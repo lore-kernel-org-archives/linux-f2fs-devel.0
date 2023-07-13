@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E324AC001E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 13 Jul 2023 23:01:30 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 675E6C001DE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 13 Jul 2023 23:01:38 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qK5JQ-0006lJ-Ip;
-	Thu, 13 Jul 2023 23:01:28 +0000
+	id 1qK5JY-0005cw-LE;
+	Thu, 13 Jul 2023 23:01:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jlayton@kernel.org>) id 1qK5JL-0006lC-GL
+ (envelope-from <jlayton@kernel.org>) id 1qK5JX-0005cq-4c
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 13 Jul 2023 23:01:23 +0000
+ Thu, 13 Jul 2023 23:01:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Message-Id:
  Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XHHzY98csxIdhFnUZS5oZpEbnogihcl0Vlct+9xAXs4=; b=e6CayovgVoPbPwmzugZEFUl9Rt
- 8qHFBhCuYKROEpfeawO/E5kRLgLwb1YcXaDIt28ehrpW4yQVfzTuPH7qQp6S2NrQqKqsAVuZQqoyC
- rK02NBWlabP6qttYCBhpSNlHzmPOGjoUCVh3iUOjMcOe1WSJmx8vWy4WrdshTtx/RRcQ=;
+ bh=0DDHRiPYhr0sd9J4288j38yiPCPs8WpS9B9X3tWRhbs=; b=MPEGmuAhShnVZscYc/1YyyeXPR
+ QIc1YwP4l5uaVbDZAW5nUboVdosIsZhxBwxYmH5/Uj+jy2S9HiS80ODSmvFR1+sDBKZNrXw+PSR5p
+ 5OuicpaP8ei4aGvlzg1yQBvJn8K5z4McZKuPgiXXGXryxnTjN3rJBUbqtdhPZ7WHs9J4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
@@ -33,36 +33,36 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=XHHzY98csxIdhFnUZS5oZpEbnogihcl0Vlct+9xAXs4=; b=eUVgJ3wTx2MX/9b5T1mZieVn+i
- aR2SS5GRhWpPo7vrN1QAqA4EgJPfuzwzLv7caalaOnmU0TvXWJx3xkKaVD3H3+wWLEXMB9WE+vQAc
- DDGUgCndrGVYTe44wW2N20wV0btxxxrayq++2MTFMARaKC3cHST12LXbYf8n6DjK42QI=;
+ bh=0DDHRiPYhr0sd9J4288j38yiPCPs8WpS9B9X3tWRhbs=; b=mDLeJvgpSOlfGQRLDrZ5uZ5qcu
+ tWy/0xfs5UEQrakEtdzG+R3RKGE7eyYkD42TAi2JtTY6+cGHGV7tUEnYTWTyYlaLgjKieHF7l02vf
+ 1lF4GE91dDS7tCM2RWC2JcKxWsAh7I4s/wn+qVOBdNLPpUmvk78Q5MES+kTTb7UcYt2w=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qK5JM-0006E2-0a for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 13 Jul 2023 23:01:23 +0000
+ id 1qK5JY-0006ES-CZ for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 13 Jul 2023 23:01:34 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 3BE8C61B8A;
- Thu, 13 Jul 2023 23:01:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96616C43395;
- Thu, 13 Jul 2023 23:01:09 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id B3CDD61B23;
+ Thu, 13 Jul 2023 23:01:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 285D7C433B7;
+ Thu, 13 Jul 2023 23:01:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1689289275;
- bh=2vQRXSuM7LMMuFaaZmD2AeyUpwjIbI+L+K8bXPk5DTQ=;
+ s=k20201202; t=1689289288;
+ bh=2uDpIMGQVMt/gC4T/BxJPAgKQID6PeU0gqKfksNKWnI=;
  h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
- b=BSkoXvWXcDj/keTS/2FezKassYS4G7pjurSgR4gS3oFBedYTE7p/18Cp+KdB+ucdM
- 4mWFzICZyqVeE7yU50sw7v3Pg2yUWX7kxzjTd+LyhjyRuPSKVzrHDFUW4T4vW5gDOu
- k67nHrT+QzJy/IIH+AhVQNVdNPoVCtGakmONlPG/FINGlG1iApR062998MUwUKtSBW
- OMv+bSvTRPEsnqgWduc0BubAUYwnmkgjEDsMYYFpwpLX0vmZArRuW7FZZLEdWJPAqf
- zZUpxxkoLp9YAK4q4wf8kQTS6t2TGezKcpTd+D8Vj2uHM1W5FiTUjmICty+IjuzZtJ
- iCDgynthtTFug==
+ b=liyRtyj08RhKgd05d/GbjIK8eAKSM10LdUJBz7UuFOcUyezObweCSPR4L5Jm7d/3+
+ J9oIvEYe6CWGwt55Hx9zbqLwPbb7BBKC8OMsAe7qX+kkwyjZAQBfJ+ADRMrXxSSmW8
+ Xzwhwg78up7SO0XMuFLZ6g+/2Pu108+rBwN7yk/z/7oyzpziWvzwOA3XIxMpCer4y9
+ lDdui9+QJ0qeG2V6Gtk4RHRd2VjBrRFJoqgHMQsHg6pmArcdKXD18EFN0CSdElLHCP
+ iu0JCzqZtl2wBu87Ybj2JDoeOy/UseVuaxAORwjKb983nHW0GT8ewtb0Icu2w+Gl8j
+ yMGVOCivsa/7g==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 13 Jul 2023 19:00:50 -0400
+Date: Thu, 13 Jul 2023 19:00:52 -0400
 MIME-Version: 1.0
-Message-Id: <20230713-mgctime-v5-1-9eb795d2ae37@kernel.org>
+Message-Id: <20230713-mgctime-v5-3-9eb795d2ae37@kernel.org>
 References: <20230713-mgctime-v5-0-9eb795d2ae37@kernel.org>
 In-Reply-To: <20230713-mgctime-v5-0-9eb795d2ae37@kernel.org>
 To: Eric Van Hensbergen <ericvh@kernel.org>, 
@@ -101,25 +101,25 @@ To: Eric Van Hensbergen <ericvh@kernel.org>,
  Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
  "Darrick J. Wong" <djwong@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=28167; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=2vQRXSuM7LMMuFaaZmD2AeyUpwjIbI+L+K8bXPk5DTQ=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBksIIuUFF2EkocwIn0PEum4dQq6wMl4vD6+Cu0s
- 5K0gYYRpKuJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZLCCLgAKCRAADmhBGVaC
- FTXMD/9IkuzbPn801fod6VBXDw96bjCgCOSdVGKbPYAr5P7BsWXDH/Ps0bYjnnNoB8yPYZ5PUyw
- atN4oiUSgPjzuvL1YM4JDP2Jkt4GdHJ7cBNFNDhJuOuRMjlxnfNmeSvACipoolKZPwqrD8PD3vW
- OiROx+xIwfbjbBhwnsm7Z6d+IN4P7qt+jHYuLRC6YHFACxC/lqHCpFa0735RuRRuQCluK/lu8J0
- iUhMeqGZ00FfaMOm2i5bZXV20eG9AwwI7hcm7Bq1Jc/tnzP/Og6nzg8hpp/Ft4KZ2naQOt3KXQ4
- PMi/TIaHKug3kMkuCCpDnFYOzTicy6pPn5iCskdiLktNw9TJaWOMj+h3092Nlme+9yElfbDPc3m
- dwWVdY3O5i90y08x5ONOSGyo00r371tbiAcPteEjUNE6p5vEbWmJdNjDqELsPyFrefG+xZ1j1Qf
- ZJTT37lJ7PwCXHtJj73+AdySBFULNORqCZy3f7VEqqqMXWwlncZlYph2vCgLKCQ5AKdrQFWrrev
- 4tIGnMLYEU7T0OF2YEuNOZ/oEKXprzNeHTxk/K9bytnJOaW223Lk1QlAHJ49BKXGd8NkxE8wevN
- Dv/tC1MVO5hh4jdjqnY4RJSzo486Z+wPvrZjMc01otLdjCwKpVkGdFQJFpDpMBDN+5JGnmGEK0L
- GToWh/TPH7CmHXg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1641; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=2uDpIMGQVMt/gC4T/BxJPAgKQID6PeU0gqKfksNKWnI=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBksIIusbBzLs0MybgDecBYC1rFLHPwWpvQ+zecR
+ awgGePAm6qJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZLCCLgAKCRAADmhBGVaC
+ FcSGEACub8Fc5S/WfyUSGxfmCSi3555ycDn+zVKXSPPiQKW1TR9LYRkybKANZmP0XYzYILSUfkU
+ ORbNjYimhQNCSxlPeeC40MyHzjga0VRHqurUT8qqaVIVJ0nl+StBd40KLXAljpP3WXM1fGUAjvH
+ vqO6pP6I3K3R/4qwCRMhWrNAcqt+qYKWVUUztTablCUbuklzQoblG24U2NK2DUfGepPumyDoeLH
+ wYod7Y1kJ92qyEoEOPNjj1+tfqjWvN7+tAsFQwpD+N0sljCCXcg2XWKOgVJBsYaXx5OEbRfi6s3
+ ryBXi9Xk0/jA6otq2rUp6HaQyJkl6teNxs+4rz75eCu8rN02oQaqFzL83u3vBt3uPmVA1pHdS8E
+ cYZhQx3P7nvLTFlUjA0Rbi4sH0FtHNJd3k1Gzcl8UkDcxVz29S7geHX+Nfj1BSUqKI8uA6NsJuI
+ nzON+pBrEdS0RRFHXzAKsdPlG285eEeNPzqWMmCPQ8I0XVLSP4vbJ+WFJhx6uO+c2gz3VEz5rKg
+ 46OipSdHjwUcz6Ps1TPvZpf/Z2bvpL5yiA+tPHgQX1nrRyMepOjxjN4vJX/dTEcENn7ySGN2vWY
+ /RoI7eVxl9z18K25MgUs7+5WZGKkUPepl/96nVkOPQyWbt7euX8Tx6c+OgzD7T9pvDRi9idRO+a
+ oNvcYRCw+z4sY9A==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Headers-End: 1qK5JM-0006E2-0a
-Subject: [f2fs-dev] [PATCH v5 1/8] fs: pass the request_mask to
- generic_fillattr
+X-Headers-End: 1qK5JY-0006ES-CZ
+Subject: [f2fs-dev] [PATCH v5 3/8] tmpfs: bump the mtime/ctime/iversion when
+ page becomes writeable
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -146,736 +146,55 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-generic_fillattr just fills in the entire stat struct indiscriminately
-today, copying data from the inode. There is at least one attribute
-(STATX_CHANGE_COOKIE) that can have side effects when it is reported,
-and we're looking at adding more with the addition of multigrain
-timestamps.
+Most filesystems that use the pagecache will update the mtime, ctime,
+and change attribute when a page becomes writeable. Add a page_mkwrite
+operation for tmpfs and just use it to bump the mtime, ctime and change
+attribute.
 
-Add a request_mask argument to generic_fillattr and have most callers
-just pass in the value that is passed to getattr. Have other callers
-(e.g. ksmbd) just pass in STATX_BASIC_STATS. Also move the setting of
-STATX_CHANGE_COOKIE into generic_fillattr.
+This fixes xfstest generic/080 on tmpfs.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/9p/vfs_inode.c       |  4 ++--
- fs/9p/vfs_inode_dotl.c  |  4 ++--
- fs/afs/inode.c          |  2 +-
- fs/btrfs/inode.c        |  2 +-
- fs/ceph/inode.c         |  2 +-
- fs/coda/inode.c         |  3 ++-
- fs/ecryptfs/inode.c     |  5 +++--
- fs/erofs/inode.c        |  2 +-
- fs/exfat/file.c         |  2 +-
- fs/ext2/inode.c         |  2 +-
- fs/ext4/inode.c         |  2 +-
- fs/f2fs/file.c          |  2 +-
- fs/fat/file.c           |  2 +-
- fs/fuse/dir.c           |  2 +-
- fs/gfs2/inode.c         |  2 +-
- fs/hfsplus/inode.c      |  2 +-
- fs/kernfs/inode.c       |  2 +-
- fs/libfs.c              |  4 ++--
- fs/minix/inode.c        |  2 +-
- fs/nfs/inode.c          |  2 +-
- fs/nfs/namespace.c      |  3 ++-
- fs/ntfs3/file.c         |  2 +-
- fs/ocfs2/file.c         |  2 +-
- fs/orangefs/inode.c     |  2 +-
- fs/proc/base.c          |  4 ++--
- fs/proc/fd.c            |  2 +-
- fs/proc/generic.c       |  2 +-
- fs/proc/proc_net.c      |  2 +-
- fs/proc/proc_sysctl.c   |  2 +-
- fs/proc/root.c          |  3 ++-
- fs/smb/client/inode.c   |  2 +-
- fs/smb/server/smb2pdu.c | 22 +++++++++++-----------
- fs/smb/server/vfs.c     |  3 ++-
- fs/stat.c               | 18 ++++++++++--------
- fs/sysv/itree.c         |  3 ++-
- fs/ubifs/dir.c          |  2 +-
- fs/udf/symlink.c        |  2 +-
- fs/vboxsf/utils.c       |  2 +-
- include/linux/fs.h      |  2 +-
- mm/shmem.c              |  2 +-
- 40 files changed, 70 insertions(+), 62 deletions(-)
+ mm/shmem.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 16d85e6033a3..d24d1f20e922 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -1016,7 +1016,7 @@ v9fs_vfs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	p9_debug(P9_DEBUG_VFS, "dentry: %p\n", dentry);
- 	v9ses = v9fs_dentry2v9ses(dentry);
- 	if (v9ses->cache & (CACHE_META|CACHE_LOOSE)) {
--		generic_fillattr(&nop_mnt_idmap, inode, stat);
-+		generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 		return 0;
- 	} else if (v9ses->cache & CACHE_WRITEBACK) {
- 		if (S_ISREG(inode->i_mode)) {
-@@ -1037,7 +1037,7 @@ v9fs_vfs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 		return PTR_ERR(st);
- 
- 	v9fs_stat2inode(st, d_inode(dentry), dentry->d_sb, 0);
--	generic_fillattr(&nop_mnt_idmap, d_inode(dentry), stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, d_inode(dentry), stat);
- 
- 	p9stat_free(st);
- 	kfree(st);
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index 464ea73d1bf8..8e8d5d2a13d8 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -451,7 +451,7 @@ v9fs_vfs_getattr_dotl(struct mnt_idmap *idmap,
- 	p9_debug(P9_DEBUG_VFS, "dentry: %p\n", dentry);
- 	v9ses = v9fs_dentry2v9ses(dentry);
- 	if (v9ses->cache & (CACHE_META|CACHE_LOOSE)) {
--		generic_fillattr(&nop_mnt_idmap, inode, stat);
-+		generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 		return 0;
- 	} else if (v9ses->cache) {
- 		if (S_ISREG(inode->i_mode)) {
-@@ -476,7 +476,7 @@ v9fs_vfs_getattr_dotl(struct mnt_idmap *idmap,
- 		return PTR_ERR(st);
- 
- 	v9fs_stat2inode_dotl(st, d_inode(dentry), 0);
--	generic_fillattr(&nop_mnt_idmap, d_inode(dentry), stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, d_inode(dentry), stat);
- 	/* Change block size to what the server returned */
- 	stat->blksize = st->st_blksize;
- 
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 6b636f43f548..1c794a1896aa 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -773,7 +773,7 @@ int afs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 
- 	do {
- 		read_seqbegin_or_lock(&vnode->cb_lock, &seq);
--		generic_fillattr(&nop_mnt_idmap, inode, stat);
-+		generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 		if (test_bit(AFS_VNODE_SILLY_DELETED, &vnode->flags) &&
- 		    stat->nlink > 0)
- 			stat->nlink -= 1;
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index ceac62c1cbfc..29a20f828dda 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -8746,7 +8746,7 @@ static int btrfs_getattr(struct mnt_idmap *idmap,
- 				  STATX_ATTR_IMMUTABLE |
- 				  STATX_ATTR_NODUMP);
- 
--	generic_fillattr(idmap, inode, stat);
-+	generic_fillattr(idmap, request_mask, inode, stat);
- 	stat->dev = BTRFS_I(inode)->root->anon_dev;
- 
- 	spin_lock(&BTRFS_I(inode)->lock);
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 5f6e93714f5a..fd05d68e2990 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2467,7 +2467,7 @@ int ceph_getattr(struct mnt_idmap *idmap, const struct path *path,
- 			return err;
- 	}
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	stat->ino = ceph_present_inode(inode);
- 
- 	/*
-diff --git a/fs/coda/inode.c b/fs/coda/inode.c
-index 3e64679c1620..0c7c2528791e 100644
---- a/fs/coda/inode.c
-+++ b/fs/coda/inode.c
-@@ -256,7 +256,8 @@ int coda_getattr(struct mnt_idmap *idmap, const struct path *path,
- {
- 	int err = coda_revalidate_inode(d_inode(path->dentry));
- 	if (!err)
--		generic_fillattr(&nop_mnt_idmap, d_inode(path->dentry), stat);
-+		generic_fillattr(&nop_mnt_idmap, request_mask,
-+				 d_inode(path->dentry), stat);
- 	return err;
- }
- 
-diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index b491bb239c8f..992d9c7e64ae 100644
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -982,7 +982,7 @@ static int ecryptfs_getattr_link(struct mnt_idmap *idmap,
- 
- 	mount_crypt_stat = &ecryptfs_superblock_to_private(
- 						dentry->d_sb)->mount_crypt_stat;
--	generic_fillattr(&nop_mnt_idmap, d_inode(dentry), stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, d_inode(dentry), stat);
- 	if (mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES) {
- 		char *target;
- 		size_t targetsiz;
-@@ -1011,7 +1011,8 @@ static int ecryptfs_getattr(struct mnt_idmap *idmap,
- 	if (!rc) {
- 		fsstack_copy_attr_all(d_inode(dentry),
- 				      ecryptfs_inode_to_lower(d_inode(dentry)));
--		generic_fillattr(&nop_mnt_idmap, d_inode(dentry), stat);
-+		generic_fillattr(&nop_mnt_idmap, request_mask,
-+				 d_inode(dentry), stat);
- 		stat->blocks = lower_stat.blocks;
- 	}
- 	return rc;
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 567c0d305ea4..f3053f0dd6e1 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -368,7 +368,7 @@ int erofs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	stat->attributes_mask |= (STATX_ATTR_COMPRESSED |
- 				  STATX_ATTR_IMMUTABLE);
- 
--	generic_fillattr(idmap, inode, stat);
-+	generic_fillattr(idmap, request_mask, inode, stat);
- 	return 0;
- }
- 
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index f40ecfeee3a4..32395ef686a2 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -232,7 +232,7 @@ int exfat_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	struct inode *inode = d_backing_inode(path->dentry);
- 	struct exfat_inode_info *ei = EXFAT_I(inode);
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	exfat_truncate_atime(&stat->atime);
- 	stat->result_mask |= STATX_BTIME;
- 	stat->btime.tv_sec = ei->i_crtime.tv_sec;
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 1259995977d2..acbab27fe957 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -1628,7 +1628,7 @@ int ext2_getattr(struct mnt_idmap *idmap, const struct path *path,
- 			STATX_ATTR_IMMUTABLE |
- 			STATX_ATTR_NODUMP);
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	return 0;
- }
- 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 86696b40c58f..6683076ecb2f 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5535,7 +5535,7 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
- 				  STATX_ATTR_NODUMP |
- 				  STATX_ATTR_VERITY);
- 
--	generic_fillattr(idmap, inode, stat);
-+	generic_fillattr(idmap, request_mask, inode, stat);
- 	return 0;
- }
- 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index b018800223c4..35886a52edfb 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -882,7 +882,7 @@ int f2fs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 				  STATX_ATTR_NODUMP |
- 				  STATX_ATTR_VERITY);
- 
--	generic_fillattr(idmap, inode, stat);
-+	generic_fillattr(idmap, request_mask, inode, stat);
- 
- 	/* we need to show initial sectors used for inline_data/dentries */
- 	if ((S_ISREG(inode->i_mode) && f2fs_has_inline_data(inode)) ||
-diff --git a/fs/fat/file.c b/fs/fat/file.c
-index 456477946dd9..e887e9ab7472 100644
---- a/fs/fat/file.c
-+++ b/fs/fat/file.c
-@@ -401,7 +401,7 @@ int fat_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	struct inode *inode = d_inode(path->dentry);
- 	struct msdos_sb_info *sbi = MSDOS_SB(inode->i_sb);
- 
--	generic_fillattr(idmap, inode, stat);
-+	generic_fillattr(idmap, request_mask, inode, stat);
- 	stat->blksize = sbi->cluster_size;
- 
- 	if (sbi->options.nfs == FAT_NFS_NOSTALE_RO) {
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index a210c231c7d3..645fae48dc6b 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1224,7 +1224,7 @@ static int fuse_update_get_attr(struct inode *inode, struct file *file,
- 		forget_all_cached_acls(inode);
- 		err = fuse_do_getattr(inode, stat, file);
- 	} else if (stat) {
--		generic_fillattr(&nop_mnt_idmap, inode, stat);
-+		generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 		stat->mode = fi->orig_i_mode;
- 		stat->ino = fi->orig_ino;
- 	}
-diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
-index 2ded6c813f20..200cabf3b393 100644
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -2071,7 +2071,7 @@ static int gfs2_getattr(struct mnt_idmap *idmap,
- 				  STATX_ATTR_IMMUTABLE |
- 				  STATX_ATTR_NODUMP);
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 
- 	if (gfs2_holder_initialized(&gh))
- 		gfs2_glock_dq_uninit(&gh);
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index 40c61ab4a918..c65c8c4b03dd 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -298,7 +298,7 @@ int hfsplus_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	stat->attributes_mask |= STATX_ATTR_APPEND | STATX_ATTR_IMMUTABLE |
- 				 STATX_ATTR_NODUMP;
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	return 0;
- }
- 
-diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-index 89a9b4dcf109..af37be68bf06 100644
---- a/fs/kernfs/inode.c
-+++ b/fs/kernfs/inode.c
-@@ -190,7 +190,7 @@ int kernfs_iop_getattr(struct mnt_idmap *idmap,
- 
- 	down_read(&root->kernfs_iattr_rwsem);
- 	kernfs_refresh_inode(kn, inode);
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	up_read(&root->kernfs_iattr_rwsem);
- 
- 	return 0;
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 4a17735aa6ad..0146b9c69029 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -33,7 +33,7 @@ int simple_getattr(struct mnt_idmap *idmap, const struct path *path,
- 		   unsigned int query_flags)
- {
- 	struct inode *inode = d_inode(path->dentry);
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	stat->blocks = inode->i_mapping->nrpages << (PAGE_SHIFT - 9);
- 	return 0;
- }
-@@ -1582,7 +1582,7 @@ static int empty_dir_getattr(struct mnt_idmap *idmap,
- 			     u32 request_mask, unsigned int query_flags)
- {
- 	struct inode *inode = d_inode(path->dentry);
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	return 0;
- }
- 
-diff --git a/fs/minix/inode.c b/fs/minix/inode.c
-index 8a4fc9420b36..df575473c1cc 100644
---- a/fs/minix/inode.c
-+++ b/fs/minix/inode.c
-@@ -656,7 +656,7 @@ int minix_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	struct super_block *sb = path->dentry->d_sb;
- 	struct inode *inode = d_inode(path->dentry);
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	if (INODE_VERSION(inode) == MINIX_V1)
- 		stat->blocks = (BLOCK_SIZE / 512) * V1_minix_blocks(stat->size, sb);
- 	else
-diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-index 1283fdfa4b0a..e21c073158e5 100644
---- a/fs/nfs/inode.c
-+++ b/fs/nfs/inode.c
-@@ -912,7 +912,7 @@ int nfs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	/* Only return attributes that were revalidated. */
- 	stat->result_mask = nfs_get_valid_attrmask(inode) | request_mask;
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	stat->ino = nfs_compat_user_ino64(NFS_FILEID(inode));
- 	stat->change_cookie = inode_peek_iversion_raw(inode);
- 	stat->attributes_mask |= STATX_ATTR_CHANGE_MONOTONIC;
-diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
-index 19d51ebf842c..e7494cdd957e 100644
---- a/fs/nfs/namespace.c
-+++ b/fs/nfs/namespace.c
-@@ -215,7 +215,8 @@ nfs_namespace_getattr(struct mnt_idmap *idmap,
- 	if (NFS_FH(d_inode(path->dentry))->size != 0)
- 		return nfs_getattr(idmap, path, stat, request_mask,
- 				   query_flags);
--	generic_fillattr(&nop_mnt_idmap, d_inode(path->dentry), stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, d_inode(path->dentry),
-+			 stat);
- 	return 0;
- }
- 
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 12788601dc84..962f12ce6c0a 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -85,7 +85,7 @@ int ntfs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 
- 	stat->attributes_mask |= STATX_ATTR_COMPRESSED | STATX_ATTR_ENCRYPTED;
- 
--	generic_fillattr(idmap, inode, stat);
-+	generic_fillattr(idmap, request_mask, inode, stat);
- 
- 	stat->result_mask |= STATX_BTIME;
- 	stat->btime = ni->i_crtime;
-diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-index 1b337ebce4df..8184499ae7a5 100644
---- a/fs/ocfs2/file.c
-+++ b/fs/ocfs2/file.c
-@@ -1319,7 +1319,7 @@ int ocfs2_getattr(struct mnt_idmap *idmap, const struct path *path,
- 		goto bail;
- 	}
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	/*
- 	 * If there is inline data in the inode, the inode will normally not
- 	 * have data blocks allocated (it may have an external xattr block).
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 9014bbcc8031..a52c30e80f45 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -871,7 +871,7 @@ int orangefs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	ret = orangefs_inode_getattr(inode,
- 	    request_mask & STATX_SIZE ? ORANGEFS_GETATTR_SIZE : 0);
- 	if (ret == 0) {
--		generic_fillattr(&nop_mnt_idmap, inode, stat);
-+		generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 
- 		/* override block size reported to stat */
- 		if (!(request_mask & STATX_SIZE))
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index d8388fc0a362..2bf67a0e0bcc 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1966,7 +1966,7 @@ int pid_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	struct proc_fs_info *fs_info = proc_sb_info(inode->i_sb);
- 	struct task_struct *task;
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 
- 	stat->uid = GLOBAL_ROOT_UID;
- 	stat->gid = GLOBAL_ROOT_GID;
-@@ -3900,7 +3900,7 @@ static int proc_task_getattr(struct mnt_idmap *idmap,
- {
- 	struct inode *inode = d_inode(path->dentry);
- 	struct task_struct *p = get_proc_task(inode);
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 
- 	if (p) {
- 		stat->nlink += get_nr_threads(p);
-diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-index b3140deebbbf..6276b3938842 100644
---- a/fs/proc/fd.c
-+++ b/fs/proc/fd.c
-@@ -352,7 +352,7 @@ static int proc_fd_getattr(struct mnt_idmap *idmap,
- 	struct inode *inode = d_inode(path->dentry);
- 	int rv = 0;
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 
- 	/* If it's a directory, put the number of open fds there */
- 	if (S_ISDIR(inode->i_mode)) {
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index 42ae38ff6e7e..775ce0bcf08c 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -146,7 +146,7 @@ static int proc_getattr(struct mnt_idmap *idmap,
- 		}
- 	}
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	return 0;
- }
- 
-diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
-index 78f9e6b469c0..2ba31b6d68c0 100644
---- a/fs/proc/proc_net.c
-+++ b/fs/proc/proc_net.c
-@@ -308,7 +308,7 @@ static int proc_tgid_net_getattr(struct mnt_idmap *idmap,
- 
- 	net = get_proc_task_net(inode);
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 
- 	if (net != NULL) {
- 		stat->nlink = net->proc_net->nlink;
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 6bc10e7e0ff7..bf06344a42cc 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -849,7 +849,7 @@ static int proc_sys_getattr(struct mnt_idmap *idmap,
- 	if (IS_ERR(head))
- 		return PTR_ERR(head);
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	if (table)
- 		stat->mode = (stat->mode & S_IFMT) | table->mode;
- 
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index a86e65a608da..9191248f2dac 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -314,7 +314,8 @@ static int proc_root_getattr(struct mnt_idmap *idmap,
- 			     const struct path *path, struct kstat *stat,
- 			     u32 request_mask, unsigned int query_flags)
- {
--	generic_fillattr(&nop_mnt_idmap, d_inode(path->dentry), stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, d_inode(path->dentry),
-+			 stat);
- 	stat->nlink = proc_root.nlink + nr_processes();
- 	return 0;
- }
-diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-index 218f03dd3f52..93fe43789d7a 100644
---- a/fs/smb/client/inode.c
-+++ b/fs/smb/client/inode.c
-@@ -2540,7 +2540,7 @@ int cifs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 			return rc;
- 	}
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	stat->blksize = cifs_sb->ctx->bsize;
- 	stat->ino = CIFS_I(inode)->uniqueid;
- 
-diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-index f9099831c8ff..2a084d35233a 100644
---- a/fs/smb/server/smb2pdu.c
-+++ b/fs/smb/server/smb2pdu.c
-@@ -4391,8 +4391,8 @@ static int get_file_basic_info(struct smb2_query_info_rsp *rsp,
- 	}
- 
- 	basic_info = (struct smb2_file_basic_info *)rsp->Buffer;
--	generic_fillattr(file_mnt_idmap(fp->filp), file_inode(fp->filp),
--			 &stat);
-+	generic_fillattr(file_mnt_idmap(fp->filp), STATX_BASIC_STATS,
-+			 file_inode(fp->filp), &stat);
- 	basic_info->CreationTime = cpu_to_le64(fp->create_time);
- 	time = ksmbd_UnixTimeToNT(stat.atime);
- 	basic_info->LastAccessTime = cpu_to_le64(time);
-@@ -4417,7 +4417,7 @@ static void get_file_standard_info(struct smb2_query_info_rsp *rsp,
- 	struct kstat stat;
- 
- 	inode = file_inode(fp->filp);
--	generic_fillattr(file_mnt_idmap(fp->filp), inode, &stat);
-+	generic_fillattr(file_mnt_idmap(fp->filp), STATX_BASIC_STATS, inode, &stat);
- 
- 	sinfo = (struct smb2_file_standard_info *)rsp->Buffer;
- 	delete_pending = ksmbd_inode_pending_delete(fp);
-@@ -4471,7 +4471,7 @@ static int get_file_all_info(struct ksmbd_work *work,
- 		return PTR_ERR(filename);
- 
- 	inode = file_inode(fp->filp);
--	generic_fillattr(file_mnt_idmap(fp->filp), inode, &stat);
-+	generic_fillattr(file_mnt_idmap(fp->filp), STATX_BASIC_STATS, inode, &stat);
- 
- 	ksmbd_debug(SMB, "filename = %s\n", filename);
- 	delete_pending = ksmbd_inode_pending_delete(fp);
-@@ -4548,8 +4548,8 @@ static void get_file_stream_info(struct ksmbd_work *work,
- 	int buf_free_len;
- 	struct smb2_query_info_req *req = ksmbd_req_buf_next(work);
- 
--	generic_fillattr(file_mnt_idmap(fp->filp), file_inode(fp->filp),
--			 &stat);
-+	generic_fillattr(file_mnt_idmap(fp->filp), STATX_BASIC_STATS,
-+			 file_inode(fp->filp), &stat);
- 	file_info = (struct smb2_file_stream_info *)rsp->Buffer;
- 
- 	buf_free_len =
-@@ -4639,8 +4639,8 @@ static void get_file_internal_info(struct smb2_query_info_rsp *rsp,
- 	struct smb2_file_internal_info *file_info;
- 	struct kstat stat;
- 
--	generic_fillattr(file_mnt_idmap(fp->filp), file_inode(fp->filp),
--			 &stat);
-+	generic_fillattr(file_mnt_idmap(fp->filp), STATX_BASIC_STATS,
-+			 file_inode(fp->filp), &stat);
- 	file_info = (struct smb2_file_internal_info *)rsp->Buffer;
- 	file_info->IndexNumber = cpu_to_le64(stat.ino);
- 	rsp->OutputBufferLength =
-@@ -4665,7 +4665,7 @@ static int get_file_network_open_info(struct smb2_query_info_rsp *rsp,
- 	file_info = (struct smb2_file_ntwrk_info *)rsp->Buffer;
- 
- 	inode = file_inode(fp->filp);
--	generic_fillattr(file_mnt_idmap(fp->filp), inode, &stat);
-+	generic_fillattr(file_mnt_idmap(fp->filp), STATX_BASIC_STATS, inode, &stat);
- 
- 	file_info->CreationTime = cpu_to_le64(fp->create_time);
- 	time = ksmbd_UnixTimeToNT(stat.atime);
-@@ -4726,8 +4726,8 @@ static void get_file_compression_info(struct smb2_query_info_rsp *rsp,
- 	struct smb2_file_comp_info *file_info;
- 	struct kstat stat;
- 
--	generic_fillattr(file_mnt_idmap(fp->filp), file_inode(fp->filp),
--			 &stat);
-+	generic_fillattr(file_mnt_idmap(fp->filp), STATX_BASIC_STATS,
-+			 file_inode(fp->filp), &stat);
- 
- 	file_info = (struct smb2_file_comp_info *)rsp->Buffer;
- 	file_info->CompressedFileSize = cpu_to_le64(stat.blocks << 9);
-diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index e35914457350..d0e94b73931a 100644
---- a/fs/smb/server/vfs.c
-+++ b/fs/smb/server/vfs.c
-@@ -1650,7 +1650,8 @@ int ksmbd_vfs_fill_dentry_attrs(struct ksmbd_work *work,
- 	u64 time;
- 	int rc;
- 
--	generic_fillattr(idmap, d_inode(dentry), ksmbd_kstat->kstat);
-+	generic_fillattr(idmap, STATX_BASIC_STATS, d_inode(dentry),
-+			 ksmbd_kstat->kstat);
- 
- 	time = ksmbd_UnixTimeToNT(ksmbd_kstat->kstat->ctime);
- 	ksmbd_kstat->create_time = time;
-diff --git a/fs/stat.c b/fs/stat.c
-index 8c2b30af19f5..062f311b5386 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -29,6 +29,7 @@
- /**
-  * generic_fillattr - Fill in the basic attributes from the inode struct
-  * @idmap:	idmap of the mount the inode was found from
-+ * @req_mask	statx request_mask
-  * @inode:	Inode to use as the source
-  * @stat:	Where to fill in the attributes
-  *
-@@ -42,8 +43,8 @@
-  * uid and gid filds. On non-idmapped mounts or if permission checking is to be
-  * performed on the raw inode simply passs @nop_mnt_idmap.
-  */
--void generic_fillattr(struct mnt_idmap *idmap, struct inode *inode,
--		      struct kstat *stat)
-+void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
-+		      struct inode *inode, struct kstat *stat)
- {
- 	vfsuid_t vfsuid = i_uid_into_vfsuid(idmap, inode);
- 	vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
-@@ -61,6 +62,12 @@ void generic_fillattr(struct mnt_idmap *idmap, struct inode *inode,
- 	stat->ctime = inode_get_ctime(inode);
- 	stat->blksize = i_blocksize(inode);
- 	stat->blocks = inode->i_blocks;
-+
-+	if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) {
-+		stat->result_mask |= STATX_CHANGE_COOKIE;
-+		stat->change_cookie = inode_query_iversion(inode);
-+	}
-+
- }
- EXPORT_SYMBOL(generic_fillattr);
- 
-@@ -123,17 +130,12 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
- 	stat->attributes_mask |= (STATX_ATTR_AUTOMOUNT |
- 				  STATX_ATTR_DAX);
- 
--	if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) {
--		stat->result_mask |= STATX_CHANGE_COOKIE;
--		stat->change_cookie = inode_query_iversion(inode);
--	}
--
- 	idmap = mnt_idmap(path->mnt);
- 	if (inode->i_op->getattr)
- 		return inode->i_op->getattr(idmap, path, stat,
- 					    request_mask, query_flags);
- 
--	generic_fillattr(idmap, inode, stat);
-+	generic_fillattr(idmap, request_mask, inode, stat);
- 	return 0;
- }
- EXPORT_SYMBOL(vfs_getattr_nosec);
-diff --git a/fs/sysv/itree.c b/fs/sysv/itree.c
-index dba6a2ef26f1..edb94e55de8e 100644
---- a/fs/sysv/itree.c
-+++ b/fs/sysv/itree.c
-@@ -449,7 +449,8 @@ int sysv_getattr(struct mnt_idmap *idmap, const struct path *path,
- 		 struct kstat *stat, u32 request_mask, unsigned int flags)
- {
- 	struct super_block *s = path->dentry->d_sb;
--	generic_fillattr(&nop_mnt_idmap, d_inode(path->dentry), stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, d_inode(path->dentry),
-+			 stat);
- 	stat->blocks = (s->s_blocksize / 512) * sysv_nblocks(s, stat->size);
- 	stat->blksize = s->s_blocksize;
- 	return 0;
-diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
-index 3a1ba8ba308a..2f48c58d47cd 100644
---- a/fs/ubifs/dir.c
-+++ b/fs/ubifs/dir.c
-@@ -1654,7 +1654,7 @@ int ubifs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 				STATX_ATTR_ENCRYPTED |
- 				STATX_ATTR_IMMUTABLE);
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	stat->blksize = UBIFS_BLOCK_SIZE;
- 	stat->size = ui->ui_size;
- 
-diff --git a/fs/udf/symlink.c b/fs/udf/symlink.c
-index 779b5c2c75f6..f7eaf7b14594 100644
---- a/fs/udf/symlink.c
-+++ b/fs/udf/symlink.c
-@@ -149,7 +149,7 @@ static int udf_symlink_getattr(struct mnt_idmap *idmap,
- 	struct inode *inode = d_backing_inode(dentry);
- 	struct page *page;
- 
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
- 	page = read_mapping_page(inode->i_mapping, 0, NULL);
- 	if (IS_ERR(page))
- 		return PTR_ERR(page);
-diff --git a/fs/vboxsf/utils.c b/fs/vboxsf/utils.c
-index 576b91d571c5..83f20dd15522 100644
---- a/fs/vboxsf/utils.c
-+++ b/fs/vboxsf/utils.c
-@@ -252,7 +252,7 @@ int vboxsf_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	if (err)
- 		return err;
- 
--	generic_fillattr(&nop_mnt_idmap, d_inode(dentry), kstat);
-+	generic_fillattr(&nop_mnt_idmap, request_mask, d_inode(dentry), kstat);
- 	return 0;
- }
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 39076ea6a360..42d1434cc427 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2919,7 +2919,7 @@ extern void page_put_link(void *);
- extern int page_symlink(struct inode *inode, const char *symname, int len);
- extern const struct inode_operations page_symlink_inode_operations;
- extern void kfree_link(void *);
--void generic_fillattr(struct mnt_idmap *, struct inode *, struct kstat *);
-+void generic_fillattr(struct mnt_idmap *, u32, struct inode *, struct kstat *);
- void generic_fill_statx_attr(struct inode *inode, struct kstat *stat);
- extern int vfs_getattr_nosec(const struct path *, struct kstat *, u32, unsigned int);
- extern int vfs_getattr(const struct path *, struct kstat *, u32, unsigned int);
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 310b0544eae3..b154af49d2df 100644
+index b154af49d2df..654d9a585820 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -1073,7 +1073,7 @@ static int shmem_getattr(struct mnt_idmap *idmap,
- 	stat->attributes_mask |= (STATX_ATTR_APPEND |
- 			STATX_ATTR_IMMUTABLE |
- 			STATX_ATTR_NODUMP);
--	generic_fillattr(idmap, inode, stat);
-+	generic_fillattr(idmap, request_mask, inode, stat);
+@@ -2169,6 +2169,16 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+ 	return ret;
+ }
  
- 	if (shmem_is_huge(inode, 0, false, NULL, 0))
- 		stat->blksize = HPAGE_PMD_SIZE;
++static vm_fault_t shmem_page_mkwrite(struct vm_fault *vmf)
++{
++	struct vm_area_struct *vma = vmf->vma;
++	struct inode *inode = file_inode(vma->vm_file);
++
++	file_update_time(vma->vm_file);
++	inode_inc_iversion(inode);
++	return 0;
++}
++
+ unsigned long shmem_get_unmapped_area(struct file *file,
+ 				      unsigned long uaddr, unsigned long len,
+ 				      unsigned long pgoff, unsigned long flags)
+@@ -4210,6 +4220,7 @@ static const struct super_operations shmem_ops = {
+ 
+ static const struct vm_operations_struct shmem_vm_ops = {
+ 	.fault		= shmem_fault,
++	.page_mkwrite	= shmem_page_mkwrite,
+ 	.map_pages	= filemap_map_pages,
+ #ifdef CONFIG_NUMA
+ 	.set_policy     = shmem_set_policy,
+@@ -4219,6 +4230,7 @@ static const struct vm_operations_struct shmem_vm_ops = {
+ 
+ static const struct vm_operations_struct shmem_anon_vm_ops = {
+ 	.fault		= shmem_fault,
++	.page_mkwrite	= shmem_page_mkwrite,
+ 	.map_pages	= filemap_map_pages,
+ #ifdef CONFIG_NUMA
+ 	.set_policy     = shmem_set_policy,
 
 -- 
 2.41.0
