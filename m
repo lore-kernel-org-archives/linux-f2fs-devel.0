@@ -4,75 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3EEA9C001E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 17 Jul 2023 17:34:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ACC42EB64DC
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 17 Jul 2023 17:34:37 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qLS7I-0008T5-Uh;
-	Mon, 17 Jul 2023 17:34:35 +0000
+	id 1qLS7I-00063T-Ss;
+	Mon, 17 Jul 2023 17:34:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qLS7B-0008Sg-OE
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qLS7G-00063C-Im
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 17 Jul 2023 17:34:28 +0000
+ Mon, 17 Jul 2023 17:34:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6q/q+dr/qzHlVsjymL0p5eNVXW8sRmIflYW61voSTP4=; b=ALwGLl2ZPb9vorvijm/qfnrU/c
- 3z4FHweK4LsDQHafY/ZBtq7l2AeCm2O6ZdBIGDqLhgsroAm9WsdqYA3YL3spc7ilxuEMZlYTOnqO1
- jWEn3Ty+c+nbfeN/ix/xA2WGGPs9jDea+alwZXyUWbj9lqXZY308pkNjpl/jgEyts4HI=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=eCd0RKWc+ssL/GRxgZPlM5J7BEGdD0q+g6gV7d1NOcg=; b=BroP2AGaMouxJ4OBQK/5jPpyc/
+ XW7+vZmKcVIvHOv7ULavXjArqym7FDsoTN4QlMFsFXRNX8wfeJ7SOPkr0iBrItgO8JS/xBDpsBHIY
+ IpMG1C45280NI1dgsq0o3/Ymwhogw/7mmGW6E50elXCFFx+seRGPVgfc+3PnUlKPwbTU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=6q/q+dr/qzHlVsjymL0p5eNVXW8sRmIflYW61voSTP4=; b=J
- F9mB4l0oqCIMOUd9RTRvS8a5+zcPAbPZhpFBU6WC+gCydOwhhEB//+GmXqUKjiqTg1vzvhEpZHtSm
- jIueYDVcIWKKyTXNesbYxzSBf8T1qSKycdf5Bgwvg4q8jA8XChTajknWp/B4S78DKaxysGqhJciDr
- +NQ8wTjeB0fArsTo=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=eCd0RKWc+ssL/GRxgZPlM5J7BEGdD0q+g6gV7d1NOcg=; b=E0xPUV51/bfcmtR2TiV1r44Sm6
+ 2VpXFx6CiQw297IGVbDqvj0LUppxTLvfeHk05zaijCeUon7wj7jFfNwPS3NRGgM3Un3Pl5Jn2+5yk
+ ZFVso42EhkRRvkVuysHIXhJtxXHfETv8l+soUwlbLgaorFKMi/0J8lh+yb16AB79aV0M=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qLS7C-00013v-31 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 17 Jul 2023 17:34:28 +0000
+ id 1qLS7G-00AvG1-AP for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 17 Jul 2023 17:34:34 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 66EF361156
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 23258611B8;
+ Mon, 17 Jul 2023 17:34:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 10CAFC43391;
  Mon, 17 Jul 2023 17:34:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CA43AC433C8
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 17 Jul 2023 17:34:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1689615261;
- bh=A3rUMV5jg0pRdXqNOzyj3ML5GQDoNyrxqoapHuDC/TQ=;
- h=Subject:From:Date:To:From;
- b=C/HKeJU4+UEnHVbT62bUKlrrnNl7hzT5xjwcAaEF+iv00EGl1lghu2mgm75PhN5HY
- A2iWXU4AVo6q475mGGYu9EPeXhuP1VwXQ383HdH0q6i6QFng+77o/RAWO+/MUxoqJs
- wvXXZo6mmsuiqWBDFCNRTeMAEv4QeeCcTO50Ul0YLFWQ0roQKyJt7GiiO8mOLhzkQ+
- NT97BWdRfQkNCWp2uRafYfKbL4uW6f0yxoSatZmqOv+KAwkcIGxlux6rgD/nF777eA
- YjfRbBjYcdTPwypZ8pj9YcxiIIjXI4nXMZNkz6tc2kT6TSBQAQI8YU6R8pCEgm4rJe
- c1j5N15nh7VWA==
+ s=k20201202; t=1689615262;
+ bh=zjpi1nmFBRkngC9kx5uSz24LCTF4uH41+2V6jKvsHMc=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=DlOnmUT3kCu61Ax6lKM/L4+gRXW8BImDVpK0xKK5s6Wq9QcuyzxwNgTeMG2DsetN9
+ R985SPgNMPOi/UC+6XItv9cHotMURfRI4IQLf6OAGp/ObrvLnRSa9i5E30Ks237A2/
+ jv7qSgeaCtvOSry7KrFXXvLsi8O80AhI9/LATJkvJ/+4FLXZ0KKaEfEWlx+8FesIm/
+ VVwm+/+n3F4JWYnPrjeh3EaYI9ePJ5wQEN54vtKlVHHbODZYokwYyJ6TT7+WzxvI+M
+ 0JZTV8CC8zRuaKRR+bQkEGk2vu0jVSt9ZY9Ub3Rg0PRboeL6cfpOGLZFLMtiWsmYMv
+ fsRMUWQIPaTYA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- B3FF6C561EE for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 17 Jul 2023 17:34:21 +0000 (UTC)
+ ED88BE29F39; Mon, 17 Jul 2023 17:34:21 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168961526173.4078.18250961950728927873.git-patchwork-summary@kernel.org>
+Message-Id: <168961526196.4078.16285159335200571257.git-patchwork-notify@kernel.org>
 Date: Mon, 17 Jul 2023 17:34:21 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1qLS7C-00013v-31
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+References: <20230710052324.2857-1-rdunlap@infradead.org>
+In-Reply-To: <20230710052324.2857-1-rdunlap@infradead.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+X-Headers-End: 1qLS7G-00AvG1-AP
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix spelling in ABI documentation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,56 +82,37 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, vkon@google.com, frank.li@vivo.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Series: [f2fs-dev,1/2] f2fs: allow f2fs_ioc_{, de}compress_file to be interrupted
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=764942
-  Lore link: https://lore.kernel.org/r/20230711200806.4884-1-chao@kernel.org
-    Patches: [f2fs-dev,1/2] f2fs: allow f2fs_ioc_{, de}compress_file to be interrupted
-             [f2fs-dev,2/2] f2fs: compress: don't {, de}compress non-full cluster
+On Sun,  9 Jul 2023 22:23:24 -0700 you wrote:
+> Correct spelling problems as identified by codespell.
+> 
+> Fixes: 9e615dbba41e ("f2fs: add missing description for ipu_policy node")
+> Fixes: b2e4a2b300e5 ("f2fs: expose discard related parameters in sysfs")
+> Fixes: 846ae671ad36 ("f2fs: expose extension_list sysfs entry")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc: Chao Yu <chao@kernel.org>
+> Cc: linux-f2fs-devel@lists.sourceforge.net
+> Cc: Yangtao Li <frank.li@vivo.com>
+> Cc: Konstantin Vyshetsky <vkon@google.com>
+> 
+> [...]
 
-Patch: [f2fs-dev,v3] f2fs: fix to avoid mmap vs set_compress_option case
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=762894
-  Lore link: https://lore.kernel.org/r/20230706020614.2950782-1-chao@kernel.org
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix spelling in ABI documentation
+    https://git.kernel.org/jaegeuk/f2fs/c/666de8daceef
 
-Patch: [f2fs-dev] f2fs: don't handle error case of f2fs_compress_alloc_page()
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=763873
-  Lore link: https://lore.kernel.org/r/20230710061058.2303767-1-chao@kernel.org
-
-Patch: [f2fs-dev] f2fs: flush inode if atomic file is aborted
-  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=763482
-  Lore link: https://lore.kernel.org/r/20230707141142.2276510-1-jaegeuk@kernel.org
-
-Patch: [f2fs-dev] f2fs: get out of a repeat loop when getting a locked data page
-  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=733326
-  Lore link: https://lore.kernel.org/r/20230323213919.1876157-1-jaegeuk@kernel.org
-
-Patch: [f2fs-dev] f2fs: fix spelling in ABI documentation
-  Submitter: Randy Dunlap <rdunlap@infradead.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=763853
-  Lore link: https://lore.kernel.org/r/20230710052324.2857-1-rdunlap@infradead.org
-
-
-Total patches: 7
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
