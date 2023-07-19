@@ -4,71 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8BBBAC0015E
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Jul 2023 07:01:45 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 03D6EEB64DA
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Jul 2023 13:51:10 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qM1Bu-0002ze-Os;
-	Wed, 19 Jul 2023 07:01:43 +0000
+	id 1qM7aA-00052R-EK;
+	Wed, 19 Jul 2023 13:51:09 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1qM1Bt-0002zX-Lw
+ (envelope-from <chao@kernel.org>) id 1qM7a9-00052L-32
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 19 Jul 2023 07:01:42 +0000
+ Wed, 19 Jul 2023 13:51:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=l3qp/hGid/pJHEVMNicyeV9o+Y985Tiae2XCDNoSiIE=; b=KuVCkVAI1aJnbw2bGaIs6xH2rp
- Inu7/XEHV8t62Pd5y3ZV+ZW3SDhBfNA1omK/piiZqiKld0mt9IFj8VMN4eFIWMB2u1T5Xd/euY97q
- DwW2cjcd+OFx2llsrwmxxQK0eod2N6j75XDnPIJUxr3Dl000lNeUHECsqZMcaq8GOLxg=;
+ bh=ZFez3G9iZwTDX9MwhqfV3uWTzMROT16heX9xDgJmM5w=; b=a9QWZf+HAzkOfptqV0wNQQF7+G
+ NEefp0GbPG9gKI9MKu2abV9D6/HRWZBuclvj6pLe+OchN+vfB89iWhb+ydyBeYUCTTo+jPtKIEjVB
+ EaBufmAX9XCPWQbP2KFI748780VQbdaZ2noWKxKlME7yAU/YnD5MVavHMarKTsW8SYug=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=l3qp/hGid/pJHEVMNicyeV9o+Y985Tiae2XCDNoSiIE=; b=H
- ad4MyAepKtjVJfePkeLuwANLlheMN1GEXsZoyTVuFrxF1hERZPpRmXB6csOwMvlEfCWK5ddkiuTcf
- gfUJIxq/zu83MqnfelYR8/QCcGsEeCK6ViH24c6CzSDcuTsEdIp6pXOcvoZ2p0VfGwa10HzHo8caw
- duhp5+gs7jiMA1Xs=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=ZFez3G9iZwTDX9MwhqfV3uWTzMROT16heX9xDgJmM5w=; b=jbHdd75ux22yh+S2G8h35tYbtG
+ C9/XPaivF7F9mm0yKfAVdqXBSArjFDf5x27CQn0WTHvTpdWJO38w/QL+Vnbm1IKS5sJGYmPS4Gqus
+ NHFAwendY9/v09Ncfpgj+7OcLC8NF6IokZmLa0Cn3tigjEzduAemrjDIJV9UIvp0B5IU=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qM1Bs-00CdPh-Nv for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 19 Jul 2023 07:01:42 +0000
+ id 1qM7a4-00CzSD-F7 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 19 Jul 2023 13:51:07 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 55342612CA
+ by dfw.source.kernel.org (Postfix) with ESMTPS id D290E6167A
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 19 Jul 2023 07:01:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFCAC433C7;
- Wed, 19 Jul 2023 07:01:28 +0000 (UTC)
+ Wed, 19 Jul 2023 13:50:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2E81C433C7;
+ Wed, 19 Jul 2023 13:50:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1689750089;
- bh=rHPIayEgCw60Voodvn5p8kOxtbFc5Qakb3TWhVfAG1o=;
- h=From:To:Cc:Subject:Date:From;
- b=Jpgc9zN8WdllpJ7JUEhajfXTPVBC7i9+pSZlE/C/H1A3xVQjke1d1GWwfFRSjMccL
- 6Re9TnIDUqxL+9QBH+6wxtD8Q28w8ohDsJMR9QucNG7Kv3VZ6N/RfUKYBwYOlDQLr+
- tT+1+vF9crjzv98WotpxjAOxQXlSghCSJp/wYkluDknJpJ1ppWqfrevmy+zT12GFF6
- bqSvAa2SNwwIxudItUYl6s5bLm1Z+7IaZqF4Xq4RRIXhp0O+tmk7eYvzQMhvtKltDJ
- T+rudmNpdj8nYc719TtQLzumcnB2HRzL4HLjWa1nGSYULypgf3TGxjBPhk97GlGle5
- 03QZupx3X9kqQ==
+ s=k20201202; t=1689774654;
+ bh=jxSEIgFFgOG/2+9mEHtdiwLWFjzU1BfBqEW1cWXN2HU=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=ZYhfHhirwP+IqwIhtU2G4WJc0ZWbF9nXm9soVIzoHF02McjRI5GfC4rG3jm1QGQqK
+ l6ClKF/zYBPX8v4gRfU+iVV5QIgUu8rOxTXTpgGJkCjzBhlm3o0e/2gbPwemooAV/w
+ P/dG6uMokDNnTvmy8FoFRWUZkuT3DeIPRrSsiG+ymqYVzw40smpQpCZq8xA8AQUbJS
+ 1VL5x+GKGDxSnyeeTWU0dg5FhGlyMNw9E5U6FCR3SzNmJ8Uc9MEC2zabXxqcAOUkdN
+ GHYyLWi+3p/v6kcmtDlvg17QZGXqt9VCrKZ6NIrCrulw1pXNOqyjKjFAVsGEgrm3sO
+ zaJI1dpPRHsOA==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Wed, 19 Jul 2023 15:01:22 +0800
-Message-Id: <20230719070122.2361853-1-chao@kernel.org>
+Date: Wed, 19 Jul 2023 21:50:46 +0800
+Message-Id: <20230719135047.2947030-2-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230719135047.2947030-1-chao@kernel.org>
+References: <20230719135047.2947030-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1qM1Bs-00CdPh-Nv
-Subject: [f2fs-dev] [PATCH] dump.f2fs: remove redundant check condition in
- dump_node()
+X-Headers-End: 1qM7a4-00CzSD-F7
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: remove unneeded check condition in
+ __f2fs_setxattr()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,38 +82,32 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In dump_node(), f2fs_is_valid_blkaddr() has checked ni.blk_addr's
-validity and dump_node() will bail up if ni.blk_addr is invalid,
-so let's remove redundant check condition and print below:
-
-	if (ni.blk_addr == 0x0)
-		MSG(force, "Invalid nat entry\n\n");
+It has checked return value of write_all_xattrs(), remove unneeded
+following check condition.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fsck/dump.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/f2fs/xattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fsck/dump.c b/fsck/dump.c
-index 6c1857f..e7a1c5c 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -605,9 +605,7 @@ int dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force)
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index 71bfa2391ab4..9cc1ca75b2da 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -757,7 +757,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+ 	if (index == F2FS_XATTR_INDEX_ENCRYPTION &&
+ 			!strcmp(name, F2FS_XATTR_NAME_ENCRYPTION_CONTEXT))
+ 		f2fs_set_encrypted_inode(inode);
+-	if (!error && S_ISDIR(inode->i_mode))
++	if (S_ISDIR(inode->i_mode))
+ 		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
  
- 	dev_read_block(node_blk, ni.blk_addr);
- 
--	if (ni.blk_addr == 0x0)
--		MSG(force, "Invalid nat entry\n\n");
--	else if (!is_sit_bitmap_set(sbi, ni.blk_addr))
-+	if (!is_sit_bitmap_set(sbi, ni.blk_addr))
- 		MSG(force, "Invalid sit bitmap, %u\n\n", ni.blk_addr);
- 
- 	DBG(1, "node_blk.footer.ino [0x%x]\n", le32_to_cpu(node_blk->footer.ino));
+ same:
 -- 
 2.40.1
 
