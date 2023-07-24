@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 742F5C001B0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:16:18 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B8CFFC001DE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:16:36 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qNsby-0000ug-19;
-	Mon, 24 Jul 2023 10:16:18 +0000
+	id 1qNscF-0007Px-GD;
+	Mon, 24 Jul 2023 10:16:35 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsbw-0000ua-Ka
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qNscA-0007Pq-Mw
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:16:16 +0000
+ Mon, 24 Jul 2023 10:16:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PA74NunQFszlW8RpIb5KtNwL3Pn/7Z7EgMABUrgFylU=; b=Y2mfncEqa5k93vuZ6nodz3K8tQ
- 7Lqp658Scm8CkD6uDS+rGbvla0EU5b4Nr27Rs4ob13djcUWUJjkTwkkkttFbz8xSGG3FXA2/FFg4g
- lqYDxEQ1dmuXMorNwZio3T91RexiYqJZxWwVFep6Rx+pUEoQW3t5kpLgtLNQ/wYt4074=;
+ bh=8oqpenbl7KoJJhQpMWpio5jwf7tXqseO0h4l218M5aA=; b=Hjiob6L994+C/vk+sfIiVbZKln
+ FaxK5CvlWki+EVhcRaAhsqdHnBDKRZ7QpmjK43t7gj6le5c2GTaay6Rc3B6j6UnpLvWk4AH7A+3T0
+ esya8WUamwUMJ8789qnAksK7Ke6X/OBSsjBUP+PdaxYQxtr6XP9cV/BIBaouaEwspWn0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,67 +33,67 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=PA74NunQFszlW8RpIb5KtNwL3Pn/7Z7EgMABUrgFylU=; b=ew/MHZ5JHygF/3pdXtMYkys1gA
- F5O/nXE2nEGASZEkGMa17pjNeP5An1ukN8QARssOyg81aUYVdZpOhlQtIxqmndynM78PMV85ZvpcU
- cCq5+CPVMUiLViyxZ0CmseoeMEN6VwTf3BerrRiPD5xtg1KMc3gfvW3q0LUH3pin7sYU=;
-Received: from mail-qv1-f44.google.com ([209.85.219.44])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=8oqpenbl7KoJJhQpMWpio5jwf7tXqseO0h4l218M5aA=; b=mIbteXnG+wYog79kYj/uFWf5gZ
+ H4hAybU8xNbGn+tDMoIzT4aNGEuflzcpbZ0bMcNrWqhCir+eBrnvrmIfJBbGjyV0gKqcTAup9UOBv
+ B4fpJiIABYazPa9MbjOXEYkKIahdNml0tk7J6I/IbA3YVV9nQGZE+OCZ2IoB1ZEIWli4=;
+Received: from mail-pl1-f172.google.com ([209.85.214.172])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qNsbu-0004os-Ns for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:16:16 +0000
-Received: by mail-qv1-f44.google.com with SMTP id
- 6a1803df08f44-62fe3f0905aso6913816d6.0
+ id 1qNsc4-000Pvy-3E for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jul 2023 10:16:29 +0000
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-1bb85ed352bso2294745ad.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Jul 2023 03:16:14 -0700 (PDT)
+ Mon, 24 Jul 2023 03:16:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690193769; x=1690798569;
+ d=bytedance.com; s=google; t=1690193778; x=1690798578;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=PA74NunQFszlW8RpIb5KtNwL3Pn/7Z7EgMABUrgFylU=;
- b=XjT+yUz2O85D5/dtd9hhvonEm1fFLx715tNJo9vnDhTz3pop5umusU32TD24cY/f3h
- n/KkAQIYa+4oEcuzBT1gFP/QhBMdnoNVJcvL92aBQf9ha4S1b97FJRbfmcZsn5OdCyDq
- MYSKCr3VVdK7GhO2SHQAXhP/Az4aSjO1BLn61pMTp2PV6HHbdFbgM/hNhPHZWc8bugp2
- 9vE1zVwUWxdSFvPMq9f4QVuF4G18Swq1m+umgT8QK+6VO2q5iipqdM7qwYXqpXi58l2L
- pEBpxxcqJnR4rEDAoDuRcP46urXhKOeC2+Ac/XD1sXro0ZxuXUEtDKATWbLDdPp4Ziq7
- DSYw==
+ bh=8oqpenbl7KoJJhQpMWpio5jwf7tXqseO0h4l218M5aA=;
+ b=lXtGIRf8ylH6+EV/B5TbpPzhzKmePXtVaSsAxZLHl+b2FsRuw5nux5zW+MSLqb1mHx
+ lTjKCM8ahwORX71jpQBP3yb9AlEHpsPOzgpZywWnblhm0Nis3g+PagG7v0cQh0V0U/Zm
+ N/5jQyHvxvR/9UEPoGzm4nDwoCi9Iv2q8GvjO4p7QOnVyWj2gnK85QhOUaxM/L8Mvt6t
+ LnOUILCMtLO8e9J5UVw2qnEUu2Kk5P6k5zDHRPkqfv6zWVZLAG617HE9fCiwPJleKYng
+ qJpXnz5NEMmdTpwV/sgL5m0ahgKFnGhvtnmQqI/KOR1JBfMvtDE9RyEKiJxMjMIVofmd
+ NbgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690193769; x=1690798569;
+ d=1e100.net; s=20221208; t=1690193778; x=1690798578;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=PA74NunQFszlW8RpIb5KtNwL3Pn/7Z7EgMABUrgFylU=;
- b=cHSMB6XUmCVnsQsvDvZpgzpYloxO3tZJ3OqTPpfysfZoiJEc8ZdFHV7phEcOzfDXpt
- sEacjhvJhnjvzlaKIk5zwmAYKGKJPO+szdE4h7K05msygAxT/lBWrObyI7yUkPNF8TLW
- HIvSLZwpLhMbRQOVuk+vIXgoWptRVLW+Tr04rj03cJxxoG3gE8tmWNTjEb2/PcB8hzx/
- x6IcPKNKxNZ2NxjifvOjRBQe5F44pNHpel2+862fCK+2Wouxrp//9GToSAGqsX+34Q10
- lj5hhiIYhBpwLDlLh/8dVp0uhsURGU4dAX5Fo2DQtbgs1O2HCKretY6yLJh+PDuBDZZ9
- 2ExA==
-X-Gm-Message-State: ABy/qLZncZ2n7wPmW+RJzxiT+qZpwCy7DCH5VZEQZOcfZAYD5/xB1HOM
- LNVHA3aBDq9wdOAMmfqChwdrDmTt1Zc3JlI5jc0=
-X-Google-Smtp-Source: APBJJlG2oOvKNbqCVYKCsLLrFI6N3Peh10WK+D3LiX3VUR0Gh2vD9sbZ8AKvOgxEZEiSv+Xi5/CKrg==
-X-Received: by 2002:a17:902:d4cb:b0:1b1:9272:55e2 with SMTP id
- o11-20020a170902d4cb00b001b1927255e2mr12377128plg.3.1690192313997; 
- Mon, 24 Jul 2023 02:51:53 -0700 (PDT)
+ bh=8oqpenbl7KoJJhQpMWpio5jwf7tXqseO0h4l218M5aA=;
+ b=ZR5FDSutzqAA6TRhGjQhPLAje0skdbQNapogu4CBH8FCPXe7+SHjuANhcMwEXJ2Ef+
+ EfcxCpngmAa0ygsmDpHUaJG01xBxoP6fuB5S7P7TmheiUQbKlIX7uDsN7Rl03V2+oJMy
+ Nfc2BXlPPqcgtqminHlb9umcPrQeDA3IV+WcFVZSM/L3K+XmTAZFV8DeVkaVKe5YS633
+ zyM/KFhylH76oeE4JvJXdvT2N/NR/KU4ngxxUfy+hahqZYdX4mnMA9ZBYgcRMtbJbR3s
+ qudSHmLJyEBzAK0Lf0eRz7HzbUqnhlSI/ZjQ4+fBkBuXX+P1CnY+JPrcuvIXXF136YYJ
+ 8JWA==
+X-Gm-Message-State: ABy/qLaOiboo8ulEPUJfU+cKLJXvR3WbuJniLhU6vQX/6VgR59K52S8l
+ DTWNeq5OTMyFYjDoyPUsOaSncexOy1WCezmRo7E=
+X-Google-Smtp-Source: APBJJlFv5Kl04F8rp2naJTMNzHe6rYzFJJPXcSejcs04WaV/YhAbklIOobqPbsV/O0Fdd5o/IKlERw==
+X-Received: by 2002:a17:902:d484:b0:1b8:a27d:f591 with SMTP id
+ c4-20020a170902d48400b001b8a27df591mr12259746plg.5.1690192110449; 
+ Mon, 24 Jul 2023 02:48:30 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.147])
  by smtp.gmail.com with ESMTPSA id
- d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.51.42
+ d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.48.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Jul 2023 02:51:53 -0700 (PDT)
+ Mon, 24 Jul 2023 02:48:30 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
-Date: Mon, 24 Jul 2023 17:43:41 +0800
-Message-Id: <20230724094354.90817-35-zhengqi.arch@bytedance.com>
+Date: Mon, 24 Jul 2023 17:43:24 +0800
+Message-Id: <20230724094354.90817-18-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qNsbu-0004os-Ns
-Subject: [f2fs-dev] [PATCH v2 34/47] nfsd: dynamically allocate the
- nfsd-client shrinker
+X-Headers-End: 1qNsc4-000Pvy-3E
+Subject: [f2fs-dev] [PATCH v2 17/47] rcu: dynamically allocate the rcu-lazy
+ shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -115,84 +115,56 @@ Cc: kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  linux-bcache@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>,
  linux-raid@vger.kernel.org, linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
- linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-btrfs@vger.kernel.org
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In preparation for implementing lockless slab shrink, use new APIs to
-dynamically allocate the nfsd-client shrinker, so that it can be freed
-asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
-read-side critical section when releasing the struct nfsd_net.
+Use new APIs to dynamically allocate the rcu-lazy shrinker.
 
-Acked-by: Chuck Lever <chuck.lever@oracle.com>
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- fs/nfsd/netns.h     |  2 +-
- fs/nfsd/nfs4state.c | 20 ++++++++++++--------
- 2 files changed, 13 insertions(+), 9 deletions(-)
+ kernel/rcu/tree_nocb.h | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
-index ec49b200b797..f669444d5336 100644
---- a/fs/nfsd/netns.h
-+++ b/fs/nfsd/netns.h
-@@ -195,7 +195,7 @@ struct nfsd_net {
- 	int			nfs4_max_clients;
+diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
+index 43229d2b0c44..919f17561733 100644
+--- a/kernel/rcu/tree_nocb.h
++++ b/kernel/rcu/tree_nocb.h
+@@ -1397,12 +1397,7 @@ lazy_rcu_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+ 	return count ? count : SHRINK_STOP;
+ }
  
- 	atomic_t		nfsd_courtesy_clients;
--	struct shrinker		nfsd_client_shrinker;
-+	struct shrinker		*nfsd_client_shrinker;
- 	struct work_struct	nfsd_shrinker_work;
- };
+-static struct shrinker lazy_rcu_shrinker = {
+-	.count_objects = lazy_rcu_shrink_count,
+-	.scan_objects = lazy_rcu_shrink_scan,
+-	.batch = 0,
+-	.seeks = DEFAULT_SEEKS,
+-};
++static struct shrinker *lazy_rcu_shrinker;
+ #endif // #ifdef CONFIG_RCU_LAZY
  
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 3339177f8e2f..c7a4616cd866 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -4388,8 +4388,7 @@ static unsigned long
- nfsd4_state_shrinker_count(struct shrinker *shrink, struct shrink_control *sc)
- {
- 	int count;
--	struct nfsd_net *nn = container_of(shrink,
--			struct nfsd_net, nfsd_client_shrinker);
-+	struct nfsd_net *nn = shrink->private_data;
+ void __init rcu_init_nohz(void)
+@@ -1436,8 +1431,16 @@ void __init rcu_init_nohz(void)
+ 		return;
  
- 	count = atomic_read(&nn->nfsd_courtesy_clients);
- 	if (!count)
-@@ -8125,12 +8124,17 @@ static int nfs4_state_create_net(struct net *net)
- 	INIT_WORK(&nn->nfsd_shrinker_work, nfsd4_state_shrinker_worker);
- 	get_net(net);
- 
--	nn->nfsd_client_shrinker.scan_objects = nfsd4_state_shrinker_scan;
--	nn->nfsd_client_shrinker.count_objects = nfsd4_state_shrinker_count;
--	nn->nfsd_client_shrinker.seeks = DEFAULT_SEEKS;
--
--	if (register_shrinker(&nn->nfsd_client_shrinker, "nfsd-client"))
-+	nn->nfsd_client_shrinker = shrinker_alloc(0, "nfsd-client");
-+	if (!nn->nfsd_client_shrinker)
- 		goto err_shrinker;
+ #ifdef CONFIG_RCU_LAZY
+-	if (register_shrinker(&lazy_rcu_shrinker, "rcu-lazy"))
+-		pr_err("Failed to register lazy_rcu shrinker!\n");
++	lazy_rcu_shrinker = shrinker_alloc(0, "rcu-lazy");
++	if (!lazy_rcu_shrinker) {
++		pr_err("Failed to allocate lazy_rcu shrinker!\n");
++	} else {
++		lazy_rcu_shrinker->count_objects = lazy_rcu_shrink_count;
++		lazy_rcu_shrinker->scan_objects = lazy_rcu_shrink_scan;
++		lazy_rcu_shrinker->seeks = DEFAULT_SEEKS;
 +
-+	nn->nfsd_client_shrinker->scan_objects = nfsd4_state_shrinker_scan;
-+	nn->nfsd_client_shrinker->count_objects = nfsd4_state_shrinker_count;
-+	nn->nfsd_client_shrinker->seeks = DEFAULT_SEEKS;
-+	nn->nfsd_client_shrinker->private_data = nn;
-+
-+	shrinker_register(nn->nfsd_client_shrinker);
-+
- 	return 0;
++		shrinker_register(lazy_rcu_shrinker);
++	}
+ #endif // #ifdef CONFIG_RCU_LAZY
  
- err_shrinker:
-@@ -8228,7 +8232,7 @@ nfs4_state_shutdown_net(struct net *net)
- 	struct list_head *pos, *next, reaplist;
- 	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
- 
--	unregister_shrinker(&nn->nfsd_client_shrinker);
-+	shrinker_unregister(nn->nfsd_client_shrinker);
- 	cancel_work(&nn->nfsd_shrinker_work);
- 	cancel_delayed_work_sync(&nn->laundromat_work);
- 	locks_end_grace(&nn->nfsd4_manager);
+ 	if (!cpumask_subset(rcu_nocb_mask, cpu_possible_mask)) {
 -- 
 2.30.2
 
