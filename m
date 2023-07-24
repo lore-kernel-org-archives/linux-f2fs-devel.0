@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 92DCEC001DE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:19:00 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6B08AC001B0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:19:02 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qNsea-000117-5q;
-	Mon, 24 Jul 2023 10:19:00 +0000
+	id 1qNseb-0007VK-KJ;
+	Mon, 24 Jul 2023 10:19:02 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qNseZ-000110-5i
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsea-0007V6-Rw
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:18:59 +0000
+ Mon, 24 Jul 2023 10:19:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Au95b59SE4lLb756TrNLGg7HOLC+u2MQAxdqgGCdIqg=; b=StndORjHEl6TvuuZhrOrlP0iLn
- dc2ZQ9CtCiOIBEhLrGOIPmuU8fJFi7ux7RKtn+EgMWKfO8iwXRHJcdvbDNEQTIT5ZcUfnaueld/iz
- B+zWIwo6WH91z7oVIJBj53xnPcKpj4YuPly19ghOgr1dhye20W7+3F9qrP1xuW+MLgfU=;
+ bh=qE79rW9nQFdZueatbKkJSwG7PQvomLDBWPiy7CJ1pOw=; b=Uw+PsCrAc4BxdHA9dQ12f4Izq1
+ OtgT2i2/SQuQRiX9jq0O71/DuUduaEJ17sQHaWenULBGWX2R1cdYYOrCMDUxArma+WRsAOhtul881
+ yFHUmESZAX9hvJWmLAVS4EnvM6KoTY2519GZ7o/Hj0bzxZ95v0YfuaI62vVpUqEPQRTw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,66 +33,67 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Au95b59SE4lLb756TrNLGg7HOLC+u2MQAxdqgGCdIqg=; b=E5MoPoPYbNQ736BBqq3APHQ12L
- BbKhYbSCiXtgDK0oYd/UG0ZVy3KNEiL5tPjxhSvnvtRQdVzulyYa8yJn/sTTPGwCh3g5eBiq3xIBS
- sqV/jQhK0gcTPqJqCiqbPgBBH6138vkayC6lU5Pj/DGa1BnbsPiGWj7mjK/cLMjJhmDY=;
-Received: from mail-yb1-f182.google.com ([209.85.219.182])
+ bh=qE79rW9nQFdZueatbKkJSwG7PQvomLDBWPiy7CJ1pOw=; b=Juc5W0jvs1BM6KWh2uF8EJmpjp
+ MsGu74bryandbT34/ZVMm3uKmXjdewLSyIL74P0R9m9cozxqvfYqHAo+vDcwrdcE8Mkf4DuNMtV5w
+ bZCAB6MYesqEPiOmavTkhAesPpjHneiYExuoRR3VLq+l+oOoPY9hBUaan9QaLIs768rc=;
+Received: from mail-ot1-f41.google.com ([209.85.210.41])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qNseY-0004uw-HW for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:18:59 +0000
-Received: by mail-yb1-f182.google.com with SMTP id
- 3f1490d57ef6-cfebdba63cdso579289276.0
+ id 1qNsea-0004v5-LO for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jul 2023 10:19:01 +0000
+Received: by mail-ot1-f41.google.com with SMTP id
+ 46e09a7af769-6bb1133b063so740869a34.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Jul 2023 03:18:58 -0700 (PDT)
+ Mon, 24 Jul 2023 03:19:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690193933; x=1690798733;
+ d=bytedance.com; s=google; t=1690193935; x=1690798735;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Au95b59SE4lLb756TrNLGg7HOLC+u2MQAxdqgGCdIqg=;
- b=gKR5LCFdsZoHtd/rdkOX6MO41V62emcQo1X2XnLd0P2isXJag2mS8HrjPe/1gqaFhC
- Ib54sRCaYaT6rWwFAxABb78BbatDrGdfwzIN/KOzXicA3AF5oXrKIvV93BjhyOlBbwgO
- n72H3ZdU6Cjo3EobZjcmHO8REFgvckhy+42e6EerYbVjIgy3cq+8sU103r3XYl6yd4QJ
- 1Kyp0xRr0+eE1dIDWKeZHj0bE5XonM6+aYW3l6Gz8h/eQgdonYyCG87LyxARc6TmCTcn
- eNE0qeZQxsrezUdiAflMuQSpxH5lc1sOfe880v2RVay4B4wqnGbstWDhLr6FJM9xS3nK
- sW3Q==
+ bh=qE79rW9nQFdZueatbKkJSwG7PQvomLDBWPiy7CJ1pOw=;
+ b=eXJDtrqdazcw0g/7/zka3RVsYMFZaOKM6FLc7uhKOP3Eck39gtLuDGg0Nq6Bk4Xc3m
+ qhX3evuLnsaVG3JnqTO+uTiNkiiwywQL7LszIrECCL1YZ3+/8kkekY+zwbFUE9+j+kKB
+ zGzVSeX0ncULHx92KdzLWeWrH57zWWcTxcxQze5f+nZJfhGrae7qWr3I2Tpzl4WCISTK
+ hsHsDR/5J9FyzeEr9Klxv7fUsU87lAmCsvQiV4G+ahjB6vxbbp6DqtWOG9QqlD4WinNe
+ QSsnbW7/AzbQyx190Kldv+wmp147XdYET7wlLBKajwP+SVE+8AFN5eCc+4C+0Jqrjc2H
+ ib5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690193933; x=1690798733;
+ d=1e100.net; s=20221208; t=1690193935; x=1690798735;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Au95b59SE4lLb756TrNLGg7HOLC+u2MQAxdqgGCdIqg=;
- b=cl2FPiPhWuzls/YLEZewDkhhehgSRazD6a0zuMAPwvnTmL56k0CnOWnXcNSpiyZS66
- 9Uj8XfdtQ++j+BBd4Pf4CzNFzjtIzeuzAXK5HZlIDpbO5be2oxy8WtZ3ObRxn8gZXxk7
- uwc6FjaM5USvHnqKRxf4a7g692QV2cz3FrVdz7uD+Z769U/sd1WKXpW7YjUj9aj2dpwc
- CEVGiotIcOhNg4Ap91n8toclWMxL0cAO56ovOOKmp8CVrUKjeWKYESkCM5lEG51fkJEd
- kHK70O96/q5fZ96ziPm/9ucDts6akkZeDYk0fBljQIQ2IDXoalp9B38LryFmjN5ssHXZ
- 4xVQ==
-X-Gm-Message-State: ABy/qLYMcHj609BZwlM3EN6ed9yfXKWs7bA4mErTiZvt6Qe5XwDNCD1l
- i5PIBib2vpChOESzKnw9ksPn1uJZEXsP6uTBN2I=
-X-Google-Smtp-Source: APBJJlHskHW5r0IhvtSXxnBFmiqfwZejMZbjxfsN1oQLUQ3K2J0HHv3xxnfIpcyIc5BfLUakmxAnBw==
+ bh=qE79rW9nQFdZueatbKkJSwG7PQvomLDBWPiy7CJ1pOw=;
+ b=J77s4EGY0CVCaFWMvGA5XJ52vGs2RQJ7b76OmnBpVBITLE/XbRZAmUF8RZUPbla6cB
+ pW54odrCefbowEljW4RQEFf0RnXeOtQ9JMv/6FhNvp2UqrNSEo6FCTK6ZQBO10gpOKm0
+ JlmK8RjTMfEDD/CPQp1rX6ReEq1gpa2i4dwiS6yeEqz9y7M+dEuUr1nkSOLmzFxZP2JP
+ E2zB5zsJCxEa2orQjr0HSI5icK249163d7qi0lT0mhHLbL7HpSJTxxLoSlU1ES6z5bsX
+ TJt3Ou8EXX4dOTJqYe2CXHW6m1jfezyj+WfAgUwubpmjwXYzQQAooS/yJhiveWGfZdvC
+ EdDg==
+X-Gm-Message-State: ABy/qLZ77//POc9VudvexuCOExwgtxjqdNdNhUDjEZf0UrbBOCMlJpBZ
+ KG+nyzoJwW3ZaO0XSuqq++lN5GyOQoO9ksbwumM=
+X-Google-Smtp-Source: APBJJlFDDpJsPsXaM9K0eN3GbgFDnugc0MZ81V5AeEkSNRv9osxW0v212MSH0egY7R7+BB7SiCdLdQ==
 X-Received: by 2002:a17:902:e802:b0:1b3:d4bb:3515 with SMTP id
- u2-20020a170902e80200b001b3d4bb3515mr12393256plg.0.1690192397637; 
- Mon, 24 Jul 2023 02:53:17 -0700 (PDT)
+ u2-20020a170902e80200b001b3d4bb3515mr12388503plg.0.1690192254453; 
+ Mon, 24 Jul 2023 02:50:54 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.147])
  by smtp.gmail.com with ESMTPSA id
- d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.53.06
+ d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.50.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Jul 2023 02:53:17 -0700 (PDT)
+ Mon, 24 Jul 2023 02:50:54 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
-Date: Mon, 24 Jul 2023 17:43:48 +0800
-Message-Id: <20230724094354.90817-42-zhengqi.arch@bytedance.com>
+Date: Mon, 24 Jul 2023 17:43:36 +0800
+Message-Id: <20230724094354.90817-30-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qNseY-0004uw-HW
-Subject: [f2fs-dev] [PATCH v2 41/47] mm: shrinker: remove old APIs
+X-Headers-End: 1qNsea-0004v5-LO
+Subject: [f2fs-dev] [PATCH v2 29/47] vmw_balloon: dynamically allocate the
+ vmw-balloon shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -120,186 +121,100 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Now no users are using the old APIs, just remove them.
+In preparation for implementing lockless slab shrink, use new APIs to
+dynamically allocate the vmw-balloon shrinker, so that it can be freed
+asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
+read-side critical section when releasing the struct vmballoon.
+
+And we can simply exit vmballoon_init() when registering the shrinker
+fails. So the shrinker_registered indication is redundant, just remove it.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- include/linux/shrinker.h |   7 --
- mm/shrinker.c            | 143 ---------------------------------------
- 2 files changed, 150 deletions(-)
+ drivers/misc/vmw_balloon.c | 38 ++++++++++++--------------------------
+ 1 file changed, 12 insertions(+), 26 deletions(-)
 
-diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-index 296f5e163861..e464b4e9be0e 100644
---- a/include/linux/shrinker.h
-+++ b/include/linux/shrinker.h
-@@ -105,13 +105,6 @@ void shrinker_free_non_registered(struct shrinker *shrinker);
- void shrinker_register(struct shrinker *shrinker);
- void shrinker_unregister(struct shrinker *shrinker);
+diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
+index 9ce9b9e0e9b6..d216d4dc042e 100644
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -380,16 +380,7 @@ struct vmballoon {
+ 	/**
+ 	 * @shrinker: shrinker interface that is used to avoid over-inflation.
+ 	 */
+-	struct shrinker shrinker;
+-
+-	/**
+-	 * @shrinker_registered: whether the shrinker was registered.
+-	 *
+-	 * The shrinker interface does not handle gracefully the removal of
+-	 * shrinker that was not registered before. This indication allows to
+-	 * simplify the unregistration process.
+-	 */
+-	bool shrinker_registered;
++	struct shrinker *shrinker;
+ };
  
--extern int __printf(2, 3) prealloc_shrinker(struct shrinker *shrinker,
--					    const char *fmt, ...);
--extern void register_shrinker_prepared(struct shrinker *shrinker);
--extern int __printf(2, 3) register_shrinker(struct shrinker *shrinker,
--					    const char *fmt, ...);
--extern void unregister_shrinker(struct shrinker *shrinker);
--extern void free_prealloced_shrinker(struct shrinker *shrinker);
- extern void synchronize_shrinkers(void);
+ static struct vmballoon balloon;
+@@ -1568,29 +1559,27 @@ static unsigned long vmballoon_shrinker_count(struct shrinker *shrinker,
  
- #ifdef CONFIG_SHRINKER_DEBUG
-diff --git a/mm/shrinker.c b/mm/shrinker.c
-index d820e4cc5806..2f3635ad1b45 100644
---- a/mm/shrinker.c
-+++ b/mm/shrinker.c
-@@ -661,149 +661,6 @@ void shrinker_unregister(struct shrinker *shrinker)
+ static void vmballoon_unregister_shrinker(struct vmballoon *b)
+ {
+-	if (b->shrinker_registered)
+-		unregister_shrinker(&b->shrinker);
+-	b->shrinker_registered = false;
++	shrinker_unregister(b->shrinker);
  }
- EXPORT_SYMBOL(shrinker_unregister);
  
--/*
-- * Add a shrinker callback to be called from the vm.
-- */
--static int __prealloc_shrinker(struct shrinker *shrinker)
--{
--	unsigned int size;
--	int err;
+ static int vmballoon_register_shrinker(struct vmballoon *b)
+ {
+-	int r;
 -
--	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
--		err = prealloc_memcg_shrinker(shrinker);
--		if (err != -ENOSYS)
--			return err;
--
--		shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
--	}
--
--	size = sizeof(*shrinker->nr_deferred);
--	if (shrinker->flags & SHRINKER_NUMA_AWARE)
--		size *= nr_node_ids;
--
--	shrinker->nr_deferred = kzalloc(size, GFP_KERNEL);
--	if (!shrinker->nr_deferred)
--		return -ENOMEM;
--
--	return 0;
--}
--
--#ifdef CONFIG_SHRINKER_DEBUG
--int prealloc_shrinker(struct shrinker *shrinker, const char *fmt, ...)
--{
--	va_list ap;
--	int err;
--
--	va_start(ap, fmt);
--	shrinker->name = kvasprintf_const(GFP_KERNEL, fmt, ap);
--	va_end(ap);
--	if (!shrinker->name)
--		return -ENOMEM;
--
--	err = __prealloc_shrinker(shrinker);
--	if (err) {
--		kfree_const(shrinker->name);
--		shrinker->name = NULL;
--	}
--
--	return err;
--}
--#else
--int prealloc_shrinker(struct shrinker *shrinker, const char *fmt, ...)
--{
--	return __prealloc_shrinker(shrinker);
--}
--#endif
--
--void free_prealloced_shrinker(struct shrinker *shrinker)
--{
--#ifdef CONFIG_SHRINKER_DEBUG
--	kfree_const(shrinker->name);
--	shrinker->name = NULL;
--#endif
--	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
--		down_write(&shrinker_rwsem);
--		unregister_memcg_shrinker(shrinker);
--		up_write(&shrinker_rwsem);
--		return;
--	}
--
--	kfree(shrinker->nr_deferred);
--	shrinker->nr_deferred = NULL;
--}
--
--void register_shrinker_prepared(struct shrinker *shrinker)
--{
--	down_write(&shrinker_rwsem);
--	list_add_tail(&shrinker->list, &shrinker_list);
--	shrinker->flags |= SHRINKER_REGISTERED;
--	shrinker_debugfs_add(shrinker);
--	up_write(&shrinker_rwsem);
--}
--
--static int __register_shrinker(struct shrinker *shrinker)
--{
--	int err = __prealloc_shrinker(shrinker);
--
--	if (err)
--		return err;
--	register_shrinker_prepared(shrinker);
--	return 0;
--}
--
--#ifdef CONFIG_SHRINKER_DEBUG
--int register_shrinker(struct shrinker *shrinker, const char *fmt, ...)
--{
--	va_list ap;
--	int err;
--
--	va_start(ap, fmt);
--	shrinker->name = kvasprintf_const(GFP_KERNEL, fmt, ap);
--	va_end(ap);
--	if (!shrinker->name)
--		return -ENOMEM;
--
--	err = __register_shrinker(shrinker);
--	if (err) {
--		kfree_const(shrinker->name);
--		shrinker->name = NULL;
--	}
--	return err;
--}
--#else
--int register_shrinker(struct shrinker *shrinker, const char *fmt, ...)
--{
--	return __register_shrinker(shrinker);
--}
--#endif
--EXPORT_SYMBOL(register_shrinker);
--
--/*
-- * Remove one
-- */
--void unregister_shrinker(struct shrinker *shrinker)
--{
--	struct dentry *debugfs_entry;
--	int debugfs_id;
--
--	if (!(shrinker->flags & SHRINKER_REGISTERED))
--		return;
--
--	down_write(&shrinker_rwsem);
--	list_del(&shrinker->list);
--	shrinker->flags &= ~SHRINKER_REGISTERED;
--	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
--		unregister_memcg_shrinker(shrinker);
--	debugfs_entry = shrinker_debugfs_detach(shrinker, &debugfs_id);
--	up_write(&shrinker_rwsem);
--
--	shrinker_debugfs_remove(debugfs_entry, debugfs_id);
--
--	kfree(shrinker->nr_deferred);
--	shrinker->nr_deferred = NULL;
--}
--EXPORT_SYMBOL(unregister_shrinker);
--
- /**
-  * synchronize_shrinkers - Wait for all running shrinkers to complete.
-  *
+ 	/* Do nothing if the shrinker is not enabled */
+ 	if (!vmwballoon_shrinker_enable)
+ 		return 0;
+ 
+-	b->shrinker.scan_objects = vmballoon_shrinker_scan;
+-	b->shrinker.count_objects = vmballoon_shrinker_count;
+-	b->shrinker.seeks = DEFAULT_SEEKS;
++	b->shrinker = shrinker_alloc(0, "vmw-balloon");
++	if (!b->shrinker)
++		return -ENOMEM;
+ 
+-	r = register_shrinker(&b->shrinker, "vmw-balloon");
++	b->shrinker->scan_objects = vmballoon_shrinker_scan;
++	b->shrinker->count_objects = vmballoon_shrinker_count;
++	b->shrinker->seeks = DEFAULT_SEEKS;
++	b->shrinker->private_data = b;
+ 
+-	if (r == 0)
+-		b->shrinker_registered = true;
++	shrinker_register(b->shrinker);
+ 
+-	return r;
++	return 0;
+ }
+ 
+ /*
+@@ -1883,7 +1872,7 @@ static int __init vmballoon_init(void)
+ 
+ 	error = vmballoon_register_shrinker(&balloon);
+ 	if (error)
+-		goto fail;
++		return error;
+ 
+ 	/*
+ 	 * Initialization of compaction must be done after the call to
+@@ -1905,9 +1894,6 @@ static int __init vmballoon_init(void)
+ 	vmballoon_debugfs_init(&balloon);
+ 
+ 	return 0;
+-fail:
+-	vmballoon_unregister_shrinker(&balloon);
+-	return error;
+ }
+ 
+ /*
 -- 
 2.30.2
 
