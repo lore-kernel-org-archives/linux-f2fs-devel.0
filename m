@@ -4,99 +4,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EB7F8C04E69
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 09:56:54 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EAA86C001DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 09:58:04 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qNsJB-0005AD-71;
-	Mon, 24 Jul 2023 09:56:54 +0000
+	id 1qNsKK-0006zw-4J;
+	Mon, 24 Jul 2023 09:58:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsJ5-00059y-Ta
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsKJ-0006zq-NO
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 09:56:48 +0000
+ Mon, 24 Jul 2023 09:58:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=am2eIoStEhYj6reS+R983QZxh6h3W0xYr71gNNToCQ8=; b=bmh14qX4AjQ0iMRvtaR0vsSCoK
- ickshDuxUw97JHdjaNjjDVqU+mGXkIUpNZJQgazDxa7OT3ZtV/4pGiZFW2FPwigMmOOLNKEyadbQg
- zj9n/DJPlj/9S2862N5Ltfr4JiI0edk/K0RFU3gJbIbdnD4RI0ejKC0OENz0JqtKjh2U=;
+ bh=ZDFCq+3UkmhmTN0HM4/h2IKWPu86Pd5FvtdYemXQxRk=; b=Y4rRDjOzCzQWjoC0ec0NkM+YVc
+ pkPi8juij1TYZkJXxLO2lcxyzx2D1mhEI28VjxBxXUHDNIBdDFfCDAPnxy/UYbBHT7GZFRewdBPD3
+ peOC1Pi8DByzylyXwQn2zBZCBUmJf0wSGyntE/9LzzTh7CBc/boXVoPzXbG7GO6SIPq8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=am2eIoStEhYj6reS+R983QZxh6h3W0xYr71gNNToCQ8=; b=kMPeE/+b3mv+EzRaV8n1jS5qeZ
- UdpB4izBwH+vSvMGxSgvqHRuRbMXkvPvDRX4spmgEMIZc3ZQ1UHmqUfilQwjtfHvMIkul2IaPeEkt
- NlSy4WvxotWEn1b8RnewOHxx6oGI7ml+rMz3Wp8RUN1/B02H1YqjF4xCGb1JWxV7vbu8=;
-Received: from mail-pf1-f177.google.com ([209.85.210.177])
+ bh=ZDFCq+3UkmhmTN0HM4/h2IKWPu86Pd5FvtdYemXQxRk=; b=er6lr/Q/MOKkaA8eSYE7W/wH+P
+ eoUG52EIth95UeVkrvk0PS/E9AroJzK3kjbrxn4nbDX4YH3PAv+3Y3Tek8EUthGwqCKFkD0u6VxdM
+ WjMZHIe/to8jD4Fa4cIrkczDbLYv5O7/RcI+A1iK9G7bs44D9B/0oczGEI1dDlB/1eJQ=;
+Received: from mail-ot1-f49.google.com ([209.85.210.49])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qNsJ4-000Onx-Ij for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 09:56:48 +0000
-Received: by mail-pf1-f177.google.com with SMTP id
- d2e1a72fcca58-682ae5d4184so1051744b3a.1
+ id 1qNsKJ-000Ori-JL for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jul 2023 09:58:04 +0000
+Received: by mail-ot1-f49.google.com with SMTP id
+ 46e09a7af769-6b947f8269eso978137a34.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Jul 2023 02:56:46 -0700 (PDT)
+ Mon, 24 Jul 2023 02:58:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690192601; x=1690797401;
- h=content-transfer-encoding:in-reply-to:from:references:cc:to
- :content-language:subject:user-agent:mime-version:date:message-id
- :from:to:cc:subject:date:message-id:reply-to;
- bh=am2eIoStEhYj6reS+R983QZxh6h3W0xYr71gNNToCQ8=;
- b=OlJHj1/yO42yQ42YyfDdqtfuDdXGGV/WQ0GpL38YIfO5RJZmkcdCx+PepLtkyGVzEN
- bTK4LhGsJI+OJKO7VuvlEDj/aPd3bZAexndKWivptO/xeLBD7J/JCOubjicjaVNWXLQ5
- H6fB+0YsEx63uc5TiCs20sSEjZ3JxRWkjZHG3LQbatv3J9k4pmh0VpqAg7R562nbzzly
- s71ebLgHH+wdbZuHYfqIuXfOS4H3wCLtxZ6Rqc556hBiF9jLddR68NJcthdMi5JsNo9F
- fUAZvFHEDsznNwsCMgykOwv5P0YMuteT/vvRsXd6nvRv9Clc/Ic3a7YeuRAtFe+vPCu7
- EZug==
+ d=bytedance.com; s=google; t=1690192678; x=1690797478;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=ZDFCq+3UkmhmTN0HM4/h2IKWPu86Pd5FvtdYemXQxRk=;
+ b=MXnEVX2t+jXOvaukySBy/A6abO9zKx/kzhg+Xt6rELTINSDiup+OPxLJOcutWrNl1y
+ fF80j153t/KeKrw4t9ZF+0Z4/sku8Jis46ZrsobhAFnTdKH+wUF7m2ZrAyIYoPvZd3Sk
+ G8qDjZ1gyed+JzRn75z8n5bgmZ7NpRZsIMTIKa2BbFO/oxydFXGSe9P1t7ZI8fNkVfSS
+ Old0+qtS64jUvrPSkBSQDdra9RgRfVP4MciodY8rYVxCqa1P83Qm+7H40rgEbpTIhGus
+ RFtLRNQk2FPmwRWYnFN29CnMObsUOJknKeHl6bQL6K/Dz/V8HW647XgB/iph3On3SOQ3
+ POKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690192601; x=1690797401;
- h=content-transfer-encoding:in-reply-to:from:references:cc:to
- :content-language:subject:user-agent:mime-version:date:message-id
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=am2eIoStEhYj6reS+R983QZxh6h3W0xYr71gNNToCQ8=;
- b=HWDHOcVNxSqCUZWH6eaO4Xl/E99NHH8ag+DApRvHP++o/ds3sgxjcr/+OQ7zFoTnHW
- SjE6TmB33ln+G1gvqPvRAybH3Of/px5Q4r9o9j+yBH2+xDWpnbp4nhQ8+IcjG9m/Ps9n
- 03ilQD1Ytj6I9g1UcA9WhYs9w0fGtU4QQIvFopfzdpYPfdfqXBWW3ecKy6aZrCkPGZPz
- lkfz2FC35IvHKueHjzB9HbD13dqaSyLoPtxDfkvJWEAIY/qcTzOyJkp8QeJzIVX/1GEy
- pkMHglaDYi43NJ+2V5i1gg7IBM+sxZfgB8gPRc6u1OISMX8+kVaRzmGemmYIU0TVW4Ku
- m39Q==
-X-Gm-Message-State: ABy/qLbvWt6pDGnZ7GLX18Llp48YaZGdTqFJtEfc/E3CFLjwJDALVdWF
- p2zrGwK9eBy+7fGgnHXMmkLqgw==
-X-Google-Smtp-Source: APBJJlEtnCzvJ6I1rkWEELadVXHfZtUE/plpWIuGp/MFKpOvTS509ssN84iHDxA1POdeL3+D21rKQg==
-X-Received: by 2002:a05:6a20:8e04:b0:137:3941:17b3 with SMTP id
- y4-20020a056a208e0400b00137394117b3mr14532126pzj.6.1690192601020; 
- Mon, 24 Jul 2023 02:56:41 -0700 (PDT)
-Received: from [10.70.252.135] ([203.208.167.147])
+ d=1e100.net; s=20221208; t=1690192678; x=1690797478;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=ZDFCq+3UkmhmTN0HM4/h2IKWPu86Pd5FvtdYemXQxRk=;
+ b=S4FDGagq54uv+oA2wAuONs5FOldHUXJ5WD99rBHroYSQDzEBih20hyq4oFT4LnZoym
+ +9gMC9brGp2kFSpH2BK5mpPpdJYaAmwMJ0IHzG9XQgBXolWCe/SHw/3CpfCZ5vYY5TpK
+ JJuQVtPV3McMTueeNlsFKr8K77W3JfLK0GqnmSvSg7Szc5Q20IWvW2hdohm3VeQ66svw
+ taeTBOIJiRQfqii43U1jSPV2aShAEiDTBU3bpn6LdeAseNslR02+D+KmBGoYSL2XMgFa
+ /6VOCJg/o91ZuBsLdD0YeZ/BMDYVJN08whD/pnhMCNB4e+BOQYkcU+t/KD8mMlZ2BGtn
+ lxFw==
+X-Gm-Message-State: ABy/qLaXAGBp/tcW0Rjj2MVKiuUj8mDED6FOUkasWO4JvN9JljPGRgn2
+ 1HfRJP607thKzQleubCYeyt6Z2ffs+W2x7mKW1U=
+X-Google-Smtp-Source: APBJJlGR+n0mPlGVKvsXqmDpjqybpKJnY8gMKNhLgc/3jSHzBMUiGDHHAqX91CFo21fNITu34xNtfg==
+X-Received: by 2002:a17:902:ec8b:b0:1b3:d8ac:8db3 with SMTP id
+ x11-20020a170902ec8b00b001b3d8ac8db3mr12344607plg.6.1690192242411; 
+ Mon, 24 Jul 2023 02:50:42 -0700 (PDT)
+Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.147])
  by smtp.gmail.com with ESMTPSA id
- y1-20020aa78541000000b00682aac1e2b8sm7356787pfn.60.2023.07.24.02.56.29
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Mon, 24 Jul 2023 02:56:40 -0700 (PDT)
-Message-ID: <7b4eb3fa-1ebd-de07-1a16-9533b069a66e@bytedance.com>
-Date: Mon, 24 Jul 2023 17:56:27 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.12.0
-Content-Language: en-US
+ d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.50.31
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 24 Jul 2023 02:50:42 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
- brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu, steven.price@arm.com,
- cel@kernel.org, senozhatsky@chromium.org, yujie.liu@intel.com,
- gregkh@linuxfoundation.org, muchun.song@linux.dev
+ brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
+ steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
+ yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
+Date: Mon, 24 Jul 2023 17:43:35 +0800
+Message-Id: <20230724094354.90817-29-zhengqi.arch@bytedance.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+In-Reply-To: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
- <20230724094354.90817-6-zhengqi.arch@bytedance.com>
-In-Reply-To: <20230724094354.90817-6-zhengqi.arch@bytedance.com>
-X-Headers-End: 1qNsJ4-000Onx-Ij
-Subject: Re: [f2fs-dev] [PATCH v2 05/47] binder: dynamically allocate the
- android-binder shrinker
+MIME-Version: 1.0
+X-Headers-End: 1qNsKJ-000Ori-JL
+Subject: [f2fs-dev] [PATCH v2 28/47] bcache: dynamically allocate the
+ md-bcache shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -115,18 +112,116 @@ Cc: kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  dm-devel@redhat.com, linux-mtd@lists.infradead.org, x86@kernel.org,
  cluster-devel@redhat.com, xen-devel@lists.xenproject.org,
  linux-ext4@vger.kernel.org, linux-arm-msm@vger.kernel.org, rcu@vger.kernel.org,
- linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
- linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+ linux-bcache@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>,
+ linux-raid@vger.kernel.org, linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+In preparation for implementing lockless slab shrink, use new APIs to
+dynamically allocate the md-bcache shrinker, so that it can be freed
+asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
+read-side critical section when releasing the struct cache_set.
 
-This patch depends on the patch: 
-https://lore.kernel.org/lkml/20230625154937.64316-1-qi.zheng@linux.dev/
+Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+---
+ drivers/md/bcache/bcache.h |  2 +-
+ drivers/md/bcache/btree.c  | 27 ++++++++++++++++-----------
+ drivers/md/bcache/sysfs.c  |  3 ++-
+ 3 files changed, 19 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index 5a79bb3c272f..c622bc50f81b 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -541,7 +541,7 @@ struct cache_set {
+ 	struct bio_set		bio_split;
+ 
+ 	/* For the btree cache */
+-	struct shrinker		shrink;
++	struct shrinker		*shrink;
+ 
+ 	/* For the btree cache and anything allocation related */
+ 	struct mutex		bucket_lock;
+diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+index fd121a61f17c..c176c7fc77d9 100644
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -667,7 +667,7 @@ static int mca_reap(struct btree *b, unsigned int min_order, bool flush)
+ static unsigned long bch_mca_scan(struct shrinker *shrink,
+ 				  struct shrink_control *sc)
+ {
+-	struct cache_set *c = container_of(shrink, struct cache_set, shrink);
++	struct cache_set *c = shrink->private_data;
+ 	struct btree *b, *t;
+ 	unsigned long i, nr = sc->nr_to_scan;
+ 	unsigned long freed = 0;
+@@ -734,7 +734,7 @@ static unsigned long bch_mca_scan(struct shrinker *shrink,
+ static unsigned long bch_mca_count(struct shrinker *shrink,
+ 				   struct shrink_control *sc)
+ {
+-	struct cache_set *c = container_of(shrink, struct cache_set, shrink);
++	struct cache_set *c = shrink->private_data;
+ 
+ 	if (c->shrinker_disabled)
+ 		return 0;
+@@ -752,8 +752,8 @@ void bch_btree_cache_free(struct cache_set *c)
+ 
+ 	closure_init_stack(&cl);
+ 
+-	if (c->shrink.list.next)
+-		unregister_shrinker(&c->shrink);
++	if (c->shrink)
++		shrinker_unregister(c->shrink);
+ 
+ 	mutex_lock(&c->bucket_lock);
+ 
+@@ -828,14 +828,19 @@ int bch_btree_cache_alloc(struct cache_set *c)
+ 		c->verify_data = NULL;
+ #endif
+ 
+-	c->shrink.count_objects = bch_mca_count;
+-	c->shrink.scan_objects = bch_mca_scan;
+-	c->shrink.seeks = 4;
+-	c->shrink.batch = c->btree_pages * 2;
++	c->shrink = shrinker_alloc(0, "md-bcache:%pU", c->set_uuid);
++	if (!c->shrink) {
++		pr_warn("bcache: %s: could not allocate shrinker\n", __func__);
++		return -ENOMEM;
++	}
++
++	c->shrink->count_objects = bch_mca_count;
++	c->shrink->scan_objects = bch_mca_scan;
++	c->shrink->seeks = 4;
++	c->shrink->batch = c->btree_pages * 2;
++	c->shrink->private_data = c;
+ 
+-	if (register_shrinker(&c->shrink, "md-bcache:%pU", c->set_uuid))
+-		pr_warn("bcache: %s: could not register shrinker\n",
+-				__func__);
++	shrinker_register(c->shrink);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 0e2c1880f60b..45d8af755de6 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -866,7 +866,8 @@ STORE(__bch_cache_set)
+ 
+ 		sc.gfp_mask = GFP_KERNEL;
+ 		sc.nr_to_scan = strtoul_or_return(buf);
+-		c->shrink.scan_objects(&c->shrink, &sc);
++		if (c->shrink)
++			c->shrink->scan_objects(c->shrink, &sc);
+ 	}
+ 
+ 	sysfs_strtoul_clamp(congested_read_threshold_us,
+-- 
+2.30.2
 
 
 
