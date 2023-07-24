@@ -4,96 +4,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 78203C001B0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 09:56:33 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EB7F8C04E69
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 09:56:54 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qNsIq-0006ws-ET;
-	Mon, 24 Jul 2023 09:56:32 +0000
+	id 1qNsJB-0005AD-71;
+	Mon, 24 Jul 2023 09:56:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsIo-0006wl-A7
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsJ5-00059y-Ta
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 09:56:30 +0000
+ Mon, 24 Jul 2023 09:56:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ztwb9n/1dXh113w/8xubUIoix8VXd/5rqVT4RvFn/tw=; b=Rib2L4j6XXGkeXGeW0DCW6isSK
- IDU/9TDpH/WchTb2ayMUI6YrdrC3Bdxw55/WJHp9wmUC6v91mUpGBvvp4CcYbBbFve9vtv09YDlus
- kKAb6M55ZFmV+QoOCfJSgYBN8stVifudD4k36TsUo5LQ+8GFIRaJdrhxtNAyImmYFmLo=;
+ bh=am2eIoStEhYj6reS+R983QZxh6h3W0xYr71gNNToCQ8=; b=bmh14qX4AjQ0iMRvtaR0vsSCoK
+ ickshDuxUw97JHdjaNjjDVqU+mGXkIUpNZJQgazDxa7OT3ZtV/4pGiZFW2FPwigMmOOLNKEyadbQg
+ zj9n/DJPlj/9S2862N5Ltfr4JiI0edk/K0RFU3gJbIbdnD4RI0ejKC0OENz0JqtKjh2U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ztwb9n/1dXh113w/8xubUIoix8VXd/5rqVT4RvFn/tw=; b=EkJycCx6SF3IO1h1m6pKiTHVqE
- Eb2O2ZH/8sZyZbJP8ZwAcYxz+hlHhmE2iqt5sDOU1pk7kZmn5SlE8fP9kGAZCMY6+kcj5TstNNmvG
- KNCGW7TJ90aZE4+rU0GSFzYCPhO7mlAFNcKMYeEWl5n9cX6V7jfJFIA9tV1AX3nUCDos=;
-Received: from mail-ot1-f51.google.com ([209.85.210.51])
+ bh=am2eIoStEhYj6reS+R983QZxh6h3W0xYr71gNNToCQ8=; b=kMPeE/+b3mv+EzRaV8n1jS5qeZ
+ UdpB4izBwH+vSvMGxSgvqHRuRbMXkvPvDRX4spmgEMIZc3ZQ1UHmqUfilQwjtfHvMIkul2IaPeEkt
+ NlSy4WvxotWEn1b8RnewOHxx6oGI7ml+rMz3Wp8RUN1/B02H1YqjF4xCGb1JWxV7vbu8=;
+Received: from mail-pf1-f177.google.com ([209.85.210.177])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qNsIo-000Oml-6F for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 09:56:30 +0000
-Received: by mail-ot1-f51.google.com with SMTP id
- 46e09a7af769-6b9de4b0c1aso638936a34.1
+ id 1qNsJ4-000Onx-Ij for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jul 2023 09:56:48 +0000
+Received: by mail-pf1-f177.google.com with SMTP id
+ d2e1a72fcca58-682ae5d4184so1051744b3a.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Jul 2023 02:56:30 -0700 (PDT)
+ Mon, 24 Jul 2023 02:56:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690192584; x=1690797384;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=ztwb9n/1dXh113w/8xubUIoix8VXd/5rqVT4RvFn/tw=;
- b=i2AY79f9q2KY9F5g4hYGF4+Tn1hRyFHBx8jG0TFZ8GGp9voWdqd22s8J05HZYIuKXf
- mM0i86J/t4UujTChkd9Gg8odNVKjYgQs+gNqH9tUv8aOj2fs7SEQCxWwl3nGze0PotcT
- beAfxrWvVYcDD8WarcnrsLB6M0VG1Yzhm31WF5tjPup2uGfCKH8VuToczMATAMKKRxLq
- 5xAuv7BG008Yj3Jm2lbAY/ZnGRN2kxwn66823u6qS7TWLZxz6w3L4wZrHS1j6+s5u33I
- KwDvG0Rt8Nt6CYJwTdXRc8yfdzDF9lYc8hs4AIMGA9cxpk67gGZFrLXBa/fNqGJtPg2r
- EHjw==
+ d=bytedance.com; s=google; t=1690192601; x=1690797401;
+ h=content-transfer-encoding:in-reply-to:from:references:cc:to
+ :content-language:subject:user-agent:mime-version:date:message-id
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=am2eIoStEhYj6reS+R983QZxh6h3W0xYr71gNNToCQ8=;
+ b=OlJHj1/yO42yQ42YyfDdqtfuDdXGGV/WQ0GpL38YIfO5RJZmkcdCx+PepLtkyGVzEN
+ bTK4LhGsJI+OJKO7VuvlEDj/aPd3bZAexndKWivptO/xeLBD7J/JCOubjicjaVNWXLQ5
+ H6fB+0YsEx63uc5TiCs20sSEjZ3JxRWkjZHG3LQbatv3J9k4pmh0VpqAg7R562nbzzly
+ s71ebLgHH+wdbZuHYfqIuXfOS4H3wCLtxZ6Rqc556hBiF9jLddR68NJcthdMi5JsNo9F
+ fUAZvFHEDsznNwsCMgykOwv5P0YMuteT/vvRsXd6nvRv9Clc/Ic3a7YeuRAtFe+vPCu7
+ EZug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690192584; x=1690797384;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=ztwb9n/1dXh113w/8xubUIoix8VXd/5rqVT4RvFn/tw=;
- b=Z4Hgm+I/1cFtV03ru7ZzYsg7ls/fZHu1DPIu8DrvO19A5GHbfOdFEj7KpokPcv82SG
- XJ7GCXZiCHlmdaMNUHshVNG0nZHOc2DwTj+wme9EmPuwQtZ4yP0mFLifxdfOQ9h4jtDV
- PGeQQsmCR2egqw8R3jM3tX1XUTwSP8wI7kfJOybOJMe58NxZNDl0fJFgnOiMEzssV2Yf
- T3f8vxCiB0rn0JhN5TgX7DGpni/ryzz8l7j/lHfycqsF+Fu2PAFTHS/3PejETcXqQMKM
- Xwe+zfoS7VM64UuWkvdwulN1U7Jr9GAwlopHEECCU6B5Zm1vnY59cjAEritNYgRTNPpr
- 2TyA==
-X-Gm-Message-State: ABy/qLYDQO6ZSJA0p2ODrLt3pqvUYYVe7ZO5MIvc7LtakOV25Yvhye9K
- mBurebo/swGEYsTLLIiGjcx+roVfUMFXMxx3SyE=
-X-Google-Smtp-Source: APBJJlHRxCFTSeAmJPIiRwzXlrngv0y6n5gqphR6YCBFCcMRvGq0CtVM2WuFHUMj7p5y6QUWxkmpXA==
-X-Received: by 2002:a17:902:dad1:b0:1b8:aded:524c with SMTP id
- q17-20020a170902dad100b001b8aded524cmr12538511plx.1.1690192086608; 
- Mon, 24 Jul 2023 02:48:06 -0700 (PDT)
-Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.147])
+ d=1e100.net; s=20221208; t=1690192601; x=1690797401;
+ h=content-transfer-encoding:in-reply-to:from:references:cc:to
+ :content-language:subject:user-agent:mime-version:date:message-id
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=am2eIoStEhYj6reS+R983QZxh6h3W0xYr71gNNToCQ8=;
+ b=HWDHOcVNxSqCUZWH6eaO4Xl/E99NHH8ag+DApRvHP++o/ds3sgxjcr/+OQ7zFoTnHW
+ SjE6TmB33ln+G1gvqPvRAybH3Of/px5Q4r9o9j+yBH2+xDWpnbp4nhQ8+IcjG9m/Ps9n
+ 03ilQD1Ytj6I9g1UcA9WhYs9w0fGtU4QQIvFopfzdpYPfdfqXBWW3ecKy6aZrCkPGZPz
+ lkfz2FC35IvHKueHjzB9HbD13dqaSyLoPtxDfkvJWEAIY/qcTzOyJkp8QeJzIVX/1GEy
+ pkMHglaDYi43NJ+2V5i1gg7IBM+sxZfgB8gPRc6u1OISMX8+kVaRzmGemmYIU0TVW4Ku
+ m39Q==
+X-Gm-Message-State: ABy/qLbvWt6pDGnZ7GLX18Llp48YaZGdTqFJtEfc/E3CFLjwJDALVdWF
+ p2zrGwK9eBy+7fGgnHXMmkLqgw==
+X-Google-Smtp-Source: APBJJlEtnCzvJ6I1rkWEELadVXHfZtUE/plpWIuGp/MFKpOvTS509ssN84iHDxA1POdeL3+D21rKQg==
+X-Received: by 2002:a05:6a20:8e04:b0:137:3941:17b3 with SMTP id
+ y4-20020a056a208e0400b00137394117b3mr14532126pzj.6.1690192601020; 
+ Mon, 24 Jul 2023 02:56:41 -0700 (PDT)
+Received: from [10.70.252.135] ([203.208.167.147])
  by smtp.gmail.com with ESMTPSA id
- d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.47.54
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Jul 2023 02:48:06 -0700 (PDT)
+ y1-20020aa78541000000b00682aac1e2b8sm7356787pfn.60.2023.07.24.02.56.29
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Mon, 24 Jul 2023 02:56:40 -0700 (PDT)
+Message-ID: <7b4eb3fa-1ebd-de07-1a16-9533b069a66e@bytedance.com>
+Date: Mon, 24 Jul 2023 17:56:27 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.12.0
+Content-Language: en-US
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
- brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
- steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
- yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
-Date: Mon, 24 Jul 2023 17:43:22 +0800
-Message-Id: <20230724094354.90817-16-zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
-In-Reply-To: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
+ brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu, steven.price@arm.com,
+ cel@kernel.org, senozhatsky@chromium.org, yujie.liu@intel.com,
+ gregkh@linuxfoundation.org, muchun.song@linux.dev
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
-MIME-Version: 1.0
-X-Headers-End: 1qNsIo-000Oml-6F
-Subject: [f2fs-dev] [PATCH v2 15/47] quota: dynamically allocate the
- dquota-cache shrinker
+ <20230724094354.90817-6-zhengqi.arch@bytedance.com>
+In-Reply-To: <20230724094354.90817-6-zhengqi.arch@bytedance.com>
+X-Headers-End: 1qNsJ4-000Onx-Ij
+Subject: Re: [f2fs-dev] [PATCH v2 05/47] binder: dynamically allocate the
+ android-binder shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -112,59 +115,18 @@ Cc: kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  dm-devel@redhat.com, linux-mtd@lists.infradead.org, x86@kernel.org,
  cluster-devel@redhat.com, xen-devel@lists.xenproject.org,
  linux-ext4@vger.kernel.org, linux-arm-msm@vger.kernel.org, rcu@vger.kernel.org,
- linux-bcache@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>,
- linux-raid@vger.kernel.org, linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+ linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+ linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use new APIs to dynamically allocate the dquota-cache shrinker.
 
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
----
- fs/quota/dquot.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index e8232242dd34..6cb2d8911bc3 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -791,11 +791,7 @@ dqcache_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
- 	percpu_counter_read_positive(&dqstats.counter[DQST_FREE_DQUOTS]));
- }
- 
--static struct shrinker dqcache_shrinker = {
--	.count_objects = dqcache_shrink_count,
--	.scan_objects = dqcache_shrink_scan,
--	.seeks = DEFAULT_SEEKS,
--};
-+static struct shrinker *dqcache_shrinker;
- 
- /*
-  * Safely release dquot and put reference to dquot.
-@@ -2991,8 +2987,15 @@ static int __init dquot_init(void)
- 	pr_info("VFS: Dquot-cache hash table entries: %ld (order %ld,"
- 		" %ld bytes)\n", nr_hash, order, (PAGE_SIZE << order));
- 
--	if (register_shrinker(&dqcache_shrinker, "dquota-cache"))
--		panic("Cannot register dquot shrinker");
-+	dqcache_shrinker = shrinker_alloc(0, "dquota-cache");
-+	if (!dqcache_shrinker)
-+		panic("Cannot allocate dquot shrinker");
-+
-+	dqcache_shrinker->count_objects = dqcache_shrink_count;
-+	dqcache_shrinker->scan_objects = dqcache_shrink_scan;
-+	dqcache_shrinker->seeks = DEFAULT_SEEKS;
-+
-+	shrinker_register(dqcache_shrinker);
- 
- 	return 0;
- }
--- 
-2.30.2
+This patch depends on the patch: 
+https://lore.kernel.org/lkml/20230625154937.64316-1-qi.zheng@linux.dev/
 
 
 
