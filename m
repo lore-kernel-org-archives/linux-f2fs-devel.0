@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BC1DFC0015E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 09:54:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0E49BC0015E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 09:54:11 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qNsGQ-0000Ky-BW;
-	Mon, 24 Jul 2023 09:54:02 +0000
+	id 1qNsGX-0004zz-Jq;
+	Mon, 24 Jul 2023 09:54:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsGL-0000Kf-BC
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsGV-0004zt-MA
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 09:53:57 +0000
+ Mon, 24 Jul 2023 09:54:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cYIc2pFR4p2fEyppjqJhI12Ags43zx4+1Vguh7yPn/A=; b=WBT92UfZKmJB6djhWdgqNU7R/g
- 5qMRi92lNeQp8iwvFTTFx1kTbeDEnLmn0RPRNVMe3vEML/kEyHX2D4aCYQ5dByGOmdlyvssg32QTs
- o+G79EBbFS2lWY+rUW9ZZgqr7JWkZZ7fOA+mlZxRLPhUSWQd1N7rCY/xZNidWUs6wTgM=;
+ bh=vu9DfqGDIkVtY7CS+mn/8y6VlhAfp+/Q2ofuaCWar5Q=; b=URDnVe3X0pLimdjEpHfth45yiv
+ frNgLtcFx4tdkdwm7yuKPpMFwba5yDd6BaiDL9qs4vsLnUg8GChlBSdtxY0+V6WOXghmMTFZw9VyG
+ ABNvtLBeflBRUV5RqtQXIXBlOX2K3liL2AXqZcqaz3cvkIhBmGWetlIMwM6erKX/qrGY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,67 +33,67 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=cYIc2pFR4p2fEyppjqJhI12Ags43zx4+1Vguh7yPn/A=; b=KQv5sMUz4cO/vEpOq3mRJRV9jq
- DQQ8Gw8r/gw3x5ZdLENzcaWbNwtir+2YwcUg80sum83h6cmU8v6F6h2Y2zl4oTR1zrrPO0gT2NF3Q
- /txN2wRgo7F7hY3XjYDQ5bNOrZ/0ySd/uB4NwKBiBjnOsEb2GXB29+aYn2rLYX0T3WYs=;
-Received: from mail-pf1-f180.google.com ([209.85.210.180])
+ bh=vu9DfqGDIkVtY7CS+mn/8y6VlhAfp+/Q2ofuaCWar5Q=; b=JJe3Dwovs1BETu1+0F0S+5UVfL
+ /UzcY4Yn/+CTw5SKgLSYI2nQshxbL2JQ3cQl8toOe7qc6EjA00KNzqGOWXiW5OcZc3rKmx57A5CcM
+ GMVYtt2n5MShBvDw8a0aXdtN+HHzgCbR5fsGUWo/x4gPxqooczgZqS8jQlkyEQ1xGRHc=;
+Received: from mail-ot1-f42.google.com ([209.85.210.42])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qNsGK-000OdZ-RF for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 09:53:57 +0000
-Received: by mail-pf1-f180.google.com with SMTP id
- d2e1a72fcca58-6862d4a1376so1158371b3a.0
+ id 1qNsGV-000Oe7-VV for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jul 2023 09:54:08 +0000
+Received: by mail-ot1-f42.google.com with SMTP id
+ 46e09a7af769-6b9da57da6bso287698a34.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Jul 2023 02:53:56 -0700 (PDT)
+ Mon, 24 Jul 2023 02:54:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690192431; x=1690797231;
+ d=bytedance.com; s=google; t=1690192442; x=1690797242;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=cYIc2pFR4p2fEyppjqJhI12Ags43zx4+1Vguh7yPn/A=;
- b=Ni9XJoMz65ahifx1/HnAu80RJZ4h0Tg5Di6XkggKA/GYEkrsH0uZcSOKRt8s7DcTeU
- Zk1B3aLwc4F6ZqtbNeOjepCM34vxa1l/RRX99t2/17kA608PoaGrZYbmRkOpcYbWPOT5
- +Yv3ZhFQ7RogyAhoihfYVINtvXjVXBojHlY7CH1cP/tRFGC9cUBJmS8J3vVkFHGGrKRe
- ne16fgllC0vd8QKXjLWosgWDzoqCG4TSTEkXNNrUcwUK1aDS+s+mTqRBQUFmLncm3tkm
- aJqloRCiGHHDtu4GCTjNOaTab2kjPWW/nhgWeCsYPuDrYAJes0xZtGGbcQc4ivgZV8wK
- K8iA==
+ bh=vu9DfqGDIkVtY7CS+mn/8y6VlhAfp+/Q2ofuaCWar5Q=;
+ b=kFRqo331OmGZJfFhbnH/oMhF2BfETPvQ8Z7YbmntMqNMabx+WUaRwkUHJLTQs13iZL
+ PA8XQGEnPpXzgIpgIlvVS3DjPWj3iyMdQhOk8oIyjY+srM14S8NflRpQ271F4kcbsVjT
+ I5LtaYjPELtnfLD6XWluXIT/q7dryc05FunuVdmB2JqqQznM+f+Y35wyucWIuTJtnJT0
+ rPQ73cg0inYBpgiit9yZTbamJBfvIuvqgwJCKvVvtCz0ieko1TDO6Mige6FvyWGtl9cP
+ Q8taTdFqOo9EogzGsFCeBGOeNrSH+iyBZsOGiQJN9YmaSmnQq5gvF1RC+4kiS30KGwtl
+ mipA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690192431; x=1690797231;
+ d=1e100.net; s=20221208; t=1690192442; x=1690797242;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=cYIc2pFR4p2fEyppjqJhI12Ags43zx4+1Vguh7yPn/A=;
- b=Tnk2I367+I0K9v4/he1hVthAVCIB6qPSTDF3q0YVbi4RRySqYaFWdUgHqnnTMImrY0
- 61n4PUwAyJczyt6eqm4adczPNxcJDKJdltyaGD1vxE19d58murJCu1mmd5jT2wcQO3//
- 3Yhhsfy9wRAe80Yor6pq4UxD9NArM55SmZjgO+nmmpl67adfd/dm8xV/LnjUzMlI1s0x
- xlI0phY7+1RpoFXgS/bUzlcfheZ9R7IWXWB/2uBSOTPbALHuf/SFL5mWnZoxiTJlSmmU
- ZvzeEtZfqA7REkmoEpU3rhPjsOlBgAU/rzW1AUn7LwZvt2Wl0Cuo6AJAojX9uARrW3TU
- pmIw==
-X-Gm-Message-State: ABy/qLbEGUJGz+aY2rHT/oTinr8dRifUA/oSbBs4aymruKR5lepqiocY
- Y4TtHpZiFjxdRbWtPW9clrEBo2iPrCmPrM5f+r8=
-X-Google-Smtp-Source: APBJJlE71N8j7jMrL1FzeS7v4yJrry2TgN0JWUZm9wk55uK2Ve/eQ/bXmY0X5mXvJcfiEdGHzkgvbw==
-X-Received: by 2002:a17:902:ec8b:b0:1b3:d8ac:8db3 with SMTP id
- x11-20020a170902ec8b00b001b3d8ac8db3mr12337602plg.6.1690192026938; 
- Mon, 24 Jul 2023 02:47:06 -0700 (PDT)
+ bh=vu9DfqGDIkVtY7CS+mn/8y6VlhAfp+/Q2ofuaCWar5Q=;
+ b=AbnEAGnRVDX9D2IpbhXlGtm2YL7s2q9+ipu+ebdxl30cuHeLZiNKPxhUBghMOtCXqO
+ GW+Dy7tIish/cBBVL4uP6HwaMOpB4Erx8JkArYZ8ftlRj4PO7NLXlXd+8yYLoby6qKDE
+ i8MH+71Ue+du3D+UjpEw/HMtmzUCQq4ajHhTHWn7qpTZIPqt/QOWnCx4fPq89DbKL2v4
+ T1HPzn4e6CBS3GLrsj/9xNoq04MOJmLkVGnf5m90oDdC4zleuAPJGL99f9EYir/Cs/fi
+ IJaDTqcFSSODq/647FIHdyN6QhfM9S37RZR325NNcsp5jjmVdi2D88/u3FtXkGoOs9mZ
+ V1+w==
+X-Gm-Message-State: ABy/qLaHsu8xfqQfxQBLzx75PlUh5jXk7Pf/YCnKCqvpz28Wy6HaOA7v
+ Im3Qpz4CRZk0HxmXFFdCRNZrm7MIZlHn5pGVDYM=
+X-Google-Smtp-Source: APBJJlGrsdFKJ71ukJT79kDa1W+M4ztJszdSUa3mf2ArYfnWEb5YwD/wtpSbLXe4wEi7ibAUftTBwg==
+X-Received: by 2002:a17:902:ecd2:b0:1b8:b4f6:1327 with SMTP id
+ a18-20020a170902ecd200b001b8b4f61327mr12288935plh.6.1690191966684; 
+ Mon, 24 Jul 2023 02:46:06 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.147])
  by smtp.gmail.com with ESMTPSA id
- d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.46.55
+ d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.45.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Jul 2023 02:47:06 -0700 (PDT)
+ Mon, 24 Jul 2023 02:46:06 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
-Date: Mon, 24 Jul 2023 17:43:17 +0800
-Message-Id: <20230724094354.90817-11-zhengqi.arch@bytedance.com>
+Date: Mon, 24 Jul 2023 17:43:12 +0800
+Message-Id: <20230724094354.90817-6-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qNsGK-000OdZ-RF
-Subject: [f2fs-dev] [PATCH v2 10/47] gfs2: dynamically allocate the
- gfs2-glock shrinker
+X-Headers-End: 1qNsGV-000Oe7-VV
+Subject: [f2fs-dev] [PATCH v2 05/47] binder: dynamically allocate the
+ android-binder shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,62 +121,68 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use new APIs to dynamically allocate the gfs2-glock shrinker.
+Use new APIs to dynamically allocate the android-binder shrinker.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- fs/gfs2/glock.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ drivers/android/binder_alloc.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
 
-diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
-index 1438e7465e30..77da354667d9 100644
---- a/fs/gfs2/glock.c
-+++ b/fs/gfs2/glock.c
-@@ -2046,11 +2046,7 @@ static unsigned long gfs2_glock_shrink_count(struct shrinker *shrink,
- 	return vfs_pressure_ratio(atomic_read(&lru_count));
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index e3db8297095a..019981d65e1e 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -1053,11 +1053,7 @@ binder_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+ 			    NULL, sc->nr_to_scan);
  }
  
--static struct shrinker glock_shrinker = {
+-static struct shrinker binder_shrinker = {
+-	.count_objects = binder_shrink_count,
+-	.scan_objects = binder_shrink_scan,
 -	.seeks = DEFAULT_SEEKS,
--	.count_objects = gfs2_glock_shrink_count,
--	.scan_objects = gfs2_glock_shrink_scan,
 -};
-+static struct shrinker *glock_shrinker;
++static struct shrinker *binder_shrinker;
  
  /**
-  * glock_hash_walk - Call a function for glock in a hash bucket
-@@ -2472,13 +2468,19 @@ int __init gfs2_glock_init(void)
- 		return -ENOMEM;
- 	}
+  * binder_alloc_init() - called by binder_open() for per-proc initialization
+@@ -1077,19 +1073,30 @@ void binder_alloc_init(struct binder_alloc *alloc)
  
--	ret = register_shrinker(&glock_shrinker, "gfs2-glock");
--	if (ret) {
-+	glock_shrinker = shrinker_alloc(0, "gfs2-glock");
-+	if (!glock_shrinker) {
- 		destroy_workqueue(glock_workqueue);
- 		rhashtable_destroy(&gl_hash_table);
--		return ret;
+ int binder_alloc_shrinker_init(void)
+ {
+-	int ret = list_lru_init(&binder_alloc_lru);
++	int ret;
+ 
+-	if (ret == 0) {
+-		ret = register_shrinker(&binder_shrinker, "android-binder");
+-		if (ret)
+-			list_lru_destroy(&binder_alloc_lru);
++	ret = list_lru_init(&binder_alloc_lru);
++	if (ret)
++		return ret;
++
++	binder_shrinker = shrinker_alloc(0, "android-binder");
++	if (!binder_shrinker) {
++		list_lru_destroy(&binder_alloc_lru);
 +		return -ENOMEM;
  	}
- 
-+	glock_shrinker->count_objects = gfs2_glock_shrink_count;
-+	glock_shrinker->scan_objects = gfs2_glock_shrink_scan;
-+	glock_shrinker->seeks = DEFAULT_SEEKS;
+-	return ret;
 +
-+	shrinker_register(glock_shrinker);
++	binder_shrinker->count_objects = binder_shrink_count;
++	binder_shrinker->scan_objects = binder_shrink_scan;
++	binder_shrinker->seeks = DEFAULT_SEEKS;
 +
- 	for (i = 0; i < GLOCK_WAIT_TABLE_SIZE; i++)
- 		init_waitqueue_head(glock_wait_table + i);
- 
-@@ -2487,7 +2489,7 @@ int __init gfs2_glock_init(void)
- 
- void gfs2_glock_exit(void)
- {
--	unregister_shrinker(&glock_shrinker);
-+	shrinker_unregister(glock_shrinker);
- 	rhashtable_destroy(&gl_hash_table);
- 	destroy_workqueue(glock_workqueue);
++	shrinker_register(binder_shrinker);
++
++	return 0;
  }
+ 
+ void binder_alloc_shrinker_exit(void)
+ {
+-	unregister_shrinker(&binder_shrinker);
++	shrinker_unregister(binder_shrinker);
+ 	list_lru_destroy(&binder_alloc_lru);
+ }
+ 
 -- 
 2.30.2
 
