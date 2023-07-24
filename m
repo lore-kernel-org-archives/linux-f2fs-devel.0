@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 51469C001DE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:18:55 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 92DCEC001DE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:19:00 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qNseV-0008P2-V6;
-	Mon, 24 Jul 2023 10:18:54 +0000
+	id 1qNsea-000117-5q;
+	Mon, 24 Jul 2023 10:19:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qNseU-0008OV-KC
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qNseZ-000110-5i
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:18:53 +0000
+ Mon, 24 Jul 2023 10:18:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UBNhxmwoWFukUMFCa6L5K1ksS1zA9QvfN1MSwW+LOvg=; b=YgxzRwwADnisj//jjWPy3mKLKp
- 2IPNLHcIUjckPTFSu+8FZghmHFfIa5dDs+26xLZerpSpoaRDyT/bCVYI51gpA/72n58RMA93Z/H5m
- 9IXSxi1fgbXNCvaHaSi5jnGo0F/VjDqOOG9JOnDhrd7KYcSrvPTHdmviBqg9stUekfrI=;
+ bh=Au95b59SE4lLb756TrNLGg7HOLC+u2MQAxdqgGCdIqg=; b=StndORjHEl6TvuuZhrOrlP0iLn
+ dc2ZQ9CtCiOIBEhLrGOIPmuU8fJFi7ux7RKtn+EgMWKfO8iwXRHJcdvbDNEQTIT5ZcUfnaueld/iz
+ B+zWIwo6WH91z7oVIJBj53xnPcKpj4YuPly19ghOgr1dhye20W7+3F9qrP1xuW+MLgfU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,67 +33,66 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=UBNhxmwoWFukUMFCa6L5K1ksS1zA9QvfN1MSwW+LOvg=; b=ILVJHFEijct7GddiAgq4Jl18Ee
- OtoT2CpIdVql6jN1bBQw7zX3zaaxUwVtX22blnpveCUeZG1wk0/2PoH4mSSZwht+zusu8bOth0ADo
- 2US9YHOK2hIquvDqOaKDrpDMMVwY8tOgz9zNUraeFlztFPTz/5H64L0CQm5+XNTWlwdM=;
-Received: from mail-pl1-f182.google.com ([209.85.214.182])
+ bh=Au95b59SE4lLb756TrNLGg7HOLC+u2MQAxdqgGCdIqg=; b=E5MoPoPYbNQ736BBqq3APHQ12L
+ BbKhYbSCiXtgDK0oYd/UG0ZVy3KNEiL5tPjxhSvnvtRQdVzulyYa8yJn/sTTPGwCh3g5eBiq3xIBS
+ sqV/jQhK0gcTPqJqCiqbPgBBH6138vkayC6lU5Pj/DGa1BnbsPiGWj7mjK/cLMjJhmDY=;
+Received: from mail-yb1-f182.google.com ([209.85.219.182])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qNseO-0004ua-4d for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:18:51 +0000
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-1bb85ed352bso2296175ad.0
+ id 1qNseY-0004uw-HW for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jul 2023 10:18:59 +0000
+Received: by mail-yb1-f182.google.com with SMTP id
+ 3f1490d57ef6-cfebdba63cdso579289276.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Jul 2023 03:18:48 -0700 (PDT)
+ Mon, 24 Jul 2023 03:18:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690193922; x=1690798722;
+ d=bytedance.com; s=google; t=1690193933; x=1690798733;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=UBNhxmwoWFukUMFCa6L5K1ksS1zA9QvfN1MSwW+LOvg=;
- b=QOZbBNwI9Vx2O1zGxjRv9l5miRHeFKSOXwGdDaiCv5dRgr6vV6t9LE0AAJgmhn/EHl
- PNSl5+MZ61X26FPRRtE0MsLO0333KmQRE4vPrHIYpe2yXUIl2rwOhiwYu88+LoR5TkZi
- dBRUSco28wX71bLxG6K0WsU6qetI0j70ksplc2EXEdaTrdU6J0DInQw74O1hOvKWkWTm
- myC5Q2YhPSetqfgt/RF54M3m3FMMCpfEDyT6JbBFLRZgmcdJr8hYQV/Jt4Bdp7JDZn1E
- 4QUJxMdY+paUlZzT08s4gNXWEI7Jza7vgWJr64vZih+lvC3nb/fYUKmC3bxkgktB3XGE
- hciQ==
+ bh=Au95b59SE4lLb756TrNLGg7HOLC+u2MQAxdqgGCdIqg=;
+ b=gKR5LCFdsZoHtd/rdkOX6MO41V62emcQo1X2XnLd0P2isXJag2mS8HrjPe/1gqaFhC
+ Ib54sRCaYaT6rWwFAxABb78BbatDrGdfwzIN/KOzXicA3AF5oXrKIvV93BjhyOlBbwgO
+ n72H3ZdU6Cjo3EobZjcmHO8REFgvckhy+42e6EerYbVjIgy3cq+8sU103r3XYl6yd4QJ
+ 1Kyp0xRr0+eE1dIDWKeZHj0bE5XonM6+aYW3l6Gz8h/eQgdonYyCG87LyxARc6TmCTcn
+ eNE0qeZQxsrezUdiAflMuQSpxH5lc1sOfe880v2RVay4B4wqnGbstWDhLr6FJM9xS3nK
+ sW3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690193922; x=1690798722;
+ d=1e100.net; s=20221208; t=1690193933; x=1690798733;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=UBNhxmwoWFukUMFCa6L5K1ksS1zA9QvfN1MSwW+LOvg=;
- b=MX0hGuVpP5zIPgjOuINB2BmXf4PP2h1mkN89H+Ojq9YWj6lY2hM58oGd6TxFQmjhuq
- tKb3bTA5BgQSlhDAF0EiGB4a4aWB90M/StUZyBjlinBn7FBFjVBljpRnniNZKixHRGZx
- PxXczC3egV7e3SbzHeGD2+Wvy9dj1XSPba3h1ad0D5d0evJqqwH+IUWdWI7G9d24enxr
- Tp515IskMH8Co+hg77ZkcbYMmxWAcM7BuYFAvb9lmqGeDmOP40bsyC6WHCPC0pg4xgt4
- KJLuB0Hui79/lcdmbo6MQhzwK2LFIH6m52B0JrShjQW/O2AWE5UPUOhB28Rux1zWQxz5
- jVcA==
-X-Gm-Message-State: ABy/qLbZjfbWGl/mlsP05VQ4yc67pyL0eR00cQlfVHhbGafxH8R01Vbr
- DBZFGQ6NU9776jkdhrQXENasx/y6Wj3rfTkNp6E=
-X-Google-Smtp-Source: APBJJlF/3KLtCT6eHhEfIce84TGjlwCK5paHy95Ixo7dnPUARJYmTi5EEMpBHN4EFiKTP+Yjoiy13g==
-X-Received: by 2002:a17:903:24f:b0:1b8:ac61:ffcd with SMTP id
- j15-20020a170903024f00b001b8ac61ffcdmr12333562plh.3.1690192038795; 
- Mon, 24 Jul 2023 02:47:18 -0700 (PDT)
+ bh=Au95b59SE4lLb756TrNLGg7HOLC+u2MQAxdqgGCdIqg=;
+ b=cl2FPiPhWuzls/YLEZewDkhhehgSRazD6a0zuMAPwvnTmL56k0CnOWnXcNSpiyZS66
+ 9Uj8XfdtQ++j+BBd4Pf4CzNFzjtIzeuzAXK5HZlIDpbO5be2oxy8WtZ3ObRxn8gZXxk7
+ uwc6FjaM5USvHnqKRxf4a7g692QV2cz3FrVdz7uD+Z769U/sd1WKXpW7YjUj9aj2dpwc
+ CEVGiotIcOhNg4Ap91n8toclWMxL0cAO56ovOOKmp8CVrUKjeWKYESkCM5lEG51fkJEd
+ kHK70O96/q5fZ96ziPm/9ucDts6akkZeDYk0fBljQIQ2IDXoalp9B38LryFmjN5ssHXZ
+ 4xVQ==
+X-Gm-Message-State: ABy/qLYMcHj609BZwlM3EN6ed9yfXKWs7bA4mErTiZvt6Qe5XwDNCD1l
+ i5PIBib2vpChOESzKnw9ksPn1uJZEXsP6uTBN2I=
+X-Google-Smtp-Source: APBJJlHskHW5r0IhvtSXxnBFmiqfwZejMZbjxfsN1oQLUQ3K2J0HHv3xxnfIpcyIc5BfLUakmxAnBw==
+X-Received: by 2002:a17:902:e802:b0:1b3:d4bb:3515 with SMTP id
+ u2-20020a170902e80200b001b3d4bb3515mr12393256plg.0.1690192397637; 
+ Mon, 24 Jul 2023 02:53:17 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.147])
  by smtp.gmail.com with ESMTPSA id
- d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.47.07
+ d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.53.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Jul 2023 02:47:18 -0700 (PDT)
+ Mon, 24 Jul 2023 02:53:17 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
-Date: Mon, 24 Jul 2023 17:43:18 +0800
-Message-Id: <20230724094354.90817-12-zhengqi.arch@bytedance.com>
+Date: Mon, 24 Jul 2023 17:43:48 +0800
+Message-Id: <20230724094354.90817-42-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qNseO-0004ua-4d
-Subject: [f2fs-dev] [PATCH v2 11/47] gfs2: dynamically allocate the gfs2-qd
- shrinker
+X-Headers-End: 1qNseY-0004uw-HW
+Subject: [f2fs-dev] [PATCH v2 41/47] mm: shrinker: remove old APIs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,98 +120,186 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use new APIs to dynamically allocate the gfs2-qd shrinker.
+Now no users are using the old APIs, just remove them.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- fs/gfs2/main.c  |  6 +++---
- fs/gfs2/quota.c | 26 ++++++++++++++++++++------
- fs/gfs2/quota.h |  3 ++-
- 3 files changed, 25 insertions(+), 10 deletions(-)
+ include/linux/shrinker.h |   7 --
+ mm/shrinker.c            | 143 ---------------------------------------
+ 2 files changed, 150 deletions(-)
 
-diff --git a/fs/gfs2/main.c b/fs/gfs2/main.c
-index afcb32854f14..e47b1cc79f59 100644
---- a/fs/gfs2/main.c
-+++ b/fs/gfs2/main.c
-@@ -147,7 +147,7 @@ static int __init init_gfs2_fs(void)
- 	if (!gfs2_trans_cachep)
- 		goto fail_cachep8;
+diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+index 296f5e163861..e464b4e9be0e 100644
+--- a/include/linux/shrinker.h
++++ b/include/linux/shrinker.h
+@@ -105,13 +105,6 @@ void shrinker_free_non_registered(struct shrinker *shrinker);
+ void shrinker_register(struct shrinker *shrinker);
+ void shrinker_unregister(struct shrinker *shrinker);
  
--	error = register_shrinker(&gfs2_qd_shrinker, "gfs2-qd");
-+	error = gfs2_qd_shrinker_init();
- 	if (error)
- 		goto fail_shrinker;
+-extern int __printf(2, 3) prealloc_shrinker(struct shrinker *shrinker,
+-					    const char *fmt, ...);
+-extern void register_shrinker_prepared(struct shrinker *shrinker);
+-extern int __printf(2, 3) register_shrinker(struct shrinker *shrinker,
+-					    const char *fmt, ...);
+-extern void unregister_shrinker(struct shrinker *shrinker);
+-extern void free_prealloced_shrinker(struct shrinker *shrinker);
+ extern void synchronize_shrinkers(void);
  
-@@ -196,7 +196,7 @@ static int __init init_gfs2_fs(void)
- fail_wq2:
- 	destroy_workqueue(gfs_recovery_wq);
- fail_wq1:
--	unregister_shrinker(&gfs2_qd_shrinker);
-+	gfs2_qd_shrinker_exit();
- fail_shrinker:
- 	kmem_cache_destroy(gfs2_trans_cachep);
- fail_cachep8:
-@@ -229,7 +229,7 @@ static int __init init_gfs2_fs(void)
- 
- static void __exit exit_gfs2_fs(void)
- {
--	unregister_shrinker(&gfs2_qd_shrinker);
-+	gfs2_qd_shrinker_exit();
- 	gfs2_glock_exit();
- 	gfs2_unregister_debugfs();
- 	unregister_filesystem(&gfs2_fs_type);
-diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
-index 704192b73605..bc9883cea847 100644
---- a/fs/gfs2/quota.c
-+++ b/fs/gfs2/quota.c
-@@ -186,13 +186,27 @@ static unsigned long gfs2_qd_shrink_count(struct shrinker *shrink,
- 	return vfs_pressure_ratio(list_lru_shrink_count(&gfs2_qd_lru, sc));
+ #ifdef CONFIG_SHRINKER_DEBUG
+diff --git a/mm/shrinker.c b/mm/shrinker.c
+index d820e4cc5806..2f3635ad1b45 100644
+--- a/mm/shrinker.c
++++ b/mm/shrinker.c
+@@ -661,149 +661,6 @@ void shrinker_unregister(struct shrinker *shrinker)
  }
+ EXPORT_SYMBOL(shrinker_unregister);
  
--struct shrinker gfs2_qd_shrinker = {
--	.count_objects = gfs2_qd_shrink_count,
--	.scan_objects = gfs2_qd_shrink_scan,
--	.seeks = DEFAULT_SEEKS,
--	.flags = SHRINKER_NUMA_AWARE,
--};
-+static struct shrinker *gfs2_qd_shrinker;
-+
-+int gfs2_qd_shrinker_init(void)
-+{
-+	gfs2_qd_shrinker = shrinker_alloc(SHRINKER_NUMA_AWARE, "gfs2-qd");
-+	if (!gfs2_qd_shrinker)
-+		return -ENOMEM;
-+
-+	gfs2_qd_shrinker->count_objects = gfs2_qd_shrink_count;
-+	gfs2_qd_shrinker->scan_objects = gfs2_qd_shrink_scan;
-+	gfs2_qd_shrinker->seeks = DEFAULT_SEEKS;
-+
-+	shrinker_register(gfs2_qd_shrinker);
- 
-+	return 0;
-+}
-+
-+void gfs2_qd_shrinker_exit(void)
-+{
-+	shrinker_unregister(gfs2_qd_shrinker);
-+}
- 
- static u64 qd2index(struct gfs2_quota_data *qd)
- {
-diff --git a/fs/gfs2/quota.h b/fs/gfs2/quota.h
-index 21ada332d555..f9cb863373f7 100644
---- a/fs/gfs2/quota.h
-+++ b/fs/gfs2/quota.h
-@@ -59,7 +59,8 @@ static inline int gfs2_quota_lock_check(struct gfs2_inode *ip,
- }
- 
- extern const struct quotactl_ops gfs2_quotactl_ops;
--extern struct shrinker gfs2_qd_shrinker;
-+int gfs2_qd_shrinker_init(void);
-+void gfs2_qd_shrinker_exit(void);
- extern struct list_lru gfs2_qd_lru;
- extern void __init gfs2_quota_hash_init(void);
- 
+-/*
+- * Add a shrinker callback to be called from the vm.
+- */
+-static int __prealloc_shrinker(struct shrinker *shrinker)
+-{
+-	unsigned int size;
+-	int err;
+-
+-	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
+-		err = prealloc_memcg_shrinker(shrinker);
+-		if (err != -ENOSYS)
+-			return err;
+-
+-		shrinker->flags &= ~SHRINKER_MEMCG_AWARE;
+-	}
+-
+-	size = sizeof(*shrinker->nr_deferred);
+-	if (shrinker->flags & SHRINKER_NUMA_AWARE)
+-		size *= nr_node_ids;
+-
+-	shrinker->nr_deferred = kzalloc(size, GFP_KERNEL);
+-	if (!shrinker->nr_deferred)
+-		return -ENOMEM;
+-
+-	return 0;
+-}
+-
+-#ifdef CONFIG_SHRINKER_DEBUG
+-int prealloc_shrinker(struct shrinker *shrinker, const char *fmt, ...)
+-{
+-	va_list ap;
+-	int err;
+-
+-	va_start(ap, fmt);
+-	shrinker->name = kvasprintf_const(GFP_KERNEL, fmt, ap);
+-	va_end(ap);
+-	if (!shrinker->name)
+-		return -ENOMEM;
+-
+-	err = __prealloc_shrinker(shrinker);
+-	if (err) {
+-		kfree_const(shrinker->name);
+-		shrinker->name = NULL;
+-	}
+-
+-	return err;
+-}
+-#else
+-int prealloc_shrinker(struct shrinker *shrinker, const char *fmt, ...)
+-{
+-	return __prealloc_shrinker(shrinker);
+-}
+-#endif
+-
+-void free_prealloced_shrinker(struct shrinker *shrinker)
+-{
+-#ifdef CONFIG_SHRINKER_DEBUG
+-	kfree_const(shrinker->name);
+-	shrinker->name = NULL;
+-#endif
+-	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
+-		down_write(&shrinker_rwsem);
+-		unregister_memcg_shrinker(shrinker);
+-		up_write(&shrinker_rwsem);
+-		return;
+-	}
+-
+-	kfree(shrinker->nr_deferred);
+-	shrinker->nr_deferred = NULL;
+-}
+-
+-void register_shrinker_prepared(struct shrinker *shrinker)
+-{
+-	down_write(&shrinker_rwsem);
+-	list_add_tail(&shrinker->list, &shrinker_list);
+-	shrinker->flags |= SHRINKER_REGISTERED;
+-	shrinker_debugfs_add(shrinker);
+-	up_write(&shrinker_rwsem);
+-}
+-
+-static int __register_shrinker(struct shrinker *shrinker)
+-{
+-	int err = __prealloc_shrinker(shrinker);
+-
+-	if (err)
+-		return err;
+-	register_shrinker_prepared(shrinker);
+-	return 0;
+-}
+-
+-#ifdef CONFIG_SHRINKER_DEBUG
+-int register_shrinker(struct shrinker *shrinker, const char *fmt, ...)
+-{
+-	va_list ap;
+-	int err;
+-
+-	va_start(ap, fmt);
+-	shrinker->name = kvasprintf_const(GFP_KERNEL, fmt, ap);
+-	va_end(ap);
+-	if (!shrinker->name)
+-		return -ENOMEM;
+-
+-	err = __register_shrinker(shrinker);
+-	if (err) {
+-		kfree_const(shrinker->name);
+-		shrinker->name = NULL;
+-	}
+-	return err;
+-}
+-#else
+-int register_shrinker(struct shrinker *shrinker, const char *fmt, ...)
+-{
+-	return __register_shrinker(shrinker);
+-}
+-#endif
+-EXPORT_SYMBOL(register_shrinker);
+-
+-/*
+- * Remove one
+- */
+-void unregister_shrinker(struct shrinker *shrinker)
+-{
+-	struct dentry *debugfs_entry;
+-	int debugfs_id;
+-
+-	if (!(shrinker->flags & SHRINKER_REGISTERED))
+-		return;
+-
+-	down_write(&shrinker_rwsem);
+-	list_del(&shrinker->list);
+-	shrinker->flags &= ~SHRINKER_REGISTERED;
+-	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+-		unregister_memcg_shrinker(shrinker);
+-	debugfs_entry = shrinker_debugfs_detach(shrinker, &debugfs_id);
+-	up_write(&shrinker_rwsem);
+-
+-	shrinker_debugfs_remove(debugfs_entry, debugfs_id);
+-
+-	kfree(shrinker->nr_deferred);
+-	shrinker->nr_deferred = NULL;
+-}
+-EXPORT_SYMBOL(unregister_shrinker);
+-
+ /**
+  * synchronize_shrinkers - Wait for all running shrinkers to complete.
+  *
 -- 
 2.30.2
 
