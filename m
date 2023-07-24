@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B6A56C001DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:17:59 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 624C5C001B0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:18:30 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qNsdb-0000xt-9b;
-	Mon, 24 Jul 2023 10:17:59 +0000
+	id 1qNse6-0008MN-P9;
+	Mon, 24 Jul 2023 10:18:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsdT-0000xi-N6
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qNse3-0008MF-Vo
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:17:51 +0000
+ Mon, 24 Jul 2023 10:18:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=F/oK6bm2Afi7WKsfFLPLaSlUUie3UdhMRHX1z52bb4o=; b=QDTLxewJQooTvpCWpGfS8yaKn3
- hIWebmk9iSY/jj3tYeYrv/6i+ExQdVC45vXg8OH8kUluLil3tznqSzwSGv3PffsirsGaunwRscqHZ
- JAAmN1LncpUAfBg9o62YQ9J+VJXvISCF2J6EzLpKeCXXSslKgFrcN67gua4PDXqd2MZk=;
+ bh=4zTxasxXedNYwr5HiD+ktCpinG7wwpmHx5iR9IBn5EM=; b=Su77jC4ugTQlYRr7dNoyU0GXtH
+ kHH3PMHCeH4E4B1LD/8ARfB/7AypiMArYIWBYVY53Md1a4G2vs2vStUApS/8fKeHHJP8ok0TheBsS
+ s6ZHjjAhYDsL5k1yh9A1L2BEmhYUm/8iw4oPajMSrjTerY8tnQd4sVt0gvnMtX8ff+tI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,67 +33,67 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=F/oK6bm2Afi7WKsfFLPLaSlUUie3UdhMRHX1z52bb4o=; b=fx+t/JvycHlYhcrArSJ0UbUh2y
- WH3r/TaNE2NNV0xKV/IJjAauPfMa0w8vNy7G9xtkXjRCr3FRm4jVagJTCwqHlZw4qA176lvUqEAKz
- ms4YhEAGnXS1wwVsFsGDFTrxSVFVbYmxzGoI2nGCHA78yaGJUzlZ+09TdbFQjK3kz9Kw=;
-Received: from mail-yb1-f182.google.com ([209.85.219.182])
+ bh=4zTxasxXedNYwr5HiD+ktCpinG7wwpmHx5iR9IBn5EM=; b=CJ0cOCVLlxT/N5CweJDrMSS50z
+ hYSIJswlYd9lzTwh93fNZ9okOS8Sg4NvpywSjOyRY/Mp7c576rUxN2S80qz23pmNKI37DUZpPPJD6
+ VoRegXTvVkTxC+NtL6y/5t0h+siWfIc3qLoTSviQmuo4kJDmFL5vqhv/WPFOY1nR+qhQ=;
+Received: from mail-qv1-f42.google.com ([209.85.219.42])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qNsdP-0004sk-SR for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:17:48 +0000
-Received: by mail-yb1-f182.google.com with SMTP id
- 3f1490d57ef6-cfebdba63cdso579037276.0
+ id 1qNse0-0004tq-Tc for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jul 2023 10:18:26 +0000
+Received: by mail-qv1-f42.google.com with SMTP id
+ 6a1803df08f44-63c82f9094bso9131306d6.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Jul 2023 03:17:47 -0700 (PDT)
+ Mon, 24 Jul 2023 03:18:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690193862; x=1690798662;
+ d=bytedance.com; s=google; t=1690193899; x=1690798699;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=F/oK6bm2Afi7WKsfFLPLaSlUUie3UdhMRHX1z52bb4o=;
- b=N1CJMbejDiHM/p9NBoMgdvDZTKV+CsnhAXqcTSNNncJrXmyhEZYd83rMbTACfnSrMi
- o+U/MmM4faguXrNosa12ZhJn80yY7QyhKmGmH832SPy5mknKQQ+Mc25bC2534ACCwOYD
- pPKyRDPOxr9pOrFU9rCBSBB8orN6KydZyzjob0iddXc3GTOqkWsWdJLV9yfRmb+anUMm
- 8wePrKYs9Emsm1MJdCvDDdzFkNV0stW2klbNnFQCcx6AP7WgqHfJkSOV1e0dg9lxZqrN
- K9VdDJbT+5Ioc/ISxROpsz9wTDG8cZKqukKzwbk7fLpH4s9VgzhjL/f93YbRDLajpxJg
- 0jTA==
+ bh=4zTxasxXedNYwr5HiD+ktCpinG7wwpmHx5iR9IBn5EM=;
+ b=EvQufrH9OaGUtA5AlwsezNzos3iLuQtQrxcBe1kwZYeo0aZJZ/t6o60hy6xHAO2ohR
+ Pr4eEsrX+vznCYRGfcF4Grl7QKtywp37/5VdwO+nmQpisHYTweABrFnx+TTj7L/yeQB6
+ /lxVGbYYPjmXZ/Wl2JfiJnBUBCwep7G5Ua9zXSnhRPC4KdujhBhEdR7m/RROBNX12n4Z
+ E3wDjQcLQHITwC46alZ63NDIfmRx7L8gslypw3qkuQpIq8udvMrVmVNu1OLZVGz+8HrR
+ tXIByPfMQJj5lajDlR8UZIt3hWTcXYRWEjAXwrZawp6sDdOfC+aRpdRx7wV4hHh7/69w
+ /Jvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690193862; x=1690798662;
+ d=1e100.net; s=20221208; t=1690193899; x=1690798699;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=F/oK6bm2Afi7WKsfFLPLaSlUUie3UdhMRHX1z52bb4o=;
- b=TZKVnbhcIWdhF7ikoiM/XjfJkVo3uxKOgKhuldSt1PkGB45sBtNa2dIETEv0Oh7euv
- 6/xsJWJwMgRbq4E0pKbLlFIj2HL0hOysGKTfO82ZDrBxNSmjddJirdMaqSqJJ1MJdXnm
- fIBngQsphQNsIHhjAchXGgX96YO67OIbH9t9RxMbAsudnO5vrNRqbT2rJo7zcyiGBOxp
- QnVatUWLU/Ebkn0hIPctGEeKGQA6rHWv2FRqGkVuVJ+fLk298UBeYL26UYkpJCu3rMeq
- Q+dOaWz+aZQZ4FzYlwIdAt4D3oWX743tXWD/xV94zbiNVBxEfpkLx9IRz+Q1bDnN3Dz4
- E1Bw==
-X-Gm-Message-State: ABy/qLYwyFdmmm+FSRKEKp+7AARlPzOdNMzmBMh/top3tdx7mmY+P1a2
- CcnSctgU6h1fx8IkvT2lznk2ulMZLkB/o4cF7qA=
-X-Google-Smtp-Source: APBJJlFeSJXGwKM1/4Fx4M034iEieIqp39l7VwM/I3gIgSntmWk50xYbsW/3q3bB2XT8c22SamI2Bg==
-X-Received: by 2002:a17:902:dad2:b0:1b8:9fc4:2733 with SMTP id
- q18-20020a170902dad200b001b89fc42733mr12483608plx.3.1690192468770; 
- Mon, 24 Jul 2023 02:54:28 -0700 (PDT)
+ bh=4zTxasxXedNYwr5HiD+ktCpinG7wwpmHx5iR9IBn5EM=;
+ b=dlVPQL6Aj5XLWvf9YYAZFJX4hAE7OtgRHEQa/Q1eqbobNp+DoDw4R40+Yw7oQ8nm59
+ cdYMwePfTgNXt3Z8WEJbTqr4u3c/57jaJqpkM+QeP17VOme9K2yYHFUzV/Bm3DoIvr9O
+ 8sBVan/6R+sCZioc1JZK9AcVmVtKxQWQbLDOuSHPn/AhMG+W5obmS4rnmAfwYuFHWFhI
+ KKKbWN42nJY1k/KssoiZzM5VA98FCu+lKUBHmc7rAvU4p+4Y3z8IHuW1YsVNHFBS2Meu
+ wOu7sWtsdCeKsw+9dyri0MMItmxzmb3jNhAQ75aBQCbqqTfcvMvqTsfoGR5gya1zSkXV
+ P6CQ==
+X-Gm-Message-State: ABy/qLbTGND5sB3lZ00zHfSwuSt5M3u2B0gcrDowpAKHX/ll8+R7StUh
+ b/6UMFETW2s+ubwgmCvuHm9T3fcWwsqk58BAgpg=
+X-Google-Smtp-Source: APBJJlEIhnQwoFDHuweIAHt2tJcWGI0d+r3I5wbhweuAT0TQly4d+VEILSYdnjVlMqhcbUSPWrZO+w==
+X-Received: by 2002:a17:903:41c9:b0:1b8:17e8:547e with SMTP id
+ u9-20020a17090341c900b001b817e8547emr12196517ple.1.1690192002389; 
+ Mon, 24 Jul 2023 02:46:42 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.147])
  by smtp.gmail.com with ESMTPSA id
- d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.54.17
+ d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.46.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Jul 2023 02:54:28 -0700 (PDT)
+ Mon, 24 Jul 2023 02:46:42 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
-Date: Mon, 24 Jul 2023 17:43:54 +0800
-Message-Id: <20230724094354.90817-48-zhengqi.arch@bytedance.com>
+Date: Mon, 24 Jul 2023 17:43:15 +0800
+Message-Id: <20230724094354.90817-9-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qNsdP-0004sk-SR
-Subject: [f2fs-dev] [PATCH v2 47/47] mm: shrinker: convert shrinker_rwsem to
- mutex
+X-Headers-End: 1qNse0-0004tq-Tc
+Subject: [f2fs-dev] [PATCH v2 08/47] erofs: dynamically allocate the
+ erofs-shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,186 +121,50 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Now there are no readers of shrinker_rwsem, so we can simply replace it
-with mutex lock.
+Use new APIs to dynamically allocate the erofs-shrinker.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- drivers/md/dm-cache-metadata.c |  2 +-
- fs/super.c                     |  2 +-
- mm/shrinker.c                  | 16 ++++++++--------
- mm/shrinker_debug.c            | 14 +++++++-------
- 4 files changed, 17 insertions(+), 17 deletions(-)
+ fs/erofs/utils.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/md/dm-cache-metadata.c b/drivers/md/dm-cache-metadata.c
-index acffed750e3e..9e0c69958587 100644
---- a/drivers/md/dm-cache-metadata.c
-+++ b/drivers/md/dm-cache-metadata.c
-@@ -1828,7 +1828,7 @@ int dm_cache_metadata_abort(struct dm_cache_metadata *cmd)
- 	 * Replacement block manager (new_bm) is created and old_bm destroyed outside of
- 	 * cmd root_lock to avoid ABBA deadlock that would result (due to life-cycle of
- 	 * shrinker associated with the block manager's bufio client vs cmd root_lock).
--	 * - must take shrinker_rwsem without holding cmd->root_lock
-+	 * - must take shrinker_mutex without holding cmd->root_lock
- 	 */
- 	new_bm = dm_block_manager_create(cmd->bdev, DM_CACHE_METADATA_BLOCK_SIZE << SECTOR_SHIFT,
- 					 CACHE_MAX_CONCURRENT_LOCKS);
-diff --git a/fs/super.c b/fs/super.c
-index 04643fd80886..602cf54eb7da 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -54,7 +54,7 @@ static char *sb_writers_name[SB_FREEZE_LEVELS] = {
-  * One thing we have to be careful of with a per-sb shrinker is that we don't
-  * drop the last active reference to the superblock from within the shrinker.
-  * If that happens we could trigger unregistering the shrinker from within the
-- * shrinker path and that leads to deadlock on the shrinker_rwsem. Hence we
-+ * shrinker path and that leads to deadlock on the shrinker_mutex. Hence we
-  * take a passive reference to the superblock to avoid this from occurring.
-  */
- static unsigned long super_cache_scan(struct shrinker *shrink,
-diff --git a/mm/shrinker.c b/mm/shrinker.c
-index 90c045620fe3..5c4546d2c234 100644
---- a/mm/shrinker.c
-+++ b/mm/shrinker.c
-@@ -7,7 +7,7 @@
- #include <trace/events/vmscan.h>
+diff --git a/fs/erofs/utils.c b/fs/erofs/utils.c
+index cc6fb9e98899..389de06e1065 100644
+--- a/fs/erofs/utils.c
++++ b/fs/erofs/utils.c
+@@ -270,19 +270,25 @@ static unsigned long erofs_shrink_scan(struct shrinker *shrink,
+ 	return freed;
+ }
  
- LIST_HEAD(shrinker_list);
--DECLARE_RWSEM(shrinker_rwsem);
-+DEFINE_MUTEX(shrinker_mutex);
- DEFINE_SPINLOCK(shrinker_lock);
+-static struct shrinker erofs_shrinker_info = {
+-	.scan_objects = erofs_shrink_scan,
+-	.count_objects = erofs_shrink_count,
+-	.seeks = DEFAULT_SEEKS,
+-};
++static struct shrinker *erofs_shrinker_info;
  
- #ifdef CONFIG_MEMCG
-@@ -80,7 +80,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
- 	int nid, ret = 0;
- 	int array_size = 0;
- 
--	down_write(&shrinker_rwsem);
-+	mutex_lock(&shrinker_mutex);
- 	array_size = shrinker_unit_size(shrinker_nr_max);
- 	for_each_node(nid) {
- 		info = kvzalloc_node(sizeof(*info) + array_size, GFP_KERNEL, nid);
-@@ -91,7 +91,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
- 			goto err;
- 		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
- 	}
--	up_write(&shrinker_rwsem);
-+	mutex_unlock(&shrinker_mutex);
- 
- 	return ret;
- 
-@@ -104,7 +104,7 @@ static struct shrinker_info *shrinker_info_protected(struct mem_cgroup *memcg,
- 						     int nid)
+ int __init erofs_init_shrinker(void)
  {
- 	return rcu_dereference_protected(memcg->nodeinfo[nid]->shrinker_info,
--					 lockdep_is_held(&shrinker_rwsem));
-+					 lockdep_is_held(&shrinker_mutex));
+-	return register_shrinker(&erofs_shrinker_info, "erofs-shrinker");
++	erofs_shrinker_info = shrinker_alloc(0, "erofs-shrinker");
++	if (!erofs_shrinker_info)
++		return -ENOMEM;
++
++	erofs_shrinker_info->count_objects = erofs_shrink_count;
++	erofs_shrinker_info->scan_objects = erofs_shrink_scan;
++	erofs_shrinker_info->seeks = DEFAULT_SEEKS;
++
++	shrinker_register(erofs_shrinker_info);
++
++	return 0;
  }
  
- static struct shrinker_info *shrinker_info_rcu(struct mem_cgroup *memcg,
-@@ -158,7 +158,7 @@ static int expand_shrinker_info(int new_id)
- 	int new_size, old_size = 0;
- 	struct mem_cgroup *memcg;
- 
--	down_write(&shrinker_rwsem);
-+	mutex_lock(&shrinker_mutex);
- 
- 	if (!root_mem_cgroup)
- 		goto out;
-@@ -179,7 +179,7 @@ static int expand_shrinker_info(int new_id)
- 	if (!ret)
- 		shrinker_nr_max = new_nr_max;
- 
--	up_write(&shrinker_rwsem);
-+	mutex_unlock(&shrinker_mutex);
- 
- 	return ret;
- }
-@@ -303,7 +303,7 @@ void reparent_shrinker_deferred(struct mem_cgroup *memcg)
- 		parent = root_mem_cgroup;
- 
- 	/* Prevent from concurrent shrinker_info expand */
--	down_write(&shrinker_rwsem);
-+	mutex_lock(&shrinker_mutex);
- 	for_each_node(nid) {
- 		child_info = shrinker_info_protected(memcg, nid);
- 		parent_info = shrinker_info_protected(parent, nid);
-@@ -316,7 +316,7 @@ void reparent_shrinker_deferred(struct mem_cgroup *memcg)
- 			}
- 		}
- 	}
--	up_write(&shrinker_rwsem);
-+	mutex_unlock(&shrinker_mutex);
- }
- #else
- static int shrinker_memcg_alloc(struct shrinker *shrinker)
-diff --git a/mm/shrinker_debug.c b/mm/shrinker_debug.c
-index badda35464c3..44b620b1919d 100644
---- a/mm/shrinker_debug.c
-+++ b/mm/shrinker_debug.c
-@@ -8,7 +8,7 @@
- #include <linux/rculist.h>
- 
- /* defined in vmscan.c */
--extern struct rw_semaphore shrinker_rwsem;
-+extern struct mutex shrinker_mutex;
- extern struct list_head shrinker_list;
- 
- static DEFINE_IDA(shrinker_debugfs_ida);
-@@ -168,7 +168,7 @@ int shrinker_debugfs_add(struct shrinker *shrinker)
- 	if (!shrinker_debugfs_root)
- 		return 0;
- 
--	down_write(&shrinker_rwsem);
-+	mutex_lock(&shrinker_mutex);
- 	if (shrinker->debugfs_entry)
- 		goto fail;
- 
-@@ -196,7 +196,7 @@ int shrinker_debugfs_add(struct shrinker *shrinker)
- 			    &shrinker_debugfs_scan_fops);
- 
- fail:
--	up_write(&shrinker_rwsem);
-+	mutex_unlock(&shrinker_mutex);
- 	return ret;
- }
- 
-@@ -215,7 +215,7 @@ int shrinker_debugfs_rename(struct shrinker *shrinker, const char *fmt, ...)
- 	if (!new)
- 		return -ENOMEM;
- 
--	down_write(&shrinker_rwsem);
-+	mutex_lock(&shrinker_mutex);
- 
- 	old = shrinker->name;
- 	shrinker->name = new;
-@@ -233,7 +233,7 @@ int shrinker_debugfs_rename(struct shrinker *shrinker, const char *fmt, ...)
- 			shrinker->debugfs_entry = entry;
- 	}
- 
--	up_write(&shrinker_rwsem);
-+	mutex_unlock(&shrinker_mutex);
- 
- 	kfree_const(old);
- 
-@@ -246,7 +246,7 @@ struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
+ void erofs_exit_shrinker(void)
  {
- 	struct dentry *entry = shrinker->debugfs_entry;
- 
--	down_write(&shrinker_rwsem);
-+	mutex_lock(&shrinker_mutex);
- 	kfree_const(shrinker->name);
- 	shrinker->name = NULL;
- 
-@@ -257,7 +257,7 @@ struct dentry *shrinker_debugfs_detach(struct shrinker *shrinker,
- 	 */
- 	smp_wmb();
- 	shrinker->debugfs_entry = NULL;
--	up_write(&shrinker_rwsem);
-+	mutex_unlock(&shrinker_mutex);
- 
- 	return entry;
+-	unregister_shrinker(&erofs_shrinker_info);
++	shrinker_unregister(erofs_shrinker_info);
  }
+ #endif	/* !CONFIG_EROFS_FS_ZIP */
 -- 
 2.30.2
 
