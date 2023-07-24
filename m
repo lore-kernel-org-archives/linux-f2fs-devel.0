@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9F0FAC001B0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8E43BC001DE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:15:17 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qNsaa-0000pa-2n;
-	Mon, 24 Jul 2023 10:14:52 +0000
+	id 1qNsaz-0000r3-51;
+	Mon, 24 Jul 2023 10:15:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsaX-0000pT-CX
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsat-0000qp-ET
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:14:49 +0000
+ Mon, 24 Jul 2023 10:15:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ys9vBHKFvUQ64/r6xhiUU0Z6Ew/XYgW4RHIRDMT4d8M=; b=ERhqrtSjWnO0C6A0uxh4mIiZD3
- NzsSbGGjEiDyJvQzP/9jVVZ5VgISnEc2SdD2l+BJcWWawILEW9g8QuEG17FsRRq8o9BMgNVIRbUjZ
- 6ymwW0toIu/d2SlDCdGDtfn+JOLBqo5OINKiPoDF/Xwik1BI6lBcdOY4T65iwxliKC64=;
+ bh=TtWMuwNQICElQwN/uI+F3WL3CTikAs+Dtp5goHq/uX4=; b=l3vcPPLYC0t5LTHpjoBmUc2+z1
+ iA57hT1WFNLTzZAuec5OiztYVrUjh8G64vOegmKMUqf7ko5QPxzvW8se/JX6+5eisNRSgl0lhyDSw
+ eL58Nf4oFcu3RQnqs/3/vd0+d0j/odvXFMFsu7ob+mI8KhFPQry27sIickUBOYAmk5sA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,67 +33,67 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ys9vBHKFvUQ64/r6xhiUU0Z6Ew/XYgW4RHIRDMT4d8M=; b=EBrgaIMdb5LgV9wGSRLvbjDki5
- 9+kW/svAdwWRgJ6MtTAXcjbv9beutCMPmcy4pQr4SrrHWC81GC30jrQIpfQZ3Pk6S/OrifuZ6vXge
- quCJ+p/hiIFLAnhEBDbi3uX7OLCBxFy9rj5G7Sqw1PRD3Uq2jWsedw4fJKqJX6Gkn/bk=;
-Received: from mail-pl1-f180.google.com ([209.85.214.180])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=TtWMuwNQICElQwN/uI+F3WL3CTikAs+Dtp5goHq/uX4=; b=abk/pZPcm70gFD2etFJrriwC0q
+ VOKhkfNSUAjj+d3Ua8xDhJhRUe4hGoOEIljGT7dx0z7o8K7MAmmEo5ZjFwZjE4flmyrseVer7XMBk
+ YcsVeplQxdxhdGkwZLXzBykxBNTbZ8l1Wl0uUVixn+HHVchFFeWyQt7tBM1NupB8vA8U=;
+Received: from mail-oi1-f178.google.com ([209.85.167.178])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qNsaV-0004ly-Mw for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:14:49 +0000
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-1bb85ed352bso2291455ad.0
+ id 1qNsap-000Ppx-Pg for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jul 2023 10:15:11 +0000
+Received: by mail-oi1-f178.google.com with SMTP id
+ 5614622812f47-3a3ee866e00so392187b6e.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Jul 2023 03:14:47 -0700 (PDT)
+ Mon, 24 Jul 2023 03:15:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690193682; x=1690798482;
+ d=bytedance.com; s=google; t=1690193701; x=1690798501;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ys9vBHKFvUQ64/r6xhiUU0Z6Ew/XYgW4RHIRDMT4d8M=;
- b=JyJ9elOeSzZYiQIsdLVY0dxg+UtA8334r0P7QgzgHTNrEmahZXAI4UxkVTM+aJCeQT
- XZjLwVXkGUzgIXOy12FoIbDTjK1/X6QNAlWbfjkORu2gwr5d6mD1MCcnGKv39lBkkhIa
- oAWsyAefvIlPW/y6fDOOwvBKs7H2yh8d3iixyOQiOnYyoYZLv3Iy3DkwXoZxaN9Vx96X
- 2kWv/mUz4tHDympcgkTl0DuNEFB+LoQzYWB7AD2vDaY64OYIq/JoD0sHqzDtT4US/S83
- WdhDJJY6UNcG37xSWEXskBNRoOWgRdNQEcsikcp0cBq+5oF+Cqu66qnziskyyiz08eSm
- 3kQQ==
+ bh=TtWMuwNQICElQwN/uI+F3WL3CTikAs+Dtp5goHq/uX4=;
+ b=DzwTUQ8dtHMn0uPlhEX4It9PP69gB/GZVM+bv9dLj+l1QDmtHRhZEcWPa2fVohg4OF
+ ztbUOqqreaVrpbGBHVkkAmQJ9xyuQFkGG0niRMgwzsLaqVuqFgHU0kasHKNsn4TOi8Qo
+ L6IjS64vASpycedWJSTv5CTbij3p8ouzdDKZyMTDKBA0RgN575Ms/Hp21aH0AvgVqlV+
+ SEKtU00uEM5m/GdNKsaxVL2VfeN8PQyWQtwFFV5/HOBYCtbZzN0ZdzXdooW52YwSXkd4
+ vDdj513OgjZO2CmKfLPiiaAo/AIHuzgVGKhgEj9bYEVzpkKJ3+BwR+NLB/KhaFvlMqQM
+ LS9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690193682; x=1690798482;
+ d=1e100.net; s=20221208; t=1690193701; x=1690798501;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ys9vBHKFvUQ64/r6xhiUU0Z6Ew/XYgW4RHIRDMT4d8M=;
- b=YCv+JhjNbxx/8mO7P7aZ8jSDGPQHmJEgN4quiMnJPFXW2FRwmKlQVd4XNR4HCiKPgu
- YzyRYbiGOSXNIPh3VgXamFFB6mshE/RYbzhzwyW7WmKbffRSbb7U+MKDGvfA/7n46NpB
- cXGJFK6DTsVJ8PGFvxAxzMXJGIPd00lkLl5UdOz60cccf93cAWZCTdTIq24C4su+v5Tk
- 1wrDB9zt8ZoBN/UBqMHtrrtU+AJjryDOYVVsUkKtoqgAjjzBSprUwbAwXk5qkG4mHlSh
- WybUG6lW1vWDTI/4fYiXTRRtWxBxX8qD1/FuLAwMo7sfRqBVi6XJYVfLjTduqasyeAfH
- mLZg==
-X-Gm-Message-State: ABy/qLblA6caSsscwK4HjiiUOVtH6C7YFXeLemF6pu/xSp0uB/oTZr8l
- dbRfCHy2o8q0bOOP4c7U2FWRmXFuhu1QF2imodY=
-X-Google-Smtp-Source: APBJJlFkBw02O8PtVItEXpmJ/bGWM9sp4fUOmnYSOIyG9XuieUTiinrCv3H33MrLETZpz/mqqXfPcw==
-X-Received: by 2002:a17:903:32c9:b0:1b8:5827:8763 with SMTP id
- i9-20020a17090332c900b001b858278763mr12116030plr.4.1690192170396; 
- Mon, 24 Jul 2023 02:49:30 -0700 (PDT)
+ bh=TtWMuwNQICElQwN/uI+F3WL3CTikAs+Dtp5goHq/uX4=;
+ b=KzN98bON2vpzQSLIp6oo95mxvZywa1i1wwIy0hRYwFwizUR/U9mqFzQs9cxdC4Uc4U
+ S32sFP7sy+/L3+CXVFh7P6Vn/k+7wgc/p55K/c1vQKDeLV77wAavv+Qrf6+DqzaGjLrp
+ W+gFXxiTw1x6JuXXd7S95+pV/q3SwA45yNDnlCqS7MgeuF45qi9jO0Ylb3gcDcNivhCq
+ w3q00oOzL47rpi1Hy+iQDb4Q7Nen3JrEnE72BGDQDaOqfDaaY+RwcqYV2nZnv3QHFyot
+ ljUIuNMGT8aS9f0fe7eWiwRE8utpp85U2tnqbTQWeLciIDKKJyCH9UHn/+QiFkHugJ9u
+ RnGg==
+X-Gm-Message-State: ABy/qLZfjeQ1fMUoR+zbkpr/mi9IsnivWg3D32YBMQvn0oJxhvB4qLBQ
+ S1oTxYuySE8thVybP/4cFpIq0ATm+rYhR0HD6JI=
+X-Google-Smtp-Source: APBJJlE4z/oQr/nYJvsLLx4ZH1UH5CYL5idBHg9QqjGajgFE/t5dphI4tPFsRKn6N/RjSu5tdTiopA==
+X-Received: by 2002:a17:902:ecd2:b0:1b8:b4f6:1327 with SMTP id
+ a18-20020a170902ecd200b001b8b4f61327mr12289687plh.6.1690191990533; 
+ Mon, 24 Jul 2023 02:46:30 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.147])
  by smtp.gmail.com with ESMTPSA id
- d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.49.19
+ d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.46.19
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Jul 2023 02:49:30 -0700 (PDT)
+ Mon, 24 Jul 2023 02:46:30 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
-Date: Mon, 24 Jul 2023 17:43:29 +0800
-Message-Id: <20230724094354.90817-23-zhengqi.arch@bytedance.com>
+Date: Mon, 24 Jul 2023 17:43:14 +0800
+Message-Id: <20230724094354.90817-8-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qNsaV-0004ly-Mw
-Subject: [f2fs-dev] [PATCH v2 22/47] drm/i915: dynamically allocate the
- i915_gem_mm shrinker
+X-Headers-End: 1qNsap-000Ppx-Pg
+Subject: [f2fs-dev] [PATCH v2 07/47] xenbus/backend: dynamically allocate
+ the xen-backend shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,99 +121,48 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In preparation for implementing lockless slab shrink, use new APIs to
-dynamically allocate the i915_gem_mm shrinker, so that it can be freed
-asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
-read-side critical section when releasing the struct drm_i915_private.
+Use new APIs to dynamically allocate the xen-backend shrinker.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- drivers/gpu/drm/i915/gem/i915_gem_shrinker.c | 30 +++++++++++---------
- drivers/gpu/drm/i915/i915_drv.h              |  2 +-
- 2 files changed, 18 insertions(+), 14 deletions(-)
+ drivers/xen/xenbus/xenbus_probe_backend.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shrinker.c b/drivers/gpu/drm/i915/gem/i915_gem_shrinker.c
-index 214763942aa2..a7409b8c2634 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_shrinker.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_shrinker.c
-@@ -284,8 +284,7 @@ unsigned long i915_gem_shrink_all(struct drm_i915_private *i915)
- static unsigned long
- i915_gem_shrinker_count(struct shrinker *shrinker, struct shrink_control *sc)
- {
--	struct drm_i915_private *i915 =
--		container_of(shrinker, struct drm_i915_private, mm.shrinker);
-+	struct drm_i915_private *i915 = shrinker->private_data;
- 	unsigned long num_objects;
- 	unsigned long count;
- 
-@@ -302,8 +301,8 @@ i915_gem_shrinker_count(struct shrinker *shrinker, struct shrink_control *sc)
- 	if (num_objects) {
- 		unsigned long avg = 2 * count / num_objects;
- 
--		i915->mm.shrinker.batch =
--			max((i915->mm.shrinker.batch + avg) >> 1,
-+		i915->mm.shrinker->batch =
-+			max((i915->mm.shrinker->batch + avg) >> 1,
- 			    128ul /* default SHRINK_BATCH */);
- 	}
- 
-@@ -313,8 +312,7 @@ i915_gem_shrinker_count(struct shrinker *shrinker, struct shrink_control *sc)
- static unsigned long
- i915_gem_shrinker_scan(struct shrinker *shrinker, struct shrink_control *sc)
- {
--	struct drm_i915_private *i915 =
--		container_of(shrinker, struct drm_i915_private, mm.shrinker);
-+	struct drm_i915_private *i915 = shrinker->private_data;
- 	unsigned long freed;
- 
- 	sc->nr_scanned = 0;
-@@ -422,12 +420,18 @@ i915_gem_shrinker_vmap(struct notifier_block *nb, unsigned long event, void *ptr
- 
- void i915_gem_driver_register__shrinker(struct drm_i915_private *i915)
- {
--	i915->mm.shrinker.scan_objects = i915_gem_shrinker_scan;
--	i915->mm.shrinker.count_objects = i915_gem_shrinker_count;
--	i915->mm.shrinker.seeks = DEFAULT_SEEKS;
--	i915->mm.shrinker.batch = 4096;
--	drm_WARN_ON(&i915->drm, register_shrinker(&i915->mm.shrinker,
--						  "drm-i915_gem"));
-+	i915->mm.shrinker = shrinker_alloc(0, "drm-i915_gem");
-+	if (!i915->mm.shrinker) {
-+		drm_WARN_ON(&i915->drm, 1);
-+	} else {
-+		i915->mm.shrinker->scan_objects = i915_gem_shrinker_scan;
-+		i915->mm.shrinker->count_objects = i915_gem_shrinker_count;
-+		i915->mm.shrinker->seeks = DEFAULT_SEEKS;
-+		i915->mm.shrinker->batch = 4096;
-+		i915->mm.shrinker->private_data = i915;
-+
-+		shrinker_register(i915->mm.shrinker);
-+	}
- 
- 	i915->mm.oom_notifier.notifier_call = i915_gem_shrinker_oom;
- 	drm_WARN_ON(&i915->drm, register_oom_notifier(&i915->mm.oom_notifier));
-@@ -443,7 +447,7 @@ void i915_gem_driver_unregister__shrinker(struct drm_i915_private *i915)
- 		    unregister_vmap_purge_notifier(&i915->mm.vmap_notifier));
- 	drm_WARN_ON(&i915->drm,
- 		    unregister_oom_notifier(&i915->mm.oom_notifier));
--	unregister_shrinker(&i915->mm.shrinker);
-+	shrinker_unregister(i915->mm.shrinker);
+diff --git a/drivers/xen/xenbus/xenbus_probe_backend.c b/drivers/xen/xenbus/xenbus_probe_backend.c
+index da96c260e26b..b4c3cf27af30 100644
+--- a/drivers/xen/xenbus/xenbus_probe_backend.c
++++ b/drivers/xen/xenbus/xenbus_probe_backend.c
+@@ -284,10 +284,7 @@ static unsigned long backend_shrink_memory_count(struct shrinker *shrinker,
+ 	return 0;
  }
  
- void i915_gem_shrinker_taints_mutex(struct drm_i915_private *i915,
-diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
-index 682ef2b5c7d5..389e8bf140d7 100644
---- a/drivers/gpu/drm/i915/i915_drv.h
-+++ b/drivers/gpu/drm/i915/i915_drv.h
-@@ -163,7 +163,7 @@ struct i915_gem_mm {
+-static struct shrinker backend_memory_shrinker = {
+-	.count_objects = backend_shrink_memory_count,
+-	.seeks = DEFAULT_SEEKS,
+-};
++static struct shrinker *backend_memory_shrinker;
  
- 	struct notifier_block oom_notifier;
- 	struct notifier_block vmap_notifier;
--	struct shrinker shrinker;
-+	struct shrinker *shrinker;
+ static int __init xenbus_probe_backend_init(void)
+ {
+@@ -305,8 +302,16 @@ static int __init xenbus_probe_backend_init(void)
  
- #ifdef CONFIG_MMU_NOTIFIER
- 	/**
+ 	register_xenstore_notifier(&xenstore_notifier);
+ 
+-	if (register_shrinker(&backend_memory_shrinker, "xen-backend"))
+-		pr_warn("shrinker registration failed\n");
++	backend_memory_shrinker = shrinker_alloc(0, "xen-backend");
++	if (!backend_memory_shrinker) {
++		pr_warn("shrinker allocation failed\n");
++		return 0;
++	}
++
++	backend_memory_shrinker->count_objects = backend_shrink_memory_count;
++	backend_memory_shrinker->seeks = DEFAULT_SEEKS;
++
++	shrinker_register(backend_memory_shrinker);
+ 
+ 	return 0;
+ }
 -- 
 2.30.2
 
