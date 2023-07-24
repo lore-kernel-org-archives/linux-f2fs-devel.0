@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5EA58C001DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 09:56:32 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 78203C001B0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 09:56:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qNsIq-00078L-MK;
-	Mon, 24 Jul 2023 09:56:31 +0000
+	id 1qNsIq-0006ws-ET;
+	Mon, 24 Jul 2023 09:56:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsIm-00077x-4O
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsIo-0006wl-A7
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 09:56:27 +0000
+ Mon, 24 Jul 2023 09:56:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9Za/Hz+nmH3G3JzZh25LzFiu0ZOWgA3znFTLEp4oxTw=; b=HxzPVe/9pmNH18xYPvCAiIZwhS
- IroqmXzo90hsecEyPNqQ47EOJRfNTihn6ECOtKUGS65BcZBG5BVAvZoGSx26tTyBW228RNOdoIb1X
- F7R8QeXpU/WD+EwvEAOPqOezUqkEC88YaWiY5OU6ZceM2wilYugo7cTlvD8qXBXmjdHI=;
+ bh=ztwb9n/1dXh113w/8xubUIoix8VXd/5rqVT4RvFn/tw=; b=Rib2L4j6XXGkeXGeW0DCW6isSK
+ IDU/9TDpH/WchTb2ayMUI6YrdrC3Bdxw55/WJHp9wmUC6v91mUpGBvvp4CcYbBbFve9vtv09YDlus
+ kKAb6M55ZFmV+QoOCfJSgYBN8stVifudD4k36TsUo5LQ+8GFIRaJdrhxtNAyImmYFmLo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,67 +33,67 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9Za/Hz+nmH3G3JzZh25LzFiu0ZOWgA3znFTLEp4oxTw=; b=kCL5PyWfybHat71FBQTav2zTaU
- wNK9BgUu0VkKBka5S10wRA9hOo5L5hOGxPGw9B637K4LN4zegZEm8qiL6Rj5wUOzPTUjj/iBuj4Gf
- IHYt9EYpHjpIztreVz8AguW2zUkxUFREMmYv4WixgKaGVxE7EtAitiqsrjq207in6Xqo=;
-Received: from mail-ot1-f49.google.com ([209.85.210.49])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=ztwb9n/1dXh113w/8xubUIoix8VXd/5rqVT4RvFn/tw=; b=EkJycCx6SF3IO1h1m6pKiTHVqE
+ Eb2O2ZH/8sZyZbJP8ZwAcYxz+hlHhmE2iqt5sDOU1pk7kZmn5SlE8fP9kGAZCMY6+kcj5TstNNmvG
+ KNCGW7TJ90aZE4+rU0GSFzYCPhO7mlAFNcKMYeEWl5n9cX6V7jfJFIA9tV1AX3nUCDos=;
+Received: from mail-ot1-f51.google.com ([209.85.210.51])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qNsIk-0004D6-CF for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 09:56:26 +0000
-Received: by mail-ot1-f49.google.com with SMTP id
- 46e09a7af769-6b9da57da6bso287988a34.0
+ id 1qNsIo-000Oml-6F for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jul 2023 09:56:30 +0000
+Received: by mail-ot1-f51.google.com with SMTP id
+ 46e09a7af769-6b9de4b0c1aso638936a34.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Jul 2023 02:56:26 -0700 (PDT)
+ Mon, 24 Jul 2023 02:56:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690192581; x=1690797381;
+ d=bytedance.com; s=google; t=1690192584; x=1690797384;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=9Za/Hz+nmH3G3JzZh25LzFiu0ZOWgA3znFTLEp4oxTw=;
- b=fgBSAZEuHqY0SldmiVnonyjaW4qv9mZDPCm/vieiBiV70W0mQV8KxQm5OtJNzhe1Kx
- hqjSHPlLm4gZrB0tGRTRe4KJmMHDfG8t/wSu3I0WwywoCm7+8EXllVFAC3U6n6csfDNO
- 0fOyF3vvz2OeuApitCbrA6pYX28CmPJfA7MswdBVt3pQw9kUpicHy9hI3JkF1pduKBNo
- jxznnQerlw7k4v/AOEFrcjR6YXe+rIjXzGFVPPj38Njfbd4IUq7Saxz1rl4F/VCqcdTo
- voH1tgvDQtZWY6qQCzxH75cBvIpaJH83+CxKktEzx3hEAQSI7TJlnFNGHx8rIRezpYwR
- adIA==
+ bh=ztwb9n/1dXh113w/8xubUIoix8VXd/5rqVT4RvFn/tw=;
+ b=i2AY79f9q2KY9F5g4hYGF4+Tn1hRyFHBx8jG0TFZ8GGp9voWdqd22s8J05HZYIuKXf
+ mM0i86J/t4UujTChkd9Gg8odNVKjYgQs+gNqH9tUv8aOj2fs7SEQCxWwl3nGze0PotcT
+ beAfxrWvVYcDD8WarcnrsLB6M0VG1Yzhm31WF5tjPup2uGfCKH8VuToczMATAMKKRxLq
+ 5xAuv7BG008Yj3Jm2lbAY/ZnGRN2kxwn66823u6qS7TWLZxz6w3L4wZrHS1j6+s5u33I
+ KwDvG0Rt8Nt6CYJwTdXRc8yfdzDF9lYc8hs4AIMGA9cxpk67gGZFrLXBa/fNqGJtPg2r
+ EHjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690192581; x=1690797381;
+ d=1e100.net; s=20221208; t=1690192584; x=1690797384;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=9Za/Hz+nmH3G3JzZh25LzFiu0ZOWgA3znFTLEp4oxTw=;
- b=X0BCjhJ6sKDwV9m6ihjVNN39qBNH/HyzgDx3Wp3Go+aqfy+OYdvaUvgJnZI0Ggkvfm
- mIuZBFNEyB56L0yUbt3ut72vBwWiQYVffep/9QWEP904KtbVHvHZcZ4dhcsY4CCvGZid
- 0pSLUNqduL6N97iVpilB9TPUeunJ+wKTBb/ppkRwb+jk8yXGs3MtrSRU0028EzWW+atZ
- KSteuUijOfNl6EvxY+NorNVFn3qVKc0s9TrsoJ4RceQE8YA/8ywcRTvD3ZtrzIbz/dSi
- ZCUV2N7QVEwGmWAAfNHMxEMtDJecqxq/lt1hv+5EzMAkWSAhJlLwZUUWNepxRwXE45Yd
- y5/Q==
-X-Gm-Message-State: ABy/qLYic/BeyBl0bNJtfiZozT6qccd2NhouBjK1495vJ6KCZ68a513y
- tr0MNR+QO7XFg3gJ885lcXgA+PWLUdqeRyVYT6Y=
-X-Google-Smtp-Source: APBJJlFYiQjYsesoLBIGYzIbaqvqBpGNnPrMVt+9gbe/8vvXchqG9OkxYsLP3NQiA5NgJtO6rGDrrQ==
-X-Received: by 2002:a17:902:e80a:b0:1b8:50a9:6874 with SMTP id
- u10-20020a170902e80a00b001b850a96874mr12325717plg.5.1690192194956; 
- Mon, 24 Jul 2023 02:49:54 -0700 (PDT)
+ bh=ztwb9n/1dXh113w/8xubUIoix8VXd/5rqVT4RvFn/tw=;
+ b=Z4Hgm+I/1cFtV03ru7ZzYsg7ls/fZHu1DPIu8DrvO19A5GHbfOdFEj7KpokPcv82SG
+ XJ7GCXZiCHlmdaMNUHshVNG0nZHOc2DwTj+wme9EmPuwQtZ4yP0mFLifxdfOQ9h4jtDV
+ PGeQQsmCR2egqw8R3jM3tX1XUTwSP8wI7kfJOybOJMe58NxZNDl0fJFgnOiMEzssV2Yf
+ T3f8vxCiB0rn0JhN5TgX7DGpni/ryzz8l7j/lHfycqsF+Fu2PAFTHS/3PejETcXqQMKM
+ Xwe+zfoS7VM64UuWkvdwulN1U7Jr9GAwlopHEECCU6B5Zm1vnY59cjAEritNYgRTNPpr
+ 2TyA==
+X-Gm-Message-State: ABy/qLYDQO6ZSJA0p2ODrLt3pqvUYYVe7ZO5MIvc7LtakOV25Yvhye9K
+ mBurebo/swGEYsTLLIiGjcx+roVfUMFXMxx3SyE=
+X-Google-Smtp-Source: APBJJlHRxCFTSeAmJPIiRwzXlrngv0y6n5gqphR6YCBFCcMRvGq0CtVM2WuFHUMj7p5y6QUWxkmpXA==
+X-Received: by 2002:a17:902:dad1:b0:1b8:aded:524c with SMTP id
+ q17-20020a170902dad100b001b8aded524cmr12538511plx.1.1690192086608; 
+ Mon, 24 Jul 2023 02:48:06 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.147])
  by smtp.gmail.com with ESMTPSA id
- d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.49.42
+ d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.47.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Jul 2023 02:49:54 -0700 (PDT)
+ Mon, 24 Jul 2023 02:48:06 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
-Date: Mon, 24 Jul 2023 17:43:31 +0800
-Message-Id: <20230724094354.90817-25-zhengqi.arch@bytedance.com>
+Date: Mon, 24 Jul 2023 17:43:22 +0800
+Message-Id: <20230724094354.90817-16-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qNsIk-0004D6-CF
-Subject: [f2fs-dev] [PATCH v2 24/47] drm/panfrost: dynamically allocate the
- drm-panfrost shrinker
+X-Headers-End: 1qNsIo-000Oml-6F
+Subject: [f2fs-dev] [PATCH v2 15/47] quota: dynamically allocate the
+ dquota-cache shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,128 +121,47 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In preparation for implementing lockless slab shrink, use new APIs to
-dynamically allocate the drm-panfrost shrinker, so that it can be freed
-asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
-read-side critical section when releasing the struct panfrost_device.
+Use new APIs to dynamically allocate the dquota-cache shrinker.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- drivers/gpu/drm/panfrost/panfrost_device.h    |  2 +-
- drivers/gpu/drm/panfrost/panfrost_drv.c       |  6 +++-
- drivers/gpu/drm/panfrost/panfrost_gem.h       |  2 +-
- .../gpu/drm/panfrost/panfrost_gem_shrinker.c  | 32 ++++++++++++-------
- 4 files changed, 27 insertions(+), 15 deletions(-)
+ fs/quota/dquot.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
-index b0126b9fbadc..e667e5689353 100644
---- a/drivers/gpu/drm/panfrost/panfrost_device.h
-+++ b/drivers/gpu/drm/panfrost/panfrost_device.h
-@@ -118,7 +118,7 @@ struct panfrost_device {
- 
- 	struct mutex shrinker_lock;
- 	struct list_head shrinker_list;
--	struct shrinker shrinker;
-+	struct shrinker *shrinker;
- 
- 	struct panfrost_devfreq pfdevfreq;
- };
-diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-index bbada731bbbd..f705bbdea360 100644
---- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -598,10 +598,14 @@ static int panfrost_probe(struct platform_device *pdev)
- 	if (err < 0)
- 		goto err_out1;
- 
--	panfrost_gem_shrinker_init(ddev);
-+	err = panfrost_gem_shrinker_init(ddev);
-+	if (err)
-+		goto err_out2;
- 
- 	return 0;
- 
-+err_out2:
-+	drm_dev_unregister(ddev);
- err_out1:
- 	pm_runtime_disable(pfdev->dev);
- 	panfrost_device_fini(pfdev);
-diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.h b/drivers/gpu/drm/panfrost/panfrost_gem.h
-index ad2877eeeccd..863d2ec8d4f0 100644
---- a/drivers/gpu/drm/panfrost/panfrost_gem.h
-+++ b/drivers/gpu/drm/panfrost/panfrost_gem.h
-@@ -81,7 +81,7 @@ panfrost_gem_mapping_get(struct panfrost_gem_object *bo,
- void panfrost_gem_mapping_put(struct panfrost_gem_mapping *mapping);
- void panfrost_gem_teardown_mappings_locked(struct panfrost_gem_object *bo);
- 
--void panfrost_gem_shrinker_init(struct drm_device *dev);
-+int panfrost_gem_shrinker_init(struct drm_device *dev);
- void panfrost_gem_shrinker_cleanup(struct drm_device *dev);
- 
- #endif /* __PANFROST_GEM_H__ */
-diff --git a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
-index bf0170782f25..9a90dfb5301f 100644
---- a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
-@@ -18,8 +18,7 @@
- static unsigned long
- panfrost_gem_shrinker_count(struct shrinker *shrinker, struct shrink_control *sc)
- {
--	struct panfrost_device *pfdev =
--		container_of(shrinker, struct panfrost_device, shrinker);
-+	struct panfrost_device *pfdev = shrinker->private_data;
- 	struct drm_gem_shmem_object *shmem;
- 	unsigned long count = 0;
- 
-@@ -65,8 +64,7 @@ static bool panfrost_gem_purge(struct drm_gem_object *obj)
- static unsigned long
- panfrost_gem_shrinker_scan(struct shrinker *shrinker, struct shrink_control *sc)
- {
--	struct panfrost_device *pfdev =
--		container_of(shrinker, struct panfrost_device, shrinker);
-+	struct panfrost_device *pfdev = shrinker->private_data;
- 	struct drm_gem_shmem_object *shmem, *tmp;
- 	unsigned long freed = 0;
- 
-@@ -97,13 +95,24 @@ panfrost_gem_shrinker_scan(struct shrinker *shrinker, struct shrink_control *sc)
-  *
-  * This function registers and sets up the panfrost shrinker.
-  */
--void panfrost_gem_shrinker_init(struct drm_device *dev)
-+int panfrost_gem_shrinker_init(struct drm_device *dev)
- {
- 	struct panfrost_device *pfdev = dev->dev_private;
--	pfdev->shrinker.count_objects = panfrost_gem_shrinker_count;
--	pfdev->shrinker.scan_objects = panfrost_gem_shrinker_scan;
--	pfdev->shrinker.seeks = DEFAULT_SEEKS;
--	WARN_ON(register_shrinker(&pfdev->shrinker, "drm-panfrost"));
-+
-+	pfdev->shrinker = shrinker_alloc(0, "drm-panfrost");
-+	if (!pfdev->shrinker) {
-+		WARN_ON(1);
-+		return -ENOMEM;
-+	}
-+
-+	pfdev->shrinker->count_objects = panfrost_gem_shrinker_count;
-+	pfdev->shrinker->scan_objects = panfrost_gem_shrinker_scan;
-+	pfdev->shrinker->seeks = DEFAULT_SEEKS;
-+	pfdev->shrinker->private_data = pfdev;
-+
-+	shrinker_register(pfdev->shrinker);
-+
-+	return 0;
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index e8232242dd34..6cb2d8911bc3 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -791,11 +791,7 @@ dqcache_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
+ 	percpu_counter_read_positive(&dqstats.counter[DQST_FREE_DQUOTS]));
  }
  
- /**
-@@ -116,7 +125,6 @@ void panfrost_gem_shrinker_cleanup(struct drm_device *dev)
- {
- 	struct panfrost_device *pfdev = dev->dev_private;
+-static struct shrinker dqcache_shrinker = {
+-	.count_objects = dqcache_shrink_count,
+-	.scan_objects = dqcache_shrink_scan,
+-	.seeks = DEFAULT_SEEKS,
+-};
++static struct shrinker *dqcache_shrinker;
  
--	if (pfdev->shrinker.nr_deferred) {
--		unregister_shrinker(&pfdev->shrinker);
--	}
-+	if (pfdev->shrinker)
-+		shrinker_unregister(pfdev->shrinker);
+ /*
+  * Safely release dquot and put reference to dquot.
+@@ -2991,8 +2987,15 @@ static int __init dquot_init(void)
+ 	pr_info("VFS: Dquot-cache hash table entries: %ld (order %ld,"
+ 		" %ld bytes)\n", nr_hash, order, (PAGE_SIZE << order));
+ 
+-	if (register_shrinker(&dqcache_shrinker, "dquota-cache"))
+-		panic("Cannot register dquot shrinker");
++	dqcache_shrinker = shrinker_alloc(0, "dquota-cache");
++	if (!dqcache_shrinker)
++		panic("Cannot allocate dquot shrinker");
++
++	dqcache_shrinker->count_objects = dqcache_shrink_count;
++	dqcache_shrinker->scan_objects = dqcache_shrink_scan;
++	dqcache_shrinker->seeks = DEFAULT_SEEKS;
++
++	shrinker_register(dqcache_shrinker);
+ 
+ 	return 0;
  }
 -- 
 2.30.2
