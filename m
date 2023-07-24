@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 624C5C001B0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C2DFAC001B0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:18:36 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qNse6-0008MN-P9;
-	Mon, 24 Jul 2023 10:18:29 +0000
+	id 1qNseD-0008N5-Eg;
+	Mon, 24 Jul 2023 10:18:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qNse3-0008MF-Vo
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qNseB-0008My-VK
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:18:27 +0000
+ Mon, 24 Jul 2023 10:18:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4zTxasxXedNYwr5HiD+ktCpinG7wwpmHx5iR9IBn5EM=; b=Su77jC4ugTQlYRr7dNoyU0GXtH
- kHH3PMHCeH4E4B1LD/8ARfB/7AypiMArYIWBYVY53Md1a4G2vs2vStUApS/8fKeHHJP8ok0TheBsS
- s6ZHjjAhYDsL5k1yh9A1L2BEmhYUm/8iw4oPajMSrjTerY8tnQd4sVt0gvnMtX8ff+tI=;
+ bh=SZ4CyloeMnj8DJaX3jH++Kh0s8L9fcE8HheaL79+C9E=; b=mDQ6WPphnOLsHJD5O7k1M376yQ
+ cZmucIamDpVfwiEdqJAZfZ3lDF4PS8DsxCfbCxSEKeZhpofnQN826X7Gf6NUojSPc+59IM0wjVSGL
+ UbONm2hpsPGcq6kEQwTFR6yPHfaGMOrvMku7EXMAa7aR16F+WEZ6ZAC6eBsXEYUUZwMw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,67 +33,67 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=4zTxasxXedNYwr5HiD+ktCpinG7wwpmHx5iR9IBn5EM=; b=CJ0cOCVLlxT/N5CweJDrMSS50z
- hYSIJswlYd9lzTwh93fNZ9okOS8Sg4NvpywSjOyRY/Mp7c576rUxN2S80qz23pmNKI37DUZpPPJD6
- VoRegXTvVkTxC+NtL6y/5t0h+siWfIc3qLoTSviQmuo4kJDmFL5vqhv/WPFOY1nR+qhQ=;
-Received: from mail-qv1-f42.google.com ([209.85.219.42])
+ bh=SZ4CyloeMnj8DJaX3jH++Kh0s8L9fcE8HheaL79+C9E=; b=RxkD501vsQrJMjKZ7VWVqTLeFD
+ DUPlOcZagJUYGXBnJn/BM3/RCkgTCumirA1deJAdAjMQGiuquXPcTx58CD9FXNYIO/Ib60cfGsRqy
+ T9tAz5LPsYJ6zyucKMSoKBZcth2b1U7oaaQzYciMhpZ8B7baWPQ4mU4C5vkLAuqX72vc=;
+Received: from mail-pj1-f53.google.com ([209.85.216.53])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qNse0-0004tq-Tc for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:18:26 +0000
-Received: by mail-qv1-f42.google.com with SMTP id
- 6a1803df08f44-63c82f9094bso9131306d6.0
+ id 1qNseA-0004uA-9U for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jul 2023 10:18:34 +0000
+Received: by mail-pj1-f53.google.com with SMTP id
+ 98e67ed59e1d1-2680edb9767so236427a91.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Jul 2023 03:18:24 -0700 (PDT)
+ Mon, 24 Jul 2023 03:18:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690193899; x=1690798699;
+ d=bytedance.com; s=google; t=1690193908; x=1690798708;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=4zTxasxXedNYwr5HiD+ktCpinG7wwpmHx5iR9IBn5EM=;
- b=EvQufrH9OaGUtA5AlwsezNzos3iLuQtQrxcBe1kwZYeo0aZJZ/t6o60hy6xHAO2ohR
- Pr4eEsrX+vznCYRGfcF4Grl7QKtywp37/5VdwO+nmQpisHYTweABrFnx+TTj7L/yeQB6
- /lxVGbYYPjmXZ/Wl2JfiJnBUBCwep7G5Ua9zXSnhRPC4KdujhBhEdR7m/RROBNX12n4Z
- E3wDjQcLQHITwC46alZ63NDIfmRx7L8gslypw3qkuQpIq8udvMrVmVNu1OLZVGz+8HrR
- tXIByPfMQJj5lajDlR8UZIt3hWTcXYRWEjAXwrZawp6sDdOfC+aRpdRx7wV4hHh7/69w
- /Jvg==
+ bh=SZ4CyloeMnj8DJaX3jH++Kh0s8L9fcE8HheaL79+C9E=;
+ b=auRifChFd4P8g06Uuq0xZFbNCkSwoI1RpTgMRT6gR3rHTdW9t8VN55PKR9xa5JO4Gg
+ Yf2DUTCYSGVa8fWC4O8Mv9STkpzR/PwmislxQBtrbcVSfBJWD7y9VgY5LO94kWoKhIru
+ iaZcYChFS9xo5+Abo9gBsMAbb0nmNuY25uSsIYW/i/Z6AfWpf9llz1ijn/vr0QcFy8B8
+ QBm8YHl5TMVRI0HDfx+53JDfThT2rD1b/pYY5PzpAOK46bT5qBx3dj3kTWA20OaALYCY
+ EmhkpGy5MhrKjtoEIR5tBE5JgbYl/DdetvUjpaMOkinJ59v+Y3zBR5YHtKmon7M2/vzf
+ y4vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690193899; x=1690798699;
+ d=1e100.net; s=20221208; t=1690193908; x=1690798708;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=4zTxasxXedNYwr5HiD+ktCpinG7wwpmHx5iR9IBn5EM=;
- b=dlVPQL6Aj5XLWvf9YYAZFJX4hAE7OtgRHEQa/Q1eqbobNp+DoDw4R40+Yw7oQ8nm59
- cdYMwePfTgNXt3Z8WEJbTqr4u3c/57jaJqpkM+QeP17VOme9K2yYHFUzV/Bm3DoIvr9O
- 8sBVan/6R+sCZioc1JZK9AcVmVtKxQWQbLDOuSHPn/AhMG+W5obmS4rnmAfwYuFHWFhI
- KKKbWN42nJY1k/KssoiZzM5VA98FCu+lKUBHmc7rAvU4p+4Y3z8IHuW1YsVNHFBS2Meu
- wOu7sWtsdCeKsw+9dyri0MMItmxzmb3jNhAQ75aBQCbqqTfcvMvqTsfoGR5gya1zSkXV
- P6CQ==
-X-Gm-Message-State: ABy/qLbTGND5sB3lZ00zHfSwuSt5M3u2B0gcrDowpAKHX/ll8+R7StUh
- b/6UMFETW2s+ubwgmCvuHm9T3fcWwsqk58BAgpg=
-X-Google-Smtp-Source: APBJJlEIhnQwoFDHuweIAHt2tJcWGI0d+r3I5wbhweuAT0TQly4d+VEILSYdnjVlMqhcbUSPWrZO+w==
-X-Received: by 2002:a17:903:41c9:b0:1b8:17e8:547e with SMTP id
- u9-20020a17090341c900b001b817e8547emr12196517ple.1.1690192002389; 
- Mon, 24 Jul 2023 02:46:42 -0700 (PDT)
+ bh=SZ4CyloeMnj8DJaX3jH++Kh0s8L9fcE8HheaL79+C9E=;
+ b=ZXAJwOapzY9MaKxVMwnSiHWBjC2t9ja4W/PHiAHXCz7fjCXGVTtzHnXEQ0bSkWrLfl
+ RuGpXDr2ZGa1bJHxqo/kb4u177haYew+xMQhX7R1W5x/HWoydJe2Nxv7x5drvTdToJVO
+ su36w0nvZTv5LCqpSfySm0b+a3wdbRIRbUwso/C4IsaXkx+OrYCUHIYzPCUM7OGikoZ/
+ dc7yVGDcTNLcKjXnUPsX2btqjdbCkm40UAyEeKUWQHw7jFUyNZ6cZCSYBtgNHtVGFRzz
+ BJSNu/aqLRvBFbGnpB5soBptlqvYB7ubOB8nAEKJdPOxhqu6vvppKuRfeFSsASmfS6fn
+ yc4g==
+X-Gm-Message-State: ABy/qLZ39tcqq+EHXvEryox8cnFYa8oNBdRJNi+OnHJw0fLDJ/Kfrbmj
+ lnU63poYn83bjS/pP9HZW+UQ9ydEuDzJEQ/xTpo=
+X-Google-Smtp-Source: APBJJlGdl4zR2tT8oeBRlnNa82kteJScCMEv7aXbUuimbAqUFJ617TPjzQL08XTMcGzg+wanNIE0AA==
+X-Received: by 2002:a17:902:ecce:b0:1b8:b55d:4cff with SMTP id
+ a14-20020a170902ecce00b001b8b55d4cffmr12423850plh.2.1690192122325; 
+ Mon, 24 Jul 2023 02:48:42 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.147])
  by smtp.gmail.com with ESMTPSA id
- d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.46.30
+ d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.48.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Jul 2023 02:46:42 -0700 (PDT)
+ Mon, 24 Jul 2023 02:48:41 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
-Date: Mon, 24 Jul 2023 17:43:15 +0800
-Message-Id: <20230724094354.90817-9-zhengqi.arch@bytedance.com>
+Date: Mon, 24 Jul 2023 17:43:25 +0800
+Message-Id: <20230724094354.90817-19-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qNse0-0004tq-Tc
-Subject: [f2fs-dev] [PATCH v2 08/47] erofs: dynamically allocate the
- erofs-shrinker
+X-Headers-End: 1qNseA-0004uA-9U
+Subject: [f2fs-dev] [PATCH v2 18/47] rcu: dynamically allocate the rcu-kfree
+ shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,50 +121,52 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use new APIs to dynamically allocate the erofs-shrinker.
+Use new APIs to dynamically allocate the rcu-kfree shrinker.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- fs/erofs/utils.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ kernel/rcu/tree.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/fs/erofs/utils.c b/fs/erofs/utils.c
-index cc6fb9e98899..389de06e1065 100644
---- a/fs/erofs/utils.c
-+++ b/fs/erofs/utils.c
-@@ -270,19 +270,25 @@ static unsigned long erofs_shrink_scan(struct shrinker *shrink,
- 	return freed;
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 1449cb69a0e0..d068ce3567fc 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -3445,12 +3445,7 @@ kfree_rcu_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+ 	return freed == 0 ? SHRINK_STOP : freed;
  }
  
--static struct shrinker erofs_shrinker_info = {
--	.scan_objects = erofs_shrink_scan,
--	.count_objects = erofs_shrink_count,
+-static struct shrinker kfree_rcu_shrinker = {
+-	.count_objects = kfree_rcu_shrink_count,
+-	.scan_objects = kfree_rcu_shrink_scan,
+-	.batch = 0,
 -	.seeks = DEFAULT_SEEKS,
 -};
-+static struct shrinker *erofs_shrinker_info;
++static struct shrinker *kfree_rcu_shrinker;
  
- int __init erofs_init_shrinker(void)
+ void __init kfree_rcu_scheduler_running(void)
  {
--	return register_shrinker(&erofs_shrinker_info, "erofs-shrinker");
-+	erofs_shrinker_info = shrinker_alloc(0, "erofs-shrinker");
-+	if (!erofs_shrinker_info)
-+		return -ENOMEM;
+@@ -4958,8 +4953,18 @@ static void __init kfree_rcu_batch_init(void)
+ 		INIT_DELAYED_WORK(&krcp->page_cache_work, fill_page_cache_func);
+ 		krcp->initialized = true;
+ 	}
+-	if (register_shrinker(&kfree_rcu_shrinker, "rcu-kfree"))
+-		pr_err("Failed to register kfree_rcu() shrinker!\n");
 +
-+	erofs_shrinker_info->count_objects = erofs_shrink_count;
-+	erofs_shrinker_info->scan_objects = erofs_shrink_scan;
-+	erofs_shrinker_info->seeks = DEFAULT_SEEKS;
++	kfree_rcu_shrinker = shrinker_alloc(0, "rcu-kfree");
++	if (!kfree_rcu_shrinker) {
++		pr_err("Failed to allocate kfree_rcu() shrinker!\n");
++		return;
++	}
 +
-+	shrinker_register(erofs_shrinker_info);
++	kfree_rcu_shrinker->count_objects = kfree_rcu_shrink_count;
++	kfree_rcu_shrinker->scan_objects = kfree_rcu_shrink_scan;
++	kfree_rcu_shrinker->seeks = DEFAULT_SEEKS;
 +
-+	return 0;
++	shrinker_register(kfree_rcu_shrinker);
  }
  
- void erofs_exit_shrinker(void)
- {
--	unregister_shrinker(&erofs_shrinker_info);
-+	shrinker_unregister(erofs_shrinker_info);
- }
- #endif	/* !CONFIG_EROFS_FS_ZIP */
+ void __init rcu_init(void)
 -- 
 2.30.2
 
