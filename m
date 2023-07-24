@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B3EC0C001DE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:17:14 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A1046C001B0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 10:17:47 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qNscr-0007Rm-Tb;
-	Mon, 24 Jul 2023 10:17:14 +0000
+	id 1qNsdQ-0008KL-BE;
+	Mon, 24 Jul 2023 10:17:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qNscq-0007Re-FM
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsdP-0008KD-Gk
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:17:12 +0000
+ Mon, 24 Jul 2023 10:17:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qReDjbjFz0xyiV7re04rgbBc1uubNDIxQ7QKRYWZSRs=; b=S2OIUQXa9+InPY0c59Tpt6U40A
- +1Q2d4csWT46B12ZB6+b2oOybT1WOtU9WxUIRhGMRR1l52f/d1Wr8QshUru7Chx9A+H+H8IkV444c
- 6LikvfpsDNQqi7ELbc3TsMaLbRgcxp0n67lhR/BR8l1sRGgaZlrdIYmaLPsNzutLxtNk=;
+ bh=qeaWGlGrVDaX2KSqXlTQooW5ZfkYFYzGyaP55BE4cnU=; b=hVFmmY8sxV6NBjcEeGfHem6bSn
+ cAtMCA9FNSKrymarrAMfxHCjwYpC254LrMzrY6tYCbYhFfufwSaGFPlP4Wk0SzUdUlrYNuBiJtDqF
+ efuCOa4TQYm5Fi71YXHYTnWQyYiCFRg+htcikQkGaDfmVedC+DYRLTt6Oo+4ln2FYRCM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,67 +33,67 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qReDjbjFz0xyiV7re04rgbBc1uubNDIxQ7QKRYWZSRs=; b=YHjibGpIblRGdc1bT7VM+v8Jhr
- j58n8VhMkaxMjoSQdbMcm/fzusOb08K3QZ96VRJ33VoVKktn2yAEPztxry4vfqxZabM95z4dd6w3J
- DC4g0L+JbMsvl53hJ/vABuZ4foyHlTM7PReZIZFcCMukKVLGIslHoIAlPY45TIfNYlP0=;
-Received: from mail-ot1-f42.google.com ([209.85.210.42])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=qeaWGlGrVDaX2KSqXlTQooW5ZfkYFYzGyaP55BE4cnU=; b=QSD+huF3AtB97NZNodlwvMOCg1
+ VXAKzbcvAcOcfwr0Kp19rwItrHkpv4nZH4/+SGmhYpKVxQL/TbLUQU2ZGw9tlF9Ogxn95aFp/zeAD
+ l+LqhjlfEWNSqbu/0mbkLhTbwmWjM3UHfN1hlZvwQ3WBWlr/o9ay1536HMc2FLIKFKXY=;
+Received: from mail-ua1-f49.google.com ([209.85.222.49])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qNsco-000Pxt-5z for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 10:17:10 +0000
-Received: by mail-ot1-f42.google.com with SMTP id
- 46e09a7af769-6b9cd6876bbso1013969a34.1
+ id 1qNsdN-0004si-OU for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jul 2023 10:17:46 +0000
+Received: by mail-ua1-f49.google.com with SMTP id
+ a1e0cc1a2514c-7948a10d116so316456241.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Jul 2023 03:17:10 -0700 (PDT)
+ Mon, 24 Jul 2023 03:17:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690193824; x=1690798624;
+ d=bytedance.com; s=google; t=1690193860; x=1690798660;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=qReDjbjFz0xyiV7re04rgbBc1uubNDIxQ7QKRYWZSRs=;
- b=Iw2Srj/RlW5R+/iqdPfB8R7l1DLatSpvzE7mRlDzBw7QKCasVXCHIh4UpQtjv36meA
- BuAq8VAFoyh3Kkvsuj6H7MtlH9XzP1KqlA68dsojVyIpTw4HOdM1nR9aYYLjwFM4VnRn
- oljjRbx6jbFIxPeAlrb6NyMV14FRBs7a28rMYVetipd8mi6K5C8+Kyz/s9XMdBzlcj8Q
- QwItDUdZR6HaEVr/awKgkcPyx3cOThH1SDB0+E4OwZYywTt0sjnXfFlt5ESNw6nESa1O
- 9BeDNI4Gq/f2PVmc9gr5cTwiwmCcu5IcwPr/tMdAij7uA5ync601IpcfQfvoguOhKsWn
- OgIQ==
+ bh=qeaWGlGrVDaX2KSqXlTQooW5ZfkYFYzGyaP55BE4cnU=;
+ b=hXpdRwx7x3ZiZXMeMxsLezGb9Ws/mESpRDDmUAlR+sFrPG92UP69KJthfrlQYDyoFa
+ SVs02ERMwEsrQLa2ev43NK+vkqnoFtIXA0eAAF3db7gk/ka/OwlkCoB3ka9sp3ftrt7d
+ gJx8l97/o3LxQkWbc5QRMdHD0fh1vvsPBes4J/bAVYuKEzVnoH94bwp5fInoA3RZeOpN
+ GZdqn1VHemfw91dB5trEkKffVGCcdGgESCp1tND7cdPiSmdZmoC7JcJ4+c6cv/erlgNk
+ ZgT6rBxcVjv/uouQM3D7IKDrU3kKAOfBEWp8Tt+oi6LKLLyNA23kv2YPENF72OzdW5zO
+ o7qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690193824; x=1690798624;
+ d=1e100.net; s=20221208; t=1690193860; x=1690798660;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=qReDjbjFz0xyiV7re04rgbBc1uubNDIxQ7QKRYWZSRs=;
- b=W0njgXZQOoLNxxZZUKXmFIc2U5iAFezcMys82HKyhN4c6HkPGcf2mIzMoN5JJHOV4y
- McDFtl956r90jDTux6LXZxZVdyjZlL9wotwJ6ZQjIgHSeLN0gSq5Y5CUDxMgsg3lyUfu
- wRJ/h4zLIKQotT5JM1x95hsJ5WLBvEvUja7QJ8uFkphDQWcnXcUqqS9RnUVsEf4HyeC0
- D918V+yPvf0Fzlrdw0eaUwyOl+l4VHzVfITJogPIa0iFi8omeV0BezJ1GIm4Sr/ISVNW
- 7mbdw7tr2eBFzxNbrR51gwFhfkVXy1ZvEvMuu2mBIga02sFnNisemBU6KN+R+zKNiS84
- ZlmQ==
-X-Gm-Message-State: ABy/qLZxX/6v9ogWPAxPJ5Td3+CF2+NsHbbPsAue5cKtOrgyZ9N+A6Xt
- QepTAUkI3rmMVGGLLZOCHDocW6BqlRUoC5VJoHQ=
-X-Google-Smtp-Source: APBJJlFmRr0YS7/80cQjb3Wv0/ryy4A2Bv0/hjBc48SsvJ3Rmt9/pUa2TTT24oRtgj6qJ02D1OEnuA==
-X-Received: by 2002:a17:902:dacf:b0:1b8:9215:9163 with SMTP id
- q15-20020a170902dacf00b001b892159163mr12197474plx.6.1690192074491; 
- Mon, 24 Jul 2023 02:47:54 -0700 (PDT)
+ bh=qeaWGlGrVDaX2KSqXlTQooW5ZfkYFYzGyaP55BE4cnU=;
+ b=Atz5lq+j+hjsHoVmmbjvxqI0vY2NNgBIQCTLYqo6Q7qrwnj+AuCpyrBn9nvrX3y3ur
+ Iasq4nO34n5JwuWx//JkmRkHi0R8qD7nXYSwHe9mSwqn6LQMLqoYL3oHAXDhTvw2O09x
+ mC5rVQglBsR0I8iL8VuCIuclXg97Ev5of17anvqZxHbl06+6AnYfYYU54Y+6uhi+l4t6
+ P7m84uILjppHsk7ua92dXG0ybyZXP7gfaECxTcIKTvWNwAYHAD7ap8ePLHnBPid9MnWm
+ VOf/4TNnhXYTDSmvuAdMah5ElmcNm7hc7q7YiG75N/qmwQurHy8E3515rvGRbKgBXNDX
+ oWvw==
+X-Gm-Message-State: ABy/qLYR0kXoO7d7X+aIz5wl7c84CSnipsq8SbQcSwDmJ1l9ZTSKMiWU
+ A4ToRI26cru04B/RwXEAXzXZ0EVJZzI9tMttTZo=
+X-Google-Smtp-Source: APBJJlEv/cxcU4CX85hgEplaAz1eX7+5tW063l2dwuRz+2PjFKejJ2gbKnkgXcFETviQG8sX+JGIQQ==
+X-Received: by 2002:a17:902:ecce:b0:1b8:b55d:4cff with SMTP id
+ a14-20020a170902ecce00b001b8b55d4cffmr12430579plh.2.1690192326485; 
+ Mon, 24 Jul 2023 02:52:06 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.147])
  by smtp.gmail.com with ESMTPSA id
- d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.47.42
+ d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.51.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Jul 2023 02:47:54 -0700 (PDT)
+ Mon, 24 Jul 2023 02:52:06 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
-Date: Mon, 24 Jul 2023 17:43:21 +0800
-Message-Id: <20230724094354.90817-15-zhengqi.arch@bytedance.com>
+Date: Mon, 24 Jul 2023 17:43:42 +0800
+Message-Id: <20230724094354.90817-36-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qNsco-000Pxt-5z
-Subject: [f2fs-dev] [PATCH v2 14/47] nfsd: dynamically allocate the
- nfsd-filecache shrinker
+X-Headers-End: 1qNsdN-0004si-OU
+Subject: [f2fs-dev] [PATCH v2 35/47] nfsd: dynamically allocate the
+ nfsd-reply shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -115,76 +115,119 @@ Cc: kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  linux-bcache@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>,
  linux-raid@vger.kernel.org, linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+ linux-xfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use new APIs to dynamically allocate the nfsd-filecache shrinker.
+In preparation for implementing lockless slab shrink, use new APIs to
+dynamically allocate the nfsd-reply shrinker, so that it can be freed
+asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
+read-side critical section when releasing the struct nfsd_net.
 
+Acked-by: Chuck Lever <chuck.lever@oracle.com>
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- fs/nfsd/filecache.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ fs/nfsd/netns.h    |  2 +-
+ fs/nfsd/nfscache.c | 31 ++++++++++++++++---------------
+ 2 files changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
-index ee9c923192e0..50216768d408 100644
---- a/fs/nfsd/filecache.c
-+++ b/fs/nfsd/filecache.c
-@@ -521,11 +521,7 @@ nfsd_file_lru_scan(struct shrinker *s, struct shrink_control *sc)
- 	return ret;
- }
+diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
+index f669444d5336..ab303a8b77d5 100644
+--- a/fs/nfsd/netns.h
++++ b/fs/nfsd/netns.h
+@@ -177,7 +177,7 @@ struct nfsd_net {
+ 	/* size of cache when we saw the longest hash chain */
+ 	unsigned int             longest_chain_cachesize;
  
--static struct shrinker	nfsd_file_shrinker = {
--	.scan_objects = nfsd_file_lru_scan,
--	.count_objects = nfsd_file_lru_count,
--	.seeks = 1,
--};
-+static struct shrinker *nfsd_file_shrinker;
+-	struct shrinker		nfsd_reply_cache_shrinker;
++	struct shrinker		*nfsd_reply_cache_shrinker;
  
- /**
-  * nfsd_file_cond_queue - conditionally unhash and queue a nfsd_file
-@@ -746,12 +742,18 @@ nfsd_file_cache_init(void)
- 		goto out_err;
- 	}
+ 	/* tracking server-to-server copy mounts */
+ 	spinlock_t              nfsd_ssc_lock;
+diff --git a/fs/nfsd/nfscache.c b/fs/nfsd/nfscache.c
+index 6eb3d7bdfaf3..9f0ab65e4125 100644
+--- a/fs/nfsd/nfscache.c
++++ b/fs/nfsd/nfscache.c
+@@ -200,26 +200,29 @@ int nfsd_reply_cache_init(struct nfsd_net *nn)
+ {
+ 	unsigned int hashsize;
+ 	unsigned int i;
+-	int status = 0;
  
--	ret = register_shrinker(&nfsd_file_shrinker, "nfsd-filecache");
--	if (ret) {
--		pr_err("nfsd: failed to register nfsd_file_shrinker: %d\n", ret);
-+	nfsd_file_shrinker = shrinker_alloc(0, "nfsd-filecache");
-+	if (!nfsd_file_shrinker) {
-+		pr_err("nfsd: failed to allocate nfsd_file_shrinker\n");
- 		goto out_lru;
- 	}
+ 	nn->max_drc_entries = nfsd_cache_size_limit();
+ 	atomic_set(&nn->num_drc_entries, 0);
+ 	hashsize = nfsd_hashsize(nn->max_drc_entries);
+ 	nn->maskbits = ilog2(hashsize);
  
-+	nfsd_file_shrinker->count_objects = nfsd_file_lru_count;
-+	nfsd_file_shrinker->scan_objects = nfsd_file_lru_scan;
-+	nfsd_file_shrinker->seeks = 1;
+-	nn->nfsd_reply_cache_shrinker.scan_objects = nfsd_reply_cache_scan;
+-	nn->nfsd_reply_cache_shrinker.count_objects = nfsd_reply_cache_count;
+-	nn->nfsd_reply_cache_shrinker.seeks = 1;
+-	status = register_shrinker(&nn->nfsd_reply_cache_shrinker,
+-				   "nfsd-reply:%s", nn->nfsd_name);
+-	if (status)
+-		return status;
+-
+ 	nn->drc_hashtbl = kvzalloc(array_size(hashsize,
+ 				sizeof(*nn->drc_hashtbl)), GFP_KERNEL);
+ 	if (!nn->drc_hashtbl)
++		return -ENOMEM;
 +
-+	shrinker_register(nfsd_file_shrinker);
++	nn->nfsd_reply_cache_shrinker = shrinker_alloc(0, "nfsd-reply:%s",
++						       nn->nfsd_name);
++	if (!nn->nfsd_reply_cache_shrinker)
+ 		goto out_shrinker;
+ 
++	nn->nfsd_reply_cache_shrinker->scan_objects = nfsd_reply_cache_scan;
++	nn->nfsd_reply_cache_shrinker->count_objects = nfsd_reply_cache_count;
++	nn->nfsd_reply_cache_shrinker->seeks = 1;
++	nn->nfsd_reply_cache_shrinker->private_data = nn;
 +
- 	ret = lease_register_notifier(&nfsd_file_lease_notifier);
- 	if (ret) {
- 		pr_err("nfsd: unable to register lease notifier: %d\n", ret);
-@@ -774,7 +776,7 @@ nfsd_file_cache_init(void)
- out_notifier:
- 	lease_unregister_notifier(&nfsd_file_lease_notifier);
++	shrinker_register(nn->nfsd_reply_cache_shrinker);
++
+ 	for (i = 0; i < hashsize; i++) {
+ 		INIT_LIST_HEAD(&nn->drc_hashtbl[i].lru_head);
+ 		spin_lock_init(&nn->drc_hashtbl[i].cache_lock);
+@@ -228,7 +231,7 @@ int nfsd_reply_cache_init(struct nfsd_net *nn)
+ 
+ 	return 0;
  out_shrinker:
--	unregister_shrinker(&nfsd_file_shrinker);
-+	shrinker_unregister(nfsd_file_shrinker);
- out_lru:
- 	list_lru_destroy(&nfsd_file_lru);
- out_err:
-@@ -891,7 +893,7 @@ nfsd_file_cache_shutdown(void)
- 		return;
+-	unregister_shrinker(&nn->nfsd_reply_cache_shrinker);
++	kvfree(nn->drc_hashtbl);
+ 	printk(KERN_ERR "nfsd: failed to allocate reply cache\n");
+ 	return -ENOMEM;
+ }
+@@ -238,7 +241,7 @@ void nfsd_reply_cache_shutdown(struct nfsd_net *nn)
+ 	struct nfsd_cacherep *rp;
+ 	unsigned int i;
  
- 	lease_unregister_notifier(&nfsd_file_lease_notifier);
--	unregister_shrinker(&nfsd_file_shrinker);
-+	shrinker_unregister(nfsd_file_shrinker);
- 	/*
- 	 * make sure all callers of nfsd_file_lru_cb are done before
- 	 * calling nfsd_file_cache_purge
+-	unregister_shrinker(&nn->nfsd_reply_cache_shrinker);
++	shrinker_unregister(nn->nfsd_reply_cache_shrinker);
+ 
+ 	for (i = 0; i < nn->drc_hashsize; i++) {
+ 		struct list_head *head = &nn->drc_hashtbl[i].lru_head;
+@@ -322,8 +325,7 @@ nfsd_prune_bucket_locked(struct nfsd_net *nn, struct nfsd_drc_bucket *b,
+ static unsigned long
+ nfsd_reply_cache_count(struct shrinker *shrink, struct shrink_control *sc)
+ {
+-	struct nfsd_net *nn = container_of(shrink,
+-				struct nfsd_net, nfsd_reply_cache_shrinker);
++	struct nfsd_net *nn = shrink->private_data;
+ 
+ 	return atomic_read(&nn->num_drc_entries);
+ }
+@@ -342,8 +344,7 @@ nfsd_reply_cache_count(struct shrinker *shrink, struct shrink_control *sc)
+ static unsigned long
+ nfsd_reply_cache_scan(struct shrinker *shrink, struct shrink_control *sc)
+ {
+-	struct nfsd_net *nn = container_of(shrink,
+-				struct nfsd_net, nfsd_reply_cache_shrinker);
++	struct nfsd_net *nn = shrink->private_data;
+ 	unsigned long freed = 0;
+ 	LIST_HEAD(dispose);
+ 	unsigned int i;
 -- 
 2.30.2
 
