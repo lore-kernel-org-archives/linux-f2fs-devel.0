@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EC542C001DE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 09:58:11 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DBB8FC001DE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 09:58:39 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qNsKR-0000SZ-HW;
-	Mon, 24 Jul 2023 09:58:11 +0000
+	id 1qNsKu-0007Hc-7F;
+	Mon, 24 Jul 2023 09:58:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsKQ-0000SL-Cc
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsKs-0007HS-Fs
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 09:58:10 +0000
+ Mon, 24 Jul 2023 09:58:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=guTIXae/kI3JPez6Art55JYiwmImAmg2GBvF3i236eo=; b=IpHmRqWVo3rbHeaPcah/P7ypwE
- TTDhI3K6l1fCdWt9E+mZ+VjQuyLJDsg46gPw8ScaNwP75tLitFkAcdquULm5EG9LVs20hYUdcI7Pi
- m0+5iBHV7nazlzYW1rdvdh3UjSwIq7bSB+hShjC1OgxObsvJLDzdrKnnowIx71nHvspc=;
+ bh=tx0FAlNIhhphM8SETf+9243EVHMgBeYNK+AXzmxIezQ=; b=Hjqi8EdDkIdMztHW1cbmDnw4di
+ T5PqZFP/DPUBkmcE14hCEqE2VjtCX+HYmqXNA4RDUD9ShxvfIoug1d00QGl2/XAUyuyMy6N18dBj0
+ X/8Qj+B+N4teIeYD2PpS+Tr4goJI+bdIDVGfQYhwHzH+sRHWLS6Ar5j4no99lzLmRRNo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,67 +33,67 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=guTIXae/kI3JPez6Art55JYiwmImAmg2GBvF3i236eo=; b=SUyaXQge0h4bukMmG+ZZkg0o7s
- CsQhcTl3R2iBZXjAxzSmwkxchBr7ozU0JjMRcRA2oQeVb4wcrFoi8J82/Mdl2dfHSUcDFcY39UKPw
- HMplgIcLqxaL3nzEBI6DTdiqS+HDU07eVrvVE1xvqhfuLwJSqj5CXXuAkbABFlDPFCRM=;
-Received: from mail-ot1-f53.google.com ([209.85.210.53])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=tx0FAlNIhhphM8SETf+9243EVHMgBeYNK+AXzmxIezQ=; b=BUkgnnNk/UpUMdrJIdMgsLOwDa
+ 2R/jNmlogboMEOVtw5ozvi5oOU5LyCIGTZLFVN8M4VxRYwZ2kxCkYiYqSihyYBGYD/CAwQTchCBxk
+ GqDOw3mYl6WVWBDNtk3vrp1JZ7KNYIrPFIFmLLhrIGYSPyCUt3TfqSOA0XhFxr43eT0U=;
+Received: from mail-ot1-f42.google.com ([209.85.210.42])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qNsKP-000Os5-Pm for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 09:58:10 +0000
-Received: by mail-ot1-f53.google.com with SMTP id
- 46e09a7af769-6b9de4b0c1aso639274a34.1
+ id 1qNsKq-0004Iu-Mm for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jul 2023 09:58:37 +0000
+Received: by mail-ot1-f42.google.com with SMTP id
+ 46e09a7af769-6b9cd6876bbso1010221a34.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Jul 2023 02:58:09 -0700 (PDT)
+ Mon, 24 Jul 2023 02:58:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690192684; x=1690797484;
+ d=bytedance.com; s=google; t=1690192711; x=1690797511;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=guTIXae/kI3JPez6Art55JYiwmImAmg2GBvF3i236eo=;
- b=L8VaXLuJlGPOo1sHsBvKWLRh+KBpn0yv2YFGdMhY9GCKhfE8cJUAvszAwCEl3sgOJM
- Z0y5Nl0wlFzaPmTWZm0qO8GLl39uRr0wyUzoURa4asALjsAlsY8UmtYujxbf22QSdpoP
- teZ4uoImn3eOfcaUrzuRJYaplsPKRnE1xZWUhhPxlyadEnfgRyAv44eeDoXbqp3Q8AGV
- /k4nGLDRGNFVQsnbGRdWIz3wuVNWIc58hGzVRwp1t/XgV0BnObXIWbY/ebyXpnERH2uI
- JKGviGtWsY2rc/LRbgbOlEGx1rk92vBtmUw3FRhkal3tnHTW8l+8yabEqCDoqImbq/Hy
- fiBg==
+ bh=tx0FAlNIhhphM8SETf+9243EVHMgBeYNK+AXzmxIezQ=;
+ b=K4VRAu0EAK7yODNfnj5AaQM8M79g4WLzcwzpyv7UcUWsN3FLdpuvwQiwHmj//D/p5o
+ 551cle2/9acDuaRGSoLpzIdEIBRoF3Ene3/PW3I2ayV99nCT1o/dE4Hib5qy4AwfUHPD
+ tNyuyc0YJLOwAda7NrZ5DL3CevEdVICuNMnJo4IoQLxE9vAAAwoYD2NjOxbHTjAw5jQi
+ H1mzB6bo1Bgo3gttzgzzVgT/JVrw/K6FeOGT9zhfj2eWbng7RcrK1BKSjdz/lF/iExsj
+ SAHUUG+Xg8YBzMStDtgUeCV1ZpbltWzuVGYAAGJZPcRjw9BIzJCQVbGkhze17UAD9Uga
+ XdTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690192684; x=1690797484;
+ d=1e100.net; s=20221208; t=1690192711; x=1690797511;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=guTIXae/kI3JPez6Art55JYiwmImAmg2GBvF3i236eo=;
- b=FYpEVFg0Dzc6fCrm5GxjnUkUnpISUJeYH0ClfFXlxFYIsJRuWV4q+OwJzHE+3CJxAS
- 1IvbbwywlL/e14qSZN4Uw2b29vnEDtDyBbTbhdSLHMWNBnS/5lcJ1MGeOHzIQ80HZa5I
- yk6C+ZvbBCZBx/MofC9g8fR7DxtLBWpEQk1QTVUdtAkxWxHTAeYjERR357OLsdqNltf2
- PF80EXSsENRlpEk5fv6wb9/Xo6/Qo6wwljFhTS7o4mzTF1UHbJcuC3KQuLNiuLq0/6O5
- UJAQWHXRFk6aulXQlNwzOXwOWMQOgQCxk8QmHqP6HdQ1CnGc/JB5T3w/ox46LHOm6Msl
- skgw==
-X-Gm-Message-State: ABy/qLaYsWNKClAJkWXLUkJIUEO9fVaF8p/wY07OwwZ/MoLUEBtcauI4
- lJ6ccrETFpd0PJZe7I2KAkzq8A==
-X-Google-Smtp-Source: APBJJlHJFdqX7YvzDE87sV65msd4BgjSJaSlmkLSDmv21X9cTIYDURxtd2XgOOda4P7o7DorEuOAJA==
-X-Received: by 2002:a17:903:41cd:b0:1bb:9e6e:a9f3 with SMTP id
- u13-20020a17090341cd00b001bb9e6ea9f3mr4119632ple.4.1690192350104; 
- Mon, 24 Jul 2023 02:52:30 -0700 (PDT)
+ bh=tx0FAlNIhhphM8SETf+9243EVHMgBeYNK+AXzmxIezQ=;
+ b=JhizPlKjX3vz+BrkmW6wZMYic61Nq+1APvKrL/a+Al77NLF+DPmj6QeUshypalx66f
+ 3IjWoEiVksTmPcN3quxPD9A0oIu/JrYffdqiWytO/kM8K5CAL9h6/vxVCFRNO8zbeNM+
+ RuFsrLInuyv3OrjDBYZtr4FkMaL0FZ0PhzPs35on2xRF1pdbXieimZM3tI4TzFAV22O4
+ bPD0UK+CDRFkx2+JTdeZFuZc6UXYYVUP9/kKhFAWlx2qgpRpI/OEHfKyNrh65Rx+jNvv
+ 7ssv1u7gtfgT7Hg8YjWNiIWMH/bjvfLCqutohrPIe6rKs/DNRqTZ/8mb83JPADr0B69m
+ odcg==
+X-Gm-Message-State: ABy/qLbK9Ms7FJZ+PjCX/kSga1B5drXgb2AqW9bGMpJ2XEvPcEds2zNU
+ uXsT5eNjj7epRbwkGOqOV8oCLmX0muODONe6Qx8=
+X-Google-Smtp-Source: APBJJlGW4+fw6ZDbsnwnWtlRY7yHkFW5IEHW5elDNTPh+ZvgkUhUSx4grfoYhobvAlLuy2pBiwekLg==
+X-Received: by 2002:a17:902:dacf:b0:1b8:9215:9163 with SMTP id
+ q15-20020a170902dacf00b001b892159163mr12201959plx.6.1690192218573; 
+ Mon, 24 Jul 2023 02:50:18 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.147])
  by smtp.gmail.com with ESMTPSA id
- d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.52.18
+ d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.50.07
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Jul 2023 02:52:29 -0700 (PDT)
+ Mon, 24 Jul 2023 02:50:18 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
-Date: Mon, 24 Jul 2023 17:43:44 +0800
-Message-Id: <20230724094354.90817-38-zhengqi.arch@bytedance.com>
+Date: Mon, 24 Jul 2023 17:43:33 +0800
+Message-Id: <20230724094354.90817-27-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qNsKP-000Os5-Pm
-Subject: [f2fs-dev] [PATCH v2 37/47] xfs: dynamically allocate the
- xfs-inodegc shrinker
+X-Headers-End: 1qNsKq-0004Iu-Mm
+Subject: [f2fs-dev] [PATCH v2 26/47] dm zoned: dynamically allocate the
+ dm-zoned-meta shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,103 +122,87 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 In preparation for implementing lockless slab shrink, use new APIs to
-dynamically allocate the xfs-inodegc shrinker, so that it can be freed
+dynamically allocate the dm-zoned-meta shrinker, so that it can be freed
 asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
-read-side critical section when releasing the struct xfs_mount.
+read-side critical section when releasing the struct dmz_metadata.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- fs/xfs/xfs_icache.c | 26 +++++++++++++++-----------
- fs/xfs/xfs_mount.c  |  4 ++--
- fs/xfs/xfs_mount.h  |  2 +-
- 3 files changed, 18 insertions(+), 14 deletions(-)
+ drivers/md/dm-zoned-metadata.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 453890942d9f..751c380afd5a 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -2225,8 +2225,7 @@ xfs_inodegc_shrinker_count(
- 	struct shrinker		*shrink,
- 	struct shrink_control	*sc)
- {
--	struct xfs_mount	*mp = container_of(shrink, struct xfs_mount,
--						   m_inodegc_shrinker);
-+	struct xfs_mount	*mp = shrink->private_data;
- 	struct xfs_inodegc	*gc;
- 	int			cpu;
+diff --git a/drivers/md/dm-zoned-metadata.c b/drivers/md/dm-zoned-metadata.c
+index 9d3cca8e3dc9..657f274e4e84 100644
+--- a/drivers/md/dm-zoned-metadata.c
++++ b/drivers/md/dm-zoned-metadata.c
+@@ -187,7 +187,7 @@ struct dmz_metadata {
+ 	struct rb_root		mblk_rbtree;
+ 	struct list_head	mblk_lru_list;
+ 	struct list_head	mblk_dirty_list;
+-	struct shrinker		mblk_shrinker;
++	struct shrinker		*mblk_shrinker;
  
-@@ -2247,8 +2246,7 @@ xfs_inodegc_shrinker_scan(
- 	struct shrinker		*shrink,
- 	struct shrink_control	*sc)
+ 	/* Zone allocation management */
+ 	struct mutex		map_lock;
+@@ -615,7 +615,7 @@ static unsigned long dmz_shrink_mblock_cache(struct dmz_metadata *zmd,
+ static unsigned long dmz_mblock_shrinker_count(struct shrinker *shrink,
+ 					       struct shrink_control *sc)
  {
--	struct xfs_mount	*mp = container_of(shrink, struct xfs_mount,
--						   m_inodegc_shrinker);
-+	struct xfs_mount	*mp = shrink->private_data;
- 	struct xfs_inodegc	*gc;
- 	int			cpu;
- 	bool			no_items = true;
-@@ -2284,13 +2282,19 @@ int
- xfs_inodegc_register_shrinker(
- 	struct xfs_mount	*mp)
- {
--	struct shrinker		*shrink = &mp->m_inodegc_shrinker;
-+	mp->m_inodegc_shrinker = shrinker_alloc(SHRINKER_NONSLAB,
-+						"xfs-inodegc:%s",
-+						mp->m_super->s_id);
-+	if (!mp->m_inodegc_shrinker)
-+		return -ENOMEM;
-+
-+	mp->m_inodegc_shrinker->count_objects = xfs_inodegc_shrinker_count;
-+	mp->m_inodegc_shrinker->scan_objects = xfs_inodegc_shrinker_scan;
-+	mp->m_inodegc_shrinker->seeks = 0;
-+	mp->m_inodegc_shrinker->batch = XFS_INODEGC_SHRINKER_BATCH;
-+	mp->m_inodegc_shrinker->private_data = mp;
+-	struct dmz_metadata *zmd = container_of(shrink, struct dmz_metadata, mblk_shrinker);
++	struct dmz_metadata *zmd = shrink->private_data;
  
--	shrink->count_objects = xfs_inodegc_shrinker_count;
--	shrink->scan_objects = xfs_inodegc_shrinker_scan;
--	shrink->seeks = 0;
--	shrink->flags = SHRINKER_NONSLAB;
--	shrink->batch = XFS_INODEGC_SHRINKER_BATCH;
-+	shrinker_register(mp->m_inodegc_shrinker);
- 
--	return register_shrinker(shrink, "xfs-inodegc:%s", mp->m_super->s_id);
-+	return 0;
+ 	return atomic_read(&zmd->nr_mblks);
  }
-diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-index fb87ffb48f7f..27c2d24797c9 100644
---- a/fs/xfs/xfs_mount.c
-+++ b/fs/xfs/xfs_mount.c
-@@ -1018,7 +1018,7 @@ xfs_mountfs(
-  out_log_dealloc:
- 	xfs_log_mount_cancel(mp);
-  out_inodegc_shrinker:
--	unregister_shrinker(&mp->m_inodegc_shrinker);
-+	shrinker_unregister(mp->m_inodegc_shrinker);
-  out_fail_wait:
- 	if (mp->m_logdev_targp && mp->m_logdev_targp != mp->m_ddev_targp)
- 		xfs_buftarg_drain(mp->m_logdev_targp);
-@@ -1100,7 +1100,7 @@ xfs_unmountfs(
- #if defined(DEBUG)
- 	xfs_errortag_clearall(mp);
- #endif
--	unregister_shrinker(&mp->m_inodegc_shrinker);
-+	shrinker_unregister(mp->m_inodegc_shrinker);
- 	xfs_free_perag(mp);
+@@ -626,7 +626,7 @@ static unsigned long dmz_mblock_shrinker_count(struct shrinker *shrink,
+ static unsigned long dmz_mblock_shrinker_scan(struct shrinker *shrink,
+ 					      struct shrink_control *sc)
+ {
+-	struct dmz_metadata *zmd = container_of(shrink, struct dmz_metadata, mblk_shrinker);
++	struct dmz_metadata *zmd = shrink->private_data;
+ 	unsigned long count;
  
- 	xfs_errortag_del(mp);
-diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-index e2866e7fa60c..562c294ca08e 100644
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -217,7 +217,7 @@ typedef struct xfs_mount {
- 	atomic_t		m_agirotor;	/* last ag dir inode alloced */
+ 	spin_lock(&zmd->mblk_lock);
+@@ -2936,19 +2936,23 @@ int dmz_ctr_metadata(struct dmz_dev *dev, int num_dev,
+ 	 */
+ 	zmd->min_nr_mblks = 2 + zmd->nr_map_blocks + zmd->zone_nr_bitmap_blocks * 16;
+ 	zmd->max_nr_mblks = zmd->min_nr_mblks + 512;
+-	zmd->mblk_shrinker.count_objects = dmz_mblock_shrinker_count;
+-	zmd->mblk_shrinker.scan_objects = dmz_mblock_shrinker_scan;
+-	zmd->mblk_shrinker.seeks = DEFAULT_SEEKS;
  
- 	/* Memory shrinker to throttle and reprioritize inodegc */
--	struct shrinker		m_inodegc_shrinker;
-+	struct shrinker		*m_inodegc_shrinker;
- 	/*
- 	 * Workqueue item so that we can coalesce multiple inode flush attempts
- 	 * into a single flush.
+ 	/* Metadata cache shrinker */
+-	ret = register_shrinker(&zmd->mblk_shrinker, "dm-zoned-meta:(%u:%u)",
+-				MAJOR(dev->bdev->bd_dev),
+-				MINOR(dev->bdev->bd_dev));
+-	if (ret) {
+-		dmz_zmd_err(zmd, "Register metadata cache shrinker failed");
++	zmd->mblk_shrinker = shrinker_alloc(0,  "dm-zoned-meta:(%u:%u)",
++					    MAJOR(dev->bdev->bd_dev),
++					    MINOR(dev->bdev->bd_dev));
++	if (!zmd->mblk_shrinker) {
++		dmz_zmd_err(zmd, "Allocate metadata cache shrinker failed");
+ 		goto err;
+ 	}
+ 
++	zmd->mblk_shrinker->count_objects = dmz_mblock_shrinker_count;
++	zmd->mblk_shrinker->scan_objects = dmz_mblock_shrinker_scan;
++	zmd->mblk_shrinker->seeks = DEFAULT_SEEKS;
++	zmd->mblk_shrinker->private_data = zmd;
++
++	shrinker_register(zmd->mblk_shrinker);
++
+ 	dmz_zmd_info(zmd, "DM-Zoned metadata version %d", zmd->sb_version);
+ 	for (i = 0; i < zmd->nr_devs; i++)
+ 		dmz_print_dev(zmd, i);
+@@ -2995,7 +2999,7 @@ int dmz_ctr_metadata(struct dmz_dev *dev, int num_dev,
+  */
+ void dmz_dtr_metadata(struct dmz_metadata *zmd)
+ {
+-	unregister_shrinker(&zmd->mblk_shrinker);
++	shrinker_unregister(zmd->mblk_shrinker);
+ 	dmz_cleanup_metadata(zmd);
+ 	kfree(zmd);
+ }
 -- 
 2.30.2
 
