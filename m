@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EAA86C001DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 09:58:04 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EC542C001DE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jul 2023 09:58:11 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qNsKK-0006zw-4J;
-	Mon, 24 Jul 2023 09:58:04 +0000
+	id 1qNsKR-0000SZ-HW;
+	Mon, 24 Jul 2023 09:58:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsKJ-0006zq-NO
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qNsKQ-0000SL-Cc
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 09:58:04 +0000
+ Mon, 24 Jul 2023 09:58:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZDFCq+3UkmhmTN0HM4/h2IKWPu86Pd5FvtdYemXQxRk=; b=Y4rRDjOzCzQWjoC0ec0NkM+YVc
- pkPi8juij1TYZkJXxLO2lcxyzx2D1mhEI28VjxBxXUHDNIBdDFfCDAPnxy/UYbBHT7GZFRewdBPD3
- peOC1Pi8DByzylyXwQn2zBZCBUmJf0wSGyntE/9LzzTh7CBc/boXVoPzXbG7GO6SIPq8=;
+ bh=guTIXae/kI3JPez6Art55JYiwmImAmg2GBvF3i236eo=; b=IpHmRqWVo3rbHeaPcah/P7ypwE
+ TTDhI3K6l1fCdWt9E+mZ+VjQuyLJDsg46gPw8ScaNwP75tLitFkAcdquULm5EG9LVs20hYUdcI7Pi
+ m0+5iBHV7nazlzYW1rdvdh3UjSwIq7bSB+hShjC1OgxObsvJLDzdrKnnowIx71nHvspc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,67 +33,67 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ZDFCq+3UkmhmTN0HM4/h2IKWPu86Pd5FvtdYemXQxRk=; b=er6lr/Q/MOKkaA8eSYE7W/wH+P
- eoUG52EIth95UeVkrvk0PS/E9AroJzK3kjbrxn4nbDX4YH3PAv+3Y3Tek8EUthGwqCKFkD0u6VxdM
- WjMZHIe/to8jD4Fa4cIrkczDbLYv5O7/RcI+A1iK9G7bs44D9B/0oczGEI1dDlB/1eJQ=;
-Received: from mail-ot1-f49.google.com ([209.85.210.49])
+ bh=guTIXae/kI3JPez6Art55JYiwmImAmg2GBvF3i236eo=; b=SUyaXQge0h4bukMmG+ZZkg0o7s
+ CsQhcTl3R2iBZXjAxzSmwkxchBr7ozU0JjMRcRA2oQeVb4wcrFoi8J82/Mdl2dfHSUcDFcY39UKPw
+ HMplgIcLqxaL3nzEBI6DTdiqS+HDU07eVrvVE1xvqhfuLwJSqj5CXXuAkbABFlDPFCRM=;
+Received: from mail-ot1-f53.google.com ([209.85.210.53])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qNsKJ-000Ori-JL for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jul 2023 09:58:04 +0000
-Received: by mail-ot1-f49.google.com with SMTP id
- 46e09a7af769-6b947f8269eso978137a34.0
+ id 1qNsKP-000Os5-Pm for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jul 2023 09:58:10 +0000
+Received: by mail-ot1-f53.google.com with SMTP id
+ 46e09a7af769-6b9de4b0c1aso639274a34.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Jul 2023 02:58:03 -0700 (PDT)
+ Mon, 24 Jul 2023 02:58:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690192678; x=1690797478;
+ d=bytedance.com; s=google; t=1690192684; x=1690797484;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ZDFCq+3UkmhmTN0HM4/h2IKWPu86Pd5FvtdYemXQxRk=;
- b=MXnEVX2t+jXOvaukySBy/A6abO9zKx/kzhg+Xt6rELTINSDiup+OPxLJOcutWrNl1y
- fF80j153t/KeKrw4t9ZF+0Z4/sku8Jis46ZrsobhAFnTdKH+wUF7m2ZrAyIYoPvZd3Sk
- G8qDjZ1gyed+JzRn75z8n5bgmZ7NpRZsIMTIKa2BbFO/oxydFXGSe9P1t7ZI8fNkVfSS
- Old0+qtS64jUvrPSkBSQDdra9RgRfVP4MciodY8rYVxCqa1P83Qm+7H40rgEbpTIhGus
- RFtLRNQk2FPmwRWYnFN29CnMObsUOJknKeHl6bQL6K/Dz/V8HW647XgB/iph3On3SOQ3
- POKg==
+ bh=guTIXae/kI3JPez6Art55JYiwmImAmg2GBvF3i236eo=;
+ b=L8VaXLuJlGPOo1sHsBvKWLRh+KBpn0yv2YFGdMhY9GCKhfE8cJUAvszAwCEl3sgOJM
+ Z0y5Nl0wlFzaPmTWZm0qO8GLl39uRr0wyUzoURa4asALjsAlsY8UmtYujxbf22QSdpoP
+ teZ4uoImn3eOfcaUrzuRJYaplsPKRnE1xZWUhhPxlyadEnfgRyAv44eeDoXbqp3Q8AGV
+ /k4nGLDRGNFVQsnbGRdWIz3wuVNWIc58hGzVRwp1t/XgV0BnObXIWbY/ebyXpnERH2uI
+ JKGviGtWsY2rc/LRbgbOlEGx1rk92vBtmUw3FRhkal3tnHTW8l+8yabEqCDoqImbq/Hy
+ fiBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690192678; x=1690797478;
+ d=1e100.net; s=20221208; t=1690192684; x=1690797484;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ZDFCq+3UkmhmTN0HM4/h2IKWPu86Pd5FvtdYemXQxRk=;
- b=S4FDGagq54uv+oA2wAuONs5FOldHUXJ5WD99rBHroYSQDzEBih20hyq4oFT4LnZoym
- +9gMC9brGp2kFSpH2BK5mpPpdJYaAmwMJ0IHzG9XQgBXolWCe/SHw/3CpfCZ5vYY5TpK
- JJuQVtPV3McMTueeNlsFKr8K77W3JfLK0GqnmSvSg7Szc5Q20IWvW2hdohm3VeQ66svw
- taeTBOIJiRQfqii43U1jSPV2aShAEiDTBU3bpn6LdeAseNslR02+D+KmBGoYSL2XMgFa
- /6VOCJg/o91ZuBsLdD0YeZ/BMDYVJN08whD/pnhMCNB4e+BOQYkcU+t/KD8mMlZ2BGtn
- lxFw==
-X-Gm-Message-State: ABy/qLaXAGBp/tcW0Rjj2MVKiuUj8mDED6FOUkasWO4JvN9JljPGRgn2
- 1HfRJP607thKzQleubCYeyt6Z2ffs+W2x7mKW1U=
-X-Google-Smtp-Source: APBJJlGR+n0mPlGVKvsXqmDpjqybpKJnY8gMKNhLgc/3jSHzBMUiGDHHAqX91CFo21fNITu34xNtfg==
-X-Received: by 2002:a17:902:ec8b:b0:1b3:d8ac:8db3 with SMTP id
- x11-20020a170902ec8b00b001b3d8ac8db3mr12344607plg.6.1690192242411; 
- Mon, 24 Jul 2023 02:50:42 -0700 (PDT)
+ bh=guTIXae/kI3JPez6Art55JYiwmImAmg2GBvF3i236eo=;
+ b=FYpEVFg0Dzc6fCrm5GxjnUkUnpISUJeYH0ClfFXlxFYIsJRuWV4q+OwJzHE+3CJxAS
+ 1IvbbwywlL/e14qSZN4Uw2b29vnEDtDyBbTbhdSLHMWNBnS/5lcJ1MGeOHzIQ80HZa5I
+ yk6C+ZvbBCZBx/MofC9g8fR7DxtLBWpEQk1QTVUdtAkxWxHTAeYjERR357OLsdqNltf2
+ PF80EXSsENRlpEk5fv6wb9/Xo6/Qo6wwljFhTS7o4mzTF1UHbJcuC3KQuLNiuLq0/6O5
+ UJAQWHXRFk6aulXQlNwzOXwOWMQOgQCxk8QmHqP6HdQ1CnGc/JB5T3w/ox46LHOm6Msl
+ skgw==
+X-Gm-Message-State: ABy/qLaYsWNKClAJkWXLUkJIUEO9fVaF8p/wY07OwwZ/MoLUEBtcauI4
+ lJ6ccrETFpd0PJZe7I2KAkzq8A==
+X-Google-Smtp-Source: APBJJlHJFdqX7YvzDE87sV65msd4BgjSJaSlmkLSDmv21X9cTIYDURxtd2XgOOda4P7o7DorEuOAJA==
+X-Received: by 2002:a17:903:41cd:b0:1bb:9e6e:a9f3 with SMTP id
+ u13-20020a17090341cd00b001bb9e6ea9f3mr4119632ple.4.1690192350104; 
+ Mon, 24 Jul 2023 02:52:30 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.147])
  by smtp.gmail.com with ESMTPSA id
- d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.50.31
+ d5-20020a170902c18500b001bb20380bf2sm8467233pld.13.2023.07.24.02.52.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Jul 2023 02:50:42 -0700 (PDT)
+ Mon, 24 Jul 2023 02:52:29 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
-Date: Mon, 24 Jul 2023 17:43:35 +0800
-Message-Id: <20230724094354.90817-29-zhengqi.arch@bytedance.com>
+Date: Mon, 24 Jul 2023 17:43:44 +0800
+Message-Id: <20230724094354.90817-38-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qNsKJ-000Ori-JL
-Subject: [f2fs-dev] [PATCH v2 28/47] bcache: dynamically allocate the
- md-bcache shrinker
+X-Headers-End: 1qNsKP-000Os5-Pm
+Subject: [f2fs-dev] [PATCH v2 37/47] xfs: dynamically allocate the
+ xfs-inodegc shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,104 +122,103 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 In preparation for implementing lockless slab shrink, use new APIs to
-dynamically allocate the md-bcache shrinker, so that it can be freed
+dynamically allocate the xfs-inodegc shrinker, so that it can be freed
 asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
-read-side critical section when releasing the struct cache_set.
+read-side critical section when releasing the struct xfs_mount.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- drivers/md/bcache/bcache.h |  2 +-
- drivers/md/bcache/btree.c  | 27 ++++++++++++++++-----------
- drivers/md/bcache/sysfs.c  |  3 ++-
- 3 files changed, 19 insertions(+), 13 deletions(-)
+ fs/xfs/xfs_icache.c | 26 +++++++++++++++-----------
+ fs/xfs/xfs_mount.c  |  4 ++--
+ fs/xfs/xfs_mount.h  |  2 +-
+ 3 files changed, 18 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 5a79bb3c272f..c622bc50f81b 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -541,7 +541,7 @@ struct cache_set {
- 	struct bio_set		bio_split;
- 
- 	/* For the btree cache */
--	struct shrinker		shrink;
-+	struct shrinker		*shrink;
- 
- 	/* For the btree cache and anything allocation related */
- 	struct mutex		bucket_lock;
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index fd121a61f17c..c176c7fc77d9 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -667,7 +667,7 @@ static int mca_reap(struct btree *b, unsigned int min_order, bool flush)
- static unsigned long bch_mca_scan(struct shrinker *shrink,
- 				  struct shrink_control *sc)
+diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+index 453890942d9f..751c380afd5a 100644
+--- a/fs/xfs/xfs_icache.c
++++ b/fs/xfs/xfs_icache.c
+@@ -2225,8 +2225,7 @@ xfs_inodegc_shrinker_count(
+ 	struct shrinker		*shrink,
+ 	struct shrink_control	*sc)
  {
--	struct cache_set *c = container_of(shrink, struct cache_set, shrink);
-+	struct cache_set *c = shrink->private_data;
- 	struct btree *b, *t;
- 	unsigned long i, nr = sc->nr_to_scan;
- 	unsigned long freed = 0;
-@@ -734,7 +734,7 @@ static unsigned long bch_mca_scan(struct shrinker *shrink,
- static unsigned long bch_mca_count(struct shrinker *shrink,
- 				   struct shrink_control *sc)
+-	struct xfs_mount	*mp = container_of(shrink, struct xfs_mount,
+-						   m_inodegc_shrinker);
++	struct xfs_mount	*mp = shrink->private_data;
+ 	struct xfs_inodegc	*gc;
+ 	int			cpu;
+ 
+@@ -2247,8 +2246,7 @@ xfs_inodegc_shrinker_scan(
+ 	struct shrinker		*shrink,
+ 	struct shrink_control	*sc)
  {
--	struct cache_set *c = container_of(shrink, struct cache_set, shrink);
-+	struct cache_set *c = shrink->private_data;
- 
- 	if (c->shrinker_disabled)
- 		return 0;
-@@ -752,8 +752,8 @@ void bch_btree_cache_free(struct cache_set *c)
- 
- 	closure_init_stack(&cl);
- 
--	if (c->shrink.list.next)
--		unregister_shrinker(&c->shrink);
-+	if (c->shrink)
-+		shrinker_unregister(c->shrink);
- 
- 	mutex_lock(&c->bucket_lock);
- 
-@@ -828,14 +828,19 @@ int bch_btree_cache_alloc(struct cache_set *c)
- 		c->verify_data = NULL;
- #endif
- 
--	c->shrink.count_objects = bch_mca_count;
--	c->shrink.scan_objects = bch_mca_scan;
--	c->shrink.seeks = 4;
--	c->shrink.batch = c->btree_pages * 2;
-+	c->shrink = shrinker_alloc(0, "md-bcache:%pU", c->set_uuid);
-+	if (!c->shrink) {
-+		pr_warn("bcache: %s: could not allocate shrinker\n", __func__);
+-	struct xfs_mount	*mp = container_of(shrink, struct xfs_mount,
+-						   m_inodegc_shrinker);
++	struct xfs_mount	*mp = shrink->private_data;
+ 	struct xfs_inodegc	*gc;
+ 	int			cpu;
+ 	bool			no_items = true;
+@@ -2284,13 +2282,19 @@ int
+ xfs_inodegc_register_shrinker(
+ 	struct xfs_mount	*mp)
+ {
+-	struct shrinker		*shrink = &mp->m_inodegc_shrinker;
++	mp->m_inodegc_shrinker = shrinker_alloc(SHRINKER_NONSLAB,
++						"xfs-inodegc:%s",
++						mp->m_super->s_id);
++	if (!mp->m_inodegc_shrinker)
 +		return -ENOMEM;
-+	}
 +
-+	c->shrink->count_objects = bch_mca_count;
-+	c->shrink->scan_objects = bch_mca_scan;
-+	c->shrink->seeks = 4;
-+	c->shrink->batch = c->btree_pages * 2;
-+	c->shrink->private_data = c;
++	mp->m_inodegc_shrinker->count_objects = xfs_inodegc_shrinker_count;
++	mp->m_inodegc_shrinker->scan_objects = xfs_inodegc_shrinker_scan;
++	mp->m_inodegc_shrinker->seeks = 0;
++	mp->m_inodegc_shrinker->batch = XFS_INODEGC_SHRINKER_BATCH;
++	mp->m_inodegc_shrinker->private_data = mp;
  
--	if (register_shrinker(&c->shrink, "md-bcache:%pU", c->set_uuid))
--		pr_warn("bcache: %s: could not register shrinker\n",
--				__func__);
-+	shrinker_register(c->shrink);
+-	shrink->count_objects = xfs_inodegc_shrinker_count;
+-	shrink->scan_objects = xfs_inodegc_shrinker_scan;
+-	shrink->seeks = 0;
+-	shrink->flags = SHRINKER_NONSLAB;
+-	shrink->batch = XFS_INODEGC_SHRINKER_BATCH;
++	shrinker_register(mp->m_inodegc_shrinker);
  
- 	return 0;
+-	return register_shrinker(shrink, "xfs-inodegc:%s", mp->m_super->s_id);
++	return 0;
  }
-diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-index 0e2c1880f60b..45d8af755de6 100644
---- a/drivers/md/bcache/sysfs.c
-+++ b/drivers/md/bcache/sysfs.c
-@@ -866,7 +866,8 @@ STORE(__bch_cache_set)
+diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+index fb87ffb48f7f..27c2d24797c9 100644
+--- a/fs/xfs/xfs_mount.c
++++ b/fs/xfs/xfs_mount.c
+@@ -1018,7 +1018,7 @@ xfs_mountfs(
+  out_log_dealloc:
+ 	xfs_log_mount_cancel(mp);
+  out_inodegc_shrinker:
+-	unregister_shrinker(&mp->m_inodegc_shrinker);
++	shrinker_unregister(mp->m_inodegc_shrinker);
+  out_fail_wait:
+ 	if (mp->m_logdev_targp && mp->m_logdev_targp != mp->m_ddev_targp)
+ 		xfs_buftarg_drain(mp->m_logdev_targp);
+@@ -1100,7 +1100,7 @@ xfs_unmountfs(
+ #if defined(DEBUG)
+ 	xfs_errortag_clearall(mp);
+ #endif
+-	unregister_shrinker(&mp->m_inodegc_shrinker);
++	shrinker_unregister(mp->m_inodegc_shrinker);
+ 	xfs_free_perag(mp);
  
- 		sc.gfp_mask = GFP_KERNEL;
- 		sc.nr_to_scan = strtoul_or_return(buf);
--		c->shrink.scan_objects(&c->shrink, &sc);
-+		if (c->shrink)
-+			c->shrink->scan_objects(c->shrink, &sc);
- 	}
+ 	xfs_errortag_del(mp);
+diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+index e2866e7fa60c..562c294ca08e 100644
+--- a/fs/xfs/xfs_mount.h
++++ b/fs/xfs/xfs_mount.h
+@@ -217,7 +217,7 @@ typedef struct xfs_mount {
+ 	atomic_t		m_agirotor;	/* last ag dir inode alloced */
  
- 	sysfs_strtoul_clamp(congested_read_threshold_us,
+ 	/* Memory shrinker to throttle and reprioritize inodegc */
+-	struct shrinker		m_inodegc_shrinker;
++	struct shrinker		*m_inodegc_shrinker;
+ 	/*
+ 	 * Workqueue item so that we can coalesce multiple inode flush attempts
+ 	 * into a single flush.
 -- 
 2.30.2
 
