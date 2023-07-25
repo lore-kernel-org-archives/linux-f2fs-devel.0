@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A39C6C04A6A
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jul 2023 09:20:35 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E6F9AC001DE
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jul 2023 09:22:49 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qOEDZ-0000io-Qi;
-	Tue, 25 Jul 2023 09:20:34 +0000
+	id 1qOEFk-0007qX-Ud;
+	Tue, 25 Jul 2023 09:22:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <muchun.song@linux.dev>) id 1qOEDZ-0000ii-76
+ (envelope-from <muchun.song@linux.dev>) id 1qOEFj-0007qR-Hx
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Jul 2023 09:20:34 +0000
+ Tue, 25 Jul 2023 09:22:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=To:References:Message-Id:Content-Transfer-Encoding:
  Cc:Date:In-Reply-To:From:Subject:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lWqqPzpNBtB6jTVVrWh0b/e9soljzkJiIrV3enhBysE=; b=m3/tPBa/8sw6EW++gBMKkkgoM5
- OFIznt0LDDhf0L1SbvL3KY1nfGUZFcs5LHrFi1r+yq4tJmdD5MdkVrb9akvqN5fGABCdB28zYTc6j
- T2NRTbgMtP3d5OIfzL0t9nJ7v4Wp+P4CK2dEyGY89yGWUMAO4S9y9XEiFqCgavyoPUGc=;
+ bh=O0aj+CEvUWLWW/lym+SjHnwm8OSi0vQ8fgtochDa6Vs=; b=IbCzmZZM5UtIXmM24WtXcd0Iib
+ W0Kp6slq6FuWEGwsm8PWFsQRJiVbWkLxAGtUDez4iq/keGruqny1InkaB58n9ZsWbleVQbLpnkoRi
+ l542DmQtsbXV0Q4HjwbGdqR+DrUomK/JoyNhklQFr0rAcGhnOWk2rTdfx2L7/ZZu3NdI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=To:References:Message-Id:Content-Transfer-Encoding:Cc:Date:In-Reply-To:
@@ -33,38 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=lWqqPzpNBtB6jTVVrWh0b/e9soljzkJiIrV3enhBysE=; b=FR+ZgDWQf8hogFL0GUNszxXYnH
- 9+hqhlzYTzrgFhd5tT6Pe+tMwzuSgxhxd8DoSFR2wCixewnXoGJmycrrKiWIQBfoYGtK18ovs56z1
- lNJCjgmDKODm49nZO78H+N3HhMolzNofTWfTwL4oj8+4bpc/Lo1ZAzV8R9egU2qabs1Y=;
-Received: from out-39.mta0.migadu.com ([91.218.175.39])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=O0aj+CEvUWLWW/lym+SjHnwm8OSi0vQ8fgtochDa6Vs=; b=Eo6voNSdtGuOZ1qB4fAsq22r/k
+ rWprTkJWz5UdHnsur6bZ23b7uHQWDZxvv1ZdTp3tDFw2qmxh0BEW2WVLcnfFcSsZrZ/6QuPEUuqTG
+ ieK8EHTIbx7hdA8JIlN52M8kEWTRCTb4XEKogHdLI15VSycREkZgYZjmm1EueoYuPBJM=;
+Received: from out-44.mta1.migadu.com ([95.215.58.44])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qOEDW-001f68-IM for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Jul 2023 09:20:34 +0000
+ id 1qOEFj-0006gs-8G for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Jul 2023 09:22:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
- t=1690276823;
+ t=1690276959;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=lWqqPzpNBtB6jTVVrWh0b/e9soljzkJiIrV3enhBysE=;
- b=hQXVvzFcrWWWpy9SLwyFzJJZuDADbBS2OdiYg60cVhz1X3iYVafxnHWqF9F5gbQE+t5rUv
- I46fSuLx9fxRRB/KaBl036o5sGpNNMaguRBPQls2fbyMfQnAsVHD21W1LE1DjorXmO7V65
- cgmVLn1Ua4w1+HIDSsYSdCmvQqociDo=
+ bh=O0aj+CEvUWLWW/lym+SjHnwm8OSi0vQ8fgtochDa6Vs=;
+ b=xJfsnq4tfri4+FrxQ/wgEMA3zFz0o0z0uW0gHHJCvckela5K3HUZXJd8znm8ohjnxlmbHS
+ uH4lNpUNfMnIh4HG6zSYXwQDD4QbiVOnWxcUq/Ckyge75DILepht+8WUJVUEtTuA6yQWPk
+ 2nBkRdUkFluXDihkXSSSRwQEBatV+pk=
 MIME-Version: 1.0
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and
  include these headers.
 From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <20230724094354.90817-7-zhengqi.arch@bytedance.com>
-Date: Tue, 25 Jul 2023 17:19:40 +0800
-Message-Id: <1A349AE9-C4B3-42EB-B2D6-018583CCB102@linux.dev>
+In-Reply-To: <20230724094354.90817-8-zhengqi.arch@bytedance.com>
+Date: Tue, 25 Jul 2023 17:22:00 +0800
+Message-Id: <CD39258F-AAA8-42A7-BBA9-6528A629B315@linux.dev>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
- <20230724094354.90817-7-zhengqi.arch@bytedance.com>
+ <20230724094354.90817-8-zhengqi.arch@bytedance.com>
 To: Qi Zheng <zhengqi.arch@bytedance.com>
 X-Migadu-Flow: FLOW_OUT
-X-Headers-End: 1qOEDW-001f68-IM
-Subject: Re: [f2fs-dev] [PATCH v2 06/47] drm/ttm: dynamically allocate the
- drm-ttm_pool shrinker
+X-Headers-End: 1qOEFj-0006gs-8G
+Subject: Re: [f2fs-dev] [PATCH v2 07/47] xenbus/backend: dynamically
+ allocate the xen-backend shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,7 +99,7 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 > On Jul 24, 2023, at 17:43, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
 > 
-> Use new APIs to dynamically allocate the drm-ttm_pool shrinker.
+> Use new APIs to dynamically allocate the xen-backend shrinker.
 > 
 > Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
