@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E374CC001E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Jul 2023 07:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 14464C41513
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Jul 2023 07:06:16 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qOYaG-0007HJ-M3;
-	Wed, 26 Jul 2023 07:05:20 +0000
+	id 1qOYb9-0007JV-58;
+	Wed, 26 Jul 2023 07:06:15 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <muchun.song@linux.dev>) id 1qOYaF-0007HD-1g
+ (envelope-from <muchun.song@linux.dev>) id 1qOYb7-0007JP-MN
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 26 Jul 2023 07:05:19 +0000
+ Wed, 26 Jul 2023 07:06:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=To:References:Message-Id:Content-Transfer-Encoding:
  Cc:Date:In-Reply-To:From:Subject:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KXYamYs9irq65yhoLRu1td82YuFMeMDqOuwaU+oDyHM=; b=KpJhAMhDhj01u8rXdwOBhmEtdi
- dmB7CM0K03a/rfcouJOz6uPeeaG1mhM26tXLfXoxw4rLiSLeqVJ+/UDiHJkJpG4XW9TYg+npQa3We
- 9JgoFNJb+D2KM3v62wZrmBJ3cxe1FgdPd1qOIkzs5m4dHSU9nNr5EXo1yzhPt1aCtMOk=;
+ bh=qP6Rsnsz9/WW+azSq2vXZZSPSLEyAJb/Z8peE40gYgo=; b=TIBf6xYsgp7jStZR+GEL7W4wf1
+ aObXyjsnhgibhhHOstWYtLNKamKyCEbo7ep9Imzcda4RUEwdMdS4i5s/pwmjK30HKRoVcYJzJdchm
+ YoFh38FLy46D0QXCOT4u1FgHX9uXQb11k5UMFiW0dyucbDlVnUbM7MmIpe4l8OwPo+5Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=To:References:Message-Id:Content-Transfer-Encoding:Cc:Date:In-Reply-To:
@@ -33,38 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=KXYamYs9irq65yhoLRu1td82YuFMeMDqOuwaU+oDyHM=; b=d58hqGKY62gpXp6l+LLWy1DDY3
- RvK+2DdgAJszMXQuq35Wzu1uB2WYijDRcEheMUuotdkiebqXbORY1Wo1Y6h2yFivTQOeiZuf2z/OD
- 0LK/ii7CWcdw+WWKcpsDciNeS0Ir6wesOxNUaqfo9VzD+KKEsKN4Ox2/5iXJazqdHGB0=;
-Received: from out-11.mta1.migadu.com ([95.215.58.11])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=qP6Rsnsz9/WW+azSq2vXZZSPSLEyAJb/Z8peE40gYgo=; b=eIB208vi76XK3ymVJn7snzLX+l
+ 2Kk6uFxxJZz4G1uUIQXDnpIBTLU4D6cm8H1jn8cr6hqUb18lpV4Iysx9i2BPh9e+dfDUiaLqFYggO
+ rEHG2ZVqNyIkAm2dUV/Dcbx2xSKFH5IXXryrg8QcUOsrW6mImfPNf/MXsMgWus8ptzy4=;
+Received: from out-1.mta1.migadu.com ([95.215.58.1])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qOYaB-002jkG-2U for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 26 Jul 2023 07:05:19 +0000
+ id 1qOYb6-0007TJ-EK for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 26 Jul 2023 07:06:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
- t=1690355108;
+ t=1690355165;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=KXYamYs9irq65yhoLRu1td82YuFMeMDqOuwaU+oDyHM=;
- b=USoqEnOQU6eM3+N9zIAHCDwhNC+8+UNIWLHIgerhexBlGJCaVmSRSO1wU4o3mjHNGYO9Rs
- DYRZMApHrS1Pjvb6NJH1mJ50Vk6voJ6kQPH4oorM80xUHt6/RAFEITooiN15iQlceLlIh+
- 2SDmjYt2iC3yWxkOb7vPU57vNB82awk=
+ bh=qP6Rsnsz9/WW+azSq2vXZZSPSLEyAJb/Z8peE40gYgo=;
+ b=vw9dtxapJigzblTo3NGynfsv+/mQB1bNWjl6Q4rEAUF9PXc7LtA8X1zBeOoHG+17byUEV5
+ rePGXHXPmPLeGOzGrE1/eqTwEdZgvDm17pzQtihT75dgxUeL35Q3sxqIVQekgyvV9/7bXJ
+ pXhSlPCuY6BK9bze6xRNH/dP9jDuXVc=
 MIME-Version: 1.0
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and
  include these headers.
 From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <20230724094354.90817-18-zhengqi.arch@bytedance.com>
-Date: Wed, 26 Jul 2023 15:04:30 +0800
-Message-Id: <3A164818-56E1-4EB4-A927-1B2D23B81659@linux.dev>
+In-Reply-To: <20230724094354.90817-19-zhengqi.arch@bytedance.com>
+Date: Wed, 26 Jul 2023 15:05:26 +0800
+Message-Id: <07191509-5186-487B-96D5-F859498CB93E@linux.dev>
 References: <20230724094354.90817-1-zhengqi.arch@bytedance.com>
- <20230724094354.90817-18-zhengqi.arch@bytedance.com>
+ <20230724094354.90817-19-zhengqi.arch@bytedance.com>
 To: Qi Zheng <zhengqi.arch@bytedance.com>
 X-Migadu-Flow: FLOW_OUT
-X-Headers-End: 1qOYaB-002jkG-2U
-Subject: Re: [f2fs-dev] [PATCH v2 17/47] rcu: dynamically allocate the
- rcu-lazy shrinker
+X-Headers-End: 1qOYb6-0007TJ-EK
+Subject: Re: [f2fs-dev] [PATCH v2 18/47] rcu: dynamically allocate the
+ rcu-kfree shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,33 +99,30 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 > On Jul 24, 2023, at 17:43, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
 > 
-> Use new APIs to dynamically allocate the rcu-lazy shrinker.
+> Use new APIs to dynamically allocate the rcu-kfree shrinker.
 > 
 > Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 > ---
-> kernel/rcu/tree_nocb.h | 19 +++++++++++--------
-> 1 file changed, 11 insertions(+), 8 deletions(-)
+> kernel/rcu/tree.c | 21 +++++++++++++--------
+> 1 file changed, 13 insertions(+), 8 deletions(-)
 > 
-> diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-> index 43229d2b0c44..919f17561733 100644
-> --- a/kernel/rcu/tree_nocb.h
-> +++ b/kernel/rcu/tree_nocb.h
-> @@ -1397,12 +1397,7 @@ lazy_rcu_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
-> return count ? count : SHRINK_STOP;
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 1449cb69a0e0..d068ce3567fc 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -3445,12 +3445,7 @@ kfree_rcu_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+> return freed == 0 ? SHRINK_STOP : freed;
 > }
 > 
-> -static struct shrinker lazy_rcu_shrinker = {
-> -	.count_objects = lazy_rcu_shrink_count,
-> -	.scan_objects = lazy_rcu_shrink_scan,
+> -static struct shrinker kfree_rcu_shrinker = {
+> -	.count_objects = kfree_rcu_shrink_count,
+> -	.scan_objects = kfree_rcu_shrink_scan,
 > -	.batch = 0,
 > -	.seeks = DEFAULT_SEEKS,
 > -};
-> +static struct shrinker *lazy_rcu_shrinker;
+> +static struct shrinker *kfree_rcu_shrinker;
 
-Seems there is no users of this variable, maybe we could drop
-this.
-
-
+Same as patch #17.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
