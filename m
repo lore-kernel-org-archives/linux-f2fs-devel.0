@@ -4,98 +4,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 88D50C41513
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 27 Jul 2023 10:32:38 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4CA6FC00528
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 27 Jul 2023 17:29:09 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qOyIO-0000dE-I6;
-	Thu, 27 Jul 2023 10:32:36 +0000
+	id 1qP4nR-0005oY-Ts;
+	Thu, 27 Jul 2023 17:29:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qOyIN-0000d8-1g
+ (envelope-from <krisman@suse.de>) id 1qP4nQ-0005oP-GH
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 27 Jul 2023 10:32:35 +0000
+ Thu, 27 Jul 2023 17:29:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4VsKgOIlO7JTMbURB3u+V7Qr/QzOpc+0Bt56AjhAYAM=; b=KZyNZSNe5YTjDnV7pXMijgSvMB
- me9er8i5N5kU76FO6Yk+WKlXaWrshZr57ZXenciPSV1n9+ctZtVyKpfPNCI8BSeNQWI65FoWLobrp
- 9MPqTKY+aJqo0Wx0JuKnu/vU999bp3TXSef6vtJNynI8gR5TyoU77dctqOik6emN/pvo=;
+ bh=Fw/NYpjSy+0nTfiVyMLNRxLrMsXbdIWyk8rDJ16hgls=; b=Ib9gqh4z6/4ZkKSC9ZUcn7IQke
+ pM5CsJvFDc7XX30HX4P9nyyvbH7b3nNPGd20Jpaz4cya4LHCpb1hqjAb28nwiAAnBzFK4dBsX5ym7
+ OmQZmD5SMAmVvGOwtPmkufwdUFdBhiTHIB9ud8Er7XVKYUlCfIjVePCE8X5R/dKoBWg4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=4VsKgOIlO7JTMbURB3u+V7Qr/QzOpc+0Bt56AjhAYAM=; b=dUHuP1KQz+VobiTG4rgDuN1FiB
- dQr3nWB6Y54Y+dOUPartE8/P4jFMULgzlZQzc61EkW3hh+4ZZmWoVWMZsGMlw6bZAGpE/NlsCZeaV
- DeXiByLcV/smNCsYZ3Z4t0NLTzKPHtBbpCTw9M5Qf0BJuUa1aKZtpRk3BuACFEyfbhqI=;
-Received: from mail-pj1-f54.google.com ([209.85.216.54])
+ bh=Fw/NYpjSy+0nTfiVyMLNRxLrMsXbdIWyk8rDJ16hgls=; b=FuBCkQ/xVPYY7xHYp7Y4kgMjL5
+ z+Mr7BddQ0flWuh2116HGvE4DFYtF1+Ne+dI9BdiDkeG7AeAAA9Gg+pt4rbSnT/L4uxt42j7p5gtm
+ UQWCGTs/g00P1K34zu0o5xTGMnTW4B39OAp/Fc8ShW4h6ab69F6Kez7J1gMLBY2J/An8=;
+Received: from smtp-out1.suse.de ([195.135.220.28])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qOyIJ-004TUS-8f for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 27 Jul 2023 10:32:35 +0000
-Received: by mail-pj1-f54.google.com with SMTP id
- 98e67ed59e1d1-2659b1113c2so160331a91.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 27 Jul 2023 03:32:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1690453945; x=1691058745;
- h=content-transfer-encoding:in-reply-to:from:references:cc:to
- :content-language:subject:user-agent:mime-version:date:message-id
- :from:to:cc:subject:date:message-id:reply-to;
- bh=4VsKgOIlO7JTMbURB3u+V7Qr/QzOpc+0Bt56AjhAYAM=;
- b=Zr/NhsMbDbdIdSqoueTQTw00LusmUmyLrdR7MeDx+ZO5Q+75jdmzv373GL0Ee5CtKr
- W6fluKiuFJCg5ZU3kW0Km101UvphMU1vBCY7hDEO6TFqab4XzqrIV8fVDPR2Owpqim7U
- N3OX4eAxVQVjc5z6Zvv7YweV9TAIgzv2mVUZoaytYD45Z4tHHiC7Kn023GaYmi5v6RKy
- g9n+r/2KPb5qfD2ZK/MDUQIwCLsfUVl7c4q/2XRu1uefpNinWMEwlZLohyik+zojbFUF
- urJtl81vW3ulTBjRT5ht+WLfC03kh8PaMNuzZ2kESl6uu5dT49u0KrVoAN4kKuQ8SPSD
- k2iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1690453945; x=1691058745;
- h=content-transfer-encoding:in-reply-to:from:references:cc:to
- :content-language:subject:user-agent:mime-version:date:message-id
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=4VsKgOIlO7JTMbURB3u+V7Qr/QzOpc+0Bt56AjhAYAM=;
- b=QTIDKhg/3sXbw/Ka5mqblTVr+Z0/L6tT3SBFjTTK8AAyxeVqJoxcWmaxr+DWMkZRnO
- HGGO+zIbGhDNghXJHUb4ca1p+4aM7BxGaDLNiPcwzdYRjAHBkvyDHIaKv042ZCgkge9f
- Zf+Px4Jqjj9Z3gfdIfDHSEg3C2JLMibJkauVwfqrvCZcqaENoVq584xaN2Sc9blNxEZ0
- j2Jc+L7hprcJ8vh/DJHSxsjZCOPJx6a2VPLEOMTF2n6VQI/JqqX9mkGgrqgmcqC03qlH
- 1NU0wfr5U+nn+UW0+llBruzMHsrVFOfNlqm2Nj0WrNV04GjR45DTtAU95/j7oM5GH0Bp
- R7+g==
-X-Gm-Message-State: ABy/qLbYu0gLFi4qwnSQ7PcvECJwqCOjQL5BwDxnORViICWe9sqS8iRw
- +44D8D08+44KNYnrTAy9XaJ3rg==
-X-Google-Smtp-Source: APBJJlGmzPZn88CMJAqpsojyTb97uikW28yo5O3pi8rH8SDlSH8BwjASuoOudfeGFyxgCSRxAf0mLA==
-X-Received: by 2002:a17:90a:1b06:b0:263:2312:60c2 with SMTP id
- q6-20020a17090a1b0600b00263231260c2mr4299433pjq.3.1690453945653; 
- Thu, 27 Jul 2023 03:32:25 -0700 (PDT)
-Received: from [10.70.252.135] ([203.208.167.147])
- by smtp.gmail.com with ESMTPSA id
- 8-20020a17090a018800b0026309d57724sm2755058pjc.39.2023.07.27.03.32.13
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 27 Jul 2023 03:32:25 -0700 (PDT)
-Message-ID: <cc819e13-cb25-ddaa-e0e3-7328f5ea3a4f@bytedance.com>
-Date: Thu, 27 Jul 2023 18:32:10 +0800
+ id 1qP4nN-004oJn-7l for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 27 Jul 2023 17:29:05 +0000
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+ (No client certificate requested)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 5124221A9B;
+ Thu, 27 Jul 2023 17:28:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+ t=1690478931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=Fw/NYpjSy+0nTfiVyMLNRxLrMsXbdIWyk8rDJ16hgls=;
+ b=u8HWGzcK3YEQ8BuWy1kNg7F+QEuwZUtN2Jdyqo7p6n31i9vu9BK/slAL+iN7FG0VluMr/1
+ doYfJF0VnQkahJyvgp2T8DrB0HFAydmtrMD5zPB+jjF2IH8B72XmZ72dACQOAgtmy780H7
+ JCu/AS7yl7hBLHESPkGTGIJq8VoxByA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+ s=susede2_ed25519; t=1690478931;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=Fw/NYpjSy+0nTfiVyMLNRxLrMsXbdIWyk8rDJ16hgls=;
+ b=1WuPKiFIfsKawmQAZnWIYNFRdcD6uuDpx3+xHoCRgK2ctdPkefDwOPN91/axvzOPuiWS+7
+ L6wJCyvsiKyg/CBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+ (No client certificate requested)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1972413902;
+ Thu, 27 Jul 2023 17:28:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+ by imap2.suse-dmz.suse.de with ESMTPSA id LqqFAFOpwmTGaAAAMHmgww
+ (envelope-from <krisman@suse.de>); Thu, 27 Jul 2023 17:28:51 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
+ ebiggers@kernel.org, jaegeuk@kernel.org
+Date: Thu, 27 Jul 2023 13:28:38 -0400
+Message-ID: <20230727172843.20542-3-krisman@suse.de>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230727172843.20542-1-krisman@suse.de>
+References: <20230727172843.20542-1-krisman@suse.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.12.0
-Content-Language: en-US
-To: Damien Le Moal <dlemoal@kernel.org>
-References: <20230727080502.77895-1-zhengqi.arch@bytedance.com>
- <20230727080502.77895-29-zhengqi.arch@bytedance.com>
- <baaf7de4-9a0e-b953-2b6a-46e60c415614@kernel.org>
- <56ee1d92-28ee-81cb-9c41-6ca7ea6556b0@bytedance.com>
- <ba0868b2-9f90-3d81-1c91-8810057fb3ce@kernel.org>
-In-Reply-To: <ba0868b2-9f90-3d81-1c91-8810057fb3ce@kernel.org>
-X-Headers-End: 1qOyIJ-004TUS-8f
-Subject: Re: [f2fs-dev] [PATCH v3 28/49] dm zoned: dynamically allocate the
- dm-zoned-meta shrinker
+X-Headers-End: 1qP4nN-004oJn-7l
+Subject: [f2fs-dev] [PATCH v4 2/7] fs: Add DCACHE_CASEFOLDED_NAME flag
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -107,53 +96,82 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Qi Zheng via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: kvm@vger.kernel.org, djwong@kernel.org, roman.gushchin@linux.dev,
- david@fromorbit.com, dri-devel@lists.freedesktop.org,
- virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
- dm-devel@redhat.com, linux-mtd@lists.infradead.org, cel@kernel.org,
- x86@kernel.org, steven.price@arm.com, cluster-devel@redhat.com,
- xen-devel@lists.xenproject.org, linux-ext4@vger.kernel.org, paulmck@kernel.org,
- linux-arm-msm@vger.kernel.org, brauner@kernel.org, rcu@vger.kernel.org,
- linux-bcache@vger.kernel.org, Muchun Song <songmuchun@bytedance.com>,
- yujie.liu@intel.com, vbabka@suse.cz, linux-raid@vger.kernel.org,
- linux-nfs@vger.kernel.org, tytso@mit.edu, netdev@vger.kernel.org,
- muchun.song@linux.dev, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- senozhatsky@chromium.org, gregkh@linuxfoundation.org,
- linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
- linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org, tkhai@ya.ru
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Cc: linux-fsdevel@vger.kernel.org, Gabriel Krisman Bertazi <krisman@suse.de>,
+ linux-ext4@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.com>,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-CgpPbiAyMDIzLzcvMjcgMTg6MjAsIERhbWllbiBMZSBNb2FsIHdyb3RlOgo+IE9uIDcvMjcvMjMg
-MTc6NTUsIFFpIFpoZW5nIHdyb3RlOgo+Pj4+ICDCoMKgwqDCoMKgwqDCoMKgwqAgZ290byBlcnI7
-Cj4+Pj4gIMKgwqDCoMKgwqAgfQo+Pj4+ICDCoCArwqDCoMKgIHptZC0+bWJsa19zaHJpbmtlci0+
-Y291bnRfb2JqZWN0cyA9IGRtel9tYmxvY2tfc2hyaW5rZXJfY291bnQ7Cj4+Pj4gK8KgwqDCoCB6
-bWQtPm1ibGtfc2hyaW5rZXItPnNjYW5fb2JqZWN0cyA9IGRtel9tYmxvY2tfc2hyaW5rZXJfc2Nh
-bjsKPj4+PiArwqDCoMKgIHptZC0+bWJsa19zaHJpbmtlci0+c2Vla3MgPSBERUZBVUxUX1NFRUtT
-Owo+Pj4+ICvCoMKgwqAgem1kLT5tYmxrX3Nocmlua2VyLT5wcml2YXRlX2RhdGEgPSB6bWQ7Cj4+
-Pj4gKwo+Pj4+ICvCoMKgwqAgc2hyaW5rZXJfcmVnaXN0ZXIoem1kLT5tYmxrX3Nocmlua2VyKTsK
-Pj4+Cj4+PiBJIGZhaWwgdG8gc2VlIGhvdyB0aGlzIG5ldyBzaHJpbmtlciBBUEkgaXMgYmV0dGVy
-Li4uIFdoeSBpc24ndCB0aGVyZSBhCj4+PiBzaHJpbmtlcl9hbGxvY19hbmRfcmVnaXN0ZXIoKSBm
-dW5jdGlvbiA/IFRoYXQgd291bGQgYXZvaWQgYWRkaW5nIGFsbCB0aGlzIGNvZGUKPj4+IGFsbCBv
-dmVyIHRoZSBwbGFjZSBhcyB0aGUgbmV3IEFQSSBjYWxsIHdvdWxkIGJlIHZlcnkgc2ltaWxhciB0
-byB0aGUgY3VycmVudAo+Pj4gc2hyaW5rZXJfcmVnaXN0ZXIoKSBjYWxsIHdpdGggc3RhdGljIGFs
-bG9jYXRpb24uCj4+Cj4+IEluIHNvbWUgcmVnaXN0cmF0aW9uIHNjZW5hcmlvcywgbWVtb3J5IG5l
-ZWRzIHRvIGJlIGFsbG9jYXRlZCBpbiBhZHZhbmNlLgo+PiBTbyB3ZSBjb250aW51ZSB0byB1c2Ug
-dGhlIHByZXZpb3VzIHByZWFsbG9jL3JlZ2lzdGVyX3ByZXBhcmVkKCkKPj4gYWxnb3JpdGhtLiBU
-aGUgc2hyaW5rZXJfYWxsb2NfYW5kX3JlZ2lzdGVyKCkgaXMganVzdCBhIGhlbHBlciBmdW5jdGlv
-bgo+PiB0aGF0IGNvbWJpbmVzIHRoZSB0d28sIGFuZCB0aGlzIGluY3JlYXNlcyB0aGUgbnVtYmVy
-IG9mIEFQSXMgdGhhdAo+PiBzaHJpbmtlciBleHBvc2VzIHRvIHRoZSBvdXRzaWRlLCBzbyBJIGNo
-b29zZSBub3QgdG8gYWRkIHRoaXMgaGVscGVyLgo+IAo+IEFuZCB0aGF0IHJlc3VsdHMgaW4gbW9y
-ZSBjb2RlIGluIG1hbnkgcGxhY2VzIGluc3RlYWQgb2YgbGVzcyBjb2RlICsgYSBzaW1wbGUKPiBp
-bmxpbmUgaGVscGVyIGluIHRoZSBzaHJpbmtlciBoZWFkZXIgZmlsZS4uLiBTbyBub3QgYWRkaW5n
-IHRoYXQgc3VwZXIgc2ltcGxlCgpJdCBhbHNvIG5lZWRzIHRvIGJlIGV4cG9ydGVkIHRvIHRoZSBk
-cml2ZXIgZm9yIHVzZS4KCj4gaGVscGVyIGlzIG5vdCBleGFjdGx5IHRoZSBiZXN0IGNob2ljZSBp
-biBteSBvcGluaW9uLgoKSG0sIGVpdGhlciBvbmUgaXMgZmluZSBmb3IgbWUuIElmIG5vIG9uZSBl
-bHNlIG9iamVjdHMsIEkgY2FuIGFkZCB0aGlzCmhlbHBlci4gOykKCj4gCgoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWls
-aW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9s
-aXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+From: Gabriel Krisman Bertazi <krisman@collabora.com>
+
+This flag marks a negative or positive dentry as being created after a
+case-insensitive lookup operation.  It is useful to differentiate
+dentries this way to detect whether the negative dentry can be trusted
+during a case-insensitive lookup.
+
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+
+---
+Changes since v2:
+  -  Rename DCACHE_CASEFOLD_LOOKUP -> DCACHE_CASEFOLDED_NAME (Eric)
+---
+ fs/dcache.c            | 8 ++++++++
+ include/linux/dcache.h | 8 ++++++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 98521862e58a..5791489b589f 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1958,6 +1958,14 @@ void d_set_fallthru(struct dentry *dentry)
+ }
+ EXPORT_SYMBOL(d_set_fallthru);
+ 
++void d_set_casefold_lookup(struct dentry *dentry)
++{
++	spin_lock(&dentry->d_lock);
++	dentry->d_flags |= DCACHE_CASEFOLDED_NAME;
++	spin_unlock(&dentry->d_lock);
++}
++EXPORT_SYMBOL(d_set_casefold_lookup);
++
+ static unsigned d_flags_for_inode(struct inode *inode)
+ {
+ 	unsigned add_flags = DCACHE_REGULAR_TYPE;
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index b6188f2e8950..14aa0255bd04 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -209,6 +209,7 @@ struct dentry_operations {
+ #define DCACHE_FALLTHRU			0x01000000 /* Fall through to lower layer */
+ #define DCACHE_NOKEY_NAME		0x02000000 /* Encrypted name encoded without key */
+ #define DCACHE_OP_REAL			0x04000000
++#define DCACHE_CASEFOLDED_NAME		0x08000000 /* Dentry comes from a casefold directory */
+ 
+ #define DCACHE_PAR_LOOKUP		0x10000000 /* being looked up (with parent locked shared) */
+ #define DCACHE_DENTRY_CURSOR		0x20000000
+@@ -497,6 +498,13 @@ static inline bool d_is_fallthru(const struct dentry *dentry)
+ 	return dentry->d_flags & DCACHE_FALLTHRU;
+ }
+ 
++extern void d_set_casefold_lookup(struct dentry *dentry);
++
++static inline bool d_is_casefold_lookup(const struct dentry *dentry)
++{
++	return dentry->d_flags & DCACHE_CASEFOLDED_NAME;
++}
++
+ 
+ extern int sysctl_vfs_cache_pressure;
+ 
+-- 
+2.41.0
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
