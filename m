@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6A6F4C001DC
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 29 Jul 2023 04:34:33 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4F07FC001DC
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 29 Jul 2023 04:52:08 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qPbex-0002B7-PZ;
-	Sat, 29 Jul 2023 04:34:32 +0000
+	id 1qPbvy-0003OL-KQ;
+	Sat, 29 Jul 2023 04:52:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1qPbew-0002B1-M4
+ (envelope-from <ebiggers@kernel.org>) id 1qPbvx-0003OE-6k
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 29 Jul 2023 04:34:31 +0000
+ Sat, 29 Jul 2023 04:52:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3AUsvTueriGvbombNj0OdNfmPYeyzOGl16zWi9DCfCs=; b=EnoJKBOQivUyo0yi7HNQcpp3b+
- LjtpKJHQUJyclawNjiTBzEb3D9nhVhaqHTcNRidX9LdB0yLp+ZMFqrM89cRdG9X44Je74cMu1rmsL
- 2M6sbgRBN3byRRk3y517w+DWgecDFIP8QKqgIPge7hc3zzpZRDVCk22fLkLmuXcgCJ0A=;
+ bh=82uhWJod7lIIaCNsKBPhvP9wNUVbXByQvSeS4aiYBoI=; b=DtLDWCVgbZ7eh89l0A1Y4SeZnX
+ RJwxjJ8As8J36D5jfA20BOxyak+XTtUTzJbZgxu4+jH9cidrJvxSErU3ZN64UfQmvjEiti5Ttxg2E
+ q8ABSQI2am7y48hJ4Ud4W4S7VpzyHPXr2GLxw6Uc0gqU4UOHUV1bPxw2jhct4oMZhWRg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,43 +33,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=3AUsvTueriGvbombNj0OdNfmPYeyzOGl16zWi9DCfCs=; b=hl6IKxGz7V6vxCVGXcwFrRLbja
- dOwXytR1d9KWTcQUVTIwUUDAbjNZILUBCr36MtBEsqxDh6eMQokeUphkjxS8j0ymxibQBtdle6Q0Q
- VLxdQi29vlpJGFPMYJ/0uyJ6y+qOhvbjpb1fpukH/C6VpfnKeU+ewSO9tSdgcfNKPH+U=;
+ bh=82uhWJod7lIIaCNsKBPhvP9wNUVbXByQvSeS4aiYBoI=; b=cQo8dDhAWlzbCTFeEt5QsQC0uE
+ XNCkf8D3YHD+4vq1TVkz9WVel2Xguhw3/XmquRSPkKj3z3ccakEcgXSiQJ0qldd7gW/oe0OxkBNFC
+ X+BoXOcfHaDdXVof1yM9mhU0U0QBVmGpywAGUtyADetz3OR1/yeDj5m1Mn9Exh5sZeeA=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qPbew-0005iQ-Dl for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 29 Jul 2023 04:34:31 +0000
+ id 1qPbvw-0006Fb-KT for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 29 Jul 2023 04:52:05 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id B573E60C1C;
- Sat, 29 Jul 2023 04:34:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C35BAC433C8;
- Sat, 29 Jul 2023 04:34:23 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 107066009E;
+ Sat, 29 Jul 2023 04:51:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A0C6C433C8;
+ Sat, 29 Jul 2023 04:51:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1690605264;
- bh=kreUmZhVx1mtOQtL4BLyEky6B76tt7CikJVFHDwTUDM=;
+ s=k20201202; t=1690606318;
+ bh=8CzHdaD4e57PvnCBD6zGsTCAxTvP8AnAGmWTWStQ05A=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=E3ACFzB5JU4CZFIy3kz5qW/uEJymTZKy9b8a0ZW6k16Rv+cJORCna0dpWt/V/2PIN
- CcGK8y6VM1KgA2fU/WGBEhbjCepAo7/4KzC268LgpvYlL91cuzE0KN7I1W2BC6o0HK
- 69PyzjLspVEBL2ZJ1C83qA4a8scAJXxGtATEH+OP7dTsG4F9GIsrEbEHxUysLaMMjG
- ximW/8wk6s2jgrpkrPgeQWZ+sPVT3ToqMYGOMc8zhNvDc3KA6c+wbhCBiTg5x8tnTi
- ST7BFkCgusvLK0zV0tIF9vbJv8eowSdcQVADWu44x9Dnc5Qy2NbWf6bSJrJaU4zE3b
- jdumDe3n3xakQ==
-Date: Fri, 28 Jul 2023 21:34:22 -0700
+ b=QUfHkctW5jrZ5oRfrm5BWOp99D4FhHHJ5FF3U/Cbwi6M4KINBV3OH7k0lEXiOAbqj
+ m8cwbnIxa2hG76i7cjAIz8CZ3geskfUggZe46CY26qAzaeV8Z0B/W5Eh7XM6Zk4VU1
+ eScItR55iQTiAaWHlabzrprU9mRIiYxuRahKKeFas7Qjd5I+mHo54kqhBf9q/MMrTK
+ 9zObyTz4OdaE9cV+3PJodwm8B0NBmSwonvQBpQ2NtiIoT1X5i45ALO70/yBFADPTGU
+ Bk9QpnUEfSUi1vCVUswBy27hPgr+GocgZopvqRxB1O1JUbOHdLboxZ/PtMjKtcu8Jm
+ qfC00n8oCyaYg==
+Date: Fri, 28 Jul 2023 21:51:56 -0700
 From: Eric Biggers <ebiggers@kernel.org>
 To: Gabriel Krisman Bertazi <krisman@suse.de>
-Message-ID: <20230729043422.GC4171@sol.localdomain>
+Message-ID: <20230729045156.GD4171@sol.localdomain>
 References: <20230727172843.20542-1-krisman@suse.de>
- <20230727172843.20542-3-krisman@suse.de>
+ <20230727172843.20542-4-krisman@suse.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20230727172843.20542-3-krisman@suse.de>
-X-Headers-End: 1qPbew-0005iQ-Dl
-Subject: Re: [f2fs-dev] [PATCH v4 2/7] fs: Add DCACHE_CASEFOLDED_NAME flag
+In-Reply-To: <20230727172843.20542-4-krisman@suse.de>
+X-Headers-End: 1qPbvw-0006Fb-KT
+Subject: Re: [f2fs-dev] [PATCH v4 3/7] libfs: Validate negative dentries in
+ case-insensitive directories
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,50 +89,19 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jul 27, 2023 at 01:28:38PM -0400, Gabriel Krisman Bertazi wrote:
-> From: Gabriel Krisman Bertazi <krisman@collabora.com>
-> 
-> This flag marks a negative or positive dentry as being created after a
-> case-insensitive lookup operation.  It is useful to differentiate
-> dentries this way to detect whether the negative dentry can be trusted
-> during a case-insensitive lookup.
-> 
-> Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> 
-> ---
-> Changes since v2:
->   -  Rename DCACHE_CASEFOLD_LOOKUP -> DCACHE_CASEFOLDED_NAME (Eric)
-> ---
->  fs/dcache.c            | 8 ++++++++
->  include/linux/dcache.h | 8 ++++++++
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 98521862e58a..5791489b589f 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -1958,6 +1958,14 @@ void d_set_fallthru(struct dentry *dentry)
->  }
->  EXPORT_SYMBOL(d_set_fallthru);
->  
-> +void d_set_casefold_lookup(struct dentry *dentry)
-> +{
-> +	spin_lock(&dentry->d_lock);
-> +	dentry->d_flags |= DCACHE_CASEFOLDED_NAME;
-> +	spin_unlock(&dentry->d_lock);
-> +}
-> +EXPORT_SYMBOL(d_set_casefold_lookup);
+On Thu, Jul 27, 2023 at 01:28:39PM -0400, Gabriel Krisman Bertazi wrote:
+> dentry->d_name is only checked by the case-insensitive d_revalidate hook
+> in the LOOKUP_CREATE/LOOKUP_RENAME_TARGET case since, for these cases,
+> d_revalidate is always called with the parent inode read-locked, and
+> therefore the name cannot change from under us.
 
-d_set_casefolded_name()
+"at least read-locked"?  Or do you actually mean write-locked?
 
-> +static inline bool d_is_casefold_lookup(const struct dentry *dentry)
-> +{
-> +	return dentry->d_flags & DCACHE_CASEFOLDED_NAME;
-> +}
+> +static inline int generic_ci_d_revalidate(struct dentry *dentry,
+> +					  const struct qstr *name,
+> +					  unsigned int flags)
 
-d_is_casefolded_name().  Or even better, just write 'dentry->d_flags &
-DCACHE_CASEFOLDED_NAME' directly in the one place that actually needs this?
+No need for inline here.
 
 - Eric
 
