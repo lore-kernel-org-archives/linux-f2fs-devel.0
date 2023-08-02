@@ -4,74 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9BEB5C001E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Aug 2023 14:52:51 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 11E67C04A6A
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Aug 2023 15:42:02 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qRDDX-0007nU-1S;
-	Wed, 02 Aug 2023 14:52:49 +0000
+	id 1qRDz6-0005VC-F0;
+	Wed, 02 Aug 2023 15:42:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1qRDDV-0007nJ-Nr
- for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 02 Aug 2023 14:52:48 +0000
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+e55ed01a16a80b75ffb8+7283+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1qRDz5-0005V6-Fx for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 02 Aug 2023 15:41:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2whAwSRDGUint+YXiXaBpUSnZXVze8REujirNqjwe84=; b=igoGZa6DX9ITQe/sESmW2oqdVV
- HmiWMd4J6wUDgHcdPhTFohxQnfLML7NVktX5YGJ02JuuZ+jmIr63Cdxm2uf3elZXMgcWlNSIpgDr9
- +yRbiuCRkzzM2K60Lzvo9+kKFrpmb68yP35gbVtN2339AiSiJu5RIKVqc3YjzS+ldzuY=;
+ bh=yR3dj+eONAtbKM/zIO7ew4m4jCWdaatgpKXh7YubtNo=; b=CoNHc2n2bspU5KL6h7LIdujEXW
+ ujTYqsFzyLhZuM94H3wp9ZJvFt/9Rflm3mWq2Ozbb2QPqq8aAYQOao7RSnqIRrT/jXQlnFw7OVYQk
+ 8VUi2IIKnOZbAiPn/0xLShi6gKOFK4ZzIJpPYdYYVMbujgl1kpTI05MTzKegIvfeG50U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2whAwSRDGUint+YXiXaBpUSnZXVze8REujirNqjwe84=; b=jOVuQ/L9jEt0hE+6AV0RolAAg4
- xVzaHYVuaOGCDljq2+IfuxFP6l9reWxhs6LzU93FhufQ3NkU2QW8rR5WUlSgaQXa7kEmIF775KI3l
- o+6aYiiKAW1cCjy4jZX2mY08aJ04KX0OcFgVrxDDgQ4K/chTZDYDbZb6gB+hS5Lg6WbM=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=yR3dj+eONAtbKM/zIO7ew4m4jCWdaatgpKXh7YubtNo=; b=ChUsL3VbipRir/iOzJ7dlpW0LX
+ 6p5wxBHWHGqln48yFIpdBqrABxE7OBIvlqb/XvRz9k92sw07u5uc+cP/NwKZgHt6Rw38p86m1DHvw
+ lrs+ThUXBlU549SisieH2dQLMYVXCIt/ovj2QL+IPdmpR22ZU+nImXqrw/hhjX/RY9rM=;
+Received: from bombadil.infradead.org ([198.137.202.133])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qRDDT-0002tJ-RO for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 02 Aug 2023 14:52:48 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 3BA87619C0;
- Wed,  2 Aug 2023 14:52:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9636CC433C8;
- Wed,  2 Aug 2023 14:52:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1690987961;
- bh=96S0siV280ta/jjrcvQR/DheSrkoJg3LEb6hR4HvrG0=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=eM9iwk6g5CHDvdPAVWiuo3IMf2tFXTMqUQIs/MFbsC8aV7EECvDkC0MnxfA1REgCd
- heinj+te32aXhZeLZvfrKSclikVz+3Woy+tqKe/m8ZPLLlvOtJJgEXK0I9wNF6eOpY
- CGHgSM6fQgZ3NyrCE8n78MUfOqdtVX87SdxhxIN9wyTOCICCkmhW4FrxdqDfj9wfLy
- Ll9K5Tk7HgoIEDB6o+lg5mfLp79PiVZUiKhHNaPiMRp6AQLldRUHzhGBf+DNiCeAFp
- cVFXasAiXMHX0HGGelHepW9ad1q1Xe5PMtvMp+vun3xUwICzg3G3/fGZIusWa63OOi
- dQV2iv/2tGc4Q==
-Message-ID: <3fbf56fd-5b4c-0f80-5758-5addfffe83a6@kernel.org>
-Date: Wed, 2 Aug 2023 22:52:38 +0800
+ id 1qRDz1-00ArNK-4Z for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 02 Aug 2023 15:41:59 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+ MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=yR3dj+eONAtbKM/zIO7ew4m4jCWdaatgpKXh7YubtNo=; b=mhaGQnhVJ1uO0sXkPgK8YqFZc5
+ sx4T/ucx2OPuff6PNBCxPLw0lRV53g6hNyTwuVkRXmfF5ms72GkE+0x1uqrIpsNzHaHP6+Py4j6Tt
+ 9XFmrppR/JGamizKFARycs9Ei0Zd6NCt6jtO/emxLVKW+oJppL6xK9oZ0QyDSOt4KwCRRE5Fb3/qV
+ nd1M5X+TDd19RtkW7i16PyY3kk/HSZISBliaimAqK2zb2qyMjYGvY5ilv8+9zMumwN7d615Bm9309
+ WGSgzj/m+SQzHji61NEj7z0Pag2YVdzThx00Fv79SfAWHCvcSS285h67bPeQfgF/88NmzMiFiyxid
+ AaZCwhZg==;
+Received: from
+ 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at
+ ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
+ by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+ id 1qRDyk-005GE4-1b; Wed, 02 Aug 2023 15:41:39 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Date: Wed,  2 Aug 2023 17:41:20 +0200
+Message-Id: <20230802154131.2221419-2-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230802154131.2221419-1-hch@lst.de>
+References: <20230802154131.2221419-1-hch@lst.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Content-Language: en-US
-To: Chunhai Guo <guochunhai@vivo.com>, jaegeuk@kernel.org
-References: <20230620141035.69782-1-guochunhai@vivo.com>
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20230620141035.69782-1-guochunhai@vivo.com>
-X-Headers-End: 1qRDDT-0002tJ-RO
-Subject: Re: [f2fs-dev] [PATCH] f2fs: Only lfs mode is allowed with zoned
- block device feature
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1qRDz1-00ArNK-4Z
+Subject: [f2fs-dev] [PATCH 01/12] fs: export setup_bdev_super
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,95 +79,64 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+ linux-nilfs@vger.kernel.org, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, "Darrick J. Wong" <djwong@kernel.org>,
+ Josef Bacik <josef@toxicpanda.com>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, Chris Mason <clm@fb.com>,
+ Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+ linux-ext4@vger.kernel.org, Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+ linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2023/6/20 22:10, Chunhai Guo wrote:
-> Now f2fs support four block allocation modes: lfs, adaptive,
-> fragment:segment, fragment:block. Only lfs mode is allowed with zoned block
-> device feature.
-> 
-> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
-> ---
->   fs/f2fs/super.c | 12 +++++++-----
->   1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index c917fa771f0e..6249483be905 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -861,12 +861,14 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
->   
->   			if (!name)
->   				return -ENOMEM;
-> +
-> +			if (strcmp(name, "lfs") && f2fs_sb_has_blkzoned(sbi)) {
-> +				f2fs_warn(sbi, "Only lfs mode is allowed with zoned block device feature");
-> +				kfree(name);
-> +				return -EINVAL;
-> +			}
+We'll want to use setup_bdev_super instead of duplicating it in nilfs2.
 
-What about:
-
- From f6e71f1d33c2cca543ebb41734c7a95af5190767 Mon Sep 17 00:00:00 2001
-From: Chunhai Guo <guochunhai@vivo.com>
-Date: Sun, 30 Jul 2023 10:06:50 +0800
-Subject: [PATCH] f2fs: only lfs mode is allowed with zoned block device
-  feature
-
-Now f2fs support four block allocation modes: lfs, adaptive,
-fragment:segment, fragment:block. Only lfs mode is allowed with zoned block
-device feature.
-
-Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
-  fs/f2fs/super.c | 9 ++++-----
-  1 file changed, 4 insertions(+), 5 deletions(-)
+ fs/super.c                 | 3 ++-
+ include/linux/fs_context.h | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 099e126c61e1..1d0593358125 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -864,11 +864,6 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
-  			if (!name)
-  				return -ENOMEM;
-  			if (!strcmp(name, "adaptive")) {
--				if (f2fs_sb_has_blkzoned(sbi)) {
--					f2fs_warn(sbi, "adaptive mode is not allowed with zoned block device feature");
--					kfree(name);
--					return -EINVAL;
--				}
-  				F2FS_OPTION(sbi).fs_mode = FS_MODE_ADAPTIVE;
-  			} else if (!strcmp(name, "lfs")) {
-  				F2FS_OPTION(sbi).fs_mode = FS_MODE_LFS;
-@@ -1333,6 +1328,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
-  			F2FS_OPTION(sbi).discard_unit =
-  					DISCARD_UNIT_SECTION;
-  		}
-+		if (F2FS_OPTION(sbi).fs_mode != FS_MODE_LFS) {
-+			f2fs_info(sbi, "Only lfs mode is allowed with zoned block device feature");
-+			return -EINVAL;
-+		}
-  #else
-  		f2fs_err(sbi, "Zoned block device support is not enabled");
-  		return -EINVAL;
+diff --git a/fs/super.c b/fs/super.c
+index 3ef39df5bec506..6aaa275fa8630d 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1243,7 +1243,7 @@ static int test_bdev_super_fc(struct super_block *s, struct fs_context *fc)
+ 		s->s_dev == *(dev_t *)fc->sget_key;
+ }
+ 
+-static int setup_bdev_super(struct super_block *sb, int sb_flags,
++int setup_bdev_super(struct super_block *sb, int sb_flags,
+ 		struct fs_context *fc)
+ {
+ 	blk_mode_t mode = sb_open_mode(sb_flags);
+@@ -1295,6 +1295,7 @@ static int setup_bdev_super(struct super_block *sb, int sb_flags,
+ 	sb_set_blocksize(sb, block_size(bdev));
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(setup_bdev_super);
+ 
+ /**
+  * get_tree_bdev - Get a superblock based on a single block device
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index ff6341e09925bc..58ef8433a94b8c 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -158,6 +158,8 @@ extern int get_tree_keyed(struct fs_context *fc,
+ 					   struct fs_context *fc),
+ 			 void *key);
+ 
++int setup_bdev_super(struct super_block *sb, int sb_flags,
++		struct fs_context *fc);
+ extern int get_tree_bdev(struct fs_context *fc,
+ 			       int (*fill_super)(struct super_block *sb,
+ 						 struct fs_context *fc));
 -- 
-2.40.1
+2.39.2
 
-
-
-> +
->   			if (!strcmp(name, "adaptive")) {
-> -				if (f2fs_sb_has_blkzoned(sbi)) {
-> -					f2fs_warn(sbi, "adaptive mode is not allowed with zoned block device feature");
-> -					kfree(name);
-> -					return -EINVAL;
-> -				}
->   				F2FS_OPTION(sbi).fs_mode = FS_MODE_ADAPTIVE;
->   			} else if (!strcmp(name, "lfs")) {
->   				F2FS_OPTION(sbi).fs_mode = FS_MODE_LFS;
 
 
 _______________________________________________
