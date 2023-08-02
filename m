@@ -4,68 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 08939C04A6A
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6314EC04FE1
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Aug 2023 15:42:08 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qRDzC-0004CR-J7;
+	id 1qRDzC-0004CY-Ti;
 	Wed, 02 Aug 2023 15:42:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+e55ed01a16a80b75ffb8+7283+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1qRDz6-0004CE-QV for linux-f2fs-devel@lists.sourceforge.net;
+ id 1qRDz9-0004CK-Ez for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 02 Aug 2023 15:42:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=b4U6bkV1Hpe1BTMHR6FYKzJdXgCv2eIo7grqFPPTqjk=; b=YVbxccT8RafEu5OpFBDgKnU1aZ
- 33GCKVReDot+bxlIhHracvdu5AcGd1MRcxWBnG4hdj7qHNdwetwrRC+z2inYFPiw4kZgS5n2R2+h7
- +mqU5e5Hy3Jz3j9D+l6oeUV2wyyfx6T7+aMc0d5RYEK7XazqXCVSy9+drLZwkGSY+I9Q=;
+ bh=t+hutzNu+OLKs7hwR5oQScZRP7h/WIsttBs8nagY2hw=; b=mpFvAZUrp9iGPbJKbISsKhXlJ3
+ 4oFsveLDgwRQxp8fq2wliss1CeVw5pP87GBJOeyPaBcEjZOZR4VN93Wh392H2pg2Sh8BXX27DWku6
+ ZgKLGRWnZeWYC5+/Mk/6lRlLobBXeFID2e6iyWqPCQ3FLjVVywT0JZV7ihi3rZjxi638=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=b4U6bkV1Hpe1BTMHR6FYKzJdXgCv2eIo7grqFPPTqjk=; b=g
- J7GpiGQwGn5FVSLuCor5jAZTtKKideXRhFeXud/F5WlAIiTuHBDW9zwrjlkaG47Hg0aHPasKAPWzU
- m+daDH+psWi532FJSki8nMZnGLuq7Pig3RcvwG1Y1Im7myzv2ketBA6rCBr4mMblhBHM+4UmYP3B6
- c6taWKCDhDR4BnbE=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=t+hutzNu+OLKs7hwR5oQScZRP7h/WIsttBs8nagY2hw=; b=JSNKS0rzQj9oKhqQtSfOjZEBAi
+ aQPqAvB6X4JytxkDDV2FLKFAp3wEOVhUrUGkGAahV/2Hh7BxEhZAvbfK0fY7YH5aloj0plc0nNDER
+ n/zqHO7hKJCG5g8rCME3KWcmjqvi7NpoWZ83pQJOXLyRI6JwXjdcSOlk/Os7yWbis4Bw=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qRDz2-0004SN-Sx for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 02 Aug 2023 15:42:01 +0000
+ id 1qRDz6-0004SZ-3q for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 02 Aug 2023 15:42:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
- MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:In-Reply-To:References;
- bh=b4U6bkV1Hpe1BTMHR6FYKzJdXgCv2eIo7grqFPPTqjk=; b=mEmIb7uaUaKOwJY8lv1GETQvVo
- WNRAbVgAX3I0Nq8v6CM/Qo1DrhqE34m6F/BDf6xyn9aDiz8ir/jR+j+b6N3vmF4ctRKkZekSnf/xi
- uUswI0ekQNU4ccZrtb1iKIfKRkjifCinoSifA+mjBzEDaNBg7gOhnCnHmtnIl+lP+7yi1X0U5ECrV
- CBu/ROThv8CXmTxygF8pUmZ+UHKpiHPjUS4CpeuY+nPNuUWnZTnad0/okenZbctCPywHMdIKttcRj
- Mov5cp0eIKS0KO0w/8rDBjKZPumqCJP1eChnKXGXEVAMc4/RbvHBDfEltpKwT7S55Y91Tb9SGytMS
- jH+0LgHw==;
+ MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=t+hutzNu+OLKs7hwR5oQScZRP7h/WIsttBs8nagY2hw=; b=MfqT8apVrXwKetoTs/uxlt7j0i
+ F/hdDE9Szgwzy89HXkA2LaUSRquS53mI7cSS5sNi2T+7nVXkXcwAUpiTMNP2N9BUQzVtxjNbyk/V+
+ qCBQeB2jWHyLGb9su722CpdyYmQflH0nge+RxWa/9QyBGSzuoZc82mvpQI/HsRPkkYBzgHu8k5itH
+ I7+ZnGg1fmJX0esEcvXm687uZ0D6tg3KVz8hVG+2M/YO7ONoljrafnhwMRZz+5DIsDtvInnEt0dKc
+ uhlmNE+HbPUosHqoiBEc789L7N+kHRFooos+y6ZmJd4JNk/BCKWXPcJIKPM+Rgb0VWyHQRMGW4EdW
+ SAC0HevA==;
 Received: from
  2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at
  ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
- id 1qRDyh-005GCS-2F; Wed, 02 Aug 2023 15:41:36 +0000
+ id 1qRDyt-005GFa-13; Wed, 02 Aug 2023 15:41:47 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Date: Wed,  2 Aug 2023 17:41:19 +0200
-Message-Id: <20230802154131.2221419-1-hch@lst.de>
+Date: Wed,  2 Aug 2023 17:41:23 +0200
+Message-Id: <20230802154131.2221419-5-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230802154131.2221419-1-hch@lst.de>
+References: <20230802154131.2221419-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1qRDz2-0004SN-Sx
-Subject: [f2fs-dev] more blkdev_get and holder work
+X-Headers-End: 1qRDz6-0004SZ-3q
+Subject: [f2fs-dev] [PATCH 04/12] btrfs: open block devices after superblock
+ creation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,41 +93,150 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi all,
+Currently btrfs_mount_root opens the block devices before committing to
+allocating a super block. That creates problems for restricting the
+number of writers to a device, and also leads to a unusual and not very
+helpful holder (the fs_type).
 
-this series sits on top of the vfs.super branch in the VFS tree and does a
-few closely related things:
+Reorganize the code to first look whether the superblock for a
+particular fsid does already exist and open the block devices only if it
+doesn't, mirror the recent changes to the VFS mount helpers.
 
-  1) it also converts nilfs2 and btrfs to the new scheme where the file system
-     only opens the block devices after we know that a new super_block was
-     allocated.
-  2) it then makes sure that for all file system openers the super_block is
-     stored in bd_holder, and makes use of that fact in the mark_dead method
-     so that it doesn't have to fall get_super and thus can also work on
-     block devices that sb->s_bdev doesn't point to
-  3) it then drops the fs-specific holder ops in ext4 and xfs and uses the
-     generic fs_holder_ops there
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/btrfs/super.c   | 51 ++++++++++++++++++++++------------------------
+ fs/btrfs/volumes.c |  4 ++--
+ 2 files changed, 26 insertions(+), 29 deletions(-)
 
-A git tree is available here:
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index b318bddefd5236..5980b5dcc6b163 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -1434,10 +1434,8 @@ static struct dentry *mount_subvol(const char *subvol_name, u64 subvol_objectid,
+ static struct dentry *btrfs_mount_root(struct file_system_type *fs_type,
+ 		int flags, const char *device_name, void *data)
+ {
+-	struct block_device *bdev = NULL;
+ 	struct super_block *s;
+ 	struct btrfs_device *device = NULL;
+-	struct btrfs_fs_devices *fs_devices = NULL;
+ 	struct btrfs_fs_info *fs_info = NULL;
+ 	void *new_sec_opts = NULL;
+ 	int error = 0;
+@@ -1483,35 +1481,36 @@ static struct dentry *btrfs_mount_root(struct file_system_type *fs_type,
+ 		error = PTR_ERR(device);
+ 		goto error_fs_info;
+ 	}
+-
+-	fs_devices = device->fs_devices;
+-	fs_info->fs_devices = fs_devices;
+-
+-	error = btrfs_open_devices(fs_devices, sb_open_mode(flags), fs_type);
++	fs_info->fs_devices = device->fs_devices;
+ 	mutex_unlock(&uuid_mutex);
+-	if (error)
+-		goto error_fs_info;
+-
+-	if (!(flags & SB_RDONLY) && fs_devices->rw_devices == 0) {
+-		error = -EACCES;
+-		goto error_close_devices;
+-	}
+ 
+-	bdev = fs_devices->latest_dev->bdev;
+ 	s = sget(fs_type, btrfs_test_super, btrfs_set_super, flags | SB_NOSEC,
+ 		 fs_info);
+ 	if (IS_ERR(s)) {
+ 		error = PTR_ERR(s);
+-		goto error_close_devices;
++		goto error_fs_info;
+ 	}
+ 
+ 	if (s->s_root) {
+-		btrfs_close_devices(fs_devices);
+ 		btrfs_free_fs_info(fs_info);
+ 		if ((flags ^ s->s_flags) & SB_RDONLY)
+ 			error = -EBUSY;
+ 	} else {
+-		snprintf(s->s_id, sizeof(s->s_id), "%pg", bdev);
++		struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
++
++		error = btrfs_open_devices(fs_devices, sb_open_mode(flags),
++					   fs_type);
++		if (error)
++			goto out_deactivate;
++
++		if (!(flags & SB_RDONLY) && fs_devices->rw_devices == 0) {
++			error = -EACCES;
++			btrfs_close_devices(fs_info->fs_devices);
++			goto out_deactivate;
++		}
++
++		snprintf(s->s_id, sizeof(s->s_id), "%pg",
++			 fs_devices->latest_dev->bdev);
+ 		shrinker_debugfs_rename(&s->s_shrink, "sb-%s:%s", fs_type->name,
+ 					s->s_id);
+ 		btrfs_sb(s)->bdev_holder = fs_type;
+@@ -1519,21 +1518,19 @@ static struct dentry *btrfs_mount_root(struct file_system_type *fs_type,
+ 	}
+ 	if (!error)
+ 		error = security_sb_set_mnt_opts(s, new_sec_opts, 0, NULL);
++	if (error)
++		goto out_deactivate;
+ 	security_free_mnt_opts(&new_sec_opts);
+-	if (error) {
+-		deactivate_locked_super(s);
+-		return ERR_PTR(error);
+-	}
+-
+ 	return dget(s->s_root);
+ 
+-error_close_devices:
+-	btrfs_close_devices(fs_devices);
+-error_fs_info:
+-	btrfs_free_fs_info(fs_info);
++out_deactivate:
++	deactivate_locked_super(s);
+ error_sec_opts:
+ 	security_free_mnt_opts(&new_sec_opts);
+ 	return ERR_PTR(error);
++error_fs_info:
++	btrfs_free_fs_info(fs_info);
++	goto error_sec_opts;
+ }
+ 
+ /*
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 8246578c70f55b..88e9daae5e74ed 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -1269,7 +1269,6 @@ int btrfs_open_devices(struct btrfs_fs_devices *fs_devices,
+ {
+ 	int ret;
+ 
+-	lockdep_assert_held(&uuid_mutex);
+ 	/*
+ 	 * The device_list_mutex cannot be taken here in case opening the
+ 	 * underlying device takes further locks like open_mutex.
+@@ -1277,7 +1276,7 @@ int btrfs_open_devices(struct btrfs_fs_devices *fs_devices,
+ 	 * We also don't need the lock here as this is called during mount and
+ 	 * exclusion is provided by uuid_mutex
+ 	 */
+-
++	mutex_lock(&uuid_mutex);
+ 	if (fs_devices->opened) {
+ 		fs_devices->opened++;
+ 		ret = 0;
+@@ -1285,6 +1284,7 @@ int btrfs_open_devices(struct btrfs_fs_devices *fs_devices,
+ 		list_sort(NULL, &fs_devices->devices, devid_cmp);
+ 		ret = open_fs_devices(fs_devices, flags, holder);
+ 	}
++	mutex_unlock(&uuid_mutex);
+ 
+ 	return ret;
+ }
+-- 
+2.39.2
 
-    git://git.infradead.org/users/hch/misc.git fs-holder-rework
-
-Gitweb:
-
-    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/fs-holder-rework
-
-Diffstat:
- fs/btrfs/super.c           |   67 ++++++++++++++++---------------------
- fs/btrfs/volumes.c         |    8 ++--
- fs/btrfs/volumes.h         |    2 -
- fs/ext4/super.c            |   18 +++-------
- fs/f2fs/super.c            |    7 +--
- fs/nilfs2/super.c          |   81 ++++++++++++++++-----------------------------
- fs/super.c                 |   44 ++++++++++++++++++------
- fs/xfs/xfs_super.c         |   32 +++++++----------
- include/linux/blkdev.h     |    2 +
- include/linux/fs_context.h |    2 +
- 10 files changed, 126 insertions(+), 137 deletions(-)
 
 
 _______________________________________________
