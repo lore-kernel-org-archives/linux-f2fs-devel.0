@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 72CB0EB64DD
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Aug 2023 18:15:29 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ECD91EB64DD
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Aug 2023 18:15:51 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qRcrA-00078V-Bk;
-	Thu, 03 Aug 2023 18:15:27 +0000
+	id 1qRcrW-0005fm-M6;
+	Thu, 03 Aug 2023 18:15:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <brauner@kernel.org>) id 1qRcr7-00078K-AX
+ (envelope-from <brauner@kernel.org>) id 1qRcrW-0005fg-3V
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 03 Aug 2023 18:15:24 +0000
+ Thu, 03 Aug 2023 18:15:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+u3l9TwYlN5F0bLxygCRRfY/pzb6e3ePMnicjpEYyNw=; b=CPGTfqDXn9Wkd5js5gN7pQkzXU
- tUX0pDbXkfn2FYe4+OKn+UFH5nmClA7qhsnmMn7A6ltHqulHiU7IHpHL9MNAxPOGCsW9xYUblBTki
- CyNpblF2+WuO1UJhd/oNiGjUJK0LnL/ufCx5wd7lYVNdkaJlZ/sKVf/H/RrDTTSdnICQ=;
+ bh=IVySodCPrNfEpsA9iYNRPXBMJ7FTDZ9Jcs3M9WPQ+Ww=; b=a2wvgLKvRDmT2cmkwXeWvx6BaW
+ KGmzejB2LJus6aUbWoiNmEE7LwfWK5bVnS8XcOJy0vgbrpkK1RgFKVO3sgNud7jMnzoJ+i76mZZ2/
+ cBksBUCBDU1M5W/F3Wq76pG29efkIRxirtjA7Vu0xo1TUmYRhNRbshju4appOEXc6/8w=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,44 +33,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+u3l9TwYlN5F0bLxygCRRfY/pzb6e3ePMnicjpEYyNw=; b=mddYlAN4zx4q2bePkGxcsI7yIm
- IA/2uWzYq1fKHlxEtUGbO/JZRbPQMxtQPrabO111C7cL7lCcqYkCpXIvlyUTJMmnapLlh33pBUl5i
- +jTf4O1+PoyMzxZzpf/ArReXZwROYULiI170rz6m19xIu9oibnqbeX9Kd8SSjM153DaU=;
+ bh=IVySodCPrNfEpsA9iYNRPXBMJ7FTDZ9Jcs3M9WPQ+Ww=; b=mLqfYH2tS4TxlN2wyb97jFjQ44
+ XIXFhVVxQ9KWWVKptqg15VaX9Sh31MJwtVEMyUNiJAZohUjH8QP2UEsTnKlt3030irYkwfZ9AmRt/
+ ydbIy+nICacSj/4YDL9XPoswnzUjVaR4t/uUX8lSqIr8tp7mJGRMJZyEhKPie4UToTt4=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qRcr5-0007Xe-KX for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 03 Aug 2023 18:15:24 +0000
+ id 1qRcrT-0007YM-K5 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 03 Aug 2023 18:15:50 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 1178761E4A;
- Thu,  3 Aug 2023 18:15:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356B0C433C7;
- Thu,  3 Aug 2023 18:15:13 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 0384C61D99;
+ Thu,  3 Aug 2023 18:15:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60162C433C8;
+ Thu,  3 Aug 2023 18:15:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1691086517;
- bh=7WvYC67Xe7oFF+cFC3hBpoW1fSKlO5ncgxOAS6uNu5M=;
+ s=k20201202; t=1691086541;
+ bh=Yz12o17pxjfv8UNlGb+RqV6iHvHIX5yYabFhIVcGnJQ=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=M+0H21hPL+ViqgirVBRmgZ4PVVO0IsTWsesv9cA8GHZUL2nO1Jaskrh1hTcb8hJgn
- zcbTF80tO8RHk8SPGrBaIY1HWV9lAP9kNCAvgF90TSNFmKJ61pagPvH2VFoo87Hcb6
- R4MGzUpmn/vOw9saQfSEZSvf4/PMN97ff43Y1NGByYWS7kQY2fYrEvIo6C0QHTG02q
- khnbhGSsGhhH0hk6KEOVJA7QyCJawZo/H8HB+DK7XECpYi8elC4KWWHzdhJoLk80T6
- k6n3yR57Ezm420usiThIMT2fn0n+EuAnrG0tm69k3En+xpEtbBxuMQMsPeRVFWq9as
- HeB02bJmZTTNw==
-Date: Thu, 3 Aug 2023 20:15:10 +0200
+ b=NzNzQ0kZIAWvy0jQWijO38E4IFU1ELuOTm+2z0/vri0vio9s55oaqAQUbTAugZAIc
+ pzSwoiINevuBV/XhzNXc0q3NFdO0ZzAFSLxi3cGXgl3HAJB+X2Uh/r/FdNfEqxzs+x
+ oEq7YaNNZC/rU+FCceLfXnczQ2a6sngVIJgi7nDzGkT1xBRDxTdPkZIen5+avgHd07
+ 8LXZzFT3Mn8qRcc0ic5S1kmXh1ScTSp3TgroiVqjyefr1jttGt6WWRWdWDbRFCjKZx
+ XR0/Ri/7v2mM1CSXfr+YKoex1c07NyImzjyMt49SbRHVJ4+fuKehgj3MggKmlENRpl
+ ceZJCjJnHL38w==
+Date: Thu, 3 Aug 2023 20:15:34 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20230803-umringt-aufprallen-e3adc44d2c75@brauner>
+Message-ID: <20230803-hergibt-nachzahlen-296067ae0bb8@brauner>
 References: <20230802154131.2221419-1-hch@lst.de>
- <20230802154131.2221419-8-hch@lst.de>
+ <20230802154131.2221419-9-hch@lst.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20230802154131.2221419-8-hch@lst.de>
-X-Headers-End: 1qRcr5-0007Xe-KX
-Subject: Re: [f2fs-dev] [PATCH 07/12] fs: stop using get_super in
- fs_mark_dead
+In-Reply-To: <20230802154131.2221419-9-hch@lst.de>
+X-Headers-End: 1qRcrT-0007YM-K5
+Subject: Re: [f2fs-dev] [PATCH 08/12] fs: export fs_holder_ops
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,15 +94,9 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Aug 02, 2023 at 05:41:26PM +0200, Christoph Hellwig wrote:
-> fs_mark_dead currently uses get_super to find the superblock for the
-> block device that is going away.  This means it is limited to the
-> main device stored in sb->s_dev, leading to a lot of code duplication
-> for file systems that can use multiple block devices.
-> 
-> Now that the holder for all block devices used by file systems is set
-> to the super_block, we can instead look at that holder and then check
-> if the file system is born and active, so do that instead.
+On Wed, Aug 02, 2023 at 05:41:27PM +0200, Christoph Hellwig wrote:
+> Export fs_holder_ops so that file systems that open additional block
+> devices can use it as well.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
