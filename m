@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9DBC8C001DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Aug 2023 11:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 20D65C41513
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Aug 2023 11:14:44 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qSyBm-00042g-Ai;
-	Mon, 07 Aug 2023 11:14:33 +0000
+	id 1qSyCB-00043k-9U;
+	Mon, 07 Aug 2023 11:14:43 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qSyBb-00042S-Jc
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qSyC7-00043U-O9
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Aug 2023 11:14:08 +0000
+ Mon, 07 Aug 2023 11:14:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=a0ijFA9s9bGVMHT4vLgTYS12L8yx2Rc7o6TjM9ZoJx8=; b=Ezc45YshsyIqiyoSlSnKAT/B9Z
- DpuoD48x/UryFupZuxPbuH4MsOtaQ2nq14XVPF2P5wppkSUSlaRNiwOJWtLMnusu4eQMgjcKA+0Lk
- IfEzT7uLlUIpMoa1j8DSgVphlBtRKFYC8GODQbM+sTDC/oZ4sb94K65ibFrLMtbjoubw=;
+ bh=igblsYgdIrcTAL0swCZj529c9jjsKo5CwfFS1Qcng2s=; b=OHvNBJCHgqG06NTw8+GiVTShQd
+ 7U6L8nhatVEJrM7S+qsVcSLrEMz+9EKt0nGDhnwP2sU0wVURd60HpIAYiWQ1vMvwpLcWuxRpvr+pK
+ kh7cZ0ejolD6NhjTWRFO8/69jOhkNK4wECXZ7zK7LD0y22I7eeicZu82Dc9g69U7mw0U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,68 +33,68 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=a0ijFA9s9bGVMHT4vLgTYS12L8yx2Rc7o6TjM9ZoJx8=; b=BZAAJso/FIcYn53tCt8/P8QL0d
- YEfS/xGYfmvRRavrSHMGrIWJpeLesdSbew/xiTxfm+9/fhXgrGt3mDcDH9OS9mONHY47f2yXs1grI
- ctqVgd/j4vgX/C/oaZQ+nLeot0i16xAj/Ch2unwR+1FNNPqhV6tCKps2NM+93sN9ZHUM=;
-Received: from mail-pg1-f169.google.com ([209.85.215.169])
+ bh=igblsYgdIrcTAL0swCZj529c9jjsKo5CwfFS1Qcng2s=; b=R+GYi/i3MbeTrcncMKVE6w+xtF
+ hwCHIhP9eLLzyHkJhCNcdke+ydrSMojRl/HIchl2v6NJApjgVv83dxxb5kE4kUTQSSw2T05VBPn0D
+ utxksOSLQnNwBuu9rO4qufAlZD7LQszj6LNHqtD0Vtc2ebDkCURXwPNv1tTkFcZgbqak=;
+Received: from mail-pj1-f45.google.com ([209.85.216.45])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qSyBb-0007o1-C9 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Aug 2023 11:14:07 +0000
-Received: by mail-pg1-f169.google.com with SMTP id
- 41be03b00d2f7-55b5a37acb6so362191a12.0
+ id 1qSyC6-0007pE-9e for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 07 Aug 2023 11:14:39 +0000
+Received: by mail-pj1-f45.google.com with SMTP id
+ 98e67ed59e1d1-265c94064b8so592688a91.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 07 Aug 2023 04:14:06 -0700 (PDT)
+ Mon, 07 Aug 2023 04:14:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1691406841; x=1692011641;
+ d=bytedance.com; s=google; t=1691406867; x=1692011667;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=a0ijFA9s9bGVMHT4vLgTYS12L8yx2Rc7o6TjM9ZoJx8=;
- b=j23yTPIuNE+5ql7c6DjTIXWDr8oKTSMtsFBsjjClL+S91jhwZsCcQpsRFgnSFEePMC
- wDGERQ9BkTMGtvLZ5zfdg/UY3HTRyGts+YmZTXabmNDPI0OPAQAqDfrw+jtLBHzydYmo
- a162rquUe53dODAJSpyuVfvHf3Ov/M30E8XZRIYttEwAxKqQFIS0/ih88OAzPNYyRzzl
- 3HkOwk/otVmt9H2o9TgGnt1eeNwmmBoINVdlSrRso11GlktIoEp92Q8ZBNulwW/JkpbE
- xeEGYB8AYsoVpHQBF7XcqQ5QT7dfjGJtE4RXA0EdlD1H8/kYwDQ1OkZhdkl3HITdo9Iq
- hOkA==
+ bh=igblsYgdIrcTAL0swCZj529c9jjsKo5CwfFS1Qcng2s=;
+ b=E/hLPt4J9XwFdy6Q/ScFkKAboS35nT/aVetijUs1uOyzpCdXJrzvux0WuTkbJahYDU
+ HJ4RnOFgFoSV4vIvUSABYCFS8MT8O5BBdFRn/e0d22QvpkBHCvD7k0jL91l8VKqh/AnF
+ pNO49bmGYrjFLlyM+it2E7+BjcoRQ4qvC4Z3zAnwRx4Mtu2gDzO6KjINZG5u37W7YPwR
+ rd9mA5oeLZ1tw0ARUeeWuqEeVLZXyyZpLkD+mkbNh9jB2r9y+xHrPRtEaxpg/6wzvL2p
+ pP/svPPe0egiR6EyNxAsA97H1SimGEidDNnScRjB0NSGHk7qAYW8vH7pvvrUaRXF4mmo
+ 0r3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1691406841; x=1692011641;
+ d=1e100.net; s=20221208; t=1691406867; x=1692011667;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=a0ijFA9s9bGVMHT4vLgTYS12L8yx2Rc7o6TjM9ZoJx8=;
- b=SrWpvHR3OAchc+o4ycOLs4VVUX0drPj6xHYt8NPCHoFMBgmtbaSuytWbu4SAz0v2CK
- lpyeD1rxzb63zyBSzJ2SRQVw8uYb7K/zt8zuFfqd6l4pB2DECjOS9+lSqlePcf0NFEMY
- 5qDQV7rwKL229EOyVCv5Qft/v3oCXVQMDOADGJJo7SIrp0q/rZ3b3F3RlVBp9WuNevLH
- iV+rT9U1pQ/ZQUCui7TFpNPZArDvHrHVMzHmSkEC6K0jZDke2LlZlG/9l+IcIUVBEEX2
- /tKNtOlk8JBtxxgV6jNVJZe4lEx51QeSJggA7MNWvfMm6Ql2fy+OfDPBf8w7/sH77ysH
- g67Q==
-X-Gm-Message-State: AOJu0YyuTs/cJmCyTbmBZBmyUCd9wflcfjvK/M9UQUuwNu0d40Jv3s1q
- FHkxjXz60NSPTFaPYExmuqt1zA==
-X-Google-Smtp-Source: AGHT+IELWLhV4Bj40lkko/D2F7gtSRcHKPclt9k8JlXsq8dyT7OdoG/0VZRRAUzfMJnehzLNwTS/oA==
-X-Received: by 2002:a17:90a:2909:b0:269:5bf7:d79c with SMTP id
- g9-20020a17090a290900b002695bf7d79cmr2214416pjd.1.1691406841328; 
- Mon, 07 Aug 2023 04:14:01 -0700 (PDT)
+ bh=igblsYgdIrcTAL0swCZj529c9jjsKo5CwfFS1Qcng2s=;
+ b=hmTYHRTl5J0d00DAkXnqJTIKD0Q1JYAyutEYCZXq6Mc6XzQu8sAKs34aESyFJachk0
+ PlMS56iHgX4bSB3N7iX9aXHyA/RO05tT48w4idIwddqo4PPdc4gMkUbzTYBCn1ZSRw1s
+ uBwKkOSxUSydUd8TtgMdKjmDoisciSDOO9Fa1DfrxQnpSkas1JvV+VpeALuEBrfI52B1
+ AJHM/ZbvayQO/FLV3INtq7c2QKpedoVsqUAmpdLCNtaCP0Xbwil32yBtsvzNfnMRsqrY
+ hlrhNcjPpeMLh44d2rlPkgU+ThtBa5b2Boq9Lkbmltq6XRtieVJ2ODV9LQeR/N4bmMeN
+ FWUQ==
+X-Gm-Message-State: ABy/qLav8FAhoHI9ZIq6lPp7rdtASM+QFIAkDtiwAjh519F6+pOU7VNJ
+ kOw6h1zGLQVeP2ZqpNxN+PvdEQ==
+X-Google-Smtp-Source: APBJJlGEDKqK4nyUWs8xE2EOJL+ODt25deDnA1/u8sHRAURqC7uD6bjxMDwwed+SXn6y84Un7sE7wA==
+X-Received: by 2002:a17:90a:1090:b0:268:126c:8a8b with SMTP id
+ c16-20020a17090a109000b00268126c8a8bmr24570134pja.3.1691406867003; 
+ Mon, 07 Aug 2023 04:14:27 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
  by smtp.gmail.com with ESMTPSA id
- y13-20020a17090aca8d00b0025be7b69d73sm5861191pjt.12.2023.08.07.04.13.49
+ y13-20020a17090aca8d00b0025be7b69d73sm5861191pjt.12.2023.08.07.04.14.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Aug 2023 04:14:01 -0700 (PDT)
+ Mon, 07 Aug 2023 04:14:26 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev,
  simon.horman@corigine.com, dlemoal@kernel.org
-Date: Mon,  7 Aug 2023 19:09:07 +0800
-Message-Id: <20230807110936.21819-20-zhengqi.arch@bytedance.com>
+Date: Mon,  7 Aug 2023 19:09:09 +0800
+Message-Id: <20230807110936.21819-22-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230807110936.21819-1-zhengqi.arch@bytedance.com>
 References: <20230807110936.21819-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qSyBb-0007o1-C9
-Subject: [f2fs-dev] [PATCH v4 19/48] rcu: dynamically allocate the rcu-kfree
- shrinker
+X-Headers-End: 1qSyC6-0007pE-9e
+Subject: [f2fs-dev] [PATCH v4 21/48] sunrpc: dynamically allocate the
+ sunrpc_cred shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -114,7 +114,8 @@ Cc: kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  cluster-devel@redhat.com, xen-devel@lists.xenproject.org,
  linux-ext4@vger.kernel.org, linux-arm-msm@vger.kernel.org, rcu@vger.kernel.org,
  linux-bcache@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>,
- linux-raid@vger.kernel.org, linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+ Muchun Song <songmuchun@bytedance.com>, linux-raid@vger.kernel.org,
+ linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
@@ -122,60 +123,59 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use new APIs to dynamically allocate the rcu-kfree shrinker.
+Use new APIs to dynamically allocate the sunrpc_cred shrinker.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Reviewed-by: Muchun Song <songmuchun@bytedance.com>
 ---
- kernel/rcu/tree.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ net/sunrpc/auth.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 7c79480bfaa0..3b20fc46c514 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3449,13 +3449,6 @@ kfree_rcu_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
- 	return freed == 0 ? SHRINK_STOP : freed;
+diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
+index 2f16f9d17966..0cc52e39f859 100644
+--- a/net/sunrpc/auth.c
++++ b/net/sunrpc/auth.c
+@@ -861,11 +861,7 @@ rpcauth_uptodatecred(struct rpc_task *task)
+ 		test_bit(RPCAUTH_CRED_UPTODATE, &cred->cr_flags) != 0;
  }
  
--static struct shrinker kfree_rcu_shrinker = {
--	.count_objects = kfree_rcu_shrink_count,
--	.scan_objects = kfree_rcu_shrink_scan,
--	.batch = 0,
+-static struct shrinker rpc_cred_shrinker = {
+-	.count_objects = rpcauth_cache_shrink_count,
+-	.scan_objects = rpcauth_cache_shrink_scan,
 -	.seeks = DEFAULT_SEEKS,
 -};
--
- void __init kfree_rcu_scheduler_running(void)
- {
- 	int cpu;
-@@ -4931,6 +4924,7 @@ static void __init kfree_rcu_batch_init(void)
- {
- 	int cpu;
- 	int i, j;
-+	struct shrinker *kfree_rcu_shrinker;
++static struct shrinker *rpc_cred_shrinker;
  
- 	/* Clamp it to [0:100] seconds interval. */
- 	if (rcu_delay_page_cache_fill_msec < 0 ||
-@@ -4962,8 +4956,18 @@ static void __init kfree_rcu_batch_init(void)
- 		INIT_DELAYED_WORK(&krcp->page_cache_work, fill_page_cache_func);
- 		krcp->initialized = true;
- 	}
--	if (register_shrinker(&kfree_rcu_shrinker, "rcu-kfree"))
--		pr_err("Failed to register kfree_rcu() shrinker!\n");
-+
-+	kfree_rcu_shrinker = shrinker_alloc(0, "rcu-kfree");
-+	if (!kfree_rcu_shrinker) {
-+		pr_err("Failed to allocate kfree_rcu() shrinker!\n");
-+		return;
+ int __init rpcauth_init_module(void)
+ {
+@@ -874,9 +870,18 @@ int __init rpcauth_init_module(void)
+ 	err = rpc_init_authunix();
+ 	if (err < 0)
+ 		goto out1;
+-	err = register_shrinker(&rpc_cred_shrinker, "sunrpc_cred");
+-	if (err < 0)
++	rpc_cred_shrinker = shrinker_alloc(0, "sunrpc_cred");
++	if (!rpc_cred_shrinker) {
++		err = -ENOMEM;
+ 		goto out2;
 +	}
 +
-+	kfree_rcu_shrinker->count_objects = kfree_rcu_shrink_count;
-+	kfree_rcu_shrinker->scan_objects = kfree_rcu_shrink_scan;
-+	kfree_rcu_shrinker->seeks = DEFAULT_SEEKS;
++	rpc_cred_shrinker->count_objects = rpcauth_cache_shrink_count;
++	rpc_cred_shrinker->scan_objects = rpcauth_cache_shrink_scan;
++	rpc_cred_shrinker->seeks = DEFAULT_SEEKS;
 +
-+	shrinker_register(kfree_rcu_shrinker);
++	shrinker_register(rpc_cred_shrinker);
++
+ 	return 0;
+ out2:
+ 	rpc_destroy_authunix();
+@@ -887,5 +892,5 @@ int __init rpcauth_init_module(void)
+ void rpcauth_remove_module(void)
+ {
+ 	rpc_destroy_authunix();
+-	unregister_shrinker(&rpc_cred_shrinker);
++	shrinker_free(rpc_cred_shrinker);
  }
- 
- void __init rcu_init(void)
 -- 
 2.30.2
 
