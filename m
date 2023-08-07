@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8AB0BC001DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Aug 2023 11:12:13 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A1300C04A6A
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Aug 2023 11:12:39 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qSy9l-0007wu-U8;
-	Mon, 07 Aug 2023 11:12:12 +0000
+	id 1qSyAA-0003yM-OE;
+	Mon, 07 Aug 2023 11:12:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qSy9k-0007we-6i
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qSyAA-0003yF-En
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Aug 2023 11:12:11 +0000
+ Mon, 07 Aug 2023 11:12:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2qNGhCyBYRkIC+KqhUj1bienmPbnCoyI88yux10rL0c=; b=fFHQA2VT75fw4APKKIrngead38
- /ZC+jbK/RIxVhU5cE1O7+PymmCUAwJjojQbLrbP6IUTO8pLtQXJ4Ic0yUJrdNd0kpFPh9KqOqtMZ7
- mMR4KANIcO7wP9M9Z8FodOQPQpuoE7s+j3wN6gPz2yHOHYrZTHdlZPqWEOpunYimK4do=;
+ bh=y2Zq84YPu5W9umXtWflPPzaPyFOqe/t1tbhlrQuOI+E=; b=iGF+Tury+WZSEpLsoP6jVNSyKE
+ l69wCd8AfgvtYJcq8DP3E8jY8jB1X4ezG8JN3zach4E6fzu6ronR4E2mkLiitY+Ip8AzCKdXN81Wl
+ QJuLhGYNZd0qqxygrL/il1Z5DVEbtuZJI5i32CDSsZ8Ef7ZyFfKP90E0eygROEWp61u8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,68 +33,68 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2qNGhCyBYRkIC+KqhUj1bienmPbnCoyI88yux10rL0c=; b=E/Nr/k0Ai5jONEVAWQs8GG1lsX
- o5arQmwX5XARAR7fJ090EHoqcAHTWJl9c9PS0yy5E+6DI9tGvaeI44j5YB0LLVt3kaaXxZTxc5Oef
- KwOtHKtJRi6gbkgMYSzMCsVzseeheMnd/ZMkiQOblWv8r0ayB5esNufpVaTmaYseiMgk=;
-Received: from mail-pg1-f169.google.com ([209.85.215.169])
+ bh=y2Zq84YPu5W9umXtWflPPzaPyFOqe/t1tbhlrQuOI+E=; b=jcpH2KpffEogDy9Z3z9J3LZCFm
+ wB88ut7bcZ98OU7YReX98YSIPRfy1NadqYiQB54dfzlWp3lbrFkVrALBGITgLJxis6t52jWYv7+DJ
+ O5R4LbDMkCzhV8iL52vMZJD2FfUdMK3wpCmNVRObSD17zGZdxUKCK92ATniubNQClHf4=;
+Received: from mail-pj1-f45.google.com ([209.85.216.45])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qSy9i-00FrZP-9k for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Aug 2023 11:12:10 +0000
-Received: by mail-pg1-f169.google.com with SMTP id
- 41be03b00d2f7-55b5a37acb6so361941a12.0
+ id 1qSyA9-00FrbN-4N for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 07 Aug 2023 11:12:38 +0000
+Received: by mail-pj1-f45.google.com with SMTP id
+ 98e67ed59e1d1-268f6ba57b5so624104a91.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 07 Aug 2023 04:12:10 -0700 (PDT)
+ Mon, 07 Aug 2023 04:12:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1691406725; x=1692011525;
+ d=bytedance.com; s=google; t=1691406751; x=1692011551;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=2qNGhCyBYRkIC+KqhUj1bienmPbnCoyI88yux10rL0c=;
- b=Xc/b9RVeZGabBZRzbFnLG60A3XcuysnQbX8QDB63xQh9Qsy33GgzK9r54ssZ8BRYsv
- Zo1icyrpegHwV8KMFlNuxd6Vv7rJh2g9STB5A/Cyu6q4WM+YLxsvvmbNVVdkSntCluNl
- It/PLVMY+sHjh9niVg4dAEeIOr6EcMWhtMnuFdCY7H6/MC8Iz/ZfTZnLr8OJnSIA36e9
- mmNGX7xKmI8VWlsJYDncO9Zq/rF2h1OiOCACwI0xXgbsWIREHFfM5CkS8NCDLLHpFGlK
- JETB4OwnLh2lGmaSIFNM9gd2qMpLx0zP9hut1e08UtN8MQU5ZK62c3ni+xnuk2sIAfG7
- kkXQ==
+ bh=y2Zq84YPu5W9umXtWflPPzaPyFOqe/t1tbhlrQuOI+E=;
+ b=Y3Gw/8I9wjDIixxDLIQ9R5eAEihH4V5EOGMa/tEQP2UVJcVR6XKMsoq0kNQA9Anemf
+ f07XdP3K3VTdRiql0M+klRK3bCLbXjjp+xplnI9SAQQIK1LQ+ZTQ4iN7KAzzTyuvBW+2
+ 22vOneIjM2lcCre/t1Mc8DL07qt3h0LYO3V6dBXrNJ+ZsacS8/3b5gEWrOt6ylq3sp75
+ +tN/NsYby1EhnscHKGVaTQLZ5Bd9+GL+XZMM1MIKbWLpVeAc6COrlmvCwmGvjTVu68WR
+ OgVgTRpqhZcRZgjQYAuUYTgXANtTE72/EYkbNkp+iXkkiBUoh7hJkggb0sVF4vx/kVZQ
+ USbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1691406725; x=1692011525;
+ d=1e100.net; s=20221208; t=1691406751; x=1692011551;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=2qNGhCyBYRkIC+KqhUj1bienmPbnCoyI88yux10rL0c=;
- b=AmZDiTQ/SDv/MdBeChyzdnIHYVsXz38o4yuw4IBsBzTNVP5CFllMdguot8NdQ1PUx2
- LHvx9Z+TnAzLikMZNiH+3t20puJlJY3ZrS/EqtXKLmldzvgg+5L1M3WcfO8d+U3NEkIw
- wdL/HA+PWjRm9CPQXhtqx3MrebfcKmvvxqbIoxwKt3JK+cSF+rya0YkHOlUS706NC1FM
- Blrkb6FmbQmj6x+ybYNEJxHettfPxHOGzOZKhbCK79ODy6exwZfACs/l0znz7sAiPMkd
- me0+Tscm/vhcLOnScIAJY1/6d3IMyzq27zyMnIxfoO8qe8GkZNh9ZiHvLAbgF56uWLE5
- dgwg==
-X-Gm-Message-State: AOJu0YwB/8QzSmQrxrPaTv0GsjLPS7PMa4FJy6uFJp8h7xDqhjKRRgxi
- SiRi18T9JaxJlhfkDchiodS3zQ==
-X-Google-Smtp-Source: AGHT+IH0i+Trkswf5ZN/Zo/hyk0nSAkeHBCb5cnTJePkF3I+vCqNyDS8fjeM0LPIBtSn2h3E1rmPDQ==
-X-Received: by 2002:a17:90a:2909:b0:269:5bf7:d79c with SMTP id
- g9-20020a17090a290900b002695bf7d79cmr2210453pjd.1.1691406724771; 
- Mon, 07 Aug 2023 04:12:04 -0700 (PDT)
+ bh=y2Zq84YPu5W9umXtWflPPzaPyFOqe/t1tbhlrQuOI+E=;
+ b=VjMccw7pg0lHStS4FpyKoyzLjOUfleOOQwTX+jYluM/TMcETHkzNQ9khea37d5c7dw
+ d46M091pw+xkfB3jZo1awL8rJyhYV/ln44tTYPWoATlTOP0E1onZSfGRuraeuW4y8SXz
+ +TQbcfMg1cexX+vHIqJVNVM1hyTll8a6+M4pk6v3FnwdwWuhmAbyrOe4d3ex4Vrkyama
+ SX3qgM9tcFO6/fF5ddMU4ClMoZZvvYvCcxBAMARWHnaRAxgrjJx4N0kDmSmFqEYV8Gl0
+ CsfPxJlopy3zG4f7C6fGcgq155jGpCmqwo++Y1t71nAIQ1zHvUMByF3iRPWlmVK7GNCP
+ ukKQ==
+X-Gm-Message-State: ABy/qLZ8j6ibPRO6EqydowAYbAhnUXSO/4w7XD0dqgUcHwOBOhGU0zQB
+ kCkgj/TNe5cklLq0j/UnPUmL3w==
+X-Google-Smtp-Source: APBJJlFA47zqmiKwpfw7q81pKFEqmAkA29wiqRNlMoLoIZqzioc4qMsA62pUfPaD7HBA/F0aUxQzvA==
+X-Received: by 2002:a17:90a:6c97:b0:263:730b:f568 with SMTP id
+ y23-20020a17090a6c9700b00263730bf568mr23062652pjj.3.1691406750926; 
+ Mon, 07 Aug 2023 04:12:30 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
  by smtp.gmail.com with ESMTPSA id
- y13-20020a17090aca8d00b0025be7b69d73sm5861191pjt.12.2023.08.07.04.11.52
+ y13-20020a17090aca8d00b0025be7b69d73sm5861191pjt.12.2023.08.07.04.12.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Aug 2023 04:12:04 -0700 (PDT)
+ Mon, 07 Aug 2023 04:12:30 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev,
  simon.horman@corigine.com, dlemoal@kernel.org
-Date: Mon,  7 Aug 2023 19:08:58 +0800
-Message-Id: <20230807110936.21819-11-zhengqi.arch@bytedance.com>
+Date: Mon,  7 Aug 2023 19:09:00 +0800
+Message-Id: <20230807110936.21819-13-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230807110936.21819-1-zhengqi.arch@bytedance.com>
 References: <20230807110936.21819-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qSy9i-00FrZP-9k
-Subject: [f2fs-dev] [PATCH v4 10/48] f2fs: dynamically allocate the
- f2fs-shrinker
+X-Headers-End: 1qSyA9-00FrbN-4N
+Subject: [f2fs-dev] [PATCH v4 12/48] gfs2: dynamically allocate the gfs2-qd
+ shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -114,8 +114,7 @@ Cc: kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  cluster-devel@redhat.com, xen-devel@lists.xenproject.org,
  linux-ext4@vger.kernel.org, linux-arm-msm@vger.kernel.org, rcu@vger.kernel.org,
  linux-bcache@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>,
- Muchun Song <songmuchun@bytedance.com>, linux-raid@vger.kernel.org,
- linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+ linux-raid@vger.kernel.org, linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
@@ -123,78 +122,98 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use new APIs to dynamically allocate the f2fs-shrinker.
+Use new APIs to dynamically allocate the gfs2-qd shrinker.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-Reviewed-by: Muchun Song <songmuchun@bytedance.com>
 ---
- fs/f2fs/super.c | 32 ++++++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 8 deletions(-)
+ fs/gfs2/main.c  |  6 +++---
+ fs/gfs2/quota.c | 26 ++++++++++++++++++++------
+ fs/gfs2/quota.h |  3 ++-
+ 3 files changed, 25 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index aa1f9a3a8037..9092310582aa 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -83,11 +83,27 @@ void f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned int rate,
- #endif
+diff --git a/fs/gfs2/main.c b/fs/gfs2/main.c
+index afcb32854f14..e47b1cc79f59 100644
+--- a/fs/gfs2/main.c
++++ b/fs/gfs2/main.c
+@@ -147,7 +147,7 @@ static int __init init_gfs2_fs(void)
+ 	if (!gfs2_trans_cachep)
+ 		goto fail_cachep8;
  
- /* f2fs-wide shrinker description */
--static struct shrinker f2fs_shrinker_info = {
--	.scan_objects = f2fs_shrink_scan,
--	.count_objects = f2fs_shrink_count,
+-	error = register_shrinker(&gfs2_qd_shrinker, "gfs2-qd");
++	error = gfs2_qd_shrinker_init();
+ 	if (error)
+ 		goto fail_shrinker;
+ 
+@@ -196,7 +196,7 @@ static int __init init_gfs2_fs(void)
+ fail_wq2:
+ 	destroy_workqueue(gfs_recovery_wq);
+ fail_wq1:
+-	unregister_shrinker(&gfs2_qd_shrinker);
++	gfs2_qd_shrinker_exit();
+ fail_shrinker:
+ 	kmem_cache_destroy(gfs2_trans_cachep);
+ fail_cachep8:
+@@ -229,7 +229,7 @@ static int __init init_gfs2_fs(void)
+ 
+ static void __exit exit_gfs2_fs(void)
+ {
+-	unregister_shrinker(&gfs2_qd_shrinker);
++	gfs2_qd_shrinker_exit();
+ 	gfs2_glock_exit();
+ 	gfs2_unregister_debugfs();
+ 	unregister_filesystem(&gfs2_fs_type);
+diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
+index 632806c5ed67..d1e4d8ab8fa1 100644
+--- a/fs/gfs2/quota.c
++++ b/fs/gfs2/quota.c
+@@ -186,13 +186,27 @@ static unsigned long gfs2_qd_shrink_count(struct shrinker *shrink,
+ 	return vfs_pressure_ratio(list_lru_shrink_count(&gfs2_qd_lru, sc));
+ }
+ 
+-struct shrinker gfs2_qd_shrinker = {
+-	.count_objects = gfs2_qd_shrink_count,
+-	.scan_objects = gfs2_qd_shrink_scan,
 -	.seeks = DEFAULT_SEEKS,
+-	.flags = SHRINKER_NUMA_AWARE,
 -};
-+static struct shrinker *f2fs_shrinker_info;
++static struct shrinker *gfs2_qd_shrinker;
 +
-+static int __init f2fs_init_shrinker(void)
++int __init gfs2_qd_shrinker_init(void)
 +{
-+	f2fs_shrinker_info = shrinker_alloc(0, "f2fs-shrinker");
-+	if (!f2fs_shrinker_info)
++	gfs2_qd_shrinker = shrinker_alloc(SHRINKER_NUMA_AWARE, "gfs2-qd");
++	if (!gfs2_qd_shrinker)
 +		return -ENOMEM;
 +
-+	f2fs_shrinker_info->count_objects = f2fs_shrink_count;
-+	f2fs_shrinker_info->scan_objects = f2fs_shrink_scan;
-+	f2fs_shrinker_info->seeks = DEFAULT_SEEKS;
++	gfs2_qd_shrinker->count_objects = gfs2_qd_shrink_count;
++	gfs2_qd_shrinker->scan_objects = gfs2_qd_shrink_scan;
++	gfs2_qd_shrinker->seeks = DEFAULT_SEEKS;
 +
-+	shrinker_register(f2fs_shrinker_info);
-+
++	shrinker_register(gfs2_qd_shrinker);
+ 
 +	return 0;
 +}
 +
-+static void f2fs_exit_shrinker(void)
++void gfs2_qd_shrinker_exit(void)
 +{
-+	shrinker_free(f2fs_shrinker_info);
++	shrinker_free(gfs2_qd_shrinker);
 +}
  
- enum {
- 	Opt_gc_background,
-@@ -4940,7 +4956,7 @@ static int __init init_f2fs_fs(void)
- 	err = f2fs_init_sysfs();
- 	if (err)
- 		goto free_garbage_collection_cache;
--	err = register_shrinker(&f2fs_shrinker_info, "f2fs-shrinker");
-+	err = f2fs_init_shrinker();
- 	if (err)
- 		goto free_sysfs;
- 	err = register_filesystem(&f2fs_fs_type);
-@@ -4985,7 +5001,7 @@ static int __init init_f2fs_fs(void)
- 	f2fs_destroy_root_stats();
- 	unregister_filesystem(&f2fs_fs_type);
- free_shrinker:
--	unregister_shrinker(&f2fs_shrinker_info);
-+	f2fs_exit_shrinker();
- free_sysfs:
- 	f2fs_exit_sysfs();
- free_garbage_collection_cache:
-@@ -5017,7 +5033,7 @@ static void __exit exit_f2fs_fs(void)
- 	f2fs_destroy_post_read_processing();
- 	f2fs_destroy_root_stats();
- 	unregister_filesystem(&f2fs_fs_type);
--	unregister_shrinker(&f2fs_shrinker_info);
-+	f2fs_exit_shrinker();
- 	f2fs_exit_sysfs();
- 	f2fs_destroy_garbage_collection_cache();
- 	f2fs_destroy_extent_cache();
+ static u64 qd2index(struct gfs2_quota_data *qd)
+ {
+diff --git a/fs/gfs2/quota.h b/fs/gfs2/quota.h
+index 21ada332d555..f0d54dcbbc75 100644
+--- a/fs/gfs2/quota.h
++++ b/fs/gfs2/quota.h
+@@ -59,7 +59,8 @@ static inline int gfs2_quota_lock_check(struct gfs2_inode *ip,
+ }
+ 
+ extern const struct quotactl_ops gfs2_quotactl_ops;
+-extern struct shrinker gfs2_qd_shrinker;
++int __init gfs2_qd_shrinker_init(void);
++void gfs2_qd_shrinker_exit(void);
+ extern struct list_lru gfs2_qd_lru;
+ extern void __init gfs2_quota_hash_init(void);
+ 
 -- 
 2.30.2
 
