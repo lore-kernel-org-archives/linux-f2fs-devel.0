@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 32E0EC001DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Aug 2023 11:16:59 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 63C89C04A6A
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Aug 2023 11:17:30 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qSyEM-00049T-6H;
-	Mon, 07 Aug 2023 11:16:58 +0000
+	id 1qSyEr-0007fh-V3;
+	Mon, 07 Aug 2023 11:17:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qSyDn-00048D-Ti
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qSyEM-0007ds-6c
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Aug 2023 11:16:24 +0000
+ Mon, 07 Aug 2023 11:16:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=x1yZWn5jqhhXD5GlPCwn7Rqy/lqVgw4fKiPcfLbuAyw=; b=d9whSYw3HCy9COmI0P3/HdUPGn
- BPV8RIRPZs7ahpoNH1D38dI9PdBewa5DL03+ano1nxitirwWNTsUNRGow50M6arGkQ8u7AWT3fYC5
- SYMsFFVG4C+ATtUJTkZbUtpjx+W/wxhyDSxLodEN4CIH/euPlV9Q/Oxc3bCK31SqYkrg=;
+ bh=2n4eBW/y496rw0R30jGqgr9PaTd+TyGx4MFgxeJTY98=; b=P+mJInRxByZ5Wkcek4WQ0T7oOn
+ CpWSzjaJ7UlQXsZNf+HjuxBDMaXSIqJwxMS/YmNnKvH3V6l8SpjXQ9wXFpvZXCxLXqN4+T4C02MDq
+ LZHSIAn0Dqc1248vstRsMAuIagfvPz+S+GrztOjmwWWxW9aHT+HpxQB0XJuNSYr1Q6EI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,68 +33,68 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=x1yZWn5jqhhXD5GlPCwn7Rqy/lqVgw4fKiPcfLbuAyw=; b=DimvU/h/N4Ick/agDdJsk95NaC
- uLIK8baf9N9otwRr3qI5cigqaF0G7+v448KS1LQfEMQom8d88e921YiK0KiKuzW8/ZhuYkb/EWvHB
- rK/8J8uLI1wisj69p/D179lMTpai0PeOPDQ/2q90BLlYd5Sd1vt0SDVjQNLi45shQBwE=;
-Received: from mail-pg1-f179.google.com ([209.85.215.179])
+ bh=2n4eBW/y496rw0R30jGqgr9PaTd+TyGx4MFgxeJTY98=; b=ZhoClE1n/rMNUOumRSzPBGPRki
+ TQaQAE7RbRvgnwYAqIGUpb+QvIekw092tnl3mfZYfY6QBTiKDosxF5cpYq9BVsJgB+tgPxzPPFxH/
+ QwMrdZn039OfTJTl7ufBUBjts8MZaZBx5zuKE2QRgFUfIYyIn+aHlXss8sWicij9kh+o=;
+Received: from mail-pj1-f51.google.com ([209.85.216.51])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qSyDU-0007tC-Ia for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Aug 2023 11:16:16 +0000
-Received: by mail-pg1-f179.google.com with SMTP id
- 41be03b00d2f7-51f64817809so360610a12.1
+ id 1qSyDr-0007u9-CQ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 07 Aug 2023 11:16:57 +0000
+Received: by mail-pj1-f51.google.com with SMTP id
+ 98e67ed59e1d1-26890669c8eso932229a91.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 07 Aug 2023 04:16:02 -0700 (PDT)
+ Mon, 07 Aug 2023 04:16:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1691406956; x=1692011756;
+ d=bytedance.com; s=google; t=1691406982; x=1692011782;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=x1yZWn5jqhhXD5GlPCwn7Rqy/lqVgw4fKiPcfLbuAyw=;
- b=AcIjUBUrPWg0UzvX5wfFusVN+dKafMdFSH2GRzDH1OvYCulGxI33IbPnGkf00jzcfm
- 4A2gtuaaMbbtp6GdbHcVvPsXNRG1dmOn4MOltHcp0lO1ZvH61PsHri+EHSBurlaP3++Q
- 4Ay4mp+CERsWHNo0m/mtiLtHugH42cl3pUwAYaJdXbMqhQOvO09TYlTgMkhLAJn4/X6x
- i3g9KcsL+Xka9qDqamdAs09xw8L3SMlDoJ+EPUs9bBOqEWf8CI1XS8GEbt6nh07SwXhK
- J3x/B99DfdJVBmu0rw2+YUXatA5oQZwE4RwMladVYflBE1HvjLGyTI12ejp5Woqr/FOF
- LWLw==
+ bh=2n4eBW/y496rw0R30jGqgr9PaTd+TyGx4MFgxeJTY98=;
+ b=FnWDWj5rwzmfFGLsv5BbODxTKmQBAUJaoO/xwiU3xtz9tOZ2AwDnatjsq2ab3ilYeJ
+ iWF7FCg8OfJEY1lx/DDczF41LpfDlE6nRRduQxYHOyP9X3uK7n/ZO9q7VAhZSG3xs95Q
+ OqWz/XghzU3SfaeMxwONvmK/HIjBzGEUASf2JFKX93u1G15t5fAwcHUsocilVhQXHkyU
+ J1tWV2QNpc4U36fDDO4ejlIhucfEnNm2u0Wt3z4T4cfN7wJRCQagqckfUu/vztdG0xlS
+ Buj0JJnUwu7QR/DBMG2ve3ld5n35BuwOJKjICt4m1cvU7hXO7dkM+KrhCZs3CTAs8/64
+ gYbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1691406956; x=1692011756;
+ d=1e100.net; s=20221208; t=1691406982; x=1692011782;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=x1yZWn5jqhhXD5GlPCwn7Rqy/lqVgw4fKiPcfLbuAyw=;
- b=jf3FniA01a4okfeUkyzpp099+6UCRVYp15B2KAo6wPXGMj0BvlXewQHd8G0jqpcorV
- J7kreCtvRdNO5qT2wLMk9E2V/P0xVEgSCj5mNPmbV1ZaV/Wy3MgiOIKq5wAWX8rUC7w2
- 4iT8KdTX1tG66vapjW55xBn43ZxQFANFsGU9pF3KnrjeTlgAfOwO3namxpslfkKFvN0C
- c4J53H5YkpnwA4dGAIipLQyr12PbAoP7KSDI76ns5jesPWtWUpqPPMbZM9/iJkghNGSG
- r/e9unM3BZf58JsT3EqZYsGLsTK1KE59K18+8izakDYgWImuegb8Zj135YpDPchW05jo
- zHKw==
-X-Gm-Message-State: AOJu0YyxLNYNIMXXSHHKSooc4ESn4drh4M0694o0gdHULHnajCyfrh87
- ocmxTAcNmhcZGRES3zgX17vp3w==
-X-Google-Smtp-Source: AGHT+IFmiFe8iRG7X1ND7nrFgfyiRFI3F00Omyk3P1Mi12alvC2oRACqfoDpuN1VIlTmyfJiX72rxw==
-X-Received: by 2002:a17:90a:2909:b0:269:5bf7:d79c with SMTP id
- g9-20020a17090a290900b002695bf7d79cmr2218056pjd.1.1691406956537; 
- Mon, 07 Aug 2023 04:15:56 -0700 (PDT)
+ bh=2n4eBW/y496rw0R30jGqgr9PaTd+TyGx4MFgxeJTY98=;
+ b=Xju5HQMErUE0yfPESN3AzE0gFAWw9iMf9r60y/ak6AbduXBBr1i4Xm1aAa3UXvNPAd
+ V0qN4/k3KM5DtOvxYeIZAeYbaxLecCboOC7ZOsW5lwKGSbdY/kA1zlpO8rzVLo0kxj9S
+ QLad3Cb7h5N5HEHBiV/+WeSIqGobojuPCG3B+50wpBeUi+UYX/hzNFxO31nzeaUpafh5
+ lLubJX8Um3Y+wz7xIyKBnHgwOYnfsop8DCR/+7APJ8TUmcHYWXlS1Z6fE7fqX6kJijqG
+ atelKW3NBIrxMgboLCXbEQlkqBnRpju9BIqhIzGSrdWh38ASOfjZI8SJGf0kDKNbAf2h
+ ADnw==
+X-Gm-Message-State: ABy/qLayqI7ynrPGoIza+MLDlcUmkVNZbFHsQErGDkvQn5ob3AKak5Wg
+ FNaaIyxdmofiMh0kP0cHwA0X0g==
+X-Google-Smtp-Source: APBJJlGfZoIKy5dlf67l9aDnuNmoWN294jSLFWBRn8Nrl68gwCTSSg7v4NaF4AAHW/6J0zEJitKJCg==
+X-Received: by 2002:a17:90a:1f83:b0:268:3dc6:f0c5 with SMTP id
+ x3-20020a17090a1f8300b002683dc6f0c5mr25038018pja.0.1691406981820; 
+ Mon, 07 Aug 2023 04:16:21 -0700 (PDT)
 Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
  by smtp.gmail.com with ESMTPSA id
- y13-20020a17090aca8d00b0025be7b69d73sm5861191pjt.12.2023.08.07.04.15.43
+ y13-20020a17090aca8d00b0025be7b69d73sm5861191pjt.12.2023.08.07.04.16.09
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Aug 2023 04:15:55 -0700 (PDT)
+ Mon, 07 Aug 2023 04:16:21 -0700 (PDT)
 To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
  vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
  brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
  steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
  yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev,
  simon.horman@corigine.com, dlemoal@kernel.org
-Date: Mon,  7 Aug 2023 19:09:16 +0800
-Message-Id: <20230807110936.21819-29-zhengqi.arch@bytedance.com>
+Date: Mon,  7 Aug 2023 19:09:18 +0800
+Message-Id: <20230807110936.21819-31-zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <20230807110936.21819-1-zhengqi.arch@bytedance.com>
 References: <20230807110936.21819-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Headers-End: 1qSyDU-0007tC-Ia
-Subject: [f2fs-dev] [PATCH v4 28/48] md/raid5: dynamically allocate the
- md-raid5 shrinker
+X-Headers-End: 1qSyDr-0007u9-CQ
+Subject: [f2fs-dev] [PATCH v4 30/48] vmw_balloon: dynamically allocate the
+ vmw-balloon shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -124,92 +124,100 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 In preparation for implementing lockless slab shrink, use new APIs to
-dynamically allocate the md-raid5 shrinker, so that it can be freed
+dynamically allocate the vmw-balloon shrinker, so that it can be freed
 asynchronously using kfree_rcu(). Then it doesn't need to wait for RCU
-read-side critical section when releasing the struct r5conf.
+read-side critical section when releasing the struct vmballoon.
+
+And we can simply exit vmballoon_init() when registering the shrinker
+fails. So the shrinker_registered indication is redundant, just remove it.
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 Reviewed-by: Muchun Song <songmuchun@bytedance.com>
 ---
- drivers/md/raid5.c | 26 +++++++++++++++-----------
- drivers/md/raid5.h |  2 +-
- 2 files changed, 16 insertions(+), 12 deletions(-)
+ drivers/misc/vmw_balloon.c | 38 ++++++++++++--------------------------
+ 1 file changed, 12 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index 32a87193bad7..e284c2f7dbe4 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -7401,7 +7401,7 @@ static void free_conf(struct r5conf *conf)
- 
- 	log_exit(conf);
- 
--	unregister_shrinker(&conf->shrinker);
-+	shrinker_free(conf->shrinker);
- 	free_thread_groups(conf);
- 	shrink_stripes(conf);
- 	raid5_free_percpu(conf);
-@@ -7449,7 +7449,7 @@ static int raid5_alloc_percpu(struct r5conf *conf)
- static unsigned long raid5_cache_scan(struct shrinker *shrink,
- 				      struct shrink_control *sc)
- {
--	struct r5conf *conf = container_of(shrink, struct r5conf, shrinker);
-+	struct r5conf *conf = shrink->private_data;
- 	unsigned long ret = SHRINK_STOP;
- 
- 	if (mutex_trylock(&conf->cache_size_mutex)) {
-@@ -7470,7 +7470,7 @@ static unsigned long raid5_cache_scan(struct shrinker *shrink,
- static unsigned long raid5_cache_count(struct shrinker *shrink,
- 				       struct shrink_control *sc)
- {
--	struct r5conf *conf = container_of(shrink, struct r5conf, shrinker);
-+	struct r5conf *conf = shrink->private_data;
- 
- 	if (conf->max_nr_stripes < conf->min_nr_stripes)
- 		/* unlikely, but not impossible */
-@@ -7705,18 +7705,22 @@ static struct r5conf *setup_conf(struct mddev *mddev)
- 	 * it reduces the queue depth and so can hurt throughput.
- 	 * So set it rather large, scaled by number of devices.
+diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
+index 9ce9b9e0e9b6..ac2cdb6cdf74 100644
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -380,16 +380,7 @@ struct vmballoon {
+ 	/**
+ 	 * @shrinker: shrinker interface that is used to avoid over-inflation.
  	 */
--	conf->shrinker.seeks = DEFAULT_SEEKS * conf->raid_disks * 4;
--	conf->shrinker.scan_objects = raid5_cache_scan;
--	conf->shrinker.count_objects = raid5_cache_count;
--	conf->shrinker.batch = 128;
--	conf->shrinker.flags = 0;
--	ret = register_shrinker(&conf->shrinker, "md-raid5:%s", mdname(mddev));
--	if (ret) {
--		pr_warn("md/raid:%s: couldn't register shrinker.\n",
-+	conf->shrinker = shrinker_alloc(0, "md-raid5:%s", mdname(mddev));
-+	if (!conf->shrinker) {
-+		ret = -ENOMEM;
-+		pr_warn("md/raid:%s: couldn't allocate shrinker.\n",
- 			mdname(mddev));
- 		goto abort;
- 	}
+-	struct shrinker shrinker;
+-
+-	/**
+-	 * @shrinker_registered: whether the shrinker was registered.
+-	 *
+-	 * The shrinker interface does not handle gracefully the removal of
+-	 * shrinker that was not registered before. This indication allows to
+-	 * simplify the unregistration process.
+-	 */
+-	bool shrinker_registered;
++	struct shrinker *shrinker;
+ };
  
-+	conf->shrinker->seeks = DEFAULT_SEEKS * conf->raid_disks * 4;
-+	conf->shrinker->scan_objects = raid5_cache_scan;
-+	conf->shrinker->count_objects = raid5_cache_count;
-+	conf->shrinker->batch = 128;
-+	conf->shrinker->private_data = conf;
-+
-+	shrinker_register(conf->shrinker);
-+
- 	sprintf(pers_name, "raid%d", mddev->new_level);
- 	rcu_assign_pointer(conf->thread,
- 			   md_register_thread(raid5d, mddev, pers_name));
-diff --git a/drivers/md/raid5.h b/drivers/md/raid5.h
-index 97a795979a35..22bea20eccbd 100644
---- a/drivers/md/raid5.h
-+++ b/drivers/md/raid5.h
-@@ -670,7 +670,7 @@ struct r5conf {
- 	wait_queue_head_t	wait_for_stripe;
- 	wait_queue_head_t	wait_for_overlap;
- 	unsigned long		cache_state;
--	struct shrinker		shrinker;
-+	struct shrinker		*shrinker;
- 	int			pool_size; /* number of disks in stripeheads in pool */
- 	spinlock_t		device_lock;
- 	struct disk_info	*disks;
+ static struct vmballoon balloon;
+@@ -1568,29 +1559,27 @@ static unsigned long vmballoon_shrinker_count(struct shrinker *shrinker,
+ 
+ static void vmballoon_unregister_shrinker(struct vmballoon *b)
+ {
+-	if (b->shrinker_registered)
+-		unregister_shrinker(&b->shrinker);
+-	b->shrinker_registered = false;
++	shrinker_free(b->shrinker);
+ }
+ 
+ static int vmballoon_register_shrinker(struct vmballoon *b)
+ {
+-	int r;
+-
+ 	/* Do nothing if the shrinker is not enabled */
+ 	if (!vmwballoon_shrinker_enable)
+ 		return 0;
+ 
+-	b->shrinker.scan_objects = vmballoon_shrinker_scan;
+-	b->shrinker.count_objects = vmballoon_shrinker_count;
+-	b->shrinker.seeks = DEFAULT_SEEKS;
++	b->shrinker = shrinker_alloc(0, "vmw-balloon");
++	if (!b->shrinker)
++		return -ENOMEM;
+ 
+-	r = register_shrinker(&b->shrinker, "vmw-balloon");
++	b->shrinker->scan_objects = vmballoon_shrinker_scan;
++	b->shrinker->count_objects = vmballoon_shrinker_count;
++	b->shrinker->seeks = DEFAULT_SEEKS;
++	b->shrinker->private_data = b;
+ 
+-	if (r == 0)
+-		b->shrinker_registered = true;
++	shrinker_register(b->shrinker);
+ 
+-	return r;
++	return 0;
+ }
+ 
+ /*
+@@ -1883,7 +1872,7 @@ static int __init vmballoon_init(void)
+ 
+ 	error = vmballoon_register_shrinker(&balloon);
+ 	if (error)
+-		goto fail;
++		return error;
+ 
+ 	/*
+ 	 * Initialization of compaction must be done after the call to
+@@ -1905,9 +1894,6 @@ static int __init vmballoon_init(void)
+ 	vmballoon_debugfs_init(&balloon);
+ 
+ 	return 0;
+-fail:
+-	vmballoon_unregister_shrinker(&balloon);
+-	return error;
+ }
+ 
+ /*
 -- 
 2.30.2
 
