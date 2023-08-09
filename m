@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F1CA9EB64DD
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Aug 2023 08:50:46 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 709E9EB64DD
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Aug 2023 09:00:46 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qTetz-0006nE-1d;
-	Wed, 09 Aug 2023 08:50:45 +0000
+	id 1qTf3d-0004vm-HD;
+	Wed, 09 Aug 2023 09:00:45 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hirofumi@parknet.co.jp>) id 1qTetx-0006n1-Ia
+ (envelope-from <hirofumi@parknet.co.jp>) id 1qTf3c-0004vf-Mc
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Aug 2023 08:50:44 +0000
+ Wed, 09 Aug 2023 09:00:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:
  References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gqexseAy8x9XfBgwRk35PK/BfcqKAg2w45FhtDl/m1c=; b=Po+RrBGlZoyVIjcmomi/hEXH77
- MjdRuHAhqDDedFnisF+0Qc04gMYT2C0oWkIxTjZ7j28+Wzk4zfEwYEV2bC9HZp2syYWyICapdNEZV
- 1JPkmLoKQNvqbHUaImyPKYPCjou7d7nXexic8UIkxjFp8SzPvIiiAAxfOdUnIjjQkvc4=;
+ bh=QGM/Znnnwz3/kBMK8Bh+uNOfA4AVYlN0i8ULGEsF93M=; b=X9s7GZx/4tAO4C0+lMXg7NR9js
+ PJoaC+ijunhSf7p2HHYpPJec4NqUnghq+yTCfAqf1mVzCZZMKilIELu6pizG7zMVJ9wx1WPU3h5+v
+ C6GKHutAYVdc4qikmcLm6rLh1OZNQI9PPt4TE3FQ2W4EuOCfYUjK68b5TSRepc0BCUsQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:MIME-Version:Message-ID:Date:References:In-Reply-To:Subject:
@@ -33,40 +33,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=gqexseAy8x9XfBgwRk35PK/BfcqKAg2w45FhtDl/m1c=; b=QoUjkp3a14xj6N4Bc6zjGe/7tb
- snmuIsG9CPJ/32Hlxcb/V2toi22DZ0I8+Uaa1nR16LiWOpwqFOeyoaMfvONjq/93qGPhoQdt0wfzX
- 32atb2Yg2j7yPNx+0QhpOrbDMqTW6tMbmNgzqeTnS3+qyMrlTf2Eo82ny31JXBMO02rU=;
+ bh=QGM/Znnnwz3/kBMK8Bh+uNOfA4AVYlN0i8ULGEsF93M=; b=Qo4lmO2v7zq1m07J8s2BwyZD76
+ YEgAX5svIvYlGwTLGq1rsVGfJW3Cz3ADCzCWMpV7pn+zH5K8jG6Wnt5irzE1Yz1qui1KVdG0wEoh2
+ C41+7jzQrvOZRlGylfJoCAGNk7G2+Z9EKL+aEuuZvsm598F97HNFjoP7LpXZo84loFLo=;
 Received: from mail.parknet.co.jp ([210.171.160.6])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.95)
- id 1qTetv-0004is-2h for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Aug 2023 08:50:44 +0000
+ id 1qTf3a-0005PX-HB for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 09 Aug 2023 09:00:44 +0000
 Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
- by mail.parknet.co.jp (Postfix) with ESMTPSA id 2BF732055FA1;
- Wed,  9 Aug 2023 17:41:12 +0900 (JST)
+ by mail.parknet.co.jp (Postfix) with ESMTPSA id 5F6A22055F9C;
+ Wed,  9 Aug 2023 17:37:57 +0900 (JST)
 Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
  by ibmpc.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id
- 3798fAMk208573
+ 3798btR4208465
  (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
- Wed, 9 Aug 2023 17:41:11 +0900
+ Wed, 9 Aug 2023 17:37:56 +0900
 Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
- by devron.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id 3798fAiA140744
+ by devron.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id 3798btTt140448
  (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
- Wed, 9 Aug 2023 17:41:10 +0900
+ Wed, 9 Aug 2023 17:37:55 +0900
 Received: (from hirofumi@localhost)
- by devron.myhome.or.jp (8.17.2/8.17.2/Submit) id 3798f9uW140743;
- Wed, 9 Aug 2023 17:41:09 +0900
+ by devron.myhome.or.jp (8.17.2/8.17.2/Submit) id 3798biDW140435;
+ Wed, 9 Aug 2023 17:37:44 +0900
 From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 To: Jeff Layton <jlayton@kernel.org>
-In-Reply-To: <87msz08vc7.fsf@mail.parknet.co.jp> (OGAWA Hirofumi's message of
- "Wed, 09 Aug 2023 17:37:44 +0900")
+In-Reply-To: <20230807-mgctime-v7-5-d1dec143a704@kernel.org> (Jeff Layton's
+ message of "Mon, 07 Aug 2023 15:38:36 -0400")
 References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
  <20230807-mgctime-v7-5-d1dec143a704@kernel.org>
- <87msz08vc7.fsf@mail.parknet.co.jp>
-Date: Wed, 09 Aug 2023 17:41:09 +0900
-Message-ID: <87il9o8v6i.fsf@mail.parknet.co.jp>
+Date: Wed, 09 Aug 2023 17:37:44 +0900
+Message-ID: <87msz08vc7.fsf@mail.parknet.co.jp>
 User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-X-Headers-End: 1qTetv-0004is-2h
+X-Headers-End: 1qTf3a-0005PX-HB
 Subject: Re: [f2fs-dev] [PATCH v7 05/13] fat: make fat_update_time get its
  own timestamp
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -128,22 +127,46 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> writes:
+Jeff Layton <jlayton@kernel.org> writes:
 
-> Jeff Layton <jlayton@kernel.org> writes:
->
->> Also, it may be that things have changed by the time we get to calling
->> fat_update_time after checking inode_needs_update_time. Ensure that we
->> attempt the i_version bump if any of the S_* flags besides S_ATIME are
->> set.
->
-> I'm not sure what it meaning though, this is from
-> generic_update_time(). Are you going to change generic_update_time()
-> too? If so, it doesn't break lazytime feature?
->
-> Thanks.
+> Also, it may be that things have changed by the time we get to calling
+> fat_update_time after checking inode_needs_update_time. Ensure that we
+> attempt the i_version bump if any of the S_* flags besides S_ATIME are
+> set.
 
-BTW, fat is not implementing lazytime now, but it is for future.
+I'm not sure what it meaning though, this is from
+generic_update_time(). Are you going to change generic_update_time()
+too? If so, it doesn't break lazytime feature?
+
+Thanks.
+
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/fat/misc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/fat/misc.c b/fs/fat/misc.c
+> index 67006ea08db6..8cab87145d63 100644
+> --- a/fs/fat/misc.c
+> +++ b/fs/fat/misc.c
+> @@ -347,14 +347,14 @@ int fat_update_time(struct inode *inode, struct timespec64 *now, int flags)
+>  		return 0;
+>  
+>  	if (flags & (S_ATIME | S_CTIME | S_MTIME)) {
+> -		fat_truncate_time(inode, now, flags);
+> +		fat_truncate_time(inode, NULL, flags);
+>  		if (inode->i_sb->s_flags & SB_LAZYTIME)
+>  			dirty_flags |= I_DIRTY_TIME;
+>  		else
+>  			dirty_flags |= I_DIRTY_SYNC;
+>  	}
+>  
+> -	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
+> +	if ((flags & (S_VERSION|S_CTIME|S_MTIME)) && inode_maybe_inc_iversion(inode, false))
+>  		dirty_flags |= I_DIRTY_SYNC;
+>  
+>  	__mark_inode_dirty(inode, dirty_flags);
+
 -- 
 OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
