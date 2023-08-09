@@ -4,61 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5B22CC001B0
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Aug 2023 18:31:53 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AE0D8C001DE
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Aug 2023 19:05:01 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qTnyH-0002WO-4y;
-	Wed, 09 Aug 2023 18:31:50 +0000
+	id 1qToUM-00086I-HO;
+	Wed, 09 Aug 2023 19:04:58 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hirofumi@parknet.co.jp>) id 1qTnyF-0002WI-By
+ (envelope-from <jlayton@kernel.org>) id 1qToUL-00086C-Mp
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Aug 2023 18:31:48 +0000
+ Wed, 09 Aug 2023 19:04:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:
- References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hKb+FAF2A8bRt+pjsstHRsoonTacXONVkaT4q8VR9Os=; b=BdJEi56QTc+5vrC9teUN0xESEI
- qPec4vVqBcekAtsyQgUHsoo7DxQ5DFMcWVLjj8JPd8aT4kirhZB5qR5TX8UHcozpS0WK33rm4kIeO
- GOQ44Rz8iJg5nemjqq8z+krh2bxBqQOeVC03LiG5cwHMdZ9y0YRL5MIPO2Y8IxrpF7Hc=;
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=alXrKPD5fHXeJn9UjHKim4LKQU7HoozYjQglaZ1xXaI=; b=CHLvH8tDVQy4XeffP1teqlTzIZ
+ DVUX/gEcegkVhqbIGtCAxkzrh/ziRmkDpZfF/EPRyM5RI7CjkJ7ZWYBtxDR3Lmgy8jk1GaPaB0FS7
+ xzeClikUQdXPZ2dnfPPgJbrdLhJdcUY8cTsIHZ0p722/DPp5m9gvXTGytJ+EubJ4G2h0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:References:In-Reply-To:Subject:
- Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hKb+FAF2A8bRt+pjsstHRsoonTacXONVkaT4q8VR9Os=; b=f/523OkFkHA4LqSf4CflmamD6P
- NlMiyKjZGxrePnlKdDP7eaynV5hiPjGAaC4c0cqebZBh8THC85FfFUdd4avh017EcKIQ5VU5KQEwt
- terTpsMrYvBwRjmB6urO3PHCSjGKKMPbXF7WeoE/WUBT+zPlqW36xpBlfg2KhyeqYBGE=;
-Received: from mail.parknet.co.jp ([210.171.160.6])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.95)
- id 1qTnyF-0004MU-9V for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Aug 2023 18:31:48 +0000
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
- by mail.parknet.co.jp (Postfix) with ESMTPSA id 929122055FA6;
- Thu, 10 Aug 2023 03:31:41 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
- by ibmpc.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id
- 379IVe0p224267
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
- Thu, 10 Aug 2023 03:31:41 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
- by devron.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id 379IVeNg228005
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
- Thu, 10 Aug 2023 03:31:40 +0900
-Received: (from hirofumi@localhost)
- by devron.myhome.or.jp (8.17.2/8.17.2/Submit) id 379IVaAM227997;
- Thu, 10 Aug 2023 03:31:36 +0900
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To: Jeff Layton <jlayton@kernel.org>
-In-Reply-To: <ccffe6ca3397c8374352b002fe01d55b09d84ef4.camel@kernel.org> (Jeff
- Layton's message of "Wed, 09 Aug 2023 13:59:26 -0400")
+ bh=alXrKPD5fHXeJn9UjHKim4LKQU7HoozYjQglaZ1xXaI=; b=CiFXufnITfL2Z59yfav+hlCCcW
+ xyWWB7qCQenez3O62KDM8IkRwOHZ0dx6/UKMGK65A1iva2ryTMkFPXIsqSLDKVNYxdqFsxCmZh6t2
+ 2elToQcFmxItXhZ9gloHTV97UHv6UISj+tx1kZ1F5X3vi6YsqaVeLcECP7Z+7jn0XwzY=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1qToUK-000krZ-Ic for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 09 Aug 2023 19:04:58 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id C947D644DE;
+ Wed,  9 Aug 2023 19:04:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB107C433C7;
+ Wed,  9 Aug 2023 19:04:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1691607890;
+ bh=alXrKPD5fHXeJn9UjHKim4LKQU7HoozYjQglaZ1xXaI=;
+ h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+ b=AneNvnqJ20CJmKiEgeASfLx4NSIFXV4j2vtzAKGnX32iLsSf9A43S7wAfHVHbYQQP
+ h3ON9dJJ2d4zasDcG0OHa5a1AfenYnO+uoesgXhOt+soOjJtmmxlhUNc5QuXKGuVOg
+ rulv+awus9qyVEIGRttUpq9Lcin2kAZfB093o2LczBjmWrzPbu4HcAMNS3Ib4zj45p
+ 3u7x0mQLZuZR6+lN5gsi60S8IiOPzBT4vt1n3+KsBq67CA1z2KjKobM8vv+qdWmPsN
+ ddnXMIFOGmdQH1E3uRbvXBai78DI/EAYz+8n3M9qwxNTsQtwGjIcAPpzsM/ELjqang
+ 5ERP9Tcme3DHA==
+Message-ID: <edf8e8ca3b38e56f30e0d24ac7293f848ffee371.camel@kernel.org>
+From: Jeff Layton <jlayton@kernel.org>
+To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Date: Wed, 09 Aug 2023 15:04:42 -0400
+In-Reply-To: <87h6p86p9z.fsf@mail.parknet.co.jp>
 References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
  <20230807-mgctime-v7-5-d1dec143a704@kernel.org>
  <87msz08vc7.fsf@mail.parknet.co.jp>
@@ -69,11 +74,10 @@ References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
  <2cb998ff14ace352a9dd553e82cfa0aa92ec09ce.camel@kernel.org>
  <87leek6rh1.fsf@mail.parknet.co.jp>
  <ccffe6ca3397c8374352b002fe01d55b09d84ef4.camel@kernel.org>
-Date: Thu, 10 Aug 2023 03:31:36 +0900
-Message-ID: <87h6p86p9z.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+ <87h6p86p9z.fsf@mail.parknet.co.jp>
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-X-Headers-End: 1qTnyF-0004MU-9V
+X-Headers-End: 1qToUK-000krZ-Ic
 Subject: Re: [f2fs-dev] [PATCH v7 05/13] fat: make fat_update_time get its
  own timestamp
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -90,8 +94,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Cc: Latchesar Ionkov <lucho@ionkov.net>,
  Martin Brandenburg <martin@omnibond.com>,
  Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
- Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
- Dominique Martinet <asmadeus@codewreck.org>,
+ Jan Kara <jack@suse.cz>, "Darrick
+ J. Wong" <djwong@kernel.org>, Dominique Martinet <asmadeus@codewreck.org>,
  Christian Schoenebeck <linux_oss@crudebyte.com>, ecryptfs@vger.kernel.org,
  Yue Hu <huyue2@gl0jj8bn.sched.sma.tdnsstic1.cn>,
  David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>,
@@ -135,42 +139,48 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Jeff Layton <jlayton@kernel.org> writes:
+On Thu, 2023-08-10 at 03:31 +0900, OGAWA Hirofumi wrote:
+> Jeff Layton <jlayton@kernel.org> writes:
+> 
+> > On Thu, 2023-08-10 at 02:44 +0900, OGAWA Hirofumi wrote:
+> > > Jeff Layton <jlayton@kernel.org> writes:
+> > > 
+> > That would be wrong. The problem is that we're changing how update_time
+> > works:
+> > 
+> > Previously, update_time was given a timestamp and a set of S_* flags to
+> > indicate which fields should be updated. Now, update_time is not given a
+> > timestamp. It needs to fetch it itself, but that subtly changes the
+> > meaning of the flags field.
+> > 
+> > It now means "these fields needed to be updated when I last checked".
+> > The timestamp and i_version may now be different from when the flags
+> > field was set. This means that if any of S_CTIME/S_MTIME/S_VERSION were
+> > set that we need to attempt to update all 3 of them. They may now be
+> > different from the timestamp or version that we ultimately end up with.
+> > 
+> > The above may look to you like it would always cause I_DIRTY_SYNC to be
+> > set on any ctime or mtime update, but inode_maybe_inc_iversion only
+> > returns true if it actually updated i_version, and it only does that if
+> > someone issued a ->getattr against the file since the last time it was
+> > updated.
+> > 
+> > So, this shouldn't generate any more DIRTY_SYNC updates than it did
+> > before.
+> 
+> Again, if you claim so, why generic_update_time() doesn't work same? Why
+> only FAT does?
+> 
+> Or I'm misreading generic_update_time() patch?
+> 
 
-> On Thu, 2023-08-10 at 02:44 +0900, OGAWA Hirofumi wrote:
->> Jeff Layton <jlayton@kernel.org> writes:
->> 
-> That would be wrong. The problem is that we're changing how update_time
-> works:
->
-> Previously, update_time was given a timestamp and a set of S_* flags to
-> indicate which fields should be updated. Now, update_time is not given a
-> timestamp. It needs to fetch it itself, but that subtly changes the
-> meaning of the flags field.
->
-> It now means "these fields needed to be updated when I last checked".
-> The timestamp and i_version may now be different from when the flags
-> field was set. This means that if any of S_CTIME/S_MTIME/S_VERSION were
-> set that we need to attempt to update all 3 of them. They may now be
-> different from the timestamp or version that we ultimately end up with.
->
-> The above may look to you like it would always cause I_DIRTY_SYNC to be
-> set on any ctime or mtime update, but inode_maybe_inc_iversion only
-> returns true if it actually updated i_version, and it only does that if
-> someone issued a ->getattr against the file since the last time it was
-> updated.
->
-> So, this shouldn't generate any more DIRTY_SYNC updates than it did
-> before.
+When you say it "doesn't work the same", what do you mean, specifically?
+I had to make some allowances for the fact that FAT is substantially
+different in its timestamp handling, and I tried to preserve existing
+behavior as best I could.
 
-Again, if you claim so, why generic_update_time() doesn't work same? Why
-only FAT does?
-
-Or I'm misreading generic_update_time() patch?
-
-Thanks.
 -- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Jeff Layton <jlayton@kernel.org>
 
 
 _______________________________________________
