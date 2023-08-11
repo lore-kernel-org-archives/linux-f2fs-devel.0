@@ -4,91 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7CA7FC07E8B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 11 Aug 2023 11:05:22 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CE447C001DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 11 Aug 2023 12:28:00 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qUPxI-0005O8-Vg;
-	Fri, 11 Aug 2023 11:05:20 +0000
+	id 1qURFG-0003n8-6N;
+	Fri, 11 Aug 2023 12:27:59 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jack@suse.cz>) id 1qUPxG-0005Nl-UP;
- Fri, 11 Aug 2023 11:05:18 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+10530082ca17b6f7899b+7292+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1qURFD-0003ms-Bx; Fri, 11 Aug 2023 12:27:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5tRGa7YNpy5azfO2DILJGaxnHQqIrHRIuX4HPJpenrQ=; b=E+Ae4bBGHJmmskeHPBYXwuMUD2
- VkZsYTwx6DaTx3E7mc+a/d/Nh3JVFUFd6fCiAbEL6g/MNr3Uj5UWuWyFDMv2EBRO1eBcJGtT7YR3M
- oVH4qzQ4r4zyN9YGbsf1ZwOPAK4fpFZvrwEggF8BmVI2yBls6kfgoyWKWJX6QVBcyvFU=;
+ bh=96Jyxa0hgrG24aZgu2ilDmsPaDJbIFT8CvAcqFGq7ak=; b=DciJ7ZWMQ4S+3A1eP+qdCNxrny
+ 03nm2ElvfMD5LQTrFZ3V6sr/AwEeN9tcdfvTdWW5IQU7vu3YQutw6Wxbg3cV7VGmMdPuzZTe2DhEK
+ CScU/kCKn9kba9BZIllFDAS3ySk8PVDwVEh0jcpDmF887ou3idSGmEcKvNH0dfQrOcbQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=5tRGa7YNpy5azfO2DILJGaxnHQqIrHRIuX4HPJpenrQ=; b=m
- fTugMQSAAFUdEFdFDXlcbbtSJxhPpzOXrPdiU3yNxbMfFUjzeiiwvWloXPB/G5RbZlepIMqbASXJY
- 101sCR5PkKtNHuVxSEqA7Kn1k0GWkf0Me15Vhkq0JMIgbdNANkesZE/Zj87Mp/qQZPfSJ4CPZpsHg
- lCNtztTPWAU1HCoM=;
-Received: from smtp-out1.suse.de ([195.135.220.28])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=96Jyxa0hgrG24aZgu2ilDmsPaDJbIFT8CvAcqFGq7ak=; b=Gh3XAD1ZAMnt4sDMZPPM+HTDKv
+ eKhJqH1ZEcTElTzRWnGbVGPzODdXoi3LDB4BZKBVNQBQKvAZzmG6ifm7RYQP9SNpKTwHzzKiNroG7
+ LSaBwebZ+WsjbROCJxTM0NKiMBDAREYsm2QmH2PWA987FLA/RcwAwqtUMj+9gUz9K6ek=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qUPxE-002RMc-KJ; Fri, 11 Aug 2023 11:05:18 +0000
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
- (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id 554E921867;
- Fri, 11 Aug 2023 11:05:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1691751905; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version: content-transfer-encoding:content-transfer-encoding;
- bh=5tRGa7YNpy5azfO2DILJGaxnHQqIrHRIuX4HPJpenrQ=;
- b=nS0o04Ko2eofWDhOvWx6o3T36EV25HqbUFvkN9WMKumyZo3DU5IiWgMskXfjyH4OXEiKYl
- IITYxvL5Q8pMKkFc8O6biwC3K3TxmcmnzVR3W1NQhsfgztirbY49kzZoor0HytOQKCBlyL
- GV3cB78+BIPaD5P0M4y2xB0Q495MkAo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1691751905;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version: content-transfer-encoding:content-transfer-encoding;
- bh=5tRGa7YNpy5azfO2DILJGaxnHQqIrHRIuX4HPJpenrQ=;
- b=PRu3LFGsOROMaty7jNH51X1wMClD6ZMlY5AdbxYnc0QwtMHxNWZ8s/wVfL1uImLDOQT/Rl
- cDHfO/YvLXNV1tAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
- (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 40B5313592;
- Fri, 11 Aug 2023 11:05:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id kdy/D+EV1mQuRQAAMHmgww
- (envelope-from <jack@suse.cz>); Fri, 11 Aug 2023 11:05:05 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
- id B94BAA076F; Fri, 11 Aug 2023 13:05:04 +0200 (CEST)
-From: Jan Kara <jack@suse.cz>
-To: <linux-fsdevel@vger.kernel.org>
-Date: Fri, 11 Aug 2023 13:04:31 +0200
-Message-Id: <20230810171429.31759-1-jack@suse.cz>
-X-Mailer: git-send-email 2.35.3
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1qURFC-002Uf6-4p; Fri, 11 Aug 2023 12:27:55 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+ :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=96Jyxa0hgrG24aZgu2ilDmsPaDJbIFT8CvAcqFGq7ak=; b=Lt8QMt/qiwPklQXJKNxAAayl50
+ ejm5z3TauQQgWXDYeiy6ev7CoxuktCUjLml+tQTXB0FrmwYo9bGjhm2G8bwiVtr2qWkYfM3c8FNl1
+ cPDaz7ayPa6vktH3ev1ZeHUse0hr9sV3dSKzn62142iTuA8TTM4tDaiYAHOFhJAm7nP3aQxRbODoe
+ cl8s2GHmVFeXScu6jrXcZHGDTmN2udO8XZ0pPwfpsd5QoOiRLOiFHXD6KYR9f2MEyvA/KeT9RzHmF
+ DIvDgADu/AxqynsuMYC3hcwdLyXOsBeZQBLnrFNVOoRqDCMnS+8kcWICKZ1ml8I/4TT3bYAOcmKWy
+ N15IsxAA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat
+ Linux)) id 1qUREm-00Abyw-17; Fri, 11 Aug 2023 12:27:28 +0000
+Date: Fri, 11 Aug 2023 05:27:28 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jan Kara <jack@suse.cz>
+Message-ID: <ZNYpMPM5o4q1xcIt@infradead.org>
+References: <20230810171429.31759-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3218; i=jack@suse.cz;
- h=from:subject:message-id; bh=8um6o7br1koHMcykRc7ml18Y2BSCm69vwpPmgjRXxkk=;
- b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBk1hW86qklK68Z0G139b8b61UzO/oV2Y6qvJg1uvDC
- +JKlEZuJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZNYVvAAKCRCcnaoHP2RA2epoB/
- 9Sgdf//aomv8tBKGEg1kRzItWS+CXbN/cjy5B6uL3IUWhEY6vxFg7DsN+znMmPFPOp7X1w/e2PExiA
- dGNvKiX2BNUyl6ZLFstCZUiXyzlig8pnDHrmrN4lbx3SIS3BHdNJ8igPArMWVDYXlZuosexzFn3fIW
- ELsTpVpNLZdp6BAxZg4925E1qscyN11eFDJecvW+IrpMA1nHR12Y/AX4zqXWcBT8MPUEiJD1Cnfxfa
- Leji+h3vOG0k2IQAyfN6R1cj/0POs0zJWvSVK9bZM8IYFIOHr+jpYHi0KEVh62q6NLoQxbMBVEzn9K
- JsmkBplP7UobjvtEWvfH0EwVENii9z
-X-Developer-Key: i=jack@suse.cz; a=openpgp;
- fpr=93C6099A142276A28BBE35D815BC833443038D8C
-X-Headers-End: 1qUPxE-002RMc-KJ
-Subject: [f2fs-dev] [PATCH v2 0/29] block: Make blkdev_get_by_*() return
+Content-Disposition: inline
+In-Reply-To: <20230810171429.31759-1-jack@suse.cz>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1qURFC-002Uf6-4p
+Subject: Re: [f2fs-dev] [PATCH v2 0/29] block: Make blkdev_get_by_*() return
  handle
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -102,13 +76,13 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net,
- Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
- linux-nvme@lists.infradead.org, Joseph Qi <joseph.qi@linux.alibaba.com>,
- dm-devel@redhat.com, target-devel@vger.kernel.org,
- linux-mtd@lists.infradead.org, Jack Wang <jinpu.wang@ionos.com>,
- Alasdair Kergon <agk@redhat.com>, drbd-dev@lists.linbit.com,
- linux-s390@vger.kernel.org, linux-nilfs@vger.kernel.org,
- linux-scsi@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-nvme@lists.infradead.org,
+ Joseph Qi <joseph.qi@linux.alibaba.com>, dm-devel@redhat.com,
+ target-devel@vger.kernel.org, linux-mtd@lists.infradead.org,
+ Jack Wang <jinpu.wang@ionos.com>, Alasdair Kergon <agk@redhat.com>,
+ drbd-dev@lists.linbit.com, linux-s390@vger.kernel.org,
+ linux-nilfs@vger.kernel.org, linux-scsi@vger.kernel.org,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
  Christoph Hellwig <hch@infradead.org>, xen-devel@lists.xenproject.org,
  Gao Xiang <xiang@kernel.org>,
  Christian Borntraeger <borntraeger@linux.ibm.com>,
@@ -123,93 +97,20 @@ Cc: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net,
  linux-mm@kvack.org, Song Liu <song@kernel.org>,
  linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
  Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
- Anna Schumaker <anna@kernel.org>, "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+ Anna Schumaker <anna@kernel.org>, linux-fsdevel@vger.kernel.org,
+ "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
  Andrew Morton <akpm@linux-foundation.org>, linux-erofs@lists.ozlabs.org,
  linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello,
+Except for a mostly cosmetic nitpick this looks good to me:
 
-this is a v2 of the patch series which implements the idea of blkdev_get_by_*()
-calls returning bdev_handle which is then passed to blkdev_put() [1]. This
-makes the get and put calls for bdevs more obviously matching and allows us to
-propagate context from get to put without having to modify all the users
-(again!).  In particular I need to propagate used open flags to blkdev_put() to
-be able count writeable opens and add support for blocking writes to mounted
-block devices. I'll send that series separately.
+Acked-by: Christoph Hellwig <hch@lst.de>
 
-The series is based on Christian's vfs tree as of yesterday as there is quite
-some overlap. Patches have passed some reasonable testing - I've tested block
-changes, md, dm, bcache, xfs, btrfs, ext4, swap. This obviously doesn't cover
-everything so I'd like to ask respective maintainers to review / test their
-changes. Thanks! I've pushed out the full branch to:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git bdev_handle
-
-to ease review / testing.
-
-Changes since v1:
-* Rebased on top of current vfs tree
-* Renamed final functions to bdev_open_by_*() and bdev_release()
-* Fixed detection of exclusive open in blkdev_ioctl() and blkdev_fallocate()
-* Fixed swap conversion to properly reinitialize swap_info->bdev_handle
-* Fixed xfs conversion to not oops with rtdev without logdev
-* Couple other minor fixups
-
-								Honza
-
-[1] https://lore.kernel.org/all/ZJGNsVDhZx0Xgs2H@infradead.org
-
-CC: Alasdair Kergon <agk@redhat.com>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Anna Schumaker <anna@kernel.org>
-CC: Chao Yu <chao@kernel.org>
-CC: Christian Borntraeger <borntraeger@linux.ibm.com>
-CC: Coly Li <colyli@suse.de
-CC: "Darrick J. Wong" <djwong@kernel.org>
-CC: Dave Kleikamp <shaggy@kernel.org>
-CC: David Sterba <dsterba@suse.com>
-CC: dm-devel@redhat.com
-CC: drbd-dev@lists.linbit.com
-CC: Gao Xiang <xiang@kernel.org>
-CC: Jack Wang <jinpu.wang@ionos.com>
-CC: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: jfs-discussion@lists.sourceforge.net
-CC: Joern Engel <joern@lazybastard.org>
-CC: Joseph Qi <joseph.qi@linux.alibaba.com>
-CC: Kent Overstreet <kent.overstreet@gmail.com>
-CC: linux-bcache@vger.kernel.org
-CC: linux-btrfs@vger.kernel.org
-CC: linux-erofs@lists.ozlabs.org
-CC: <linux-ext4@vger.kernel.org>
-CC: linux-f2fs-devel@lists.sourceforge.net
-CC: linux-mm@kvack.org
-CC: linux-mtd@lists.infradead.org
-CC: linux-nfs@vger.kernel.org
-CC: linux-nilfs@vger.kernel.org
-CC: linux-nvme@lists.infradead.org
-CC: linux-pm@vger.kernel.org
-CC: linux-raid@vger.kernel.org
-CC: linux-s390@vger.kernel.org
-CC: linux-scsi@vger.kernel.org
-CC: linux-xfs@vger.kernel.org
-CC: "Md. Haris Iqbal" <haris.iqbal@ionos.com>
-CC: Mike Snitzer <snitzer@kernel.org>
-CC: Minchan Kim <minchan@kernel.org>
-CC: ocfs2-devel@oss.oracle.com
-CC: reiserfs-devel@vger.kernel.org
-CC: Sergey Senozhatsky <senozhatsky@chromium.org>
-CC: Song Liu <song@kernel.org>
-CC: Sven Schnelle <svens@linux.ibm.com>
-CC: target-devel@vger.kernel.org
-CC: Ted Tso <tytso@mit.edu>
-CC: Trond Myklebust <trond.myklebust@hammerspace.com>
-CC: xen-devel@lists.xenproject.org
-
-Previous versions:
-Link: http://lore.kernel.org/r/20230629165206.383-1-jack@suse.cz # v1
+That's not eactly the deep review I'd like to do, but as I'm about to
+head out for vacation that's probably as good as it gets.
 
 
 _______________________________________________
