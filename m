@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 275DCC04A6A
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 734FBC0015E
 	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 12 Aug 2023 00:42:18 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qUchu-0007ZM-90;
+	id 1qUchu-0007ZV-Pr;
 	Sat, 12 Aug 2023 00:42:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <krisman@suse.de>) id 1qUchp-0007Yz-6z
+ (envelope-from <krisman@suse.de>) id 1qUcht-0007Z7-1D
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 12 Aug 2023 00:42:12 +0000
+ Sat, 12 Aug 2023 00:42:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZLSJltA607r7xtpPPkkvUfJUZbMcdXItzz2TC+sxABk=; b=N3d1I8SOxYir+ELcIDTi8uefvl
- pcV2bWzl85UAVr06A1+sRodFTZ0CLi2Do9SVARDlmF5dnxteO5m7KQ0BC6Ej0jmxsPPU2KHor0Yww
- /MZx9+6oUOeXjlw3y6STNywWs/OGiUHH/f7hslCLkHFKi0VlpAwdu+g82C67COfyHfs8=;
+ bh=rboAhxFh4vXaAaxXhYnXEsNgIGq+WuMjEQjmzuhhcBA=; b=CzwXA2GpirGcQflGlmORGcWJHM
+ r9IsEengeoP5v9u5YgHjb89+79MIPTvqpBSRQ/bcOClNASyFDsGR0owzomFgSogA8lLIWwlM3LJpv
+ UBi5ziI8nDZ6NUZfwZw0/KGT8hbnTlTibqxcL2owTgvL1Mhn05P6izfexui9cer2AwCQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,59 +33,59 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ZLSJltA607r7xtpPPkkvUfJUZbMcdXItzz2TC+sxABk=; b=K1aCMt9UHlFLO/Sd3ObRFnewZB
- lR7615od1mQJyJR3f+s8cS3/0DdJQOuKd+Y0sxHdpKjhF1FLEyibXvN2z+TcKLZZeXAWFFp8ul/2d
- VIRM89827xUsQ3FGEIxQGp/kkct8/6hQZXMBn17y8HCq24ufSHxpBjvkHFePBs0HtK34=;
-Received: from smtp-out1.suse.de ([195.135.220.28])
+ bh=rboAhxFh4vXaAaxXhYnXEsNgIGq+WuMjEQjmzuhhcBA=; b=M+jL2GhzpaBeFtuGCBSCIuMyw/
+ nwSjqhouG1H/oCiQA6qZcyszHBJpBMCzRfuGP5vqnKOn03CJ8d2xq4yDysTho0wJtKVMBPYvBku5w
+ rS8nUt5/67zUfCyVijGMYi+j9svkWm0dJKa9WKK0QLlaTEoPnZq9VafSNO5pBiO7ar14=;
+Received: from smtp-out2.suse.de ([195.135.220.29])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qUchk-002xtD-7V for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 12 Aug 2023 00:42:12 +0000
+ id 1qUchn-002xto-5C for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 12 Aug 2023 00:42:13 +0000
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id EEB07218E6;
- Sat, 12 Aug 2023 00:41:58 +0000 (UTC)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 2026B1F45A;
+ Sat, 12 Aug 2023 00:42:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1691800918; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1691800924; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=ZLSJltA607r7xtpPPkkvUfJUZbMcdXItzz2TC+sxABk=;
- b=SQTOGHNV2KiavvzoucAG5T8Vw5AFv5EqUIT7kv7/ngcaAqlx47a8XJNITsEjC5YDJ/KbXw
- wenk5fzYjOmUCtWwimhSa3Zgkhx2H3QRzrEmmVANv2AGmz9VV+eBxyTDPMjATet6RyV6dq
- 9aRrHOSeHurjemQaGcy+dOVl5DFOeMk=
+ bh=rboAhxFh4vXaAaxXhYnXEsNgIGq+WuMjEQjmzuhhcBA=;
+ b=yPHW/KW99FkobstIfyZ/sDxFi5xpqOFvAkfJ31DfjY7MVOYoI6+eJ+lmeJtNdWd1Ce9I7r
+ 1IquXEvycPUfOm3fUuBkInbFRkqUKFmaYS9AF2JyC7ozZk0EYGCmggZFJvwVKPtvP+HhWq
+ uMmbV7Onl6KA0SGk986x6avE9/tluqQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1691800918;
+ s=susede2_ed25519; t=1691800924;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=ZLSJltA607r7xtpPPkkvUfJUZbMcdXItzz2TC+sxABk=;
- b=t+aMxO4dfWreIRpbqekuGL5xR6qXonpBXp/46PoO9x4xKG7WBEvCyDBYbyG/pPKaw67Waj
- 7a6q0bcfAfohLZCA==
+ bh=rboAhxFh4vXaAaxXhYnXEsNgIGq+WuMjEQjmzuhhcBA=;
+ b=LCXLd7R33X9KhxaoePEQheYn/UMXFwBikpRSIXAVpuCAeBdnhjmbpXwoyxCFwYaezWPpyh
+ 0X9c6s8oIRWvKaAQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BA1F713592;
- Sat, 12 Aug 2023 00:41:58 +0000 (UTC)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DCE7B13592;
+ Sat, 12 Aug 2023 00:42:03 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id nwbYJ1bV1mQREAAAMHmgww
- (envelope-from <krisman@suse.de>); Sat, 12 Aug 2023 00:41:58 +0000
+ by imap2.suse-dmz.suse.de with ESMTPSA id 7DxOMFvV1mQlEAAAMHmgww
+ (envelope-from <krisman@suse.de>); Sat, 12 Aug 2023 00:42:03 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
  ebiggers@kernel.org, jaegeuk@kernel.org
-Date: Fri, 11 Aug 2023 20:41:39 -0400
-Message-ID: <20230812004146.30980-4-krisman@suse.de>
+Date: Fri, 11 Aug 2023 20:41:42 -0400
+Message-ID: <20230812004146.30980-7-krisman@suse.de>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230812004146.30980-1-krisman@suse.de>
 References: <20230812004146.30980-1-krisman@suse.de>
 MIME-Version: 1.0
-X-Headers-End: 1qUchk-002xtD-7V
-Subject: [f2fs-dev] [PATCH v5 03/10] 9p: Split ->weak_revalidate from
- ->revalidate
+X-Headers-End: 1qUchn-002xto-5C
+Subject: [f2fs-dev] [PATCH v5 06/10] libfs: Validate negative dentries in
+ case-insensitive directories
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,40 +98,164 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-fsdevel@vger.kernel.org, Gabriel Krisman Bertazi <krisman@suse.de>,
- linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+ linux-ext4@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.com>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In preparation to change the signature of dentry_ops->revalidate, avoid
-reusing the handler directly for d_weak_revalidate in 9p.
+From: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+Introduce a dentry revalidation helper to be used by case-insensitive
+filesystems to check if it is safe to reuse a negative dentry.
+
+A negative dentry is safe to be reused on a case-insensitive lookup if
+it was created during a case-insensitive lookup and this is not a lookup
+that will instantiate a dentry. If this is a creation lookup, we also
+need to make sure the name matches sensitively the name under lookup in
+order to assure the name preserving semantics.
+
+dentry->d_name is only checked by the case-insensitive d_revalidate hook
+in the LOOKUP_CREATE/LOOKUP_RENAME_TARGET case since, for these cases,
+d_revalidate is always called with the parent inode at least
+read-locked, and therefore the name cannot change from under us.
+
+d_revalidate is only called in 4 places: lookup_dcache, __lookup_slow,
+lookup_open and lookup_fast:
+
+  - lookup_dcache always calls it with zeroed flags, with the exception
+    of when coming from __lookup_hash, which needs the parent locked
+    already, for instance in the open/creation path, which is locked in
+    open_last_lookups.
+
+  - In __lookup_slow, either the parent inode is read-locked by the
+    caller (lookup_slow), or it is called with no flags (lookup_one*).
+    The read lock suffices to prevent ->d_name modifications, with the
+    exception of one case: __d_unalias, will call __d_move to fix a
+    directory accessible from multiple dentries, which effectively swaps
+    ->d_name while holding only the shared read lock.  This happens
+    through this flow:
+
+    lookup_slow()  //LOOKUP_CREATE
+      d_lookup()
+        ->d_lookup()
+          d_splice_alias()
+            __d_unalias()
+              __d_move()
+
+    Nevertheless, this case is not a problem because negative dentries
+    are not allowed to be moved with __d_move.  In addition,
+    d_instantiate shouldn't race with this case because it's callers
+    also acquire the parent inode lock, preventing it from racing with
+    lookup creation, so the dentry cannot become positive and be moved
+    while inside d_revalidate, which would be a problem if a parallel
+    lookup did d_splice_alias.
+
+  - lookup_open also requires the parent to be locked in the creation
+    case, which is done in open_last_lookups.
+
+  - lookup_fast will indeed be called with the parent unlocked, but it
+    shouldn't be called with LOOKUP_CREATE.  Either it is called in the
+    link_path_walk, where nd->flags doesn't have LOOKUP_CREATE yet or in
+    open_last_lookups. But, in this case, it also never has LOOKUP_CREATE,
+    because it is only called on the !O_CREAT case, which means op->intent
+    doesn't have LOOKUP_CREAT (set in build_open_flags only if O_CREAT is
+    set).
+
+Finally, for the LOOKUP_RENAME_TARGET, we are doing a rename, so the
+parents inodes are also locked.
+
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+
 ---
- fs/9p/vfs_dentry.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Changes since v4:
+  - Drop useless inline declaration (eric)
+  - Refactor to drop extra identation (Christian)
+  - Discuss d_instantiate
+Changes since v3:
+  - Add comment regarding creation (Eric)
+  - Reorder checks to clarify !flags meaning (Eric)
+  - Add commit message explanaton of the inode read lock wrt.
+    __d_move. (Eric)
+Changes since v2:
+  - Add comments to all rejection cases (Eric)
+  - safeguard against filesystem creating dentries without LOOKUP flags
+---
+ fs/libfs.c | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-diff --git a/fs/9p/vfs_dentry.c b/fs/9p/vfs_dentry.c
-index f16f73581634..0c6fa1f53530 100644
---- a/fs/9p/vfs_dentry.c
-+++ b/fs/9p/vfs_dentry.c
-@@ -94,9 +94,15 @@ static int v9fs_lookup_revalidate(struct dentry *dentry, unsigned int flags)
- 	return 1;
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 8d0b64cfd5da..cb98c4721327 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1452,9 +1452,66 @@ static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
+ 	return 0;
  }
  
-+static int v9fs_lookup_weak_revalidate(struct dentry *dentry,
-+				       unsigned int flags)
++static int generic_ci_d_revalidate(struct dentry *dentry,
++				   const struct qstr *name,
++				   unsigned int flags)
 +{
-+	return v9fs_lookup_revalidate(dentry, flags);
++	const struct dentry *parent;
++	const struct inode *dir;
++
++	if (!d_is_negative(dentry))
++		return 1;
++
++	parent = READ_ONCE(dentry->d_parent);
++	dir = READ_ONCE(parent->d_inode);
++
++	if (!dir || !dir_is_casefolded(dir))
++		return 1;
++
++	/*
++	 * Negative dentries created prior to turning the directory
++	 * case-insensitive cannot be trusted, since they don't ensure
++	 * any possible case version of the filename doesn't exist.
++	 */
++	if (!d_is_casefolded_name(dentry))
++		return 0;
++
++	/*
++	 * Filesystems will call into d_revalidate without setting
++	 * LOOKUP_ flags even for file creation (see lookup_one*
++	 * variants).  Reject negative dentries in this case, since we
++	 * can't know for sure it won't be used for creation.
++	 */
++	if (!flags)
++		return 0;
++
++	/*
++	 * If the lookup is for creation, then a negative dentry can
++	 * only be reused if it's a case-sensitive match, not just a
++	 * case-insensitive one.  This is needed to make the new file be
++	 * created with the name the user specified, preserving case.
++	 */
++	if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET)) {
++		/*
++		 * ->d_name won't change from under us in the creation
++		 * path only, since d_revalidate during creation and
++		 * renames is always called with the parent inode
++		 * locked.  It isn't the case for all lookup callpaths,
++		 * so ->d_name must not be touched outside
++		 * (LOOKUP_CREATE|LOOKUP_RENAME_TARGET) context.
++		 */
++		if (dentry->d_name.len != name->len ||
++		    memcmp(dentry->d_name.name, name->name, name->len))
++			return 0;
++	}
++
++	return 1;
 +}
 +
- const struct dentry_operations v9fs_cached_dentry_operations = {
- 	.d_revalidate = v9fs_lookup_revalidate,
--	.d_weak_revalidate = v9fs_lookup_revalidate,
-+	.d_weak_revalidate = v9fs_lookup_weak_revalidate,
- 	.d_delete = v9fs_cached_dentry_delete,
- 	.d_release = v9fs_dentry_release,
+ static const struct dentry_operations generic_ci_dentry_ops = {
+ 	.d_hash = generic_ci_d_hash,
+ 	.d_compare = generic_ci_d_compare,
++	.d_revalidate = generic_ci_d_revalidate,
  };
+ #endif
+ 
 -- 
 2.41.0
 
