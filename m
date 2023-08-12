@@ -4,87 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5A65CC04E69
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 12 Aug 2023 00:42:23 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EACD8EB64DD
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 12 Aug 2023 01:59:27 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qUchy-0001O9-HC;
-	Sat, 12 Aug 2023 00:42:22 +0000
+	id 1qUduX-0007HS-FD;
+	Sat, 12 Aug 2023 01:59:25 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <krisman@suse.de>) id 1qUchr-0001Nf-FY
+ (envelope-from <ebiggers@kernel.org>) id 1qUduW-0007HL-Ci
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 12 Aug 2023 00:42:15 +0000
+ Sat, 12 Aug 2023 01:59:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9oCLm5O/TfEzHLI4v9CFF2If6jDnpmsmOxID/3lxDto=; b=CXWs2fau3/d0jKw/0RucqEClur
- Zbh2+4O/boyA26fWDKNSlmpJupKtckwK6HvRxJlG0SiXFyPqb8qajB98bPQUDdGfv9eq4A6eS9JVm
- XjwsXIeD9KunI6zItlccNBVDrZ1ptH9F99YFrcbiaiGpKdnijuMf5Iepr/5IvPzGQINI=;
+ bh=lRiZBwK97WHAjg4wO5uFgMB148aHT7LI+2Rtf0H1064=; b=Bpp0jfAoN3900e4JOAL05HkM2D
+ A3MMdvSH7c5UufuUUK4Vtt1OV9n05rJq8c3N+ZdnJCM3khsmC0ii+KMBwQ6nx2iageyrFPMeJhqxf
+ r6KnvnsbagaB+GnjiJ6itZZa/FMdmSsci6r/V1yqpFnHZ5whfxY6uyq9EQHxT/u+xqx8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9oCLm5O/TfEzHLI4v9CFF2If6jDnpmsmOxID/3lxDto=; b=LqzuKEEpMBOe8kz5juX5CXf1e+
- lq2+/vL9qlqb+2436tGvYRQKl6h5icoZHY/e6x/7H/Pm1X37y2a2qwIW6fQ812r/UGYLvi2Klzfpu
- TOZQpyQqwLC+HLw+enR4Ll0vBbxyKW27+mO9tX3p6LWmDlVZtBIdLJRQrB8PFnOiCQEk=;
-Received: from smtp-out2.suse.de ([195.135.220.29])
+ bh=lRiZBwK97WHAjg4wO5uFgMB148aHT7LI+2Rtf0H1064=; b=Gfes9eFjRhbB8tfFWQg8hG82/B
+ kzfroQ1WMJ8qePrM/twGvIa5+uwvvua5//y1/rn/QeaHSAA1tz0ejsqpZ/dZ4gxwiWqXeF7zxhS1Y
+ ZgL/lxJYp/CtW6Zpd7kaax85yxvXiGJ7OtaGHSD/+RynaOcQLd8w6AGyWgis2euUWXSs=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qUchk-0002eI-L4 for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 12 Aug 2023 00:42:13 +0000
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1qUduV-0004Sb-Ix for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 12 Aug 2023 01:59:24 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id 68EB61F460;
- Sat, 12 Aug 2023 00:42:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1691800922; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=9oCLm5O/TfEzHLI4v9CFF2If6jDnpmsmOxID/3lxDto=;
- b=z6Sp2GC8+jBUk4Xx/A77FekdsXw0LySonxn/vojNIRs8+QDJ3peu6XxH9Z0DFa3dgM1R2p
- WuecezI0IXifkVqSKW/OcTMwPsEawf2PMfFdc/ynwnn7DaMoilA0/be9ywUHwZcXVyxfSb
- V0lKoKwDpEdwEGvObRc2J3gLS0G5Mew=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1691800922;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=9oCLm5O/TfEzHLI4v9CFF2If6jDnpmsmOxID/3lxDto=;
- b=RVwQwTMRI2YS7bafrUHDV4SStZsR5/eJYZVYF02/jr6Kw/TxjEdUBYlMJieDgSUXM22ayd
- L44McZvMY2uGN1AA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
- (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 31A0113592;
- Sat, 12 Aug 2023 00:42:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id jYNIBlrV1mQZEAAAMHmgww
- (envelope-from <krisman@suse.de>); Sat, 12 Aug 2023 00:42:02 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
- ebiggers@kernel.org, jaegeuk@kernel.org
-Date: Fri, 11 Aug 2023 20:41:41 -0400
-Message-ID: <20230812004146.30980-6-krisman@suse.de>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230812004146.30980-1-krisman@suse.de>
+ by dfw.source.kernel.org (Postfix) with ESMTPS id E1FB0612B9;
+ Sat, 12 Aug 2023 01:59:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06E97C433C7;
+ Sat, 12 Aug 2023 01:59:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1691805557;
+ bh=nAJmbpwTFQg79wN1L8Hwf7i2NhG4ry3JrZqe/1RgP6Q=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=uo+6bf47lZ6FIDB/B6UeLXM9d5L7Wkv8oX/AwcApqynO7J5p1UBnfMdR91KELqHqc
+ F1QL7ifceNwBQmF6ny1QzGIbHPdZvQIfEj53kJ3QOhKHCRz/S/eEBo6AhpDLpwDiVE
+ xDKzrW766UaBxMsBJ5IDiaSuwwnSC6+FgDFrER5i2Th+1WVD6tGy7ca1sYVl2ZZHl4
+ C5tyTThejdiELIai1/gNPgpHDzLE0cFycvpifjF2db5MREBAPdIJ415qdvmHvgBq9k
+ aLOh1GK+dTbQW2H80fWrWTbAbq0kU3AG/ZC07Y47Yx/hvtbQde1GdDGxdVmzDXSLrL
+ 4qME5GREFAxLg==
+Date: Fri, 11 Aug 2023 18:59:15 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Message-ID: <20230812015915.GA971@sol.localdomain>
 References: <20230812004146.30980-1-krisman@suse.de>
+ <20230812004146.30980-2-krisman@suse.de>
 MIME-Version: 1.0
-X-Headers-End: 1qUchk-0002eI-L4
-Subject: [f2fs-dev] [PATCH v5 05/10] fs: Add DCACHE_CASEFOLDED_NAME flag
+Content-Disposition: inline
+In-Reply-To: <20230812004146.30980-2-krisman@suse.de>
+X-Headers-End: 1qUduV-0004Sb-Ix
+Subject: Re: [f2fs-dev] [PATCH v5 01/10] fs: Expose helper to check if a
+ directory needs casefolding
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,82 +82,115 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fsdevel@vger.kernel.org, Gabriel Krisman Bertazi <krisman@suse.de>,
- linux-ext4@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.com>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: brauner@kernel.org, tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net,
+ viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Gabriel Krisman Bertazi <krisman@collabora.com>
+On Fri, Aug 11, 2023 at 08:41:37PM -0400, Gabriel Krisman Bertazi wrote:
+> In preparation to use it in ecryptfs, move needs_casefolding into a
+> public header and give it a namespaced name.
+> 
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+> ---
+>  fs/libfs.c         | 14 ++------------
+>  include/linux/fs.h | 21 +++++++++++++++++++++
+>  2 files changed, 23 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 5b851315eeed..8d0b64cfd5da 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -1381,16 +1381,6 @@ bool is_empty_dir_inode(struct inode *inode)
+>  }
+>  
+>  #if IS_ENABLED(CONFIG_UNICODE)
+> -/*
+> - * Determine if the name of a dentry should be casefolded.
+> - *
+> - * Return: if names will need casefolding
+> - */
+> -static bool needs_casefold(const struct inode *dir)
+> -{
+> -	return IS_CASEFOLDED(dir) && dir->i_sb->s_encoding;
+> -}
+> -
+>  /**
+>   * generic_ci_d_compare - generic d_compare implementation for casefolding filesystems
+>   * @dentry:	dentry whose name we are checking against
+> @@ -1411,7 +1401,7 @@ static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+>  	char strbuf[DNAME_INLINE_LEN];
+>  	int ret;
+>  
+> -	if (!dir || !needs_casefold(dir))
+> +	if (!dir || !dir_is_casefolded(dir))
+>  		goto fallback;
+>  	/*
+>  	 * If the dentry name is stored in-line, then it may be concurrently
+> @@ -1453,7 +1443,7 @@ static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
+>  	const struct unicode_map *um = sb->s_encoding;
+>  	int ret = 0;
+>  
+> -	if (!dir || !needs_casefold(dir))
+> +	if (!dir || !dir_is_casefolded(dir))
+>  		return 0;
+>  
+>  	ret = utf8_casefold_hash(um, dentry, str);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 6867512907d6..e3b631c6d24a 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3213,6 +3213,27 @@ static inline bool dir_relax_shared(struct inode *inode)
+>  	return !IS_DEADDIR(inode);
+>  }
+>  
+> +/**
+> + * dir_is_casefolded - Safely determine if filenames inside of a
+> + * directory should be casefolded.
+> + * @dir: The directory inode to be checked
+> + *
+> + * Filesystems should usually rely on this instead of checking the
+> + * S_CASEFOLD flag directly when handling inodes, to avoid surprises
+> + * with corrupted volumes.  Checking i_sb->s_encoding ensures the
+> + * filesystem knows how to deal with case-insensitiveness.
+> + *
+> + * Return: if names will need casefolding
+> + */
+> +static inline bool dir_is_casefolded(const struct inode *dir)
+> +{
+> +#if IS_ENABLED(CONFIG_UNICODE)
+> +	return IS_CASEFOLDED(dir) && dir->i_sb->s_encoding;
+> +#else
+> +	return false;
+> +#endif
+> +}
 
-This flag marks a negative or positive dentry as being created after a
-case-insensitive lookup operation.  It is useful to differentiate
-dentries this way to detect whether the negative dentry can be trusted
-during a case-insensitive lookup.
+To be honest I've always been confused about why the ->s_encoding check is
+there.  It looks like Ted added it in 6456ca6520ab ("ext4: fix kernel oops
+caused by spurious casefold flag") to address a fuzzing report for a filesystem
+that had a casefolded directory but didn't have the casefold feature flag set.
+It seems like an unnecessarily complex fix, though.  The filesystem should just
+reject the inode earlier, in __ext4_iget().  And likewise for f2fs.  Then no
+other code has to worry about this problem.
 
-Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Actually, f2fs already does it, as I added it in commit f6322f3f1212:
 
----
-Changes since v4:
-  - Fixup names of functions to reflect flag name change (Eric)
+        if ((fi->i_flags & F2FS_CASEFOLD_FL) && !f2fs_sb_has_casefold(sbi)) {
+                set_sbi_flag(sbi, SBI_NEED_FSCK);
+                f2fs_warn(sbi, "%s: inode (ino=%lx) has casefold flag, but casefold feature is off",
+                          __func__, inode->i_ino);
+                return false;
+        }
 
-Changes since v2:
-  -  Rename DCACHE_CASEFOLD_LOOKUP -> DCACHE_CASEFOLDED_NAME (Eric)
----
- fs/dcache.c            | 8 ++++++++
- include/linux/dcache.h | 8 ++++++++
- 2 files changed, 16 insertions(+)
+So just __ext4_iget() needs to be fixed.  I think we should consider doing that
+before further entrenching all the extra ->s_encoding checks.
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 52e6d5fdab6b..269367c1a86c 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1958,6 +1958,14 @@ void d_set_fallthru(struct dentry *dentry)
- }
- EXPORT_SYMBOL(d_set_fallthru);
- 
-+void d_set_casefolded_name(struct dentry *dentry)
-+{
-+	spin_lock(&dentry->d_lock);
-+	dentry->d_flags |= DCACHE_CASEFOLDED_NAME;
-+	spin_unlock(&dentry->d_lock);
-+}
-+EXPORT_SYMBOL(d_set_casefold_lookup);
-+
- static unsigned d_flags_for_inode(struct inode *inode)
- {
- 	unsigned add_flags = DCACHE_REGULAR_TYPE;
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 9362e4ef0bad..ccbb5c4db7ce 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -208,6 +208,7 @@ struct dentry_operations {
- #define DCACHE_FALLTHRU			0x01000000 /* Fall through to lower layer */
- #define DCACHE_NOKEY_NAME		0x02000000 /* Encrypted name encoded without key */
- #define DCACHE_OP_REAL			0x04000000
-+#define DCACHE_CASEFOLDED_NAME		0x08000000 /* Dentry comes from a casefold directory */
- 
- #define DCACHE_PAR_LOOKUP		0x10000000 /* being looked up (with parent locked shared) */
- #define DCACHE_DENTRY_CURSOR		0x20000000
-@@ -496,6 +497,13 @@ static inline bool d_is_fallthru(const struct dentry *dentry)
- 	return dentry->d_flags & DCACHE_FALLTHRU;
- }
- 
-+extern void d_set_casefolded_name(struct dentry *dentry);
-+
-+static inline bool d_is_casefolded_name(const struct dentry *dentry)
-+{
-+	return dentry->d_flags & DCACHE_CASEFOLDED_NAME;
-+}
-+
- 
- extern int sysctl_vfs_cache_pressure;
- 
--- 
-2.41.0
+Also I don't understand why this needs to be part of your patch series anyway.
+Shouldn't eCryptfs check IS_CASEFOLDED() anyway?
 
+- Eric
 
 
 _______________________________________________
