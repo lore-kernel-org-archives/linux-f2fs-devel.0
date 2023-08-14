@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 83935C04A94
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Aug 2023 18:29:52 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F3A68EB64DD
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Aug 2023 18:29:54 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qVcK6-0002Vf-B4;
-	Mon, 14 Aug 2023 18:29:51 +0000
+	id 1qVcKB-0002Hf-HT;
+	Mon, 14 Aug 2023 18:29:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1qVcK4-0002VY-Cv
+ (envelope-from <ebiggers@kernel.org>) id 1qVcKA-0002HV-5k
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 14 Aug 2023 18:29:49 +0000
+ Mon, 14 Aug 2023 18:29:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DmDfc08x8VToh7Sjng6Vrs09G2EwKP0oP+4Qdk5vTl4=; b=idHtazTsqHrZgegDj9kst7AZ28
- zB7gPmabq5X9xdgqwex5lyQpS78tzei5/vLTqTFLnnBCL+bvnlWR9ekI73GiLKtXV73TzvPZT21O7
- oeFPf8ycr6TGxmvmXmvdTVeu21FAShoB61zTPT9IgXiU1R+X7DDfamrJ8Io5DST9KVwE=;
+ bh=BwFnR5tPjO95NlnfWrn/kIOXkLrDuTTA18kKpvSVtV4=; b=lBIF1PbqQPzxWC6p04gTxin24I
+ XyC4j7WgcRzQhxR2StQOezybhYEX4x76Ud+KqZPtVbBsq0d5McKF7nYnnEjCfQSJ2thQbDso6ncIa
+ UW1eTIZy3mcPDs9dMguAzIbx+BFh7h2K2YTfNPgVZ+sIaH9L9N/Ze3TyLnJnfGzZwcu8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,44 +33,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=DmDfc08x8VToh7Sjng6Vrs09G2EwKP0oP+4Qdk5vTl4=; b=gFdJtIotfLGSBMW8yMLRT8Pi1k
- pFRESu+yYEEJAa5xYHP8HL49/oIiKuqBGeWqwX1X5U7oTv2Bz3D+NIKdd6FnIhGY8SOJ8LAHVXsLV
- 4eXN2Uq6wUxKP1zVJcND/xtPg0AVXLnYwmclWiJgCNym5+gJdPJp6ObD6Lq5u7wtO5Ic=;
+ bh=BwFnR5tPjO95NlnfWrn/kIOXkLrDuTTA18kKpvSVtV4=; b=Vcxe0JIosdQOEEC4Rli1uecQ7x
+ gMPchsb6gDs+/3vjnKfW4YSg6PvMSAeSfGi4lGKrDgeKNqsY/ZJTdHEUVw3Te8kKQiKQIzI+uWAxy
+ QI6EhTcE//0N5Nzh2NwnxMHBbmEdXNA2df7rNVNluXkHABmlJ/ZWUkezEC5lPPKC1k4k=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qVcK4-005f0A-R3 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 14 Aug 2023 18:29:49 +0000
+ id 1qVcK4-005f0H-R0 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 14 Aug 2023 18:29:53 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 34D746493D;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id D2CE4657BA;
  Mon, 14 Aug 2023 18:29:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E89C433C9;
- Mon, 14 Aug 2023 18:29:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E2DCC433C8;
+ Mon, 14 Aug 2023 18:29:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1692037776;
- bh=54AzBJPDSBowvAHeFULqDhusG5VK0CfhD6wbQR4h6H4=;
+ s=k20201202; t=1692037777;
+ bh=ZmG/XvBXL8nYb0AYKa5yxa3KEb90q7gpbLYhFxe+7hc=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=e6rJHIFKhproYAmLhuYPDBbc5nzyCpv9IcUSKJu0kxa/OHMVAgqKO0HWMccoUpXpN
- axXETeuc8RhcWiz1X2llfkhH/nmVJuvMJznEn7wJxaXRKwTTe40LCVD7wYxTKBlXUj
- mAmYHkmNelqqA70ITo1Ec4//Zg/FqZDagJPjTH4ME6LO615eQAk5Hlx9qTKZCF7WG/
- 03fS/e0G7XM+4gfoJQXakB8Iusv0dbAmUw3wbm7z7sQdNmrpbjTxe6hs3f8E1uAl01
- vN5t0+mzk8/B2Bryfneta+q7gT+8TMJ6gKTmiKdsb1CSUpskiW2KaWQONZn/OTxPa2
- Df7klZ3FbMZfw==
+ b=RPu3Z7xOTiw1V2P9IGJ3Zq6It/yKQDOl4S8w4vkx/8uUbODyhlazNrBFDQfieMUVR
+ 6lGqwV/MTV1XwfMAF/HwwqTf7NRlJsfT2gKH+EO7UgwjeTe06UCnFwv9NJCnH8/sPx
+ RaLyBmG+bXYvYG26NH9t31zsEISCLes66ViCdisW7axIPpYcUE0FnhTr4vFIPEP36k
+ rTa8YfV8vYcsC+tr9E++6x84YjtCGpiYdK+Tq0iSfxgADjUIoxpamwtwvDi8nkud4s
+ KX3gTW43S0vV9fDGLakOvExRU/BUGTaWLGjZELMqh0Q780fCr7dkN4A36rOQ3hrpPH
+ 3FHTRoSqZkmDQ==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-ext4@vger.kernel.org,
 	Theodore Ts'o <tytso@mit.edu>
-Date: Mon, 14 Aug 2023 11:29:01 -0700
-Message-ID: <20230814182903.37267-2-ebiggers@kernel.org>
+Date: Mon, 14 Aug 2023 11:29:03 -0700
+Message-ID: <20230814182903.37267-4-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230814182903.37267-1-ebiggers@kernel.org>
 References: <20230814182903.37267-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1qVcK4-005f0A-R3
-Subject: [f2fs-dev] [PATCH 1/3] ext4: reject casefold inode flag without
- casefold feature
+X-Headers-End: 1qVcK4-005f0H-R0
+Subject: [f2fs-dev] [PATCH 3/3] libfs: remove redundant checks of s_encoding
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,47 +89,54 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-It is invalid for the casefold inode flag to be set without the casefold
-superblock feature flag also being set.  e2fsck already considers this
-case to be invalid and handles it by offering to clear the casefold flag
-on the inode.  __ext4_iget() also already considered this to be invalid,
-sort of, but it only got so far as logging an error message; it didn't
-actually reject the inode.  Make it reject the inode so that other code
-doesn't have to handle this case.  This matches what f2fs does.
-
-Note: we could check 's_encoding != NULL' instead of
-ext4_has_feature_casefold().  This would make the check robust against
-the casefold feature being enabled by userspace writing to the page
-cache of the mounted block device.  However, it's unsolvable in general
-for filesystems to be robust against concurrent writes to the page cache
-of the mounted block device.  Though this very particular scenario
-involving the casefold feature is solvable, we should not pretend that
-we can support this model, so let's just check the casefold feature.
-tune2fs already forbids enabling casefold on a mounted filesystem.
+Now that neither ext4 nor f2fs allows inodes with the casefold flag to
+be instantiated when unsupported, it's unnecessary to repeatedly check
+for support later on during random filesystem operations.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ext4/inode.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/libfs.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 43775a6ca505..390dedbb7e8a 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4940,9 +4940,12 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 				 "iget: bogus i_mode (%o)", inode->i_mode);
- 		goto bad_inode;
- 	}
--	if (IS_CASEFOLDED(inode) && !ext4_has_feature_casefold(inode->i_sb))
-+	if (IS_CASEFOLDED(inode) && !ext4_has_feature_casefold(inode->i_sb)) {
- 		ext4_error_inode(inode, function, line, 0,
- 				 "casefold flag without casefold feature");
-+		ret = -EFSCORRUPTED;
-+		goto bad_inode;
-+	}
- 	if ((err_str = check_igot_inode(inode, flags)) != NULL) {
- 		ext4_error_inode(inode, function, line, 0, err_str);
- 		ret = -EFSCORRUPTED;
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 5b851315eeed..5197ea8c66d3 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1381,16 +1381,6 @@ bool is_empty_dir_inode(struct inode *inode)
+ }
+ 
+ #if IS_ENABLED(CONFIG_UNICODE)
+-/*
+- * Determine if the name of a dentry should be casefolded.
+- *
+- * Return: if names will need casefolding
+- */
+-static bool needs_casefold(const struct inode *dir)
+-{
+-	return IS_CASEFOLDED(dir) && dir->i_sb->s_encoding;
+-}
+-
+ /**
+  * generic_ci_d_compare - generic d_compare implementation for casefolding filesystems
+  * @dentry:	dentry whose name we are checking against
+@@ -1411,7 +1401,7 @@ static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+ 	char strbuf[DNAME_INLINE_LEN];
+ 	int ret;
+ 
+-	if (!dir || !needs_casefold(dir))
++	if (!dir || !IS_CASEFOLDED(dir))
+ 		goto fallback;
+ 	/*
+ 	 * If the dentry name is stored in-line, then it may be concurrently
+@@ -1453,7 +1443,7 @@ static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
+ 	const struct unicode_map *um = sb->s_encoding;
+ 	int ret = 0;
+ 
+-	if (!dir || !needs_casefold(dir))
++	if (!dir || !IS_CASEFOLDED(dir))
+ 		return 0;
+ 
+ 	ret = utf8_casefold_hash(um, dentry, str);
 -- 
 2.41.0
 
