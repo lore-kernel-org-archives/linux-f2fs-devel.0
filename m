@@ -4,74 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6A518C001DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Aug 2023 20:37:49 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3D1D5EB64DD
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Aug 2023 20:50:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qVeJv-00062Y-Pp;
-	Mon, 14 Aug 2023 20:37:47 +0000
+	id 1qVeWD-0001rO-OH;
+	Mon, 14 Aug 2023 20:50:30 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1qVeJu-00062S-6Y
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qVeWC-0001rC-MN
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 14 Aug 2023 20:37:46 +0000
+ Mon, 14 Aug 2023 20:50:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3KaM95H8lxdcFwHlB8zFOUmfx9269nBnNCgvq34uksU=; b=BdJPSCN5CoUoRAHd3HVHCarvFf
- MlzORGlKm/uUhZojg5CndPzMvjoFteRBLmCrwTpOBcP4YshuAh//WAT4Sqeod1hY13A6VEmBYu+HL
- SBcA4FjmO/w4m/d2ChNmeh4Bv7P6tjyrB9jX3VhGR8LonifZDQVoF5wMhUUFOXN5p/7c=;
+ bh=0H8crO3ynKT0ao6vObbZC4NivGgXKWRhKHUA3u2zCX8=; b=XWaQG/YcV66mkqGZNCDuxTN6EA
+ kKgfTamNPohW2KshcNNNYBcW2FiD4NXgzUSZ8D3W5ospAAxjopTcXzHnrcWwyX6MFpcPSKHgTEPIY
+ auGlx+nZyF7aJjL/GU3rzK2ZkL/hPx7QD4E3SOvoRVIrlSwvcCA/XSqY3VFJFyDzBkws=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=3KaM95H8lxdcFwHlB8zFOUmfx9269nBnNCgvq34uksU=; b=euDurPuYgkYxVoX/a8vk6UaAJf
- BWyMebGLS2mJzuk2WkIV3StNFg+8JxIVR4J60CeiXtbWniWJ3KDWYuOr+MwAKe9VVR6i/abm0QMnX
- l06PiBNMI907+KgQrkmcXC1XybJ8fQcmMvmQAyFQdN4EQGrNum5P/qwFRE/8Brp6NYqw=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=0H8crO3ynKT0ao6vObbZC4NivGgXKWRhKHUA3u2zCX8=; b=NdwHWGK/N8kvnpQ5DaqY24uvDu
+ BBdLlAuPy8H0mtU7ufp8gkgbkldnWSJ4CihW8rgP5d1Xe3Ac2X2IbqcyJDcLILYTD+rCfFxLqc6Bi
+ tDx1EZoDOb2llEb33mdvXlhQockWgGaDInEz9/MK+N8986lkZmHdLQAnGyMrmZ5cWqco=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qVeJs-0007EZ-N7 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 14 Aug 2023 20:37:46 +0000
+ id 1qVeWC-0007W0-JU for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 14 Aug 2023 20:50:29 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 1D94261B8C;
- Mon, 14 Aug 2023 20:37:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32D9AC433C8;
- Mon, 14 Aug 2023 20:37:38 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id E5D1C627DA;
+ Mon, 14 Aug 2023 20:50:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 58829C433C9;
+ Mon, 14 Aug 2023 20:50:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1692045458;
- bh=p/3cegYidBuPQOysI3EfoMODZv58DITeMGmAbN5Lraw=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=M9Gj4ubRIm3PLxL0kOHAMCQbhl5UCr73qpln3KKMYGI8BLRT42nJyC5CTPpHF4ndY
- YBIPHCeJjmV2NH0Q3B/m/UnVyIoottcNuILf10IYEJG4+zUfkHphzakSnVN8VdfUlM
- iSXTFMuoXVShf2rz3Vq8J2jZczWE3g/r4n9A5klaL+G5rDuLAEdJ5NffG20axDDyMD
- PUG67WZiX27Od1lPassZvtcavO5pQK9uxsL6hDMkQP/NyY8A6s6Wc71FT4hKfs2w34
- NjUqxAtygX/kWlTIAL5iqO4tdReb4cBWgwprtGdqwkylzH6CZZR3DhkE1kmALM2djG
- TaDUDVV2xUmHg==
-Date: Mon, 14 Aug 2023 13:37:36 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Kajetan Puchalski <kajetan.puchalski@arm.com>
-Message-ID: <ZNqQkDm0YschY+WI@google.com>
-References: <20230306122549.236561-1-douglas.raillard@arm.com>
- <ZNotAI1T+hKfzJWV@e126311.manchester.arm.com>
- <ZNo8hoR2V3Zo14+l@e126311.manchester.arm.com>
+ s=k20201202; t=1692046222;
+ bh=7ahPsYJb2VWj+5q4JjbIrqJmgJYdovuwK0IeKkfLRoM=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=IaLOjP0BzL70Cg1XYavERrlSXeabLnxia2+U5i1szJ0GbbZpyM+S3fDS84jPHuPyd
+ 0/5WCWKE15xIO/JC9t5gSB7hxrlre3HinG/ylj1t6AG9J3+v0XaWjvE8/YGnnvI8Sg
+ ctPVJlj4xzPPjxNRnYEtnokyJYn2882OnE/Sg25VHVagXrBOa5vMRYlk4voW4Uh1wt
+ +euJBLr8NL4GnKSMRYtUiiM9LY7rfLzT8gBkMNBIGhfylKSKHp8+a8qDBlj2pkkiyD
+ hq6fFJvRH554MNzByRLR95PyiFFAzWbpKTrb02NOWqxQL1Eun20DDxzwKKKBiIcK81
+ kTX5NvkLsTxbg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ 31477E93B36; Mon, 14 Aug 2023 20:50:22 +0000 (UTC)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <ZNo8hoR2V3Zo14+l@e126311.manchester.arm.com>
-X-Headers-End: 1qVeJs-0007EZ-N7
-Subject: Re: [f2fs-dev] [PATCH] f2fs: Fix f2fs_truncate_partial_nodes ftrace
- event
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <169204622219.5033.17422365206843508436.git-patchwork-notify@kernel.org>
+Date: Mon, 14 Aug 2023 20:50:22 +0000
+References: <20230717071109.5663-1-duminjie@vivo.com>
+In-Reply-To: <20230717071109.5663-1-duminjie@vivo.com>
+To: Minjie Du <duminjie@vivo.com>
+X-Headers-End: 1qVeWC-0007W0-JU
+Subject: Re: [f2fs-dev] [PATCH v1] f2fs: increase usage of
+ folio_next_index() helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,81 +83,36 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: "open list:TRACING" <linux-kernel@vger.kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>,
- "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
- jstultz@google.com, Masami Hiramatsu <mhiramat@kernel.org>, qyousef@google.com,
- Douglas RAILLARD <douglas.raillard@arm.com>, lukasz.luba@arm.com,
- "open list:TRACING" <linux-trace-kernel@vger.kernel.org>
+Cc: opensource.kernel@vivo.com, jaegeuk@kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 08/14, Kajetan Puchalski wrote:
-> On Mon, Aug 14, 2023 at 02:32:53PM +0100, Kajetan Puchalski wrote:
-> > On Mon, Mar 06, 2023 at 12:25:49PM +0000, Douglas RAILLARD wrote:
-> > > From: Douglas Raillard <douglas.raillard@arm.com>
-> > > 
-> > > Fix the nid_t field so that its size is correctly reported in the text
-> > > format embedded in trace.dat files. As it stands, it is reported as
-> > > being of size 4:
-> > > 
-> > >         field:nid_t nid[3];     offset:24;      size:4; signed:0;
-> > > 
-> > > Instead of 12:
-> > > 
-> > >         field:nid_t nid[3];     offset:24;      size:12;        signed:0;
-> > > 
-> > > This also fixes the reported offset of subsequent fields so that they
-> > > match with the actual struct layout.
-> > > 
-> > > 
-> > > Signed-off-by: Douglas Raillard <douglas.raillard@arm.com>
-> > > ---
-> > >  include/trace/events/f2fs.h | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-> > > index 31d994e6b4ca..8d053838d6cf 100644
-> > > --- a/include/trace/events/f2fs.h
-> > > +++ b/include/trace/events/f2fs.h
-> > > @@ -512,7 +512,7 @@ TRACE_EVENT(f2fs_truncate_partial_nodes,
-> > >  	TP_STRUCT__entry(
-> > >  		__field(dev_t,	dev)
-> > >  		__field(ino_t,	ino)
-> > > -		__field(nid_t,	nid[3])
-> > > +		__array(nid_t,	nid, 3)
-> > >  		__field(int,	depth)
-> > >  		__field(int,	err)
-> > >  	),
-> > > -- 
-> > > 2.25.1
-> > 
-> > Hi,
-> > 
-> > Just wanted to flag that I noticed this breaks Perfetto tracing on
-> > Android, at least as of Android 13. I'm not sure if it's been fixed in newer
-> > versions. Looks like the version of Perfetto in Android 13 is expecting
-> > the previous (ie broken) field format to be there and its entire ftrace
-> > collector fails as a result:
-> > 
-> > E/perfetto( 3532): ranslation_table.cc:133 Failed to infer ftrace field type for "f2fs_truncate_partial_nodes.nid" (type:"nid_t nid[3]" size:12 signed:0) (errno: 2, No such file or directory)
-> > I/perfetto( 3640):            probes.cc:65 Hard resetting ftrace state.
-> > 
-> > For my own purposes I just reverted these two:
-> > * 0b04d4c0542e8573a837b1d81b94209e48723b25 (f2fs: Fix f2fs_truncate_partial_nodes ftrace event)
-> > * f82e7ca019dfad3b006fd3b772f7ac569672db55 (tracing: Error if a trace event has an array for a __field()
-> > 
-> > and now it works fine so not the biggest deal but this should probably
-> > be addressed, I imagine more likely on the Perfetto side.
-> 
-> Added context here, it is just caused by the parser implementation in Perfetto
-> being pretty lacking:
-> 
-> https://github.com/google/perfetto/blob/c36c70c1d4a72eafdd257f7a63e55f49fbc3df3d/src/traced/probes/ftrace/proto_translation_table.cc#L255
+Hello:
 
-Hi, I believe this was fixed by
-https://android-review.git.corp.google.com/c/platform/external/perfetto/+/2587146
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
+
+On Mon, 17 Jul 2023 15:11:09 +0800 you wrote:
+> Simplify code pattern of 'folio->index + folio_nr_pages(folio)' by using
+> the existing helper folio_next_index().
+> 
+> Signed-off-by: Minjie Du <duminjie@vivo.com>
+> ---
+>  fs/f2fs/data.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+
+Here is the summary with links:
+  - [f2fs-dev,v1] f2fs: increase usage of folio_next_index() helper
+    https://git.kernel.org/jaegeuk/f2fs/c/a842a90926b6
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
 
 _______________________________________________
