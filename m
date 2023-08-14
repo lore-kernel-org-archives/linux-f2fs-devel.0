@@ -4,75 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 88C83C04E69
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 58AB3C001DB
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Aug 2023 20:50:33 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qVeWG-00012H-CE;
-	Mon, 14 Aug 2023 20:50:32 +0000
+	id 1qVeWG-0002FK-Cy;
+	Mon, 14 Aug 2023 20:50:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qVeWD-00012A-R5
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qVeWE-0002F8-RG
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 14 Aug 2023 20:50:30 +0000
+ Mon, 14 Aug 2023 20:50:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8LCzzkcHQX2w21iJePa1sC1z0U0OCte7e7CUdEOH3qA=; b=POv0WS2Yv8VgfHNY/U/hoihAhp
- p54o/wkU/bsdgBN+5aXDirVeDkerOtWbfsNgMUr0OmwIwJhA9pA8pUPEyJfOJVdJ9wZfJzAKLI+Qx
- v16TdSH7W14vPERLRpuz6O+J3EDgn3g9liwFB81uDbAMfvsJx0LELGkQNuran1i7pw7s=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=dVajRVUw3vpBuJVw+dxU13tMvu8MO6+FWv8eVoB4EcY=; b=XgTZhjYCDSOhNc0oeXWxLKdxAf
+ I43jv6dSOSbeCdWrA7zluZpqiTsaqr8HIkDCVJtT8kz9U22xYFpMwF82dRfpDP7JKNJYFxcBcBWa4
+ 6OR1rVGl2ccr1RskN0utxh6ZQDzG2MKJ/xccLSkp98LNFlpiblSnTGSLHETO01fW1jIM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=8LCzzkcHQX2w21iJePa1sC1z0U0OCte7e7CUdEOH3qA=; b=f
- wWwIP+nF5LxNFpBpqTLws87/p4JfRc4TZnjxKLxjCltJmz3II62rsRT4gTWtN/+oZtdwV7TvR8U8q
- B9ZOC7H0gkkiK7SNZFeffbOdvcMsl1IPlgEKSF1S3dV6N+TW5yW9Im0Trtwyv/6iNc9DTy2SVQr7X
- evuy+BDyl4eB1UsQ=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=dVajRVUw3vpBuJVw+dxU13tMvu8MO6+FWv8eVoB4EcY=; b=kmo8julExOzvxNF1vrlv7ojVLG
+ JXaT5QzMSXjpHP6IAtHTbalWsnLAgjtzUx6ceSMCDTLONvbMk7eydNlQSh9C9g5B6n+43QcD6Vl2f
+ wL9bKdz3OagtjodDsNAL7GdqUh90tFzagcI0EfkHWnUP60HsToIjAvCCrNP1aeOSeyfk=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qVeWD-005nrp-8G for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 14 Aug 2023 20:50:30 +0000
+ id 1qVeWD-0007W1-30 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 14 Aug 2023 20:50:29 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id D1B3961DB0
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 7D37B647FF
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 14 Aug 2023 20:50:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3E78EC433C8
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 14 Aug 2023 20:50:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6E803C433CB;
  Mon, 14 Aug 2023 20:50:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1692046222;
- bh=7FMXJ4nnDccIKmME2luyOcuNmu+siXOg7p+XA7jycQE=;
- h=Subject:From:Date:To:From;
- b=Kwbs1Wzk9ClDfbGntirnbLXq8aVwhG1/JOtPGy8jHNDDvfEa0oRvlFyvw8qT9GuXR
- IdIvWlfQ9Ue9gisPeknL/i6hVcpRMyVGMchz5cilyBYgwSqY799VgatABbSMYaz9SQ
- v/o4+o2M/QwLUJD5Vhy8NEp16rG0IZWEwFeQ6TPWiYfbpNXYlBR8RGyqcgeNe0dUwL
- Z+tRKw4XgDUviZruv2tPGu3cfELLeG5wL5RgzSkp+Rx5BHUuX9eESzgkJ2sXBod7ww
- dmRG9QCE+PAsUtzkCKh8hbIESHGXjX8uo7aXCsXPcRZNPAUi3yCibSPA5/V6ztbIdc
- N4GBUO+0HgQqw==
+ bh=6zIrbL56hboc477qzoy7DVouRIPq7ziErvkxVOGb7UA=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=lhQ4ifN5HS5D7bL6IyaU5Rrgr+RSXiLNAyT2a3Iw9llPZI/ENnZO00VJKnqlLw57Z
+ zJ87e2PQmq3LKg/V7nqSx/tfk9E/HxkNMVoi+Cx3EVNCJeCOxbZobFoZ9dPN4EdYVY
+ lzSG3ZIU+TdB4p0tGlu+b8B0xhilClvphYXqauvyQKVaCNyUucP1ButmWKX6cm/27z
+ nmMlcDWCRn8HGOI7p3NaWJhYoKOq93KAAUkE3t/k2AdjUHULAFt8NpaLBXYAfVVbMn
+ AfV6Z2VZQplbFKODPY12YFux0TQXfGblbLpRNdld4kDIPD1XYkRQbDPAHwZi+8yNcP
+ 3RU4jacSs5hKw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 1E5ABE93B32 for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 14 Aug 2023 20:50:22 +0000 (UTC)
+ 44113E93B33; Mon, 14 Aug 2023 20:50:22 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <169204622207.5033.12657255335557343040.git-patchwork-summary@kernel.org>
+Message-Id: <169204622227.5033.2565918262411584066.git-patchwork-notify@kernel.org>
 Date: Mon, 14 Aug 2023 20:50:22 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1qVeWD-005nrp-8G
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+References: <20230808005949.1790839-1-chao@kernel.org>
+In-Reply-To: <20230808005949.1790839-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1qVeWD-0007W1-30
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix to account gc stats correctly
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,58 +83,39 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Patch: [f2fs-dev,v1] f2fs: increase usage of folio_next_index() helper
-  Submitter: Minjie Du <duminjie@vivo.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=766363
-  Lore link: https://lore.kernel.org/r/20230717071109.5663-1-duminjie@vivo.com
+On Tue,  8 Aug 2023 08:59:48 +0800 you wrote:
+> As reported, status debugfs entry shows inconsistent GC stats as below:
+> 
+> GC calls: 6008 (BG: 6161)
+>   - data segments : 3053 (BG: 3053)
+>   - node segments : 2955 (BG: 2955)
+> 
+> Total GC calls is larger than BGGC calls, the reason is:
+> - f2fs_stat_info.call_count accounts total migrated section count
+> by f2fs_gc()
+> - f2fs_stat_info.bg_gc accounts total call times of f2fs_gc() from
+> background gc_thread
+> 
+> [...]
 
-Series: [f2fs-dev,1/2] f2fs: fix to update i_ctime in __f2fs_setxattr()
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=767418
-  Lore link: https://lore.kernel.org/r/20230719135047.2947030-1-chao@kernel.org
-    Patches: [f2fs-dev,1/2] f2fs: fix to update i_ctime in __f2fs_setxattr()
-             [f2fs-dev,2/2] f2fs: remove unneeded check condition in __f2fs_setxattr()
+Here is the summary with links:
+  - [f2fs-dev,1/2] f2fs: fix to account gc stats correctly
+    https://git.kernel.org/jaegeuk/f2fs/c/9bf1dcbdfdc8
+  - [f2fs-dev,2/2] f2fs: fix to account cp stats correctly
+    https://git.kernel.org/jaegeuk/f2fs/c/eb61c2cca2eb
 
-Series: [f2fs-dev,1/2] f2fs: fix to account gc stats correctly
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=773884
-  Lore link: https://lore.kernel.org/r/20230808005949.1790839-1-chao@kernel.org
-    Patches: [f2fs-dev,1/2] f2fs: fix to account gc stats correctly
-             [f2fs-dev,2/2] f2fs: fix to account cp stats correctly
-
-Patch: [f2fs-dev,v2] f2fs: Only lfs mode is allowed with zoned block device feature
-  Submitter: Chunhai Guo <guochunhai@vivo.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=772692
-  Lore link: https://lore.kernel.org/r/20230803142842.29062-1-guochunhai@vivo.com
-
-Patch: [f2fs-dev] f2fs: should update REQ_TIME for direct write
-  Submitter: Zhiguo Niu <zhiguo.niu@unisoc.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=774846
-  Lore link: https://lore.kernel.org/r/1691656800-21616-1-git-send-email-zhiguo.niu@unisoc.com
-
-Patch: [f2fs-dev] Revert "f2fs: fix to do sanity check on extent cache correctly"
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=767784
-  Lore link: https://lore.kernel.org/r/20230720112953.3764050-1-chao@kernel.org
-
-
-Total patches: 8
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
