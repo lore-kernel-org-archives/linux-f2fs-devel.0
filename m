@@ -4,74 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5E9C2C04A94
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Aug 2023 20:50:39 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 482ABEB64DD
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Aug 2023 20:58:12 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qVeWM-0006E9-TY;
-	Mon, 14 Aug 2023 20:50:38 +0000
+	id 1qVede-0002No-HV;
+	Mon, 14 Aug 2023 20:58:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qVeWK-0006E2-F2
+ (envelope-from <jaegeuk@kernel.org>) id 1qVedd-0002Ni-4d
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 14 Aug 2023 20:50:36 +0000
+ Mon, 14 Aug 2023 20:58:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ond0/Oi8zL8/bptZnMmLXSEBCsFk5/1YYjzlC3JMf+I=; b=nRQWqCrp1O3KPRVRey6LSZ3V1i
- eOUoLi3LZgr+Y20T3Uo9nAkmhxkiPYPr8lsYJpoQuSU8x7MXzxklhSHZo+LhvrbFP+Ya/A7EHWXOc
- 03AxSyvNJ3tB9q21GIAeX/5I8zc2otNlq1ZHvOpuos8FyRJF+eztYdnSglGTSKyeRjJ4=;
+ bh=ts42IGvPEw7wOKe/0FPh7PJQp+fY03EEJctoG8jxa0A=; b=akSk+VWUC3ylus/CimQ5Q/XOFf
+ IuM3t4FHx54OW2mW6cSAFXs+4iKgOsbvlPJYPHL2E+vgRGX3fLiOtIa7+ds70T4AcQT0AVwKE58kY
+ +Fh3h4iMg9vgynVZq7EpgtPqyPxok9AgAnRZrfc18hsS/I9S1pZL+g9hTYaC5cNNVbcA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ond0/Oi8zL8/bptZnMmLXSEBCsFk5/1YYjzlC3JMf+I=; b=IJVA/gy5i6EQZulpRRquGxKvSn
- +B4jUtfa4i4bn3GRuC+iTpZvtKAM2juXEJ3xPdMjWp4SPEkpJgLW4GcTx5RhTyJVDXIPrr06/osRk
- sfPIDUKOh5wEGMSv6x+uXSBaj4OmCGtcGrICuFMPeNsG8BRkfljmOuCgQV0MHVsT4Gn8=;
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=ts42IGvPEw7wOKe/0FPh7PJQp+fY03EEJctoG8jxa0A=; b=B
+ Aj9ForPKAclyFFVw1wOfJTrNd8Q3RzDpbCrvGD6Tq1e9Ae1EuIhSCjNyajXSVtwvZn660yFWROAKz
+ dZeyscjGAIlSqDRpdAktiYSXQh2RL1DBxvxZGhoOM69OHtPudpYmAcvdtzG3hNp0pCaT5B+BQ7642
+ M1At3H03QWOQcG6E=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qVeWJ-005ns6-GK for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 14 Aug 2023 20:50:36 +0000
+ id 1qVedc-005o72-8y for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 14 Aug 2023 20:58:10 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 97E956481D;
- Mon, 14 Aug 2023 20:50:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7D4E7C43395;
- Mon, 14 Aug 2023 20:50:22 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 9AA3561085
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 14 Aug 2023 20:58:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F10C7C433C8;
+ Mon, 14 Aug 2023 20:58:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1692046222;
- bh=HyxFxhf4E18n+HFsMV0CE+FpVTTOA6JA7lROJ6EF848=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=CcwPvzKVwTQr3lffWFUCBr5l2Edfo/5qK3NmwWP68ZS5RO/Z8vEMcMPJ7IjaBv1rG
- 3qJORsZ4DFZq4bFDDQhvSduLSFAI4w5Ro/vBbt1iYIT/JMHc7U3fiBeHffLMbiwcV+
- iL9meFKFQdIzLslhRcg9GpEguJHF0G5HyfUbRsVYsE1ohLog/MeLo+lK47J+gnOlXa
- vdzZiC0h+E9DaZy5JpjUJLsABlqO+ex4pK9Mvs7MEKAIv32ZTzp2i9fJeInh6tWAJH
- EacQS8eYzc7CdyPcuWtX+Hiq6v4uOGwpDwAgIbeXxRd6tTQ1BaWPpQSdyO2AvW+YMJ
- a1D6cyvZGI9EQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 601CAE93B37; Mon, 14 Aug 2023 20:50:22 +0000 (UTC)
+ s=k20201202; t=1692046682;
+ bh=CHpL0bgZHsiC9nPGHHwnzfW0EFge2wCHNew9Q1TBAzw=;
+ h=From:To:Cc:Subject:Date:From;
+ b=rdipyjT3iJHZEM9J3QOgmJs7wchnI990qX5lgRNXbLLAqkig9CjhA3SdJzhEqfJNa
+ zQ+JAXRNu4ps/Q7zuCKso0OPSs3VYta17abxiqs86F4r6D1xA21Q08gyJTZxFvSQCm
+ MthzGkbd7CxE5Eno4ZeQdxSnnEilAqUdljLIAwhv3JeCFSulqiYLxfx2BJm5rmVpmT
+ YOyXx3nqozaxLlFhuA/V5c7wumKiLvvCFqHbXguJPf4XtZBne7f9o4hgZXvAPsP7we
+ UuNjLfeFCq1XyCK12QEfFnld5h8rfdmhuYdXanoQilrpMHKJyn85f//iRuQqsmaWOy
+ 8fyFBv2VNSzvw==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Mon, 14 Aug 2023 13:58:00 -0700
+Message-ID: <20230814205800.2244461-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.41.0.694.ge786442a9b-goog
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <169204622238.5033.822780908633322584.git-patchwork-notify@kernel.org>
-Date: Mon, 14 Aug 2023 20:50:22 +0000
-References: <20230720112953.3764050-1-chao@kernel.org>
-In-Reply-To: <20230720112953.3764050-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1qVeWJ-005ns6-GK
-Subject: Re: [f2fs-dev] [PATCH] Revert "f2fs: fix to do sanity check on
- extent cache correctly"
+X-Headers-End: 1qVedc-005o72-8y
+Subject: [f2fs-dev] [PATCH] f2fs-tools: f2fs_io: no memcpy for mmap read
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,54 +79,76 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, syzbot+601018296973a481f302@syzkaller.appspotmail.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+This replaces the mmmap read flow to get the maximum performance.
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ tools/f2fs_io/f2fs_io.c | 30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
 
-On Thu, 20 Jul 2023 19:29:53 +0800 you wrote:
-> syzbot reports a f2fs bug as below:
-> 
-> UBSAN: array-index-out-of-bounds in fs/f2fs/f2fs.h:3275:19
-> index 1409 is out of range for type '__le32[923]' (aka 'unsigned int[923]')
-> Call Trace:
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
->  ubsan_epilogue lib/ubsan.c:217 [inline]
->  __ubsan_handle_out_of_bounds+0x11c/0x150 lib/ubsan.c:348
->  inline_data_addr fs/f2fs/f2fs.h:3275 [inline]
->  __recover_inline_status fs/f2fs/inode.c:113 [inline]
->  do_read_inode fs/f2fs/inode.c:480 [inline]
->  f2fs_iget+0x4730/0x48b0 fs/f2fs/inode.c:604
->  f2fs_fill_super+0x640e/0x80c0 fs/f2fs/super.c:4601
->  mount_bdev+0x276/0x3b0 fs/super.c:1391
->  legacy_get_tree+0xef/0x190 fs/fs_context.c:611
->  vfs_get_tree+0x8c/0x270 fs/super.c:1519
->  do_new_mount+0x28f/0xae0 fs/namespace.c:3335
->  do_mount fs/namespace.c:3675 [inline]
->  __do_sys_mount fs/namespace.c:3884 [inline]
->  __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3861
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x41/0xc0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> 
-> [...]
-
-Here is the summary with links:
-  - [f2fs-dev] Revert "f2fs: fix to do sanity check on extent cache correctly"
-    https://git.kernel.org/jaegeuk/f2fs/c/958ccbbf1ce7
-
-You are awesome, thank you!
+diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+index 73ac700f8209..51baded4cb4b 100644
+--- a/tools/f2fs_io/f2fs_io.c
++++ b/tools/f2fs_io/f2fs_io.c
+@@ -684,6 +684,7 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
+ 	char *data;
+ 	char *print_buf = NULL;
+ 	unsigned bs, count, i, print_bytes;
++	u64 total_time = 0;
+ 	int flags = 0;
+ 	int do_mmap = 0;
+ 	int fd;
+@@ -719,28 +720,29 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
+ 
+ 	fd = xopen(argv[6], O_RDONLY | flags, 0);
+ 
++	total_time = get_current_us();
+ 	if (do_mmap) {
+ 		data = mmap(NULL, count * buf_size, PROT_READ,
+-						MAP_SHARED, fd, offset);
++						MAP_SHARED | MAP_POPULATE, fd, offset);
+ 		if (data == MAP_FAILED)
+ 			die("Mmap failed");
+ 	}
+-
+-	for (i = 0; i < count; i++) {
+-		if (do_mmap) {
+-			memcpy(buf, data + offset + buf_size * i, buf_size);
+-			ret = buf_size;
+-		} else {
++	if (!do_mmap) {
++		for (i = 0; i < count; i++) {
+ 			ret = pread(fd, buf, buf_size, offset + buf_size * i);
+-		}
+-		if (ret != buf_size)
+-			break;
++			if (ret != buf_size)
++				break;
+ 
+-		read_cnt += ret;
+-		if (i == 0)
+-			memcpy(print_buf, buf, print_bytes);
++			read_cnt += ret;
++			if (i == 0)
++				memcpy(print_buf, buf, print_bytes);
++		}
++	} else {
++		read_cnt = count * buf_size;
++		memcpy(print_buf, data, print_bytes);
+ 	}
+-	printf("Read %"PRIu64" bytes and print %u bytes:\n", read_cnt, print_bytes);
++	printf("Read %"PRIu64" bytes total_time = %"PRIu64" us, print %u bytes:\n",
++		read_cnt, get_current_us() - total_time, print_bytes);
+ 	printf("%08"PRIx64" : ", offset);
+ 	for (i = 1; i <= print_bytes; i++) {
+ 		printf("%02x", print_buf[i - 1]);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.41.0.694.ge786442a9b-goog
 
 
 
