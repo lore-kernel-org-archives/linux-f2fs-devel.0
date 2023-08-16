@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 34BB0C001E0
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6AE97C04FDF
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 16 Aug 2023 05:08:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qW8lg-0007m3-Bc;
+	id 1qW8lf-0001qo-Sz;
 	Wed, 16 Aug 2023 05:08:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <krisman@suse.de>) id 1qW8lf-0007ls-4k
+ (envelope-from <krisman@suse.de>) id 1qW8le-0001qh-Mb
  for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 16 Aug 2023 05:08:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=o7BnRrZj/BGeCpY2Eau7Peq32o7FSQuNiLArj6jqWIo=; b=l1jxzht3n9VjTMVlI+C2SIMWV/
- uWsldOf+aKVppEgxRh1mvH41tzXNcxaedSylw32LdZwXxZTQP7lVLkrTEzamfge+id8KJh7qpmZf0
- fvu/2g5e5ps53TnHJHGmABjcmK9cKF1sQngdDBQTGX4BbGsEn6W1LIBzr0gp264hKXOo=;
+ bh=+WpWeF/beREB2Fn9GeBuU/+YeiAk2ooPdVMPezCQUNU=; b=FoSRihzB5K+UYiY5wcW4wz9RfV
+ 1CHXzyO8byINqpksZfKhiT3vglZZUB3j9HmdSqDX7ETSr/siZtVfr5pe829Idrk4xeQRKndRMPsnR
+ dk7ozAv1K3hh9N/D/NyXp1445W6EnCHFAu8GFbOwnw2c6ETY1u9NEyA4/jLemAQzd92M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,59 +33,59 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=o7BnRrZj/BGeCpY2Eau7Peq32o7FSQuNiLArj6jqWIo=; b=CQvua0JGEgRopEZ4gzF/MH/oH+
- wLVRNRpf5SDNRhDb1PSFX/Zk962pUUUjx6lRAkvmFO9W7BGuBB1EOnvBpddgvp9LE35cG8DgzAwwR
- /vmZkDgffVQ2WIRGr6Y/n6q71rtCXwtNgEjtI51071/ZACZDrD+10Rjb68YWxh1zrnNE=;
-Received: from smtp-out2.suse.de ([195.135.220.29])
+ bh=+WpWeF/beREB2Fn9GeBuU/+YeiAk2ooPdVMPezCQUNU=; b=GzIFU6Sj7JjlUJ1CtRUZv0q0lD
+ fdZXmvNXRj3wYn3BykOKwdwO+N+O4eavJbGe0VgV2aVRjFbGcd4hUE6JE1X5FByN7IV2tC0yK42rW
+ PVKRs2pkbhIoYHqLp1Im9FNMp1DiFz3ymlmRuiOpUcGQlsrsvywhgHSM3Ug13L9gpxyo=;
+Received: from smtp-out1.suse.de ([195.135.220.28])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qW8la-006njO-2b for linux-f2fs-devel@lists.sourceforge.net;
+ id 1qW8ld-006njT-3L for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 16 Aug 2023 05:08:26 +0000
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id D1C1F1F85D;
- Wed, 16 Aug 2023 05:08:15 +0000 (UTC)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id DD4492197E;
+ Wed, 16 Aug 2023 05:08:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1692162495; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1692162498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=o7BnRrZj/BGeCpY2Eau7Peq32o7FSQuNiLArj6jqWIo=;
- b=q+nIByajPNGdCgxwjTHcLgAcAAE3vo30+GSTTYImLwz+LrBlsadIBIdtJJzpGVjC8TX+nl
- UgdLS9nV2sQ94Mk1eqJ15RlrylbuwzmbdIwsX18ke7XNSgO5U70hWHCLUBzm8HNE9d5LQL
- wKCyWapwZWLv+WHv+QLulCV8clwKKUI=
+ bh=+WpWeF/beREB2Fn9GeBuU/+YeiAk2ooPdVMPezCQUNU=;
+ b=lm26MfDUBiHQuyHb46zaQ0o6C2cOU0FMGKuUoH5PiNp/835savhoWnQU4yN/xwQp+sgURX
+ HJwxuqQSkWegX9sgFI3dP7n6NulUFc/z/stg/WjNWzB40wUHvT8QnccJh7eqR7AgwBubKc
+ 05pmpGknUCyYROU9sNy4reGD1/4T/9o=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1692162495;
+ s=susede2_ed25519; t=1692162498;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=o7BnRrZj/BGeCpY2Eau7Peq32o7FSQuNiLArj6jqWIo=;
- b=FX/3mY0BqMtV9jaM2LR1JG0RlWYXG2jiexMxBdbGEsHVgQxelSZGCBNPbBTH2wWdzy6poC
- +2WHUIrDFrUZj6Dw==
+ bh=+WpWeF/beREB2Fn9GeBuU/+YeiAk2ooPdVMPezCQUNU=;
+ b=hmNCRvvC0SKQcXmET/OnFbvqes+JG+oLvQXYa/0idPerhVvI3iw5xCvUj+5nqfEpBf2ScO
+ p+rJlV8dLA6NbRBQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9D139133F2;
- Wed, 16 Aug 2023 05:08:15 +0000 (UTC)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A804E133F2;
+ Wed, 16 Aug 2023 05:08:18 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id 4A70IL9Z3GTwTgAAMHmgww
- (envelope-from <krisman@suse.de>); Wed, 16 Aug 2023 05:08:15 +0000
+ by imap2.suse-dmz.suse.de with ESMTPSA id 6J9KI8JZ3GQFTwAAMHmgww
+ (envelope-from <krisman@suse.de>); Wed, 16 Aug 2023 05:08:18 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: viro@zeniv.linux.org.uk, brauner@kernel.org, tytso@mit.edu,
  ebiggers@kernel.org, jaegeuk@kernel.org
-Date: Wed, 16 Aug 2023 01:07:59 -0400
-Message-ID: <20230816050803.15660-6-krisman@suse.de>
+Date: Wed, 16 Aug 2023 01:08:01 -0400
+Message-ID: <20230816050803.15660-8-krisman@suse.de>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230816050803.15660-1-krisman@suse.de>
 References: <20230816050803.15660-1-krisman@suse.de>
 MIME-Version: 1.0
-X-Headers-End: 1qW8la-006njO-2b
-Subject: [f2fs-dev] [PATCH v6 5/9] libfs: Validate negative dentries in
- case-insensitive directories
+X-Headers-End: 1qW8ld-006njT-3L
+Subject: [f2fs-dev] [PATCH v6 7/9] libfs: Merge encrypted_ci_dentry_ops and
+ ci_dentry_ops
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -106,152 +106,105 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-Introduce a dentry revalidation helper to check the negative dentries of
-case-insensitive filesystems.  This helper is based on the fact that a
-negative dentry might safe to be reused on a casefolded directory if it
-was created during a case-insensitive lookup, because that kind of
-lookup verifies not only the exact name doesn't exist in a directory,
-but also that *any* case-equivalent name also doesn't exist.  The sole
-exception is during file creation, in which case we also need to make
-sure the name matches case-sensitively, in order to assure the disk
-name-preserving semantics.
+Now that casefold needs d_revalidate and calls fscrypt_d_revalidate
+itself, generic_encrypt_ci_dentry_ops and generic_ci_dentry_ops are now
+equivalent.  Merge them together and simplify the setup code.
 
-We cover most creations by checking LOOKUP_CREATE|LOOKUP_RENAME_TARGET
-flags.  But, while most creations use those flags, there are filesystem
-helpers that call lookup for creation with flags==0.  Since we can't
-know whether those are for creation, just reject the negative dentries
-if there are no flags to check.
-
-Note that we avoid taking the ->d_lock while accessing ->d_name, because
-it isn't really necessary for the LOOKUP_CREATE/LOOKUP_RENAME_TARGET
-case. That is because in every creation path with these flags, we know
-the parent inode lock is acquired, at least for reading, thus
-stabilizing the d_name, since it prevents the dentry from being
-instantiated and negative dentries cannot be moved.
-
-See also the comment in the code.
-
-* Discussion on the ->d_name stability
-
-d_revalidate can only be reached from 4 code paths: lookup_dcache,
-__lookup_slow, lookup_open and lookup_fast:
-
-  - lookup_dcache only reaches d_revalidate with creation flags when
-  coming from __lookup_hash, which needs the parent locked already.
-
-  - In __lookup_slow, either the parent inode is read-locked by the
-  caller (lookup_slow), or it is called with no flags (lookup_one*).  A
-  read lock suffices to prevent concurrent ->d_name modifications, with
-  the exception of a modification inside __d_unalias, which is not a
-  problem because negative dentries are not allowed to be moved with
-  __d_move.  In addition, d_instantiate shouldn't race with this case
-  because its callers also acquire the parent inode lock, preventing it
-  from racing with lookup creation.
-
-  - lookup_open also requires the parent to be locked in the creation
-  case, which is done in open_last_lookups.
-
-  - lookup_fast will indeed be called with the parent unlocked, but it
-  shouldn never be called with LOOKUP_CREATE.  Either it is called in the
-  link_path_walk, where nd->flags doesn't have LOOKUP_CREATE yet or in
-  open_last_lookups. But, in this case, it also never has LOOKUP_CREATE,
-  because it is only called on the !O_CREAT case, which means op->intent
-  doesn't have LOOKUP_CREAT (set in build_open_flags only if O_CREAT is
-  set).
-
-In addition, for the LOOKUP_RENAME_TARGET, we are doing a rename, so the
-parents inodes are also locked.
-
-Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
 ---
-Changes since v5:
-  - Use IS_CASEFOLDED directly (Eric)
-  - Reword commit message and comment in the code (Eric)
-Changes since v4:
-  - Drop useless inline declaration (eric)
-  - Refactor to drop extra identation (Christian)
-  - Discuss d_instantiate
-Changes since v3:
-  - Add comment regarding creation (Eric)
-  - Reorder checks to clarify !flags meaning (Eric)
-  - Add commit message explanaton of the inode read lock wrt.
-    __d_move. (Eric)
-Changes since v2:
-  - Add comments to all rejection cases (Eric)
-  - safeguard against filesystem creating dentries without LOOKUP flags
+changes since v2:
+  - reword comment for clarity (Eric)
 ---
- fs/libfs.c | 54 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+ fs/libfs.c | 45 +++++++++++++--------------------------------
+ 1 file changed, 13 insertions(+), 32 deletions(-)
 
 diff --git a/fs/libfs.c b/fs/libfs.c
-index 5b851315eeed..26bf1b832b0a 100644
+index 994e4c98ec07..e7a44a2be0ee 100644
 --- a/fs/libfs.c
 +++ b/fs/libfs.c
-@@ -1462,9 +1462,63 @@ static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
- 	return 0;
+@@ -1523,7 +1523,7 @@ static int generic_ci_d_revalidate(struct dentry *dentry,
+ 	return fscrypt_d_revalidate(dentry, name, flags);
  }
  
-+static int generic_ci_d_revalidate(struct dentry *dentry,
-+				   const struct qstr *name,
-+				   unsigned int flags)
-+{
-+	const struct dentry *parent;
-+	const struct inode *dir;
-+
-+	if (!d_is_negative(dentry))
-+		return 1;
-+
-+	parent = READ_ONCE(dentry->d_parent);
-+	dir = READ_ONCE(parent->d_inode);
-+
-+	if (!dir || !IS_CASEFOLDED(dir))
-+		return 1;
-+
-+	/*
-+	 * Negative dentries created prior to turning the directory
-+	 * case-insensitive cannot be trusted, since they don't ensure
-+	 * any possible case version of the filename doesn't exist.
-+	 */
-+	if (!d_is_casefolded_name(dentry))
-+		return 0;
-+
-+	/*
-+	 * If the lookup is for creation, then a negative dentry can only be
-+	 * reused if it's a case-sensitive match, not just a case-insensitive
-+	 * one.  This is needed to make the new file be created with the name
-+	 * the user specified, preserving case.
-+	 *
-+	 * LOOKUP_CREATE or LOOKUP_RENAME_TARGET cover most creations.  In these
-+	 * cases, ->d_name is stable and can be compared to 'name' without
-+	 * taking ->d_lock because the caller must hold dir->i_rwsem.  (This
-+	 * is because the directory lock blocks the dentry from being
-+	 * concurrently instantiated, and negative dentries are never moved.)
-+	 *
-+	 * All other creations actually use flags==0.  These come from the edge
-+	 * case of filesystems calling functions like lookup_one() that do a
-+	 * lookup without setting the lookup flags at all.  Such lookups might
-+	 * or might not be for creation, and if not don't guarantee stable
-+	 * ->d_name.  Therefore, invalidate all negative dentries when flags==0.
-+	 */
-+	if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET)) {
-+		if (dentry->d_name.len != name->len ||
-+		    memcmp(dentry->d_name.name, name->name, name->len))
-+			return 0;
-+	} else if (!flags) {
-+		return 0;
-+	}
-+
-+	return 1;
-+}
-+
- static const struct dentry_operations generic_ci_dentry_ops = {
+-static const struct dentry_operations generic_ci_dentry_ops = {
++static const struct dentry_operations generic_encrypted_ci_dentry_ops = {
  	.d_hash = generic_ci_d_hash,
  	.d_compare = generic_ci_d_compare,
-+	.d_revalidate = generic_ci_d_revalidate,
+ 	.d_revalidate = generic_ci_d_revalidate,
+@@ -1536,26 +1536,19 @@ static const struct dentry_operations generic_encrypted_dentry_ops = {
  };
  #endif
+ 
+-#if defined(CONFIG_FS_ENCRYPTION) && IS_ENABLED(CONFIG_UNICODE)
+-static const struct dentry_operations generic_encrypted_ci_dentry_ops = {
+-	.d_hash = generic_ci_d_hash,
+-	.d_compare = generic_ci_d_compare,
+-	.d_revalidate = generic_ci_d_revalidate,
+-};
+-#endif
+-
+ /**
+  * generic_set_encrypted_ci_d_ops - helper for setting d_ops for given dentry
+  * @dentry:	dentry to set ops on
+  *
+- * Casefolded directories need d_hash and d_compare set, so that the dentries
+- * contained in them are handled case-insensitively.  Note that these operations
+- * are needed on the parent directory rather than on the dentries in it, and
+- * while the casefolding flag can be toggled on and off on an empty directory,
+- * dentry_operations can't be changed later.  As a result, if the filesystem has
+- * casefolding support enabled at all, we have to give all dentries the
+- * casefolding operations even if their inode doesn't have the casefolding flag
+- * currently (and thus the casefolding ops would be no-ops for now).
++ * Casefolded directories need some dentry_operations set, so that the dentries
++ * contained in them are handled case-insensitively.  Note that d_hash and
++ * d_compare are needed on the parent directory rather than on the dentries in
++ * it, and while the casefolding flag can be toggled on and off on an empty
++ * directory, dentry_operations can't be changed later.  As a result, if the
++ * filesystem has casefolding support enabled at all, we have to give all
++ * dentries the casefolding operations even if their inode doesn't have the
++ * casefolding flag currently (and thus the casefolding ops would be no-ops for
++ * now).
+  *
+  * Encryption works differently in that the only dentry operation it needs is
+  * d_revalidate, which it only needs on dentries that have the no-key name flag.
+@@ -1564,34 +1557,22 @@ static const struct dentry_operations generic_encrypted_ci_dentry_ops = {
+  * Finally, to maximize compatibility with overlayfs (which isn't compatible
+  * with certain dentry operations) and to avoid taking an unnecessary
+  * performance hit, we use custom dentry_operations for each possible
+- * combination rather than always installing all operations.
++ * combination of operations rather than always installing them.
+  */
+ void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
+ {
+-#ifdef CONFIG_FS_ENCRYPTION
+-	bool needs_encrypt_ops = dentry->d_flags & DCACHE_NOKEY_NAME;
+-#endif
+ #if IS_ENABLED(CONFIG_UNICODE)
+-	bool needs_ci_ops = dentry->d_sb->s_encoding;
+-#endif
+-#if defined(CONFIG_FS_ENCRYPTION) && IS_ENABLED(CONFIG_UNICODE)
+-	if (needs_encrypt_ops && needs_ci_ops) {
++	if (dentry->d_sb->s_encoding) {
+ 		d_set_d_op(dentry, &generic_encrypted_ci_dentry_ops);
+ 		return;
+ 	}
+ #endif
+ #ifdef CONFIG_FS_ENCRYPTION
+-	if (needs_encrypt_ops) {
++	if (dentry->d_flags & DCACHE_NOKEY_NAME) {
+ 		d_set_d_op(dentry, &generic_encrypted_dentry_ops);
+ 		return;
+ 	}
+ #endif
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	if (needs_ci_ops) {
+-		d_set_d_op(dentry, &generic_ci_dentry_ops);
+-		return;
+-	}
+-#endif
+ }
+ EXPORT_SYMBOL(generic_set_encrypted_ci_d_ops);
  
 -- 
 2.41.0
