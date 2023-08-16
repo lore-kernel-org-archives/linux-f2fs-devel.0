@@ -4,86 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AE268C0015E
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 16 Aug 2023 02:16:51 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9E13EC001DE
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 16 Aug 2023 02:20:21 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qW65Z-00025H-OM;
-	Wed, 16 Aug 2023 02:16:50 +0000
+	id 1qW68y-0003EA-Bk;
+	Wed, 16 Aug 2023 02:20:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <35SLcZAYKAMgr526s1u22uzs.q20@flex--drosen.bounces.google.com>)
- id 1qW65Y-000255-Jq for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 16 Aug 2023 02:16:49 +0000
+ (envelope-from <39CLcZAYKANc6KHL7G9HH9E7.5HF@flex--drosen.bounces.google.com>)
+ id 1qW68x-0003E3-Uq for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 16 Aug 2023 02:20:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=u4xbLVOeVgkdWDXqR24NE2nC3f9NqTiQMCDohIN4YrI=; b=NMbfnauu8aUwNfQ6BE/49EdiiX
- AwU6aR9Ulppu09tDHlPg0N/YuB4whN3vS0v5t3fnZRJs5r9HFyUvHL3bXTAN/wLQAdWd2TX9vLFDX
- x+g44/IBHD4HNciSSxdk9FQ+ex/slP0uc1aM+OHrwtYvF+GwmSZBpwhRzxlOBnR+znhM=;
+ References:Mime-Version:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=iTr7HAKWpBensaRIYG4CBZPMVmoz2vxieul5vJXQRDo=; b=RrkuTCfLhDpNVIibizsmo4UsKn
+ ZMaYAeZW8uT1yP0HNTJQ6SgaIBSP5t4m7+84Xcx4r/NH1bkLIeWR3pmUNUJyjwGUadiRdTdaw4F6R
+ yjYdihI/FCwU0f2IOcTmb6WSqibeLnUtkjsHPiCBv6AJCNH72WMddomiYBwqCenhSbLA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=u4xbLVOeVgkdWDXqR24NE2nC3f9NqTiQMCDohIN4YrI=; b=D
- QvG2heVz9hc1Y9HMsD5Xbv6lxPdMFI0EQVX7UMWMtgmWhGwChpJSAs3WONxen5WDVQFwG+8KfJqRb
- NRsWH/WQr5Ot9QdKTiByV/rRIDJt5KQ6AYrCME4XPz0TniIY+jHEDqPbebNQXh+8QRZ9/or/ULsKV
- 5/wrUZFxB2BEFgmY=;
-Received: from mail-yw1-f201.google.com ([209.85.128.201])
+ h=Content-Type:Cc:To:From:Subject:Message-ID:References:Mime-Version:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=iTr7HAKWpBensaRIYG4CBZPMVmoz2vxieul5vJXQRDo=; b=Z27v+pMD2EiIUGzAYg6ponMFeo
+ AxWZT5wSUcL24AQAE8J/bZbluTcU82XJEkCpILSYRsy4Hz3FjeSrCs8YpF6kVgKgXr7NfeuRFfVwI
+ 3A6aNs6jHrMLDHX2bV7WFHMFKui4YJ8wMLoxEshxAFrlQjrMxjoTAFcKMad0UedxONkI=;
+Received: from mail-pl1-f202.google.com ([209.85.214.202])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qW65Z-006j8h-40 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 16 Aug 2023 02:16:49 +0000
-Received: by mail-yw1-f201.google.com with SMTP id
- 00721157ae682-586a5ac5c29so78110967b3.1
+ id 1qW68x-006jE5-H3 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 16 Aug 2023 02:20:20 +0000
+Received: by mail-pl1-f202.google.com with SMTP id
+ d9443c01a7336-1bde651db83so29979595ad.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 15 Aug 2023 19:16:49 -0700 (PDT)
+ Tue, 15 Aug 2023 19:20:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20221208; t=1692152203; x=1692757003;
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=u4xbLVOeVgkdWDXqR24NE2nC3f9NqTiQMCDohIN4YrI=;
- b=UYgt6hIp0FfmS3iy1tkdNoaLJurXKH8Z13e/WZuCJaCDBhV/2I0F5unoqgUL79bPMx
- rMRvT7GLOi1F95MhyINhrZLYRCX/ayYxbhWgCzHNPLJd8XWTK72z6h/kQicECXkIAMem
- SRXqCkAaklJuU+Sbm2Y91TVn1NtI/tq6XH1WoQHFMb8x0L9tdMIo6KEAj+ykUWB717iO
- UK2FSeaJnNmt8gLAK0xvmPx+L3Xxto4ChYeJv0L1wAwkAoyEiwQkoetuSBm5ChaShYTx
- /79ReuNoZrlwN7eerEkZg79YgT+nU7Kt+MXqChOtKIL4R4sa5wDpEdBBN3+bMuljLhwE
- 8TnQ==
+ d=google.com; s=20221208; t=1692152414; x=1692757214;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=iTr7HAKWpBensaRIYG4CBZPMVmoz2vxieul5vJXQRDo=;
+ b=Lf0TG8ohTEAa1u/OOxyETmy2fpu5KUYt6rOvC/0/cwtFV7ND91BSWJwVgjiWVjqVOD
+ NSy6PxhOlYp1baYvddDAvXGXaqFUPNF0fgjnXV7859WDULSm+tWab7gQE6br3TTYxTs5
+ QlEGIxSDchNVEnxs4TyisXGfWTLeHxrqyw6hgDdhV6+xQbEqNo9xARia7fZ2qVx1rO+/
+ UB9ry0tMBoImsS5RGF/2oZxywEWGRCvFfMjlzWex9E8MrOuCQOgrbqUm2YHRfQBK+GSx
+ gms8vvab2JrvtQsRK7sRZ6jY9FbIZaiD34qwqnUH+ELzNXbF9/Vw4sohor1HKobmGgvg
+ eHtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1692152203; x=1692757003;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=u4xbLVOeVgkdWDXqR24NE2nC3f9NqTiQMCDohIN4YrI=;
- b=C1p5tuQklltRCkziAPN50mCj1zhpgjB2yZyedD/WY4gMKijvG92E6svKiSHZOELPLC
- mWkp0uzuPEb14RL9tUvI1420eizMFxHQPHxmOQYHNj0rTe1D3odxhfDqHpgwh2z/nZoH
- aHqysW3QotHpH2ID93JLxpbfUyW1sEKmgi8ep/sy2VcG+GArAj2qk31LcIV31MthWZei
- STqoKbKjj0v2LoJFHVOXAulIOFgVDO5ecatkT5x4PwFSXdyqKIoCRkFCqoH7h+y2Qm/N
- AB8RBC+86mN3XZiDRw7LsiwpCBHvgH1ncYf/d7Ho2cbfVrlJgadUMhYV4vMd1jivWMTt
- C8JA==
-X-Gm-Message-State: AOJu0YzlwSL5laAv4ceMUSm0gd9Mn7BjfTU8J4n8ovTp/7lcrxqMaXFf
- hE584hahvxW9ifdSKHeSY5bjrTVcV/f6VTXr8yIhSln6qcwZ6cfRDGXeP78XZtMwPBwgtjuXKHk
- Diao365tQQFSxMRHaZpfCO1MnGd+nCF50M0QKgbiBssZuh/lcGpQOCVFjzCcmqo2LB3cAkSJKbL
- GmRuclZF8=
-X-Google-Smtp-Source: AGHT+IFIrh35XrN0txHtTCkJq/+rvQNLzJqQvZ+OET40JSBcpSKmDOLnb2WE7uXay6gtT8p4NtsdyHPZTMc=
+ d=1e100.net; s=20221208; t=1692152414; x=1692757214;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=iTr7HAKWpBensaRIYG4CBZPMVmoz2vxieul5vJXQRDo=;
+ b=ef5M+57zYadWTb2MtmfrnprX7X/ZDhvcOWqreL3qaYkujxtukeOKp9x+o4Kyx2XRJl
+ +w3e1mD9AQztgNHApLbrsFWHFs0q0zZHRPBDVdhawOYPGkWZrmG9Nhv4GXjD6zrAYJlH
+ 8tpQeqQBNULU776GBiLdb2MI5Pdt/923Q3WS1RVZRlvJ22lrKrfWnlvP2bqQVSR5Hhjk
+ d99Ievsn8YBihLmDNXIk5HJepfvRKJuCrIZP8XHGwkLNc/XQbPVq+4IL7oQag6iir471
+ bCYyZaEUWN+rDoUvF9jQ4vW8YHYJcYyZShZreLYhH8Znr/5n12D1pmPg/tHPTVC0RNzd
+ aDUA==
+X-Gm-Message-State: AOJu0Yzkd860xpDkAqfde+6ct40ex3YsboIYIP0QFDcD13PyORRSRFBP
+ LsTm9Kj8FID8SioVi4gurEj7QZCn+TTzCWYHW46ETE+9jXNFTxS3daDCNyFX7BXqM25HXTJ818u
+ Xu60AG6QiR1GStql1iaO0ymoOlwHO3jRsmrGQQHUf06956/JaMHmXRb3aCxR32vjCSV6ByY9cDB
+ 6lEc1qyl4=
+X-Google-Smtp-Source: AGHT+IGs7F+E3YEa9T5M4mscnecF0cnx8Epu1G2l8cc1clq4db2ejO3JIn/oKvYoKyG5Li6Px6lyslxqv3w=
 X-Received: from drosen.mtv.corp.google.com
  ([2620:15c:211:201:19fa:33cd:f272:37ec])
- (user=drosen job=sendgmr) by 2002:a81:bc14:0:b0:576:b244:5a4e with SMTP id
- a20-20020a81bc14000000b00576b2445a4emr3311ywi.10.1692148453408; Tue, 15 Aug
- 2023 18:14:13 -0700 (PDT)
-Date: Tue, 15 Aug 2023 18:13:52 -0700
+ (user=drosen job=sendgmr) by 2002:a81:4524:0:b0:57a:793:7fb0 with SMTP id
+ s36-20020a814524000000b0057a07937fb0mr4154ywa.3.1692148468877; Tue, 15 Aug
+ 2023 18:14:28 -0700 (PDT)
+Date: Tue, 15 Aug 2023 18:13:59 -0700
+In-Reply-To: <20230816011359.1964484-1-drosen@google.com>
 Mime-Version: 1.0
+References: <20230816011359.1964484-1-drosen@google.com>
 X-Mailer: git-send-email 2.41.0.694.ge786442a9b-goog
-Message-ID: <20230816011359.1964484-1-drosen@google.com>
+Message-ID: <20230816011359.1964484-8-drosen@google.com>
 To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1qW65Z-006j8h-40
-Subject: [f2fs-dev] [PATCH 0/7] Add 16K Support for f2fs-tools
+X-Headers-End: 1qW68x-006jE5-H3
+Subject: [f2fs-dev] [PATCH 7/7] f2fs-tools: Support different block sizes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -104,63 +106,244 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This adds support for different block sizes to f2fs-tools.
+This adds support for 4K and 16K block size using the same binary.
+mkfs can choose block size via the -b option, with other tools getting
+the blocksize from the superblock.
 
-The first patch redefines all block size based constants to be based on the
-block size. After this patch, you should be able to compile a version of
-f2fs-tools that works for a given blocksize by just setting F2FS_BLKSIZE_BITS
-in f2fs_fs.h. Running fsck on an f2fs filesystem of a different block size will
-fail early, and should leave the fs untouched.
+On mount time, we can't rely on block size for the location for the
+superblock, since that information is in the superblock. If the first
+superblock is corrupt, we will attempt to find the second superblock at
+a 4K block offset, and then a 16K block offset if that fails.
 
-I was unsure how to handle things under tools/, so I've left them as is.
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+---
+ fsck/dir.c               |  2 +-
+ fsck/dump.c              |  4 ++--
+ fsck/fsck.h              |  3 ---
+ fsck/mount.c             | 27 +++++++++++++++++++++------
+ include/f2fs_fs.h        | 10 +++++++---
+ lib/libf2fs.c            |  2 ++
+ man/sload.f2fs.8         |  2 +-
+ mkfs/f2fs_format_main.c  | 12 +++++++++++-
+ mkfs/f2fs_format_utils.c |  2 +-
+ 9 files changed, 46 insertions(+), 18 deletions(-)
 
-The rest of the patches refactor the code to allow it to handle different block
-sizes with the same binary. The final patch puts this under a block size
-argument in make_f2fs.
-
-The refactor splits apart structs that have components with sizes derived from
-the blocksize in the middle. If the component is at the end, it's treated as a
-variable length array. This means that sizeof on affected structs will not work
-as expected, and should be replaced with F2FS_BLKSIZE where appropriate. The
-affected static_asserts are replaced with runtime asserts.
-
-It touches a lot of places, but I think it's probably with it to be able to use
-a single binary, particularly if we're ever going to be able to mount different
-blocksize f2fs filesystems using the same kernel.
-
-I was unable to get xfstests running on my 16k arm setup, so I wasn't able to
-test it as thoroughly as I'd like to have, but it behaved the same on a 4k
-x86_64 system, and fsck/mounted successfully on an arm64 system.
-
-Daniel Rosenberg (7):
-  f2fs-tools: Define constants in terms of BLKSIZE
-  f2fs-tools: Refactor Orphan Block struct
-  f2fs-tools: Refactor f2fs_node struct and friends
-  f2fs-tools: Refactor SIT/NAT block structs
-  f2fs-tools: Refactor Summary block struct and friends
-  f2fs-tools: Refactor f2fs_dentry_block struct
-  f2fs-tools: Support different block sizes
-
- fsck/dir.c               |  46 +++----
- fsck/dump.c              |  28 ++--
- fsck/f2fs.h              |   6 +-
- fsck/fsck.c              |  72 +++++------
- fsck/fsck.h              |   5 +-
- fsck/main.c              |   1 +
- fsck/mount.c             |  93 ++++++++------
- fsck/node.c              |  12 +-
- fsck/node.h              |  20 +--
- fsck/resize.c            |   2 +-
- include/f2fs_fs.h        | 271 ++++++++++++++++++++++++++++-----------
- lib/libf2fs.c            |   4 +-
- man/sload.f2fs.8         |   2 +-
- mkfs/f2fs_format.c       |  90 ++++++-------
- mkfs/f2fs_format_main.c  |  14 +-
- mkfs/f2fs_format_utils.c |   2 +-
- 16 files changed, 405 insertions(+), 263 deletions(-)
-
-
-base-commit: 6ebf6f2967d0a5731af1767d5735f46e30fea0fc
+diff --git a/fsck/dir.c b/fsck/dir.c
+index 05d291c..21d9da3 100644
+--- a/fsck/dir.c
++++ b/fsck/dir.c
+@@ -474,7 +474,7 @@ static void init_inode_block(struct f2fs_sb_info *sbi,
+ 
+ 	if (de->file_type == F2FS_FT_DIR) {
+ 		mode |= S_IFDIR;
+-		size = 4096;
++		size = F2FS_BLKSIZE;
+ 		links++;
+ 		blocks++;
+ 	} else if (de->file_type == F2FS_FT_REG_FILE) {
+diff --git a/fsck/dump.c b/fsck/dump.c
+index 5a9c440..ecadfdd 100644
+--- a/fsck/dump.c
++++ b/fsck/dump.c
+@@ -687,8 +687,8 @@ static void dump_data_offset(u32 blk_addr, int ofs_in_node)
+ 	bidx +=  ofs_in_node;
+ 
+ 	setlocale(LC_ALL, "");
+-	MSG(0, " - Data offset       : 0x%x (4KB), %'u (bytes)\n",
+-				bidx, bidx * 4096);
++	MSG(0, " - Data offset       : 0x%x (BLOCK), %'u (bytes)\n",
++				bidx, bidx * F2FS_BLKSIZE);
+ 	free(node_blk);
+ }
+ 
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index 89d0b22..091b5d8 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -127,9 +127,6 @@ struct f2fs_fsck {
+ };
+ 
+ #define BLOCK_SZ		F2FS_BLKSIZE
+-struct block {
+-	unsigned char buf[BLOCK_SZ];
+-};
+ 
+ enum NODE_TYPE {
+ 	TYPE_INODE = 37,
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 732bfb3..0ba087e 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -994,11 +994,15 @@ int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
+ 		return -1;
+ 
+ 	blocksize = 1 << get_sb(log_blocksize);
+-	if (F2FS_BLKSIZE != blocksize) {
+-		MSG(0, "Invalid blocksize (%u), supports only (%u)\n",
+-			blocksize, F2FS_BLKSIZE);
++	if (blocksize < F2FS_MIN_BLKSIZE || blocksize > F2FS_MAX_BLKSIZE) {
++		MSG(0, "Invalid blocksize (%u), must be between 4KB and 16KB\n",
++			blocksize);
+ 		return -1;
+ 	}
++	c.blksize_bits = get_sb(log_blocksize);
++	c.blksize = blocksize;
++	c.sectors_per_blk = F2FS_BLKSIZE / c.sector_size;
++	check_block_struct_sizes();
+ 
+ 	/* check log blocks per segment */
+ 	if (get_sb(log_blocks_per_seg) != 9) {
+@@ -1007,7 +1011,7 @@ int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
+ 		return -1;
+ 	}
+ 
+-	/* Currently, support 512/1024/2048/4096 bytes sector size */
++	/* Currently, support powers of 2 from 512 to BLOCK SIZE bytes sector size */
+ 	if (get_sb(log_sectorsize) > F2FS_MAX_LOG_SECTOR_SIZE ||
+ 			get_sb(log_sectorsize) < F2FS_MIN_LOG_SECTOR_SIZE) {
+ 		MSG(0, "Invalid log sectorsize (%u)\n", get_sb(log_sectorsize));
+@@ -3854,9 +3858,20 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+ 	sbi->active_logs = NR_CURSEG_TYPE;
+ 	ret = validate_super_block(sbi, SB0_ADDR);
+ 	if (ret) {
++		/* Assuming 4K Block Size */
++		c.blksize_bits = 12;
++		c.blksize = 1 << c.blksize_bits;
++		MSG(0, "Looking for secondary superblock assuming 4K Block Size\n");
+ 		ret = validate_super_block(sbi, SB1_ADDR);
+-		if (ret)
+-			return -1;
++		if (ret) {
++			/* Trying 16K Block Size */
++			c.blksize_bits = 14;
++			c.blksize = 1 << c.blksize_bits;
++			MSG(0, "Looking for secondary superblock assuming 16K Block Size\n");
++			ret = validate_super_block(sbi, SB1_ADDR);
++			if (ret)
++				return -1;
++		}
+ 	}
+ 	sb = F2FS_RAW_SUPER(sbi);
+ 
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index adbd381..a5587d3 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -392,7 +392,7 @@ static inline uint64_t bswap_64(uint64_t val)
+ #define MAX_DEVICES		8
+ 
+ #define F2FS_BYTES_TO_BLK(bytes)    ((bytes) >> F2FS_BLKSIZE_BITS)
+-#define F2FS_BLKSIZE_BITS 12	/* 4KB block */
++#define F2FS_BLKSIZE_BITS c.blksize_bits
+ 
+ /* for mkfs */
+ #define	F2FS_NUMBER_OF_CHECKPOINT_PACK	2
+@@ -400,6 +400,7 @@ static inline uint64_t bswap_64(uint64_t val)
+ #define	DEFAULT_SECTORS_PER_BLOCK	(1 << (F2FS_BLKSIZE_BITS - SECTOR_SHIFT))
+ #define	DEFAULT_BLOCKS_PER_SEGMENT	512
+ #define DEFAULT_SEGMENTS_PER_SECTION	1
++#define DEFAULT_BLKSIZE_BITS		12	/* 4096	*/
+ 
+ #define VERSION_LEN		256
+ #define VERSION_TIMESTAMP_LEN	4
+@@ -628,9 +629,10 @@ enum {
+  */
+ #define F2FS_SUPER_OFFSET		1024	/* byte-size offset */
+ #define F2FS_MIN_LOG_SECTOR_SIZE	9	/* 9 bits for 512 bytes */
+-#define F2FS_MAX_LOG_SECTOR_SIZE	F2FS_BLKSIZE_BITS	/* 12 bits for 4096 bytes */
+-#define F2FS_BLKSIZE			(1 << F2FS_BLKSIZE_BITS)/* support only 4KB block */
++#define F2FS_MAX_LOG_SECTOR_SIZE	F2FS_BLKSIZE_BITS	/* max sector size is block size */
++#define F2FS_MIN_BLKSIZE		4096
+ #define F2FS_MAX_BLKSIZE		16384
++#define F2FS_BLKSIZE			c.blksize	/* support configurable block size */
+ #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
+ #define F2FS_EXTENSION_LEN		8	/* max size of extension */
+ #define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) / F2FS_BLKSIZE)
+@@ -1510,6 +1512,8 @@ struct f2fs_configuration {
+ 	uint32_t lpf_ino;
+ 	uint32_t root_uid;
+ 	uint32_t root_gid;
++	uint32_t blksize;
++	uint32_t blksize_bits;
+ 
+ 	/* defragmentation parameters */
+ 	int defrag_shrink;
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 838ba7e..59e6f40 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -689,6 +689,8 @@ void f2fs_init_configuration(void)
+ 
+ 	memset(&c, 0, sizeof(struct f2fs_configuration));
+ 	c.ndevs = 1;
++	c.blksize = 1 << DEFAULT_BLKSIZE_BITS;
++	c.blksize_bits = DEFAULT_BLKSIZE_BITS;
+ 	c.sectors_per_blk = DEFAULT_SECTORS_PER_BLOCK;
+ 	c.blks_per_seg = DEFAULT_BLOCKS_PER_SEGMENT;
+ 	c.wanted_total_sectors = -1;
+diff --git a/man/sload.f2fs.8 b/man/sload.f2fs.8
+index ed5ee4b..f213dea 100644
+--- a/man/sload.f2fs.8
++++ b/man/sload.f2fs.8
+@@ -82,7 +82,7 @@ independently.
+ Specify cluster size in power of two blocks.
+ The minimum value is 2 (4 blocks, default).
+ The maximum value is 8 (256 blocks).
+-Note that a block contains 4096 bytes.
++Note that a block contains 4096 or 16384 bytes.
+ This option must be used with option \fB\-c\fR.
+ .TP
+ .BI \-a " compression-algorithm"
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index c0f4253..7470322 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -52,6 +52,7 @@ static void mkfs_usage()
+ 	MSG(0, "\nUsage: mkfs.f2fs [options] device [sectors]\n");
+ 	MSG(0, "[options]:\n");
+ 	MSG(0, "  -a heap-based allocation [default:0]\n");
++	MSG(0, "  -b filesystem block size [default:4096]\n");
+ 	MSG(0, "  -c device1[,device2,...] up to 7 additional devices, except meta device\n");
+ 	MSG(0, "  -d debug level [default:0]\n");
+ 	MSG(0, "  -e [cold file ext list] e.g. \"mp3,gif,mov\"\n");
+@@ -177,7 +178,7 @@ static void add_default_options(void)
+ 
+ static void f2fs_parse_options(int argc, char *argv[])
+ {
+-	static const char *option_string = "qa:c:C:d:e:E:g:hil:mo:O:rR:s:S:z:t:T:U:Vfw:Z:";
++	static const char *option_string = "qa:b:c:C:d:e:E:g:hil:mo:O:rR:s:S:z:t:T:U:Vfw:Z:";
+ 	static const struct option long_opts[] = {
+ 		{ .name = "help", .has_arg = 0, .flag = NULL, .val = 'h' },
+ 		{ .name = NULL, .has_arg = 0, .flag = NULL, .val = 0 }
+@@ -194,6 +195,15 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 		case 'a':
+ 			c.heap = atoi(optarg);
+ 			break;
++		case 'b':
++			c.blksize = atoi(optarg);
++			c.blksize_bits = log_base_2(c.blksize);
++			c.sectors_per_blk = DEFAULT_SECTORS_PER_BLOCK;
++			if ((1 << c.blksize_bits) != c.blksize) {
++				MSG(0, "Error: Block size must be power of 2");
++				mkfs_usage();
++			}
++			break;
+ 		case 'c':
+ 			if (c.ndevs >= MAX_DEVICES) {
+ 				MSG(0, "Error: Too many devices\n");
+diff --git a/mkfs/f2fs_format_utils.c b/mkfs/f2fs_format_utils.c
+index 448fbaa..579a39a 100644
+--- a/mkfs/f2fs_format_utils.c
++++ b/mkfs/f2fs_format_utils.c
+@@ -126,7 +126,7 @@ static bool is_wiped_device(int i)
+ 	int fd = dev->fd;
+ 	char *buf, *zero_buf;
+ 	bool wiped = true;
+-	int nblocks = 4096;	/* 16MB size */
++	int nblocks = (4096 * 4096) / F2FS_BLKSIZE;	/* 16MB size */
+ 	int j;
+ 
+ 	/* let's trim the other devices except the first device */
 -- 
 2.41.0.694.ge786442a9b-goog
 
