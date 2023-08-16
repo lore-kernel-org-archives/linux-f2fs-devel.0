@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8AAF8C001B0
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 16 Aug 2023 01:45:14 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3F78CC001DE
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 16 Aug 2023 01:46:55 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qW5ay-0007rX-Li;
-	Wed, 16 Aug 2023 01:45:13 +0000
+	id 1qW5cc-00085e-Pd;
+	Wed, 16 Aug 2023 01:46:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <37iLcZAYKANE0EBF1A3BB381.zB9@flex--drosen.bounces.google.com>)
- id 1qW5ax-0007rR-KV for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 16 Aug 2023 01:45:12 +0000
+ (envelope-from <36SLcZAYKAMwv96Aw5y66y3w.u64@flex--drosen.bounces.google.com>)
+ id 1qW5cb-00085Y-8T for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 16 Aug 2023 01:46:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
  References:Mime-Version:In-Reply-To:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=EtokK/S0JdydvYkGO4D4dn6PL0VDx3I2PilqfFBiRjU=; b=gPkEkAStaOKcHlkArooNaGxz6m
- BkNlcJQAOMR/azL1u8nV0XvPGIs1FIC6/argX7kenkq981hDNGR4DXmWo54r2W08/WTFKx/bXXTDV
- ZjaTxmkXR5TQ06epv0vHfQdEbfv52vyFaTougVk5Kn7n0vq9+r0p/QXzp+HR5fYLjlOc=;
+ bh=L4D7lyseRfeNGNPXt8iGTjc32JT/WjMSoEi0kpw6uDw=; b=i7QFa+C3qsgs/VoONjJ6TK7Lkp
+ MPjGHkb0ICsAsrA9aOrA/3ZT9SJyHmFcMYugld9+EioXhKFCCJqxz5MNL3V6OtlDGFaO6HWz1ViVN
+ QUSYuN549HoWpYpk2EE8FqjPNAvhqe0hF9Wu+XuDzhQjoAhnGtN6OdQUE4lohF305rMw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:Message-ID:References:Mime-Version:
@@ -33,59 +33,59 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=EtokK/S0JdydvYkGO4D4dn6PL0VDx3I2PilqfFBiRjU=; b=k0so4gM3F9kKmdMah79jnIU8Qy
- o3J/YXCZRmprSfew2RrmIfySoVJ4ZXZ5nwSyZGba0KqM1M0Mb/1KppwkR9RhZCpKvWXsD1yYh2fpp
- pO3hAHm2hUgysb0pPT+C7gY8q6k4p+0AaOekoSCdJyzhdeo8xCjUmcYFMIPdHDU3bqCY=;
-Received: from mail-yw1-f201.google.com ([209.85.128.201])
+ bh=L4D7lyseRfeNGNPXt8iGTjc32JT/WjMSoEi0kpw6uDw=; b=Rp88hcMkBJ7xoM4dCBK8Ov8Myx
+ RrTiUBVXyZQw6pLIuEB/+Yx8wE8s4ZmQL5ylkV7T1Ufhaovv1sZG/myKPWZ+mmDHQp++DbrIIIfk7
+ zlCTLP/Tr+WPaU4+1sY4HZVF4Q35ETKE+gAXv4itqMaMcUq+hSIxpL544T3WQPgpcdJ8=;
+Received: from mail-pj1-f73.google.com ([209.85.216.73])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qW5ay-006iEv-3X for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 16 Aug 2023 01:45:12 +0000
-Received: by mail-yw1-f201.google.com with SMTP id
- 00721157ae682-58c4d30c349so23436437b3.2
+ id 1qW5cZ-006iI7-H5 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 16 Aug 2023 01:46:53 +0000
+Received: by mail-pj1-f73.google.com with SMTP id
+ 98e67ed59e1d1-26b639eb9d9so3439319a91.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 15 Aug 2023 18:45:12 -0700 (PDT)
+ Tue, 15 Aug 2023 18:46:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20221208; t=1692150306; x=1692755106;
+ d=google.com; s=20221208; t=1692150406; x=1692755206;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:from:to:cc:subject:date:message-id:reply-to;
- bh=EtokK/S0JdydvYkGO4D4dn6PL0VDx3I2PilqfFBiRjU=;
- b=6x7srC3tM5DZrrk/i/hyQRMxY/pnLHc06l8yLb2KkzJBmYE0+/A+Par/1BmUBRleEF
- 4pg54Ypj5FYh0SHCwHiaHwQ1VCR4MrHBYIuKUyy1F2ZU2xddO0wicnRxIgqmo8b+9sgQ
- hMDcrK45LHGCumHpIf2Ty285ozg9wk4LS8JlV29EGcXg4oSBybaS7jWTu/sVHztWnbBy
- 9Ukq70sTT1Cbau2heVS3mt10CzNeqwYZfTUBA7AJqwF0B6N6312BubN14NPd0DTP/Z5m
- QL8cGLQkoqTb1035MvsGQd1kAqqW/d0F6KmzoGm38h2XWSWYDl63np93+MhJ3ryRRY3B
- V1Sg==
+ bh=L4D7lyseRfeNGNPXt8iGTjc32JT/WjMSoEi0kpw6uDw=;
+ b=Nz55VNXyBQbxF6L9Ri+eZa/Kq3eAdPcW3xDU8KnzSm3U/2QzJeXSqFqrvmDE3/DUnT
+ BF156BpO5F/bCV8a8UoKLaaLQUuf3QKUG5XhZFhbbHQbu61iDvYgWDg8r7eswIvoJOnM
+ ssW05SjwOBMiyhRAKnMfXg+VLU3ryMoeJsnuVvSi01TdwzbVajOYKg4AxrQ952Lm8TOk
+ sKCi6skKP1gF1hzCr0v9BQCz80IHLenaSbAhqwLL/WOHottLznCjuG59c7FACDWI0ej/
+ 9ILE7tGMCaiHcqjGenhjrag2r8kJE7NNxQy65Q9nhXUlDKvzs9DQWlGpI7SfhJOUKAR3
+ wDZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1692150306; x=1692755106;
+ d=1e100.net; s=20221208; t=1692150406; x=1692755206;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=EtokK/S0JdydvYkGO4D4dn6PL0VDx3I2PilqfFBiRjU=;
- b=c24c3I0pioBD4NxSWoLLreSqAh5m9FK6Dxk3BPxtO+yHuhIeneAF4kAJznxcM/mWCf
- yUE50GD3pXmq/V2LYmSQSAyVY5IMkE7X1WX/a9mA9bGuLQAN+cLBweQnWDosnhUfOwUc
- a/tRTTCEKkLDkjhbFNUdXOmZZyzNJjG4tVGHtfgpnZRh/TrVDBBZC1rta4bRiIHsKwi3
- 6MkJItacGk8UCUfGsqeMG0glV7wTAhb/ULUVrTXxeUtgEGREYXunBrx3ZqWcnYI0268s
- 6E1m3SuvEkjFFFq0b9fvQuADHR2/WCE6jfHPtE3akvog4/d6eu0LrkX/oqsOpK2d4KYs
- MiHw==
-X-Gm-Message-State: AOJu0YxxZBd5YrNoD2Fw44m/j96qN1cQR9YKV2eE7yVGOElFPlzxdrGu
- e5YRpPiQCtntcOjir1URr8DkXsifSLdRVajzEK/KZFfrVKhYkHAP6nknxobcdaKMKmzFnGwsEFl
- J+DipFnjMyBuZYzQPkZwuEK0KnpF2GIXobX6lMkJRhTbZy/QbMcoBe4hVg3U9KOMmrPwE6Fxmmk
- XyE1fDFrU=
-X-Google-Smtp-Source: AGHT+IHtVp52aojaLVtqsEIM5SrI6ZlcQAM7/pFgr/ZT6cqeUx1hwc74hOqkdh79OKO+tfluCLvB5RJMt0g=
+ bh=L4D7lyseRfeNGNPXt8iGTjc32JT/WjMSoEi0kpw6uDw=;
+ b=D5/wpl8MQHAqS/KNIEJnm3dNVmg5+tXnbXcJsz9QKH9uIAz7IR7V1j4mTMBjlhiwIH
+ 2J6NOX+hjdo7yZmxGONQ8uFanRHn6PzrmjoIyE3GNOc+SCrg5GiQ8jn67vNg6HrsYBhq
+ jADq2omAKD1cZH8KzCaV+agzqId8hi+1rLRNJSM+sEGeI1o049kMdn6ppDEQhi0ZKlKn
+ j7bviWsBllLhCIqFfroSNUBwXjKo7geYqnklYEJdhPYCwu8bVP3psRzn7+A617kjm153
+ wnfOUfFGCMTcdCWr3rZbJ3Ei8rkufxX+luveRcuE7h98w520C4F4AQi7GKvDaOrLRhaJ
+ jTdg==
+X-Gm-Message-State: AOJu0Ywtc9n69BAfv6htDWUwypYY1z+euCu8Q7fwzef+ZF2DrZAz1vYv
+ yId7mcMbcu8ES0p9wfV9aZcsHnRNnYFmTm1LI7W2bvfHXsfZdvjnNHbmeYQzbRmkS11XJfBcUbf
+ rh/0dSfzfA+6NdIf8rn2odaosN3XvCxXguq+r20jKz2LVMjkOV2TQREgpABX7Sn71p/DZ1UE5Yt
+ hzFIkf/wE=
+X-Google-Smtp-Source: AGHT+IHPKq4dxMpmFe1RHPEYqfZigCi4wfShOxZoTQXA5+b0ZOtDJl6Wc3Sm7OkPs2vHyantx3U8v3JOCkg=
 X-Received: from drosen.mtv.corp.google.com
  ([2620:15c:211:201:19fa:33cd:f272:37ec])
- (user=drosen job=sendgmr) by 2002:a05:690c:731:b0:586:4eae:b943 with SMTP id
- bt17-20020a05690c073100b005864eaeb943mr3656ywb.8.1692148462518; Tue, 15 Aug
- 2023 18:14:22 -0700 (PDT)
-Date: Tue, 15 Aug 2023 18:13:56 -0700
+ (user=drosen job=sendgmr) by 2002:a25:748e:0:b0:d6b:7397:a16f with SMTP id
+ p136-20020a25748e000000b00d6b7397a16fmr7184ybc.1.1692148457722; Tue, 15 Aug
+ 2023 18:14:17 -0700 (PDT)
+Date: Tue, 15 Aug 2023 18:13:54 -0700
 In-Reply-To: <20230816011359.1964484-1-drosen@google.com>
 Mime-Version: 1.0
 References: <20230816011359.1964484-1-drosen@google.com>
 X-Mailer: git-send-email 2.41.0.694.ge786442a9b-goog
-Message-ID: <20230816011359.1964484-5-drosen@google.com>
+Message-ID: <20230816011359.1964484-3-drosen@google.com>
 To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1qW5ay-006iEv-3X
-Subject: [f2fs-dev] [PATCH 4/7] f2fs-tools: Refactor SIT/NAT block structs
+X-Headers-End: 1qW5cZ-006iI7-H5
+Subject: [f2fs-dev] [PATCH 2/7] f2fs-tools: Refactor Orphan Block struct
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -106,65 +106,104 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This converts f2fs_nat_block and f2fs_sit_block to be variable length
-arrays. This does not change the way they are accessed, but removes a
-misleading statment that these sizes are fixed, as opposed to deriving
-from F2FS_BLKSIZE
+This splits off access to the orphan block's footer into a macro call
+as its location is dependent on block size. Because of this, you should
+use F2FS_BLKSIZE instead of sizeof(struct f2fs_orphan_block)
 
 Signed-off-by: Daniel Rosenberg <drosen@google.com>
 ---
- include/f2fs_fs.h | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ fsck/fsck.c       |  4 ++--
+ fsck/main.c       |  1 +
+ include/f2fs_fs.h | 23 ++++++++++++++++++++---
+ 3 files changed, 23 insertions(+), 5 deletions(-)
 
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 78ffdb6..e0dce16 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -2058,7 +2058,7 @@ int fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
+ 		u32 new_entry_count = 0;
+ 
+ 		ASSERT(ret >= 0);
+-		entry_count = le32_to_cpu(orphan_blk->entry_count);
++		entry_count = le32_to_cpu(F2FS_ORPHAN_BLOCK_FOOTER(orphan_blk)->entry_count);
+ 
+ 		for (j = 0; j < entry_count; j++) {
+ 			nid_t ino = le32_to_cpu(orphan_blk->ino[j]);
+@@ -2094,7 +2094,7 @@ int fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
+ 		}
+ 		if (f2fs_dev_is_writable() && c.fix_on &&
+ 				entry_count != new_entry_count) {
+-			new_blk->entry_count = cpu_to_le32(new_entry_count);
++			F2FS_ORPHAN_BLOCK_FOOTER(new_blk)->entry_count = cpu_to_le32(new_entry_count);
+ 			ret = dev_write_block(new_blk, start_blk + i);
+ 			ASSERT(ret >= 0);
+ 		}
+diff --git a/fsck/main.c b/fsck/main.c
+index 3690c74..15e2e4e 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -803,6 +803,7 @@ void f2fs_parse_options(int argc, char *argv[])
+ 			return;
+ 	}
+ 
++	check_block_struct_sizes();
+ 	/* print out error */
+ 	switch (err) {
+ 	case EWRONG_OPT:
 diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 13a1c14..b2d479f 100644
+index 6975143..c5b1e26 100644
 --- a/include/f2fs_fs.h
 +++ b/include/f2fs_fs.h
-@@ -1119,11 +1119,9 @@ struct f2fs_nat_entry {
- static_assert(sizeof(struct f2fs_nat_entry) == 9, "");
+@@ -21,6 +21,7 @@
+ #define __SANE_USERSPACE_TYPES__       /* For PPC64, to get LL64 types */
+ #endif
  
- struct f2fs_nat_block {
--	struct f2fs_nat_entry entries[NAT_ENTRY_PER_BLOCK];
-+	struct f2fs_nat_entry entries[0]; /* NAT_ENTRY_PER_BLOCK */
- };
- 
--static_assert(sizeof(struct f2fs_nat_block) == F2FS_BLKSIZE - (F2FS_BLKSIZE % 9), "");
--
- /*
-  * For SIT entries
-  *
-@@ -1169,12 +1167,14 @@ struct f2fs_sit_entry {
- 
- static_assert(sizeof(struct f2fs_sit_entry) == 74, "");
++#include <assert.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <sys/stat.h>
+@@ -855,8 +856,19 @@ static_assert(sizeof(struct f2fs_checkpoint) == 192, "");
+  */
+ #define F2FS_ORPHANS_PER_BLOCK	((F2FS_BLKSIZE - 4 * sizeof(__le32)) / sizeof(__le32))
  
 +/*
 + * On disk layout is:
-+ * struct f2fs_sit_entry entries[SIT_ENTRY_PER_BLOCK];
++ * __le32 ino[F2FS_ORPHANS_PER_BLOCK];
++ * struct f2fs_ophan_block_footer
++ *
++ * Do NOT use sizeof, use F2FS_BLKSIZE instead
 + */
- struct f2fs_sit_block {
--	struct f2fs_sit_entry entries[SIT_ENTRY_PER_BLOCK];
-+	struct f2fs_sit_entry entries[0];
+ struct f2fs_orphan_block {
+-	__le32 ino[F2FS_ORPHANS_PER_BLOCK];	/* inode numbers */
++	__le32 ino[0];	/* F2FS_ORPHANS_PER_BLOCK inode numbers */
++};
++#define F2FS_ORPHAN_BLOCK_FOOTER(blk) ((struct orphan_block_footer *)&(blk)->ino[F2FS_ORPHANS_PER_BLOCK])
++
++struct orphan_block_footer {
+ 	__le32 reserved;	/* reserved */
+ 	__le16 blk_addr;	/* block index in current CP */
+ 	__le16 blk_count;	/* Number of orphan inode blocks in CP */
+@@ -864,8 +876,6 @@ struct f2fs_orphan_block {
+ 	__le32 check_sum;	/* CRC32 for orphan inode block */
  };
  
--static_assert(sizeof(struct f2fs_sit_block) == F2FS_BLKSIZE - (F2FS_BLKSIZE % 74), "");
+-static_assert(sizeof(struct f2fs_orphan_block) == F2FS_BLKSIZE, "");
 -
  /*
-  * For segment summary
-  *
-@@ -1995,6 +1995,14 @@ static inline void check_block_struct_sizes(void)
+  * For NODE structure
+  */
+@@ -1956,4 +1966,11 @@ extern char *f2fs_encoding2str(const int encoding);
+ extern int f2fs_get_encoding_flags(int encoding);
+ extern int f2fs_str2encoding_flags(char **param, __u16 *flags);
  
- 	/* Check Indirect Block Size */
- 	assert(NIDS_PER_BLOCK * sizeof(__le32) + sizeof(struct node_footer) == F2FS_BLKSIZE);
++static inline void check_block_struct_sizes(void)
++{
++	/* Check Orphan Block Size */
++	assert(F2FS_ORPHANS_PER_BLOCK * sizeof(__le32)
++			+ sizeof(struct orphan_block_footer) == F2FS_BLKSIZE);
++}
 +
-+	/* Check NAT Block Size */
-+	assert((NAT_ENTRY_PER_BLOCK + 1) * sizeof(struct f2fs_nat_entry) > F2FS_BLKSIZE);
-+	assert(NAT_ENTRY_PER_BLOCK * sizeof(struct f2fs_nat_entry) <= F2FS_BLKSIZE);
-+
-+	/* Check SIT Block Size */
-+	assert((SIT_ENTRY_PER_BLOCK + 1) * sizeof(struct f2fs_nat_entry) > F2FS_BLKSIZE);
-+	assert(SIT_ENTRY_PER_BLOCK * sizeof(struct f2fs_sit_entry) <= F2FS_BLKSIZE);
- }
- 
  #endif	/*__F2FS_FS_H */
 -- 
 2.41.0.694.ge786442a9b-goog
