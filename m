@@ -4,91 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 388ADEE49A5
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Aug 2023 09:32:46 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0D93AEE4996
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Aug 2023 15:22:45 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qY1H8-0007dP-7E;
-	Mon, 21 Aug 2023 09:32:43 +0000
+	id 1qY6jq-00036H-Qx;
+	Mon, 21 Aug 2023 15:22:43 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <bugzilla-daemon@kernel.org>) id 1qY1H6-0007dI-PA
+ (envelope-from <chao@kernel.org>) id 1qY6jp-00036B-IV
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Aug 2023 09:32:41 +0000
+ Mon, 21 Aug 2023 15:22:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=G0QTNVHShuNqYFfaysbmQSCdsSoV6JLJFP9De81PZ6o=; b=Nd9xW7v4MkHo8nstXw9vb3dDHv
- xmEA6lN3mtWIyQc4y1FYRaxJdSpo2THLwIqqziF31oWiMGiobKyu1JN2hQOqrRFIQcMEBKGcF7y1Q
- nMSuxiybJk6PdSBvP1ONmEgQm9jrgvW6eWAMgt0xAnNSZ/YFr2UPELOUvkFCk6lJ/OJo=;
+ bh=rToafid38dSDzo9BmIsdEKn34E8qPil/lAIBqR3Fvqo=; b=iyjLTgxgBiccTaUlQ4mQtXVi2q
+ W/PBpbXt8rtaw2PA/rrOhXtAU6fObNP5puJV3TaYS+7ZdYSfQNLv5vKYkQGXoa2zXpNfVwTsNJOuY
+ 36XjxvHxycNJEGp8PsDbpW0h28wIm9WLUsgglJUpRel/U6UIeHeXXEbidWawD0+/zwOo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=G0QTNVHShuNqYFfaysbmQSCdsSoV6JLJFP9De81PZ6o=; b=ELYQ1YtjS+IvOatGYaUHBZK7GL
- pAwwCuLgS66px1q6M2PoNBBN+DL9VVbu/wYq5EdePFpVdUMNFfwtA1/vKNi1nrtpl5XkAK346Nxyf
- +RDwy63GM4NmT7TFtdpdKPTsD+UE5cTYr+ssZXDW7AO7aL0FOl30GsdbZSFCDTArWj0E=;
+ bh=rToafid38dSDzo9BmIsdEKn34E8qPil/lAIBqR3Fvqo=; b=F2JaHAwWyunzialRFrg1vU78ZF
+ dvQEcgW5YF9DIbQ4uVIK79dLnGFkBDlbAeNSOsQQ6GRJ7UMgSHQvFgqeoSpcCy9ivLY8wwFVXSb8v
+ c14rFZA6W1RPfdrqR9+lGVqSrZ8u3esfWXfAA+sHZkpE+zr/O7OAhMc91rGq0OEoXU/Q=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qY1H7-0006lH-5X for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Aug 2023 09:32:41 +0000
+ id 1qY6jp-00BU2l-Cm for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Aug 2023 15:22:41 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 52D7262ECB
+ by dfw.source.kernel.org (Postfix) with ESMTPS id C6E9963A9A
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 21 Aug 2023 09:32:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2273FC4339A
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 21 Aug 2023 09:32:34 +0000 (UTC)
+ Mon, 21 Aug 2023 15:22:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E65AAC433C8;
+ Mon, 21 Aug 2023 15:22:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1692610354;
- bh=G0QTNVHShuNqYFfaysbmQSCdsSoV6JLJFP9De81PZ6o=;
- h=From:To:Subject:Date:In-Reply-To:References:From;
- b=s5IqGfKhWIJkh5sgS/DWG5tyKcnlLo0PNzeZojIqQ/zA02ZKe4fxoyDmORaDURwsy
- YQlYamLa0/1qrOh/aF0/p2ffxeMEz9sRoPN7asBoOHB1DhGo6FzSxHMcPZof2CIz4T
- xhFt8l2plFMX+4cYzX/cJc5SwE+Rk6DX96ouz8KSIz4efmB95p9bFcwpzoJA3qwe1Y
- 0xgAnEcizqZpogFrwfdf7eCA+nkmIJYp3af90lwZJBSvaU5KvQvPUbokJMKHzNx+tU
- +HmmoaKcN6rXNw/sPp/FTa170eGyJ9SrSksyAsxljgva2WUf6EAIp34CSoyBttnxoA
- FHZ1C2PO4IGeA==
-Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
- from userid 48) id 0ECE9C53BC6; Mon, 21 Aug 2023 09:32:34 +0000 (UTC)
-From: bugzilla-daemon@kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon, 21 Aug 2023 09:32:33 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: high
-X-Bugzilla-Who: guido.iodice@gmail.com
-X-Bugzilla-Status: NEW
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P1
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: 
-Message-ID: <bug-216050-202145-BdpoP0lNgT@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-216050-202145@https.bugzilla.kernel.org/>
-References: <bug-216050-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ s=k20201202; t=1692631355;
+ bh=ViCdO3mKsu0rpP6MtdWLUzlowcnCJvN7GijE6W+iSaE=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=NMzRWXF/8nU1TTsBojqEhv3nqo6J7b23jvjPMJ1BJlZ4tSk1Y4dXWU2HWVLrA1j66
+ Fnd1QtrOKO0xij66hBlRITK31JSzw7r3O3zgzDjFW7YV0SsJwgvzaauhPsEuLkXXzF
+ 9xoISvWonafD/FqlpmjhQaAC+eEUahCA7ub5DrKY9rM/XvJHQsrn0MDAgmL1bTxhj2
+ WLumWWntO0YnMkmYNv6FG/Zkh83gfgmgNWY/WkLtGSOFbXg7wqPq6TSeZW9U7WVC/V
+ EAswnMFwxOON9QyUkfpnfv1bH11Xt6BOi4+Y0Sz/P95Uz9FqpETvBBn/UmpGQJ/Dbb
+ JzePma50DG+8w==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Mon, 21 Aug 2023 23:22:24 +0800
+Message-Id: <20230821152225.4086924-2-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230821152225.4086924-1-chao@kernel.org>
+References: <20230821152225.4086924-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1qY1H7-0006lH-5X
-Subject: [f2fs-dev] [Bug 216050] f2fs_gc occupies 100% cpu
+X-Headers-End: 1qY6jp-00BU2l-Cm
+Subject: [f2fs-dev] [PATCH 2/3] f2fs: fix error path of
+ f2fs_submit_page_read()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,30 +82,37 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=216050
+In error path of f2fs_submit_page_read(), it missed to call
+iostat_update_and_unbind_ctx() and free bio_post_read_ctx, fix it.
 
---- Comment #181 from Guido (guido.iodice@gmail.com) ---
-The fact that dirty segments don't go below 10000 suggests that the bug is not
-completely fixed even with this patch. This is unfortunate because the 5.15
-kernel, which is not affected by the bug, is near to EOL (October, if I
-remember correctly).
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/data.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I am not an expert, but I assume it is safer not to interrupt the script
-(because the gc goes on on its own anyway) or shut down the pc while the gc is
-running, but to do in reverse what the script does. TBH I don't remember if
-doing this really interrupts the gc or in any case once it enters the loop
-there is nothing to do. For clarity, I found the script on the Internet, I am
-not responsible for any damage or loss of data.
-
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 5d9697717353..916e317ac925 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1167,6 +1167,9 @@ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
+ 	f2fs_wait_on_block_writeback(inode, blkaddr);
+ 
+ 	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
++		iostat_update_and_unbind_ctx(bio);
++		if (bio->bi_private)
++			mempool_free(bio->bi_private, bio_post_read_ctx_pool);
+ 		bio_put(bio);
+ 		return -EFAULT;
+ 	}
 -- 
-You may reply to this email to add a comment.
+2.40.1
 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+
 
 _______________________________________________
 Linux-f2fs-devel mailing list
