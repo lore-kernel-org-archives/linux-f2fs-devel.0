@@ -4,96 +4,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 18F08EE49A5
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Aug 2023 03:00:03 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E572AEE49B2
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Aug 2023 10:49:13 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qYe6B-0006Q8-HR;
-	Wed, 23 Aug 2023 02:59:59 +0000
+	id 1qYlQF-0004iW-F4;
+	Wed, 23 Aug 2023 10:49:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhengqi.arch@bytedance.com>) id 1qYe6A-0006Q1-24
+ (envelope-from <jack@suse.cz>) id 1qYlQE-0004iP-S6
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 23 Aug 2023 02:59:58 +0000
+ Wed, 23 Aug 2023 10:49:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- Cc:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bhgEqLuvf9ApSnTvUwn1L76c2o2W1Ei/QD6yE6yt7Vo=; b=B9CkhU37whvgEQZJ1jRHYb4e2F
- cysbN89Im2X9EEHMp5UOqFoDOMwpoC0EEhao/TJsj+p5tK+LOSp5jYIpJrSnZbeceGrBG/rYxwsyw
- afoRc7TYlpbb5ieRBFTyN2db83QYUoxv2p5PDQtdd1bTDmolTNUbSIrGJXC34C6QIT8k=;
+ bh=2AUkHVYDDBg67q+3OD0qFSazOfyxTAI2542TIz3rbns=; b=Zwvg6B622BFkiG5J9Jz3jIV+PE
+ uRq8PaHpAW6FQne98yybyvXI+GMmptpJOSZSBbidTKSUVpSv60almrkpe2EPgIoHRYDhqfW/ZhCvy
+ z8Kzg9HmbOjPYERu6FQkjPKv+YEeCjT29DWiNdGcbIHmnUX0TZR95lF6UFt2GRwLyyEA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:Cc:From:References:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=bhgEqLuvf9ApSnTvUwn1L76c2o2W1Ei/QD6yE6yt7Vo=; b=GJ/GCFxONpW+b94yydamd4kk2T
- riM3oGoYekBV/qaGtAK2TiAlcEx2NPMP4eT6VXBUfhd8YMtwBC6ma4OW877JWD3iiqZvkAZ/+0FIx
- QcUTJL3Tj8l67UkjQxXOi/rAwoh9yH3RO4YxJvQv5HCoWY50k3xgluyLUktK4vcB5mZU=;
-Received: from mail-pl1-f182.google.com ([209.85.214.182])
+ bh=2AUkHVYDDBg67q+3OD0qFSazOfyxTAI2542TIz3rbns=; b=jFyPaK2FOvJiCi1Szg3EbQ5HIx
+ Ixc1+8gvvps5m7BSfQszlNgDUn5PzxdV+Ol5fqpjBEvys7On6t9Vh0rVNDVJXT7z5ge55rn6Dg0Sq
+ 71LhMrFx3SOc+5YR/xdIpqxF1UIO70nC12LvLr9a9cQ5mS2mYyuIVLM9vGtjW0WE4/N8=;
+Received: from smtp-out1.suse.de ([195.135.220.28])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qYe66-00Covp-8h for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 23 Aug 2023 02:59:57 +0000
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-1befe39630bso9174885ad.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 22 Aug 2023 19:59:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=bytedance.com; s=google; t=1692759588; x=1693364388;
- h=content-transfer-encoding:in-reply-to:cc:from:references:to
- :content-language:subject:user-agent:mime-version:date:message-id
- :from:to:cc:subject:date:message-id:reply-to;
- bh=bhgEqLuvf9ApSnTvUwn1L76c2o2W1Ei/QD6yE6yt7Vo=;
- b=RzbIwpF/0rWWCHIbil/kmvbYsiH+zzV8cteo0NeX4iqS5Th3aMObOrBBZ5QIYYiYNO
- EzLvxXnwaU3C6HJ66DVx0SYeH6DBUUXE/parOT0tZRTGaLZHY6BYCVv0BWvKsae2+Z4V
- HEkSBtQA++hJt6hjIX8coUzQJXYdSMU0EhPZnC3wJk9rsU5aMcdQM2J2gdrxRnnAl7ZG
- 8NIlks8SUC7HZyd+TSNVs6GUNYerNVLSzTLDuAq02G7Vh6n7NQtQV5W2S/tTxnIxqdnK
- Yk0AUrfOj+V8sxulrYV9L4sfBNDgKCkzUecP9KTfiIS3EGmzpdtRXoZ4mpHHvApm3vtv
- 04iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1692759588; x=1693364388;
- h=content-transfer-encoding:in-reply-to:cc:from:references:to
- :content-language:subject:user-agent:mime-version:date:message-id
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=bhgEqLuvf9ApSnTvUwn1L76c2o2W1Ei/QD6yE6yt7Vo=;
- b=QdRlzJtHOgg/9S/CS6XYoMrwC/piAZRWHD91zAnGyglUDRe2BrWgEhUPYJOMqACHHs
- g3YzMKAeXq/EDcAmkdCpz0Z5WyN4y70e/HpwLUxvRvM4d/fTI1j04eOeSFUCJIr1DVs0
- sA/eFxMLm90LhgGRjb1NVK0OPrPz9ZK3X2AWgC6dAt+EqEoeoycdvqWEfuOmTfwYBBhX
- qMBS1+ssslo3CCcWnc8vO7qs0XGHJwBT9qnjd7LMUbPG+5qhGeVZfWr36pYpCxho4Gr7
- HULXUVVE0l5qb/RTCBVEtM7oNzvrlLItF+CfV5U+7sA/bguLYUcDZ1CjKPANplqqHvET
- Mt1A==
-X-Gm-Message-State: AOJu0YxtStc+YVucYXI+LSJRtnoAXqDaDoRhH5OleE6h0rEH/dG078ro
- c6UTbvjntgfrhFzSBL5ZZLSr3g==
-X-Google-Smtp-Source: AGHT+IEfrTZGJtg+pRH2EfLUkWhGiT4SJbELosEEcEbXeeoUMWHqtsVXqJsCto+j1ri8qfTaL4v/sQ==
-X-Received: by 2002:a17:90a:2f41:b0:26d:4ade:fcf0 with SMTP id
- s59-20020a17090a2f4100b0026d4adefcf0mr10521410pjd.4.1692759588304; 
- Tue, 22 Aug 2023 19:59:48 -0700 (PDT)
-Received: from ?IPV6:fdbd:ff1:ce00:1c25:884:3ed:e1db:b610?
- ([2408:8000:b001:1:1f:58ff:f102:103])
- by smtp.gmail.com with ESMTPSA id
- z2-20020a17090a1fc200b00262ca945cecsm11045048pjz.54.2023.08.22.19.59.38
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 22 Aug 2023 19:59:47 -0700 (PDT)
-Message-ID: <63dc1d86-2a15-6b7e-f63a-63fccb25eae2@bytedance.com>
-Date: Wed, 23 Aug 2023 10:59:34 +0800
+ id 1qYlQC-00D5kc-Pq for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 23 Aug 2023 10:49:11 +0000
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+ (No client certificate requested)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 2BC0022238;
+ Wed, 23 Aug 2023 10:48:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+ t=1692787739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=2AUkHVYDDBg67q+3OD0qFSazOfyxTAI2542TIz3rbns=;
+ b=ZXrZlNJ3g4AtXip0gcX9yOKeExtqThYsiSH/r5mRCx7snkGOAI4bxRyChbhpTyL+YexBdn
+ bRYsTUSSyIdny4nYF6zpWcL5pY9mc1XOJHP7Tb+/3HMIMtj5otx7DOkSh/zpAhixApQL6x
+ rd586/2JMwc1UfVFL6EJJw64zSt8XhI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+ s=susede2_ed25519; t=1692787739;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=2AUkHVYDDBg67q+3OD0qFSazOfyxTAI2542TIz3rbns=;
+ b=m5WcXtUVe4h3za6ZijNlLIIyMKLAsIuwR1PjgVMTs0bVDdKI+wzWvV6vSq6kuDZNRA3ulW
+ 67bI0IDo7GpnJSAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+ (No client certificate requested)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1D3C613592;
+ Wed, 23 Aug 2023 10:48:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+ by imap2.suse-dmz.suse.de with ESMTPSA id wV8iBxvk5WRzIAAAMHmgww
+ (envelope-from <jack@suse.cz>); Wed, 23 Aug 2023 10:48:59 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+ id 8D718A0799; Wed, 23 Aug 2023 12:48:57 +0200 (CEST)
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Date: Wed, 23 Aug 2023 12:48:34 +0200
+Message-Id: <20230823104857.11437-23-jack@suse.cz>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20230818123232.2269-1-jack@suse.cz>
+References: <20230818123232.2269-1-jack@suse.cz>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.14.0
-Content-Language: en-US
-To: daniel@ffwll.ch
-References: <20230807110936.21819-1-zhengqi.arch@bytedance.com>
- <20230807110936.21819-44-zhengqi.arch@bytedance.com>
- <ZOS+g51Yx9PsYkGU@phenom.ffwll.local>
-In-Reply-To: <ZOS+g51Yx9PsYkGU@phenom.ffwll.local>
-X-Headers-End: 1qYe66-00Covp-8h
-Subject: Re: [f2fs-dev] [PATCH v4 43/48] drm/ttm: introduce pool_shrink_rwsem
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2284; i=jack@suse.cz;
+ h=from:subject; bh=A8xzyyYYp7e3nycZMwh5um089G3sh6pF1T1fTnU+2b4=;
+ b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBk5eQCpKEjjgiqB3ZA1c5TSrTxzQCLo0J9QrbxTBbl
+ SsdwFCeJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZOXkAgAKCRCcnaoHP2RA2Yo7CA
+ DYPCyhul0tth4sF/mXbVG+Z7Im4oaDJsjL/BvAEgOC/9sq+RuecArAuEaoYD1RvO49AHJHjPARmsuB
+ xRWlPxNeZFWhePZeL17m7liT+2aykb1N9AsnJR1TSrr/HfCfMFNwsvnE3Hyo8H9hif+Ly/4DZubggh
+ Xa1jU2D/7GK1eVnMKl0NqVABPx80+GL+4TiftnFI/vOMpIR4VnnB0M7fyH85Zv5zRWiTvUkrzEw5qa
+ /CSDo9YDJ58zIAjq3QPYYLeBJ7E+3HCQwYsGT8/xlWjNrxCHYt040qaAeGvv9RjWXmh0krMUsBZW25
+ yQ9TU9vP6WqA3ZX3kKiLlX9ddWdazR
+X-Developer-Key: i=jack@suse.cz; a=openpgp;
+ fpr=93C6099A142276A28BBE35D815BC833443038D8C
+X-Headers-End: 1qYlQC-00D5kc-Pq
+Subject: [f2fs-dev] [PATCH 23/29] f2fs: Convert to bdev_open_by_dev/path()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -105,151 +108,85 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Qi Zheng via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: kvm@vger.kernel.org, djwong@kernel.org, roman.gushchin@linux.dev,
- david@fromorbit.com, dri-devel@lists.freedesktop.org,
- virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
- dm-devel@redhat.com, linux-mtd@lists.infradead.org, cel@kernel.org,
- x86@kernel.org, steven.price@arm.com, cluster-devel@redhat.com,
- simon.horman@corigine.com, xen-devel@lists.xenproject.org,
- linux-ext4@vger.kernel.org, paulmck@kernel.org, linux-arm-msm@vger.kernel.org,
- linux-nfs@vger.kernel.org, rcu@vger.kernel.org, linux-bcache@vger.kernel.org,
- dlemoal@kernel.org, Muchun Song <songmuchun@bytedance.com>,
- yujie.liu@intel.com, vbabka@suse.cz, linux-raid@vger.kernel.org,
- brauner@kernel.org, tytso@mit.edu, gregkh@linuxfoundation.org,
- daniel.vetter@ffwll.ch, muchun.song@linux.dev, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- senozhatsky@chromium.org, netdev@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
- linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org, tkhai@ya.ru
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+ Jan Kara <jack@suse.cz>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Daniel,
+Convert f2fs to use bdev_open_by_dev/path() and pass the handle around.
 
-On 2023/8/22 21:56, Daniel Vetter wrote:
-> On Mon, Aug 07, 2023 at 07:09:31PM +0800, Qi Zheng wrote:
->> Currently, the synchronize_shrinkers() is only used by TTM pool. It only
->> requires that no shrinkers run in parallel.
->>
->> After we use RCU+refcount method to implement the lockless slab shrink,
->> we can not use shrinker_rwsem or synchronize_rcu() to guarantee that all
->> shrinker invocations have seen an update before freeing memory.
->>
->> So we introduce a new pool_shrink_rwsem to implement a private
->> synchronize_shrinkers(), so as to achieve the same purpose.
->>
->> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->> Reviewed-by: Muchun Song <songmuchun@bytedance.com>
-> 
-> On the 5 drm patches (I counted 2 ttm and 3 drivers) for merging through
-> some other tree (since I'm assuming that's how this will land):
+CC: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: Chao Yu <chao@kernel.org>
+CC: linux-f2fs-devel@lists.sourceforge.net
+Acked-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/super.c | 17 +++++++++--------
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
-Yeah, there are 5 drm patches: PATCH v4 07/48 23/48 24/48 25/48 43/48.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index e18272ae3119..2ec6c10df636 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1234,6 +1234,7 @@ struct f2fs_bio_info {
+ #define FDEV(i)				(sbi->devs[i])
+ #define RDEV(i)				(raw_super->devs[i])
+ struct f2fs_dev_info {
++	struct bdev_handle *bdev_handle;
+ 	struct block_device *bdev;
+ 	char path[MAX_PATH_LEN];
+ 	unsigned int total_segments;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index aa1f9a3a8037..885dcbd81859 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1561,7 +1561,7 @@ static void destroy_device_list(struct f2fs_sb_info *sbi)
+ 	int i;
+ 
+ 	for (i = 0; i < sbi->s_ndevs; i++) {
+-		blkdev_put(FDEV(i).bdev, sbi->sb);
++		bdev_release(FDEV(i).bdev_handle);
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 		kvfree(FDEV(i).blkz_seq);
+ #endif
+@@ -4196,9 +4196,9 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+ 
+ 		if (max_devices == 1) {
+ 			/* Single zoned block device mount */
+-			FDEV(0).bdev =
+-				blkdev_get_by_dev(sbi->sb->s_bdev->bd_dev, mode,
+-						  sbi->sb, NULL);
++			FDEV(0).bdev_handle = bdev_open_by_dev(
++					sbi->sb->s_bdev->bd_dev, mode, sbi->sb,
++					NULL);
+ 		} else {
+ 			/* Multi-device mount */
+ 			memcpy(FDEV(i).path, RDEV(i).path, MAX_PATH_LEN);
+@@ -4216,12 +4216,13 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+ 					(FDEV(i).total_segments <<
+ 					sbi->log_blocks_per_seg) - 1;
+ 			}
+-			FDEV(i).bdev = blkdev_get_by_path(FDEV(i).path, mode,
+-							  sbi->sb, NULL);
++			FDEV(i).bdev_handle = bdev_open_by_path(FDEV(i).path,
++					mode, sbi->sb, NULL);
+ 		}
+-		if (IS_ERR(FDEV(i).bdev))
+-			return PTR_ERR(FDEV(i).bdev);
++		if (IS_ERR(FDEV(i).bdev_handle))
++			return PTR_ERR(FDEV(i).bdev_handle);
+ 
++		FDEV(i).bdev = FDEV(i).bdev_handle->bdev;
+ 		/* to release errored devices */
+ 		sbi->s_ndevs = i + 1;
+ 
+-- 
+2.35.3
 
-> 
-> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-Thanks for your review!
-
-Qi
-
-> 
->> ---
->>   drivers/gpu/drm/ttm/ttm_pool.c | 15 +++++++++++++++
->>   include/linux/shrinker.h       |  2 --
->>   mm/shrinker.c                  | 15 ---------------
->>   3 files changed, 15 insertions(+), 17 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/ttm/ttm_pool.c b/drivers/gpu/drm/ttm/ttm_pool.c
->> index c9c9618c0dce..38b4c280725c 100644
->> --- a/drivers/gpu/drm/ttm/ttm_pool.c
->> +++ b/drivers/gpu/drm/ttm/ttm_pool.c
->> @@ -74,6 +74,7 @@ static struct ttm_pool_type global_dma32_uncached[MAX_ORDER + 1];
->>   static spinlock_t shrinker_lock;
->>   static struct list_head shrinker_list;
->>   static struct shrinker *mm_shrinker;
->> +static DECLARE_RWSEM(pool_shrink_rwsem);
->>   
->>   /* Allocate pages of size 1 << order with the given gfp_flags */
->>   static struct page *ttm_pool_alloc_page(struct ttm_pool *pool, gfp_t gfp_flags,
->> @@ -317,6 +318,7 @@ static unsigned int ttm_pool_shrink(void)
->>   	unsigned int num_pages;
->>   	struct page *p;
->>   
->> +	down_read(&pool_shrink_rwsem);
->>   	spin_lock(&shrinker_lock);
->>   	pt = list_first_entry(&shrinker_list, typeof(*pt), shrinker_list);
->>   	list_move_tail(&pt->shrinker_list, &shrinker_list);
->> @@ -329,6 +331,7 @@ static unsigned int ttm_pool_shrink(void)
->>   	} else {
->>   		num_pages = 0;
->>   	}
->> +	up_read(&pool_shrink_rwsem);
->>   
->>   	return num_pages;
->>   }
->> @@ -572,6 +575,18 @@ void ttm_pool_init(struct ttm_pool *pool, struct device *dev,
->>   }
->>   EXPORT_SYMBOL(ttm_pool_init);
->>   
->> +/**
->> + * synchronize_shrinkers - Wait for all running shrinkers to complete.
->> + *
->> + * This is useful to guarantee that all shrinker invocations have seen an
->> + * update, before freeing memory, similar to rcu.
->> + */
->> +static void synchronize_shrinkers(void)
->> +{
->> +	down_write(&pool_shrink_rwsem);
->> +	up_write(&pool_shrink_rwsem);
->> +}
->> +
->>   /**
->>    * ttm_pool_fini - Cleanup a pool
->>    *
->> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
->> index c55c07c3f0cb..025c8070dd86 100644
->> --- a/include/linux/shrinker.h
->> +++ b/include/linux/shrinker.h
->> @@ -103,8 +103,6 @@ struct shrinker *shrinker_alloc(unsigned int flags, const char *fmt, ...);
->>   void shrinker_register(struct shrinker *shrinker);
->>   void shrinker_free(struct shrinker *shrinker);
->>   
->> -extern void synchronize_shrinkers(void);
->> -
->>   #ifdef CONFIG_SHRINKER_DEBUG
->>   extern int __printf(2, 3) shrinker_debugfs_rename(struct shrinker *shrinker,
->>   						  const char *fmt, ...);
->> diff --git a/mm/shrinker.c b/mm/shrinker.c
->> index 3ab301ff122d..a27779ed3798 100644
->> --- a/mm/shrinker.c
->> +++ b/mm/shrinker.c
->> @@ -650,18 +650,3 @@ void shrinker_free(struct shrinker *shrinker)
->>   	kfree(shrinker);
->>   }
->>   EXPORT_SYMBOL_GPL(shrinker_free);
->> -
->> -/**
->> - * synchronize_shrinkers - Wait for all running shrinkers to complete.
->> - *
->> - * This is equivalent to calling unregister_shrink() and register_shrinker(),
->> - * but atomically and with less overhead. This is useful to guarantee that all
->> - * shrinker invocations have seen an update, before freeing memory, similar to
->> - * rcu.
->> - */
->> -void synchronize_shrinkers(void)
->> -{
->> -	down_write(&shrinker_rwsem);
->> -	up_write(&shrinker_rwsem);
->> -}
->> -EXPORT_SYMBOL(synchronize_shrinkers);
->> -- 
->> 2.30.2
->>
-> 
 
 
 _______________________________________________
