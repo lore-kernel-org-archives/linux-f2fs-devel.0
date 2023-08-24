@@ -4,92 +4,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 78B4AEE49B0
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Aug 2023 10:49:15 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4AA92C3DA6F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Aug 2023 03:45:03 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qYlQI-0001FE-08;
-	Wed, 23 Aug 2023 10:49:15 +0000
+	id 1qZ1HJ-0001iq-Ko;
+	Thu, 24 Aug 2023 03:45:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jack@suse.cz>) id 1qYlQE-0001ES-8l;
- Wed, 23 Aug 2023 10:49:11 +0000
+ (envelope-from <zhengqi.arch@bytedance.com>) id 1qZ1HH-0001iZ-Tn
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 24 Aug 2023 03:44:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=czbolVCNdiRIhtzRMydBVuDGtNoMVf0uK7rI8VUw4Wg=; b=h57u0J+Z6ADeQDqwAgmm/0AEhP
- DVMfhIA/4w87az8x4F11vgSc6z9oYXK22/VQkrEXUymIG2yFzBSJxdfzHlIOO4yKSWMy1MUIQuPZr
- WOsqZtBM9otB+78hYMUXUzQnchJV/YvcWe2xBK+cj6Ao2r46ozNnh0p4gdPWWGK4gAxk=;
+ bh=RH+UWxgsfED4SOG31SRsciPnOVwoHjCv5sMnfhtq6Bc=; b=cr8itaBD24wcVktIYba8aXGnsz
+ SUOJ2whjoqItdqsjw7wnf7hSV5UMLruhTAdqRiOOE2yviPC5lpH4qHUTbyw5KNh+HRKeRIz5nF9yw
+ 2MJbt9KRsoBdbih2x2Jh5WUeTyo8EbKCEEX88lYBL5XcROq8gBoNdEF5mnJh7Ufod6kA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=czbolVCNdiRIhtzRMydBVuDGtNoMVf0uK7rI8VUw4Wg=; b=T
- 4wjyOuIulJdC+Rpa/KjEEfw/O07/aYm9Pga/wZXr+9p/TJOjJGRl3imxPCTVNbUUe93scYhqYYVCK
- dhx+CpLv2u6+3tmfjqLMLXtPLAvlTEKrj2Ps7wYhQ2Owyttu2OcGOFqOIR7wWw9F3GxgeBxxM84Cq
- uA2/1/ISebmEBAiA=;
-Received: from smtp-out1.suse.de ([195.135.220.28])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=RH+UWxgsfED4SOG31SRsciPnOVwoHjCv5sMnfhtq6Bc=; b=M4OC6sbREVzP1Cu1NM0/oyWi1S
+ LPXxcCFpFh0U1fcZOUhi+Tq/xd41lpYQZhowKwNDot8q/FSQCRpTQy6/66V4Fv5yGANjZtiPBXuiJ
+ RG3eRZhoyugGduV37EctTh3jp+PghbwSDyEJEfTnhagTO4k3qv2bgaw2RcONl5NNkTug=;
+Received: from mail-pf1-f176.google.com ([209.85.210.176])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qYlQA-00021i-5u; Wed, 23 Aug 2023 10:49:11 +0000
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
- (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id 1F89B21EDA;
- Wed, 23 Aug 2023 10:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1692787738; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version: content-transfer-encoding:content-transfer-encoding;
- bh=czbolVCNdiRIhtzRMydBVuDGtNoMVf0uK7rI8VUw4Wg=;
- b=cea+STFByaV36NWMjg8zifEKP9bUJaVFrhrdsQ1BHrDjc+6YKTyOk0XUYe/aGcn7z1GdBW
- Sp5Xg8/PcrR30C9G8GkmtNgleVHgoFT9VpO4HmYAD81nOJQ/2ts6Z2GJ97FCPouubZqTfM
- 7Ki5cRwEgj/8O3iByHVAhCDVhrdgZS0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1692787738;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version: content-transfer-encoding:content-transfer-encoding;
- bh=czbolVCNdiRIhtzRMydBVuDGtNoMVf0uK7rI8VUw4Wg=;
- b=ccloVX/Tox8MPvEstSnU1swyihs7KV2puBqol0j3M4wpbT7Z67JF74RuKmYp8i9zsSQ2aK
- Q/J06H24OiSZjOBw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
- (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0486813592;
- Wed, 23 Aug 2023 10:48:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id hdjcABrk5WQsIAAAMHmgww
- (envelope-from <jack@suse.cz>); Wed, 23 Aug 2023 10:48:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
- id 0E216A0774; Wed, 23 Aug 2023 12:48:57 +0200 (CEST)
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Date: Wed, 23 Aug 2023 12:48:11 +0200
-Message-Id: <20230818123232.2269-1-jack@suse.cz>
-X-Mailer: git-send-email 2.35.3
+ id 1qZ1HD-0004xI-TL for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 24 Aug 2023 03:44:58 +0000
+Received: by mail-pf1-f176.google.com with SMTP id
+ d2e1a72fcca58-68824a0e747so1237888b3a.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 23 Aug 2023 20:44:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=bytedance.com; s=google; t=1692848690; x=1693453490;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=RH+UWxgsfED4SOG31SRsciPnOVwoHjCv5sMnfhtq6Bc=;
+ b=L5s18IvPmkO1Yi1aX8xoUBVbVs+NYj2wes5Iop5itsw/50mmjZRe3mo5xjdm+YoYr+
+ LilfHyHML7A/wtK+y3tmj6oJnO9F477J4r8ASwXsJMy1GqlaxC/IRlgArGQhd91MGOHK
+ 3A/nIh3uIHjjesEmVDhRjQQGnpOSt+ZUZIXZCdxBGM+Ld1QW0fUX6EUASA/OZvpRDifX
+ PZxVf/aQ+feX6zs1fU4hK4chLezuy6pKGNDjYDnCsIRpGw/8fLGUh1PWhw7uWepXLMd7
+ 7iamIzVc5Mglw5KEkqKNqjKvoDX13NmQ/PUea91yy3q87XQGMlCFJxJ4OLm3P8rzsoMA
+ cazw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20221208; t=1692848690; x=1693453490;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=RH+UWxgsfED4SOG31SRsciPnOVwoHjCv5sMnfhtq6Bc=;
+ b=b/qtusdBgLQ5IH5I5yZBak7nWWZUuUjvKWcmTYowWGrl2xZnqkNUVOlZdyu8Y9jmld
+ 4hw9FpKA1xbD2hWUcMZyUj8KYOUfaWFF1m9vQFKibS4GaEMsLbxpK7ZwUPO8ma9ZOPTq
+ IHf/WUFd/hV781+KWgAeYmmY3eUjOieb3GLdcxiYlwYpGQQyVbgCW0zmgi7Kf6JEbAty
+ IpyS2Wpj0MOYcDN/MtrgZTPfcndHqeqltTSEqwYNcGK1qKMELekvxDP0MjslEqXGQlBT
+ h3M2n/Qa/sWJir1UcyjxtgqeXsbNNLSo8Um+BKW5AejD87FCN9vHK5TqJs+/MyQkE19v
+ KTZQ==
+X-Gm-Message-State: AOJu0Ywv19VsfWWTU1beNoBuPPHLVnkILk/BALWKJtYEcgpb0kpfTo3/
+ qtPBpT9GrCh3ENb8w6evbHF0DA==
+X-Google-Smtp-Source: AGHT+IGADDIb7FS/BEzlD2NDaSR5lL9y4k3FkTUBZvyAz9qvN4bXZycSD4+PZlpH8/QgOFEsYt18oQ==
+X-Received: by 2002:a05:6a00:1d85:b0:68a:6cec:e538 with SMTP id
+ z5-20020a056a001d8500b0068a6cece538mr7248281pfw.3.1692848690333; 
+ Wed, 23 Aug 2023 20:44:50 -0700 (PDT)
+Received: from C02DW0BEMD6R.bytedance.net ([203.208.167.146])
+ by smtp.gmail.com with ESMTPSA id
+ t6-20020a63b246000000b005579f12a238sm10533157pgo.86.2023.08.23.20.44.41
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 23 Aug 2023 20:44:49 -0700 (PDT)
+To: akpm@linux-foundation.org, david@fromorbit.com, tkhai@ya.ru,
+ vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org,
+ brauner@kernel.org, paulmck@kernel.org, tytso@mit.edu,
+ steven.price@arm.com, cel@kernel.org, senozhatsky@chromium.org,
+ yujie.liu@intel.com, gregkh@linuxfoundation.org, muchun.song@linux.dev
+Date: Thu, 24 Aug 2023 11:42:26 +0800
+Message-Id: <20230824034304.37411-8-zhengqi.arch@bytedance.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+In-Reply-To: <20230824034304.37411-1-zhengqi.arch@bytedance.com>
+References: <20230824034304.37411-1-zhengqi.arch@bytedance.com>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3781; i=jack@suse.cz;
- h=from:subject:message-id; bh=cMBb8bZk7tVGWo+BW5D78pH+ebOvNFFLsxdd3Uvzd/w=;
- b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBk5ePhrEMij+4xGF6e8K//xuADex0OXIFxlpO0VT6g
- 42vu5BeJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZOXj4QAKCRCcnaoHP2RA2RqoB/
- 91nt6Qs4NSStbt9M1WXY1akBbAqu+Bv3ZXdZ6WMy9kKyYwY7zCnyQziikP60M2MjCrud4NP9os4YAr
- 4uXdyOyVcdJ9TjbciDgTyoYdfkFl7g+rZhj1pyPeep1xmvDMn3QtNJ28EbhLegdC+nkmL6+bxPGEwd
- IdsuBKGrdIIEryWwhBq0+BWowL3nzmQjs5GoDtXLoHADfHYhgC8RKYK/4FaML1/SsAZRvGJ/C8wFB4
- JUGsDGFE4CJx9XgiRx407CSIGNSoCciqBpMaMA7x/dbq9Tu76xcqN4/DZrtT2qyG4I7GZYetndEl3F
- vWMZMQFPauZmB2S1r30HY+nn2IOCrM
-X-Developer-Key: i=jack@suse.cz; a=openpgp;
- fpr=93C6099A142276A28BBE35D815BC833443038D8C
-X-Headers-End: 1qYlQA-00021i-5u
-Subject: [f2fs-dev] [PATCH v3 0/29] block: Make blkdev_get_by_*() return
- handle
+X-Headers-End: 1qZ1HD-0004xI-TL
+Subject: [f2fs-dev] [PATCH v5 07/45] f2fs: dynamically allocate the
+ f2fs-shrinker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,128 +105,94 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net,
- Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
- linux-nvme@lists.infradead.org, Joseph Qi <joseph.qi@linux.alibaba.com>,
- dm-devel@redhat.com, target-devel@vger.kernel.org,
- linux-mtd@lists.infradead.org, Jack Wang <jinpu.wang@ionos.com>,
- Alasdair Kergon <agk@redhat.com>, drbd-dev@lists.linbit.com,
- linux-s390@vger.kernel.org, linux-nilfs@vger.kernel.org,
- linux-scsi@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>,
- Christoph Hellwig <hch@infradead.org>, xen-devel@lists.xenproject.org,
- Gao Xiang <xiang@kernel.org>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- Sven Schnelle <svens@linux.ibm.com>, linux-pm@vger.kernel.org,
- Mike Snitzer <snitzer@kernel.org>, Joern Engel <joern@lazybastard.org>,
- reiserfs-devel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-bcache@vger.kernel.org, David Sterba <dsterba@suse.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>,
- Trond Myklebust <trond.myklebust@hammerspace.com>,
- Jens Axboe <axboe@kernel.dk>, linux-raid@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-ext4@vger.kernel.org, Ted Tso <tytso@mit.edu>,
- linux-mm@kvack.org, Song Liu <song@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- Minchan Kim <minchan@kernel.org>, ocfs2-devel@oss.oracle.com,
- Anna Schumaker <anna@kernel.org>, linux-fsdevel@vger.kernel.org,
- "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-erofs@lists.ozlabs.org,
- linux-btrfs@vger.kernel.org
+From: Qi Zheng via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: linux-kernel@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+ Muchun Song <songmuchun@bytedance.com>, linux-fsdevel@vger.kernel.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello,
+Use new APIs to dynamically allocate the f2fs-shrinker.
 
-this is a v3 of the patch series which implements the idea of blkdev_get_by_*()
-calls returning bdev_handle which is then passed to blkdev_put() [1]. This
-makes the get and put calls for bdevs more obviously matching and allows us to
-propagate context from get to put without having to modify all the users
-(again!). In particular I need to propagate used open flags to blkdev_put() to
-be able count writeable opens and add support for blocking writes to mounted
-block devices. I'll send that series separately.
-
-The series is based on Christian's vfs tree as of today as there is quite
-some overlap. Patches have passed some reasonable testing - I've tested block
-changes, md, dm, bcache, xfs, btrfs, ext4, swap. More testing or review is
-always welcome. Thanks! I've pushed out the full branch to:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git bdev_handle
-
-to ease review / testing. Since there were not many comments for v2 and
-Christoph has acked the series I think we should start discussing how to merge
-the series. Most collisions with this series seem to happen in the filesystems
-area so VFS tree would seem as the least painful way to merge this. Jens,
-are you OK with that?
-
-Changes since v2:
-* Rebased on top of current vfs tree
-* Added some acks
-* Reflected minor nits from Christoph
-* Added missing conversion of blkdev_put() calls in cramfs and erofs
-* Fixed possible leak of bdev handle in xfs if logdev is the same as fs dev
-
-Changes since v1:
-* Rebased on top of current vfs tree
-* Renamed final functions to bdev_open_by_*() and bdev_release()
-* Fixed detection of exclusive open in blkdev_ioctl() and blkdev_fallocate()
-* Fixed swap conversion to properly reinitialize swap_info->bdev_handle
-* Fixed xfs conversion to not oops with rtdev without logdev
-* Couple other minor fixups
-
-								Honza
-
-[1] https://lore.kernel.org/all/ZJGNsVDhZx0Xgs2H@infradead.org
-
-CC: Alasdair Kergon <agk@redhat.com>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Anna Schumaker <anna@kernel.org>
-CC: Chao Yu <chao@kernel.org>
-CC: Christian Borntraeger <borntraeger@linux.ibm.com>
-CC: Coly Li <colyli@suse.de
-CC: "Darrick J. Wong" <djwong@kernel.org>
-CC: Dave Kleikamp <shaggy@kernel.org>
-CC: David Sterba <dsterba@suse.com>
-CC: dm-devel@redhat.com
-CC: drbd-dev@lists.linbit.com
-CC: Gao Xiang <xiang@kernel.org>
-CC: Jack Wang <jinpu.wang@ionos.com>
+Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Reviewed-by: Muchun Song <songmuchun@bytedance.com>
 CC: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: jfs-discussion@lists.sourceforge.net
-CC: Joern Engel <joern@lazybastard.org>
-CC: Joseph Qi <joseph.qi@linux.alibaba.com>
-CC: Kent Overstreet <kent.overstreet@gmail.com>
-CC: linux-bcache@vger.kernel.org
-CC: linux-btrfs@vger.kernel.org
-CC: linux-erofs@lists.ozlabs.org
-CC: <linux-ext4@vger.kernel.org>
+CC: Chao Yu <chao@kernel.org>
 CC: linux-f2fs-devel@lists.sourceforge.net
-CC: linux-mm@kvack.org
-CC: linux-mtd@lists.infradead.org
-CC: linux-nfs@vger.kernel.org
-CC: linux-nilfs@vger.kernel.org
-CC: linux-nvme@lists.infradead.org
-CC: linux-pm@vger.kernel.org
-CC: linux-raid@vger.kernel.org
-CC: linux-s390@vger.kernel.org
-CC: linux-scsi@vger.kernel.org
-CC: linux-xfs@vger.kernel.org
-CC: "Md. Haris Iqbal" <haris.iqbal@ionos.com>
-CC: Mike Snitzer <snitzer@kernel.org>
-CC: Minchan Kim <minchan@kernel.org>
-CC: ocfs2-devel@oss.oracle.com
-CC: reiserfs-devel@vger.kernel.org
-CC: Sergey Senozhatsky <senozhatsky@chromium.org>
-CC: Song Liu <song@kernel.org>
-CC: Sven Schnelle <svens@linux.ibm.com>
-CC: target-devel@vger.kernel.org
-CC: Ted Tso <tytso@mit.edu>
-CC: Trond Myklebust <trond.myklebust@hammerspace.com>
-CC: xen-devel@lists.xenproject.org
+---
+ fs/f2fs/super.c | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
-Previous versions:
-Link: http://lore.kernel.org/r/20230629165206.383-1-jack@suse.cz # v1
-Link: http://lore.kernel.org/r/20230810171429.31759-1-jack@suse.cz # v2
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 050f4f8ee8f5..86047da85856 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -83,11 +83,27 @@ void f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned int rate,
+ #endif
+ 
+ /* f2fs-wide shrinker description */
+-static struct shrinker f2fs_shrinker_info = {
+-	.scan_objects = f2fs_shrink_scan,
+-	.count_objects = f2fs_shrink_count,
+-	.seeks = DEFAULT_SEEKS,
+-};
++static struct shrinker *f2fs_shrinker_info;
++
++static int __init f2fs_init_shrinker(void)
++{
++	f2fs_shrinker_info = shrinker_alloc(0, "f2fs-shrinker");
++	if (!f2fs_shrinker_info)
++		return -ENOMEM;
++
++	f2fs_shrinker_info->count_objects = f2fs_shrink_count;
++	f2fs_shrinker_info->scan_objects = f2fs_shrink_scan;
++	f2fs_shrinker_info->seeks = DEFAULT_SEEKS;
++
++	shrinker_register(f2fs_shrinker_info);
++
++	return 0;
++}
++
++static void f2fs_exit_shrinker(void)
++{
++	shrinker_free(f2fs_shrinker_info);
++}
+ 
+ enum {
+ 	Opt_gc_background,
+@@ -4944,7 +4960,7 @@ static int __init init_f2fs_fs(void)
+ 	err = f2fs_init_sysfs();
+ 	if (err)
+ 		goto free_garbage_collection_cache;
+-	err = register_shrinker(&f2fs_shrinker_info, "f2fs-shrinker");
++	err = f2fs_init_shrinker();
+ 	if (err)
+ 		goto free_sysfs;
+ 	err = register_filesystem(&f2fs_fs_type);
+@@ -4989,7 +5005,7 @@ static int __init init_f2fs_fs(void)
+ 	f2fs_destroy_root_stats();
+ 	unregister_filesystem(&f2fs_fs_type);
+ free_shrinker:
+-	unregister_shrinker(&f2fs_shrinker_info);
++	f2fs_exit_shrinker();
+ free_sysfs:
+ 	f2fs_exit_sysfs();
+ free_garbage_collection_cache:
+@@ -5021,7 +5037,7 @@ static void __exit exit_f2fs_fs(void)
+ 	f2fs_destroy_post_read_processing();
+ 	f2fs_destroy_root_stats();
+ 	unregister_filesystem(&f2fs_fs_type);
+-	unregister_shrinker(&f2fs_shrinker_info);
++	f2fs_exit_shrinker();
+ 	f2fs_exit_sysfs();
+ 	f2fs_destroy_garbage_collection_cache();
+ 	f2fs_destroy_extent_cache();
+-- 
+2.30.2
+
 
 
 _______________________________________________
