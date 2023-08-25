@@ -4,18 +4,18 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 48D46C83F06
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4029AC83F05
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 25 Aug 2023 22:44:32 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qZfXb-0001KC-SJ;
+	id 1qZfXc-00022Y-Lf;
 	Fri, 25 Aug 2023 22:44:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <3yC7pZAYKAPccqnrdmfnnfkd.bnl@flex--drosen.bounces.google.com>)
- id 1qZfXa-0001K2-Jk for linux-f2fs-devel@lists.sourceforge.net;
+ (envelope-from <3wy7pZAYKAPIXlimYhaiiafY.Wig@flex--drosen.bounces.google.com>)
+ id 1qZfXb-00022J-6l for linux-f2fs-devel@lists.sourceforge.net;
  Fri, 25 Aug 2023 22:44:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ma47L4jaVLdbFhNW27vq8zn9BPtySpWvE3JcMEM4mZs=; b=bBQ3IQpunZcsjYlccvM9ci/9Y5
- 6ZWpGHwDmOkfdkqn0BSrNYxrVDLtbiiOTyBBDljzrOdI71rng3VzurlzP5M2JLmi9t+6n4ozro/dG
- Krt8/l2FTg4FoQCKPp98zvhi7xGiq3TaVLBonDSqtnguEtLeDoo3Kra3btl64DQIv/YE=;
+ bh=p4Iwa3cd6vPKM8a5f0JoGCX6bpTcSPVSv62HG019OqU=; b=hmB5UHRO0Q8VAJtvwDnQXHgpV/
+ 9EqZTrNI97MOmHZx1nS0dm6sS9PNb/wk/ZoqqdCmpR0I8gfUa33n1Z0lkLT1sW1AS6S0fCMZDetS+
+ /AVR13pmoogTzGJMbXeLXJ15BCPHLkvBW6+4bkDrMtzTizcBsL2r3lZKYzBlf8dWab24=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:Message-ID:References:Mime-Version:
@@ -33,59 +33,60 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Ma47L4jaVLdbFhNW27vq8zn9BPtySpWvE3JcMEM4mZs=; b=FA/Ev+ZlEaN5jf0vBTyVxSSb8o
- tPAuLUFjX3bPWMQm6wzOyHzJibmYerj0Drt/sFvBpCj+JjgDil/HgBa8ldM8sZ1Xq4jCA8pqfyPxz
- +idMeTLlf+qTOdc5fKj8nX4unOGNwSr90Icd0cS473dJ8gp6bukYKhp6O3S0Ju6+ubUE=;
-Received: from mail-yb1-f202.google.com ([209.85.219.202])
+ bh=p4Iwa3cd6vPKM8a5f0JoGCX6bpTcSPVSv62HG019OqU=; b=i+GvtW546is+rXmA4YvbfZllGu
+ VT30udKkJVH0ZgOqRgknQ2VSf2PDNdouJHxcJFYU4HIaW65HeMc9nK66YaS3zsXwDMmMrHl/55OSm
+ AYGbWerGHmQO+QnZx1jHJI3zF42rBAWc2nJ/cA303/P2XgfDDAOvpnRFatl45ngfW95w=;
+Received: from mail-yw1-f201.google.com ([209.85.128.201])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qZfXZ-00FcBR-SB for linux-f2fs-devel@lists.sourceforge.net;
+ id 1qZfXV-00FcB8-KU for linux-f2fs-devel@lists.sourceforge.net;
  Fri, 25 Aug 2023 22:44:30 +0000
-Received: by mail-yb1-f202.google.com with SMTP id
- 3f1490d57ef6-d72f3290e6eso1720708276.3
+Received: by mail-yw1-f201.google.com with SMTP id
+ 00721157ae682-594e1154756so7987387b3.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 25 Aug 2023 15:44:29 -0700 (PDT)
+ Fri, 25 Aug 2023 15:44:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20221208; t=1693003464; x=1693608264;
+ d=google.com; s=20221208; t=1693003460; x=1693608260;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:from:to:cc:subject:date:message-id:reply-to;
- bh=Ma47L4jaVLdbFhNW27vq8zn9BPtySpWvE3JcMEM4mZs=;
- b=jPpwxfs7PQezFELNbB4y+lwlaM8PmstIQY471RKU06/7zq2tYRs0GBXzyTjQc0pylL
- tlQP2IU61fuZheWu3W1aPrItJ+WCF3V7kwqhNkEKQ/trW/45qSHHrtj76F7ueXLjCnwO
- 17krg13Q69TSF7HNoteHyDItpcFgbEnVvjpkwKXrG+XwPJNOSO49MCFeaKf8b3mqCRtk
- Hd4y8whe6jlD+nkk0H6dnKrD+ZPsA/SzzHiwf0ht2i/vRUBMTGDSNpBj13zckCNZXPBH
- D1WhAiOaD1p5C3urK6hsTrXqxhSuADzNpUcZuSp5h5N49PgivHf3EOe2TzuC/p7dORmk
- NxqA==
+ bh=p4Iwa3cd6vPKM8a5f0JoGCX6bpTcSPVSv62HG019OqU=;
+ b=drrHz5/DPIqRr0nlW7g3daxW6vIbh3RVzK03yXd04tHr8CBWD9gpvKG0gVU5A6R6zK
+ 6sywqueU065if3aXl9KQnGaZOfLudb5HukkyLmkFzKDTQckv8y+RrMrFJkNYrxanLSrd
+ eWicZ/hGQhJAgMP+sqwugB0rotAvebLsL78jx2G49rKJLqZlLMq0K4Nm1GVjgs725IP0
+ /BPqVQOUw65ZG6iSN45iOgp7dnUXMnT1PahAEyiJLm+dlEU5RMrxotWTGsOflVFIaOyU
+ cw80c0lzG0WaHmRt4rF13udMLqTH13Z5sw5JsvE9NFLQhgusFrTOgrC1IjfqFronMY66
+ WcZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1693003464; x=1693608264;
+ d=1e100.net; s=20221208; t=1693003460; x=1693608260;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=Ma47L4jaVLdbFhNW27vq8zn9BPtySpWvE3JcMEM4mZs=;
- b=cLvCCZnUYcbM5ISx+0/4Sfe9YAqju31jVPwbcshkpnlP9fN65qd2RUMLlsMnJOXc2j
- /SoWBSE84YRrhT5LgHdSCxoJwP5k8x1o0MUuRkmiFJeFSQZN4QeCudyeGzyP50YWTiS4
- qB0kwj2Pi7Mq74leQqJLNVKRsy+saWbOwTDpfoh8nOm3+N4J1zIaPZQhgfnzEcryZ1Xs
- eMThHGGp8PlzR5/xHfQ5dgX7U+8J8UkytUonZSiS6ETladjlExHKYiadE5GFXwhRhkZ9
- YrPVBGvKD3u29QDHIuIHlSrkioogiSt0rbT3Yk0UEQ3DZiWkGtJ3wxA4tvpBDUhLY6Ci
- M44g==
-X-Gm-Message-State: AOJu0Yy2e9TMv2xDfhKHjBt2TSQh/8H5mlp0zuT1cNFUoP/LlBB5o1E8
- WMvzZSWyAUCVvca+RRarckZzxwtOMwA3N93dRcYvozg6tv4f0NfEx59ok6JJptmnizfqIUZcgft
- Gs37mY2Mx1dfzJmTCYyQoSIkduLg6Fi2UclIzVWn3oLuDNgGT9hdannFDiMJ2S8zlgJaiAtlEdl
- 3TLXtjAXQ=
-X-Google-Smtp-Source: AGHT+IHgAERMO7nLPIedGaRmT1QmfxqCM0Wbl9YnxZBVkfd/IwaZaJQvww2kZehXiXCDXRfgEQOGYq62czk=
+ bh=p4Iwa3cd6vPKM8a5f0JoGCX6bpTcSPVSv62HG019OqU=;
+ b=ML8WRuWCCsuQ6sAvIQ/XUDcEG4Hrf8GO17uXKhF0JkK18e9ZYvti/YV4iGJysFM0D9
+ uP1iG1rKnrWAbPnK00yfEgwk6/Fi/PfDq5AaEn9ToCiovkX6TaBTCoXywN6r544V+xdd
+ iyDRa7znaMsqPtnAep8xFYJWhh73hfgW5CI7JUbTyOGJrmVCW8xdCQ6oQBKLJ31aHkgu
+ 9IGGYcXCOiqMEEZTou0FBTDbbilTyvP0hUBytFDHn/paqdBdaueg+yyn4iW4w7G8aSvw
+ zriOyNmizJbfaGDPqjGAXrevQCXGhDjFL8z20ciHUELSabzEsFoamLUNf+eFAZsWCvTe
+ UXBw==
+X-Gm-Message-State: AOJu0Yz78Ug3M6TkWB8NEVoT5DpCz24re/U4BS/aKRF6U9vIr7ZViWHU
+ cIsDe33VT/+cLxMMYi0sKGy5SyY3AU4opKftqe+qrOgg7EoLzDE3UCPNwDaArRm5UhIZ+5HxR+P
+ +u5jAvPYquOCtbwQhnT9R6Bd8qfoMwv53ajpxCp0RljQa6c/6TCJizXftwToN+TrmaSrNJqQpuk
+ FEZ8LMhjM=
+X-Google-Smtp-Source: AGHT+IHy0YFt9gqfNzdNsc5DUi1FkMLvz33BRNe4zNlP238QfEHOE2sRt29sdATv/hoRkIs73CT2NASc7Rs=
 X-Received: from drosen.mtv.corp.google.com
  ([2620:15c:211:201:ad1d:adc4:c021:b463])
- (user=drosen job=sendgmr) by 2002:a05:6902:a8d:b0:d77:d70c:b5cd with SMTP id
- cd13-20020a0569020a8d00b00d77d70cb5cdmr356669ybb.12.1693003464207; Fri, 25
- Aug 2023 15:44:24 -0700 (PDT)
-Date: Fri, 25 Aug 2023 15:44:00 -0700
+ (user=drosen job=sendgmr) by 2002:a81:b71a:0:b0:56c:f8b7:d4fa with SMTP id
+ v26-20020a81b71a000000b0056cf8b7d4famr514662ywh.7.1693003459928; Fri, 25 Aug
+ 2023 15:44:19 -0700 (PDT)
+Date: Fri, 25 Aug 2023 15:43:58 -0700
 In-Reply-To: <20230825224400.2206278-1-drosen@google.com>
 Mime-Version: 1.0
 References: <20230825224400.2206278-1-drosen@google.com>
 X-Mailer: git-send-email 2.42.0.rc2.253.gd59a3bf2b4-goog
-Message-ID: <20230825224400.2206278-8-drosen@google.com>
+Message-ID: <20230825224400.2206278-6-drosen@google.com>
 To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1qZfXZ-00FcBR-SB
-Subject: [f2fs-dev] [PATCH v2 7/7] f2fs-tools: Support different block sizes
+X-Headers-End: 1qZfXV-00FcB8-KU
+Subject: [f2fs-dev] [PATCH v2 5/7] f2fs-tools: Refactor Summary block struct
+ and friends
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -106,177 +107,486 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This adds support for 4K and 16K block size using the same binary.
-mkfs can choose block size via the -b option, with other tools getting
-the blocksize from the superblock.
-
-On mount time, we can't rely on block size for the location for the
-superblock, since that information is in the superblock. If the first
-superblock is corrupt, we will attempt to find the second superblock at
-a 4K block offset, and then a 16K block offset if that fails.
+This splits off access to the summary block's journal and footer into a
+macro call, as their location is dependent on block size. Because of
+this you should use F2FS_BLKSIZE instead of sizeof(struct summary_block)
 
 Signed-off-by: Daniel Rosenberg <drosen@google.com>
 ---
- fsck/fsck.h             |  3 ---
- fsck/mount.c            | 25 ++++++++++++++++++++-----
- include/f2fs_fs.h       | 10 +++++++---
- lib/libf2fs.c           |  2 ++
- mkfs/f2fs_format_main.c | 12 +++++++++++-
- 5 files changed, 40 insertions(+), 12 deletions(-)
+ fsck/f2fs.h        |  4 +--
+ fsck/fsck.c        | 12 +++----
+ fsck/mount.c       | 48 +++++++++++++--------------
+ fsck/resize.c      |  2 +-
+ include/f2fs_fs.h  | 83 +++++++++++++++++++++++++++++++++-------------
+ mkfs/f2fs_format.c | 16 ++++-----
+ 6 files changed, 101 insertions(+), 64 deletions(-)
 
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 89d0b22..091b5d8 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -127,9 +127,6 @@ struct f2fs_fsck {
- };
+diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+index 0b136b0..a0fca45 100644
+--- a/fsck/f2fs.h
++++ b/fsck/f2fs.h
+@@ -608,8 +608,8 @@ static inline int inline_xattr_size(struct f2fs_inode *inode)
+ }
  
- #define BLOCK_SZ		F2FS_BLKSIZE
--struct block {
--	unsigned char buf[BLOCK_SZ];
--};
+ extern int lookup_nat_in_journal(struct f2fs_sb_info *sbi, u32 nid, struct f2fs_nat_entry *ne);
+-#define IS_SUM_NODE_SEG(footer)		(footer.entry_type == SUM_TYPE_NODE)
+-#define IS_SUM_DATA_SEG(footer)		(footer.entry_type == SUM_TYPE_DATA)
++#define IS_SUM_NODE_SEG(sum)		(F2FS_SUMMARY_BLOCK_FOOTER(sum)->entry_type == SUM_TYPE_NODE)
++#define IS_SUM_DATA_SEG(sum)		(F2FS_SUMMARY_BLOCK_FOOTER(sum)->entry_type == SUM_TYPE_DATA)
  
- enum NODE_TYPE {
- 	TYPE_INODE = 37,
+ static inline unsigned int dir_buckets(unsigned int level, int dir_level)
+ {
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 769ee65..e605d3c 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -172,7 +172,7 @@ static int is_valid_ssa_node_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 		se = get_seg_entry(sbi, segno);
+ 		if(IS_NODESEG(se->type)) {
+ 			ASSERT_MSG("Summary footer indicates a node segment: 0x%x", segno);
+-			sum_blk->footer.entry_type = SUM_TYPE_NODE;
++			F2FS_SUMMARY_BLOCK_FOOTER(sum_blk)->entry_type = SUM_TYPE_NODE;
+ 		} else {
+ 			ret = -EINVAL;
+ 			goto out;
+@@ -297,7 +297,7 @@ static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
+ 		se = get_seg_entry(sbi, segno);
+ 		if (IS_DATASEG(se->type)) {
+ 			ASSERT_MSG("Summary footer indicates a data segment: 0x%x", segno);
+-			sum_blk->footer.entry_type = SUM_TYPE_DATA;
++			F2FS_SUMMARY_BLOCK_FOOTER(sum_blk)->entry_type = SUM_TYPE_DATA;
+ 		} else {
+ 			ret = -EINVAL;
+ 			goto out;
+@@ -3299,16 +3299,16 @@ int fsck_chk_curseg_info(struct f2fs_sb_info *sbi)
+ 				se->type = i;
+ 			ret = -1;
+ 		}
+-		if (i <= CURSEG_COLD_DATA && IS_SUM_DATA_SEG(sum_blk->footer)) {
++		if (i <= CURSEG_COLD_DATA && IS_SUM_DATA_SEG(sum_blk)) {
+ 			continue;
+-		} else if (i > CURSEG_COLD_DATA && IS_SUM_NODE_SEG(sum_blk->footer)) {
++		} else if (i > CURSEG_COLD_DATA && IS_SUM_NODE_SEG(sum_blk)) {
+ 			continue;
+ 		} else {
+ 			ASSERT_MSG("Incorrect curseg [%d]: segno [0x%x] "
+ 				   "type(SSA) [%d]", i, curseg->segno,
+-				   sum_blk->footer.entry_type);
++				   F2FS_SUMMARY_BLOCK_FOOTER(sum_blk)->entry_type);
+ 			if (c.fix_on || c.preen_mode)
+-				sum_blk->footer.entry_type =
++				F2FS_SUMMARY_BLOCK_FOOTER(sum_blk)->entry_type =
+ 					i <= CURSEG_COLD_DATA ?
+ 					SUM_TYPE_DATA : SUM_TYPE_NODE;
+ 			ret = -1;
 diff --git a/fsck/mount.c b/fsck/mount.c
-index 6220d91..0ba087e 100644
+index 162d742..6220d91 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -994,11 +994,15 @@ int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
- 		return -1;
+@@ -1588,7 +1588,7 @@ static int f2fs_early_init_nid_bitmap(struct f2fs_sb_info *sbi)
+ 	int nid_bitmap_size = (nm_i->max_nid + BITS_PER_BYTE - 1) / BITS_PER_BYTE;
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+ 	struct f2fs_summary_block *sum = curseg->sum_blk;
+-	struct f2fs_journal *journal = &sum->journal;
++	struct f2fs_journal *journal = F2FS_SUMMARY_BLOCK_JOURNAL(sum);
+ 	nid_t nid;
+ 	int i;
  
- 	blocksize = 1 << get_sb(log_blocksize);
--	if (F2FS_BLKSIZE != blocksize) {
--		MSG(0, "Invalid blocksize (%u), supports only (%u)\n",
--			blocksize, F2FS_BLKSIZE);
-+	if (blocksize < F2FS_MIN_BLKSIZE || blocksize > F2FS_MAX_BLKSIZE) {
-+		MSG(0, "Invalid blocksize (%u), must be between 4KB and 16KB\n",
-+			blocksize);
- 		return -1;
+@@ -1773,7 +1773,7 @@ static int check_nat_bits(struct f2fs_sb_info *sbi,
+ 					8 + F2FS_BLKSIZE - 1);
+ 	unsigned char *nat_bits, *full_nat_bits, *empty_nat_bits;
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk);
+ 	uint32_t i, j;
+ 	block_t blkaddr;
+ 	int err = 0;
+@@ -1974,12 +1974,12 @@ void reset_curseg(struct f2fs_sb_info *sbi, int type)
+ 	struct summary_footer *sum_footer;
+ 	struct seg_entry *se;
+ 
+-	sum_footer = &(curseg->sum_blk->footer);
++	sum_footer = F2FS_SUMMARY_BLOCK_FOOTER(curseg->sum_blk);
+ 	memset(sum_footer, 0, sizeof(struct summary_footer));
+ 	if (IS_DATASEG(type))
+-		SET_SUM_TYPE(sum_footer, SUM_TYPE_DATA);
++		SET_SUM_TYPE(curseg->sum_blk, SUM_TYPE_DATA);
+ 	if (IS_NODESEG(type))
+-		SET_SUM_TYPE(sum_footer, SUM_TYPE_NODE);
++		SET_SUM_TYPE(curseg->sum_blk, SUM_TYPE_NODE);
+ 	se = get_seg_entry(sbi, curseg->segno);
+ 	se->type = type;
+ 	se->dirty = 1;
+@@ -2002,10 +2002,10 @@ static void read_compacted_summaries(struct f2fs_sb_info *sbi)
+ 	ASSERT(ret >= 0);
+ 
+ 	curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	memcpy(&curseg->sum_blk->journal.n_nats, kaddr, SUM_JOURNAL_SIZE);
++	memcpy(&F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk)->n_nats, kaddr, SUM_JOURNAL_SIZE);
+ 
+ 	curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
+-	memcpy(&curseg->sum_blk->journal.n_sits, kaddr + SUM_JOURNAL_SIZE,
++	memcpy(&F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk)->n_sits, kaddr + SUM_JOURNAL_SIZE,
+ 						SUM_JOURNAL_SIZE);
+ 
+ 	offset = 2 * SUM_JOURNAL_SIZE;
+@@ -2088,7 +2088,7 @@ static void read_normal_summaries(struct f2fs_sb_info *sbi, int type)
+ 			blk_addr = GET_SUM_BLKADDR(sbi, segno);
  	}
-+	c.blksize_bits = get_sb(log_blocksize);
-+	c.blksize = blocksize;
-+	c.sectors_per_blk = F2FS_BLKSIZE / c.sector_size;
-+	check_block_struct_sizes();
  
- 	/* check log blocks per segment */
- 	if (get_sb(log_blocks_per_seg) != 9) {
-@@ -3854,9 +3858,20 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
- 	sbi->active_logs = NR_CURSEG_TYPE;
- 	ret = validate_super_block(sbi, SB0_ADDR);
- 	if (ret) {
-+		/* Assuming 4K Block Size */
-+		c.blksize_bits = 12;
-+		c.blksize = 1 << c.blksize_bits;
-+		MSG(0, "Looking for secondary superblock assuming 4K Block Size\n");
- 		ret = validate_super_block(sbi, SB1_ADDR);
--		if (ret)
--			return -1;
-+		if (ret) {
-+			/* Trying 16K Block Size */
-+			c.blksize_bits = 14;
-+			c.blksize = 1 << c.blksize_bits;
-+			MSG(0, "Looking for secondary superblock assuming 16K Block Size\n");
-+			ret = validate_super_block(sbi, SB1_ADDR);
-+			if (ret)
-+				return -1;
-+		}
+-	sum_blk = malloc(sizeof(*sum_blk));
++	sum_blk = malloc(F2FS_BLKSIZE);
+ 	ASSERT(sum_blk);
+ 
+ 	ret = dev_read_block(sum_blk, blk_addr);
+@@ -2098,7 +2098,7 @@ static void read_normal_summaries(struct f2fs_sb_info *sbi, int type)
+ 		restore_node_summary(sbi, segno, sum_blk);
+ 
+ 	curseg = CURSEG_I(sbi, type);
+-	memcpy(curseg->sum_blk, sum_blk, sizeof(*sum_blk));
++	memcpy(curseg->sum_blk, sum_blk, F2FS_BLKSIZE);
+ 	reset_curseg(sbi, type);
+ 	free(sum_blk);
+ }
+@@ -2122,7 +2122,7 @@ void update_sum_entry(struct f2fs_sb_info *sbi, block_t blk_addr,
+ 
+ 	sum_blk = get_sum_block(sbi, segno, &type);
+ 	memcpy(&sum_blk->entries[offset], sum, sizeof(*sum));
+-	sum_blk->footer.entry_type = IS_NODESEG(se->type) ? SUM_TYPE_NODE :
++	F2FS_SUMMARY_BLOCK_FOOTER(sum_blk)->entry_type = IS_NODESEG(se->type) ? SUM_TYPE_NODE :
+ 							SUM_TYPE_DATA;
+ 
+ 	/* write SSA all the time */
+@@ -2164,7 +2164,7 @@ static int build_curseg(struct f2fs_sb_info *sbi)
+ 	SM_I(sbi)->curseg_array = array;
+ 
+ 	for (i = 0; i < NR_CURSEG_TYPE; i++) {
+-		array[i].sum_blk = calloc(sizeof(*(array[i].sum_blk)), 1);
++		array[i].sum_blk = calloc(F2FS_BLKSIZE, 1);
+ 		if (!array[i].sum_blk) {
+ 			MSG(1, "\tError: Calloc failed for build_curseg!!\n");
+ 			goto seg_cleanup;
+@@ -2334,7 +2334,7 @@ struct f2fs_summary_block *get_sum_block(struct f2fs_sb_info *sbi,
+ 	for (type = 0; type < NR_CURSEG_NODE_TYPE; type++) {
+ 		if (segno == get_cp(cur_node_segno[type])) {
+ 			curseg = CURSEG_I(sbi, CURSEG_HOT_NODE + type);
+-			if (!IS_SUM_NODE_SEG(curseg->sum_blk->footer)) {
++			if (!IS_SUM_NODE_SEG(curseg->sum_blk)) {
+ 				ASSERT_MSG("segno [0x%x] indicates a data "
+ 						"segment, but should be node",
+ 						segno);
+@@ -2349,7 +2349,7 @@ struct f2fs_summary_block *get_sum_block(struct f2fs_sb_info *sbi,
+ 	for (type = 0; type < NR_CURSEG_DATA_TYPE; type++) {
+ 		if (segno == get_cp(cur_data_segno[type])) {
+ 			curseg = CURSEG_I(sbi, type);
+-			if (IS_SUM_NODE_SEG(curseg->sum_blk->footer)) {
++			if (IS_SUM_NODE_SEG(curseg->sum_blk)) {
+ 				ASSERT_MSG("segno [0x%x] indicates a node "
+ 						"segment, but should be data",
+ 						segno);
+@@ -2367,9 +2367,9 @@ struct f2fs_summary_block *get_sum_block(struct f2fs_sb_info *sbi,
+ 	ret = dev_read_block(sum_blk, ssa_blk);
+ 	ASSERT(ret >= 0);
+ 
+-	if (IS_SUM_NODE_SEG(sum_blk->footer))
++	if (IS_SUM_NODE_SEG(sum_blk))
+ 		*ret_type = SEG_TYPE_NODE;
+-	else if (IS_SUM_DATA_SEG(sum_blk->footer))
++	else if (IS_SUM_DATA_SEG(sum_blk))
+ 		*ret_type = SEG_TYPE_DATA;
+ 
+ 	return sum_blk;
+@@ -2519,7 +2519,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+ {
+ 	struct sit_info *sit_i = SIT_I(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk);
+ 	struct f2fs_sit_block *sit_blk;
+ 	struct seg_entry *se;
+ 	struct f2fs_sit_entry sit;
+@@ -2685,7 +2685,7 @@ void rewrite_sit_area_bitmap(struct f2fs_sb_info *sbi)
+ 	sit_blk = calloc(BLOCK_SZ, 1);
+ 	ASSERT(sit_blk);
+ 	/* remove sit journal */
+-	sum->journal.n_sits = 0;
++	F2FS_SUMMARY_BLOCK_JOURNAL(sum)->n_sits = 0;
+ 
+ 	ptr = fsck->main_area_bitmap;
+ 
+@@ -2726,7 +2726,7 @@ void rewrite_sit_area_bitmap(struct f2fs_sb_info *sbi)
+ static int flush_sit_journal_entries(struct f2fs_sb_info *sbi)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk);
+ 	struct sit_info *sit_i = SIT_I(sbi);
+ 	struct f2fs_sit_block *sit_blk;
+ 	unsigned int segno;
+@@ -2760,7 +2760,7 @@ static int flush_sit_journal_entries(struct f2fs_sb_info *sbi)
+ static int flush_nat_journal_entries(struct f2fs_sb_info *sbi)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk);
+ 	struct f2fs_nat_block *nat_block;
+ 	pgoff_t block_addr;
+ 	int entry_off;
+@@ -3064,7 +3064,7 @@ void zero_journal_entries(struct f2fs_sb_info *sbi)
+ 	int i;
+ 
+ 	for (i = 0; i < NO_CHECK_TYPE; i++)
+-		CURSEG_I(sbi, i)->sum_blk->journal.n_nats = 0;
++		F2FS_SUMMARY_BLOCK_JOURNAL(CURSEG_I(sbi, i)->sum_blk)->n_nats = 0;
+ }
+ 
+ void write_curseg_info(struct f2fs_sb_info *sbi)
+@@ -3092,7 +3092,7 @@ int lookup_nat_in_journal(struct f2fs_sb_info *sbi, u32 nid,
+ 					struct f2fs_nat_entry *raw_nat)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk);
+ 	int i = 0;
+ 
+ 	for (i = 0; i < nats_in_cursum(journal); i++) {
+@@ -3109,7 +3109,7 @@ int lookup_nat_in_journal(struct f2fs_sb_info *sbi, u32 nid,
+ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk);
+ 	struct f2fs_nat_block *nat_block;
+ 	pgoff_t block_addr;
+ 	int entry_off;
+@@ -3153,7 +3153,7 @@ void update_nat_journal_blkaddr(struct f2fs_sb_info *sbi, u32 nid,
+ 					block_t blkaddr)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk);
+ 	int i;
+ 
+ 	for (i = 0; i < nats_in_cursum(journal); i++) {
+@@ -3314,7 +3314,7 @@ void write_checkpoints(struct f2fs_sb_info *sbi)
+ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk);
+ 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+ 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 2fd3941..6c3f4bd 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -222,7 +222,7 @@ static void move_ssa(struct f2fs_sb_info *sbi, unsigned int segno,
+ 		ASSERT(ret >= 0);
+ 		DBG(1, "Write summary block: (%d) segno=%x/%x --> (%d) %x\n",
+ 				type, segno, GET_SUM_BLKADDR(sbi, segno),
+-				IS_SUM_NODE_SEG(sum_blk->footer),
++				IS_SUM_NODE_SEG(sum_blk),
+ 				new_sum_blk_addr);
  	}
- 	sb = F2FS_RAW_SUPER(sbi);
- 
+ 	if (type == SEG_TYPE_NODE || type == SEG_TYPE_DATA ||
 diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index adbd381..a5587d3 100644
+index b2d479f..e6c68b2 100644
 --- a/include/f2fs_fs.h
 +++ b/include/f2fs_fs.h
-@@ -392,7 +392,7 @@ static inline uint64_t bswap_64(uint64_t val)
- #define MAX_DEVICES		8
- 
- #define F2FS_BYTES_TO_BLK(bytes)    ((bytes) >> F2FS_BLKSIZE_BITS)
--#define F2FS_BLKSIZE_BITS 12	/* 4KB block */
-+#define F2FS_BLKSIZE_BITS c.blksize_bits
- 
- /* for mkfs */
- #define	F2FS_NUMBER_OF_CHECKPOINT_PACK	2
-@@ -400,6 +400,7 @@ static inline uint64_t bswap_64(uint64_t val)
- #define	DEFAULT_SECTORS_PER_BLOCK	(1 << (F2FS_BLKSIZE_BITS - SECTOR_SHIFT))
- #define	DEFAULT_BLOCKS_PER_SEGMENT	512
- #define DEFAULT_SEGMENTS_PER_SECTION	1
-+#define DEFAULT_BLKSIZE_BITS		12	/* 4096	*/
- 
- #define VERSION_LEN		256
- #define VERSION_TIMESTAMP_LEN	4
-@@ -628,9 +629,10 @@ enum {
+@@ -620,8 +620,8 @@ enum {
+ /*
+  * Copied from fs/f2fs/segment.h
   */
- #define F2FS_SUPER_OFFSET		1024	/* byte-size offset */
+-#define GET_SUM_TYPE(footer) ((footer)->entry_type)
+-#define SET_SUM_TYPE(footer, type) ((footer)->entry_type = type)
++#define GET_SUM_TYPE(sum) (F2FS_SUMMARY_BLOCK_FOOTER(sum)->entry_type)
++#define SET_SUM_TYPE(sum, type) (F2FS_SUMMARY_BLOCK_FOOTER(sum)->entry_type = type)
+ 
+ /*
+  * Copied from include/linux/f2fs_sb.h
+@@ -630,6 +630,7 @@ enum {
  #define F2FS_MIN_LOG_SECTOR_SIZE	9	/* 9 bits for 512 bytes */
--#define F2FS_MAX_LOG_SECTOR_SIZE	F2FS_BLKSIZE_BITS	/* 12 bits for 4096 bytes */
--#define F2FS_BLKSIZE			(1 << F2FS_BLKSIZE_BITS)/* support only 4KB block */
-+#define F2FS_MAX_LOG_SECTOR_SIZE	F2FS_BLKSIZE_BITS	/* max sector size is block size */
-+#define F2FS_MIN_BLKSIZE		4096
- #define F2FS_MAX_BLKSIZE		16384
-+#define F2FS_BLKSIZE			c.blksize	/* support configurable block size */
+ #define F2FS_MAX_LOG_SECTOR_SIZE	F2FS_BLKSIZE_BITS	/* 12 bits for 4096 bytes */
+ #define F2FS_BLKSIZE			(1 << F2FS_BLKSIZE_BITS)/* support only 4KB block */
++#define F2FS_MAX_BLKSIZE		16384
  #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
  #define F2FS_EXTENSION_LEN		8	/* max size of extension */
  #define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) / F2FS_BLKSIZE)
-@@ -1510,6 +1512,8 @@ struct f2fs_configuration {
- 	uint32_t lpf_ino;
- 	uint32_t root_uid;
- 	uint32_t root_gid;
-+	uint32_t blksize;
-+	uint32_t blksize_bits;
+@@ -1253,13 +1254,15 @@ struct nat_journal_entry {
  
- 	/* defragmentation parameters */
- 	int defrag_shrink;
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index 8f2cc3b..995e42d 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -686,6 +686,8 @@ void f2fs_init_configuration(void)
+ static_assert(sizeof(struct nat_journal_entry) == 13, "");
  
- 	memset(&c, 0, sizeof(struct f2fs_configuration));
- 	c.ndevs = 1;
-+	c.blksize = 1 << DEFAULT_BLKSIZE_BITS;
-+	c.blksize_bits = DEFAULT_BLKSIZE_BITS;
- 	c.sectors_per_blk = DEFAULT_SECTORS_PER_BLOCK;
- 	c.blks_per_seg = DEFAULT_BLOCKS_PER_SEGMENT;
- 	c.wanted_total_sectors = -1;
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index b2b84dd..349ee75 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -50,6 +50,7 @@ static void mkfs_usage()
- 	MSG(0, "\nUsage: mkfs.f2fs [options] device [sectors]\n");
- 	MSG(0, "[options]:\n");
- 	MSG(0, "  -a heap-based allocation [default:0]\n");
-+	MSG(0, "  -b filesystem block size [default:4096]\n");
- 	MSG(0, "  -c device1[,device2,...] up to 7 additional devices, except meta device\n");
- 	MSG(0, "  -d debug level [default:0]\n");
- 	MSG(0, "  -e [cold file ext list] e.g. \"mp3,gif,mov\"\n");
-@@ -175,7 +176,7 @@ static void add_default_options(void)
++/*
++ * Layout is as follows:
++ * struct nat_journal_entry entries[NAT_JOURNAL_ENTRIES];
++ * __u8 reserved[NAT_JOURNAL_RESERVED];
++ */
+ struct nat_journal {
+-	struct nat_journal_entry entries[NAT_JOURNAL_ENTRIES];
+-	__u8 reserved[NAT_JOURNAL_RESERVED];
++	struct nat_journal_entry entries[0];
+ };
  
- static void f2fs_parse_options(int argc, char *argv[])
- {
--	static const char *option_string = "qa:c:C:d:e:E:g:hil:mo:O:rR:s:S:z:t:T:U:Vfw:Z:";
-+	static const char *option_string = "qa:b:c:C:d:e:E:g:hil:mo:O:rR:s:S:z:t:T:U:Vfw:Z:";
- 	static const struct option long_opts[] = {
- 		{ .name = "help", .has_arg = 0, .flag = NULL, .val = 'h' },
- 		{ .name = NULL, .has_arg = 0, .flag = NULL, .val = 0 }
-@@ -192,6 +193,15 @@ static void f2fs_parse_options(int argc, char *argv[])
- 		case 'a':
- 			c.heap = atoi(optarg);
- 			break;
-+		case 'b':
-+			c.blksize = atoi(optarg);
-+			c.blksize_bits = log_base_2(c.blksize);
-+			c.sectors_per_blk = DEFAULT_SECTORS_PER_BLOCK;
-+			if ((1 << c.blksize_bits) != c.blksize) {
-+				MSG(0, "Error: Block size must be power of 2");
-+				mkfs_usage();
-+			}
-+			break;
- 		case 'c':
- 			if (c.ndevs >= MAX_DEVICES) {
- 				MSG(0, "Error: Too many devices\n");
+-static_assert(sizeof(struct nat_journal) == (F2FS_BLKSIZE / 8) - 7, "");
+-
+ struct sit_journal_entry {
+ 	__le32 segno;
+ 	struct f2fs_sit_entry se;
+@@ -1267,20 +1270,28 @@ struct sit_journal_entry {
+ 
+ static_assert(sizeof(struct sit_journal_entry) == 78, "");
+ 
++/*
++ * Layout is as follows:
++ * struct sit_journal_entry entries[SIT_JOURNAL_ENTRIES];
++ * __u8 reserved[SIT_JOURNAL_RESERVED];
++ */
+ struct sit_journal {
+-	struct sit_journal_entry entries[SIT_JOURNAL_ENTRIES];
+-	__u8 reserved[SIT_JOURNAL_RESERVED];
++	struct sit_journal_entry entries[0];
+ };
+ 
+-static_assert(sizeof(struct sit_journal) == (F2FS_BLKSIZE / 8) - 7, "");
+-
++/*
++ * Layout is as follows:
++ * __le64 kbytes_written;
++ * __u8 reserved[EXTRA_INFO_RESERVED];
++ */
+ struct f2fs_extra_info {
+ 	__le64 kbytes_written;
+-	__u8 reserved[EXTRA_INFO_RESERVED];
++	__u8 reserved[0];
+ } __attribute__((packed));
+ 
+-static_assert(sizeof(struct f2fs_extra_info) == (F2FS_BLKSIZE / 8) - 7, "");
+-
++/*
++ * This struct's used size depends on F2FS_BLKSIZE. DO NOT use sizeof
++ */
+ struct f2fs_journal {
+ 	union {
+ 		__le16 n_nats;
+@@ -1294,16 +1305,22 @@ struct f2fs_journal {
+ 	};
+ } __attribute__((packed));
+ 
+-static_assert(sizeof(struct f2fs_journal) == (F2FS_BLKSIZE / 8) - 5, "");
+-
+-/* 4KB-sized summary block structure */
++/*
++ * Block-sized summary block structure
++ * Layout of f2fs_summary block is
++ * struct f2fs_summary entries[ENTRIES_IN_SUM];
++ * struct f2fs_journal journal;
++ * struct summary_footer footer;
++ *
++ * Do NOT use sizeof, use F2FS_BLKSIZE
++ *
++ */
+ struct f2fs_summary_block {
+-	struct f2fs_summary entries[ENTRIES_IN_SUM];
+-	struct f2fs_journal journal;
+-	struct summary_footer footer;
++	struct f2fs_summary entries[0];
+ };
+-
+-static_assert(sizeof(struct f2fs_summary_block) == F2FS_BLKSIZE, "");
++#define F2FS_SUMMARY_BLOCK_JOURNAL(blk) ((struct f2fs_journal *)(&(blk)->entries[ENTRIES_IN_SUM]))
++#define F2FS_SUMMARY_BLOCK_FOOTER(blk) ((struct summary_footer *)&((char *)\
++					(&(blk)->entries[0]))[F2FS_BLKSIZE - SUM_FOOTER_SIZE])
+ 
+ /*
+  * For directory operations
+@@ -1511,9 +1528,15 @@ struct f2fs_configuration {
+ 	compress_config_t compress;
+ 
+ 	block_t curseg_offset[NR_CURSEG_TYPE];
+-	struct f2fs_journal sit_jnl;
+-	struct f2fs_journal nat_jnl;
+ 	struct f2fs_summary sum[NR_CURSEG_TYPE][MAX_CACHE_SUMS];
++	union {
++		struct f2fs_journal sit_jnl;
++		char sit_bytes[F2FS_MAX_BLKSIZE];
++	};
++	union {
++		struct f2fs_journal nat_jnl;
++		char nat_bytes[F2FS_MAX_BLKSIZE];
++	};
+ };
+ 
+ extern int utf8_to_utf16(char *, const char *, size_t, size_t);
+@@ -2003,6 +2026,20 @@ static inline void check_block_struct_sizes(void)
+ 	/* Check SIT Block Size */
+ 	assert((SIT_ENTRY_PER_BLOCK + 1) * sizeof(struct f2fs_nat_entry) > F2FS_BLKSIZE);
+ 	assert(SIT_ENTRY_PER_BLOCK * sizeof(struct f2fs_sit_entry) <= F2FS_BLKSIZE);
++
++	/* Check NAT Journal Block Size */
++	assert(sizeof(struct f2fs_summary) * ENTRIES_IN_SUM
++			+ NAT_JOURNAL_ENTRIES * sizeof(struct sit_journal_entry)
++			+ NAT_JOURNAL_RESERVED + sizeof(struct summary_footer) == F2FS_BLKSIZE);
++
++	/* Check SIT Journal Block Size */
++	assert(sizeof(struct f2fs_summary) * ENTRIES_IN_SUM
++			+ SIT_JOURNAL_ENTRIES * sizeof(struct nat_journal_entry)
++			+ SIT_JOURNAL_RESERVED + sizeof(struct summary_footer) == F2FS_BLKSIZE);
++
++	/* Check Info Journal Block Size */
++	assert(sizeof(struct f2fs_summary) * ENTRIES_IN_SUM + sizeof(__le64)
++			+ EXTRA_INFO_RESERVED + sizeof(struct summary_footer) == F2FS_BLKSIZE);
+ }
+ 
+ #endif	/*__F2FS_FS_H */
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 50890c8..740e752 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -927,8 +927,8 @@ static int f2fs_write_check_point_pack(void)
+ 	sum_compact_p += SUM_JOURNAL_SIZE;
+ 
+ 	/* hot data summary */
+-	memset(sum, 0, sizeof(struct f2fs_summary_block));
+-	SET_SUM_TYPE((&sum->footer), SUM_TYPE_DATA);
++	memset(sum, 0, F2FS_BLKSIZE);
++	SET_SUM_TYPE(sum, SUM_TYPE_DATA);
+ 
+ 	sum_entry = (struct f2fs_summary *)sum_compact_p;
+ 	memcpy(sum_entry, c.sum[CURSEG_HOT_DATA],
+@@ -946,8 +946,8 @@ static int f2fs_write_check_point_pack(void)
+ 	}
+ 
+ 	/* Prepare and write Segment summary for HOT_NODE */
+-	memset(sum, 0, sizeof(struct f2fs_summary_block));
+-	SET_SUM_TYPE((&sum->footer), SUM_TYPE_NODE);
++	memset(sum, 0, F2FS_BLKSIZE);
++	SET_SUM_TYPE(sum, SUM_TYPE_NODE);
+ 	memcpy(sum->entries, c.sum[CURSEG_HOT_NODE],
+ 			sizeof(struct f2fs_summary) * MAX_CACHE_SUMS);
+ 
+@@ -960,8 +960,8 @@ static int f2fs_write_check_point_pack(void)
+ 	}
+ 
+ 	/* Fill segment summary for WARM_NODE to zero. */
+-	memset(sum, 0, sizeof(struct f2fs_summary_block));
+-	SET_SUM_TYPE((&sum->footer), SUM_TYPE_NODE);
++	memset(sum, 0, F2FS_BLKSIZE);
++	SET_SUM_TYPE(sum, SUM_TYPE_NODE);
+ 
+ 	cp_seg_blk++;
+ 	DBG(1, "\tWriting Segment summary for WARM_NODE, at offset 0x%08"PRIx64"\n",
+@@ -972,8 +972,8 @@ static int f2fs_write_check_point_pack(void)
+ 	}
+ 
+ 	/* Fill segment summary for COLD_NODE to zero. */
+-	memset(sum, 0, sizeof(struct f2fs_summary_block));
+-	SET_SUM_TYPE((&sum->footer), SUM_TYPE_NODE);
++	memset(sum, 0, F2FS_BLKSIZE);
++	SET_SUM_TYPE(sum, SUM_TYPE_NODE);
+ 	cp_seg_blk++;
+ 	DBG(1, "\tWriting Segment summary for COLD_NODE, at offset 0x%08"PRIx64"\n",
+ 			cp_seg_blk);
 -- 
 2.42.0.rc2.253.gd59a3bf2b4-goog
 
