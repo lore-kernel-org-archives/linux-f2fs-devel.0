@@ -4,89 +4,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 42C45C83F04
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 25 Aug 2023 22:44:34 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 20A5AC83F01
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 25 Aug 2023 22:53:40 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qZfXd-0002LV-4k;
-	Fri, 25 Aug 2023 22:44:33 +0000
+	id 1qZfgR-0001XH-6v;
+	Fri, 25 Aug 2023 22:53:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <3xS7pZAYKAPQZnkoajckkcha.Yki@flex--drosen.bounces.google.com>)
- id 1qZfXb-0002LJ-K6 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 25 Aug 2023 22:44:32 +0000
+ (envelope-from <david@fromorbit.com>) id 1qZfgQ-0001XA-DP
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 25 Aug 2023 22:53:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- References:Mime-Version:In-Reply-To:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UDdV6uDdBALNxpq/V338GEwwvrnFON/4W2F10W8a3hQ=; b=dByjJv/EJWKx30gNsaGiIespyD
- 9oyCGCCxPa2U7pKsBuFZBoMbOtCvpSoDPY6FOjKOeqy1HRQJBfqPlHo5VW4YiTk6r/7gPkrOstHtg
- rza2qY5HGOVRL32EbaQVKzJOWRPZo2h+nUvff+DyMeDRiIb+5JdyaJJnJUZaa9G2iXDU=;
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=pUz0mvDJOC9uQjgg5Uba361PK/6ticcfnjAOo3qTtYA=; b=hQtKEN5jBHfJUAhIEmsldMaucq
+ ZwuszvgZf9PMxyKtv7biFQBoQr2iM26h0GHq4lF3+nk22mlRIHu6sQ62f5irINigLHIZop/+qhciP
+ o51mCXtb40gH23CJmq+jJ80SKWyebOyn1UifT6Il8lMGzDUF9XIk/tZCX6U3+xdZl5KY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:References:Mime-Version:
- In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=UDdV6uDdBALNxpq/V338GEwwvrnFON/4W2F10W8a3hQ=; b=b50yqJThGNchq6O/ZD4SDQw6k1
- /B/y0ifMGv+C5uCQMdzRDWbW5yBE5RiShGornpdMtN5VRi9fJPhxVp+mww+BZlZDrOC86TYKQ1uET
- li1lgrH3rbAOg/gkTjn8CkRH29wrbNq2+CEN2RBNouWWx5ZLvFjryRRfMMcrJut/27+s=;
-Received: from mail-yb1-f201.google.com ([209.85.219.201])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=pUz0mvDJOC9uQjgg5Uba361PK/6ticcfnjAOo3qTtYA=; b=hEnqEnFGgnFheB0H4lFoEp5Cvv
+ MmOGaXR0UycKkTPChdbA5JCEOXx3GAxn7ocrNSrPolthzgjL/Rw2Uv2c67DA2nEHz7mNDLqSDHkwx
+ Iz+eRW57txm2AzNlcTLM6edbM2YmECO8rM/6t5Ci8lCXnovlSMXOnG1EQBDADx+Ed470=;
+Received: from mail-pf1-f177.google.com ([209.85.210.177])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qZfXX-0007Ne-JV for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 25 Aug 2023 22:44:31 +0000
-Received: by mail-yb1-f201.google.com with SMTP id
- 3f1490d57ef6-d795e8483f8so1259835276.1
+ id 1qZfgP-00Fcf8-MA for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 25 Aug 2023 22:53:38 +0000
+Received: by mail-pf1-f177.google.com with SMTP id
+ d2e1a72fcca58-68c0d4cc3a4so714034b3a.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 25 Aug 2023 15:44:27 -0700 (PDT)
+ Fri, 25 Aug 2023 15:53:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20221208; t=1693003462; x=1693608262;
- h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
- :date:from:to:cc:subject:date:message-id:reply-to;
- bh=UDdV6uDdBALNxpq/V338GEwwvrnFON/4W2F10W8a3hQ=;
- b=qGBmxfTojS/mXSjDn+M/7o2GVovQs+SW0YG88qtrNt0aHiEDP4FjUgPPCvRKkTM9jz
- aG2YupGu0XdgPnY80f4oljo2SCzof8Yt19W4NJsRZtZ9J5oWalHHWWdFnDxcTsQGO8Y6
- l6JwOGHy2TcG0bBq8tDC1yxgcT/vwq09pUJGsxR1Uq5+Y3xx/bDEZ4O8czar2Lb5LgU+
- Vq8GH+wn67GM3isD9D5+AaRbzyvxgYIuEbU7IMyi3IhuF2zULeARwWn7vYe9KpK4EbWq
- YngE+Uaw0YnyhZdiBjYjxtxMXt2gBcnxxjIKEjXWykuNRv9TZf2oQZPrfF0oYK5Mkgew
- pgDQ==
+ d=fromorbit-com.20221208.gappssmtp.com; s=20221208; t=1693004012; x=1693608812;
+ h=in-reply-to:content-disposition:mime-version:references:message-id
+ :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+ bh=pUz0mvDJOC9uQjgg5Uba361PK/6ticcfnjAOo3qTtYA=;
+ b=F6apRE+SrZTqCeuN1zLMRosK5ge3rhNKZnpOWKEqEdWDSsGDK7EQGyDQsb6/5NjMZA
+ 3YMPbcTJ/D3BMiY5oD/xtnLm9pzhShZ6+Y7oDMWnO0DfFEZbieWLXokCpFNjeT5nfH1C
+ s22NB1Wf7ErFiXowqbOOitIpN8YQ6wn+7f9hHAh/AXrGUdDwlOs/O2qrqcuv4RSpXcnU
+ GbrxFepvZAk5VQgoyCmH+APqoM+wo3KvR0eb+zB1BsLvnPOQaJNrJEZsuvoY9FN/6wnP
+ PBrjyNBdKOdo0Hj7mZUOQ9904vJZldE2dQql827LKN+udL2AKxU33q1Q1ADVqqMaFs/v
+ qugw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1693003462; x=1693608262;
- h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
- :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=UDdV6uDdBALNxpq/V338GEwwvrnFON/4W2F10W8a3hQ=;
- b=YGPGxh64xRLU1EkzOi0Yf2i2rNImBLPyg5c00ac/9MMDj1eVsOvhW/tIbGOIk9tDrb
- qDkUQImYR2C0Fom4oQi1nv1jRj+mjSga0aTqSMBYIJ+sd9qyZizVEq7xKImnLl33SUEZ
- A7ywg0BeslUZiJM0DKhQGRpIRLLA2697VZ8cK5Q71hBwY0U/ULDjVR9VeSWq0/xkOJ0z
- 1tgdudO4D3jV3Kc2+VP7oVLfjAqm/9vsz+VnY/cLDX5AEiaxKe8FmKH/0bQvN+oNGQat
- MD9EaIePvGbU+P7+a+h9fTW1FM0u2si74AW+A41uW5dDGvrmbY8UGK5uuEW1GoZAO1cc
- TENA==
-X-Gm-Message-State: AOJu0YyFFVBX/lrUVAH1PZq2g4PWKb5/BfpFJ4olg5utJUJk9aRlc+1w
- 0Ky3csI/e7v6lv+U8WTF0JeY43ma+XouWdfYoTiSlrO5kgtvlcJbMpXDlImK9Ixy8H0gXuc5Eao
- Y7nXpXvkwKBOMek/YHshhop1zKk5nQfO6tUdAZroremFbnZj8k07U/kEzg3NvrDlVGo2qY8OT69
- TdpYCPOPQ=
-X-Google-Smtp-Source: AGHT+IGYxMCfTEOBOPqeHdJqBocKlh8+eoZpQyjzHu5uRw8ggc/cMVD7AKX8tpaexsU7d0ceTU67cyvkxgw=
-X-Received: from drosen.mtv.corp.google.com
- ([2620:15c:211:201:ad1d:adc4:c021:b463])
- (user=drosen job=sendgmr) by 2002:a25:ae9c:0:b0:d77:fb00:b246 with SMTP id
- b28-20020a25ae9c000000b00d77fb00b246mr399401ybj.1.1693003461882; Fri, 25 Aug
- 2023 15:44:21 -0700 (PDT)
-Date: Fri, 25 Aug 2023 15:43:59 -0700
-In-Reply-To: <20230825224400.2206278-1-drosen@google.com>
-Mime-Version: 1.0
-References: <20230825224400.2206278-1-drosen@google.com>
-X-Mailer: git-send-email 2.42.0.rc2.253.gd59a3bf2b4-goog
-Message-ID: <20230825224400.2206278-7-drosen@google.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1qZfXX-0007Ne-JV
-Subject: [f2fs-dev] [PATCH v2 6/7] f2fs-tools: Refactor f2fs_dentry_block
- struct
+ d=1e100.net; s=20221208; t=1693004012; x=1693608812;
+ h=in-reply-to:content-disposition:mime-version:references:message-id
+ :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=pUz0mvDJOC9uQjgg5Uba361PK/6ticcfnjAOo3qTtYA=;
+ b=Wfzl2YXpwj7TNKl+S9ojyY48nOWHFpcJm3U5XsZrUn9CYsBA2gypZvmfxW/OJkc0Ua
+ J2M1o8aHf6EG61KOFrJOR5343jnBnXdHbs51RxwkfhU63raDkUKf1aUk5BoK4+Ii6ukk
+ jWO6e1FhUKYCVugX/ICyW4vSdE3XTPIdxiW7TKAEFTrQtaYB3d1Rpjwloi24SLSHpiQ1
+ AecPuPovUQliJrNG1qfMgHyrDDlQP3WycRhrTh0/E/RNzD8LvH+GHI2+AMw5fGNah43j
+ rcbdpgSmFz2tcsNK+yLjUjh1SR3jIOjSyYRB/kMXo667wGa5E4NW0cI0bu2r2WrlW1b/
+ N2Zg==
+X-Gm-Message-State: AOJu0Yx1a0t+ZyBFx5pLG7ZuyFeINJaym3LXSNuTwtMOYa8fSUi7GWmb
+ vfOTZHQAp/2uqpwa1sOREHS27A==
+X-Google-Smtp-Source: AGHT+IF7qLruqklxY40yAH4SKvsJCnFBTQ8pg1x9p8DXB9ryPTSvbA4aGhPPBTQdBXYgxxyeFGZdhA==
+X-Received: by 2002:a05:6a20:7354:b0:13d:5b8e:db83 with SMTP id
+ v20-20020a056a20735400b0013d5b8edb83mr20399311pzc.9.1693004012072; 
+ Fri, 25 Aug 2023 15:53:32 -0700 (PDT)
+Received: from dread.disaster.area (pa49-195-66-88.pa.nsw.optusnet.com.au.
+ [49.195.66.88]) by smtp.gmail.com with ESMTPSA id
+ u15-20020a62ed0f000000b006887be16675sm2060364pfh.205.2023.08.25.15.53.31
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 25 Aug 2023 15:53:31 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+ (envelope-from <david@fromorbit.com>) id 1qZfgG-006WDY-1c;
+ Sat, 26 Aug 2023 08:53:28 +1000
+Date: Sat, 26 Aug 2023 08:53:28 +1000
+To: Hao Xu <hao.xu@linux.dev>
+Message-ID: <ZOkw6KkdP1UWPNBW@dread.disaster.area>
+References: <20230825135431.1317785-1-hao.xu@linux.dev>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20230825135431.1317785-1-hao.xu@linux.dev>
+X-Headers-End: 1qZfgP-00Fcf8-MA
+Subject: Re: [f2fs-dev] [PATCH RFC v5 00/29] io_uring getdents
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,222 +102,82 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Rosenberg via Linux-f2fs-devel
+From: Dave Chinner via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Rosenberg <drosen@google.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kernel-team@android.com,
- Daniel Rosenberg <drosen@google.com>
+Reply-To: Dave Chinner <david@fromorbit.com>
+Cc: Wanpeng Li <wanpengli@tencent.com>, "Darrick J . Wong" <djwong@kernel.org>,
+ Dominique Martinet <asmadeus@codewreck.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Stefan Roesch <shr@fb.com>, Clay Harris <bugs@claycon.org>,
+ linux-s390@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ codalist@coda.cs.cmu.edu, cluster-devel@redhat.com, linux-cachefs@redhat.com,
+ linux-ext4@vger.kernel.org, devel@lists.orangefs.org,
+ linux-cifs@vger.kernel.org, ecryptfs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-block@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+ netdev@vger.kernel.org, samba-technical@lists.samba.org,
+ linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, bpf@vger.kernel.org,
+ Pavel Begunkov <asml.silence@gmail.com>, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This moves access to f2fs_dentry_block's dentry list and filename list
-behind a macro, as their locations depend on block size.
+On Fri, Aug 25, 2023 at 09:54:02PM +0800, Hao Xu wrote:
+> From: Hao Xu <howeyxu@tencent.com>
+> 
+> This series introduce getdents64 to io_uring, the code logic is similar
+> with the snychronized version's. It first try nowait issue, and offload
+> it to io-wq threads if the first try fails.
+> 
+> Patch1 and Patch2 are some preparation
+> Patch3 supports nowait for xfs getdents code
+> Patch4-11 are vfs change, include adding helpers and trylock for locks
+> Patch12-29 supports nowait for involved xfs journal stuff
+> note, Patch24 and 27 are actually two questions, might be removed later.
+> an xfs test may come later.
 
-Since struct f2fs_dentry_block no longer represents the full block, use
-F2FS_BLKSIZE instead of sizeof(struct f2fs_dentry_block)
+You need to drop all the XFS journal stuff. It's fundamentally
+broken as it stands, and we cannot support non-blocking
+transactional changes without first putting a massive investment in
+transaction and intent chain rollback to allow correctly undoing
+partially complete modifications.
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
----
- fsck/dir.c         | 26 +++++++++++-----------
- fsck/fsck.c        |  2 +-
- include/f2fs_fs.h  | 30 ++++++++++++++++++++------
- mkfs/f2fs_format.c | 54 +++++++++++++++++++++++-----------------------
- 4 files changed, 65 insertions(+), 47 deletions(-)
+Regardless, non-blocking transactions are completely unnecessary for
+a non-blocking readdir implementation. readdir should only be
+touching atime, and with relatime it should only occur once every 24
+hours per inode. If that's a problem, then we have noatime mount
+options. Hence I just don't see any point in worrying about having a
+timestamp update block occasionally...
 
-diff --git a/fsck/dir.c b/fsck/dir.c
-index 64beaad..21d9da3 100644
---- a/fsck/dir.c
-+++ b/fsck/dir.c
-@@ -43,8 +43,8 @@ void make_dentry_ptr(struct f2fs_dentry_ptr *d, struct f2fs_node *node_blk,
- 		d->max = NR_DENTRY_IN_BLOCK;
- 		d->nr_bitmap = SIZE_OF_DENTRY_BITMAP;
- 		d->bitmap = t->dentry_bitmap;
--		d->dentry = t->dentry;
--		d->filename = t->filename;
-+		d->dentry = F2FS_DENTRY_BLOCK_DENTRIES(t);
-+		d->filename = F2FS_DENTRY_BLOCK_FILENAMES(t);
- 	} else {
- 		int entry_cnt = NR_INLINE_DENTRY(node_blk);
- 		int bitmap_size = INLINE_DENTRY_BITMAP_SIZE(node_blk);
-@@ -352,17 +352,17 @@ static void make_empty_dir(struct f2fs_sb_info *sbi, struct f2fs_node *inode)
- 	dent_blk = calloc(BLOCK_SZ, 1);
- 	ASSERT(dent_blk);
- 
--	dent_blk->dentry[0].hash_code = 0;
--	dent_blk->dentry[0].ino = cpu_to_le32(ino);
--	dent_blk->dentry[0].name_len = cpu_to_le16(1);
--	dent_blk->dentry[0].file_type = F2FS_FT_DIR;
--	memcpy(dent_blk->filename[0], ".", 1);
--
--	dent_blk->dentry[1].hash_code = 0;
--	dent_blk->dentry[1].ino = cpu_to_le32(pino);
--	dent_blk->dentry[1].name_len = cpu_to_le16(2);
--	dent_blk->dentry[1].file_type = F2FS_FT_DIR;
--	memcpy(dent_blk->filename[1], "..", 2);
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).hash_code = 0;
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).ino = cpu_to_le32(ino);
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).name_len = cpu_to_le16(1);
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).file_type = F2FS_FT_DIR;
-+	memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 0), ".", 1);
-+
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).hash_code = 0;
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).ino = cpu_to_le32(pino);
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).name_len = cpu_to_le16(2);
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).file_type = F2FS_FT_DIR;
-+	memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 1), "..", 2);
- 
- 	test_and_set_bit_le(0, dent_blk->dentry_bitmap);
- 	test_and_set_bit_le(1, dent_blk->dentry_bitmap);
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index e605d3c..13494b0 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1963,7 +1963,7 @@ int fsck_chk_dentry_blk(struct f2fs_sb_info *sbi, int casefolded, u32 blk_addr,
- 
- 	dentries = __chk_dentries(sbi, casefolded, child,
- 			de_blk->dentry_bitmap,
--			de_blk->dentry, de_blk->filename,
-+			F2FS_DENTRY_BLOCK_DENTRIES(de_blk), F2FS_DENTRY_BLOCK_FILENAMES(de_blk),
- 			NR_DENTRY_IN_BLOCK, last_blk, enc_name);
- 
- 	if (dentries < 0 && f2fs_dev_is_writable()) {
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index e6c68b2..adbd381 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -1365,16 +1365,29 @@ struct f2fs_dir_entry {
- 
- static_assert(sizeof(struct f2fs_dir_entry) == 11, "");
- 
--/* 4KB-sized directory entry block */
-+/*
-+ * Block-sized directory entry block
-+ * On disk structure:
-+ * struct f2fs_dentry_block;
-+ * __u8 reserved[SIZE_OF_RESERVED];
-+ * struct f2fs_dir_entry dentry[NR_DENTRY_IN_BLOCK];
-+ * __u8 filename[NR_DENTRY_IN_BLOCK][F2FS_SLOT_LEN];
-+ *
-+ * Do NOT use sizeof. Use F2FS_BLKSIZE instead
-+ */
- struct f2fs_dentry_block {
- 	/* validity bitmap for directory entries in each block */
--	__u8 dentry_bitmap[SIZE_OF_DENTRY_BITMAP];
--	__u8 reserved[SIZE_OF_RESERVED];
--	struct f2fs_dir_entry dentry[NR_DENTRY_IN_BLOCK];
--	__u8 filename[NR_DENTRY_IN_BLOCK][F2FS_SLOT_LEN];
-+	__u8 dentry_bitmap[0]; /* size is SIZE_OF_DENTRY_BITMAP, based on block size */
- };
- 
--static_assert(sizeof(struct f2fs_dentry_block) == F2FS_BLKSIZE, "");
-+#define F2FS_DENTRY_BLOCK_DENTRIES(blk) ((struct f2fs_dir_entry *)\
-+			&((blk)->dentry_bitmap[SIZE_OF_DENTRY_BITMAP + SIZE_OF_RESERVED]))
-+#define F2FS_DENTRY_BLOCK_DENTRY(blk, i) (F2FS_DENTRY_BLOCK_DENTRIES((blk))[(i)])
-+
-+#define F2FS_DENTRY_BLOCK_FILENAMES(blk) ((__u8(*)[F2FS_SLOT_LEN])&F2FS_DENTRY_BLOCK_DENTRY(blk,\
-+							NR_DENTRY_IN_BLOCK))
-+#define F2FS_DENTRY_BLOCK_FILENAME(blk, i) (&((__u8 *)&F2FS_DENTRY_BLOCK_DENTRY(blk,\
-+							NR_DENTRY_IN_BLOCK))[(i) * F2FS_SLOT_LEN])
- 
- /* for inline stuff */
- #define DEF_INLINE_RESERVED_SIZE	1
-@@ -2040,6 +2053,11 @@ static inline void check_block_struct_sizes(void)
- 	/* Check Info Journal Block Size */
- 	assert(sizeof(struct f2fs_summary) * ENTRIES_IN_SUM + sizeof(__le64)
- 			+ EXTRA_INFO_RESERVED + sizeof(struct summary_footer) == F2FS_BLKSIZE);
-+
-+	/* Check Dentry Block Size */
-+	assert(sizeof(__u8) * (SIZE_OF_DENTRY_BITMAP + SIZE_OF_RESERVED)
-+			+ NR_DENTRY_IN_BLOCK * sizeof(struct f2fs_dir_entry)
-+			+ NR_DENTRY_IN_BLOCK * F2FS_SLOT_LEN * sizeof(u8) == F2FS_BLKSIZE);
- }
- 
- #endif	/*__F2FS_FS_H */
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 740e752..f2840c8 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -1217,17 +1217,17 @@ static block_t f2fs_add_default_dentry_root(void)
- 		return 0;
- 	}
- 
--	dent_blk->dentry[0].hash_code = 0;
--	dent_blk->dentry[0].ino = sb->root_ino;
--	dent_blk->dentry[0].name_len = cpu_to_le16(1);
--	dent_blk->dentry[0].file_type = F2FS_FT_DIR;
--	memcpy(dent_blk->filename[0], ".", 1);
--
--	dent_blk->dentry[1].hash_code = 0;
--	dent_blk->dentry[1].ino = sb->root_ino;
--	dent_blk->dentry[1].name_len = cpu_to_le16(2);
--	dent_blk->dentry[1].file_type = F2FS_FT_DIR;
--	memcpy(dent_blk->filename[1], "..", 2);
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).hash_code = 0;
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).ino = sb->root_ino;
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).name_len = cpu_to_le16(1);
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).file_type = F2FS_FT_DIR;
-+	memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 0), ".", 1);
-+
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).hash_code = 0;
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).ino = sb->root_ino;
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).name_len = cpu_to_le16(2);
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).file_type = F2FS_FT_DIR;
-+	memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 1), "..", 2);
- 
- 	/* bitmap for . and .. */
- 	test_and_set_bit_le(0, dent_blk->dentry_bitmap);
-@@ -1237,13 +1237,13 @@ static block_t f2fs_add_default_dentry_root(void)
- 		int len = strlen(LPF);
- 		f2fs_hash_t hash = f2fs_dentry_hash(0, 0, (unsigned char *)LPF, len);
- 
--		dent_blk->dentry[2].hash_code = cpu_to_le32(hash);
--		dent_blk->dentry[2].ino = cpu_to_le32(c.lpf_ino);
--		dent_blk->dentry[2].name_len = cpu_to_le16(len);
--		dent_blk->dentry[2].file_type = F2FS_FT_DIR;
--		memcpy(dent_blk->filename[2], LPF, F2FS_SLOT_LEN);
-+		F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 2).hash_code = cpu_to_le32(hash);
-+		F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 2).ino = cpu_to_le32(c.lpf_ino);
-+		F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 2).name_len = cpu_to_le16(len);
-+		F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 2).file_type = F2FS_FT_DIR;
-+		memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 2), LPF, F2FS_SLOT_LEN);
- 
--		memcpy(dent_blk->filename[3], &LPF[F2FS_SLOT_LEN],
-+		memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 3), &LPF[F2FS_SLOT_LEN],
- 				len - F2FS_SLOT_LEN);
- 
- 		test_and_set_bit_le(2, dent_blk->dentry_bitmap);
-@@ -1494,17 +1494,17 @@ static block_t f2fs_add_default_dentry_lpf(void)
- 		return 0;
- 	}
- 
--	dent_blk->dentry[0].hash_code = 0;
--	dent_blk->dentry[0].ino = cpu_to_le32(c.lpf_ino);
--	dent_blk->dentry[0].name_len = cpu_to_le16(1);
--	dent_blk->dentry[0].file_type = F2FS_FT_DIR;
--	memcpy(dent_blk->filename[0], ".", 1);
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).hash_code = 0;
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).ino = cpu_to_le32(c.lpf_ino);
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).name_len = cpu_to_le16(1);
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).file_type = F2FS_FT_DIR;
-+	memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 0), ".", 1);
- 
--	dent_blk->dentry[1].hash_code = 0;
--	dent_blk->dentry[1].ino = sb->root_ino;
--	dent_blk->dentry[1].name_len = cpu_to_le16(2);
--	dent_blk->dentry[1].file_type = F2FS_FT_DIR;
--	memcpy(dent_blk->filename[1], "..", 2);
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).hash_code = 0;
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).ino = sb->root_ino;
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).name_len = cpu_to_le16(2);
-+	F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).file_type = F2FS_FT_DIR;
-+	memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 1), "..", 2);
- 
- 	test_and_set_bit_le(0, dent_blk->dentry_bitmap);
- 	test_and_set_bit_le(1, dent_blk->dentry_bitmap);
+I also don't really don't see why you need to fiddle with xfs buffer
+cache semantics - it already has the functionality "nowait" buffer
+reads require (i.e.  XBF_INCORE|XBF_TRYLOCK).
+
+However, the readahead IO that the xfs readdir code issues cannot
+use your defined NOWAIT semantics - it must be able to allocate
+memory and issue IO. Readahead already avoids blocking on memory
+allocation and blocking on IO via the XBF_READ_AHEAD flag. This sets
+__GFP_NORETRY for buffer allocation and REQ_RAHEAD for IO. Hence
+readahead only needs the existing XBF_TRYLOCK flag to be set to be
+compatible with the required NOWAIT semantics....
+
+As for the NOIO memory allocation restrictions io_uring requires,
+that should be enforced at the io_uring layer before calling into
+the VFS using memalloc_noio_save/restore.  At that point no memory
+allocation will trigger IO and none of the code running under NOWAIT
+conditions even needs to be aware that io_uring has a GFP_NOIO
+restriction on memory allocation....
+
+Please go back to the simple "do non-blocking buffer IO"
+implementation we started with and don't try to solve every little
+blocking problem that might exist in the VFS and filesystems...
+
+-Dave
 -- 
-2.42.0.rc2.253.gd59a3bf2b4-goog
-
+Dave Chinner
+david@fromorbit.com
 
 
 _______________________________________________
