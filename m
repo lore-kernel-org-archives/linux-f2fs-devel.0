@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8DE00C71153
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Aug 2023 12:30:49 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1BB0BC71153
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Aug 2023 12:33:13 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qabOI-00067u-Bp;
-	Mon, 28 Aug 2023 12:30:47 +0000
+	id 1qabQd-0005yw-RX;
+	Mon, 28 Aug 2023 12:33:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1qabOH-00067o-AY
+ (envelope-from <hch@lst.de>) id 1qabQd-0005yp-1F
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Aug 2023 12:30:46 +0000
+ Mon, 28 Aug 2023 12:33:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TLnvMQnkyoR7wwCry5GRCKzwjL5P4BV+bNSPRJ9AdUw=; b=F7iH7H3Iy87nMeggjwj7w2bLMx
- zOvpnaF8mVeDpbltu17WXN3A7ZBDuivY/Yiy6rDIHd8nNOMiZTJ6RzpFnCN7hMT5YZUz/DmojO4KB
- xUTFXTQEa64ukxHnWeBVMExFNMZ27t09A6LodHL7+U50c8YJiPUcJFpfyoMKkN75SLU0=;
+ bh=AFgAO5uGx+/8pExT6wW8lT/FnP0yLewZIEyGH7Av2K0=; b=Hj3llzQWkFBsha70wO77PtFP6v
+ ghtrVrvl+qw4EPmm8BuwSQ6Cp/kG8+ktFSjFmdBaZrlCATmPvxB50MPYoxPtklwg8uerQ4c/Xh6mV
+ Kr87Df+fynKZX36/f6eSS1cSuQSk2Gv2GtVYlsPvNivb9w/I3lADCc4/u/Rso41YhPhs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,27 +33,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TLnvMQnkyoR7wwCry5GRCKzwjL5P4BV+bNSPRJ9AdUw=; b=T7jIGhi6fSHeVUckTtTvUgkhsv
- 2EE550bLK0FyIgs+COWsFcyBE0RYB2BB8KcWZOU9yHSXetoJY+N5lSQS0zS9Y8YtH4AvEgWdVXlBJ
- TeLL5RmAGbiLuxW5drrqLaPv62wGLjAMatMns5pyuZ6Xrj4DbDg3MBUSZ1nzYbeWgSvI=;
+ bh=AFgAO5uGx+/8pExT6wW8lT/FnP0yLewZIEyGH7Av2K0=; b=CQhIzi7JUlSG3JYic6txN+yfLo
+ ZYoU37Hcoh37bOYZz8E4fIH+3n9Tqd2Hpugiu8ybakMMeEme+UNVv2JGx+8p5mkghdxA6A1tuSuDi
+ QCga57W/+ivuB0dSQn5UvkF+irzeZgugaDbLuydOqQLwz8drjdlXqe9T/4q+ZC4/NSGY=;
 Received: from verein.lst.de ([213.95.11.211])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qabOC-0008FX-No for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Aug 2023 12:30:46 +0000
+ id 1qabQc-000jna-E4 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 28 Aug 2023 12:33:10 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id 981DA68D05; Mon, 28 Aug 2023 14:30:25 +0200 (CEST)
-Date: Mon, 28 Aug 2023 14:30:23 +0200
+ id 580D668AA6; Mon, 28 Aug 2023 14:33:00 +0200 (CEST)
+Date: Mon, 28 Aug 2023 14:32:59 +0200
 From: Christoph Hellwig <hch@lst.de>
 To: Al Viro <viro@zeniv.linux.org.uk>
-Message-ID: <20230828123023.GA11084@lst.de>
+Message-ID: <20230828123259.GB11084@lst.de>
 References: <20230601145904.1385409-1-hch@lst.de>
  <20230601145904.1385409-4-hch@lst.de> <20230827194122.GA325446@ZenIV>
+ <20230827214518.GU3390869@ZenIV>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20230827194122.GA325446@ZenIV>
+In-Reply-To: <20230827214518.GU3390869@ZenIV>
 User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1qabOC-0008FX-No
+X-Headers-End: 1qabQc-000jna-E4
 Subject: Re: [f2fs-dev] [PATCH 03/12] filemap: update ki_pos in
  generic_perform_write
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -84,34 +85,13 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Sun, Aug 27, 2023 at 08:41:22PM +0100, Al Viro wrote:
-> That part is somewhat fishy - there's a case where you return a positive value
-> and advance ->ki_pos by more than that amount.  I really wonder if all callers
-> of ->write_iter() are OK with that.  Consider e.g. this:
+On Sun, Aug 27, 2023 at 10:45:18PM +0100, Al Viro wrote:
+> IOW, I suspect that the right thing to do would be something along the lines
+> of
 
-This should not exist in the latest version merged by Jens.  Can you
-check if you still  see issues in the version in the block tree or
-linux-next.
+The idea looks sensible to me, but we'll also need to do it for the
+filemap_write_and_wait_range failure case.
 
-> Suppose ->write_iter() ends up doing returning a positive value smaller than
-> the increment of kiocb.ki_pos.  What do we get?  ret is positive, so
-> kiocb.ki_pos gets copied into *ppos, which is ksys_write's pos and there
-> we copy it into file->f_pos.
-> 
-> Is it really OK to have write() return 4096 and advance the file position
-> by 16K?  AFAICS, userland wouldn't get any indication of something
-> odd going on - just a short write to a regular file, with followup write
-> of remaining 12K getting quietly written in the range 16K..28K.
-> 
-> I don't remember what POSIX says about that, but it would qualify as
-> nasty surprise for any userland program - sure, one can check fsync()
-> results before closing the sucker and see if everything looks fine,
-> but the way it's usually discussed could easily lead to assumption that
-> (synchronous) O_DIRECT writes would not be affected by anything of that
-> sort.
-
-ki_pos should always be updated by the write return value.  Everything
-else is a bug.
 
 
 _______________________________________________
