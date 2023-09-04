@@ -4,73 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D28D9C71153
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Sep 2023 16:40:48 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 00E81CA1000
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Sep 2023 18:11:20 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qdCd3-0004LX-36;
-	Mon, 04 Sep 2023 16:40:46 +0000
+	id 1qdE2g-0003GB-OK;
+	Mon, 04 Sep 2023 18:11:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1qdCd1-0004LR-KV
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qdE2f-0003G5-Kk
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 04 Sep 2023 16:40:44 +0000
+ Mon, 04 Sep 2023 18:11:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rLmavJmKst8MwlRCpvYzryPGqmmeFR2AewgneG0z5Bs=; b=WWe/9AUXseyOHr3c6kfpyyd1yr
- icWkQRp01J5Io/YrdQyRcUuZcTIDWIor2whcyqhtEN0ty0+R6zEer4ga7seWIlHLhgh3+ZO+TYYc7
- FW3Xh2fGALSiBcjW4PWoTo6DeaNpMivnbYz1oeIkG+DQL4V6OLuRdoQtCo+1YOXU+XFM=;
+ bh=kmfv1pf+LlrUXECFl22Y7F74qpbdpRAeBbonW5mPEPM=; b=M275QWXTgMymQ3W3wcjbT/TmPY
+ Bz+ro7mecoQFWPya8Co0Vm4IaC+aT1adqH53F6aI3TRvicqJ9ot4eO5+NhOV/u/pAg+Zxfko0ipbn
+ EYeY3KgPAMGd3HEvNtRzrlrx/T8+bMzflX6QVNpu+82PPiJH1t+e9yp2ah2DFK6zoleY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=rLmavJmKst8MwlRCpvYzryPGqmmeFR2AewgneG0z5Bs=; b=FrNYb0fB/wjbfacI6kHic8r2Ip
- 9cFxHFj186gCtUCvqZ3I7sHQ2pG0TXaOKC5wupUVo2J1E6gXoi7+jzn7vWpXI7DJ/uxtDOn8Ftejr
- +EgdePGkjY6lBXxxBy8Qw+K867Qku77dyopy+4p1bC/JApMaO7GhoSweU6oO7kRalumM=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=kmfv1pf+LlrUXECFl22Y7F74qpbdpRAeBbonW5mPEPM=; b=hnp7zYlq/YYFhX5UccKiIvjojn
+ /qroD6NlzNqxTSxKx5nkQ9a1DnQi/NYRh8ZaAlIWeizx0+qTrRtQU/tLG04VVCe/+rNrUT0fCyLja
+ 29U5AIy4HsRhVP4KBWAboXSwkYBXmRCmTvtEQK2l3LUCtrMUh6StxPy+79UG5em+Nu/M=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qdCcy-0003rj-E2 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 04 Sep 2023 16:40:44 +0000
+ id 1qdE2e-009VKo-J7 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 04 Sep 2023 18:11:17 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 40D1260EDE;
- Mon,  4 Sep 2023 16:40:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 857D6C433C8;
- Mon,  4 Sep 2023 16:40:32 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 2F706B80EF2;
+ Mon,  4 Sep 2023 18:11:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D11E1C433C9;
+ Mon,  4 Sep 2023 18:11:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1693845632;
- bh=3xgIBlBK1m7Zp9mLlRF22BaIUy8HKmcr8AoobM9e/dM=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=KBMDbz4uHiM3Eij5T6Y3avqcmevmnQMOGFB8RuIvWI4tmD5wqCudMFYvhxbFhMyMc
- gwXM6ex64ixHUfiD3ns6AzKvqj3UjflxLCRjY0eOU63EaqFWayJgOdw8FKXTho7lGK
- sOgP0+AxDFIjfteO0jnfHAfwVKwYne7Ma3Ba+8GyKZlfLGzvI5Qi6zOflfFw3N87Ko
- AgSKU+I5YJMqaEllCxbklIe/9qksg+EuuT2t8XMBptlpAkgOrhsSYc0JEwPahBp7ZH
- OZBWUjN3vAoFshEVo09g3oDm4plAXgbfJWQYosczYPmxwSdn5KxNxMG2RZvz2/GNxP
- dQO8MEPbKikyA==
-Date: Mon, 4 Sep 2023 09:40:30 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Message-ID: <ZPYIfvwCd/UpMS8S@google.com>
-References: <20230831071011.56116-1-guochunhai@vivo.com>
- <0749d51f-bbc3-dfcb-93e3-c6c34614f403@kernel.org>
+ s=k20201202; t=1693851068;
+ bh=r/KSGQSC2NTgHdn0OJxxPyQs5JUPuWZgLFSrloxRrHA=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=WY31BwYbsVaGAsAtOYrlZpg1KnLgAs5RHjbBmkE63X+qnTxnsbYUW9NjQiKOCOSGM
+ 35dAjc/16r8x9+4UIY1GQvYdcgSsF77G7M2umeI4achKQwD1r8kxyKpsMJDAeQKbTj
+ u6bTnoPshfWTKPGcNpvjSFXZ9frMcmaQ0P9oEyxf+sCu7ki/Kd6jSbGw0PTGvlI3UD
+ RA7tIDXWOm7Wp2tIjI5uMzknfLnXGn9YM9MyAad0LLRUPYtXYJ8QofSzgrkLH468um
+ 4pvwF6c7OW0hlvH9nqUhoyMV8I8+BpXY3iW5/itS6xyJ86O/cYKn3kkqQsfYzZub2B
+ DuKDMXXQ3sPjg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ B6BD6C0C3FD; Mon,  4 Sep 2023 18:11:08 +0000 (UTC)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <0749d51f-bbc3-dfcb-93e3-c6c34614f403@kernel.org>
-X-Headers-End: 1qdCcy-0003rj-E2
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: replace blk_finish_plug() with
- blk_flush_plug()
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <169385106874.19669.13506137748616735375.git-patchwork-notify@kernel.org>
+Date: Mon, 04 Sep 2023 18:11:08 +0000
+References: <20230424054926.26927-2-hch@lst.de>
+In-Reply-To: <20230424054926.26927-2-hch@lst.de>
+To: Christoph Hellwig <hch@lst.de>
+X-Headers-End: 1qdE2e-009VKo-J7
+Subject: Re: [f2fs-dev] [PATCH 01/17] fs: unexport
+ buffer_check_dirty_writeback
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,69 +83,73 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Chunhai Guo <guochunhai@vivo.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: axboe@kernel.dk, cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
+ miklos@szeredi.hu, djwong@kernel.org, ceph-devel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, willy@infradead.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+ linux-mm@kvack.org, dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+ akpm@linux-foundation.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 09/04, Chao Yu wrote:
-> On 2023/8/31 15:10, Chunhai Guo wrote:
-> > The commit 344150999b7f ("f2fs: fix to avoid potential deadlock") only
-> > requires unplugging current->plug. Using blk_finish_plug() is unnecessary
-> > as it sets current->plug as NULL and prevents wb_writeback() from using
-> > plug in subsequent loops. Instead, use blk_flush_plug() as a replacement.
-> > 
-> > Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
-> > ---
-> >   fs/f2fs/data.c | 3 +--
-> >   fs/f2fs/node.c | 3 +--
-> >   2 files changed, 2 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index 916e317ac925..77b4a55d6d94 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -3346,8 +3346,7 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
-> >   		atomic_inc(&sbi->wb_sync_req[DATA]);
-> >   	else if (atomic_read(&sbi->wb_sync_req[DATA])) {
-> >   		/* to avoid potential deadlock */
-> > -		if (current->plug)
-> > -			blk_finish_plug(current->plug);
-> 
-> What about?
-> 
-> if (current->plug) {
-> 	struct blk_plug *plug = current->plug;
-> 
-> 	blk_finish_plug(plug);
-> 	blk_start_plug(plug);
-> }
-> 
-> Jaegeuk, thoughts?
+Hello:
 
-By the way, do we really need to reuse current->plug again? After checkpoint
-being done, we can use the plug in __f2fs_write_data_pages. Are there some
-numbers to show the benefit?
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jens Axboe <axboe@kernel.dk>:
 
+On Mon, 24 Apr 2023 07:49:10 +0200 you wrote:
+> buffer_check_dirty_writeback is only used by the block device aops,
+> remove the export.
 > 
-> Thanks,
-> 
-> > +		blk_flush_plug(current->plug, false);
-> >   		goto skip_write;
-> >   	}
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> > index ee2e1dd64f25..c4b5717a8c1a 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -2126,8 +2126,7 @@ static int f2fs_write_node_pages(struct address_space *mapping,
-> >   		atomic_inc(&sbi->wb_sync_req[NODE]);
-> >   	else if (atomic_read(&sbi->wb_sync_req[NODE])) {
-> >   		/* to avoid potential deadlock */
-> > -		if (current->plug)
-> > -			blk_finish_plug(current->plug);
-> > +		blk_flush_plug(current->plug, false);
-> >   		goto skip_write;
-> >   	}
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/buffer.c | 1 -
+>  1 file changed, 1 deletion(-)
+
+Here is the summary with links:
+  - [f2fs-dev,01/17] fs: unexport buffer_check_dirty_writeback
+    (no matching commit)
+  - [f2fs-dev,02/17] fs: remove the special !CONFIG_BLOCK def_blk_fops
+    (no matching commit)
+  - [f2fs-dev,03/17] fs: rename and move block_page_mkwrite_return
+    (no matching commit)
+  - [f2fs-dev,04/17] fs: remove emergency_thaw_bdev
+    https://git.kernel.org/jaegeuk/f2fs/c/4a8b719f95c0
+  - [f2fs-dev,05/17] filemap: update ki_pos in generic_perform_write
+    (no matching commit)
+  - [f2fs-dev,06/17] filemap: add a kiocb_write_and_wait helper
+    (no matching commit)
+  - [f2fs-dev,07/17] filemap: add a kiocb_invalidate_pages helper
+    (no matching commit)
+  - [f2fs-dev,08/17] filemap: add a kiocb_invalidate_post_write helper
+    (no matching commit)
+  - [f2fs-dev,09/17] fs: factor out a direct_write_fallback helper
+    (no matching commit)
+  - [f2fs-dev,10/17] iomap: use kiocb_write_and_wait and kiocb_invalidate_pages
+    (no matching commit)
+  - [f2fs-dev,11/17] iomap: assign current->backing_dev_info in iomap_file_buffered_write
+    (no matching commit)
+  - [f2fs-dev,12/17] fuse: use direct_write_fallback
+    (no matching commit)
+  - [f2fs-dev,13/17] block: don't plug in blkdev_write_iter
+    (no matching commit)
+  - [f2fs-dev,14/17] block: open code __generic_file_write_iter for blkdev writes
+    (no matching commit)
+  - [f2fs-dev,15/17] block: stop setting ->direct_IO
+    (no matching commit)
+  - [f2fs-dev,16/17] block: use iomap for writes to block devices
+    (no matching commit)
+  - [f2fs-dev,17/17] fs: add CONFIG_BUFFER_HEAD
+    (no matching commit)
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
 
 _______________________________________________
