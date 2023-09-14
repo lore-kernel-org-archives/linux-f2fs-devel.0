@@ -4,75 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 776F3CA553B
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Sep 2023 16:33:30 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 94254EDE996
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 14 Sep 2023 08:15:04 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qgSnv-00074c-9i;
-	Wed, 13 Sep 2023 16:33:27 +0000
+	id 1qghV7-0000hQ-Aw;
+	Thu, 14 Sep 2023 08:15:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <brauner@kernel.org>) id 1qgSnu-00074T-AS
+ (envelope-from <ebiggers@kernel.org>) id 1qghV5-0000h1-VF
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Sep 2023 16:33:26 +0000
+ Thu, 14 Sep 2023 08:15:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Q6aPtxLCYed//nrPJlN0YolEEgZg0w4fKTNV4B0HzRo=; b=YvsGBnjXOXTFxNn3PC+m8uJIC9
- LMcDGa4B5CcVZd30vQ0jodr6bBs5DzbMsFsybk61YVp07c0Na2Ljb+9sGyjEVqbMeBNLVOv3j8n88
- 2SENHkSH028PkGU7ZUbJ+ZeBqSMKdqu3t19aGywi4ZjM6KfapdwR+d+vnI52yryQPQgM=;
+ bh=OzsB3ne8LPQcK1axEa6Zf8GMRlwdZ3Fkl0uUFjgBN8I=; b=gBVubvFy4NU8pBhYflDq48C2tP
+ AHVaZHNB45NGGYMgQpqingHjFTNE+5YLqMCfaAWaQT8D7mD9G+URIdj3cW9QSuOKOF8jAu5OadkEK
+ llbUE/YbPd2NWNDTnnouEsy2hgFZvEuatj6khKX5EYFdXO8UUyL4tF+2rVWQEKnaJDgA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Q6aPtxLCYed//nrPJlN0YolEEgZg0w4fKTNV4B0HzRo=; b=nNsAo8gmcM4tLhT9VVkWwUpJKn
- gDmfXxof05V3LWQXrzJjgwyheiKuC0IQ8mCYnjvp0GKlDDhRkNBVi702DffAj4qDyWWbBkbNv1Z9c
- pz6bvwMjvnmJPzIEtB7/Uf0CN6lwh4AkFyRUZw4L9uEqLdsGaFJujnCH3c46NMYr70qo=;
-Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=OzsB3ne8LPQcK1axEa6Zf8GMRlwdZ3Fkl0uUFjgBN8I=; b=XRZN6l9DTWOWKEKQF2tUB2ptLY
+ DWDo86pRPm/o82+lAxm2jAbuRgQXaT7W78RPsIpMiG9cfNjl3oCdsH/T3UCgFQv+8e1oDEJv4oxq2
+ zIOI3yfgsRhJdVVOqYEtK/xc2q54iboZRu94VWtwI7CEQn9SmYPcsgTuWuXuGVKLkZwo=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qgSnt-0004SA-F2 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Sep 2023 16:33:26 +0000
+ id 1qghV2-005AYj-BZ for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 14 Sep 2023 08:15:00 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 3E1D5B8252A;
- Wed, 13 Sep 2023 16:33:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6C43C433C8;
- Wed, 13 Sep 2023 16:33:12 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id ECA9F61CB4;
+ Thu, 14 Sep 2023 08:14:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B881C433CB;
+ Thu, 14 Sep 2023 08:14:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1694622797;
- bh=/BE0SzPSHWJUDQnPrCfnTnaEO0Ee7ixrpqIiDWWi4pg=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=JEIWOoDeYw0Lf9hWj/zCyZ4x/rGCa/NQnygF+m0lMZeczRYWp/+IE53tvWyCKZsG+
- up2zc8mQP9OdLjIt3ieHpSW+DbqQjZbKoxHgYka+ox5B/duraDYwWYC2flCW6yQuBT
- cv0SrfJZcsbNKoo8+UUGobBcO+5vSh//zaB0oCO1AkX/JNOxsSLnUA74YuG8d2qy//
- xSekU6sH/2OHlD59lMaI3d2pMSviFkxZRQRw7TX7MfD7+om+CEtOj6/4xJ6+C+s9aW
- E5R98PPdfp9ZT0xmFjYnC4VDDVH+LzbtHDEh8winSlhdDUVsFOEtHvfQKUUr5vKlnV
- kky/flcyBX0+w==
-Date: Wed, 13 Sep 2023 18:33:10 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20230913-aufgreifen-fehlleiten-204b36f3069d@brauner>
-References: <20230601145904.1385409-1-hch@lst.de>
- <20230601145904.1385409-4-hch@lst.de>
- <20230827194122.GA325446@ZenIV> <20230827214518.GU3390869@ZenIV>
- <20230913110010.GA31292@lst.de>
+ s=k20201202; t=1694679290;
+ bh=cdkAH/oskwHvzF8j12szEYgbjRbtZUXjU97VQhihgfw=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=Epb0jzo2Y5M8tvOFynD8JdYf2XrKhRdrms+dV1TRYHtgizjmhz7JQ2z3sjbrROjmI
+ ow1Z3JjCpFx+DVF2BeXs0MoGhA/VLhRLfH9+eFkYxZnif/TXqNNrpM3WzlywwuutI3
+ sk8Httf9+1G1RJzFnXV539Dj/L+L1GkhpuD+AxP1j0+HWIliJBoOEl89/mvdeOtE/P
+ 4FgSh8tipx0+JLG9paJ1ZTqLosdS16lFUdHYL3dRYiiNT49f4Xo5DwgF3YOUCa0k7M
+ Kq1KF0errdmA7q9LyRZogmL2LZMrXmy3+nMLl9vdPhqPzzohVQm2CVqo5fk3FPWsrK
+ ki9XXhnpX4tsQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Date: Thu, 14 Sep 2023 01:12:52 -0700
+Message-ID: <20230914081255.193502-3-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20230914081255.193502-1-ebiggers@kernel.org>
+References: <20230914081255.193502-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20230913110010.GA31292@lst.de>
-X-Headers-End: 1qgSnt-0004SA-F2
-Subject: Re: [f2fs-dev] [PATCH 03/12] filemap: update ki_pos in
- generic_perform_write
+X-Headers-End: 1qghV2-005AYj-BZ
+Subject: [f2fs-dev] [PATCH v2 2/5] fscrypt: make the bounce page pool opt-in
+ instead of opt-out
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,31 +81,147 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
- Andreas Gruenbacher <agruenba@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
- Matthew Wilcox <willy@infradead.org>, cluster-devel@redhat.com,
- Ilya Dryomov <idryomov@gmail.com>, linux-ext4@vger.kernel.org,
- linux-block@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
- ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
- Trond Myklebust <trond.myklebust@hammerspace.com>,
- Jens Axboe <axboe@kernel.dk>, linux-nfs@vger.kernel.org,
- Theodore Ts'o <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, Anna Schumaker <anna@kernel.org>,
- linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Hannes Reinecke <hare@suse.de>
+Cc: Theodore Ts'o <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Sep 13, 2023 at 01:00:10PM +0200, Christoph Hellwig wrote:
-> > direct_write_fallback(): on error revert the ->ki_pos update from buffered write
-> 
-> Al, Christian: can you send this fix on top Linus?
+From: Eric Biggers <ebiggers@google.com>
 
-Wasn't aware of this, sorry. I've picked it up and placed it with
-another set of small fixes I already have.
-I'm happy to have Al take it ofc.
+Replace FS_CFLG_OWN_PAGES with a bit flag 'needs_bounce_pages' which has
+the opposite meaning.  I.e., filesystems now opt into the bounce page
+pool instead of opt out.  Make fscrypt_alloc_bounce_page() check that
+the bounce page pool has been initialized.
+
+I believe the opt in makes more sense, since nothing else in
+fscrypt_operations is opt out, and these days filesystems can choose to
+use blk-crypto which doesn't need the fscrypt bounce page pool.  Also, I
+happen to be planning to add two more flags, and I wanted to fix the
+"FS_CFLG_" name anyway as it wasn't prefixed with "FSCRYPT_".
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/ceph/crypto.c        |  1 +
+ fs/crypto/crypto.c      |  9 ++++++++-
+ fs/ext4/crypto.c        |  1 +
+ fs/f2fs/super.c         |  1 +
+ fs/ubifs/crypto.c       |  1 -
+ include/linux/fscrypt.h | 19 ++++++++++---------
+ 6 files changed, 21 insertions(+), 11 deletions(-)
+
+diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+index e4d5cd56a80b9..cc63f1e6fdef6 100644
+--- a/fs/ceph/crypto.c
++++ b/fs/ceph/crypto.c
+@@ -133,6 +133,7 @@ static const union fscrypt_policy *ceph_get_dummy_policy(struct super_block *sb)
+ }
+ 
+ static struct fscrypt_operations ceph_fscrypt_ops = {
++	.needs_bounce_pages	= 1,
+ 	.get_context		= ceph_crypt_get_context,
+ 	.set_context		= ceph_crypt_set_context,
+ 	.get_dummy_policy	= ceph_get_dummy_policy,
+diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+index 6a837e4b80dcb..803347a5d0a6d 100644
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -49,6 +49,13 @@ EXPORT_SYMBOL(fscrypt_enqueue_decrypt_work);
+ 
+ struct page *fscrypt_alloc_bounce_page(gfp_t gfp_flags)
+ {
++	if (WARN_ON_ONCE(!fscrypt_bounce_page_pool)) {
++		/*
++		 * Oops, the filesystem called a function that uses the bounce
++		 * page pool, but it forgot to set needs_bounce_pages.
++		 */
++		return NULL;
++	}
+ 	return mempool_alloc(fscrypt_bounce_page_pool, gfp_flags);
+ }
+ 
+@@ -325,7 +332,7 @@ int fscrypt_initialize(struct super_block *sb)
+ 		return 0;
+ 
+ 	/* No need to allocate a bounce page pool if this FS won't use it. */
+-	if (sb->s_cop->flags & FS_CFLG_OWN_PAGES)
++	if (!sb->s_cop->needs_bounce_pages)
+ 		return 0;
+ 
+ 	mutex_lock(&fscrypt_init_mutex);
+diff --git a/fs/ext4/crypto.c b/fs/ext4/crypto.c
+index 8cdb7bbc655b0..a9221be67f2a7 100644
+--- a/fs/ext4/crypto.c
++++ b/fs/ext4/crypto.c
+@@ -240,6 +240,7 @@ static void ext4_get_ino_and_lblk_bits(struct super_block *sb,
+ }
+ 
+ const struct fscrypt_operations ext4_cryptops = {
++	.needs_bounce_pages	= 1,
+ 	.legacy_key_prefix_for_backcompat = "ext4:",
+ 	.get_context		= ext4_get_context,
+ 	.set_context		= ext4_set_context,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 8de799a8bad04..276535af5bf3c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3231,6 +3231,7 @@ static struct block_device **f2fs_get_devices(struct super_block *sb,
+ }
+ 
+ static const struct fscrypt_operations f2fs_cryptops = {
++	.needs_bounce_pages	= 1,
+ 	.legacy_key_prefix_for_backcompat = "f2fs:",
+ 	.get_context		= f2fs_get_context,
+ 	.set_context		= f2fs_set_context,
+diff --git a/fs/ubifs/crypto.c b/fs/ubifs/crypto.c
+index fab90f9a8eaff..f0ca403777d9a 100644
+--- a/fs/ubifs/crypto.c
++++ b/fs/ubifs/crypto.c
+@@ -88,7 +88,6 @@ int ubifs_decrypt(const struct inode *inode, struct ubifs_data_node *dn,
+ }
+ 
+ const struct fscrypt_operations ubifs_crypt_operations = {
+-	.flags			= FS_CFLG_OWN_PAGES,
+ 	.legacy_key_prefix_for_backcompat = "ubifs:",
+ 	.get_context		= ubifs_crypt_get_context,
+ 	.set_context		= ubifs_crypt_set_context,
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 70e0d4917dd59..32290e5fa9abb 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -59,18 +59,19 @@ struct fscrypt_name {
+ 
+ #ifdef CONFIG_FS_ENCRYPTION
+ 
+-/*
+- * If set, the fscrypt bounce page pool won't be allocated (unless another
+- * filesystem needs it).  Set this if the filesystem always uses its own bounce
+- * pages for writes and therefore won't need the fscrypt bounce page pool.
+- */
+-#define FS_CFLG_OWN_PAGES (1U << 1)
+-
+ /* Crypto operations for filesystems */
+ struct fscrypt_operations {
+ 
+-	/* Set of optional flags; see above for allowed flags */
+-	unsigned int flags;
++	/*
++	 * If set, then fs/crypto/ will allocate a global bounce page pool.  The
++	 * bounce page pool is required by the following functions:
++	 *
++	 * - fscrypt_encrypt_pagecache_blocks()
++	 * - fscrypt_zeroout_range() for files not using inline crypto
++	 *
++	 * If the filesystem doesn't use those, it doesn't need to set this.
++	 */
++	unsigned int needs_bounce_pages : 1;
+ 
+ 	/*
+ 	 * This field exists only for backwards compatibility reasons and should
+-- 
+2.42.0
+
 
 
 _______________________________________________
