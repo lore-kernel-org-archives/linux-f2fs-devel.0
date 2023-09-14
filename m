@@ -4,72 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 94254EDE996
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 14 Sep 2023 08:15:04 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E2837EDE98C
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 14 Sep 2023 08:15:07 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qghV7-0000hQ-Aw;
-	Thu, 14 Sep 2023 08:15:01 +0000
+	id 1qghVE-0006xO-Cj;
+	Thu, 14 Sep 2023 08:15:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1qghV5-0000h1-VF
+ (envelope-from <ebiggers@kernel.org>) id 1qghVA-0006xH-85
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 14 Sep 2023 08:15:00 +0000
+ Thu, 14 Sep 2023 08:15:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=OzsB3ne8LPQcK1axEa6Zf8GMRlwdZ3Fkl0uUFjgBN8I=; b=gBVubvFy4NU8pBhYflDq48C2tP
- AHVaZHNB45NGGYMgQpqingHjFTNE+5YLqMCfaAWaQT8D7mD9G+URIdj3cW9QSuOKOF8jAu5OadkEK
- llbUE/YbPd2NWNDTnnouEsy2hgFZvEuatj6khKX5EYFdXO8UUyL4tF+2rVWQEKnaJDgA=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=OzsB3ne8LPQcK1axEa6Zf8GMRlwdZ3Fkl0uUFjgBN8I=; b=XRZN6l9DTWOWKEKQF2tUB2ptLY
- DWDo86pRPm/o82+lAxm2jAbuRgQXaT7W78RPsIpMiG9cfNjl3oCdsH/T3UCgFQv+8e1oDEJv4oxq2
- zIOI3yfgsRhJdVVOqYEtK/xc2q54iboZRu94VWtwI7CEQn9SmYPcsgTuWuXuGVKLkZwo=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=MvSRlFmK/zPM3FOTQFTgYjFNwr/XUhqE92UhtlyGHXg=; b=Ra4blB2dZttXmRvu9cwzDp+PuQ
+ nG2TFz5+TMBgTS7SsNg9OAUY6efPPEPyWFFLrgajK9vPetAl7UZX9pcKF1/uSy02wvQVQkZ0g+eH5
+ muD3/CqxbZBQ1u0N/7eJ3FcHCS8RGRY1jClq3dSd5G9stzVZac+2pnQ3/Ki3uTC38cOA=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=MvSRlFmK/zPM3FOTQFTgYjFNwr/XUhqE92UhtlyGHXg=; b=Q
+ 884k0t6rc1CUtoSE0IHZsePMK1bairaxvjInWqrYQGx4QfvxIKy46GRfvg8Tw+0NozGe7Rq9P6YqJ
+ O/6Yce/3XVu7bm2vzSlpXn5reFukAK2wsTVtIKqatHHg+CkRha3dvwNr1qgYqzsCv46ndncT9zoao
+ J3Lpj8Ajr5cBd2oM=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qghV2-005AYj-BZ for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 14 Sep 2023 08:15:00 +0000
+ id 1qghV3-0002dd-1d for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 14 Sep 2023 08:15:02 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id ECA9F61CB4;
+ by ams.source.kernel.org (Postfix) with ESMTPS id F05A0B82815;
  Thu, 14 Sep 2023 08:14:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B881C433CB;
- Thu, 14 Sep 2023 08:14:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E8AC433C7;
+ Thu, 14 Sep 2023 08:14:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1694679290;
- bh=cdkAH/oskwHvzF8j12szEYgbjRbtZUXjU97VQhihgfw=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Epb0jzo2Y5M8tvOFynD8JdYf2XrKhRdrms+dV1TRYHtgizjmhz7JQ2z3sjbrROjmI
- ow1Z3JjCpFx+DVF2BeXs0MoGhA/VLhRLfH9+eFkYxZnif/TXqNNrpM3WzlywwuutI3
- sk8Httf9+1G1RJzFnXV539Dj/L+L1GkhpuD+AxP1j0+HWIliJBoOEl89/mvdeOtE/P
- 4FgSh8tipx0+JLG9paJ1ZTqLosdS16lFUdHYL3dRYiiNT49f4Xo5DwgF3YOUCa0k7M
- Kq1KF0errdmA7q9LyRZogmL2LZMrXmy3+nMLl9vdPhqPzzohVQm2CVqo5fk3FPWsrK
- ki9XXhnpX4tsQ==
+ s=k20201202; t=1694679289;
+ bh=O/fQUB0thzVERyyDJ+e34tB6NXJCmxw8lXP18CaGKeo=;
+ h=From:To:Cc:Subject:Date:From;
+ b=XXUmuSFI3jaRP/IM3nQ4JnvyjNh2qAOhASwCfGN1IJc6eJjrXLpDuCg/3ZRK0XZIj
+ PFpUjNSLaAuzaHdHX3KqjtWOGoOw1pqq7H1hX2lo3clUMJ3Hq5Q+RZY621FubejTSP
+ Dh2Z62Cf+OwrRofnkyC/mnCGfrVcW82/pgXrN5vRE9sZCwRAPBDRIgbVnSW1AscKx0
+ qnVUR+TBx4/yQhJ4uusXzvx8wg1uyXcrRP8jIXgrEbf3eBb2dChUkeuEIJ3i44gnGV
+ dn/WYBhiU/WVI/fHFm4KWMQ+n7wCAX7LZDacnTqVfOvr354VtPtV1r2ZSb96qVxwNz
+ efUYIl8JOfimg==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Thu, 14 Sep 2023 01:12:52 -0700
-Message-ID: <20230914081255.193502-3-ebiggers@kernel.org>
+Date: Thu, 14 Sep 2023 01:12:50 -0700
+Message-ID: <20230914081255.193502-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20230914081255.193502-1-ebiggers@kernel.org>
-References: <20230914081255.193502-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1qghV2-005AYj-BZ
-Subject: [f2fs-dev] [PATCH v2 2/5] fscrypt: make the bounce page pool opt-in
- instead of opt-out
+X-Headers-End: 1qghV3-0002dd-1d
+Subject: [f2fs-dev] [PATCH v2 0/5] fscrypt: add support for data_unit_size <
+ fs_block_size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,137 +86,63 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+This patchset adds support for configuring the granularity of file
+contents encryption (a.k.a. the "crypto data unit size") to be less than
+the filesystem block size.  The main use case for this is to support
+inline crypto hardware that only supports a data unit size that is less
+than the FS block size being used.  Another possible use case is to
+support direct I/O on encrypted files without the FS block alignment
+restriction.  Note that decreasing the crypto data unit size decreases
+efficiency, so this feature should only be used when necessary.
 
-Replace FS_CFLG_OWN_PAGES with a bit flag 'needs_bounce_pages' which has
-the opposite meaning.  I.e., filesystems now opt into the bounce page
-pool instead of opt out.  Make fscrypt_alloc_bounce_page() check that
-the bounce page pool has been initialized.
+For full details, see patch 5 which adds the actual feature.  Patches
+1-4 are preparatory patches.
 
-I believe the opt in makes more sense, since nothing else in
-fscrypt_operations is opt out, and these days filesystems can choose to
-use blk-crypto which doesn't need the fscrypt bounce page pool.  Also, I
-happen to be planning to add two more flags, and I wanted to fix the
-"FS_CFLG_" name anyway as it wasn't prefixed with "FSCRYPT_".
+I've written an xfstest that verifies that when a sub-block data unit
+size is selected, the data on-disk is encrypted correctly with that data
+unit size.  I'll be sending that out separately.  Other testing of this
+patchset with xfstests has gone well, though it turns out a sub-block
+data unit size doesn't really work with IV_INO_LBLK_* yet (see patch 5).
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/ceph/crypto.c        |  1 +
- fs/crypto/crypto.c      |  9 ++++++++-
- fs/ext4/crypto.c        |  1 +
- fs/f2fs/super.c         |  1 +
- fs/ubifs/crypto.c       |  1 -
- include/linux/fscrypt.h | 19 ++++++++++---------
- 6 files changed, 21 insertions(+), 11 deletions(-)
+This patchset will cause some conflicts in the extent-based encryption
+patches that the btrfs folks are working on, as both are touching file
+contents encryption, but logically they are orthogonal features.
 
-diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index e4d5cd56a80b9..cc63f1e6fdef6 100644
---- a/fs/ceph/crypto.c
-+++ b/fs/ceph/crypto.c
-@@ -133,6 +133,7 @@ static const union fscrypt_policy *ceph_get_dummy_policy(struct super_block *sb)
- }
- 
- static struct fscrypt_operations ceph_fscrypt_ops = {
-+	.needs_bounce_pages	= 1,
- 	.get_context		= ceph_crypt_get_context,
- 	.set_context		= ceph_crypt_set_context,
- 	.get_dummy_policy	= ceph_get_dummy_policy,
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index 6a837e4b80dcb..803347a5d0a6d 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -49,6 +49,13 @@ EXPORT_SYMBOL(fscrypt_enqueue_decrypt_work);
- 
- struct page *fscrypt_alloc_bounce_page(gfp_t gfp_flags)
- {
-+	if (WARN_ON_ONCE(!fscrypt_bounce_page_pool)) {
-+		/*
-+		 * Oops, the filesystem called a function that uses the bounce
-+		 * page pool, but it forgot to set needs_bounce_pages.
-+		 */
-+		return NULL;
-+	}
- 	return mempool_alloc(fscrypt_bounce_page_pool, gfp_flags);
- }
- 
-@@ -325,7 +332,7 @@ int fscrypt_initialize(struct super_block *sb)
- 		return 0;
- 
- 	/* No need to allocate a bounce page pool if this FS won't use it. */
--	if (sb->s_cop->flags & FS_CFLG_OWN_PAGES)
-+	if (!sb->s_cop->needs_bounce_pages)
- 		return 0;
- 
- 	mutex_lock(&fscrypt_init_mutex);
-diff --git a/fs/ext4/crypto.c b/fs/ext4/crypto.c
-index 8cdb7bbc655b0..a9221be67f2a7 100644
---- a/fs/ext4/crypto.c
-+++ b/fs/ext4/crypto.c
-@@ -240,6 +240,7 @@ static void ext4_get_ino_and_lblk_bits(struct super_block *sb,
- }
- 
- const struct fscrypt_operations ext4_cryptops = {
-+	.needs_bounce_pages	= 1,
- 	.legacy_key_prefix_for_backcompat = "ext4:",
- 	.get_context		= ext4_get_context,
- 	.set_context		= ext4_set_context,
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8de799a8bad04..276535af5bf3c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3231,6 +3231,7 @@ static struct block_device **f2fs_get_devices(struct super_block *sb,
- }
- 
- static const struct fscrypt_operations f2fs_cryptops = {
-+	.needs_bounce_pages	= 1,
- 	.legacy_key_prefix_for_backcompat = "f2fs:",
- 	.get_context		= f2fs_get_context,
- 	.set_context		= f2fs_set_context,
-diff --git a/fs/ubifs/crypto.c b/fs/ubifs/crypto.c
-index fab90f9a8eaff..f0ca403777d9a 100644
---- a/fs/ubifs/crypto.c
-+++ b/fs/ubifs/crypto.c
-@@ -88,7 +88,6 @@ int ubifs_decrypt(const struct inode *inode, struct ubifs_data_node *dn,
- }
- 
- const struct fscrypt_operations ubifs_crypt_operations = {
--	.flags			= FS_CFLG_OWN_PAGES,
- 	.legacy_key_prefix_for_backcompat = "ubifs:",
- 	.get_context		= ubifs_crypt_get_context,
- 	.set_context		= ubifs_crypt_set_context,
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 70e0d4917dd59..32290e5fa9abb 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -59,18 +59,19 @@ struct fscrypt_name {
- 
- #ifdef CONFIG_FS_ENCRYPTION
- 
--/*
-- * If set, the fscrypt bounce page pool won't be allocated (unless another
-- * filesystem needs it).  Set this if the filesystem always uses its own bounce
-- * pages for writes and therefore won't need the fscrypt bounce page pool.
-- */
--#define FS_CFLG_OWN_PAGES (1U << 1)
--
- /* Crypto operations for filesystems */
- struct fscrypt_operations {
- 
--	/* Set of optional flags; see above for allowed flags */
--	unsigned int flags;
-+	/*
-+	 * If set, then fs/crypto/ will allocate a global bounce page pool.  The
-+	 * bounce page pool is required by the following functions:
-+	 *
-+	 * - fscrypt_encrypt_pagecache_blocks()
-+	 * - fscrypt_zeroout_range() for files not using inline crypto
-+	 *
-+	 * If the filesystem doesn't use those, it doesn't need to set this.
-+	 */
-+	unsigned int needs_bounce_pages : 1;
- 
- 	/*
- 	 * This field exists only for backwards compatibility reasons and should
+This patchset is based on v6.6-rc1.
+
+Changed in v2:
+  - Rebased onto v6.6-rc1 and took into account CephFS's recent addition
+    of support for fscrypt
+  - Narrowed the focus somewhat by dropping the attempted support for
+    IV_INO_LBLK_32 and clearly documenting what is considered out of
+    scope for now
+  - Other cleanups
+
+Eric Biggers (5):
+  fscrypt: make it extra clear that key_prefix is deprecated
+  fscrypt: make the bounce page pool opt-in instead of opt-out
+  fscrypt: use s_maxbytes instead of filesystem lblk_bits
+  fscrypt: replace get_ino_and_lblk_bits with just has_32bit_inodes
+  fscrypt: support crypto data unit size less than filesystem block size
+
+ Documentation/filesystems/fscrypt.rst | 116 ++++++++++++++------
+ fs/ceph/crypto.c                      |   1 +
+ fs/crypto/bio.c                       |  39 ++++---
+ fs/crypto/crypto.c                    | 148 +++++++++++++++-----------
+ fs/crypto/fscrypt_private.h           |  55 ++++++++--
+ fs/crypto/inline_crypt.c              |  25 +++--
+ fs/crypto/keysetup.c                  |   3 +
+ fs/crypto/keysetup_v1.c               |   5 +-
+ fs/crypto/policy.c                    |  75 ++++++++-----
+ fs/ext4/crypto.c                      |  13 +--
+ fs/f2fs/super.c                       |  13 +--
+ fs/ubifs/crypto.c                     |   3 +-
+ include/linux/fscrypt.h               |  71 +++++++-----
+ include/uapi/linux/fscrypt.h          |   3 +-
+ 14 files changed, 364 insertions(+), 206 deletions(-)
+
+
+base-commit: 0bb80ecc33a8fb5a682236443c1e740d5c917d1d
 -- 
 2.42.0
 
