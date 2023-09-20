@@ -4,75 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6E05AC04AAB
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 Sep 2023 15:50:34 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1E1E9C04AAA
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 Sep 2023 15:50:41 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qizTF-0001Nh-Mi;
-	Wed, 20 Sep 2023 15:50:33 +0000
+	id 1qizTN-0005Yp-Q0;
+	Wed, 20 Sep 2023 15:50:40 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qizTE-0001NZ-VX
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qizTL-0005Yi-QS
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 Sep 2023 15:50:32 +0000
+ Wed, 20 Sep 2023 15:50:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=D1gqVz3/9A+uO8G9sxzbgA1mNhvBB28PNuYZoyZ9gp0=; b=XISdynsqEnv1tVNHokej+VyhYq
- Vu1GPInj701cuKin+rFrkJ7cVR5qpgQTnywztjihSyOuWVYyY+WemFQlPRP0+6NshrmT1DYiZfhrN
- oSp13tPdiacDa1vKoUgYvHgBt2Dm2SA1+CLxybPH+dHPhSu3ugFL9r8S+o80x4UeGR/0=;
+ bh=AfsO3eQSB6e5Iuaraab56PbFAa9WsFVQAnbuUUaYdvk=; b=O5GsjLlbPTIbRERIZ4IMkuyc+t
+ rd7RI7P/zvykNB3huB0MHtlHrmPyrM/QEHAePTqEkSrCKmv84klX/bQYMWmwmWv7PC71scaCf4Dqk
+ jh8NCLHEvYpaLZ6kh05VBRLgwHquNRTs7d3uJHBXtrQgguouG0uhuxddwz2SbXxsPB3A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=D1gqVz3/9A+uO8G9sxzbgA1mNhvBB28PNuYZoyZ9gp0=; b=eFz7J+g7H05W5A9BJC+y2XvwM7
- OC3x2APratt1Mv/0LxdURZkKuvKklgChhdaZneq/rFlwwugvEFRBMflHHT7YaWoDB2mV6ChZv2hgR
- zjfQKt8mO0SIkeSD9xyptFUHlNFoue/yk5WsU5RWK9BqtEbOE5nbIn8WhG0RqBg7PB3s=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=AfsO3eQSB6e5Iuaraab56PbFAa9WsFVQAnbuUUaYdvk=; b=HBHRgy1GsAJE4EP5M7XUPnn6np
+ lMaSg22bWaHNkUM434QekFx7Xszpywf0/DGDrZdVxV8tM1/8H70J/i0lbAdgCR2yUyIGxfzZwIpM3
+ ON3tzhU4nLv4a9hjXwm3wl9sz/m/b3RAe0sFeSqIcaK1x66jFwSn3At6YzdZH9x6nb4w=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qizTD-00GvPn-9c for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 Sep 2023 15:50:32 +0000
+ id 1qizTG-00GvPp-Ck for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 20 Sep 2023 15:50:38 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id DE8F261CFE
+ by ams.source.kernel.org (Postfix) with ESMTPS id 24E5DB81DDD
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 20 Sep 2023 15:50:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 53AC4C433CA;
+ Wed, 20 Sep 2023 15:50:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 78016C4339A;
  Wed, 20 Sep 2023 15:50:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1695225025;
- bh=i6ZrC8twPkdmMTcCFAxDTNOGE1x2JCRDQFyKX/X5q/A=;
+ bh=/1672Hbz58PbiCTUwJZm1qr1uRwDuYVk0zfuDwqJfm0=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=DtHyO333m9sIjpXf28lydAgurEtbjB6KBsVg7OM41DNBwDs7dTY/UjnAXyMBELbdl
- EfpCAqWaF9nB/QsXDKnjYDfSN1EU1VosrluDn/gzDCb6xiySodlt9mnRlH7q6+S799
- kYdP7M8UwqEX1SYZs5xpa9OkBmhAw4c+pPHxQD/nQupvrCtFZWssZs349VKf2oooqF
- rPh9juQJ+UtRG8SljZUdxEUu2wlpGe591a8/S5iqM+JLvRRGN3ek/FWIIDTJh3YaCz
- nwuZN0535iHQp4l9EppFOZaF9IhfpQvpKUMy2SRfRMOs44vLB6KLeJPtStqDwwwHJ9
- RDxxQpr/cBJcg==
+ b=GAmidUmtByFG8Xtpk8rggPpB/ji6VR6J7VnGb4aX9FVQ4HZQIqx/G3Ht/x+gZBhHb
+ EbU4bfxB64mXttF646xhh6PqCjKPFr0PlozCuIQtlABZibZYuwjclr3rvmEIYAfO4w
+ RN4rZX6wulcZoZJSFiHhpCQ/TGCC9cI5e+ZKVGvlXYTcelNOAkxqPwvNlJUiNA5wZ3
+ OJSR47v26BRE1upTW2bDEdZ4YTnrIJKboQ7kX3XHQFw7oGuArxCrdoYuOtxejcT/Yh
+ kOTHDlo6qJX79lonWrRX7Kd1BGQ3vqTpyvCB8HUCi/2R2mLzH7jmtOmjoFapiyRth1
+ sWBhIsqubeLVA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 2F853C40C5E; Wed, 20 Sep 2023 15:50:25 +0000 (UTC)
+ 5F1A2E1F66B; Wed, 20 Sep 2023 15:50:25 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <169522502519.22557.11952566114540568403.git-patchwork-notify@kernel.org>
+Message-Id: <169522502538.22557.17553337845342817079.git-patchwork-notify@kernel.org>
 Date: Wed, 20 Sep 2023 15:50:25 +0000
-References: <20230828140417.2951796-1-chao@kernel.org>
-In-Reply-To: <20230828140417.2951796-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1qizTD-00GvPn-9c
-Subject: Re: [f2fs-dev] [PATCH 1/4] f2fs: compress: fix deadloop in
- f2fs_write_cache_pages()
+References: <20230920004645.1462354-1-jaegeuk@kernel.org>
+In-Reply-To: <20230920004645.1462354-1-jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+X-Headers-End: 1qizTG-00GvPp-Ck
+Subject: Re: [f2fs-dev] [PATCH] f2fs: preload extent_cache for
+ POSIX_FADV_WILLNEED
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,7 +84,7 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+Cc: ebiggers@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -92,31 +92,22 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon, 28 Aug 2023 22:04:14 +0800 you wrote:
-> With below mount option and testcase, it hangs kernel.
+On Tue, 19 Sep 2023 17:46:45 -0700 you wrote:
+> This patch tries to preload extent_cache given POSIX_FADV_WILLNEED, which is
+> more useful for generic usecases.
 > 
-> 1. mount -t f2fs -o compress_log_size=5 /dev/vdb /mnt/f2fs
-> 2. touch /mnt/f2fs/file
-> 3. chattr +c /mnt/f2fs/file
-> 4. dd if=/dev/zero of=/mnt/f2fs/file bs=1MB count=1
-> 5. sync
-> 6. dd if=/dev/zero of=/mnt/f2fs/file bs=111 count=11 conv=notrunc
-> 7. sync
-> 
-> [...]
+> Suggested-by: Eric Biggers <ebiggers@kernel.org>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/file.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
 Here is the summary with links:
-  - [f2fs-dev,1/4] f2fs: compress: fix deadloop in f2fs_write_cache_pages()
-    https://git.kernel.org/jaegeuk/f2fs/c/c5d3f9b7649a
-  - [f2fs-dev,2/4] f2fs: compress: fix to avoid use-after-free on dic
-    https://git.kernel.org/jaegeuk/f2fs/c/b0327c84e91a
-  - [f2fs-dev,3/4] f2fs: compress: do sanity check on cluster when CONFIG_F2FS_CHECK_FS is on
-    https://git.kernel.org/jaegeuk/f2fs/c/2aaea533bf06
-  - [f2fs-dev,4/4] f2fs: compress: fix to avoid redundant compress extension
-    https://git.kernel.org/jaegeuk/f2fs/c/7e1b150fece0
+  - [f2fs-dev] f2fs: preload extent_cache for POSIX_FADV_WILLNEED
+    https://git.kernel.org/jaegeuk/f2fs/c/a3edf9f0bbb7
 
 You are awesome, thank you!
 -- 
