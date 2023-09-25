@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AC901CE7A95
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 25 Sep 2023 05:59:13 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4C267CE7A99
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 25 Sep 2023 05:59:14 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qkeck-0004rk-3Y;
+	id 1qkeci-0002NF-Qa;
 	Mon, 25 Sep 2023 05:59:13 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1qkecg-0004rX-91
+ (envelope-from <ebiggers@kernel.org>) id 1qkecg-0002My-Ef
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 25 Sep 2023 05:59:09 +0000
+ Mon, 25 Sep 2023 05:59:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JfsobkT5qArxLhr2VgQoefLetqHbgORr8Ux5upiwXWU=; b=dE1bGSr9fdbXbZ8GwUSP8d0hFv
- /ZlmQDplVP01nlywDt4uuDaS8/wimrJlLp3C/e8vNxgyZFKg1H6vYoDc0M3wwyZqCtmK7OHCkSL+/
- Htq9q8m5skaytOwn6vaMCYiT/w5XA3h1VBe/cCStJRuHcbbH2Srh68WFQqG4cmAqUFJk=;
+ bh=qNAKr2mV5AJ58RSIU3VqiAv4vHbEYRZDhlpGSTrADx4=; b=QaNFom3IQUO5Ip5AtTNcDg7lGo
+ yRY83ifRaZ/hmurTH2m7Duw23gdEnMTm7Z7muxZAYFRv7g0zlYndr5ZDuQOlRxyuzveKJe+C3tQzD
+ XCfitDFu3yj5G5UkELHQJ2bTU7SNJysYYMIwX/ZNELia5UeluXwuy/VaTi67jVf1SiYc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,40 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=JfsobkT5qArxLhr2VgQoefLetqHbgORr8Ux5upiwXWU=; b=NVadYQObEbSr6qn112J33gMa/B
- FYSZcMGfkBcQTLNq/ZfB322jNI+uwzJninjG8R/f+eUs8Mw6RNa0UqtcbfkcLXAC7diunm3oeo6DZ
- wYuh72KqftlJaUsApxt179JfcfjI6UoOQneByGN3IUdsbEeGV2R0yn9WWl/1JtPQ1Ct4=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=qNAKr2mV5AJ58RSIU3VqiAv4vHbEYRZDhlpGSTrADx4=; b=JEw5nAiUWweIMe/75xTpE9Unyw
+ TMuAS6IzazGAXecjruP6qmj7e8yL1eGWq4szmcRXFJD/xH2pT0QtVFvMtDaJ7vrBWgFojSTMJt9Ta
+ 03weUxk7xPP2pSpiS+MdVm+MabyjMr62mXecLXWyA6vjacMzaSx85Q3647fNqo8ys+8Y=;
+Received: from sin.source.kernel.org ([145.40.73.55])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qkece-005UJk-Cn for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 25 Sep 2023 05:59:09 +0000
+ id 1qkecf-0000QM-1N for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 25 Sep 2023 05:59:10 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id B6BA860ED0;
+ by sin.source.kernel.org (Postfix) with ESMTP id 73602CE0E2D;
  Mon, 25 Sep 2023 05:58:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A6ABC433CD;
- Mon, 25 Sep 2023 05:58:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8020DC433C8;
+ Mon, 25 Sep 2023 05:58:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1695621539;
- bh=h8mTMAMQf4YlUJQ0ORVBKrImlVjE8z0fmjJV3yhH3u0=;
+ s=k20201202; t=1695621538;
+ bh=idiVzlkasc6EOKYjPFwNaxxpxVhmkIQdbuE4cRL0Tzs=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=VbrDtfveGzBd60l2zP1eylFWyZPHZ/e6eVdAJ7HMHU6gOXEqB+AVjDS0ig218A7hn
- Zv873VDPSfQAOryryncPcPhJufNjEvtkgvlVwfZHwxE8hSDJ0JGPbqu+V6TjVGLyD+
- s7t+LkNB35eNqEAfjzPJcoG66J3ikLRjP0MXFi/3SZDm2joIlm09ZfkgEh+lYTn4Q4
- F9O27i/e43tmGRbnsFv6Z4RmPMBffpG+1oPQlV0CwU7OmolEkdF0WRQxv3DtvGc+T/
- ahSzuM0nf5Rka5sIMJ07wpS4SXTmWBuuMpt2C6UJZyTyu92Bz1r/70FchXhDa5Y2Ig
- VT6CHK9qQfiTQ==
+ b=qd9ipEV70X7+ByaaCBd7HAb+BHhngMqY7dpRA/jPvTYup4xniVJ91BMtXoo5Sr35f
+ 6ONvHB4Yw2HGU9DRLYDTcdhq033DvfAPl4w90ommQ9+5w0dZRhTR0+3DMQ9vB7hue5
+ 8wo/OJb2lAf0B0Jp74s8nVrYNXjTqWO3vXQ/IxIIaKyR5WsTK4BTo88HrCyxXDwapK
+ T6FMGs+vM0hSUM/LF4ERbrlSapj8atL5o1cLkPg6BUG5dVKN26Wg7TMz36/D/c6Xhm
+ S4QVUJAR5/Fu8d/OlogAZo5LmHB6l0P2tqTRZ0GTMeKgaP8gwJtkaN+IpgFSAJ7knu
+ Qy72UYYc6vkoQ==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Sun, 24 Sep 2023 22:54:49 -0700
-Message-ID: <20230925055451.59499-4-ebiggers@kernel.org>
+Date: Sun, 24 Sep 2023 22:54:47 -0700
+Message-ID: <20230925055451.59499-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20230925055451.59499-1-ebiggers@kernel.org>
 References: <20230925055451.59499-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1qkece-005UJk-Cn
-Subject: [f2fs-dev] [PATCH v3 3/5] fscrypt: compute max_lblk_bits from
- s_maxbytes and block size
+X-Headers-End: 1qkecf-0000QM-1N
+Subject: [f2fs-dev] [PATCH v3 1/5] fscrypt: make it clearer that key_prefix
+ is deprecated
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,200 +87,172 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-For a given filesystem, the number of bits used by the maximum file
-logical block number is computable from the maximum file size and block
-size.  These values are always present in struct super_block.
-Therefore, compute it this way instead of using the value from
-fscrypt_operations::get_ino_and_lblk_bits.  Since filesystems always
-have to set the super_block fields anyway, this avoids having to provide
-this information redundantly via fscrypt_operations.
-
-This change is in preparation for adding support for sub-block data
-units.  For that, the value that is needed will become "the maximum file
-data unit index".  A hardcoded value won't suffice for that; it will
-need to be computed anyway.
+fscrypt_operations::key_prefix should not be set by any filesystems that
+aren't setting it already.  This is already documented, but apparently
+it's not sufficiently clear, as both ceph and btrfs have tried to set
+it.  Rename the field to legacy_key_prefix and improve the documentation
+to hopefully make it clearer.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/fscrypt_private.h | 10 ++++++++++
- fs/crypto/inline_crypt.c    |  7 ++-----
- fs/crypto/policy.c          | 18 ++++++++++--------
- 3 files changed, 22 insertions(+), 13 deletions(-)
+ fs/crypto/keysetup_v1.c |  5 +++--
+ fs/ext4/crypto.c        |  2 +-
+ fs/f2fs/super.c         |  2 +-
+ fs/ubifs/crypto.c       |  2 +-
+ include/linux/fscrypt.h | 14 +++++++++-----
+ 5 files changed, 15 insertions(+), 10 deletions(-)
 
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index 2d63da48635ab..4b113214b53af 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -289,20 +289,30 @@ union fscrypt_iv {
- 		/* per-file nonce; only set in DIRECT_KEY mode */
- 		u8 nonce[FSCRYPT_FILE_NONCE_SIZE];
- 	};
- 	u8 raw[FSCRYPT_MAX_IV_SIZE];
- 	__le64 dun[FSCRYPT_MAX_IV_SIZE / sizeof(__le64)];
+diff --git a/fs/crypto/keysetup_v1.c b/fs/crypto/keysetup_v1.c
+index 75dabd9b27f9b..86b48a2b47d1b 100644
+--- a/fs/crypto/keysetup_v1.c
++++ b/fs/crypto/keysetup_v1.c
+@@ -292,29 +292,30 @@ static int setup_v1_file_key_derived(struct fscrypt_info *ci,
+ int fscrypt_setup_v1_file_key(struct fscrypt_info *ci, const u8 *raw_master_key)
+ {
+ 	if (ci->ci_policy.v1.flags & FSCRYPT_POLICY_FLAG_DIRECT_KEY)
+ 		return setup_v1_file_key_direct(ci, raw_master_key);
+ 	else
+ 		return setup_v1_file_key_derived(ci, raw_master_key);
+ }
+ 
+ int fscrypt_setup_v1_file_key_via_subscribed_keyrings(struct fscrypt_info *ci)
+ {
++	const struct super_block *sb = ci->ci_inode->i_sb;
+ 	struct key *key;
+ 	const struct fscrypt_key *payload;
+ 	int err;
+ 
+ 	key = find_and_lock_process_key(FSCRYPT_KEY_DESC_PREFIX,
+ 					ci->ci_policy.v1.master_key_descriptor,
+ 					ci->ci_mode->keysize, &payload);
+-	if (key == ERR_PTR(-ENOKEY) && ci->ci_inode->i_sb->s_cop->key_prefix) {
+-		key = find_and_lock_process_key(ci->ci_inode->i_sb->s_cop->key_prefix,
++	if (key == ERR_PTR(-ENOKEY) && sb->s_cop->legacy_key_prefix) {
++		key = find_and_lock_process_key(sb->s_cop->legacy_key_prefix,
+ 						ci->ci_policy.v1.master_key_descriptor,
+ 						ci->ci_mode->keysize, &payload);
+ 	}
+ 	if (IS_ERR(key))
+ 		return PTR_ERR(key);
+ 
+ 	err = fscrypt_setup_v1_file_key(ci, payload->raw);
+ 	up_read(&key->sem);
+ 	key_put(key);
+ 	return err;
+diff --git a/fs/ext4/crypto.c b/fs/ext4/crypto.c
+index 453d4da5de520..99a4769a53f63 100644
+--- a/fs/ext4/crypto.c
++++ b/fs/ext4/crypto.c
+@@ -233,18 +233,18 @@ static bool ext4_has_stable_inodes(struct super_block *sb)
+ }
+ 
+ static void ext4_get_ino_and_lblk_bits(struct super_block *sb,
+ 				       int *ino_bits_ret, int *lblk_bits_ret)
+ {
+ 	*ino_bits_ret = 8 * sizeof(EXT4_SB(sb)->s_es->s_inodes_count);
+ 	*lblk_bits_ret = 8 * sizeof(ext4_lblk_t);
+ }
+ 
+ const struct fscrypt_operations ext4_cryptops = {
+-	.key_prefix		= "ext4:",
++	.legacy_key_prefix	= "ext4:",
+ 	.get_context		= ext4_get_context,
+ 	.set_context		= ext4_set_context,
+ 	.get_dummy_policy	= ext4_get_dummy_policy,
+ 	.empty_dir		= ext4_empty_dir,
+ 	.has_stable_inodes	= ext4_has_stable_inodes,
+ 	.get_ino_and_lblk_bits	= ext4_get_ino_and_lblk_bits,
  };
- 
- void fscrypt_generate_iv(union fscrypt_iv *iv, u64 lblk_num,
- 			 const struct fscrypt_info *ci);
- 
-+/*
-+ * Return the number of bits used by the maximum file logical block number that
-+ * is possible on the given filesystem.
-+ */
-+static inline int
-+fscrypt_max_file_lblk_bits(const struct super_block *sb)
-+{
-+	return fls64(sb->s_maxbytes - 1) - sb->s_blocksize_bits;
-+}
-+
- /* fname.c */
- bool __fscrypt_fname_encrypted_size(const union fscrypt_policy *policy,
- 				    u32 orig_len, u32 max_len,
- 				    u32 *encrypted_len_ret);
- 
- /* hkdf.c */
- struct fscrypt_hkdf {
- 	struct crypto_shash *hmac_tfm;
- };
- 
-diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
-index 8bfb3ce864766..7d9f6c167de58 100644
---- a/fs/crypto/inline_crypt.c
-+++ b/fs/crypto/inline_crypt.c
-@@ -34,37 +34,34 @@ static struct block_device **fscrypt_get_devices(struct super_block *sb,
- 	devs = kmalloc(sizeof(*devs), GFP_KERNEL);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index a8c8232852bb1..f60062b558fd1 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3224,21 +3224,21 @@ static struct block_device **f2fs_get_devices(struct super_block *sb,
  	if (!devs)
  		return ERR_PTR(-ENOMEM);
- 	devs[0] = sb->s_bdev;
- 	*num_devs = 1;
+ 
+ 	for (i = 0; i < sbi->s_ndevs; i++)
+ 		devs[i] = FDEV(i).bdev;
+ 	*num_devs = sbi->s_ndevs;
  	return devs;
  }
  
- static unsigned int fscrypt_get_dun_bytes(const struct fscrypt_info *ci)
- {
--	struct super_block *sb = ci->ci_inode->i_sb;
-+	const struct super_block *sb = ci->ci_inode->i_sb;
- 	unsigned int flags = fscrypt_policy_flags(&ci->ci_policy);
--	int ino_bits = 64, lblk_bits = 64;
+ static const struct fscrypt_operations f2fs_cryptops = {
+-	.key_prefix		= "f2fs:",
++	.legacy_key_prefix	= "f2fs:",
+ 	.get_context		= f2fs_get_context,
+ 	.set_context		= f2fs_set_context,
+ 	.get_dummy_policy	= f2fs_get_dummy_policy,
+ 	.empty_dir		= f2fs_empty_dir,
+ 	.has_stable_inodes	= f2fs_has_stable_inodes,
+ 	.get_ino_and_lblk_bits	= f2fs_get_ino_and_lblk_bits,
+ 	.get_devices		= f2fs_get_devices,
+ };
+ #endif
  
- 	if (flags & FSCRYPT_POLICY_FLAG_DIRECT_KEY)
- 		return offsetofend(union fscrypt_iv, nonce);
- 
- 	if (flags & FSCRYPT_POLICY_FLAG_IV_INO_LBLK_64)
- 		return sizeof(__le64);
- 
- 	if (flags & FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32)
- 		return sizeof(__le32);
- 
- 	/* Default case: IVs are just the file logical block number */
--	if (sb->s_cop->get_ino_and_lblk_bits)
--		sb->s_cop->get_ino_and_lblk_bits(sb, &ino_bits, &lblk_bits);
--	return DIV_ROUND_UP(lblk_bits, 8);
-+	return DIV_ROUND_UP(fscrypt_max_file_lblk_bits(sb), 8);
- }
- 
- /*
-  * Log a message when starting to use blk-crypto (native) or blk-crypto-fallback
-  * for an encryption mode for the first time.  This is the blk-crypto
-  * counterpart to the message logged when starting to use the crypto API for the
-  * first time.  A limitation is that these messages don't convey which specific
-  * filesystems or files are using each implementation.  However, *usually*
-  * systems use just one implementation per mode, which makes these messages
-  * helpful for debugging problems where the "wrong" implementation is used.
-diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
-index f4456ecb3f877..7b34949e49de6 100644
---- a/fs/crypto/policy.c
-+++ b/fs/crypto/policy.c
-@@ -112,22 +112,21 @@ static bool supported_direct_key_modes(const struct inode *inode,
- 	if (mode->ivsize < offsetofend(union fscrypt_iv, nonce)) {
- 		fscrypt_warn(inode, "Direct key flag not allowed with %s",
- 			     mode->friendly_name);
- 		return false;
+diff --git a/fs/ubifs/crypto.c b/fs/ubifs/crypto.c
+index 3125e76376ee6..1be3e11da3b3e 100644
+--- a/fs/ubifs/crypto.c
++++ b/fs/ubifs/crypto.c
+@@ -82,15 +82,15 @@ int ubifs_decrypt(const struct inode *inode, struct ubifs_data_node *dn,
+ 		ubifs_err(c, "fscrypt_decrypt_block_inplace() failed: %d", err);
+ 		return err;
  	}
- 	return true;
+ 	*out_len = clen;
+ 
+ 	return 0;
  }
  
- static bool supported_iv_ino_lblk_policy(const struct fscrypt_policy_v2 *policy,
- 					 const struct inode *inode,
--					 const char *type,
--					 int max_ino_bits, int max_lblk_bits)
-+					 const char *type, int max_ino_bits)
- {
- 	struct super_block *sb = inode->i_sb;
- 	int ino_bits = 64, lblk_bits = 64;
+ const struct fscrypt_operations ubifs_crypt_operations = {
+ 	.flags			= FS_CFLG_OWN_PAGES,
+-	.key_prefix		= "ubifs:",
++	.legacy_key_prefix	= "ubifs:",
+ 	.get_context		= ubifs_crypt_get_context,
+ 	.set_context		= ubifs_crypt_set_context,
+ 	.empty_dir		= ubifs_crypt_empty_dir,
+ };
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index c895b12737a19..b0037566ce308 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -66,26 +66,30 @@ struct fscrypt_name {
+  */
+ #define FS_CFLG_OWN_PAGES (1U << 1)
+ 
+ /* Crypto operations for filesystems */
+ struct fscrypt_operations {
+ 
+ 	/* Set of optional flags; see above for allowed flags */
+ 	unsigned int flags;
  
  	/*
- 	 * IV_INO_LBLK_* exist only because of hardware limitations, and
- 	 * currently the only known use case for them involves AES-256-XTS.
- 	 * That's also all we test currently.  For these reasons, for now only
- 	 * allow AES-256-XTS here.  This can be relaxed later if a use case for
- 	 * IV_INO_LBLK_* with other encryption modes arises.
-@@ -151,23 +150,28 @@ static bool supported_iv_ino_lblk_policy(const struct fscrypt_policy_v2 *policy,
- 		return false;
- 	}
- 	if (sb->s_cop->get_ino_and_lblk_bits)
- 		sb->s_cop->get_ino_and_lblk_bits(sb, &ino_bits, &lblk_bits);
- 	if (ino_bits > max_ino_bits) {
- 		fscrypt_warn(inode,
- 			     "Can't use %s policy on filesystem '%s' because its inode numbers are too long",
- 			     type, sb->s_id);
- 		return false;
- 	}
--	if (lblk_bits > max_lblk_bits) {
-+
-+	/*
-+	 * IV_INO_LBLK_64 and IV_INO_LBLK_32 both require that file logical
-+	 * block numbers fit in 32 bits.
-+	 */
-+	if (fscrypt_max_file_lblk_bits(sb) > 32) {
- 		fscrypt_warn(inode,
--			     "Can't use %s policy on filesystem '%s' because its block numbers are too long",
-+			     "Can't use %s policy on filesystem '%s' because its maximum file size is too large",
- 			     type, sb->s_id);
- 		return false;
- 	}
- 	return true;
- }
- 
- static bool fscrypt_supported_v1_policy(const struct fscrypt_policy_v1 *policy,
- 					const struct inode *inode)
- {
- 	if (!fscrypt_valid_enc_modes_v1(policy->contents_encryption_mode,
-@@ -232,33 +236,31 @@ static bool fscrypt_supported_v2_policy(const struct fscrypt_policy_v2 *policy,
- 			     policy->flags);
- 		return false;
- 	}
- 
- 	if ((policy->flags & FSCRYPT_POLICY_FLAG_DIRECT_KEY) &&
- 	    !supported_direct_key_modes(inode, policy->contents_encryption_mode,
- 					policy->filenames_encryption_mode))
- 		return false;
- 
- 	if ((policy->flags & FSCRYPT_POLICY_FLAG_IV_INO_LBLK_64) &&
--	    !supported_iv_ino_lblk_policy(policy, inode, "IV_INO_LBLK_64",
--					  32, 32))
-+	    !supported_iv_ino_lblk_policy(policy, inode, "IV_INO_LBLK_64", 32))
- 		return false;
- 
- 	/*
- 	 * IV_INO_LBLK_32 hashes the inode number, so in principle it can
- 	 * support any ino_bits.  However, currently the inode number is gotten
- 	 * from inode::i_ino which is 'unsigned long'.  So for now the
- 	 * implementation limit is 32 bits.
+-	 * If set, this is a filesystem-specific key description prefix that
+-	 * will be accepted for "logon" keys for v1 fscrypt policies, in
+-	 * addition to the generic prefix "fscrypt:".  This functionality is
+-	 * deprecated, so new filesystems shouldn't set this field.
++	 * This field exists only for backwards compatibility reasons and should
++	 * only be set by the filesystems that are setting it already.  It
++	 * contains the filesystem-specific key description prefix that is
++	 * accepted for "logon" keys for v1 fscrypt policies.  This
++	 * functionality is deprecated in favor of the generic prefix
++	 * "fscrypt:", which itself is deprecated in favor of the filesystem
++	 * keyring ioctls such as FS_IOC_ADD_ENCRYPTION_KEY.  Filesystems that
++	 * are newly adding fscrypt support should not set this field.
  	 */
- 	if ((policy->flags & FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32) &&
--	    !supported_iv_ino_lblk_policy(policy, inode, "IV_INO_LBLK_32",
--					  32, 32))
-+	    !supported_iv_ino_lblk_policy(policy, inode, "IV_INO_LBLK_32", 32))
- 		return false;
+-	const char *key_prefix;
++	const char *legacy_key_prefix;
  
- 	if (memchr_inv(policy->__reserved, 0, sizeof(policy->__reserved))) {
- 		fscrypt_warn(inode, "Reserved bits set in encryption policy");
- 		return false;
- 	}
- 
- 	return true;
- }
- 
+ 	/*
+ 	 * Get the fscrypt context of the given inode.
+ 	 *
+ 	 * @inode: the inode whose context to get
+ 	 * @ctx: the buffer into which to get the context
+ 	 * @len: length of the @ctx buffer in bytes
+ 	 *
+ 	 * Return: On success, returns the length of the context in bytes; this
+ 	 *	   may be less than @len.  On failure, returns -ENODATA if the
+
+base-commit: 6465e260f48790807eef06b583b38ca9789b6072
 -- 
 2.42.0
 
