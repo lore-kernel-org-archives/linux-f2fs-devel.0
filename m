@@ -4,132 +4,161 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9CE8ACE7B0F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Sep 2023 09:13:31 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7ED6EE732CA
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Sep 2023 11:03:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qln5Q-0006Cs-LF;
-	Thu, 28 Sep 2023 09:13:31 +0000
+	id 1qlonq-0004Az-0P;
+	Thu, 28 Sep 2023 11:03:30 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <bo.wu@vivo.com>) id 1qln5P-0006Cl-EW
- for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Sep 2023 09:13:30 +0000
+ (envelope-from <jlayton@kernel.org>) id 1qlonn-0004Af-SU;
+ Thu, 28 Sep 2023 11:03:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
- :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=p3qYDJ0CPf3IYOOvsJ+LMmfAce2ZiCcVF2trmbUYWYo=; b=G/KLhXsqytFhAYrb46eOC/aLsV
- 9rPWkZazGlDXrcmFMvuWIv8QusOqXy1JOL/kNE50PDiGZS0NM7RZ+lOdCkL1UJoZ9AWFEa7IO3nCn
- IozKRFKOsjCt0It5XC0ldCSSSegHhAqFLUNtsIBfwArn+ShtZHZS+z0Mo8vKseKqXkWg=;
+ bh=H6/PGhTnNIMn3orh6NoywiPLKzPAP9n0apXCR75yE60=; b=Il/3uLsU4EmfUzDiZi76fYGZf6
+ qRFOm/eS5TMlKxm20yhMCsgXiQH9hVTrRikZFVGjkJ2a/Gbe1t62M7Y5u8xx/NnuZPc/KPUi4i5g2
+ 3RJ6AipSpW9BbfBuAn22n5KXiEEJzf9yPXRu2HTw+FXtsiX+mS9b0FoOsZi6YFqOYseU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Type:Content-Transfer-Encoding:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=p3qYDJ0CPf3IYOOvsJ+LMmfAce2ZiCcVF2trmbUYWYo=; b=OTY+xnz6EoXPeiWI1sNAOcZEHQ
- n6nAxk0vlDMMFex6uTZtMY/499hJhKr4BfFLpJCpEVsMgmjeXC4HdB4pg6nYOFD5apYJ9yc9Mp1US
- ItbRQtCHvSHvO8j1dxi7qA+Lak7GFQsQvocF+6vhNor7cl3xyYteNReGUoXI/BdodCHg=;
-Received: from mail-psaapc01on2099.outbound.protection.outlook.com
- ([40.107.255.99] helo=APC01-PSA-obe.outbound.protection.outlook.com)
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=H6/PGhTnNIMn3orh6NoywiPLKzPAP9n0apXCR75yE60=; b=O
+ bc8CGJUHIeMNRnZEdi1SrEt5pQ7eg7veINziTN7wLtQV3lbaBdovSyUe9v0fuAxf3ONp97jFTeZPZ
+ ZJsWsq1sAST0fvafpHSgqHpsoSE0a9WZ76XozpC/LQ9m9Eoz/dZCoU+N0OSrI13NFJZSdZjgzXxgu
+ 4yPSnunDWDKtUxCc=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qln5M-00050A-K9 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Sep 2023 09:13:29 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DQtH6iCzXYRKO0nEuahrjw76Czw8U1cfO3/eNMQ3zwUflGjcY2ufuDl0qZC9zY8KvsjlPWc+pqIoYaoS2L+dDRtkEiRrGt1Ars9mbxbbWpFMoC5qYmH5wne6fTMsnHu7KVbKbHSfKtpj1ttxVmTaOyKE5OM3tCAsvuT+LvtprSBBJ/7/iYDU7B1jqw4fi5cTbjyY9qVZkv8UFS0OL19Es1YyD/8GoyZz6IFazoYxbyl+ldJlyQpND4bpQ94Ddlsh//VcLgWrS1MCTNVDbW14Haz/Sx1cTKZ3/Vy8+1e2AoMNBNWdrRC204RTRFODJsvzus0MwFRut7+kxpM/r7DqPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p3qYDJ0CPf3IYOOvsJ+LMmfAce2ZiCcVF2trmbUYWYo=;
- b=l5GbEVGXGL5M9jbTUld0T0MHvSYJprUYX9bmS8n0jbP+B0a6mXmcUgVs5nSRThPrYxebgL4CSgg9xR+S/c1C9k960bwV1Uu83V3jC8shMQDY0zesvgEGes8ifCMia1DE1qa8j0GAJCgxDMsXG9Ncu+RPmV1gZQ57zMSafqwNZbc31duUngzhX06IrsMXhcT4KM5DCHsOmmbxwhNOk5aEbSAKTsv82lYr+7PxBq2dnZPHJnhWoAJkBCZhTyExBzUFU/CNdYod9QOlJ7T/4ZdSg3d9Ji3JrSUrUKMjYitcszkK9WLYSD7cAuHXVnFmYHV1AMAQVRBxsRjFypMMto1W5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p3qYDJ0CPf3IYOOvsJ+LMmfAce2ZiCcVF2trmbUYWYo=;
- b=nY0TCQqKwfdJj5nQOvtVMgOoA3CNvPxVjwmhcBTyvK5dT8uvrn6h7tC91SytYnq7gMT7hixi7t+ohB4YGJfZYCF4kUmyXgt7YZkcxgK8zOStIvOx5ZZV9psuERoNkwFBSFTcun8t0wBwxZdT+fkVT9/uu/uV+0vaneLyJq5zPVQyy9Q08k65r4iO1ZuYV1Gtgpp82dqs7t/+/ukENBqT4fXVg1/fLgqJ+hY6SYhxP75Xj4B6QAd22jffWOiTv3INCM5SIwiBeXuZEbEZynfMjNNqRtXxmoJANu69tnsMKpARDqv3kthssOrP0fGu7+i42jSZoiLC7ZAGnC3+I5nJ3w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SL2PR06MB3017.apcprd06.prod.outlook.com (2603:1096:100:3a::16)
- by SEYPR06MB5867.apcprd06.prod.outlook.com (2603:1096:101:d0::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6813.28; Thu, 28 Sep
- 2023 09:13:19 +0000
-Received: from SL2PR06MB3017.apcprd06.prod.outlook.com
- ([fe80::e1e6:c2aa:6b5b:bc1c]) by SL2PR06MB3017.apcprd06.prod.outlook.com
- ([fe80::e1e6:c2aa:6b5b:bc1c%6]) with mapi id 15.20.6813.027; Thu, 28 Sep 2023
- 09:13:19 +0000
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Date: Thu, 28 Sep 2023 03:20:51 -0600
-Message-Id: <188b05d1764d1ba48f9c704ff28df853f3094f67.1695890686.git.bo.wu@vivo.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1695890686.git.bo.wu@vivo.com>
-References: <cover.1695890686.git.bo.wu@vivo.com>
-X-ClientProxiedBy: SG3P274CA0020.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::32)
- To SL2PR06MB3017.apcprd06.prod.outlook.com
- (2603:1096:100:3a::16)
+ id 1qlonm-00067K-S2; Thu, 28 Sep 2023 11:03:28 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by ams.source.kernel.org (Postfix) with ESMTP id 117E3B81BB6;
+ Thu, 28 Sep 2023 11:03:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6261C433C7;
+ Thu, 28 Sep 2023 11:03:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1695898996;
+ bh=P/ji0vPUFbCbMgRaXGuX+mvLtN5yOsTM92SNHS8Fueo=;
+ h=From:To:Cc:Subject:Date:From;
+ b=ajA8TqmoJHDxZZXJB7u7BMot+JbXkx4s2BucffEwH263YJ1rAl5f3kOGlSugrXpmt
+ enCVyE8I76GPL/4IwNc6Xbqia5TJMQJMD0b6VI10w4v7eGGGrt78TCsyNOegv/F9Uj
+ iW/9CtFBkFT2tmshJ5jLV46fOQDVQrsOik9OnfKq3kLgtaU5yGkVbFFKWwj7owPjN5
+ uKY70w3//pT9DL9Vb4zHyLQxEjU2ccCDoLvTNb0KR95R/azkiP4Qv5k+R06xTjnj5w
+ k30XWG81ek4EZ/ysaVPoNTqidztW9RMKRExEC41IRtMuKvo/5O4MhdApjUIRFWMG+e
+ viZeUgPDfZseg==
+From: Jeff Layton <jlayton@kernel.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ David Sterba <dsterba@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+ Theodore Ts'o <tytso@mit.edu>, Eric Biederman <ebiederm@xmission.com>,
+ Kees Cook <keescook@chromium.org>, Jeremy Kerr <jk@ozlabs.org>,
+ Arnd Bergmann <arnd@arndb.de>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+ Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Carlos Llamas <cmllamas@google.com>,
+ Suren Baghdasaryan <surenb@google.com>, Mattia Dongili <malattia@linux.it>,
+ Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ Brad Warrum <bwarrum@linux.ibm.com>, Ritu Agarwal <rituagar@linux.ibm.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Mark Gross <markgross@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
+ Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>,
+ David Sterba <dsterba@suse.com>, David Howells <dhowells@redhat.com>,
+ Marc Dionne <marc.dionne@auristor.com>, Ian Kent <raven@themaw.net>,
+ Luis de Bethencourt <luisbg@kernel.org>,
+ Salah Triki <salah.triki@gmail.com>,
+ "Tigran A. Aivazian" <aivazian.tigran@gmail.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, Xiubo Li <xiubli@redhat.com>,
+ Ilya Dryomov <idryomov@gmail.com>, Jan Harkes <jaharkes@cs.cmu.edu>,
+ coda@cs.cmu.edu, Joel Becker <jlbec@evilplan.org>,
+ Christoph Hellwig <hch@lst.de>, Nicolas Pitre <nico@fluxnic.net>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+ Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+ Yue Hu <huyue2@coolpad.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
+ Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>,
+ Jan Kara <jack@suse.com>, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Jaegeuk Kim <jaegeuk@kernel.org>,
+ OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+ Christoph Hellwig <hch@infradead.org>, Miklos Szeredi <miklos@szeredi.hu>,
+ Bob Peterson <rpeterso@redhat.com>,
+ Andreas Gruenbacher <agruenba@redhat.com>,
+ Richard Weinberger <richard@nod.at>,
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+ Mike Kravetz <mike.kravetz@oracle.com>,
+ Muchun Song <muchun.song@linux.dev>, Jan Kara <jack@suse.cz>,
+ David Woodhouse <dwmw2@infradead.org>, Dave Kleikamp <shaggy@kernel.org>,
+ Tejun Heo <tj@kernel.org>,
+ Trond Myklebust <trond.myklebust@hammerspace.com>,
+ Anna Schumaker <anna@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>,
+ Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+ Anton Altaparmakov <anton@tuxera.com>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ Mark Fasheh <mark@fasheh.com>, Joseph Qi <joseph.qi@linux.alibaba.com>,
+ Bob Copeland <me@bobcopeland.com>, Mike Marshall <hubcap@omnibond.com>,
+ Martin Brandenburg <martin@omnibond.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, Iurii Zaikin <yzaikin@google.com>,
+ Tony Luck <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+ Anders Larsen <al@alarsen.net>, Steve French <sfrench@samba.org>,
+ Paulo Alcantara <pc@manguebit.com>, Ronnie Sahlberg <lsahlber@redhat.com>,
+ Shyam Prasad N <sprasad@microsoft.com>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Phillip Lougher <phillip@squashfs.org.uk>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Evgeniy Dushistov <dushistov@mail.ru>,
+ Chandan Babu R <chandan.babu@oracle.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, Damien Le Moal <dlemoal@kernel.org>,
+ Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Hugh Dickins <hughd@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ John Johansen <john.johansen@canonical.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Eric Paris <eparis@parisplace.org>
+Date: Thu, 28 Sep 2023 07:02:59 -0400
+Message-ID: <20230928110300.32891-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SL2PR06MB3017:EE_|SEYPR06MB5867:EE_
-X-MS-Office365-Filtering-Correlation-Id: ef1e40fa-4ed1-4d8c-516d-08dbc0032853
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: IjpqzL790SUgxGnobOdklGbcM5FvItWPbPCbYzqoKzgX09/Ng0F8ws4356NrtSSUBJDIR6ugM0Cd+agFukcXHHGkZF5Zhk7q08UBjL3/y1aeECROd4Q1dtd6OhTFsgyot9YCCXkTpjoC5fjBWFfGwyT9orEI+4xeDAiiZP0wrQgho/Gv9fxUxBo5IIj/zbIkIIphhN3B2458TuqV81Dtkotbtddspu0gIQLF4mYPvVpX6cwGlS9v4/y5EblaC+NZSxPJax9cRe4MmmBRghPj4JSQsK+9rIGXYWZzULm2we8KkXrAU5i1Y1Qw5CbZHpm9lse0oM7RU10YcgF64e78Levwt/G1J1A0fRy0y0ALGZ8M1Dm+vixKxfNt9OQofvLRpFQfQMfxEsl3dJBlOQKTzk+Yua4SS2usPdDBnoidHzJVUR4Vdh0Q44eeyHbHn1jCwtqta5SVmeTi9WSGFOdbPYZs7svokmejbPZdlbYZbNVYk75iSKEsu7GqaHzgX/wcWuYaQeVwlRODzYDGV3vw8gQKOjkxGrxPigPGlgixu6SKpc5/8lCCYaDDtI0H1nPKOYAvBKHhadKGXgVrTnasOKZkcMAKeKopxaRAHIyzvRyCVW9EP1mefzd9P7MS9zqn
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SL2PR06MB3017.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230031)(396003)(136003)(39860400002)(346002)(366004)(376002)(230922051799003)(64100799003)(1800799009)(186009)(451199024)(2616005)(2906002)(6506007)(52116002)(38350700002)(38100700002)(86362001)(6486002)(110136005)(6512007)(54906003)(83380400001)(26005)(478600001)(316002)(4326008)(107886003)(5660300002)(66556008)(66476007)(36756003)(8676002)(8936002)(41300700001)(6666004)(66946007);
- DIR:OUT; SFP:1102; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hWCnAU7NzJfIng46OdW4vVju+1batKJ0lvlWQulsZVNCiuc23w/hKuKa+R1A?=
- =?us-ascii?Q?I6UgjOwk438KprF0V1sevrIMTKrcgjygRxtuShcXByYkmnN2k7XSy9tuwT4m?=
- =?us-ascii?Q?E5xm6xV9zih+4z6SYzR6Xi9Swsf041i0QYYj32n65qg7ZgOIv4gixBxLLzEA?=
- =?us-ascii?Q?O48ifFcROmGCadWH7O8gAlxx/B9sBeYuRid9qqhyLStFc0XqJFMoP5POvWl7?=
- =?us-ascii?Q?Z2lfndnhte+oTJKzImorUjxMfHWZ/DpJyNZBpBp1BA/qewwCya9sj3MXkXu9?=
- =?us-ascii?Q?OJQ7fdR/JA9rDK7GW8ozWjp5oRk4n2gprgdiWCrq/UWjK9mRFEhGkaMLnBqN?=
- =?us-ascii?Q?cC9h21Ih/en7U4NpSnujhfZJ+LC5pXYuomcCgViFBRaJtZdjbGu1lm71lEBW?=
- =?us-ascii?Q?he7W1RfpEN7+w4QVcCB8R8HtEqgXYqyLPgfza8bGB9iB2b2zsEEaebJOdA5q?=
- =?us-ascii?Q?LQ+lcOUl7PO1wpiLqpLHVru+8VIDbjqmwErLqeWQcv8ARFWXYrRm9CXasnIR?=
- =?us-ascii?Q?ChN2gTDLDb/V0F2SUXBUQQC/nEl5lFINcPN64scSZpa9BfWWV68cuhTDp5ny?=
- =?us-ascii?Q?qYwN42hwjm3bXbpi18Bm+49Or7O+AVt3C2AqQZcd81uChmc9eJtM8v77ZOMx?=
- =?us-ascii?Q?4Ew4OSkaqs3DJXdWpnJmgK6gqVLCAbtVdJAD64lXUmoxh5hm2xtG6KUgnefx?=
- =?us-ascii?Q?S8uklkJJ0qctuKl/XbnQNaT1ZLDZe7QhfmNLBeGuHKjBU1k1pHPaBsnpZK4x?=
- =?us-ascii?Q?2EibfbLdIB31nr7fFfBLTitgRXX1QsxrOsCU82Ucw6OUYQ5YqyDzB+XXqODH?=
- =?us-ascii?Q?CtQReSMdVS9+CJA0dW4giw+csDHTLZyoAlZS56iNhLnQXbwbeHxJJS+KG8I9?=
- =?us-ascii?Q?OlXIMUcuw1+KcUnR74gQCjOzhH3I6B9fJbUFJJZ0tqhEFTX/lyMlDSo+QzeU?=
- =?us-ascii?Q?VvQE8nrDD0bYnLIh+vg7/AEAbRC9lbwEk6C/wJAbieweXym1Fs+0eR7w46Ht?=
- =?us-ascii?Q?izt5gAdIrViq7eEarhWXkjZs75ZM3u+SkYP90DplmroEO5xXjD5/4B782VFu?=
- =?us-ascii?Q?rAakuvx28hWImKy5V1uLC9Xz9F4DgHpgbHKFXz+DGjZy0EM64AscdQ50nJ4u?=
- =?us-ascii?Q?UkffopTaxMMdw+72H9V9rYb+L3GJcb+aaC5GzVjtxYP1lBU+CDyltF4z6cKr?=
- =?us-ascii?Q?ZqafBgm+N7DWjewvYAL7kij/XeU2WyCzv9p+tdQajEIVoqZkMEnYAzytcr/f?=
- =?us-ascii?Q?7VQXhdMh1JhXaTOw+IoFhs9GEd90wlkYNg75Sc/fccY656QpaxTx7DmJVo61?=
- =?us-ascii?Q?/unC5oYASIOiMPEC4VIAAvtNamWQAWZLqMe0wl6pbuC5PE4CoQJ9a4t+fatO?=
- =?us-ascii?Q?vk6m1RZ1LhzsMkI0/0GQHXyfAtD3DsQvTT+PNA+Uv/JIclp0ivZwoL31MtPO?=
- =?us-ascii?Q?DzojG0Doo5Kxjebeu05A115b1yJ885lYU1advDnHxqSzWSyAY3gr2PXP72mj?=
- =?us-ascii?Q?Wgwl4qU73315RgQjcgXH25AXWlhIlNvVGTqIUT0fCdgw2eTxXHFzaJrYbqc9?=
- =?us-ascii?Q?A9nxidQHFLASJLQ6c8lTiwcEcCsbf/iaaMTZveZv?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef1e40fa-4ed1-4d8c-516d-08dbc0032853
-X-MS-Exchange-CrossTenant-AuthSource: SL2PR06MB3017.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2023 09:13:19.8543 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: y6ZhYeVakilDcM58w4JyeEp8GLFss7k2XI1fIwqYQ9kEwkhy+alS4WFnTRWpMMcOcmzTGluY4ut21ECO6CUfEg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5867
-X-Headers-End: 1qln5M-00050A-K9
-Subject: [f2fs-dev] [PATCH v2 3/3] f2fs-tools: cache free segments count to
- improve perfmance
+X-Headers-End: 1qlonm-00067K-S2
+Subject: [f2fs-dev] [PATCH 00/87] fs: new accessor methods for atime and
+ mtime
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -141,94 +170,355 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Wu Bo via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Wu Bo <bo.wu@vivo.com>
-Cc: Wu Bo <wubo.oduw@gmail.com>, Wu Bo <bo.wu@vivo.com>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: jfs-discussion@lists.sourceforge.net, linux-efi@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, gfs2@lists.linux.dev, linux-mm@kvack.org,
+ linux-mtd@lists.infradead.org, linux-hardening@vger.kernel.org,
+ linux-afs@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-nilfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, codalist@coda.cs.cmu.edu,
+ linux-serial@vger.kernel.org, linux-ext4@vger.kernel.org,
+ devel@lists.orangefs.org, linux-trace-kernel@vger.kernel.org,
+ linux-cifs@vger.kernel.org, selinux@vger.kernel.org, apparmor@lists.ubuntu.com,
+ autofs@vger.kernel.org, linux-um@lists.infradead.org,
+ reiserfs-devel@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+ ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-ntfs-dev@lists.sourceforge.net, linuxppc-dev@lists.ozlabs.org,
+ v9fs@lists.linux.dev, linux-usb@vger.kernel.org,
+ samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, ntfs3@lists.linux.dev,
+ linux-erofs@lists.ozlabs.org, linux-karma-devel@lists.sourceforge.net,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-'get_free_segments()' is implemented by traversing all segments to
-calculate the total free segments. It cosume much time.
+While working on the multigrain timestamp changes, Linus suggested
+adding some similar wrappers for accessing the atime and mtime that we
+have for the ctime. With that, we could then move to using discrete
+integers instead of timespec64 in struct inode, and shrink it.
 
-Every time when call 'find_next_free_block()' this calculation will
-do it again. So if we cache the free segments count, it will greatly
-improve performance of dfrag & resize & sload.
----
- fsck/f2fs.h    | 1 +
- fsck/mount.c   | 9 +++++++--
- fsck/segment.c | 2 ++
- 3 files changed, 10 insertions(+), 2 deletions(-)
+Linus suggested using macros for the new accessors, but the existing
+ctime wrappers were static inlines and since there are only 3 different
+timestamps, I didn't see that trying to fiddle with macros would gain us
+anything.
 
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index e65644e..a7cdc4c 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -197,6 +197,7 @@ struct f2fs_sm_info {
- 	unsigned int main_segments;
- 	unsigned int reserved_segments;
- 	unsigned int ovp_segments;
-+	unsigned int free_segments;
- };
- 
- struct f2fs_dentry_ptr {
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 098e73d..0a37bc4 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -123,7 +123,7 @@ void update_free_segments(struct f2fs_sb_info *sbi)
- 	if (c.dbg_lv)
- 		return;
- 
--	MSG(0, "\r [ %c ] Free segments: 0x%x", progress[i % 5], get_free_segments(sbi));
-+	MSG(0, "\r [ %c ] Free segments: 0x%x", progress[i % 5], SM_I(sbi)->free_segments);
- 	fflush(stdout);
- 	i++;
- }
-@@ -2430,6 +2430,10 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 
- 			check_block_count(sbi, segno, &sit);
- 			seg_info_from_raw_sit(sbi, se, &sit);
-+			if (se->valid_blocks == 0x0 &&
-+				is_usable_seg(sbi, segno) &&
-+				!IS_CUR_SEGNO(sbi, segno))
-+				SM_I(sbi)->free_segments++;
- 		}
- 		start_blk += readed;
- 	} while (start_blk < sit_blk_cnt);
-@@ -2485,6 +2489,7 @@ static int early_build_segment_manager(struct f2fs_sb_info *sbi)
- 	sm_info->ovp_segments = get_cp(overprov_segment_count);
- 	sm_info->main_segments = get_sb(segment_count_main);
- 	sm_info->ssa_blkaddr = get_sb(ssa_blkaddr);
-+	sm_info->free_segments = 0;
- 
- 	if (build_sit_info(sbi) || build_curseg(sbi)) {
- 		free(sm_info);
-@@ -2806,7 +2811,7 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left,
- 
- 	if (*to > 0)
- 		*to -= left;
--	if (get_free_segments(sbi) <= SM_I(sbi)->reserved_segments + 1)
-+	if (SM_I(sbi)->free_segments <= SM_I(sbi)->reserved_segments + 1)
- 		not_enough = 1;
- 
- 	while (*to >= SM_I(sbi)->main_blkaddr && *to < end_blkaddr) {
-diff --git a/fsck/segment.c b/fsck/segment.c
-index 0307bdd..1cb7d02 100644
---- a/fsck/segment.c
-+++ b/fsck/segment.c
-@@ -77,6 +77,8 @@ int reserve_new_block(struct f2fs_sb_info *sbi, block_t *to,
- 	se = get_seg_entry(sbi, GET_SEGNO(sbi, blkaddr));
- 	offset = OFFSET_IN_SEG(sbi, blkaddr);
- 	se->type = type;
-+	if (se->valid_blocks == 0)
-+		SM_I(sbi)->free_segments--;
- 	se->valid_blocks++;
- 	f2fs_set_bit(offset, (char *)se->cur_valid_map);
- 	if (need_fsync_data_record(sbi)) {
+The first patches start with some new infrastructure, and then we move
+to converting different subsystems to use it. The second to last patch
+makes the conversion to discrete integers, which shaves 8 bytes off of
+struct inode on my x86_64 kernel. The last patch reshuffles things a
+bit more, to keep the i_lock in the same cacheline as the fields it
+protects (at least on x86_64).
+
+About 75% of this conversion was done with coccinelle, with the rest
+done by hand with vim.
+
+Jeff Layton (87):
+  fs: new accessor methods for atime and mtime
+  fs: convert core infrastructure to new {a,m}time accessors
+  arch/powerpc/platforms/cell/spufs: convert to new inode {a,m}time
+    accessors
+  arch/s390/hypfs: convert to new inode {a,m}time accessors
+  drivers/android: convert to new inode {a,m}time accessors
+  drivers/char: convert to new inode {a,m}time accessors
+  drivers/infiniband/hw/qib: convert to new inode {a,m}time accessors
+  drivers/misc/ibmasm: convert to new inode {a,m}time accessors
+  drivers/misc: convert to new inode {a,m}time accessors
+  drivers/platform/x86: convert to new inode {a,m}time accessors
+  drivers/tty: convert to new inode {a,m}time accessors
+  drivers/usb/core: convert to new inode {a,m}time accessors
+  drivers/usb/gadget/function: convert to new inode {a,m}time accessors
+  drivers/usb/gadget/legacy: convert to new inode {a,m}time accessors
+  fs/9p: convert to new inode {a,m}time accessors
+  fs/adfs: convert to new inode {a,m}time accessors
+  fs/affs: convert to new inode {a,m}time accessors
+  fs/afs: convert to new inode {a,m}time accessors
+  fs/autofs: convert to new inode {a,m}time accessors
+  fs/befs: convert to new inode {a,m}time accessors
+  fs/bfs: convert to new inode {a,m}time accessors
+  fs/btrfs: convert to new inode {a,m}time accessors
+  fs/ceph: convert to new inode {a,m}time accessors
+  fs/coda: convert to new inode {a,m}time accessors
+  fs/configfs: convert to new inode {a,m}time accessors
+  fs/cramfs: convert to new inode {a,m}time accessors
+  fs/debugfs: convert to new inode {a,m}time accessors
+  fs/devpts: convert to new inode {a,m}time accessors
+  fs/efivarfs: convert to new inode {a,m}time accessors
+  fs/efs: convert to new inode {a,m}time accessors
+  fs/erofs: convert to new inode {a,m}time accessors
+  fs/exfat: convert to new inode {a,m}time accessors
+  fs/ext2: convert to new inode {a,m}time accessors
+  fs/ext4: convert to new inode {a,m}time accessors
+  fs/f2fs: convert to new inode {a,m}time accessors
+  fs/fat: convert to new inode {a,m}time accessors
+  fs/freevxfs: convert to new inode {a,m}time accessors
+  fs/fuse: convert to new inode {a,m}time accessors
+  fs/gfs2: convert to new inode {a,m}time accessors
+  fs/hfs: convert to new inode {a,m}time accessors
+  fs/hfsplus: convert to new inode {a,m}time accessors
+  fs/hostfs: convert to new inode {a,m}time accessors
+  fs/hpfs: convert to new inode {a,m}time accessors
+  fs/hugetlbfs: convert to new inode {a,m}time accessors
+  fs/isofs: convert to new inode {a,m}time accessors
+  fs/jffs2: convert to new inode {a,m}time accessors
+  fs/jfs: convert to new inode {a,m}time accessors
+  fs/kernfs: convert to new inode {a,m}time accessors
+  fs/minix: convert to new inode {a,m}time accessors
+  fs/nfs: convert to new inode {a,m}time accessors
+  fs/nfsd: convert to new inode {a,m}time accessors
+  fs/nilfs2: convert to new inode {a,m}time accessors
+  fs/ntfs: convert to new inode {a,m}time accessors
+  fs/ntfs3: convert to new inode {a,m}time accessors
+  fs/ocfs2: convert to new inode {a,m}time accessors
+  fs/omfs: convert to new inode {a,m}time accessors
+  fs/openpromfs: convert to new inode {a,m}time accessors
+  fs/orangefs: convert to new inode {a,m}time accessors
+  fs/overlayfs: convert to new inode {a,m}time accessors
+  fs/proc: convert to new inode {a,m}time accessors
+  fs/pstore: convert to new inode {a,m}time accessors
+  fs/qnx4: convert to new inode {a,m}time accessors
+  fs/qnx6: convert to new inode {a,m}time accessors
+  fs/ramfs: convert to new inode {a,m}time accessors
+  fs/reiserfs: convert to new inode {a,m}time accessors
+  fs/romfs: convert to new inode {a,m}time accessors
+  fs/smb/client: convert to new inode {a,m}time accessors
+  fs/smb/server: convert to new inode {a,m}time accessors
+  fs/squashfs: convert to new inode {a,m}time accessors
+  fs/sysv: convert to new inode {a,m}time accessors
+  fs/tracefs: convert to new inode {a,m}time accessors
+  fs/ubifs: convert to new inode {a,m}time accessors
+  fs/udf: convert to new inode {a,m}time accessors
+  fs/ufs: convert to new inode {a,m}time accessors
+  fs/vboxsf: convert to new inode {a,m}time accessors
+  fs/xfs: convert to new inode {a,m}time accessors
+  fs/zonefs: convert to new inode {a,m}time accessors
+  ipc: convert to new inode {a,m}time accessors
+  kernel/bpf: convert to new inode {a,m}time accessors
+  mm: convert to new inode {a,m}time accessors
+  net/sunrpc: convert to new inode {a,m}time accessors
+  security/apparmor: convert to new inode {a,m}time accessors
+  security/selinux: convert to new inode {a,m}time accessors
+  security: convert to new inode {a,m}time accessors
+  fs: rename i_atime and i_mtime fields to __i_atime and __i_mtime
+  fs: switch timespec64 fields in inode to discrete integers
+  fs: move i_blocks up a few places in struct inode
+
+ arch/powerpc/platforms/cell/spufs/inode.c |  2 +-
+ arch/s390/hypfs/inode.c                   |  4 +-
+ drivers/android/binderfs.c                |  8 +--
+ drivers/char/sonypi.c                     |  2 +-
+ drivers/infiniband/hw/qib/qib_fs.c        |  4 +-
+ drivers/misc/ibmasm/ibmasmfs.c            |  2 +-
+ drivers/misc/ibmvmc.c                     |  2 +-
+ drivers/platform/x86/sony-laptop.c        |  2 +-
+ drivers/tty/tty_io.c                      | 10 +++-
+ drivers/usb/core/devio.c                  | 26 ++++++---
+ drivers/usb/gadget/function/f_fs.c        |  4 +-
+ drivers/usb/gadget/legacy/inode.c         |  2 +-
+ fs/9p/vfs_inode.c                         |  6 +-
+ fs/9p/vfs_inode_dotl.c                    | 16 +++---
+ fs/adfs/inode.c                           | 13 +++--
+ fs/affs/amigaffs.c                        |  4 +-
+ fs/affs/inode.c                           | 17 +++---
+ fs/afs/dynroot.c                          |  2 +-
+ fs/afs/inode.c                            |  8 +--
+ fs/afs/write.c                            |  2 +-
+ fs/attr.c                                 |  4 +-
+ fs/autofs/inode.c                         |  2 +-
+ fs/autofs/root.c                          |  6 +-
+ fs/bad_inode.c                            |  2 +-
+ fs/befs/linuxvfs.c                        | 10 ++--
+ fs/bfs/dir.c                              |  9 +--
+ fs/bfs/inode.c                            | 10 ++--
+ fs/binfmt_misc.c                          |  2 +-
+ fs/btrfs/delayed-inode.c                  | 16 +++---
+ fs/btrfs/file.c                           | 18 +++---
+ fs/btrfs/inode.c                          | 39 ++++++-------
+ fs/btrfs/reflink.c                        |  2 +-
+ fs/btrfs/transaction.c                    |  3 +-
+ fs/btrfs/tree-log.c                       |  8 +--
+ fs/ceph/addr.c                            | 10 ++--
+ fs/ceph/caps.c                            |  4 +-
+ fs/ceph/file.c                            |  2 +-
+ fs/ceph/inode.c                           | 60 +++++++++++---------
+ fs/ceph/mds_client.c                      |  8 ++-
+ fs/ceph/snap.c                            |  4 +-
+ fs/coda/coda_linux.c                      |  6 +-
+ fs/coda/dir.c                             |  2 +-
+ fs/coda/file.c                            |  2 +-
+ fs/configfs/inode.c                       |  8 +--
+ fs/cramfs/inode.c                         |  4 +-
+ fs/debugfs/inode.c                        |  2 +-
+ fs/devpts/inode.c                         |  6 +-
+ fs/efivarfs/file.c                        |  2 +-
+ fs/efivarfs/inode.c                       |  2 +-
+ fs/efs/inode.c                            |  5 +-
+ fs/erofs/inode.c                          |  3 +-
+ fs/exfat/exfat_fs.h                       |  1 +
+ fs/exfat/file.c                           |  7 +--
+ fs/exfat/inode.c                          | 31 ++++++-----
+ fs/exfat/misc.c                           |  8 +++
+ fs/exfat/namei.c                          | 31 ++++++-----
+ fs/exfat/super.c                          |  4 +-
+ fs/ext2/dir.c                             |  6 +-
+ fs/ext2/ialloc.c                          |  2 +-
+ fs/ext2/inode.c                           | 11 ++--
+ fs/ext2/super.c                           |  2 +-
+ fs/ext4/ext4.h                            | 20 +++++--
+ fs/ext4/extents.c                         | 11 ++--
+ fs/ext4/ialloc.c                          |  4 +-
+ fs/ext4/inline.c                          |  4 +-
+ fs/ext4/inode.c                           | 19 ++++---
+ fs/ext4/ioctl.c                           | 13 ++++-
+ fs/ext4/namei.c                           | 10 ++--
+ fs/ext4/super.c                           |  2 +-
+ fs/ext4/xattr.c                           |  6 +-
+ fs/f2fs/dir.c                             |  6 +-
+ fs/f2fs/f2fs.h                            | 10 ++--
+ fs/f2fs/file.c                            | 14 ++---
+ fs/f2fs/inline.c                          |  2 +-
+ fs/f2fs/inode.c                           | 20 +++----
+ fs/f2fs/namei.c                           |  4 +-
+ fs/f2fs/recovery.c                        |  8 +--
+ fs/f2fs/super.c                           |  2 +-
+ fs/fat/inode.c                            | 25 ++++++---
+ fs/fat/misc.c                             |  6 +-
+ fs/freevxfs/vxfs_inode.c                  |  6 +-
+ fs/fuse/control.c                         |  2 +-
+ fs/fuse/dir.c                             |  6 +-
+ fs/fuse/inode.c                           | 25 ++++-----
+ fs/fuse/readdir.c                         |  6 +-
+ fs/gfs2/bmap.c                            | 10 ++--
+ fs/gfs2/dir.c                             | 10 ++--
+ fs/gfs2/glops.c                           | 11 ++--
+ fs/gfs2/inode.c                           |  7 ++-
+ fs/gfs2/quota.c                           |  2 +-
+ fs/gfs2/super.c                           |  8 +--
+ fs/hfs/catalog.c                          |  8 +--
+ fs/hfs/inode.c                            | 16 +++---
+ fs/hfs/sysdep.c                           | 10 ++--
+ fs/hfsplus/catalog.c                      |  8 +--
+ fs/hfsplus/inode.c                        | 22 ++++----
+ fs/hostfs/hostfs_kern.c                   | 12 ++--
+ fs/hpfs/dir.c                             | 10 ++--
+ fs/hpfs/inode.c                           | 12 ++--
+ fs/hpfs/namei.c                           | 20 +++----
+ fs/hpfs/super.c                           | 10 ++--
+ fs/hugetlbfs/inode.c                      | 10 ++--
+ fs/inode.c                                | 35 +++++++-----
+ fs/isofs/inode.c                          |  4 +-
+ fs/isofs/rock.c                           | 18 +++---
+ fs/jffs2/dir.c                            | 35 +++++++-----
+ fs/jffs2/file.c                           |  4 +-
+ fs/jffs2/fs.c                             | 20 +++----
+ fs/jffs2/os-linux.h                       |  4 +-
+ fs/jfs/inode.c                            |  2 +-
+ fs/jfs/jfs_imap.c                         | 16 +++---
+ fs/jfs/jfs_inode.c                        |  2 +-
+ fs/jfs/namei.c                            | 20 ++++---
+ fs/jfs/super.c                            |  2 +-
+ fs/kernfs/inode.c                         |  6 +-
+ fs/libfs.c                                | 41 ++++++++++----
+ fs/minix/bitmap.c                         |  2 +-
+ fs/minix/dir.c                            |  6 +-
+ fs/minix/inode.c                          | 15 +++--
+ fs/minix/itree_common.c                   |  2 +-
+ fs/nfs/callback_proc.c                    |  2 +-
+ fs/nfs/fscache.h                          |  4 +-
+ fs/nfs/inode.c                            | 30 +++++-----
+ fs/nfsd/blocklayout.c                     |  3 +-
+ fs/nfsd/nfs3proc.c                        |  4 +-
+ fs/nfsd/nfs4proc.c                        |  8 +--
+ fs/nfsd/nfsctl.c                          |  2 +-
+ fs/nilfs2/dir.c                           |  6 +-
+ fs/nilfs2/inode.c                         | 16 +++---
+ fs/nsfs.c                                 |  2 +-
+ fs/ntfs/inode.c                           | 25 +++++----
+ fs/ntfs/mft.c                             |  2 +-
+ fs/ntfs3/file.c                           |  6 +-
+ fs/ntfs3/frecord.c                        | 11 ++--
+ fs/ntfs3/inode.c                          | 22 +++++---
+ fs/ntfs3/namei.c                          |  4 +-
+ fs/ocfs2/alloc.c                          |  2 +-
+ fs/ocfs2/aops.c                           |  6 +-
+ fs/ocfs2/dir.c                            |  5 +-
+ fs/ocfs2/dlmfs/dlmfs.c                    |  4 +-
+ fs/ocfs2/dlmglue.c                        | 29 +++++-----
+ fs/ocfs2/file.c                           | 26 +++++----
+ fs/ocfs2/inode.c                          | 24 ++++----
+ fs/ocfs2/namei.c                          |  8 +--
+ fs/ocfs2/refcounttree.c                   |  4 +-
+ fs/omfs/inode.c                           |  8 +--
+ fs/openpromfs/inode.c                     |  4 +-
+ fs/orangefs/orangefs-utils.c              | 16 +++---
+ fs/overlayfs/file.c                       |  9 ++-
+ fs/overlayfs/inode.c                      |  3 +-
+ fs/overlayfs/util.c                       |  4 +-
+ fs/pipe.c                                 |  2 +-
+ fs/proc/base.c                            |  2 +-
+ fs/proc/inode.c                           |  2 +-
+ fs/proc/proc_sysctl.c                     |  2 +-
+ fs/proc/self.c                            |  2 +-
+ fs/proc/thread_self.c                     |  2 +-
+ fs/pstore/inode.c                         |  5 +-
+ fs/qnx4/inode.c                           |  6 +-
+ fs/qnx6/inode.c                           |  6 +-
+ fs/ramfs/inode.c                          |  7 ++-
+ fs/reiserfs/inode.c                       | 22 +++-----
+ fs/reiserfs/namei.c                       |  8 +--
+ fs/reiserfs/stree.c                       |  5 +-
+ fs/reiserfs/super.c                       |  2 +-
+ fs/romfs/super.c                          |  3 +-
+ fs/smb/client/file.c                      | 18 +++---
+ fs/smb/client/fscache.h                   |  6 +-
+ fs/smb/client/inode.c                     | 17 +++---
+ fs/smb/client/smb2ops.c                   |  6 +-
+ fs/smb/server/smb2pdu.c                   |  8 +--
+ fs/squashfs/inode.c                       |  6 +-
+ fs/stack.c                                |  4 +-
+ fs/stat.c                                 |  4 +-
+ fs/sysv/dir.c                             |  6 +-
+ fs/sysv/ialloc.c                          |  2 +-
+ fs/sysv/inode.c                           | 10 ++--
+ fs/sysv/itree.c                           |  2 +-
+ fs/tracefs/inode.c                        |  2 +-
+ fs/ubifs/debug.c                          |  8 +--
+ fs/ubifs/dir.c                            | 23 +++++---
+ fs/ubifs/file.c                           | 16 +++---
+ fs/ubifs/journal.c                        |  8 +--
+ fs/ubifs/super.c                          |  8 +--
+ fs/udf/ialloc.c                           |  4 +-
+ fs/udf/inode.c                            | 38 +++++++------
+ fs/udf/namei.c                            | 16 +++---
+ fs/ufs/dir.c                              |  6 +-
+ fs/ufs/ialloc.c                           |  2 +-
+ fs/ufs/inode.c                            | 36 +++++++-----
+ fs/vboxsf/utils.c                         | 15 ++---
+ fs/xfs/libxfs/xfs_inode_buf.c             | 10 ++--
+ fs/xfs/libxfs/xfs_rtbitmap.c              |  6 +-
+ fs/xfs/libxfs/xfs_trans_inode.c           |  2 +-
+ fs/xfs/xfs_bmap_util.c                    |  7 ++-
+ fs/xfs/xfs_inode.c                        |  4 +-
+ fs/xfs/xfs_inode_item.c                   |  4 +-
+ fs/xfs/xfs_iops.c                         |  8 +--
+ fs/xfs/xfs_itable.c                       |  8 +--
+ fs/xfs/xfs_rtalloc.c                      | 30 +++++-----
+ fs/zonefs/super.c                         | 10 ++--
+ include/linux/fs.h                        | 68 +++++++++++++++++++++--
+ include/linux/fs_stack.h                  |  6 +-
+ ipc/mqueue.c                              | 19 ++++---
+ kernel/bpf/inode.c                        |  5 +-
+ mm/shmem.c                                | 20 +++----
+ net/sunrpc/rpc_pipe.c                     |  2 +-
+ security/apparmor/apparmorfs.c            |  7 ++-
+ security/apparmor/policy_unpack.c         |  4 +-
+ security/inode.c                          |  2 +-
+ security/selinux/selinuxfs.c              |  2 +-
+ 211 files changed, 1115 insertions(+), 906 deletions(-)
+
 -- 
-2.25.1
+2.41.0
 
 
 
