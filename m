@@ -4,87 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 00975CDB482
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Oct 2023 15:25:46 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B0FB1CDB474
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Oct 2023 21:59:04 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qsPTU-00077P-7F;
-	Mon, 16 Oct 2023 15:25:44 +0000
+	id 1qsVc6-0007kf-H9;
+	Mon, 16 Oct 2023 21:59:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1qsPTS-00077F-PD
+ (envelope-from <jaegeuk@kernel.org>) id 1qsVc4-0007kR-CX
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Oct 2023 15:25:42 +0000
+ Mon, 16 Oct 2023 21:59:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
- Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VdJuKEfOYE5A8Kjx9jh0E3Zg2w1jYR6HPq2kjcrmS/0=; b=iHsRnuadBLem3rHAnapR5ePZcX
- yH+FHCd8F1T3nzOrlLLVUSBpxeQ/RbsmguBXT1hoRRhKb7yKRwOV1oZsy3wCJtXP5kF1wN6o0V7+5
- z14AYpO/8DeqPTeLa0SoSlqr09eW7+cv21BRfi51WuthuWgYEGGK4D6sc7e7gsJwXL+g=;
+ bh=hIL2tY6Ya3vXaRYdpIXxGg5UF1TByOarqlrzQ1IPHw8=; b=LayMk+uAYT5FvMX3BWh98M9XhK
+ A9sw3qnVmL3qlNJVCssx0b6Bt2bj+uvR9oSeF6G4cpb1rqWH0Y1yiRDx7ZOzHVpbrwrgjDi1nagPg
+ fIvOx+XH5ZgpI2Evh2PFnb6jzEpXas4gC9YI1XmcRGdv6NqwWY5B/GfzMcDnpbeWSKxo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
- :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VdJuKEfOYE5A8Kjx9jh0E3Zg2w1jYR6HPq2kjcrmS/0=; b=ap/00q/Jg7672p4ufy12bVYWe+
- +sEiFERNJHfoIhbpb9n1WFVEX4xcbJh4zoEgLfCokLeWKEl1tGtlTJYG6CGyr6r0U92X8zI1cQ8GK
- BmCkG3xf9cq3uqArlAHi0oZ06dxBw+K6DGWYwUgIkz2w3U/zZnrzAKE6UuvcAUzFYUjo=;
-Received: from mail-ua1-f44.google.com ([209.85.222.44])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qsPTN-000193-Nn for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Oct 2023 15:25:42 +0000
-Received: by mail-ua1-f44.google.com with SMTP id
- a1e0cc1a2514c-7b5fafed01aso1660052241.0
+ bh=hIL2tY6Ya3vXaRYdpIXxGg5UF1TByOarqlrzQ1IPHw8=; b=M7LIF7xdl2fw5e9e/rcAagMW8B
+ dkca9/ZngzpgNUF4SRWh4dQB7o/19t3xYPYbdE2jrtJdmvfEEhKyLnCqMSiSdv+M0kVXJWWfN85nW
+ xWuf0COmL/pKTWIxTg2WkgSAPAklxFtVOcZP0P0a5/g4zCmwbp24lKmRUBHpz+5dEK+4=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1qsVc4-00HA6e-42 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 16 Oct 2023 21:59:00 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id B37E8611C3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 16 Oct 2023 08:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1697469932; x=1698074732; darn=lists.sourceforge.net;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=VdJuKEfOYE5A8Kjx9jh0E3Zg2w1jYR6HPq2kjcrmS/0=;
- b=VA9jiAUM7ZGr35gTv3UpGl1B8gYdk5IMpd+hzvLPd5MjRuzBVEHYFYgYFa+xbYFj+s
- yjZy5K9cAfSlW4URWZMxXXkwBGTkvv05VUkaEwndXJB1DOF4ng4BYUyoFKqNqiQOYSyk
- pqrgnLSt8K7XlXImmjS3tQDNQPYiB/etsWfVx8JvFVeFjGfBaCbuvEyG0tKQqjtAvyKR
- plB94TA7ASDtQYKeOrrakYUfWGnsyuBaXCCmDb4kJ/LoM5RAQ+yOX192hKOFTk2ZGyKZ
- VWLKX9+PXCB8hrQneEHAItVG6HRt8ybAPea9YVl5Z6v8lq7Gm4TLWoFXyaMiYG938cVS
- FHQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1697469932; x=1698074732;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=VdJuKEfOYE5A8Kjx9jh0E3Zg2w1jYR6HPq2kjcrmS/0=;
- b=U0MuCjVYxD50pRX4O7LuWvxRRwV4pGbilAjmdGfdFfjKeB1PHh1A+XIWKLURXuYYJk
- eyB86puK6AJYn4TlPuin3JhR8T6oENfK0YtckxdHxZ+ABUL/im4s8IC5ggPB+i4ZtT9F
- vjVU9ntckobc0HI2rP0thRY5ZmBlpd/V9eEH4QvqeiZzRQCKhh5sBblBcSxLxKOQkD5w
- S2l2Joncc67Ip8p39WrMJPODhWV7lz4tYQdMbvf86rrW3DrQyLd33uADK5O2Q2zOaRrd
- 40AHvBLycB/mClowFNJt4z3Hel2sr4814YUiiydDiopE1fICKA9L7awa65wLpcmoZDOa
- K1kQ==
-X-Gm-Message-State: AOJu0Yw1LCeUHwM+Wb3dGRjgblcgzbms7jtQ8QFvxBPiLDehs9unN5YY
- AKEBuDzP3bHHkPUMh8+LpiWUmerGj/LIqNw6RyY=
-X-Google-Smtp-Source: AGHT+IHv6LjWv4HRL2UxPCMbLFi0e3vcsrOMIJJaPnJhhozM8EwMLhbByMTuBqLyW6wAzcEu6poTCfw8lOddnKHAqEs=
-X-Received: by 2002:a67:c205:0:b0:458:11dd:87aa with SMTP id
- i5-20020a67c205000000b0045811dd87aamr1217133vsj.22.1697469931930; Mon, 16 Oct
- 2023 08:25:31 -0700 (PDT)
+ Mon, 16 Oct 2023 21:58:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56835C433C8;
+ Mon, 16 Oct 2023 21:58:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1697493534;
+ bh=tPneTTHKFMRHD0Rybv8/aIBgzOJ0UU1S3RNxLEY6rEc=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=FfXxOi6PNKCnL+r/nEnKEOr29udj5Yjo4qO+yaF2auO1GMGJSLFC5DsREEsXRNohq
+ wOBMUQfqTlHFNxkRe1VxXIsFt3KzW0IMBhBplRT6SZaL+zXgvGan0RDft+ENITNmDP
+ TspT9JZnJGMf+AbNwK4ARIjShln5RMtwyqVCGCUU9R9P5eKQ9b/A7J9kqELc0OyCNI
+ DxfnpZ72iBw9fFN03Tod3sIESIURSAhCCE/vge4/yLPnK3jol+H3uSCwSB1V6H69LY
+ GnH6pC1diMAZFKNJ1hwc2FT/fNYmdv16qL3vKpjJmHMkOpGjWtodqj8A4VQaYh7TKg
+ ZFlsDBPD3yL4A==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Mon, 16 Oct 2023 14:58:49 -0700
+Message-ID: <20231016215849.639313-2-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.42.0.655.g421f12c284-goog
+In-Reply-To: <20231016215849.639313-1-jaegeuk@kernel.org>
+References: <20231016215849.639313-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-References: <20231013222453.240961-1-daeho43@gmail.com>
- <b16ea8fb-b3f2-4ae9-c543-cd84e0f3fa48@kernel.org>
-In-Reply-To: <b16ea8fb-b3f2-4ae9-c543-cd84e0f3fa48@kernel.org>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Mon, 16 Oct 2023 08:25:21 -0700
-Message-ID: <CACOAw_y4L_8YcJu3rK4cFFjwMg+z=XKppTGd2A6F+W9=mMV2Lg@mail.gmail.com>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1qsPTN-000193-Nn
-Subject: Re: [f2fs-dev] [PATCH] f2fs-tools: initialize allocated node area
+X-Headers-End: 1qsVc4-00HA6e-42
+Subject: [f2fs-dev] [PATCH 2/2] fsck.f2fs: fix cache offset for multiple
+ partitions
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,41 +79,141 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gU3VuLCBPY3QgMTUsIDIwMjMgYXQgMTE6MzPigK9QTSBDaGFvIFl1IDxjaGFvQGtlcm5lbC5v
-cmc+IHdyb3RlOgo+Cj4gT24gMjAyMy8xMC8xNCA2OjI0LCBEYWVobyBKZW9uZyB3cm90ZToKPiA+
-IEZyb206IERhZWhvIEplb25nIDxkYWVob2plb25nQGdvb2dsZS5jb20+Cj4gPgo+ID4gTmVlZCB0
-byBpbml0aWFsaXplIGFsbG9jYXRlZCBub2RlIGFyZWFzIGFmdGVyIG1lbW9yeSBhbGxvY2F0aW9u
-Lgo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6IERhZWhvIEplb25nIDxkYWVob2plb25nQGdvb2dsZS5j
-b20+Cj4gPiAtLS0KPiA+ICAgZnNjay9ub2RlLmMgICAgICAgfCAxICsKPiA+ICAgaW5jbHVkZS9m
-MmZzX2ZzLmggfCAyICsrCj4gPiAgIDIgZmlsZXMgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspCj4g
-Pgo+ID4gZGlmZiAtLWdpdCBhL2ZzY2svbm9kZS5jIGIvZnNjay9ub2RlLmMKPiA+IGluZGV4IDM3
-NjE0NzAuLjY1MDgzNDAgMTAwNjQ0Cj4gPiAtLS0gYS9mc2NrL25vZGUuYwo+ID4gKysrIGIvZnNj
-ay9ub2RlLmMKPiA+IEBAIC0xMjcsNiArMTI3LDcgQEAgYmxvY2tfdCBuZXdfbm9kZV9ibG9jayhz
-dHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4gPgo+ID4gICAgICAgbm9kZV9ibGsgPSBjYWxsb2Mo
-QkxPQ0tfU1osIDEpOwo+Cj4gY2FsbG9jKCkgaGFzIGFscmVhZHkgaW5pdGlhbGl6ZWQgbWVtb3J5
-IHcvIHplcm8sIGl0IGRvZXNuJ3QgbmVlZCB0byByZWluaXRpYWxpemUKPiBpdCBhZ2Fpbj8KClNv
-cnJ5LCBJIHdhcyBjb25mdXNlZC4gOigKCgo+Cj4gPiAgICAgICBBU1NFUlQobm9kZV9ibGspOwo+
-ID4gKyAgICAgbWVtc2V0KG5vZGVfYmxrLCAwLCBCTE9DS19TWik7Cj4gPgo+ID4gICAgICAgRjJG
-U19OT0RFX0ZPT1RFUihub2RlX2JsayktPm5pZCA9IGNwdV90b19sZTMyKGRuLT5uaWQpOwo+ID4g
-ICAgICAgRjJGU19OT0RFX0ZPT1RFUihub2RlX2JsayktPmlubyA9IEYyRlNfTk9ERV9GT09URVIo
-ZjJmc19pbm9kZSktPmlubzsKPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2YyZnNfZnMuaCBiL2lu
-Y2x1ZGUvZjJmc19mcy5oCj4gPiBpbmRleCAzYzc0NTFjLi43ZTIyMjc4IDEwMDY0NAo+ID4gLS0t
-IGEvaW5jbHVkZS9mMmZzX2ZzLmgKPiA+ICsrKyBiL2luY2x1ZGUvZjJmc19mcy5oCj4gPiBAQCAt
-MTgyNiw2ICsxODI2LDggQEAgc3RhdGljIGlubGluZSB2b2lkIHNob3dfdmVyc2lvbihjb25zdCBj
-aGFyICpwcm9nKQo+ID4gICBzdGF0aWMgaW5saW5lIHZvaWQgZjJmc19pbml0X2lub2RlKHN0cnVj
-dCBmMmZzX3N1cGVyX2Jsb2NrICpzYiwKPiA+ICAgICAgICAgICAgICAgc3RydWN0IGYyZnNfbm9k
-ZSAqcmF3X25vZGUsIG5pZF90IGlubywgdGltZV90IG10aW1lLCBtb2RlX3QgbW9kZSkKPiA+ICAg
-ewo+ID4gKyAgICAgbWVtc2V0KHJhd19ub2RlLCAwLCBGMkZTX0JMS1NJWkUpOwo+Cj4gRGl0dG8s
-Cj4KPiBUaGFua3MsCj4KPiA+ICsKPiA+ICAgICAgIEYyRlNfTk9ERV9GT09URVIocmF3X25vZGUp
-LT5uaWQgPSBjcHVfdG9fbGUzMihpbm8pOwo+ID4gICAgICAgRjJGU19OT0RFX0ZPT1RFUihyYXdf
-bm9kZSktPmlubyA9IGNwdV90b19sZTMyKGlubyk7Cj4gPiAgICAgICBGMkZTX05PREVfRk9PVEVS
-KHJhd19ub2RlKS0+Y3BfdmVyID0gY3B1X3RvX2xlNjQoMSk7CgoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
-c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
-b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+The cache offset should have been considered multiple partitions per fd.
+Let's fix.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ lib/libf2fs_io.c | 45 +++++++++++++++++++++++++--------------------
+ 1 file changed, 25 insertions(+), 20 deletions(-)
+
+diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
+index 74e5f3ac49ba..39d377777259 100644
+--- a/lib/libf2fs_io.c
++++ b/lib/libf2fs_io.c
+@@ -246,7 +246,7 @@ static inline long dcache_relocate(long entry, int n)
+ 			dcache_config.num_cache_entry;
+ }
+ 
+-static long dcache_find(off_t blk)
++static long dcache_find(__u64 blk)
+ {
+ 	register long n = dcache_config.num_cache_entry;
+ 	register unsigned m = dcache_config.max_hash_collision;
+@@ -267,8 +267,13 @@ static long dcache_find(off_t blk)
+ }
+ 
+ /* Physical read into cache */
+-static int dcache_io_read(int fd, long entry, off_t offset, off_t blk)
++static int dcache_io_read(long entry, __u64 offset, off_t blk)
+ {
++	int fd = __get_device_fd(&offset);
++
++	if (fd < 0)
++		return fd;
++
+ 	if (lseek(fd, offset, SEEK_SET) < 0) {
+ 		MSG(0, "\n lseek fail.\n");
+ 		return -1;
+@@ -297,12 +302,11 @@ static int dcache_io_read(int fd, long entry, off_t offset, off_t blk)
+  *       1: cache not available (uninitialized)
+  *      -1: error
+  */
+-static int dcache_update_rw(int fd, void *buf, off_t offset,
++static int dcache_update_rw(void *buf, __u64 offset,
+ 		size_t byte_count, bool is_write)
+ {
+-	off_t blk;
++	__u64 blk, start;
+ 	int addr_in_blk;
+-	off_t start;
+ 
+ 	if (!dcache_initialized)
+ 		dcache_init(); /* auto initialize */
+@@ -337,7 +341,7 @@ static int dcache_update_rw(int fd, void *buf, off_t offset,
+ 				if (dcache_valid[entry])
+ 					++dcache_rreplace;
+ 				/* read: physical I/O read into cache */
+-				err = dcache_io_read(fd, entry, start, blk);
++				err = dcache_io_read(entry, start, blk);
+ 				if (err)
+ 					return err;
+ 			}
+@@ -366,15 +370,15 @@ static int dcache_update_rw(int fd, void *buf, off_t offset,
+  * return value: 1: cache not available
+  *               0: success, -1: I/O error
+  */
+-int dcache_update_cache(int fd, void *buf, off_t offset, size_t count)
++int dcache_update_cache(void *buf, __u64 offset, size_t count)
+ {
+-	return dcache_update_rw(fd, buf, offset, count, true);
++	return dcache_update_rw(buf, offset, count, true);
+ }
+ 
+ /* handles read into cache + read into buffer  */
+-int dcache_read(int fd, void *buf, off_t offset, size_t count)
++int dcache_read(void *buf, __u64 offset, size_t count)
+ {
+-	return dcache_update_rw(fd, buf, offset, count, false);
++	return dcache_update_rw(buf, offset, count, false);
+ }
+ 
+ /*
+@@ -517,15 +521,15 @@ int dev_read(void *buf, __u64 offset, size_t len)
+ 		return sparse_read_blk(offset / F2FS_BLKSIZE,
+ 					len / F2FS_BLKSIZE, buf);
+ 
+-	fd = __get_device_fd(&offset);
+-	if (fd < 0)
+-		return fd;
+-
+ 	/* err = 1: cache not available, fall back to non-cache R/W */
+ 	/* err = 0: success, err=-1: I/O error */
+-	err = dcache_read(fd, buf, (off_t)offset, len);
++	err = dcache_read(buf, offset, len);
+ 	if (err <= 0)
+ 		return err;
++
++	fd = __get_device_fd(&offset);
++	if (fd < 0)
++		return fd;
+ 	if (lseek(fd, (off_t)offset, SEEK_SET) < 0)
+ 		return -1;
+ 	if (read(fd, buf, len) < 0)
+@@ -561,16 +565,17 @@ int dev_write(void *buf, __u64 offset, size_t len)
+ 		return sparse_write_blk(offset / F2FS_BLKSIZE,
+ 					len / F2FS_BLKSIZE, buf);
+ 
+-	fd = __get_device_fd(&offset);
+-	if (fd < 0)
+-		return fd;
+-
+ 	/*
+ 	 * dcache_update_cache() just update cache, won't do I/O.
+ 	 * Thus even no error, we need normal non-cache I/O for actual write
+ 	 */
+-	if (dcache_update_cache(fd, buf, (off_t)offset, len) < 0)
++	if (dcache_update_cache(buf, offset, len) < 0)
+ 		return -1;
++
++	fd = __get_device_fd(&offset);
++	if (fd < 0)
++		return fd;
++
+ 	if (lseek(fd, (off_t)offset, SEEK_SET) < 0)
+ 		return -1;
+ 	if (write(fd, buf, len) < 0)
+-- 
+2.42.0.655.g421f12c284-goog
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
