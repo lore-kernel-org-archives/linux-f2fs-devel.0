@@ -4,72 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 65725C004C0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Oct 2023 15:30:37 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D6B66C001E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Oct 2023 15:30:38 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1quwt4-00076l-5u;
-	Mon, 23 Oct 2023 15:30:36 +0000
+	id 1quwt3-0008BN-5u;
+	Mon, 23 Oct 2023 15:30:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1quwsz-00076d-Mm
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1quwsy-0008BG-N7
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 23 Oct 2023 15:30:32 +0000
+ Mon, 23 Oct 2023 15:30:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JWwU3CoZI3IjLx5lEcH6/4Au6wMwb2AGuQ6NaOt4nxI=; b=XaDIQWTj41qPorkpTsfztNFWXC
- 8/e5rT/Apsw4Hpdj+3LHR31ofO8B52Zfs3cNoAXXBqTm9axcC6ime1twbiN5+vXgavY/+ygXuR6KJ
- 8oIF0BuCc8N7f3NpOdkzg6IP8oKSl/7OteBOsQOKmNipPfjznxa9T5likbb1JpRKk9JU=;
+ bh=HmECVV1mlavG4dW9VmJ6ewn2la11A3/BxpONeadGjkM=; b=V3qvsZ2rzvTIRfxzB9gtRVnwCS
+ B58IvGhEQyyW+GpuGNmzDw2Z9imAgL2aREm+9WMg6Ba+Ofr8nU0nLLYHiIPf/MRbYa/ipR00I/7wu
+ 1Rr3Xp62saA2Uxccb4MSVJeO2KljA6CUnId/fjBlC1KiomXBPvkPYfb3nWlfz2Nzz+GY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JWwU3CoZI3IjLx5lEcH6/4Au6wMwb2AGuQ6NaOt4nxI=; b=KoggdkxZ0S/WWy4qZEDo6TNmm7
- N2CGcvBO9dk35U0pmENzK+HnNQzUnbSL5uFSLvRHds7Act5xNZChYlMQtzE6/mll4eJ2jb5th8rlQ
- yFNHIgptsT5V9DU5o7NJxYlimTCWuokb3yy+dR9vAoaUaxD19yDxwqB0krX5ttndq39A=;
+ bh=HmECVV1mlavG4dW9VmJ6ewn2la11A3/BxpONeadGjkM=; b=XNW/QR2xjR+Sk36+qNs19N1bqY
+ KSvLxu+bXDYTcU45EWcWbUGLWmN1NfIucOkBu5qApLsYLRsE6D/pTJeapBJvTbGc8CJ3drM2T8MKk
+ 0d1k3TW8DkEbn/d7I7qMYPFpdQe9Dvp0kZBAeJq9/cd9XjH+6D7XKs0E7LEfWluArnhA=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1quwsx-0002HV-LT for linux-f2fs-devel@lists.sourceforge.net;
+ id 1quwsy-007FvP-Bj for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 23 Oct 2023 15:30:32 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 4377F61E29
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 23 Oct 2023 15:30:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 541FBC433B6;
+ by dfw.source.kernel.org (Postfix) with ESMTP id CB99561DDC;
+ Mon, 23 Oct 2023 15:30:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2AEF3C433C9;
  Mon, 23 Oct 2023 15:30:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1698075025;
- bh=bUtVoh6YaTR2e9kd3iT8lvGM2BLtR/4vtkRIDHJ3FNY=;
+ bh=fky56o6OGMffUlnNTnMeI5GtbOUQM5DLVFGgZZmx03Y=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=MUkjNIA1zWr4Q1NAuiy992Ih9icgnKqn0745p5V9X6rY25Da24EBUmgohWr4VwPfE
- zneIrISV9LPC2JBOUwR46yCz4jkX/qX+gtYvKmc6SyfVrl0Yx8tt6O2q6qqJ/riovD
- Et5w+te/cb5Rr3kyITBZmYFsSz51DI06NGhEA2jIgMrgvpU9rUHUNM/AeGMOmMkqT4
- R9rp7cL0AFicWs64L8mMdLPVLxgw3y37hW9iX6zn1MEqMOJIsq5wx82z9tPTdTSe8p
- dQc9fbyCQ5BnE2d9K5d866Su+wcSnnX+1JrCi2j7ZiPZ8fpOK9Lw6Gawes/MCwtAQU
- wkmLQg3SAY2mQ==
+ b=Jc6QPJo75xtph1CujVnPQqnI3CLhVnBru/a8uHyKGDs2fjbhtrd5x6OQ0oOUMGjLl
+ 4oHtqftbPmkFD9XtcMwNPWaF00FIa2qw5p0M+0TpDOrl81JdQR2rtVdfCOxQzE4J/I
+ vWdN0RveX8K8GeMFkovi/8bqWtOHhzi+sHjbehq1nSkvFiMBwrBWp92OYsdsQj//FR
+ lWnLgoPbKElVUOUZXy8PVGibQHkWoIZWhTA3FmbWPuWhcRlgC6cEIe0DMLtd/43LDY
+ V+9zQlfNZNoJWS5ZjicFtD9R0VBojqqsgJTjvns39DJJ9zhe/O6t0qORJSmyOfAGG8
+ GqkrNRWajupMw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 3AB8CE21EC3; Mon, 23 Oct 2023 15:30:25 +0000 (UTC)
+ 05A90C2BBF6; Mon, 23 Oct 2023 15:30:25 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <169807502523.26537.10004934909406083909.git-patchwork-notify@kernel.org>
+Message-Id: <169807502501.26537.6061670597610762355.git-patchwork-notify@kernel.org>
 Date: Mon, 23 Oct 2023 15:30:25 +0000
-References: <20231019225300.1846362-1-jaegeuk@kernel.org>
-In-Reply-To: <20231019225300.1846362-1-jaegeuk@kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1quwsx-0002HV-LT
-Subject: Re: [f2fs-dev] [PATCH] f2fs: do not return EFSCORRUPTED,
- but try to run online repair
+References: <20231010193628.2629168-1-daeho43@gmail.com>
+In-Reply-To: <20231010193628.2629168-1-daeho43@gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>
+X-Headers-End: 1quwsy-007FvP-Bj
+Subject: Re: [f2fs-dev] [PATCH] f2fs: clean up zones when not successfully
+ unmounted
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,8 +80,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: daehojeong@google.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -92,20 +91,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 19 Oct 2023 15:53:00 -0700 you wrote:
-> If we return the error, there's no way to recover the status as of now, since
-> fsck does not fix the xattr boundary issue.
+On Tue, 10 Oct 2023 12:36:28 -0700 you wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/node.c  |  4 +++-
->  fs/f2fs/xattr.c | 20 +++++++++++++-------
->  2 files changed, 16 insertions(+), 8 deletions(-)
+> We can't trust write pointers when the previous mount was not
+> successfully unmounted.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: do not return EFSCORRUPTED, but try to run online repair
-    https://git.kernel.org/jaegeuk/f2fs/c/50a472bbc79f
+  - [f2fs-dev] f2fs: clean up zones when not successfully unmounted
+    https://git.kernel.org/jaegeuk/f2fs/c/9f792ab8e33d
 
 You are awesome, thank you!
 -- 
