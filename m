@@ -4,72 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 85FBAC25B41
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8121FC00A8F
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Oct 2023 15:30:35 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1quwt0-0003AS-L1;
+	id 1quwt0-0003AZ-Ui;
 	Mon, 23 Oct 2023 15:30:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1quwsz-0003AF-BY
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1quwt0-0003AM-E1
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 23 Oct 2023 15:30:32 +0000
+ Mon, 23 Oct 2023 15:30:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=x7fm6kHVzxNBeGp83tN2ID9/OpjzwL2m+nL03Fhply4=; b=TLLw8y20Q3GHunFwFG/gQeo1ar
- YC+T1am/p/whvdilVYUAkVAXCpoZzeR33kZHZu5EGz8qbsBPDJNmyRAStrr9rVrDQPH8DsAXmRevF
- zXuoRdHfDLMFArJGmrk934nXNze3IN519rgMblc437eLVTkQg62fJ6fKbRGKlUVAZSGA=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=YoW2XuVytjJQwZvdB98h8/RpVvijLCXU9O1TMP0Ifyo=; b=aRX2D6Mn5z7acKBiO1RnCsy/Ae
+ lMXoSrcHFpNivg0kkHgjGNEXJHd1Fsg7U3Qeo75gAHgL3uT6vssh0Meqlmt6h672NTSNaPGB9qauU
+ dQz6oZY/m3eHZLCoHRnKLM9ZMJyK3Yw33dh1F2lD+7HIfjjxX6FL7jWtjrpkN90wzPWs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=x7fm6kHVzxNBeGp83tN2ID9/OpjzwL2m+nL03Fhply4=; b=mBpmqi0hu//5ZFYdexhSoV2OcH
- zuSIhV/+cBBGnsCgAzY0jWVMaczUTYBiKKStoklack5mBvnrWCY+UJJhdXcKk/cpUOjk2YGO3wNlI
- QFex9YjH833GAAAyj/vprjBcIIWTpmfgMzs6mirRa0Hm8dy09YFNFP5AczgZ5lytA5jE=;
+ ;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=YoW2XuVytjJQwZvdB98h8/RpVvijLCXU9O1TMP0Ifyo=; b=c
+ yI2/pTPCWh9IWbzf/X7IPIfVzQ/gaJPgmKk1/AUyJNnFvgRlMvQtxTg2EeSb8SrpbgbOQaqH6pY39
+ E2h0DiWZg8sIY7YFXs8hqh3O2MMBhDF4p2yzdWZafDiC4cGA5G5M0UGw5N8boF+ysaNF3Ld/XJLEn
+ EQp9DUS+nqjc6d+8=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1quwsw-0002HP-R8 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 23 Oct 2023 15:30:32 +0000
+ id 1quwsy-007FvO-Bl for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 23 Oct 2023 15:30:33 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 6F5B761BE2
+ by dfw.source.kernel.org (Postfix) with ESMTP id 58E1761B74
  for <linux-f2fs-devel@lists.sourceforge.net>;
  Mon, 23 Oct 2023 15:30:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1AC53C433CA;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 03951C433C8
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Mon, 23 Oct 2023 15:30:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1698075025;
- bh=Qr2qJ1m47DDdX9GbktKLz922kAXN4MXJALybWvMfpNE=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=IufPDlv7a+lFU6I5mBddw8bwm+roi+Fw+YghKAnnBSugnmaThqzqrqtqQ7ZNnOndx
- kDpJAXL0wHA4VHZ25YaWouXO6YDdALGa0ybnGYF6rivcE1wTqYxC1p8R3DN5/fo9UC
- 95VE+yrbjI/Xm6nP2UjovzXqfNRpEy5ei/UCP0qa+yZIsny9yO8WOpHv+TqYuIXrMR
- tYTnkoDzRfhLiCMz8Ud14VJp8HgrihRTK1gt7lDp9QTnubdwCT+LcUnuMAKmQJ99YU
- NdeRPCHA1yc+/ox0rWQXr7VSRb1EOHnkUqtIJTJud8dfd3n8/SVrKbd80HAghn8a1c
- IjIhsqc6xaXzQ==
+ bh=5dEPofQQX7kzjPvdB9cVusHecLomZgqPqqkeKIhJNYQ=;
+ h=Subject:From:Date:To:From;
+ b=KaNDLWFfmUFVZRC0dtaWFBjXmiCA33U2f8dsDcn9n8U1dmerMMMwP5qBX/93X6DN+
+ k2IKCZ14PP5MY3jXfGtUBz8a8Y+vRXiU4GCOUo4UbU3XFv9ScZLPwKS4lZ4Zk6wEOq
+ b4WelMElYnsxy/XBzumd8EwlF4KfZGRquSzJfmGaRZ5/MJ/Z96gDXZ2dNXoJKmg+Qg
+ fZT5nVaFDjJAKlqtwsUGG4xD4zCUurKH3vVy2tlFdAJ4bCVz3ZbrJrllCRFQpxIOzW
+ beAiL/zfib5kFGaSA6v6pt3I2EezMhyAmWkiU0CUZDZ/84cK1rAufol0Srvj3HBO5v
+ ZtZat0lY7EY4w==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- EBC00E4CC1C; Mon, 23 Oct 2023 15:30:24 +0000 (UTC)
+ DE194E4CC13 for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 23 Oct 2023 15:30:24 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <169807502496.26537.15638158417948699715.git-patchwork-notify@kernel.org>
+Message-Id: <169807502484.26537.4897695792131679719.git-patchwork-summary@kernel.org>
 Date: Mon, 23 Oct 2023 15:30:24 +0000
-References: <20231007074552.3170496-1-chao@kernel.org>
-In-Reply-To: <20231007074552.3170496-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1quwsw-0002HP-R8
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to initialize map.m_pblk in
- f2fs_precache_extents()
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1quwsy-007FvO-Bl
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,33 +81,78 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-On Sat,  7 Oct 2023 15:45:52 +0800 you wrote:
-> Otherwise, it may print random physical block address in tracepoint
-> of f2fs_map_blocks() as below:
-> 
-> f2fs_map_blocks: dev = (253,16), ino = 2297, file offset = 0, start blkaddr = 0xa356c421, len = 0x0, flags = 0
-> 
-> Fixes: c4020b2da4c9 ("f2fs: support F2FS_IOC_PRECACHE_EXTENTS")
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> 
-> [...]
+Patch: [f2fs-dev] f2fs: fix to initialize map.m_pblk in f2fs_precache_extents()
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=790886
+  Lore link: https://lore.kernel.org/r/20231007074552.3170496-1-chao@kernel.org
 
-Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to initialize map.m_pblk in f2fs_precache_extents()
-    https://git.kernel.org/jaegeuk/f2fs/c/8b07c1fb0f1a
+Patch: [f2fs-dev,V2] f2fs: fix error path of __f2fs_build_free_nids
+  Submitter: Zhiguo Niu <zhiguo.niu@unisoc.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=793507
+  Lore link: https://lore.kernel.org/r/1697455651-11124-1-git-send-email-zhiguo.niu@unisoc.com
 
-You are awesome, thank you!
+Patch: [f2fs-dev] f2fs: clean up zones when not successfully unmounted
+  Submitter: Daeho Jeong <daeho43@gmail.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=791910
+  Lore link: https://lore.kernel.org/r/20231010193628.2629168-1-daeho43@gmail.com
+
+Patch: [f2fs-dev] f2fs: let f2fs_precache_extents() traverses in file range
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=791616
+  Lore link: https://lore.kernel.org/r/20231010013459.115024-1-chao@kernel.org
+
+Patch: [f2fs-dev] f2fs: stop iterating f2fs_map_block if hole exists
+  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=789731
+  Lore link: https://lore.kernel.org/r/20231003225208.1936359-1-jaegeuk@kernel.org
+
+Patch: [f2fs-dev] f2fs: fix error handling of __get_node_page
+  Submitter: Zhiguo Niu <zhiguo.niu@unisoc.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=794205
+  Lore link: https://lore.kernel.org/r/1697611862-25239-1-git-send-email-zhiguo.niu@unisoc.com
+
+Patch: [f2fs-dev] f2fs: finish previous checkpoints before returning from remount
+  Submitter: Daeho Jeong <daeho43@gmail.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=795192
+  Lore link: https://lore.kernel.org/r/20231020163645.2852056-1-daeho43@gmail.com
+
+Patch: [f2fs-dev] f2fs: Clean up errors in segment.h
+  Submitter: KaiLong Wang <wangkailong@jari.cn>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=792864
+  Lore link: https://lore.kernel.org/r/1712b338.95b.18b27c8a5b6.Coremail.wangkailong@jari.cn
+
+Patch: Add 16K Support for f2fs
+  Submitter: Daniel Rosenberg <drosen@google.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=789420
+  Lore link: https://lore.kernel.org/r/20231002230935.169229-1-drosen@google.com
+
+Patch: [f2fs-dev] f2fs: do not return EFSCORRUPTED, but try to run online repair
+  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=794901
+  Lore link: https://lore.kernel.org/r/20231019225300.1846362-1-jaegeuk@kernel.org
+
+
+Total patches: 10
+
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
