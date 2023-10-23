@@ -4,71 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EEDB3C001E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Oct 2023 15:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 92817C25B41
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Oct 2023 15:30:46 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1quwtC-00077E-VR;
+	id 1quwtD-00077Z-CG;
 	Mon, 23 Oct 2023 15:30:45 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1quwt0-00076j-QE
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1quwt7-000775-I9
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 23 Oct 2023 15:30:34 +0000
+ Mon, 23 Oct 2023 15:30:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MeVU+FOeb0V6FcifivKgTCk+OtrpmImIzEQrN6Qfrx8=; b=VJ3CoaAbZYgfmCBR+FfOA0DL8P
- yYubSIgOiZ5hC9Zg8dZjBxPeqC2nz7ag1AhTtl53I2atxwKhmVGWOPEDF36iM3Wp5woLyz21HNuEx
- lpJCqELx8fTBKA7QHHISEAFqREP5BeG4GGwvzKkQ+dlr89lLYxu++394wMWbVI5IrRpw=;
+ bh=R+jLo7IfWYibxXrNCF2TESUzM9lzJUGhsAoisgf79CM=; b=fxyJDSOmeOfic8yPY16J8Qo7K/
+ oQcWg4vshUyEUSqJMRPQ+VlRmTHdB8HvKH7j5zGHxun0kZX5HhYK4KoDuOrMh6BNB/rDM4xxZfndD
+ z1lcxBTMrZcagmrY0+RYfezqLiXfD8UlVRZExcPENYl3wSR6XdpUG7Un+Iw17B3VqUQ8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MeVU+FOeb0V6FcifivKgTCk+OtrpmImIzEQrN6Qfrx8=; b=d9OQVqSdY3I9EOxtIKDMwasnWV
- 4Bi9B1RAjUrkdFdVWwNyMH3kjXHaQ1fhTMrDBXQiA3s3jSixN9F4Df3NMYHSVLoUnGSOVw0mireCe
- 6QaY34NjRdsJ8VnqcBkwVK4g7zYEyZvYyV8KULtiGuw0a++1OMcnPHdDUd3YIMIIOPzM=;
+ bh=R+jLo7IfWYibxXrNCF2TESUzM9lzJUGhsAoisgf79CM=; b=ej+EdzDh0r+DaQ6zR65A0+Hl0b
+ LxAsES8sKHO5gnOsYvhboRx98Qt+iNZcNpPC8stXYdpfgKcDcqJ6jp6jQrQK/knK/OyqHOaz4PeHq
+ pnsB6aPuJxsIW1IGsZxIbbE45bHrXbqAzpmQEEllMc1dDynO33vCeLTWGl49ycl6ECOY=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1quwsy-007FvU-Bl for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 23 Oct 2023 15:30:32 +0000
+ id 1quwt3-0002Hx-Nx for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 23 Oct 2023 15:30:38 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 1B2CC61E21;
+ by dfw.source.kernel.org (Postfix) with ESMTP id 50F9561DC5;
  Mon, 23 Oct 2023 15:30:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 49DD3C433A9;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4FE46C433AB;
  Mon, 23 Oct 2023 15:30:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1698075025;
- bh=iCTBRr0dsiu33PXdRb3tJpIwc6vYGqE99DbJgnFKsiA=;
+ bh=OKWIKmca4kW63hOA9qQevvO3LIv+dqiLYJlGjPsbZbE=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=VIbm6w5oJQX5F0hlXID2dAkdV5UTAtYPxJdIjCJr1dXzn5BxNHV/Hi1nU4Iidhxgh
- XSIn5fSBRE9FkEAWfR98DUU4NRxz61V9odzGTMPtumPIG28XJhod7KXsYJhdW+Gvl9
- e1jAO2AoXB0GGBfkixq/S7m0q5IV+gc2vU9NQVOHVxer/xbsSGqS524wllIbYtwzi9
- zys+tkOPEhGeVULNMLfmtY6VmKgEh8/OAN6kZoO3T9fBYC49u9FpiB3VNJ1xfK7mJH
- 3k/hi2lKl0/fyFqMazkt2J8ghsK3XePnvSIBHtlVyHJ6IpSalVvYdcA6934bk2dPm9
- Y5Nahwr7ZIzAA==
+ b=g8B7PKtpL0Scf8QfuO9OGn5ygw3uIm7XzZl97Yoe42zP21xgVHm8hbbe6I/4UbDvg
+ v3S+ldLjWaqgP27EGKbtXwmQDeDoXqwgTg9flJx41VgPG0OLhY7ewiiFg/P9IosP0b
+ /RtDY81G0jyk3yQ0FD4xYrXmfqE20wTBAuiesuVxgLRjN93LpoPLEy2zLxZP9JmUHu
+ Ea3OZ9hOuMkv/3Tr02mXDaYI8Jab+W9hvRNjEbXTffGgMN5qfS7KzmbqDXpyqH+G6P
+ w+CPYRnpjbkaQR7VpI7w42n11oMQ5yuqIt8D1ShDViYEIxvyDE0rZV45GxhrhFlgxh
+ RrloaKs36azeA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 26312C595CE; Mon, 23 Oct 2023 15:30:25 +0000 (UTC)
+ 33E20E4CC1C; Mon, 23 Oct 2023 15:30:25 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <169807502515.26537.16625521816473138159.git-patchwork-notify@kernel.org>
+Message-Id: <169807502520.26537.15643252943037065209.git-patchwork-notify@kernel.org>
 Date: Mon, 23 Oct 2023 15:30:25 +0000
-References: <20231020163645.2852056-1-daeho43@gmail.com>
-In-Reply-To: <20231020163645.2852056-1-daeho43@gmail.com>
-To: Daeho Jeong <daeho43@gmail.com>
-X-Headers-End: 1quwsy-007FvU-Bl
-Subject: Re: [f2fs-dev] [PATCH] f2fs: finish previous checkpoints before
- returning from remount
+References: <20231002230935.169229-1-drosen@google.com>
+In-Reply-To: <20231002230935.169229-1-drosen@google.com>
+To: Daniel Rosenberg <drosen@google.com>
+X-Headers-End: 1quwt3-0002Hx-Nx
+Subject: Re: [f2fs-dev] [PATCH v2 0/1] Add 16K Support for f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,8 +79,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: daehojeong@google.com, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -91,19 +90,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Fri, 20 Oct 2023 09:36:45 -0700 you wrote:
-> From: Daeho Jeong <daehojeong@google.com>
+On Mon,  2 Oct 2023 16:09:34 -0700 you wrote:
+> F2fs filesystems currently have two large restrictions around block size.
+> The block size must equal the page size, and the block size must be 4096.
 > 
-> Flush remaining checkpoint requests at the end of remount, since a new
-> checkpoint would be triggered while remount and we need to take care of
-> it before returning from remount, in order to avoid the below race
-> condition.
+> The following patch, along with the associated f2fs-tools patch set, relax the
+> latter restriction, allowing you to use 16K block size f2fs on a 16K page size
+> system. It does not allow mounting 4K block size f2fs on a 16k page system.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: finish previous checkpoints before returning from remount
-    https://git.kernel.org/jaegeuk/f2fs/c/1e7bef5f90ed
+  - [f2fs-dev,v2,1/1] f2fs: Support Block Size == Page Size
+    https://git.kernel.org/jaegeuk/f2fs/c/d7e9a9037de2
 
 You are awesome, thank you!
 -- 
