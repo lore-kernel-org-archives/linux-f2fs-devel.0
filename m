@@ -4,67 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A9547C54FB9
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Nov 2023 06:26:20 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8B01EC47071
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Nov 2023 06:26:23 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1r3VpV-0004v5-8Z;
-	Thu, 16 Nov 2023 06:26:20 +0000
+	id 1r3VpV-000085-26;
+	Thu, 16 Nov 2023 06:26:21 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1r3VpL-0004ux-8u
+ (envelope-from <chao@kernel.org>) id 1r3VpT-00007y-0G
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 16 Nov 2023 06:26:10 +0000
+ Thu, 16 Nov 2023 06:26:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=g1hZefIHY8SFwKkLVv2TQxgJr4q8W7A1nr2ia8yTO8Q=; b=EseMPVbCswoXhNHxUM4Vw8za3c
- UFbyskDtiFK7zsk34YvKu4PxahzMVkeoUmQ8pFokmUd+fl+Kv0dqgOjoi9IeiW0DGydKLIyxveu7Q
- hGoNBjd9r2iTAIB8m5OKBh3bySZpsnMfcxWeZZcvv9yVijkJW3dWkFAlE+/Hcmgyx/ZI=;
+ bh=5iXeEcEqiRYpmeSIt8aCITFPceGAZWzrZRvTG0xcYrI=; b=A5QXm2ls9Uog2bpSQQFq4NS3OD
+ zHljvDxaIbFvUj5Q06a045gtTd4q8+3BtvKic+ZXx1cCxTGsb7z4cWjlzFSwUJqtpQ+1pzVJUedRI
+ hiHJRxTYndDqvVyxvOUkkxWxzjlOu1bRrK6vjgFBmpPYGoqIILSOCWX2qGEVyBxS5P0E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=g1hZefIHY8SFwKkLVv2TQxgJr4q8W7A1nr2ia8yTO8Q=; b=L
- N+ggidB0kJJqpsXrol1bw/8PVccNDHFgOuJAMw2mOXLz+3i79Y14e4nFK8hA56ig3uxeUftQDeWiW
- uuS/pRAnRS2wbMvLbl5n165pcLid+tYuOA3NuLQile4VPB04ArFHndcCYtDPeXV5YFDx73WNYIkUo
- KAYw3dq6odTQ3wnA=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=5iXeEcEqiRYpmeSIt8aCITFPceGAZWzrZRvTG0xcYrI=; b=gp1s116E29H219FTY8g+0AVIKZ
+ Q/zupuJ0S1KazUe950Dm1bFzTrjWA0XCVTNKtLDrsyF2/NYJ2gqBl0MJ86Bt9E+IQ//hgWIA18VIV
+ LV4xXy7lmuX8gCXQWkQWimTFBxq8wYg7yOCxU7epTW8WDd0vE0xAxE3C4hiPOT9sextM=;
 Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1r3VpJ-0077Dl-K5 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 16 Nov 2023 06:26:10 +0000
+ id 1r3VpN-0004aq-Mr for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 16 Nov 2023 06:26:19 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by ams.source.kernel.org (Postfix) with ESMTP id 5B382B81C85
+ by ams.source.kernel.org (Postfix) with ESMTP id 0A6AAB81C8A
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 16 Nov 2023 06:26:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A5B1C433C7;
- Thu, 16 Nov 2023 06:26:01 +0000 (UTC)
+ Thu, 16 Nov 2023 06:26:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E298C433CA;
+ Thu, 16 Nov 2023 06:26:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1700115962;
- bh=LdQ7fpYx4XjHDzsyZXb0qCihyPciooXY4TAlO70WFe0=;
- h=From:To:Cc:Subject:Date:From;
- b=tjzg/XJu3pN7sLj7482nvRPWD4ZfXv+y3cwgmIn6dzesDklcub5lzV2vPAqSnq+xi
- 5sZ7lQgMTzc2xmxBS6TyyrrJiYgw14NCfohsaxtFcZyGBdtI2aepFCjc6SiL1R5AWa
- 7qSuKpJq3NNgR4vN4xPVMO2APRWkFgIiSBIrB0vXvcKmhfTw/bwSbELJZgnigeMgtH
- ojsdDCKgTnsOmXziWm7yNe61anSBtCITcLPKy1/W1jbUrXpqBaA6KMid+xG/03Gg7S
- vcvqH0+aXghk7vYHW3L9C9998PKLak/kDOGlwGBodDMS4ztHxM7QyZ4VgE36uIgXuP
- JognBF4pI0rWw==
+ s=k20201202; t=1700115966;
+ bh=4ui5+7aVz7Gqv0sQoth9MwnoQqqjL6flt9PtV4MBJnY=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=jHDeTQZSCIyaqUr9vYjCrR938zf9P6Ll63wLDGPERCA0VvpwEVjIIG0g0icc4cZLO
+ TTnT/WcHrP2GHjvkhHL+gPcvgoyuuVypIAHkfs4Sj5R1afufTAaJ1rxCgIfAH9oOBq
+ PJCzQdFVSDGtt9mHy59T4+sLSw1pa+CAqjwXze80vBsBJ1pwUjaO5BEDxp3Cje+UXk
+ wYHj0HcvrNTY7iPM8CbPqNQTu59+WLXrvsVoyqmFMnVNVBGKdcS86byQg1img9iYd0
+ NZmqmjR9LhTa/lcfhJ3NbXUgZPUkuKPOsDIqhRC9Le8sCPORXc+2MGRMOlyGJOVedu
+ Lkc9Lbou9tu7A==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Thu, 16 Nov 2023 14:25:54 +0800
-Message-Id: <20231116062556.2451839-1-chao@kernel.org>
+Date: Thu, 16 Nov 2023 14:25:56 +0800
+Message-Id: <20231116062556.2451839-3-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20231116062556.2451839-1-chao@kernel.org>
+References: <20231116062556.2451839-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1r3VpJ-0077Dl-K5
-Subject: [f2fs-dev] [PATCH 1/3] f2fs: clean up w/ dotdot_name
+X-Headers-End: 1r3VpN-0004aq-Mr
+Subject: [f2fs-dev] [PATCH 3/3] f2fs: fix to check return value of
+ f2fs_reserve_new_block()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,41 +84,61 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Just cleanup, no logic changes.
+Let's check return value of f2fs_reserve_new_block() in do_recover_data()
+rather than letting it fails silently.
+
+Also refactoring check condition on return value of f2fs_reserve_new_block()
+as below:
+- trigger f2fs_bug_on() only for ENOSPC case;
+- use do-while statement to avoid redundant codes;
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/namei.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/f2fs/recovery.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index d0053b0284d8..a9360ee02da1 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -459,7 +459,6 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
- 	struct qstr dot = QSTR_INIT(".", 1);
--	struct qstr dotdot = QSTR_INIT("..", 2);
- 	struct f2fs_dir_entry *de;
- 	struct page *page;
- 	int err = 0;
-@@ -497,13 +496,13 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
- 			goto out;
- 	}
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index b56d0f1078a7..16415c770b45 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -712,7 +712,16 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		 */
+ 		if (dest == NEW_ADDR) {
+ 			f2fs_truncate_data_blocks_range(&dn, 1);
+-			f2fs_reserve_new_block(&dn);
++			do {
++				err = f2fs_reserve_new_block(&dn);
++				if (err == -ENOSPC) {
++					f2fs_bug_on(sbi, 1);
++					break;
++				}
++			} while (err &&
++				IS_ENABLED(CONFIG_F2FS_FAULT_INJECTION));
++			if (err)
++				goto err;
+ 			continue;
+ 		}
  
--	de = f2fs_find_entry(dir, &dotdot, &page);
-+	de = f2fs_find_entry(dir, &dotdot_name, &page);
- 	if (de)
- 		f2fs_put_page(page, 0);
- 	else if (IS_ERR(page))
- 		err = PTR_ERR(page);
- 	else
--		err = f2fs_do_add_link(dir, &dotdot, NULL, pino, S_IFDIR);
-+		err = f2fs_do_add_link(dir, &dotdot_name, NULL, pino, S_IFDIR);
- out:
- 	if (!err)
- 		clear_inode_flag(dir, FI_INLINE_DOTS);
+@@ -720,12 +729,14 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		if (f2fs_is_valid_blkaddr(sbi, dest, META_POR)) {
+ 
+ 			if (src == NULL_ADDR) {
+-				err = f2fs_reserve_new_block(&dn);
+-				while (err &&
+-				       IS_ENABLED(CONFIG_F2FS_FAULT_INJECTION))
++				do {
+ 					err = f2fs_reserve_new_block(&dn);
+-				/* We should not get -ENOSPC */
+-				f2fs_bug_on(sbi, err);
++					if (err == -ENOSPC) {
++						f2fs_bug_on(sbi, 1);
++						break;
++					}
++				} while (err &&
++					IS_ENABLED(CONFIG_F2FS_FAULT_INJECTION));
+ 				if (err)
+ 					goto err;
+ 			}
 -- 
 2.40.1
 
