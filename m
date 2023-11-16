@@ -4,72 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D5D03C54FB9
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Nov 2023 14:57:16 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E6335C197A0
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Nov 2023 06:26:18 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1r3HKO-0002KF-JI;
-	Wed, 15 Nov 2023 14:57:15 +0000
+	id 1r3VpP-0005Mz-Qp;
+	Thu, 16 Nov 2023 06:26:15 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1r3HKN-0002K8-7V
+ (envelope-from <chao@kernel.org>) id 1r3VpK-0005Ms-Qb
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 15 Nov 2023 14:57:14 +0000
+ Thu, 16 Nov 2023 06:26:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=92MEAvYvaC8YEtZiHNidnapRwPjVt4JSanYNKB9xBoI=; b=nQZp2XNlix8ysEKEH680jNDb1N
- Xo59udeJZrwab+kz1weakuD6SHboIvi6Va2FXnkzbRVk5bBucMpvi6E4c6xltYcB8TsiMXIuAx1p2
- OLwu5iScfzT2S+GO7Zrla19Iu0Ia5bGFkTztXGll1LcVlmdNa+gJ+QP0zMO7XjMBlzpM=;
+ bh=Iirx9aZ1jQB9H5aHSLV9cAcubZwnik+/CrJ/R53I8XA=; b=IV8FDQiDIV7/cyIDL2ZTwOaLkI
+ 7R4xLbyRI0ZWTfJG6e8fVQ9k8LHQMmRgdtV2f4THkqbX+Ogh3poewSaujALCuJ8WP7P7a1Ys9IbVt
+ qR+MBRHpsOVnhCkVmW6is9WXXNLbU8wY5bzlvU9aF/kAr1Vjrst3vzZcvurNoYIPCXUY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=92MEAvYvaC8YEtZiHNidnapRwPjVt4JSanYNKB9xBoI=; b=J4ZOTM9SCSmV+e1By1nYf333MF
- bUtbpCPZ4aFPxzX1bPWYON+flXlVfHQdWmcuLGRLTjySALttejUFRnax+J2Hq4YeCvsZ1zcCX6RWU
- s9u1g2UzEkITWODPlMW8VWLwJb1AYwZ/5x7Et5FbrAiD4kdYBULmcbYp2dCy0PkM36jU=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=Iirx9aZ1jQB9H5aHSLV9cAcubZwnik+/CrJ/R53I8XA=; b=FlBv7eqfnT4Z+fcu5e3CqSL4G7
+ zk5JfGqunBJBRx+hmVJ/ewWR13hmRdfJDUP2Y+egE0mP593hBLVCGPAz5SAQd6zKc+niQSLZWOLcw
+ tKZ3JfMX0F5CHocFte2i0jSOgIXT3QtOigzfwP7JZb1ZaMDMnvqyFb26sgeRmCTpJPWM=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1r3HKH-006Z8i-Lf for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 15 Nov 2023 14:57:14 +0000
+ id 1r3VpK-0077Dm-AN for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 16 Nov 2023 06:26:10 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id D6124CE1D73;
- Wed, 15 Nov 2023 14:57:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D2EEC433C8;
- Wed, 15 Nov 2023 14:56:58 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id E3E186188D
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 16 Nov 2023 06:26:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 458B6C433C9;
+ Thu, 16 Nov 2023 06:26:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1700060222;
- bh=DbC/RlTt46G/vcvasCDLPs0jylhf+xjP8xII2Uu+weU=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=dQvpWSOrDccdTNU5lSrfOvUM+KXPgaQi7dD9rDxVqWyXDm8+3FCwtvWBBnkhGd7tb
- E9ys82d1mwVUOpFIU0jD1fAoD9Rfb8zCq8ASsam/ughEJcjPmZ4JidyDpNkFFn0/Tu
- PvC/2GXhU+Js1Rwy9KBlBSvT84+nXc28Hh9tgctemyHC/+wif8Sxx0Tv6yScPwyXbv
- XpI9Dr/3r6TNrAIm/7drMX2N+Pw4KJqrT65mBlvB8UMmUUq5gO4Yw/t/CSn07UEhZK
- tKcmoOGalwISoNvbKitf/4WuU51De92NLjLk3NcIKExqSibc3RU1s0GP3kxeRyS8Wg
- hjURTfRCxS/kA==
-Message-ID: <f2d4f2d9-ab6a-de4f-e950-a37502be01d0@kernel.org>
-Date: Wed, 15 Nov 2023 22:56:57 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20231027154935.1384979-1-daeho43@gmail.com>
+ s=k20201202; t=1700115964;
+ bh=6rwiQ68wHhdsE6vY/Y31nFsyaYQ2rLgqDwN+2WxChEs=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=XIuPwVvk8OAAiglh4l+yrHMbH+U1E4tlFGpj6dqWYdv6FlT3GEmLUnBx6u5qaJL8e
+ 8iiU1S03QdgwgH67BEn0CunhA2O/7XGyO+TJLDVXrS0Ql3NY3m1Cof+SADxmK+nv5d
+ emPwLN/XIwrNwUkAvFbD9iuFt+Ki6Ba2hjNFIZ9cHqYYj/NKt1EafCbhU1bK5soqrD
+ Ea2mNSi+m8H8h4HhaA7ikBwdDtfafQXtAvValMHkzvU3shabOifFaNoJHC+9wZ/0HY
+ be8J/dOOZP8Db6Y33jBnwR5mM/h0WUtCm6gc5qZaHorKuzRJrCbxpj4bW6Z7b7T7G/
+ Gc2skX6crDrYQ==
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20231027154935.1384979-1-daeho43@gmail.com>
-X-Headers-End: 1r3HKH-006Z8i-Lf
-Subject: Re: [f2fs-dev] [PATCH] f2fs-tools: do not put CP_UMOUNT_FLAG for
- roll forward recovery
+To: jaegeuk@kernel.org
+Date: Thu, 16 Nov 2023 14:25:55 +0800
+Message-Id: <20231116062556.2451839-2-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20231116062556.2451839-1-chao@kernel.org>
+References: <20231116062556.2451839-1-chao@kernel.org>
+MIME-Version: 1.0
+X-Headers-End: 1r3VpK-0077Dm-AN
+Subject: [f2fs-dev] [PATCH 2/3] f2fs: use shared inode lock during
+ f2fs_fiemap()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,82 +79,44 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2023/10/27 23:49, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> If we write CP_UMOUNT_FLAG in fsck, f2fs will not do foll forward recovery
+f2fs_fiemap() will only traverse metadata of inode, let's use shared
+inode lock for it to avoid unnecessary race on inode lock.
 
-:s/foll/roll
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/data.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Otherwise, it looks good to me.
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 4e42b5f24deb..42f0f6184f73 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1992,7 +1992,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	if (ret)
+ 		return ret;
+ 
+-	inode_lock(inode);
++	inode_lock_shared(inode);
+ 
+ 	maxbytes = max_file_blocks(inode) << F2FS_BLKSIZE_BITS;
+ 	if (start > maxbytes) {
+@@ -2112,7 +2112,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	if (ret == 1)
+ 		ret = 0;
+ 
+-	inode_unlock(inode);
++	inode_unlock_shared(inode);
+ 	return ret;
+ }
+ 
+-- 
+2.40.1
 
-Reviewed-by: Chao Yu <chao@kernel.org>
-
-Thanks,
-
-> even though it has to do.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> ---
->   fsck/fsck.c       | 3 ++-
->   fsck/mount.c      | 5 ++++-
->   include/f2fs_fs.h | 1 +
->   3 files changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fsck/fsck.c b/fsck/fsck.c
-> index f1a55db..126458c 100644
-> --- a/fsck/fsck.c
-> +++ b/fsck/fsck.c
-> @@ -2526,7 +2526,8 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
->   	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
->   	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
->   	unsigned long long cp_blk_no;
-> -	u32 flags = c.alloc_failed ? CP_FSCK_FLAG: CP_UMOUNT_FLAG;
-> +	u32 flags = c.alloc_failed ? CP_FSCK_FLAG :
-> +			(c.roll_forward ? 0 : CP_UMOUNT_FLAG);
->   	block_t orphan_blks = 0;
->   	block_t cp_blocks;
->   	u32 i;
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index 3b02d73..805671c 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -3218,7 +3218,7 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
->   	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
->   	block_t orphan_blks = 0;
->   	unsigned long long cp_blk_no;
-> -	u32 flags = CP_UMOUNT_FLAG;
-> +	u32 flags = c.roll_forward ? 0 : CP_UMOUNT_FLAG;
->   	int i, ret;
->   	uint32_t crc = 0;
->   
-> @@ -3837,6 +3837,9 @@ static int record_fsync_data(struct f2fs_sb_info *sbi)
->   	if (ret)
->   		goto out;
->   
-> +	if (c.func == FSCK && inode_list.next != &inode_list)
-> +		c.roll_forward = 1;
-> +
->   	ret = late_build_segment_manager(sbi);
->   	if (ret < 0) {
->   		ERR_MSG("late_build_segment_manager failed\n");
-> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-> index abd5abf..faa5d6b 100644
-> --- a/include/f2fs_fs.h
-> +++ b/include/f2fs_fs.h
-> @@ -1513,6 +1513,7 @@ struct f2fs_configuration {
->   	unsigned int feature;			/* defined features */
->   	unsigned int quota_bits;	/* quota bits */
->   	time_t fixed_time;
-> +	int roll_forward;
->   
->   	/* mkfs parameters */
->   	int fake_seed;
 
 
 _______________________________________________
