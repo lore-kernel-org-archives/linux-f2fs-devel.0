@@ -4,87 +4,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E873BC072A2
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 18 Nov 2023 02:35:09 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2DD75C2BB3F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 18 Nov 2023 04:35:28 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1r4BAq-0001o0-Mn;
-	Sat, 18 Nov 2023 02:35:08 +0000
+	id 1r4D3G-0007aH-IT;
+	Sat, 18 Nov 2023 04:35:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <3ZxtYZQYKADAPdaeQZSaaSXQ.OaY@flex--drosen.bounces.google.com>)
- id 1r4BAn-0001ns-1O for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 18 Nov 2023 02:35:05 +0000
+ (envelope-from <3bRtYZQYKADYVjgkWfYggYdW.Uge@flex--drosen.bounces.google.com>)
+ id 1r4D3F-0007aB-6C for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 18 Nov 2023 04:35:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=OudNb3vyGckkWCRqMA6EKuyQcCNMJz/Wh4Wc36ODnxs=; b=LrSdeoV0IooSzjQ1cOP1UDvMQX
- ID29cUHmIcPaKuE4W0LmfYE61kwPhc6HetJdK7DhveKDU6vtEGHniMI2JRcwyuR/SE14uQeWmCw2Z
- MVcnM40D511HXknfQXwgLiFGdZOgKIWJhiPWJxmXrRgbWi1/HDKbL/NP/M6oL00k9vFU=;
+ References:Mime-Version:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=r3da8+JleDBVNKPrVjm2nlHhjcj6Q9VBbqhYZ08KC7w=; b=WacIU7aIaDZvRVLZHpMp/IxEP2
+ mF/7YRynfKgfvbyF8tvHLWODRzUGAlRahkoRLDcZd8xORf/fOZUALOzZzKzFP6/q6HKzz0B8C96b6
+ HIkE125FEt7bYIN4HmgoGUFanneNsTch6JDWgrMwySpsoMyXyE/NsMotY81zGXmSBZ5A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=OudNb3vyGckkWCRqMA6EKuyQcCNMJz/Wh4Wc36ODnxs=; b=D
- 4nuoyPtWzswqP2yXbscxVm8z+dtRDD/4GGeNgQf+wmNctnv0VucnXCEh/yL2XN+8UwRWUXA5+aEuy
- sICd/bNFIYYzzmv/CYiIWxy96mbf0vJIsf4tR88f8DtKU5wXvNDx1NHwt5QJtauwjefjfx7cLpjem
- c7XQM3QMemoHy7gs=;
-Received: from mail-qv1-f74.google.com ([209.85.219.74])
+ h=Content-Type:Cc:To:From:Subject:Message-ID:References:Mime-Version:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=r3da8+JleDBVNKPrVjm2nlHhjcj6Q9VBbqhYZ08KC7w=; b=JoXtxOBZLEqGMPLxHVwMLMPf2a
+ Nz9+NDkPDodEETOEZo9s/xsFP+LLYOpUvS4KOnzZc5xaz3iqNmHfLmpBEFQT8+YRPRV1Tnennzj5N
+ 7EhWvjT0JfGBJwsHl8LsW6XQUOuyXFa6FX/blmVEtYIBwej5Gyo0aqngTNVhaRtKihNc=;
+Received: from mail-oi1-f202.google.com ([209.85.167.202])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1r4BAk-0090U6-B4 for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 18 Nov 2023 02:35:04 +0000
-Received: by mail-qv1-f74.google.com with SMTP id
- 6a1803df08f44-677f3c0bb78so1210096d6.1
+ id 1r4D3B-0093mk-2m for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 18 Nov 2023 04:35:25 +0000
+Received: by mail-oi1-f202.google.com with SMTP id
+ 5614622812f47-3b6d023424bso3111270b6e.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 17 Nov 2023 18:35:02 -0800 (PST)
+ Fri, 17 Nov 2023 20:35:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1700274896; x=1700879696;
+ d=google.com; s=20230601; t=1700282115; x=1700886915;
  darn=lists.sourceforge.net; 
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=OudNb3vyGckkWCRqMA6EKuyQcCNMJz/Wh4Wc36ODnxs=;
- b=ZgciIeI2TF8Vh4Wa+Q30bArJLtnuBroeN+Z7feLQRNl+qJTy2ExjC02/1qvkIiW7rg
- pXUwUCyPnV+c5oahnxTEhrmX4aCrj9f6AJ4tNX/ldv4hZx+EynpVAc+Z5k0jjMEkVXJb
- PHEJNnXkbYMChZi0zNZq7DsEYFm/82XvA9onqQw/iQPSBIrKKZBwKHjv8UyZ384ChQ98
- y0zBrk7N+hXVV56paOhFkkEgIP2sgeFhX1HrPhuGQXdDn8t6qVkl/rlIK8N0egcbrpTI
- R9+GfUzt4DV+No/onkc2JEWdv55LD+piBIkGhl/a8OHsIdJYS1I1NTw0xmuiSIUdGCJP
- WTOQ==
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=r3da8+JleDBVNKPrVjm2nlHhjcj6Q9VBbqhYZ08KC7w=;
+ b=WcDk1F+eSv0hP7tQrdBo5IWrZwSsvV0W5pGahKzOP0hGPqYfi80Nuw40r54zuGRabZ
+ /6ZikVpnzUtzPVKhbyjHj2158+lNuSiWhFjY47a8WlKNJ7d2LPX2LudExtLXFmRL2Dm3
+ cKFWccwuIobgvOASuOIhjkm9RZw3xnVYxjChXF+lYZQsiyB7srwlr9y273DmWQDv1UiQ
+ 747lNb2tAFLs/zFDdpCmU3iiR1ATP16o3Q+IfVHEUF5LJSfiPm8piPAhYY884Gn8ifxQ
+ yi2SSuKeKU52e/1+OkBgHu+sa//gjTdA3XMZKGmXzFPX8NRXmi11RqjZiWJSBop2T3i3
+ VhJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1700274896; x=1700879696;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=OudNb3vyGckkWCRqMA6EKuyQcCNMJz/Wh4Wc36ODnxs=;
- b=JKplP/4HyUx28vhX4f61w9/zXb3FNF1s2RpFpMWMgJp3ZYy2S+Q6q6LV2lhzqfdYn2
- 0BRT+UNbMdfMdvnIMSXP8wDkOtrheEpqWrs48ekwbkZqq/aPs8H/U1Z5z2AKc0KqGkpN
- NJHm+reRk3aYZ9ew4Q9uJe1Jemgx842o0NXvD8S6lfyFfRQ5ohG6HwaOfXrABPQJI3of
- /YQKVboAkPpKPcwZDy/iWJVx61gJMjVfvoQGaRTWKOgc4uZtkB86oadB/Nneocw0SXsa
- P6ZxfCfoJq2MNS+/INCjRSwpnzljiMN7AIYlmUMtm04HUuiXr7qtRb3XWDNGq5Jy5ykz
- RRPA==
-X-Gm-Message-State: AOJu0Yw810/5GoyXOL0dgIcnEK0hJdcY15iwUo+vipSMkO8CkOWRy2KA
- V37IubGE9KJ4gd5MXPH3zpygBtoTz5LlNn/X9oYEV8UK5na6Te70a29ifyCfX+1enQxgzJj9IxM
- tN+UP/EPks1QVh6o2+LJjDadlG5LkU5npmyohgskLhw/kMTVbwYyfqCBDX6YgDKvKDXPwvu/Rir
- KBlGtIzBs=
-X-Google-Smtp-Source: AGHT+IGrEeqx3toQycaPHsn38coKr0R7r6LyWUyWlhDMawuih692Y05AWgISBP3+prgEVNjJladod362miE=
+ d=1e100.net; s=20230601; t=1700282115; x=1700886915;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=r3da8+JleDBVNKPrVjm2nlHhjcj6Q9VBbqhYZ08KC7w=;
+ b=bUJDeUocn+43Wsc5PlBESVZsJaYkEKAeDblMAIt3QLMZMHvkoY3tjfScui1VwgxqjS
+ wWNpKz2qbQjb4BUi2dL2K25K+lXFvjnlJnJlmJKKNVuFB+qOPgGYEu7TzX1+/gxdd211
+ twSrrZtKx+IFMHQgrVVkgbvqAM8M1qXyvJlYFZYPbQcRe22T+PS9J17/xm+bM2aSIAMp
+ C2ZGp/S1eo2YT5RomppCNtqtGjRZhrFARvzQ6bU+dQFXOsABvvk2Ss9mdHLtOVjX6836
+ lfZ56g5nEuPw+A+FAOUjOb5nz8vE9OXqfT7lSR8p2GJacW8QBR/nSh9gtZ4Pl4bGpq9A
+ ufew==
+X-Gm-Message-State: AOJu0YxmDutB7eGp9VNfg5tdaIf9k6Uq1mP+k6zzkvfgad5pNtLCjNId
+ v+sQIsb9BHZf8RW+BW9CAM+tIzuJxp8+tlb8vm1Bg0u16SdOnkuPRq8QMW8k7KqoLvMAZCpFmbF
+ dKjvSZmVssBPN5lKR0qLOtqmrIkd5AhvqH7UzQ1CVAOzTCZi9dG/Yr0N8zFQSxUSO01C593gj3b
+ napnmRNjE=
+X-Google-Smtp-Source: AGHT+IGv0DnQxx+hbyhUa6NznPuXS5TCHEb2adceWiDGvi+Y9WB0vkYKGteYqU3RhS8aoZBWlrEz77FYc5I=
 X-Received: from drosen.mtv.corp.google.com
  ([2620:15c:211:201:5334:1f35:bdef:529b])
- (user=drosen job=sendgmr) by 2002:a25:d70f:0:b0:db3:5b0a:f274 with SMTP id
- o15-20020a25d70f000000b00db35b0af274mr31632ybg.0.1700272999249; Fri, 17 Nov
- 2023 18:03:19 -0800 (PST)
-Date: Fri, 17 Nov 2023 18:03:06 -0800
+ (user=drosen job=sendgmr) by 2002:a0d:dbc6:0:b0:59b:f138:c845 with SMTP id
+ d189-20020a0ddbc6000000b0059bf138c845mr39537ywe.2.1700273005790; Fri, 17 Nov
+ 2023 18:03:25 -0800 (PST)
+Date: Fri, 17 Nov 2023 18:03:09 -0800
+In-Reply-To: <20231118020309.1894531-1-drosen@google.com>
 Mime-Version: 1.0
+References: <20231118020309.1894531-1-drosen@google.com>
 X-Mailer: git-send-email 2.43.0.rc0.421.g78406f8d94-goog
-Message-ID: <20231118020309.1894531-1-drosen@google.com>
+Message-ID: <20231118020309.1894531-4-drosen@google.com>
 To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1r4BAk-0090U6-B4
-Subject: [f2fs-dev] [PATCH 0/3] F2FS Tools 16K Bug Fixes
+X-Headers-End: 1r4D3B-0093mk-2m
+Subject: [f2fs-dev] [PATCH 3/3] f2fs-tools: Fix dqb_curspace to reflect
+ blocksize
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -105,25 +108,30 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-I missed a couple things in my previous patch set. This fixes Quotas,
-the -c cache option, and a debug print. The issues can be seen by running:
+The initial sizes for dqblk.dqb_curspace should reflect the block size,
+as that's the minimal filesize.
 
-truncate test.dat --size 256M
-make_f2fs -g android -O project_quota,extra_attr -w 16384 -b 16384 test.dat 16384
-fsck.f2fs -f -c 10000 --debug-cache test.dat
-
-Daniel Rosenberg (3):
-  f2fs-tools: Fix debug size print
-  f2fs-tools: Wait for Block Size to initialize Cache
-  f2fs-tools: Fix dqb_curspace to reflect blocksize
-
- fsck/fsck.c        | 3 ++-
- fsck/mount.c       | 5 +++++
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+---
  mkfs/f2fs_format.c | 4 ++--
- 3 files changed, 9 insertions(+), 3 deletions(-)
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-base-commit: f71fbf8f3dee4eefdddac1abaaf4ae76bb9a48b3
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index f2840c8..b46bc15 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -1362,9 +1362,9 @@ static int f2fs_write_default_quota(int qtype, __le32 raw_id)
+ 	dqblk.dqb_bhardlimit = cpu_to_le64(0);
+ 	dqblk.dqb_bsoftlimit = cpu_to_le64(0);
+ 	if (c.lpf_ino)
+-		dqblk.dqb_curspace = cpu_to_le64(8192);
++		dqblk.dqb_curspace = cpu_to_le64(F2FS_BLKSIZE * 2);
+ 	else
+-		dqblk.dqb_curspace = cpu_to_le64(4096);
++		dqblk.dqb_curspace = cpu_to_le64(F2FS_BLKSIZE);
+ 	dqblk.dqb_btime = cpu_to_le64(0);
+ 	dqblk.dqb_itime = cpu_to_le64(0);
+ 
 -- 
 2.43.0.rc0.421.g78406f8d94-goog
 
