@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 43A74C61D85
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 63BF1C61D99
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Nov 2023 22:39:49 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1r5ZPH-000364-Ru;
+	id 1r5ZPK-0007c5-8n;
 	Tue, 21 Nov 2023 22:39:48 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1r5ZPF-00035y-77
+ (envelope-from <ebiggers@kernel.org>) id 1r5ZPH-0007bn-1b
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 21 Nov 2023 22:39:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=54qNRG1MA7StMTbbY3j7i2EWu4W3pJYuYtzAhwJgf2k=; b=SivXNTV8d7V+zETlACn1/3TEoo
- Jy5RHbvO0Gz1m5rwEt9MSQ5fEpy5gNJxXbtM22PEW9jpTMNeB5Dz3ImFwBMYjuboiYc0Vwr4arRc8
- muFAyo09pKpMYa+sTvAtMKFK9ycV3CGODtMtmk+tZ106uFvHA7OWZpiV7ejctw38GLRk=;
+ bh=mqLFPZR1LPtWg/nVwC6DAX3Nhoma2+TW04u1JpDE9lQ=; b=HMqWFoVreerVx2g0h7qvErF1Q7
+ v5HTEx42Il2O4uWJkMelF87nwJQ4f8dYIt8R4VrBAeZYNhrQ4TG1LE9RrPfN5V8PsEnICpjIYsyhG
+ BDw3W60sIdhnhidMK/QacsLFPNgWASQYei/Kg6ACuVi5zddyxqEJK2FD5bKZ48Sq8kCg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,40 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=54qNRG1MA7StMTbbY3j7i2EWu4W3pJYuYtzAhwJgf2k=; b=UfqXenNJZeNfC69tlm4TBWVuhP
- 3ALRndybqm0s+bhcRaM6+8iD4AcI4Nc/a6NggHe4LOKutuzwElGJE0/Khs2mDLWbikb2614dNvIFD
- aMVx5qXf6F+tb6ECKGWxQ9KWVU7Rb8sXoD+4o0/WSnAUZIUHDujeVzQ1HHNVTjJNLaSA=;
+ bh=mqLFPZR1LPtWg/nVwC6DAX3Nhoma2+TW04u1JpDE9lQ=; b=ASVaYWT0QRUhz4Fbxoyz/Q8dep
+ 0rh7KbThD7NdntZQ822O557mvpBHD2Qr8ZAaoSDZUsTd38ILu7FZFs+YEE6aU/WB0x1dMOrJpL24b
+ lLNTS1LQ+p9Ig1i6ryt/HVk8DjTBNlQb+xC/aSMF71JUZlicTaObbY0TRoYRTI5FN+I4=;
 Received: from sin.source.kernel.org ([145.40.73.55])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1r5ZPD-0006YD-LU for linux-f2fs-devel@lists.sourceforge.net;
+ id 1r5ZPE-00CIt4-Gr for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 21 Nov 2023 22:39:45 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 1DDCBCE1DD2;
- Tue, 21 Nov 2023 22:39:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 372DCC433CA;
+ by sin.source.kernel.org (Postfix) with ESMTP id 0910BCE1E60;
+ Tue, 21 Nov 2023 22:39:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE78CC4339A;
  Tue, 21 Nov 2023 22:39:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1700606376;
- bh=KtsSq5LYvPatFAAXEjl+Y4OaaAiq0o6mzQHlHZHSUC4=;
+ s=k20201202; t=1700606377;
+ bh=umCuFGN2fvdZ+2kf5o7EsnbD7X97WCaVkuR4lIaN3mI=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Pm0hdeERQdM86iFIoenPcFcCHMgeHmJ5ufw1PyLPxu3eurY+ylVFB3V7VF6CUIe3o
- dgBuXop3SNQ7eSXkgyl33LvcRTmsosZqpfm1Oq071kcquPsWmQ2VSLbpdXT9HCATOt
- IFqRGJlQQXjS0XvHw50LI+HZ70xqaZ7O4zcv/EutWn2keDZMoIh7H2iU37x8Bvb9PW
- 7mTg2WJEV0zRMbi5JcNw4ThThFDf0lMsYfOFHb/11z6QlZf+QSQQ1eikoIprv/YFbQ
- iJn8DNQXc8vygVj+20jAfHjkR1i1ybaM8X1ZA5H2ec/A+opn7I/hb0Qe30/5iKYmuD
- 13RLPhNS+yflg==
+ b=OZWBWzwcrEm26xDQ8TxD0Pk8ybINPhnrBWu3ilH4q/c+4hP8SkZv/XzEMw3pTYdj8
+ PGIeuI/gcG5SMi85/TUma9ccqq/teob0v8p9dfIfP8a4UgUKXDdtdJmWcZUPmFjFGS
+ UGGYugXbAhTRLnxpo/Tf/rj/f1K+oc2B6DBm7WykpaSFfnwobc9MGTyAOuZGkSF3nF
+ JSe26wy0TrSB9f0lRIr6JjfuZO5h8sSi7DCxF42QpoC9I0EzshGrsUUrqTaIizjq0E
+ hJMiCf9Mh9v0Sq0AGbkDWH10rosJt8ZPyqgnCOaoTLmJB6BSGfK0ftt2vuuaIui76T
+ P9myy1fNhtYXA==
 From: Eric Biggers <ebiggers@kernel.org>
 To: fstests@vger.kernel.org
-Date: Tue, 21 Nov 2023 14:39:07 -0800
-Message-ID: <20231121223909.4617-3-ebiggers@kernel.org>
+Date: Tue, 21 Nov 2023 14:39:09 -0800
+Message-ID: <20231121223909.4617-5-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.42.1
 In-Reply-To: <20231121223909.4617-1-ebiggers@kernel.org>
 References: <20231121223909.4617-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1r5ZPD-0006YD-LU
-Subject: [f2fs-dev] [PATCH v2 2/4] common/rc: fix _require_xfs_io_command
- with digits in argument
+X-Headers-End: 1r5ZPE-00CIt4-Gr
+Subject: [f2fs-dev] [PATCH v2 4/4] generic: add test for custom crypto data
+ unit size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,50 +86,79 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-'_require_xfs_io_command set_encpolicy -s' does not work as expected
-because the following in the output of 'xfs_io -c "help set_encpolicy"':
+Add a test that verifies the on-disk format of encrypted files that use
+a crypto data unit size that differs from the filesystem block size.
+This tests the functionality that was introduced in Linux 6.7 by kernel
+commit 5b1188847180 ("fscrypt: support crypto data unit size less than
+filesystem block size").
 
-     -s LOG2_DUSIZE -- log2 of data unit size
+This depends on the xfsprogs patch
+"xfs_io/encrypt: support specifying crypto data unit size"
+(https://lore.kernel.org/r/20231013062639.141468-1-ebiggers@kernel.org)
+which adds the '-s' option to the set_encpolicy command of xfs_io.
 
-... does not match the regex:
-
-    "^ -s ([a-zA-Z_]+ )?--"
-
-... because the 2 in the argument name LOG2_DUSIZE is not matched.  Fix
-the regex to support digits in the argument name.
+As usual, the test skips itself when any prerequisite isn't met.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- common/rc | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tests/generic/900     | 29 +++++++++++++++++++++++++++++
+ tests/generic/900.out | 11 +++++++++++
+ 2 files changed, 40 insertions(+)
+ create mode 100755 tests/generic/900
+ create mode 100644 tests/generic/900.out
 
-diff --git a/common/rc b/common/rc
-index cc92fe06..dab672d8 100644
---- a/common/rc
-+++ b/common/rc
-@@ -2719,21 +2719,21 @@ _require_xfs_io_command()
- 	echo $testio | grep -q "foreign file active" && \
- 		_notrun "xfs_io $command $param_checked not supported on $FSTYP"
- 	echo $testio | grep -q "Function not implemented" && \
- 		_notrun "xfs_io $command $param_checked support is missing (missing syscall?)"
- 	echo $testio | grep -q "unknown flag" && \
- 		_notrun "xfs_io $command $param_checked support is missing (unknown flag)"
- 
- 	[ -n "$param" ] || return
- 
- 	if [ -z "$param_checked" ]; then
--		$XFS_IO_PROG -c "help $command" | grep -E -q "^ $param ([a-zA-Z_]+ )?--" || \
-+		$XFS_IO_PROG -c "help $command" | grep -E -q "^ $param ([a-zA-Z0-9_]+ )?--" || \
- 			_notrun "xfs_io $command doesn't support $param"
- 	else
- 		# xfs_io could result in "command %c not supported" if it was
- 		# built on kernels not supporting pwritev2() calls
- 		echo $testio | grep -q "\(invalid option\|not supported\)" && \
- 			_notrun "xfs_io $command doesn't support $param"
- 	fi
- 
- 	# On XFS, ioctl(FSSETXATTR)(called by xfs_io -c "chattr") maskes off unsupported
- 	# or invalid flags silently so need to check these flags by extra ioctl(FSGETXATTR)
+diff --git a/tests/generic/900 b/tests/generic/900
+new file mode 100755
+index 00000000..8d1b5766
+--- /dev/null
++++ b/tests/generic/900
+@@ -0,0 +1,29 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright 2023 Google LLC
++#
++# FS QA Test No. generic/900
++#
++# Verify the on-disk format of encrypted files that use a crypto data unit size
++# that differs from the filesystem block size.  This tests the functionality
++# that was introduced in Linux 6.7 by kernel commit 5b1188847180
++# ("fscrypt: support crypto data unit size less than filesystem block size").
++#
++. ./common/preamble
++_begin_fstest auto quick encrypt
++
++. ./common/filter
++. ./common/encrypt
++
++_supported_fs generic
++
++# For now, just test 512-byte and 1024-byte data units.  Filesystems accept
++# power-of-2 sizes between 512 and the filesystem block size, inclusively.
++# Testing 512 and 1024 ensures this test will run for any FS block size >= 1024
++# (provided that the filesystem supports sub-block data units at all).
++_verify_ciphertext_for_encryption_policy AES-256-XTS AES-256-CTS-CBC v2 log2_dusize=9
++_verify_ciphertext_for_encryption_policy AES-256-XTS AES-256-CTS-CBC v2 log2_dusize=10
++
++# success, all done
++status=0
++exit
+diff --git a/tests/generic/900.out b/tests/generic/900.out
+new file mode 100644
+index 00000000..3259f08c
+--- /dev/null
++++ b/tests/generic/900.out
+@@ -0,0 +1,11 @@
++QA output created by 900
++
++Verifying ciphertext with parameters:
++	contents_encryption_mode: AES-256-XTS
++	filenames_encryption_mode: AES-256-CTS-CBC
++	options: v2 log2_dusize=9
++
++Verifying ciphertext with parameters:
++	contents_encryption_mode: AES-256-XTS
++	filenames_encryption_mode: AES-256-CTS-CBC
++	options: v2 log2_dusize=10
 -- 
 2.42.1
 
