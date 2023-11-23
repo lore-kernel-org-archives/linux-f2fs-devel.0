@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 922B4C27C40
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Nov 2023 21:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 98B39C27C40
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Nov 2023 01:12:26 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1r5ucs-0004Oy-Oe;
-	Wed, 22 Nov 2023 21:19:13 +0000
+	id 1r5yGW-00079U-Qf;
+	Thu, 23 Nov 2023 01:12:23 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <viro@ftp.linux.org.uk>) id 1r5ucs-0004Os-0D
+ (envelope-from <viro@ftp.linux.org.uk>) id 1r5yGV-00079O-5E
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 22 Nov 2023 21:19:13 +0000
+ Thu, 23 Nov 2023 01:12:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Sender:In-Reply-To:Content-Type:MIME-Version:
  References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GbGgxXd0D6P3kK6eEYEOVB7NqqPtigeykui8LfkWNZM=; b=lrOEHb2P5XyXMqo6nyYSjcBwuB
- PCEHLD2IhzTukLuSftbjugTSy5ZScFjkerKhgYZhQtG9xdGGb6pvAoxbwkUPZXjaobi1WGufA4Yol
- TjayldLwDlkbG01oTrMJk5WsoUmE0pFsSzHwMtsXPqBHkuWuoH6RlrOsNowZsTdm7BlY=;
+ bh=PY9S8RVi0dnKEfdrmFsdECJKTXexMrbF0x58rHr1R88=; b=WgBiRa8E4GwL0QrSxKAig271Ce
+ pKzAgXLqyqW8tfgLQCzvKBs6hurOilvlODaGh2axZp3iSZNzbwjA+x4CYl9uhQUvvEYkudY/0bgX/
+ 1xPEOA28qpZPOlhk1xdPdQhxXQRH2lNepR5A6rqwDgo6itT3lairK73pDGeUX968/Xfo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Sender:In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
@@ -33,40 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GbGgxXd0D6P3kK6eEYEOVB7NqqPtigeykui8LfkWNZM=; b=IjC1IxAQ+ixcEXzVN5YJue7l04
- j17eb/EEnFouxi2UqHELOaMb+kqpRFQPv7AL2Ow+EYGLNPo99xuPeAW1sT/HZdPa75lJwKu5Lk6YR
- ZGhAmVHQaF9zY7nZXYILbpZkk11rjwD/zFu8aIwVozT5wcSZXBvqqOWKEqi93+SmFia4=;
+ bh=PY9S8RVi0dnKEfdrmFsdECJKTXexMrbF0x58rHr1R88=; b=Iss/G7mpbgWPhyKg94eWrNmnjU
+ qBjput1bNVGTtWZ9nIbbJN+GKh3NCpkLwEqI7Op6vushi0Z3dVWXrPo6V2fHxbdjeKxQZIwfU4KmY
+ 2In/W8mTN6P35dOkGBmPPnPVxnr9ieHWbpS5ItukfRv21d2ByNdoYy/foLJeggyeBSrw=;
 Received: from zeniv.linux.org.uk ([62.89.141.173])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1r5ucq-0000km-ER for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 22 Nov 2023 21:19:12 +0000
+ id 1r5yGT-00DB2t-7p for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 Nov 2023 01:12:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
  MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=GbGgxXd0D6P3kK6eEYEOVB7NqqPtigeykui8LfkWNZM=; b=mI/nBUzbuLRl8y71pGzGwG3AqE
- 9nwjsJ2gz+NhHF9XD6iYO4i+9WjMVuzBqAY16Wd/yrssV0AaFAv02ZkujqU5S78p8rOPo/SUuyk4W
- 8/nT5AO6eLxpRd56238mkk7z92XdfpSyf1N4qCYODg2gNDegCwfS36EIdJMnpzbyg7jIOIqlm60a2
- cN+L44mlhZcn4bOy1TdDvE3F2HyesD2+3TOjf/yriqIuoujbwk+Nw4r8tfbC6bs0khIm3iyEeR0VO
- hr8fiUavTzkDlQHsYuue1vVtFUt9QBG1qUpXfi8yRo5l95o54GwvPikZo1kq4tHNgUWZHJcpxjlAn
- H3hu8bYw==;
+ bh=PY9S8RVi0dnKEfdrmFsdECJKTXexMrbF0x58rHr1R88=; b=Wxreso/B/Dh4LiFC6ky64hsoHG
+ DKfrqS4iEfOeCiGHQM3PUKYAigdumD8QkqkM/jQrNnbtL9PALDBmElowJuy/vjcngWK/ssk9wCGgQ
+ 9pha+U/3DXFwYydFhuh4n7vom/JGSpqnpVBwi+vRhCN8hnowSDsERumqVCzFcF7HL6DLpsuRZubIe
+ uJoNVzHTqKya2IYBdJncmhtD0Bn+TQOhAMAr00YOEQHEi8wtDoZdFTERTgT8I5sMuO+JlcgvipYjn
+ EkSBN+YD++43nTzDFqkcoWXhZ5Q2CL49AFsyyFeDNtwvVfXowGcRIQ0Ki4Id8+pI9hJb3vx5I5gQL
+ SNSRS68A==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat
- Linux)) id 1r5ucf-001mtu-1r; Wed, 22 Nov 2023 21:19:01 +0000
-Date: Wed, 22 Nov 2023 21:19:01 +0000
+ Linux)) id 1r5yGG-001rH6-1H; Thu, 23 Nov 2023 01:12:08 +0000
+Date: Thu, 23 Nov 2023 01:12:08 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <20231122211901.GJ38156@ZenIV>
+Message-ID: <20231123011208.GK38156@ZenIV>
 References: <20230816050803.15660-1-krisman@suse.de>
  <20231025-selektiert-leibarzt-5d0070d85d93@brauner>
  <655a9634.630a0220.d50d7.5063SMTPIN_ADDED_BROKEN@mx.google.com>
  <20231120-nihilismus-verehren-f2b932b799e0@brauner>
  <CAHk-=whTCWwfmSzv3uVLN286_WZ6coN-GNw=4DWja7NZzp5ytg@mail.gmail.com>
- <20231121022734.GC38156@ZenIV>
+ <20231121022734.GC38156@ZenIV> <20231122211901.GJ38156@ZenIV>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20231121022734.GC38156@ZenIV>
-X-Headers-End: 1r5ucq-0000km-ER
+In-Reply-To: <20231122211901.GJ38156@ZenIV>
+X-Headers-End: 1r5yGT-00DB2t-7p
 Subject: Re: [f2fs-dev] [PATCH v6 0/9] Support negative dentries on
  case-insensitive ext4 and f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -88,34 +88,74 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Nov 21, 2023 at 02:27:34AM +0000, Al Viro wrote:
+On Wed, Nov 22, 2023 at 09:19:01PM +0000, Al Viro wrote:
+> On Tue, Nov 21, 2023 at 02:27:34AM +0000, Al Viro wrote:
+> 
+> > I will review that series; my impression from the previous iterations
+> > had been fairly unpleasant, TBH, but I hadn't rechecked since April
+> > or so.
+> 
+> The serious gap, AFAICS, is the interplay with open-by-fhandle.
+> It's not unfixable, but we need to figure out what to do when
+> lookup runs into a disconnected directory alias.  d_splice_alias()
+> will move it in place, all right, but any state ->lookup() has
+> hung off the dentry that had been passed to it will be lost.
+> 
+> And I seriously suspect that we want to combine that state
+> propagation with d_splice_alias() (or its variant to be used in
+> such cases), rather than fixing the things up afterwards.
+> 
+> In particular, propagating ->d_op is really not trivial at that
+> point; it is safe to do to ->lookup() argument prior to d_splice_alias()
+> (even though that's too subtle and brittle, IMO), but after
+> d_splice_alias() has succeeded, the damn thing is live and can
+> be hit by hash lookups, revalidate, etc.
+> 
+> The only things that can't happen to it are ->d_delete(), ->d_prune(),
+> ->d_iput() and ->d_init().  Everything else is fair game.
+> 
+> And then there's an interesting question about the interplay with
+> reparenting.  It's OK to return an error rather than reparent,
+> but we need some way to tell if we need to do so.
 
-> I will review that series; my impression from the previous iterations
-> had been fairly unpleasant, TBH, but I hadn't rechecked since April
-> or so.
+Hmm... int (*d_transfer)(struct dentry *alias, struct dentry *new)?
+Called if d_splice_alias() picks that sucker, under rename_lock,
+before the call of __d_move().  Can check IS_ROOT(alias) (due to
+rename_lock), so can tell attaching from reparenting, returning
+an error - failed d_splice_alias().
 
-The serious gap, AFAICS, is the interplay with open-by-fhandle.
-It's not unfixable, but we need to figure out what to do when
-lookup runs into a disconnected directory alias.  d_splice_alias()
-will move it in place, all right, but any state ->lookup() has
-hung off the dentry that had been passed to it will be lost.
+Perhaps would be even better inside __d_move(), once all ->d_lock
+are taken...  Turn the current bool exchange in there into honest
+enum (exchange/move/splice) and call ->d_transfer() on splice.
+In case of failure it's still not too late to back out - __d_move()
+would return an int, ignored in d_move() and d_exchange() and
+treated as "fail in unlikely case it's non-zero" in d_splice_alias()
+and __d_unalias()...
 
-And I seriously suspect that we want to combine that state
-propagation with d_splice_alias() (or its variant to be used in
-such cases), rather than fixing the things up afterwards.
+Comments?  Note that e.g.
+        res = d_splice_alias(inode, dentry);
+        if (!IS_ERR(fid)) {
+                if (!res)
+                        v9fs_fid_add(dentry, &fid);
+                else if (!IS_ERR(res))
+                        v9fs_fid_add(res, &fid);
+                else
+                        p9_fid_put(fid);
+        }
 
-In particular, propagating ->d_op is really not trivial at that
-point; it is safe to do to ->lookup() argument prior to d_splice_alias()
-(even though that's too subtle and brittle, IMO), but after
-d_splice_alias() has succeeded, the damn thing is live and can
-be hit by hash lookups, revalidate, etc.
+in 9p ->lookup() would turn into
 
-The only things that can't happen to it are ->d_delete(), ->d_prune(),
-->d_iput() and ->d_init().  Everything else is fair game.
+	v9fs_fid_add(dentry, &fid);
+        return d_splice_alias(inode, dentry);
 
-And then there's an interesting question about the interplay with
-reparenting.  It's OK to return an error rather than reparent,
-but we need some way to tell if we need to do so.
+with ->d_transfer(alias, new) being simply
+
+	struct hlist_node *p = new->d_fsdata;
+	hlist_del_init(p);
+	__add_fid(alias, hlist_entry(p, struct p9_fid, dlist));
+	return 0;
+
+assuming the call from __d_move()...
 
 
 _______________________________________________
