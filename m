@@ -4,59 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CCF9EC5AD4C
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Nov 2023 05:10:07 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3DF21C61D97
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Nov 2023 16:42:13 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1r61yW-0008OR-2U;
-	Thu, 23 Nov 2023 05:10:05 +0000
+	id 1r6CmI-00071P-KY;
+	Thu, 23 Nov 2023 16:42:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <viro@ftp.linux.org.uk>) id 1r61yT-0008OL-MD
+ (envelope-from <torvalds@linuxfoundation.org>) id 1r6CmG-00071B-LE
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 Nov 2023 05:10:02 +0000
+ Thu, 23 Nov 2023 16:42:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Sender:In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=iITGfQea8BxCiD9vKqR4Ix99Hb6hdNI5sOzOQogEaHk=; b=IlqN0XmiOLyA+mSMHNnB2703fa
- +tQ4fNdyMBCoBpJyhj1YrZVFSWOAdrTOOiQUoNnGgc6KvoujBuZKYnYTQOQSAAfZ+idjdGYqcPs4G
- TZH/5kJTRli70JzW46q7aVP0n8BeufgbKv0c0Wjab04YDq63v2thZ5w54ss4jicGft2E=;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=hrJOVqWZyXV3tJNMbwk0Hktw++SEqtTU6CT36WDZi5A=; b=XeltApUMyG7W9gB1bkW8oMVXaO
+ Zo0yoazQts/+q6IckymfXg3zLHqih2NK0RS1BeKYFP2fZz8prKi8tA5KXE3pUHnWjqG2/aef3fdr3
+ ayq59GTiP+0LY9hKCNgXK96xBuhZLI7daY66309rT4sYvOmQR9Kf7eIe8xU0v8aiVtVg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Sender:In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
- Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=iITGfQea8BxCiD9vKqR4Ix99Hb6hdNI5sOzOQogEaHk=; b=UsgT4mbxcbrJS3ZhnBcqUmQl1e
- 4Wslz04/z+vn+voE3uGf7grHWKZiNsQyuBunPKfo7E6Gxntc/TDh0nenwOkoCqIE/Cn4c8aemWCed
- dmBHI9/OsOqMKBucmS12rYmt+x2Btf4CtX+7VKZauvALPnKumg+xoqdSkhT9sRogBkWE=;
-Received: from zeniv.linux.org.uk ([62.89.141.173])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1r61yQ-00DKDj-9O for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 Nov 2023 05:10:02 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
- MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=iITGfQea8BxCiD9vKqR4Ix99Hb6hdNI5sOzOQogEaHk=; b=Ib38JnkE8qFEfCsu6aaCR/9lHx
- SMAuzxYNMe57P3S2yZ+Jw3sFPbIN2FDzhDJdjTipjmREeWsMJMU9bz/9gtgibiJOz/22oIQewboOf
- tG2X8/Hjx6DGB/GY+Z2gUUevGHcPgAZrRYpzFj9XC62UIchkqR/KHWqJl8ykOShhPoW3iPAxomT5j
- CGPvkfO5sRHRlLYG5LvHSi6OYIYamRv9t9bv/o+P8+wu+pRxlbE9kc7VpS2zAqgQoujiADDzQpxdF
- yTTiXRP3iC1vH3WjCFTtCwdHZb+peIKUQnpEYL2xZRTRzD6/RbZt9kzOoTN4K+Vl2iW+65S153WS+
- pArIhMlw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat
- Linux)) id 1r61yB-001vUi-2H; Thu, 23 Nov 2023 05:09:43 +0000
-Date: Thu, 23 Nov 2023 05:09:43 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <20231123050943.GM38156@ZenIV>
+ bh=hrJOVqWZyXV3tJNMbwk0Hktw++SEqtTU6CT36WDZi5A=; b=Jnzj097p6IGixlU4k7Tr36kGzD
+ 6jVvrzsNPYl50VxBqfyBX3Fcb0YhcC37d1sHguCrgJISDFLw39n9bc0b6Q2CnC3MGaql8MJ/KcEtn
+ gqEVgbxcEZ8PrWg23mK52a92gPP5ADZ9kPpTEQCf3Dl0nN7WZOTuJj4gY++w6U1E4ZxU=;
+Received: from mail-ej1-f52.google.com ([209.85.218.52])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1r6CmA-0006WW-4Q for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 Nov 2023 16:42:08 +0000
+Received: by mail-ej1-f52.google.com with SMTP id
+ a640c23a62f3a-a06e59384b6so99483566b.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 23 Nov 2023 08:42:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=linux-foundation.org; s=google; t=1700757715; x=1701362515;
+ darn=lists.sourceforge.net; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=hrJOVqWZyXV3tJNMbwk0Hktw++SEqtTU6CT36WDZi5A=;
+ b=UIYe8eZFMSF6FwnCfi1PM9yilGIsEOOZRdA+os6ZcwI/NgAJlepObmIkPwdbj3hCUe
+ zT0/k46Z/enDxvxYDV9pMyoma3/u6pYZ3W6X7TkZmMsdnwrKmCNAXs7WzidVm69yKR5T
+ +fb9kkcqfe+jUy2vtvoHr8cji0u1ey8V7RxEQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1700757715; x=1701362515;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=hrJOVqWZyXV3tJNMbwk0Hktw++SEqtTU6CT36WDZi5A=;
+ b=HxTq3LPp0K5Zwp1lg0IHbwsNv3UGDSG+Z8JQjmzAydvaxWrO85oHkj7IsShK3pySaR
+ 5D46zSDmUSikRfAYGhZNWcCVdy8WXx8RSOPQCv+5CfMWLlg5rsjdHi1SoRdGH11tAFQ2
+ SeI7i5yeBkzAyMWj/nrcauviLlDThVHP4qyoMrgD54kRJI3HVW/SpHofTrMQsZexboQf
+ zAvEFzAeB+gzqZAbk1rHPvKEguy/Qs3rw0MkYJ2ac+WsdxBr/F768D/jIiRfQ3MuQjje
+ l0A1ZAtr8BmrGiL2f/ZxuKu/2Rsy1Qc/AkkAph9T1RSpiT/tLGGXQunqBwaWS91Vnms1
+ EWGQ==
+X-Gm-Message-State: AOJu0YxA3DAjQQ5pF0hsOnZBOu59JmvoHk0nYNif1CiaKCOCZpEunUOq
+ DsFQ/4u0G3y6uaf2JktF4wwLNzjBNYgRLsJZx3Q4Ehcc
+X-Google-Smtp-Source: AGHT+IEbBpgLAiD11eKxYPeevVdgrPUHHMgsszjnx3MsoX7b5joe4Ks/DNOiHjxvmTWNuhaapq7Byw==
+X-Received: by 2002:a17:906:14d:b0:9e0:5d5c:aa6d with SMTP id
+ 13-20020a170906014d00b009e05d5caa6dmr4268458ejh.20.1700757715541; 
+ Thu, 23 Nov 2023 08:41:55 -0800 (PST)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com.
+ [209.85.208.49]) by smtp.gmail.com with ESMTPSA id
+ gw9-20020a170906f14900b009fc8f309183sm976003ejb.51.2023.11.23.08.41.54
+ for <linux-f2fs-devel@lists.sourceforge.net>
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Thu, 23 Nov 2023 08:41:54 -0800 (PST)
+Received: by mail-ed1-f49.google.com with SMTP id
+ 4fb4d7f45d1cf-5431614d90eso1547619a12.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 23 Nov 2023 08:41:54 -0800 (PST)
+X-Received: by 2002:aa7:dcc4:0:b0:548:a0e8:4e51 with SMTP id
+ w4-20020aa7dcc4000000b00548a0e84e51mr4040787edu.39.1700757714239; Thu, 23 Nov
+ 2023 08:41:54 -0800 (PST)
+MIME-Version: 1.0
 References: <20230816050803.15660-1-krisman@suse.de>
  <20231025-selektiert-leibarzt-5d0070d85d93@brauner>
  <655a9634.630a0220.d50d7.5063SMTPIN_ADDED_BROKEN@mx.google.com>
@@ -64,10 +93,14 @@ References: <20230816050803.15660-1-krisman@suse.de>
  <CAHk-=whTCWwfmSzv3uVLN286_WZ6coN-GNw=4DWja7NZzp5ytg@mail.gmail.com>
  <20231121022734.GC38156@ZenIV> <20231122211901.GJ38156@ZenIV>
  <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
-X-Headers-End: 1r61yQ-00DKDj-9O
+ <655f7665.df0a0220.58a21.e84fSMTPIN_ADDED_BROKEN@mx.google.com>
+In-Reply-To: <655f7665.df0a0220.58a21.e84fSMTPIN_ADDED_BROKEN@mx.google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 23 Nov 2023 08:41:37 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgADgC_+Nmamrzei7JpRDa7ugvP8P_8zS2VxB5ksF9Khg@mail.gmail.com>
+Message-ID: <CAHk-=wgADgC_+Nmamrzei7JpRDa7ugvP8P_8zS2VxB5ksF9Khg@mail.gmail.com>
+To: Gabriel Krisman Bertazi <gabriel@krisman.be>
+X-Headers-End: 1r6CmA-0006WW-4Q
 Subject: Re: [f2fs-dev] [PATCH v6 0/9] Support negative dentries on
  case-insensitive ext4 and f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -81,52 +114,50 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>,
- Christian Brauner <brauner@kernel.org>, tytso@mit.edu,
+Cc: Christian Brauner <brauner@kernel.org>, tytso@mit.edu,
  linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org,
- linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+ Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+ jaegeuk@kernel.org, linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Nov 22, 2023 at 04:18:56PM -0800, Linus Torvalds wrote:
-> On Wed, 22 Nov 2023 at 13:19, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > The serious gap, AFAICS, is the interplay with open-by-fhandle.
-> 
-> So I'm obviously not a fan of igncase filesystems, but I don't think
-> this series actually changes any of that.
-> 
-> > It's not unfixable, but we need to figure out what to do when
-> > lookup runs into a disconnected directory alias.  d_splice_alias()
-> > will move it in place, all right, but any state ->lookup() has
-> > hung off the dentry that had been passed to it will be lost.
-> 
-> I guess this migth be about the new DCACHE_CASEFOLDED_NAME bit.
-> 
-> At least for now, that is only used by generic_ci_d_revalidate() for
-> negative dentries, so it shouldn't matter for that d_splice_alias()
-> that only does positive dentries. No?
-> 
-> Or is there something else you worry about?
+On Thu, 23 Nov 2023 at 07:57, Gabriel Krisman Bertazi
+<gabriel@krisman.be> wrote:
+>
+> The problem I found with that approach, which I originally tried, was
+> preventing concurrent lookups from racing with the invalidation and
+> creating more 'case-sensitive' negative dentries.  Did I miss a way to
+> synchronize with concurrent lookups of the children of the dentry?  We
+> can trivially ensure the dentry doesn't have positive children by
+> holding the parent lock, but that doesn't protect from concurrent
+> lookups creating negative dentries, as far as I understand.
 
-Dentries created by d_obtain_alias() will never go anywhere near
-generic_set_encrypted_ci_d_ops().  They do *not* get ->d_op set
-that way.  When ext4_lookup() does a lookup in c-i directory it
-does have ->d_op set on dentry it got from the caller.  Which is
-promptly discarded when d_splice_alias() finds a preexisting
-alias for it.
+I'd just set the "casefolded" bit, then do a RCU grace period wait,
+and then invalidate all old negative dentries.
 
-Positive dentries eventually become negative; not invalidating them
-when that happens is a large part of the point of this series.
-->d_revalidate() is taught to check if they are marked with that
-bit, but... they won't have that ->d_revalidate() associated with
-them, will they?  ->d_hash() and ->d_compare() come from the
-parent, but ->d_revalidate() comes from dentry itself.
+Sure, there's technically a window there where somebody could hit an
+existing negative dentry that matches a casefolded name after
+casefolded has been set (but before the invalidation) and the lookup
+would result in a "does not exist" lookup that way.
 
-In other words, generic_ci_d_revalidate() won't see the lack of
-that bit on dentry, etc. - it won't be called for that dentry
-in the first place.
+But that seems no different from the lookup having been done before
+the casefolded bit got set, so I don't think that's an _actual_
+difference. If you do a lookup concurrently with the directory being
+set casefolded, you get one or the other.
+
+And no, I haven't thought about this a ton, but it seems the obvious
+thing to do. Temporary stale negative dentries while the casefolded
+bit is in the process of being set seems a harmless thing, exactly
+because they would seem to be the same thing as if the lookup was done
+before...
+
+And yes, that "wait for RCU grace period" is a somewhat slow
+operation, but how often do the casefolded bits get changed?
+
+This is not a huge deal. I don't hate your approach, I just found it surprising.
+
+                 Linus
 
 
 _______________________________________________
