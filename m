@@ -4,78 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 63456C07CB1
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 27 Nov 2023 16:06:16 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D1A29C4167B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 27 Nov 2023 16:14:46 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1r7e7j-0002EP-K5;
-	Mon, 27 Nov 2023 16:06:15 +0000
+	id 1r7eFx-0006Mf-Ky;
+	Mon, 27 Nov 2023 16:14:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiederm@xmission.com>) id 1r7e7Y-0002EH-4L
+ (envelope-from <viro@ftp.linux.org.uk>) id 1r7eFv-0006MY-Ub
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 27 Nov 2023 16:06:05 +0000
+ Mon, 27 Nov 2023 16:14:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Subject:Content-Type:MIME-Version:Message-ID:
- In-Reply-To:Date:References:Cc:To:From:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Sender:In-Reply-To:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=F2XVjYS15DnBKDYgdZ6Dy2/Nx0q+9aIsAG5Ok1ftBM8=; b=ciUuW1wbAJ5zBS5ARHH6uCoEwy
- 7SwrRQlpjfLBb3WrwPUZFbbxE38j1SmZDVFKJBXMbE0O+pXENm/JBKaV4Mdc0NXciGwabkKofpuH9
- PZB5fFXbPiHRsIXtlgV1u3Mo499N757bdXTb/l1hrRIhmYe1Agp2SZ2mWkMB5xPEzUqw=;
+ bh=f6t3S95m3XiCuv2fnCK3LYrmUiIo2p7MxZyJA3+p7Vk=; b=ZKluBWkW/GcuRQnjMvO8AImkl4
+ xquOLRE/C5gGxOOB3AROITqyL0YLyA4MyhdHlG+J1og1ZzxG4EjlLhH53jubuzQz27MeLXZHuc+Fn
+ 0h7PTGgo0dIGDOSAI+yHnxOr8jOo3TQkOa0sK6hNDQWyXHMd0ImYgePTUsAArGHpRSA8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Subject:Content-Type:MIME-Version:Message-ID:In-Reply-To:Date:References:
- Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Sender:In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+ Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=F2XVjYS15DnBKDYgdZ6Dy2/Nx0q+9aIsAG5Ok1ftBM8=; b=RjbOGSzrceNbEc+Pz4HD3cgJ8j
- 8KOp4+WU0na50e6zf7Liuo6Zy9wh78b8kKePUzPYwI4dtfw1JmR5qpHHwSmsgN0F1bcqgoP3mjFBN
- ++XWwtP+BPUAdLkV5NSFFoqEGZmaEWLwqAhPwLtSVvOQCiqwscIWFLWFbILxdK8QoYEk=;
-Received: from out03.mta.xmission.com ([166.70.13.233])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=f6t3S95m3XiCuv2fnCK3LYrmUiIo2p7MxZyJA3+p7Vk=; b=arwZX9cLAOLccxYJpgwpudPvrQ
+ 2SgZ7+CycmiISBxg3S8EF5MZKQz5C/hq7BmN1KkIBCzPFCwRjlnYNcEOtCTh+o+PXZTOgv+oNh4cB
+ T+LPwuVNn2ybXSCrEHr3uUVc2nGciumZmCxQpCOWSp5+ZMGD6VUyGp8tonPuXCTf5duM=;
+Received: from zeniv.linux.org.uk ([62.89.141.173])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1r7e7U-00H7ej-HZ for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 27 Nov 2023 16:06:04 +0000
-Received: from in02.mta.xmission.com ([166.70.13.52]:45924)
- by out03.mta.xmission.com with esmtps (TLS1.3) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.93)
- (envelope-from <ebiederm@xmission.com>)
- id 1r7dqH-0037sg-6R; Mon, 27 Nov 2023 08:48:13 -0700
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:47674
- helo=email.froward.int.ebiederm.org.xmission.com)
- by in02.mta.xmission.com with esmtpsa (TLS1.3) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.93)
- (envelope-from <ebiederm@xmission.com>)
- id 1r7dqF-001Jou-Tb; Mon, 27 Nov 2023 08:48:12 -0700
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-References: <20231121022734.GC38156@ZenIV> <20231122211901.GJ38156@ZenIV>
- <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
+ id 1r7eFu-0002BB-CR for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 27 Nov 2023 16:14:42 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+ MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=f6t3S95m3XiCuv2fnCK3LYrmUiIo2p7MxZyJA3+p7Vk=; b=HQmorr4bydMgYYjt+87IfrdCnX
+ wkoemiCdFgrYV+AgikhFuQfsaBscVGISJO9sIzM9L5j5Sf1tWzj5a1OTTd0CI6mr1f0CU1iCeyFNF
+ U8jQAg6oXDXjuqa5M8plGosyofibiF7dLCRysFq3mA9AiGEZfQJY/NNCYi5ILyA2qC/BM4qym/YkV
+ V7O5lUkYKtkyDX0RA2ywbV+uLIn16rVbmCspIYFwM2X8BhdgLYH6nN2hbhn2ZchAPDjtx1J58cwMP
+ nLnW1m0Rnq93mc8agBKsoiTJuhLCYvxOboHF/V0XVMJ0nx/OY7F3s47E7HJ6wXGumDcr/eLt+3Myz
+ /D/tjinw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat
+ Linux)) id 1r7eFe-00434D-22; Mon, 27 Nov 2023 16:14:26 +0000
+Date: Mon, 27 Nov 2023 16:14:26 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Message-ID: <20231127161426.GA964333@ZenIV>
+References: <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
  <20231123171255.GN38156@ZenIV> <20231123182426.GO38156@ZenIV>
  <20231123215234.GQ38156@ZenIV> <20231125220136.GB38156@ZenIV>
  <20231126045219.GD38156@ZenIV> <20231126184141.GF38156@ZenIV>
  <20231127063842.GG38156@ZenIV>
-Date: Mon, 27 Nov 2023 09:47:47 -0600
-In-Reply-To: <20231127063842.GG38156@ZenIV> (Al Viro's message of "Mon, 27 Nov
- 2023 06:38:42 +0000")
-Message-ID: <87jzq3nqos.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+ <87jzq3nqos.fsf@email.froward.int.ebiederm.org>
+ <20231127160318.GI38156@ZenIV>
 MIME-Version: 1.0
-X-XM-SPF: eid=1r7dqF-001Jou-Tb; ; ;
- mid=<87jzq3nqos.fsf@email.froward.int.ebiederm.org>; ; ;
- hst=in02.mta.xmission.com; ; ; ip=68.227.168.167; ; ;
- frm=ebiederm@xmission.com; ; ; spf=pass
-X-XM-AID: U2FsdGVkX19Ivoqmgj6NYRmk04vHCeMgMvlWWNyi8uM=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
-X-Headers-End: 1r7e7U-00H7ej-HZ
+Content-Disposition: inline
+In-Reply-To: <20231127160318.GI38156@ZenIV>
+X-Headers-End: 1r7eFu-0002BB-CR
 Subject: Re: [f2fs-dev] fun with d_invalidate() vs. d_splice_alias() was Re:
  [PATCH v6 0/9] Support negative dentries on case-insensitive ext4 and f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -98,166 +90,55 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
+On Mon, Nov 27, 2023 at 04:03:18PM +0000, Al Viro wrote:
+> On Mon, Nov 27, 2023 at 09:47:47AM -0600, Eric W. Biederman wrote:
+> 
+> > There is a lot going on there.  I remember one of the relevant
+> > restrictions was marking dentries dont_mount, and inodes S_DEAD
+> > in unlink and rmdir.
+> > 
+> > But even without out that marking if d_invalidate is called
+> > from d_revalidate the inode and all of it's dentries must be
+> > dead because the inode is stale and most go.  There should
+> > be no resurrecting it at that point.
+> > 
+> > I suspect the most fruitful way to think of the d_invalidate vs
+> > d_splice_alias races is an unlink vs rename race.
+> > 
+> > I don't think the mechanism matters, but deeply and fundamentally
+> > if we detect a directory inode is dead we need to stick with
+> > that decision and not attempt to resurrect it with d_splice_alias.
+> 
+> Wrong.  Deeply and fundamentally we detect a dentry that does not
+> match the directory contents according to the server.
+> 
+> For example, due to rename done on server.  With object in question
+> perfectly alive there - fhandle still works, etc.
+> 
+> However, it's no longer where it used to be.  And we would bloody better
+> not have lookups for the old name result in access to that object.
+> We also should never allow the access to *new* name lead to two live
+> dentries for the same directory inode.
+> 
+> Again, this is not about rmdir() or unlink() - invalidation can happen
+> for object that is still open, still accessed and still very much alive.
+> Does that all the time for any filesystem with ->d_revalidate().
 
-> On Sun, Nov 26, 2023 at 06:41:41PM +0000, Al Viro wrote:
->
->> d_invalidate() situation is more subtle - we need to sort out its interplay
->> with d_splice_alias().
->> 
->> More concise variant of the scenario in question:
->> * we have /mnt/foo/bar and a lot of its descendents in dcache on client
->> * server does a rename, after which what used to be /mnt/foo/bar is /mnt/foo/baz
->> * somebody on the client does a lookup of /mnt/foo/bar and gets told by
->> the server that there's no directory with that name anymore.
->> * that somebody hits d_invalidate(), unhashes /mnt/foo/bar and starts
->> evicting its descendents
->> * We try to mount something on /mnt/foo/baz/blah.  We look up baz, get
->> an fhandle and notice that there's a directory inode for it (/mnt/foo/bar).
->> d_splice_alias() picks the bugger and moves it to /mnt/foo/baz, rehashing
->> it in process, as it ought to.  Then we find /mnt/foo/baz/blah in dcache and 
->> mount on top of it.
->> * d_invalidate() finishes shrink_dcache_parent() and starts hunting for
->> submounts to dissolve.  And finds the mount we'd done.  Which mount quietly
->> disappears.
->> 
->> Note that from the server POV the thing had been moved quite a while ago.
->> No server-side races involved - all it seeem is a couple of LOOKUP in the
->> same directory, one for the old name, one for the new.
->> 
->> On the client on the mounter side we have an uneventful mount on /mnt/foo/baz,
->> which had been there on server at the time we started and which remains in
->> place after mount we'd created suddenly disappears.
->> 
->> For the thread that ended up calling d_invalidate(), they'd been doing e.g.
->> stat on a pathname that used to be there a while ago, but currently isn't.
->> They get -ENOENT and no indication that something odd might have happened.
->> 
->> >From ->d_revalidate() point of view there's also nothing odd happening -
->> dentry is not a mountpoint, it stays in place until we return and there's
->> no directory entry with that name on in its parent.  It's as clear-cut
->> as it gets - dentry is stale.
->> 
->> The only overlap happening there is d_splice_alias() hitting in the middle
->> of already started d_invalidate().
->> 
->> For a while I thought that ff17fa561a04 "d_invalidate(): unhash immediately"
->> and 3a8e3611e0ba "d_walk(): kill 'finish' callback" might have something
->> to do with it, but the same problem existed prior to that.
->> 
->> FWIW, I suspect that the right answer would be along the lines of
->> 	* if d_splice_alias() does move an exsiting (attached) alias in
->> place, it ought to dissolve all mountpoints in subtree being moved.
->> There might be subtleties, but in case when that __d_unalias() happens
->> due to rename on server this is definitely the right thing to do.
->> 	* d_invalidate() should *NOT* do anything with dentry that
->> got moved (including moved by d_splice_alias()) from the place we'd
->> found it in dcache.  At least d_invalidate() done due to having
->> ->d_revalidate() return 0.
->> 	* d_invalidate() should dissolve all mountpoints in the
->> subtree that existed when it got started (and found the victim
->> still unmoved, that is).  It should (as it does) prevent any
->> new mountpoints added in that subtree, unless the mountpoint
->> to be had been moved (spliced) out.  What it really shouldn't
->> do is touch the mountpoints that are currently outside of it
->> due to moves.
->> 
->> I'm going to look around and see if we have any weird cases where
->> d_splice_alias() is used for things like "correct the case of
->> dentry name on a case-mangled filesystem" - that would presumably
->> not want to dissolve any submounts.  I seem to recall seeing
->> some shite of that sort, but that was a long time ago.
->> 
->> Eric, Miklos - it might be a good idea if you at least took a
->> look at whatever comes out of that (sub)thread; I'm trying to
->> reconstruct the picture, but the last round of serious reworking
->> of that area had been almost 10 years ago and your recollections
->> of the considerations back then might help.  I realize that they
->> are probably rather fragmentary (mine definitely are) and any
->> analysis will need to be redone on the current tree, but...
+Put another way, there used to be very odd song and dance in ->d_revalidate()
+instances along the lines of "we can't possibly tell the caller to invalidate
+a mountpoint"; it was racy in the best case and during the rewrite of
+d_invalidate() to teach it how to evict submounts those attempts had been
+dropped - ->d_revalidate() returning 0 does end up with mounts dissolved
+by d_invalidate() from caller.
 
-By subthread I assume you are referring to the work to that generalized
-check_submounts_and_drop into the current d_invalidate.
+It always had been racy, starting with the checks that used to be in
+->d_revalidate() instances way before all those changes.  So the switch
+of d_invalidate() to dissolving submounts had been a step in the right
+direction, but it's not being careful enough.
 
-My memory is that there were deliberate restrictions on where
-d_revalidate could be called so as not to mess with mounts.
-
-I believe those restrictions either prevented or convinced us it
-prevented nasty interactions between d_invalidate and d_splice_alias.
-
-There is a lot going on there.  I remember one of the relevant
-restrictions was marking dentries dont_mount, and inodes S_DEAD
-in unlink and rmdir.
-
-But even without out that marking if d_invalidate is called
-from d_revalidate the inode and all of it's dentries must be
-dead because the inode is stale and most go.  There should
-be no resurrecting it at that point.
-
-I suspect the most fruitful way to think of the d_invalidate vs
-d_splice_alias races is an unlink vs rename race.
-
-
-I don't think the mechanism matters, but deeply and fundamentally
-if we detect a directory inode is dead we need to stick with
-that decision and not attempt to resurrect it with d_splice_alias.
-
-
-Looking at ext4 and f2fs it appears when case folding they are calling
-d_invalidate before the generic code can, and before marking like
-dont_mount happen.  Is that the tie in with where the current
-conversation comes in?
-
-
-> TBH, I wonder if we ought to have d_invalidate() variant that would
-> unhash the dentry in question,
-
-You mean like the current d_invalidate does?  It calls __d_drop which
-unhashes the thing and prevent lookups.  You even pointed to the change
-that added that in the previous email.  The only thing that does not
-happen currently is marking the dentry as unhashed.
-
-Looking the rmdir code uses not only dont_mount but marks the
-inode S_DEAD as well.
-
-Right now we can't even get to d_splice_alias unless the original
-dentry is unhashed.
-
-So I suspect it isn't d_invalidate you are fighting.
-
-> do a variant of shrink_dcache_parent()
-> that would report if there had been any mountpoints and if there
-> had been any, do namespace_lock() and go hunting for mounts in that
-> subtree, moving corresponding struct mountpoint to a private list
-> as we go (removing them from mountpoint hash chains, that it).  Then
-> have them all evicted after we'd finished walking the subtree...
-
->
-> The tricky part will be lock ordering - right now we have the
-> mountpoint hash protected by mount_lock (same as mount hash, probably
-> worth splitting anyway) and that nests outside of ->d_lock.
-
-I don't get get it.
-
-All we have to do is to prevent the inode lookup from succeeding
-if we have decided the inode has been deleted.  It may be a little
-more subtle the path of the inode we are connecting goes through
-a dentry that is being invalidated.
-
-But either need to prevent it in the lookup that leads to d_alloc,
-or prevent the new dentry from being attached.
-
-I know d_splice_alias takes the rename_lock to prevent some of those
-races.
-
-
-I hope that helps on the recollection front.
-
-
-I am confused what is going on with ext4 and f2fs.  I think they
-are calling d_invalidate when all they need to call is d_drop.
-
-Eric
+Again, it's about d_invalidate() caused by pathwalk running into a dentry that
+doesn't match the reality vs. d_splice_alias() finding that it matches the
+inode we had looked up elsewhere.
 
 
 _______________________________________________
