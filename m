@@ -4,67 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7C93CC4167B
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 28 Nov 2023 09:32:10 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A68CEC07CA9
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 28 Nov 2023 11:20:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1r7uRs-0005pk-Ey;
-	Tue, 28 Nov 2023 09:32:08 +0000
+	id 1r7w8j-0004Jh-FA;
+	Tue, 28 Nov 2023 11:20:30 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1r7uRn-0005pe-D8
+ (envelope-from <jack@suse.cz>) id 1r7w8i-0004JY-DT
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 28 Nov 2023 09:32:03 +0000
+ Tue, 28 Nov 2023 11:20:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KfcTND6BssLdpzmPYPlDYig9sIrB6I9wGFcgPo8r/xE=; b=keYZzDblLwHEIZIjEBE6QUUxkh
- cM9sG+ZS7JLNgQvUdJmJX6u3H5alNxuCPic/DvUIW3R2Zsj5io2iex1oB9CTknvCr43XBWRTtVfAP
- 4dxSmNdB3J+yLB/rEFSku20w2Kj+iASvVuoWb3ggqVQ+qvizENWboHYXzYMZ7KJ19VmY=;
+ bh=kVD9cpIxQxlHQBTO+E9xaUGf8SVgbYHSIaOxapk5BPo=; b=cOMhKDmSNireC53wMyxQ/5p5Or
+ 1QiOSpnEFCKSkNzb7InLQxXWY/Us0dHbaO6jYO1WE63GxqYOJyPsMKhdP54+9jzwq41/1+0xJ6hgC
+ Af+Ui1+BBrecamuk34zVGOOr+CWRVs7SdUwKWp0nQUVKAMYf4riYx77OT4aYC5QfD4NE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=KfcTND6BssLdpzmPYPlDYig9sIrB6I9wGFcgPo8r/xE=; b=h
- Nu14OUnyzuv/j+Vk60V65hVex5afR7lnk4wZ9y/U73I2fDrG4Y7Dt5Dw8BhzhkgE51wsJbzCJC4Dj
- 117jCsaqKAiypkdMSGaQbqb26JHeaNKi3jTGAIB+ApfR6Y0cP1maUC25Emwd431frnH9d/hYGLj+O
- I4/BXkdJe/pA2kz4=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=kVD9cpIxQxlHQBTO+E9xaUGf8SVgbYHSIaOxapk5BPo=; b=CkCfqpxVy7jADs2HIESqUJJbCC
+ GqbDP3w+R8rV7KUakSWkmvTo6RMQnhQvkXvgezKYxnYiNpittoAmcMa/EGgnc52U5yt0ag9OqUVvN
+ SF5HxLMZ1HR2LlNZeSIpaZfotInftndQVLLUyXdxmS68rqj2/ugwbyyDErjjGBcBH60I=;
+Received: from smtp-out1.suse.de ([195.135.223.130])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1r7uRk-0001Q4-Ei for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 28 Nov 2023 09:32:03 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by ams.source.kernel.org (Postfix) with ESMTP id 0294EB8397B
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 28 Nov 2023 09:31:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08D9CC433C9;
- Tue, 28 Nov 2023 09:31:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1701163896;
- bh=2Dql++FKHJ8HVSjhd3VZ6CSZcME1Follek+sE8aZeJw=;
- h=From:To:Cc:Subject:Date:From;
- b=uM+SHt9GX2KUqUvXgBd787svm6ARgraDkrqYaF6Egelrh2xG59GlsMUcB7PuMpCpw
- 6N6MzY5q9OOYsB05ub5yHlVUthLCGmAjeYYBhQLo8bWgSgomf5/qUpyYjJCRD30das
- N3FEk2RSidtpASei6n2AU0i/C3+jf5QHGIii/tT3QBJiDoB+i3aeu13+MWd0VGgp7S
- S2tM2q5R2MNnicIEWoZfhFeh5QihqXBK/A8QNrHzd64rPxH8tifvfOy35jpC/AIqCw
- gwucsOqVaa7KilE2a0EZDW4PrF8FDCwSJAv1yFCTNiYH7md9gHQI0U3s7Dui9Ldj53
- CRgxi4y927gLg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Tue, 28 Nov 2023 17:31:29 +0800
-Message-Id: <20231128093130.2885216-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1r7w8h-0007UZ-RY for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 28 Nov 2023 11:20:28 +0000
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org
+ [IPv6:2a07:de40:b281:104:10:150:64:98])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 23ACC2195A;
+ Tue, 28 Nov 2023 11:03:02 +0000 (UTC)
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A1FA139FC;
+ Tue, 28 Nov 2023 11:03:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+ by imap2.dmz-prg2.suse.org with ESMTPSA id UV1cBubIZWUVcAAAn2gu4w
+ (envelope-from <jack@suse.cz>); Tue, 28 Nov 2023 11:03:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+ id A8438A07CB; Tue, 28 Nov 2023 12:03:01 +0100 (CET)
+Date: Tue, 28 Nov 2023 12:03:01 +0100
+From: Jan Kara <jack@suse.cz>
+To: Chao Yu <chao@kernel.org>
+Message-ID: <20231128110301.pk3qbhopptmhvxet@quack3>
+References: <20231128092516.2882629-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1r7uRk-0001Q4-Ei
-Subject: [f2fs-dev] [PATCH 1/2] f2fs: introduce tracepoint for f2fs_rename()
+Content-Disposition: inline
+In-Reply-To: <20231128092516.2882629-1-chao@kernel.org>
+X-Spamd-Bar: ++++++++++++++
+X-Rspamd-Server: rspamd1
+Authentication-Results: smtp-out1.suse.de; dkim=none;
+ spf=softfail (smtp-out1.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither
+ permitted nor denied by domain of jack@suse.cz) smtp.mailfrom=jack@suse.cz; 
+ dmarc=none
+X-Rspamd-Queue-Id: 23ACC2195A
+X-Spamd-Result: default: False [14.12 / 50.00]; ARC_NA(0.00)[];
+ RCVD_VIA_SMTP_AUTH(0.00)[];
+ SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
+ FROM_HAS_DN(0.00)[]; TO_DN_SOME(0.00)[];
+ TO_MATCH_ENVRCPT_ALL(0.00)[]; NEURAL_SPAM_SHORT(2.75)[0.917];
+ MIME_GOOD(-0.10)[text/plain]; MID_RHS_NOT_FQDN(0.50)[];
+ DMARC_NA(1.20)[suse.cz]; R_SPF_SOFTFAIL(4.60)[~all:c];
+ RCPT_COUNT_FIVE(0.00)[6]; RCVD_COUNT_THREE(0.00)[3];
+ MX_GOOD(-0.01)[]; NEURAL_SPAM_LONG(3.50)[1.000];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email];
+ FUZZY_BLOCKED(0.00)[rspamd.com]; FROM_EQ_ENVFROM(0.00)[];
+ R_DKIM_NA(2.20)[]; MIME_TRACE(0.00)[0:+]; RCVD_TLS_ALL(0.00)[];
+ BAYES_HAM(-0.52)[80.29%]
+X-Headers-End: 1r7w8h-0007UZ-RY
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid dirent corruption
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,139 +100,71 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+ Al Viro <viro@zeniv.linux.org.uk>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch adds tracepoints for f2fs_rename().
+On Tue 28-11-23 17:25:16, Chao Yu wrote:
+> As Al reported in link[1]:
+> 
+> f2fs_rename()
+> ...
+> 	if (old_dir != new_dir && !whiteout)
+> 		f2fs_set_link(old_inode, old_dir_entry,
+> 					old_dir_page, new_dir);
+> 	else
+> 		f2fs_put_page(old_dir_page, 0);
+> 
+> You want correct inumber in the ".." link.  And cross-directory
+> rename does move the source to new parent, even if you'd been asked
+> to leave a whiteout in the old place.
+> 
+> [1] https://lore.kernel.org/all/20231017055040.GN800259@ZenIV/
+> 
+> With below testcase, it may cause dirent corruption, due to it missed
+> to call f2fs_set_link() to update ".." link to new directory.
+> - mkdir -p dir/foo
+> - renameat2 -w dir/foo bar
+> 
+> [ASSERT] (__chk_dots_dentries:1421)  --> Bad inode number[0x4] for '..', parent parent ino is [0x3]
+> [FSCK] other corrupted bugs                           [Fail]
+> 
+> Fixes: 7e01e7ad746b ("f2fs: support RENAME_WHITEOUT")
+> Cc: Jan Kara <jack@suse.cz>
+> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Chao Yu <chao@kernel.org>
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/namei.c             | 16 ++++++---
- include/trace/events/f2fs.h | 69 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 80 insertions(+), 5 deletions(-)
+Thanks for fixing this! Makes sense to me so feel free to add:
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index a765db9e26c2..ede6afb81762 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -1315,21 +1315,27 @@ static int f2fs_rename2(struct mnt_idmap *idmap,
- 	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
- 		return -EINVAL;
- 
-+	trace_f2fs_rename_start(old_dir, old_dentry, new_dir, new_dentry,
-+								flags);
-+
- 	err = fscrypt_prepare_rename(old_dir, old_dentry, new_dir, new_dentry,
- 				     flags);
- 	if (err)
- 		return err;
- 
--	if (flags & RENAME_EXCHANGE) {
--		return f2fs_cross_rename(old_dir, old_dentry,
--					 new_dir, new_dentry);
--	}
-+	if (flags & RENAME_EXCHANGE)
-+		err = f2fs_cross_rename(old_dir, old_dentry,
-+					new_dir, new_dentry);
-+	else
- 	/*
- 	 * VFS has already handled the new dentry existence case,
- 	 * here, we just deal with "RENAME_NOREPLACE" as regular rename.
- 	 */
--	return f2fs_rename(idmap, old_dir, old_dentry,
-+		err = f2fs_rename(idmap, old_dir, old_dentry,
- 					new_dir, new_dentry, flags);
-+
-+	trace_f2fs_rename_end(old_dentry, new_dentry, flags, err);
-+	return err;
- }
- 
- static const char *f2fs_encrypted_get_link(struct dentry *dentry,
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 793f82cc1515..36d9e29ca3c5 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -866,6 +866,75 @@ TRACE_EVENT(f2fs_lookup_end,
- 		__entry->err)
- );
- 
-+TRACE_EVENT(f2fs_rename_start,
-+
-+	TP_PROTO(struct inode *old_dir, struct dentry *old_dentry,
-+			struct inode *new_dir, struct dentry *new_dentry,
-+			unsigned int flags),
-+
-+	TP_ARGS(old_dir, old_dentry, new_dir, new_dentry, flags),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		dev)
-+		__field(ino_t,		ino)
-+		__string(old_name,	old_dentry->d_name.name)
-+		__field(ino_t,		new_pino)
-+		__string(new_name,	new_dentry->d_name.name)
-+		__field(unsigned int,	flags)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev		= old_dir->i_sb->s_dev;
-+		__entry->ino		= old_dir->i_ino;
-+		__assign_str(old_name, old_dentry->d_name.name);
-+		__entry->new_pino	= new_dir->i_ino;
-+		__assign_str(new_name, new_dentry->d_name.name);
-+		__entry->flags		= flags;
-+	),
-+
-+	TP_printk("dev = (%d,%d), old_dir = %lu, old_name: %s, "
-+		"new_dir = %lu, new_name: %s, flags = %u",
-+		show_dev_ino(__entry),
-+		__get_str(old_name),
-+		__entry->new_pino,
-+		__get_str(new_name),
-+		__entry->flags)
-+);
-+
-+TRACE_EVENT(f2fs_rename_end,
-+
-+	TP_PROTO(struct dentry *old_dentry, struct dentry *new_dentry,
-+			unsigned int flags, int ret),
-+
-+	TP_ARGS(old_dentry, new_dentry, flags, ret),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		dev)
-+		__field(ino_t,		ino)
-+		__string(old_name,	old_dentry->d_name.name)
-+		__string(new_name,	new_dentry->d_name.name)
-+		__field(unsigned int,	flags)
-+		__field(int,		ret)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev		= old_dentry->d_sb->s_dev;
-+		__entry->ino		= old_dentry->d_inode->i_ino;
-+		__assign_str(old_name, old_dentry->d_name.name);
-+		__assign_str(new_name, new_dentry->d_name.name);
-+		__entry->flags		= flags;
-+		__entry->ret		= ret;
-+	),
-+
-+	TP_printk("dev = (%d,%d), ino = %lu, old_name: %s, "
-+		"new_name: %s, flags = %u, ret = %d",
-+		show_dev_ino(__entry),
-+		__get_str(old_name),
-+		__get_str(new_name),
-+		__entry->flags,
-+		__entry->ret)
-+);
-+
- TRACE_EVENT(f2fs_readdir,
- 
- 	TP_PROTO(struct inode *dir, loff_t start_pos, loff_t end_pos, int err),
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/f2fs/namei.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 3b1793cfb002..ede6afb81762 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -1105,7 +1105,7 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+>  	}
+>  
+>  	if (old_dir_entry) {
+> -		if (old_dir != new_dir && !whiteout)
+> +		if (old_dir != new_dir)
+>  			f2fs_set_link(old_inode, old_dir_entry,
+>  						old_dir_page, new_dir);
+>  		else
+> -- 
+> 2.40.1
+> 
 -- 
-2.40.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
 
 _______________________________________________
