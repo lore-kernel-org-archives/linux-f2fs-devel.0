@@ -4,80 +4,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6D9E1C4167B
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Nov 2023 15:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5F944C4167B
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Nov 2023 19:40:50 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1r8MMM-0006xP-HF;
-	Wed, 29 Nov 2023 15:20:19 +0000
+	id 1r8QQS-0000bg-0a;
+	Wed, 29 Nov 2023 19:40:48 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiederm@xmission.com>) id 1r8MML-0006xJ-8L
+ (envelope-from <daeho43@gmail.com>) id 1r8QQP-0000bU-Mu
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Nov 2023 15:20:17 +0000
+ Wed, 29 Nov 2023 19:40:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Subject:Content-Type:MIME-Version:Message-ID:Date:
- References:In-Reply-To:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=U6c0fq7KFsncZZz+YJTsa8Nv4i5aeZP+Zi7973oKj+E=; b=LiRy0V/ciQaQXzpH8DbmUQMX5W
- JJ0AfJ+Sa1NXSeyBOEb7mFj9PQq73X53rMFI4qcOIRF16EWWBJMEfviXIE1asGBVN+RSTA4AO6vWj
- MgjcAYXkGRlJPbH5a85bNtlEuncrssWkj8bZU6G+6zv+s2p5mllaf851nrDyM4O7+zLE=;
+ bh=IbN/CBdY8HaO8oEbKkB4VSrcYoZEzNbVhbQ6CTvXobk=; b=Nzp4FU3L+mvdgyeHdBcGJCcK72
+ Ty1Rb2XpNTGqaxruKTlelUMEyOgkwDQ/go0z9gwAgrza4DJfWNv0YEkcVrJB4wu3LR0UKJHUDuKdE
+ LLM8784ApVGbS4P9azzLSs+yroiir+Xhf699d/KYOBQQfh3JcfztoYzvcoznEu9RJ0cc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Subject:Content-Type:MIME-Version:Message-ID:Date:References:In-Reply-To:
- Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=U6c0fq7KFsncZZz+YJTsa8Nv4i5aeZP+Zi7973oKj+E=; b=HlygeGc0hX548EayazAS+rcbTn
- lU+cRwtJrY8OPVL2udj4hSHcBxQ2Z2DaB7YlR8FOPOvnWiJIE0EU4AYju0UF6J6kMf+7NT22Tohd5
- R6IHJzvqwG0edqfMtVqyrTOLUtT7SPEp0J4TjdON1Yk0uFy98jUJE9VUNgaMeV2dJCVI=;
-Received: from out01.mta.xmission.com ([166.70.13.231])
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=IbN/CBdY8HaO8oEbKkB4VSrcYoZEzNbVhbQ6CTvXobk=; b=P
+ mKHQKv3xk6X/d9ea+IVopGKrPEMOVTMygtzjTzPe/BW2bcquRb7CBHn9GHrli5nTHWObP8Zu8KcgJ
+ JPd2KHPbXV0OpMDqMyi77uQYjiXPKpwuuvpZ3ZS9nNjI6Ch2P7PvFey9qST4bfnxTvCK5dL11lONi
+ SiUvvhJdwd1MS+aw=;
+Received: from mail-pl1-f175.google.com ([209.85.214.175])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1r8MME-0004Mh-UJ for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Nov 2023 15:20:15 +0000
-Received: from in02.mta.xmission.com ([166.70.13.52]:41778)
- by out01.mta.xmission.com with esmtps (TLS1.3) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.93)
- (envelope-from <ebiederm@xmission.com>)
- id 1r8MLv-00Cf3p-Sp; Wed, 29 Nov 2023 08:19:51 -0700
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:49158
- helo=email.froward.int.ebiederm.org.xmission.com)
- by in02.mta.xmission.com with esmtpsa (TLS1.3) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.93)
- (envelope-from <ebiederm@xmission.com>)
- id 1r8MLu-005gWB-Nk; Wed, 29 Nov 2023 08:19:51 -0700
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-In-Reply-To: <20231129045313.GA1130947@ZenIV> (Al Viro's message of "Wed, 29
- Nov 2023 04:53:13 +0000")
-References: <20231122211901.GJ38156@ZenIV>
- <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
- <20231123171255.GN38156@ZenIV> <20231123182426.GO38156@ZenIV>
- <20231123215234.GQ38156@ZenIV> <20231125220136.GB38156@ZenIV>
- <20231126045219.GD38156@ZenIV> <20231126184141.GF38156@ZenIV>
- <20231127063842.GG38156@ZenIV> <20231129045313.GA1130947@ZenIV>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
-Date: Wed, 29 Nov 2023 09:19:41 -0600
-Message-ID: <87v89kio36.fsf@email.froward.int.ebiederm.org>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1r8QQP-0006SA-Ij for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 29 Nov 2023 19:40:46 +0000
+Received: by mail-pl1-f175.google.com with SMTP id
+ d9443c01a7336-1cfc2bcffc7so1344505ad.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 29 Nov 2023 11:40:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1701286840; x=1701891640; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=IbN/CBdY8HaO8oEbKkB4VSrcYoZEzNbVhbQ6CTvXobk=;
+ b=QTbVcYel2qKGSi3Oc0ZcWwLU1mpCNxj3NxKb6j5bYFOAVbHvkVL7M+bdsYcT2GZvYM
+ rQLknSmyV742vbTsQOeZpE+j7in3GetT1Fh41Kb/AJbB8DfOm+UlQSb8sXRGfosTWI62
+ hvZMXIBUnEZLD6RWKbbGVA1/5mOHR1W26J/OU1aPPZzp1Wg9IE6XI+EsWMDClmRRHnAF
+ DmhdghiNzb6pQRGnMcRtf+nG5KVu/AwMtguu2q2LXviLFqCxQe/j7wuuzz9dPV1UgpbN
+ qY8G5SKX0NbUtXZE7njFQNLmwdrHO76oDiiVUZ7/vRAsO+QjlVnrdAskbWeTWmaC7CBQ
+ y4+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1701286840; x=1701891640;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=IbN/CBdY8HaO8oEbKkB4VSrcYoZEzNbVhbQ6CTvXobk=;
+ b=H72D3qsi7VBYZ/AWs/mOU9H8+ab5nLwQtWqPrzMUxJ/c5MUqEda7BkdgAoTG6hoLB8
+ dsBvtkhzDoLFBGigUiQzBx52eUk7Y7thOBGmpxr1B68v6ZKJZGFc0WLe1ATHkNj9C2Rd
+ 4eD0XLiQqM2F8PuvX9gmEiOs+AyBRqwUtdQl7EM3KIL9fwtS9AVZHSU4m/Khs8V3hQFl
+ MRWRI9DHistjAWTEewGaBmMAhF9uWG815tyd7sgB3hITg2vXWBUhEdG3203yjb+0TmiA
+ GtqyffzLISIEyN3LYK8dBeyIOJDDYjhBZfedxxCkdh7DCqsYOBYHaPEQCOqDeVU33AMN
+ 9OiA==
+X-Gm-Message-State: AOJu0Yz4Kb5eBEL4FIK1Mib6B8QwbKiCIFHgkFnSslTd9e8/wsiJcozx
+ dbb+5v80Z/GGNDIAZAhZ+nQ=
+X-Google-Smtp-Source: AGHT+IGdZFEyfJpctUU4fXRWtzNMxJlMGwLs6LcaKQ3Eyh1t6Rcslzbpzy0kGZFLVkD8gYn5WOHfqQ==
+X-Received: by 2002:a17:902:bd46:b0:1cf:896f:d6c5 with SMTP id
+ b6-20020a170902bd4600b001cf896fd6c5mr18940725plx.41.1701286839814; 
+ Wed, 29 Nov 2023 11:40:39 -0800 (PST)
+Received: from daehojeong-desktop.mtv.corp.google.com
+ ([2620:0:1000:8411:7782:28f:d123:243d])
+ by smtp.gmail.com with ESMTPSA id
+ h12-20020a170902748c00b001c9d011581dsm12640601pll.164.2023.11.29.11.40.39
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 29 Nov 2023 11:40:39 -0800 (PST)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Wed, 29 Nov 2023 11:40:33 -0800
+Message-ID: <20231129194033.999207-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
 MIME-Version: 1.0
-X-XM-SPF: eid=1r8MLu-005gWB-Nk; ; ;
- mid=<87v89kio36.fsf@email.froward.int.ebiederm.org>; ; ;
- hst=in02.mta.xmission.com; ; ; ip=68.227.168.167; ; ;
- frm=ebiederm@xmission.com; ; ; spf=pass
-X-XM-AID: U2FsdGVkX1/b6JS6EkjAv/7bqf1Ls+CX0i6iy1ZrEtE=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
-X-Headers-End: 1r8MME-0004Mh-UJ
-Subject: Re: [f2fs-dev] fun with d_invalidate() vs. d_splice_alias() was Re:
- [PATCH v6 0/9] Support negative dentries on case-insensitive ext4 and f2fs
+X-Headers-End: 1r8QQP-0006SA-Ij
+Subject: [f2fs-dev] [PATCH] f2fs-tools: convert lost+found dir to regular
+ dentry before adding nodes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,78 +101,57 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Christian Brauner <brauner@kernel.org>, tytso@mit.edu,
- Miklos Szeredi <miklos@szeredi.hu>, linux-f2fs-devel@lists.sourceforge.net,
- ebiggers@kernel.org, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
- linux-ext4@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
- Gabriel Krisman Bertazi <gabriel@krisman.be>
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
+From: Daeho Jeong <daehojeong@google.com>
 
-> On Mon, Nov 27, 2023 at 06:38:43AM +0000, Al Viro wrote:
->
->> > FWIW, I suspect that the right answer would be along the lines of
->> > 	* if d_splice_alias() does move an exsiting (attached) alias in
->> > place, it ought to dissolve all mountpoints in subtree being moved.
->> > There might be subtleties,
->
-> Are there ever...  Starting with the "our test for loop creation
-> (alias is a direct ancestor, need to fail with -ELOOP) is dependent
-> upon rename_lock being held all along".
->
-> Folks, what semantics do we want for dissolving mounts on splice?
-> The situation when it happens is when we have a subtree on e.g. NFS
-> and have some mounts (on client) inside that.  Then somebody on
-> server moves the root of that subtree somewhere else and we try
-> to do a lookup in new place.  Options:
->
-> 1) our dentry for directory that got moved on server is moved into
-> new place, along with the entire subtree *and* everything mounted
-> on it.  Very dubious semantics, especially since if we look the
-> old location up before looking for new one, the mounts will be
-> dissolved; no way around that.
->
-> 2) lookup fails.  It's already possible; e.g. if server has
-> /srv/nfs/1/2/3 moved to /srv/nfs/x, then /srv/nfs/1/2 moved
-> to /srv/nfs/x/y and client has a process with cwd in /mnt/nfs/1/2/3
-> doing a lookup for "y", there's no way in hell to handle that -
-> the lookup will return the fhandle of /srv/nfs/x, which is the
-> same thing the client has for /mnt/nfs/1/2; we *can't* move that
-> dentry to /mnt/nfs/1/2/3/y - not without creating a detached loop.
-> We can also run into -ESTALE if one of the trylocks in
-> __d_unalias() fails.  Having the same happen if there are mounts
-> in the subtree we are trying to splice would be unpleasant, but
-> not fatal.  The trouble is, that won't be a transient failure -
-> not until somebody tries to look the old location up.
->
-> 3) dissolve the mounts.  Doable, but it's not easy; especially
-> since we end up having to redo the loop-prevention check after
-> the mounts had been dissolved.  And that check may be failing
-> by that time, with no way to undo that dissolving...
+fsck doesn't support adding inodes to inline dentries. So, need to
+convert inline lost+found dentry before adding missing inodes.
 
-To be clear this is a change in current semantics and has a minuscule
-change of resulting in a regression.  That should be called out in the
-change log.
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ fsck/fsck.c | 8 ++++++++
+ fsck/fsck.h | 4 ++++
+ 2 files changed, 12 insertions(+)
 
-If we choose to change the semantics I would suggest that the new
-semantics be:
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 55eddca..f40b4cd 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -2849,6 +2849,14 @@ static struct f2fs_node *fsck_get_lpf(struct f2fs_sb_info *sbi)
+ 			/* FIXME: give up? */
+ 			goto out;
+ 		}
++
++		/* Must convert inline dentry before adding inodes */
++		err = convert_inline_dentry(sbi, node, ni.blk_addr);
++		if (err) {
++			MSG(0, "Convert inline dentry for ino=%x failed.\n",
++					lpf_ino);
++			goto out;
++		}
+ 	} else { /* not found, create it */
+ 		struct dentry de;
+ 
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index f6f15e7..d6abf18 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -330,4 +330,8 @@ void *read_all_xattrs(struct f2fs_sb_info *, struct f2fs_node *, bool);
+ void write_all_xattrs(struct f2fs_sb_info *sbi,
+ 		struct f2fs_node *inode, __u32 hsize, void *txattr_addr);
+ 
++/* dir.c */
++int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
++		block_t p_blkaddr);
++
+ #endif /* _FSCK_H_ */
+-- 
+2.43.0.rc2.451.g8631bc7472-goog
 
-If a different name for a directory already exists:
-	* Detach the mounts unconditionally (leaving dentry descendants alone).
-	* Attempt the current splice.
-          - If the splice succeeds ( return the new dentry )
-	  - If the splice fails ( fail the lookup, and d_invalidate the existing name )
-
-Unconditionally dissolving the mounts before attempting the rename
-should simplify everything.
-
-In the worst case a race between d_invalidate and d_splice_alias will
-now become a race to see who can detach the mounts first.
-
-Eric
 
 
 _______________________________________________
