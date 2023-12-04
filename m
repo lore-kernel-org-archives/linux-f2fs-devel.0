@@ -4,88 +4,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 78415C4167B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Dec 2023 22:09:43 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A85BDC10DC1
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Dec 2023 23:46:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rAH8H-0003M0-RR;
-	Mon, 04 Dec 2023 22:09:42 +0000
+	id 1rAIe1-0002Ft-4f;
+	Mon, 04 Dec 2023 23:46:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1rAH8H-0003Lt-2G
- for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 04 Dec 2023 22:09:41 +0000
+ (envelope-from <3zGRuZQYKAIEiwtxjslttlqj.htr@flex--drosen.bounces.google.com>)
+ id 1rAIe0-0002Fn-HE for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 04 Dec 2023 23:46:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
- Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
+ Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0yaO/BTFuN+hdaZ3dr+nTdBWWXl4w8z8dbFIh9uyCDo=; b=Pregl5ZFaqIr+aEFa7no30AOk9
- dzbOtbI67fUS8enH+EjgLURrx+QDThFm0UHJsBN24mZdWyVHUzxd/RzTyPG4wVxStTkNUJ+HIcGqL
- F1Z4U1lP5DE+VfV9VzBgI2z9sQPYcl0wnhqBOHe13jcOfKEUDQLvEUFfEb85MFpHJ18o=;
+ bh=mUymHRPuxHIIlrnrqmrnoyhDvTW+Hjf6wrxLrnIWncc=; b=HcxMfvtg3VOGUzMnMAGxy3GYDh
+ SG1CH2BjcyK9f+26FUeiTvw5y7CXTpZh8jPh1YMK0itMmjMnOSCO+uzJ7m97RRmRljPHDMT9Gv92r
+ B8/B18MidQ4vaGhpI2MA/ZakrugUS8qUbeVc7al0jNwjv+ZAbWFY79W2g/3+VsuuesT0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
- :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=0yaO/BTFuN+hdaZ3dr+nTdBWWXl4w8z8dbFIh9uyCDo=; b=WZS+LRHbOBFMnlHHfJmsAObYYH
- 6aD5D1jyoESBj5ubp/FGb/CYFogLg4EoXfGsUex2eTVVqkxSKnUabX0SiTIv5CBbkMHXF2UKoE14i
- N6fdqmOcML7mKyhf1AALP5/qK9ihJYoPD6DC+oHebLUPgPlPWQrmZnszxU6l7ZwIL2gw=;
-Received: from mail-pf1-f178.google.com ([209.85.210.178])
+ h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=mUymHRPuxHIIlrnrqmrnoyhDvTW+Hjf6wrxLrnIWncc=; b=K
+ IaCGgZtPh2TiuRK/3erAqtQ1lbO3o1zz+7X50xzJtgnznttlAi7mQUuCtedWcDkUovI98Rzjbe2dV
+ /dd7+ad7wus8iJNzeKAFmBYzIi4pbcEJ97WT+aM1/L81GOUjVrYo3N/oXbEXoIMyl5QeGOw6mfqnN
+ knKPROkwCG9SkU/8=;
+Received: from mail-yb1-f201.google.com ([209.85.219.201])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rAH8G-0007Sl-PU for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 04 Dec 2023 22:09:41 +0000
-Received: by mail-pf1-f178.google.com with SMTP id
- d2e1a72fcca58-6cddc148285so5292320b3a.2
+ id 1rAIdy-0003gs-Sl for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 04 Dec 2023 23:46:31 +0000
+Received: by mail-yb1-f201.google.com with SMTP id
+ 3f1490d57ef6-db542ec49d9so3495975276.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 04 Dec 2023 14:09:40 -0800 (PST)
+ Mon, 04 Dec 2023 15:46:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1701727775; x=1702332575; darn=lists.sourceforge.net;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=0yaO/BTFuN+hdaZ3dr+nTdBWWXl4w8z8dbFIh9uyCDo=;
- b=dhP13j6XFTSipmKN9FrzyZR2xc5sr+lxk9uXCt0y/++f8FvqWgj/WTYoj18zt9Y+gk
- uuItC7Zh/LdiQlpPQR0zMFGVdwO4N/uYI5sTZzGUDagpTaglZ9H83hSVE4TAPLp8nqUl
- GXsenmffJjFTmDQrTos74cBUe9bAlL4aHlI0oLS2487d6gAT81ZBCQ5GY/KCPkrdfmhj
- 52F3RtKZGTKTAN7GZXrUIvQOS+cjQH47HUJumS4eq7S68kI9shSCMqsRmmdAN1tCmiko
- +i/HUFYbO6l+B8P7XW6jpCNdRBcflHYm7XBOgIlhm6XW3mZLPSfTligYF1uH06seQmZv
- suLA==
+ d=google.com; s=20230601; t=1701733580; x=1702338380;
+ darn=lists.sourceforge.net; 
+ h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=mUymHRPuxHIIlrnrqmrnoyhDvTW+Hjf6wrxLrnIWncc=;
+ b=C/J1j3MIb4ieCDEeoTp3hRpqoPG3J/mk1Tgwvq/GpMPa9cjFfXXf5URLGTamuIiD3x
+ GdOa0HtDI3C0jGQ/RnbJdqSgeQviD7ta/JDHCcoeFNkb6yh1VGIfsFpUPOGQzzjGcJGP
+ 2ktqL+/05ZWseaPLVrWSWK5qLlq9tXEjIQHDBPOLQwZgEErEi1yBw3Oy2cQsAylAxFYx
+ RSQc/LsLn/ohknFRJFFUwqZGTWPITi/h6D7+K/6wy+xCCIOCnGk3DM3SxVYplRepVlpW
+ bN5jx8u8817pb3rKhWh/Y1p+iwQpTD3TYf37OQcMNI7lzjLwCOb0hgziA/kRU8rVt3Wb
+ WZFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1701727775; x=1702332575;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=0yaO/BTFuN+hdaZ3dr+nTdBWWXl4w8z8dbFIh9uyCDo=;
- b=C1ycBZpDVcwrleA59+N1n6A8bjWq63oHGhZYzsrfAPU3T6DiSfel70HcEuYeOCB7Rk
- vgJ/FyYvPa/RWMwsUUBWFXEYpsAm+WuN8lRVWVUa1uKd0nPmikJTA0jmTywbOsU46jh5
- pjtRy8IRxPTJVjAsWlRBcegZtR7f80puc7JAsdCDh0i0MLHF+6fw9OoGW/M72yvY/pZO
- am1GxjbXCcboNIEeSSjo7lU+ZsOzVZ1HND+QQ2ZPViRGb0iKuJ43IZLUC/v5XBUqDPmE
- CNagEo1PJjkOdCyleycrCMYjecZc/uFHd4HiyYasUBvPSGPQJPzzAyG8fyYs08Pzyrtt
- gM1w==
-X-Gm-Message-State: AOJu0YwzLHwTiv3ZGBuJfFl+Egjd+ku3qnYYjQCuMRkTOGZzCMdkvUja
- dnfVzfby1sNEmfR2ln3wl0ST0sOe1e66B2A6WepZjuSGLbE=
-X-Google-Smtp-Source: AGHT+IHx2fJpWDvTw2VKMw7ZWa7AZ6Rjp2hXyHx6dU/sGjxgbNBWELhAzuwxM3yL2y0OEcXGx6baE8F20seioBN2j/Q=
-X-Received: by 2002:a05:6122:1797:b0:4b2:c554:fbb1 with SMTP id
- o23-20020a056122179700b004b2c554fbb1mr2666171vkf.19.1701716589352; Mon, 04
- Dec 2023 11:03:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20231204180428.925779-1-jaegeuk@kernel.org>
- <20231204180428.925779-2-jaegeuk@kernel.org>
-In-Reply-To: <20231204180428.925779-2-jaegeuk@kernel.org>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Mon, 4 Dec 2023 11:02:58 -0800
-Message-ID: <CACOAw_xbm4MinoOeimooCEketA=5oKWr46e-gU-ZtAG_rpWDAg@mail.gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1rAH8G-0007Sl-PU
-Subject: Re: [f2fs-dev] [PATCH 2/4] f2fs: fix write pointers on zoned device
- after roll forward
+ d=1e100.net; s=20230601; t=1701733580; x=1702338380;
+ h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=mUymHRPuxHIIlrnrqmrnoyhDvTW+Hjf6wrxLrnIWncc=;
+ b=UYTD4t+VZJbmPnZfkcvcZ2ldFrgqh4rohY+iDYfPnSk7zFs+NN27dNPn6CPTJnkdHL
+ RdR6X4SkyOuAGkiQUWCY3uK5QlUrbFyFlHznKoZuTFlg8WSJoMYuWeFNZegQHI8nYKte
+ 6w5ei9z5dAxeUSqxSRrLlZ1WSJLX2bt2/mT55SVBAlxzegAAELJt6Tv8K1X9j/Bv84/u
+ hDz1drkJH18ITrT3MbsTVh7uemwsPMElawlQ4kPZF7HQOcBeIS81w1nD+tjvulvrWoLQ
+ tEcYsIL7802/oAMYgavkDrZrzv9myINQ1eSidHtXuY83fuNskhk/iSDsIgnDP6dodcSi
+ s01A==
+X-Gm-Message-State: AOJu0YzLK4i6P8H+gS/IiqlZH9oCxq9k8el0OHsqVbSIUmUaRFRzb3uV
+ kK6QBTPqKDqoQRYhnnVT5PrBf5q8jLO9V2DDGiFV1sjXETqvelmf0YtgDEP7ACXa15lfvEfgzJZ
+ OUe+Wevexv3FlPcp9Sn66X8ZTm/v//Rn6Jc7f0AwdiWVgKw4kk+QLf4UvC+tBfh5YVre5H4q6U8
+ mbO3JkDa4=
+X-Google-Smtp-Source: AGHT+IHq0SjWmG+nLZUtdxneA/JrpUr7QGWRDcSdZO7VpafKGKWVxgfIRv46tf+blV+TIKsoHoyYIge4lyY=
+X-Received: from drosen.mtv.corp.google.com
+ ([2620:15c:211:201:5074:e7bb:c7b:6a8a])
+ (user=drosen job=sendgmr) by 2002:a25:ca16:0:b0:db5:382f:3999 with SMTP id
+ a22-20020a25ca16000000b00db5382f3999mr474717ybg.1.1701733580100; Mon, 04 Dec
+ 2023 15:46:20 -0800 (PST)
+Date: Mon,  4 Dec 2023 15:46:15 -0800
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
+Message-ID: <20231204234615.3592624-1-drosen@google.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1rAIdy-0003gs-Sl
+Subject: [f2fs-dev] [PATCH v2] f2fs: Restrict max filesize for 16K f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,32 +96,58 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Daniel Rosenberg via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Daniel Rosenberg <drosen@google.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, Daniel Rosenberg <drosen@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-TEdUTQoKT24gTW9uLCBEZWMgNCwgMjAyMyBhdCAxMDowNuKAr0FNIEphZWdldWsgS2ltIDxqYWVn
-ZXVrQGtlcm5lbC5vcmc+IHdyb3RlOgo+Cj4gMS4gZG8gcm9sbCBmb3J3YXJkIHJlY292ZXJ5Cj4g
-Mi4gdXBkYXRlIGN1cnJlbnQgc2VnbWVudHMgcG9pbnRlcnMKPiAzLiBmaXggdGhlIGVudGlyZSB6
-b25lcycgd3JpdGUgcG9pbnRlcnMKPiA0LiBkbyBjaGVja3BvaW50Cj4KPiBTaWduZWQtb2ZmLWJ5
-OiBKYWVnZXVrIEtpbSA8amFlZ2V1a0BrZXJuZWwub3JnPgo+IC0tLQo+ICBmcy9mMmZzL3JlY292
-ZXJ5LmMgfCAyICsrCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKykKPgo+IGRpZmYg
-LS1naXQgYS9mcy9mMmZzL3JlY292ZXJ5LmMgYi9mcy9mMmZzL3JlY292ZXJ5LmMKPiBpbmRleCAx
-NjQxNWM3NzBiNDUuLmQwZjI0Y2NiZDFhYyAxMDA2NDQKPiAtLS0gYS9mcy9mMmZzL3JlY292ZXJ5
-LmMKPiArKysgYi9mcy9mMmZzL3JlY292ZXJ5LmMKPiBAQCAtOTE3LDYgKzkxNyw4IEBAIGludCBm
-MmZzX3JlY292ZXJfZnN5bmNfZGF0YShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIGJvb2wgY2hl
-Y2tfb25seSkKPiAgICAgICAgIGlmICghZXJyICYmIGZpeF9jdXJzZWdfd3JpdGVfcG9pbnRlciAm
-JiAhZjJmc19yZWFkb25seShzYmktPnNiKSAmJgo+ICAgICAgICAgICAgICAgICAgICAgICAgIGYy
-ZnNfc2JfaGFzX2Jsa3pvbmVkKHNiaSkpIHsKPiAgICAgICAgICAgICAgICAgZXJyID0gZjJmc19m
-aXhfY3Vyc2VnX3dyaXRlX3BvaW50ZXIoc2JpKTsKPiArICAgICAgICAgICAgICAgaWYgKCFlcnIp
-Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgZXJyID0gZjJmc19jaGVja193cml0ZV9wb2ludGVy
-KHNiaSk7Cj4gICAgICAgICAgICAgICAgIHJldCA9IGVycjsKPiAgICAgICAgIH0KPgo+IC0tCj4g
-Mi40My4wLnJjMi40NTEuZzg2MzFiYzc0NzItZ29vZwo+Cj4KPgo+IF9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5n
-IGxpc3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBzOi8v
-bGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
-LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
-dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
-LWRldmVsCg==
+Blocks are tracked by u32, so the max permitted filesize is
+U32_MAX * BLOCK_SIZE. Additionally, in order to support crypto data unit
+sizes of 4K with a 16K block size with IV_INO_LBLK_{32,63}, we must
+further restrict max filesize to U32_MAX * 4096. This does not affect 4K
+blocksize f2fs as the natural limit for files are well below that.
+
+Fixes: d7e9a9037de2 ("f2fs: Support Block Size == Page Size")
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+---
+ fs/f2fs/super.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 033af907c3b1..18a2189a0dc4 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3364,6 +3364,18 @@ loff_t max_file_blocks(struct inode *inode)
+ 	leaf_count *= NIDS_PER_BLOCK;
+ 	result += leaf_count;
+ 
++	/*
++	 * For compatibility with FSCRYPT_POLICY_IV_INO_LBLK_{64,32} with a
++	 * 4K crypto data unit, we must restrict the max filesize to what can
++	 * fit within U32_MAX data units.
++	 *
++	 * Since the blocksize must currently be equal to the page size,
++	 * we can use a constant for that. Note if this is not the case
++	 * in the future that inode is NULL while setting up the superblock.
++	 */
++
++	result = min(result, ((loff_t) U32_MAX * 4096) >> F2FS_BLKSIZE_BITS);
++
+ 	return result;
+ }
+ 
+
+base-commit: d346fa09abff46988de9267b67b6900d9913d5a2
+-- 
+2.43.0.rc2.451.g8631bc7472-goog
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
