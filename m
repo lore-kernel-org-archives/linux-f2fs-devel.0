@@ -4,92 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9F951C4167B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Dec 2023 21:59:45 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 78415C4167B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Dec 2023 22:09:43 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rAGyg-0000lC-52;
-	Mon, 04 Dec 2023 21:59:45 +0000
+	id 1rAH8H-0003M0-RR;
+	Mon, 04 Dec 2023 22:09:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1rAGyc-0000l5-LN
+ (envelope-from <daeho43@gmail.com>) id 1rAH8H-0003Lt-2G
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 04 Dec 2023 21:59:41 +0000
+ Mon, 04 Dec 2023 22:09:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2NsrjOGbg4NmIjD8PWqjBsvJk5exDijeITeH9cgLNWk=; b=mMboq4JgbvfNJ6znREgAfIsLl4
- 7KQ+C2Of0x8jkGpXJOHpdx4XL5Ivc9nq5DZwq5MZDNBl2EiJrK+arbFpRluMFuKsXXHICXsOEA8j5
- lDZt5Gu0pfkPowbZ3A+g4fovwN7SLguCmbImNFW0XlfA2ckm6rLHD2CFGbPdgMnyL6eI=;
+ bh=0yaO/BTFuN+hdaZ3dr+nTdBWWXl4w8z8dbFIh9uyCDo=; b=Pregl5ZFaqIr+aEFa7no30AOk9
+ dzbOtbI67fUS8enH+EjgLURrx+QDThFm0UHJsBN24mZdWyVHUzxd/RzTyPG4wVxStTkNUJ+HIcGqL
+ F1Z4U1lP5DE+VfV9VzBgI2z9sQPYcl0wnhqBOHe13jcOfKEUDQLvEUFfEb85MFpHJ18o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=2NsrjOGbg4NmIjD8PWqjBsvJk5exDijeITeH9cgLNWk=; b=R
- 1lZt0GFQmw+6zus2Wy0Bta588+QmoT+WI/L7l4Z3eFW25lNQA84LwcxfgAY4CIsnA/gcLu8Dfe3Jz
- gIhA7FpefAdcH3bK3mTcPInYToFYq91m6ZFzgb+a+Aic3Fr5vcP+AZC3vk4dn9fsX4e/UudsMnphv
- pzoouuxUE6T62Jkc=;
-Received: from mail-pj1-f43.google.com ([209.85.216.43])
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=0yaO/BTFuN+hdaZ3dr+nTdBWWXl4w8z8dbFIh9uyCDo=; b=WZS+LRHbOBFMnlHHfJmsAObYYH
+ 6aD5D1jyoESBj5ubp/FGb/CYFogLg4EoXfGsUex2eTVVqkxSKnUabX0SiTIv5CBbkMHXF2UKoE14i
+ N6fdqmOcML7mKyhf1AALP5/qK9ihJYoPD6DC+oHebLUPgPlPWQrmZnszxU6l7ZwIL2gw=;
+Received: from mail-pf1-f178.google.com ([209.85.210.178])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rAGyZ-0006rx-2Y for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 04 Dec 2023 21:59:41 +0000
-Received: by mail-pj1-f43.google.com with SMTP id
- 98e67ed59e1d1-28654179ec0so3682653a91.2
+ id 1rAH8G-0007Sl-PU for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 04 Dec 2023 22:09:41 +0000
+Received: by mail-pf1-f178.google.com with SMTP id
+ d2e1a72fcca58-6cddc148285so5292320b3a.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 04 Dec 2023 13:59:34 -0800 (PST)
+ Mon, 04 Dec 2023 14:09:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1701727168; x=1702331968; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=2NsrjOGbg4NmIjD8PWqjBsvJk5exDijeITeH9cgLNWk=;
- b=Av6vZyJ7GMD5yQPvTeNLFO/HscR1UTnEF4gy580cfyDVGkjW9w9c0x/Gyc4aelqo7X
- 7WwsUEk6gVSsxFE000/i7ay2Fc1s1Q3PcTEbAh6Fgz/FA15MT8/zFxjNMStKZhKexiGJ
- Wv0CVY7svUgbkXfzWLJPnjcpo7qb6ZZUHgyfD1LnZfF1wlk1I70qATxOVSUqkJETr4Q0
- s7O30Tb11N4CjVzy6gRy3eq5bGv7FQ6shY94y5s0R5UcQbRN1ka8kufqjpn1jEXaM5B3
- 0ms0Ru+D2bP2LmmmejCveGItot3bAgZmXBjY9+0fjXhh5QEaP0j/eU9nantKmzU+4PWZ
- eVGQ==
+ d=gmail.com; s=20230601; t=1701727775; x=1702332575; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=0yaO/BTFuN+hdaZ3dr+nTdBWWXl4w8z8dbFIh9uyCDo=;
+ b=dhP13j6XFTSipmKN9FrzyZR2xc5sr+lxk9uXCt0y/++f8FvqWgj/WTYoj18zt9Y+gk
+ uuItC7Zh/LdiQlpPQR0zMFGVdwO4N/uYI5sTZzGUDagpTaglZ9H83hSVE4TAPLp8nqUl
+ GXsenmffJjFTmDQrTos74cBUe9bAlL4aHlI0oLS2487d6gAT81ZBCQ5GY/KCPkrdfmhj
+ 52F3RtKZGTKTAN7GZXrUIvQOS+cjQH47HUJumS4eq7S68kI9shSCMqsRmmdAN1tCmiko
+ +i/HUFYbO6l+B8P7XW6jpCNdRBcflHYm7XBOgIlhm6XW3mZLPSfTligYF1uH06seQmZv
+ suLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1701727168; x=1702331968;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=2NsrjOGbg4NmIjD8PWqjBsvJk5exDijeITeH9cgLNWk=;
- b=Ncg+Ef2YgYJ9xBfnRS9OTSixPZxpGPQReZUHsfxMY1ev+vW85tMyFpSpxNlJEGZLU3
- 2+9BOvvORimrJ/czZVVnXyur1SMOII9hjIM6tCxTfM4Jar+tDXioD59iXfH6n21BfKXL
- gWXzi8WL0P+taViWnF32f0h/yHnrAfze3lU2MXd9NRrAuN6QKEWfGDK0Uqh+vtm5jPZc
- H/obCOkJWWoklRR5lmvMUuMS6YIZla0EdWqkihincJeE2W9AYqJJQyGF8Hwn1l0iE8tQ
- +yGAKEnYoOtnQxFTZxCffQeeW5xP02Um8kuTZ1ikgQRqHGHhY23vBJ8b8spD6xGR6PbN
- +vOQ==
-X-Gm-Message-State: AOJu0YwoqnPxgZ+V74wqgP6wBrvrAEvdwod9dPMsjGkmdqeBMnhUvAbh
- IV1vTFI6+IQ9VJJNm/NJDzYoKCI5NIo=
-X-Google-Smtp-Source: AGHT+IEd8ztf0T46rO8eqjfh+HBBSeiqKtVN5wRE53nvIDe3epX1CVDUgVsHKD8Vx1RM5sUOMcJY/g==
-X-Received: by 2002:a17:902:7842:b0:1d0:649b:89d0 with SMTP id
- e2-20020a170902784200b001d0649b89d0mr3912917pln.52.1701717778840; 
- Mon, 04 Dec 2023 11:22:58 -0800 (PST)
-Received: from daehojeong-desktop.mtv.corp.google.com
- ([2620:0:1000:8411:727a:d07a:2bd2:a437])
- by smtp.gmail.com with ESMTPSA id
- q4-20020a170902dac400b001cfe19e2508sm8687675plx.274.2023.12.04.11.22.58
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 04 Dec 2023 11:22:58 -0800 (PST)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Date: Mon,  4 Dec 2023 11:22:51 -0800
-Message-ID: <20231204192251.2518865-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
+ d=1e100.net; s=20230601; t=1701727775; x=1702332575;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=0yaO/BTFuN+hdaZ3dr+nTdBWWXl4w8z8dbFIh9uyCDo=;
+ b=C1ycBZpDVcwrleA59+N1n6A8bjWq63oHGhZYzsrfAPU3T6DiSfel70HcEuYeOCB7Rk
+ vgJ/FyYvPa/RWMwsUUBWFXEYpsAm+WuN8lRVWVUa1uKd0nPmikJTA0jmTywbOsU46jh5
+ pjtRy8IRxPTJVjAsWlRBcegZtR7f80puc7JAsdCDh0i0MLHF+6fw9OoGW/M72yvY/pZO
+ am1GxjbXCcboNIEeSSjo7lU+ZsOzVZ1HND+QQ2ZPViRGb0iKuJ43IZLUC/v5XBUqDPmE
+ CNagEo1PJjkOdCyleycrCMYjecZc/uFHd4HiyYasUBvPSGPQJPzzAyG8fyYs08Pzyrtt
+ gM1w==
+X-Gm-Message-State: AOJu0YwzLHwTiv3ZGBuJfFl+Egjd+ku3qnYYjQCuMRkTOGZzCMdkvUja
+ dnfVzfby1sNEmfR2ln3wl0ST0sOe1e66B2A6WepZjuSGLbE=
+X-Google-Smtp-Source: AGHT+IHx2fJpWDvTw2VKMw7ZWa7AZ6Rjp2hXyHx6dU/sGjxgbNBWELhAzuwxM3yL2y0OEcXGx6baE8F20seioBN2j/Q=
+X-Received: by 2002:a05:6122:1797:b0:4b2:c554:fbb1 with SMTP id
+ o23-20020a056122179700b004b2c554fbb1mr2666171vkf.19.1701716589352; Mon, 04
+ Dec 2023 11:03:09 -0800 (PST)
 MIME-Version: 1.0
-X-Headers-End: 1rAGyZ-0006rx-2Y
-Subject: [f2fs-dev] [PATCH] f2fs-tools: skip finishing zones for current
- zones
+References: <20231204180428.925779-1-jaegeuk@kernel.org>
+ <20231204180428.925779-2-jaegeuk@kernel.org>
+In-Reply-To: <20231204180428.925779-2-jaegeuk@kernel.org>
+From: Daeho Jeong <daeho43@gmail.com>
+Date: Mon, 4 Dec 2023 11:02:58 -0800
+Message-ID: <CACOAw_xbm4MinoOeimooCEketA=5oKWr46e-gU-ZtAG_rpWDAg@mail.gmail.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+X-Headers-End: 1rAH8G-0007Sl-PU
+Subject: Re: [f2fs-dev] [PATCH 2/4] f2fs: fix write pointers on zoned device
+ after roll forward
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,58 +97,32 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daeho Jeong <daehojeong@google.com>
-
-Do not finishing zones for current zones.
-
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
-Fixes: 06a25b021d15 ("f2fs-tools: make six open zone check resilient")
----
- fsck/fsck.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 8acb822..5121a56 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -3265,8 +3265,9 @@ static int chk_and_fix_wp_with_sit(int UNUSED(i), void *blkzone, void *opaque)
- 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
- 	block_t zone_block, wp_block, wp_blkoff;
- 	unsigned int zone_segno, wp_segno;
--	int ret, last_valid_blkoff;
-+	int i, ret, last_valid_blkoff;
- 	int log_sectors_per_block = sbi->log_blocksize - SECTOR_SHIFT;
-+	unsigned int segs_per_zone = sbi->segs_per_sec * sbi->secs_per_zone;
- 
- 	if (blk_zone_conv(blkz))
- 		return 0;
-@@ -3309,6 +3310,15 @@ static int chk_and_fix_wp_with_sit(int UNUSED(i), void *blkzone, void *opaque)
- 		return 0;
- 	}
- 
-+	/* if a curseg points to the zone, do not finishing zone */
-+	for (i = 0; i < NO_CHECK_TYPE; i++) {
-+		struct curseg_info *cs = CURSEG_I(sbi, i);
-+
-+		if (zone_segno <= cs->segno &&
-+				cs->segno < zone_segno + segs_per_zone)
-+			return 0;
-+	}
-+
- 	/*
- 	 * If valid blocks exist in the zone beyond the write pointer, it
- 	 * is a bug. No need to fix because the zone is not selected for the
--- 
-2.43.0.rc2.451.g8631bc7472-goog
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+TEdUTQoKT24gTW9uLCBEZWMgNCwgMjAyMyBhdCAxMDowNuKAr0FNIEphZWdldWsgS2ltIDxqYWVn
+ZXVrQGtlcm5lbC5vcmc+IHdyb3RlOgo+Cj4gMS4gZG8gcm9sbCBmb3J3YXJkIHJlY292ZXJ5Cj4g
+Mi4gdXBkYXRlIGN1cnJlbnQgc2VnbWVudHMgcG9pbnRlcnMKPiAzLiBmaXggdGhlIGVudGlyZSB6
+b25lcycgd3JpdGUgcG9pbnRlcnMKPiA0LiBkbyBjaGVja3BvaW50Cj4KPiBTaWduZWQtb2ZmLWJ5
+OiBKYWVnZXVrIEtpbSA8amFlZ2V1a0BrZXJuZWwub3JnPgo+IC0tLQo+ICBmcy9mMmZzL3JlY292
+ZXJ5LmMgfCAyICsrCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKykKPgo+IGRpZmYg
+LS1naXQgYS9mcy9mMmZzL3JlY292ZXJ5LmMgYi9mcy9mMmZzL3JlY292ZXJ5LmMKPiBpbmRleCAx
+NjQxNWM3NzBiNDUuLmQwZjI0Y2NiZDFhYyAxMDA2NDQKPiAtLS0gYS9mcy9mMmZzL3JlY292ZXJ5
+LmMKPiArKysgYi9mcy9mMmZzL3JlY292ZXJ5LmMKPiBAQCAtOTE3LDYgKzkxNyw4IEBAIGludCBm
+MmZzX3JlY292ZXJfZnN5bmNfZGF0YShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIGJvb2wgY2hl
+Y2tfb25seSkKPiAgICAgICAgIGlmICghZXJyICYmIGZpeF9jdXJzZWdfd3JpdGVfcG9pbnRlciAm
+JiAhZjJmc19yZWFkb25seShzYmktPnNiKSAmJgo+ICAgICAgICAgICAgICAgICAgICAgICAgIGYy
+ZnNfc2JfaGFzX2Jsa3pvbmVkKHNiaSkpIHsKPiAgICAgICAgICAgICAgICAgZXJyID0gZjJmc19m
+aXhfY3Vyc2VnX3dyaXRlX3BvaW50ZXIoc2JpKTsKPiArICAgICAgICAgICAgICAgaWYgKCFlcnIp
+Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgZXJyID0gZjJmc19jaGVja193cml0ZV9wb2ludGVy
+KHNiaSk7Cj4gICAgICAgICAgICAgICAgIHJldCA9IGVycjsKPiAgICAgICAgIH0KPgo+IC0tCj4g
+Mi40My4wLnJjMi40NTEuZzg2MzFiYzc0NzItZ29vZwo+Cj4KPgo+IF9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5n
+IGxpc3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBzOi8v
+bGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
+LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
+dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
+LWRldmVsCg==
