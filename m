@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 91518C4167B
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 95F03C46CA3
 	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 10 Dec 2023 09:21:16 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rCFzu-0000yB-IX;
+	id 1rCFzv-0007b3-VQ;
 	Sun, 10 Dec 2023 09:21:15 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rCFzt-0000xw-64
+ (envelope-from <chao@kernel.org>) id 1rCFzu-0007ax-Os
  for linux-f2fs-devel@lists.sourceforge.net;
  Sun, 10 Dec 2023 09:21:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GyDb89B1pBnoGazvPcFqJJ0tUhQM56Cu+onPhqysOEw=; b=K8gQrrMN7XkqBMs20xU9Tw8WTZ
- HAzXxYreiBEJDWixDzJg547OBlOXqN24QaHneo+xxRXJ4i/fNt+Q16pIoNCPOlTHBsS4jsPoZiolR
- gKQGtwrOGDcY6mlYv3I7ti/vaQoXxiZ6SieUVOXUDdDFmHM5MZP2JCBUzUBiv/7g1rB8=;
+ bh=t1mFy5MqHYl9IZvWjQoiTSStN4TsgRcBm1BmXVteFVA=; b=IL5t7U16zap6hFOFI9E7giAznm
+ 76fFvBAcXTIyaKQWINSvswWoDOfywcpANuaxZGp9ZTQ0TvT4uW/XcCbfgEPrjQov8Xw7ec13SCbZH
+ zGqt/VYQBLzSmEotjgtOxNZwbJZyBOfAwOFEkIPmHOj9qQq4FCQAG3j7CoHGNVNblqP4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,41 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GyDb89B1pBnoGazvPcFqJJ0tUhQM56Cu+onPhqysOEw=; b=Rq4terXh2PCfJgrV0OvhJLkmFW
- f8yzfupf5sk3U75u/kxBDG99vVZgjARuuKeS/asqtbyHS3MxFYHTtLiZLjp4TJBxtRBZclJpYDOs9
- 6YsCpVO9RDXYVRCm1kbOWdfXPL4YhZk0puQR0WYRfK5ACPZF631ZxDC//GtuwMn8ncIE=;
+ bh=t1mFy5MqHYl9IZvWjQoiTSStN4TsgRcBm1BmXVteFVA=; b=Mm1e6Swbg8coj8of3qdjW/Duqr
+ oTUCL69SrWj5lpXTjVtCL3AZTGx1nv/XqM92MAScvPebOWUdzFmchGG53GkZ+f7hQacon8YA9zvqE
+ cuSxja7zRtC5/wpaluNslde1hspVUH/ZqWVhYvi1Pp3mgbo4xpViUyscIbFfAW8Cfz2M=;
 Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rCFzo-0002np-Vd for linux-f2fs-devel@lists.sourceforge.net;
+ id 1rCFzp-0002nH-0Z for linux-f2fs-devel@lists.sourceforge.net;
  Sun, 10 Dec 2023 09:21:13 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by ams.source.kernel.org (Postfix) with ESMTP id 62292B80A37
+ by ams.source.kernel.org (Postfix) with ESMTP id 18929B80A27
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 10 Dec 2023 09:20:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79378C433C9;
- Sun, 10 Dec 2023 09:20:55 +0000 (UTC)
+ Sun, 10 Dec 2023 09:20:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F537C433C7;
+ Sun, 10 Dec 2023 09:20:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1702200056;
- bh=BjltPLVDTqSnWr9yrzT9LGYq3m8ffUZKi+SKLGr20ZY=;
+ s=k20201202; t=1702200051;
+ bh=yOuZPXBjKzvohX2oVWWx3dWTtZRRyOJHZm+idQtSj7Y=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Ym7Re/0FEavQLP5slXvCbzQnjUi0GthG8VNGQYE+0JCOAMo6vdFGa4yWxtFKBBzo3
- b1s0tJK5bocfJeWdBsmpfuyemVDJJWqf6BaiM9QDqjAHBAXweky3SETt+rHTBNGVMD
- 7Amm0TM0/D8srUZdU6RgfWOMdmOwVKjEftXL+v77Luu2sxU2iTW+5Y7R2+2KEbmE1S
- QDzfhjJtM0OxeYJqF5SUZSRpiUp6oHlG7O8KAEDt3y3a0eCrlzhb3nc54QEtPEWt4R
- xtWISNMIzEDZAbAL/4SZEEIZlWnbaFCHkMj0nWfjql0rGhlWYkHysZ1F0YrkF0EKAm
- UwBaF0MGJNWvQ==
+ b=mUBmEZdRC92b5ppU7KkbM5o9GKhtV4T8mxVcHNQtSFi1TWK6ZZgU3pNRQTsxnksO0
+ ZlH8O0D2n8ptGIZWKr9/wPIxREIvk+1tYykw+G94KFEcNueKjxl5VYj5ZnC3QhkWE1
+ AwAqrNKyEEnOfv65Ie/zTHzBLa1mLP9gr5cEzhC0gzJBjD6fyC74o3hHyVARIDzbU5
+ 0jrHRuA9IjLXVS6b/2b7luEVW8xRiQIUf034T31RDcpG97OKjnQfZrEwy4KVTRFSk2
+ V72N3Y3At8ehn+q19DYpuIycqo12FdUX8K8R0QVuQIu+tGdB5aQrD3PrrHsL6tHVVf
+ +r+g/piIZcT3g==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Sun, 10 Dec 2023 17:20:40 +0800
-Message-Id: <20231210092040.3374741-6-chao@kernel.org>
+Date: Sun, 10 Dec 2023 17:20:37 +0800
+Message-Id: <20231210092040.3374741-3-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20231210092040.3374741-1-chao@kernel.org>
 References: <20231210092040.3374741-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1rCFzo-0002np-Vd
-Subject: [f2fs-dev] [PATCH 6/6] f2fs: add tracepoint for
- f2fs_vm_page_mkwrite()
+X-Headers-End: 1rCFzp-0002nH-0Z
+Subject: [f2fs-dev] [PATCH 3/6] f2fs: introduce get_dnode_addr() to clean up
+ codes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,166 +84,174 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch adds to support tracepoint for f2fs_vm_page_mkwrite(),
-meanwhile it prints more details for trace_f2fs_filemap_fault().
+Just cleanup, no logic changes.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/file.c              | 25 ++++++++++++++----------
- include/trace/events/f2fs.h | 39 ++++++++++++++++++++++++-------------
- 2 files changed, 41 insertions(+), 23 deletions(-)
+ fs/f2fs/data.c  | 11 ++---------
+ fs/f2fs/f2fs.h  | 18 +++++++++++++++---
+ fs/f2fs/file.c  |  8 +-------
+ fs/f2fs/inode.c | 32 ++++++++++++++------------------
+ 4 files changed, 32 insertions(+), 37 deletions(-)
 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7a81ff3c385a..ae46c4841ca9 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1181,16 +1181,9 @@ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
+ 
+ static void __set_data_blkaddr(struct dnode_of_data *dn)
+ {
+-	struct f2fs_node *rn = F2FS_NODE(dn->node_page);
+-	__le32 *addr_array;
+-	int base = 0;
++	__le32 *addr = get_dnode_addr(dn->inode, dn->node_page);
+ 
+-	if (IS_INODE(dn->node_page) && f2fs_has_extra_attr(dn->inode))
+-		base = get_extra_isize(dn->inode);
+-
+-	/* Get physical address of data block */
+-	addr_array = blkaddr_in_node(rn);
+-	addr_array[base + dn->ofs_in_node] = cpu_to_le32(dn->data_blkaddr);
++	addr[dn->ofs_in_node] = cpu_to_le32(dn->data_blkaddr);
+ }
+ 
+ /*
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 2f1d76088953..a06b8aad5117 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3277,12 +3277,13 @@ static inline bool f2fs_is_cow_file(struct inode *inode)
+ 	return is_inode_flag_set(inode, FI_COW_FILE);
+ }
+ 
++static inline __le32 *get_dnode_addr(struct inode *inode,
++					struct page *node_page);
+ static inline void *inline_data_addr(struct inode *inode, struct page *page)
+ {
+-	struct f2fs_inode *ri = F2FS_INODE(page);
+-	int extra_size = get_extra_isize(inode);
++	__le32 *addr = get_dnode_addr(inode, page);
+ 
+-	return (void *)&(ri->i_addr[extra_size + DEF_INLINE_RESERVED_SIZE]);
++	return (void *)(addr + DEF_INLINE_RESERVED_SIZE);
+ }
+ 
+ static inline int f2fs_has_inline_dentry(struct inode *inode)
+@@ -3427,6 +3428,17 @@ static inline int get_inline_xattr_addrs(struct inode *inode)
+ 	return F2FS_I(inode)->i_inline_xattr_size;
+ }
+ 
++static inline __le32 *get_dnode_addr(struct inode *inode,
++					struct page *node_page)
++{
++	int base = 0;
++
++	if (IS_INODE(node_page) && f2fs_has_extra_attr(inode))
++		base = get_extra_isize(inode);
++
++	return blkaddr_in_node(F2FS_NODE(node_page)) + base;
++}
++
+ #define f2fs_get_inode_mode(i) \
+ 	((is_inode_flag_set(i, FI_ACL_MODE)) ? \
+ 	 (F2FS_I(i)->i_acl_mode) : ((i)->i_mode))
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 3c7e6bfc1265..60290940018d 100644
+index 5025abf2d995..d0e7894e42d4 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -46,7 +46,7 @@ static vm_fault_t f2fs_filemap_fault(struct vm_fault *vmf)
- 		f2fs_update_iostat(F2FS_I_SB(inode), inode,
- 					APP_MAPPED_READ_IO, F2FS_BLKSIZE);
+@@ -557,20 +557,14 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
+ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+-	struct f2fs_node *raw_node;
+ 	int nr_free = 0, ofs = dn->ofs_in_node, len = count;
+ 	__le32 *addr;
+-	int base = 0;
+ 	bool compressed_cluster = false;
+ 	int cluster_index = 0, valid_blocks = 0;
+ 	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
+ 	bool released = !atomic_read(&F2FS_I(dn->inode)->i_compr_blocks);
  
--	trace_f2fs_filemap_fault(inode, vmf->pgoff, (unsigned long)ret);
-+	trace_f2fs_filemap_fault(inode, vmf->pgoff, vmf->vma->vm_flags, ret);
+-	if (IS_INODE(dn->node_page) && f2fs_has_extra_attr(dn->inode))
+-		base = get_extra_isize(dn->inode);
+-
+-	raw_node = F2FS_NODE(dn->node_page);
+-	addr = blkaddr_in_node(raw_node) + base + ofs;
++	addr = get_dnode_addr(dn->inode, dn->node_page) + ofs;
  
- 	return ret;
+ 	/* Assumption: truncation starts with cluster */
+ 	for (; count > 0; count--, addr++, dn->ofs_in_node++, cluster_index++) {
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 108e3d00028a..b31410c4afbc 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -61,35 +61,31 @@ void f2fs_set_inode_flags(struct inode *inode)
+ 			S_ENCRYPTED|S_VERITY|S_CASEFOLD);
  }
-@@ -59,26 +59,29 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 	struct dnode_of_data dn;
- 	bool need_alloc = true;
- 	int err = 0;
-+	vm_fault_t ret;
  
- 	if (unlikely(IS_IMMUTABLE(inode)))
- 		return VM_FAULT_SIGBUS;
+-static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
++static void __get_inode_rdev(struct inode *inode, struct page *node_page)
+ {
+-	int extra_size = get_extra_isize(inode);
++	__le32 *addr = get_dnode_addr(inode, node_page);
  
--	if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED))
--		return VM_FAULT_SIGBUS;
-+	if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED)) {
-+		err = -EIO;
-+		goto out;
-+	}
- 
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		err = -EIO;
--		goto err;
-+		goto out;
+ 	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
+ 			S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
+-		if (ri->i_addr[extra_size])
+-			inode->i_rdev = old_decode_dev(
+-				le32_to_cpu(ri->i_addr[extra_size]));
++		if (addr[0])
++			inode->i_rdev = old_decode_dev(le32_to_cpu(addr[0]));
+ 		else
+-			inode->i_rdev = new_decode_dev(
+-				le32_to_cpu(ri->i_addr[extra_size + 1]));
++			inode->i_rdev = new_decode_dev(le32_to_cpu(addr[1]));
  	}
+ }
  
- 	if (!f2fs_is_checkpoint_ready(sbi)) {
- 		err = -ENOSPC;
--		goto err;
-+		goto out;
- 	}
+-static void __set_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
++static void __set_inode_rdev(struct inode *inode, struct page *node_page)
+ {
+-	int extra_size = get_extra_isize(inode);
++	__le32 *addr = get_dnode_addr(inode, node_page);
  
- 	err = f2fs_convert_inline_inode(inode);
- 	if (err)
--		goto err;
-+		goto out;
- 
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	if (f2fs_compressed_file(inode)) {
-@@ -86,7 +89,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 
- 		if (ret < 0) {
- 			err = ret;
--			goto err;
-+			goto out;
- 		} else if (ret) {
- 			need_alloc = false;
+ 	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode)) {
+ 		if (old_valid_dev(inode->i_rdev)) {
+-			ri->i_addr[extra_size] =
+-				cpu_to_le32(old_encode_dev(inode->i_rdev));
+-			ri->i_addr[extra_size + 1] = 0;
++			addr[0] = cpu_to_le32(old_encode_dev(inode->i_rdev));
++			addr[1] = 0;
+ 		} else {
+-			ri->i_addr[extra_size] = 0;
+-			ri->i_addr[extra_size + 1] =
+-				cpu_to_le32(new_encode_dev(inode->i_rdev));
+-			ri->i_addr[extra_size + 2] = 0;
++			addr[0] = 0;
++			addr[1] = cpu_to_le32(new_encode_dev(inode->i_rdev));
++			addr[2] = 0;
  		}
-@@ -153,13 +156,15 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 	f2fs_update_iostat(sbi, inode, APP_MAPPED_IO, F2FS_BLKSIZE);
- 	f2fs_update_time(sbi, REQ_TIME);
- 
--	trace_f2fs_vm_page_mkwrite(page, DATA);
- out_sem:
- 	filemap_invalidate_unlock_shared(inode->i_mapping);
- 
- 	sb_end_pagefault(inode->i_sb);
--err:
--	return vmf_fs_error(err);
-+out:
-+	ret = vmf_fs_error(err);
-+
-+	trace_f2fs_vm_page_mkwrite(inode, page->index, vmf->vma->vm_flags, ret);
-+	return ret;
+ 	}
  }
+@@ -463,7 +459,7 @@ static int do_read_inode(struct inode *inode)
+ 	}
  
- static const struct vm_operations_struct f2fs_file_vm_ops = {
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 479d26eae22f..7ed0fc430dc6 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -1369,13 +1369,6 @@ DEFINE_EVENT(f2fs__page, f2fs_set_page_dirty,
- 	TP_ARGS(page, type)
- );
+ 	/* get rdev by using inline_info */
+-	__get_inode_rdev(inode, ri);
++	__get_inode_rdev(inode, node_page);
  
--DEFINE_EVENT(f2fs__page, f2fs_vm_page_mkwrite,
--
--	TP_PROTO(struct page *page, int type),
--
--	TP_ARGS(page, type)
--);
--
- TRACE_EVENT(f2fs_replace_atomic_write_block,
+ 	if (!f2fs_need_inode_block_update(sbi, inode->i_ino))
+ 		fi->last_disk_size = inode->i_size;
+@@ -736,7 +732,7 @@ void f2fs_update_inode(struct inode *inode, struct page *node_page)
+ 		}
+ 	}
  
- 	TP_PROTO(struct inode *inode, struct inode *cow_inode, pgoff_t index,
-@@ -1413,30 +1406,50 @@ TRACE_EVENT(f2fs_replace_atomic_write_block,
- 		__entry->recovery)
- );
+-	__set_inode_rdev(inode, ri);
++	__set_inode_rdev(inode, node_page);
  
--TRACE_EVENT(f2fs_filemap_fault,
-+DECLARE_EVENT_CLASS(f2fs_mmap,
- 
--	TP_PROTO(struct inode *inode, pgoff_t index, unsigned long ret),
-+	TP_PROTO(struct inode *inode, pgoff_t index,
-+			vm_flags_t flags, vm_fault_t ret),
- 
--	TP_ARGS(inode, index, ret),
-+	TP_ARGS(inode, index, flags, ret),
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
- 		__field(ino_t,	ino)
- 		__field(pgoff_t, index)
--		__field(unsigned long, ret)
-+		__field(vm_flags_t, flags)
-+		__field(vm_fault_t, ret)
- 	),
- 
- 	TP_fast_assign(
- 		__entry->dev	= inode->i_sb->s_dev;
- 		__entry->ino	= inode->i_ino;
- 		__entry->index	= index;
-+		__entry->flags	= flags;
- 		__entry->ret	= ret;
- 	),
- 
--	TP_printk("dev = (%d,%d), ino = %lu, index = %lu, ret = %lx",
-+	TP_printk("dev = (%d,%d), ino = %lu, index = %lu, flags: %s, ret: %s",
- 		show_dev_ino(__entry),
- 		(unsigned long)__entry->index,
--		__entry->ret)
-+		__print_flags(__entry->flags, "|", FAULT_FLAG_TRACE),
-+		__print_flags(__entry->ret, "|", VM_FAULT_RESULT_TRACE))
-+);
-+
-+DEFINE_EVENT(f2fs_mmap, f2fs_filemap_fault,
-+
-+	TP_PROTO(struct inode *inode, pgoff_t index,
-+			vm_flags_t flags, vm_fault_t ret),
-+
-+	TP_ARGS(inode, index, flags, ret)
-+);
-+
-+DEFINE_EVENT(f2fs_mmap, f2fs_vm_page_mkwrite,
-+
-+	TP_PROTO(struct inode *inode, pgoff_t index,
-+			vm_flags_t flags, vm_fault_t ret),
-+
-+	TP_ARGS(inode, index, flags, ret)
- );
- 
- TRACE_EVENT(f2fs_writepages,
+ 	/* deleted inode */
+ 	if (inode->i_nlink == 0)
 -- 
 2.40.1
 
