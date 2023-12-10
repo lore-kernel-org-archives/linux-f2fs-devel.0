@@ -4,67 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C06FFC10DCE
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 10 Dec 2023 09:21:17 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 00B69C4167B
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 10 Dec 2023 09:21:18 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rCFzx-0002Yd-0z;
-	Sun, 10 Dec 2023 09:21:17 +0000
+	id 1rCFzx-0007VZ-Th;
+	Sun, 10 Dec 2023 09:21:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rCFzu-0002YR-HF
+ (envelope-from <chao@kernel.org>) id 1rCFzu-0007Uf-5X
  for linux-f2fs-devel@lists.sourceforge.net;
  Sun, 10 Dec 2023 09:21:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Cxckw0x/9Kqnap6ztx3O7T5K6wGg+pZ+aRth6VeFPbc=; b=jPAI1LIP2NGQxkDt6UteIqd6i3
- sLULloXxhtQp9QGgnzb/yLDzRzOLhb1ioyPz38fxl3pi6USPH9S6QjnSMKyz+nyraalz0uaMzciuy
- 0Hl9/FvhxSJwABKOSujyorlBSh0TS9f720XaP6xGFvWw0gxxAzm4sNZeW7KgZFnv/wGU=;
+ bh=nzuKnedrEWC6imVBrtc3Ahv7ofZ1i17PF18F+M1hMpI=; b=A0LHmmpTmb/7tgrybK46fpuRbO
+ suF5yZxMIIZ6GJDonqqrXh0Rmq4+Joc7rHQmpa8gXAP/YeUK60K8pzMuEjA1CB/lMBFqtj+Q5jVAk
+ xsVEcpFEuainbqDt+9VNWPkWnhlQChyPbRcn40zrdMuH9yGoakV7alkWBLmjilkrLM5A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Cxckw0x/9Kqnap6ztx3O7T5K6wGg+pZ+aRth6VeFPbc=; b=B
- asUuIK9U0Q7T0ay4xrnLhFrvK8GHGbwojPWqPIqdnVMBLUC/TUwWQEOHtlkHCxRs3BmXl9GbEAcv+
- Je5dcPYVdwE+qb4KzE5M4JlS9HhE/F1LFEIc2nW5fbb1yu6ymMYqriME5Me1e976ChKgF4wpQ7waT
- kH5CaCo18AwN5Nn0=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=nzuKnedrEWC6imVBrtc3Ahv7ofZ1i17PF18F+M1hMpI=; b=D4oDkCh0BG0lInN/nBfhjW1YIc
+ feuX30ZUZxW5DICsRxGTpDen8j1f8zYxUQWN085VjvMEDlhGjYrWWYdFJEoj3DTIR9I727usQ6Mdm
+ GkWrPwvze1BDnllCZnVok+7WaeHBqQ157w0b1YdD+IphuTNuZYKgGxfSb2n9jY0/yoTc=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rCFzp-0002mz-1X for linux-f2fs-devel@lists.sourceforge.net;
+ id 1rCFzq-0002n7-98 for linux-f2fs-devel@lists.sourceforge.net;
  Sun, 10 Dec 2023 09:21:14 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by ams.source.kernel.org (Postfix) with ESMTP id 6A598B8085F
+ by sin.source.kernel.org (Postfix) with ESMTP id B0E06CE0AC4
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 10 Dec 2023 09:20:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A35EEC433C8;
- Sun, 10 Dec 2023 09:20:46 +0000 (UTC)
+ Sun, 10 Dec 2023 09:20:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B40CFC433C7;
+ Sun, 10 Dec 2023 09:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1702200047;
- bh=c1XbgCcpxu3d0B/1CATk98nDLk0XqyEJ9d7k2gjQZM8=;
- h=From:To:Cc:Subject:Date:From;
- b=ih4AafpLeUQyDzAUdh8J9F7WUFdiDG6H+E8KdJ1BitFkJ6vjAwXbJft2PvHru8VaF
- gWit9nM9FUzXDDy/xgbfyH7WfoUEUkjO7osz4/hj5jdoeS1S/3JuQJvh5tvZ2J6pPM
- luLUwllV8invWxjOlNNxp18PnIySvO4hfzj5IXHE+CQO2DBMhRmZ6AfIXx5S0ApECC
- iNH+eeWUgEJMJ14gRyl32kNwd5zty4XyLBGFKfix2HFyRWNjDDs41VDQMo58xSh5XN
- QSpdH9VT2oY+XqtnaOxEU+JKAszpPXz0nq9qT13BebnwSJV4iBPBOpC8BazuFCddeU
- XEn1tofwaPofg==
+ s=k20201202; t=1702200055;
+ bh=eUCNfxU2ZBnjWJhSbW0ed8WQRjl0G3WQDgSCqx5F8l4=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=CsAAwj/MMr5jSOHLX75QKHpCQxJtZVXufXnZ6XxIMswho/8WFi8muJOhFEAk0mBNc
+ 82vlvK36Hj45Wn+lAU52WNuPlO7MFhdvSjTgjBBwFUAh22Mjr1BnZ71MHQA/NSZiVO
+ NQp+nEztmeLMTbKh9DaYeM6ztfhmTRbAgmQq6nbZoH6+BWj2/L5LX6hM/FyV+gUVeM
+ 3B5BxJ4kJ/+MsnVvRR+sNYzJfzdJv6pgxe0kxvwqbU1LvLMXxE/kxscHdcKZOtMWVg
+ CMT6YQWKIS+EPzY5xwXZyEY97SJucA/U9M40cxsnrmCIqk53e5WtASetoCsJ+B5xd4
+ pLncCxPkj9n2Q==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Sun, 10 Dec 2023 17:20:35 +0800
-Message-Id: <20231210092040.3374741-1-chao@kernel.org>
+Date: Sun, 10 Dec 2023 17:20:39 +0800
+Message-Id: <20231210092040.3374741-5-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20231210092040.3374741-1-chao@kernel.org>
+References: <20231210092040.3374741-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1rCFzp-0002mz-1X
-Subject: [f2fs-dev] [PATCH 1/6] f2fs: delete obsolete FI_FIRST_BLOCK_WRITTEN
+X-Headers-End: 1rCFzq-0002n7-98
+Subject: [f2fs-dev] [PATCH 5/6] f2fs: introduce
+ f2fs_invalidate_internal_cache() for cleanup
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,154 +84,108 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Commit 3c6c2bebef79 ("f2fs: avoid punch_hole overhead when releasing
-volatile data") introduced FI_FIRST_BLOCK_WRITTEN as below reason:
-
-This patch is to avoid some punch_hole overhead when releasing volatile
-data. If volatile data was not written yet, we just can make the first
-page as zero.
-
-After commit 7bc155fec5b3 ("f2fs: kill volatile write support"), we
-won't support volatile write, but it missed to remove obsolete
-FI_FIRST_BLOCK_WRITTEN, delete it in this patch.
+Just cleanup, no logic changes.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/compress.c |  2 --
- fs/f2fs/data.c     |  2 --
- fs/f2fs/f2fs.h     |  6 ------
- fs/f2fs/file.c     |  3 ---
- fs/f2fs/gc.c       |  2 --
- fs/f2fs/inode.c    | 25 -------------------------
- 6 files changed, 40 deletions(-)
+ fs/f2fs/data.c    |  8 +++-----
+ fs/f2fs/f2fs.h    |  7 +++++++
+ fs/f2fs/gc.c      |  5 ++---
+ fs/f2fs/segment.c | 14 ++++----------
+ 4 files changed, 16 insertions(+), 18 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 36e5dab6baae..b35be5799726 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1369,8 +1369,6 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 	add_compr_block_stat(inode, cc->valid_nr_cpages);
- 
- 	set_inode_flag(cc->inode, FI_APPEND_WRITE);
--	if (cc->cluster_idx == 0)
--		set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
- 
- 	f2fs_put_dnode(&dn);
- 	if (quota_inode)
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 42f0f6184f73..73d0726ac366 100644
+index d86419b01310..27015b7875ae 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -2810,8 +2810,6 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
- 	f2fs_outplace_write_data(&dn, fio);
- 	trace_f2fs_do_write_data_page(page, OPU);
- 	set_inode_flag(inode, FI_APPEND_WRITE);
--	if (page->index == 0)
--		set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
- out_writepage:
- 	f2fs_put_dnode(&dn);
- out:
+@@ -1484,11 +1484,9 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+ 	old_blkaddr = dn->data_blkaddr;
+ 	f2fs_allocate_data_block(sbi, NULL, old_blkaddr, &dn->data_blkaddr,
+ 				&sum, seg_type, NULL);
+-	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO) {
+-		invalidate_mapping_pages(META_MAPPING(sbi),
+-					old_blkaddr, old_blkaddr);
+-		f2fs_invalidate_compress_page(sbi, old_blkaddr);
+-	}
++	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO)
++		f2fs_invalidate_internal_cache(sbi, old_blkaddr);
++
+ 	f2fs_update_data_blkaddr(dn, dn->data_blkaddr);
+ 	return 0;
+ }
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 86a145be4e53..be9a8e50ac50 100644
+index 50e666ebd987..65294e3b0bef 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -781,7 +781,6 @@ enum {
- 	FI_UPDATE_WRITE,	/* inode has in-place-update data */
- 	FI_NEED_IPU,		/* used for ipu per file */
- 	FI_ATOMIC_FILE,		/* indicate atomic file */
--	FI_FIRST_BLOCK_WRITTEN,	/* indicate #0 data block was written */
- 	FI_DROP_CACHE,		/* drop dirty page cache */
- 	FI_DATA_EXIST,		/* indicate data exists */
- 	FI_INLINE_DOTS,		/* indicate inline dot dentries */
-@@ -3279,11 +3278,6 @@ static inline bool f2fs_is_cow_file(struct inode *inode)
- 	return is_inode_flag_set(inode, FI_COW_FILE);
+@@ -4613,6 +4613,13 @@ static inline bool f2fs_is_readonly(struct f2fs_sb_info *sbi)
+ 	return f2fs_sb_has_readonly(sbi) || f2fs_readonly(sbi->sb);
  }
  
--static inline bool f2fs_is_first_block_written(struct inode *inode)
--{
--	return is_inode_flag_set(inode, FI_FIRST_BLOCK_WRITTEN);
--}
--
- static inline bool f2fs_is_drop_cache(struct inode *inode)
- {
- 	return is_inode_flag_set(inode, FI_DROP_CACHE);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 325dab01a29d..5025abf2d995 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -599,9 +599,6 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 				valid_blocks++;
- 		}
++static inline void f2fs_invalidate_internal_cache(struct f2fs_sb_info *sbi,
++								block_t blkaddr)
++{
++	invalidate_mapping_pages(META_MAPPING(sbi), blkaddr, blkaddr);
++	f2fs_invalidate_compress_page(sbi, blkaddr);
++}
++
+ #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+ #define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
  
--		if (dn->ofs_in_node == 0 && IS_INODE(dn->node_page))
--			clear_inode_flag(dn->inode, FI_FIRST_BLOCK_WRITTEN);
--
- 		f2fs_invalidate_blocks(sbi, blkaddr);
- 
- 		if (!released || blkaddr != COMPRESS_ADDR)
 diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index f550cdeaa663..2fbe16ad726f 100644
+index 2fbe16ad726f..405a6077bd83 100644
 --- a/fs/f2fs/gc.c
 +++ b/fs/f2fs/gc.c
-@@ -1405,8 +1405,6 @@ static int move_data_block(struct inode *inode, block_t bidx,
+@@ -1380,9 +1380,8 @@ static int move_data_block(struct inode *inode, block_t bidx,
+ 	memcpy(page_address(fio.encrypted_page),
+ 				page_address(mpage), PAGE_SIZE);
+ 	f2fs_put_page(mpage, 1);
+-	invalidate_mapping_pages(META_MAPPING(fio.sbi),
+-				fio.old_blkaddr, fio.old_blkaddr);
+-	f2fs_invalidate_compress_page(fio.sbi, fio.old_blkaddr);
++
++	f2fs_invalidate_internal_cache(fio.sbi, fio.old_blkaddr);
  
- 	f2fs_update_data_blkaddr(&dn, newaddr);
- 	set_inode_flag(inode, FI_APPEND_WRITE);
--	if (page->index == 0)
--		set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
- put_page_out:
- 	f2fs_put_page(fio.encrypted_page, 1);
- recover_block:
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 560bfcad1af2..108e3d00028a 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -76,20 +76,6 @@ static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
+ 	set_page_dirty(fio.encrypted_page);
+ 	if (clear_page_dirty_for_io(fio.encrypted_page))
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 007ebb107236..61da26eb61cc 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2500,8 +2500,7 @@ void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
+ 	if (addr == NEW_ADDR || addr == COMPRESS_ADDR)
+ 		return;
+ 
+-	invalidate_mapping_pages(META_MAPPING(sbi), addr, addr);
+-	f2fs_invalidate_compress_page(sbi, addr);
++	f2fs_invalidate_internal_cache(sbi, addr);
+ 
+ 	/* add it into sit main buffer */
+ 	down_write(&sit_i->sentry_lock);
+@@ -3562,11 +3561,8 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
+ reallocate:
+ 	f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
+ 			&fio->new_blkaddr, sum, type, fio);
+-	if (GET_SEGNO(fio->sbi, fio->old_blkaddr) != NULL_SEGNO) {
+-		invalidate_mapping_pages(META_MAPPING(fio->sbi),
+-					fio->old_blkaddr, fio->old_blkaddr);
+-		f2fs_invalidate_compress_page(fio->sbi, fio->old_blkaddr);
+-	}
++	if (GET_SEGNO(fio->sbi, fio->old_blkaddr) != NULL_SEGNO)
++		f2fs_invalidate_internal_cache(fio->sbi, fio->old_blkaddr);
+ 
+ 	/* writeout dirty page into bdev */
+ 	f2fs_submit_page_write(fio);
+@@ -3762,9 +3758,7 @@ void f2fs_do_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 		update_sit_entry(sbi, new_blkaddr, 1);
  	}
- }
- 
--static int __written_first_block(struct f2fs_sb_info *sbi,
--					struct f2fs_inode *ri)
--{
--	block_t addr = le32_to_cpu(ri->i_addr[offset_in_addr(ri)]);
--
--	if (!__is_valid_data_blkaddr(addr))
--		return 1;
--	if (!f2fs_is_valid_blkaddr(sbi, addr, DATA_GENERIC_ENHANCE)) {
--		f2fs_handle_error(sbi, ERROR_INVALID_BLKADDR);
--		return -EFSCORRUPTED;
--	}
--	return 0;
--}
--
- static void __set_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
- {
- 	int extra_size = get_extra_isize(inode);
-@@ -398,7 +384,6 @@ static int do_read_inode(struct inode *inode)
- 	struct page *node_page;
- 	struct f2fs_inode *ri;
- 	projid_t i_projid;
--	int err;
- 
- 	/* Check if ino is within scope */
- 	if (f2fs_check_nid_range(sbi, inode->i_ino))
-@@ -480,16 +465,6 @@ static int do_read_inode(struct inode *inode)
- 	/* get rdev by using inline_info */
- 	__get_inode_rdev(inode, ri);
- 
--	if (S_ISREG(inode->i_mode)) {
--		err = __written_first_block(sbi, ri);
--		if (err < 0) {
--			f2fs_put_page(node_page, 1);
--			return err;
--		}
--		if (!err)
--			set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
--	}
--
- 	if (!f2fs_need_inode_block_update(sbi, inode->i_ino))
- 		fi->last_disk_size = inode->i_size;
- 
+ 	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO) {
+-		invalidate_mapping_pages(META_MAPPING(sbi),
+-					old_blkaddr, old_blkaddr);
+-		f2fs_invalidate_compress_page(sbi, old_blkaddr);
++		f2fs_invalidate_internal_cache(sbi, old_blkaddr);
+ 		if (!from_gc)
+ 			update_segment_mtime(sbi, old_blkaddr, 0);
+ 		update_sit_entry(sbi, old_blkaddr, -1);
 -- 
 2.40.1
 
