@@ -4,70 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A099BC4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Dec 2023 01:29:15 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B7360C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Dec 2023 04:01:26 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rDE3l-0005Ft-I1;
-	Wed, 13 Dec 2023 01:29:14 +0000
+	id 1rDGR2-0008KE-M3;
+	Wed, 13 Dec 2023 04:01:25 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rDE3j-0005Ff-7S
+ (envelope-from <ebiggers@kernel.org>) id 1rDGR1-0008K7-8T
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Dec 2023 01:29:11 +0000
+ Wed, 13 Dec 2023 04:01:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tbLF/xRBGFXTbCeNMbw4obwrMHh3RCnWbBeVvi5hy6U=; b=UYr44qkCEVi+8PxP8CneYUDRwX
- LHdEZFpEWpgMFgXa+rddwqMMyhuNrYL0lrBG0uv1YwArTJ9H1qJ6Kw/KrMdLnRlA7LsC2N0sbH999
- RR9oOykQVsVoRMWqeGEBjlyq4y7wms3lyfwesLRcsa5kBIb+gf/G/B0ARL1nq22iLuT0=;
+ bh=TX2QUSyDHeBd6n9e2NFA2ZksXZCMbf+AauXYVlhryC0=; b=SzTrh2c3gCJyZBLclUeEnLGjiD
+ sjvdd4c7NrxiypobxEOwq3QNxbhevLq1OR2VXTIxTVmShkTKA6vBJKgJuFiyzOlYHEr4OkLSucjQh
+ bImdlYDdk8OjweAl62UopmKbXyUbSeqRmmuGXg/moJHr5YoXkB1UCZVY3ee55l9zPt+I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=tbLF/xRBGFXTbCeNMbw4obwrMHh3RCnWbBeVvi5hy6U=; b=l3L6ByZdvgECT8GOgVnmgHQUlv
- f8MkAhhpvdZNcWNq/g+KC4kESObmO23lXeEbkN334VS0OFlroTZyEzqQ8JsbLUyeLmCPO1xHXKSO2
- obP0rm5v0MymqhP5u2OcvJwzJug+r4k+GWfTkiykKJXWwZX0kUL8p1FPoFg5Aslp8KmQ=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ bh=TX2QUSyDHeBd6n9e2NFA2ZksXZCMbf+AauXYVlhryC0=; b=P6Ippxv+KCKkmEdDsqv3yT77I2
+ 3FFnfU7TnbVkAyljqgJKhCNvssZIMaDAzfdrBeEc43DLV5dhKSOb4VV6WJ1Zb7ltF2uplCaAjHSTg
+ 63VtzMgd9WtgQ2qibE3of19I9Ca45rXodhy0xKPYONFuvmTLN7avW5gyKihR4CckBUYs=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rDE3i-00033H-Th for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Dec 2023 01:29:11 +0000
+ id 1rDGQz-0004Bk-H9 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 13 Dec 2023 04:01:23 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by ams.source.kernel.org (Postfix) with ESMTP id 24977B81ABD;
- Wed, 13 Dec 2023 01:28:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AAF7C433C7;
- Wed, 13 Dec 2023 01:28:53 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id CDD4561B09;
+ Wed, 13 Dec 2023 04:01:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A0D1C433C9;
+ Wed, 13 Dec 2023 04:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1702430934;
- bh=WHT7yhKML4b47HIYKO+zlfH79QBE5JY7QcP0BwiA0S8=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=uAlEUEW5DH1jtd23uEK97RhH1sMDjeaXr/+8cvWEY7H8DWnBRu9WYK4z+LquCqduC
- d5yOoh2A5t8B8EMIWYb/+gZFCeW5rcboH2p7gSXO7k25GkeuobI4SUO/xfBnDhwaT8
- fUZiN3mFTu1WTUG2y7Qcl9x7bDatbIycB9nt/X2REgZt3O28IeY5TyBq656pRLqcKe
- icG6X4V1+maL9YYYzcb/kUaOEQmH86ymexTx4y3DT7GOKfxEHKID7v/k+vrJNQWZxC
- cPxMaWP0rOWZdesc5wteOUYZpT0C/rtvPIDjL/xrl/6+iqFuJ+l4wQ6VzP4crWZvvv
- ywikPVplcPtzg==
-Message-ID: <9dc77c35-bcb3-4a87-9926-36a0fa205d17@kernel.org>
-Date: Wed, 13 Dec 2023 09:28:50 +0800
+ s=k20201202; t=1702440075;
+ bh=/IgnbynuauVVnwnYuvTis66K2+UvLrV1IZcqqY1dQxo=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=Mtsw78xNFAYW72ZVSI58XmG3r3b7jzf5YBccAulp9/1BO7zRBF+wDqWlYrljaMm4k
+ +9/Vx7T1sw6/jBV6IO4Yha52vkFfiqnum5DEck4Ip6XZ9VSVH1PeChkoTOrTWNuszY
+ c1N8MVSA6ovIcnZMimKA5Kw55To5yhNMb79uFZKY8fg5hjndWVeVqmfW9hQxcY7xS6
+ 5+OGVzgKJ3Y/tofA5oACmOTMCIwq0P6wpqYrMHO3JTqaGLbs50MhOKakxkbUvrYTPf
+ xDELOGTPUziyVV7E1kKLU0GuHB2LUKeXJ1Ptab8+IqkLO6TSYZX3avBSD7LXIRnRgW
+ OYnRi5KlA9t3A==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fsdevel@vger.kernel.org
+Date: Tue, 12 Dec 2023 20:00:18 -0800
+Message-ID: <20231213040018.73803-4-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20231213040018.73803-1-ebiggers@kernel.org>
+References: <20231213040018.73803-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
-References: <1702347327-24181-1-git-send-email-zhiguo.niu@unisoc.com>
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <1702347327-24181-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Headers-End: 1rDE3i-00033H-Th
-Subject: Re: [f2fs-dev] [PATCH V2] f2fs: fix to check return value of
- f2fs_recover_xattr_data
+X-Headers-End: 1rDGQz-0004Bk-H9
+Subject: [f2fs-dev] [PATCH 3/3] fs: move fscrypt keyring destruction to
+ after ->put_super
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,25 +78,75 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: ke.wang@unisoc.com, niuzhiguo84@gmail.com, linux-kernel@vger.kernel.org,
+Cc: linux-fscrypt@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+ Josef Bacik <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2023/12/12 10:15, Zhiguo Niu wrote:
-> Should check return value of f2fs_recover_xattr_data in
-> __f2fs_setxattr rather than doing invalid retry if error happen.
-> 
-> Also just do set_page_dirty in f2fs_recover_xattr_data when
-> page is changed really.
-> 
-> Fixes: 50a472bbc79f ("f2fs: do not return EFSCORRUPTED, but try to run online repair")
-> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+btrfs has a variety of asynchronous things we do with inodes that can
+potentially last until ->put_super, when we shut everything down and
+clean up all of our async work.  Due to this we need to move
+fscrypt_destroy_keyring() to after ->put_super, otherwise we get
+warnings about still having active references on the master key.
 
-Thanks,
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/super.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/fs/super.c b/fs/super.c
+index 076392396e724..faf7d248145d2 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -674,34 +674,34 @@ void generic_shutdown_super(struct super_block *sb)
+ 		/* Evict all inodes with zero refcount. */
+ 		evict_inodes(sb);
+ 
+ 		/*
+ 		 * Clean up and evict any inodes that still have references due
+ 		 * to fsnotify or the security policy.
+ 		 */
+ 		fsnotify_sb_delete(sb);
+ 		security_sb_delete(sb);
+ 
+-		/*
+-		 * Now that all potentially-encrypted inodes have been evicted,
+-		 * the fscrypt keyring can be destroyed.
+-		 */
+-		fscrypt_destroy_keyring(sb);
+-
+ 		if (sb->s_dio_done_wq) {
+ 			destroy_workqueue(sb->s_dio_done_wq);
+ 			sb->s_dio_done_wq = NULL;
+ 		}
+ 
+ 		if (sop->put_super)
+ 			sop->put_super(sb);
+ 
++		/*
++		 * Now that all potentially-encrypted inodes have been evicted,
++		 * the fscrypt keyring can be destroyed.
++		 */
++		fscrypt_destroy_keyring(sb);
++
+ 		if (CHECK_DATA_CORRUPTION(!list_empty(&sb->s_inodes),
+ 				"VFS: Busy inodes after unmount of %s (%s)",
+ 				sb->s_id, sb->s_type->name)) {
+ 			/*
+ 			 * Adding a proper bailout path here would be hard, but
+ 			 * we can at least make it more likely that a later
+ 			 * iput_final() or such crashes cleanly.
+ 			 */
+ 			struct inode *inode;
+ 
+-- 
+2.43.0
+
 
 
 _______________________________________________
