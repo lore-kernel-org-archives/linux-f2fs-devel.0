@@ -4,95 +4,119 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9636BC4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Dec 2023 16:08:47 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5E0C9C4167B
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Dec 2023 21:16:31 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rEAk0-0006xU-UA;
-	Fri, 15 Dec 2023 16:08:45 +0000
+	id 1rEFXq-0000CW-PS;
+	Fri, 15 Dec 2023 21:16:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <josef@toxicpanda.com>) id 1rEAjz-0006xO-VU
+ (envelope-from <krisman@suse.de>) id 1rEFXp-0000CQ-KB
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 15 Dec 2023 16:08:44 +0000
+ Fri, 15 Dec 2023 21:16:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+4V/xtuU5RtW7auv55nECI5YJaBifIHvReIdoO950Ik=; b=KoxUjC3g8CyHQmep7gTEG8s7SQ
- v4lt1SWJf5jfM9xkCi5lzyp97KtORcWW9MFDdmT5zCWev1N1asKkIp0E+hDX5oe3+6jKlh3Y9p0Lb
- RJwhLiV9oWEiArB3XOCV7De1pH0VHIfuE6fmE3AI8BHkeMOisc9Fi15uTr+AsqjJceiE=;
+ bh=wFdpRL19Qo72V5iD16rSLzA5DXdY7+DFwh/2hlpfLqI=; b=iIVkIuoeQZO5ot4LghA6hJOpIg
+ P1l6fGJlmRPDsgbGK8UunfkVLUtGuh9nI8yp5VFvvNYsCmoK9fzpbTt/WcDRRY4A5aXJ7Sb1TcIRy
+ 7UhONSVsvQEyIeLKVhugqAyVUf3MsFUUv7GxcE5yt+Uy8ZtotesaC5sxBvi5v7BmnsEM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+4V/xtuU5RtW7auv55nECI5YJaBifIHvReIdoO950Ik=; b=mVOlE6aEpAOymBgZw9P9txRR/E
- X78qjS9vp46Hhv48E2uQtRBT13YgxXsxJylIRywU04iUks9E+YU2EQPePdFzKIMfx1hC1TT7pRMeJ
- 9zRfVcB+2yIiSPwGXksX7B+rIKAMTJ9XxDaV7LFmClzIReE3LERuwU69EtlWkzoGhVG4=;
-Received: from mail-oi1-f179.google.com ([209.85.167.179])
+ bh=wFdpRL19Qo72V5iD16rSLzA5DXdY7+DFwh/2hlpfLqI=; b=KA7DPC3Xhy9FwVoYwePhSN2CDb
+ bAtWsi8NWBRXNgdPsULdOniHanwp/682U7e8BMqhj39q37l4pG3+u/LQ140QJr4Eei0LObYY/fI2x
+ IvJW5IoUkKj1UXh3J1KNDMckfmvHxsDvmMkS5uTHuoa8cTAWN6qhOiDBjXBZ8GuMdwFc=;
+Received: from smtp-out2.suse.de ([195.135.223.131])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rEAjt-0007XJ-Gj for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 15 Dec 2023 16:08:44 +0000
-Received: by mail-oi1-f179.google.com with SMTP id
- 5614622812f47-3b9efed2e6fso666037b6e.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 15 Dec 2023 08:08:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1702656507; x=1703261307;
- darn=lists.sourceforge.net; 
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
- bh=+4V/xtuU5RtW7auv55nECI5YJaBifIHvReIdoO950Ik=;
- b=r8raI5CqfuqWf46FyubzUc6AgbmIntd2zjX/bVUM4aHU585oHXOdz42CHJjkTKmLH+
- 4IoZ6B9GPMJVSxWCVd5+WJNoLl0VrWBN+pW7X64Up13MwwIP7UaeVxuNCSaHzR9L7DnX
- Hzksk6Eyk0RF5UOQYdRe0Phj9ttt7fBcIznnIl4gTAOFX2VApYhibLM02cRq1/aaKfNk
- Unu0vqFfEWNJN0n9oPro/Bi1NoVVwnFpIZQkSqEW1dv8uRZ155f1pB0O57Vr9c31L+td
- 25PvBhiL87OWNPT9PJr+6Tci6KHJ727yCheLTEoPGALlGrBPAnQD+CJhu9lZnMplXjRV
- V4WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1702656507; x=1703261307;
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=+4V/xtuU5RtW7auv55nECI5YJaBifIHvReIdoO950Ik=;
- b=DYBqeoU5wBSDMjXyHoIRnXt4+7MoD3q+nHXmLalxgi6D+OtM98SnZDApSsXuzDeLJC
- cxxddlNgPGYFKwyGjI1jzK6xd9urtw52/dF6tau4InufGCNl5A71C1JFmxWu5PjQAA86
- Q66/l09C0PqMo0JAWQgUvqoo3BsCi/snlecTmoGDNmjHq2eCDULqxdHZ2qBmz6Kea14I
- dtX42r30y06jtkKkwRdNZ2DR0UQRvixxHAHN30egtrwsXY+vBF8iHzUs2hk44AmJqt0X
- QLrTzNPO3FvYFODmEoC5tKc6Gw8teWNX8SyKObgxQpueOqTy2nUWyfQdfvKRYr/0is7w
- fH1w==
-X-Gm-Message-State: AOJu0YwKww8GPR+8dBN7FLP7IH/Ab3ustAeWClWtXkDx/PDxS2qUWj5a
- KPpOEFFBWXg3Ei3i+xXfuSmCUI10QS5FUTRjLt4=
-X-Google-Smtp-Source: AGHT+IGpj2fZ4DlpWbI9o2AbVXyl3n081P7woEHQN+l8wabNi4vE8R5e3ZFfwi7WbmH7RL0B6LtbAw==
-X-Received: by 2002:a0d:d812:0:b0:5e3:347b:e864 with SMTP id
- a18-20020a0dd812000000b005e3347be864mr3181497ywe.26.1702650392430; 
- Fri, 15 Dec 2023 06:26:32 -0800 (PST)
-Received: from localhost (076-182-020-124.res.spectrum.com. [76.182.20.124])
- by smtp.gmail.com with ESMTPSA id
- x8-20020a814a08000000b005d3b4fce438sm6269510ywa.65.2023.12.15.06.26.31
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 15 Dec 2023 06:26:31 -0800 (PST)
-Date: Fri, 15 Dec 2023 09:26:30 -0500
-From: Josef Bacik <josef@toxicpanda.com>
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20231215142630.GB683314@perftesting>
-References: <20231213040018.73803-1-ebiggers@kernel.org>
- <20231213040018.73803-2-ebiggers@kernel.org>
- <20231213084123.GA6184@lst.de>
+ id 1rEFXl-0001QO-Sl for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 15 Dec 2023 21:16:28 +0000
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 1E9371F863;
+ Fri, 15 Dec 2023 21:16:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+ t=1702674979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=wFdpRL19Qo72V5iD16rSLzA5DXdY7+DFwh/2hlpfLqI=;
+ b=0PbC4ieIDnc8k96lBUCBSBJdgMCggwUaTxtfGkWiKpTA+onRQVeH/wvJNqbTBJhULfz31x
+ AHAeyRPrSmhlndlcGEMsxGayZpOQ21lXWdl8YIlQYM82j+c3gJXtcbpmpoGkgBQVSAmfup
+ MoPFCWyBEcBkWTxMNPMy5OxwIGDGXaE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+ s=susede2_ed25519; t=1702674979;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=wFdpRL19Qo72V5iD16rSLzA5DXdY7+DFwh/2hlpfLqI=;
+ b=5x41is8J3UjiUO+NUlXQDmmbb0nMC4xGU9RXf5QraFMqwbtqsyesZG9vAMu4ulJHXexC9q
+ Yb8Zd3TXBw8bVzAA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+ t=1702674979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=wFdpRL19Qo72V5iD16rSLzA5DXdY7+DFwh/2hlpfLqI=;
+ b=0PbC4ieIDnc8k96lBUCBSBJdgMCggwUaTxtfGkWiKpTA+onRQVeH/wvJNqbTBJhULfz31x
+ AHAeyRPrSmhlndlcGEMsxGayZpOQ21lXWdl8YIlQYM82j+c3gJXtcbpmpoGkgBQVSAmfup
+ MoPFCWyBEcBkWTxMNPMy5OxwIGDGXaE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+ s=susede2_ed25519; t=1702674979;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=wFdpRL19Qo72V5iD16rSLzA5DXdY7+DFwh/2hlpfLqI=;
+ b=5x41is8J3UjiUO+NUlXQDmmbb0nMC4xGU9RXf5QraFMqwbtqsyesZG9vAMu4ulJHXexC9q
+ Yb8Zd3TXBw8bVzAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D02A4137D4;
+ Fri, 15 Dec 2023 21:16:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+ by imap1.dmz-prg2.suse.org with ESMTPSA id 9nfHKyLCfGWMOQAAD6G6ig
+ (envelope-from <krisman@suse.de>); Fri, 15 Dec 2023 21:16:18 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: viro@zeniv.linux.org.uk, ebiggers@kernel.org, jaegeuk@kernel.org,
+ tytso@mit.edu
+Date: Fri, 15 Dec 2023 16:16:02 -0500
+Message-ID: <20231215211608.6449-3-krisman@suse.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20231215211608.6449-1-krisman@suse.de>
+References: <20231215211608.6449-1-krisman@suse.de>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20231213084123.GA6184@lst.de>
-X-Headers-End: 1rEAjt-0007XJ-Gj
-Subject: Re: [f2fs-dev] [PATCH 1/3] btrfs: call btrfs_close_devices from
- ->kill_sb
+X-Spamd-Result: default: False [4.63 / 50.00]; ARC_NA(0.00)[];
+ RCVD_VIA_SMTP_AUTH(0.00)[]; FROM_HAS_DN(0.00)[];
+ TO_DN_SOME(0.00)[]; R_MISSING_CHARSET(2.50)[];
+ TO_MATCH_ENVRCPT_ALL(0.00)[]; MIME_GOOD(-0.10)[text/plain];
+ BROKEN_CONTENT_TYPE(1.50)[]; RCVD_COUNT_THREE(0.00)[3];
+ DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+ RCPT_COUNT_SEVEN(0.00)[8]; MID_CONTAINS_FROM(1.00)[];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
+ FUZZY_BLOCKED(0.00)[rspamd.com]; FROM_EQ_ENVFROM(0.00)[];
+ MIME_TRACE(0.00)[0:+]; RCVD_TLS_ALL(0.00)[];
+ BAYES_HAM(-0.27)[73.94%]
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Headers-End: 1rEFXl-0001QO-Sl
+Subject: [f2fs-dev] [PATCH v2 2/8] fscrypt: Drop d_revalidate if key is
+ available
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -104,45 +128,45 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Christian Brauner <brauner@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-btrfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, Gabriel Krisman Bertazi <krisman@suse.de>,
+ linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Dec 13, 2023 at 09:41:23AM +0100, Christoph Hellwig wrote:
-> On Tue, Dec 12, 2023 at 08:00:16PM -0800, Eric Biggers wrote:
-> > From: Christoph Hellwig <hch@lst.de>
-> > 
-> > blkdev_put must not be called under sb->s_umount to avoid a lock order
-> > reversal with disk->open_mutex once call backs from block devices to
-> > the file system using the holder ops are supported.  Move the call
-> > to btrfs_close_devices into btrfs_free_fs_info so that it is closed
-> > from ->kill_sb (which is also called from the mount failure handling
-> > path unlike ->put_super) as well as when an fs_info is freed because
-> > an existing superblock already exists.
-> 
-> Thanks, this looks roughly the same to what I have locally.
-> 
-> I did in fact forward port everything missing from the get_super
-> series yesterday, but on my test setup btrfs/142 hangs even in the
-> baseline setup.  I went back to Linux before giving up for now.
-> 
-> Josef, any chane you could throw this branch:
-> 
->     git://git.infradead.org/users/hch/misc.git btrfs-holder
-> 
-> into your CI setup and see if it sticks?  Except for the trivial last
-> three patches this is basically what you reviewed already, although
-> there was some heavy rebasing due to the mount API converison.
-> 
+fscrypt dentries are always valid once the key is available.  Since the
+key cannot be removed without evicting the dentry, we don't need to keep
+retrying to revalidate it.
 
-Yup, sorry Christoph I missed this email when you sent it, I'll throw it in
-there now.  Thanks,
+Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+---
+ fs/crypto/fname.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Josef
+diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+index 7b3fc189593a..0457ba2d7d76 100644
+--- a/fs/crypto/fname.c
++++ b/fs/crypto/fname.c
+@@ -591,8 +591,15 @@ int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 	 * reverting to no-key names without evicting the directory's inode
+ 	 * -- which implies eviction of the dentries in the directory.
+ 	 */
+-	if (!(dentry->d_flags & DCACHE_NOKEY_NAME))
++	if (!(dentry->d_flags & DCACHE_NOKEY_NAME)) {
++		/*
++		 * If fscrypt is the only feature requiring
++		 * revalidation for this dentry, we can just disable it.
++		 */
++		if (dentry->d_op->d_revalidate == &fscrypt_d_revalidate)
++			d_set_always_valid(dentry);
+ 		return 1;
++	}
+ 
+ 	/*
+ 	 * No-key name; valid if the directory's key is still unavailable.
+-- 
+2.43.0
+
 
 
 _______________________________________________
