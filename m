@@ -4,68 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AF47DC3DA6E
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 17 Dec 2023 17:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1A2BEC3DA6E
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 17 Dec 2023 17:36:24 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rEuuv-0003l0-9m;
-	Sun, 17 Dec 2023 17:27:04 +0000
+	id 1rEv3w-0003yf-C6;
+	Sun, 17 Dec 2023 17:36:23 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+1cffd234e19dbf5c5a3f+7420+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1rEuut-0003kt-3j for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 17 Dec 2023 17:27:02 +0000
+ id 1rEv3v-0003yZ-HL for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 17 Dec 2023 17:36:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ctU7eNWyO5uU8k+K1R2TcQkMR0gAuYk2v8Yjsja/Y1c=; b=C+ysipWXZWqrOegJ8/CXJFuORt
- GpJ5eAZP8PotTwrEcgnMI/CRhUKrjKlWXTDPviItnSJSyYx+pTJuBTcG8pWCYfF3Ew+o7xyAbmnGQ
- dFWGdQIChr/HGe2hhcyAS6z+KxZVlXJH9nSSSNz9sgwzrypEC1L9DhVpTAvjJiBMOrdk=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=ctU7eNWyO5uU8k+K1R2TcQkMR0gAuYk2v8Yjsja/Y1c=; b=gtIhNOH78+aqJuwb8KGfkr9Tjt
- +FNU7hgDxXCURfREl9bdfuPeuPqwvj11J9X/gRyx9dFYxVaFjDVtlXgtxGC03XWLgIjwnYdBKm6q1
- KvuZV5KKicK9dbaEUcSHStJfsIScRsxHf9mHD+uwmM98TjSvPq+hTALkRdw9qTnPPt4c=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=zthoML/uhpAs1hPvD/fh13swKppKnu7l7FTtACwvAxE=; b=mv7tJYKoXz2Eaun141zlEtd5n5
+ gQW0Eafy6PmiG866CIgE2+xOf0h+PHDz8LNP/Z5MpIoEc67BVmZtHh9ZNZfxkw2NxK96CQ+3cw9ab
+ NatIbdQX8ICHfimjeypFBNY1AIdlNLPm6wUtzoBmH96XDW9dLIWzOZLAfkJi1FYi+plM=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=zthoML/uhpAs1hPvD/fh13swKppKnu7l7FTtACwvAxE=; b=I
+ ndSH+eCO4Mol18bNCOoJcVnz+VeShvxpn16ehXZBdnCAz8kXg48cK9sIAQKIymXXUxtlfdmLIk9uH
+ LqSXD4gSvqMMKFAfdTofKGJV22YDNi0uKWDdy4E33wUr6ez5giSK6kfl1e3p/HpEjFYNyMnY0RMkO
+ Wd19tAPi+T1DzWUQ=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rEuuq-0000Sl-3d for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 17 Dec 2023 17:27:00 +0000
+ id 1rEv3t-00031S-SV for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 17 Dec 2023 17:36:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
- MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
- :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=ctU7eNWyO5uU8k+K1R2TcQkMR0gAuYk2v8Yjsja/Y1c=; b=DXYqZVLTY3AXEoBxl64SMyaX8s
- iocWPDWI6wSF+Py9Nzd53oAjEW8s1qbVJSoFuHgjMO7ReyYzIlvWagT4aJ/QmwFjj50jACktmkLZZ
- 71o5L28Kq7RX+chawOPRKpL2T53erXPKzIXI2nvXIoChjJLg+xemJqSISQODlbdXJhjhX3utH0SCb
- szSXCMLib0iNpU+rrWEUHdVpkSQBb6SomuF0Kui47LLE3g4uh80BP5X4zJwwPeRq3X5kFrKbtgrF7
- l9Bbdlk6oGly95fNPZZVTL8laT37R0kjKKAPdOWDe6Ywyiy/a+PBeQwlF7aweLD4aibb3mJ7/+CUa
- zv8VYmog==;
+ MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:In-Reply-To:References;
+ bh=zthoML/uhpAs1hPvD/fh13swKppKnu7l7FTtACwvAxE=; b=WLAw68JlEwbNFdIQ2xyIscfsps
+ CWgTZVnaIvQlWzz06TQgw+PjcgppWNTQHeaP9heFZI/N1X6bRYNdiDnf2HKguxboWjjhX0XmDtIjK
+ Cfq3ixlcQVdCDmt8I6cHcZgfNphEKcI3/sVh25Wwnsz+IwF9FU+0k1hDj6q3C9Vdeme9/K9trDDqA
+ V71hDtLh1lZVVWiDsNBiBlb8sihMmf06SvtbxGjuggJOMDbBBTxgpx44hH1dWWFQwYuZk0pKkO4pD
+ z9I6Ggwwd4Bgt8+xX5UuHNQ6CBWHRRa61Hf3XU+/hpP1RR7WYzVz20j0J0IOo1IjoDdlSGlIKer06
+ t4lIRgSQ==;
 Received: from [88.128.92.84] (helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
- id 1rEuPB-0088Od-1n; Sun, 17 Dec 2023 16:54:17 +0000
+ id 1rEuOw-0088L9-1x; Sun, 17 Dec 2023 16:54:03 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
-Date: Sun, 17 Dec 2023 17:53:59 +0100
-Message-Id: <20231217165359.604246-6-hch@lst.de>
+Date: Sun, 17 Dec 2023 17:53:54 +0100
+Message-Id: <20231217165359.604246-1-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231217165359.604246-1-hch@lst.de>
-References: <20231217165359.604246-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1rEuuq-0000Sl-3d
-Subject: [f2fs-dev] [PATCH 5/5] sd: only call disk_clear_zoned when needed
+X-Headers-End: 1rEv3t-00031S-SV
+Subject: [f2fs-dev] remove support for the host aware zoned model
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,34 +85,53 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-disk_clear_zoned only needs to be called when a device reported zone
-managed mode first and we clear it.  Add a check so that disk_clear_zoned
-isn't called on devices that were never zoned.
+Hi all,
 
-This avoids a fairly expensive queue freezing when revalidating
-conventional devices.
+hen zones were first added the SCSI and ATA specs, two different
+models were supported (in addition to the drive managed one that
+is invisible to the host):
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/scsi/sd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ - host managed where non-conventional zones there is strict requirement
+   to write at the write pointer, or else an error is returned
+ - host aware where a write point is maintained if writes always happen
+   at it, otherwise it is left in an under-defined state and the
+   sequential write preferred zones behave like conventional zones
+   (probably very badly performing ones, though)
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index dbed075cdb981a..8c8ac5cd1833b4 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -3149,7 +3149,7 @@ static void sd_read_block_characteristics(struct scsi_disk *sdkp)
- 		 * the device physical block size.
- 		 */
- 		blk_queue_zone_write_granularity(q, sdkp->physical_block_size);
--	} else {
-+	} else if (blk_queue_is_zoned(q)) {
- 		/*
- 		 * Anything else.  This includes host-aware device that we treat
- 		 * as conventional.
--- 
-2.39.2
+Not surprisingly this lukewarm model didn't prove to be very useful and
+was finally removed from the ZBC and SBC specs (NVMe never implemented
+it).  Due to to the easily disappearing write pointer host software
+could never rely on the write pointer to actually be useful for say
+recovery.
 
+Fortunately only a few HDD prototypes shipped using this model which
+never made it to mass production.  Drop the support before it is too
+late.  Note that any such host aware prototype HDD can still be used
+with Linux as we'll now treat it as a conventional HDD.
+
+Diffstat:
+ block/blk-settings.c           |   83 +++++------------------------------------
+ block/blk-sysfs.c              |    9 ----
+ block/blk-zoned.c              |    3 -
+ block/blk.h                    |    2 
+ block/partitions/core.c        |   12 -----
+ drivers/block/null_blk/zoned.c |    2 
+ drivers/block/ublk_drv.c       |    2 
+ drivers/block/virtio_blk.c     |   78 +++++++++++---------------------------
+ drivers/md/dm-kcopyd.c         |    2 
+ drivers/md/dm-table.c          |   45 +++++++++-------------
+ drivers/md/dm-zoned-metadata.c |    7 +--
+ drivers/md/dm-zoned-target.c   |    4 -
+ drivers/nvme/host/zns.c        |    2 
+ drivers/scsi/scsi_debug.c      |   27 ++++++-------
+ drivers/scsi/sd.c              |   50 +++++++++++-------------
+ drivers/scsi/sd_zbc.c          |   16 -------
+ fs/btrfs/zoned.c               |   23 +----------
+ fs/btrfs/zoned.h               |    2 
+ fs/f2fs/data.c                 |    2 
+ fs/f2fs/super.c                |   17 +++-----
+ include/linux/blkdev.h         |   38 +-----------------
+ 21 files changed, 124 insertions(+), 302 deletions(-)
 
 
 _______________________________________________
