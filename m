@@ -4,79 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4BAC6C3DA6E
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 17 Dec 2023 09:36:25 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 508D1C3DA6E
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 17 Dec 2023 17:23:44 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rEnZO-0003Xh-6m;
-	Sun, 17 Dec 2023 09:36:22 +0000
+	id 1rEure-0002SA-I1;
+	Sun, 17 Dec 2023 17:23:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <3BcF-ZQkbALQmsteUffYlUjjcX.aiiafYomYlWihnYhn.Wig@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
- id 1rEnZM-0003X1-46 for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 17 Dec 2023 09:36:20 +0000
+ <BATV+1cffd234e19dbf5c5a3f+7420+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1rEurb-0002Rt-Ie for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 17 Dec 2023 17:23:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:In-Reply-To
- :Date:MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QYt+ikegC5rVi/qGr8IiLcMnutjmAb6NTg3JW6/hHH0=; b=Ql45Gu8axvKtyJ6JANktFd9tW0
- /h30FZF2nFyVzidoQkoKiwFM+ttZ0bqE9nkImMVn0QMwtfx8mseOqVRVIGPRWGDJECXHUyOH4JaS6
- jomQxgZrN5IkNIYVnzHZ1by5DXevZjnXsTay7Ym9p8ppGtHQWipKEG/f+0GuLv0D0pl0=;
+ bh=MJjD01GsaCXNqJGBk8XaIGbPlf5DMiF6yt4DNbEE94E=; b=mR/SzswbV7UaOEwoCsm/XM68GG
+ XRsvxlZ0w4sxEPH6lYtInaNlrSmadEEm/YGXqPtY44+GOChpsboDegX/jvc6om+/iTQc9ascAubwW
+ n/luqe2ET8ND/CKQ+8tBOXyCceN1ssAwcxTDV86tsJVTc2oesaCKk+e49RHmUVrdFgjU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:To:From:Subject:Message-ID:In-Reply-To:Date:MIME-Version:
- Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=QYt+ikegC5rVi/qGr8IiLcMnutjmAb6NTg3JW6/hHH0=; b=L
- EhLMI23GD288HqEvb034j3VMyIdZyrnGoa+iA6a5R3VY8t6vO0ujeZGyr+29V9KwYysW2T63Yzdpt
- YBxLZjeIKaueVL+X6MBWC0rZTT+N7izhCc5WEO/sj18XW5QdVAG9yfx+iRnLfxKZdQdtT+JNpiG4/
- Z0t3FlueyPSWzDT0=;
-Received: from mail-il1-f198.google.com ([209.85.166.198])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=MJjD01GsaCXNqJGBk8XaIGbPlf5DMiF6yt4DNbEE94E=; b=NrxRv5uXp5pL1zZrA1ERZqlrap
+ 8mVZ8EFuOz1mJms9WfQdJUOFCvqrrRP5x/EuPPFy1VcbMB3GBFG3LqbUee08V9IGZuvfk5Tu0er5r
+ 6WIb3KCdDf+zYJRwciPoI7gXhGmjnDe0FJLg3WSmqh5JzLzW3C4sZWe8rL83LyYWd/GA=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rEnZI-0008BW-Iz for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 17 Dec 2023 09:36:20 +0000
-Received: by mail-il1-f198.google.com with SMTP id
- e9e14a558f8ab-35f8344e3c8so36513275ab.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 17 Dec 2023 01:36:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1702805766; x=1703410566;
- h=to:from:subject:message-id:in-reply-to:date:mime-version
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=QYt+ikegC5rVi/qGr8IiLcMnutjmAb6NTg3JW6/hHH0=;
- b=A0CHoDZKNvdUpcWhPcYTr5wmzYkI8mnPk2DYQbf3w9sUPCMKZJFsDQSjqimlEvAjRX
- ecCjsLnHzBLBKxRhCiSwMIqIfSUHp0+j1clUBn9CaVHMVLoCOcmPVszzeOQnG62p25q9
- T7oX2Lz5WhhdZV0Jm3wQ6McWLomAyrRCvo4cAflCh/cZnLtm0L5u4I8deFxuTkXqHOL+
- 3r88U3qDPRsicnOFnUq1YCXy7aezMS+7WWPRjCAZHXeo/iWqtQ0RR+irbw33yGDkKO4O
- V2nxFHEtcoAf3vQngxy0W5vPHLBsVZK4XuIVWhiagkXgaRz1/mG5O/alCeNvWXpZ/iRv
- E3uA==
-X-Gm-Message-State: AOJu0YwVuTMvibxgjxtiZXx19bIpVNVpvBHiEgoEcikYExv9NkowV9aV
- IjnYwlr782RfS5SzWdi/MifwWhPCQQJqwEwFjtPs1HVMFGWz
-X-Google-Smtp-Source: AGHT+IEJAguZt+Gv2Y76sjvdueN6ZFAUUjgQ3bitOLfHS8oC6v8p3BLP5V9wsQgaUv5l1IktXBdwbNZHY16qZ2kMSl2kME9KRaTW
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1rEurX-0007rf-HF for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 17 Dec 2023 17:23:39 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+ MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=MJjD01GsaCXNqJGBk8XaIGbPlf5DMiF6yt4DNbEE94E=; b=uNUl9LpNBDEEsMIcjXzCWS1CS+
+ NuBFkENto4vKXlqWa2I8rt0mYdjgysD1zytkXRtydeM93VJT7ZPPw8cArSK7Hynx2mOKIgbifLIbO
+ rcOgrvKv71gvAgBVt+acKoW26RpHW/WhpHrrzX+OnDLn0CWwMpxYhDDGjKE3MR8VhajEWfLOBieo6
+ Cfx0k4kMcYTlKsDwmLBZRpR5/+fQ9fz4KhtuNBBN7i/tWA/iua8+0fMiq65q1qH1koTnqMRCOanxr
+ HUuxiRLxTj+x+iYLHfspJZ///lvwSqYmXajFaqeUJmDxpdOdSfaJanGoZj5rFhJsyEHLnUO3qSKfO
+ dWuVReaQ==;
+Received: from [88.128.92.84] (helo=localhost)
+ by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+ id 1rEuP8-0088NZ-1Z; Sun, 17 Dec 2023 16:54:14 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>
+Date: Sun, 17 Dec 2023 17:53:58 +0100
+Message-Id: <20231217165359.604246-5-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20231217165359.604246-1-hch@lst.de>
+References: <20231217165359.604246-1-hch@lst.de>
 MIME-Version: 1.0
-X-Received: by 2002:a92:1e06:0:b0:35f:4dfd:c224 with SMTP id
- e6-20020a921e06000000b0035f4dfdc224mr473921ile.0.1702805765999; Sun, 17 Dec
- 2023 01:36:05 -0800 (PST)
-Date: Sun, 17 Dec 2023 01:36:05 -0800
-In-Reply-To: <CAOQ4uxjjo=qwwWcRXhv_D+KFfnPa_CEOrPbbZtzLroiOO7eYDg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cdd406060cb15c9c@google.com>
-From: syzbot <syzbot+8608bb4553edb8c78f41@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, chao@kernel.org, jaegeuk@kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, phillip@squashfs.org.uk, 
- reiserfs-devel@vger.kernel.org, squashfs-devel@lists.sourceforge.net, 
- syzkaller-bugs@googlegroups.com, terrelln@fb.com, viro@zeniv.linux.org.uk
-X-Headers-End: 1rEnZI-0008BW-Iz
-Subject: Re: [f2fs-dev] [syzbot] [reiserfs?] [squashfs?] BUG: Dentry still
- in use in unmount
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1rEurX-0007rf-HF
+Subject: [f2fs-dev] [PATCH 4/5] block: simplify disk_set_zoned
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,27 +77,218 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: dm-devel@lists.linux.dev, linux-scsi@vger.kernel.org,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+ virtualization@lists.linux.dev, Damien Le Moal <dlemoal@kernel.org>,
+ Stefan Hajnoczi <stefanha@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello,
+Only use disk_set_zoned to actually enable zoned device support.
+For clearing it, call disk_clear_zoned, which is renamed from
+disk_clear_zone_settings and now directly clears the zoned flag as
+well.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ block/blk-settings.c           | 32 +++++++++++---------------------
+ block/blk-zoned.c              |  3 ++-
+ block/blk.h                    |  2 --
+ drivers/block/null_blk/zoned.c |  2 +-
+ drivers/block/ublk_drv.c       |  2 +-
+ drivers/block/virtio_blk.c     |  2 +-
+ drivers/nvme/host/zns.c        |  2 +-
+ drivers/scsi/sd.c              |  7 +++++--
+ include/linux/blkdev.h         |  3 ++-
+ 9 files changed, 24 insertions(+), 31 deletions(-)
 
-Reported-and-tested-by: syzbot+8608bb4553edb8c78f41@syzkaller.appspotmail.com
+diff --git a/block/blk-settings.c b/block/blk-settings.c
+index 50e9efb59f67fd..bb94a3d471f4fb 100644
+--- a/block/blk-settings.c
++++ b/block/blk-settings.c
+@@ -881,31 +881,21 @@ bool blk_queue_can_use_dma_map_merging(struct request_queue *q,
+ EXPORT_SYMBOL_GPL(blk_queue_can_use_dma_map_merging);
+ 
+ /**
+- * disk_set_zoned - configure the zoned model for a disk
+- * @disk:	the gendisk of the queue to configure
+- * @zoned:	zoned or not.
+- *
+- * When @zoned is %true, this should be called only if zoned block device
+- * support is enabled (CONFIG_BLK_DEV_ZONED option).
++ * disk_set_zoned - inidicate a zoned device
++ * @disk:	gendisk to configure
+  */
+-void disk_set_zoned(struct gendisk *disk, bool zoned)
++void disk_set_zoned(struct gendisk *disk)
+ {
+ 	struct request_queue *q = disk->queue;
+ 
+-	if (zoned) {
+-		WARN_ON_ONCE(!IS_ENABLED(CONFIG_BLK_DEV_ZONED));
+-
+-		/*
+-		 * Set the zone write granularity to the device logical block
+-		 * size by default. The driver can change this value if needed.
+-		 */
+-		q->limits.zoned = true;
+-		blk_queue_zone_write_granularity(q,
+-						queue_logical_block_size(q));
+-	} else if (q->limits.zoned) {
+-		q->limits.zoned = false;
+-		disk_clear_zone_settings(disk);
+-	}
++	WARN_ON_ONCE(!IS_ENABLED(CONFIG_BLK_DEV_ZONED));
++
++	/*
++	 * Set the zone write granularity to the device logical block
++	 * size by default. The driver can change this value if needed.
++	 */
++	q->limits.zoned = true;
++	blk_queue_zone_write_granularity(q, queue_logical_block_size(q));
+ }
+ EXPORT_SYMBOL_GPL(disk_set_zoned);
+ 
+diff --git a/block/blk-zoned.c b/block/blk-zoned.c
+index 619ee41a51cc8c..580a58e53efd77 100644
+--- a/block/blk-zoned.c
++++ b/block/blk-zoned.c
+@@ -616,12 +616,13 @@ int blk_revalidate_disk_zones(struct gendisk *disk,
+ }
+ EXPORT_SYMBOL_GPL(blk_revalidate_disk_zones);
+ 
+-void disk_clear_zone_settings(struct gendisk *disk)
++void disk_clear_zoned(struct gendisk *disk)
+ {
+ 	struct request_queue *q = disk->queue;
+ 
+ 	blk_mq_freeze_queue(q);
+ 
++	q->limits.zoned = false;
+ 	disk_free_zone_bitmaps(disk);
+ 	blk_queue_flag_clear(QUEUE_FLAG_ZONE_RESETALL, q);
+ 	q->required_elevator_features &= ~ELEVATOR_F_ZBD_SEQ_WRITE;
+diff --git a/block/blk.h b/block/blk.h
+index 08a358bc0919e2..1ef920f72e0f87 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -395,14 +395,12 @@ static inline struct bio *blk_queue_bounce(struct bio *bio,
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+ void disk_free_zone_bitmaps(struct gendisk *disk);
+-void disk_clear_zone_settings(struct gendisk *disk);
+ int blkdev_report_zones_ioctl(struct block_device *bdev, unsigned int cmd,
+ 		unsigned long arg);
+ int blkdev_zone_mgmt_ioctl(struct block_device *bdev, blk_mode_t mode,
+ 		unsigned int cmd, unsigned long arg);
+ #else /* CONFIG_BLK_DEV_ZONED */
+ static inline void disk_free_zone_bitmaps(struct gendisk *disk) {}
+-static inline void disk_clear_zone_settings(struct gendisk *disk) {}
+ static inline int blkdev_report_zones_ioctl(struct block_device *bdev,
+ 		unsigned int cmd, unsigned long arg)
+ {
+diff --git a/drivers/block/null_blk/zoned.c b/drivers/block/null_blk/zoned.c
+index 369eb1e78bb579..6f5e0994862eae 100644
+--- a/drivers/block/null_blk/zoned.c
++++ b/drivers/block/null_blk/zoned.c
+@@ -159,7 +159,7 @@ int null_register_zoned_dev(struct nullb *nullb)
+ 	struct nullb_device *dev = nullb->dev;
+ 	struct request_queue *q = nullb->q;
+ 
+-	disk_set_zoned(nullb->disk, true);
++	disk_set_zoned(nullb->disk);
+ 	blk_queue_flag_set(QUEUE_FLAG_ZONE_RESETALL, q);
+ 	blk_queue_required_elevator_features(q, ELEVATOR_F_ZBD_SEQ_WRITE);
+ 	blk_queue_chunk_sectors(q, dev->zone_size_sects);
+diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+index 24fb95f19d5284..d50d69b2c023de 100644
+--- a/drivers/block/ublk_drv.c
++++ b/drivers/block/ublk_drv.c
+@@ -250,7 +250,7 @@ static int ublk_dev_param_zoned_apply(struct ublk_device *ub)
+ {
+ 	const struct ublk_param_zoned *p = &ub->params.zoned;
+ 
+-	disk_set_zoned(ub->ub_disk, true);
++	disk_set_zoned(ub->ub_disk);
+ 	blk_queue_flag_set(QUEUE_FLAG_ZONE_RESETALL, ub->ub_disk->queue);
+ 	blk_queue_required_elevator_features(ub->ub_disk->queue,
+ 					     ELEVATOR_F_ZBD_SEQ_WRITE);
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 19a4f20bd1c2f8..7d7a19b2b9a8eb 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -730,7 +730,7 @@ static int virtblk_probe_zoned_device(struct virtio_device *vdev,
+ 
+ 	dev_dbg(&vdev->dev, "probing host-managed zoned device\n");
+ 
+-	disk_set_zoned(vblk->disk, true);
++	disk_set_zoned(vblk->disk);
+ 	blk_queue_flag_set(QUEUE_FLAG_ZONE_RESETALL, q);
+ 
+ 	virtio_cread(vdev, struct virtio_blk_config,
+diff --git a/drivers/nvme/host/zns.c b/drivers/nvme/host/zns.c
+index 6d4c440e97e2a5..3d98e435821e4a 100644
+--- a/drivers/nvme/host/zns.c
++++ b/drivers/nvme/host/zns.c
+@@ -108,7 +108,7 @@ int nvme_update_zone_info(struct nvme_ns *ns, unsigned lbaf)
+ 		goto free_data;
+ 	}
+ 
+-	disk_set_zoned(ns->disk, true);
++	disk_set_zoned(ns->disk);
+ 	blk_queue_flag_set(QUEUE_FLAG_ZONE_RESETALL, q);
+ 	disk_set_max_open_zones(ns->disk, le32_to_cpu(id->mor) + 1);
+ 	disk_set_max_active_zones(ns->disk, le32_to_cpu(id->mar) + 1);
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 19a19eb277f57d..dbed075cdb981a 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -3135,11 +3135,13 @@ static void sd_read_block_characteristics(struct scsi_disk *sdkp)
+ 		blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, q);
+ 	}
+ 
++
++#ifdef CONFIG_BLK_DEV_ZONED /* sd_probe rejects ZBD devices early otherwise */
+ 	if (sdkp->device->type == TYPE_ZBC) {
+ 		/*
+ 		 * Host-managed.
+ 		 */
+-		disk_set_zoned(sdkp->disk, true);
++		disk_set_zoned(sdkp->disk);
+ 
+ 		/*
+ 		 * Per ZBC and ZAC specifications, writes in sequential write
+@@ -3152,8 +3154,9 @@ static void sd_read_block_characteristics(struct scsi_disk *sdkp)
+ 		 * Anything else.  This includes host-aware device that we treat
+ 		 * as conventional.
+ 		 */
+-		disk_set_zoned(sdkp->disk, false);
++		disk_clear_zoned(sdkp->disk);
+ 	}
++#endif /* CONFIG_BLK_DEV_ZONED */
+ 
+ 	if (!sdkp->first_scan)
+ 		return;
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 28cda9fb239eb6..bc236e77d85e1c 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -317,7 +317,8 @@ struct queue_limits {
+ typedef int (*report_zones_cb)(struct blk_zone *zone, unsigned int idx,
+ 			       void *data);
+ 
+-void disk_set_zoned(struct gendisk *disk, bool zoned);
++void disk_set_zoned(struct gendisk *disk);
++void disk_clear_zoned(struct gendisk *disk);
+ 
+ #define BLK_ALL_ZONES  ((unsigned int)-1)
+ int blkdev_report_zones(struct block_device *bdev, sector_t sector,
+-- 
+2.39.2
 
-Tested on:
-
-commit:         79f938ea ovl: fix dentry reference leak after changes ..
-git tree:       https://github.com/amir73il/linux ovl-fixes
-console output: https://syzkaller.appspot.com/x/log.txt?x=171ae01ae80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=52c9552def2a0fdd
-dashboard link: https://syzkaller.appspot.com/bug?extid=8608bb4553edb8c78f41
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
 
 
 _______________________________________________
