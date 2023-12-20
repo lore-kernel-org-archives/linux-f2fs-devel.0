@@ -4,69 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5C2EAC46CD2
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A7A90C46CD3
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 Dec 2023 14:00:00 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rFx78-0000tH-GW;
-	Wed, 20 Dec 2023 13:59:59 +0000
+	id 1rFx7B-0008VJ-6c;
+	Wed, 20 Dec 2023 14:00:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rFx76-0000t8-HW
+ (envelope-from <chao@kernel.org>) id 1rFx78-0008VC-Eo
  for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 20 Dec 2023 13:59:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PG5vzWF2/Zst7Rv4M9EAEkwmGP1h2Y/muDmldfhvo/c=; b=BC/tvC/Klc3yWWFVd0TUHyDkhF
- cJR3bbgAybL0ejTk7t1oZKOxtw5y71iw4tTdSNdzlRW5AvJuLTy3+TdWYrhZx9VZ6kTnlFs4PFLz1
- J4+W577r+FVU986pTOVQ9xrtZfuxQkkbF1FlIiB6nX3FvE7/HNUCOgUTnJczKglAXCH4=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=PG5vzWF2/Zst7Rv4M9EAEkwmGP1h2Y/muDmldfhvo/c=; b=kLQBSnZNMIKKjW7ZaK12+yHpWq
- DPG8UH3vDvl8QYInjirF6xh2Sc2s+c45Wg4GQ1pb2D3X0o6qbz8BDZlbpTaJ5ETk7pVSJANsud7WD
- jfDqdHATgUmOI7rV+lHqg4mv24+/JIErq4KCvFGf5PPHlF+9aqfifYybA7PiEgJ8+70g=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=xscjI8hRCqb0TVF/ZPOmL17Fu99hTNWTrn2y8jLUfpo=; b=KBVl7CSN/EE+Wi5GmKOCePYZR0
+ zUBRKxiNoius2Inumq/35ElhR3lEXqKMJRVOaOUmvv/SMvQu7fOVyqSkt6FswNfqLJ/PAX3Kbfm6U
+ YG97NjzYnYPDb63+pGpXjR1gNMlDKkHmo2UUj7lafqYg7co/uFqpkxjniseHfft+jX30=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=xscjI8hRCqb0TVF/ZPOmL17Fu99hTNWTrn2y8jLUfpo=; b=f
+ wAxpMUO4mr/+mfGirDpmYtykoLAHZuYm+H7pLilqoyiCJB3U/HtSQFlEzCqtegwlaTeio+Htkt3Mf
+ GBjMUB8fPP+50szzBQCJjMXvhcwUWCwjcn+Iq7FzrwgLNhSovzZ+7V0NtFm+/73GVwA0pXpz7jY0O
+ etErDV2LQtTuupx0=;
 Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rFx72-0001Jj-Pm for linux-f2fs-devel@lists.sourceforge.net;
+ id 1rFx73-0001Jm-QT for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 20 Dec 2023 13:59:57 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by ams.source.kernel.org (Postfix) with ESMTP id 80107B81D6D;
- Wed, 20 Dec 2023 13:59:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8229AC433C9;
- Wed, 20 Dec 2023 13:59:44 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTP id 88FF9B81D6F
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 20 Dec 2023 13:59:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C1FAC433C9;
+ Wed, 20 Dec 2023 13:59:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1703080786;
- bh=v4LG7qKqe/M+w+R9MpQa9X4bJKEDltOmx7SXeOQu0+g=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=OL7AZ7SRexIAReodySDXML3iH2ENLvevRKCZBxFla/XCSj4J9zJLC1wtYmtdpbRlk
- gw89uKyBFqkPsyV4hoNrqupk4BsEgh5LsguNh4j3c2o21x/mEzvpCvKSmmqQdwl0B1
- xvVuzC23KncXqWNCUTWuY1Qa9RzkARpusQnqsCPKN1dYS4LT/8CzWncLobPQYMEfMJ
- 54ptx4MbXrSvaUFIXL6OZoAkmy/1YRQYAYX5vKtZxl87pWshX/cXjQsdNxZhlQblsB
- BuKQ+8HAbPp+PHB/iQ9snsIiVZLFvg45E3XPIGxrhOlpVOS6tjB7aqL9aMNHS9phbn
- 50aZGm6QlwLDA==
+ s=k20201202; t=1703080781;
+ bh=1NoN4vHX+F5B0WJZK8QqQakY9pc1N432/Yr899L6umA=;
+ h=From:To:Cc:Subject:Date:From;
+ b=LsflaQn/Rpi1r63bTcKQzLAw6EfRwK9cBsHYh2in+KK6g6cuNWDLwdAppjiihuRPE
+ DUh1q6tb8kH/p+aNjHZGtKNGSH47k8IPkYzKP1KYu9+0v6RJW9cTl6gIw36PkVv7lw
+ VcsmWYBHfZG++2ANDm7PwM6g65zOvG4hJTdrQnghgTb9b4WYEfLk3Qu0OhvwA43clV
+ Av9IjNnnAYkKuVB9Mrhv/RPZ1MisWBUU3Mqe2X18y/hrGur6vgPHhJLLSAqG4yf/fk
+ mAlr/bWMlcn5tyW61vmyqOfPqRrpT4HS2QuDhkI1ZzpaIhtg/qFQ/3qogGw6ItMCVg
+ QFUKONcK8dPLA==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Wed, 20 Dec 2023 21:59:31 +0800
-Message-Id: <20231220135934.3471407-3-chao@kernel.org>
+Date: Wed, 20 Dec 2023 21:59:29 +0800
+Message-Id: <20231220135934.3471407-1-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20231220135934.3471407-1-chao@kernel.org>
-References: <20231220135934.3471407-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1rFx72-0001Jj-Pm
-Subject: [f2fs-dev] [PATCH 3/6] f2fs: compress: fix to check unreleased
- compressed cluster
+X-Headers-End: 1rFx73-0001Jm-QT
+Subject: [f2fs-dev] [PATCH 1/6] f2fs: compress: fix to guarantee persisting
+ compressed blocks by CP
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,49 +82,104 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Sheng Yong <shengyong@oppo.com>
-
-Compressed cluster may not be released due to we can fail in
-release_compress_blocks(), fix to handle reserved compressed
-cluster correctly in reserve_compress_blocks().
+If data block in compressed cluster is not persisted with metadata
+during checkpoint, after SPOR, the data may be corrupted, let's
+guarantee to write compressed page by checkpoint.
 
 Fixes: 4c8ff7095bef ("f2fs: support data compression")
-Signed-off-by: Sheng Yong <shengyong@oppo.com>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/file.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/f2fs/compress.c |  3 ++-
+ fs/f2fs/data.c     | 12 +++++++++---
+ fs/f2fs/f2fs.h     |  3 ++-
+ 3 files changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index c5e681fc1d58..c200b4c81baf 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3643,6 +3643,15 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
- 				goto next;
- 			}
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 5b076329e9bf..1122db8cc0b0 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1442,6 +1442,7 @@ void f2fs_compress_write_end_io(struct bio *bio, struct page *page)
+ 	struct f2fs_sb_info *sbi = bio->bi_private;
+ 	struct compress_io_ctx *cic =
+ 			(struct compress_io_ctx *)page_private(page);
++	enum count_type type = WB_DATA_TYPE(page);
+ 	int i;
  
-+			/*
-+			 * compressed cluster was not released due to
-+			 * it fails in release_compress_blocks().
-+			 */
-+			if (blkaddr == NEW_ADDR) {
-+				compr_blocks++;
-+				continue;
-+			}
-+
- 			if (__is_valid_data_blkaddr(blkaddr)) {
- 				compr_blocks++;
- 				continue;
-@@ -3652,6 +3661,9 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
- 		}
+ 	if (unlikely(bio->bi_status))
+@@ -1449,7 +1450,7 @@ void f2fs_compress_write_end_io(struct bio *bio, struct page *page)
  
- 		reserved = cluster_size - compr_blocks;
-+		if (!reserved)
-+			goto next;
+ 	f2fs_compress_free_page(page);
+ 
+-	dec_page_count(sbi, F2FS_WB_DATA);
++	dec_page_count(sbi, type);
+ 
+ 	if (atomic_dec_return(&cic->pending_pages))
+ 		return;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index d28c97282e68..6c72a6e86ba8 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -48,7 +48,7 @@ void f2fs_destroy_bioset(void)
+ 	bioset_exit(&f2fs_bioset);
+ }
+ 
+-static bool __is_cp_guaranteed(struct page *page)
++bool f2fs_is_cp_guaranteed(struct page *page)
+ {
+ 	struct address_space *mapping = page->mapping;
+ 	struct inode *inode;
+@@ -66,7 +66,7 @@ static bool __is_cp_guaranteed(struct page *page)
+ 		return true;
+ 
+ 	if (f2fs_is_compressed_page(page))
+-		return false;
++		return true;
+ 	if ((S_ISREG(inode->i_mode) && IS_NOQUOTA(inode)) ||
+ 			page_private_gcing(page))
+ 		return true;
+@@ -1007,6 +1007,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
+ 	struct f2fs_bio_info *io = sbi->write_io[btype] + fio->temp;
+ 	struct page *bio_page;
++	enum count_type type;
+ 
+ 	f2fs_bug_on(sbi, is_read_io(fio->op));
+ 
+@@ -1046,7 +1047,12 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	/* set submitted = true as a return value */
+ 	fio->submitted = 1;
+ 
+-	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
++	type = WB_DATA_TYPE(bio_page);
++	/* override count type if page is compressed one */
++	if (fio->compressed_page)
++		type = WB_DATA_TYPE(fio->compressed_page);
 +
- 		ret = inc_valid_block_count(sbi, dn->inode, &reserved);
- 		if (ret)
- 			return ret;
++	inc_page_count(sbi, type);
+ 
+ 	if (io->bio &&
+ 	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 76e9a8682e38..bcb3940ab5ba 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1092,7 +1092,7 @@ struct f2fs_sm_info {
+  * f2fs monitors the number of several block types such as on-writeback,
+  * dirty dentry blocks, dirty node blocks, and dirty meta blocks.
+  */
+-#define WB_DATA_TYPE(p)	(__is_cp_guaranteed(p) ? F2FS_WB_CP_DATA : F2FS_WB_DATA)
++#define WB_DATA_TYPE(p)	(f2fs_is_cp_guaranteed(p) ? F2FS_WB_CP_DATA : F2FS_WB_DATA)
+ enum count_type {
+ 	F2FS_DIRTY_DENTS,
+ 	F2FS_DIRTY_DATA,
+@@ -3824,6 +3824,7 @@ void f2fs_init_ckpt_req_control(struct f2fs_sb_info *sbi);
+  */
+ int __init f2fs_init_bioset(void);
+ void f2fs_destroy_bioset(void);
++bool f2fs_is_cp_guaranteed(struct page *page);
+ int f2fs_init_bio_entry_cache(void);
+ void f2fs_destroy_bio_entry_cache(void);
+ void f2fs_submit_read_bio(struct f2fs_sb_info *sbi, struct bio *bio,
 -- 
 2.40.1
 
