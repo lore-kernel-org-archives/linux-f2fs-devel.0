@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 69258C3DA6E
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 Dec 2023 14:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C8D22C3DA6E
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 Dec 2023 14:00:09 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rFx7B-0006su-Nb;
-	Wed, 20 Dec 2023 14:00:01 +0000
+	id 1rFx7J-0006tO-EX;
+	Wed, 20 Dec 2023 14:00:09 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rFx79-0006sT-Ks
+ (envelope-from <chao@kernel.org>) id 1rFx7H-0006tD-U1
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 Dec 2023 13:59:59 +0000
+ Wed, 20 Dec 2023 14:00:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=32GlP9vHEqARMVaEpjyRz2ivgY/q1Q1PAMgFqPrgVs8=; b=kVDnh92bkk3NPl3dGkasfNf60K
- 8xivbXrvs7RPcn8VGzWrru8yod99/H+E1+yPpTeS4hkp3KWqVPymi3i1xkutuK3Xq/11gk/cVTJBg
- 5x/tASxjloaMmrz+O5zEq4Gf57+288cMo4Zk5hFYOD9DHQ9hd3XJacj58WBZvx+jO9nQ=;
+ bh=ADmk9SW4UgZx1Gt8dfBrDImUmmYFyOX+V1ThXwqp8CA=; b=FriS97tcILDXZZZEkcoD2u4tJE
+ ob+b7vtnBfdlf/LXOIh2gHvbN64U61VPXDcuz+05dR2rDMjXHvY17ilW30pn6iMMAnygJWsMW/kT8
+ 5/OK2L5cRh8rs1mR2yCMkcMRyn94vqqzlywQVVigv0JF6ovDPhYsoLCvO+tfBZt4A3o8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,41 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=32GlP9vHEqARMVaEpjyRz2ivgY/q1Q1PAMgFqPrgVs8=; b=CEr5Zm+l6W0vPiBP5YnhY3IAhw
- 3flwniSaUqUtWLSJbVc1WFOcH8r4rOUwtJeDzKVHio4eN/VQVBv3f74EWEIazSpJlHzsKRSXr/nG3
- Zy5QomXD51RnsnUelaBXzxs7gaMdngT+/DMlfYusALD5xwF8T1xvewlej4URJuMyufzQ=;
+ bh=ADmk9SW4UgZx1Gt8dfBrDImUmmYFyOX+V1ThXwqp8CA=; b=mU8gVH4wKUqLY/nGci7spcgI2Q
+ ev2NoX1IkMs7ou6HelSv9PBrcIUQGXxka74glFL4oVfCkmyueJbvp+7LRjDreDpH/bv/naFNTAH9U
+ bx/WzmUb1Nr1B7r99J5tw5TMO3UXpjGahRUjf8IuOWld9E+8+svaIbH9l59L7Ca8n+80=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rFx78-0001K9-Pf for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 Dec 2023 13:59:59 +0000
+ id 1rFx7C-0001KX-Sn for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 20 Dec 2023 14:00:07 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 5FB796165F
+ by dfw.source.kernel.org (Postfix) with ESMTP id 76EEE61652
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 20 Dec 2023 13:59:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBDFAC433C7;
- Wed, 20 Dec 2023 13:59:46 +0000 (UTC)
+ Wed, 20 Dec 2023 13:59:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCAC2C433CB;
+ Wed, 20 Dec 2023 13:59:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1703080788;
- bh=syTLTyQL0h6bm/dVO7pwCM9/CV4AN46/r4l6pfWHOsk=;
+ s=k20201202; t=1703080792;
+ bh=W2roxFRnwD7OFBUoZGhnWeFociodl3+VYdCaqAo2V0c=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=f+Xem3SDh/g99pjEVufXEyyYTplXClv9zD6wXfHQwb+grX1vfInCbK0xd+jGB3NWr
- sN92ub7zMqSpU6mGrNFx3TeQIYR3xngeYKtLy8zt6xGgWDU4RwAGi5j5Yyv63Kv6rO
- k7oX8GeZFKZF0dwOt0BxtO3EFM6aAvk3hxGX3iqHcmTI7vHmtTVePS8HEGQjxKLpDP
- Ihg1Wf/yOH3qLzMeu0NTd9/aECTj2+HT5FtVD8MW2wAadyp/IgN9BAAsh4hdSv5bA4
- Zb/YkGlt+TTHnO54zERz6Sk1nHQaLxXFVVtzGlktNXYFwNOj4UH0W4wRDMxP5aNDut
- NH+gV9zHyPH5Q==
+ b=rA/+TbY9/3iHsCkeDwv3DGjklnUjcgF96veKb4IYxEeTOefB7KB+7XvuI8qB5jT/h
+ 3cbxpx5O7v+qc0fzfLQ9FTnTSkx3IJ+851v7UHN0SFcKkFmExcWdFrohLiLEZKDEgH
+ rZckz4T6zWbNAU6HrsBZbaotesOY1v3lPOBrgwI/LRdbF4CPv83r9fI3V2YwIR781f
+ K4CWRsiy61oSa8uIwRQkStY2nm3F5aKG6WN4tZxnXute+XP3dpkLxbDMkWjS+CxkzV
+ ZAtr44wtznR3668+oZvk3VCHLSfI8mEMznTB4ZgFl/X3fsaqN+Cx7JF14MA/V/Ex+1
+ HWtB6HauAfwHg==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Wed, 20 Dec 2023 21:59:32 +0800
-Message-Id: <20231220135934.3471407-4-chao@kernel.org>
+Date: Wed, 20 Dec 2023 21:59:34 +0800
+Message-Id: <20231220135934.3471407-6-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20231220135934.3471407-1-chao@kernel.org>
 References: <20231220135934.3471407-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1rFx78-0001K9-Pf
-Subject: [f2fs-dev] [PATCH 4/6] f2fs: compress: fix to avoid inconsistent
- bewteen i_blocks and dnode
+X-Headers-End: 1rFx7C-0001KX-Sn
+Subject: [f2fs-dev] [PATCH 6/6] f2fs: introduce FAULT_INCONSISTENCE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,136 +83,157 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In reserve_compress_blocks(), we update blkaddrs of dnode in prior to
-inc_valid_block_count(), it may cause inconsistent status bewteen
-i_blocks and blkaddrs once inc_valid_block_count() fails.
+We will encounter below inconsistent status when FAULT_BLKADDR type
+fault injection is on.
 
-To fix this issue, it needs to reverse their invoking order.
+Info: checkpoint state = d6 :  nat_bits crc fsck compacted_summary orphan_inodes sudden-power-off
+[ASSERT] (fsck_chk_inode_blk:1254)  --> ino: 0x1c100 has i_blocks: 000000c0, but has 191 blocks
+[FIX] (fsck_chk_inode_blk:1260)  --> [0x1c100] i_blocks=0x000000c0 -> 0xbf
+[FIX] (fsck_chk_inode_blk:1269)  --> [0x1c100] i_compr_blocks=0x00000026 -> 0x27
+[ASSERT] (fsck_chk_inode_blk:1254)  --> ino: 0x1cadb has i_blocks: 0000002f, but has 46 blocks
+[FIX] (fsck_chk_inode_blk:1260)  --> [0x1cadb] i_blocks=0x0000002f -> 0x2e
+[FIX] (fsck_chk_inode_blk:1269)  --> [0x1cadb] i_compr_blocks=0x00000011 -> 0x12
+[ASSERT] (fsck_chk_inode_blk:1254)  --> ino: 0x1c62c has i_blocks: 00000002, but has 1 blocks
+[FIX] (fsck_chk_inode_blk:1260)  --> [0x1c62c] i_blocks=0x00000002 -> 0x1
 
-Fixes: c75488fb4d82 ("f2fs: introduce F2FS_IOC_RESERVE_COMPRESS_BLOCKS")
+After we inject fault into f2fs_is_valid_blkaddr() during truncation,
+a) it missed to increase @nr_free or @valid_blocks
+b) it can cause in blkaddr leak in truncated dnode
+Which may cause inconsistent status.
+
+This patch separates FAULT_INCONSISTENCE from FAULT_BLKADDR, so that
+we can:
+a) use FAULT_INCONSISTENCE in f2fs_truncate_data_blocks_range() to
+simulate inconsistent issue independently,
+b) FAULT_BLKADDR fault will not cause any inconsistent status, we can
+just use it to check error path handling in kernel side.
+
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/data.c    |  5 +++--
- fs/f2fs/f2fs.h    |  7 ++++++-
- fs/f2fs/file.c    | 26 ++++++++++++++------------
- fs/f2fs/segment.c |  2 +-
- 4 files changed, 24 insertions(+), 16 deletions(-)
+ Documentation/ABI/testing/sysfs-fs-f2fs |  1 +
+ Documentation/filesystems/f2fs.rst      |  1 +
+ fs/f2fs/checkpoint.c                    | 19 +++++++++++++++----
+ fs/f2fs/f2fs.h                          |  3 +++
+ fs/f2fs/file.c                          |  8 ++++++--
+ fs/f2fs/super.c                         |  1 +
+ 6 files changed, 27 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index ceed5ac6c66b..cc4cb9099db6 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1224,7 +1224,8 @@ int f2fs_reserve_new_blocks(struct dnode_of_data *dn, blkcnt_t count)
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 4f1d4e636d67..649aabac16c2 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -708,6 +708,7 @@ Description:	Support configuring fault injection type, should be
+ 		FAULT_DQUOT_INIT         0x000010000
+ 		FAULT_LOCK_OP            0x000020000
+ 		FAULT_BLKADDR            0x000040000
++		FAULT_INCONSISTENCE      0x000080000
+ 		===================      ===========
  
- 	if (unlikely(is_inode_flag_set(dn->inode, FI_NO_ALLOC)))
- 		return -EPERM;
--	if (unlikely((err = inc_valid_block_count(sbi, dn->inode, &count))))
-+	err = inc_valid_block_count(sbi, dn->inode, &count, true);
-+	if (unlikely(err))
- 		return err;
+ What:		/sys/fs/f2fs/<disk>/discard_io_aware_gran
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 5a1686cdd6b4..dfc1e73b17d9 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -209,6 +209,7 @@ fault_type=%d		 Support configuring fault injection type, should be
+ 			 FAULT_DQUOT_INIT	  0x000010000
+ 			 FAULT_LOCK_OP		  0x000020000
+ 			 FAULT_BLKADDR		  0x000040000
++			 FAULT_INCONSISTENCE	  0x000080000
+ 			 ===================	  ===========
+ mode=%s			 Control block allocation mode which supports "adaptive"
+ 			 and "lfs". In "lfs" mode, there should be no random
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index f3f3e98fd6b0..b59db6c1932c 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -170,12 +170,9 @@ static bool __is_bitmap_valid(struct f2fs_sb_info *sbi, block_t blkaddr,
+ 	return exist;
+ }
  
- 	trace_f2fs_reserve_new_blocks(dn->inode, dn->nid,
-@@ -1481,7 +1482,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+-bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
++bool __f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+ 					block_t blkaddr, int type)
+ {
+-	if (time_to_inject(sbi, FAULT_BLKADDR))
+-		return false;
+-
+ 	switch (type) {
+ 	case META_NAT:
+ 		break;
+@@ -230,6 +227,20 @@ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+ 	return true;
+ }
  
- 	dn->data_blkaddr = f2fs_data_blkaddr(dn);
- 	if (dn->data_blkaddr == NULL_ADDR) {
--		err = inc_valid_block_count(sbi, dn->inode, &count);
-+		err = inc_valid_block_count(sbi, dn->inode, &count, true);
- 		if (unlikely(err))
- 			return err;
- 	}
++bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
++					block_t blkaddr, int type)
++{
++	if (time_to_inject(sbi, FAULT_BLKADDR))
++		return false;
++	return __f2fs_is_valid_blkaddr(sbi, blkaddr, type);
++}
++
++bool f2fs_is_valid_blkaddr_raw(struct f2fs_sb_info *sbi,
++					block_t blkaddr, int type)
++{
++	return __f2fs_is_valid_blkaddr(sbi, blkaddr, type);
++}
++
+ /*
+  * Readahead CP/NAT/SIT/SSA/POR pages
+  */
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index bcb3940ab5ba..541c52fe2872 100644
+index 9487581db08a..49e4de324841 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -2294,7 +2294,7 @@ static inline unsigned int get_available_block_count(struct f2fs_sb_info *sbi,
+@@ -61,6 +61,7 @@ enum {
+ 	FAULT_DQUOT_INIT,
+ 	FAULT_LOCK_OP,
+ 	FAULT_BLKADDR,
++	FAULT_INCONSISTENCE,
+ 	FAULT_MAX,
+ };
  
- static inline void f2fs_i_blocks_write(struct inode *, block_t, bool, bool);
- static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
--				 struct inode *inode, blkcnt_t *count)
-+				 struct inode *inode, blkcnt_t *count, bool partial)
- {
- 	blkcnt_t diff = 0, release = 0;
- 	block_t avail_user_block_count;
-@@ -2320,6 +2320,11 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 	avail_user_block_count = get_available_block_count(sbi, inode, true);
- 
- 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
-+		if (!partial) {
-+			spin_unlock(&sbi->stat_lock);
-+			goto enospc;
-+		}
-+
- 		diff = sbi->total_valid_block_count - avail_user_block_count;
- 		if (diff > *count)
- 			diff = *count;
+@@ -3787,6 +3788,8 @@ struct page *f2fs_get_meta_page_retry(struct f2fs_sb_info *sbi, pgoff_t index);
+ struct page *f2fs_get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index);
+ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+ 					block_t blkaddr, int type);
++bool f2fs_is_valid_blkaddr_raw(struct f2fs_sb_info *sbi,
++					block_t blkaddr, int type);
+ int f2fs_ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+ 			int type, bool sync);
+ void f2fs_ra_meta_pages_cond(struct f2fs_sb_info *sbi, pgoff_t index,
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index c200b4c81baf..4f3ed627f6a1 100644
+index 4f3ed627f6a1..6c4c739d73b3 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -3633,14 +3633,16 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
- 		blkcnt_t reserved;
- 		int ret;
+@@ -593,9 +593,13 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+ 		f2fs_set_data_blkaddr(dn, NULL_ADDR);
  
--		for (i = 0; i < cluster_size; i++, dn->ofs_in_node++) {
--			blkaddr = f2fs_data_blkaddr(dn);
-+		for (i = 0; i < cluster_size; i++) {
-+			blkaddr = data_blkaddr(dn->inode, dn->node_page,
-+						dn->ofs_in_node + i);
- 
- 			if (i == 0) {
--				if (blkaddr == COMPRESS_ADDR)
--					continue;
--				dn->ofs_in_node += cluster_size;
--				goto next;
-+				if (blkaddr != COMPRESS_ADDR) {
-+					dn->ofs_in_node += cluster_size;
-+					goto next;
-+				}
+ 		if (__is_valid_data_blkaddr(blkaddr)) {
+-			if (!f2fs_is_valid_blkaddr(sbi, blkaddr,
+-					DATA_GENERIC_ENHANCE))
++			if (time_to_inject(sbi, FAULT_INCONSISTENCE))
 +				continue;
- 			}
- 
- 			/*
-@@ -3656,20 +3658,20 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
- 				compr_blocks++;
++			if (!f2fs_is_valid_blkaddr_raw(sbi, blkaddr,
++						DATA_GENERIC_ENHANCE)) {
++				f2fs_handle_error(sbi, ERROR_INVALID_BLKADDR);
  				continue;
- 			}
--
--			f2fs_set_data_blkaddr(dn, NEW_ADDR);
++			}
+ 			if (compressed_cluster)
+ 				valid_blocks++;
  		}
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 29b9e6e3eb5f..5659166b3918 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -62,6 +62,7 @@ const char *f2fs_fault_name[FAULT_MAX] = {
+ 	[FAULT_DQUOT_INIT]	= "dquot initialize",
+ 	[FAULT_LOCK_OP]		= "lock_op",
+ 	[FAULT_BLKADDR]		= "invalid blkaddr",
++	[FAULT_INCONSISTENCE]	= "inconsistence",
+ };
  
- 		reserved = cluster_size - compr_blocks;
- 		if (!reserved)
- 			goto next;
- 
--		ret = inc_valid_block_count(sbi, dn->inode, &reserved);
--		if (ret)
-+		ret = inc_valid_block_count(sbi, dn->inode, &reserved, false);
-+		if (unlikely(ret))
- 			return ret;
- 
--		if (reserved != cluster_size - compr_blocks)
--			return -ENOSPC;
-+		for (i = 0; i < cluster_size; i++, dn->ofs_in_node++) {
-+			if (f2fs_data_blkaddr(dn) == NULL_ADDR)
-+				f2fs_set_data_blkaddr(dn, NEW_ADDR);
-+		}
- 
- 		f2fs_i_compr_blocks_update(dn->inode, compr_blocks, true);
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index bafdd2295957..f95a2e914baf 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -248,7 +248,7 @@ static int __replace_atomic_write_block(struct inode *inode, pgoff_t index,
- 	} else {
- 		blkcnt_t count = 1;
- 
--		err = inc_valid_block_count(sbi, inode, &count);
-+		err = inc_valid_block_count(sbi, inode, &count, true);
- 		if (err) {
- 			f2fs_put_dnode(&dn);
- 			return err;
+ void f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned int rate,
 -- 
 2.40.1
 
