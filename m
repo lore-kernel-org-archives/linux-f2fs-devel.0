@@ -4,70 +4,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8BEE1C46CD2
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 Dec 2023 14:00:11 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 66887C35274
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Dec 2023 05:56:51 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rFx7K-0001O4-Ev;
-	Wed, 20 Dec 2023 14:00:10 +0000
+	id 1rGC37-0000Lz-3m;
+	Thu, 21 Dec 2023 05:56:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rFx7B-0001Ne-Dc
+ (envelope-from <yonggil.song@samsung.com>) id 1rGC35-0000Lt-Fm
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 Dec 2023 14:00:01 +0000
+ Thu, 21 Dec 2023 05:56:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
+ Date:Message-ID:To:From:Sender:Reply-To:Subject:Mime-Version:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jG1xYjeQFCncjaAKEpZbGnvc9Orum4R/wVy+dZd+s5k=; b=WS9HJp8a38IiL+VIPRULxqT+/S
- FBwG7loLDDna1sZLZVOEBg7J/a3+2lxtugWhtsIkbc8AV0PaAbHOA7dZyG8QC2ZAu3CYgg8YthiyM
- G9g2joPJj6RezMVF123mbkW15OhqTPJoECUlS4QBVzXAt93X/thUq0FuKLXS7laP7zbM=;
+ bh=PfgH9IEjjrpOGSzq5Vmy1Ag86e6ztIeWWXYEJNjG/qE=; b=BEMB3G5dTBcebM2kjfbVJAinJG
+ uAG2HgOfYFMRjz+H1I+FlMekA1F4XJmSMlOOckWq4A5Jm3VFzXW1PgvoMzETgDOIRfMuU0ooPq+fQ
+ kE75C4FBev4IP3WdHFuXKdDmY0pece8XsCM+xRt0Cd2pi9+qJXxZGepqPEGMWRMHbmRQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=jG1xYjeQFCncjaAKEpZbGnvc9Orum4R/wVy+dZd+s5k=; b=DciSQmMgKat1vlGbONNYzxMM6P
- W+5tReQ2DoCvfM8eY1nkEMvpZrboXl3ie41Jkl3N6a/sa85lKigtz/jBngvQvVqIQTK240Cg0gyyu
- n0Q+dTBMqodvVSFm0TpotrKa9kXwAqmEwA3TZaik2PDhwn0SOGZiD3b5CC/+IbVEb6Q4=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ h=References:Content-Type:Content-Transfer-Encoding:Date:Message-ID:To:From
+ :Sender:Reply-To:Subject:Mime-Version:Cc:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=PfgH9IEjjrpOGSzq5Vmy1Ag86e6ztIeWWXYEJNjG/qE=; b=F
+ kNXlPrwDq2uQ1r1NkBNCyDUaUZhDxfUfqrN2Ab4pCQIJ8Y+s1dXVvn8VIxy1MGW0lSJsXyrSlC5x2
+ vEzFkFcaFLdKUspdC6cusFjeGmH3VbPrIGo4vOQZ4NLPT5VhhyhgVz+jp+g/cczyHtSNA/ulh3RQ+
+ N6cfOnxJThURLjfI=;
+Received: from mailout2.samsung.com ([203.254.224.25])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rFx77-0001K0-56 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 Dec 2023 14:00:01 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by ams.source.kernel.org (Postfix) with ESMTP id D79A3B81D72
+ id 1rGC31-0001Y4-PJ for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 21 Dec 2023 05:56:47 +0000
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+ by mailout2.samsung.com (KnoxPortal) with ESMTP id
+ 20231221055631epoutp0272ba45ee0c020890544b89a7204adca6~iwyl1aDrR0908909089epoutp02b
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 20 Dec 2023 13:59:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF137C433C7;
- Wed, 20 Dec 2023 13:59:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1703080790;
- bh=a+Zr5UnD9JUAPNdpT3P1rGDjRu5/Oz4DN3bx1yho9co=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=p7AP1VMH72ySxKDNYPwmOKGF7q51vqQMEB1+DXpAwpCyC6g85zy8oN8ik0NtuGECt
- fw5/oI6jiG4jODCmtW47jZNlF0pSs44rma9TnkTgz4+Rn9VKUA0XdZCAbjTTqWg01s
- 1Qe/SnxCpB7xpntmDxOOGwId82y/UnScwUQW/JoHkbw/UZ9V0qRiIdGRM0eexxPq+2
- YwSJkO5n7pQeyvWeF7tgDH+FLyXYB7cbJ3Xdx7yRW9PwI8Ss8zqIZLy96dglx3O8+0
- c/34qbSGUVjWs7wAi2hgltZ7HqAb6Ok3MFqvnR6HgZolU06+U4Vu5Pxk3uEynOOqL8
- M10J8RnmP5IDg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Wed, 20 Dec 2023 21:59:33 +0800
-Message-Id: <20231220135934.3471407-5-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20231220135934.3471407-1-chao@kernel.org>
-References: <20231220135934.3471407-1-chao@kernel.org>
-MIME-Version: 1.0
-X-Headers-End: 1rFx77-0001K0-56
-Subject: [f2fs-dev] [PATCH 5/6] f2fs: fix to remove unnecessary
- f2fs_bug_on() to avoid panic
+ Thu, 21 Dec 2023 05:56:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com
+ 20231221055631epoutp0272ba45ee0c020890544b89a7204adca6~iwyl1aDrR0908909089epoutp02b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+ s=mail20170921; t=1703138191;
+ bh=PfgH9IEjjrpOGSzq5Vmy1Ag86e6ztIeWWXYEJNjG/qE=;
+ h=Subject:Reply-To:From:To:Date:References:From;
+ b=puWWaEl1EtVkmQ6HsrvozLo8tvF/f6d1ezD+lycEJ/S3k4wkwfcyxFnLQiBn+GgBO
+ XYA0zfqyfLNlOxe0hUw0giGFV8zwon0tOfBWizG58AZpFKy4kWrNKRVeWybCQ5CZdM
+ YTRjlgssO49WD0611Y0S5xk2sjzohetvnsPh/Suc=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+ epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+ 20231221055631epcas2p46732e2dbd5148bfa9d0e8f80e943252b~iwylN-CtQ1320913209epcas2p4n;
+ Thu, 21 Dec 2023 05:56:31 +0000 (GMT)
+Received: from epsmgec2p1.samsung.com (unknown [182.195.36.97]) by
+ epsnrtp2.localdomain (Postfix) with ESMTP id 4SwfnV4mJrz4x9Q6; Thu, 21 Dec
+ 2023 05:56:30 +0000 (GMT)
+X-AuditID: b6c32a43-4b3ff700000021c8-2f-6583d38e89e9
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+ epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+ 5F.A5.08648.E83D3856; Thu, 21 Dec 2023 14:56:30 +0900 (KST)
+Mime-Version: 1.0
+From: Yonggil Song <yonggil.song@samsung.com>
+To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org"
+ <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Seokhwan Kim <sukka.kim@samsung.com>, Daejun
+ Park <daejun7.park@samsung.com>, Siwoo Jung <siu.jung@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20231221055630epcms2p25ae1ac5e4509d5c8ba7f338b51592e53@epcms2p2>
+Date: Thu, 21 Dec 2023 14:56:30 +0900
+X-CMS-MailID: 20231221055630epcms2p25ae1ac5e4509d5c8ba7f338b51592e53
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjk+LIzCtJLcpLzFFi42LZdljTVLfvcnOqwafZyhanp55lsnh5SNNi
+ 1YNwiyfrZzFbXFrkbnF51xw2i/MTXzNZrOqYy2gx9fwRJgdOj02rOtk8di/4zOTRt2UVo8fn
+ TXIBLFHZNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlA
+ hygplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCswL9IoTc4tL89L18lJLrAwNDIxM
+ gQoTsjOW3pct+O9UsfHHHJYGxh0mXYycHBICJhK3f31j62Lk4hAS2MEo0f/uN3sXIwcHr4Cg
+ xN8dwiA1wgKmEnMabzOC2EICShLXDvSyQMT1JTYvXsYOYrMJ6Er83bAczBYRuMsk0dftDjGf
+ V2JG+1MWCFtaYvvyrYwQtobEj2W9zBC2qMTN1W/ZYez3x+ZD1YhItN47C1UjKPHg526ouKTE
+ okPnmSDsfIm/K66zQdg1Elsb2qDi+hLXOjaC7eUV8JWYM6MVzGYRUJX4PWcNK0SNi8SDFRDz
+ mQXkJba/ncMM8jqzgKbE+l36IKaEgLLEkVssEBV8Eh2H/7LDfNWw8TdW9o55T6AuUJPYvGkz
+ 1CYZiQuP26Cu95DYs/Qv0wRGxVmIcJ6F5IZZCDcsYGRexSiWWlCcm56abFRgCI/Z5PzcTYzg
+ BKnlvIPxyvx/eocYmTgYDzFKcDArifDu7WxKFeJNSaysSi3Kjy8qzUktPsRoCvT9RGYp0eR8
+ YIrOK4k3NLE0MDEzMzQ3MjUwVxLnvdc6N0VIID2xJDU7NbUgtQimj4mDU6qBqW/jRe/P31IO
+ xv2Qexz815GHQ/zb6rX/na5LsQRW7Jz6LSLbL1fyg4OXhKpJt0j2k60nmW8Xueb7/hVea3Xj
+ 7PKOREafOW/Weew5Hs1Xoi8QkLOM4+1xNoH/xcHCT3cwa3LYKDLvO/vnoeultTlrlbX3HAmQ
+ /XC3aN99w/4E152/V/G/qPsT1trZc3XHjlLv8uXPHn9NNRPaJ7YvbIviW2unK7VsxibZLZsn
+ x5ibTv6k2fr4UsleZoPax/FmW7+tSj139ULJPmnbpXe5U1sLjjsHRQutLFr4+Nc+55rM443V
+ uyxmT18rMbtj0yIXXoNw8bsKSqff/XU2mTsvmK012qLttcHMs4uOfWXc23BDTYmlOCPRUIu5
+ qDgRAHf4dDoZBAAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231221055630epcms2p25ae1ac5e4509d5c8ba7f338b51592e53
+References: <CGME20231221055630epcms2p25ae1ac5e4509d5c8ba7f338b51592e53@epcms2p2>
+X-Headers-End: 1rGC31-0001Y4-PJ
+Subject: [f2fs-dev] [PATCH v3] f2fs: New victim selection for GC
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,39 +122,261 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Reply-To: yonggil.song@samsung.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-verify_blkaddr() will trigger panic once we inject fault into
-f2fs_is_valid_blkaddr(), fix to remove this unnecessary f2fs_bug_on().
+Overview
+========
 
-Fixes: 18792e64c86d ("f2fs: support fault injection for f2fs_is_valid_blkaddr()")
-Signed-off-by: Chao Yu <chao@kernel.org>
+This patch introduces a new way to preference data sections when selecting
+GC victims. Migration of data blocks causes invalidation of node blocks.
+Therefore, in situations where GC is frequent, selecting data blocks as
+victims can reduce unnecessary block migration by invalidating node blocks.
+For exceptional situations where free sections are insufficient, node blocks
+are selected as victims instead of data blocks to get extra free sections.
+
+Problem
+=======
+
+If the total amount of nodes is larger than the size of one section, nodes
+occupy multiple sections, and node victims are often selected because the
+gc cost is lowered by data block migration in GC. Since moving the data
+section causes frequent node victim selection, victim threshing occurs in
+the node section. This results in an increase in WAF.
+
+Experiment
+==========
+
+Test environment is as follows.
+
+        System info
+          - 3.6GHz, 16 core CPU
+          - 36GiB Memory
+        Device info
+          - a conventional null_blk with 228MiB
+          - a sequential null_blk with 4068 zones of 8MiB
+        Format
+          - mkfs.f2fs <conv null_blk> -c <seq null_blk> -m -Z 8 -o 3.89
+        Mount
+          - mount <conv null_blk> <mount point>
+        Fio script
+	  - fio --rw=randwrite --bs=4k --ba=4k --filesize=31187m --norandommap --overwrite=1 --name=job1 --filename=./mnt/sustain --io_size=128g
+	WAF calculation
+	  - (IOs on conv. null_blk + IOs on seq. null_blk) / random write IOs
+
+Conclusion
+==========
+
+This experiment showed that the WAF was reduced by 29% (18.75 -> 13.3) when
+the data section was selected first when selecting GC victims. This was
+achieved by reducing the migration of the node blocks by 69.4%
+(253,131,743 blks -> 77,463,278 blks). It is possible to achieve low WAF
+performance with the GC victim selection method in environments where the
+section size is relatively small.
+
+Signed-off-by: Yonggil Song <yonggil.song@samsung.com>
 ---
- fs/f2fs/f2fs.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/f2fs/f2fs.h |   1 +
+ fs/f2fs/gc.c   | 102 +++++++++++++++++++++++++++++++++++++++----------
+ fs/f2fs/gc.h   |   6 +++
+ 3 files changed, 88 insertions(+), 21 deletions(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 541c52fe2872..9487581db08a 100644
+index 9043cedfa12b..578d57f6022f 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -3489,11 +3489,9 @@ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
- static inline void verify_blkaddr(struct f2fs_sb_info *sbi,
- 					block_t blkaddr, int type)
- {
--	if (!f2fs_is_valid_blkaddr(sbi, blkaddr, type)) {
-+	if (!f2fs_is_valid_blkaddr(sbi, blkaddr, type))
- 		f2fs_err(sbi, "invalid blkaddr: %u, type: %d, run fsck to fix.",
- 			 blkaddr, type);
--		f2fs_bug_on(sbi, 1);
--	}
- }
+@@ -1649,6 +1649,7 @@ struct f2fs_sb_info {
+ 	struct f2fs_mount_info mount_opt;	/* mount options */
  
- static inline bool __is_valid_data_blkaddr(block_t blkaddr)
+ 	/* for cleaning operations */
++	bool need_node_clean;			/* need to clean dirty nodes */
+ 	struct f2fs_rwsem gc_lock;		/*
+ 						 * semaphore for GC, avoid
+ 						 * race between GC and GC or CP
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index f550cdeaa663..da963765e087 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -341,6 +341,14 @@ static unsigned int get_cb_cost(struct f2fs_sb_info *sbi, unsigned int segno)
+ 	unsigned int i;
+ 	unsigned int usable_segs_per_sec = f2fs_usable_segs_in_sec(sbi, segno);
+ 
++	/*
++	 * When BG_GC selects victims based on age, it prevents node victims
++	 * from being selected. This is because node blocks can be invalidated
++	 * by moving data blocks.
++	 */
++	if (is_skip(sbi, segno))
++		return UINT_MAX;
++
+ 	for (i = 0; i < usable_segs_per_sec; i++)
+ 		mtime += get_seg_entry(sbi, start + i)->mtime;
+ 	vblocks = get_valid_blocks(sbi, segno, true);
+@@ -369,10 +377,27 @@ static inline unsigned int get_gc_cost(struct f2fs_sb_info *sbi,
+ 		return get_seg_entry(sbi, segno)->ckpt_valid_blocks;
+ 
+ 	/* alloc_mode == LFS */
+-	if (p->gc_mode == GC_GREEDY)
+-		return get_valid_blocks(sbi, segno, true);
+-	else if (p->gc_mode == GC_CB)
++	if (p->gc_mode == GC_GREEDY) {
++		unsigned int weight = 0;
++		unsigned int no_need = sbi->need_node_clean ? 0 : 1;
++		bool is_node =
++			IS_NODESEG(get_seg_entry(sbi, segno)->type);
++
++		/*
++		 * If the data block that the node block pointed to is GCed,
++		 * the node block is invalidated. For this reason, we add a
++		 * weight to cost of node victims to give priority to data
++		 * victims during the gc process. However, in a situation
++		 * where we run out of free sections, we remove the weight
++		 * because we need to clean up node blocks.
++		 */
++		weight = is_node ?
++			no_need * (sbi->blocks_per_seg * sbi->segs_per_sec) : 0;
++
++		return (get_valid_blocks(sbi, segno, true) + weight);
++	} else if (p->gc_mode == GC_CB) {
+ 		return get_cb_cost(sbi, segno);
++	}
+ 
+ 	f2fs_bug_on(sbi, 1);
+ 	return 0;
+@@ -557,6 +582,14 @@ static void atgc_lookup_victim(struct f2fs_sb_info *sbi,
+ 	if (ve->mtime >= max_mtime || ve->mtime < min_mtime)
+ 		goto skip;
+ 
++	/*
++	 * When BG_GC selects victims based on age, it prevents node victims
++	 * from being selected. This is because node blocks can be invalidated
++	 * by moving data blocks.
++	 */
++	if (is_skip(sbi, ve->segno))
++		goto skip;
++
+ 	/* age = 10000 * x% * 60 */
+ 	age = div64_u64(accu * (max_mtime - ve->mtime), total_time) *
+ 								age_weight;
+@@ -913,7 +946,22 @@ int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
+ 		goto retry;
+ 	}
+ 
++
+ 	if (p.min_segno != NULL_SEGNO) {
++		if (sbi->need_node_clean &&
++		    IS_DATASEG(get_seg_entry(sbi, p.min_segno)->type)) {
++			 /*
++			  * We need to clean node sections. but, data victim
++			  * cost is the lowest. If free sections are enough,
++			  * stop cleaning node victim. If not, it goes on
++			  * by GCing data victims.
++			  */
++			if (has_enough_free_secs(sbi, prefree_segments(sbi), 0)) {
++				sbi->need_node_clean = false;
++				p.min_segno = NULL_SEGNO;
++				goto out;
++			}
++		}
+ got_it:
+ 		*result = (p.min_segno / p.ofs_unit) * p.ofs_unit;
+ got_result:
+@@ -1830,8 +1878,27 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
+ 		goto stop;
+ 	}
+ 
++	__get_secs_required(sbi, NULL, &upper_secs, NULL);
++
++	/*
++	 * Write checkpoint to reclaim prefree segments.
++	 * We need more three extra sections for writer's data/node/dentry.
++	 */
++	if (free_sections(sbi) <= upper_secs + NR_GC_CHECKPOINT_SECS) {
++		sbi->need_node_clean = true;
++
++		if (prefree_segments(sbi)) {
++			stat_inc_cp_call_count(sbi, TOTAL_CALL);
++			ret = f2fs_write_checkpoint(sbi, &cpc);
++			if (ret)
++				goto stop;
++			/* Reset due to checkpoint */
++			sec_freed = 0;
++		}
++	}
++
+ 	/* Let's run FG_GC, if we don't have enough space. */
+-	if (has_not_enough_free_secs(sbi, 0, 0)) {
++	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0)) {
+ 		gc_type = FG_GC;
+ 
+ 		/*
+@@ -1882,7 +1949,13 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
+ 			if (!gc_control->no_bg_gc &&
+ 			    total_sec_freed < gc_control->nr_free_secs)
+ 				goto go_gc_more;
+-			goto stop;
++			/*
++			 * If need_node_clean flag is set even though there
++			 * are enough free sections, node cleaning will
++			 * continue.
++			 */
++			if (!sbi->need_node_clean)
++				goto stop;
+ 		}
+ 		if (sbi->skipped_gc_rwsem)
+ 			skipped_round++;
+@@ -1897,21 +1970,6 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
+ 		goto stop;
+ 	}
+ 
+-	__get_secs_required(sbi, NULL, &upper_secs, NULL);
+-
+-	/*
+-	 * Write checkpoint to reclaim prefree segments.
+-	 * We need more three extra sections for writer's data/node/dentry.
+-	 */
+-	if (free_sections(sbi) <= upper_secs + NR_GC_CHECKPOINT_SECS &&
+-				prefree_segments(sbi)) {
+-		stat_inc_cp_call_count(sbi, TOTAL_CALL);
+-		ret = f2fs_write_checkpoint(sbi, &cpc);
+-		if (ret)
+-			goto stop;
+-		/* Reset due to checkpoint */
+-		sec_freed = 0;
+-	}
+ go_gc_more:
+ 	segno = NULL_SEGNO;
+ 	goto gc_more;
+@@ -1920,8 +1978,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
+ 	SIT_I(sbi)->last_victim[ALLOC_NEXT] = 0;
+ 	SIT_I(sbi)->last_victim[FLUSH_DEVICE] = gc_control->victim_segno;
+ 
+-	if (gc_type == FG_GC)
++	if (gc_type == FG_GC) {
+ 		f2fs_unpin_all_sections(sbi, true);
++		sbi->need_node_clean = false;
++	}
+ 
+ 	trace_f2fs_gc_end(sbi->sb, ret, total_freed, total_sec_freed,
+ 				get_pages(sbi, F2FS_DIRTY_NODES),
+diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+index 28a00942802c..b0af7c086b66 100644
+--- a/fs/f2fs/gc.h
++++ b/fs/f2fs/gc.h
+@@ -166,3 +166,9 @@ static inline bool has_enough_invalid_blocks(struct f2fs_sb_info *sbi)
+ 		free_user_blocks(sbi) <
+ 			limit_free_user_blocks(invalid_user_blocks));
+ }
++
++static inline bool is_skip(struct f2fs_sb_info *sbi, unsigned int segno)
++{
++	return (IS_NODESEG(get_seg_entry(sbi, segno)->type) &&
++		!sbi->need_node_clean);
++}
 -- 
-2.40.1
+2.34.1
 
 
 
