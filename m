@@ -4,69 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9A6ADC3DA6E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Dec 2023 10:50:56 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 61C37C3DA6E
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Dec 2023 14:32:20 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rInyY-0004zj-Jn;
-	Thu, 28 Dec 2023 10:50:54 +0000
+	id 1rIrQp-0003ZB-Dc;
+	Thu, 28 Dec 2023 14:32:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <brauner@kernel.org>) id 1rInyX-0004zd-JV
+ (envelope-from <chao@kernel.org>) id 1rIrQo-0003Z5-E3
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Dec 2023 10:50:53 +0000
+ Thu, 28 Dec 2023 14:32:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AlG5s033yWJpN218gk0hjIu+YllQLpgD2y1CYJxNGc0=; b=ArP6WOwWlc/bf71VfrdqRn8xrP
- MLrTLbuWADAb3UkO1YI8gRgisPDVugBXH71GDOLkmv+2k2hPXLcHEnMpNJCQla8OsuJjvJ5gDgiLo
- nGOifrSC+m01WdWHqdsDUw4e5IdFoQ0RnwK2s9cF8wja0ZQp3J41r+K8G0gmLRERDnnQ=;
+ bh=I7XXUYIr8Q9KF+4scUbYcSJk+NkBf5I8stoKQ5y70L8=; b=K0MTjjKx8dbXFYsWG4ngV3Q+Fo
+ mZIygYhgoosWs5mdhLw1hCgzivHxZrG55xxj8OtEzuDQMRJy6vNVATIkz8c36QQr1172iG1QzxMZI
+ 6gB3NXqNSCuzX/8+FMDaLipHyiCv0jYDyWGfdRkHhz1J3A6cxhBXft/vCTR9dtReSf4Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=AlG5s033yWJpN218gk0hjIu+YllQLpgD2y1CYJxNGc0=; b=Y26nesQm77B2u65OqrnG+GqmMN
- FG23OvAMooy44G36KrKPWAtgYEB4AjKnhEWtGaURGO8cUBJH/EGAqwH+mBYX4S6TPH5u6UHOxZJnv
- dYoAM1vTPifofu+tszjZzbbflqWPPR21RuEGhCN+2HtXnjTbS+G0vgF3UqMqbVlmfJ1k=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ bh=I7XXUYIr8Q9KF+4scUbYcSJk+NkBf5I8stoKQ5y70L8=; b=NJuNq47bZLMlI4fwe/bCbCn/D1
+ Fqr+j9lKGTBpa/dZ17btb7EEja4hsUzeWcGA0H9VQBikUFhQIWaNo2kf4PqCkDUpeWHd8qVruuztO
+ 4XCYxIoKRNV2vtfCfrqvSkBbmGCmGhqjLV8/TEuq6kmpdcTVsqWTnKPlhnfISml80wL0=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rInyT-0007MG-My for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Dec 2023 10:50:53 +0000
+ id 1rIrQm-0000zM-PN for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 28 Dec 2023 14:32:17 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by ams.source.kernel.org (Postfix) with ESMTP id 0A4A5B80D9D;
- Thu, 28 Dec 2023 10:50:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8D88C433C7;
- Thu, 28 Dec 2023 10:50:34 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 5AC0860FFB
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 28 Dec 2023 14:32:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9777DC433C9;
+ Thu, 28 Dec 2023 14:32:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1703760639;
- bh=BPxPOKTaZnluFeSzgfExNeB7kZWJYat+UJLHwDn2Rig=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=rU23jokBsrTIsxPfYmNIo9Xnj10xyocVaTrcpX7nEltRKTr9sMmIM31539OQOErIB
- wO+EI/Dce0SrS+TxgxagIadHeq/btyUM2L+r8H6fEZ/QXeBYe3GjB+ddI7ky/zdFpu
- Jbww5cKdCaPPzkFsrvcoteN2n2cntNKgN+lFQv8GHWelw6dM65ZJJAg9Y5AydqbxG6
- AuiZhSW1ZKkZa5dc6cjkyyzWDqSPHv2/W4TMSgg73kHZ4YUkw/nG5BrvE22SX05hbz
- kEUVX9gV0khXZsUJ+czZTzndgCJ6ysMkFwXN6KOspnN8ujArhc6D4iLx2p+u3PT/zu
- Pi9T8etG2rnDA==
-Date: Thu, 28 Dec 2023 11:50:32 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: syzbot <syzbot+062317ea1d0a6d5e29e7@syzkaller.appspotmail.com>
-Message-ID: <20231228-arterien-nachmachen-d74aec52820e@brauner>
-References: <0000000000001825ce06047bf2a6@google.com>
- <00000000000007d6a9060d441adc@google.com>
+ s=k20201202; t=1703773926;
+ bh=/uXMDvSOj4ElzaKYgiipftBm0qNMtUebJdjXyJwsNz0=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=KbL/mcEp6TTfyO6ngjT22PS7q4xzi+uVlJnUWiUE6+Lad500sZw+hkyeIF2jx0jMh
+ S3//2yv+6t5dC/rAMejbCiK/h30KLr+9LQgThbN8oyH45LKus/kS5aa/4en7zxybGj
+ 5yR7Sx0HWr5+Iy5MNXeMiARK61DzVOYcay4jXxhlZBZsRHt3qiiG/BmBVUdgk3Rd4Z
+ JZ81dAfN4Lws9PwMTqW+CBzZ8i/dyn1HOT6P07RfzpZ6RxzUspMjSIcrXuKBBB8uiO
+ VRuk+9wdHU+U5AJWsXbJvz+n+/1Iu8epGMprZ7+0ZjJM5r4gGUOmOM6HAlOLhH9Jds
+ rK0j1Kbvw1gFw==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Thu, 28 Dec 2023 22:31:48 +0800
+Message-Id: <20231228143152.1543509-2-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20231228143152.1543509-1-chao@kernel.org>
+References: <20231228143152.1543509-1-chao@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <00000000000007d6a9060d441adc@google.com>
-X-Headers-End: 1rInyT-0007MG-My
-Subject: Re: [f2fs-dev] [syzbot] [reiserfs?] possible deadlock in super_lock
+X-Headers-End: 1rIrQm-0000zM-PN
+Subject: [f2fs-dev] [PATCH v3 2/6] f2fs: compress: fix to cover normal
+ cluster write with cp_rwsem
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,41 +79,107 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: axboe@kernel.dk, hdanton@sina.com, mcanal@igalia.com, jack@suse.cz,
- reiserfs-devel@vger.kernel.org, daniel.vetter@ffwll.ch,
- syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
- willy@infradead.org, linux-f2fs-devel@lists.sourceforge.net,
- mairacanal@riseup.net, terrelln@fb.com, yukuai3@huawei.com,
- linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, jinpu.wang@ionos.com,
- hch@lst.de, christian@brauner.io
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Sun, Dec 24, 2023 at 08:40:05AM -0800, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
-> 
-> commit fd1464105cb37a3b50a72c1d2902e97a71950af8
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Oct 18 15:29:24 2023 +0000
-> 
->     fs: Avoid grabbing sb->s_umount under bdev->bd_holder_lock
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14639595e80000
-> start commit:   2cf0f7156238 Merge tag 'nfs-for-6.6-2' of git://git.linux-..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=710dc49bece494df
-> dashboard link: https://syzkaller.appspot.com/bug?extid=062317ea1d0a6d5e29e7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=107e9518680000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
-> 
-> #syz fix: fs: Avoid grabbing sb->s_umount under bdev->bd_holder_lock
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+When we overwrite compressed cluster w/ normal cluster, we should
+not unlock cp_rwsem during f2fs_write_raw_pages(), otherwise data
+will be corrupted if partial blocks were persisted before CP & SPOR,
+due to cluster metadata wasn't updated atomically.
 
-Fwiw, this was always a false-positive. But we also reworked the locking
-that even the false-positive cannot be triggered anymore. So yay!
+Fixes: 4c8ff7095bef ("f2fs: support data compression")
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/compress.c | 20 ++++++++++++++------
+ fs/f2fs/data.c     |  3 ++-
+ 2 files changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 9940b7886e5d..bf4cfab67aec 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1448,7 +1448,8 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+ 					enum iostat_type io_type)
+ {
+ 	struct address_space *mapping = cc->inode->i_mapping;
+-	int _submitted, compr_blocks, ret, i;
++	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
++	int _submitted, compr_blocks, ret = 0, i;
+ 
+ 	compr_blocks = f2fs_compressed_blocks(cc);
+ 
+@@ -1463,6 +1464,10 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+ 	if (compr_blocks < 0)
+ 		return compr_blocks;
+ 
++	/* overwrite compressed cluster w/ normal cluster */
++	if (compr_blocks > 0)
++		f2fs_lock_op(sbi);
++
+ 	for (i = 0; i < cc->cluster_size; i++) {
+ 		if (!cc->rpages[i])
+ 			continue;
+@@ -1495,26 +1500,29 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+ 				unlock_page(cc->rpages[i]);
+ 				ret = 0;
+ 			} else if (ret == -EAGAIN) {
++				ret = 0;
+ 				/*
+ 				 * for quota file, just redirty left pages to
+ 				 * avoid deadlock caused by cluster update race
+ 				 * from foreground operation.
+ 				 */
+ 				if (IS_NOQUOTA(cc->inode))
+-					return 0;
+-				ret = 0;
++					goto out;
+ 				f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+ 				goto retry_write;
+ 			}
+-			return ret;
++			goto out;
+ 		}
+ 
+ 		*submitted += _submitted;
+ 	}
+ 
+-	f2fs_balance_fs(F2FS_M_SB(mapping), true);
++out:
++	if (compr_blocks > 0)
++		f2fs_unlock_op(sbi);
+ 
+-	return 0;
++	f2fs_balance_fs(sbi, true);
++	return ret;
+ }
+ 
+ int f2fs_write_multi_pages(struct compress_ctx *cc,
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 81f9e2cc49e2..b171a9980f6a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2839,7 +2839,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 		.encrypted_page = NULL,
+ 		.submitted = 0,
+ 		.compr_blocks = compr_blocks,
+-		.need_lock = LOCK_RETRY,
++		.need_lock = compr_blocks ? LOCK_DONE : LOCK_RETRY,
+ 		.post_read = f2fs_post_read_required(inode) ? 1 : 0,
+ 		.io_type = io_type,
+ 		.io_wbc = wbc,
+@@ -2920,6 +2920,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 	if (err == -EAGAIN) {
+ 		err = f2fs_do_write_data_page(&fio);
+ 		if (err == -EAGAIN) {
++			f2fs_bug_on(sbi, compr_blocks);
+ 			fio.need_lock = LOCK_REQ;
+ 			err = f2fs_do_write_data_page(&fio);
+ 		}
+-- 
+2.40.1
+
 
 
 _______________________________________________
