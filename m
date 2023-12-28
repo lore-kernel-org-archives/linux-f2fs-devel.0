@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 61C37C3DA6E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Dec 2023 14:32:20 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EC4C9C3DA6E
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Dec 2023 14:32:24 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rIrQp-0003ZB-Dc;
-	Thu, 28 Dec 2023 14:32:18 +0000
+	id 1rIrQu-0006LR-7N;
+	Thu, 28 Dec 2023 14:32:24 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rIrQo-0003Z5-E3
+ (envelope-from <chao@kernel.org>) id 1rIrQs-0006LK-L5
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Dec 2023 14:32:17 +0000
+ Thu, 28 Dec 2023 14:32:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=I7XXUYIr8Q9KF+4scUbYcSJk+NkBf5I8stoKQ5y70L8=; b=K0MTjjKx8dbXFYsWG4ngV3Q+Fo
- mZIygYhgoosWs5mdhLw1hCgzivHxZrG55xxj8OtEzuDQMRJy6vNVATIkz8c36QQr1172iG1QzxMZI
- 6gB3NXqNSCuzX/8+FMDaLipHyiCv0jYDyWGfdRkHhz1J3A6cxhBXft/vCTR9dtReSf4Q=;
+ bh=jb13lTI2jO540ZxGI73v57QF49I8wKdfwf41/Lmdnms=; b=MW1dgRu7Oc0zz1n2UDXhOEOONc
+ XuVPvQFumCpHl5KpK3SGtV5IGmxzpRirD19A/5h9MlRp+5AR2AO/I1woXoWxnjwgRsYeENNvQEEJG
+ GbXk9NgyOi/OUazify9qe6Nhl53bxeFI+cKLMMqs38DFLlMdfX6yjbIOqHy7U1CcslPw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,41 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=I7XXUYIr8Q9KF+4scUbYcSJk+NkBf5I8stoKQ5y70L8=; b=NJuNq47bZLMlI4fwe/bCbCn/D1
- Fqr+j9lKGTBpa/dZ17btb7EEja4hsUzeWcGA0H9VQBikUFhQIWaNo2kf4PqCkDUpeWHd8qVruuztO
- 4XCYxIoKRNV2vtfCfrqvSkBbmGCmGhqjLV8/TEuq6kmpdcTVsqWTnKPlhnfISml80wL0=;
+ bh=jb13lTI2jO540ZxGI73v57QF49I8wKdfwf41/Lmdnms=; b=OMi2dMrqngwT2rlFZxtbSk1yx0
+ wUrPBqz4FPHZDa+NLgVEAJ7tHKVZUMgfYgUP0L3yUhWDxA1tbOFahDUL8a6nMRIovkmsxkmxM4HXW
+ iU74H5NPifwYKEV9bDCWWcDDoqATwwhqbL5BsNcz2BAiJ2w9jIgXCiwLhqQAoDeSqhCA=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rIrQm-0000zM-PN for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Dec 2023 14:32:17 +0000
+ id 1rIrQq-0000zZ-Qn for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 28 Dec 2023 14:32:21 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 5AC0860FFB
+ by dfw.source.kernel.org (Postfix) with ESMTP id 6476861085
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 28 Dec 2023 14:32:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9777DC433C9;
- Thu, 28 Dec 2023 14:32:04 +0000 (UTC)
+ Thu, 28 Dec 2023 14:32:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C46BAC433CB;
+ Thu, 28 Dec 2023 14:32:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1703773926;
- bh=/uXMDvSOj4ElzaKYgiipftBm0qNMtUebJdjXyJwsNz0=;
+ s=k20201202; t=1703773930;
+ bh=LUmVUzlEgho8rblT2MQAj6/QwwZ/toOy2wW11JTIlIQ=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=KbL/mcEp6TTfyO6ngjT22PS7q4xzi+uVlJnUWiUE6+Lad500sZw+hkyeIF2jx0jMh
- S3//2yv+6t5dC/rAMejbCiK/h30KLr+9LQgThbN8oyH45LKus/kS5aa/4en7zxybGj
- 5yR7Sx0HWr5+Iy5MNXeMiARK61DzVOYcay4jXxhlZBZsRHt3qiiG/BmBVUdgk3Rd4Z
- JZ81dAfN4Lws9PwMTqW+CBzZ8i/dyn1HOT6P07RfzpZ6RxzUspMjSIcrXuKBBB8uiO
- VRuk+9wdHU+U5AJWsXbJvz+n+/1Iu8epGMprZ7+0ZjJM5r4gGUOmOM6HAlOLhH9Jds
- rK0j1Kbvw1gFw==
+ b=UNoxEVhr6Da6imq6OlKiSiY/Azz3SqVS+G47a6/fEo8B0lxuxy0utjoSHI6Ei35Jk
+ dWQE2x/cXWzkTmPy7uSzHTnvrfOJC7sZlG5JB8/FYdiOM6QhK0mA9P03qPmVIPcZl2
+ 5bVN9I6UX0njDIhNmV8cXROWezFNjfRLcsP2fiGhQdkMOzomZbJldVO5FwmDOLrUvv
+ KDe4MRr54puqH1HDUd0oJtaZuRAZgDYa7q7dxyhaix/qheQ5Wx45zzBc0OaPtWFo6a
+ n8Hyr3GNiX9n0XpDmGGVEEj61/dxxND/6+b5t7h1Jfl6hi/9gI6mALWXuN7OfasH//
+ 50xlSXCmPbpgg==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Thu, 28 Dec 2023 22:31:48 +0800
-Message-Id: <20231228143152.1543509-2-chao@kernel.org>
+Date: Thu, 28 Dec 2023 22:31:50 +0800
+Message-Id: <20231228143152.1543509-4-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20231228143152.1543509-1-chao@kernel.org>
 References: <20231228143152.1543509-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1rIrQm-0000zM-PN
-Subject: [f2fs-dev] [PATCH v3 2/6] f2fs: compress: fix to cover normal
- cluster write with cp_rwsem
+X-Headers-End: 1rIrQq-0000zZ-Qn
+Subject: [f2fs-dev] [PATCH v3 4/6] f2fs: compress: fix to avoid inconsistent
+ bewteen i_blocks and dnode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,99 +84,136 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-When we overwrite compressed cluster w/ normal cluster, we should
-not unlock cp_rwsem during f2fs_write_raw_pages(), otherwise data
-will be corrupted if partial blocks were persisted before CP & SPOR,
-due to cluster metadata wasn't updated atomically.
+In reserve_compress_blocks(), we update blkaddrs of dnode in prior to
+inc_valid_block_count(), it may cause inconsistent status bewteen
+i_blocks and blkaddrs once inc_valid_block_count() fails.
 
-Fixes: 4c8ff7095bef ("f2fs: support data compression")
+To fix this issue, it needs to reverse their invoking order.
+
+Fixes: c75488fb4d82 ("f2fs: introduce F2FS_IOC_RESERVE_COMPRESS_BLOCKS")
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/compress.c | 20 ++++++++++++++------
- fs/f2fs/data.c     |  3 ++-
- 2 files changed, 16 insertions(+), 7 deletions(-)
+ fs/f2fs/data.c    |  5 +++--
+ fs/f2fs/f2fs.h    |  7 ++++++-
+ fs/f2fs/file.c    | 26 ++++++++++++++------------
+ fs/f2fs/segment.c |  2 +-
+ 4 files changed, 24 insertions(+), 16 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 9940b7886e5d..bf4cfab67aec 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1448,7 +1448,8 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
- 					enum iostat_type io_type)
- {
- 	struct address_space *mapping = cc->inode->i_mapping;
--	int _submitted, compr_blocks, ret, i;
-+	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
-+	int _submitted, compr_blocks, ret = 0, i;
- 
- 	compr_blocks = f2fs_compressed_blocks(cc);
- 
-@@ -1463,6 +1464,10 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
- 	if (compr_blocks < 0)
- 		return compr_blocks;
- 
-+	/* overwrite compressed cluster w/ normal cluster */
-+	if (compr_blocks > 0)
-+		f2fs_lock_op(sbi);
-+
- 	for (i = 0; i < cc->cluster_size; i++) {
- 		if (!cc->rpages[i])
- 			continue;
-@@ -1495,26 +1500,29 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
- 				unlock_page(cc->rpages[i]);
- 				ret = 0;
- 			} else if (ret == -EAGAIN) {
-+				ret = 0;
- 				/*
- 				 * for quota file, just redirty left pages to
- 				 * avoid deadlock caused by cluster update race
- 				 * from foreground operation.
- 				 */
- 				if (IS_NOQUOTA(cc->inode))
--					return 0;
--				ret = 0;
-+					goto out;
- 				f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
- 				goto retry_write;
- 			}
--			return ret;
-+			goto out;
- 		}
- 
- 		*submitted += _submitted;
- 	}
- 
--	f2fs_balance_fs(F2FS_M_SB(mapping), true);
-+out:
-+	if (compr_blocks > 0)
-+		f2fs_unlock_op(sbi);
- 
--	return 0;
-+	f2fs_balance_fs(sbi, true);
-+	return ret;
- }
- 
- int f2fs_write_multi_pages(struct compress_ctx *cc,
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 81f9e2cc49e2..b171a9980f6a 100644
+index b171a9980f6a..8d2ace723310 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -2839,7 +2839,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
- 		.encrypted_page = NULL,
- 		.submitted = 0,
- 		.compr_blocks = compr_blocks,
--		.need_lock = LOCK_RETRY,
-+		.need_lock = compr_blocks ? LOCK_DONE : LOCK_RETRY,
- 		.post_read = f2fs_post_read_required(inode) ? 1 : 0,
- 		.io_type = io_type,
- 		.io_wbc = wbc,
-@@ -2920,6 +2920,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
- 	if (err == -EAGAIN) {
- 		err = f2fs_do_write_data_page(&fio);
- 		if (err == -EAGAIN) {
-+			f2fs_bug_on(sbi, compr_blocks);
- 			fio.need_lock = LOCK_REQ;
- 			err = f2fs_do_write_data_page(&fio);
+@@ -1219,7 +1219,8 @@ int f2fs_reserve_new_blocks(struct dnode_of_data *dn, blkcnt_t count)
+ 
+ 	if (unlikely(is_inode_flag_set(dn->inode, FI_NO_ALLOC)))
+ 		return -EPERM;
+-	if (unlikely((err = inc_valid_block_count(sbi, dn->inode, &count))))
++	err = inc_valid_block_count(sbi, dn->inode, &count, true);
++	if (unlikely(err))
+ 		return err;
+ 
+ 	trace_f2fs_reserve_new_blocks(dn->inode, dn->nid,
+@@ -1476,7 +1477,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+ 
+ 	dn->data_blkaddr = f2fs_data_blkaddr(dn);
+ 	if (dn->data_blkaddr == NULL_ADDR) {
+-		err = inc_valid_block_count(sbi, dn->inode, &count);
++		err = inc_valid_block_count(sbi, dn->inode, &count, true);
+ 		if (unlikely(err))
+ 			return err;
+ 	}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 50f3d546ded8..69e71460a950 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2252,7 +2252,7 @@ static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
+ 
+ static inline void f2fs_i_blocks_write(struct inode *, block_t, bool, bool);
+ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+-				 struct inode *inode, blkcnt_t *count)
++				 struct inode *inode, blkcnt_t *count, bool partial)
+ {
+ 	blkcnt_t diff = 0, release = 0;
+ 	block_t avail_user_block_count;
+@@ -2292,6 +2292,11 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 			avail_user_block_count = 0;
+ 	}
+ 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
++		if (!partial) {
++			spin_unlock(&sbi->stat_lock);
++			goto enospc;
++		}
++
+ 		diff = sbi->total_valid_block_count - avail_user_block_count;
+ 		if (diff > *count)
+ 			diff = *count;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 782ae3be48f6..9f4e21b5916c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3614,14 +3614,16 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
+ 		blkcnt_t reserved;
+ 		int ret;
+ 
+-		for (i = 0; i < cluster_size; i++, dn->ofs_in_node++) {
+-			blkaddr = f2fs_data_blkaddr(dn);
++		for (i = 0; i < cluster_size; i++) {
++			blkaddr = data_blkaddr(dn->inode, dn->node_page,
++						dn->ofs_in_node + i);
+ 
+ 			if (i == 0) {
+-				if (blkaddr == COMPRESS_ADDR)
+-					continue;
+-				dn->ofs_in_node += cluster_size;
+-				goto next;
++				if (blkaddr != COMPRESS_ADDR) {
++					dn->ofs_in_node += cluster_size;
++					goto next;
++				}
++				continue;
+ 			}
+ 
+ 			/*
+@@ -3637,20 +3639,20 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
+ 				compr_blocks++;
+ 				continue;
+ 			}
+-
+-			f2fs_set_data_blkaddr(dn, NEW_ADDR);
  		}
+ 
+ 		reserved = cluster_size - compr_blocks;
+ 		if (!reserved)
+ 			goto next;
+ 
+-		ret = inc_valid_block_count(sbi, dn->inode, &reserved);
+-		if (ret)
++		ret = inc_valid_block_count(sbi, dn->inode, &reserved, false);
++		if (unlikely(ret))
+ 			return ret;
+ 
+-		if (reserved != cluster_size - compr_blocks)
+-			return -ENOSPC;
++		for (i = 0; i < cluster_size; i++, dn->ofs_in_node++) {
++			if (f2fs_data_blkaddr(dn) == NULL_ADDR)
++				f2fs_set_data_blkaddr(dn, NEW_ADDR);
++		}
+ 
+ 		f2fs_i_compr_blocks_update(dn->inode, compr_blocks, true);
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 61da26eb61cc..9632e9977c90 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -248,7 +248,7 @@ static int __replace_atomic_write_block(struct inode *inode, pgoff_t index,
+ 	} else {
+ 		blkcnt_t count = 1;
+ 
+-		err = inc_valid_block_count(sbi, inode, &count);
++		err = inc_valid_block_count(sbi, inode, &count, true);
+ 		if (err) {
+ 			f2fs_put_dnode(&dn);
+ 			return err;
 -- 
 2.40.1
 
