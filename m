@@ -4,70 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3A29FC47073
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 29 Dec 2023 19:10:35 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5F1CFC47073
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 29 Dec 2023 19:10:39 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rJIFc-0001l6-FZ;
-	Fri, 29 Dec 2023 19:10:32 +0000
+	id 1rJIFh-0007TO-LA;
+	Fri, 29 Dec 2023 19:10:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rJIFb-0001kz-76
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rJIFg-0007T8-Cz
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 29 Dec 2023 19:10:31 +0000
+ Fri, 29 Dec 2023 19:10:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=23eaMhKrUyDHks0Vz4qfKXwTrM4+Bf18A8zbIML0BaQ=; b=jVg8TORwuqD9mYINsxvoGHwZuV
- iZGlZCQ56JMERbSReVABUIjSsHMSq0Kj9Bqe/ORl1KG47QX/CdoLx+z0HJokSCJzsiRlYyZn0k7xZ
- VLh83ERDHe7nrJCP93l17qdcVG2nAJhUJSLQAXffxS189THkr+hpkYIYYF150yHWJ13o=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=HXGDK7Wc9UlnlV2LXLy3jy8MEPPyzQY8R2a3l2/M63M=; b=j+V2LN6xKNFnEBLUKwpR2lAyNj
+ XhzME9aaiLXpUaOqAvhNnLvPBtNaYflZn4GX8xAqTbyW5ahRh9abINBvu08psFg6tFhNAhh5UPjKs
+ orMZVkDGAVPNDNngmENi/1lEdrgpMKEN078XifwaVtAf0JTFzbPMuWfm8YpWxsph+O3I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=23eaMhKrUyDHks0Vz4qfKXwTrM4+Bf18A8zbIML0BaQ=; b=ONjaSsuI4RZrV7jWfLjmpzZJuu
- XZtnCcflo/tJ4IufcnRJJSW6oUM1MPbINGBc7Ven3Vxxk6WcKUWAHPnseRwurDMMNcP0yn3KiBhkI
- 4Oy0Ws9Sx8GIA3K9YNn9e43spJGJ1DizU4eJ2f3zJ7H7MnHYRX5ijjCY4LvMKXiIdn9k=;
+ ;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=HXGDK7Wc9UlnlV2LXLy3jy8MEPPyzQY8R2a3l2/M63M=; b=K
+ mC/z8g7K0M1wLHnrfU5Xg7xAPveF41Vm2qhjns1r1uSIMZJ4I2UNlIkJm1ciNuYkVmJoFjKWDJqeh
+ jTEn5csXMeBXP3C5/P888tB8lavXtB7zCV7kwy0Q8/8QFJIzoNY+P1Zte+m4f41MhTiLR1cTi064y
+ csHlem5klpsq/uU4=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rJIFa-0005NH-Ta for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 29 Dec 2023 19:10:31 +0000
+ id 1rJIFf-0005NO-Pw for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 29 Dec 2023 19:10:36 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 5B7A760EF4;
+ by dfw.source.kernel.org (Postfix) with ESMTP id 5A531611EC
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Fri, 29 Dec 2023 19:10:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CEA50C433C9;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B482BC433C7
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Fri, 29 Dec 2023 19:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1703877024;
- bh=azbq9IaFcbH3G1hY8wqg9qCkLNXlK1459gYGzqBZmB8=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=DJu5tO23zkSBizsuEcsJ8lve5wEaPt3xh8r7hHFcy5yNbHXULOf9dKCWiPc0PMwvJ
- sC7V3b6/qVKuqdxb0Q6dF1pL+MAKuk0CX2QR3Ichgze7V9AW+I1YHnU1MLSdiKSYPR
- O3lZ3g0oA4VqTnWv8xTGhn7kjOpRBEv+PqUMUIhGOKwkbpDTc7lq+BwYhwNygY++KQ
- Xo5SIjFODNmXhr7+FWNg7g2uPBl1/2R9Kv8Lrj8CWxnjTvnbukDBQiNgzNPriOPvwf
- xhaApl/8r7l8Fm3s1qdyi6g0l0nhAgYP70Butd73zX1rUKc1hABVvY6dqLd3rpUzf8
- j2wye18ew2v0Q==
+ bh=7W/uP2WB2+dwOZu2xeWvB7Je036LqJtiwXinzqfhCmo=;
+ h=Subject:From:Date:To:From;
+ b=XBJiGE+KSX9SGkIa2wRhYCZC4tptf1iDTsVx4ehfd1QN9+KD0UQZOMBpaCvJ3Xgps
+ zAmXVuSp0doHK3pxyQ/yVgnDAov+8+QYRa4wkqcRhr68Z89g748rTPYCAqk1UVDTIe
+ eoFlaAS1z89+YX4ZvTGHvRWpq8W7e41dxOBzmZrr1tMalmTq3N9kURCt6mCtMXaODn
+ JNmUnwNk8V0nL2R5be/5OH/3Gn91GeTmAFrcDNmYVJJ/sfiaZ0hogUmhqbirH/7wXC
+ nXRq4eCMcgFDW6A2WuXc7m0HFDdh3MaGOaI0jIcpRRfR1eeA3er22CJMxmqMspV0f2
+ Hx4DMntmlLEoQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- B409BE333DB; Fri, 29 Dec 2023 19:10:24 +0000 (UTC)
+ 974D8E333D5 for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 29 Dec 2023 19:10:24 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <170387702473.8173.3280676810374722700.git-patchwork-notify@kernel.org>
+Message-Id: <170387702455.8173.13298946935811425671.git-patchwork-summary@kernel.org>
 Date: Fri, 29 Dec 2023 19:10:24 +0000
-References: <1703037598-4359-1-git-send-email-zhiguo.niu@unisoc.com>
-In-Reply-To: <1703037598-4359-1-git-send-email-zhiguo.niu@unisoc.com>
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>
-X-Headers-End: 1rJIFa-0005NH-Ta
-Subject: Re: [f2fs-dev] [PATCH V5] f2fs: show more discard status by sysfs
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1rJIFf-0005NO-Pw
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,37 +81,44 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
- niuzhiguo84@gmail.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-On Wed, 20 Dec 2023 09:59:58 +0800 you wrote:
-> The current pending_discard attr just only shows the discard_cmd_cnt
-> information. More discard status can be shown so that we can check
-> them through sysfs when needed.
-> 
-> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> ---
-> changes of v2: Improve the patch according to Chao's suggestions.
-> changes of v3: Add a blank line for easy reading.
-> changes of v4: Split to three entries
-> changes of v5: move these entries from disk/xxx to disk/stat/xxx.
-> 
-> [...]
+Series: [f2fs-dev,1/2] f2fs: Constrain the modification range of dir_level in the sysfs
+  Submitter: Yongpeng Yang <yangyongpeng1@oppo.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=812369
+  Lore link: https://lore.kernel.org/r/20231222032901.3861649-1-yangyongpeng1@oppo.com
+    Patches: [f2fs-dev,1/2] f2fs: Constrain the modification range of dir_level in the sysfs
+             [f2fs-dev,2/2] f2fs: Add error handling for negative returns from do_garbage_collect
 
-Here is the summary with links:
-  - [f2fs-dev,V5] f2fs: show more discard status by sysfs
-    https://git.kernel.org/jaegeuk/f2fs/c/c3c2d45b9050
+Patch: [f2fs-dev,v2] f2fs: Use wait_event_freezable_timeout() for freezable kthread
+  Submitter: Kevin Hao <haokexin@gmail.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=812034
+  Lore link: https://lore.kernel.org/r/20231221064916.1930095-1-haokexin@gmail.com
 
-You are awesome, thank you!
+Patch: [f2fs-dev,V5] f2fs: show more discard status by sysfs
+  Submitter: Zhiguo Niu <zhiguo.niu@unisoc.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=811630
+  Lore link: https://lore.kernel.org/r/1703037598-4359-1-git-send-email-zhiguo.niu@unisoc.com
+
+Patch: [f2fs-dev,V2] f2fs: fix to check return value of f2fs_recover_xattr_data
+  Submitter: Zhiguo Niu <zhiguo.niu@unisoc.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=809000
+  Lore link: https://lore.kernel.org/r/1702347327-24181-1-git-send-email-zhiguo.niu@unisoc.com
+
+
+Total patches: 5
+
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
