@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2285FC47077
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 11 Jan 2024 22:59:13 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DBDF8C4707B
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 11 Jan 2024 22:59:18 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rO412-0001ET-OP;
-	Thu, 11 Jan 2024 22:59:12 +0000
+	id 1rO417-0000Zh-GH;
+	Thu, 11 Jan 2024 22:59:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <krisman@suse.de>) id 1rO40t-0001EL-6X
+ (envelope-from <krisman@suse.de>) id 1rO40x-0000ZP-VU
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 11 Jan 2024 22:59:03 +0000
+ Thu, 11 Jan 2024 22:59:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=noWIkV7tDOxT+ahoicDZr82jxDDniPzXUm/ClBuwL34=; b=VR6pKcfQGOGUtC59ThCQV/2JsC
- 0FOpgwYUzTaIiiufqdFG+pQpkmi32TdFfJn4LPcpmY84xGl8BmgN2ilw5SUZ/Z5Vu25QtSCTPXKg7
- qUQFvAbJHP3cV/9Bm9EREcH4c0H5oi+EXk1by6Sr1b1i1VDYK1QZrZqqHio/fwR3qi+U=;
+ bh=icfpDa9cQWSMCJ3qgTlqcSwaA2iZOw9bqJdb6XgXsH8=; b=AB/uetPvC8zouKyQlzVFaM+dBA
+ A5qIA+kEJRWANpB7u4SbAzYHC5+J5cC+gf82ahbuqcsisOAIjL5XQlXEkSKXvrYAAlN1wwUAsDVuL
+ iRQoEzaBzs/InAjPz72eyU+U3Hf3/AocVjG3B7Gy2Sc5c7Wcfd5A8te7Lc4G+SqC7ByI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,94 +33,92 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=noWIkV7tDOxT+ahoicDZr82jxDDniPzXUm/ClBuwL34=; b=S+bfyaeXx1n3OxmgtHQx7NajE0
- xQo2RXgjbuUMbxtMmVqEjQiWLIcz8pJPWaQlHSa1lckKUSlheB1ibyGxsozeeQE405cdaAuzBCbl7
- 8TvnjtRliFcJQLFy3rneQd3MWvFkoVObdBAX6WSlCLBPKsiyDsTJGlXQ/tX8cGdMvQRs=;
-Received: from smtp-out2.suse.de ([195.135.223.131])
+ bh=icfpDa9cQWSMCJ3qgTlqcSwaA2iZOw9bqJdb6XgXsH8=; b=ha0a15k6IDsO4M5pm0TzlFknpY
+ dxwddm72/qoZyL6Fv4tCIaregdSCnBpnudwpiP+t2xQZTQplMlrRw70Wa8bFAbnqt7ml+9O2egYMO
+ 0C8RiRHnAyNU3aL/9YPGSkDbH1fAqVSyLRa80ZH7Fb/3kgsttCigTPuUIclwzoFPVJXU=;
+Received: from smtp-out1.suse.de ([195.135.223.130])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rO40o-0005x7-5H for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 11 Jan 2024 22:59:03 +0000
+ id 1rO40u-0005xO-Jh for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 11 Jan 2024 22:59:08 +0000
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id 314091FB68;
- Thu, 11 Jan 2024 22:58:47 +0000 (UTC)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id A5CC52224C;
+ Thu, 11 Jan 2024 22:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1705013927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1705013933; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=noWIkV7tDOxT+ahoicDZr82jxDDniPzXUm/ClBuwL34=;
- b=S3XnhC0lgOqI7rcukcYudVe474umKuuxpPX4Id3vSQIqrCziYuk077ZA3fg1R4DkZzify3
- atgep2fEUOnnxH3vu55qEprRccv+EjhH3+JxFh2M/3cFbLZyybZ75JJBoE+2Nq0HnnlzGV
- 2AR/NrGuK9d88YM01F5K8gBwV09vLgQ=
+ bh=icfpDa9cQWSMCJ3qgTlqcSwaA2iZOw9bqJdb6XgXsH8=;
+ b=mZDO2nNrpqHQMxg8euhKqdOuPjYCb/FFILlqbK6LTximzV6F67BWOOzkHex/xiTWBG6OJY
+ VhwGJe74+sdDs4oijT0DIFoI/cPpXqmRL/X2k51HMo0N5CXgmUnrrj4fPskMK4Ju1Ekn2I
+ 9Dmhh0WdRNLPFzPLIIqnC17jRY+d+wY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1705013927;
+ s=susede2_ed25519; t=1705013933;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=noWIkV7tDOxT+ahoicDZr82jxDDniPzXUm/ClBuwL34=;
- b=bVQRWEPDG90yqs5k4WKu5SEqbELGEH8fq2Y74jdfCDPbXTTqwSfGlFSAdcLSbyi0Vl13t1
- mTgC8mCM9HnvsWAg==
+ bh=icfpDa9cQWSMCJ3qgTlqcSwaA2iZOw9bqJdb6XgXsH8=;
+ b=mBc57u00PH/hw+n8mGU5jVB7oke0VDIvO1byYPDa/eZclL4jSOHDQBD1kBOOa2QZVFUf3+
+ 2JN/Ek7GE5eO0dBw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1705013927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1705013933; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=noWIkV7tDOxT+ahoicDZr82jxDDniPzXUm/ClBuwL34=;
- b=S3XnhC0lgOqI7rcukcYudVe474umKuuxpPX4Id3vSQIqrCziYuk077ZA3fg1R4DkZzify3
- atgep2fEUOnnxH3vu55qEprRccv+EjhH3+JxFh2M/3cFbLZyybZ75JJBoE+2Nq0HnnlzGV
- 2AR/NrGuK9d88YM01F5K8gBwV09vLgQ=
+ bh=icfpDa9cQWSMCJ3qgTlqcSwaA2iZOw9bqJdb6XgXsH8=;
+ b=mZDO2nNrpqHQMxg8euhKqdOuPjYCb/FFILlqbK6LTximzV6F67BWOOzkHex/xiTWBG6OJY
+ VhwGJe74+sdDs4oijT0DIFoI/cPpXqmRL/X2k51HMo0N5CXgmUnrrj4fPskMK4Ju1Ekn2I
+ 9Dmhh0WdRNLPFzPLIIqnC17jRY+d+wY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1705013927;
+ s=susede2_ed25519; t=1705013933;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=noWIkV7tDOxT+ahoicDZr82jxDDniPzXUm/ClBuwL34=;
- b=bVQRWEPDG90yqs5k4WKu5SEqbELGEH8fq2Y74jdfCDPbXTTqwSfGlFSAdcLSbyi0Vl13t1
- mTgC8mCM9HnvsWAg==
+ bh=icfpDa9cQWSMCJ3qgTlqcSwaA2iZOw9bqJdb6XgXsH8=;
+ b=mBc57u00PH/hw+n8mGU5jVB7oke0VDIvO1byYPDa/eZclL4jSOHDQBD1kBOOa2QZVFUf3+
+ 2JN/Ek7GE5eO0dBw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B0E0913946;
- Thu, 11 Jan 2024 22:58:46 +0000 (UTC)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0B5DB13946;
+ Thu, 11 Jan 2024 22:58:52 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id FYfcHaZyoGVVLwAAD6G6ig
- (envelope-from <krisman@suse.de>); Thu, 11 Jan 2024 22:58:46 +0000
+ by imap1.dmz-prg2.suse.org with ESMTPSA id RHP+MKxyoGVeLwAAD6G6ig
+ (envelope-from <krisman@suse.de>); Thu, 11 Jan 2024 22:58:52 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: viro@zeniv.linux.org.uk, ebiggers@kernel.org, jaegeuk@kernel.org,
  tytso@mit.edu
-Date: Thu, 11 Jan 2024 19:58:07 -0300
-Message-ID: <20240111225816.18117-2-krisman@suse.de>
+Date: Thu, 11 Jan 2024 19:58:09 -0300
+Message-ID: <20240111225816.18117-4-krisman@suse.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240111225816.18117-1-krisman@suse.de>
 References: <20240111225816.18117-1-krisman@suse.de>
 MIME-Version: 1.0
-Authentication-Results: smtp-out2.suse.de;
+Authentication-Results: smtp-out1.suse.de;
 	none
-X-Spamd-Result: default: False [0.70 / 50.00]; ARC_NA(0.00)[];
+X-Spamd-Result: default: False [4.41 / 50.00]; ARC_NA(0.00)[];
  RCVD_VIA_SMTP_AUTH(0.00)[]; FROM_HAS_DN(0.00)[];
- TO_DN_SOME(0.00)[]; R_MISSING_CHARSET(2.50)[];
- FREEMAIL_ENVRCPT(0.00)[gmail.com];
- MIME_GOOD(-0.10)[text/plain]; TO_MATCH_ENVRCPT_ALL(0.00)[];
- BROKEN_CONTENT_TYPE(1.50)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
+ TO_DN_SOME(0.00)[]; FREEMAIL_ENVRCPT(0.00)[gmail.com];
+ R_MISSING_CHARSET(2.50)[]; MIME_GOOD(-0.10)[text/plain];
+ TO_MATCH_ENVRCPT_ALL(0.00)[]; BROKEN_CONTENT_TYPE(1.50)[];
  RCVD_COUNT_THREE(0.00)[3];
  DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
- NEURAL_HAM_SHORT(-0.20)[-1.000]; RCPT_COUNT_SEVEN(0.00)[9];
- MID_CONTAINS_FROM(1.00)[];
+ RCPT_COUNT_SEVEN(0.00)[9]; MID_CONTAINS_FROM(1.00)[];
  DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
  FUZZY_BLOCKED(0.00)[rspamd.com]; FROM_EQ_ENVFROM(0.00)[];
  MIME_TRACE(0.00)[0:+];
  FREEMAIL_CC(0.00)[lists.sourceforge.net,vger.kernel.org,gmail.com,suse.de];
- RCVD_TLS_ALL(0.00)[]; BAYES_HAM(-3.00)[100.00%]
-X-Headers-End: 1rO40o-0005x7-5H
-Subject: [f2fs-dev] [PATCH v3 01/10] ovl: Reject mounting case-insensitive
- filesystems
+ RCVD_TLS_ALL(0.00)[]; BAYES_HAM(-0.49)[79.74%]
+X-Headers-End: 1rO40u-0005xO-Jh
+Subject: [f2fs-dev] [PATCH v3 03/10] fscrypt: Drop d_revalidate for valid
+ dentries during lookup
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -139,92 +137,42 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-overlayfs relies on the filesystem setting DCACHE_OP_HASH or
-DCACHE_OP_COMPARE to reject mounting over case-insensitive directories.
+Unencrypted and encrypted-dentries where the key is available don't need
+to be revalidated with regards to fscrypt, since they don't go stale
+from under VFS and the key cannot be removed for the encrypted case
+without evicting the dentry.  Mark them with d_set_always_valid, to
+avoid unnecessary revalidation, in preparation to always configuring
+d_op through sb->s_d_op.
 
-Since commit bb9cd9106b22 ("fscrypt: Have filesystems handle their
-d_ops"), we set ->d_op through a hook in ->d_lookup, which
-means the root dentry won't have them, causing the mount to accidentally
-succeed.
+Since the filesystem might have other features that require
+revalidation, only apply this optimization if the d_revalidate handler
+is fscrypt_d_revalidate itself.
 
-In v6.7-rc7, the following sequence will succeed to mount, but any
-dentry other than the root dentry will be a "weird" dentry to ovl and
-fail with EREMOTE.
-
-  mkfs.ext4 -O casefold lower.img
-  mount -O loop lower.img lower
-  mount -t overlay -o lowerdir=lower,upperdir=upper,workdir=work ovl /mnt
-
-Mounting on a subdirectory fails, as expected, because DCACHE_OP_HASH
-and DCACHE_OP_COMPARE are properly set by ->lookup.
-
-Fix by explicitly rejecting superblocks that allow case-insensitive
-dentries.
-
-While there, re-sort the entries to have more descriptive error messages
-first.
-
-Fixes: bb9cd9106b22 ("fscrypt: Have filesystems handle their d_ops")
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
-Acked-by: Amir Goldstein <amir73il@gmail.com>
-
 ---
-changes since v2:
-  - Re-sort checks to trigger more descriptive error messages
-  first (Amir)
-  - Add code comment (Amir)
----
- fs/overlayfs/params.c | 13 ++++++++++---
- include/linux/fs.h    |  9 +++++++++
- 2 files changed, 19 insertions(+), 3 deletions(-)
+ fs/crypto/hooks.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
-index 3fe2dde1598f..09a4973f26f9 100644
---- a/fs/overlayfs/params.c
-+++ b/fs/overlayfs/params.c
-@@ -280,12 +280,19 @@ static int ovl_mount_dir_check(struct fs_context *fc, const struct path *path,
- {
- 	struct ovl_fs_context *ctx = fc->fs_private;
+diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
+index 41df986d1230..53381acc83e7 100644
+--- a/fs/crypto/hooks.c
++++ b/fs/crypto/hooks.c
+@@ -127,6 +127,15 @@ int fscrypt_prepare_lookup_dentry(struct inode *dir,
+ 	spin_lock(&dentry->d_lock);
+ 	if (nokey_name) {
+ 		dentry->d_flags |= DCACHE_NOKEY_NAME;
++	} else if (dentry->d_flags & DCACHE_OP_REVALIDATE &&
++		   dentry->d_op->d_revalidate == fscrypt_d_revalidate) {
++		/*
++		 * Unencrypted dentries and encrypted dentries where the
++		 * key is available are always valid from fscrypt
++		 * perspective. Avoid the cost of calling
++		 * fscrypt_d_revalidate unnecessarily.
++		 */
++		dentry->d_flags &= ~DCACHE_OP_REVALIDATE;
+ 	}
+ 	spin_unlock(&dentry->d_lock);
  
--	if (ovl_dentry_weird(path->dentry))
--		return invalfc(fc, "filesystem on %s not supported", name);
--
- 	if (!d_is_dir(path->dentry))
- 		return invalfc(fc, "%s is not a directory", name);
- 
-+	/*
-+	 * Root dentries of case-insensitive filesystems might not have
-+	 * the dentry operations set, but still be incompatible with
-+	 * overlayfs.  Check explicitly to prevent post-mount failures.
-+	 */
-+	if (sb_has_encoding(path->mnt->mnt_sb))
-+		return invalfc(fc, "case-insensitive filesystem on %s not supported", name);
-+
-+	if (ovl_dentry_weird(path->dentry))
-+		return invalfc(fc, "filesystem on %s not supported", name);
- 
- 	/*
- 	 * Check whether upper path is read-only here to report failures
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 98b7a7a8c42e..e6667ece5e64 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3203,6 +3203,15 @@ extern int generic_check_addressable(unsigned, u64);
- 
- extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
- 
-+static inline bool sb_has_encoding(const struct super_block *sb)
-+{
-+#if IS_ENABLED(CONFIG_UNICODE)
-+	return !!sb->s_encoding;
-+#else
-+	return false;
-+#endif
-+}
-+
- int may_setattr(struct mnt_idmap *idmap, struct inode *inode,
- 		unsigned int ia_valid);
- int setattr_prepare(struct mnt_idmap *, struct dentry *, struct iattr *);
 -- 
 2.43.0
 
