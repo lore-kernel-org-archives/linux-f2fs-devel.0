@@ -4,69 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DE7B0C4707B
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 11 Jan 2024 03:55:07 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5E620C47DA2
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 11 Jan 2024 06:42:36 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rNm9p-00008E-F4;
-	Thu, 11 Jan 2024 03:55:05 +0000
+	id 1rNolv-0004mv-Gw;
+	Thu, 11 Jan 2024 06:42:35 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1rNm9n-000088-VJ
+ (envelope-from <chao@kernel.org>) id 1rNols-0004mM-Cs
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 11 Jan 2024 03:55:04 +0000
+ Thu, 11 Jan 2024 06:42:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ClpuSunGho9f1gLvvhuLtowdRqHe7r4i6hpvhMTKN9U=; b=YL+kLNXyNz29l3Tf5ph9jUIksD
- +KxJHg59TCceWlVBtBWGtB9X56/iBNuOh6G0M+i/TJyyew+nTx8Azstw1P6WJfcmvb+Gtqq9UVb+s
- JILnWbtMy6/oOwgLEPttKoRrtGrDXmosG83myMcVNhM56XclsiydD4sjFmUoMQokC4aU=;
+ bh=I7XXUYIr8Q9KF+4scUbYcSJk+NkBf5I8stoKQ5y70L8=; b=XWHEVlk0MLLvDDzSTlig2Y+6as
+ RIMGcrdUVz52DZZqhjG4S5xzpf4Gbkn/ZYbkZr/BOqhEung4DGiZHk3gCVliE+tuESADzbZBIX6WX
+ uCPmrrdn11RUsN6DvKgIn39s/6ineI0Gb9ExaeCUkZeY5b1d3re20lvGxv9YEGIrlDlg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ClpuSunGho9f1gLvvhuLtowdRqHe7r4i6hpvhMTKN9U=; b=U4Svq+R8HE7EPWpKeV2RykQ57H
- ZfYEp8lwJQ17S+sn3sUwzJTJjw7tCNW4OQhfJy+xkQZ0PmibtmPymD4pdLwh+Zsh26pnyPUHvyw/F
- JHGIZE5fusdmmO+s+OO+7b5pb3b5HqOo3RX1mdwoANyhw4gMyJ+F0gGsc03bx8WMr/9A=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=I7XXUYIr8Q9KF+4scUbYcSJk+NkBf5I8stoKQ5y70L8=; b=IoYTqapgEHQYhv508+CxRv44wS
+ AFLL75QoKll09Y51lJRn0PVi5Z0mAHK20yhwVBkexnUK+LAcAv54CIZnAZICdeECy/7IYplY3f67Y
+ amefEfGaSezT0QFyV0icgh+diKXzvOn+jSdObx4xRem98N0S062m3CYD1FvrxkOmOHU4=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rNm9i-0000D7-U9 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 11 Jan 2024 03:55:03 +0000
+ id 1rNolm-00078b-Gl for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 11 Jan 2024 06:42:28 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 336ABCE1E4B;
- Thu, 11 Jan 2024 03:54:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BBC5C433F1;
- Thu, 11 Jan 2024 03:54:46 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTP id 5A1DCB81A42
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 11 Jan 2024 06:42:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3183C43390;
+ Thu, 11 Jan 2024 06:42:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1704945286;
- bh=72ivCjl5dJtBmZbh/NqHldmjpyUkgHUjTtMsl2+EJXQ=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=N00HjlJaqIIpwtxvgkzp1hc0w21pAr2mfxFbAOOBJ4+tUE+wv3INEvh2zAPy147Hu
- fYLnEsF1lSJPmdtwP3v6F7IBCAINb6p6T/gGpzSHcmna9TsDGPNe+ZVMFJozQivHHD
- esEWMTYeAi0AI/S1x70TE1XwuljaYHVxXBM6zGjouG1P2JlP+S00vYnrlk/XQ3dfnX
- N2GOjDKVdmSwl8tcm7SkIc0dyAM9czqe7MOoCQUVoGy2O/yn/nllKYM8BODCivrapH
- d5QdAU7Zk0GWZGCtJq3bI1yMK9KTPQ9zvfItD4jvkMrPJVbh5klhgI+cGNFp5JpYxo
- D2UerbxU2uc2Q==
-Date: Wed, 10 Jan 2024 19:54:44 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Zorro Lang <zlang@kernel.org>
-Message-ID: <20240111035444.GA3453@sol.localdomain>
-References: <20231121223909.4617-1-ebiggers@kernel.org>
+ s=k20201202; t=1704955337;
+ bh=/uXMDvSOj4ElzaKYgiipftBm0qNMtUebJdjXyJwsNz0=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=DKKjCjVPjWXCbOFCnOQfP0ek3Hvak8Z4Z3uLF1tVCIAxbItx0Vzqd05veQm/NExGD
+ iOM8vgp+UBR/fVNGv64FMvCvbtO93CKnFzR75jMhwbaWIVT0GqmSKApPDlCBokfWst
+ KzuO0i510CaClc/LAMhkdD2mzatL3DFFUYPoX/XZujTg9Af+1ItF6AB6dH7Gu0MehR
+ wRq0DEQHJrERbJVZTwYp91rchogMv3z6LBvROIKClQ2YKm9tcj2bJ+MHjB8VjZPHKW
+ RxQ7e9OywUM+31u6e4IQQDevQOzv0CpRhhzodicptp7ItZy1gwBERM3Saro06ty9Do
+ UBqAEb0gaYFZg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Thu, 11 Jan 2024 14:42:04 +0800
+Message-Id: <20240111064208.2969599-2-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240111064208.2969599-1-chao@kernel.org>
+References: <20240111064208.2969599-1-chao@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20231121223909.4617-1-ebiggers@kernel.org>
-X-Headers-End: 1rNm9i-0000D7-U9
-Subject: Re: [f2fs-dev] [PATCH v2 0/4] xfstests: test custom crypto data
- unit size
+X-Headers-End: 1rNolm-00078b-Gl
+Subject: [f2fs-dev] [PATCH v4 2/6] f2fs: compress: fix to cover normal
+ cluster write with cp_rwsem
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,27 +79,107 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
- Daniel Rosenberg <drosen@google.com>, fstests@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Nov 21, 2023 at 02:39:05PM -0800, Eric Biggers wrote:
-> This series adds a test that verifies the on-disk format of encrypted
-> files that use a crypto data unit size that differs from the filesystem
-> block size.  This tests the functionality that was introduced in Linux
-> 6.7 by kernel commit 5b1188847180 ("fscrypt: support crypto data unit
-> size less than filesystem block size").
+When we overwrite compressed cluster w/ normal cluster, we should
+not unlock cp_rwsem during f2fs_write_raw_pages(), otherwise data
+will be corrupted if partial blocks were persisted before CP & SPOR,
+due to cluster metadata wasn't updated atomically.
 
-Hi Zorro, can you consider applying this series?  It's been out for review for
-3 months, so I don't think reviews are going to come in.  The prerequisite
-xfsprogs patch is already present on the for-next branch of xfsprogs.
+Fixes: 4c8ff7095bef ("f2fs: support data compression")
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/compress.c | 20 ++++++++++++++------
+ fs/f2fs/data.c     |  3 ++-
+ 2 files changed, 16 insertions(+), 7 deletions(-)
 
-Thanks!
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 9940b7886e5d..bf4cfab67aec 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1448,7 +1448,8 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+ 					enum iostat_type io_type)
+ {
+ 	struct address_space *mapping = cc->inode->i_mapping;
+-	int _submitted, compr_blocks, ret, i;
++	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
++	int _submitted, compr_blocks, ret = 0, i;
+ 
+ 	compr_blocks = f2fs_compressed_blocks(cc);
+ 
+@@ -1463,6 +1464,10 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+ 	if (compr_blocks < 0)
+ 		return compr_blocks;
+ 
++	/* overwrite compressed cluster w/ normal cluster */
++	if (compr_blocks > 0)
++		f2fs_lock_op(sbi);
++
+ 	for (i = 0; i < cc->cluster_size; i++) {
+ 		if (!cc->rpages[i])
+ 			continue;
+@@ -1495,26 +1500,29 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+ 				unlock_page(cc->rpages[i]);
+ 				ret = 0;
+ 			} else if (ret == -EAGAIN) {
++				ret = 0;
+ 				/*
+ 				 * for quota file, just redirty left pages to
+ 				 * avoid deadlock caused by cluster update race
+ 				 * from foreground operation.
+ 				 */
+ 				if (IS_NOQUOTA(cc->inode))
+-					return 0;
+-				ret = 0;
++					goto out;
+ 				f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+ 				goto retry_write;
+ 			}
+-			return ret;
++			goto out;
+ 		}
+ 
+ 		*submitted += _submitted;
+ 	}
+ 
+-	f2fs_balance_fs(F2FS_M_SB(mapping), true);
++out:
++	if (compr_blocks > 0)
++		f2fs_unlock_op(sbi);
+ 
+-	return 0;
++	f2fs_balance_fs(sbi, true);
++	return ret;
+ }
+ 
+ int f2fs_write_multi_pages(struct compress_ctx *cc,
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 81f9e2cc49e2..b171a9980f6a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2839,7 +2839,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 		.encrypted_page = NULL,
+ 		.submitted = 0,
+ 		.compr_blocks = compr_blocks,
+-		.need_lock = LOCK_RETRY,
++		.need_lock = compr_blocks ? LOCK_DONE : LOCK_RETRY,
+ 		.post_read = f2fs_post_read_required(inode) ? 1 : 0,
+ 		.io_type = io_type,
+ 		.io_wbc = wbc,
+@@ -2920,6 +2920,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 	if (err == -EAGAIN) {
+ 		err = f2fs_do_write_data_page(&fio);
+ 		if (err == -EAGAIN) {
++			f2fs_bug_on(sbi, compr_blocks);
+ 			fio.need_lock = LOCK_REQ;
+ 			err = f2fs_do_write_data_page(&fio);
+ 		}
+-- 
+2.40.1
 
-- Eric
 
 
 _______________________________________________
