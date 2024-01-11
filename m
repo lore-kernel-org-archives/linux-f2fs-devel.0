@@ -4,68 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5D701C47258
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 11 Jan 2024 06:42:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2C0FEC47DA6
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 11 Jan 2024 06:42:37 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rNolv-0004mm-4F;
+	id 1rNolu-0003th-Lb;
 	Thu, 11 Jan 2024 06:42:35 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rNols-0004mN-Cr
+ (envelope-from <chao@kernel.org>) id 1rNols-0003tT-Nf
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 11 Jan 2024 06:42:32 +0000
+ Thu, 11 Jan 2024 06:42:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mYVkXF1DWcidr/AabRCInisRL43WQBNA/bKEEAIuf+8=; b=JjoMOWngnz9bzsdGbqDS5nqCIm
- yNMOFEMODQNgwsF3KIfyzLEUBbXzG7bGSA+SBxoU6CFoGzkkdutWBNLEfDqaq0YK/1wFxESEUdF8w
- z2OCuqlhuxor0xn80i7RNgrQaf77fLsbxxn7iMqUowuAmokzb/DxE7KBRNrhRW1xX06c=;
+ bh=2uEm+qvMEcnqhVfAegGNLtcQeGmgnyjWc4uSHYAZjmE=; b=nTicGFyFI4gbGKPcnF3AxFAxgQ
+ 2F25URtnF/dCcmY4tWJ04fdrZfmcoGhV9sfCfOk2koeD2D6WhB9vqNFhUivcIsfEtTO2ZEOymPCNM
+ JFV/So5fHkzw3Me4xFfL1HezKvKC8H0terl4CyAZ0UKJJFOpRo7fL9xne366TJiYqDmI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=mYVkXF1DWcidr/AabRCInisRL43WQBNA/bKEEAIuf+8=; b=R
- GOhcbITnX0BR+SjFPDdcminGTupUcQ9a7d6w8gc4auERPc1nAvdsR1yJ7erth2SwoFyd80Hk56uV2
- W/nzouqL+BMYKd00I+OlOj4GjiAPVEe1CYoodfnPENGTz5R2K6izYYcSgc/UuxD5TGwkGUs+xP0I+
- SkIFMV6nLRbp/mdw=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=2uEm+qvMEcnqhVfAegGNLtcQeGmgnyjWc4uSHYAZjmE=; b=eiGJQ1+eYBiH9U1tXf/cyI3FOY
+ SN26KAmna2L5kX4d9NSP82aQFFPJ/SeAdNele8OttURt54nGOueJMFRICWNyryZrUi9NAttUNyaUV
+ BzVc4K84ssEjl7vg3T+oyqcm/nc6+kkzWtcmt1FyR+OUQU8AJBINeqFyi/Af+uufT4uY=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rNolm-00078W-GH for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 11 Jan 2024 06:42:28 +0000
+ id 1rNols-000790-CH for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 11 Jan 2024 06:42:33 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by ams.source.kernel.org (Postfix) with ESMTP id C6940B81ECA
+ by dfw.source.kernel.org (Postfix) with ESMTP id 31F53619A3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 11 Jan 2024 06:42:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0096C433F1;
- Thu, 11 Jan 2024 06:42:13 +0000 (UTC)
+ Thu, 11 Jan 2024 06:42:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73538C43390;
+ Thu, 11 Jan 2024 06:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1704955335;
- bh=oZuzDV9vCkL88UX/UxwReq5BdTIrwPqe8fsiqxAln1Y=;
- h=From:To:Cc:Subject:Date:From;
- b=EZELZ3sxNIieKHBWyJdtLZ/BIU6aMrUpYgMP+CpO7N5Km6FY11u5f80NaGW0sstXJ
- gclLpVP6ZLrV52w0JOWgmQMLaFuG4U2A+x988e64MvwpBp2rd+zCbLt8rERR9zrGSx
- W317DTFzUylw16jMFWnqHa6eKoCHTqP9Nco6pbjEn2jxenelz05K7sBEr7i+9SYhOk
- u1aJCeH8nA3kZ5wO1+u4vCByPbWwLfIgPrkzNpzfofAUqF47iwYOd6CMEjt1rmHdpP
- p0GqLm+IqdKGPivRuFOgkZvCKni/+EZE5myxTniB1sAFWFlBZuLdfpXdzoaSQs/2Rp
- NCWsSLE6hG7kQ==
+ s=k20201202; t=1704955345;
+ bh=0eTSIClAwlCcrVovRj94A7MDYbnHjhz5P+j+mC5CIs8=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=ScBzs3pX4ymCCv8YAlgEU7AzJ9iMI22fKQ5H5DcicKVFyWZIkdWco8lYdYD6uRUFt
+ +7E4oQaCR15TXf/b0lpo3EfGW2d1DOLenVRV9DlCrTN/rSv+VmfI2EwNrdsY7OCoub
+ rC7Iv3cY7EBM3g2VE/zuAzwH/v2ijerSUwS1DFwLJFCG5AxV5iI0pStQ2wsE83menw
+ iLCK4MSO5Ug9R/cUVxUI6xrWVmj9WKj460on3hSH1FCjxVUhmqhZwml+WWyiQZxec3
+ d2dfU7i8VmhNduiRWN7UuApd8PPO4N72vL/EBYuWdA4oE68Ad5kRciK62y7+pORWR5
+ H3JlzRvj93bMg==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Thu, 11 Jan 2024 14:42:03 +0800
-Message-Id: <20240111064208.2969599-1-chao@kernel.org>
+Date: Thu, 11 Jan 2024 14:42:08 +0800
+Message-Id: <20240111064208.2969599-6-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240111064208.2969599-1-chao@kernel.org>
+References: <20240111064208.2969599-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1rNolm-00078W-GH
-Subject: [f2fs-dev] [PATCH v4 1/6] f2fs: compress: fix to guarantee
- persisting compressed blocks by CP
+X-Headers-End: 1rNols-000790-CH
+Subject: [f2fs-dev] [PATCH v4 6/6] f2fs: introduce FAULT_BLKADDR_CONSISTENCE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,139 +83,292 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If data block in compressed cluster is not persisted with metadata
-during checkpoint, after SPOR, the data may be corrupted, let's
-guarantee to write compressed page by checkpoint.
+We will encounter below inconsistent status when FAULT_BLKADDR type
+fault injection is on.
 
-Fixes: 4c8ff7095bef ("f2fs: support data compression")
+Info: checkpoint state = d6 :  nat_bits crc fsck compacted_summary orphan_inodes sudden-power-off
+[ASSERT] (fsck_chk_inode_blk:1254)  --> ino: 0x1c100 has i_blocks: 000000c0, but has 191 blocks
+[FIX] (fsck_chk_inode_blk:1260)  --> [0x1c100] i_blocks=0x000000c0 -> 0xbf
+[FIX] (fsck_chk_inode_blk:1269)  --> [0x1c100] i_compr_blocks=0x00000026 -> 0x27
+[ASSERT] (fsck_chk_inode_blk:1254)  --> ino: 0x1cadb has i_blocks: 0000002f, but has 46 blocks
+[FIX] (fsck_chk_inode_blk:1260)  --> [0x1cadb] i_blocks=0x0000002f -> 0x2e
+[FIX] (fsck_chk_inode_blk:1269)  --> [0x1cadb] i_compr_blocks=0x00000011 -> 0x12
+[ASSERT] (fsck_chk_inode_blk:1254)  --> ino: 0x1c62c has i_blocks: 00000002, but has 1 blocks
+[FIX] (fsck_chk_inode_blk:1260)  --> [0x1c62c] i_blocks=0x00000002 -> 0x1
+
+After we inject fault into f2fs_is_valid_blkaddr() during truncation,
+a) it missed to increase @nr_free or @valid_blocks
+b) it can cause in blkaddr leak in truncated dnode
+Which may cause inconsistent status.
+
+This patch separates FAULT_BLKADDR_CONSISTENCE from FAULT_BLKADDR,
+and rename FAULT_BLKADDR to FAULT_BLKADDR_VALIDITY
+so that we can:
+a) use FAULT_BLKADDR_CONSISTENCE in f2fs_truncate_data_blocks_range()
+to simulate inconsistent issue independently, then it can verify fsck
+repair flow.
+b) FAULT_BLKADDR_VALIDITY fault will not cause any inconsistent status,
+we can just use it to check error path handling in kernel side.
+
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/compress.c |  4 +++-
- fs/f2fs/data.c     | 17 +++++++++--------
- fs/f2fs/f2fs.h     |  4 +++-
- 3 files changed, 15 insertions(+), 10 deletions(-)
+v4:
+- rename macro to FAULT_BLKADDR_CONSISTENCE and FAULT_BLKADDR_VALIDITY
+suggested by Jaegeuk.
+ Documentation/ABI/testing/sysfs-fs-f2fs | 47 +++++++++++++------------
+ Documentation/filesystems/f2fs.rst      | 47 +++++++++++++------------
+ fs/f2fs/checkpoint.c                    | 19 +++++++---
+ fs/f2fs/f2fs.h                          |  5 ++-
+ fs/f2fs/file.c                          |  8 +++--
+ fs/f2fs/super.c                         | 37 +++++++++----------
+ 6 files changed, 92 insertions(+), 71 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index c5a4364c4482..9940b7886e5d 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1418,6 +1418,8 @@ void f2fs_compress_write_end_io(struct bio *bio, struct page *page)
- 	struct f2fs_sb_info *sbi = bio->bi_private;
- 	struct compress_io_ctx *cic =
- 			(struct compress_io_ctx *)page_private(page);
-+	enum count_type type = WB_DATA_TYPE(page,
-+				f2fs_is_compressed_page(page));
- 	int i;
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 99fa87a43926..48c135e24eb5 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -701,29 +701,30 @@ Description:	Support configuring fault injection type, should be
+ 		enabled with fault_injection option, fault type value
+ 		is shown below, it supports single or combined type.
  
- 	if (unlikely(bio->bi_status))
-@@ -1425,7 +1427,7 @@ void f2fs_compress_write_end_io(struct bio *bio, struct page *page)
+-		===================      ===========
+-		Type_Name                Type_Value
+-		===================      ===========
+-		FAULT_KMALLOC            0x000000001
+-		FAULT_KVMALLOC           0x000000002
+-		FAULT_PAGE_ALLOC         0x000000004
+-		FAULT_PAGE_GET           0x000000008
+-		FAULT_ALLOC_BIO          0x000000010 (obsolete)
+-		FAULT_ALLOC_NID          0x000000020
+-		FAULT_ORPHAN             0x000000040
+-		FAULT_BLOCK              0x000000080
+-		FAULT_DIR_DEPTH          0x000000100
+-		FAULT_EVICT_INODE        0x000000200
+-		FAULT_TRUNCATE           0x000000400
+-		FAULT_READ_IO            0x000000800
+-		FAULT_CHECKPOINT         0x000001000
+-		FAULT_DISCARD            0x000002000
+-		FAULT_WRITE_IO           0x000004000
+-		FAULT_SLAB_ALLOC         0x000008000
+-		FAULT_DQUOT_INIT         0x000010000
+-		FAULT_LOCK_OP            0x000020000
+-		FAULT_BLKADDR            0x000040000
+-		===================      ===========
++		===========================      ===========
++		Type_Name                        Type_Value
++		===========================      ===========
++		FAULT_KMALLOC                    0x000000001
++		FAULT_KVMALLOC                   0x000000002
++		FAULT_PAGE_ALLOC                 0x000000004
++		FAULT_PAGE_GET                   0x000000008
++		FAULT_ALLOC_BIO                  0x000000010 (obsolete)
++		FAULT_ALLOC_NID                  0x000000020
++		FAULT_ORPHAN                     0x000000040
++		FAULT_BLOCK                      0x000000080
++		FAULT_DIR_DEPTH                  0x000000100
++		FAULT_EVICT_INODE                0x000000200
++		FAULT_TRUNCATE                   0x000000400
++		FAULT_READ_IO                    0x000000800
++		FAULT_CHECKPOINT                 0x000001000
++		FAULT_DISCARD                    0x000002000
++		FAULT_WRITE_IO                   0x000004000
++		FAULT_SLAB_ALLOC                 0x000008000
++		FAULT_DQUOT_INIT                 0x000010000
++		FAULT_LOCK_OP                    0x000020000
++		FAULT_BLKADDR_VALIDITY           0x000040000
++		FAULT_BLKADDR_CONSISTENCE        0x000080000
++		===========================      ===========
  
- 	f2fs_compress_free_page(page);
+ What:		/sys/fs/f2fs/<disk>/discard_io_aware_gran
+ Date:		January 2023
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index d32c6209685d..32cbfa864f38 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -184,29 +184,30 @@ fault_type=%d		 Support configuring fault injection type, should be
+ 			 enabled with fault_injection option, fault type value
+ 			 is shown below, it supports single or combined type.
  
--	dec_page_count(sbi, F2FS_WB_DATA);
-+	dec_page_count(sbi, type);
- 
- 	if (atomic_dec_return(&cic->pending_pages))
- 		return;
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index dce8defdf4c7..81f9e2cc49e2 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -48,7 +48,7 @@ void f2fs_destroy_bioset(void)
- 	bioset_exit(&f2fs_bioset);
+-			 ===================	  ===========
+-			 Type_Name		  Type_Value
+-			 ===================	  ===========
+-			 FAULT_KMALLOC		  0x000000001
+-			 FAULT_KVMALLOC		  0x000000002
+-			 FAULT_PAGE_ALLOC	  0x000000004
+-			 FAULT_PAGE_GET		  0x000000008
+-			 FAULT_ALLOC_BIO	  0x000000010 (obsolete)
+-			 FAULT_ALLOC_NID	  0x000000020
+-			 FAULT_ORPHAN		  0x000000040
+-			 FAULT_BLOCK		  0x000000080
+-			 FAULT_DIR_DEPTH	  0x000000100
+-			 FAULT_EVICT_INODE	  0x000000200
+-			 FAULT_TRUNCATE		  0x000000400
+-			 FAULT_READ_IO		  0x000000800
+-			 FAULT_CHECKPOINT	  0x000001000
+-			 FAULT_DISCARD		  0x000002000
+-			 FAULT_WRITE_IO		  0x000004000
+-			 FAULT_SLAB_ALLOC	  0x000008000
+-			 FAULT_DQUOT_INIT	  0x000010000
+-			 FAULT_LOCK_OP		  0x000020000
+-			 FAULT_BLKADDR		  0x000040000
+-			 ===================	  ===========
++			 ===========================      ===========
++			 Type_Name                        Type_Value
++			 ===========================      ===========
++			 FAULT_KMALLOC                    0x000000001
++			 FAULT_KVMALLOC                   0x000000002
++			 FAULT_PAGE_ALLOC                 0x000000004
++			 FAULT_PAGE_GET                   0x000000008
++			 FAULT_ALLOC_BIO                  0x000000010 (obsolete)
++			 FAULT_ALLOC_NID                  0x000000020
++			 FAULT_ORPHAN                     0x000000040
++			 FAULT_BLOCK                      0x000000080
++			 FAULT_DIR_DEPTH                  0x000000100
++			 FAULT_EVICT_INODE                0x000000200
++			 FAULT_TRUNCATE                   0x000000400
++			 FAULT_READ_IO                    0x000000800
++			 FAULT_CHECKPOINT                 0x000001000
++			 FAULT_DISCARD                    0x000002000
++			 FAULT_WRITE_IO                   0x000004000
++			 FAULT_SLAB_ALLOC                 0x000008000
++			 FAULT_DQUOT_INIT                 0x000010000
++			 FAULT_LOCK_OP                    0x000020000
++			 FAULT_BLKADDR_VALIDITY           0x000040000
++			 FAULT_BLKADDR_CONSISTENCE        0x000080000
++			 ===========================      ===========
+ mode=%s			 Control block allocation mode which supports "adaptive"
+ 			 and "lfs". In "lfs" mode, there should be no random
+ 			 writes towards main area.
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index b0597a539fc5..b85820e70f5e 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -170,12 +170,9 @@ static bool __is_bitmap_valid(struct f2fs_sb_info *sbi, block_t blkaddr,
+ 	return exist;
  }
  
--static bool __is_cp_guaranteed(struct page *page)
-+bool f2fs_is_cp_guaranteed(struct page *page)
+-bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
++static bool __f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+ 					block_t blkaddr, int type)
  {
- 	struct address_space *mapping = page->mapping;
- 	struct inode *inode;
-@@ -65,8 +65,6 @@ static bool __is_cp_guaranteed(struct page *page)
- 			S_ISDIR(inode->i_mode))
- 		return true;
- 
--	if (f2fs_is_compressed_page(page))
+-	if (time_to_inject(sbi, FAULT_BLKADDR))
 -		return false;
- 	if ((S_ISREG(inode->i_mode) && IS_NOQUOTA(inode)) ||
- 			page_private_gcing(page))
- 		return true;
-@@ -338,7 +336,7 @@ static void f2fs_write_end_io(struct bio *bio)
+-
+ 	switch (type) {
+ 	case META_NAT:
+ 		break;
+@@ -230,6 +227,20 @@ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+ 	return true;
+ }
  
- 	bio_for_each_segment_all(bvec, bio, iter_all) {
- 		struct page *page = bvec->bv_page;
--		enum count_type type = WB_DATA_TYPE(page);
-+		enum count_type type = WB_DATA_TYPE(page, false);
- 
- 		if (page_private_dummy(page)) {
- 			clear_page_private_dummy(page);
-@@ -762,7 +760,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 		wbc_account_cgroup_owner(fio->io_wbc, fio->page, PAGE_SIZE);
- 
- 	inc_page_count(fio->sbi, is_read_io(fio->op) ?
--			__read_io_type(page) : WB_DATA_TYPE(fio->page));
-+			__read_io_type(page) : WB_DATA_TYPE(fio->page, false));
- 
- 	if (is_read_io(bio_op(bio)))
- 		f2fs_submit_read_bio(fio->sbi, bio, fio->type);
-@@ -973,7 +971,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 	if (fio->io_wbc)
- 		wbc_account_cgroup_owner(fio->io_wbc, fio->page, PAGE_SIZE);
- 
--	inc_page_count(fio->sbi, WB_DATA_TYPE(page));
-+	inc_page_count(fio->sbi, WB_DATA_TYPE(page, false));
- 
- 	*fio->last_block = fio->new_blkaddr;
- 	*fio->bio = bio;
-@@ -1007,6 +1005,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
- 	struct f2fs_bio_info *io = sbi->write_io[btype] + fio->temp;
- 	struct page *bio_page;
-+	enum count_type type;
- 
- 	f2fs_bug_on(sbi, is_read_io(fio->op));
- 
-@@ -1046,7 +1045,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 	/* set submitted = true as a return value */
- 	fio->submitted = 1;
- 
--	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
-+	type = WB_DATA_TYPE(bio_page, fio->compressed_page);
-+	inc_page_count(sbi, type);
- 
- 	if (io->bio &&
- 	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
-@@ -1059,7 +1059,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 		if (F2FS_IO_ALIGNED(sbi) &&
- 				(fio->type == DATA || fio->type == NODE) &&
- 				fio->new_blkaddr & F2FS_IO_SIZE_MASK(sbi)) {
--			dec_page_count(sbi, WB_DATA_TYPE(bio_page));
-+			dec_page_count(sbi, WB_DATA_TYPE(bio_page,
-+						fio->compressed_page));
- 			fio->retry = 1;
- 			goto skip;
- 		}
++bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
++					block_t blkaddr, int type)
++{
++	if (time_to_inject(sbi, FAULT_BLKADDR_VALIDITY))
++		return false;
++	return __f2fs_is_valid_blkaddr(sbi, blkaddr, type);
++}
++
++bool f2fs_is_valid_blkaddr_raw(struct f2fs_sb_info *sbi,
++					block_t blkaddr, int type)
++{
++	return __f2fs_is_valid_blkaddr(sbi, blkaddr, type);
++}
++
+ /*
+  * Readahead CP/NAT/SIT/SSA/POR pages
+  */
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 65294e3b0bef..50f3d546ded8 100644
+index ab710bb6d8b3..4481f68d6418 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1080,7 +1080,8 @@ struct f2fs_sm_info {
-  * f2fs monitors the number of several block types such as on-writeback,
-  * dirty dentry blocks, dirty node blocks, and dirty meta blocks.
-  */
--#define WB_DATA_TYPE(p)	(__is_cp_guaranteed(p) ? F2FS_WB_CP_DATA : F2FS_WB_DATA)
-+#define WB_DATA_TYPE(p, f)			\
-+	(f || f2fs_is_cp_guaranteed(p) ? F2FS_WB_CP_DATA : F2FS_WB_DATA)
- enum count_type {
- 	F2FS_DIRTY_DENTS,
- 	F2FS_DIRTY_DATA,
-@@ -3804,6 +3805,7 @@ void f2fs_init_ckpt_req_control(struct f2fs_sb_info *sbi);
-  */
- int __init f2fs_init_bioset(void);
- void f2fs_destroy_bioset(void);
-+bool f2fs_is_cp_guaranteed(struct page *page);
- int f2fs_init_bio_entry_cache(void);
- void f2fs_destroy_bio_entry_cache(void);
- void f2fs_submit_read_bio(struct f2fs_sb_info *sbi, struct bio *bio,
+@@ -60,7 +60,8 @@ enum {
+ 	FAULT_SLAB_ALLOC,
+ 	FAULT_DQUOT_INIT,
+ 	FAULT_LOCK_OP,
+-	FAULT_BLKADDR,
++	FAULT_BLKADDR_VALIDITY,
++	FAULT_BLKADDR_CONSISTENCE,
+ 	FAULT_MAX,
+ };
+ 
+@@ -3768,6 +3769,8 @@ struct page *f2fs_get_meta_page_retry(struct f2fs_sb_info *sbi, pgoff_t index);
+ struct page *f2fs_get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index);
+ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+ 					block_t blkaddr, int type);
++bool f2fs_is_valid_blkaddr_raw(struct f2fs_sb_info *sbi,
++					block_t blkaddr, int type);
+ int f2fs_ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+ 			int type, bool sync);
+ void f2fs_ra_meta_pages_cond(struct f2fs_sb_info *sbi, pgoff_t index,
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 53c495651789..0e4c871d6aed 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -590,9 +590,13 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+ 		f2fs_set_data_blkaddr(dn, NULL_ADDR);
+ 
+ 		if (__is_valid_data_blkaddr(blkaddr)) {
+-			if (!f2fs_is_valid_blkaddr(sbi, blkaddr,
+-					DATA_GENERIC_ENHANCE))
++			if (time_to_inject(sbi, FAULT_BLKADDR_CONSISTENCE))
++				continue;
++			if (!f2fs_is_valid_blkaddr_raw(sbi, blkaddr,
++						DATA_GENERIC_ENHANCE)) {
++				f2fs_handle_error(sbi, ERROR_INVALID_BLKADDR);
+ 				continue;
++			}
+ 			if (compressed_cluster)
+ 				valid_blocks++;
+ 		}
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 206d03c82d96..4de5478972b2 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -44,24 +44,25 @@ static struct kmem_cache *f2fs_inode_cachep;
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+ 
+ const char *f2fs_fault_name[FAULT_MAX] = {
+-	[FAULT_KMALLOC]		= "kmalloc",
+-	[FAULT_KVMALLOC]	= "kvmalloc",
+-	[FAULT_PAGE_ALLOC]	= "page alloc",
+-	[FAULT_PAGE_GET]	= "page get",
+-	[FAULT_ALLOC_NID]	= "alloc nid",
+-	[FAULT_ORPHAN]		= "orphan",
+-	[FAULT_BLOCK]		= "no more block",
+-	[FAULT_DIR_DEPTH]	= "too big dir depth",
+-	[FAULT_EVICT_INODE]	= "evict_inode fail",
+-	[FAULT_TRUNCATE]	= "truncate fail",
+-	[FAULT_READ_IO]		= "read IO error",
+-	[FAULT_CHECKPOINT]	= "checkpoint error",
+-	[FAULT_DISCARD]		= "discard error",
+-	[FAULT_WRITE_IO]	= "write IO error",
+-	[FAULT_SLAB_ALLOC]	= "slab alloc",
+-	[FAULT_DQUOT_INIT]	= "dquot initialize",
+-	[FAULT_LOCK_OP]		= "lock_op",
+-	[FAULT_BLKADDR]		= "invalid blkaddr",
++	[FAULT_KMALLOC]			= "kmalloc",
++	[FAULT_KVMALLOC]		= "kvmalloc",
++	[FAULT_PAGE_ALLOC]		= "page alloc",
++	[FAULT_PAGE_GET]		= "page get",
++	[FAULT_ALLOC_NID]		= "alloc nid",
++	[FAULT_ORPHAN]			= "orphan",
++	[FAULT_BLOCK]			= "no more block",
++	[FAULT_DIR_DEPTH]		= "too big dir depth",
++	[FAULT_EVICT_INODE]		= "evict_inode fail",
++	[FAULT_TRUNCATE]		= "truncate fail",
++	[FAULT_READ_IO]			= "read IO error",
++	[FAULT_CHECKPOINT]		= "checkpoint error",
++	[FAULT_DISCARD]			= "discard error",
++	[FAULT_WRITE_IO]		= "write IO error",
++	[FAULT_SLAB_ALLOC]		= "slab alloc",
++	[FAULT_DQUOT_INIT]		= "dquot initialize",
++	[FAULT_LOCK_OP]			= "lock_op",
++	[FAULT_BLKADDR_VALIDITY]	= "invalid blkaddr",
++	[FAULT_BLKADDR_CONSISTENCE]	= "inconsistent blkaddr",
+ };
+ 
+ void f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned int rate,
 -- 
 2.40.1
 
