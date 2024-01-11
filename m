@@ -4,70 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CA9BAC47258
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 11 Jan 2024 06:42:48 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BD957C47077
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 11 Jan 2024 06:44:22 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rNom8-0005fE-3u;
-	Thu, 11 Jan 2024 06:42:48 +0000
+	id 1rNond-000248-Un;
+	Thu, 11 Jan 2024 06:44:21 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rNom5-0005f8-QI
+ (envelope-from <chao@kernel.org>) id 1rNonc-000242-7b
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 11 Jan 2024 06:42:45 +0000
+ Thu, 11 Jan 2024 06:44:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gbqBjB9dGO5DNoWz4hJSaL4wOc8782Hf6wNDj7ZMkLo=; b=l66sqoY9572xPnU4hEw7P2Y1B/
- DxVtK72UPi/I6PJnjpj67nIMFYwurDcHPefLS4m4MsM+OSzODrAddUNlv9whvVPzzuZ24t+Xd09rS
- eNNx5FmZfLs1ADszTGe2aqM/Mnm0nrhVCD9p9cY2+7xc5OmRoZeKOgm8vcjhmfIukQEY=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=gbqBjB9dGO5DNoWz4hJSaL4wOc8782Hf6wNDj7ZMkLo=; b=IUp/Sfg+MjnEae2sfY9IypTa6K
- qBsXK81aycetGnD+wCIPxlTIP3r7CrlCKN8YKosRvC9wI0JDDaJ+bEuq+UIM2nbLaLQpdIGJ1wCZI
- UypQZcnngRybQXeRFiUgLVGPao4l84YMIR8E/qnnyJlUscZZVX7teL0ADfbnq7qC4XS8=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=nS3yEtZzKvSluZ6LIwm28rAt0s8KRshkEHKE0yeCqS4=; b=mUQf041cEO34vR1BHLx8kZz3Tv
+ 2DhBgrcOc0UC5sD97MqLLScA0xfZuCbPv8BWDy2XPQU8QGDDNMT6Fm5mmOkBgYoEh9/Hx+w7GAkvv
+ KJcrVumXq6ESdS5ZSW1kINaycZCjEhzWfVvI/xwyr7/Xxb07Xy9XtSOPESdWtDEmyaQI=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=nS3yEtZzKvSluZ6LIwm28rAt0s8KRshkEHKE0yeCqS4=; b=G
+ 1iJa4+EubnEZI2X9B0qHSdz1c9GrrHlml2uaWQgeUWvcsGLZdmQBDdVZxscJisfQTL/dfI8JKMi3M
+ zWhFWmox7slLhgg8qeFEsDtXI99fgDM+0PIxQ88whjg8lJmD3/MJLTXSVzNvMk47Fb9cwepxDg/Dm
+ /3h2nJWKcifoj6RE=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rNolz-000798-3M for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 11 Jan 2024 06:42:45 +0000
+ id 1rNonb-0007Im-G7 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 11 Jan 2024 06:44:20 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 4F1CFCE1E75
+ by ams.source.kernel.org (Postfix) with ESMTP id 35863B81ED9
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 11 Jan 2024 06:42:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96C0EC43399;
- Thu, 11 Jan 2024 06:42:21 +0000 (UTC)
+ Thu, 11 Jan 2024 06:44:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F69EC433F1;
+ Thu, 11 Jan 2024 06:44:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1704955342;
- bh=gbX4YWfRwjVnF49sDXj1O3cCSmmOzMm5S1M/X7oiEXI=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=GB1XxKtKwAbjoCUkLjjJoGupyaPxCfXinyIZtxjj9h2gCF7xtiv/z0/J3XLuA3w2M
- B2LfimX/2MM/HUA3rnD7W3oZBvb2aw67It4G85AaSbvCt9yQKfVNYUBcZcZhmqZcnc
- cs+kHcWdfDgP8ZNs0MNVS4He1flN5E+DXouJPZfCxAtfF3pOnyXHHQ004IhPeMlBu5
- V1gUtCtI4XF1IjTXutmIDXqs4VAEwbPoV+eHeCub7gz2HmD13o4DK7m8RSAmZP8lF8
- oae/LmsEx/b1c9a0FvZ7IWl6ik8/Sjhi9TxMrYQBrLWWFUFNz0idA9eUankiINLg+C
- KIlJksLKi0+tg==
+ s=k20201202; t=1704955452;
+ bh=Yt2x1VIugdYVXsOxoBOVxcIohw/X1vEQrQchbterPrg=;
+ h=From:To:Cc:Subject:Date:From;
+ b=LJrCKw9ObJhB5WOPt9fG/KvCfAARHtMVBKRloB6IGXiC2c8QIuZaZqg3vLPBQcmif
+ l5Oya0vqJMNBwxbp3Aw3+lJUvgKF/Ns1UWShYNEdcBoLlK9s240rn8GpX0m55Axcnj
+ Negd12cyLVdZ587YXF2EpRJea/TU0uM+mQc263D+QYHwNwMVYO7rz4hupiCXThi7CM
+ GneEhT6fiFoA6Ke/1hd8cP9R9Ln6by10eQADUy/rIeSacYkKC9YdQslORNGfzDAn6c
+ ycUFU9kI/svDBz/4S7CKRo0GBOFOgry8oQRnpTUrfxS/BiQ4KnL8QoY67GJuqaAoqe
+ aRUatm4c8/5cw==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Thu, 11 Jan 2024 14:42:07 +0800
-Message-Id: <20240111064208.2969599-5-chao@kernel.org>
+Date: Thu, 11 Jan 2024 14:44:06 +0800
+Message-Id: <20240111064406.2970205-1-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240111064208.2969599-1-chao@kernel.org>
-References: <20240111064208.2969599-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1rNolz-000798-3M
-Subject: [f2fs-dev] [PATCH v4 5/6] f2fs: fix to remove unnecessary
- f2fs_bug_on() to avoid panic
+X-Headers-End: 1rNonb-0007Im-G7
+Subject: [f2fs-dev] [PATCH] f2fs: compress: fix to cover
+ f2fs_disable_compressed_file() w/ i_sem
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,32 +82,91 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-verify_blkaddr() will trigger panic once we inject fault into
-f2fs_is_valid_blkaddr(), fix to remove this unnecessary f2fs_bug_on().
+- f2fs_disable_compressed_file
+  - check inode_has_data
+					- f2fs_file_mmap
+					- mkwrite
+					 - f2fs_get_block_locked
+					 : update metadata in compressed
+					   inode's disk layout
+  - fi->i_flags &= ~F2FS_COMPR_FL
+  - clear_inode_flag(inode, FI_COMPRESSED_FILE);
 
-Fixes: 18792e64c86d ("f2fs: support fault injection for f2fs_is_valid_blkaddr()")
+we should use i_sem lock to prevent above race case.
+
+Meanwhile, this patch adds i_size check to restrict compress inode
+conversion condition.
+
+Fixes: 4c8ff7095bef ("f2fs: support data compression")
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/f2fs.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/f2fs/f2fs.h | 18 ++++++++++++++++--
+ fs/f2fs/file.c |  5 ++---
+ 2 files changed, 18 insertions(+), 5 deletions(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 69e71460a950..ab710bb6d8b3 100644
+index 74729db0b381..e2e0ca45f881 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -3470,11 +3470,9 @@ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
- static inline void verify_blkaddr(struct f2fs_sb_info *sbi,
- 					block_t blkaddr, int type)
- {
--	if (!f2fs_is_valid_blkaddr(sbi, blkaddr, type)) {
-+	if (!f2fs_is_valid_blkaddr(sbi, blkaddr, type))
- 		f2fs_err(sbi, "invalid blkaddr: %u, type: %d, run fsck to fix.",
- 			 blkaddr, type);
--		f2fs_bug_on(sbi, 1);
--	}
+@@ -4406,19 +4406,33 @@ static inline int set_compress_context(struct inode *inode)
+ #endif
  }
  
- static inline bool __is_valid_data_blkaddr(block_t blkaddr)
++static inline bool inode_has_data(struct inode *inode)
++{
++	return (S_ISREG(inode->i_mode) &&
++		(F2FS_HAS_BLOCKS(inode) || i_size_read(inode)));
++}
++
+ static inline bool f2fs_disable_compressed_file(struct inode *inode)
+ {
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 
+-	if (!f2fs_compressed_file(inode))
++	f2fs_down_write(&F2FS_I(inode)->i_sem);
++
++	if (!f2fs_compressed_file(inode)) {
++		f2fs_up_write(&F2FS_I(inode)->i_sem);
+ 		return true;
+-	if (S_ISREG(inode->i_mode) && F2FS_HAS_BLOCKS(inode))
++	}
++	if (f2fs_is_mmap_file(inode) || inode_has_data(inode)) {
++		f2fs_up_write(&F2FS_I(inode)->i_sem);
+ 		return false;
++	}
+ 
+ 	fi->i_flags &= ~F2FS_COMPR_FL;
+ 	stat_dec_compr_inode(inode);
+ 	clear_inode_flag(inode, FI_COMPRESSED_FILE);
+ 	f2fs_mark_inode_dirty_sync(inode, true);
++
++	f2fs_up_write(&F2FS_I(inode)->i_sem);
+ 	return true;
+ }
+ 
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 0e4c871d6aed..5e5df234eb92 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1926,8 +1926,7 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+ 
+ 			f2fs_down_write(&F2FS_I(inode)->i_sem);
+ 			if (!f2fs_may_compress(inode) ||
+-					(S_ISREG(inode->i_mode) &&
+-					F2FS_HAS_BLOCKS(inode))) {
++					inode_has_data(inode)) {
+ 				f2fs_up_write(&F2FS_I(inode)->i_sem);
+ 				return -EINVAL;
+ 			}
+@@ -4011,7 +4010,7 @@ static int f2fs_ioc_set_compress_option(struct file *filp, unsigned long arg)
+ 		goto out;
+ 	}
+ 
+-	if (F2FS_HAS_BLOCKS(inode)) {
++	if (inode_has_data(inode)) {
+ 		ret = -EFBIG;
+ 		goto out;
+ 	}
 -- 
 2.40.1
 
