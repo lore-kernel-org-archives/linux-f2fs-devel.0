@@ -4,69 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 45F0BC4707C
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 13 Jan 2024 03:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2046BC4707B
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 13 Jan 2024 06:38:20 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rOV9V-0005vG-SJ;
-	Sat, 13 Jan 2024 03:57:45 +0000
+	id 1rOXer-0007Zn-Ko;
+	Sat, 13 Jan 2024 06:38:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rOV9U-0005v4-BE
- for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 13 Jan 2024 03:57:44 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <3zC-iZQkbAOcbhiTJUUNaJYYRM.PXXPUNdbNaLXWcNWc.LXV@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
+ id 1rOXep-0007Zg-HN for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 13 Jan 2024 06:38:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:In-Reply-To
+ :Date:MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZS356O51aGJ1N2N0Prl+HSBzuRtRUv+MzcWcawjdxZM=; b=YDNhd6cl5yi0oKut+seUPkNBGk
- w4J5Kx8qqwdYpy6Lg+iHkqtjxzGzMPOlYCj2v1/Y54J/328UWYLeJyZPknrD163whk9XkwT96TMvi
- sEfxghXa5yzoBJFxN5mhhmSwjGdcq/7FD38gqyolPLZJ8p8FmkkkEoE2dGI16GcQ1vcY=;
+ bh=C/sGOHyENyQ7i0bMTzfDcnKoPl21TmOJ32DC/X68Sl4=; b=hW/KdS8UbiKLNg57Frs1DiebV7
+ D7QwSjWcrxs8fRcI74FnhQImCU+WNjbJm7vazPAJPOVYPePWP7EuTn5tLYE4TsENkV2ojt5FeaPOG
+ uszBxeoDEDaWAShAKAhOTa3BV/aN3VsX7aNDDHylcc1emydWbABGDhyrPEJaqkF2Njfw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=ZS356O51aGJ1N2N0Prl+HSBzuRtRUv+MzcWcawjdxZM=; b=ZPNRywxjvAxq3U83AY8Fw/LvQ1
- NRHuVQyUeSq2JPEm2YJppsTPyi18jSJMANHL4UjhmWjVLPnzjKvEm50hD/zWPWr2uXX2ITBioSsIB
- 1/zJUOSPztCmZ3GoLB3csbMA4JZWHaSUofF+P2gE74Lc5FxwOdw6xRwQz7nibg5Yd1S4=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ h=Content-Type:To:From:Subject:Message-ID:In-Reply-To:Date:MIME-Version:
+ Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=C/sGOHyENyQ7i0bMTzfDcnKoPl21TmOJ32DC/X68Sl4=; b=a
+ 3AN6bSs1KEjaBLWXtWONNrHvn4l9YmAsxcanmXq6f3nN9ahe9yYKh9FwPLJnf2E5eS8AtmMoFbY4t
+ aTBnjNUP7LT5ihREB7CcS/5TvG03VEqf2JIko+2CYyrGWu7G0yXYWD/rvlyLAClSnR3hlu4rriwPp
+ xFBIH0U6CcgXjMQI=;
+Received: from mail-io1-f71.google.com ([209.85.166.71])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rOV9O-0003of-W6 for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 13 Jan 2024 03:57:44 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id CA782CE2591;
- Sat, 13 Jan 2024 03:57:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE14C43394;
- Sat, 13 Jan 2024 03:57:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1705118247;
- bh=V21gcWFsGMtYKh3R/2HUCTY5gVSXqKTY8pGHYmR5nmQ=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=OTua4APuYBGQcI6gnfTPP3KBgkVKWQ6SWD2lgqSxyiRBEG5BZaeBkQ3F0L7P92cSM
- tHHcHWW8taPdMUsxw+M+ThkKTIAafdB7v9X+5/l58zp1nIxpxGsMOyQBfiMmqPFbJ3
- 3GZthW7qPAUTz4ydI2mk3UyBfvP15B/x0Bzmy+PWKNgQi+ELpPG9xqKtm/TwDg52op
- XAzdPg/vTB64SMrDt04+o9tFzbdPVPcNnnd6OZV0ljKuw8kLHjcz/XcBLDn1gqHCxQ
- gi1+LeGKPwxHc+wvadWyxGBiyFeMbNtPRGQ+oCJxj2XTTVdsyHcUsCu+IwVis5hrcZ
- Yt9E3Zw1XmTdw==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Sat, 13 Jan 2024 03:41:30 +0800
-Message-Id: <20240112194132.25637-4-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240112194132.25637-1-chao@kernel.org>
-References: <20240112194132.25637-1-chao@kernel.org>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1rOXeo-0000up-Au for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 13 Jan 2024 06:38:15 +0000
+Received: by mail-io1-f71.google.com with SMTP id
+ ca18e2360f4ac-7bc3dd97ddaso646058239f.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 12 Jan 2024 22:38:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1705127884; x=1705732684;
+ h=to:from:subject:message-id:in-reply-to:date:mime-version
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=C/sGOHyENyQ7i0bMTzfDcnKoPl21TmOJ32DC/X68Sl4=;
+ b=meOp+hXbV/2hM6hjmcf6bAjhW9wmxO4rrn+l549Yoog300NqLudDXhs/G09eaD4j9f
+ uJBEinSsfOvvWn54luxs78ekPvKjpDUtZGa6ahLATzwrh4xGYrOA/nMO5kgR7FxXyOB7
+ +1g9cYXLVMYZqwk0EQARtsK3Y99/DFNkzL6iwAllzGHv7dYDkLggarjNfz63TOpouhqe
+ shrjM8f3gHZrP5ZnSY282xW5wfWz6vhKxPzj3EyHVYrnYbWcV5drmv1JE18tCrPJqLU2
+ XDehK5+31d/XofZGZ1LXsLQS1UgixRTVFeMSJqQcgL2nf8Jnt0Q3sIk9dw99rgVhkP4V
+ 9ktA==
+X-Gm-Message-State: AOJu0YwO/On1xizj0de/ImRBCGHgMsbjuYHNAUZ0r4Dyg3PtOQavy9/B
+ YLexsFfSjxvkjOE51kLReYKm9FlTYelRwCkQP4dbElzSp86I
+X-Google-Smtp-Source: AGHT+IGNM+FdG1AbyUYcw6kxC9URY0S3T+KJqSYkHLA8+jx0v5cOSRLiGSC4NszsTS++2Ts56IlniAXgBLCjDqqD3qjYpWr6CSAN
 MIME-Version: 1.0
-X-Headers-End: 1rOV9O-0003of-W6
-Subject: [f2fs-dev] [PATCH v5 4/6] f2fs: compress: fix to avoid
- inconsistence bewteen i_blocks and dnode
+X-Received: by 2002:a05:6638:130a:b0:46d:1c7:3b12 with SMTP id
+ r10-20020a056638130a00b0046d01c73b12mr146543jad.5.1705127884248; Fri, 12 Jan
+ 2024 22:38:04 -0800 (PST)
+Date: Fri, 12 Jan 2024 22:38:04 -0800
+In-Reply-To: <0000000000006cb174060ec34502@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d65af9060ece0537@google.com>
+From: syzbot <syzbot+8f477ac014ff5b32d81f@syzkaller.appspotmail.com>
+To: chao@kernel.org, ebiggers@google.com, ebiggers@kernel.org, 
+ hdanton@sina.com, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+X-Headers-End: 1rOXeo-0000up-Au
+Subject: Re: [f2fs-dev] [syzbot] [f2fs?] KASAN: slab-use-after-free Read in
+ kill_f2fs_super
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,147 +87,32 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In reserve_compress_blocks(), we update blkaddrs of dnode in prior to
-inc_valid_block_count(), it may cause inconsistent status bewteen
-i_blocks and blkaddrs once inc_valid_block_count() fails.
+syzbot has bisected this issue to:
 
-To fix this issue, it needs to reverse their invoking order.
+commit 275dca4630c165edea9abe27113766bc1173f878
+Author: Eric Biggers <ebiggers@google.com>
+Date:   Wed Dec 27 17:14:28 2023 +0000
 
-Fixes: c75488fb4d82 ("f2fs: introduce F2FS_IOC_RESERVE_COMPRESS_BLOCKS")
-Reviewed-by: Daeho Jeong <daehojeong@google.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/data.c    |  5 +++--
- fs/f2fs/f2fs.h    |  7 ++++++-
- fs/f2fs/file.c    | 26 ++++++++++++++------------
- fs/f2fs/segment.c |  2 +-
- 4 files changed, 24 insertions(+), 16 deletions(-)
+    f2fs: move release of block devices to after kill_block_super()
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b171a9980f6a..8d2ace723310 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1219,7 +1219,8 @@ int f2fs_reserve_new_blocks(struct dnode_of_data *dn, blkcnt_t count)
- 
- 	if (unlikely(is_inode_flag_set(dn->inode, FI_NO_ALLOC)))
- 		return -EPERM;
--	if (unlikely((err = inc_valid_block_count(sbi, dn->inode, &count))))
-+	err = inc_valid_block_count(sbi, dn->inode, &count, true);
-+	if (unlikely(err))
- 		return err;
- 
- 	trace_f2fs_reserve_new_blocks(dn->inode, dn->nid,
-@@ -1476,7 +1477,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
- 
- 	dn->data_blkaddr = f2fs_data_blkaddr(dn);
- 	if (dn->data_blkaddr == NULL_ADDR) {
--		err = inc_valid_block_count(sbi, dn->inode, &count);
-+		err = inc_valid_block_count(sbi, dn->inode, &count, true);
- 		if (unlikely(err))
- 			return err;
- 	}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 50f3d546ded8..69e71460a950 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2252,7 +2252,7 @@ static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
- 
- static inline void f2fs_i_blocks_write(struct inode *, block_t, bool, bool);
- static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
--				 struct inode *inode, blkcnt_t *count)
-+				 struct inode *inode, blkcnt_t *count, bool partial)
- {
- 	blkcnt_t diff = 0, release = 0;
- 	block_t avail_user_block_count;
-@@ -2292,6 +2292,11 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 			avail_user_block_count = 0;
- 	}
- 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
-+		if (!partial) {
-+			spin_unlock(&sbi->stat_lock);
-+			goto enospc;
-+		}
-+
- 		diff = sbi->total_valid_block_count - avail_user_block_count;
- 		if (diff > *count)
- 			diff = *count;
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 4aef2310395f..a02c530c7e4b 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3614,14 +3614,16 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
- 		blkcnt_t reserved;
- 		int ret;
- 
--		for (i = 0; i < cluster_size; i++, dn->ofs_in_node++) {
--			blkaddr = f2fs_data_blkaddr(dn);
-+		for (i = 0; i < cluster_size; i++) {
-+			blkaddr = data_blkaddr(dn->inode, dn->node_page,
-+						dn->ofs_in_node + i);
- 
- 			if (i == 0) {
--				if (blkaddr == COMPRESS_ADDR)
--					continue;
--				dn->ofs_in_node += cluster_size;
--				goto next;
-+				if (blkaddr != COMPRESS_ADDR) {
-+					dn->ofs_in_node += cluster_size;
-+					goto next;
-+				}
-+				continue;
- 			}
- 
- 			/*
-@@ -3634,8 +3636,6 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
- 				compr_blocks++;
- 				continue;
- 			}
--
--			f2fs_set_data_blkaddr(dn, NEW_ADDR);
- 		}
- 
- 		reserved = cluster_size - compr_blocks;
-@@ -3644,12 +3644,14 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
- 		if (reserved == 1)
- 			goto next;
- 
--		ret = inc_valid_block_count(sbi, dn->inode, &reserved);
--		if (ret)
-+		ret = inc_valid_block_count(sbi, dn->inode, &reserved, false);
-+		if (unlikely(ret))
- 			return ret;
- 
--		if (reserved != cluster_size - compr_blocks)
--			return -ENOSPC;
-+		for (i = 0; i < cluster_size; i++, dn->ofs_in_node++) {
-+			if (f2fs_data_blkaddr(dn) == NULL_ADDR)
-+				f2fs_set_data_blkaddr(dn, NEW_ADDR);
-+		}
- 
- 		f2fs_i_compr_blocks_update(dn->inode, compr_blocks, true);
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 4c8836ded90f..ef5b3848426b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -248,7 +248,7 @@ static int __replace_atomic_write_block(struct inode *inode, pgoff_t index,
- 	} else {
- 		blkcnt_t count = 1;
- 
--		err = inc_valid_block_count(sbi, inode, &count);
-+		err = inc_valid_block_count(sbi, inode, &count, true);
- 		if (err) {
- 			f2fs_put_dnode(&dn);
- 			return err;
--- 
-2.40.1
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16071613e80000
+start commit:   70d201a40823 Merge tag 'f2fs-for-6.8-rc1' of git://git.ker..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15071613e80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11071613e80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4607bc15d1c4bb90
+dashboard link: https://syzkaller.appspot.com/bug?extid=8f477ac014ff5b32d81f
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=112b660be80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c1df5de80000
 
+Reported-by: syzbot+8f477ac014ff5b32d81f@syzkaller.appspotmail.com
+Fixes: 275dca4630c1 ("f2fs: move release of block devices to after kill_block_super()")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 
 _______________________________________________
