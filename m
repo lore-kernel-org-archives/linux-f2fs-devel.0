@@ -4,67 +4,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0430AC47077
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Jan 2024 14:24:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 95A74C47077
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Jan 2024 14:25:38 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rPkMl-00068g-9E;
-	Tue, 16 Jan 2024 14:24:35 +0000
+	id 1rPkNl-0004Il-Uq;
+	Tue, 16 Jan 2024 14:25:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rPkMh-00068W-PJ
+ (envelope-from <bugzilla-daemon@kernel.org>) id 1rPkNk-0004If-1S
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 16 Jan 2024 14:24:32 +0000
+ Tue, 16 Jan 2024 14:25:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1+8e+VhLSXmkdEXvwI7ZG0C5ZaayLAYYGE5p3kIL0y0=; b=bqhZecw0Bqic7PZ7NG14HRnZV+
- 3to9Orm5n20GBjYt1rFMUWWQIiCnoAHX5RoETGGa5wl2E/Dwcy+Lrx7/mvMCv6bgHpJbRp+z7zEFU
- iE7gLrWoIvZrLQOwakngMGW5YVnpm5Q0gykbq8z0VWj8ZAWft7ajSW6/e1bC47hR2hm4=;
+ bh=FR7MdUpW2vLZfOLxz7bJ6+fe6I6EEA6LqKX0tgQIM4g=; b=hQGSEnIuK+ZC5+JS6zJGevPQuS
+ C/sWqx2KtJ0EFl4AcR6DIh8sJwQJYFlwG136zLL/E3mMR8A6FZyOGNh7tm4D39yuFaWu/5v0Yc4aP
+ GNe3XdLmgQlbxchTTAwuoL4nbFSzCqm2DY91M9egceJg9yjFLy8mfZLkDW7Hm86SmGw0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=1+8e+VhLSXmkdEXvwI7ZG0C5ZaayLAYYGE5p3kIL0y0=; b=n
- MpkB1ebhxFG7z6ZIP4BELOK4CQZp1NnFqoXyLmgiyW07okK1Uo/vx8jadSBa0P6PfJ/+jL5BpNdxt
- cJVMI8wjuJ5xR0J09DaaXQspt5TSNVqeQSRT6Mg5Dn4LzrzgJoIv2/xubv4wkBJUec9TAlya6+1qe
- atfwCNHNrG/+8WQ4=;
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=FR7MdUpW2vLZfOLxz7bJ6+fe6I6EEA6LqKX0tgQIM4g=; b=Zoic27tJkCfTHyc+9NARcIWp7m
+ QiXSK+tgK6ZfZvSjzxbChMze0P2hEDSf5whDZXLQENlt1oHX2kyZSQaS6Q3skss2pSmFDgZPMkmX+
+ 6paEyBK7VsJjsawIQq5owW9fwbLXRCMDyy35Sl+4z2xHPbAPJPjrYygFZZCcAmgMkKq0=;
 Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rPkMg-0001ih-RA for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 16 Jan 2024 14:24:32 +0000
+ id 1rPkNi-0001om-LA for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 16 Jan 2024 14:25:36 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id F3753CE19B2;
- Tue, 16 Jan 2024 14:24:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDB3C433F1;
- Tue, 16 Jan 2024 14:24:09 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id 32865CE19B3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 16 Jan 2024 14:25:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A1919C43390
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 16 Jan 2024 14:25:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1705415050;
- bh=VZJTPGfILjf+cNF1UZaQjhGTPWGf48SxG/O+ibMRJvo=;
- h=From:To:Cc:Subject:Date:From;
- b=Hxgfm2FavourMrxlmO1xyRBDpXaraB/ZGD9ZmOaWqJ4GGwc9F7cq4YMFgGzAdjH8B
- oiygj/hJRapv2rvxDbxBSr6hQdGCcQeRPbJzkS4Tnwl4rwV0iR8lLBD5vktI7JGJsK
- He7O04aTDJWykYDSAdzk58Xh6zMJNRLDyzCVbyAgOS/Yyn3CqrUJymASvRrKnMG51m
- a+qP+kDFJmXK65/uS11ZQycSjIv+DIwW0h7BF1hOC+gSfCpLZEHKbuFhXa+t5iWXbP
- 6biSI4aWNg1ps/06XReoDgz+qUs3vCJ82tGVothM4ar/aIecYA/rd4xFdHWYxf3hYf
- a1uV1oiAHBC2g==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Mon, 15 Jan 2024 02:21:18 +0800
-Message-Id: <20240114182118.38596-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ s=k20201202; t=1705415126;
+ bh=BjdBDYogHS4TSH1VftptHUqeo+wKE6zHV+rrFNTRVDk=;
+ h=From:To:Subject:Date:In-Reply-To:References:From;
+ b=oxYoz20F8J9h7WVvaanfFMTHHhZevMenCSZUFN7OEOQcRYRl6adGnG3ayXmDqE7Aj
+ DZaf2q6+H4P+Q7ZV4rfZy/OzG1/oJCXElx+qTes4OJ0DKp+D5HIGRU4hhIgiCDAtB1
+ NI1Kv89PDFsSspnWxB4xm3TLW58o3hQEkEHYbKf7JHl1680VeaEOp/6lk6el6nQhIQ
+ Y6R9wk8NOQQ/57vpMttp6e6CrHgeSOI79yWBoGzk9XVjP6D0lK969Ag4WOjJyoB2Qv
+ Cf+azAoi9mCRBjo1h5PCpjvkN1IBof7mF2Jfkcc5jVGg3gY2mbPYBHWD3hzM/kvwrC
+ 2/m2jEdDu2yyg==
+Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
+ from userid 48) id 8EAE1C53BCD; Tue, 16 Jan 2024 14:25:26 +0000 (UTC)
+From: bugzilla-daemon@kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Tue, 16 Jan 2024 14:25:26 +0000
+X-Bugzilla-Reason: None
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Product: File System
+X-Bugzilla-Component: f2fs
+X-Bugzilla-Version: 2.5
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: chao@kernel.org
+X-Bugzilla-Status: ASSIGNED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: P3
+X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_status cc
+Message-ID: <bug-218349-202145-14p84pDOs8@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-218349-202145@https.bugzilla.kernel.org/>
+References: <bug-218349-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-Headers-End: 1rPkMg-0001ih-RA
-Subject: [f2fs-dev] [PATCH] fsck.f2fs: fix to avoid assert in
- do_record_fsync_data()
+X-Headers-End: 1rPkNi-0001om-LA
+Subject: [f2fs-dev] [Bug 218349] f2fs partitions corrupted during power
+ failures and cannot be fixed with fsck.
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,77 +98,29 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Kane Ch'in <qinfd2023@lzu.edu.cn>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-As Kane Ch'in reported in bugzilla [1]
+https://bugzilla.kernel.org/show_bug.cgi?id=218349
 
-I am using some Debian VMs with f2fs root partition for development.
-My host machine crashed for some reason and this caused the f2fs
-partitions in the VMs to become corrupted. I tried to boot from Debian
-Live and repair the partitions but failed.
+Chao Yu (chao@kernel.org) changed:
 
-do_record_fsync_data: [node] ino = 24573, nid = 0, blkaddr = 2063580
-recover_data: ino = 24573, nid = 0, recorded = 0, err = 0
-do_record_fsync_data: [node] ino = 471286, nid = 0, blkaddr = 2063581
-recover_data: ino = 471286, nid = 0, recorded = 0, err = 0
-[ASSERT] (do_record_fsync_data:3475) 0
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |ASSIGNED
+                 CC|                            |chao@kernel.org
 
-During do_record_fsync_data(), if dnode in warm node chain is valid in
-SIT table, it's better to continue checking rather than triggering
-assert().
+--- Comment #1 from Chao Yu (chao@kernel.org) ---
+Can you please try below patch?
 
-[1] https://bugzilla.kernel.org/show_bug.cgi?id=218349
+https://git.kernel.org/pub/scm/linux/kernel/git/chao/f2fs-tools.git/commit/?h=dev-test&id=20678a083d967948f3eeac6a61c17f691addaccd
 
-Reported-by: Kane Ch'in <qinfd2023@lzu.edu.cn>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fsck/mount.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 30c6228..345556d 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -3811,14 +3811,11 @@ static int do_record_fsync_data(struct f2fs_sb_info *sbi,
- 	se = get_seg_entry(sbi, segno);
- 	offset = OFFSET_IN_SEG(sbi, blkaddr);
- 
--	if (f2fs_test_bit(offset, (char *)se->cur_valid_map)) {
--		ASSERT(0);
--		return -1;
--	}
--	if (f2fs_test_bit(offset, (char *)se->ckpt_valid_map)) {
--		ASSERT(0);
--		return -1;
--	}
-+	if (f2fs_test_bit(offset, (char *)se->cur_valid_map))
-+		return 1;
-+
-+	if (f2fs_test_bit(offset, (char *)se->ckpt_valid_map))
-+		return 1;
- 
- 	if (!se->ckpt_valid_blocks)
- 		se->ckpt_type = CURSEG_WARM_NODE;
-@@ -3912,8 +3909,11 @@ static int traverse_dnodes(struct f2fs_sb_info *sbi,
- 			goto next;
- 
- 		err = do_record_fsync_data(sbi, node_blk, blkaddr);
--		if (err)
-+		if (err) {
-+			if (err > 0)
-+				err = 0;
- 			break;
-+		}
- 
- 		if (entry->blkaddr == blkaddr)
- 			del_fsync_inode(entry);
 -- 
-2.40.1
+You may reply to this email to add a comment.
 
-
+You are receiving this mail because:
+You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
