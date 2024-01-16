@@ -4,71 +4,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3FA07C47077
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Jan 2024 19:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4816AC47077
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Jan 2024 21:58:46 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rPohp-0002AJ-Pv;
-	Tue, 16 Jan 2024 19:02:37 +0000
+	id 1rPrSG-0002zw-Kr;
+	Tue, 16 Jan 2024 21:58:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rPohm-0002AA-CQ
+ (envelope-from <daeho43@gmail.com>) id 1rPrSC-0002zp-Pw
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 16 Jan 2024 19:02:34 +0000
+ Tue, 16 Jan 2024 21:58:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zpAXod8D/xRXm9/3ApCAtk70KL4OPlTyLwW8+G588SE=; b=lZcH+qiCktA4y4HsAZ4JXdPOOv
- 3XfWHNbQoK32rs1rCPf0ZCkDvWNplISyocl00YdTFQcsPLnDYFcnWhC/wKR5fjZdUiqkMQGmDXCLG
- UujB3qUkbAboClMXZg6IJoynNQnrduHyUL6c3X14e914QrS5IiNzpnmSr3pxVzUb2kL8=;
+ bh=UM17XEtXwoJG5qURPoDZ6ip2BPJ/BbKfK3ArAY10wg4=; b=D2LciipIJ7xpWB8914xCyYM4vt
+ Da9MtXu8QZysUMbed6vjfWPBpaV8JJfX+2zafavO0twmej1gT6WStqmOesSUFVzZn/lJR0YGiiRTv
+ 9PcdvRJpzuNbAaFBzvvlOftgL+p6BDkOpNYi+YAO8rYZphDxUCfAfS8NlKpkY1DphCcA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zpAXod8D/xRXm9/3ApCAtk70KL4OPlTyLwW8+G588SE=; b=imOLB6XX3kKVB1cHMglNZxcQMs
- 5OYh2WdhlLZysm37ZUJIcyW8wh0crpK5XXgaAvZKLV7cmx5D2WosCxKinO9cn56UibfCiG78snRAN
- 8xtStsG6RNdibVaceRlw2JpP9Hza47cQnujeBiPxR+3pH/vp/5Tt0RxPWFVXSj8xA8W8=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ ;
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=UM17XEtXwoJG5qURPoDZ6ip2BPJ/BbKfK3ArAY10wg4=; b=dUaaPfyDXajWlF3rv/ON4Ar9QG
+ TEHSAEIsZSejz5SA3ZZJ6awswx+uJ+KqNrooEyDZnvCyiWGHTqv0y+zzR/K8SifFdgst/yG4nLpLr
+ bMXhxs8163MeHFQPyTtXZ/TJWAfsyUoSPTcRrsyEnVg8NxlYdGD5WULDUbJ9QBVX2LGg=;
+Received: from mail-vk1-f179.google.com ([209.85.221.179])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rPohj-0000as-0L for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 16 Jan 2024 19:02:32 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id F0857CE1ADA;
- Tue, 16 Jan 2024 19:02:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 04F44C433A6;
- Tue, 16 Jan 2024 19:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1705431739;
- bh=B7KdqtNAr+YKsv310derD9kBElqfPUpwakSS4/1H6EE=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=fTyE/atvgWNfwbRtGAK9G4fT+t48V9auXl/dM9UBC1XrAORjlIi5Sk5uxCY3mFft3
- W12nOB+vt1pk5Y5eQJ7cHfFOmJkPJvsHoFOtfCATr1XDymAjtZjtVYC3E2dIzth+Qy
- a/qruXUyLG6BjMYwosh2gTkz6FHXILkeyFqWgyx3t/FxkHad7dz59tKTRafdDZjRJk
- AGM0FQc2faIf3FMg3SordWsvUL52JNTkbE8fbXumy3MdLuYzhyjFm7S2YwlFRNgejh
- I/IEI9/XBi42QIjbpG5427aZzPNdGx4KjJLsJdGw6CTUT/pyMBXvGbG6FHIzLMYGxz
- y9NrZ/egbUVBA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- D51F4D8C9A0; Tue, 16 Jan 2024 19:02:18 +0000 (UTC)
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1rPrS6-0000o7-W8 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 16 Jan 2024 21:58:40 +0000
+Received: by mail-vk1-f179.google.com with SMTP id
+ 71dfb90a1353d-49618e09f16so1976538e0c.2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 16 Jan 2024 13:58:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1705442310; x=1706047110; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=UM17XEtXwoJG5qURPoDZ6ip2BPJ/BbKfK3ArAY10wg4=;
+ b=P4M7mq540ltHgFn6URY+2GdRw0122/X7e+HUnqLvJcIsrzluk2H1UHJ4iK6cfI7xlD
+ Scl/laWYm2mpErKJ/+5S8TJgbbeE+L1VEtmqddNIgCZDG1+gwzrS1m/37MIbLWwa5Nnh
+ 21vB47r8L8qVRjwtueWgbjIiZgswAomtOt8xFCIInlYyfeoxHrBjI65hht9P10IMFPID
+ TwyjqPukwC6ZL5BiaXJzvT/jigZ5QbH0Ep5Qk0ohvAk018DvpvSfYhEfyjDBfkIhnpit
+ zVMmvUZIc8L1T5uyX1gGAK2ovKRPyfJKPtD9EmSi08mBCnxsuDuAtrbOJsts2D2uolRp
+ 5gow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1705442310; x=1706047110;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=UM17XEtXwoJG5qURPoDZ6ip2BPJ/BbKfK3ArAY10wg4=;
+ b=KaZA8RzzzTPRMM9ahK5z4LGFr67/Tzd1rl5nrcGyyiilOk89yuKM3XcA91tykD+Z7A
+ ixTadi44hHNw+pTbEJRIAB6Pq8ycCnsPmZDhCE9nXH9HZQ98H28lPS2W8L1gd12tr8wI
+ bXkeiSyGc1LCqDIR83pWVZ4IoL5jskyqbCo6VrQn/NXn9041O6tzobwbB3nS7a8vtUbY
+ 0aoPo2rbW9GCf0mb3UXpEqQuKysgrrZnXd8HiLsSxcXrb9KCHeMAdC26TxyWHQuSFaBW
+ Bi0qo/6kwR+fw6+7Xj3eAeB29xAmL+9vNL/g8KY2S1S8a64n/rbGMpLXBiADSKO+4J/i
+ OaEg==
+X-Gm-Message-State: AOJu0YyhpHTZWvfEKjUGCZlctfGt/2bUGOkaH4wJyJ03BRZMBjm/njEz
+ llT0NA6tVfskg+xVOMepywLHbEpti3S/kxK9ku0=
+X-Google-Smtp-Source: AGHT+IHNq7SRiGzII1ZMvV3Nor4XcBcLaLAvx0JhsT11NjNzBhH7AqPeJOWPQwNrJEaYg/ib3lul2W01EuURQx9+MP0=
+X-Received: by 2002:ac5:c5d7:0:b0:4b7:45b7:63fc with SMTP id
+ g23-20020ac5c5d7000000b004b745b763fcmr3079766vkl.33.1705442310109; Tue, 16
+ Jan 2024 13:58:30 -0800 (PST)
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <170543173886.30188.17408872425977441156.git-patchwork-notify@kernel.org>
-Date: Tue, 16 Jan 2024 19:02:18 +0000
-References: <20230816050803.15660-1-krisman@suse.de>
-In-Reply-To: <20230816050803.15660-1-krisman@suse.de>
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-X-Headers-End: 1rPohj-0000as-0L
-Subject: Re: [f2fs-dev] [PATCH v6 0/9] Support negative dentries on
- case-insensitive ext4 and f2fs
+References: <20240116141138.1245-1-qwjhust@gmail.com>
+In-Reply-To: <20240116141138.1245-1-qwjhust@gmail.com>
+From: Daeho Jeong <daeho43@gmail.com>
+Date: Tue, 16 Jan 2024 13:58:18 -0800
+Message-ID: <CACOAw_yL7fLmjLkK29yEb3hgTqoDO2hntOX5LMHmWjZWWix1ig@mail.gmail.com>
+To: Wenjie Qi <qwjhust@gmail.com>
+X-Headers-End: 1rPrS6-0000o7-W8
+Subject: Re: [f2fs-dev] [PATCH v1] f2fs: fix NULL pointer dereference in
+ f2fs_submit_page_write()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,60 +96,60 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: brauner@kernel.org, tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net,
- ebiggers@kernel.org, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
- jaegeuk@kernel.org, linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, hustqwj@hust.edu.cn,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
-
-This series was applied to jaegeuk/f2fs.git (dev)
-by Gabriel Krisman Bertazi <krisman@suse.de>:
-
-On Wed, 16 Aug 2023 01:07:54 -0400 you wrote:
-> Hi,
-> 
-> This is v6 of the negative dentry on case-insensitive directories.
-> Thanks Eric for the review of the last iteration.  This version
-> drops the patch to expose the helper to check casefolding directories,
-> since it is not necessary in ecryptfs and it might be going away.  It
-> also addresses some documentation details, fix a build bot error and
-> simplifies the commit messages.  See the changelog in each patch for
-> more details.
-> 
-> [...]
-
-Here is the summary with links:
-  - [f2fs-dev,v6,1/9] ecryptfs: Reject casefold directory inodes
-    https://git.kernel.org/jaegeuk/f2fs/c/cd72c7ef5fed
-  - [f2fs-dev,v6,2/9] 9p: Split ->weak_revalidate from ->revalidate
-    (no matching commit)
-  - [f2fs-dev,v6,3/9] fs: Expose name under lookup to d_revalidate hooks
-    (no matching commit)
-  - [f2fs-dev,v6,4/9] fs: Add DCACHE_CASEFOLDED_NAME flag
-    (no matching commit)
-  - [f2fs-dev,v6,5/9] libfs: Validate negative dentries in case-insensitive directories
-    (no matching commit)
-  - [f2fs-dev,v6,6/9] libfs: Chain encryption checks after case-insensitive revalidation
-    (no matching commit)
-  - [f2fs-dev,v6,7/9] libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
-    (no matching commit)
-  - [f2fs-dev,v6,8/9] ext4: Enable negative dentries on case-insensitive lookup
-    (no matching commit)
-  - [f2fs-dev,v6,9/9] f2fs: Enable negative dentries on case-insensitive lookup
-    (no matching commit)
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gVHVlLCBKYW4gMTYsIDIwMjQgYXQgNjoxM+KAr0FNIFdlbmppZSBRaSA8cXdqaHVzdEBnbWFp
+bC5jb20+IHdyb3RlOgo+Cj4gQlVHOiBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlLCBh
+ZGRyZXNzOiAwMDAwMDAwMDAwMDAwMDE0Cj4gUklQOiAwMDEwOmYyZnNfc3VibWl0X3BhZ2Vfd3Jp
+dGUrMHg2Y2YvMHg3ODAgW2YyZnNdCj4gQ2FsbCBUcmFjZToKPiA8VEFTSz4KPiA/IHNob3dfcmVn
+cysweDZlLzB4ODAKPiA/IF9fZGllKzB4MjkvMHg3MAo+ID8gcGFnZV9mYXVsdF9vb3BzKzB4MTU0
+LzB4NGEwCj4gPyBwcmJfcmVhZF92YWxpZCsweDIwLzB4MzAKPiA/IF9faXJxX3dvcmtfcXVldWVf
+bG9jYWwrMHgzOS8weGQwCj4gPyBpcnFfd29ya19xdWV1ZSsweDM2LzB4NzAKPiA/IGRvX3VzZXJf
+YWRkcl9mYXVsdCsweDMxNC8weDZjMAo+ID8gZXhjX3BhZ2VfZmF1bHQrMHg3ZC8weDE5MAo+ID8g
+YXNtX2V4Y19wYWdlX2ZhdWx0KzB4MmIvMHgzMAo+ID8gZjJmc19zdWJtaXRfcGFnZV93cml0ZSsw
+eDZjZi8weDc4MCBbZjJmc10KPiA/IGYyZnNfc3VibWl0X3BhZ2Vfd3JpdGUrMHg3MzYvMHg3ODAg
+W2YyZnNdCj4gZG9fd3JpdGVfcGFnZSsweDUwLzB4MTcwIFtmMmZzXQo+IGYyZnNfb3V0cGxhY2Vf
+d3JpdGVfZGF0YSsweDYxLzB4YjAgW2YyZnNdCj4gZjJmc19kb193cml0ZV9kYXRhX3BhZ2UrMHgz
+ZjgvMHg2NjAgW2YyZnNdCj4gZjJmc193cml0ZV9zaW5nbGVfZGF0YV9wYWdlKzB4NWJiLzB4N2Ew
+IFtmMmZzXQo+IGYyZnNfd3JpdGVfY2FjaGVfcGFnZXMrMHgzZGEvMHhiZTAgW2YyZnNdCj4gLi4u
+Cj4gSXQgaXMgcG9zc2libGUgdGhhdCBvdGhlciB0aHJlYWRzIGhhdmUgYWRkZWQgdGhpcyBmaW8g
+dG8gaW8tPmJpbwo+IGFuZCBzdWJtaXR0ZWQgdGhlIGlvLT5iaW8gYmVmb3JlIGVudGVyaW5nIGYy
+ZnNfc3VibWl0X3BhZ2Vfd3JpdGUoKS4KPiBBdCB0aGlzIHBvaW50IGlvLT5iaW8gPSBOVUxMLgo+
+IElmIGlzX2VuZF96b25lX2Jsa2FkZHIoc2JpLCBmaW8tPm5ld19ibGthZGRyKSBvZiB0aGlzIGZp
+byBpcyB0cnVlLAo+IHRoZW4gYW4gTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNlIGVycm9yIG9jY3Vy
+cyBhdCBiaW9fZ2V0KGlvLT5iaW8pLgo+IFRoZSBvcmlnaW5hbCBjb2RlIGZvciBkZXRlcm1pbmlu
+ZyB6b25lIGVuZCB3YXMgYWZ0ZXIgIm91dDoiLAo+IHdoaWNoIHdvdWxkIGhhdmUgbWlzc2VkIHNv
+bWUgZmlvIHdobyBpcyB6b25lIGVuZC4gSSd2ZSBtb3ZlZAo+ICB0aGlzIGNvZGUgYmVmb3JlICJz
+a2lwOiIgdG8gbWFrZSBzdXJlIGl0J3MgZG9uZSBmb3IgZWFjaCBmaW8uCj4KPiBTaWduZWQtb2Zm
+LWJ5OiBXZW5qaWUgUWkgPHF3amh1c3RAZ21haWwuY29tPgo+IC0tLQo+ICBmcy9mMmZzL2RhdGEu
+YyB8IDggKysrKy0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgNCBkZWxl
+dGlvbnMoLSkKPgo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2RhdGEuYyBiL2ZzL2YyZnMvZGF0YS5j
+Cj4gaW5kZXggZGNlOGRlZmRmNGM3Li40ZjQ0NTkwNmRiOGIgMTAwNjQ0Cj4gLS0tIGEvZnMvZjJm
+cy9kYXRhLmMKPiArKysgYi9mcy9mMmZzL2RhdGEuYwo+IEBAIC0xMDgwLDEwICsxMDgwLDYgQEAg
+dm9pZCBmMmZzX3N1Ym1pdF9wYWdlX3dyaXRlKHN0cnVjdCBmMmZzX2lvX2luZm8gKmZpbykKPiAg
+ICAgICAgIGlvLT5sYXN0X2Jsb2NrX2luX2JpbyA9IGZpby0+bmV3X2Jsa2FkZHI7Cj4KPiAgICAg
+ICAgIHRyYWNlX2YyZnNfc3VibWl0X3BhZ2Vfd3JpdGUoZmlvLT5wYWdlLCBmaW8pOwo+IC1za2lw
+Ogo+IC0gICAgICAgaWYgKGZpby0+aW5fbGlzdCkKPiAtICAgICAgICAgICAgICAgZ290byBuZXh0
+Owo+IC1vdXQ6Cj4gICNpZmRlZiBDT05GSUdfQkxLX0RFVl9aT05FRAo+ICAgICAgICAgaWYgKGYy
+ZnNfc2JfaGFzX2Jsa3pvbmVkKHNiaSkgJiYgYnR5cGUgPCBNRVRBICYmCj4gICAgICAgICAgICAg
+ICAgICAgICAgICAgaXNfZW5kX3pvbmVfYmxrYWRkcihzYmksIGZpby0+bmV3X2Jsa2FkZHIpKSB7
+Cj4gQEAgLTEwOTYsNiArMTA5MiwxMCBAQCB2b2lkIGYyZnNfc3VibWl0X3BhZ2Vfd3JpdGUoc3Ry
+dWN0IGYyZnNfaW9faW5mbyAqZmlvKQo+ICAgICAgICAgICAgICAgICBfX3N1Ym1pdF9tZXJnZWRf
+YmlvKGlvKTsKPiAgICAgICAgIH0KPiAgI2VuZGlmCj4gK3NraXA6Cj4gKyAgICAgICBpZiAoZmlv
+LT5pbl9saXN0KQo+ICsgICAgICAgICAgICAgICBnb3RvIG5leHQ7Cj4gK291dDoKCkhvdyBhYm91
+dCBtb3Zpbmcgb25seSB0aGUgIm91dCIgbGFiZWwgaW5zdGVhZCBvZiB0aGUgd2hvbGUgYmxvY2sg
+ZnJvbQoic2tpcCIgdG8gIm91dCI/Cgo+ICAgICAgICAgaWYgKGlzX3NiaV9mbGFnX3NldChzYmks
+IFNCSV9JU19TSFVURE9XTikgfHwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICFm
+MmZzX2lzX2NoZWNrcG9pbnRfcmVhZHkoc2JpKSkKPiAgICAgICAgICAgICAgICAgX19zdWJtaXRf
+bWVyZ2VkX2Jpbyhpbyk7Cj4gLS0KPiAyLjM0LjEKPgo+Cj4KPiBfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBs
+aXN0Cj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBodHRwczovL2xp
+c3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCgoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1k
+ZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQK
+aHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1k
+ZXZlbAo=
