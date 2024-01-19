@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EE1C3C47DD3
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 19 Jan 2024 18:49:00 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6BF70C4725D
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 19 Jan 2024 18:49:04 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rQtvI-0000OG-AN;
-	Fri, 19 Jan 2024 18:49:00 +0000
+	id 1rQtvL-0005LC-6t;
+	Fri, 19 Jan 2024 18:49:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <krisman@suse.de>) id 1rQtuw-0000Mv-HJ
+ (envelope-from <krisman@suse.de>) id 1rQtvH-0005Kg-5j
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 19 Jan 2024 18:48:39 +0000
+ Fri, 19 Jan 2024 18:49:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7n1vpYH9zMkx8GCAKMQ38/U0hkGRlRzMkf9u51OH3zI=; b=mBTTfcS4AW8Aow/xaQslMwNy6c
- EX6faplfzJDfYZStdDowHe0LK8gbjpyXQKWWBPMLoUtDfYfW4fzBJb7XQxvcGeJZQYhosqUPaf1Ub
- NRlJTdsdfI3DnIj97CEFPfc44SrGYikuCcERWW5rjMCAoA0L0n0Qza28BsGBE7K8HluU=;
+ bh=RVHkl1+gHuQ53whsCv6aHWAEO4kmheKoUmT6NcMFQk8=; b=DtzflhdofsKlBTd50KJ7O8dJ/q
+ t6Sw27MGJJpF+N6ZX2af9z5PPFglpK6glYJFBz1DF9HRy3vqBkJ70Joa4i4A66xYtS6hnZRoG5r+o
+ ufwgmBHqxBscZDP8/HerUn1W/LrFtqarrxlJwHtHBdAjT5F4+eMu7RkumKISp9kQQZ2Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,48 +33,48 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=7n1vpYH9zMkx8GCAKMQ38/U0hkGRlRzMkf9u51OH3zI=; b=fviSwynshl5dUNLKEIBPwqs+LQ
- G/DENQMR708JO5DkfhuWVMyfQJx899oE1yMZ9fkE5OkpMHeo9VpC6hSl2vjwboF8W0+dwLll4YFO/
- 3MgZvNp9aT01jXZW09I4pSPrluGZ+qAl1G6mgI++V9Sh2yVNLE94M7/Gbeyy+I5FT3MM=;
-Received: from smtp-out1.suse.de ([195.135.223.130])
+ bh=RVHkl1+gHuQ53whsCv6aHWAEO4kmheKoUmT6NcMFQk8=; b=dTcUHQqwGSoghABbLJZgo9oNxh
+ wLLFs5avCRk3SRoO4Zyb78TDpxCyWmAIXSAC/OQHrQAMYXncENUZEFxupAOHXn1Fe0ENGlJ4ktdgv
+ 8fEtRif1oumsOMGE8w2LbSwTyzddxhmewChiYhl6u35CLkKRdZimBjtdbaFEXAX6v66A=;
+Received: from smtp-out2.suse.de ([195.135.223.131])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rQtuu-0001bX-IK for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 19 Jan 2024 18:48:38 +0000
+ id 1rQtvE-0001ca-5v for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 19 Jan 2024 18:48:57 +0000
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
  [IPv6:2a07:de40:b281:104:10:150:64:97])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id D893A21FB3;
- Fri, 19 Jan 2024 18:48:25 +0000 (UTC)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 4FADC1FD18;
+ Fri, 19 Jan 2024 18:48:45 +0000 (UTC)
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 51910136F5;
- Fri, 19 Jan 2024 18:48:25 +0000 (UTC)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AE167136F5;
+ Fri, 19 Jan 2024 18:48:44 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id 8em3A/nDqmVfDAAAD6G6ig
- (envelope-from <krisman@suse.de>); Fri, 19 Jan 2024 18:48:25 +0000
+ by imap1.dmz-prg2.suse.org with ESMTPSA id dz4FHQzEqmV1DAAAD6G6ig
+ (envelope-from <krisman@suse.de>); Fri, 19 Jan 2024 18:48:44 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: viro@zeniv.linux.org.uk, ebiggers@kernel.org, jaegeuk@kernel.org,
  tytso@mit.edu
-Date: Fri, 19 Jan 2024 15:47:38 -0300
-Message-ID: <20240119184742.31088-7-krisman@suse.de>
+Date: Fri, 19 Jan 2024 15:47:41 -0300
+Message-ID: <20240119184742.31088-10-krisman@suse.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240119184742.31088-1-krisman@suse.de>
 References: <20240119184742.31088-1-krisman@suse.de>
 MIME-Version: 1.0
-Authentication-Results: smtp-out1.suse.de;
+Authentication-Results: smtp-out2.suse.de;
 	none
 X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Spamd-Result: default: False [-4.00 / 50.00];
 	 REPLY(-4.00)[]
-X-Rspamd-Queue-Id: D893A21FB3
-X-Headers-End: 1rQtuu-0001bX-IK
-Subject: [f2fs-dev] [PATCH v3 06/10] libfs: Add helper to choose dentry
- operations at mount
+X-Rspamd-Queue-Id: 4FADC1FD18
+X-Headers-End: 1rQtvE-0001ca-5v
+Subject: [f2fs-dev] [PATCH v3 09/10] ubifs: Configure dentry operations at
+ dentry-creation time
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,70 +93,40 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In preparation to drop the similar helper that sets d_op at lookup time,
-add a version to set the right d_op filesystem-wide, through sb->s_d_op.
-The operations structures are shared across filesystems supporting
-fscrypt and/or casefolding, therefore we can keep it in common libfs
-code.
+fscrypt now supports configuring dentry operations at dentry-creation
+time through the preset sb->s_d_op, instead of at lookup time.
+Enable this in ubifs, since the lookup-time mechanism is going away.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
- fs/libfs.c         | 29 +++++++++++++++++++++++++++++
- include/linux/fs.h |  1 +
- 2 files changed, 30 insertions(+)
+ fs/ubifs/dir.c   | 1 -
+ fs/ubifs/super.c | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index c4be0961faf0..9cd4df6969d2 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1822,6 +1822,35 @@ void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
- }
- EXPORT_SYMBOL(generic_set_encrypted_ci_d_ops);
+diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
+index 3b13c648d490..51b9a10a9851 100644
+--- a/fs/ubifs/dir.c
++++ b/fs/ubifs/dir.c
+@@ -205,7 +205,6 @@ static struct dentry *ubifs_lookup(struct inode *dir, struct dentry *dentry,
+ 	dbg_gen("'%pd' in dir ino %lu", dentry, dir->i_ino);
  
-+/**
-+ * generic_set_sb_d_ops - helper for choosing the set of
-+ * filesystem-wide dentry operations for the enabled features
-+ * @sb: superblock to be configured
-+ *
-+ * Filesystems supporting casefolding and/or fscrypt can call this
-+ * helper at mount-time to configure sb->s_d_root to best set of dentry
-+ * operations required for the enabled features. The helper must be
-+ * called after these have been configured, but before the root
-+ * dentry is created.
-+ *
-+ */
-+void generic_set_sb_d_ops(struct super_block *sb)
-+{
-+#if IS_ENABLED(CONFIG_UNICODE)
-+	if (sb->s_encoding) {
-+		sb->s_d_op = &generic_ci_dentry_ops;
-+		return;
-+	}
-+#endif
-+#ifdef CONFIG_FS_ENCRYPTION
-+	if (sb->s_cop) {
-+		sb->s_d_op = &generic_encrypted_dentry_ops;
-+		return;
-+	}
-+#endif
-+}
-+EXPORT_SYMBOL(generic_set_sb_d_ops);
-+
- /**
-  * inode_maybe_inc_iversion - increments i_version
-  * @inode: inode with the i_version that should be updated
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e6667ece5e64..c985d9392b61 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3202,6 +3202,7 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
- extern int generic_check_addressable(unsigned, u64);
+ 	err = fscrypt_prepare_lookup(dir, dentry, &nm);
+-	generic_set_encrypted_ci_d_ops(dentry);
+ 	if (err == -ENOENT)
+ 		return d_splice_alias(NULL, dentry);
+ 	if (err)
+diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
+index 09e270d6ed02..304646b03e99 100644
+--- a/fs/ubifs/super.c
++++ b/fs/ubifs/super.c
+@@ -2239,6 +2239,7 @@ static int ubifs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto out_umount;
+ 	}
  
- extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
-+extern void generic_set_sb_d_ops(struct super_block *sb);
- 
- static inline bool sb_has_encoding(const struct super_block *sb)
- {
++	generic_set_sb_d_ops(sb);
+ 	sb->s_root = d_make_root(root);
+ 	if (!sb->s_root) {
+ 		err = -ENOMEM;
 -- 
 2.43.0
 
