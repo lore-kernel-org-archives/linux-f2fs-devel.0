@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3A046C47DDB
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jan 2024 15:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 39E49C47DAF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jan 2024 15:14:11 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rRvzZ-0002Mk-Hx;
-	Mon, 22 Jan 2024 15:13:42 +0000
+	id 1rRw01-0002OC-Sr;
+	Mon, 22 Jan 2024 15:14:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1rRvzX-0002Me-PC
+ (envelope-from <sashal@kernel.org>) id 1rRw00-0002O6-LR
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jan 2024 15:13:40 +0000
+ Mon, 22 Jan 2024 15:14:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UjDk2/Hp3CwE09RtgftPpJV4JbVxNthsQGUNFex9UVU=; b=T3o2h7MQUNaIVcHvXlqyoCpx6d
- WaiSpEMjkfyqQIR34O8v4V/nTYzdT3pagmfWzRlLLJ/RsWHqDn/piQkig6PL4FjfX1RRy/gs6ZXE8
- 2C2h8Gf63668WyyMAW1G2voguO6gnb7ZmMTXIdxeQQ0+0RTeLyrzk3y6NvdsObrkaAvo=;
+ bh=Qq6Rjnw0VvO7fdLxTd+yZRY+QKrnkRLZPjWhz7UdTY0=; b=ESRy2P+PRZRFNvqcvLmImK4axO
+ LHq2wR/DTsrNqnXJIE1BoqoQlLwXVlGASDfSz3uMyMoNiHazMgUJUROfZFGesrMO6h3306p5Rkux0
+ v1IhUdgPD9RZpHmfakRl88Rc04LmcPey9dTINO9hnzU+gm5mxzFCrGRyYK2AmOOTWkvo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,34 +33,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=UjDk2/Hp3CwE09RtgftPpJV4JbVxNthsQGUNFex9UVU=; b=AVwkKOEmqQrFqDVgJgJaTDUUW7
- zPowDaGJUROkk3rg6SsT2TT5/PR2AK4pdWZiM1oDer68boaSGdBjp7dvEvxItUzpilpmjz8UiDp6f
- OmxwKVo2PTzS8u3jlDcM1x9mZDgGl0kBAKw8n6ia7vG+cn29KZAn4tZyaACjN1IYvW98=;
+ bh=Qq6Rjnw0VvO7fdLxTd+yZRY+QKrnkRLZPjWhz7UdTY0=; b=bcExh+eNM7tm/+D/IqVhunIP+8
+ eRZTI6DYfedvswsZYi/ZH1UG3+p6y2/vnEt+KZ0U34+rQa4TQuaHnToo0yCHuakV8cTXa+skPnI7x
+ 96jyCVdXw614FiCnBqZ6F76qiAI7mQrOfv0TSAZjahky9NfTWru/7mM61NSSLjK4SOGo=;
 Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rRvzT-000425-GW for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jan 2024 15:13:40 +0000
+ id 1rRvzz-00044L-Gr for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 22 Jan 2024 15:14:09 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by ams.source.kernel.org (Postfix) with ESMTP id E151AB80E89;
- Mon, 22 Jan 2024 15:13:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70F01C433C7;
- Mon, 22 Jan 2024 15:13:23 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTP id 0809AB80E94
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 22 Jan 2024 15:13:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAAE2C43601;
+ Mon, 22 Jan 2024 15:13:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1705936404;
- bh=Hrod67hh4LkwO/pTdv/A52E6Qb1RnNmgHSwfUZ/J2JQ=;
+ s=k20201202; t=1705936434;
+ bh=Sa6kKliqi6TRKNMJZrqcEHRWzDRql/cto/qdXv2ICOk=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=qj/oHkqfGMRTQaNTqUj74hc3ml7xSgyR8qSfF3HAsgWqMoX325lOdazj8j26xFR4K
- X3x5tD6VYUBGc/MAH/vBQ4N5pWzFC51Tsa2/PlfHZfzyVITEoN+ZIIReP63AAs8qFd
- SzZF2PiBYxdsuQML7NWzAWQg3c64YPuRIKtAsRbnO/gBBvFs/6KEvLHmDen+1draPB
- FrElM8NjaZck0igOLIQ8Cz9jMoEvsGnHhq3x1ITTd6Ed3Tb71WMbI8f68UONIT75du
- e9RQEyTsB320x4ZYC9ZXheCINl7fjTyzJ+vLr1p7vSEBn6mNAaj45zjsIj7L14Aqsj
- c33+PiO+GH2+Q==
+ b=ikKYr9BfXOVNjlsGPgomkuQRSZBkaOz7V9d+QAzc9T/zDzhNY19QZv9nsWDUziD9Q
+ sqLOmJqEHY1L6aQQ+bfrjrRvmPTJukeBKOFz4NA8uzuT6orhEp96r58txgeJZ2Oqhg
+ /A18eppTcghSjix7slI4JBy2qXTXnKB5gUU0lmmoHaeNv8oRslRsiUBYvDqGvAQY+S
+ zGec+TPZu3L9CQPqpOX9HF8KJqRfM3K7/9Lq4HoSbVSiS756TJtG8PtJsvoByTnPFI
+ 14g8EdtBRupzT2YT9of06NruI7mpwtMt4/stkXqYTbOtYvK2SnyJd4jO84CrwsSbuj
+ ybZNNcGt1IUPA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Mon, 22 Jan 2024 10:12:05 -0500
-Message-ID: <20240122151302.995456-8-sashal@kernel.org>
+Date: Mon, 22 Jan 2024 10:12:17 -0500
+Message-ID: <20240122151302.995456-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240122151302.995456-1-sashal@kernel.org>
 References: <20240122151302.995456-1-sashal@kernel.org>
@@ -68,9 +69,9 @@ MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 5.15.147
-X-Headers-End: 1rRvzT-000425-GW
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.15 08/35] f2fs: fix write pointers on
- zoned device after roll forward
+X-Headers-End: 1rRvzz-00044L-Gr
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.15 20/35] f2fs: fix to tag gcing flag
+ on page during block migration
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,40 +84,67 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Daeho Jeong <daehojeong@google.com>, linux-f2fs-devel@lists.sourceforge.net
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Chao Yu <chao@kernel.org>
 
-[ Upstream commit 9dad4d964291295ef48243d4e03972b85138bc9f ]
+[ Upstream commit 4961acdd65c956e97c1a000c82d91a8c1cdbe44b ]
 
-1. do roll forward recovery
-2. update current segments pointers
-3. fix the entire zones' write pointers
-4. do checkpoint
+It needs to add missing gcing flag on page during block migration,
+in order to garantee migrated data be persisted during checkpoint,
+otherwise out-of-order persistency between data and node may cause
+data corruption after SPOR.
 
-Reviewed-by: Daeho Jeong <daehojeong@google.com>
+Similar issue was fixed by commit 2d1fe8a86bf5 ("f2fs: fix to tag
+gcing flag on page during file defragment").
+
+Signed-off-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/recovery.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/f2fs/compress.c | 4 +++-
+ fs/f2fs/file.c     | 2 ++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index da0801aa4118..f07ae58d266d 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -871,6 +871,8 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 	if (!err && fix_curseg_write_pointer && !f2fs_readonly(sbi->sb) &&
- 			f2fs_sb_has_blkzoned(sbi)) {
- 		err = f2fs_fix_curseg_write_pointer(sbi);
-+		if (!err)
-+			err = f2fs_check_write_pointer(sbi);
- 		ret = err;
- 	}
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 3982b4a7618c..7b4479d5b531 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1037,8 +1037,10 @@ static void set_cluster_dirty(struct compress_ctx *cc)
+ 	int i;
  
+ 	for (i = 0; i < cc->cluster_size; i++)
+-		if (cc->rpages[i])
++		if (cc->rpages[i]) {
+ 			set_page_dirty(cc->rpages[i]);
++			set_page_private_gcing(cc->rpages[i]);
++		}
+ }
+ 
+ static int prepare_compress_overwrite(struct compress_ctx *cc,
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 58fd32db025d..5c63cbb06faa 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1278,6 +1278,7 @@ static int __clone_blkaddrs(struct inode *src_inode, struct inode *dst_inode,
+ 			}
+ 			f2fs_copy_page(psrc, pdst);
+ 			set_page_dirty(pdst);
++			set_page_private_gcing(pdst);
+ 			f2fs_put_page(pdst, 1);
+ 			f2fs_put_page(psrc, 1);
+ 
+@@ -3976,6 +3977,7 @@ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
+ 			break;
+ 		}
+ 		set_page_dirty(page);
++		set_page_private_gcing(page);
+ 		f2fs_put_page(page, 1);
+ 		f2fs_put_page(page, 0);
+ 	}
 -- 
 2.43.0
 
