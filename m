@@ -4,71 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AFD55C47DAF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jan 2024 15:17:11 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C5554C47DAF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jan 2024 15:18:42 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rRw2w-00042f-PQ;
-	Mon, 22 Jan 2024 15:17:11 +0000
+	id 1rRw4P-0000AH-KB;
+	Mon, 22 Jan 2024 15:18:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1rRw2v-00042Z-7F
+ (envelope-from <sashal@kernel.org>) id 1rRw4N-0000AB-S8
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jan 2024 15:17:09 +0000
+ Mon, 22 Jan 2024 15:18:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YWgxPGvUfJgH6QSIv4dZhfjh4llbC5YfnQQ5pZHkT5M=; b=kJ39IB7xf6t4AqjptbT4BLDK7g
- xyzWwyS8DYuQHsy1tju/kKE4ukmR4FIIEhjKe1O6GSTqC1/4xKKrB4AkJGdP+1j0rKMpz525w5drF
- rzXuDEWMrtVLw9IH/qwKA70BpaxYYcvfB7UPZrlLpk3eixbucsCl/8RqphuxwXkY685A=;
+ bh=j2jTAGSgTgv9CsIRVS29K0Sx/ot0O6wczOPo50IF6Fo=; b=SswVwUZCLs07yVbAeYLZRhxhQS
+ K6kaDHGq9y3jNVs9UfKQfhi0FzeKi+Aa16iU6gaULoUc3iVLQoQ4kf5djJ3IAslOUMNfB+438BxtI
+ xZp5S297p+96xw/a55k8LsO7VhTojTqViwXc+9EtOQYssDvy2tVn+RWIQseNzJPbY/DI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=YWgxPGvUfJgH6QSIv4dZhfjh4llbC5YfnQQ5pZHkT5M=; b=N
- lMkA1GepUgIEHsVAXTkJUg1s+TtMt3686umMOW2Jp0zmap+Q1MoI1McrmGMWTLNXHV86NrdXvNKo8
- VSWxU+3kI/Olvk1t0R2pYyfMGUTG3wbs5bUF1wXKgXxHRa7FpWl3jTxQE6FPLgYbgDxKpKn7FTg5f
- y0x5XiSBG8VWW014=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ List-Owner:List-Archive; bh=j2jTAGSgTgv9CsIRVS29K0Sx/ot0O6wczOPo50IF6Fo=; b=n
+ ThQd0Os6n23QF+k8KJ4bWj2KsDbFBeY0CAK3veUHVc5/zqLIt7238HoEwxf2i/7gL8HzlAOQX1sGM
+ an5YpdodQrb2LhWDneaeucwIQkJDO4nHj9QRB7RQpgYNhmnjIIaNULTWy9zkKtPPfmPicjOjbYt0U
+ /rd8jj6Zdmi6e34Y=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rRw2u-0004Fr-E1 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jan 2024 15:17:09 +0000
+ id 1rRw4M-0004Lu-Sg for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 22 Jan 2024 15:18:40 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by ams.source.kernel.org (Postfix) with ESMTP id D15FEB80E8D
+ by sin.source.kernel.org (Postfix) with ESMTP id 3D452CE2B29
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 22 Jan 2024 15:17:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 763E8C433C7;
- Mon, 22 Jan 2024 15:17:01 +0000 (UTC)
+ Mon, 22 Jan 2024 15:18:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E1EAC433F1;
+ Mon, 22 Jan 2024 15:18:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1705936622;
- bh=PHlstZOn4P8fYiw3yCJ5n92bZwgwDCDEX6GCLi15oTY=;
+ s=k20201202; t=1705936706;
+ bh=as4ZD96i3aN9NMBMedkYzd3p78ya5sCcySgUgKIfv/M=;
  h=From:To:Cc:Subject:Date:From;
- b=HxgWuOCuZy8iHc4ax3wwEp6au9fDDN93g+tkSMEQ/hvLrtEDziJLyzKTmqk5NhHzc
- PFDlgPALSVtgLbsIJUchV5aNvia9Hc1I0RFFbIfBTVdgwoIJndAFaGf6941qD8mf2p
- /jdA32X1OYqTwt7E3Ae/cmDPBxeLU/9+lV+P5Y/q8rTKFZ0VJr979M/mGTP/i0H2ik
- g6v9DDhKPFi74lAaJzK3NpLsHYGvfB/KDg8BAhje4y3cGFcJmtv2fI/NHnOlRgJO3Q
- 8NW6D1UIdB0YnYCiUz6qJ3wxZfKM2u9PPk7HZok6VjTwM4avbsRDv1Qud08aSl0XOB
- i37RLpXhcceUA==
+ b=g5hXEryflvrDZR3cjcBlPLKBemyak//2xLrAs2+FyA8SiwR7HUA2880QiZZWfqRsf
+ PmYyDzhyc4IsfHV4mQg4PfmWUikrBmbN50PVPRBHnZ04KkQS4RoMpPrNyqB4M5PNMG
+ FXGcQfGwzSI1KaDdHklU3ME/3oNmeFj1RY/T5SHtD8LZbcsOYpeLdsSINwL/XVQpd/
+ 17KDe2rW+SkDNBXsZrnWLXV904/yuLfIrkO13Xk7k9Iltj2M0d7XP1O7HioxSHvXn6
+ xpAzrv17KLy6js8ou4l41b3BnhtLbRjwn8NsnpKauMbLuJxtkuOdmlt0Qu4X1lOGDa
+ PaVWh9YqraeUQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Mon, 22 Jan 2024 10:16:15 -0500
-Message-ID: <20240122151659.997085-1-sashal@kernel.org>
+Date: Mon, 22 Jan 2024 10:17:41 -0500
+Message-ID: <20240122151823.997644-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.267
-X-Headers-End: 1rRw2u-0004Fr-E1
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.4 01/24] f2fs: fix to check return
+X-stable-base: Linux 4.19.305
+X-Headers-End: 1rRw4M-0004Lu-Sg
+Subject: [f2fs-dev] [PATCH AUTOSEL 4.19 01/23] f2fs: fix to check return
  value of f2fs_reserve_new_block()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -107,10 +107,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 17 insertions(+), 6 deletions(-)
 
 diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index da123c6d3ce0..7e30326b296c 100644
+index ad0486beee2c..fffc7a9de04b 100644
 --- a/fs/f2fs/recovery.c
 +++ b/fs/f2fs/recovery.c
-@@ -611,7 +611,16 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+@@ -548,7 +548,16 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
  		 */
  		if (dest == NEW_ADDR) {
  			f2fs_truncate_data_blocks_range(&dn, 1);
@@ -128,7 +128,7 @@ index da123c6d3ce0..7e30326b296c 100644
  			continue;
  		}
  
-@@ -619,12 +628,14 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+@@ -556,12 +565,14 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
  		if (f2fs_is_valid_blkaddr(sbi, dest, META_POR)) {
  
  			if (src == NULL_ADDR) {
