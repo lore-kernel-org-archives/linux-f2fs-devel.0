@@ -4,74 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 39E49C47DAF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jan 2024 15:14:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A2446C47DD9
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jan 2024 15:15:40 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rRw01-0002OC-Sr;
-	Mon, 22 Jan 2024 15:14:10 +0000
+	id 1rRw1T-0002a5-A0;
+	Mon, 22 Jan 2024 15:15:40 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1rRw00-0002O6-LR
+ (envelope-from <sashal@kernel.org>) id 1rRw1S-0002Zz-Gl
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jan 2024 15:14:09 +0000
+ Mon, 22 Jan 2024 15:15:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Qq6Rjnw0VvO7fdLxTd+yZRY+QKrnkRLZPjWhz7UdTY0=; b=ESRy2P+PRZRFNvqcvLmImK4axO
- LHq2wR/DTsrNqnXJIE1BoqoQlLwXVlGASDfSz3uMyMoNiHazMgUJUROfZFGesrMO6h3306p5Rkux0
- v1IhUdgPD9RZpHmfakRl88Rc04LmcPey9dTINO9hnzU+gm5mxzFCrGRyYK2AmOOTWkvo=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Qq6Rjnw0VvO7fdLxTd+yZRY+QKrnkRLZPjWhz7UdTY0=; b=bcExh+eNM7tm/+D/IqVhunIP+8
- eRZTI6DYfedvswsZYi/ZH1UG3+p6y2/vnEt+KZ0U34+rQa4TQuaHnToo0yCHuakV8cTXa+skPnI7x
- 96jyCVdXw614FiCnBqZ6F76qiAI7mQrOfv0TSAZjahky9NfTWru/7mM61NSSLjK4SOGo=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=E5Ca2Jap1DSHM2lQ9RpPacr9jQZ+OewicPF5UAk+Ycc=; b=HRsAEO+57Ht4jezNSFTyAMdXKo
+ V+XALwPWzuHsfwpOXJxKgNf6i0E2Q2dKikL8wAVubh+//5t/86Vdzs6nJ0+uH641rilN10ZDRks+Y
+ KXP9vczQq9LQvTJq8rlb3N+UcAq9b1ac1db5CCMHzEQ1THgI/9zB90aZw5d0vfUNwN3A=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=E5Ca2Jap1DSHM2lQ9RpPacr9jQZ+OewicPF5UAk+Ycc=; b=a
+ tUQHLHVVOo15RVwH1A8xYJjFqIlXv/xGsqObKW8vnaKdV0hBipnpOj78vzBlqq65I3gDtILT9brJi
+ AXJA7b7XPmEXk2rYpvvGJN3ZJh8ZhfP1V/9BaJBBuQKPjUFH3yVfq2uqOhQSQkrf6G/nhmaUVBLMq
+ LPSD4Tmht0ptkD4s=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rRvzz-00044L-Gr for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jan 2024 15:14:09 +0000
+ id 1rRw1S-0004Ap-0I for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 22 Jan 2024 15:15:39 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by ams.source.kernel.org (Postfix) with ESMTP id 0809AB80E94
+ by sin.source.kernel.org (Postfix) with ESMTP id 78740CE2B24
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 22 Jan 2024 15:13:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAAE2C43601;
- Mon, 22 Jan 2024 15:13:53 +0000 (UTC)
+ Mon, 22 Jan 2024 15:15:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB0AC433C7;
+ Mon, 22 Jan 2024 15:15:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1705936434;
- bh=Sa6kKliqi6TRKNMJZrqcEHRWzDRql/cto/qdXv2ICOk=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=ikKYr9BfXOVNjlsGPgomkuQRSZBkaOz7V9d+QAzc9T/zDzhNY19QZv9nsWDUziD9Q
- sqLOmJqEHY1L6aQQ+bfrjrRvmPTJukeBKOFz4NA8uzuT6orhEp96r58txgeJZ2Oqhg
- /A18eppTcghSjix7slI4JBy2qXTXnKB5gUU0lmmoHaeNv8oRslRsiUBYvDqGvAQY+S
- zGec+TPZu3L9CQPqpOX9HF8KJqRfM3K7/9Lq4HoSbVSiS756TJtG8PtJsvoByTnPFI
- 14g8EdtBRupzT2YT9of06NruI7mpwtMt4/stkXqYTbOtYvK2SnyJd4jO84CrwsSbuj
- ybZNNcGt1IUPA==
+ s=k20201202; t=1705936524;
+ bh=z/q4voB+EPDamF3u0eqwmT9u48yKxLVPnuOYra/Tn6c=;
+ h=From:To:Cc:Subject:Date:From;
+ b=B+HEGo5HkIk+FQS/1l2VcoUlMcdzwvCuWENhqcYVt5nTr0BzGycBBCWHZxrQ4LoNl
+ pCTG83j3ydR9lSQJnH7D+df2lKleegK4fRzIg10cNte5BK2WfnqrLnkyJBt/jjGS+C
+ mudfXslXm1C33FwwgnosQvjufbx2E4xcPHOtbwsk9LkKl7jPhas2AZn0oVwr0fyaae
+ qa9WrGjm/Ysbv+dCAgEwg9ihE9xQmwo8979YAItR3bCPvVRMgsGUQlepbUlwekC3tk
+ Fwh2n+vZS1kP7/YQok1qqcX8K9XrxFmQzGSRKxDqIlHJl/OTJb1Gli9cMjcpUiHt7c
+ SnYR7RFIJoO1A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Mon, 22 Jan 2024 10:12:17 -0500
-Message-ID: <20240122151302.995456-20-sashal@kernel.org>
+Date: Mon, 22 Jan 2024 10:14:27 -0500
+Message-ID: <20240122151521.996443-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240122151302.995456-1-sashal@kernel.org>
-References: <20240122151302.995456-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.147
-X-Headers-End: 1rRvzz-00044L-Gr
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.15 20/35] f2fs: fix to tag gcing flag
- on page during block migration
+X-stable-base: Linux 5.10.208
+X-Headers-End: 1rRw1S-0004Ap-0I
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.10 01/28] f2fs: fix to check return
+ value of f2fs_reserve_new_block()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,60 +89,65 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Chao Yu <chao@kernel.org>
 
-[ Upstream commit 4961acdd65c956e97c1a000c82d91a8c1cdbe44b ]
+[ Upstream commit 956fa1ddc132e028f3b7d4cf17e6bfc8cb36c7fd ]
 
-It needs to add missing gcing flag on page during block migration,
-in order to garantee migrated data be persisted during checkpoint,
-otherwise out-of-order persistency between data and node may cause
-data corruption after SPOR.
+Let's check return value of f2fs_reserve_new_block() in do_recover_data()
+rather than letting it fails silently.
 
-Similar issue was fixed by commit 2d1fe8a86bf5 ("f2fs: fix to tag
-gcing flag on page during file defragment").
+Also refactoring check condition on return value of f2fs_reserve_new_block()
+as below:
+- trigger f2fs_bug_on() only for ENOSPC case;
+- use do-while statement to avoid redundant codes;
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/compress.c | 4 +++-
- fs/f2fs/file.c     | 2 ++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ fs/f2fs/recovery.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 3982b4a7618c..7b4479d5b531 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1037,8 +1037,10 @@ static void set_cluster_dirty(struct compress_ctx *cc)
- 	int i;
- 
- 	for (i = 0; i < cc->cluster_size; i++)
--		if (cc->rpages[i])
-+		if (cc->rpages[i]) {
- 			set_page_dirty(cc->rpages[i]);
-+			set_page_private_gcing(cc->rpages[i]);
-+		}
- }
- 
- static int prepare_compress_overwrite(struct compress_ctx *cc,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 58fd32db025d..5c63cbb06faa 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1278,6 +1278,7 @@ static int __clone_blkaddrs(struct inode *src_inode, struct inode *dst_inode,
- 			}
- 			f2fs_copy_page(psrc, pdst);
- 			set_page_dirty(pdst);
-+			set_page_private_gcing(pdst);
- 			f2fs_put_page(pdst, 1);
- 			f2fs_put_page(psrc, 1);
- 
-@@ -3976,6 +3977,7 @@ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
- 			break;
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index c3c527afdd07..2700e0fdd3e0 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -641,7 +641,16 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		 */
+ 		if (dest == NEW_ADDR) {
+ 			f2fs_truncate_data_blocks_range(&dn, 1);
+-			f2fs_reserve_new_block(&dn);
++			do {
++				err = f2fs_reserve_new_block(&dn);
++				if (err == -ENOSPC) {
++					f2fs_bug_on(sbi, 1);
++					break;
++				}
++			} while (err &&
++				IS_ENABLED(CONFIG_F2FS_FAULT_INJECTION));
++			if (err)
++				goto err;
+ 			continue;
  		}
- 		set_page_dirty(page);
-+		set_page_private_gcing(page);
- 		f2fs_put_page(page, 1);
- 		f2fs_put_page(page, 0);
- 	}
+ 
+@@ -649,12 +658,14 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		if (f2fs_is_valid_blkaddr(sbi, dest, META_POR)) {
+ 
+ 			if (src == NULL_ADDR) {
+-				err = f2fs_reserve_new_block(&dn);
+-				while (err &&
+-				       IS_ENABLED(CONFIG_F2FS_FAULT_INJECTION))
++				do {
+ 					err = f2fs_reserve_new_block(&dn);
+-				/* We should not get -ENOSPC */
+-				f2fs_bug_on(sbi, err);
++					if (err == -ENOSPC) {
++						f2fs_bug_on(sbi, 1);
++						break;
++					}
++				} while (err &&
++					IS_ENABLED(CONFIG_F2FS_FAULT_INJECTION));
+ 				if (err)
+ 					goto err;
+ 			}
 -- 
 2.43.0
 
