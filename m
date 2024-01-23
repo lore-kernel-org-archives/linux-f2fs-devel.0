@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0D787C47DDB
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7E0F7C47E49
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Jan 2024 09:59:48 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rSDZK-0004tH-8v;
-	Tue, 23 Jan 2024 09:59:46 +0000
+	id 1rSDZL-0001uk-S5;
+	Tue, 23 Jan 2024 09:59:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
  (envelope-from <prvs=745eb970d=johannes.thumshirn@wdc.com>)
- id 1rSDZI-0004sw-Q5 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 23 Jan 2024 09:59:45 +0000
+ id 1rSDZL-0001ub-94 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 23 Jan 2024 09:59:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Message-Id:
  Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xwNR4/EZjtvmjPU5B92P0twDrTPGvgcwhXfRvMp8W3M=; b=L6wcO6WVCWBrrEAeJP6BI9jmNW
- H4L9q8hxr7oWxUuhWGZUHjai8OvGuQxuDpq/IdCDiksahgI0S7dfBosPzF2A7Vp+bNCkmRU6AvNI2
- qZHqHdwN9WpzWlFjIb1J1NOlfGEggDGcVgans187WrWPKI/LG01vucEBWBLAN0qo/MsM=;
+ bh=Fru1l8dAq84Xfh5gnq+lN/Z+UvKQa5FRHDYekqiQyQc=; b=jZbO3ZJi+L+BbkmfCSGhrmzq8p
+ 4rLxB5KBq8jJ7EEMcJ/pbOJUL3dQG96FaOrStBgZGhnUgDZknoRq5nV9ZBnSJIhjIcYToIXGQSdH1
+ DU/qNS/6Uu+Ss+FG0yAOkINEGQHMv/2Nu10OMul/73NIjTeWLvcVvN8FFZfVVSytaX8Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
@@ -33,46 +33,46 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=xwNR4/EZjtvmjPU5B92P0twDrTPGvgcwhXfRvMp8W3M=; b=aLNDNSTOtMLJsZlB+iuNis3bV3
- 0l2a0FU0elyWNTIXPrm4DkMfDGOnCy3Ig2CDK8vtyLQvCkMSTMp76cukbJByQAoJHH8MutBus9MTl
- lbfMfJnnDLKjCWWxm+HZAU1r9Op+V1U1mq7wUjOSpfMMKzJTGm3zTWZP2En2fsvLp8Ys=;
+ bh=Fru1l8dAq84Xfh5gnq+lN/Z+UvKQa5FRHDYekqiQyQc=; b=eS3hLO7RvG0AqIPcg9ozoKs34X
+ XBElwSx7xzOgJaz8SZ/VWivYWsH1oSJ6latPd5xJJ4IskXmr5voSbFENVslnwrQXcYpv6WpGG2NrJ
+ savIwVXIekiT6pQORYUxRsfu38yvr9B9s4WiUAfAq8QSQvhPfOr8Wr+p5LwLVoeslf58=;
 Received: from esa3.hgst.iphmx.com ([216.71.153.141])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rSDZH-0000SS-W1 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 23 Jan 2024 09:59:45 +0000
+ id 1rSDZJ-0000SS-VB for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 23 Jan 2024 09:59:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
- t=1706003984; x=1737539984;
+ t=1706003986; x=1737539986;
  h=from:date:subject:mime-version:content-transfer-encoding:
  message-id:references:in-reply-to:to:cc;
- bh=USx+V+gR/5Lk+0GJr2lbq1FeCI2pXKMzpek+ct39bMM=;
- b=X+1t1vJDLsezySht2wYw8R7QzBdNOvZIK120rnzSDIovY/t2peUlpizx
- +vSVJJ+YH0nGL6ibN0FR4qu+q4wJ8VMAWHBQRmKew4SkpJj6gfVG4ycGW
- ECw/unWHcmbOb1te2eYngBgJEIVVJDQw2ivONsmuG1yVwDfA7XjxKWJQd
- qRjRsxRFOdwUyBkcefS/xPNqdu03oSSqfE/GNclVQ/gx5nOSu8VDN+Qp2
- yQwcNs2RJCJOSKnpd+NQk3tF5MPALRuCk80wQZr2Km3xb4AXSYQz4vTz1
- PEYoglaNLbR+/4qeBQlBrw6reG1cdu8WTGoyDLYEbOetW9+5lc5jeqJze g==;
-X-CSE-ConnectionGUID: BOkBxo6+RfijPaJ+38di5g==
-X-CSE-MsgGUID: diTUpXrVRH+D/od8CmUEqw==
+ bh=jxy1iW5YBQpx2L/2XzM+MqzG0Ug1dnhtomAoOd2ZnbI=;
+ b=BY7+oo5mfEOUl6ZyseshrIheCARVsQfA7c5/7J69yAZ4Bp/MDx+/0ly8
+ PWGN6K3OLr3oVN1zwwpX3ewD7rUxH3sFhl4LhtZec8efwEe/7g2YaNZ/3
+ hsPArYR7509vAJ0JQlLN24nUnLqIlaemREy8ZjEwFRGvnALOGtXcQ4ayg
+ l88PWA2AK20WnRIiaQCVXna8Ac238fhpi1PZ/jLctgXnoDSWyqnEplXo9
+ jz84ugNtDqGIEfBczDhZhoiLZvxPkUzBfVlCkizT8NnmnkaI2LUumuCak
+ DQXlDIVHNCglnOTgjzHgSHI04el2A/5igZthLNtUO7Mlb2g5lt12blGgj Q==;
+X-CSE-ConnectionGUID: M4rJNpEgSGOzr4U2FIHsjg==
+X-CSE-MsgGUID: qmBP81s3SIO6L0XnmBswsw==
 X-IronPort-AV: E=Sophos;i="6.05,214,1701100800"; 
-   d="scan'208";a="7462059"
+   d="scan'208";a="7462074"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com)
  ([199.255.45.15])
- by ob1.hgst.iphmx.com with ESMTP; 23 Jan 2024 17:43:56 +0800
-IronPort-SDR: xvvsWJXd9mKOetnrFiXw3/09pHul/s6QYoJlOEF3Gfv66CTp7o0QuPp26XlFcQX6asGtf5de+4
- YgJpntwVNd7w==
+ by ob1.hgst.iphmx.com with ESMTP; 23 Jan 2024 17:44:06 +0800
+IronPort-SDR: 96qnONrMHzXWefSZRYV/F8L1VdEW417iCHL1twEW1fuIPdYXZAQc7fxVFptp+MKCOuRCjTefgp
+ tJr6bzP8+dXw==
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256;
- 23 Jan 2024 00:48:17 -0800
-IronPort-SDR: P3OOCgnEiOoiT5kro0hhE2puMVinRxHrlbO9eu21ZDBzEa4K+SZFeEYuAtZNHIp7Zz4lNvn0Hv
- sg9b/x3sDNFA==
+ 23 Jan 2024 00:48:27 -0800
+IronPort-SDR: IOh8OwQ887uF8FYicwPpeIj8pGPKsumfi+cLbrdodtKz/molf3mfeRtZvITdJ29oAO3ta0WwLL
+ KVxG7oRWNRUw==
 WDCIronportException: Internal
 Received: from unknown (HELO redsun91.ssa.fujisawa.hgst.com) ([10.149.66.6])
- by uls-op-cesaip02.wdc.com with ESMTP; 23 Jan 2024 01:43:50 -0800
-Date: Tue, 23 Jan 2024 01:43:42 -0800
+ by uls-op-cesaip02.wdc.com with ESMTP; 23 Jan 2024 01:44:02 -0800
+Date: Tue, 23 Jan 2024 01:43:45 -0800
 MIME-Version: 1.0
-Message-Id: <20240123-zonefs_nofs-v1-1-cc0b0308ef25@wdc.com>
+Message-Id: <20240123-zonefs_nofs-v1-4-cc0b0308ef25@wdc.com>
 References: <20240123-zonefs_nofs-v1-0-cc0b0308ef25@wdc.com>
 In-Reply-To: <20240123-zonefs_nofs-v1-0-cc0b0308ef25@wdc.com>
 To: Damien Le Moal <dlemoal@kernel.org>, 
@@ -83,16 +83,15 @@ To: Damien Le Moal <dlemoal@kernel.org>,
  Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
  Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1706003027; l=967;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1706003027; l=1916;
  i=johannes.thumshirn@wdc.com; s=20230613; h=from:subject:message-id;
- bh=USx+V+gR/5Lk+0GJr2lbq1FeCI2pXKMzpek+ct39bMM=;
- b=CqyzAxjrtVF3h1COiTD1vUp/FvMExp42Wy7b72mtI/+VK3Cc+nQQgb8KdYlLZ32Qn9DwLPhCQ
- 2dpOdt+5tGWBTomHGv+qgGPRnYLx+GcwkDEU2N7SunPs8Zz3A98pXO5
+ bh=jxy1iW5YBQpx2L/2XzM+MqzG0Ug1dnhtomAoOd2ZnbI=;
+ b=3ZNl4h+s8HSPaptSA3bTG7Cc54lypNN6lGHNAsGVtJDwGDQrTa34PvB3BXdfTQsyIQIenyPIa
+ XCtHIB+z9g5Bw9M9so4He4f+ztWTV5lnoteYP3kS9WTufWUnEYW9XJS
 X-Developer-Key: i=johannes.thumshirn@wdc.com; a=ed25519;
  pk=TGmHKs78FdPi+QhrViEvjKIGwReUGCfa+3LEnGoR2KM=
-X-Headers-End: 1rSDZH-0000SS-W1
-Subject: [f2fs-dev] [PATCH 1/5] zonefs: pass GFP_KERNEL to
- blkdev_zone_mgmt() call
+X-Headers-End: 1rSDZJ-0000SS-VB
+Subject: [f2fs-dev] [PATCH 4/5] f2fs: guard blkdev_zone_mgmt with nofs scope
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -116,31 +115,56 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Pass GFP_KERNEL instead of GFP_NOFS to the blkdev_zone_mgmt() call in
-zonefs_zone_mgmt().
-
-As as zonefs_zone_mgmt() and zonefs_inode_zone_mgmt() are never called
-from a place that can recurse back into the filesystem on memory reclaim,
-it is save to call blkdev_zone_mgmt() with GFP_KERNEL.
+Guard the calls to blkdev_zone_mgmt() with a memalloc_nofs scope.
+This helps us getting rid of the GFP_NOFS argument to blkdev_zone_mgmt();
 
 Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- fs/zonefs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/segment.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index 93971742613a..63fbac018c04 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -113,7 +113,7 @@ static int zonefs_zone_mgmt(struct super_block *sb,
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 4c8836ded90f..0094fe491364 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1971,9 +1971,15 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+ 		}
  
- 	trace_zonefs_zone_mgmt(sb, z, op);
- 	ret = blkdev_zone_mgmt(sb->s_bdev, op, z->z_sector,
--			       z->z_size >> SECTOR_SHIFT, GFP_NOFS);
-+			       z->z_size >> SECTOR_SHIFT, GFP_KERNEL);
- 	if (ret) {
- 		zonefs_err(sb,
- 			   "Zone management operation %s at %llu failed %d\n",
+ 		if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING))) {
++			unsigned int nofs_flags;
++			int ret;
++
+ 			trace_f2fs_issue_reset_zone(bdev, blkstart);
+-			return blkdev_zone_mgmt(bdev, REQ_OP_ZONE_RESET,
+-						sector, nr_sects, GFP_NOFS);
++			nofs_flags = memalloc_nofs_save();
++			ret = blkdev_zone_mgmt(bdev, REQ_OP_ZONE_RESET,
++						sector, nr_sects, GFP_KERNEL);
++			memalloc_nofs_restore(nofs_flags);
++			return ret;
+ 		}
+ 
+ 		__queue_zone_reset_cmd(sbi, bdev, blkstart, lblkstart, blklen);
+@@ -4865,6 +4871,7 @@ static int check_zone_write_pointer(struct f2fs_sb_info *sbi,
+ 	block_t zone_block, valid_block_cnt;
+ 	unsigned int log_sectors_per_block = sbi->log_blocksize - SECTOR_SHIFT;
+ 	int ret;
++	unsigned int nofs_flags;
+ 
+ 	if (zone->type != BLK_ZONE_TYPE_SEQWRITE_REQ)
+ 		return 0;
+@@ -4912,8 +4919,10 @@ static int check_zone_write_pointer(struct f2fs_sb_info *sbi,
+ 		    "pointer: valid block[0x%x,0x%x] cond[0x%x]",
+ 		    zone_segno, valid_block_cnt, zone->cond);
+ 
++	nofs_flags = memalloc_nofs_save();
+ 	ret = blkdev_zone_mgmt(fdev->bdev, REQ_OP_ZONE_FINISH,
+-				zone->start, zone->len, GFP_NOFS);
++				zone->start, zone->len, GFP_KERNEL);
++	memalloc_nofs_restore(nofs_flags);
+ 	if (ret == -EOPNOTSUPP) {
+ 		ret = blkdev_issue_zeroout(fdev->bdev, zone->wp,
+ 					zone->len - (zone->wp - zone->start),
 
 -- 
 2.43.0
