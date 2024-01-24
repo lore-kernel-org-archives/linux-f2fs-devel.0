@@ -4,98 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 53FE4C47258
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Jan 2024 23:47:34 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EEB3CC46CD2
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jan 2024 14:44:12 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rSQUO-0002Ol-CX;
-	Tue, 23 Jan 2024 23:47:33 +0000
+	id 1rSeU6-0006dA-Rv;
+	Wed, 24 Jan 2024 14:44:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <david@fromorbit.com>) id 1rSQUM-0002Oe-Ix
+ (envelope-from <chao@kernel.org>) id 1rSeU5-0006d4-HI
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 23 Jan 2024 23:47:31 +0000
+ Wed, 24 Jan 2024 14:44:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=pyNE0YBQ61XvxQg0qzcUw/mj3pyKM5V+H7U9PFr3Dnc=; b=hMR/Uc2bcfCxOuhl7d5tD1+jeA
- qzCjphljc6P8yBuOJFc/LQio2inY6I71ZuvM6fgTeKyLRI3F3lnbVty/YoeX9W8SDAbvqQPe62p8H
- +cyA76ZHzHTG+Jh42Du4DqUUcr6PLOeSG+XFOCT5Sjuc8J0Ne2aOAnhQ0krcVGvyIv7Y=;
+ bh=KFt+s4bkPh3d4DpchVvrMGyH3UkvEzJ/Jw2y22R4xio=; b=C5b/h4OXUbk9hKShBQKlKiLG0D
+ yicLY80cWj8aVZ9+TiWomj3HxFflFdQpXTkLKjkU+DaqQ5IAkQtW4dqAGvSqPyhOK9pV602BfkViV
+ TjYQvrexuDSlbuySXcn+or7CtC9B/uekEtwLewlgl8RdCicN8g/iw2OkglX5mO5drSI8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=pyNE0YBQ61XvxQg0qzcUw/mj3pyKM5V+H7U9PFr3Dnc=; b=JSOslUHOy2WbiZzpot71CCX+vU
- RKGjKhSj7DIlXX5kHgn2RPI7blO67qcpV63KJI6heh8q8jwaej+rXsFIblmw6svxfeBaGkjUSIFj2
- XGrq2hPVBvu2Jm4KsgAoc3urDb9Km8Tn+RxyWtwFOjzd9zWB9RjJzd7jJV5LBy9/apao=;
-Received: from mail-oa1-f45.google.com ([209.85.160.45])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=KFt+s4bkPh3d4DpchVvrMGyH3UkvEzJ/Jw2y22R4xio=; b=N
+ yYbucgiYgggI6QgQNEbqTHEoaXYAM24u79FNrTSIClmf6bIvupjobgSDCqmoB4eFThqJMTavTIlWz
+ h5yXiVnZQqPiz1kS23mLaOGHUQzCiAeneXB+a4l7i9IR4OfJ/6ugQJ/o3xTYAvEIOuutUnshiXEKo
+ ZXzBCFlHykLiDKtM=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rSQUH-0004Cy-KN for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 23 Jan 2024 23:47:31 +0000
-Received: by mail-oa1-f45.google.com with SMTP id
- 586e51a60fabf-2046b2cd2d3so3632222fac.0
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1rSeTz-0008OS-AJ for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Jan 2024 14:44:08 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id 5980B61D60
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 23 Jan 2024 15:47:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1706053640; x=1706658440;
- darn=lists.sourceforge.net; 
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
- bh=pyNE0YBQ61XvxQg0qzcUw/mj3pyKM5V+H7U9PFr3Dnc=;
- b=NdwvIK8ENtOFBfNiV9Y8QbKTouL6hzThldB/na6Lb19c0WRkhIBEJwRSdlrWw2MMOE
- pvdSLBxWHpHI/X76fV8AtfP+uiBFxy/6nfM0YyUJPe5+vaVqpx5bgDYqB3Ttw34F0rdc
- 6JgCaCiaupLIwzun2Fzl3vIeYOZ6Run2b9u2n8UfqSKmpN1XyClPLykq7j1081q3gvzB
- 2+KYF4zaUek2OOzu22bW0P9Dz6hAkJ7xaqTrbZo8MT6nIjAA0onNZlHRLiPHwlMgSNBM
- 4cFSg7IM7T9FC8K92nzYGjZxDc86DMpNX3+aF8s8aj453od03Fq0CXdjAz9IM3++xCCP
- xqwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1706053640; x=1706658440;
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=pyNE0YBQ61XvxQg0qzcUw/mj3pyKM5V+H7U9PFr3Dnc=;
- b=b70LnHtyixm33HGWynTr+S+r1nLl7fIykIpachUeUaj+IyB+ZLsGOyV0t9ox/qqvOp
- j2794aJ22NRlOI9nn29CBErPMhDI+f2to1d4PI1oe52H2ptLjAZpDy8IOQPJ4NMDUONv
- Fk7FJaAQUQeqa5YxStjJagXKkMV5mXtd8WkUkvFlNjWfnKWNPMu92/XfeABFDZ5JnS2q
- XWoibdRKnzQdcKmbfGVlFHpzWHf93P2Ve+DHb+BHwXqJ5E+iaNW94RqQHGxfvvKwoG74
- 9S2DkJw8zaFIaOsE29eyKYtoBcExDZvMjM7T5q7gyu6PpFzrlzgn8mTRy4ffttgoEfgh
- au4A==
-X-Gm-Message-State: AOJu0YzOLCQRaEFN58QroPQZV0d8KH8dOcKuvxx7pkGtSEin9zIfcVro
- xvHeedptPUwXABZ0CJWxS7ACpFgEOEMSTtvqYUGsSOuzY/pwDukwka7kWiDMr69AMLt03bVpK7s
- H
-X-Google-Smtp-Source: AGHT+IGeQm//kQ1jNNCFdA/q04f/cj+3wXvZbTLBGBCW2U08K7o/GP2/AW3XgLOokmhWoQbjbV2FZg==
-X-Received: by 2002:a17:902:d202:b0:1d7:1e5d:ab39 with SMTP id
- t2-20020a170902d20200b001d71e5dab39mr3908243ply.80.1706052110812; 
- Tue, 23 Jan 2024 15:21:50 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au.
- [49.181.38.249]) by smtp.gmail.com with ESMTPSA id
- t10-20020a170902bc4a00b001d714a1530bsm8165932plz.176.2024.01.23.15.21.50
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 23 Jan 2024 15:21:50 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
- (envelope-from <david@fromorbit.com>) id 1rSQ5T-00EPce-2c;
- Wed, 24 Jan 2024 10:21:47 +1100
-Date: Wed, 24 Jan 2024 10:21:47 +1100
-To: Mikulas Patocka <mpatocka@redhat.com>
-Message-ID: <ZbBKC3U3/1yPvWDR@dread.disaster.area>
-References: <20240123-zonefs_nofs-v1-0-cc0b0308ef25@wdc.com>
- <20240123-zonefs_nofs-v1-1-cc0b0308ef25@wdc.com>
- <31e0f796-1c5-b7f8-2f4b-d937770e8d5@redhat.com>
+ Wed, 24 Jan 2024 14:43:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFE2CC433C7;
+ Wed, 24 Jan 2024 14:43:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1706107433;
+ bh=W4jjIT3rFGY05/gjE0cqYf1XPxshz9/frF5SQn/Cvy8=;
+ h=From:To:Cc:Subject:Date:From;
+ b=Z+nvrq5Bor6DTnQQZYi7BMd6G/paRdTOD1kasJ2W+8VMC8yyAJiMFZp3guRoVCi3P
+ rcRaS95gCbn61GN0ybv9qcFc45ovLTdpKJKrw88jXYrFTJdhWB2A/Cu2HPW6lCirQN
+ kB5OiThib+tOqgK9yxb7/un1DtGo+3UfdIcVWUBmYCwtt9ejvGViq0JoWc5BiISFVY
+ jRL/QQpK1BNE9/O3q2TM5zcSMuMmMQVcZ9n2Vd+lYUNz+CeSxaCHZFmzYoX3b8/yzY
+ N0KvgzXS6/3E8BsHmYSjZ6P/E2PiaQUntPk8nrn8fECNpoKheeYUrbAyTpvqbXGso7
+ /Njj8KEqaoVAg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Wed, 24 Jan 2024 22:43:42 +0800
+Message-Id: <20240124144342.14612-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <31e0f796-1c5-b7f8-2f4b-d937770e8d5@redhat.com>
-X-Headers-End: 1rSQUH-0004Cy-KN
-Subject: Re: [f2fs-dev] [PATCH 1/5] zonefs: pass GFP_KERNEL to
- blkdev_zone_mgmt() call
+X-Headers-End: 1rSeTz-0008OS-AJ
+Subject: [f2fs-dev] [PATCH] f2fs: introduce get_available_block_count() for
+ cleanup
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -107,75 +77,121 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Dave Chinner via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Dave Chinner <david@fromorbit.com>
-Cc: Naohiro Aota <naohiro.aota@wdc.com>, dm-devel@lists.linux.dev,
- linux-f2fs-devel@lists.sourceforge.net, Chaitanya Kulkarni <kch@nvidia.com>,
- Sagi Grimberg <sagi@grimberg.me>,
- "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
- Johannes Thumshirn <johannes.thumshirn@wdc.com>,
- Mike Snitzer <snitzer@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, Chris Mason <clm@fb.com>,
- Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- David Sterba <dsterba@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-btrfs@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
- linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jan 23, 2024 at 09:39:02PM +0100, Mikulas Patocka wrote:
-> 
-> 
-> On Tue, 23 Jan 2024, Johannes Thumshirn wrote:
-> 
-> > Pass GFP_KERNEL instead of GFP_NOFS to the blkdev_zone_mgmt() call in
-> > zonefs_zone_mgmt().
-> > 
-> > As as zonefs_zone_mgmt() and zonefs_inode_zone_mgmt() are never called
-> > from a place that can recurse back into the filesystem on memory reclaim,
-> > it is save to call blkdev_zone_mgmt() with GFP_KERNEL.
-> > 
-> > Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> > ---
-> >  fs/zonefs/super.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-> > index 93971742613a..63fbac018c04 100644
-> > --- a/fs/zonefs/super.c
-> > +++ b/fs/zonefs/super.c
-> > @@ -113,7 +113,7 @@ static int zonefs_zone_mgmt(struct super_block *sb,
-> >  
-> >  	trace_zonefs_zone_mgmt(sb, z, op);
-> >  	ret = blkdev_zone_mgmt(sb->s_bdev, op, z->z_sector,
-> > -			       z->z_size >> SECTOR_SHIFT, GFP_NOFS);
-> > +			       z->z_size >> SECTOR_SHIFT, GFP_KERNEL);
-> >  	if (ret) {
-> >  		zonefs_err(sb,
-> >  			   "Zone management operation %s at %llu failed %d\n",
-> > 
-> > -- 
-> > 2.43.0
-> 
-> zonefs_inode_zone_mgmt calls 
-> lockdep_assert_held(&ZONEFS_I(inode)->i_truncate_mutex); - so, this 
-> function is called with the mutex held - could it happen that the 
-> GFP_KERNEL allocation recurses into the filesystem and attempts to take 
-> i_truncate_mutex as well?
-> 
-> i.e. GFP_KERNEL -> iomap_do_writepage -> zonefs_write_map_blocks -> 
-> zonefs_write_iomap_begin -> mutex_lock(&zi->i_truncate_mutex)
+There are very similar codes in inc_valid_block_count() and
+inc_valid_node_count() which is used for available user block
+count calculation.
 
-zonefs doesn't have a ->writepage method, so writeback can't be
-called from memory reclaim like this.
+This patch introduces a new helper get_available_block_count()
+to include those common codes, and used it to clean up codes.
 
--Dave.
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/f2fs.h | 61 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 31 insertions(+), 30 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5d19643a92af..0094a8c85f4a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2253,6 +2253,31 @@ static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
+ 	return false;
+ }
+ 
++static inline unsigned int get_available_block_count(struct f2fs_sb_info *sbi,
++						struct inode *inode, bool cap)
++{
++	block_t avail_user_block_count;
++
++	avail_user_block_count = sbi->user_block_count -
++					sbi->current_reserved_blocks;
++
++	if (!__allow_reserved_blocks(sbi, inode, cap))
++		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
++
++	if (F2FS_IO_ALIGNED(sbi))
++		avail_user_block_count -= sbi->blocks_per_seg *
++				SM_I(sbi)->additional_reserved_segments;
++
++	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
++		if (avail_user_block_count > sbi->unusable_block_count)
++			avail_user_block_count -= sbi->unusable_block_count;
++		else
++			avail_user_block_count = 0;
++	}
++
++	return avail_user_block_count;
++}
++
+ static inline void f2fs_i_blocks_write(struct inode *, block_t, bool, bool);
+ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 				 struct inode *inode, blkcnt_t *count, bool partial)
+@@ -2278,22 +2303,8 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 
+ 	spin_lock(&sbi->stat_lock);
+ 	sbi->total_valid_block_count += (block_t)(*count);
+-	avail_user_block_count = sbi->user_block_count -
+-					sbi->current_reserved_blocks;
+-
+-	if (!__allow_reserved_blocks(sbi, inode, true))
+-		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
++	avail_user_block_count = get_available_block_count(sbi, inode, true);
+ 
+-	if (F2FS_IO_ALIGNED(sbi))
+-		avail_user_block_count -= sbi->blocks_per_seg *
+-				SM_I(sbi)->additional_reserved_segments;
+-
+-	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+-		if (avail_user_block_count > sbi->unusable_block_count)
+-			avail_user_block_count -= sbi->unusable_block_count;
+-		else
+-			avail_user_block_count = 0;
+-	}
+ 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
+ 		if (!partial) {
+ 			spin_unlock(&sbi->stat_lock);
+@@ -2609,7 +2620,8 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+ 					struct inode *inode, bool is_inode)
+ {
+ 	block_t	valid_block_count;
+-	unsigned int valid_node_count, user_block_count;
++	unsigned int valid_node_count;
++	unsigned int avail_user_block_count;
+ 	int err;
+ 
+ 	if (is_inode) {
+@@ -2629,21 +2641,10 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+ 
+ 	spin_lock(&sbi->stat_lock);
+ 
+-	valid_block_count = sbi->total_valid_block_count +
+-					sbi->current_reserved_blocks + 1;
+-
+-	if (!__allow_reserved_blocks(sbi, inode, false))
+-		valid_block_count += F2FS_OPTION(sbi).root_reserved_blocks;
+-
+-	if (F2FS_IO_ALIGNED(sbi))
+-		valid_block_count += sbi->blocks_per_seg *
+-				SM_I(sbi)->additional_reserved_segments;
+-
+-	user_block_count = sbi->user_block_count;
+-	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+-		user_block_count -= sbi->unusable_block_count;
++	valid_block_count = sbi->total_valid_block_count + 1;
++	avail_user_block_count = get_available_block_count(sbi, inode, false);
+ 
+-	if (unlikely(valid_block_count > user_block_count)) {
++	if (unlikely(valid_block_count > avail_user_block_count)) {
+ 		spin_unlock(&sbi->stat_lock);
+ 		goto enospc;
+ 	}
 -- 
-Dave Chinner
-david@fromorbit.com
+2.40.1
+
 
 
 _______________________________________________
