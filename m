@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3DC4AC46CD2
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Jan 2024 03:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 94DC6C47258
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Jan 2024 03:13:09 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rSq3m-0005oG-UU;
-	Thu, 25 Jan 2024 03:05:47 +0000
+	id 1rSqAu-0006Sp-1t;
+	Thu, 25 Jan 2024 03:13:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1rSq3m-0005o4-09
+ (envelope-from <ebiggers@kernel.org>) id 1rSqAt-0006Se-9G
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 25 Jan 2024 03:05:46 +0000
+ Thu, 25 Jan 2024 03:13:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=R7lVZpcxIo/fskWnBX7E++DalAuH+CS+W2ZfJ0YRyJs=; b=ghTQXa3YXhAPatmH2xffTnf9jp
- sNH7gBhVlgr3u4Z4vAP9MkbPO/40/X9/KY6AY9z9kPaUYHuwOXCH1bv2qYv3fAV1OyMy1AkcD4qZP
- 66vXs9waXx1bNemvVjZ/VraGejCGaHT7fjA8RNmbH6DCxtSRfKww7gVpSv57hAmMm92o=;
+ bh=Ltawi/q+QwKIc79Ljr+y1UlrS+n25loM4V01eAT2Vyo=; b=nMcIdieyHOL2RyRgL8XyuO041i
+ AbeI0dafj0u3Y1VUZTT2XJrkit9YwQN7Su0o7MVAbmeMeK2Hm+eSLDW1KYo77qTAPMP+d+znz5qPT
+ Qn93nphVlQhcHp84KrkDBnQcowTVhsFoG7R+ZM0AhGpN7CMjN7pwcXcgfynQz/baNPPQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,41 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=R7lVZpcxIo/fskWnBX7E++DalAuH+CS+W2ZfJ0YRyJs=; b=TRY8WtdyCzzNz6b6avIxUrM0to
- wo3MEq3D0Tfrtv/3M/Gbg6eEIu0oyaZsP78gPUmEpqwdu1Nj/0Guos6uv5kWvh4fqHRFTzQKlo/et
- 5UmfbO6pCJn0cpQjW6sr93wzn2HHzkDYRziAkASjhjxoUktTLjaRtD3/Nt8O1j3BOsks=;
+ bh=Ltawi/q+QwKIc79Ljr+y1UlrS+n25loM4V01eAT2Vyo=; b=RRhO/+cCB+Z6q5xP05BhIJ03jI
+ NL9ewMzi/8wvozdHN0+OJoAy7W0Hf56S9a9sh46vsaVXJTye8jvuGHV2SHPDNofcfi/PThDBQ2ZuB
+ QCECHpnHQ01cUawQWmkpuGnn1xxhIZuxaB0dS5SMEuOc/p9/RCToGpwZOkPuEO0SvFXE=;
 Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rSq3l-0005eG-43 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 25 Jan 2024 03:05:46 +0000
+ id 1rSqAr-0005tY-Mg for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 25 Jan 2024 03:13:07 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id D5FE4CE09E4;
- Thu, 25 Jan 2024 03:05:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F35DC433F1;
- Thu, 25 Jan 2024 03:05:32 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id 8BB92CE32B7;
+ Thu, 25 Jan 2024 03:12:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 763FBC433C7;
+ Thu, 25 Jan 2024 03:12:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1706151932;
- bh=k/lcg2zazVrlN5kWliEtrgP95ZsgX1rocgc1aIdg3L4=;
+ s=k20201202; t=1706152373;
+ bh=fRk1oYOWwebE3Gwdrh/Tnqsxt6v+AVSd7r7lMjh5y1Q=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=C2MBZ2Ii8noSNTJIR9GJXA/gpybC54e7/5EkfmuEekhstUGgZBwcYYV7cn5pvnmFj
- mnI91/Enut3AM5eLngfH35zaZXbp/aaoypZPhVJ1csin1MBrgy1J8zlfKF6RkWFC4H
- 1038qtJRm8ANP8twzH7GGrGr1boqXCBxtwCCkVX2qDaZgUvmE9Z8jwz9/ByhXw8OLI
- bCXBsupFXihzmYcAyHi5K8rxJiuj3XFotYLULPttjSAmSl9fQQP418LAvDWHBG04Yf
- xqvaNZ/pqPLly+hnluO8JNn141QNZl3ge17G7QrHsO/LGe6z9UlDV48Tf6fyK8j3je
- HFIW9zCxGXjDg==
-Date: Wed, 24 Jan 2024 19:05:30 -0800
+ b=A00aORVzedzHs30RWLFcTiWlC03VdaDvQqDuKIAniFdAVLKuMFWQwxb59IXtBz2js
+ biOOHxBJXNbV378sLsEZGXvS6lPyMptuibzGnJvQkqseD6lrRtyTeMKtB8mXtpbXSx
+ 4Pv1Ln6RLbqUw4p/jGh/OIqpEAo8vZua8MzySaGj2g6Rn+HM8ilr3C649ktYm+KQxq
+ WhkYcxMLZRZcUiTXCT0TRYg30Qym+0RffALXDgmH3PKCar90DVOLimPGCPIgo7pfcf
+ YTEAglBkTetGeXVcp+JEsx32RwjkZVRMtm6LCS7LJyGymi76fkcv/tS/ve/NGo1uxA
+ +/ugfqmnbe8Cw==
+Date: Wed, 24 Jan 2024 19:12:51 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: Gabriel Krisman Bertazi <krisman@suse.de>
-Message-ID: <20240125030530.GB52073@sol.localdomain>
+Message-ID: <20240125031251.GC52073@sol.localdomain>
 References: <20240119184742.31088-1-krisman@suse.de>
- <20240119184742.31088-3-krisman@suse.de>
+ <20240119184742.31088-5-krisman@suse.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20240119184742.31088-3-krisman@suse.de>
-X-Headers-End: 1rSq3l-0005eG-43
-Subject: Re: [f2fs-dev] [PATCH v3 02/10] fscrypt: Share code between
- functions that prepare lookup
+In-Reply-To: <20240119184742.31088-5-krisman@suse.de>
+X-Headers-End: 1rSqAr-0005tY-Mg
+Subject: Re: [f2fs-dev] [PATCH v3 04/10] fscrypt: Drop d_revalidate once the
+ key is added
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,29 +86,35 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jan 19, 2024 at 03:47:34PM -0300, Gabriel Krisman Bertazi wrote:
-> To make the patch simpler, we now call fscrypt_get_encryption_info twice
-> for fscrypt_prepare_lookup, once inside fscrypt_setup_filename and once
-> inside fscrypt_prepare_lookup_dentry.  It seems safe to do, and
-> considering it will bail early in the second lookup and most lookups
-> should go to the dcache anyway, it doesn't seem problematic for
-> performance.  In addition, we add a function call for the unencrypted
-> case, also during lookup.
+On Fri, Jan 19, 2024 at 03:47:36PM -0300, Gabriel Krisman Bertazi wrote:
+> /*
+>  * When d_splice_alias() moves a directory's no-key alias to its plaintext alias
+>  * as a result of the encryption key being added, DCACHE_NOKEY_NAME must be
+>  * cleared.  Note that we don't have to support arbitrary moves of this flag
+>  * because fscrypt doesn't allow no-key names to be the source or target of a
+>  * rename().
+>  */
+>  static inline void fscrypt_handle_d_move(struct dentry *dentry)
+>  {
+>  	dentry->d_flags &= ~DCACHE_NOKEY_NAME;
+> +
+> +	/*
+> +	 * Save the d_revalidate call cost during VFS operations.  We
+> +	 * can do it because, when the key is available, the dentry
+> +	 * can't go stale and the key won't go away without eviction.
+> +	 */
+> +	if (dentry->d_op && dentry->d_op->d_revalidate == fscrypt_d_revalidate)
+> +		dentry->d_flags &= ~DCACHE_OP_REVALIDATE;
+>  }
 
-Unfortunately I don't think it's correct.  This is basically undoing my fix
-b01531db6cec ("fscrypt: fix race where ->lookup() marks plaintext dentry as
-ciphertext") from several years ago.
+Is there any way to optimize this further for the case where fscrypt is not
+being used?  This is called unconditionally from d_move().  I've generally been
+trying to avoid things like this where the fscrypt support slows things down for
+everyone even when they're not using the feature.
 
-When a lookup is done, the filesystem needs to either treat the name being
-looked up as a no-key name *or* as a regular name, depending on whether the
-directory's key is present.  We shouldn't enable race conditions where, due to
-the key being concurrently added, the name is treated as a no-key name for
-filename matching purposes but a regular name for dentry validation purposes.
-That can result in an anomaly where a file that exists ends up with a negative
-dentry that doesn't get invalidated.
-
-Basically, the boolean fscrypt_name::is_nokey_name that's produced by
-fscrypt_setup_filename() should continue to be propagated to DCACHE_NOKEY_NAME.
+In any case, as always please don't let function comments get outdated.  Since
+it now seems to just describe the DCACHE_NOKEY_NAME clearing and not the whole
+function, maybe it should be moved to above that line.
 
 - Eric
 
