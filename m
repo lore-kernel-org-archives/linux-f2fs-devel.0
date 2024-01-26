@@ -4,88 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 48680C47422
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Jan 2024 22:49:16 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 650A1C47422
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Jan 2024 23:08:30 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rTV0d-0000WX-0z;
-	Fri, 26 Jan 2024 22:49:15 +0000
+	id 1rTVJF-00007I-2e;
+	Fri, 26 Jan 2024 23:08:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <3yC-0ZQYKAC0MaXbNWPXXPUN.LXV@flex--drosen.bounces.google.com>)
- id 1rTV0a-0000WC-CA for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 26 Jan 2024 22:49:12 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1rTVJE-00007B-M0
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 26 Jan 2024 23:08:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VvtxBMBvF/R8LHmcH12L5RxNotJBNU7EMF56KO0LBm0=; b=CkScaO9vcb86fn8VimALsndpRB
- 17SFM2hKoCWIyqXOVFL97RsAkDcKVXC6OPJ9kkS5x9lNIeDl8ePC0zbdjAV+Ii2GLShkwyaR0uQSW
- ygAjKx6W/hews1RQN7sZexBwhmPoe4dC4N+BQWHYWIkrzUOr0PXH5hOIS5D+199OEwCw=;
+ bh=cDgvlw2+zZg4+vBGbt35PcUSP+w9v5YJ81LThm3Va5I=; b=HhtsO1eXu5swznguKK7hWM9A2i
+ 3oGYvKh+GYK8wiIIBjBqZx/YOaEDYlyGbNEja16hvF0+pbOK5HL4pcHpCb3D8qSiNq3FpQd1UreNG
+ OC764KP4xkssAB1S1l7VgAq4q/3cj41P3VPlgIsK4UkHKzWtF5pkzLNez4fgZsuMLnMs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=VvtxBMBvF/R8LHmcH12L5RxNotJBNU7EMF56KO0LBm0=; b=i
- VEgOO6U/kUIDvQIcNUmgPzglBUXnvNugXWyKdWQT/FCbyN6OYOyEmTzd0C9jilT9Lm5/U4ak6kkaD
- zzQw08ZxLKSk0Pbr88+/1b55FIXKSC8S7qg468JeFGHoqfeKoiG4Bp72PmszB5+n0JShLkQQMAQYO
- PCThKEnQ/bLhD8k0=;
-Received: from mail-vk1-f202.google.com ([209.85.221.202])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=cDgvlw2+zZg4+vBGbt35PcUSP+w9v5YJ81LThm3Va5I=; b=SSaLBW9KhrPCBN9TOFKD0l/YnP
+ 5vTUcGc/ZnbUGUsBeqX2zTKF36/TZN5VKmZrxSYNnRdNQkX4lCfH9g7l1rYx95uzp7EB8hECrKYTX
+ ImfhHm8cLkBdtqNlhpXd42jXsw9o0g6mhGc0BMRkCtIEl6LenpDtUQSR1YY+V5VGGaeY=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rTV0Z-0002Qp-Fv for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 26 Jan 2024 22:49:12 +0000
-Received: by mail-vk1-f202.google.com with SMTP id
- 71dfb90a1353d-4bddd10a870so600010e0c.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 26 Jan 2024 14:49:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1706309341; x=1706914141;
- darn=lists.sourceforge.net; 
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=VvtxBMBvF/R8LHmcH12L5RxNotJBNU7EMF56KO0LBm0=;
- b=TyG6m8w51Gg8vS4I5AGdVhwuVko8AdfxEJzmJUfT6IS6QFvaX8qKbtJPskGSTe1lw4
- Xw2y3ll8lZPEUyPfyEfGHbUZQlpj6rovec6MujOVJyf+t4SQTefhXbNf7L+mw20+v98v
- Z/D467XpgKdESsjG0haGKg1JeP17gGvazP7BdFmFk++wMG+q+TaD4gq+M41ZHVAQp2+N
- IHGlpPY9HF4N2/fI0p737O0uOasuy1Mm/GJhylUqNf50DECxHdAlA2AuACP2Ts2EjIyJ
- Siwsei/iQR8UKDzj/n8CGwaPH/gCAt+Vz3BQAVu91arelBJ8RR8S/DntFc0m8wmG4CTc
- 5U7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1706309341; x=1706914141;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=VvtxBMBvF/R8LHmcH12L5RxNotJBNU7EMF56KO0LBm0=;
- b=sD65n5BIWStS9MT541ngxrPMuoXtSZql0a6mPvXYIWK/XfDQR9gtX1Q3N0YC5Rirx7
- oQCeE0zPmEXRk1FgVroBaT25GUktT1xouEAUexMSO7ZDMarRw5Kpj4g6z5kIgE57Lyk9
- Nj+kN/sz7Q26vf+3puVE74zInOMzI0nWxWUgKUeWiM2lZyF120sdarfdk6CZ2CsSzvAs
- 1KEKuoHgkQXbKc6b85ZLtFlT/UmXYBe/KuWTPUaZS3jtfJqR+Vbfap3FiTPGaD3jQ4As
- boI/VcfEQF+PkdSQ22DeS2RnQAOAFRD9BPbrFTN1g12Kxh/KWCjRbQDE13xGskhd8kAO
- H/Qg==
-X-Gm-Message-State: AOJu0Yw5qm3Uq1i6z3VeEHo2Yp+KZlIcbnQ0AIxcKkg/puRBJN+BDbtG
- Xpg5p1CsTMYauRXtL7D/HOeefl50zfhXL5HjM3577PcmjRyx35SjGv36/2soTN2BepCKJrsoLDY
- nN0NbHW5aN2SOuaLcAXgZuhDZvedrnOhs7p6r/tHCzahxsIENZHn8OJHuCp6iYonVxhwHy61bQu
- xCXHVxrE5vzFBIZZJAUuvum7XCAQ4Sb61dBWh4HK5IMFvxDINSFrf1lw==
-X-Google-Smtp-Source: AGHT+IEMegmqSNXm5Jg7+9YLBvuM7Bq5JW7GiWyZBvHNzzCTCoYvJQotPtwfPZeURUL+nYLRZVLApYrbxk8=
-X-Received: from drosen.mtv.corp.google.com
- ([2620:15c:211:201:2056:76c7:fa0d:88ae])
- (user=drosen job=sendgmr) by 2002:a0d:df93:0:b0:602:c1e2:c6f7 with SMTP id
- i141-20020a0ddf93000000b00602c1e2c6f7mr532395ywe.2.1706307528006; Fri, 26 Jan
- 2024 14:18:48 -0800 (PST)
-Date: Fri, 26 Jan 2024 14:18:44 -0800
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
-Message-ID: <20240126221845.265859-1-drosen@google.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1rTV0Z-0002Qp-Fv
-Subject: [f2fs-dev] [PATCH 1/2] libf2fs: Accept Sparse files with non 4K
- Blocksize
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1rTVJ9-0003JB-5C for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 26 Jan 2024 23:08:28 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sin.source.kernel.org (Postfix) with ESMTP id 10114CE3526;
+ Fri, 26 Jan 2024 23:08:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DE71C433F1;
+ Fri, 26 Jan 2024 23:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1706310496;
+ bh=gtDQI+hKL0TQ2S0fIwbLd2/StC1wd1X9UG/XGhPc+u0=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=OXelBLKMoeU91iMzptcxcM+mQaJSEpgO+jrwD6fwJBA2GkYx+erSHvnEqaEecJ7ys
+ L9UR+moDECJyZTNAQStBJ1gqSu5Jo3jJb361fwbSboiVHV/p0YUsN9tkSs+y6gLuMd
+ RM4TB7dkNB+Sq2ezTxik+577gPYickgUpAX0Pl2B1ezh1CV1XENFR1r4dA2nhp9qJ/
+ 0haeFt1yoLgoBcVaL0dkDQoPqPRIihKVZA//P8H+bBkf0INz8Fq1lEqopVaqZRfjpy
+ Hz6QN8dXokICkd7xEjTGsy5qLKgFWycDOoof+b/7THMJ43wRjTyrsiamf/DlywMiWR
+ YFNnxDfWK+faA==
+Date: Fri, 26 Jan 2024 15:08:14 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Wenjie <qwjhust@gmail.com>
+Message-ID: <ZbQ7XmFpAMSXslkU@google.com>
+References: <20240109035804.642-1-qwjhust@gmail.com>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20240109035804.642-1-qwjhust@gmail.com>
+X-Headers-End: 1rTVJ9-0003JB-5C
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix max open zone constraints
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,100 +77,139 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Rosenberg via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Rosenberg <drosen@google.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kernel-team@android.com,
- Daniel Rosenberg <drosen@google.com>
+Cc: linux-kernel@vger.kernel.org, hustqwj@hust.edu.cn,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Since we may not know the block size when initializing sparse files, we
-should assume that the sparse file's blocksize is correct.
+On 01/09, Wenjie wrote:
+> From: Wenjie Qi <qwjhust@gmail.com>
+> 
+> 1. If the max active zones of zoned devices are less than
+> the active logs of F2FS, the device may error due to
+> insufficient zone resources when multiple active logs are
+> being written at the same time.
+> 
+> 2. We can get the number of remaining available zone
+> resources by subtracting the number of active logs from
+> the number of max active zones of zoned devices.  We can
+> use these available zone resources to reduce the number
+> of pending bio when switching zones.
+> 
+> 3. The original code for determining zone end was
+> after "out":, which would have missed some fio's
+> where is_end_zone_blkaddr(sbi, fio->new_blkaddr)
+> was true. I've moved this code before "skip:" to
+> make sure it's done for each fio.
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
----
- fsck/mount.c     | 20 +++++++++++++-------
- lib/libf2fs_io.c | 11 +++++++----
- 2 files changed, 20 insertions(+), 11 deletions(-)
+Could you please keep #3 as a separate patch?
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 30c6228..7bbec3f 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -995,6 +995,10 @@ int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
- 		return -1;
- 
- 	blocksize = 1 << get_sb(log_blocksize);
-+	if (c.sparse_mode && F2FS_BLKSIZE != blocksize) {
-+		MSG(0, "Invalid blocksize (%u), does not equal sparse file blocksize (%u)",
-+			F2FS_BLKSIZE);
-+	}
- 	if (blocksize < F2FS_MIN_BLKSIZE || blocksize > F2FS_MAX_BLKSIZE) {
- 		MSG(0, "Invalid blocksize (%u), must be between 4KB and 16KB\n",
- 			blocksize);
-@@ -3965,20 +3969,22 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
- 	sbi->active_logs = NR_CURSEG_TYPE;
- 	ret = validate_super_block(sbi, SB0_ADDR);
- 	if (ret) {
--		/* Assuming 4K Block Size */
--		c.blksize_bits = 12;
--		c.blksize = 1 << c.blksize_bits;
--		MSG(0, "Looking for secondary superblock assuming 4K Block Size\n");
-+		if (!c.sparse_mode) {
-+			/* Assuming 4K Block Size */
-+			c.blksize_bits = 12;
-+			c.blksize = 1 << c.blksize_bits;
-+			MSG(0, "Looking for secondary superblock assuming 4K Block Size\n");
-+		}
- 		ret = validate_super_block(sbi, SB1_ADDR);
--		if (ret) {
-+		if (ret && !c.sparse_mode) {
- 			/* Trying 16K Block Size */
- 			c.blksize_bits = 14;
- 			c.blksize = 1 << c.blksize_bits;
- 			MSG(0, "Looking for secondary superblock assuming 16K Block Size\n");
- 			ret = validate_super_block(sbi, SB1_ADDR);
--			if (ret)
--				return -1;
- 		}
-+		if (ret)
-+			return -1;
- 	}
- 	sb = F2FS_RAW_SUPER(sbi);
- 	c.cache_config.num_cache_entry = num_cache_entry;
-diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
-index d76da83..97c91ef 100644
---- a/lib/libf2fs_io.c
-+++ b/lib/libf2fs_io.c
-@@ -662,14 +662,17 @@ int f2fs_init_sparse_file(void)
- 		if (!f2fs_sparse_file)
- 			return -1;
- 
-+		c.blksize = sparse_file_block_size(f2fs_sparse_file);
-+		c.blksize_bits = log_base_2(c.blksize);
-+		if (c.blksize_bits == -1) {
-+			MSG(0, "\tError: Sparse file blocksize not a power of 2.\n");
-+			return -1;
-+		}
-+
- 		c.device_size = sparse_file_len(f2fs_sparse_file, 0, 0);
- 		c.device_size &= (~((uint64_t)(F2FS_BLKSIZE - 1)));
- 	}
- 
--	if (sparse_file_block_size(f2fs_sparse_file) != F2FS_BLKSIZE) {
--		MSG(0, "\tError: Corrupted sparse file\n");
--		return -1;
--	}
- 	blocks_count = c.device_size / F2FS_BLKSIZE;
- 	blocks = calloc(blocks_count, sizeof(char *));
- 	if (!blocks) {
-
-base-commit: bf5100606d63f6928799846b7322aa6f3f158bcf
--- 
-2.43.0.429.g432eaa2c6b-goog
-
+> 
+> Signed-off-by: Wenjie Qi <qwjhust@gmail.com>
+> ---
+>  fs/f2fs/data.c  | 38 ++++++++++++++++++++++++++++----------
+>  fs/f2fs/f2fs.h  |  2 ++
+>  fs/f2fs/super.c |  9 +++++++++
+>  3 files changed, 39 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index dce8defdf4c7..6b11364e94b8 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -392,6 +392,19 @@ static void f2fs_zone_write_end_io(struct bio *bio)
+>  	complete(&io->zone_wait);
+>  	f2fs_write_end_io(bio);
+>  }
+> +
+> +static void f2fs_zone_write_end_io_nowait(struct bio *bio)
+> +{
+> +#ifdef CONFIG_F2FS_IOSTAT
+> +	struct bio_iostat_ctx *iostat_ctx = bio->bi_private;
+> +	struct f2fs_sb_info *sbi = iostat_ctx->sbi;
+> +#else
+> +	struct f2fs_sb_info *sbi = (struct f2fs_sb_info *)bio->bi_private;
+> +#endif
+> +
+> +	atomic_inc(&sbi->available_active_zones);
+> +	f2fs_write_end_io(bio);
+> +}
+>  #endif
+>  
+>  struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
+> @@ -1080,22 +1093,27 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+>  	io->last_block_in_bio = fio->new_blkaddr;
+>  
+>  	trace_f2fs_submit_page_write(fio->page, fio);
+> -skip:
+> -	if (fio->in_list)
+> -		goto next;
+> -out:
+>  #ifdef CONFIG_BLK_DEV_ZONED
+>  	if (f2fs_sb_has_blkzoned(sbi) && btype < META &&
+>  			is_end_zone_blkaddr(sbi, fio->new_blkaddr)) {
+> -		bio_get(io->bio);
+> -		reinit_completion(&io->zone_wait);
+> -		io->bi_private = io->bio->bi_private;
+> -		io->bio->bi_private = io;
+> -		io->bio->bi_end_io = f2fs_zone_write_end_io;
+> -		io->zone_pending_bio = io->bio;
+> +		if (!atomic_add_negative(-1, &sbi->available_active_zones)) {
+> +			io->bio->bi_end_io = f2fs_zone_write_end_io_nowait;
+> +		} else {
+> +			atomic_inc(&sbi->available_active_zones);
+> +			bio_get(io->bio);
+> +			reinit_completion(&io->zone_wait);
+> +			io->bi_private = io->bio->bi_private;
+> +			io->bio->bi_private = io;
+> +			io->bio->bi_end_io = f2fs_zone_write_end_io;
+> +			io->zone_pending_bio = io->bio;
+> +		}
+>  		__submit_merged_bio(io);
+>  	}
+>  #endif
+> +skip:
+> +	if (fio->in_list)
+> +		goto next;
+> +out:
+>  	if (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN) ||
+>  				!f2fs_is_checkpoint_ready(sbi))
+>  		__submit_merged_bio(io);
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 65294e3b0bef..1b1833e1d10e 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1551,6 +1551,8 @@ struct f2fs_sb_info {
+>  
+>  #ifdef CONFIG_BLK_DEV_ZONED
+>  	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
+> +	unsigned int max_active_zones;		/* max zone resources of the zoned device */
+> +	atomic_t available_active_zones;		/* remaining zone resources */
+>  #endif
+>  
+>  	/* for node-related operations */
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 206d03c82d96..c79919425d63 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -3932,6 +3932,15 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
+>  	if (!f2fs_sb_has_blkzoned(sbi))
+>  		return 0;
+>  
+> +	sbi->max_active_zones = bdev_max_active_zones(bdev);
+> +	if (sbi->max_active_zones && (sbi->max_active_zones < F2FS_OPTION(sbi).active_logs)) {
+> +		f2fs_err(sbi,
+> +			"zoned: max active zones %u is too small, need at least %u active zones",
+> +				 sbi->max_active_zones, F2FS_OPTION(sbi).active_logs);
+> +		return -EINVAL;
+> +	}
+> +	atomic_set(&sbi->available_active_zones, sbi->max_active_zones - F2FS_OPTION(sbi).active_logs);
+> +
+>  	zone_sectors = bdev_zone_sectors(bdev);
+>  	if (!is_power_of_2(zone_sectors)) {
+>  		f2fs_err(sbi, "F2FS does not support non power of 2 zone sizes\n");
+> -- 
+> 2.34.1
 
 
 _______________________________________________
