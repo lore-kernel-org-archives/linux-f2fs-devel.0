@@ -4,68 +4,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 650A1C47422
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Jan 2024 23:08:30 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E26A6C47422
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 27 Jan 2024 00:10:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rTVJF-00007I-2e;
-	Fri, 26 Jan 2024 23:08:29 +0000
+	id 1rTWHH-0007uV-5H;
+	Sat, 27 Jan 2024 00:10:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1rTVJE-00007B-M0
+ (envelope-from <krisman@suse.de>) id 1rTWHF-0007uF-7X
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 26 Jan 2024 23:08:28 +0000
+ Sat, 27 Jan 2024 00:10:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cDgvlw2+zZg4+vBGbt35PcUSP+w9v5YJ81LThm3Va5I=; b=HhtsO1eXu5swznguKK7hWM9A2i
- 3oGYvKh+GYK8wiIIBjBqZx/YOaEDYlyGbNEja16hvF0+pbOK5HL4pcHpCb3D8qSiNq3FpQd1UreNG
- OC764KP4xkssAB1S1l7VgAq4q/3cj41P3VPlgIsK4UkHKzWtF5pkzLNez4fgZsuMLnMs=;
+ bh=qiP0FQnt4cqTSN1YiUy858/KWPxl65jOuggk0qs8I50=; b=Xm3Z2eIdhT07+AlGTzEmcmzG0i
+ 9vW9autWEcdYoLN+xCnoYjLN7N+axeG6cE0gq89O3r158l+piKxNRUpcrtsD64TLF4oo0IuKuC+ud
+ TsS8mJZ/GYM4H+UCP5DYgvQpQuonyu+mpKMIaQyu58tLB3+O6zxfrTQ1Uof0JFnvXgHk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=cDgvlw2+zZg4+vBGbt35PcUSP+w9v5YJ81LThm3Va5I=; b=SSaLBW9KhrPCBN9TOFKD0l/YnP
- 5vTUcGc/ZnbUGUsBeqX2zTKF36/TZN5VKmZrxSYNnRdNQkX4lCfH9g7l1rYx95uzp7EB8hECrKYTX
- ImfhHm8cLkBdtqNlhpXd42jXsw9o0g6mhGc0BMRkCtIEl6LenpDtUQSR1YY+V5VGGaeY=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=qiP0FQnt4cqTSN1YiUy858/KWPxl65jOuggk0qs8I50=; b=WWrzksrb5cURuyhpmPkgBwThvZ
+ EwkNU8umcPQ2yjYVHbTm5OtNRrTL6yPjP2cv6O+eOKw0EARzKEaG+pV3Pk8Qfl9l4LjzZ/EE6TUdy
+ LmD39jnYgtcNnVJOhhrSN+508G8gDRQcRfPRGxGUw3n3CNco7h5jVn9msD1clklOblME=;
+Received: from smtp-out1.suse.de ([195.135.223.130])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rTVJ9-0003JB-5C for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 26 Jan 2024 23:08:28 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 10114CE3526;
- Fri, 26 Jan 2024 23:08:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DE71C433F1;
- Fri, 26 Jan 2024 23:08:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1706310496;
- bh=gtDQI+hKL0TQ2S0fIwbLd2/StC1wd1X9UG/XGhPc+u0=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=OXelBLKMoeU91iMzptcxcM+mQaJSEpgO+jrwD6fwJBA2GkYx+erSHvnEqaEecJ7ys
- L9UR+moDECJyZTNAQStBJ1gqSu5Jo3jJb361fwbSboiVHV/p0YUsN9tkSs+y6gLuMd
- RM4TB7dkNB+Sq2ezTxik+577gPYickgUpAX0Pl2B1ezh1CV1XENFR1r4dA2nhp9qJ/
- 0haeFt1yoLgoBcVaL0dkDQoPqPRIihKVZA//P8H+bBkf0INz8Fq1lEqopVaqZRfjpy
- Hz6QN8dXokICkd7xEjTGsy5qLKgFWycDOoof+b/7THMJ43wRjTyrsiamf/DlywMiWR
- YFNnxDfWK+faA==
-Date: Fri, 26 Jan 2024 15:08:14 -0800
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Wenjie <qwjhust@gmail.com>
-Message-ID: <ZbQ7XmFpAMSXslkU@google.com>
-References: <20240109035804.642-1-qwjhust@gmail.com>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1rTWHD-0006tQ-Pd for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 27 Jan 2024 00:10:29 +0000
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id F1A762239F;
+ Sat, 27 Jan 2024 00:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+ t=1706314222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=qiP0FQnt4cqTSN1YiUy858/KWPxl65jOuggk0qs8I50=;
+ b=eAAFZ+hy4W0ERneznfbod8HXWCF07cC6PU63IyVd2evLY8aZDQAoUfZlmui/oUFCRYGB5N
+ twUS1FwQuuQ7ofq26SJs3pH705X6M0Ugo42/MNXEGH1XGhwls+vStktZJeAciu6RGoICvX
+ kZAUv7bnZR5sUJHxlsY0IISMEJzSM7w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+ s=susede2_ed25519; t=1706314222;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=qiP0FQnt4cqTSN1YiUy858/KWPxl65jOuggk0qs8I50=;
+ b=coJPqI18mzxwHUMmbNuW5b4oJ0HGPG4SbV9iMOwsQymwFj9saypdm7WjZydevgsf+xwHV7
+ fQK0Rr3fxGy0mTAQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+ t=1706314221; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=qiP0FQnt4cqTSN1YiUy858/KWPxl65jOuggk0qs8I50=;
+ b=e5S9gQPSWNkDUQCzGk1aqUJIpJ4aLly/Bkyw9BfriAr+/uuwhwWMJIL00T8F5I8kUW50MQ
+ 3IXgl/CLMYHEYKvfDd2VjaDMRLcA7qMEQDsv5CdhcTrnTh021WPZn/JXsPabc/QXMSOuXo
+ /Gl+GzBKv7aRX784UyQrbFveKcffzag=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+ s=susede2_ed25519; t=1706314221;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=qiP0FQnt4cqTSN1YiUy858/KWPxl65jOuggk0qs8I50=;
+ b=C7LC53HFQIloXip4thh8xaelROkCeKT8Kz/NA83gWTi7k8gb+mLcr9xZSpJat0J+iQh2N9
+ gFJ9Xp7QTdLdGHBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5F79413998;
+ Sat, 27 Jan 2024 00:10:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+ by imap1.dmz-prg2.suse.org with ESMTPSA id sAf8Ce1JtGVQEQAAD6G6ig
+ (envelope-from <krisman@suse.de>); Sat, 27 Jan 2024 00:10:21 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: ebiggers@kernel.org, viro@zeniv.linux.org.uk, jaegeuk@kernel.org,
+ tytso@mit.edu
+Date: Fri, 26 Jan 2024 21:10:01 -0300
+Message-ID: <20240127001013.2845-2-krisman@suse.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240127001013.2845-1-krisman@suse.de>
+References: <20240127001013.2845-1-krisman@suse.de>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20240109035804.642-1-qwjhust@gmail.com>
-X-Headers-End: 1rTVJ9-0003JB-5C
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix max open zone constraints
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spamd-Result: default: False [1.90 / 50.00]; ARC_NA(0.00)[];
+ RCVD_VIA_SMTP_AUTH(0.00)[]; FROM_HAS_DN(0.00)[];
+ TO_DN_SOME(0.00)[]; FREEMAIL_ENVRCPT(0.00)[gmail.com];
+ R_MISSING_CHARSET(2.50)[]; MIME_GOOD(-0.10)[text/plain];
+ TO_MATCH_ENVRCPT_ALL(0.00)[]; BROKEN_CONTENT_TYPE(1.50)[];
+ RCVD_COUNT_THREE(0.00)[3];
+ DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+ RCPT_COUNT_SEVEN(0.00)[9]; MID_CONTAINS_FROM(1.00)[];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
+ FUZZY_BLOCKED(0.00)[rspamd.com]; FROM_EQ_ENVFROM(0.00)[];
+ MIME_TRACE(0.00)[0:+];
+ FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,lists.sourceforge.net,suse.de];
+ RCVD_TLS_ALL(0.00)[]; BAYES_HAM(-3.00)[100.00%]
+X-Headers-End: 1rTWHD-0006tQ-Pd
+Subject: [f2fs-dev] [PATCH v4 01/12] ovl: Reject mounting over
+ case-insensitive directories
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,139 +130,107 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, hustqwj@hust.edu.cn,
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ amir73il@gmail.com, Gabriel Krisman Bertazi <krisman@suse.de>,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 01/09, Wenjie wrote:
-> From: Wenjie Qi <qwjhust@gmail.com>
-> 
-> 1. If the max active zones of zoned devices are less than
-> the active logs of F2FS, the device may error due to
-> insufficient zone resources when multiple active logs are
-> being written at the same time.
-> 
-> 2. We can get the number of remaining available zone
-> resources by subtracting the number of active logs from
-> the number of max active zones of zoned devices.  We can
-> use these available zone resources to reduce the number
-> of pending bio when switching zones.
-> 
-> 3. The original code for determining zone end was
-> after "out":, which would have missed some fio's
-> where is_end_zone_blkaddr(sbi, fio->new_blkaddr)
-> was true. I've moved this code before "skip:" to
-> make sure it's done for each fio.
+overlayfs relies on the filesystem setting DCACHE_OP_HASH or
+DCACHE_OP_COMPARE to reject mounting over case-insensitive directories.
 
-Could you please keep #3 as a separate patch?
+Since commit bb9cd9106b22 ("fscrypt: Have filesystems handle their
+d_ops"), we set ->d_op through a hook in ->d_lookup, which
+means the root dentry won't have them, causing the mount to accidentally
+succeed.
 
-> 
-> Signed-off-by: Wenjie Qi <qwjhust@gmail.com>
-> ---
->  fs/f2fs/data.c  | 38 ++++++++++++++++++++++++++++----------
->  fs/f2fs/f2fs.h  |  2 ++
->  fs/f2fs/super.c |  9 +++++++++
->  3 files changed, 39 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index dce8defdf4c7..6b11364e94b8 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -392,6 +392,19 @@ static void f2fs_zone_write_end_io(struct bio *bio)
->  	complete(&io->zone_wait);
->  	f2fs_write_end_io(bio);
->  }
-> +
-> +static void f2fs_zone_write_end_io_nowait(struct bio *bio)
-> +{
-> +#ifdef CONFIG_F2FS_IOSTAT
-> +	struct bio_iostat_ctx *iostat_ctx = bio->bi_private;
-> +	struct f2fs_sb_info *sbi = iostat_ctx->sbi;
-> +#else
-> +	struct f2fs_sb_info *sbi = (struct f2fs_sb_info *)bio->bi_private;
-> +#endif
-> +
-> +	atomic_inc(&sbi->available_active_zones);
-> +	f2fs_write_end_io(bio);
-> +}
->  #endif
->  
->  struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
-> @@ -1080,22 +1093,27 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
->  	io->last_block_in_bio = fio->new_blkaddr;
->  
->  	trace_f2fs_submit_page_write(fio->page, fio);
-> -skip:
-> -	if (fio->in_list)
-> -		goto next;
-> -out:
->  #ifdef CONFIG_BLK_DEV_ZONED
->  	if (f2fs_sb_has_blkzoned(sbi) && btype < META &&
->  			is_end_zone_blkaddr(sbi, fio->new_blkaddr)) {
-> -		bio_get(io->bio);
-> -		reinit_completion(&io->zone_wait);
-> -		io->bi_private = io->bio->bi_private;
-> -		io->bio->bi_private = io;
-> -		io->bio->bi_end_io = f2fs_zone_write_end_io;
-> -		io->zone_pending_bio = io->bio;
-> +		if (!atomic_add_negative(-1, &sbi->available_active_zones)) {
-> +			io->bio->bi_end_io = f2fs_zone_write_end_io_nowait;
-> +		} else {
-> +			atomic_inc(&sbi->available_active_zones);
-> +			bio_get(io->bio);
-> +			reinit_completion(&io->zone_wait);
-> +			io->bi_private = io->bio->bi_private;
-> +			io->bio->bi_private = io;
-> +			io->bio->bi_end_io = f2fs_zone_write_end_io;
-> +			io->zone_pending_bio = io->bio;
-> +		}
->  		__submit_merged_bio(io);
->  	}
->  #endif
-> +skip:
-> +	if (fio->in_list)
-> +		goto next;
-> +out:
->  	if (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN) ||
->  				!f2fs_is_checkpoint_ready(sbi))
->  		__submit_merged_bio(io);
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 65294e3b0bef..1b1833e1d10e 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1551,6 +1551,8 @@ struct f2fs_sb_info {
->  
->  #ifdef CONFIG_BLK_DEV_ZONED
->  	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
-> +	unsigned int max_active_zones;		/* max zone resources of the zoned device */
-> +	atomic_t available_active_zones;		/* remaining zone resources */
->  #endif
->  
->  	/* for node-related operations */
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 206d03c82d96..c79919425d63 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -3932,6 +3932,15 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
->  	if (!f2fs_sb_has_blkzoned(sbi))
->  		return 0;
->  
-> +	sbi->max_active_zones = bdev_max_active_zones(bdev);
-> +	if (sbi->max_active_zones && (sbi->max_active_zones < F2FS_OPTION(sbi).active_logs)) {
-> +		f2fs_err(sbi,
-> +			"zoned: max active zones %u is too small, need at least %u active zones",
-> +				 sbi->max_active_zones, F2FS_OPTION(sbi).active_logs);
-> +		return -EINVAL;
-> +	}
-> +	atomic_set(&sbi->available_active_zones, sbi->max_active_zones - F2FS_OPTION(sbi).active_logs);
-> +
->  	zone_sectors = bdev_zone_sectors(bdev);
->  	if (!is_power_of_2(zone_sectors)) {
->  		f2fs_err(sbi, "F2FS does not support non power of 2 zone sizes\n");
-> -- 
-> 2.34.1
+In v6.7-rc7, the following sequence will succeed to mount, but any
+dentry other than the root dentry will be a "weird" dentry to ovl and
+fail with EREMOTE.
+
+  mkfs.ext4 -O casefold lower.img
+  mount -O loop lower.img lower
+  mount -t overlay -o lowerdir=lower,upperdir=upper,workdir=work ovl /mnt
+
+Mounting on a subdirectory fails, as expected, because DCACHE_OP_HASH
+and DCACHE_OP_COMPARE are properly set by ->lookup.
+
+Fix by explicitly rejecting superblocks that allow case-insensitive
+dentries.
+
+While there, re-sort the entries to have more descriptive error messages
+first.
+
+Fixes: bb9cd9106b22 ("fscrypt: Have filesystems handle their d_ops")
+Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+Acked-by: Amir Goldstein <amir73il@gmail.com>
+
+---
+changes since v3:
+  - Case insensitive filesystem ->Case insensitive capable
+  filesystem (eric)
+  - clarify patch summary line
+changes since v2:
+  - Re-sort checks to trigger more descriptive error messages
+  first (Amir)
+  - Add code comment (Amir)
+---
+ fs/overlayfs/params.c | 14 +++++++++++---
+ include/linux/fs.h    |  9 +++++++++
+ 2 files changed, 20 insertions(+), 3 deletions(-)
+
+diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
+index 3fe2dde1598f..488f920f79d2 100644
+--- a/fs/overlayfs/params.c
++++ b/fs/overlayfs/params.c
+@@ -280,12 +280,20 @@ static int ovl_mount_dir_check(struct fs_context *fc, const struct path *path,
+ {
+ 	struct ovl_fs_context *ctx = fc->fs_private;
+ 
+-	if (ovl_dentry_weird(path->dentry))
+-		return invalfc(fc, "filesystem on %s not supported", name);
+-
+ 	if (!d_is_dir(path->dentry))
+ 		return invalfc(fc, "%s is not a directory", name);
+ 
++	/*
++	 * Root dentries of case-insensitive capable filesystems might
++	 * not have the dentry operations set, but still be incompatible
++	 * with overlayfs.  Check explicitly to prevent post-mount
++	 * failures.
++	 */
++	if (sb_has_encoding(path->mnt->mnt_sb))
++		return invalfc(fc, "case-insensitive capable filesystem on %s not supported", name);
++
++	if (ovl_dentry_weird(path->dentry))
++		return invalfc(fc, "filesystem on %s not supported", name);
+ 
+ 	/*
+ 	 * Check whether upper path is read-only here to report failures
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 98b7a7a8c42e..e6667ece5e64 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3203,6 +3203,15 @@ extern int generic_check_addressable(unsigned, u64);
+ 
+ extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
+ 
++static inline bool sb_has_encoding(const struct super_block *sb)
++{
++#if IS_ENABLED(CONFIG_UNICODE)
++	return !!sb->s_encoding;
++#else
++	return false;
++#endif
++}
++
+ int may_setattr(struct mnt_idmap *idmap, struct inode *inode,
+ 		unsigned int ia_valid);
+ int setattr_prepare(struct mnt_idmap *, struct dentry *, struct iattr *);
+-- 
+2.43.0
+
 
 
 _______________________________________________
