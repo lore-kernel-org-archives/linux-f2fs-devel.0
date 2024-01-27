@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A3152C47DA9
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 27 Jan 2024 00:10:44 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 31E98C47DA9
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 27 Jan 2024 00:10:49 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rTWHT-0007wJ-OV;
-	Sat, 27 Jan 2024 00:10:44 +0000
+	id 1rTWHY-00018s-7C;
+	Sat, 27 Jan 2024 00:10:48 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <krisman@suse.de>) id 1rTWHR-0007vy-LG
+ (envelope-from <krisman@suse.de>) id 1rTWHX-00018j-5X
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 27 Jan 2024 00:10:42 +0000
+ Sat, 27 Jan 2024 00:10:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=pedrDAyodui+t1vV5VqCovZAmeHiWI4BdqWsbJ87tRE=; b=CJD5GLCbGium980SzGit/03BB2
- qcet9+19VrlW/lkZkwBF79Gb9MyvxJXUarUx14yX/Y8CxXBAkcHvuNN3LM7zs6gEAH4q0AnJIrDJU
- jpNn7TOPadkoidg7ilG+1uzpBXXbhEJ/34f8QNup8RUsYRDO13BqVY2aW9rru6F9EZMg=;
+ bh=ee/oWUNb4/zKYaB/G7ImZVRaz1EQk96VJ8QbjhzB4ZM=; b=QhN8KMkxS3RkOA3EJogw5oW52C
+ ZviyyOfDHFXrbMUVpXDQlecxHT/+i+U7RDZJlvTS/+RUPONhoLNDZ4eLGd7MAhEwWAy+l92VE2/Ti
+ 7FuqFWlWgsawxfZB3YYAFlxXspGcnxh/2gjRYyqbMwUNN391ITPK1GUQ2X/BkYeCxmSU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,102 +33,101 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=pedrDAyodui+t1vV5VqCovZAmeHiWI4BdqWsbJ87tRE=; b=WZgCe1D6oW3FF4EvfUf8DqZ1E8
- 3E3RMU9LoSK3TNXKNRPf3j9ox39j88SOQ0Kr6pThstjwOJh9HSYMHOg9up+G28nvpTxqLAn6hA8gf
- lrD6XR6fWMZhfDyOk4rOgSmsBHu9qOn851S3cmy7p5LG/VW9BEIY6HslZw0ZcPt2p6iI=;
+ bh=ee/oWUNb4/zKYaB/G7ImZVRaz1EQk96VJ8QbjhzB4ZM=; b=azhIiIUcaB2xJ8ewqqsYJKvgiM
+ C51U6/5lVpwWiNuPYHxtFwW8gdpSU0EQv4hVOpRqP5X5qIic24TZsRSoDY6siR1FC2sV1P4hudqkn
+ nx6LY9sGTIsLVfUzxkPyf7dSxSpZT1SXIEQT+iZyyb8Y+F5zamIraje1khvAyuUgSGIs=;
 Received: from smtp-out2.suse.de ([195.135.223.131])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rTWHQ-0006uL-Ge for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 27 Jan 2024 00:10:42 +0000
+ id 1rTWHT-0006ua-5t for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 27 Jan 2024 00:10:47 +0000
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
  [IPv6:2a07:de40:b281:104:10:150:64:97])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id BCD5A1FDB5;
- Sat, 27 Jan 2024 00:10:29 +0000 (UTC)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 6FBB51FDB0;
+ Sat, 27 Jan 2024 00:10:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1706314229; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1706314237; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=pedrDAyodui+t1vV5VqCovZAmeHiWI4BdqWsbJ87tRE=;
- b=CKo1zCKbYgnNFY/q1JmBghIYJv2lhPqdGMadhM3O33D5mJClGb3MfaDz9TF4IjuWecNKjY
- ejj0njC7dMyrI0FzFwHxdc0VoX/USWhleVmoNn7JnPzjqOmuSLidFr71k7f4i/Lewwaj/o
- GHUVUlxKcueG/ppSmTXZWIuMo43In+k=
+ bh=ee/oWUNb4/zKYaB/G7ImZVRaz1EQk96VJ8QbjhzB4ZM=;
+ b=njihZ2dHAnHyFYwzjouCIGfePEXEE1CROutbw5YtwQizHMZhBRVFuJguNcMm6MihGp+vIa
+ qSEPIOXSrjG4Wwj6Mk9lDyaUFHvnoozmE0obDlR/2140b7HdytPHbETVIwVj7uebRkBzIr
+ rEj2n9UP+SBCfCFSxlbhtB5i1euUq0Q=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1706314229;
+ s=susede2_ed25519; t=1706314237;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=pedrDAyodui+t1vV5VqCovZAmeHiWI4BdqWsbJ87tRE=;
- b=aZVg/Fsbf/TWSmpzAs2dAn80uqTvMOiaFj5RUVMcOK6HoUOXf/UnBy1UjfSOO6KG+ibGb2
- Fv6i0TZ6YUQ7TdBw==
+ bh=ee/oWUNb4/zKYaB/G7ImZVRaz1EQk96VJ8QbjhzB4ZM=;
+ b=glvGzXi4PeXfuOC1nkWX/mSYmDJJheEXCVcC/+N7c4gFM55a9yJ3LjZTbCRYtJtAPv6ILB
+ N/e9drsssNj7fPCQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1706314229; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1706314237; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=pedrDAyodui+t1vV5VqCovZAmeHiWI4BdqWsbJ87tRE=;
- b=CKo1zCKbYgnNFY/q1JmBghIYJv2lhPqdGMadhM3O33D5mJClGb3MfaDz9TF4IjuWecNKjY
- ejj0njC7dMyrI0FzFwHxdc0VoX/USWhleVmoNn7JnPzjqOmuSLidFr71k7f4i/Lewwaj/o
- GHUVUlxKcueG/ppSmTXZWIuMo43In+k=
+ bh=ee/oWUNb4/zKYaB/G7ImZVRaz1EQk96VJ8QbjhzB4ZM=;
+ b=njihZ2dHAnHyFYwzjouCIGfePEXEE1CROutbw5YtwQizHMZhBRVFuJguNcMm6MihGp+vIa
+ qSEPIOXSrjG4Wwj6Mk9lDyaUFHvnoozmE0obDlR/2140b7HdytPHbETVIwVj7uebRkBzIr
+ rEj2n9UP+SBCfCFSxlbhtB5i1euUq0Q=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1706314229;
+ s=susede2_ed25519; t=1706314237;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=pedrDAyodui+t1vV5VqCovZAmeHiWI4BdqWsbJ87tRE=;
- b=aZVg/Fsbf/TWSmpzAs2dAn80uqTvMOiaFj5RUVMcOK6HoUOXf/UnBy1UjfSOO6KG+ibGb2
- Fv6i0TZ6YUQ7TdBw==
+ bh=ee/oWUNb4/zKYaB/G7ImZVRaz1EQk96VJ8QbjhzB4ZM=;
+ b=glvGzXi4PeXfuOC1nkWX/mSYmDJJheEXCVcC/+N7c4gFM55a9yJ3LjZTbCRYtJtAPv6ILB
+ N/e9drsssNj7fPCQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2159413998;
- Sat, 27 Jan 2024 00:10:28 +0000 (UTC)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C7AB513998;
+ Sat, 27 Jan 2024 00:10:36 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id XxL8MfRJtGVcEQAAD6G6ig
- (envelope-from <krisman@suse.de>); Sat, 27 Jan 2024 00:10:28 +0000
+ by imap1.dmz-prg2.suse.org with ESMTPSA id CC1ZH/xJtGVpEQAAD6G6ig
+ (envelope-from <krisman@suse.de>); Sat, 27 Jan 2024 00:10:36 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: ebiggers@kernel.org, viro@zeniv.linux.org.uk, jaegeuk@kernel.org,
  tytso@mit.edu
-Date: Fri, 26 Jan 2024 21:10:03 -0300
-Message-ID: <20240127001013.2845-4-krisman@suse.de>
+Date: Fri, 26 Jan 2024 21:10:05 -0300
+Message-ID: <20240127001013.2845-6-krisman@suse.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240127001013.2845-1-krisman@suse.de>
 References: <20240127001013.2845-1-krisman@suse.de>
 MIME-Version: 1.0
 Authentication-Results: smtp-out2.suse.de;
- dkim=pass header.d=suse.de header.s=susede2_rsa header.b=CKo1zCKb;
- dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="aZVg/Fsb"
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.51 / 50.00]; RCVD_VIA_SMTP_AUTH(0.00)[];
- SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
- TO_DN_SOME(0.00)[]; R_MISSING_CHARSET(2.50)[];
- BROKEN_CONTENT_TYPE(1.50)[]; RCVD_COUNT_THREE(0.00)[3];
- DKIM_TRACE(0.00)[suse.de:+]; MX_GOOD(-0.01)[];
- RCPT_COUNT_SEVEN(0.00)[9]; NEURAL_HAM_SHORT(-0.20)[-1.000];
- FROM_EQ_ENVFROM(0.00)[]; MIME_TRACE(0.00)[0:+];
- BAYES_HAM(-3.00)[100.00%]; ARC_NA(0.00)[];
+ dkim=pass header.d=suse.de header.s=susede2_rsa header.b=njihZ2dH;
+ dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=glvGzXi4
+X-Spamd-Result: default: False [-0.31 / 50.00]; ARC_NA(0.00)[];
+ RCVD_VIA_SMTP_AUTH(0.00)[];
  R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
- FROM_HAS_DN(0.00)[]; DWL_DNSWL_MED(-2.00)[suse.de:dkim];
- FREEMAIL_ENVRCPT(0.00)[gmail.com];
- TO_MATCH_ENVRCPT_ALL(0.00)[]; MIME_GOOD(-0.10)[text/plain];
- NEURAL_HAM_LONG(-1.00)[-1.000];
+ SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+ FROM_HAS_DN(0.00)[]; TO_DN_SOME(0.00)[];
+ FREEMAIL_ENVRCPT(0.00)[gmail.com]; R_MISSING_CHARSET(2.50)[];
+ MIME_GOOD(-0.10)[text/plain]; TO_MATCH_ENVRCPT_ALL(0.00)[];
+ BROKEN_CONTENT_TYPE(1.50)[];
+ DWL_DNSWL_MED(-2.00)[suse.de:dkim]; RCVD_COUNT_THREE(0.00)[3];
  DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
- MID_CONTAINS_FROM(1.00)[];
+ DKIM_TRACE(0.00)[suse.de:+]; MX_GOOD(-0.01)[];
+ RCPT_COUNT_SEVEN(0.00)[9]; MID_CONTAINS_FROM(1.00)[];
  DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
- FUZZY_BLOCKED(0.00)[rspamd.com];
+ FUZZY_BLOCKED(0.00)[rspamd.com]; FROM_EQ_ENVFROM(0.00)[];
+ MIME_TRACE(0.00)[0:+];
  FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,lists.sourceforge.net,suse.de];
- RCVD_TLS_ALL(0.00)[]
-X-Rspamd-Queue-Id: BCD5A1FDB5
-X-Headers-End: 1rTWHQ-0006uL-Ge
-Subject: [f2fs-dev] [PATCH v4 03/12] fscrypt: Call
- fscrypt_prepare_lookup_dentry on unencrypted dentries
+ RCVD_TLS_ALL(0.00)[]; BAYES_HAM(-3.00)[100.00%]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 6FBB51FDB0
+X-Spamd-Bar: /
+X-Headers-End: 1rTWHT-0006ua-5t
+Subject: [f2fs-dev] [PATCH v4 05/12] fscrypt: Drop d_revalidate once the key
+ is added
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -147,99 +146,88 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In preparation to dropping DCACHE_OP_REVALIDATE for dentries that
-don't need it at lookup time, refactor the code to make unencrypted
-denties also call fscrypt_prepare_dentry.  This makes the
-non-inline __fscrypt_prepare_lookup superfulous, so drop it.
+From fscrypt perspective, once the key is available, the dentry will
+remain valid until evicted for other reasons, since keyed dentries don't
+require revalidation and, if the key is removed, the dentry is
+forcefully evicted.  Therefore, we don't need to keep revalidating them
+repeatedly.
+
+Obviously, we can only do this if fscrypt is the only thing requiring
+revalidation for a dentry.  For this reason, we only disable
+d_revalidate if the .d_revalidate hook is fscrypt_d_revalidate itself.
+
+It is safe to do it here because when moving the dentry to the
+plain-text version, we are holding the d_lock.  We might race with a
+concurrent RCU lookup but this is harmless because, at worst, we will
+get an extra d_revalidate on the keyed dentry, which is will find the
+dentry is valid.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
----
- fs/crypto/hooks.c       | 14 --------------
- include/linux/fscrypt.h | 31 +++++++++++++++----------------
- 2 files changed, 15 insertions(+), 30 deletions(-)
 
-diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
-index 71463cef08f9..eb870bc162e6 100644
---- a/fs/crypto/hooks.c
-+++ b/fs/crypto/hooks.c
-@@ -94,20 +94,6 @@ int __fscrypt_prepare_rename(struct inode *old_dir, struct dentry *old_dentry,
- }
- EXPORT_SYMBOL_GPL(__fscrypt_prepare_rename);
- 
--int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
--			     struct fscrypt_name *fname)
--{
--	int err = fscrypt_setup_filename(dir, &dentry->d_name, 1, fname);
--
--	if (err && err != -ENOENT)
--		return err;
--
--	fscrypt_prepare_lookup_dentry(dentry, fname->is_nokey_name);
--
--	return err;
--}
--EXPORT_SYMBOL_GPL(__fscrypt_prepare_lookup);
--
- /**
-  * fscrypt_prepare_lookup_partial() - prepare lookup without filename setup
-  * @dir: the encrypted directory being searched
+---
+Changes since v3:
+  - Fix null-ptr-deref for filesystems that don't support fscrypt (ktr)
+Changes since v2:
+  - Do it when moving instead of when revalidating the dentry. (me)
+
+Changes since v1:
+  - Improve commit message (Eric)
+  - Drop & in function comparison (Eric)
+---
+ include/linux/fscrypt.h | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
+
 diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 68ca8706483a..4aaf847955c0 100644
+index a22997b9f35c..c1e285053b3e 100644
 --- a/include/linux/fscrypt.h
 +++ b/include/linux/fscrypt.h
-@@ -382,8 +382,6 @@ int __fscrypt_prepare_link(struct inode *inode, struct inode *dir,
- int __fscrypt_prepare_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			     struct inode *new_dir, struct dentry *new_dentry,
- 			     unsigned int flags);
--int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
--			     struct fscrypt_name *fname);
- int fscrypt_prepare_lookup_partial(struct inode *dir, struct dentry *dentry);
- int __fscrypt_prepare_readdir(struct inode *dir);
- int __fscrypt_prepare_setattr(struct dentry *dentry, struct iattr *attr);
-@@ -704,13 +702,6 @@ static inline int __fscrypt_prepare_rename(struct inode *old_dir,
- 	return -EOPNOTSUPP;
+@@ -192,6 +192,8 @@ struct fscrypt_operations {
+ 					     unsigned int *num_devs);
+ };
+ 
++int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags);
++
+ static inline struct fscrypt_inode_info *
+ fscrypt_get_inode_info(const struct inode *inode)
+ {
+@@ -221,15 +223,24 @@ static inline bool fscrypt_needs_contents_encryption(const struct inode *inode)
  }
  
--static inline int __fscrypt_prepare_lookup(struct inode *dir,
--					   struct dentry *dentry,
--					   struct fscrypt_name *fname)
--{
--	return -EOPNOTSUPP;
--}
--
- static inline int fscrypt_prepare_lookup_partial(struct inode *dir,
- 						 struct dentry *dentry)
+ /*
+- * When d_splice_alias() moves a directory's no-key alias to its plaintext alias
+- * as a result of the encryption key being added, DCACHE_NOKEY_NAME must be
+- * cleared.  Note that we don't have to support arbitrary moves of this flag
+- * because fscrypt doesn't allow no-key names to be the source or target of a
+- * rename().
++ * When d_splice_alias() moves a directory's no-key alias to its
++ * plaintext alias as a result of the encryption key being added,
++ * DCACHE_NOKEY_NAME must be cleared and there might be an opportunity
++ * to disable d_revalidate.  Note that we don't have to support the
++ * inverse operation because fscrypt doesn't allow no-key names to be
++ * the source or target of a rename().
+  */
+ static inline void fscrypt_handle_d_move(struct dentry *dentry)
  {
-@@ -985,14 +976,22 @@ static inline int fscrypt_prepare_lookup(struct inode *dir,
- 					 struct dentry *dentry,
- 					 struct fscrypt_name *fname)
- {
--	if (IS_ENCRYPTED(dir))
--		return __fscrypt_prepare_lookup(dir, dentry, fname);
-+	int err = 0;
+ 	dentry->d_flags &= ~DCACHE_NOKEY_NAME;
 +
-+	if (IS_ENCRYPTED(dir)) {
-+		err = fscrypt_setup_filename(dir, &dentry->d_name, 1, fname);
-+		if (err && err != -ENOENT)
-+			return err;
-+	} else {
-+		memset(fname, 0, sizeof(*fname));
-+		fname->usr_fname = &dentry->d_name;
-+		fname->disk_name.name = (unsigned char *)dentry->d_name.name;
-+		fname->disk_name.len = dentry->d_name.len;
-+	}
- 
--	memset(fname, 0, sizeof(*fname));
--	fname->usr_fname = &dentry->d_name;
--	fname->disk_name.name = (unsigned char *)dentry->d_name.name;
--	fname->disk_name.len = dentry->d_name.len;
--	return 0;
-+	fscrypt_prepare_lookup_dentry(dentry, fname->is_nokey_name);
-+
-+	return err;
++	/*
++	 * Save the d_revalidate call cost during VFS operations.  We
++	 * can do it because, when the key is available, the dentry
++	 * can't go stale and the key won't go away without eviction.
++	 */
++	if (dentry->d_op && dentry->d_op->d_revalidate == fscrypt_d_revalidate)
++		dentry->d_flags &= ~DCACHE_OP_REVALIDATE;
  }
  
  /**
+@@ -368,7 +379,6 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
+ bool fscrypt_match_name(const struct fscrypt_name *fname,
+ 			const u8 *de_name, u32 de_name_len);
+ u64 fscrypt_fname_siphash(const struct inode *dir, const struct qstr *name);
+-int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags);
+ 
+ /* bio.c */
+ bool fscrypt_decrypt_bio(struct bio *bio);
 -- 
 2.43.0
 
