@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 90586C47DA9
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 27 Jan 2024 00:11:11 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 060FBC47422
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 27 Jan 2024 00:11:20 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rTWHu-0000yB-TY;
-	Sat, 27 Jan 2024 00:11:10 +0000
+	id 1rTWI2-00073j-MR;
+	Sat, 27 Jan 2024 00:11:19 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <krisman@suse.de>) id 1rTWHt-0000xy-Ag
+ (envelope-from <krisman@suse.de>) id 1rTWI1-00073a-TL
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 27 Jan 2024 00:11:09 +0000
+ Sat, 27 Jan 2024 00:11:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=; b=SAuffbKAMN/tfbcxbYYBI1YcQI
- ezMLJGyIp2CkRIFYurFuk2TLa8xrt8Ms0SpFU/hZ39ziyiqP7l/vriajdLCvIPWL1KfTcfwL8X4m7
- Mok8sDC96GG45eY/ALGu2Vbh9ZuNauPjR7P23TTW1yMjwuMUoBkPi38fZtM8Sn1MBPJc=;
+ bh=xqFo+NbC+4N+nbk/+SEqgEGx6mP0Hq6kIaXRoErZ8as=; b=FcS0NHxYPQcdiYjMuGQ/xC9ytu
+ 9sqNHcvq1KXDsWCfuWoDRw681TqKfPzFXggvLs8nH1HjZKiiDCPRNRqCIXFNN637EmVhTnBYGdJnw
+ kSV/0ylY1ec7/rvNkaChAx7lju2Pz02WjeWA7rCOd2pwgokiyICeG5Pg3aMHOmGFXizY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,95 +33,102 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=; b=E2G9ql67IqMa8/6PAhOVfBkH5y
- CSBMFAAT3OF/aCHD0kS+Tq7DXsV4uq0J4uuml0LrITVufnTKt2v/H3trPkaI2ZCaKXS5mrwOwFELw
- if+Zc0ubXu0tN4+M94SWmzUAUdek2fOPyR3HNfVmhb8pjnrBO0WBPjmVSGZGe2Ae3WMQ=;
+ bh=xqFo+NbC+4N+nbk/+SEqgEGx6mP0Hq6kIaXRoErZ8as=; b=GlDBcYYcQOqnNgUiMAVsUZtJ2Q
+ gku+n84wcANzcQSgcTJWuaZ7lMFAwc3oZD+soLQCLGe+vhymc2+OaHnq1waiOMUNcjBSNS8YUYMbu
+ P21fwf1YkyqPwVxG40/fDaZuKP8TKcVk1e9a9+bVKdEBJ+6pwzPOxlujYC1VeTWnI8qU=;
 Received: from smtp-out1.suse.de ([195.135.223.130])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rTWHr-0006we-PZ for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 27 Jan 2024 00:11:09 +0000
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+ id 1rTWI1-0006xX-5I for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 27 Jan 2024 00:11:18 +0000
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
+ [IPv6:2a07:de40:b281:104:10:150:64:97])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id F20E4223A2;
- Sat, 27 Jan 2024 00:10:56 +0000 (UTC)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 9024A2239F;
+ Sat, 27 Jan 2024 00:11:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1706314257; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1706314264; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
- b=YcY1xGHpTl9Vy8q3omzUUcUEfClzGE70Ta6rn+086a221j5iI5SWBVzrEoDqXYZ8Dud6a5
- ZxPK6uHn0jlZMIZ/i0VqSbJzno/GjXX5UMrKia1TWIqH1XcuuccegBqrNHcJCOIMK6haBb
- hqdzP4odjb+/UHyxOLxVmcspEmYZCZM=
+ bh=xqFo+NbC+4N+nbk/+SEqgEGx6mP0Hq6kIaXRoErZ8as=;
+ b=h8iFeVUUvH4RAxVwM0JI/+x9dsw/JEoOjH0IFNebxdRbTRRU+wscf21xIxS1mspeZRznsp
+ gu43O7Nvp5wTnIGAwH7NdWGcbav+O+nM4tbmbdQfCYYQIvdPtwNqm/FPK5MCaYYYq4/RwV
+ yL5OlaJzPI0D50jb4hEgpISHHuV8/hg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1706314257;
+ s=susede2_ed25519; t=1706314264;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
- b=+3MLAQIubavuuRim7BkW3oHAk217xznLyNLzcaIy8k+6pVLjBrkXHCqHNk+an6H6ewHKK9
- 3XDmguXcjZ3siKDw==
+ bh=xqFo+NbC+4N+nbk/+SEqgEGx6mP0Hq6kIaXRoErZ8as=;
+ b=7GFSu66WuFBqwaZq3waq1r+UvbzRMqcjW9BrGg/ZRqPh6plJe1mriBRe+7cEUa2Y2oBJzp
+ tNnc4Xewq7BphZBg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1706314256; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1706314264; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
- b=DL29lvjES8MKtzC9/H5Hh210LiZwpdC1QzYI1J5hnPnz2hQPukfS6PT9koBHlz9+1V4Us4
- x2tUASE4Kpby/3Byr5BFzaFU752g5U4FJZZYBlQCAAOjleus3FHitgl7wB3TiyNnAOT3F0
- 4LJuvuZYerbPv4o+GSNz5DIuo/k9jyI=
+ bh=xqFo+NbC+4N+nbk/+SEqgEGx6mP0Hq6kIaXRoErZ8as=;
+ b=h8iFeVUUvH4RAxVwM0JI/+x9dsw/JEoOjH0IFNebxdRbTRRU+wscf21xIxS1mspeZRznsp
+ gu43O7Nvp5wTnIGAwH7NdWGcbav+O+nM4tbmbdQfCYYQIvdPtwNqm/FPK5MCaYYYq4/RwV
+ yL5OlaJzPI0D50jb4hEgpISHHuV8/hg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1706314256;
+ s=susede2_ed25519; t=1706314264;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
- b=lUykj0Lo8ao0pKTz/joEtkFX/o7HStFWM56EhE6CZw9hi9pxFDK2yNMxfAtiwuv/dbhjtP
- IcUs4BZHLf7Rs6AQ==
+ bh=xqFo+NbC+4N+nbk/+SEqgEGx6mP0Hq6kIaXRoErZ8as=;
+ b=7GFSu66WuFBqwaZq3waq1r+UvbzRMqcjW9BrGg/ZRqPh6plJe1mriBRe+7cEUa2Y2oBJzp
+ tNnc4Xewq7BphZBg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C99D13998;
- Sat, 27 Jan 2024 00:10:56 +0000 (UTC)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EC6F913998;
+ Sat, 27 Jan 2024 00:11:03 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id 4NFGBBBKtGWIEQAAD6G6ig
- (envelope-from <krisman@suse.de>); Sat, 27 Jan 2024 00:10:56 +0000
+ by imap1.dmz-prg2.suse.org with ESMTPSA id EhOnLBdKtGWQEQAAD6G6ig
+ (envelope-from <krisman@suse.de>); Sat, 27 Jan 2024 00:11:03 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: ebiggers@kernel.org, viro@zeniv.linux.org.uk, jaegeuk@kernel.org,
  tytso@mit.edu
-Date: Fri, 26 Jan 2024 21:10:10 -0300
-Message-ID: <20240127001013.2845-11-krisman@suse.de>
+Date: Fri, 26 Jan 2024 21:10:12 -0300
+Message-ID: <20240127001013.2845-13-krisman@suse.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240127001013.2845-1-krisman@suse.de>
 References: <20240127001013.2845-1-krisman@suse.de>
 MIME-Version: 1.0
+X-Spamd-Bar: +
 Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spamd-Result: default: False [3.70 / 50.00]; ARC_NA(0.00)[];
- RCVD_VIA_SMTP_AUTH(0.00)[]; FROM_HAS_DN(0.00)[];
+ dkim=pass header.d=suse.de header.s=susede2_rsa header.b=h8iFeVUU;
+ dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=7GFSu66W
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [1.49 / 50.00]; RCVD_VIA_SMTP_AUTH(0.00)[];
+ SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
  TO_DN_SOME(0.00)[]; R_MISSING_CHARSET(2.50)[];
+ BROKEN_CONTENT_TYPE(1.50)[]; RCVD_COUNT_THREE(0.00)[3];
+ DKIM_TRACE(0.00)[suse.de:+]; MX_GOOD(-0.01)[];
+ RCPT_COUNT_SEVEN(0.00)[9]; NEURAL_HAM_SHORT(-0.20)[-1.000];
+ FROM_EQ_ENVFROM(0.00)[]; MIME_TRACE(0.00)[0:+]; ARC_NA(0.00)[];
+ R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+ FROM_HAS_DN(0.00)[]; DWL_DNSWL_MED(-2.00)[suse.de:dkim];
  FREEMAIL_ENVRCPT(0.00)[gmail.com];
- MIME_GOOD(-0.10)[text/plain]; TO_MATCH_ENVRCPT_ALL(0.00)[];
- BROKEN_CONTENT_TYPE(1.50)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
- R_RATELIMIT(0.00)[to_ip_from(RLzk7q5dcbbphp39zi8hi5jhbt)];
- RCVD_COUNT_THREE(0.00)[3];
+ TO_MATCH_ENVRCPT_ALL(0.00)[]; MIME_GOOD(-0.10)[text/plain];
+ NEURAL_HAM_LONG(-1.00)[-1.000];
  DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
- NEURAL_HAM_SHORT(-0.20)[-1.000]; RCPT_COUNT_SEVEN(0.00)[9];
  MID_CONTAINS_FROM(1.00)[];
- DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
- FUZZY_BLOCKED(0.00)[rspamd.com]; FROM_EQ_ENVFROM(0.00)[];
- MIME_TRACE(0.00)[0:+];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
+ FUZZY_BLOCKED(0.00)[rspamd.com];
  FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,lists.sourceforge.net,suse.de];
  RCVD_TLS_ALL(0.00)[]
-X-Headers-End: 1rTWHr-0006we-PZ
-Subject: [f2fs-dev] [PATCH v4 10/12] f2fs: Configure dentry operations at
- dentry-creation time
+X-Rspamd-Queue-Id: 9024A2239F
+X-Headers-End: 1rTWI1-0006xX-5I
+Subject: [f2fs-dev] [PATCH v4 12/12] libfs: Drop
+ generic_set_encrypted_ci_d_ops
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -140,46 +147,73 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This was already the case for case-insensitive before commit
-bb9cd9106b22 ("fscrypt: Have filesystems handle their d_ops"), but it
-was changed to set at lookup-time to facilitate the integration with
-fscrypt.  But it's a problem because dentries that don't get created
-through ->lookup() won't have any visibility of the operations.
-
-Since fscrypt now also supports configuring dentry operations at
-creation-time, do it for any encrypted and/or casefold volume,
-simplifying the implementation across these features.
+No filesystems depend on it anymore, and it is generally a bad idea.
+Since all dentries should have the same set of dentry operations in
+case-insensitive filesystems, it should be propagated through ->s_d_op.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
- fs/f2fs/namei.c | 1 -
- fs/f2fs/super.c | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ fs/libfs.c         | 34 ----------------------------------
+ include/linux/fs.h |  1 -
+ 2 files changed, 35 deletions(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index d0053b0284d8..b40c6c393bd6 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -532,7 +532,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 	}
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 0aa388ee82ff..35124987f162 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1788,40 +1788,6 @@ static const struct dentry_operations generic_encrypted_dentry_ops = {
+ };
+ #endif
  
- 	err = f2fs_prepare_lookup(dir, dentry, &fname);
--	generic_set_encrypted_ci_d_ops(dentry);
- 	if (err == -ENOENT)
- 		goto out_splice;
- 	if (err)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 033af907c3b1..abfdb6e25b1c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4663,6 +4663,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto free_node_inode;
- 	}
+-/**
+- * generic_set_encrypted_ci_d_ops - helper for setting d_ops for given dentry
+- * @dentry:	dentry to set ops on
+- *
+- * Casefolded directories need d_hash and d_compare set, so that the dentries
+- * contained in them are handled case-insensitively.  Note that these operations
+- * are needed on the parent directory rather than on the dentries in it, and
+- * while the casefolding flag can be toggled on and off on an empty directory,
+- * dentry_operations can't be changed later.  As a result, if the filesystem has
+- * casefolding support enabled at all, we have to give all dentries the
+- * casefolding operations even if their inode doesn't have the casefolding flag
+- * currently (and thus the casefolding ops would be no-ops for now).
+- *
+- * Encryption works differently in that the only dentry operation it needs is
+- * d_revalidate, which it only needs on dentries that have the no-key name flag.
+- * The no-key flag can't be set "later", so we don't have to worry about that.
+- */
+-void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
+-{
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	if (dentry->d_sb->s_encoding) {
+-		d_set_d_op(dentry, &generic_ci_dentry_ops);
+-		return;
+-	}
+-#endif
+-#ifdef CONFIG_FS_ENCRYPTION
+-	if (dentry->d_flags & DCACHE_NOKEY_NAME) {
+-		d_set_d_op(dentry, &generic_encrypted_dentry_ops);
+-		return;
+-	}
+-#endif
+-}
+-EXPORT_SYMBOL(generic_set_encrypted_ci_d_ops);
+-
+ /**
+  * generic_set_sb_d_ops - helper for choosing the set of
+  * filesystem-wide dentry operations for the enabled features
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c985d9392b61..c0cfc53f95bb 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3201,7 +3201,6 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
  
-+	generic_set_sb_d_ops(sb);
- 	sb->s_root = d_make_root(root); /* allocate root dentry */
- 	if (!sb->s_root) {
- 		err = -ENOMEM;
+ extern int generic_check_addressable(unsigned, u64);
+ 
+-extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
+ extern void generic_set_sb_d_ops(struct super_block *sb);
+ 
+ static inline bool sb_has_encoding(const struct super_block *sb)
 -- 
 2.43.0
 
