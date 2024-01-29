@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8A9B6C47DA9
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Jan 2024 20:44:23 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 126A4C47DDB
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Jan 2024 20:44:24 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rUYUQ-0006OC-74;
+	id 1rUYUR-0001Mq-EP;
 	Mon, 29 Jan 2024 20:44:23 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <krisman@suse.de>) id 1rUYUN-0006O0-VA
+ (envelope-from <krisman@suse.de>) id 1rUYUP-0001Mg-UB
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 29 Jan 2024 20:44:20 +0000
+ Mon, 29 Jan 2024 20:44:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=; b=IssGY93n01GvTqKzMam88nhCNM
- L42jIgzRxvWajIvxfvslyrCOZpyDNg+WDnu2WfMg8tRyjL/gzVbsKASYTY2Cw2RaS/QWl/Ku6Gybm
- gBhpPmsv9RYn5/JkeC1vsrlkr6Q5lqdKwxtdSsJBAkK65jRRdXysuMq1bitAs4FZULXg=;
+ bh=dAXxsZUzQs43nPmCR7QF70NpWme+IPIt3kqL7m9PrBY=; b=Zu9MR0gApBGgR98hKNIBYD5ga7
+ +XP9BX4s1u1zzpVRmS1l8b6rCeYuQ2ppWGdQyiDrY7vMjzEO+DwwmP9/H45qQ7Xo4IMZbB3qMVTFK
+ dlOvmss/UPPsGO42kWLMR1BVIbXRyhhmPDeZc0zQR8+6v+Ng3ViXUfCNz7CI8MGCaiFo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,91 +33,47 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=; b=AVAty5PYc8IoFy9RBiP6D1nE/P
- Ht/Q4yzYX8lY5ZG6xNlF7w+yeChj2rWQcdIbeqxRrjYZMACZLGPQSUOwNkYK+HzOKvgT5KK7Y16Ph
- REYdd7JJTZjjcoZams5ntxnCZsRm20NEQLkT641inXsZvY+MB3ndWS2KShTf3UqIE+0k=;
+ bh=dAXxsZUzQs43nPmCR7QF70NpWme+IPIt3kqL7m9PrBY=; b=ByjwoLRfM/HJvQ+LwUU4aF0hMJ
+ /XMlqpYqipyoNbfmuUXVd9KRPE7ftywz+bw875cBRz1U6afJM5/R6H/9NnKEF6KdYu8tkGlYMY/62
+ 0SJhSdPb3pV8kGCfSkrvmwoN/JPRAyrvPmyYqPq4PM0MNivga8cDXH2UcgP0/XEbkIR0=;
 Received: from smtp-out1.suse.de ([195.135.223.130])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rUYUN-0000aL-FP for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 29 Jan 2024 20:44:20 +0000
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+ id 1rUYUO-0000aQ-IX for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 29 Jan 2024 20:44:21 +0000
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
+ [IPv6:2a07:de40:b281:104:10:150:64:97])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id B065D21E90;
- Mon, 29 Jan 2024 20:44:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1706561053; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
- b=lYOH9VNBq37wf1pK1VtMJ51LjuJFOyu15hNf31Mk8BvZ1GwQ7L7jBaRFik6PT44y0cWIrT
- Ei7kXnJPX65wQnFrmYosH5cMJ2sbCLhuJXWzGLl0iyHEsDb/c7zXnWuiFgeYg9xCc3spoG
- t6PQZuu9iP3UXKh7y5RQ2EU8CVf1tnc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1706561053;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
- b=moGiH92VSwWhrw2FpXg3fyUxpbG2+4NzU5TzwpoOWHtMP/jTqhd0K02bLUHiHHCBejIadQ
- 6LaK+2tXKjBVOKDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1706561053; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
- b=lYOH9VNBq37wf1pK1VtMJ51LjuJFOyu15hNf31Mk8BvZ1GwQ7L7jBaRFik6PT44y0cWIrT
- Ei7kXnJPX65wQnFrmYosH5cMJ2sbCLhuJXWzGLl0iyHEsDb/c7zXnWuiFgeYg9xCc3spoG
- t6PQZuu9iP3UXKh7y5RQ2EU8CVf1tnc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1706561053;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
- b=moGiH92VSwWhrw2FpXg3fyUxpbG2+4NzU5TzwpoOWHtMP/jTqhd0K02bLUHiHHCBejIadQ
- 6LaK+2tXKjBVOKDw==
+ by smtp-out1.suse.de (Postfix) with ESMTPS id E55342208D;
+ Mon, 29 Jan 2024 20:44:09 +0000 (UTC)
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 140F212FF7;
- Mon, 29 Jan 2024 20:44:12 +0000 (UTC)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 46F9712FF7;
+ Mon, 29 Jan 2024 20:44:09 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id jDB3LxwOuGX2DAAAD6G6ig
- (envelope-from <krisman@suse.de>); Mon, 29 Jan 2024 20:44:12 +0000
+ by imap1.dmz-prg2.suse.org with ESMTPSA id hepvAxkOuGXyDAAAD6G6ig
+ (envelope-from <krisman@suse.de>); Mon, 29 Jan 2024 20:44:09 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: ebiggers@kernel.org, viro@zeniv.linux.org.uk, jaegeuk@kernel.org,
  tytso@mit.edu
-Date: Mon, 29 Jan 2024 17:43:28 -0300
-Message-ID: <20240129204330.32346-11-krisman@suse.de>
+Date: Mon, 29 Jan 2024 17:43:27 -0300
+Message-ID: <20240129204330.32346-10-krisman@suse.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240129204330.32346-1-krisman@suse.de>
 References: <20240129204330.32346-1-krisman@suse.de>
 MIME-Version: 1.0
 Authentication-Results: smtp-out1.suse.de;
 	none
-X-Spamd-Result: default: False [-0.30 / 50.00]; ARC_NA(0.00)[];
- RCVD_VIA_SMTP_AUTH(0.00)[]; FROM_HAS_DN(0.00)[];
- TO_DN_SOME(0.00)[]; R_MISSING_CHARSET(2.50)[];
- FREEMAIL_ENVRCPT(0.00)[gmail.com];
- MIME_GOOD(-0.10)[text/plain]; TO_MATCH_ENVRCPT_ALL(0.00)[];
- REPLY(-4.00)[]; BROKEN_CONTENT_TYPE(1.50)[];
- NEURAL_HAM_LONG(-1.00)[-1.000]; RCVD_COUNT_THREE(0.00)[3];
- DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
- NEURAL_HAM_SHORT(-0.20)[-1.000]; RCPT_COUNT_SEVEN(0.00)[9];
- MID_CONTAINS_FROM(1.00)[]; FUZZY_BLOCKED(0.00)[rspamd.com];
- FROM_EQ_ENVFROM(0.00)[]; MIME_TRACE(0.00)[0:+];
- FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,lists.sourceforge.net,suse.de];
- RCVD_TLS_ALL(0.00)[]
-X-Headers-End: 1rUYUN-0000aL-FP
-Subject: [f2fs-dev] [PATCH v5 10/12] f2fs: Configure dentry operations at
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	 REPLY(-4.00)[]
+X-Rspamd-Queue-Id: E55342208D
+X-Headers-End: 1rUYUO-0000aQ-IX
+Subject: [f2fs-dev] [PATCH v5 09/12] ext4: Configure dentry operations at
  dentry-creation time
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -149,34 +105,34 @@ simplifying the implementation across these features.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
- fs/f2fs/namei.c | 1 -
- fs/f2fs/super.c | 1 +
+ fs/ext4/namei.c | 1 -
+ fs/ext4/super.c | 1 +
  2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index d0053b0284d8..b40c6c393bd6 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -532,7 +532,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 	}
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index d252935f9c8a..3f0b853a371e 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1762,7 +1762,6 @@ static struct buffer_head *ext4_lookup_entry(struct inode *dir,
+ 	struct buffer_head *bh;
  
- 	err = f2fs_prepare_lookup(dir, dentry, &fname);
+ 	err = ext4_fname_prepare_lookup(dir, dentry, &fname);
 -	generic_set_encrypted_ci_d_ops(dentry);
  	if (err == -ENOENT)
- 		goto out_splice;
+ 		return NULL;
  	if (err)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 033af907c3b1..abfdb6e25b1c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4663,6 +4663,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto free_node_inode;
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index c5fcf377ab1f..de80a9cc699a 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5493,6 +5493,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ 		goto failed_mount4;
  	}
  
 +	generic_set_sb_d_ops(sb);
- 	sb->s_root = d_make_root(root); /* allocate root dentry */
+ 	sb->s_root = d_make_root(root);
  	if (!sb->s_root) {
- 		err = -ENOMEM;
+ 		ext4_msg(sb, KERN_ERR, "get root dentry failed");
 -- 
 2.43.0
 
