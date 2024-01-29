@@ -4,71 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 36BD5C4828C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Jan 2024 20:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 29040C47DA9
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Jan 2024 20:43:51 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rUYGJ-00025u-8F;
-	Mon, 29 Jan 2024 20:29:47 +0000
+	id 1rUYTu-0002IW-2Z;
+	Mon, 29 Jan 2024 20:43:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rUYGG-00025k-6M
+ (envelope-from <krisman@suse.de>) id 1rUYTs-0002IP-C3
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 29 Jan 2024 20:29:44 +0000
+ Mon, 29 Jan 2024 20:43:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1sJ652kVpMhyPQuVJ6wcDaW/GJWDe7dbJKeG4znLoe4=; b=KkKQ88aeLkmaQEicBbGh1mnu/x
- aKYb7TtAAxwHCUGh/XEdLZAGKE++Aar8MJXGcWxvLemV1OWT50tcZ6n+PsqNrLX+A/sVwn84eSI4U
- 0Fhuq76S3gNKegHd6rNIlWZ5nONzqxxxMgVxX24JKtMxT5KK6xCBBfJao8KTCxDVY9wg=;
+ bh=gafjaukDasr5oQuNWIkTl8VbHZftkVo7vNgh9ZWycDc=; b=D2RqGHe/7volW24h48LeqOaEjt
+ RMPYXDBkI2SABO1MnR59WbN61njpdZ99st27a6+P+XIKF4NTxNW48ICVvQgCa6/LSM7UNNMlLTj9Q
+ Q0V/cqmBDt7b0JIU58DsyNNQXXg7ioIrWJYzpisofhM3q2g2M+9sesT+mqICHUSUjv1c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1sJ652kVpMhyPQuVJ6wcDaW/GJWDe7dbJKeG4znLoe4=; b=aeNZUGliSd9JSonTacQ0FHcDrb
- TwO+btGO0rNmnNJ8K5nILRCAwI1NMDTYUqZeCulZEkIhehlyFFMQuo0+ULiybI1F3RDIpkdTKycyQ
- pbzA1rp/5F+rLnFU+KYpU7Ujw00EGx0XO18aDUPbQjsN7gezssNFJwi2xzBlOVNWcD3Y=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=gafjaukDasr5oQuNWIkTl8VbHZftkVo7vNgh9ZWycDc=; b=W
+ cNpmUCM93VY3iUmgQLU70vhJp0P7mYmTBQP6P2hB7sRuItS77mhwLhlt3Fys85rSFNT8ejjhLlbtJ
+ KPGrKYNV3zB55PWN4B/vQ/lpgGftpvMe31Wjs/YGMtzXwaPM5tzbzNAisDT1UNTXZR6lZ4BjDIqCt
+ prFzr4rVOGcQb6n0=;
+Received: from smtp-out1.suse.de ([195.135.223.130])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rUYGF-0008Ps-9a for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 29 Jan 2024 20:29:44 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 17615CE1773;
- Mon, 29 Jan 2024 20:29:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0754AC43390;
- Mon, 29 Jan 2024 20:29:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1706560171;
- bh=1dJSQ6Tnp2+ouIN2nL7yz88hd0l7IGvrUD6ww83AGCY=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=MzZPMHWtTAC6aGCtBddBG+v34X5vJvNHnhA7bY/RxRJJIzS9PU7pB2ezeYYLCcRIZ
- BOdJVqin1SshTRvYp/Mi0HLbKotzhnMudhBYEUEZnX2Iz1kfF3XNnUr3dGcf18kN2C
- rQJKn9rQQibk7YBJjrLeZkE6O+Wi9fXdCQnY0AmZoOrLqyNgWhYDZw7miaLZ2VDROs
- fU14NZA5S2UcSVeCIpbJJ/OIq+Bvyk745XBoEmVLLy8JU0R3QYuBZ9rWfpjTdYphj3
- v4rxHKx4gnAk5eHUt1fBBzUOOgMgVq4hYncHFyVwdgyT28Wb6nnTGTyV0wHxi6Nos7
- AQvgpnPsDvJlg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- E373EC561EE; Mon, 29 Jan 2024 20:29:30 +0000 (UTC)
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1rUYTp-0000Yp-Tu for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 29 Jan 2024 20:43:48 +0000
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 02B9621E90;
+ Mon, 29 Jan 2024 20:43:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+ t=1706561015; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version: content-transfer-encoding:content-transfer-encoding;
+ bh=gafjaukDasr5oQuNWIkTl8VbHZftkVo7vNgh9ZWycDc=;
+ b=Y13LX74e6Iz11+VN5UxxZlMdkJ11bbWANbBANCg5zX3m9OJDPXXOmKBL2A2QCz/iX1tpi+
+ YrBSuL32IUAW0Ur8mcCFsvZIStwK8p8nHMCITudkbOgykzCraNwyHhSm8vwloD7dz4Ko/i
+ kD4o4kYMe2Tgw6V2pvEJc6tBraAJtZ8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+ s=susede2_ed25519; t=1706561015;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version: content-transfer-encoding:content-transfer-encoding;
+ bh=gafjaukDasr5oQuNWIkTl8VbHZftkVo7vNgh9ZWycDc=;
+ b=JjqX9IRlapCI+n7hKlhomBoPixESwOWCP9ECYF+pjnOo66jIzgQii+7HZdrL735VLpQs9Y
+ YWXlPdScEox3ZlBQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+ t=1706561015; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version: content-transfer-encoding:content-transfer-encoding;
+ bh=gafjaukDasr5oQuNWIkTl8VbHZftkVo7vNgh9ZWycDc=;
+ b=Y13LX74e6Iz11+VN5UxxZlMdkJ11bbWANbBANCg5zX3m9OJDPXXOmKBL2A2QCz/iX1tpi+
+ YrBSuL32IUAW0Ur8mcCFsvZIStwK8p8nHMCITudkbOgykzCraNwyHhSm8vwloD7dz4Ko/i
+ kD4o4kYMe2Tgw6V2pvEJc6tBraAJtZ8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+ s=susede2_ed25519; t=1706561015;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version: content-transfer-encoding:content-transfer-encoding;
+ bh=gafjaukDasr5oQuNWIkTl8VbHZftkVo7vNgh9ZWycDc=;
+ b=JjqX9IRlapCI+n7hKlhomBoPixESwOWCP9ECYF+pjnOo66jIzgQii+7HZdrL735VLpQs9Y
+ YWXlPdScEox3ZlBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7E51012FF7;
+ Mon, 29 Jan 2024 20:43:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+ by imap1.dmz-prg2.suse.org with ESMTPSA id YoUnEfYNuGW5DAAAD6G6ig
+ (envelope-from <krisman@suse.de>); Mon, 29 Jan 2024 20:43:34 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: ebiggers@kernel.org, viro@zeniv.linux.org.uk, jaegeuk@kernel.org,
+ tytso@mit.edu
+Date: Mon, 29 Jan 2024 17:43:18 -0300
+Message-ID: <20240129204330.32346-1-krisman@suse.de>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <170656017092.16041.5056529810169892695.git-patchwork-notify@kernel.org>
-Date: Mon, 29 Jan 2024 20:29:30 +0000
-References: <20240112194132.25637-1-chao@kernel.org>
-In-Reply-To: <20240112194132.25637-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1rUYGF-0008Ps-9a
-Subject: Re: [f2fs-dev] [PATCH v5 1/6] f2fs: compress: fix to guarantee
- persisting compressed blocks by CP
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spamd-Result: default: False [0.70 / 50.00]; ARC_NA(0.00)[];
+ RCVD_VIA_SMTP_AUTH(0.00)[]; FROM_HAS_DN(0.00)[];
+ TO_DN_SOME(0.00)[]; R_MISSING_CHARSET(2.50)[];
+ FREEMAIL_ENVRCPT(0.00)[gmail.com];
+ MIME_GOOD(-0.10)[text/plain]; TO_MATCH_ENVRCPT_ALL(0.00)[];
+ BROKEN_CONTENT_TYPE(1.50)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
+ RCVD_COUNT_THREE(0.00)[3];
+ DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+ NEURAL_HAM_SHORT(-0.20)[-1.000]; RCPT_COUNT_SEVEN(0.00)[9];
+ MID_CONTAINS_FROM(1.00)[]; FUZZY_BLOCKED(0.00)[rspamd.com];
+ FROM_EQ_ENVFROM(0.00)[]; MIME_TRACE(0.00)[0:+];
+ FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,lists.sourceforge.net,suse.de];
+ RCVD_TLS_ALL(0.00)[]; BAYES_HAM(-3.00)[100.00%]
+X-Headers-End: 1rUYTp-0000Yp-Tu
+Subject: [f2fs-dev] [PATCH v5 00/12] Set casefold/fscrypt dentry operations
+ through sb->s_d_op
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,47 +120,84 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- daehojeong@google.com, linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ amir73il@gmail.com, Gabriel Krisman Bertazi <krisman@suse.de>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+Hi,
 
-This series was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+Sorry for the quick respin. The only difference from v4 is that we
+change the way we check for relevant dentries during a d_move, as
+suggested by Eric.
 
-On Sat, 13 Jan 2024 03:41:27 +0800 you wrote:
-> If data block in compressed cluster is not persisted with metadata
-> during checkpoint, after SPOR, the data may be corrupted, let's
-> guarantee to write compressed page by checkpoint.
-> 
-> Fixes: 4c8ff7095bef ("f2fs: support data compression")
-> Reviewed-by: Daeho Jeong <daehojeong@google.com>
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> 
-> [...]
+The v5 of this patchset addresses the issues Eric pointed out in the
+previous version.  The patch merging the fscrypt lookup helpers was
+completely rewritten to avoid the race condition; We also now return
+immediately from __fscrypt_handle_d_move; Finally, the overlayfs patch
+message was improved.  Further details can be found on the changelog of
+each patch.
 
-Here is the summary with links:
-  - [f2fs-dev,v5,1/6] f2fs: compress: fix to guarantee persisting compressed blocks by CP
-    https://git.kernel.org/jaegeuk/f2fs/c/fe2b98bcae7e
-  - [f2fs-dev,v5,2/6] f2fs: compress: fix to cover normal cluster write with cp_rwsem
-    https://git.kernel.org/jaegeuk/f2fs/c/bd0dddafd4a5
-  - [f2fs-dev,v5,3/6] f2fs: compress: fix to check unreleased compressed cluster
-    https://git.kernel.org/jaegeuk/f2fs/c/787f217e7f04
-  - [f2fs-dev,v5,4/6] f2fs: compress: fix to avoid inconsistence bewteen i_blocks and dnode
-    https://git.kernel.org/jaegeuk/f2fs/c/6d05c8d5997a
-  - [f2fs-dev,v5,5/6] f2fs: fix to remove unnecessary f2fs_bug_on() to avoid panic
-    https://git.kernel.org/jaegeuk/f2fs/c/ef62f2496f99
-  - [f2fs-dev,v5,6/6] f2fs: introduce FAULT_BLKADDR_CONSISTENCE
-    https://git.kernel.org/jaegeuk/f2fs/c/e2c2cb1a331f
+As usual, this survived fstests on ext4 and f2fs.
 
-You are awesome, thank you!
+---
+original cover letter:
+
+When case-insensitive and fscrypt were adapted to work together, we moved the
+code that sets the dentry operations for case-insensitive dentries(d_hash and
+d_compare) to happen from a helper inside ->lookup.  This is because fscrypt
+wants to set d_revalidate only on some dentries, so it does it only for them in
+d_revalidate.
+
+But, case-insensitive hooks are actually set on all dentries in the filesystem,
+so the natural place to do it is through s_d_op and let d_alloc handle it [1].
+In addition, doing it inside the ->lookup is a problem for case-insensitive
+dentries that are not created through ->lookup, like those coming
+open-by-fhandle[2], which will not see the required d_ops.
+
+This patchset therefore reverts to using sb->s_d_op to set the dentry operations
+for case-insensitive filesystems.  In order to set case-insensitive hooks early
+and not require every dentry to have d_revalidate in case-insensitive
+filesystems, it introduces a patch suggested by Al Viro to disable d_revalidate
+on some dentries on the fly.
+
+It survives fstests encrypt and quick groups without regressions.  Based on
+v6.7-rc1.
+
+[1] https://lore.kernel.org/linux-fsdevel/20231123195327.GP38156@ZenIV/
+[2] https://lore.kernel.org/linux-fsdevel/20231123171255.GN38156@ZenIV/
+
+Gabriel Krisman Bertazi (12):
+  ovl: Reject mounting over case-insensitive directories
+  fscrypt: Factor out a helper to configure the lookup dentry
+  fscrypt: Call fscrypt_prepare_lookup_dentry on unencrypted dentries
+  fscrypt: Drop d_revalidate for valid dentries during lookup
+  fscrypt: Drop d_revalidate once the key is added
+  fscrypt: Ignore plaintext dentries during d_move
+  libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
+  libfs: Add helper to choose dentry operations at mount-time
+  ext4: Configure dentry operations at dentry-creation time
+  f2fs: Configure dentry operations at dentry-creation time
+  ubifs: Configure dentry operations at dentry-creation time
+  libfs: Drop generic_set_encrypted_ci_d_ops
+
+ fs/crypto/hooks.c       | 28 +++-----------
+ fs/ext4/namei.c         |  1 -
+ fs/ext4/super.c         |  1 +
+ fs/f2fs/namei.c         |  1 -
+ fs/f2fs/super.c         |  1 +
+ fs/libfs.c              | 62 +++++++++---------------------
+ fs/overlayfs/params.c   | 14 +++++--
+ fs/ubifs/dir.c          |  1 -
+ fs/ubifs/super.c        |  1 +
+ include/linux/fs.h      | 11 +++++-
+ include/linux/fscrypt.h | 83 ++++++++++++++++++++++++++++++-----------
+ 11 files changed, 108 insertions(+), 96 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.43.0
 
 
 
