@@ -4,71 +4,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5A63BC48285
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Jan 2024 20:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3EF7BC46CD2
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Jan 2024 21:40:24 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rUv46-0005ay-4c;
-	Tue, 30 Jan 2024 20:50:42 +0000
+	id 1rUvqA-0006Dy-0t;
+	Tue, 30 Jan 2024 21:40:22 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rUv43-0005an-67
+ (envelope-from <msnitzer@redhat.com>) id 1rUvq8-0006Dr-K1
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 Jan 2024 20:50:39 +0000
+ Tue, 30 Jan 2024 21:40:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=egfW9xWBlqdnDhPyihqrstCauf1gU0PaW0F7u8kAb3o=; b=HfnVsuV+PXEHCkkAPjj+qp5HAg
- n6PKgGLT7nvif8bJKvN5Ki1ib4tkzQeC++kFxVtrtePCHeHX7EBUqLRx9GlTq8qZNabUmYyvbrCI7
- Cci+HAQe8trTNWdhTdY80a99cH9IweT5oPGpstUxxXjA7GkrCN/6K8ilSSonKDoyIuOA=;
+ bh=5wxvZziXbUhtUP1Y9zXw54fZ6cDdnya/SKk+UDHGEFo=; b=HUUHkSoONABjnhbaMDsv1jsGC5
+ H/oNfk0mdiRYIrm12/dwuEn1uJo7+5hK+MI1k+T+/U6p15wYGBOqNecbggTlLCWd1TOY+um4M4DTi
+ VCgA5Lw1mbVLyERkFkkMhSjECPF33yLcmuJxv+JvSd5J7b1KhkTQLqoBp6GRkqPXLeGg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=egfW9xWBlqdnDhPyihqrstCauf1gU0PaW0F7u8kAb3o=; b=MjpnxY7oGIqRUWxxCTMKOBd7Is
- eeCY7am7ty6SGVbv9IIUq6q636zDmwH6cwaspy7d2PeCXQ+2s7+eeFsKDpZ14YmkxSRXdEhJVjrvx
- W7PSELf3lCN5V1uyRUvd9ZSNdo8Eas3VDxjUCiF1pe3nSFzotVLth/2hsKzFrzLT2THQ=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ ;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=5wxvZziXbUhtUP1Y9zXw54fZ6cDdnya/SKk+UDHGEFo=; b=XJbFUK/w4kOIxBWL5vD79Tf0jB
+ UTT0EARpSf5MVO7qpInVIvgSyOrq5fyYrIuUFosICOLLRnbDHtGrzN+Mk7rc5DIrl1Q/JQCvRMoyd
+ i/s9xpJ6BTfI43D5C4MJ/5OQ8A6d0bdp2KZBMuHfLJTB//dRv0YVG0j3HaW6oKep3IO4=;
+Received: from mail-qt1-f182.google.com ([209.85.160.182])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rUv42-00016o-C0 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 Jan 2024 20:50:39 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 4BB3BCE1CD0;
- Tue, 30 Jan 2024 20:50:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E7A3EC43394;
- Tue, 30 Jan 2024 20:50:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1706647826;
- bh=P9Nxfwsi22IBiRvPA+3XxCKQOS0jTpHQgVQTl1R2KsM=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=WzSiEehyX6Tp9o+FIoVXSXh9HQIC/PLdpk986JdLoKr5IFu1wT5kKH4jJhY3GXDBV
- A1eBj9mmTavRR3TNw+zTU2Yv9ExdZihV7+ATMpja6RJV/EIVqfFmowwA4i1SPAcjT+
- co0ilGsdsGqMe3/w+TTslncRXPnGwlExJ+DWIbKoYqDBRlCEXBDnaQyhA7q8hbs9xz
- kvUke0sQnF07bKUC10egOsG5GYx5zCZCD6NkussKVbeZo6bFoOU+jmLvAXVF5eCsgD
- L4fDSOKoNFfE/adNwHzFWAH8G8ZNi1FUHfWjYeQp3tH5zfDMDeP1zcsFy87N5JzwEE
- 3ALTk6hsc00UA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- CDD24C595C5; Tue, 30 Jan 2024 20:50:25 +0000 (UTC)
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1rUvq6-0003Iw-PJ for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 30 Jan 2024 21:40:21 +0000
+Received: by mail-qt1-f182.google.com with SMTP id
+ d75a77b69052e-42aa4a9d984so29320811cf.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 30 Jan 2024 13:40:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1706650808; x=1707255608;
+ h=in-reply-to:content-disposition:mime-version:references:message-id
+ :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=5wxvZziXbUhtUP1Y9zXw54fZ6cDdnya/SKk+UDHGEFo=;
+ b=Zq3vWGzrPmxoeumEmJnxYF5fH0rgfICbVFt/qco+ESZUVRVEvK/rvPIjns+EXbXdEg
+ KMuo0eT0ewkZygbLPrS9e4BfkMRMt/pd7GWL53We4MGuQ4ao6r2jAEIo2b807JOskqmY
+ imXkaUwY3f69hMn4FvjizE85ZZZEgGAZYOHpVA+KmBuDKlBYZTbb5nDOu8oCL9VGgPTo
+ cnT0X0pjCqRv8fyNOVSojfW134zM6P8WPzwqwFyIqslKkODTe/UeSetCjlGm+LiVRwq+
+ EjfcVsH/LTwmhA91a23MO5bhCWFwKuJft3JUgLqPUuIjH0wLHZs/RBtwlLb3xL60Drhu
+ XRWA==
+X-Gm-Message-State: AOJu0Yyu55RaYPtJkXfI5jGNifO6KcfO8oC2yNn1gTCMAlQwzKuGbqC+
+ jTl/qi3EcSlAkHOUe6UGWzFSmbkGpmDlXnj7mvVy8iXuJNzAPP0f/BWYKJx+LE7APbtXzDEfAkD
+ sqQ==
+X-Google-Smtp-Source: AGHT+IH5S9pyQeSM2K6WGjuq7LBNmUE3HoawjAO33JauM5M9qFYAUZROQj6Nk22MOXOq+8oUsCH3ng==
+X-Received: by 2002:ac8:7f8a:0:b0:42a:b37f:4a75 with SMTP id
+ z10-20020ac87f8a000000b0042ab37f4a75mr3021041qtj.16.1706647719211; 
+ Tue, 30 Jan 2024 12:48:39 -0800 (PST)
+Received: from localhost (pool-68-160-141-91.bstnma.fios.verizon.net.
+ [68.160.141.91]) by smtp.gmail.com with ESMTPSA id
+ x4-20020ac81204000000b00429bd898838sm4160126qti.47.2024.01.30.12.48.38
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 30 Jan 2024 12:48:38 -0800 (PST)
+Date: Tue, 30 Jan 2024 15:48:37 -0500
+From: Mike Snitzer <snitzer@kernel.org>
+To: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Message-ID: <ZblgpVdHZqPaq7xD@redhat.com>
+References: <20240128-zonefs_nofs-v3-0-ae3b7c8def61@wdc.com>
+ <20240128-zonefs_nofs-v3-2-ae3b7c8def61@wdc.com>
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <170664782583.32692.9577632595929529789.git-patchwork-notify@kernel.org>
-Date: Tue, 30 Jan 2024 20:50:25 +0000
-References: <1705478398-10890-1-git-send-email-zhiguo.niu@unisoc.com>
-In-Reply-To: <1705478398-10890-1-git-send-email-zhiguo.niu@unisoc.com>
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>
-X-Headers-End: 1rUv42-00016o-C0
-Subject: Re: [f2fs-dev] [PATCH] f2fs: use IS_INODE replace IS_DNODE in
- f2fs_flush_inline_data
+Content-Disposition: inline
+In-Reply-To: <20240128-zonefs_nofs-v3-2-ae3b7c8def61@wdc.com>
+X-Headers-End: 1rUvq6-0003Iw-PJ
+Subject: Re: [f2fs-dev] [PATCH v3 2/5] dm: dm-zoned: guard blkdev_zone_mgmt
+ with noio scope
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,38 +92,29 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
- niuzhiguo84@gmail.com
+Cc: Naohiro Aota <naohiro.aota@wdc.com>, dm-devel@lists.linux.dev,
+ linux-f2fs-devel@lists.sourceforge.net, Chaitanya Kulkarni <kch@nvidia.com>,
+ Sagi Grimberg <sagi@grimberg.me>, linux-fsdevel@vger.kernel.org,
+ linux-block@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>,
+ Damien Le Moal <dlemoal@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Jens Axboe <axboe@kernel.dk>, David Sterba <dsterba@suse.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Johannes Thumshirn <jth@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Alasdair Kergon <agk@redhat.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+On Mon, Jan 29 2024 at  2:52P -0500,
+Johannes Thumshirn <johannes.thumshirn@wdc.com> wrote:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Wed, 17 Jan 2024 15:59:58 +0800 you wrote:
-> Now IS_DNODE is used in f2fs_flush_inline_data and it has some problems:
-> 1. Just only inodes may include inline data,not all direct nodes
-> 2. When system IO is busy, it is inefficient to lock a direct node page
-> but not an inode page. Besides, if this direct node page is being
-> locked by others for IO, f2fs_flush_inline_data will be blocked here,
-> which will affects the checkpoint process, this is unreasonable.
+> Guard the calls to blkdev_zone_mgmt() with a memalloc_noio scope.
+> This helps us getting rid of the GFP_NOIO argument to blkdev_zone_mgmt();
 > 
-> [...]
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Here is the summary with links:
-  - [f2fs-dev] f2fs: use IS_INODE replace IS_DNODE in f2fs_flush_inline_data
-    https://git.kernel.org/jaegeuk/f2fs/c/5e9f083a7ae8
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Reviewed-by: Mike Snitzer <snitzer@kernel.org>
 
 
 _______________________________________________
