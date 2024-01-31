@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3AADAC46CD2
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 31 Jan 2024 00:23:15 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E77DBC47DDB
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 31 Jan 2024 00:29:56 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rUyNk-0005Fz-GF;
-	Wed, 31 Jan 2024 00:23:13 +0000
+	id 1rUyUF-0002Ri-Lu;
+	Wed, 31 Jan 2024 00:29:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1rUyNj-0005Ft-Iv
+ (envelope-from <ebiggers@kernel.org>) id 1rUyUE-0002RU-9c
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 31 Jan 2024 00:23:12 +0000
+ Wed, 31 Jan 2024 00:29:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ED+roD9mzDndzR24BJXX1xkTwyet9MXt9L11gGKkyaI=; b=ZF0qbP9nOttQPxbX5MRWSKU0SK
- daHU5899WLTDLzT1DwUxPkpPJ4kQ6tNQZ9kObcWfd5C11Rl2rh81zpfAOpqNvTMC6SqdDlXRo0AFj
- 25J6zbRYdZ6Dw+AOGUhHiFUhMVGpcAg/REk8nbPfD6PB3yNYSNzhxyilV0Cas74niq+0=;
+ bh=9iFBHJkp7up0ymjAoTr9pGik901atUgs+vltbP87kRA=; b=CtGrYi7Cu1K2K9u1KDJMJRvhaq
+ vf2kaOa6ZfFhqqINzM07VKI1/E+zQzKXTZrAxDu3hoFuRCb36SWXyl0rxfBTTCCywbOCep8pBZKBm
+ rWGda8TQFzwQGMDdeXu1sufhGdIIdMRmbAZ08vKPWlnHAfyX9YaGfoL7qH7B4mYCTLLk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,41 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ED+roD9mzDndzR24BJXX1xkTwyet9MXt9L11gGKkyaI=; b=XobejhZ2htYr+i/L1nNpoOPuxF
- tCLa+uMjznU6qVhPAkUkpKQruDQTf0Meixya3dgt0eDDuVQA3XZKlIc54jE0lYc06k7VK4bbe52Rb
- i7X5m+HpVhRhflj768ALYtoB1LwHGseRrPlCvJNS5W8FhAR6PS0HcusL+yDH5vk7UgIE=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=9iFBHJkp7up0ymjAoTr9pGik901atUgs+vltbP87kRA=; b=WycdD4DLmC1B1plS1n2Gi9gtEb
+ SzshH5/sYrQx1DemLRMr/tKVDANue1MDEmEW7oK2I5HlUgDb9w3U9/DMhTe7A8lXy3A3rsSHdqBaT
+ r5ojfbC2C4+zr+j0DI5Q0dB0tWr9QDcWY7Y7rE3LW2O7cdrLaW8Efp4YYx39YauUI2jo=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rUyNf-00024K-PB for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 31 Jan 2024 00:23:12 +0000
+ id 1rUyU9-0002LQ-Kx for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 31 Jan 2024 00:29:54 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 7FD4ECE1D1D;
- Wed, 31 Jan 2024 00:23:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74D3CC433F1;
- Wed, 31 Jan 2024 00:23:00 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id E25AB611D9;
+ Wed, 31 Jan 2024 00:29:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50234C43390;
+ Wed, 31 Jan 2024 00:29:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1706660580;
- bh=ZHcmK97bEwj2r3qzU94neICtQokjkJ+hHC+srZkKdz8=;
+ s=k20201202; t=1706660979;
+ bh=D3cBN3aB5cNbTbyQFYW4Hq+b+QWshyCJ+Ot1mi+gd/s=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=PDTNjGjypkWJm6CTVfPNj3ZBHYWA9TADsGf+ary7R9O5cPhHWun/I+BStulvVfXtW
- 2U8o2IOFEkvbyEKBSV4rcnqvG3DXCGrWzPeutmmYgQQGW0oHtqwoNUgmLWAAwtyz88
- sWtr7nggk9zY/yDLPe9NBRALy2O6cc9OJW2Q+wm58C6shrPDs1aCrEIX3K33tpeT2W
- f2A6U8T8XU7Mz/I9D/P9CC6UA51duIvSCNHg94zj6xwo7pDlw9UzWRlgsdybfp7vd7
- laIj59dS6GVYbPxaGgZmkNGRYXUwaAzpJ6zElEPG9N52waM7TN/UFOs4ibFjUq4Erd
- uDgCv/MmLnbaQ==
-Date: Tue, 30 Jan 2024 16:22:58 -0800
+ b=FV0jE6q8R4zeCARBAI0FTnrytJ5JAYcK0DeacrN9ClZe7QVHxN8rjDTtMEU0ZxnPX
+ SWWMlXqeQCyeW2LrjHG8SA0mgzYBD+scdKxU/E1UBwJtCzigduwqtlNftN9El76Ccw
+ YGOu7Gfs0KzJ8OLkDuA/6Wy+Oy+Y2FcHc3SWmpqmVWSB6gPdxVHBdKOAUbZyBh3sRX
+ AkHBeWM2X6ZYNfIRyDgryg46uvo12CI9+3rXlBqjrPkiaUomSYg7BX8eXnxIaamPde
+ Pmg4mmZ+nR6InQ5qIViQTsYkMdLhIQ9ykPyAv7QCD+8p3pW4Akhkaaw2C2hM+Nu36b
+ 0Q0jQZR2ac2hQ==
+Date: Tue, 30 Jan 2024 16:29:37 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: Gabriel Krisman Bertazi <krisman@suse.de>
-Message-ID: <20240131002258.GA2020@sol.localdomain>
+Message-ID: <20240131002937.GB2020@sol.localdomain>
 References: <20240129204330.32346-1-krisman@suse.de>
- <20240129204330.32346-2-krisman@suse.de>
+ <20240129204330.32346-3-krisman@suse.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20240129204330.32346-2-krisman@suse.de>
-X-Headers-End: 1rUyNf-00024K-PB
-Subject: Re: [f2fs-dev] [PATCH v5 01/12] ovl: Reject mounting over
- case-insensitive directories
+In-Reply-To: <20240129204330.32346-3-krisman@suse.de>
+X-Headers-End: 1rUyU9-0002LQ-Kx
+Subject: Re: [f2fs-dev] [PATCH v5 02/12] fscrypt: Factor out a helper to
+ configure the lookup dentry
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,28 +86,38 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Jan 29, 2024 at 05:43:19PM -0300, Gabriel Krisman Bertazi wrote:
-> ovl: Reject mounting over case-insensitive directories
+On Mon, Jan 29, 2024 at 05:43:20PM -0300, Gabriel Krisman Bertazi wrote:
+> Both fscrypt_prepare_lookup_dentry_partial and
+> fscrypt_prepare_lookup_dentry will set DCACHE_NOKEY_NAME for dentries
+> when the key is not available. 
 
-Maybe:
+Shouldn't this say: "Both fscrypt_prepare_lookup() and
+fscrypt_prepare_lookup_partial() set DCACHE_NOKEY_NAME for dentries when the key
+is not available."
 
-    ovl: Reject mounting over rootdir of case-insensitive capable FS
+> @@ -131,12 +128,13 @@ EXPORT_SYMBOL_GPL(__fscrypt_prepare_lookup);
+>  int fscrypt_prepare_lookup_partial(struct inode *dir, struct dentry *dentry)
+>  {
+>  	int err = fscrypt_get_encryption_info(dir, true);
+> +	bool is_nokey_name = false;
+> +
+> +	if (!err && !fscrypt_has_encryption_key(dir))
+> +		is_nokey_name = true;
 
-or:
+	bool is_nokey_name = (err == 0 && !fscrypt_has_encryption_key(dir));
 
-    ovl: Always reject mounting over case-insensitive directories
+> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+> index 12f9e455d569..68ca8706483a 100644
+> --- a/include/linux/fscrypt.h
+> +++ b/include/linux/fscrypt.h
+> @@ -948,6 +948,16 @@ static inline int fscrypt_prepare_rename(struct inode *old_dir,
+>  	return 0;
+>  }
+>  
+> +static inline void fscrypt_prepare_lookup_dentry(struct dentry *dentry,
+> +						 bool is_nokey_name)
 
-... since as your commit message explains, overlayfs already does reject
-mounting over case-insensitive directories, just not in all cases.
-
-> Since commit bb9cd9106b22 ("fscrypt: Have filesystems handle their
-> d_ops"), we set ->d_op through a hook in ->d_lookup, which
-> means the root dentry won't have them, causing the mount to accidentally
-> succeed.
-
-But this series changes that.  Doesn't that make this overlayfs fix redundant?
-It does improve the error message, which is helpful, but your commit message
-makes it sound like it's an actual fix, not just an error message improvement.
+Maybe just fscrypt_prepare_dentry()?
 
 - Eric
 
