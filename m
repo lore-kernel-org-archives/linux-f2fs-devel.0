@@ -4,66 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F1552C4828D
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Feb 2024 02:02:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ED61AC4828D
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Feb 2024 02:02:06 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rXXGB-0001iC-Uz;
-	Wed, 07 Feb 2024 02:02:00 +0000
+	id 1rXXGI-000861-Gp;
+	Wed, 07 Feb 2024 02:02:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <Zhiguo.Niu@unisoc.com>) id 1rXXGA-0001i6-QI
+ (envelope-from <Zhiguo.Niu@unisoc.com>) id 1rXXGG-00085v-AM
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Feb 2024 02:01:59 +0000
+ Wed, 07 Feb 2024 02:02:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BVsEEWLQGZX07FZQldrpv0fblveMaQMwFSNSeOK+Uvg=; b=hvsdpNmyGfX2CfgKBKLFM1kgA7
- LGrgstuioHiobSP/oipjD0Cwe6TJ08JbNvX2cpb6rUNoq1ZGuKCu3kAEreVPSHHUZLxc1B/5YfCAJ
- BOG7HXmpAEnhl+W1/RPVd0RZwODuqM+rRgGwEv7DivE2U6Gqub2nLxh6d8D4z7gQCRZo=;
+ bh=FOokTu0s+bVReKHVSYa0qE6gIQjcvqYd+nCqBdDRciw=; b=FFAVreU9+Pt5Btr59f3FFcCKRE
+ hSguh2gBDmLpiVtxEnR0WZh2IYoYtI/ty+gMzFdDTHVTbf6WGFIQFdF7qAFaQZp+Py0Dg63948YwT
+ rB57mVsLjXM5/6lkwf2JnUvsvSuISIsfIK3mXc4s8P5vqGDicXwt7nDemlfvIqeCFoPw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=BVsEEWLQGZX07FZQldrpv0fblveMaQMwFSNSeOK+Uvg=; b=E
- pBxFobw9skAemd5BcjnZ0PYvk3hHotGh0qXw8yNXxc7S5MUqK2sJSj6Iz2/yknsU832jZaDpTCFzt
- G81GDOUlVhtFItKpwv+xpiFDp9scYnS4dME28IDNzgq/5eoAOCUo2rS6hsdQSTCmjUn06kOmocczi
- UvrA7fFqp4y5upRg=;
+ h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
+ CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=FOokTu0s+bVReKHVSYa0qE6gIQjcvqYd+nCqBdDRciw=; b=frMDnNbcodQabiRg2pcplZd943
+ m2R1Xb9y4k23+zFSmDSIVLxFbeSjsgaIEKE5cpp3NNVU9MHwWv51SOasqmCFsO7IGnqKCFn/e7o27
+ sN/wCGFyPGWOi00sYYlBKUFQii1WiMHxIVzY/uTCKuQNJ9ajGEb1g7GwDkp+qTbgnKs0=;
 Received: from mx1.unisoc.com ([222.66.158.135] helo=SHSQR01.spreadtrum.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rXXG9-00071x-DC for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Feb 2024 02:01:59 +0000
+ id 1rXXGE-00072B-Kg for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 07 Feb 2024 02:02:04 +0000
 Received: from dlp.unisoc.com ([10.29.3.86])
- by SHSQR01.spreadtrum.com with ESMTP id 41721Nq0075264;
- Wed, 7 Feb 2024 10:01:23 +0800 (+08)
+ by SHSQR01.spreadtrum.com with ESMTP id 41721Vt7075716;
+ Wed, 7 Feb 2024 10:01:31 +0800 (+08)
  (envelope-from Zhiguo.Niu@unisoc.com)
 Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
- by dlp.unisoc.com (SkyGuard) with ESMTPS id 4TV3Hv3prTz2K4cJ2;
- Wed,  7 Feb 2024 10:01:15 +0800 (CST)
+ by dlp.unisoc.com (SkyGuard) with ESMTPS id 4TV3J40K0Dz2K4cHw;
+ Wed,  7 Feb 2024 10:01:24 +0800 (CST)
 Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
  BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 7 Feb 2024 10:01:20 +0800
+ 15.0.1497.23; Wed, 7 Feb 2024 10:01:29 +0800
 From: Zhiguo Niu <zhiguo.niu@unisoc.com>
 To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Wed, 7 Feb 2024 10:01:00 +0800
-Message-ID: <1707271264-5551-1-git-send-email-zhiguo.niu@unisoc.com>
+Date: Wed, 7 Feb 2024 10:01:02 +0800
+Message-ID: <1707271264-5551-3-git-send-email-zhiguo.niu@unisoc.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1707271264-5551-1-git-send-email-zhiguo.niu@unisoc.com>
+References: <1707271264-5551-1-git-send-email-zhiguo.niu@unisoc.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.0.73.87]
 X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
  BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL: SHSQR01.spreadtrum.com 41721Nq0075264
-X-Headers-End: 1rXXG9-00071x-DC
-Subject: [f2fs-dev] [PATCH v2 0/4] f2fs: fix panic issue in small capacity
- device
+X-MAIL: SHSQR01.spreadtrum.com 41721Vt7075716
+X-Headers-End: 1rXXGE-00072B-Kg
+Subject: [f2fs-dev] [PATCH v2 2/4] f2fs: fix panic issue in update_sit_entry
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,36 +83,78 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-A panic issue happened in a reboot test in small capacity device
-as following:
-1.The device size is 64MB, and main area has 24 segments, and
-CONFIG_F2FS_CHECK_FS is not enabled.
-2.There is no any free segments left shown in free_segmap_info,
-then another write request cause get_new_segment get a out-of-bound
-segment with segno 24.
-3.panic happen in update_sit_entry because access invalid bitmap
-pointer.
+When CONFIG_F2FS_CHECK_FS is not enabled, f2fs_bug_on just printing
+warning, get_new_segment may get an out-of-bounds segment when there
+is no free segments. Then a block is allocated from this invalid
+segment, update_sit_entry will access the invalid bitmap address,
+cause system panic. Just as below call stack:
 
-More detail shown in following patch sets.
-The three patches are splited here because the modifications are
-relatively independent and more readable.
+f2fs_allocate_data_block get a block address with 0x4000 and
+partition size is 64MB
 
+[   13.401997] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+[   13.402003] Mem abort info:
+[   13.402006]   ESR = 0x96000005
+[   13.402009]   EC = 0x25: DABT (current EL), IL = 32 bits
+[   13.402015]   SET = 0, FnV = 0
+[   13.402018]   EA = 0, S1PTW = 0
+[   13.402021]   FSC = 0x05: level 1 translation fault
+[   13.402025] Data abort info:
+[   13.402027]   ISV = 0, ISS = 0x00000005
+[   13.402030]   CM = 0, WnR = 0
+[   13.402034] user pgtable: 4k pages, 39-bit VAs, pgdp=00000001066ab000
+[   13.402038] [0000000000000000] pgd=0000000000000000, p4d=0000000000000000, pud=0000000000000000
+[   13.402052] Internal error: Oops: 96000005 [#1] PREEMPT SMP
+[   13.489854] pc : update_sit_entry+0x128/0x420
+[   13.490497] lr : f2fs_allocate_data_block+0x6b0/0xc2c
+[   13.491218] sp : ffffffc00e023440
+[   13.501530] Call trace:
+[   13.501930]  update_sit_entry+0x128/0x420
+[   13.502523]  f2fs_allocate_data_block+0x6b0/0xc2c
+[   13.503203]  do_write_page+0xf0/0x1d4
+[   13.503752]  f2fs_outplace_write_data+0x68/0xfc
+[   13.504408]  f2fs_do_write_data_page+0x3a8/0x65c
+[   13.505076]  move_data_page+0x294/0x7a8
+[   13.505647]  gc_data_segment+0x4b8/0x800
+[   13.506229]  do_garbage_collect+0x354/0x674
+[   13.506843]  f2fs_gc+0x280/0x68c
+[   13.507340]  f2fs_balance_fs+0x104/0x144
+[   13.507921]  f2fs_create+0x310/0x3d8
+[   13.508458]  path_openat+0x53c/0xc28
+[   13.508997]  do_filp_open+0xbc/0x16c
+[   13.509535]  do_sys_openat2+0xa0/0x2a0
+
+So sanity check should be add in update_sit_entry.
+Also remove some redundant judgment code.
+
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
 ---
-Changes of v2: stop checkpoint when get a out-of-bound segment
----
+ fs/f2fs/segment.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Zhiguo Niu (4):
-  f2fs: correct counting methods of free_segments in __set_inuse
-  f2fs: fix panic issue in update_sit_entry
-  f2fs: enhance judgment conditions of GET_SEGNO
-  f2fs: stop checkpoint when get a out-of-bounds segment
-
- fs/f2fs/file.c          |  7 ++++++-
- fs/f2fs/segment.c       | 21 ++++++++++++++++-----
- fs/f2fs/segment.h       |  7 ++++---
- include/linux/f2fs_fs.h |  1 +
- 4 files changed, 27 insertions(+), 9 deletions(-)
-
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index ad6511f..f373ff7 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2399,6 +2399,8 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ #endif
+ 
+ 	segno = GET_SEGNO(sbi, blkaddr);
++	if (segno == NULL_SEGNO)
++		return;
+ 
+ 	se = get_seg_entry(sbi, segno);
+ 	new_vblocks = se->valid_blocks + del;
+@@ -3464,8 +3466,7 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+ 	 * since SSR needs latest valid block information.
+ 	 */
+ 	update_sit_entry(sbi, *new_blkaddr, 1);
+-	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO)
+-		update_sit_entry(sbi, old_blkaddr, -1);
++	update_sit_entry(sbi, old_blkaddr, -1);
+ 
+ 	/*
+ 	 * If the current segment is full, flush it out and replace it with a
 -- 
 1.9.1
 
