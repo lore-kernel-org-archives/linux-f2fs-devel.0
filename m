@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3C560C48BC3
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 15 Feb 2024 00:16:50 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5EB20C48BC4
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 15 Feb 2024 00:24:40 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1raPQm-0006Os-Sn;
-	Thu, 15 Feb 2024 00:16:49 +0000
+	id 1raPYN-00034D-8J;
+	Thu, 15 Feb 2024 00:24:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1raPQl-0006Of-HD
+ (envelope-from <ebiggers@kernel.org>) id 1raPYM-000347-40
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 15 Feb 2024 00:16:48 +0000
+ Thu, 15 Feb 2024 00:24:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5mOwL+EGIOBx/xim2ZXhrn61+VNM/cAXORgsz1BYVJQ=; b=XCY2gQ6j4hiR7/vhVJRhY2NJ/R
- 1tzpF/a3GBJAepi/Z95rTbAHsd3o9wtYm7hm4SmSzVwyqG+hAQJ2RaNDKeE9sGPVwWihdZv8jWEIg
- ZbYrRKlhvjWeCqs1teK6IbdAIS723qKbnC9BTYqq3L1kdpR7K0SBn2j8pAcR80ZGKsPA=;
+ bh=sqiWnqSJgEtcos3fpiKxiMG+xfTegtN4gnquwuKmB/w=; b=ehFml6m9H1E/Vg6f7ZzrRTDECa
+ +sDUS1RZFI4JO1R3cAuoYOs/Iq1PNbhZ5kb+ONa3PEoA+LVxXK2JhN0rqrrPk0hh3LLf7gpwNpVOx
+ XmBUpYpRvvBfMV5Vg1Z0ypRWGdew0HQiriyyT1gHByGgcWr437rMGgBYjMtkJmnN+e68=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,41 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=5mOwL+EGIOBx/xim2ZXhrn61+VNM/cAXORgsz1BYVJQ=; b=RNCvLRbidB04qEscHV2eLF3N1N
- NZstJ4OlsczvOzxTt3q/suwJjO9tLRx4cUV+/l1LkdrdNiIMgRoZZAqFhmBz7uY11rPq946AlWZUb
- FKLFTCXfNdxVYnKfoPyceKkKbYH6WiZZNLxhV+niNkq2+nnyEzAEmTKzRGDAoxLArFyk=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=sqiWnqSJgEtcos3fpiKxiMG+xfTegtN4gnquwuKmB/w=; b=EO1opL1uNf78vAIPL94cnahnqx
+ 3NQ5Dl7MmSEY9Y/WzUg8SNMQViq+oZXcC5fXc9tXnyEqCGQ3XiYv+BFK6RGPu7EZeQxA+rUwmANlY
+ B9ZbpwKjzE37i8Sc2br0h1VFfhavqRGsmfV/v5tOkzYLGdd+UgHkJaWil6BdMlXPir0A=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1raPQk-0006eT-Gf for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 15 Feb 2024 00:16:47 +0000
+ id 1raPYJ-0006o1-ND for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 15 Feb 2024 00:24:38 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 79448CE234B;
- Thu, 15 Feb 2024 00:16:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CCF9C433F1;
- Thu, 15 Feb 2024 00:16:33 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id F149361B80;
+ Thu, 15 Feb 2024 00:24:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3713FC433C7;
+ Thu, 15 Feb 2024 00:24:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1707956193;
- bh=ylFK6Bpi7O0s6j/9+mo/NrShh6U5P03/xrJn/rG4PpM=;
+ s=k20201202; t=1707956665;
+ bh=59cH34O2OWkKVZjG9GgdkKelHOHZV98dvK1VvoxsuNw=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=VEvdwyv92kXe4udUPiYfbfA9b6N6wY5f05UN/tXpwXHit2VxdlHZZIQ4lvbl7JCb6
- fGYXD6oQSJ9SpdC361S/r4aUdmN4cyBhjtlCshylY1BOlBXnmc+mg7N+1s0hBW3kTz
- pIt0vbs66fOB1cWPiOnO1k/uVsWavea+HZjzPACrazcYPZSV+EvqjVs309elxkHM2A
- Z2qgQmP6d1NRO6s+/qrBmK+BA6yW/WOrypcYy7gygv260aFM2OVif9hW82XZub3Uhc
- DXBqhfAWjEU4KDEIHfzixirflHkeiWRiORgDXBCdku4/cEfJ/9n9YdZPUNTe4MlRSh
- G2KeHLq9+gT8w==
-Date: Wed, 14 Feb 2024 16:16:31 -0800
+ b=hrK5g6NegFC+QhqrQea4HSmqTdiC9Ka/gx0p2n7jiipIgWksWr24/0BVRwkNjluCO
+ o/mA4cjWmL+WNNbSUwu1cH2syPViHbh7mITciDFdhaMCXuxgQb1c0suVhPiV7ViTp4
+ ncP94sqOe852oIomjyUZT4yz5pxRVbglAV2iZOjOQHcF0MwWecT5ZK+kVShnJlfvNY
+ OykMsWyj4W+fUb6iZ5pVyPKpNc3tVavEbiWfVhg9eOlNlmVArIP5dRJf6RCvhpaXDh
+ oqcrmyOzsFiY7kqCA9BzFxTZCbrJRiQa6bzILtTeVdf4wv05i3k6HPWJd9IJH19vEP
+ KMzA0kaGVqA3g==
+Date: Wed, 14 Feb 2024 16:24:23 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: Gabriel Krisman Bertazi <krisman@suse.de>
-Message-ID: <20240215001631.GI1638@sol.localdomain>
+Message-ID: <20240215002423.GJ1638@sol.localdomain>
 References: <20240213021321.1804-1-krisman@suse.de>
- <20240213021321.1804-5-krisman@suse.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20240213021321.1804-5-krisman@suse.de>
-X-Headers-End: 1raPQk-0006eT-Gf
-Subject: Re: [f2fs-dev] [PATCH v6 04/10] fscrypt: Drop d_revalidate once the
- key is added
+In-Reply-To: <20240213021321.1804-1-krisman@suse.de>
+X-Headers-End: 1raPYJ-0006o1-ND
+Subject: Re: [f2fs-dev] [PATCH v6 00/10] Set casefold/fscrypt dentry
+ operations through sb->s_d_op
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,39 +85,23 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Feb 12, 2024 at 09:13:15PM -0500, Gabriel Krisman Bertazi wrote:
-> From fscrypt perspective, once the key is available, the dentry will
-> remain valid until evicted for other reasons, since keyed dentries don't
-> require revalidation and, if the key is removed, the dentry is
-> forcefully evicted.  Therefore, we don't need to keep revalidating them
-> repeatedly.
+On Mon, Feb 12, 2024 at 09:13:11PM -0500, Gabriel Krisman Bertazi wrote:
+> Hi,
 > 
-> Obviously, we can only do this if fscrypt is the only thing requiring
-> revalidation for a dentry.  For this reason, we only disable
-> d_revalidate if the .d_revalidate hook is fscrypt_d_revalidate itself.
+> v6 of this patchset applying the comments from Eric and the suggestion from
+> Christian. Thank you for your feedback.
 > 
-> It is safe to do it here because when moving the dentry to the
-> plain-text version, we are holding the d_lock.  We might race with a
-> concurrent RCU lookup but this is harmless because, at worst, we will
-> get an extra d_revalidate on the keyed dentry, which is will find the
-> dentry is valid.
+> Eric, since this is getting close to merging, how do you want to handle
+> it? I will take patch 1 through my tree already, are you fine if I merge
+> this through unicode or do you want to take it through fscrypt?
 > 
-> Finally, now that we do more than just clear the DCACHE_NOKEY_NAME in
-> fscrypt_handle_d_move, skip it entirely for plaintext dentries, to avoid
-> extra costs.
-> 
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+> As usual, this survived fstests on ext4 and f2fs.
 
-I think this explanation misses an important point, which is that it's only
-*directories* where a no-key dentry can become the regular dentry.  The VFS does
-the move because it only allows one dentry to exist per directory.
+I think you should just take the whole series through the unicode tree.
 
-For nondirectories, the dentries don't get reused and this patch is irrelevant.
-
-(Of course, there's no point in making fscrypt_handle_d_move() check whether the
-dentry is a directory, since checking DCACHE_NOKEY_NAME is sufficient.)
-
-The diff itself looks good -- thanks.
+If I understand correctly, this series is really about fixing things for
+casefolding support, not fscrypt support, right?  There is a lot of interaction
+between the two, but ultimately it's casefold that gets fixed.
 
 - Eric
 
