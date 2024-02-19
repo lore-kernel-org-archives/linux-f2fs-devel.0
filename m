@@ -4,70 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 50EF9C48260
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Feb 2024 07:19:21 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 100B4C48260
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Feb 2024 07:45:23 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rbxvr-0005H9-HC;
-	Mon, 19 Feb 2024 07:19:20 +0000
+	id 1rbyL2-0005v0-TC;
+	Mon, 19 Feb 2024 07:45:21 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rbxvm-0005H2-GP
+ (envelope-from <eugen.hristev@collabora.com>) id 1rbyL2-0005uu-Ct
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Feb 2024 07:19:15 +0000
+ Mon, 19 Feb 2024 07:45:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7+8koXOhA1BxfRLWCGX8EcP/4OtI+ZUU6ZrygpC78eI=; b=JChEGeswnagFNpJeZgwRxl3q32
- +YmhsQD9bNfPUukBgJ8f5QbGyylT6o0Tw+B8tL15JiOyfQQ1zbS6eWqfZdOy2Igg5nk7GTE97AOyZ
- Y5zAFrPlFdIkoffr1Pq3Jndzc4/oB/B9S+bU9VLzTGH1TRzxjgNKlCkMlUpUc/X5kdV8=;
+ bh=bLj6BkOOj6QP6flSGLrMwh8Bhh9dmUPrqQK2TTtbiVo=; b=JtqDmZdL9id6qopBSYW/WIGC9L
+ qFvcblq68nbhvdR1PxO/LZ+LjyOmgr5+2eoPXnFEXG+3gFBQ8q8NuVQ8t5mMbqLO9TFsveTkn9MGJ
+ Yfvb2zDnLVIx/p5R+/h4eNQJHELLnTyukrWJVeJcS1sDloX2547ae3myrI3AxgR0TzA4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=7+8koXOhA1BxfRLWCGX8EcP/4OtI+ZUU6ZrygpC78eI=; b=HC8XnUjBF7qX74ukVBqDgFC5PM
- rs0MER7lAhre4wERawDL8kG7YhPbd7CoeO97iMRwIbw23tJeX6nXyJSd6afNOdAyAiext+X3/51VD
- TIJbTi3HjBbhqGcNre9/wb+Eb4jS33PkBoaOLKee6HT7DV58Cgn6VYMmjAw1wxmtAdw0=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=bLj6BkOOj6QP6flSGLrMwh8Bhh9dmUPrqQK2TTtbiVo=; b=G37ZIybqUQ9F5qggkwaceLYoi1
+ Lx9ovLW84CwMlqYHbRjajs9Bjv03SCHRkEomXh4ORLZ9fX0EM5+13rPwq/a1caQ7tHlQ8x5L2Aitt
+ vCrSFe7F/q7UbElp7ZWiQSjXUkKVq8SxaKsXTSiardltipSYjiEEUdJxF1b1SvBmDnh8=;
+Received: from madrid.collaboradmins.com ([46.235.227.194])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rbxvk-0007It-UL for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Feb 2024 07:19:14 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id DB38060C11;
- Mon, 19 Feb 2024 07:19:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E0FDC433F1;
- Mon, 19 Feb 2024 07:19:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1708327148;
- bh=H/LvVtNLbX7Glwkxq0tYV6X0XZq4RSQbYoC8dTerJNI=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=FNpPeAg+cF8+1q4yw+Awwp75FsBkjyv8hc8WZmmUBUE8uhVrruY69sGZfcQ2b/6D6
- iqu3qP5W5Gg8XNOcqydNIf2cF6VXoD42MKh3e7O5qL/jH+Crkg58Q7VdNIyr9oJWUt
- N3M/wrMEYcRgaYiAjsjTVdKYYdesqpBLt14Hp2nPCk4cnQcnF0P3fDF694YtiGgTWG
- L22An/T9kHdOSlziRlnCXzCxm2xJufEhZWn9xg2Q+WYHE+1YFO/HNN9WcT7fv1nUmJ
- dJomfnTVJOWnAZuRmOg+Vt4g1mGUTJU72UrenbxmGT4qMnsidQU3DtJ9Ui0cSuESdn
- OqQkutjCYUkmA==
-Message-ID: <ae43ed8a-49b5-44bf-8fea-a222091e9790@kernel.org>
-Date: Mon, 19 Feb 2024 15:19:04 +0800
+ id 1rbyL0-0008Ql-5S for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 19 Feb 2024 07:45:21 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+ s=mail; t=1708328713;
+ bh=sYUTU/89PFPnPBoR5kfzfYqhAM5p15Bl509BAaBxeuk=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=MrYiXDShaKHC1Ig7K9Qso9gBz86AfFZ3JFz4PXxC1iolNqEnF+rqpLfF7Qn8v58wc
+ n7UBOUv1SHxquk8lnAy6P2PutyRtZPyl/UH/eguM6hYRpKSsv2/AQR32j4Mbs8kcb+
+ eAEkq+cWa643LYGMWTE78UJ8L1XOJbrFXFGK/HCdnoouvlWCcseKDnpL4LDgx4cUeS
+ J0TR1CXYa3WmHJJWnZXXS0TPGQJf/NOjSetJtinePSjmiMY3821jYbf1jkn80Hc4iV
+ jGd58vCaysq1sAlsgk1y4OrFkyp9+eUoaHF62eGOEUAf53AFYkXVntyGiJwOjnnZGY
+ gtAkDjW9UrKzg==
+Received: from eugen-station.. (cola.collaboradmins.com [195.201.22.229])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested) (Authenticated sender: ehristev)
+ by madrid.collaboradmins.com (Postfix) with ESMTPSA id 48BFA3781FD3;
+ Mon, 19 Feb 2024 07:45:09 +0000 (UTC)
+To: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+ jaegeuk@kernel.org, chao@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Date: Mon, 19 Feb 2024 09:44:50 +0200
+Message-Id: <20240219074457.24578-2-eugen.hristev@collabora.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240219074457.24578-1-eugen.hristev@collabora.com>
+References: <20240219074457.24578-1-eugen.hristev@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: jaegeuk@kernel.org
-References: <20240111081743.2999210-1-chao@kernel.org>
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240111081743.2999210-1-chao@kernel.org>
-X-Headers-End: 1rbxvk-0007It-UL
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: reduce expensive checkpoint trigger
- frequency
+X-Headers-End: 1rbyL0-0008Ql-5S
+Subject: [f2fs-dev] [PATCH v11 1/8] ext4: Simplify the handling of cached
+ insensitive names
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,132 +80,106 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+From: Eugen Hristev via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Eugen Hristev <eugen.hristev@collabora.com>
+Cc: krisman@suse.de, brauner@kernel.org, jack@suse.cz,
+ Eric Biggers <ebiggers@google.com>, linux-kernel@vger.kernel.org,
+ eugen.hristev@collabora.com, viro@zeniv.linux.org.uk, kernel@collabora.com,
+ Gabriel Krisman Bertazi <krisman@collabora.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Jaegeuk,
+From: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-Any comments?
+Keeping it as qstr avoids the unnecessary conversion in ext4_match
 
-On 2024/1/11 16:17, Chao Yu wrote:
-> We may trigger high frequent checkpoint for below case:
-> 1. mkdir /mnt/dir1; set dir1 encrypted
-> 2. touch /mnt/file1; fsync /mnt/file1
-> 3. mkdir /mnt/dir2; set dir2 encrypted
-> 4. touch /mnt/file2; fsync /mnt/file2
-> ...
-> 
-> Although, newly created dir and file are not related, due to
-> commit bbf156f7afa7 ("f2fs: fix lost xattrs of directories"), we will
-> trigger checkpoint whenever fsync() comes after a new encrypted dir
-> created.
-> 
-> In order to avoid such condition, let's record an entry including
-> directory's ino into global cache when we initialize encryption policy
-> in a checkpointed directory, and then only trigger checkpoint() when
-> target file's parent has non-persisted encryption policy, for the case
-> its parent is not checkpointed, need_do_checkpoint() has cover that
-> by verifying it with f2fs_is_checkpointed_node().
-> 
-> Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> Tested-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> Reported-by: Yunlei He <heyunlei@hihonor.com>
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
-> v3:
-> - Recently, Zhiguo Niu reported the same issue, so I repost this
-> patch for comments.
->   fs/f2fs/f2fs.h              |  2 ++
->   fs/f2fs/file.c              |  3 +++
->   fs/f2fs/xattr.c             | 16 ++++++++++++++--
->   include/trace/events/f2fs.h |  3 ++-
->   4 files changed, 21 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index e2e0ca45f881..0094a8c85f4a 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -279,6 +279,7 @@ enum {
->   	APPEND_INO,		/* for append ino list */
->   	UPDATE_INO,		/* for update ino list */
->   	TRANS_DIR_INO,		/* for transactions dir ino list */
-> +	ENC_DIR_INO,		/* for encrypted dir ino list */
->   	FLUSH_INO,		/* for multiple device flushing */
->   	MAX_INO_ENTRY,		/* max. list */
->   };
-> @@ -1147,6 +1148,7 @@ enum cp_reason_type {
->   	CP_FASTBOOT_MODE,
->   	CP_SPEC_LOG_NUM,
->   	CP_RECOVER_DIR,
-> +	CP_ENC_DIR,
->   };
->   
->   enum iostat_type {
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 8198afb5fb9c..18b33b1f0c83 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -218,6 +218,9 @@ static inline enum cp_reason_type need_do_checkpoint(struct inode *inode)
->   		f2fs_exist_written_data(sbi, F2FS_I(inode)->i_pino,
->   							TRANS_DIR_INO))
->   		cp_reason = CP_RECOVER_DIR;
-> +	else if (f2fs_exist_written_data(sbi, F2FS_I(inode)->i_pino,
-> +							ENC_DIR_INO))
-> +		cp_reason = CP_ENC_DIR;
->   
->   	return cp_reason;
->   }
-> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> index f290fe9327c4..cbd1b88297fe 100644
-> --- a/fs/f2fs/xattr.c
-> +++ b/fs/f2fs/xattr.c
-> @@ -629,6 +629,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
->   			const char *name, const void *value, size_t size,
->   			struct page *ipage, int flags)
->   {
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->   	struct f2fs_xattr_entry *here, *last;
->   	void *base_addr, *last_base_addr;
->   	int found, newsize;
-> @@ -772,8 +773,19 @@ static int __f2fs_setxattr(struct inode *inode, int index,
->   	if (index == F2FS_XATTR_INDEX_ENCRYPTION &&
->   			!strcmp(name, F2FS_XATTR_NAME_ENCRYPTION_CONTEXT))
->   		f2fs_set_encrypted_inode(inode);
-> -	if (S_ISDIR(inode->i_mode))
-> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
-> +
-> +	if (S_ISDIR(inode->i_mode)) {
-> +		/*
-> +		 * In restrict mode, fsync() always tries triggering checkpoint
-> +		 * for all metadata consistency, in other mode, it only triggers
-> +		 * checkpoint when parent's encryption metadata updates.
-> +		 */
-> +		if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT)
-> +			set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
-> +		else if (IS_ENCRYPTED(inode) &&
-> +			f2fs_is_checkpointed_node(sbi, inode->i_ino))
-> +			f2fs_add_ino_entry(sbi, inode->i_ino, ENC_DIR_INO);
-> +	}
->   
->   same:
->   	if (is_inode_flag_set(inode, FI_ACL_MODE)) {
-> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-> index 7ed0fc430dc6..48f2e399e184 100644
-> --- a/include/trace/events/f2fs.h
-> +++ b/include/trace/events/f2fs.h
-> @@ -139,7 +139,8 @@ TRACE_DEFINE_ENUM(EX_BLOCK_AGE);
->   		{ CP_NODE_NEED_CP,	"node needs cp" },		\
->   		{ CP_FASTBOOT_MODE,	"fastboot mode" },		\
->   		{ CP_SPEC_LOG_NUM,	"log type is 2" },		\
-> -		{ CP_RECOVER_DIR,	"dir needs recovery" })
-> +		{ CP_RECOVER_DIR,	"dir needs recovery" },		\
-> +		{ CP_ENC_DIR,		"persist encryption policy" })
->   
->   #define show_shutdown_mode(type)					\
->   	__print_symbolic(type,						\
+Reviewed-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+[eugen.hristev@collabora.com: port to 6.8-rc3]
+Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
+---
+ fs/ext4/ext4.h  |  2 +-
+ fs/ext4/namei.c | 23 +++++++++++------------
+ 2 files changed, 12 insertions(+), 13 deletions(-)
+
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 023571f8dd1b..932bae88b4a7 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2508,7 +2508,7 @@ struct ext4_filename {
+ 	struct fscrypt_str crypto_buf;
+ #endif
+ #if IS_ENABLED(CONFIG_UNICODE)
+-	struct fscrypt_str cf_name;
++	struct qstr cf_name;
+ #endif
+ };
+ 
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 05b647e6bc19..e554c5a62ba9 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1445,7 +1445,8 @@ static int ext4_ci_compare(const struct inode *parent, const struct qstr *name,
+ int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
+ 				  struct ext4_filename *name)
+ {
+-	struct fscrypt_str *cf_name = &name->cf_name;
++	struct qstr *cf_name = &name->cf_name;
++	unsigned char *buf;
+ 	struct dx_hash_info *hinfo = &name->hinfo;
+ 	int len;
+ 
+@@ -1455,18 +1456,18 @@ int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
+ 		return 0;
+ 	}
+ 
+-	cf_name->name = kmalloc(EXT4_NAME_LEN, GFP_NOFS);
+-	if (!cf_name->name)
++	buf = kmalloc(EXT4_NAME_LEN, GFP_NOFS);
++	if (!buf)
+ 		return -ENOMEM;
+ 
+-	len = utf8_casefold(dir->i_sb->s_encoding,
+-			    iname, cf_name->name,
+-			    EXT4_NAME_LEN);
++	len = utf8_casefold(dir->i_sb->s_encoding, iname, buf, EXT4_NAME_LEN);
+ 	if (len <= 0) {
+-		kfree(cf_name->name);
+-		cf_name->name = NULL;
++		kfree(buf);
++		buf = NULL;
+ 	}
++	cf_name->name = buf;
+ 	cf_name->len = (unsigned) len;
++
+ 	if (!IS_ENCRYPTED(dir))
+ 		return 0;
+ 
+@@ -1503,8 +1504,6 @@ static bool ext4_match(struct inode *parent,
+ 	if (IS_CASEFOLDED(parent) &&
+ 	    (!IS_ENCRYPTED(parent) || fscrypt_has_encryption_key(parent))) {
+ 		if (fname->cf_name.name) {
+-			struct qstr cf = {.name = fname->cf_name.name,
+-					  .len = fname->cf_name.len};
+ 			if (IS_ENCRYPTED(parent)) {
+ 				if (fname->hinfo.hash != EXT4_DIRENT_HASH(de) ||
+ 					fname->hinfo.minor_hash !=
+@@ -1513,8 +1512,8 @@ static bool ext4_match(struct inode *parent,
+ 					return false;
+ 				}
+ 			}
+-			return !ext4_ci_compare(parent, &cf, de->name,
+-							de->name_len, true);
++			return !ext4_ci_compare(parent, &fname->cf_name,
++						de->name, de->name_len, true);
+ 		}
+ 		return !ext4_ci_compare(parent, fname->usr_fname, de->name,
+ 						de->name_len, false);
+-- 
+2.34.1
+
 
 
 _______________________________________________
