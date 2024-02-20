@@ -4,128 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6AAC6C48BC3
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 20 Feb 2024 23:03:38 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C787FC48BC3
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 20 Feb 2024 23:23:08 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rcZ9D-0006SE-3P;
-	Tue, 20 Feb 2024 23:03:36 +0000
+	id 1rcZS7-00089n-On;
+	Tue, 20 Feb 2024 23:23:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <krisman@suse.de>) id 1rcZ97-0006S7-J8
+ (envelope-from <jaegeuk@kernel.org>) id 1rcZS4-00089P-AI
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 20 Feb 2024 23:03:30 +0000
+ Tue, 20 Feb 2024 23:23:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:
- References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WF1IXh+fBnSN8LQbhCP/XIN1EbVVDvvTkk0nMzutoiw=; b=Gi1sSwjC12Q660RrhWw5/xINCw
- be+1peAemvmFjbS0B7PvKrqWp60oXzwaHd0jRDynP+sIKKeg3WhgqjYjNZRx8qWM6jkyKQiZ7qLCg
- 9AciXJG+RxJgn9N2I5R0vvv/1bFVhJezUC/xeVFsgYEHHBwaynwXvgKmi7sNtZ7x0OEU=;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=bw6TXE4X6gm7laWa6Ql8TTJbzqDkDWGSGsqct2muGr8=; b=M7SLOSZOnYDAdIICafc3BekbWq
+ kghyCHKJzFFzPG4csQ7biKQq7XwsnkObFbJaGM8uuPzqmKlIXk/ecC1lgVvBJPs/UQEkUmdPaUCNR
+ CrQ26ty7tYQ4ZtJc/Hgn3dCI/efmyRfCEMXqrWZjjDyQ6TuHt9l6dweFSkWm0YLs6Flc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:References:In-Reply-To:Subject:
- Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=WF1IXh+fBnSN8LQbhCP/XIN1EbVVDvvTkk0nMzutoiw=; b=NsHCqAQJ3EcagKzuOb6GizjKSA
- rsvtFtW99L7H0cK8ZsVpIAzwDube7cSD80RNx1YTlwa3qVC/mcMdDyUhhyfnA1YTHr07WRIJl3kDK
- nz+qhuUtypmUMYjB5fMLMiz7ASR8/bnF/rdKcOMjGrg7tYnxr2NgRgKwsjIdJFPO+JPE=;
-Received: from smtp-out1.suse.de ([195.135.223.130])
+ bh=bw6TXE4X6gm7laWa6Ql8TTJbzqDkDWGSGsqct2muGr8=; b=Ma2Iw0UwxY3KLeK4otlxmNrAEP
+ CxC/BGrr9U0ZZ4j53K94byHBFUlLBlfgiLAz0Yx0AyqhUut+3toHwTvisLIHAwSPlR7aVXyfOrB0A
+ XnBrS0CcLKw4Q5Zm37SKmWUOdPQquGjST7vLWkefAadmh89Lz6ojNN/tenlqR/5au9WI=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rcZ93-00011V-BC for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 20 Feb 2024 23:03:30 +0000
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
- [IPv6:2a07:de40:b281:104:10:150:64:97])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id B47EC21EC0;
- Tue, 20 Feb 2024 23:03:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1708470194; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=WF1IXh+fBnSN8LQbhCP/XIN1EbVVDvvTkk0nMzutoiw=;
- b=i7jMSMQk7cleGz/czFetNQYmji0YBhI+Rpe/S4RNzrjaPs334KRqcFNgd8baNZaeSv4gcb
- B8ThL3hXGv+4JIJ3ph+DZBm314tpaphHanOxhvUvO2ETGKKjnCEE7ZcX/Hx1Ua5SUQOGxE
- d9PLaeNPKh6KcpMpGSyylXhXU990IYY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1708470194;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=WF1IXh+fBnSN8LQbhCP/XIN1EbVVDvvTkk0nMzutoiw=;
- b=1qvswjm5EoNFxZ2Pfu9puIJJj0ydlCpLpSKobCjmDLPFO1kUGoh6BxbP1jbCZ5qwL98QOK
- pBaLl1xcxY643yCg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1708470194; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=WF1IXh+fBnSN8LQbhCP/XIN1EbVVDvvTkk0nMzutoiw=;
- b=i7jMSMQk7cleGz/czFetNQYmji0YBhI+Rpe/S4RNzrjaPs334KRqcFNgd8baNZaeSv4gcb
- B8ThL3hXGv+4JIJ3ph+DZBm314tpaphHanOxhvUvO2ETGKKjnCEE7ZcX/Hx1Ua5SUQOGxE
- d9PLaeNPKh6KcpMpGSyylXhXU990IYY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1708470194;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=WF1IXh+fBnSN8LQbhCP/XIN1EbVVDvvTkk0nMzutoiw=;
- b=1qvswjm5EoNFxZ2Pfu9puIJJj0ydlCpLpSKobCjmDLPFO1kUGoh6BxbP1jbCZ5qwL98QOK
- pBaLl1xcxY643yCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7BB6D139D0;
- Tue, 20 Feb 2024 23:03:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id FCoqGLIv1WW2LwAAD6G6ig
- (envelope-from <krisman@suse.de>); Tue, 20 Feb 2024 23:03:14 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Eric Biggers <ebiggers@kernel.org>
-In-Reply-To: <20240214235904.GH1638@sol.localdomain> (Eric Biggers's message
- of "Wed, 14 Feb 2024 15:59:04 -0800")
-Organization: SUSE
-References: <20240213021321.1804-1-krisman@suse.de>
- <20240213021321.1804-4-krisman@suse.de>
- <20240214235904.GH1638@sol.localdomain>
-Date: Tue, 20 Feb 2024 18:03:13 -0500
-Message-ID: <87o7caagcu.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1rcZS1-0001OK-Ho for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 20 Feb 2024 23:23:04 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sin.source.kernel.org (Postfix) with ESMTP id 31108CE1B6D
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 20 Feb 2024 23:22:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60E07C43394;
+ Tue, 20 Feb 2024 23:22:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1708471370;
+ bh=0ms7KVh+AOl9a1lPdIN8NKPVq4XoHxB9aa6kRs4XqG4=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=PddiNl/YazsPYFCCCjB+VXg4HrEqsF7rDKgVkEQBMXqz3QOyKp7+JcTchUDPadrVJ
+ sBPHoSAazM9M5b42J1PYokXzdRadn/GAY+o2pM5zQ2U6t28Ia+EXANZiED5Tc4IRGU
+ SqazlN0wiIcQ03GmdNbMLCY8xG6xwH6rsmG07nEbAc6Re2iwFjaEQ3j82NdR3RPucs
+ Bu01oyqgONjUN9qpLJa8iTidhvtlHaKNBKxWX1Qu1UufjtIP5qg6nY62bUeVPqsXUD
+ LsUea/GcH2yUOs9FoSpsU8+qNp/F3SNhPe2i4GZK8F2UneJzyiVdU6wsL7y5cLIM3Y
+ tuavq7QtWfgfQ==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Tue, 20 Feb 2024 15:22:46 -0800
+Message-ID: <20240220232247.2856-2-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.44.0.rc0.258.g7320e95886-goog
+In-Reply-To: <20240220232247.2856-1-jaegeuk@kernel.org>
+References: <20240220232247.2856-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-Authentication-Results: smtp-out1.suse.de;
- dkim=pass header.d=suse.de header.s=susede2_rsa header.b=i7jMSMQk;
- dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=1qvswjm5
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00]; ARC_NA(0.00)[];
- RCVD_VIA_SMTP_AUTH(0.00)[];
- R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
- SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
- FROM_HAS_DN(0.00)[]; TO_DN_SOME(0.00)[];
- FREEMAIL_ENVRCPT(0.00)[gmail.com];
- TO_MATCH_ENVRCPT_ALL(0.00)[]; MIME_GOOD(-0.10)[text/plain];
- NEURAL_HAM_LONG(-1.00)[-1.000]; HAS_ORG_HEADER(0.00)[];
- RCVD_COUNT_THREE(0.00)[3];
- DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
- DKIM_TRACE(0.00)[suse.de:+]; MX_GOOD(-0.01)[];
- RCPT_COUNT_SEVEN(0.00)[9];
- DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
- FUZZY_BLOCKED(0.00)[rspamd.com]; FROM_EQ_ENVFROM(0.00)[];
- MIME_TRACE(0.00)[0:+]; NEURAL_HAM_SHORT(-0.20)[-1.000];
- FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,mit.edu,gmail.com,vger.kernel.org,lists.sourceforge.net];
- RCVD_TLS_ALL(0.00)[]; BAYES_HAM(-3.00)[100.00%]
-X-Rspamd-Queue-Id: B47EC21EC0
-X-Headers-End: 1rcZ93-00011V-BC
-Subject: Re: [f2fs-dev] [PATCH v6 03/10] fscrypt: Drop d_revalidate for
- valid dentries during lookup
+X-Headers-End: 1rcZS1-0001OK-Ho
+Subject: [f2fs-dev] [PATCH 2/3] f2fs: prevent an f2fs_gc loop during
+ disable_checkpoint
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -137,114 +80,34 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: brauner@kernel.org, tytso@mit.edu, amir73il@gmail.com,
- linux-f2fs-devel@lists.sourceforge.net, viro@zeniv.linux.org.uk,
- linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Eric Biggers <ebiggers@kernel.org> writes:
+Don't get stuck in the f2fs_gc loop while disabling checkpoint. Instead, we have
+a time-based management.
 
-> On Mon, Feb 12, 2024 at 09:13:14PM -0500, Gabriel Krisman Bertazi wrote:
->> Finally, we need to clean the dentry->flags even for unencrypted
->> dentries, so the ->d_lock might be acquired even for them.  In order to
->
-> might => must?
->
->> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
->> index 47567a6a4f9d..d1f17b90c30f 100644
->> --- a/include/linux/fscrypt.h
->> +++ b/include/linux/fscrypt.h
->> @@ -951,10 +951,29 @@ static inline int fscrypt_prepare_rename(struct inode *old_dir,
->>  static inline void fscrypt_prepare_dentry(struct dentry *dentry,
->>  					  bool is_nokey_name)
->>  {
->> +	/*
->> +	 * This code tries to only take ->d_lock when necessary to write
->> +	 * to ->d_flags.  We shouldn't be peeking on d_flags for
->> +	 * DCACHE_OP_REVALIDATE unlocked, but in the unlikely case
->> +	 * there is a race, the worst it can happen is that we fail to
->> +	 * unset DCACHE_OP_REVALIDATE and pay the cost of an extra
->> +	 * d_revalidate.
->> +	 */
->>  	if (is_nokey_name) {
->>  		spin_lock(&dentry->d_lock);
->>  		dentry->d_flags |= DCACHE_NOKEY_NAME;
->>  		spin_unlock(&dentry->d_lock);
->> +	} else if (dentry->d_flags & DCACHE_OP_REVALIDATE &&
->> +		   dentry->d_op->d_revalidate == fscrypt_d_revalidate) {
->> +		/*
->> +		 * Unencrypted dentries and encrypted dentries where the
->> +		 * key is available are always valid from fscrypt
->> +		 * perspective. Avoid the cost of calling
->> +		 * fscrypt_d_revalidate unnecessarily.
->> +		 */
->> +		spin_lock(&dentry->d_lock);
->> +		dentry->d_flags &= ~DCACHE_OP_REVALIDATE;
->> +		spin_unlock(&dentry->d_lock);
->>  	}
->>  }
->
-> Does this all get optimized out when !CONFIG_FS_ENCRYPTION?
->
-> As-is, I don't think the d_revalidate part will be optimized out.
->
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-it seems to get optimized out:
-
-This is ext4_lookup built with CONFIG_FS_ENCRYPTION=n
-
-ffffffff814ca3e0 <ext4_lookup>:
-ffffffff814ca3e0:       e8 5b b5 c3 ff          call   ffffffff81105940 <__fentry__>
-ffffffff814ca3e5:       41 54                   push   %r12
-ffffffff814ca3e7:       55                      push   %rbp
-ffffffff814ca3e8:       53                      push   %rbx
-ffffffff814ca3e9:       48 83 ec 58             sub    $0x58,%rsp
-ffffffff814ca3ed:       8b 56 24                mov    0x24(%rsi),%edx
-ffffffff814ca3f0:       65 48 8b 04 25 28 00    mov    %gs:0x28,%rax
-ffffffff814ca3f7:       00 00
-ffffffff814ca3f9:       48 89 44 24 50          mov    %rax,0x50(%rsp)
-ffffffff814ca3fe:       31 c0                   xor    %eax,%eax
-ffffffff814ca400:       48 c7 c0 dc ff ff ff    mov    $0xffffffffffffffdc,%rax
-ffffffff814ca407:       81 fa ff 00 00 00       cmp    $0xff,%edx
-ffffffff814ca40d:       76 21                   jbe    ffffffff814ca430 <ext4_lookup+0x50>
-ffffffff814ca40f:       48 8b 4c 24 50          mov    0x50(%rsp),%rcx
-ffffffff814ca414:       65 48 33 0c 25 28 00    xor    %gs:0x28,%rcx
-ffffffff814ca41b:       00 00
-ffffffff814ca41d:       0f 85 cd 01 00 00       jne    ffffffff814ca5f0 <ext4_lookup+0x210>  <- (__stack_chk_fail)
-ffffffff814ca423:       48 83 c4 58             add    $0x58,%rsp
-ffffffff814ca427:       5b                      pop    %rbx
-ffffffff814ca428:       5d                      pop    %rbp
-ffffffff814ca429:       41 5c                   pop    %r12
-ffffffff814ca42b:       e9 70 21 8b 00          jmp    ffffffff81d7c5a0 <__x86_return_thunk>
-ffffffff814ca430:       48 89 f3                mov    %rsi,%rbx
-ffffffff814ca433:       89 54 24 20             mov    %edx,0x20(%rsp)
-ffffffff814ca437:       48 8d 76 20             lea    0x20(%rsi),%rsi
-ffffffff814ca43b:       48 8b 43 28             mov    0x28(%rbx),%rax
-ffffffff814ca43f:       48 8d 54 24 10          lea    0x10(%rsp),%rdx
-ffffffff814ca444:       48 89 fd                mov    %rdi,%rbp
-ffffffff814ca447:       48 89 74 24 10          mov    %rsi,0x10(%rsp)
-ffffffff814ca44c:       48 89 44 24 18          mov    %rax,0x18(%rsp)
-ffffffff814ca451:       e8 ca f0 ff ff          call   ffffffff814c9520 <ext4_fname_setup_ci_filename>
-
-[..]
-
-I had also confirmed previously that fscrypt_lookup_prepare and
-fscrypt_prepare_dentry gets correctly inlined into
-ext4_fname_prepare_lookup.
-
-
-> You may need to create a !CONFIG_FS_ENCRYPTION stub explicitly.
-
-But, in spite of gcc doing the right thing now, fscrypt_prepare_dentry
-might grow in the future. So, if you don't mind, I will still add the
-stub explicitly, as you suggested.
-
-thanks,
-
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index ad80cd38f3a4..9de467a28fd3 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2190,6 +2190,7 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+ 			.init_gc_type = FG_GC,
+ 			.should_migrate_blocks = false,
+ 			.err_gc_skipped = true,
++			.no_bg_gc = true,
+ 			.nr_free_secs = 1 };
+ 
+ 		f2fs_down_write(&sbi->gc_lock);
 -- 
-Gabriel Krisman Bertazi
+2.44.0.rc0.258.g7320e95886-goog
+
 
 
 _______________________________________________
