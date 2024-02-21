@@ -4,72 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 14798C5478B
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Feb 2024 18:10:41 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4A017C5478A
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Feb 2024 18:10:42 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rcr3G-0001pf-JT;
-	Wed, 21 Feb 2024 18:10:39 +0000
+	id 1rcr3I-0007Uc-Qq;
+	Wed, 21 Feb 2024 18:10:40 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rcr3F-0001pY-Pg
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rcr3H-0007UW-Qc
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 21 Feb 2024 18:10:38 +0000
+ Wed, 21 Feb 2024 18:10:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MJV/RL7O5sH7e27NdVo+3KvKhaYZLQM+V9QPkEwrDns=; b=BWj8E7a2JlkVRYEaugo9/3Etfy
- EFyCYbriO966N/cwWTsBxXKN4B5hYIwUGaeW/7vxxwid90wd6GSt8Gnu4XZCDpUok4HFNWWKvPNa6
- 7kcJ9buWGTwt28ddujh7btH6DzAsuiRF5r2wh6Yfyo3Sa5eyDB7Lw5v6ME6QSF7BwXN4=;
+ bh=vsgyKT1p4Atrla+EutEyOqe5Ay5k+h5nnP9vUZvS2oY=; b=Z1tINbE5ubGw5kwATo/a8HALPa
+ 6EKPqQFDg8WZX3P7qjDCHv0kQCdOYD8PCmR71H0z4Lu657JGSK+NZAasjLB+rGrvBANGE0yUEIT7D
+ frE5RTRqNawlhreugbRmsdmj13fqe1vttlmiYN11klmmbbd/P7iZNWlck8DX1sjCPP54=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MJV/RL7O5sH7e27NdVo+3KvKhaYZLQM+V9QPkEwrDns=; b=jyW8ycnbpU5SnfywTToL+lrGNK
- jeiFKYSEfX/cNczeD2vZ3rBCiVJcY8X90s5mxuPNgk88bSv0ggzr+FRvwuNLzOUpehJ4tNjoTbEU3
- acBEwdAlNtHQi+apjynuAJK9njyWdDvLptrsU7X133nj6HSjeuzZe7DqQUYZB71DIDaM=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=vsgyKT1p4Atrla+EutEyOqe5Ay5k+h5nnP9vUZvS2oY=; b=aHz5+pc1yd/jFO7atrz6nhqIl6
+ FfGWJILlEKZvXlzPFh3wdBluDlCYRqAhtuxkmSgJ+zkb7E/btkmZFyJqOwbjko2pHvW+2Ex8gqaLg
+ qH1GpcC0ZiUUYFSU5hAfm7n4qbtfez8qBcKyRY47P8/5048NqB1icz8qDVi7H9888lng=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rcr3E-0001QL-FR for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 21 Feb 2024 18:10:38 +0000
+ id 1rcr3F-0001QP-O6 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 21 Feb 2024 18:10:39 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 5A796615A6
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by sin.source.kernel.org (Postfix) with ESMTP id 61BDDCE1F24;
  Wed, 21 Feb 2024 18:10:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 41AADC4166D;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 102F8C43399;
  Wed, 21 Feb 2024 18:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1708539031;
- bh=Cn+JRPN2wIDYM95v/oHS3oFCII1P7bQgJXAqhNcOF1I=;
+ bh=m+WgYxlYIKix88Gefl0qOHfj0XJUP9gj9mnEbpOqYwk=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=SPx2MTBPLj7p/PWWfcoRwENhD/ztj5c/YRViIOLzzFOgsPUKZ+ByAf/0SXiecQzV7
- gA1p4eVPnMTXqB6wPWxWrZcbKtyFMFtMakcLuEXAzkgWZGO2NNgcIGCp4XQ0LqvAox
- GgWCQuyRLseabJ0F4h4WEdFQi+r3uCVNEErjz9+gDW/ue6w+VZ179YhpoWCOETXbuZ
- 25sCSkVkSsFkrkP3rXem4DS7DMYQUmewjPQBVY/XH2zJT2wv85hUFnEn9SEEd+P2MJ
- 31wVhjmE5/P/Jm8ALP3ChfPH9QNwoOechiht+6Aku391lhnwra3Ya8fwGt2Mdq1Jti
- fKR4BrxUxMAqg==
+ b=PuLDK1fF7Z7eEJ/258n6I6WDfnqCl2/fyH+dUS6tLkQ9xxUpIZHaQKwI8UTrponrL
+ MuUly7g0fl2X1yfRSQG5esKwtyO2KaBu1xkSZhj1/WsULNjY8JNbG4lp2PeuIGKEUz
+ +FtMrn8C2SvwBX5HAWRRfy6HEv29Sbr+en0D8lKXCA92Yi72+Ac6ETZ4TsSZ8D+Kos
+ oCc3npGr2JUd+m3FNFgnt1KlaPGx93QZsMDf0KPVTZOdhQzbfr1FRgu73QvaI1jQcq
+ POiBC/yV0zP8Xqk6QMexhLj9jVzVQ2gd4UM3H0wgjZlrSbxMdR+u2ymVEZVWriHarv
+ snVmisN3++14g==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 20489D84BCB; Wed, 21 Feb 2024 18:10:31 +0000 (UTC)
+ EA033D84BCC; Wed, 21 Feb 2024 18:10:30 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <170853903112.7043.10216556441891626581.git-patchwork-notify@kernel.org>
-Date: Wed, 21 Feb 2024 18:10:31 +0000
-References: <20240207070548.3095087-1-chao@kernel.org>
-In-Reply-To: <20240207070548.3095087-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1rcr3E-0001QL-FR
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to create selinux label during
- whiteout initialization
+Message-Id: <170853903095.7043.8191554159559684336.git-patchwork-notify@kernel.org>
+Date: Wed, 21 Feb 2024 18:10:30 +0000
+References: <20240215201633.2365333-1-daeho43@gmail.com>
+In-Reply-To: <20240215201633.2365333-1-daeho43@gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>
+X-Headers-End: 1rcr3F-0001QP-O6
+Subject: Re: [f2fs-dev] [PATCH] f2fs: support SEEK_DATA and SEEK_HOLE for
+ compression files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,8 +80,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: daehojeong@google.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -92,23 +91,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed,  7 Feb 2024 15:05:48 +0800 you wrote:
-> generic/700       - output mismatch (see /media/fstests/results//generic/700.out.bad)
->     --- tests/generic/700.out	2023-03-28 10:40:42.735529223 +0000
->     +++ /media/fstests/results//generic/700.out.bad	2024-02-06 04:37:56.000000000 +0000
->     @@ -1,2 +1,4 @@
->      QA output created by 700
->     +/mnt/scratch_f2fs/f1: security.selinux: No such attribute
->     +/mnt/scratch_f2fs/f2: security.selinux: No such attribute
->      Silence is golden
->     ...
->     (Run 'diff -u /media/fstests/tests/generic/700.out /media/fstests/results//generic/700.out.bad'  to see the entire diff)
+On Thu, 15 Feb 2024 12:16:33 -0800 you wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> [...]
+> Fix to support SEEK_DATA and SEEK_HOLE for compression files
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> ---
+>  fs/f2fs/file.c | 21 ++++++++++++++++++---
+>  1 file changed, 18 insertions(+), 3 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to create selinux label during whiteout initialization
-    https://git.kernel.org/jaegeuk/f2fs/c/697c9124d70a
+  - [f2fs-dev] f2fs: support SEEK_DATA and SEEK_HOLE for compression files
+    https://git.kernel.org/jaegeuk/f2fs/c/ef952ede4a7b
 
 You are awesome, thank you!
 -- 
