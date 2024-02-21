@@ -4,69 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EA8E0C54764
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 20 Feb 2024 23:23:09 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B7E9FC48BC3
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Feb 2024 01:04:46 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rcZS6-0000kv-TN;
-	Tue, 20 Feb 2024 23:23:07 +0000
+	id 1rcb2R-00027s-QU;
+	Wed, 21 Feb 2024 01:04:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1rcZS5-0000ko-UA
+ (envelope-from <chao@kernel.org>) id 1rcb2P-00027l-W4
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 20 Feb 2024 23:23:06 +0000
+ Wed, 21 Feb 2024 01:04:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qDyBaqIzeX83wC9UkXq7TkJ2CnOp3HTLCwXxLLTxCy0=; b=VV7kSXoTlthn908WQNc1tXkcNy
- gvkijYo4dJt8YLhnMkExV9OQ6OL4tI6MvJ7udLlOxVI+7hnz24zy2NXdU7a9Lqu9fstk3tduX0lh0
- Sw4at3GYmqCvIYlW/DHpoNjek30WcExlRwa598JvJ/mT61djt1isdlvVP8/cGJ7zkyIM=;
+ bh=4Bi2/WK4U8qrB047yhVOFHvdBxG81qeilni47DjDlWg=; b=LFbb0D5EvKtbC83XeqmqZftNd5
+ N0Ah+1mLnMSfZ0b1y++xFIqGuD2iRy6mgXeVuBnxF9NvkA+Qf9A7prcx2yXuMMV+rwMehqhyRE1BJ
+ 4wGA04IW/DGTBwgnHTxi5ppxJsCRZ5aQTtaroW3zz3K3ll2YfvDh1GB/QJfVau6QXQZM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=qDyBaqIzeX83wC9UkXq7TkJ2CnOp3HTLCwXxLLTxCy0=; b=O
- aDV9TDZmEKp0ZXnqDtXyYAfY3suTs0aQmjks1ESPOOHUIn1iK4as1opS1ZMnQXefpo2WuGjWt8e4d
- zxkz+7olSHdflHZRhjdSP6OkrOZNHw1lQKlo2xkumeywb9UE9CgjKNQaOLm6i9zcVEwrx3lSn1viO
- Mub2EWGjmgKRJ2ks=;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=4Bi2/WK4U8qrB047yhVOFHvdBxG81qeilni47DjDlWg=; b=mCcQCztbZzMdobMBru1KrDRR6B
+ 9/KbDvzunvE9uYngoJdaxxx8QbvnK+SgCryMgW7LH7N5W85XXVoih2NciTOTQ0UX33K84xhaWsf0O
+ Pj6zUCutqkrmz9CrYYB6XyDfnMQpBFA4eq5dRnoykPrK/PXa2JG4IqvcNaNPvwoU38N0=;
 Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rcZS0-0001OJ-Uf for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 20 Feb 2024 23:23:06 +0000
+ id 1rcb2O-0004d4-CO for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 21 Feb 2024 01:04:42 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 5E393CE1A9D
+ by sin.source.kernel.org (Postfix) with ESMTP id 02DCECE19C2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 20 Feb 2024 23:22:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D29EC433C7;
- Tue, 20 Feb 2024 23:22:49 +0000 (UTC)
+ Wed, 21 Feb 2024 01:04:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58F45C433F1;
+ Wed, 21 Feb 2024 01:04:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1708471369;
- bh=CBp5JjqsLlKrQ4BNGdzZd5rg9Xdr48xFXWUha9mjqMk=;
- h=From:To:Cc:Subject:Date:From;
- b=JCURf4g0DN9i5rfqoTbGnrdxhM3Icz9HiY+JaPFhD/Vy00aaUyiSlcDK+qhCKRHe4
- Ho23d5Tk0ARSTuOyIiXNl1w3y7WD7MxcbgvuUrvpLJGQ1LnK8nMWpX+g3GxQNyXSBL
- 6lqJqOHjTWb0jWAnfk0Btwya+uHHAZpXGFNcVBKoX2w9ADVxVyLfvgBV7piMPa3vi2
- LlQFJ/qCULU8kupAvJvCWxJs3lSey6emyWkv8NnNU1Nq6lT4RRkxBsN8XwAcAER0+6
- oU8yqP8oNSNUb92exDuKtvR2ojnkhNf0eQmslQ8PHsD7TmRQla/mcX5711a0g49pIM
- BygBxghqVqC7A==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Date: Tue, 20 Feb 2024 15:22:45 -0800
-Message-ID: <20240220232247.2856-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.44.0.rc0.258.g7320e95886-goog
+ s=k20201202; t=1708477474;
+ bh=lY1BvwYdkdPQgChfmKA+k2lduIGy+T+Lsl5kVFPtli8=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=T/5NAwCmZfaacxe9uGeGXDlgNRfGgHaGKYDpOIkYlAdhMz9Hd4baHZ2NIGTLWpD8S
+ 0xSPWBi9xNK2xExQ+aVoGv22dO7ael31gcQZCVQX5i6eIdVdnZADIqRe34sJNQVi5b
+ PJdobMLdBlX/7ta6+L8URQdNBU+FSMkl0VfXxtrneA56bVWc+o2O23RlmjFUxn1kQK
+ KGGVUYU42pyAIjHg4TAJFaFXdLnNQ/SYsAx6Kp6AEymrO8Udx171yNkSxh0PQoIohx
+ FR2ZLXXR8NE4E/ryO8H6mPwdiVnZ1/vPYE9t2Qt50OO9PhsXsg1osjMP/l5P3xE9Ta
+ BfsiV7v3gwZMg==
+Message-ID: <73c8c2b1-b5c1-4cdc-b8c3-f64d7dfdb125@kernel.org>
+Date: Wed, 21 Feb 2024 09:04:30 +0800
 MIME-Version: 1.0
-X-Headers-End: 1rcZS0-0001OJ-Uf
-Subject: [f2fs-dev] [PATCH 1/3] f2fs: check number of blocks in a current
- section
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20240207005105.3744811-1-jaegeuk@kernel.org>
+ <20240207005105.3744811-2-jaegeuk@kernel.org> <ZcpfF9UJz8bNW6ge@google.com>
+ <bded9fde-9541-465d-86f8-292249226cc9@kernel.org>
+ <ZdUMgrzpVHob6KvQ@google.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <ZdUMgrzpVHob6KvQ@google.com>
+X-Headers-End: 1rcb2O-0004d4-CO
+Subject: Re: [f2fs-dev] [PATCH 2/3 v2] f2fs: use BLKS_PER_SEG, BLKS_PER_SEC,
+ and SEGS_PER_SEC
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,48 +83,32 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In cfd66bb715fd ("f2fs: fix deadloop in foreground GC"), we needed to check
-the number of blocks in a section instead of the segment.
+On 2024/2/21 4:33, Jaegeuk Kim wrote:
+>> @@ -4723,7 +4723,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>   			.reason = CP_DISCARD,
+>>   			.trim_start = 0,
+>>   			.trim_end = MAIN_SEGS(sbi) - 1,
+>> -			.trim_minlen = sbi->blocks_per_seg,
+>> +			.trim_minlen = BLKS_PER_SEG(sbi),
+> 
+> We don't have this.
 
-Fixes: cfd66bb715fd ("f2fs: fix deadloop in foreground GC")
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/segment.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Oh, it's due to my branch is not clean... I should rebase this diff to
+last dev-test, sorry.
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 63f278210654..9fe5ec619456 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -560,16 +560,16 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
- 	/* check current node segment */
- 	for (i = CURSEG_HOT_NODE; i <= CURSEG_COLD_NODE; i++) {
- 		segno = CURSEG_I(sbi, i)->segno;
--		left_blocks = BLKS_PER_SEG(sbi) -
--				get_seg_entry(sbi, segno)->ckpt_valid_blocks;
-+		left_blocks = BLKS_PER_SEC(sbi) -
-+				get_ckpt_valid_blocks(sbi, segno, true);
- 		if (node_blocks > left_blocks)
- 			return false;
- 	}
- 
- 	/* check current data segment */
- 	segno = CURSEG_I(sbi, CURSEG_HOT_DATA)->segno;
--	left_blocks = BLKS_PER_SEG(sbi) -
--			get_seg_entry(sbi, segno)->ckpt_valid_blocks;
-+	left_blocks = BLKS_PER_SEC(sbi) -
-+				get_ckpt_valid_blocks(sbi, segno, true);
- 	if (dent_blocks > left_blocks)
- 		return false;
- 	return true;
--- 
-2.44.0.rc0.258.g7320e95886-goog
+Thanks,
 
+> 
+>>   		};
+>>   		f2fs_write_checkpoint(sbi, &cpc);
+>>   	}
+>> -- 
+>> 2.40.1
 
 
 _______________________________________________
