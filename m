@@ -4,70 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7258CC48BF8
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Feb 2024 12:19:10 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 16584C48BEB
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Feb 2024 12:19:13 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rd82f-0007T0-Vt;
-	Thu, 22 Feb 2024 12:19:09 +0000
+	id 1rd82i-0006r1-6g;
+	Thu, 22 Feb 2024 12:19:12 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rd82e-0007Su-SZ
+ (envelope-from <chao@kernel.org>) id 1rd82h-0006qs-QG
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Feb 2024 12:19:08 +0000
+ Thu, 22 Feb 2024 12:19:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5XxDLe1c6Dl0sB8fQLg6jo+WW+90//w1xGF2UrA+ddU=; b=TIhGA/Zt3uMB8cKTcoQj6WAXfF
- 421yKJPNE+INasyMW5mXqEP6oIBl4TLKESwg8PL0kZPEkt1b5ji/eDpYxKyaaAb5kGmCPD+5fLOh+
- g8ZDskd3CsorbQZJFtQTxK65gzF7HWRvii/FDkEzkuNVGVZDo+zMBHdiRlZf4Rq1Cehg=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=5XxDLe1c6Dl0sB8fQLg6jo+WW+90//w1xGF2UrA+ddU=; b=WNLZTNDRFzCwp188ovo0v6Gp5b
- /sp52/EhQi2kQLlmqHzTv68TYxPrFeCuMyAf1ZWS2sCCpObd9Z1V35fjIabYRAQrTS8G1fxj57y53
- 9mKfcJAgV2V29rUX5PMINhm/4L74I2PFwKgSG93b544fPLDVqT2XL/FwT/uM4B7JB4u4=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=RybAO6UjF9rQEJ8FIGv7KnXw6IFw6ds7eywLmrx2Vw0=; b=CXtPPFJJcM88pNelOJzrvI1cJz
+ QOOoTv5Mh3xOF4KeNMaCd1s19EcxBlDschbJc48JsYxpcHatp3dF5gJBbvSgon6hJAooNR3mvKYmE
+ nyYES9eM6fQaNcSkNLOjHl7Nzl/tSBZpZWabBC13/3LaA61c2mDgOn4lWWBl67jM/V0A=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=RybAO6UjF9rQEJ8FIGv7KnXw6IFw6ds7eywLmrx2Vw0=; b=O
+ YKD/Eqn9ft5qbec8kSYrzPawEJauUBKOk3bXObLGVEv24EjUPoOJCHL/w+z8PsSV63sbPYAHfzeSC
+ 2O8mFkpS+izjy1MDvkXN0d0pL4l/9Q0KxOkVlO1/w49CnFdVedeKTB5tEIAa9nkorYtJTU4rhGAF7
+ biFX1U2NaEon8x7c=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rd82b-0003UQ-Hi for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Feb 2024 12:19:08 +0000
+ id 1rd82f-0003UY-1y for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Feb 2024 12:19:12 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 7F5F06177D
+ by sin.source.kernel.org (Postfix) with ESMTP id 7F725CE2271
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 22 Feb 2024 12:19:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FF7DC433F1;
- Thu, 22 Feb 2024 12:18:59 +0000 (UTC)
+ Thu, 22 Feb 2024 12:18:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF62C433F1;
+ Thu, 22 Feb 2024 12:18:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1708604341;
- bh=JScqMUmhnumYR16/rHyzcKV1L1sOSHfgCbEcWtK9OnY=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=StLUxsYEGp6qFUHyiSGOtJrfIfpajgNSWYrhEGA2mW/GqMuJq3Mz7Nph1WwW83zgN
- z2UZeOxs0Q+vEFZ2XsTSVLoTQ82faFpVudcCVVqg9Tc+zRIorhL7WM1ENRpJegUErt
- Ki/5+wbdTH2iTbfIb+Ro2h49U/pgsmFIvThpZW+1H/3E0gQGiL4W7urwAIPGteNCJt
- D/FmM+rV1NhQpZat5UT4pZX1c74GW2BpF9m2V8G8u27/jhaWc+/LAZC/iYYpHMTuxh
- tQ0iERkfaEo6qx5Pji9BYTqKpb7rvoHHknnR4H42xGYOazoO8AMFhB2rMyVOaBnuII
- ImBjWddAmuITQ==
+ s=k20201202; t=1708604337;
+ bh=hBevzcQ0912uhBWtG4E7Up+PFldcF2IwczOHh20Evtc=;
+ h=From:To:Cc:Subject:Date:From;
+ b=bT18rqCLQzC7YSmZJAXDveVoZqPTAt+O/d3Ye19a9zklautaxeoKEXQO7eWGIEKVj
+ eN84vFJ8FaO43JUq90P4gF+oabMZlJujN2Q4njfa9qQbqJmalW5EAEjNzIZJOG1RLd
+ u3epzZPURBhSezX3nA2z7UGiaGNmRoS5sLXp8aMzf1JkDJ4RO/ZbYGm0FsZnQddXl6
+ 9/GiVQv1eAgOKAFqfX2nI1s++S8PGQMXSPEPAPbL3l17HnLYU99Lu/ZQYbtV1GrEPJ
+ hgK9pUyPxvZJ8szMAoZPQAa6KdGSWXqOitm7anO/ztW5I9HeLvixbtlxTyJ4nJaU3N
+ FkyaaBqAsMJ0g==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Thu, 22 Feb 2024 20:18:50 +0800
-Message-Id: <20240222121851.883141-3-chao@kernel.org>
+Date: Thu, 22 Feb 2024 20:18:48 +0800
+Message-Id: <20240222121851.883141-1-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240222121851.883141-1-chao@kernel.org>
-References: <20240222121851.883141-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1rd82b-0003UQ-Hi
-Subject: [f2fs-dev] [PATCH 3/4] f2fs: fix to handle segment allocation
- failure correctly
+X-Headers-End: 1rd82f-0003UY-1y
+Subject: [f2fs-dev] [PATCH 1/4] f2fs: delete f2fs_get_new_segment()
+ declaration
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,223 +82,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If CONFIG_F2FS_CHECK_FS is off, and for very rare corner case that
-we run out of free segment, we should not panic kernel, instead,
-let's handle such error correctly in its caller.
+Commit 093749e296e2 ("f2fs: support age threshold based garbage
+collection") added this declaration, but w/ definition, delete
+it.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/data.c    |  7 +++++--
- fs/f2fs/f2fs.h    |  2 +-
- fs/f2fs/file.c    |  7 ++++++-
- fs/f2fs/gc.c      |  7 ++++++-
- fs/f2fs/segment.c | 46 +++++++++++++++++++++++++++++++++++++++-------
- 5 files changed, 57 insertions(+), 12 deletions(-)
+ fs/f2fs/f2fs.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 0c9aa3082fcf..c21b92f18463 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1416,8 +1416,11 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
- 
- 	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
- 	old_blkaddr = dn->data_blkaddr;
--	f2fs_allocate_data_block(sbi, NULL, old_blkaddr, &dn->data_blkaddr,
--				&sum, seg_type, NULL);
-+	err = f2fs_allocate_data_block(sbi, NULL, old_blkaddr,
-+				&dn->data_blkaddr, &sum, seg_type, NULL);
-+	if (err)
-+		return err;
-+
- 	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO)
- 		f2fs_invalidate_internal_cache(sbi, old_blkaddr);
- 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index fbbe9a0a4221..6390c3d551cb 100644
+index 8a6fd4352a0e..fbbe9a0a4221 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -3726,7 +3726,7 @@ void f2fs_replace_block(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
- 			block_t old_addr, block_t new_addr,
- 			unsigned char version, bool recover_curseg,
- 			bool recover_newaddr);
--void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
-+int f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 			block_t old_blkaddr, block_t *new_blkaddr,
- 			struct f2fs_summary *sum, int type,
- 			struct f2fs_io_info *fio);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 088d0e79fbbc..d6ec744f1545 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2262,8 +2262,11 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- 	case F2FS_GOING_DOWN_METASYNC:
- 		/* do checkpoint only */
- 		ret = f2fs_sync_fs(sb, 1);
--		if (ret)
-+		if (ret) {
-+			if (ret == -EIO)
-+				ret = 0;
- 			goto out;
-+		}
- 		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_SHUTDOWN);
- 		break;
- 	case F2FS_GOING_DOWN_NOSYNC:
-@@ -2279,6 +2282,8 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- 		set_sbi_flag(sbi, SBI_IS_DIRTY);
- 		/* do checkpoint only */
- 		ret = f2fs_sync_fs(sb, 1);
-+		if (ret == -EIO)
-+			ret = 0;
- 		goto out;
- 	default:
- 		ret = -EINVAL;
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 6d160d50e14e..42e75e9b8b6b 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1358,8 +1358,13 @@ static int move_data_block(struct inode *inode, block_t bidx,
- 	set_summary(&sum, dn.nid, dn.ofs_in_node, ni.version);
- 
- 	/* allocate block address */
--	f2fs_allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
-+	err = f2fs_allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
- 				&sum, type, NULL);
-+	if (err) {
-+		f2fs_put_page(mpage, 1);
-+		/* filesystem should shutdown, no need to recovery block */
-+		goto up_out;
-+	}
- 
- 	fio.encrypted_page = f2fs_pagecache_get_page(META_MAPPING(fio.sbi),
- 				newaddr, FGP_LOCK | FGP_CREAT, GFP_NOFS);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 8edc42071e6f..71f523431e87 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -400,6 +400,9 @@ int f2fs_commit_atomic_write(struct inode *inode)
-  */
- void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
- {
-+	if (f2fs_cp_error(sbi))
-+		return;
-+
- 	if (time_to_inject(sbi, FAULT_CHECKPOINT))
- 		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_FAULT_INJECT);
- 
-@@ -2636,7 +2639,7 @@ static int is_next_segment_free(struct f2fs_sb_info *sbi,
-  * Find a new segment from the free segments bitmap to right order
-  * This function should be returned with success, otherwise BUG
-  */
--static void get_new_segment(struct f2fs_sb_info *sbi,
-+static int get_new_segment(struct f2fs_sb_info *sbi,
- 			unsigned int *newseg, bool new_sec, bool pinning)
- {
- 	struct free_segmap_info *free_i = FREE_I(sbi);
-@@ -2711,6 +2714,7 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
- 		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_NO_SEGMENT);
- 		f2fs_bug_on(sbi, 1);
- 	}
-+	return ret;
- }
- 
- static void reset_curseg(struct f2fs_sb_info *sbi, int type, int modified)
-@@ -2719,6 +2723,10 @@ static void reset_curseg(struct f2fs_sb_info *sbi, int type, int modified)
- 	struct summary_footer *sum_footer;
- 	unsigned short seg_type = curseg->seg_type;
- 
-+	/* only happen when get_new_segment() fails */
-+	if (curseg->next_segno == NULL_SEGNO)
-+		return;
-+
- 	curseg->inited = true;
- 	curseg->segno = curseg->next_segno;
- 	curseg->zone = GET_ZONE_FROM_SEG(sbi, curseg->segno);
-@@ -2783,7 +2791,10 @@ static int new_curseg(struct f2fs_sb_info *sbi, int type, bool new_sec)
- 		write_sum_page(sbi, curseg->sum_blk, GET_SUM_BLOCK(sbi, segno));
- 
- 	segno = __get_next_segno(sbi, type);
--	get_new_segment(sbi, &segno, new_sec, pinning);
-+	if (get_new_segment(sbi, &segno, new_sec, pinning)) {
-+		curseg->segno = NULL_SEGNO;
-+		return -ENOSPC;
-+	}
- 	if (new_sec && pinning &&
- 	    !f2fs_valid_pinned_area(sbi, START_BLOCK(sbi, segno))) {
- 		__set_free(sbi, segno);
-@@ -3425,7 +3436,7 @@ static void f2fs_randomize_chunk(struct f2fs_sb_info *sbi,
- 		get_random_u32_inclusive(1, sbi->max_fragment_hole);
- }
- 
--void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
-+int f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 		block_t old_blkaddr, block_t *new_blkaddr,
- 		struct f2fs_summary *sum, int type,
- 		struct f2fs_io_info *fio)
-@@ -3442,6 +3453,9 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 	mutex_lock(&curseg->curseg_mutex);
- 	down_write(&sit_i->sentry_lock);
- 
-+	if (curseg->segno == NULL_SEGNO)
-+		goto out_err;
-+
- 	if (from_gc) {
- 		f2fs_bug_on(sbi, GET_SEGNO(sbi, old_blkaddr) == NULL_SEGNO);
- 		se = get_seg_entry(sbi, GET_SEGNO(sbi, old_blkaddr));
-@@ -3500,6 +3514,9 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 				change_curseg(sbi, type);
- 			stat_inc_seg_type(sbi, curseg);
- 		}
-+
-+		if (curseg->segno == NULL_SEGNO)
-+			goto out_err;
- 	}
- 
- skip_new_segment:
-@@ -3534,8 +3551,15 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 	}
- 
- 	mutex_unlock(&curseg->curseg_mutex);
--
- 	f2fs_up_read(&SM_I(sbi)->curseg_lock);
-+	return 0;
-+out_err:
-+	*new_blkaddr = NULL_ADDR;
-+	up_write(&sit_i->sentry_lock);
-+	mutex_unlock(&curseg->curseg_mutex);
-+	f2fs_up_read(&SM_I(sbi)->curseg_lock);
-+	return -ENOSPC;
-+
- }
- 
- void f2fs_update_device_state(struct f2fs_sb_info *sbi, nid_t ino,
-@@ -3573,8 +3597,16 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- 	if (keep_order)
- 		f2fs_down_read(&fio->sbi->io_order_lock);
- 
--	f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
--			&fio->new_blkaddr, sum, type, fio);
-+	if (f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
-+			&fio->new_blkaddr, sum, type, fio)) {
-+		if (fscrypt_inode_uses_fs_layer_crypto(fio->page->mapping->host))
-+			fscrypt_finalize_bounce_page(&fio->encrypted_page);
-+		if (PageWriteback(fio->page))
-+			end_page_writeback(fio->page);
-+		if (f2fs_in_warm_node_list(fio->sbi, fio->page))
-+			f2fs_del_fsync_node_entry(fio->sbi, fio->page);
-+		goto out;
-+	}
- 	if (GET_SEGNO(fio->sbi, fio->old_blkaddr) != NULL_SEGNO)
- 		f2fs_invalidate_internal_cache(fio->sbi, fio->old_blkaddr);
- 
-@@ -3582,7 +3614,7 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- 	f2fs_submit_page_write(fio);
- 
- 	f2fs_update_device_state(fio->sbi, fio->ino, fio->new_blkaddr, 1);
--
-+out:
- 	if (keep_order)
- 		f2fs_up_read(&fio->sbi->io_order_lock);
- }
+@@ -3701,8 +3701,6 @@ bool f2fs_segment_has_free_slot(struct f2fs_sb_info *sbi, int segno);
+ void f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi);
+ void f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi);
+ void f2fs_restore_inmem_curseg(struct f2fs_sb_info *sbi);
+-void f2fs_get_new_segment(struct f2fs_sb_info *sbi,
+-			unsigned int *newseg, bool new_sec, int dir);
+ void f2fs_allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
+ 					unsigned int start, unsigned int end);
+ int f2fs_allocate_new_section(struct f2fs_sb_info *sbi, int type, bool force);
 -- 
 2.40.1
 
