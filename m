@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id ACEC2C48BF8
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EAC7EC54788
 	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Feb 2024 12:19:15 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rd82i-00048B-IJ;
-	Thu, 22 Feb 2024 12:19:13 +0000
+	id 1rd82k-0002Sy-VL;
+	Thu, 22 Feb 2024 12:19:15 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rd82f-000482-UE
+ (envelope-from <chao@kernel.org>) id 1rd82j-0002Sr-RJ
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Feb 2024 12:19:10 +0000
+ Thu, 22 Feb 2024 12:19:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=egF2uKlkrZrFqBU0WSciNeTzO1/Wffz3bqGISsIOh4Q=; b=Sm0wQ5KdVtVyef+Y2T6Q93fKSH
- nhtix5yvGoNZAb4VlN03THEKDs19NZOguvfQmK/Rijj5VZ/3mesTJh3N2uObg4uC4PIswFFrErA+z
- oqyizvYaJZMmKNP35FhmkaZEmR8M6xgrliujZkO1+HpSAjAb+efHZKBR0GHvnn0hCwL4=;
+ bh=1+JK4WVLIkawlA+4DRsNdo3qHG1oONosg29W+Nu+dJI=; b=DBu463wFV4z3rUoS+/B7pheoC0
+ IEy13p20INaMpKtbQSizebFPplXtqfwDLADFaSP9zhlePXbBp+gleNMhO4FOEUqTGA3tyUX8bCR8r
+ GnSuIlo8RBgtZdS9YJa+JIISzeVyKy6Y8i5wsF/gh2+4U86hiw/4z7n6lKK9ejZgR5aM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,41 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=egF2uKlkrZrFqBU0WSciNeTzO1/Wffz3bqGISsIOh4Q=; b=XwJ/q1H32+mvrD1RwRXMDxINrD
- 7AsQUNX1cWUGrXzZaofTMsiD0BmzwHSm6kZJhFprxO5bLlYRK9MPZdduXeKe+rzgVjl8kEeUTgHG+
- LKgP+GbND5jN0+yjLkwpAqSgquxXe/ztSQyZxGDqX9g9CiPOk3I7s3JMg3KFSr0b1Oro=;
+ bh=1+JK4WVLIkawlA+4DRsNdo3qHG1oONosg29W+Nu+dJI=; b=ctZWb089IzreBCcZcPgOoRiEVF
+ delbXawNgsRN46ARQnA2SXJ6VfAmeogRjxq12Kqt9HOksjDXDvWxlygilkUtV+TZW4dbl/vWMq3L9
+ yHVhIwBnw996ptCOhEpLIFMQvy4VmS/HptxKp/sAK8KLYGECBptpY6dI6kRqu8fXBn6M=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rd82e-0003UZ-SS for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Feb 2024 12:19:10 +0000
+ id 1rd82i-0003Ue-9q for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Feb 2024 12:19:14 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id D0F5A617F3
+ by dfw.source.kernel.org (Postfix) with ESMTP id 42E1461802
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 22 Feb 2024 12:18:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47646C433A6;
- Thu, 22 Feb 2024 12:18:58 +0000 (UTC)
+ Thu, 22 Feb 2024 12:19:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC1AEC43390;
+ Thu, 22 Feb 2024 12:19:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1708604339;
- bh=kfTRBKt4Nbx/JzbJcvx90tf0O1Cn9EETCkS6TLsrw28=;
+ s=k20201202; t=1708604343;
+ bh=UBGAWY7QBAf6w4r+D7RUjGAJRqIj79Menb0OJmr4XXg=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=mDPZhRslysG7G8AyvkqI8r9ViKpQOP+RQuHHkMeCIcT4GE6xkcFtwtOUwLrA0HTcl
- e4fhoauXNziXTHN2W1w3JUYD94c04YFog4zl54zZ09EZ6jcyrTi7wexP0TnXtj41nF
- pZTBiZLeS/XcY5dcSQtyG4jIEVKsl2UBDJqWeNyV9VuhMGrKpv/KdbsVKrGscfycZs
- QhzasHFMgiDW5BvPoK7K2rKzb71cWIRmOZQwNRDpSSzgNP/yAm26lcgVx8YVM2n2+f
- DDU+YdTK9Ami/i3bRM0Z+vfc8fG5QArg94/tJ+r/12G9OJ4dloiaGhIVHElja3U7FB
- kkEf90HRJXeuA==
+ b=X20vHx/MBMMZ9nbQR/BWo7scTGZoMiocWVi8XVG4+OvGHF7/2fY+wuifhcYWYiVEB
+ ZhuGf9JD6G6eOp1Vn9Eq8eUOW5WYx5c47nQFFqCcID+CZAziyakODU/e5Je+xdtrBb
+ t6gQTyKPqiH/5Tw5ZbfBZzX8qLeNI/eZC7TZ62EeOSCpO4xYY97Ee28kMJEWxnn++w
+ 2TJog2bmir0d4VzHaq2oKeAACSLr09o0krBNqJH+gc0MUPzYu+JdglCZRuACek91hn
+ XeLiUZhX+J6EbunerVYYgqWkdnCpH+uV8IT59d3MOalDNjtcm4DuOcX2y6oI4J3xXa
+ vgMovY33b0kVg==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Thu, 22 Feb 2024 20:18:49 +0800
-Message-Id: <20240222121851.883141-2-chao@kernel.org>
+Date: Thu, 22 Feb 2024 20:18:51 +0800
+Message-Id: <20240222121851.883141-4-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240222121851.883141-1-chao@kernel.org>
 References: <20240222121851.883141-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1rd82e-0003UZ-SS
-Subject: [f2fs-dev] [PATCH 2/4] f2fs: fix to don't call f2fs_stop_checkpoint
- in spinlock coverage
+X-Headers-End: 1rd82i-0003Ue-9q
+Subject: [f2fs-dev] [PATCH 4/4] f2fs: introduce FAULT_NO_SEGMENT
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,52 +83,81 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-f2fs_stop_checkpoint(, false) is complex and it may sleep, so we should
-move it outside segmap_lock spinlock coverage in get_new_segment().
+Use it to simulate no free segment case during block allocation.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/segment.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ Documentation/ABI/testing/sysfs-fs-f2fs | 1 +
+ Documentation/filesystems/f2fs.rst      | 1 +
+ fs/f2fs/f2fs.h                          | 1 +
+ fs/f2fs/segment.c                       | 5 +++++
+ fs/f2fs/super.c                         | 1 +
+ 5 files changed, 9 insertions(+)
 
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 15044d7d4977..96b54259a02a 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -718,6 +718,7 @@ Description:	Support configuring fault injection type, should be
+ 		FAULT_LOCK_OP                    0x000020000
+ 		FAULT_BLKADDR_VALIDITY           0x000040000
+ 		FAULT_BLKADDR_CONSISTENCE        0x000080000
++		FAULT_NO_SEGMENT                 0x000100000
+ 		===========================      ===========
+ 
+ What:		/sys/fs/f2fs/<disk>/discard_io_aware_gran
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 1b3b73aa3ab9..bc074b8eedbb 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -205,6 +205,7 @@ fault_type=%d		 Support configuring fault injection type, should be
+ 			 FAULT_LOCK_OP                    0x000020000
+ 			 FAULT_BLKADDR_VALIDITY           0x000040000
+ 			 FAULT_BLKADDR_CONSISTENCE        0x000080000
++			 FAULT_NO_SEGMENT                 0x000100000
+ 			 ===========================      ===========
+ mode=%s			 Control block allocation mode which supports "adaptive"
+ 			 and "lfs". In "lfs" mode, there should be no random
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 6390c3d551cb..fdc9a4dc981d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -62,6 +62,7 @@ enum {
+ 	FAULT_LOCK_OP,
+ 	FAULT_BLKADDR_VALIDITY,
+ 	FAULT_BLKADDR_CONSISTENCE,
++	FAULT_NO_SEGMENT,
+ 	FAULT_MAX,
+ };
+ 
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index d0209ea77dd2..8edc42071e6f 100644
+index 71f523431e87..8ad88d5d4d1d 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -2646,6 +2646,7 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
- 	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
- 	bool init = true;
- 	int i;
-+	int ret = 0;
+@@ -2653,6 +2653,11 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
  
  	spin_lock(&free_i->segmap_lock);
  
-@@ -2671,9 +2672,8 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
- 		secno = find_first_zero_bit(free_i->free_secmap,
- 							MAIN_SECS(sbi));
- 		if (secno >= MAIN_SECS(sbi)) {
--			f2fs_stop_checkpoint(sbi, false,
--				STOP_CP_REASON_NO_SEGMENT);
--			f2fs_bug_on(sbi, 1);
-+			ret = -ENOSPC;
-+			goto out_unlock;
- 		}
- 	}
- 	segno = GET_SEG_FROM_SEC(sbi, secno);
-@@ -2704,7 +2704,13 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
- 	f2fs_bug_on(sbi, test_bit(segno, free_i->free_segmap));
- 	__set_inuse(sbi, segno);
- 	*newseg = segno;
-+out_unlock:
- 	spin_unlock(&free_i->segmap_lock);
-+
-+	if (ret) {
-+		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_NO_SEGMENT);
-+		f2fs_bug_on(sbi, 1);
++	if (time_to_inject(sbi, FAULT_NO_SEGMENT)) {
++		ret = -ENOSPC;
++		goto out_unlock;
 +	}
- }
++
+ 	if (!new_sec && ((*newseg + 1) % SEGS_PER_SEC(sbi))) {
+ 		segno = find_next_zero_bit(free_i->free_segmap,
+ 			GET_SEG_FROM_SEC(sbi, hint + 1), *newseg + 1);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index bb056700b459..dc4fb9a661f2 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -63,6 +63,7 @@ const char *f2fs_fault_name[FAULT_MAX] = {
+ 	[FAULT_LOCK_OP]			= "lock_op",
+ 	[FAULT_BLKADDR_VALIDITY]	= "invalid blkaddr",
+ 	[FAULT_BLKADDR_CONSISTENCE]	= "inconsistent blkaddr",
++	[FAULT_NO_SEGMENT]		= "no free segment",
+ };
  
- static void reset_curseg(struct f2fs_sb_info *sbi, int type, int modified)
+ void f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned int rate,
 -- 
 2.40.1
 
