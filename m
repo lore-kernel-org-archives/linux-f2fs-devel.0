@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E79D4C48BC4
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Feb 2024 03:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 38FBBC54798
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Feb 2024 03:44:02 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rdMA4-00030E-ML;
-	Fri, 23 Feb 2024 03:23:45 +0000
+	id 1rdMTf-0004Pl-88;
+	Fri, 23 Feb 2024 03:44:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rdMA1-000307-Mg
+ (envelope-from <chao@kernel.org>) id 1rdMTd-0004Pe-UM
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Feb 2024 03:23:42 +0000
+ Fri, 23 Feb 2024 03:43:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nlISERxZnpPOZWpCoStdLdcd2TzT3EfxaGao1CLf3sY=; b=A7/H6VBcvT7lcoZXk2KB3zAIQZ
- 4Csuk9fLbxToWF/QoBZMnKvFxEDo3Lgr6PYFA75BNMtQiTBN3z5JKmbhMilVM5BJecfZvBGmE8ZTj
- KMMKq0re13Qxe0lQXhhnnb7X971u+zLT+aL8H+o8w+FnMLYNcLT/EsQ39VIMxGUY8KVI=;
+ bh=4ZKfrxOPlWiP2PoAe6ADrglo6s+SEc50FbdDsm7qZy0=; b=MJSGPoQ2W5C08HjlJ2ofGcO1Ts
+ MfpaxRSSJDDbaOs15u8MaESSTJem/R44JGerYeMAvOTEooqOWLehR2F3ap+EbTc8mg6Ud3u3QYTpU
+ HV6LkiqXIkr8sLELaO/IQBpt+/UybZwNzPxVmKIobBie/EC+wFmM/RANkI/RgKGidGdk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,31 +33,31 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=nlISERxZnpPOZWpCoStdLdcd2TzT3EfxaGao1CLf3sY=; b=K19JfKy54DfFLr7Z5/pE5LwRth
- IZNedpEI2tL8zUvzRDR5etvWKOjDruVT5vPeD/GGIW75gkd8X852OFOK2SJuE3S2a5zulldI3Z5nX
- slDpFaE0cziEym1dydC3yGxagzn3WPoBX7DL4VxAMGs0goVYBdBFEwGH3EHVKXASlWNk=;
+ bh=4ZKfrxOPlWiP2PoAe6ADrglo6s+SEc50FbdDsm7qZy0=; b=hKLxW5ujGP5MqkrlTk0EVr4/th
+ NnvmYk/xzZOePdLQAUxIV0BRoLALSmlw72PZVAZQs6ZzYeIP8O283xj/XCajAGApWjkMrN9qZAn3E
+ sHIp89FNGQdNkaPUtOv48ry7zaBGoJgTjzVYS5Mwe7mJG4B5Pjjn1X2bXRB/+6RiiRzg=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rdMA0-0004oc-2z for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Feb 2024 03:23:42 +0000
+ id 1rdMTb-0005bj-DQ for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 23 Feb 2024 03:43:58 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id D6B606333E;
- Fri, 23 Feb 2024 03:23:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2D6FC433F1;
- Fri, 23 Feb 2024 03:23:28 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 3E028633AC;
+ Fri, 23 Feb 2024 03:43:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F6A7C433F1;
+ Fri, 23 Feb 2024 03:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1708658610;
- bh=l3xOKaGYm6N0VROnCO2w/SCwjaoLt+BKB1hE6r/pMtc=;
+ s=k20201202; t=1708659825;
+ bh=TRd/BANzvLVqQrUFMdKyHxBiSVmEvU8CPsHLgwppJmw=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=OzkhNa0VkqTtW4BwVnpk0ma34YknN3k0EHfnf2eatnitltk7IABfGaR2QtM9N5p/d
- aF4dWw0KRk8CdIglfIMyHZfrPu4xOty1uImejLqGBAe0faxEMLRIdUUOMhJqd5qBBt
- 0Lbv6FleGf1Zf42GwHiabgD9iBKU95bCy4+gARt5CgpUGkIh8wELPloCC7kcN9nMTr
- 4Gay1Gz+cB2Jc3MmAyIvb6CQtciStdMcLJlZFRdlEEyiPZFrV1Q6B/PaAKv1VjLqIt
- zqYxcP6yo8aQs/A0I4DBbIUvuLljJ0lYfHMMN28GV9Hq3Uc2ADuzMQ5VBdHUFgGArj
- Zv/nhckcoDeTQ==
-Message-ID: <cdf8048e-e37e-4ab7-b6b5-b758ae2dfef4@kernel.org>
-Date: Fri, 23 Feb 2024 11:23:25 +0800
+ b=IRkTxVp+XmHAkcwhEve10Jt7hR89sLLmDl6YM/8OqJBWKFnEl43DD8xXfu8vZhGM4
+ XvuAUt+uxy84hqG0eDj+LI9guGgPKqyPYc8UTqC9tAAeDS+W9LQPpSekc2rnesRkSZ
+ ksSy9StbNxQyT3TsFrihNHyMDeZE1dMxb2Oghxwa6JFz54Kxqaw6oRDI2XQ+SGosEk
+ M/yXwdOK/shISDFCO0Ld3hgTkQXGoalhKGyTUuKgankv3p3HgIrn3kjntPMP5PmVVX
+ HWRsB5pbkSkzRonQqHM8k2U31G+n0gWIO/pwGFOyjDVyW0B0cKOLxIftTII7BBGVnW
+ J4UWh7FVTWCpw==
+Message-ID: <baccf741-eeaa-476d-8478-098dc5d6e9d3@kernel.org>
+Date: Fri, 23 Feb 2024 11:43:41 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Content-Language: en-US
@@ -67,7 +67,7 @@ References: <20240213173812.1432663-1-daeho43@gmail.com>
  <20240213173812.1432663-2-daeho43@gmail.com>
 From: Chao Yu <chao@kernel.org>
 In-Reply-To: <20240213173812.1432663-2-daeho43@gmail.com>
-X-Headers-End: 1rdMA0-0004oc-2z
+X-Headers-End: 1rdMTb-0005bj-DQ
 Subject: Re: [f2fs-dev] [PATCH v3 2/2] f2fs: support file pinning for zoned
  devices
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -85,8 +85,6 @@ Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Daeho Jeong <daehojeong@google.com>
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-
-Hi Daeho,
 
 On 2024/2/14 1:38, Daeho Jeong wrote:
 > From: Daeho Jeong <daehojeong@google.com>
@@ -136,9 +134,6 @@ On 2024/2/14 1:38, Daeho Jeong wrote:
 > +	for (; secidx <= end_sec; secidx++) {
 > +		unsigned int blkofs_end = secidx == end_sec ?
 > +			(blkcnt - 1) % blk_per_sec : blk_per_sec - 1;
-
-(start_blk + blkcnt - 1) % blk_per_sec ?
-
 > +
 >   		f2fs_down_write(&sbi->pin_sem);
 >   
@@ -230,13 +225,6 @@ On 2024/2/14 1:38, Daeho Jeong wrote:
 > +	ret = filemap_fdatawrite(inode->i_mapping);
 > +	if (ret < 0)
 > +		return ret;
-
-What do you think of exchanging position of f2fs_precache_extents()
-and filemap_fdatawrite()? so that f2fs_precache_extents() can load
-extent info after physical addresses of all data are fixed.
-
-Thanks,
-
 > +
 >   	ret = check_swap_activate(sis, file, span);
 >   	if (ret < 0)
@@ -446,6 +434,12 @@ Thanks,
 >   		write_sum_page(sbi, curseg->sum_blk, GET_SUM_BLOCK(sbi, segno));
 > +
 >   	segno = __get_next_segno(sbi, type);
+
+If type is CURSEG_COLD_DATA_PINNED, can we let __get_next_segno() return 0?
+then we can allocate free segment from conventional zone in priority.
+
+Thanks,
+
 > -	get_new_segment(sbi, &segno, new_sec);
 > +	get_new_segment(sbi, &segno, new_sec, pinning);
 > +	if (new_sec && pinning &&
