@@ -4,71 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 058EEC54E49
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Feb 2024 20:55:54 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A4B65C54798
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 24 Feb 2024 01:14:27 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rdcaH-0000iR-29;
-	Fri, 23 Feb 2024 20:55:53 +0000
+	id 1rdgcT-0002lz-13;
+	Sat, 24 Feb 2024 01:14:25 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1rdcaF-0000iG-Ma
+ (envelope-from <jaegeuk@kernel.org>) id 1rdgcS-0002lt-Ak
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Feb 2024 20:55:52 +0000
+ Sat, 24 Feb 2024 01:14:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LY4nb6aO4XFI9t4oJbOKO3rOm7VYOQsfpcV4tt+nqqk=; b=SdcZqOjjXsNmnC2LSylKYWYUPU
- +4Fz+5gfBzxhlb1m4ISm+HQeVk0hoRSZtqLPVC9SiOuuIva/kXHqSEtZhKBx+sETOFAMqOdvjU2F3
- MdOcRzbIwkDwgVe95bk76mUhs7VE96OSbVbsBex1r6lw/zjgA8NAGoR1qk71YGCH0xdA=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=LY4nb6aO4XFI9t4oJbOKO3rOm7VYOQsfpcV4tt+nqqk=; b=iVUdxwsHsZTqwzgGnBFlgLCT5T
- 9sb4jSyhe9ifOKaOdBAPDlC/qghhdm9kFqbhLOenbK2rED29c8I42X3LmNLNDAPzI0Ss+hQSjD5wI
- 0XPBPXweo3RrvrocG5inQoaYE5vCPbOfYJUFsicNGSPdEgeXmAGKARpEbBCHZphPbnBI=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=7/7etoDVxa2GaekHSFIR1OImQmXOmWYVlrE0hdes3cU=; b=flz+1r8O6Mf21cqzzkEs2REGQG
+ VSDkKPPJJ90/vycH1KwlGcrxR72IA6fDyU1q+i8Vhww3pnrIYtCemD4GCSUeldjwb5ofO5HRu8vae
+ +DpA1712iNTNGHgJ8oELiZ5+ZvV1mtxJdFrW1KeiXmzhOKeyYeb8Y2JOxJAhqRkNppog=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=7/7etoDVxa2GaekHSFIR1OImQmXOmWYVlrE0hdes3cU=; b=S
+ x4nqZyx0mxf9JMqwudk5eJwwW39DMJWJkQoUnw13Db/8bHAA9xTAV+/8KLwOvFVvBv/lVtNedK/dE
+ fQ/bokN1euHTPTLUScQQcphX882vmpKxCkeqFfSCHiNgCSb85zXK7inwJ4orOrn1vHx8MW9gsr8No
+ SvjSSauQfihr8geg=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rdcaF-0002pW-Jb for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Feb 2024 20:55:52 +0000
+ id 1rdgcN-0005bc-Ra for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 24 Feb 2024 01:14:24 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id D53CACE2F1F
+ by dfw.source.kernel.org (Postfix) with ESMTP id 70683618EA
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 23 Feb 2024 20:55:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D6DAC433F1;
- Fri, 23 Feb 2024 20:55:39 +0000 (UTC)
+ Sat, 24 Feb 2024 01:14:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F8CCC433F1;
+ Sat, 24 Feb 2024 01:14:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1708721739;
- bh=jcqHB3mOguQlmJS0WZkHNVvEJ+LlBmJIQaxT0/mGi48=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=SB3mQtoLjZc3slFBxMQrc1O4HtbEMqzWJ/jBNTuPg46FWdAFrTsuEr3EkozkldcV0
- qAaO6BTlVNGrYTROIXCN2Amj4mabG7qG2YHN1PAAzYoipn5o5eQUStaR1qZA7rAGeQ
- jOBs1vmnQXSZ11t341fROSPlKCIb0rk8Xnpu02UC8vzTHnNXzye9LrSr5wuSrq/dVE
- m3D7HdmqSzsJiRwuLbNCeGxKvCAB6R4c1m878ohP4rQso5/gjLA8hX/Gc84Jdm639T
- uaZ/L0JUYTkQvgMfOw4hhZ9ZyTy/QHhGl2/oTZ/FCRK/J/cqy/0cBhrUq3Dm8cdQLn
- 0Kdk/h96tmGbQ==
+ s=k20201202; t=1708737254;
+ bh=t6bpmHREMYzl4Sh4aRRosfkE6F9NITSKrV4bmyBQCfk=;
+ h=From:To:Cc:Subject:Date:From;
+ b=myU8pj7yDRMWYqCJUNWkiGjFDJHS8OUE670INLraKYknIO/Z09rg/mqRNA9QeOdqK
+ WSlNrriituWHgpk/uDvkZFSyw0YJD50VYs2l84v3+ygkuAi9QPlruKb0TgsrCPeQcE
+ 0pobnviMxRn1QiuxGEng8hI1KIWYzsM23EjIAvluxiCSwYz0QCPvRJopIGOyhdXsEn
+ +bLkmXSIYzWyNRvcKxPE5TAjxZQAjiuCFZzI7IxdwJZlS/cobfYqjeiArTSXnbowWb
+ irE8M+dmM66awsKHsAEbfQyhySGjr6hF34Lbgm5MFyQgQQidiM4Dk/siNYblmVARwK
+ DwOr/7y0lFyPQ==
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 23 Feb 2024 12:55:34 -0800
-Message-ID: <20240223205535.307307-4-jaegeuk@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 23 Feb 2024 17:14:11 -0800
+Message-ID: <20240224011411.3820719-1-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.44.0.rc0.258.g7320e95886-goog
-In-Reply-To: <20240223205535.307307-1-jaegeuk@kernel.org>
-References: <20240223205535.307307-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1rdcaF-0002pW-Jb
-Subject: [f2fs-dev] [PATCH 4/5] f2fs: prevent an f2fs_gc loop during
- disable_checkpoint
+X-Headers-End: 1rdgcN-0005bc-Ra
+Subject: [f2fs-dev] [PATCH] mkfs.f2fs: should give section-aligned reserved
+ segments
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,26 +82,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Don't get stuck in the f2fs_gc loop while disabling checkpoint. Instead, we have
-a time-based management.
+The reserved segments should be aligned to the section boundary.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/super.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/f2fs_fs.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index fc7f1a9fbbda..7d9b92978709 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2191,6 +2191,7 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 			.init_gc_type = FG_GC,
- 			.should_migrate_blocks = false,
- 			.err_gc_skipped = true,
-+			.no_bg_gc = true,
- 			.nr_free_secs = 1 };
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 9056e02acd29..2e93503cada9 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -1771,7 +1771,8 @@ static inline double get_reserved(struct f2fs_super_block *sb, double ovp)
+ 	else
+ 		reserved = (100 / ovp + 1 + NR_CURSEG_TYPE) * segs_per_sec;
  
- 		f2fs_down_write(&sbi->gc_lock);
+-	return reserved;
++	/* Let's keep the section alignment */
++	return round_up(reserved, segs_per_sec);
+ }
+ 
+ static inline double get_best_overprovision(struct f2fs_super_block *sb)
 -- 
 2.44.0.rc0.258.g7320e95886-goog
 
