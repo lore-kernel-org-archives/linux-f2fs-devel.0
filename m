@@ -4,74 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5E9BAC5478C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Feb 2024 06:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8D1B7C48BF6
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Feb 2024 07:35:57 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1reUmw-00021v-TH;
-	Mon, 26 Feb 2024 06:48:34 +0000
+	id 1reVWm-0002xZ-0T;
+	Mon, 26 Feb 2024 07:35:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1reUmu-00021m-VN
+ (envelope-from <chao@kernel.org>) id 1reVWk-0002xP-AF
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 26 Feb 2024 06:48:32 +0000
+ Mon, 26 Feb 2024 07:35:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LR/7L7nEpWJ+YfECk+UFWBTTWSmi4ubljdQi8MEsqMs=; b=Zbokr9d7HRcDViAeidqBlr4LH2
- M39qsxd8Mdfmvl7Uped8J/9pam0BulGl4sL19I1UtkwZu+k+QTBbW7sn0+KdOl34FYENl0vVuNrJj
- X/83SzclJm8uBO69L/NJQd1YzcQTNZbIWYQaRuvkX7Fb4NfgQL3eGS7Z2SvfSx4yfD2w=;
+ bh=nEPJ26NFMrTmL49thufpcKhb2K7Qjw5iU5l47qd9Nlw=; b=Cqv6taY9jljpo5y9S6UO1afXrm
+ oK73FFCIAXddwWqMfltBPBdKoVcm93rpag6C635JtjO6wzoF1rzaaemg9PbEC5MNWmLa/loHtnGGc
+ 4YN6UxBGOjLXpit6LgMSFMRMbvQy70PgwDTNL8p1K5qVM77vgcYre06u/wcsZeZG1CJ8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=LR/7L7nEpWJ+YfECk+UFWBTTWSmi4ubljdQi8MEsqMs=; b=l/GbwVLcgm66SW/81Clxax9VA+
- EPHrrpzmOfvYKQWGTnpPFrPP3CKZfqPybQqLbPHb+BdniwwuDzDBYX20bau02pFXk8EW37qpTbzhL
- u/0bZElJwMcVgXajBprVzFRWVbUsRKuKlKgJ/gdCDtQMghY/IyYKm40uIVVe2e8E/55I=;
+ bh=nEPJ26NFMrTmL49thufpcKhb2K7Qjw5iU5l47qd9Nlw=; b=PDYkOBgD+4Y/mJaoirHfMSTWvs
+ izR1rdltxdRrCbTZ9qeHfiSiqbweVM/wBFZdHeHZoupH0oq2+1pdCYqD+PE2jV46lGswWYaNwl6EJ
+ TL88OUNXq81TDYZmybDZxz6ds9wSnoeCKmKustpxJPtGWEZnrsTdnhCoskbadf5ugLnA=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1reUmq-0001XW-CB for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 26 Feb 2024 06:48:32 +0000
+ id 1reVWj-0002xq-Oh for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 26 Feb 2024 07:35:54 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 9CB2C60F00;
- Mon, 26 Feb 2024 06:48:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37527C433F1;
- Mon, 26 Feb 2024 06:48:19 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 4E3AD60FA5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 26 Feb 2024 07:35:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C106C433B2;
+ Mon, 26 Feb 2024 07:35:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1708930102;
- bh=FNhLB11u49PkDdPAlymv79Dni35HVKGs4cgtYI0JOd8=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=RtaDjU+q2AGjbskrExrHxJCKsfi4cDqvPObSm94Gmn4YFYjl7dyuSMHcW5BQDuuRs
- 86Xa98gyNVCR4uaXyIIxFs5gteN5osYJR72sNDgxyC8KEPQ8nS/Inw4k8GKc/UtF+u
- SsYUINlmOo7FpTaZBCzVvIdG5dMfHB+zaEPqUPmDKzE6AG16zjG3m4jTRJIZntWOa3
- RX+XJlChhUBelWhY77a7V1OUxZe5WfvYDh4y6fFjwdZxgPBrkZeJNB7He3VdzNgsX1
- lnOtVVrrhvtqwbrsMrrn7gWoJfAPjMgSW4TmiAffwjf4rgGRctEQpqlGjElW8vIdX3
- GbWwkJ/s+WIKg==
-Message-ID: <03f16549-fdbf-4050-888a-b9e27e2b2dff@kernel.org>
-Date: Mon, 26 Feb 2024 14:48:17 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Zhiguo Niu <niuzhiguo84@gmail.com>
-References: <1707271264-5551-1-git-send-email-zhiguo.niu@unisoc.com>
- <88459a22-a21c-4c3d-8371-31d7d713b536@kernel.org>
- <CAHJ8P3KYY27M3v=9Lu-yD2ufxU1fdG-bg=G92AbpnLUx0zLz3g@mail.gmail.com>
- <f36ef5d0-8922-449e-b19c-de009c89e712@kernel.org>
- <CAHJ8P3KS2YAXm=GND8DknZqvGqTvm38Nv_9z1nEq4cTJjir-sA@mail.gmail.com>
+ s=k20201202; t=1708932947;
+ bh=DM7lCeAQkkrdeMDm7IxgfNbaFgZdno2MS54NUJmA8dw=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=I3ajVGpgQc6l7+OU17u75YYhHNroOTJz8hHJTRRGAnv31ib+bQX+ozAzTBiBlyody
+ 2trvL2ADY8ta0KNNzk6otf5eBw74LSiUdxJURZJgqTmT8SckTYPAwS1AO+ykCMImQy
+ 2L74/p3AcflUs0sYfV6OVwSsN6l78h659dpZsrI6uciQzUVioiuGLSxXRuG9+99DJX
+ Zt6L4BprJAHNjZJx+BjVzuOtUIlubCWPyXKRfmZUSfOqZdTfirUQuZ32PMcuuEnUvC
+ /3OV5svysGVXzPXYeF5YwxKHZpa8twJqYPGmkPfShE9aHNaDRDwEjs8RrDAmAutWnC
+ nZRx0aWJ7IAqA==
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <CAHJ8P3KS2YAXm=GND8DknZqvGqTvm38Nv_9z1nEq4cTJjir-sA@mail.gmail.com>
-X-Headers-End: 1reUmq-0001XW-CB
-Subject: Re: [f2fs-dev] [PATCH v2 0/4] f2fs: fix panic issue in small
- capacity device
+To: jaegeuk@kernel.org
+Date: Mon, 26 Feb 2024 15:35:39 +0800
+Message-Id: <20240226073539.2509926-2-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240226073539.2509926-1-chao@kernel.org>
+References: <20240226073539.2509926-1-chao@kernel.org>
+MIME-Version: 1.0
+X-Headers-End: 1reVWj-0002xq-Oh
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: ro: don't start discard thread for
+ readonly image
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,69 +79,48 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, hongyu.jin@unisoc.com,
- Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gMjAyNC8yLzI2IDExOjI1LCBaaGlndW8gTml1IHdyb3RlOgo+IERlYXIgQ2hhbywKPiAKPiBP
-biBGcmksIEZlYiAyMywgMjAyNCBhdCAxMDozOOKAr0FNIENoYW8gWXUgPGNoYW9Aa2VybmVsLm9y
-Zz4gd3JvdGU6Cj4+Cj4+IE9uIDIwMjQvMi8yMyAxMDowMSwgWmhpZ3VvIE5pdSB3cm90ZToKPj4+
-Cj4+Pgo+Pj4gT24gVGh1LCBGZWIgMjIsIDIwMjQgYXQgODozMOKAr1BNIENoYW8gWXUgPGNoYW9A
-a2VybmVsLm9yZyA8bWFpbHRvOmNoYW9Aa2VybmVsLm9yZz4+IHdyb3RlOgo+Pj4KPj4+ICAgICAg
-T24gMjAyNC8yLzcgMTA6MDEsIFpoaWd1byBOaXUgd3JvdGU6Cj4+PiAgICAgICA+IEEgcGFuaWMg
-aXNzdWUgaGFwcGVuZWQgaW4gYSByZWJvb3QgdGVzdCBpbiBzbWFsbCBjYXBhY2l0eSBkZXZpY2UK
-Pj4+ICAgICAgID4gYXMgZm9sbG93aW5nOgo+Pj4gICAgICAgPiAxLlRoZSBkZXZpY2Ugc2l6ZSBp
-cyA2NE1CLCBhbmQgbWFpbiBhcmVhIGhhcyAyNCBzZWdtZW50cywgYW5kCj4+PiAgICAgICA+IENP
-TkZJR19GMkZTX0NIRUNLX0ZTIGlzIG5vdCBlbmFibGVkLgo+Pj4gICAgICAgPiAyLlRoZXJlIGlz
-IG5vIGFueSBmcmVlIHNlZ21lbnRzIGxlZnQgc2hvd24gaW4gZnJlZV9zZWdtYXBfaW5mbywKPj4+
-ICAgICAgID4gdGhlbiBhbm90aGVyIHdyaXRlIHJlcXVlc3QgY2F1c2UgZ2V0X25ld19zZWdtZW50
-IGdldCBhIG91dC1vZi1ib3VuZAo+Pj4gICAgICAgPiBzZWdtZW50IHdpdGggc2Vnbm8gMjQuCj4+
-PiAgICAgICA+IDMucGFuaWMgaGFwcGVuIGluIHVwZGF0ZV9zaXRfZW50cnkgYmVjYXVzZSBhY2Nl
-c3MgaW52YWxpZCBiaXRtYXAKPj4+ICAgICAgID4gcG9pbnRlci4KPj4+Cj4+PiAgICAgIFpoaWd1
-bywKPj4+Cj4+PiAgICAgIENhbiB5b3UgcGxlYXNlIHRyeSBiZWxvdyBwYXRjaCB0byBzZWUgd2hl
-dGhlciBpdCBjYW4gZml4IHlvdXIgcHJvYmxlbT8KPj4+Cj4+PiAgICAgIGh0dHBzOi8vbG9yZS5r
-ZXJuZWwub3JnL2xpbnV4LWYyZnMtZGV2ZWwvMjAyNDAyMjIxMjE4NTEuODgzMTQxLTMtY2hhb0Br
-ZXJuZWwub3JnIDxodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1mMmZzLWRldmVsLzIwMjQw
-MjIyMTIxODUxLjg4MzE0MS0zLWNoYW9Aa2VybmVsLm9yZz4KPj4+Cj4+PiAgICAgIFRoYW5rcywK
-Pj4+Cj4+Pgo+Pj4gRGVhciBDaGFvLAo+Pj4gSSBuZWVkIHRvIGNvb3JkaW5hdGUgdGhlIHRlc3Rp
-bmcgcmVzb3VyY2VzLiBUaGUgcHJldmlvdXMgdGVzdGluZyBoYXMgYmVlbiBzdG9wcGVkIGJlY2F1
-c2UgaXQgd2FzIGZpeGVkIHdpdGggdGhlIGN1cnJlbnQgcGF0Y2guIEluIGFkZGl0aW9uLCB0aGlz
-IHJlcXVpcmVzIHN0YWJpbGl0eSB0ZXN0aW5nIHRvIHJlcHJvZHVjZSwgc28gaXQgd2lsbCB0YWtl
-IGEgY2VydGFpbiBhbW91bnQgb2YgdGltZS4gSWYgdGhlcmUgaXMgYW55IHNpdHVhdGlvbiwgSSB3
-aWxsIHRlbGwgeW91IGluIHRpbWUuCj4+Cj4+IFpoaWd1bywgdGhhbmsgeW91IQo+IAo+IFdlIHRl
-c3RlZCB0aGlzIHBhdGNoICB0aGlzIHdlZWtlbmQgb24gdGhlIHByZXZpb3VzIHZlcnNpb24gd2l0
-aAo+IHByb2JsZW0sIGFuZCBpdCBjYW4gbm90IHJlcHJvZHVjZSBwYW5pYyBpc3N1ZXMsCj4gc28g
-dGhpcyBwYXRjaCBzaG91bGQgZml4IHRoZSBvcmlnaW5hbCBpc3N1ZS4KClpoaWd1bywKClRoYW5r
-cyBhIGxvdCBmb3IgdGhlIHRlc3QhCgpEbyB5b3UgbWluZCByZXBseWluZyB0byBvcmlnaW5hbCBw
-YXRjaCBiZWxvdyB0YWc/CgpUZXN0ZWQtYnk6IFpoaWd1byBOaXUgPHpoaWd1by5uaXVAdW5pc29j
-LmNvbT4KClRoYW5rcywKCj4gdGhhbmtz77yBCj4gCj4+Cj4+IEJUVywgSSd2ZSB0ZXN0ZWQgdGhp
-cyBwYXRjaCBmb3IgYSB3aGlsZSwgYW5kIGl0IGxvb2tzIHRoZXJlIGlzIG5vIGlzc3VlIHcvCj4+
-IEZBVUxUX05PX1NFR01FTlQgZmF1bHQgaW5qZWN0aW9uIGlzIG9uLgo+Pgo+Pj4gYnR3LCBXaHkg
-Y2Fu4oCZdCBJIHNlZSB0aGlzIHBhdGNoIG9uIHlvdXIgYnJhbmNoXl4/Cj4+PiBodHRwczovL2dp
-dC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9jaGFvL2xpbnV4LmdpdC9sb2cv
-P2g9ZGV2LXRlc3QgPGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwv
-Z2l0L2NoYW8vbGludXguZ2l0L2xvZy8/aD1kZXYtdGVzdD4KPj4KPj4gVG9vIGxhenkgdG8gcHVz
-aCBwYXRjaGVzIGluIHRpbWUsIHdpbGwgZG8gaXQgaW4gdGhpcyB3ZWVrZW5kLiA6UAo+Pgo+Pj4g
-dGhhbmtz77yBCj4+Pgo+Pj4KPj4+ICAgICAgID4KPj4+ICAgICAgID4gTW9yZSBkZXRhaWwgc2hv
-d24gaW4gZm9sbG93aW5nIHBhdGNoIHNldHMuCj4+PiAgICAgICA+IFRoZSB0aHJlZSBwYXRjaGVz
-IGFyZSBzcGxpdGVkIGhlcmUgYmVjYXVzZSB0aGUgbW9kaWZpY2F0aW9ucyBhcmUKPj4+ICAgICAg
-ID4gcmVsYXRpdmVseSBpbmRlcGVuZGVudCBhbmQgbW9yZSByZWFkYWJsZS4KPj4+ICAgICAgID4K
-Pj4+ICAgICAgID4gLS0tCj4+PiAgICAgICA+IENoYW5nZXMgb2YgdjI6IHN0b3AgY2hlY2twb2lu
-dCB3aGVuIGdldCBhIG91dC1vZi1ib3VuZCBzZWdtZW50Cj4+PiAgICAgICA+IC0tLQo+Pj4gICAg
-ICAgPgo+Pj4gICAgICAgPiBaaGlndW8gTml1ICg0KToKPj4+ICAgICAgID4gICAgZjJmczogY29y
-cmVjdCBjb3VudGluZyBtZXRob2RzIG9mIGZyZWVfc2VnbWVudHMgaW4gX19zZXRfaW51c2UKPj4+
-ICAgICAgID4gICAgZjJmczogZml4IHBhbmljIGlzc3VlIGluIHVwZGF0ZV9zaXRfZW50cnkKPj4+
-ICAgICAgID4gICAgZjJmczogZW5oYW5jZSBqdWRnbWVudCBjb25kaXRpb25zIG9mIEdFVF9TRUdO
-Two+Pj4gICAgICAgPiAgICBmMmZzOiBzdG9wIGNoZWNrcG9pbnQgd2hlbiBnZXQgYSBvdXQtb2Yt
-Ym91bmRzIHNlZ21lbnQKPj4+ICAgICAgID4KPj4+ICAgICAgID4gICBmcy9mMmZzL2ZpbGUuYyAg
-ICAgICAgICB8ICA3ICsrKysrKy0KPj4+ICAgICAgID4gICBmcy9mMmZzL3NlZ21lbnQuYyAgICAg
-ICB8IDIxICsrKysrKysrKysrKysrKystLS0tLQo+Pj4gICAgICAgPiAgIGZzL2YyZnMvc2VnbWVu
-dC5oICAgICAgIHwgIDcgKysrKy0tLQo+Pj4gICAgICAgPiAgIGluY2x1ZGUvbGludXgvZjJmc19m
-cy5oIHwgIDEgKwo+Pj4gICAgICAgPiAgIDQgZmlsZXMgY2hhbmdlZCwgMjcgaW5zZXJ0aW9ucygr
-KSwgOSBkZWxldGlvbnMoLSkKPj4+ICAgICAgID4KPj4+CgoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QK
-TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+[ 9299.893835] F2FS-fs (vdd): Allow to mount readonly mode only
+mount: /mnt/f2fs: WARNING: source write-protected, mounted read-only.
+root@qemu:/ ps -ef|grep f2fs
+root          94       2  0 03:46 ?        00:00:00 [kworker/u17:0-f2fs_post_read_wq]
+root        6282       2  0 06:21 ?        00:00:00 [f2fs_discard-253:48]
+
+There will be no deletion in readonly image, let's skip starting
+discard thread to save system resources.
+
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/segment.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index b486fe4485f9..cc27c5440188 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2253,6 +2253,12 @@ int f2fs_start_discard_thread(struct f2fs_sb_info *sbi)
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+ 	int err = 0;
+ 
++	if (f2fs_sb_has_readonly(sbi)) {
++		f2fs_info(sbi,
++			"Skip to start discard thread for readonly image");
++		return 0;
++	}
++
+ 	if (!f2fs_realtime_discard_enable(sbi))
+ 		return 0;
+ 
+-- 
+2.40.1
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
