@@ -4,70 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BA250C47DD9
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Feb 2024 01:32:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D3077C54E4F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Feb 2024 01:32:37 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rePr8-0000za-CF;
-	Mon, 26 Feb 2024 01:32:35 +0000
+	id 1rePrA-0006WT-MW;
+	Mon, 26 Feb 2024 01:32:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rePr7-0000zU-7n
+ (envelope-from <chao@kernel.org>) id 1rePr8-0006WM-MA
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 26 Feb 2024 01:32:34 +0000
+ Mon, 26 Feb 2024 01:32:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MKYXI1Ap5bdO4ffnGtEFZhoB6Xx2YGZvvZEWMh9zBBU=; b=K9q5nmNz3+kMpucaXr3qg/YMYF
- JpZ+w4zXDXYHr1QnpQC/crQNjm7pEiFMrWnKpUXWIhnBC8PZIzcezasnuN8r39wDvuBxW0via7t4G
- 2k0ceucnss+ZLRsYg/Kb/xwfklWrrtm/cyWJcwDqYrHAuLl0EtkYdMJpR4X92RFYulKI=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=MKYXI1Ap5bdO4ffnGtEFZhoB6Xx2YGZvvZEWMh9zBBU=; b=asD2ewTm13414ftoE46Pen9PCr
- PX40423vU5axtJMZcqSh0bE2nxqe5HQVsQ7S1zd+qo3/B83d4mz4k1SfLLIwHyzaULXrg86GyWrDv
- pza/v33WiOYGH0Vd1pKFYyYIjAcCYLyhtG33LaxQPTwzWTkSpNjj7QfI5Voo4SOIOgtQ=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=uIDhPLNiisO8kLje9+ppC9Q2Qs4N6ZNlTlkoeo5OPkw=; b=GQUqS4wZlP2cKwGb5lYx0Phg2W
+ 3IxUrDn68NYrnqvXSPX15AzNpEsJmsumS5aA/qBoMMF/+bOQTQtlqjN/3942p0PGROQ5Ftq6iv2Ju
+ nOeE2cvwr667OSsjFH3KvBOvSk2bQJLenIsDSLDZ/bE3TuLkWsQHtSXzBkU1xgqNpLLk=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=uIDhPLNiisO8kLje9+ppC9Q2Qs4N6ZNlTlkoeo5OPkw=; b=J
+ feFeapFlmr4tkipoPimKri6AwEVHe0tkstYzDAs9TgMxcyzz2vWTRh72nh2HD+XSanT8pGsOgQkSc
+ hZx68fSAouOqOn2/O03xvs9lsDWxekQQbGbkBiS1Jz6nPE/hnHMMxTYLy+oVeC2dQ29g4XZW2kOir
+ QgMfj3/0kwOlEK4c=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rePr3-0007wJ-JM for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 26 Feb 2024 01:32:34 +0000
+ id 1rePr4-0007wM-OK for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 26 Feb 2024 01:32:35 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id A4CFACE122C
+ by dfw.source.kernel.org (Postfix) with ESMTP id 54CF460DF3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 26 Feb 2024 01:32:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87233C433F1;
  Mon, 26 Feb 2024 01:32:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E958C433C7;
+ Mon, 26 Feb 2024 01:32:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1708911141;
- bh=A4yz3LRTSvapt9o8FbzBxwIf+iiKoUhwLj0hcQkJ+Wk=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Kba7CjwyvYHZYqaueT48znUox1iICesihe//v1MzldqInj0Axh8uIvIfBjn+h6T/6
- TCqvnsiB0U6qFKtp0I7a2S7tBvyRGZoGO0kXG2dw1ERyFzI3+bOctLMqV2Ri/LbDIV
- XtFDkbFXIpHuv+baKXjHLX/KsG+0uyTmNtt4/2h/FlAAzfaNPqL/HQU7ZgQ5ffPzDv
- XEp7AniLEMBQsfyArGdqI8+sQy0D7i1NVN9HcLjwmJwIXH2BkdIrModkOfqGQ0b18E
- 9Zpb4EtqwTcKyakW2QPyKkX9BLFTdkYizPcvgCpU4q8VlRi9K6ZpEmX+X4VYYzcmhA
- odIiTNwigmV1g==
+ s=k20201202; t=1708911140;
+ bh=JC2tKZVI/N9NKXwRhcw37ItMYVdb46EEQNkTvwv2vU0=;
+ h=From:To:Cc:Subject:Date:From;
+ b=Sz8sjKAET+isPNL/4a4fFdhhgcMkhiNGh9nDOKbXa6M+bIqIqS/gJVLGUZt6kfd7U
+ SM6tD2+qQrobZhW2CxqSvTkKSogfCArlGO5sLq10ZoNJ4ftQcU3PHCNZkcdMUjQRLT
+ Rt5u70cfST75BOH4CAKDNkOdDeWq35f8VPOcUS8UMFQoi4eI+Xto7tlwLPA7XaS9qF
+ qrt/yiu4dFYNzVNu1+2LcnQ7WFDzX1zUzcnE76vkZV4XPaNvyV1A9Ki0dJZqU0Bvzh
+ hJKKTjm9B3Ol/u/2KtJPswTuPIFu6dGqdsdIO7zNpPTumy2iHJ7pj+zQVSZvE0tL81
+ LogR/jchMm3Wg==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Mon, 26 Feb 2024 09:32:06 +0800
-Message-Id: <20240226013208.2389246-2-chao@kernel.org>
+Date: Mon, 26 Feb 2024 09:32:05 +0800
+Message-Id: <20240226013208.2389246-1-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240226013208.2389246-1-chao@kernel.org>
-References: <20240226013208.2389246-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1rePr3-0007wJ-JM
-Subject: [f2fs-dev] [PATCH 2/4] f2fs: relocate f2fs_precache_extents() in
- f2fs_swap_activate()
+X-Headers-End: 1rePr4-0007wM-OK
+Subject: [f2fs-dev] [PATCH 1/4] f2fs: fix blkofs_end correctly in
+ f2fs_migrate_blocks()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,34 +82,43 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch exchangs position of f2fs_precache_extents() and
-filemap_fdatawrite(), so that f2fs_precache_extents() can load
-extent info after physical addresses of all data are fixed.
+In f2fs_migrate_blocks(), when traversing blocks in last section,
+blkofs_end should be (start_blk + blkcnt - 1) % blk_per_sec, fix it.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/data.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/data.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 0c728e82d936..bd8674bf1d84 100644
+index c21b92f18463..0c728e82d936 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -4045,12 +4045,12 @@ static int f2fs_swap_activate(struct swap_info_struct *sis, struct file *file,
- 	if (!f2fs_disable_compressed_file(inode))
- 		return -EINVAL;
+@@ -3841,13 +3841,14 @@ static int f2fs_migrate_blocks(struct inode *inode, block_t start_blk,
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	unsigned int blkofs;
+ 	unsigned int blk_per_sec = BLKS_PER_SEC(sbi);
++	unsigned int end_blk = start_blk + blkcnt - 1;
+ 	unsigned int secidx = start_blk / blk_per_sec;
+ 	unsigned int end_sec;
+ 	int ret = 0;
  
--	f2fs_precache_extents(inode);
--
- 	ret = filemap_fdatawrite(inode->i_mapping);
- 	if (ret < 0)
- 		return ret;
+ 	if (!blkcnt)
+ 		return 0;
+-	end_sec = secidx + (blkcnt - 1) / blk_per_sec;
++	end_sec = end_blk / blk_per_sec;
  
-+	f2fs_precache_extents(inode);
-+
- 	ret = check_swap_activate(sis, file, span);
- 	if (ret < 0)
- 		return ret;
+ 	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	filemap_invalidate_lock(inode->i_mapping);
+@@ -3857,7 +3858,7 @@ static int f2fs_migrate_blocks(struct inode *inode, block_t start_blk,
+ 
+ 	for (; secidx <= end_sec; secidx++) {
+ 		unsigned int blkofs_end = secidx == end_sec ?
+-			(blkcnt - 1) % blk_per_sec : blk_per_sec - 1;
++				end_blk % blk_per_sec : blk_per_sec - 1;
+ 
+ 		f2fs_down_write(&sbi->pin_sem);
+ 
 -- 
 2.40.1
 
