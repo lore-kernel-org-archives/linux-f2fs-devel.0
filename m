@@ -4,69 +4,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 53924C5478C
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 27 Feb 2024 06:36:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 41FD2C5478C
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 27 Feb 2024 15:44:34 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rer4k-0007Ca-68;
-	Tue, 27 Feb 2024 06:36:27 +0000
+	id 1rezd8-0002Vi-Ih;
+	Tue, 27 Feb 2024 15:44:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1rer4i-0007CT-LK
+ (envelope-from <dan.carpenter@linaro.org>) id 1rezd6-0002VX-BX
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 27 Feb 2024 06:36:25 +0000
+ Tue, 27 Feb 2024 15:44:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+ From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Esne05Xg/2+FYn1gPTCPuX94UvkRu95MFCnEvRPRHOU=; b=ReTg0yBqmuEFdaZtTlgFCES23Q
- ilHc83KQKP2QlgjUoT76Flerus2pCmF3XLTu5V9YXNJf/hm9TGoWehQRseyEtXk+1c9XiKMtlOwts
- amexEnHLnz4X1s+PGM145HS3wMxf6deKs4fksu1BLMZgb/Ce+mX5gkMstKPrfGJKbpUc=;
+ bh=ZyqE6zwCtj8FzE3kFECe+lH0t4NfDfRRhI6K5GNDTGk=; b=lPej2YcKlaHB1D+5vzxbRlvVKM
+ nmoY39LHj7AAmGoIsjdpA8Ul/0uj8i4JH+3rDYODr2ZQAFA2dkdR+HiylbPzP/kaQpfNN7AVDXVP5
+ qSfhvpgOIeIQJzHyMypKcfWdx3u5UFjBthoQZIkcxBPZW8e/JYt36MxZMWJFW4tq/R7o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Esne05Xg/2+FYn1gPTCPuX94UvkRu95MFCnEvRPRHOU=; b=aoiVr0Q8ZgrrFb0Vr1XqRDe38P
- D4YJVw66W/B98xUqU2wDxnyD6WCdP+lg9Ys03gDWUVbYV1fkhGHXS10MnqtO0Xn41g0DtZJGht08L
- BRqBCluzu9jvXpVUmGs0eUraCcQz9q5glWvKUuS6217T/GqiVuJ04lj2P0P/9r6RaC8w=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=ZyqE6zwCtj8FzE3kFECe+lH0t4NfDfRRhI6K5GNDTGk=; b=V
+ 5B1swRaLAawMLfVNOfI+0/DP3LOs8R6fwd4IQDPFqj+34pah2dQ6bXYTya+TMFlMN66JgFU1DzBMQ
+ By34ru9LPQF4aB6IQbJJKgHzuGVPbLLT1TOcCHNJckRH7kVrRvMAAqmTmJMEmIM8QcqjQmCVTTtYS
+ a20wWtCx5VHSbwxQ=;
+Received: from mail-lf1-f54.google.com ([209.85.167.54])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rer4h-0004tS-OU for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 27 Feb 2024 06:36:24 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 0CCA6CE1BC4;
- Tue, 27 Feb 2024 06:36:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B0E8C433C7;
- Tue, 27 Feb 2024 06:36:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1709015776;
- bh=BnWI1QlWvLT8QiqmYWbI9nYOFqfqKjduJfF+ni+ECWU=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=TAON0pASJNwPRPdlYDWOlNy5thVAd1zfXGGDMD9tvgdhVDaM5MNasI2hsJeAog4tq
- 7CTK3YUoVpDtoSiwjBCcs1j8vsWNtuNltYFB2rpX5BA8lpn/ER+fi+uVYOiaslWRaB
- XPj3t5FLRAz5a4gWlqFvqfHWQNMawq6j6zD6CqvUGJ5fmaW9ltX7XUqs0garIZvcAE
- r/1CDWmMln2ZZ5SQzUh1yg3TkgSgQvG07KDx7Dn5Yr5UCvCMi2QH8Z/wIrLCX2XwrE
- F9TjgMeBF2H5Lxr7j46Wnvh/8W/qUtLTUWQRcH3QLnYc5/msk+7Cw58aZIFQhiiARk
- tYei7ksoL52xQ==
-Date: Mon, 26 Feb 2024 22:36:14 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Message-ID: <20240227063614.GB1126@sol.localdomain>
-References: <20240221171412.10710-1-krisman@suse.de>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1rezd4-0000mN-O7 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 27 Feb 2024 15:44:28 +0000
+Received: by mail-lf1-f54.google.com with SMTP id
+ 2adb3069b0e04-513143d3c42so574193e87.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 27 Feb 2024 07:44:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=linaro.org; s=google; t=1709048655; x=1709653455; darn=lists.sourceforge.net;
+ h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=ZyqE6zwCtj8FzE3kFECe+lH0t4NfDfRRhI6K5GNDTGk=;
+ b=Rm2QfKZuab/xPl3Mz9nxF6LOvyCsB+KF4Qs/I/1zrG2gybV4bXQBzQKgj34tdM7Ldj
+ VvrOK2dORWQnLY2ZiTrhQd4ug5rl94qMb6mFspDCCdFFj6g2xJZlI1dQTuGOwWP7RpEX
+ UKe6gJ2ISvTYnaLaTJC+QKHRb8wIvXcbaSPpdr5vAEsBuWUTfkr+TGeVXf7NUqlTQgvI
+ LFOUPWhVzoaZlCssq4glwhBVEhwdvnXvcdGWo1K6y+SW7NTslRaewmPmyPADvJj6qM2a
+ v8zKtfI+Ontvxe5dv6o0cJROJvhKCfmR8kJrBTbf2eS1e0290Hue2OGgKI2zZoeAZa/o
+ 8vDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1709048655; x=1709653455;
+ h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=ZyqE6zwCtj8FzE3kFECe+lH0t4NfDfRRhI6K5GNDTGk=;
+ b=uQuy2QBaCASLFSJXU0vou5SFQkjhB9GlFsQ+qLX9JxUSq1FSohZ07EBsVTLqbLEq1j
+ x+2bH3inNNJ/gNV+sHAW2Rv7VAGTz+CPArSIBPzL+EqAz8rz3rBYBIN8RfQcneF6YmzP
+ vpKbHbcxzaabpx6bHatRZ0Woy0lP/Kl7NZVefKMs0T3sXRREjddy1jvVmK5KS4/7+RUN
+ NfaE1/58M5moikQixz0Xm7ukd1sX3yGz45+wwR5SyZEeNnPWGKTwkgW9Vtcq+pLuHmgq
+ Hs1Ryg1caWzoWillcBebbjJGavJzULrVUkqMqF+T7VNHqFAN+6tXcS2d3AwX+4G5/TNn
+ NdwQ==
+X-Gm-Message-State: AOJu0Yw9/QqDI/ylb4MVOPF7YD/xuX0qjlj+nsukPjQqUjMTfub4YJ4f
+ 1bzPdXV4HNMPIWHtbyYhLjW7iFTGOj+lu98zAYa2BLIdBPJ5Z+b/qQguiScwX1nTcrxkf6C4I8b
+ P
+X-Google-Smtp-Source: AGHT+IHpOljzyI6wZRjt/bF4pe+eAjXy2H2+2MDNzIGlbLNPAvf4LjiPK+b2T1eG3ClKkUIs6HLxMA==
+X-Received: by 2002:a05:600c:45cd:b0:412:7b4d:b256 with SMTP id
+ s13-20020a05600c45cd00b004127b4db256mr7458967wmo.18.1709047333146; 
+ Tue, 27 Feb 2024 07:22:13 -0800 (PST)
+Received: from localhost ([102.222.70.76]) by smtp.gmail.com with ESMTPSA id
+ c23-20020a7bc857000000b004128f1ace2asm15108530wml.19.2024.02.27.07.22.12
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 27 Feb 2024 07:22:12 -0800 (PST)
+Date: Tue, 27 Feb 2024 18:22:06 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: jaegeuk@kernel.org
+Message-ID: <0dbca927-9037-4ccd-ac1e-98ade64a2a0b@moroto.mountain>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20240221171412.10710-1-krisman@suse.de>
-X-Headers-End: 1rer4h-0004tS-OU
-Subject: Re: [f2fs-dev] [PATCH v7 00/10] Set casefold/fscrypt dentry
- operations through sb->s_d_op
+X-Headers-End: 1rezd4-0000mN-O7
+Subject: [f2fs-dev] [bug report] f2fs: use BLKS_PER_SEG, BLKS_PER_SEC,
+ and SEGS_PER_SEC
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,70 +98,40 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: brauner@kernel.org, tytso@mit.edu, amir73il@gmail.com,
- linux-f2fs-devel@lists.sourceforge.net, viro@zeniv.linux.org.uk,
- linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Feb 21, 2024 at 12:14:02PM -0500, Gabriel Krisman Bertazi wrote:
-> 
-> When case-insensitive and fscrypt were adapted to work together, we moved the
-> code that sets the dentry operations for case-insensitive dentries(d_hash and
-> d_compare) to happen from a helper inside ->lookup.  This is because fscrypt
-> wants to set d_revalidate only on some dentries, so it does it only for them in
-> d_revalidate.
-> 
-> But, case-insensitive hooks are actually set on all dentries in the filesystem,
-> so the natural place to do it is through s_d_op and let d_alloc handle it [1].
-> In addition, doing it inside the ->lookup is a problem for case-insensitive
-> dentries that are not created through ->lookup, like those coming
-> open-by-fhandle[2], which will not see the required d_ops.
-> 
-> This patchset therefore reverts to using sb->s_d_op to set the dentry operations
-> for case-insensitive filesystems.  In order to set case-insensitive hooks early
-> and not require every dentry to have d_revalidate in case-insensitive
-> filesystems, it introduces a patch suggested by Al Viro to disable d_revalidate
-> on some dentries on the fly.
-> 
-> It survives fstests encrypt and quick groups without regressions.  Based on
-> v6.7-rc1.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/20231123195327.GP38156@ZenIV/
-> [2] https://lore.kernel.org/linux-fsdevel/20231123171255.GN38156@ZenIV/
-> 
-> Gabriel Krisman Bertazi (10):
->   ovl: Always reject mounting over case-insensitive directories
->   fscrypt: Factor out a helper to configure the lookup dentry
->   fscrypt: Drop d_revalidate for valid dentries during lookup
->   fscrypt: Drop d_revalidate once the key is added
->   libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
->   libfs: Add helper to choose dentry operations at mount-time
->   ext4: Configure dentry operations at dentry-creation time
->   f2fs: Configure dentry operations at dentry-creation time
->   ubifs: Configure dentry operations at dentry-creation time
->   libfs: Drop generic_set_encrypted_ci_d_ops
-> 
->  fs/crypto/hooks.c       | 15 ++++------
->  fs/ext4/namei.c         |  1 -
->  fs/ext4/super.c         |  1 +
->  fs/f2fs/namei.c         |  1 -
->  fs/f2fs/super.c         |  1 +
->  fs/libfs.c              | 62 +++++++++++---------------------------
->  fs/overlayfs/params.c   | 14 +++++++--
->  fs/ubifs/dir.c          |  1 -
->  fs/ubifs/super.c        |  1 +
->  include/linux/fs.h      | 11 ++++++-
->  include/linux/fscrypt.h | 66 ++++++++++++++++++++++++++++++++++++-----
->  11 files changed, 105 insertions(+), 69 deletions(-)
-> 
+Hello Jaegeuk Kim,
 
-Looks good,
+The patch 9c1d3cd4ff8c: "f2fs: use BLKS_PER_SEG, BLKS_PER_SEC, and
+SEGS_PER_SEC" from Feb 6, 2024 (linux-next), leads to the following
+Smatch static checker warning:
 
-Reviewed-by: Eric Biggers <ebiggers@google.com>
+	fs/f2fs/gc.c:2092 update_fs_metadata()
+	warn: cast after binop
 
-- Eric
+fs/f2fs/gc.c
+    2089 static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
+    2090 {
+    2091         int segs = secs * SEGS_PER_SEC(sbi);
+--> 2092         long long blks = (long long)(segs << sbi->log_blocks_per_seg);
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Originally this was something like:
+
+	long long blks = (long long)segs << sbi->log_blocks_per_seg;
+
+So the cast seemed necessary to avoid an integer overflow.
+
+    2093         long long user_block_count =
+    2094                                 le64_to_cpu(F2FS_CKPT(sbi)->user_block_count);
+    2095 
+    2096         SM_I(sbi)->segment_count = (int)SM_I(sbi)->segment_count + segs;
+    2097         MAIN_SEGS(sbi) = (int)MAIN_SEGS(sbi) + segs;
+
+regards,
+dan carpenter
 
 
 _______________________________________________
