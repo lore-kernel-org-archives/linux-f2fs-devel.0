@@ -4,72 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DF45AC54E41
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Feb 2024 22:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 70919C48BF6
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 29 Feb 2024 07:19:08 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rfSlC-0008Ih-A1;
-	Wed, 28 Feb 2024 22:50:46 +0000
+	id 1rfah7-0002A6-H2;
+	Thu, 29 Feb 2024 07:19:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rfSl9-0008IX-2H
+ (envelope-from <huangjianan@xiaomi.com>) id 1rfah6-0002A0-FV
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 28 Feb 2024 22:50:43 +0000
+ Thu, 29 Feb 2024 07:19:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7pzvILSD3WuzHUuXX2CNYglpPuf9cqGYydQ8teGlv+c=; b=KcYnyfxd5Hm/f8m2l80tgm6tHs
- 1AClDf9FY51vwzBG21j27cuF2D8W0UNx+PV45aEIPhhlrAuUBLRL1h+c237bP5FGNr9rFRrVEkGIF
- c0/TtFii8EdxUQFY1pQb/RDjJtnQEAJjfn262kx5Yfm7CpSyd/Lursn/A0vuR/dtpAN4=;
+ bh=vJwMbzWzqZZecTvO2lEO80X6J/8axeV7KSvmdBq1RAw=; b=mytC9z8KTnHLavvl9W5lvtBx+M
+ FgFhmiImV0oIfR9DBnbAr3Rh6ijLA90o0fyZ1gRDnumNyxtd02vsA7oS0/xSzryuTqh/oAgJdq0EN
+ H4SwQPjxwgDrleCrGT+sD+AEsq93g+RYoyOq3LzVcEIoU0dltHwwPQZAqOgsRkIDuMwk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7pzvILSD3WuzHUuXX2CNYglpPuf9cqGYydQ8teGlv+c=; b=QuCFWjjha8MAOTmGqoOmTusAO5
- Fyy5YOzkY8b+YCBoQLFniVKCht84l/H7KoAWQWVy/8nSugxVAUH1iK9/g2L29KzAT8YRqXdz4ZD3V
- ReQ4mBizi+n1hbU6MLICBXK+mge6mcoc70x13OhnUmXjKG3ql2rr2wKgdYYdEFwgxc/8=;
-Received: from sin.source.kernel.org ([145.40.73.55])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rfSl5-0001hS-0y for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 28 Feb 2024 22:50:43 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 602C5CE231F
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 28 Feb 2024 22:50:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A09D2C43394;
- Wed, 28 Feb 2024 22:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1709160631;
- bh=pq8vRdWD6j6IoWSZ4zPOwhJv/Db5Ok0GUTbeHCKV/+k=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=mELIGUPldG1K0nHQYMA1MZ69VbmZPOymIuM6N7El4RCXHy4lO49sG+hlI7rFBXwOl
- WEpUV9iPT70yi+N43akaTpqtSkdDFMv/wjkRaN8yJhBq4TX2GLWmp6anY0JK8pjWt/
- zP4vV3JOF+25kSxpFTS4ROj0ws6Pd3mvtBrvKWSYxAQMuQrYeISKgApx+4tKaLbVKN
- Ni1vGQd+dK2pxXlHtIOfLgjNj3IgzVzpcBxP/YRteIo9o5oTd7fn0cFFbjnbwG96ra
- BM1pgb5SmhNrfT0Kd5SEvsPks5CDxkpL+8Apx3zrgsRqfShgOjyidyzHvydMdAX/UG
- puiX6mZa90gyQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 7ACE9D88FAF; Wed, 28 Feb 2024 22:50:31 +0000 (UTC)
+ ;
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=vJwMbzWzqZZecTvO2lEO80X6J/8axeV7KSvmdBq1RAw=; b=H
+ oiQoWXq9m1ZE3ESJfx2JGnr1Pl5pp84X2ftab8JCAdY3o82saF2mh+waw8BD/YCL4op+mOzyHTbXF
+ WPhrO0cmR5hymbh8F7XCRtFbtMdkRLnWxGBjTLmdy8AIhyQ6+2O4uHFXhkpZcVJP2rrGM/NuIGq+4
+ mtXvlwHzd3CO3BjQ=;
+Received: from outboundhk.mxmail.xiaomi.com ([118.143.206.90])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.95)
+ id 1rfah5-0005KY-Fj for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 29 Feb 2024 07:19:04 +0000
+X-IronPort-AV: E=Sophos;i="6.06,192,1705334400"; d="scan'208";a="79294954"
+To: <linux-f2fs-devel@lists.sourceforge.net>, <chao@kernel.org>,
+ <jaegeuk@kernel.org>
+Date: Thu, 29 Feb 2024 15:18:53 +0800
+Message-ID: <20240229071853.62884-1-huangjianan@xiaomi.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <170916063149.28690.12475647856104740303.git-patchwork-notify@kernel.org>
-Date: Wed, 28 Feb 2024 22:50:31 +0000
-References: <20240222121851.883141-1-chao@kernel.org>
-In-Reply-To: <20240222121851.883141-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1rfSl5-0001hS-0y
-Subject: Re: [f2fs-dev] [PATCH 1/4] f2fs: delete f2fs_get_new_segment()
- declaration
+X-Originating-IP: [10.237.8.19]
+X-ClientProxiedBy: BJ-MBX15.mioffice.cn (10.237.8.135) To YZ-MBX05.mioffice.cn
+ (10.237.88.125)
+X-Headers-End: 1rfah5-0005KY-Fj
+Subject: [f2fs-dev] [PATCH] f2fs-tools: fix to check loop device for
+ non-root users
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,42 +64,102 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+From: Huang Jianan via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Huang Jianan <huangjianan@xiaomi.com>
+Cc: jnhuang95@gmail.com, wanghui33@xiaomi.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+Currently mkfs/fsck gets the following error when executed by
+non-root users:
 
-This series was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+Info: open /dev/loop0 failed errno:13
+        Error: Not available on mounted device!
 
-On Thu, 22 Feb 2024 20:18:48 +0800 you wrote:
-> Commit 093749e296e2 ("f2fs: support age threshold based garbage
-> collection") added this declaration, but w/ definition, delete
-> it.
-> 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/f2fs.h | 2 --
->  1 file changed, 2 deletions(-)
+Let's fix it by reading the backing file from sysfs.
 
-Here is the summary with links:
-  - [f2fs-dev,1/4] f2fs: delete f2fs_get_new_segment() declaration
-    https://git.kernel.org/jaegeuk/f2fs/c/134c289f5e7d
-  - [f2fs-dev,2/4] f2fs: fix to don't call f2fs_stop_checkpoint in spinlock coverage
-    (no matching commit)
-  - [f2fs-dev,3/4] f2fs: fix to handle segment allocation failure correctly
-    https://git.kernel.org/jaegeuk/f2fs/c/6ca83e9cdc51
-  - [f2fs-dev,4/4] f2fs: introduce FAULT_NO_SEGMENT
-    https://git.kernel.org/jaegeuk/f2fs/c/251a769d3f50
+Fixes: 14197d546b93 ("f2fs-tools: fix to check loop device")
+Signed-off-by: Huang Jianan <huangjianan@xiaomi.com>
+---
+ lib/libf2fs.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 46 insertions(+), 2 deletions(-)
 
-You are awesome, thank you!
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index d51e485..fa9ea9a 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -834,14 +834,20 @@ int f2fs_dev_is_umounted(char *path)
+ 		/* check whether regular is backfile of loop device */
+ #if defined(HAVE_LINUX_LOOP_H) && defined(HAVE_LINUX_MAJOR_H)
+ 		struct mntent *mnt;
+-		struct stat st_loop;
++		struct stat st_loop, st_sysfs;
+ 		FILE *f;
++		bool has_sysfs = true;
++
++		if (stat("/sys/dev/block/", &st_sysfs) || !S_ISDIR(st_sysfs.st_mode))
++			has_sysfs = false;
+ 
+ 		f = setmntent("/proc/mounts", "r");
+ 
+ 		while ((mnt = getmntent(f)) != NULL) {
+ 			struct loop_info64 loopinfo = {0, };
+-			int loop_fd, err;
++			struct stat st_back;
++			int loop_fd, sysfs_fd, rc, err;
++			char buf[PATH_MAX + 1];
+ 
+ 			if (mnt->mnt_fsname[0] != '/')
+ 				continue;
+@@ -852,6 +858,44 @@ int f2fs_dev_is_umounted(char *path)
+ 			if (major(st_loop.st_rdev) != LOOP_MAJOR)
+ 				continue;
+ 
++			if (has_sysfs) {
++				snprintf(buf, PATH_MAX,
++					 "/sys/dev/block/%d:%d/loop/backing_file",
++					 major(st_loop.st_rdev), minor(st_loop.st_rdev));
++
++				sysfs_fd = open(buf, O_RDONLY);
++				if (sysfs_fd < 0) {
++					MSG(0, "Info: open %s failed errno:%d\n",
++						buf, errno);
++					return -1;
++				}
++
++				memset(buf, 0, PATH_MAX + 1);
++				rc = read(sysfs_fd, buf, 1024);
++				if (rc < 0) {
++					MSG(0, "Info: read %s failed errno:%d\n",
++						buf, errno);
++					return -1;
++				}
++
++				/* Remove trailing newline (usual in sysfs) */
++				if (rc > 0 && *(buf + rc - 1) == '\n')
++					--rc;
++				buf[rc] = '\0';
++
++				if (stat(buf, &st_back) != 0) {
++					MSG(0, "Info: stat %s failed errno:%d\n",
++						buf, errno);
++					return -1;
++				}
++
++				if (st_buf.st_dev == st_back.st_dev &&
++					st_buf.st_ino == st_back.st_ino) {
++					MSG(0, "\tError: In use by loop device!\n");
++					return -EBUSY;
++				}
++			}
++
+ 			loop_fd = open(mnt->mnt_fsname, O_RDONLY);
+ 			if (loop_fd < 0) {
+ 				MSG(0, "Info: open %s failed errno:%d\n",
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
 
 
