@@ -4,72 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 875DAC5478C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Mar 2024 18:20:38 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 43E6BC48BF6
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Mar 2024 18:20:40 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rhCvU-0008Su-5N;
-	Mon, 04 Mar 2024 18:20:36 +0000
+	id 1rhCvW-0002TP-AE;
+	Mon, 04 Mar 2024 18:20:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rhCvS-0008Sm-Pm
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rhCvT-0002TG-2H
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 04 Mar 2024 18:20:35 +0000
+ Mon, 04 Mar 2024 18:20:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LXIErrNTO+BRaJRqybF3ijoynWyqGK1/0M7RQ0JJ19I=; b=Wyt8qtJk0+IoyYjQ2FUu+di9Zx
- AJa3iNk+K7Sqdf+/ZVZ3egoFQAcGctxiOy3VbSTAtmn3TC/j/owM0V/YuKql/COc3ry9m63v9P1Aw
- Lyfo/KJ4jyfC0d7y2ZzA66oh1QmvWKfdEPRS05yU1COvn8G8URso/Gbhc2IWG9dacInE=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=gaef5BaaM1j0lTjSKD5TKPYlspQaNhVe2LhNiV4YyhU=; b=SrB0094msAdmG/gsj8EelA+CDz
+ 1+o4PkeM13BvUQQGXvkCzUUe2AD0bpWTYdiWOT3AnV2jNEQW+O11fxcTNhUu110+3WXtfB2ACtvTB
+ L9B3HvOBmpshqmSfa+fydcaV5ymjHGHXmsTQzTrrAgw3XBGkXXReYLpE9sKHzvCJTMkE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=LXIErrNTO+BRaJRqybF3ijoynWyqGK1/0M7RQ0JJ19I=; b=M
- g11AAgXYAzeUzoW9TaLc9o7PwMTiSdMf02kvggUuVQKup48Bz/sw49gzGHmkaIvgKUIbF+YlXzt7u
- BI46Vxg03SuqgCLFr55hEFrzJC2251X1AQG6zQq2FklI4lwpzw9eug+joiwsL/xCDppTAMWW3OC7H
- R6HRcwQjcVp7uXro=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=gaef5BaaM1j0lTjSKD5TKPYlspQaNhVe2LhNiV4YyhU=; b=EjDj1G+ozbiAleY5MNtP+3WM1d
+ NCdNqHmtzbkyQr7imE3QDgEXTZzEpa/7hfzsqf9mhzEfmsi9u8cxiz8BLpuHS6gCDUZewg5UdDugZ
+ 70XIm6TZVNMZyOgHc+9K7X7w7ijD7V+zRaJNM6XBeFn1TVFv+aFP/hEOSMeP7e3GKpNs=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rhCvM-0002fP-H9 for linux-f2fs-devel@lists.sourceforge.net;
+ id 1rhCvN-0002fa-C5 for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 04 Mar 2024 18:20:35 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 39B7660EFC
+ by dfw.source.kernel.org (Postfix) with ESMTP id 024E161049
  for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon,  4 Mar 2024 18:20:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 113D1C43330;
  Mon,  4 Mar 2024 18:20:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D8AFEC433F1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  4 Mar 2024 18:20:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1709576428;
- bh=qwyAtP+Ex1Wn+GtMrycVqvjZFbLzrOIlZpsByZaq2Tw=;
- h=Subject:From:Date:To:From;
- b=tqoCtKuvuFmr0A7OBTyJr9KJiorCa98c7lCxjvNWm+xcp1j2Xu1YUmqAliCBCjXSa
- s0e/5Iefenp+X4YqgAg0kGgB621RRHcKMKZ4O1+TvEhn8urQ7HWijmgdNvNqxpZiej
- zR3TbCT4r6O8PelenGjEFAgd6TBs2ENJh7br6b2fJWzt6gOEKkw6wMkIlM0l/8x6SB
- dfhIxH6Zl7zulbEAzaZhgXVp4mzxwo0+x9bqXOnmgcsAc5oAJInxwUVIbxJI2WRbaE
- cSPo2e5I+/ibLH55MS1iXwARoYEqHo+VyfKF6VONMdYXgEm+uwD3SXK0ISHuLSBy7H
- QQ8LVXpS2mi6g==
+ s=k20201202; t=1709576429;
+ bh=lTbK2fW4sd5g7yN9587jwyOUJdCj3ya2dZC91nk0tOM=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=Cpm8IWRmhRN6aGArbKrbu6AynKWoRY3VFI74Yhsj6b1GKa0eJAyAafpc+KdMcMrju
+ oEkbgyffn5N4+IHT5Jzylw38cxhzk7jA00GSPLZoYHuVQqom3j4zrPxKh20ZayAnjH
+ DlI5aWOd+3twcQd4Sovd21Y618Sjd3zDPC7xk9+wbvAANeVQg+I3yiCaOJIrXUVkZZ
+ U5Z9LpLWcm8wH169HGsqlKukpj8i4qav4B9cTqwyLj5sG0ymnAGiwBPtluujy09wXm
+ NV/s653c4ozrKDFMqEXFoiBNu4nBJtYmpSKASaiFvFHXKixpAwKAmR6W/9AXpvn2w7
+ NEBGPDBXCNA8Q==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- C29F9D9A4BB for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  4 Mar 2024 18:20:28 +0000 (UTC)
+ F109DD9A4BB; Mon,  4 Mar 2024 18:20:28 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <170957642871.16816.4377481812991371857.git-patchwork-summary@kernel.org>
+Message-Id: <170957642898.16816.15329403645520818007.git-patchwork-notify@kernel.org>
 Date: Mon, 04 Mar 2024 18:20:28 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1rhCvM-0002fP-H9
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+References: <20240226031916.2420870-1-chao@kernel.org>
+In-Reply-To: <20240226031916.2420870-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1rhCvN-0002fa-C5
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to check return value in
+ f2fs_insert_range()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,68 +81,33 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Patch: [f2fs-dev,v2] f2fs: introduce SEGS_TO_BLKS/BLKS_TO_SEGS for cleanup
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=831928
-  Lore link: https://lore.kernel.org/r/20240304032855.1425579-1-chao@kernel.org
+On Mon, 26 Feb 2024 11:19:16 +0800 you wrote:
+> In f2fs_insert_range(), it missed to check return value of
+> filemap_write_and_wait_range(), fix it.
+> 
+> Meanwhile, just return error number once __exchange_data_block()
+> fails.
+> 
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> 
+> [...]
 
-Series: [f2fs-dev,1/2] f2fs: fix to check return value __allocate_new_segment
-  Submitter: Zhiguo Niu <zhiguo.niu@unisoc.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=831423
-  Lore link: https://lore.kernel.org/r/1709281555-11373-1-git-send-email-zhiguo.niu@unisoc.com
-    Patches: [f2fs-dev,1/2] f2fs: fix to check return value __allocate_new_segment
-             [f2fs-dev,2/2] f2fs: fix to check return value of f2fs_gc_range
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix to check return value in f2fs_insert_range()
+    https://git.kernel.org/jaegeuk/f2fs/c/2fc2bcc8d399
 
-Series: [f2fs-dev,1/4] f2fs: fix blkofs_end correctly in f2fs_migrate_blocks()
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=829643
-  Lore link: https://lore.kernel.org/r/20240226013208.2389246-1-chao@kernel.org
-    Patches: [f2fs-dev,1/4] f2fs: fix blkofs_end correctly in f2fs_migrate_blocks()
-             [f2fs-dev,2/4] f2fs: relocate f2fs_precache_extents() in f2fs_swap_activate()
-             [f2fs-dev,3/4] f2fs: clean up new_curseg()
-             [f2fs-dev,4/4] f2fs: fix to reset fields for unloaded curseg
-
-Series: [f2fs-dev,1/2] f2fs: ro: compress: fix to avoid caching unaligned extent
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=829726
-  Lore link: https://lore.kernel.org/r/20240226073539.2509926-1-chao@kernel.org
-    Patches: [f2fs-dev,1/2] f2fs: ro: compress: fix to avoid caching unaligned extent
-             [f2fs-dev,2/2] f2fs: ro: don't start discard thread for readonly image
-
-Patch: [f2fs-dev] f2fs: fix to check return value in f2fs_insert_range()
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=829662
-  Lore link: https://lore.kernel.org/r/20240226031916.2420870-1-chao@kernel.org
-
-Patch: [f2fs-dev] f2fs: fix to do sanity check in update_sit_entry
-  Submitter: Zhiguo Niu <zhiguo.niu@unisoc.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=830683
-  Lore link: https://lore.kernel.org/r/1709121594-22314-1-git-send-email-zhiguo.niu@unisoc.com
-
-Patch: [f2fs-dev,v2] f2fs: fix to use correct segment type in f2fs_allocate_data_block()
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=829557
-  Lore link: https://lore.kernel.org/r/20240225063628.2086320-1-chao@kernel.org
-
-
-Total patches: 12
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
