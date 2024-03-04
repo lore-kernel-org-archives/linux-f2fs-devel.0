@@ -4,72 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 213E1C5478C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Mar 2024 18:20:45 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 10B05C54E55
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Mar 2024 18:20:46 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rhCvb-0006AD-Ul;
-	Mon, 04 Mar 2024 18:20:44 +0000
+	id 1rhCvc-0002Tp-KU;
+	Mon, 04 Mar 2024 18:20:45 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rhCvb-00069y-22
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rhCvZ-0002Te-6G
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 04 Mar 2024 18:20:43 +0000
+ Mon, 04 Mar 2024 18:20:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=F8VgTj8mX8lj/2DLnL6kPJHjX8TCvjNW/1HMPnUdz8U=; b=PvRfoXv/d+n2cd0h0hprSJXXlF
- e1eWeSoK5hnafegtIBzYbCINrese0bUVO2VbmMCTccd4BueXUiPk9kOCSN/KbX0iiIeCGRc1P8n4A
- RuVbONvZcIOyS6IIBqBj8xPzw6Y9ZpWdO1bQfuVt8Jot2RGmpgLhY5E8qxDaGrJg/clo=;
+ bh=u3+HmtyFXOimzwci6OiQgwNKHxpKY+1Wd4S8b3OJfoA=; b=idJHoSmPvhdw1MQwvUDPkq+RqC
+ mJ0S0EiFreuPPR8nUJ9Yd1sNpXuA9YhbqmHCQoItBrLTe5mX2gPni7mlpQrRXmSzyAxQgNg7lrVNk
+ TSsgEKVjGsmEGIgRLNrAzacStHn/kKT5UPoaGYppySAkeqz+jhrpqD61FfuRrEAjULDU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=F8VgTj8mX8lj/2DLnL6kPJHjX8TCvjNW/1HMPnUdz8U=; b=nGbNHvZK44lcfS/hgGYvFkvDds
- zx6E0Sogu6+UDDTr8IPkJBoVUsJZ14+Bhiv0fAwmIJ2lBMdrI69oIX6T2yfKpvHK9Se5nNm7HPebo
- laEug4yqjAH0Ffipltf3jfSmi+XEDRLBuoWQ/LSjNScte0FZQonR+Sr8g5X6C16HLxd4=;
+ bh=u3+HmtyFXOimzwci6OiQgwNKHxpKY+1Wd4S8b3OJfoA=; b=WsaUd6GtlI8WskP9t49gYUYbQe
+ g85p7VJ3PBJ1vxdHZmEwT9pdzjPlNenIvngnnWa8re3u6phjB9lZaa2aZQDK18q1pSF/6TjFIbGWm
+ bnZkFJK+Kq64iFcIF82btUCCIrJvnAY1F91NHz9XnzKepGLQrTSeZgghHrFfJyC4MbpY=;
 Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rhCvU-0002g7-5Y for linux-f2fs-devel@lists.sourceforge.net;
+ id 1rhCvT-0002fu-8r for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 04 Mar 2024 18:20:42 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 950A1CE16AC
+ by sin.source.kernel.org (Postfix) with ESMTP id A10CBCE0B62
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  4 Mar 2024 18:20:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2BC1EC4166C;
  Mon,  4 Mar 2024 18:20:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DFFEBC43399;
+ Mon,  4 Mar 2024 18:20:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1709576429;
- bh=t0ZE3fuXMKbZQWvtdv7075xw9wqlU8kEK4OZdYpNEnI=;
+ s=k20201202; t=1709576428;
+ bh=zBz/B0sPWT2Admpa/78zITi4LH0kZhVDwkb4NFeSsWM=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=X8Avz4dHUd89U6+LNm6Hfe0xsVR2mJePRT8J32cS95S+x6/PaCdn5u+jrxbHHPRkg
- gg+7vNXkZMg6fIWGTw73A4rPI9Vw/93nwPZQBwhNLyxnqXT7pbHQcm98lD/XsQLWQo
- pg+rWqlOd2kj+DuH82e6q/4IWYnv7FbsGIMZTrRRMzDfyFvylvSdamXRF3Xg+BLu3n
- UODi5xsPn7F9IhHgQXbq6PSs9CETuNwZXUTIYWcD7YME1XaEA15yaZ8DpQA+57/6Dv
- 03Al+u5caf3hOxeADtIned0RuJF8LkcsGpBpIY3qN/iddai8atDleFEWtYiWkT0WJz
- d8xPYm6GsSNpQ==
+ b=GafLWyUzmjeWoIBnnnYln5Nhx9tEkEO3bWDW0/2mgrMOGzo1wzMGo7hK/neWWgzNV
+ SgAo3xqrVcLntFh8uUWkKbJywVhAVo6soeKhZlTkyM4h95g2sYKsniqGjm6a5N3XMu
+ X83gggqeTexElXf1qelqwXW4ze+5D5dM+mHHZdRtqtRt2WdiJjxv77RqnMxTPyQcHO
+ jkT+esrTICpUVGqVMJGi9KHm1bbADQalSTltH2/gVM5sm2X2rIPwRGKfWhiMjStREE
+ hbOyUjIngKEEjU+ovl4dzLMFzyuxPHDrV6338Jsdi0es86uuoUbV+TGUyol6moDYsJ
+ BplU+QoHNnzpQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 0ADE1D88F8A; Mon,  4 Mar 2024 18:20:29 +0000 (UTC)
+ CA373D9A4B9; Mon,  4 Mar 2024 18:20:28 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <170957642904.16816.7612730438346906986.git-patchwork-notify@kernel.org>
-Date: Mon, 04 Mar 2024 18:20:29 +0000
-References: <20240225063628.2086320-1-chao@kernel.org>
-In-Reply-To: <20240225063628.2086320-1-chao@kernel.org>
+Message-Id: <170957642882.16816.9297901358493884285.git-patchwork-notify@kernel.org>
+Date: Mon, 04 Mar 2024 18:20:28 +0000
+References: <20240304032855.1425579-1-chao@kernel.org>
+In-Reply-To: <20240304032855.1425579-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1rhCvU-0002g7-5Y
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to use correct segment type in
- f2fs_allocate_data_block()
+X-Headers-End: 1rhCvT-0002fu-8r
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: introduce SEGS_TO_BLKS/BLKS_TO_SEGS
+ for cleanup
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,20 +92,28 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Sun, 25 Feb 2024 14:36:28 +0800 you wrote:
-> @type in f2fs_allocate_data_block() indicates log header's type, it
-> can be CURSEG_COLD_DATA_PINNED or CURSEG_ALL_DATA_ATGC, rather than
-> type of data/node, however IS_DATASEG()/IS_NODESEG() only accept later
-> one, fix it.
+On Mon,  4 Mar 2024 11:28:55 +0800 you wrote:
+> Just cleanup, no functional change.
 > 
-> Fixes: 093749e296e2 ("f2fs: support age threshold based garbage collection")
 > Signed-off-by: Chao Yu <chao@kernel.org>
-> 
-> [...]
+> ---
+> v2:
+> - don't cast type of segment number from unsigned int
+> to long long, because segs << log_blocks_per_seg won't
+> overflow due to f2fs doesn't support 64-bits addressing.
+>  fs/f2fs/debug.c   |  7 +++----
+>  fs/f2fs/f2fs.h    | 14 ++++++++------
+>  fs/f2fs/gc.c      | 10 +++++-----
+>  fs/f2fs/gc.h      |  4 ++--
+>  fs/f2fs/segment.c | 12 ++++++------
+>  fs/f2fs/segment.h | 15 +++++++--------
+>  fs/f2fs/super.c   | 16 ++++++++--------
+>  fs/f2fs/sysfs.c   |  4 ++--
+>  8 files changed, 41 insertions(+), 41 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: fix to use correct segment type in f2fs_allocate_data_block()
-    https://git.kernel.org/jaegeuk/f2fs/c/732485823782
+  - [f2fs-dev,v2] f2fs: introduce SEGS_TO_BLKS/BLKS_TO_SEGS for cleanup
+    https://git.kernel.org/jaegeuk/f2fs/c/45809cd3bdac
 
 You are awesome, thank you!
 -- 
