@@ -4,72 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 891FFC54E41
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 Mar 2024 17:50:44 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2C46BC5475B
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 Mar 2024 17:50:47 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rhvPd-00087t-W2;
-	Wed, 06 Mar 2024 17:50:42 +0000
+	id 1rhvPi-000069-8U;
+	Wed, 06 Mar 2024 17:50:46 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rhvPd-00087n-Ak
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rhvPe-00005j-Fi
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 06 Mar 2024 17:50:42 +0000
+ Wed, 06 Mar 2024 17:50:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=plfCy1nwtMYKeTAc5e8aXkC9AkA9bg4BgMzsNopiGOc=; b=jZQZ1OKhph2Q9oNwxDv3oQWmPb
- kYxExnq3/oTpwCdB2ujeLBb5yoHcX+yjdkNdrTvgnHU35kA8kPjyT5l+tMjGKort+LUByiTQsPaYb
- J1q+x2NwoRzPx75MEY1b1ZlKi05cyWXpcCGirw82T4eE98JlbLN9URMkUxg/mVDu/yTs=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=26ClJN5fxdRNROl0Qrcw5njl6Bfh1rxKHRJyCxi6L6s=; b=AX/8cRxVBQ25cLHE8RzLCh8eWr
+ liqb/RGJjp+5DIk77NLXy9JzT5EdvCq5PX9Xp4bWP/7CBCc7JjQsQLkDJ5nm97KCVU/8PoxEoJtKa
+ dk3jRO7aQmIGTO7jhXo1ExYuLLnPvozI2Bd1qEGTWqWjBgEY5iEPEP3U51rvwOm7+FV8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=plfCy1nwtMYKeTAc5e8aXkC9AkA9bg4BgMzsNopiGOc=; b=Y
- 3MF1tGaGvv6F351D8lxlySIXagVkRJroGoPvgK058TlA/7QazFbschkJt4hQmeayYlzszQxdjam41
- m26CSpoOf3WStYpIO2NMGUy26swrRg0YVigIukljjRxol1W2T/sObtZGk9rTnuYKzMwyUXzUulY72
- ZAOaBZ0cqPLBLSoM=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=26ClJN5fxdRNROl0Qrcw5njl6Bfh1rxKHRJyCxi6L6s=; b=UmUXnihc+ynwQ8nM4rACPyo6/S
+ h6rGRGHDigT/yEqGrF0nvnXdNOA9lmDkbyjyfqcH+Ri4JSyBDyTa2YGmQJlx2mlEQC/9gcVyMvTmL
+ M8JvrciE2BZ643W+bWjcrtltPPz5ERai+Ld8gnTI7Ep7iVe52xOcPxBvGHRUv+mnFLJk=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rhvPV-0006Ua-Mh for linux-f2fs-devel@lists.sourceforge.net;
+ id 1rhvPY-0006VH-4P for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 06 Mar 2024 17:50:42 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 5BFCB6147E
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by sin.source.kernel.org (Postfix) with ESMTP id D16C8CE22CB;
  Wed,  6 Mar 2024 17:50:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 09A21C433F1
- for <linux-f2fs-devel@lists.sourceforge.net>;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1A2D7C433C7;
  Wed,  6 Mar 2024 17:50:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1709747429;
- bh=lAASYLz4/8l/r6bDSRsICWfe+a+oCljRd015yJHkHe4=;
- h=Subject:From:Date:To:From;
- b=fBszN2XXUhKlNzYc8YvzTkidnP3CSv3gxy3FYtmfpE1XfJIfHUFsC0hEcdNFbdcDg
- 9mrJ71wzmkLQKNePQE/ZpdpZpCtSgVpN3GRt8HNAHT+yupBWIoYtFvmkq78ophUuvP
- jYbePEajFzUW4Pms6a8eaNJe8aDZvOZNsh4iLXdC0VgsbBbKe4qm1tVkLYWJES3qao
- 32LzrzmxW0P1yCS4vCVfbZ54Lltfe3Q14A2k7csiPeEuLDKcY7blw9nV8k5seqo76W
- yt6UF1pQXfZ2K7n3jnNcWZcBBn5bp+X6XEkk994ZKOKeB9WfJNjWF9EWk1fTqvaxXs
- aKJmpFQluzjwQ==
+ bh=7CB5Bot5JtGx9FNOHp5QlZ+t4Ki7IpsGY6s5MKPegSY=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=TFSZGg6tb8BmHi/WN/doDwAsZ9zfjJAYcUXgkYXP+0UNL4QEYLy2LEh6uFQtgO/8v
+ 7jRRTsO4l0zSuoiv16tK16/RA+gd92HgkIwTj0oVO9F908DVR5p3cVFmH0noZ1HmiZ
+ UA1KnikxF7HXc+AdOGSWdq+FkKR80IQlMG1N1xwDfP4g26ZBW1Hcnzd9CKxAhJwIYO
+ TfogW+jsIf/bA5elYAD9tA1Ig6fU2aoaKy85vuEkqa9SzWg0FEBlAGr6iCcIjAa1il
+ d92h4m5VYBHZkj6MoZtIVcdku08ROcpcnm/HOish5Oz4fm6AIqahayztM15gIhdmZ+
+ T2BSJbcW+0XLA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- E4187D9A4B5 for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed,  6 Mar 2024 17:50:28 +0000 (UTC)
+ ECA7FD84BDB; Wed,  6 Mar 2024 17:50:28 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <170974742886.3369.17374281770211650485.git-patchwork-summary@kernel.org>
+Message-Id: <170974742896.3369.11970088169453313081.git-patchwork-notify@kernel.org>
 Date: Wed, 06 Mar 2024 17:50:28 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1rhvPV-0006Ua-Mh
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+References: <20240305080943.6922-1-r.smirnov@omp.ru>
+In-Reply-To: <20240305080943.6922-1-r.smirnov@omp.ru>
+To: Roman Smirnov <r.smirnov@omp.ru>
+X-Headers-End: 1rhvPY-0006VH-4P
+Subject: Re: [f2fs-dev] [PATCH] f2fs: Cast expression type to unsigned long
+ in __count_extent_cache()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,24 +80,34 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: s.shtylyov@omp.ru, lvc-project@linuxtesting.org,
+ linux-kernel@vger.kernel.org, k.yankevich@omp.ru,
+ linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Patch: [f2fs-dev] f2fs: Cast expression type to unsigned long in __count_extent_cache()
-  Submitter: Roman Smirnov <r.smirnov@omp.ru>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=832410
-  Lore link: https://lore.kernel.org/r/20240305080943.6922-1-r.smirnov@omp.ru
+On Tue, 5 Mar 2024 11:09:43 +0300 you wrote:
+> Cast expression type to unsigned long in __count_extent_cache()
+> to prevent integer overflow.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Svace.
+> 
+> Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+> 
+> [...]
 
+Here is the summary with links:
+  - [f2fs-dev] f2fs: Cast expression type to unsigned long in __count_extent_cache()
+    https://git.kernel.org/jaegeuk/f2fs/c/e88f4647d82f
 
-Total patches: 1
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
