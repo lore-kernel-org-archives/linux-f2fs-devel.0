@@ -4,72 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 117BDC54798
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 Mar 2024 02:23:55 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D2655C5475B
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 Mar 2024 03:48:37 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rhgwj-0001lP-Ki;
-	Wed, 06 Mar 2024 02:23:53 +0000
+	id 1rhiGh-0007S5-5E;
+	Wed, 06 Mar 2024 03:48:35 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rhgwi-0001lG-Oh
+ (envelope-from <Xiuhong.Wang@unisoc.com>) id 1rhiGf-0007Rs-DB
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 06 Mar 2024 02:23:52 +0000
+ Wed, 06 Mar 2024 03:48:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7XM/Llgj8lwiCV2cACXxyMAq73xPB1otmD5lKBKLUY8=; b=HFU3YLbyPHcxjeDwrTwEMRQ+sD
- o0mroVw2AwpX/aQGMpq8rFB+yQSLE4ExM1ZxPVHJ6WJtVtdjKJJZhIg+4aZ/CJJar69ML04nXLja0
- NN/wRQEYqPv7GZ3S7QnaCrSx81i66diHukKDhawHwCUGchWH01B+HYrEAohUst/JPtJ0=;
+ bh=E/EG/9OUysCCu2EIMuyX5R2856qMq7OXIrJcnhG3wx0=; b=a12gGR8/dlRt/ueiPyGtFSJUUL
+ RuYgMEawX3ny4If5VfkQU0GbaB8CgMB0bpAXfHeovJZ0ksh/0D3WhN84tdGseUh8GsGF/YFhcypxQ
+ OzqTngRSKsGpHKQpNam14/0pFah/T8s1hM12oU9++gYHLk7X242LYLSHXlngi4Wk9M44=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=7XM/Llgj8lwiCV2cACXxyMAq73xPB1otmD5lKBKLUY8=; b=G9C1zkzvhZNxizzyv6e9g7TYdv
- Ujh3sqJAS3vQnWR814tOo3upvlXMEK2Uti7Ev3aIAnIbxsMXljDvidnYHvRq7kOVIFc4arDxKBCSU
- gdkprfllTom1xMn4hBf0ABPgJDQ16HntoSz+CTRCc0oCggUESEVlSClZYvkTfpN7KjD8=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=E/EG/9OUysCCu2EIMuyX5R2856qMq7OXIrJcnhG3wx0=; b=iKr0Mh4KkkOpGUFoEPgW0VwX1Y
+ BNZB99K45ALxsqVjPqyUN30BS/5PGraPoqHrHiGPXpDtLd6ZH1K7YQNHGMfrHtdRNLcs0LFSj2Rmo
+ 3MVFitpGncWvsdU6kPYRYkvr9a9O9mh2P3BZ/0D/FB4zDdn9AerwB2kjv+wbEc/oYWUk=;
+Received: from mx1.unisoc.com ([222.66.158.135] helo=SHSQR01.spreadtrum.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rhgwb-0007TD-UC for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 06 Mar 2024 02:23:52 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 59674CE1E88
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed,  6 Mar 2024 02:23:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9B4FC433F1;
- Wed,  6 Mar 2024 02:23:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1709691819;
- bh=thzyX0QVW7HCmD/AS2IUCEdrgCJD2FDngBW5T7A+LDg=;
- h=Date:Subject:To:References:From:In-Reply-To:From;
- b=rbxhxhWoauShrqAED6RbMQJ/l4S7v/CLzCOob8mtA5OwApBBzYLh3TF2BdWizUoJg
- tSkgVlYC4X6YghhSZBVizxopWus6pN0+HrQPtiARiVa8hK9lrzS6SqMib6LgXiCVbx
- zgHaedhVFaMCAbBNEgYw2eIwo5pLL1tbIl4SUXuNwqUT8Z/Kke6sxlOLNyVkSQcf8J
- f6dewf2Xo8ZJToUJRT0O/XSbCzJaOMaguo7qe5aORGHxH09hMrgA7SA5G4D3jMMExZ
- IsZCtATLpHb9zFGGIxko175wyrfOkUWVsGzbHZEGaVGos1fKQzIeCvVVdjISMzqGUQ
- 34zu+U5KfbMJQ==
-Message-ID: <85cd3edf-8256-44d6-8dac-eebffb90fb52@kernel.org>
-Date: Wed, 6 Mar 2024 10:23:33 +0800
+ id 1rhiGY-0003NC-6h for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 06 Mar 2024 03:48:33 +0000
+Received: from dlp.unisoc.com ([10.29.3.86])
+ by SHSQR01.spreadtrum.com with ESMTP id 4263m2C3002928;
+ Wed, 6 Mar 2024 11:48:02 +0800 (+08)
+ (envelope-from Xiuhong.Wang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+ by dlp.unisoc.com (SkyGuard) with ESMTPS id 4TqJK02Dtrz2KZgsX;
+ Wed,  6 Mar 2024 11:47:00 +0800 (CST)
+Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 6 Mar 2024 11:48:00 +0800
+From: Xiuhong Wang <xiuhong.wang@unisoc.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>,
+ <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>
+Date: Wed, 6 Mar 2024 11:47:46 +0800
+Message-ID: <20240306034746.3722986-2-xiuhong.wang@unisoc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240306034746.3722986-1-xiuhong.wang@unisoc.com>
+References: <20240306034746.3722986-1-xiuhong.wang@unisoc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-References: <20240305001709.637722-1-jaegeuk@kernel.org>
- <ZeeqmMT8sdPyPKi0@google.com>
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <ZeeqmMT8sdPyPKi0@google.com>
-X-Headers-End: 1rhgwb-0007TD-UC
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add a proc entry show disk map
+X-Originating-IP: [10.5.32.15]
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL: SHSQR01.spreadtrum.com 4263m2C3002928
+X-Headers-End: 1rhiGY-0003NC-6h
+Subject: [f2fs-dev] [PATCH V2 2/2] f2fs: compress: fix reserve_cblocks
+ counting error when out of space
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,19 +78,131 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: ke.wang@unisoc.com, xiuhong.wang.cn@gmail.com, hongyu.jin.cn@gmail.com
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2024/3/6 7:28, Jaegeuk Kim wrote:
-> This patch adds the disk map of block address ranges configured by multiple
-> partitions.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+When a file only needs one direct_node, performing the following
+operations will cause the file to be unrepairable:
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+unisoc # ./f2fs_io compress test.apk
+unisoc #df -h | grep dm-48
+/dev/block/dm-48 112G 112G 1.2M 100% /data
 
-Thanks,
+unisoc # ./f2fs_io release_cblocks test.apk
+924
+unisoc # df -h | grep dm-48
+/dev/block/dm-48 112G 112G 4.8M 100% /data
+
+unisoc # dd if=/dev/random of=file4 bs=1M count=3
+3145728 bytes (3.0 M) copied, 0.025 s, 120 M/s
+unisoc # df -h | grep dm-48
+/dev/block/dm-48 112G 112G 1.8M 100% /data
+
+unisoc # ./f2fs_io reserve_cblocks test.apk
+F2FS_IOC_RESERVE_COMPRESS_BLOCKS failed: No space left on device
+
+adb reboot
+unisoc # df -h  | grep dm-48
+/dev/block/dm-48             112G 112G   11M 100% /data
+unisoc # ./f2fs_io reserve_cblocks test.apk
+0
+
+This is because the file has only one direct_node. After returning
+to -ENOSPC, reserved_blocks += ret will not be executed. As a result,
+the reserved_blocks at this time is still 0, which is not the real
+number of reserved blocks. Therefore, fsck cannot be set to repair
+the file.
+
+After this patch, the fsck flag will be set to fix this problem.
+
+unisoc # df -h | grep dm-48
+/dev/block/dm-48             112G 112G  1.8M 100% /data
+unisoc # ./f2fs_io reserve_cblocks test.apk
+F2FS_IOC_RESERVE_COMPRESS_BLOCKS failed: No space left on device
+
+adb reboot then fsck will be executed
+unisoc # df -h  | grep dm-48
+/dev/block/dm-48             112G 112G   11M 100% /data
+unisoc # ./f2fs_io reserve_cblocks test.apk
+924
+
+Fixes: c75488fb4d82 ("f2fs: introduce F2FS_IOC_RESERVE_COMPRESS_BLOCKS")
+Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+---
+ fs/f2fs/file.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 74c5e48fce22..dc9c6bac678d 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3624,10 +3624,10 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
+ 	return ret;
+ }
+ 
+-static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
++static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count,
++		unsigned int *reserved_blocks)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+-	unsigned int reserved_blocks = 0;
+ 	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
+ 	block_t blkaddr;
+ 	int i;
+@@ -3691,12 +3691,12 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
+ 
+ 		f2fs_i_compr_blocks_update(dn->inode, compr_blocks, true);
+ 
+-		reserved_blocks += reserved;
++		*reserved_blocks += reserved;
+ next:
+ 		count -= cluster_size;
+ 	}
+ 
+-	return reserved_blocks;
++	return 0;
+ }
+ 
+ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
+@@ -3757,7 +3757,7 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
+ 		count = min(end_offset - dn.ofs_in_node, last_idx - page_idx);
+ 		count = round_up(count, F2FS_I(inode)->i_cluster_size);
+ 
+-		ret = reserve_compress_blocks(&dn, count);
++		ret = reserve_compress_blocks(&dn, count, &reserved_blocks);
+ 
+ 		f2fs_put_dnode(&dn);
+ 
+@@ -3765,13 +3765,12 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
+ 			break;
+ 
+ 		page_idx += count;
+-		reserved_blocks += ret;
+ 	}
+ 
+ 	filemap_invalidate_unlock(inode->i_mapping);
+ 	f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 
+-	if (ret >= 0) {
++	if (!ret) {
+ 		clear_inode_flag(inode, FI_COMPRESS_RELEASED);
+ 		inode_set_ctime_current(inode);
+ 		f2fs_mark_inode_dirty_sync(inode, true);
+@@ -3780,7 +3779,7 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
+ 	inode_unlock(inode);
+ 	mnt_drop_write_file(filp);
+ 
+-	if (ret >= 0) {
++	if (!ret) {
+ 		ret = put_user(reserved_blocks, (u64 __user *)arg);
+ 	} else if (reserved_blocks &&
+ 			atomic_read(&F2FS_I(inode)->i_compr_blocks)) {
+-- 
+2.25.1
+
 
 
 _______________________________________________
