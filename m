@@ -4,67 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 02386C54798
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  7 Mar 2024 15:12:49 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A87B4C54798
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  7 Mar 2024 18:37:42 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1riFQN-0007Hq-TN;
-	Thu, 07 Mar 2024 15:12:48 +0000
+	id 1riIce-0006Oo-A3;
+	Thu, 07 Mar 2024 18:37:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1riFQN-0007Hk-IN
+ (envelope-from <jaegeuk@kernel.org>) id 1riIcc-0006OZ-RO
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 07 Mar 2024 15:12:47 +0000
+ Thu, 07 Mar 2024 18:37:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kAVQJstc0K/++Pz1FWfxO9GcRupS+CJ8YR4J3WKuVwA=; b=lQ+afNWtFeBHj9/RPHMIiUKRE3
- BfVOOcIOgrVEokOAqLhnUQeZ2qSuFKZHOXjzvlURcow6zksU3IVmnxra3y1hyXvmO4yCjmgSeBsSb
- nI3RnnQuVxSgzcMUmPHE+Cavt8kbolbCjTYL/qLnSi75Q4wxmYZh1X026/3RF1kqJ9Hc=;
+ bh=u5Gb02I60RoyE0ljdapDO2F1NqLwMav1DzZk0xjqRgo=; b=DsPTuIP3z0lldxsj/339a1Yh4X
+ ExL3snDmg9sd5iLD7KgPy2r6hX5X3ejbzla3aFVxRcbUXNu1x4L5ad2gFK35gsM15uqz681eFAoMU
+ /iYVEBgbZkdZyBcvFhgQkzYD1ZPjdDAKwB2ClvUjTyN80nDy9ILk6HWYy7nBwz0C/T5Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=kAVQJstc0K/++Pz1FWfxO9GcRupS+CJ8YR4J3WKuVwA=; b=S
- OrZEOqrjmo0pNfMxJj/JFuvhd3SPpTYZr6fbSYr5tdv/44qeXQpfB26J7YzFMcp+9DQlORykSbExW
- HZkJKUCdKtmU8Yc0Pd3cVznMkQSxSPCITEMZ3o91ibWvbDEsvjmlbHJIvhWSU7mw4ayq3X+XoA6KN
- OBJ92HHfxsNALHWc=;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=u5Gb02I60RoyE0ljdapDO2F1NqLwMav1DzZk0xjqRgo=; b=jVk5iI4q6IbCmN3kdtat+pxKOW
+ 3TSvwmsBWyXx0KnZUTVV+nVDeJqM6spnz1b9ITOQrWXtPgvK6p10T163Yo6op6uUUXa6ddy//2TJX
+ TLwCKfZfhVUG6oViwcp/q+iq8eXmTN6H4AfncayxAPCEiafAaN6rxiVlArI9D5C7XUKg=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1riFQH-0004w6-3H for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 07 Mar 2024 15:12:47 +0000
+ id 1riIcW-0007ls-Ok for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 07 Mar 2024 18:37:39 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id C59B561C17
+ by dfw.source.kernel.org (Postfix) with ESMTP id 7976E614ED
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  7 Mar 2024 15:12:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23140C433F1;
- Thu,  7 Mar 2024 15:12:39 +0000 (UTC)
+ Thu,  7 Mar 2024 18:37:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00116C433C7;
+ Thu,  7 Mar 2024 18:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1709824361;
- bh=3/MS3w+BjpyGQQ/yvQk2ofeke2ntBrE76z6kvY8nSTs=;
- h=From:To:Cc:Subject:Date:From;
- b=usspeqpFcaqpougqBOJeTiihzK8g/ZvphZrp2GXq9szbwP2O4Sa/L3Q8B/dDFtmpI
- l7hndx1xmcd9BHuaH9Rn0YXyiywBMm8CNOvDbHYpgNL2WzOrFl1i+StZVTqhubUHB9
- ykNGxcd9mrz8i7izQUgj/a4k897itUVSSLGnvbT+XZEDwFEAnOkSev1gvUDTRTphUW
- 4CXxtfcwlF8qmIIcT/JcAX1vVZbBQrzT0hEphnp80fJKUn4tb4yxOXHL6M68VJ2g7V
- briwFOH027Em+wGLA0v6g0RM2b2pGot2TQDbCJHmyzixlLyYjjwnK9DWVafI+Waxa4
- c+XkNpO1eWAOA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Thu,  7 Mar 2024 23:12:35 +0800
-Message-Id: <20240307151235.3864725-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ s=k20201202; t=1709836653;
+ bh=Xc4eMaeP9TxUHMhYQ28rw5FYDBXjNUTmMl4vW5n4qjQ=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=ri7vNUT6uTbG/zFJOvAI2CaaWyIyglBRNdUZm0SRmIvRJ2UMLKCPuqjZqAF9t/3zT
+ TQLFYQKhJaDx2cb90MsUTdtf9yHlzXvM1cNfYuHR9rEiGUBwMOhXpxn9HMZOTJAfab
+ dl0pB32g8DEF0xcYa0Qj2R7tkIUnPgOacTP4DMo8IQD8RCgt0WpQyFYZHeUqUloat1
+ vH4md5RKqkPEvc0NmxHO0nMgdiBPWp0QoScGINSJwbWpQ8e6VhQlJhwwUGrO2uYQJt
+ 0sfVvkpJmzipJpxyBYgfJsVmyK4HLP9kvlgcZOtGBhNoxyWf6PXcWKH+NymeTOyYW4
+ xpMZAvTYOFshw==
+Date: Thu, 7 Mar 2024 10:37:31 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Message-ID: <ZeoJa705xDrPRNQY@google.com>
+References: <20240307151235.3864725-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1riFQH-0004w6-3H
-Subject: [f2fs-dev] [PATCH] f2fs: fix to truncate meta inode pages forcely
+Content-Disposition: inline
+In-Reply-To: <20240307151235.3864725-1-chao@kernel.org>
+X-Headers-End: 1riIcW-0007ls-Ok
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to truncate meta inode pages
+ forcely
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,135 +84,138 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Below race case can cause data corruption:
+On 03/07, Chao Yu wrote:
+> Below race case can cause data corruption:
+> 
+> Thread A				GC thread
+> - f2fs_inplace_write_data
+> 					- gc_data_segment
+> 					 - ra_data_block
+> 					  - locked meta_inode page
+>  - invalidate_mapping_pages
+>  : fail to invalidate meta_inode page
+>    due to lock failure or dirty|writeback
+>    status
 
-Thread A				GC thread
-- f2fs_inplace_write_data
-					- gc_data_segment
-					 - ra_data_block
-					  - locked meta_inode page
- - invalidate_mapping_pages
- : fail to invalidate meta_inode page
-   due to lock failure or dirty|writeback
-   status
- - f2fs_submit_page_bio
- : write last dirty data to old blkaddr
-					 - move_data_block
-					  - load old data from meta_inode page
-					  - f2fs_submit_page_write
-					  : write old data to new blkaddr
+Wasn't the original data page locked in both cases?
 
-Because invalidate_mapping_pages() will skip invalidating page when the
-page has unclear status including locked, dirty, writeback and so on, so
-we need to use truncate_inode_pages_range() instead of
-invalidate_mapping_pages() to make sure meta_inode page will be dropped.
-
-Fixes: 6aa58d8ad20a ("f2fs: readahead encrypted block during GC")
-Fixes: e3b49ea36802 ("f2fs: invalidate META_MAPPING before IPU/DIO write")
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/checkpoint.c    |  5 +++--
- fs/f2fs/f2fs.h          | 28 +++++++++++++++++++++++++++-
- fs/f2fs/segment.c       |  5 ++---
- include/linux/f2fs_fs.h |  1 +
- 4 files changed, 33 insertions(+), 6 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index a09a9609e228..55b7d2cf030f 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1598,8 +1598,9 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	 */
- 	if (f2fs_sb_has_encrypt(sbi) || f2fs_sb_has_verity(sbi) ||
- 		f2fs_sb_has_compression(sbi))
--		invalidate_mapping_pages(META_MAPPING(sbi),
--				MAIN_BLKADDR(sbi), MAX_BLKADDR(sbi) - 1);
-+		f2fs_bug_on(sbi,
-+			invalidate_inode_pages2_range(META_MAPPING(sbi),
-+				MAIN_BLKADDR(sbi), MAX_BLKADDR(sbi) - 1));
- 
- 	f2fs_release_ino_entry(sbi, false);
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4836e7cb0efe..9814e5981a6a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4655,10 +4655,36 @@ static inline bool f2fs_is_readonly(struct f2fs_sb_info *sbi)
- 	return f2fs_sb_has_readonly(sbi) || f2fs_readonly(sbi->sb);
- }
- 
-+static inline void f2fs_truncate_meta_inode_pages(struct f2fs_sb_info *sbi,
-+					block_t blkaddr, unsigned int cnt)
-+{
-+	bool need_submit = false;
-+	int i = 0;
-+
-+	do {
-+		struct page *page;
-+
-+		page = find_get_page(META_MAPPING(sbi), blkaddr + i);
-+		if (page) {
-+			if (PageWriteback(page))
-+				need_submit = true;
-+			f2fs_put_page(page, 0);
-+		}
-+	} while (++i < cnt && !need_submit);
-+
-+	if (need_submit)
-+		f2fs_submit_merged_write_cond(sbi, sbi->meta_inode,
-+							NULL, 0, DATA);
-+
-+	truncate_inode_pages_range(META_MAPPING(sbi),
-+			F2FS_BLK_TO_BYTES((loff_t)blkaddr),
-+			F2FS_BLK_END_BYTES((loff_t)(blkaddr + cnt - 1)));
-+}
-+
- static inline void f2fs_invalidate_internal_cache(struct f2fs_sb_info *sbi,
- 								block_t blkaddr)
- {
--	invalidate_mapping_pages(META_MAPPING(sbi), blkaddr, blkaddr);
-+	f2fs_truncate_meta_inode_pages(sbi, blkaddr, 1);
- 	f2fs_invalidate_compress_page(sbi, blkaddr);
- }
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 4ff3b2d14ddf..20af48d7f784 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3741,8 +3741,7 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
- 	}
- 
- 	if (fio->post_read)
--		invalidate_mapping_pages(META_MAPPING(sbi),
--				fio->new_blkaddr, fio->new_blkaddr);
-+		f2fs_truncate_meta_inode_pages(sbi, fio->new_blkaddr, 1);
- 
- 	stat_inc_inplace_blocks(fio->sbi);
- 
-@@ -3932,7 +3931,7 @@ void f2fs_wait_on_block_writeback_range(struct inode *inode, block_t blkaddr,
- 	for (i = 0; i < len; i++)
- 		f2fs_wait_on_block_writeback(inode, blkaddr + i);
- 
--	invalidate_mapping_pages(META_MAPPING(sbi), blkaddr, blkaddr + len - 1);
-+	f2fs_truncate_meta_inode_pages(sbi, blkaddr, len);
- }
- 
- static int read_compacted_summaries(struct f2fs_sb_info *sbi)
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 755e9a41b196..a357287eac1e 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -27,6 +27,7 @@
- 
- #define F2FS_BYTES_TO_BLK(bytes)	((bytes) >> F2FS_BLKSIZE_BITS)
- #define F2FS_BLK_TO_BYTES(blk)		((blk) << F2FS_BLKSIZE_BITS)
-+#define F2FS_BLK_END_BYTES(blk)		(F2FS_BLK_TO_BYTES(blk + 1) - 1)
- 
- /* 0, 1(node nid), 2(meta nid) are reserved node id */
- #define F2FS_RESERVED_NODE_NUM		3
--- 
-2.40.1
-
+>  - f2fs_submit_page_bio
+>  : write last dirty data to old blkaddr
+> 					 - move_data_block
+> 					  - load old data from meta_inode page
+> 					  - f2fs_submit_page_write
+> 					  : write old data to new blkaddr
+> 
+> Because invalidate_mapping_pages() will skip invalidating page when the
+> page has unclear status including locked, dirty, writeback and so on, so
+> we need to use truncate_inode_pages_range() instead of
+> invalidate_mapping_pages() to make sure meta_inode page will be dropped.
+> 
+> Fixes: 6aa58d8ad20a ("f2fs: readahead encrypted block during GC")
+> Fixes: e3b49ea36802 ("f2fs: invalidate META_MAPPING before IPU/DIO write")
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/checkpoint.c    |  5 +++--
+>  fs/f2fs/f2fs.h          | 28 +++++++++++++++++++++++++++-
+>  fs/f2fs/segment.c       |  5 ++---
+>  include/linux/f2fs_fs.h |  1 +
+>  4 files changed, 33 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index a09a9609e228..55b7d2cf030f 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1598,8 +1598,9 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	 */
+>  	if (f2fs_sb_has_encrypt(sbi) || f2fs_sb_has_verity(sbi) ||
+>  		f2fs_sb_has_compression(sbi))
+> -		invalidate_mapping_pages(META_MAPPING(sbi),
+> -				MAIN_BLKADDR(sbi), MAX_BLKADDR(sbi) - 1);
+> +		f2fs_bug_on(sbi,
+> +			invalidate_inode_pages2_range(META_MAPPING(sbi),
+> +				MAIN_BLKADDR(sbi), MAX_BLKADDR(sbi) - 1));
+>  
+>  	f2fs_release_ino_entry(sbi, false);
+>  
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 4836e7cb0efe..9814e5981a6a 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -4655,10 +4655,36 @@ static inline bool f2fs_is_readonly(struct f2fs_sb_info *sbi)
+>  	return f2fs_sb_has_readonly(sbi) || f2fs_readonly(sbi->sb);
+>  }
+>  
+> +static inline void f2fs_truncate_meta_inode_pages(struct f2fs_sb_info *sbi,
+> +					block_t blkaddr, unsigned int cnt)
+> +{
+> +	bool need_submit = false;
+> +	int i = 0;
+> +
+> +	do {
+> +		struct page *page;
+> +
+> +		page = find_get_page(META_MAPPING(sbi), blkaddr + i);
+> +		if (page) {
+> +			if (PageWriteback(page))
+> +				need_submit = true;
+> +			f2fs_put_page(page, 0);
+> +		}
+> +	} while (++i < cnt && !need_submit);
+> +
+> +	if (need_submit)
+> +		f2fs_submit_merged_write_cond(sbi, sbi->meta_inode,
+> +							NULL, 0, DATA);
+> +
+> +	truncate_inode_pages_range(META_MAPPING(sbi),
+> +			F2FS_BLK_TO_BYTES((loff_t)blkaddr),
+> +			F2FS_BLK_END_BYTES((loff_t)(blkaddr + cnt - 1)));
+> +}
+> +
+>  static inline void f2fs_invalidate_internal_cache(struct f2fs_sb_info *sbi,
+>  								block_t blkaddr)
+>  {
+> -	invalidate_mapping_pages(META_MAPPING(sbi), blkaddr, blkaddr);
+> +	f2fs_truncate_meta_inode_pages(sbi, blkaddr, 1);
+>  	f2fs_invalidate_compress_page(sbi, blkaddr);
+>  }
+>  
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 4ff3b2d14ddf..20af48d7f784 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -3741,8 +3741,7 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+>  	}
+>  
+>  	if (fio->post_read)
+> -		invalidate_mapping_pages(META_MAPPING(sbi),
+> -				fio->new_blkaddr, fio->new_blkaddr);
+> +		f2fs_truncate_meta_inode_pages(sbi, fio->new_blkaddr, 1);
+>  
+>  	stat_inc_inplace_blocks(fio->sbi);
+>  
+> @@ -3932,7 +3931,7 @@ void f2fs_wait_on_block_writeback_range(struct inode *inode, block_t blkaddr,
+>  	for (i = 0; i < len; i++)
+>  		f2fs_wait_on_block_writeback(inode, blkaddr + i);
+>  
+> -	invalidate_mapping_pages(META_MAPPING(sbi), blkaddr, blkaddr + len - 1);
+> +	f2fs_truncate_meta_inode_pages(sbi, blkaddr, len);
+>  }
+>  
+>  static int read_compacted_summaries(struct f2fs_sb_info *sbi)
+> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> index 755e9a41b196..a357287eac1e 100644
+> --- a/include/linux/f2fs_fs.h
+> +++ b/include/linux/f2fs_fs.h
+> @@ -27,6 +27,7 @@
+>  
+>  #define F2FS_BYTES_TO_BLK(bytes)	((bytes) >> F2FS_BLKSIZE_BITS)
+>  #define F2FS_BLK_TO_BYTES(blk)		((blk) << F2FS_BLKSIZE_BITS)
+> +#define F2FS_BLK_END_BYTES(blk)		(F2FS_BLK_TO_BYTES(blk + 1) - 1)
+>  
+>  /* 0, 1(node nid), 2(meta nid) are reserved node id */
+>  #define F2FS_RESERVED_NODE_NUM		3
+> -- 
+> 2.40.1
 
 
 _______________________________________________
