@@ -4,67 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A8C58C5475B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  8 Mar 2024 03:51:29 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CBFD5C54E41
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  8 Mar 2024 06:20:52 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1riRGX-0000Ez-HL;
-	Fri, 08 Mar 2024 03:51:26 +0000
+	id 1riTb8-0001CN-Lx;
+	Fri, 08 Mar 2024 06:20:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1riRGW-0000El-Cx
+ (envelope-from <chao@kernel.org>) id 1riTb6-0001CH-LZ
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 08 Mar 2024 03:51:25 +0000
+ Fri, 08 Mar 2024 06:20:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RCJRMWlT35Mzc55dp61CYAOdjNHtFe/PtRJMy98LASw=; b=JpN6B0kUBcu+DSPEzwQoFtQtm5
- 72P/hUkTveJnAP4IneSda56326RKdySnH69E1o8uhmyCjLalfAgDI4wYLQU+yEjB4cxzjdTT3YTr0
- yHA2GgkJJCV3atOtNAnpgq9nkTCcJve0BpA7z7D+XknYXghocZ7BGj5p43e5i1kdHTFA=;
+ bh=OZ+qnmSVC3iLyvhs+UIjCUUIXVPW9vWO1BjQSnS4hDA=; b=Gz2ogmIcWF+slEbYDTlsCVdpfF
+ zcPf2RCAOzRPrD7MK9K6Qorz/5mw7+Z7JQGW0GZZKBWFv2P3WpcvTeGZ0EUrWLZN/z+hekgxQiHuK
+ zpQBBi7fwfnrQn6gQoHXGghhFJN/z+9gQYf/K5+b5KBkYb79rF6GdnIVr2kBLIfeiE6k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=RCJRMWlT35Mzc55dp61CYAOdjNHtFe/PtRJMy98LASw=; b=V
- dxVQ5XEGakxekpG0ywVysLmaDL/sQhoRetnWyzCRHnkpnKKaSAmuPFb4IlcapStO1EvcqnF9uso17
- 2bCWuPlatza5Lkv92m9gLbj8C6rvwcrHInPZkPR114ZLeyYML2XDsFIeeDOtAGxLlgoe0iU2+vdZL
- cybl2wwlG9+p/CGg=;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=OZ+qnmSVC3iLyvhs+UIjCUUIXVPW9vWO1BjQSnS4hDA=; b=QHpIXvbIK8e0ewxXnP/5E4sn7i
+ GawUHux9b783Gz3pK1HlFlgwC2XxTNnncWq3HadC6CU77sS1Uh+GQLAg3LXCX3XGG94p0kCWN/oDT
+ W+dwYXZmaVHLRxYc0CNFfwsh7txwIk65oUBjGs0ydSnfkh/QE1FK4VBbR1e9nhxMZRcA=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1riRGQ-0005jX-Cp for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 08 Mar 2024 03:51:25 +0000
+ id 1riTay-0003i1-Nh for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 08 Mar 2024 06:20:48 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 03D9F6119A;
- Fri,  8 Mar 2024 03:51:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0B8DC433F1;
- Fri,  8 Mar 2024 03:51:11 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 44FC261617
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri,  8 Mar 2024 06:20:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 078C5C433F1;
+ Fri,  8 Mar 2024 06:20:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1709869873;
- bh=L+U3YTJaKWjFVJqwd79Dx/KrkVoS6k2lA1363JvtMf4=;
- h=From:To:Cc:Subject:Date:From;
- b=pYSe037MGJ18WUss5lY6ExOhP7hT5uqZ4h2ePbprihz92o+JWRwu3szl8/dcJliEP
- 0lqdBHwL0Z7dcsVhcNL2Cb6Mmth3xBtPIXmm23nkC51S3JHWDmEBiuNWyGroT/257F
- dfTIG7Xv5t0+nvJ8WjtlHU+JpdNnNvVQSog+Y7376p4U0BWhbSHNjo6PwXI61LR6Zl
- hp5I8uz64gCYrBvNHGDLj/6KDbaiHq0qNzJGAEvOWhtJggDeL9Ns7LQ65KmysxAVHt
- gv1b+K4/rslUOM62uWJZgCWYbyBBqas0DN1fscAWhYzJUd6AEn+k/jmxr9/97D6MJX
- 9LFj2L3lij4iA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Fri,  8 Mar 2024 11:50:57 +0800
-Message-Id: <20240308035057.62660-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ s=k20201202; t=1709878840;
+ bh=APt9nw3iUKosH6rfvav1qdlGVyqi/IlhhjgYZZfNE5Y=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=JhMvwzu75vexwGA5XzB+R6ylBhI0lqs3sN6u5DHe4KGwhWryea2zpbIOkCRuA+fdf
+ 8Jl8D84Xu89gZnrgRknzV04h9xQnYte2lwok+dlxQLz0Jl/I3R4HcXec1hxPCayIL6
+ Lh8LaS8te3qQf7HyGxLQf28rQCDs02vp70RDKpZl1KyPFC+7HZ+QG6RLyXcuxer2LA
+ NfHhvBiGLeEFg2u1kp2zyRqNi5Xv+BSZqIGInmNGDbWPds1pbDtfONc+8pmJrC5trI
+ kX0r5YbOdo02x6u/9qxjf4fYWEj6+F2rOqGVPpY51XS+i9TfbODVfiij6WndZD3MpY
+ K+dvnxu0H3O6A==
+Message-ID: <73296ac6-8b00-4131-ab78-a127cdbff4b9@kernel.org>
+Date: Fri, 8 Mar 2024 14:20:33 +0800
 MIME-Version: 1.0
-X-Headers-End: 1riRGQ-0005jX-Cp
-Subject: [f2fs-dev] [PATCH] f2fs: zone: fix to remove pow2 check condition
- for zoned block device
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20200618063625.110273-1-yuchao0@huawei.com>
+ <20200618235932.GA227771@google.com>
+ <f5bbb14b-52a0-9697-a8fe-c3e39f78b0a5@huawei.com>
+ <20200619054922.GC227771@google.com>
+ <3634ef79-5903-449d-0d52-3d5566481863@huawei.com>
+ <20200619224755.GA60059@google.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20200619224755.GA60059@google.com>
+X-Headers-End: 1riTay-0003i1-Nh
+Subject: Re: [f2fs-dev] [PATCH 1/5] f2fs: fix to wait page writeback before
+ update
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,43 +85,45 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Feng Song <songfeng@oppo.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Commit 2e2c6e9b72ce ("f2fs: remove power-of-two limitation of zoned
-device") missed to remove pow2 check condition in init_blkz_info(),
-fix it.
+On 2020/6/20 6:47, Jaegeuk Kim wrote:
+>>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>>>>> index 3268f8dd59bb..1862073b96d2 100644
+>>>>>> --- a/fs/f2fs/file.c
+>>>>>> +++ b/fs/f2fs/file.c
+>>>>>> @@ -1250,6 +1250,7 @@ static int __clone_blkaddrs(struct inode *src_inode, struct inode *dst_inode,
+>>>>>>   				f2fs_put_page(psrc, 1);
+>>>>>>   				return PTR_ERR(pdst);
+>>>>>>   			}
+>>>>>> +			f2fs_wait_on_page_writeback(pdst, DATA, true, true);
+> 
+> Do you mean pdst can be under writeback?
 
-Fixes: 2e2c6e9b72ce ("f2fs: remove power-of-two limitation of zoned device")
-Signed-off-by: Feng Song <songfeng@oppo.com>
-Signed-off-by: Yongpeng Yang <yangyongpeng1@oppo.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/super.c | 5 -----
- 1 file changed, 5 deletions(-)
+Jaegeuk,
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 0676c2dcbbf7..fb4c1ed72710 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3874,11 +3874,6 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
- 		return 0;
- 
- 	zone_sectors = bdev_zone_sectors(bdev);
--	if (!is_power_of_2(zone_sectors)) {
--		f2fs_err(sbi, "F2FS does not support non power of 2 zone sizes\n");
--		return -EINVAL;
--	}
--
- 	if (sbi->blocks_per_blkz && sbi->blocks_per_blkz !=
- 				SECTOR_TO_BLOCK(zone_sectors))
- 		return -EINVAL;
--- 
-2.40.1
+Look back this again, is it possible that pdst is writebacking
+in below race condition? or am I missing something?
 
+Thread A				GC Thread
+- f2fs_move_file_range
+  - filemap_write_and_wait_range(dst)
+					- gc_data_segment
+					 - f2fs_down_write(dst)
+					 - move_data_page
+					  - set_page_writeback(dst_page)
+					  - f2fs_submit_page_write
+					 - f2fs_up_write(dst)
+  - f2fs_down_write(dst)
+  - __exchange_data_block
+   - __clone_blkaddrs
+    - f2fs_get_new_data_page
+    - memcpy_page
+
+Thanks,
 
 
 _______________________________________________
