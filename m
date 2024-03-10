@@ -4,65 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 68086C54798
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  9 Mar 2024 06:31:31 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 96083C54791
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 10 Mar 2024 18:04:22 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1riqEz-0000Vp-0g;
-	Sat, 09 Mar 2024 06:31:29 +0000
+	id 1rjNX2-0000WZ-1q;
+	Sun, 10 Mar 2024 18:04:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <SRS0=QXqU=KP=scrollout.comdepot.pl=postmaster@comdepot.pl>)
- id 1riqEx-0000Vi-9L for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 09 Mar 2024 06:31:27 +0000
+ (envelope-from <david.laight@aculab.com>) id 1rjNWy-0000WP-QF
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 10 Mar 2024 18:04:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Subject:Content-Transfer-Encoding:Content-Type:
- MIME-Version:Message-ID:Date:To:From:Reply-To:Sender:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :In-Reply-To:References:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FAsDsfGhRgHLhiPEp5G/wiEHNNbE0kr6ZZQI+0qFbSs=; b=ANpr4DbV+FrDak891YzmE5dprl
- 1P/jfzDqmyBw+Ow2yks13w9p8mL8QoDQo98UOKDoycxtODmD6I26nr3VyWNxg6JUjaXXsMYcJ4Ikj
- n+OPfwM1m5m7aktn02otV6VWt1paak0oxn/dzjArIoGSjojJJ/47tabO50Z7INxwU+Uk=;
+ bh=NNv/3Ap4lgv+JAaqLEJc5P0kyr8Viy9Oq1MrlGUATA0=; b=HWi21q8lR51ORhtadqZ2bScdat
+ eLAprt76qxQ1JNe9RECDgjqu+AiaX7PIbf/pvexwVJqq7Rb2a6C2R3Qqsu9HS3lWUagGRGzw2twTP
+ CE4XG8/DjYDiJJuqMGMq2bezP9A8qDRZcxXVoSRs0Yp2mAJb4BqecKnULXns83PjoSFQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Subject:Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
- Date:To:From:Reply-To:Sender:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=FAsDsfGhRgHLhiPEp5G/wiEHNNbE0kr6ZZQI+0qFbSs=; b=E
- +ZjQjSQSNJmz3PAOa9CW2Ha+p6XqxDxPQH5SriRYKeWzbkjkDQ+oDvk9h9GuIuOCh2/lCtZ6kgJum
- YDW43MvM7mN2Hple3MNd4gYBecHvhIZRxoAx5LGej3QPwkXnkupL2yp96kkiz+qhp062ZubBNA8f3
- ldQYgm013DH9owrY=;
-Received: from [158.101.188.237] (helo=scrollout.comdepot.pl)
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:In-Reply-To:
+ References:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=NNv/3Ap4lgv+JAaqLEJc5P0kyr8Viy9Oq1MrlGUATA0=; b=le1jf00NLv2QROyZB4xH0sSHLu
+ hVc7uVqoE00RGo/Y+cGD0/qMm2V0OZR+PydmaRIE2Rq0S29B8uJWpIdGIjSUfW9+x+yIFvmwi79WG
+ mTHEw6lpec+RW7zlD9TbUw/R4lwBye0GQdLAYXKdikGIqpgtb3nAIn9Zb14x/uTm+6ug=;
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1riqEl-0001wQ-G1 for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 09 Mar 2024 06:31:27 +0000
-Received: from localhost (localhost.localdomain [127.0.0.1])
- by scrollout.comdepot.pl (Postfix) with ESMTP id 4Ts9fp42gCzFcZL
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat,  9 Mar 2024 05:53:54 +0100 (CET)
-X-Virus-Scanned: Scrollout F1 at comdepot.pl
-Received: from scrollout.comdepot.pl ([127.0.0.1])
- by localhost (scrollout.comdepot.pl [127.0.0.1]) (amavisd-new, port 10024)
- with LMTP id LskrB-MYQr7C
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat,  9 Mar 2024 05:53:41 +0100 (CET)
-Received: from scrollout.comdepot.pl (localhost.localdomain [127.0.0.1])
- by scrollout.comdepot.pl (Postfix) with ESMTP id 4TrY4B1jDdzD04D
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri,  8 Mar 2024 05:25:12 +0100 (CET)
-From: Mr Philippe <postmaster@scrollout.comdepot.pl>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: 08 Mar 2024 05:25:10 +0100
-Message-ID: <20240308052509.58C78D49F97CC431@scrollout.comdepot.pl>
+ id 1rjNWo-00040X-4k for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 10 Mar 2024 18:04:17 +0000
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-114-TNp10J7jNWOsLS4FIbmhqQ-1; Sun, 10 Mar 2024 17:46:05 +0000
+X-MC-Unique: TNp10J7jNWOsLS4FIbmhqQ-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 10 Mar
+ 2024 17:46:15 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 10 Mar 2024 17:46:15 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Roman Smirnov' <r.smirnov@omp.ru>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ "Chao Yu" <chao@kernel.org>
+Thread-Topic: [PATCH] f2fs: Cast expression type to unsigned long in
+ __count_extent_cache()
+Thread-Index: AQHabtSs8qQLngIY8Ey8WBtnYc/JqbExQp7Q
+Date: Sun, 10 Mar 2024 17:46:14 +0000
+Message-ID: <b4f9780714e243a6af9f77ab00593ec1@AcuMS.aculab.com>
+References: <20240305080943.6922-1-r.smirnov@omp.ru>
+In-Reply-To: <20240305080943.6922-1-r.smirnov@omp.ru>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-X-VA-Spam-Flag: YES
-X-Headers-End: 1riqEl-0001wQ-G1
-Subject: [SPAM] Re: Très Important
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+X-Headers-End: 1rjNWo-00040X-4k
+Subject: Re: [f2fs-dev] [PATCH] f2fs: Cast expression type to unsigned long
+ in __count_extent_cache()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -74,18 +84,81 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: phillippemartinez@outlook.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: "lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>,
+ Sergey Shtylyov <s.shtylyov@omp.ru>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Karina Yankevich <k.yankevich@omp.ru>,
+ "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Qm9uam91ciwKSmUgbWUgcHLDqXNlbnRlIE1vbnNpZXVyIFBoaWxpcHBlIE1BUlRJTkVaLCBqZSB2
-b3VzIGNvbnRhY3RlIHN1aXRlIArDoCB1biBkb24gZGUgMSA1MjUgMDAwIOKCrCBxdWUgamUgdmV1
-eCB2b3VzIG9mZnJpciwgY2FyIG1lcyBqb3VycyAKc29udCBjb21wdMOpcy4gUG91ciBwbHVzIGRl
-IHJlbnNlaWduZW1lbnRzLCBqZSB2b3VzIHByaWUgZGUgYmllbiAKdm91bG9pciBtZSBjb250YWN0
-ZXIgw6AgbW9uIGFkcmVzc2UgY291cnJpZWwgcGVyc29ubmVsOiAKcGhpbGxpcHBlbWFydGluZXpA
-b3V0bG9vay5jb20KUXVlIGxlIFNlaWduZXVyIERpZXUgY3LDqWF0ZXVyIGR1IGNpZWwgZXQgZGUg
-bGEgdGVycmUgZXhhdWNlIHZvcyAKcHJpw6hyZXMsIEFtZW4uCgoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
-c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
-b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+From: Roman Smirnov
+> Sent: 05 March 2024 08:10
+> 
+> Cast expression type to unsigned long in __count_extent_cache()
+> to prevent integer overflow.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Svace.
+
+Another broken analysis tool :-)
+
+> Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+> ---
+>  fs/f2fs/shrinker.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
+> index 83d6fb97dcae..bb86a06c5d5e 100644
+> --- a/fs/f2fs/shrinker.c
+> +++ b/fs/f2fs/shrinker.c
+> @@ -33,7 +33,7 @@ static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi,
+>  {
+>  	struct extent_tree_info *eti = &sbi->extent_tree[type];
+> 
+> -	return atomic_read(&eti->total_zombie_tree) +
+> +	return (unsigned long)atomic_read(&eti->total_zombie_tree) +
+>  				atomic_read(&eti->total_ext_node);
+
+Makes diddly-squit difference.
+
+Both total_zombie_tree and totat_ext_node are 'int'.
+If they are large enough that their sum wraps then the values
+can individually wrap (to negative values).
+
+You really don't want to cast 'int' to 'unsigned long' here
+at all - implicitly or explicitly.
+The cast will first promote 'int' to 'signed long'.
+So a negative value will get sign extended to a very big value.
+
+The best you can hope for is a 33bit result from wrapped 32bit
+signed counters.
+To get that you need to convert 'int' => 'unsigned int' => 'unsigned long'.
+One way would be:
+	return (atomic_read(&eti->total_zombie_tree) + 0u + 0ul) +
+		(atomic_read(&eti->total_ext_node) + 0u);
+
+Although changing the return type to 'unsigned int' would probably
+be better.
+I don't know what the values are, but if they are stats counters
+then that would give a value that nicely wraps at 2^32 rather
+that the strange wrap that the sum of two wrapping 32bit counters
+has.
+
+OTOH it may be that they are counts - and just can't get any where
+near that big.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
