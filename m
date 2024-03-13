@@ -4,72 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6A2D1C54E5D
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Mar 2024 01:30:47 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8BC44C54E58
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Mar 2024 01:30:50 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rkDSA-0001QE-UI;
-	Wed, 13 Mar 2024 01:30:47 +0000
+	id 1rkDSC-0007ER-Cs;
+	Wed, 13 Mar 2024 01:30:48 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rkDS9-0001Q8-3h
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rkDSA-0007EH-Oe
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Mar 2024 01:30:45 +0000
+ Wed, 13 Mar 2024 01:30:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QaLoCesEa3FigrElrzGEqRoGO1nI9NKoD7A6Um042zs=; b=IHCehyDghv3w3UZtnzaND8gJw4
- 3kt/o6iBDtt1VWENYuIEQsdIZXvU7WA0oGTsYi007VEC1FITL16VXOFHGeTnLDJ0WHcwYHgtm5gQL
- yeG0M5T8mi/ciRErOnuAFibGOISweEQ+rrqDVGejYh9Fvc3ihTwiNGPxatfxl5IV2Eco=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=kSmY527TjYzEGBFvn8IW7XT6nImaDn7crCBlsaM+dE0=; b=M3SnViPygVjkgHuolMApVEpWRE
+ GFSwZ/kjrumLb6VZvv1kUkk6/5fizlaTKwmXEZIBHGn5wp+66wPGxZh1lWtxMqT88xSk9LdM2cx3z
+ PDGZYmGBgZ5Rf/vIBcw4dEa3zfI20jwRAWUoa8/3UtuXjNA/SXswAWLoNKI6LMAMTUoY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=QaLoCesEa3FigrElrzGEqRoGO1nI9NKoD7A6Um042zs=; b=D
- SmtzsKxhWHQSu7o1+Wd09kqVSAt1HVukA7q2ASgX3dDdWRxm2m6EqMIpbf0H7p5Y99RSspuRHxK8+
- tIPC2S7DYMWysdLIe36CIKv5jUty47MBjZTOckpkthpUzyEjYjzYKYMM0Gj/dMg0T5U5NVY9r9b3B
- NI3xMG3tOKDVUsb0=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=kSmY527TjYzEGBFvn8IW7XT6nImaDn7crCBlsaM+dE0=; b=G9aCiyWFUXcqrb/PudSNDukSRf
+ eVP8ovdb7NxBxMzOJn7VXOprx6AgX1Q5zS2l4g7B8XgXTUs8m1/QHXOvcX9KQ/uAHFgKt/nHr33Kz
+ HeEmv8BOQXADASzpv8mcyNeerq6z8wvnw2Ef/b9xVPShxBa2YgJjwEv6MqsxtsZlZWzk=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rkDRy-00023f-LT for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Mar 2024 01:30:45 +0000
+ id 1rkDS0-00023j-Fr for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 13 Mar 2024 01:30:47 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 4FA3661346
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by sin.source.kernel.org (Postfix) with ESMTP id BFA8DCE19F8;
  Wed, 13 Mar 2024 01:30:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E78D5C433F1
- for <linux-f2fs-devel@lists.sourceforge.net>;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 07E8CC433C7;
  Wed, 13 Mar 2024 01:30:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1710293429;
- bh=dOIzdw4qg16uoAkKG+4U75XWqG8X1LiB9ilFH4aDyJQ=;
- h=Subject:From:Date:To:From;
- b=MTx91NG/qQYehK77W06DJmDgp0Hlat9Y8xhTp9Zz9xkBWbZ88U7tXxRN7phz15bTW
- 25jWDxhB5pPWiKryAIKo+ib2wv9BYpbik01GaX+W1YGJ0Ky7g+Fp9ZDwRWjD/SfNnE
- 1y5emFYSJTL1E65Yfczd6lQqOY/cqnfjdvi7EkncPWXMTnfr205XwZR6x+HJVxaV0a
- HCqdoBZD9tarfBWHEaesBfshNUqKcRQDGEsjLWbVrup9DBzoRmjXcLovMyShlrYcGo
- RjczqWcivmUuY9trABdWnO4W9mgelYp7JewL+KA5ZdDobuMdciGL9xx8DxObUoC8+S
- 2H+6jEp6Ph01A==
+ s=k20201202; t=1710293430;
+ bh=h8pOeiSdPI8iajU4IaZNdfrgsdrTQVx5B+jm+TWhEWg=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=L4PzfoP9Wo383wNbc5BDShHMAaUAteOMrpcRwlP9W+XkyacJQL7EAW8RvpSMUsl/i
+ c33IceUb9vKGv2iwCwCzhNpKFiamzAO2Sn2i1yQna6ml9XsyXc4tJoFZ1f60so+w/X
+ UsQzNXjM7/k3i4TaVWx6F946oaFNsi+tg4bMIoJ9uwy74exGV3ofvjwfpt8AuOkq7L
+ aXqmOYP0vbXMn6e6RKxGWJigF4zcZf1leYFnXxx3nJ5miZJfoD8nvIi6IyKuzNalUA
+ h+VMpMMLrH2AuA/dRFgjmRECxaXXwhCrZMV9w1PlOWk0oXSp98uWSq/w1F90EAdKi/
+ axu5hHpZDF+ug==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- C8D7BD95053 for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 13 Mar 2024 01:30:29 +0000 (UTC)
+ D8054D84BAC; Wed, 13 Mar 2024 01:30:29 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171029342976.17296.7961812797377876526.git-patchwork-summary@kernel.org>
+Message-Id: <171029342988.17296.17999527024833802144.git-patchwork-notify@kernel.org>
 Date: Wed, 13 Mar 2024 01:30:29 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1rkDRy-00023f-LT
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+References: <20240308035057.62660-1-chao@kernel.org>
+In-Reply-To: <20240308035057.62660-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1rkDS0-00023j-Fr
+Subject: Re: [f2fs-dev] [PATCH] f2fs: zone: fix to remove pow2 check
+ condition for zoned block device
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,51 +80,34 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ songfeng@oppo.com, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Series: [f2fs-dev,1/2] f2fs: prevent atomic write on pinned file
-  Submitter: Daeho Jeong <daeho43@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=834480
-  Lore link: https://lore.kernel.org/r/20240311235921.1832684-1-daeho43@gmail.com
-    Patches: [f2fs-dev,1/2] f2fs: prevent atomic write on pinned file
+On Fri,  8 Mar 2024 11:50:57 +0800 you wrote:
+> Commit 2e2c6e9b72ce ("f2fs: remove power-of-two limitation of zoned
+> device") missed to remove pow2 check condition in init_blkz_info(),
+> fix it.
+> 
+> Fixes: 2e2c6e9b72ce ("f2fs: remove power-of-two limitation of zoned device")
+> Signed-off-by: Feng Song <songfeng@oppo.com>
+> Signed-off-by: Yongpeng Yang <yangyongpeng1@oppo.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> 
+> [...]
 
-Patch: [f2fs-dev] f2fs: zone: fix to remove pow2 check condition for zoned block device
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=833648
-  Lore link: https://lore.kernel.org/r/20240308035057.62660-1-chao@kernel.org
+Here is the summary with links:
+  - [f2fs-dev] f2fs: zone: fix to remove pow2 check condition for zoned block device
+    https://git.kernel.org/jaegeuk/f2fs/c/11bec96afbfb
 
-Patch: [f2fs-dev,v2] f2fs: fix to truncate meta inode pages forcely
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=833630
-  Lore link: https://lore.kernel.org/r/20240308010834.4023772-1-chao@kernel.org
-
-Series: [f2fs-dev,V2,1/2] f2fs: compress: relocate some judgments in f2fs_reserve_compress_blocks
-  Submitter: Xiuhong Wang <xiuhong.wang@unisoc.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=832808
-  Lore link: https://lore.kernel.org/r/20240306034746.3722986-1-xiuhong.wang@unisoc.com
-    Patches: [f2fs-dev,V2,1/2] f2fs: compress: relocate some judgments in f2fs_reserve_compress_blocks
-             [f2fs-dev,V2,2/2] f2fs: compress: fix reserve_cblocks counting error when out of space
-
-Patch: None
-  Submitter: Zhiguo Niu <zhiguo.niu@unisoc.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=834208
-  Lore link: https://lore.kernel.org/r/1710143334-27653-1-git-send-email-zhiguo.niu@unisoc.com
-
-
-Total patches: 6
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
