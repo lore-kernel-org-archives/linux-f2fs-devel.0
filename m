@@ -4,70 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 136B4C54E5D
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Mar 2024 01:30:45 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6A2D1C54E5D
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Mar 2024 01:30:47 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rkDS7-0000B2-MD;
-	Wed, 13 Mar 2024 01:30:44 +0000
+	id 1rkDSA-0001QE-UI;
+	Wed, 13 Mar 2024 01:30:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rkDS5-0000Ar-JR
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rkDS9-0001Q8-3h
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Mar 2024 01:30:42 +0000
+ Wed, 13 Mar 2024 01:30:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JuARYiyIcT1PM7Kfq0gVcYChTsc+N/Twv3AjRsR/zTM=; b=SX+qY+SVXi+U+lS/WvDSUrzywB
- 1JZbYX1ScgU/FXqmYIuc/mjhbU7EVaEeZG4Po32nMZ9aow7LHBouhThXYiQRe3Gwl/5xVnVxKFhJj
- lSfft6fPeaEEzeJuwmuO5yiM9+KGW03C91euUJ1cRqmG6Z4x0WrcjvFsWM6FfvZQTyMc=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=QaLoCesEa3FigrElrzGEqRoGO1nI9NKoD7A6Um042zs=; b=IHCehyDghv3w3UZtnzaND8gJw4
+ 3kt/o6iBDtt1VWENYuIEQsdIZXvU7WA0oGTsYi007VEC1FITL16VXOFHGeTnLDJ0WHcwYHgtm5gQL
+ yeG0M5T8mi/ciRErOnuAFibGOISweEQ+rrqDVGejYh9Fvc3ihTwiNGPxatfxl5IV2Eco=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JuARYiyIcT1PM7Kfq0gVcYChTsc+N/Twv3AjRsR/zTM=; b=nKSXH7/mj0bx+/u1k/q6XYYWOZ
- VxrUuolAPzwtle0Z83Hy3iw+elW46bU8sBHK5Z8KYeNKd9d2zdzDa47/c/zyrR83RcQ8fXglVtMfc
- 71x4bnRpBJ+S3409tVdViC5SsouEbkRD+i40ITdMfbmpryEVNmA7Vwkv2HDK21iI2St4=;
+ ;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=QaLoCesEa3FigrElrzGEqRoGO1nI9NKoD7A6Um042zs=; b=D
+ SmtzsKxhWHQSu7o1+Wd09kqVSAt1HVukA7q2ASgX3dDdWRxm2m6EqMIpbf0H7p5Y99RSspuRHxK8+
+ tIPC2S7DYMWysdLIe36CIKv5jUty47MBjZTOckpkthpUzyEjYjzYKYMM0Gj/dMg0T5U5NVY9r9b3B
+ NI3xMG3tOKDVUsb0=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rkDRt-000237-Me for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Mar 2024 01:30:41 +0000
+ id 1rkDRy-00023f-LT for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 13 Mar 2024 01:30:45 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 5BBE861362;
+ by dfw.source.kernel.org (Postfix) with ESMTP id 4FA3661346
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Wed, 13 Mar 2024 01:30:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EF8F8C43390;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E78D5C433F1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Wed, 13 Mar 2024 01:30:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1710293430;
- bh=7nZy9/vurPXr1lYbS/73LM5YtBWgmbZJ5YIqQSYtFnQ=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=J2Bga/YRp8sVgNGz4lcaA0QlE7hQfgHBNd3QdMB6cHyqXJqSEERoitbs2VSjHjt2E
- B6DsR5KTJKZ4CYuK80W3zg0cbAoJzQq9pm5Ygf03xmdcE0shLRvu1ZfJPghO3kwu/O
- iqEpTSN78NxwvVG2np+US9IIf2M0u6umaW5TXWs4wcq4+2kp9kA3fUkAyAUnDigX/T
- MUzjIO9ulbz7Z3PUHtsEQQ4WA4GS615T2XuY6H5W3afTxK8/Mc0BfClcu0bvF7KeUa
- 7Xz2TPBAEr2857UYIqDypdiGvBdhMeSW2Z+/UDDzyo3HKt4ruEyqLd1vYO1aVlKyTP
- 5If3Arl3uP5sQ==
+ s=k20201202; t=1710293429;
+ bh=dOIzdw4qg16uoAkKG+4U75XWqG8X1LiB9ilFH4aDyJQ=;
+ h=Subject:From:Date:To:From;
+ b=MTx91NG/qQYehK77W06DJmDgp0Hlat9Y8xhTp9Zz9xkBWbZ88U7tXxRN7phz15bTW
+ 25jWDxhB5pPWiKryAIKo+ib2wv9BYpbik01GaX+W1YGJ0Ky7g+Fp9ZDwRWjD/SfNnE
+ 1y5emFYSJTL1E65Yfczd6lQqOY/cqnfjdvi7EkncPWXMTnfr205XwZR6x+HJVxaV0a
+ HCqdoBZD9tarfBWHEaesBfshNUqKcRQDGEsjLWbVrup9DBzoRmjXcLovMyShlrYcGo
+ RjczqWcivmUuY9trABdWnO4W9mgelYp7JewL+KA5ZdDobuMdciGL9xx8DxObUoC8+S
+ 2H+6jEp6Ph01A==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- D0540D95057; Wed, 13 Mar 2024 01:30:29 +0000 (UTC)
+ C8D7BD95053 for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 13 Mar 2024 01:30:29 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171029342984.17296.1929429193688050018.git-patchwork-notify@kernel.org>
+Message-Id: <171029342976.17296.7961812797377876526.git-patchwork-summary@kernel.org>
 Date: Wed, 13 Mar 2024 01:30:29 +0000
-References: <20240311235921.1832684-1-daeho43@gmail.com>
-In-Reply-To: <20240311235921.1832684-1-daeho43@gmail.com>
-To: Daeho Jeong <daeho43@gmail.com>
-X-Headers-End: 1rkDRt-000237-Me
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: prevent atomic write on pinned file
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1rkDRy-00023f-LT
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,34 +81,51 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: daehojeong@google.com, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-On Mon, 11 Mar 2024 16:59:19 -0700 you wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> Since atomic write way was changed to out-place-update, we should
-> prevent it on pinned files.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> 
-> [...]
+Series: [f2fs-dev,1/2] f2fs: prevent atomic write on pinned file
+  Submitter: Daeho Jeong <daeho43@gmail.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=834480
+  Lore link: https://lore.kernel.org/r/20240311235921.1832684-1-daeho43@gmail.com
+    Patches: [f2fs-dev,1/2] f2fs: prevent atomic write on pinned file
 
-Here is the summary with links:
-  - [f2fs-dev,1/2] f2fs: prevent atomic write on pinned file
-    https://git.kernel.org/jaegeuk/f2fs/c/c644af133283
-  - [f2fs-dev,2/2] f2fs: prevent writing without fallocate() for pinned files
-    (no matching commit)
+Patch: [f2fs-dev] f2fs: zone: fix to remove pow2 check condition for zoned block device
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=833648
+  Lore link: https://lore.kernel.org/r/20240308035057.62660-1-chao@kernel.org
 
-You are awesome, thank you!
+Patch: [f2fs-dev,v2] f2fs: fix to truncate meta inode pages forcely
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=833630
+  Lore link: https://lore.kernel.org/r/20240308010834.4023772-1-chao@kernel.org
+
+Series: [f2fs-dev,V2,1/2] f2fs: compress: relocate some judgments in f2fs_reserve_compress_blocks
+  Submitter: Xiuhong Wang <xiuhong.wang@unisoc.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=832808
+  Lore link: https://lore.kernel.org/r/20240306034746.3722986-1-xiuhong.wang@unisoc.com
+    Patches: [f2fs-dev,V2,1/2] f2fs: compress: relocate some judgments in f2fs_reserve_compress_blocks
+             [f2fs-dev,V2,2/2] f2fs: compress: fix reserve_cblocks counting error when out of space
+
+Patch: None
+  Submitter: Zhiguo Niu <zhiguo.niu@unisoc.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=834208
+  Lore link: https://lore.kernel.org/r/1710143334-27653-1-git-send-email-zhiguo.niu@unisoc.com
+
+
+Total patches: 6
+
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
