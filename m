@@ -4,67 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 33FE8C54E67
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 14 Mar 2024 16:16:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5C414C54E5D
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 14 Mar 2024 16:20:46 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rknkw-0004qq-0U;
-	Thu, 14 Mar 2024 16:16:34 +0000
+	id 1rknoy-0005bN-Dx;
+	Thu, 14 Mar 2024 16:20:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1rknku-0004qj-9l
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rknox-0005bG-5q
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 14 Mar 2024 16:16:32 +0000
+ Thu, 14 Mar 2024 16:20:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=a0lDV0lr73qQLDXk1bcrHAQawHG1fHO5QWfmZrZw2Tw=; b=el37ZDpm7gwRuDK9GahESDUjse
- iM6+8Ry0nMGjPv56xwBztWhstkxvEniwXnACChr3Nub7GiueGbl2DnS7z9waXjHPTOM43PqPUTNMd
- NBkj8+KBKmR4hKRuTLeK2D/cKFfwZqaRX33PBtXS9m9f0QfLndQC188Ck2iRYdsHNyss=;
+ bh=Dc8z26VGfJ8t4WQk51GNledaY/JmcbRU55dIcMZhiuA=; b=m9dNUYlZYsGGqcWNZGlE4nQMfU
+ kmmY7C5haxvw1MIqzCE6O259bJmMiYQU9D9AN/Ry8+mTk1Uae2diZLikpb3S/v01oytPTtOz5GcuP
+ 10SPWG0/ALtCzLz7OkxTHoyF2J14KJKHrG5QA1jtKvezdo3gBvJNjZXjGi7cc1WopkP4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=a0lDV0lr73qQLDXk1bcrHAQawHG1fHO5QWfmZrZw2Tw=; b=RkxjJ3Skriq/XZ2WS1stigSPnW
- ar7Y6ZdhyMxq+Qg82Ufbf7k/O5W7h7vyp80UYWjqQeHcvfc/4qHTqGJb2qubbKRBkeGiIKhP8uZ4A
- qX+jr0k7lcJMNNsWtDbVBbdIOZtJsDbSXoCi1j3a8N2QAAaEyMnE2m3/3dBKV4fFJKdw=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=Dc8z26VGfJ8t4WQk51GNledaY/JmcbRU55dIcMZhiuA=; b=ZdSUPSojo4jUA+G8gwMYzoSFE+
+ sK6UcNCbLGy7Ptt1sV+T1cjzc2RcibGB4ptflXqbNXlWJWK4bY1KLJbryX7zOX0aZ81Knpk2FECrT
+ pe35o+YLkATQuyp3OTVURZZRzPTERPPyNGdrMRBlY+3W7IJZ01OJ/4FI1cEggc72PWMk=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rknkj-0001Ud-P3 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 14 Mar 2024 16:16:32 +0000
+ id 1rknom-0001s3-Qn for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 14 Mar 2024 16:20:43 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 74E29614E6;
- Thu, 14 Mar 2024 16:16:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E72B1C433F1;
- Thu, 14 Mar 2024 16:16:16 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id 45327CE1DD2;
+ Thu, 14 Mar 2024 16:20:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 82B05C43390;
+ Thu, 14 Mar 2024 16:20:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1710432977;
- bh=U8AyetdLrhnWBQCfPFpv6tTgew9AS0AAM56e79RtgeM=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=PIHwkShnXphYqFArdN0hG3XJx0vwoeoLih4Bo5c9IFPa6h3zvCl9niRZeulLJKt71
- HrlmHYATceiLkvKZss3yUOaCmesxi4c0ry8fGaSRowDsATKyQI+sR+LeaIDlT2u+HC
- oigBQf5i3j4Qd0O/mhg3ZXAXBVjVixMRig2oXOPhoYwP9iemI0HyhJUbMbi8Nz+rUk
- gNWoB1ikRk2G7KKeJt+mhjqi1MrqR53m85A8E4GqnH89UgvUy8G+67U2pKScRTCwf4
- qNdJyKuvI79ST5R1khU7BNANNPIvGM2Vhv+fxYg1BVfzBpdc5A4jgJC9PxmqNI2z8j
- AJw9e3/zQ2bug==
-Date: Thu, 14 Mar 2024 09:16:15 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Message-ID: <ZfMiz67zynbEFBl9@google.com>
-References: <20240314020528.3051533-1-chao@kernel.org>
+ s=k20201202; t=1710433231;
+ bh=DiMMcNdh086cZ1dy2/SsqCOSR/rQG4XxC4tlfBQ3NIs=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=hF9pB5rwtQNKNi8cLb0VPwWDhJRtsUNAoHE5f7QVDsYRkJcE6GbiAalYTxtsxCK4t
+ a2iCRcQV/nw/5PD8jhzND6x1NdqSNRm++a5mIWON6CAWt/oG0fb8kp3RDmqoRa0hf8
+ 5M15xbK3HaZkwSReUVEtfVLp9LnBXCTvjfbuVV0oCP9OA2yyCJ6fmWc8bjSvE51RhT
+ S7Usmy2qDtd/ofd0YxIbJzehl/Dw98De1F2/79aKYY81H0VdkKXfcwMuBNph1NdIg+
+ z0vhZp+fPlcITayDCK4gAo4Ot+kpj+UwaWLuV1uABpJjAc/2sA8yryinATt3sanklf
+ JjVzGaxdcHmdw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ 6DCD3D95061; Thu, 14 Mar 2024 16:20:31 +0000 (UTC)
 MIME-Version: 1.0
-Content-Disposition: inline
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <171043323144.13516.1787617599417094605.git-patchwork-notify@kernel.org>
+Date: Thu, 14 Mar 2024 16:20:31 +0000
+References: <20240314020528.3051533-1-chao@kernel.org>
 In-Reply-To: <20240314020528.3051533-1-chao@kernel.org>
-X-Headers-End: 1rknkj-0001Ud-P3
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1rknom-0001s3-Qn
 Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid use-after-free issue in
  f2fs_filemap_fault
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -78,14 +80,19 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Hillf Danton <hdanton@sina.com>, Ed Tsai <Ed.Tsai@mediatek.com>,
- syzbot+763afad57075d3f862f2@syzkaller.appspotmail.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: hdanton@sina.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
+ Ed.Tsai@mediatek.com, syzbot+763afad57075d3f862f2@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 03/14, Chao Yu wrote:
+Hello:
+
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
+
+On Thu, 14 Mar 2024 10:05:28 +0800 you wrote:
 > syzbot reports a f2fs bug as below:
 > 
 > BUG: KASAN: slab-use-after-free in f2fs_filemap_fault+0xd1/0x2c0 fs/f2fs/file.c:49
@@ -113,49 +120,18 @@ On 03/14, Chao Yu wrote:
 >  exc_page_fault+0x456/0x870 arch/x86/mm/fault.c:1563
 >  asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
 > 
-> The root cause is: in f2fs_filemap_fault(), vmf->vma may be not alive after
-> filemap_fault(), so it may cause use-after-free issue when accessing
-> vmf->vma->vm_flags in trace_f2fs_filemap_fault(). So it needs to keep vm_flags
-> in separated temporary variable for tracepoint use.
-> 
-> Fixes: 87f3afd366f7 ("f2fs: add tracepoint for f2fs_vm_page_mkwrite()")
-> Reported-and-tested-by: syzbot+763afad57075d3f862f2@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/lkml/000000000000e8222b060f00db3b@google.com
-> Cc: Ed Tsai <Ed.Tsai@mediatek.com>
-> Cc: Hillf Danton <hdanton@sina.com>
+> [...]
 
-Suggested-by: Hillf Danton <hdanton@sina.com>
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix to avoid use-after-free issue in f2fs_filemap_fault
+    https://git.kernel.org/jaegeuk/f2fs/c/eb70d5a6c932
 
-I modified to "Suggested-by". Please let me know if this doesn't work.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/file.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index a47c57e813bb..c19e55a3e50e 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -39,6 +39,7 @@
->  static vm_fault_t f2fs_filemap_fault(struct vm_fault *vmf)
->  {
->  	struct inode *inode = file_inode(vmf->vma->vm_file);
-> +	vm_flags_t flags = vmf->vma->vm_flags;
->  	vm_fault_t ret;
->  
->  	ret = filemap_fault(vmf);
-> @@ -46,7 +47,7 @@ static vm_fault_t f2fs_filemap_fault(struct vm_fault *vmf)
->  		f2fs_update_iostat(F2FS_I_SB(inode), inode,
->  					APP_MAPPED_READ_IO, F2FS_BLKSIZE);
->  
-> -	trace_f2fs_filemap_fault(inode, vmf->pgoff, vmf->vma->vm_flags, ret);
-> +	trace_f2fs_filemap_fault(inode, vmf->pgoff, flags, ret);
->  
->  	return ret;
->  }
-> -- 
-> 2.40.1
+
 
 
 _______________________________________________
