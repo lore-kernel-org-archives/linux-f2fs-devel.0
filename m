@@ -4,70 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8ED2BC6FD1F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 26 Mar 2024 11:12:14 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CA5A0C6FD1F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 26 Mar 2024 11:29:11 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rp4iy-0002Eq-K8;
-	Tue, 26 Mar 2024 11:12:13 +0000
+	id 1rp4zL-0003f6-BV;
+	Tue, 26 Mar 2024 11:29:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rp4iw-0002Eb-J8
+ (envelope-from <chao@kernel.org>) id 1rp4zK-0003ek-AC
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 26 Mar 2024 11:12:11 +0000
+ Tue, 26 Mar 2024 11:29:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4Tk6DS2QAq6koFHYij25bP5TbhpaX6EhVX5UwuXE/YQ=; b=Et1Jd1Yh4cyOKSb2ATK95ec9vu
- l9ukFSPPgJ4G4887dIEPS6YyTQGYydlSNvmuXATJL/Do3ouTzsHAVV1oMl115+J66KBuqD8KzfOQb
- ClcXK0qcP5I5qn7zLN3rfo6YIGMeP2eNQXxmcbNT26qoYB7K77ibgLFyZEpxs0NRktpw=;
+ bh=SH6HKYRPnSHWH9fd9ic6GzAQ0FRtRMwzXxpmmyOxglA=; b=Nt8i7+klO6W76A+qTCz2l/sgc0
+ gsqcOPlLOo9pvpMySFDQxY5g8vuSLDHAL9sGWY8h9L/fwIrI75IrRC7+ePCIa5+VF3W2rb7L+lIaM
+ qVFPTcXDcaG5g4WUPakFUlgX7LlkFnE8Iewoa2QgzmxDi2jj3POOLYuvnekglJY96O9E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=4Tk6DS2QAq6koFHYij25bP5TbhpaX6EhVX5UwuXE/YQ=; b=lfVIwpX+pskHtJyXXtrzY+vrNW
- r4Mmy8Tk2lvKv3mV2nzvsy4Y/DzFRdjgCRFLb80zOiV35gpTdSEJ5JJ0i2xfE05Uj1tQhSa9Lbi+E
- Tw4JHiWfbO8q2VsvHE3u4YA0bXUrROT2uolN+3ZzpwicpSlkb7wiIR0T1s0kDmFHrntE=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=SH6HKYRPnSHWH9fd9ic6GzAQ0FRtRMwzXxpmmyOxglA=; b=b
+ /RkGSh0HTC2gALwgCm//dLy3HXiKJR7v4wkbP7u9A0igKGiyhK77VWrahbLmfjAZ5bRsLVzaGqTJC
+ WMYk/cN6flN+hB6ucwWMIIWj2uTg5ZO+uVp42/2lnUr6nGoSnavhowO1aWG0k1D1bddjX/wiu6aGl
+ 0l8A6nNfdNrzysyE=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rp4it-0004Cx-Gw for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 26 Mar 2024 11:12:11 +0000
+ id 1rp4zG-0005jj-TP for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 26 Mar 2024 11:29:06 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 0E74BCE1EF1;
- Tue, 26 Mar 2024 11:11:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51EACC433F1;
- Tue, 26 Mar 2024 11:11:53 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id CC4FE60DCA
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 26 Mar 2024 11:28:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 132C0C433F1;
+ Tue, 26 Mar 2024 11:28:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1711451515;
- bh=XOachr2WIaie8cJhl/lzaSmTxBP/4J3wqYR/eRLBdO8=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=UZUDLLRuPSnii715EPgehEkwLpc2bCCpy55jaWgGp7uH9FxbqW6+vaJAhstkh64Ho
- Gp2OkGWlSF8rL6b5MobYtUjhJ33VzlDTeB+jQlCNoOyHba2er/P6yvjlddDKuq9CI0
- SwiMQlt4FBmRFGIXM3Str9hGkUeWkCbme/wd5mNGTkAZHewRFc1hjyZuB1v9fUijfn
- bhvkzlyOaCdIkKuEaHm5LXOWbNoBoljVZn2jRggs8ETEQ07HIcP/PwN0OanHRA6oFr
- h6AymSgN3MVLdAhMD2Eu6CjqbXrt4UkovwTTKET5xqQx7IlY+/YbJjZGSJRgTo6rGn
- t4GxWigrJrzwA==
-Message-ID: <8a6b2768-8ab6-4275-8c4e-05b4eca83987@kernel.org>
-Date: Tue, 26 Mar 2024 19:11:50 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
-References: <1711346195-24555-1-git-send-email-zhiguo.niu@unisoc.com>
-Content-Language: en-US
+ s=k20201202; t=1711452532;
+ bh=z0+/Jl8NKB183NMMyQeNKTgaIJ6S9uSiw9hjXJ2acAc=;
+ h=From:To:Cc:Subject:Date:From;
+ b=Ie04r/wNhqrRkb12Z5yWvEIf4RJSHZ9itxikPcyOGWGKEqhpG2cn1ScKT0cwrlgDR
+ m8AdWvR3DvOrEDBhzAw7aT1U4M8Qc5giqD6SFOJzt+6KZKdNJ98cbSVZTcuClxLgiG
+ P+BQl1ZaMDApVhBK6Yt2Oz/Mz7Gs/R+omLmPqTdhPnm+1/u+Jw99L7BcUFUtFW1Vco
+ pG2uhOfc/tHrHIeD0NVRF1cQNwGBoiqTsygqm0FdVu7qdjopsHv2v8ZVcoCumIJxCV
+ /fl7HUBYLH8ccF+EBX+4ly7+gVuQG9VbWHMI7SzTu5otg3kDvkeFAXiWfHxmcvR1FQ
+ 5TwASqHmgKkrg==
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <1711346195-24555-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Headers-End: 1rp4it-0004Cx-Gw
-Subject: Re: [f2fs-dev] [PATCH V2] f2fs: fix to adjust appropirate
- defragment pg_end
+To: jaegeuk@kernel.org
+Date: Tue, 26 Mar 2024 19:28:45 +0800
+Message-Id: <20240326112845.1576111-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
+MIME-Version: 1.0
+X-Headers-End: 1rp4zG-0005jj-TP
+Subject: [f2fs-dev] [PATCH] f2fs: fix to wait on page writeback in
+ __clone_blkaddrs()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,68 +77,53 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: hongyu.jin@unisoc.com, ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2024/3/25 13:56, Zhiguo Niu wrote:
-> A length that exceeds the real size of the inode may be
-> specified from user, although these out-of-range areas
-> are not mapped, but they still need to be check in
-> while loop, which is unnecessary.
-> 
-> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> ---
-> v2: check i_size within inode lock according to Chao's suggestions
-> ---
-> ---
->   fs/f2fs/file.c | 11 +++++++----
->   1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 128e53d..cf63db7 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -2608,9 +2608,6 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
->   	bool fragmented = false;
->   	int err;
->   
-> -	pg_start = range->start >> PAGE_SHIFT;
-> -	pg_end = (range->start + range->len) >> PAGE_SHIFT;
-> -
->   	f2fs_balance_fs(sbi, true);
->   
->   	inode_lock(inode);
-> @@ -2629,10 +2626,16 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+In below race condition, dst page may become writeback status
+in __clone_blkaddrs(), it needs to wait writeback before update,
+fix it.
 
-pg_start = range->start >> PAGE_SHIFT;
-pg_end = min_t(pgoff_t, (range->start + range->len) >> PAGE_SHIFT,
-			DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE));
+Thread A				GC Thread
+- f2fs_move_file_range
+  - filemap_write_and_wait_range(dst)
+					- gc_data_segment
+					 - f2fs_down_write(dst)
+					 - move_data_page
+					  - set_page_writeback(dst_page)
+					  - f2fs_submit_page_write
+					 - f2fs_up_write(dst)
+  - f2fs_down_write(dst)
+  - __exchange_data_block
+   - __clone_blkaddrs
+    - f2fs_get_new_data_page
+    - memcpy_page
 
->   
->   	/* writeback all dirty pages in the range */
->   	err = filemap_write_and_wait_range(inode->i_mapping, range->start,
-> -						range->start + range->len - 1);
-> +						min_t(loff_t, range->start + range->len - 1,
-> +						i_size_read(inode) - 1));
+Fixes: 0a2aa8fbb969 ("f2fs: refactor __exchange_data_block for speed up")
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/file.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-, pg_start << PAGE_SHIFT - 1, pg_end << PAGE_SHIFT - 1); ?
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index f6edc2fdaafe..911b074f808c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1328,6 +1328,9 @@ static int __clone_blkaddrs(struct inode *src_inode, struct inode *dst_inode,
+ 				f2fs_put_page(psrc, 1);
+ 				return PTR_ERR(pdst);
+ 			}
++
++			f2fs_wait_on_page_writeback(pdst, DATA, true, true);
++
+ 			memcpy_page(pdst, 0, psrc, 0, PAGE_SIZE);
+ 			set_page_dirty(pdst);
+ 			set_page_private_gcing(pdst);
+-- 
+2.40.1
 
-Thanks,
-
->   	if (err)
->   		goto out;
->   
-> +	pg_start = range->start >> PAGE_SHIFT;
-> +	pg_end = min_t(pgoff_t,
-> +				(range->start + range->len) >> PAGE_SHIFT,
-> +				DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE));
-> +
->   	/*
->   	 * lookup mapping info in extent cache, skip defragmenting if physical
->   	 * block addresses are continuous.
 
 
 _______________________________________________
