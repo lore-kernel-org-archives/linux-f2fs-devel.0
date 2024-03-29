@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2157AC54E67
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Mar 2024 14:09:45 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9ABFDC6FD1F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 29 Mar 2024 03:20:34 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rpqRq-0005Ds-AH;
-	Thu, 28 Mar 2024 14:09:43 +0000
+	id 1rq2n8-0006Kr-U8;
+	Fri, 29 Mar 2024 03:20:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rpqRp-0005Di-KD
+ (envelope-from <chao@kernel.org>) id 1rq2n7-0006Kj-CL
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Mar 2024 14:09:42 +0000
+ Fri, 29 Mar 2024 03:20:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=grSsGnFPhdAola7ECTVeT9BdZxuLogRKQp8mq18B+ds=; b=FZ3HikbUHkNxy3zKuO3gRzEhj6
- ktnAPMCBMMyxK9VLXhYDaWGZc9bIAIlYaGHJ5eBz6ySa5fOjJtnMECstrhVcBmJPbc6J8jrbuHlsh
- TyX+7k1pmuCRzwNJXp6fqd9AEplId34uQ0QHdRhssX4VVCT20G9vn8oYH5v4hBHhabWY=;
+ bh=RCmgSrycx9JWFYnMHks1kjr51er2wqMIrCVHMw/5XWA=; b=YlpIC1oTtSMFMPRpW8s529UXAx
+ 9zn/KnLc6QNpuyPWM4eFjUf57ogo/tXiCyqoVxs0cTaIZitpM9/qL0luaiyUoEutsJ1TPFXPxY26G
+ 4dhqAokJ/ct51uyq+K5WD+nuJiQlN1RnxjujPBTY2ieixqWBdRByr7gBWyXLLPuzCAuc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=grSsGnFPhdAola7ECTVeT9BdZxuLogRKQp8mq18B+ds=; b=m
- XjbSJLyDsB6zVr1mgxJa1YXAHOPtMQrs+/q4xftcmHr5uQ1QGAmXxRBA6/4yR4XI9irF87krC5PTP
- sPfPpzexG872X8r9b2fE0pFYhwAfTDlZfRy/g44VJiC2gnn52MCWqbZRfO4WgaiFIJEfy9QdH56K4
- VSFUWzEfmq9u0R5s=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ List-Owner:List-Archive; bh=RCmgSrycx9JWFYnMHks1kjr51er2wqMIrCVHMw/5XWA=; b=O
+ tqDjQ4ZzyX6hkOOZtOHBktByplNqkfKk2WNEpgdXPFqSTAIcgaNi7urxRRezxwmpHEPs2LuvQpE0S
+ nKSAh6WTK4Y8VKB1f8liiAqeEIBPjnDc9vQU3GAafFWnV4zku08MVbeb+rVgJQ9p++PjhS0Q6jhju
+ jq7memMMTjFT2WaA=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rpqRp-0006UH-0W for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Mar 2024 14:09:42 +0000
+ id 1rq2n5-0002dh-3M for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 29 Mar 2024 03:20:29 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id DB01A6171D;
- Thu, 28 Mar 2024 14:09:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0439C43390;
- Thu, 28 Mar 2024 14:09:28 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id 87EA9CE2CCE;
+ Fri, 29 Mar 2024 03:20:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 275F0C433C7;
+ Fri, 29 Mar 2024 03:20:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1711634970;
- bh=ZR+FDy105meI+WZXdZ6rgTBpMmaMXCpT9ksqy5R2t4Q=;
+ s=k20201202; t=1711682414;
+ bh=rY2JQii55Kvgisqee1kcdn54MRq+qAvAnPy7NBSOrQ0=;
  h=From:To:Cc:Subject:Date:From;
- b=ulhoxQpS56WQEPjX1TisPnnDEQP16l29shJRGuWhKdDdBakGxQisL6eDb01LAJHB2
- zbopgbhTVh2pC28Z9ZApyJm97vwIrJ0Nchpbx2tzKE05l0EbyTMB+t5QiX0bC7fXc0
- zlAi7T1R4C5bFhXJ8TDp7P3Z0Z18o6lT/5vmR96Ol6cFb/sg/UC/GOgFMTfQVFd45g
- X7+AgqM6X/74RObmS+LHcaQ03KWiiv60Ge3nZ/LMc8Hk3196xDrlb/6fEOYun5Kj7n
- udus6dAl/LVaeGfOpDYmgqmEEequnpCBW+i0RzG+NL+13Lt9u0nO2lTKRcV3rUKgDI
- qtZRki/gN72Aw==
+ b=IHX9vfJ+a4XDPJ5P+S2Cm+s4mC9woGcRx8mrJEs3m+p8V+l0rLzStBw3FPfA6fFTx
+ LQq0mjfHFBfdy/j6tvQBL68tSo/B0qqdg6kHCXFAHgAGQnDiaqO5R90S5rKIei5HKH
+ HGTG7sBq7IrNTr+ZDWaejFDQd7erueIq1svivIbAQP0OqmJRdg+HzUXiNq6tlQM+jP
+ OPPj2rfA/Yam9/hXg8es5+NqWeZ622qJsYORVKHCMpkmhkE0pBbgA7YytfXwi3wNas
+ ON3dF3UihMCkJ6AwUtSm86E1w7/nlDBIDLiwmanKsWgIc2Sx6k96Nts82y0bIiqF0Q
+ HJznpwKIX6kMA==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Thu, 28 Mar 2024 22:09:18 +0800
-Message-Id: <20240328140918.3133301-1-chao@kernel.org>
+Date: Fri, 29 Mar 2024 11:20:09 +0800
+Message-Id: <20240329032009.3395384-1-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-X-Headers-End: 1rpqRp-0006UH-0W
-Subject: [f2fs-dev] [PATCH] f2fs: zone: don't block IO if there is remained
- open zone
+X-Headers-End: 1rq2n5-0002dh-3M
+Subject: [f2fs-dev] [PATCH v2] f2fs: zone: don't block IO if there is
+ remained open zone
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,14 +90,16 @@ of last IO in the zone.
 Cc: Daeho Jeong <daeho43@gmail.com>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
+v2:
+- remove unneeded declaration.
  fs/f2fs/data.c    | 80 +++++++++++++++++++++++++----------------------
- fs/f2fs/f2fs.h    | 34 +++++++++++++++++---
+ fs/f2fs/f2fs.h    | 33 ++++++++++++++++---
  fs/f2fs/iostat.c  |  7 +++++
  fs/f2fs/iostat.h  |  2 ++
  fs/f2fs/segment.c | 58 ++++++++++++++++++++++++++++++----
  fs/f2fs/segment.h | 12 ++++++-
  fs/f2fs/super.c   |  2 ++
- 7 files changed, 146 insertions(+), 49 deletions(-)
+ 7 files changed, 145 insertions(+), 49 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
 index 0d88649c60a5..132a3ede60b1 100644
@@ -243,7 +245,7 @@ index 0d88649c60a5..132a3ede60b1 100644
  	}
  #endif
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 694f8a52cb84..1ca7603a553f 100644
+index 694f8a52cb84..41a07bedf0a1 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
 @@ -1234,16 +1234,16 @@ struct f2fs_bio_info {
@@ -276,15 +278,7 @@ index 694f8a52cb84..1ca7603a553f 100644
  #endif
  
  	/* for node-related operations */
-@@ -3831,6 +3832,7 @@ void f2fs_submit_merged_ipu_write(struct f2fs_sb_info *sbi,
- void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
- int f2fs_submit_page_bio(struct f2fs_io_info *fio);
- int f2fs_merge_page_bio(struct f2fs_io_info *fio);
-+bool f2fs_blkaddr_in_seqzone(struct f2fs_sb_info *sbi, block_t blkaddr);
- void f2fs_submit_page_write(struct f2fs_io_info *fio);
- struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
- 		block_t blk_addr, sector_t *sector);
-@@ -4469,6 +4471,28 @@ static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
+@@ -4469,6 +4470,28 @@ static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
  
  	return test_bit(zno, FDEV(devi).blkz_seq);
  }
