@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 06A54CD1288
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  3 Apr 2024 16:58:27 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7FDB3CD128A
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  3 Apr 2024 18:20:41 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rs3wR-0000j0-6k;
-	Wed, 03 Apr 2024 16:58:27 +0000
+	id 1rs5Dz-0002mU-46;
+	Wed, 03 Apr 2024 18:20:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <bfoster@redhat.com>) id 1rs3wP-0000iq-NV
+ (envelope-from <djwong@kernel.org>) id 1rs5Dx-0002mO-82
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 03 Apr 2024 16:58:26 +0000
+ Wed, 03 Apr 2024 18:20:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=M0vlp5zqKNWczSf5uwQPJWCYRlyw0wuDQPwNGC+8xK8=; b=M0TEa9uKJ6pDhDrCmkkTOgqpSD
- xu7QaU686U0Ctv8pYSnGtPa2exXLz0r6pR4JUV0/sXE5y9nLszphW8j+B3suhwAfJiUoAJn89jKiy
- xRl57SMov9WSoGtP2bTcV1Q4dnt0JXvIcEdneG9NK6ztwPt8KjVwtngXu2YKzqKpxn44=;
+ bh=kgGG71+PbmfI0fq3O+MCRO61PbQZUSP4YiW3koKj+XY=; b=i14ONhNcVpSaLKsFbqxFTg1nJx
+ sbjBr7gDoeTziOj6btzcUeQZpU5kbz7buPBrKzcbXWfycl9K5E7OSNHG3HBpqQ1JYAdBlwnbVi8V+
+ YoUXPHsH/6izwSskeK8L3hzfG91t27OSNmIL9m5/I5w32KAqwqZL3xxBnUt9+sFpytFE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,51 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=M0vlp5zqKNWczSf5uwQPJWCYRlyw0wuDQPwNGC+8xK8=; b=a4gF3zok4FIGcI98zqilPvtuAX
- 0rz2VS41OXGO7gAkM5I3/FPqVeTu+NBkfGJbQWwGTt9oOibcsKTglD1diuiXIzGfGZg7SJddJAKjZ
- g7MoKUcYcaXsjK/JDSdIUv+1C9pbAow/TCHPgYDcjB+vS868f5vNNv95/Bj7t9wyE5Go=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124])
+ bh=kgGG71+PbmfI0fq3O+MCRO61PbQZUSP4YiW3koKj+XY=; b=RUNT42oUXxyXQSttcqjwcM9Yoz
+ oIFRSRWidL6s3rk1ezGuJKchSs9QhPhwwyN+bNTo9qua7Gr6maD2VJe3WSjsL4aVI32OsvCJmK9Ju
+ g9KAVTFzKlM0k3xx5VtizPRnZsaVJ86ndnVxzgv7rKKMlri+1JEOPukUD2hkgJdvHOAU=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rs3wM-0006Sr-4S for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 03 Apr 2024 16:58:26 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1712163496;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=M0vlp5zqKNWczSf5uwQPJWCYRlyw0wuDQPwNGC+8xK8=;
- b=WmUMB7rih5zScqXx3NjFJenYdCUD6STBJ7zTbt0aBiLtRzj1j/n4iWWzLAKktgpge/XH6Q
- Xsk62WWqSgSwNUtjWNY0oeHJbZltMLJby7orr/Qlj3z5BYUsdCTLt368SCdm14gwRrnyFm
- Mt61j+dJYq+6ACpxFNqTJfKhMxRQVLk=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-588-b9Sqe5VQNbSAgN0m4F60cA-1; Wed,
- 03 Apr 2024 12:58:14 -0400
-X-MC-Unique: b9Sqe5VQNbSAgN0m4F60cA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com
- [10.11.54.2])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6496A383CD7A;
- Wed,  3 Apr 2024 16:58:13 +0000 (UTC)
-Received: from bfoster (unknown [10.22.16.57])
- by smtp.corp.redhat.com (Postfix) with ESMTPS id A6F3C40C6CB5;
- Wed,  3 Apr 2024 16:58:12 +0000 (UTC)
-Date: Wed, 3 Apr 2024 13:00:11 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-Message-ID: <Zg2LG1_2-ac1GlsG@bfoster>
+ id 1rs5Dv-0002ah-Ia for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 03 Apr 2024 18:20:36 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sin.source.kernel.org (Postfix) with ESMTP id F0B0ECE2C0B;
+ Wed,  3 Apr 2024 18:20:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30722C433C7;
+ Wed,  3 Apr 2024 18:20:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1712168423;
+ bh=dKvQPTXecftDT+DnIIwHEnA6Z/BLqGb2biglQSFhZeY=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=P+29GNYuQx0VUmcsHNAcViKqPDDq3ZFBXvXQk8i5X/Ng9rS0Nn5TR2ZFKpItLWJoz
+ AxQT8f9QGCIMrVhK1tfOsWr/ibXybNTHcuh13+EwHlmZmzl6cHhaXAIJFA2kXoY8nj
+ Eb9fEuRHhhO+5iGTBPB7lLoN0d0TNvxS1vVTWNROU6LwDNr45oZ1dar1YVARAXcn8w
+ LqRoDraupidvfHDGwIQvORPlSb6lScoO5H1ipbe0TmVYlxpqNjDw0D5fFjn1h/DyZj
+ FFLK6Xci6djMMnMU73EvCh8gOPGDnRrFucf6kgrgZvpN41PbVwUI0e2bWiNpZ+LDQT
+ 6+Do0ENej/RcQ==
+Date: Wed, 3 Apr 2024 11:20:22 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Message-ID: <20240403182022.GB6375@frogsfrogsfrogs>
 References: <cover.1712126039.git.sweettea-kernel@dorminy.me>
- <b9b795987a485afa0fdb8f0decc09405691d9320.1712126039.git.sweettea-kernel@dorminy.me>
+ <vf4k3yagvb6vf3vfu7st7uj7asv4zbf5c3b2tef2g2xic5fkvj@olqxfakmkoew>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <b9b795987a485afa0fdb8f0decc09405691d9320.1712126039.git.sweettea-kernel@dorminy.me>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
-X-Headers-End: 1rs3wM-0006Sr-4S
-Subject: Re: [f2fs-dev] [PATCH v3 11/13] bcachefs: fiemap: return correct
- extent physical length
+In-Reply-To: <vf4k3yagvb6vf3vfu7st7uj7asv4zbf5c3b2tef2g2xic5fkvj@olqxfakmkoew>
+X-Headers-End: 1rs5Dv-0002ah-Ia
+Subject: Re: [f2fs-dev] [PATCH v3 00/13] fiemap extension for more physical
+ information
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,93 +80,106 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-bcachefs@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+ kernel-team@meta.com, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
  Jonathan Corbet <corbet@lwn.net>, linux-btrfs@vger.kernel.org,
- Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org,
+ Brian Foster <bfoster@redhat.com>, linux-doc@vger.kernel.org,
  Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org,
- Chris Mason <clm@fb.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- David Sterba <dsterba@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@meta.com,
+ Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Sweet Tea Dorminy <sweettea-kernel@dorminy.me>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
  =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Apr 03, 2024 at 03:22:52AM -0400, Sweet Tea Dorminy wrote:
-> Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-> ---
->  fs/bcachefs/fs.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
+On Wed, Apr 03, 2024 at 02:17:26PM -0400, Kent Overstreet wrote:
+> On Wed, Apr 03, 2024 at 03:22:41AM -0400, Sweet Tea Dorminy wrote:
+> > For many years, various btrfs users have written programs to discover
+> > the actual disk space used by files, using root-only interfaces.
+> > However, this information is a great fit for fiemap: it is inherently
+> > tied to extent information, all filesystems can use it, and the
+> > capabilities required for FIEMAP make sense for this additional
+> > information also.
+> > 
+> > Hence, this patchset adds various additional information to fiemap,
+> > and extends filesystems (but not iomap) to return it.  This uses some of
+> > the reserved padding in the fiemap extent structure, so programs unaware
+> > of the changes will be unaffected.
+> > 
+> > This is based on next-20240403. I've tested the btrfs part of this with
+> > the standard btrfs testing matrix locally and manually, and done minimal
+> > testing of the non-btrfs parts.
+> > 
+> > I'm unsure whether btrfs should be returning the entire physical extent
+> > referenced by a particular logical range, or just the part of the
+> > physical extent referenced by that range. The v2 thread has a discussion
+> > of this.
 > 
-> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-> index f830578a9cd1..d2793bae842d 100644
-> --- a/fs/bcachefs/fs.c
-> +++ b/fs/bcachefs/fs.c
-> @@ -913,15 +913,17 @@ static int bch2_fill_extent(struct bch_fs *c,
->  			flags |= FIEMAP_EXTENT_SHARED;
->  
->  		bkey_for_each_ptr_decode(k.k, ptrs, p, entry) {
-> -			int flags2 = 0;
-> +			int flags2 = FIEMAP_EXTENT_HAS_PHYS_LEN;
-> +			u64 phys_len = k.k->size << 9;
->  			u64 offset = p.ptr.offset;
->  
->  			if (p.ptr.unwritten)
->  				flags2 |= FIEMAP_EXTENT_UNWRITTEN;
->  
-> -			if (p.crc.compression_type)
-> +			if (p.crc.compression_type) {
->  				flags2 |= FIEMAP_EXTENT_ENCODED;
-> -			else
-> +				phys_len = p.crc.compressed_size << 9;
-> +			} else
->  				offset += p.crc.offset;
->  
->  			if ((offset & (block_sectors(c) - 1)) ||
-> @@ -931,7 +933,7 @@ static int bch2_fill_extent(struct bch_fs *c,
->  			ret = fiemap_fill_next_extent(info,
->  						bkey_start_offset(k.k) << 9,
->  						offset << 9,
-> -						k.k->size << 9, 0,
-> +						k.k->size << 9, phys_len,
->  						flags|flags2);
->  			if (ret)
->  				return ret;
-> @@ -941,14 +943,18 @@ static int bch2_fill_extent(struct bch_fs *c,
->  	} else if (bkey_extent_is_inline_data(k.k)) {
->  		return fiemap_fill_next_extent(info,
->  					       bkey_start_offset(k.k) << 9,
-> -					       0, k.k->size << 9, 0,
-> +					       0, k.k->size << 9,
-> +					       bkey_inline_data_bytes(k.k),
+> I believe there was some talk of using the padding for a device ID, so
+> that fiemap could properly support multi device filesystems. Are we sure
+> this is the best use of those bytes?
 
-Question for Kent perhaps, but what's the functional difference between
-bkey_inline_data_bytes() and k->size in this particular case?
+We still have 5x u32 of empty space in struct fiemap after this series,
+so I don't think adding the physical length is going to prohibit future
+expansion.
 
-FWIW that and the other couple nitty questions aside, this all LGTM.
-Thanks.
+--D
 
-Brian
-
->  					       flags|
-> +					       FIEMAP_EXTENT_HAS_PHYS_LEN|
->  					       FIEMAP_EXTENT_DATA_INLINE);
->  	} else if (k.k->type == KEY_TYPE_reservation) {
->  		return fiemap_fill_next_extent(info,
->  					       bkey_start_offset(k.k) << 9,
-> -					       0, k.k->size << 9, 0,
-> +					       0, k.k->size << 9,
-> +					       k.k->size << 9,
->  					       flags|
-> +					       FIEMAP_EXTENT_HAS_PHYS_LEN|
->  					       FIEMAP_EXTENT_DELALLOC|
->  					       FIEMAP_EXTENT_UNWRITTEN);
->  	} else {
-> -- 
-> 2.43.0
+> > 
+> > Changelog:
+> > 
+> > v3: 
+> >  - Adapted all the direct users of fiemap, except iomap, to emit
+> >    the new fiemap information, as far as I understand the other
+> >    filesystems.
+> > 
+> > v2:
+> >  - Adopted PHYS_LEN flag and COMPRESSED flag from the previous version,
+> >    as per Andreas Dilger' comment.
+> >    https://patchwork.ozlabs.org/project/linux-ext4/patch/4f8d5dc5b51a43efaf16c39398c23a6276e40a30.1386778303.git.dsterba@suse.cz/
+> >  - https://lore.kernel.org/linux-fsdevel/cover.1711588701.git.sweettea-kernel@dorminy.me/T/#t
+> > 
+> > v1: https://lore.kernel.org/linux-fsdevel/20240315030334.GQ6184@frogsfrogsfrogs/T/#t
+> > 
+> > Sweet Tea Dorminy (13):
+> >   fs: fiemap: add physical_length field to extents
+> >   fs: fiemap: update fiemap_fill_next_extent() signature
+> >   fs: fiemap: add new COMPRESSED extent state
+> >   btrfs: fiemap: emit new COMPRESSED state.
+> >   btrfs: fiemap: return extent physical size
+> >   nilfs2: fiemap: return correct extent physical length
+> >   ext4: fiemap: return correct extent physical length
+> >   f2fs: fiemap: add physical length to trace_f2fs_fiemap
+> >   f2fs: fiemap: return correct extent physical length
+> >   ocfs2: fiemap: return correct extent physical length
+> >   bcachefs: fiemap: return correct extent physical length
+> >   f2fs: fiemap: emit new COMPRESSED state
+> >   bcachefs: fiemap: emit new COMPRESSED state
+> > 
+> >  Documentation/filesystems/fiemap.rst | 35 ++++++++++----
+> >  fs/bcachefs/fs.c                     | 17 +++++--
+> >  fs/btrfs/extent_io.c                 | 72 ++++++++++++++++++----------
+> >  fs/ext4/extents.c                    |  3 +-
+> >  fs/f2fs/data.c                       | 36 +++++++++-----
+> >  fs/f2fs/inline.c                     |  7 +--
+> >  fs/ioctl.c                           | 11 +++--
+> >  fs/iomap/fiemap.c                    |  2 +-
+> >  fs/nilfs2/inode.c                    | 18 ++++---
+> >  fs/ntfs3/frecord.c                   |  7 +--
+> >  fs/ocfs2/extent_map.c                | 10 ++--
+> >  fs/smb/client/smb2ops.c              |  1 +
+> >  include/linux/fiemap.h               |  2 +-
+> >  include/trace/events/f2fs.h          | 10 ++--
+> >  include/uapi/linux/fiemap.h          | 34 ++++++++++---
+> >  15 files changed, 178 insertions(+), 87 deletions(-)
+> > 
+> > 
+> > base-commit: 75e31f66adc4c8d049e8aac1f079c1639294cd65
+> > -- 
+> > 2.43.0
+> > 
 > 
-> 
-
 
 
 _______________________________________________
