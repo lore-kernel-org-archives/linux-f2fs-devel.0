@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D81E2CD1294
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  3 Apr 2024 07:52:26 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3FF1BC6FD1F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  3 Apr 2024 07:52:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rrvQ1-0005mz-Fb;
-	Wed, 03 Apr 2024 07:52:26 +0000
+	id 1rrvQ6-0003Ur-1r;
+	Wed, 03 Apr 2024 07:52:30 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sweettea-kernel@dorminy.me>) id 1rrvQ0-0005mh-1U
+ (envelope-from <sweettea-kernel@dorminy.me>) id 1rrvQ1-0003UO-OQ
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 03 Apr 2024 07:52:24 +0000
+ Wed, 03 Apr 2024 07:52:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=c8lpBdyF9DznCjSgkbHmb0HX9PX2+NlolbfNMD9N8MM=; b=ZNeIjW9lEiPiXiuLtfQIlas0bY
- DsJATQum0JANsakdQR8+z+O0b86VXIHUE6NYGTztlaoxkhZEia937pTsWwACgVI7I+TqwZFHLgtDm
- seRzVlRurzZQ/RGYDEFq/8+dcR6uQoE5iUHWkcgFz9J39sw/EOjC9sOJAJGjo2yXXxm8=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=c8lpBdyF9DznCjSgkbHmb0HX9PX2+NlolbfNMD9N8MM=; b=CnjJ7JXEEUURvl3K1ZjWxsgOwD
- 3ZuAqcTWF45g3LTu6qlFg+9OtSeCp0DRgOMNnXirMF/2EaiXlLdt+AeAdBAf6qhIw220fM8r+YLQq
- lFEUcM33aSe3GY0LJlhdOiwXqQU5x7s7FK2y2DsXYg36vwEUclHxt02LRY7YE2JNMweA=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=2SC6Anwg36IOtJKdJbxvqGVUkkAdxWSEE9g3JzlTq28=; b=Gs2G9/XViZgLHVO+IlCdAYI1UD
+ BVTf9C5TyR9HPL9GN7hfwIMpwCH17erX2BHBimTIwwvMxcNcnodBtupprJz0lVvnvqjdy7eEKu0wI
+ SXANgJMM1xzcCR1JMKo/XLOmFkosdvs5xuE1AL+/hL2q37fYvdpL0g1ARWlwDXT9U3pc=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:To:From:
+ Sender:Reply-To:Cc:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=2SC6Anwg36IOtJKdJbxvqGVUkkAdxWSEE9g3JzlTq28=; b=C
+ 1+L7MNGq3CdWym0GJHv3Uetjmt+CdVC4w4DEYVzgW+UZRGLAAuEmThq/xevnIvLzr7lMP8TEXszCd
+ 8yqrGnPswhZFuiwITTbdIwwhyuU6URJYcarolZNgqZEKb9des/rxIJZw4U/dDTRCwnQsYl7hL5/eI
+ vQ80rpnE0gIMDiEw=;
 Received: from box.fidei.email ([71.19.144.250])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rrvPz-0001lE-GW for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 03 Apr 2024 07:52:24 +0000
+ id 1rrvQ1-0001lO-3G for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 03 Apr 2024 07:52:26 +0000
 Received: from authenticated-user (box.fidei.email [71.19.144.250])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
  (No client certificate requested)
- by box.fidei.email (Postfix) with ESMTPSA id 85BD2807F9;
- Wed,  3 Apr 2024 03:33:15 -0400 (EDT)
+ by box.fidei.email (Postfix) with ESMTPSA id 83D2B807A2;
+ Wed,  3 Apr 2024 03:33:03 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
- t=1712129596; bh=k2cIvdzLg3sljiZ/6znD/m3Ichqz9W7DWE80AeNEY2E=;
- h=From:To:Subject:Date:In-Reply-To:References:From;
- b=QewS3YWB1Udfrmc/U+d3uuM7Whmk18AUwovF8JVhddL2HNuIMXaUpIm41h3L4CYTs
- 5KScePZY2mnNQLA2JWbk7uAmVjO/Q0ocd2pjHbwWhNJ9WeQQ6ErauUPhc3TSpxHsZz
- IzCe9DHOenanCyWyEZ7PBdaPAQOwz0o5/dwXJq9jHPTyz64Cm4WLLoL8mXGR5VAvFt
- ieU26UGsxvoUwgp6smA3DzC2kFa+OUkmSZV2Dtt5LZ15W88v7JyshorRDs/anyn52b
- qaT/UPkoL8UVb6bDkx5xa2Eliks4n2naoWdnSMU7ngNNU+5h23bqxiIVqnuLPee3y9
- ighpvtsu8WGLA==
+ t=1712129583; bh=B8T21JVbOLWLZIWqX9Kk4W8YEBxzK1vo2nUprAs1Et0=;
+ h=From:To:Subject:Date:From;
+ b=RMMhudxb7EIzCkqtHOmFwCDPbzgbWgn5vp8COLdnfwf+qsRdUrHavuwlRc5bMVEiY
+ kgw67uVuJhjs63x2OaL8IC0tPgouh2AcqwdGCEWhTb0V7eUhPxFrhru47kQh7HeJWE
+ t2+MhGmN22+WGDmkykhpSjR9PhQJTk/Ep//iqUjzwTzOsSU6sq4vsvZfyhow8doZ7o
+ YhR7ehQgYH/ByQMLhSyFGRFnpzJKYoUFAaoDiZASvkHxaV54iofPU6PSNKQFMJWjB0
+ 8EOfG2D66AkPESDO8GJmrHFQfKL9137B2ksLw3d3FgnT9Fd+KFJNw/QioT2Nr/hMha
+ orctZOIBXFCvQ==
 To: Jonathan Corbet <corbet@lwn.net>,
  Kent Overstreet <kent.overstreet@linux.dev>,
  Brian Foster <bfoster@redhat.com>, Chris Mason <clm@fb.com>,
@@ -67,14 +67,12 @@ To: Jonathan Corbet <corbet@lwn.net>,
  linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
  linux-btrfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Date: Wed,  3 Apr 2024 03:22:46 -0400
-Message-ID: <62391207f8d60060fddc18404af600c4b4f9b170.1712126039.git.sweettea-kernel@dorminy.me>
-In-Reply-To: <cover.1712126039.git.sweettea-kernel@dorminy.me>
-References: <cover.1712126039.git.sweettea-kernel@dorminy.me>
+Date: Wed,  3 Apr 2024 03:22:41 -0400
+Message-ID: <cover.1712126039.git.sweettea-kernel@dorminy.me>
 MIME-Version: 1.0
-X-Headers-End: 1rrvPz-0001lE-GW
-Subject: [f2fs-dev] [PATCH v3 05/13] btrfs: fiemap: return extent physical
- size
+X-Headers-End: 1rrvQ1-0001lO-3G
+Subject: [f2fs-dev] [PATCH v3 00/13] fiemap extension for more physical
+ information
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,242 +91,76 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Now that fiemap allows returning extent physical size, make btrfs return
-the appropriate extent's actual disk size.
+For many years, various btrfs users have written programs to discover
+the actual disk space used by files, using root-only interfaces.
+However, this information is a great fit for fiemap: it is inherently
+tied to extent information, all filesystems can use it, and the
+capabilities required for FIEMAP make sense for this additional
+information also.
 
-Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
----
- fs/btrfs/extent_io.c | 70 ++++++++++++++++++++++++++++----------------
- 1 file changed, 45 insertions(+), 25 deletions(-)
+Hence, this patchset adds various additional information to fiemap,
+and extends filesystems (but not iomap) to return it.  This uses some of
+the reserved padding in the fiemap extent structure, so programs unaware
+of the changes will be unaffected.
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index e9df670ef7d2..b631f387cc3c 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -2506,7 +2506,8 @@ int try_release_extent_mapping(struct page *page, gfp_t mask)
- struct btrfs_fiemap_entry {
- 	u64 offset;
- 	u64 phys;
--	u64 len;
-+	u64 log_len;
-+	u64 phys_len;
- 	u32 flags;
- };
- 
-@@ -2564,7 +2565,8 @@ struct fiemap_cache {
- 	/* Fields for the cached extent (unsubmitted, not ready, extent). */
- 	u64 offset;
- 	u64 phys;
--	u64 len;
-+	u64 log_len;
-+	u64 phys_len;
- 	u32 flags;
- 	bool cached;
- };
-@@ -2577,8 +2579,8 @@ static int flush_fiemap_cache(struct fiemap_extent_info *fieinfo,
- 		int ret;
- 
- 		ret = fiemap_fill_next_extent(fieinfo, entry->offset,
--					      entry->phys, entry->len, 0,
--					      entry->flags);
-+					      entry->phys, entry->log_len,
-+					      entry->phys_len, entry->flags);
- 		/*
- 		 * Ignore 1 (reached max entries) because we keep track of that
- 		 * ourselves in emit_fiemap_extent().
-@@ -2603,7 +2605,8 @@ static int flush_fiemap_cache(struct fiemap_extent_info *fieinfo,
-  */
- static int emit_fiemap_extent(struct fiemap_extent_info *fieinfo,
- 				struct fiemap_cache *cache,
--				u64 offset, u64 phys, u64 len, u32 flags)
-+				u64 offset, u64 phys, u64 log_len,
-+				u64 phys_len, u32 flags)
- {
- 	struct btrfs_fiemap_entry *entry;
- 	u64 cache_end;
-@@ -2611,6 +2614,9 @@ static int emit_fiemap_extent(struct fiemap_extent_info *fieinfo,
- 	/* Set at the end of extent_fiemap(). */
- 	ASSERT((flags & FIEMAP_EXTENT_LAST) == 0);
- 
-+	/* We always set the correct physical length. */
-+	flags |= FIEMAP_EXTENT_HAS_PHYS_LEN;
-+
- 	if (!cache->cached)
- 		goto assign;
- 
-@@ -2646,7 +2652,7 @@ static int emit_fiemap_extent(struct fiemap_extent_info *fieinfo,
- 	 * or equals to what we have in cache->offset. We deal with this as
- 	 * described below.
- 	 */
--	cache_end = cache->offset + cache->len;
-+	cache_end = cache->offset + cache->log_len;
- 	if (cache_end > offset) {
- 		if (offset == cache->offset) {
- 			/*
-@@ -2670,10 +2676,10 @@ static int emit_fiemap_extent(struct fiemap_extent_info *fieinfo,
- 			 * where a previously found file extent item was split
- 			 * due to an ordered extent completing.
- 			 */
--			cache->len = offset - cache->offset;
-+			cache->log_len = offset - cache->offset;
- 			goto emit;
- 		} else {
--			const u64 range_end = offset + len;
-+			const u64 range_end = offset + log_len;
- 
- 			/*
- 			 * The offset of the file extent item we have just found
-@@ -2706,11 +2712,13 @@ static int emit_fiemap_extent(struct fiemap_extent_info *fieinfo,
- 			if (range_end <= cache_end)
- 				return 0;
- 
--			if (!(flags & (FIEMAP_EXTENT_DATA_COMPRESSED | FIEMAP_EXTENT_DELALLOC)))
-+			if (!(flags & (FIEMAP_EXTENT_DATA_COMPRESSED | FIEMAP_EXTENT_DELALLOC))) {
- 				phys += cache_end - offset;
-+				phys_len -= cache_end - offset;
-+			}
- 
- 			offset = cache_end;
--			len = range_end - cache_end;
-+			log_len = range_end - cache_end;
- 			goto emit;
- 		}
- 	}
-@@ -2720,15 +2728,17 @@ static int emit_fiemap_extent(struct fiemap_extent_info *fieinfo,
- 	 * 1) Their logical addresses are continuous
- 	 *
- 	 * 2) Their physical addresses are continuous
--	 *    So truly compressed (physical size smaller than logical size)
--	 *    extents won't get merged with each other
- 	 *
- 	 * 3) Share same flags
-+	 *
-+	 * 4) Not compressed
- 	 */
--	if (cache->offset + cache->len  == offset &&
--	    cache->phys + cache->len == phys  &&
--	    cache->flags == flags) {
--		cache->len += len;
-+	if (cache->offset + cache->log_len  == offset &&
-+	    cache->phys + cache->log_len == phys  &&
-+	    cache->flags == flags &&
-+	    !(flags & FIEMAP_EXTENT_DATA_COMPRESSED)) {
-+		cache->log_len += log_len;
-+		cache->phys_len += phys_len;
- 		return 0;
- 	}
- 
-@@ -2745,7 +2755,7 @@ static int emit_fiemap_extent(struct fiemap_extent_info *fieinfo,
- 		 * to miss it.
- 		 */
- 		entry = &cache->entries[cache->entries_size - 1];
--		cache->next_search_offset = entry->offset + entry->len;
-+		cache->next_search_offset = entry->offset + entry->log_len;
- 		cache->cached = false;
- 
- 		return BTRFS_FIEMAP_FLUSH_CACHE;
-@@ -2754,7 +2764,8 @@ static int emit_fiemap_extent(struct fiemap_extent_info *fieinfo,
- 	entry = &cache->entries[cache->entries_pos];
- 	entry->offset = cache->offset;
- 	entry->phys = cache->phys;
--	entry->len = cache->len;
-+	entry->log_len = cache->log_len;
-+	entry->phys_len = cache->phys_len;
- 	entry->flags = cache->flags;
- 	cache->entries_pos++;
- 	cache->extents_mapped++;
-@@ -2767,7 +2778,8 @@ static int emit_fiemap_extent(struct fiemap_extent_info *fieinfo,
- 	cache->cached = true;
- 	cache->offset = offset;
- 	cache->phys = phys;
--	cache->len = len;
-+	cache->log_len = log_len;
-+	cache->phys_len = phys_len;
- 	cache->flags = flags;
- 
- 	return 0;
-@@ -2793,7 +2805,8 @@ static int emit_last_fiemap_cache(struct fiemap_extent_info *fieinfo,
- 		return 0;
- 
- 	ret = fiemap_fill_next_extent(fieinfo, cache->offset, cache->phys,
--				      cache->len, 0, cache->flags);
-+				      cache->log_len, cache->phys_len,
-+				      cache->flags);
- 	cache->cached = false;
- 	if (ret > 0)
- 		ret = 0;
-@@ -2987,13 +3000,15 @@ static int fiemap_process_hole(struct btrfs_inode *inode,
- 			}
- 			ret = emit_fiemap_extent(fieinfo, cache, prealloc_start,
- 						 disk_bytenr + extent_offset,
--						 prealloc_len, prealloc_flags);
-+						 prealloc_len, prealloc_len,
-+						 prealloc_flags);
- 			if (ret)
- 				return ret;
- 			extent_offset += prealloc_len;
- 		}
- 
- 		ret = emit_fiemap_extent(fieinfo, cache, delalloc_start, 0,
-+					 delalloc_end + 1 - delalloc_start,
- 					 delalloc_end + 1 - delalloc_start,
- 					 FIEMAP_EXTENT_DELALLOC |
- 					 FIEMAP_EXTENT_UNKNOWN);
-@@ -3034,7 +3049,8 @@ static int fiemap_process_hole(struct btrfs_inode *inode,
- 		}
- 		ret = emit_fiemap_extent(fieinfo, cache, prealloc_start,
- 					 disk_bytenr + extent_offset,
--					 prealloc_len, prealloc_flags);
-+					 prealloc_len, prealloc_len,
-+					 prealloc_flags);
- 		if (ret)
- 			return ret;
- 	}
-@@ -3180,6 +3196,7 @@ int extent_fiemap(struct btrfs_inode *inode, struct fiemap_extent_info *fieinfo,
- 		u64 extent_offset = 0;
- 		u64 extent_gen;
- 		u64 disk_bytenr = 0;
-+		u64 disk_size = 0;
- 		u64 flags = 0;
- 		int extent_type;
- 		u8 compression;
-@@ -3242,7 +3259,7 @@ int extent_fiemap(struct btrfs_inode *inode, struct fiemap_extent_info *fieinfo,
- 			flags |= FIEMAP_EXTENT_DATA_INLINE;
- 			flags |= FIEMAP_EXTENT_NOT_ALIGNED;
- 			ret = emit_fiemap_extent(fieinfo, &cache, key.offset, 0,
--						 extent_len, flags);
-+						 extent_len, extent_len, flags);
- 		} else if (extent_type == BTRFS_FILE_EXTENT_PREALLOC) {
- 			ret = fiemap_process_hole(inode, fieinfo, &cache,
- 						  &delalloc_cached_state,
-@@ -3257,6 +3274,7 @@ int extent_fiemap(struct btrfs_inode *inode, struct fiemap_extent_info *fieinfo,
- 						  backref_ctx, 0, 0, 0,
- 						  key.offset, extent_end - 1);
- 		} else {
-+			disk_size = btrfs_file_extent_disk_num_bytes(leaf, ei);
- 			/* We have a regular extent. */
- 			if (fieinfo->fi_extents_max) {
- 				ret = btrfs_is_data_extent_shared(inode,
-@@ -3271,7 +3289,9 @@ int extent_fiemap(struct btrfs_inode *inode, struct fiemap_extent_info *fieinfo,
- 
- 			ret = emit_fiemap_extent(fieinfo, &cache, key.offset,
- 						 disk_bytenr + extent_offset,
--						 extent_len, flags);
-+						 extent_len,
-+						 disk_size - extent_offset,
-+						 flags);
- 		}
- 
- 		if (ret < 0) {
-@@ -3309,7 +3329,7 @@ int extent_fiemap(struct btrfs_inode *inode, struct fiemap_extent_info *fieinfo,
- 		prev_extent_end = range_end;
- 	}
- 
--	if (cache.cached && cache.offset + cache.len >= last_extent_end) {
-+	if (cache.cached && cache.offset + cache.log_len >= last_extent_end) {
- 		const u64 i_size = i_size_read(&inode->vfs_inode);
- 
- 		if (prev_extent_end < i_size) {
+This is based on next-20240403. I've tested the btrfs part of this with
+the standard btrfs testing matrix locally and manually, and done minimal
+testing of the non-btrfs parts.
+
+I'm unsure whether btrfs should be returning the entire physical extent
+referenced by a particular logical range, or just the part of the
+physical extent referenced by that range. The v2 thread has a discussion
+of this.
+
+Changelog:
+
+v3: 
+ - Adapted all the direct users of fiemap, except iomap, to emit
+   the new fiemap information, as far as I understand the other
+   filesystems.
+
+v2:
+ - Adopted PHYS_LEN flag and COMPRESSED flag from the previous version,
+   as per Andreas Dilger' comment.
+   https://patchwork.ozlabs.org/project/linux-ext4/patch/4f8d5dc5b51a43efaf16c39398c23a6276e40a30.1386778303.git.dsterba@suse.cz/
+ - https://lore.kernel.org/linux-fsdevel/cover.1711588701.git.sweettea-kernel@dorminy.me/T/#t
+
+v1: https://lore.kernel.org/linux-fsdevel/20240315030334.GQ6184@frogsfrogsfrogs/T/#t
+
+Sweet Tea Dorminy (13):
+  fs: fiemap: add physical_length field to extents
+  fs: fiemap: update fiemap_fill_next_extent() signature
+  fs: fiemap: add new COMPRESSED extent state
+  btrfs: fiemap: emit new COMPRESSED state.
+  btrfs: fiemap: return extent physical size
+  nilfs2: fiemap: return correct extent physical length
+  ext4: fiemap: return correct extent physical length
+  f2fs: fiemap: add physical length to trace_f2fs_fiemap
+  f2fs: fiemap: return correct extent physical length
+  ocfs2: fiemap: return correct extent physical length
+  bcachefs: fiemap: return correct extent physical length
+  f2fs: fiemap: emit new COMPRESSED state
+  bcachefs: fiemap: emit new COMPRESSED state
+
+ Documentation/filesystems/fiemap.rst | 35 ++++++++++----
+ fs/bcachefs/fs.c                     | 17 +++++--
+ fs/btrfs/extent_io.c                 | 72 ++++++++++++++++++----------
+ fs/ext4/extents.c                    |  3 +-
+ fs/f2fs/data.c                       | 36 +++++++++-----
+ fs/f2fs/inline.c                     |  7 +--
+ fs/ioctl.c                           | 11 +++--
+ fs/iomap/fiemap.c                    |  2 +-
+ fs/nilfs2/inode.c                    | 18 ++++---
+ fs/ntfs3/frecord.c                   |  7 +--
+ fs/ocfs2/extent_map.c                | 10 ++--
+ fs/smb/client/smb2ops.c              |  1 +
+ include/linux/fiemap.h               |  2 +-
+ include/trace/events/f2fs.h          | 10 ++--
+ include/uapi/linux/fiemap.h          | 34 ++++++++++---
+ 15 files changed, 178 insertions(+), 87 deletions(-)
+
+
+base-commit: 75e31f66adc4c8d049e8aac1f079c1639294cd65
 -- 
 2.43.0
 
