@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C1BF2CD1288
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C1C3ACD128D
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  3 Apr 2024 07:52:20 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rrvPv-0002lU-OE;
-	Wed, 03 Apr 2024 07:52:19 +0000
+	id 1rrvPv-0005cU-VM;
+	Wed, 03 Apr 2024 07:52:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sweettea-kernel@dorminy.me>) id 1rrvPu-0002lK-9S
+ (envelope-from <sweettea-kernel@dorminy.me>) id 1rrvPu-0005cO-3j
  for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 03 Apr 2024 07:52:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hgNG3Zr2MtLq0GIKKJTRzv4xGMhx/WuzOjui/PQ1JOQ=; b=To7nI8D23qHwjCRYIJXFfeqSec
- mfrTbVsDyaZ5YEtlz2jqkx7IPKDaKHXd9Z/DxND13PKbjXCyj3m08rQzrPk5qBVCxwaTgAj+KGmu5
- HfQtcmj7ZaTqml9aWerS5VA9SahXSS+m9xrFXHE6bbEwoScT07d8FTDyn7XHpSAdSFwQ=;
+ bh=IX3KpPM4W+j2ivkrNeAafVbPQd2u0lN8UtjO6Vi2ho0=; b=L0VH8GcS1pkaaXnunfHOer7yFa
+ gGxnjLtajvgGAB654JO/FZetl4ciCqZp2mDGNTa7EH67ci5DjMZ2BMUEAG0kncOoNFI6kEX1KgEoI
+ PVm4urwysNO73wdIvVBGGFFe4G2ELMTxcKuUUXNnZfKlZjxceIDLh7Iqo2bFEBHaGUyY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,28 +33,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hgNG3Zr2MtLq0GIKKJTRzv4xGMhx/WuzOjui/PQ1JOQ=; b=IfXoL/DF248NSzcTKH/Oezg6gQ
- Vk8XDmf/1CEXzVbPKO4aXY5lxhDxR6gJn8QWEznkUSV144Mzpu3jhfqdu8Sg+PEiafQWgKtOtN8Ra
- dBz1yqhYyq0f/ddROJ+noLq0+Hz2bENrIO+SvDmTJfHR1k3OC6cUd8AABp6o/fjXlSmc=;
+ bh=IX3KpPM4W+j2ivkrNeAafVbPQd2u0lN8UtjO6Vi2ho0=; b=CV0rYQuhRy9xGjgQZAO/8bDr+T
+ Ux47lF1QYMgkmP5Jfu2wWpgUkkl4ZniY/OwB51zIpkC9BAqpEyrA0LB87ZtUzgwEE19WgAebjADlD
+ aSOfmWbs2k3gcGrozPKL8DcdGTaqUx39fahW4ZVoGxVUIx21QfkzgmXz4jrJMP7ZnKJA=;
 Received: from box.fidei.email ([71.19.144.250])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rrvPq-0001kU-0j for linux-f2fs-devel@lists.sourceforge.net;
+ id 1rrvPq-0001kT-07 for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 03 Apr 2024 07:52:18 +0000
 Received: from authenticated-user (box.fidei.email [71.19.144.250])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
  (No client certificate requested)
- by box.fidei.email (Postfix) with ESMTPSA id BDBF98089D;
- Wed,  3 Apr 2024 03:33:24 -0400 (EDT)
+ by box.fidei.email (Postfix) with ESMTPSA id 41FCF807B2;
+ Wed,  3 Apr 2024 03:33:10 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
- t=1712129605; bh=LnQUExMEi4K5Eq4tutxz2pOoBuBB93Ng5m6J9LLHIv8=;
+ t=1712129590; bh=5jSs8nU917GCzbrVP0KXLbUutJOMwr3M87eATF8xiYE=;
  h=From:To:Subject:Date:In-Reply-To:References:From;
- b=ShLq06yRFTESpZJwiWHcJo16tBtJUgnqA9agoyQSzZAWKNutSxyYios9BpbTInyZk
- ScSiv6shQNZnemhUNUlVK2nqEIApjUSOluBjpuf2tmZJn8tx2zsV7xYlxyDuSUDP+5
- JR4dJlnpOG6rCx+Bgqk/kHpkK61yY3GXzTQ1RAljAGTG8f8bA+dNbrf7psorjEw+SH
- HHsns8Qgyx50zcnfxXrLvu27AaOv9tnb4ZHCDSYtifvkkKPYCogkQa6FrqvBR59QAP
- T/O7VI6Y41ZUJaargTyw3VjXUaZoNxhNjUUOri0m9QA0XtsCxey/Q/c+brGFL7QGe7
- BhSc4Llv+6ngQ==
+ b=I+GHyyn2AqhIMgJR35EkQswgG3miJcGyEJxwzXEC6xVoLDp2OlwyCosaNuuCkBCB9
+ e3mF+1V+JntbUuBhT+zndD8j1+FQqYM+m18PAE0UkxIGavLc/UHnvJgLZlPhY3HvRU
+ dAB1kd2oBY1IVAYOFyco0jcQzCh32wCqvmI1yUvKFEjAsgvRdtJEggWdai9Jldcnqz
+ ZrXXRiSB4ad5DztioJsAP3FkLablHBamn3DBFU9p+4wWhQQJptJQTzZ4KPwbj+Bogf
+ R+1oWcA8RUDRvVc2MjugMnBE1zMK/gXCQTxbPRZqZkrJjkesi+ktRnElXyFYmnL7+R
+ VHl1Slf2emloA==
 To: Jonathan Corbet <corbet@lwn.net>,
  Kent Overstreet <kent.overstreet@linux.dev>,
  Brian Foster <bfoster@redhat.com>, Chris Mason <clm@fb.com>,
@@ -67,14 +67,14 @@ To: Jonathan Corbet <corbet@lwn.net>,
  linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
  linux-btrfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Date: Wed,  3 Apr 2024 03:22:50 -0400
-Message-ID: <3bcdf126c1db6b4119d4bbdd4dc621c3ca3e2ae1.1712126039.git.sweettea-kernel@dorminy.me>
+Date: Wed,  3 Apr 2024 03:22:44 -0400
+Message-ID: <2befe2c13065bdf3ca74cb8b701727940310fd2a.1712126039.git.sweettea-kernel@dorminy.me>
 In-Reply-To: <cover.1712126039.git.sweettea-kernel@dorminy.me>
 References: <cover.1712126039.git.sweettea-kernel@dorminy.me>
 MIME-Version: 1.0
-X-Headers-End: 1rrvPq-0001kU-0j
-Subject: [f2fs-dev] [PATCH v3 09/13] f2fs: fiemap: return correct extent
- physical length
+X-Headers-End: 1rrvPq-0001kT-07
+Subject: [f2fs-dev] [PATCH v3 03/13] fs: fiemap: add new COMPRESSED extent
+ state
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,100 +93,59 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+This goes closely with the new physical length field in struct
+fiemap_extent, as when physical length is not equal to logical length
+the reason is frequently compression.
+
 Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
 ---
- fs/f2fs/data.c   | 25 ++++++++++++++++---------
- fs/f2fs/inline.c |  2 +-
- 2 files changed, 17 insertions(+), 10 deletions(-)
+ Documentation/filesystems/fiemap.rst | 4 ++++
+ fs/ioctl.c                           | 3 ++-
+ include/uapi/linux/fiemap.h          | 2 ++
+ 3 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 34af1673461b..2a3625c10125 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1829,7 +1829,9 @@ static int f2fs_xattr_fiemap(struct inode *inode,
+diff --git a/Documentation/filesystems/fiemap.rst b/Documentation/filesystems/fiemap.rst
+index c060bb83f5d8..16bd7faba5e0 100644
+--- a/Documentation/filesystems/fiemap.rst
++++ b/Documentation/filesystems/fiemap.rst
+@@ -162,6 +162,10 @@ FIEMAP_EXTENT_DATA_ENCRYPTED
+   This will also set FIEMAP_EXTENT_ENCODED
+   The data in this extent has been encrypted by the file system.
  
- 		f2fs_put_page(page, 1);
++FIEMAP_EXTENT_DATA_COMPRESSED
++  This will also set FIEMAP_EXTENT_ENCODED
++  The data in this extent is compressed by the file system.
++
+ FIEMAP_EXTENT_NOT_ALIGNED
+   Extent offsets and length are not guaranteed to be block aligned.
  
--		flags = FIEMAP_EXTENT_DATA_INLINE | FIEMAP_EXTENT_NOT_ALIGNED;
-+		flags = FIEMAP_EXTENT_DATA_INLINE |
-+			FIEMAP_EXTENT_NOT_ALIGNED |
-+			FIEMAP_EXTENT_HAS_PHYS_LEN;
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index 1830baca532b..b47e2da7ec17 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -126,7 +126,8 @@ int fiemap_fill_next_extent(struct fiemap_extent_info *fieinfo, u64 logical,
+ 		return 1;
  
- 		if (!xnid)
- 			flags |= FIEMAP_EXTENT_LAST;
-@@ -1857,7 +1859,7 @@ static int f2fs_xattr_fiemap(struct inode *inode,
+ #define SET_UNKNOWN_FLAGS	(FIEMAP_EXTENT_DELALLOC)
+-#define SET_NO_UNMOUNTED_IO_FLAGS	(FIEMAP_EXTENT_DATA_ENCRYPTED)
++#define SET_NO_UNMOUNTED_IO_FLAGS	(FIEMAP_EXTENT_DATA_ENCRYPTED|\
++					 FIEMAP_EXTENT_DATA_COMPRESSED)
+ #define SET_NOT_ALIGNED_FLAGS	(FIEMAP_EXTENT_DATA_TAIL|FIEMAP_EXTENT_DATA_INLINE)
  
- 		f2fs_put_page(page, 1);
- 
--		flags = FIEMAP_EXTENT_LAST;
-+		flags = FIEMAP_EXTENT_LAST | FIEMAP_EXTENT_HAS_PHYS_LEN;
- 	}
- 
- 	if (phys) {
-@@ -1894,8 +1896,8 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	struct f2fs_map_blocks map;
- 	sector_t start_blk, last_blk;
- 	pgoff_t next_pgofs;
--	u64 logical = 0, phys = 0, size = 0;
--	u32 flags = 0;
-+	u64 logical = 0, phys = 0, size = 0, phys_size = 0;
-+	u32 flags = FIEMAP_EXTENT_HAS_PHYS_LEN;
- 	int ret = 0;
- 	bool compr_cluster = false, compr_appended;
- 	unsigned int cluster_size = F2FS_I(inode)->i_cluster_size;
-@@ -1981,11 +1983,12 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 			flags |= FIEMAP_EXTENT_DATA_ENCRYPTED;
- 
- 		ret = fiemap_fill_next_extent(fieinfo, logical,
--				phys, size, 0, flags);
--		trace_f2fs_fiemap(inode, logical, phys, size, 0, flags, ret);
-+				phys, size, phys_size, flags);
-+		trace_f2fs_fiemap(inode, logical, phys, size, phys_size, flags, ret);
- 		if (ret)
- 			goto out;
- 		size = 0;
-+		phys_size = 0;
- 	}
- 
- 	if (start_blk > last_blk)
-@@ -2006,17 +2009,21 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 		phys = __is_valid_data_blkaddr(map.m_pblk) ?
- 			blks_to_bytes(inode, map.m_pblk) : 0;
- 		size = blks_to_bytes(inode, map.m_len);
--		flags = 0;
-+		phys_size = blks_to_bytes(inode, map.m_len);
-+		flags = FIEMAP_EXTENT_HAS_PHYS_LEN;
- 
- 		if (compr_cluster) {
--			flags = FIEMAP_EXTENT_ENCODED;
-+			flags = FIEMAP_EXTENT_ENCODED |
-+				FIEMAP_EXTENT_HAS_PHYS_LEN;
- 			count_in_cluster += map.m_len;
- 			if (count_in_cluster == cluster_size) {
- 				compr_cluster = false;
- 				size += blks_to_bytes(inode, 1);
-+				phys_size += blks_to_bytes(inode, 1);
- 			}
- 		} else if (map.m_flags & F2FS_MAP_DELALLOC) {
--			flags = FIEMAP_EXTENT_UNWRITTEN;
-+			flags = FIEMAP_EXTENT_UNWRITTEN |
-+				FIEMAP_EXTENT_HAS_PHYS_LEN;
- 		}
- 
- 		start_blk += bytes_to_blks(inode, size);
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 235b0d72f6fc..c1c804a754de 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -772,7 +772,7 @@ int f2fs_inline_data_fiemap(struct inode *inode,
- {
- 	__u64 byteaddr, ilen;
- 	__u32 flags = FIEMAP_EXTENT_DATA_INLINE | FIEMAP_EXTENT_NOT_ALIGNED |
--		FIEMAP_EXTENT_LAST;
-+		FIEMAP_EXTENT_HAS_PHYS_LEN | FIEMAP_EXTENT_LAST;
- 	struct node_info ni;
- 	struct page *ipage;
- 	int err = 0;
+ 	if (flags & SET_UNKNOWN_FLAGS)
+diff --git a/include/uapi/linux/fiemap.h b/include/uapi/linux/fiemap.h
+index 3079159b8e94..ea97e33ddbb3 100644
+--- a/include/uapi/linux/fiemap.h
++++ b/include/uapi/linux/fiemap.h
+@@ -67,6 +67,8 @@ struct fiemap {
+ 						    * Sets EXTENT_UNKNOWN. */
+ #define FIEMAP_EXTENT_ENCODED		0x00000008 /* Data can not be read
+ 						    * while fs is unmounted */
++#define FIEMAP_EXTENT_DATA_COMPRESSED	0x00000040 /* Data is compressed by fs.
++						    * Sets EXTENT_ENCODED. */
+ #define FIEMAP_EXTENT_DATA_ENCRYPTED	0x00000080 /* Data is encrypted by fs.
+ 						    * Sets EXTENT_NO_BYPASS. */
+ #define FIEMAP_EXTENT_NOT_ALIGNED	0x00000100 /* Extent offsets may not be
 -- 
 2.43.0
 
