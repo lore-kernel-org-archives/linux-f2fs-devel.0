@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 769CCCD1294
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  3 Apr 2024 07:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 14CA5CD1288
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  3 Apr 2024 07:52:39 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rrvQC-0002nN-US;
-	Wed, 03 Apr 2024 07:52:37 +0000
+	id 1rrvQE-0002nk-97;
+	Wed, 03 Apr 2024 07:52:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sweettea-kernel@dorminy.me>) id 1rrvQ9-0002mh-Ul
+ (envelope-from <sweettea-kernel@dorminy.me>) id 1rrvQ9-0002mV-UI
  for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 03 Apr 2024 07:52:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5WH/5LPzN9bHNaWy1O6F7SVrQKWYv/okRnljM021VRQ=; b=HcwG2XfNwGqvuyHwyyzlWzQAKA
- gJpDKyIvS/HCcOYs1jprEU2dS2+8IlZ1ZacjVpkGc2R5yRstucF2hdPTIRPwbe95s95/tqMo2rgii
- O3n26vJmgvjjC8n7Hpo6C861lEcUdIP9KcZ2YqVucJNryoyCX7enENyhiTpnNfd7RHek=;
+ bh=DbnwEYctC+JK8P/EWPZTBgKnomIWJC9/OakieGz83Y4=; b=EYAElkzrs0pN/SWdf2uXeyP+Pk
+ a1qQcXXMtUW65HXNwpM9Db6YerJ+nnPGo/OrhQUkQ3xyDNFRm98ihXt3P90n8i78zVFBACKLRgA5l
+ yovwmhdmBdUor8qZAxU3xVCzv7pK5mP8dqtnsVupz1fP9VQm0OY/irxO3v7mZoSjV95Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,28 +33,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=5WH/5LPzN9bHNaWy1O6F7SVrQKWYv/okRnljM021VRQ=; b=egxWEVOM/qImna+vkJTNG8xO9E
- +k3UjIcP/bXXMTP8IOwZu8HuwUbsyMskrHX6YM32G7qd3QXLr2MWxgYODIpb3cBn0K/HGzhGuErJF
- cgqUmKAi6kwB9pmX6ATBg55wX24Q2sVli3QY/k3JZlnxSK/tVD3Iqr6EWa7fnkWAeOTU=;
+ bh=DbnwEYctC+JK8P/EWPZTBgKnomIWJC9/OakieGz83Y4=; b=hronlmkdlXPq3/m1lOT75qLPMr
+ QxydsmdtgqD7sYpwfSxy8rb2unKhG0U7RpgjOGPOH5epMeq2Sv6hWbBDkVZXcFzW7LbUY/YNNXIIe
+ ZN7j29XORL5bW331/rILVfdhCNhlcLAVOyco2Wv/1gyqio/anEFuJM5mhkERyuLlilcg=;
 Received: from box.fidei.email ([71.19.144.250])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1rrvQ6-0001m2-D8 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 03 Apr 2024 07:52:31 +0000
+ id 1rrvQ3-0001lb-Vo for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 03 Apr 2024 07:52:28 +0000
 Received: from authenticated-user (box.fidei.email [71.19.144.250])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
  (No client certificate requested)
- by box.fidei.email (Postfix) with ESMTPSA id EFBB2807E8;
- Wed,  3 Apr 2024 03:33:11 -0400 (EDT)
+ by box.fidei.email (Postfix) with ESMTPSA id CBFF38083F;
+ Wed,  3 Apr 2024 03:33:39 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
- t=1712129592; bh=GM61hCA7kvAHqNWRBNMS7+3u4Ivx/tDJO9J885fhLWo=;
+ t=1712129620; bh=SgpqdEQktNmIE/si/SsUXivp3OLO9RykBmr/owEiMwk=;
  h=From:To:Subject:Date:In-Reply-To:References:From;
- b=QEytHR5MrDl3eno9gSXLyQB780SiYAwX/SZdkiJabaBXvfAUR2a/I55tLnkfL+CpI
- LnJTjdaz247j/qKvYwDUu7CxYvVbE8cVGMf0WclMBiAvAT10XgKz3HSg1Ml/SaYXQa
- rg2PstwGLpZAeUn5EpHRZFRcrevxmhyfmtSUhkJtQUFuxI0LSJpShGx9d+xVczDG3M
- x8y3lzEBsciaVn1VquDjmkqOHeXLmOzuRycxl5c2xZombu1LEM3DPEHr6zhFU2SLrO
- ClzRjg6qvWGUqMZ4Ods46LlfFVGV113DU5DLef8bULDeQuG84gvVvSjV6FppbEL/WO
- qyopps01ElZSg==
+ b=XAboOI1gOEYEeFHrK1IrQoakMcUXsIMd5sSfqTDBehMhEAI8iLj2M4cvGuZWOnlea
+ sptYc4MV8Ozdb9aTADpJGN+8wTnZ7a4nquwTvUU7Fg8MmCD8svm0CoyTyh7cz/SBD+
+ ZMFxSNY4lqBJ9+dz+mPFPmrNmB+z57J2Ezal//nHLbJPn2kpBB/DeRdnynt73/ONre
+ w1nx6Q9inAxG9UN8ga9ww6DJNwFqfSLAGdGXdXScTmCspAGRxQd722JIdIuqf41v1U
+ vpPKduXjNxy+o5h6VMKoOcFf5LJdNmM7bXsHLaUDtdElsmkXjDqye/eAoNu2dZVkZX
+ f6UzUKP6VJHVQ==
 To: Jonathan Corbet <corbet@lwn.net>,
  Kent Overstreet <kent.overstreet@linux.dev>,
  Brian Foster <bfoster@redhat.com>, Chris Mason <clm@fb.com>,
@@ -67,14 +67,14 @@ To: Jonathan Corbet <corbet@lwn.net>,
  linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
  linux-btrfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Date: Wed,  3 Apr 2024 03:22:45 -0400
-Message-ID: <ed3a3c3edbf01b728c20c0718d227ebb79611f47.1712126039.git.sweettea-kernel@dorminy.me>
+Date: Wed,  3 Apr 2024 03:22:52 -0400
+Message-ID: <b9b795987a485afa0fdb8f0decc09405691d9320.1712126039.git.sweettea-kernel@dorminy.me>
 In-Reply-To: <cover.1712126039.git.sweettea-kernel@dorminy.me>
 References: <cover.1712126039.git.sweettea-kernel@dorminy.me>
 MIME-Version: 1.0
-X-Headers-End: 1rrvQ6-0001m2-D8
-Subject: [f2fs-dev] [PATCH v3 04/13] btrfs: fiemap: emit new COMPRESSED
- state.
+X-Headers-End: 1rrvQ3-0001lb-Vo
+Subject: [f2fs-dev] [PATCH v3 11/13] bcachefs: fiemap: return correct extent
+ physical length
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,31 +95,64 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
 ---
- fs/btrfs/extent_io.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/bcachefs/fs.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 9e421d99fd5c..e9df670ef7d2 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -2706,7 +2706,7 @@ static int emit_fiemap_extent(struct fiemap_extent_info *fieinfo,
- 			if (range_end <= cache_end)
- 				return 0;
+diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+index f830578a9cd1..d2793bae842d 100644
+--- a/fs/bcachefs/fs.c
++++ b/fs/bcachefs/fs.c
+@@ -913,15 +913,17 @@ static int bch2_fill_extent(struct bch_fs *c,
+ 			flags |= FIEMAP_EXTENT_SHARED;
  
--			if (!(flags & (FIEMAP_EXTENT_ENCODED | FIEMAP_EXTENT_DELALLOC)))
-+			if (!(flags & (FIEMAP_EXTENT_DATA_COMPRESSED | FIEMAP_EXTENT_DELALLOC)))
- 				phys += cache_end - offset;
+ 		bkey_for_each_ptr_decode(k.k, ptrs, p, entry) {
+-			int flags2 = 0;
++			int flags2 = FIEMAP_EXTENT_HAS_PHYS_LEN;
++			u64 phys_len = k.k->size << 9;
+ 			u64 offset = p.ptr.offset;
  
- 			offset = cache_end;
-@@ -3236,7 +3236,7 @@ int extent_fiemap(struct btrfs_inode *inode, struct fiemap_extent_info *fieinfo,
- 		}
+ 			if (p.ptr.unwritten)
+ 				flags2 |= FIEMAP_EXTENT_UNWRITTEN;
  
- 		if (compression != BTRFS_COMPRESS_NONE)
--			flags |= FIEMAP_EXTENT_ENCODED;
-+			flags |= FIEMAP_EXTENT_DATA_COMPRESSED;
+-			if (p.crc.compression_type)
++			if (p.crc.compression_type) {
+ 				flags2 |= FIEMAP_EXTENT_ENCODED;
+-			else
++				phys_len = p.crc.compressed_size << 9;
++			} else
+ 				offset += p.crc.offset;
  
- 		if (extent_type == BTRFS_FILE_EXTENT_INLINE) {
- 			flags |= FIEMAP_EXTENT_DATA_INLINE;
+ 			if ((offset & (block_sectors(c) - 1)) ||
+@@ -931,7 +933,7 @@ static int bch2_fill_extent(struct bch_fs *c,
+ 			ret = fiemap_fill_next_extent(info,
+ 						bkey_start_offset(k.k) << 9,
+ 						offset << 9,
+-						k.k->size << 9, 0,
++						k.k->size << 9, phys_len,
+ 						flags|flags2);
+ 			if (ret)
+ 				return ret;
+@@ -941,14 +943,18 @@ static int bch2_fill_extent(struct bch_fs *c,
+ 	} else if (bkey_extent_is_inline_data(k.k)) {
+ 		return fiemap_fill_next_extent(info,
+ 					       bkey_start_offset(k.k) << 9,
+-					       0, k.k->size << 9, 0,
++					       0, k.k->size << 9,
++					       bkey_inline_data_bytes(k.k),
+ 					       flags|
++					       FIEMAP_EXTENT_HAS_PHYS_LEN|
+ 					       FIEMAP_EXTENT_DATA_INLINE);
+ 	} else if (k.k->type == KEY_TYPE_reservation) {
+ 		return fiemap_fill_next_extent(info,
+ 					       bkey_start_offset(k.k) << 9,
+-					       0, k.k->size << 9, 0,
++					       0, k.k->size << 9,
++					       k.k->size << 9,
+ 					       flags|
++					       FIEMAP_EXTENT_HAS_PHYS_LEN|
+ 					       FIEMAP_EXTENT_DELALLOC|
+ 					       FIEMAP_EXTENT_UNWRITTEN);
+ 	} else {
 -- 
 2.43.0
 
