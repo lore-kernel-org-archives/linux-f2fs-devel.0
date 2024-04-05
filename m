@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 01DEACD11C2
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  5 Apr 2024 12:14:27 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4DB66CD11C2
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  5 Apr 2024 12:14:31 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rsiSh-0003zH-2J;
-	Fri, 05 Apr 2024 12:14:27 +0000
+	id 1rsiSk-00082V-7V;
+	Fri, 05 Apr 2024 12:14:30 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <eugen.hristev@collabora.com>) id 1rsiSe-0003yx-IY
+ (envelope-from <eugen.hristev@collabora.com>) id 1rsiSh-00081q-4w
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 05 Apr 2024 12:14:24 +0000
+ Fri, 05 Apr 2024 12:14:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8sbsv28mkc9rYVRw1VmvFfYk6iGtJsLkjAf38gOsMhQ=; b=Mjs6gfQZrX4sGmxkm7tqUMdTCp
- dSAsmUWz6RT+/ZEdxA6STIItH7XHA1jANAbqySC+HMFIjxZYysyv1D0Ch+V3VTMQ5m8CLjk3wtFCN
- 2eF7qCHoJOu1EsUSR5pK+39OORDT57eNRXbgcwHrePzSI1VFNDyiNUguTPgfsztAZ+yA=;
+ bh=/ezJxfGYemehzFQ474FDiSGDq/uXRTtZO0VJNVCWpxw=; b=lHqFHNbo0aelbxVP8Tw1oL7GvR
+ tkPGTADLXEz3ARtq+CeQTPTB/Qai3DTeCFm4dfCq70Cvpoq2ZzqiKct3/2GDkRteHiDwjFY2QuQOF
+ camh44eXbzvFWKK0Bl+3o0vv3/ahNW9IlI/Z/a9PwcqwurXY7gWZAPADE/l2zPO8JZjY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,42 +33,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=8sbsv28mkc9rYVRw1VmvFfYk6iGtJsLkjAf38gOsMhQ=; b=DZcAH2c2lrd61KrAPup9vzVzgh
- uSssS/JcBmLycLC0JbZFqBdP3viV2AT8L3YvUUE4VUiXZDKiw/fxGDVFS3GwfLNzjEo3kkBtP3TkQ
- kCLXW6hEpyG9M1lrQ4wwmojHqfqMhi9VS/2AzJ5HHaU0f3D+MTbyb9DU2EmDHxRHiBgY=;
+ bh=/ezJxfGYemehzFQ474FDiSGDq/uXRTtZO0VJNVCWpxw=; b=KBNqgboHPiYexaawOH5/f2Fsse
+ QswJjHlt4iAMrR+OwGwnC7f49TwuvnZVoGGVAVQQzVejazR8K8Dnq0M3PiyvtJXlsyg4XTicfEKFH
+ VI3qkIAqayT6bvPywAawfKPaLlopeYushYgq2PHTco4NnSD+MYyFTtqyayjs/kE7U7vU=;
 Received: from madrid.collaboradmins.com ([46.235.227.194])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rsiSd-0004YX-Rw for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 05 Apr 2024 12:14:24 +0000
+ id 1rsiSg-0004Yr-Mu for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 05 Apr 2024 12:14:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
- s=mail; t=1712319249;
- bh=Yqu0eGYoz7+oBoYtg2t/IEEnKe5iA2fOw8gbynJ9Ihs=;
+ s=mail; t=1712319251;
+ bh=HTiihURQJkrf1R4qMENE36JKmwiQmaMABNkIFCv6n/0=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=df8xZznrABuMa8M76D/XsfV8axeXxvQxOkVf47zrMlcghtQDKi7QspHB/bIuP4gao
- l/2+hvqJdnjEEoG3F2mILMO2cusG1vFGc4ViArSz/Vf1jtvzB5eVUV9uLymYvLONza
- eSm6fbscy8EdR9KmWLUqeT76t/WcZ1AiahVLRU81iX5Zll6A5QsAT2QhupFby26xYU
- 3DgfXtyfCDBNHeA2UArVpEv8OTo5/4/xgpfOoAh13wtwWoR6t6kzF2WJsaPI3DbeQ8
- bVtuPaXwjW56g7kS9VRALJkS6F1sCQZQgExEwupzhfU0Wsco8l3/DZlBs2qtNQwLbp
- k3lrTGi18YKTQ==
+ b=RP8DMOuO94eoZIWw6RKTZw6SpuWp8MEirLCUdsT0mTFbGpDmgn29daN+lX9nf4oot
+ YFDbXUsyXlOo79bYQaMpYCeZrhO03i/NQCXdiDFeKE+LImUgeGfFOdU/9jJ4by2Oe1
+ umlQ6HOBrveDsnshQGBIbnWZOkIgVemKleji6S6FCulHUOKpc9hVp+CYfIniM6wtr+
+ k1xcaMCJmreKZBaL3dfGZHjEbR0kdCv31yc0tFDYKupyhAkvdlsKh6QI+a/SjGRSHy
+ qU3MIbfvyJzjkYofy6DuR8WFWp//EktpWO/x3XdB+ytLrk84INDSx2AppZ9wlmojiJ
+ /9kk7zBZEyCOg==
 Received: from eugen-station.. (cola.collaboradmins.com [195.201.22.229])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested) (Authenticated sender: ehristev)
- by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4558B3782135;
- Fri,  5 Apr 2024 12:14:08 +0000 (UTC)
+ by madrid.collaboradmins.com (Postfix) with ESMTPSA id 63B8E3782136;
+ Fri,  5 Apr 2024 12:14:10 +0000 (UTC)
 To: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
  jaegeuk@kernel.org, chao@kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Date: Fri,  5 Apr 2024 15:13:30 +0300
-Message-Id: <20240405121332.689228-8-eugen.hristev@collabora.com>
+Date: Fri,  5 Apr 2024 15:13:32 +0300
+Message-Id: <20240405121332.689228-10-eugen.hristev@collabora.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240405121332.689228-1-eugen.hristev@collabora.com>
 References: <20240405121332.689228-1-eugen.hristev@collabora.com>
 MIME-Version: 1.0
-X-Headers-End: 1rsiSd-0004YX-Rw
-Subject: [f2fs-dev] [PATCH v16 7/9] f2fs: Log error when lookup of encoded
- dentry fails
+X-Headers-End: 1rsiSg-0004Yr-Mu
+Subject: [f2fs-dev] [PATCH v16 9/9] f2fs: Move CONFIG_UNICODE defguards into
+ the code flow
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,47 +85,97 @@ From: Eugen Hristev via Linux-f2fs-devel
 Reply-To: Eugen Hristev <eugen.hristev@collabora.com>
 Cc: krisman@suse.de, brauner@kernel.org, jack@suse.cz,
  linux-kernel@vger.kernel.org, eugen.hristev@collabora.com, ebiggers@kernel.org,
- viro@zeniv.linux.org.uk, kernel@collabora.com
+ viro@zeniv.linux.org.uk, kernel@collabora.com,
+ Gabriel Krisman Bertazi <krisman@collabora.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If the volume is in strict mode, generi c_ci_compare can report a broken
-encoding name.  This will not trigger on a bad lookup, which is caught
-earlier, only if the actual disk name is bad.
+From: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-Suggested-by: Gabriel Krisman Bertazi <krisman@suse.de>
+Instead of a bunch of ifdefs, make the unicode built checks part of the
+code flow where possible, as requested by Torvalds.
+
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+[eugen.hristev@collabora.com: port to 6.8-rc3]
 Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
 ---
- fs/f2fs/dir.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ fs/f2fs/namei.c | 10 ++++------
+ fs/f2fs/super.c |  8 ++++----
+ 2 files changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index cbd7a5e96a37..376f705aa3f1 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -192,11 +192,16 @@ static inline int f2fs_match_name(const struct inode *dir,
- 	struct fscrypt_name f;
- 
- #if IS_ENABLED(CONFIG_UNICODE)
--	if (fname->cf_name.name)
--		return generic_ci_match(dir, fname->usr_fname,
--					&fname->cf_name,
--					de_name, de_name_len);
--
-+	if (fname->cf_name.name) {
-+		int ret = generic_ci_match(dir, fname->usr_fname,
-+					   &fname->cf_name,
-+					   de_name, de_name_len);
-+		if (ret == -EINVAL)
-+			f2fs_warn_ratelimited(F2FS_SB(dir->i_sb),
-+				"Directory contains filename that is invalid UTF-8");
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index e54f8c08bda8..1ecde2b45e99 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -576,8 +576,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 		goto out_iput;
+ 	}
+ out_splice:
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	if (!inode && IS_CASEFOLDED(dir)) {
++	if (IS_ENABLED(CONFIG_UNICODE) && !inode && IS_CASEFOLDED(dir)) {
+ 		/* Eventually we want to call d_add_ci(dentry, NULL)
+ 		 * for negative dentries in the encoding case as
+ 		 * well.  For now, prevent the negative dentry
+@@ -586,7 +585,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 		trace_f2fs_lookup_end(dir, dentry, ino, err);
+ 		return NULL;
+ 	}
+-#endif
 +
-+		return ret;
-+	}
+ 	new = d_splice_alias(inode, dentry);
+ 	trace_f2fs_lookup_end(dir, !IS_ERR_OR_NULL(new) ? new : dentry,
+ 				ino, IS_ERR(new) ? PTR_ERR(new) : err);
+@@ -639,16 +638,15 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 	f2fs_delete_entry(de, page, dir, inode);
+ 	f2fs_unlock_op(sbi);
+ 
+-#if IS_ENABLED(CONFIG_UNICODE)
+ 	/* VFS negative dentries are incompatible with Encoding and
+ 	 * Case-insensitiveness. Eventually we'll want avoid
+ 	 * invalidating the dentries here, alongside with returning the
+ 	 * negative dentries at f2fs_lookup(), when it is better
+ 	 * supported by the VFS for the CI case.
+ 	 */
+-	if (IS_CASEFOLDED(dir))
++	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+ 		d_invalidate(dentry);
+-#endif
++
+ 	if (IS_DIRSYNC(dir))
+ 		f2fs_sync_fs(sbi->sb, 1);
+ fail:
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index a4bc26dfdb1a..68f3639d9b52 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -311,7 +311,7 @@ struct kmem_cache *f2fs_cf_name_slab;
+ static int __init f2fs_create_casefold_cache(void)
+ {
+ 	f2fs_cf_name_slab = f2fs_kmem_cache_create("f2fs_casefolded_name",
+-							F2FS_NAME_LEN);
++						   F2FS_NAME_LEN);
+ 	return f2fs_cf_name_slab ? 0 : -ENOMEM;
+ }
+ 
+@@ -1313,13 +1313,13 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+ 		return -EINVAL;
+ 	}
  #endif
- 	f.usr_fname = fname->usr_fname;
- 	f.disk_name = fname->disk_name;
+-#if !IS_ENABLED(CONFIG_UNICODE)
+-	if (f2fs_sb_has_casefold(sbi)) {
++
++	if (!IS_ENABLED(CONFIG_UNICODE) && f2fs_sb_has_casefold(sbi)) {
+ 		f2fs_err(sbi,
+ 			"Filesystem with casefold feature cannot be mounted without CONFIG_UNICODE");
+ 		return -EINVAL;
+ 	}
+-#endif
++
+ 	/*
+ 	 * The BLKZONED feature indicates that the drive was formatted with
+ 	 * zone alignment optimization. This is optional for host-aware
 -- 
 2.34.1
 
