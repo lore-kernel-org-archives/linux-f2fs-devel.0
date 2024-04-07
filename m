@@ -4,65 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E2330CD11C2
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Apr 2024 09:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CA7E9CD11C2
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Apr 2024 13:02:12 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rtOoN-0002Pr-BQ;
-	Sun, 07 Apr 2024 09:27:39 +0000
+	id 1rtS9y-000525-VP;
+	Sun, 07 Apr 2024 13:02:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <Zhiguo.Niu@unisoc.com>) id 1rtOoM-0002PV-0R
+ (envelope-from <chao@kernel.org>) id 1rtS9x-00051y-GP
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 07 Apr 2024 09:27:38 +0000
+ Sun, 07 Apr 2024 13:02:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+CICuZa8RAkpnW/K+ZYiu9JcRqDkB2InpYbeBTFmlGU=; b=F+hxLeQAe7lUwsPP2zTOJ787UY
- Mw1u2iOsxM6Kr5XQ9E44YUk+48i3zpI3yNNVF+f63s8790YpCLB0g1lNGMQiPFHA2UMxsxAt2fX7I
- SKLFe4k7CXZjPNFMkpOhOxL+ZY2EHB4sSNRac9US7M1doT43FLJAdjZybRizvmLHFZhg=;
+ bh=Q8beweUiGNNklRhRa9bmp83y4OUcSBvAkT54hYB0BoM=; b=I4OIpL8aN6ZbKn4qeTI+AIQnrc
+ svDCFm0tWdDzvhqlOniP7W9dm/2KOIeJH9Q9U5N8KTR36HD8ddIzfNzARlIipn3QF8nqsecQWYkMR
+ lXUmaSd9poLdyX1nngFKDzxYEEgI5jW3fntbambADlizUXz6jCVoxUfr1SEScP99oBh0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=+CICuZa8RAkpnW/K+ZYiu9JcRqDkB2InpYbeBTFmlGU=; b=R
- 9BfYFO6ppopWt0Ul0i0vKNQCIBHDABk1eQqIa6gbG9TkEzeaFqWGpby6fkyv0Zc8Y3bvCLRMaSDPb
- 4Dg6LKlWmdWo0bZOSdIYqvFnPvt49MNI/kzDcrx0Y4WU9Wgo1XqG6BxunzK+ZtYfGjEuDSpJ2OYfX
- JyZ8Lm5zSRzuRd1A=;
-Received: from mx1.unisoc.com ([222.66.158.135] helo=SHSQR01.spreadtrum.com)
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=Q8beweUiGNNklRhRa9bmp83y4OUcSBvAkT54hYB0BoM=; b=MLDNvkTmfwes+I2PX+SK+bDXKc
+ 5weRC//rnl0GsSX0zlB+NnBAUvkTHvaW2S6hy6hGjT0v1zL9D/fkL51JzUKIa+2uLD3hQOjBB019m
+ wyenKIcJslcpITH3MyZhAkhRHYA42z2k+sZfleWIU55KEKxobPlpAiXow+rbW7SA7DL4=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rtOoH-00087k-3N for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 07 Apr 2024 09:27:38 +0000
-Received: from dlp.unisoc.com ([10.29.3.86])
- by SHSQR01.spreadtrum.com with ESMTP id 4379QxkF089922;
- Sun, 7 Apr 2024 17:26:59 +0800 (+08)
- (envelope-from Zhiguo.Niu@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
- by dlp.unisoc.com (SkyGuard) with ESMTPS id 4VC6J70vMVz2K5rcL;
- Sun,  7 Apr 2024 17:24:55 +0800 (CST)
-Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Sun, 7 Apr 2024 17:26:32 +0800
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Sun, 7 Apr 2024 17:26:23 +0800
-Message-ID: <1712481983-7721-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Mailer: git-send-email 1.9.1
+ id 1rtS9w-0000Uu-Bk for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 07 Apr 2024 13:02:09 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id 4163A60C5B
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun,  7 Apr 2024 13:02:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 837FBC433F1;
+ Sun,  7 Apr 2024 13:02:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1712494922;
+ bh=vlwwBg4ZiQTSQiT1cbzo/lmslvX2+yGwLAwsr5WpIc0=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=MIQsKGWBWYK7m/q3+X1qpdn9/qBUVzHdHBnWu7e1zMKCHCf0Vb+QYzMDS7w76YKSW
+ xxDoxsmQ9xCjapjbDlZgVCkAga2Ekutjs1UkPZqcd6uGTrZkdJSf6OmwNEZBrjkwDX
+ LXj7Ygn6/f8cC9+bX5sNdKrIxhdNmVeGxHi7SjCLAGUl7sFOuRmZ6FPTdUt507olqk
+ ifdqlrtfh7Wjk++PQseDpyHAt0KDI4bk3KiUUtv1H97LVuBok6ghbgKr6BGp+KMiQ+
+ fsrHIjDcoVEi5ILxAcDpuEoxamM2mAw7MFDKqRvw9nev8wuQqLoQuX2cGdN4Fq2BgJ
+ NP0m8Y6ZWu3XA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Sun,  7 Apr 2024 21:01:55 +0800
+Message-Id: <20240407130155.3602415-2-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240407130155.3602415-1-chao@kernel.org>
+References: <20240407130155.3602415-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Originating-IP: [10.0.73.87]
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL: SHSQR01.spreadtrum.com 4379QxkF089922
-X-Headers-End: 1rtOoH-00087k-3N
-Subject: [f2fs-dev] [PATCH] f2fs: fix some ambiguous comments
+X-Headers-End: 1rtS9w-0000Uu-Bk
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: introduce written_map to indicate
+ written datas
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -74,45 +79,168 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, hongyu.jin@unisoc.com,
- zhiguo.niu@unisoc.com
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Some comments are confused and just correct with block size is 4KB.
+Currently, __exchange_data_block() will check checkpointed state of data,
+if it is not checkpointed, it will try to exchange blkaddrs directly in
+dnode.
 
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+However, after commit 899fee36fac0 ("f2fs: fix to avoid data corruption
+by forbidding SSR overwrite"), in order to disallow SSR allocator to
+reuse all written data/node type blocks, all written blocks were set as
+checkpointed.
+
+In order to reenable metadata exchange functionality, let's introduce
+written_map to indicate all written blocks including checkpointed one,
+or newly written and invalidated one, and use it for SSR allocation,
+and then ckpt_valid_bitmap can indicate real checkpointed status, and
+we can use it correctly in __exchange_data_block().
+
+[testcase]
+xfs_io -f /mnt/f2fs/src -c "pwrite 0 2m"
+xfs_io -f /mnt/f2fs/dst -c "pwrite 0 2m"
+xfs_io /mnt/f2fs/src -c "fiemap -v"
+xfs_io /mnt/f2fs/dst -c "fiemap -v"
+f2fs_io move_range /mnt/f2fs/src /mnt/f2fs/dst 0 0 2097152
+xfs_io /mnt/f2fs/src -c "fiemap -v"
+xfs_io /mnt/f2fs/dst -c "fiemap -v"
+
+[before]
+/mnt/f2fs/src:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..4095]:       8445952..8450047  4096 0x1001
+/mnt/f2fs/dst:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..4095]:       143360..147455    4096 0x1001
+
+/mnt/f2fs/src:
+/mnt/f2fs/dst:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..4095]:       4284416..4288511  4096 0x1001
+
+[after]
+/mnt/f2fs/src:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..4095]:       147456..151551    4096 0x1001
+/mnt/f2fs/dst:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..4095]:       151552..155647    4096 0x1001
+
+/mnt/f2fs/src:
+/mnt/f2fs/dst:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..4095]:       147456..151551    4096 0x1001
+
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- include/linux/f2fs_fs.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/f2fs/segment.c | 24 ++++++++++++------------
+ fs/f2fs/segment.h |  6 ++++++
+ 2 files changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index a357287..4a56d18 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -424,8 +424,8 @@ struct f2fs_sit_block {
- /*
-  * For segment summary
-  *
-- * One summary block contains exactly 512 summary entries, which represents
-- * exactly one segment by default. Not allow to change the basic units.
-+ * One summary block with 4KB size contains exactly 512 summary entries, which
-+ * represents exactly one segment with 2MB size. Not allow to change the basic units.
-  *
-  * NOTE: For initializing fields, you must use set_summary
-  *
-@@ -556,6 +556,7 @@ struct f2fs_summary_block {
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index ecb9ee80d5e0..ec3288381397 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2456,13 +2456,12 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ 			sbi->discard_blks--;
  
- /*
-  * space utilization of regular dentry and inline dentry (w/o extra reservation)
-+ * when block size is 4KB.
-  *		regular dentry		inline dentry (def)	inline dentry (min)
-  * bitmap	1 * 27 = 27		1 * 23 = 23		1 * 1 = 1
-  * reserved	1 * 3 = 3		1 * 7 = 7		1 * 1 = 1
+ 		/*
+-		 * SSR should never reuse block which is checkpointed
+-		 * or newly invalidated.
++		 * if CP disabling is enable, it allows SSR to reuse newly
++		 * invalidated block, otherwise forbidding it to pretect fsyned
++		 * datas.
+ 		 */
+-		if (!is_sbi_flag_set(sbi, SBI_CP_DISABLED)) {
+-			if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map))
+-				se->ckpt_valid_blocks++;
+-		}
++		if (!is_sbi_flag_set(sbi, SBI_CP_DISABLED))
++			f2fs_set_bit(offset, se->written_map);
+ 	} else {
+ 		exist = f2fs_test_and_clear_bit(offset, se->cur_valid_map);
+ #ifdef CONFIG_F2FS_CHECK_FS
+@@ -2498,8 +2497,6 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ 			f2fs_test_and_clear_bit(offset, se->discard_map))
+ 			sbi->discard_blks++;
+ 	}
+-	if (!f2fs_test_bit(offset, se->ckpt_valid_map))
+-		se->ckpt_valid_blocks += del;
+ 
+ 	__mark_sit_entry_dirty(sbi, segno);
+ 
+@@ -2847,11 +2844,11 @@ static void __get_segment_bitmap(struct f2fs_sb_info *sbi,
+ 	struct seg_entry *se = get_seg_entry(sbi, segno);
+ 	int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
+ 	unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
+-	unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
++	unsigned long *written_map = (unsigned long *)se->written_map;
+ 	int i;
+ 
+ 	for (i = 0; i < entries; i++)
+-		target_map[i] = ckpt_map[i] | cur_map[i];
++		target_map[i] = ckpt_map[i] | written_map[i];
+ }
+ 
+ static int __next_free_blkoff(struct f2fs_sb_info *sbi, unsigned long *bitmap,
+@@ -4529,9 +4526,9 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
+ 		return -ENOMEM;
+ 
+ #ifdef CONFIG_F2FS_CHECK_FS
+-	bitmap_size = MAIN_SEGS(sbi) * SIT_VBLOCK_MAP_SIZE * (3 + discard_map);
++	bitmap_size = MAIN_SEGS(sbi) * SIT_VBLOCK_MAP_SIZE * (4 + discard_map);
+ #else
+-	bitmap_size = MAIN_SEGS(sbi) * SIT_VBLOCK_MAP_SIZE * (2 + discard_map);
++	bitmap_size = MAIN_SEGS(sbi) * SIT_VBLOCK_MAP_SIZE * (3 + discard_map);
+ #endif
+ 	sit_i->bitmap = f2fs_kvzalloc(sbi, bitmap_size, GFP_KERNEL);
+ 	if (!sit_i->bitmap)
+@@ -4546,6 +4543,9 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
+ 		sit_i->sentries[start].ckpt_valid_map = bitmap;
+ 		bitmap += SIT_VBLOCK_MAP_SIZE;
+ 
++		sit_i->sentries[start].written_map = bitmap;
++		bitmap += SIT_VBLOCK_MAP_SIZE;
++
+ #ifdef CONFIG_F2FS_CHECK_FS
+ 		sit_i->sentries[start].cur_valid_map_mir = bitmap;
+ 		bitmap += SIT_VBLOCK_MAP_SIZE;
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 08d667e6a36f..eda04d9ed5a5 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -205,6 +205,10 @@ struct seg_entry {
+ 	 * checkpoint pack. This information is used by the SSR mode.
+ 	 */
+ 	unsigned char *ckpt_valid_map;	/* validity bitmap of blocks last cp */
++	unsigned char *written_map;	/*
++					 * blocks were written, including newly
++					 * invalidated data
++					 */
+ 	unsigned char *discard_map;
+ 	unsigned long long mtime;	/* modification time of the segment */
+ };
+@@ -370,6 +374,7 @@ static inline void seg_info_from_raw_sit(struct seg_entry *se,
+ 	se->ckpt_valid_blocks = GET_SIT_VBLOCKS(rs);
+ 	memcpy(se->cur_valid_map, rs->valid_map, SIT_VBLOCK_MAP_SIZE);
+ 	memcpy(se->ckpt_valid_map, rs->valid_map, SIT_VBLOCK_MAP_SIZE);
++	memcpy(se->written_map, rs->valid_map, SIT_VBLOCK_MAP_SIZE);
+ #ifdef CONFIG_F2FS_CHECK_FS
+ 	memcpy(se->cur_valid_map_mir, rs->valid_map, SIT_VBLOCK_MAP_SIZE);
+ #endif
+@@ -412,6 +417,7 @@ static inline void seg_info_to_raw_sit(struct seg_entry *se,
+ 	__seg_info_to_raw_sit(se, rs);
+ 
+ 	memcpy(se->ckpt_valid_map, rs->valid_map, SIT_VBLOCK_MAP_SIZE);
++	memcpy(se->written_map, rs->valid_map, SIT_VBLOCK_MAP_SIZE);
+ 	se->ckpt_valid_blocks = se->valid_blocks;
+ }
+ 
 -- 
-1.9.1
+2.40.1
 
 
 
