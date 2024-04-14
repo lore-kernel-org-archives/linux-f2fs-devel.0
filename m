@@ -4,71 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D219AC4345F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 14 Apr 2024 15:32:53 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 611ECC04FFE
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 14 Apr 2024 15:32:54 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rw1qe-0005qS-Ee;
-	Sun, 14 Apr 2024 15:32:52 +0000
+	id 1rw1qf-0000zG-AC;
+	Sun, 14 Apr 2024 15:32:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rw1qd-0005qM-MS
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rw1qc-0000yv-Q1
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 14 Apr 2024 15:32:52 +0000
+ Sun, 14 Apr 2024 15:32:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CP3BuRckj+Hh1CTPEqi2P1g/LVd17QRHUyeC5qQEf/c=; b=JsYDka01YLxexsXXv+uA7dACAl
- ou99JqwuXXCm18oMKYn1JqOGQSHHydy4xjJmZPBvC1m7Zk3Dzy46hcWbJKCt+1V/5hsVLjxmC4D69
- NXG0pAte9OibBMM+a9j1++0MzR/VZStY+aUGkJyi/DiPYWGu9ACUCD/t8sIFdNabVaKI=;
+ bh=vnNshwKadsBgKH/U06mDaGoU7TiC73md76Q0U4k+GS8=; b=L5fD21iXjqE/4xfbErbmof71/2
+ R2Hd7xwKE9HXVugv5TtOSpPccyh5U8oLZ8HDH4FAeJSCMB71WVTOhK0ZLZE8/KPlLd63GLzpCem8J
+ q9cXEYvcAPW8jUq6jDKPIOxtaii4Rv/yfS+k+KLsAxWMCnuB0TFk5H751AQ4NtQImDm0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CP3BuRckj+Hh1CTPEqi2P1g/LVd17QRHUyeC5qQEf/c=; b=RCB4fIlubn99/5HRPV5db2SffY
- bD8V/MCz1wj3tZhRL1YUnw/zT1yU0eTGSiCTDl4+xVdXG/SP/yKqO1sJF7wa2w0Hsucxgx4JOOVtQ
- 7cORuWdyzvJhA48XLwOgtn3cG3qVEaOKMUXX56uGXadJUt+mhwHyXzwPHXmOmkOkWwrE=;
+ bh=vnNshwKadsBgKH/U06mDaGoU7TiC73md76Q0U4k+GS8=; b=G7Ts7AWzPZbdnQgH6FYEypEGEa
+ PnF15dnBW2aA8VbWm2bMupGOANdaNKo2cUQRJ3Wwhp08b8YhsxCf0SM34hk6d2kcTITGOrjmWndrs
+ 3OVVIgBoOLq1Inriqroic1BtEbKCMu/Z1GnvKWkB773umNZ0MYS9IHfFHxh3otjAmImo=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rw1qd-0003Vj-6e for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 14 Apr 2024 15:32:52 +0000
+ id 1rw1qc-0003Ve-L7 for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 14 Apr 2024 15:32:51 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 1F26960B85;
- Sun, 14 Apr 2024 15:32:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5294AC4AF0C;
+ by dfw.source.kernel.org (Postfix) with ESMTP id 8788E60AEA
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 14 Apr 2024 15:32:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3398BC32783;
  Sun, 14 Apr 2024 15:32:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1713108765;
- bh=3L4+fDkzDFHAZ+szBJYMTSWnDcyTz76RO9nlceD/Qaw=;
+ bh=7UlnJ16rSnRhcFmtv0mafzMbnH+iolNByYGo2vrHRXw=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=T+2UEr+/0bY28FJoGI0rIhcARvlnL+B/v1b3OYpgWWURjntitMAYAmQxPvvHLqqVy
- sRvU8UzI/6+4EVOShVOojOkNiwN8EF1Z6ddzCDoNd55Ay4yBGROfaDdEnFZlCAGX6o
- Kua3RFCm2kUf2rRQUaxbU7gQOQfoqKatb0bwpCmc/J/V4Im0DWvTEA8JAhHJcea3JZ
- DNV032C0FyYWOlw8DuUyBXjgQSusSUgUlgZZrXyhOo7hb/CqzmHThp/EIJb2CzNwZ/
- SLhV9nshkeVyvrScyklNlSHY6aDRK77yPrgkKl2sdYcz0gAUQj/RRJaHDGwF/vj8Rv
- lioZavcJeypBQ==
+ b=jUQlcjqdenEzfnEvH4B4O//d4jBvlWHG8nRNQe8B9QzGJ3YU4L0qCecmHQDXWfT7A
+ 0YI9zvKDjUMsZ7duJ3NsVyp1fJYJlOjdjrFeDmoYpW4PoctA3lovvRbhXtfT/XAdoJ
+ 67KZ8xxzK4QTY7iwmILezNMuIkgsmq1iFqu8q+KNF3mPpXje+g/RDUjcUXgpFeoFo7
+ flWFxPuWdfMH2ZNZEom6DfYLBwYhxP9B2WlUuiepxwVxWDlPmEiqnepgH1wQbCRmRn
+ TFu5Fe+2737oc/Pl6yA0koqkPfYqmDOZ+KuZO7t/3vbkbsBZGdxn8kmXO7JO/TpB8e
+ Z2keFJ4jw5rcQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 32D64C54BD1; Sun, 14 Apr 2024 15:32:45 +0000 (UTC)
+ 134D5DF7858; Sun, 14 Apr 2024 15:32:45 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171310876520.3156.2825403590213821856.git-patchwork-notify@kernel.org>
+Message-Id: <171310876507.3156.2662208686749241669.git-patchwork-notify@kernel.org>
 Date: Sun, 14 Apr 2024 15:32:45 +0000
-References: <20240407072604.3488169-1-chao@kernel.org>
-In-Reply-To: <20240407072604.3488169-1-chao@kernel.org>
+References: <20240326112845.1576111-1-chao@kernel.org>
+In-Reply-To: <20240326112845.1576111-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1rw1qd-0003Vj-6e
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: compress: fix to relocate check
- condition in f2fs_{release, reserve}_compress_blocks()
+X-Headers-End: 1rw1qc-0003Ve-L7
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to wait on page writeback in
+ __clone_blkaddrs()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,7 +81,7 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, zhiguo.niu@unisoc.com, linux-kernel@vger.kernel.org,
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -88,25 +89,34 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Sun,  7 Apr 2024 15:26:03 +0800 you wrote:
-> Compress flag should be checked after inode lock held to avoid
-> racing w/ f2fs_setflags_common(), fix it.
+On Tue, 26 Mar 2024 19:28:45 +0800 you wrote:
+> In below race condition, dst page may become writeback status
+> in __clone_blkaddrs(), it needs to wait writeback before update,
+> fix it.
 > 
-> Fixes: 4c8ff7095bef ("f2fs: support data compression")
-> Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> Closes: https://lore.kernel.org/linux-f2fs-devel/CAHJ8P3LdZXLc2rqeYjvymgYHr2+YLuJ0sLG9DdsJZmwO7deuhw@mail.gmail.com
-> Signed-off-by: Chao Yu <chao@kernel.org>
+> Thread A				GC Thread
+> - f2fs_move_file_range
+>   - filemap_write_and_wait_range(dst)
+> 					- gc_data_segment
+> 					 - f2fs_down_write(dst)
+> 					 - move_data_page
+> 					  - set_page_writeback(dst_page)
+> 					  - f2fs_submit_page_write
+> 					 - f2fs_up_write(dst)
+>   - f2fs_down_write(dst)
+>   - __exchange_data_block
+>    - __clone_blkaddrs
+>     - f2fs_get_new_data_page
+>     - memcpy_page
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,1/2] f2fs: compress: fix to relocate check condition in f2fs_{release, reserve}_compress_blocks()
-    https://git.kernel.org/jaegeuk/f2fs/c/7c5dffb3d90c
-  - [f2fs-dev,2/2] f2fs: compress: fix to relocate check condition in f2fs_ioc_{, de}compress_file()
-    https://git.kernel.org/jaegeuk/f2fs/c/bd9ae4ae9e58
+  - [f2fs-dev] f2fs: fix to wait on page writeback in __clone_blkaddrs()
+    https://git.kernel.org/jaegeuk/f2fs/c/d3876e34e7e7
 
 You are awesome, thank you!
 -- 
