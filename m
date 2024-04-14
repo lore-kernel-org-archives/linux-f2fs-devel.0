@@ -4,71 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D47B4C05024
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C93BDC04FFF
 	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 14 Apr 2024 15:33:03 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rw1qp-0004pY-6r;
+	id 1rw1qo-0004pL-SY;
 	Sun, 14 Apr 2024 15:33:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rw1qo-0004pF-8I
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rw1qm-0004oj-20
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 14 Apr 2024 15:33:02 +0000
+ Sun, 14 Apr 2024 15:33:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ExKzsLTivNtnnrFz8r/yvq3j1Jn6eoaLNBe+1qY0uMo=; b=UK+u48YuFdhLo0th0mW8o9qrIc
- KvTGA7yCgR5UrwQvPtjjaHe9XWJZxlTmfn+1Y7uZCJ9axGVrIA1MCHmPHoKXR9pXF+1OS5btov/Ya
- m3LvqQ9kEJ4TQIGIxcixh8//NazTU2HT1neI4KhcDAZ7NmqaKQMXrgrYkc5uvDyuR/8I=;
+ bh=3pNgsE5u7eH9CwzdZeGaxlAUykfl16lVvc3SoGCQh+A=; b=aj7eXtSJCS8P1R/Dy4/oMPkTIh
+ 0rjifr6X2PN/Z5o8BSVmR/T8PC8q3RuG8q/bswBrMfygW5h91PfjkAzVvHFEFhd+6EvOTD7JqYBA1
+ UO0+7Zxss63Gkg3ZV2+kJl7flkRL6QdO9zsNTr7glmIWuwAlyuGQb6XP7KjJt+B6oRO8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ExKzsLTivNtnnrFz8r/yvq3j1Jn6eoaLNBe+1qY0uMo=; b=YorMl42SwNSiDnBBxMNq8meVAj
- v2Mu5CbQmUsxgeyk9VIcetpScdlVl72vSMlc3C54VqKXmP7aP8YXV7EykNeNVJoRvUK1S3BuTd9EQ
- tUJmM6YB7dn8DItObileKGACYOajRk8PdtNskB8K9+dG4bRWZFQxg3xbNphTilfhN+Vs=;
+ bh=3pNgsE5u7eH9CwzdZeGaxlAUykfl16lVvc3SoGCQh+A=; b=IKwGlDGcNr/vhtCfg/3P90xBXh
+ dCmYLegPijv8zxk1BGytoGlh4cU4t5j6SidRBkN6t9p5W+CpBCV3brex+HkogfiipFgzVsEJSmU/r
+ z3Q9Q/X/1yXlwce013LYNvqN88Fgb9D7Nvrb0PN65pS45lC1bbCsfwPMP5Q0ZvsxohLE=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rw1qn-0003XU-NE for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 14 Apr 2024 15:33:02 +0000
+ id 1rw1qk-0003WY-W3 for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 14 Apr 2024 15:33:00 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 88ED760B98;
+ by dfw.source.kernel.org (Postfix) with ESMTP id 53F5E60B8B;
  Sun, 14 Apr 2024 15:32:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 85571C4AF4D;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5EA1CC4AF12;
  Sun, 14 Apr 2024 15:32:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1713108765;
- bh=Nq3NlHtxi8rvfgNbkSAh4DaAAJW8IF5KEUOEpD4s3qM=;
+ bh=HffsvLIWPYupnLLRGUro6qCAd4PWhu6U8ocjNHJuxnw=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=pQfimu3oZuJOYZZZ4vviipCEbG7l8+Dq62nBa+BXxQ5b0RVm1HEBIu/tsiEPs0pSY
- OrrJZmqNMxpNWD0dG+vdzK7vVXv7xq7qmfblr7MxvRWmfPTW4wyxW7dZqMDpPvO3hQ
- gGwXyCYT8EwX3QuODm48po/PJJW6kO2FAqClPO+8JrHVysS6wVClj7HuTGfvvz41V1
- eqaZpf2Bfq1VrzBRCt3oF79gun+rSj7iMKP9jT81VNE3Ilq6JghTi8tRgCetEzhuJ5
- VQXQl05v7TU00Q2cMc776UgtgHUlMxwLTvDBKMDNdI286D4AtvTWQnzSnoL1W+sej6
- B07hckn2BHdfQ==
+ b=ToyjMp5qtRzUYH2jifdqiBNs0QatLgrah3+j45X7lCpCXWN8nwwC029iGcyrWkmpA
+ IzjZ/bki934NFywDG74xj3uJG4u4LppiNiObZd+/GiwlF8X9oh4Tgb28yz3BdNVNe8
+ PK1jryT+J5BxIwQDiwPYAMh4z3NpWa3nq0qlFiBQtKwH5qhXrjPUudDv91eh0SsI0e
+ u8wRcwN1HQeLX9MQY7YrvS0rT05Ogg2m1N4bf9ZMJpGWQC9EqeR9WLxaM9MW0La7y7
+ CCgp2HUMHafp95CkDNBFptpOYP4OT68BtAQktm27ikHj09bzutd27nkppDqS1UMXhr
+ MHE57pffFpD+g==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 7ACCFDF7857; Sun, 14 Apr 2024 15:32:45 +0000 (UTC)
+ 4F653DF7857; Sun, 14 Apr 2024 15:32:45 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171310876549.3156.14230955021108259973.git-patchwork-notify@kernel.org>
+Message-Id: <171310876532.3156.10776428756258877374.git-patchwork-notify@kernel.org>
 Date: Sun, 14 Apr 2024 15:32:45 +0000
-References: <20240411183753.2417792-1-daeho43@gmail.com>
-In-Reply-To: <20240411183753.2417792-1-daeho43@gmail.com>
+References: <20240409233411.1197830-1-daeho43@gmail.com>
+In-Reply-To: <20240409233411.1197830-1-daeho43@gmail.com>
 To: Daeho Jeong <daeho43@gmail.com>
-X-Headers-End: 1rw1qn-0003XU-NE
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: allow direct io of pinned files
- for zoned storage
+X-Headers-End: 1rw1qk-0003WY-W3
+Subject: Re: [f2fs-dev] [PATCH] f2fs: write missing last sum blk of file
+ pinning section
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,19 +91,21 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 11 Apr 2024 11:37:53 -0700 you wrote:
+On Tue,  9 Apr 2024 16:34:11 -0700 you wrote:
 > From: Daeho Jeong <daehojeong@google.com>
 > 
-> Since the allocation happens in conventional LU for zoned storage, we
-> can allow direct io for that.
+> While do not allocating a new section in advance for file pinning area, I
+> missed that we should write the sum block for the last segment of a file
+> pinning section.
 > 
+> Fixes: 9703d69d9d15 ("f2fs: support file pinning for zoned devices")
 > Signed-off-by: Daeho Jeong <daehojeong@google.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,2/2] f2fs: allow direct io of pinned files for zoned storage
-    https://git.kernel.org/jaegeuk/f2fs/c/b2cf5a1ff236
+  - [f2fs-dev] f2fs: write missing last sum blk of file pinning section
+    https://git.kernel.org/jaegeuk/f2fs/c/b084403cfc32
 
 You are awesome, thank you!
 -- 
