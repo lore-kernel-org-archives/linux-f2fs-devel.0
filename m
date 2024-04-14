@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2BC6EC05023
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 14 Apr 2024 15:33:03 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9C902C001CC
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 14 Apr 2024 15:33:02 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rw1qo-0005re-Eb;
+	id 1rw1qn-00010y-G2;
 	Sun, 14 Apr 2024 15:33:02 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rw1qm-0005qw-3m
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rw1ql-00010a-PS
  for linux-f2fs-devel@lists.sourceforge.net;
  Sun, 14 Apr 2024 15:33:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,52 +23,52 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=srLPix37mAy/WG+stCfh0jISusTj3X1jQ3SA04XsN20=; b=iU3sY6nHa9avsIesQbx2B/kRqB
- IovI6GBjB6PsJOf0JRvF1kehViA/EGX8fjjiQ34WqpEBoHqhp1lAd4C36OuM1GHIsbslkj2GFBPTC
- frO01QzG+EzAWTiRaRPOZonFM9sphj2boVousICExZZxXR2uVp3BVfoT3NDZDs7FkjAs=;
+ bh=hbvcKxIs/KkFnbtpgzcVVCBoRUDFLduhJqlbxP2pGpo=; b=JY83cnRdJls5+CY6qEG+qnppJC
+ bthCCeC/d5fCasur37luMVGPfjt9XyLeJEND+jejw8rmgBFnhDjhlH2060N68xp/opheqAY+hkfim
+ Ngb1GktYCWQ8fMX3Yv3sB3SGCdWGsh7c8O4WV+tBKmuqsI1+E7xZRFXuwLvgRxbsqqbg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=srLPix37mAy/WG+stCfh0jISusTj3X1jQ3SA04XsN20=; b=Vo7yiVu6IKL0uq2IFdYQqWyH7Z
- Oena6ESSUFdDxY5ZLijolcFrVUdqhOeLEL0BxyyPJISd+Bs1fDg3HKePYeP3Z1Ubsv8UKaY/C/5fj
- 5LdNM0+mvqnTzcGxParWrougyTgpe6oPwm/de2Wvbp1OD0oa8XZdlCnheSVpTMrtfMV0=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=hbvcKxIs/KkFnbtpgzcVVCBoRUDFLduhJqlbxP2pGpo=; b=Z6NNgSGKwiaWCRio2fVyAGCtLZ
+ 19ocT5kf+SxusDeONLv2Q88R8Kcnu8T8x8ckhmlmGi+aOC2JRJHuLrj9/lb4GN+ght4qO1dp6Scn2
+ bP5whz4oYnHDA1kU443n1NKcmLvB9fwNYTlNNi0hPp3mmvxaqKKdSfZ4abl7UjVJW2Nk=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rw1qk-0003Wi-W7 for linux-f2fs-devel@lists.sourceforge.net;
+ id 1rw1qi-0003WP-6a for linux-f2fs-devel@lists.sourceforge.net;
  Sun, 14 Apr 2024 15:33:00 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id E1EF9CE0979;
+ by dfw.source.kernel.org (Postfix) with ESMTP id 1F22660B81
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Sun, 14 Apr 2024 15:32:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 776BDC4AF1A;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 522ECC32786;
  Sun, 14 Apr 2024 15:32:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1713108765;
- bh=aCUWzSW3nnOCWJY6Wih6C6rNM9RCw6Fje6P5C4uUrFU=;
+ bh=bxNO3fkRN2ASJqrntL4vOhcWHQKY0KbQtg8KAE0BNuQ=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=iKhHZbrH4yK4TpodU1SaUctxEHf4l2i9OPpl24g2y42r+srMG32IQb7O15I5WwA5O
- stfQvJK7KCywmrOcCPogx1ETwr+wuyAJJClGyyiidm/oip4xwXO1VKGCKbvrZUS7gb
- XhK1h0/Xw5Z098phPN6yoTFsUYoHq9ORfit6yziXZ0j7a16ECyaNYxI0YbJZzD39+m
- 30OLMmoftHwUN2Y3Vs8FGbZ8TwZh5paVwpXobfut3a3QWUbbHi5d5209OKoe2Bvl9i
- 4nCnV9j+IzXpRlx0aFXHpfem0YjJ7FI2rwQCXFPdFj3wDIGx/pU7cfBQF9fwAFOMes
- 7Atl7NguR11Zw==
+ b=cCzv8Lnk/2BPKQQn3P2DLmjc/aDjSDHRyDxOGODvk55yta9kZOAusmHl3RJYW+jNN
+ Qj9KQ//DAH7+ehRwCObwBMT4Cyo87fqfDEAgDajEY9I14Rr84k0l3B4qNsCQcO2NzT
+ JxjO9WSqDzdKIUbrfaGahBKIDscy4wk1u0jCkUhZPzAtP7Evg9+I8QTMzMfdt3tXew
+ G2hUATt5gWcSaZDno7IAe2bb5RnMCGVi1j7Csr7z7mADH7DLRoUNR8qgi+nOuT/EPN
+ vGLgThOdmRbdzylbstJhKMOq6ZgMZ40MnjPtAEGFYsmUoS74OpFXINSuLpymt4uGJg
+ R8mCAnIPPnA/Q==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 68FD9C43140; Sun, 14 Apr 2024 15:32:45 +0000 (UTC)
+ 41C5FC43140; Sun, 14 Apr 2024 15:32:45 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171310876541.3156.7562582983890566171.git-patchwork-notify@kernel.org>
+Message-Id: <171310876526.3156.6732886911990694550.git-patchwork-notify@kernel.org>
 Date: Sun, 14 Apr 2024 15:32:45 +0000
-References: <20240322145955.2959257-1-chao@kernel.org>
-In-Reply-To: <20240322145955.2959257-1-chao@kernel.org>
+References: <20240229143838.45149-1-chao@kernel.org>
+In-Reply-To: <20240229143838.45149-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1rw1qk-0003Wi-W7
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to detect inconsistent nat entry
- during truncation
+X-Headers-End: 1rw1qi-0003WP-6a
+Subject: Re: [f2fs-dev] [PATCH] f2fs: support .shutdown in f2fs_sops
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,8 +80,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, r.smirnov@omp.ru
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -91,24 +91,20 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Fri, 22 Mar 2024 22:59:55 +0800 you wrote:
-> As Roman Smirnov reported as below:
+On Thu, 29 Feb 2024 22:38:38 +0800 you wrote:
+> Support .shutdown callback in f2fs_sops, then, it can be called to
+> shut down the file system when underlying block device is marked dead.
 > 
-> "
-> There is a possible bug in f2fs_truncate_inode_blocks():
-> 
->     if (err < 0 && err != -ENOENT)
->     			goto fail;
->         ...
->         offset[1] = 0;
->         offset[0]++;
->         nofs += err;
-> 
-> [...]
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/f2fs.h  |  2 ++
+>  fs/f2fs/file.c  | 70 ++++++++++++++++++++++++++++++-------------------
+>  fs/f2fs/super.c |  6 +++++
+>  3 files changed, 51 insertions(+), 27 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to detect inconsistent nat entry during truncation
-    https://git.kernel.org/jaegeuk/f2fs/c/92c556ed6318
+  - [f2fs-dev] f2fs: support .shutdown in f2fs_sops
+    https://git.kernel.org/jaegeuk/f2fs/c/ee745e4736fb
 
 You are awesome, thank you!
 -- 
