@@ -4,71 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9C902C001CC
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 14 Apr 2024 15:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F2067C41513
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 14 Apr 2024 15:33:03 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rw1qn-00010y-G2;
-	Sun, 14 Apr 2024 15:33:02 +0000
+	id 1rw1qo-00011W-SO;
+	Sun, 14 Apr 2024 15:33:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rw1ql-00010a-PS
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rw1qn-00011D-T2
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 14 Apr 2024 15:33:00 +0000
+ Sun, 14 Apr 2024 15:33:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hbvcKxIs/KkFnbtpgzcVVCBoRUDFLduhJqlbxP2pGpo=; b=JY83cnRdJls5+CY6qEG+qnppJC
- bthCCeC/d5fCasur37luMVGPfjt9XyLeJEND+jejw8rmgBFnhDjhlH2060N68xp/opheqAY+hkfim
- Ngb1GktYCWQ8fMX3Yv3sB3SGCdWGsh7c8O4WV+tBKmuqsI1+E7xZRFXuwLvgRxbsqqbg=;
+ bh=OxsyCM3S0SHGF1Vlq+jZi8GdEoPct5y/IujfylFs6qM=; b=KPRtVIeyMG2T5zowf7zNLy9S7w
+ Jqkx2qh+5d6nUauj3+L19ps9zcNpBS4aggaiuAt4f3YQiJD2Sx+RV0iN5dH5Tjw1pWaTLitwH6B4P
+ eK3+7lCdJN7YjPpJq/nnJ1JTTTn/kuyHncvOz34DK0v1+RNe8sVrH54CrZ2fBMUfVk1A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hbvcKxIs/KkFnbtpgzcVVCBoRUDFLduhJqlbxP2pGpo=; b=Z6NNgSGKwiaWCRio2fVyAGCtLZ
- 19ocT5kf+SxusDeONLv2Q88R8Kcnu8T8x8ckhmlmGi+aOC2JRJHuLrj9/lb4GN+ght4qO1dp6Scn2
- bP5whz4oYnHDA1kU443n1NKcmLvB9fwNYTlNNi0hPp3mmvxaqKKdSfZ4abl7UjVJW2Nk=;
+ bh=OxsyCM3S0SHGF1Vlq+jZi8GdEoPct5y/IujfylFs6qM=; b=az8VxLGiIkelIu52WjAkUQ0o9C
+ ma20/eDjOVQVN9C8jVWCzUrq9tVBGG2Nzw+yDOxHXa2aivR56YB37LIsUBJHraNLvFn95GNkvhhzl
+ FeVAjISQq9OBR9qKqdpIaiZ5+qMfsPn9YI5bA8sfVtFO9nmSQ4tzA5qbwdA4rcRa5eog=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rw1qi-0003WP-6a for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 14 Apr 2024 15:33:00 +0000
+ id 1rw1qn-0003XV-Nh for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 14 Apr 2024 15:33:02 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 1F22660B81
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by dfw.source.kernel.org (Postfix) with ESMTP id 1F25160B84;
  Sun, 14 Apr 2024 15:32:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 522ECC32786;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4DD00C4AF08;
  Sun, 14 Apr 2024 15:32:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1713108765;
- bh=bxNO3fkRN2ASJqrntL4vOhcWHQKY0KbQtg8KAE0BNuQ=;
+ bh=/b615jjEaFmNIs7LXPqjCCapz512Lm5RVdgG3VRbsAM=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=cCzv8Lnk/2BPKQQn3P2DLmjc/aDjSDHRyDxOGODvk55yta9kZOAusmHl3RJYW+jNN
- Qj9KQ//DAH7+ehRwCObwBMT4Cyo87fqfDEAgDajEY9I14Rr84k0l3B4qNsCQcO2NzT
- JxjO9WSqDzdKIUbrfaGahBKIDscy4wk1u0jCkUhZPzAtP7Evg9+I8QTMzMfdt3tXew
- G2hUATt5gWcSaZDno7IAe2bb5RnMCGVi1j7Csr7z7mADH7DLRoUNR8qgi+nOuT/EPN
- vGLgThOdmRbdzylbstJhKMOq6ZgMZ40MnjPtAEGFYsmUoS74OpFXINSuLpymt4uGJg
- R8mCAnIPPnA/Q==
+ b=JbkqDmakr9djWwllgYEm3aWqcdqpxO9Ul/750YHDEFHzRN/ZW1ECNztQmFlHkrZdJ
+ K4Zpf0dF6aOaltuLmEyeHyR+BjlXycGgtHHepzIfHv5U+ArikNC+kusNEcpemiB2KF
+ ti4mhf6uP4mE3RKdynyqpDJO+ZnbXeW57GUpTf2fhLhwPAeC9TJ1uCk2mYyC792PZ6
+ xNnG814oHE2r4/JRFHL7XfWRtZrB3mPbzOm77gM/xOS58DsQI5L7QreGRvb4A5HCot
+ 1yr4VCFR8BgSJsKLlvVv1rsdht1fg+lnTibovCE5VB/3xy80qMxCzy9DwBWQ0+p7Zw
+ 8JTA/2vfdWydA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 41C5FC43140; Sun, 14 Apr 2024 15:32:45 +0000 (UTC)
+ 3A25FC54BD5; Sun, 14 Apr 2024 15:32:45 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171310876526.3156.6732886911990694550.git-patchwork-notify@kernel.org>
+Message-Id: <171310876523.3156.12747424719057521546.git-patchwork-notify@kernel.org>
 Date: Sun, 14 Apr 2024 15:32:45 +0000
-References: <20240229143838.45149-1-chao@kernel.org>
-In-Reply-To: <20240229143838.45149-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1rw1qi-0003WP-6a
-Subject: Re: [f2fs-dev] [PATCH] f2fs: support .shutdown in f2fs_sops
+References: <20240411175410.2406710-1-daeho43@gmail.com>
+In-Reply-To: <20240411175410.2406710-1-daeho43@gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>
+X-Headers-End: 1rw1qn-0003XV-Nh
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: prevent writing without
+ fallocate() for pinned files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,8 +80,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: daehojeong@google.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -91,20 +91,20 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 29 Feb 2024 22:38:38 +0800 you wrote:
-> Support .shutdown callback in f2fs_sops, then, it can be called to
-> shut down the file system when underlying block device is marked dead.
+On Thu, 11 Apr 2024 10:54:10 -0700 you wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/f2fs.h  |  2 ++
->  fs/f2fs/file.c  | 70 ++++++++++++++++++++++++++++++-------------------
->  fs/f2fs/super.c |  6 +++++
->  3 files changed, 51 insertions(+), 27 deletions(-)
+> In a case writing without fallocate(), we can't guarantee it's allocated
+> in the conventional area for zoned stroage. To make it consistent across
+> storage devices, we disallow it regardless of storage device types.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: support .shutdown in f2fs_sops
-    https://git.kernel.org/jaegeuk/f2fs/c/ee745e4736fb
+  - [f2fs-dev,1/2] f2fs: prevent writing without fallocate() for pinned files
+    https://git.kernel.org/jaegeuk/f2fs/c/3fdd89b452c2
 
 You are awesome, thank you!
 -- 
