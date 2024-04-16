@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 60A17C04FF8
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Apr 2024 07:23:46 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CC74AC4345F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Apr 2024 07:23:51 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rwdAP-0007Qv-EH;
-	Tue, 16 Apr 2024 07:23:45 +0000
+	id 1rwdAU-0006Tv-Sj;
+	Tue, 16 Apr 2024 07:23:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1rwdAO-0007Qm-3r
+ (envelope-from <chao@kernel.org>) id 1rwdAS-0006Tm-7o
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 16 Apr 2024 07:23:44 +0000
+ Tue, 16 Apr 2024 07:23:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nebwr34inJA/ZYYAC9fSM7aQwvQVIq10txEmBjSfFYU=; b=d8kmxEkXkMeknywbF3YYUTTnih
- o3LTstmGBMbklpRXGd101pRTlhcnIbewumlEYyf9gYsQuUNxnqcyajpB0c4y5R5GszEX6wvSyUlPV
- Nmb7+x139/sxbV3u0V0Cm/rRW32cO68ONIeL0LXAcvLP+DOzkh7phz12Ek9RUD+vBBDY=;
+ bh=ahDPmM48SVsKHciiLhwBsgPpLCn75dWharEla/iJ/1M=; b=A9vnQxRx9t2CErL32MbiPU4UZO
+ RXFtrHgdMaPQZbG0hywRYmMOWufvrLn0C8pVx1+ObBoY367+Ru5OvDp1RPIcizCYR+xtcRpViy5Bp
+ LFy3BQMw3FRmYGwSI8+TOUX6VTOyg9st8VjbywpK6zsmek/O/LC7+DOMripIUesKyvTQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,41 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=nebwr34inJA/ZYYAC9fSM7aQwvQVIq10txEmBjSfFYU=; b=Juvq0K/dVDGScqe5AuLsmWZ9yi
- a2HO7uqXQghf2IGjn+L1IgLapSb4Fs/9KMZ8HVCzDOV3wfqLqGtCi2nDof/KfMPjY85DLYQQ2az7L
- i+aMKA/H2KWEybxPpwirF0l0WGLZJ/1xojR5iLTLjeI3WoIFh1p4FA644mklQKDAhhJs=;
+ bh=ahDPmM48SVsKHciiLhwBsgPpLCn75dWharEla/iJ/1M=; b=OdbC8CDkj5skZ7c44LF3MNXMOh
+ jMXf2zAjD2E2ZhMfyGfeEGUqvwla88CmZCoWq68K0ig3pACiV7qk8mzODpSarCZM4lEG1ijxnNjhT
+ 8vGsOUkD3wKZTbiboq2k17hdKSB2pJxathFUEtaNI4PzddEp3zLnuRBtiMbmmbskSick=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rwdAN-0002y0-S6 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 16 Apr 2024 07:23:44 +0000
+ id 1rwdAR-0002yI-Mf for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 16 Apr 2024 07:23:48 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 5E8106109A
+ by dfw.source.kernel.org (Postfix) with ESMTP id 346AA60F0E
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 16 Apr 2024 07:23:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCED4C4AF07;
- Tue, 16 Apr 2024 07:23:31 +0000 (UTC)
+ Tue, 16 Apr 2024 07:23:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A21E4C32781;
+ Tue, 16 Apr 2024 07:23:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1713252213;
- bh=+rHA/TjA7B8eR6kxVZ+90vp2Y9xGqpF27dl9oDGOTCU=;
+ s=k20201202; t=1713252217;
+ bh=yUmaqz0X2leLyEtaGKKFRv7XkWM87V0UO7GQWcOJJgU=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=FoxT+UxJEf+VaWlxWxF+lc6GlEDeXmwoSWwYq9YqLCgs+z6+8IJV+I34mp1l1k5QC
- I8Qf1H7YCeViM7zxMI3Rk4rsntyhRzjYyKLkmqqjYqlFYz5RBYUnXfaGZNE1Poz6Sk
- W/V5d+tyfya1T/tozU40xqeBgLUFOrnc8Z4OOBXiLcVFLBFuxmTRzm60gi9Rem3L9x
- FXJr81HS8fFpRn8C3RvBhTnlV/AIvMdize9pZQpdu0r604uTJyo6jq9JBYWM2ru8KZ
- 8uB2OM8Y6m0GpH2diij3Xrx5aMZGateWpOZheqLPEx7ldeMX0uiiNC/7IqnARph3UV
- aXbjHwY1JKhqg==
+ b=XNr7HcJx5M5YA+w5jFOmPY72vMb7k70IPgptRYiFc4faHnpDQpE67a9nGIM8jgYOq
+ +4PqtM0v3T+Mec0qeWCD41e2oND6173A09YEnMf0TQa66AwKUwpCWYo8ZB7MhylIXw
+ 0uesNtuMjEdd68M7k0G90bPqmOxndJctPQdjSdak7omhbWDp21BxH1CFhp78EhxIPo
+ 6BT+MtPaFKuawTILlY6fCKFkz94sbW1YBN2KKVf2NBGRO+2JSv9f9IMvRNfb0LKgcG
+ aryb9tGw9QVtMa22lJr0y5g1QxGdvmJJ84z9wreAVPa/0bT6R06S7XXrRGcBLZXqmu
+ GinxU2m2lvHkA==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Tue, 16 Apr 2024 15:23:16 +0800
-Message-Id: <20240416072318.6486-2-chao@kernel.org>
+Date: Tue, 16 Apr 2024 15:23:18 +0800
+Message-Id: <20240416072318.6486-4-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240416072318.6486-1-chao@kernel.org>
 References: <20240416072318.6486-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1rwdAN-0002y0-S6
-Subject: [f2fs-dev] [PATCH 2/4] f2fs: convert f2fs_read_single_page() to use
- folio
+X-Headers-End: 1rwdAR-0002yI-Mf
+Subject: [f2fs-dev] [PATCH 4/4] f2fs: convert f2fs__page tracepoint class to
+ use folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,105 +84,195 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Convert f2fs_read_single_page() to use folio and related
-functionality.
+Convert f2fs__page tracepoint class() and its instances to use folio
+and related functionality, and rename it to f2fs__folio().
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/data.c | 27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
+ fs/f2fs/checkpoint.c        |  4 ++--
+ fs/f2fs/data.c              | 10 ++++-----
+ fs/f2fs/node.c              |  4 ++--
+ include/trace/events/f2fs.h | 42 ++++++++++++++++++-------------------
+ 4 files changed, 30 insertions(+), 30 deletions(-)
 
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index eac698b8dd38..5d05a413f451 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -345,7 +345,7 @@ static int __f2fs_write_meta_page(struct page *page,
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
+ 
+-	trace_f2fs_writepage(page, META);
++	trace_f2fs_writepage(page_folio(page), META);
+ 
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+ 		if (is_sbi_flag_set(sbi, SBI_IS_CLOSE)) {
+@@ -492,7 +492,7 @@ long f2fs_sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
+ static bool f2fs_dirty_meta_folio(struct address_space *mapping,
+ 		struct folio *folio)
+ {
+-	trace_f2fs_set_page_dirty(&folio->page, META);
++	trace_f2fs_set_page_dirty(folio, META);
+ 
+ 	if (!folio_test_uptodate(folio))
+ 		folio_mark_uptodate(folio);
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 14dcd621acaa..c35107657c97 100644
+index 3eb90b9b0f8b..cf6d31e3e630 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -2092,7 +2092,7 @@ static inline loff_t f2fs_readpage_limit(struct inode *inode)
- 	return i_size_read(inode);
- }
+@@ -2490,7 +2490,7 @@ static int f2fs_read_data_folio(struct file *file, struct folio *folio)
+ 	struct inode *inode = folio_file_mapping(folio)->host;
+ 	int ret = -EAGAIN;
  
--static int f2fs_read_single_page(struct inode *inode, struct page *page,
-+static int f2fs_read_single_page(struct inode *inode, struct folio *folio,
- 					unsigned nr_pages,
- 					struct f2fs_map_blocks *map,
- 					struct bio **bio_ret,
-@@ -2105,9 +2105,10 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
- 	sector_t last_block;
- 	sector_t last_block_in_file;
- 	sector_t block_nr;
-+	pgoff_t index = folio_index(folio);
- 	int ret = 0;
+-	trace_f2fs_readpage(&folio->page, DATA);
++	trace_f2fs_readpage(folio, DATA);
  
--	block_in_file = (sector_t)page_index(page);
-+	block_in_file = (sector_t)index;
- 	last_block = block_in_file + nr_pages;
- 	last_block_in_file = bytes_to_blks(inode,
- 			f2fs_readpage_limit(inode) + blocksize - 1);
-@@ -2138,7 +2139,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
- got_it:
- 	if ((map->m_flags & F2FS_MAP_MAPPED)) {
- 		block_nr = map->m_pblk + block_in_file - map->m_lblk;
--		SetPageMappedToDisk(page);
-+		folio_set_mappedtodisk(folio);
- 
- 		if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), block_nr,
- 						DATA_GENERIC_ENHANCE_READ)) {
-@@ -2147,15 +2148,15 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+ 	if (!f2fs_is_compress_backend_ready(inode)) {
+ 		folio_unlock(folio);
+@@ -2739,7 +2739,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 		} else {
+ 			set_inode_flag(inode, FI_UPDATE_WRITE);
  		}
- 	} else {
- zero_out:
--		zero_user_segment(page, 0, PAGE_SIZE);
--		if (f2fs_need_verity(inode, page->index) &&
--		    !fsverity_verify_page(page)) {
-+		folio_zero_segment(folio, 0, folio_size(folio));
-+		if (f2fs_need_verity(inode, index) &&
-+		    !fsverity_verify_folio(folio)) {
- 			ret = -EIO;
- 			goto out;
- 		}
--		if (!PageUptodate(page))
--			SetPageUptodate(page);
--		unlock_page(page);
-+		if (!folio_test_uptodate(folio))
-+			folio_mark_uptodate(folio);
-+		folio_unlock(folio);
- 		goto out;
+-		trace_f2fs_do_write_data_page(fio->page, IPU);
++		trace_f2fs_do_write_data_page(page_folio(page), IPU);
+ 		return err;
  	}
  
-@@ -2165,14 +2166,14 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
- 	 */
- 	if (bio && (!page_is_mergeable(F2FS_I_SB(inode), bio,
- 				       *last_block_in_bio, block_nr) ||
--		    !f2fs_crypt_mergeable_bio(bio, inode, page->index, NULL))) {
-+		    !f2fs_crypt_mergeable_bio(bio, inode, index, NULL))) {
- submit_and_realloc:
- 		f2fs_submit_read_bio(F2FS_I_SB(inode), bio, DATA);
- 		bio = NULL;
- 	}
- 	if (bio == NULL) {
- 		bio = f2fs_grab_read_bio(inode, block_nr, nr_pages,
--				is_readahead ? REQ_RAHEAD : 0, page->index,
-+				is_readahead ? REQ_RAHEAD : 0, index,
- 				false);
- 		if (IS_ERR(bio)) {
- 			ret = PTR_ERR(bio);
-@@ -2187,7 +2188,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
- 	 */
- 	f2fs_wait_on_block_writeback(inode, block_nr);
+@@ -2768,7 +2768,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
  
--	if (bio_add_page(bio, page, blocksize, 0) < blocksize)
-+	if (!bio_add_folio(bio, folio, blocksize, 0))
- 		goto submit_and_realloc;
+ 	/* LFS mode write path */
+ 	f2fs_outplace_write_data(&dn, fio);
+-	trace_f2fs_do_write_data_page(page, OPU);
++	trace_f2fs_do_write_data_page(page_folio(page), OPU);
+ 	set_inode_flag(inode, FI_APPEND_WRITE);
+ out_writepage:
+ 	f2fs_put_dnode(&dn);
+@@ -2815,7 +2815,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 		.last_block = last_block,
+ 	};
  
- 	inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
-@@ -2453,7 +2454,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
- read_single_page:
- #endif
+-	trace_f2fs_writepage(page, DATA);
++	trace_f2fs_writepage(page_folio(page), DATA);
  
--		ret = f2fs_read_single_page(inode, &folio->page, max_nr_pages, &map,
-+		ret = f2fs_read_single_page(inode, folio, max_nr_pages, &map,
- 					&bio, &last_block_in_bio, rac);
- 		if (ret) {
- #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	/* we should bypass data pages to proceed the kworker jobs */
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+@@ -3789,7 +3789,7 @@ static bool f2fs_dirty_data_folio(struct address_space *mapping,
+ {
+ 	struct inode *inode = mapping->host;
+ 
+-	trace_f2fs_set_page_dirty(&folio->page, DATA);
++	trace_f2fs_set_page_dirty(folio, DATA);
+ 
+ 	if (!folio_test_uptodate(folio))
+ 		folio_mark_uptodate(folio);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 3b9eb5693683..95cecf08cb37 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1624,7 +1624,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ 	};
+ 	unsigned int seq;
+ 
+-	trace_f2fs_writepage(page, NODE);
++	trace_f2fs_writepage(page_folio(page), NODE);
+ 
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+ 		/* keep node pages in remount-ro mode */
+@@ -2171,7 +2171,7 @@ static int f2fs_write_node_pages(struct address_space *mapping,
+ static bool f2fs_dirty_node_folio(struct address_space *mapping,
+ 		struct folio *folio)
+ {
+-	trace_f2fs_set_page_dirty(&folio->page, NODE);
++	trace_f2fs_set_page_dirty(folio, NODE);
+ 
+ 	if (!folio_test_uptodate(folio))
+ 		folio_mark_uptodate(folio);
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 7ed0fc430dc6..371ba28415f5 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -1304,11 +1304,11 @@ TRACE_EVENT(f2fs_write_end,
+ 		__entry->copied)
+ );
+ 
+-DECLARE_EVENT_CLASS(f2fs__page,
++DECLARE_EVENT_CLASS(f2fs__folio,
+ 
+-	TP_PROTO(struct page *page, int type),
++	TP_PROTO(struct folio *folio, int type),
+ 
+-	TP_ARGS(page, type),
++	TP_ARGS(folio, type),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+@@ -1321,14 +1321,14 @@ DECLARE_EVENT_CLASS(f2fs__page,
+ 	),
+ 
+ 	TP_fast_assign(
+-		__entry->dev	= page_file_mapping(page)->host->i_sb->s_dev;
+-		__entry->ino	= page_file_mapping(page)->host->i_ino;
++		__entry->dev	= folio_file_mapping(folio)->host->i_sb->s_dev;
++		__entry->ino	= folio_file_mapping(folio)->host->i_ino;
+ 		__entry->type	= type;
+ 		__entry->dir	=
+-			S_ISDIR(page_file_mapping(page)->host->i_mode);
+-		__entry->index	= page->index;
+-		__entry->dirty	= PageDirty(page);
+-		__entry->uptodate = PageUptodate(page);
++			S_ISDIR(folio_file_mapping(folio)->host->i_mode);
++		__entry->index	= folio_index(folio);
++		__entry->dirty	= folio_test_dirty(folio);
++		__entry->uptodate = folio_test_uptodate(folio);
+ 	),
+ 
+ 	TP_printk("dev = (%d,%d), ino = %lu, %s, %s, index = %lu, "
+@@ -1341,32 +1341,32 @@ DECLARE_EVENT_CLASS(f2fs__page,
+ 		__entry->uptodate)
+ );
+ 
+-DEFINE_EVENT(f2fs__page, f2fs_writepage,
++DEFINE_EVENT(f2fs__folio, f2fs_writepage,
+ 
+-	TP_PROTO(struct page *page, int type),
++	TP_PROTO(struct folio *folio, int type),
+ 
+-	TP_ARGS(page, type)
++	TP_ARGS(folio, type)
+ );
+ 
+-DEFINE_EVENT(f2fs__page, f2fs_do_write_data_page,
++DEFINE_EVENT(f2fs__folio, f2fs_do_write_data_page,
+ 
+-	TP_PROTO(struct page *page, int type),
++	TP_PROTO(struct folio *folio, int type),
+ 
+-	TP_ARGS(page, type)
++	TP_ARGS(folio, type)
+ );
+ 
+-DEFINE_EVENT(f2fs__page, f2fs_readpage,
++DEFINE_EVENT(f2fs__folio, f2fs_readpage,
+ 
+-	TP_PROTO(struct page *page, int type),
++	TP_PROTO(struct folio *folio, int type),
+ 
+-	TP_ARGS(page, type)
++	TP_ARGS(folio, type)
+ );
+ 
+-DEFINE_EVENT(f2fs__page, f2fs_set_page_dirty,
++DEFINE_EVENT(f2fs__folio, f2fs_set_page_dirty,
+ 
+-	TP_PROTO(struct page *page, int type),
++	TP_PROTO(struct folio *folio, int type),
+ 
+-	TP_ARGS(page, type)
++	TP_ARGS(folio, type)
+ );
+ 
+ TRACE_EVENT(f2fs_replace_atomic_write_block,
 -- 
 2.40.1
 
