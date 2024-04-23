@@ -4,68 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 035E6C10F15
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Apr 2024 22:56:29 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A5311C4345F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Apr 2024 22:56:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rzP3s-0005O3-96;
-	Tue, 23 Apr 2024 22:56:28 +0000
+	id 1rzP3u-000072-S7;
+	Tue, 23 Apr 2024 22:56:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1rzP3i-0005Nc-74
+ (envelope-from <willy@infradead.org>) id 1rzP3m-00006h-JO
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 23 Apr 2024 22:56:18 +0000
+ Tue, 23 Apr 2024 22:56:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KYDG6ZsjDj+2iBPQ3OajYlgseuthmwTxF2D+L3YSI+w=; b=Nzctu+VSZXehxegIn3TeT97xSg
- WIGu5m0mGAtwP4Bboi7xZWxVoot4VVflqFLu/gFwk7h+FXLvHgBaUs4QhsIuiC0tprM7xkBXh5SIL
- /k5fOlFWRuSKFmNuqvJZjk1IRKgKM+/LvctYQKZMe+KMso8gFLD184RKyk4vDI5zKkPE=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=KYDG6ZsjDj+2iBPQ3OajYlgseuthmwTxF2D+L3YSI+w=; b=iO28dpkEUTd/uhMdzHyCTbHwNZ
- PNc2r29hwJY6NcKVDdcZuaFKlc+J2aRYM/4t39nwPda5TKMt5GFLpof+jO7Z9q272dDKUdShgH1UW
- 6EHKr8w8srmHNr2b6Is/obgIXC8BjYEhihf1GQ/KtOV8I3LqyVEs+XOYlIvDyGDwsink=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=Jo/OjuBX7+Ck/BIUygFAqUDlJfqBAMZkQTNEoiLOR9g=; b=Y0BPomC10f45H0RxjxzYDxheVQ
+ 68wp7c6To4G1t0MxbxMXeFZ8jrcnXcbuqsKfEqr+40lpIZNUudzWu33JveDNy1zQjB2sBYf3XoE8I
+ dAc+pLjWgzoo5S7zZ1RdF7UK59Cb7XQZxYfhwlUxCagWGOw23jixLCBweWgmsK5hS2iU=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=Jo/OjuBX7+Ck/BIUygFAqUDlJfqBAMZkQTNEoiLOR9g=; b=d
+ ciPnc5QWc28tH3YYtTMbv+9AOeqOXKCfi2DvRoeFAE1MSAsewNsS/9zs6vL0j00IZFnK6lD4Z3HZE
+ uiIdYh1Lf0VHEqpZ9BxKYeNYHF6ozmtV/D9sr/ITckgVg+evpN37ysFm63l116RMD3vVrP/Vnsx+e
+ GrzJoFVCN/0PWwLI=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rzP3g-0007E2-1B for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 23 Apr 2024 22:56:18 +0000
+ id 1rzP3l-0007EW-7o for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 23 Apr 2024 22:56:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
- References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
- Content-Type:Content-ID:Content-Description;
- bh=KYDG6ZsjDj+2iBPQ3OajYlgseuthmwTxF2D+L3YSI+w=; b=VPD3YkPlOZgK3F00x6rBjyB/qa
- 7iLvl71KcyySOFpXv6VNcIvJ4kLBFTS/SXC3ZzrjOZBGWVSosHva8VS0O89ku2EGoSb9qZG20yWz2
- gsbxrWVoRLITZhb+GHv47Fr7Tcbg/hDcEGYqKicULJLqtr7/WQI/SbIVuXP87EClD4lburQZ8Bn0E
- 1sENDUkd5HyuQEQA7bd59fijov3p1eibLXaD65uZE4xl1bPmqZpVd8Bz2kpemDPimf7xp4wYx1Bts
- biZFYcGHus1s7W3aAtQd9JEgMLwAi1M2Q51JgD2jB+d0NH8QBSQz+8Dfe99630W60Xx6+tpx6+3jk
- Cq8mW83A==;
+ Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:In-Reply-To:References;
+ bh=Jo/OjuBX7+Ck/BIUygFAqUDlJfqBAMZkQTNEoiLOR9g=; b=et9bn3CkzMB3+HnIrCN3Uj3Sn2
+ aQLlknGrRBNyt2qdPxSs7VeHT1SLo+HbT0YcdFSv3TF/TVQeNP7EeDbic5eG7ZKL3wPS3QKD4jPnr
+ kOSe1jybNRVlGA8HI6UrFbPU+KYQ6CffAi2CuFYJGBn10G1tTPlpcYt+AwWWmVb8P1wwX+PyjUz85
+ eJbvU3XFouLaJenbcOYHiRaD+ep0u/Zup/j0YriJASlYmqzfp4wlvDxY6m8WdWU9xqGuTgwOv157E
+ JvcDWwo+ll3kG37kovqYhFcOEl0VyrsZ6yelcf5HVgG+QZ19crnhQ3aQNd3s58iAwHsPaWEinppT6
+ rMLkR3mQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red
- Hat Linux)) id 1rzP3K-0000000HG6G-1bIa;
+ Hat Linux)) id 1rzP3K-0000000HG6C-0rHA;
  Tue, 23 Apr 2024 22:55:54 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	linux-mm@kvack.org
-Date: Tue, 23 Apr 2024 23:55:33 +0100
-Message-ID: <20240423225552.4113447-3-willy@infradead.org>
+Date: Tue, 23 Apr 2024 23:55:31 +0100
+Message-ID: <20240423225552.4113447-1-willy@infradead.org>
 X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240423225552.4113447-1-willy@infradead.org>
-References: <20240423225552.4113447-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1rzP3g-0007E2-1B
-Subject: [f2fs-dev] [PATCH 2/6] f2fs: Convert
- f2fs_clear_page_cache_dirty_tag to use a folio
+X-Headers-End: 1rzP3l-0007EW-7o
+Subject: [f2fs-dev] [PATCH 0/6] Remove page_mapping()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,32 +81,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Removes uses of page_mapping() and page_index().
+There are only a few users left.  Convert them all to either call
+folio_mapping() or just use folio->mapping directly.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/f2fs/data.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Matthew Wilcox (Oracle) (6):
+  fscrypt: Convert bh_get_inode_and_lblk_num to use a folio
+  f2fs: Convert f2fs_clear_page_cache_dirty_tag to use a folio
+  memory-failure: Remove calls to page_mapping()
+  migrate: Expand the use of folio in __migrate_device_pages()
+  userfault; Expand folio use in mfill_atomic_install_pte()
+  mm: Remove page_mapping()
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 5d641fac02ba..9f74c867d790 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -4100,11 +4100,12 @@ const struct address_space_operations f2fs_dblock_aops = {
- 
- void f2fs_clear_page_cache_dirty_tag(struct page *page)
- {
--	struct address_space *mapping = page_mapping(page);
-+	struct folio *folio = page_folio(page);
-+	struct address_space *mapping = folio->mapping;
- 	unsigned long flags;
- 
- 	xa_lock_irqsave(&mapping->i_pages, flags);
--	__xa_clear_mark(&mapping->i_pages, page_index(page),
-+	__xa_clear_mark(&mapping->i_pages, folio->index,
- 						PAGECACHE_TAG_DIRTY);
- 	xa_unlock_irqrestore(&mapping->i_pages, flags);
- }
+ fs/crypto/inline_crypt.c |  6 +++---
+ fs/f2fs/data.c           |  5 +++--
+ include/linux/pagemap.h  |  1 -
+ mm/folio-compat.c        |  6 ------
+ mm/memory-failure.c      |  6 ++++--
+ mm/migrate_device.c      | 13 +++++--------
+ mm/userfaultfd.c         |  5 ++---
+ 7 files changed, 17 insertions(+), 25 deletions(-)
+
 -- 
 2.43.0
 
