@@ -4,72 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0F8A2C4345F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Apr 2024 17:40:37 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B98FAC4345F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Apr 2024 17:40:44 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rzgbk-0002yF-IE;
-	Wed, 24 Apr 2024 17:40:36 +0000
+	id 1rzgbs-0004Po-2g;
+	Wed, 24 Apr 2024 17:40:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rzgbj-0002y9-Rn
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rzgbr-0004Pg-3O
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Apr 2024 17:40:36 +0000
+ Wed, 24 Apr 2024 17:40:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vP0dr14Tur6j65j0IhKe9FwtwdQ/wB0H/KKZCyZT1nY=; b=Q5SsD9eI2NRhQibg8SLVXr7fpY
- 54EMOmLcBDeeSW8soThOuyyWuWZzFDJa/vYFsgB4Vdw2QInsiUcHLh6JOhYPv4Kc+uFrDGM1g8NKw
- 5BtXXGjQt5Zbrhh07BEJ85O0Fk6RNM9E4Zw4iTK/bbTQQ+dNedhQQTZMc+CbwcN1r3Xk=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=KPSLr68nVDIAGiO1qAkR0a7Xuwion50hBrWWXH46Yzg=; b=gHgRJNnWq+O9hCjuiY+QfllW0D
+ 7/Ox2FORiKK1m10darwRXf8ygw0BI1VQew5k9ua77oCjbnKMc0ItG8NHKSbi5ExAAIOHJ2F/hjcF4
+ D7kSCFeGNHryejfUI7UTHHpaP712GahdeV42cMejQ9Cbn1hWjnIcZW+hP9YM7SjGLLMQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=vP0dr14Tur6j65j0IhKe9FwtwdQ/wB0H/KKZCyZT1nY=; b=B
- bQvCi9niWS2JG8+KFQMy84I9hUA3e+9/hJT54/PcaTP51yzVWdFjHtjrgqNcpr3BBzIpVM4G9sBkS
- mb/ArqkzhOZ7hif13rXvp07vJFAuHGmKipHkjbVmCBwhRO3De7mM2mZN79kuLKJZdu0Vo9Swj8LB/
- n3Njv0eUJsl6Qzz0=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=KPSLr68nVDIAGiO1qAkR0a7Xuwion50hBrWWXH46Yzg=; b=d7aVIbJFXmrTZeZ01dEoZmA1k+
+ FHgvsaERBP/hQKPjENnmIVgvqBJdWK2n9pGSjt7OsZUgGc9WWakl89f9DdBtKJm7bs974RsSJeKAt
+ 3Ob0skZjaQ4l7cDSMYqYXwGNLZ1jvBHSZXZic9lyfiKF0mf2/jyoI8B8o/6a5S5Y2upQ=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rzgbi-0004l5-Q6 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Apr 2024 17:40:35 +0000
+ id 1rzgbp-0004lk-O2 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Apr 2024 17:40:43 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 00EB461B68
+ by sin.source.kernel.org (Postfix) with ESMTP id 84D6CCE1814
  for <linux-f2fs-devel@lists.sourceforge.net>;
  Wed, 24 Apr 2024 17:40:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9B872C113CD
- for <linux-f2fs-devel@lists.sourceforge.net>;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A99A1C2BD11;
  Wed, 24 Apr 2024 17:40:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1713980429;
- bh=1TuK/r4o6TuDmkzVSdcm3kHL8XYuZYKYB0KTwm3ZWBo=;
- h=Subject:From:Date:To:From;
- b=Mxfi6j5SvNP8x3iZ+MPFYveMSvIk5mUMFmzeoff9UMvwafngu/B41M5V3ZgdYxrif
- hLUstUsJ1CoEECygllyIFXbWVQrV5ZIvdNVAMiJsTYZVIF1CfKzwM9p8pynd2cP/PT
- 9D46z1gQkGGhGTdvEneaxMgXvQMXrwAOLePE/olQ4zguZ+Q9yCxFADp2FXn4WX73F7
- 0reyGVxzHwDTn7+BwDm5JNkXZ8GX1yu4++YODK6SiElflZHyfn8flqlrRd/VzaF0mZ
- InkDfz2EcJw3nFxh5Dnpq4g5rN9PiOQWDF+N6B+PX86aXCZMxgpBK4Tb+WS4zMglQr
- KsDe+sn7HFG9Q==
+ bh=cnMh4lZ8/DF2nts885keD3oVXLmD1/qliCT2gQ+qeR8=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=MJhb4G212OVVVFLWHMt8RXJ9Y735f1eTRks8+loZ8XR2iJGoHvjNweOgmLCk+VVvT
+ 2mxreSsKbVbzop6g+K7+LLHIcShmtQuzBQ+cLd3EPekMc37Cmj2NgfjUJ/ETD/NdZA
+ cfeih1xiGj3OZsQAdV8CuGUgBIeoallpp3Ax2pnt2lqXOZbdIhLXipKlXJKHRx82jG
+ hW8LzOn7TRUiIgm9p9/v6ckSAfk9vnErUrcUGJVe4DtbqTNqWeNvVSA+Vo8FNpzXcF
+ 37Vc1URkXcgmJHPJ6dRZjEgbTeelrISV4JAvAQlBOTmjt0uL263/X+2MwuSA3XCvbv
+ xJafJ6eKK6j+g==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 88194C595CE for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 24 Apr 2024 17:40:29 +0000 (UTC)
+ 91EF2C00448; Wed, 24 Apr 2024 17:40:29 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171398042949.20673.4662856675160142751.git-patchwork-summary@kernel.org>
+Message-Id: <171398042958.20673.10102364996945847109.git-patchwork-notify@kernel.org>
 Date: Wed, 24 Apr 2024 17:40:29 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1rzgbi-0004l5-Q6
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+References: <20240409203411.1885121-1-jaegeuk@kernel.org>
+In-Reply-To: <20240409203411.1885121-1-jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+X-Headers-End: 1rzgbp-0004lk-O2
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: use folio_test_writeback
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,25 +80,40 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Series: [f2fs-dev,1/3] f2fs: use folio_test_writeback
-  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=842987
-  Lore link: https://lore.kernel.org/r/20240409203411.1885121-1-jaegeuk@kernel.org
-    Patches: [f2fs-dev,1/3] f2fs: use folio_test_writeback
-             [f2fs-dev,3/3] f2fs: fix false alarm on invalid block address
+On Tue,  9 Apr 2024 20:34:09 +0000 you wrote:
+> Let's convert PageWriteback to folio_test_writeback.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/compress.c |  2 +-
+>  fs/f2fs/data.c     |  3 +--
+>  fs/f2fs/f2fs.h     |  2 +-
+>  fs/f2fs/gc.c       |  2 +-
+>  fs/f2fs/inline.c   |  2 +-
+>  fs/f2fs/inode.c    |  3 ++-
+>  fs/f2fs/node.c     |  2 +-
+>  fs/f2fs/segment.c  | 10 +++++-----
+>  8 files changed, 13 insertions(+), 13 deletions(-)
 
+Here is the summary with links:
+  - [f2fs-dev,1/3] f2fs: use folio_test_writeback
+    (no matching commit)
+  - [f2fs-dev,2/3] f2fs: clear writeback when compression failed
+    (no matching commit)
+  - [f2fs-dev,3/3] f2fs: fix false alarm on invalid block address
+    https://git.kernel.org/jaegeuk/f2fs/c/04890641bf1f
 
-Total patches: 2
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
