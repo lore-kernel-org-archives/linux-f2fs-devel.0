@@ -4,68 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9330DC4345F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Apr 2024 17:36:08 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0F8A2C4345F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Apr 2024 17:40:37 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1rzgXP-0001lR-DC;
-	Wed, 24 Apr 2024 17:36:08 +0000
+	id 1rzgbk-0002yF-IE;
+	Wed, 24 Apr 2024 17:40:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1rzgXK-0001lF-GN
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1rzgbj-0002y9-Rn
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Apr 2024 17:36:03 +0000
+ Wed, 24 Apr 2024 17:40:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xmKgKACp3JhtOJBqJoIq/G/7KjOl0wLk3uLpujJ12+A=; b=AyFGCijrM8S9UKry3/4HrEvhmW
- Cv3paxazUoawO0beAL8m3O26MklJHXHvq4KIwArs3lPM1XcX8DumzvH5q9u4ryO2m9d4UHs6etU74
- lCHQeOKkfUnKF8rD7jsdIYgEZDvg3q5DM3g8z/CcrptAc9VtHOsvc7eLRHFa3kCxeroM=;
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=vP0dr14Tur6j65j0IhKe9FwtwdQ/wB0H/KKZCyZT1nY=; b=Q5SsD9eI2NRhQibg8SLVXr7fpY
+ 54EMOmLcBDeeSW8soThOuyyWuWZzFDJa/vYFsgB4Vdw2QInsiUcHLh6JOhYPv4Kc+uFrDGM1g8NKw
+ 5BtXXGjQt5Zbrhh07BEJ85O0Fk6RNM9E4Zw4iTK/bbTQQ+dNedhQQTZMc+CbwcN1r3Xk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=xmKgKACp3JhtOJBqJoIq/G/7KjOl0wLk3uLpujJ12+A=; b=Q
- tVb7i8wlOQMMjb+1dcCWR2RechK1/V34hE7ybUg/ZJW4maNWAW2rmgy1ldZRcTYZPVWjklGq/4+CW
- RQ4J9V9Nmn9BGAsLU0v5IsYZggjvg4ZM18QcKFu35spklqG8zTuSxwaxvQAF9iROiFhRZ5gksrl4l
- +WDS9xaRrxciJ1HA=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ List-Owner:List-Archive; bh=vP0dr14Tur6j65j0IhKe9FwtwdQ/wB0H/KKZCyZT1nY=; b=B
+ bQvCi9niWS2JG8+KFQMy84I9hUA3e+9/hJT54/PcaTP51yzVWdFjHtjrgqNcpr3BBzIpVM4G9sBkS
+ mb/ArqkzhOZ7hif13rXvp07vJFAuHGmKipHkjbVmCBwhRO3De7mM2mZN79kuLKJZdu0Vo9Swj8LB/
+ n3Njv0eUJsl6Qzz0=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1rzgXJ-0003pQ-Q6 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Apr 2024 17:36:03 +0000
+ id 1rzgbi-0004l5-Q6 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Apr 2024 17:40:35 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 92F65CE179C
+ by dfw.source.kernel.org (Postfix) with ESMTP id 00EB461B68
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 24 Apr 2024 17:35:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1D0CC113CD;
- Wed, 24 Apr 2024 17:35:49 +0000 (UTC)
+ Wed, 24 Apr 2024 17:40:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9B872C113CD
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 24 Apr 2024 17:40:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1713980149;
- bh=Zx21olM6TIaTxOuCCMQe79AYeFL/GNrR4k4CavTnoaI=;
- h=From:To:Cc:Subject:Date:From;
- b=C5owhCdw5/jNzo4EXhhD4qYlKIO1w4wRmFxlqkBkF429P6nWjaizzpCPRdYDgUO/x
- SFiBdn+15eoCMyccee/urI38e+ynLSuKp/oRoN4mXM/96/svlcmanFAqODmcSDvge4
- wQUonhmhf9DHZrBZ0566qz+IvE3nLr0oa5Dbj2DFK8GjZL8pOZBVEY7gomsn1nnq3V
- zXlJjhYzKKd3GhhFaRPG/6hJ7YlaoS2bI7miAeNHl+NSRH9PC9IpnVc5GbCr+q6VZP
- vOVbdrolEmedOWq4aNmfhYeT7Rortcgcv7OsjBze8oH93rpjK5BSoWefTalpogDFvI
- 49H/wulrmnuww==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Date: Wed, 24 Apr 2024 17:35:48 +0000
-Message-ID: <20240424173548.1515606-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.44.0.769.g3c40516874-goog
+ s=k20201202; t=1713980429;
+ bh=1TuK/r4o6TuDmkzVSdcm3kHL8XYuZYKYB0KTwm3ZWBo=;
+ h=Subject:From:Date:To:From;
+ b=Mxfi6j5SvNP8x3iZ+MPFYveMSvIk5mUMFmzeoff9UMvwafngu/B41M5V3ZgdYxrif
+ hLUstUsJ1CoEECygllyIFXbWVQrV5ZIvdNVAMiJsTYZVIF1CfKzwM9p8pynd2cP/PT
+ 9D46z1gQkGGhGTdvEneaxMgXvQMXrwAOLePE/olQ4zguZ+Q9yCxFADp2FXn4WX73F7
+ 0reyGVxzHwDTn7+BwDm5JNkXZ8GX1yu4++YODK6SiElflZHyfn8flqlrRd/VzaF0mZ
+ InkDfz2EcJw3nFxh5Dnpq4g5rN9PiOQWDF+N6B+PX86aXCZMxgpBK4Tb+WS4zMglQr
+ KsDe+sn7HFG9Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ 88194C595CE for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 24 Apr 2024 17:40:29 +0000 (UTC)
 MIME-Version: 1.0
-X-Headers-End: 1rzgXJ-0003pQ-Q6
-Subject: [f2fs-dev] [PATCH] f2fs: fix false alarm on invalid block address
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <171398042949.20673.4662856675160142751.git-patchwork-summary@kernel.org>
+Date: Wed, 24 Apr 2024 17:40:29 +0000
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1rzgbi-0004l5-Q6
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,63 +81,29 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-f2fs_ra_meta_pages can try to read ahead on invalid block address which is
-not the corruption case.
+Hello:
 
-Cc: <stable@kernel.org> # v6.9+
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=218770
-Fixes: 31f85ccc84b8 ("f2fs: unify the error handling of f2fs_is_valid_blkaddr")
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/checkpoint.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 5d05a413f451..55d444bec5c0 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -179,22 +179,22 @@ static bool __f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
- 		break;
- 	case META_SIT:
- 		if (unlikely(blkaddr >= SIT_BLK_CNT(sbi)))
--			goto err;
-+			goto check_only;
- 		break;
- 	case META_SSA:
- 		if (unlikely(blkaddr >= MAIN_BLKADDR(sbi) ||
- 			blkaddr < SM_I(sbi)->ssa_blkaddr))
--			goto err;
-+			goto check_only;
- 		break;
- 	case META_CP:
- 		if (unlikely(blkaddr >= SIT_I(sbi)->sit_base_addr ||
- 			blkaddr < __start_cp_addr(sbi)))
--			goto err;
-+			goto check_only;
- 		break;
- 	case META_POR:
- 		if (unlikely(blkaddr >= MAX_BLKADDR(sbi) ||
- 			blkaddr < MAIN_BLKADDR(sbi)))
--			goto err;
-+			goto check_only;
- 		break;
- 	case DATA_GENERIC:
- 	case DATA_GENERIC_ENHANCE:
-@@ -228,6 +228,7 @@ static bool __f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
- 	return true;
- err:
- 	f2fs_handle_error(sbi, ERROR_INVALID_BLKADDR);
-+check_only:
- 	return false;
- }
- 
+Series: [f2fs-dev,1/3] f2fs: use folio_test_writeback
+  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=842987
+  Lore link: https://lore.kernel.org/r/20240409203411.1885121-1-jaegeuk@kernel.org
+    Patches: [f2fs-dev,1/3] f2fs: use folio_test_writeback
+             [f2fs-dev,3/3] f2fs: fix false alarm on invalid block address
+
+
+Total patches: 2
+
 -- 
-2.44.0.769.g3c40516874-goog
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
 
