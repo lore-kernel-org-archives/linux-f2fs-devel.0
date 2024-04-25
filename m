@@ -4,59 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4227EC4345F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Apr 2024 15:15:18 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 92B65C4345F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Apr 2024 15:40:44 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1s00oe-0003se-V6;
-	Thu, 25 Apr 2024 15:15:17 +0000
+	id 1s01DG-00012w-63;
+	Thu, 25 Apr 2024 15:40:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhaoyifan@sjtu.edu.cn>) id 1s00od-0003sY-M7
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1s01DF-00012m-9u
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 25 Apr 2024 15:15:15 +0000
+ Thu, 25 Apr 2024 15:40:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/Nl3JOPVeBdfmD2v9lCk6sV034nFP8z6mhsfuVwoaAM=; b=ZMK0nZHtOvVbNNAEAulSOsZFKD
- hCZpe3bgGRkQTrQkgZzIGx7yuYG03QOcxkIwKHLH5zIOtYkabqeINqSsEsHJMAHA/M9Kkmq+Qo5Pr
- oe11wblv9it9UujU0QDNnLp4EemlTXGP+Vukz9sIumHOCAMG0FbVhoDugQSnY653AjPw=;
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=/KllIuZT9Kims/2mN4DeVbp1vKSlvJWAb+TAl2ntRr8=; b=EwjADwuh7/IlXLRYwhbJWEsRd2
+ 4xYNNZDpsjE+NbAanEMqn0A2eKxbP9/ZH3ZNkGkJz6sYvqvjiOeTZJLxx0IF9kej1DeNnE48cG56A
+ Rr4R+UBWruOYlhUj2KCkg55KyGrLB1/VB4Bp8wbLiPPauxqXl9OdXJoj1RzKI6lEY5CE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=/Nl3JOPVeBdfmD2v9lCk6sV034nFP8z6mhsfuVwoaAM=; b=h
- 6SuGyvctm0alWbhmSc3FoQUAxEa4J5pdYA56z3gd+27ueWZ4+JRKDGLgjCEpBj8ERm7vyzrU0BetX
- aCdjrgebiKtTRwXeMrfFftm2sbQR8Zckv9axNZGJTMDyKuhGOCfqbVbvpK/30G2fcrxno7657VvDv
- ffcICEZSIH+QvVuE=;
-Received: from smtp232.sjtu.edu.cn ([202.120.2.232])
+ List-Owner:List-Archive; bh=/KllIuZT9Kims/2mN4DeVbp1vKSlvJWAb+TAl2ntRr8=; b=I
+ dm05H9qdjlJZr2H1pusy8ZvtY+N4uta/dmi5aL1QBeUBdJP7VYL3/DaTUBPzlsJgEsWTboZ39EyQl
+ 0aOE+/wVhaZlCjNZfQYYjTWKsf1nDS02gcsFizGqVWjNHfHUcWEpNBdftpj6u3siK1SDZL4cl0sCw
+ cYwL6upZTdJAEkIU=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1s00oa-0002Jb-Tm for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 25 Apr 2024 15:15:15 +0000
-Received: from proxy188.sjtu.edu.cn (smtp188.sjtu.edu.cn [202.120.2.188])
- by smtp232.sjtu.edu.cn (Postfix) with ESMTPS id 05E30100460AA;
- Thu, 25 Apr 2024 22:55:57 +0800 (CST)
-Received: from zhaoyf.ipads-lab.se.sjtu.edu.cn (unknown [202.120.40.82])
- by proxy188.sjtu.edu.cn (Postfix) with ESMTPSA id D655C380D11;
- Thu, 25 Apr 2024 22:55:52 +0800 (CST)
-From: Yifan Zhao <zhaoyifan@sjtu.edu.cn>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Thu, 25 Apr 2024 22:55:28 +0800
-Message-ID: <20240425145528.2925372-1-zhaoyifan@sjtu.edu.cn>
-X-Mailer: git-send-email 2.44.0
+ id 1s01DE-0005gn-Ul for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 25 Apr 2024 15:40:41 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id 0A95A61E8D
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 25 Apr 2024 15:40:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C7483C32783
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 25 Apr 2024 15:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1714059630;
+ bh=AlB1v1t8VtpB3BhDTfYgaKf0o111mMrPTGI5UgyxPoY=;
+ h=Subject:From:Date:To:From;
+ b=fx2hKFkHT6I8FY0IjSVUC7z2ljnzCIx9wjRJytVD0jmLMVwh+g/7ULR3QkxhtyqYn
+ 0Pvutakums76Ms/HczFYGTpImXSa8oE/veWjKkMCsZOMxmTze19c+7e0YQAgpgJjpY
+ tRDmY3jm3+chBPRkIKvRT2Ap962jo0RXfvMQMUEGWZ1iLQ3QoTwN+8qlbFU/hEoruF
+ SD6YUJFgIqThN5bS4wXvuhRFBVF4oDnFO9yqzKzzMOzjgCqNaCR/AA4KhFec1u+W2u
+ TVmg5NWmEpWFKGJAGR0FipR6YAcopb8b7NmRtRCFb5ZgCzRVsi4nW+u/BZHBPZw6UV
+ Qswu0BfvooG3Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ BCD67C43140 for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 25 Apr 2024 15:40:30 +0000 (UTC)
 MIME-Version: 1.0
-X-Headers-End: 1s00oa-0002Jb-Tm
-Subject: [f2fs-dev] [PATCH] f2fs: remove redundant parameter in
- is_next_segment_free()
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <171405963076.10966.13262518300282759105.git-patchwork-summary@kernel.org>
+Date: Thu, 25 Apr 2024 15:40:30 +0000
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1s01DE-0005gn-Ul
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -68,44 +81,34 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Yifan Zhao <zhaoyifan@sjtu.edu.cn>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-is_next_segment_free() takes a redundant `type` parameter. Remove it.
+Hello:
 
-Signed-off-by: Yifan Zhao <zhaoyifan@sjtu.edu.cn>
----
- fs/f2fs/segment.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 2206199e8099..8d63ddfe4a77 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2645,7 +2645,7 @@ static void write_current_sum_page(struct f2fs_sb_info *sbi,
- }
- 
- static int is_next_segment_free(struct f2fs_sb_info *sbi,
--				struct curseg_info *curseg, int type)
-+				struct curseg_info *curseg)
- {
- 	unsigned int segno = curseg->segno + 1;
- 	struct free_segmap_info *free_i = FREE_I(sbi);
-@@ -3073,8 +3073,7 @@ static bool need_new_seg(struct f2fs_sb_info *sbi, int type)
- 	if (!is_set_ckpt_flags(sbi, CP_CRC_RECOVERY_FLAG) &&
- 	    curseg->seg_type == CURSEG_WARM_NODE)
- 		return true;
--	if (curseg->alloc_type == LFS &&
--	    is_next_segment_free(sbi, curseg, type) &&
-+	if (curseg->alloc_type == LFS && is_next_segment_free(sbi, curseg) &&
- 	    likely(!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
- 		return true;
- 	if (!f2fs_need_SSR(sbi) || !get_ssr_segment(sbi, type, SSR, 0))
+Patch: [f2fs-dev] f2fs: fix false alarm on invalid block address
+  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=847558
+  Lore link: https://lore.kernel.org/r/20240424173548.1515606-1-jaegeuk@kernel.org
+
+Patch: [f2fs-dev] f2fs: use helper to print zone condition
+  Submitter: Wu Bo <bo.wu@vivo.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=846991
+  Lore link: https://lore.kernel.org/r/20240423112759.4081008-1-bo.wu@vivo.com
+
+
+Total patches: 2
+
 -- 
-2.44.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
 
