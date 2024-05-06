@@ -4,68 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C788BC10F16
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 May 2024 10:42:32 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CAA73C10F16
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 May 2024 10:42:36 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1s3vnj-0002mT-VY;
-	Mon, 06 May 2024 10:42:32 +0000
+	id 1s3vno-0005jf-B0;
+	Mon, 06 May 2024 10:42:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1s3vnV-0002mB-GC
+ (envelope-from <chao@kernel.org>) id 1s3vnb-0005jS-HL
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 May 2024 10:42:17 +0000
+ Mon, 06 May 2024 10:42:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GRk8J73aHkAjGnjqnt1BGC+vOHKHWag6oQMeaZjEaeE=; b=jEfU5pISGKN2cp58fnqDvIYrca
- sqp3CFCQ+16PIzUw4USMpqEZMRHd0acSFzLCqgQS3QWo8OXM7A5kfaZ+aojG/FbtLuq1aXsNJxRk5
- qy1RNgBQGpwAkUzKYRLPH4eeN2CHw4K6qBjvtfpO8ZVSQQ7qfwhkQYx6zKW88VCOci+M=;
+ bh=pXM3+d7J8l7/SuJ1Cme1YN2EKq4LyU96RK6rS2IrXx4=; b=IPIob6zMGsNl0NQnfBhAKzyXiC
+ GCvLRHSO1eGPfIB2lBui6Vbb+lnVcVihplgq4ugnsfWN0WQeyePXgf1DfBF12PRfMk6BcLWTKjIe4
+ 3zX0VsUUTqnMDZoHspOOl9dPlugFnGv5FxT3C+/seCckIHB3zWmzu+CzeGtYK8pwVrs4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=GRk8J73aHkAjGnjqnt1BGC+vOHKHWag6oQMeaZjEaeE=; b=B
- 3pryQCP8NgFBa3S6oVDwpevB2IG4eAVu+AEIDrY/E64XxAwKeqzDY5y2anihdoHiVZc3VJ68tByTI
- RE0qkyRNWRERgMvYU6cPSzaHfdISQ20+HN92xcMFhQs6PCQQtqm7JKHSJtkG4nc2M/HdENQuMaL3o
- luj+EDC4PlnMAQsM=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=pXM3+d7J8l7/SuJ1Cme1YN2EKq4LyU96RK6rS2IrXx4=; b=PPbubA9GnS8fml6Zyhp1m8ejOa
+ 0qtBDWuBfWmSspz9DsPTH8RwOlR1giVKLf2z7qAdTx8MtmqpNtef4fUFwAYkc434p/oQJv8z0v2f+
+ /3A26CUZ1ShUkR3khp1P1cIcpeNudRfZQVonE+UV4BCJJSQTH7nO0LD9rgjory53u3ZM=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1s3vnU-0004nQ-F5 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 May 2024 10:42:17 +0000
+ id 1s3vnb-0004ny-1T for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 06 May 2024 10:42:23 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id BF008CE0B94
+ by dfw.source.kernel.org (Postfix) with ESMTP id B25BD6119D
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  6 May 2024 10:42:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF85EC116B1;
- Mon,  6 May 2024 10:42:07 +0000 (UTC)
+ Mon,  6 May 2024 10:42:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 481F5C4DDE0;
+ Mon,  6 May 2024 10:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1714992129;
- bh=fkODJ+9Ux00FgOPM9w3UQmabvHvLSKggWB9GdOxfzKk=;
- h=From:To:Cc:Subject:Date:From;
- b=ncvf9WVqkkcqtIcg46MwqNiCi2mTYjzBclGhpKSJpuN1kgt90iLNu0JVJoTHyCRjC
- pVuH+q36+RUxxrR9PI/IMd+/ntWcs3/p/OPiskVtsUhiOH1UOSY+NaUeY98Biv0VRz
- Z+bH409TGYJ/Ak8ynRSQJgqIoIYjsEXzg+1err/x0XFL2KWxo0INqvgJwZiQHucwb2
- BJNCww7myP9r9hGtJiO3253gFFHkQWGTFwknvSMv6ioobjmMK6WeYk2l7j0LebMPzl
- VbudVcZpHgA7GzKrj4Z7r83PszR5vJLTejovZrwDohWUe/ZNSmJ1Dej1GvqEAKyJQI
- CnWm0EZAHh9Bg==
+ s=k20201202; t=1714992132;
+ bh=KvHgv8pWJ70VR77g2JX68gkuf540MRIUf0YWe6xekTw=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=DpaEIk0f4Ct2HOBbOktLw9cLgScg74r6sF1aeBGSzldjHZsNtOCpAb7aB09DC+L4b
+ nH/B/fkiKSgkh5C6qy4uO2Kdfy9F8UY2dvpVSFFyoFWZSMM4T/T5O3j2TnREhwhU7j
+ ItwrN3876knBt86fB5TEPiIVlC5FEpyo+oL1tFlXoxyBZlLKw2k+gQm3e+JpalOszz
+ a/qMDofsnHqvSBlCu9fngq2K0PxZUs9hUmhu4O3Rq4p0f1J3urtAB4sdoaMv+AhvLI
+ MbbiGVOOgBWfkPsddFIQG/VI++F2GOSEwo3sHQC0kKQ0it7nAW3FjgUnSrLgu7wttl
+ PmlDVZsZj/rMA==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Mon,  6 May 2024 18:41:36 +0800
-Message-Id: <20240506104140.776986-1-chao@kernel.org>
+Date: Mon,  6 May 2024 18:41:38 +0800
+Message-Id: <20240506104140.776986-3-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240506104140.776986-1-chao@kernel.org>
+References: <20240506104140.776986-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1s3vnU-0004nQ-F5
-Subject: [f2fs-dev] [PATCH 1/5] f2fs: compress: fix to update i_compr_blocks
- correctly
+X-Headers-End: 1s3vnb-0004ny-1T
+Subject: [f2fs-dev] [PATCH 3/5] f2fs: compress: fix typo in
+ f2fs_reserve_compress_blocks()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,74 +84,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Previously, we account reserved blocks and compressed blocks into
-@compr_blocks, then, f2fs_i_compr_blocks_update(,compr_blocks) will
-update i_compr_blocks incorrectly, fix it.
+s/released/reserved.
 
-Meanwhile, for the case all blocks in cluster were reserved, fix to
-update dn->ofs_in_node correctly.
-
-Fixes: eb8fbaa53374 ("f2fs: compress: fix to check unreleased compressed cluster")
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/file.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ fs/f2fs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 1761ad125f97..6c84485687d3 100644
+index 6c84485687d3..e77e958a9f92 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -3641,7 +3641,8 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count,
- 
- 	while (count) {
- 		int compr_blocks = 0;
--		blkcnt_t reserved;
-+		blkcnt_t reserved = 0;
-+		blkcnt_t to_reserved;
- 		int ret;
- 
- 		for (i = 0; i < cluster_size; i++) {
-@@ -3661,20 +3662,26 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count,
- 			 * fails in release_compress_blocks(), so NEW_ADDR
- 			 * is a possible case.
- 			 */
--			if (blkaddr == NEW_ADDR ||
--				__is_valid_data_blkaddr(blkaddr)) {
-+			if (blkaddr == NEW_ADDR) {
-+				reserved++;
-+				continue;
-+			}
-+			if (__is_valid_data_blkaddr(blkaddr)) {
- 				compr_blocks++;
- 				continue;
- 			}
- 		}
- 
--		reserved = cluster_size - compr_blocks;
-+		to_reserved = cluster_size - compr_blocks - reserved;
- 
- 		/* for the case all blocks in cluster were reserved */
--		if (reserved == 1)
-+		if (to_reserved == 1) {
-+			dn->ofs_in_node += cluster_size;
- 			goto next;
-+		}
- 
--		ret = inc_valid_block_count(sbi, dn->inode, &reserved, false);
-+		ret = inc_valid_block_count(sbi, dn->inode,
-+						&to_reserved, false);
- 		if (unlikely(ret))
- 			return ret;
- 
-@@ -3685,7 +3692,7 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count,
- 
- 		f2fs_i_compr_blocks_update(dn->inode, compr_blocks, true);
- 
--		*reserved_blocks += reserved;
-+		*reserved_blocks += to_reserved;
- next:
- 		count -= cluster_size;
- 	}
+@@ -3785,7 +3785,7 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
+ 	} else if (reserved_blocks &&
+ 			atomic_read(&F2FS_I(inode)->i_compr_blocks)) {
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		f2fs_warn(sbi, "%s: partial blocks were released i_ino=%lx "
++		f2fs_warn(sbi, "%s: partial blocks were reserved i_ino=%lx "
+ 			"iblocks=%llu, reserved=%u, compr_blocks=%u, "
+ 			"run fsck to fix.",
+ 			__func__, inode->i_ino, inode->i_blocks,
 -- 
 2.40.1
 
