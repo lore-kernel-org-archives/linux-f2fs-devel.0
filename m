@@ -4,70 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0A3DCC10F16
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 May 2024 10:42:39 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 78A48C10F16
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 May 2024 10:46:03 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1s3vnp-0000cE-9q;
-	Mon, 06 May 2024 10:42:37 +0000
+	id 1s3vr8-0002i1-0V;
+	Mon, 06 May 2024 10:46:02 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1s3vnd-0000bZ-7O
+ (envelope-from <chao@kernel.org>) id 1s3vr6-0002hq-TY
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 May 2024 10:42:25 +0000
+ Mon, 06 May 2024 10:46:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bFtObBWWpAaEThNan5FYnmr0TnSmuoc3FKrd0rPupJU=; b=RU0W7X61lMMtms2NkUWhMCnO7e
- ctwnqgvpzFKHHnE8idq5QlnhnaVbqAyFGQClaoWAL4g92fCD+u/XSr0Zae5GDnd6ZBbysZXiG6LI6
- a7DOZZ4eUwmzmRen7ccE9I8TNL323Z+ElDxtfl6GRYxR7uGM/nOQMlY8yENPM1st9Zbg=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=bFtObBWWpAaEThNan5FYnmr0TnSmuoc3FKrd0rPupJU=; b=IgIr7f+4nY9YK4wdW082/FCun4
- WJlA3HZV4QjLELj6I469pgAPYbDAoiKWwBjNFQDraQO4hxAvOyBlCoAGs+yik3SBmeOabAdlqc+ZI
- m/BBvoSqJWew2sGzIuFbHPrSfPYa7UHh3kG4ODurhUM/ZKd44MTrbZERe8SMT9jTJtOE=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=YwtzIVBRLXvAfr4UlszVe59kDltAJIrJRMH5c41aXSQ=; b=Lflbj4bE7ARZ971lehztx8lSj6
+ TCCqQNMufDy97eUZlC+/7DcGWijmm+NE7MJjQnFJtoTBgtGwFGVf3soq1jkUfHw5f+kJCmNM197rW
+ IsebQyd7WnnNbeaXoqZ/T06ilFbC17NV/f4y1ugDSYOkXy29QKSJfSaxUC2M1OqruKTI=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=YwtzIVBRLXvAfr4UlszVe59kDltAJIrJRMH5c41aXSQ=; b=f
+ Dbmjz/6pY1SGWtdQ1IWneuepo4wfkcbCaYgKYMBb6zxiIsWonN3kkO635zrBxImaSFqr10uMcCzfl
+ sr51MrDLwMKyOZRsZgciN8ty7W1WVYkJSuNXKJEMH6C8Am4g8xqUmeufioARuEzcATlVvBGOxmURB
+ dNQJtfpGud1XLIvI=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1s3vnc-0004o8-Sp for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 May 2024 10:42:25 +0000
+ id 1s3vr6-00058X-Om for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 06 May 2024 10:46:01 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 7DD3A6109E
+ by dfw.source.kernel.org (Postfix) with ESMTP id 6A20261173
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  6 May 2024 10:42:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 138FDC4AF66;
- Mon,  6 May 2024 10:42:12 +0000 (UTC)
+ Mon,  6 May 2024 10:45:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB1DBC116B1;
+ Mon,  6 May 2024 10:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1714992134;
- bh=h2cJ8DiDTvOHVXuqiLQoZiz/U51rJ58bz1v/ndbDMNc=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=BiOxEnJ1khv7+Zae5sAhEAsn2ZDIc9Ye9P28fYz4pEatNLYbUaHZRWSQwOeayJsuO
- 3ON/Fn6RgX2LR295sTaNE53iuE8Wxdki7jx3y/GvNzpJRvcIFDtRCG6HH+e1pcB4s3
- tOech77POBhS4mtwrZ/hU617xqruqq8zLlFwYyiXbh1V6YsT//8UuFKucEjLqgEa71
- C1JGpJs4ZXt9RHyGFZErXZAHNWpBjUcvIjNTGTNSqn/CMaKWGAYSJaYurkERH5L0vX
- WT5wBhGOi8nPKmRL2MQIHb7/F7Yv7nu7edzCPcwzCM+O7aZRoDRahlbFpK533EFzP0
- 2Hj+mvEq2JVzw==
+ s=k20201202; t=1714992350;
+ bh=5FXL1w0kKd3v0/c9H8JOMPfU9RVcvwO4fWYHuVk8glE=;
+ h=From:To:Cc:Subject:Date:From;
+ b=r1nk7Np7JNO5Kym3vyWEHhbHQsp/9VFNe2U/ZPA9DqjwZQ+N7LTlpMI3GX8xb+7Ps
+ PeywSepD8oFBV9bap2jeKm4XyMIoZNi/9P/8FJuFSz4DTRhk87KAbQu2/GbU/yS7Do
+ cMdXXDV4xMe0RDIpoLfvnxtDN2LPrCpYhQeP9vlynn+bqWmCnZdyy9+grHnM2uP980
+ Y+PCFEoWFVwe20f4sQ46R7GhWCDQLFJgv991UBogfjsMBnC8f98VGOEjVrQRFAq2ta
+ TBfIjFmDpUKyUu7pYTQ2SLnCnkFEbrzG0Lbye/Psp5XeSnkjGWwDPABMHz5agSjx5D
+ /PJM9SuewHLHQ==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Mon,  6 May 2024 18:41:39 +0800
-Message-Id: <20240506104140.776986-4-chao@kernel.org>
+Date: Mon,  6 May 2024 18:45:37 +0800
+Message-Id: <20240506104538.778116-1-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240506104140.776986-1-chao@kernel.org>
-References: <20240506104140.776986-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1s3vnc-0004o8-Sp
-Subject: [f2fs-dev] [PATCH 4/5] f2fs: compress: fix to cover {reserve,
- release}_compress_blocks() w/ cp_rwsem lock
+X-Headers-End: 1s3vr6-00058X-Om
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: remove unused GC_FAILURE_PIN
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,65 +81,136 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-It needs to cover {reserve,release}_compress_blocks() w/ cp_rwsem lock
-to avoid racing with checkpoint, otherwise, filesystem metadata including
-blkaddr in dnode, inode fields and .total_valid_block_count may be
-corrupted after SPO case.
+After commit 3db1de0e582c ("f2fs: change the current atomic write way"),
+we removed all GC_FAILURE_ATOMIC usage, let's change i_gc_failures[]
+array to i_pin_failure for cleanup.
 
-Fixes: ef8d563f184e ("f2fs: introduce F2FS_IOC_RELEASE_COMPRESS_BLOCKS")
-Fixes: c75488fb4d82 ("f2fs: introduce F2FS_IOC_RESERVE_COMPRESS_BLOCKS")
+Meanwhile, let's define i_current_depth and i_gc_failures as union
+variable due to they won't be valid at the same time.
+
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/file.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/f2fs/f2fs.h     | 14 +++++---------
+ fs/f2fs/file.c     | 12 +++++-------
+ fs/f2fs/inode.c    |  6 ++----
+ fs/f2fs/recovery.c |  3 +--
+ 4 files changed, 13 insertions(+), 22 deletions(-)
 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index b03d75e4eedc..400ff8e1abe0 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -765,11 +765,6 @@ enum {
+ 
+ #define DEF_DIR_LEVEL		0
+ 
+-enum {
+-	GC_FAILURE_PIN,
+-	MAX_GC_FAILURE
+-};
+-
+ /* used for f2fs_inode_info->flags */
+ enum {
+ 	FI_NEW_INODE,		/* indicate newly allocated inode */
+@@ -816,9 +811,10 @@ struct f2fs_inode_info {
+ 	unsigned long i_flags;		/* keep an inode flags for ioctl */
+ 	unsigned char i_advise;		/* use to give file attribute hints */
+ 	unsigned char i_dir_level;	/* use for dentry level for large dir */
+-	unsigned int i_current_depth;	/* only for directory depth */
+-	/* for gc failure statistic */
+-	unsigned int i_gc_failures[MAX_GC_FAILURE];
++	union {
++		unsigned int i_current_depth;	/* only for directory depth */
++		unsigned int i_gc_failures;	/* for gc failure statistic */
++	};
+ 	unsigned int i_pino;		/* parent inode number */
+ 	umode_t i_acl_mode;		/* keep file acl mode temporarily */
+ 
+@@ -3133,7 +3129,7 @@ static inline void f2fs_i_depth_write(struct inode *inode, unsigned int depth)
+ static inline void f2fs_i_gc_failures_write(struct inode *inode,
+ 					unsigned int count)
+ {
+-	F2FS_I(inode)->i_gc_failures[GC_FAILURE_PIN] = count;
++	F2FS_I(inode)->i_gc_failures = count;
+ 	f2fs_mark_inode_dirty_sync(inode, true);
+ }
+ 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index e77e958a9f92..3f0db351e976 100644
+index ac9d6380e433..200cafc75dce 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -3570,9 +3570,12 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
- 		struct dnode_of_data dn;
- 		pgoff_t end_offset, count;
+@@ -3196,13 +3196,11 @@ int f2fs_pin_file_control(struct inode *inode, bool inc)
  
-+		f2fs_lock_op(sbi);
-+
- 		set_new_dnode(&dn, inode, NULL, NULL, 0);
- 		ret = f2fs_get_dnode_of_data(&dn, page_idx, LOOKUP_NODE);
- 		if (ret) {
-+			f2fs_unlock_op(sbi);
- 			if (ret == -ENOENT) {
- 				page_idx = f2fs_get_next_page_offset(&dn,
- 								page_idx);
-@@ -3590,6 +3593,8 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
+ 	/* Use i_gc_failures for normal file as a risk signal. */
+ 	if (inc)
+-		f2fs_i_gc_failures_write(inode,
+-				fi->i_gc_failures[GC_FAILURE_PIN] + 1);
++		f2fs_i_gc_failures_write(inode, fi->i_gc_failures + 1);
  
- 		f2fs_put_dnode(&dn);
+-	if (fi->i_gc_failures[GC_FAILURE_PIN] > sbi->gc_pin_file_threshold) {
++	if (fi->i_gc_failures > sbi->gc_pin_file_threshold) {
+ 		f2fs_warn(sbi, "%s: Enable GC = ino %lx after %x GC trials",
+-			  __func__, inode->i_ino,
+-			  fi->i_gc_failures[GC_FAILURE_PIN]);
++			  __func__, inode->i_ino, fi->i_gc_failures);
+ 		clear_inode_flag(inode, FI_PIN_FILE);
+ 		return -EAGAIN;
+ 	}
+@@ -3266,7 +3264,7 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
+ 	}
  
-+		f2fs_unlock_op(sbi);
-+
- 		if (ret < 0)
- 			break;
+ 	set_inode_flag(inode, FI_PIN_FILE);
+-	ret = F2FS_I(inode)->i_gc_failures[GC_FAILURE_PIN];
++	ret = F2FS_I(inode)->i_gc_failures;
+ done:
+ 	f2fs_update_time(sbi, REQ_TIME);
+ out:
+@@ -3281,7 +3279,7 @@ static int f2fs_ioc_get_pin_file(struct file *filp, unsigned long arg)
+ 	__u32 pin = 0;
  
-@@ -3742,9 +3747,12 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
- 		struct dnode_of_data dn;
- 		pgoff_t end_offset, count;
+ 	if (is_inode_flag_set(inode, FI_PIN_FILE))
+-		pin = F2FS_I(inode)->i_gc_failures[GC_FAILURE_PIN];
++		pin = F2FS_I(inode)->i_gc_failures;
+ 	return put_user(pin, (u32 __user *)arg);
+ }
  
-+		f2fs_lock_op(sbi);
-+
- 		set_new_dnode(&dn, inode, NULL, NULL, 0);
- 		ret = f2fs_get_dnode_of_data(&dn, page_idx, LOOKUP_NODE);
- 		if (ret) {
-+			f2fs_unlock_op(sbi);
- 			if (ret == -ENOENT) {
- 				page_idx = f2fs_get_next_page_offset(&dn,
- 								page_idx);
-@@ -3762,6 +3770,8 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 1423cd27a477..9a8c2b63f56d 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -408,8 +408,7 @@ static int do_read_inode(struct inode *inode)
+ 	if (S_ISDIR(inode->i_mode))
+ 		fi->i_current_depth = le32_to_cpu(ri->i_current_depth);
+ 	else if (S_ISREG(inode->i_mode))
+-		fi->i_gc_failures[GC_FAILURE_PIN] =
+-					le16_to_cpu(ri->i_gc_failures);
++		fi->i_gc_failures = le16_to_cpu(ri->i_gc_failures);
+ 	fi->i_xattr_nid = le32_to_cpu(ri->i_xattr_nid);
+ 	fi->i_flags = le32_to_cpu(ri->i_flags);
+ 	if (S_ISREG(inode->i_mode))
+@@ -679,8 +678,7 @@ void f2fs_update_inode(struct inode *inode, struct page *node_page)
+ 		ri->i_current_depth =
+ 			cpu_to_le32(F2FS_I(inode)->i_current_depth);
+ 	else if (S_ISREG(inode->i_mode))
+-		ri->i_gc_failures =
+-			cpu_to_le16(F2FS_I(inode)->i_gc_failures[GC_FAILURE_PIN]);
++		ri->i_gc_failures = cpu_to_le16(F2FS_I(inode)->i_gc_failures);
+ 	ri->i_xattr_nid = cpu_to_le32(F2FS_I(inode)->i_xattr_nid);
+ 	ri->i_flags = cpu_to_le32(F2FS_I(inode)->i_flags);
+ 	ri->i_pino = cpu_to_le32(F2FS_I(inode)->i_pino);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index e7bf15b8240a..496aee53c38a 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -330,8 +330,7 @@ static int recover_inode(struct inode *inode, struct page *page)
+ 	F2FS_I(inode)->i_advise = raw->i_advise;
+ 	F2FS_I(inode)->i_flags = le32_to_cpu(raw->i_flags);
+ 	f2fs_set_inode_flags(inode);
+-	F2FS_I(inode)->i_gc_failures[GC_FAILURE_PIN] =
+-				le16_to_cpu(raw->i_gc_failures);
++	F2FS_I(inode)->i_gc_failures = le16_to_cpu(raw->i_gc_failures);
  
- 		f2fs_put_dnode(&dn);
- 
-+		f2fs_unlock_op(sbi);
-+
- 		if (ret < 0)
- 			break;
+ 	recover_inline_flags(inode, raw);
  
 -- 
 2.40.1
