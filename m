@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F3D94C25B5F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 May 2024 10:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7F66AC25B5C
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 May 2024 10:42:38 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1s3vno-0002Lw-UD;
-	Mon, 06 May 2024 10:42:37 +0000
+	id 1s3vnp-0002M9-Ep;
+	Mon, 06 May 2024 10:42:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1s3vnV-0002L6-0t
+ (envelope-from <chao@kernel.org>) id 1s3vne-0002LH-GN
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 May 2024 10:42:17 +0000
+ Mon, 06 May 2024 10:42:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BxArMdgJXALH7kX7KC1uLNCx8j7YG3n6T1DTG2HPg1I=; b=XMuJEbDBKmKOO3oKJ7W6XTdWKC
- FvOSUFtd7ZxVu7MapM4Fbml+83iY0cjrD1ARrU/fNuEmWCzfBNTfWiI5/ekRpxFVSz4ftqLJcN6t/
- TnCny8vz3jvtNbpc80aH73+MZ8pQ3Yuv9h/vwpm9+QpXg2MCJPIXKnvA93vohs2WcfkI=;
+ bh=61yaauQLX1xW6A03+Mrdh7LSN+wCYJc2rD+SN/uGjhs=; b=asNYk/Fz6XptEkqrW5n+JSUTdd
+ QtRNblWfqAZ3YXSUZAvxVFAuYyJ8/no8MfFIcDQQPxbTTjfCrj0pWZImu+b5YXJ/zCpIyJve9at/t
+ lr+TG33p7h9un8dh0POo6ene8ycLKGWTgK1F3/wwhooDJYKW2KwARN8Ed32nUhctnteQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,41 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=BxArMdgJXALH7kX7KC1uLNCx8j7YG3n6T1DTG2HPg1I=; b=GMidWTkh3IeOUwPRxV/F1WI+9U
- 2jfKUJjjKKApdraMmqrr5h/RbJVVTzF37qhIhIV0Fy4bbRtr7/A57NVTAEGYFMUvPrNLqDSL7V3C3
- 4YcnEzF+3N33ckNWe2J8XWkw9EN0O0+PGWyCieGf0Uojq5aCm/Gxre6bE/PNWpanRkmI=;
+ bh=61yaauQLX1xW6A03+Mrdh7LSN+wCYJc2rD+SN/uGjhs=; b=kUTebHJxubvOt042B9jjtTnYs8
+ IYsVV5aGUsrlRwQwdk9aZX1OSNLH3vvE8zwxAGPqnvyHW3tDYSmGMbk6bUUJqrHxZwrE5zKOnDvTA
+ EIMR8J6hGBTn7v+eOocrPeWCmWChptJ90fzeuI0DB1lRPHglC/QggF6F+TizEXFMG8Z0=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1s3vnU-0004nS-DD for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 May 2024 10:42:17 +0000
+ id 1s3vne-0004oG-KL for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 06 May 2024 10:42:27 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 12D2561171
+ by dfw.source.kernel.org (Postfix) with ESMTP id 4918D611A9
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  6 May 2024 10:42:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C3AEC4AF63;
- Mon,  6 May 2024 10:42:09 +0000 (UTC)
+ Mon,  6 May 2024 10:42:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4204C4AF68;
+ Mon,  6 May 2024 10:42:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1714992130;
- bh=v82z/f0v3qlNA/pUTvtaHNQodyv569B9p8AX3nujvZk=;
+ s=k20201202; t=1714992136;
+ bh=dv1pEoHOwA1g/+IAGWZ5yWzazulJlprTYfwb5ytZma8=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=boV2IkvTKAOy7YPAYJ/6WZNNps3mLpo5SdXeM5EZN8FpPP/Pn2RRUM9tUTbEATUXm
- dbAD+zMropII+XZY7MDHJKFVUtIJFrKCKE5AgpkikNdBWiIZROAqGbLw2nlZk1XQNs
- EuM/c+V/LZ9XIc11EEdYIzN/vVH7mB+bOqVgqbnKLvGlAx96IwZ3CB6FZHT8S+Hiuj
- 7w0t7yz40dvcdJpECFuvBYgbEKu80LrGLP5nGwJYyX6a+gEUXNfeaZYfOY7n3Y00BN
- sHwWbLWKzCU4zKlgQkyLaXjIz0kmbQ/5BMnCCGASy8bm5n86zB4xDZ8sCCda3MmIdl
- gPh/QD7CnAD2A==
+ b=siwn/DFOz2c0A0TUxgsNXWaLaIGaw/YomjZgU9pII4NXQGaBu7ptzSDjO8ZevIJ3A
+ Lr1MALFUgBfjLt8s+WkXAJiEagLVemd+FTxA4jg0D+Frk4DlO+5f1pMiOy6jxPlXcP
+ X2hF33+AJEHfLETLOng+0Gy2+r4cQtVgf9Xu7p+kUnwNKn1ZIC88/kPuajQ4PaBRKq
+ gLuaXHNax7qElwja1IWVrvChIDMVwPw6C/4197HiMFonxZMmJ/cnEKcpqq9uaECq7U
+ 3AyXhD3c0yn51BoAuaczk6CadFECQhl+8n0feyhIVOxGgiOqN47JYKO/vuBa69M5vM
+ liVDrIv21Ys/g==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Mon,  6 May 2024 18:41:37 +0800
-Message-Id: <20240506104140.776986-2-chao@kernel.org>
+Date: Mon,  6 May 2024 18:41:40 +0800
+Message-Id: <20240506104140.776986-5-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240506104140.776986-1-chao@kernel.org>
 References: <20240506104140.776986-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1s3vnU-0004nS-DD
-Subject: [f2fs-dev] [PATCH 2/5] f2fs: compress: fix error path of
- inc_valid_block_count()
+X-Headers-End: 1s3vne-0004oG-KL
+Subject: [f2fs-dev] [PATCH 5/5] f2fs: compress: don't allow unaligned
+ truncation on released compress inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,63 +84,56 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If inc_valid_block_count() can not allocate all requested blocks,
-it needs to release block count in .total_valid_block_count and
-resevation blocks in inode.
+f2fs image may be corrupted after below testcase:
+- mkfs.f2fs -O extra_attr,compression -f /dev/vdb
+- mount /dev/vdb /mnt/f2fs
+- touch /mnt/f2fs/file
+- f2fs_io setflags compression /mnt/f2fs/file
+- dd if=/dev/zero of=/mnt/f2fs/file bs=4k count=4
+- f2fs_io release_cblocks /mnt/f2fs/file
+- truncate -s 8192 /mnt/f2fs/file
+- umount /mnt/f2fs
+- fsck.f2fs /dev/vdb
 
-Fixes: 54607494875e ("f2fs: compress: fix to avoid inconsistence bewteen i_blocks and dnode")
+[ASSERT] (fsck_chk_inode_blk:1256)  --> ino: 0x5 has i_blocks: 0x00000002, but has 0x3 blocks
+[FSCK] valid_block_count matching with CP             [Fail] [0x4, 0x5]
+[FSCK] other corrupted bugs                           [Fail]
+
+The reason is: partial truncation assume compressed inode has reserved
+blocks, after partial truncation, valid block count may change w/
+.i_blocks and .total_valid_block_count update, result in corruption.
+
+This patch only allow cluster size aligned truncation on released
+compress inode for fixing.
+
+Fixes: c61404153eb6 ("f2fs: introduce FI_COMPRESS_RELEASED instead of using IMMUTABLE bit")
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/f2fs.h | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ fs/f2fs/file.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index c876813b5532..95a40d4f778f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2309,7 +2309,7 @@ static inline void f2fs_i_blocks_write(struct inode *, block_t, bool, bool);
- static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 				 struct inode *inode, blkcnt_t *count, bool partial)
- {
--	blkcnt_t diff = 0, release = 0;
-+	long long diff = 0, release = 0;
- 	block_t avail_user_block_count;
- 	int ret;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 3f0db351e976..ac9d6380e433 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -952,9 +952,14 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 				  ATTR_GID | ATTR_TIMES_SET))))
+ 		return -EPERM;
  
-@@ -2329,26 +2329,27 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 	percpu_counter_add(&sbi->alloc_valid_block_count, (*count));
+-	if ((attr->ia_valid & ATTR_SIZE) &&
+-		!f2fs_is_compress_backend_ready(inode))
+-		return -EOPNOTSUPP;
++	if ((attr->ia_valid & ATTR_SIZE)) {
++		if (!f2fs_is_compress_backend_ready(inode))
++			return -EOPNOTSUPP;
++		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
++			(attr->ia_size %
++			F2FS_BLK_TO_BYTES(F2FS_I(inode)->i_cluster_size)))
++			return -EINVAL;
++	}
  
- 	spin_lock(&sbi->stat_lock);
--	sbi->total_valid_block_count += (block_t)(*count);
--	avail_user_block_count = get_available_block_count(sbi, inode, true);
- 
--	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
-+	avail_user_block_count = get_available_block_count(sbi, inode, true);
-+	diff = (long long)sbi->total_valid_block_count + *count -
-+						avail_user_block_count;
-+	if (unlikely(diff > 0)) {
- 		if (!partial) {
- 			spin_unlock(&sbi->stat_lock);
-+			release = *count;
- 			goto enospc;
- 		}
--
--		diff = sbi->total_valid_block_count - avail_user_block_count;
- 		if (diff > *count)
- 			diff = *count;
- 		*count -= diff;
- 		release = diff;
--		sbi->total_valid_block_count -= diff;
- 		if (!*count) {
- 			spin_unlock(&sbi->stat_lock);
- 			goto enospc;
- 		}
- 	}
-+	sbi->total_valid_block_count += (block_t)(*count);
-+
- 	spin_unlock(&sbi->stat_lock);
- 
- 	if (unlikely(release)) {
+ 	err = setattr_prepare(idmap, dentry, attr);
+ 	if (err)
 -- 
 2.40.1
 
