@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 24D35C10F1A
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  9 May 2024 15:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EF5D3C10F1A
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  9 May 2024 18:19:52 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1s5655-00058e-Ba;
-	Thu, 09 May 2024 15:53:14 +0000
+	id 1s58Mx-0000N4-Lt;
+	Thu, 09 May 2024 18:19:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1s5654-00058X-AC
+ (envelope-from <jaegeuk@kernel.org>) id 1s58Mv-0000Mw-Ce
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 09 May 2024 15:53:13 +0000
+ Thu, 09 May 2024 18:19:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ThZkXguEyN1vvxqOgIvMYOR0ltr7SZkHgg5yGR0mQmo=; b=Dg+/u7wdOacU1Mgn9aeUbUSnvx
- lAdsfkTrtBdewKKty785rSLKYc3ww5ivjfpcgMuKJxA4z69uEqx8NDgWtfdqx4BjxAsK4uBp9EGem
- 46yuhGKiGIEciEIzDpIAfZDfQfxgOhNHEr9j2rR6Kt0Pn/A6nFpz2PfHDGeRGnQvpJtk=;
+ bh=Mg3HwjqEc2ZWsKqhcpViEOtUQpAVaqFthT91OSEbTLU=; b=jguz9FD3ssdSCN/afiX6AUxMOe
+ MTrAfkoWPwQ8dRnfpWI3AGAgYlNuAJRz6HHwMh1Cw9kzsJb50rW9syloyaRHaXT/r8W+l5EjSBz5b
+ tS5paxhlyHJnZUvCpmgFMEld/VH5JEyPay4JzxA5XVtQiARAkCy0v6upQ14m6LzdREfs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,41 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ThZkXguEyN1vvxqOgIvMYOR0ltr7SZkHgg5yGR0mQmo=; b=DLDntwaW7h2fs3elWjM/0Upm1O
- oueozRkxZqn2+oiP7zGPKsw3n/qL8OEW8Mhb3eAeX1VF65uceQLAz8Wu2VOxssOeFd1iFfJ7Z66xf
- iqfaAzrwtxLDGifPk8datptjUyLBqwjWGqSzf0WNK1x0JjwC+aKasBha9ORS1cDmEbS8=;
+ bh=Mg3HwjqEc2ZWsKqhcpViEOtUQpAVaqFthT91OSEbTLU=; b=Mu3BsynY2b8JztNOqAhKevSMqy
+ 7XT2KTBQOEQwarF+lC2zDK/UaS2aEJ1c2efcHXES8PLZ7lmDfypZotvGdtN186DqT/jqstFAT0trS
+ FNx+uHtLjM8G5srCs6PIVU2+snwYm7+2llfnXTsYgE3x1P6PjR5zx7CD/8UkbM2cV+Js=;
 Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1s5653-00084G-Bc for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 09 May 2024 15:53:13 +0000
+ id 1s58Mu-0002Uh-P7 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 09 May 2024 18:19:48 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id CD3B8CE1B27;
- Thu,  9 May 2024 15:53:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D57E6C116B1;
- Thu,  9 May 2024 15:52:59 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id 4CA0BCE18F1;
+ Thu,  9 May 2024 18:19:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50157C116B1;
+ Thu,  9 May 2024 18:19:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1715269980;
- bh=EyTwGmTH6PChSbRLYLFE7d/gisUiJhHgzpqM5Qc1hCk=;
+ s=k20201202; t=1715278780;
+ bh=/t2pB7QSKYBgF36Vts5qeGbyY0WPmNyjKYluvoaa0e8=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=fmxnUoNQ0HMljqxekQNwpiEU3pr0qzZotqFdeU4FWe3sUCVO+IoCENO4XfPH8b1Ul
- yogZ/YJVL48PLj6Ap7nnQAwUbF5OXNS9AznxxtHWMK3uGWbhAi4ba0JNNgrfCOgM2L
- WyCNt4Vxs8xQOEEJqm5jHhevpo6XNievOB+5oq7kEFKQkHTTpKzXLUe+XeJ17403wd
- mMkD4nphS0bsjc58yKG+4w2yerBPmBx0Q/D9U8WJAy+mbKo35/IZ/YHmk3ZMRh0anG
- jxCadXoIv7wLGBL7onfgPHfs/ppPgUWGk0Hl10u8yVivifSP3jY9Os6iPvLvYMipY7
- 9FSyB/GP8xfVw==
-Date: Thu, 9 May 2024 15:52:58 +0000
+ b=sfCzvEu3z3WHRI1nraVl6WeK1wotw9++4gucuIDqKxMu5wUS/QYU4aFM+u13Ot/29
+ ilihfAxTJySycWkwZWHBRBctf/dDFrBNmw9zUC0zIAvXcvLXHVi/MFpp7ZGqFUhZoG
+ lWBKWGZtV8iFVlZqyQcngV3ZaHRB+DoNcAYC84c/QWFY26T2fwO3th9B4WN4yncRKA
+ 6REhCvNjCrscVWbiHuWWP4lrQi8mAqL6PXjCg7wdpgeftsOHUaq1tVXBvgdkmhUqIV
+ LhYk/fUpJnP5+zYDzLugEYyf57oPesdOBkk5wL4gTP5LkSTNeE0V2P06vtnPjAEKCQ
+ 1rYQMvEWRSNuQ==
+Date: Thu, 9 May 2024 18:19:38 +0000
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Message-ID: <ZjzxWp4-wmpCzBeB@google.com>
-References: <20240506103313.773503-1-chao@kernel.org>
- <20240506103313.773503-3-chao@kernel.org>
+To: Daeho Jeong <daeho43@gmail.com>
+Message-ID: <Zj0TuhzHzevgxGfe@google.com>
+References: <20240507175628.2460390-1-daeho43@gmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20240506103313.773503-3-chao@kernel.org>
-X-Headers-End: 1s5653-00084G-Bc
-Subject: Re: [f2fs-dev] [PATCH 3/3] f2fs: fix to do sanity check on i_nid
- for inline_data inode
+In-Reply-To: <20240507175628.2460390-1-daeho43@gmail.com>
+X-Headers-End: 1s58Mu-0002Uh-P7
+Subject: Re: [f2fs-dev] [PATCH] f2fs: allow dirty sections with zero valid
+ block for checkpoint disabled
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,136 +78,56 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org,
- syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Daeho Jeong <daehojeong@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 05/06, Chao Yu wrote:
-> syzbot reports a f2fs bug as below:
+On 05/07, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> ------------[ cut here ]------------
-> kernel BUG at fs/f2fs/inline.c:258!
-> CPU: 1 PID: 34 Comm: kworker/u8:2 Not tainted 6.9.0-rc6-syzkaller-00012-g9e4bc4bcae01 #0
-> RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:258
-> Call Trace:
->  f2fs_write_single_data_page+0xb65/0x1d60 fs/f2fs/data.c:2834
->  f2fs_write_cache_pages fs/f2fs/data.c:3133 [inline]
->  __f2fs_write_data_pages fs/f2fs/data.c:3288 [inline]
->  f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3315
->  do_writepages+0x35b/0x870 mm/page-writeback.c:2612
->  __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1650
->  writeback_sb_inodes+0x905/0x1260 fs/fs-writeback.c:1941
->  wb_writeback+0x457/0xce0 fs/fs-writeback.c:2117
->  wb_do_writeback fs/fs-writeback.c:2264 [inline]
->  wb_workfn+0x410/0x1090 fs/fs-writeback.c:2304
->  process_one_work kernel/workqueue.c:3254 [inline]
->  process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3335
->  worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
->  kthread+0x2f2/0x390 kernel/kthread.c:388
->  ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> Following the semantic for dirty segments in checkpoint disabled mode,
+> apply the same rule to dirty sections.
 > 
-> The root cause is: inline_data inode can be fuzzed, so that there may
-> be valid blkaddr in its direct node, once f2fs triggers background GC
-> to migrate the block, it will hit f2fs_bug_on() during dirty page
-> writeback.
-> 
-> Let's add sanity check on i_nid field for inline_data inode, meanwhile,
-> forbid to migrate inline_data inode's data block to fix this issue.
-> 
-> Reported-by: syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/linux-f2fs-devel/000000000000d103ce06174d7ec3@google.com
-> Signed-off-by: Chao Yu <chao@kernel.org>
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
 > ---
->  fs/f2fs/f2fs.h   |  2 +-
->  fs/f2fs/gc.c     |  6 ++++++
->  fs/f2fs/inline.c | 17 ++++++++++++++++-
->  fs/f2fs/inode.c  |  2 +-
->  4 files changed, 24 insertions(+), 3 deletions(-)
+>  fs/f2fs/segment.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index fced2b7652f4..c876813b5532 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -4146,7 +4146,7 @@ extern struct kmem_cache *f2fs_inode_entry_slab;
->   * inline.c
->   */
->  bool f2fs_may_inline_data(struct inode *inode);
-> -bool f2fs_sanity_check_inline_data(struct inode *inode);
-> +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage);
->  bool f2fs_may_inline_dentry(struct inode *inode);
->  void f2fs_do_read_inline_data(struct page *page, struct page *ipage);
->  void f2fs_truncate_inline_inode(struct inode *inode,
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index e86c7f01539a..041957750478 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -1563,6 +1563,12 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  				continue;
->  			}
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 6474b7338e81..2463398b243f 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -771,8 +771,11 @@ static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
+>  			block_t valid_blocks =
+>  				get_valid_blocks(sbi, segno, true);
 >  
-> +			if (f2fs_has_inline_data(inode)) {
-> +				iput(inode);
-> +				set_sbi_flag(sbi, SBI_NEED_FSCK);
-> +				continue;
+> -			f2fs_bug_on(sbi, unlikely(!valid_blocks ||
+> -					valid_blocks == CAP_BLKS_PER_SEC(sbi)));
+> +			if (!is_sbi_flag_set(sbi, SBI_CP_DISABLED))
+> +				f2fs_bug_on(sbi, unlikely(!valid_blocks));
+> +
+> +			f2fs_bug_on(sbi, unlikely(valid_blocks ==
+> +					CAP_BLKS_PER_SEC(sbi)));
 
-Any race condtion to get this as false alarm?
+What about:
+f2fs_bug_on(sbi,
+	(!is_sbi_flag_set(sbi, SBI_CP_DISABLED) && !valid_blocks) ||
+	valid_blocks == CAP_BLKS_PER_SEC(sbi));
 
-> +			}
-> +
->  			err = f2fs_gc_pinned_control(inode, gc_type, segno);
->  			if (err == -EAGAIN) {
->  				iput(inode);
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index ac00423f117b..067600fed3d4 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -33,11 +33,26 @@ bool f2fs_may_inline_data(struct inode *inode)
->  	return !f2fs_post_read_required(inode);
->  }
 >  
-> -bool f2fs_sanity_check_inline_data(struct inode *inode)
-> +static bool has_node_blocks(struct inode *inode, struct page *ipage)
-> +{
-> +	struct f2fs_inode *ri = F2FS_INODE(ipage);
-> +	int i;
-> +
-> +	for (i = 0; i < DEF_NIDS_PER_INODE; i++) {
-> +		if (ri->i_nid[i])
-> +			return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage)
->  {
->  	if (!f2fs_has_inline_data(inode))
->  		return false;
->  
-> +	if (has_node_blocks(inode, ipage))
-> +		return false;
-> +
->  	if (!support_inline_data(inode))
->  		return true;
->  
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index c26effdce9aa..1423cd27a477 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -343,7 +343,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
->  		}
->  	}
->  
-> -	if (f2fs_sanity_check_inline_data(inode)) {
-> +	if (f2fs_sanity_check_inline_data(inode, node_page)) {
->  		f2fs_warn(sbi, "%s: inode (ino=%lx, mode=%u) should not have inline_data, run fsck to fix",
->  			  __func__, inode->i_ino, inode->i_mode);
->  		return false;
+>  			if (!IS_CURSEC(sbi, secno))
+>  				set_bit(secno, dirty_i->dirty_secmap);
 > -- 
-> 2.40.1
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
+> 
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 _______________________________________________
