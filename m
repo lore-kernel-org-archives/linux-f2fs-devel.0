@@ -4,68 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A9675C25B10
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 May 2024 03:34:01 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C0D86C25B10
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 May 2024 03:37:12 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1s5H1D-00036l-Gt;
-	Fri, 10 May 2024 03:33:59 +0000
+	id 1s5H4K-0005pl-Ui;
+	Fri, 10 May 2024 03:37:12 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1s5H1C-00036c-17
+ (envelope-from <chao@kernel.org>) id 1s5H4J-0005pb-9k
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 10 May 2024 03:33:58 +0000
+ Fri, 10 May 2024 03:37:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ References:Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zIdMh/N0FWcNcbYJZABLYDE0wkeH2UZCG1RGlYZtdW8=; b=me9j+Kz63WO360AMDX7Fu+JVsh
- MAexqfEVlMida4dQXdQJWQsa1U7IkPxHPIQ6puvcrvKJP1dHCjAz1KfXmgzaxb33RHFW1d83387J2
- cqO8/R1JSq+zEsYARlp7uIj37ENabgGFKHgHUwfCkGw7dOMS3aYbK0A70rqpQ8Qtu7Co=;
+ bh=UYMElMAXHutQ9TEBBxQI23YG7Q3h1CCb5i1x2aGQOeA=; b=P2Df0bpCLj1BSb+r1L/W/+JgWg
+ J2fHoD+1j7QqH+bRBojWQ1be9xpElo56fY4Lg0GgrIttHfHhZs7d3f4o1u+lyCyJmGrHSI7QiJ7qK
+ b+NCsiFmJtfZcPRiXBQ8xn1H2Q9pJopbHPthZ3VTH39oSLIP+Acp0l5I8B6KOPnb18e8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=zIdMh/N0FWcNcbYJZABLYDE0wkeH2UZCG1RGlYZtdW8=; b=R
- 0GP3JFHBctrQi+cx1jRVG5bQ7ynGwfnTKnOwzbSoQEc73wr+E730HkobFy/0GdVz4rLD5FVNs9EqD
- 26P6MI3lepLjp80YTj3JFqPNX7kZFUKUJ//u/N2yC39eq2xgxtZeYb5USll4SNEjcXK2vDeoj3C4S
- 6Ns88OdEAe7uL+Gg=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=UYMElMAXHutQ9TEBBxQI23YG7Q3h1CCb5i1x2aGQOeA=; b=HkLnAl70i627xSK78DV1LKgY2Q
+ 3X7GLYIkstN7qLeO0fP4g8WqHmRtc/bPsILtZVOZVUBd+VKj0VJ/DQcKtWuiM1OnJtGHwP0Cn5sQJ
+ J+W/Kh+LaBz/vHm/GIzVxNh4zBTHqCHA1GxWqBjrKKYTnlnC3EqRUw/402c+08btHLP8=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1s5H1C-0004hD-Er for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 10 May 2024 03:33:58 +0000
+ id 1s5H4I-0004rX-Lz for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 10 May 2024 03:37:10 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 582B361DE8
+ by sin.source.kernel.org (Postfix) with ESMTP id 36261CE1C84
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 10 May 2024 03:33:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C06D3C116B1;
- Fri, 10 May 2024 03:33:45 +0000 (UTC)
+ Fri, 10 May 2024 03:36:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9137DC113CC;
+ Fri, 10 May 2024 03:36:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1715312027;
- bh=tQCU8a3DiAlPU9cV1Yzc3NpKh9FJk5rB1BHhgkRcW64=;
- h=From:To:Cc:Subject:Date:From;
- b=FPvQG7uCqrunIi2zYYEK8kQmFI7UgEMMeCKgSwnzRcOiqBZZf3wbPvmYJ6pkhPDWP
- A6EbyQBemc961bNMTu+nxSQMfyyzJc/7fsjmWKfQspdiUzLNEO/xMPjIGJL+jootOU
- EmtHGd9QtVHTIFRan5C/+O6HVZDqnAtdNx1mE9UfoUiEf9mtNKvC+CA1V19311wxX/
- B/3Yh1KFQqKElwZJvAdKK5w9Bw89hgqkhUcbtw19OQglD2kgoaSsF2UGgrOOHU3N4/
- fr4B79W88VAwq5uLScMOOTfH1eoBqFyEVwHylGCKBOjXK7AL3fhMOvKAE8uWf5zMeS
- /wO1VlIjqB2ZQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Fri, 10 May 2024 11:33:39 +0800
-Message-Id: <20240510033339.300331-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ s=k20201202; t=1715312217;
+ bh=1KviGYd5beyNX2PBlLyIIAQ0SMbAih+SYoo5RKeNBEE=;
+ h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+ b=hBP8m2hQxhieQldc8KDb6vku9VRUD5vfmOv6LIxyK18cKM8+DqLMF/LmKoZXwVwz6
+ bIOmr+nPSe9hZ+8tfjV5080kM100ppP4/QghvFkZoNdbdwCfvo7zk9LT8yw2Zxxfq5
+ iXfwpgKihp90C8K4Lii7hB1Q0xbo5fDvtKrUTx4DoRKcFY0DbGOryRYorHW0IlvEBu
+ ulS8j5OIsfEfapYP0XtG/9dvXQv2pkqKlz56uwdaugCTt1YEqhPRaSlbUcpL6kRXDa
+ d1OxZnwDVdj58W7vE6tUzSlUJgugIILJpXRCEjnn16/qGqmjE+IWw4kxWXYI4fHKpc
+ JOdkeAsUnNDaA==
+Message-ID: <a67948c7-6268-4c25-990d-8946814c7c4e@kernel.org>
+Date: Fri, 10 May 2024 11:36:54 +0800
 MIME-Version: 1.0
-X-Headers-End: 1s5H1C-0004hD-Er
-Subject: [f2fs-dev] [PATCH v3 5/5] f2fs: compress: don't allow unaligned
- truncation on released compress inode
+User-Agent: Mozilla Thunderbird
+From: Chao Yu <chao@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20240506103313.773503-1-chao@kernel.org>
+ <20240506103313.773503-2-chao@kernel.org> <Zjwc5QGJfm6XXzOX@google.com>
+ <32e097e6-67f1-4f06-bad0-0c7b3afb46f0@kernel.org>
+Content-Language: en-US
+In-Reply-To: <32e097e6-67f1-4f06-bad0-0c7b3afb46f0@kernel.org>
+X-Headers-End: 1s5H4I-0004rX-Lz
+Subject: Re: [f2fs-dev] [PATCH 2/3] f2fs: fix to add missing iput() in
+ gc_data_segment()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,68 +83,50 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-f2fs image may be corrupted after below testcase:
-- mkfs.f2fs -O extra_attr,compression -f /dev/vdb
-- mount /dev/vdb /mnt/f2fs
-- touch /mnt/f2fs/file
-- f2fs_io setflags compression /mnt/f2fs/file
-- dd if=/dev/zero of=/mnt/f2fs/file bs=4k count=4
-- f2fs_io release_cblocks /mnt/f2fs/file
-- truncate -s 8192 /mnt/f2fs/file
-- umount /mnt/f2fs
-- fsck.f2fs /dev/vdb
-
-[ASSERT] (fsck_chk_inode_blk:1256)  --> ino: 0x5 has i_blocks: 0x00000002, but has 0x3 blocks
-[FSCK] valid_block_count matching with CP             [Fail] [0x4, 0x5]
-[FSCK] other corrupted bugs                           [Fail]
-
-The reason is: partial truncation assume compressed inode has reserved
-blocks, after partial truncation, valid block count may change w/o
-.i_blocks and .total_valid_block_count update, result in corruption.
-
-This patch only allow cluster size aligned truncation on released
-compress inode for fixing.
-
-Fixes: c61404153eb6 ("f2fs: introduce FI_COMPRESS_RELEASED instead of using IMMUTABLE bit")
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v3:
-- fix typo in commit description: w/ -> w/o
- fs/f2fs/file.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 7371f485b3f7..15f4222da891 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -952,9 +952,14 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 				  ATTR_GID | ATTR_TIMES_SET))))
- 		return -EPERM;
- 
--	if ((attr->ia_valid & ATTR_SIZE) &&
--		!f2fs_is_compress_backend_ready(inode))
--		return -EOPNOTSUPP;
-+	if ((attr->ia_valid & ATTR_SIZE)) {
-+		if (!f2fs_is_compress_backend_ready(inode))
-+			return -EOPNOTSUPP;
-+		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
-+			!IS_ALIGNED(attr->ia_size,
-+			F2FS_BLK_TO_BYTES(F2FS_I(inode)->i_cluster_size)))
-+			return -EINVAL;
-+	}
- 
- 	err = setattr_prepare(idmap, dentry, attr);
- 	if (err)
--- 
-2.40.1
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gMjAyNC81LzkgMTA6NDksIENoYW8gWXUgd3JvdGU6Cj4gT24gMjAyNC81LzkgODo0NiwgSmFl
+Z2V1ayBLaW0gd3JvdGU6Cj4+IE9uIDA1LzA2LCBDaGFvIFl1IHdyb3RlOgo+Pj4gRHVyaW5nIGdj
+X2RhdGFfc2VnbWVudCgpLCBpZiBpbm9kZSBzdGF0ZSBpcyBhYm5vcm1hbCwgaXQgbWlzc2VkIHRv
+IGNhbGwKPj4+IGlwdXQoKSwgZml4IGl0Lgo+Pj4KPj4+IEZpeGVzOiAxMzJlMzIwOTc4OWMgKCJm
+MmZzOiByZW1vdmUgZmFsc2UgYWxhcm0gb24gaWdldCBmYWlsdXJlIGR1cmluZyBHQyIpCgpPaCwg
+dGhpcyBsaW5lIHNob3VsZCBiZSByZXBsYWNlZCB3LyBiZWxvdyBvbmUsIGxldCBtZSByZXZpc2Ug
+dGhlIHBhdGNoLgoKRml4ZXM6IGI3M2U1MjgyNGM4OSAoImYyZnM6IHJlcG9zaXRpb24gdW5sb2Nr
+X25ld19pbm9kZSB0byBwcmV2ZW50IGFjY2Vzc2luZyBpbnZhbGlkIGlub2RlIikuCgpUaGFua3Ms
+Cgo+Pj4gRml4ZXM6IDkwNTZkNjQ4OWY1YSAoImYyZnM6IGZpeCB0byBkbyBzYW5pdHkgY2hlY2sg
+b24gaW5vZGUgdHlwZSBkdXJpbmcgZ2FyYmFnZSBjb2xsZWN0aW9uIikKPj4+IFNpZ25lZC1vZmYt
+Ynk6IENoYW8gWXUgPGNoYW9Aa2VybmVsLm9yZz4KPj4+IC0tLQo+Pj4gwqAgZnMvZjJmcy9nYy5j
+IHwgOSArKysrKysrLS0KPj4+IMKgIDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKyksIDIg
+ZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZ2MuYyBiL2ZzL2YyZnMv
+Z2MuYwo+Pj4gaW5kZXggODg1MjgxNGRhYjdmLi5lODZjN2YwMTUzOWEgMTAwNjQ0Cj4+PiAtLS0g
+YS9mcy9mMmZzL2djLmMKPj4+ICsrKyBiL2ZzL2YyZnMvZ2MuYwo+Pj4gQEAgLTE1NTQsMTAgKzE1
+NTQsMTUgQEAgc3RhdGljIGludCBnY19kYXRhX3NlZ21lbnQoc3RydWN0IGYyZnNfc2JfaW5mbyAq
+c2JpLCBzdHJ1Y3QgZjJmc19zdW1tYXJ5ICpzdW0sCj4+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBpbnQgZXJyOwo+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaW5vZGUgPSBmMmZz
+X2lnZXQoc2IsIGRuaS5pbm8pOwo+Pj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKElTX0VS
+Uihpbm9kZSkgfHwgaXNfYmFkX2lub2RlKGlub2RlKSB8fAo+Pj4gLcKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHNwZWNpYWxfZmlsZShpbm9kZS0+aV9tb2RlKSkKPj4+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChJU19FUlIoaW5vZGUpKQo+Pj4gwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb250aW51ZTsKPj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIGlmIChpc19iYWRfaW5vZGUoaW5vZGUpIHx8Cj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgc3BlY2lhbF9maWxlKGlub2RlLT5pX21vZGUpKSB7Cj4+PiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlwdXQoaW5vZGUpOwo+Pgo+PiBpZ2V0X2ZhaWxl
+ZCgpIGNhbGxlZCBpcHV0KCk/Cj4gCj4gSXQgbG9va3MgdGhlIGJhZCBpbm9kZSB3YXMgcmVmZXJl
+bmNlZCBpbiB0aGlzIGNvbnRleHQsIGl0IG5lZWRzIHRvIGJlIGlwdXQoKWVkCj4gaGVyZS4KPiAK
+PiBUaGUgYmFkIGlub2RlIHdhcyBtYWRlIGluIG90aGVyIHRocmVhZCwgcGxlYXNlIGNoZWNrIGRl
+c2NyaXB0aW9uIGluIGNvbW1pdAo+IGI3M2U1MjgyNGM4OSAoImYyZnM6IHJlcG9zaXRpb24gdW5s
+b2NrX25ld19pbm9kZSB0byBwcmV2ZW50IGFjY2Vzc2luZyBpbnZhbGlkCj4gaW5vZGUiKS4KPiAK
+PiBUaGFua3MsCj4gCj4+Cj4+Cj4+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNv
+bnRpbnVlOwo+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfQo+Pj4gKwo+Pj4gwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgZXJyID0gZjJmc19nY19waW5uZWRfY29udHJvbChpbm9kZSwgZ2Nf
+dHlwZSwgc2Vnbm8pOwo+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKGVyciA9PSAt
+RUFHQUlOKSB7Cj4+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlwdXQoaW5v
+ZGUpOwo+Pj4gLS0gCj4+PiAyLjQwLjEKPiAKPiAKPiBfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwo+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4g
+TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBodHRwczovL2xpc3RzLnNv
+dXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCgoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBt
+YWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6
+Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
