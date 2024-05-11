@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CFAE1C25B10
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 11 May 2024 00:50:55 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 16911C25B75
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 11 May 2024 00:50:57 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1s5awx-0006St-7Y;
-	Sat, 11 May 2024 00:50:55 +0000
+	id 1s5awz-00044W-CA;
+	Sat, 11 May 2024 00:50:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1s5aww-0006Sj-BI
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1s5awx-00043w-Gh
  for linux-f2fs-devel@lists.sourceforge.net;
  Sat, 11 May 2024 00:50:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,53 +23,53 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GThXhubQwXz60cNslvTBhJ9fV0EyveFXoD+Mv4DeYUg=; b=exA0UOWuTgWhpCXoqErsKEJFg2
- Tg5ri17dGqQiZAVJVGp82s3jKTGKM54/GG0USgxEzr9aoQSzoAAlN4DL60MGit39WeJ26NOd4axPm
- kooXIkk3VEiQ4aFdZzvAit/IEXnUnx6C/0beUrbrIhXbDUIKAzfPSzEvuGU1U1Z1quAk=;
+ bh=6OgTMsU0vgipx4fSQQuNhLHWBmq8eNfbR3UJ+jYaKE0=; b=FkOwcmWZk/KzVsR6qftHBbs2D5
+ P2csBY8Qbdb0mvh9/Rx392Tfi0f58shLFH7Gi+Qe3JhzghKcwhHWS7d5xotnLiMAmUtjRKielbz3U
+ 2ZWKFPpTsdysZGD63IBNmP1LmT8KAkbLn3OKeV+Z+Rp/a8hcNCkvXP+HC/QLSA50jDC8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GThXhubQwXz60cNslvTBhJ9fV0EyveFXoD+Mv4DeYUg=; b=SnfB2xFff8sB02FTrKGhi5zmxw
- ZAtea2p9SX6R490LmQemEUnKkpYqwNmkf/G2mBL9pvRYimyFcAurcALIZx1GmFqE4EttZUia8qAod
- dABRiDED5fcqv4s/ODZM6wwcszHYd6DXOIpu4mDMJnmcvKGCf1CY9aLDACy9ToQPKfeQ=;
+ bh=6OgTMsU0vgipx4fSQQuNhLHWBmq8eNfbR3UJ+jYaKE0=; b=hpY3rXhekDDE/FhfQISGZcYQLR
+ NMw8Z8FqlVolHaOZJeKk6fx8ZUk1YdCqNZrm8+5RoUz/smz6jP+4oY3o5G1dg3MHKLh36RVlzXJn3
+ kXIWgvn7Hihf4DaKCw714o+aL55Az6PUGyWyCwphS5k4ZMd9R/F7P6pCXrom2dYeDfCY=;
 Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1s5aww-00050j-KV for linux-f2fs-devel@lists.sourceforge.net;
+ id 1s5aww-00050n-V2 for linux-f2fs-devel@lists.sourceforge.net;
  Sat, 11 May 2024 00:50:54 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 45B70CE1F38
+ by sin.source.kernel.org (Postfix) with ESMTP id 69A11CE1F2D
  for <linux-f2fs-devel@lists.sourceforge.net>;
  Sat, 11 May 2024 00:50:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F1E87C4AF0F;
- Sat, 11 May 2024 00:50:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 345FBC4DDE7;
+ Sat, 11 May 2024 00:50:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1715388634;
- bh=Lm9UgoQ0EqF9fJAh2wacDF88Osv1XpcxXCrzsm+J6/U=;
+ bh=umpzRfqIbQjf2cQ3pWh/DFx/YMizin6Bv2YlZ01qB7w=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=BnoE+l9xyxXgcfa24Y4kVBpFJHKqH3v8qaEBFeylWyz2Y6fbwJTVTG9PJ90JwQzHQ
- urNJyNTn6bEO4tDXR1LA5/XcwLGR39FDu8TxqriOhmguGqVn3ltv1EVs8w5vkVSVbb
- aSeO6OQGlEJ+oeLoTG8QvvLtrBawVzRa7PpxRAuGQAev4FL2nf6DeD9xahmxJUViNY
- VMei5Qxab/f5aM2u+OJFvEwe7daVR2KG0wdX0QjqiPXGB/qN7vZrJAdT2p5l68laVH
- egPfiqvQNtes4ovSXJmELIjdbruzLIpUnBVBtpo9zKU485d+XrTJBN9D/R4fjH61ix
- eJtGd2+CWNFOQ==
+ b=DG2PIQNDZ2WQ5knTaNMQofd+vFkrj/8Lk4AJ9Ilohrc1wSrcsxtGnOUGfmqiNU+Ij
+ btandg8l9XvpWW4uEQzEB7DHlsFnDpyt8D52GzjfJ+aO4U+EBbjjCjNyWo3Hem5Tvu
+ DRd54W2RradldTUZvEu01KhbnsxSupD0dpHA17zFtYME7I8/6HJJhA0xSfQkQzvjWZ
+ C6hk1cv9FDBcRMzimQYMpSkLOu0hxwVphDjargyZg/P5XxtPo4cpO3j5YhVrvR7gAV
+ tSxAtlifxSR+rYrQVN46TQam5xBSZc2glLvUcbq1GXF4KKa51RSRvesIU9GVUXo9aY
+ da3/cqXB4otNg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- D67DCC54BA3; Sat, 11 May 2024 00:50:33 +0000 (UTC)
+ 2A88FE7C114; Sat, 11 May 2024 00:50:34 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171538863387.11229.8284477395784483205.git-patchwork-notify@kernel.org>
-Date: Sat, 11 May 2024 00:50:33 +0000
-References: <20240506103313.773503-1-chao@kernel.org>
-In-Reply-To: <20240506103313.773503-1-chao@kernel.org>
+Message-Id: <171538863417.11229.16140970709452072250.git-patchwork-notify@kernel.org>
+Date: Sat, 11 May 2024 00:50:34 +0000
+References: <20240507062019.1097683-1-chao@kernel.org>
+In-Reply-To: <20240507062019.1097683-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1s5aww-00050j-KV
-Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: fix to release node block count in
- error path of f2fs_new_node_page()
+X-Headers-End: 1s5aww-00050n-V2
+Subject: Re: [f2fs-dev] [PATCH v2 5/5] f2fs: compress: don't allow unaligned
+ truncation on released compress inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,26 +89,26 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon,  6 May 2024 18:33:11 +0800 you wrote:
-> It missed to call dec_valid_node_count() to release node block count
-> in error path, fix it.
+On Tue,  7 May 2024 14:20:19 +0800 you wrote:
+> f2fs image may be corrupted after below testcase:
+> - mkfs.f2fs -O extra_attr,compression -f /dev/vdb
+> - mount /dev/vdb /mnt/f2fs
+> - touch /mnt/f2fs/file
+> - f2fs_io setflags compression /mnt/f2fs/file
+> - dd if=/dev/zero of=/mnt/f2fs/file bs=4k count=4
+> - f2fs_io release_cblocks /mnt/f2fs/file
+> - truncate -s 8192 /mnt/f2fs/file
+> - umount /mnt/f2fs
+> - fsck.f2fs /dev/vdb
 > 
-> Fixes: 141170b759e0 ("f2fs: fix to avoid use f2fs_bug_on() in f2fs_new_node_page()")
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/node.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev,1/3] f2fs: fix to release node block count in error path of f2fs_new_node_page()
-    (no matching commit)
-  - [f2fs-dev,2/3] f2fs: fix to add missing iput() in gc_data_segment()
-    https://git.kernel.org/jaegeuk/f2fs/c/a798ff17cd2d
-  - [f2fs-dev,3/3] f2fs: fix to do sanity check on i_nid for inline_data inode
-    (no matching commit)
+  - [f2fs-dev,v2,5/5] f2fs: compress: don't allow unaligned truncation on released compress inode
+    https://git.kernel.org/jaegeuk/f2fs/c/29ed2b5dd521
 
 You are awesome, thank you!
 -- 
