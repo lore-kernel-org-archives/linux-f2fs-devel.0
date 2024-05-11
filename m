@@ -4,72 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 16911C25B75
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 168BDC25B4F
 	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 11 May 2024 00:50:57 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1s5awz-00044W-CA;
+	id 1s5awx-0002QN-Il;
 	Sat, 11 May 2024 00:50:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1s5awx-00043w-Gh
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1s5aww-0002Q7-CB
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 11 May 2024 00:50:54 +0000
+ Sat, 11 May 2024 00:50:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6OgTMsU0vgipx4fSQQuNhLHWBmq8eNfbR3UJ+jYaKE0=; b=FkOwcmWZk/KzVsR6qftHBbs2D5
- P2csBY8Qbdb0mvh9/Rx392Tfi0f58shLFH7Gi+Qe3JhzghKcwhHWS7d5xotnLiMAmUtjRKielbz3U
- 2ZWKFPpTsdysZGD63IBNmP1LmT8KAkbLn3OKeV+Z+Rp/a8hcNCkvXP+HC/QLSA50jDC8=;
+ bh=NIzVXrr44wgMkSBInuhiNMSolzNRvJ4uRD283fKLuC8=; b=RbrrLc7sqR/dLDoNNxUnCeZjyv
+ qS351TPVsNQranp0jhWoyzqBwffoeCiW5I8JWbbdLyrH5sQaec88hOj7wQ1dzf7/wo/UoomDbVBc5
+ MFuchTOi+UshWZSc8APbJreM6CHTlO0pxz2xRhtvulHDbBw61L4u49AQ4dcsUU11qsY0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6OgTMsU0vgipx4fSQQuNhLHWBmq8eNfbR3UJ+jYaKE0=; b=hpY3rXhekDDE/FhfQISGZcYQLR
- NMw8Z8FqlVolHaOZJeKk6fx8ZUk1YdCqNZrm8+5RoUz/smz6jP+4oY3o5G1dg3MHKLh36RVlzXJn3
- kXIWgvn7Hihf4DaKCw714o+aL55Az6PUGyWyCwphS5k4ZMd9R/F7P6pCXrom2dYeDfCY=;
+ bh=NIzVXrr44wgMkSBInuhiNMSolzNRvJ4uRD283fKLuC8=; b=J7p7dMtBre3ajfiYzy5bFfF6RV
+ WhQOkDUltq72S5+usC/dSQUdfTf/Qk4e80/ZVPDT/mdu9W5OLJDkFB/WqENJM21neGJfyERqEmcLn
+ EWgogyjDfUuv1salh+Jgh435N91BcuIGHHbTnpuic4FERfqCAH2BLwhiFXv+tAgQdOBU=;
 Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1s5aww-00050n-V2 for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 11 May 2024 00:50:54 +0000
+ id 1s5awx-00050s-JZ for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 11 May 2024 00:50:55 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 69A11CE1F2D
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by sin.source.kernel.org (Postfix) with ESMTP id C285BCE1F47;
  Sat, 11 May 2024 00:50:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 345FBC4DDE7;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2BFA6C4DDE3;
  Sat, 11 May 2024 00:50:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1715388634;
- bh=umpzRfqIbQjf2cQ3pWh/DFx/YMizin6Bv2YlZ01qB7w=;
+ bh=Pz+ow3JxEINc2wts5BR00ZQMF+TsSbf1YGi3BBPfPxg=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=DG2PIQNDZ2WQ5knTaNMQofd+vFkrj/8Lk4AJ9Ilohrc1wSrcsxtGnOUGfmqiNU+Ij
- btandg8l9XvpWW4uEQzEB7DHlsFnDpyt8D52GzjfJ+aO4U+EBbjjCjNyWo3Hem5Tvu
- DRd54W2RradldTUZvEu01KhbnsxSupD0dpHA17zFtYME7I8/6HJJhA0xSfQkQzvjWZ
- C6hk1cv9FDBcRMzimQYMpSkLOu0hxwVphDjargyZg/P5XxtPo4cpO3j5YhVrvR7gAV
- tSxAtlifxSR+rYrQVN46TQam5xBSZc2glLvUcbq1GXF4KKa51RSRvesIU9GVUXo9aY
- da3/cqXB4otNg==
+ b=lwBXNb7xi/6jTNONWTORQWCM0OTldyOVw9RcQyzfhL6TUPOhyyKR+vnyKp8PbO0mi
+ Ie9T2GmFCklKqn5gYCC78I+69DZcSf9jNvIpXKcvkjaf/yj8czyeUcpME7fn0KPf6/
+ EfRX/4sc5lnVCWQPcLxNfwgkMzgK87IP67hFr+O+elgezAE9vgW+8wmUrg+VMpXCqh
+ KVYwn1R8fqGhs1pwIpZs4KCEvoaPRI3ISyfW87gMWnzNxONl/oYfJz40W2TtRGYtmb
+ vDnXmB4M+TtlAtQJhDGAcLqAu6cznDqNRKebH70ptxjChOeOx1xn8U5TQ5UVaI0XoM
+ ksCqbF4XXeMeA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 2A88FE7C114; Sat, 11 May 2024 00:50:34 +0000 (UTC)
+ 20D5CE7C112; Sat, 11 May 2024 00:50:34 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171538863417.11229.16140970709452072250.git-patchwork-notify@kernel.org>
+Message-Id: <171538863413.11229.14009197979317413967.git-patchwork-notify@kernel.org>
 Date: Sat, 11 May 2024 00:50:34 +0000
-References: <20240507062019.1097683-1-chao@kernel.org>
-In-Reply-To: <20240507062019.1097683-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1s5aww-00050n-V2
-Subject: Re: [f2fs-dev] [PATCH v2 5/5] f2fs: compress: don't allow unaligned
- truncation on released compress inode
+References: <20240429035142.706356-1-bo.wu@vivo.com>
+In-Reply-To: <20240429035142.706356-1-bo.wu@vivo.com>
+To: Wu Bo <bo.wu@vivo.com>
+X-Headers-End: 1s5awx-00050s-JZ
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix block migration when section is
+ not aligned to pow2
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,8 +80,9 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: liaoyuanhong@vivo.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, wubo.oduw@gmail.com,
+ jaegeuk@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -92,23 +92,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue,  7 May 2024 14:20:19 +0800 you wrote:
-> f2fs image may be corrupted after below testcase:
-> - mkfs.f2fs -O extra_attr,compression -f /dev/vdb
-> - mount /dev/vdb /mnt/f2fs
-> - touch /mnt/f2fs/file
-> - f2fs_io setflags compression /mnt/f2fs/file
-> - dd if=/dev/zero of=/mnt/f2fs/file bs=4k count=4
-> - f2fs_io release_cblocks /mnt/f2fs/file
-> - truncate -s 8192 /mnt/f2fs/file
-> - umount /mnt/f2fs
-> - fsck.f2fs /dev/vdb
+On Sun, 28 Apr 2024 21:51:42 -0600 you wrote:
+> As for zoned-UFS, f2fs section size is forced to zone size. And zone
+> size may not aligned to pow2.
+> 
+> Fixes: 859fca6b706e ("f2fs: swap: support migrating swapfile in aligned write mode")
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+> Signed-off-by: Wu Bo <bo.wu@vivo.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2,5/5] f2fs: compress: don't allow unaligned truncation on released compress inode
-    https://git.kernel.org/jaegeuk/f2fs/c/29ed2b5dd521
+  - [f2fs-dev,v2] f2fs: fix block migration when section is not aligned to pow2
+    https://git.kernel.org/jaegeuk/f2fs/c/aa4074e8fec4
 
 You are awesome, thank you!
 -- 
