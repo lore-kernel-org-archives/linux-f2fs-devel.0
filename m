@@ -4,71 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C6AD1C41513
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C3EE0C25B4F
 	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 11 May 2024 00:50:47 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1s5awq-00042g-2X;
-	Sat, 11 May 2024 00:50:47 +0000
+	id 1s5awo-00042T-LJ;
+	Sat, 11 May 2024 00:50:46 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1s5awo-00042O-I6
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1s5awm-00042H-4s
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 11 May 2024 00:50:45 +0000
+ Sat, 11 May 2024 00:50:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qcPBEErrThBzikN2LkBomtRvG3jp4XS3BRRwDS9Bw7o=; b=W092TfANdwS5dISpCwJaCiOuLR
- uhJqZeXu2wXfvdpLr+46v33mU5nKpOnbTUKXCnDsPI0KmJZBjhhQte1SDd3agXeRazRA9JwFjYZ/2
- +FUphFPya9bVeSaXTHv/hUndAqwDDx4D9fj+H9YIi4VUcsdTGvDMRtVayybHzzxvvMSA=;
+ bh=Fogu62ZUb1hRhtB8wur5kGZLHL4pkt3E8WFfYwV7Mbs=; b=UCmq3fdT3N/nDUut4LXOntyIEO
+ y4XtcPKJc7wYCJ4Ou5AfA8SFG8F/C2zD9EA+bDBktHfgDWZMos7+6CFZ7Xhab3idOgj6Vh1UHzFbI
+ zLGVTFg6kLA/uXWLjVBR4oDSjxPgATO+EEWMgrzkQdVkVPICX2dWneK0Xqz/OSjsIS7Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qcPBEErrThBzikN2LkBomtRvG3jp4XS3BRRwDS9Bw7o=; b=YqDPgQLoyryDPP4FTaiwyWYhNa
- azeulWG8nEoeVU0kK9NqQh1rM4YpNYyTGBnwCPGkHhhyBTWMP7UqYtYX3+sXASvzxMUYpCeTfmDpj
- en+5+C1LNqW49GNxtn3aYRX28rv82sXxCZ3NQebQA6Djnjw059LY3EMGpx3HYYTUA3bA=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=Fogu62ZUb1hRhtB8wur5kGZLHL4pkt3E8WFfYwV7Mbs=; b=bDUWtywA5MPfbyAltyaHcC6cGT
+ 5ZtzedMuuOuMWgKzX0Qo+S5TyLB+MKa8onwHhdTlPaDzwzgKrciHTde/I8TggH3YHRVnFoUTp7NBE
+ ZAko36spN8dQtQ0iCqNis7xbGEo1z5gJ642kyghXsgN+9C77L4yn+g32ujbvjtX9lOaI=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1s5awo-0004zG-1k for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 11 May 2024 00:50:45 +0000
+ id 1s5awk-0004yo-AK for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 11 May 2024 00:50:43 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id EC2B862040;
+ by sin.source.kernel.org (Postfix) with ESMTP id D4C9BCE1F32
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Sat, 11 May 2024 00:50:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 01859C4AF10;
- Sat, 11 May 2024 00:50:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DB33EC32786;
+ Sat, 11 May 2024 00:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1715388634;
- bh=f/QziGJMQfc3AVEjvIb2SXkPaytTiSIZVj8Z4dQuuV0=;
+ s=k20201202; t=1715388633;
+ bh=R5U8t8MN0hqu7l7yU22M0NMbzTpnmhHxeE8rTHlv+ew=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=LKfmjuB/FrMY9Dza4ye4K5aty+xxhteXPrObXZ3zFb8GSxQwcVRPCiXY/TgiQ8kJC
- 8y366RjZt6V2H4CsMAuY5Xntjgb7UcEnJJ4uNsPMh1uEwBV/Nh1teQhBY2xtF3cKIg
- qKblRdK+aRqjeetDfVLWXyo8Krqm0HTTEXfn71sF9p5oGybqt9jQiLQbSnKyX1OxBH
- 9F1ckx4Won3+N4cuB57k/HRsm0jDPc4/DC1Iex/ckldSmhK8Sb5BMwnTjlidIRO36D
- urGIiMx0d6bVh2ioFgkqAt1LUpXjiPuiXGeuNcghcJOGjyCHcdpXEnNQvVNw8yrjy/
- 0CuraQo5Lw7iA==
+ b=gz28MCtpXPmTPfefkM4029fWb2/+g9qSGTYfkjjC1VYkUqpXnKjMP2R0EqOztr0Gw
+ a+J2ITB5JhNUrZ5kfDfQ8ICmXYR60ntCvA9W8d0jNf5Jhq88SvPk7p8vCnosmAJIVU
+ ChZUWxUyqaEVQlS1z6Wr5E7VaYkce5B5TP6yZIHpIzdfmaALyWt6nHnKBZZRJ2iAdl
+ OCd+iXfjGZnY11sM33azMkgVfW/OWRAQOyU9bJF7pFZnLCYESpH5sZJrkq0Zx7jnj0
+ XnGfZcnwdy/+s1JXYO8gFECsfsAATIjmmgFQYitgAExW2gAyXKHqfq5l5eyWyVk6aQ
+ 8hMBfM39yN4Hw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- E7716C32759; Sat, 11 May 2024 00:50:33 +0000 (UTC)
+ C3E03C54BA1; Sat, 11 May 2024 00:50:33 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171538863394.11229.6682600182078372745.git-patchwork-notify@kernel.org>
+Message-Id: <171538863379.11229.10303320996620120996.git-patchwork-notify@kernel.org>
 Date: Sat, 11 May 2024 00:50:33 +0000
-References: <20240425145528.2925372-1-zhaoyifan@sjtu.edu.cn>
-In-Reply-To: <20240425145528.2925372-1-zhaoyifan@sjtu.edu.cn>
-To: Yifan Zhao <zhaoyifan@sjtu.edu.cn>
-X-Headers-End: 1s5awo-0004zG-1k
-Subject: Re: [f2fs-dev] [PATCH] f2fs: remove redundant parameter in
- is_next_segment_free()
+References: <20240506104538.778116-1-chao@kernel.org>
+In-Reply-To: <20240506104538.778116-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1s5awk-0004yo-AK
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: remove unused GC_FAILURE_PIN
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,20 +88,24 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 25 Apr 2024 22:55:28 +0800 you wrote:
-> is_next_segment_free() takes a redundant `type` parameter. Remove it.
+On Mon,  6 May 2024 18:45:37 +0800 you wrote:
+> After commit 3db1de0e582c ("f2fs: change the current atomic write way"),
+> we removed all GC_FAILURE_ATOMIC usage, let's change i_gc_failures[]
+> array to i_pin_failure for cleanup.
 > 
-> Signed-off-by: Yifan Zhao <zhaoyifan@sjtu.edu.cn>
-> ---
->  fs/f2fs/segment.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+> Meanwhile, let's define i_current_depth and i_gc_failures as union
+> variable due to they won't be valid at the same time.
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: remove redundant parameter in is_next_segment_free()
-    https://git.kernel.org/jaegeuk/f2fs/c/ecd69be71aad
+  - [f2fs-dev,1/2] f2fs: remove unused GC_FAILURE_PIN
+    https://git.kernel.org/jaegeuk/f2fs/c/968c4f72b23c
+  - [f2fs-dev,2/2] f2fs: fix to limit gc_pin_file_threshold
+    https://git.kernel.org/jaegeuk/f2fs/c/c521a6ab4ad7
 
 You are awesome, thank you!
 -- 
