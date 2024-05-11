@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8EF50C25B7A
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 671E2C25B75
 	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 11 May 2024 00:50:52 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1s5awt-0006Rz-SK;
+	id 1s5aws-0002OF-Sk;
 	Sat, 11 May 2024 00:50:52 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1s5awp-0006RT-Ak
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1s5awo-0002NO-44
  for linux-f2fs-devel@lists.sourceforge.net;
  Sat, 11 May 2024 00:50:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,53 +23,53 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bnQfjBZGSfG0C0v1eUE64KMdxHzAhgWX8+RLzmK8ZOk=; b=cPXhkw+2y2xoEw0iQ1B5ogRfmz
- 3pi21c1NpwFUlTfGm44o/QDiPQ7aSP2SiKPJ6jfsHBccMnfrguXia1zzLeMIpw29LajglPtiUicHK
- 8fWkTEyNY59n2NGuFlT/fLVHmz6ypRQpHbK4LuiAOu68qfY6zRJQgQ5MMTpXg5sxxXR4=;
+ bh=jyopC3G+MEJd86s+4zW0x7qm4kfRnwX0NrvEILiypbI=; b=enO4gvaK3n96wDfftA6pX1pzXy
+ hXIn0oAgrjk3cfvJ/nKmdCYUXKUwF9cKr6LIAgfUvOeoqj6yGcdVWXTGDT3qZQcpi9JNtxkslxBP9
+ 0+uPPgkmkwkRS6ze2h4U6nHbe/bl7dSEA6XZO17fudEL0/QL7eu7pgq5T6lXbWrvODks=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bnQfjBZGSfG0C0v1eUE64KMdxHzAhgWX8+RLzmK8ZOk=; b=X7WNh/n+cF8D9WLBKPK9iJu5+o
- aqWgGmSxY4OzMjkMk6itxQj7VATLNE+ON1/35VZB+ogQ1jxmmaM21ItdhMpsaWIM9FK/nh3nAMcR6
- GdlwcmuTzc4xx4FqW6jMXA1sTMxOVv2xiAepvWqFyVyPxRkGeN3AUtjVoHg9thuPDJHo=;
+ bh=jyopC3G+MEJd86s+4zW0x7qm4kfRnwX0NrvEILiypbI=; b=ZqN52+iWYmBIl4ZMfbG/WgGk8N
+ JLu0fuMMvBKPoYgbmS1ZTK8oTZI+CBs5VbuhTCOJxMshjGrt/DZGuwPOGX0rl8EwW/kpEnesxKJhp
+ HAGI6wQvN/a7FjuVxNsUuJ8zlOQ0cs9JRD//CzMvHlb62/4rgD84GS2rdDjpNAKYqgXg=;
 Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1s5awp-0004zM-JE for linux-f2fs-devel@lists.sourceforge.net;
+ id 1s5awp-0004zJ-Bp for linux-f2fs-devel@lists.sourceforge.net;
  Sat, 11 May 2024 00:50:47 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 17FF4CE1F36
+ by sin.source.kernel.org (Postfix) with ESMTP id D4C7BCE1F2F
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 11 May 2024 00:50:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EBE1AC4AF0A;
+ Sat, 11 May 2024 00:50:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D8EFDC32782;
  Sat, 11 May 2024 00:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1715388634;
- bh=BAOZth3SU5C4Yq4fzloslWpuCb5bnkV+Xuow5ptNvfs=;
+ s=k20201202; t=1715388633;
+ bh=8Yop3smxewSROz7DAHuqzNJwUb8FvXPb5lUi3OGSIu8=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=UnHBiKIcNQrduUaq4FqQqop2hd+dUmvJD98PB/VHAf1LIe4GOKLfZ9w0WIM1No08B
- gntPOwQo761cVRQOGX2uUaaa2X63QXnJqh/1Oog6Z3DDb2+qqY8t7gJLsatdlzK3Bv
- IIk/hgXZQ1FvbG7LEUX1I95fepYUzJDiPP4HBxiJ+cD6UIn5BTB+ygQrJ/NWCBbA7F
- VsqiUPqeeMtRBBe39YFKpZ5XAS+jjFvnX+cYrmndWzaFgJS7p/n5MazieUsn4+2LsL
- I9TV53CXaV0RWpafig3C5tRgIf9DuzEJ7nl9AR52HhYH6WaR5hwWJLOEjPwExZdiKo
- nT1FYUKY0WH5A==
+ b=qaItr4cVfJp6WlyqcwFaD0BnCkFTkgScfqQp8CaRtpcdAH/29//J/LyJVc/LX6+gZ
+ 8IYtMVrqHFD+0MzUesF/5gRTpk/MyUQuOlHEg/6/k7J5exaoei8DMsLEkZ2TqP7F++
+ RfahxO49CNmWumvP+23GlopBn7G8iXs1n4rBECKxj4UMKgNkrAdik+oiCFJEPjetf3
+ Npp7L4AbtTq5In0XDieCtlngZ12hSYp4Ji2tfWgsRkEQVAYHmLNW/skz0Rj8yYxpip
+ u2HfRMpLPh8Nm9VThxVNDpWxbdRXU/tsHrC8vuxxn7WzER+GpT1oUsTfiyi6vxufVq
+ yFwin0Vhp27bQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- DE94CC54BA4; Sat, 11 May 2024 00:50:33 +0000 (UTC)
+ BBE27C54BA2; Sat, 11 May 2024 00:50:33 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171538863390.11229.16051294251093639392.git-patchwork-notify@kernel.org>
+Message-Id: <171538863376.11229.7632095101337485351.git-patchwork-notify@kernel.org>
 Date: Sat, 11 May 2024 00:50:33 +0000
-References: <20240510034333.358653-1-chao@kernel.org>
-In-Reply-To: <20240510034333.358653-1-chao@kernel.org>
+References: <20240506104742.778789-1-chao@kernel.org>
+In-Reply-To: <20240506104742.778789-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1s5awp-0004zM-JE
-Subject: Re: [f2fs-dev] [PATCH v2 2/3] f2fs: fix to add missing iput() in
- gc_data_segment()
+X-Headers-End: 1s5awp-0004zJ-Bp
+Subject: Re: [f2fs-dev] [PATCH] f2fs: use f2fs_{err,
+ info}_ratelimited() for cleanup
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,19 +92,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Fri, 10 May 2024 11:43:33 +0800 you wrote:
-> During gc_data_segment(), if inode state is abnormal, it missed to call
-> iput(), fix it.
+On Mon,  6 May 2024 18:47:42 +0800 you wrote:
+> Commit b1c9d3f833ba ("f2fs: support printk_ratelimited() in f2fs_printk()")
+> missed some cases, cover all remains for cleanup.
 > 
-> Fixes: b73e52824c89 ("f2fs: reposition unlock_new_inode to prevent accessing invalid inode")
-> Fixes: 9056d6489f5a ("f2fs: fix to do sanity check on inode type during garbage collection")
 > Signed-off-by: Chao Yu <chao@kernel.org>
-> 
-> [...]
+> ---
+>  fs/f2fs/compress.c | 54 +++++++++++++++++++++-------------------------
+>  fs/f2fs/segment.c  |  5 ++---
+>  2 files changed, 26 insertions(+), 33 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev,v2,2/3] f2fs: fix to add missing iput() in gc_data_segment()
-    https://git.kernel.org/jaegeuk/f2fs/c/a798ff17cd2d
+  - [f2fs-dev] f2fs: use f2fs_{err, info}_ratelimited() for cleanup
+    https://git.kernel.org/jaegeuk/f2fs/c/a78118406d52
 
 You are awesome, thank you!
 -- 
