@@ -4,71 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C3EE0C25B4F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 11 May 2024 00:50:47 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 273A7C25B75
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 11 May 2024 00:50:48 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1s5awo-00042T-LJ;
-	Sat, 11 May 2024 00:50:46 +0000
+	id 1s5awo-0002NX-Ic;
+	Sat, 11 May 2024 00:50:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1s5awm-00042H-4s
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1s5awm-0002NB-Nh
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 11 May 2024 00:50:43 +0000
+ Sat, 11 May 2024 00:50:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Fogu62ZUb1hRhtB8wur5kGZLHL4pkt3E8WFfYwV7Mbs=; b=UCmq3fdT3N/nDUut4LXOntyIEO
- y4XtcPKJc7wYCJ4Ou5AfA8SFG8F/C2zD9EA+bDBktHfgDWZMos7+6CFZ7Xhab3idOgj6Vh1UHzFbI
- zLGVTFg6kLA/uXWLjVBR4oDSjxPgATO+EEWMgrzkQdVkVPICX2dWneK0Xqz/OSjsIS7Y=;
+ bh=fOTCva+rvlDMae+sSGuwnRQFCXhlzfSFWrnUZWX2rg8=; b=TgVFJLwtAOGrTM91xLJojpQ3Ou
+ Ntgt5gmJQ0xx3FGt0obGlDy05IfxcqgXL9hq9NpHCmSpOx4p/x8R4rEtnCF+ll74XvznNzsyWeCIH
+ UErv9odojOavg0kimIStvRxt6r46qEo587LASau+TOXuXzE9dlXi+VaA9z46Lk8Tcg5o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Fogu62ZUb1hRhtB8wur5kGZLHL4pkt3E8WFfYwV7Mbs=; b=bDUWtywA5MPfbyAltyaHcC6cGT
- 5ZtzedMuuOuMWgKzX0Qo+S5TyLB+MKa8onwHhdTlPaDzwzgKrciHTde/I8TggH3YHRVnFoUTp7NBE
- ZAko36spN8dQtQ0iCqNis7xbGEo1z5gJ642kyghXsgN+9C77L4yn+g32ujbvjtX9lOaI=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=fOTCva+rvlDMae+sSGuwnRQFCXhlzfSFWrnUZWX2rg8=; b=PkbnJXMKwegtoeGPD9D49rHs5b
+ R1ruKVewB9Mrzrzhk0gycaHcY/kUYNzJXI4e8qLLXSax3IRvgJtdQPGLAFzm7A4CIMzxSLzcyTJwL
+ Ibv4z09AhbkE5B3CXyeccE8rUMQd5m1Xyqbr4d694pv+4w9MLN+UcBBWeYHP34YCWUfA=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1s5awk-0004yo-AK for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 11 May 2024 00:50:43 +0000
+ id 1s5awo-0004zE-18 for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 11 May 2024 00:50:45 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id D4C9BCE1F32
+ by dfw.source.kernel.org (Postfix) with ESMTP id E722E6203D
  for <linux-f2fs-devel@lists.sourceforge.net>;
  Sat, 11 May 2024 00:50:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DB33EC32786;
- Sat, 11 May 2024 00:50:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 07B39C4AF13;
+ Sat, 11 May 2024 00:50:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1715388633;
- bh=R5U8t8MN0hqu7l7yU22M0NMbzTpnmhHxeE8rTHlv+ew=;
+ s=k20201202; t=1715388634;
+ bh=k29d+zi6/5QyA5Jm8QI53vH7XuREqf3q+JGSX44Smb8=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=gz28MCtpXPmTPfefkM4029fWb2/+g9qSGTYfkjjC1VYkUqpXnKjMP2R0EqOztr0Gw
- a+J2ITB5JhNUrZ5kfDfQ8ICmXYR60ntCvA9W8d0jNf5Jhq88SvPk7p8vCnosmAJIVU
- ChZUWxUyqaEVQlS1z6Wr5E7VaYkce5B5TP6yZIHpIzdfmaALyWt6nHnKBZZRJ2iAdl
- OCd+iXfjGZnY11sM33azMkgVfW/OWRAQOyU9bJF7pFZnLCYESpH5sZJrkq0Zx7jnj0
- XnGfZcnwdy/+s1JXYO8gFECsfsAATIjmmgFQYitgAExW2gAyXKHqfq5l5eyWyVk6aQ
- 8hMBfM39yN4Hw==
+ b=kEXTyCqtxWo0DoOBtCJTgiCAp7eOe2Sw/KBO7/mhD4y/vvU4I1tY+wxyw+gy6kO+D
+ rua40dk5oN3iy0OvAoYGDQ4Z5C62LD/xkYmz8mHS2uJXC3NlgF96p/TNpiY4RL553X
+ TDlBSoWqHiSMTQHfrf/xlA7qJFl8ei2sORBMXq4g1T89KWUqSljfvxjoNn2Czg2xUK
+ CHzByCtiDvlwqxbcLVS2cotIGuqxP9mQUefV8dwMZd/dYMunC0CNwlDu9HictqVaMz
+ Qbma/HCc5Yvxx1vEomDJH5rl7wgZAKSwmaJo87p6wo/ipssy9sP9ha0Oyrd/TCq8ya
+ FAH5jToxPEevg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- C3E03C54BA1; Sat, 11 May 2024 00:50:33 +0000 (UTC)
+ F02BFC54BA2; Sat, 11 May 2024 00:50:33 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171538863379.11229.10303320996620120996.git-patchwork-notify@kernel.org>
+Message-Id: <171538863398.11229.15562636520334285373.git-patchwork-notify@kernel.org>
 Date: Sat, 11 May 2024 00:50:33 +0000
-References: <20240506104538.778116-1-chao@kernel.org>
-In-Reply-To: <20240506104538.778116-1-chao@kernel.org>
+References: <20240507033847.1047251-1-chao@kernel.org>
+In-Reply-To: <20240507033847.1047251-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1s5awk-0004yo-AK
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: remove unused GC_FAILURE_PIN
+X-Headers-End: 1s5awo-0004zE-18
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: check validation of fault attrs in
+ f2fs_build_fault_attr()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,24 +89,26 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon,  6 May 2024 18:45:37 +0800 you wrote:
-> After commit 3db1de0e582c ("f2fs: change the current atomic write way"),
-> we removed all GC_FAILURE_ATOMIC usage, let's change i_gc_failures[]
-> array to i_pin_failure for cleanup.
+On Tue,  7 May 2024 11:38:47 +0800 you wrote:
+> - It missed to check validation of fault attrs in parse_options(),
+> let's fix to add check condition in f2fs_build_fault_attr().
+> - Use f2fs_build_fault_attr() in __sbi_store() to clean up code.
 > 
-> Meanwhile, let's define i_current_depth and i_gc_failures as union
-> variable due to they won't be valid at the same time.
-> 
-> [...]
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+> v2:
+> - add static for f2fs_build_fault_attr().
+>  fs/f2fs/f2fs.h  | 12 ++++++++----
+>  fs/f2fs/super.c | 27 ++++++++++++++++++++-------
+>  fs/f2fs/sysfs.c | 14 ++++++++++----
+>  3 files changed, 38 insertions(+), 15 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev,1/2] f2fs: remove unused GC_FAILURE_PIN
-    https://git.kernel.org/jaegeuk/f2fs/c/968c4f72b23c
-  - [f2fs-dev,2/2] f2fs: fix to limit gc_pin_file_threshold
-    https://git.kernel.org/jaegeuk/f2fs/c/c521a6ab4ad7
+  - [f2fs-dev,v2] f2fs: check validation of fault attrs in f2fs_build_fault_attr()
+    https://git.kernel.org/jaegeuk/f2fs/c/4ed886b187f4
 
 You are awesome, thank you!
 -- 
