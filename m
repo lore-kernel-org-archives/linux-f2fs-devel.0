@@ -4,87 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C381CC25B77
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 May 2024 23:42:19 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 85093C25B77
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 May 2024 00:57:06 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1s9Ce0-0003Xc-7g;
-	Mon, 20 May 2024 23:42:16 +0000
+	id 1s9DoN-00074H-DX;
+	Tue, 21 May 2024 00:57:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <3gt5LZgYKAKcKYVZLUNVVNSL.JVT@flex--drosen.bounces.google.com>)
- id 1s9Cdy-0003XW-FY for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 20 May 2024 23:42:14 +0000
+ (envelope-from <niuzhiguo84@gmail.com>) id 1s9DoL-00074A-Nj
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 21 May 2024 00:57:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JOg7M3RfyLjAcSIoge2yJszKtwg5gEcuxckn2jhJ5EI=; b=kIx/ylgvhnYKxB9C/QRPJeKc5C
- SK7FlZIG0OJLqTbrS0t21wgZvIC0d+ui/Fa7Ujgt582m/+u3elRLgDy5OcgC/89XmjuKru1gT5Ka4
- FQAOGDoI92w7apnos7M0pPOf4YGkr6nWDl6Ps8ifabVZ7gFFl1rIfbQxo2knMWck0u6E=;
+ bh=SDFjVEIxnzzbbdCDf35cR3KZt93rZh1X8rbzHgZqemI=; b=DTVOdgmfJ+Xow4hdVOIWaaInX+
+ moEoWlLk/AllOsm6BXmWnUYD6YoU9xJhVSw1TdbV47blY+GPxdVv+UspqLYL5OoJWFUqXWcy4JjBm
+ hggB+SkxZrXHvTK+3lb3Qjco0JTK5tpG8JofdKBKuZ8EQ5RVlz5/Yz5ggph3utgg1/eo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=JOg7M3RfyLjAcSIoge2yJszKtwg5gEcuxckn2jhJ5EI=; b=b
- CR5e8khVFp3avuarqUlKbScl9ilAwagEhOoKcUROKcc05kNf9c04pYbBAzMu8SCiuO8yZE0R4PKW+
- y0a+UzQp9pnRR37nKuN9oYRlVw3TjQjsOCKLMtURC4J0CC4xw9KTkGRXVilBT89E3rb0fYGBybwxi
- 9xHNqe+KE5h4K9HU=;
-Received: from mail-qk1-f202.google.com ([209.85.222.202])
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=SDFjVEIxnzzbbdCDf35cR3KZt93rZh1X8rbzHgZqemI=; b=fpF5N9tEqRSX59Nl3PPn7z1Pna
+ ZUMEDLTWSe1qBnRoEoOyf9SYhNiapSi0cdPRD5A8fZuC3z8ZBh1M/0c0EovSLoYzcmmTltJIOxwQg
+ BRajUZMoc7ZdiLXxGjqwYSKXXVX86O2FEeUE58rjGwZvhUMWhqMp1xlNnsNq9uwNhLTU=;
+Received: from mail-wr1-f54.google.com ([209.85.221.54])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1s9Cdy-0004sX-CN for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 20 May 2024 23:42:14 +0000
-Received: by mail-qk1-f202.google.com with SMTP id
- af79cd13be357-792d2abbc65so1213162285a.2
+ id 1s9DoN-0008DY-1K for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 21 May 2024 00:57:02 +0000
+Received: by mail-wr1-f54.google.com with SMTP id
+ ffacd0b85a97d-34de61b7ca4so1985959f8f.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 20 May 2024 16:42:13 -0700 (PDT)
+ Mon, 20 May 2024 17:57:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1716248523; x=1716853323;
- darn=lists.sourceforge.net; 
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=JOg7M3RfyLjAcSIoge2yJszKtwg5gEcuxckn2jhJ5EI=;
- b=cwkxkTdzxvLTldmOGMAJKlfAFo3KA8tAyYUyHeIGXmyRLonxfDREkC/2H+mYETUWj+
- nYZ/vhFGNsl7qQEhwIhcXZmztAzMRDUi/ELqLpiRVBVi7hdNQAm98urbnFrXucxZp7pP
- VfpoAnsNeKYtlDJNHoCuzfuYtnKdXUOCRrwD5NXIX1fSk9WM7/PDEsOgcYR8lIEttw16
- MdWkf9S3kQBytGHF5igQWM/SY8DrXkZyynqOY35g8NLOQVhpzUcx1z8akX70UN0vLqxZ
- LfRwRqhHxVKJUadvdtMK5LAYW28sCOw0gybNWwUY0ueB5EH4T5cZiwlUYSEzfu3taABH
- dmkQ==
+ d=gmail.com; s=20230601; t=1716253016; x=1716857816; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=SDFjVEIxnzzbbdCDf35cR3KZt93rZh1X8rbzHgZqemI=;
+ b=DTSDIU9eoT8UTX2F1jGFtJunOOs2mh0xTTRTXc2Cpz5toukmtOCfPtk3RJLP9imAqo
+ oy7UhDJ1DjrywBFvnA1aymWCie97bh1nJ9aYHqk+SYqrtBZDnzv9n9s3mFjZ5CMU62Am
+ ldJnGWangAvLCkMhYFbLyj/ScX6uoJty7iDqCcn17DrUt4iEnQeyZtJZMEbHXIY0KcBs
+ RvAjULYuk2IKX5cuXY0olHvxmHcKr5qWqe9eM/zBglkTn6av+vBYKUDwWeCv4H2JiTkA
+ q0M2x4hqxhuVq/733yixfNhFavbhK5UPiD1cm9MQD8tMk1KRQAKvNDUfVRBJhKQuA8T2
+ M1Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1716248523; x=1716853323;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=JOg7M3RfyLjAcSIoge2yJszKtwg5gEcuxckn2jhJ5EI=;
- b=u+3Q/tJDrHR5xONNmxOl4HXPVm+JsQZzRm3VagMRMwAKrdc2N5Q+hY9vGBC0j0Imvr
- LFvAtyQr+3NjcZe1lwRgcJvWcgUa2KP+FWnjc+JYlChxDKrluFf204QnxL5litEs/Py4
- m7LhlmHHPRYLCOjOE7fjdYptQ8f+yLo204xYkbX01gCpSEN2SMlW0lyvil73VQwg6HBW
- a8MAeH2qXeK5LXsNaHgUyd6klkRHIfHwWt0fr2YZG5Y8Y1T4nEpkxrbRY4i567ute4KZ
- RwPZAEvuVKkBUQWEjDhsH5adT4ROCfSRwrvlBilyTY2OxMRrKhUaevvvSSEtLQ0zC6Cl
- ltYA==
-X-Gm-Message-State: AOJu0YzUzlt23XT53xKwTanxgXWhudg77oITUb5B+YaWzY0zHX6P7Yhc
- 5lYkGVfM+3qaEhma/jfgrFOgflS/2w7FoY8Ji43b7hTZB8jXZGYPpattgQiEnHNVxRsDB9o0ytx
- jMemXa3EYMftvS43o8N5/fZkUGzlM8rFCvuPiKzrlQ78VM0nFb9ljpKhQ7GzroxdJleDt6VdqsD
- OIoJ/eO2bB8ptnPviBOTBv4vmit1CG+F+ulAdqazd8Jw4bpTGQ5uusyw==
-X-Google-Smtp-Source: AGHT+IEvwPsVtpQbCfWjqMY/edmCeQPYFi0ngHtWMPXKkENGlBmOkOdeIq5p+ypor910/+g0GsB3AEVYdGw=
-X-Received: from drosen.mtv.corp.google.com
- ([2620:15c:211:201:2a75:ea5e:7aed:661e])
- (user=drosen job=sendgmr) by 2002:a05:6902:1025:b0:df4:8e06:f383 with SMTP id
- 3f1490d57ef6-df48e0700d9mr2537331276.6.1716248194262; Mon, 20 May 2024
- 16:36:34 -0700 (PDT)
-Date: Mon, 20 May 2024 16:36:28 -0700
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Message-ID: <20240520233629.2505375-1-drosen@google.com>
-To: linux-f2fs-devel@lists.sourceforge.net, Daeho Jeong <daeho43@gmail.com>
-X-Headers-End: 1s9Cdy-0004sX-CN
-Subject: [f2fs-dev] [PATCH v2 1/2] dump.f2fs: Add ability to dump folders
+ d=1e100.net; s=20230601; t=1716253016; x=1716857816;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=SDFjVEIxnzzbbdCDf35cR3KZt93rZh1X8rbzHgZqemI=;
+ b=JpzQ6ViLh4brN6MFwi/s/flWkc87ZZRXQy4BHUIWp7bAFd2mMqxazYQBIpwmhwxdHY
+ +8nLcgmcdMbCzx+azH4uMcpnevIzbEbbsGeDXDejG4PxQ0QOu9OL7dbg0FdAeaMMAkue
+ a4k8rZv80V5GhG3wEgnLpYyP5jHQu7lZ+msMN3IF2EJpKyOFtpaJVg5YX2vXRtgEC12B
+ VhgluSGUqsNY8BUhOv6NrK/6Ya9MBXyWwHDManGebAgb9GFvtZ4UP9ZwkG3enATZTVYU
+ ovXGQ/CaRK7VVVaTX4oM/C2j2jMiKPnq3OV4zNevg+cicyHPJSil/0DsinLyaS3dgc+k
+ dvDQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVrRtm0HTDBC5poIjPXvMn4MS8Vhleg4WHlQo4vWdIhkV21/7T3cIjpRPPcXKheSgOXsrbBUZqBMDdZ96l9uRh+Q2Zv3tjthlf5wbEehX/L7unnEDqS7Q==
+X-Gm-Message-State: AOJu0YwwLIYQKILHs2ipy5Nq9eMzEB8fXRP0QztNUdQ9MdPqxujXInAO
+ i7AXye2w02uMJ790o+NjVSEcHa27gjt7lCO7+jw5qPke0Y9hzSoG0UVQcsIqZBHUIQss9KdwFem
+ 2s2hse9ZW9y3JYgAY6CdSYT4kLpQVGHJM
+X-Google-Smtp-Source: AGHT+IH57y+Tq9h+ZlICLNECCaXrn/08OlecWEWCwOXqN0yA/w+Zu47PAOyA6HJjp6vdSo7wPCQkh2RGLBrCZ4q3F0k=
+X-Received: by 2002:adf:e586:0:b0:34f:3293:85c6 with SMTP id
+ ffacd0b85a97d-3504a96b7c9mr31557621f8f.64.1716253015538; Mon, 20 May 2024
+ 17:56:55 -0700 (PDT)
+MIME-Version: 1.0
+References: <1715945202-30045-1-git-send-email-zhiguo.niu@unisoc.com>
+ <Zkup-c2K74bxVJ0i@google.com>
+In-Reply-To: <Zkup-c2K74bxVJ0i@google.com>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Tue, 21 May 2024 08:56:44 +0800
+Message-ID: <CAHJ8P3J=qJMp=VjB3Ui19AWAf3O3df4bmNwhMo0Rg_Nf+w3Y7w@mail.gmail.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+X-Headers-End: 1s9DoN-0008DY-1K
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to check return value of
+ f2fs_allocate_new_section
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,478 +100,38 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Rosenberg via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Rosenberg <drosen@google.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kernel-team@android.com,
- Daniel Rosenberg <drosen@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, Zhiguo Niu <zhiguo.niu@unisoc.com>,
+ Hao_hao.Wang@unisoc.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This adds the ability to dump folders as well as files. Folders are
-dumped recursively. Additionally, dumped files/folders may be directed
-to a folder specified by -o [path] instead of ./lost_found. The -r flag
-will dump the entire fs from the root inode. -f or -y will skip the
-prompt before dumping, and -P will preserve the mode/owner info for the
-created file/folder.
-
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
----
- fsck/dump.c     | 164 +++++++++++++++++++++++++++++++++++++-----------
- fsck/fsck.c     |   4 +-
- fsck/fsck.h     |   4 +-
- fsck/main.c     |  24 ++++++-
- man/dump.f2fs.8 |  17 ++++-
- 5 files changed, 171 insertions(+), 42 deletions(-)
-
-diff --git a/fsck/dump.c b/fsck/dump.c
-index b2e990b..aecc293 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -247,7 +247,26 @@ out:
- 		printf("\n");
- }
- 
--static void dump_data_blk(struct f2fs_sb_info *sbi, __u64 offset, u32 blkaddr)
-+static void dump_folder_contents(struct f2fs_sb_info *sbi, u8 *bitmap,
-+				struct f2fs_dir_entry *dentry,
-+				__u8 (*filenames)[F2FS_SLOT_LEN], int max)
-+{
-+	int i;
-+	int name_len;
-+
-+	for (i = 0; i < max; i++) {
-+		if (test_bit_le(i, bitmap) == 0)
-+			continue;
-+		name_len = le16_to_cpu(dentry[i].name_len);
-+		if (name_len == 1 && filenames[i][0] == '.')
-+			continue;
-+		if (name_len == 2 && filenames[i][0] == '.' && filenames[i][1] == '.')
-+			continue;
-+		dump_node(sbi, le32_to_cpu(dentry[i].ino), 1, NULL, 0, 1);
-+	}
-+}
-+
-+static void dump_data_blk(struct f2fs_sb_info *sbi, __u64 offset, u32 blkaddr, bool is_folder)
- {
- 	char buf[F2FS_BLKSIZE];
- 
-@@ -288,12 +307,19 @@ static void dump_data_blk(struct f2fs_sb_info *sbi, __u64 offset, u32 blkaddr)
- 		ASSERT(ret >= 0);
- 	}
- 
--	/* write blkaddr */
--	dev_write_dump(buf, offset, F2FS_BLKSIZE);
-+	if (is_folder) {
-+		struct f2fs_dentry_block *d = (struct f2fs_dentry_block *) buf;
-+
-+		dump_folder_contents(sbi, d->dentry_bitmap, F2FS_DENTRY_BLOCK_DENTRIES(d),
-+					F2FS_DENTRY_BLOCK_FILENAMES(d), NR_DENTRY_IN_BLOCK);
-+	} else {
-+		/* write blkaddr */
-+		dev_write_dump(buf, offset, F2FS_BLKSIZE);
-+	}
- }
- 
- static void dump_node_blk(struct f2fs_sb_info *sbi, int ntype,
--				u32 nid, u32 addr_per_block, u64 *ofs)
-+				u32 nid, u32 addr_per_block, u64 *ofs, int is_dir)
- {
- 	struct node_info ni;
- 	struct f2fs_node *node_blk;
-@@ -330,20 +356,20 @@ static void dump_node_blk(struct f2fs_sb_info *sbi, int ntype,
- 		switch (ntype) {
- 		case TYPE_DIRECT_NODE:
- 			dump_data_blk(sbi, *ofs * F2FS_BLKSIZE,
--					le32_to_cpu(node_blk->dn.addr[i]));
-+					le32_to_cpu(node_blk->dn.addr[i]), is_dir);
- 			(*ofs)++;
- 			break;
- 		case TYPE_INDIRECT_NODE:
- 			dump_node_blk(sbi, TYPE_DIRECT_NODE,
- 					le32_to_cpu(node_blk->in.nid[i]),
- 					addr_per_block,
--					ofs);
-+					ofs, is_dir);
- 			break;
- 		case TYPE_DOUBLE_INDIRECT_NODE:
- 			dump_node_blk(sbi, TYPE_INDIRECT_NODE,
- 					le32_to_cpu(node_blk->in.nid[i]),
- 					addr_per_block,
--					ofs);
-+					ofs, is_dir);
- 			break;
- 		}
- 	}
-@@ -435,8 +461,9 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	u32 i = 0;
- 	u64 ofs = 0;
- 	u32 addr_per_block;
-+	bool is_dir = S_ISDIR(le16_to_cpu(node_blk->i.i_mode));
- 
--	if((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
-+	if ((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
- 		DBG(3, "ino[0x%x] has inline data!\n", nid);
- 		/* recover from inline data */
- 		dev_write_dump(((unsigned char *)node_blk) + INLINE_DATA_OFFSET,
-@@ -444,13 +471,25 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 		return -1;
- 	}
- 
-+	if ((node_blk->i.i_inline & F2FS_INLINE_DENTRY)) {
-+		void *inline_dentry = inline_data_addr(node_blk);
-+		struct f2fs_dentry_ptr d;
-+
-+		make_dentry_ptr(&d, node_blk, inline_dentry, 2);
-+
-+		DBG(3, "ino[0x%x] has inline dentries!\n", nid);
-+		/* recover from inline dentry */
-+		dump_folder_contents(sbi, d.bitmap, d.dentry, d.filename, d.max);
-+		return -1;
-+	}
-+
- 	c.show_file_map_max_offset = f2fs_max_file_offset(&node_blk->i);
- 	addr_per_block = ADDRS_PER_BLOCK(&node_blk->i);
- 
- 	/* check data blocks in inode */
- 	for (i = 0; i < ADDRS_PER_INODE(&node_blk->i); i++, ofs++)
- 		dump_data_blk(sbi, ofs * F2FS_BLKSIZE, le32_to_cpu(
--			node_blk->i.i_addr[get_extra_isize(node_blk) + i]));
-+			node_blk->i.i_addr[get_extra_isize(node_blk) + i]), is_dir);
- 
- 	/* check node blocks in inode */
- 	for (i = 0; i < 5; i++) {
-@@ -458,17 +497,20 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 			dump_node_blk(sbi, TYPE_DIRECT_NODE,
- 					le32_to_cpu(F2FS_INODE_I_NID(&node_blk->i, i)),
- 					addr_per_block,
--					&ofs);
-+					&ofs,
-+					is_dir);
- 		else if (i == 2 || i == 3)
- 			dump_node_blk(sbi, TYPE_INDIRECT_NODE,
- 					le32_to_cpu(F2FS_INODE_I_NID(&node_blk->i, i)),
- 					addr_per_block,
--					&ofs);
-+					&ofs,
-+					is_dir);
- 		else if (i == 4)
- 			dump_node_blk(sbi, TYPE_DOUBLE_INDIRECT_NODE,
- 					le32_to_cpu(F2FS_INODE_I_NID(&node_blk->i, i)),
- 					addr_per_block,
--					&ofs);
-+					&ofs,
-+					is_dir);
- 		else
- 			ASSERT(0);
- 	}
-@@ -479,8 +521,44 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	return 0;
- }
- 
--static int dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
--				struct f2fs_node *node_blk, int force)
-+static void dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
-+				struct f2fs_node *node_blk, char *path)
-+{
-+	struct f2fs_inode *inode = &node_blk->i;
-+	int ret;
-+
-+	c.dump_fd = open(path, O_TRUNC|O_CREAT|O_RDWR, 0666);
-+	ASSERT(c.dump_fd >= 0);
-+
-+	/* dump file's data */
-+	dump_inode_blk(sbi, ni->ino, node_blk);
-+
-+	/* adjust file size */
-+	ret = ftruncate(c.dump_fd, le32_to_cpu(inode->i_size));
-+	ASSERT(ret >= 0);
-+
-+	close(c.dump_fd);
-+}
-+
-+static void dump_folder(struct f2fs_sb_info *sbi, struct node_info *ni,
-+				struct f2fs_node *node_blk, char *path, int is_root)
-+{
-+	if (!is_root) {
-+		if (mkdir(path, 0777) < 0 && errno != EEXIST) {
-+			MSG(0, "Failed to create directory %s\n", path);
-+			return;
-+		}
-+		ASSERT(chdir(path) == 0);
-+	}
-+	/* dump folder data */
-+	dump_inode_blk(sbi, ni->ino, node_blk);
-+	if (!is_root)
-+		ASSERT(chdir("..") == 0);
-+}
-+
-+static int dump_filesystem(struct f2fs_sb_info *sbi, struct node_info *ni,
-+				struct f2fs_node *node_blk, int force, char *base_path,
-+				bool is_base, bool allow_folder)
- {
- 	struct f2fs_inode *inode = &node_blk->i;
- 	u32 imode = le16_to_cpu(inode->i_mode);
-@@ -489,6 +567,7 @@ static int dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	char path[1024] = {0};
- 	char ans[255] = {0};
- 	int is_encrypted = file_is_encrypt(inode);
-+	int is_root = sbi->root_ino_num == ni->nid;
- 	int ret;
- 
- 	if (is_encrypted) {
-@@ -496,11 +575,15 @@ static int dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
- 		return -1;
- 	}
- 
--	if ((!S_ISREG(imode) && !S_ISLNK(imode)) ||
--				namelen == 0 || namelen > F2FS_NAME_LEN) {
--		MSG(force, "Not a regular file or wrong name info\n\n");
-+	if ((!S_ISREG(imode) && !S_ISLNK(imode) && !(S_ISDIR(imode) && allow_folder))) {
-+		MSG(force, "Not a valid file type\n\n");
- 		return -1;
- 	}
-+	if (!is_root && (namelen == 0 || namelen > F2FS_NAME_LEN)) {
-+		MSG(force, "Wrong name info\n\n");
-+		return -1;
-+	}
-+	base_path = base_path ?: "./lost_found";
- 	if (force)
- 		goto dump;
- 
-@@ -508,31 +591,42 @@ static int dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	if (c.show_file_map)
- 		return dump_inode_blk(sbi, ni->ino, node_blk);
- 
--	printf("Do you want to dump this file into ./lost_found/? [Y/N] ");
-+	printf("Do you want to dump this %s into %s/? [Y/N] ",
-+			S_ISREG(imode) || S_ISLNK(imode) ? "file" : "folder",
-+			base_path);
- 	ret = scanf("%s", ans);
- 	ASSERT(ret >= 0);
- 
- 	if (!strcasecmp(ans, "y")) {
- dump:
--		ret = system("mkdir -p ./lost_found");
--		ASSERT(ret >= 0);
-+		if (is_base) {
-+			getcwd(path, sizeof(path));
-+			ret = mkdir(base_path, 0777);
-+			ASSERT(ret == 0 || errno == EEXIST);
-+			ASSERT(chdir(base_path) == 0);
-+		}
- 
- 		/* make a file */
--		strncpy(name, (const char *)inode->i_name, namelen);
--		name[namelen] = 0;
--		sprintf(path, "./lost_found/%s", name);
--
--		c.dump_fd = open(path, O_TRUNC|O_CREAT|O_RDWR, 0666);
--		ASSERT(c.dump_fd >= 0);
--
--		/* dump file's data */
--		dump_inode_blk(sbi, ni->ino, node_blk);
-+		if (!is_root) {
-+			strncpy(name, (const char *)inode->i_name, namelen);
-+			name[namelen] = 0;
-+		}
- 
--		/* adjust file size */
--		ret = ftruncate(c.dump_fd, le32_to_cpu(inode->i_size));
--		ASSERT(ret >= 0);
-+		if (S_ISREG(imode) || S_ISLNK(imode)) {
-+			dump_file(sbi, ni, node_blk, name);
-+		} else {
-+			dump_folder(sbi, ni, node_blk, name, is_root);
-+		}
- 
--		close(c.dump_fd);
-+		/* fix up mode/owner */
-+		if (c.preserve_perms) {
-+			if (is_root)
-+				strncpy(name, ".", 2);
-+			chmod(name, imode);
-+			chown(name, inode->i_uid, inode->i_gid);
-+		}
-+		if (is_base)
-+			chdir(path);
- 	}
- 	return 0;
- }
-@@ -582,7 +676,7 @@ void dump_node_scan_disk(struct f2fs_sb_info *sbi, nid_t nid)
- 	free(node_blk);
- }
- 
--int dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force)
-+int dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force, char *base_path, int base, int allow_folder)
- {
- 	struct node_info ni;
- 	struct f2fs_node *node_blk;
-@@ -617,7 +711,7 @@ int dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force)
- 			print_node_info(sbi, node_blk, force);
- 
- 		if (ni.ino == ni.nid)
--			ret = dump_file(sbi, &ni, node_blk, force);
-+			ret = dump_filesystem(sbi, &ni, node_blk, force, base_path, base, allow_folder);
- 	} else {
- 		print_node_info(sbi, node_blk, force);
- 		MSG(force, "Invalid (i)node block\n\n");
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 5d345d0..7400dcf 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1651,7 +1651,7 @@ static void print_dentry(struct f2fs_sb_info *sbi, __u8 *name,
- 			d = d->next;
- 		}
- 		printf("/%s", new);
--		if (dump_node(sbi, le32_to_cpu(dentry[idx].ino), 0))
-+		if (dump_node(sbi, le32_to_cpu(dentry[idx].ino), 0, NULL, 0, 0))
- 			printf("\33[2K\r");
- 	} else {
- 		for (i = 1; i < depth; i++)
-@@ -3632,7 +3632,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
- 		if (!strcasecmp(ans, "y")) {
- 			for (i = 0; i < fsck->nr_nat_entries; i++) {
- 				if (f2fs_test_bit(i, fsck->nat_area_bitmap))
--					dump_node(sbi, i, 1);
-+					dump_node(sbi, i, 1, NULL, 1, 0);
- 			}
- 		}
- 	}
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index f5282e2..6cac926 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -270,12 +270,14 @@ struct dump_option {
- 	int end_ssa;
- 	int32_t blk_addr;
- 	nid_t scan_nid;
-+	int use_root_nid;
-+	char *base_path;
- };
- 
- extern void nat_dump(struct f2fs_sb_info *, nid_t, nid_t);
- extern void sit_dump(struct f2fs_sb_info *, unsigned int, unsigned int);
- extern void ssa_dump(struct f2fs_sb_info *, int, int);
--extern int dump_node(struct f2fs_sb_info *, nid_t, int);
-+extern int dump_node(struct f2fs_sb_info *, nid_t, int, char *, int, int);
- extern int dump_info_from_blkaddr(struct f2fs_sb_info *, u32);
- extern unsigned int start_bidx_of_node(unsigned int, struct f2fs_node *);
- extern void dump_node_scan_disk(struct f2fs_sb_info *sbi, nid_t nid);
-diff --git a/fsck/main.c b/fsck/main.c
-index c4d0956..7d0578a 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -34,7 +34,7 @@ struct f2fs_fsck gfsck;
- 
- INIT_FEATURE_TABLE;
- 
--#ifdef WITH_SLOAD
-+#if defined(WITH_SLOAD) || defined(WITH_DUMP)
- static char *absolute_path(const char *file)
- {
- 	char *ret;
-@@ -384,7 +384,7 @@ void f2fs_parse_options(int argc, char *argv[])
- 		}
- 	} else if (!strcmp("dump.f2fs", prog)) {
- #ifdef WITH_DUMP
--		const char *option_string = "d:i:I:n:Ms:Sa:b:V";
-+		const char *option_string = "d:fi:I:n:Mo:Prs:Sa:b:Vy";
- 		static struct dump_option dump_opt = {
- 			.nid = 0,	/* default root ino */
- 			.start_nat = -1,
-@@ -395,6 +395,8 @@ void f2fs_parse_options(int argc, char *argv[])
- 			.end_ssa = -1,
- 			.blk_addr = -1,
- 			.scan_nid = 0,
-+			.use_root_nid = 0,
-+			.base_path = NULL,
- 		};
- 
- 		c.func = DUMP;
-@@ -456,6 +458,19 @@ void f2fs_parse_options(int argc, char *argv[])
- 					ret = sscanf(optarg, "%x",
- 							&dump_opt.blk_addr);
- 				break;
-+			case 'y':
-+			case 'f':
-+				c.force = 1;
-+				break;
-+			case 'r':
-+				dump_opt.use_root_nid = 1;
-+				break;
-+			case 'o':
-+				dump_opt.base_path = absolute_path(optarg);
-+				break;
-+			case 'P':
-+				c.preserve_perms = 1;
-+				break;
- 			case 'V':
- 				show_version(prog);
- 				exit(0);
-@@ -914,6 +929,9 @@ static void do_dump(struct f2fs_sb_info *sbi)
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
- 	u32 flag = le32_to_cpu(ckpt->ckpt_flags);
- 
-+	if (opt->use_root_nid)
-+		opt->nid = sbi->root_ino_num;
-+
- 	if (opt->end_nat == -1)
- 		opt->end_nat = NM_I(sbi)->max_nid;
- 	if (opt->end_sit == -1)
-@@ -929,7 +947,7 @@ static void do_dump(struct f2fs_sb_info *sbi)
- 	if (opt->blk_addr != -1)
- 		dump_info_from_blkaddr(sbi, opt->blk_addr);
- 	if (opt->nid)
--		dump_node(sbi, opt->nid, 0);
-+		dump_node(sbi, opt->nid, c.force, opt->base_path, 1, 1);
- 	if (opt->scan_nid)
- 		dump_node_scan_disk(sbi, opt->scan_nid);
- 
-diff --git a/man/dump.f2fs.8 b/man/dump.f2fs.8
-index 94bf5f3..60d6783 100644
---- a/man/dump.f2fs.8
-+++ b/man/dump.f2fs.8
-@@ -44,7 +44,8 @@ is used to retrieve f2fs metadata (usually in a disk partition).
- \fIdevice\fP is the special file corresponding to the device (e.g.
- \fI/dev/sdXX\fP).
- 
--Currently, it can retrieve 1) a file given its inode number, 2) NAT
-+Currently, it can retrieve 1) a file or folder given its inode number
-+(folders are dumped recursively), 2) NAT
- entries into a file, 3) SIT entries into a file, 4) SSA entries into
- a file, 5) reverse information from the given block address.
- .PP
-@@ -56,6 +57,20 @@ is 0 on success and -1 on failure.
- .BI \-i " inode number"
- Specify an inode number to dump out.
- .TP
-+.BI \-r
-+Dump out from the root inode.
-+.TP
-+.BI \-f
-+Do not prompt before dumping
-+.TP
-+.BI \-y
-+Alias for \-f
-+.TP
-+.BI \-o " path"
-+Dump inodes to the given path
-+.BI \-P
-+Preserve mode/owner/group for dumped inode
-+.TP
- .BI \-I " inode number"
- Specify an inode number and scan full disk to dump out, include history inode block
- .TP
-
-base-commit: 5da4e5241503b385e4a7e75b1b2bb3367b38be96
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gVHVlLCBNYXkgMjEsIDIwMjQgYXQgMzo1MuKAr0FNIEphZWdldWsgS2ltIDxqYWVnZXVrQGtl
+cm5lbC5vcmc+IHdyb3RlOgo+Cj4gT24gMDUvMTcsIFpoaWd1byBOaXUgd3JvdGU6Cj4gPiBjb21t
+aXQgMjQ1OTMwNjE3YzliICgiZjJmczogZml4IHRvIGhhbmRsZSBlcnJvciBwYXRocyBvZiB7bmV3
+LGNoYW5nZX1fY3Vyc2VnKCkiKQo+ID4gbWlzc2VkIHRoaXMgYWxsb2NhdGVkIHBhdGgsIGZpeCBp
+dC4KPiA+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBaaGlndW8gTml1IDx6aGlndW8ubml1QHVuaXNvYy5j
+b20+Cj4gPiAtLS0KPiA+ICBmcy9mMmZzL3NlZ21lbnQuYyB8IDQgKysrLQo+ID4gIDEgZmlsZSBj
+aGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiA+Cj4gPiBkaWZmIC0tZ2l0
+IGEvZnMvZjJmcy9zZWdtZW50LmMgYi9mcy9mMmZzL3NlZ21lbnQuYwo+ID4gaW5kZXggYTBjZTNk
+MC4uNzFkYzgwNDIgMTAwNjQ0Cj4gPiAtLS0gYS9mcy9mMmZzL3NlZ21lbnQuYwo+ID4gKysrIGIv
+ZnMvZjJmcy9zZWdtZW50LmMKPiA+IEBAIC01MTkwLDcgKzUxOTAsOSBAQCBzdGF0aWMgaW50IGZp
+eF9jdXJzZWdfd3JpdGVfcG9pbnRlcihzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIGludCB0eXBl
+KQo+ID4gICAgICAgaWYgKGNzLT5uZXh0X2Jsa29mZikgewo+ID4gICAgICAgICAgICAgICB1bnNp
+Z25lZCBpbnQgb2xkX3NlZ25vID0gY3MtPnNlZ25vLCBvbGRfYmxrb2ZmID0gY3MtPm5leHRfYmxr
+b2ZmOwo+ID4KPiA+IC0gICAgICAgICAgICAgZjJmc19hbGxvY2F0ZV9uZXdfc2VjdGlvbihzYmks
+IHR5cGUsIHRydWUpOwo+ID4gKyAgICAgICAgICAgICBlcnIgPSBmMmZzX2FsbG9jYXRlX25ld19z
+ZWN0aW9uKHNiaSwgdHlwZSwgdHJ1ZSk7Cj4gPiArICAgICAgICAgICAgIGlmIChlcnIpCj4gPiAr
+ICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGVycjsKPgo+IEkgaGVzaXRhdGUgdG8gYXBwbHkg
+dGhpcywgc2luY2UgdGhpcyBtYXkgZ2l2ZSBtb3VudCBmYWlsdXJlcyBmb3JldmVyLiBEbyB5b3Ug
+c2VlCj4gYSByZWFsIGlzc3VlIHdpdGggdGhpcz8KSGkgSmFlZ2V1aywKTm8gSSBkaWQgbm90IGhh
+dmUgYSByZWFsIGlzc3VlIHJlbGF0ZWQgdG8gdGhpcywganVzdCBmb3VuZCBpdCBieSBjb2RlIHJl
+dmlldy4KaXQgaXMgb2sgbm90IHRvIGFwcGx5IHRoaXMgZm9yIG1lIC4KdGhhbmtzIGEgbG90Lgo+
+Cj4gPiAgICAgICAgICAgICAgIGYyZnNfbm90aWNlKHNiaSwgIkFzc2lnbiBuZXcgc2VjdGlvbiB0
+byBjdXJzZWdbJWRdOiAiCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiWzB4JXgs
+MHgleF0gLT4gWzB4JXgsMHgleF0iLAo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+dHlwZSwgb2xkX3NlZ25vLCBvbGRfYmxrb2ZmLAo+ID4gLS0KPiA+IDEuOS4xCgoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBt
+YWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6
+Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
