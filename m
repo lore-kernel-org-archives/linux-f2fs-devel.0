@@ -4,89 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 49CB3C25B75
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 May 2024 13:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 88F27C25B75
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 May 2024 13:30:15 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sA8H5-0007nS-Hn;
-	Thu, 23 May 2024 13:14:26 +0000
+	id 1sA8WN-0008Du-F9;
+	Thu, 23 May 2024 13:30:14 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <bugzilla-daemon@kernel.org>) id 1sA8H4-0007nM-69
+ (envelope-from <chao@kernel.org>) id 1sA8WM-0008Dn-Nc
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 May 2024 13:14:25 +0000
+ Thu, 23 May 2024 13:30:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hTTNHV5Mx4Bo7Q6l1g1/650JzJyxNUnpLFVTTU1rxKs=; b=NFZ5/HNimh2xnipz6ayhbgyulz
- bDsQe2oVdZQ5uj3+mZwBTB8vp7wk+AECAp4wupnTx7DyAXTGmqZceqsmXFZeNbs88JqjKA2EEOrqX
- MzFGQ6AbJAfc70vr+ePciGj3csSfFV11PfTqiG8z7DwxPFnUdY4iDphA0IPu9YodugVE=;
+ bh=OuCNEgJSsUEnXJbZPKO91r6MB414YH8j6wV6xl5Olk0=; b=H/MM0hv4GEE/+1tN7rnhxQU67N
+ hp9rwEkBRcZraXErXF+UGfIXLvhwA1fz9xPu4V24vkWZnkVe9CvzYJAEse2vh2/Z1q7KqFBQbyqU7
+ 3Xubu5ajIxCZwsn4Q0rY3uJaMGYVwyxhtuv2jL6SnaQn+Ay96kvSUKdFYJmu1WMRHhZY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=hTTNHV5Mx4Bo7Q6l1g1/650JzJyxNUnpLFVTTU1rxKs=; b=JgQemFbbrtWzdTFE0sv3JEcJMi
- H9W8ogSLP56qqGHtuh0NXNe+Ua49gp1Pu9NY+Bb9gCV6n/qQUTbnN/GOyuj0xDjrM8mFb6YBWUH6e
- QwR2J61ZmxTQDLzfIlZYjlzUcgb6roMluRdTuAy54MrhD0bo1I6dsQf2REqCHRoOeSWI=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=OuCNEgJSsUEnXJbZPKO91r6MB414YH8j6wV6xl5Olk0=; b=C
+ WjyShuUZnsvT90FN0bxhAFlaoldqR9kOIKobk4CGHLdc1kWUa9M8DK1PF/g6oELHORL8QshBgsLIJ
+ U+WkGNycMontvmTPl5L3H0zgZAoNsh/KJF3bZoSkHGu9tUDv4mqxMmwwoggtwHMg6WJn4dE+RENEW
+ K4szou6vFNap4neA=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sA8H3-00020U-9g for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 May 2024 13:14:25 +0000
+ id 1sA8WM-00034X-30 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 May 2024 13:30:14 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 2ABBC62E14
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 23 May 2024 13:14:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D3D74C2BD10
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 23 May 2024 13:14:13 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id 31871CE16FD;
+ Thu, 23 May 2024 13:30:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A8BC3277B;
+ Thu, 23 May 2024 13:29:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1716470053;
- bh=XFmY6+JfVo9pqPfwZ6oPK8oMfZxSC8V93j3CjKT+1SE=;
- h=From:To:Subject:Date:In-Reply-To:References:From;
- b=Doq7Wj9qMfJ46XDnn16gg1RK+e0IAfXpWECgUSv+GSw/YafN3nYgOarUiriZQqzht
- PjPl+LGSPXsjv97xmgJeKhLI+SsB9QZh8pYH+husGp43mtfajhq0NUvKmBZ8pCC7mu
- S+dIcRCTMTgjx+PMMVGXjIqGUdirYzixUEzX2vBgNTSdvqWPZBUR56F8+pKmgSQ3I3
- ETPChS0demDfXaMzGqlv1UVi7s/ij1R4Qa/hLIGXcNLzgWtGRRNI15lWIaUvsA+iM2
- IPtwPxB6+XuyT+a60QpF3SpcaQG4UO0zXT2wR4nHSPGeXIEUvSK+ox3UhY5Q2U1yeV
- oS6XivtIslw6Q==
-Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
- from userid 48) id CC017C53B50; Thu, 23 May 2024 13:14:13 +0000 (UTC)
-From: bugzilla-daemon@kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Thu, 23 May 2024 13:14:13 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: pmw.gover@yahoo.co.uk
-X-Bugzilla-Status: NEW
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P3
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: attachments.created
-Message-ID: <bug-218870-202145-iK7TdpczEm@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-218870-202145@https.bugzilla.kernel.org/>
-References: <bug-218870-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ s=k20201202; t=1716470999;
+ bh=Rk4yXUP9gRTWbd2b0oejhcUnoZA8VySiJ7FWn7BIDGU=;
+ h=From:To:Cc:Subject:Date:From;
+ b=YtEjefmpxgRonDoRO53ZOxb0h9X1hV1MABIRTkpEcM46Fdu7FjXI2mZZXdX+2m2Nu
+ gzLkYAJe9ws3crPFQqXzYzrX+fgu+oifo1GrCAlJzDQLaNSGmjZA7pkX9Or8UwWcBG
+ HurnlUeJCuT060TU+kxrTlk4md+95Q2HoyWJoc4HWc9gSG14KpFuLMGacmM0/NMRlE
+ 4VDbWSEmQPJ6/YOYQc5AS2XsxBR4yJxpv7Vc4s9nYqjb9uuoB+1+jNP8KAaMuWmgsH
+ HPFE8+7iOd47xNbmfEk/BGIewPeFKzkGzjZMzoLjHZOUAQkYo9/YZzyznnUful6Xwo
+ 8dlJNjnq7+Tbg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Thu, 23 May 2024 21:29:48 +0800
+Message-Id: <20240523132948.2250254-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-X-Headers-End: 1sA8H3-00020U-9g
-Subject: [f2fs-dev] [Bug 218870] F2FS mount/unmount results in
- invalid_blkaddr
+X-Headers-End: 1sA8WM-00034X-30
+Subject: [f2fs-dev] [PATCH] f2fs: fix to force buffered IO on inline_data
+ inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,22 +76,46 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Barry Song <v-songbaohua@oppo.com>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=218870
+It will return all zero data when DIO reading from inline_data inode, it
+is because f2fs_iomap_begin() assign iomap->type w/ IOMAP_HOLE incorrectly
+for this case.
 
---- Comment #3 from Paul Gover (pmw.gover@yahoo.co.uk) ---
-Created attachment 306325
-  --> https://bugzilla.kernel.org/attachment.cgi?id=306325&action=edit
-syslog showing the problem
+We can let iomap framework handle inline data via assigning iomap->type
+and iomap->inline_data correctly, however, it will be a little bit
+complicated when handling race case in between direct IO and buffered IO.
 
+So, let's force to use buffered IO to fix this issue.
+
+Cc: stable@vger.kernel.org
+Reported-by: Barry Song <v-songbaohua@oppo.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/file.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index db6236f27852..e038910ad1e5 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -851,6 +851,8 @@ static bool f2fs_force_buffered_io(struct inode *inode, int rw)
+ 		return true;
+ 	if (f2fs_compressed_file(inode))
+ 		return true;
++	if (f2fs_has_inline_data(inode))
++		return true;
+ 
+ 	/* disallow direct IO if any of devices has unaligned blksize */
+ 	if (f2fs_is_multi_device(sbi) && !sbi->aligned_blksize)
 -- 
-You may reply to this email to add a comment.
+2.40.1
 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+
 
 _______________________________________________
 Linux-f2fs-devel mailing list
