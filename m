@@ -4,71 +4,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 580CDC25B75
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 May 2024 17:47:05 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 74559C25B75
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 May 2024 21:28:14 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sACWs-0000WL-4i;
-	Thu, 23 May 2024 17:47:03 +0000
+	id 1sAFys-0006dX-T7;
+	Thu, 23 May 2024 21:28:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1sACWq-0000W5-Ta
- for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 May 2024 17:47:02 +0000
+ (envelope-from <3NLNPZgYKABMwA7Bx6z77z4x.v75@flex--drosen.bounces.google.com>)
+ id 1sAFyr-0006dI-M9 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 May 2024 21:28:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ofdG6cOVDKe4iEDRHwUavXfAIoDD1FxExt3AvIo2pWg=; b=K3gq9FfndFrJqXGH1wzip8y+/4
- DfR+teCkb1tNRsIcc2x8ZLj9LuevqxUU3SlVRb4mfLKmksAfmTA3m2eqFHj/sh9EKUNEpG1BT+ub/
- z/75P88rntsRNJuFp0VlZjqO7gMnK5ja3MfKuqNN0WP8SQce7Lg9raIPhAAVA2yAhBgs=;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
+ References:Mime-Version:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=Mp+obKuKF8ZV1nddH/uj38nuZGLM9hBpS0yCFoNPV1U=; b=NQz86gE5ObygIo3mbnyQNuCEP6
+ gdO51+O1NjkbGR0IG0IN532+X++OiXC6YMCZpQsV0V1MIoG0g3fyIVDrzszFQAYjz/sEIfGrYuvFh
+ 6vMARoZsRWIxU8ONjLomTQnUWGvehROuP/5n6q+gJO/Aw7CuVICCwotWNfo2sClh4omw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Type:Cc:To:From:Subject:Message-ID:References:Mime-Version:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ofdG6cOVDKe4iEDRHwUavXfAIoDD1FxExt3AvIo2pWg=; b=g/ION7u98kVifzZmSNRDAQmi2z
- q/RDEs0aTpw1e0ht9JMcb1ih0NOiUny627Uk4Nlgrj07+HTck2JHyif6G6thBnMeTNqJagri1f+eG
- LfpwnqWyi8ehLf2jkY+h8PxBLtsNq+HiTMQreFDS6R2B1SoItfvWgRATw+MBYJnV7fN4=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=Mp+obKuKF8ZV1nddH/uj38nuZGLM9hBpS0yCFoNPV1U=; b=Xv+nfwn+FaY6W1cTSA/daLHmrG
+ XNWf2ZnVCeWv6FcM17dBHqjN2rDBeAWcjg/Cfvow93fuvJ3VVZELCxWgA0LKdRYMH15lIajPdrS/W
+ CxS1XQYjfk36kpIMcoAqfVjrR9wIc7jnjjfmLgxYChF3FUmpE3JtAlpns/B6bzrhhS28=;
+Received: from mail-qk1-f202.google.com ([209.85.222.202])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sACWr-00008l-VY for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 May 2024 17:47:02 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 6C8B7CE1787;
- Thu, 23 May 2024 17:46:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67F62C2BD10;
- Thu, 23 May 2024 17:46:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1716486408;
- bh=axKpqX7OyxRRCvS63G23idJ5DSe9uwY6YtfBQyk6UXA=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=DfhrwL6ZYr2U/k2cV+uJ6FlfSvGKBfOf0QHmX7Uh1/WxB7a4o1beGBVbtyGEcddmo
- lkd2WcjSoHpRY98KL1OAR+5deYjV7PsEZOmY32ggScgVlHWq0ZFsv6lBod0UPBxYKI
- JmfEZC7nZDLFjv4YZNA2ZDVQuaHvaVzI4hfbtmZZtzVvK+HLh99JtbBS6CKHP4GVcu
- jelCq+4jj1yVOwNfk+SVQ5r5Vegh1o1Vee9IqoC/jTDq9J9hG5+wtzc0qUE6Pk08yU
- ewf3q6EYDvI29IY1fPJ6PHGKJey5iRXtLtnfXX18mDk+tyYSdSyr4ET1MsUgyriYig
- O3u/oYmDqFymw==
-Date: Thu, 23 May 2024 17:46:46 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Message-ID: <Zk-BBpChhBi1J4PC@google.com>
-References: <20240520220208.1596727-1-jaegeuk@kernel.org>
- <Zk-AilUqViUaLj8b@google.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <Zk-AilUqViUaLj8b@google.com>
-X-Headers-End: 1sACWr-00008l-VY
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix false alarm on invalid block
- address
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1sAFyr-00023u-W5 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 May 2024 21:28:09 +0000
+Received: by mail-qk1-f202.google.com with SMTP id
+ af79cd13be357-794aaf57a38so21492785a.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 23 May 2024 14:28:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=google.com; s=20230601; t=1716499683; x=1717104483;
+ darn=lists.sourceforge.net; 
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=Mp+obKuKF8ZV1nddH/uj38nuZGLM9hBpS0yCFoNPV1U=;
+ b=Xqpq0O/MSWx7xtaRXnjfGj4IRExI6Sksdkr0YnzLT0OP3Ec2O+1u0/7TrT5KOaRki6
+ jSFKb4SyQFNfXx0ohCRIo56IrFBzehvQYSBBTBIgPhBNyO7usYtAXaXt1CnJER1BejT/
+ x6CRPYtBGlEioHs/Ig3hKCm/uEdwha1Zq3QIXFX89/034LB0WbcBw/QsPH+RN8vliFXM
+ zoNId4Tx+kU0bJQSXAy5BhipTo12muKku737fvW1Lepz1JH0F4JVWl9SUrBRfEeDlu8M
+ 2F0T5W3jJgLSfPm1vHWY1lwYSfpsn2rxPfmQn0GeAqx4OPpR1gf4q2nAmx0C7utN/UoB
+ vKrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1716499683; x=1717104483;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=Mp+obKuKF8ZV1nddH/uj38nuZGLM9hBpS0yCFoNPV1U=;
+ b=MJcErPywG1T5syxv7r0hQPyQZzm8s4avxQCNHEfEH6nRQbNbrZzwhHArHabpXI7qS8
+ OgE9+YvzHYn8xK5MxgKuJAeKlzkofExS8FcjrmrS4kWhYVIYMwWgppckNh/Ybtczxe8K
+ SVLTL5ktd/vXHW9rXhOytpjdYSuA1pDoknQQVIM3sLM9Jmk7knMJeLtQQTzJT39PvU8g
+ x3W7b/EaiLa0/pqzxNyoSus+x8rPtE0fcHIc3Qr2ZD2GX0SSVkQ3wHpyKXgXsrA+ax5Z
+ /IQcH4oEnoAzPITwnnM718c0/q/3cCGIiQ+EzFYqs1Kql5Vg/lWuwZ222myDQnA/JUfR
+ 7shw==
+X-Gm-Message-State: AOJu0YwPg+8j/NR1d0pJbdOXRNw8KXT8/NvqSeqJVbp/wRsqyTY3Vk90
+ 3PMs3AWLt4MHuiugWfZo7PJwE8pCj3fcqGEdJDNesp4ddtAUDsJMmrVo11k4hLAQ+T302htcqvu
+ wP/jmjDzhmdCgsfASJQWNpApkcsohLZL2nlGciH47brGJ7uRM13dPjWzQVE696R77LZj5ZwNsQi
+ Ok0NGgeJleyNPnUSdh6/YGvRRIthXq70A2KuwcObLYFxlVLhA7ZePBBg==
+X-Google-Smtp-Source: AGHT+IEftHJ+hSe5/LH53aa44DP+zumTPQ0k+PAFnzrBoiIjyD8qdpbhMX0Sw0e9Mh5HSKuzKb2GwVvaMNU=
+X-Received: from drosen.mtv.corp.google.com
+ ([2620:15c:211:201:a8c9:5272:5c18:de65])
+ (user=drosen job=sendgmr) by 2002:a05:6902:2b12:b0:de5:3003:4b64 with SMTP id
+ 3f1490d57ef6-df772149c96mr39114276.1.1716499252810; Thu, 23 May 2024 14:20:52
+ -0700 (PDT)
+Date: Thu, 23 May 2024 14:20:32 -0700
+In-Reply-To: <20240523212032.137615-1-drosen@google.com>
+Mime-Version: 1.0
+References: <20240523212032.137615-1-drosen@google.com>
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+Message-ID: <20240523212032.137615-2-drosen@google.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1sAFyr-00023u-W5
+Subject: [f2fs-dev] [PATCH v3 2/2] dump.f2fs: Fix xattr dumping
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,78 +98,119 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: stable@kernel.org
+From: Daniel Rosenberg via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Daniel Rosenberg <drosen@google.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kernel-team@android.com,
+ Daeho Jeong <daehojeong@google.com>, Daniel Rosenberg <drosen@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Fixed the stable mailing list.
+Xattrs for files with inline data were being skipped. This dumps those,
+as well as xattrs for folders.
 
-On 05/23, Jaegeuk Kim wrote:
-> Hi Greg,
-> 
-> Could you please consider to cherry-pick this patch in stable-6.9, since
-> there are many users suffering from unnecessary fsck runs during boot?
-> 
-> You can get this from Linus's tree by
-> (b864ddb57eb0 "f2fs: fix false alarm on invalid block address")
-> 
-> Thanks,
-> 
-> On 05/20, Jaegeuk Kim wrote:
-> > f2fs_ra_meta_pages can try to read ahead on invalid block address which is
-> > not the corruption case.
-> > 
-> > Cc: <stable@kernel.org> # v6.9+
-> > Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=218770
-> > Fixes: 31f85ccc84b8 ("f2fs: unify the error handling of f2fs_is_valid_blkaddr")
-> > Reviewed-by: Chao Yu <chao@kernel.org>
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/checkpoint.c | 9 +++++----
-> >  1 file changed, 5 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index 5d05a413f451..55d444bec5c0 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -179,22 +179,22 @@ static bool __f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
-> >  		break;
-> >  	case META_SIT:
-> >  		if (unlikely(blkaddr >= SIT_BLK_CNT(sbi)))
-> > -			goto err;
-> > +			goto check_only;
-> >  		break;
-> >  	case META_SSA:
-> >  		if (unlikely(blkaddr >= MAIN_BLKADDR(sbi) ||
-> >  			blkaddr < SM_I(sbi)->ssa_blkaddr))
-> > -			goto err;
-> > +			goto check_only;
-> >  		break;
-> >  	case META_CP:
-> >  		if (unlikely(blkaddr >= SIT_I(sbi)->sit_base_addr ||
-> >  			blkaddr < __start_cp_addr(sbi)))
-> > -			goto err;
-> > +			goto check_only;
-> >  		break;
-> >  	case META_POR:
-> >  		if (unlikely(blkaddr >= MAX_BLKADDR(sbi) ||
-> >  			blkaddr < MAIN_BLKADDR(sbi)))
-> > -			goto err;
-> > +			goto check_only;
-> >  		break;
-> >  	case DATA_GENERIC:
-> >  	case DATA_GENERIC_ENHANCE:
-> > @@ -228,6 +228,7 @@ static bool __f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
-> >  	return true;
-> >  err:
-> >  	f2fs_handle_error(sbi, ERROR_INVALID_BLKADDR);
-> > +check_only:
-> >  	return false;
-> >  }
-> >  
-> > -- 
-> > 2.45.0.rc1.225.g2a3ae87e7f-goog
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+Reviewed-by: Daeho Jeong <daehojeong@google.com>
+---
+ fsck/dump.c | 39 +++++++++++++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 12 deletions(-)
+
+diff --git a/fsck/dump.c b/fsck/dump.c
+index 1a733f8..dd5a02f 100644
+--- a/fsck/dump.c
++++ b/fsck/dump.c
+@@ -377,7 +377,7 @@ static void dump_node_blk(struct f2fs_sb_info *sbi, int ntype,
+ }
+ 
+ #ifdef HAVE_FSETXATTR
+-static void dump_xattr(struct f2fs_sb_info *sbi, struct f2fs_node *node_blk)
++static void dump_xattr(struct f2fs_sb_info *sbi, struct f2fs_node *node_blk, int is_dir)
+ {
+ 	void *xattr;
+ 	void *last_base_addr;
+@@ -431,12 +431,24 @@ static void dump_xattr(struct f2fs_sb_info *sbi, struct f2fs_node *node_blk)
+ 
+ 		DBG(1, "fd %d xattr_name %s\n", c.dump_fd, xattr_name);
+ #if defined(__linux__)
+-		ret = fsetxattr(c.dump_fd, xattr_name, value,
+-				le16_to_cpu(ent->e_value_size), 0);
++		if (is_dir) {
++			ret = setxattr(".", xattr_name, value,
++							le16_to_cpu(ent->e_value_size), 0);
++		} else {
++			ret = fsetxattr(c.dump_fd, xattr_name, value,
++							le16_to_cpu(ent->e_value_size), 0);
++		}
++
+ #elif defined(__APPLE__)
+-		ret = fsetxattr(c.dump_fd, xattr_name, value,
+-				le16_to_cpu(ent->e_value_size), 0,
+-				XATTR_CREATE);
++		if (is_dir) {
++			ret = setxattr(".", xattr_name, value,
++					le16_to_cpu(ent->e_value_size), 0,
++					XATTR_CREATE);
++		} else {
++			ret = fsetxattr(c.dump_fd, xattr_name, value,
++					le16_to_cpu(ent->e_value_size), 0,
++					XATTR_CREATE);
++		}
+ #endif
+ 		if (ret)
+ 			MSG(0, "XATTR index 0x%x set xattr failed error %d\n",
+@@ -449,7 +461,7 @@ static void dump_xattr(struct f2fs_sb_info *sbi, struct f2fs_node *node_blk)
+ }
+ #else
+ static void dump_xattr(struct f2fs_sb_info *UNUSED(sbi),
+-				struct f2fs_node *UNUSED(node_blk))
++				struct f2fs_node *UNUSED(node_blk), int UNUSED(is_dir))
+ {
+ 	MSG(0, "XATTR does not support\n");
+ }
+@@ -462,13 +474,15 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 	u64 ofs = 0;
+ 	u32 addr_per_block;
+ 	bool is_dir = S_ISDIR(le16_to_cpu(node_blk->i.i_mode));
++	int ret = 0;
+ 
+ 	if ((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
+ 		DBG(3, "ino[0x%x] has inline data!\n", nid);
+ 		/* recover from inline data */
+ 		dev_write_dump(((unsigned char *)node_blk) + INLINE_DATA_OFFSET,
+ 						0, MAX_INLINE_DATA(node_blk));
+-		return -1;
++		ret = -1;
++		goto dump_xattr;
+ 	}
+ 
+ 	if ((node_blk->i.i_inline & F2FS_INLINE_DENTRY)) {
+@@ -480,7 +494,8 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 		DBG(3, "ino[0x%x] has inline dentries!\n", nid);
+ 		/* recover from inline dentry */
+ 		dump_folder_contents(sbi, d.bitmap, d.dentry, d.filename, d.max);
+-		return -1;
++		ret = -1;
++		goto dump_xattr;
+ 	}
+ 
+ 	c.show_file_map_max_offset = f2fs_max_file_offset(&node_blk->i);
+@@ -516,9 +531,9 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 	}
+ 	/* last block in extent cache */
+ 	print_extent(true);
+-
+-	dump_xattr(sbi, node_blk);
+-	return 0;
++dump_xattr:
++	dump_xattr(sbi, node_blk, is_dir);
++	return ret;
+ }
+ 
+ static void dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
+-- 
+2.45.1.288.g0e0cd299f1-goog
+
 
 
 _______________________________________________
