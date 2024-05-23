@@ -4,87 +4,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5A178C25B79
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 May 2024 22:47:18 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 75012C25B75
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 May 2024 23:34:22 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sAHDQ-0003eD-QE;
-	Thu, 23 May 2024 22:47:18 +0000
+	id 1sAHww-0007sb-W7;
+	Thu, 23 May 2024 23:34:19 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <3aMdPZgYKAG8QebfRaTbbTYR.PbZ@flex--drosen.bounces.google.com>)
- id 1sAHDP-0003e6-L0 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 May 2024 22:47:16 +0000
+ (envelope-from <daeho43@gmail.com>) id 1sAHwv-0007sM-7a
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 May 2024 23:34:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vyVQV284sS/EOjCusdN6JI2zjuhpl1ZPsmOsymYsB84=; b=eAo1ae/EOAHtf6yxgIHU8vTN52
- 64ZKuDnHUp2TwO58iNUAcJtjGbXGyUaR5ML6pNC8luVmYfAONPcbsolwGtfwkUQLSGDn+yafC/2a+
- kY/iuQgMEcziDnjpsT7yFjBTLoZ6dMbMKmUSu9S3cZa/6ffCbxuVIWFtibVIZAlzPRMI=;
+ bh=eIkgg0cDrajdxFuJZEw9YcvWzphC5ed2UBbZqe2ByCQ=; b=XL7Tr92d/5tEg2CcKF4buiAGPN
+ iRKY93AMq6vBb4axwK/3vBuwuE63xc2Q0aJYHcK/BOhWKRe3zxka2ZojV6DSCnnYYF0WWaKO44ciL
+ AX6CkRFU+ZuO3ouup/323mLPMaSXx6qoA5y8CZILkyrXe2thxwk9mQ2IQYSAVlOOkSnk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=vyVQV284sS/EOjCusdN6JI2zjuhpl1ZPsmOsymYsB84=; b=X
- PqihrGbuBo5vkhL8KG7AZjLWqHJInt9lXLgjz70aYdwQB8fY3IFIJ9EBYJuWpHVl6f/z3XSaBLS4R
- 8oPks3P7mqojC2eJh8yHjmT72uWixNxZ5zSLKvRedC1QJ19sPB/XYPvv+1e/BteI8mVbYWfohOe8R
- 5SWab00z9TAHIwck=;
-Received: from mail-yb1-f202.google.com ([209.85.219.202])
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=eIkgg0cDrajdxFuJZEw9YcvWzphC5ed2UBbZqe2ByCQ=; b=UtjJ0mOUgg1tLiT7TCw5Z47Aa3
+ Cs3GypOhkl8J3sbabkkwTudjfVZFbCcZu/7cK50yJU7KRppoIC7ZtIDtksBqIbVgO8W5dsX2jv9/0
+ E5UOEPAdNaIhuMzWesuJc9dga6iiyGy5DX3eVMZuL/ov3qqg+c2pbtT/fwhK+sKOjoq4=;
+Received: from mail-vs1-f52.google.com ([209.85.217.52])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1sAHDQ-0005ji-AB for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 May 2024 22:47:16 +0000
-Received: by mail-yb1-f202.google.com with SMTP id
- 3f1490d57ef6-dee5f035dd6so24412405276.0
+ id 1sAHwv-0007TU-2C for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 May 2024 23:34:17 +0000
+Received: by mail-vs1-f52.google.com with SMTP id
+ ada2fe7eead31-48a39be0e32so87297137.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 23 May 2024 15:47:15 -0700 (PDT)
+ Thu, 23 May 2024 16:34:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1716504425; x=1717109225;
- darn=lists.sourceforge.net; 
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=vyVQV284sS/EOjCusdN6JI2zjuhpl1ZPsmOsymYsB84=;
- b=bRad+HU0FVOKh1eLwCYgf6VRkEQ025V1xmlJNQrNmkM2sNa8EdV6zAG+G+hMo6uf0a
- oC5qpQYen20nXwPSpK7KHHNvZzTjlCMEY5KaZ4eIz7GhVjss1G66kjg6yCE95lQxQl9y
- TqTt44MfosHWBTV3xfWZGzPJNG4TVv/ZMrZBDO74wp6jhmnuMLaKeXkJq+FVnJgOWRhF
- Hd9/9g07SH1qRZlTk0izDnE8470P4iH4hXFcFVzCyk6qw4+GQlLWCeZD4/ITgRGKcCx2
- BVnmmz6oEdEg1WIoYmosgktLU15RBjf48vM1Qum4EFdMIWpqoJ63qcctb8bS/IyiZpfe
- YFIg==
+ d=gmail.com; s=20230601; t=1716507250; x=1717112050; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=eIkgg0cDrajdxFuJZEw9YcvWzphC5ed2UBbZqe2ByCQ=;
+ b=UMjr4ahXz2DjpUqZd26ohAJUU6rvrZYNxq0vbyvBeCeHVvyTtwoHiAs/CqRpAsc0E9
+ yWLke4QCVgArBFvLNhevPeY2HAuAAdnKMzHEDK1iL8rTJNzvi7sEEKAUsiDhzGVGYUh5
+ 2G5BaeyqEMevJE+ovT8hMwvWW/feyJQrOpaNp2IpImTbVGs5/IyRMbSaxNqfH1wcAuJ8
+ vh0DEiSznSkmaFOwk3XnrJNaHPrhmrnAHsYHQoTnPX+ALKIycQwld+7j1UIdMmoWgtQg
+ AOC1J/ruECnWmGdILe/jkaFTXVwDJ0y6kowCfpRBFbxCzSE5loTJWmxr3P5kpEsOW7dY
+ ETCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1716504425; x=1717109225;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=vyVQV284sS/EOjCusdN6JI2zjuhpl1ZPsmOsymYsB84=;
- b=i0TcNjRETkTk3eLZ+nbJb6h3RMZ/JfdcWBo4Iw7gBgZBq8UjPrRq+laih9PpOT0AkN
- Mfsxshc66E54ZPwB3VrkD8/qRF98v7mKZSPN6hjjA1qFJj2aNNClHx8QGsmaKZHgIwND
- hQT7YDLJeZmoFqnlTwo4khPuYh8CCtugAaiph5Ou8HkmwhgdvGbtPvkNf+1V8tcwXBZr
- iqznW/r0RjwGHfuR5NUZCESw92gq8WM3uHb7QgCD4JU5fJshpKxpt+SxXzG4ADCKb34u
- CK5QVuXvMUVZzSLS9AKbRuZ2MIZ0QN46g5OxgEUhk1/ILTW4hiKiuTZzdyz8IK08O39Q
- CR8A==
-X-Gm-Message-State: AOJu0Ywza/ST4v1x+Mcvk1cRYO5pxM/ahueQD66mRA5o/IdQuRQFZu7c
- 0bOyX0OAP4YLgpnk5tEynfYnHA9pGyTR3sdrowInTmLJj4bZmwlYlZ1rykGOgfdNQOvROA8nfSG
- HjQfHJzFCJpTDJ9ycQEu2fkQXg0ATnEtINsHp9ezpDMoUnBG6eF8/dphuxhbYgeuYsHKMuxQgwL
- 4UQCDxXy0N8NiCZ7+7IPsAARC3wvw6Tq5fDsQIXgo6lvLafwQLNl7lLA==
-X-Google-Smtp-Source: AGHT+IFNjWn1IzlsEJljSwgaoCzOUsUP+qgVpie1FnoRTs/Ih+x8wFrpTLDEDvrrh9YOek+YP34HWezPNE4=
-X-Received: from drosen.mtv.corp.google.com
- ([2620:15c:211:201:3506:bc94:4f44:4a86])
- (user=drosen job=sendgmr) by 2002:a05:6902:e89:b0:dc9:c54e:c5eb with SMTP id
- 3f1490d57ef6-df77219d04fmr124483276.7.1716504424697; Thu, 23 May 2024
- 15:47:04 -0700 (PDT)
-Date: Thu, 23 May 2024 15:46:59 -0700
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240523224700.265251-1-drosen@google.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1sAHDQ-0005ji-AB
-Subject: [f2fs-dev] [PATCH v4 1/2] dump.f2fs: Add ability to dump folders
+ d=1e100.net; s=20230601; t=1716507250; x=1717112050;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=eIkgg0cDrajdxFuJZEw9YcvWzphC5ed2UBbZqe2ByCQ=;
+ b=O8O9HIJ5HJjtsrSdBYQ3FiXK0sAcib1lKc9LIXPD99saVFSXRw8xp3GdIzWTsyJypL
+ 1dvtE4VBVcAyizLv58x+5AR8ofiRjsOZBxsz42IqFdGkn06UvCdVTccuVGQ5OjmBYfmZ
+ oOO5ujhKT75TVRqiX2WAChmqHk0X2O1TsCal6g1pPmrourh255gc3++luAeKdgaU1IDa
+ Q8Nc42BGBeTLUNgIyfP+28qhqp7AvNwtN6+jZ2KeQg0pEKDxuRPNEBpYjpwnUZP8Wz1b
+ 6EXeZraGOXt+z8ue4XRurL4D6fqPXKGe+KgAtlWtxtnu5qhRTqL2ZLxGWn9hbOAQiyWp
+ 2HCQ==
+X-Gm-Message-State: AOJu0YwOYaZGA8Ab0CR4XPK4LWSe9LreFC6S9godu5qyy83ZCQc3tXfx
+ HZ8Gc8hq8JCwyhxVGdmwnBcztJP6+D4KNdTUTzcq2TJUCa391tcNoXqhV9pnQGzWCK766cg4M7U
+ OkB81LXcunGE9yTQjc3N8m/B7H4Y=
+X-Google-Smtp-Source: AGHT+IEcGqscbLMgsXmAORR9UsP4kpsGF0bEYa13A02ZqOU+p6UdDuj6CSqt3oHymmHYefTjcI2Xu/RinnaZM0rvX2g=
+X-Received: by 2002:a05:6102:512a:b0:47c:122b:a3bd with SMTP id
+ ada2fe7eead31-48a385036d4mr1341799137.2.1716507250239; Thu, 23 May 2024
+ 16:34:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <20240523224700.265251-1-drosen@google.com>
+In-Reply-To: <20240523224700.265251-1-drosen@google.com>
+From: Daeho Jeong <daeho43@gmail.com>
+Date: Thu, 23 May 2024 16:33:59 -0700
+Message-ID: <CACOAw_wAO9fta_SmnSM4kdGDOCur_uDXv4iF=WqOdLfMtyQCqA@mail.gmail.com>
+To: Daniel Rosenberg <drosen@google.com>
+X-Headers-End: 1sAHwv-0007TU-2C
+Subject: Re: [f2fs-dev] [PATCH v4 1/2] dump.f2fs: Add ability to dump folders
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,498 +96,370 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Rosenberg via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Rosenberg <drosen@google.com>
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kernel-team@android.com,
- Daeho Jeong <daehojeong@google.com>, Daniel Rosenberg <drosen@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+ Daeho Jeong <daehojeong@google.com>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This adds the ability to dump folders as well as files. Folders are
-dumped recursively. Additionally, dumped files/folders may be directed
-to a folder specified by -o [path] instead of ./lost_found. The -r flag
-will dump the entire fs from the root inode. -f or -y will skip the
-prompt before dumping, and -P will preserve the mode/owner info for the
-created file/folder.
-
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
-Reviewed-by: Daeho Jeong <daehojeong@google.com>
----
- fsck/dump.c     | 178 ++++++++++++++++++++++++++++++++++++++----------
- fsck/fsck.c     |   4 +-
- fsck/fsck.h     |   4 +-
- fsck/main.c     |  29 +++++++-
- man/dump.f2fs.8 |  17 ++++-
- 5 files changed, 190 insertions(+), 42 deletions(-)
-
-diff --git a/fsck/dump.c b/fsck/dump.c
-index b2e990b..fa68456 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -247,7 +247,26 @@ out:
- 		printf("\n");
- }
- 
--static void dump_data_blk(struct f2fs_sb_info *sbi, __u64 offset, u32 blkaddr)
-+static void dump_folder_contents(struct f2fs_sb_info *sbi, u8 *bitmap,
-+				struct f2fs_dir_entry *dentry,
-+				__u8 (*filenames)[F2FS_SLOT_LEN], int max)
-+{
-+	int i;
-+	int name_len;
-+
-+	for (i = 0; i < max; i++) {
-+		if (test_bit_le(i, bitmap) == 0)
-+			continue;
-+		name_len = le16_to_cpu(dentry[i].name_len);
-+		if (name_len == 1 && filenames[i][0] == '.')
-+			continue;
-+		if (name_len == 2 && filenames[i][0] == '.' && filenames[i][1] == '.')
-+			continue;
-+		dump_node(sbi, le32_to_cpu(dentry[i].ino), 1, NULL, 0, 1);
-+	}
-+}
-+
-+static void dump_data_blk(struct f2fs_sb_info *sbi, __u64 offset, u32 blkaddr, bool is_folder)
- {
- 	char buf[F2FS_BLKSIZE];
- 
-@@ -288,12 +307,19 @@ static void dump_data_blk(struct f2fs_sb_info *sbi, __u64 offset, u32 blkaddr)
- 		ASSERT(ret >= 0);
- 	}
- 
--	/* write blkaddr */
--	dev_write_dump(buf, offset, F2FS_BLKSIZE);
-+	if (is_folder) {
-+		struct f2fs_dentry_block *d = (struct f2fs_dentry_block *) buf;
-+
-+		dump_folder_contents(sbi, d->dentry_bitmap, F2FS_DENTRY_BLOCK_DENTRIES(d),
-+					F2FS_DENTRY_BLOCK_FILENAMES(d), NR_DENTRY_IN_BLOCK);
-+	} else {
-+		/* write blkaddr */
-+		dev_write_dump(buf, offset, F2FS_BLKSIZE);
-+	}
- }
- 
- static void dump_node_blk(struct f2fs_sb_info *sbi, int ntype,
--				u32 nid, u32 addr_per_block, u64 *ofs)
-+				u32 nid, u32 addr_per_block, u64 *ofs, int is_dir)
- {
- 	struct node_info ni;
- 	struct f2fs_node *node_blk;
-@@ -330,20 +356,20 @@ static void dump_node_blk(struct f2fs_sb_info *sbi, int ntype,
- 		switch (ntype) {
- 		case TYPE_DIRECT_NODE:
- 			dump_data_blk(sbi, *ofs * F2FS_BLKSIZE,
--					le32_to_cpu(node_blk->dn.addr[i]));
-+					le32_to_cpu(node_blk->dn.addr[i]), is_dir);
- 			(*ofs)++;
- 			break;
- 		case TYPE_INDIRECT_NODE:
- 			dump_node_blk(sbi, TYPE_DIRECT_NODE,
- 					le32_to_cpu(node_blk->in.nid[i]),
- 					addr_per_block,
--					ofs);
-+					ofs, is_dir);
- 			break;
- 		case TYPE_DOUBLE_INDIRECT_NODE:
- 			dump_node_blk(sbi, TYPE_INDIRECT_NODE,
- 					le32_to_cpu(node_blk->in.nid[i]),
- 					addr_per_block,
--					ofs);
-+					ofs, is_dir);
- 			break;
- 		}
- 	}
-@@ -435,8 +461,9 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	u32 i = 0;
- 	u64 ofs = 0;
- 	u32 addr_per_block;
-+	bool is_dir = S_ISDIR(le16_to_cpu(node_blk->i.i_mode));
- 
--	if((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
-+	if ((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
- 		DBG(3, "ino[0x%x] has inline data!\n", nid);
- 		/* recover from inline data */
- 		dev_write_dump(((unsigned char *)node_blk) + INLINE_DATA_OFFSET,
-@@ -444,13 +471,25 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 		return -1;
- 	}
- 
-+	if ((node_blk->i.i_inline & F2FS_INLINE_DENTRY)) {
-+		void *inline_dentry = inline_data_addr(node_blk);
-+		struct f2fs_dentry_ptr d;
-+
-+		make_dentry_ptr(&d, node_blk, inline_dentry, 2);
-+
-+		DBG(3, "ino[0x%x] has inline dentries!\n", nid);
-+		/* recover from inline dentry */
-+		dump_folder_contents(sbi, d.bitmap, d.dentry, d.filename, d.max);
-+		return -1;
-+	}
-+
- 	c.show_file_map_max_offset = f2fs_max_file_offset(&node_blk->i);
- 	addr_per_block = ADDRS_PER_BLOCK(&node_blk->i);
- 
- 	/* check data blocks in inode */
- 	for (i = 0; i < ADDRS_PER_INODE(&node_blk->i); i++, ofs++)
- 		dump_data_blk(sbi, ofs * F2FS_BLKSIZE, le32_to_cpu(
--			node_blk->i.i_addr[get_extra_isize(node_blk) + i]));
-+			node_blk->i.i_addr[get_extra_isize(node_blk) + i]), is_dir);
- 
- 	/* check node blocks in inode */
- 	for (i = 0; i < 5; i++) {
-@@ -458,17 +497,20 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 			dump_node_blk(sbi, TYPE_DIRECT_NODE,
- 					le32_to_cpu(F2FS_INODE_I_NID(&node_blk->i, i)),
- 					addr_per_block,
--					&ofs);
-+					&ofs,
-+					is_dir);
- 		else if (i == 2 || i == 3)
- 			dump_node_blk(sbi, TYPE_INDIRECT_NODE,
- 					le32_to_cpu(F2FS_INODE_I_NID(&node_blk->i, i)),
- 					addr_per_block,
--					&ofs);
-+					&ofs,
-+					is_dir);
- 		else if (i == 4)
- 			dump_node_blk(sbi, TYPE_DOUBLE_INDIRECT_NODE,
- 					le32_to_cpu(F2FS_INODE_I_NID(&node_blk->i, i)),
- 					addr_per_block,
--					&ofs);
-+					&ofs,
-+					is_dir);
- 		else
- 			ASSERT(0);
- 	}
-@@ -479,8 +521,51 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	return 0;
- }
- 
--static int dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
--				struct f2fs_node *node_blk, int force)
-+static void dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
-+				struct f2fs_node *node_blk, char *path)
-+{
-+	struct f2fs_inode *inode = &node_blk->i;
-+	int ret;
-+
-+	c.dump_fd = open(path, O_TRUNC|O_CREAT|O_RDWR, 0666);
-+	ASSERT(c.dump_fd >= 0);
-+
-+	/* dump file's data */
-+	dump_inode_blk(sbi, ni->ino, node_blk);
-+
-+	/* adjust file size */
-+	ret = ftruncate(c.dump_fd, le32_to_cpu(inode->i_size));
-+	ASSERT(ret >= 0);
-+
-+	close(c.dump_fd);
-+}
-+
-+static void dump_folder(struct f2fs_sb_info *sbi, struct node_info *ni,
-+				struct f2fs_node *node_blk, char *path, int is_root)
-+{
-+	if (!is_root) {
-+#if defined(__MINGW32__)
-+		if (mkdir(path) < 0 && errno != EEXIST) {
-+			MSG(0, "Failed to create directory %s\n", path);
-+			return;
-+		}
-+#else
-+		if (mkdir(path, 0777) < 0 && errno != EEXIST) {
-+			MSG(0, "Failed to create directory %s\n", path);
-+			return;
-+		}
-+#endif
-+		ASSERT(chdir(path) == 0);
-+	}
-+	/* dump folder data */
-+	dump_inode_blk(sbi, ni->ino, node_blk);
-+	if (!is_root)
-+		ASSERT(chdir("..") == 0);
-+}
-+
-+static int dump_filesystem(struct f2fs_sb_info *sbi, struct node_info *ni,
-+				struct f2fs_node *node_blk, int force, char *base_path,
-+				bool is_base, bool allow_folder)
- {
- 	struct f2fs_inode *inode = &node_blk->i;
- 	u32 imode = le16_to_cpu(inode->i_mode);
-@@ -489,6 +574,7 @@ static int dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	char path[1024] = {0};
- 	char ans[255] = {0};
- 	int is_encrypted = file_is_encrypt(inode);
-+	int is_root = sbi->root_ino_num == ni->nid;
- 	int ret;
- 
- 	if (is_encrypted) {
-@@ -496,11 +582,15 @@ static int dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
- 		return -1;
- 	}
- 
--	if ((!S_ISREG(imode) && !S_ISLNK(imode)) ||
--				namelen == 0 || namelen > F2FS_NAME_LEN) {
--		MSG(force, "Not a regular file or wrong name info\n\n");
-+	if ((!S_ISREG(imode) && !S_ISLNK(imode) && !(S_ISDIR(imode) && allow_folder))) {
-+		MSG(force, "Not a valid file type\n\n");
-+		return -1;
-+	}
-+	if (!is_root && (namelen == 0 || namelen > F2FS_NAME_LEN)) {
-+		MSG(force, "Wrong name info\n\n");
- 		return -1;
- 	}
-+	base_path = base_path ?: "./lost_found";
- 	if (force)
- 		goto dump;
- 
-@@ -508,31 +598,49 @@ static int dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	if (c.show_file_map)
- 		return dump_inode_blk(sbi, ni->ino, node_blk);
- 
--	printf("Do you want to dump this file into ./lost_found/? [Y/N] ");
-+	printf("Do you want to dump this %s into %s/? [Y/N] ",
-+			S_ISREG(imode) || S_ISLNK(imode) ? "file" : "folder",
-+			base_path);
- 	ret = scanf("%s", ans);
- 	ASSERT(ret >= 0);
- 
- 	if (!strcasecmp(ans, "y")) {
- dump:
--		ret = system("mkdir -p ./lost_found");
--		ASSERT(ret >= 0);
--
--		/* make a file */
--		strncpy(name, (const char *)inode->i_name, namelen);
--		name[namelen] = 0;
--		sprintf(path, "./lost_found/%s", name);
-+		if (is_base) {
-+			ASSERT(getcwd(path, sizeof(path)) != NULL);
-+#if defined(__MINGW32__)
-+			ret = mkdir(base_path);
-+#else
-+			ret = mkdir(base_path, 0777);
-+#endif
- 
--		c.dump_fd = open(path, O_TRUNC|O_CREAT|O_RDWR, 0666);
--		ASSERT(c.dump_fd >= 0);
-+			ASSERT(ret == 0 || errno == EEXIST);
-+			ASSERT(chdir(base_path) == 0);
-+		}
- 
--		/* dump file's data */
--		dump_inode_blk(sbi, ni->ino, node_blk);
-+		/* make a file */
-+		if (!is_root) {
-+			strncpy(name, (const char *)inode->i_name, namelen);
-+			name[namelen] = 0;
-+		}
- 
--		/* adjust file size */
--		ret = ftruncate(c.dump_fd, le32_to_cpu(inode->i_size));
--		ASSERT(ret >= 0);
-+		if (S_ISREG(imode) || S_ISLNK(imode)) {
-+			dump_file(sbi, ni, node_blk, name);
-+		} else {
-+			dump_folder(sbi, ni, node_blk, name, is_root);
-+		}
- 
--		close(c.dump_fd);
-+#if !defined(__MINGW32__)
-+		/* fix up mode/owner */
-+		if (c.preserve_perms) {
-+			if (is_root)
-+				strncpy(name, ".", 2);
-+			ASSERT(chmod(name, imode) == 0);
-+			ASSERT(chown(name, inode->i_uid, inode->i_gid) == 0);
-+		}
-+#endif
-+		if (is_base)
-+			ASSERT(chdir(path) == 0);
- 	}
- 	return 0;
- }
-@@ -582,7 +690,7 @@ void dump_node_scan_disk(struct f2fs_sb_info *sbi, nid_t nid)
- 	free(node_blk);
- }
- 
--int dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force)
-+int dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force, char *base_path, int base, int allow_folder)
- {
- 	struct node_info ni;
- 	struct f2fs_node *node_blk;
-@@ -617,7 +725,7 @@ int dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force)
- 			print_node_info(sbi, node_blk, force);
- 
- 		if (ni.ino == ni.nid)
--			ret = dump_file(sbi, &ni, node_blk, force);
-+			ret = dump_filesystem(sbi, &ni, node_blk, force, base_path, base, allow_folder);
- 	} else {
- 		print_node_info(sbi, node_blk, force);
- 		MSG(force, "Invalid (i)node block\n\n");
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 5d345d0..7400dcf 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1651,7 +1651,7 @@ static void print_dentry(struct f2fs_sb_info *sbi, __u8 *name,
- 			d = d->next;
- 		}
- 		printf("/%s", new);
--		if (dump_node(sbi, le32_to_cpu(dentry[idx].ino), 0))
-+		if (dump_node(sbi, le32_to_cpu(dentry[idx].ino), 0, NULL, 0, 0))
- 			printf("\33[2K\r");
- 	} else {
- 		for (i = 1; i < depth; i++)
-@@ -3632,7 +3632,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
- 		if (!strcasecmp(ans, "y")) {
- 			for (i = 0; i < fsck->nr_nat_entries; i++) {
- 				if (f2fs_test_bit(i, fsck->nat_area_bitmap))
--					dump_node(sbi, i, 1);
-+					dump_node(sbi, i, 1, NULL, 1, 0);
- 			}
- 		}
- 	}
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index f5282e2..6cac926 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -270,12 +270,14 @@ struct dump_option {
- 	int end_ssa;
- 	int32_t blk_addr;
- 	nid_t scan_nid;
-+	int use_root_nid;
-+	char *base_path;
- };
- 
- extern void nat_dump(struct f2fs_sb_info *, nid_t, nid_t);
- extern void sit_dump(struct f2fs_sb_info *, unsigned int, unsigned int);
- extern void ssa_dump(struct f2fs_sb_info *, int, int);
--extern int dump_node(struct f2fs_sb_info *, nid_t, int);
-+extern int dump_node(struct f2fs_sb_info *, nid_t, int, char *, int, int);
- extern int dump_info_from_blkaddr(struct f2fs_sb_info *, u32);
- extern unsigned int start_bidx_of_node(unsigned int, struct f2fs_node *);
- extern void dump_node_scan_disk(struct f2fs_sb_info *sbi, nid_t nid);
-diff --git a/fsck/main.c b/fsck/main.c
-index c4d0956..6edc902 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -34,7 +34,7 @@ struct f2fs_fsck gfsck;
- 
- INIT_FEATURE_TABLE;
- 
--#ifdef WITH_SLOAD
-+#if defined(WITH_SLOAD) || defined(WITH_DUMP)
- static char *absolute_path(const char *file)
- {
- 	char *ret;
-@@ -384,7 +384,7 @@ void f2fs_parse_options(int argc, char *argv[])
- 		}
- 	} else if (!strcmp("dump.f2fs", prog)) {
- #ifdef WITH_DUMP
--		const char *option_string = "d:i:I:n:Ms:Sa:b:V";
-+		const char *option_string = "d:fi:I:n:Mo:Prs:Sa:b:Vy";
- 		static struct dump_option dump_opt = {
- 			.nid = 0,	/* default root ino */
- 			.start_nat = -1,
-@@ -395,6 +395,8 @@ void f2fs_parse_options(int argc, char *argv[])
- 			.end_ssa = -1,
- 			.blk_addr = -1,
- 			.scan_nid = 0,
-+			.use_root_nid = 0,
-+			.base_path = NULL,
- 		};
- 
- 		c.func = DUMP;
-@@ -456,6 +458,24 @@ void f2fs_parse_options(int argc, char *argv[])
- 					ret = sscanf(optarg, "%x",
- 							&dump_opt.blk_addr);
- 				break;
-+			case 'y':
-+			case 'f':
-+				c.force = 1;
-+				break;
-+			case 'r':
-+				dump_opt.use_root_nid = 1;
-+				break;
-+			case 'o':
-+				dump_opt.base_path = absolute_path(optarg);
-+				break;
-+			case 'P':
-+#if defined(__MINGW32__)
-+				MSG(0, "-P not supported for Windows\n");
-+				err = EWRONG_OPT;
-+#else
-+				c.preserve_perms = 1;
-+#endif
-+				break;
- 			case 'V':
- 				show_version(prog);
- 				exit(0);
-@@ -914,6 +934,9 @@ static void do_dump(struct f2fs_sb_info *sbi)
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
- 	u32 flag = le32_to_cpu(ckpt->ckpt_flags);
- 
-+	if (opt->use_root_nid)
-+		opt->nid = sbi->root_ino_num;
-+
- 	if (opt->end_nat == -1)
- 		opt->end_nat = NM_I(sbi)->max_nid;
- 	if (opt->end_sit == -1)
-@@ -929,7 +952,7 @@ static void do_dump(struct f2fs_sb_info *sbi)
- 	if (opt->blk_addr != -1)
- 		dump_info_from_blkaddr(sbi, opt->blk_addr);
- 	if (opt->nid)
--		dump_node(sbi, opt->nid, 0);
-+		dump_node(sbi, opt->nid, c.force, opt->base_path, 1, 1);
- 	if (opt->scan_nid)
- 		dump_node_scan_disk(sbi, opt->scan_nid);
- 
-diff --git a/man/dump.f2fs.8 b/man/dump.f2fs.8
-index 94bf5f3..60d6783 100644
---- a/man/dump.f2fs.8
-+++ b/man/dump.f2fs.8
-@@ -44,7 +44,8 @@ is used to retrieve f2fs metadata (usually in a disk partition).
- \fIdevice\fP is the special file corresponding to the device (e.g.
- \fI/dev/sdXX\fP).
- 
--Currently, it can retrieve 1) a file given its inode number, 2) NAT
-+Currently, it can retrieve 1) a file or folder given its inode number
-+(folders are dumped recursively), 2) NAT
- entries into a file, 3) SIT entries into a file, 4) SSA entries into
- a file, 5) reverse information from the given block address.
- .PP
-@@ -56,6 +57,20 @@ is 0 on success and -1 on failure.
- .BI \-i " inode number"
- Specify an inode number to dump out.
- .TP
-+.BI \-r
-+Dump out from the root inode.
-+.TP
-+.BI \-f
-+Do not prompt before dumping
-+.TP
-+.BI \-y
-+Alias for \-f
-+.TP
-+.BI \-o " path"
-+Dump inodes to the given path
-+.BI \-P
-+Preserve mode/owner/group for dumped inode
-+.TP
- .BI \-I " inode number"
- Specify an inode number and scan full disk to dump out, include history inode block
- .TP
-
-base-commit: 5da4e5241503b385e4a7e75b1b2bb3367b38be96
--- 
-2.45.1.288.g0e0cd299f1-goog
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gVGh1LCBNYXkgMjMsIDIwMjQgYXQgMzo0OOKAr1BNIERhbmllbCBSb3NlbmJlcmcgdmlhIExp
+bnV4LWYyZnMtZGV2ZWwKPGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0PiB3
+cm90ZToKPgo+IFRoaXMgYWRkcyB0aGUgYWJpbGl0eSB0byBkdW1wIGZvbGRlcnMgYXMgd2VsbCBh
+cyBmaWxlcy4gRm9sZGVycyBhcmUKPiBkdW1wZWQgcmVjdXJzaXZlbHkuIEFkZGl0aW9uYWxseSwg
+ZHVtcGVkIGZpbGVzL2ZvbGRlcnMgbWF5IGJlIGRpcmVjdGVkCj4gdG8gYSBmb2xkZXIgc3BlY2lm
+aWVkIGJ5IC1vIFtwYXRoXSBpbnN0ZWFkIG9mIC4vbG9zdF9mb3VuZC4gVGhlIC1yIGZsYWcKPiB3
+aWxsIGR1bXAgdGhlIGVudGlyZSBmcyBmcm9tIHRoZSByb290IGlub2RlLiAtZiBvciAteSB3aWxs
+IHNraXAgdGhlCj4gcHJvbXB0IGJlZm9yZSBkdW1waW5nLCBhbmQgLVAgd2lsbCBwcmVzZXJ2ZSB0
+aGUgbW9kZS9vd25lciBpbmZvIGZvciB0aGUKPiBjcmVhdGVkIGZpbGUvZm9sZGVyLgo+Cj4gU2ln
+bmVkLW9mZi1ieTogRGFuaWVsIFJvc2VuYmVyZyA8ZHJvc2VuQGdvb2dsZS5jb20+Cj4gUmV2aWV3
+ZWQtYnk6IERhZWhvIEplb25nIDxkYWVob2plb25nQGdvb2dsZS5jb20+Cj4gLS0tCj4gIGZzY2sv
+ZHVtcC5jICAgICB8IDE3OCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0t
+LS0tLS0tLS0KPiAgZnNjay9mc2NrLmMgICAgIHwgICA0ICstCj4gIGZzY2svZnNjay5oICAgICB8
+ICAgNCArLQo+ICBmc2NrL21haW4uYyAgICAgfCAgMjkgKysrKysrKy0KPiAgbWFuL2R1bXAuZjJm
+cy44IHwgIDE3ICsrKystCj4gIDUgZmlsZXMgY2hhbmdlZCwgMTkwIGluc2VydGlvbnMoKyksIDQy
+IGRlbGV0aW9ucygtKQo+Cj4gZGlmZiAtLWdpdCBhL2ZzY2svZHVtcC5jIGIvZnNjay9kdW1wLmMK
+PiBpbmRleCBiMmU5OTBiLi5mYTY4NDU2IDEwMDY0NAo+IC0tLSBhL2ZzY2svZHVtcC5jCj4gKysr
+IGIvZnNjay9kdW1wLmMKPiBAQCAtMjQ3LDcgKzI0NywyNiBAQCBvdXQ6Cj4gICAgICAgICAgICAg
+ICAgIHByaW50ZigiXG4iKTsKPiAgfQo+Cj4gLXN0YXRpYyB2b2lkIGR1bXBfZGF0YV9ibGsoc3Ry
+dWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBfX3U2NCBvZmZzZXQsIHUzMiBibGthZGRyKQo+ICtzdGF0
+aWMgdm9pZCBkdW1wX2ZvbGRlcl9jb250ZW50cyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHU4
+ICpiaXRtYXAsCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZjJmc19k
+aXJfZW50cnkgKmRlbnRyeSwKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF9fdTgg
+KCpmaWxlbmFtZXMpW0YyRlNfU0xPVF9MRU5dLCBpbnQgbWF4KQo+ICt7Cj4gKyAgICAgICBpbnQg
+aTsKPiArICAgICAgIGludCBuYW1lX2xlbjsKPiArCj4gKyAgICAgICBmb3IgKGkgPSAwOyBpIDwg
+bWF4OyBpKyspIHsKPiArICAgICAgICAgICAgICAgaWYgKHRlc3RfYml0X2xlKGksIGJpdG1hcCkg
+PT0gMCkKPiArICAgICAgICAgICAgICAgICAgICAgICBjb250aW51ZTsKPiArICAgICAgICAgICAg
+ICAgbmFtZV9sZW4gPSBsZTE2X3RvX2NwdShkZW50cnlbaV0ubmFtZV9sZW4pOwo+ICsgICAgICAg
+ICAgICAgICBpZiAobmFtZV9sZW4gPT0gMSAmJiBmaWxlbmFtZXNbaV1bMF0gPT0gJy4nKQo+ICsg
+ICAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOwo+ICsgICAgICAgICAgICAgICBpZiAobmFt
+ZV9sZW4gPT0gMiAmJiBmaWxlbmFtZXNbaV1bMF0gPT0gJy4nICYmIGZpbGVuYW1lc1tpXVsxXSA9
+PSAnLicpCj4gKyAgICAgICAgICAgICAgICAgICAgICAgY29udGludWU7Cj4gKyAgICAgICAgICAg
+ICAgIGR1bXBfbm9kZShzYmksIGxlMzJfdG9fY3B1KGRlbnRyeVtpXS5pbm8pLCAxLCBOVUxMLCAw
+LCAxKTsKPiArICAgICAgIH0KPiArfQo+ICsKPiArc3RhdGljIHZvaWQgZHVtcF9kYXRhX2Jsayhz
+dHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIF9fdTY0IG9mZnNldCwgdTMyIGJsa2FkZHIsIGJvb2wg
+aXNfZm9sZGVyKQo+ICB7Cj4gICAgICAgICBjaGFyIGJ1ZltGMkZTX0JMS1NJWkVdOwo+Cj4gQEAg
+LTI4OCwxMiArMzA3LDE5IEBAIHN0YXRpYyB2b2lkIGR1bXBfZGF0YV9ibGsoc3RydWN0IGYyZnNf
+c2JfaW5mbyAqc2JpLCBfX3U2NCBvZmZzZXQsIHUzMiBibGthZGRyKQo+ICAgICAgICAgICAgICAg
+ICBBU1NFUlQocmV0ID49IDApOwo+ICAgICAgICAgfQo+Cj4gLSAgICAgICAvKiB3cml0ZSBibGth
+ZGRyICovCj4gLSAgICAgICBkZXZfd3JpdGVfZHVtcChidWYsIG9mZnNldCwgRjJGU19CTEtTSVpF
+KTsKPiArICAgICAgIGlmIChpc19mb2xkZXIpIHsKPiArICAgICAgICAgICAgICAgc3RydWN0IGYy
+ZnNfZGVudHJ5X2Jsb2NrICpkID0gKHN0cnVjdCBmMmZzX2RlbnRyeV9ibG9jayAqKSBidWY7Cj4g
+Kwo+ICsgICAgICAgICAgICAgICBkdW1wX2ZvbGRlcl9jb250ZW50cyhzYmksIGQtPmRlbnRyeV9i
+aXRtYXAsIEYyRlNfREVOVFJZX0JMT0NLX0RFTlRSSUVTKGQpLAo+ICsgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBGMkZTX0RFTlRSWV9CTE9DS19GSUxFTkFNRVMoZCksIE5S
+X0RFTlRSWV9JTl9CTE9DSyk7Cj4gKyAgICAgICB9IGVsc2Ugewo+ICsgICAgICAgICAgICAgICAv
+KiB3cml0ZSBibGthZGRyICovCj4gKyAgICAgICAgICAgICAgIGRldl93cml0ZV9kdW1wKGJ1Ziwg
+b2Zmc2V0LCBGMkZTX0JMS1NJWkUpOwo+ICsgICAgICAgfQo+ICB9Cj4KPiAgc3RhdGljIHZvaWQg
+ZHVtcF9ub2RlX2JsayhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIGludCBudHlwZSwKPiAtICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHUzMiBuaWQsIHUzMiBhZGRyX3Blcl9ibG9jaywg
+dTY0ICpvZnMpCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1MzIgbmlkLCB1MzIg
+YWRkcl9wZXJfYmxvY2ssIHU2NCAqb2ZzLCBpbnQgaXNfZGlyKQo+ICB7Cj4gICAgICAgICBzdHJ1
+Y3Qgbm9kZV9pbmZvIG5pOwo+ICAgICAgICAgc3RydWN0IGYyZnNfbm9kZSAqbm9kZV9ibGs7Cj4g
+QEAgLTMzMCwyMCArMzU2LDIwIEBAIHN0YXRpYyB2b2lkIGR1bXBfbm9kZV9ibGsoc3RydWN0IGYy
+ZnNfc2JfaW5mbyAqc2JpLCBpbnQgbnR5cGUsCj4gICAgICAgICAgICAgICAgIHN3aXRjaCAobnR5
+cGUpIHsKPiAgICAgICAgICAgICAgICAgY2FzZSBUWVBFX0RJUkVDVF9OT0RFOgo+ICAgICAgICAg
+ICAgICAgICAgICAgICAgIGR1bXBfZGF0YV9ibGsoc2JpLCAqb2ZzICogRjJGU19CTEtTSVpFLAo+
+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZTMyX3RvX2NwdShub2Rl
+X2Jsay0+ZG4uYWRkcltpXSkpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBsZTMyX3RvX2NwdShub2RlX2Jsay0+ZG4uYWRkcltpXSksIGlzX2Rpcik7Cj4gICAgICAg
+ICAgICAgICAgICAgICAgICAgKCpvZnMpKys7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgYnJl
+YWs7Cj4gICAgICAgICAgICAgICAgIGNhc2UgVFlQRV9JTkRJUkVDVF9OT0RFOgo+ICAgICAgICAg
+ICAgICAgICAgICAgICAgIGR1bXBfbm9kZV9ibGsoc2JpLCBUWVBFX0RJUkVDVF9OT0RFLAo+ICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZTMyX3RvX2NwdShub2RlX2Js
+ay0+aW4ubmlkW2ldKSwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+YWRkcl9wZXJfYmxvY2ssCj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IG9mcyk7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9mcywgaXNf
+ZGlyKTsKPiAgICAgICAgICAgICAgICAgICAgICAgICBicmVhazsKPiAgICAgICAgICAgICAgICAg
+Y2FzZSBUWVBFX0RPVUJMRV9JTkRJUkVDVF9OT0RFOgo+ICAgICAgICAgICAgICAgICAgICAgICAg
+IGR1bXBfbm9kZV9ibGsoc2JpLCBUWVBFX0lORElSRUNUX05PREUsCj4gICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIGxlMzJfdG9fY3B1KG5vZGVfYmxrLT5pbi5uaWRbaV0p
+LAo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBhZGRyX3Blcl9ibG9j
+aywKPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb2ZzKTsKPiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb2ZzLCBpc19kaXIpOwo+ICAgICAg
+ICAgICAgICAgICAgICAgICAgIGJyZWFrOwo+ICAgICAgICAgICAgICAgICB9Cj4gICAgICAgICB9
+Cj4gQEAgLTQzNSw4ICs0NjEsOSBAQCBzdGF0aWMgaW50IGR1bXBfaW5vZGVfYmxrKHN0cnVjdCBm
+MmZzX3NiX2luZm8gKnNiaSwgdTMyIG5pZCwKPiAgICAgICAgIHUzMiBpID0gMDsKPiAgICAgICAg
+IHU2NCBvZnMgPSAwOwo+ICAgICAgICAgdTMyIGFkZHJfcGVyX2Jsb2NrOwo+ICsgICAgICAgYm9v
+bCBpc19kaXIgPSBTX0lTRElSKGxlMTZfdG9fY3B1KG5vZGVfYmxrLT5pLmlfbW9kZSkpOwo+Cj4g
+LSAgICAgICBpZigobm9kZV9ibGstPmkuaV9pbmxpbmUgJiBGMkZTX0lOTElORV9EQVRBKSkgewo+
+ICsgICAgICAgaWYgKChub2RlX2Jsay0+aS5pX2lubGluZSAmIEYyRlNfSU5MSU5FX0RBVEEpKSB7
+Cj4gICAgICAgICAgICAgICAgIERCRygzLCAiaW5vWzB4JXhdIGhhcyBpbmxpbmUgZGF0YSFcbiIs
+IG5pZCk7Cj4gICAgICAgICAgICAgICAgIC8qIHJlY292ZXIgZnJvbSBpbmxpbmUgZGF0YSAqLwo+
+ICAgICAgICAgICAgICAgICBkZXZfd3JpdGVfZHVtcCgoKHVuc2lnbmVkIGNoYXIgKilub2RlX2Js
+aykgKyBJTkxJTkVfREFUQV9PRkZTRVQsCj4gQEAgLTQ0NCwxMyArNDcxLDI1IEBAIHN0YXRpYyBp
+bnQgZHVtcF9pbm9kZV9ibGsoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCB1MzIgbmlkLAo+ICAg
+ICAgICAgICAgICAgICByZXR1cm4gLTE7Cj4gICAgICAgICB9Cj4KPiArICAgICAgIGlmICgobm9k
+ZV9ibGstPmkuaV9pbmxpbmUgJiBGMkZTX0lOTElORV9ERU5UUlkpKSB7Cj4gKyAgICAgICAgICAg
+ICAgIHZvaWQgKmlubGluZV9kZW50cnkgPSBpbmxpbmVfZGF0YV9hZGRyKG5vZGVfYmxrKTsKPiAr
+ICAgICAgICAgICAgICAgc3RydWN0IGYyZnNfZGVudHJ5X3B0ciBkOwo+ICsKPiArICAgICAgICAg
+ICAgICAgbWFrZV9kZW50cnlfcHRyKCZkLCBub2RlX2JsaywgaW5saW5lX2RlbnRyeSwgMik7Cj4g
+Kwo+ICsgICAgICAgICAgICAgICBEQkcoMywgImlub1sweCV4XSBoYXMgaW5saW5lIGRlbnRyaWVz
+IVxuIiwgbmlkKTsKPiArICAgICAgICAgICAgICAgLyogcmVjb3ZlciBmcm9tIGlubGluZSBkZW50
+cnkgKi8KPiArICAgICAgICAgICAgICAgZHVtcF9mb2xkZXJfY29udGVudHMoc2JpLCBkLmJpdG1h
+cCwgZC5kZW50cnksIGQuZmlsZW5hbWUsIGQubWF4KTsKPiArICAgICAgICAgICAgICAgcmV0dXJu
+IC0xOwo+ICsgICAgICAgfQo+ICsKPiAgICAgICAgIGMuc2hvd19maWxlX21hcF9tYXhfb2Zmc2V0
+ID0gZjJmc19tYXhfZmlsZV9vZmZzZXQoJm5vZGVfYmxrLT5pKTsKPiAgICAgICAgIGFkZHJfcGVy
+X2Jsb2NrID0gQUREUlNfUEVSX0JMT0NLKCZub2RlX2Jsay0+aSk7Cj4KPiAgICAgICAgIC8qIGNo
+ZWNrIGRhdGEgYmxvY2tzIGluIGlub2RlICovCj4gICAgICAgICBmb3IgKGkgPSAwOyBpIDwgQURE
+UlNfUEVSX0lOT0RFKCZub2RlX2Jsay0+aSk7IGkrKywgb2ZzKyspCj4gICAgICAgICAgICAgICAg
+IGR1bXBfZGF0YV9ibGsoc2JpLCBvZnMgKiBGMkZTX0JMS1NJWkUsIGxlMzJfdG9fY3B1KAo+IC0g
+ICAgICAgICAgICAgICAgICAgICAgIG5vZGVfYmxrLT5pLmlfYWRkcltnZXRfZXh0cmFfaXNpemUo
+bm9kZV9ibGspICsgaV0pKTsKPiArICAgICAgICAgICAgICAgICAgICAgICBub2RlX2Jsay0+aS5p
+X2FkZHJbZ2V0X2V4dHJhX2lzaXplKG5vZGVfYmxrKSArIGldKSwgaXNfZGlyKTsKPgo+ICAgICAg
+ICAgLyogY2hlY2sgbm9kZSBibG9ja3MgaW4gaW5vZGUgKi8KPiAgICAgICAgIGZvciAoaSA9IDA7
+IGkgPCA1OyBpKyspIHsKPiBAQCAtNDU4LDE3ICs0OTcsMjAgQEAgc3RhdGljIGludCBkdW1wX2lu
+b2RlX2JsayhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHUzMiBuaWQsCj4gICAgICAgICAgICAg
+ICAgICAgICAgICAgZHVtcF9ub2RlX2JsayhzYmksIFRZUEVfRElSRUNUX05PREUsCj4gICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGxlMzJfdG9fY3B1KEYyRlNfSU5PREVf
+SV9OSUQoJm5vZGVfYmxrLT5pLCBpKSksCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIGFkZHJfcGVyX2Jsb2NrLAo+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAmb2ZzKTsKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgJm9mcywKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaXNfZGly
+KTsKPiAgICAgICAgICAgICAgICAgZWxzZSBpZiAoaSA9PSAyIHx8IGkgPT0gMykKPiAgICAgICAg
+ICAgICAgICAgICAgICAgICBkdW1wX25vZGVfYmxrKHNiaSwgVFlQRV9JTkRJUkVDVF9OT0RFLAo+
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZTMyX3RvX2NwdShGMkZT
+X0lOT0RFX0lfTklEKCZub2RlX2Jsay0+aSwgaSkpLAo+ICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBhZGRyX3Blcl9ibG9jaywKPiAtICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgJm9mcyk7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICZvZnMsCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IGlzX2Rpcik7Cj4gICAgICAgICAgICAgICAgIGVsc2UgaWYgKGkgPT0gNCkKPiAgICAgICAgICAg
+ICAgICAgICAgICAgICBkdW1wX25vZGVfYmxrKHNiaSwgVFlQRV9ET1VCTEVfSU5ESVJFQ1RfTk9E
+RSwKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGUzMl90b19jcHUo
+RjJGU19JTk9ERV9JX05JRCgmbm9kZV9ibGstPmksIGkpKSwKPiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgYWRkcl9wZXJfYmxvY2ssCj4gLSAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICZvZnMpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAmb2ZzLAo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBpc19kaXIpOwo+ICAgICAgICAgICAgICAgICBlbHNlCj4gICAgICAgICAgICAgICAgICAg
+ICAgICAgQVNTRVJUKDApOwo+ICAgICAgICAgfQo+IEBAIC00NzksOCArNTIxLDUxIEBAIHN0YXRp
+YyBpbnQgZHVtcF9pbm9kZV9ibGsoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCB1MzIgbmlkLAo+
+ICAgICAgICAgcmV0dXJuIDA7Cj4gIH0KPgo+IC1zdGF0aWMgaW50IGR1bXBfZmlsZShzdHJ1Y3Qg
+ZjJmc19zYl9pbmZvICpzYmksIHN0cnVjdCBub2RlX2luZm8gKm5pLAo+IC0gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgc3RydWN0IGYyZnNfbm9kZSAqbm9kZV9ibGssIGludCBmb3JjZSkK
+PiArc3RhdGljIHZvaWQgZHVtcF9maWxlKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgc3RydWN0
+IG5vZGVfaW5mbyAqbmksCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3Qg
+ZjJmc19ub2RlICpub2RlX2JsaywgY2hhciAqcGF0aCkKPiArewo+ICsgICAgICAgc3RydWN0IGYy
+ZnNfaW5vZGUgKmlub2RlID0gJm5vZGVfYmxrLT5pOwo+ICsgICAgICAgaW50IHJldDsKPiArCj4g
+KyAgICAgICBjLmR1bXBfZmQgPSBvcGVuKHBhdGgsIE9fVFJVTkN8T19DUkVBVHxPX1JEV1IsIDA2
+NjYpOwo+ICsgICAgICAgQVNTRVJUKGMuZHVtcF9mZCA+PSAwKTsKPiArCj4gKyAgICAgICAvKiBk
+dW1wIGZpbGUncyBkYXRhICovCj4gKyAgICAgICBkdW1wX2lub2RlX2JsayhzYmksIG5pLT5pbm8s
+IG5vZGVfYmxrKTsKPiArCj4gKyAgICAgICAvKiBhZGp1c3QgZmlsZSBzaXplICovCj4gKyAgICAg
+ICByZXQgPSBmdHJ1bmNhdGUoYy5kdW1wX2ZkLCBsZTMyX3RvX2NwdShpbm9kZS0+aV9zaXplKSk7
+Cj4gKyAgICAgICBBU1NFUlQocmV0ID49IDApOwo+ICsKPiArICAgICAgIGNsb3NlKGMuZHVtcF9m
+ZCk7Cj4gK30KPiArCj4gK3N0YXRpYyB2b2lkIGR1bXBfZm9sZGVyKHN0cnVjdCBmMmZzX3NiX2lu
+Zm8gKnNiaSwgc3RydWN0IG5vZGVfaW5mbyAqbmksCj4gKyAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICBzdHJ1Y3QgZjJmc19ub2RlICpub2RlX2JsaywgY2hhciAqcGF0aCwgaW50IGlzX3Jv
+b3QpCj4gK3sKPiArICAgICAgIGlmICghaXNfcm9vdCkgewo+ICsjaWYgZGVmaW5lZChfX01JTkdX
+MzJfXykKPiArICAgICAgICAgICAgICAgaWYgKG1rZGlyKHBhdGgpIDwgMCAmJiBlcnJubyAhPSBF
+RVhJU1QpIHsKPiArICAgICAgICAgICAgICAgICAgICAgICBNU0coMCwgIkZhaWxlZCB0byBjcmVh
+dGUgZGlyZWN0b3J5ICVzXG4iLCBwYXRoKTsKPiArICAgICAgICAgICAgICAgICAgICAgICByZXR1
+cm47Cj4gKyAgICAgICAgICAgICAgIH0KPiArI2Vsc2UKPiArICAgICAgICAgICAgICAgaWYgKG1r
+ZGlyKHBhdGgsIDA3NzcpIDwgMCAmJiBlcnJubyAhPSBFRVhJU1QpIHsKPiArICAgICAgICAgICAg
+ICAgICAgICAgICBNU0coMCwgIkZhaWxlZCB0byBjcmVhdGUgZGlyZWN0b3J5ICVzXG4iLCBwYXRo
+KTsKPiArICAgICAgICAgICAgICAgICAgICAgICByZXR1cm47Cj4gKyAgICAgICAgICAgICAgIH0K
+PiArI2VuZGlmCj4gKyAgICAgICAgICAgICAgIEFTU0VSVChjaGRpcihwYXRoKSA9PSAwKTsKPiAr
+ICAgICAgIH0KPiArICAgICAgIC8qIGR1bXAgZm9sZGVyIGRhdGEgKi8KPiArICAgICAgIGR1bXBf
+aW5vZGVfYmxrKHNiaSwgbmktPmlubywgbm9kZV9ibGspOwo+ICsgICAgICAgaWYgKCFpc19yb290
+KQo+ICsgICAgICAgICAgICAgICBBU1NFUlQoY2hkaXIoIi4uIikgPT0gMCk7Cj4gK30KPiArCj4g
+K3N0YXRpYyBpbnQgZHVtcF9maWxlc3lzdGVtKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgc3Ry
+dWN0IG5vZGVfaW5mbyAqbmksCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1
+Y3QgZjJmc19ub2RlICpub2RlX2JsaywgaW50IGZvcmNlLCBjaGFyICpiYXNlX3BhdGgsCj4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBib29sIGlzX2Jhc2UsIGJvb2wgYWxsb3dfZm9s
+ZGVyKQo+ICB7Cj4gICAgICAgICBzdHJ1Y3QgZjJmc19pbm9kZSAqaW5vZGUgPSAmbm9kZV9ibGst
+Pmk7Cj4gICAgICAgICB1MzIgaW1vZGUgPSBsZTE2X3RvX2NwdShpbm9kZS0+aV9tb2RlKTsKPiBA
+QCAtNDg5LDYgKzU3NCw3IEBAIHN0YXRpYyBpbnQgZHVtcF9maWxlKHN0cnVjdCBmMmZzX3NiX2lu
+Zm8gKnNiaSwgc3RydWN0IG5vZGVfaW5mbyAqbmksCj4gICAgICAgICBjaGFyIHBhdGhbMTAyNF0g
+PSB7MH07Cj4gICAgICAgICBjaGFyIGFuc1syNTVdID0gezB9Owo+ICAgICAgICAgaW50IGlzX2Vu
+Y3J5cHRlZCA9IGZpbGVfaXNfZW5jcnlwdChpbm9kZSk7Cj4gKyAgICAgICBpbnQgaXNfcm9vdCA9
+IHNiaS0+cm9vdF9pbm9fbnVtID09IG5pLT5uaWQ7Cj4gICAgICAgICBpbnQgcmV0Owo+Cj4gICAg
+ICAgICBpZiAoaXNfZW5jcnlwdGVkKSB7Cj4gQEAgLTQ5NiwxMSArNTgyLDE1IEBAIHN0YXRpYyBp
+bnQgZHVtcF9maWxlKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IG5vZGVfaW5mbyAq
+bmksCj4gICAgICAgICAgICAgICAgIHJldHVybiAtMTsKPiAgICAgICAgIH0KPgo+IC0gICAgICAg
+aWYgKCghU19JU1JFRyhpbW9kZSkgJiYgIVNfSVNMTksoaW1vZGUpKSB8fAo+IC0gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgbmFtZWxlbiA9PSAwIHx8IG5hbWVsZW4gPiBGMkZTX05BTUVf
+TEVOKSB7Cj4gLSAgICAgICAgICAgICAgIE1TRyhmb3JjZSwgIk5vdCBhIHJlZ3VsYXIgZmlsZSBv
+ciB3cm9uZyBuYW1lIGluZm9cblxuIik7Cj4gKyAgICAgICBpZiAoKCFTX0lTUkVHKGltb2RlKSAm
+JiAhU19JU0xOSyhpbW9kZSkgJiYgIShTX0lTRElSKGltb2RlKSAmJiBhbGxvd19mb2xkZXIpKSkg
+ewo+ICsgICAgICAgICAgICAgICBNU0coZm9yY2UsICJOb3QgYSB2YWxpZCBmaWxlIHR5cGVcblxu
+Iik7Cj4gKyAgICAgICAgICAgICAgIHJldHVybiAtMTsKPiArICAgICAgIH0KPiArICAgICAgIGlm
+ICghaXNfcm9vdCAmJiAobmFtZWxlbiA9PSAwIHx8IG5hbWVsZW4gPiBGMkZTX05BTUVfTEVOKSkg
+ewo+ICsgICAgICAgICAgICAgICBNU0coZm9yY2UsICJXcm9uZyBuYW1lIGluZm9cblxuIik7Cj4g
+ICAgICAgICAgICAgICAgIHJldHVybiAtMTsKPiAgICAgICAgIH0KPiArICAgICAgIGJhc2VfcGF0
+aCA9IGJhc2VfcGF0aCA/OiAiLi9sb3N0X2ZvdW5kIjsKPiAgICAgICAgIGlmIChmb3JjZSkKPiAg
+ICAgICAgICAgICAgICAgZ290byBkdW1wOwo+Cj4gQEAgLTUwOCwzMSArNTk4LDQ5IEBAIHN0YXRp
+YyBpbnQgZHVtcF9maWxlKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IG5vZGVfaW5m
+byAqbmksCj4gICAgICAgICBpZiAoYy5zaG93X2ZpbGVfbWFwKQo+ICAgICAgICAgICAgICAgICBy
+ZXR1cm4gZHVtcF9pbm9kZV9ibGsoc2JpLCBuaS0+aW5vLCBub2RlX2Jsayk7Cj4KPiAtICAgICAg
+IHByaW50ZigiRG8geW91IHdhbnQgdG8gZHVtcCB0aGlzIGZpbGUgaW50byAuL2xvc3RfZm91bmQv
+PyBbWS9OXSAiKTsKPiArICAgICAgIHByaW50ZigiRG8geW91IHdhbnQgdG8gZHVtcCB0aGlzICVz
+IGludG8gJXMvPyBbWS9OXSAiLAo+ICsgICAgICAgICAgICAgICAgICAgICAgIFNfSVNSRUcoaW1v
+ZGUpIHx8IFNfSVNMTksoaW1vZGUpID8gImZpbGUiIDogImZvbGRlciIsCj4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgYmFzZV9wYXRoKTsKPiAgICAgICAgIHJldCA9IHNjYW5mKCIlcyIsIGFucyk7
+Cj4gICAgICAgICBBU1NFUlQocmV0ID49IDApOwo+Cj4gICAgICAgICBpZiAoIXN0cmNhc2VjbXAo
+YW5zLCAieSIpKSB7Cj4gIGR1bXA6Cj4gLSAgICAgICAgICAgICAgIHJldCA9IHN5c3RlbSgibWtk
+aXIgLXAgLi9sb3N0X2ZvdW5kIik7Cj4gLSAgICAgICAgICAgICAgIEFTU0VSVChyZXQgPj0gMCk7
+Cj4gLQo+IC0gICAgICAgICAgICAgICAvKiBtYWtlIGEgZmlsZSAqLwo+IC0gICAgICAgICAgICAg
+ICBzdHJuY3B5KG5hbWUsIChjb25zdCBjaGFyICopaW5vZGUtPmlfbmFtZSwgbmFtZWxlbik7Cj4g
+LSAgICAgICAgICAgICAgIG5hbWVbbmFtZWxlbl0gPSAwOwo+IC0gICAgICAgICAgICAgICBzcHJp
+bnRmKHBhdGgsICIuL2xvc3RfZm91bmQvJXMiLCBuYW1lKTsKPiArICAgICAgICAgICAgICAgaWYg
+KGlzX2Jhc2UpIHsKPiArICAgICAgICAgICAgICAgICAgICAgICBBU1NFUlQoZ2V0Y3dkKHBhdGgs
+IHNpemVvZihwYXRoKSkgIT0gTlVMTCk7Cj4gKyNpZiBkZWZpbmVkKF9fTUlOR1czMl9fKQo+ICsg
+ICAgICAgICAgICAgICAgICAgICAgIHJldCA9IG1rZGlyKGJhc2VfcGF0aCk7Cj4gKyNlbHNlCj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgcmV0ID0gbWtkaXIoYmFzZV9wYXRoLCAwNzc3KTsKPiAr
+I2VuZGlmCj4KPiAtICAgICAgICAgICAgICAgYy5kdW1wX2ZkID0gb3BlbihwYXRoLCBPX1RSVU5D
+fE9fQ1JFQVR8T19SRFdSLCAwNjY2KTsKPiAtICAgICAgICAgICAgICAgQVNTRVJUKGMuZHVtcF9m
+ZCA+PSAwKTsKPiArICAgICAgICAgICAgICAgICAgICAgICBBU1NFUlQocmV0ID09IDAgfHwgZXJy
+bm8gPT0gRUVYSVNUKTsKPiArICAgICAgICAgICAgICAgICAgICAgICBBU1NFUlQoY2hkaXIoYmFz
+ZV9wYXRoKSA9PSAwKTsKPiArICAgICAgICAgICAgICAgfQo+Cj4gLSAgICAgICAgICAgICAgIC8q
+IGR1bXAgZmlsZSdzIGRhdGEgKi8KPiAtICAgICAgICAgICAgICAgZHVtcF9pbm9kZV9ibGsoc2Jp
+LCBuaS0+aW5vLCBub2RlX2Jsayk7Cj4gKyAgICAgICAgICAgICAgIC8qIG1ha2UgYSBmaWxlICov
+Cj4gKyAgICAgICAgICAgICAgIGlmICghaXNfcm9vdCkgewo+ICsgICAgICAgICAgICAgICAgICAg
+ICAgIHN0cm5jcHkobmFtZSwgKGNvbnN0IGNoYXIgKilpbm9kZS0+aV9uYW1lLCBuYW1lbGVuKTsK
+PiArICAgICAgICAgICAgICAgICAgICAgICBuYW1lW25hbWVsZW5dID0gMDsKPiArICAgICAgICAg
+ICAgICAgfQo+Cj4gLSAgICAgICAgICAgICAgIC8qIGFkanVzdCBmaWxlIHNpemUgKi8KPiAtICAg
+ICAgICAgICAgICAgcmV0ID0gZnRydW5jYXRlKGMuZHVtcF9mZCwgbGUzMl90b19jcHUoaW5vZGUt
+Pmlfc2l6ZSkpOwo+IC0gICAgICAgICAgICAgICBBU1NFUlQocmV0ID49IDApOwo+ICsgICAgICAg
+ICAgICAgICBpZiAoU19JU1JFRyhpbW9kZSkgfHwgU19JU0xOSyhpbW9kZSkpIHsKPiArICAgICAg
+ICAgICAgICAgICAgICAgICBkdW1wX2ZpbGUoc2JpLCBuaSwgbm9kZV9ibGssIG5hbWUpOwo+ICsg
+ICAgICAgICAgICAgICB9IGVsc2Ugewo+ICsgICAgICAgICAgICAgICAgICAgICAgIGR1bXBfZm9s
+ZGVyKHNiaSwgbmksIG5vZGVfYmxrLCBuYW1lLCBpc19yb290KTsKPiArICAgICAgICAgICAgICAg
+fQo+Cj4gLSAgICAgICAgICAgICAgIGNsb3NlKGMuZHVtcF9mZCk7Cj4gKyNpZiAhZGVmaW5lZChf
+X01JTkdXMzJfXykKPiArICAgICAgICAgICAgICAgLyogZml4IHVwIG1vZGUvb3duZXIgKi8KPiAr
+ICAgICAgICAgICAgICAgaWYgKGMucHJlc2VydmVfcGVybXMpIHsKPiArICAgICAgICAgICAgICAg
+ICAgICAgICBpZiAoaXNfcm9vdCkKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0
+cm5jcHkobmFtZSwgIi4iLCAyKTsKPiArICAgICAgICAgICAgICAgICAgICAgICBBU1NFUlQoY2ht
+b2QobmFtZSwgaW1vZGUpID09IDApOwo+ICsgICAgICAgICAgICAgICAgICAgICAgIEFTU0VSVChj
+aG93bihuYW1lLCBpbm9kZS0+aV91aWQsIGlub2RlLT5pX2dpZCkgPT0gMCk7Cj4gKyAgICAgICAg
+ICAgICAgIH0KPiArI2VuZGlmCj4gKyAgICAgICAgICAgICAgIGlmIChpc19iYXNlKQo+ICsgICAg
+ICAgICAgICAgICAgICAgICAgIEFTU0VSVChjaGRpcihwYXRoKSA9PSAwKTsKPiAgICAgICAgIH0K
+PiAgICAgICAgIHJldHVybiAwOwo+ICB9Cj4gQEAgLTU4Miw3ICs2OTAsNyBAQCB2b2lkIGR1bXBf
+bm9kZV9zY2FuX2Rpc2soc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBuaWRfdCBuaWQpCj4gICAg
+ICAgICBmcmVlKG5vZGVfYmxrKTsKPiAgfQo+Cj4gLWludCBkdW1wX25vZGUoc3RydWN0IGYyZnNf
+c2JfaW5mbyAqc2JpLCBuaWRfdCBuaWQsIGludCBmb3JjZSkKPiAraW50IGR1bXBfbm9kZShzdHJ1
+Y3QgZjJmc19zYl9pbmZvICpzYmksIG5pZF90IG5pZCwgaW50IGZvcmNlLCBjaGFyICpiYXNlX3Bh
+dGgsIGludCBiYXNlLCBpbnQgYWxsb3dfZm9sZGVyKQo+ICB7Cj4gICAgICAgICBzdHJ1Y3Qgbm9k
+ZV9pbmZvIG5pOwo+ICAgICAgICAgc3RydWN0IGYyZnNfbm9kZSAqbm9kZV9ibGs7Cj4gQEAgLTYx
+Nyw3ICs3MjUsNyBAQCBpbnQgZHVtcF9ub2RlKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgbmlk
+X3QgbmlkLCBpbnQgZm9yY2UpCj4gICAgICAgICAgICAgICAgICAgICAgICAgcHJpbnRfbm9kZV9p
+bmZvKHNiaSwgbm9kZV9ibGssIGZvcmNlKTsKPgo+ICAgICAgICAgICAgICAgICBpZiAobmkuaW5v
+ID09IG5pLm5pZCkKPiAtICAgICAgICAgICAgICAgICAgICAgICByZXQgPSBkdW1wX2ZpbGUoc2Jp
+LCAmbmksIG5vZGVfYmxrLCBmb3JjZSk7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0ID0g
+ZHVtcF9maWxlc3lzdGVtKHNiaSwgJm5pLCBub2RlX2JsaywgZm9yY2UsIGJhc2VfcGF0aCwgYmFz
+ZSwgYWxsb3dfZm9sZGVyKTsKPiAgICAgICAgIH0gZWxzZSB7Cj4gICAgICAgICAgICAgICAgIHBy
+aW50X25vZGVfaW5mbyhzYmksIG5vZGVfYmxrLCBmb3JjZSk7Cj4gICAgICAgICAgICAgICAgIE1T
+Ryhmb3JjZSwgIkludmFsaWQgKGkpbm9kZSBibG9ja1xuXG4iKTsKPiBkaWZmIC0tZ2l0IGEvZnNj
+ay9mc2NrLmMgYi9mc2NrL2ZzY2suYwo+IGluZGV4IDVkMzQ1ZDAuLjc0MDBkY2YgMTAwNjQ0Cj4g
+LS0tIGEvZnNjay9mc2NrLmMKPiArKysgYi9mc2NrL2ZzY2suYwo+IEBAIC0xNjUxLDcgKzE2NTEs
+NyBAQCBzdGF0aWMgdm9pZCBwcmludF9kZW50cnkoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBf
+X3U4ICpuYW1lLAo+ICAgICAgICAgICAgICAgICAgICAgICAgIGQgPSBkLT5uZXh0Owo+ICAgICAg
+ICAgICAgICAgICB9Cj4gICAgICAgICAgICAgICAgIHByaW50ZigiLyVzIiwgbmV3KTsKPiAtICAg
+ICAgICAgICAgICAgaWYgKGR1bXBfbm9kZShzYmksIGxlMzJfdG9fY3B1KGRlbnRyeVtpZHhdLmlu
+byksIDApKQo+ICsgICAgICAgICAgICAgICBpZiAoZHVtcF9ub2RlKHNiaSwgbGUzMl90b19jcHUo
+ZGVudHJ5W2lkeF0uaW5vKSwgMCwgTlVMTCwgMCwgMCkpCj4gICAgICAgICAgICAgICAgICAgICAg
+ICAgcHJpbnRmKCJcMzNbMktcciIpOwo+ICAgICAgICAgfSBlbHNlIHsKPiAgICAgICAgICAgICAg
+ICAgZm9yIChpID0gMTsgaSA8IGRlcHRoOyBpKyspCj4gQEAgLTM2MzIsNyArMzYzMiw3IEBAIGlu
+dCBmc2NrX3ZlcmlmeShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4gICAgICAgICAgICAgICAg
+IGlmICghc3RyY2FzZWNtcChhbnMsICJ5IikpIHsKPiAgICAgICAgICAgICAgICAgICAgICAgICBm
+b3IgKGkgPSAwOyBpIDwgZnNjay0+bnJfbmF0X2VudHJpZXM7IGkrKykgewo+ICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgaWYgKGYyZnNfdGVzdF9iaXQoaSwgZnNjay0+bmF0X2FyZWFf
+Yml0bWFwKSkKPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZHVtcF9u
+b2RlKHNiaSwgaSwgMSk7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IGR1bXBfbm9kZShzYmksIGksIDEsIE5VTEwsIDEsIDApOwo+ICAgICAgICAgICAgICAgICAgICAg
+ICAgIH0KPiAgICAgICAgICAgICAgICAgfQo+ICAgICAgICAgfQo+IGRpZmYgLS1naXQgYS9mc2Nr
+L2ZzY2suaCBiL2ZzY2svZnNjay5oCj4gaW5kZXggZjUyODJlMi4uNmNhYzkyNiAxMDA2NDQKPiAt
+LS0gYS9mc2NrL2ZzY2suaAo+ICsrKyBiL2ZzY2svZnNjay5oCj4gQEAgLTI3MCwxMiArMjcwLDE0
+IEBAIHN0cnVjdCBkdW1wX29wdGlvbiB7Cj4gICAgICAgICBpbnQgZW5kX3NzYTsKPiAgICAgICAg
+IGludDMyX3QgYmxrX2FkZHI7Cj4gICAgICAgICBuaWRfdCBzY2FuX25pZDsKPiArICAgICAgIGlu
+dCB1c2Vfcm9vdF9uaWQ7Cj4gKyAgICAgICBjaGFyICpiYXNlX3BhdGg7Cj4gIH07Cj4KPiAgZXh0
+ZXJuIHZvaWQgbmF0X2R1bXAoc3RydWN0IGYyZnNfc2JfaW5mbyAqLCBuaWRfdCwgbmlkX3QpOwo+
+ICBleHRlcm4gdm9pZCBzaXRfZHVtcChzdHJ1Y3QgZjJmc19zYl9pbmZvICosIHVuc2lnbmVkIGlu
+dCwgdW5zaWduZWQgaW50KTsKPiAgZXh0ZXJuIHZvaWQgc3NhX2R1bXAoc3RydWN0IGYyZnNfc2Jf
+aW5mbyAqLCBpbnQsIGludCk7Cj4gLWV4dGVybiBpbnQgZHVtcF9ub2RlKHN0cnVjdCBmMmZzX3Ni
+X2luZm8gKiwgbmlkX3QsIGludCk7Cj4gK2V4dGVybiBpbnQgZHVtcF9ub2RlKHN0cnVjdCBmMmZz
+X3NiX2luZm8gKiwgbmlkX3QsIGludCwgY2hhciAqLCBpbnQsIGludCk7Cj4gIGV4dGVybiBpbnQg
+ZHVtcF9pbmZvX2Zyb21fYmxrYWRkcihzdHJ1Y3QgZjJmc19zYl9pbmZvICosIHUzMik7Cj4gIGV4
+dGVybiB1bnNpZ25lZCBpbnQgc3RhcnRfYmlkeF9vZl9ub2RlKHVuc2lnbmVkIGludCwgc3RydWN0
+IGYyZnNfbm9kZSAqKTsKPiAgZXh0ZXJuIHZvaWQgZHVtcF9ub2RlX3NjYW5fZGlzayhzdHJ1Y3Qg
+ZjJmc19zYl9pbmZvICpzYmksIG5pZF90IG5pZCk7Cj4gZGlmZiAtLWdpdCBhL2ZzY2svbWFpbi5j
+IGIvZnNjay9tYWluLmMKPiBpbmRleCBjNGQwOTU2Li42ZWRjOTAyIDEwMDY0NAo+IC0tLSBhL2Zz
+Y2svbWFpbi5jCj4gKysrIGIvZnNjay9tYWluLmMKPiBAQCAtMzQsNyArMzQsNyBAQCBzdHJ1Y3Qg
+ZjJmc19mc2NrIGdmc2NrOwo+Cj4gIElOSVRfRkVBVFVSRV9UQUJMRTsKPgo+IC0jaWZkZWYgV0lU
+SF9TTE9BRAo+ICsjaWYgZGVmaW5lZChXSVRIX1NMT0FEKSB8fCBkZWZpbmVkKFdJVEhfRFVNUCkK
+PiAgc3RhdGljIGNoYXIgKmFic29sdXRlX3BhdGgoY29uc3QgY2hhciAqZmlsZSkKPiAgewo+ICAg
+ICAgICAgY2hhciAqcmV0Owo+IEBAIC0zODQsNyArMzg0LDcgQEAgdm9pZCBmMmZzX3BhcnNlX29w
+dGlvbnMoaW50IGFyZ2MsIGNoYXIgKmFyZ3ZbXSkKPiAgICAgICAgICAgICAgICAgfQo+ICAgICAg
+ICAgfSBlbHNlIGlmICghc3RyY21wKCJkdW1wLmYyZnMiLCBwcm9nKSkgewo+ICAjaWZkZWYgV0lU
+SF9EVU1QCj4gLSAgICAgICAgICAgICAgIGNvbnN0IGNoYXIgKm9wdGlvbl9zdHJpbmcgPSAiZDpp
+Okk6bjpNczpTYTpiOlYiOwo+ICsgICAgICAgICAgICAgICBjb25zdCBjaGFyICpvcHRpb25fc3Ry
+aW5nID0gImQ6Zmk6STpuOk1vOlByczpTYTpiOlZ5IjsKPiAgICAgICAgICAgICAgICAgc3RhdGlj
+IHN0cnVjdCBkdW1wX29wdGlvbiBkdW1wX29wdCA9IHsKPiAgICAgICAgICAgICAgICAgICAgICAg
+ICAubmlkID0gMCwgICAgICAgLyogZGVmYXVsdCByb290IGlubyAqLwo+ICAgICAgICAgICAgICAg
+ICAgICAgICAgIC5zdGFydF9uYXQgPSAtMSwKPiBAQCAtMzk1LDYgKzM5NSw4IEBAIHZvaWQgZjJm
+c19wYXJzZV9vcHRpb25zKGludCBhcmdjLCBjaGFyICphcmd2W10pCj4gICAgICAgICAgICAgICAg
+ICAgICAgICAgLmVuZF9zc2EgPSAtMSwKPiAgICAgICAgICAgICAgICAgICAgICAgICAuYmxrX2Fk
+ZHIgPSAtMSwKPiAgICAgICAgICAgICAgICAgICAgICAgICAuc2Nhbl9uaWQgPSAwLAo+ICsgICAg
+ICAgICAgICAgICAgICAgICAgIC51c2Vfcm9vdF9uaWQgPSAwLAo+ICsgICAgICAgICAgICAgICAg
+ICAgICAgIC5iYXNlX3BhdGggPSBOVUxMLAo+ICAgICAgICAgICAgICAgICB9Owo+Cj4gICAgICAg
+ICAgICAgICAgIGMuZnVuYyA9IERVTVA7Cj4gQEAgLTQ1Niw2ICs0NTgsMjQgQEAgdm9pZCBmMmZz
+X3BhcnNlX29wdGlvbnMoaW50IGFyZ2MsIGNoYXIgKmFyZ3ZbXSkKPiAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgcmV0ID0gc3NjYW5mKG9wdGFyZywgIiV4IiwKPiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICZkdW1w
+X29wdC5ibGtfYWRkcik7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBicmVhazsK
+PiArICAgICAgICAgICAgICAgICAgICAgICBjYXNlICd5JzoKPiArICAgICAgICAgICAgICAgICAg
+ICAgICBjYXNlICdmJzoKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGMuZm9yY2Ug
+PSAxOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7Cj4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgY2FzZSAncic6Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBkdW1wX29wdC51c2Vfcm9vdF9uaWQgPSAxOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgYnJlYWs7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgY2FzZSAnbyc6Cj4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBkdW1wX29wdC5iYXNlX3BhdGggPSBhYnNvbHV0ZV9w
+YXRoKG9wdGFyZyk7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBicmVhazsKPiAr
+ICAgICAgICAgICAgICAgICAgICAgICBjYXNlICdQJzoKPiArI2lmIGRlZmluZWQoX19NSU5HVzMy
+X18pCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBNU0coMCwgIi1QIG5vdCBzdXBw
+b3J0ZWQgZm9yIFdpbmRvd3NcbiIpOwo+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ZXJyID0gRVdST05HX09QVDsKPiArI2Vsc2UKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIGMucHJlc2VydmVfcGVybXMgPSAxOwo+ICsjZW5kaWYKPiArICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIGJyZWFrOwo+ICAgICAgICAgICAgICAgICAgICAgICAgIGNhc2UgJ1YnOgo+
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2hvd192ZXJzaW9uKHByb2cpOwo+ICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZXhpdCgwKTsKPiBAQCAtOTE0LDYgKzkzNCw5
+IEBAIHN0YXRpYyB2b2lkIGRvX2R1bXAoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQo+ICAgICAg
+ICAgc3RydWN0IGYyZnNfY2hlY2twb2ludCAqY2twdCA9IEYyRlNfQ0tQVChzYmkpOwo+ICAgICAg
+ICAgdTMyIGZsYWcgPSBsZTMyX3RvX2NwdShja3B0LT5ja3B0X2ZsYWdzKTsKPgo+ICsgICAgICAg
+aWYgKG9wdC0+dXNlX3Jvb3RfbmlkKQo+ICsgICAgICAgICAgICAgICBvcHQtPm5pZCA9IHNiaS0+
+cm9vdF9pbm9fbnVtOwo+ICsKPiAgICAgICAgIGlmIChvcHQtPmVuZF9uYXQgPT0gLTEpCj4gICAg
+ICAgICAgICAgICAgIG9wdC0+ZW5kX25hdCA9IE5NX0koc2JpKS0+bWF4X25pZDsKPiAgICAgICAg
+IGlmIChvcHQtPmVuZF9zaXQgPT0gLTEpCj4gQEAgLTkyOSw3ICs5NTIsNyBAQCBzdGF0aWMgdm9p
+ZCBkb19kdW1wKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkKPiAgICAgICAgIGlmIChvcHQtPmJs
+a19hZGRyICE9IC0xKQo+ICAgICAgICAgICAgICAgICBkdW1wX2luZm9fZnJvbV9ibGthZGRyKHNi
+aSwgb3B0LT5ibGtfYWRkcik7Cj4gICAgICAgICBpZiAob3B0LT5uaWQpCj4gLSAgICAgICAgICAg
+ICAgIGR1bXBfbm9kZShzYmksIG9wdC0+bmlkLCAwKTsKPiArICAgICAgICAgICAgICAgZHVtcF9u
+b2RlKHNiaSwgb3B0LT5uaWQsIGMuZm9yY2UsIG9wdC0+YmFzZV9wYXRoLCAxLCAxKTsKPiAgICAg
+ICAgIGlmIChvcHQtPnNjYW5fbmlkKQo+ICAgICAgICAgICAgICAgICBkdW1wX25vZGVfc2Nhbl9k
+aXNrKHNiaSwgb3B0LT5zY2FuX25pZCk7Cj4KPiBkaWZmIC0tZ2l0IGEvbWFuL2R1bXAuZjJmcy44
+IGIvbWFuL2R1bXAuZjJmcy44Cj4gaW5kZXggOTRiZjVmMy4uNjBkNjc4MyAxMDA2NDQKPiAtLS0g
+YS9tYW4vZHVtcC5mMmZzLjgKPiArKysgYi9tYW4vZHVtcC5mMmZzLjgKPiBAQCAtNDQsNyArNDQs
+OCBAQCBpcyB1c2VkIHRvIHJldHJpZXZlIGYyZnMgbWV0YWRhdGEgKHVzdWFsbHkgaW4gYSBkaXNr
+IHBhcnRpdGlvbikuCj4gIFxmSWRldmljZVxmUCBpcyB0aGUgc3BlY2lhbCBmaWxlIGNvcnJlc3Bv
+bmRpbmcgdG8gdGhlIGRldmljZSAoZS5nLgo+ICBcZkkvZGV2L3NkWFhcZlApLgo+Cj4gLUN1cnJl
+bnRseSwgaXQgY2FuIHJldHJpZXZlIDEpIGEgZmlsZSBnaXZlbiBpdHMgaW5vZGUgbnVtYmVyLCAy
+KSBOQVQKPiArQ3VycmVudGx5LCBpdCBjYW4gcmV0cmlldmUgMSkgYSBmaWxlIG9yIGZvbGRlciBn
+aXZlbiBpdHMgaW5vZGUgbnVtYmVyCj4gKyhmb2xkZXJzIGFyZSBkdW1wZWQgcmVjdXJzaXZlbHkp
+LCAyKSBOQVQKPiAgZW50cmllcyBpbnRvIGEgZmlsZSwgMykgU0lUIGVudHJpZXMgaW50byBhIGZp
+bGUsIDQpIFNTQSBlbnRyaWVzIGludG8KPiAgYSBmaWxlLCA1KSByZXZlcnNlIGluZm9ybWF0aW9u
+IGZyb20gdGhlIGdpdmVuIGJsb2NrIGFkZHJlc3MuCj4gIC5QUAo+IEBAIC01Niw2ICs1NywyMCBA
+QCBpcyAwIG9uIHN1Y2Nlc3MgYW5kIC0xIG9uIGZhaWx1cmUuCj4gIC5CSSBcLWkgIiBpbm9kZSBu
+dW1iZXIiCj4gIFNwZWNpZnkgYW4gaW5vZGUgbnVtYmVyIHRvIGR1bXAgb3V0Lgo+ICAuVFAKPiAr
+LkJJIFwtcgo+ICtEdW1wIG91dCBmcm9tIHRoZSByb290IGlub2RlLgo+ICsuVFAKPiArLkJJIFwt
+Zgo+ICtEbyBub3QgcHJvbXB0IGJlZm9yZSBkdW1waW5nCj4gKy5UUAo+ICsuQkkgXC15Cj4gK0Fs
+aWFzIGZvciBcLWYKPiArLlRQCj4gKy5CSSBcLW8gIiBwYXRoIgo+ICtEdW1wIGlub2RlcyB0byB0
+aGUgZ2l2ZW4gcGF0aAo+ICsuQkkgXC1QCj4gK1ByZXNlcnZlIG1vZGUvb3duZXIvZ3JvdXAgZm9y
+IGR1bXBlZCBpbm9kZQo+ICsuVFAKPiAgLkJJIFwtSSAiIGlub2RlIG51bWJlciIKPiAgU3BlY2lm
+eSBhbiBpbm9kZSBudW1iZXIgYW5kIHNjYW4gZnVsbCBkaXNrIHRvIGR1bXAgb3V0LCBpbmNsdWRl
+IGhpc3RvcnkgaW5vZGUgYmxvY2sKPiAgLlRQCj4KPiBiYXNlLWNvbW1pdDogNWRhNGU1MjQxNTAz
+YjM4NWU0YTdlNzViMWIyYmIzMzY3YjM4YmU5Ngo+IC0tCj4gMi40NS4xLjI4OC5nMGUwY2QyOTlm
+MS1nb29nCj4KPgoKUmV2aWV3ZWQtYnk6IERhZWhvIEplb25nIDxkYWVob2plb25nQGdvb2dsZS5j
+b20+CgpUaGFua3MsCgo+Cj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KPiBMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdAo+IExpbnV4LWYyZnMtZGV2
+ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQv
+bGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAoKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Ckxp
+bnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNl
+Zm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
