@@ -4,66 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0A48EC25B7C
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 May 2024 08:22:55 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3E51EC25B75
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 May 2024 08:26:58 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sCEaC-0002xx-Gt;
-	Wed, 29 May 2024 08:22:52 +0000
+	id 1sCEe9-0001rR-JF;
+	Wed, 29 May 2024 08:26:57 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <Zhiguo.Niu@unisoc.com>) id 1sCEaA-0002xo-OU
+ (envelope-from <eugen.hristev@collabora.com>) id 1sCEe8-0001rH-Pl
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 May 2024 08:22:51 +0000
+ Wed, 29 May 2024 08:26:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PJhVg8X5DiwWA1ReBbYvYJtINdPHP78WrvBWgrIXXcE=; b=gRLCT71CX10eQWEWiQ0s/uqYoH
- kgw/ckmhC51ZqjT5ukuo0MAJnGsP+ZDMW7uQvi/vyO2xREcSYAc7Fm6hiL9Kz78YU3hjSit5l/Dg2
- 888L+KCWTIUOorjW1SG7Ho7nt5muq8NAOfU4ySbNx5hHb2BTc3f4laP4zXDBT69FN36Q=;
+ bh=62huonw5lxR0ikApRXt8p5ggxijFLHs4vyIu6B0cmGA=; b=buV3qFnSZBcecMvoAuE1or1LDU
+ Vg0Y3ZxKAUUiSRLBMmV7V/1AxqiZlvBJii4PgE4YrjrC9bvTdWhDHBoGWmTrDEXXPMCEsdblzbpub
+ MAIY4h6Gh7oKVJp0eKTPLPH5NWYkDGqQwQN+3d/Jgy70nNKCFZZmyRbwHy6kwBxYzL5k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=PJhVg8X5DiwWA1ReBbYvYJtINdPHP78WrvBWgrIXXcE=; b=A
- 4L/gM9Ol2gTSBBe+um8vWrAYDHy/6lkN0KnqOm8+Lf6MzQeS/fkwFLffhW8Fn2ZcD3j4wdq62gnLm
- swger154kufgquiFwX7Mb/b2IzE/pEl4p3xEpUhGyNvviBoW23z9G3XUiGGGPS2ONZuiOsJdyMkZq
- ZuuIgDRqh60R61ME=;
-Received: from mx1.unisoc.com ([222.66.158.135] helo=SHSQR01.spreadtrum.com)
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=62huonw5lxR0ikApRXt8p5ggxijFLHs4vyIu6B0cmGA=; b=eJYQyyFrzYn9ZTepdR2u/b/PD7
+ wqVY8C09brrNFAwL8pQr7VdzwbU/Ad8qetBgaYtPYHIw3vLt7ycKy8n7Vt60HjZMKoI46rxkFXJBQ
+ SQAsKEOJXXRp43+bG/eZ+H4ikKwEv5QIgAte2dhI7+QcqJGAEbwP+9HpFKmBGWZDBqOY=;
+Received: from madrid.collaboradmins.com ([46.235.227.194])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sCEaA-0008DB-Hz for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 May 2024 08:22:51 +0000
-Received: from dlp.unisoc.com ([10.29.3.86])
- by SHSQR01.spreadtrum.com with ESMTP id 44T8MCFq075923;
- Wed, 29 May 2024 16:22:12 +0800 (+08)
- (envelope-from Zhiguo.Niu@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
- by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Vq2MQ1J15z2QjGgT;
- Wed, 29 May 2024 16:18:26 +0800 (CST)
-Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 29 May 2024 16:22:10 +0800
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Wed, 29 May 2024 16:19:39 +0800
-Message-ID: <1716970779-27896-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Mailer: git-send-email 1.9.1
+ id 1sCEe8-0008WO-V3 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 29 May 2024 08:26:57 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+ s=mail; t=1716971209;
+ bh=ff8DpzwAZfEYeJk9vvRifefq2qMJjx4JWhXWjCFPTAA=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=TgscUdLPTsXKCd/PWwa9rhjQr2RlhAHZp/RKeQKh8bm7yk6+gS5aMrGWdE/OSQGgB
+ f6YhJVLnCMscTqSMIs56F9K2lqjSbmVQ1RBnVgJTAru7MMTB2ncO0TPODrxEpmLuuT
+ OgHu+LZ5hpVGGeAn4JjmAfQ4hdPff9EFMRQSoWGJWOYx9u6tmmMYbF/Iz+yuMh0g8E
+ tAZCePmbKXC+9nHmDSWc9NuCq7gZszcOiK9ioE8PJ3vGS0YZhhJcrxokI/ZAa+N34m
+ hmYKMvXMKvludVUSCQM3R2hpzdu2ReB2EVNzRvCUzlwyWK982qkGAoPD7bN9yo1BNT
+ jmTeX8jVca0Fg==
+Received: from eugen-station.. (cola.collaboradmins.com [195.201.22.229])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested) (Authenticated sender: ehristev)
+ by madrid.collaboradmins.com (Postfix) with ESMTPSA id B5C7D378216D;
+ Wed, 29 May 2024 08:26:48 +0000 (UTC)
+To: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ jaegeuk@kernel.org, adilger.kernel@dilger.ca, tytso@mit.edu
+Date: Wed, 29 May 2024 11:26:30 +0300
+Message-Id: <20240529082634.141286-4-eugen.hristev@collabora.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240529082634.141286-1-eugen.hristev@collabora.com>
+References: <20240529082634.141286-1-eugen.hristev@collabora.com>
 MIME-Version: 1.0
-X-Originating-IP: [10.0.73.87]
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL: SHSQR01.spreadtrum.com 44T8MCFq075923
-X-Headers-End: 1sCEaA-0008DB-Hz
-Subject: [f2fs-dev] [PATCH] f2fs: fix to avoid use SSR allocate when do
- defragment
+X-Headers-End: 1sCEe8-0008WO-V3
+Subject: [f2fs-dev] [PATCH v17 3/7] libfs: Introduce case-insensitive string
+ comparison helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -75,111 +80,135 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, zhiguo.niu@unisoc.com,
- Hao_hao.Wang@unisoc.com
+From: Eugen Hristev via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Eugen Hristev <eugen.hristev@collabora.com>
+Cc: krisman@suse.de, brauner@kernel.org, jack@suse.cz, ebiggers@google.com,
+ Eugen Hristev <eugen.hristev@collabora.com>, viro@zeniv.linux.org.uk,
+ kernel@collabora.com, Gabriel Krisman Bertazi <krisman@collabora.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-SSR allocate mode will be used when doing file defragment
-if ATGC is working at the same time, that is because
-set_page_private_gcing may make CURSEG_ALL_DATA_ATGC segment
-type got in f2fs_allocate_data_block when defragment page
-is writeback, which may cause file fragmentation is worse.
+From: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-A file with 2 fragmentations is changed as following after defragment:
+generic_ci_match can be used by case-insensitive filesystems to compare
+strings under lookup with dirents in a case-insensitive way.  This
+function is currently reimplemented by each filesystem supporting
+casefolding, so this reduces code duplication in filesystem-specific
+code.
 
-----------------file info-------------------
-sensorsdata :
---------------------------------------------
-dev       [254:48]
-ino       [0x    3029 : 12329]
-mode      [0x    81b0 : 33200]
-nlink     [0x       1 : 1]
-uid       [0x    27e6 : 10214]
-gid       [0x    27e6 : 10214]
-size      [0x  242000 : 2367488]
-blksize   [0x    1000 : 4096]
-blocks    [0x    1210 : 4624]
---------------------------------------------
-
-file_pos   start_blk     end_blk        blks
-       0    11361121    11361207          87
-  356352    11361215    11361216           2
-  364544    11361218    11361218           1
-  368640    11361220    11361221           2
-  376832    11361224    11361225           2
-  385024    11361227    11361238          12
-  434176    11361240    11361252          13
-  487424    11361254    11361254           1
-  491520    11361271    11361279           9
-  528384     3681794     3681795           2
-  536576     3681797     3681797           1
-  540672     3681799     3681799           1
-  544768     3681803     3681803           1
-  548864     3681805     3681805           1
-  552960     3681807     3681807           1
-  557056     3681809     3681809           1
-
-A new FI flag FI_DEFRAG_IN_PROGRESS is introduced to avoid
-this scenarios.
-
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+[eugen.hristev@collabora.com: rework to first test the exact match, cleanup
+and add error message]
+Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
 ---
- fs/f2fs/f2fs.h    | 1 +
- fs/f2fs/file.c    | 2 ++
- fs/f2fs/segment.c | 3 ++-
- 3 files changed, 5 insertions(+), 1 deletion(-)
+ fs/libfs.c         | 74 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h |  4 +++
+ 2 files changed, 78 insertions(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4044e67..9281c5e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -803,6 +803,7 @@ enum {
- 	FI_COW_FILE,		/* indicate COW file */
- 	FI_ATOMIC_COMMITTED,	/* indicate atomic commit completed except disk sync */
- 	FI_ATOMIC_REPLACE,	/* indicate atomic replace */
-+	FI_DEFRAG_IN_PROGRESS,	/* indicate file was defragmenting */
- 	FI_MAX,			/* max flag, never be used */
+diff --git a/fs/libfs.c b/fs/libfs.c
+index b635ee5adbcc..6a6cfa2d7d93 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1854,6 +1854,80 @@ static const struct dentry_operations generic_ci_dentry_ops = {
+ 	.d_revalidate = fscrypt_d_revalidate,
+ #endif
  };
++
++/**
++ * generic_ci_match() - Match a name (case-insensitively) with a dirent.
++ * This is a filesystem helper for comparison with directory entries.
++ * generic_ci_d_compare should be used in VFS' ->d_compare instead.
++ *
++ * @parent: Inode of the parent of the dirent under comparison
++ * @name: name under lookup.
++ * @folded_name: Optional pre-folded name under lookup
++ * @de_name: Dirent name.
++ * @de_name_len: dirent name length.
++ *
++ * Test whether a case-insensitive directory entry matches the filename
++ * being searched.  If @folded_name is provided, it is used instead of
++ * recalculating the casefold of @name.
++ *
++ * Return: > 0 if the directory entry matches, 0 if it doesn't match, or
++ * < 0 on error.
++ */
++int generic_ci_match(const struct inode *parent,
++		     const struct qstr *name,
++		     const struct qstr *folded_name,
++		     const u8 *de_name, u32 de_name_len)
++{
++	const struct super_block *sb = parent->i_sb;
++	const struct unicode_map *um = sb->s_encoding;
++	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
++	struct qstr dirent = QSTR_INIT(de_name, de_name_len);
++	int res = 0;
++
++	if (IS_ENCRYPTED(parent)) {
++		const struct fscrypt_str encrypted_name =
++			FSTR_INIT((u8 *) de_name, de_name_len);
++
++		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
++			return -EINVAL;
++
++		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
++		if (!decrypted_name.name)
++			return -ENOMEM;
++		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
++						&decrypted_name);
++		if (res < 0) {
++			kfree(decrypted_name.name);
++			return res;
++		}
++		dirent.name = decrypted_name.name;
++		dirent.len = decrypted_name.len;
++	}
++
++	/*
++	 * Attempt a case-sensitive match first. It is cheaper and
++	 * should cover most lookups, including all the sane
++	 * applications that expect a case-sensitive filesystem.
++	 */
++
++	if (dirent.len == (folded_name->name ? folded_name->len : name->len) &&
++	    !memcmp(name->name, dirent.name, dirent.len))
++		goto out;
++
++	if (folded_name->name)
++		res = utf8_strncasecmp_folded(um, folded_name, &dirent);
++	else
++		res = utf8_strncasecmp(um, name, &dirent);
++
++out:
++	kfree(decrypted_name.name);
++	if (res < 0 && sb_has_strict_encoding(sb)) {
++		pr_err_ratelimited("Directory contains filename that is invalid UTF-8");
++		return 0;
++	}
++	return !res;
++}
++EXPORT_SYMBOL(generic_ci_match);
+ #endif
  
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 5c0b281..93d2767 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2717,6 +2717,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 		goto out;
- 	}
+ #ifdef CONFIG_FS_ENCRYPTION
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 639885621608..f8ca264a0edc 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3367,6 +3367,10 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
+ extern int generic_check_addressable(unsigned, u64);
  
-+	set_inode_flag(inode, FI_DEFRAG_IN_PROGRESS);
- 	map.m_lblk = pg_start;
- 	map.m_len = pg_end - pg_start;
- 	total = 0;
-@@ -2772,6 +2773,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- clear_out:
- 	clear_inode_flag(inode, FI_SKIP_WRITES);
- out:
-+	clear_inode_flag(inode, FI_DEFRAG_IN_PROGRESS);
- 	clear_inode_flag(inode, FI_OPU_WRITE);
- unlock_out:
- 	inode_unlock(inode);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 7caf20a..dd6f8ac 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3482,7 +3482,8 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
- 		if (page_private_gcing(fio->page)) {
- 			if (fio->sbi->am.atgc_enabled &&
- 				(fio->io_type == FS_DATA_IO) &&
--				(fio->sbi->gc_mode != GC_URGENT_HIGH))
-+				(fio->sbi->gc_mode != GC_URGENT_HIGH) &&
-+				!is_inode_flag_set(inode, FI_DEFRAG_IN_PROGRESS))
- 				return CURSEG_ALL_DATA_ATGC;
- 			else
- 				return CURSEG_COLD_DATA;
+ extern void generic_set_sb_d_ops(struct super_block *sb);
++extern int generic_ci_match(const struct inode *parent,
++			    const struct qstr *name,
++			    const struct qstr *folded_name,
++			    const u8 *de_name, u32 de_name_len);
+ 
+ static inline bool sb_has_encoding(const struct super_block *sb)
+ {
 -- 
-1.9.1
+2.34.1
 
 
 
