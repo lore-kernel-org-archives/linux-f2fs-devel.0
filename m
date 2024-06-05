@@ -4,70 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D46B9C27C53
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Jun 2024 11:54:29 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 03084C25B76
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Jun 2024 11:54:54 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sEpDo-00084W-VB;
-	Wed, 05 Jun 2024 11:54:29 +0000
+	id 1sEpEE-0000dC-88;
+	Wed, 05 Jun 2024 11:54:54 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1sEpDo-00084N-9G
+ (envelope-from <sashal@kernel.org>) id 1sEpEC-0000d5-Kk
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Jun 2024 11:54:28 +0000
+ Wed, 05 Jun 2024 11:54:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xRGUAOUUTWByjjdz7uStNK7zU5qu8v19QCrxcaXEyRU=; b=Qv0F7VrzKj0U/ZR9sj6IqkIuQ9
- 8KP+Q2OTEpiMk2+CT/gZDAUlVg6SZ5CfUvM8X261XSlCcsjugwm4sZESS2LFQv015iZAQg8q5unM8
- /hCzjswqiAYwocV/K7hlTnKXeoKK6RgUh8T/u54pacqeIGKrgsg7x2VVsdWJML+/VIAk=;
+ bh=H7KNIu6EaDIxBlhAFCJxWc/FNtN0h/4gVJ9OTCdf/hA=; b=b8UtIr2mT3CHqwDiBmSRi1aJ/8
+ U28qdOymHhh6r+fzFW8MxKMwYXk4ueU1Rp03el48oS2jCtd6w58zY7CrKp0h8rfAZycY9GwRlArwR
+ 6ClUrY8bHW7Y6A1STN0wAK7xM47UMoxRtDCCnXM77UKDvUknYzuhrAo7RT1c1cjx4N/s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=xRGUAOUUTWByjjdz7uStNK7zU5qu8v19QCrxcaXEyRU=; b=B
- 8NwGzgaZNYky+/OsBjzBS1Y6zBD4YfombFzv1SMLHlW6/vRZap3RrUHjXqiL5kDZaPfQOwA1OVbyx
- 3YGYDIeOQJGkgX+Dss930FBbNlSWJF6JeQB7CSMRBjFE+JdbFRXh/yjcGKt+CUKoajTVDufOBdmXI
- m6eC1Z11pgUgfX4c=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ List-Owner:List-Archive; bh=H7KNIu6EaDIxBlhAFCJxWc/FNtN0h/4gVJ9OTCdf/hA=; b=B
+ sC5IkI+pugerGwUdhfmiGpKId7Q9bWxk4H0wq4Hr5xaC1jPwlaud3BNpnWdy3YKON9rEL8Ip3xfsx
+ sNUhJyKS9GRB7SB1ILfaSCFTBP8RRgNE973EflfxnJqmuhEGRRAontnhb1Kr9jYRnktp+t1Zubtak
+ 3Mq1rwbzXp3VV+Ew=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sEpDo-0000CG-Q4 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Jun 2024 11:54:28 +0000
+ id 1sEpED-0000Dz-30 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 05 Jun 2024 11:54:53 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id AE795617FE;
- Wed,  5 Jun 2024 11:54:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92E04C3277B;
- Wed,  5 Jun 2024 11:54:16 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id 7DA5CCE139E;
+ Wed,  5 Jun 2024 11:54:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC6CC3277B;
+ Wed,  5 Jun 2024 11:54:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1717588457;
- bh=a/4zziXLEH7ScUQ841dFu6fDUaravSz8cdlQEliR3Pc=;
+ s=k20201202; t=1717588484;
+ bh=fjvJY+jDj+VRWLNeYheSJjo7RC0CvRgYbsQoviL+v/Q=;
  h=From:To:Cc:Subject:Date:From;
- b=kcHBSNIDSCLOarWPvFPw/55kP515WYoAGr5zEI+03pGnZZaNWjbBmRTaAckx5QMN7
- zf2DAI+4hVfLk/bUU9wNVgEjp+J5vYG1pJNror/xXgxyHPfMhR7SVTg2R+O4wPQU60
- xPj2u3dG7YeaLPo+MsUxSX9E3EgzkeH3Ide+eJrj2b7Ku/ZSn9gxQ8tEG/CPMjCiQM
- z8mg4qqX8tcA2QrLBnfV7L2c7SoC/2xF2GubW1CY1YADo9GJrkQ5TxjLdaXf0VN/1I
- GzQDnQ+EzLV225TKUAGQOUcI5rnAp8ki72pZlixNBWE3v+F/tSfANtJkYFZFsWihkW
- XlKfihSkSYilg==
+ b=AQLonXI3VgSkp404filO/yP6DHcjq+pL2U6Euv+2kAMH8X2Zq7qL4CgwP6AW7zb5w
+ Hsdi3XXBkTLXlWyRz+eFkZjWoj4MHgcSL31tSPuvNwTVxZk0OZ6MQjp/ehXenSNman
+ 2QVQ5Hl6WQoqtlNxnENoJOgBT+jSN0pzIAB9JYCBeBzSrSzOP0aWBZONxQfyuFZTUc
+ nWcoxgusWD5/YewxlT5+MHEwvbJg6X+Co85B9kxG2RhzqyufkodjHm8sQ1tnxGZ4Lb
+ VNCQmVaWV0hFnqrDPe/iiVzLnqkUmILko4ovEmhrR8XT3U+L6wi7wI770Xcb+ya3ca
+ iGF4y3BZ33z1w==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Wed,  5 Jun 2024 07:53:59 -0400
-Message-ID: <20240605115415.2964165-1-sashal@kernel.org>
+Date: Wed,  5 Jun 2024 07:54:30 -0400
+Message-ID: <20240605115442.2964376-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.160
-X-Headers-End: 1sEpDo-0000CG-Q4
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.15 1/9] f2fs: remove clear
+X-stable-base: Linux 5.10.218
+X-Headers-End: 1sEpED-0000Dz-30
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.10 1/7] f2fs: remove clear
  SB_INLINECRYPT flag in default_options
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -115,11 +115,11 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 deletions(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index df1e5496352c2..706d7adda3b22 100644
+index 9a74d60f61dba..f73b2b9445acd 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -2068,8 +2068,6 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	F2FS_OPTION(sbi).compress_mode = COMPR_MODE_FS;
+@@ -1713,8 +1713,6 @@ static void default_options(struct f2fs_sb_info *sbi)
+ 	F2FS_OPTION(sbi).compress_ext_cnt = 0;
  	F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
  
 -	sbi->sb->s_flags &= ~SB_INLINECRYPT;
