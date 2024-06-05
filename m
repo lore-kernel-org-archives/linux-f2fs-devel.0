@@ -4,73 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AEC5EC25B76
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Jun 2024 11:53:12 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A83BEC25B76
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Jun 2024 11:53:45 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sEpCa-0008Hf-T4;
-	Wed, 05 Jun 2024 11:53:12 +0000
+	id 1sEpD6-0004JG-1P;
+	Wed, 05 Jun 2024 11:53:45 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1sEpCX-0008HR-Oo
+ (envelope-from <sashal@kernel.org>) id 1sEpD2-0004J4-Q7
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Jun 2024 11:53:09 +0000
+ Wed, 05 Jun 2024 11:53:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2eoJdOr4uM+Qs3H8XKVMqDJlE157WaszAU69h/40cjs=; b=D0PAMx33928/xMG6YqrDphGEnS
- EH7oacn0tphtcEml+WqMML9iYytGh2IEqSEtXL4qrpJ7QoeQP5QxzcLPB8IOovqksOu2/vDSshIqu
- BJp/AnfV8ZTGMj87x/VxX6ZQcTxmMQvrNIxqIebXXF1rwuids4aYOfLrqMnGXHJV0dS4=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=2eoJdOr4uM+Qs3H8XKVMqDJlE157WaszAU69h/40cjs=; b=baHhPeuRH5auV+myfyVjX8rvvf
- IyWBGt9O53ijFrKmZVyfreQC39j2bcWgeACRZmGMRzLk2g0HZ+snAhXR05Q9cd0LJMsS7b83eF673
- Vqyyg3cr060nSzU8j/UtgREH3hgMk+LJyt0p09oEQVLucz2hQMNSgDNigR5B+IZFhrmU=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=GLqOGFI+f3uhDleWUoE0gqlMq96bZaIVXISN57oK7ek=; b=AlK/kLh7iCB2G1nzANoESDdben
+ xZROke73CP3JCpVlQwcZiQaTbdKJBK6siePUjMFkRl76uvlPgQI9D+iXQr9aje8j9Ei0NJX4t2Vos
+ 5LUbqXRad0guKwi/pnu+2JFk1T1/O9e2dZEhOXvgtuayPKSCztQrqO/66mq0OsVN+z2A=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=GLqOGFI+f3uhDleWUoE0gqlMq96bZaIVXISN57oK7ek=; b=m
+ OgFHsuQRIIXJYNLCkKFLSMTws4eaoCYsd8u/vsNy4Fgp9KL/cvEZ0qk0edxQzlCmbbflfI4wHWtft
+ Bvv95MrIt5z8eCmVCnD1l+wgmw908FzucwVRmOqhoxkLyqe9rs8xMjq+f+25263p5ZclmcQ6TQYzG
+ HjB6srXsPG2/IkqM=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sEpCW-000058-U3 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Jun 2024 11:53:08 +0000
+ id 1sEpD4-000084-7b for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 05 Jun 2024 11:53:41 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id CCDB56187D;
- Wed,  5 Jun 2024 11:53:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1BB6C4AF07;
- Wed,  5 Jun 2024 11:53:01 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 2298B617DF;
+ Wed,  5 Jun 2024 11:53:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07E4DC3277B;
+ Wed,  5 Jun 2024 11:53:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1717588382;
- bh=RRQkgtyusECkJBoYg3oUy7UVIQQ61c3d9foSQSMCJhU=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=ohpeP1jnjr+wxg8HbxQAxD0Tn9DVX0A1sBJO1pkJqKsukoAKWRIsWCKGHEnn8Xs/L
- GxINbgceAgU53d6KOn7KI6ke7mwc0buwjee5c2zb/23O105CtKmDKvzhRQmT3JaBK3
- 4UhYJ3yp+nRFK0hWV+lH3w2FgeC9tghMRn/dIjNQJ/W9oF0EeYE1tCZBCQ05HYUyel
- w/1UkZM6cuQrMKlOTFs72eMP6khaWw2jmEZISs7hGAMTr9y78y107JtKiymoE0te/H
- Q/7oKwDuX+rQXGrjVTQWOV3MaI/fEV6MddiYB/JFTuseF69Bw+JuDSRE/E7hypNODs
- f8oNCqWo1D8pw==
+ s=k20201202; t=1717588415;
+ bh=M4hUo4Sz5eXhFIXqPo6FLTorE27s5v5OULPRV+E2nas=;
+ h=From:To:Cc:Subject:Date:From;
+ b=Iqntjj3tXzsb5UX6gQEZst4eldgvzHKzusRrS03IgvxkiTyX3Yg1qIuixf64iHTth
+ BAa7cbyziLitNYJnnge6wrgNR4SJWTZBDLZXOmQB1unNBASGi1wxakKOJ8cfZWFBY/
+ z9kT/919ikCP7l2T/qkXcvMFYTrBD2jrJ53qPqm9zJy6YVqGnJ6JXnj5Muecf8xvEE
+ IaD+yGXdsogn+u813Pi7qi31MDd910VXKIIwsiZwuZOIeaDPHKhf3YHANBcKBNC02c
+ wgIc3Xjrn1CRXubKGDY2M90284k/BLQkBwpyVu6RfYv9NpeloK/wIfQZvd15uGHcWX
+ 4Z5cDv3vM+BFA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Wed,  5 Jun 2024 07:51:57 -0400
-Message-ID: <20240605115225.2963242-14-sashal@kernel.org>
+Date: Wed,  5 Jun 2024 07:53:06 -0400
+Message-ID: <20240605115334.2963803-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240605115225.2963242-1-sashal@kernel.org>
-References: <20240605115225.2963242-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.32
-X-Headers-End: 1sEpCW-000058-U3
-Subject: [f2fs-dev] [PATCH AUTOSEL 6.6 14/20] f2fs: fix to do sanity check
- on i_xattr_nid in sanity_check_inode()
+X-stable-base: Linux 6.1.92
+X-Headers-End: 1sEpD4-000084-7b
+Subject: [f2fs-dev] [PATCH AUTOSEL 6.1 01/12] f2fs: remove clear
+ SB_INLINECRYPT flag in default_options
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,78 +81,52 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- syzbot+3694e283cf5c40df6d14@syzkaller.appspotmail.com,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Chao Yu <chao@kernel.org>
+From: Yunlei He <heyunlei@oppo.com>
 
-[ Upstream commit 20faaf30e55522bba2b56d9c46689233205d7717 ]
+[ Upstream commit ac5eecf481c29942eb9a862e758c0c8b68090c33 ]
 
-syzbot reports a kernel bug as below:
+In f2fs_remount, SB_INLINECRYPT flag will be clear and re-set.
+If create new file or open file during this gap, these files
+will not use inlinecrypt. Worse case, it may lead to data
+corruption if wrappedkey_v0 is enable.
 
-F2FS-fs (loop0): Mounted with checkpoint version = 48b305e4
-==================================================================
-BUG: KASAN: slab-out-of-bounds in f2fs_test_bit fs/f2fs/f2fs.h:2933 [inline]
-BUG: KASAN: slab-out-of-bounds in current_nat_addr fs/f2fs/node.h:213 [inline]
-BUG: KASAN: slab-out-of-bounds in f2fs_get_node_info+0xece/0x1200 fs/f2fs/node.c:600
-Read of size 1 at addr ffff88807a58c76c by task syz-executor280/5076
+Thread A:                               Thread B:
 
-CPU: 1 PID: 5076 Comm: syz-executor280 Not tainted 6.9.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- f2fs_test_bit fs/f2fs/f2fs.h:2933 [inline]
- current_nat_addr fs/f2fs/node.h:213 [inline]
- f2fs_get_node_info+0xece/0x1200 fs/f2fs/node.c:600
- f2fs_xattr_fiemap fs/f2fs/data.c:1848 [inline]
- f2fs_fiemap+0x55d/0x1ee0 fs/f2fs/data.c:1925
- ioctl_fiemap fs/ioctl.c:220 [inline]
- do_vfs_ioctl+0x1c07/0x2e50 fs/ioctl.c:838
- __do_sys_ioctl fs/ioctl.c:902 [inline]
- __se_sys_ioctl+0x81/0x170 fs/ioctl.c:890
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+-f2fs_remount				-f2fs_file_open or f2fs_new_inode
+  -default_options
+	<- clear SB_INLINECRYPT flag
 
-The root cause is we missed to do sanity check on i_xattr_nid during
-f2fs_iget(), so that in fiemap() path, current_nat_addr() will access
-nat_bitmap w/ offset from invalid i_xattr_nid, result in triggering
-kasan bug report, fix it.
+                                          -fscrypt_select_encryption_impl
 
-Reported-and-tested-by: syzbot+3694e283cf5c40df6d14@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-f2fs-devel/00000000000094036c0616e72a1d@google.com
-Signed-off-by: Chao Yu <chao@kernel.org>
+  -parse_options
+	<- set SB_INLINECRYPT again
+
+Signed-off-by: Yunlei He <heyunlei@oppo.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/inode.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/f2fs/super.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index dd61449f05b85..ab2eecd986ec5 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -361,6 +361,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
- 		return false;
- 	}
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c529ce5d986cc..f496622921843 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2092,8 +2092,6 @@ static void default_options(struct f2fs_sb_info *sbi)
+ 	F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
+ 	F2FS_OPTION(sbi).memory_mode = MEMORY_MODE_NORMAL;
  
-+	if (fi->i_xattr_nid && f2fs_check_nid_range(sbi, fi->i_xattr_nid)) {
-+		f2fs_warn(sbi, "%s: inode (ino=%lx) has corrupted i_xattr_nid: %u, run fsck to fix.",
-+			  __func__, inode->i_ino, fi->i_xattr_nid);
-+		return false;
-+	}
-+
- 	return true;
- }
- 
+-	sbi->sb->s_flags &= ~SB_INLINECRYPT;
+-
+ 	set_opt(sbi, INLINE_XATTR);
+ 	set_opt(sbi, INLINE_DATA);
+ 	set_opt(sbi, INLINE_DENTRY);
 -- 
 2.43.0
 
