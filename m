@@ -4,71 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 03084C25B76
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Jun 2024 11:54:54 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A6E61C27C52
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Jun 2024 07:34:46 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sEpEE-0000dC-88;
-	Wed, 05 Jun 2024 11:54:54 +0000
+	id 1sF7e0-0006Wi-9H;
+	Thu, 06 Jun 2024 07:34:44 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1sEpEC-0000d5-Kk
+ (envelope-from <eugen.hristev@collabora.com>) id 1sF7dy-0006Wa-Rc
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Jun 2024 11:54:53 +0000
+ Thu, 06 Jun 2024 07:34:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=H7KNIu6EaDIxBlhAFCJxWc/FNtN0h/4gVJ9OTCdf/hA=; b=b8UtIr2mT3CHqwDiBmSRi1aJ/8
- U28qdOymHhh6r+fzFW8MxKMwYXk4ueU1Rp03el48oS2jCtd6w58zY7CrKp0h8rfAZycY9GwRlArwR
- 6ClUrY8bHW7Y6A1STN0wAK7xM47UMoxRtDCCnXM77UKDvUknYzuhrAo7RT1c1cjx4N/s=;
+ bh=a1qNqrk9UnddbyEYqJThGAAsnQfkC+hRRjEDw1I3Dmw=; b=j9vh+Gn1SKvpnKMvgoJXCSk+Kj
+ xUUqUJ8X0SEhQqGIhBXqyFy+MWZM1Kit50yoeNUkYnZqcCDrDy/0K7GRuSKgJCzxyVZKQDHac+2ey
+ 2hW7hIawJsM/dUooo4cs7Opn3NiJc296kd2e5yRPDbhRibyl90IqxYY6W5dVuCIbIf8E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=H7KNIu6EaDIxBlhAFCJxWc/FNtN0h/4gVJ9OTCdf/hA=; b=B
- sC5IkI+pugerGwUdhfmiGpKId7Q9bWxk4H0wq4Hr5xaC1jPwlaud3BNpnWdy3YKON9rEL8Ip3xfsx
- sNUhJyKS9GRB7SB1ILfaSCFTBP8RRgNE973EflfxnJqmuhEGRRAontnhb1Kr9jYRnktp+t1Zubtak
- 3Mq1rwbzXp3VV+Ew=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=a1qNqrk9UnddbyEYqJThGAAsnQfkC+hRRjEDw1I3Dmw=; b=MdyGDOPvMCH6VM8mpdrlj2Duie
+ AXxRT9EVD8GUfEDpymk9rArKWxa1VFFKimXn7qYrwn0c6IlKZ2FccntmAOtsCBOI9+WPV/YJy+LHh
+ EpwF1S1zUr3NBsQq3s1dNyz+nDGeHGeAZuKaxcmIAXk6PAUIgIJkzVV29XC2onT4oPNs=;
+Received: from madrid.collaboradmins.com ([46.235.227.194])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sEpED-0000Dz-30 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Jun 2024 11:54:53 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 7DA5CCE139E;
- Wed,  5 Jun 2024 11:54:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC6CC3277B;
- Wed,  5 Jun 2024 11:54:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1717588484;
- bh=fjvJY+jDj+VRWLNeYheSJjo7RC0CvRgYbsQoviL+v/Q=;
- h=From:To:Cc:Subject:Date:From;
- b=AQLonXI3VgSkp404filO/yP6DHcjq+pL2U6Euv+2kAMH8X2Zq7qL4CgwP6AW7zb5w
- Hsdi3XXBkTLXlWyRz+eFkZjWoj4MHgcSL31tSPuvNwTVxZk0OZ6MQjp/ehXenSNman
- 2QVQ5Hl6WQoqtlNxnENoJOgBT+jSN0pzIAB9JYCBeBzSrSzOP0aWBZONxQfyuFZTUc
- nWcoxgusWD5/YewxlT5+MHEwvbJg6X+Co85B9kxG2RhzqyufkodjHm8sQ1tnxGZ4Lb
- VNCQmVaWV0hFnqrDPe/iiVzLnqkUmILko4ovEmhrR8XT3U+L6wi7wI770Xcb+ya3ca
- iGF4y3BZ33z1w==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Date: Wed,  5 Jun 2024 07:54:30 -0400
-Message-ID: <20240605115442.2964376-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+ id 1sF7dy-0001xB-Vx for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 06 Jun 2024 07:34:43 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+ s=mail; t=1717659275;
+ bh=XtEHiBrDSf4ce/QizppJREOQW0pGgY68GGnjXcbrJYU=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=fBkkX++I18I7bSLdl+E9++h7LlHjEqSgLyuRKmIfLuNaFNmSlzC8xVzqvU1jYGjua
+ r0lHU/jHcSe4iEhElLN9+yzuiCRXurnRfXep8HZBg4yFNEHnje+B+Ou6K/vBhzersS
+ hFrZ4EVSc919hcSKgerPHHzH+/DUiUALnY6luH8ROYB819LZJFtw5tYSFy92YQ66Fs
+ JXyRvGSzOY28SXnt76mj67+0TP5rUl3BtkcYdYo3ZWeqvlm/STpq9mMPE/etDhMWia
+ qIMXPHBJ6SwdxflvhlRp4pzoyux0TQy63JlM4Ak5RbNC9Y3MMq+Td8M6k7LS6m6EDn
+ xDpItX3aYx3lg==
+Received: from eugen-station.. (cola.collaboradmins.com [195.201.22.229])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested) (Authenticated sender: ehristev)
+ by madrid.collaboradmins.com (Postfix) with ESMTPSA id AA42337821D4;
+ Thu,  6 Jun 2024 07:34:34 +0000 (UTC)
+To: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ jaegeuk@kernel.org, adilger.kernel@dilger.ca, tytso@mit.edu
+Date: Thu,  6 Jun 2024 10:33:47 +0300
+Message-Id: <20240606073353.47130-2-eugen.hristev@collabora.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240606073353.47130-1-eugen.hristev@collabora.com>
+References: <20240606073353.47130-1-eugen.hristev@collabora.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.218
-X-Headers-End: 1sEpED-0000Dz-30
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.10 1/7] f2fs: remove clear
- SB_INLINECRYPT flag in default_options
+X-Headers-End: 1sF7dy-0001xB-Vx
+Subject: [f2fs-dev] [PATCH v18 1/7] ext4: Simplify the handling of cached
+ casefolded names
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,55 +80,104 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net
+From: Eugen Hristev via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Eugen Hristev <eugen.hristev@collabora.com>
+Cc: krisman@suse.de, brauner@kernel.org, jack@suse.cz, ebiggers@google.com,
+ Eugen Hristev <eugen.hristev@collabora.com>, viro@zeniv.linux.org.uk,
+ kernel@collabora.com, Gabriel Krisman Bertazi <krisman@collabora.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Yunlei He <heyunlei@oppo.com>
+From: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-[ Upstream commit ac5eecf481c29942eb9a862e758c0c8b68090c33 ]
+Keeping it as qstr avoids the unnecessary conversion in ext4_match
 
-In f2fs_remount, SB_INLINECRYPT flag will be clear and re-set.
-If create new file or open file during this gap, these files
-will not use inlinecrypt. Worse case, it may lead to data
-corruption if wrappedkey_v0 is enable.
-
-Thread A:                               Thread B:
-
--f2fs_remount				-f2fs_file_open or f2fs_new_inode
-  -default_options
-	<- clear SB_INLINECRYPT flag
-
-                                          -fscrypt_select_encryption_impl
-
-  -parse_options
-	<- set SB_INLINECRYPT again
-
-Signed-off-by: Yunlei He <heyunlei@oppo.com>
-Reviewed-by: Chao Yu <chao@kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+[eugen.hristev@collabora.com: port to 6.10-rc1]
+Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
+Reviewed-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/super.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/ext4/ext4.h  |  2 +-
+ fs/ext4/namei.c | 23 +++++++++++------------
+ 2 files changed, 12 insertions(+), 13 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 9a74d60f61dba..f73b2b9445acd 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1713,8 +1713,6 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	F2FS_OPTION(sbi).compress_ext_cnt = 0;
- 	F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 983dad8c07ec..deffd7431c8b 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2511,7 +2511,7 @@ struct ext4_filename {
+ 	struct fscrypt_str crypto_buf;
+ #endif
+ #if IS_ENABLED(CONFIG_UNICODE)
+-	struct fscrypt_str cf_name;
++	struct qstr cf_name;
+ #endif
+ };
  
--	sbi->sb->s_flags &= ~SB_INLINECRYPT;
--
- 	set_opt(sbi, INLINE_XATTR);
- 	set_opt(sbi, INLINE_DATA);
- 	set_opt(sbi, INLINE_DENTRY);
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index a630b27a4cc6..ec4c9bfc1057 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1445,7 +1445,8 @@ static int ext4_ci_compare(const struct inode *parent, const struct qstr *name,
+ int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
+ 				  struct ext4_filename *name)
+ {
+-	struct fscrypt_str *cf_name = &name->cf_name;
++	struct qstr *cf_name = &name->cf_name;
++	unsigned char *buf;
+ 	struct dx_hash_info *hinfo = &name->hinfo;
+ 	int len;
+ 
+@@ -1455,18 +1456,18 @@ int ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
+ 		return 0;
+ 	}
+ 
+-	cf_name->name = kmalloc(EXT4_NAME_LEN, GFP_NOFS);
+-	if (!cf_name->name)
++	buf = kmalloc(EXT4_NAME_LEN, GFP_NOFS);
++	if (!buf)
+ 		return -ENOMEM;
+ 
+-	len = utf8_casefold(dir->i_sb->s_encoding,
+-			    iname, cf_name->name,
+-			    EXT4_NAME_LEN);
++	len = utf8_casefold(dir->i_sb->s_encoding, iname, buf, EXT4_NAME_LEN);
+ 	if (len <= 0) {
+-		kfree(cf_name->name);
+-		cf_name->name = NULL;
++		kfree(buf);
++		buf = NULL;
+ 	}
++	cf_name->name = buf;
+ 	cf_name->len = (unsigned) len;
++
+ 	if (!IS_ENCRYPTED(dir))
+ 		return 0;
+ 
+@@ -1503,8 +1504,6 @@ static bool ext4_match(struct inode *parent,
+ 	if (IS_CASEFOLDED(parent) &&
+ 	    (!IS_ENCRYPTED(parent) || fscrypt_has_encryption_key(parent))) {
+ 		if (fname->cf_name.name) {
+-			struct qstr cf = {.name = fname->cf_name.name,
+-					  .len = fname->cf_name.len};
+ 			if (IS_ENCRYPTED(parent)) {
+ 				if (fname->hinfo.hash != EXT4_DIRENT_HASH(de) ||
+ 					fname->hinfo.minor_hash !=
+@@ -1513,8 +1512,8 @@ static bool ext4_match(struct inode *parent,
+ 					return false;
+ 				}
+ 			}
+-			return !ext4_ci_compare(parent, &cf, de->name,
+-							de->name_len, true);
++			return !ext4_ci_compare(parent, &fname->cf_name,
++						de->name, de->name_len, true);
+ 		}
+ 		return !ext4_ci_compare(parent, fname->usr_fname, de->name,
+ 						de->name_len, false);
 -- 
-2.43.0
+2.34.1
 
 
 
