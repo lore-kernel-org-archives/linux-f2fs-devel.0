@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C7962C27C53
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Jun 2024 15:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CEE8DC2BA18
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Jun 2024 15:56:29 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sHQKr-00043C-1N;
-	Wed, 12 Jun 2024 15:56:28 +0000
+	id 1sHQKr-00043V-Mm;
+	Wed, 12 Jun 2024 15:56:29 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sHQKd-00042U-Fr
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sHQKd-00042Q-Fm
  for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 12 Jun 2024 15:56:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,52 +23,52 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hv+cst/YZg3bSHDLfTd5qvpJMihe/cCbA8iMyvhzdms=; b=HonWl9pBHiHSPJNRElXzq8912f
- vyxT2MCdTcsFh93tGFV37esJwd/EZjBfIuXZTgrHBUHtuDq2JowSCMSTFLZp7zDnghnjEMYNEy5VZ
- GY/QpojpDVlQdsL07VbJEu1W312gFVA7ZV8MgkKBSBA03QGFsxBTgcVMVCTeoDoLe2Yg=;
+ bh=UolA5bh3yjeAZLQd6RxjW2rRV/zNWZOJBQb2Dd9ZngI=; b=F7RRwOcBT+sby6SQarArWxHOYE
+ c5B4M0PFSSl5QYItVhamDG1UxMTXELGQcMyi0WX2H1+BXwxPTcywRzq5Ay/F6YlQNGia5B8pph3xa
+ 98/GPXwC8LRIE4/slo892hRcVjxnye0HtYe36WkS3HBp7anfgRsff4ZmpJJ8pkwNaU2E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hv+cst/YZg3bSHDLfTd5qvpJMihe/cCbA8iMyvhzdms=; b=JNoOMLT0aDBZfX1PKAtaspTX3i
- INR3nFbnyUyb2f29KEIJy7M3LgyrudlP5QBLBXb7UBLvBZVBpF23Q5VA8mpaVMcMaQhBHZ5wCMI5e
- /2BiRgt+C8kQmvlhgaBzOQws5TuwI7INtnPdnxyLPpzOv52mO1M8IkeTrC9b5IxMHK90=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=UolA5bh3yjeAZLQd6RxjW2rRV/zNWZOJBQb2Dd9ZngI=; b=CB2BNR2gEgcIKgoBJU8dlbL/Fk
+ lEUbzFu/YqBiV5cb1wBfZOnJqTBlrA3uEpbkrjYZGcyhw8MOYeHQaSznsuCeJd4Xf3uP4t7KQFySW
+ GS+582xEGg2oPK1Rk12VTD3a9NnweECgteXIqgwg545sZjzteiqDje9qia3EaP/uvacw=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sHQKc-0007Sp-W1 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Jun 2024 15:56:14 +0000
+ id 1sHQKZ-0007SM-PT for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 12 Jun 2024 15:56:11 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id BEB3B614DD
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 12 Jun 2024 15:55:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 89176C4AF1C;
+ by sin.source.kernel.org (Postfix) with ESMTP id 1D3B5CE21D5;
+ Wed, 12 Jun 2024 15:55:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 43C10C4AF53;
  Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1718207757;
- bh=c3FMlagO4HhbTzrgPecz6RKU3l5fy3h1uoMfDBquvuY=;
+ bh=fg5ngAXBtHfUv26u+nwajvrTqbRSPs+zZsIgoe3iwR4=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=jFdjzOKq0QfNuyRJKUIX53p1TWUF4Jqt6Gn1h14i6f2nUpw/qk5WT1ga4WLCFUW8/
- 7iJ/PpmlgabK5a7jKfsUCrCDerHtBd3mOAWaivowbOC26qO7P4S48VOkBIHsoTmURr
- 7cww1VUd/TrH49B+4KA9xFccuXq2WV948S3pDJWMLmnPLdtQQxIseE/HEdwD77Y33x
- 5wppROmrDmcelhhA5Dvk3a0FG/Kb/FkYackp25y+7utUos45hC/eF3Qy5xFYdPIJfm
- 6W2Jc9IZpSUAa8AnPyxHlmKOd0rv88SjxVgBaeMwqkzd3XByG1ebu9VzAY4/s/pLEs
- /nxB16kMzaJ9g==
+ b=k5vQvJyBzqctuLwDDYj7pCJYgiBbRwzVJcRl1mJqImEXx8OrPBo9Qci53mSM+AGNc
+ VTOTT9pQgIpE6xq1DqkQJ7qNyOt80lWHsKpUiYQjWNiHjaOKBIFLPJe79nlzhS/eK/
+ oVElTBCjj2eopBOXvAjglDJY7w5VLhbBtpdWaNCH57UzNcvA5DLJXmg9vMxsm1Qqnt
+ RmXU4N/H00oygZ8VMl7Heo+zZBiY/VC/JS7X3IAhxbpEk91lfiIJpMTdiQsifvyJeY
+ R+05ZCk6JAKqDNYqcFmqiLfM0AN+2zdle0/sqyzSBsZCJa9MvmWdNUow2TYxC3rGjj
+ o6Jh+01D6JqoA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 7ED9FC4361A; Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
+ 35CA6C43638; Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171820775751.32393.2721044204636659523.git-patchwork-notify@kernel.org>
+Message-Id: <171820775721.32393.16229302976932686990.git-patchwork-notify@kernel.org>
 Date: Wed, 12 Jun 2024 15:55:57 +0000
-References: <20240515081233.2463848-1-chao@kernel.org>
-In-Reply-To: <20240515081233.2463848-1-chao@kernel.org>
+References: <20240531020032.1019991-1-chao@kernel.org>
+In-Reply-To: <20240531020032.1019991-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1sHQKc-0007Sp-W1
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add support for FS_IOC_GETFSSYSFSPATH
+X-Headers-End: 1sHQKZ-0007SM-PT
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to cover read extent cache
+ access with lock
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,8 +80,9 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org,
+ syzbot+74ebe2104433e9dc610d@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -91,19 +92,40 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 15 May 2024 16:12:33 +0800 you wrote:
-> FS_IOC_GETFSSYSFSPATH ioctl expects sysfs sub-path of a filesystem, the
-> format can be "$FSTYP/$SYSFS_IDENTIFIER" under /sys/fs, it can helps to
-> standardizes exporting sysfs datas across filesystems.
+On Fri, 31 May 2024 10:00:32 +0800 you wrote:
+> syzbot reports a f2fs bug as below:
 > 
-> This patch wires up FS_IOC_GETFSSYSFSPATH for f2fs, it will output
-> "f2fs/<dev>".
+> BUG: KASAN: slab-use-after-free in sanity_check_extent_cache+0x370/0x410 fs/f2fs/extent_cache.c:46
+> Read of size 4 at addr ffff8880739ab220 by task syz-executor200/5097
+> 
+> CPU: 0 PID: 5097 Comm: syz-executor200 Not tainted 6.9.0-rc6-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+>  print_address_description mm/kasan/report.c:377 [inline]
+>  print_report+0x169/0x550 mm/kasan/report.c:488
+>  kasan_report+0x143/0x180 mm/kasan/report.c:601
+>  sanity_check_extent_cache+0x370/0x410 fs/f2fs/extent_cache.c:46
+>  do_read_inode fs/f2fs/inode.c:509 [inline]
+>  f2fs_iget+0x33e1/0x46e0 fs/f2fs/inode.c:560
+>  f2fs_nfs_get_inode+0x74/0x100 fs/f2fs/super.c:3237
+>  generic_fh_to_dentry+0x9f/0xf0 fs/libfs.c:1413
+>  exportfs_decode_fh_raw+0x152/0x5f0 fs/exportfs/expfs.c:444
+>  exportfs_decode_fh+0x3c/0x80 fs/exportfs/expfs.c:584
+>  do_handle_to_path fs/fhandle.c:155 [inline]
+>  handle_to_path fs/fhandle.c:210 [inline]
+>  do_handle_open+0x495/0x650 fs/fhandle.c:226
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: add support for FS_IOC_GETFSSYSFSPATH
-    https://git.kernel.org/jaegeuk/f2fs/c/cc260b66c4cd
+  - [f2fs-dev,v2] f2fs: fix to cover read extent cache access with lock
+    https://git.kernel.org/jaegeuk/f2fs/c/d7409b05a64f
 
 You are awesome, thank you!
 -- 
