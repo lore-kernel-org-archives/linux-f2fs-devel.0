@@ -4,67 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5FDFEC27C53
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Jun 2024 07:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 57DC7C27C7B
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Jun 2024 15:56:06 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sHIFd-0002XI-Cu;
-	Wed, 12 Jun 2024 07:18:34 +0000
+	id 1sHQKS-0006uv-Kw;
+	Wed, 12 Jun 2024 15:56:05 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <Xiuhong.Wang@unisoc.com>) id 1sHIFb-0002XA-4a
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sHQKQ-0006un-9S
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Jun 2024 07:18:32 +0000
+ Wed, 12 Jun 2024 15:56:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vKJMoHWpQC2UYWQYztC5rLOVgDzSM4YC+TJpec0VqC4=; b=RoBJtvF+rH2yqB5RHLglq1Cbho
- YGZleaBj9onaC0Bycx7TFg0HkJqOzWA9Sy8HrkisBf5YVJmc1mf2GWI8NtUSHuSOrCcAa4zI/2A+B
- 1ZuOjTk8Lo1NqtdDbjCdimr5tv4vB8ZhrlvolFWOyDSkZ6sRshbJX7EnMd1OM72SmYfo=;
+ bh=ORnkHzlX295IrGtbxXVABIoPWnI67PEqQ2lw23hK6CI=; b=JOhxPpgq2JahEepVs7352PAtH0
+ 1MWaIKtqAiTEly52v3503aBxMV6KiAvpNQQO6f8CCyj6o5PdDtQlLs24g2R/G69lciaP+y7jZGcvm
+ YUOFoSFbq8jdooWv9DFFK18J7uNYX6GSNILlCa6eo7EqVjwz85mf8MS8tPM46EK+xlc8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=vKJMoHWpQC2UYWQYztC5rLOVgDzSM4YC+TJpec0VqC4=; b=T
- P2jiolqdSsQ326kE1WEUFBP2C4WbH3v05uHPItFQ9rhpM9CgBGiGB1u7mZsAEwS+Jr0YXjE2XTCEZ
- koiO2sRQ9am03trjDxns5xK+yKQG2sTGbiTt4ds8+Yy4GYqQwBRbB8jkVcCByJC2EIkMLi2V22OPb
- h8uTqg8JKrLnueqM=;
-Received: from mx1.unisoc.com ([222.66.158.135] helo=SHSQR01.spreadtrum.com)
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=ORnkHzlX295IrGtbxXVABIoPWnI67PEqQ2lw23hK6CI=; b=WTJ/K8A9ME/XT1gf8Vr0Tkrwk/
+ bI9kzHZW0dbot+cfH/SMMxt68D+ofp6UWDdC54nRlhhMhRLxS43E44e5kTc3+uhtlAtY6i7VTtHRY
+ 1IR/ntfhg0tXvxMKxfSXwHtQzNe1J02ddv3mXL1WVog3bvg5cy4CVOjHHJenFLF//Uww=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sHIFb-00072K-BE for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Jun 2024 07:18:32 +0000
-Received: from dlp.unisoc.com ([10.29.3.86])
- by SHSQR01.spreadtrum.com with ESMTP id 45C7HtJC015511;
- Wed, 12 Jun 2024 15:17:55 +0800 (+08)
- (envelope-from Xiuhong.Wang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
- by dlp.unisoc.com (SkyGuard) with ESMTPS id 4VzcGF48Lcz2QkWK3;
- Wed, 12 Jun 2024 15:13:41 +0800 (CST)
-Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 12 Jun 2024 15:17:53 +0800
-From: Xiuhong Wang <xiuhong.wang@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>,
- <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>
-Date: Wed, 12 Jun 2024 15:17:49 +0800
-Message-ID: <20240612071749.348843-1-xiuhong.wang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+ id 1sHQKR-0007Ri-HE for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 12 Jun 2024 15:56:03 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id 6B07B614D9;
+ Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 21371C4AF1C;
+ Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1718207757;
+ bh=DZPyxFdKirmwiOX/njEKegbJptxiHo8sI/vLKAKdO74=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=HYZaTL2vORBb8W8g+jzjLsH7pHyggMjmQkJ0pMhqZQNDXhzHhVufNzzvGCcSBYgnr
+ z1QNVhCzNDuS7Fnar67O57lDD4XrGEb/KHM7yVTbkxC0KdmPNAc+jTgvDklTBapU/A
+ 7N7k/t2oqI7j2tNCakIwUjvQPKoNHYJk+jtienv1hvQOVBjAOeG0q7CncW/wjF75XS
+ YseMAzlGeBHtvjCCNmziSlmh+v+LVATJWxpyxF+2Yc2mad/ihOx+l9nl6OeTZRsxbE
+ OVocZUMxDrJFHS6+AYnaaTs2+GE2bbhMPMWrvUFmSUbJ6bJnDyhQFmVCP4oYJgYT5V
+ docIxYS/r+NRQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ 0C887C4361A; Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
 MIME-Version: 1.0
-X-Originating-IP: [10.5.32.15]
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL: SHSQR01.spreadtrum.com 45C7HtJC015511
-X-Headers-End: 1sHIFb-00072K-BE
-Subject: [f2fs-dev] [PATCH 1/1] f2fs-tools: use atoll replace atoi to avoid
- data truncate
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <171820775704.32393.17458759004168978642.git-patchwork-notify@kernel.org>
+Date: Wed, 12 Jun 2024 15:55:57 +0000
+References: <20240530100158.762954-1-shengyong@oppo.com>
+In-Reply-To: <20240530100158.762954-1-shengyong@oppo.com>
+To: Sheng Yong <shengyong@oppo.com>
+X-Headers-End: 1sHQKR-0007Ri-HE
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: alloc new section if curseg is not
+ the first seg in its zone
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,81 +80,37 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: ke.wang@unisoc.com, xiuhong.wang.cn@gmail.com
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If input exceeds int range, data will be truncated, such as lseek:
-unisoc:/data # ./f2fs_io lseek set 3221225000 file
-returned offset=2147483647
-The offset is truncated.
+Hello:
 
-After patch:
-unisoc:/data # ./f2fs_io lseek set 3221225000 file
-returned offset=3221225000
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
----
- tools/f2fs_io/f2fs_io.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+On Thu, 30 May 2024 18:01:58 +0800 you wrote:
+> If curseg is not the first segment in its zone, the zone is not empty.
+> A new section should be allocated and avoid resetting the old zone.
+> 
+> Reviewed-by: Chao Yu <chao@kernel.org>
+> Signed-off-by: Sheng Yong <shengyong@oppo.com>
+> ---
+> v2: remove and update inaccurate commit msg
+> 
+> [...]
 
-diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index a7b593a..8c9d433 100644
---- a/tools/f2fs_io/f2fs_io.c
-+++ b/tools/f2fs_io/f2fs_io.c
-@@ -539,7 +539,7 @@ static void do_fallocate(int argc, char **argv, const struct cmd_desc *cmd)
- 	if (!strcmp(argv[0], "1"))
- 		mode |= FALLOC_FL_KEEP_SIZE;
- 
--	offset = atoi(argv[1]);
-+	offset = atoll(argv[1]);
- 	length = atoll(argv[2]);
- 
- 	fd = xopen(argv[3], O_RDWR, 0);
-@@ -957,7 +957,7 @@ static void do_randread(int argc, char **argv, const struct cmd_desc *cmd)
- 
- #define fiemap_desc "get block address in file"
- #define fiemap_help					\
--"f2fs_io fiemap [offset in 4kb] [count] [file_path]\n\n"\
-+"f2fs_io fiemap [offset in 4kb] [count in 4kb] [file_path]\n\n"\
- 
- #if defined(HAVE_LINUX_FIEMAP_H) && defined(HAVE_LINUX_FS_H)
- static void do_fiemap(int argc, char **argv, const struct cmd_desc *cmd)
-@@ -1546,9 +1546,9 @@ static void do_move_range(int argc, char **argv, const struct cmd_desc *cmd)
- 
- 	fd = xopen(argv[1], O_RDWR, 0);
- 	range.dst_fd = xopen(argv[2], O_RDWR | O_CREAT, 0644);
--	range.pos_in = atoi(argv[3]);
--	range.pos_out = atoi(argv[4]);
--	range.len = atoi(argv[5]);
-+	range.pos_in = atoll(argv[3]);
-+	range.pos_out = atoll(argv[4]);
-+	range.len = atoll(argv[5]);
- 
- 	ret = ioctl(fd, F2FS_IOC_MOVE_RANGE, &range);
- 	if (ret < 0)
-@@ -1726,7 +1726,7 @@ static void do_lseek(int argc, char **argv, const struct cmd_desc *cmd)
- 		exit(1);
- 	}
- 
--	offset = atoi(argv[2]);
-+	offset = atoll(argv[2]);
- 
- 	if (!strcmp(argv[1], "set"))
- 		whence = SEEK_SET;
-@@ -1746,7 +1746,7 @@ static void do_lseek(int argc, char **argv, const struct cmd_desc *cmd)
- 	ret = lseek(fd, offset, whence);
- 	if (ret < 0)
- 		die_errno("lseek failed");
--	printf("returned offset=%ld\n", ret);
-+	printf("returned offset=%lld\n", (long long)ret);
- 	exit(0);
- }
- 
+Here is the summary with links:
+  - [f2fs-dev,v2] f2fs: alloc new section if curseg is not the first seg in its zone
+    https://git.kernel.org/jaegeuk/f2fs/c/76da333f4b93
+
+You are awesome, thank you!
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
 
