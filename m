@@ -4,71 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6D6FBC27C53
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Jun 2024 15:56:25 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3011BC27C7B
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Jun 2024 15:56:26 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sHQKn-00042n-Mu;
+	id 1sHQKm-0006wy-Hy;
 	Wed, 12 Jun 2024 15:56:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sHQKX-00042I-Or
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sHQKb-0006vb-Mz
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Jun 2024 15:56:09 +0000
+ Wed, 12 Jun 2024 15:56:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XPaNDJXfWu320CAx+J96pKu6CkNUG6Qr1tyBXDufIhQ=; b=VgEBX4LvL6DoVuAs7sbER4GbjW
- cSNF23lusax+6sfOC/S14Nh8H+kpVl4m4nJtLuuoXy5PzHkg9RK6jR3htiQqOUh4RnZ6ktC/TjHAX
- uyWIuGAQpwCnpe17civUYwDiXPyyWzU7VzrVB2UFjN2xK0+slJ6lrSXvqlw7idvvOGFo=;
+ bh=CD4KiP7xTXSJoafzPoZiqY+6GIXr86Htaou3l9dDp+0=; b=e8MvsG5yHkpDkba+JzyACsshlo
+ 2peCZ8PE8rx9nvXIw4rISw+bXxJzPDE6GH1YxYRyOgRokiUdp5kfwZlYkiv4e85ZvWF782C7ndUpe
+ a3SYSvF3qxJPw4SiuE9CZp9aE1MbH64jV004bQgjWWsCuiCQxnGi1pQK5cjK0hULSU70=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XPaNDJXfWu320CAx+J96pKu6CkNUG6Qr1tyBXDufIhQ=; b=UHXS/rR3t0Ypj8L2BjeF/rHQFQ
- VQWrVPM8CWCXetA0gVbQVpm59G073hiD3pGoZ49gzZQLRtid5iKOu+KPTdv6YANadl/ToLjd8HQv6
- P9e0dOkCEGA3tx/A/p/HisAcTb2g5Q0Z4iT2/shpG8PuE4nGEDA4yR8Hkh7IJUpwxLRw=;
+ bh=CD4KiP7xTXSJoafzPoZiqY+6GIXr86Htaou3l9dDp+0=; b=A/nhjqjRiJlBGmZgiKDpH8neVP
+ bPr4UR62ZVqskQS0v208rytf26eP1JGdhUbFG3gEFT6DA2RBy7KiJgZq8ZZ9tnTLS0pqfn4eVtwK/
+ EGWL0BlzLqiKEUgImOFVs7a/c0j+6c+qtgt4OxEpNeKTNAXxEloHPAyH3sirWs9KdPWM=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sHQKX-0007SA-6u for linux-f2fs-devel@lists.sourceforge.net;
+ id 1sHQKX-0007SF-Mp for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 12 Jun 2024 15:56:09 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 192CB614DE;
+ by dfw.source.kernel.org (Postfix) with ESMTP id A3C39614E7;
  Wed, 12 Jun 2024 15:55:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 40F0CC4AF51;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 81EECC4AF4D;
  Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1718207757;
- bh=xjFhkd1pDCVuCkX4MEJUFhIi2XRBRKnNHn6Nq/p1zpI=;
+ bh=nvqdK8Zfe+BQqsmHz03eVLUh1k+NW47H6UA4WSho07I=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=Qrybn7YOhRJp8ek1nsiVlA8Zdu3h4KRNRVbHTVynqLmRqUvAZ5muuOT4OW3EzbxU5
- a29mUTTgoY3TfJwTzK/vRYFRIGm899tsiYnj+8ZZoOR9SFFmKqxOU4zlZlfxAOYvxd
- zndh9YRaxOJ2VMsW2oLgHm/J/nXnZYJBBQgnFe+paqXWKZhiq7FPU7bgnFc3ggMN91
- oukIVY8CV6fo9sCNwZov8WPkd9UeAUsBQ/5pUHp6BQFqtZDfo3WfhOQw6bgMR0fxYN
- /SIQEjn2q1t+T9g6vpEw/Z9FnEwuY3QdB1jhyDDX6kq71PpIGuVU1klF67K5xMSMK7
- lrxLMIdtMa2dQ==
+ b=epUylh4Wid+JYSdc14+jnpQ4XAO0GHhRMf3jsCknV2zF2KrJo1ADGp4pQ+rQeSj8d
+ spM/szMeN43fZgHaV5R9s6ctyM1yz2wmjXYkcCLiULtBeFdXbVTtqiweUiaIAhz9s/
+ 3+Lr61L7+/aTHvhWLYQVyOip6OlnGkMpTZna+Cu6LoVZyGEjKH3tGkYSKp4gCLs7k3
+ PBY661Ck0f36PhE7frbYprhlcHoy6wZSVfl/w8+Ece6zYNn1kXgc+2KfhvbPUtMzV2
+ XCjNXbDeF3rL8yZU/K/y5wacN/pHE037DJL77ydqnkAEv+AXRdhToyFmAMgtQsiAAq
+ +7SildofgLo8g==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 1F12FC43618; Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
+ 75A19C43619; Wed, 12 Jun 2024 15:55:57 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171820775712.32393.17507695192982662246.git-patchwork-notify@kernel.org>
+Message-Id: <171820775747.32393.11994963596959116040.git-patchwork-notify@kernel.org>
 Date: Wed, 12 Jun 2024 15:55:57 +0000
-References: <20240604075636.3126389-1-chao@kernel.org>
-In-Reply-To: <20240604075636.3126389-1-chao@kernel.org>
+References: <20240529100103.329778-1-chao@kernel.org>
+In-Reply-To: <20240529100103.329778-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1sHQKX-0007SA-6u
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to don't dirty inode for readonly
- filesystem
+X-Headers-End: 1sHQKX-0007SF-Mp
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to truncate preallocated blocks
+ in f2fs_file_open()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,8 +81,7 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- syzbot+31e4659a3fe953aec2f4@syzkaller.appspotmail.com, stable@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ linux-kernel@vger.kernel.org, yuwen.chen@xjmz.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -92,36 +91,42 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue,  4 Jun 2024 15:56:36 +0800 you wrote:
-> syzbot reports f2fs bug as below:
+On Wed, 29 May 2024 18:01:03 +0800 you wrote:
+> chenyuwen reports a f2fs bug as below:
 > 
-> kernel BUG at fs/f2fs/inode.c:933!
-> RIP: 0010:f2fs_evict_inode+0x1576/0x1590 fs/f2fs/inode.c:933
-> Call Trace:
->  evict+0x2a4/0x620 fs/inode.c:664
->  dispose_list fs/inode.c:697 [inline]
->  evict_inodes+0x5f8/0x690 fs/inode.c:747
->  generic_shutdown_super+0x9d/0x2c0 fs/super.c:675
->  kill_block_super+0x44/0x90 fs/super.c:1667
->  kill_f2fs_super+0x303/0x3b0 fs/f2fs/super.c:4894
->  deactivate_locked_super+0xc1/0x130 fs/super.c:484
->  cleanup_mnt+0x426/0x4c0 fs/namespace.c:1256
->  task_work_run+0x24a/0x300 kernel/task_work.c:180
->  ptrace_notify+0x2cd/0x380 kernel/signal.c:2399
->  ptrace_report_syscall include/linux/ptrace.h:411 [inline]
->  ptrace_report_syscall_exit include/linux/ptrace.h:473 [inline]
->  syscall_exit_work kernel/entry/common.c:251 [inline]
->  syscall_exit_to_user_mode_prepare kernel/entry/common.c:278 [inline]
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:283 [inline]
->  syscall_exit_to_user_mode+0x15c/0x280 kernel/entry/common.c:296
->  do_syscall_64+0x50/0x110 arch/x86/entry/common.c:88
->  entry_SYSCALL_64_after_hwframe+0x63/0x6b
+> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000011
+>  fscrypt_set_bio_crypt_ctx+0x78/0x1e8
+>  f2fs_grab_read_bio+0x78/0x208
+>  f2fs_submit_page_read+0x44/0x154
+>  f2fs_get_read_data_page+0x288/0x5f4
+>  f2fs_get_lock_data_page+0x60/0x190
+>  truncate_partial_data_page+0x108/0x4fc
+>  f2fs_do_truncate_blocks+0x344/0x5f0
+>  f2fs_truncate_blocks+0x6c/0x134
+>  f2fs_truncate+0xd8/0x200
+>  f2fs_iget+0x20c/0x5ac
+>  do_garbage_collect+0x5d0/0xf6c
+>  f2fs_gc+0x22c/0x6a4
+>  f2fs_disable_checkpoint+0xc8/0x310
+>  f2fs_fill_super+0x14bc/0x1764
+>  mount_bdev+0x1b4/0x21c
+>  f2fs_mount+0x20/0x30
+>  legacy_get_tree+0x50/0xbc
+>  vfs_get_tree+0x5c/0x1b0
+>  do_new_mount+0x298/0x4cc
+>  path_mount+0x33c/0x5fc
+>  __arm64_sys_mount+0xcc/0x15c
+>  invoke_syscall+0x60/0x150
+>  el0_svc_common+0xb8/0xf8
+>  do_el0_svc+0x28/0xa0
+>  el0_svc+0x24/0x84
+>  el0t_64_sync_handler+0x88/0xec
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to don't dirty inode for readonly filesystem
-    https://git.kernel.org/jaegeuk/f2fs/c/192b8fb8d1c8
+  - [f2fs-dev,v2] f2fs: fix to truncate preallocated blocks in f2fs_file_open()
+    https://git.kernel.org/jaegeuk/f2fs/c/298b1e4182d6
 
 You are awesome, thank you!
 -- 
