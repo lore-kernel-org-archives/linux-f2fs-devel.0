@@ -4,70 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EF12FC27C79
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Jun 2024 01:02:17 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C4631C27C79
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Jun 2024 01:04:01 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sJNEl-0006q0-6v;
-	Tue, 18 Jun 2024 01:02:16 +0000
+	id 1sJNGS-00010H-1c;
+	Tue, 18 Jun 2024 01:04:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1sJNEk-0006pu-5R
+ (envelope-from <chao@kernel.org>) id 1sJNGQ-000101-Hc
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Jun 2024 01:02:15 +0000
+ Tue, 18 Jun 2024 01:03:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tgBnCxe3sOcZVGKOf26rTeMSqoh+k5fbCtix2ox1j0M=; b=Ax8nUuYMIv18vLvv8dg/lRv6Bi
- S9MRmRndiLNkRYfy7mc85X0uL9m8K4wRcNRMJUFp2SXDv2BZBkn+EdpQkDkmGv0OVYt5c6802dGPE
- UTVBroO1ywn0Kv+KFs/9pFwznWtJg1hIJpxny+qF2h++oCPx3RvNHD0rQNizDjOMtZuo=;
+ bh=iyFpyQE/3e00k/SOi1R4it4pVYm3Qv1WKc4+j1QBy1o=; b=VkBByLZvOgoLTlZ6YBUruS2oQ+
+ yHXP+yF26+bfbOZOUQ+XxcofRHdZsWrDY/wj5UyiCiG3a9RiuPM/O5ibkXvMdHYOLbjx4e37RzWYj
+ 5Q2X38cYaoHq5/4N5j6QsR+HrvwXJ4Xo3WpDlIGKe5LQjic1iOdpqVR9QZaT2+0H9z4A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=tgBnCxe3sOcZVGKOf26rTeMSqoh+k5fbCtix2ox1j0M=; b=ifRrUT18QoKaCSDqNrelHy+iVf
- 2AcXKVCPSljhSUiZMcz5RTNyRM0ixsDODVyxlmNTj3nCicYUvnn3iGHZZGqII1Redv7DRPjjos2/p
- HeC8ggUrSnZDWy+osQWJ8d1CQ8evKE8Ht/ZfbwEX4zHC+kn6SDzDaVvDc2LCdVCg7k8A=;
+ bh=iyFpyQE/3e00k/SOi1R4it4pVYm3Qv1WKc4+j1QBy1o=; b=iPj2qw11Niuy/YDl4Nk8HQfSQO
+ dgvbsO8zwM9npcY+luT4Y5sBpQkFAXqjRVOFx1wk+tR4zKWxN0lMkuijY/xgUtMPzljLus29oRTlx
+ qgcXicwYHVpQAjyqcidBX7NSRt8RMoK1kg8fd4eSTyjGLQW7UMx+Z47RnscCT1OzOwFY=;
 Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sJNEl-000639-Bh for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Jun 2024 01:02:15 +0000
+ id 1sJNGQ-00066g-Rk for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 18 Jun 2024 01:03:58 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id DE0FACE13F9;
- Tue, 18 Jun 2024 01:02:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CE69C2BD10;
- Tue, 18 Jun 2024 01:01:59 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id 6C341CE13F9
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 18 Jun 2024 01:03:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1030C2BD10;
+ Tue, 18 Jun 2024 01:03:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1718672522;
- bh=lydhvMk1/cTBLc9nkGWn8WKi5PQNxBQkD4/oF9bwnq4=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=Vn4xzXW9qBc+/0mEK8hTzSpHbMEh9OAfBqx3fgCr3bmVyJByt+qYOLEfwYhH/OoHs
- nLABGnKfoLL8ZtvhpuAaGNAsleK30zSOKcI5ALS2QK9in2774n+5BMB1vPqNdZS1M1
- e2FJNcpMVoqdaaa8BNM2D8cCmINFO3mWdDRd/NZAWSO+td/dVj8FFEPYeRTc0jtsa/
- 7FW8cRW8S//slPgoHtQ+cAHV+jDl8LcGmN6gxHMoFp9lGnBYZbF/KTqHKt3G2av+Ek
- 2y4DowGZK4CXqCWAlepQJIS3zdPqjA6G3tH2ewaDv+Xh7llr2MqI4FZKpfAS70GUaM
- 6qznEPD0tT/5Q==
-Message-ID: <5eb12aeb-a898-4fcc-9f60-037458905929@kernel.org>
-Date: Tue, 18 Jun 2024 09:01:53 +0800
+ s=k20201202; t=1718672625;
+ bh=/swPX5W6fAnNAGqwBtdSnQTYwnfC0j2x33mqYPjbDds=;
+ h=Date:Subject:To:References:From:In-Reply-To:From;
+ b=qLDqtAXspqkGVmptyAuy0Wvklru0L2/sDTEmv0HEJcKNB8dIQvYjs61GwyTnb6RfJ
+ tGrRGkqbWNjCWckIWxLCcnITqUkj2pPC+uNDKrPpvi2yvf8N6Q21b3g2i2Nzno3vvS
+ FV8wFFvO28yXvLVqMuG/V+kXSoqlEAhk207GYX5ASTpRwWF5U9Mlj2pKvv9e5vJ/V7
+ rO+gmYvZbk3TfYbufBaxJd8rlDC5ROhbpZkuZk58C8dulwrOUf3rHTAZw/iXq0+fpK
+ JvTD3b0chM71gWwA5w3wbCpznMtcg3nMafOBgdv2ymgmt0S27wddJM49FIVG3DQLPo
+ bEMrK/Zhs8VaA==
+Message-ID: <8547fb4d-e046-4b7e-b3f9-b52ed09fd645@kernel.org>
+Date: Tue, 18 Jun 2024 09:03:42 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
-References: <1718271333-32179-1-git-send-email-zhiguo.niu@unisoc.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20240612193831.106524-1-jaegeuk@kernel.org>
 Content-Language: en-US
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <1718271333-32179-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Headers-End: 1sJNEl-000639-Bh
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to use mnt_{want,
- drop}_write_file replace file_{start, end}_wrtie
+In-Reply-To: <20240612193831.106524-1-jaegeuk@kernel.org>
+X-Headers-End: 1sJNGQ-00066g-Rk
+Subject: Re: [f2fs-dev] [PATCH] f2fs: clean up set REQ_RAHEAD given rac
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,18 +80,14 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Hao_hao.Wang@unisoc.com, ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2024/6/13 17:35, Zhiguo Niu wrote:
-> mnt_{want,drop}_write_file is more suitable than
-> file_{start,end}_wrtie and also is consistent with
-> other ioctl operations.
+On 2024/6/13 3:38, Jaegeuk Kim wrote:
+> Let's set REQ_RAHEAD per rac by single source.
 > 
-> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
 Reviewed-by: Chao Yu <chao@kernel.org>
 
