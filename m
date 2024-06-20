@@ -4,70 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4AB85C27C79
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Jun 2024 03:20:43 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 56DE4C2BB85
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Jun 2024 03:43:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sK8Lm-0004SO-HP;
-	Thu, 20 Jun 2024 03:20:38 +0000
+	id 1sK8hw-0003Pa-Iv;
+	Thu, 20 Jun 2024 03:43:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1sK8Lg-0004S2-6x
+ (envelope-from <youling.tang@linux.dev>) id 1sK8hr-0003PQ-1I
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 20 Jun 2024 03:20:32 +0000
+ Thu, 20 Jun 2024 03:43:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qV9QCYrOoonJKSnU5+HeaEZ9BKvVWKaRAvqJHghyn3U=; b=jESvWJLi271GYEntPd0+0NPK4s
- UopmYGoVAfDDBA2vFpiOxSiedMRYeLjW6pw8YB2CMQa0MGdXYSSEd3S9dddBcXepnRgi5TJrfPbqk
- ZCk3vbd/l4HzUKzZgVCyGPIcV/ijGhEuXisYibxBM4s+ZLno6MSnrO6yJ55UQyp7LKQU=;
+ bh=SUmHFYVsSdRNn5kuyX1XQfBw/O2XJKBxeFC/8akhqcc=; b=IC64MJhU3G7uQc/l6m8/vkhhub
+ 2GPcgofhdqX90qymL1m12gfAPYAFv5A7cjhSn3lliaAnvZJaGAmTon7lx2obJ11tlOQto+AtZrF7U
+ FAwHQQjWdnTX+iHFfYjDFchDYouUtDPXMp8ud3Vvx3ynAGZIFDCowustnXH2hC2rf1C0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qV9QCYrOoonJKSnU5+HeaEZ9BKvVWKaRAvqJHghyn3U=; b=GkuXJUCiLY7xCF4VK+GSwF9QVg
- cXL+ucsI8+UanikS8QY5DmXXHU8rJcEPja+Ra314985DQuGCCAt8Bt4ntkEQTla11Ep4T5OL+WObZ
- M+0W00ObZoJC9yhHpNH4P3FYCdgKdy8ZTPVne+3zQCd4k7Vmz/3TuZCvArsgByCzWc6w=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=SUmHFYVsSdRNn5kuyX1XQfBw/O2XJKBxeFC/8akhqcc=; b=RYFcOyHb7TiYDPxR8BN6HfM9Yh
+ YdoXBt/yjabWCNnhth6SUGMfaRyI9lR6+0D4By8ytYv6UTCkeo/CHpeyxU0l23ew+JVtoVGnj3jLk
+ iBL2yeAquMAol55GN34Zy546ZGagNS+7kI4cULdsEtcl8s+tbtFBuIOlEiRhh21jtwIA=;
+Received: from out-176.mta0.migadu.com ([91.218.175.176])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sK8Lg-0003pn-D1 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 20 Jun 2024 03:20:32 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id B5E6ACE21BC;
- Thu, 20 Jun 2024 03:20:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D380FC2BBFC;
- Thu, 20 Jun 2024 03:20:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1718853624;
- bh=TAAgplD9oJWAcHrVyNc1Ug4UEEKEKPxmnmCOe3L5NyE=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=uu4go8hK2Ieal0QhF84wVdASOEMAWKc2+vYrYSQsMpMR0XvpmLa9KH+EGSIc1bz3d
- bxaJuWKkFEdfxEW7vBHPNdAXawihAyj5UUSif4ArOXBVPhP3WM381aF/HeA/Sockg5
- Phqez3wxzWC4WehNxjZuXkwi/XkLek00MRRnHJiKvnEv9ehHjdheQfVBnwXK7c65Tp
- /H6zUk0gwidmVU/c2wN2EhOMs6mOwqIOtDFILwY77gfCaZ7KoW8rsMcsZmbxLL9n4q
- d1sbzUfaAV+bNs0Tbhlq3bCSqaDnp0IiXnvCTCsO6W0SGNoNTE5xy1L8vpn/E3OQxy
- PwkYCd6LRgIsQ==
-Message-ID: <2842767c-db80-407b-a5e5-2b9fa74b0d79@kernel.org>
-Date: Thu, 20 Jun 2024 11:20:20 +0800
+ id 1sK8hr-0005Zw-5r for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 20 Jun 2024 03:43:27 +0000
+X-Envelope-To: viro@zeniv.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+ t=1718853839;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=SUmHFYVsSdRNn5kuyX1XQfBw/O2XJKBxeFC/8akhqcc=;
+ b=FpGmzYaKBkuMDo7Iq/S0iQT3ZIiFEx5kW+x8bcs0MiYI57ry6AMOyq+TRv5jAD1kBs6EOP
+ 5wmZSNNZXohmoVrx/q4DXXHe7xJuJktrLHwXwAjdtfdih+WsCyZuBsGQTM3uQ7356ly02p
+ sGXcDWAZ7Rmpvo91AFFeSa5dR4IyRLk=
+X-Envelope-To: brauner@kernel.org
+X-Envelope-To: jaegeuk@kernel.org
+X-Envelope-To: chao@kernel.org
+X-Envelope-To: miklos@szeredi.hu
+X-Envelope-To: jack@suse.cz
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-f2fs-devel@lists.sourceforge.net
+X-Envelope-To: youling.tang@linux.dev
+X-Envelope-To: tangyouling@kylinos.cn
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and
+ include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Chao Yu <chao@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 20 Jun 2024 11:23:34 +0800
+Message-Id: <20240620032335.147136-2-youling.tang@linux.dev>
+In-Reply-To: <20240620032335.147136-1-youling.tang@linux.dev>
+References: <20240620032335.147136-1-youling.tang@linux.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: jaegeuk@kernel.org, Wenjie Cheng <cwjhust@gmail.com>
-References: <20240614004841.103114-1-cwjhust@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240614004841.103114-1-cwjhust@gmail.com>
-X-Headers-End: 1sK8Lg-0003pn-D1
-Subject: Re: [f2fs-dev] [PATCH] Revert "f2fs: use flush command instead of
- FUA for zoned device"
+X-Migadu-Flow: FLOW_OUT
+X-Headers-End: 1sK8hr-0005Zw-5r
+Subject: [f2fs-dev] [PATCH 2/3] f2fs: Use in_group_or_capable() helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,71 +87,56 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: qwjhust@gmail.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Youling Tang <tangyouling@kylinos.cn>, Jan Kara <jack@suse.cz>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ youling.tang@linux.dev, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Jaegeuk,
+From: Youling Tang <tangyouling@kylinos.cn>
 
-Quoted commit message from commit c550e25bca66 ("f2fs: use flush command
-instead of FUA for zoned device")
-"
-The block layer for zoned disk can reorder the FUA'ed IOs. Let's use flush
-command to keep the write order.
-"
+Use the in_group_or_capable() helper function to simplify the code.
 
-It seems mq-deadline use fifo queue and make queue depth of zone device
-as 1 to IO order, so why FUA'ed write node IOs can be reordered by block
-layer?
+Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+---
+ fs/f2fs/acl.c  | 3 +--
+ fs/f2fs/file.c | 4 +---
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index ec2aeccb69a3..8bffdeccdbc3 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -219,8 +219,7 @@ static int f2fs_acl_update_mode(struct mnt_idmap *idmap,
+ 		return error;
+ 	if (error == 0)
+ 		*acl = NULL;
+-	if (!vfsgid_in_group_p(i_gid_into_vfsgid(idmap, inode)) &&
+-	    !capable_wrt_inode_uidgid(idmap, inode, CAP_FSETID))
++	if (!in_group_or_capable(idmap, inode, i_gid_into_vfsgid(idmap, inode)))
+ 		mode &= ~S_ISGID;
+ 	*mode_p = mode;
+ 	return 0;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 5c0b281a70f3..7a23434963d1 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -923,10 +923,8 @@ static void __setattr_copy(struct mnt_idmap *idmap,
+ 		inode_set_ctime_to_ts(inode, attr->ia_ctime);
+ 	if (ia_valid & ATTR_MODE) {
+ 		umode_t mode = attr->ia_mode;
+-		vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
+ 
+-		if (!vfsgid_in_group_p(vfsgid) &&
+-		    !capable_wrt_inode_uidgid(idmap, inode, CAP_FSETID))
++		if (!in_group_or_capable(idmap, inode, i_gid_into_vfsgid(idmap, inode)))
+ 			mode &= ~S_ISGID;
+ 		set_acl_inode(inode, mode);
+ 	}
+-- 
+2.34.1
 
-On 2024/6/14 8:48, Wenjie Cheng wrote:
-> This reverts commit c550e25bca660ed2554cbb48d32b82d0bb98e4b1.
-> 
-> Commit c550e25bca660ed2554cbb48d32b82d0bb98e4b1 ("f2fs: use flush
-> command instead of FUA for zoned device") used additional flush
-> command to keep write order.
-> 
-> Since Commit dd291d77cc90eb6a86e9860ba8e6e38eebd57d12 ("block:
-> Introduce zone write plugging") has enabled the block layer to
-> handle this order issue, there is no need to use flush command.
-> 
-> Signed-off-by: Wenjie Cheng <cwjhust@gmail.com>
-> ---
->   fs/f2fs/file.c | 3 +--
->   fs/f2fs/node.c | 2 +-
->   2 files changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index eae2e7908072..f08e6208e183 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -372,8 +372,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
->   	f2fs_remove_ino_entry(sbi, ino, APPEND_INO);
->   	clear_inode_flag(inode, FI_APPEND_WRITE);
->   flush_out:
-> -	if ((!atomic && F2FS_OPTION(sbi).fsync_mode != FSYNC_MODE_NOBARRIER) ||
-> -	    (atomic && !test_opt(sbi, NOBARRIER) && f2fs_sb_has_blkzoned(sbi)))
-> +	if (!atomic && F2FS_OPTION(sbi).fsync_mode != FSYNC_MODE_NOBARRIER)
->   		ret = f2fs_issue_flush(sbi, inode->i_ino);
->   	if (!ret) {
->   		f2fs_remove_ino_entry(sbi, ino, UPDATE_INO);
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 144f9f966690..c45d341dcf6e 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1631,7 +1631,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
->   		goto redirty_out;
->   	}
->   
-> -	if (atomic && !test_opt(sbi, NOBARRIER) && !f2fs_sb_has_blkzoned(sbi))
-> +	if (atomic && !test_opt(sbi, NOBARRIER))
->   		fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
->   
->   	/* should add to global list before clearing PAGECACHE status */
 
 
 _______________________________________________
