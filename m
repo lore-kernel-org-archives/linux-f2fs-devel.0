@@ -4,68 +4,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 08F90C27C4F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Jun 2024 06:28:55 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 70587C27C4F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Jun 2024 08:01:10 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sKXlV-00065U-RO;
-	Fri, 21 Jun 2024 06:28:54 +0000
+	id 1sKZCn-0006H9-70;
+	Fri, 21 Jun 2024 08:01:08 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <Yi.Sun@unisoc.com>) id 1sKXlU-00065O-Ff
+ (envelope-from <jiangshanlai@gmail.com>) id 1sKZCl-0006H2-At
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Jun 2024 06:28:52 +0000
+ Fri, 21 Jun 2024 08:01:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ubp4rSItjAZBCkY7SbCuk+EN2RlkpACkKXKQ/j5iRL8=; b=HxAUCQ5FXzUXpRlT4TChEfWHjO
- rvFiYsqcVfVpbrO3V41HtDmuy8V201J/MSweeuLdtX3pmY7UI+DnErHt+amud/shSoijzT4unx/Ld
- cHAOBOXn6mccm4y8OReAQXbn5YSWAknj5wjbga/gXc2EldhZtjNxwEv2jYT79UzH3VEI=;
+ bh=A10uLI/mw5BPIFxNPTyi9eTFLYJc1j4b8EnpD6ygN/E=; b=Im5BCoeTHzFZex1ODZByMoVXQH
+ YGTqlDQU8qbnzoVee4w/zGY4nguCG2YQrHj6Gf/60dznlf5vvPqi07qmjqjUvwkJqPdPhkk2AdK69
+ 9z03+jqgDSTsK1eRo/VbMpajDg5GqcY+2fzJg7ollR/1WDENEQsWholzaFLt5D9RcM1Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ubp4rSItjAZBCkY7SbCuk+EN2RlkpACkKXKQ/j5iRL8=; b=T58AwZ4dLmkAFddhJqa4vPS5jz
- SL97zduRSDqL2diH+NwMOCdFLGnyAC83wP/bRiZGSwTT71RB9xkhkRJqCU75Mh35ZENoHL8f+NGjh
- E/Jiprt5n9u7Cwacqt7L1A8PhTRTpN53BUFh/J1yZarf9iV46T3QA3zCNEWzHBA3a8aU=;
-Received: from mx1.unisoc.com ([222.66.158.135] helo=SHSQR01.spreadtrum.com)
+ bh=A10uLI/mw5BPIFxNPTyi9eTFLYJc1j4b8EnpD6ygN/E=; b=OGTD0U17R4gTWP27fzO2+ADAgI
+ VD4JZ1uklQUN7kVZBzIoNqVIg2qZBXHefhAGhAb0dXBf1/NdYmD3rLXzVpCZDSFQ2zYNjAKT6khCN
+ s/w51LEQ7agWXQ4t6kGOLuL+Pwch/1UGI+OyFbRyg0Ukto8ljzU8XXb39zdIhIfVVBG0=;
+Received: from mail-pj1-f54.google.com ([209.85.216.54])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sKXlU-0005hF-1y for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Jun 2024 06:28:52 +0000
-Received: from dlp.unisoc.com ([10.29.3.86])
- by SHSQR01.spreadtrum.com with ESMTP id 45L6QVZj041339;
- Fri, 21 Jun 2024 14:26:31 +0800 (+08)
- (envelope-from Yi.Sun@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
- by dlp.unisoc.com (SkyGuard) with ESMTPS id 4W56hR1r47z2SFWL2;
- Fri, 21 Jun 2024 14:21:59 +0800 (CST)
-Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Fri, 21 Jun 2024 14:26:28 +0800
-From: Yi Sun <yi.sun@unisoc.com>
-To: <sunyibuaa@gmail.com>, <tj@kernel.org>, <jaegeuk@kernel.org>,
- <chao@kernel.org>
-Date: Fri, 21 Jun 2024 14:26:16 +0800
-Message-ID: <20240621062617.595007-2-yi.sun@unisoc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240621062617.595007-1-yi.sun@unisoc.com>
-References: <20240621062617.595007-1-yi.sun@unisoc.com>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1sKZCk-00021M-RP for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 21 Jun 2024 08:01:06 +0000
+Received: by mail-pj1-f54.google.com with SMTP id
+ 98e67ed59e1d1-2bfff08fc29so1458119a91.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 21 Jun 2024 01:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1718956855; x=1719561655; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=A10uLI/mw5BPIFxNPTyi9eTFLYJc1j4b8EnpD6ygN/E=;
+ b=dtjofWpi+/Lbw1nwo0V8drYbHhuLr58tgd/lEkHZblmk7hqeObFzA+a2oz7Qu1XaWW
+ Gcw70euCBrRB/SrzAtl941btJ5E4WA7g3yPIAwlflFpUT042dPXahcAvssm0oPJEwifz
+ 23RjUEK1vUq35UoMeLmNsCWCTfnbFokuk8xlLzjRvTVnmLYXy2ZV3qnA3RNtDvKqCVyr
+ 3WwZ3blGJjcQk//S4iwrhrWxicfMW6hwzednf7DN76LwEdXNpTgr1cakiL1U2u8gjySL
+ OZCvpl69heaObiErjFdfEXLQnCrW0YhFzn0jMr29jSugXU+WLBH4SVDJjWk2EXHLOCvW
+ lMHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1718956855; x=1719561655;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=A10uLI/mw5BPIFxNPTyi9eTFLYJc1j4b8EnpD6ygN/E=;
+ b=KmOeDNrZQwlb//jmV/Y/esj2Zt1POe5GzzaFToEYEBFTC20V16ZsIp7G0yAAXVilCN
+ /prwRjESAyXGNM37rLU1OvsumxeMqb8aIexb/bAamN7KdxLEQPFmaXmSjHkiuPmYtzJt
+ RJG5fN4AYlqOrS5ZhftiVlB0PKIj/7gqmC30ae7QX+kUC2vpHLVFUqlYIAE8ZMN6/dwp
+ b5BU2C9/x6VLZIlvrCCgmVg40xnB8l9jo/kThqI/w6toCrzdESbUpxnfuSLwfeAQj3fn
+ uaWZUx29S6EAMZmaIomEWhTd5hxAv/clzne5Ie2nZnbdhnnDHwkg4Qgnac1SAdjPV0da
+ yLRA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWivNGI4s12tOvxNSK5aZtqGUxoNIPMK6gQ8DA0X/xWs1uqmh1f/6GE2xjAwV7V8S0bq+3GlbN1edH7sqaIQFN5PJz5IRGR3L3FeVWlFFz7xFP7tBCu+Q==
+X-Gm-Message-State: AOJu0Yw5NGuzN8yo70GyybhI4PWSNu2MjSC+RBlziaatVMcD5GDNVnHI
+ QI1QktCLlIW2/sEdGAlI+6VPYw0Q2JuyWg1AugW8WXo8DcRuqFUomBMzcGBhgP5dcknY8vL8ZAT
+ RP/kT6S9is+abxM0n7jR1MsoKVUI=
+X-Google-Smtp-Source: AGHT+IGc68H9WcHj8y15EEUf6zY/mIOxdH/h8ZT3XcHAgoC0HxXPonbeX3d4GDnX62zQsLJSuwIM6Rj8VwETKjhkIgU=
+X-Received: by 2002:a17:90a:77c8:b0:2c4:e772:a864 with SMTP id
+ 98e67ed59e1d1-2c7b5dc9e68mr7896458a91.40.1718956855165; Fri, 21 Jun 2024
+ 01:00:55 -0700 (PDT)
 MIME-Version: 1.0
-X-Originating-IP: [10.5.32.15]
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL: SHSQR01.spreadtrum.com 45L6QVZj041339
-X-Headers-End: 1sKXlU-0005hF-1y
-Subject: [f2fs-dev] [PATCH 1/2] workqueue: add io priority to work_struct
+References: <20240621062617.595007-1-yi.sun@unisoc.com>
+ <20240621062617.595007-2-yi.sun@unisoc.com>
+In-Reply-To: <20240621062617.595007-2-yi.sun@unisoc.com>
+From: Lai Jiangshan <jiangshanlai@gmail.com>
+Date: Fri, 21 Jun 2024 16:00:43 +0800
+Message-ID: <CAJhGHyASBtZ6pE3hUB=qB7qv3CQ=OAwarxNaQ=iojcFznfORpg@mail.gmail.com>
+To: Yi Sun <yi.sun@unisoc.com>
+X-Headers-End: 1sKZCk-00021M-RP
+Subject: Re: [f2fs-dev] [PATCH 1/2] workqueue: add io priority to work_struct
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,156 +99,38 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: yunlongxing23@gmail.com, ebiggers@google.com, kent.overstreet@linux.dev,
- jiangshanlai@gmail.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Hao_hao.Wang@unisoc.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: kent.overstreet@linux.dev, ebiggers@google.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ yunlongxing23@gmail.com, sunyibuaa@gmail.com, tj@kernel.org,
+ jaegeuk@kernel.org, Hao_hao.Wang@unisoc.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Many works will go to submit_bio(), and in many cases the io priority of
-kworker cannot meet the real-time requirements of this work.
-
-So add the basic attribute ioprio to work_struct, and kworker can adjust
-its io priority according to this attribute.
-
-Add function set_work_ioprio() to set the io priority of this work.
-Add function may_adjust_work_task_ioprio() to adjust kworker's io priority.
-Add function restore_work_task_ioprio() to restore kworker's io priority.
-
-Signed-off-by: Yi Sun <yi.sun@unisoc.com>
----
- include/linux/workqueue.h       |  9 ++++++
- include/linux/workqueue_types.h |  6 ++++
- kernel/workqueue.c              | 51 +++++++++++++++++++++++++++++++++
- 3 files changed, 66 insertions(+)
-
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index fb3993894536..f6191774b730 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -286,6 +286,9 @@ static inline unsigned int work_static(struct work_struct *work) { return 0; }
- 		lockdep_init_map(&(_work)->lockdep_map, "(work_completion)"#_work, (_key), 0); \
- 		INIT_LIST_HEAD(&(_work)->entry);			\
- 		(_work)->func = (_func);				\
-+		(_work)->ioprio = 0;					\
-+		(_work)->ori_ioprio = 0;				\
-+		(_work)->ioprio_flag = 0;				\
- 	} while (0)
- #else
- #define __INIT_WORK_KEY(_work, _func, _onstack, _key)			\
-@@ -294,6 +297,9 @@ static inline unsigned int work_static(struct work_struct *work) { return 0; }
- 		(_work)->data = (atomic_long_t) WORK_DATA_INIT();	\
- 		INIT_LIST_HEAD(&(_work)->entry);			\
- 		(_work)->func = (_func);				\
-+		(_work)->ioprio = 0;					\
-+		(_work)->ori_ioprio = 0;				\
-+		(_work)->ioprio_flag = 0;				\
- 	} while (0)
- #endif
- 
-@@ -585,6 +591,9 @@ extern struct work_struct *current_work(void);
- extern bool current_is_workqueue_rescuer(void);
- extern bool workqueue_congested(int cpu, struct workqueue_struct *wq);
- extern unsigned int work_busy(struct work_struct *work);
-+extern void set_work_ioprio(struct work_struct *work, unsigned short ioprio);
-+extern void may_adjust_work_task_ioprio(struct work_struct *work);
-+extern void restore_work_task_ioprio(struct work_struct *work);
- extern __printf(1, 2) void set_worker_desc(const char *fmt, ...);
- extern void print_worker_info(const char *log_lvl, struct task_struct *task);
- extern void show_all_workqueues(void);
-diff --git a/include/linux/workqueue_types.h b/include/linux/workqueue_types.h
-index 4c38824f3ab4..d9969596bbc3 100644
---- a/include/linux/workqueue_types.h
-+++ b/include/linux/workqueue_types.h
-@@ -17,6 +17,12 @@ struct work_struct {
- 	atomic_long_t data;
- 	struct list_head entry;
- 	work_func_t func;
-+	/* If the work does submit_bio, io priority may be needed. */
-+	unsigned short ioprio;
-+	/* Record kworker's original io priority. */
-+	unsigned short ori_ioprio;
-+	/* Whether the work has set io priority? */
-+	long ioprio_flag;
- #ifdef CONFIG_LOCKDEP
- 	struct lockdep_map lockdep_map;
- #endif
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 003474c9a77d..a44a8f92eec2 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -55,6 +55,7 @@
- #include <linux/kvm_para.h>
- #include <linux/delay.h>
- #include <linux/irq_work.h>
-+#include <linux/ioprio.h>
- 
- #include "workqueue_internal.h"
- 
-@@ -6025,6 +6026,56 @@ unsigned int work_busy(struct work_struct *work)
- }
- EXPORT_SYMBOL_GPL(work_busy);
- 
-+/**
-+ * set_work_ioprio - set io priority for the current work
-+ * @work: the work to be set
-+ * @ioprio: desired io priority
-+ *
-+ * This function can be called after INIT_WORK if the io priority
-+ * of the work needs to adjust. And it is recommended to use this
-+ * function together with may_adjust_work_task_ioprio() and
-+ * restore_work_task_ioprio().
-+ */
-+void set_work_ioprio(struct work_struct *work, unsigned short ioprio)
-+{
-+	work->ioprio = ioprio;
-+	work->ioprio_flag = 1;
-+}
-+EXPORT_SYMBOL_GPL(set_work_ioprio);
-+
-+/**
-+ * may_adjust_work_task_ioprio - adjust the io priority of kworker
-+ * @work: the work that kworker will do
-+ *
-+ * It is recommended to use this function together with set_work_ioprio()
-+ * and restore_work_task_ioprio().
-+ */
-+void may_adjust_work_task_ioprio(struct work_struct *work)
-+{
-+	if (work->ioprio_flag) {
-+		work->ori_ioprio = get_current_ioprio();
-+		set_task_ioprio(current, work->ioprio);
-+	}
-+}
-+EXPORT_SYMBOL_GPL(may_adjust_work_task_ioprio);
-+
-+/**
-+ * restore_work_task_ioprio - restore the io priority of kworker
-+ * @work: the work that kworker just did
-+ *
-+ * When kworker finishes the work, the original io priority of
-+ * kworker should be restored. It is recommended to use this function
-+ * together with set_work_ioprio() and may_adjust_work_task_ioprio().
-+ */
-+void restore_work_task_ioprio(struct work_struct *work)
-+{
-+	if (work->ioprio_flag) {
-+		set_task_ioprio(current, work->ori_ioprio);
-+		work->ioprio_flag = 0;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(restore_work_task_ioprio);
-+
- /**
-  * set_worker_desc - set description for the current work item
-  * @fmt: printf-style format string
--- 
-2.25.1
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+SGVsbG8KCk9uIEZyaSwgSnVuIDIxLCAyMDI0IGF0IDI6MjfigK9QTSBZaSBTdW4gPHlpLnN1bkB1
+bmlzb2MuY29tPiB3cm90ZToKCj4gaW5kZXggNGMzODgyNGYzYWI0Li5kOTk2OTU5NmJiYzMgMTAw
+NjQ0Cj4gLS0tIGEvaW5jbHVkZS9saW51eC93b3JrcXVldWVfdHlwZXMuaAo+ICsrKyBiL2luY2x1
+ZGUvbGludXgvd29ya3F1ZXVlX3R5cGVzLmgKPiBAQCAtMTcsNiArMTcsMTIgQEAgc3RydWN0IHdv
+cmtfc3RydWN0IHsKPiAgICAgICAgIGF0b21pY19sb25nX3QgZGF0YTsKPiAgICAgICAgIHN0cnVj
+dCBsaXN0X2hlYWQgZW50cnk7Cj4gICAgICAgICB3b3JrX2Z1bmNfdCBmdW5jOwo+ICsgICAgICAg
+LyogSWYgdGhlIHdvcmsgZG9lcyBzdWJtaXRfYmlvLCBpbyBwcmlvcml0eSBtYXkgYmUgbmVlZGVk
+LiAqLwo+ICsgICAgICAgdW5zaWduZWQgc2hvcnQgaW9wcmlvOwo+ICsgICAgICAgLyogUmVjb3Jk
+IGt3b3JrZXIncyBvcmlnaW5hbCBpbyBwcmlvcml0eS4gKi8KPiArICAgICAgIHVuc2lnbmVkIHNo
+b3J0IG9yaV9pb3ByaW87Cj4gKyAgICAgICAvKiBXaGV0aGVyIHRoZSB3b3JrIGhhcyBzZXQgaW8g
+cHJpb3JpdHk/ICovCj4gKyAgICAgICBsb25nIGlvcHJpb19mbGFnOwoKSSBkb24ndCBzZWUgYW55
+IGlvcHJpbyBjb2RlIGJlaW5nIGludGVncmF0ZWQgaW50byB3b3JrcXVldWUgaW4geW91cgpwYXRj
+aHNldCwgZnJvbSB3aGljaCB3aGF0IHlvdSBuZWVkIG1pZ2h0IGJlOgoKc3RydWN0IGlvcHJpb193
+b3JrIHsKICAgICAgIC8qKioqKioqIHRoZSB3b3JrIGl0ZW0gdG8gYmUgc2NoZWR1bGVkICoqKioq
+KiovCiAgICAgICBzdHJ1Y3Qgd29ya19zdHJ1Y3Qgd29yazsKCiAgICAgICAvKioqKioqKiB0aGUg
+c3R1ZmYgbmVlZCBmb3IgaW9wcmlvICoqKioqKi8KCiAgICAgICAvKiBJZiB0aGUgd29yayBkb2Vz
+IHN1Ym1pdF9iaW8sIGlvIHByaW9yaXR5IG1heSBiZSBuZWVkZWQuICovCiAgICAgICB1bnNpZ25l
+ZCBzaG9ydCBpb3ByaW87CiAgICAgICAvKiBSZWNvcmQga3dvcmtlcidzIG9yaWdpbmFsIGlvIHBy
+aW9yaXR5LiAqLwogICAgICAgdW5zaWduZWQgc2hvcnQgb3JpX2lvcHJpbzsKICAgICAgIC8qIFdo
+ZXRoZXIgdGhlIHdvcmsgaGFzIHNldCBpbyBwcmlvcml0eT8gKi8KICAgICAgIGxvbmcgaW9wcmlv
+X2ZsYWc7Cn0KCkFuZCBpZiBpb3ByaW8gbmVlZHMgdG8gYmUgaW50ZWdyYXRlZCBpbnRvIHdvcmtx
+dWV1ZSwgaXQgc2hvdWxkIGJlIGF0dHJpYnV0ZXMKYWRkZWQgdG8gdGhlIHdvcmtxdWV1ZSBpdHNl
+bGYgYXMgaW4gdGhlIHN0cnVjdCB3b3JrcXVldWVfYXR0cnMuCgpUaGFua3MKTGFpCgoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZl
+bCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0
+cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZl
+bAo=
