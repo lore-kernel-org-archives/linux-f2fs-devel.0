@@ -4,72 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 43C5AC27C79
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Jun 2024 21:24:14 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 17AF3C27C4F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Jun 2024 06:27:51 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sKPGL-00045o-Kq;
-	Thu, 20 Jun 2024 21:24:09 +0000
+	id 1sKXkQ-0003LT-Ja;
+	Fri, 21 Jun 2024 06:27:47 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <djwong@kernel.org>) id 1sKPGK-00045a-Hy
+ (envelope-from <Yi.Sun@unisoc.com>) id 1sKXkO-0003Jg-Jg
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 20 Jun 2024 21:24:08 +0000
+ Fri, 21 Jun 2024 06:27:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NwvUyN8h/MN79bhRw4WZ2w6W1GyaV7Re0UTnoarnXHU=; b=RHxxqwI5KBwC5DHeS0K342O6By
- n1eSrMfpWkbZVvtFD9ZUwYAIVLeF+zjh3Mh/U8L1eO8W5XOSwSN9rwmpsFWGXyNAVh/zUKwtXLkEB
- u0/80KrCUHWNYQieS2Ka7Vtxf6MkA//efZ/gOTKeMVjiC2AY4tTjDIL5vYOynEMlwfwo=;
+ bh=Nbmzlt0otK1zbmsPwlHItgUa2gS69QDvx/UQq/N0nSc=; b=duQo5SgS1YaPy5UJLn7oyftyVR
+ vFu2U6WPI2DmKL/c0rQtA02d6HXVYAfKQmUaUv1qP1+iI7MulxdpiJImRz5VZoTx4/f7XJLzHoNO9
+ BFpNunO1rsFU2vRFMpvwTJD5c9OuExwPyzt/lFRGg6KV9dqQXMlSvTP+vcRWJUfuI1pA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=NwvUyN8h/MN79bhRw4WZ2w6W1GyaV7Re0UTnoarnXHU=; b=SzdtbSywhBlzBjlukAWhLgXl8X
- vlCD/SpVSZ/POlr+rqgcIy/lG+tJ/eNfwZFvesgL6RBp79oexricRcwG3IE8RzCpdDqO/yAyIUyE4
- BHzwhLtcFshpMUmgRJJG/3D6Un7IzdQvdnJX7Ay5mhTBNUpD1z3Q84L3UUHpK0PN5G9I=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=Nbmzlt0otK1zbmsPwlHItgUa2gS69QDvx/UQq/N0nSc=; b=i
+ viP0X4jX6dhlrrFDsu/fZA8ClVtac0DQfsQpGTefUYVq3KYafEKi8JjIPOxB2i2beAFgSDNS6uR0m
+ iTr2ob9Z7oyY4/QJmWVo++TvQU6ME3fblNNho4VzKuRTCeU2iODk25zNakGBSrGiv85CDF6dZeVgb
+ IrtupBfisRAPBdUE=;
+Received: from mx1.unisoc.com ([222.66.158.135] helo=SHSQR01.spreadtrum.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sKPGK-0005Fm-SD for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 20 Jun 2024 21:24:08 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id AF130620DD;
- Thu, 20 Jun 2024 21:24:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 578C8C2BD10;
- Thu, 20 Jun 2024 21:24:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1718918642;
- bh=J2GqEQCdBgJeMDsHOUD3ggS0L8MaxCNWl/BVWnLRCW8=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=FlQZkEWXuYjG3lBPD+CbeqHswxAsU7y4iss7QjmrwwSkTw2iU3E6o6btinmhwPHrD
- lSF/mb5wOLfVwxtjYYm93dMIUn1hfwPO7/uvnuUvaMGfIVTVH8Kn/kMXsydRkfKkKk
- +q9uKCYgckPzfqcC2uHLzy4ZEe1BFH/G9Q8G00qfYW4ZlnjgKp1D8f5mbTBTzHet3f
- KJRe02ZO01MDudREL9gtQdj64PgKYAVNDPPdkW0hXvesX4jdchaliSxKMN5OssSrSq
- Ecnj4xZ09k4NozRYTQARzo3zXOkrOETiUmVHdKRiMwF75ak/8AVeIkVdoL0kbhtqfE
- xzqtOujZzBqdw==
-Date: Thu, 20 Jun 2024 14:24:01 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Message-ID: <20240620212401.GA3058325@frogsfrogsfrogs>
-References: <20240607143919.2622319-1-john.g.garry@oracle.com>
- <20240607143919.2622319-2-john.g.garry@oracle.com>
- <20240612211040.GJ2764752@frogsfrogsfrogs>
- <a123946e-1df2-48da-b120-67b50c3aa9f5@oracle.com>
+ id 1sKXkP-0005cI-2p for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 21 Jun 2024 06:27:45 +0000
+Received: from dlp.unisoc.com ([10.29.3.86])
+ by SHSQR01.spreadtrum.com with ESMTP id 45L6QUrP041081;
+ Fri, 21 Jun 2024 14:26:30 +0800 (+08)
+ (envelope-from Yi.Sun@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+ by dlp.unisoc.com (SkyGuard) with ESMTPS id 4W56hP6fg0z2SFCkm;
+ Fri, 21 Jun 2024 14:21:57 +0800 (CST)
+Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Fri, 21 Jun 2024 14:26:27 +0800
+From: Yi Sun <yi.sun@unisoc.com>
+To: <sunyibuaa@gmail.com>, <tj@kernel.org>, <jaegeuk@kernel.org>,
+ <chao@kernel.org>
+Date: Fri, 21 Jun 2024 14:26:15 +0800
+Message-ID: <20240621062617.595007-1-yi.sun@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <a123946e-1df2-48da-b120-67b50c3aa9f5@oracle.com>
-X-Headers-End: 1sKPGK-0005Fm-SD
-Subject: Re: [f2fs-dev] [PATCH v4 01/22] fs: Add
- generic_atomic_write_valid_size()
+X-Originating-IP: [10.5.32.15]
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL: SHSQR01.spreadtrum.com 45L6QUrP041081
+X-Headers-End: 1sKXkP-0005cI-2p
+Subject: [f2fs-dev] [PATCH 0/2] add io priority feature to work and use it
+ in f2fs fsverity work
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,129 +76,39 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: ritesh.list@gmail.com, gfs2@lists.linux.dev,
- mikulas@artax.karlin.mff.cuni.cz, hch@lst.de, agruenba@redhat.com,
- miklos@szeredi.hu, linux-ext4@vger.kernel.org, catherine.hoang@oracle.com,
- linux-block@vger.kernel.org, viro@zeniv.linux.org.uk, dchinner@redhat.com,
- axboe@kernel.dk, brauner@kernel.org, tytso@mit.edu, martin.petersen@oracle.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, mcgrof@kernel.org, jack@suse.com,
- linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-btrfs@vger.kernel.org, chandan.babu@oracle.com
+Cc: yunlongxing23@gmail.com, ebiggers@google.com, kent.overstreet@linux.dev,
+ jiangshanlai@gmail.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, Hao_hao.Wang@unisoc.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jun 13, 2024 at 08:35:53AM +0100, John Garry wrote:
-> On 12/06/2024 22:10, Darrick J. Wong wrote:
-> > On Fri, Jun 07, 2024 at 02:38:58PM +0000, John Garry wrote:
-> > > Add a generic helper for FSes to validate that an atomic write is
-> > > appropriately sized (along with the other checks).
-> > > 
-> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > > ---
-> > >   include/linux/fs.h | 12 ++++++++++++
-> > >   1 file changed, 12 insertions(+)
-> > > 
-> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > > index 069cbab62700..e13d34f8c24e 100644
-> > > --- a/include/linux/fs.h
-> > > +++ b/include/linux/fs.h
-> > > @@ -3645,4 +3645,16 @@ bool generic_atomic_write_valid(loff_t pos, struct iov_iter *iter)
-> > >   	return true;
-> > >   }
-> > > +static inline
-> > > +bool generic_atomic_write_valid_size(loff_t pos, struct iov_iter *iter,
-> > > +				unsigned int unit_min, unsigned int unit_max)
-> > > +{
-> > > +	size_t len = iov_iter_count(iter);
-> > > +
-> > > +	if (len < unit_min || len > unit_max)
-> > > +		return false;
-> > > +
-> > > +	return generic_atomic_write_valid(pos, iter);
-> > > +}
-> > 
-> > Now that I look back at "fs: Initial atomic write support" I wonder why
-> > not pass the iocb and the iov_iter instead of pos and the iov_iter?
-> 
-> The original user of generic_atomic_write_valid() [blkdev_dio_unaligned() or
-> blkdev_dio_invalid() with the rename] used these same args, so I just went
-> with that.
+Many works will go to submit_bio(). In many cases, the default
+io priority of kworker cannot meet the real-time requirements of
+the work. Such as f2fs_verify_bio work.
 
-Don't let the parameter types of static blockdev helpers determine the
-VFS API that filesystems need to implement untorn writes.
+If a high-task-priority process reads the verity-file, it is likely
+that the high-task-priority process will be slowly because the
+kworker's io priority is too low.
 
-In the block layer enablement patch, this could easily be:
+Patch 1: Provide a set of interfaces for temporarily changing the
+io priority of kworker.
+Patch 2: Use the interfaces provided in patch1 to temporarily change
+the io priority of f2fs_verify_bio work.
 
-bool generic_atomic_write_valid(const struct kiocb *iocb,
-				const struct iov_iter *iter)
-{
-	size_t len = iov_iter_count(iter);
+Yi Sun (2):
+  workqueue: add io priority to work_struct
+  f2fs: set f2fs verify work io priority
 
-	if (!iter_is_ubuf(iter))
-		return false;
+ fs/f2fs/data.c                  |  5 ++++
+ include/linux/workqueue.h       |  9 ++++++
+ include/linux/workqueue_types.h |  6 ++++
+ kernel/workqueue.c              | 51 +++++++++++++++++++++++++++++++++
+ 4 files changed, 71 insertions(+)
 
-	if (!is_power_of_2(len))
-		return false;
+-- 
+2.25.1
 
-	if (!IS_ALIGNED(iocb->ki_pos, len))
-		return false;
-
-	return true;
-}
-
-Then this becomes:
-
-bool generic_atomic_write_valid_size(const struct kiocb *iocb,
-				     const struct iov_iter *iter,
-				     unsigned int unit_min,
-				     unsigned int unit_max)
-{
-	size_t len = iov_iter_count(iter);
-
-	if (len < unit_min || len > unit_max)
-		return false;
-
-	return generic_atomic_write_valid(iocb, iter);
-}
-
-Yes, that means you have to rearrange the calling conventions of
-blkdev_dio_invalid a little bit, but the first two arguments match
-->read_iter and ->write_iter.  Filesystem writers can see that the first
-two arguments are the first two parameters to foofs_write_iter() and
-focus on the hard part, which is figuring out unit_{min,max}.
-
-static ssize_t
-xfs_file_dio_write(
-	struct kiocb		*iocb,
-	struct iov_iter		*from)
-{
-...
-	if ((iocb->ki_flags & IOCB_ATOMIC) &&
-	    !generic_atomic_write_valid_size(iocb, from,
-			i_blocksize(inode),
-			XFS_FSB_TO_B(mp, ip->i_extsize)))
-		return -EINVAL;
-	}
-
-
-> > And can these be collapsed into a single generic_atomic_write_checks()
-> > function?
-> 
-> bdev file operations would then need to use
-> generic_atomic_write_valid_size(), and there is no unit_min and unit_max
-> size there, apart from bdev awu min and max. And if I checked them, we would
-> be duplicating checks (of awu min and max) in the block layer.
-
-Fair enough, I concede this point.
-
---D
-
-> 
-> Cheers,
-> John
-> 
 
 
 _______________________________________________
