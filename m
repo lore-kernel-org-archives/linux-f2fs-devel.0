@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 25123C2BD09
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jun 2024 17:47:32 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 04CE5C3064D
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jun 2024 17:53:43 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sLnmr-0006qj-Me;
-	Mon, 24 Jun 2024 17:47:30 +0000
+	id 1sLnss-0004Qe-Od;
+	Mon, 24 Jun 2024 17:53:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1sLnmp-0006qa-Hp
+ (envelope-from <jaegeuk@kernel.org>) id 1sLnsq-0004QL-DG
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jun 2024 17:47:27 +0000
+ Mon, 24 Jun 2024 17:53:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Yao0KXdlKc5X8m2RO1NZXJPBoZ1JXNVjAtjzDI46TtI=; b=e7Lt2smGZsYbOcxJMg2bMzSe/S
- Sh1zAu6VLprxwHRkVQbL1z78szCOwCVJPEJqfOHvWYt8YtaUvgSRcrDUQuDrhEoSXPNngKUEiY+RV
- GB7/TBxTg/Oe4hQmODgeXRuNz2+vVMNP+NGGPsnzaN/LJyl377mfUKBaOCn2619skGGU=;
+ bh=J4ZLYf4a3EtGn29nYSnecDE5wiUsHD+CaE8lcr0dORQ=; b=Mjqnj3povbUVQ/TluEJl19wIEc
+ fag3yIR7KX5eNL7qOe6d1obnpUe43sTdARj5bIVESOEhtyfO2rKk/6ptyEbcMH+gTalWfAFAUbGsY
+ F5JyYiuejqeO8Q4VuwVUcCflFkg0phxAHM1ICaeje/kXmF1keqzi1FYVaUCAsd5uAXfI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,41 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Yao0KXdlKc5X8m2RO1NZXJPBoZ1JXNVjAtjzDI46TtI=; b=iQSs/++aCoE33pg2cRrjxixUoo
- 1hfExhRS0iwobyNo4ZPcwKjR8QI27Jlh2I7ikeolXCgMFPdQT1i5qH5MEXzuHdWoIWXUaG9Q4pzsz
- zSXrhQ+9UVGtGjrNnhWKXys1VlTE6vKpnsR4nWl1Vt/AZkmeXGvoEAFuKMSB6dH26EWg=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=J4ZLYf4a3EtGn29nYSnecDE5wiUsHD+CaE8lcr0dORQ=; b=iAchfps9CaAle6j/SYVxgeLtlU
+ MZE2RYON5lO/vj6Pqavnlh/5MRL4AdlcOn7msplLwTqVIhY72pQoBgohQQhcgKTVLdrimKbhd8Jim
+ DwLCKTxSW4Wf9bN3T7yqX4Vo7NV1yFPoeGmoRtcWVu7Sfvh11YYIslI0kKPKzpHUAwe0=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sLnmq-0003B6-2Y for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jun 2024 17:47:27 +0000
+ id 1sLnsq-0003tO-DU for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jun 2024 17:53:40 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id EEB2C60DD0;
- Mon, 24 Jun 2024 17:47:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71C5AC2BBFC;
- Mon, 24 Jun 2024 17:47:16 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id DBFD2CE137E;
+ Mon, 24 Jun 2024 17:53:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C41ADC32789;
+ Mon, 24 Jun 2024 17:53:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1719251236;
- bh=Oz2btTRqlYmLB8ZxcZd8zXogqsv7FU1VjxDC00TshrI=;
+ s=k20201202; t=1719251607;
+ bh=sV7eppB4xqZxl7orWq5DEhrQtYxq9XdZxd/7zbygi5Y=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=r0Fo0KSqW2CyCX7Y3Dw7BZ1VqIuLjJ+8QE6m2pl0mfJflxOEYR08quoEJs2t4dlA8
- WgjhZaa/w6GKP+sWfyq98B153uHKCiqBXTTRMi7EW58sxfTI6ZwlLWEmy+c1GnRdF9
- YzIoHJ5Fcj9lPkQ5JF+67Onv3tJLp07AxmSu8J00E4yN9+hK2JbFxxbdw102jazsfX
- KN+AMJ4mYslm/rcKBk5GwXtgnn5PJW8dh5dOTm6X0nk//PFCJShYLvuEDGExXUb7Wd
- eAmctgtf0I+oCWne4cs6HoTNEmQjdzPw9WJwplsGVfufvF8xMfjyb6fkpk4ak8mCsx
- AP4rEvDRvOqPQ==
-Date: Mon, 24 Jun 2024 17:47:14 +0000
+ b=emrSZSLO81R0j6/M/RlR4nDU5/cXe/8EtimLnx4K76ipJHenhNkolVfyNvHthEJw8
+ PIPWOvrZOPigrlWsyjSEWsvgNZjERHYPodUeom2ibbJCHBBn//pjt+fWq8ov1KF5OE
+ 0BcQt2WEYpQICQU8QMaain3NtTb7mfmUWOECXtjKvF2HKiPGmUd283CW/8M+/Q1Qk2
+ prvZ8U88rPTjY8220bzZZkqgEqtBZdbUpwFTxw8rrIV5TBaTzaZedfETcLRoODwZlT
+ mFeWQqvRoC20pkbCFb6VC8L2AFrHxRWUtkT58oXkUFhYLT2q0cA+PblXkglIkk69uR
+ lF0nx0KaNr8Ow==
+Date: Mon, 24 Jun 2024 17:53:25 +0000
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: Chao Yu <chao@kernel.org>
-Message-ID: <ZnmxIuq7sqopF-cJ@google.com>
-References: <CGME20240611234050epcas2p40bd72d91c6a7b67e411a5ebfcddbcb97@epcas2p4.samsung.com>
- <20240611233906.2873639-1-jtp.park@samsung.com>
- <4a79eea2-e360-493d-8c98-d93aacbd4d00@kernel.org>
+Message-ID: <ZnmylaqsdF65PVDp@google.com>
+References: <20240606095451.4088735-1-chao@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <4a79eea2-e360-493d-8c98-d93aacbd4d00@kernel.org>
-X-Headers-End: 1sLnmq-0003B6-2Y
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add scope based f2fs_putname() cleanup
+In-Reply-To: <20240606095451.4088735-1-chao@kernel.org>
+X-Headers-End: 1sLnsq-0003tO-DU
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to update user block counts in
+ block_operations()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,80 +78,91 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jtp.park@samsung.com, Jeongtae Park <jeongtae.park@gmail.com>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 06/18, Chao Yu wrote:
-> On 2024/6/12 7:39, jtp.park@samsung.com wrote:
-> > From: Jeongtae Park <jtp.park@samsung.com>
-> > 
-> > This patch adds a new scope based f2fs_putname() cleanup to reduce
-> > the chances of forgetting a f2fs_putname(). And doing so removes
+On 06/06, Chao Yu wrote:
+> Commit 59c9081bc86e ("f2fs: allow write page cache when writting cp")
+> allows write() to write data to page cache during checkpoint, so block
+> count fields like .total_valid_block_count, .alloc_valid_block_count
+> and .rf_node_block_count may encounter race condition as below:
 > 
-> Actually, f2fs_trace_rw_file_path() won't change frequently, so the risk
-> of forgetting f2fs_putname() here is very low.
+> CP				Thread A
+> - write_checkpoint
+>  - block_operations
+>   - f2fs_down_write(&sbi->node_change)
+>   - __prepare_cp_block
+>   : ckpt->valid_block_count = .total_valid_block_count
+>   - f2fs_up_write(&sbi->node_change)
+> 				- write
+> 				 - f2fs_preallocate_blocks
+> 				  - f2fs_map_blocks(,F2FS_GET_BLOCK_PRE_AIO)
+> 				   - f2fs_map_lock
+> 				    - f2fs_down_read(&sbi->node_change)
+> 				   - f2fs_reserve_new_blocks
+> 				    - inc_valid_block_count
+> 				    : percpu_counter_add(&sbi->alloc_valid_block_count, count)
+> 				    : sbi->total_valid_block_count += count
+> 				    - f2fs_up_read(&sbi->node_change)
+>  - do_checkpoint
+>  : sbi->last_valid_block_count = sbi->total_valid_block_count
+>  : percpu_counter_set(&sbi->alloc_valid_block_count, 0)
+>  : percpu_counter_set(&sbi->rf_node_block_count, 0)
+> 				- fsync
+> 				 - need_do_checkpoint
+> 				  - f2fs_space_for_roll_forward
+> 				  : alloc_valid_block_count was reset to zero,
+> 				    so, it may missed last data during checkpoint
 > 
-> > a goto statement for error handling.
+> Let's change to update .total_valid_block_count, .alloc_valid_block_count
+> and .rf_node_block_count in block_operations(), then their access can be
+> protected by .node_change and .cp_rwsem lock, so that it can avoid above
+> race condition.
 > 
-> The code logic is fine to me, but not sure whether we should apply this.
+> Fixes: 59c9081bc86e ("f2fs: allow write page cache when writting cp")
+> Cc: Yunlei He <heyunlei@oppo.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/checkpoint.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 > 
-> Jaegeuk, any comments?
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 66eaad591b60..010bbd5af211 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1298,6 +1298,12 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>  	 * dirty node blocks and some checkpoint values by block allocation.
+>  	 */
+>  	__prepare_cp_block(sbi);
+> +
+> +	/* update user_block_counts */
+> +	sbi->last_valid_block_count = sbi->total_valid_block_count;
+> +	percpu_counter_set(&sbi->alloc_valid_block_count, 0);
+> +	percpu_counter_set(&sbi->rf_node_block_count, 0);
 
-IMO, we don't need this since it's a very trivial path.
+Need to add this in __prepare_cp_block()?
 
+> +
+>  	f2fs_up_write(&sbi->node_change);
+>  	return err;
+>  }
+> @@ -1575,11 +1581,6 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  		start_blk += NR_CURSEG_NODE_TYPE;
+>  	}
+>  
+> -	/* update user_block_counts */
+> -	sbi->last_valid_block_count = sbi->total_valid_block_count;
+> -	percpu_counter_set(&sbi->alloc_valid_block_count, 0);
+> -	percpu_counter_set(&sbi->rf_node_block_count, 0);
+> -
+>  	/* Here, we have one bio having CP pack except cp pack 2 page */
+>  	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+>  	/* Wait for all dirty meta pages to be submitted for IO */
+> -- 
+> 2.40.1
 > 
-> Thanks,
-> 
-> > 
-> > Signed-off-by: Jeongtae Park <jtp.park@samsung.com>
-> > ---
-> >   fs/f2fs/f2fs.h | 2 ++
-> >   fs/f2fs/file.c | 8 +++-----
-> >   2 files changed, 5 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index 1974b6aff397..284024c12ee5 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -3402,6 +3402,8 @@ static inline void f2fs_putname(char *buf)
-> >   	__putname(buf);
-> >   }
-> > +DEFINE_FREE(f2fs_putname, void *, if (_T) f2fs_putname(_T))
-> > +
-> >   static inline void *f2fs_kzalloc(struct f2fs_sb_info *sbi,
-> >   					size_t size, gfp_t flags)
-> >   {
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index 5c0b281a70f3..c783d017ed28 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -4511,22 +4511,20 @@ static void f2fs_trace_rw_file_path(struct file *file, loff_t pos, size_t count,
-> >   				    int rw)
-> >   {
-> >   	struct inode *inode = file_inode(file);
-> > -	char *buf, *path;
-> > +	char *buf __free(f2fs_putname) = f2fs_getname(F2FS_I_SB(inode));
-> > +	char *path;
-> > -	buf = f2fs_getname(F2FS_I_SB(inode));
-> >   	if (!buf)
-> >   		return;
-> >   	path = dentry_path_raw(file_dentry(file), buf, PATH_MAX);
-> >   	if (IS_ERR(path))
-> > -		goto free_buf;
-> > +		return;
-> >   	if (rw == WRITE)
-> >   		trace_f2fs_datawrite_start(inode, pos, count,
-> >   				current->pid, path, current->comm);
-> >   	else
-> >   		trace_f2fs_dataread_start(inode, pos, count,
-> >   				current->pid, path, current->comm);
-> > -free_buf:
-> > -	f2fs_putname(buf);
-> >   }
-> >   static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
 
 
 _______________________________________________
