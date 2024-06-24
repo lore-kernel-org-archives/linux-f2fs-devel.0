@@ -4,71 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0E2C7C2D0D1
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jun 2024 17:40:54 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 25123C2BD09
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jun 2024 17:47:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sLngT-0003GU-DP;
-	Mon, 24 Jun 2024 17:40:53 +0000
+	id 1sLnmr-0006qj-Me;
+	Mon, 24 Jun 2024 17:47:30 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sLngK-0003Fb-48
+ (envelope-from <jaegeuk@kernel.org>) id 1sLnmp-0006qa-Hp
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jun 2024 17:40:44 +0000
+ Mon, 24 Jun 2024 17:47:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WoBRdiB1JenDhNnjXiXx9/WHtghAR4JxtOtdkvhDUoE=; b=ezX5r9nkfKGkoRSRK0K6ihP/1J
- AVWYJfBhDUaUc5/MMbuNSSqq7norZueeNkZlHoOpD9iPx8DMFTc3T5V3V/W8D8YMYsjdiIXzNqZ3h
- 72/KROuFa/xXjtETvqu2V2s0f3Zcn/608ae66ltErHMHb2OFo0vPnqVLfg7dsAO1G31Y=;
+ bh=Yao0KXdlKc5X8m2RO1NZXJPBoZ1JXNVjAtjzDI46TtI=; b=e7Lt2smGZsYbOcxJMg2bMzSe/S
+ Sh1zAu6VLprxwHRkVQbL1z78szCOwCVJPEJqfOHvWYt8YtaUvgSRcrDUQuDrhEoSXPNngKUEiY+RV
+ GB7/TBxTg/Oe4hQmODgeXRuNz2+vVMNP+NGGPsnzaN/LJyl377mfUKBaOCn2619skGGU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WoBRdiB1JenDhNnjXiXx9/WHtghAR4JxtOtdkvhDUoE=; b=P8tBtn4h9xSoRR1LffRDDwcSWF
- SU3cm73Pli4ETGP7UuzwaDhfURLQj0gQ2gGHYBY6szqfe/5vVZUejsklNku0DvVWoP1IpmsUvbjh7
- dhNUYkd6sDmvrlo31gcEzoQ5bxTVNqlwTepcyh+dPG52+Y5GDVWHiZaA4w5xHcIJ1F3U=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ ;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=Yao0KXdlKc5X8m2RO1NZXJPBoZ1JXNVjAtjzDI46TtI=; b=iQSs/++aCoE33pg2cRrjxixUoo
+ 1hfExhRS0iwobyNo4ZPcwKjR8QI27Jlh2I7ikeolXCgMFPdQT1i5qH5MEXzuHdWoIWXUaG9Q4pzsz
+ zSXrhQ+9UVGtGjrNnhWKXys1VlTE6vKpnsR4nWl1Vt/AZkmeXGvoEAFuKMSB6dH26EWg=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sLngK-000253-D1 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Jun 2024 17:40:44 +0000
+ id 1sLnmq-0003B6-2Y for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Jun 2024 17:47:27 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id EDC6BCE01C1;
- Mon, 24 Jun 2024 17:40:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1E1E6C4AF09;
- Mon, 24 Jun 2024 17:40:31 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id EEB2C60DD0;
+ Mon, 24 Jun 2024 17:47:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71C5AC2BBFC;
+ Mon, 24 Jun 2024 17:47:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1719250831;
- bh=UgjBZziCdN2Taf5eSsXXsJtqJ7kU4QpFWTH/FtVBLpI=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=X8TTt8NB9+lbJ16LgMefXf5QzIdmNGecHO8hwaP+8t3elXmTKdtteoLgirIQfg18c
- EzdiiZoDHp+jh6CvkhANt+NWw8UjjokUyl1/G4llWyGnTSt6H+xvI/pgWGWuXw7dqp
- 4yLum1Trx21XMUBzd8NP2hkpbFKJyu8Rw8kUe3bqqxSBkTZ+jTx1+PlIluE2XukFyp
- krtFb64IFyu6Je63O5AkemsJ4kVFqOQ2nYjWCDPPDfOqvwcTExBqnmHVxRXUI8bjyj
- vXSB5ADRN8entcQcFaCmVHVkVFf+1DeUiQfWWxQieGHabh1RRm+w31fEj+5DWjBI7f
- iTHNetKJ+bDgA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- E2A33C43616; Mon, 24 Jun 2024 17:40:30 +0000 (UTC)
+ s=k20201202; t=1719251236;
+ bh=Oz2btTRqlYmLB8ZxcZd8zXogqsv7FU1VjxDC00TshrI=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=r0Fo0KSqW2CyCX7Y3Dw7BZ1VqIuLjJ+8QE6m2pl0mfJflxOEYR08quoEJs2t4dlA8
+ WgjhZaa/w6GKP+sWfyq98B153uHKCiqBXTTRMi7EW58sxfTI6ZwlLWEmy+c1GnRdF9
+ YzIoHJ5Fcj9lPkQ5JF+67Onv3tJLp07AxmSu8J00E4yN9+hK2JbFxxbdw102jazsfX
+ KN+AMJ4mYslm/rcKBk5GwXtgnn5PJW8dh5dOTm6X0nk//PFCJShYLvuEDGExXUb7Wd
+ eAmctgtf0I+oCWne4cs6HoTNEmQjdzPw9WJwplsGVfufvF8xMfjyb6fkpk4ak8mCsx
+ AP4rEvDRvOqPQ==
+Date: Mon, 24 Jun 2024 17:47:14 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Message-ID: <ZnmxIuq7sqopF-cJ@google.com>
+References: <CGME20240611234050epcas2p40bd72d91c6a7b67e411a5ebfcddbcb97@epcas2p4.samsung.com>
+ <20240611233906.2873639-1-jtp.park@samsung.com>
+ <4a79eea2-e360-493d-8c98-d93aacbd4d00@kernel.org>
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <171925083092.4247.2292355325725216488.git-patchwork-notify@kernel.org>
-Date: Mon, 24 Jun 2024 17:40:30 +0000
-References: <1717750830-15423-1-git-send-email-zhiguo.niu@unisoc.com>
-In-Reply-To: <1717750830-15423-1-git-send-email-zhiguo.niu@unisoc.com>
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>
-X-Headers-End: 1sLngK-000253-D1
-Subject: Re: [f2fs-dev] [PATCH V2] f2fs: enable atgc dynamically if
- conditions are met
+Content-Disposition: inline
+In-Reply-To: <4a79eea2-e360-493d-8c98-d93aacbd4d00@kernel.org>
+X-Headers-End: 1sLnmq-0003B6-2Y
+Subject: Re: [f2fs-dev] [PATCH] f2fs: add scope based f2fs_putname() cleanup
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,38 +79,80 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
- Hao_hao.Wang@unisoc.com
+Cc: jtp.park@samsung.com, Jeongtae Park <jeongtae.park@gmail.com>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
-
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Fri, 7 Jun 2024 17:00:30 +0800 you wrote:
-> Now atgc can only be enabled when umounted->mounted device
-> even related conditions have reached. If the device has not
-> be umounted->mounted for a long time, atgc can not work.
+On 06/18, Chao Yu wrote:
+> On 2024/6/12 7:39, jtp.park@samsung.com wrote:
+> > From: Jeongtae Park <jtp.park@samsung.com>
+> > 
+> > This patch adds a new scope based f2fs_putname() cleanup to reduce
+> > the chances of forgetting a f2fs_putname(). And doing so removes
 > 
-> So enable atgc dynamically when atgc_age_threshold is less than
-> elapsed_time and ATGC mount option is on.
+> Actually, f2fs_trace_rw_file_path() won't change frequently, so the risk
+> of forgetting f2fs_putname() here is very low.
 > 
-> [...]
+> > a goto statement for error handling.
+> 
+> The code logic is fine to me, but not sure whether we should apply this.
+> 
+> Jaegeuk, any comments?
 
-Here is the summary with links:
-  - [f2fs-dev,V2] f2fs: enable atgc dynamically if conditions are met
-    https://git.kernel.org/jaegeuk/f2fs/c/6efc3a05e613
+IMO, we don't need this since it's a very trivial path.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> 
+> Thanks,
+> 
+> > 
+> > Signed-off-by: Jeongtae Park <jtp.park@samsung.com>
+> > ---
+> >   fs/f2fs/f2fs.h | 2 ++
+> >   fs/f2fs/file.c | 8 +++-----
+> >   2 files changed, 5 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 1974b6aff397..284024c12ee5 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -3402,6 +3402,8 @@ static inline void f2fs_putname(char *buf)
+> >   	__putname(buf);
+> >   }
+> > +DEFINE_FREE(f2fs_putname, void *, if (_T) f2fs_putname(_T))
+> > +
+> >   static inline void *f2fs_kzalloc(struct f2fs_sb_info *sbi,
+> >   					size_t size, gfp_t flags)
+> >   {
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index 5c0b281a70f3..c783d017ed28 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -4511,22 +4511,20 @@ static void f2fs_trace_rw_file_path(struct file *file, loff_t pos, size_t count,
+> >   				    int rw)
+> >   {
+> >   	struct inode *inode = file_inode(file);
+> > -	char *buf, *path;
+> > +	char *buf __free(f2fs_putname) = f2fs_getname(F2FS_I_SB(inode));
+> > +	char *path;
+> > -	buf = f2fs_getname(F2FS_I_SB(inode));
+> >   	if (!buf)
+> >   		return;
+> >   	path = dentry_path_raw(file_dentry(file), buf, PATH_MAX);
+> >   	if (IS_ERR(path))
+> > -		goto free_buf;
+> > +		return;
+> >   	if (rw == WRITE)
+> >   		trace_f2fs_datawrite_start(inode, pos, count,
+> >   				current->pid, path, current->comm);
+> >   	else
+> >   		trace_f2fs_dataread_start(inode, pos, count,
+> >   				current->pid, path, current->comm);
+> > -free_buf:
+> > -	f2fs_putname(buf);
+> >   }
+> >   static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
 
 
 _______________________________________________
