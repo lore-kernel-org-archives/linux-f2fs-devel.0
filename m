@@ -4,67 +4,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DB0A3C2BBCA
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2024 14:02:49 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A359FC2BBCA
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2024 14:13:07 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sM6ky-0000ez-2e;
-	Tue, 25 Jun 2024 14:02:48 +0000
+	id 1sM6uu-0004kZ-S6;
+	Tue, 25 Jun 2024 14:13:05 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1sM6kw-0000et-Bs
+ (envelope-from <chao@kernel.org>) id 1sM6us-0004kH-Dp
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Jun 2024 14:02:46 +0000
+ Tue, 25 Jun 2024 14:13:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UI6SRPMhpq83+LVj7HjgyImNSKqGo7GC194OmZd0ZRw=; b=U3xD8MQMcr+k/QZ+n/x644ZPNV
- 6TvL29fOaceAPn+DH4kDVljwzPMkhHwP76eM7VsOv9BCmzg/hmyFD41nGfWT6NCPsumczeugBtl+S
- /q0cPfKd8UkonAzhvwqUVEbhUQAamV6L2Sz3Fv0Nlj/Fj3/p1eU8AwyyZVPNWCUdxsh8=;
+ bh=qDotQnNU72HcosjAJ1jd0s1V96GoZ/n9UvU2qv2bmEs=; b=dbrcIsF7ns67PN3SVxY7oNqbq5
+ UOYyFupPpwliujBx2oz2ZRkm0HsGgZLRcPMZupgLgXmSKqqbVa/SzzzP3rpK4zVX4/UltWSoNKL8a
+ GEd2Gu6h0VMmcZ0n3URk6J60xto+pPa+bSRGwV0Q2D47R5RgLLCHIXPk86f27uB5RIoM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=UI6SRPMhpq83+LVj7HjgyImNSKqGo7GC194OmZd0ZRw=; b=K
- uzhx5T2qfMnN33tuvNwStgv6L3HnJO3W2Hl0ulm1WEy/K0Uwop3ImOZufRRmxyS3U/spTWxb8penM
- 8iXJxHnnsd4B4VGLx2JCVHz/tnZB3gmv5RTgcRulwGmUJYUMUIidl4/8uDRdn515sx/58lk2BrVLp
- jJolyduk6Kq6+Ogw=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=qDotQnNU72HcosjAJ1jd0s1V96GoZ/n9UvU2qv2bmEs=; b=dM1zB6vivWWsPJSQtOMzDH8dni
+ l73FZoTyeLcRp1Ig/RDIvuu68DR8u1WdJhff9UMJl3KkQfCIg0FWs0IWGE8IhgU9YAKPx976dUirN
+ fw5qfjfW4IcrJLw3rPL/S3C0yPiQYyHUz43Or4v6Dh/POhydr8mC6JQuzTWZ0jlHdC4U=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sM6kw-0004B6-SQ for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Jun 2024 14:02:46 +0000
+ id 1sM6us-00065K-CR for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Jun 2024 14:13:02 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id BD16461454;
- Tue, 25 Jun 2024 14:02:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4177C32781;
- Tue, 25 Jun 2024 14:02:38 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id EE4BBCE1A72;
+ Tue, 25 Jun 2024 14:12:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E95BC32781;
+ Tue, 25 Jun 2024 14:12:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1719324160;
- bh=5UjL4GyZrjz619WsFq1WHy8mcigCmMBJuw6biomyaJU=;
- h=From:To:Cc:Subject:Date:From;
- b=RrpH7IF5FEgP1IJSfWRQ9+74A11Jaz23GSmjPswh4v3g/J1K6SXfboqD8BLAGoZob
- CWwufwqM3CylgWg2sAajvlO0GI44G+r52edV+mPu3G5rdMu8iaFv5zXiNBnk2sYwD+
- MJr5mPgVccNYjszsTtmxv8/AwySfLMUAxrINmyeLbqDX+cBhT3Ly3ZhJUMrolvx2XP
- I6E6kUhncJbMlRyONW2Dx0GNUgRf/HfPJG/iL62DIlRYLjeQCPlAnb8TRzw/nXYMYo
- vIhcZNQQ8xz5IF57XsHctiNv4d0PIo/7hZzgjn8qdQDSyZAXo/HdBK6sJiQpJIdZ1h
- B2ENuIT4NgaCQ==
-From: Chao Yu <chao@kernel.org>
-To: Zorro Lang <zlang@redhat.com>
-Date: Tue, 25 Jun 2024 22:02:33 +0800
-Message-Id: <20240625140233.3907012-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ s=k20201202; t=1719324774;
+ bh=z61fVSnCBwaO+yTzZq2IC4MPML4OWSs6fv7IZ88Hgag=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=Cwj8Q9/8mKPNDZR/5VfxNppPhxh167OE1svMp04c5gsXsScaDaKhTKonDdZZ8B5tA
+ kiqqbHUHHCokuLLo+IyY0JjVxYoi/JTNY/5v21zFAyeGSBSN2046G/EHxu7FWJYfo7
+ HTB9SwQzIaqcJhkA3hFFUR7noAKtg+rVciE2WyhnXmIP4CKsI5ydKApg+327W1wHIq
+ QQA4FDjIBnXPwibFT5LvtbZyyiBm/PfOYY8MYlZ3LEGVBjt+7gSUp4I6l1W/WxwPdZ
+ s8ZkBPVcieADnWXE3pOhxrXf55qkaTkk8QALXLB2f37rxeT6HtevPpjLS8ylhIRUes
+ LJTo9oPktvN+A==
+Message-ID: <e1bc380d-be61-40ba-85ef-26b9cc6149dc@kernel.org>
+Date: Tue, 25 Jun 2024 22:12:50 +0800
 MIME-Version: 1.0
-X-Headers-End: 1sM6kw-0004B6-SQ
-Subject: [f2fs-dev] [PATCH] f2fs: test for race condition in between
- atomic_write and dio
+User-Agent: Mozilla Thunderbird
+To: Sheng Yong <shengyong@oppo.com>, jaegeuk@kernel.org
+References: <20240625075839.3750112-1-shengyong@oppo.com>
+ <20240625121512.3877754-1-shengyong@oppo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+Autocrypt: addr=chao@kernel.org; keydata=
+ xsFNBFYs6bUBEADJuxYGZRMvAEySns+DKVtVQRKDYcHlmj+s9is35mtlhrLyjm35FWJY099R
+ 6DL9bp8tAzLJOMBn9RuTsu7hbRDErCCTiyXWAsFsPkpt5jgTOy90OQVyTon1i/fDz4sgGOrL
+ 1tUfcx4m5i5EICpdSuXm0dLsC5lFB2KffLNw/ZfRuS+nNlzUm9lomLXxOgAsOpuEVps7RdYy
+ UEC81IYCAnweojFbbK8U6u4Xuu5DNlFqRFe/MBkpOwz4Nb+caCx4GICBjybG1qLl2vcGFNkh
+ eV2i8XEdUS8CJP2rnp0D8DM0+Js+QmAi/kNHP8jzr7CdG5tje1WIVGH6ec8g8oo7kIuFFadO
+ kwy6FSG1kRzkt4Ui2d0z3MF5SYgA1EWQfSqhCPzrTl4rJuZ72ZVirVxQi49Ei2BI+PQhraJ+
+ pVXd8SnIKpn8L2A/kFMCklYUaLT8kl6Bm+HhKP9xYMtDhgZatqOiyVV6HFewfb58HyUjxpza
+ 1C35+tplQ9klsejuJA4Fw9y4lhdiFk8y2MppskaqKg950oHiqbJcDMEOfdo3NY6/tXHFaeN1
+ etzLc1N3Y0pG8qS/mehcIXa3Qs2fcurIuLBa+mFiFWrdfgUkvicSYqOimsrE/Ezw9hYhAHq4
+ KoW4LQoKyLbrdOBJFW0bn5FWBI4Jir1kIFHNgg3POH8EZZDWbQARAQABzRlDaGFvIFl1IDxj
+ aGFvQGtlcm5lbC5vcmc+wsF3BBMBCgAhBQJWLOm1AhsDBQsJCAcDBRUKCQgLBRYCAwEAAh4B
+ AheAAAoJEKTPgB1/p52Gm2MP/0zawCU6QN7TZuJ8R1yfdhYr0cholc8ZuPoGim69udQ3otet
+ wkTNARnpuK5FG5la0BxFKPlazdgAU1pt+dTzCTS6a3/+0bXYQ5DwOeBPRWeFFklm5Frmk8sy
+ wSTxxEty0UBMjzElczkJflmCiDfQunBpWGy9szn/LZ6jjIVK/BiR7CgwXTdlvKcCEkUlI7MD
+ vTj/4tQ3y4Vdx+p7P53xlacTzZkP+b6D2VsjK+PsnsPpKwaiPzVFMUwjt1MYtOupK4bbDRB4
+ NIFSNu2HSA0cjsu8zUiiAvhd/6gajlZmV/GLJKQZp0MjHOvFS5Eb1DaRvoCf27L+BXBMH4Jq
+ 2XIyBMm+xqDJd7BRysnImal5NnQlKnDeO4PrpFq4JM0P33EgnSOrJuAb8vm5ORS9xgRlshXh
+ 2C0MeyQFxL6l+zolEFe2Nt2vrTFgjYLsm2vPL+oIPlE3j7ToRlmm7DcAqsa9oYMlVTTnPRL9
+ afNyrsocG0fvOYFCGvjfog/V56WFXvy9uH8mH5aNOg5xHB0//oG9vUyY0Rv/PrtW897ySEPh
+ 3jFP/EDI0kKjFW3P6CfYG/X1eaw6NDfgpzjkCf2/bYm/SZLV8dL2vuLBVV+hrT1yM1FcZotP
+ WwLEzdgdQffuQwJHovz72oH8HVHD2yvJf2hr6lH58VK4/zB/iVN4vzveOdzlzsFNBFYs6bUB
+ EADZTCTgMHkb6bz4bt6kkvj7+LbftBt5boKACy2mdrFFMocT5zM6YuJ7Ntjazk5z3F3IzfYu
+ 94a41kLY1H/G0Y112wggrxem6uAtUiekR9KnphsWI9lRI4a2VbbWUNRhCQA8ag7Xwe5cDIV5
+ qb7r7M+TaKaESRx/Y91bm0pL/MKfs/BMkYsr3wA1OX0JuEpV2YHDW8m2nFEGP6CxNma7vzw+
+ JRxNuyJcNi+VrLOXnLR6hZXjShrmU88XIU2yVXVbxtKWq8vlOSRuXkLh9NQOZn7mrR+Fb1EY
+ DY1ydoR/7FKzRNt6ejI8opHN5KKFUD913kuT90wySWM7Qx9icc1rmjuUDz3VO+rl2sdd0/1h
+ Q2VoXbPFxi6c9rLiDf8t7aHbYccst/7ouiHR/vXQty6vSUV9iEbzm+SDpHzdA8h3iPJs6rAb
+ 0NpGhy3XKY7HOSNIeHvIbDHTUZrewD2A6ARw1VYg1vhJbqUE4qKoUL1wLmxHrk+zHUEyLHUq
+ aDpDMZArdNKpT6Nh9ySUFzlWkHUsj7uUNxU3A6GTum2aU3Gh0CD1p8+FYlG1dGhO5boTIUsR
+ 6ho73ZNk1bwUj/wOcqWu+ZdnQa3zbfvMI9o/kFlOu8iTGlD8sNjJK+Y/fPK3znFqoqqKmSFZ
+ aiRALjAZH6ufspvYAJEJE9eZSX7Rtdyt30MMHQARAQABwsFfBBgBCgAJBQJWLOm1AhsMAAoJ
+ EKTPgB1/p52GPpoP/2LOn/5KSkGHGmdjzRoQHBTdm2YV1YwgADg52/mU68Wo6viStZqcVEnX
+ 3ALsWeETod3qeBCJ/TR2C6hnsqsALkXMFFJTX8aRi/E4WgBqNvNgAkWGsg5XKB3JUoJmQLqe
+ CGVCT1OSQA/gTEfB8tTZAGFwlw1D3W988CiGnnRb2EEqU4pEuBoQir0sixJzFWybf0jjEi7P
+ pODxw/NCyIf9GNRNYByUTVKnC7C51a3b1gNs10aTUmRfQuu+iM5yST5qMp4ls/yYl5ybr7N1
+ zSq9iuL13I35csBOn13U5NE67zEb/pCFspZ6ByU4zxChSOTdIJSm4/DEKlqQZhh3FnVHh2Ld
+ eG/Wbc1KVLZYX1NNbXTz7gBlVYe8aGpPNffsEsfNCGsFDGth0tC32zLT+5/r43awmxSJfx2P
+ 5aGkpdszvvyZ4hvcDfZ7U5CBItP/tWXYV0DDl8rCFmhZZw570vlx8AnTiC1v1FzrNfvtuxm3
+ 92Qh98hAj3cMFKtEVbLKJvrc2AO+mQlS7zl1qWblEhpZnXi05S1AoT0gDW2lwe54VfT3ySon
+ 8Klpbp5W4eEoY21tLwuNzgUMxmycfM4GaJWNCncKuMT4qGVQO9SPFs0vgUrdBUC5Pn5ZJ46X
+ mZA0DUz0S8BJtYGI0DUC/jAKhIgy1vAx39y7sAshwu2VILa71tXJ
+In-Reply-To: <20240625121512.3877754-1-shengyong@oppo.com>
+X-Headers-End: 1sM6us-00065K-CR
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: only fragment segment in the same
+ section
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,95 +122,51 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Daeho Jeong <daehojeong@google.com>,
- fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: daehojeong@google.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In this patch, we simulate race case in between sqlite atomic write
-and direct IO w/ below steps:
-1. create a regular file, and initialize it w/ 0xff data
-2. start transaction (via F2FS_IOC_START_ATOMIC_WRITE) on it
-3. write transaction data
-4. trigger direct read/write IO on it to check whether it fails or not
-5. commit and end the transaction (via F2FS_IOC_COMMIT_ATOMIC_WRITE)
-This is a regression test to check handling of race condition in
-between atomic_write and direct IO.
+On 2024/6/25 20:15, Sheng Yong wrote:
+> When new_curseg() is allocating a new segment, if mode=fragment:xxx is
+> switched on in large section scenario, __get_next_segno() will select
+> the next segno randomly in the range of [0, maxsegno] in order to
+> fragment segments.
+> 
+> If the candidate segno is free, get_new_segment() will use it directly
+> as the new segment.
+> 
+> However, if the section of the candidate is not empty, and some other
+> segments have already been used, and have a different type (e.g NODE)
+> with the candidate (e.g DATA), GC will complain inconsistent segment
+> type later.
+> 
+> This could be reproduced by the following steps:
+> 
+>    dd if=/dev/zero of=test.img bs=1M count=10240
+>    mkfs.f2fs -s 128 test.img
+>    mount -t f2fs test.img /mnt -o mode=fragment:block
+>    echo 1 > /sys/fs/f2fs/loop0/max_fragment_chunk
+>    echo 512 > /sys/fs/f2fs/loop0/max_fragment_hole
+>    dd if=/dev/zero of=/mnt/testfile bs=4K count=100
+>    umount /mnt
+> 
+>    F2FS-fs (loop0): Inconsistent segment (4377) type [0, 1] in SSA and SIT
+> 
+> In order to allow simulating segment fragmentation in large section
+> scenario, this patch reduces the candidate range:
+>   * if curseg is the last segment in the section, return curseg->segno
+>     to make get_new_segment() itself find the next free segment.
+>   * if curseg is in the middle of the secion, select candicate randomly in
+>     the range of [curseg + 1, last_seg_in_the_same_section] to keep type
+>     consistent.
+> 
+> Signed-off-by: Sheng Yong <shengyong@oppo.com>
 
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Daeho Jeong <daehojeong@google.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- tests/f2fs/004     | 45 +++++++++++++++++++++++++++++++++++++++++++++
- tests/f2fs/004.out |  3 +++
- 2 files changed, 48 insertions(+)
- create mode 100755 tests/f2fs/004
- create mode 100644 tests/f2fs/004.out
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-diff --git a/tests/f2fs/004 b/tests/f2fs/004
-new file mode 100755
-index 00000000..26862cb5
---- /dev/null
-+++ b/tests/f2fs/004
-@@ -0,0 +1,45 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2024 Oppo.  All Rights Reserved.
-+#
-+# FS QA Test No. f2fs/004
-+#
-+# Test that we will simulate race case in between sqlite atomic write
-+# and direct IO w/ below steps:
-+# 1. create a regular file, and initialize it w/ 0xff data
-+# 2. start transaction (via F2FS_IOC_START_ATOMIC_WRITE) on it
-+# 3. write transaction data
-+# 4. trigger direct read/write IO to check whether it fails or not
-+# 5. commit and end the transaction (via F2FS_IOC_COMMIT_ATOMIC_WRITE)
-+# This is a regression test to check handling of race condition in
-+# between atomic_write and direct IO.
-+#
-+. ./common/preamble
-+_begin_fstest auto quick
-+
-+. ./common/filter
-+
-+_supported_fs f2fs
-+_require_scratch
-+_require_xfs_io_command "pwrite"
-+
-+_scratch_mkfs >> $seqres.full
-+_scratch_mount >> $seqres.full
-+
-+dbfile=$SCRATCH_MNT/dbfile
-+
-+# start atomic_write on dbfile & write data to dbfile
-+touch $dbfile
-+$F2FS_IO_PROG write 1 0 32 zero atomic_commit $dbfile 3000 >> $seqres.full &
-+
-+# simulate concurrent direct read/write IO
-+$XFS_IO_PROG -d -c "pread 0 128k" $dbfile
-+$XFS_IO_PROG -d -c "pwrite 0 128k" $dbfile
-+
-+# wait for atomic_write commit completion
-+sleep 5
-+
-+_scratch_unmount
-+
-+status=0
-+exit
-diff --git a/tests/f2fs/004.out b/tests/f2fs/004.out
-new file mode 100644
-index 00000000..3af79541
---- /dev/null
-+++ b/tests/f2fs/004.out
-@@ -0,0 +1,3 @@
-+QA output created by 004
-+pread: Operation not supported
-+pwrite: Operation not supported
--- 
-2.40.1
-
+Thanks,
 
 
 _______________________________________________
