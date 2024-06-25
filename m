@@ -4,68 +4,153 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 90E7FC30653
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2024 06:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E5A71C2BBCA
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2024 07:59:21 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sM066-0007d9-52;
-	Tue, 25 Jun 2024 06:56:11 +0000
+	id 1sM15C-00035n-Vk;
+	Tue, 25 Jun 2024 07:59:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <wangzijie1@honor.com>) id 1sM064-0007d1-GD
+ (envelope-from <shengyong@oppo.com>) id 1sM15B-00035h-KE
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Jun 2024 06:56:09 +0000
+ Tue, 25 Jun 2024 07:59:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
+ :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=71OaJ7Mjlq23/hLxYoLgA3eG6sdmiE51O2cUeTDoDpw=; b=KZ2jv7EHiqf7uNyQHpgvEO4RHl
- rFPi4eG/2G23HvELgjgid3752xeVA/X0wj9m4WhPygKnHLl9Pg629gxbhkMAq0AIhhxw7OrSIhfXF
- 92bqtz1aWcZbTO3DakaW3mcHigBnf2Ofcmvq5LGo2bw8CtAIwg68Jn2XknOCPDFSJkPc=;
+ bh=iGQUlicVmsetEsTvfJvbGAI9C5xIVPocsnR+TYy2Lbs=; b=es3WNX2aLIYsF5UkLUU+/b7IN3
+ oVeWO5I2mpKp1725AP0g9hVO/u1ebMNrhWOUhxNElSD9Eg3GhZLeXO6mnQ2RsfiszKY/OhEN3OKU6
+ 9DL+JQjm0zk0dpz1m6ooxeaO9tl/vW//IGezRRPRHjY72BRHS65837P0BrsXZe7eLXGA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=71OaJ7Mjlq23/hLxYoLgA3eG6sdmiE51O2cUeTDoDpw=; b=TVzlgn6yps2lf/wZECevxeJHbq
- kwYDFtirXhS7/HKz1djXtMLfEC/n8+CbLYPTmcFtjfYp7ogKovbM5W4aQrwmqFUAKtzYk1Pjec/U9
- ASRXCXX/eDK5oPgEmbroO6brZIb7FWYW60Y4541iZxqAPlzBoGlqtkg9rcGPIc8XYDvM=;
-Received: from mta22.honor.com ([81.70.192.198] helo=mta22.hihonor.com)
+ h=MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Date:
+ Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=iGQUlicVmsetEsTvfJvbGAI9C5xIVPocsnR+TYy2Lbs=; b=C
+ ERbA9dWWS4G1AZnbj0sF4ux31jhHf0iPwjUAvGlho/kMMwB+6W3LYoHzCQP3BMQB1WUJQ2R4rI3x0
+ yudHwMOTLaFS+mGkqZYUVVc6pqEiaVTUvWauMIQxR+/Z4Em1IlC41JEnabtuDFKqoAzeXBH4cVDa9
+ PUjkNwC8KgIshn7Y=;
+Received: from mail-psaapc01on2065.outbound.protection.outlook.com
+ ([40.107.255.65] helo=APC01-PSA-obe.outbound.protection.outlook.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sM063-0006Fq-1X for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Jun 2024 06:56:09 +0000
-Received: from w002.hihonor.com (unknown [10.68.28.120])
- by mta22.hihonor.com (SkyGuard) with ESMTPS id 4W7Zmc04ZFzYlPjR;
- Tue, 25 Jun 2024 14:34:08 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w002.hihonor.com
- (10.68.28.120) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.25; Tue, 25 Jun
- 2024 14:36:11 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.25; Tue, 25 Jun
- 2024 14:36:11 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <chao@kernel.org>
-Date: Tue, 25 Jun 2024 14:36:11 +0800
-Message-ID: <20240625063611.816629-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <874174e3-79ba-452d-afff-615fe0bc8d0d@kernel.org>
-References: <874174e3-79ba-452d-afff-615fe0bc8d0d@kernel.org>
+ id 1sM15C-0006o6-OV for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Jun 2024 07:59:18 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XtfsugfOt/duZjw2WQXSR2oO3K7unNv/ghCXhUQnPpXb6u6YLBmPLhJ/wyl2OA6m5eIcwlCNnua560vrf3DGflyGIC0KTknoIedffGJv1hFdZg5UOePekEb9DEFDqQw9CCt1pepeBq5YbhoZ+nE6OGAHZ0eMS5NiHKOrO2lWqQMTfz88WEeAkrDKrGBz4Skm9JvY+kZh3O0vsK8ecD+FjDR9dTNpR4s4aHZp7gl69HURtpA6kFj9KLsExDscQO/dAWJVxVsAqpE4g6c3a0nwungybTMaS1HZvBvwRT9SE8YtstGwdBJyH+zJmmzJnKa3PNRFAH2KG10ID+4Zj/SLww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iGQUlicVmsetEsTvfJvbGAI9C5xIVPocsnR+TYy2Lbs=;
+ b=WgMmjPmjDhvLd63Dyn2r/TrUyTwQAYbR55C3ffS27Hgg9HOXSDNlJ9kP6sLiDspXY2xKVablVeiXKFSOs+6PmDrrp7yax3cz7+7UoZQijoKLFLQSvaOfJItXCIMTr21gwieZz73tSug82fOGeHFK2VPWkIfBUr/lf3bsA7eHg32zWe9PW+XMK7fBv7dNcoETPkOGqVH6EZQF3QjiOv99UCNloaXZ4sllEumDMIVb1zjnjNSOte1MpDz/YZ2ufBFjpRtF9TOPfeplXq5McKNAn/ur/TmhXSgvf59Op2umvIc1e4wywuVvlTFrYUJtLDMxsAtVWq8FzOtKK21Id37XVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
+ dkim=pass header.d=oppo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iGQUlicVmsetEsTvfJvbGAI9C5xIVPocsnR+TYy2Lbs=;
+ b=RsYMDzE/D4JFzkf0Zu8nfJV2VBHzetY+YnpfTr6sYtGpgv8Ycq0v3upFyvl9zXWENNA4lX5cnD5jHCMDOql/8PtmbgXsPdKwEwgRnM9CbdWU38NUFaal2nTdzWquULAl8V0l0dDCVvd6Fuvpj8j3A0yk4vPY/CFgGa+0zh/MnSk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oppo.com;
+Received: from SI2PR02MB6002.apcprd02.prod.outlook.com (2603:1096:4:1e9::6) by
+ SEZPR02MB7259.apcprd02.prod.outlook.com (2603:1096:101:1ed::7) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7698.26; Tue, 25 Jun 2024 07:59:08 +0000
+Received: from SI2PR02MB6002.apcprd02.prod.outlook.com
+ ([fe80::430e:3ab6:1ee6:968d]) by SI2PR02MB6002.apcprd02.prod.outlook.com
+ ([fe80::430e:3ab6:1ee6:968d%3]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
+ 07:59:08 +0000
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Tue, 25 Jun 2024 15:58:39 +0800
+Message-Id: <20240625075839.3750112-1-shengyong@oppo.com>
+X-Mailer: git-send-email 2.40.1
+X-ClientProxiedBy: SI1PR02CA0002.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::16) To SI2PR02MB6002.apcprd02.prod.outlook.com
+ (2603:1096:4:1e9::6)
 MIME-Version: 1.0
-X-Originating-IP: [10.144.23.14]
-X-ClientProxiedBy: w010.hihonor.com (10.68.28.113) To a011.hihonor.com
- (10.68.31.243)
-X-Headers-End: 1sM063-0006Fq-1X
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: reduce expensive checkpoint trigger
- frequency
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR02MB6002:EE_|SEZPR02MB7259:EE_
+X-MS-Office365-Filtering-Correlation-Id: b15da480-336e-4437-aef8-08dc94ecb0dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230037|1800799021|366013|376011|52116011|38350700011; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?QzFe4L01/Wf2GgAoEZObpQkvNYvvJOlgmHR1D3IvE2/zyY6v0dxBOM8H6y0m?=
+ =?us-ascii?Q?QfbNmVNa0kSJ4cE78XjNtAmuXkMv3yZSqiZbskWgo4ctpn/3dZA4GPCZq91D?=
+ =?us-ascii?Q?egfsAQLaG9TETdjY+P615+uM4v2KFQFR1lwl1V9wy9SXeET5RlEuhJm3hFti?=
+ =?us-ascii?Q?sSKk/8GrqhPvIY0zkHqkKx2CrSOpIzf9QNnzUuUnxhUQh///nKdcGURsVBWa?=
+ =?us-ascii?Q?eAhfom2vLptYvlA8+g/WClSxgdx5NGxlIKA1pjFKsPVBoco0A370x9bn3qft?=
+ =?us-ascii?Q?Ftm/PrWHZP3ezmwVrJWmNGtMoImx7LlN4LwsJh8l3qxlq9WXTirMhSltqwGU?=
+ =?us-ascii?Q?XsW92aFSbPqygiSxac0GoTgYO5mtOD/KwLc7sRhma/Tj9UByfcjwnmN/oMXe?=
+ =?us-ascii?Q?isAfM92xZrU1v9RYmfh8lp0cqpLXdKfYv4/FGgVEfBMeZ9B9cGgpBh+mObvz?=
+ =?us-ascii?Q?KLShXxmh9HJlxcqTsO6ZNLHhFcYFIfq3/sEH0SEGG52UA50B8GUPUa4pneR0?=
+ =?us-ascii?Q?UtoT6L9bIIN4dViO46OSIY4XRzkcwfYiolOtWrS3ycsXRIieIrc1zZb7tJos?=
+ =?us-ascii?Q?Pixl3NaiNWELUWvz9wwRkNK3vx7bQ3XM5FLJDLhcrnw3dDOTZhZQ130PXKqM?=
+ =?us-ascii?Q?HYpxA+2kdumFp8SKhpv8NaG41mTzKZBi3up/XvDubJJDMmPGaawB6l9498s4?=
+ =?us-ascii?Q?X4btx9n1thtCoUze43++vKOCFJpEJd57K6LVtzxLH7QtORDBVEOUmhcZqRU1?=
+ =?us-ascii?Q?C2YYMHupIe1G/N89g8m5A8ClGOyY87+ZRfpXRyRebqmG3tm/cb1HmqZUDwgm?=
+ =?us-ascii?Q?gZMxMMgLRY9usKXuoUhrKydkfilVQF5MjZ7djebdy7Gq2vI61zQ6U/POp/M0?=
+ =?us-ascii?Q?DnO514lDvDvPVM/36gItu3THT76l54XNK5nApmqKlc4RfwnKH87vaVK/aP/e?=
+ =?us-ascii?Q?dOdIGInWdkjG7dP0b5nFcD7IZND5+DgRMm4mGvUqwJokT0MwsyctFvMxOrlE?=
+ =?us-ascii?Q?hKWABhdx78cAt3Ben8mzMMtlLwajwnk8ayTnyGIOEBW0IGOnvp7vJufIKtJk?=
+ =?us-ascii?Q?hB0WmY83k/x9MKuAJHMZSceZKcb5rq6keNGRvXinq3gwaW58KMgTqKYL8tYF?=
+ =?us-ascii?Q?k+sfy1IXIqPpNLHpshH7Vp/EIFo+BO1qpen7UG1zyNEXZBzery6Nv2IMHfrG?=
+ =?us-ascii?Q?rN9lu15fdp4RB+2dLjU5im8MirtsSRZQv53wGoWL4YyR5t+c48xmgPKPKZUz?=
+ =?us-ascii?Q?ueLHtz0RcRFOjJP4EldqegBclPtV+RsnMy+5u+Hzs94wqDf8S+A1yZxkZyco?=
+ =?us-ascii?Q?si4XxYEmoCepY7Eq/Jw8oGUZFBwQYQNu6Kvay4x7CNPsvHcZBQHEtqykEGyi?=
+ =?us-ascii?Q?LCB6xqg=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SI2PR02MB6002.apcprd02.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230037)(1800799021)(366013)(376011)(52116011)(38350700011); DIR:OUT;
+ SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?/4SFl5Z8xtNeWLP/Zwlhy1QXVWPmkrMTQNN1XYm+le9gqca41mr+xa9vV1Y/?=
+ =?us-ascii?Q?tTYVtmUfmB+c0fUg6Dq5ANCwkZNQAir8Zn4NLtSmMwmfSWaeaEjgkEuaG7zy?=
+ =?us-ascii?Q?zdxMpobg0iMhoQZOJ63bsJ2WCv8AeF25pjvaaWWxyNbCA+v4e5jxRQ5Q6XJf?=
+ =?us-ascii?Q?Z3GUU0S4272LuRYVaucxbxwCEDz2u0ZiokRT6yvITVyUpJjYZVFsfduezJl8?=
+ =?us-ascii?Q?7ep8pfXTfuVLGICGrowMKZX6QdpCBQxdoBflJnScn8Hyx4AlRbu6/7M5DRgv?=
+ =?us-ascii?Q?MqSThcCq4WwazI5lD9SqMjHAj0qxNunZfTB9UVGw1VrR5PXmRLaVA9D19skh?=
+ =?us-ascii?Q?+IM63EBLTPO/HqeplS2eMhuOPW/dMEGXOhQRvKQzKVOY2tdoTpHIr78ThUXP?=
+ =?us-ascii?Q?vuXvcM/1BebCcx7cwCelihktwnKsquanYLaUTswKZRjtmyS7//K1ZphVBxWS?=
+ =?us-ascii?Q?FU2kKX0B+m/dW9H/HKWEW2/8WTfNkvZdUHXpi13MT9ug/BX+59rcZbgf3rgA?=
+ =?us-ascii?Q?UEtZrlYRvSEC8gHQhQH1BBjVwInqvtmlnGYk1F96eIb/3RSZXsmckNix6EXH?=
+ =?us-ascii?Q?+ePCvf7fY3wVk4e4wnumn1JGF5phxKz292xDzGZm7IHZi8xcl1l9atyFk7If?=
+ =?us-ascii?Q?ofVMku8AUPDEzuDSy73S4pK7Ch1/gHb4VBrUgPmXfr6ifcA32aba1ebGoTuT?=
+ =?us-ascii?Q?P04A5eIc60S7Nw3tfaq+3pdwX2LzvxVID2Yvcbpt7eTk6Ef4n14g5KLqDL5v?=
+ =?us-ascii?Q?4Gxx1pKDMilY2KsKtnoZylGzHG8FKQGgUK6LJGSL6U8msU4HoEtWneusPvdP?=
+ =?us-ascii?Q?dwJP5OEzmKu+BMiKm/0clD4v8RF6K+8d2+PbJHuONLw2dceN8KohUjxBEgE4?=
+ =?us-ascii?Q?n/wId18+L2mYZj5QTNC09/VTC+3XVeirZLNnkkoT9YROoNfgjZ0/ketesBQp?=
+ =?us-ascii?Q?Srj+PeGNu5L0xbCqQW/vv2/+ko//9UfKtIoGmC3YUKOV7GjtTErnwbRzHLqz?=
+ =?us-ascii?Q?ZhZlZsTAiaYUOukR01iFx1GDqphKz7e2p8I0BeDRNygRMU+mfJXcnaiw+s55?=
+ =?us-ascii?Q?KBzclyV+csXCsWd4XQIOd0iDIZG88wiYLF+socXvRuGNY6CB6aLJRa2s2QFo?=
+ =?us-ascii?Q?KddqThU+uiPeYZEMJeKxH49+92pr/hhKnxK+QbshXDCifvo0OYHCYpmvVW8z?=
+ =?us-ascii?Q?gZORQ5YI72CLwUMxmySZxyYfDPAWFdYfNYHKCe2k08zE5/zGXQNb3zYdCPnI?=
+ =?us-ascii?Q?rFEZvvukkwzNrZ0ggtHkkIF3Ml5+gDz5m5lsGCabGC1cz3NqZVmdJQTB0rZz?=
+ =?us-ascii?Q?8C2YQqzCvTV7pzr462R6GFBFKWaFTphiBheVBJse6k7BGs0uX48b9dztHctL?=
+ =?us-ascii?Q?bmTRZzTqQj+q4P2JSiXS417ENp5NI5FNfKzSoDYVpwqXJ2DhhSUT0k6Qidm7?=
+ =?us-ascii?Q?4GO2gZxTILDjuZ0nMBigwMORBcTW0oQb6pin7yMHMtTDdoOzuh82jM3DE6LO?=
+ =?us-ascii?Q?cmgUGUoFGxjztAobZoY33CQanO8gj4Ld8EgqQXD2kRN8stlwf02PxNnwyg2i?=
+ =?us-ascii?Q?t0keBlzA6e1wxlGI1fNIpmNkJ7bQsfHQYNUuEgcE?=
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b15da480-336e-4437-aef8-08dc94ecb0dc
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR02MB6002.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 07:59:08.1890 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5TM/mfV9DH0EGGtg2WLCXQ1a1CPcJucuHmQJ4IOuYmd1DMR/nvTIvLqISR+uBCPgeqdRNqPOGMw0A5C+jy0ANw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR02MB7259
+X-Headers-End: 1sM15C-0006o6-OV
+Subject: [f2fs-dev] [PATCH] f2fs: only fragment segment in the same section
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,152 +162,66 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- bintian.wang@honor.com, zhiguo.niu@unisoc.com, jaegeuk@kernel.org,
- wangzijie1@honor.com
+From: Sheng Yong via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Sheng Yong <shengyong@oppo.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
->On 2024/6/25 10:14, wangzijie wrote:
->>> We may trigger high frequent checkpoint for below case:
->>> 1. mkdir /mnt/dir1; set dir1 encrypted
->>> 2. touch /mnt/file1; fsync /mnt/file1
->>> 3. mkdir /mnt/dir2; set dir2 encrypted
->>> 4. touch /mnt/file2; fsync /mnt/file2
->>> ...
->>>
->>> Although, newly created dir and file are not related, due to
->>> commit bbf156f7afa7 ("f2fs: fix lost xattrs of directories"), we will
->>> trigger checkpoint whenever fsync() comes after a new encrypted dir
->>> created.
->>>
->>> In order to avoid such condition, let's record an entry including
->>> directory's ino into global cache when we initialize encryption policy
->>> in a checkpointed directory, and then only trigger checkpoint() when
->>> target file's parent has non-persisted encryption policy, for the case
->>> its parent is not checkpointed, need_do_checkpoint() has cover that
->>> by verifying it with f2fs_is_checkpointed_node().
->>>
->>> Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
->>> Tested-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
->>> Reported-by: Yunlei He <heyunlei@hihonor.com>
->>> Signed-off-by: Chao Yu <chao@kernel.org>
->>> ---
->>> v3:
->>> - Recently, Zhiguo Niu reported the same issue, so I repost this
->>> patch for comments.
->>>   fs/f2fs/f2fs.h              |  2 ++
->>>   fs/f2fs/file.c              |  3 +++
->>>   fs/f2fs/xattr.c             | 16 ++++++++++++++--
->>>   include/trace/events/f2fs.h |  3 ++-
->>>   4 files changed, 21 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index e2e0ca45f881..0094a8c85f4a 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -279,6 +279,7 @@ enum {
->>>   	APPEND_INO,		/* for append ino list */
->>>   	UPDATE_INO,		/* for update ino list */
->>>   	TRANS_DIR_INO,		/* for transactions dir ino list */
->>> +	ENC_DIR_INO,		/* for encrypted dir ino list */
->>>   	FLUSH_INO,		/* for multiple device flushing */
->>>   	MAX_INO_ENTRY,		/* max. list */
->>>   };
->>> @@ -1147,6 +1148,7 @@ enum cp_reason_type {
->>>   	CP_FASTBOOT_MODE,
->>>   	CP_SPEC_LOG_NUM,
->>>   	CP_RECOVER_DIR,
->>> +	CP_ENC_DIR,
->>>   };
->>>   
->>>   enum iostat_type {
->>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>> index 8198afb5fb9c..18b33b1f0c83 100644
->>> --- a/fs/f2fs/file.c
->>> +++ b/fs/f2fs/file.c
->>> @@ -218,6 +218,9 @@ static inline enum cp_reason_type need_do_checkpoint(struct inode *inode)
->>>   		f2fs_exist_written_data(sbi, F2FS_I(inode)->i_pino,
->>>   							TRANS_DIR_INO))
->>>   		cp_reason = CP_RECOVER_DIR;
->>> +	else if (f2fs_exist_written_data(sbi, F2FS_I(inode)->i_pino,
->>> +							ENC_DIR_INO))
->>> +		cp_reason = CP_ENC_DIR;
->>>   
->>>   	return cp_reason;
->>>   }
->>> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
->>> index f290fe9327c4..cbd1b88297fe 100644
->>> --- a/fs/f2fs/xattr.c
->>> +++ b/fs/f2fs/xattr.c
->>> @@ -629,6 +629,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
->>>   			const char *name, const void *value, size_t size,
->>>   			struct page *ipage, int flags)
->>>   {
->>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->>>   	struct f2fs_xattr_entry *here, *last;
->>>   	void *base_addr, *last_base_addr;
->>>   	int found, newsize;
->>> @@ -772,8 +773,19 @@ static int __f2fs_setxattr(struct inode *inode, int index,
->>>   	if (index == F2FS_XATTR_INDEX_ENCRYPTION &&
->>>   			!strcmp(name, F2FS_XATTR_NAME_ENCRYPTION_CONTEXT))
->>>   		f2fs_set_encrypted_inode(inode);
->>> -	if (S_ISDIR(inode->i_mode))
->>> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
->>> +
->>> +	if (S_ISDIR(inode->i_mode)) {
->>> +		/*
->>> +		 * In restrict mode, fsync() always tries triggering checkpoint
->>> +		 * for all metadata consistency, in other mode, it only triggers
->>> +		 * checkpoint when parent's encryption metadata updates.
->>> +		 */
->>> +		if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT)
->>> +			set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
->>> +		else if (IS_ENCRYPTED(inode) &&
->>> +			f2fs_is_checkpointed_node(sbi, inode->i_ino))
->>> +			f2fs_add_ino_entry(sbi, inode->i_ino, ENC_DIR_INO);
->>> +	}
->>>   
->>>   same:
->>>   	if (is_inode_flag_set(inode, FI_ACL_MODE)) {
->>> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
->>> index 7ed0fc430dc6..48f2e399e184 100644
->>> --- a/include/trace/events/f2fs.h
->>> +++ b/include/trace/events/f2fs.h
->>> @@ -139,7 +139,8 @@ TRACE_DEFINE_ENUM(EX_BLOCK_AGE);
->>>   		{ CP_NODE_NEED_CP,	"node needs cp" },		\
->>>   		{ CP_FASTBOOT_MODE,	"fastboot mode" },		\
->>>   		{ CP_SPEC_LOG_NUM,	"log type is 2" },		\
->>> -		{ CP_RECOVER_DIR,	"dir needs recovery" })
->>> +		{ CP_RECOVER_DIR,	"dir needs recovery" },		\
->>> +		{ CP_ENC_DIR,		"persist encryption policy" })
->>>   
->>>   #define show_shutdown_mode(type)					\
->>>   	__print_symbolic(type,						\
->>> -- 
->>> 2.40.1
->> 
->> Hi, Chao
->> I noticed the discussion about patch v2, Jaegeuk mentioned no encryption case:
->> 1) parent is checkpointed
->> 2) set_xattr(dir) w/ new xnid
->> 3) create(file)
->> 4) fsync(file)
->> We will not trigger checkpoint() after this change.
->> So, how about adding a rule in need_do_checkpoint? We can judge if the parent has xnid
->> being checkpointed or not, if not we can still trigger checkpoint() and keep the same
->> behavior before this change.
->
->Hi wangzijie,
->
->It may cause performance overhead to get parent's xnid by parent ino,
->so I prefer to tag ENC_DIR_INO for the inode if its parent's xnid is
->not checkpointed, it that fine to you?
->
->Thanks,
+If mode=fragment:xxx is enabled in large section mode, segno returned by
+__get_next_segno() may located in new section with different type, which
+messes up ssa type. This could be reproduced by the following steps:
 
-Yes, I've also met this reported problem. Thank you for your reply.
+  dd if=/dev/zero of=test.img bs=1M count=10240
+  mkfs.f2fs -s 128 test.img
+  mount -t f2fs test.img /mnt -o mode=fragment:block
+  echo 1 > /sys/fs/f2fs/loop0/max_fragment_chunk
+  echo 512 > /sys/fs/f2fs/loop0/max_fragment_hole
+  dd if=/dev/zero of=/mnt/testfile bs=4K count=100
+  umount /mnt
+
+  F2FS-fs (loop0): Inconsistent segment (4377) type [0, 1] in SSA and SIT
+
+In order to allow simulate segment fragmentation in large section mode,
+this patch limits the random range within the same section.
+
+Signed-off-by: Sheng Yong <shengyong@oppo.com>
+---
+ fs/f2fs/segment.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index a0ce3d080f80a..55d474f5c2103 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2782,10 +2782,21 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, type);
+ 	unsigned short seg_type = curseg->seg_type;
++	unsigned int hint;
+ 
+ 	sanity_check_seg_type(sbi, seg_type);
+-	if (f2fs_need_rand_seg(sbi))
+-		return get_random_u32_below(MAIN_SECS(sbi) * SEGS_PER_SEC(sbi));
++	if (f2fs_need_rand_seg(sbi)) {
++		if (__is_large_section(sbi)) {
++			hint = GET_SEC_FROM_SEG(sbi, curseg->segno);
++			if (GET_SEC_FROM_SEG(sbi, curseg->segno + 1) != hint)
++				return curseg->segno;
++			return get_random_u32_inclusive(curseg->segno + 1,
++					GET_SEG_FROM_SEC(sbi, hint + 1) - 1);
++		} else {
++			return get_random_u32_below(MAIN_SECS(sbi) *
++						SEGS_PER_SEC(sbi));
++		}
++	}
+ 
+ 	if (__is_large_section(sbi))
+ 		return curseg->segno;
+-- 
+2.40.1
+
 
 
 _______________________________________________
