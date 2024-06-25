@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C73CDC2BBCA
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2024 03:14:20 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 87208C3064D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2024 03:16:21 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sLwdR-000895-1X;
-	Tue, 25 Jun 2024 03:14:20 +0000
+	id 1sLwfM-0002Nc-PZ;
+	Tue, 25 Jun 2024 03:16:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1sLwdP-00088y-B7
+ (envelope-from <chao@kernel.org>) id 1sLwfL-0002NV-OD
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Jun 2024 03:14:18 +0000
+ Tue, 25 Jun 2024 03:16:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zFoPWh3n1vldeyDoiiwfNDaGFyKz3NB2faLdmiv25Cs=; b=LoaY7wRFJeu3UZ6AMpvs9w7Daz
- KKNLXjQ2jlD41Z5NNQFaYpTTwQLRZHZJWuW1f2gIfpF6MlYCJlijyNxxCoRbXFtwtxhyBVxYnrhkY
- lVvHwwDmtIKg/7AcqjhCQ04mlIRuWhPHSQdK+bP+wMSbyWY9EJ/37PqJ9irxDiykZzSw=;
+ bh=84+pn/lqan3N47R8gGvLXlaQqc/fX8OXzhOW+0UKk4Y=; b=EkKGiNIsSSgsPl1RxW03vemTZB
+ pHWQ1r2wdAy6JguCUCmvMXVvYxLmzo6GG1JbfmeJsp64TDDJYxqfBSzdq7JYEu4C2JiNsq3y2avIH
+ b7JQ5Ln/OHEXNFP5m0RcQ7bCSKpzOnUyj/wP6RowiVvsCBiB01eEGntfPHfkGKE9uhIc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,41 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=zFoPWh3n1vldeyDoiiwfNDaGFyKz3NB2faLdmiv25Cs=; b=AnpHDp5uMXeGNaO7UWsdIyvC0+
- 84P/SIt2Y8600Eyn9Lv1NysRRLek/wosuNF0vdx8R0Ks6We4lhNNIJbZSwJhzsTwpWOcvCwec9wmx
- 6L59GnnqwP6rvEPmC7y7A+zcParV59BQ4cVgU35WRepaxn7krxmNplwyWcBVnlDR2zvE=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=84+pn/lqan3N47R8gGvLXlaQqc/fX8OXzhOW+0UKk4Y=; b=jYkk4KmmqxyzKt0qiIOmyP/a4x
+ OtI5aKSMYvhhr9q+034MxZn/y1R+S+XgYCPQTeUELURVrXOm4j2O6/ehGwPSeFBgWzf0H2CypWbMV
+ cOCOrZHc7BfxAjuoDw4vPEcdH6sqZX4KniL34/rvGv+fgBKtUIaQ5iS7aTQcCZA1tELc=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sLwdO-0001Vd-QS for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Jun 2024 03:14:18 +0000
+ id 1sLwfL-0001lm-UY for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Jun 2024 03:16:20 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id A85A6611DE
+ by sin.source.kernel.org (Postfix) with ESMTP id 7B8C7CE17BB
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 25 Jun 2024 03:14:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2CF7C4AF09;
- Tue, 25 Jun 2024 03:14:05 +0000 (UTC)
+ Tue, 25 Jun 2024 03:16:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEB0FC32789;
+ Tue, 25 Jun 2024 03:16:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1719285247;
- bh=xmtO96A+N055YtD+3waXk7KlXygllEUWidyxOMqx4xI=;
+ s=k20201202; t=1719285371;
+ bh=bcfjSpR4747ly8u0IB5/5T8MV5FJsuo1UT28kexs9go=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=As17zSnO0H4YoH+VEVrP911ZuxvwpgRbdBTze0ZpkNW/ELFc5oFf3HykaV5PANk7V
- 2ab/7PRTOjsr6r8s93ABFdevstCei9Equ9lwnzbWYj1q5ETshXq2OnFghqFDsYetV1
- Cde/ANAIZobA0uB4A09LUfECsCiwkmMdt3OW8WYqBlPQyRuSoNfvV/HYYSNknt6EPn
- P+LmSyn3ekDO+OGnl3c9P0GY+b3aoDdWe5ijfWLYOGBwW2xUP+oEaIkr0p5a5e6iD4
- akbjT990sIF+LS/A7BewqCDY92BD8N15JmuelcQLhk3z1FnqQL/qKl/J329434dGdF
- yGpMuq1R6GzIA==
+ b=N1qqYF7nhrmFEUJQRTPuqDOCe8hw81XtgvnojiHzy5xj3IEtSTPoRo33HJedaJUzN
+ pDZlehNg42PKv1x8KzTYT0BierwehD/GiimORKBDZbSxC+Exr6cVkLzqagcqPwLz5e
+ PAD/l1S1kRDOhp+9Eb7J68tilVMWQtGLTSe/Wrn7W20oU4/aBB/eUC9Fp4h1+5UPNl
+ J/kxtJ7iUBEGXnVVXE4jmjqyMNCjDBIWvqntUEATsHz5tFlCYLmx4Wy20S+hOQRfQj
+ ZVGFpgeICnxtkIhg4s2JkM7mYKNNBW8XnkJ4cfgBvktDvi18cM3VyyCkKBw5nx1K6o
+ w4DjcahEZHhMg==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Tue, 25 Jun 2024 11:13:51 +0800
-Message-Id: <20240625031351.3586955-4-chao@kernel.org>
+Date: Tue, 25 Jun 2024 11:16:03 +0800
+Message-Id: <20240625031604.3587691-2-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240625031351.3586955-1-chao@kernel.org>
-References: <20240625031351.3586955-1-chao@kernel.org>
+In-Reply-To: <20240625031604.3587691-1-chao@kernel.org>
+References: <20240625031604.3587691-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1sLwdO-0001Vd-QS
-Subject: [f2fs-dev] [PATCH 4/4] f2fs: atomic: fix to forbid dio in
- atomic_file
+X-Headers-End: 1sLwfL-0001lm-UY
+Subject: [f2fs-dev] [PATCH 2/3] f2fs: clean up addrs_per_{inode,block}()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,61 +83,71 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-atomic write can only be used via buffered IO, let's fail direct IO on
-atomic_file and return -EOPNOTSUPP.
+Introduce a new help addrs_per_page() to wrap common code
+from addrs_per_inode() and addrs_per_block() for cleanup.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/file.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ fs/f2fs/f2fs.h          | 20 +++++++-------------
+ include/linux/f2fs_fs.h |  7 +++----
+ 2 files changed, 10 insertions(+), 17 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 0355cb054521..a527de1e7a2f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2150,6 +2150,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
- 		goto out;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 45451ca3b438..1f78a39fe7f4 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3232,21 +3232,15 @@ static inline bool f2fs_need_compress_data(struct inode *inode)
+ 	return false;
+ }
  
- 	f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
-+	f2fs_down_write(&fi->i_gc_rwsem[READ]);
+-static inline unsigned int addrs_per_inode(struct inode *inode)
++static inline unsigned int addrs_per_page(struct inode *inode,
++							bool is_inode)
+ {
+-	unsigned int addrs = CUR_ADDRS_PER_INODE(inode) -
+-				get_inline_xattr_addrs(inode);
++	unsigned int addrs = is_inode ? (CUR_ADDRS_PER_INODE(inode) -
++			get_inline_xattr_addrs(inode)) : DEF_ADDRS_PER_BLOCK;
  
- 	/*
- 	 * Should wait end_io to count F2FS_WB_CP_DATA correctly by
-@@ -2209,6 +2210,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
- 	}
- 	f2fs_i_size_write(fi->cow_inode, isize);
+-	if (!f2fs_compressed_file(inode))
+-		return addrs;
+-	return ALIGN_DOWN(addrs, F2FS_I(inode)->i_cluster_size);
+-}
+-
+-static inline unsigned int addrs_per_block(struct inode *inode)
+-{
+-	if (!f2fs_compressed_file(inode))
+-		return DEF_ADDRS_PER_BLOCK;
+-	return ALIGN_DOWN(DEF_ADDRS_PER_BLOCK, F2FS_I(inode)->i_cluster_size);
++	if (f2fs_compressed_file(inode))
++		return ALIGN_DOWN(addrs, F2FS_I(inode)->i_cluster_size);
++	return addrs;
+ }
  
-+	f2fs_up_write(&fi->i_gc_rwsem[READ]);
- 	f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
+ static inline void *inline_xattr_addr(struct inode *inode, struct page *page)
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index 41d1d71c36ff..01bee2b289c2 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -259,15 +259,14 @@ struct node_footer {
+ #define CUR_ADDRS_PER_INODE(inode)	(DEF_ADDRS_PER_INODE - \
+ 					get_extra_isize(inode))
+ #define DEF_NIDS_PER_INODE	5	/* Node IDs in an Inode */
+-#define ADDRS_PER_INODE(inode)	addrs_per_inode(inode)
++#define ADDRS_PER_INODE(inode)	addrs_per_page(inode, true)
+ /* Address Pointers in a Direct Block */
+ #define DEF_ADDRS_PER_BLOCK	((F2FS_BLKSIZE - sizeof(struct node_footer)) / sizeof(__le32))
+-#define ADDRS_PER_BLOCK(inode)	addrs_per_block(inode)
++#define ADDRS_PER_BLOCK(inode)	addrs_per_page(inode, false)
+ /* Node IDs in an Indirect Block */
+ #define NIDS_PER_BLOCK		((F2FS_BLKSIZE - sizeof(struct node_footer)) / sizeof(__le32))
  
- 	f2fs_update_time(sbi, REQ_TIME);
-@@ -4537,6 +4539,13 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		f2fs_down_read(&fi->i_gc_rwsem[READ]);
- 	}
+-#define ADDRS_PER_PAGE(page, inode)	\
+-	(IS_INODE(page) ? ADDRS_PER_INODE(inode) : ADDRS_PER_BLOCK(inode))
++#define ADDRS_PER_PAGE(page, inode)	(addrs_per_page(inode, IS_INODE(page)))
  
-+	/* dio is not compatible w/ atomic file */
-+	if (f2fs_is_atomic_file(inode)) {
-+		f2fs_up_read(&fi->i_gc_rwsem[READ]);
-+		ret = -EOPNOTSUPP;
-+		goto out;
-+	}
-+
- 	/*
- 	 * We have to use __iomap_dio_rw() and iomap_dio_complete() instead of
- 	 * the higher-level function iomap_dio_rw() in order to ensure that the
-@@ -4948,6 +4957,12 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	/* Determine whether we will do a direct write or a buffered write. */
- 	dio = f2fs_should_use_dio(inode, iocb, from);
- 
-+	/* dio is not compatible w/ atomic write */
-+	if (dio && f2fs_is_atomic_file(inode)) {
-+		ret = -EOPNOTSUPP;
-+		goto out_unlock;
-+	}
-+
- 	/* Possibly preallocate the blocks for the write. */
- 	target_size = iocb->ki_pos + iov_iter_count(from);
- 	preallocated = f2fs_preallocate_blocks(iocb, from, dio);
+ #define	NODE_DIR1_BLOCK		(DEF_ADDRS_PER_INODE + 1)
+ #define	NODE_DIR2_BLOCK		(DEF_ADDRS_PER_INODE + 2)
 -- 
 2.40.1
 
