@@ -4,67 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F3512C2BBCA
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2024 03:16:24 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4A54CC2BBCA
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2024 03:52:56 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sLwfO-0001LA-Mi;
-	Tue, 25 Jun 2024 03:16:23 +0000
+	id 1sLxEj-0003zw-Ot;
+	Tue, 25 Jun 2024 03:52:54 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1sLwfN-0001L3-DW
+ (envelope-from <chao@kernel.org>) id 1sLxEi-0003zg-8Q
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Jun 2024 03:16:22 +0000
+ Tue, 25 Jun 2024 03:52:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GSu69bhZN3fMlsKaSuBGCV9ehLdyEQQwtY4JPZvZ9pc=; b=NWd37OZ/0r09XFNmOtXOi8POuC
- 13rLSjdT9XywTnufa6aTmxzg/QaQyNIGBsNhkuGeJLRaAyGxiW4AMUIce2EX8RH57r98HUlf+gpu+
- ePpQN/K0TtOpp+q2EvhccGonQHDAN/NoX9zlBKoaLIQ3YmFuStcQB4kmkGxuiFxTIRRA=;
+ bh=eeVE7NB6fSGj/T0oQcC9GvJD6l9G7/AhQ8A/OK+YS0E=; b=Q98OViVKA0rLleKz0da0MDjGRn
+ dVjruTp2WKRgt/Wrivg1YTbIzQDpwe8LA7rsARGcz0+W/EyMdcrEmKVfWZrFdOOLVUBokL37F52UC
+ w3mdlwTxMup+OwqarWqyc1FCEPELwy1sSNLWWRRjONEhXAqtcxH9szocX0IEvfp1VhpA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=GSu69bhZN3fMlsKaSuBGCV9ehLdyEQQwtY4JPZvZ9pc=; b=m
- Bc08GOe+1u69aFiQl4a6Nfa+V3lWbdjEa1m8uMcPddcr4uZjFPNtSbcf4xJUOB8W0vmaVWUoc033u
- fTlX9XOs9Sm1kK7umcaNyX/Dw05e3yxPCyE9rcg7xhliicKolSsGLatXEvh3yS1cU7c+SpLJZKPJJ
- J3mKOFObYdlkbEWo=;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=eeVE7NB6fSGj/T0oQcC9GvJD6l9G7/AhQ8A/OK+YS0E=; b=EixFiybdZzBtkrT2Gm6S9O3pwR
+ 3MAcCtpSSrfi0bf271l/5Dg/BcaX5ErCyFvsWmEaeB7O4LPIb/h68hk9lYxw4P1qeqKDHVM2+4xly
+ sQeslmHP7y4QAiVSsQYQs2M9cuHxe9Nvbf4iOreKywENAforBX3IKxbjD4lMrC6oqyO4=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sLwfN-0001mN-Ni for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Jun 2024 03:16:22 +0000
+ id 1sLxEi-0005wp-FY for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Jun 2024 03:52:52 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 8AE0160F78
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 25 Jun 2024 03:16:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED304C32782;
- Tue, 25 Jun 2024 03:16:08 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 5D682611CF;
+ Tue, 25 Jun 2024 03:52:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EE98C32782;
+ Tue, 25 Jun 2024 03:52:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1719285370;
- bh=6Rglquvyxioi6UiW3APlZPWPADnqnzvx28cYgeo8yyc=;
- h=From:To:Cc:Subject:Date:From;
- b=njEzkDX5DdtnE6itvLk3mT/8+u4zNoc1s80CHx98IfSdjCp1qac+N8jvP35e87LC5
- IORpPPYFkPw3W8gqL2zxRReyIgGw+462yvgG2umCrQpaLzEHHDdA7JgUr6R7p8nVCj
- 6mWgUox9mAHO7rN752lvt0rnS4DRDhg5etpOmS8qW7soaflm72fmpRQ53F/XXkzDKp
- VItatSlh36LCTret9LUzU9Eao7bd66DCSIDtaBHhD2ooazAnKulki17Jw9njAHmuqH
- zqESEUEyghd1X8uZbfSoH2yEhj6wQl6pvu07B46bxtz9ASdJPUQNef5GLXybEzfYgK
- hfw85jKeTOcSA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Tue, 25 Jun 2024 11:16:02 +0800
-Message-Id: <20240625031604.3587691-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ s=k20201202; t=1719287566;
+ bh=z5urP9LmonVj1+HWK1Z4RP53MeJ9CgTGlShcGRnU5d8=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=HTCPW3iUCAhqdm1Ud/ZUaC0sYGyAzGoZ/dbtFmHNTEKnhSfnXszL9EBxj7kXR3nb2
+ kAGhjFQa4noI4X3WTb9wDvYPFGNbkQZYdWjBkm5EgmUibnKhEQ3n9DDO8hiwKYYWXR
+ flYza6dtOhcUJI48Bxwm5uDAZT5T1luoa9pRkTS4oBhhrpUz3G+JFW/GFIA79tVH5Q
+ 58Vjc682QbzYDYdN9kjEVTzlY4IjIlrU+ILSOps29IhLEXsbU0ttt9jYNUbpeQuY9+
+ Py3CU6sBpP77FW0fynqe4klgVBYoy+ZLrepMYJbKseFK9r4+INtF5uGtkzSjKJl4JX
+ MgS6dLdC9Qatw==
+Message-ID: <874174e3-79ba-452d-afff-615fe0bc8d0d@kernel.org>
+Date: Tue, 25 Jun 2024 11:52:42 +0800
 MIME-Version: 1.0
-X-Headers-End: 1sLwfN-0001mN-Ni
-Subject: [f2fs-dev] [PATCH 1/3] f2fs: clean up F2FS_I()
+User-Agent: Mozilla Thunderbird
+To: wangzijie <wangzijie1@honor.com>
+References: <20240111081743.2999210-1-chao@kernel.org>
+ <20240625021433.798568-1-wangzijie1@honor.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240625021433.798568-1-wangzijie1@honor.com>
+X-Headers-End: 1sLxEi-0005wp-FY
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: reduce expensive checkpoint trigger
+ frequency
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,541 +80,158 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: jaegeuk@kernel.org, zhiguo.niu@unisoc.com, linux-kernel@vger.kernel.org,
+ bintian.wang@honor.com, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use temporary variable instead of F2FS_I() for cleanup.
+On 2024/6/25 10:14, wangzijie wrote:
+>> We may trigger high frequent checkpoint for below case:
+>> 1. mkdir /mnt/dir1; set dir1 encrypted
+>> 2. touch /mnt/file1; fsync /mnt/file1
+>> 3. mkdir /mnt/dir2; set dir2 encrypted
+>> 4. touch /mnt/file2; fsync /mnt/file2
+>> ...
+>>
+>> Although, newly created dir and file are not related, due to
+>> commit bbf156f7afa7 ("f2fs: fix lost xattrs of directories"), we will
+>> trigger checkpoint whenever fsync() comes after a new encrypted dir
+>> created.
+>>
+>> In order to avoid such condition, let's record an entry including
+>> directory's ino into global cache when we initialize encryption policy
+>> in a checkpointed directory, and then only trigger checkpoint() when
+>> target file's parent has non-persisted encryption policy, for the case
+>> its parent is not checkpointed, need_do_checkpoint() has cover that
+>> by verifying it with f2fs_is_checkpointed_node().
+>>
+>> Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+>> Tested-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+>> Reported-by: Yunlei He <heyunlei@hihonor.com>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>> v3:
+>> - Recently, Zhiguo Niu reported the same issue, so I repost this
+>> patch for comments.
+>>   fs/f2fs/f2fs.h              |  2 ++
+>>   fs/f2fs/file.c              |  3 +++
+>>   fs/f2fs/xattr.c             | 16 ++++++++++++++--
+>>   include/trace/events/f2fs.h |  3 ++-
+>>   4 files changed, 21 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index e2e0ca45f881..0094a8c85f4a 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -279,6 +279,7 @@ enum {
+>>   	APPEND_INO,		/* for append ino list */
+>>   	UPDATE_INO,		/* for update ino list */
+>>   	TRANS_DIR_INO,		/* for transactions dir ino list */
+>> +	ENC_DIR_INO,		/* for encrypted dir ino list */
+>>   	FLUSH_INO,		/* for multiple device flushing */
+>>   	MAX_INO_ENTRY,		/* max. list */
+>>   };
+>> @@ -1147,6 +1148,7 @@ enum cp_reason_type {
+>>   	CP_FASTBOOT_MODE,
+>>   	CP_SPEC_LOG_NUM,
+>>   	CP_RECOVER_DIR,
+>> +	CP_ENC_DIR,
+>>   };
+>>   
+>>   enum iostat_type {
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index 8198afb5fb9c..18b33b1f0c83 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -218,6 +218,9 @@ static inline enum cp_reason_type need_do_checkpoint(struct inode *inode)
+>>   		f2fs_exist_written_data(sbi, F2FS_I(inode)->i_pino,
+>>   							TRANS_DIR_INO))
+>>   		cp_reason = CP_RECOVER_DIR;
+>> +	else if (f2fs_exist_written_data(sbi, F2FS_I(inode)->i_pino,
+>> +							ENC_DIR_INO))
+>> +		cp_reason = CP_ENC_DIR;
+>>   
+>>   	return cp_reason;
+>>   }
+>> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+>> index f290fe9327c4..cbd1b88297fe 100644
+>> --- a/fs/f2fs/xattr.c
+>> +++ b/fs/f2fs/xattr.c
+>> @@ -629,6 +629,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+>>   			const char *name, const void *value, size_t size,
+>>   			struct page *ipage, int flags)
+>>   {
+>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>>   	struct f2fs_xattr_entry *here, *last;
+>>   	void *base_addr, *last_base_addr;
+>>   	int found, newsize;
+>> @@ -772,8 +773,19 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+>>   	if (index == F2FS_XATTR_INDEX_ENCRYPTION &&
+>>   			!strcmp(name, F2FS_XATTR_NAME_ENCRYPTION_CONTEXT))
+>>   		f2fs_set_encrypted_inode(inode);
+>> -	if (S_ISDIR(inode->i_mode))
+>> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
+>> +
+>> +	if (S_ISDIR(inode->i_mode)) {
+>> +		/*
+>> +		 * In restrict mode, fsync() always tries triggering checkpoint
+>> +		 * for all metadata consistency, in other mode, it only triggers
+>> +		 * checkpoint when parent's encryption metadata updates.
+>> +		 */
+>> +		if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT)
+>> +			set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
+>> +		else if (IS_ENCRYPTED(inode) &&
+>> +			f2fs_is_checkpointed_node(sbi, inode->i_ino))
+>> +			f2fs_add_ino_entry(sbi, inode->i_ino, ENC_DIR_INO);
+>> +	}
+>>   
+>>   same:
+>>   	if (is_inode_flag_set(inode, FI_ACL_MODE)) {
+>> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+>> index 7ed0fc430dc6..48f2e399e184 100644
+>> --- a/include/trace/events/f2fs.h
+>> +++ b/include/trace/events/f2fs.h
+>> @@ -139,7 +139,8 @@ TRACE_DEFINE_ENUM(EX_BLOCK_AGE);
+>>   		{ CP_NODE_NEED_CP,	"node needs cp" },		\
+>>   		{ CP_FASTBOOT_MODE,	"fastboot mode" },		\
+>>   		{ CP_SPEC_LOG_NUM,	"log type is 2" },		\
+>> -		{ CP_RECOVER_DIR,	"dir needs recovery" })
+>> +		{ CP_RECOVER_DIR,	"dir needs recovery" },		\
+>> +		{ CP_ENC_DIR,		"persist encryption policy" })
+>>   
+>>   #define show_shutdown_mode(type)					\
+>>   	__print_symbolic(type,						\
+>> -- 
+>> 2.40.1
+> 
+> Hi, Chao
+> I noticed the discussion about patch v2, Jaegeuk mentioned no encryption case:
+> 1) parent is checkpointed
+> 2) set_xattr(dir) w/ new xnid
+> 3) create(file)
+> 4) fsync(file)
+> We will not trigger checkpoint() after this change.
+> So, how about adding a rule in need_do_checkpoint? We can judge if the parent has xnid
+> being checkpointed or not, if not we can still trigger checkpoint() and keep the same
+> behavior before this change.
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/f2fs.h     | 32 ++++++++++-------------
- fs/f2fs/file.c     | 64 ++++++++++++++++++++++++----------------------
- fs/f2fs/inode.c    | 54 +++++++++++++++++---------------------
- fs/f2fs/namei.c    | 20 ++++++++-------
- fs/f2fs/recovery.c | 11 ++++----
- 5 files changed, 88 insertions(+), 93 deletions(-)
+Hi wangzijie,
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 777497919c62..45451ca3b438 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4398,22 +4398,18 @@ static inline int set_compress_context(struct inode *inode)
- {
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
- 
--	F2FS_I(inode)->i_compress_algorithm =
--			F2FS_OPTION(sbi).compress_algorithm;
--	F2FS_I(inode)->i_log_cluster_size =
--			F2FS_OPTION(sbi).compress_log_size;
--	F2FS_I(inode)->i_compress_flag =
--			F2FS_OPTION(sbi).compress_chksum ?
--				BIT(COMPRESS_CHKSUM) : 0;
--	F2FS_I(inode)->i_cluster_size =
--			BIT(F2FS_I(inode)->i_log_cluster_size);
--	if ((F2FS_I(inode)->i_compress_algorithm == COMPRESS_LZ4 ||
--		F2FS_I(inode)->i_compress_algorithm == COMPRESS_ZSTD) &&
-+	fi->i_compress_algorithm = F2FS_OPTION(sbi).compress_algorithm;
-+	fi->i_log_cluster_size = F2FS_OPTION(sbi).compress_log_size;
-+	fi->i_compress_flag = F2FS_OPTION(sbi).compress_chksum ?
-+					BIT(COMPRESS_CHKSUM) : 0;
-+	fi->i_cluster_size = BIT(fi->i_log_cluster_size);
-+	if ((fi->i_compress_algorithm == COMPRESS_LZ4 ||
-+		fi->i_compress_algorithm == COMPRESS_ZSTD) &&
- 			F2FS_OPTION(sbi).compress_level)
--		F2FS_I(inode)->i_compress_level =
--				F2FS_OPTION(sbi).compress_level;
--	F2FS_I(inode)->i_flags |= F2FS_COMPR_FL;
-+		fi->i_compress_level = F2FS_OPTION(sbi).compress_level;
-+	fi->i_flags |= F2FS_COMPR_FL;
- 	set_inode_flag(inode, FI_COMPRESSED_FILE);
- 	stat_inc_compr_inode(inode);
- 	inc_compr_inode_stat(inode);
-@@ -4428,15 +4424,15 @@ static inline bool f2fs_disable_compressed_file(struct inode *inode)
- {
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 
--	f2fs_down_write(&F2FS_I(inode)->i_sem);
-+	f2fs_down_write(&fi->i_sem);
- 
- 	if (!f2fs_compressed_file(inode)) {
--		f2fs_up_write(&F2FS_I(inode)->i_sem);
-+		f2fs_up_write(&fi->i_sem);
- 		return true;
- 	}
- 	if (f2fs_is_mmap_file(inode) ||
- 		(S_ISREG(inode->i_mode) && F2FS_HAS_BLOCKS(inode))) {
--		f2fs_up_write(&F2FS_I(inode)->i_sem);
-+		f2fs_up_write(&fi->i_sem);
- 		return false;
- 	}
- 
-@@ -4445,7 +4441,7 @@ static inline bool f2fs_disable_compressed_file(struct inode *inode)
- 	clear_inode_flag(inode, FI_COMPRESSED_FILE);
- 	f2fs_mark_inode_dirty_sync(inode, true);
- 
--	f2fs_up_write(&F2FS_I(inode)->i_sem);
-+	f2fs_up_write(&fi->i_sem);
- 	return true;
- }
- 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 7508c744c157..2203904383a6 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -980,6 +980,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		 struct iattr *attr)
- {
- 	struct inode *inode = d_inode(dentry);
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	int err;
- 
- 	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
-@@ -998,7 +999,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 			return -EOPNOTSUPP;
- 		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
- 			!IS_ALIGNED(attr->ia_size,
--			F2FS_BLK_TO_BYTES(F2FS_I(inode)->i_cluster_size)))
-+			F2FS_BLK_TO_BYTES(fi->i_cluster_size)))
- 			return -EINVAL;
- 	}
- 
-@@ -1052,7 +1053,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 				return err;
- 		}
- 
--		f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+		f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
- 		filemap_invalidate_lock(inode->i_mapping);
- 
- 		truncate_setsize(inode, attr->ia_size);
-@@ -1064,14 +1065,14 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		 * larger than i_size.
- 		 */
- 		filemap_invalidate_unlock(inode->i_mapping);
--		f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+		f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
- 		if (err)
- 			return err;
- 
--		spin_lock(&F2FS_I(inode)->i_size_lock);
-+		spin_lock(&fi->i_size_lock);
- 		inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
--		F2FS_I(inode)->last_disk_size = i_size_read(inode);
--		spin_unlock(&F2FS_I(inode)->i_size_lock);
-+		fi->last_disk_size = i_size_read(inode);
-+		spin_unlock(&fi->i_size_lock);
- 	}
- 
- 	__setattr_copy(idmap, inode, attr);
-@@ -1081,7 +1082,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 
- 		if (is_inode_flag_set(inode, FI_ACL_MODE)) {
- 			if (!err)
--				inode->i_mode = F2FS_I(inode)->i_acl_mode;
-+				inode->i_mode = fi->i_acl_mode;
- 			clear_inode_flag(inode, FI_ACL_MODE);
- 		}
- 	}
-@@ -1989,15 +1990,15 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
- 			if (err)
- 				return err;
- 
--			f2fs_down_write(&F2FS_I(inode)->i_sem);
-+			f2fs_down_write(&fi->i_sem);
- 			if (!f2fs_may_compress(inode) ||
- 					(S_ISREG(inode->i_mode) &&
- 					F2FS_HAS_BLOCKS(inode))) {
--				f2fs_up_write(&F2FS_I(inode)->i_sem);
-+				f2fs_up_write(&fi->i_sem);
- 				return -EINVAL;
- 			}
- 			err = set_compress_context(inode);
--			f2fs_up_write(&F2FS_I(inode)->i_sem);
-+			f2fs_up_write(&fi->i_sem);
- 
- 			if (err)
- 				return err;
-@@ -3584,6 +3585,7 @@ static int release_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
- static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	pgoff_t page_idx = 0, last_idx;
- 	unsigned int released_blocks = 0;
-@@ -3621,7 +3623,7 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
- 	if (ret)
- 		goto out;
- 
--	if (!atomic_read(&F2FS_I(inode)->i_compr_blocks)) {
-+	if (!atomic_read(&fi->i_compr_blocks)) {
- 		ret = -EPERM;
- 		goto out;
- 	}
-@@ -3630,7 +3632,7 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
- 	inode_set_ctime_current(inode);
- 	f2fs_mark_inode_dirty_sync(inode, true);
- 
--	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+	f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
- 	filemap_invalidate_lock(inode->i_mapping);
- 
- 	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-@@ -3656,7 +3658,7 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
- 
- 		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
- 		count = min(end_offset - dn.ofs_in_node, last_idx - page_idx);
--		count = round_up(count, F2FS_I(inode)->i_cluster_size);
-+		count = round_up(count, fi->i_cluster_size);
- 
- 		ret = release_compress_blocks(&dn, count);
- 
-@@ -3672,7 +3674,7 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
- 	}
- 
- 	filemap_invalidate_unlock(inode->i_mapping);
--	f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+	f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
- out:
- 	if (released_blocks)
- 		f2fs_update_time(sbi, REQ_TIME);
-@@ -3683,14 +3685,14 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
- 	if (ret >= 0) {
- 		ret = put_user(released_blocks, (u64 __user *)arg);
- 	} else if (released_blocks &&
--			atomic_read(&F2FS_I(inode)->i_compr_blocks)) {
-+			atomic_read(&fi->i_compr_blocks)) {
- 		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 		f2fs_warn(sbi, "%s: partial blocks were released i_ino=%lx "
- 			"iblocks=%llu, released=%u, compr_blocks=%u, "
- 			"run fsck to fix.",
- 			__func__, inode->i_ino, inode->i_blocks,
- 			released_blocks,
--			atomic_read(&F2FS_I(inode)->i_compr_blocks));
-+			atomic_read(&fi->i_compr_blocks));
- 	}
- 
- 	return ret;
-@@ -3779,6 +3781,7 @@ static int reserve_compress_blocks(struct dnode_of_data *dn, pgoff_t count,
- static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	pgoff_t page_idx = 0, last_idx;
- 	unsigned int reserved_blocks = 0;
-@@ -3804,10 +3807,10 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
- 		goto unlock_inode;
- 	}
- 
--	if (atomic_read(&F2FS_I(inode)->i_compr_blocks))
-+	if (atomic_read(&fi->i_compr_blocks))
- 		goto unlock_inode;
- 
--	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+	f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
- 	filemap_invalidate_lock(inode->i_mapping);
- 
- 	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
-@@ -3833,7 +3836,7 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
- 
- 		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
- 		count = min(end_offset - dn.ofs_in_node, last_idx - page_idx);
--		count = round_up(count, F2FS_I(inode)->i_cluster_size);
-+		count = round_up(count, fi->i_cluster_size);
- 
- 		ret = reserve_compress_blocks(&dn, count, &reserved_blocks);
- 
-@@ -3848,7 +3851,7 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
- 	}
- 
- 	filemap_invalidate_unlock(inode->i_mapping);
--	f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+	f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
- 
- 	if (!ret) {
- 		clear_inode_flag(inode, FI_COMPRESS_RELEASED);
-@@ -3864,14 +3867,14 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
- 	if (!ret) {
- 		ret = put_user(reserved_blocks, (u64 __user *)arg);
- 	} else if (reserved_blocks &&
--			atomic_read(&F2FS_I(inode)->i_compr_blocks)) {
-+			atomic_read(&fi->i_compr_blocks)) {
- 		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 		f2fs_warn(sbi, "%s: partial blocks were reserved i_ino=%lx "
- 			"iblocks=%llu, reserved=%u, compr_blocks=%u, "
- 			"run fsck to fix.",
- 			__func__, inode->i_ino, inode->i_blocks,
- 			reserved_blocks,
--			atomic_read(&F2FS_I(inode)->i_compr_blocks));
-+			atomic_read(&fi->i_compr_blocks));
- 	}
- 
- 	return ret;
-@@ -4097,6 +4100,7 @@ static int f2fs_ioc_get_compress_option(struct file *filp, unsigned long arg)
- static int f2fs_ioc_set_compress_option(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct f2fs_comp_option option;
- 	int ret = 0;
-@@ -4137,25 +4141,25 @@ static int f2fs_ioc_set_compress_option(struct file *filp, unsigned long arg)
- 		goto out;
- 	}
- 
--	F2FS_I(inode)->i_compress_algorithm = option.algorithm;
--	F2FS_I(inode)->i_log_cluster_size = option.log_cluster_size;
--	F2FS_I(inode)->i_cluster_size = BIT(option.log_cluster_size);
-+	fi->i_compress_algorithm = option.algorithm;
-+	fi->i_log_cluster_size = option.log_cluster_size;
-+	fi->i_cluster_size = BIT(option.log_cluster_size);
- 	/* Set default level */
--	if (F2FS_I(inode)->i_compress_algorithm == COMPRESS_ZSTD)
--		F2FS_I(inode)->i_compress_level = F2FS_ZSTD_DEFAULT_CLEVEL;
-+	if (fi->i_compress_algorithm == COMPRESS_ZSTD)
-+		fi->i_compress_level = F2FS_ZSTD_DEFAULT_CLEVEL;
- 	else
--		F2FS_I(inode)->i_compress_level = 0;
-+		fi->i_compress_level = 0;
- 	/* Adjust mount option level */
- 	if (option.algorithm == F2FS_OPTION(sbi).compress_algorithm &&
- 	    F2FS_OPTION(sbi).compress_level)
--		F2FS_I(inode)->i_compress_level = F2FS_OPTION(sbi).compress_level;
-+		fi->i_compress_level = F2FS_OPTION(sbi).compress_level;
- 	f2fs_mark_inode_dirty_sync(inode, true);
- 
- 	if (!f2fs_is_compress_backend_ready(inode))
- 		f2fs_warn(sbi, "compression algorithm is successfully set, "
- 			"but current kernel doesn't support this algorithm.");
- out:
--	f2fs_up_write(&F2FS_I(inode)->i_sem);
-+	f2fs_up_write(&fi->i_sem);
- 	inode_unlock(inode);
- 	mnt_drop_write_file(filp);
- 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index a3456b29b5ff..11aab5fdf71b 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -635,8 +635,9 @@ struct inode *f2fs_iget_retry(struct super_block *sb, unsigned long ino)
- 
- void f2fs_update_inode(struct inode *inode, struct page *node_page)
- {
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	struct f2fs_inode *ri;
--	struct extent_tree *et = F2FS_I(inode)->extent_tree[EX_READ];
-+	struct extent_tree *et = fi->extent_tree[EX_READ];
- 
- 	f2fs_wait_on_page_writeback(node_page, NODE, true, true);
- 	set_page_dirty(node_page);
-@@ -646,7 +647,7 @@ void f2fs_update_inode(struct inode *inode, struct page *node_page)
- 	ri = F2FS_INODE(node_page);
- 
- 	ri->i_mode = cpu_to_le16(inode->i_mode);
--	ri->i_advise = F2FS_I(inode)->i_advise;
-+	ri->i_advise = fi->i_advise;
- 	ri->i_uid = cpu_to_le32(i_uid_read(inode));
- 	ri->i_gid = cpu_to_le32(i_gid_read(inode));
- 	ri->i_links = cpu_to_le32(inode->i_nlink);
-@@ -672,58 +673,49 @@ void f2fs_update_inode(struct inode *inode, struct page *node_page)
- 	ri->i_ctime_nsec = cpu_to_le32(inode_get_ctime_nsec(inode));
- 	ri->i_mtime_nsec = cpu_to_le32(inode_get_mtime_nsec(inode));
- 	if (S_ISDIR(inode->i_mode))
--		ri->i_current_depth =
--			cpu_to_le32(F2FS_I(inode)->i_current_depth);
-+		ri->i_current_depth = cpu_to_le32(fi->i_current_depth);
- 	else if (S_ISREG(inode->i_mode))
--		ri->i_gc_failures = cpu_to_le16(F2FS_I(inode)->i_gc_failures);
--	ri->i_xattr_nid = cpu_to_le32(F2FS_I(inode)->i_xattr_nid);
--	ri->i_flags = cpu_to_le32(F2FS_I(inode)->i_flags);
--	ri->i_pino = cpu_to_le32(F2FS_I(inode)->i_pino);
-+		ri->i_gc_failures = cpu_to_le16(fi->i_gc_failures);
-+	ri->i_xattr_nid = cpu_to_le32(fi->i_xattr_nid);
-+	ri->i_flags = cpu_to_le32(fi->i_flags);
-+	ri->i_pino = cpu_to_le32(fi->i_pino);
- 	ri->i_generation = cpu_to_le32(inode->i_generation);
--	ri->i_dir_level = F2FS_I(inode)->i_dir_level;
-+	ri->i_dir_level = fi->i_dir_level;
- 
- 	if (f2fs_has_extra_attr(inode)) {
--		ri->i_extra_isize = cpu_to_le16(F2FS_I(inode)->i_extra_isize);
-+		ri->i_extra_isize = cpu_to_le16(fi->i_extra_isize);
- 
- 		if (f2fs_sb_has_flexible_inline_xattr(F2FS_I_SB(inode)))
- 			ri->i_inline_xattr_size =
--				cpu_to_le16(F2FS_I(inode)->i_inline_xattr_size);
-+				cpu_to_le16(fi->i_inline_xattr_size);
- 
- 		if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)) &&
--			F2FS_FITS_IN_INODE(ri, F2FS_I(inode)->i_extra_isize,
--								i_projid)) {
-+			F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_projid)) {
- 			projid_t i_projid;
- 
--			i_projid = from_kprojid(&init_user_ns,
--						F2FS_I(inode)->i_projid);
-+			i_projid = from_kprojid(&init_user_ns, fi->i_projid);
- 			ri->i_projid = cpu_to_le32(i_projid);
- 		}
- 
- 		if (f2fs_sb_has_inode_crtime(F2FS_I_SB(inode)) &&
--			F2FS_FITS_IN_INODE(ri, F2FS_I(inode)->i_extra_isize,
--								i_crtime)) {
--			ri->i_crtime =
--				cpu_to_le64(F2FS_I(inode)->i_crtime.tv_sec);
--			ri->i_crtime_nsec =
--				cpu_to_le32(F2FS_I(inode)->i_crtime.tv_nsec);
-+			F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_crtime)) {
-+			ri->i_crtime = cpu_to_le64(fi->i_crtime.tv_sec);
-+			ri->i_crtime_nsec = cpu_to_le32(fi->i_crtime.tv_nsec);
- 		}
- 
- 		if (f2fs_sb_has_compression(F2FS_I_SB(inode)) &&
--			F2FS_FITS_IN_INODE(ri, F2FS_I(inode)->i_extra_isize,
-+			F2FS_FITS_IN_INODE(ri, fi->i_extra_isize,
- 							i_compress_flag)) {
- 			unsigned short compress_flag;
- 
--			ri->i_compr_blocks =
--				cpu_to_le64(atomic_read(
--					&F2FS_I(inode)->i_compr_blocks));
--			ri->i_compress_algorithm =
--				F2FS_I(inode)->i_compress_algorithm;
--			compress_flag = F2FS_I(inode)->i_compress_flag |
--				F2FS_I(inode)->i_compress_level <<
-+			ri->i_compr_blocks = cpu_to_le64(
-+					atomic_read(&fi->i_compr_blocks));
-+			ri->i_compress_algorithm = fi->i_compress_algorithm;
-+			compress_flag = fi->i_compress_flag |
-+						fi->i_compress_level <<
- 						COMPRESS_LEVEL_OFFSET;
- 			ri->i_compress_flag = cpu_to_le16(compress_flag);
--			ri->i_log_cluster_size =
--				F2FS_I(inode)->i_log_cluster_size;
-+			ri->i_log_cluster_size = fi->i_log_cluster_size;
- 		}
- 	}
- 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index e54f8c08bda8..3d9d2b710796 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -221,6 +221,7 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
- 						const char *name)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
-+	struct f2fs_inode_info *fi;
- 	nid_t ino;
- 	struct inode *inode;
- 	bool nid_free = false;
-@@ -241,14 +242,15 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
- 
- 	inode_init_owner(idmap, inode, dir, mode);
- 
-+	fi = F2FS_I(inode);
- 	inode->i_ino = ino;
- 	inode->i_blocks = 0;
- 	simple_inode_init_ts(inode);
--	F2FS_I(inode)->i_crtime = inode_get_mtime(inode);
-+	fi->i_crtime = inode_get_mtime(inode);
- 	inode->i_generation = get_random_u32();
- 
- 	if (S_ISDIR(inode->i_mode))
--		F2FS_I(inode)->i_current_depth = 1;
-+		fi->i_current_depth = 1;
- 
- 	err = insert_inode_locked(inode);
- 	if (err) {
-@@ -258,9 +260,9 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
- 
- 	if (f2fs_sb_has_project_quota(sbi) &&
- 		(F2FS_I(dir)->i_flags & F2FS_PROJINHERIT_FL))
--		F2FS_I(inode)->i_projid = F2FS_I(dir)->i_projid;
-+		fi->i_projid = F2FS_I(dir)->i_projid;
- 	else
--		F2FS_I(inode)->i_projid = make_kprojid(&init_user_ns,
-+		fi->i_projid = make_kprojid(&init_user_ns,
- 							F2FS_DEF_PROJID);
- 
- 	err = fscrypt_prepare_new_inode(dir, inode, &encrypt);
-@@ -278,7 +280,7 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
- 
- 	if (f2fs_sb_has_extra_attr(sbi)) {
- 		set_inode_flag(inode, FI_EXTRA_ATTR);
--		F2FS_I(inode)->i_extra_isize = F2FS_TOTAL_EXTRA_ATTR_SIZE;
-+		fi->i_extra_isize = F2FS_TOTAL_EXTRA_ATTR_SIZE;
- 	}
- 
- 	if (test_opt(sbi, INLINE_XATTR))
-@@ -296,15 +298,15 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
- 				f2fs_has_inline_dentry(inode)) {
- 		xattr_size = DEFAULT_INLINE_XATTR_ADDRS;
- 	}
--	F2FS_I(inode)->i_inline_xattr_size = xattr_size;
-+	fi->i_inline_xattr_size = xattr_size;
- 
--	F2FS_I(inode)->i_flags =
-+	fi->i_flags =
- 		f2fs_mask_flags(mode, F2FS_I(dir)->i_flags & F2FS_FL_INHERITED);
- 
- 	if (S_ISDIR(inode->i_mode))
--		F2FS_I(inode)->i_flags |= F2FS_INDEX_FL;
-+		fi->i_flags |= F2FS_INDEX_FL;
- 
--	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL)
-+	if (fi->i_flags & F2FS_PROJINHERIT_FL)
- 		set_inode_flag(inode, FI_PROJ_INHERIT);
- 
- 	/* Check compression first. */
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 496aee53c38a..c74ffdeedc4c 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -287,6 +287,7 @@ static void recover_inline_flags(struct inode *inode, struct f2fs_inode *ri)
- static int recover_inode(struct inode *inode, struct page *page)
- {
- 	struct f2fs_inode *raw = F2FS_INODE(page);
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	char *name;
- 	int err;
- 
-@@ -309,12 +310,12 @@ static int recover_inode(struct inode *inode, struct page *page)
- 			i_projid = (projid_t)le32_to_cpu(raw->i_projid);
- 			kprojid = make_kprojid(&init_user_ns, i_projid);
- 
--			if (!projid_eq(kprojid, F2FS_I(inode)->i_projid)) {
-+			if (!projid_eq(kprojid, fi->i_projid)) {
- 				err = f2fs_transfer_project_quota(inode,
- 								kprojid);
- 				if (err)
- 					return err;
--				F2FS_I(inode)->i_projid = kprojid;
-+				fi->i_projid = kprojid;
- 			}
- 		}
- 	}
-@@ -327,10 +328,10 @@ static int recover_inode(struct inode *inode, struct page *page)
- 	inode_set_mtime(inode, le64_to_cpu(raw->i_mtime),
- 			le32_to_cpu(raw->i_mtime_nsec));
- 
--	F2FS_I(inode)->i_advise = raw->i_advise;
--	F2FS_I(inode)->i_flags = le32_to_cpu(raw->i_flags);
-+	fi->i_advise = raw->i_advise;
-+	fi->i_flags = le32_to_cpu(raw->i_flags);
- 	f2fs_set_inode_flags(inode);
--	F2FS_I(inode)->i_gc_failures = le16_to_cpu(raw->i_gc_failures);
-+	fi->i_gc_failures = le16_to_cpu(raw->i_gc_failures);
- 
- 	recover_inline_flags(inode, raw);
- 
--- 
-2.40.1
+It may cause performance overhead to get parent's xnid by parent ino,
+so I prefer to tag ENC_DIR_INO for the inode if its parent's xnid is
+not checkpointed, it that fine to you?
 
+Thanks,
+
+> 
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
 
 
 _______________________________________________
