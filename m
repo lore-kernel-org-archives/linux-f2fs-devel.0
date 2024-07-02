@@ -4,166 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D03BCC2BD09
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Jul 2024 01:16:53 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2F84BC2BD09
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Jul 2024 02:33:51 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sOS8Z-0003JW-5m;
-	Tue, 02 Jul 2024 01:16:51 +0000
+	id 1sOTL2-0004pS-8W;
+	Tue, 02 Jul 2024 02:33:49 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <bounces+SRS=arXme=OC@healthnoworg.onmicrosoft.com>)
- id 1sOS8X-0003JN-VV for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 02 Jul 2024 01:16:50 +0000
+ (envelope-from <chao@kernel.org>) id 1sOTL1-0004pM-If
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 02 Jul 2024 02:33:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Message-ID:Date:Subject:To:From:Reply-To:Sender:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jpnCOrP5uDZ/oHLuY3OIjSytRNiGUjXRZ/5IbABNkR0=; b=OU+N8SShGYK+3WsLKB0SowFnyQ
- pNY81l8TTNP+n7xFBSJKlLYbBrFxjbBTeBN8+9dhDyMftUjGn7Dew9PlHMSHbu+DOYruVNJ8nbxU/
- 7NtmiL3nhueatTNToTidz6fBk80Xbz0xpvwouAqGgllEi9cV8Lk8JjSJBVH8S/JWXLJU=;
+ bh=rqtTndCz8d1hQzDqwHFLCKiqT9lQiwuWfxic0PAIrkE=; b=bP4UBdmPzfPG1IcwS10jga03Bx
+ 5j6uHJtL477D6JJZSroxgOY7sqjjd7E4NShadgYQ3lG5zbVwvPXDSq7lGwN4ZzzDz9EYAlUayZ0p7
+ oBeDeoqA2iWCgSjozcuacVCeiitvG+Vz771jLgabvgc3Pv/JoTNAfm71++zBXAHSoYys=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:
- Subject:To:From:Reply-To:Sender:Cc:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=jpnCOrP5uDZ/oHLuY3OIjSytRNiGUjXRZ/5IbABNkR0=; b=S
- 6cN2rGIRbKez8mo6feX3+gwmOEoHUQhF6XrCxHwGZLGvCwMhoqyFKx39MSHj0e7QpoGNI/aN7M8/R
- GgSobh4YoOD5eQyqDEMnTRz0hXsv9Nh13dP0Vib2AVNOddfgWH9QqnhDzJoHlWdoALWcaFJsgfjOt
- igOpUoBaC6qhPAlY=;
-Received: from mail-dm6nam10hn2211.outbound.protection.outlook.com
- ([52.100.156.211] helo=NAM10-DM6-obe.outbound.protection.outlook.com)
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=rqtTndCz8d1hQzDqwHFLCKiqT9lQiwuWfxic0PAIrkE=; b=ftW8HBmDb5hwoxpOKvCmrPAXIo
+ H9qpNPubSEMfhga/faucplCRgGA+ben+IZ2fRMhdxHYNJCpfzxRceMmFdWkSBazuyTNftFIhDc28q
+ 2DdvkPCTkfyfqUOknkJbCZrkQ+aCYiPDEscmYKcMfXl8rlbHLLfsMahfwLUjzh2+CfSk=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sOS8Y-0004J8-GA for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 02 Jul 2024 01:16:50 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KpE1tbhelzFRArkQNw/gyLbmOHfruWkjbfC0NcauBvLjdNdVPQt2OJF20g3kX10G+W9/yuf0hoXb5ttukKZbduGp9zbH2UVmKiyChU0MIPejBP/+eAzCUiGkU/XHqIACIJGH+NGIYc1aOOEx69KNyM+cMkNmMr57mJtj+ctsEsf5M9bBTlc6GO/FJ04Qb+J3wEo5yQANqo+/hHX4DTXo/gkF0bAqwIMtSLR+LWnoKfVUwzE5UcbS6aGuQZGfQDAZesKsaNzAtHPGUCDxlfNVero/fyNcPMepNFGcTZh4S9nNcLcJ+kVZHBhQQmNU0xVsJDuG6WtGPSnL2G76HGKd9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jpnCOrP5uDZ/oHLuY3OIjSytRNiGUjXRZ/5IbABNkR0=;
- b=YE9QMk2hdSBKZxO43PA8hdLyTyju5TRXGNR65GaChGUh8oGQPoH3v0DxwGENQdh5NTJc2Ody8udjukDj/CyNyODjUX/LONj/K9iuyaUifM5R4uObP3VJwR3IyzIxxbW4tK4gFEMItyDmqGpWvzO81Xdr3SJfz3kqOs5VS1dthmZbgv47QUIaT3BMRu8fpRLo+uMllOLs7VYEpAzzFRVaXTaJ5rqu4vcd5WDIwB0sRfDMP7c0K1/KvL0uHJpyR9JeDpHI7DFfOSCNgui6kWNW3CUlLMlcDBbnIHFzQpKDi+GXhbiJubGDRjgAWH+XfPkLy1xCNQbL9tYsx8sTh1PsrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 208.81.14.32) smtp.rcpttodomain=lists.sourceforge.net
- smtp.mailfrom=gmail.com; dmarc=fail (p=reject sp=reject pct=100)
- action=oreject header.from=healthnow.org; dkim=none (message not signed);
- arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=healthnow.org;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jpnCOrP5uDZ/oHLuY3OIjSytRNiGUjXRZ/5IbABNkR0=;
- b=N9xP6njREkl238jNJ0aDYPcgH9QvD8lSs21q5sLzvi0I/sUJONiROizFPbAKdOPISWvPSzvuo5cwQp5FU5v35KFVLT9NlYtb7LKVhz/a8fiHG3gJNrb7Rzkt6DUXzaFOCF7s1grSnhNCJZHYPJ7J3muSBYOwVbYwE5WfCQcfGm4=
-Received: from CH2PR10CA0018.namprd10.prod.outlook.com (2603:10b6:610:4c::28)
- by PH0PR20MB5797.namprd20.prod.outlook.com (2603:10b6:510:28f::12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Tue, 2 Jul
- 2024 01:16:42 +0000
-Received: from CH3PEPF00000011.namprd21.prod.outlook.com
- (2603:10b6:610:4c:cafe::4) by CH2PR10CA0018.outlook.office365.com
- (2603:10b6:610:4c::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.33 via Frontend
- Transport; Tue, 2 Jul 2024 01:16:42 +0000
-X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 208.81.14.32)
- smtp.mailfrom=gmail.com;
- dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=healthnow.org;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- gmail.com discourages use of 208.81.14.32 as permitted sender)
-Received: from mail.healthnow.org (208.81.14.32) by
- CH3PEPF00000011.mail.protection.outlook.com (10.167.244.116) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.7762.1 via Frontend Transport; Tue, 2 Jul 2024 01:16:42 +0000
-Received: from EXMPR02BVWA.healthnow.org (10.130.146.23) by
- EXMPR01BVWA.healthnow.org (10.130.146.22) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
- 15.1.2507.39; Mon, 1 Jul 2024 21:16:30 -0400
-Received: from [178.215.236.233] (10.8.129.249) by mail.healthnow.org
- (10.130.146.23) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 1 Jul 2024 21:16:29 -0400
-To: <linux-f2fs-devel@lists.sourceforge.net>
-Date: Mon, 1 Jul 2024 18:16:29 -0700
-Message-ID: <20240701181629.DB778FA020EE4691@healthnow.org>
+ id 1sOTL2-0007hI-Pe for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 02 Jul 2024 02:33:48 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sin.source.kernel.org (Postfix) with ESMTP id 5BCB5CE0B31;
+ Tue,  2 Jul 2024 02:33:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E6EFC116B1;
+ Tue,  2 Jul 2024 02:33:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1719887620;
+ bh=WIaylUeyWMquueBHcy55ySZAVTQji6MPduf3DyKipBs=;
+ h=Date:Subject:To:References:From:In-Reply-To:From;
+ b=eQSI0fF18EZ2n6Y0MMfk2Rlle/l5PvlWkb09zmIGSqzrgdUtROl63pVEzuHyLyGhK
+ 3pBdbCJeeMQHuk7YM1jj1Jbh3cpjch+UAxk2k6kGH6yML1E/Fx3VMFPqfm9m9ePLUd
+ nogg15ezSBG6Xw+CBmKCBQs0OpZltZ52oz+RbJVNn97EiyuPiPpfJ+NY4tGK1G721N
+ ROA/66a4qpNGcVPWSp55hPPRWBrn3F4Qtqhx+t8riSoet/DovO/LZoH7015hC1RrOj
+ NZcvufp6c7YdcR0HjDTHnNO1OHHY1ihEKvp3vLHMe+IZhRpOsDvqvjYVf9jAa3G6vY
+ H7sszC7rhQ0sA==
+Message-ID: <f035b71f-741d-495e-a516-99e0b0ee250a@kernel.org>
+Date: Tue, 2 Jul 2024 10:33:36 +0800
 MIME-Version: 1.0
-X-OrganizationHeadersPreserved: EXMPR01BVWA.healthnow.org
-X-EOPAttributedMessage: 0
-X-CrossPremisesHeadersPromoted: CH3PEPF00000011.namprd21.prod.outlook.com
-X-CrossPremisesHeadersFiltered: CH3PEPF00000011.namprd21.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000011:EE_|PH0PR20MB5797:EE_
-X-MS-Office365-Filtering-Correlation-Id: 44a19247-2fa1-4d1a-c643-08dc9a34a1d9
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|35950700016|376014|82310400026|1800799024|366016|7093399012|3613699012|17110700014|17130700016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?a1cwMitoTzdSUWMxZDVzL0dBdU50UGtOdUVybEhjNm9HQVRVK2JEaDI5bHVs?=
- =?utf-8?B?L1B6UmlJeXYyUm5rQlgzSm5IcHFJZkp3RVdOd0FnbnowSnpxdHErbm5qZHM0?=
- =?utf-8?B?dkRVTTZHVUQxUDBLK0w3MFFENlIrTzBkNkI5bkF5a1Fla3dWN0xiME4xamVU?=
- =?utf-8?B?MnNnM1NxUENXc1lMQllFU2U5a3BTZWl0ZjIramJkd3hIa1BqU0RvZ3l3aFp1?=
- =?utf-8?B?eXZlUnNySDhFSTdqeTVYL0pjK2RmbmhJVmdGM3JNNFNXYmR4WTRvc0s0VzNz?=
- =?utf-8?B?UUU5VFRxaXc4bm1oYWl2ZVMwSk9iK005UHhTSzl1d1Q1dXhFV3QwU2xtQXFv?=
- =?utf-8?B?eTlzbkhmYzNvOTZVRnNrSXhmZmZpOVhzRm9tUHJ4b0FjZnRGQjVVUWhiM05P?=
- =?utf-8?B?NVFDM25UaEVLRFAvU2ZKTFkvTzAwa0h0RWVzNzNrcXAwUXZPb2dUc2pPZVk3?=
- =?utf-8?B?K2ZKK3VWcjlVdExSenZnbnIrMGhmU3ZpajgwQ0NjSjNWRDJ4ekZCZmkyd3JX?=
- =?utf-8?B?dGVPSXRBTkxaek5scHgrbm5uUSs0WDdiL2w4UHZyQkg5enh5RG80S1NXeDFW?=
- =?utf-8?B?RzZ2VFdzdTJPWkpoaXNnOHYvZE9FWHJDbVdVSEg4aDNKbWxoNXE0dVpTdE9C?=
- =?utf-8?B?YmdHVlJUQ0FPTUJNa3Jzc1JkMXU0d3d0UEFPTnBiNlZTNkl5cFZRSFloSERN?=
- =?utf-8?B?YWJTbkYrM0h4b1FkNU9WRUJMNkViejB4by9ZMTExaUNNY25pZFBSQ1RDVjlU?=
- =?utf-8?B?bzQ1dVlZVmRINDkyUmRDYTAyZjR5RkJZcWZWRUFjbHVOc3hVK0doQUlWTUJH?=
- =?utf-8?B?RU5IQ3VoL2dvejhSWUY1RkZHbFN0MktmT3RhOXl5WC9ZRXR4YjQwSkMyREZW?=
- =?utf-8?B?V3dXUHRMM0NKTHNIQWtOMHhuaW9DajNJNy83Y204SGtlTlNMcGVsck9xQWxv?=
- =?utf-8?B?TTJiYU92ajI4Yk1GL09VYU9zVEdYdHltcVQ2UjBoSFRBL1Z1SWQ2L0F4VUt4?=
- =?utf-8?B?SXZUa2JPN3cydFBGNHZ2a3BibFRKZTlqZDBsM2YzeitzZ25PV3BMc1BRRWJi?=
- =?utf-8?B?V0E5bjFNaEQxTzBIa3lLekMvT1hEdlV0NWw0QnVUWmtoN3Z6Y001Ni93UDJ0?=
- =?utf-8?B?MGVVdDduVGI3SWVsRTBxQVpWM2JseitqZitDdW1UWlRnY3VCelhLNC8xM2xX?=
- =?utf-8?B?RHNVQS9XdWowSVEzVVAxVGc4YnpTbDRTT2pKRGsvM1VHcG02L2xTYm5GTWtz?=
- =?utf-8?B?bUtIaDVoNERXVzIvZ2hnMjJlUER1UVgyWnBlWFpUNUZja2VWcEpTOS9Ba01t?=
- =?utf-8?B?ajlHSzVJQUpDelpQcldmMHB3UTFNOVB5REZ0cW9xbU5reDZQckN4Rmdtcm5i?=
- =?utf-8?B?VXN1TG1LSEZRTmlHSWJLakpzeUgzV3VTbCt0U3lBbE11cXd6amw4eFp6RDhJ?=
- =?utf-8?B?aTk4TnRxQ1ZFblpFdnp2b082eVlHOUlTRDVzV0NBaUg2WDVYandsTCtabE9z?=
- =?utf-8?B?eTZ5ZUE0K0lsQlI2VlZlTTFVbFVNSGo5YWV1Q2hwNXB6WDBwWEEzSmdMNytL?=
- =?utf-8?B?OVFoQ0ROa3FHVTViKzAzVzQxcXh2TU1Ycktydjl0Nll6YklGNUV5REJVcEhH?=
- =?utf-8?B?M21BWVVyUHpySWhMQ2p4NzliMDlkeXFFeUVOREd4Q0dZTG9oMXFDYit1d3Iw?=
- =?utf-8?B?Ny9XRit5aEZQTExxaEVBNk8rZCtBS3NGWEQwODJTRndGTDBtQmVKanpRcFNz?=
- =?utf-8?B?RkdMK0Z3Tll0ZURTZG9Qd2VHMkd5RitlSkpYM1Mwb0R3ZWUrbEpTa2RvMEw1?=
- =?utf-8?B?VFBEMzdNMEFFNks2a0g1UW8vOGRXcHlEOC9XOXNZNlZUbDl5SHJWN2N3TGRj?=
- =?utf-8?B?bUd6S0VpRHY3SUE2SWxIK2piTGlGZDl1a1p4Y3E5c1VJVGpaRzIyUENQWjVC?=
- =?utf-8?B?K0VuSTZaanRSK2RvLzhJSGRBZVFkMnN6alJaY1p3UllHM3ZHeWg0Q0R0Ti94?=
- =?utf-8?B?SjQ2MkRXeFlvM1VkNzBtakRRUkZ4RmR6ZEd4ZE8yam5za3RzdFE0eUVXeVpv?=
- =?utf-8?B?Qk9qVVVyQjd2bFg5Vjh6bDVBTEx4QzErdXNUNm01L29rNG4vUXFjWVhtREQ3?=
- =?utf-8?B?Rko5SUdmcGJQaEI5bTlXS1FMc0RibnBoTXBmNFVnNlMvK2FqdmNpTmdUeCtv?=
- =?utf-8?B?Mk5wVSs0Um9jRU5qMUNJdVBBcHIrWXRQeTdSU0NEQXVQZ2VCd2dNRzliV3ZL?=
- =?utf-8?B?Z0FTdnlrZEsxSGR1UTVTalpzM0dZamdBeWlYa0E4YXVFTFVQS09MY1IrWWZa?=
- =?utf-8?B?TUZXaGdTd211R1hBQmFCbTFXT291Nm9mT1dSbStRS3RHN3A4U0lYa1dHaUtJ?=
- =?utf-8?B?bCtSUTFiU05MUTQ4bEZMb09CV0l6TnQ4MHM1MG5PSzZmT1J2bWxCTm5lbmZq?=
- =?utf-8?B?VytISkE3WEVlZzRaTHJtdFFMdjNZRXhmbDNHczNaWmhnZVBmNGJtcGhMeVdP?=
- =?utf-8?B?NmlRYVhRTHZyL3JoMWFYRE84bG56NUN5WnEvZnNwQjZBSDBNNmc2OFBpekdM?=
- =?utf-8?B?SlFIYjZpQmQrSmpTRWNLMzRRa1k3VUJuZ2U0cDdCSGRYOHVjQzl3RkpIZTZO?=
- =?utf-8?B?ZEJyc3dXaHE1enorQjJ6QkovUmRkTm03UEN5MzNtTDhTSk9qMjhZTzFtSEh6?=
- =?utf-8?B?bUp5dHNNUmtBL2xDK2hWS2ZLaHhQYXhQbVE9PQ==?=
-X-Forefront-Antispam-Report: CIP:208.81.14.32; CTRY:US; LANG:en; SCL:5; SRV:;
- IPV:NLI; SFV:SPM; H:mail.healthnow.org; PTR:InfoDomainNonexistent; CAT:OSPM;
- SFS:(13230040)(35950700016)(376014)(82310400026)(1800799024)(366016)(7093399012)(3613699012)(17110700014)(17130700016);
- DIR:OUT; SFP:1501; 
-X-OriginatorOrg: healthnow.org
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2024 01:16:42.3367 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44a19247-2fa1-4d1a-c643-08dc9a34a1d9
-X-MS-Exchange-CrossTenant-Id: 480ee22c-5ff4-416d-bfa6-99e16833d21c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=480ee22c-5ff4-416d-bfa6-99e16833d21c; Ip=[208.81.14.32];
- Helo=[mail.healthnow.org]
-X-MS-Exchange-CrossTenant-AuthSource: EXMPR02BVWA.healthnow.org
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR20MB5797
-X-Headers-End: 1sOS8Y-0004J8-GA
-Subject: [f2fs-dev] We have reached an agreement with the European
- Investment Payment
+User-Agent: Mozilla Thunderbird
+To: Eric Sandeen <sandeen@redhat.com>, linux-f2fs-devel@lists.sourceforge.net
+References: <e7e1d63e-b6d2-495d-ac1f-28d87d56ca09@redhat.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <e7e1d63e-b6d2-495d-ac1f-28d87d56ca09@redhat.com>
+X-Headers-End: 1sOTL2-0007hI-Pe
+Subject: Re: [f2fs-dev] [PATCH] f2fs: remove unreachable lazytime mount
+ option parsing
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -175,36 +79,32 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Holley Lisanne via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: unitednation.kerrymorgan@yandex.com
-Cc: Holley Lisanne <holley.lisanne@healthnow.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-RGVhciBCZW5lZmljaWFyeSwgCgpXZSBhcmUgd3JpdGluZyB0byBpbmZvcm0geW91IHRoYXQgd2Ug
-aGF2ZSBiZWVuIGF1dGhvcml6ZWQgYnkgdGhlIApFdXJvcGVhbiBJbnZlc3RtZW50IEJhbmsgb2Yg
-TG9uZG9uIGFuZCB0aGUgSW50ZXJuYXRpb25hbCBNb25ldGFyeSAKRnVuZCAoSU1GKSB0byBpbnZl
-c3RpZ2F0ZSB0aGUgY2F1c2Ugb2YgdGhlIGRlbGF5IGluIHlvdXIgbGVnYWxseSAKYXBwcm92ZWQg
-ZnVuZHMuIE91ciBpbnZlc3RpZ2F0aW9uIGhhcyByZXZlYWxlZCB0aGF0IHlvdXIgcGF5bWVudCAK
-d2FzIGRlbGF5ZWQgYnkgY29ycnVwdCBiYW5rIGVtcGxveWVlcyB3aG8gYXR0ZW1wdGVkIHRvIGRp
-dmVydCAKeW91ciBmdW5kcyBpbnRvIHRoZWlyIHBlcnNvbmFsIGFjY291bnRzLgoKIFRvIHByZXZl
-bnQgdGhpcyBraW5kIG9mIGZyYXVkdWxlbnQgYWN0aXZpdHksIHdlIGhhdmUgcmVhY2hlZCBhbiAK
-YWdyZWVtZW50IHdpdGggdGhlIEV1cm9wZWFuIEludmVzdG1lbnQgQmFuayBhbmQgdGhlIElNRiB0
-byBtYW5hZ2UgCmFuZCBtb25pdG9yIHlvdXIgcGF5bWVudC4gQXMgYSByZXN1bHQsIHdlIGhhdmUg
-cmVjZWl2ZWQgYW4gCmlycmV2b2NhYmxlIHBheW1lbnQgZ3VhcmFudGVlIGZvciB5b3VyIE1GSSBw
-YXltZW50LiBXZSBhcmUgCnBsZWFzZWQgdG8gaW5mb3JtIHlvdSB0aGF0IHRoZSBFdXJvcGVhbiBJ
-bnZlc3RtZW50IEJhbmsgaGFzIApkZWNpZGVkIHRvIHJlaW1idXJzZSB5b3UgdGhlIHN1bSBvZiDi
-gqwzLDUwMCwwMDAuMDAgYW5kIHRyYW5zZmVyIGl0IApkaXJlY3RseSB0byB5b3VyIGJhbmsgYWNj
-b3VudCB2aWEgYmFuayB0cmFuc2Zlci4gVG8gZW5zdXJlIGEgCnNtb290aCBhbmQgaGFzc2xlLWZy
-ZWUgcGF5bWVudCBwcm9jZXNzLCBwbGVhc2UgY29udGFjdCB0aGUgcmlnaHQgCmFnZW50LCBNci4g
-S2VycnkgTW9yZ2FuLCBhdCB0aGUgZW1haWwgYWRkcmVzcyBiZWxvdzogCgpFbWFpbDogdW5pdGVk
-bmF0aW9uLmtlcnJ5bW9yZ2FuQHlhbmRleC5jb20gCgpBZGRpdGlvbmFsbHksIHBsZWFzZSBmZWVs
-IGZyZWUgdG8gcHJvdmlkZSB1cyB3aXRoIHlvdXIgV2hhdHNBcHAgCm51bWJlciBmb3IgZWFzeSBj
-b21tdW5pY2F0aW9uLiBUaGFuayB5b3UgZm9yIHlvdXIgYXR0ZW50aW9uIHRvIAp0aGlzIG1hdHRl
-ci4KClNpbmNlcmVseSwgCgpNcnMuIEhvbGxleSBMaXNhbm5lIApSZXBseTogdW5pdGVkbmF0aW9u
-LmtlcnJ5bW9yZ2FuQHlhbmRleC5jb20KCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZz
-LWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5l
-dC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+On 2024/6/29 12:38, Eric Sandeen wrote:
+> The lazytime/nolazytime options are now handled in the VFS, and are
+> never seen in filesystem parsers, so remove handling of these
+> options from f2fs.
+> 
+> Note: when lazytime support was added in 6d94c74ab85f it made
+> lazytime the default in default_options() - as a result, lazytime
+> cannot be disabled (because Opt_nolazytime is never seen in f2fs
+> parsing).
+> 
+> If lazytime is desired to be configurable, and default off is OK,
+> default_options() could be updated to stop setting it by default
+> and allow mount option control.
+> 
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+
+Reviewed-by: Chao Yu <chao@kernel.org>
+
+Thanks,
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
