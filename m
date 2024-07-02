@@ -4,153 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A0CA6C3064D
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Jul 2024 06:45:30 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E0F82C30658
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Jul 2024 07:01:23 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sOXGa-0005PD-EK;
-	Tue, 02 Jul 2024 06:45:28 +0000
+	id 1sOXVz-0002F5-Jn;
+	Tue, 02 Jul 2024 07:01:23 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <liaoyuanhong@vivo.com>) id 1sOXGY-0005Ov-RI
+ (envelope-from <chao@kernel.org>) id 1sOXVx-0002Ex-SU
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 02 Jul 2024 06:45:27 +0000
+ Tue, 02 Jul 2024 07:01:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
- :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4UQCj22NUmAFr+B289w93+ZVGx0u/LTME6FJQQqL1Jk=; b=EKRBL3TXwTOJmJ1YCDSreci/2u
- Z7c5iIiBOXPUMqjGb+ihYX+xdy02O28fxLKzDTNHkBOMlBW0NKuj/RWM4WdqnQgjFOdGVlpykM6Mw
- QAwDUGMHNnFD74qUQQFCwreEOou1NkrFhWD6GVYYBY2149Jaxwv2mJ/bmYwdNWjYsBw8=;
+ bh=VMaKZQOOkdbKe6iGId/t9xN959lY7r1hRolcFz88W9Y=; b=NwcPLVrbjCw/LeWPiHpVgr53xA
+ aFjzvZ8cLWtoBwNdDM9Bv6NZSGJ64swoYklolzixMcCtR2+jxOZad39atIGBbcxYOLbNiNgDdSBSB
+ uwwfdsTrVZi45QjOTVvPOw0aXL8qOYj72+48vY0AYRetU6V3jmEUnvtLrANFQXIDc8l4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Date:
- Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=4UQCj22NUmAFr+B289w93+ZVGx0u/LTME6FJQQqL1Jk=; b=N
- /fSQUCPaNB5kALSe5r8phmxMdvnhv+qpjN4Ow51IoMFas5FPAJxR5kTHsuONncSxAJznehjPtzxFC
- fVbNO6oMaiDIHt/4RQOEmVDgkBy9Wwdsypzo4cBVlFrPxURzBk1+anaOVGTAS4Jw9YmP8xadnWFIA
- SIjc8/3gn88a1tWI=;
-Received: from mail-psaapc01on2051.outbound.protection.outlook.com
- ([40.107.255.51] helo=APC01-PSA-obe.outbound.protection.outlook.com)
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=VMaKZQOOkdbKe6iGId/t9xN959lY7r1hRolcFz88W9Y=; b=AsKbtBi4kzB45gtWsuYB6SEJOP
+ 96d+YQK7GNJXxWFhTKob2tA6WNRGJLNGBd0mHDwPXfgCuFeZqbjyW/xFA/qU5lDNnwU/uvON9se1s
+ /l+/ePKsJ4+ay+YRggU34LroU85w0tL4H2EawcZgv7wz73+V/cJVz+edCQPwJ78Aa488=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sOXGY-0002v2-NB for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 02 Jul 2024 06:45:27 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=B6elZX5ESTHgItUZb+EziIiHWP9ilQDPDuNQmPlYUgqkM+wLyXGlMj2BtooR1XvrD0mVkwWogzI5gn69E8vYoeYqhhSZ7KjIaGPOGMD9f49p9Kb/X3fm+2LBb3L/w3FNAP923bkiJ911EW2p0fPINBzl7Pqi5hEdDpwOKJvECEtsoG2shfqRTwOw7gu16j90nW5QGFkVlCtRNZOCQeBGDM+ZCtZLrNx8gxKYHkmjQVErucnc9ItmFE1BhVUZRwIJXuCXTY5Wqw+jwWOHtiZD2H3bANdh/y60kgAzH1QCULOQVZND+wNKvmIOdJpU+pbbtlirr+mGAIlNzgs0I2DJ4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4UQCj22NUmAFr+B289w93+ZVGx0u/LTME6FJQQqL1Jk=;
- b=KxaMRS2R4iWP+MR3tpdx1zymsOuHHpN/PrCjodoVJrMW4+UpuP/sR6bMmkvhZGs3b38fK36BBCYAxQwylSBxZBdS8OGmKHWRpslWT2Yl4FBlkOSJ8RPDKwwZYAFbGQe6UUPayqIJKMMHPQTxpNTYnsRcKKoPZSDbLiDUAE+0xc3o4q7gR7gGFokFbZ9Z/UdVNw/tSEPsLbUrkmvNr/npx7+DDiFXJgsj2fgTEncqtxHjG2+Akc7Mgvm/jPp8wZQYBnCfkWaRhkVtMpa/607Fg6JYyQBPubm2plqYgnxaGR1j/8JO8eb2KAvIC/yXfz1LRmmXJDSFkmafvoFOimqbxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4UQCj22NUmAFr+B289w93+ZVGx0u/LTME6FJQQqL1Jk=;
- b=YA4RHklHDz93ahR8PQva6tCsJ5j4DoUA2b7Hwzu+PyEm4GTQhQT11+E7akCY0JqweKXCoNAG/J5ET4+oY2j3mPO/Bhd0ROr/ELcf/Ofo64HC+21SgIpyw0vpykR/k53Yz+sbXUaALwUErX/BGiyXaQaondIYm7bfjgOx1ACSz4z+4c+KiqgGVW/9kZkMGmGsKznR8YrPbf14M5cA0clClnREBc34J3tgSdYJDDWyLdJ/Stpv/zTxYB/BM/65/f81u6t+E+T7h0PrRl1qXFhiay/aZFSvxAnd3M5ojxqnveQ6nCZLdVXjld/dmPWDR3TZnd8+dB6T3ThuMudsShMErw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by KL1PR06MB6818.apcprd06.prod.outlook.com (2603:1096:820:10d::5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Tue, 2 Jul
- 2024 06:30:04 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%6]) with mapi id 15.20.7719.028; Tue, 2 Jul 2024
- 06:30:03 +0000
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Date: Tue,  2 Jul 2024 14:29:52 +0800
-Message-Id: <20240702062952.28859-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.25.1
-X-ClientProxiedBy: TYWPR01CA0022.jpnprd01.prod.outlook.com
- (2603:1096:400:aa::9) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+ id 1sOXVw-0003kk-Mc for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 02 Jul 2024 07:01:21 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sin.source.kernel.org (Postfix) with ESMTP id 4B24CCE1C41;
+ Tue,  2 Jul 2024 07:01:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2643C4AF0A;
+ Tue,  2 Jul 2024 07:01:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1719903672;
+ bh=7+uA7w1KKXjPr90CVlNe8jEMzNUQIIGGIrqNQv7SF/s=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=KvMscesRuf25Z7x4ucp/ZjdOvbXnrTKVCaLpIAVSnJDzV+5jnaJWVncjcdTT/yHpB
+ U/yEgKcwbUh/GkkTfFaaYO68dhukp9ZsBWBf1kQfrtQx2Bs75gbl1I08kSa4wJzvll
+ /SS5Bis215NHxK1niKxDS0hP7ffKe8M4c/bOmuEgI4cakMRVBsx9JTsyMmxwxMpZr7
+ BVTrj5iqqlbwx9VqWkAAu9eblMJAd7iCVk6mMsYpoWrQJrMt67eFrtA7r169xlN6B1
+ fj/yWtahCQKRLu29Z1hBC+uon+e37CiRcg7ATP119Oj6zF9iCs+HqCP/BxJiFCndBP
+ pKTwHoDv5LGcw==
+Message-ID: <01299dcb-a1b0-4d7c-b538-fd16cdf5d7ca@kernel.org>
+Date: Tue, 2 Jul 2024 15:01:08 +0800
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|KL1PR06MB6818:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0393bbf9-3527-4a31-9f93-08dc9a6067e3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|52116014|1800799024|366016|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?1Sgx/JJ4O1T2lZuJtcCLuhV568ADyzgR82R3yOocxOzNTF7qQv1PjvUVNW3T?=
- =?us-ascii?Q?sN0B4ciRCCefHL0UqmNkruXktQTc0Eq6VRKzWON50PjOVmGf7b1yVEcO7dQf?=
- =?us-ascii?Q?2cT7CEHVclJu9lsGnO+fLA5wH6Z/zOtD7l2jgpb2PmJL8JO1vd4TpD3OhLL8?=
- =?us-ascii?Q?Ynpvvz9n6UOhCczIvpGTB6K6n/rL5MOn59HUYZMU5DvWueS6dByGdYeMwy9l?=
- =?us-ascii?Q?UW4F+Ck3VjCIvLZUzXuTbIQCOeVu5ZVP73h281vr5sxN4tqlCjX/I5jww7jy?=
- =?us-ascii?Q?t+a5L4DsRMeyL+R3ACmkc5WIyBvhKQ6m+NdtacHLwouwms339Nk+4MpK3pbP?=
- =?us-ascii?Q?qKw2+1DTEgU0kMxjdTjkgfjwqhGlFzRpxdim5ABckBNdBsbM6Yo8FKqGHwjW?=
- =?us-ascii?Q?9P3WBMasEcHA8c7qMgYwHoOQFALcC8J0Q4oGzBIuHeRSj/QrVKV/pMDDICLH?=
- =?us-ascii?Q?gQjml1YYTdZuQC0qXSG1B98WUvBpWss+oiPUBlwHFELs2R5tUPYJOZwOFGy7?=
- =?us-ascii?Q?UtAfdOf/lipSkvhqFsqgO8y3rLSPqlfDJkvOOhveizf2DGpSPo55ibBJ1uA2?=
- =?us-ascii?Q?zjHpx5fkFq6lBhpvqS1dQihtZLMak4l59J6EgBYVMlbPuGMXaoGBi3C1EJAv?=
- =?us-ascii?Q?lAOu58jNCSoO201QJvqUv4A3IdCwheGkIAaj1vMWdFS5DQ4x9itf0ULsmTQo?=
- =?us-ascii?Q?XmRwbzGoCGL4syqCuPAP3Nix0413LLrXowmFr9uhq9FfY6fY9m9i2gSc4UQn?=
- =?us-ascii?Q?WMa4KGE7Kuz+AOkZzORsYUSBcgl0heutGgu+ZIzNzmWjsh86IuXy+aIk4zxb?=
- =?us-ascii?Q?Rqcb6jIa/MzVtq/04OWD/IBBN20voeLVk7LZa24ueCkqXErVcs79OgQNW0zo?=
- =?us-ascii?Q?vnQydZ6hME6q90sraN2k+oDY2eqGqvn8bzlaZ01Xiwpe7HuIpQVhnV/DQ4a+?=
- =?us-ascii?Q?m5ia9ZRf7EsECqLVFHMqHRhgYVNxktyOUkQ2x9V38ZMRPsMr8Y5LGVAYsMR5?=
- =?us-ascii?Q?WMxoBpWyQWPQl2bLM//p+4IyloHas8cdIARJrP01vV0UwxqalhzizaTXX6Fk?=
- =?us-ascii?Q?VmgzWr0492zEtjn3g7302mzA9U04t+q5qYDT2kpdsp5guHFBESWMmt1FU5F3?=
- =?us-ascii?Q?WirsvbYKohI5WUF1H3QOdMO66bvtTkOo6DoVIXOqrTcp0yea9nctnHWAingy?=
- =?us-ascii?Q?VMi2AgBpRG176T+sPM9y58+geUo4yVrvSNSiJD+0lStYa4DNoy6nzc9F/Xq7?=
- =?us-ascii?Q?aKRLwsMEDxrAw/5XsCHjiIU2IofAomFZpbLWaFow4kJ+cTypmiJ8dWPHEy1I?=
- =?us-ascii?Q?3QoltLFnPzexpkcGNKhJ8NoI55mB/522YES+fA8Kbl3VW7z5kt/jCJs9lZjc?=
- =?us-ascii?Q?lKqTZz1v/6plI109MyyenL6IQef0xT60UZ+taMA19yK8j4nqMA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SEZPR06MB5576.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014); DIR:OUT;
- SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?5oOXeZzFn5idc3VicwqgTpn8bgE2vsyF35ezBtbdPSWcX3YicbY7g81e2kbq?=
- =?us-ascii?Q?/bcAUbsTWzWyL0aUCfbQwGXITkKEAGrZgmkji2geDrWtj7kBjli1Zki0wbMZ?=
- =?us-ascii?Q?dohVaQGZxP6oP8YccdTnsEGj61sX5JVUanUQ94h085FfkwitQELIfoO0hmv2?=
- =?us-ascii?Q?8VgruhaQrWkcZZj1Uep+iagG1PkzajA4YbIUshpcrYUz+UUuVEr98z81VAce?=
- =?us-ascii?Q?k82dXfLuZCzkrKD4pLu5Cbe/KNr+KCeygjYH5VyM7cvle/VZwhW03ZtmGp5N?=
- =?us-ascii?Q?tef8PlIYab7IZaZ4x1uYtcmx0AR2QQt/g/9Gd828B9huQPSwrHJaGAHxNf9J?=
- =?us-ascii?Q?q6k+jtcrdWU7CBdIBnOcQjJP/LpKN0GEUKdzcqxCGiTHU9OHE+xYN31ykONo?=
- =?us-ascii?Q?4OvaALBEQSPCThb8Pces/NIy8jzSih7RaWUuy+jvFd6Q8XZYevIqy/X3bBMV?=
- =?us-ascii?Q?kydtYKxhcFbNV9P2cYXOu61ygh7KY6+to6wwA7Vc2rYLKiEH2/g72FfEI/Vg?=
- =?us-ascii?Q?K/X7QnKCKVyFic1cVx9mN89RsitV8QVVGe/PO98EUULeMKnf8kkhwMtuqOQZ?=
- =?us-ascii?Q?t+3bR6h41M2QHTs7s/niyYa/yoUXpKaRO0JnA0LUK5d0QN+IG9/8nnUtHDzQ?=
- =?us-ascii?Q?bhrgwcT1J28zdEAHiXvmX2emlAcVI8NlpqtSipziym9o/EaplgulJ9SnIQO/?=
- =?us-ascii?Q?ptPfLpRNDGLgsFhvHFIwz2CzPeO01lfoWsNugU99/pUJmuU38s44hpcjXq95?=
- =?us-ascii?Q?STA9cSGqKiXBixqjX9uEwklMclKAlTmUfHfYUpmo31ubOY9VEmeWXU8lgny0?=
- =?us-ascii?Q?nLFoLaufd3BSUt44ne6s9aceZgvJDFFDhYF2ONWBqqo6tOcKKiktI18/jmSe?=
- =?us-ascii?Q?T+6c+EAeNCoLHLCvvwv2EvbhMb6mZ4JcNR7v1P6gthLEJAfRsTtZoV2/jf0v?=
- =?us-ascii?Q?5rrf5xo03ianfuYvmxGSzo74mPpDX0fVSjNgLBd9esBQu/40FgJwC6hvd8KV?=
- =?us-ascii?Q?W3tbvY/kWo9Fq0ejpKCVCfNpJAptRH7zdC2t82OOhrBj3NlD01YkVgZdAJGN?=
- =?us-ascii?Q?3vBdGtokMC6+iJDXNECgTCGF0U0NCc8nVOh9mYTVVWDDLcna1/mOhXFrM0Wc?=
- =?us-ascii?Q?Z0UZBjH6P/BmX9wXSVQraqbLMhRlGcIsTtMPcEzrx78qPRnnpOBZiXt5H5lZ?=
- =?us-ascii?Q?iMcVkzMgr84Avi7OhCoY67f+EI2u3oQ80Ev6eOTVHEawVwGZYSY3CyvJ7/Mx?=
- =?us-ascii?Q?Y8utMDRWyQkEZAoQ/MzQnFQmpvLyNeT+eeedU5hRuuhtiRAGmxh/f9y+YI+K?=
- =?us-ascii?Q?M0Ajt29yu27HSygimTmgegF198KWyz2NRxbMUpQA5FT7Obj35QtS4EO5ADyh?=
- =?us-ascii?Q?efZoZ/ly8bTjaLDBdFa94AeNpkDicN1BreoEgEkFqArozUWppH9IQvCdeM6F?=
- =?us-ascii?Q?EO2bVFGwwE8SzVb6JBd4e5FyI2c4DsGWTI4nSLUOMZbEzJhRLsBx849xybGp?=
- =?us-ascii?Q?hagZsiyjBDd7rwwiVi2Exxi9Yg8NfMvchVuVg8rdWbzD3zuvhcun9TzmicK7?=
- =?us-ascii?Q?e3Dw2I0lS3e4JrIZROrVSGaeZP6Qk01xO9PTSusz?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0393bbf9-3527-4a31-9f93-08dc9a6067e3
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2024 06:30:03.3031 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: r/lTFYNax/O154c3FYJ9w60FZfJZ4UVhHuB4Yu1cg54PezU7SWVmifzglgOsS1jc1v+t/L1okkpvw+0iRXECYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6818
-X-Headers-End: 1sOXGY-0002v2-NB
-Subject: [f2fs-dev] [PATCH] f2fs:Add write priority option based on zone UFS
+User-Agent: Mozilla Thunderbird
+To: Sheng Yong <shengyong@oppo.com>, jaegeuk@kernel.org
+References: <20240628013140.2444209-1-shengyong@oppo.com>
+ <20240628013140.2444209-10-shengyong@oppo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240628013140.2444209-10-shengyong@oppo.com>
+X-Headers-End: 1sOXVw-0003kk-Mc
+Subject: Re: [f2fs-dev] [RFC PATCH v2 09/10] inject.f2fs: add dentry
+ injection
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -162,139 +80,294 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Liao Yuanhong via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>, linux-kernel@vger.kernel.org,
- bo.wu@vivo.com, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Currently, we are using a mix of traditional UFS and zone UFS to support 
-some functionalities that cannot be achieved on zone UFS alone. However, 
-there are some issues with this approach. There exists a significant 
-performance difference between traditional UFS and zone UFS. Under normal 
-usage, we prioritize writes to zone UFS. However, in critical conditions 
-(such as when the entire UFS is almost full), we cannot determine whether 
-data will be written to traditional UFS or zone UFS. This can lead to 
-significant performance fluctuations, which is not conducive to 
-development and testing. To address this, we have added an option 
-zlu_io_enable under sys with the following three modes:
-1) zlu_io_enable == 0:Normal mode, prioritize writing to zone UFS;
-2) zlu_io_enable == 1:Zone UFS only mode, only allow writing to zone UFS;
-3) zlu_io_enable == 2:Traditional UFS priority mode, prioritize writing to 
-traditional UFS.
+On 2024/6/28 9:31, Sheng Yong wrote:
+> This patch enables injecting dentry block or dir entry.
+> print_raw_dentry_info() is added to show values of node footer.
+> 
+> The meanings of options are:
+>   * dent: means dentry is injected.
+> 
+> The members could be injected in cp contains:
+>   * d_bitmap: dentry block d_bitmap of nid
+>   * d_hash: dentry hash
+>   * d_ino: dentry ino
+>   * d_ftype: dentry ftype
+> 
+> Signed-off-by: Sheng Yong <shengyong@oppo.com>
+> ---
+>   fsck/inject.c | 179 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>   fsck/inject.h |   1 +
+>   2 files changed, 180 insertions(+)
+> 
+> diff --git a/fsck/inject.c b/fsck/inject.c
+> index c48728e..bae9afb 100644
+> --- a/fsck/inject.c
+> +++ b/fsck/inject.c
+> @@ -10,6 +10,7 @@
+>    */
+>   
+>   #include <getopt.h>
+> +#include "node.h"
+>   #include "inject.h"
+>   
+>   static void print_raw_nat_entry_info(struct f2fs_nat_entry *ne)
+> @@ -74,6 +75,17 @@ static void print_node_footer_info(struct node_footer *footer)
+>   	DISP_u32(footer, next_blkaddr);
+>   }
+>   
+> +static void print_raw_dentry_info(struct f2fs_dir_entry *dentry)
+> +{
+> +	if (!c.dbg_lv)
+> +		return;
+> +
+> +	DISP_u32(dentry, hash_code);
+> +	DISP_u32(dentry, ino);
+> +	DISP_u16(dentry, name_len);
+> +	DISP_u8(dentry, file_type);
+> +}
+> +
+>   void inject_usage(void)
+>   {
+>   	MSG(0, "\nUsage: inject.f2fs [options] device\n");
+> @@ -92,6 +104,7 @@ void inject_usage(void)
+>   	MSG(0, "  --sit <0|1|2> --mb <name> --blk <blk> [--idx <index>] --val <value> inject sit entry\n");
+>   	MSG(0, "  --ssa --mb <name> --blk <blk> [--idx <index>] --val <value> inject summary entry\n");
+>   	MSG(0, "  --node --mb <name> --nid <nid> [--idx <index>] --val <value> inject node\n");
+> +	MSG(0, "  --dent --mb <name> --nid <ino> [--idx <index>] --val <value> inject ino's dentry\n");
+>   	MSG(0, "  --dry-run do not really inject\n");
+>   
+>   	exit(1);
+> @@ -186,6 +199,16 @@ static void inject_node_usage(void)
+>   	MSG(0, "  addr: inject {in}direct node nid/addr array selected by --idx <index>\n");
+>   }
+>   
+> +static void inject_dent_usage(void)
+> +{
+> +	MSG(0, "inject.f2fs --dent --mb <name> --nid <nid> [--idx <index>] --val <value> inject dentry\n");
+> +	MSG(0, "[mb]:\n");
+> +	MSG(0, "  d_bitmap: inject dentry block d_bitmap of nid\n");
+> +	MSG(0, "  d_hash: inject dentry hash\n");
+> +	MSG(0, "  d_ino: inject dentry ino\n");
+> +	MSG(0, "  d_ftype: inject dentry ftype\n");
+> +}
+> +
+>   int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+>   {
+>   	int o = 0;
+> @@ -205,6 +228,7 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+>   		{"blk", required_argument, 0, 11},
+>   		{"ssa", no_argument, 0, 12},
+>   		{"node", no_argument, 0, 13},
+> +		{"dent", no_argument, 0, 14},
+>   		{0, 0, 0, 0}
+>   	};
+>   
+> @@ -280,6 +304,10 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+>   			opt->node = true;
+>   			MSG(0, "Info: inject node\n");
+>   			break;
+> +		case 14:
+> +			opt->dent = true;
+> +			MSG(0, "Info: inject dentry\n");
+> +			break;
+>   		case 'd':
+>   			if (optarg[0] == '-' || !is_digits(optarg))
+>   				return EWRONG_OPT;
+> @@ -309,6 +337,9 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+>   			} else if (opt->node) {
+>   				inject_node_usage();
+>   				exit(0);
+> +			} else if (opt->dent) {
+> +				inject_dent_usage();
+> +				exit(0);
+>   			}
+>   			return EUNKNOWN_OPT;
+>   		}
+> @@ -884,6 +915,152 @@ out:
+>   	return ret;
+>   }
+>   
+> +static int find_dir_entry(struct f2fs_dentry_ptr *d, nid_t ino)
+> +{
+> +	struct f2fs_dir_entry *de;
+> +	int slot = 0;
+> +
+> +	while (slot < d->max) {
+> +		if (!test_bit_le(slot, d->bitmap)) {
+> +			slot++;
+> +			continue;
+> +		}
+> +
+> +		de = &d->dentry[slot];
+> +		if (le32_to_cpu(de->ino) == ino && de->hash_code != 0)
+> +			return slot;
+> +		if (de->name_len == 0) {
+> +			slot++;
+> +			continue;
+> +		}
+> +		slot += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+> +	}
+> +
+> +	return -ENOENT;
+> +}
+> +
+> +static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
+> +{
+> +	struct node_info ni;
+> +	struct f2fs_node *node_blk = NULL;
+> +	struct f2fs_inode *inode;
+> +	struct f2fs_dentry_ptr d;
+> +	void *inline_dentry;
+> +	struct f2fs_dentry_block *dent_blk = NULL;
+> +	block_t addr = 0;
+> +	void *buf = NULL;
+> +	struct f2fs_dir_entry *dent = NULL;
+> +	struct dnode_of_data dn;
+> +	nid_t pino;
+> +	int slot = -ENOENT, ret;
+> +
+> +	node_blk = malloc(F2FS_BLKSIZE);
+> +	ASSERT(node_blk != NULL);
+> +
+> +	/* get child inode */
+> +	get_node_info(sbi, opt->nid, &ni);
+> +	ret = dev_read_block(node_blk, ni.blk_addr);
+> +	ASSERT(ret >= 0);
+> +	pino = le32_to_cpu(node_blk->i.i_pino);
+> +
+> +	/* get parent inode */
+> +	get_node_info(sbi, pino, &ni);
+> +	ret = dev_read_block(node_blk, ni.blk_addr);
+> +	ASSERT(ret >= 0);
+> +	inode = &node_blk->i;
+> +
+> +	/* find child dentry */
+> +	if (inode->i_inline & F2FS_INLINE_DENTRY) {
+> +		inline_dentry = inline_data_addr(node_blk);
+> +		make_dentry_ptr(&d, node_blk, inline_dentry, 2);
+> +		addr = ni.blk_addr;
+> +		buf = node_blk;
+> +
+> +		slot = find_dir_entry(&d, opt->nid);
+> +		if (slot >= 0)
+> +			dent = &d.dentry[slot];
+> +	} else {
+> +		unsigned int level, dirlevel, nbucket;
+> +		unsigned long i, end;
+> +
+> +		level = le32_to_cpu(inode->i_current_depth);
+> +		dirlevel = le32_to_cpu(inode->i_dir_level);
+> +		nbucket = dir_buckets(level, dirlevel);
+> +		end = dir_block_index(level, dirlevel, nbucket) +
+> +						bucket_blocks(level);
+> +
+> +		dent_blk = malloc(F2FS_BLKSIZE);
+> +		ASSERT(dent_blk != NULL);
+> +
+> +		for (i = 0; i < end; i++) {
+> +			memset(&dn, 0, sizeof(dn));
+> +			set_new_dnode(&dn, node_blk, NULL, pino);
+> +			ret = get_dnode_of_data(sbi, &dn, i, LOOKUP_NODE);
+> +			if (ret < 0)
+> +				break;
+> +			addr = dn.data_blkaddr;
+> +			if (dn.inode_blk != dn.node_blk)
+> +				free(dn.node_blk);
+> +			if (addr == NULL_ADDR || addr == NEW_ADDR)
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-Signed-off-by: Wu Bo <bo.wu@vivo.com>
----
- fs/f2fs/f2fs.h    |  5 +++++
- fs/f2fs/segment.c | 23 ++++++++++++++++++++++-
- fs/f2fs/sysfs.c   | 13 +++++++++++++
- 3 files changed, 40 insertions(+), 1 deletion(-)
+check addr w/ f2fs_is_valid_blkaddr() ? otherwise, we may read dentry block
+from invalid blkaddr.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f7ee6c5e371e..7ba782bd15b2 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1781,6 +1781,11 @@ struct f2fs_sb_info {
- 	u64 committed_atomic_block;
- 	u64 revoked_atomic_block;
- 
-+#ifdef CONFIG_BLK_DEV_ZONED
-+	/* For adjust the priority writing position of data in zone UFS */
-+	unsigned int zlu_io_enable;		/* data write mode */
-+#endif
-+
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	struct kmem_cache *page_array_slab;	/* page array entry */
- 	unsigned int page_array_slab_size;	/* default page array slab size */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 4db1add43e36..327457c28700 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2686,17 +2686,38 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
- 			goto got_it;
- 	}
- 
-+#ifdef CONFIG_BLK_DEV_ZONED
- 	/*
- 	 * If we format f2fs on zoned storage, let's try to get pinned sections
- 	 * from beginning of the storage, which should be a conventional one.
- 	 */
- 	if (f2fs_sb_has_blkzoned(sbi)) {
--		segno = pinning ? 0 : max(first_zoned_segno(sbi), *newseg);
-+		if (sbi->zlu_io_enable == 2)		/* Prioritize writing to traditional UFS */
-+			segno = 0;
-+		else
-+			segno = pinning ? 0 : max(first_zoned_segno(sbi), *newseg);
- 		hint = GET_SEC_FROM_SEG(sbi, segno);
- 	}
-+#endif
- 
- find_other_zone:
- 	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
-+
-+#ifdef CONFIG_BLK_DEV_ZONED
-+	if (secno >= MAIN_SECS(sbi) && f2fs_sb_has_blkzoned(sbi)) {
-+		if (sbi->zlu_io_enable == 1) {		/* Write only to zone UFS */
-+			hint = GET_SEC_FROM_SEG(sbi, first_zoned_segno(sbi));
-+			secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
-+		} else
-+			secno = find_first_zero_bit(free_i->free_secmap,
-+								MAIN_SECS(sbi));
-+		if (secno >= MAIN_SECS(sbi)) {
-+			ret = -ENOSPC;
-+			goto out_unlock;
-+		}
-+	}
-+#endif
-+
- 	if (secno >= MAIN_SECS(sbi)) {
- 		secno = find_first_zero_bit(free_i->free_secmap,
- 							MAIN_SECS(sbi));
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index fee7ee45ceaa..bc9e5e8bb749 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -627,6 +627,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 	}
- #endif
- 
-+#ifdef CONFIG_BLK_DEV_ZONED
-+	if (!strcmp(a->attr.name, "zlu_io_enable")) {
-+		sbi->zlu_io_enable = t;
-+		return count;
-+	}
-+#endif
-+
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	if (!strcmp(a->attr.name, "compr_written_block") ||
- 		!strcmp(a->attr.name, "compr_saved_block")) {
-@@ -1006,6 +1013,9 @@ F2FS_SBI_GENERAL_RW_ATTR(dir_level);
- F2FS_SBI_GENERAL_RW_ATTR(iostat_enable);
- F2FS_SBI_GENERAL_RW_ATTR(iostat_period_ms);
- #endif
-+#ifdef CONFIG_BLK_DEV_ZONED
-+F2FS_SBI_GENERAL_RW_ATTR(zlu_io_enable);
-+#endif
- F2FS_SBI_GENERAL_RW_ATTR(readdir_ra);
- F2FS_SBI_GENERAL_RW_ATTR(max_io_bytes);
- F2FS_SBI_GENERAL_RW_ATTR(data_io_flag);
-@@ -1153,6 +1163,9 @@ static struct attribute *f2fs_attrs[] = {
- #ifdef CONFIG_F2FS_IOSTAT
- 	ATTR_LIST(iostat_enable),
- 	ATTR_LIST(iostat_period_ms),
-+#endif
-+#ifdef CONFIG_BLK_DEV_ZONED
-+	ATTR_LIST(zlu_io_enable),
- #endif
- 	ATTR_LIST(readdir_ra),
- 	ATTR_LIST(max_io_bytes),
--- 
-2.25.1
+Thanks,
 
+> +				continue;
+> +			ret = dev_read_block(dent_blk, addr);
+> +			ASSERT(ret >= 0);
+> +
+> +			make_dentry_ptr(&d, node_blk, dent_blk, 1);
+> +			slot = find_dir_entry(&d, opt->nid);
+> +			if (slot >= 0) {
+> +				dent = &d.dentry[slot];
+> +				buf = dent_blk;
+> +				break;
+> +			}
+> +		}
+> +	}
+> +
+> +	if (slot < 0) {
+> +		ERR_MSG("dentry of ino %u not found\n", opt->nid);
+> +		ret = -ENOENT;
+> +		goto out;
+> +	}
+> +
+> +	if (!strcmp(opt->mb, "d_bitmap")) {
+> +		MSG(0, "Info: inject dentry bitmap of nid %u: 1 -> 0\n",
+> +		    opt->nid);
+> +		test_and_clear_bit_le(slot, d.bitmap);
+> +	} else if (!strcmp(opt->mb, "d_hash")) {
+> +		MSG(0, "Info: inject dentry d_hash of nid %u: "
+> +		    "0x%x -> 0x%x\n", opt->nid, le32_to_cpu(dent->hash_code),
+> +		    (u32)opt->val);
+> +		dent->hash_code = cpu_to_le32((u32)opt->val);
+> +	} else if (!strcmp(opt->mb, "d_ino")) {
+> +		MSG(0, "Info: inject dentry d_ino of nid %u: "
+> +		    "%u -> %u\n", opt->nid, le32_to_cpu(dent->ino),
+> +		    (nid_t)opt->val);
+> +		dent->ino = cpu_to_le32((nid_t)opt->val);
+> +	} else if (!strcmp(opt->mb, "d_ftype")) {
+> +		MSG(0, "Info: inject dentry d_type of nid %u: "
+> +		    "%d -> %d\n", opt->nid, dent->file_type,
+> +		    (u8)opt->val);
+> +		dent->file_type = (u8)opt->val;
+> +	} else {
+> +		ERR_MSG("unknown or unsupported member \"%s\"\n", opt->mb);
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	print_raw_dentry_info(dent);
+> +
+> +	if (inode->i_inline & F2FS_INLINE_DENTRY)
+> +		ret = update_inode(sbi, buf, &addr);
+> +	else
+> +		ret = update_block(sbi, buf, &addr, NULL);
+> +	ASSERT(ret >= 0);
+> +
+> +out:
+> +	free(node_blk);
+> +	free(dent_blk);
+> +	return ret;
+> +}
+> +
+>   int do_inject(struct f2fs_sb_info *sbi)
+>   {
+>   	struct inject_option *opt = (struct inject_option *)c.private;
+> @@ -901,6 +1078,8 @@ int do_inject(struct f2fs_sb_info *sbi)
+>   		ret = inject_ssa(sbi, opt);
+>   	else if (opt->node)
+>   		ret = inject_node(sbi, opt);
+> +	else if (opt->dent)
+> +		ret = inject_dentry(sbi, opt);
+>   
+>   	return ret;
+>   }
+> diff --git a/fsck/inject.h b/fsck/inject.h
+> index 9b14c31..43c21b5 100644
+> --- a/fsck/inject.h
+> +++ b/fsck/inject.h
+> @@ -32,6 +32,7 @@ struct inject_option {
+>   	int sit;		/* which sit pack */
+>   	bool ssa;
+>   	bool node;
+> +	bool dent;
+>   };
+>   
+>   void inject_usage(void);
 
 
 _______________________________________________
