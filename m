@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2365CC3064D
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Jul 2024 06:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 19E29C3064D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Jul 2024 06:14:39 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sOWjX-0002Fe-Fx;
-	Tue, 02 Jul 2024 06:11:19 +0000
+	id 1sOWmk-0002b3-5f;
+	Tue, 02 Jul 2024 06:14:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1sOWjV-0002FN-SN
+ (envelope-from <chao@kernel.org>) id 1sOWmj-0002av-J1
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 02 Jul 2024 06:11:18 +0000
+ Tue, 02 Jul 2024 06:14:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HD+7urcX1J7z8tC3u0w79km5S1EdGx7iAbOwWxhGOqw=; b=iUwuTnSlJFXqQs9tR+n7jopHY7
- /e5YLmxW8vOOt47PVFxqA3uHtNAmzxGx7cRQn+bKoArTReyrE82FATcaFY2bLqwVf+/wBjP/yoQpE
- aKIwNhMI9YluGD4evWtY8kgQqFEY0Qkek50Vktm8wUAviashf64+oL5Rf/PSY2zDCyYw=;
+ bh=YaWx2uMhXIm6g60DknTLTqUgUXvYJ9FEu4tzwg5bFA8=; b=GVH5iO0iwsZ7iFkX4VGC5cbmJe
+ n8QSn2dbfpwlBn/5mmwvBOW2p0fFZ//E3hg8zZfskQbo1PmKi0Vwx/y/KKhSdWga0isLFLxU+tGyv
+ OMr3zVZYuYN/r/qifL9oG8nA/vXvRvPiFbh1Pwwh4kZSqjZcVLqb8aG8Bo9/sNZqHJ0Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,41 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=HD+7urcX1J7z8tC3u0w79km5S1EdGx7iAbOwWxhGOqw=; b=NR4TgOhJiUETYNTg4Th/KogYx7
- P2VpWJT2vKwF1XVP/sL9dw3mroz+NA1KTCSz7fYNY2RfcQAvD3LvuNW9DutIPber0DxjbRSOOj3IF
- QR1A4DZupf1afiyBIBciNCaU1qepI4A5PPh5eNRDrxpHvi+n/BhOmK3S3fJpCmtYxOGs=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=YaWx2uMhXIm6g60DknTLTqUgUXvYJ9FEu4tzwg5bFA8=; b=MUqb3dUMPlzZNWO8kMneE3ep99
+ 1FzcUrIjOcbxVczjWtQg4S7lh1og4r3bAKGHUBCf1w+v2ZinU5TYDvWoNrmoRnQkrxBwR9sllYrBp
+ toqMAUysNpnuhs31MdHRulE8IA8m8NCsnbLrkXEVuheQYnwXWM9ve2FZ2gvWANyDX9uo=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sOWjW-0000js-94 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 02 Jul 2024 06:11:18 +0000
+ id 1sOWmj-00012T-S0 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 02 Jul 2024 06:14:37 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 2A9E560AFD;
- Tue,  2 Jul 2024 06:11:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14185C116B1;
- Tue,  2 Jul 2024 06:11:05 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id 76E6CCE0B46;
+ Tue,  2 Jul 2024 06:14:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E4CC116B1;
+ Tue,  2 Jul 2024 06:14:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1719900666;
- bh=ths+yCbawqhHMCmubkRulWR44EgI5qbOYAwR9HpjZLY=;
+ s=k20201202; t=1719900869;
+ bh=4Z67GbZxOQabAJr3drErb60Fr2T6VBrEOJPGrzkhS3U=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=TxXOw9A1OGgruQ1pdAo2ZMq/BJmBppL5fyz9GC98O3Zhexb3ZmzLj3JSOoO20IuzL
- uaJHpXIeq0lfhAcsW4BUl2P/FVbkrIN8uOVCHyd/RJSrh6w46WVUXvxaIxQHYiEFgF
- ZEO9GE5HCiuNiAa4OsIykp8D1kslPMNUtgejnQEcvXC/h9mmJx7AIusZEUIxj2YxCJ
- faxRAq4EK/3SSEOsu9sUvfNoy8UxeimT67B2wiYpdiKm2oXKkTiyGseaApJELrS3lt
- f4lSVxoUP540K7HOvu2VlM9RkFk0LwhDhlaSEoDi+r++dbs9nbmJZMKK2LpCQ6hwt1
- qq7Qsxyo1AjJw==
-Message-ID: <2cbb23b5-f870-453a-90d1-8f47280b7e4c@kernel.org>
-Date: Tue, 2 Jul 2024 14:11:03 +0800
+ b=obLXu6wHTZxurSrOXUKSCK2BiSuCgpAxCtxHQtu0anOY9R711aLW3QMR5yydQKvTq
+ BepxMB+mTyqMGszXkXx/rM92LVZTUo3gMLkvxHYlmTfjD1cMHEyRlrq4/aWEWtGvJ+
+ aqUpsfdfnB3iqMN15uyVYXZtt7RdsgaXfNI29+dN4GMxQJ0xyET7AquiDLrLikv/Sy
+ Vj7MpGCSC82Z7adYTF2E6XkW+R0m6niqu3v1R+llQ8ITOS+w1u0yaZydzySXngZFz0
+ qpcz0vLXjoEiwhfseudL0/rg5uOD4cMUZkdlNVv1gL3VHRxJkv2owwFvZMucgjzJ/R
+ T1WGt0Gl953gw==
+Message-ID: <9d834670-c959-4b3f-b394-b372e05bb306@kernel.org>
+Date: Tue, 2 Jul 2024 14:14:26 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Sheng Yong <shengyong@oppo.com>, jaegeuk@kernel.org
 References: <20240628013140.2444209-1-shengyong@oppo.com>
- <20240628013140.2444209-7-shengyong@oppo.com>
+ <20240628013140.2444209-8-shengyong@oppo.com>
 Content-Language: en-US
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240628013140.2444209-7-shengyong@oppo.com>
-X-Headers-End: 1sOWjW-0000js-94
-Subject: Re: [f2fs-dev] [RFC PATCH v2 06/10] inject.f2fs: add sit injection
+In-Reply-To: <20240628013140.2444209-8-shengyong@oppo.com>
+X-Headers-End: 1sOWmj-00012T-S0
+Subject: Re: [f2fs-dev] [RFC PATCH v2 07/10] inject.f2fs: add ssa injection
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,19 +85,19 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 2024/6/28 9:31, Sheng Yong wrote:
-> This patch enables injecting sit entry. print_raw_sit_entry_info() is
-> added to show values of the sit entry.
+> This patch enables injecting summary block or summary entry.
+> print_raw_sum_entry_info() and print_sum_footer_info() are added to show
+> values of the ssa entry and summary footer.
 > 
 > The meanings of options are:
->   * sit: means sit entry is injected, its argument chooses which sit pack
->          to be injected, where 0 means the current valid sit is choosen
-> 	automatically.
->   * blk: is the block address of the sit entry.
+>   * ssa: means ssa entry is injected.
 > 
 > The members could be injected in cp contains:
->   * vblocks: sit entry vblocks
->   * valid_map: sit entry valid_map
->   * mtime: sit entry mtime
+>   * entry_type: summary block footer entry_type
+>   * check_sum: summary block footer check_sum
+>   * nid: summary entry nid
+>   * version: summary entry version
+>   * ofs_in_node: summary entry ofs_in_node
 > 
 > Signed-off-by: Sheng Yong <shengyong@oppo.com>
 
