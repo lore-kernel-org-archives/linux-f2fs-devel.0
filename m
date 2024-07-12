@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B4A86C2BD09
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 12 Jul 2024 07:24:09 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 62AFDC2BD09
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 12 Jul 2024 07:33:41 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sSAdV-0004sO-P8;
-	Fri, 12 Jul 2024 07:24:09 +0000
+	id 1sSAmi-0004Rp-9L;
+	Fri, 12 Jul 2024 07:33:40 +0000
 Received: from [172.30.29.67] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1sSAdU-0004sG-JL
+ (envelope-from <chao@kernel.org>) id 1sSAmg-0004Rh-Os
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 12 Jul 2024 07:24:08 +0000
+ Fri, 12 Jul 2024 07:33:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xzNrA/TSJLASDe0oz+Ym4XCRdWn47lOwfsxFlNmVk+k=; b=FrcnljAIlekdaikW7fnILTbuQY
- rNwrdsD0pb9ZHl6mXnurjdLTaUIcGF3jgRMdTtE/jSP1UArD7dU/kwdHhiZOS8oA0PEHe32MJ+f+s
- W5FSX49JRafbAVzodCcuBH8A6EzPmzcFJ9IQusohotdfpUznzQ+QBVinQdkAUeYkM1+Q=;
+ bh=aNLzgOYLXAIuzD7FMx1zwXyE1R4lGbm8dqVNd1AWtrs=; b=CKHxmCg19tSySyHyBz4w/I6nK+
+ 5WXucU++irsdT4b7Bp+QRVBP8lxshjJ9EkjgKnZVoyurVySB3BgptkUEFB+Qli5PJ5gnsrVGbR41y
+ LRCwbzF+vp5xoP7dkBwU++IKYBv8mObZyOxcnH06rD/ATrtM708jYbIQF6mefeufqTlU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,41 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=xzNrA/TSJLASDe0oz+Ym4XCRdWn47lOwfsxFlNmVk+k=; b=hYcuOupLa1mfNt9Q0+wAKqySm8
- FSige94VffQoS+BpMAZLxWLC5g6M8Q6RAKg72SLVfBBVi6e5BLTzHDJIXbx/8GV4SOw6ZbQsscMCW
- ETMHkW/7CI+BlzsepTQ8Jo7I4u9yru+hrOW2xmjxRFRzkgfjkty0lLUHvs3TKlbtozmo=;
+ bh=aNLzgOYLXAIuzD7FMx1zwXyE1R4lGbm8dqVNd1AWtrs=; b=hz/yrcqM1IzoJYE6Hpw0M6CqbS
+ eVN+aI+2YE+AhlLBd+7tSnkftG0ubS7aWT3Ta8UkWa1jGPlpqp5/jpV3+vrs4KhVZ+uDvPClXJqsN
+ nFpr+PBBMb1khSiQobR0lgAS2l6oKpJ8siy6rOdSbUv+8go9xwSgl1ajEtpnWO3fVefo=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sSAdU-0005CD-3L for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 12 Jul 2024 07:24:07 +0000
+ id 1sSAmh-0005bh-Bx for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 12 Jul 2024 07:33:39 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id ED48D61E1C;
- Fri, 12 Jul 2024 07:23:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E2B3C3277B;
- Fri, 12 Jul 2024 07:23:55 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 41CF361E56;
+ Fri, 12 Jul 2024 07:33:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34532C3277B;
+ Fri, 12 Jul 2024 07:33:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1720769036;
- bh=GTTtD9y/JWJ+MaUYc7bkysWR54S+lYhg/UQCdbU9kPM=;
+ s=k20201202; t=1720769607;
+ bh=A+AECDdN44hSn3L3+HKGSnAHvCrCo8EaQ1/VV7oEklo=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=Riap1uj8h6fPv1Tgiy4BC5NxE45PBfxl3k3wK65qvIeOCV73dG51p1rUhYTt4Bys0
- uuF/Gda+xyb+YH8Xulx+9CfGNw19lV8Zf62iz43Qy9n6/KNCwTYDs5qeW+DjeIRAf4
- FketK9PGv08soqsQDBLmYsZ/NhmT4HJuHyNBWlMTyFQyYOBq1AgDMhiKwMGkL35rBo
- 1rV0FljQNFhMJxxhAnXYNJPxGNJqjHbNnszpI5SDnaKPMrVjdEZLsInJk7E6GFRS8+
- dS2E2hlZ4+Zx9pXZB6STuZ+a5FNokvu0ThdD2XfmYj+cuj3qEreZ7VJYQ0FcAPez0y
- SMfhREGuhCpPA==
-Message-ID: <cdafa166-2b34-49cb-bcc0-9d99a118aad9@kernel.org>
-Date: Fri, 12 Jul 2024 15:23:52 +0800
+ b=RnqDs9L+JI5/FuRYNvZEQ3Accw0oRfJKFt4eRdx46kIA4ngemCWsE0pgRo/jAQjor
+ udGnLANQHGNShjN4JkrYZ3zQMMOYOZZwzd4Gb2hbAPiy3+WKZEsozYXj7UF/Q22Q6v
+ 2ceC+1eLtftkcqvVK6O+QwDFp2UYpzRgXdIFfxlDaFhT1UpqbEO8MspkCYQgB90NlW
+ 0/Djb5JBkzmK+S8FX4lpnUgX8cSNdJ3ztt+rBeSEZPWb04Y3+jq3IiGyVXTDnARJCk
+ icQ4sNQjlZTz82qDZRk0kucVl2S/LDQCmvoUHMoiD4zkjI8mLh6QoFw4GgyfE9YPoC
+ jQXZu9WvmWrPQ==
+Message-ID: <d35ef4d4-22ae-46ef-885d-7e9aa674deb1@kernel.org>
+Date: Fri, 12 Jul 2024 15:33:24 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Sheng Yong <shengyong@oppo.com>, jaegeuk@kernel.org
 References: <20240712020133.140148-1-shengyong@oppo.com>
- <20240712020133.140148-4-shengyong@oppo.com>
+ <20240712020133.140148-5-shengyong@oppo.com>
 Content-Language: en-US
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240712020133.140148-4-shengyong@oppo.com>
-X-Headers-End: 1sSAdU-0005CD-3L
-Subject: Re: [f2fs-dev] [PATCH] fsck.f2fs: fix checking wp of all devices
+In-Reply-To: <20240712020133.140148-5-shengyong@oppo.com>
+X-Headers-End: 1sSAmh-0005bh-Bx
+Subject: Re: [f2fs-dev] [PATCH] fsck.f2fs: update superblock if invalid
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,9 +85,13 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 2024/7/12 10:01, Sheng Yong wrote:
-> For zoned model, the first device (devices[0]) is not zoned device,
-> whose zoned_model is not F2FS_ZONED_HM. Let's skip it and check write
-> pointer of left devices continuously.
+> If a superblock failed in sanity check, it should be fixed. This patch
+> add a new state `sb_invalid' to tell fsck needs to update superblock
+> at the end of all checkings.
+> 
+> This patch also cleans up force_stop, abnormal_stop, fs_errors and
+> sb_invalid by merging them into an `invalid_sb' flags, and each of
+> them is indicated using one bit.
 > 
 > Signed-off-by: Sheng Yong <shengyong@oppo.com>
 
