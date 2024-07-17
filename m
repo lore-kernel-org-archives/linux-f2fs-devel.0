@@ -4,104 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 08888C3DA59
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Jul 2024 11:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D66F2C3DA49
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Jul 2024 02:12:35 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sTfyU-0006qg-IX;
-	Tue, 16 Jul 2024 11:04:02 +0000
+	id 1sTu9h-0003Uh-8e;
+	Wed, 17 Jul 2024 02:12:33 +0000
 Received: from [172.30.29.67] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zlang@redhat.com>) id 1sTfyT-0006qQ-F3
+ (envelope-from <chao@kernel.org>) id 1sTu9g-0003Ub-IV
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 16 Jul 2024 11:04:01 +0000
+ Wed, 17 Jul 2024 02:12:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:In-Reply-To:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=G3/AtxtSwR8lUsUE4FZXEG4bGpUSLh82ydkzVdaGpVA=; b=QBkE2spe84H4LT35tV3D9778YO
- XNVlfXATTSlJS7B6OwXRRw4I5oPNFiPHB0jITFz5wigbwP5j95bgYe92lhIxAjp3CdNgcKSBwL/n2
- eJ7CiRn3dfMFtu3KMbFF6VnSdaZG/Xp17epVjP++lxvXN5XDrj39W7MnZCVx/l33jEDU=;
+ bh=Q9M3R3smfbTPwIl9IuHSnGfiV3qt751F6xqrZkqZoDc=; b=dappfSfWYfdeK25IGFsZVQ3OZq
+ Vk6yDG4J0jLms6wL/llfG85RgGauX90LkEaUpyo0kPIu1HBLLptLRCteBx7ZFvtnNh9sIL//Y+VAX
+ W8nvxpoLQAeK/Ribtr045XOim2FBwzndygTB2k5EH0QT0A3VZVO5sOspS9hpwQG3cvhA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=G3/AtxtSwR8lUsUE4FZXEG4bGpUSLh82ydkzVdaGpVA=; b=BkCZ82npKf1AVd1wzcAgQExB0M
- 2iD2hV1USH3eKOQuvCMYl9xbbaU9Bv8uBtkWysKk+FwQ0rvFywMHcMoPz9awv6esqUuBjt+uycSjB
- HoWEQmQJhJgjgsXof0A7uijmv/fC2gT9VaGO+Jjw2AEG9cipimmaiEp2TH5TgL1bbL04=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
+ bh=Q9M3R3smfbTPwIl9IuHSnGfiV3qt751F6xqrZkqZoDc=; b=KToXvYHiWvlrh7HlPegzsku8FQ
+ 83D/NPWo7UcAUX+Q/oK7ZegclH+BYh9Zp2j2a6e6EsVvNKkferWyHp8GKuPAlFElZWR6iLR+f53uB
+ D2qacSiI3VT+JFGyIOLDqylpLtgyEyVsSQ6YFohEyeicA3uY7o8GOgc9kVskTugYK9SU=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sTfyT-00015d-D9 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 16 Jul 2024 11:04:01 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1721127829;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=G3/AtxtSwR8lUsUE4FZXEG4bGpUSLh82ydkzVdaGpVA=;
- b=Q81Aujxd0MCvluRXo41G6/P3TwKtyPNBTQd8VDQLKNhUCFzfu6p/Q8AkebGP7Ioi8hzamK
- F7E+gU5GIsMab5jrVNol2GH6wsiIYRAT24Yvfky1odmJPO+Lp3H94fijBT2i8IHphihRu7
- 9mznogejvAl6v4Uohm1fkBRY2fZiK2k=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-325-mfu_zYGfPdKZiWcR9lm8Vw-1; Tue, 16 Jul 2024 07:03:48 -0400
-X-MC-Unique: mfu_zYGfPdKZiWcR9lm8Vw-1
-Received: by mail-pl1-f197.google.com with SMTP id
- d9443c01a7336-1fb019a1227so36581085ad.2
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 16 Jul 2024 04:03:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1721127827; x=1721732627;
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=G3/AtxtSwR8lUsUE4FZXEG4bGpUSLh82ydkzVdaGpVA=;
- b=WE4v3PUrQObjIldpomDKMGKMlzFOeEfEwXmIoXcVPeMUwKNQJYrYWfFMAp4M8uR8S9
- HeJFFJUXj+SaHUZxbpho/0aqfNMYPAHeciXWwOsk0R8qmn2vQOxm+A7PgZPyYKKuukCi
- /McjTSYCxZL96U3ykIXDeAlR62PeErtzvcX0uYCIowzOsHiJm13kZgp+L9azQdjeefzA
- +9PBgfDErQZ06usG7W9/0P2km/8yb8UrDLZ85VRWo9GxBin6YRE1cula7DcCRhpaqZgG
- f4hMmWEomeflt9shlX3V7RuNJ8GSHIVSUqkj+ejtTMNwPv+pJPmRomVl62LuuTRFnVjc
- ZYVg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUXaQi5PtGFaXCnR+J3uwJFmMmAJpfsjpuxDgvUG8OCFyv/dskmVXBaB9wuCvSzwSpJ5xnRJB1vVakQmTUSZrls3VE5r9WWwwjBKUKj7jmbClgtTU93ww==
-X-Gm-Message-State: AOJu0YyuUdevXJbteV7xyPFI+sI3j2R5xDAeCWgrm5BSbGelTzcDQzOY
- IUzfbFfpH/7X4WW8QqfLemcWyu+8hJu5o0cPAz7Z1AFe8Yww1QJtb1ZChSnRbp7AiiteK5yfOdb
- qSlrg3P+zrw2iXSVcE4/MFJmivPEyjmue9F3VZoFE47RpJ625qQH/NTjaUPCYZf02Vyv8Kmjpmg
- uy9WUJy9Jb8w==
-X-Received: by 2002:a17:903:189:b0:1fb:48c6:a2b0 with SMTP id
- d9443c01a7336-1fc3d914683mr14517505ad.5.1721127826920; 
- Tue, 16 Jul 2024 04:03:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHpuozIIg2P4JkySM51kbaebxVPC2AGB8uZWPOqDTc7+W31Ck3hl6zCrnTREBha5R8olzIpVw==
-X-Received: by 2002:a17:903:189:b0:1fb:48c6:a2b0 with SMTP id
- d9443c01a7336-1fc3d914683mr14517305ad.5.1721127826525; 
- Tue, 16 Jul 2024 04:03:46 -0700 (PDT)
-Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([43.228.180.230])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-1fc0bc3921bsm55775415ad.227.2024.07.16.04.03.44
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Jul 2024 04:03:46 -0700 (PDT)
-Date: Tue, 16 Jul 2024 19:03:42 +0800
-From: Zorro Lang <zlang@redhat.com>
-To: Chao Yu <chao@kernel.org>
-Message-ID: <20240716110342.2jhwp3wn65pvhoyd@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-References: <20240625140233.3907012-1-chao@kernel.org>
+ id 1sTu9g-00072j-HC for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 17 Jul 2024 02:12:32 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id 5E64061113;
+ Wed, 17 Jul 2024 02:12:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5826C116B1;
+ Wed, 17 Jul 2024 02:12:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1721182341;
+ bh=r18DYM9L0j/fdMY2uog1UdcMmZiz6cjxEKC8Pnyj0xI=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=UbHbIYx2l0scUaNJxuzM21ymvFnJp1ApE7FNyOtDWhdz214AyCv0eBIFroP7SufHQ
+ TqmxFNGmoN0Bsc6jDf2QbDoqYXXExmXnYtNWqID+m7y92O01kweFSiqlu2+y2dd3aF
+ y70RC29GBhprgKANYu4tm6z0yn8SPw3L871nib57UlYh+C1gcquA5k9is+5gtpVjS5
+ yOBQ/HVIpHQIYIv0cUQhIHbKbl1HdIeiBEE7mu41XOMhoYn7oL4AogRWL5J+0BbqwG
+ X4FPWhGik9CWxUFCWWwDaUxQ1q7zPopkhRja1VbMmlk70Ge/q2eOhEyydHW8GEdvfg
+ SJTls0cluoNiw==
+Message-ID: <fba75c06-b0d9-4e92-b673-9c11314744c1@kernel.org>
+Date: Wed, 17 Jul 2024 10:12:16 +0800
 MIME-Version: 1.0
-In-Reply-To: <20240625140233.3907012-1-chao@kernel.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Disposition: inline
-X-Headers-End: 1sTfyT-00015d-D9
+User-Agent: Mozilla Thunderbird
+To: Zorro Lang <zlang@redhat.com>
+References: <20240625030416.3553498-1-chao@kernel.org>
+ <20240716105710.v76icnjhqmvjmgsd@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240716105710.v76icnjhqmvjmgsd@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+X-Headers-End: 1sTu9g-00072j-HC
 Subject: Re: [f2fs-dev] [PATCH] f2fs: test for race condition in between
- atomic_write and dio
+ atomic_write and gc
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -114,119 +81,161 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Daeho Jeong <daehojeong@google.com>,
- fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+ fstests@vger.kernel.org, "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jun 25, 2024 at 10:02:33PM +0800, Chao Yu wrote:
-> In this patch, we simulate race case in between sqlite atomic write
-> and direct IO w/ below steps:
-> 1. create a regular file, and initialize it w/ 0xff data
-> 2. start transaction (via F2FS_IOC_START_ATOMIC_WRITE) on it
-> 3. write transaction data
-> 4. trigger direct read/write IO on it to check whether it fails or not
-> 5. commit and end the transaction (via F2FS_IOC_COMMIT_ATOMIC_WRITE)
-> This is a regression test to check handling of race condition in
-> between atomic_write and direct IO.
+On 2024/7/16 18:57, Zorro Lang wrote:
+> On Tue, Jun 25, 2024 at 11:04:16AM +0800, Chao Yu wrote:
+>> Test that we will simulate sqlite atomic write logic w/ below steps:
+>> 1. create a regular file, and initialize it w/ 0xff data
+>> 2. start transaction (via F2FS_IOC_START_ATOMIC_WRITE) on it
+>> 3. write transaction data
+>> 4. trigger foreground GC to migrate data block of the file
+>> 5. commit and end the transaction (via F2FS_IOC_COMMIT_ATOMIC_WRITE)
+>> 6. check consistency of transaction w/ in-memory and on-disk data
+>> This is a regression test to check handling of race condition in
+>> between atomic_write and GC.
 > 
-> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-> Cc: Daeho Jeong <daehojeong@google.com>
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  tests/f2fs/004     | 45 +++++++++++++++++++++++++++++++++++++++++++++
->  tests/f2fs/004.out |  3 +++
->  2 files changed, 48 insertions(+)
->  create mode 100755 tests/f2fs/004
->  create mode 100644 tests/f2fs/004.out
+> Hi Chao,
 > 
-> diff --git a/tests/f2fs/004 b/tests/f2fs/004
-> new file mode 100755
-> index 00000000..26862cb5
-> --- /dev/null
-> +++ b/tests/f2fs/004
-> @@ -0,0 +1,45 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2024 Oppo.  All Rights Reserved.
-> +#
-> +# FS QA Test No. f2fs/004
-> +#
-> +# Test that we will simulate race case in between sqlite atomic write
-> +# and direct IO w/ below steps:
-> +# 1. create a regular file, and initialize it w/ 0xff data
-> +# 2. start transaction (via F2FS_IOC_START_ATOMIC_WRITE) on it
-> +# 3. write transaction data
-> +# 4. trigger direct read/write IO to check whether it fails or not
-> +# 5. commit and end the transaction (via F2FS_IOC_COMMIT_ATOMIC_WRITE)
-> +# This is a regression test to check handling of race condition in
-> +# between atomic_write and direct IO.
+> Sorry for the late reviewing. As this's a regression test, so which onne
+> kernel commit fix this known issue, please specify it by:
+> 
+> _fixed_by_kernel_commit $commit_id $commit_subject
 
-Same as last patch, please add _fixed_by_kernel_commit.
+Hi Zorro,
 
-> +#
-> +. ./common/preamble
-> +_begin_fstest auto quick
-> +
-> +. ./common/filter
-> +
-> +_supported_fs f2fs
-   ^^^^^
-It's not needed
+Since the fixed patch has not been merged yet, so what about adding this line
+after merging the fix?
 
-> +_require_scratch
-> +_require_xfs_io_command "pwrite"
-   ^^^^
-It can be removed too I think.
+> 
+>>
+>> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+>> Cc: Daeho Jeong <daehojeong@google.com>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>>   tests/f2fs/003     | 61 ++++++++++++++++++++++++++++++++++++++++++++++
+>>   tests/f2fs/003.out | 11 +++++++++
+>>   2 files changed, 72 insertions(+)
+>>   create mode 100755 tests/f2fs/003
+>>   create mode 100644 tests/f2fs/003.out
+>>
+>> diff --git a/tests/f2fs/003 b/tests/f2fs/003
+>> new file mode 100755
+>> index 00000000..d8311c4c
+>> --- /dev/null
+>> +++ b/tests/f2fs/003
+>> @@ -0,0 +1,61 @@
+>> +#! /bin/bash
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +# Copyright (c) 2024 Oppo.  All Rights Reserved.
+>> +#
+>> +# FS QA Test No. f2fs/003
+>> +#
+>> +# Test that we will simulate sqlite atomic write logic w/ below steps:
+>> +# 1. create a regular file, and initialize it w/ 0xff data
+>> +# 2. start transaction (via F2FS_IOC_START_ATOMIC_WRITE) on it
+>> +# 3. write transaction data
+>> +# 4. trigger foreground GC to migrate data block of the file
+>> +# 5. commit and end the transaction (via F2FS_IOC_COMMIT_ATOMIC_WRITE)
+>> +# 6. check consistency of transaction w/ in-memory and on-disk data
+>> +# This is a regression test to check handling of race condition in
+>> +# between atomic_write and GC.
+>> +#
+>> +. ./common/preamble
+>> +_begin_fstest auto quick
+>> +
+>> +. ./common/filter
+>> +
+>> +_supported_fs f2fs
+>      ^^^^^
+> This line is not necessary now.
+> 
+>> +_require_scratch
+>> +_require_xfs_io_command "pwrite"
+> 
+> pwrite is a basic command of xfs_io, so I think this line is not necessary.
+> 
+>> +_require_xfs_io_command "fpunch"
+>> +
+>> +_scratch_mkfs >> $seqres.full
+>> +_scratch_mount >> $seqres.full
+>> +
+>> +dbfile=$SCRATCH_MNT/dbfile
+>> +foo=$SCRATCH_MNT/foo
+>> +bar=$SCRATCH_MNT/bar
+>> +
+>> +$XFS_IO_PROG -c "pwrite 0 512k -S 0xff" -c "fsync" -f $dbfile >> $seqres.full
+>> +$XFS_IO_PROG -c "pwrite 0 2m" -c "fsync" -f $foo >> $seqres.full
+>> +sync
+>> +
+>> +# start atomic_write on dbfile & write data to dbfile
+>> +$F2FS_IO_PROG write 1 0 32 zero atomic_commit $dbfile 3000 >> $seqres.full &
+> 
+> As there's a background process, shouldn't we do kill and wait in _cleanup
+> to make sure unmount won't hit EBUSY?
+> 
+>> +$XFS_IO_PROG -c "fpunch 0 2m" $foo >> $seqres.full
+>> +$XFS_IO_PROG -c "pwrite 0 2m" -c "fsync" -f $bar >> $seqres.full
+>> +
+>> +# persist all dirty data
+>> +sync
+>> +echo 3 > /proc/sys/vm/drop_caches
+>> +
+>> +# trigger foreground GC to migrate data block of atomic_file
+>> +$F2FS_IO_PROG gc 1 $SCRATCH_MNT > /dev/null 2>&1
+>> +
+>> +# wait for atomic_write commit completion
+>> +sleep 5
+>> +# print in-memory data
+>> +od -x $dbfile
+>> +echo 3 > /proc/sys/vm/drop_caches
+>> +# print on-disk data
+>> +od -x $dbfile
+> 
+> There's a common helper named "_hexdump" in common/rc, can that be used?
+> 
+>> +
+>> +_scratch_unmount
+> 
+> The SCRATCH_DEV will be unmounted at the end of the test, don't need to
+> do this manually if it's not a necessary test step.
 
-> +
-> +_scratch_mkfs >> $seqres.full
-> +_scratch_mount >> $seqres.full
-> +
-> +dbfile=$SCRATCH_MNT/dbfile
-> +
-> +# start atomic_write on dbfile & write data to dbfile
-> +touch $dbfile
-> +$F2FS_IO_PROG write 1 0 32 zero atomic_commit $dbfile 3000 >> $seqres.full &
-
-There's a backgroup process too. Better to make sure it's done "kill && wait"
-before the end of the test.
-
-> +
-> +# simulate concurrent direct read/write IO
-> +$XFS_IO_PROG -d -c "pread 0 128k" $dbfile
-> +$XFS_IO_PROG -d -c "pwrite 0 128k" $dbfile
-
-Do you need _require_odirect (not sure about that:).
-
-> +
-> +# wait for atomic_write commit completion
-> +sleep 5
-> +
-> +_scratch_unmount
-   ^^^^
-It's not necessary.
+Let me update this patch according to your comments, thanks.
 
 Thanks,
-Zorro
 
-> +
-> +status=0
-> +exit
-> diff --git a/tests/f2fs/004.out b/tests/f2fs/004.out
-> new file mode 100644
-> index 00000000..3af79541
-> --- /dev/null
-> +++ b/tests/f2fs/004.out
-> @@ -0,0 +1,3 @@
-> +QA output created by 004
-> +pread: Operation not supported
-> +pwrite: Operation not supported
-> -- 
-> 2.40.1
 > 
+> Thanks,
+> Zorro
 > 
-
+>> +
+>> +status=0
+>> +exit
+>> diff --git a/tests/f2fs/003.out b/tests/f2fs/003.out
+>> new file mode 100644
+>> index 00000000..d6c8a637
+>> --- /dev/null
+>> +++ b/tests/f2fs/003.out
+>> @@ -0,0 +1,11 @@
+>> +QA output created by 003
+>> +0000000 0000 0000 0000 0000 0000 0000 0000 0000
+>> +*
+>> +0400000 ffff ffff ffff ffff ffff ffff ffff ffff
+>> +*
+>> +2000000
+>> +0000000 0000 0000 0000 0000 0000 0000 0000 0000
+>> +*
+>> +0400000 ffff ffff ffff ffff ffff ffff ffff ffff
+>> +*
+>> +2000000
+>> -- 
+>> 2.40.1
+>>
+> 
 
 
 _______________________________________________
