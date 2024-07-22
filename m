@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BA71DC3DA5D
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jul 2024 01:28:59 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DD20EC3DA5D
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jul 2024 01:31:21 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sVhrF-0008Jn-DO;
-	Mon, 22 Jul 2024 01:28:57 +0000
+	id 1sVhtY-0007sp-TL;
+	Mon, 22 Jul 2024 01:31:20 +0000
 Received: from [172.30.29.67] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1sVhrE-0008Jc-3M
+ (envelope-from <chao@kernel.org>) id 1sVhtW-0007sU-SM
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jul 2024 01:28:56 +0000
+ Mon, 22 Jul 2024 01:31:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=I0ZAzvxyLp1EQZ50jeSBhH+fe2d1rLs3wDBALUoUzHg=; b=HpHHqM0cMx6Jt3TWd039kwJvER
- ZIp3oFz+SG5CBXuM68UraEMWz3mxm5s2mD87AiZZMMteMcS5MZvYYC02aRFO5faXuvMamL73geBGr
- dQ5MYY6YY70lixbkaMsRml16611meZ2/s/ebDwSAp4jz/q9W1ISUdqE5HLLoMjVZp0es=;
+ bh=cNNjF5+k4YcjDq23FQDhcTHhA70Z5ekvmQygtcQU5c4=; b=lvbMuhvoukJD+tCXF7P+IKVX6d
+ erS3DbSFoM1bZWexhc14I7pqtKHMYuthQmW3/xfnI9P8SAHd4ibEvoNpbLMBUX2vHirP4FloFNWoU
+ cTdjS8TWRYfgggDZ/jNwdTrcB7BcrBu1Nl/+G4G2tTog+E3eT3vvfPNBa7UQANIAWFts=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,41 +33,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=I0ZAzvxyLp1EQZ50jeSBhH+fe2d1rLs3wDBALUoUzHg=; b=lFNXAZH/7dg90VfzabiR6Pi5Is
- j5ezYdguLXjqZV3DLpimTF2b6jMz4ISjBFj0ZP3JVb3gsON3bg2YzWz1QwNv6QFHz6Rfrc9MlpSL9
- e36qkAuyJ4qsTWO1VoBU1//QUCX4YxkVbo3vcDCHRvYOez3YeBjZ1BrKsYehp7aCBNv0=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=cNNjF5+k4YcjDq23FQDhcTHhA70Z5ekvmQygtcQU5c4=; b=KIDiTdD/uep3OuHUFROe74FzLC
+ 2hOCEl/UmZ0z0zILu969lVP04i/jUa8XWM/N7IGenDIoOucEgF8nsAmaiMfB+RSMEO9Gi7whPOWsx
+ xF98sFRxJy7xljuBelXvuFgrS5pZkn64a5XGAnt6jMv5/scPsuLBrobrJKbVHyQd142k=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sVhrD-0005uX-E2 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jul 2024 01:28:56 +0000
+ id 1sVhtW-000661-2k for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 22 Jul 2024 01:31:18 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 113F260A08;
- Mon, 22 Jul 2024 01:28:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6084C116B1;
- Mon, 22 Jul 2024 01:28:48 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id 5F8A6CE0ACD;
+ Mon, 22 Jul 2024 01:31:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71E7AC116B1;
+ Mon, 22 Jul 2024 01:31:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1721611729;
- bh=g2tSq9APFMR0Bl17C+GbBQhxN8oIR1MC2bDyCs6g6OE=;
+ s=k20201202; t=1721611865;
+ bh=Pgdfoi+plDo5Sv3bTklJaLHXbBK8ZHhX9xR+sbaiMhQ=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=KiyNexAXxxhWCzfOnl7t3ckfxAPOlNjcBSm3MJGrAZt1BJCpunm6IgWUOFyFyY027
- zun53EGWDkaCXAZ+sy4xJ/arOxe3rt5WbF4a4EWGMMcWIfthpr3jE3s6zLhAPc3RlN
- vXp+JkVI9dGAVrn8B7eC2j5501HP4r0fe+I3kB8iNOxVyO+i/wrtS5/plDxhr3BhJ3
- I2E/T41ff9Uy9aDhf6slsBT3QmuvmPSbFVE0DiUQU8Ly4uiprZ44AS6EUgUhum0LXm
- FWPAWRkiOLiK5teiaFkddVqyHus2RW4qwK+OzSjliDB9fy2RYG6ORy19Ly62Tb231n
- h93VfvPXCA+Dg==
-Message-ID: <c81af94d-3b56-4169-b2eb-5d82623ab0af@kernel.org>
-Date: Mon, 22 Jul 2024 09:28:46 +0800
+ b=hkOOIsmvpuHAylM3fafNyX9Gn3LhzrBn8erzTFGQ9ZBy02HJXjLFkpkI1EUkGuBV2
+ aYBm2YapcZDduVx8+HlYNUy6jF/cZ+vpG5qveZroDz55Gidx+7llkY3ubUhYMWL2zH
+ pV7TFFM0fUNGKXmcoCJjx15/ClYikEIEVm0sHs/KaFxI28g7KHjHjbUmmtBQyewuyQ
+ 3JwMMua7ECXOkI4s6LMJcsOrx2lOMFnnpyso6FnNc76/Y/YJM/zEQIgti7vHk51/dG
+ j2Kun6/jsqdtrs7heEi1nCDgdO90dKMEdOcvBt1LICZPonsz1Rb7fRvtUo0MtCXtHc
+ m74JMPb3appVw==
+Message-ID: <e406930d-def7-4e10-91f6-7ff084eac7a2@kernel.org>
+Date: Mon, 22 Jul 2024 09:31:01 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Yongpeng Yang <yangyongpeng1@oppo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20240720103349.3347764-1-yangyongpeng1@oppo.com>
+To: Liao Yuanhong <liaoyuanhong@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20240702062952.28859-1-liaoyuanhong@vivo.com>
+ <20240715123451.7918-1-liaoyuanhong@vivo.com>
 Content-Language: en-US
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240720103349.3347764-1-yangyongpeng1@oppo.com>
-X-Headers-End: 1sVhrD-0005uX-E2
-Subject: Re: [f2fs-dev] [PATCH] f2fs: free victim_secmap when pinned_secmap
- allocation fails
+In-Reply-To: <20240715123451.7918-1-liaoyuanhong@vivo.com>
+X-Headers-End: 1sVhtW-000661-2k
+Subject: Re: [f2fs-dev] [PATCH v5] f2fs:Add write priority option based on
+ zone UFS
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,49 +80,34 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, bo.wu@vivo.com,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2024/7/20 18:33, Yongpeng Yang wrote:
-> In the init_victim_secmap function, if the allocation of
-> dirty_i->pinned_secmap fails, dirty_i->victim_secmap is not
-> freed, which can cause a memory leak.
+On 2024/7/15 20:34, Liao Yuanhong wrote:
+> Currently, we are using a mix of traditional UFS and zone UFS to support
+> some functionalities that cannot be achieved on zone UFS alone. However,
+> there are some issues with this approach. There exists a significant
+> performance difference between traditional UFS and zone UFS. Under normal
+> usage, we prioritize writes to zone UFS. However, in critical conditions
+> (such as when the entire UFS is almost full), we cannot determine whether
+> data will be written to traditional UFS or zone UFS. This can lead to
+> significant performance fluctuations, which is not conducive to
+> development and testing. To address this, we have added an option
+> zlu_io_enable under sys with the following three modes:
+> 1) zlu_io_enable == 0:Normal mode, prioritize writing to zone UFS;
+> 2) zlu_io_enable == 1:Zone UFS only mode, only allow writing to zone UFS;
+> 3) zlu_io_enable == 2:Traditional UFS priority mode, prioritize writing to
+> traditional UFS.
 > 
-> Signed-off-by: Yongpeng Yang <yangyongpeng1@oppo.com>
-> ---
->   fs/f2fs/segment.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 78c3198a6308..1e784ea3dbb4 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -4971,8 +4971,10 @@ static int init_victim_secmap(struct f2fs_sb_info *sbi)
->   		return -ENOMEM;
->   
->   	dirty_i->pinned_secmap = f2fs_kvzalloc(sbi, bitmap_size, GFP_KERNEL);
-> -	if (!dirty_i->pinned_secmap)
-> +	if (!dirty_i->pinned_secmap) {
-> +		kvfree(dirty_i->victim_secmap);
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+> Signed-off-by: Wu Bo <bo.wu@vivo.com>
 
-Yongpeng,
-
-In below path, it will release pinned_secmap/victim_secmap?
-
-- f2fs_destroy_segment_manager
-  - destroy_victim_secmap
-   : kvfree(dirty_i->pinned_secmap);
-   : kvfree(dirty_i->victim_secmap);
+Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
-
->   		return -ENOMEM;
-> +	}
->   
->   	dirty_i->pinned_secmap_cnt = 0;
->   	dirty_i->enable_pin_section = true;
 
 
 _______________________________________________
