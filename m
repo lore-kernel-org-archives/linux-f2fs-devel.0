@@ -4,87 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C62E6C3DA49
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Jul 2024 23:07:44 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 368ACC3DA63
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jul 2024 01:20:50 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sWObe-0008A3-Pj;
-	Tue, 23 Jul 2024 23:07:42 +0000
+	id 1sWQgR-0003Ec-4A;
+	Wed, 24 Jul 2024 01:20:47 +0000
 Received: from [172.30.29.67] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <3oBygZgYKAJU2GDH3C5DD5A3.1DB@flex--drosen.bounces.google.com>)
- id 1sWObd-00089u-RX for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 23 Jul 2024 23:07:41 +0000
+ (envelope-from <youling.tang@linux.dev>) id 1sWQgP-0003EU-94
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Jul 2024 01:20:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9c5mn0vtBXWXIuWX7wAz9BUQcsTeFvti6sAi1tjWFTM=; b=koTj17L7OtuJbtqNHU3ofl0zfg
- aUBQbe9EM2iVDrZ0nKcCvmvKDdyqf9QIt9CF6YU8t/fvWwLCjO8xk18TbhjT/td38R70KaJZlMh6x
- ssAWG7Nvr2TCplvHTepr7uFP024IItyWqA+kBlHa8JQWY2iAEmcgH1rYAwQq5CQLbUEo=;
+ bh=dEhyMpF2beLnKk2jNCAd0kL3ECpPY/WBwUXHZaKgEPc=; b=FAUP9WvWJU4LVnNeV8yrnZzZVl
+ A2vgF1RieyhGnAj8LB4TugP/7K1ClcL9ZQf+L8zMOD1yUk5NCqPIa4bpjzJiYuc4ElTl7CQ55ii1O
+ iebrk1fqgAQ5jqV4GswDjecfQ7gCNk0olNeBcNblNLouc7tVtD9O6nhszFuNu7kELQL4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=9c5mn0vtBXWXIuWX7wAz9BUQcsTeFvti6sAi1tjWFTM=; b=k
- dZH7S+HjgC1jhmPYrZjpfA/nD27u/A/ZtF1oeYDna2Dt9FFB+mmm9sHkWM/+jwQSwPveGIJXxooWq
- H+wS0btCZHA63uH0R6OwNAzj8jYui3XyyvUJ6QTWFwhw5oz664rCmfGg+RlsgsbOD2Q9163CTxMK2
- vhrBhLWnvx1+BSPQ=;
-Received: from mail-yb1-f201.google.com ([209.85.219.201])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=dEhyMpF2beLnKk2jNCAd0kL3ECpPY/WBwUXHZaKgEPc=; b=Q+DLANeyP5g8vsvTSLLB9uz1Y2
+ H8qO1P4dHU+oJibiuyXD9XAABuz4cA/qv1jpsA4H5tUhpDCXMSWpyTgRCxVorrLtQa14FRaLjSxFE
+ hu1IqdMwgo0Vh/sb1LbQKWqZgLnZg8uDjFdkBASaMpDG7tvYUdEuH95YMVlxxWkwnKE4=;
+Received: from out-185.mta1.migadu.com ([95.215.58.185])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1sWObc-0002Ew-Bj for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 23 Jul 2024 23:07:41 +0000
-Received: by mail-yb1-f201.google.com with SMTP id
- 3f1490d57ef6-dfa7a8147c3so12769790276.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 23 Jul 2024 16:07:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1721776049; x=1722380849;
- darn=lists.sourceforge.net; 
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=9c5mn0vtBXWXIuWX7wAz9BUQcsTeFvti6sAi1tjWFTM=;
- b=h3ik9JN5581h+pUM+RKDmZkVT/n3TY/ksr28hcBm1G4haxXgE2DOfIjehvmMbPFeWn
- 4pyp/H2GhmRumjJJM7XmbT4DrfK6a2mRgnwsQhpmSFuD34pNGS+OYIcfADn/S/7Zn2Lw
- SyOXmQTbKFaE2cX9j7IuBBs98duKT7+ZVEYOIW3LMJcTmHUXoo6nhMr5TaJl/WMffO9k
- 0rcM4tu3QOkfegJl3IHpkgGkpGpAaiLBR0qnircCvb2nzJjTvP6A4am6F+igLkUf9zfo
- H3LLgXBLmZ/kDFFZ/+3CXA2poH2qlr1Ey6J0nGD2Y365KyrnCoSaRG5BzQ++FtiE3mOw
- gGHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1721776049; x=1722380849;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=9c5mn0vtBXWXIuWX7wAz9BUQcsTeFvti6sAi1tjWFTM=;
- b=gC56uJ5mtwyA48eeD4FcRzpSXXt3gTyDKoNgK60Uknolti22dob+u2VnGfclU+An0/
- 9blNdXfqfveivgtF0UyPFeUY/eKhWlUV+XUD0YRXlKVViQPq6ksPLpPKZRqGNMlCT77U
- FFw24TFb/+BeY3mxbe1yHAwaZQbgnIZ0vj/6GtmJfefjGESNVWwsKpurPFXb0/AWVM1S
- Ick1E9poWAHRUFMUbIbzqmXHebKl/PO4pZjxDkIda9l/EHWy4UBzFn1QqIvAkVxXxl5Z
- BGmWlREuFAAvww5U05NBTBcXg8FgvHJUkQCu91iDZdVsbft/xOGPl1V6ExnMSRF56Sxm
- 5paA==
-X-Gm-Message-State: AOJu0Ywh5MGxiBfyYolFius551jKj8c8yIYVOLv7SlrY3zULkN7V7z61
- u9G2qO+8dVBSWTz7IPN1M+8CJC724cc5U11uX9xFV3wSy4O4aBV2lVWJ/caYwEUHceXVu9p/XiR
- wrwQpEoNHxZqCyC/5tlvI8vsKpCKZbRGhl7TFSUnPXH+0iNDl9OufOcunkgPB+7f2zatY4qBOqp
- cm3w5t5c+9ZnFSS20SxahiWuoS0YS0Fd4absMccLfbn9fgfj4BU2rR2A==
-X-Google-Smtp-Source: AGHT+IGuSGs+4RLUNEkrCmRk11GN7DDtZ18sRRcmZARn7s14+QfzJ42iP7jmDR3zrXWVHX/FodP2wJTExmo=
-X-Received: from drosen.mtv.corp.google.com
- ([2620:15c:211:201:c2f2:281d:3cfd:6cf4])
- (user=drosen job=sendgmr) by 2002:a05:6902:4ef:b0:e08:664c:dd1f with SMTP id
- 3f1490d57ef6-e0b099d3e88mr2035276.12.1721769120188; Tue, 23 Jul 2024 14:12:00
- -0700 (PDT)
-Date: Tue, 23 Jul 2024 14:11:57 -0700
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
-Message-ID: <20240723211157.27618-1-drosen@google.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1sWObc-0002Ew-Bj
-Subject: [f2fs-dev] [PATCH v3] dump.f2fs: Dump symlinks as symlinks
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1sWQgO-00083A-5S for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Jul 2024 01:20:45 +0000
+Message-ID: <da41a162-9f6d-4607-9055-ffc21fe1771e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+ t=1721784032;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=dEhyMpF2beLnKk2jNCAd0kL3ECpPY/WBwUXHZaKgEPc=;
+ b=dQ7pvkaawQNIB+BCzRzvtJY0Wq6NMR8kNLAXFxl1E0sHcVC61q5kr1NayEOKt2/T4r5rr/
+ TUUUJheElULcwdIdWT3AjkAP0Ab7PzaCezqqmnT9Aifbt56O8FoM5KawiUhjGZdR7imDB3
+ NOvrBa2TpNxpWQwFSLrlC5J9ef6FHxg=
+Date: Wed, 24 Jul 2024 09:20:17 +0800
+MIME-Version: 1.0
+To: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@mbosol.com>,
+ Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
+ Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, tytso@mit.edu,
+ Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Chao Yu <chao@kernel.org>, Christoph Hellwig <hch@infradead.org>
+References: <20240723083239.41533-1-youling.tang@linux.dev>
+ <20240723083239.41533-2-youling.tang@linux.dev>
+ <4570c972-de09-4818-bd1b-3112f651b49d@mbosol.com>
+Content-Language: en-US, en-AU
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and
+ include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+In-Reply-To: <4570c972-de09-4818-bd1b-3112f651b49d@mbosol.com>
+X-Migadu-Flow: FLOW_OUT
+X-Headers-End: 1sWQgO-00083A-5S
+Subject: Re: [f2fs-dev] [PATCH 1/4] module: Add module_subinit{_noexit} and
+ module_subeixt helper macros
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,514 +83,139 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Rosenberg via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Rosenberg <drosen@google.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kernel-team@android.com,
- Daniel Rosenberg <drosen@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: linux-arch@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-modules@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-btrfs@vger.kernel.org
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Previously, dumped symlinks would always create regular files instead.
-This allows symlinks to be dumped as symlinks with the -L option.
-
-The i_name field's name may not be the same as the actual name from the
-dirent, so we use the dirent name when available.
-
-Currently hardlinks aren't detected, so print a warning if we notice a
-nondirectory with a link count over 1.
-
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
----
-
-V3: Fixed le32_to_cpu => le64_to_cpu
-V2: Fixed some issues on the Windows build. Also S_ISLNK is defined as
-false for the Windows build, so I adjusted some checks to not rely on that.
-Removed some unused variables.
-
- fsck/dump.c       | 121 ++++++++++++++++++++++++++++++++++------------
- fsck/fsck.c       |   4 +-
- fsck/fsck.h       |   2 +-
- fsck/main.c       |  13 ++++-
- include/f2fs_fs.h |   8 +++
- lib/libf2fs_io.c  |  10 ++++
- man/dump.f2fs.8   |   3 ++
- 7 files changed, 125 insertions(+), 36 deletions(-)
-
-diff --git a/fsck/dump.c b/fsck/dump.c
-index 8d5613e..493a80d 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -253,20 +253,27 @@ static void dump_folder_contents(struct f2fs_sb_info *sbi, u8 *bitmap,
- {
- 	int i;
- 	int name_len;
-+	char name[F2FS_NAME_LEN + 1] = {0};
- 
- 	for (i = 0; i < max; i++) {
- 		if (test_bit_le(i, bitmap) == 0)
- 			continue;
- 		name_len = le16_to_cpu(dentry[i].name_len);
-+		if (name_len == 0 || name_len > F2FS_NAME_LEN) {
-+			MSG(c.force, "Wrong name info\n\n");
-+			ASSERT(name_len == 0 || name_len > F2FS_NAME_LEN);
-+		}
- 		if (name_len == 1 && filenames[i][0] == '.')
- 			continue;
- 		if (name_len == 2 && filenames[i][0] == '.' && filenames[i][1] == '.')
- 			continue;
--		dump_node(sbi, le32_to_cpu(dentry[i].ino), 1, NULL, 0, 1);
-+		strncpy(name, (const char *)filenames[i], name_len);
-+		name[name_len] = 0;
-+		dump_node(sbi, le32_to_cpu(dentry[i].ino), 1, NULL, 0, 1, name);
- 	}
- }
- 
--static void dump_data_blk(struct f2fs_sb_info *sbi, __u64 offset, u32 blkaddr, bool is_folder)
-+static void dump_data_blk(struct f2fs_sb_info *sbi, __u64 offset, u32 blkaddr, int type)
- {
- 	char buf[F2FS_BLKSIZE];
- 
-@@ -307,11 +314,15 @@ static void dump_data_blk(struct f2fs_sb_info *sbi, __u64 offset, u32 blkaddr, b
- 		ASSERT(ret >= 0);
- 	}
- 
--	if (is_folder) {
-+	if (S_ISDIR(type)) {
- 		struct f2fs_dentry_block *d = (struct f2fs_dentry_block *) buf;
- 
- 		dump_folder_contents(sbi, d->dentry_bitmap, F2FS_DENTRY_BLOCK_DENTRIES(d),
- 					F2FS_DENTRY_BLOCK_FILENAMES(d), NR_DENTRY_IN_BLOCK);
-+#if !defined(__MINGW32__)
-+	} if (S_ISLNK(type)) {
-+		dev_write_symlink(buf, c.dump_sym_target_len);
-+#endif
- 	} else {
- 		/* write blkaddr */
- 		dev_write_dump(buf, offset, F2FS_BLKSIZE);
-@@ -319,7 +330,7 @@ static void dump_data_blk(struct f2fs_sb_info *sbi, __u64 offset, u32 blkaddr, b
- }
- 
- static void dump_node_blk(struct f2fs_sb_info *sbi, int ntype,
--				u32 nid, u32 addr_per_block, u64 *ofs, int is_dir)
-+				u32 nid, u32 addr_per_block, u64 *ofs, int type)
- {
- 	struct node_info ni;
- 	struct f2fs_node *node_blk;
-@@ -356,20 +367,20 @@ static void dump_node_blk(struct f2fs_sb_info *sbi, int ntype,
- 		switch (ntype) {
- 		case TYPE_DIRECT_NODE:
- 			dump_data_blk(sbi, *ofs * F2FS_BLKSIZE,
--					le32_to_cpu(node_blk->dn.addr[i]), is_dir);
-+					le32_to_cpu(node_blk->dn.addr[i]), type);
- 			(*ofs)++;
- 			break;
- 		case TYPE_INDIRECT_NODE:
- 			dump_node_blk(sbi, TYPE_DIRECT_NODE,
- 					le32_to_cpu(node_blk->in.nid[i]),
- 					addr_per_block,
--					ofs, is_dir);
-+					ofs, type);
- 			break;
- 		case TYPE_DOUBLE_INDIRECT_NODE:
- 			dump_node_blk(sbi, TYPE_INDIRECT_NODE,
- 					le32_to_cpu(node_blk->in.nid[i]),
- 					addr_per_block,
--					ofs, is_dir);
-+					ofs, type);
- 			break;
- 		}
- 	}
-@@ -377,7 +388,7 @@ static void dump_node_blk(struct f2fs_sb_info *sbi, int ntype,
- }
- 
- #ifdef HAVE_FSETXATTR
--static void dump_xattr(struct f2fs_sb_info *sbi, struct f2fs_node *node_blk, int is_dir)
-+static void dump_xattr(struct f2fs_sb_info *sbi, struct f2fs_node *node_blk, int type)
- {
- 	void *xattr;
- 	void *last_base_addr;
-@@ -431,19 +442,26 @@ static void dump_xattr(struct f2fs_sb_info *sbi, struct f2fs_node *node_blk, int
- 
- 		DBG(1, "fd %d xattr_name %s\n", c.dump_fd, xattr_name);
- #if defined(__linux__)
--		if (is_dir) {
-+		if (S_ISDIR(type)) {
- 			ret = setxattr(".", xattr_name, value,
- 							le16_to_cpu(ent->e_value_size), 0);
-+		} if (S_ISLNK(type) && c.preserve_symlinks) {
-+			ret = lsetxattr(c.dump_symlink, xattr_name, value,
-+							le16_to_cpu(ent->e_value_size), 0);
- 		} else {
- 			ret = fsetxattr(c.dump_fd, xattr_name, value,
- 							le16_to_cpu(ent->e_value_size), 0);
- 		}
- 
- #elif defined(__APPLE__)
--		if (is_dir) {
-+		if (S_ISDIR(type)) {
- 			ret = setxattr(".", xattr_name, value,
- 					le16_to_cpu(ent->e_value_size), 0,
- 					XATTR_CREATE);
-+		} if (S_ISLNK(type) && c.preserve_symlinks) {
-+			ret = lsetxattr(c.dump_symlink, xattr_name, value,
-+					le16_to_cpu(ent->e_value_size), 0,
-+					XATTR_CREATE);
- 		} else {
- 			ret = fsetxattr(c.dump_fd, xattr_name, value,
- 					le16_to_cpu(ent->e_value_size), 0,
-@@ -473,14 +491,21 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	u32 i = 0;
- 	u64 ofs = 0;
- 	u32 addr_per_block;
--	bool is_dir = S_ISDIR(le16_to_cpu(node_blk->i.i_mode));
-+	u16 type = le16_to_cpu(node_blk->i.i_mode);
- 	int ret = 0;
- 
- 	if ((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
- 		DBG(3, "ino[0x%x] has inline data!\n", nid);
- 		/* recover from inline data */
--		dev_write_dump(inline_data_addr(node_blk),
-+#if !defined(__MINGW32__)
-+		if (S_ISLNK(type) && c.preserve_symlinks) {
-+			dev_write_symlink(inline_data_addr(node_blk), c.dump_sym_target_len);
-+		} else
-+#endif
-+		{
-+			dev_write_dump(inline_data_addr(node_blk),
- 						0, MAX_INLINE_DATA(node_blk));
-+		}
- 		ret = -1;
- 		goto dump_xattr;
- 	}
-@@ -504,7 +529,7 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	/* check data blocks in inode */
- 	for (i = 0; i < ADDRS_PER_INODE(&node_blk->i); i++, ofs++)
- 		dump_data_blk(sbi, ofs * F2FS_BLKSIZE, le32_to_cpu(
--			node_blk->i.i_addr[get_extra_isize(node_blk) + i]), is_dir);
-+			node_blk->i.i_addr[get_extra_isize(node_blk) + i]), type);
- 
- 	/* check node blocks in inode */
- 	for (i = 0; i < 5; i++) {
-@@ -513,26 +538,26 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 					le32_to_cpu(F2FS_INODE_I_NID(&node_blk->i, i)),
- 					addr_per_block,
- 					&ofs,
--					is_dir);
-+					type);
- 		else if (i == 2 || i == 3)
- 			dump_node_blk(sbi, TYPE_INDIRECT_NODE,
- 					le32_to_cpu(F2FS_INODE_I_NID(&node_blk->i, i)),
- 					addr_per_block,
- 					&ofs,
--					is_dir);
-+					type);
- 		else if (i == 4)
- 			dump_node_blk(sbi, TYPE_DOUBLE_INDIRECT_NODE,
- 					le32_to_cpu(F2FS_INODE_I_NID(&node_blk->i, i)),
- 					addr_per_block,
- 					&ofs,
--					is_dir);
-+					type);
- 		else
- 			ASSERT(0);
- 	}
- 	/* last block in extent cache */
- 	print_extent(true);
- dump_xattr:
--	dump_xattr(sbi, node_blk, is_dir);
-+	dump_xattr(sbi, node_blk, type);
- 	return ret;
- }
- 
-@@ -555,6 +580,23 @@ static void dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	close(c.dump_fd);
- }
- 
-+static void dump_link(struct f2fs_sb_info *sbi, struct node_info *ni,
-+				struct f2fs_node *node_blk, char *name)
-+{
-+#if defined(__MINGW32__)
-+	dump_file(sbi, ni, node_blk, name);
-+#else
-+	struct f2fs_inode *inode = &node_blk->i;
-+	int len = le64_to_cpu(inode->i_size);
-+
-+	if (!c.preserve_symlinks)
-+		return dump_file(sbi, ni, node_blk, name);
-+	c.dump_symlink = name;
-+	c.dump_sym_target_len = len + 1;
-+	dump_inode_blk(sbi, ni->ino, node_blk);
-+#endif
-+}
-+
- static void dump_folder(struct f2fs_sb_info *sbi, struct node_info *ni,
- 				struct f2fs_node *node_blk, char *path, int is_root)
- {
-@@ -580,18 +622,24 @@ static void dump_folder(struct f2fs_sb_info *sbi, struct node_info *ni,
- 
- static int dump_filesystem(struct f2fs_sb_info *sbi, struct node_info *ni,
- 				struct f2fs_node *node_blk, int force, char *base_path,
--				bool is_base, bool allow_folder)
-+				bool is_base, bool allow_folder, char *dirent_name)
- {
- 	struct f2fs_inode *inode = &node_blk->i;
- 	u32 imode = le16_to_cpu(inode->i_mode);
--	u32 namelen = le32_to_cpu(inode->i_namelen);
--	char name[F2FS_NAME_LEN + 1] = {0};
-+	u32 ilinks = le32_to_cpu(inode->i_links);
-+	u32 i_namelen = le32_to_cpu(inode->i_namelen);
-+	char i_name[F2FS_NAME_LEN + 1] = {0};
-+	char *name;
- 	char path[1024] = {0};
- 	char ans[255] = {0};
- 	int is_encrypted = file_is_encrypt(inode);
- 	int is_root = sbi->root_ino_num == ni->nid;
- 	int ret;
- 
-+	if (!S_ISDIR(imode) && ilinks != 1) {
-+		MSG(force, "Warning: Hard link detected. Dumped files may be duplicated\n");
-+	}
-+
- 	if (is_encrypted) {
- 		MSG(force, "File is encrypted\n");
- 		return -1;
-@@ -601,7 +649,7 @@ static int dump_filesystem(struct f2fs_sb_info *sbi, struct node_info *ni,
- 		MSG(force, "Not a valid file type\n\n");
- 		return -1;
- 	}
--	if (!is_root && (namelen == 0 || namelen > F2FS_NAME_LEN)) {
-+	if (!is_root && !dirent_name && (i_namelen == 0 || i_namelen > F2FS_NAME_LEN)) {
- 		MSG(force, "Wrong name info\n\n");
- 		return -1;
- 	}
-@@ -614,7 +662,7 @@ static int dump_filesystem(struct f2fs_sb_info *sbi, struct node_info *ni,
- 		return dump_inode_blk(sbi, ni->ino, node_blk);
- 
- 	printf("Do you want to dump this %s into %s/? [Y/N] ",
--			S_ISREG(imode) || S_ISLNK(imode) ? "file" : "folder",
-+			S_ISDIR(imode) ? "folder" : "file",
- 			base_path);
- 	ret = scanf("%s", ans);
- 	ASSERT(ret >= 0);
-@@ -635,23 +683,34 @@ dump:
- 
- 		/* make a file */
- 		if (!is_root) {
--			strncpy(name, (const char *)inode->i_name, namelen);
--			name[namelen] = 0;
-+			/* The i_name name may be out of date. Prefer dirent_name */
-+			if (dirent_name) {
-+				name = dirent_name;
-+			} else  {
-+				strncpy(i_name, (const char *)inode->i_name, i_namelen);
-+				i_name[i_namelen] = 0;
-+				name = i_name;
-+			}
- 		}
- 
--		if (S_ISREG(imode) || S_ISLNK(imode)) {
-+		if (S_ISREG(imode)) {
- 			dump_file(sbi, ni, node_blk, name);
--		} else {
-+		} else if (S_ISDIR(imode)) {
- 			dump_folder(sbi, ni, node_blk, name, is_root);
-+		} else {
-+			dump_link(sbi, ni, node_blk, name);
- 		}
- 
- #if !defined(__MINGW32__)
- 		/* fix up mode/owner */
- 		if (c.preserve_perms) {
--			if (is_root)
-+			if (is_root) {
-+				name = i_name;
- 				strncpy(name, ".", 2);
--			ASSERT(chmod(name, imode) == 0);
--			ASSERT(chown(name, inode->i_uid, inode->i_gid) == 0);
-+			}
-+			if (!S_ISLNK(imode))
-+				ASSERT(chmod(name, imode) == 0);
-+			ASSERT(lchown(name, inode->i_uid, inode->i_gid) == 0);
- 		}
- #endif
- 		if (is_base)
-@@ -705,7 +764,7 @@ void dump_node_scan_disk(struct f2fs_sb_info *sbi, nid_t nid)
- 	free(node_blk);
- }
- 
--int dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force, char *base_path, int base, int allow_folder)
-+int dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force, char *base_path, int base, int allow_folder, char *dirent_name)
- {
- 	struct node_info ni;
- 	struct f2fs_node *node_blk;
-@@ -740,7 +799,7 @@ int dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force, char *base_path, i
- 			print_node_info(sbi, node_blk, force);
- 
- 		if (ni.ino == ni.nid)
--			ret = dump_filesystem(sbi, &ni, node_blk, force, base_path, base, allow_folder);
-+			ret = dump_filesystem(sbi, &ni, node_blk, force, base_path, base, allow_folder, dirent_name);
- 	} else {
- 		print_node_info(sbi, node_blk, force);
- 		MSG(force, "Invalid (i)node block\n\n");
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 7400dcf..b79b354 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1651,7 +1651,7 @@ static void print_dentry(struct f2fs_sb_info *sbi, __u8 *name,
- 			d = d->next;
- 		}
- 		printf("/%s", new);
--		if (dump_node(sbi, le32_to_cpu(dentry[idx].ino), 0, NULL, 0, 0))
-+		if (dump_node(sbi, le32_to_cpu(dentry[idx].ino), 0, NULL, 0, 0, NULL))
- 			printf("\33[2K\r");
- 	} else {
- 		for (i = 1; i < depth; i++)
-@@ -3632,7 +3632,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
- 		if (!strcasecmp(ans, "y")) {
- 			for (i = 0; i < fsck->nr_nat_entries; i++) {
- 				if (f2fs_test_bit(i, fsck->nat_area_bitmap))
--					dump_node(sbi, i, 1, NULL, 1, 0);
-+					dump_node(sbi, i, 1, NULL, 1, 0, NULL);
- 			}
- 		}
- 	}
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 6cac926..476b436 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -277,7 +277,7 @@ struct dump_option {
- extern void nat_dump(struct f2fs_sb_info *, nid_t, nid_t);
- extern void sit_dump(struct f2fs_sb_info *, unsigned int, unsigned int);
- extern void ssa_dump(struct f2fs_sb_info *, int, int);
--extern int dump_node(struct f2fs_sb_info *, nid_t, int, char *, int, int);
-+extern int dump_node(struct f2fs_sb_info *, nid_t, int, char *, int, int, char *);
- extern int dump_info_from_blkaddr(struct f2fs_sb_info *, u32);
- extern unsigned int start_bidx_of_node(unsigned int, struct f2fs_node *);
- extern void dump_node_scan_disk(struct f2fs_sb_info *sbi, nid_t nid);
-diff --git a/fsck/main.c b/fsck/main.c
-index c13e287..af00fa5 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -102,6 +102,7 @@ void dump_usage()
- 	MSG(0, "  -y alias for -f\n");
- 	MSG(0, "  -o dump inodes to the given path\n");
- 	MSG(0, "  -P preserve mode/owner/group for dumped inode\n");
-+	MSG(0, "  -L Preserves symlinks. Otherwise symlinks are dumped as regular files.\n");
- 	MSG(0, "  -V print the version number and exit\n");
- 
- 	exit(1);
-@@ -389,7 +390,7 @@ void f2fs_parse_options(int argc, char *argv[])
- 		}
- 	} else if (!strcmp("dump.f2fs", prog)) {
- #ifdef WITH_DUMP
--		const char *option_string = "d:fi:I:n:Mo:Prs:Sa:b:Vy";
-+		const char *option_string = "d:fi:I:n:LMo:Prs:Sa:b:Vy";
- 		static struct dump_option dump_opt = {
- 			.nid = 0,	/* default root ino */
- 			.start_nat = -1,
-@@ -479,6 +480,14 @@ void f2fs_parse_options(int argc, char *argv[])
- 				err = EWRONG_OPT;
- #else
- 				c.preserve_perms = 1;
-+#endif
-+				break;
-+			case 'L':
-+#if defined(__MINGW32__)
-+				MSG(0, "-L not supported for Windows\n");
-+				err = EWRONG_OPT;
-+#else
-+				c.preserve_symlinks = 1;
- #endif
- 				break;
- 			case 'V':
-@@ -957,7 +966,7 @@ static void do_dump(struct f2fs_sb_info *sbi)
- 	if (opt->blk_addr != -1)
- 		dump_info_from_blkaddr(sbi, opt->blk_addr);
- 	if (opt->nid)
--		dump_node(sbi, opt->nid, c.force, opt->base_path, 1, 1);
-+		dump_node(sbi, opt->nid, c.force, opt->base_path, 1, 1, NULL);
- 	if (opt->scan_nid)
- 		dump_node_scan_disk(sbi, opt->scan_nid);
- 
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 870a6e4..08ba32d 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -1478,6 +1478,8 @@ struct f2fs_configuration {
- 	uint16_t s_encoding_flags;
- 	int32_t kd;
- 	int32_t dump_fd;
-+	char *dump_symlink;
-+	int dump_sym_target_len;
- 	struct device_info devices[MAX_DEVICES];
- 	int ndevs;
- 	char *extension_list[2];
-@@ -1540,7 +1542,10 @@ struct f2fs_configuration {
- 	struct selinux_opt seopt_file[8];
- 	int nr_opt;
- #endif
-+
-+	/* dump parameters */
- 	int preserve_perms;
-+	int preserve_symlinks;
- 
- 	/* resize parameters */
- 	int safe_resize;
-@@ -1614,6 +1619,9 @@ extern int dev_readahead(__u64, size_t UNUSED(len));
- extern int dev_write(void *, __u64, size_t);
- extern int dev_write_block(void *, __u64);
- extern int dev_write_dump(void *, __u64, size_t);
-+#if !defined(__MINGW32__)
-+extern int dev_write_symlink(char *, size_t);
-+#endif
- /* All bytes in the buffer must be 0 use dev_fill(). */
- extern int dev_fill(void *, __u64, size_t);
- extern int dev_fill_block(void *, __u64);
-diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
-index b2d6933..f39367a 100644
---- a/lib/libf2fs_io.c
-+++ b/lib/libf2fs_io.c
-@@ -598,6 +598,16 @@ int dev_write_dump(void *buf, __u64 offset, size_t len)
- 	return 0;
- }
- 
-+#if !defined(__MINGW32__)
-+int dev_write_symlink(char *buf, size_t len)
-+{
-+	buf[len] = 0;
-+	if (symlink(buf, c.dump_symlink))
-+		return -1;
-+	return 0;
-+}
-+#endif
-+
- int dev_fill(void *buf, __u64 offset, size_t len)
- {
- 	int fd;
-diff --git a/man/dump.f2fs.8 b/man/dump.f2fs.8
-index 60d6783..4035d57 100644
---- a/man/dump.f2fs.8
-+++ b/man/dump.f2fs.8
-@@ -71,6 +71,9 @@ Dump inodes to the given path
- .BI \-P
- Preserve mode/owner/group for dumped inode
- .TP
-+.BI \-L
-+Preserves symlinks. Otherwise symlinks are dumped as regular files.
-+.TP
- .BI \-I " inode number"
- Specify an inode number and scan full disk to dump out, include history inode block
- .TP
-
-base-commit: 584ebc710bc0779381595135e0686492c3908a20
--- 
-2.45.2.1089.g2a221341d9-goog
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+SGksIE1pa2EKCk9uIDIzLzA3LzIwMjQgMTc6NTgsIE1pa2EgUGVudHRpbMOkIHdyb3RlOgo+IE9u
+IDcvMjMvMjQgMTE6MzIsIFlvdWxpbmcgVGFuZyB3cm90ZToKPj4gRnJvbTogWW91bGluZyBUYW5n
+IDx0YW5neW91bGluZ0BreWxpbm9zLmNuPgo+Pgo+PiBJbiB0aGVvcnkgaW5pdC9leGl0IHNob3Vs
+ZCBtYXRjaCB0aGVpciBzZXF1ZW5jZSwgdGh1cyBub3JtYWxseSB0aGV5IHNob3VsZAo+PiBsb29r
+IGxpa2UgdGhpczoKPj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0KPj4gICAgICBpbml0X0EoKTsgICAgICAgICAgICB8Cj4+ICAgICAgaW5pdF9CKCk7
+ICAgICAgICAgICAgfAo+PiAgICAgIGluaXRfQygpOyAgICAgICAgICAgIHwKPj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICB8ICAgZXhpdF9DKCk7Cj4+ICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgfCAgIGV4aXRfQigpOwo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICBleGl0X0Eo
+KTsKPj4KPj4gUHJvdmlkaW5nIG1vZHVsZV9zdWJpbml0e19ub2V4aXR9IGFuZCBtb2R1bGVfc3Vi
+ZWl4dCBoZWxwcyBtYWNyb3MgZW5zdXJlCj4+IHRoYXQgbW9kdWxlcyBpbml0L2V4aXQgbWF0Y2gg
+dGhlaXIgb3JkZXIsIHdoaWxlIGFsc28gc2ltcGxpZnlpbmcgdGhlIGNvZGUuCj4+Cj4+IFRoZSB0
+aHJlZSBtYWNyb3MgYXJlIGRlZmluZWQgYXMgZm9sbG93czoKPj4gLSBtb2R1bGVfc3ViaW5pdChp
+bml0Zm4sIGV4aXRmbixyb2xsYmFjaykKPj4gLSBtb2R1bGVfc3ViaW5pdF9ub2V4aXQoaW5pdGZu
+LCByb2xsYmFjaykKPj4gLSBtb2R1bGVfc3ViZXhpdChyb2xsYmFjaykKPj4KPj4gYGluaXRmbmAg
+aXMgdGhlIGluaXRpYWxpemF0aW9uIGZ1bmN0aW9uIGFuZCBgZXhpdGZuYCBpcyB0aGUgY29ycmVz
+cG9uZGluZwo+PiBleGl0IGZ1bmN0aW9uLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBZb3VsaW5nIFRh
+bmcgPHRhbmd5b3VsaW5nQGt5bGlub3MuY24+Cj4+IC0tLQo+PiAgIGluY2x1ZGUvYXNtLWdlbmVy
+aWMvdm1saW51eC5sZHMuaCB8ICA1ICsrKwo+PiAgIGluY2x1ZGUvbGludXgvaW5pdC5oICAgICAg
+ICAgICAgICB8IDYyICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0KPj4gICBpbmNsdWRl
+L2xpbnV4L21vZHVsZS5oICAgICAgICAgICAgfCAyMiArKysrKysrKysrKwo+PiAgIDMgZmlsZXMg
+Y2hhbmdlZCwgODggaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+Pgo+PiBkaWZmIC0tZ2l0
+IGEvaW5jbHVkZS9hc20tZ2VuZXJpYy92bWxpbnV4Lmxkcy5oIGIvaW5jbHVkZS9hc20tZ2VuZXJp
+Yy92bWxpbnV4Lmxkcy5oCj4+IGluZGV4IDY3NzMxNWU1MWU1NC4uNDhjY2FjN2M2NDQ4IDEwMDY0
+NAo+PiAtLS0gYS9pbmNsdWRlL2FzbS1nZW5lcmljL3ZtbGludXgubGRzLmgKPj4gKysrIGIvaW5j
+bHVkZS9hc20tZ2VuZXJpYy92bWxpbnV4Lmxkcy5oCj4+IEBAIC05MjcsNiArOTI3LDEwIEBACj4+
+ICAgCQlJTklUX0NBTExTX0xFVkVMKDcpCQkJCQlcCj4+ICAgCQlfX2luaXRjYWxsX2VuZCA9IC47
+Cj4+ICAgCj4+ICsjZGVmaW5lIFNVQklOSVRfQ0FMTAkJCQkJCQlcCj4+ICsJCSooLnN1YmluaXRj
+YWxsLmluaXQpCQkJCQlcCj4+ICsJCSooLnN1YmV4aXRjYWxsLmV4aXQpCj4+ICsKPj4gICAjZGVm
+aW5lIENPTl9JTklUQ0FMTAkJCQkJCQlcCj4+ICAgCUJPVU5ERURfU0VDVElPTl9QT1NUX0xBQkVM
+KC5jb25faW5pdGNhbGwuaW5pdCwgX19jb25faW5pdGNhbGwsIF9zdGFydCwgX2VuZCkKPj4gICAK
+Pj4gQEAgLTExNTUsNiArMTE1OSw3IEBACj4+ICAgCQlJTklUX0RBVEEJCQkJCQlcCj4+ICAgCQlJ
+TklUX1NFVFVQKGluaXRzZXR1cF9hbGlnbikJCQkJXAo+PiAgIAkJSU5JVF9DQUxMUwkJCQkJCVwK
+Pj4gKwkJU1VCSU5JVF9DQUxMCQkJCQkJXAo+PiAgIAkJQ09OX0lOSVRDQUxMCQkJCQkJXAo+PiAg
+IAkJSU5JVF9SQU1fRlMJCQkJCQlcCj4+ICAgCX0KPj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGlu
+dXgvaW5pdC5oIGIvaW5jbHVkZS9saW51eC9pbml0LmgKPj4gaW5kZXggZWUxMzA5NDczYmM2Li5l
+ODY4OWZmMmNiNmMgMTAwNjQ0Cj4+IC0tLSBhL2luY2x1ZGUvbGludXgvaW5pdC5oCj4+ICsrKyBi
+L2luY2x1ZGUvbGludXgvaW5pdC5oCj4+IEBAIC01NSw2ICs1NSw5IEBACj4+ICAgI2RlZmluZSBf
+X2V4aXRkYXRhCV9fc2VjdGlvbigiLmV4aXQuZGF0YSIpCj4+ICAgI2RlZmluZSBfX2V4aXRfY2Fs
+bAlfX3VzZWQgX19zZWN0aW9uKCIuZXhpdGNhbGwuZXhpdCIpCj4+ICAgCj4+ICsjZGVmaW5lIF9f
+c3ViaW5pdF9jYWxsCV9fdXNlZCBfX3NlY3Rpb24oIi5zdWJpbml0Y2FsbC5pbml0IikKPj4gKyNk
+ZWZpbmUgX19zdWJleGl0X2NhbGwJX191c2VkIF9fc2VjdGlvbigiLnN1YmV4aXRjYWxsLmV4aXQi
+KQo+PiArCj4+ICAgLyoKPj4gICAgKiBtb2Rwb3N0IGNoZWNrIGZvciBzZWN0aW9uIG1pc21hdGNo
+ZXMgZHVyaW5nIHRoZSBrZXJuZWwgYnVpbGQuCj4+ICAgICogQSBzZWN0aW9uIG1pc21hdGNoIGhh
+cHBlbnMgd2hlbiB0aGVyZSBhcmUgcmVmZXJlbmNlcyBmcm9tIGEKPj4gQEAgLTExNSw2ICsxMTgs
+OSBAQAo+PiAgIHR5cGVkZWYgaW50ICgqaW5pdGNhbGxfdCkodm9pZCk7Cj4+ICAgdHlwZWRlZiB2
+b2lkICgqZXhpdGNhbGxfdCkodm9pZCk7Cj4+ICAgCj4+ICt0eXBlZGVmIGludCAoKnN1YmluaXRj
+YWxsX3QpKHZvaWQpOwo+PiArdHlwZWRlZiB2b2lkICgqc3ViZXhpdGNhbGxfdCkodm9pZCk7Cj4+
+ICsKPj4gICAjaWZkZWYgQ09ORklHX0hBVkVfQVJDSF9QUkVMMzJfUkVMT0NBVElPTlMKPj4gICB0
+eXBlZGVmIGludCBpbml0Y2FsbF9lbnRyeV90Owo+PiAgIAo+PiBAQCAtMTgzLDcgKzE4OSw2MSBA
+QCBleHRlcm4gc3RydWN0IG1vZHVsZSBfX3RoaXNfbW9kdWxlOwo+PiAgICNlbmRpZgo+PiAgIAo+
+PiAgICNlbmRpZgo+PiAtCj4+ICsKPj4gKyNpZm5kZWYgX19BU1NFTUJMWV9fCj4+ICtzdHJ1Y3Qg
+c3ViZXhpdGNhbGxfcm9sbGJhY2sgewo+PiArCS8qCj4+ICsJICogUmVjb3JkcyB0aGUgYWRkcmVz
+cyBvZiB0aGUgZmlyc3Qgc3ViLWluaXRpYWxpemF0aW9uIGZ1bmN0aW9uIGluIHRoZQo+PiArCSAq
+ICIuc3ViZXhpdGNhbGwuZXhpdCIgc2VjdGlvbgo+PiArCSAqLwo+PiArCXVuc2lnbmVkIGxvbmcg
+Zmlyc3RfYWRkcjsKPj4gKwlpbnQgbmNhbGxzOwo+PiArfTsKPj4gKwo+PiArc3RhdGljIGlubGlu
+ZSB2b2lkIF9fc3ViZXhpdGNhbGxfcm9sbGJhY2soc3RydWN0IHN1YmV4aXRjYWxsX3JvbGxiYWNr
+ICpyKQo+PiArewo+PiArCXVuc2lnbmVkIGxvbmcgYWRkciA9IHItPmZpcnN0X2FkZHIgLSBzaXpl
+b2Yoci0+Zmlyc3RfYWRkcikgKiAoci0+bmNhbGxzIC0gMSk7Cj4+ICsKPj4gKwlmb3IgKDsgci0+
+bmNhbGxzLS07IGFkZHIgKz0gc2l6ZW9mKHItPmZpcnN0X2FkZHIpKSB7Cj4+ICsJCXVuc2lnbmVk
+IGxvbmcgKnRtcCA9ICh2b2lkICopYWRkcjsKPj4gKwkJc3ViZXhpdGNhbGxfdCBmbiA9IChzdWJl
+eGl0Y2FsbF90KSp0bXA7Cj4+ICsJCWZuKCk7Cj4+ICsJfQo+PiArfQo+IEhvdyBkb2VzIHRoaXMg
+Z3VhcmFudGVlIHRoZSBleGl0IGNhbGxzIG1hdGNoIHNlcXVlbmNlPyBBcmUgeW91IGFzc3VtaW5n
+Cj4gbGlua2VyIHB1dHMgZXhpdCBmdW5jdGlvbnMgaW4gcmV2ZXJzZSBvcmRlcj8KVGFrZSBidHJm
+cyBmb3IgZXhhbXBsZToKSW5pdGlhbGl6ZSB0aGUgZnVuY3Rpb24gc2VxdWVudGlhbGx5IGluIGlu
+aXRfYnRyZnNfZnMoKSB1c2luZwptb2R1bGVfc3ViaW5pdHtfbm9leGl0fSwgc3RvcmluZyB0aGUg
+Y29ycmVzcG9uZGluZyBmdW5jdGlvbiBhZGRyZXNzZXMKaW4gdGhlIHNwZWNpZmllZCAiLnN1Ymlu
+aXRjYWxsLmluaXQiIGFuZCAiLnN1YmV4aXRjYWxsLmV4aXQiIHNlY3Rpb25zLgoKVXNpbmcgZ2Nj
+IHRvIGNvbXBpbGUgYnRyZnMgdG8ua28sIHRoZSB2aWV3IHNlY3Rpb24gY29udGFpbnMgdGhlIGZv
+bGxvd2luZzoKYGBgCiQgb2JqZHVtcCAtZCAtaiAiLnN1YmluaXRjYWxsLmluaXQiIGZzL2J0cmZz
+L3N1cGVyLm8KCmZzL2J0cmZzL3N1cGVyLm86wqDCoMKgwqAgZmlsZSBmb3JtYXQgZWxmNjQteDg2
+LTY0CgoKRGlzYXNzZW1ibHkgb2Ygc2VjdGlvbiAuc3ViaW5pdGNhbGwuaW5pdDoKCjAwMDAwMDAw
+MDAwMDAwMDAgPF9fc3ViaW5pdGNhbGxfcmVnaXN0ZXJfYnRyZnMuMD46CiDCoMKgIMKgLi4uCgow
+MDAwMDAwMDAwMDAwMDA4IDxfX3N1YmluaXRjYWxsX2J0cmZzX3J1bl9zYW5pdHlfdGVzdHMuMj46
+CiDCoMKgIMKgLi4uCgowMDAwMDAwMDAwMDAwMDEwIDxfX3N1YmluaXRjYWxsX2J0cmZzX3ByaW50
+X21vZF9pbmZvLjM+OgogwqDCoCDCoC4uLgoKMDAwMDAwMDAwMDAwMDAxOCA8X19zdWJpbml0Y2Fs
+bF9idHJmc19pbnRlcmZhY2VfaW5pdC40PjoKIMKgwqAgwqAuLi4KCjAwMDAwMDAwMDAwMDAwMjAg
+PF9fc3ViaW5pdGNhbGxfYnRyZnNfcHJlbGltX3JlZl9pbml0LjY+OgogwqDCoCDCoC4uLgoKMDAw
+MDAwMDAwMDAwMDAyOCA8X19zdWJpbml0Y2FsbF9idHJmc19kZWxheWVkX3JlZl9pbml0Ljg+Ogog
+wqDCoCDCoC4uLgoKMDAwMDAwMDAwMDAwMDAzMCA8X19zdWJpbml0Y2FsbF9idHJmc19hdXRvX2Rl
+ZnJhZ19pbml0LjEwPjoKIMKgwqAgwqAuLi4KCjAwMDAwMDAwMDAwMDAwMzggPF9fc3ViaW5pdGNh
+bGxfYnRyZnNfZGVsYXllZF9pbm9kZV9pbml0LjEyPjoKIMKgwqAgwqAuLi4KCjAwMDAwMDAwMDAw
+MDAwNDAgPF9fc3ViaW5pdGNhbGxfb3JkZXJlZF9kYXRhX2luaXQuMTQ+OgogwqDCoCDCoC4uLgoK
+MDAwMDAwMDAwMDAwMDA0OCA8X19zdWJpbml0Y2FsbF9leHRlbnRfbWFwX2luaXQuMTY+OgogwqDC
+oCDCoC4uLgoKMDAwMDAwMDAwMDAwMDA1MCA8X19zdWJpbml0Y2FsbF9idHJmc19iaW9zZXRfaW5p
+dC4xOD46CiDCoMKgIMKgLi4uCgowMDAwMDAwMDAwMDAwMDU4IDxfX3N1YmluaXRjYWxsX2V4dGVu
+dF9idWZmZXJfaW5pdF9jYWNoZXAuMjA+OgogwqDCoCDCoC4uLgoKMDAwMDAwMDAwMDAwMDA2MCA8
+X19zdWJpbml0Y2FsbF9leHRlbnRfc3RhdGVfaW5pdF9jYWNoZXAuMjI+OgogwqDCoCDCoC4uLgoK
+MDAwMDAwMDAwMDAwMDA2OCA8X19zdWJpbml0Y2FsbF9idHJmc19mcmVlX3NwYWNlX2luaXQuMjQ+
+OgogwqDCoCDCoC4uLgoKMDAwMDAwMDAwMDAwMDA3MCA8X19zdWJpbml0Y2FsbF9idHJmc19jdHJl
+ZV9pbml0LjI2PjoKIMKgwqAgwqAuLi4KCjAwMDAwMDAwMDAwMDAwNzggPF9fc3ViaW5pdGNhbGxf
+YnRyZnNfdHJhbnNhY3Rpb25faW5pdC4yOD46CiDCoMKgIMKgLi4uCgowMDAwMDAwMDAwMDAwMDgw
+IDxfX3N1YmluaXRjYWxsX2J0cmZzX2luaXRfZGlvLjMwPjoKIMKgwqAgwqAuLi4KCjAwMDAwMDAw
+MDAwMDAwODggPF9fc3ViaW5pdGNhbGxfYnRyZnNfaW5pdF9jYWNoZXAuMzI+OgogwqDCoCDCoC4u
+LgoKMDAwMDAwMDAwMDAwMDA5MCA8X19zdWJpbml0Y2FsbF9idHJmc19pbml0X2NvbXByZXNzLjM0
+PjoKIMKgwqAgwqAuLi4KCjAwMDAwMDAwMDAwMDAwOTggPF9fc3ViaW5pdGNhbGxfYnRyZnNfaW5p
+dF9zeXNmcy4zNj46CiDCoMKgIMKgLi4uCgowMDAwMDAwMDAwMDAwMGEwIDxfX3N1YmluaXRjYWxs
+X2J0cmZzX3Byb3BzX2luaXQuMzg+OgogwqDCoCDCoC4uLgoKYGBgCgpgYGAKJCBvYmpkdW1wIC1k
+IC1qICIuc3ViZXhpdGNhbGwuZXhpdCIgZnMvYnRyZnMvc3VwZXIubwoKZnMvYnRyZnMvc3VwZXIu
+bzrCoMKgwqDCoCBmaWxlIGZvcm1hdCBlbGY2NC14ODYtNjQKCgpEaXNhc3NlbWJseSBvZiBzZWN0
+aW9uIC5zdWJleGl0Y2FsbC5leGl0OgoKMDAwMDAwMDAwMDAwMDAwMCA8X19zdWJleGl0Y2FsbF91
+bnJlZ2lzdGVyX2J0cmZzLjE+OgogwqDCoCDCoC4uLgoKMDAwMDAwMDAwMDAwMDAwOCA8X19zdWJl
+eGl0Y2FsbF9idHJmc19pbnRlcmZhY2VfZXhpdC41PjoKIMKgwqAgwqAuLi4KCjAwMDAwMDAwMDAw
+MDAwMTAgPF9fc3ViZXhpdGNhbGxfYnRyZnNfcHJlbGltX3JlZl9leGl0Ljc+OgogwqDCoCDCoC4u
+LgoKMDAwMDAwMDAwMDAwMDAxOCA8X19zdWJleGl0Y2FsbF9idHJmc19kZWxheWVkX3JlZl9leGl0
+Ljk+OgogwqDCoCDCoC4uLgoKMDAwMDAwMDAwMDAwMDAyMCA8X19zdWJleGl0Y2FsbF9idHJmc19h
+dXRvX2RlZnJhZ19leGl0LjExPjoKIMKgwqAgwqAuLi4KCjAwMDAwMDAwMDAwMDAwMjggPF9fc3Vi
+ZXhpdGNhbGxfYnRyZnNfZGVsYXllZF9pbm9kZV9leGl0LjEzPjoKIMKgwqAgwqAuLi4KCjAwMDAw
+MDAwMDAwMDAwMzAgPF9fc3ViZXhpdGNhbGxfb3JkZXJlZF9kYXRhX2V4aXQuMTU+OgogwqDCoCDC
+oC4uLgoKMDAwMDAwMDAwMDAwMDAzOCA8X19zdWJleGl0Y2FsbF9leHRlbnRfbWFwX2V4aXQuMTc+
+OgogwqDCoCDCoC4uLgoKMDAwMDAwMDAwMDAwMDA0MCA8X19zdWJleGl0Y2FsbF9idHJmc19iaW9z
+ZXRfZXhpdC4xOT46CiDCoMKgIMKgLi4uCgowMDAwMDAwMDAwMDAwMDQ4IDxfX3N1YmV4aXRjYWxs
+X2V4dGVudF9idWZmZXJfZnJlZV9jYWNoZXAuMjE+OgogwqDCoCDCoC4uLgoKMDAwMDAwMDAwMDAw
+MDA1MCA8X19zdWJleGl0Y2FsbF9leHRlbnRfc3RhdGVfZnJlZV9jYWNoZXAuMjM+OgogwqDCoCDC
+oC4uLgoKMDAwMDAwMDAwMDAwMDA1OCA8X19zdWJleGl0Y2FsbF9idHJmc19mcmVlX3NwYWNlX2V4
+aXQuMjU+OgogwqDCoCDCoC4uLgoKMDAwMDAwMDAwMDAwMDA2MCA8X19zdWJleGl0Y2FsbF9idHJm
+c19jdHJlZV9leGl0LjI3PjoKIMKgwqAgwqAuLi4KCjAwMDAwMDAwMDAwMDAwNjggPF9fc3ViZXhp
+dGNhbGxfYnRyZnNfdHJhbnNhY3Rpb25fZXhpdC4yOT46CiDCoMKgIMKgLi4uCgowMDAwMDAwMDAw
+MDAwMDcwIDxfX3N1YmV4aXRjYWxsX2J0cmZzX2Rlc3Ryb3lfZGlvLjMxPjoKIMKgwqAgwqAuLi4K
+CjAwMDAwMDAwMDAwMDAwNzggPF9fc3ViZXhpdGNhbGxfYnRyZnNfZGVzdHJveV9jYWNoZXAuMzM+
+OgogwqDCoCDCoC4uLgoKMDAwMDAwMDAwMDAwMDA4MCA8X19zdWJleGl0Y2FsbF9idHJmc19leGl0
+X2NvbXByZXNzLjM1PjoKIMKgwqAgwqAuLi4KCjAwMDAwMDAwMDAwMDAwODggPF9fc3ViZXhpdGNh
+bGxfYnRyZnNfZXhpdF9zeXNmcy4zNz46CiDCoMKgIMKgLi4uCgoKYGBgCgogRnJvbSB0aGUgYWJv
+dmUsIHdlIGNhbiBzZWUgdGhhdCB0aGUgY29tcGlsZXIgc3RvcmVzIHRoZSBpbml0L2V4aXQgZnVu
+Y3Rpb24KaW4gcmV2ZXJzZSBvcmRlci4KClRoYW5rcywKWW91bGluZy4KCgpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxp
+bmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xp
+c3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
