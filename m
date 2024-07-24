@@ -4,74 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BB259C3DA49
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jul 2024 02:15:19 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 35CE2C3DA63
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jul 2024 02:16:56 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sWRXC-0006Vy-5c;
-	Wed, 24 Jul 2024 02:15:18 +0000
+	id 1sWRYl-0002JM-0a;
+	Wed, 24 Jul 2024 02:16:54 +0000
 Received: from [172.30.29.67] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <youling.tang@linux.dev>) id 1sWRXA-0006Vr-Qg
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sWRYk-0002JG-4x
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jul 2024 02:15:17 +0000
+ Wed, 24 Jul 2024 02:16:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MLUfk9gi7OCPJH9Y7tsnfPUpLHamp4aWw3nheTJInOk=; b=Id6xxIOiGL3dAfd0p8sTQ4+kk/
- vmoILeEDaNifyvLnMBRNeyjxfJdMp8hJIP3s7vKUFXI4axmgD2/qv0t99M7I9yqoE6Eg4XohlYBvP
- Ha0BNETlt4XLqkGPlmJ6Ri6dWZcdC1gBwYP852VXR78bkZ61YGzr3/rGS7VE5Gbvf3yk=;
+ bh=fqri+GEb10ias8Z/aba1zke+gbUr/+EbocTNeb8nOaA=; b=VyUZ+JeNwy3tBvWAn42cyt9Iuz
+ p9IHPxFUtIDyydyiWbnGfO/E4bgdqpBt6k+PCX2flIugw+rW0q0X+OuTS+Ll6OIquBh9L1bnizf06
+ ITiG2P5NK+UysphXuNBs0tbsbJIaU0VuJskv5hVWDXrf8VlbeX0NvCYXEZV2Zcr71GN8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=MLUfk9gi7OCPJH9Y7tsnfPUpLHamp4aWw3nheTJInOk=; b=eQXe+7GWmiv5EdYDnIjDq3oQq6
- cLGVRIOapcdpz+/qnil2jV8+lIHdbM7cbhXZQ0+GDuqPO/loUlP6SjoA+UCNkJezaTPQN14g2NaDg
- GukpVXlvEzmHta0S/WmUXDZuicr7czelk3mvgxZeefMSs2i2Mvg+ogx+0JDDIvyKFoO8=;
-Received: from out-170.mta1.migadu.com ([95.215.58.170])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=fqri+GEb10ias8Z/aba1zke+gbUr/+EbocTNeb8nOaA=; b=DkF5LYv4tPWVp8UnqURe0r1IRq
+ ZdHCkf+VJAmv5IolXYhO5Gp17QM/LB8lCxLGxIBWzsc245RistVVyn4C+GTGNWPqia5b5FTw4m0Ou
+ zDub1Np2YpMg17Agtsxh2Yqm1tktM5TMHIIZbsyuUltO1a5UjH6s94M0h1ZEyrY6ZAko=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sWRXA-0002CX-21 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jul 2024 02:15:17 +0000
-Message-ID: <4b932baf-9b43-42cd-9d9b-8048009d6d42@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
- t=1721787309;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=MLUfk9gi7OCPJH9Y7tsnfPUpLHamp4aWw3nheTJInOk=;
- b=h0HlnRfzLN2pF/0Djo3ulN2R/8hakmdUblUS8AMiDZvzdfcac3jnIdfoJnkofQkSy/5Kv4
- ruGT11NG/QXJU/JV90HgCY8W5hKXZ0PjyFwlGHLGr9cVWDehFUhwydQ4hZWs/TacOJtqIQ
- s6MbaR10dt+l4Zl2DHJZxMX7IgFCLUc=
-Date: Wed, 24 Jul 2024 10:14:58 +0800
+ id 1sWRYi-0002Ho-Uq for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Jul 2024 02:16:53 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id 9A80060E04;
+ Wed, 24 Jul 2024 02:16:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B947BC4AF12;
+ Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1721787406;
+ bh=YAphdt5cvZkMjOJF6eiFICf+SX4Aidz7t2RyuBYQf+w=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=ejlJSw/BBlOT3plFizhSVD/QfSEYIOxm+xA20yjVToNpelN3ccHDJiFjjsvw660u9
+ hgUb3cqTdwNzn3jDVXwIPA1TJz0lV3bWJZqU6E1ly7Ff2VtWzFsrovmJLBNmXixz51
+ TPgZe9En+N9k7oFkEOoVFpbOIrCYfxeIs//V6iO9iJPZYzt5bRr4Oycx6OJNCP+RB4
+ zEL9kjHdGwvhNfuzwbBTQeELhw4VYjAoEcO0kqYxdAxSS+5DCCGKiEVupplMaEnmcP
+ 548Vg/no29ytGYnXy0FfD23HAo9g3p39vaDDvwYIYg0/aJLoOJ4372O7ffu6FTXFdM
+ kEksppGOPM+Xg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ ADF8AC54BB5; Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
 MIME-Version: 1.0
-To: kernel test robot <lkp@intel.com>, Arnd Bergmann <arnd@arndb.de>,
- Luis Chamberlain <mcgrof@kernel.org>, Chris Mason
- <chris.mason@fusionio.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, tytso@mit.edu,
- Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>,
- Christoph Hellwig <hch@infradead.org>
-References: <20240723083239.41533-5-youling.tang@linux.dev>
- <202407240204.KcPiCniO-lkp@intel.com>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and
- include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <202407240204.KcPiCniO-lkp@intel.com>
-X-Migadu-Flow: FLOW_OUT
-X-Headers-End: 1sWRXA-0002CX-21
-Subject: Re: [f2fs-dev] [PATCH 4/4] f2fs: Use module_{subinit,
- subeixt} helper macros
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <172178740670.17759.14780959274097594461.git-patchwork-notify@kernel.org>
+Date: Wed, 24 Jul 2024 02:16:46 +0000
+References: <20240423225552.4113447-1-willy@infradead.org>
+In-Reply-To: <20240423225552.4113447-1-willy@infradead.org>
+To: Matthew Wilcox (Oracle) <willy@infradead.org>
+X-Headers-End: 1sWRYi-0002Ho-Uq
+Subject: Re: [f2fs-dev] [PATCH 0/6] Remove page_mapping()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,63 +79,52 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-arch@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>,
- llvm@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-modules@vger.kernel.org,
- oe-kbuild-all@lists.linux.dev, linux-ext4@vger.kernel.org,
- linux-btrfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ akpm@linux-foundation.org, linux-fscrypt@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 24/07/2024 02:51, kernel test robot wrote:
-> Hi Youling,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on kdave/for-next]
-> [also build test WARNING on linus/master next-20240723]
-> [cannot apply to jaegeuk-f2fs/dev-test jaegeuk-f2fs/dev soc/for-next v6.10]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Youling-Tang/module-Add-module_subinit-_noexit-and-module_subeixt-helper-macros/20240723-164434
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
-> patch link:    https://lore.kernel.org/r/20240723083239.41533-5-youling.tang%40linux.dev
-> patch subject: [PATCH 4/4] f2fs: Use module_{subinit, subeixt} helper macros
-> config: i386-buildonly-randconfig-004-20240724 (https://download.01.org/0day-ci/archive/20240724/202407240204.KcPiCniO-lkp@intel.com/config)
-> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240724/202407240204.KcPiCniO-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202407240204.KcPiCniO-lkp@intel.com/
->
-> All warnings (new ones prefixed by >>):
->
->     In file included from fs/f2fs/node.c:16:
->>> fs/f2fs/f2fs.h:4131:57: warning: non-void function does not return a value [-Wreturn-type]
->      4131 | static inline int __init f2fs_create_root_stats(void) { }
+Hello:
 
-I'll fix it later.
-static inline int __init f2fs_create_root_stats(void) { return 0; }
->           |                                                         ^
->     1 warning generated.
-> --
->     In file included from fs/f2fs/data.c:25:
->>> fs/f2fs/f2fs.h:4131:57: warning: non-void function does not return a value [-Wreturn-type]
->      4131 | static inline int __init f2fs_create_root_stats(void) { }
->           |                                                         ^
->     fs/f2fs/data.c:2373:10: warning: variable 'index' set but not used [-Wunused-but-set-variable]
->      2373 |         pgoff_t index;
->           |                 ^
->     2 warnings generated.
-index = folio_index(folio);
-This statement should be moved to CONFIG_F2FS_FS_COMPRESSION.
+This series was applied to jaegeuk/f2fs.git (dev)
+by Andrew Morton <akpm@linux-foundation.org>:
 
-I'll send a separate patch to fix it if it needs to be modified.
+On Tue, 23 Apr 2024 23:55:31 +0100 you wrote:
+> There are only a few users left.  Convert them all to either call
+> folio_mapping() or just use folio->mapping directly.
+> 
+> Matthew Wilcox (Oracle) (6):
+>   fscrypt: Convert bh_get_inode_and_lblk_num to use a folio
+>   f2fs: Convert f2fs_clear_page_cache_dirty_tag to use a folio
+>   memory-failure: Remove calls to page_mapping()
+>   migrate: Expand the use of folio in __migrate_device_pages()
+>   userfault; Expand folio use in mfill_atomic_install_pte()
+>   mm: Remove page_mapping()
+> 
+> [...]
+
+Here is the summary with links:
+  - [f2fs-dev,1/6] fscrypt: Convert bh_get_inode_and_lblk_num to use a folio
+    (no matching commit)
+  - [f2fs-dev,2/6] f2fs: Convert f2fs_clear_page_cache_dirty_tag to use a folio
+    (no matching commit)
+  - [f2fs-dev,3/6] memory-failure: Remove calls to page_mapping()
+    (no matching commit)
+  - [f2fs-dev,4/6] migrate: Expand the use of folio in __migrate_device_pages()
+    (no matching commit)
+  - [f2fs-dev,5/6] userfault; Expand folio use in mfill_atomic_install_pte()
+    (no matching commit)
+  - [f2fs-dev,6/6] mm: Remove page_mapping()
+    https://git.kernel.org/jaegeuk/f2fs/c/06668257a355
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
 
 _______________________________________________
