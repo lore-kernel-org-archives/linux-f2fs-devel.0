@@ -4,72 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 91F67C52CD8
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jul 2024 02:17:09 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C25B1C3DA63
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jul 2024 02:17:11 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sWRYz-0002L2-RY;
-	Wed, 24 Jul 2024 02:17:09 +0000
+	id 1sWRZ1-00046T-Dy;
+	Wed, 24 Jul 2024 02:17:11 +0000
 Received: from [172.30.29.67] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sWRYs-0002Jt-Um
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sWRYk-00045s-Ug
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jul 2024 02:17:02 +0000
+ Wed, 24 Jul 2024 02:16:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5K9zHcPQyJ/FAYxOSjcwvAeeDUQrwShr1CxWZruS5bY=; b=f1PzIA99+IfS0UPRJ+k9HsmbP0
- 7ZVYGKSqPlyC1Je1ZSnqo/HhCys3HVFvn1uZ+yt0PdPI48nx4e6Y+mAWM+EZ9qTmkc9+FI8uYeE3O
- siKGRYLnitbgejA6sUvTk5fnxQYcOhBqFmT+YSqkHG1CzqLfPPtds972Krd5lcm/bPYk=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=HsVR5SV0620fVtCEMaWePw+/1iFYbvGE+/1xrqb+xHw=; b=mC/IMURcGHn0JKr9QpXxksaNNm
+ jAA4CRGudWTPSX1uzfI+5qEbVMGwD6IcrhpFWe6aP2FyeNzFfy/sI+8LnVWvBl8+w7mmoIOgwk/qm
+ I34a/9eyVwM+s4PluJIHBaEtMtIG15jP4VS5sHDEbHKJXLcLK+ePO+KlwXCQBzM1X670=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=5K9zHcPQyJ/FAYxOSjcwvAeeDUQrwShr1CxWZruS5bY=; b=M
- aYljc7+1oh7M0UIRs6wnAgAnn/NjLn6nJBZRRYreMp+TrWJiJ40eQ8NHaWohRaZ6udJyzm0249nwr
- ML0J+jzrC1XGNsgkh1LqjO7Ru6+aiyo+dFUdT++5L/esSNxk02T6O/8+HHfP2mgGXMIHY1Md/lgfq
- xrPGFQFOCFTUOpJY=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=HsVR5SV0620fVtCEMaWePw+/1iFYbvGE+/1xrqb+xHw=; b=CMkyQAktDCGjM7T431U8biCwRk
+ 1sYMR7ViUmEa8oroOTselTHPXiH4LRDw0GmVUPxaxx8DNG3Nt4yvqFztK57Sd9XhaQe6Oy+QaeC9l
+ oTUAkqUOhk9+o5SA0v60sSExEFZnOx/vm+PUwOO12Blp2+R3p2W7GwaZhfCCxUshtuBg=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sWRYo-0002I6-W2 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jul 2024 02:17:00 +0000
+ id 1sWRYi-0002Hk-B9 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Jul 2024 02:16:54 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 4214BCE0F09
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by dfw.source.kernel.org (Postfix) with ESMTP id 00F2360E2C;
  Wed, 24 Jul 2024 02:16:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 804B8C4AF0A
- for <linux-f2fs-devel@lists.sourceforge.net>;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A0D85C4AF10;
  Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1721787406;
- bh=qn19ogqooqyMFuaf0IvEdluIfaa2DPJHVXmlWU6q3ac=;
- h=Subject:From:Date:To:From;
- b=e3/gpgK3ZIR9sOd9LSCmAO5zJmQdgKJHW+U2NsRnnPvJAlZgPRucvWaStObqjeSLH
- xmV+XUrbRFqoonyLsbyox0zJGU3sI+HQOuMWzOoBPLjSadi8FXlGcopiH5nP0KkvAo
- 8p2Zaw+2NLQPC5giUJ0wiF3qWGkDTVMEswuk9PVocKyQNlHB3pLItJaHiAp4cjslC+
- Obxe6kw/LZqnODSaP4B4C4xMzxkXvWTpZqvdCGvNi5T9hX9oyOEriYZiUUR3fBqpsM
- k/qW5wGE1PhopcxlWei0fNRQVx5OvZtCpkV1JmN7EX2zQh+aITXw2XmoFy3edzvTUb
- Rv23yZhgtM4PA==
+ bh=e2dCHd3n8q25XhOxzHvJ6i3RPXn9LxCn1diONk3KotU=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=bMpDk9N7EkOjwmpSIaAklT8hKeoG5hdBDnUji25xGqzIqXwl2rfjVmaQ/8qQ2+Yek
+ gOs+5otr1dYkrWn+WLf0ZC3HwosbZkdbdnUO0UGPhsVjWN98Q7xmyz2jNw6FzWgvOD
+ 9ndEKbh0olHi7p2k64uy+qnGbLmH6t8j1sa6XUSiGnrh7bgv/HP5UQRGPMlsdtpHmK
+ qfGlbxz8w3UWIOg38XkCepKM8/51bHXqfVu1p7eW27zj2OOxvqss+E6rzPm4jCZyv6
+ Geo/fzyYTMac242CPAQTv+006yg3TOQ8zCnWl4VapNKMakux9lOgHLCrG2vPZuFVE2
+ akL++zdvOugdg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 702A3C43443 for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
+ 94D30C43443; Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <172178740637.17759.6164855175682800543.git-patchwork-summary@kernel.org>
+Message-Id: <172178740660.17759.10253649840019036127.git-patchwork-notify@kernel.org>
 Date: Wed, 24 Jul 2024 02:16:46 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1sWRYo-0002I6-W2
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+References: <20240606073353.47130-1-eugen.hristev@collabora.com>
+In-Reply-To: <20240606073353.47130-1-eugen.hristev@collabora.com>
+To: Eugen Hristev <eugen.hristev@collabora.com>
+X-Headers-End: 1sWRYi-0002Hk-B9
+Subject: Re: [f2fs-dev] [PATCH v18 0/7] Case insensitive cleanup for
+ ext4/f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,87 +80,48 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: krisman@suse.de, brauner@kernel.org, kernel@collabora.com, tytso@mit.edu,
+ ebiggers@google.com, jack@suse.cz, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, adilger.kernel@dilger.ca,
+ viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This series was applied to jaegeuk/f2fs.git (dev)
+by Christian Brauner <brauner@kernel.org>:
 
-Series: [f2fs-dev,1/3] fs: Export in_group_or_capable()
-  Submitter: Youling Tang <youling.tang@linux.dev>
-  Committer: Christian Brauner <brauner@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=863678
-  Lore link: https://lore.kernel.org/r/20240620032335.147136-1-youling.tang@linux.dev
-    Patches: [f2fs-dev,1/3] fs: Export in_group_or_capable()
-             [f2fs-dev,2/3] f2fs: Use in_group_or_capable() helper
-             [f2fs-dev,3/3] fuse: Use in_group_or_capable() helper
+On Thu,  6 Jun 2024 10:33:46 +0300 you wrote:
+> Hello,
+> 
+> I am trying to respin the series here :
+> https://www.spinics.net/lists/linux-ext4/msg85081.html
+> 
+> I resent some of the v9 patches and got some reviews from Gabriel,
+> I did changes as requested and here is v18.
+> 
+> [...]
 
-Patch: [f2fs-dev,GIT,PULL] f2fs update for 6.11-rc1
-  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
-  Committer: Linus Torvalds <torvalds@linux-foundation.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=873357
-  Lore link: https://lore.kernel.org/r/ZqAZZAmghKIaBAkJ@google.com
+Here is the summary with links:
+  - [f2fs-dev,v18,1/7] ext4: Simplify the handling of cached casefolded names
+    https://git.kernel.org/jaegeuk/f2fs/c/f776f02a2c96
+  - [f2fs-dev,v18,2/7] f2fs: Simplify the handling of cached casefolded names
+    https://git.kernel.org/jaegeuk/f2fs/c/632f4054b229
+  - [f2fs-dev,v18,3/7] libfs: Introduce case-insensitive string comparison helper
+    https://git.kernel.org/jaegeuk/f2fs/c/6a79a4e187bd
+  - [f2fs-dev,v18,4/7] ext4: Reuse generic_ci_match for ci comparisons
+    https://git.kernel.org/jaegeuk/f2fs/c/d76b92f61f3b
+  - [f2fs-dev,v18,5/7] f2fs: Reuse generic_ci_match for ci comparisons
+    https://git.kernel.org/jaegeuk/f2fs/c/d66858eb0c72
+  - [f2fs-dev,v18,6/7] ext4: Move CONFIG_UNICODE defguards into the code flow
+    https://git.kernel.org/jaegeuk/f2fs/c/d98c822232f8
+  - [f2fs-dev,v18,7/7] f2fs: Move CONFIG_UNICODE defguards into the code flow
+    https://git.kernel.org/jaegeuk/f2fs/c/28add38d545f
 
-Series: Cache insensitive cleanup for ext4/f2fs
-  Submitter: Eugen Hristev <eugen.hristev@collabora.com>
-  Committer: Christian Brauner <brauner@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=841787
-  Lore link: https://lore.kernel.org/r/20240405121332.689228-1-eugen.hristev@collabora.com
-    Patches: [f2fs-dev,v16,1/9] ext4: Simplify the handling of cached insensitive names
-             [f2fs-dev,v16,2/9] f2fs: Simplify the handling of cached insensitive names
-             [f2fs-dev,v16,5/9] f2fs: Reuse generic_ci_match for ci comparisons
-             [f2fs-dev,v16,8/9] ext4: Move CONFIG_UNICODE defguards into the code flow
-             [f2fs-dev,v16,9/9] f2fs: Move CONFIG_UNICODE defguards into the code flow
-
-Series: Case insensitive cleanup for ext4/f2fs
-  Submitter: Eugen Hristev <eugen.hristev@collabora.com>
-  Committer: Christian Brauner <brauner@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=859376
-  Lore link: https://lore.kernel.org/r/20240606073353.47130-1-eugen.hristev@collabora.com
-    Patches: [f2fs-dev,v18,1/7] ext4: Simplify the handling of cached casefolded names
-             [f2fs-dev,v18,2/7] f2fs: Simplify the handling of cached casefolded names
-             [f2fs-dev,v18,3/7] libfs: Introduce case-insensitive string comparison helper
-             [f2fs-dev,v18,4/7] ext4: Reuse generic_ci_match for ci comparisons
-             [f2fs-dev,v18,5/7] f2fs: Reuse generic_ci_match for ci comparisons
-             [f2fs-dev,v18,6/7] ext4: Move CONFIG_UNICODE defguards into the code flow
-             [f2fs-dev,v18,7/7] f2fs: Move CONFIG_UNICODE defguards into the code flow
-
-Series: Minor cleanup for case insensitive path
-  Submitter: Eugen Hristev <eugen.hristev@collabora.com>
-  Committer: Christian Brauner <brauner@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=823843
-  Lore link: https://lore.kernel.org/r/20240207064302.221060-1-eugen.hristev@collabora.com
-    Patches: [f2fs-dev,RESEND,v9,1/2] ext4: Simplify the handling of cached insensitive names
-
-Series: [f2fs-dev,v10,1/8] ext4: Simplify the handling of cached insensitive names
-  Submitter: Eugen Hristev <eugen.hristev@collabora.com>
-  Committer: Christian Brauner <brauner@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=826206
-  Lore link: https://lore.kernel.org/r/20240215042654.359210-1-eugen.hristev@collabora.com
-    Patches: [f2fs-dev,v10,1/8] ext4: Simplify the handling of cached insensitive names
-             [f2fs-dev,v10,5/8] f2fs: Reuse generic_ci_match for ci comparisons
-             [f2fs-dev,v10,8/8] f2fs: Move CONFIG_UNICODE defguards into the code flow
-
-Series: Remove page_mapping()
-  Submitter: Matthew Wilcox (Oracle) <willy@infradead.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=847221
-  Lore link: https://lore.kernel.org/r/20240423225552.4113447-1-willy@infradead.org
-    Patches: [f2fs-dev,1/6] fscrypt: Convert bh_get_inode_and_lblk_num to use a folio
-             [f2fs-dev,6/6] mm: Remove page_mapping()
-
-Series: Introduce case-insensitive string comparison helper
-  Submitter: Eugen Hristev <eugen.hristev@collabora.com>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=824195
-  Lore link: https://lore.kernel.org/r/20240208064334.268216-1-eugen.hristev@collabora.com
-    Patches: [f2fs-dev,RESEND,v9,1/3] libfs: Introduce case-insensitive string comparison helper
-             [f2fs-dev,RESEND,v9,3/3] f2fs: Reuse generic_ci_match for ci comparisons
-
-
-Total patches: 24
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
