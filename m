@@ -4,70 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2E5C6C3DA63
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 95E34C3DA49
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jul 2024 02:17:06 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sWRYv-0007MZ-3q;
-	Wed, 24 Jul 2024 02:17:05 +0000
+	id 1sWRYv-0007Mm-Gt;
+	Wed, 24 Jul 2024 02:17:06 +0000
 Received: from [172.30.29.67] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sWRYk-0007Lt-6n
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sWRYt-0007M4-Em
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jul 2024 02:16:54 +0000
+ Wed, 24 Jul 2024 02:17:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rVx9ZKzNuyE2dUIFPtib19cKob9uzkeYuuO+uKMxt/o=; b=O4m3m7doen136Vb+RlWonBHVLu
- LOd8xOdy2kEDmZJqykc/pe29jjoW+s4VnPpfTePfjWDQnQjSVjEtVWrp+7+c5mHuJ+VOJ2pelj6Cm
- r9odwO861naAVUDLHVdU9QwgU0jrKp4kZcND3jAjkkSUW8t6sp0oCQCZS927tqKBMqA4=;
+ bh=KbDTjoP/C6xjmkhAZqPe1I/tihgg9YwqsVwy1FLlXFA=; b=aEVRc6EkaX+c4v4rZ7tjFKdgEi
+ 5l0e144Ae2KgeqJWNivHGojszBRA5SXmN0WZUvFyaGZ0ACBxgvDIEABjaNOyNRi2sEIal4NAlItuD
+ 5v2Lz3dIFkr6GjHO946NfR0hwdq9HYzHaVzbJdtXc3gtD/v2WNVm5tur6eR0WWNQ91bE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rVx9ZKzNuyE2dUIFPtib19cKob9uzkeYuuO+uKMxt/o=; b=j97CQxcLd8RMRihnOuPl+tQte8
- 93VKXJrACDi3fbWay0AzxY3lbFcaxJnLdqrgpiNf6pS38sSQAtHXvq87TNX48jAO4UxYvoPgvRWly
- VhsXUZKCB7kLLr1M5nLvk65KK4e4Pnq8/lydi/yqduTMn/jf/c1P7NLUZNgCX3xARKLU=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=KbDTjoP/C6xjmkhAZqPe1I/tihgg9YwqsVwy1FLlXFA=; b=fOzkuumULc2QsXrEBEvPwCjN1N
+ 15QfxY3DeL0+vFsEYeQfHdfmoRzC/+VGTI9lRsyOXokeeuNeS1pc1yaG5CicO21maAS+mDVgbAGfm
+ ttRLz+bTE7OroYXI/KDP1dyy7Lj+AQDUD3xyQNcggm2zqH9H7B4LQb2k+qwGzTmTCUi0=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sWRYk-0002Hp-2c for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jul 2024 02:16:54 +0000
+ id 1sWRYo-0002I9-7b for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Jul 2024 02:16:58 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 5805CCE062A;
+ by dfw.source.kernel.org (Postfix) with ESMTP id D331C6119F;
  Wed, 24 Jul 2024 02:16:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9765CC4AF0C;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C5B70C4AF18;
  Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1721787406;
- bh=RxzxknUylVUGaV6PlU26q9c37KnidmqlRfe2BEvESdk=;
+ bh=uOhx3iyOqZfaap9huG8iloFal4jT6CiWr3f80xG7QOU=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=nN7AhojEmCkoanDQFv6I44e7EWMFSXU1x6iMMoigKHziv9uQFHxY1no7Fn0wDkBW5
- 28Lub/kDH6FqgdW4NQtoKYr987oiobTrL+7MM5K3agoqMjgBd6QfGFIDgxKxWNK9aP
- Fm3LYhbEqKsQz5rbEunlb8sqiHObeavPnXIvN/iK4ghtj22gmc5cFPHQ2sd4EQk1Dk
- GHICy9UP1NghYQKLVkU0WtF+CutfmhpUB+hoPtly702cRAOK8lplGtOeoNC2pDNyu8
- 0vqBe8huosEh/4c/t5bUQt5BxAp3eRDTurmhCUdDMTONUh3GfkV1FDvsqkpvacKp4C
- 8Awq2ZOLFS1Ug==
+ b=nulDWwYH8l0hWWUETLAk7bpiheKu7MESq9AbkM0cZFEpiJcsuolnCatCt6Rra2A1D
+ RHMwlVgK2bYwUwE3Sl50Xtnc9mqmaAWs1a9OSxLiYSHg4tjt2qNXA/YXqL4BHzj+uB
+ WgHhupyvP8VJYUPdFiKuKpuZmjAY6HYeRIsnlTu8vClXoTmjC2PEvoe0KY3/8/tQRQ
+ Vi5P15h1rm4ki+b+rztHNgxOMoOqLrZl4GQv4wsI14/Bj4i5Ijksd7FGX16XS2BKDm
+ yaReHS6UlSV24T7IpahVZ3w1rA2x0o6SthmQ3JMcCZcCeihP76AiKRPrjNvGKPHn43
+ itjEaaQpvr61A==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 83118C43638; Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
+ B5F6FC8E8DD; Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <172178740653.17759.16908087723522583018.git-patchwork-notify@kernel.org>
+Message-Id: <172178740674.17759.3977282531593034304.git-patchwork-notify@kernel.org>
 Date: Wed, 24 Jul 2024 02:16:46 +0000
-References: <ZqAZZAmghKIaBAkJ@google.com>
-In-Reply-To: <ZqAZZAmghKIaBAkJ@google.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1sWRYk-0002Hp-2c
-Subject: Re: [f2fs-dev] [GIT PULL] f2fs update for 6.11-rc1
+References: <20240208064334.268216-1-eugen.hristev@collabora.com>
+In-Reply-To: <20240208064334.268216-1-eugen.hristev@collabora.com>
+To: Eugen Hristev <eugen.hristev@collabora.com>
+X-Headers-End: 1sWRYo-0002I9-7b
+Subject: Re: [f2fs-dev] [RESEND PATCH v9 0/3] Introduce case-insensitive
+ string comparison helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,31 +80,39 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: brauner@kernel.org, kernel@collabora.com, tytso@mit.edu, jack@suse.cz,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk,
+ linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This pull request was applied to jaegeuk/f2fs.git (dev)
-by Linus Torvalds <torvalds@linux-foundation.org>:
+This series was applied to jaegeuk/f2fs.git (dev)
+by Christian Brauner <brauner@kernel.org>:
 
-On Tue, 23 Jul 2024 20:58:12 +0000 you wrote:
-> Hi Linus,
+On Thu,  8 Feb 2024 08:43:31 +0200 you wrote:
+> Hello,
 > 
-> Could you please consider this pull request?
+> I am trying to respin the series here :
+> https://www.spinics.net/lists/linux-ext4/msg85081.html
 > 
-> Thanks,
-> 
-> The following changes since commit 2ef5971ff345d3c000873725db555085e0131961:
+> To make it easier to apply I split it into smaller chunks which address
+> one single thing.
+> This series is based on top of the first series here:
+> https://marc.info/?l=linux-ext4&m=170728813912935&w=2
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,GIT,PULL] f2fs update for 6.11-rc1
-    https://git.kernel.org/jaegeuk/f2fs/c/5ad7ff8738b8
+  - [f2fs-dev,RESEND,v9,1/3] libfs: Introduce case-insensitive string comparison helper
+    (no matching commit)
+  - [f2fs-dev,RESEND,v9,2/3] ext4: Reuse generic_ci_match for ci comparisons
+    (no matching commit)
+  - [f2fs-dev,RESEND,v9,3/3] f2fs: Reuse generic_ci_match for ci comparisons
+    https://git.kernel.org/jaegeuk/f2fs/c/d66858eb0c72
 
 You are awesome, thank you!
 -- 
