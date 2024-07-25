@@ -4,72 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 73659C3DA5D
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Jul 2024 14:40:07 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7AEFCC3DA5D
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Jul 2024 15:34:16 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sWzdU-0005P8-Aj;
-	Thu, 25 Jul 2024 14:40:04 +0000
+	id 1sX0Tu-00042E-0D;
+	Thu, 25 Jul 2024 15:34:14 +0000
 Received: from [172.30.29.67] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+eb6281b6209e17a76e98+7641+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1sWzdS-0005Oz-CC for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 25 Jul 2024 14:40:02 +0000
+ id 1sX0Ts-000428-LM for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 25 Jul 2024 15:34:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
- MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=fT+P3bL2alqk783XUIpMyvxWyxVKIMjRx9YDa8Msrv8=; b=GynBRVxsE+v/vttj3DmZUTmfy8
- wdoOT2Fz+RbasrEcQbYi8LeceUI7djNSVDgIhbGs0GpghEEdGZup0IKLO8QiVBNASHd4wb12XzCoa
- CiIRx1bFJK1BAJIRqejyjoGIRCtNmATAC8SVVvG0FwzGlxsP5+C8tV4LvFzH7ky6ySvs=;
+ bh=Jf02KJptUmzqNSH7cWf1ELLoEYpwrFBHCIF0xHDo8l0=; b=FWD9g3+8jkjgto/7e0IqN5pwEP
+ jCkerbgYh6JSJM9wpXmzOzZy1tN10/yn5KK7Xnz45GPZ72oYYTZx2o2kSjiRcVE787Tb/XCZ20WE1
+ 6dIqXBnlzwJEMuJcxbXt/KWZx6w7beNe4GHFYX9KuNmmLZEeO8IXzAh7FPH7eXDLfwzg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=fT+P3bL2alqk783XUIpMyvxWyxVKIMjRx9YDa8Msrv8=; b=mS4KW2evOL2bZ40MokHpA6Ar+C
- I3B9/3WNTizPUErEwwsP8hLfc6rnVQrE7ycCwz3g6v2Tz7ZkOSow8B9t3VD86OpXcVX7m3TBRe8zy
- qF3htqXwyl+9ox49wkZTLyFxjI5y5RFLR0YWhGlLpot83HjexJZVdO8PDaa9yficQlwo=;
+ bh=Jf02KJptUmzqNSH7cWf1ELLoEYpwrFBHCIF0xHDo8l0=; b=ggE21vs3mVbnR9qjT0Tc6lK8Fp
+ k96BVt6NNkAF5zfhDG/8WoUJqOnzjbftJtq9NMF93WLW0WNZLOjjCbfPcmhHrtTH8UxAKocNNrbps
+ phbHYyg0nSthuXHnmy0RWrvUAE4AgPdz0Ct/bo9ZiVbC9dWMTb6HdK0QWV8mUe9CtTxk=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sWzdR-0005iB-GW for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 25 Jul 2024 14:40:02 +0000
+ id 1sX0Ts-0001WG-0h for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 25 Jul 2024 15:34:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
- :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
- Sender:Reply-To:Content-ID:Content-Description;
- bh=fT+P3bL2alqk783XUIpMyvxWyxVKIMjRx9YDa8Msrv8=; b=WL5/OYQ+RT6V2Tl5hRTNfUjVwL
- oYtEItO5DN/EmTddff9oHpV7Z1VvU/Hz+Wd/ZHHcYbz51Wp7Pyq1+pk0K/7zQPkMmENAMlmbCODHD
- e5Vr8IhAmtm1e63eRQfIZYn4YhuFhEfyTM2m+FX40WG1cnKnrVwE7Qp3XJyhDFybOgRokQsOqhLVU
- exQ2/h/Jc8DM+0kWg1+tInyN9tyTGSg30g+Urn5OCITbb2OMIKeZqU36FmGsCWt4pMVGSDnv5zLvN
- cjcI8uRXUENjfZNyTD2zcw+U34WMrESbsJV14YTD1M0PxUQTTJxWSlubgoMyN5eOUzZyr4+eXPHz4
- BZFIqkRQ==;
+ d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+ :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=Jf02KJptUmzqNSH7cWf1ELLoEYpwrFBHCIF0xHDo8l0=; b=LIOpP/z0HDXBvgis90fj8E5C4a
+ mKo04fF6xe5Kfd7gqhDDo/Ltpr6NVq86cDZZflinaEq8T3lDMs7VaQyEvc+UdG7DdZgLDnNTB64qF
+ OzbeX9Jfb1r6PqIxfPAO4MeQrtJ6ObM7nkMmX4RV7s5Sodywr272B2RBteD0PacNJBgYNiVqurMZU
+ psJmvT3z99KULg2rvesB8JAhCoLgJTSa8xGEpp+LMV2A9xYxYM/4lyJ4VFLC5IQuiFyLccQ6eu+MS
+ oTzVGMoZDIhsp629Bhp3yThgyrqDwXxfqCe0wNzbqthfraFbl+zYMWSNZ1TW7fLBiWf4YGDBWFkRl
+ EkrFh6Mw==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red
- Hat Linux)) id 1sWzdC-00000001Iql-2cGb;
- Thu, 25 Jul 2024 14:39:46 +0000
-Date: Thu, 25 Jul 2024 07:39:46 -0700
+ Hat Linux)) id 1sX0Tj-00000001QbE-0QCv;
+ Thu, 25 Jul 2024 15:34:03 +0000
+Date: Thu, 25 Jul 2024 08:34:03 -0700
 From: Christoph Hellwig <hch@infradead.org>
-To: Youling Tang <youling.tang@linux.dev>
-Message-ID: <ZqJjsg3s7H5cTWlT@infradead.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Message-ID: <ZqJwa2-SsIf0aA_l@infradead.org>
 References: <20240723083239.41533-1-youling.tang@linux.dev>
  <20240723083239.41533-2-youling.tang@linux.dev>
  <Zp-_RDk5n5431yyh@infradead.org>
  <0a63dfd1-ead3-4db3-a38c-2bc1db65f354@linux.dev>
  <ZqEhMCjdFwC3wF4u@infradead.org>
  <895360e3-97bb-4188-a91d-eaca3302bd43@linux.dev>
+ <ZqJjsg3s7H5cTWlT@infradead.org>
+ <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <895360e3-97bb-4188-a91d-eaca3302bd43@linux.dev>
+In-Reply-To: <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1sWzdR-0005iB-GW
+X-Headers-End: 1sX0Ts-0001WG-0h
 Subject: Re: [f2fs-dev] [PATCH 1/4] module: Add module_subinit{_noexit} and
  module_subeixt helper macros
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -83,65 +85,47 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-arch@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>,
- linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu,
- Arnd Bergmann <arnd@arndb.de>, Josef Bacik <josef@toxicpanda.com>,
+Cc: Linux-Arch <linux-arch@vger.kernel.org>,
+ Youling Tang <tangyouling@kylinos.cn>, linux-f2fs-devel@lists.sourceforge.net,
+ Theodore Ts'o <tytso@mit.edu>, Josef Bacik <josef@toxicpanda.com>,
  linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
  Chris Mason <clm@fb.com>, Luis Chamberlain <mcgrof@kernel.org>,
  Andreas Dilger <adilger.kernel@dilger.ca>, linux-btrfs@vger.kernel.org,
- David Sterba <dsterba@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-ext4@vger.kernel.org, linux-modules@vger.kernel.org
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+ Youling Tang <youling.tang@linux.dev>, David Sterba <dsterba@suse.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
+ linux-modules@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jul 25, 2024 at 11:01:33AM +0800, Youling Tang wrote:
-> - It doesn't feel good to have only one subinit/exit in a file.
-> =A0 Assuming that there is only one file in each file, how do we
-> =A0 ensure that the files are linked in order?(Is it sorted by *.o
-> =A0 in the Makefile?)
+On Thu, Jul 25, 2024 at 05:30:58PM +0200, Arnd Bergmann wrote:
+> Now I think we could just make the module_init() macro
+> do the same thing as a built-in initcall() and put
+> an entry in a special section, to let you have multiple
+> entry points in a loadable module.
+> 
+> There are still at least two problems though:
+> 
+> - while link order is defined between files in a module,
+>   I don't think there is any guarantee for the order between
+>   two initcalls of the same level within a single file.
 
-Yes, link order already matterns for initialization order for built-in
-code, so this is a well known concept.
+I think the sanest answer is to only allow one per file.  If you
+are in the same file anyway calling one function from the other
+is not a big burden.  It really is when they are spread over files
+when it is annoying, and the three examples show that pretty
+clearly.
 
-> - Even if the order of each init is linked correctly, then the
-> =A0 runtime will be iterated through the .subinitcall.init section,
-> =A0 which executes each initfn in sequence (similar to do_initcalls),
-> =A0 which means that no other code can be inserted between each subinit.
+> - For built-in code we don't have to worry about matching
+>   the order of the exit calls since they don't exist there.
+>   As I understand, the interesting part of this patch
+>   series is about making sure the order matches between
+>   init and exit, so there still needs to be a way to
+>   express a pair of such calls.
 
-I don't understand this comment.  What do you mean with no other
-code could be inserted?
-
-> If module_subinit is called in module_init, other code can be inserted
-> between subinit, similar to the following:
-> =
-
-> ```
-> static int __init init_example(void)
-> {
-> =A0=A0 =A0module_subinit(inita, exita);
-> =
-
-> =A0=A0 =A0otherthing...
-> =
-
-> =A0=A0 =A0module_subinit(initb, exitb);
-> =
-
-> =A0=A0 =A0return 0;
-> }
-
-Yikes.  That's really not the point of having init calls, but just
-really, really convoluted control flow.
-
-> module_init(init_example);
-> ```
-> =
-
-> IMHO, module_subinit() might be better called in module_init().
-
-I strongly disagree.
-
+That's why you want a single macro to define the init and exit
+callbacks, so that the order can be matched up and so that
+error unwinding can use the relative position easily.
 
 
 _______________________________________________
