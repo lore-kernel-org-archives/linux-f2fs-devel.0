@@ -4,127 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DB78FC3DA49
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Jul 2024 22:46:11 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 85E9AC3DA4A
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 27 Jul 2024 00:14:43 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sXThR-0000UF-Lx;
-	Fri, 26 Jul 2024 22:46:09 +0000
+	id 1sXV56-0002fq-Jw;
+	Sat, 27 Jul 2024 00:14:41 +0000
 Received: from [172.30.29.67] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <dsterba@suse.cz>) id 1sXThP-0000U7-Je
- for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 26 Jul 2024 22:46:07 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <3KySkZgMKEEAreeiqqing.eqonkpwz-h4hu-fgxgnnkuvu.uqwteghqtig.pgv@flex--pcc.bounces.google.com>)
+ id 1sXV54-0002fg-Vd for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 27 Jul 2024 00:14:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Mime-Version:
+ Message-Id:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wEH8Vk8Kw3nyR7i95KJItR4+alXownkC8UVtnwJo0OM=; b=RmhUBrNdrxKQCfjAFHwN+PhkbC
- O6aFAB996aiMj4LYJx14W39X7J5Er+1bCToiRfjOfrog0q4TN9el+LpxUPMkm3LKNebtznWZI8DLj
- JXqL60sevfO3vVTzuqaaO2QCphokLGcN0Dkg3+TaQpgHnTn3XeSSAPrJ+4a9BGW1wMk0=;
+ bh=UxEbXk8sjYfJnszBYV/U6tD0PeIchNjCPKOCbBglaT4=; b=lBZ+2+5GGGQMTJmH++Oy9xOA8C
+ QTDPCe1qcFYwRCxLwygaa1ez8cwl3uAsyRN/fo1jGFKTgPDu7Lvz94+n0rszKzIIICE/qlccI9TzZ
+ +iX8ceHaEKBuf7RG5u07hrcYK+7WLsKbZIxMigoNAsMJClrC1bvA0IsSvADc2pUnQUdw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Reply-To:Message-ID:
- Subject:Cc:To:From:Date:Sender:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=wEH8Vk8Kw3nyR7i95KJItR4+alXownkC8UVtnwJo0OM=; b=UrwOAVt7uriYCeqK0lEyqnr58m
- UyW+eWrEaxQM99wfEZLIcGSjBzjOYMSsSNj5Mmr7n/lwC9R+2t6xEWkykJh5MNUF1mBmu8Gch40co
- V3jbu57R02hm223Nz/E5cgSLtjuvwGuqK/EZzdsVqPymACF0UnNc+4OQTDx0djhrTGM0=;
-Received: from smtp-out1.suse.de ([195.135.223.130])
+ h=Content-Type:Cc:To:From:Subject:Mime-Version:Message-Id:Date:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=UxEbXk8sjYfJnszBYV/U6tD0PeIchNjCPKOCbBglaT4=; b=H
+ FIUJsbW+A6a9ufoScuvN7/8O9lj8BNNijdIohKAdpSkaJ3kchpe/kXs+ir/Dt54K+x1pG5MEWl+13
+ yrco0Ly2ZQFFXMyh+NfImWZ4e4KItHEKDx9JGqUAsfYjuyHJFclKCIt++oxO97WiAI4aQrLna54hq
+ 5axUMM+oYhbguAiw=;
+Received: from mail-pl1-f202.google.com ([209.85.214.202])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1sXThL-0004y3-Hn for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 26 Jul 2024 22:46:07 +0000
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id 25F8221B17;
- Fri, 26 Jul 2024 22:45:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1722033952;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=wEH8Vk8Kw3nyR7i95KJItR4+alXownkC8UVtnwJo0OM=;
- b=A1eLqX/o3M7AFIEpMfRvh9UI16KN1MarYEfSLxUe0RcDFUcJJTMzohG8/Enihr7MMxtUYm
- fHpQKSb1thuoBT46Frp0arz9Rhw/cNoJsgJ7SfaIpM4cKz59OTUHO71Eoq5vg/ZKF2awYF
- uqTQchb3NbuddeY6BjyQxGCicc6THvI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1722033952;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=wEH8Vk8Kw3nyR7i95KJItR4+alXownkC8UVtnwJo0OM=;
- b=LYynmnwNijUa7IM9Aurpnga1UXlEZyj3zZYcbrjnAkj4RhzIKCV8IErRexqSNbnRzeKkac
- HzPg1zOUZPJ/i+Cg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1722033952;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=wEH8Vk8Kw3nyR7i95KJItR4+alXownkC8UVtnwJo0OM=;
- b=A1eLqX/o3M7AFIEpMfRvh9UI16KN1MarYEfSLxUe0RcDFUcJJTMzohG8/Enihr7MMxtUYm
- fHpQKSb1thuoBT46Frp0arz9Rhw/cNoJsgJ7SfaIpM4cKz59OTUHO71Eoq5vg/ZKF2awYF
- uqTQchb3NbuddeY6BjyQxGCicc6THvI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1722033952;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=wEH8Vk8Kw3nyR7i95KJItR4+alXownkC8UVtnwJo0OM=;
- b=LYynmnwNijUa7IM9Aurpnga1UXlEZyj3zZYcbrjnAkj4RhzIKCV8IErRexqSNbnRzeKkac
- HzPg1zOUZPJ/i+Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E52A4138A7;
- Fri, 26 Jul 2024 22:45:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id k1NYNx8npGacGAAAD6G6ig
- (envelope-from <dsterba@suse.cz>); Fri, 26 Jul 2024 22:45:51 +0000
-Date: Sat, 27 Jul 2024 00:45:42 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Christoph Hellwig <hch@infradead.org>
-Message-ID: <20240726224542.GP17473@twin.jikos.cz>
-References: <ZqJjsg3s7H5cTWlT@infradead.org>
- <61beb54b-399b-442d-bfdb-bad23cefa586@app.fastmail.com>
- <ZqJwa2-SsIf0aA_l@infradead.org>
- <68584887-3dec-4ce5-8892-86af50651c41@libero.it>
- <ZqKreStOD-eRkKZU@infradead.org>
- <91bfea9b-ad7e-4f35-a2c1-8cd41499b0c0@linux.dev>
- <ZqOs84hdYkSV_YWd@infradead.org>
- <20240726152237.GH17473@twin.jikos.cz>
- <20240726175800.GC131596@mit.edu> <ZqPmPufwqbGOTyGI@infradead.org>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <ZqPmPufwqbGOTyGI@infradead.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-3.80 / 50.00]; BAYES_HAM(-3.00)[100.00%];
- NEURAL_HAM_LONG(-1.00)[-1.000];
- HAS_REPLYTO(0.30)[dsterba@suse.cz];
- MIME_GOOD(-0.10)[text/plain]; RCVD_TLS_ALL(0.00)[];
- RCVD_VIA_SMTP_AUTH(0.00)[]; MIME_TRACE(0.00)[0:+];
- ARC_NA(0.00)[]; RCPT_COUNT_TWELVE(0.00)[20];
- TO_DN_SOME(0.00)[];
- DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
- RCVD_COUNT_TWO(0.00)[2]; FROM_HAS_DN(0.00)[];
- FREEMAIL_CC(0.00)[mit.edu,suse.cz,linux.dev,inwind.it,arndb.de,kernel.org,fb.com,toxicpanda.com,suse.com,dilger.ca,vger.kernel.org,lists.sourceforge.net,kylinos.cn];
- FUZZY_BLOCKED(0.00)[rspamd.com]; FROM_EQ_ENVFROM(0.00)[];
- TO_MATCH_ENVRCPT_ALL(0.00)[]; REPLYTO_ADDR_EQ_FROM(0.00)[];
- FREEMAIL_ENVRCPT(0.00)[inwind.it]
-X-Headers-End: 1sXThL-0004y3-Hn
-Subject: Re: [f2fs-dev] [PATCH 1/4] module: Add module_subinit{_noexit} and
- module_subeixt helper macros
+ id 1sXV55-0000Qt-2D for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 27 Jul 2024 00:14:39 +0000
+Received: by mail-pl1-f202.google.com with SMTP id
+ d9443c01a7336-1fd8677380dso10238595ad.2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 26 Jul 2024 17:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=google.com; s=20230601; t=1722039268; x=1722644068;
+ darn=lists.sourceforge.net; 
+ h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=UxEbXk8sjYfJnszBYV/U6tD0PeIchNjCPKOCbBglaT4=;
+ b=YpASitkmQSW84wYkgZgYEE34mRzfihZ1yAKx6hSacl0l7QiFspm9H9yEPGHIXMWadW
+ +VsrmIQsV7mtywxFkKvCGm/t20qmtDU3BdwTk4ANDPqhYfdBp5TxEwhR+6hMvJnVGIEo
+ GJJgzq2mXy8zYPXt1rBZYj1niz9/qvRHDCjiMVgEiOaMqg8dJlnFbL9zhFsgOqE7cTRw
+ xwyXiJ1UtcO7sdFjUgnv+ZcA5xou/P3ijH6+qoOIRqHuUt0wORr94432z0D5yy75HHvQ
+ cvpWYqjoXekkAfOlpiGs6FKwjRb3g+H9qg6lkuSr1UciJi4mG6QFjQBqkYplpAs0+GNl
+ Yszg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1722039268; x=1722644068;
+ h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=UxEbXk8sjYfJnszBYV/U6tD0PeIchNjCPKOCbBglaT4=;
+ b=XL6tAu46gWxy+pDT7kNu2A3WO7w755qWaxejWPA3X1pcY5DPf5KkQxeh+Nf/Z5XEzV
+ ZsneJVzvAcHYjCzgCHElnQSE1Qa6sI2tixWSxyNKMbJMEPnR+JrB5vE5J/PbnMAqtRAr
+ O0mD0eYKD4Nm3ar0pT4jCm0JZp3EX3wBxeQ6IRrK9Eyis3SizfOKBb20+Quc9ijiUjYL
+ LzTksHN5zAD+msZ4ZKAiCpRyucEe9wq3+x52wvRUGEijsqzm+mJhT3i8FbMBUjqNqjM0
+ FxFyC6ODWNU1B4YzVdvz3HhXPAlkvHUpJakUUNkCcfS381tZK0NHPxek25UhAHKUnq3z
+ DCmQ==
+X-Gm-Message-State: AOJu0Yyv7o77P5kg6wK2ORHPsjsGNoYnzts7GooSq2buoHZ4xjoaNer4
+ On3IkBa5yb+PdsAbNGAm2WN9T3RKB4uQR6I49iDtsR0PRYET5o5FVj2il10GGrE/qw==
+X-Google-Smtp-Source: AGHT+IGDTpp651+Ae+mAPWXKUcL4AvGkhvxlzhCl/W+3VowgNjRkKPd5HaIzcMKI6Cno4jqokg1nve4=
+X-Received: from pcc-desktop.svl.corp.google.com
+ ([2620:15c:2d3:205:4799:26a1:4da2:c60f])
+ (user=pcc job=sendgmr) by 2002:a81:ff12:0:b0:66b:fb2f:1c2 with SMTP id
+ 00721157ae682-67a09b6f148mr354947b3.7.1722033195698; Fri, 26 Jul 2024
+ 15:33:15 -0700 (PDT)
+Date: Fri, 26 Jul 2024 15:33:09 -0700
+Message-Id: <20240726223309.2102788-1-pcc@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+X-Headers-End: 1sXV55-0000Qt-2D
+Subject: [f2fs-dev] [PATCH] mkfs.f2fs: Fix out-of-bounds read in
+ f2fs_prepare_super_block
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -136,41 +95,41 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: dsterba@suse.cz
-Cc: Linux-Arch <linux-arch@vger.kernel.org>,
- Youling Tang <tangyouling@kylinos.cn>, linux-f2fs-devel@lists.sourceforge.net,
- Theodore Ts'o <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
- linux-kernel@vger.kernel.org, kreijack@inwind.it,
- David Sterba <dsterba@suse.cz>, Josef Bacik <josef@toxicpanda.com>,
- Chris Mason <clm@fb.com>, Luis Chamberlain <mcgrof@kernel.org>,
- Andreas Dilger <adilger.kernel@dilger.ca>, linux-btrfs@vger.kernel.org,
- Youling Tang <youling.tang@linux.dev>, David Sterba <dsterba@suse.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
- linux-modules@vger.kernel.org
+From: Peter Collingbourne via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Peter Collingbourne <pcc@google.com>
+Cc: Peter Collingbourne <pcc@google.com>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jul 26, 2024 at 11:09:02AM -0700, Christoph Hellwig wrote:
-> On Fri, Jul 26, 2024 at 01:58:00PM -0400, Theodore Ts'o wrote:
-> > Yeah, that's my reaction as well.  This only saves 50 lines of code in
-> > ext4, and that includes unrelated changes such as getting rid of "int
-> > i" and putting the declaration into the for loop --- "for (int i =
-> > ...").  Sure, that saves two lines of code, but yay?
-> > 
-> > If the ordering how the functions gets called is based on the magic
-> > ordering in the Makefile, I'm not sure this actually makes the code
-> > clearer, more robust, and easier to maintain for the long term.
-> 
-> So you two object to kernel initcalls for the same reason and would
-> rather go back to calling everything explicitly?
+The path field in c.devices[i] is a pointer and is normally filled
+in using strdup. This makes it invalid to copy MAX_PATH_LEN bytes
+from it because the string may be shorter than that. Therefore,
+fix the code to use strncpy to copy the string instead.
 
-No and not my call to do it for the kernel. Somebody probably had a
-reason use the initcalls, there are probably practical reasons for that.
-Quick grep shows there are thousands of initcalls scattered over the
-whole code base, that does ask for some tricks because updating a single
-file with explicit calls would be a nightmare. Unlike for a subsystem
-inside one directory, like a filesystem.
+Signed-off-by: Peter Collingbourne <pcc@google.com>
+---
+ mkfs/f2fs_format.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index c9d335a..b053685 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -316,7 +316,7 @@ static int f2fs_prepare_super_block(void)
+ 					c.blks_per_seg - 1;
+ 		}
+ 		if (c.ndevs > 1) {
+-			memcpy(sb->devs[i].path, c.devices[i].path, MAX_PATH_LEN);
++			strncpy((char *)sb->devs[i].path, c.devices[i].path, MAX_PATH_LEN);
+ 			sb->devs[i].total_segments =
+ 					cpu_to_le32(c.devices[i].total_segments);
+ 		}
+-- 
+2.46.0.rc1.232.g9752f9e123-goog
+
 
 
 _______________________________________________
