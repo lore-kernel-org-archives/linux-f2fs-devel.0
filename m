@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0F9D8C3DA49
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Jul 2024 09:48:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 58DFFC3DA49
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Jul 2024 09:49:31 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sXHYp-0005jN-Dv;
-	Fri, 26 Jul 2024 09:48:26 +0000
+	id 1sXHZr-0006m6-0o;
+	Fri, 26 Jul 2024 09:49:31 +0000
 Received: from [172.30.29.67] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1sXHYm-0005jG-1n
+ (envelope-from <chao@kernel.org>) id 1sXHZp-0006ly-Fr
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 26 Jul 2024 09:48:23 +0000
+ Fri, 26 Jul 2024 09:49:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vidH4iLP1JWHsUEWB4/libtZns1v4/S1G0IlFrO97ZU=; b=I/S6YJqr3yjLQIZgAGQz2juLl/
- ZGMroFnAuu6YcQm49yMwjy0Nfz/nVmRIg5yo5ao2I4lSo/xPDmW+2badqT4ReXTPei4q7HmODAc3T
- RPHBUhb+Rdmq45Uq5xRqSans4fMo6yzQq4qPbkMu/GaHoiWceH4HbbrNvCzfLhN0sFrg=;
+ bh=ixxJF7juTcmO0pBrj3JhM6u7YqVkuD+rGka+gIVkjdQ=; b=J0S/US8vXnrpEhaN5saw9eMWQF
+ J+NMDz7IZYq7K+pozmm/IEvcGC+we7cmBED0UAO/bEV7VeW9Adj38kZh32Ej6pdqDRFJnXHvBF1dO
+ BY/ekM5fDyDVFtloWGn5hD9AI11y5IyVFFUKaeLcBcwBgRm1x56Tbw6Nn85icXtKnRTU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,41 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=vidH4iLP1JWHsUEWB4/libtZns1v4/S1G0IlFrO97ZU=; b=BLua9dyZ5Na8T4mBubkRl/3uXW
- bW3E6izRkVNSTOS+oN/UiYrSduwuBTZ/FYZtaDMoKmUcjmJXNUk7FDKa7xVn5wFpa2X3Y05RARHmB
- 06KjLpBi+4Kls11rCoJuBKtHgj4i3JQs/Sf65moIxgahpymaxEM/DaHdi/4ssnSaPFOs=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=ixxJF7juTcmO0pBrj3JhM6u7YqVkuD+rGka+gIVkjdQ=; b=YlaZAixPsUuKvLmlPUk2NKPSMr
+ tIbk7xyKsjsqLASXnssnIFtOUZZ4cZvUNuAUyCb6rYOgAgPU9V6aBUtqviXOupnBUYa7RfGUZ0N96
+ XiKdEAOnBruMK6BiaOiuzs2D3Oy3RDJPWNjC3P++QxyqeXbfpTZDX0TaQqGNc3/DSloQ=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sXHYk-0008KX-Sq for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 26 Jul 2024 09:48:23 +0000
+ id 1sXHZo-0008Qn-NT for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 26 Jul 2024 09:49:29 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 866426167A;
- Fri, 26 Jul 2024 09:48:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B3AC32782;
- Fri, 26 Jul 2024 09:48:10 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id F19B2CE1751;
+ Fri, 26 Jul 2024 09:49:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1153C4AF07;
+ Fri, 26 Jul 2024 09:49:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1721987292;
- bh=ayFiWm/WuLiRqH9qfUcMqJzUthosUQpNHRXQfqPxzh0=;
+ s=k20201202; t=1721987356;
+ bh=AAUbx8TeBWYEP6Ic4mOlnbercYp2YYgawpoonj8ove4=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=eaPSsyuCMQP86llfgQDA1ySdbYR6aBaLeNkBRtKVR3X6CHh69RkYzp2JzVIlpi01d
- lGHolw4U+Pfyb97x6qOgs6jBS8z70YRixoApdAR6qWPo38re8JBrWCYUTyrNs1sTbC
- 47HYB6nXLVu7T9mzqrsDAjPfAnfl8ujwmGnYF73VeFXSQEOTdrYXZ/FIL8dUrS3iCZ
- pKIdiVpLAOWWp2v41kBMAIl+WAI6EjECKORLUBgZAEhKdJ6iqBKcTtzWYzH0XcM87l
- VmUYTMTFin18+kxe1Vj3Ab2fIDYFKrYkwT6rFN+KudvjlznCIowQPztZfFFdCjdTkY
- XQdAaroVat6gQ==
-Message-ID: <3b871ee3-c246-4eee-8929-d0aab014a41b@kernel.org>
-Date: Fri, 26 Jul 2024 17:48:07 +0800
+ b=kjoHjQIdBTBZEAtG/lyrrvZLqmM5byKGZsbI6Zd7uTRJ0UYwni2GTBI/WxoMCmTcD
+ BtM5ypdXPlednu6G3uBePlKYUBcN7nlkG1AD4xVIRHXPoslwQBUr11Lb7PU2WwI2U5
+ fLB9YWbDuaHgpn3AJkJJZ1qYpXZTeCwGuf8NxfIFBgtUR7A7U1IvIGftfeB5+H9e54
+ 0o3yOKHWXDkxkcZOirZTcRf3B79f9mqT1WZGeL+n9u6U/zArydBfmXnJ/vbwFG2ec5
+ AkrucdiC15BW8HGM9utv57JMo8xuaGzDwdn+RVJmSmgS26Y1DxNeDxRNlbM5NCRBEu
+ 9d3u5nxhJXz5w==
+Message-ID: <a2138acd-9478-4706-85e8-761438382474@kernel.org>
+Date: Fri, 26 Jul 2024 17:49:11 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Wu Bo <bo.wu@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20240726022550.3117469-1-bo.wu@vivo.com>
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
+References: <1721975246-32345-1-git-send-email-zhiguo.niu@unisoc.com>
 Content-Language: en-US
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240726022550.3117469-1-bo.wu@vivo.com>
-X-Headers-End: 1sXHYk-0008KX-Sq
-Subject: Re: [f2fs-dev] [PATCH v2] dump.f2fs: add checkpoint version to
- dump_nat
+In-Reply-To: <1721975246-32345-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Headers-End: 1sXHZo-0008Qn-NT
+Subject: Re: [f2fs-dev] [PATCH V2] f2fs: fix to use per-inode maxbytes and
+ cleanup
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,17 +79,18 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Wu Bo <wubo.oduw@gmail.com>, linux-kernel@vger.kernel.org,
+Cc: Hao_hao.Wang@unisoc.com, ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2024/7/26 10:25, Wu Bo wrote:
-> The cp_ver of node footer is useful when analyzing data corruption
-> issues.
+On 2024/7/26 14:27, Zhiguo Niu wrote:
+> This is a supplement to commit 6d1451bf7f84 ("f2fs: fix to use per-inode maxbytes")
+> for some missed cases, also cleanup redundant code in f2fs_llseek.
 > 
-> Signed-off-by: Wu Bo <bo.wu@vivo.com>
+> Cc: Chengguang Xu <cgxu519@mykernel.net>
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
 
 Reviewed-by: Chao Yu <chao@kernel.org>
 
