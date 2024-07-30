@@ -4,72 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 90560C3DA70
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Jul 2024 16:26:31 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 070C2C3DA70
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Jul 2024 19:37:13 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sYpgD-0001Ck-Aa;
-	Tue, 30 Jul 2024 16:26:30 +0000
+	id 1sYsem-0001V2-05;
+	Tue, 30 Jul 2024 19:37:12 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1sYpgB-0001Ca-LK
+ (envelope-from <jaegeuk@kernel.org>) id 1sYsek-0001Us-SV
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 Jul 2024 16:26:28 +0000
+ Tue, 30 Jul 2024 19:37:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=trucinTH/HQonaIoqAbCh+X2ScT1bvpR+R1y/CxbOMk=; b=B8TrKdwX/S551m04V4r+BdNh+z
- j0VnyTh4Ngd4jgxwthy+2QYaZ9cN/Xq8GmTSUxOgmxZDBzsS6gTTljtUvATemBAfAcihyFPuCDJFS
- /rJRIdFauhcVrlxbDbyeoqQS8h/GNVy36Vf2aYLzTENnvuU5OLHJ/ESHWlwhjjAVD5Po=;
+ bh=DxO1MgCDTNeAzbTx/ffGcdbjlU/2bBg0HyipjQgo7Eg=; b=LoKUqhEuQfcomM0Y7WmKvrcLYY
+ hNg4mH52Rg8zjhpXgaO6Mve2Y23kHDZ7gZVw0Efhy6brYOsEkQuhLbt8ZN+eyjMaw3u9qRT5RnlYm
+ +5P07ZuycTkZSXQtnSj4BUihIKjLQLwyZ6U4UdRcirl6Dsi69sf8mpt121KMN+COJdlc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:To:
+ From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=trucinTH/HQonaIoqAbCh+X2ScT1bvpR+R1y/CxbOMk=; b=Rr3U8qUXlj3hwbNs+NMRxEBe5L
- RQ4JG8YWSoKEaHSe9dSOAb/u5YatHDdt86NSygVm7tleWP2XBhIEt3m9f8YqhA+XEpCUvV67iFF/g
- aQNtZXapCKf/voKgBwWHgcLOol2vMflMY+az6fC9j2ennIn3WTQXYGqhl8i09Xyred8o=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=DxO1MgCDTNeAzbTx/ffGcdbjlU/2bBg0HyipjQgo7Eg=; b=H5whm2E9+fXXneM0FJr228FZbe
+ 8cQW3PmsW7rFkYlsE30V54mvk1u0WhDkpZqzhVPgWk7K/Vf5dIz+1Xl2chKon3RXZXQWIeQ6EAAuU
+ +yMi2lwWwz904jLWAwYrHqdeWrKQ3N8RqhPK/NyEJllgAwPzqAwj9HrPhiwCObzaJp5s=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sYpgB-0006kU-IJ for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 Jul 2024 16:26:28 +0000
+ id 1sYsek-0004tP-1b for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 30 Jul 2024 19:37:10 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 7714DCE1133
+ by dfw.source.kernel.org (Postfix) with ESMTP id AA6BA62054
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 30 Jul 2024 16:26:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97A35C4AF0E;
- Tue, 30 Jul 2024 16:26:14 +0000 (UTC)
+ Tue, 30 Jul 2024 19:36:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 442A6C32782
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 30 Jul 2024 19:36:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1722356774;
- bh=dVkDjxt+MI5jEKXFqONpZnrpH8uhWQCwH8FHk5L7onM=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=d3u52ZS9c4CL0IWkn7vhhTuSz7XyDFgkSuKPlGIFPE/gD6RSQZnWXREhxRVv/QOCj
- MNlYP2p1ZGfULYyLtAfd0m4VxV1WDZaOKkCBt8iwz5a9v5LS/PaIjHpdR5SVncjObM
- zfHw6cQVdGEYbNNsYlIGgNQOc2oe/oPSzJjTy04ullD/sfr/6Sa315KoJlKVJRdwB2
- s1Vu+IMdkN363Kw01f25oTbf/SPDmbQMCJbQYfS6xhm5PQA6Acp66FMx1DMCoAKnbq
- GXRnb1Q9SN0/hfUT18wuTGJZn274tUSDtH/xQ5WzdKGU1pzC+hFiDZbrFvju67B7Yg
- OrW0hM1+CFCCg==
-Date: Tue, 30 Jul 2024 16:26:12 +0000
+ s=k20201202; t=1722368219;
+ bh=MOuYRWteVPOrXl6B2cEJh/RFmr3EWitNn9XKBJ3M24w=;
+ h=Date:From:To:Subject:References:In-Reply-To:From;
+ b=Q1s9ZU+R/YcbcWy+3dBynqgWfi0pfxlsbWKo8yq01FHyfjLs3o0EJVxfNnNgPrBby
+ qTtuoQtmDc5X4Q+qe1ymdnONmE55+fZy7bXXC03TuUwe7YWxDUiqijEoeng40rSYm4
+ hUjoHZNsMJy6q6IrOLeSAipUWl/Gh1tI8D1bvsLKblmjqmuCycvIKjaxJRNcHgxAWY
+ EVcTteKkvQg39Z/MNIKJQ2nKVU/SNfviiPlpSsYLpCu+jcj4A0qaxzjtAa1I6NXPsc
+ kQUE+VQlP+LyNVUu0J1BStnTNktWvfXvMPrYr7utQ3WycyudbbUeDfTJyehqLMxBJE
+ deZgAPPQg56bw==
+Date: Tue, 30 Jul 2024 19:36:57 +0000
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Message-ID: <ZqkUJAMJzW_4ANhY@google.com>
-References: <20240726012204.1306174-1-chao@kernel.org>
- <ZqfCwDcg7nvJPenf@google.com>
- <9e6c0e72-a175-4432-bada-564464698c3f@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
+Message-ID: <ZqlA2aMjz5x4GpJP@google.com>
+References: <20240725183941.655356-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <9e6c0e72-a175-4432-bada-564464698c3f@kernel.org>
-X-Headers-End: 1sYpgB-0006kU-IJ
-Subject: Re: [f2fs-dev] [PATCH v2 3/4] f2fs: atomic: fix to truncate
- pagecache before on-disk metadata truncation
+In-Reply-To: <20240725183941.655356-1-jaegeuk@kernel.org>
+X-Headers-End: 1sYsek-0004tP-1b
+Subject: Re: [f2fs-dev] [PATCH v2] inject.f2fs: fix some build errors
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,49 +79,122 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 07/30, Chao Yu wrote:
-> On 2024/7/30 0:26, Jaegeuk Kim wrote:
-> > On 07/26, Chao Yu wrote:
-> > > We should always truncate pagecache while truncating on-disk data.
-> > > 
-> > > Fixes: a46bebd502fe ("f2fs: synchronize atomic write aborts")
-> > > Signed-off-by: Chao Yu <chao@kernel.org>
-> > > ---
-> > > v2:
-> > > - fix to use cow_inode instead of inode
-> > >   fs/f2fs/file.c | 1 +
-> > >   1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > > index 6c62f76474d1..54886ddcb8ab 100644
-> > > --- a/fs/f2fs/file.c
-> > > +++ b/fs/f2fs/file.c
-> > > @@ -2202,6 +2202,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
-> > >   		F2FS_I(fi->cow_inode)->atomic_inode = inode;
-> > >   	} else {
-> > >   		/* Reuse the already created COW inode */
-> > > +		truncate_setsize(fi->cow_inode, 0);
-> > 
-> > What if the below truncation failed?
-> 
-> What about just dropping page cache and do not set isize to 0?
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
 
-Can we also check if there's any dirty page before truncating it?
+ Change log from v1:
+  - check the negative values
 
-> 
-> Thanks,
-> 
-> > 
-> > >   		ret = f2fs_do_truncate_blocks(fi->cow_inode, 0, true);
-> > >   		if (ret) {
-> > >   			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
-> > > -- 
-> > > 2.40.1
+ fsck/inject.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
+
+diff --git a/fsck/inject.c b/fsck/inject.c
+index 2a21dae293f6..9dc085f389be 100644
+--- a/fsck/inject.c
++++ b/fsck/inject.c
+@@ -211,6 +211,8 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+ 
+ 	while ((o = getopt_long(argc, argv, option_string,
+ 				long_opt, NULL)) != EOF) {
++		long nid, blk;
++
+ 		switch (o) {
+ 		case 1:
+ 			c.dry_run = 1;
+@@ -265,10 +267,11 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+ 			MSG(0, "Info: inject nat pack %s\n", pack[opt->nat]);
+ 			break;
+ 		case 9:
+-			opt->nid = strtol(optarg, &endptr, 0);
+-			if (opt->nid == LONG_MAX || opt->nid == LONG_MIN ||
++			nid = strtol(optarg, &endptr, 0);
++			if (nid >= UINT_MAX || nid < 0 ||
+ 			    *endptr != '\0')
+ 				return -ERANGE;
++			opt->nid = nid;
+ 			MSG(0, "Info: inject nid %u : 0x%x\n", opt->nid, opt->nid);
+ 			break;
+ 		case 10:
+@@ -280,10 +283,11 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+ 			MSG(0, "Info: inject sit pack %s\n", pack[opt->sit]);
+ 			break;
+ 		case 11:
+-			opt->blk = strtol(optarg, &endptr, 0);
+-			if (opt->blk == LONG_MAX || opt->blk == LONG_MIN ||
++			blk = strtol(optarg, &endptr, 0);
++			if (blk >= UINT_MAX || blk < 0 ||
+ 			    *endptr != '\0')
+ 				return -ERANGE;
++			opt->blk = blk;
+ 			MSG(0, "Info: inject blkaddr %u : 0x%x\n", opt->blk, opt->blk);
+ 			break;
+ 		case 12:
+@@ -432,7 +436,7 @@ static int inject_cp(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 	}
+ 
+ 	if (!strcmp(opt->mb, "checkpoint_ver")) {
+-		MSG(0, "Info: inject checkpoint_ver of cp %d: 0x%llx -> 0x%lx\n",
++		MSG(0, "Info: inject checkpoint_ver of cp %d: 0x%llx -> 0x%"PRIx64"\n",
+ 		    opt->cp, get_cp(checkpoint_ver), (u64)opt->val);
+ 		set_cp(checkpoint_ver, (u64)opt->val);
+ 	} else if (!strcmp(opt->mb, "ckpt_flags")) {
+@@ -510,7 +514,7 @@ static int inject_nat(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 	int ret;
+ 
+ 	if (!IS_VALID_NID(sbi, opt->nid)) {
+-		ERR_MSG("Invalid nid %u range [%u:%lu]\n", opt->nid, 0,
++		ERR_MSG("Invalid nid %u range [%u:%"PRIu64"]\n", opt->nid, 0,
+ 			NAT_ENTRY_PER_BLOCK *
+ 			((get_sb(segment_count_nat) << 1) <<
+ 			 sbi->log_blocks_per_seg));
+@@ -627,7 +631,7 @@ static int inject_sit(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 		sit->valid_map[opt->idx] = (u8)opt->val;
+ 	} else if (!strcmp(opt->mb, "mtime")) {
+ 		MSG(0, "Info: inject sit entry mtime of block 0x%x "
+-		    "in pack %d: %lu -> %lu\n", opt->blk, opt->sit,
++		    "in pack %d: %"PRIu64" -> %"PRIu64"\n", opt->blk, opt->sit,
+ 		    le64_to_cpu(sit->mtime), (u64)opt->val);
+ 		sit->mtime = cpu_to_le64((u64)opt->val);
+ 	} else {
+@@ -752,11 +756,11 @@ static int inject_inode(struct f2fs_sb_info *sbi, struct f2fs_node *node,
+ 		    opt->nid, le32_to_cpu(inode->i_links), (u32)opt->val);
+ 		inode->i_links = cpu_to_le32((u32)opt->val);
+ 	} else if (!strcmp(opt->mb, "i_size")) {
+-		MSG(0, "Info: inject inode i_size of nid %u: %lu -> %lu\n",
++		MSG(0, "Info: inject inode i_size of nid %u: %"PRIu64" -> %"PRIu64"\n",
+ 		    opt->nid, le64_to_cpu(inode->i_size), (u64)opt->val);
+ 		inode->i_size = cpu_to_le64((u64)opt->val);
+ 	} else if (!strcmp(opt->mb, "i_blocks")) {
+-		MSG(0, "Info: inject inode i_blocks of nid %u: %lu -> %lu\n",
++		MSG(0, "Info: inject inode i_blocks of nid %u: %"PRIu64" -> %"PRIu64"\n",
+ 		    opt->nid, le64_to_cpu(inode->i_blocks), (u64)opt->val);
+ 		inode->i_blocks = cpu_to_le64((u64)opt->val);
+ 	} else if (!strcmp(opt->mb, "i_extra_isize")) {
+@@ -835,7 +839,7 @@ static int inject_node(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 	int ret;
+ 
+ 	if (!IS_VALID_NID(sbi, opt->nid)) {
+-		ERR_MSG("Invalid nid %u range [%u:%lu]\n", opt->nid, 0,
++		ERR_MSG("Invalid nid %u range [%u:%"PRIu64"]\n", opt->nid, 0,
+ 			NAT_ENTRY_PER_BLOCK *
+ 			((get_sb(segment_count_nat) << 1) <<
+ 			 sbi->log_blocks_per_seg));
+@@ -865,7 +869,7 @@ static int inject_node(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 		footer->flag = cpu_to_le32((u32)opt->val);
+ 	} else if (!strcmp(opt->mb, "cp_ver")) {
+ 		MSG(0, "Info: inject node footer cp_ver of nid %u: "
+-		    "0x%lx -> 0x%lx\n", opt->nid, le64_to_cpu(footer->cp_ver),
++		    "0x%"PRIx64" -> 0x%"PRIx64"\n", opt->nid, le64_to_cpu(footer->cp_ver),
+ 		    (u64)opt->val);
+ 		footer->cp_ver = cpu_to_le64((u64)opt->val);
+ 	} else if (!strcmp(opt->mb, "next_blkaddr")) {
+-- 
+2.46.0.rc1.232.g9752f9e123-goog
+
 
 
 _______________________________________________
