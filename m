@@ -4,122 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6A5F8C3DA49
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Jul 2024 12:38:15 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0669BC3DA49
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Jul 2024 12:45:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sYm7I-0003zn-V0;
-	Tue, 30 Jul 2024 12:38:13 +0000
+	id 1sYmEM-0002bp-WA;
+	Tue, 30 Jul 2024 12:45:31 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jack@suse.cz>) id 1sYm7H-0003zg-Ew
+ (envelope-from <sashal@kernel.org>) id 1sYmEM-0002bg-5d
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 Jul 2024 12:38:12 +0000
+ Tue, 30 Jul 2024 12:45:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mJbwupOCQw82vkSxHqrB0yPLKfq0DkbrhS/e5z9cxHo=; b=NdOlqyraDv8ZrVcjFnHiaP0Si3
- aCNCLjEqa5cPyTewwrcdmVBqIZPhvzP0yyKElEzkxmdWKIk+BpZLBXPON+c/AzwTtNQ6eJFvs7WXy
- eYrS1evob1GkS9Hh2UXNieMUCKo55Jp+gdmwxdSKNcFnICLX3z7weeOtHZL3jwD30Uns=;
+ bh=jqgHWGCwFOLNv0woodpQknZyOaH57U8mvPv+I6AocrE=; b=GdFgsiLmEdy9gdyUmKvYllgN8H
+ HU9HA3IsFbOrwDU2Gr/qFUiqesX5F6aB6olqvipR+CK55mBdrtEneDY+G/euXwod/5E1FFwgADPyu
+ cPeSSgxvucu+5IhOZW6Lk/487b3rZAfYkK4mduZSpGZ878MVSMM8MAdzQ5YSY4NdZGU4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=mJbwupOCQw82vkSxHqrB0yPLKfq0DkbrhS/e5z9cxHo=; b=Yb1GpmOCc5fWXvWI9d+dJyrhrF
- vtreXXN3QvKYHZvEyfo+7635J5oONu5C+L/veNnXlD96/cmvBMUCEIVDz5h/3Z32KraH5TzqXsWLd
- hKtDZ0XLGyi0s0TFR3SV9lkPkJ8VWcXmS2ASIxQaTHDRmzcyZ8CzRYsvFlYx1ClI71KA=;
-Received: from smtp-out2.suse.de ([195.135.223.131])
+ bh=jqgHWGCwFOLNv0woodpQknZyOaH57U8mvPv+I6AocrE=; b=RUfuk/M6F766Z5nuFpmMbBxySQ
+ oD8/hiVCU2kh3KtXBsPfwpcQGSIQlpFPhr0rRtoPUDjCQMc0wLsvt3e0X8kdN/Er5DrFPo/6+erdf
+ 3Cv8qSYeB4Mg8AApojQrzIFgXnwKgp53tH3KFJJ1oH1hKGEWkyDo2xXzGgN+Zs4Ks2gY=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1sYm7H-0006dM-4b for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 Jul 2024 12:38:12 +0000
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id B3FB41F7F6;
- Tue, 30 Jul 2024 12:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1722343084; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=mJbwupOCQw82vkSxHqrB0yPLKfq0DkbrhS/e5z9cxHo=;
- b=KMakEjIHSWBwf/G/jkXHX9EFt2J1JL3nFyQqppFfVEK/TXXSxKKjuNW6P+HmZeGRYGR4Gx
- FDeh9ldJ2UyGlZSmS+SVVAf8m+b2RookDGKGC9/YNO3CSz5nyRVa5h6/JKucVz1O9Ygr7g
- jQCPwVmnV8mzftb3Hl9FJsirl7D05Ug=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1722343084;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=mJbwupOCQw82vkSxHqrB0yPLKfq0DkbrhS/e5z9cxHo=;
- b=2rwhffjd6fhdyhz3LwkrJDDxYoquTfDC8RHEVf/bkiexPpnDsjlYYo9v3yvJjvs1efr2Na
- CoZrGwC5bkff6pDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1722343084; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=mJbwupOCQw82vkSxHqrB0yPLKfq0DkbrhS/e5z9cxHo=;
- b=KMakEjIHSWBwf/G/jkXHX9EFt2J1JL3nFyQqppFfVEK/TXXSxKKjuNW6P+HmZeGRYGR4Gx
- FDeh9ldJ2UyGlZSmS+SVVAf8m+b2RookDGKGC9/YNO3CSz5nyRVa5h6/JKucVz1O9Ygr7g
- jQCPwVmnV8mzftb3Hl9FJsirl7D05Ug=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1722343084;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=mJbwupOCQw82vkSxHqrB0yPLKfq0DkbrhS/e5z9cxHo=;
- b=2rwhffjd6fhdyhz3LwkrJDDxYoquTfDC8RHEVf/bkiexPpnDsjlYYo9v3yvJjvs1efr2Na
- CoZrGwC5bkff6pDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7E04D13297;
- Tue, 30 Jul 2024 12:38:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id cm6/HqzeqGZvSwAAD6G6ig
- (envelope-from <jack@suse.cz>); Tue, 30 Jul 2024 12:38:04 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
- id 17E1CA099C; Tue, 30 Jul 2024 14:38:00 +0200 (CEST)
-Date: Tue, 30 Jul 2024 14:38:00 +0200
-From: Jan Kara <jack@suse.cz>
-To: Theodore Ts'o <tytso@mit.edu>
-Message-ID: <20240730123800.sgtlpu3l2p7fif3f@quack3>
-References: <0000000000004ff2dc061e281637@google.com>
- <20240729-himbeeren-funknetz-96e62f9c7aee@brauner>
- <20240729132721.hxih6ehigadqf7wx@quack3>
- <20240729135847.GB557749@mit.edu>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1sYmEL-00079u-ER for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 30 Jul 2024 12:45:30 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id 1BE3861E46
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 30 Jul 2024 12:45:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E18AAC4AF09;
+ Tue, 30 Jul 2024 12:45:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1722343523;
+ bh=a06fT59JYSEYGZu3uqZ7J/4JW8k25L+XSMr8vDSImjI=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=MdziFkDxmn2RyXHWN/E5BZBLOU+FLjHLYf3uy0yDZC+zGYX4pgszNh04JC386fBxF
+ RNdAwsKrNI/BVkfpPhaDiI7IjGDIPy+kjJg7cUukGGRmbCTykXIAxyY1CaKeIzoWZn
+ ZZ1npzkjIqK4eVx8Yvjkg1FafKtNYcvaX5juD2RhFJjUc3UZaajoUBUIXfLLaawkQc
+ PO/iJ2G9r9yB3RQ6Eju5Ppr7mM08zSewcWppyNcQtoDJG/Y2YCLnWLRMm03mxHuCjQ
+ NznBA8gFsNcGz3ZgEodpotGu0orkyxRlEwgRN7TLuPz3Th5mHORXgEMu1bhPlm/Bl7
+ zjF06p8BesLEg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Date: Tue, 30 Jul 2024 08:45:08 -0400
+Message-ID: <20240730124519.3093607-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240730124519.3093607-1-sashal@kernel.org>
+References: <20240730124519.3093607-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20240729135847.GB557749@mit.edu>
-X-Spamd-Result: default: False [-2.10 / 50.00]; BAYES_HAM(-3.00)[100.00%];
- SUSPICIOUS_RECIPS(1.50)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
- MID_RHS_NOT_FQDN(0.50)[]; MIME_GOOD(-0.10)[text/plain];
- TAGGED_RCPT(0.00)[20d7e439f76bbbd863a7];
- RCVD_VIA_SMTP_AUTH(0.00)[]; MISSING_XM_UA(0.00)[];
- MIME_TRACE(0.00)[0:+]; ARC_NA(0.00)[];
- RCPT_COUNT_TWELVE(0.00)[18]; RCVD_COUNT_THREE(0.00)[3];
- FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
- DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
- DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email];
- FROM_EQ_ENVFROM(0.00)[];
- FREEMAIL_CC(0.00)[suse.cz,kernel.org,suse.com,lists.sourceforge.net,syzkaller.appspotmail.com,redhat.com,gmail.com,sina.com,vger.kernel.org,vivo.com,googlegroups.com,zeniv.linux.org.uk];
- TO_DN_SOME(0.00)[]; TO_MATCH_ENVRCPT_ALL(0.00)[];
- RCVD_TLS_LAST(0.00)[]; FROM_HAS_DN(0.00)[];
- FUZZY_BLOCKED(0.00)[rspamd.com]; SUBJECT_HAS_QUESTION(0.00)[]
-X-Headers-End: 1sYm7H-0006dM-4b
-Subject: Re: [f2fs-dev] [syzbot] [f2fs?] WARNING in rcu_sync_dtor
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.2
+X-Headers-End: 1sYmEL-00079u-ER
+Subject: [f2fs-dev] [PATCH AUTOSEL 6.10 2/7] f2fs: fix to do sanity check on
+ blocks for inline_data inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -131,83 +83,93 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Christian Brauner <brauner@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>,
- Jan Kara <jack@suse.cz>, paulmck@kernel.org, frank.li@vivo.com,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- Oleg Nesterov <oleg@redhat.com>, Hillf Danton <hdanton@sina.com>,
- linux-f2fs-devel@lists.sourceforge.net, rcu@vger.kernel.org,
- viro@zeniv.linux.org.uk, Jan Kara <jack@suse.com>,
- linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- syzbot <syzbot+20d7e439f76bbbd863a7@syzkaller.appspotmail.com>
+Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon 29-07-24 09:58:47, Theodore Ts'o wrote:
-> On Mon, Jul 29, 2024 at 03:27:21PM +0200, Jan Kara wrote:
-> > So in ext4 we have EXT4_FLAGS_SHUTDOWN flag which we now use
-> > internally instead of SB_RDONLY flag for checking whether the
-> > filesystem was shutdown (because otherwise races between remount and
-> > hitting fs error were really messy). However we still *also* set
-> > SB_RDONLY so that VFS bails early from some paths which generally
-> > results in less error noise in kernel logs and also out of caution
-> > of not breaking something in this path. That being said we also
-> > support EXT4_IOC_SHUTDOWN ioctl for several years and in that path
-> > we set EXT4_FLAGS_SHUTDOWN without setting SB_RDONLY and nothing
-> > seems to have blown up. So I'm inclined to belive we could remove
-> > setting of SB_RDONLY from ext4 error handling. Ted, what do you
-> > think?
-> 
-> Well, there are some failures of generic/388 (which involves calling
-> the shutdown ioctl while running fsstress).  I believe that most of
-> those failures are file system corruption errors, as opposed to other
-> sorts of failures, but we don't run KASAN kernels all that often,
-> especially since generic/388 is now on the exclude list.
+From: Chao Yu <chao@kernel.org>
 
-As far as I remember the reason for those failures were mostly because the
-fs shutdown happened in the middle of some operation on another CPU and 
-this tickled unusual error handling paths that eventually resulted in
-WARN_ONs and similar.
+[ Upstream commit c240c87bcd44a1a2375fc8ef8c645d1f1fe76466 ]
 
-> The failure rate of generic/388 varies depending on the storage device
-> involved, but it varies from less than 10% to 50% of the time, if
-> memory serves correctly.  Since EXT4_IOC_SHUTDOWN is used most of the
-> time as a debugging/test (although there are some users use it in
-> production, but the failure rate when you're not doing something
-> really aggressive like fsstress is very small), this has been on the
-> "one of these days, when we have tons of free time, we should really
-> look into this.  The challenge is fixing this in a way that doesn't
-> involve adding new locking in various file system hotpaths.
-> 
-> So "nothing seems to have blown up" might be a bit strong.  But it's
-> something we can try doing, and see whether it results in more rather
-> than less syzbot complaints.
+inode can be fuzzed, so it can has F2FS_INLINE_DATA flag and valid
+i_blocks/i_nid value, this patch supports to do extra sanity check
+to detect such corrupted state.
 
-OK. I don't expect real troubles within the filesystem itself here because
-the read-only check currently brings us only the benefit that the
-filesystem isn't even entered in a lot of cases. But at latest by the time
-we try to start a transaction handle, we get back error and bail out anyway
-after the fs was shutdown and this is reasonably well tested path. What might
-have larger impact is that userspace will be getting back EIO / EUCLEAN
-instead of EROFS. But I hope it won't be a big deal either.
+Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/f2fs/f2fs.h   |  2 +-
+ fs/f2fs/inline.c | 20 +++++++++++++++++++-
+ fs/f2fs/inode.c  |  2 +-
+ 3 files changed, 21 insertions(+), 3 deletions(-)
 
-> > Also as the "filesystem shutdown" is spreading across multiple
-> > filesystems, I'm playing with the idea that maybe we could lift a
-> > flag like this to VFS so that we can check it in VFS paths and abort
-> > some operations early.  But so far I'm not convinced the gain is
-> > worth the need to iron out various subtle semantical differences of
-> > "shutdown" among filesystems.
-> 
-> I think that might be a good idea.  Hopefully subtle semantic
-> differences are ones that won't matter in terms of the VFS aborting
-> operations early.
-
-OK, I guess I'll try and see.
-
-								Honza
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1974b6aff397c..f463961b497c4 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4149,7 +4149,7 @@ extern struct kmem_cache *f2fs_inode_entry_slab;
+  * inline.c
+  */
+ bool f2fs_may_inline_data(struct inode *inode);
+-bool f2fs_sanity_check_inline_data(struct inode *inode);
++bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage);
+ bool f2fs_may_inline_dentry(struct inode *inode);
+ void f2fs_do_read_inline_data(struct folio *folio, struct page *ipage);
+ void f2fs_truncate_inline_inode(struct inode *inode,
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 7638d0d7b7eed..0203c3baabb66 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -33,11 +33,29 @@ bool f2fs_may_inline_data(struct inode *inode)
+ 	return !f2fs_post_read_required(inode);
+ }
+ 
+-bool f2fs_sanity_check_inline_data(struct inode *inode)
++static bool inode_has_blocks(struct inode *inode, struct page *ipage)
++{
++	struct f2fs_inode *ri = F2FS_INODE(ipage);
++	int i;
++
++	if (F2FS_HAS_BLOCKS(inode))
++		return true;
++
++	for (i = 0; i < DEF_NIDS_PER_INODE; i++) {
++		if (ri->i_nid[i])
++			return true;
++	}
++	return false;
++}
++
++bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage)
+ {
+ 	if (!f2fs_has_inline_data(inode))
+ 		return false;
+ 
++	if (inode_has_blocks(inode, ipage))
++		return false;
++
+ 	if (!support_inline_data(inode))
+ 		return true;
+ 
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 005dde72aff3d..33b2778d54525 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -344,7 +344,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+ 		}
+ 	}
+ 
+-	if (f2fs_sanity_check_inline_data(inode)) {
++	if (f2fs_sanity_check_inline_data(inode, node_page)) {
+ 		f2fs_warn(sbi, "%s: inode (ino=%lx, mode=%u) should not have inline_data, run fsck to fix",
+ 			  __func__, inode->i_ino, inode->i_mode);
+ 		return false;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
 
 
 _______________________________________________
