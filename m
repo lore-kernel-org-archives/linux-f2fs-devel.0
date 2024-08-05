@@ -4,71 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 521BCC52D72
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 48C1CC3DA7F
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Aug 2024 23:31:07 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sb7AQ-0001G2-Lv;
+	id 1sb7AQ-0007JR-1e;
 	Mon, 05 Aug 2024 23:31:06 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sb7AI-0001FW-Km
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sb7AI-0007Iz-9B
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 05 Aug 2024 23:30:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=teRNwejswpQPciAY02bxbDr2/q2anUv1vVOm4HNjynI=; b=jaHtijb5uqLPu0s979kRhnji43
- +N3vwuQDtUY3/l8Otq4fAPrwtBOWmAOm0d2wYui1ScOYca4mee2dAhWGVcbmZpRF6zShP4g3iFTYx
- SGGl24s426gRzAgDSdJjJo0qBFDeHsx7YYxF2rlLMkeXpXuDegBL+uJsBSq4iYWCmJnw=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=MkGLCH6AA8QG8aaw0GDVG5SYDYlDnQeBMK4QEjyqfNw=; b=Ev5HbJwrUvOqgNEuf4K0X58vuw
+ d+a7A6vPJ+CBpyRiHWpwfESlmebgTdwXoBWbyEMHz1qf4qbw3/VXyU4nDc2NuG7ZSC39Nk2yxtrit
+ mncC7hC0+88r072LSrcJ53b4xqyPXN7CerUxCPvEOSwB9buZ1/E6uqrz0uoNLngsPRG0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=teRNwejswpQPciAY02bxbDr2/q2anUv1vVOm4HNjynI=; b=JbzaGN2g550tdBYmuKUe3getYb
- /E0Z7D+enOyjZEEBuAt1utoEE0+73TGOXhoQA5ow+Zfa/hisK6gNs6USoe24pvUvdr1BY2tlQ4FN1
- 0yzGXEXyn/MD4Qj8xRay8pyl35zrwI0+/+5n3YwHj5iW+HX0yrnNeP1Zwg31lw+8ugIM=;
+ ;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=MkGLCH6AA8QG8aaw0GDVG5SYDYlDnQeBMK4QEjyqfNw=; b=j
+ 4/+wZ77jX0nu2fzEsSEBdKQqA5ROh+LhWF49oSgBRJrC5DQA7Lg8RNhM91ONii6IVXeLeJ+RVkfXF
+ 4427GV8LlTgkSeG8TaTQqShV1FDpChl9FLeyX8jxZDzmJIMPkdIxE3B5Jr+VmpYxgYBCP/slHYxc+
+ MW8zSEZmqAVrJEDs=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sb7AI-00059v-1e for linux-f2fs-devel@lists.sourceforge.net;
+ id 1sb7AH-00059r-Eo for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 05 Aug 2024 23:30:58 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id A06B060EAC;
+ by dfw.source.kernel.org (Postfix) with ESMTP id 1F77160EA9
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Mon,  5 Aug 2024 23:30:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F036FC4AF17;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C6FE3C4AF0B
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Mon,  5 Aug 2024 23:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1722900652;
- bh=J7HlvM9ebl2LhQNjxB74nmObesaFPxmrkJCZVoV4R2A=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=Sk1EJWeXRNZlVvwBXBskZ+EXiatDYRtVUsxFyKu/e6egYDHg6PIZ2JE8wkMW55GWq
- tSaFMWuqLz6ynzKZc8eKQ48PIcgGDr6S6sdftHhhKDqlTFdKU1KeqcUbG5D3AyUKez
- XPOwV6Ja4T0VryfMuzKfsma5cO3kfH9M4HLdU8QCcmY/kYel0P4RDFFQqeSlaY5G9v
- WMf7gC1Qk6Zynqv0Ru8teQJ/GFpeh7GrqSEIXIJP1EyLRdbsWeM5WZ336rAtSQ7n2Z
- tu55kE09kCxxz8OLY4ttQVdDAArZOqnj3FfzArIRD0FelmUCQzCRO3LWgxnjd64MpT
- igP/e6BCYfG3A==
+ s=k20201202; t=1722900651;
+ bh=a1deIRdLwu8potLu+W0FTdVjnZ46QGgNha9TvmfRAUY=;
+ h=Subject:From:Date:To:From;
+ b=aE/kXRE7EZN/x8f/U7OedfJJZ40vq1GiYUodx7qT/o+C/GnRmNjPsIvu9hcC2CTt5
+ rcitEOfpgJTc9oj2aZYyig7DDjRn+wvl5g5hCzHzcHk7WiXzLw00YCLgtGT7nCEO5O
+ ttwo+VfnDQjFH//cwkamcuOeluqLUa+GgNCC824dcirx9WdSy3Q6/DH0WDtVK9CzVY
+ z+OHbdcKrZDIomQuX3EOQTraggo1spQkbq4+P1U6Y+SwOuia7rFl0hEhqnFYG9Tkeg
+ 38ioSDhlfyyd0VEh8bGr9++7Sq0Q0dIxRO6Bs1/+r5QcbNHh8yWk/tmruVfy7B9PyI
+ KR8wPk03ZdbmQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- E7CB6C43140; Mon,  5 Aug 2024 23:30:51 +0000 (UTC)
+ AC68CC43337 for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon,  5 Aug 2024 23:30:51 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <172290065194.2803.2752541342354642319.git-patchwork-notify@kernel.org>
+Message-Id: <172290065158.2803.16538877170316459584.git-patchwork-summary@kernel.org>
 Date: Mon, 05 Aug 2024 23:30:51 +0000
-References: <20240724172838.11614-1-n.zhandarovich@fintech.ru>
-In-Reply-To: <20240724172838.11614-1-n.zhandarovich@fintech.ru>
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-X-Headers-End: 1sb7AI-00059v-1e
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix several potential integer
- overflows in file offsets
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1sb7AH-00059r-Eo
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,34 +81,107 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: lvc-project@linuxtesting.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- jaegeuk@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-On Wed, 24 Jul 2024 10:28:38 -0700 you wrote:
-> When dealing with large extents and calculating file offsets by
-> summing up according extent offsets and lengths of unsigned int type,
-> one may encounter possible integer overflow if the values are
-> big enough.
-> 
-> Prevent this from happening by expanding one of the addends to
-> (pgoff_t) type.
-> 
-> [...]
+Patch: [f2fs-dev,v5] f2fs:Add write priority option based on zone UFS
+  Submitter: Liao Yuanhong <liaoyuanhong@vivo.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=871359
+  Lore link: https://lore.kernel.org/r/20240715123451.7918-1-liaoyuanhong@vivo.com
 
-Here is the summary with links:
-  - [f2fs-dev] f2fs: fix several potential integer overflows in file offsets
-    https://git.kernel.org/jaegeuk/f2fs/c/1cade98cf641
+Series: [f2fs-dev,v2,1/2] f2fs: fix macro definition on_f2fs_build_free_nids
+  Submitter: Julian Sun <sunjunchao2870@gmail.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=872806
+  Lore link: https://lore.kernel.org/r/20240722023913.54788-1-sunjunchao2870@gmail.com
+    Patches: [f2fs-dev,v2,1/2] f2fs: fix macro definition on_f2fs_build_free_nids
+             [f2fs-dev,v2,2/2] f2fs: fix macro definition stat_inc_cp_count
 
-You are awesome, thank you!
+Patch: [f2fs-dev,V2] f2fs: fix to use per-inode maxbytes and cleanup
+  Submitter: Zhiguo Niu <zhiguo.niu@unisoc.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=873984
+  Lore link: https://lore.kernel.org/r/1721975246-32345-1-git-send-email-zhiguo.niu@unisoc.com
+
+Series: [f2fs-dev,1/4] f2fs: atomic: fix to avoid racing w/ GC
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=865147
+  Lore link: https://lore.kernel.org/r/20240625031351.3586955-1-chao@kernel.org
+    Patches: [f2fs-dev,1/4] f2fs: atomic: fix to avoid racing w/ GC
+             [f2fs-dev,2/4] f2fs: atomic: fix to not allow GC to pollute atomic_file
+             [f2fs-dev,4/4] f2fs: atomic: fix to forbid dio in atomic_file
+
+Patch: None
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=870295
+  Lore link: https://lore.kernel.org/r/20240711014632.3927676-1-chao@kernel.org
+
+Patch: [f2fs-dev] f2fs: fix to wait dio completion
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=866020
+  Lore link: https://lore.kernel.org/r/20240627071711.1563420-1-chao@kernel.org
+
+Patch: [f2fs-dev] f2fs: fix several potential integer overflows in file offsets
+  Submitter: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=873619
+  Lore link: https://lore.kernel.org/r/20240724172838.11614-1-n.zhandarovich@fintech.ru
+
+Patch: [f2fs-dev] f2fs: use f2fs_get_node_page when write inline data
+  Submitter: wangzijie <wangzijie1@honor.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=840263
+  Lore link: https://lore.kernel.org/r/2073e8995f5444aeaf7133b87ec07de8@honor.com
+
+Patch: [f2fs-dev] f2fs: avoid potential int overflow in sanity_check_area_boundary()
+  Submitter: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=873622
+  Lore link: https://lore.kernel.org/r/20240724175158.11928-1-n.zhandarovich@fintech.ru
+
+Patch: [f2fs-dev] f2fs: prevent possible int overflow in dir_block_index()
+  Submitter: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=873614
+  Lore link: https://lore.kernel.org/r/20240724170544.11372-1-n.zhandarovich@fintech.ru
+
+Patch: [f2fs-dev,v5] f2fs: reduce expensive checkpoint trigger frequency
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=865565
+  Lore link: https://lore.kernel.org/r/20240626014727.4095350-1-chao@kernel.org
+
+Patch: [f2fs-dev,v3] f2fs: fix to avoid racing in between read and OPU dio write
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=866017
+  Lore link: https://lore.kernel.org/r/20240627071521.1557830-1-chao@kernel.org
+
+Patch: [f2fs-dev] Revert "f2fs: use flush command instead of FUA for zoned device"
+  Submitter: Wenjie Cheng <cwjhust@gmail.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=861860
+  Lore link: https://lore.kernel.org/r/20240614004841.103114-1-cwjhust@gmail.com
+
+Patch: [f2fs-dev,v3] f2fs: get rid of buffer_head use
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=862893
+  Lore link: https://lore.kernel.org/r/20240618072620.720535-1-chao@kernel.org
+
+
+Total patches: 17
+
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
