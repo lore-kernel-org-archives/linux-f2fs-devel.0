@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D4CFAC52D7C
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Aug 2024 14:14:12 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D96C9C531DC
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Aug 2024 14:14:13 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sdsHq-0007Jt-A9;
-	Tue, 13 Aug 2024 14:14:09 +0000
+	id 1sdsHt-0008Fu-HR;
+	Tue, 13 Aug 2024 14:14:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1sdsHo-0007Jf-3A
+ (envelope-from <chao@kernel.org>) id 1sdsHs-0008Fi-4G
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Aug 2024 14:14:07 +0000
+ Tue, 13 Aug 2024 14:14:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=j+iw0zkklSTC2aRDUdvVgf+vxe/jKuhM9JE8Xc6+KuE=; b=OuGOrIXIiVQ1nEIYiI/uKNnAi0
- 4uPfNDtFb1V20V/JpM1bMdbWqZYfR40sqKHbLEAE0ifFVkYpgtWCcR6UFp/tTaRL7Z/Ko2FF7s1vi
- QZ1/TohjtW9WXDZuvAKpwycrKvCt6j9RvwgNIhXzhHt7MtKpyZFV/SEO90BvuZoJczmo=;
+ bh=GALEBg6QTn4diRzzk+xHggmwIgCVRve5iXWh4Fx33uw=; b=EdGQ6jPNUNd2JcPgpa6BbrOsuc
+ JqcRzR4AX62L+lGnfbRI6diK/l42jPOQAsESTknBv/lb/l2vweiU7YRN3YvIw4DcOm9K8UIaIN/N/
+ NbtSRy5wnuhi/vgnFFnVwIWPW+/zHwZxaX69r7Mos9sXlekIjASndvEd2ESiZ+KZGxWA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,40 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=j+iw0zkklSTC2aRDUdvVgf+vxe/jKuhM9JE8Xc6+KuE=; b=N9zGzEwS4XZFgdaub0w1i8EIOz
- M6GThrNKqChmqnrQuHSWQ1noOSZgkVrbRj/0pwZTUrYh9LwFy1fUkhze5crHoAxUdRLDDcU3TONNF
- Cwu+s/ToYXEz0UA/PjsoB68LZB6pYarkJUX99eNZw3WvjPACWCxze3ARAw5+Mk7S0ABI=;
+ bh=GALEBg6QTn4diRzzk+xHggmwIgCVRve5iXWh4Fx33uw=; b=dzAsBSBcWzkcPbFHqmaWyaAE5R
+ VEo0hxhZDDBK4gdrkPsrmA9lml+c/g0Zyp2BUN4yDSiul4txPe5nGHbcVT/zXwT2P2AmAe49mkfam
+ 0jauomjXmy2hUGA9ekJyXsUSGHXwZedjc5A8cUEVwHPfHdpncXN7crM9v90ZT0zPtLE4=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sdsHm-0001DD-SX for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Aug 2024 14:14:07 +0000
+ id 1sdsHq-0001Di-SV for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Aug 2024 14:14:11 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 82B8A6170B;
- Tue, 13 Aug 2024 14:13:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9E4AC4AF15;
- Tue, 13 Aug 2024 14:13:54 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 776B96172F;
+ Tue, 13 Aug 2024 14:14:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF9DC4AF11;
+ Tue, 13 Aug 2024 14:13:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1723558436;
- bh=O7pw8vrwHsmRKsgyDC121Jnhb8Pog4l0udno2Rfx5N4=;
+ s=k20201202; t=1723558440;
+ bh=+Rahtg2CIbqQVDwx0J+IxStkz1u33ze7GCP87Z5bhDY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=dk2QQ8wPoosbvLg3UHkk0KZRRfPL+3OhTJB3QJvfzwZgmVX2wOIW2nDOmgCG/FfXH
- 22onUHZLrgYMlhhMUHd4lPUzN+wC9x30La1GVCGqIpd4fJbnNqm2Ep9zwgiecO+myb
- 9DievUR+BqDyjmwoOxV81W69bK0vaZKbtEG+8KWJN2t2ZoUQyfBbFf3lt3Wg5AtMAH
- GWu4m2/nQpw8xT/JFxsKI64dB3bhgIk9UiA4g2/7oP/sNTNPfpNLF6+Br91lt+TU7f
- 89ApQROUK0Khm9dr3EIGLPTb2Zl2cn2AGCsKbl05axspxur/QHeQLcO15iqTqHJ2Nf
- SJKKcx2Dnl0EQ==
+ b=azkwPqRfL6kB75jA+pqe+ygYJJV/FrIXp79ryh2MjDe6l9aF+7/8bbWxzpTHMQFm2
+ 7RFyhMAzw2BHCVZNj78tyeVGZzzP5CGKx+QXsLuZAsOOPOcJQgomYIqhqkxHa3zFKo
+ w2me4nsj27Tbom/J9J16Tom96uQagm2Avj1KsxT9wuHZWSwemdPkgZ59l+KbGcS8JW
+ SqYW/r+LmwSIDyj5a77se9l2UghPwZcqqOI45l6HXB1JR+rL1l/LXSaImKvPFX0FfE
+ 5dEDxiTJOI8g2hJYucr/KDKj4P1lMR1p3U8wAQrshzW4t259xs4wkVxyk5xEIXLO1P
+ ZRuY/bcCD+bjQ==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Tue, 13 Aug 2024 22:13:29 +0800
-Message-Id: <20240813141331.417067-7-chao@kernel.org>
+Date: Tue, 13 Aug 2024 22:13:31 +0800
+Message-Id: <20240813141331.417067-9-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240813141331.417067-1-chao@kernel.org>
 References: <20240813141331.417067-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1sdsHm-0001DD-SX
-Subject: [f2fs-dev] [PATCH 7/9] f2fs: convert __f2fs_write_meta_page() to
- use folio
+X-Headers-End: 1sdsHq-0001Di-SV
+Subject: [f2fs-dev] [PATCH 9/9] f2fs: convert f2fs_handle_page_eio() to use
+ folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,51 +92,55 @@ prepare for removal of 'index' field in structure page [1].
 Cc: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ fs/f2fs/checkpoint.c | 2 +-
+ fs/f2fs/f2fs.h       | 6 ++++--
+ fs/f2fs/node.c       | 2 +-
+ 3 files changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index d73d4d05313e..ffaf295a198a 100644
+index ffaf295a198a..7f76460b721f 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -345,30 +345,31 @@ static int __f2fs_write_meta_page(struct page *page,
- 				enum iostat_type io_type)
- {
- 	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
-+	struct folio *folio = page_folio(page);
- 
--	trace_f2fs_writepage(page_folio(page), META);
-+	trace_f2fs_writepage(folio, META);
- 
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		if (is_sbi_flag_set(sbi, SBI_IS_CLOSE)) {
--			ClearPageUptodate(page);
-+			folio_clear_uptodate(folio);
- 			dec_page_count(sbi, F2FS_DIRTY_META);
--			unlock_page(page);
-+			folio_unlock(folio);
- 			return 0;
- 		}
- 		goto redirty_out;
+@@ -99,7 +99,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
  	}
- 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
- 		goto redirty_out;
--	if (wbc->for_reclaim && page->index < GET_SUM_BLOCK(sbi, 0))
-+	if (wbc->for_reclaim && folio->index < GET_SUM_BLOCK(sbi, 0))
- 		goto redirty_out;
  
--	f2fs_do_write_meta_page(sbi, page_folio(page), io_type);
-+	f2fs_do_write_meta_page(sbi, folio, io_type);
- 	dec_page_count(sbi, F2FS_DIRTY_META);
+ 	if (unlikely(!PageUptodate(page))) {
+-		f2fs_handle_page_eio(sbi, page->index, META);
++		f2fs_handle_page_eio(sbi, page_folio(page), META);
+ 		f2fs_put_page(page, 1);
+ 		return ERR_PTR(-EIO);
+ 	}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c29ed8b6eea6..28b6246e07f9 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4666,9 +4666,11 @@ static inline void f2fs_io_schedule_timeout(long timeout)
+ 	io_schedule_timeout(timeout);
+ }
  
- 	if (wbc->for_reclaim)
- 		f2fs_submit_merged_write_cond(sbi, NULL, page, 0, META);
- 
--	unlock_page(page);
-+	folio_unlock(folio);
- 
+-static inline void f2fs_handle_page_eio(struct f2fs_sb_info *sbi, pgoff_t ofs,
+-					enum page_type type)
++static inline void f2fs_handle_page_eio(struct f2fs_sb_info *sbi,
++				struct folio *folio, enum page_type type)
+ {
++	pgoff_t ofs = folio->index;
++
  	if (unlikely(f2fs_cp_error(sbi)))
- 		f2fs_submit_merged_write(sbi, META);
+ 		return;
+ 
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 2b764c86aacc..7beaa3690e03 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1492,7 +1492,7 @@ static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
+ out_put_err:
+ 	/* ENOENT comes from read_node_page which is not an error. */
+ 	if (err != -ENOENT)
+-		f2fs_handle_page_eio(sbi, page->index, NODE);
++		f2fs_handle_page_eio(sbi, page_folio(page), NODE);
+ 	f2fs_put_page(page, 1);
+ 	return ERR_PTR(err);
+ }
 -- 
 2.40.1
 
