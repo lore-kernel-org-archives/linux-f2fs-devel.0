@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 842AFC52D7C
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Aug 2024 14:14:04 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 693C6C531DC
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Aug 2024 14:14:06 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sdsHk-0007JG-NO;
-	Tue, 13 Aug 2024 14:14:04 +0000
+	id 1sdsHl-0002Qy-Bx;
+	Tue, 13 Aug 2024 14:14:06 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1sdsHi-0007J5-L2
+ (envelope-from <chao@kernel.org>) id 1sdsHj-0002Qp-1y
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Aug 2024 14:14:02 +0000
+ Tue, 13 Aug 2024 14:14:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Nu4q/nFZYYBYeYZkY4mJDO7VXvwLTIoN1gM1xC/rvio=; b=RdjMcmyMb09EthTXgjO0eRyeod
- RsRVIetihcoyxKeC5OWnyfhSV4g1rU/LYsiyudVNqVK8CJdfUq+oTDe3/EftsI2AxhWfjIDitVvAj
- J19Sl/bZY8IMDpuiP6pbiiE7IwXn7t7Y74jrknqqcq1PKyK46hdZOo8HiWgGEFtIQ6nc=;
+ bh=Fv5AR5W3KMKZ5e07IpsLsS4ElWgcmPzeACpnc0VHM9I=; b=it2dZg9k4pvdhLb6mLKxdwJqh1
+ E5jlylbM11prjfNmihHOEm0wlCWhyHNWidAhfBhd9HEU/5W3PIyfvXwuTyYlXqwEBTJGp5LuUm6UD
+ v3FOzMFKU6BUExQSJ3bnVNMU/CPIT6JBOvcT/va0trNc3xWtVoQUlCyH2KuO3VWawv9E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,40 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Nu4q/nFZYYBYeYZkY4mJDO7VXvwLTIoN1gM1xC/rvio=; b=MJeEEqo/vlHefjg2bkluEDHywu
- CMQ2hAhdRQAngkYZMGgHgabBRJ4y2BJRw7riu+54HnxBun3vsknuIN6AN/STaJsIC/0SV65Q7TfxP
- SxId1LDpVchB2PsZyOUtMyLCsBe/4UeKojVp+r0UsY/BBhTh1KliTGPeTj3F3y75DHbI=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=Fv5AR5W3KMKZ5e07IpsLsS4ElWgcmPzeACpnc0VHM9I=; b=e5CpcRkSI9/D7QYBTN4flvKI+7
+ fRCzCHjiOXfpJuFvURwSJmefYOdbjwlNhuuaVavDGNsD5MSKFIowpcRvunj7KwX9+md7FZRMvnc5Z
+ Ib1OTC4FCKwASbhc5PTa4MaOpjItCH6cjIrHGHLaCEK57/x4Q+/w/PMEIDWHFk4gR4qU=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sdsHg-0001Cs-U4 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Aug 2024 14:14:01 +0000
+ id 1sdsHi-0001D1-Tc for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Aug 2024 14:14:03 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 3E5ACCE13CA;
- Tue, 13 Aug 2024 14:13:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F278BC4AF09;
- Tue, 13 Aug 2024 14:13:46 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 9015C61722;
+ Tue, 13 Aug 2024 14:13:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6733C4AF0F;
+ Tue, 13 Aug 2024 14:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1723558428;
- bh=eWtrXzMhJKS5xOWZigySRTMy/cUMuJ5/xx/SVnO/CfE=;
+ s=k20201202; t=1723558432;
+ bh=CAOJ8mgA8jKzzI9hA7HpfYwAeUu6fh4NOYcV9F2ZHaw=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=deSS6dQWX6MhyUkHKOW35OnUJXdbXGhjTAED2iUx20cNK7aJallgy3rIyQ1jlXP23
- o58u1wZSlop3de6DqDEwwyRCEY9DF85+1eNYjfKxMNLXfXvfLhAFNDW6KnvbZa6Ss5
- RxtFQfYz2MCMpny54vB2qv81YayXky0y9l0rIsT6zQbLnzj32w0uf3+IRYPFJI7gN/
- aWmhxuwul5XvIW5LukXURj9dqVIy9fJ0iNNJwzLZPjYVrDuTdCAM8eymv1NbfoJzzw
- z7haXumUHWmdZTrXHy8lDCs95z/GBNzJUn4ROcm5UFNIR/lnFGWTpZXTym3tPNEM+9
- m49vf8yl4rPpg==
+ b=jojLb2S8+RXDU3B+0dvEVenn7/GAwWb3Mu2ll6AbX3FJ+WXV0Ul8RFaFDRhqt2lAm
+ Eyn1k3U1YVnoXMZrjxCmGRHdRlS8xIL5/BzSicOS/CkUwMXRc0S/VE2G/BpZ4F4w/k
+ dBB6FWr3cf2GXDCdV/wExXZZQhhShlqJh70kMYz8XE+ATbLNZNfz/YGNohcpM5DVXB
+ blgqcGLhod9jvLlJzDlQepVfEGQQyWpgXp5sMPm9U2YBZj20IR4lMoJDEpg3R7WFEN
+ 40HSY1IO/t4BvQ4i4T6uszN5J9GMXG6twUuW2mJkP/4D/61yQC1rHg3kSwhk+6iEgC
+ OrEn7tvVBaDVg==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Tue, 13 Aug 2024 22:13:25 +0800
-Message-Id: <20240813141331.417067-3-chao@kernel.org>
+Date: Tue, 13 Aug 2024 22:13:27 +0800
+Message-Id: <20240813141331.417067-5-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240813141331.417067-1-chao@kernel.org>
 References: <20240813141331.417067-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1sdsHg-0001Cs-U4
-Subject: [f2fs-dev] [PATCH 3/9] f2fs: convert
- f2fs_clear_page_cache_dirty_tag() to use folio
+X-Headers-End: 1sdsHi-0001D1-Tc
+Subject: [f2fs-dev] [PATCH 5/9] f2fs: convert f2fs_write_single_data_page()
+ to use folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,80 +92,157 @@ prepare for removal of 'index' field in structure page [1].
 Cc: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/data.c   | 3 +--
- fs/f2fs/dir.c    | 2 +-
- fs/f2fs/f2fs.h   | 2 +-
- fs/f2fs/inline.c | 2 +-
- fs/f2fs/node.c   | 2 +-
- 5 files changed, 5 insertions(+), 6 deletions(-)
+ fs/f2fs/compress.c |  3 ++-
+ fs/f2fs/data.c     | 29 +++++++++++++++--------------
+ fs/f2fs/f2fs.h     |  2 +-
+ 3 files changed, 18 insertions(+), 16 deletions(-)
 
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index eb5cd1457ffc..82c31641e696 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1523,7 +1523,8 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+ 		if (!clear_page_dirty_for_io(cc->rpages[i]))
+ 			goto continue_unlock;
+ 
+-		ret = f2fs_write_single_data_page(cc->rpages[i], &submitted,
++		ret = f2fs_write_single_data_page(page_folio(cc->rpages[i]),
++						&submitted,
+ 						NULL, NULL, wbc, io_type,
+ 						compr_blocks, false);
+ 		if (ret) {
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 100b6526717f..0df5a0c66ede 100644
+index 6d2a37db0c9e..0779e222f709 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -4117,9 +4117,8 @@ const struct address_space_operations f2fs_dblock_aops = {
- 	.swap_deactivate = f2fs_swap_deactivate,
- };
+@@ -2764,7 +2764,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 	return err;
+ }
  
--void f2fs_clear_page_cache_dirty_tag(struct page *page)
-+void f2fs_clear_page_cache_dirty_tag(struct folio *folio)
+-int f2fs_write_single_data_page(struct page *page, int *submitted,
++int f2fs_write_single_data_page(struct folio *folio, int *submitted,
+ 				struct bio **bio,
+ 				sector_t *last_block,
+ 				struct writeback_control *wbc,
+@@ -2772,12 +2772,13 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 				int compr_blocks,
+ 				bool allow_balance)
  {
--	struct folio *folio = page_folio(page);
- 	struct address_space *mapping = folio->mapping;
- 	unsigned long flags;
+-	struct inode *inode = page->mapping->host;
++	struct inode *inode = folio->mapping->host;
++	struct page *page = folio_page(folio, 0);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	loff_t i_size = i_size_read(inode);
+ 	const pgoff_t end_index = ((unsigned long long)i_size)
+ 							>> PAGE_SHIFT;
+-	loff_t psize = (loff_t)(page->index + 1) << PAGE_SHIFT;
++	loff_t psize = (loff_t)(folio->index + 1) << PAGE_SHIFT;
+ 	unsigned offset = 0;
+ 	bool need_balance_fs = false;
+ 	bool quota_inode = IS_NOQUOTA(inode);
+@@ -2801,11 +2802,11 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 		.last_block = last_block,
+ 	};
  
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 14900ca8a9ff..5fcc952107e9 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -868,7 +868,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+-	trace_f2fs_writepage(page_folio(page), DATA);
++	trace_f2fs_writepage(folio, DATA);
  
- 	if (bit_pos == NR_DENTRY_IN_BLOCK &&
- 		!f2fs_truncate_hole(dir, page->index, page->index + 1)) {
--		f2fs_clear_page_cache_dirty_tag(page);
-+		f2fs_clear_page_cache_dirty_tag(page_folio(page));
- 		clear_page_dirty_for_io(page);
- 		ClearPageUptodate(page);
- 		clear_page_private_all(page);
+ 	/* we should bypass data pages to proceed the kworker jobs */
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+-		mapping_set_error(page->mapping, -EIO);
++		mapping_set_error(folio->mapping, -EIO);
+ 		/*
+ 		 * don't drop any dirty dentry pages for keeping lastest
+ 		 * directory structure.
+@@ -2823,7 +2824,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+ 		goto redirty_out;
+ 
+-	if (page->index < end_index ||
++	if (folio->index < end_index ||
+ 			f2fs_verity_in_progress(inode) ||
+ 			compr_blocks)
+ 		goto write;
+@@ -2833,10 +2834,10 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 	 * this page does not have to be written to disk.
+ 	 */
+ 	offset = i_size & (PAGE_SIZE - 1);
+-	if ((page->index >= end_index + 1) || !offset)
++	if ((folio->index >= end_index + 1) || !offset)
+ 		goto out;
+ 
+-	zero_user_segment(page, offset, PAGE_SIZE);
++	folio_zero_segment(folio, offset, folio_size(folio));
+ write:
+ 	/* Dentry/quota blocks are controlled by checkpoint */
+ 	if (S_ISDIR(inode->i_mode) || quota_inode) {
+@@ -2896,7 +2897,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ out:
+ 	inode_dec_dirty_pages(inode);
+ 	if (err) {
+-		ClearPageUptodate(page);
++		folio_clear_uptodate(folio);
+ 		clear_page_private_gcing(page);
+ 	}
+ 
+@@ -2906,7 +2907,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 		f2fs_remove_dirty_inode(inode);
+ 		submitted = NULL;
+ 	}
+-	unlock_page(page);
++	folio_unlock(folio);
+ 	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode) &&
+ 			!F2FS_I(inode)->wb_task && allow_balance)
+ 		f2fs_balance_fs(sbi, need_balance_fs);
+@@ -2924,7 +2925,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 	return 0;
+ 
+ redirty_out:
+-	redirty_page_for_writepage(wbc, page);
++	folio_redirty_for_writepage(wbc, folio);
+ 	/*
+ 	 * pageout() in MM translates EAGAIN, so calls handle_write_error()
+ 	 * -> mapping_set_error() -> set_bit(AS_EIO, ...).
+@@ -2933,7 +2934,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 	 */
+ 	if (!err || wbc->for_reclaim)
+ 		return AOP_WRITEPAGE_ACTIVATE;
+-	unlock_page(page);
++	folio_unlock(folio);
+ 	return err;
+ }
+ 
+@@ -2955,7 +2956,7 @@ static int f2fs_write_data_page(struct page *page,
+ out:
+ #endif
+ 
+-	return f2fs_write_single_data_page(page, NULL, NULL, NULL,
++	return f2fs_write_single_data_page(page_folio(page), NULL, NULL, NULL,
+ 						wbc, FS_DATA_IO, 0, true);
+ }
+ 
+@@ -3165,7 +3166,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 				continue;
+ 			}
+ #endif
+-			ret = f2fs_write_single_data_page(&folio->page,
++			ret = f2fs_write_single_data_page(folio,
+ 					&submitted, &bio, &last_block,
+ 					wbc, io_type, 0, true);
+ 			if (ret == AOP_WRITEPAGE_ACTIVATE)
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index df436dd3aac1..a4b90215a51f 100644
+index 7c7760aa1a7c..5800ac90a5f7 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -3890,7 +3890,7 @@ void f2fs_write_failed(struct inode *inode, loff_t to);
- void f2fs_invalidate_folio(struct folio *folio, size_t offset, size_t length);
- bool f2fs_release_folio(struct folio *folio, gfp_t wait);
- bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
--void f2fs_clear_page_cache_dirty_tag(struct page *page);
-+void f2fs_clear_page_cache_dirty_tag(struct folio *folio);
- int f2fs_init_post_read_processing(void);
- void f2fs_destroy_post_read_processing(void);
- int f2fs_init_post_read_wq(struct f2fs_sb_info *sbi);
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index d76a3bed7093..98d122164cd1 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -281,7 +281,7 @@ int f2fs_write_inline_data(struct inode *inode, struct page *page)
- 			 page, 0, MAX_INLINE_DATA(inode));
- 	set_page_dirty(ipage);
- 
--	f2fs_clear_page_cache_dirty_tag(page);
-+	f2fs_clear_page_cache_dirty_tag(page_folio(page));
- 
- 	set_inode_flag(inode, FI_APPEND_WRITE);
- 	set_inode_flag(inode, FI_DATA_EXIST);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 9e7a6e21f30c..20518c12f5b7 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -123,7 +123,7 @@ bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type)
- static void clear_node_page_dirty(struct page *page)
- {
- 	if (PageDirty(page)) {
--		f2fs_clear_page_cache_dirty_tag(page);
-+		f2fs_clear_page_cache_dirty_tag(page_folio(page));
- 		clear_page_dirty_for_io(page);
- 		dec_page_count(F2FS_P_SB(page), F2FS_DIRTY_NODES);
- 	}
+@@ -3881,7 +3881,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ int f2fs_encrypt_one_page(struct f2fs_io_info *fio);
+ bool f2fs_should_update_inplace(struct inode *inode, struct f2fs_io_info *fio);
+ bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio);
+-int f2fs_write_single_data_page(struct page *page, int *submitted,
++int f2fs_write_single_data_page(struct folio *folio, int *submitted,
+ 				struct bio **bio, sector_t *last_block,
+ 				struct writeback_control *wbc,
+ 				enum iostat_type io_type,
 -- 
 2.40.1
 
