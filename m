@@ -4,67 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 60504C531DC
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Aug 2024 14:13:56 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 763D9C52D7B
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Aug 2024 14:14:03 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sdsHb-0002Q5-6E;
-	Tue, 13 Aug 2024 14:13:55 +0000
+	id 1sdsHj-0001KN-2r;
+	Tue, 13 Aug 2024 14:14:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1sdsHY-0002Pr-92
+ (envelope-from <chao@kernel.org>) id 1sdsHh-0001K7-RT
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Aug 2024 14:13:53 +0000
+ Tue, 13 Aug 2024 14:14:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Wfvz5qTTiWunLLAk2zw1fdxIKf4Wx0FuQF9mRRY1TNg=; b=UkOz0YlYKbqZu4+bz/jKyUp7mU
- oKGvLFd+Vy7DTpUYxCTYqwRk5FQdF8ZsrXIQJa6yuFbaU2A5B6g2LrcnQhnXe+qXClgPn5YcdRTMa
- JhMXdoVrxqyAL0S8vU/JBznydMlICGtlr27++nCZZfs8EH9GRy5B4jbd949hkT1PjwHU=;
+ bh=/1nmacVmrsXn6q7cUflrbKUeMHuQqfjQNR0KC6cVyz8=; b=NcsTdIlWmR8B3pE2dnf0JlpGwK
+ t87SLKRJaW1iqoRqWw4O1SH5xrRO2etzQihbciAguTf/bSMy/+y/3aMfXvWb9acWeaqYFXHQxn+Mu
+ DUEnnaC6681ReVtM6ziP3jf29kOCjpskum+jUXNgOg3K23Eu8ri+3ykcRcJ0RdSPrnVE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Wfvz5qTTiWunLLAk2zw1fdxIKf4Wx0FuQF9mRRY1TNg=; b=U
- ma91Pxpotzfxm2EvEAHp6v1NQx5J0uKM67n9skSD4JAmykvjvMMXSEkHHhVtumwNreN6CWsPXOoW/
- WT3O8yrUkNb5W1giQI4LhqfSeqA1UnJHkl4vriSh+SAJe4XK+0Ev6rNdU5zhmEFADyfxI7lmvTDyp
- 7mMsclwdLyiBuzxI=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=/1nmacVmrsXn6q7cUflrbKUeMHuQqfjQNR0KC6cVyz8=; b=OEuuLSBOeiSHtvanpNAW2W+qQx
+ yxH+k45ZRWA3lvgAloCSgWkLSIMl586Z33kvR+jsSV0VTkxdTOCSC6chSBMM+tTjwtqHJftw31Bx2
+ P1k+3Tclv9tVEIIv79oil3H+cZMJy5Pz3MT5L6cxPj7hcGPciQxkHs9eCCddmi0QxO68=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sdsHX-0001CE-Vd for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Aug 2024 14:13:52 +0000
+ id 1sdsHg-0001Cw-Uf for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Aug 2024 14:14:01 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id 4B343CE0159;
- Tue, 13 Aug 2024 14:13:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BAC5C4AF09;
- Tue, 13 Aug 2024 14:13:42 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 94D6F61727;
+ Tue, 13 Aug 2024 14:13:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC9CC4AF11;
+ Tue, 13 Aug 2024 14:13:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1723558424;
- bh=jeYWkLahC30q53zidZWoDYe1mT2rCQxgLl7pKbyzKME=;
- h=From:To:Cc:Subject:Date:From;
- b=NIEL4rarQPF1QG53mUNGMO2jwW4INcHFzUNCt5FbTPQp8KEi872+saZe00PI7+uBC
- 8WRmt+aA8qsT9tRUntGU5Sn2FOuDb/gyFWNQhQ0y6WQhpVjriOSOT8ydOfiAnCiXOp
- z7RhRhDxZTjonxzOwGn4hq9+ySnFI5NIa5XA0sOIlB5JmyWu4zwfuYRdy7XK1oF1Jk
- M9KULFWYRbYeNPR6bPd9nB+rdVWvX1r8Bfe2EJLBswo3TVjPdsx6aOq3RvBn5zxviI
- DTFsFg6BTMBaaBCm9LlpAYik4TjrNIA6HoiiSpCU26nFtrQR9/KhpAJ+8wVDeAkRpw
- yH+eChcSlm4Ow==
+ s=k20201202; t=1723558430;
+ bh=ceJAsQVNvPZUvEVH90Lwtfbz3Ha3JuH6fkV/BpfNMgQ=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=nJR5h6nfLGvDN1tZY8B6tCGJErI5wYrupexx86bDUR8ZZHF8uZMGcphc6Zx+caNhZ
+ DrbS/FicXfh88Q20S4VUlUtCar05NhDlieMIS29787iWRjGwOYby6pamMfP0wkw0HZ
+ pQp4ZSo4Fen2MQNQKjKJrr6rDdx4wjoLpCWmsrX9dTV+wQQBOtQ6xLo6FrY2Awb3k4
+ hNcABuWiQCJxOO53ORBjVtZ56ffg/X6a2XYmKuOUrpBydDcY9iHgRRVSB257K3gO6f
+ R3JV1+fOfwZz9f77Gw9b7J3Y5nIyp9u4cGHMyLobvT9YrItmYnqwz/r4dHHvmyasDO
+ piGcoJYEvKSXA==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Tue, 13 Aug 2024 22:13:23 +0800
-Message-Id: <20240813141331.417067-1-chao@kernel.org>
+Date: Tue, 13 Aug 2024 22:13:26 +0800
+Message-Id: <20240813141331.417067-4-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240813141331.417067-1-chao@kernel.org>
+References: <20240813141331.417067-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1sdsHX-0001CE-Vd
-Subject: [f2fs-dev] [PATCH 1/9] f2fs: convert f2fs_compress_ctx_add_page()
- to use folio
+X-Headers-End: 1sdsHg-0001Cw-Uf
+Subject: [f2fs-dev] [PATCH 4/9] f2fs: convert f2fs_write_inline_data() to
+ use folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,7 +84,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-onvert to use folio, so that we can get rid of 'page->index' to
+Convert to use folio, so that we can get rid of 'page->index' to
 prepare for removal of 'index' field in structure page [1].
 
 [1] https://lore.kernel.org/all/Zp8fgUSIBGQ1TN0D@casper.infradead.org/
@@ -90,91 +92,83 @@ prepare for removal of 'index' field in structure page [1].
 Cc: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/compress.c | 14 +++++++-------
- fs/f2fs/data.c     |  4 ++--
- fs/f2fs/f2fs.h     |  2 +-
- 3 files changed, 10 insertions(+), 10 deletions(-)
+ fs/f2fs/data.c   |  2 +-
+ fs/f2fs/f2fs.h   |  2 +-
+ fs/f2fs/inline.c | 10 +++++-----
+ fs/f2fs/node.c   |  2 +-
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 990b93689b46..eb5cd1457ffc 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -160,17 +160,17 @@ void f2fs_destroy_compress_ctx(struct compress_ctx *cc, bool reuse)
- 		cc->cluster_idx = NULL_CLUSTER;
- }
- 
--void f2fs_compress_ctx_add_page(struct compress_ctx *cc, struct page *page)
-+void f2fs_compress_ctx_add_page(struct compress_ctx *cc, struct folio *folio)
- {
- 	unsigned int cluster_ofs;
- 
--	if (!f2fs_cluster_can_merge_page(cc, page->index))
-+	if (!f2fs_cluster_can_merge_page(cc, folio->index))
- 		f2fs_bug_on(F2FS_I_SB(cc->inode), 1);
- 
--	cluster_ofs = offset_in_cluster(cc, page->index);
--	cc->rpages[cluster_ofs] = page;
-+	cluster_ofs = offset_in_cluster(cc, folio->index);
-+	cc->rpages[cluster_ofs] = folio_page(folio, 0);
- 	cc->nr_rpages++;
--	cc->cluster_idx = cluster_idx(cc, page->index);
-+	cc->cluster_idx = cluster_idx(cc, folio->index);
- }
- 
- #ifdef CONFIG_F2FS_FS_LZO
-@@ -1093,7 +1093,7 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
- 		if (PageUptodate(page))
- 			f2fs_put_page(page, 1);
- 		else
--			f2fs_compress_ctx_add_page(cc, page);
-+			f2fs_compress_ctx_add_page(cc, page_folio(page));
- 	}
- 
- 	if (!f2fs_cluster_is_empty(cc)) {
-@@ -1123,7 +1123,7 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
- 		}
- 
- 		f2fs_wait_on_page_writeback(page, DATA, true, true);
--		f2fs_compress_ctx_add_page(cc, page);
-+		f2fs_compress_ctx_add_page(cc, page_folio(page));
- 
- 		if (!PageUptodate(page)) {
- release_and_retry:
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index e9570f4e0f21..100b6526717f 100644
+index 0df5a0c66ede..6d2a37db0c9e 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -2429,7 +2429,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
- 		if (ret)
- 			goto set_error_page;
+@@ -2866,7 +2866,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
  
--		f2fs_compress_ctx_add_page(&cc, &folio->page);
-+		f2fs_compress_ctx_add_page(&cc, folio);
- 
- 		goto next_page;
- read_single_page:
-@@ -3161,7 +3161,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 			if (f2fs_compressed_file(inode)) {
- 				folio_get(folio);
--				f2fs_compress_ctx_add_page(&cc, &folio->page);
-+				f2fs_compress_ctx_add_page(&cc, folio);
- 				continue;
- 			}
- #endif
+ 	err = -EAGAIN;
+ 	if (f2fs_has_inline_data(inode)) {
+-		err = f2fs_write_inline_data(inode, page);
++		err = f2fs_write_inline_data(inode, folio);
+ 		if (!err)
+ 			goto out;
+ 	}
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 51fd5063a69c..df436dd3aac1 100644
+index a4b90215a51f..7c7760aa1a7c 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -4322,7 +4322,7 @@ bool f2fs_cluster_can_merge_page(struct compress_ctx *cc, pgoff_t index);
- bool f2fs_all_cluster_page_ready(struct compress_ctx *cc, struct page **pages,
- 				int index, int nr_pages, bool uptodate);
- bool f2fs_sanity_check_cluster(struct dnode_of_data *dn);
--void f2fs_compress_ctx_add_page(struct compress_ctx *cc, struct page *page);
-+void f2fs_compress_ctx_add_page(struct compress_ctx *cc, struct folio *folio);
- int f2fs_write_multi_pages(struct compress_ctx *cc,
- 						int *submitted,
- 						struct writeback_control *wbc,
+@@ -4185,7 +4185,7 @@ int f2fs_read_inline_data(struct inode *inode, struct folio *folio);
+ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page);
+ int f2fs_convert_inline_inode(struct inode *inode);
+ int f2fs_try_convert_inline_dir(struct inode *dir, struct dentry *dentry);
+-int f2fs_write_inline_data(struct inode *inode, struct page *page);
++int f2fs_write_inline_data(struct inode *inode, struct folio *folio);
+ int f2fs_recover_inline_data(struct inode *inode, struct page *npage);
+ struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
+ 					const struct f2fs_filename *fname,
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 98d122164cd1..005babf1bed1 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -260,7 +260,7 @@ int f2fs_convert_inline_inode(struct inode *inode)
+ 	return err;
+ }
+ 
+-int f2fs_write_inline_data(struct inode *inode, struct page *page)
++int f2fs_write_inline_data(struct inode *inode, struct folio *folio)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct page *ipage;
+@@ -274,14 +274,14 @@ int f2fs_write_inline_data(struct inode *inode, struct page *page)
+ 		return -EAGAIN;
+ 	}
+ 
+-	f2fs_bug_on(F2FS_I_SB(inode), page->index);
++	f2fs_bug_on(F2FS_I_SB(inode), folio->index);
+ 
+ 	f2fs_wait_on_page_writeback(ipage, NODE, true, true);
+-	memcpy_from_page(inline_data_addr(inode, ipage),
+-			 page, 0, MAX_INLINE_DATA(inode));
++	memcpy_from_folio(inline_data_addr(inode, ipage),
++			 folio, 0, MAX_INLINE_DATA(inode));
+ 	set_page_dirty(ipage);
+ 
+-	f2fs_clear_page_cache_dirty_tag(page_folio(page));
++	f2fs_clear_page_cache_dirty_tag(folio);
+ 
+ 	set_inode_flag(inode, FI_APPEND_WRITE);
+ 	set_inode_flag(inode, FI_DATA_EXIST);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 20518c12f5b7..2b764c86aacc 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1535,7 +1535,7 @@ static void flush_inline_data(struct f2fs_sb_info *sbi, nid_t ino)
+ 	if (!clear_page_dirty_for_io(page))
+ 		goto page_out;
+ 
+-	ret = f2fs_write_inline_data(inode, page);
++	ret = f2fs_write_inline_data(inode, page_folio(page));
+ 	inode_dec_dirty_pages(inode);
+ 	f2fs_remove_dirty_inode(inode);
+ 	if (ret)
 -- 
 2.40.1
 
