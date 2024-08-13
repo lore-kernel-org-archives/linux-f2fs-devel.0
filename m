@@ -4,131 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 16E81C52D7B
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Aug 2024 07:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4E2EBC52D7C
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Aug 2024 14:13:56 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sdm1Z-0006nl-U5;
-	Tue, 13 Aug 2024 07:32:57 +0000
+	id 1sdsHa-0008EI-Nf;
+	Tue, 13 Aug 2024 14:13:54 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <youngjin.gil@samsung.com>) id 1sdm1Y-0006nb-CG
+ (envelope-from <chao@kernel.org>) id 1sdsHY-0008EC-Rp
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Aug 2024 07:32:56 +0000
+ Tue, 13 Aug 2024 14:13:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
- MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zG6ilKTn8eNmcV9EFzJK5daAN5h+HI6Gemb8abNBuJk=; b=NZ8JCdyegWS5oD68YO3q8LQDJW
- bO6mQCLPjc1s4ZXHD/iaKquUbjAkb4vA3S41T+NyAcIdhUKBQcjDWmOQ/W+TFS1DqtRCQEm8xPNz3
- SoritgRYodqq2Xip+4YX0lUo2y8PFyz/yXopsw6g0ExJgXp6BvyBJ+tY78NacqJSRdNo=;
+ bh=CgUI+2tXv2m0nVzqIL76WrwoGRP9ACYfDzKtSiw9BfM=; b=e/8T0eg0KnP68rQNOQ/KmSK9og
+ ycA7bcIKZiMtkvYiEyki27/7aAxJYOQBLX0ZPOkDq+yJUz8YB+3EPOtQ969XzH+KpFkjq9WEQePIF
+ 4nOz6ezCYNehBlRtYIY1nFEr8BOVE5nu6WKtXloxlrdk+Z/BiylfJ4BqaoVAX/qpU7ZQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id
- :Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=zG6ilKTn8eNmcV9EFzJK5daAN5h+HI6Gemb8abNBuJk=; b=V
- 5ltJP4N6471CQBXcFAJh8hOBW5ajr/7r0iwZo7UN/SzouvDdNVwesn74Akac743lJH1pNf3fPwd4g
- 2LO2Sgv2FwAmfgm8+z7buI4mZp5wTalPXobrUWFAQHC08LpN7EX0YhgKVftJcCbsRL3dH2diwJEIS
- bP1fb09b2u6vbptI=;
-Received: from mailout4.samsung.com ([203.254.224.34])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=CgUI+2tXv2m0nVzqIL76WrwoGRP9ACYfDzKtSiw9BfM=; b=SVmwaK6aJkKecQ6+y89FZt4mGL
+ H9dWIgjAlLJMahGja1q355M2z+AwVdGOYRU8y34wWuQOyGCKUK5gbVOtLATisHxv+dHkngfqeLAy6
+ xashyqOnO91fj7fy8Sv7uOpVu8vuAwJNp9aR04LM4X2V7kvAqh7zOssd1hJx1TUp02NM=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sdm1W-0005Ns-Kl for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Aug 2024 07:32:56 +0000
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
- by mailout4.samsung.com (KnoxPortal) with ESMTP id
- 20240813073247epoutp04405a0e35e55160f3f058f216a75222e9~rOWAwA87F1979119791epoutp04L
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 13 Aug 2024 07:32:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com
- 20240813073247epoutp04405a0e35e55160f3f058f216a75222e9~rOWAwA87F1979119791epoutp04L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
- s=mail20170921; t=1723534367;
- bh=zG6ilKTn8eNmcV9EFzJK5daAN5h+HI6Gemb8abNBuJk=;
- h=From:To:Cc:Subject:Date:References:From;
- b=n02JOwwmyaTY93Qq4+reruPpXRnDlSWMOvq638x33EcOj4dRZycrbNw91+/24Ojld
- J4VkgoHoucNvR2FsXCoD7T0rvQicMYvOnNovT6phmOmeOOMoUEgaUD9kNr7/kdxioE
- Csb8ijO1nU4hetpQzCD6e/Dw3nGCdFyyVLcKqe+Q=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
- epcas1p1.samsung.com (KnoxPortal) with ESMTP id
- 20240813073247epcas1p1a5986fdba4af931962a07b631f37ce71~rOWAeSXVh2396423964epcas1p1M;
- Tue, 13 Aug 2024 07:32:47 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.38.242]) by
- epsnrtp3.localdomain (Postfix) with ESMTP id 4Wjjlf6cx2z4x9Q7; Tue, 13 Aug
- 2024 07:32:46 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
- epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
- A6.C5.08992.E1C0BB66; Tue, 13 Aug 2024 16:32:46 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
- epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
- 20240813073246epcas1p4085b32d2b008b77119b811dc328b964e~rOV-i0cGo0063700637epcas1p4c;
- Tue, 13 Aug 2024 07:32:46 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
- epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
- 20240813073246epsmtrp2b542b92e37c497f1ac776c80eff6a660~rOV-hnS5V0250902509epsmtrp2Y;
- Tue, 13 Aug 2024 07:32:46 +0000 (GMT)
-X-AuditID: b6c32a33-70bff70000002320-aa-66bb0c1ec355
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
- epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
- 3F.82.08964.E1C0BB66; Tue, 13 Aug 2024 16:32:46 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.253.99.41]) by
- epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
- 20240813073246epsmtip2a802335dba448035f5e87d2e088c0d4d~rOV-R5H9l1326513265epsmtip2W;
- Tue, 13 Aug 2024 07:32:46 +0000 (GMT)
-From: Yeongjin Gil <youngjin.gil@samsung.com>
-To: jaegeuk@kernel.org, chao@kernel.org, daehojeong@google.com
-Date: Tue, 13 Aug 2024 16:32:44 +0900
-Message-Id: <20240813073244.9052-1-youngjin.gil@samsung.com>
+ id 1sdsHY-0001CJ-3l for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Aug 2024 14:13:52 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id BD9446170E;
+ Tue, 13 Aug 2024 14:13:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04FC6C4AF0B;
+ Tue, 13 Aug 2024 14:13:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1723558426;
+ bh=r8VUUyyyojUjPoAkVdjtfFrqOLyTXjXWxZ3MOiPSYtc=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=q7Ws6BEUshWrGSkJ6u4ewdjywioZy237bBmdMqh1qJUIyGgigcirqLDjCC+IxTknZ
+ 5fVyXQ+QUcBwqUiDQPBEDOHzeBk2KuzDq1Tl9sTJuVSCL45d+EQi9sPHGJz0fgzm2Z
+ 6pKbzAhXdL2RLzcYIJKnPM1yjoNxsvq/oP2NUu0LmuIGrZe1YuS2Y11rcXC7bALDQw
+ XzD2mqp2kfacqv9pyuCySGeuwzcU499UfsiQnAB1aeNC4Kg+CPs226Hd/thhKUW+f0
+ 0quITyLHUZZS5mLINWSNJqMiiDrczFepJXA2q6+N6aOviZT2opgDepR2f9Sb+fxePA
+ aTO8Aq0m3Vtzg==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Tue, 13 Aug 2024 22:13:24 +0800
+Message-Id: <20240813141331.417067-2-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240813141331.417067-1-chao@kernel.org>
+References: <20240813141331.417067-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNJsWRmVeSWpSXmKPExsWy7bCmnq4cz+40g+mn9S1OTz3LZDG1fS+j
- xZP1s5gtLi1yt7i8aw6bxYLW3ywWW/4dYbWYsf8puwOHx4JNpR6bVnWyeexe8JnJo2/LKkaP
- z5vkAlijGhhtEouSMzLLUhVS85LzUzLz0m2VQkPcdC2UFDLyi0tslaINDY30DA3M9YyMjPRM
- jWKtjEyVFPISc1NtlSp0oXqVFIqSC4BqcyuLgQbkpOpBxfWKU/NSHLLyS0HO1ytOzC0uzUvX
- S87PVVIoS8wpBRqhpJ/wjTFjX/81xoIJfBXvDu1jaWA8w93FyMkhIWAisWDZMpYuRi4OIYEd
- jBI9K5rYIZxPjBLrJvxkgnC+MUqcuL6TCaZlzrUGqMReRoldb1YxwrU0rHzCCFLFJqArMfXl
- U1YQW0TATuLWzUWsIEXMAkcYJX7v2g5WJCzgLbFt+ydmEJtFQFXi96XrYHFeARuJPzfOs0Gs
- k5e42bWfGSIuKHFy5hMWEJsZKN68dTYzyFAJgWvsEp9XLmeEaHCRePPoIFSzsMSr41vYIWwp
- ic/v9rJBNKxilHjT+okJwtnOKDH9cQ9Uh71Ec2szkM0BtEJTYv0ufYhtfBLvvvawQpQISpy+
- 1s0MUiIhwCvR0SYEEVaTuDLpF1SJjETfg1lQez0kPu8/BzZdSCBW4mTnBPYJjPKzkPwzC8k/
- sxAWL2BkXsUollpQnJuemmxYYIgct5sYwelUy3gH4+X5//QOMTJxMB5ilOBgVhLhDTTZlSbE
- m5JYWZValB9fVJqTWnyIMRkYwhOZpUST84EJPa8k3tDMzNLC0sjE0NjM0JCwsImlgYmZkYmF
- saWxmZI475krZalCAumJJanZqakFqUUwW5g4OKUamDKca1m+vr5uOGH2zES+4O/rdpu2vw2/
- 55nzzDRMVc9vDe8S7Uz2t4sORVr095+6t0r7w26NPo+lD/KbuNeqnera335VPL/C8cgqJY98
- t78vvwfVvGgInf+3Y+YGidafCq2mNesWTnp+/wHjxI2L47LP3pSyMv3RmJF4qW/Cga02U2wD
- Lp7MKMlL6fz1s3hWbSRz8jxTqbmNZwNvcbkEpLllb5n9d/FLLu9LGuL/MvZbXYqbdG0e0+qt
- oTGBORPDvz2ZuK3q3TrZWwezVvzgKHm5Yxq7euSTf9837l5x+drV+THPO8y3Ra5jdeYW0jP5
- 6jLLs+zTBq91W061LN8nJjHtkKXsr8sqs1YuOB8r9ChGiaU4I9FQi7moOBEAnAwO3V4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrELMWRmVeSWpSXmKPExsWy7bCSvK4cz+40g+mXeCxOTz3LZDG1fS+j
- xZP1s5gtLi1yt7i8aw6bxYLW3ywWW/4dYbWYsf8puwOHx4JNpR6bVnWyeexe8JnJo2/LKkaP
- z5vkAlijuGxSUnMyy1KL9O0SuDL29V9jLJjAV/Hu0D6WBsYz3F2MnBwSAiYSc641MHUxcnEI
- CexmlOhtusYKkZCR+DPxPVsXIweQLSxx+HAxRM0HRolVrYvZQGrYBHQlpr58ClYvIuAk8f9G
- OztIEbPACUaJr4u/MoEkhAW8JbZt/8QMYrMIqEr8vnSdEcTmFbCR+HPjPBvEMnmJm137mSHi
- ghInZz5hAbGZgeLNW2czT2Dkm4UkNQtJagEj0ypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k
- /NxNjOBg1dLcwbh91Qe9Q4xMHIyHGCU4mJVEeANNdqUJ8aYkVlalFuXHF5XmpBYfYpTmYFES
- 5xV/0ZsiJJCeWJKanZpakFoEk2Xi4JRqYDLVr+0/Ze7kySJs5TFPXWl3R9X5zUY7n8VfSj69
- rEpIIPrUynV2JQxvuk46yb87HmH53t7PPptnUdjDD63hPl4mP1pFORcdSRSvdI3N6+/WuiG1
- VXih//OWb8JqWVkxRpN5Nv3Xmso292/4hS3ThOtMbPZd3aufXHPT6M2etBeZR64n2f/p/a7v
- IaT5ZVnCTsfqWPbH+dtm8DfFflF7ym87Jzt57zI/E8f+ZieTd0EPFqT9D+LasG2Dqn7XR7NT
- QkfdzyecCNrP0rNoQtrlXJnYGys5pun0PNm5Sz92ltDlhE0rTBZNZ2oOyV77/26IbZqvyJLp
- L6osbsyZ/vrim1ihhD1J0ZOVp0Q7S7hOUGIpzkg01GIuKk4EAMP3DqvFAgAA
-X-CMS-MailID: 20240813073246epcas1p4085b32d2b008b77119b811dc328b964e
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-ArchiveUser: EV
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240813073246epcas1p4085b32d2b008b77119b811dc328b964e
-References: <CGME20240813073246epcas1p4085b32d2b008b77119b811dc328b964e@epcas1p4.samsung.com>
-X-Headers-End: 1sdm1W-0005Ns-Kl
-Subject: [f2fs-dev] [PATCH] f2fs: Create COW inode from parent dentry for
- atomic write
+X-Headers-End: 1sdsHY-0001CJ-3l
+Subject: [f2fs-dev] [PATCH 2/9] f2fs: convert f2fs_vm_page_mkwrite() to use
+ folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -140,59 +78,120 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Sungjong Seo <sj1557.seo@samsung.com>, linux-kernel@vger.kernel.org,
+Cc: linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The i_pino in f2fs_inode_info has the previous parent's i_ino when inode
-was renamed, which may cause f2fs_ioc_start_atomic_write to fail.
-If file_wrong_pino is true and i_nlink is 1, then to find a valid pino,
-we should refer to the dentry from inode.
+Convert to use folio, so that we can get rid of 'page->index' to
+prepare for removal of 'index' field in structure page [1].
 
-To resolve this issue, let's get parent inode using parent dentry
-directly.
+[1] https://lore.kernel.org/all/Zp8fgUSIBGQ1TN0D@casper.infradead.org/
 
-Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
-Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
-Reviewed-by: Sunmin Jeong <s_min.jeong@samsung.com>
-Signed-off-by: Yeongjin Gil <youngjin.gil@samsung.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/file.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ fs/f2fs/file.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index fba8b5f216f9..1eae123f0315 100644
+index 8d2f4160a8eb..3c73da7bb05a 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -2127,7 +2127,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
- 	struct mnt_idmap *idmap = file_mnt_idmap(filp);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
+@@ -53,7 +53,7 @@ static vm_fault_t f2fs_filemap_fault(struct vm_fault *vmf)
+ 
+ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ {
+-	struct page *page = vmf->page;
++	struct folio *folio = page_folio(vmf->page);
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct inode *pinode;
- 	loff_t isize;
- 	int ret;
+ 	struct dnode_of_data dn;
+@@ -85,7 +85,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
  
-@@ -2178,15 +2177,10 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
- 	/* Check if the inode already has a COW inode */
- 	if (fi->cow_inode == NULL) {
- 		/* Create a COW inode for atomic write */
--		pinode = f2fs_iget(inode->i_sb, fi->i_pino);
--		if (IS_ERR(pinode)) {
--			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
--			ret = PTR_ERR(pinode);
--			goto out;
--		}
-+		struct dentry *dentry = file_dentry(filp);
-+		struct inode *dir = d_inode(dentry->d_parent);
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	if (f2fs_compressed_file(inode)) {
+-		int ret = f2fs_is_compressed_cluster(inode, page->index);
++		int ret = f2fs_is_compressed_cluster(inode, folio->index);
  
--		ret = f2fs_get_tmpfile(idmap, pinode, &fi->cow_inode);
--		iput(pinode);
-+		ret = f2fs_get_tmpfile(idmap, dir, &fi->cow_inode);
- 		if (ret) {
- 			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
- 			goto out;
+ 		if (ret < 0) {
+ 			err = ret;
+@@ -105,11 +105,11 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 
+ 	file_update_time(vmf->vma->vm_file);
+ 	filemap_invalidate_lock_shared(inode->i_mapping);
+-	lock_page(page);
+-	if (unlikely(page->mapping != inode->i_mapping ||
+-			page_offset(page) > i_size_read(inode) ||
+-			!PageUptodate(page))) {
+-		unlock_page(page);
++	folio_lock(folio);
++	if (unlikely(folio->mapping != inode->i_mapping ||
++			folio_pos(folio) > i_size_read(inode) ||
++			!folio_test_uptodate(folio))) {
++		folio_unlock(folio);
+ 		err = -EFAULT;
+ 		goto out_sem;
+ 	}
+@@ -117,9 +117,9 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	set_new_dnode(&dn, inode, NULL, NULL, 0);
+ 	if (need_alloc) {
+ 		/* block allocation */
+-		err = f2fs_get_block_locked(&dn, page->index);
++		err = f2fs_get_block_locked(&dn, folio->index);
+ 	} else {
+-		err = f2fs_get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
++		err = f2fs_get_dnode_of_data(&dn, folio->index, LOOKUP_NODE);
+ 		f2fs_put_dnode(&dn);
+ 		if (f2fs_is_pinned_file(inode) &&
+ 		    !__is_valid_data_blkaddr(dn.data_blkaddr))
+@@ -127,11 +127,11 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	}
+ 
+ 	if (err) {
+-		unlock_page(page);
++		folio_unlock(folio);
+ 		goto out_sem;
+ 	}
+ 
+-	f2fs_wait_on_page_writeback(page, DATA, false, true);
++	f2fs_wait_on_page_writeback(folio_page(folio, 0), DATA, false, true);
+ 
+ 	/* wait for GCed page writeback via META_MAPPING */
+ 	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
+@@ -139,18 +139,18 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	/*
+ 	 * check to see if the page is mapped already (no holes)
+ 	 */
+-	if (PageMappedToDisk(page))
++	if (folio_test_mappedtodisk(folio))
+ 		goto out_sem;
+ 
+ 	/* page is wholly or partially inside EOF */
+-	if (((loff_t)(page->index + 1) << PAGE_SHIFT) >
++	if (((loff_t)(folio->index + 1) << PAGE_SHIFT) >
+ 						i_size_read(inode)) {
+ 		loff_t offset;
+ 
+ 		offset = i_size_read(inode) & ~PAGE_MASK;
+-		zero_user_segment(page, offset, PAGE_SIZE);
++		folio_zero_segment(folio, offset, folio_size(folio));
+ 	}
+-	set_page_dirty(page);
++	folio_mark_dirty(folio);
+ 
+ 	f2fs_update_iostat(sbi, inode, APP_MAPPED_IO, F2FS_BLKSIZE);
+ 	f2fs_update_time(sbi, REQ_TIME);
+@@ -162,7 +162,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ out:
+ 	ret = vmf_fs_error(err);
+ 
+-	trace_f2fs_vm_page_mkwrite(inode, page->index, vmf->vma->vm_flags, ret);
++	trace_f2fs_vm_page_mkwrite(inode, folio->index, vmf->vma->vm_flags, ret);
+ 	return ret;
+ }
+ 
 -- 
 2.40.1
 
