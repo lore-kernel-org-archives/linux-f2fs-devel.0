@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 18139C52D7C
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3A193C52D7B
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 Aug 2024 02:32:49 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1se3of-0007G7-7X;
+	id 1se3oe-0007u5-Qs;
 	Wed, 14 Aug 2024 02:32:48 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lihongbo22@huawei.com>) id 1se3od-0007Fz-R6
+ (envelope-from <lihongbo22@huawei.com>) id 1se3od-0007tx-OR
  for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 14 Aug 2024 02:32:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AcPxhlT3vwNDfR8D6DWGk+04c1moSkfSKqi8ARDqwXs=; b=TqK3CPPwJSh0R9NpuyJPYX6c8F
- ioqJ4+jLP8xLe/piK9Cqm9lck6NMiDDPXGUwGvfcJwlgeBOkNcLgcdzlZyTf3nA84FPO+WA1MvD8Y
- 4xfcBYr9uZX5Ppyg9KqfDcrL697EtYCeVgUywcA86KW5u1St0v4xDVEKgiFwwcRZQUqA=;
+ bh=cxSAG1Dt6z3vTnaLtIDP98M0vbyUnxcgEXYmsOfDo3M=; b=ERlJUt84fgVJsV8kh6n+YjtzQG
+ PoM+K8aUNBGC4djKxFLuMLTxLUF8DWH5ebG4al2mwUmmJm8HwkFxjwYqBxY8LH5OTwdnjyg0Bgtlo
+ 3rePpif3HJdu043GGLfDNisbTkWrOrVpP2Cqy9xKVzNzrlXRvmPjFOLARA50PXpouh40=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -33,27 +33,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=AcPxhlT3vwNDfR8D6DWGk+04c1moSkfSKqi8ARDqwXs=; b=C2sm/AW9SEf+CwfZ3bRzdBlvfO
- W1ZTrxkKI+q9serzf5i4frCcVwhAjmrSLinre9KIKrn+ZT73GnuJkQe3zxedA0acb2K68EEE1bgTj
- fFgpUOI4ms6Lhd3MJiwyZEEPyHyzp3SoPiCaSSXDTd5yjw5HIY7W6/wi3NOt9RiUM9RI=;
-Received: from szxga04-in.huawei.com ([45.249.212.190])
+ bh=cxSAG1Dt6z3vTnaLtIDP98M0vbyUnxcgEXYmsOfDo3M=; b=dI1IDqV/lTyuMXGpxvfRGQbGBG
+ s7e8hJNT4UWM2aouQQ5+8b0fZf8dnSE1l2M+8kHj6mwT4Xd7y+aabp8VAEvMSz5PGfN31gPZFF1UH
+ c6eW2lBZ/rUbl6z+Xw3FUEHGn71u6O6Og31czaJkD38e00bq0GrMbYG752mdutBxw03E=;
+Received: from szxga05-in.huawei.com ([45.249.212.191])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1se3oc-0005Uz-6b for linux-f2fs-devel@lists.sourceforge.net;
+ id 1se3oc-0005Uy-8j for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 14 Aug 2024 02:32:47 +0000
-Received: from mail.maildlp.com (unknown [172.19.162.112])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WkBxd4PHDz20lcQ;
- Wed, 14 Aug 2024 10:28:05 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+ by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WkBxH3Sh3z1j6Pv;
+ Wed, 14 Aug 2024 10:27:47 +0800 (CST)
 Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
- by mail.maildlp.com (Postfix) with ESMTPS id 3622914037B;
- Wed, 14 Aug 2024 10:32:39 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id D8CDC140109;
+ Wed, 14 Aug 2024 10:32:38 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by dggpeml500022.china.huawei.com
  (7.185.36.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 14 Aug
  2024 10:32:38 +0800
 To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Wed, 14 Aug 2024 10:39:06 +0800
-Message-ID: <20240814023912.3959299-4-lihongbo22@huawei.com>
+Date: Wed, 14 Aug 2024 10:39:04 +0800
+Message-ID: <20240814023912.3959299-2-lihongbo22@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240814023912.3959299-1-lihongbo22@huawei.com>
 References: <20240814023912.3959299-1-lihongbo22@huawei.com>
@@ -61,9 +61,9 @@ MIME-Version: 1.0
 X-Originating-IP: [10.90.53.73]
 X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
  dggpeml500022.china.huawei.com (7.185.36.66)
-X-Headers-End: 1se3oc-0005Uz-6b
-Subject: [f2fs-dev] [PATCH 3/9] f2fs: move option validation into a separate
- helper
+X-Headers-End: 1se3oc-0005Uy-8j
+Subject: [f2fs-dev] [PATCH 1/9] f2fs: Add fs parameter specifications for
+ mount options
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,74 +83,114 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Just move option validation out of parse_options(), and the
-validation logic is enclosed within f2fs_validate_options.
+Use an array of `fs_parameter_spec` called f2fs_param_specs to
+hold the mount option specifications for the new mount api.
 
 Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
 ---
- fs/f2fs/super.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+ fs/f2fs/super.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 013b1078653f..8c8cd06a6d9c 100644
+index 3959fd137cc9..1bd923a73c1f 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -41,6 +41,8 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/f2fs.h>
+@@ -28,6 +28,7 @@
+ #include <linux/part_stat.h>
+ #include <linux/zstd.h>
+ #include <linux/lz4.h>
++#include <linux/fs_parser.h>
  
-+static int f2fs_validate_options(struct super_block *sb);
-+
- static struct kmem_cache *f2fs_inode_cachep;
+ #include "f2fs.h"
+ #include "node.h"
+@@ -189,9 +190,87 @@ enum {
+ 	Opt_memory_mode,
+ 	Opt_age_extent_cache,
+ 	Opt_errors,
++	Opt_jqfmt,
++	Opt_checkpoint,
+ 	Opt_err,
+ };
  
- #ifdef CONFIG_F2FS_FAULT_INJECTION
-@@ -1418,7 +1420,15 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 				return ret;
- 		}
- 	}
++static const struct constant_table f2fs_param_jqfmt[] = {
++	{"vfsold",	QFMT_VFS_OLD},
++	{"vfsv0",	QFMT_VFS_V0},
++	{"vfsv1",	QFMT_VFS_V1},
++	{}
++};
 +
- default_check:
-+	return f2fs_validate_options(sb);
-+}
++static const struct fs_parameter_spec f2fs_param_specs[] = {
++	fsparam_string("background_gc", Opt_gc_background),
++	fsparam_flag("disable_roll_forward", Opt_disable_roll_forward),
++	fsparam_flag("norecovery", Opt_norecovery),
++	fsparam_flag("discard", Opt_discard),
++	fsparam_flag("nodiscard", Opt_nodiscard),
++	fsparam_flag("no_heap", Opt_noheap),
++	fsparam_flag("heap", Opt_heap),
++	fsparam_flag("user_xattr", Opt_user_xattr),
++	fsparam_flag("nouser_xattr", Opt_nouser_xattr),
++	fsparam_flag("acl", Opt_acl),
++	fsparam_flag("noacl", Opt_noacl),
++	fsparam_s32("active_logs", Opt_active_logs),
++	fsparam_flag("disable_ext_identify", Opt_disable_ext_identify),
++	fsparam_flag("inline_xattr", Opt_inline_xattr),
++	fsparam_flag("noinline_xattr", Opt_noinline_xattr),
++	fsparam_s32("inline_xattr_size", Opt_inline_xattr_size),
++	fsparam_flag("inline_data", Opt_inline_data),
++	fsparam_flag("inline_dentry", Opt_inline_dentry),
++	fsparam_flag("noinline_dentry", Opt_noinline_dentry),
++	fsparam_flag("flush_merge", Opt_flush_merge),
++	fsparam_flag("noflush_merge", Opt_noflush_merge),
++	fsparam_flag("barrier", Opt_barrier),
++	fsparam_flag("nobarrier", Opt_nobarrier),
++	fsparam_flag("fastboot", Opt_fastboot),
++	fsparam_flag("extent_cache", Opt_extent_cache),
++	fsparam_flag("noextent_cache", Opt_noextent_cache),
++	fsparam_flag("noinline_data", Opt_noinline_data),
++	fsparam_flag("data_flush", Opt_data_flush),
++	fsparam_u32("reserve_root", Opt_reserve_root),
++	fsparam_u32("resgid", Opt_resgid),
++	fsparam_u32("resuid", Opt_resuid),
++	fsparam_string("mode", Opt_mode),
++	fsparam_s32("fault_injection", Opt_fault_injection),
++	fsparam_u32("fault_type", Opt_fault_type),
++	fsparam_flag("quota", Opt_quota),
++	fsparam_flag("noquota", Opt_noquota),
++	fsparam_flag("usrquota", Opt_usrquota),
++	fsparam_flag("grpquota", Opt_grpquota),
++	fsparam_flag("prjquota", Opt_prjquota),
++	fsparam_string_empty("usrjquota", Opt_usrjquota),
++	fsparam_string_empty("grpjquota", Opt_grpjquota),
++	fsparam_string_empty("prjjquota", Opt_prjjquota),
++	fsparam_enum("jqfmt", Opt_jqfmt, f2fs_param_jqfmt),
++	fsparam_string("alloc_mode", Opt_alloc),
++	fsparam_string("fsync_mode", Opt_fsync),
++	fsparam_string("test_dummy_encryption", Opt_test_dummy_encryption),
++	fsparam_flag("test_dummy_encryption", Opt_test_dummy_encryption),
++	fsparam_flag("inlinecrypt", Opt_inlinecrypt),
++	fsparam_string("checkpoint", Opt_checkpoint),
++	fsparam_flag("checkpoint_merge", Opt_checkpoint_merge),
++	fsparam_flag("nocheckpoint_merge", Opt_nocheckpoint_merge),
++	fsparam_string("compress_algorithm", Opt_compress_algorithm),
++	fsparam_u32("compress_log_size", Opt_compress_log_size),
++	fsparam_string("compress_extension", Opt_compress_extension),
++	fsparam_string("nocompress_extension", Opt_nocompress_extension),
++	fsparam_flag("compress_chksum", Opt_compress_chksum),
++	fsparam_string("compress_mode", Opt_compress_mode),
++	fsparam_flag("compress_cache", Opt_compress_cache),
++	fsparam_flag("atgc", Opt_atgc),
++	fsparam_flag("gc_merge", Opt_gc_merge),
++	fsparam_flag("nogc_merge", Opt_nogc_merge),
++	fsparam_string("discard_unit", Opt_discard_unit),
++	fsparam_string("memory", Opt_memory_mode),
++	fsparam_flag("age_extent_cache", Opt_age_extent_cache),
++	fsparam_string("errors", Opt_errors),
++	{}
++};
 +
-+static int f2fs_validate_options(struct super_block *sb)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+
- #ifdef CONFIG_QUOTA
- 	if (f2fs_check_quota_options(sbi))
- 		return -EINVAL;
-@@ -1432,13 +1442,13 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 		return -EINVAL;
- 	}
- #endif
--
--	if (!IS_ENABLED(CONFIG_UNICODE) && f2fs_sb_has_casefold(sbi)) {
-+#if !IS_ENABLED(CONFIG_UNICODE)
-+	if (f2fs_sb_has_casefold(sbi)) {
- 		f2fs_err(sbi,
- 			"Filesystem with casefold feature cannot be mounted without CONFIG_UNICODE");
- 		return -EINVAL;
- 	}
--
-+#endif
- 	/*
- 	 * The BLKZONED feature indicates that the drive was formatted with
- 	 * zone alignment optimization. This is optional for host-aware
-@@ -1458,10 +1468,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			return -EINVAL;
- 		}
- #else
--		f2fs_err(sbi, "Zoned block device support is not enabled");
--		return -EINVAL;
-+			f2fs_err(sbi, "Zoned block device support is not enabled");
-+			return -EINVAL;
- #endif
--	}
-+		}
- 
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	if (f2fs_test_compress_extension(sbi)) {
+ static match_table_t f2fs_tokens = {
+ 	{Opt_gc_background, "background_gc=%s"},
+ 	{Opt_disable_roll_forward, "disable_roll_forward"},
 -- 
 2.34.1
 
