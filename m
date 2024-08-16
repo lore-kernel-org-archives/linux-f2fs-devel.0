@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7BEDFC52D7C
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Aug 2024 01:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7B464C52D7C
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Aug 2024 02:30:36 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1semCq-0003qX-1j;
-	Fri, 16 Aug 2024 01:56:43 +0000
+	id 1semjb-0004bp-6i;
+	Fri, 16 Aug 2024 02:30:34 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1semCo-0003qR-T5
+ (envelope-from <dlemoal@kernel.org>) id 1semja-0004bi-4T
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 16 Aug 2024 01:56:42 +0000
+ Fri, 16 Aug 2024 02:30:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=u2bM0cUIKVeOIyqClZJbyu+G796CPJouut+35KoTLX0=; b=c4c6wg/9YlxeKDFvdMSTyuuTfk
- 79wXX8nTk236CeWj9NZljnMng/6qN5IWLMPhWat9BUApda/5RbWfNGyVAyN5OJCDi26SY19bCq4/k
- aI3Fo1Hh7cgaMrUfTyWZfSEBpZA5BraXrlqrgtfT30eZZNBBdbVcS3MDnSkVdDESbONM=;
+ bh=7SeoSU/PRu22uMkUFO6EkAXNfWasgRhCOGCVEjrCiXI=; b=PvQIeg7mZvpcL/nSFnBW2BxivG
+ Tkd2F8K578WIfLv5e/Fha+67jv8RJJaWRN6jbWktHRJJDKdZ+EymfF4vgTWndmCpQgZscCLRgiSc5
+ UURqnap8OdRWpl286/1Jvm9V5AGTKpO5BtrqqmCndfJXLtHoNiESydF0QULx6y9YHJlw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,47 +33,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=u2bM0cUIKVeOIyqClZJbyu+G796CPJouut+35KoTLX0=; b=khbzhdj3JB1pZBsvVRFRb5FNa0
- a164UPqxmNnlslbyjnt+GEHlyUeR87N50vexypnxPgLR77pRkxg3FSMXKfqRfnleIIWKyJ/3W9usr
- ztmTyGaZgz1qyedJ3MCrxaDugpa3ZMMVDpA6mTrn13PMV3nBBtdilalhEAgUsbN4mAzY=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=7SeoSU/PRu22uMkUFO6EkAXNfWasgRhCOGCVEjrCiXI=; b=eqGyt3yniXCUbXQi0zgMYLTEb6
+ SDQccqID/zzs2sQJXGIL5vVQUn+IdjV7oHUiKTQC8DyOqqKFt0Ht3lNTnSbCBg5hY+EMIqvvJvIUf
+ v1UDM+oRd0U5HsuH1B+xrpgvAyBlOIuhessrs64jk6OYQrdlWmrQbQfdm6isFYhgG2IM=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1semCn-0006qY-HJ for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 16 Aug 2024 01:56:42 +0000
+ id 1semjY-0002Mj-GL for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 16 Aug 2024 02:30:33 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 2587362087;
- Fri, 16 Aug 2024 01:56:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B0B5C32786;
- Fri, 16 Aug 2024 01:56:28 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTP id 95262CE1EC9;
+ Fri, 16 Aug 2024 02:30:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20FCBC32786;
+ Fri, 16 Aug 2024 02:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1723773390;
- bh=dZIWTkbqG9CE4eee0cwu5JPhJzQVRrcUFkrIXFMHhXg=;
+ s=k20201202; t=1723775419;
+ bh=RRKv6BK2uyxfKOpDGLdqG+hlBlBiteVFLDwYsyDuEFg=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=YdflQGqHWKcmAxnISCI3IZxHAaluNUWQVi9Pa/NDbz96xkysrjIaxluFMUc+nU4Bq
- mEQTkEocIsMART1ZnO63nEu5o/lBGlzk9n698E+jYviO8ToHKG6Ehe1oo5GbYJDDKN
- ZyHJC80kpP4/hzalSLjmxqw5vAEdKSvkNMM5Wyxvmr2EPKnRdOtMCYzuhi96u1ha0u
- D9eOEcTai6pvy8kovOoOj3IzZMOkzqxu82ZMBc7jP/Fw4sphxfx4JyjxmlyZbaI+P/
- uxV9l+f3pnOXwLVhfWJ3YCDO0/deU/EcSH6Zz3eYwOOQ2mCFCyAp/QI7FNxBdbbr+F
- vRJK0FCNJlmKg==
-Message-ID: <5b892d6a-620d-47f4-b870-214dcf4bc480@kernel.org>
-Date: Fri, 16 Aug 2024 09:56:25 +0800
+ b=tsyhc8lDRwoayKHCxOD7MzDzsIankGc5cr704FHX0gzmB9Akmgfe1Qz1iUjYF4YAp
+ JSlXQHuXtGolaj5gLVII7mH7uGh2nzAA7BluwC4Otq2zH8087K6HbT/z8HAvFvrJgR
+ RvJKzMd42rkjnIb1lZoX0ZSS6LMPIniPL4y140uv1CujR+opgX9Vf7N8UpOt1jozFS
+ x6hJ91TomIP9RmdYeUnkGLle2WSZc5scZ29szjJ6GxI8ApIwqdfXd1SlfU52pR8u/x
+ Ad/oQSEAjJtz5o/IZUpBDifZBVtQH6f1fY/IVmbwIAV8RZBZqr8H6W/uhSVxWvXr4X
+ 5q89WaEjfwhBA==
+Message-ID: <a4e822d5-9d3a-4d95-b568-8482385fa85c@kernel.org>
+Date: Fri, 16 Aug 2024 11:30:17 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: daejun7.park@samsung.com, "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <7860b050-3948-4e23-b40f-a3df522477cd@kernel.org>
- <20240801074715epcms2p788934486cd0e8090f67ed0d7cffbc91b@epcms2p7>
- <CGME20240801074715epcms2p788934486cd0e8090f67ed0d7cffbc91b@epcms2p3>
- <20240816001700epcms2p37f406e9cd3a1d6438a866e7a7a3d5c31@epcms2p3>
+To: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Chao Yu <chao@kernel.org>
+References: <20240816022353.734136-1-shinichiro.kawasaki@wdc.com>
+From: Damien Le Moal <dlemoal@kernel.org>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240816001700epcms2p37f406e9cd3a1d6438a866e7a7a3d5c31@epcms2p3>
-X-Headers-End: 1semCn-0006qY-HJ
-Subject: Re: [f2fs-dev] (2) [PATCH] f2fs: avoid unused block when dio write
- in LFS mode
+Organization: Western Digital Research
+In-Reply-To: <20240816022353.734136-1-shinichiro.kawasaki@wdc.com>
+X-Headers-End: 1semjY-0002Mj-GL
+Subject: Re: [f2fs-dev] [PATCH] f2fs: check discard support for conventional
+ zones
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,74 +82,88 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Nayeon Kim <nayeoni.kim@samsung.com>, Siwoo Jung <siu.jung@samsung.com>,
- Seokhwan Kim <sukka.kim@samsung.com>, Jeuk Kim <jeuk20.kim@samsung.com>,
- Dongjin Kim <dongjin_.kim@samsung.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Cc: Christoph Hellwig <hch@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gMjAyNC84LzE2IDg6MTcsIERhZWp1biBQYXJrIHdyb3RlOgo+IEhpIENoYW8gWXUsCj4+ICAg
-Cj4+IC0tLS0tLS0tLSBPcmlnaW5hbCBNZXNzYWdlIC0tLS0tLS0tLQo+PiBTZW5kZXIgOiBDaGFv
-IFl1IDxjaGFvQGtlcm5lbC5vcmc+Cj4+IERhdGUgOiAyMDI0LTA4LTE0IDE4OjUwIChHTVQrOSkK
-Pj4gVGl0bGUgOiBSZTogW1BBVENIXSBmMmZzOiBhdm9pZCB1bnVzZWQgYmxvY2sgd2hlbiBkaW8g
-d3JpdGUgaW4gTEZTIG1vZGUKPj4gICAKPj4gT24gMjAyNC84LzEgMTU6NDcsIERhZWp1biBQYXJr
-IHdyb3RlOgo+Pj4gVGhpcyBwYXRjaCBhZGRyZXNzZXMgdGhlIHByb2JsZW0gdGhhdCB3aGVuIHVz
-aW5nIExGUyBtb2RlLCB1bnVzZWQgYmxvY2tzCj4+PiBtYXkgb2NjdXIgaW4gZjJmc19tYXBfYmxv
-Y2tzKCkgZHVyaW5nIGJsb2NrIGFsbG9jYXRpb24gZm9yIGRpbyB3cml0ZXMuCj4+Pgo+Pj4gSWYg
-YSBuZXcgc2VjdGlvbiBpcyBhbGxvY2F0ZWQgZHVyaW5nIGJsb2NrIGFsbG9jYXRpb24sIGl0IHdp
-bGwgbm90IGJlCj4+PiBpbmNsdWRlZCBpbiB0aGUgbWFwIHN0cnVjdCBieSBtYXBfaXNfbWVyZ2Vh
-YmxlKCkgaWYgdGhlIExCQSBvZiB0aGUKPj4KPj4gSSBkaWRuJ3QgZ2V0IGl0LCB3aHkgYmVsb3cg
-Y29uZGl0aW9uIGluIG1hcF9pc19tZXJnZWFibGUoKSBjYW4gbm90IGNhdGNoIHRoaXMKPj4gY2Fz
-ZT8gQ2FuIHlvdSBwbGVhc2UgZXhwbGFpbiBtb3JlPwo+Pgo+PiAgwqAgwqAgwqAgwqBpZiAobWFw
-LT5tX3BibGsgIT0gTkVXX0FERFIgJiYgYmxrYWRkciA9PSAobWFwLT5tX3BibGsgKyBvZnMpKQo+
-PiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqByZXR1cm4gdHJ1ZTsKPj4KPiAKPiBUaGFuayB5b3Ug
-Zm9yIHlvdXIgcmV2aWV3Lgo+IG1hcF9pc19tZXJnZWFibGUoKSByZXR1cm5zIHRydWUgd2hlbiB0
-aGUgbGFzdCBibG9jayBpbiB0aGUgc2VjdGlvbiBpcyBtZXJnZWQuCj4gVGhlIHByb2JsZW0gaXMg
-dGhlIG5leHQgYmxvY2sgYWxsb2NhdGlvbiwgd2hpY2ggaGFwcGVucyBjb25zZWN1dGl2ZWx5Lgo+
-IFNpbmNlIGl0IHdpbGwgYmUgYWxsb2NhdGVkIGEgbmV3IHNlY3Rpb24sIGl0cyBibG9jayB3aWxs
-IGJlIHRoZSBmaXJzdAo+IGJsb2NrIGluIHRoZSBzZWN0aW9uLgo+IElmIHRoZSBuZXdseSBhbGxv
-Y2F0ZWQgc2VjdGlvbiBpcyBub3QgY29udGlndW91cyB3aXRoIHRoZSBwcmV2aW91cyBzZWN0aW9u
-LAo+IG1hcF9pc19tZXJnZWFibGUoKSB3aWxsIHJldHVybiBmYWxzZS4KPiBTbyB0aGUgYmxvY2sg
-aXMgYWxsb2NhdGVkIGJ1dCB1bnVzZWQuCj4gSG93ZXZlciwgaXQgaXMgbm90IGZyZWVkLCBzbyB0
-aGUgYmxvY2sgaXMgdW51c2FibGUuCj4gSWYgbXkgZXhwbGFuYXRpb24gd2FzIG5vdCBjbGVhciBl
-bm91Z2gsIHBsZWFzZSBmZWVsIGZyZWUgdG8gYXNrIHF1ZXN0aW9ucy4KCkl0J3MgY2xlYXIgdG8g
-bWUgbm93LCB0aGFua3MgZm9yIHlvdXIgZXhwbGFuYXRpb24uCgo+IAo+IFRoYW5rcwo+IERhZWp1
-bgo+IAo+PiBUaGFua3MsCj4+Cj4+PiBhbGxvY2F0ZWQgYmxvY2sgaXMgbm90IGNvbnRpZ3VvdXMu
-IEhvd2V2ZXIsIHRoZSBibG9jayBhbHJlYWR5IGFsbG9jYXRlZAo+Pj4gaW4gdGhpcyBwcm9jZXNz
-IHdpbGwgcmVtYWluIHVudXNlZCBkdWUgdG8gdGhlIExGUyBtb2RlLgo+Pj4KPj4+IFRoaXMgcGF0
-Y2ggYXZvaWRzIHRoZSBwb3NzaWJpbGl0eSBvZiB1bnVzZWQgYmxvY2tzIGJ5IGVzY2FwaW5nCj4+
-PiBmMmZzX21hcF9ibG9ja3MoKSB3aGVuIGFsbG9jYXRpbmcgdGhlIGxhc3QgYmxvY2sgaW4gYSBz
-ZWN0aW9uLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IERhZWp1biBQYXJrIDxkYWVqdW43LnBhcmtA
-c2Ftc3VuZy5jb20+Cj4+PiAtLS0KPj4+ICDCoCBmcy9mMmZzL2RhdGEuYyAxMyArKysrKysrKysr
-KysrCj4+PiAgwqAgMSBmaWxlIGNoYW5nZWQsIDEzIGluc2VydGlvbnMoKykKPj4+Cj4+PiBkaWZm
-IC0tZ2l0IGEvZnMvZjJmcy9kYXRhLmMgYi9mcy9mMmZzL2RhdGEuYwo+Pj4gaW5kZXggYjZkY2Iz
-YmNhZWY3Li5iMjdhM2Y0NDhmMzIgMTAwNjQ0Cj4+PiAtLS0gYS9mcy9mMmZzL2RhdGEuYwo+Pj4g
-KysrIGIvZnMvZjJmcy9kYXRhLmMKPj4+IEBAIC0xNzExLDYgKzE3MTEsMTkgQEAgaW50IGYyZnNf
-bWFwX2Jsb2NrcyhzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZjJmc19tYXBfYmxvY2tzICpt
-YXAsIGludCBmbGFnKQo+Pj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgZG4ub2ZzX2lu
-X25vZGUgPSBlbmRfb2Zmc2V0Owo+Pj4gIMKgIMKgIMKgIMKgIMKgIMKgfQo+Pj4gICAKPj4+ICsg
-wqAgwqAgwqAgwqBpZiAoZmxhZyA9PSBGMkZTX0dFVF9CTE9DS19ESU8gJiYgZjJmc19sZnNfbW9k
-ZShzYmkpKSB7CgpUaGUgY29uZGl0aW9uIHNob3VsZCBjaGVjayBtYXAtPm1fbWF5X2NyZWF0ZSBh
-cyB3ZWxsLCBvdGhlcndpc2UgZjJmc19tYXBfYmxvY2tzKCkKZnJvbSByZWFkIHBhdGggd2lsbCBi
-cmVhayBoZXJlPwoKPj4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBpbnQgc2Vnbm8gPSBHRVRf
-U0VHTk8oc2JpLCBibGthZGRyKTsKPj4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBib29sIGxh
-c3Rfc2VnLCBsYXN0X2JsazsKPj4+ICsKPj4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBsYXN0
-X3NlZyA9ICEoKHNlZ25vICsgMSkgJSBTRUdTX1BFUl9TRUMoc2JpKSk7CgpTaG91bGQgY29uc2lk
-ZXIgdGhlIGNhc2UgdGhhdCBzZWdubyAjKFNFR1NfUEVSX1NFQyAtIDEpIGlzIG5vdCB2YWxpZD8K
-ZS5nLiBTRUdTX1BFUl9TRUMgaXMgNCwgQ0FQX1NFR1NfUEVSX1NFQyBpcyAyPwoKPj4+ICsgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqBsYXN0X2JsayA9IChmMmZzX3VzYWJsZV9ibGtzX2luX3NlZyhz
-YmksIHNlZ25vKSAtIDEpID09Cj4+PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgR0VUX0JMS09GRl9GUk9NX1NFRzAoc2JpLCBibGthZGRyKTsKCmlmIChH
-RVRfU0VHT0ZGX0ZST01fU0VHMCgpICUgQkxLU19QRVJfU0VDKCkgPT0gQ0FQX0JMS1NfUEVSX1NF
-QygpIC0gMSkKCWdvdG8gc3luY19vdXQ7CgpUaGFua3MsCgo+Pj4gKwo+Pj4gKyDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoC8qIExCQSBvZiB0aGUgbmV4dCBibG9jayB0byBiZSBhbGxvY2F0ZWQgbWF5
-IG5vdCBiZSBjb250aWd1b3VzLiAqLwo+Pj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGlmIChs
-YXN0X3NlZyAmJiBsYXN0X2JsaykKPj4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqBnb3RvIHN5bmNfb3V0Owo+Pj4gKyDCoCDCoCDCoCDCoH0KPj4+ICsKPj4+ICDCoCDCoCDC
-oCDCoCDCoCDCoGlmIChwZ29mcyA+PSBlbmQpCj4+PiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqBnb3RvIHN5bmNfb3V0Owo+Pj4gIMKgIMKgIMKgIMKgIMKgIMKgZWxzZSBpZiAoZG4ub2Zz
-X2luX25vZGUgPCBlbmRfb2Zmc2V0KQoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZz
-LWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5l
-dC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+On 8/16/24 11:23, Shin'ichiro Kawasaki wrote:
+> As the helper function f2fs_bdev_support_discard() shows, f2fs checks if
+> the target block devices support discard by calling
+> bdev_max_discard_sectors() and bdev_is_zoned(). This check works good
+
+s/good/well
+
+> for most cases, but it does not work for conventional zones on zoned
+> block devices. F2fs assumes that zoned block devices support discard,
+> and calls __submit_discard_cmd(). When __submit_discard_cmd() is called
+> for sequential write required zones, it works fine since
+> __submit_discard_cmd() issues zone reset commands instead of discard
+> commands. However, when __submit_discard_cmd() is called for
+> conventional zones, __blkdev_issue_discard() is called even when the
+> devices do not support discard.
+> 
+> The inappropriate __blkdev_issue_discard() call was not a problem before
+> the commit 30f1e7241422 ("block: move discard checks into the ioctl
+> handler") because __blkdev_issue_discard() checked if the target devices
+> support discard or not. If not, it returned EOPNOTSUPP. After the
+> commit, __blkdev_issue_discard() no longer checks it and always returns
+> zero and sets NULL to the give bio pointer. This NULL pointer triggers
+> f2fs_bug_on() in __submit_discard_cmd(). The BUG is recreated with the
+> commands below at the umount step, where /dev/nullb0 is a zoned null_blk
+> with 5GB total size, 128MB zone size and 10 conventional zones.
+> 
+> $ mkfs.f2fs -f -m /dev/nullb0
+> $ mount /dev/nullb0 /mnt
+> $ for ((i=0;i<5;i++)); do dd if=/dev/zero of=/mnt/test bs=65536 count=1600 conv=fsync; done
+> $ umount /mnt
+> 
+> To fix the BUG, avoid the inappropriate __blkdev_issue_discard() call.
+> When discard is requested for conventional zones, check if the device
+> supports discard or not. If not, return EOPNOTSUPP.
+> 
+> Fixes: 30f1e7241422 ("block: move discard checks into the ioctl handler")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+> ---
+>  fs/f2fs/segment.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 78c3198a6308..e10bf3c4eed5 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -1281,6 +1281,8 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+>  			__submit_zone_reset_cmd(sbi, dc, flag,
+>  						wait_list, issued);
+>  			return 0;
+> +		} else if (!bdev_max_discard_sectors(bdev)) {
+> +			return -EOPNOTSUPP;
+>  		}
+
+You do not need the else here. And I suggest adding a comment as well:
+
+		/*
+		 * Issue discard for conventional zones only if the
+		 * device supports discard.
+		 */
+		if (!bdev_max_discard_sectors(bdev))
+			return -EOPNOTSUPP;
+
+With that:
+
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+
+>  	}
+>  #endif
+
+-- 
+Damien Le Moal
+Western Digital Research
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
