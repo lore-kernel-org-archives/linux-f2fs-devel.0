@@ -4,67 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 36671C54722
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 325E5C5321D
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 20 Aug 2024 03:47:24 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sgFq5-0006ix-Ns;
-	Tue, 20 Aug 2024 03:47:21 +0000
+	id 1sgFq7-0007OV-0W;
+	Tue, 20 Aug 2024 03:47:23 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1sgFq3-0006ip-7N
+ (envelope-from <chao@kernel.org>) id 1sgFq4-0007OP-Oa
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 20 Aug 2024 03:47:18 +0000
+ Tue, 20 Aug 2024 03:47:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/GItEWqxznVCij7rKDkuYmv2jUj/+xx6HzGDrLsxMOU=; b=LhvjNM3Y7SOr8OyJnu9WVv63jI
- 2HLIlyXlvNaoUmAqKL/LeHKjYNHDwBJOVXKrz6dbUjEnVx9cYITQFpeTdnZJ13D4gSTkxVtvoXDqB
- keTAy5aoEDKbem5rOeruHkcyD3+P5Esfz3F5XBVvaJH3yJsQQ8lnHg3uRFmXuuAHu6fY=;
+ bh=hJ395t/DI3f3KuV2Ba3nm6yeqnl7hQuZTauYfbbIJAw=; b=brtc7/LbxkAwzdgmB+8mO9BBge
+ tdlswkPiyu8V1WptttWwqzs3aSycYGSVNTneLlEan9LmAvsZxWK78FycXc1dv1uxnodeuQyfLo/l/
+ cLGiQv6RwBrCWheIChjoXLhdN+yb6UBnu5q5COVlNyQ5Uc+D+LT7qF8v9rZceGJVrK/g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=/GItEWqxznVCij7rKDkuYmv2jUj/+xx6HzGDrLsxMOU=; b=h
- PRU35S7R5mLlcXo0MyX8QiREHAxAwEck5+prJWjsCdjJNTcLfvESiSnDrcorruMLq2QKV41jTzmlb
- 0cV/Ucd2oqMA/M/ymbdIkn90+N7LiQsbc+uexZLlJyjkt37B02jSE8OkHVfhHlZzi6G9IkjwozF7/
- sQzXGOqBK5Oi5xyc=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=hJ395t/DI3f3KuV2Ba3nm6yeqnl7hQuZTauYfbbIJAw=; b=FaDWzC5UZlNfs0zJ48acFLv/EH
+ dmw6H1fRPg5BmAUqMczFgA/VNeYMiZg4FR82pVFxcLNMo7suRgFMe5yePEGCPOR2LGCO9yjTHEzLZ
+ 5Z9qw3qNyQsrQgYwEPjkMQYBesFpK2xx5l0SHt8N3L8yczpah37Og0UE8Uz1lW8BSoGk=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sgFq1-0006RU-G6 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 20 Aug 2024 03:47:18 +0000
+ id 1sgFq4-0006Rh-Mm for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 20 Aug 2024 03:47:21 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sin.source.kernel.org (Postfix) with ESMTP id A9A5FCE0989;
- Tue, 20 Aug 2024 03:47:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DF5AC4AF0C;
- Tue, 20 Aug 2024 03:47:02 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 5DA9360DC4;
+ Tue, 20 Aug 2024 03:47:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C57E5C4AF12;
+ Tue, 20 Aug 2024 03:47:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1724125624;
- bh=g4BTj0BsXqAj1BLALkrYqHcBy0nS0AoA9Yo+xzPSI3w=;
- h=From:To:Cc:Subject:Date:From;
- b=EWvYZUIAWCaXoBFo5ThcMoMl+KZVKuVlkWRa55RwOpuL4j3Kd7blI0IG8zWQw+aTu
- L3pdYh1jKCeYafMuBSqSRAq8GCxd/oleYTl1nMjf3SZC3p0PELwDfIc/00RszkdRzX
- J2VGElFvyOjiNnM9S7P+nJ10n5PzPC9ZY6Q5R4tdhmDaWGdIW87/5Im68rw15R5Uxj
- qaqHQCQEIb5vBzezO6+YrTpuYFzqu0o2NQbRBxEyniUApYtG6hNt/uPKDW8J8bXI/2
- fEmYOkkuurkuyZseogsoPYwUPeFqCKmxSO7QRSbfDLk2HSFJowKNTodnbnFGHsrfc9
- k8hs9lzec2kFA==
+ s=k20201202; t=1724125630;
+ bh=kI9JNrkqcWakqf9nzqIrzXTTjP9TFX7SUhwYCeGt3EY=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=pTSo7mKbZOK8myMmYn594lSgctp4XIcijOYlsvx2gOEJGuPOKdAIWsrSVnrtHlNNU
+ nL9hKGb8XNnac4eQw9yX0YGX9FyhJUSv/qzdWC3lyTOxmOaLwflmO0+DGIJS46aZpI
+ M9i8s10phwWK5Lb0R/+15nuN2Y8WGnXqbWEjCXnSAtId8gkJhyIK9dPJ2GveRFXG8J
+ vdSEFt2ubmKrMECQwr67lfZdS8Ql3UafBJlAZDsK6Zd3wEPaYq7lG6DNT7NvlIo/B4
+ yxC4kLeDYgUO5ngRKW1qR3IKBtm9RSS7cEizepcwHAqBv1MPfbrxibgmpFclvqkDPk
+ qh/QOp8PFXf9w==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Tue, 20 Aug 2024 11:46:47 +0800
-Message-Id: <20240820034654.698236-1-chao@kernel.org>
+Date: Tue, 20 Aug 2024 11:46:50 +0800
+Message-Id: <20240820034654.698236-4-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240820034654.698236-1-chao@kernel.org>
+References: <20240820034654.698236-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1sgFq1-0006RU-G6
-Subject: [f2fs-dev] [PATCH v2 1/8] f2fs: convert f2fs_write_begin() to use
- folio
+X-Headers-End: 1sgFq4-0006Rh-Mm
+Subject: [f2fs-dev] [PATCH v2 4/8] f2fs: convert f2fs_do_write_data_page()
+ to use folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,143 +92,105 @@ prepare for removal of 'index' field in structure page [1].
 Cc: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
-v2:
-- fix compile error.
- fs/f2fs/data.c | 44 +++++++++++++++++++++++---------------------
- 1 file changed, 23 insertions(+), 21 deletions(-)
+ fs/f2fs/data.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 0655fddfc4ba..85ac05c3655a 100644
+index e114d738b6b4..c57ddee2c7c5 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -3378,11 +3378,11 @@ void f2fs_write_failed(struct inode *inode, loff_t to)
- }
+@@ -2648,8 +2648,8 @@ static inline bool need_inplace_update(struct f2fs_io_info *fio)
  
- static int prepare_write_begin(struct f2fs_sb_info *sbi,
--			struct page *page, loff_t pos, unsigned len,
-+			struct folio *folio, loff_t pos, unsigned int len,
- 			block_t *blk_addr, bool *node_changed)
+ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
  {
+-	struct page *page = fio->page;
 -	struct inode *inode = page->mapping->host;
--	pgoff_t index = page->index;
++	struct folio *folio = page_folio(fio->page);
 +	struct inode *inode = folio->mapping->host;
-+	pgoff_t index = folio->index;
  	struct dnode_of_data dn;
- 	struct page *ipage;
- 	bool locked = false;
-@@ -3419,13 +3419,13 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+ 	struct node_info ni;
+ 	bool ipu_force = false;
+@@ -2658,14 +2658,14 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
  
- 	if (f2fs_has_inline_data(inode)) {
- 		if (pos + len <= MAX_INLINE_DATA(inode)) {
--			f2fs_do_read_inline_data(page_folio(page), ipage);
-+			f2fs_do_read_inline_data(folio, ipage);
- 			set_inode_flag(inode, FI_DATA_EXIST);
- 			if (inode->i_nlink)
- 				set_page_private_inline(ipage);
- 			goto out;
- 		}
--		err = f2fs_convert_inline_page(&dn, page);
-+		err = f2fs_convert_inline_page(&dn, folio_page(folio, 0));
- 		if (err || dn.data_blkaddr != NULL_ADDR)
- 			goto out;
- 	}
-@@ -3518,12 +3518,12 @@ static int __reserve_data_block(struct inode *inode, pgoff_t index,
- }
- 
- static int prepare_atomic_write_begin(struct f2fs_sb_info *sbi,
--			struct page *page, loff_t pos, unsigned int len,
-+			struct folio *folio, loff_t pos, unsigned int len,
- 			block_t *blk_addr, bool *node_changed, bool *use_cow)
- {
--	struct inode *inode = page->mapping->host;
-+	struct inode *inode = folio->mapping->host;
- 	struct inode *cow_inode = F2FS_I(inode)->cow_inode;
--	pgoff_t index = page->index;
-+	pgoff_t index = folio->index;
- 	int err = 0;
- 	block_t ori_blk_addr = NULL_ADDR;
- 
-@@ -3566,6 +3566,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 	struct inode *inode = mapping->host;
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct page *page = NULL;
-+	struct folio *folio;
- 	pgoff_t index = ((unsigned long long) pos) >> PAGE_SHIFT;
- 	bool need_balance = false;
- 	bool use_cow = false;
-@@ -3625,22 +3626,23 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 	/* TODO: cluster can be compressed due to race with .writepage */
- 
- 	*pagep = page;
-+	folio = page_folio(page);
- 
- 	if (f2fs_is_atomic_file(inode))
--		err = prepare_atomic_write_begin(sbi, page, pos, len,
-+		err = prepare_atomic_write_begin(sbi, folio, pos, len,
- 					&blkaddr, &need_balance, &use_cow);
+ 	/* Use COW inode to make dnode_of_data for atomic write */
+ 	atomic_commit = f2fs_is_atomic_file(inode) &&
+-				page_private_atomic(fio->page);
++				page_private_atomic(folio_page(folio, 0));
+ 	if (atomic_commit)
+ 		set_new_dnode(&dn, F2FS_I(inode)->cow_inode, NULL, NULL, 0);
  	else
--		err = prepare_write_begin(sbi, page, pos, len,
-+		err = prepare_write_begin(sbi, folio, pos, len,
- 					&blkaddr, &need_balance);
+ 		set_new_dnode(&dn, inode, NULL, NULL, 0);
+ 
+ 	if (need_inplace_update(fio) &&
+-	    f2fs_lookup_read_extent_cache_block(inode, page->index,
++	    f2fs_lookup_read_extent_cache_block(inode, folio->index,
+ 						&fio->old_blkaddr)) {
+ 		if (!f2fs_is_valid_blkaddr(fio->sbi, fio->old_blkaddr,
+ 						DATA_GENERIC_ENHANCE))
+@@ -2680,7 +2680,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 	if (fio->need_lock == LOCK_REQ && !f2fs_trylock_op(fio->sbi))
+ 		return -EAGAIN;
+ 
+-	err = f2fs_get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
++	err = f2fs_get_dnode_of_data(&dn, folio->index, LOOKUP_NODE);
  	if (err)
- 		goto fail;
+ 		goto out;
  
- 	if (need_balance && !IS_NOQUOTA(inode) &&
- 			has_not_enough_free_secs(sbi, 0, 0)) {
--		unlock_page(page);
-+		folio_unlock(folio);
- 		f2fs_balance_fs(sbi, true);
--		lock_page(page);
--		if (page->mapping != mapping) {
-+		folio_lock(folio);
-+		if (folio->mapping != mapping) {
- 			/* The page got truncated from under us */
- 			f2fs_put_page(page, 1);
- 			goto repeat;
-@@ -3649,18 +3651,18 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+@@ -2688,8 +2688,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
  
- 	f2fs_wait_on_page_writeback(page, DATA, false, true);
+ 	/* This page is already truncated */
+ 	if (fio->old_blkaddr == NULL_ADDR) {
+-		ClearPageUptodate(page);
+-		clear_page_private_gcing(page);
++		folio_clear_uptodate(folio);
++		clear_page_private_gcing(folio_page(folio, 0));
+ 		goto out_writepage;
+ 	}
+ got_it:
+@@ -2715,7 +2715,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 		if (err)
+ 			goto out_writepage;
  
--	if (len == PAGE_SIZE || PageUptodate(page))
-+	if (len == PAGE_SIZE || folio_test_uptodate(folio))
- 		return 0;
- 
- 	if (!(pos & (PAGE_SIZE - 1)) && (pos + len) >= i_size_read(inode) &&
- 	    !f2fs_verity_in_progress(inode)) {
--		zero_user_segment(page, len, PAGE_SIZE);
-+		folio_zero_segment(folio, len, folio_size(folio));
- 		return 0;
+-		set_page_writeback(page);
++		folio_start_writeback(folio);
+ 		f2fs_put_dnode(&dn);
+ 		if (fio->need_lock == LOCK_REQ)
+ 			f2fs_unlock_op(fio->sbi);
+@@ -2723,11 +2723,11 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 		if (err) {
+ 			if (fscrypt_inode_uses_fs_layer_crypto(inode))
+ 				fscrypt_finalize_bounce_page(&fio->encrypted_page);
+-			end_page_writeback(page);
++			folio_end_writeback(folio);
+ 		} else {
+ 			set_inode_flag(inode, FI_UPDATE_WRITE);
+ 		}
+-		trace_f2fs_do_write_data_page(page_folio(page), IPU);
++		trace_f2fs_do_write_data_page(folio, IPU);
+ 		return err;
  	}
  
- 	if (blkaddr == NEW_ADDR) {
--		zero_user_segment(page, 0, PAGE_SIZE);
--		SetPageUptodate(page);
-+		folio_zero_segment(folio, 0, folio_size(folio));
-+		folio_mark_uptodate(folio);
- 	} else {
- 		if (!f2fs_is_valid_blkaddr(sbi, blkaddr,
- 				DATA_GENERIC_ENHANCE_READ)) {
-@@ -3669,16 +3671,16 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 		}
- 		err = f2fs_submit_page_read(use_cow ?
- 				F2FS_I(inode)->cow_inode : inode,
--				page_folio(page), blkaddr, 0, true);
-+				folio, blkaddr, 0, true);
- 		if (err)
- 			goto fail;
+@@ -2749,17 +2749,17 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 	if (err)
+ 		goto out_writepage;
  
--		lock_page(page);
--		if (unlikely(page->mapping != mapping)) {
-+		folio_lock(folio);
-+		if (unlikely(folio->mapping != mapping)) {
- 			f2fs_put_page(page, 1);
- 			goto repeat;
- 		}
--		if (unlikely(!PageUptodate(page))) {
-+		if (unlikely(!folio_test_uptodate(folio))) {
- 			err = -EIO;
- 			goto fail;
- 		}
+-	set_page_writeback(page);
++	folio_start_writeback(folio);
+ 
+ 	if (fio->compr_blocks && fio->old_blkaddr == COMPRESS_ADDR)
+ 		f2fs_i_compr_blocks_update(inode, fio->compr_blocks - 1, false);
+ 
+ 	/* LFS mode write path */
+ 	f2fs_outplace_write_data(&dn, fio);
+-	trace_f2fs_do_write_data_page(page_folio(page), OPU);
++	trace_f2fs_do_write_data_page(folio, OPU);
+ 	set_inode_flag(inode, FI_APPEND_WRITE);
+ 	if (atomic_commit)
+-		clear_page_private_atomic(page);
++		clear_page_private_atomic(folio_page(folio, 0));
+ out_writepage:
+ 	f2fs_put_dnode(&dn);
+ out:
 -- 
 2.40.1
 
