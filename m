@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DFF6AC5321E
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E62E0C5472D
 	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Aug 2024 01:29:53 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sgwe7-0002ub-Vl;
-	Thu, 22 Aug 2024 01:29:51 +0000
+	id 1sgwe9-0002uq-Bh;
+	Thu, 22 Aug 2024 01:29:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lizetao1@huawei.com>) id 1sgwe4-0002uU-Mu
+ (envelope-from <lizetao1@huawei.com>) id 1sgwe8-0002ug-3W
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Aug 2024 01:29:48 +0000
+ Thu, 22 Aug 2024 01:29:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
  :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=uWt/FB++UE/QihX1QoEMwvPJnjS3zRJ6b9vVA98DcX0=; b=ixfFzaxdJdjp2kmqle6Jty9+1a
- UbUVOFYK7AWACfGeBc9D6oAezqHn478q9zI92kDfOq79ntYZuosLIQlKOe8+Z8nqVlS35W905ZrQ5
- zPHofVOYZ3yqY8c9k0mmupOTKmu4A/U8wMO8iGjmdII3pVL9yDNfxBshVfMh6ki1EJHc=;
+ bh=ivs1xyjD4VeuwWZ8XWhDB1sEjfAkoDI4wWP2AQWxYMY=; b=de6wRuXfMg7pl490eTRPFpzcGC
+ Z9pbcKQfuCc7w6iaMz+67sA7ZT4OWk3fIyx2GlMhrRmPirIJqjI+0DLsYB5GyHXHBTGLl/IqUmOQo
+ 9bChQwBM/QGaPt6GhzIgbqeKGJ53UOcT1SUY3UbFB+bJuPA95XiqqBqryLfrwUqQrrE0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -33,27 +33,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=uWt/FB++UE/QihX1QoEMwvPJnjS3zRJ6b9vVA98DcX0=; b=TD+DY62R9OV/+/ZfOtkhonAWmN
- FI/gdeaP3GlqG67HYDxeOvrwIBm/y7AMWuZQ/lABNTooKKhRFz2fUDu7l8ZM+DNvtIHXHqZXVyZKh
- CPazO6N32IRwyhcnS38w0YMSbRkxpS8CoXU4RmC2iEtdYZJYXaXEMJMbCYz3+fMkX0qE=;
-Received: from szxga01-in.huawei.com ([45.249.212.187])
+ bh=ivs1xyjD4VeuwWZ8XWhDB1sEjfAkoDI4wWP2AQWxYMY=; b=C4NTzrGDdeGPOmDyfG16FCSHpQ
+ t6HbGAg4yIDVktiP5mcJC6180HpZPO/GojmB+Qv39dU3nqpKW8HvrSxQErgkwuj65ajyPTjbMl16o
+ 4pqM2/NE/iUH7ZsU2eovtcBH4XouVJnmkh2EFqFUYWXxwRMgezB9CE2aXmgHAUQ/W/mE=;
+Received: from szxga02-in.huawei.com ([45.249.212.188])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sgwe3-0006bp-Gr for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Aug 2024 01:29:48 +0000
-Received: from mail.maildlp.com (unknown [172.19.163.48])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wq5G45pflzyR8j;
- Thu, 22 Aug 2024 09:29:16 +0800 (CST)
+ id 1sgwe6-0006bv-Oi for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Aug 2024 01:29:52 +0000
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wq5Dq3CgnzpTZC;
+ Thu, 22 Aug 2024 09:28:11 +0800 (CST)
 Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
- by mail.maildlp.com (Postfix) with ESMTPS id 1CB5C180087;
- Thu, 22 Aug 2024 09:29:40 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id BB3DC1404A6;
+ Thu, 22 Aug 2024 09:29:43 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemd500012.china.huawei.com
  (7.221.188.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 22 Aug
- 2024 09:29:39 +0800
+ 2024 09:29:43 +0800
 To: <clm@fb.com>, <josef@toxicpanda.com>, <dsterba@suse.com>, <terrelln@fb.com>
-Date: Thu, 22 Aug 2024 09:37:03 +0800
-Message-ID: <20240822013714.3278193-4-lizetao1@huawei.com>
+Date: Thu, 22 Aug 2024 09:37:12 +0800
+Message-ID: <20240822013714.3278193-13-lizetao1@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240822013714.3278193-1-lizetao1@huawei.com>
 References: <20240822013714.3278193-1-lizetao1@huawei.com>
@@ -61,9 +61,9 @@ MIME-Version: 1.0
 X-Originating-IP: [10.90.53.73]
 X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
  kwepemd500012.china.huawei.com (7.221.188.25)
-X-Headers-End: 1sgwe3-0006bp-Gr
-Subject: [f2fs-dev] [PATCH 03/14] btrfs: convert
- try_release_subpage_extent_buffer() to take a folio
+X-Headers-End: 1sgwe6-0006bv-Oi
+Subject: [f2fs-dev] [PATCH 12/14] btrfs: convert zstd_decompress() to take a
+ folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,69 +85,102 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 The old page API is being gradually replaced and converted to use folio
 to improve code readability and avoid repeated conversion between page
-and folio. And use folio_pos instend of page_offset, which is more
-consistent with folio usage. At the same time, folio_test_private can
-handle folio directly without converting from page to folio first.
+and folio. And memcpy_to_page() can be replaced with memcpy_to_folio().
+But there is no memzero_folio(), but it can be replaced equivalently by
+folio_zero_range().
 
 Signed-off-by: Li Zetao <lizetao1@huawei.com>
 ---
- fs/btrfs/extent_io.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ fs/btrfs/compression.c |  2 +-
+ fs/btrfs/compression.h |  2 +-
+ fs/btrfs/zstd.c        | 16 ++++++++--------
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index b9d159fcbbc5..77c1f69f4229 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4171,11 +4171,11 @@ static struct extent_buffer *get_next_extent_buffer(
- 	return found;
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index 8e67203ab97d..eab79edeb64c 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -146,7 +146,7 @@ static int compression_decompress(int type, struct list_head *ws,
+ 						dest_pgoff, srclen, destlen);
+ 	case BTRFS_COMPRESS_LZO:  return lzo_decompress(ws, data_in, page_folio(dest_page),
+ 						dest_pgoff, srclen, destlen);
+-	case BTRFS_COMPRESS_ZSTD: return zstd_decompress(ws, data_in, dest_page,
++	case BTRFS_COMPRESS_ZSTD: return zstd_decompress(ws, data_in, page_folio(dest_page),
+ 						dest_pgoff, srclen, destlen);
+ 	case BTRFS_COMPRESS_NONE:
+ 	default:
+diff --git a/fs/btrfs/compression.h b/fs/btrfs/compression.h
+index 4b5a7ba54815..d2453cf28eef 100644
+--- a/fs/btrfs/compression.h
++++ b/fs/btrfs/compression.h
+@@ -183,7 +183,7 @@ int zstd_compress_folios(struct list_head *ws, struct address_space *mapping,
+ 		unsigned long *total_in, unsigned long *total_out);
+ int zstd_decompress_bio(struct list_head *ws, struct compressed_bio *cb);
+ int zstd_decompress(struct list_head *ws, const u8 *data_in,
+-		struct page *dest_page, unsigned long dest_pgoff, size_t srclen,
++		struct folio *dest_folio, unsigned long dest_pgoff, size_t srclen,
+ 		size_t destlen);
+ void zstd_init_workspace_manager(void);
+ void zstd_cleanup_workspace_manager(void);
+diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
+index 05cf7cebc17c..866607fd3e58 100644
+--- a/fs/btrfs/zstd.c
++++ b/fs/btrfs/zstd.c
+@@ -656,11 +656,11 @@ int zstd_decompress_bio(struct list_head *ws, struct compressed_bio *cb)
  }
  
--static int try_release_subpage_extent_buffer(struct page *page)
-+static int try_release_subpage_extent_buffer(struct folio *folio)
+ int zstd_decompress(struct list_head *ws, const u8 *data_in,
+-		struct page *dest_page, unsigned long dest_pgoff, size_t srclen,
++		struct folio *dest_folio, unsigned long dest_pgoff, size_t srclen,
+ 		size_t destlen)
  {
--	struct btrfs_fs_info *fs_info = page_to_fs_info(page);
--	u64 cur = page_offset(page);
--	const u64 end = page_offset(page) + PAGE_SIZE;
-+	struct btrfs_fs_info *fs_info = folio_to_fs_info(folio);
-+	u64 cur = folio_pos(folio);
-+	const u64 end = cur + PAGE_SIZE;
- 	int ret;
+ 	struct workspace *workspace = list_entry(ws, struct workspace, list);
+-	struct btrfs_fs_info *fs_info = btrfs_sb(dest_page->mapping->host->i_sb);
++	struct btrfs_fs_info *fs_info = btrfs_sb(folio_inode(dest_folio)->i_sb);
+ 	const u32 sectorsize = fs_info->sectorsize;
+ 	zstd_dstream *stream;
+ 	int ret = 0;
+@@ -669,12 +669,12 @@ int zstd_decompress(struct list_head *ws, const u8 *data_in,
+ 	stream = zstd_init_dstream(
+ 			ZSTD_BTRFS_MAX_INPUT, workspace->mem, workspace->size);
+ 	if (unlikely(!stream)) {
+-		struct btrfs_inode *inode = BTRFS_I(dest_page->mapping->host);
++		struct btrfs_inode *inode = folio_to_inode(dest_folio);
  
- 	while (cur < end) {
-@@ -4190,7 +4190,7 @@ static int try_release_subpage_extent_buffer(struct page *page)
- 		 * with spinlock rather than RCU.
- 		 */
- 		spin_lock(&fs_info->buffer_lock);
--		eb = get_next_extent_buffer(fs_info, page_folio(page), cur);
-+		eb = get_next_extent_buffer(fs_info, folio, cur);
- 		if (!eb) {
- 			/* No more eb in the page range after or at cur */
- 			spin_unlock(&fs_info->buffer_lock);
-@@ -4231,12 +4231,12 @@ static int try_release_subpage_extent_buffer(struct page *page)
- 	 * Finally to check if we have cleared folio private, as if we have
- 	 * released all ebs in the page, the folio private should be cleared now.
+ 		btrfs_err(inode->root->fs_info,
+ 		"zstd decompression init failed, root %llu inode %llu offset %llu",
+ 			  btrfs_root_id(inode->root), btrfs_ino(inode),
+-			  page_offset(dest_page));
++			  folio_pos(dest_folio));
+ 		ret = -EIO;
+ 		goto finish;
+ 	}
+@@ -693,21 +693,21 @@ int zstd_decompress(struct list_head *ws, const u8 *data_in,
  	 */
--	spin_lock(&page->mapping->i_private_lock);
--	if (!folio_test_private(page_folio(page)))
-+	spin_lock(&folio->mapping->i_private_lock);
-+	if (!folio_test_private(folio))
- 		ret = 1;
- 	else
- 		ret = 0;
--	spin_unlock(&page->mapping->i_private_lock);
-+	spin_unlock(&folio->mapping->i_private_lock);
+ 	ret = zstd_decompress_stream(stream, &workspace->out_buf, &workspace->in_buf);
+ 	if (unlikely(zstd_is_error(ret))) {
+-		struct btrfs_inode *inode = BTRFS_I(dest_page->mapping->host);
++		struct btrfs_inode *inode = folio_to_inode(dest_folio);
+ 
+ 		btrfs_err(inode->root->fs_info,
+ 		"zstd decompression failed, error %d root %llu inode %llu offset %llu",
+ 			  zstd_get_error_code(ret), btrfs_root_id(inode->root),
+-			  btrfs_ino(inode), page_offset(dest_page));
++			  btrfs_ino(inode), folio_pos(dest_folio));
+ 		goto finish;
+ 	}
+ 	to_copy = workspace->out_buf.pos;
+-	memcpy_to_page(dest_page, dest_pgoff, workspace->out_buf.dst, to_copy);
++	memcpy_to_folio(dest_folio, dest_pgoff, workspace->out_buf.dst, to_copy);
+ finish:
+ 	/* Error or early end. */
+ 	if (unlikely(to_copy < destlen)) {
+ 		ret = -EIO;
+-		memzero_page(dest_page, dest_pgoff + to_copy, destlen - to_copy);
++		folio_zero_range(dest_folio, dest_pgoff + to_copy, destlen - to_copy);
+ 	}
  	return ret;
- 
  }
-@@ -4247,7 +4247,7 @@ int try_release_extent_buffer(struct page *page)
- 	struct extent_buffer *eb;
- 
- 	if (page_to_fs_info(page)->nodesize < PAGE_SIZE)
--		return try_release_subpage_extent_buffer(page);
-+		return try_release_subpage_extent_buffer(page_folio(page));
- 
- 	/*
- 	 * We need to make sure nobody is changing folio private, as we rely on
 -- 
 2.34.1
 
