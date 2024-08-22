@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 327B5C52D7C
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Aug 2024 01:29:57 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 70B83C5472E
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Aug 2024 01:29:56 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sgweC-0003Ys-Ql;
+	id 1sgweC-0002vK-17;
 	Thu, 22 Aug 2024 01:29:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lizetao1@huawei.com>) id 1sgweB-0003YV-MH
+ (envelope-from <lizetao1@huawei.com>) id 1sgweA-0002v8-Bw
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Aug 2024 01:29:55 +0000
+ Thu, 22 Aug 2024 01:29:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
  :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=J63If87hVIuHjNt9QKFABY3dpsWo54CKym+jHnW8ez0=; b=JtuY9Ni3p9PE6ZVzCAPftFVmNr
- ZLs8NTV8FFfufJgSUcMbP6vxq7QGhVju1MtO9NsbPECwB7kV8KriRjObA7GrMptXCJm0k99yDxmJd
- VglIRCD+RH6lenMlD7sBe5L5rea5q9lq8ek3Nup/JCCSfbPL1m4mIcYXhdqZx0u3xAes=;
+ bh=1AcXvX91u9nuVp+ZWFW4c2c9NJg7RiMV+HHd3BwD344=; b=Vtm0h8oe8vRIKDQleBJZ5KKf5O
+ hMnqINmubKAwGpafI6ViEwdsnl4l+DH1EVexDRul3Ndh34I9CjMs7DHM/x9svMCiCB3uo3BlGHWrC
+ QTKaQXWMkl5R4ULzn6ZzEewXji3vhu0kp1bhzHKKviI2vdz11KMeN6h9qbbPuzGXlgXI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -33,27 +33,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=J63If87hVIuHjNt9QKFABY3dpsWo54CKym+jHnW8ez0=; b=kuGCudoA47K4/efNJPcoCB+s50
- AyQwdPj0jdr0yq3PFnEMuLXpez8ZPOza4qn2/I8BqWuzIsOcfMlymHS7YXlxTpcID8r6Y2qlFK1Kj
- DN/I4nb/QCBFkTI1LEi+z/U1RtiIhqHbXxW1FGuXttmafqF7TnZrmoIsEmQk8nHSPWLE=;
-Received: from szxga07-in.huawei.com ([45.249.212.35])
+ bh=1AcXvX91u9nuVp+ZWFW4c2c9NJg7RiMV+HHd3BwD344=; b=er7g6ZDaOsSgem/AyR29vQKfDn
+ HmTmV+iAMs+OG+u3Olwoq9WiuIpL5HeAJEw7UZOW8tifC9L92+V50+WlwCgqd76GO9jzOeP6aodPL
+ QC9voycKZt5gJis5Og+7O/Z1AUieXm/TwdOg8QCLBZKLmOy5Ui33LT3VxbeEsbNg9KdA=;
+Received: from szxga01-in.huawei.com ([45.249.212.187])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sgweA-0006c8-NW for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Aug 2024 01:29:55 +0000
-Received: from mail.maildlp.com (unknown [172.19.163.44])
- by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Wq5GV6PHbz1S8V0;
- Thu, 22 Aug 2024 09:29:38 +0800 (CST)
+ id 1sgwe9-0006c3-2h for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Aug 2024 01:29:54 +0000
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wq5Fn2Kl5zpVYq;
+ Thu, 22 Aug 2024 09:29:01 +0800 (CST)
 Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
- by mail.maildlp.com (Postfix) with ESMTPS id 8DFC11400FD;
- Thu, 22 Aug 2024 09:29:42 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 5BF4C1800D3;
+ Thu, 22 Aug 2024 09:29:41 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemd500012.china.huawei.com
  (7.221.188.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 22 Aug
- 2024 09:29:42 +0800
+ 2024 09:29:40 +0800
 To: <clm@fb.com>, <josef@toxicpanda.com>, <dsterba@suse.com>, <terrelln@fb.com>
-Date: Thu, 22 Aug 2024 09:37:09 +0800
-Message-ID: <20240822013714.3278193-10-lizetao1@huawei.com>
+Date: Thu, 22 Aug 2024 09:37:06 +0800
+Message-ID: <20240822013714.3278193-7-lizetao1@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240822013714.3278193-1-lizetao1@huawei.com>
 References: <20240822013714.3278193-1-lizetao1@huawei.com>
@@ -61,9 +61,9 @@ MIME-Version: 1.0
 X-Originating-IP: [10.90.53.73]
 X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
  kwepemd500012.china.huawei.com (7.221.188.25)
-X-Headers-End: 1sgweA-0006c8-NW
-Subject: [f2fs-dev] [PATCH 09/14] btrfs: convert
- try_release_extent_mapping() to take a folio
+X-Headers-End: 1sgwe9-0006c3-2h
+Subject: [f2fs-dev] [PATCH 06/14] btrfs: convert submit_eb_subpage() to take
+ a folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,60 +85,78 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 The old page API is being gradually replaced and converted to use folio
 to improve code readability and avoid repeated conversion between page
-and folio. And page_to_inode() can be replaced with folio_to_inode() now.
+and folio. Moreover, use folio_pos() instend of page_offset(),
+which is more consistent with folio usage.
 
 Signed-off-by: Li Zetao <lizetao1@huawei.com>
 ---
- fs/btrfs/extent_io.c | 6 +++---
- fs/btrfs/extent_io.h | 2 +-
- fs/btrfs/inode.c     | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ fs/btrfs/extent_io.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
 diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 27ca7a56d8f5..cfd523b523b3 100644
+index a0102b9b67ff..ca458237ac35 100644
 --- a/fs/btrfs/extent_io.c
 +++ b/fs/btrfs/extent_io.c
-@@ -2435,11 +2435,11 @@ static bool try_release_extent_state(struct extent_io_tree *tree,
-  * in the range corresponding to the page, both state records and extent
-  * map records are removed
+@@ -1818,12 +1818,11 @@ static noinline_for_stack void write_one_eb(struct extent_buffer *eb,
+  * Return >=0 for the number of submitted extent buffers.
+  * Return <0 for fatal error.
   */
--bool try_release_extent_mapping(struct page *page, gfp_t mask)
-+bool try_release_extent_mapping(struct folio *folio, gfp_t mask)
+-static int submit_eb_subpage(struct page *page, struct writeback_control *wbc)
++static int submit_eb_subpage(struct folio *folio, struct writeback_control *wbc)
  {
--	u64 start = page_offset(page);
-+	u64 start = folio_pos(folio);
- 	u64 end = start + PAGE_SIZE - 1;
--	struct btrfs_inode *inode = page_to_inode(page);
-+	struct btrfs_inode *inode = folio_to_inode(folio);
- 	struct extent_io_tree *io_tree = &inode->io_tree;
+-	struct btrfs_fs_info *fs_info = page_to_fs_info(page);
+-	struct folio *folio = page_folio(page);
++	struct btrfs_fs_info *fs_info = folio_to_fs_info(folio);
+ 	int submitted = 0;
+-	u64 page_start = page_offset(page);
++	u64 folio_start = folio_pos(folio);
+ 	int bit_start = 0;
+ 	int sectors_per_node = fs_info->nodesize >> fs_info->sectorsize_bits;
  
- 	while (start <= end) {
-diff --git a/fs/btrfs/extent_io.h b/fs/btrfs/extent_io.h
-index f4c93ca46bdd..d1c54788d444 100644
---- a/fs/btrfs/extent_io.h
-+++ b/fs/btrfs/extent_io.h
-@@ -236,7 +236,7 @@ static inline void extent_changeset_free(struct extent_changeset *changeset)
- 	kfree(changeset);
- }
+@@ -1838,21 +1837,21 @@ static int submit_eb_subpage(struct page *page, struct writeback_control *wbc)
+ 		 * Take private lock to ensure the subpage won't be detached
+ 		 * in the meantime.
+ 		 */
+-		spin_lock(&page->mapping->i_private_lock);
++		spin_lock(&folio->mapping->i_private_lock);
+ 		if (!folio_test_private(folio)) {
+-			spin_unlock(&page->mapping->i_private_lock);
++			spin_unlock(&folio->mapping->i_private_lock);
+ 			break;
+ 		}
+ 		spin_lock_irqsave(&subpage->lock, flags);
+ 		if (!test_bit(bit_start + fs_info->subpage_info->dirty_offset,
+ 			      subpage->bitmaps)) {
+ 			spin_unlock_irqrestore(&subpage->lock, flags);
+-			spin_unlock(&page->mapping->i_private_lock);
++			spin_unlock(&folio->mapping->i_private_lock);
+ 			bit_start++;
+ 			continue;
+ 		}
  
--bool try_release_extent_mapping(struct page *page, gfp_t mask);
-+bool try_release_extent_mapping(struct folio *folio, gfp_t mask);
- int try_release_extent_buffer(struct folio *folio);
+-		start = page_start + bit_start * fs_info->sectorsize;
++		start = folio_start + bit_start * fs_info->sectorsize;
+ 		bit_start += sectors_per_node;
  
- int btrfs_read_folio(struct file *file, struct folio *folio);
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 5e3b834cc72b..e844c409c12a 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -7238,7 +7238,7 @@ static int btrfs_launder_folio(struct folio *folio)
+ 		/*
+@@ -1861,7 +1860,7 @@ static int submit_eb_subpage(struct page *page, struct writeback_control *wbc)
+ 		 */
+ 		eb = find_extent_buffer_nolock(fs_info, start);
+ 		spin_unlock_irqrestore(&subpage->lock, flags);
+-		spin_unlock(&page->mapping->i_private_lock);
++		spin_unlock(&folio->mapping->i_private_lock);
  
- static bool __btrfs_release_folio(struct folio *folio, gfp_t gfp_flags)
- {
--	if (try_release_extent_mapping(&folio->page, gfp_flags)) {
-+	if (try_release_extent_mapping(folio, gfp_flags)) {
- 		wait_subpage_spinlock(folio);
- 		clear_page_extent_mapped(folio);
- 		return true;
+ 		/*
+ 		 * The eb has already reached 0 refs thus find_extent_buffer()
+@@ -1912,7 +1911,7 @@ static int submit_eb_page(struct page *page, struct btrfs_eb_write_context *ctx)
+ 		return 0;
+ 
+ 	if (page_to_fs_info(page)->nodesize < PAGE_SIZE)
+-		return submit_eb_subpage(page, wbc);
++		return submit_eb_subpage(folio, wbc);
+ 
+ 	spin_lock(&mapping->i_private_lock);
+ 	if (!folio_test_private(folio)) {
 -- 
 2.34.1
 
