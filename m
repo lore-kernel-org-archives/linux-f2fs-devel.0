@@ -4,94 +4,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 25840CA0EC4
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 29 Aug 2024 21:52:58 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4A291CA0EC0
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 29 Aug 2024 21:53:04 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sjn4a-0002nG-Nh;
-	Thu, 29 Aug 2024 21:52:56 +0000
+	id 1sjn4h-0004CR-SC;
+	Thu, 29 Aug 2024 21:53:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1sjn4Z-0002n4-0e
+ (envelope-from <daeho43@gmail.com>) id 1sjn4g-0004CF-M7
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 29 Aug 2024 21:52:55 +0000
+ Thu, 29 Aug 2024 21:53:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Edfu7fbFGAzqD2XrSR1tHmTZAuikCACk3QwSTIyslvw=; b=lqcA0IJwIb5OBzcyEO/2CvQRej
- 9HopMyijA65HBPiR6ILV0dP3yu2ZVBVRk703oiKuvbazq0PViLiT6a2WHh5opDP4hLVOv5gbm0LAz
- XGiZmnTWkBy+QSiSR9BsU2GLdR2gG0ox8TxN79MLNK2OCLGdMzAEA/zqkGvI6xmWOBz4=;
+ bh=u2yDERBuwFp8nVKBjkDWK81Owor96SC7L8sKWZWfv3Q=; b=ZXLRP6Eq7UVqynrMU0kibIT81K
+ 4ipHjIwNH5yrX5xxsZk6+YbaBpjBfrA1GiP25BgCL2ScXTT66Vx4QJt7Bsl18/RtxYxbEPNzkYu9e
+ 4YTV382kZyQlhTHafxI7BwmffuuAj0VzyDvugT+fWN9K7UYFjRapONavEpAWuDjqE5RQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Edfu7fbFGAzqD2XrSR1tHmTZAuikCACk3QwSTIyslvw=; b=T
- v/DmDs9rHOe9OPfNAtY6XfK/dFAAknUM1BEyT7koMwc96gcD3/HFJ8kaqwbCJGM59L8PGu/NxVXUK
- YDXOFaTjWHOmMaG65uUHolNYcV/2cTACP3gDJilPLjUn/M/mQCDZLna2pT0TkCcM6ZQrsVjnGTbYd
- tnuXbTKJFldt1bBs=;
-Received: from mail-io1-f41.google.com ([209.85.166.41])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=u2yDERBuwFp8nVKBjkDWK81Owor96SC7L8sKWZWfv3Q=; b=BFeYpoPe/bbaQJyU+RCNSyzyLo
+ P+Z/mO4cvh3QnhiOZSxDtJDQyYS8Ac7fzlasnSzKWFuLmrQXju94OSOCik3mlT9blj9xfJSJ9hT3f
+ lRytk+5Etjel7TnaWG3yzlGmkLCyG5Iw5kbh7PJok1RHha+XRth0jNmmjQm0zCfW+gGQ=;
+Received: from mail-il1-f177.google.com ([209.85.166.177])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1sjn4Y-0007bF-4Z for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 29 Aug 2024 21:52:54 +0000
-Received: by mail-io1-f41.google.com with SMTP id
- ca18e2360f4ac-829f5e9d8e9so49129339f.3
+ id 1sjn4f-0007bU-Tq for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 29 Aug 2024 21:53:02 +0000
+Received: by mail-il1-f177.google.com with SMTP id
+ e9e14a558f8ab-39d3b31e577so4975185ab.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 29 Aug 2024 14:52:54 -0700 (PDT)
+ Thu, 29 Aug 2024 14:53:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1724968368; x=1725573168; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=Edfu7fbFGAzqD2XrSR1tHmTZAuikCACk3QwSTIyslvw=;
- b=POR8JFRIkDm0sUTPonmnkE3LtdCUlxRCZAcC6SWQfNoQ75KwiGO5HIkrI9ClYGx0js
- OlvCpq5+s91GM9wxiqejgFfWf75/pXDJ9e9moRujS5yPr9crWyeMhXtVGlcdD9T6Zm8c
- oFH8BGc58HYN9wD1ptwHqQEaZzGJJdnPZB/qvSy/E2hVscZ20djOKf38IycyRwnfwEsA
- 2V8fhcT0lXJL74VvbANeJPd/rgfzqQrL9c+CNXay93bg9DqslyWLgxr4TZ38vGDlgjmF
- eVA0fHdZJMsJeJox21ydKngLPVgoE2QKbgB2EPgDBgvT5FS5bJLdihWOdNdy1pn8l3go
- JepQ==
+ d=gmail.com; s=20230601; t=1724968376; x=1725573176; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=u2yDERBuwFp8nVKBjkDWK81Owor96SC7L8sKWZWfv3Q=;
+ b=lbYhe70Se1sFEgRJO1HV4hmOGI2UrlxcDay47t3sjD1jbocly+y1sx4VkSj6+Iskk4
+ zdOOpPql527P5yXrIZs9sXUKK8HkA68WnmjBGAeUDHS9a6nupE930vBcXgRa7S/3fjDN
+ Cqw2QhMKlZuoG7TaSDba9cecq6HROXSFNrqXO5a2R5fjHGM3iUN6x04KTO/FHf703pMJ
+ Ub8iUmCW5oTxgVElg26+/wM6gYS1i+QgltEz6rAPNY21Umz1oX6vK6deW0nbHh8lCuZ5
+ P/4Az3WvVEhwif0GQN0MCmDX8V+9oKuqvg5bFB/R8L5uHie66FnfiKE3q4cRHdp2gnS1
+ X/Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1724968368; x=1725573168;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=Edfu7fbFGAzqD2XrSR1tHmTZAuikCACk3QwSTIyslvw=;
- b=k8dDr9MjiSeeHZdXcoVrG98mbxCpUGuIUwl538m66oJL/eJofJ4fuSgcBn9lrOuKBL
- gqt+BXUIs6xqpUUV1sCoinyB9U0ANXOC2nGyHWRhrNQ79wJo9BV1zdTqx5sHJWKCcRdg
- 1TOt8HV8m85P5M2oyaCCktF8Khdvv3XaDE+1auQijYZX04dsOHRnSixuV8FRbPEwJKTe
- Lyb/ZwVuaUlOslCCV6FD5RLNHVd+WvFVBmXkAPOWf6c1qdb40m2JVILW/f2RlnsBVFmJ
- DNeLA8XJ4XlHuipKNWhIJoBhNLmnoFmZzIP146zi6xJfOg47Ifo3zwpJFmMEbSHOkxR1
- WG+g==
+ d=1e100.net; s=20230601; t=1724968376; x=1725573176;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=u2yDERBuwFp8nVKBjkDWK81Owor96SC7L8sKWZWfv3Q=;
+ b=cEf7SYD97pBnV12DjXRCMHcHt7bfAtvC8ymqstCGozUaWqllmBHgtqLU/CmDsNMEct
+ VRww4OACwNoZn2slz2t6xP7iDz+EjWV4OckkYjW3k1U50//wfoQJN74P/02bzN21FkVE
+ LxZHIUdZe733UQ4NmfDB3Oxx2+3UNR5YpO2S48Mc+o4T9ENlky4sFeYLdzNJrDZdj2ts
+ MEffaLwm0EVMdbDmT4rU1Hmqdfmb936+BTbsUyXSx8APXJnaPqUcaKDhpS7JkNby6MXZ
+ 2SXAoKUoG/RZYdKNatcMieWpNPO5tEYVqJSgBb7R/bgx/BAgq4nKQdgV+2KgG26Qx8vB
+ rD4w==
 X-Forwarded-Encrypted: i=1;
- AJvYcCVH1ZseguIobE1sU0oa0XucMK4ITrBXB8xHhZVdj1ydCG2HX92oWDcsW1+gJG3IYeMVua1VcZEvakQzcLGwfi8R@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YzDYGYpbkmD17qO7I9DRLhIb08uo0jiHDX66++bqpaXxBxDg9aW
- Lzx0m2OExzNHe65y7dK9nVQtfiXr4OZ463CzSLniK1z72o9gUzEN
-X-Google-Smtp-Source: AGHT+IGTeTrFmeuCfOKUgfFM1WfBAV57WVShkDHfKq+CbbCKAShvP/Vh5nyJgX1QFkU9XX2U3VIuWw==
-X-Received: by 2002:a05:6e02:1547:b0:39d:637f:97bc with SMTP id
- e9e14a558f8ab-39f377138c6mr49358335ab.0.1724968368209; 
- Thu, 29 Aug 2024 14:52:48 -0700 (PDT)
+ AJvYcCU/4Z9lO0Nq/fEJuTVi83CBj2xhDyKHn1jbzwuOyuI1UCczy/g3qttW8d2OWbm2+GvSPYz4IHMyvcMTc3YZcmBI@lists.sourceforge.net
+X-Gm-Message-State: AOJu0Yx9O/oMFvPDLhEYegEZwV2JkbuKJYjVeBjPIWrH5EYNPyfnATxC
+ uspwWfHPu61u6bj7kyY5qI70gkjSXk2XIRd8RWo0yeWHoE/nnvcu
+X-Google-Smtp-Source: AGHT+IFtyUivTo4A1L+LEOlzGSFxyyn44PCEBcc9Wz4G26Eb8oCHWiMMdRZYIcxxv0rHM+CjSXGQRg==
+X-Received: by 2002:a05:6e02:219c:b0:39a:14f7:1c1c with SMTP id
+ e9e14a558f8ab-39f37866c50mr54459475ab.25.1724968376015; 
+ Thu, 29 Aug 2024 14:52:56 -0700 (PDT)
 Received: from daehojeong-desktop.mtv.corp.google.com
  ([2a00:79e0:2e14:7:a1e7:73eb:e77e:3e2b])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-7d22e9d512asm1705653a12.78.2024.08.29.14.52.47
+ 41be03b00d2f7-7d22e9d512asm1705653a12.78.2024.08.29.14.52.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 29 Aug 2024 14:52:47 -0700 (PDT)
+ Thu, 29 Aug 2024 14:52:55 -0700 (PDT)
 From: Daeho Jeong <daeho43@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  kernel-team@android.com
-Date: Thu, 29 Aug 2024 14:52:36 -0700
-Message-ID: <20240829215242.3641502-1-daeho43@gmail.com>
+Date: Thu, 29 Aug 2024 14:52:40 -0700
+Message-ID: <20240829215242.3641502-5-daeho43@gmail.com>
 X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+In-Reply-To: <20240829215242.3641502-1-daeho43@gmail.com>
+References: <20240829215242.3641502-1-daeho43@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1sjn4Y-0007bF-4Z
-Subject: [f2fs-dev] [PATCH 1/7] f2fs: make BG GC more aggressive for zoned
- devices
+X-Headers-End: 1sjn4f-0007bU-Tq
+Subject: [f2fs-dev] [PATCH 5/7] f2fs: do FG_GC when GC boosting is required
+ for zoned devices
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -110,180 +113,110 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Daeho Jeong <daehojeong@google.com>
 
-Since we don't have any GC on device side for zoned devices, need more
-aggressive BG GC. So, tune the parameters for that.
+Under low free section count, we need to use FG_GC instead of BG_GC to
+recover free sections.
 
 Signed-off-by: Daeho Jeong <daehojeong@google.com>
 ---
- fs/f2fs/f2fs.h  | 20 ++++++++++++++++++--
- fs/f2fs/gc.c    | 25 +++++++++++++++++++++----
- fs/f2fs/gc.h    | 22 ++++++++++++++++++++++
- fs/f2fs/super.c |  8 +++++++-
- 4 files changed, 68 insertions(+), 7 deletions(-)
+ fs/f2fs/f2fs.h |  1 +
+ fs/f2fs/gc.c   | 24 +++++++++++++++++-------
+ 2 files changed, 18 insertions(+), 7 deletions(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ac19c61f0c3e..5e4db3ba534a 100644
+index 5e4db3ba534a..ee1fafc65e95 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -2854,13 +2854,26 @@ static inline bool is_inflight_io(struct f2fs_sb_info *sbi, int type)
- 	return false;
- }
+@@ -1294,6 +1294,7 @@ struct f2fs_gc_control {
+ 	bool should_migrate_blocks;	/* should migrate blocks */
+ 	bool err_gc_skipped;		/* return EAGAIN if GC skipped */
+ 	unsigned int nr_free_secs;	/* # of free sections to do GC */
++	bool one_time;			/* require one time GC in one migration unit */
+ };
  
-+static inline bool is_inflight_read_io(struct f2fs_sb_info *sbi)
-+{
-+	return get_pages(sbi, F2FS_RD_DATA) || get_pages(sbi, F2FS_DIO_READ);
-+}
-+
- static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
- {
-+	bool zoned_gc = (type == GC_TIME &&
-+			F2FS_HAS_FEATURE(sbi, F2FS_FEATURE_BLKZONED));
-+
- 	if (sbi->gc_mode == GC_URGENT_HIGH)
- 		return true;
- 
--	if (is_inflight_io(sbi, type))
--		return false;
-+	if (zoned_gc) {
-+		if (is_inflight_read_io(sbi))
-+			return false;
-+	} else {
-+		if (is_inflight_io(sbi, type))
-+			return false;
-+	}
- 
- 	if (sbi->gc_mode == GC_URGENT_MID)
- 		return true;
-@@ -2869,6 +2882,9 @@ static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
- 			(type == DISCARD_TIME || type == GC_TIME))
- 		return true;
- 
-+	if (zoned_gc)
-+		return true;
-+
- 	return f2fs_time_over(sbi, type);
- }
- 
+ /*
 diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 724bbcb447d3..46e3bc26b78a 100644
+index d6d71aab94f3..37b47a8d95f1 100644
 --- a/fs/f2fs/gc.c
 +++ b/fs/f2fs/gc.c
-@@ -116,7 +116,17 @@ static int gc_thread_func(void *data)
- 			goto next;
+@@ -81,6 +81,8 @@ static int gc_thread_func(void *data)
+ 			continue;
  		}
  
--		if (has_enough_invalid_blocks(sbi))
-+		if (f2fs_sb_has_blkzoned(sbi)) {
-+			if (has_enough_free_blocks(sbi, LIMIT_NO_ZONED_GC)) {
-+				wait_ms = gc_th->no_gc_sleep_time;
-+				f2fs_up_write(&sbi->gc_lock);
-+				goto next;
-+			}
-+			if (wait_ms == gc_th->no_gc_sleep_time)
-+				wait_ms = gc_th->max_sleep_time;
-+		}
++		gc_control.one_time = false;
 +
-+		if (need_to_boost_gc(sbi))
+ 		/*
+ 		 * [GC triggering condition]
+ 		 * 0. GC is not conducted currently.
+@@ -126,15 +128,19 @@ static int gc_thread_func(void *data)
+ 				wait_ms = gc_th->max_sleep_time;
+ 		}
+ 
+-		if (need_to_boost_gc(sbi))
++		if (need_to_boost_gc(sbi)) {
  			decrease_sleep_time(gc_th, &wait_ms);
- 		else
+-		else
++			if (f2fs_sb_has_blkzoned(sbi))
++				gc_control.one_time = true;
++		} else {
  			increase_sleep_time(gc_th, &wait_ms);
-@@ -179,9 +189,16 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
- 		return -ENOMEM;
++		}
+ do_gc:
+ 		stat_inc_gc_call_count(sbi, foreground ?
+ 					FOREGROUND : BACKGROUND);
  
- 	gc_th->urgent_sleep_time = DEF_GC_THREAD_URGENT_SLEEP_TIME;
--	gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME;
--	gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME;
--	gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME;
-+
-+	if (f2fs_sb_has_blkzoned(sbi)) {
-+		gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME_ZONED;
-+		gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME_ZONED;
-+		gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME_ZONED;
-+	} else {
-+		gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME;
-+		gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME;
-+		gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME;
-+	}
+-		sync_mode = F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_SYNC;
++		sync_mode = (F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_SYNC) ||
++				gc_control.one_time;
  
- 	gc_th->gc_wake = false;
- 
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index a8ea3301b815..14ae85f33235 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -15,6 +15,11 @@
- #define DEF_GC_THREAD_MAX_SLEEP_TIME	60000
- #define DEF_GC_THREAD_NOGC_SLEEP_TIME	300000	/* wait 5 min */
- 
-+/* GC sleep parameters for zoned deivces */
-+#define DEF_GC_THREAD_MIN_SLEEP_TIME_ZONED	10
-+#define DEF_GC_THREAD_MAX_SLEEP_TIME_ZONED	20
-+#define DEF_GC_THREAD_NOGC_SLEEP_TIME_ZONED	60000
-+
- /* choose candidates from sections which has age of more than 7 days */
- #define DEF_GC_THREAD_AGE_THRESHOLD		(60 * 60 * 24 * 7)
- #define DEF_GC_THREAD_CANDIDATE_RATIO		20	/* select 20% oldest sections as candidates */
-@@ -25,6 +30,10 @@
- #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
- #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
- 
-+#define LIMIT_NO_ZONED_GC	60 /* percentage over total user space of no gc for zoned devices */
-+#define LIMIT_BOOST_ZONED_GC	25 /* percentage over total user space of boosted gc for zoned devices */
-+#define DEF_MIGRATION_GRANULARITY_ZONED	3
-+
- #define DEF_GC_FAILED_PINNED_FILES	2048
- #define MAX_GC_FAILED_PINNED_FILES	USHRT_MAX
- 
-@@ -152,6 +161,12 @@ static inline void decrease_sleep_time(struct f2fs_gc_kthread *gc_th,
- 		*wait -= min_time;
- }
- 
-+static inline bool has_enough_free_blocks(struct f2fs_sb_info *sbi,
-+						unsigned int limit_perc)
-+{
-+	return free_sections(sbi) > ((sbi->total_sections * limit_perc) / 100);
-+}
-+
- static inline bool has_enough_invalid_blocks(struct f2fs_sb_info *sbi)
+ 		/* foreground GC was been triggered via f2fs_balance_fs() */
+ 		if (foreground)
+@@ -1701,7 +1707,7 @@ static int __get_victim(struct f2fs_sb_info *sbi, unsigned int *victim,
+ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 				unsigned int start_segno,
+ 				struct gc_inode_list *gc_list, int gc_type,
+-				bool force_migrate)
++				bool force_migrate, bool one_time)
  {
- 	block_t user_block_count = sbi->user_block_count;
-@@ -167,3 +182,10 @@ static inline bool has_enough_invalid_blocks(struct f2fs_sb_info *sbi)
- 		free_user_blocks(sbi) <
- 			limit_free_user_blocks(invalid_user_blocks));
- }
+ 	struct page *sum_page;
+ 	struct f2fs_summary_block *sum;
+@@ -1728,7 +1734,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 			sec_end_segno -= SEGS_PER_SEC(sbi) -
+ 					f2fs_usable_segs_in_sec(sbi, segno);
+ 
+-		if (gc_type == BG_GC) {
++		if (gc_type == BG_GC || one_time) {
+ 			unsigned int migration_granularity =
+ 				sbi->migration_granularity;
+ 
+@@ -1908,7 +1914,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
+ 	}
+ 
+ 	seg_freed = do_garbage_collect(sbi, segno, &gc_list, gc_type,
+-				gc_control->should_migrate_blocks);
++				gc_control->should_migrate_blocks,
++				gc_control->one_time);
+ 	if (seg_freed < 0)
+ 		goto stop;
+ 
+@@ -1919,6 +1926,9 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
+ 		total_sec_freed++;
+ 	}
+ 
++	if (gc_control->one_time)
++		goto stop;
 +
-+static inline bool need_to_boost_gc(struct f2fs_sb_info *sbi)
-+{
-+	if (f2fs_sb_has_blkzoned(sbi))
-+		return !has_enough_free_blocks(sbi, LIMIT_BOOST_ZONED_GC);
-+	return has_enough_invalid_blocks(sbi);
-+}
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 3959fd137cc9..790ec9d030c9 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -707,6 +707,11 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			if (!strcmp(name, "on")) {
- 				F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
- 			} else if (!strcmp(name, "off")) {
-+				if (f2fs_sb_has_blkzoned(sbi)) {
-+					f2fs_warn(sbi, "zoned devices need bggc");
-+					kfree(name);
-+					return -EINVAL;
-+				}
- 				F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_OFF;
- 			} else if (!strcmp(name, "sync")) {
- 				F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_SYNC;
-@@ -3785,7 +3790,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->next_victim_seg[BG_GC] = NULL_SEGNO;
- 	sbi->next_victim_seg[FG_GC] = NULL_SEGNO;
- 	sbi->max_victim_search = DEF_MAX_VICTIM_SEARCH;
--	sbi->migration_granularity = SEGS_PER_SEC(sbi);
-+	sbi->migration_granularity = f2fs_sb_has_blkzoned(sbi) ?
-+		DEF_MIGRATION_GRANULARITY_ZONED : SEGS_PER_SEC(sbi);
- 	sbi->seq_file_ra_mul = MIN_RA_MUL;
- 	sbi->max_fragment_chunk = DEF_FRAGMENT_SIZE;
- 	sbi->max_fragment_hole = DEF_FRAGMENT_SIZE;
+ 	if (gc_type == FG_GC) {
+ 		sbi->cur_victim_sec = NULL_SEGNO;
+ 
+@@ -2044,7 +2054,7 @@ int f2fs_gc_range(struct f2fs_sb_info *sbi,
+ 		};
+ 
+ 		do_garbage_collect(sbi, segno, &gc_list, FG_GC,
+-						dry_run_sections == 0);
++						dry_run_sections == 0, false);
+ 		put_gc_inode(&gc_list);
+ 
+ 		if (!dry_run && get_valid_blocks(sbi, segno, true))
 -- 
 2.46.0.469.g59c65b2a67-goog
 
