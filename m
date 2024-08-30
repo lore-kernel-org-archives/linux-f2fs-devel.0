@@ -4,113 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B4BE2CA0EFD
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Aug 2024 17:22:15 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F247CCA0EF3
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Aug 2024 20:51:51 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sk5K9-00045E-LN;
-	Fri, 30 Aug 2024 17:22:14 +0000
+	id 1sk8b0-00052h-PO;
+	Fri, 30 Aug 2024 20:51:50 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sandeen@sandeen.net>) id 1sk5K3-000450-2b
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sk8ay-00052a-Ir
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Aug 2024 17:22:08 +0000
+ Fri, 30 Aug 2024 20:51:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Rdqy319/qy8mgecu7nilvPFyGIoY+bNoGS92/jVSf10=; b=NYb4t65tLo6C3vf0r37AaakGz9
- nwTpZkVAYoy+XuVD1s4g/G5t/AvmDFZwYidQDqiKHxPmvCBtIG2M4D57p2y4iWPMaZUb7nWx5JGEc
- w1+wDJBYBCG9xM5Y3sM08pa//qXy8/GfAqCFJetIRwfbF3FP+N4wafc/PnLK9wP458pU=;
+ bh=qMZbx9qR81U2W7JO50SHhBwKcsgaqzSba/8rWwfTWBI=; b=hUFrZR9macR/6gbPLrDUBeffWt
+ uksTfpAkoVC83tCBFF8PUHmI1cwSHQjHbywNGHFJDUbAjkChiXOQ9UiXqVy6UAckyh0E8YJgD0Bdf
+ fpnh9qUAxCusNNva/9zdO/OnZ54XMFTP609munx3j7/z8hknNhu3W4fUjV+uxX0Zclb0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Rdqy319/qy8mgecu7nilvPFyGIoY+bNoGS92/jVSf10=; b=JwoBcq6TyArf8Lwg6xW5wnN0tX
- 9MnoLD41fGQTIrQ7e2c8Ja3HCgwt+GNitM28+rGfmmrKiYr3ftWdXUAbce9vIsZZy6lWkZgyTITYy
- bkzvR4y7YLEzP+s+CB7fr5Ah1MRZhoyC/ijKjfuRDiZqbxEDNzB6hDU+nFXqILRkLA4k=;
-Received: from fout5-smtp.messagingengine.com ([103.168.172.148])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=qMZbx9qR81U2W7JO50SHhBwKcsgaqzSba/8rWwfTWBI=; b=JmU8fO4cP4785KYfrOS/4Nr4pN
+ yD1vB/UyK4HGSkLwiPClCDu7oqXQaDzU/6NRQhvOoSSBrN+KA/Tee5d6NiVAvHcjQO9Ci/GF+YH3G
+ 4ya+YZRt6vlYc4xNM5LLB8yJbcfjFLnrV3QMPW2gYNDWHKPfab/DmOuOY4xbNBDIz7hA=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sk5K2-0000eT-Bb for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Aug 2024 17:22:07 +0000
-Received: from phl-compute-03.internal (phl-compute-03.nyi.internal
- [10.202.2.43])
- by mailfout.nyi.internal (Postfix) with ESMTP id 6AE421380195;
- Fri, 30 Aug 2024 13:07:28 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Fri, 30 Aug 2024 13:07:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1725037648;
- x=1725124048; bh=Rdqy319/qy8mgecu7nilvPFyGIoY+bNoGS92/jVSf10=; b=
- UzaEcL7bA0CheZ7fxD03VTdlK+Mr4xWTZGM/KUyWznjBVtoaJZyp3MqqC8QY3dro
- QY1NomOb0YC9HOZUTU/qUgNwXAgbQILwT4x2CSDy+XjR9reEkTShhClknnsMlVDI
- 5uyzXTYnHZS0rzvVxOc56ZhA5wpi15V3gmfilaJHeo+DEyL2I/TptEj4nz/byKtI
- YaxQMZi5Bzs9ZqbIG2HhBxdRyIF0ShqzK2TK1rN3zVwGyZCBh65ObdJtA8pSaFOg
- B6wiFT+pBD8X/6UdYMwXaPvklGhga5zBT66ImG20BqITZqAPrXNELYeQ6Z2UtSQo
- aRUT1I7eChwClyo52PXrHw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725037648; x=
- 1725124048; bh=Rdqy319/qy8mgecu7nilvPFyGIoY+bNoGS92/jVSf10=; b=t
- BIrl6TNACaSQ9tVhxz/8a3Ff+PAAqSc+q93OzQXY1zsTOVmhfkB3rYHJr9tUrMYd
- 7ithOBa162VxYSxCL5ji8QYqIbNRqY11SO5DECgdQCF33gfFWdEpYR2HP6cB9HKA
- t2+10Lw6EImIZksA8Vtzxw70AIQLg9I0ODSMOOjryBw4lWwiRp0xS/AQTUafqGy/
- HeGxY6N2mUvnLkr88CFeTuI+VygWJgLpScR1MUNmO7zSHK70aPsNdRookUnmWerx
- Vl0uex31DPqma9Xp+QfYAcoq13CGHh1r9hpih18YWKqSSEb3DkcLssFK71SyBfUy
- Sko2QYrPW3ee6JtIEEJsg==
-X-ME-Sender: <xms:UPzRZlKB1lpMi9kxrU4cICIPZQlpUF-rHle2L-bwymqUd-Y0Ka534w>
- <xme:UPzRZhLYEgEvAMUrwewmcSg3egy5SAjtHFRKzbDxjy5O_qeAgDwdHKSmE3yBubYxz
- 5iRUxaZs47VOTd3Suo>
-X-ME-Received: <xmr:UPzRZtuDHidjY8ko3TIAvW9H8gNTiqjV6PJAKd4Zu53QeTgkoociO8uozp2wVYN7MW4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefiedguddtkecutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
- uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
- hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddv
- jeenucfhrhhomhepgfhrihgtucfurghnuggvvghnuceoshgrnhguvggvnhesshgrnhguvg
- gvnhdrnhgvtheqnecuggftrfgrthhtvghrnheptdduvdduteeugeekiedtfefgteevveeg
- kedttedvhedtieeuieevvddttdffleevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrgh
- enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghn
- uggvvghnsehsrghnuggvvghnrdhnvghtpdhnsggprhgtphhtthhopeejpdhmohguvgepsh
- hmthhpohhuthdprhgtphhtthhopehlihhhohhnghgsohdvvdeshhhurgifvghirdgtohhm
- pdhrtghpthhtohepjhgrvghgvghukheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptg
- hhrghosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfvdhfshdquggv
- vhgvlheslhhishhtshdrshhouhhrtggvfhhorhhgvgdrnhgvthdprhgtphhtthhopegsrh
- gruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehltgiivghrnhgvrhesrhgv
- ughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrd
- hkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:UPzRZmZSPM-6A9TQHMjX8xAN7tM-srWcrQN6NKowhaWqnL1iz0l8Qg>
- <xmx:UPzRZsZ9AhXdLvBSO7vVKl-lVz4EmINY-9Y_7h9Ii8Yyma6pjwWdxg>
- <xmx:UPzRZqANflY6g0K8W1Cbw8DAJc2-T8hTrtdEjdXicYsFp1KTlh-S-g>
- <xmx:UPzRZqYeB9Yvjz_JrGZkaXQGhFm2snAukQ_ljkIzteLnjsP-LB0gww>
- <xmx:UPzRZiMZskJa2rdkhaKQciDXSU5b5ztXaBjVtQQzG2ByvagPuOIwfA-V>
-Feedback-ID: i2b59495a:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 30 Aug 2024 13:07:27 -0400 (EDT)
-Message-ID: <5c194e3e-6dc9-41a2-b967-13fc1177b2f4@sandeen.net>
-Date: Fri, 30 Aug 2024 12:07:27 -0500
+ id 1sk8ax-0005mb-6r for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 30 Aug 2024 20:51:47 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by nyc.source.kernel.org (Postfix) with ESMTP id 31E05A41ACA;
+ Fri, 30 Aug 2024 20:51:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4E70C4CEC6;
+ Fri, 30 Aug 2024 20:51:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1725051100;
+ bh=uTw2PivCAVhqwWwRcS6aU3xqvVMUcLj7zapdKiG/t8w=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=lATOTwPar158c+Lu0wZzU7V0jxsiVr/Rd0EiBeiqT5hlTvt/LzMEr6K1sXZKitOLW
+ 0a/2+4LYsuGRS9kRfY4g1Hw0SVxBlQ506ob3QEW86MBgwfrrmhcBBYfm5KugsX/Yez
+ 3GKZTgVQ1IVZfSYtgkkQgQrvDK+HoN6S1z0sCmhrMnmR9wZI1AQTsyv71FkreaBUnb
+ SWBgdVjxZLAdHtj0L9kJcEfuj74nvDdVv5gPr3ShhdEi0X1I7w4M1KtFkCofQidrun
+ a8YJm2s2LlljShgnhGCLs1FMe67VBZLP55OuZGmh26imsCmkjbd2Aex8+Ws+EGjToE
+ exBO1ikz7ndzw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+ by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
+ 712823809A80; Fri, 30 Aug 2024 20:51:42 +0000 (UTC)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Hongbo Li <lihongbo22@huawei.com>, jaegeuk@kernel.org, chao@kernel.org
-References: <20240814023912.3959299-1-lihongbo22@huawei.com>
- <6c1baa6e-5f71-418f-a7fc-27c798e51498@huawei.com>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@sandeen.net>
-In-Reply-To: <6c1baa6e-5f71-418f-a7fc-27c798e51498@huawei.com>
-X-Headers-End: 1sk5K2-0000eT-Bb
-Subject: Re: [f2fs-dev] [PATCH 0/9] f2fs: new mount API conversion
+Message-Id: <172505110100.2712133.9120573138658027084.git-patchwork-notify@kernel.org>
+Date: Fri, 30 Aug 2024 20:51:41 +0000
+References: <20240820034654.698236-1-chao@kernel.org>
+In-Reply-To: <20240820034654.698236-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1sk8ax-0005mb-6r
+Subject: Re: [f2fs-dev] [PATCH v2 1/8] f2fs: convert f2fs_write_begin() to
+ use folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,73 +78,58 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fsdevel@vger.kernel.org, lczerner@redhat.com, brauner@kernel.org,
+From: patchwork-bot+f2fs--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, willy@infradead.org,
  linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-SnVzdCBGV0lXIC0gCgpJIGhhZCBtaXNzZWQgdGhpcyB0aHJlYWQgd2hlbiBJIGdvdCB0ZW1wb3Jh
-cmlseSB1bnN1YnNjcmliZWQgZnJvbSBmc2RldmVsLgpJIGhhdmUgYSBzZXJpZXMgdGhhdCBJIHdh
-cyBoYWNraW5nIG9uIGZvciB0aGlzIHNhbWUgd29yaywgYXQKaHR0cHM6Ly9naXQua2VybmVsLm9y
-Zy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvc2FuZGVlbi9saW51eC5naXQvY29tbWl0Lz9oPWYy
-ZnMtbW91bnQtYXBpCmJ1dCBpdCdzIHZlcnkgcm91Z2ggYW5kIGFsbW9zdCBjZXJ0YWlubHkgY29u
-dGFpbnMgYnVncy4gSXQgbWF5IG9yIG1heSBub3QKYmUgb2YgYW55IGhlbHAgdG8geW91LCBidXQg
-anVzdCBGWUkuCgpJJ2xsIHRyeSB0byBoZWxwIHJldmlldy90ZXN0IHlvdXIgc2VyaWVzIHNpbmNl
-IEkgdHJpZWQgdG8gc29sdmUgdGhpcyBhcwp3ZWxsLCBidXQgSSBuZXZlciBjb21wbGV0ZWQgdGhl
-IHdvcmsuIDopCgpUaGFua3MsCi1FcmljCgpPbiA4LzI3LzI0IDY6NDcgQU0sIEhvbmdibyBMaSB3
-cm90ZToKPiBEb2VzIHRoZXJlIGV4aXN0IENJIHRlc3QgZm9yIGYyZnM/IEkgY2FuIG9ubHkgd3Jp
-dGUgdGhlIG1vdW50IHRlc3QgZm9yIGYyZnMgcmVmZXIgdG8gdGVzdHMvZXh0NC8wNTMuIEFuZCBJ
-IGhhdmUgdGVzdGVkIHRoaXMgaW4gbG9jYWwuCj4gCj4gVGhhbmtzLAo+IEhvbmdibwo+IAo+IE9u
-IDIwMjQvOC8xNCAxMDozOSwgSG9uZ2JvIExpIHdyb3RlOgo+PiBTaW5jZSBtYW55IGZpbGVzeXN0
-ZW1zIGhhdmUgZG9uZSB0aGUgbmV3IG1vdW50IEFQSSBjb252ZXJzaW9uLAo+PiB3ZSBpbnRyb2R1
-Y2UgdGhlIG5ldyBtb3VudCBBUEkgY29udmVyc2lvbiBpbiBmMmZzLgo+Pgo+PiBUaGUgc2VyaWVz
-IGNhbiBiZSBhcHBsaWVkIG9uIHRvcCBvZiB0aGUgY3VycmVudCBtYWlubGluZSB0cmVlCj4+IGFu
-ZCB0aGUgd29yayBpcyBiYXNlZCBvbiB0aGUgcGF0Y2hlcyBmcm9tIEx1a2FzIEN6ZXJuZXIgKGhh
-cwo+PiBkb25lIHRoaXMgaW4gZXh0NFsxXSkuIEhpcyBwYXRjaCBnaXZlIG1lIGEgbG90IG9mIGlk
-ZWFzLgo+Pgo+PiBIZXJlIGlzIGEgaGlnaCBsZXZlbCBkZXNjcmlwdGlvbiBvZiB0aGUgcGF0Y2hz
-ZXQ6Cj4+Cj4+IDEuIFByZXBhcmUgdGhlIGYyZnMgbW91bnQgcGFyYW1ldGVycyByZXF1aXJlZCBi
-eSB0aGUgbmV3IG1vdW50Cj4+IEFQSSBhbmQgdXNlIGl0IGZvciBwYXJzaW5nLCB3aGlsZSBzdGls
-bCB1c2luZyB0aGUgb2xkIEFQSSB0bwo+PiBnZXQgbW91bnQgb3B0aW9ucyBzdHJpbmcuIFNwbGl0
-IHRoZSBwYXJhbWV0ZXIgcGFyc2luZyBhbmQKPj4gdmFsaWRhdGlvbiBvZiB0aGUgcGFyc2Vfb3B0
-aW9ucyBoZWxwZXIgaW50byB0d28gc2VwYXJhdGUKPj4gaGVscGVycy4KPj4KPj4gwqDCoCBmMmZz
-OiBBZGQgZnMgcGFyYW1ldGVyIHNwZWNpZmljYXRpb25zIGZvciBtb3VudCBvcHRpb25zCj4+IMKg
-wqAgZjJmczogbW92ZSB0aGUgb3B0aW9uIHBhcnNlciBpbnRvIGhhbmRsZV9tb3VudF9vcHQKPj4g
-wqDCoCBmMmZzOiBtb3ZlIG9wdGlvbiB2YWxpZGF0aW9uIGludG8gYSBzZXBhcmF0ZSBoZWxwZXIK
-Pj4KPj4gMi4gUmVtb3ZlIHRoZSB1c2Ugb2Ygc2Ivc2JpIHN0cnVjdHVyZSBvZiBmMmZzIGZyb20g
-YWxsIHRoZQo+PiBwYXJzaW5nIGNvZGUsIGJlY2F1c2Ugd2l0aCB0aGUgbmV3IG1vdW50IEFQSSB0
-aGUgcGFyc2luZyBpcwo+PiBnb2luZyB0byBiZSBkb25lIGJlZm9yZSB3ZSBldmVuIGdldCB0aGUg
-c3VwZXIgYmxvY2suIEluIHRoaXMKPj4gcGFydCwgd2UgaW50cm9kdWNlIGYyZnNfZnNfY29udGV4
-dCB0byBob2xkIHRoZSB0ZW1wb3JhcnkKPj4gb3B0aW9ucyB3aGVuIHBhcnNpbmcuIEZvciB0aGUg
-c2ltcGxlIG9wdGlvbnMgY2hlY2ssIGl0IGhhcwo+PiB0byBiZSBkb25lIGR1cmluZyBwYXJzaW5n
-IGJ5IHVzaW5nIGYyZnNfZnNfY29udGV4dCBzdHJ1Y3R1cmUuCj4+IEZvciB0aGUgY2hlY2sgd2hp
-Y2ggbmVlZHMgc2Ivc2JpLCB3ZSBkbyB0aGlzIGR1cmluZyBzdXBlcgo+PiBibG9jayBmaWxsaW5n
-Lgo+Pgo+PiDCoMKgIGYyZnM6IEFsbG93IHNiaSB0byBiZSBOVUxMIGluIGYyZnNfcHJpbnRrCj4+
-IMKgwqAgZjJmczogQWRkIGYyZnNfZnNfY29udGV4dCB0byByZWNvcmQgdGhlIG1vdW50IG9wdGlv
-bnMKPj4gwqDCoCBmMmZzOiBzZXBhcmF0ZSB0aGUgb3B0aW9ucyBwYXJzaW5nIGFuZCBvcHRpb25z
-IGNoZWNraW5nCj4+Cj4+IDMuIFN3aXRjaCB0aGUgZjJmcyB0byB1c2UgdGhlIG5ldyBtb3VudCBB
-UEkgZm9yIG1vdW50IGFuZAo+PiByZW1vdW50Lgo+Pgo+PiDCoMKgIGYyZnM6IGludHJvZHVjZSBm
-c19jb250ZXh0X29wZXJhdGlvbiBzdHJ1Y3R1cmUKPj4gwqDCoCBmMmZzOiBzd2l0Y2ggdG8gdGhl
-IG5ldyBtb3VudCBhcGkKPj4KPj4gNC4gQ2xlYW51cCB0aGUgb2xkIHVudXNlZCBzdHJ1Y3R1cmVz
-IGFuZCBoZWxwZXJzLgo+Pgo+PiDCoMKgIGYyZnM6IHJlbW92ZSB1bnVzZWQgc3RydWN0dXJlIGFu
-ZCBmdW5jdGlvbnMKPj4KPj4gVGhlcmUgaXMgc3RpbGwgYSBwb3RlbnRpYWwgdG8gZG8gc29tZSBj
-bGVhbnVwcyBhbmQgcGVyaGFwcwo+PiByZWZhY3RvcmluZy4gSG93ZXZlciB0aGF0IGNhbiBiZSBk
-b25lIGxhdGVyIGFmdGVyIHRoZSBjb252ZXJzaW9uCj4+IHRvIHRoZSBuZXcgbW91bnQgQVBJIHdo
-aWNoIGlzIHRoZSBtYWluIHB1cnBvc2Ugb2YgdGhlIHBhdGNoc2V0Lgo+Pgo+PiBbMV0gaHR0cHM6
-Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjExMDIxMTE0NTA4LjIxNDA3LTEtbGN6ZXJuZXJAcmVk
-aGF0LmNvbS8KPj4KPj4gSG9uZ2JvIExpICg5KToKPj4gwqDCoCBmMmZzOiBBZGQgZnMgcGFyYW1l
-dGVyIHNwZWNpZmljYXRpb25zIGZvciBtb3VudCBvcHRpb25zCj4+IMKgwqAgZjJmczogbW92ZSB0
-aGUgb3B0aW9uIHBhcnNlciBpbnRvIGhhbmRsZV9tb3VudF9vcHQKPj4gwqDCoCBmMmZzOiBtb3Zl
-IG9wdGlvbiB2YWxpZGF0aW9uIGludG8gYSBzZXBhcmF0ZSBoZWxwZXIKPj4gwqDCoCBmMmZzOiBB
-bGxvdyBzYmkgdG8gYmUgTlVMTCBpbiBmMmZzX3ByaW50awo+PiDCoMKgIGYyZnM6IEFkZCBmMmZz
-X2ZzX2NvbnRleHQgdG8gcmVjb3JkIHRoZSBtb3VudCBvcHRpb25zCj4+IMKgwqAgZjJmczogc2Vw
-YXJhdGUgdGhlIG9wdGlvbnMgcGFyc2luZyBhbmQgb3B0aW9ucyBjaGVja2luZwo+PiDCoMKgIGYy
-ZnM6IGludHJvZHVjZSBmc19jb250ZXh0X29wZXJhdGlvbiBzdHJ1Y3R1cmUKPj4gwqDCoCBmMmZz
-OiBzd2l0Y2ggdG8gdGhlIG5ldyBtb3VudCBhcGkKPj4gwqDCoCBmMmZzOiByZW1vdmUgdW51c2Vk
-IHN0cnVjdHVyZSBhbmQgZnVuY3Rpb25zCj4+Cj4+IMKgIGZzL2YyZnMvc3VwZXIuYyB8IDIyMTEg
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0KPj4gwqAgMSBm
-aWxlIGNoYW5nZWQsIDEzNDEgaW5zZXJ0aW9ucygrKSwgODcwIGRlbGV0aW9ucygtKQo+Pgo+IAoK
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1m
-MmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdl
-Lm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1m
-MmZzLWRldmVsCg==
+Hello:
+
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
+
+On Tue, 20 Aug 2024 11:46:47 +0800 you wrote:
+> Convert to use folio, so that we can get rid of 'page->index' to
+> prepare for removal of 'index' field in structure page [1].
+> 
+> [1] https://lore.kernel.org/all/Zp8fgUSIBGQ1TN0D@casper.infradead.org/
+> 
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> 
+> [...]
+
+Here is the summary with links:
+  - [f2fs-dev,v2,1/8] f2fs: convert f2fs_write_begin() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/f13c7184e62e
+  - [f2fs-dev,v2,2/8] f2fs: convert f2fs_write_end() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/357dd8479f8b
+  - [f2fs-dev,v2,3/8] f2fs: convert f2fs_set_compressed_page() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/4713b14f107a
+  - [f2fs-dev,v2,4/8] f2fs: convert f2fs_do_write_data_page() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/609c7375350a
+  - [f2fs-dev,v2,5/8] f2fs: convert f2fs_write_data_page() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/75428dcd4d2e
+  - [f2fs-dev,v2,6/8] f2fs: convert __write_node_page() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/62b691af1a66
+  - [f2fs-dev,v2,7/8] f2fs: convert read_node_page() to use folio
+    https://git.kernel.org/jaegeuk/f2fs/c/e381d92a035a
+  - [f2fs-dev,v2,8/8] f2fs: get rid of page->index
+    https://git.kernel.org/jaegeuk/f2fs/c/c6f1758f7a68
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
