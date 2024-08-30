@@ -4,69 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 32AB1CA0EF3
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Aug 2024 20:52:03 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C7B91CA101A
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Aug 2024 20:52:04 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sk8bC-0000mD-4h;
-	Fri, 30 Aug 2024 20:52:02 +0000
+	id 1sk8bE-00014l-FD;
+	Fri, 30 Aug 2024 20:52:04 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sk8b8-0000lc-Jb
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sk8bB-00014Y-MP
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Aug 2024 20:51:59 +0000
+ Fri, 30 Aug 2024 20:52:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oZrsCLSDhhzOngp3AjvhXO/yWEDOi9SRwjC2QUJ66P4=; b=AcHuvg5WAqOaaD49JuczU6+f2S
- qhzfCPm+4fXQDMGWNDXJfbLVhuoN09RiZ0i5U7sCMYqoQi/4iJVYa3jnu4LGxsl81rgQpc1IkN6t3
- k8nOYFKCRdglA3+brlzcEoOjjzDAcDqOIXa4IqJ53DbJ5TOa6GmjE9MMeWVx0oW9MPrE=;
+ bh=eRxNFuHJBV4NScpJR4C+wk+hqEMCMm8lqIQaq/AWV1U=; b=jlHpCxtzsgMbPJcuCv2r/p1kfm
+ yIHmgew4fk1ngjUokeUAcGi1J6sTnpUEvxgWL8bIG8ZJZtrG6BGiFjFgC5zLQwpaIL9LXxqGZJ5gQ
+ t7ZpDJ0z1XzJKS0to99LKKN4j0YsYEGBFnarGyk71YDu7vKZ9m2clRO5WdatPbM0uPyc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oZrsCLSDhhzOngp3AjvhXO/yWEDOi9SRwjC2QUJ66P4=; b=V1yLGlKs8tDu9Y0sb/oJCOmxie
- V/xv9GNU+DIUbD5JibFkKLL2lt4nNFP1wZlZhJSJPBCCmkDLPKo6rxxRqy/S6khu0xZCTLfEaHojb
- P4KNg8UN+3Fb3HOprN9QxusYii8Za9dixIk1LOC/gRUKOXD4Tp3J6xoBCgPGZNcc+Iis=;
+ bh=eRxNFuHJBV4NScpJR4C+wk+hqEMCMm8lqIQaq/AWV1U=; b=Wx7Tjv28wwOd2cr0z4bQZDBYpe
+ /ewJiz3625Rp7nHJVD5NWmuBqnMMZH6bHQ+gHnwdBGyctr8g270IgIMY7VAO4OMs/cgSOgwhsPEEG
+ b5g1vRi2jqVl5D8kuaegrpfNtT8D2kgRqhmsbLSwxvw1x0mkJ6F3FK7h3/kEH+Ox3jbU=;
 Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sk8b8-0005nb-Mi for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Aug 2024 20:51:59 +0000
+ id 1sk8bA-0005nk-W4 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 30 Aug 2024 20:52:01 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id F25CEA41A84;
- Fri, 30 Aug 2024 20:51:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3921C4CEC6;
- Fri, 30 Aug 2024 20:51:46 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id 037F1A41AD7
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 30 Aug 2024 20:51:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C203DC4CEC6;
+ Fri, 30 Aug 2024 20:51:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1725051106;
- bh=+uGLknkE6IoO7a90AR+5N+DJ4wXbk1knYsF6gQ4Z0iU=;
+ s=k20201202; t=1725051109;
+ bh=4Vmdu72nUVTxQXYckq6IBwekLTpwl0AskvoZbUnNnSw=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=LuY3lw/o8cVgpsG0zbxiatyxvXTQqqsXeepFteXMMYvxLJCC0o2bVYp081n77XiWI
- VOHpM4dQUlKXlDyLPShI+nnB+JNP4895XkICs1aSsmfL4fZzx/Dgm4raGw3QAwD7Xv
- buQKS79wFpF2mQBvTzh0vJYznWS+1/lngLkTxpz+JMpMlCPFd5i+5zTvNTF9DW51Dc
- aXX0aPhDtuHfTpuZ6WsY7V9d15K2i9h3IbBhoE1hsWwx9+OVb9cWvPWpCSCiS2i0GY
- kerj/6Ft2ze9AA83B9gKwUBPIQb1CLGVHY4y5snf+9lCuUnrxDf9asWEBEyqKDc0GP
- W6RZcQplP69sg==
+ b=t+F6HfxgLbI227YOSEmxQMOjwOpFCRPRInLD49dQSWL6hZ+K7XqZlOcaPj/Zikci4
+ KAu9I2ttKDZfb5PyX0v9O+E/JusyiZHjgvXPdeHwo3iZjvYZFFNA4OD+539WKYWti6
+ 4sB0Dcyymf2//GWZnXqZD/aVu/Wr6ThkbzmvrYRixvqmY/afDE9WmYKTreW3nW9gi4
+ 74HqcjK6hn627tObMjdL6wURtkymqggtbGkckSKAPI3yHHpKSTnclcb/31Qdz1Ch7Y
+ F7mcE7tU3qfNq4ZBdv/QE9pE61mkrxrqy2CyBn8KJr25LtT6WaDAnpmihNhGl1ObJm
+ dyZbpS04YWEpQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 70ECC3809A80; Fri, 30 Aug 2024 20:51:48 +0000 (UTC)
+ 70D9D3809A80; Fri, 30 Aug 2024 20:51:51 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <172505110700.2712133.2963157749047738751.git-patchwork-notify@kernel.org>
-Date: Fri, 30 Aug 2024 20:51:47 +0000
-References: <20240815004728.983290-1-chao@kernel.org>
-In-Reply-To: <20240815004728.983290-1-chao@kernel.org>
+Message-Id: <172505111000.2712133.17949895219038625887.git-patchwork-notify@kernel.org>
+Date: Fri, 30 Aug 2024 20:51:50 +0000
+References: <20240812141242.4159033-1-chao@kernel.org>
+In-Reply-To: <20240812141242.4159033-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1sk8b8-0005nb-Mi
-Subject: Re: [f2fs-dev] [PATCH RESEND] f2fs: Use sysfs_emit_at() to simplify
- code
+X-Headers-End: 1sk8bA-0005nk-W4
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to wait page writeback before
+ setting gcing flag
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,8 +82,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, christophe.jaillet@wanadoo.fr,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -92,19 +93,22 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 15 Aug 2024 08:47:28 +0800 you wrote:
-> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> This file already uses sysfs_emit(). So be consistent and also use
-> sysfs_emit_at().
-> 
-> This slightly simplifies the code and makes it more readable.
+On Mon, 12 Aug 2024 22:12:42 +0800 you wrote:
+> Soft IRQ				Thread
+> - f2fs_write_end_io
+> 					- f2fs_defragment_range
+> 					 - set_page_private_gcing
+>  - type = WB_DATA_TYPE(page, false);
+>  : assign type w/ F2FS_WB_CP_DATA
+>  due to page_private_gcing() is true
+>   - dec_page_count() w/ wrong type
+>   - end_page_writeback()
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,RESEND] f2fs: Use sysfs_emit_at() to simplify code
-    https://git.kernel.org/jaegeuk/f2fs/c/f7a678bbe5a8
+  - [f2fs-dev] f2fs: fix to wait page writeback before setting gcing flag
+    https://git.kernel.org/jaegeuk/f2fs/c/a4d7f2b3238f
 
 You are awesome, thank you!
 -- 
