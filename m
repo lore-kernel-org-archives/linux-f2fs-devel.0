@@ -4,69 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 75937CA101C
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Aug 2024 20:51:53 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A7FB2CA101B
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Aug 2024 20:51:52 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sk8b3-0001R6-4R;
-	Fri, 30 Aug 2024 20:51:53 +0000
+	id 1sk8b0-0000l8-Ks;
+	Fri, 30 Aug 2024 20:51:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sk8b1-0001Qm-1n
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sk8az-0000l1-I7
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Aug 2024 20:51:51 +0000
+ Fri, 30 Aug 2024 20:51:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TCpqnO4zMl0YejkCLuc04I0+Qny/4tjDVxASQE9Xu0I=; b=l3LFPGgKWfjtOofwnm9foPsqm2
- QWToBiu1noWUak+hzBUnoF8OQ32Mot8Sl5v1EnP3dpzD3Xet9F59CxSff5RjDwN2d26P67oZw3rxQ
- xzNahKwnv5JiN5Q8wkAnkg/qt6m/IpTlvSQOHCVL3/g17awHqS3hfoZynxz3aw1odTuM=;
+ bh=5/G0bWOXJgkk8p1XWZQEW3ybvU+hJmnIsKa6sp9ZoR0=; b=YR06p2xu6XbDW2poIG1W9z1OU1
+ teA6xENTUZOxFUYAb4N1Zxypq3Y/NsT+5xkSahO5Fk124TUlw1msZb8bCXBRlVkRCMhHxcwbU9pnP
+ AdEPi5o5tJkN3Q/zU+HsRgAR25M+xxfm21OjF/L0Paxqz+daKBLjcSfSXeEEIxhhFeng=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TCpqnO4zMl0YejkCLuc04I0+Qny/4tjDVxASQE9Xu0I=; b=e+BcykeBWrxHpI2h1ErqO+AcbP
- McYJiyKW8hYddBDBxGwIwNIx47J/igbhNADXl7Otk5h53WPP1807mAhirK/8dRC0SF36J7VPq+CI3
- pZLF8xT7J0dAfnaQUkHElwkG2T9laznL5JPQCPID/hjLMHBXjDNyxtLSOeWWQpVtNB9A=;
+ bh=5/G0bWOXJgkk8p1XWZQEW3ybvU+hJmnIsKa6sp9ZoR0=; b=RidxSrCfd6X+HyMofzERGP5hRG
+ zt4S4wODRJ1OVpR6eEEMiYENLH1Qsb3yLP97T2/Rdt1iAkQHM8rd8S1qp0YCTvHrZTNxRxPhKYGES
+ KN95bEArrRILpd2oy4AIIlWmvRs1geLV9kcnT1svswuNBa/rIqvfmsp4fNF2H1PMDu4o=;
 Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sk8b0-0005mm-B3 for linux-f2fs-devel@lists.sourceforge.net;
+ id 1sk8az-0005mj-Lk for linux-f2fs-devel@lists.sourceforge.net;
  Fri, 30 Aug 2024 20:51:50 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id AA3BCA41AC6;
- Fri, 30 Aug 2024 20:51:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA35C4CEC2;
- Fri, 30 Aug 2024 20:51:39 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id F28A1A41ACB;
+ Fri, 30 Aug 2024 20:51:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7BDBC4CEC2;
+ Fri, 30 Aug 2024 20:51:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1725051099;
- bh=vPxzIksKckelCZPO/lJH6gBkLGJDcZWljmfpGuIjjHE=;
+ s=k20201202; t=1725051103;
+ bh=WXxE0mTRDrcgb4N9+MYhxEZZT3OXqpBy5Yj1GIK/sfE=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=K6KkzIwL6Ctr+iwW67Ua7xntF7iTQbEe8PUNj4KRZoHr79dfDNW8PNblFz9gx9mRa
- A1YP0uECJJ6qXSxkQi1/HWOckUxl31lQdat8psmtTqGoIOV0zmhHDk5oOTgePXPOGb
- X7Ey2AyltmA3LbauPooP+YqhNCHBe8k0CksFrLQJL/Qu3dhejSui4eTCdszan00Bs2
- 4aplR37mv17nzeta88KjVyggrD6TbUL+C3vlLgVftYe5ShT8fw8kZUizB1ZY9lB7zk
- kXPSmcCbMgQjcW4VGBQYNEcYxtP52Hb+qYybBgNJkhSYiVXVmhPq5f3MSnU4qNlu5J
- uNEgjpAzE0MZA==
+ b=AXZX55nB//eD/NOzBJgg8vgYDlGecce3j4Opmo6QeZxK2+55tAruCTvH1pFMFC08w
+ RbpRzKy4qrRjDPOmujoAoyUTO6S4oojTzlBqN3roFoDKgQUeUdhb4HmGcz8wbz+dLl
+ +hR46pccjROMaHswb2Wu9TQP0jHR3NYZesv7FfeVDgIKBG6+3U36FEfIHA0ZaXgWiT
+ hsOJf/KWfwof7mBEXIZgP6bXQTmFP5wLGL0+OpMz1f9ZK+Ptrz49/U1rVom0cK//pu
+ ooYKUnac62epzEPLCdaXLLf24+aMOw/KRZ54XAfwZa8fs/FBn29t1P3md1KATYigVL
+ 86Kr2wsX62VzQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- EAED13809A80; Fri, 30 Aug 2024 20:51:40 +0000 (UTC)
+ 70EA23809A80; Fri, 30 Aug 2024 20:51:45 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <172505109977.2712133.16285332779262349295.git-patchwork-notify@kernel.org>
-Date: Fri, 30 Aug 2024 20:51:39 +0000
-References: <20240813141331.417067-1-chao@kernel.org>
-In-Reply-To: <20240813141331.417067-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1sk8b0-0005mm-B3
-Subject: Re: [f2fs-dev] [PATCH 1/9] f2fs: convert
- f2fs_compress_ctx_add_page() to use folio
+Message-Id: <172505110399.2712133.5128196263519102281.git-patchwork-notify@kernel.org>
+Date: Fri, 30 Aug 2024 20:51:43 +0000
+References: <1722476031-22106-1-git-send-email-zhiguo.niu@unisoc.com>
+In-Reply-To: <1722476031-22106-1-git-send-email-zhiguo.niu@unisoc.com>
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>
+X-Headers-End: 1sk8az-0005mj-Lk
+Subject: Re: [f2fs-dev] [PATCH] f2fs: clean up val{>>,<<}F2FS_BLKSIZE_BITS
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,47 +80,34 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, willy@infradead.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
+ Hao_hao.Wang@unisoc.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 13 Aug 2024 22:13:23 +0800 you wrote:
-> onvert to use folio, so that we can get rid of 'page->index' to
-> prepare for removal of 'index' field in structure page [1].
+On Thu, 1 Aug 2024 09:33:51 +0800 you wrote:
+> Use F2FS_BYTES_TO_BLK(bytes) and F2FS_BLK_TO_BYTES(blk) for cleanup
 > 
-> [1] https://lore.kernel.org/all/Zp8fgUSIBGQ1TN0D@casper.infradead.org/
-> 
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> 
-> [...]
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> ---
+>  fs/f2fs/checkpoint.c    | 2 +-
+>  fs/f2fs/debug.c         | 2 +-
+>  fs/f2fs/file.c          | 6 +++---
+>  fs/f2fs/node.c          | 4 ++--
+>  fs/f2fs/super.c         | 2 +-
+>  include/linux/f2fs_fs.h | 2 +-
+>  6 files changed, 9 insertions(+), 9 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev,1/9] f2fs: convert f2fs_compress_ctx_add_page() to use folio
-    https://git.kernel.org/jaegeuk/f2fs/c/2cbbc4f94317
-  - [f2fs-dev,2/9] f2fs: convert f2fs_vm_page_mkwrite() to use folio
-    https://git.kernel.org/jaegeuk/f2fs/c/8ed263450530
-  - [f2fs-dev,3/9] f2fs: convert f2fs_clear_page_cache_dirty_tag() to use folio
-    https://git.kernel.org/jaegeuk/f2fs/c/71aa6bbfc247
-  - [f2fs-dev,4/9] f2fs: convert f2fs_write_inline_data() to use folio
-    https://git.kernel.org/jaegeuk/f2fs/c/333ad04822f5
-  - [f2fs-dev,5/9] f2fs: convert f2fs_write_single_data_page() to use folio
-    https://git.kernel.org/jaegeuk/f2fs/c/65826f2732fa
-  - [f2fs-dev,6/9] f2fs: convert f2fs_do_write_meta_page() to use folio
-    https://git.kernel.org/jaegeuk/f2fs/c/9f9bbd634792
-  - [f2fs-dev,7/9] f2fs: convert __f2fs_write_meta_page() to use folio
-    https://git.kernel.org/jaegeuk/f2fs/c/1b9eb6539810
-  - [f2fs-dev,8/9] f2fs: convert f2fs_read_multi_pages() to use folio
-    (no matching commit)
-  - [f2fs-dev,9/9] f2fs: convert f2fs_handle_page_eio() to use folio
-    https://git.kernel.org/jaegeuk/f2fs/c/6d899d7e3999
+  - [f2fs-dev] f2fs: clean up val{>>,<<}F2FS_BLKSIZE_BITS
+    https://git.kernel.org/jaegeuk/f2fs/c/8fb9f31984bd
 
 You are awesome, thank you!
 -- 
