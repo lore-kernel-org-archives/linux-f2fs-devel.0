@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5B8EACD3420
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Sep 2024 10:04:59 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 75F74CD3420
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Sep 2024 10:06:51 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1slQPA-0004Hp-Nr;
-	Tue, 03 Sep 2024 10:04:57 +0000
+	id 1slQR1-00045k-2S;
+	Tue, 03 Sep 2024 10:06:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <huangjianan@xiaomi.com>) id 1slQP9-0004HY-0o
+ (envelope-from <huangjianan@xiaomi.com>) id 1slQR0-00045e-Iu
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Sep 2024 10:04:55 +0000
+ Tue, 03 Sep 2024 10:06:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-ID:
  Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From:Sender
  :Reply-To:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To
  :Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YCJtvlKwGlnH0v4fIcqZym0S/odYiTTNF/thyVRPRdE=; b=dltEKf8EJvvvQbQCWPEKe7Mez4
- icd2LPylWoFgb38Z2R3G0N9L9OUXamTdGVuxgGVWPL69+V/LSBXpH499CidxWow5htXCXaL3k9YuX
- 1v6sgUdh4rg3mJ00RQcarICsXtcWHw4zJENFjod0T3iaDMZJeLRG6qJGv/E8md0L2t50=;
+ bh=XOVQ707CMA64SAkQoKVPUzsZM3uB3E3NDa9YdXVxXYs=; b=iP9cKoZUp568wF6GxhqnmEm+ru
+ UbikGtNH6218dHejRUQE2VxHR2j4NEdW1wulcC1mIQietkcRgXcta4sd3Nqxx/eXgPJWHnuTuZxsY
+ 3hamobkVcq8oISxKbCL3hlEuglgo+vybovC0lPhGcNxylyENNrkv4TVGuzeyU1Aa3M5A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:
@@ -33,23 +33,23 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=YCJtvlKwGlnH0v4fIcqZym0S/odYiTTNF/thyVRPRdE=; b=CfbLIdCQwAzX8giXCz7eEPuDQj
- N5z+lu6ITmqvv7GxLADpcik+mkdRG1HLFZA62y79SErs8PH3nN/XEEMdrgQIXCtFexj9I3V56MXmy
- dPiEXNmLhI8eveNMd1+nf6zRYfIoDSNIj0dZ+J9tHPPluFZGYNhHdlIsyZFLhJVIDgjc=;
-Received: from outboundhk.mxmail.xiaomi.com ([118.143.206.90])
+ bh=XOVQ707CMA64SAkQoKVPUzsZM3uB3E3NDa9YdXVxXYs=; b=CB4fMgU6ZDe/0kJUyIG/DrqUe8
+ dQfvyU+IfpKxKfQw7v7w8/Vwgf1B11oMsAz1BPOwNoUg1Lwk4/4Ap6vOLma/yyrlpi8VPJURiaBI3
+ 7lNiI5+8hOLMFZem3M/IlFC+WUA9OexnFtPpuyv244KIRizvxu+Bm8MTlrwypfgTsuHg=;
+Received: from outboundhk.mxmail.xiaomi.com ([207.226.244.122])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.95)
- id 1slQP8-0007Mx-ON for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Sep 2024 10:04:55 +0000
-X-CSE-ConnectionGUID: 6+T9Hnn8RuWjBFzMOk/HVw==
-X-CSE-MsgGUID: +E2TGmDJTgiGlym54yZ89A==
-X-IronPort-AV: E=Sophos;i="6.10,198,1719849600"; d="scan'208";a="95305435"
-To: Wu Bo <bo.wu@vivo.com>, "linux-kernel@vger.kernel.org"
+ id 1slQQz-0007VX-G2 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 03 Sep 2024 10:06:50 +0000
+X-CSE-ConnectionGUID: Y3LtmdYtR0C+oVJmOa/52Q==
+X-CSE-MsgGUID: aKoAoiowQiGb/3Lvw25XOQ==
+X-IronPort-AV: E=Sophos;i="6.10,198,1719849600"; d="scan'208";a="121008352"
+To: Wu Bo <wubo.oduw@gmail.com>, "linux-kernel@vger.kernel.org"
  <linux-kernel@vger.kernel.org>
 Thread-Topic: [External Mail][f2fs-dev] [PATCH 05/13] f2fs: set inline tail
  flag when create inode
-Thread-Index: AQHa/d9TEJ0BFkkmf0yNrLcOSrFLD7JFSyMA
-Date: Tue, 3 Sep 2024 09:49:00 +0000
-Message-ID: <83bfb7d2-655e-4f3d-9bda-3f275637a3f0@xiaomi.com>
+Thread-Index: AQHa/d9TEJ0BFkkmf0yNrLcOSrFLD7JFS5uA
+Date: Tue, 3 Sep 2024 09:50:41 +0000
+Message-ID: <9f381694-2573-4f72-9177-54e2b5c07652@xiaomi.com>
 References: <cover.1725334811.git.bo.wu@vivo.com>
  <d5f1a318931b213f7a27de8441ba985354eecabb.1725334811.git.bo.wu@vivo.com>
 In-Reply-To: <d5f1a318931b213f7a27de8441ba985354eecabb.1725334811.git.bo.wu@vivo.com>
@@ -58,9 +58,9 @@ Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [10.237.88.13]
-Content-ID: <604B70C4BBC297469DA7016D8A220A7C@xiaomi.com>
+Content-ID: <624B598B5950C141A39959F41105D51B@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1slQP8-0007Mx-ON
+X-Headers-End: 1slQQz-0007VX-G2
 Subject: Re: [f2fs-dev] [External Mail] [PATCH 05/13] f2fs: set inline tail
  flag when create inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -77,56 +77,39 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Huang Jianan via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Huang Jianan <huangjianan@xiaomi.com>
-Cc: Wu Bo <wubo.oduw@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- "linux-f2fs-devel@lists.sourceforge.net"
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net"
  <linux-f2fs-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2024/9/3 16:54, Wu Bo via Linux-f2fs-devel wrote:
-Hi Bo,
-> 
-> Set inline tail flag to enable this feature when new inode is created.
-> Inherit the conditions from inline data.
-> 
-> Signed-off-by: Wu Bo <bo.wu@vivo.com>
-> ---
->   fs/f2fs/namei.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index 38b4750475db..13c295ea19de 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -315,6 +315,9 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
->          /* Should enable inline_data after compression set */
->          if (test_opt(sbi, INLINE_DATA) && f2fs_may_inline_data(inode))
->                  set_inode_flag(inode, FI_INLINE_DATA);
-> +       /* Inherit the conditions from inline data */
-> +       if (test_opt(sbi, INLINE_TAIL) && f2fs_has_inline_data(inode))
-> +               set_inode_flag(inode, FI_INLINE_TAIL);
-
-Should f2fs_post_read_required() be checked here, like inline data?
-
-Thanks,
-Jianan
-
-> 
->          if (name && !test_opt(sbi, DISABLE_EXT_IDENTIFY))
->                  set_file_temperature(sbi, inode, name);
-> --
-> 2.35.3
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gMjAyNC85LzMgMTY6NTQsIFd1IEJvIHZpYSBMaW51eC1mMmZzLWRldmVsIHdyb3RlOg0KPiBb
+5aSW6YOo6YKu5Lu2XSDmraTpgq7ku7bmnaXmupDkuo7lsI/nsbPlhazlj7jlpJbpg6jvvIzor7fo
+sKjmhY7lpITnkIbjgILoi6Xlr7npgq7ku7blronlhajmgKflrZjnlpHvvIzor7flsIbpgq7ku7bo
+vazlj5Hnu5ltaXNlY0B4aWFvbWkuY29t6L+b6KGM5Y+N6aaIDQo+IA0KPiBTZXQgaW5saW5lIHRh
+aWwgZmxhZyB0byBlbmFibGUgdGhpcyBmZWF0dXJlIHdoZW4gbmV3IGlub2RlIGlzIGNyZWF0ZWQu
+DQo+IEluaGVyaXQgdGhlIGNvbmRpdGlvbnMgZnJvbSBpbmxpbmUgZGF0YS4NCj4gDQo+IFNpZ25l
+ZC1vZmYtYnk6IFd1IEJvIDxiby53dUB2aXZvLmNvbT4NCj4gLS0tDQo+ICAgZnMvZjJmcy9uYW1l
+aS5jIHwgMyArKysNCj4gICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspDQo+IA0KPiBk
+aWZmIC0tZ2l0IGEvZnMvZjJmcy9uYW1laS5jIGIvZnMvZjJmcy9uYW1laS5jDQo+IGluZGV4IDM4
+YjQ3NTA0NzVkYi4uMTNjMjk1ZWExOWRlIDEwMDY0NA0KPiAtLS0gYS9mcy9mMmZzL25hbWVpLmMN
+Cj4gKysrIGIvZnMvZjJmcy9uYW1laS5jDQo+IEBAIC0zMTUsNiArMzE1LDkgQEAgc3RhdGljIHN0
+cnVjdCBpbm9kZSAqZjJmc19uZXdfaW5vZGUoc3RydWN0IG1udF9pZG1hcCAqaWRtYXAsDQo+ICAg
+ICAgICAgIC8qIFNob3VsZCBlbmFibGUgaW5saW5lX2RhdGEgYWZ0ZXIgY29tcHJlc3Npb24gc2V0
+ICovDQo+ICAgICAgICAgIGlmICh0ZXN0X29wdChzYmksIElOTElORV9EQVRBKSAmJiBmMmZzX21h
+eV9pbmxpbmVfZGF0YShpbm9kZSkpDQo+ICAgICAgICAgICAgICAgICAgc2V0X2lub2RlX2ZsYWco
+aW5vZGUsIEZJX0lOTElORV9EQVRBKTsNCj4gKyAgICAgICAvKiBJbmhlcml0IHRoZSBjb25kaXRp
+b25zIGZyb20gaW5saW5lIGRhdGEgKi8NCj4gKyAgICAgICBpZiAodGVzdF9vcHQoc2JpLCBJTkxJ
+TkVfVEFJTCkgJiYgZjJmc19oYXNfaW5saW5lX2RhdGEoaW5vZGUpKQ0KPiArICAgICAgICAgICAg
+ICAgc2V0X2lub2RlX2ZsYWcoaW5vZGUsIEZJX0lOTElORV9UQUlMKTsNCg0KU2hvdWxkIGYyZnNf
+cG9zdF9yZWFkX3JlcXVpcmVkKCkgYmUgY2hlY2tlZCBoZXJlLCBsaWtlIGlubGluZSBkYXRhPw0K
+DQpUaGFua3MsDQpKaWFuYW4NCg0KPiANCj4gICAgICAgICAgaWYgKG5hbWUgJiYgIXRlc3Rfb3B0
+KHNiaSwgRElTQUJMRV9FWFRfSURFTlRJRlkpKQ0KPiAgICAgICAgICAgICAgICAgIHNldF9maWxl
+X3RlbXBlcmF0dXJlKHNiaSwgaW5vZGUsIG5hbWUpOw0KPiAtLQ0KPiAyLjM1LjMNCj4gDQo+IA0K
+PiANCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4g
+TGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QNCj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5z
+b3VyY2Vmb3JnZS5uZXQNCj4gaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlz
+dGluZm8vbGludXgtZjJmcy1kZXZlbA0KDQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJm
+cy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5u
+ZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
