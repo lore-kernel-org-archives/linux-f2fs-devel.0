@@ -4,94 +4,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5A6F7ECE58E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Sep 2024 22:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AEA4AECE57E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Sep 2024 22:20:13 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1snmk2-0004sH-Jh;
-	Mon, 09 Sep 2024 22:20:14 +0000
+	id 1snmk1-0004s5-RB;
+	Mon, 09 Sep 2024 22:20:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1snmjy-0004rl-D1
+ (envelope-from <daeho43@gmail.com>) id 1snmjy-0004rq-DA
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 09 Sep 2024 22:20:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=96o2jLIHz/bI5xeY8SRyIJjzjj2HXt3FtxwUFI6EfOI=; b=FVcOWtXgvUhx8lbeeKj1Qs3apH
- UsGdTEGOJe0brnRJdIDo4YrFphVasTALptsHwww7smiVFaU+VSMi43P9QlMYfq/B9gZvdgpP9LxY8
- b0aM2nMwZecli5JJyJiJZTTODhPf+QF0euRZiqhXHag1b3SGOMt7d9RDzMQabCGZvM7k=;
+ bh=cla/Hu+x6KHpSAchLiy/oR8hbHuRD9DRfoz1PxleRLw=; b=l6Gx0gZrAcj0i8U54R3a+VRMMu
+ 0nIo7gewC0lmR71P/XKJZZO9R2uu/Lbyp0NyqBrps0exI5LDI9nvvWCTarLw4eu0IoJNdirZ0kVJf
+ 7WVgordOmxlrNnwquYZ1GaHfopkPtrECj+ZFuAwNZMOff/ZvqZj5ELMD+V6A8Ki7yPis=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=96o2jLIHz/bI5xeY8SRyIJjzjj2HXt3FtxwUFI6EfOI=; b=L
- 7s4MN5SyzNzCzbDu5FjF0SPjxU78gK/UBazMABVBaqHAmlGhN5XMMHMgRN26bocKGef9YW6cgZdTP
- 0Xnjf3B7TlvqFSHh1hEZ6ax5XETgU+RCVxlD049pzYYYIzrHIL0dQ3xus4M6OU/kBHNmJR7iMdEav
- Fr6AhxnNj5SqCjno=;
-Received: from mail-pj1-f41.google.com ([209.85.216.41])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=cla/Hu+x6KHpSAchLiy/oR8hbHuRD9DRfoz1PxleRLw=; b=P1Ue6z283wROSEqXx74SX3ed9k
+ thmbJ94Djo400jI1oMnmBJv3aq49paFFsJfKC2xvYF6M3Ikgms3Uj7hRCTLwmAaOPIAmVfguE9Xd4
+ WlKQ7zxVXp52pXInbO93MttDUJIFyJqQHtueYXhwwWIp7vmQFTrdMX2Is1ySY9zD2Nro=;
+Received: from mail-pj1-f45.google.com ([209.85.216.45])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1snmjq-0006gP-Pq for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Sep 2024 22:20:03 +0000
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-2d88edf1340so3120097a91.1
+ id 1snmjv-0006gp-Ds for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 09 Sep 2024 22:20:08 +0000
+Received: by mail-pj1-f45.google.com with SMTP id
+ 98e67ed59e1d1-2d88c0f8e79so3807203a91.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 09 Sep 2024 15:20:02 -0700 (PDT)
+ Mon, 09 Sep 2024 15:20:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1725920392; x=1726525192; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=96o2jLIHz/bI5xeY8SRyIJjzjj2HXt3FtxwUFI6EfOI=;
- b=ayx3EnjCIzRjYJ+TgWnPaz877YxPT9s8396w6mpgyRy72l2FQhjXsRvfWVoIyYIRPr
- Ob2vLz5bwuYyjPCcFxaAYpD3dYMnia28HuEUmtaX3PR1viUoollF2rQN0uSOUzePoSj8
- lznQbr09KIa9V/nW4rFuIvGImLeR5zu8nVuj6nqbr/QMFFI2/8wdn8Tz7kRd30rCagHK
- lrtclAR1iAb1QufXLAv5ROVEQc2H9wyUVj2RTwWL/WUXzzML4uNQAmZt4+bt+tqZN2qE
- Bfp0OQffJ0UM+IIVVsV36AlbO6voy+di6jT7zxj75nB75ZyvpLf4Etob++rEMTf1tkSv
- cQ0Q==
+ d=gmail.com; s=20230601; t=1725920397; x=1726525197; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=cla/Hu+x6KHpSAchLiy/oR8hbHuRD9DRfoz1PxleRLw=;
+ b=FKuRfkmpTSF/cHzdhmjs7nulSsaGvSnc7zoyKs/6YGfdMd7IWrPvrN3exzPBYsn5Q3
+ Xl/P7dmAoL8G6MLzj2rKfU8bVxDIqeY988TRcP7SoPUr/SBJZoRpcnR82KSiBpByQZ9H
+ /PjpsHCLBc9ez8edoNSCT+lc2gQgpL5j0esluTez/Ma25QA25N37oXtKBz5YioCuc4Dm
+ X+BAKHLQlHGNw4qT0jwUbII0GfaBcUZlIP9yT6Tq7BDBKDe5mFXtFsevoXcVZzdZQ27V
+ YWVNMBjUlPtCjNIpLIjLlAt2H6nrbpd99N45k15udDixydWg3z1Om44Br3vEocULSRJW
+ fFtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1725920392; x=1726525192;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=96o2jLIHz/bI5xeY8SRyIJjzjj2HXt3FtxwUFI6EfOI=;
- b=QBbs/dHRafVdk99LFLX9jHhcp3sYIsXw/cUee1JzBQ5vGAM3sTE8NBje715U4Bd+hz
- EhBGJAgLBN8azCqKINVo6ShklkNw7ZKjMPN97Qrxz8MYC3lMWZfE9vyIY9btb/qCrqew
- nolKc4gb7M05P97XGlu7mLvI6vIpr2mor5ibZcS6WaXZuXzFMXym1SJRt8xPOpwsZk8t
- d//CyY0KwNmBxZTmelhVjNpB/ZDPZUi0cEeXOklc7bTRTejcVWzALr4QJiy/tmS1KFTl
- OZ0Et9Jx401RI6JYxT4dPZCmAalt41Q+J+/iiE0MJ6Ifb45X6jRaarC5AYI2igdg0MY9
- D5UQ==
+ d=1e100.net; s=20230601; t=1725920397; x=1726525197;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=cla/Hu+x6KHpSAchLiy/oR8hbHuRD9DRfoz1PxleRLw=;
+ b=l3B49OvYDXbWjW8toxJ3TatyZZJ+zXSPwatLYazcx6cGtWR0W0DEKGA7aczC9++u30
+ rfxDUaUnYkS0oZxfV348Y8qCt5vCu2Wx6BXA3VWuPx4Q0K+V9LW6nBxBa/jLxP1LyejZ
+ +IactX53jDNaawcy2wUihPkuWr2RkcPliRblkYYrg8OETqNY9JF5pzx+rPVSlbT6uCJB
+ 6F6/uzd4geQtpJTNXobG8rnpjAFQ7VJMzA4lhiqCJLEHyTBTRpS+0VJxLz9TAMiLOIvB
+ wqrqlmJoawdKk6AmqUoaG2UdMlBIMijL8bGNA1uHxRsURapKLno/GewYeeX9ZzQQHpN1
+ c1Cg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCXe1VZpHK3uAR2r4dnf8luro4HqzEUaA/aAAY6J+exxt3WCFeXWZ4LPXBbwTMjo16Tng4nrYRhhlB1ChfLw4g9U@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YzM30tnPukM8MwxyrBWKawGkcg6dnpqdGVBqwjjvUKXwWRFCJeN
- XTrQAlAZROAZ7/dlj4eR26s5a2F+b7D6pjsD5O9boLLCDjGJR2PR
-X-Google-Smtp-Source: AGHT+IGYtptBMoCRyIFLyR68NFRnQCLG+PIh/2i8YAvc5XVEbC/o5hvfd2WlnY6N4BtfpvmnF8kruQ==
-X-Received: by 2002:a17:90a:e651:b0:2d8:f99d:48d2 with SMTP id
- 98e67ed59e1d1-2dad50fcd09mr10727795a91.29.1725920391729; 
- Mon, 09 Sep 2024 15:19:51 -0700 (PDT)
+ AJvYcCVQ3a4ctE8TNyAqkua4d6ClW+RbN/T4vwcOnwDmVTMogsFfd3XStzjH2AhpUrEUn+39KoSKct3By4xsPzG3et5j@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YwfZGwiR7dhVU0FBHdNW19QXKBIIgcawxHtM5WDS0Z9+EpkDjUo
+ BrB2o+caIWOpkkb/l9RYCUUDOLIORr40bLuebTqITdvEvemAnIUjBw75Rg==
+X-Google-Smtp-Source: AGHT+IGfEphEYe8iguFpalf0M6+gnZinIeoQ6xP0sK1afOnwfJgv0XG/DI5+vE4JW3HwyJDIpFiDKw==
+X-Received: by 2002:a17:90b:3c43:b0:2da:5156:1253 with SMTP id
+ 98e67ed59e1d1-2dad50141cbmr2814276a91.21.1725920396721; 
+ Mon, 09 Sep 2024 15:19:56 -0700 (PDT)
 Received: from daehojeong-desktop.mtv.corp.google.com
  ([2a00:79e0:2e14:7:ed56:14c3:db02:6c66])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2db04988470sm5016840a91.54.2024.09.09.15.19.50
+ 98e67ed59e1d1-2db04988470sm5016840a91.54.2024.09.09.15.19.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Sep 2024 15:19:51 -0700 (PDT)
+ Mon, 09 Sep 2024 15:19:56 -0700 (PDT)
 From: Daeho Jeong <daeho43@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  kernel-team@android.com
-Date: Mon,  9 Sep 2024 15:19:40 -0700
-Message-ID: <20240909221946.2004046-1-daeho43@gmail.com>
+Date: Mon,  9 Sep 2024 15:19:45 -0700
+Message-ID: <20240909221946.2004046-6-daeho43@gmail.com>
 X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
+In-Reply-To: <20240909221946.2004046-1-daeho43@gmail.com>
+References: <20240909221946.2004046-1-daeho43@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1snmjq-0006gP-Pq
-Subject: [f2fs-dev] [PATCH v2 1/7] f2fs: make BG GC more aggressive for
- zoned devices
+X-Headers-End: 1snmjv-0006gp-Ds
+Subject: [f2fs-dev] [PATCH v2 6/7] f2fs: create gc_no_zoned_gc_percent and
+ gc_boost_zoned_gc_percent
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -110,169 +113,117 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Daeho Jeong <daehojeong@google.com>
 
-Since we don't have any GC on device side for zoned devices, need more
-aggressive BG GC. So, tune the parameters for that.
+Added control knobs for gc_no_zoned_gc_percent and
+gc_boost_zoned_gc_percent.
 
 Signed-off-by: Daeho Jeong <daehojeong@google.com>
 ---
- fs/f2fs/f2fs.h  | 20 ++++++++++++++++++--
- fs/f2fs/gc.c    | 25 +++++++++++++++++++++----
- fs/f2fs/gc.h    | 21 +++++++++++++++++++++
- fs/f2fs/super.c |  5 +++++
- 4 files changed, 65 insertions(+), 6 deletions(-)
+ Documentation/ABI/testing/sysfs-fs-f2fs | 14 ++++++++++++++
+ fs/f2fs/gc.c                            | 12 +++++++++---
+ fs/f2fs/gc.h                            |  4 ++++
+ fs/f2fs/sysfs.c                         |  4 ++++
+ 4 files changed, 31 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ac19c61f0c3e..5e4db3ba534a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2854,13 +2854,26 @@ static inline bool is_inflight_io(struct f2fs_sb_info *sbi, int type)
- 	return false;
- }
- 
-+static inline bool is_inflight_read_io(struct f2fs_sb_info *sbi)
-+{
-+	return get_pages(sbi, F2FS_RD_DATA) || get_pages(sbi, F2FS_DIO_READ);
-+}
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index deff703035e1..f3c533b523cd 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -777,3 +777,17 @@ Date:		September 2024
+ Contact:	"Daeho Jeong" <daehojeong@google.com>
+ Description:	In order to fine tune GC behavior, we can control the number of
+ 		reserved segments.
 +
- static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
- {
-+	bool zoned_gc = (type == GC_TIME &&
-+			F2FS_HAS_FEATURE(sbi, F2FS_FEATURE_BLKZONED));
++What:		/sys/fs/f2fs/<disk>/gc_no_zoned_gc_percent
++Date:		September 2024
++Contact:	"Daeho Jeong" <daehojeong@google.com>
++Description:	If the percentage of free sections over total sections is above this
++		number, F2FS do not garbage collection for zoned devices through the
++		background GC thread. the default number is "60".
 +
- 	if (sbi->gc_mode == GC_URGENT_HIGH)
- 		return true;
- 
--	if (is_inflight_io(sbi, type))
--		return false;
-+	if (zoned_gc) {
-+		if (is_inflight_read_io(sbi))
-+			return false;
-+	} else {
-+		if (is_inflight_io(sbi, type))
-+			return false;
-+	}
- 
- 	if (sbi->gc_mode == GC_URGENT_MID)
- 		return true;
-@@ -2869,6 +2882,9 @@ static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
- 			(type == DISCARD_TIME || type == GC_TIME))
- 		return true;
- 
-+	if (zoned_gc)
-+		return true;
-+
- 	return f2fs_time_over(sbi, type);
- }
- 
++What:		/sys/fs/f2fs/<disk>/gc_boost_zoned_gc_percent
++Date:		September 2024
++Contact:	"Daeho Jeong" <daehojeong@google.com>
++Description:	If the percentage of free sections over total sections is under this
++		number, F2FS boosts garbage collection for zoned devices through the
++		background GC thread. the default number is "25".
 diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 724bbcb447d3..46e3bc26b78a 100644
+index a59fec64eccf..319b4b80ba72 100644
 --- a/fs/f2fs/gc.c
 +++ b/fs/f2fs/gc.c
-@@ -116,7 +116,17 @@ static int gc_thread_func(void *data)
- 			goto next;
+@@ -119,7 +119,8 @@ static int gc_thread_func(void *data)
  		}
  
--		if (has_enough_invalid_blocks(sbi))
-+		if (f2fs_sb_has_blkzoned(sbi)) {
-+			if (has_enough_free_blocks(sbi, LIMIT_NO_ZONED_GC)) {
-+				wait_ms = gc_th->no_gc_sleep_time;
-+				f2fs_up_write(&sbi->gc_lock);
-+				goto next;
-+			}
-+			if (wait_ms == gc_th->no_gc_sleep_time)
-+				wait_ms = gc_th->max_sleep_time;
-+		}
-+
-+		if (need_to_boost_gc(sbi))
- 			decrease_sleep_time(gc_th, &wait_ms);
- 		else
- 			increase_sleep_time(gc_th, &wait_ms);
-@@ -179,9 +189,16 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
- 		return -ENOMEM;
- 
- 	gc_th->urgent_sleep_time = DEF_GC_THREAD_URGENT_SLEEP_TIME;
--	gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME;
--	gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME;
--	gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME;
-+
-+	if (f2fs_sb_has_blkzoned(sbi)) {
-+		gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME_ZONED;
-+		gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME_ZONED;
-+		gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME_ZONED;
-+	} else {
-+		gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME;
-+		gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME;
-+		gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME;
-+	}
+ 		if (f2fs_sb_has_blkzoned(sbi)) {
+-			if (has_enough_free_blocks(sbi, LIMIT_NO_ZONED_GC)) {
++			if (has_enough_free_blocks(sbi,
++				gc_th->no_zoned_gc_percent)) {
+ 				wait_ms = gc_th->no_gc_sleep_time;
+ 				f2fs_up_write(&sbi->gc_lock);
+ 				goto next;
+@@ -200,10 +201,14 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
+ 		gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME_ZONED;
+ 		gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME_ZONED;
+ 		gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME_ZONED;
++		gc_th->no_zoned_gc_percent = LIMIT_NO_ZONED_GC;
++		gc_th->boost_zoned_gc_percent = LIMIT_BOOST_ZONED_GC;
+ 	} else {
+ 		gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME;
+ 		gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME;
+ 		gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME;
++		gc_th->no_zoned_gc_percent = 0;
++		gc_th->boost_zoned_gc_percent = 0;
+ 	}
  
  	gc_th->gc_wake = false;
+@@ -1740,8 +1745,9 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
  
+ 			if (f2fs_sb_has_blkzoned(sbi) &&
+ 					!has_enough_free_blocks(sbi,
+-					LIMIT_BOOST_ZONED_GC))
+-				window_granularity *= BOOST_GC_MULTIPLE;
++					sbi->gc_thread->boost_zoned_gc_percent))
++				window_granularity *=
++					BOOST_GC_MULTIPLE;
+ 
+ 			end_segno = start_segno + window_granularity;
+ 		}
 diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index a8ea3301b815..55c4ba73362e 100644
+index 78abeebd68b5..c063310c8dde 100644
 --- a/fs/f2fs/gc.h
 +++ b/fs/f2fs/gc.h
-@@ -15,6 +15,11 @@
- #define DEF_GC_THREAD_MAX_SLEEP_TIME	60000
- #define DEF_GC_THREAD_NOGC_SLEEP_TIME	300000	/* wait 5 min */
- 
-+/* GC sleep parameters for zoned deivces */
-+#define DEF_GC_THREAD_MIN_SLEEP_TIME_ZONED	10
-+#define DEF_GC_THREAD_MAX_SLEEP_TIME_ZONED	20
-+#define DEF_GC_THREAD_NOGC_SLEEP_TIME_ZONED	60000
+@@ -61,6 +61,10 @@ struct f2fs_gc_kthread {
+ 						 * caller of f2fs_balance_fs()
+ 						 * will wait on this wait queue.
+ 						 */
 +
- /* choose candidates from sections which has age of more than 7 days */
- #define DEF_GC_THREAD_AGE_THRESHOLD		(60 * 60 * 24 * 7)
- #define DEF_GC_THREAD_CANDIDATE_RATIO		20	/* select 20% oldest sections as candidates */
-@@ -25,6 +30,9 @@
- #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
- #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
++	/* for gc control for zoned devices */
++	unsigned int no_zoned_gc_percent;
++	unsigned int boost_zoned_gc_percent;
+ };
  
-+#define LIMIT_NO_ZONED_GC	60 /* percentage over total user space of no gc for zoned devices */
-+#define LIMIT_BOOST_ZONED_GC	25 /* percentage over total user space of boosted gc for zoned devices */
-+
- #define DEF_GC_FAILED_PINNED_FILES	2048
- #define MAX_GC_FAILED_PINNED_FILES	USHRT_MAX
+ struct gc_inode_list {
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 761d1abd46a8..60693ec39a03 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -965,6 +965,8 @@ GC_THREAD_RW_ATTR(gc_urgent_sleep_time, urgent_sleep_time);
+ GC_THREAD_RW_ATTR(gc_min_sleep_time, min_sleep_time);
+ GC_THREAD_RW_ATTR(gc_max_sleep_time, max_sleep_time);
+ GC_THREAD_RW_ATTR(gc_no_gc_sleep_time, no_gc_sleep_time);
++GC_THREAD_RW_ATTR(gc_no_zoned_gc_percent, no_zoned_gc_percent);
++GC_THREAD_RW_ATTR(gc_boost_zoned_gc_percent, boost_zoned_gc_percent);
  
-@@ -152,6 +160,12 @@ static inline void decrease_sleep_time(struct f2fs_gc_kthread *gc_th,
- 		*wait -= min_time;
- }
- 
-+static inline bool has_enough_free_blocks(struct f2fs_sb_info *sbi,
-+						unsigned int limit_perc)
-+{
-+	return free_sections(sbi) > ((sbi->total_sections * limit_perc) / 100);
-+}
-+
- static inline bool has_enough_invalid_blocks(struct f2fs_sb_info *sbi)
- {
- 	block_t user_block_count = sbi->user_block_count;
-@@ -167,3 +181,10 @@ static inline bool has_enough_invalid_blocks(struct f2fs_sb_info *sbi)
- 		free_user_blocks(sbi) <
- 			limit_free_user_blocks(invalid_user_blocks));
- }
-+
-+static inline bool need_to_boost_gc(struct f2fs_sb_info *sbi)
-+{
-+	if (f2fs_sb_has_blkzoned(sbi))
-+		return !has_enough_free_blocks(sbi, LIMIT_BOOST_ZONED_GC);
-+	return has_enough_invalid_blocks(sbi);
-+}
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 3959fd137cc9..ca2101ad918e 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -707,6 +707,11 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			if (!strcmp(name, "on")) {
- 				F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
- 			} else if (!strcmp(name, "off")) {
-+				if (f2fs_sb_has_blkzoned(sbi)) {
-+					f2fs_warn(sbi, "zoned devices need bggc");
-+					kfree(name);
-+					return -EINVAL;
-+				}
- 				F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_OFF;
- 			} else if (!strcmp(name, "sync")) {
- 				F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_SYNC;
+ /* SM_INFO ATTR */
+ SM_INFO_RW_ATTR(reclaim_segments, rec_prefree_segments);
+@@ -1123,6 +1125,8 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(gc_min_sleep_time),
+ 	ATTR_LIST(gc_max_sleep_time),
+ 	ATTR_LIST(gc_no_gc_sleep_time),
++	ATTR_LIST(gc_no_zoned_gc_percent),
++	ATTR_LIST(gc_boost_zoned_gc_percent),
+ 	ATTR_LIST(gc_idle),
+ 	ATTR_LIST(gc_urgent),
+ 	ATTR_LIST(reclaim_segments),
 -- 
 2.46.0.598.g6f2099f65c-goog
 
