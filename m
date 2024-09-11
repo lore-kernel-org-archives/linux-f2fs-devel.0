@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EC54CEE01FA
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Sep 2024 02:11:54 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5A0A3EE01FA
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Sep 2024 02:12:13 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1soCpm-0000iA-5S;
-	Wed, 11 Sep 2024 02:11:54 +0000
+	id 1soCq5-0003cO-03;
+	Wed, 11 Sep 2024 02:12:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1soCpk-0000hv-HT
+ (envelope-from <chao@kernel.org>) id 1soCq2-0003cG-Jf
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Sep 2024 02:11:52 +0000
+ Wed, 11 Sep 2024 02:12:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=P1VFn7dwTHuzEsz9ICNU2+DgWUdXkia+oLvb3NPPcWk=; b=ebTGgU1qHuNYmoMda+6AM/Vqz9
- JVjrTMR1WkjEmR/6Zj9PxxIpbILX+ha37YFl6A6ezf0d9u4tyT3+Z747ZecMaLTcGfZxD+Ym8YlYS
- 8j+i8txDX4vGwvU++Fwrabp7/VmiikwpNf6G/kRRUB+qgo1VR8SVHBKOaYsIkiPxtq34=;
+ bh=+/ISS7V63FPE+/V658JzQaSPETBMqmN3IURZEJLfGb4=; b=KdEMQIMSZEi69GXBMo62vBMEY/
+ Oji/D/kaF7UkBS/gJvzyPnFulAXSiifcx5PfoWtje8CVqw/DotxmT5IGYpL4JHuY5qjEAOVXrXInf
+ S3ONWKLm3SgyMNt/DPHzC9bvOxieMTI6p1uzGMJfYLcNEfhzgjsTYSiNgmai+laE9x6Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -33,42 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=P1VFn7dwTHuzEsz9ICNU2+DgWUdXkia+oLvb3NPPcWk=; b=cPFA8jX8okABGlCsXBALbR1fJE
- hwLrAN2FwiPXiweIgthaHiEk54J52S49wqoAlXXPJxGM35eKWCVKHqUxqw3ed2C2vKI7UT2y8smUe
- imr2J5m9IsU/wTJPTTo1CXoAmCcT/8Swn8Z9g8q/wgWZvBdqfOZpoI8eNW1ec88/h1bc=;
+ bh=+/ISS7V63FPE+/V658JzQaSPETBMqmN3IURZEJLfGb4=; b=fMvuSiDini789Q9Nl1+PZ/CDQ7
+ LMioHciUGEIPFG/a+8x1SWV8qM3sOqv0cbjYz7wI3/8GcYrHC426LVynQA1jHYyhm7WMQaOxntjYH
+ SR8LNPbC6+GmZcWS8pyZbc1ZnQcY5ZOX1Z2uHBm5NkSoceLuCsfSRmf9iPAHNYZvoB98=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1soCpj-0004qZ-VG for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Sep 2024 02:11:52 +0000
+ id 1soCq1-0004rN-Pz for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 11 Sep 2024 02:12:10 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 06B055C02E6;
- Wed, 11 Sep 2024 02:11:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9E37C4CEC3;
- Wed, 11 Sep 2024 02:11:39 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id E365A5C0534;
+ Wed, 11 Sep 2024 02:11:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70242C4CEC3;
+ Wed, 11 Sep 2024 02:11:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1726020701;
- bh=1mJdaCMQ/y+9vZRgUVNXZFTQ16s9zRPE93MsE9D4JL8=;
+ s=k20201202; t=1726020719;
+ bh=XD3xU71GufM2mam+Bj4b7+0w5mWce4gp07uM3VRrjSc=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=S10nq36gUFpRFz3NpLdrRMYVvlcP/anrrOBUYn3SJTrfQDFMdjUQax/lY+8fTF7NE
- wpk0hItcbiw+qZv7WuNqwxdxK6nNARI+R4QkAimP5bEJGGLjLaSg/cCCT+bWm+B/N7
- fBLzre7IeZyPBxBXsNqWgEwi5/loELUswEw12RQl2fy0E1ciF3nlrLaN0LWiMLp/oY
- Pn6Cq56b0NDM3JxNb3wxVSg8z4G79fRyf5UNbo+W2cz7ucFbQDpwHlIjkaplFiIPHx
- TyEAYOLpwxWC69D9QVQ674aF8H2EhmcQDvRogVRhgqFyxAAabhMZ8XYKosvXBrFvJF
- 4LWJpuYDdVA5g==
-Message-ID: <31db09a9-cd34-431b-8e16-31b06785430a@kernel.org>
-Date: Wed, 11 Sep 2024 10:11:37 +0800
+ b=GBkkQBwz2sdnZ8OQ2J/aw49QN7rsmPKVZFDZd0/PIcFCffgLjNHEgOccqA5nYDQKv
+ x7D+4Yg9oPQ4MwMETng0bP4Y43b88ofCiBrOLrlcQjnjrHg4oRUgu/hPKMZ4/OeVKr
+ ndVLmG948HoPtA0NDMQT05thK0vM2qPkqZ+FZJaJMB9/jvfIXoLNH/gOaI3QVB/oEl
+ hVkK+ZZeLT4R9W41esBVevbfZX/jTWgw7xdQumipIZ5D3QZBeNUU6aJFT90TMxw0xm
+ ffcVfMbEz3LR58Gr2SrW1F0TWrJfxg13WYTn2/OSfU0QyfpNCZ5L9V2zNEeV0B3NjO
+ D0FVx2DK1gaug==
+Message-ID: <9b9ee9a3-af25-45eb-a85b-eb86234a4463@kernel.org>
+Date: Wed, 11 Sep 2024 10:11:54 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
 References: <20240909221946.2004046-1-daeho43@gmail.com>
- <20240909221946.2004046-2-daeho43@gmail.com>
+ <20240909221946.2004046-3-daeho43@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20240909221946.2004046-2-daeho43@gmail.com>
-X-Headers-End: 1soCpj-0004qZ-VG
-Subject: Re: [f2fs-dev] [PATCH v2 2/7] f2fs: introduce
- migration_window_granularity
+In-Reply-To: <20240909221946.2004046-3-daeho43@gmail.com>
+X-Headers-End: 1soCq1-0004rN-Pz
+Subject: Re: [f2fs-dev] [PATCH v2 3/7] f2fs: add reserved_segments sysfs node
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,9 +89,7 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 On 2024/9/10 6:19, Daeho Jeong wrote:
 > From: Daeho Jeong <daehojeong@google.com>
 > 
-> We can control the scanning window granularity for GC migration. For
-> more frequent scanning and GC on zoned devices, we need a fine grained
-> control knob for it.
+> For the fine tuning of GC behavior, add reserved_segments sysfs node.
 > 
 > Signed-off-by: Daeho Jeong <daehojeong@google.com>
 
