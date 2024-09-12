@@ -4,68 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 60D2EEE6457
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Sep 2024 07:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A7CC7EE57F8
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Sep 2024 13:13:20 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1soe2G-0002Du-9P;
-	Thu, 12 Sep 2024 07:14:36 +0000
+	id 1sojdO-0003nB-Kz;
+	Thu, 12 Sep 2024 13:13:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1soe2E-0002Dn-Fv
+ (envelope-from <hch@lst.de>) id 1sojdM-0003mr-6x
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Sep 2024 07:14:34 +0000
+ Thu, 12 Sep 2024 13:13:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GnOd1Kn77Xp8EZEniHYN06GmSJ+gyPOcYoqS9AtuvQA=; b=UHnwYLmeD2Jue+ZlM6IqT8d1ew
- BdjOin5lBnQT7WB7rqj7nIve8YFy4hoOfvFFTIziOV+wGbyyAMfHgrc8DPplJs01D2YnXB0ZwkS3s
- ozk8sBVmbvBg49jRfwKOnYLUIm1e13L3ce/jnrbqnYm1zWOyI62VKfayP5ktBZ5a+utQ=;
+ bh=XgGsrf7dA6CpjvI9fBVgqtnxnzZ8jdii2mjMffhIatM=; b=AI+WZtiQ0dEZ/PnzVB+q82DI47
+ 40xReYeJPPZqKB6NjwTKY0UFyTmCl4pvcEJFWp8vUhr+Io8k5Dc0nZqZZSidlQsXP/2EUnNAUaWLb
+ oSBE7hClLRaKPsKHqrvGrR/Re3S0AdC9RSRgVmDeAPrwt5DCJzbW1GbBR9Fh7/y9O4cg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GnOd1Kn77Xp8EZEniHYN06GmSJ+gyPOcYoqS9AtuvQA=; b=SWqtndl3YDNKpY40sss0cVrosw
- LI5sTsUcDPf9rqXDqpvUOdea7SI0ToiPy9YSr3BHsX2HGEHhd3I+YQg/fPDk3t3bR0HUlw2d5ql9d
- 5ESGie6UggkXXOktvODmWN4mP46Ejqi2TsitVFJM7oRzIerrsunNBpq3IcJbNqxOhMlI=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ bh=XgGsrf7dA6CpjvI9fBVgqtnxnzZ8jdii2mjMffhIatM=; b=lvvOJVlsuqYuhVNKKHKBmAVXgq
+ 7OrUIdqcTkzd3GLEMKEIM0Rnp31CmpW27lQNCQ6FEd5AbE8dul5xPA9Tsq3HlLGMRqD/q1gp1NPAi
+ L3ym2ltMAxXyiHxHXsZ0fHUgXG9AZSd6SlYkv7chFw9B/zgdG7i8ixfY0oTDyFQLlBu8=;
+Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1soe2D-0000Go-MB for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Sep 2024 07:14:34 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 2B9D1A4402D;
- Thu, 12 Sep 2024 07:14:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E1AC4CEC3;
- Thu, 12 Sep 2024 07:14:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1726125267;
- bh=ZA9BLxD+lQ9n6b28gDkrvcFthmnuikCEMekpEbh0DG8=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=Pa+3LdMJCowinybpA2znB7wcPMIXLIrrOvTLqsyo8CAXaDwGitwW2WGTHTFxIvDmS
- 38ikG4e/ucuwUbhydWUy2iqV2G5vgo52cA0ubLsKAsKTdfJxomzXwXTDMg6RQYbq7l
- 2h+CGZ9IBWw/BBU+NY0KhSMl/Fd+j71/+vM288l+lUthkAsu2rgHr03AA0pWnfnKlL
- Ex8w+ICqAD7dvJGy0JOGfKLEUYTE9Gjy9bYKkrApJ2Y7DXneF8EPK9jMu/JthOQV/t
- N0eFQiaF0aMR6/5rKRq6Esg7BlgqNeqjz5GSGO8TC1FNhx2wvyvzNH4u0+WGEoieMb
- a30ABy3GiOtug==
-Message-ID: <679c7dae-91c4-4ad0-a2cb-55dc92b47fd4@kernel.org>
-Date: Thu, 12 Sep 2024 15:14:24 +0800
+ id 1sojdL-0007jR-Ao for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 12 Sep 2024 13:13:16 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id 944E4227AB6; Thu, 12 Sep 2024 15:01:46 +0200 (CEST)
+Date: Thu, 12 Sep 2024 15:01:46 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Kanchan Joshi <joshi.k@samsung.com>
+Message-ID: <20240912130146.GA28535@lst.de>
+References: <20240910150200.6589-1-joshi.k@samsung.com>
+ <CGME20240910151052epcas5p48b20962753b1e3171daf98f050d0b5af@epcas5p4.samsung.com>
+ <20240910150200.6589-4-joshi.k@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Wu Bo <bo.wu@vivo.com>, linux-kernel@vger.kernel.org
-References: <cover.1726024116.git.bo.wu@vivo.com>
-Content-Language: en-US
-In-Reply-To: <cover.1726024116.git.bo.wu@vivo.com>
-X-Headers-End: 1soe2D-0000Go-MB
-Subject: Re: [f2fs-dev] [PATCH v2 00/13] f2fs: introduce inline tail
+Content-Disposition: inline
+In-Reply-To: <20240910150200.6589-4-joshi.k@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1sojdL-0007jR-Ao
+Subject: Re: [f2fs-dev] [PATCH v5 3/5] fcntl: add F_{SET/GET}_RW_HINT_EX
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,119 +67,74 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: Wu Bo <wubo.oduw@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: vishak.g@samsung.com, jack@suse.cz, linux-nvme@lists.infradead.org,
+ James.Bottomley@HansenPartnership.com, hch@lst.de, sagi@grimberg.me,
+ linux-scsi@vger.kernel.org, gost.dev@samsung.com,
+ Nitesh Shetty <nj.shetty@samsung.com>, linux-block@vger.kernel.org,
+ viro@zeniv.linux.org.uk, kbusch@kernel.org, jaegeuk@kernel.org,
+ bvanassche@acm.org, axboe@kernel.dk, brauner@kernel.org,
+ martin.petersen@oracle.com, jlayton@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, chuck.lever@oracle.com,
+ linux-fsdevel@vger.kernel.org, javier.gonz@samsung.com
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2024/9/11 11:57, Wu Bo wrote:
-> The inode in F2FS occupies an entire 4k block. For many small files, this means
-> they consume much more space than their actual size. Therefore, there is
-> significant potential to better utilize the inode block space.
+On Tue, Sep 10, 2024 at 08:31:58PM +0530, Kanchan Joshi wrote:
+> This is similar to existing F_{SET/GET}_RW_HINT but more
+> generic/extensible.
 > 
-> Currently, F2FS has two features to make use of the inode block space: inline
-> data and inline xattr.
+> F_SET/GET_RW_HINT_EX take a pointer to a struct rw_hint_ex as argument:
 > 
-> Inline data stores file which size is smaller then 3.5k in inode block. However,
-> for slightly larger small files, there still have much waste.
-> For example, a 5k file requires 3 blocks, totaling 12k of space, which is
-> more than twice the size of the file itself!
+> struct rw_hint_ex {
+>         __u8    type;
+>         __u8    pad[7];
+>         __u64   val;
+> };
 > 
-> Additionally, the end of a file often does not occupy an entire block. If we can
-> store the end of the file data within the inode block, we can save an entire
-> block for the file. This is particularly important for small files.
-> 
-> In fact, the current inline data is a special case of inline tail, and
-> inline tail is an extension of inline data.
-> 
-> To make it simple, inline tail only on small files(<64k). And for larger files,
-> inline tails don't provide any significant benefits.
-> 
-> The layout of an inline tail inode block is following:
-> 
-> | inode block     | 4096 |     inline tail enable    |
-> | --------------- | ---- | --------------------------|
-> | inode info      | 360  |                           |
-> | --------------- | ---- | --------------------------|
-> |                 |      | extra info         | 0~36 |
-> |                 |      | **compact_addr[16] | 64   |
-> | addr table[923] | 3692 | reserved           | 4    |
-> |                 |      | **tail data        |      |
-> |                 |      | inline_xattr       | 200  |
-> | --------------- | ---- | --------------------------|
-> | nid table[5]    | 20   |
-> | node footer     | 24   |
-> 
-> F2fs-tools to support inline tail:
-> https://lore.kernel.org/linux-f2fs-devel/20240903075931.3339584-1-bo.wu@vivo.com
-> 
-> I tested inline tail by copying the source code of Linux 6.9.7. The storage
-> space was reduced by approximately 8%. Additionally, due to the reduced IO, the
-> copy time also reduced by around 10%.
-> 
-> This patch series has been tested with xfstests by running 'kvm-xfstests -c f2fs
-> -g quick' both with and without the patch; no regressions were observed.
-> The test result is:
-> f2fs/default: 583 tests, 6 failures, 213 skipped, 650 seconds
->    Failures: generic/050 generic/064 generic/250 generic/252 generic/563
->        generic/735
->        Totals: 607 tests, 213 skipped, 30 failures, 0 errors, 579s
+> With F_SET_RW_HINT_EX, the user passes the hint type and its value.
+> Hint type can be either lifetime hint (TYPE_RW_LIFETIME_HINT) or
+> placement hint (TYPE_RW_PLACEMENT_HINT). The interface allows to add
+> more hint add more hint types in future.
 
-MKFS_OPTIONS  -- -O extra_attr,encrypt,inode_checksum,flexible_inline_xattr,inode_crtime,verity,compression -f /dev/vdc
-MOUNT_OPTIONS -- -o acl,user_xattr -o discard,inline_tail /dev/vdc /mnt/scratch_f2fs
+What is the point of multiplexing these into a single call vs having
+one fcntl for each?  It's not like the code points are a super
+limited resource.
 
-Before:
-Failures: generic/042 generic/050 generic/250 generic/252 generic/270 generic/389 generic/563 generic/700 generic/735
-Failed 9 of 746 tests
+And the _EX name isn't exactly descriptive either and screams of horrible
+Windows APIs :)
 
-After:
-Failures: generic/042 generic/050 generic/125 generic/250 generic/252 generic/270 generic/389 generic/418 generic/551 generic/563 generic/700 generic/735
-Failed 12 of 746 tests
+> +	WRITE_ONCE(inode->i_write_hint, hint);
+> +	if (file->f_mapping->host != inode)
+> +		WRITE_ONCE(file->f_mapping->host->i_write_hint, hint);
 
-Failures: f2fs/004
+This doesn't work.  You need a file system method for this so that
+the file system can intercept it, instead of storing it in completely
+arbitrary inodes without any kind of checking for support or intercetion
+point.
 
-Can you please check failed testcases?
+> --- a/include/linux/rw_hint.h
+> +++ b/include/linux/rw_hint.h
+> @@ -21,4 +21,17 @@ enum rw_lifetime_hint {
+>  static_assert(sizeof(enum rw_lifetime_hint) == 1);
+>  #endif
+>  
+> +#define WRITE_HINT_TYPE_BIT	BIT(7)
+> +#define WRITE_HINT_VAL_MASK	(WRITE_HINT_TYPE_BIT - 1)
+> +#define WRITE_HINT_TYPE(h)	(((h) & WRITE_HINT_TYPE_BIT) ? \
+> +				TYPE_RW_PLACEMENT_HINT : TYPE_RW_LIFETIME_HINT)
+> +#define WRITE_HINT_VAL(h)	((h) & WRITE_HINT_VAL_MASK)
+> +
+> +#define WRITE_PLACEMENT_HINT(h)	(((h) & WRITE_HINT_TYPE_BIT) ? \
+> +				 WRITE_HINT_VAL(h) : 0)
+> +#define WRITE_LIFETIME_HINT(h)	(((h) & WRITE_HINT_TYPE_BIT) ? \
+> +				 0 : WRITE_HINT_VAL(h))
+> +
+> +#define PLACEMENT_HINT_TYPE	WRITE_HINT_TYPE_BIT
+> +#define MAX_PLACEMENT_HINT_VAL	(WRITE_HINT_VAL_MASK - 1)
 
-Thanks,
-
-> 
-> ---
-> v2:
-> - fix ARCH=arc build warning
-> 
-> ---
-> Wu Bo (13):
->    f2fs: add inline tail mount option
->    f2fs: add inline tail disk layout definition
->    f2fs: implement inline tail write & truncate
->    f2fs: implement inline tail read & fiemap
->    f2fs: set inline tail flag when create inode
->    f2fs: fix address info has been truncated
->    f2fs: support seek for inline tail
->    f2fs: convert inline tail when inode expand
->    f2fs: fix data loss during inline tail writing
->    f2fs: avoid inlining quota files
->    f2fs: fix inline tail data lost
->    f2fs: convert inline tails to avoid potential issues
->    f2fs: implement inline tail forward recovery
-> 
->   fs/f2fs/data.c     |  93 +++++++++++++++++++++++++-
->   fs/f2fs/f2fs.h     |  46 ++++++++++++-
->   fs/f2fs/file.c     |  85 +++++++++++++++++++++++-
->   fs/f2fs/inline.c   | 159 +++++++++++++++++++++++++++++++++++++++------
->   fs/f2fs/inode.c    |   6 ++
->   fs/f2fs/namei.c    |   3 +
->   fs/f2fs/node.c     |   6 +-
->   fs/f2fs/recovery.c |   9 ++-
->   fs/f2fs/super.c    |  25 +++++++
->   fs/f2fs/verity.c   |   4 ++
->   10 files changed, 409 insertions(+), 27 deletions(-)
-> 
-> 
-> base-commit: 67784a74e258a467225f0e68335df77acd67b7ab
+That's a whole lot of undocumented macros.  Please turn these into proper
+inline functions and write documentation for them.
 
 
 
