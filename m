@@ -4,69 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 262B4C3ABD1
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B7EBBC3ABD3
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Sep 2024 21:30:48 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sqJJ1-0004V5-1W;
-	Mon, 16 Sep 2024 21:30:47 +0000
+	id 1sqJJ2-0007zd-Cr;
+	Mon, 16 Sep 2024 21:30:48 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sqJIz-0004Uq-Ol
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sqJJ1-0007zK-5p
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Sep 2024 21:30:46 +0000
+ Mon, 16 Sep 2024 21:30:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GD0HdTs5giBz6E5u9iw9eOobLckas5bz4rI9LPBajtI=; b=ADbpzbipGpDzQ6K1hM9ShlEJcj
- jC2jXEIgBpcxTiZDg81flUust7AVGYM0srUQSYtLv+mKhXUdOOW3Uh4ap6+AEjXrHKseqm79VXEBK
- of25ReIsMWxzgzl0MVxmXyvHNKw4yG2ti7eNtEyzGhgNUahyyk5Di2pPIqaMfe93LvKs=;
+ bh=ve2mvte3bqvyqEOGjwLCt046fq2EtM/f+jCTGmd5SGM=; b=ZJKZI9EamLE+EeLwVyiHaub8AK
+ D8uJ7pJOTsKBw0O5T1QTt4t1lsI1rONuXzRTjL9/z61QwySFf4XC64osH1rXzYXV4Te5JTUgQ6ri/
+ oZW4aKetiZwDFbOt2Q2MhGnsCPp2Th8/5VzRmCXpQT9mPynXr48EsclM+i6CpEV4RrIw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GD0HdTs5giBz6E5u9iw9eOobLckas5bz4rI9LPBajtI=; b=YrM7ABuWjxsmm4aVYg5ykNDHE3
- hBnfhA8G4r0SrU76fnGyNfSgIXJh1OO3cSx0jRHl0hxIbHT/sqyVL/OBpY9yZ4UyKA0oYOr6ylPDQ
- UMVMuRARXQCKiyMVpuUBFn0/QGfA1wAzCfdBK1/kRvOhYbj5vd+AYIDm4WVzHnF9y2YM=;
+ bh=ve2mvte3bqvyqEOGjwLCt046fq2EtM/f+jCTGmd5SGM=; b=ikrCktcvxkWxlvKw6bHedcUuio
+ zpnILw5YyjwzhqqjVJpwfPtwLv5b/1jx9o/dPes83A3brDqgDxRX0YUPL29f0q64TCF/kfSddtiwm
+ HErfMgcHhiJwgpt4RbKs7h0M6ffMiGP1HYv7Gp8Vwhyd/pfso3IajNRQVPTPXLRkKehk=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sqJIz-0000OZ-Ua for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Sep 2024 21:30:46 +0000
+ id 1sqJJ0-0000Oc-HI for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 16 Sep 2024 21:30:47 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 5CAD35C0608
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by dfw.source.kernel.org (Postfix) with ESMTP id 7AB4A5C05F7;
+ Mon, 16 Sep 2024 21:30:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4E4DC4CEC4;
  Mon, 16 Sep 2024 21:30:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D61D4C4CEC5;
- Mon, 16 Sep 2024 21:30:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1726522238;
- bh=/LTfMGIkXGSWPvlj+TCbpSSwcSOa/6IWvXCKKM62UNU=;
+ s=k20201202; t=1726522235;
+ bh=gpAhyyWTTofmD5p8pqREwF5xUfCBBnrCVAI8oGe8Bgg=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=a3cqY3KrneybyUBzNYha9tYbpkgYUAlrR2Zl7Q4mxuSRDMjPUPfL2JJNgZTINxkhb
- lk5cTPvs1Mj3ok6G98BW4USYcWod8KodpiIlVDcsJUeMNuH96c3SJehFuc7MIqB5ox
- S95PrjhYpdQfXaIz/p8IPhQgriHJh79IB+T4QtFHkSahbHzzItUqy6ir41vwLpalKa
- 7Qc5vQmtP8p9VZZdTl3PVJDMPXTff7vKAybGttFEX/eusDXRZ06twc+VhLaHPH9m4I
- +3VzAaV17JnlCt3jszMYMny31BoogcRIzeB5k3tfXU9Xj9qY6xc/HiXkkQdLVislF4
- y1fxr01YWjZEA==
+ b=c990Pe7+XpgXXAA49chRytqdlsJLhHDzty95z/zdhO2T6/VZAuNZoqUbhmCRD/RUA
+ iNV/gNpEGdnUQdlxYpaEYznsZ5Viv/+IpsFJf229yIqVZKbGZGoy1/Q3Jmn+KxGqkf
+ aTFeHUOHKhPtCYUePlKvEYM2y8CYvFhPX8eu60XLO++0P5iXvG4D5h1/7uKs9S6niz
+ PRmRpL7B7wUNKQ9EKEkHdOxZHchTRp8vvXnuSXVZaAJSi6PBIM9X4gvdJM6p36DYtr
+ bZdGXsUT1kmcr7Tm40X54M/uu/fvEwkjqbSe3qnT/39aFY3pot6EIVY2dFeX8U1WSI
+ EkDUUudPePB5A==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- ADBA43806644; Mon, 16 Sep 2024 21:30:41 +0000 (UTC)
+ AE5393806644; Mon, 16 Sep 2024 21:30:38 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <172652224025.3820990.7553839359732316755.git-patchwork-notify@kernel.org>
-Date: Mon, 16 Sep 2024 21:30:40 +0000
-References: <20240915032251.2300459-1-jaegeuk@kernel.org>
-In-Reply-To: <20240915032251.2300459-1-jaegeuk@kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1sqJIz-0000OZ-Ua
-Subject: Re: [f2fs-dev] [PATCH] f2fs: allow F2FS_IPU_NOCACHE for pinned file
+Message-Id: <172652223724.3820990.15004713720565188782.git-patchwork-notify@kernel.org>
+Date: Mon, 16 Sep 2024 21:30:37 +0000
+References: <20240904153306.816988-1-daeho43@gmail.com>
+In-Reply-To: <20240904153306.816988-1-daeho43@gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>
+X-Headers-End: 1sqJJ0-0000Oc-HI
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: prevent atomic file from being
+ dirtied before commit
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,7 +81,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: daehojeong@google.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -91,17 +92,21 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Sun, 15 Sep 2024 03:22:51 +0000 you wrote:
-> This patch allows f2fs to submit bios of in-place writes on pinned file.
+On Wed,  4 Sep 2024 08:33:06 -0700 you wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/sysfs.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Keep atomic file clean while updating and make it dirtied during commit
+> in order to avoid unnecessary and excessive inode updates in the previous
+> fix.
+> 
+> Fixes: 4bf78322346f ("f2fs: mark inode dirty for FI_ATOMIC_COMMITTED flag")
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: allow F2FS_IPU_NOCACHE for pinned file
-    https://git.kernel.org/jaegeuk/f2fs/c/755f18261376
+  - [f2fs-dev,v2] f2fs: prevent atomic file from being dirtied before commit
+    https://git.kernel.org/jaegeuk/f2fs/c/fccaa81de87e
 
 You are awesome, thank you!
 -- 
