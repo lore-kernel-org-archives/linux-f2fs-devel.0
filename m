@@ -4,69 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 23B2BC3ABCE
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 869BCC3ABCB
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Sep 2024 21:30:47 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1sqJIz-0004Uj-G7;
-	Mon, 16 Sep 2024 21:30:46 +0000
+	id 1sqJJ1-0006w7-Oi;
+	Mon, 16 Sep 2024 21:30:47 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sqJIu-0004UZ-Px
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1sqJIz-0006vy-Hi
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Sep 2024 21:30:41 +0000
+ Mon, 16 Sep 2024 21:30:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cyGdQso8aDIUfqDNqbMFHtdVYngykJZQ7+4EIAhWnW8=; b=REaxMIAWHlis59SB7O613tNKpa
- 9HBHFBrqM0APuJxOj5SXchymF5y7LR5j9ORBqSNaPapzlChPGeiSDwNbiN1W2ZGl3GJ9kSc8Cf76A
- FfgI9T93K2wp9eO247ztAgJjh3JbFZZAspioPbsd+QvubnQLmAReBVKGizpm+2fODDxg=;
+ bh=THCdxlK8EY4aV8bqpMUlgSGegwd8dPSYmfoXgoQoyew=; b=NZnCg4LSQsPGmJCd1aBOrTmbiO
+ cCZfYHwjiOELZGuV9LhWpGMW6zSqwX9UKkOHbHz0sk5SCR0q5LonQBhlnWkcVfCuRnzvJH0SkR7M7
+ 7IxKV6CtDd3H8XhuX/aNCS3aC4idUQ193GpIPGTYrRpknFDFnULdkAitfh0KAIdi3q0s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cyGdQso8aDIUfqDNqbMFHtdVYngykJZQ7+4EIAhWnW8=; b=ga9IdEv8u5tG9yuyCxqq+JknEH
- ZzEuAwp6nzc3zYt5da7fQ9FX/ydHTu4vKpdQFP5FO2YLByy1BJEBuS6F8mlwtqkFTJRMoZXu5Rhrt
- A9I00qJd8XK1Hw1RqfnSJaDJfGyt8Qy3vhKfwVdu1L7P0Yf9/ID41cncKjIAl647x7Yc=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=THCdxlK8EY4aV8bqpMUlgSGegwd8dPSYmfoXgoQoyew=; b=LGM46cmQz15ZXtjQz6gzNboLSe
+ hMn+DekosFKLaYERUgbUGNtkCFzaOgYoaxbzPXyKoBcy+tPocWk2vb7gyumfdpwj9CXqi8WuvzBZe
+ accH7oxroZj9DUgdT8Dmthf4n/hALM05n7yYKGK8Shsr/52uyYXPv/JQhtrb6kYGBB0o=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1sqJIu-0000O6-V7 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Sep 2024 21:30:41 +0000
+ id 1sqJIy-0000OK-93 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 16 Sep 2024 21:30:44 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id C807E5C05F6;
- Mon, 16 Sep 2024 21:30:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28E51C4CEC4;
- Mon, 16 Sep 2024 21:30:30 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id AC8A1A43270;
+ Mon, 16 Sep 2024 21:30:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE84C4CECE;
+ Mon, 16 Sep 2024 21:30:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1726522230;
- bh=anl4DpoqqD9fIJF2b3yEUbmX6bTmHXeEKVEwgC0wq3o=;
+ s=k20201202; t=1726522233;
+ bh=TZJ1GBrIg57PXXnle/QW2Qy3nJQgUO8q3yXT38KZQdo=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=Z5REh09/c6QIhhYABIZhNRBLxGuekL9ILzwCRKqqWabrx/lYD4CDG9gpZKnecCFoV
- K0CvBQidTUAj2VD1jtxECKNPEPTzMbMP2vM2tE2XWqHveB2rdBwhwiWKrH0xLTCVjZ
- YnXA87pAgDmyaIrgPPqmXS/3pGgpZwpbY7uSX8iXWJn2inUtQ2Yl+HsvKZ4i/2Fk4l
- AhSqUaX2GGpbTxNn4OVxfYzsuEDOJ4KQT3j5tz9we+utXc5GmhFNV3LGPgE/QanIjf
- oe4Oi/M9aR/Wi9oC0rJA1Mq8TG8b4eXs4v/yVGUqLKqttupj9kzmH3mAgUACnvpj9o
- CmE64cki7pWEQ==
+ b=i24MWzelxezgQxSfirUpYeLLLHeYAzmNit8b91Xpdk7CBOSrx5eFZ49KRW550cHhg
+ IRtVfT7OlXttXRjQMvWL9ucN9po1OXyUZ1suGBO+8zR2ZhoES4l5K8i9oh+vJQ56jp
+ XrJmIbaZZCOaRild1wTlXp09nbs9fqybO7yYP3sXM6xT+GIv1DI1Z3vl6gs/Y5WuaO
+ 53j3Qh9ZhNI/heP2pOvL3IFASIg1YXRLk2DNRJtCiWYmQ2F4eE8rlDBbTKATkKokFR
+ yT4FVgjGd0Ru32MgTpBxkJL4fHYuHwGSENKp1IgnkhASQFjhCaA8BuE82hbYPd6i/j
+ nT/0kZEEdQ+nQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- EAE0D3806644; Mon, 16 Sep 2024 21:30:32 +0000 (UTC)
+ EB2133806644; Mon, 16 Sep 2024 21:30:35 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <172652223176.3820990.6988007191062882745.git-patchwork-notify@kernel.org>
-Date: Mon, 16 Sep 2024 21:30:31 +0000
-References: <20240912165958.386947-1-daeho43@gmail.com>
-In-Reply-To: <20240912165958.386947-1-daeho43@gmail.com>
-To: Daeho Jeong <daeho43@gmail.com>
-X-Headers-End: 1sqJIu-0000O6-V7
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: forcibly migrate to secure space
- for zoned device file pinning
+Message-Id: <172652223449.3820990.9890904559085171308.git-patchwork-notify@kernel.org>
+Date: Mon, 16 Sep 2024 21:30:34 +0000
+References: <20240910011619.3582861-1-chao@kernel.org>
+In-Reply-To: <20240910011619.3582861-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1sqJIy-0000OK-93
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to don't panic system for no free
+ segment fault injection
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,7 +81,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: daehojeong@google.com, kernel-team@android.com,
+Cc: syzbot+341e5f32ebafbb46b81c@syzkaller.appspotmail.com, jaegeuk@kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -92,20 +92,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 12 Sep 2024 09:59:58 -0700 you wrote:
-> From: Daeho Jeong <daehojeong@google.com>
+On Tue, 10 Sep 2024 09:16:19 +0800 you wrote:
+> f2fs: fix to don't panic system for no free segment fault injection
 > 
-> We need to migrate data blocks even though it is full to secure space
-> for zoned device file pinning.
+> syzbot reports a f2fs bug as below:
 > 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> Fixes: 9703d69d9d15 ("f2fs: support file pinning for zoned devices")
+> F2FS-fs (loop0): inject no free segment in get_new_segment of __allocate_new_segment+0x1ce/0x940 fs/f2fs/segment.c:3167
+> F2FS-fs (loop0): Stopped filesystem due to reason: 7
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: forcibly migrate to secure space for zoned device file pinning
-    https://git.kernel.org/jaegeuk/f2fs/c/5cc69a27abfa
+  - [f2fs-dev] f2fs: fix to don't panic system for no free segment fault injection
+    https://git.kernel.org/jaegeuk/f2fs/c/65a6ce4726c2
 
 You are awesome, thank you!
 -- 
