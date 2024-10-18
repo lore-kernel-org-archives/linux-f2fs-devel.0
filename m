@@ -4,66 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BCF20D2FFE0
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 18 Oct 2024 10:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C8666D3DEAB
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 18 Oct 2024 18:45:15 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t1joE-000878-L2;
-	Fri, 18 Oct 2024 10:02:15 +0000
+	id 1t1ryL-00010I-GL;
+	Fri, 18 Oct 2024 18:45:14 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1t1joD-000870-Ci
+ (envelope-from <ebiggers@kernel.org>) id 1t1ryK-00010A-P3
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 18 Oct 2024 10:02:14 +0000
+ Fri, 18 Oct 2024 18:45:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=04lJBhgGLkTojMhFdUoeLrEqka/ettsx8YKuK0x/x28=; b=SBonUacC0OXmJU+xzjbNoAfXwD
- YCMtWQwepqsu68GYo7w5hPcWEgtbwaWK2neLmrbcLjQ1/36Ml9xUu9EdjKs5ysgTPFT5BUQfRpLrL
- Bpu736ixxPCVTz77OBLQ26StRJrHVQJcgK73N1w7HPED4nEyG4ZiE9ZcKH6x4uAbVVWA=;
+ bh=13m6iHJC97GgDZeNITlexe9FUh0oANaCkDaM707WUQ0=; b=Ex1BXptcRqY1PfdRyV2EJVkxqm
+ HwF5zcd/2gx0/qLV7bO/2FsUDAncBEH1wKMe2dxAI2jJE1PoVboKKcT/9NhnXJIC+iuiUsxqiqH84
+ v9ntInUrDZPBPJ+8bbAgeeiiS7bWOaDrCdVmi0E/CE6hkhYulJ5LI3inAc7JF/O+Qygs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=04lJBhgGLkTojMhFdUoeLrEqka/ettsx8YKuK0x/x28=; b=J
- oXpy5fSg4PDY+fItA+rtqTN5yd/aOUgbFKdFjG6TjeVd8VpIlsDSnC524po054kAcNP9ZrEiGhbFr
- 5ktbunlU9hxW8nx6F4rHpCRgSooQlSvco4MLyDdz10C4BGVPw0qZUDAZuNEN/HS2L9S0lsVS+8lL3
- +L1HCJIFvOCUAAec=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=13m6iHJC97GgDZeNITlexe9FUh0oANaCkDaM707WUQ0=; b=QMUN3RrQPuLlW3+1vo6nsPODQ4
+ rFQC1ceJtPsHkCptke8aGoB16jtrebfIKrt6HttolB6bid+neu4U7oEaa2/FA3xl2ubYurp6/yx9d
+ KbHr7+5LfTP1FALzQamuojgu8mLVvHWI2jEbiIHpsMIpfWssZK/vsWBscps57vmZU/W0=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t1joB-0005KL-Vx for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 18 Oct 2024 10:02:14 +0000
+ id 1t1ryJ-00013K-Es for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 18 Oct 2024 18:45:13 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 3F1A7A431EF;
- Fri, 18 Oct 2024 10:01:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C1E6C4CEC3;
- Fri, 18 Oct 2024 10:01:59 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 6FE9F5C3FCD;
+ Fri, 18 Oct 2024 18:45:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EAFEC4CEC7;
+ Fri, 18 Oct 2024 18:45:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1729245721;
- bh=c95i7yQ7yvMxmF9U7mJUoxODymNVPbilqum2Qcc3rII=;
- h=From:To:Cc:Subject:Date:From;
- b=RH2EWPAE9cL7/kwE7/Kfm6Y/IhDxlxqTorp7dqmS937GwQmXH5DkJWB8wI/FTlShx
- PsMCDYFG+xMAbSUmUh/97FmXycbi3V3fYf2T60Apsclk+f+catDhbxyoijKtGoFib2
- FhFglyLy+xrGhVHssLWKhC2H4IuWhLFAUNTNoOF1TYibJD7CU29hyIFJRDLXLa7gMX
- yD1Epk4CKUHh4Em4PhH3dKXgkCabk9SYhrEgpQLZU3cgURPRKO06Tt1XmfNgKMmRLy
- q4LyLmrn3lpL0QPbyQui9QE6FB+GriciKX63cW3N3VZW3JCh6uSFNr8w6ZOVwPLXVH
- g1+MwAnJXpqfA==
-To: jaegeuk@kernel.org
-Date: Fri, 18 Oct 2024 18:01:50 +0800
-Message-Id: <20241018100150.2852132-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ s=k20201202; t=1729277105;
+ bh=0qchzt7gBgYJL42I9oOzic2a5iFiBbDN8bBm6iTAtt4=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=lP58+IJ7tGDLYShN+HUc2tPy2kDe9kB2VqDCKrSP6RWS26eooYpruQeVtU2dhKkK/
+ Ht7Q+1lADA2gM5X72mZwvZy/G7nScEOmvsxjuv6aZnoxsTusK1mNr/LfPBpHF1I81s
+ 5zb0CTfAUvRGXhEr9gKp6s8GqULfYpIWUiZw73DvYHDnqWC6dN0wJzgMFEjmOPNOr0
+ qKzR3STi+6oT/BbwRt8xkKviKGO5s/KlwFDyqY5H0bRmaL3u8RWdoVvOY2+zErcn0D
+ a9M++TZCS/MGO5T52V4k0d2cADGh45aICwEL2UF3Cv4OKu8/uMY7kqJUmUZxO1ksZG
+ IYIl2RSqXYj0A==
+To: dm-devel@lists.linux.dev
+Date: Fri, 18 Oct 2024 11:43:37 -0700
+Message-ID: <20241018184339.66601-3-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241018184339.66601-1-ebiggers@kernel.org>
+References: <20241018184339.66601-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1t1joB-0005KL-Vx
-Subject: [f2fs-dev] [PATCH RFC] f2fs: revalidate empty segment when
- checkpoint is disabled
+X-Headers-End: 1t1ryJ-00013K-Es
+Subject: [f2fs-dev] [RFC PATCH 2/4] block: add the bi_skip_dm_default_key
+ flag
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -75,66 +77,152 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: Qi Han <hanqi@vivo.com>, linux-kernel@vger.kernel.org,
- Daniel Rosenberg <drosen@google.com>, linux-f2fs-devel@lists.sourceforge.net
+From: Eric Biggers via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Eric Biggers <ebiggers@kernel.org>
+Cc: Israel Rukshin <israelr@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+ Adrian Vovk <adrianvovk@gmail.com>, Md Sadre Alam <quic_mdalam@quicinc.com>,
+ linux-ext4@vger.kernel.org, Milan Broz <gmazyland@gmail.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If checkpoint is off, let's set segment as free once all newly
-written datas were removed, it fixes below case:
+From: Eric Biggers <ebiggers@google.com>
 
-dd if=/dev/zero of=f2fs.img bs=1M count=64
-mkfs.f2fs -f f2fs.img
-mount -o checkpoint=disable:10% f2fs.img mnt
-dd if=/dev/zero of=mnt/file bs=1M count=19
-sync
-rm mnt/file
-dd if=/dev/zero of=mnt/file bs=1M count=9
-dd: error writing 'mnt/file': No space left on device
+Add a flag bi_skip_dm_default_key to struct bio.  This flag indicates
+that dm-default-key should not en/decrypt the bio, due to it targeting
+the contents of an encrypted file.
 
-Cc: Daniel Rosenberg <drosen@google.com>
-Reported-by: Qi Han <hanqi@vivo.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
+When a bio is cloned, copy the bi_skip_dm_default_key flag.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/segment.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ block/bio.c                 |  3 +++
+ block/blk-crypto-fallback.c |  2 ++
+ include/linux/blk-crypto.h  | 36 ++++++++++++++++++++++++++++++++++++
+ include/linux/blk_types.h   |  3 +++
+ 4 files changed, 44 insertions(+)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index e172b3d0aec3..4f480bfc9618 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -849,6 +849,17 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
- 	valid_blocks = get_valid_blocks(sbi, segno, false);
- 	ckpt_valid_blocks = get_ckpt_valid_blocks(sbi, segno, false);
+diff --git a/block/bio.c b/block/bio.c
+index ac4d77c889322..5ff0b66e47a42 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -267,10 +267,13 @@ void bio_init(struct bio *bio, struct block_device *bdev, struct bio_vec *table,
+ 	bio->bi_iocost_cost = 0;
+ #endif
+ #endif
+ #ifdef CONFIG_BLK_INLINE_ENCRYPTION
+ 	bio->bi_crypt_context = NULL;
++#if IS_ENABLED(CONFIG_DM_DEFAULT_KEY)
++	bio->bi_skip_dm_default_key = false;
++#endif
+ #endif
+ #ifdef CONFIG_BLK_DEV_INTEGRITY
+ 	bio->bi_integrity = NULL;
+ #endif
+ 	bio->bi_vcnt = 0;
+diff --git a/block/blk-crypto-fallback.c b/block/blk-crypto-fallback.c
+index b1e7415f8439c..dd5f1edcc44b3 100644
+--- a/block/blk-crypto-fallback.c
++++ b/block/blk-crypto-fallback.c
+@@ -179,10 +179,12 @@ static struct bio *blk_crypto_fallback_clone_bio(struct bio *bio_src)
+ 	bio_for_each_segment(bv, bio_src, iter)
+ 		bio->bi_io_vec[bio->bi_vcnt++] = bv;
  
-+	/*
-+	 * If checkpoint is off, let's set segment as free once all newly
-+	 * written datas were removed.
-+	 */
-+	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED) &&
-+		valid_blocks == 0 && ckpt_valid_blocks == 0) {
-+		__remove_dirty_segment(sbi, segno, DIRTY);
-+		__set_test_and_free(sbi, segno, false);
-+		goto out_lock;
-+	}
+ 	bio_clone_blkg_association(bio, bio_src);
+ 
++	bio_clone_skip_dm_default_key(bio, bio_src);
 +
- 	if (valid_blocks == 0 && (!is_sbi_flag_set(sbi, SBI_CP_DISABLED) ||
- 		ckpt_valid_blocks == usable_blocks)) {
- 		__locate_dirty_segment(sbi, segno, PRE);
-@@ -859,7 +870,7 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
- 		/* Recovery routine with SSR needs this */
- 		__remove_dirty_segment(sbi, segno, DIRTY);
- 	}
--
-+out_lock:
- 	mutex_unlock(&dirty_i->seglist_lock);
+ 	return bio;
  }
  
+ static bool
+ blk_crypto_fallback_alloc_cipher_req(struct blk_crypto_keyslot *slot,
+diff --git a/include/linux/blk-crypto.h b/include/linux/blk-crypto.h
+index 5e5822c18ee41..f1f3d546c53e5 100644
+--- a/include/linux/blk-crypto.h
++++ b/include/linux/blk-crypto.h
+@@ -110,10 +110,13 @@ static inline bool bio_has_crypt_ctx(struct bio *bio)
+ 	return false;
+ }
+ 
+ #endif /* CONFIG_BLK_INLINE_ENCRYPTION */
+ 
++static inline void bio_clone_skip_dm_default_key(struct bio *dst,
++						 const struct bio *src);
++
+ int __bio_crypt_clone(struct bio *dst, struct bio *src, gfp_t gfp_mask);
+ /**
+  * bio_crypt_clone - clone bio encryption context
+  * @dst: destination bio
+  * @src: source bio
+@@ -125,11 +128,44 @@ int __bio_crypt_clone(struct bio *dst, struct bio *src, gfp_t gfp_mask);
+  *	   @gfp_mask doesn't include %__GFP_DIRECT_RECLAIM.
+  */
+ static inline int bio_crypt_clone(struct bio *dst, struct bio *src,
+ 				  gfp_t gfp_mask)
+ {
++	bio_clone_skip_dm_default_key(dst, src);
+ 	if (bio_has_crypt_ctx(src))
+ 		return __bio_crypt_clone(dst, src, gfp_mask);
+ 	return 0;
+ }
+ 
++#if IS_ENABLED(CONFIG_DM_DEFAULT_KEY)
++static inline void bio_set_skip_dm_default_key(struct bio *bio)
++{
++	bio->bi_skip_dm_default_key = true;
++}
++
++static inline bool bio_should_skip_dm_default_key(const struct bio *bio)
++{
++	return bio->bi_skip_dm_default_key;
++}
++
++static inline void bio_clone_skip_dm_default_key(struct bio *dst,
++						 const struct bio *src)
++{
++	dst->bi_skip_dm_default_key = src->bi_skip_dm_default_key;
++}
++#else /* CONFIG_DM_DEFAULT_KEY */
++static inline void bio_set_skip_dm_default_key(struct bio *bio)
++{
++}
++
++static inline bool bio_should_skip_dm_default_key(const struct bio *bio)
++{
++	return false;
++}
++
++static inline void bio_clone_skip_dm_default_key(struct bio *dst,
++						 const struct bio *src)
++{
++}
++#endif /* !CONFIG_DM_DEFAULT_KEY */
++
+ #endif /* __LINUX_BLK_CRYPTO_H */
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index dce7615c35e7e..2ee6a7e570796 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -247,10 +247,13 @@ struct bio {
+ #endif
+ #endif
+ 
+ #ifdef CONFIG_BLK_INLINE_ENCRYPTION
+ 	struct bio_crypt_ctx	*bi_crypt_context;
++#if IS_ENABLED(CONFIG_DM_DEFAULT_KEY)
++	bool			bi_skip_dm_default_key;
++#endif
+ #endif
+ 
+ #if defined(CONFIG_BLK_DEV_INTEGRITY)
+ 	struct bio_integrity_payload *bi_integrity; /* data integrity */
+ #endif
 -- 
-2.40.1
+2.47.0
 
 
 
