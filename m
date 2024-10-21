@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C0C27D3C935
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6F733D3C938
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Oct 2024 00:30:18 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t2gJO-0005ij-Dd;
+	id 1t2gJO-0005iU-2J;
 	Mon, 21 Oct 2024 00:30:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1t2gJH-0005hO-Cs
+ (envelope-from <ebiggers@kernel.org>) id 1t2gJF-0005h8-ER
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Oct 2024 00:30:11 +0000
+ Mon, 21 Oct 2024 00:30:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=k/OfLUqQHLysvg3ybfXGU6fWaoCD3U2ehR5MGc2/rak=; b=QlX3AmFE+ClLZqQM0aOrmp6G3H
- PWqyPuK1ByFM7nVCwZ+QDFNPqDhdXipd9V31LFx+doL/5QWS9nibsMwVOJMhHHeXqwLZR6FBP8OUH
- 6R872itRVNXaTfiMupMkzvVYwUog6DGmVTkn9OltjA+/dSUAkebjf0H8bHiD190QQzBE=;
+ bh=N6WNHgH/odqbb+BsbJZfbCPrXfC9i4dZxq+SImrG6rI=; b=S/yldlEUNkMYbubNSSHxHDEbkx
+ 0eGq2NwNLCwyxrehfH6E/l7MaK8v7R2/ngCkkTvvq71zW0r/BDOrgxRn93LJMNmb30sJZaYFZ4F3T
+ S8AnFJSDZb4std2OGPMJ+G1eWesIk+bRNi+EBoGBb+SUi+EiUJkIepToRutlxQYVbZe4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,38 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=k/OfLUqQHLysvg3ybfXGU6fWaoCD3U2ehR5MGc2/rak=; b=NcKQlyQwkTN6UG0ukuygSweqTR
- Gjnh4yf0/9iBNaSDbqOI34B1gfBdWCNAgC23p9ocIPYws1fuKjXnnqNvFc8JOKWfW3eRr06/A88Wj
- rH/M2QhmH4ma5gnzpiwtxciz2mLPFdNVYcH6Z1cDpWbdFZ9J9rkgPFoauJeEzC9ujvyY=;
+ bh=N6WNHgH/odqbb+BsbJZfbCPrXfC9i4dZxq+SImrG6rI=; b=YCsr5ZKpl7IsM2BHQAVcSXZpi7
+ WCHC52xb5S94M7mqyBbb0uS+Y2Nu/Pw0LdY0c+fDnqVYx23N4C29RcxxWr0m675z0z6g9H/PAw7zL
+ TEoswAaHb99KVCk/IL+YVef1peIL+0pEL1dHNVkAdBUQM4EQFcvduO7KBdIgShuFS0Ow=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t2gJF-0003tj-W5 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Oct 2024 00:30:10 +0000
+ id 1t2gJE-0003tZ-HJ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Oct 2024 00:30:09 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id B3AC55C5815;
- Mon, 21 Oct 2024 00:29:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87B75C4CEE5;
- Mon, 21 Oct 2024 00:29:58 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 15C675C58A3;
+ Mon, 21 Oct 2024 00:29:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4B69C4CEE5;
+ Mon, 21 Oct 2024 00:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1729470598;
- bh=2edVn3yzlgvTIcU4OYne6VaRBmOeBMvpuDRrHbVNdrI=;
+ s=k20201202; t=1729470597;
+ bh=4c2g2/aBZcJU5enMBJmjzSkc9cpjlgUBMmCuy/77kP8=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=NFFk4W0dyvHD7M3v36IIWTb5ySBBZX5uZ/VLRYiArPPR5++D/baWB8d+lyfAaBOhk
- rztTLk/6ilOUZBWwQxzKVpNgy7hbS+bAqO2cV8DFYmzWDyAaKEezQcPZFBrYh8vShT
- roh7zUz+tjlNZy+E9vuB5Q59JQnN14hGjhkd5gjyQeUJqlHGIc+Uf3/5EwjEZ4O6Ps
- TvEpzXEcAb/PHAsselt3G1remC4TFMm//VXM0Ciyn11PZQ9zsIxfN5iARYumUTBA9J
- 8pJ0BrJoKwcW+JUENnQzEDWoyb2qcx6NpA2gan0ia3pz9LbggvtIVcVcrMMhn+Rn2b
- w+zTkdQuRqfwg==
+ b=m8OKhyqDcGs17zHcb6Jt5UVhwFuor56sLp5dULk3zv8sIxETjWHOz+V/XWOF//bH6
+ jGmc4mj20oXisgOVLQ1YneJQIhD74LNkVdnk9C1bZi/p3GKS2CnpWzPX+j7BUymCpt
+ lYDXsl14clCrOdfkOE1F0ZUPjvPqycmkUWRtfVUAjkwCgMkr63QrYMYxdHEJrgvjbR
+ iFCKhpv1BK1ZZkmKPADL9f/DIlqTHNAyCQ2TH+nVQed+4vEYhvkER5MuWXnFpVTzwJ
+ ztD1BC6CsgZqsYd7mA5RbvuXJDPo701tTn82k2meXAAacdHBASCiusVzqTuYmbIs5d
+ ot9NliUxFaahw==
 To: linux-kernel@vger.kernel.org
-Date: Sun, 20 Oct 2024 17:29:35 -0700
-Message-ID: <20241021002935.325878-16-ebiggers@kernel.org>
+Date: Sun, 20 Oct 2024 17:29:32 -0700
+Message-ID: <20241021002935.325878-13-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241021002935.325878-1-ebiggers@kernel.org>
 References: <20241021002935.325878-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1t2gJF-0003tj-W5
-Subject: [f2fs-dev] [PATCH 15/15] f2fs: switch to using the crc32 library
+X-Headers-End: 1t2gJE-0003tZ-HJ
+Subject: [f2fs-dev] [PATCH 12/15] lib/crc32: make crc32c() go directly to lib
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,139 +91,170 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Now that the crc32() library function takes advantage of
-architecture-specific optimizations, it is unnecessary to go through the
-crypto API.  Just use crc32().  This is much simpler, and it improves
-performance due to eliminating the crypto API overhead.
+Now that the lower level __crc32c_le() library function is optimized for
+each architecture, make crc32c() just call that instead of taking an
+inefficient and error-prone detour through the shash API.
+
+Note: a future cleanup should make crc32c_le() be the actual library
+function instead of __crc32c_le().  That will require updating callers
+of __crc32c_le() to use crc32c_le() instead, and updating callers of
+crc32c_le() that expect a 'const void *' arg to expect 'const u8 *'
+instead.  Similarly, a future cleanup should remove LIBCRC32C by making
+everyone who is selecting it just select CRC32 directly instead.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/Kconfig |  3 +--
- fs/f2fs/f2fs.h  | 19 +------------------
- fs/f2fs/super.c | 15 ---------------
- 3 files changed, 2 insertions(+), 35 deletions(-)
+ include/linux/crc32c.h |  7 ++--
+ lib/Kconfig            | 10 ++----
+ lib/Makefile           |  1 -
+ lib/libcrc32c.c        | 74 ------------------------------------------
+ 4 files changed, 8 insertions(+), 84 deletions(-)
+ delete mode 100644 lib/libcrc32c.c
 
-diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
-index 68a1e23e1557c..5916a02fb46dd 100644
---- a/fs/f2fs/Kconfig
-+++ b/fs/f2fs/Kconfig
-@@ -2,12 +2,11 @@
- config F2FS_FS
- 	tristate "F2FS filesystem support"
- 	depends on BLOCK
- 	select BUFFER_HEAD
- 	select NLS
+diff --git a/include/linux/crc32c.h b/include/linux/crc32c.h
+index 357ae4611a453..47eb78003c265 100644
+--- a/include/linux/crc32c.h
++++ b/include/linux/crc32c.h
+@@ -1,12 +1,15 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef _LINUX_CRC32C_H
+ #define _LINUX_CRC32C_H
+ 
+-#include <linux/types.h>
++#include <linux/crc32.h>
+ 
+-extern u32 crc32c(u32 crc, const void *address, unsigned int length);
++static inline u32 crc32c(u32 crc, const void *address, unsigned int length)
++{
++	return __crc32c_le(crc, address, length);
++}
+ 
+ /* This macro exists for backwards-compatibility. */
+ #define crc32c_le crc32c
+ 
+ #endif	/* _LINUX_CRC32C_H */
+diff --git a/lib/Kconfig b/lib/Kconfig
+index 07afcf214f353..b894ee64ff957 100644
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@ -296,18 +296,14 @@ config CRC7
+ 	  the kernel tree does. Such modules that use library CRC7
+ 	  functions require M here.
+ 
+ config LIBCRC32C
+ 	tristate "CRC32c (Castagnoli, et al) Cyclic Redundancy-Check"
 -	select CRYPTO
--	select CRYPTO_CRC32
+-	select CRYPTO_CRC32C
 +	select CRC32
- 	select F2FS_FS_XATTR if FS_ENCRYPTION
- 	select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
- 	select FS_IOMAP
- 	select LZ4_COMPRESS if F2FS_FS_LZ4
- 	select LZ4_DECOMPRESS if F2FS_FS_LZ4
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 33f5449dc22d5..1fc5c2743c8d4 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1761,13 +1761,10 @@ struct f2fs_sb_info {
+ 	help
+-	  This option is provided for the case where no in-kernel-tree
+-	  modules require CRC32c functions, but a module built outside the
+-	  kernel tree does. Such modules that use library CRC32c functions
+-	  require M here.  See Castagnoli93.
+-	  Module will be libcrc32c.
++	  This option just selects CRC32 and is provided for compatibility
++	  purposes until the users are updated to select CRC32 directly.
  
- 	/* For write statistics */
- 	u64 sectors_written_start;
- 	u64 kbytes_written;
+ config CRC8
+ 	tristate "CRC8 function"
+ 	help
+ 	  This option provides CRC8 function. Drivers may select this
+diff --git a/lib/Makefile b/lib/Makefile
+index 773adf88af416..15646679aee21 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -161,11 +161,10 @@ obj-$(CONFIG_CRC_ITU_T)	+= crc-itu-t.o
+ obj-$(CONFIG_CRC32)	+= crc32.o
+ obj-$(CONFIG_CRC64)     += crc64.o
+ obj-$(CONFIG_CRC32_SELFTEST)	+= crc32test.o
+ obj-$(CONFIG_CRC4)	+= crc4.o
+ obj-$(CONFIG_CRC7)	+= crc7.o
+-obj-$(CONFIG_LIBCRC32C)	+= libcrc32c.o
+ obj-$(CONFIG_CRC8)	+= crc8.o
+ obj-$(CONFIG_CRC64_ROCKSOFT) += crc64-rocksoft.o
+ obj-$(CONFIG_XXHASH)	+= xxhash.o
+ obj-$(CONFIG_GENERIC_ALLOCATOR) += genalloc.o
  
--	/* Reference to checksum algorithm driver via cryptoapi */
--	struct crypto_shash *s_chksum_driver;
+diff --git a/lib/libcrc32c.c b/lib/libcrc32c.c
+deleted file mode 100644
+index 649e687413a0c..0000000000000
+--- a/lib/libcrc32c.c
++++ /dev/null
+@@ -1,74 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/* 
+- * CRC32C
+- *@Article{castagnoli-crc,
+- * author =       { Guy Castagnoli and Stefan Braeuer and Martin Herrman},
+- * title =        {{Optimization of Cyclic Redundancy-Check Codes with 24
+- *                 and 32 Parity Bits}},
+- * journal =      IEEE Transactions on Communication,
+- * year =         {1993},
+- * volume =       {41},
+- * number =       {6},
+- * pages =        {},
+- * month =        {June},
+- *}
+- * Used by the iSCSI driver, possibly others, and derived from
+- * the iscsi-crc.c module of the linux-iscsi driver at
+- * http://linux-iscsi.sourceforge.net.
+- *
+- * Following the example of lib/crc32, this function is intended to be
+- * flexible and useful for all users.  Modules that currently have their
+- * own crc32c, but hopefully may be able to use this one are:
+- *  net/sctp (please add all your doco to here if you change to
+- *            use this one!)
+- *  <endoflist>
+- *
+- * Copyright (c) 2004 Cisco Systems, Inc.
+- */
 -
- 	/* Precomputed FS UUID checksum for seeding other checksums */
- 	__u32 s_chksum_seed;
- 
- 	struct workqueue_struct *post_read_wq;	/* post read workqueue */
- 
-@@ -1941,25 +1938,11 @@ static inline unsigned int f2fs_time_to_wait(struct f2fs_sb_info *sbi,
-  * Inline functions
-  */
- static inline u32 __f2fs_crc32(struct f2fs_sb_info *sbi, u32 crc,
- 			      const void *address, unsigned int length)
- {
--	struct {
--		struct shash_desc shash;
--		char ctx[4];
--	} desc;
+-#include <crypto/hash.h>
+-#include <linux/err.h>
+-#include <linux/init.h>
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/crc32c.h>
+-
+-static struct crypto_shash *tfm;
+-
+-u32 crc32c(u32 crc, const void *address, unsigned int length)
+-{
+-	SHASH_DESC_ON_STACK(shash, tfm);
+-	u32 ret, *ctx = (u32 *)shash_desc_ctx(shash);
 -	int err;
 -
--	BUG_ON(crypto_shash_descsize(sbi->s_chksum_driver) != sizeof(desc.ctx));
+-	shash->tfm = tfm;
+-	*ctx = crc;
 -
--	desc.shash.tfm = sbi->s_chksum_driver;
--	*(u32 *)desc.ctx = crc;
--
--	err = crypto_shash_update(&desc.shash, address, length);
+-	err = crypto_shash_update(shash, address, length);
 -	BUG_ON(err);
 -
--	return *(u32 *)desc.ctx;
-+	return crc32(crc, address, length);
- }
- 
- static inline u32 f2fs_crc32(struct f2fs_sb_info *sbi, const void *address,
- 			   unsigned int length)
- {
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 87ab5696bd482..003d3bcb0caa2 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1670,12 +1670,10 @@ static void f2fs_put_super(struct super_block *sb)
- 
- 	f2fs_destroy_post_read_wq(sbi);
- 
- 	kvfree(sbi->ckpt);
- 
--	if (sbi->s_chksum_driver)
--		crypto_free_shash(sbi->s_chksum_driver);
- 	kfree(sbi->raw_super);
- 
- 	f2fs_destroy_page_array_cache(sbi);
- 	f2fs_destroy_xattr_caches(sbi);
- #ifdef CONFIG_QUOTA
-@@ -4419,19 +4417,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		INIT_LIST_HEAD(&sbi->inode_list[i]);
- 		spin_lock_init(&sbi->inode_lock[i]);
- 	}
- 	mutex_init(&sbi->flush_lock);
- 
--	/* Load the checksum driver */
--	sbi->s_chksum_driver = crypto_alloc_shash("crc32", 0, 0);
--	if (IS_ERR(sbi->s_chksum_driver)) {
--		f2fs_err(sbi, "Cannot load crc32 driver.");
--		err = PTR_ERR(sbi->s_chksum_driver);
--		sbi->s_chksum_driver = NULL;
--		goto free_sbi;
--	}
+-	ret = *ctx;
+-	barrier_data(ctx);
+-	return ret;
+-}
 -
- 	/* set a block size */
- 	if (unlikely(!sb_set_blocksize(sb, F2FS_BLKSIZE))) {
- 		f2fs_err(sbi, "unable to set blocksize");
- 		goto free_sbi;
- 	}
-@@ -4872,12 +4861,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	fscrypt_free_dummy_policy(&F2FS_OPTION(sbi).dummy_enc_policy);
- 	kvfree(options);
- free_sb_buf:
- 	kfree(raw_super);
- free_sbi:
--	if (sbi->s_chksum_driver)
--		crypto_free_shash(sbi->s_chksum_driver);
- 	kfree(sbi);
- 	sb->s_fs_info = NULL;
- 
- 	/* give only one another chance */
- 	if (retry_cnt > 0 && skip_recovery) {
-@@ -5080,7 +5067,5 @@ module_init(init_f2fs_fs)
- module_exit(exit_f2fs_fs)
- 
- MODULE_AUTHOR("Samsung Electronics's Praesto Team");
- MODULE_DESCRIPTION("Flash Friendly File System");
- MODULE_LICENSE("GPL");
--MODULE_SOFTDEP("pre: crc32");
+-EXPORT_SYMBOL(crc32c);
 -
+-static int __init libcrc32c_mod_init(void)
+-{
+-	tfm = crypto_alloc_shash("crc32c", 0, 0);
+-	return PTR_ERR_OR_ZERO(tfm);
+-}
+-
+-static void __exit libcrc32c_mod_fini(void)
+-{
+-	crypto_free_shash(tfm);
+-}
+-
+-module_init(libcrc32c_mod_init);
+-module_exit(libcrc32c_mod_fini);
+-
+-MODULE_AUTHOR("Clay Haapala <chaapala@cisco.com>");
+-MODULE_DESCRIPTION("CRC32c (Castagnoli) calculations");
+-MODULE_LICENSE("GPL");
+-MODULE_SOFTDEP("pre: crc32c");
 -- 
 2.47.0
 
