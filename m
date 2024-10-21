@@ -4,68 +4,155 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5540BD3C93C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Oct 2024 00:30:21 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 71E65D3C92F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Oct 2024 02:32:31 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t2gJR-0003KY-HM;
-	Mon, 21 Oct 2024 00:30:20 +0000
+	id 1t2iDc-0007uv-PV;
+	Mon, 21 Oct 2024 02:32:29 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1t2gJH-0003JP-W3
+ (envelope-from <weilongping@oppo.com>) id 1t2iDa-0007uo-Tw
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Oct 2024 00:30:12 +0000
+ Mon, 21 Oct 2024 02:32:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
+ :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ROWei38DhlLZDYredTbVAm43GoyAX6cIJhcUBGY+NrE=; b=KD/w7bxRZvwwQllSPxMQ9NtlOw
- Z0d3FgCcV2xhpnRlpsIvCQlPML5frTDB/lu0eqopl5A7N0qwmePdVm+a/QoYOwIGzvOGh/ruH3NUH
- SFyebJmYea6CbNMYXWnnhlkhzFzQKEYA7hRi7RPv5YFC/0OpWBi4ydwH1nbQVTZ34m34=;
+ bh=YDYKhxqjgazH2uOevqpNxewM/4Xh1F1Sf9226Kc5nOM=; b=ZM1XbgYyWOlJYlnXwX8nh2EIdr
+ FDlGwaFcogByWIlDH9F97pWpeEw9oIFXS7WHgFP4+VC7vTnFi07Q9eAnhjbH3m2DsxUKIdLbU4mGq
+ rfnlNP/MQADod4YeqDSulCiQqzpVRL+8q+S3JnBEOit+sfyW26VSLEJCzBYqfCaGUNjw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=ROWei38DhlLZDYredTbVAm43GoyAX6cIJhcUBGY+NrE=; b=L7c9FLcUhM0/ENHQPYgrf7koQZ
- DtEii7gQqMhplra9V/UF74EgRdIJeAgrHMwoMiPca1iNAUwKGiUYxOt6IBfbydRH9G/fqE9aYucJG
- TIbqfGFI5t3RkW4dLK+5jYMPEB3iHYGaAL2rqa33Nn0/DAs/ZDuSlc8Vv2VpjEQLHueg=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ h=MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Date:
+ Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=YDYKhxqjgazH2uOevqpNxewM/4Xh1F1Sf9226Kc5nOM=; b=m
+ kYvQ8nageEbwtonu8ZcLiJuCZb7grJUkbpd7sarc6cJOm+2IOZtSv5tJTB/J1ko7EPpjt7hPgJ6A+
+ sxdsmmRDWcoEw1QbR1U0xEoTg6c5btiBp49M7RH3MjcLqP72vuWNylZC3rMZfJJ96jcXtyC5JpEwp
+ wZdPSm9RgWOR/UcQ=;
+Received: from mail-koreacentralazon11013008.outbound.protection.outlook.com
+ ([40.107.44.8] helo=SEYPR02CU001.outbound.protection.outlook.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t2gJF-0003tf-VZ for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Oct 2024 00:30:11 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id DBDFEA40CD9;
- Mon, 21 Oct 2024 00:29:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F9DCC4CEF8;
- Mon, 21 Oct 2024 00:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1729470594;
- bh=oHN4Jm8KAp+40wEWTPzgeuvgj07tFEJ9e7R5m6FX/oQ=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=VTNr9Iy+61iOYLM3FA1i9/px61Rl+8yq33ofmvw43Lts03dEvrJF89F5yrpAThjT+
- z1OeNMtray6VYJehHbOQ0cgSFExYuI+rAOjwvEoCnupSxkh57l3bVixVpDqFN4mJvW
- K8rSCD9z8DqO8L+WH38POcwcqya/HVOHn4rDOniVMcIj5/6TThna0w9igpHk8JvZk+
- FI2K5BaQDDL3ABLQ89KXTB1h2SszCm6RNS9GYKhPO/WpOr0mvhvee/9XMbJ9xrtSrj
- Js81xp7GkFh4PlxZB/7jF40VjlLzW4s66eY0dMS2UXHC3mpeW0iwt9xYK2yr26ZZgI
- yYQpVghFxOGnA==
-To: linux-kernel@vger.kernel.org
-Date: Sun, 20 Oct 2024 17:29:27 -0700
-Message-ID: <20241021002935.325878-8-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241021002935.325878-1-ebiggers@kernel.org>
-References: <20241021002935.325878-1-ebiggers@kernel.org>
+ id 1t2iDa-0007oU-Qj for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Oct 2024 02:32:27 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O2Me922V1xsv6naNoC40JK6Gi4wVUUWdIKk/af1jMmcZkL3FcdYWAlU47gCqIF+5x9KlxNXl5yHxgR0g+b/Z3QttXJuIZDLkBOZ82Kyw788SZIeXuyF7IzRSuEnVQjXK18FNYCTILx/0hvp45fFJNvDfdyyrQWZ7zzj7oKIOXGEzBFw0ZuWcdcMQAJwK753qbxNSmFGkRpp9eVYtD7bshtYeMmNOOshrejiaqUOmD13R1AKj8yBv6GIt1Bv4AgjJuEZYuoIfsxlMlWA4UDGp0NLxw0tEMNIhnrB5Ba2FGiD8405jj6rzyg/Jmf15UHY95yh31P23D9r7SdAOFbBnyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YDYKhxqjgazH2uOevqpNxewM/4Xh1F1Sf9226Kc5nOM=;
+ b=zWJKaDMsdaxW2T7QoSyuhYM/7oObE6Tbwc0dmVSAiadhqC9L5Ri+XCopg1QDF4whAEbLbe66s+ihu07TYRf0U2OSbHZ57PD4wZu2eJS5wrAnOwydt4i75MsBpfeXw3bUorI0ZVQ76HfI2zziQim0OBmb21GBgUJ1Dru9gHCT61B29Fp55f+Yvtj3nl4vAwLXt3C3+VcaebEw0ivsyVIK5/h1f21xwUUVfmwR+MX5kcU83NIc+EweU6XDjcGnqSBVeN7lJQs4LeM5X3pWI35NHYDc0CTMZdpl6xEdJwFDaS9O4rliHpa01zVgiL/KpPAg4F4Qpwgunrvg9hW34BWTkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
+ dkim=pass header.d=oppo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YDYKhxqjgazH2uOevqpNxewM/4Xh1F1Sf9226Kc5nOM=;
+ b=RowQQd7RhTxqgswbM7awxFTR1je/AYnsbJ932asaI/l4ZDdJMtvS9UjmKXPYRv3hwiqSSFKgd26QsaUEIMLskUGvfoHWBdDivt2T+EB8kbcpxQ6Rz1WZa+aGQtruRyK/Hq18II80EB1rjzMGMxtJFYstsNg8PcYvD7A9/E9wjx0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oppo.com;
+Received: from SEZPR02MB7967.apcprd02.prod.outlook.com (2603:1096:101:22a::14)
+ by TYZPR02MB5691.apcprd02.prod.outlook.com (2603:1096:400:1c1::6)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.26; Mon, 21 Oct
+ 2024 02:32:18 +0000
+Received: from SEZPR02MB7967.apcprd02.prod.outlook.com
+ ([fe80::5723:5b88:ed4c:d49b]) by SEZPR02MB7967.apcprd02.prod.outlook.com
+ ([fe80::5723:5b88:ed4c:d49b%3]) with mapi id 15.20.8069.027; Mon, 21 Oct 2024
+ 02:32:18 +0000
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Mon, 21 Oct 2024 10:31:47 +0800
+Message-Id: <20241021023147.1774412-1-weilongping@oppo.com>
+X-Mailer: git-send-email 2.34.1
+X-ClientProxiedBy: SG2PR06CA0212.apcprd06.prod.outlook.com
+ (2603:1096:4:68::20) To SEZPR02MB7967.apcprd02.prod.outlook.com
+ (2603:1096:101:22a::14)
 MIME-Version: 1.0
-X-Headers-End: 1t2gJF-0003tf-VZ
-Subject: [f2fs-dev] [PATCH 07/15] s390/crc32: expose CRC32 functions through
- lib
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR02MB7967:EE_|TYZPR02MB5691:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e89cc54-411b-416f-eae8-08dcf17894fc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|52116014|376014|366016|1800799024|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?c5zGQSuF77qvT1baCtafphM29OEvAvcLU6slfIhBplwMLQ1AVV65+r3elQCE?=
+ =?us-ascii?Q?LW7lyhjrEjz2ttxKuQe/ihgtTnViENXdhpMiX7jD+XC98W9Y9kMl/qY+4vcv?=
+ =?us-ascii?Q?HrWafJ+4r8abHphHA0oTNZSobElBsxdtbU0Ysj7KOPWGVrViGpHaZ6LTIz+P?=
+ =?us-ascii?Q?ILx9kQ6jOjJ0ww3RXaGQ2YeXdDqCkVtQO0jM4aVmsYKfb6zWv7DJtEv+Yyrt?=
+ =?us-ascii?Q?nly8OkS8Fd4pbS6tmdc3qpEaU+H3BHCR4N46fIQXNkfTT9QYNZue8Om1Q1+4?=
+ =?us-ascii?Q?iIYiCDyTuoPTBC9aFs+3/yBApMZSJNoSmYWG9cXcm4i2xWFg+XfwMYl7WB95?=
+ =?us-ascii?Q?6M8jX/nqBb/ZkQ6oHIa6E1Hkvj3YZcgWrv1oqUR3QmR56GhhI57z9Atf6UAd?=
+ =?us-ascii?Q?yMw4i0fajh23eNx79jXsyuulq30HanBpvn+gZH41xK1Qvr6xsNeDEJVuJrOx?=
+ =?us-ascii?Q?87dvwEhR7aEpXXjMZO5BRSh6QPpYHL8iI2ddRliUK8LVCL3ORklu92yQBz+0?=
+ =?us-ascii?Q?7G31mdJeP3xyIp1MR7Z4x4qugFKDgGf88A5XDWwKVe8NWs8Ak8ltEcfPp5+A?=
+ =?us-ascii?Q?Ri3q6WuVhtKWJ3nzCtVQpsnwB4MWtM8MD4piDsGUfu3vREL91EPtQ414LnIT?=
+ =?us-ascii?Q?dfUMx1mOJymEakgygAnLLKjrAMl6+amxmBH4OXneL3bK385YfpFIIysZnkEf?=
+ =?us-ascii?Q?g7LitWSWbj/43jLCgPnpxxa/uY9cxS2mM3d+KLB0kONKC1NoC93AdofCveOq?=
+ =?us-ascii?Q?ZrO4A9RW/GeXvLG3qHoMIYtze7wyLiJEHzxbjVHqhjHyVF6HD7ijPv/whIIm?=
+ =?us-ascii?Q?BIqXMO4h8ZU1xarH8fK7OF/MmixrwwsJjanaCRVUdfOTgH2qJWfqfZWBau12?=
+ =?us-ascii?Q?2SePDFqj+YDzl/7CoOGxDW7F06kWv9UxhWumfKF+adEw7+D/BnoP8+O1dDC3?=
+ =?us-ascii?Q?JfdPy7V4VWgBv1iEGEevU3yr+MYUZDmRob2ykOr+CUJYlM9i4mmVxQFAcKp+?=
+ =?us-ascii?Q?V6vFXUKF8jwRtk1qL6CPQdK7tAOniM4auupGw3K41orT0NWpw8Vx0QLCcjvu?=
+ =?us-ascii?Q?exfK/IJSvZHP57oyRjyDWeQcaNJ2dqwFZYZm6jdfvsxZRwOCMEbhywA6JbcE?=
+ =?us-ascii?Q?jc9ZkclEufNnvZ4qNww7vKMn6pcDI14WqyMHIbfF3//8ApyCtABRbFOHctbe?=
+ =?us-ascii?Q?4eFYPPrqVtXIq1Ypkrq8uuWItDMrnsMvBaGn4bL7GZchwGKBhz9mANvYP1MB?=
+ =?us-ascii?Q?x2sp+jTssD3lqxOX/9lauGKmLNrlTS+KT0/OnmYFt1rjJKhNqKtByyuTWAvZ?=
+ =?us-ascii?Q?gVLp80gif5/Ib5UIkxGN+WrLQCzHtT9j5VnmDrArqOL3xBvGePOpmHOXtM4t?=
+ =?us-ascii?Q?eqCESPo=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SEZPR02MB7967.apcprd02.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014); DIR:OUT;
+ SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0L3BfgKvB2ocNEc0f5A5rK4GJy2fNXifVzwgBej3FUR/dYr/xmcqpaHaX777?=
+ =?us-ascii?Q?0y5JcNNSvVPh947RI1FcVUj8dU8OY37p73442AWJ0dJnnKfxS63WAEHlnKHi?=
+ =?us-ascii?Q?Ql+MeEdSs8e7NZcnPBL0i/Bgz/uD88LaiSdPOaGwzzhcW6e3O7bAOBdUAkPS?=
+ =?us-ascii?Q?9gJkjTXus8As94CXQGbcjELXoHKWryA/PG2Lkf3cy53nXc2EdvzkIaOncD7D?=
+ =?us-ascii?Q?9/8JzNd4mBPYaZzVjzYk6gGWyptpfUFo/eyv/Ai6KOSxPMvyNPwgkn5ghZOX?=
+ =?us-ascii?Q?RjtzLnkiFQcRJZjFL1KmHrDHAY4lE67MNteFPPUUnudo0xqOL5X3O6RnBxJH?=
+ =?us-ascii?Q?18kUtvqxr3SVJVAANeBNfk6QXVLweYtEWrVtdj5M5zGparY6e77K3DhQyI6q?=
+ =?us-ascii?Q?5/AHEDVEFiDpb7NbZHQcq9OCg2LAWFqfg7u+7B+xjCx5VSd8AOCX637lJrrs?=
+ =?us-ascii?Q?en9NvbgW+w/qjB4hBCBgFyhLcS0ckQ3RUem3n7BuBMBHBLwwGzc9KXCI62W7?=
+ =?us-ascii?Q?dyqHMVB098ZXX2oS1KEQPjYLvRQJ9VPU8JA/zNZS+I2A71WLle3N0Y8qi8as?=
+ =?us-ascii?Q?UlQ8+1viM83CtZWQG/CaIZfC3mI9Lc46rIMVo42HUgd/g495qLCLnznqYM9P?=
+ =?us-ascii?Q?a/K26ZZZhHWdzjFHBe4ZdQxzZyfDf2e7FmwGx9j2pG5V+3x9Ta5WL2NIMcyB?=
+ =?us-ascii?Q?iujcbV4CmxBlBFyaudAz3Ax6hE6LH9prELfmqL7nWpPcL5H54Y5Ii7ywMT+D?=
+ =?us-ascii?Q?f5NAL5qzNjQBMrqaZhUPXieGalXkpNuvW2iZscpodCML3+nmk8hSlh0G20m1?=
+ =?us-ascii?Q?OcwmFla0h+BeNOFCR/At7v7IZ8aRaytxoTSJzB1zKudotgQqiR0j5Un3rMNr?=
+ =?us-ascii?Q?3MawCfDMXDLnuyXntMg09YQnmMlzgoxf8ZmU1jXTPCe9SMRHdySVYWztnc4s?=
+ =?us-ascii?Q?k9C4uF2iqJ7o+aTBC4e0AyMlS1aX9iS+k/0kLInZdyLR8J4SZBmbbmgjdZox?=
+ =?us-ascii?Q?ve+LnCCBQFLeoHc4RzeEqC4MY0rpRWPHwOVfpmmZlpikeOgLZ9z+H00w65pE?=
+ =?us-ascii?Q?EtApHezSAAgq3lRlah3BsMEDqx3s9PILGz2Nv5DjfqQP/+ygYwXEZA2lLGJt?=
+ =?us-ascii?Q?Rg/hiQ9HW6y8hsQuF7/1bw0kT5Of147nyHyLmwWmqia64qtp6th4SbXC7Pnx?=
+ =?us-ascii?Q?rIiXvPHtmP9SJclZCpcb0++gNFS6kHC/R9ZjrEuo+klbLvPxSOqHtyjRlg8e?=
+ =?us-ascii?Q?txGIlIv8e6erqu+In6SRKaFCJ4oiK/go6KA3AbGHnfQ2d6jOXuyxW1VxqTzn?=
+ =?us-ascii?Q?ZzFY4GGsl8RCjGFDEIdF/vYlzLPN+x/gzOKDB44dZWa1GESAku1XaUPf1Mlg?=
+ =?us-ascii?Q?JmTHg7rLBSuH33G5IjEZw9pre06vKnGQL9lxLmjX1ANiu2lM7Jt7ZZiwqB3z?=
+ =?us-ascii?Q?saLi/w6sjBBsHsO05DLsax7WvpaMIrs7VhiaFUK5qzQucgUoB0aZPKNyZ9WT?=
+ =?us-ascii?Q?DzX1/amCaiPKD1CiTI9cEfsadSULQ34e93ein3tWd7jGA8+7uQmYv+3fWH0o?=
+ =?us-ascii?Q?zo4zXCJzhAN60TSIHO844bG6VS3msuXoXieBijtFU6yVWd+w8L+Y4DKsb5hj?=
+ =?us-ascii?Q?zA=3D=3D?=
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e89cc54-411b-416f-eae8-08dcf17894fc
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR02MB7967.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2024 02:32:18.0582 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eQMrwBdk5ubLWSS+VZrarpCvlgBqTj/cnUqfD7lJJYE/B5KRmZoFPSm/V7gquNu2RxE74SYD33A0b9FSqDBA9A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR02MB5691
+X-Headers-End: 1t2iDa-0007oU-Qj
+Subject: [f2fs-dev] [PATCH v2] f2fs: fix the wrong f2fs_bug_on condition in
+ f2fs_do_replace_block
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,567 +164,41 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
+From: LongPing Wei via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-s390@vger.kernel.org, x86@kernel.org,
- linux-mips@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
- sparclinux@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-ext4@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org
+Reply-To: LongPing Wei <weilongping@oppo.com>
+Cc: LongPing Wei <weilongping@oppo.com>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+This f2fs_bug_on was introduced by commit 2c1905042c8c ("f2fs: check
+segment type in __f2fs_replace_block") when there were only 6 curseg types.
+After commit d0b9e42ab615 ("f2fs: introduce inmem curseg") was introduced,
+the condition should be changed to checking curseg->seg_type.
 
-Move the s390 CRC32 assembly code into the lib directory and wire it up
-to the library interface.  This allows it to be used without going
-through the crypto API.  It remains usable via the crypto API too via
-the shash algorithms that use the library interface.  Thus all the
-arch-specific "shash" code becomes unnecessary and is removed.
-
-Note: to see the diff from arch/s390/crypto/crc32-vx.c to
-arch/s390/lib/crc32-glue.c, view this commit with 'git show -M10'.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Fixes: d0b9e42ab615 ("f2fs: introduce inmem curseg")
+Signed-off-by: LongPing Wei <weilongping@oppo.com>
 ---
- arch/s390/Kconfig                      |   1 +
- arch/s390/configs/debug_defconfig      |   1 -
- arch/s390/configs/defconfig            |   1 -
- arch/s390/crypto/Kconfig               |  12 -
- arch/s390/crypto/Makefile              |   2 -
- arch/s390/crypto/crc32-vx.c            | 306 -------------------------
- arch/s390/lib/Makefile                 |   3 +
- arch/s390/lib/crc32-glue.c             |  82 +++++++
- arch/s390/{crypto => lib}/crc32-vx.h   |   0
- arch/s390/{crypto => lib}/crc32be-vx.c |   0
- arch/s390/{crypto => lib}/crc32le-vx.c |   0
- 11 files changed, 86 insertions(+), 322 deletions(-)
- delete mode 100644 arch/s390/crypto/crc32-vx.c
- create mode 100644 arch/s390/lib/crc32-glue.c
- rename arch/s390/{crypto => lib}/crc32-vx.h (100%)
- rename arch/s390/{crypto => lib}/crc32be-vx.c (100%)
- rename arch/s390/{crypto => lib}/crc32le-vx.c (100%)
+ fs/f2fs/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index d339fe4fdedf8..d1fde8b941d2f 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -63,10 +63,11 @@ config S390
- 	select ARCH_BINFMT_ELF_STATE
- 	select ARCH_CORRECT_STACKTRACE_ON_KRETPROBE
- 	select ARCH_ENABLE_MEMORY_HOTPLUG if SPARSEMEM
- 	select ARCH_ENABLE_MEMORY_HOTREMOVE
- 	select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
-+	select ARCH_HAS_CRC32
- 	select ARCH_HAS_CURRENT_STACK_POINTER
- 	select ARCH_HAS_DEBUG_VIRTUAL
- 	select ARCH_HAS_DEBUG_VM_PGTABLE
- 	select ARCH_HAS_DEBUG_WX
- 	select ARCH_HAS_DEVMEM_IS_ALLOWED
-diff --git a/arch/s390/configs/debug_defconfig b/arch/s390/configs/debug_defconfig
-index fb0e9a1d9be25..fd83d8958f0bb 100644
---- a/arch/s390/configs/debug_defconfig
-+++ b/arch/s390/configs/debug_defconfig
-@@ -792,11 +792,10 @@ CONFIG_CRYPTO_ZSTD=m
- CONFIG_CRYPTO_ANSI_CPRNG=m
- CONFIG_CRYPTO_USER_API_HASH=m
- CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
--CONFIG_CRYPTO_CRC32_S390=y
- CONFIG_CRYPTO_SHA512_S390=m
- CONFIG_CRYPTO_SHA1_S390=m
- CONFIG_CRYPTO_SHA256_S390=m
- CONFIG_CRYPTO_SHA3_256_S390=m
- CONFIG_CRYPTO_SHA3_512_S390=m
-diff --git a/arch/s390/configs/defconfig b/arch/s390/configs/defconfig
-index 88be0a734b60f..3bdeb6d5cbd95 100644
---- a/arch/s390/configs/defconfig
-+++ b/arch/s390/configs/defconfig
-@@ -779,11 +779,10 @@ CONFIG_CRYPTO_ANSI_CPRNG=m
- CONFIG_CRYPTO_JITTERENTROPY_OSR=1
- CONFIG_CRYPTO_USER_API_HASH=m
- CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
--CONFIG_CRYPTO_CRC32_S390=y
- CONFIG_CRYPTO_SHA512_S390=m
- CONFIG_CRYPTO_SHA1_S390=m
- CONFIG_CRYPTO_SHA256_S390=m
- CONFIG_CRYPTO_SHA3_256_S390=m
- CONFIG_CRYPTO_SHA3_512_S390=m
-diff --git a/arch/s390/crypto/Kconfig b/arch/s390/crypto/Kconfig
-index d3eb3a2336932..b760232537f1c 100644
---- a/arch/s390/crypto/Kconfig
-+++ b/arch/s390/crypto/Kconfig
-@@ -1,21 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1766254279d2..7b54b1851d34 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3977,8 +3977,8 @@ void f2fs_do_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 		}
+ 	}
  
- menu "Accelerated Cryptographic Algorithms for CPU (s390)"
+-	f2fs_bug_on(sbi, !IS_DATASEG(type));
+ 	curseg = CURSEG_I(sbi, type);
++	f2fs_bug_on(sbi, !IS_DATASEG(curseg->seg_type));
  
--config CRYPTO_CRC32_S390
--	tristate "CRC32c and CRC32"
--	depends on S390
--	select CRYPTO_HASH
--	select CRC32
--	help
--	  CRC32c and CRC32 CRC algorithms
--
--	  Architecture: s390
--
--	  It is available with IBM z13 or later.
--
- config CRYPTO_SHA512_S390
- 	tristate "Hash functions: SHA-384 and SHA-512"
- 	depends on S390
- 	select CRYPTO_HASH
- 	help
-diff --git a/arch/s390/crypto/Makefile b/arch/s390/crypto/Makefile
-index a0cb96937c3de..14dafadbcbed4 100644
---- a/arch/s390/crypto/Makefile
-+++ b/arch/s390/crypto/Makefile
-@@ -12,11 +12,9 @@ obj-$(CONFIG_CRYPTO_DES_S390) += des_s390.o
- obj-$(CONFIG_CRYPTO_AES_S390) += aes_s390.o
- obj-$(CONFIG_CRYPTO_PAES_S390) += paes_s390.o
- obj-$(CONFIG_CRYPTO_CHACHA_S390) += chacha_s390.o
- obj-$(CONFIG_S390_PRNG) += prng.o
- obj-$(CONFIG_CRYPTO_GHASH_S390) += ghash_s390.o
--obj-$(CONFIG_CRYPTO_CRC32_S390) += crc32-vx_s390.o
- obj-$(CONFIG_CRYPTO_HMAC_S390) += hmac_s390.o
- obj-y += arch_random.o
- 
--crc32-vx_s390-y := crc32-vx.o crc32le-vx.o crc32be-vx.o
- chacha_s390-y := chacha-glue.o chacha-s390.o
-diff --git a/arch/s390/crypto/crc32-vx.c b/arch/s390/crypto/crc32-vx.c
-deleted file mode 100644
-index 89a10337e6ea9..0000000000000
---- a/arch/s390/crypto/crc32-vx.c
-+++ /dev/null
-@@ -1,306 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Crypto-API module for CRC-32 algorithms implemented with the
-- * z/Architecture Vector Extension Facility.
-- *
-- * Copyright IBM Corp. 2015
-- * Author(s): Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-- */
--#define KMSG_COMPONENT	"crc32-vx"
--#define pr_fmt(fmt)	KMSG_COMPONENT ": " fmt
--
--#include <linux/module.h>
--#include <linux/cpufeature.h>
--#include <linux/crc32.h>
--#include <crypto/internal/hash.h>
--#include <asm/fpu.h>
--#include "crc32-vx.h"
--
--#define CRC32_BLOCK_SIZE	1
--#define CRC32_DIGEST_SIZE	4
--
--#define VX_MIN_LEN		64
--#define VX_ALIGNMENT		16L
--#define VX_ALIGN_MASK		(VX_ALIGNMENT - 1)
--
--struct crc_ctx {
--	u32 key;
--};
--
--struct crc_desc_ctx {
--	u32 crc;
--};
--
--/*
-- * DEFINE_CRC32_VX() - Define a CRC-32 function using the vector extension
-- *
-- * Creates a function to perform a particular CRC-32 computation. Depending
-- * on the message buffer, the hardware-accelerated or software implementation
-- * is used.   Note that the message buffer is aligned to improve fetch
-- * operations of VECTOR LOAD MULTIPLE instructions.
-- *
-- */
--#define DEFINE_CRC32_VX(___fname, ___crc32_vx, ___crc32_sw)		    \
--	static u32 __pure ___fname(u32 crc,				    \
--				unsigned char const *data, size_t datalen)  \
--	{								    \
--		unsigned long prealign, aligned, remaining;		    \
--		DECLARE_KERNEL_FPU_ONSTACK16(vxstate);			    \
--									    \
--		if (datalen < VX_MIN_LEN + VX_ALIGN_MASK)		    \
--			return ___crc32_sw(crc, data, datalen);		    \
--									    \
--		if ((unsigned long)data & VX_ALIGN_MASK) {		    \
--			prealign = VX_ALIGNMENT -			    \
--				  ((unsigned long)data & VX_ALIGN_MASK);    \
--			datalen -= prealign;				    \
--			crc = ___crc32_sw(crc, data, prealign);		    \
--			data = (void *)((unsigned long)data + prealign);    \
--		}							    \
--									    \
--		aligned = datalen & ~VX_ALIGN_MASK;			    \
--		remaining = datalen & VX_ALIGN_MASK;			    \
--									    \
--		kernel_fpu_begin(&vxstate, KERNEL_VXR_LOW);		    \
--		crc = ___crc32_vx(crc, data, aligned);			    \
--		kernel_fpu_end(&vxstate, KERNEL_VXR_LOW);		    \
--									    \
--		if (remaining)						    \
--			crc = ___crc32_sw(crc, data + aligned, remaining);  \
--									    \
--		return crc;						    \
--	}
--
--DEFINE_CRC32_VX(crc32_le_vx, crc32_le_vgfm_16, crc32_le)
--DEFINE_CRC32_VX(crc32_be_vx, crc32_be_vgfm_16, crc32_be)
--DEFINE_CRC32_VX(crc32c_le_vx, crc32c_le_vgfm_16, __crc32c_le)
--
--
--static int crc32_vx_cra_init_zero(struct crypto_tfm *tfm)
--{
--	struct crc_ctx *mctx = crypto_tfm_ctx(tfm);
--
--	mctx->key = 0;
--	return 0;
--}
--
--static int crc32_vx_cra_init_invert(struct crypto_tfm *tfm)
--{
--	struct crc_ctx *mctx = crypto_tfm_ctx(tfm);
--
--	mctx->key = ~0;
--	return 0;
--}
--
--static int crc32_vx_init(struct shash_desc *desc)
--{
--	struct crc_ctx *mctx = crypto_shash_ctx(desc->tfm);
--	struct crc_desc_ctx *ctx = shash_desc_ctx(desc);
--
--	ctx->crc = mctx->key;
--	return 0;
--}
--
--static int crc32_vx_setkey(struct crypto_shash *tfm, const u8 *newkey,
--			   unsigned int newkeylen)
--{
--	struct crc_ctx *mctx = crypto_shash_ctx(tfm);
--
--	if (newkeylen != sizeof(mctx->key))
--		return -EINVAL;
--	mctx->key = le32_to_cpu(*(__le32 *)newkey);
--	return 0;
--}
--
--static int crc32be_vx_setkey(struct crypto_shash *tfm, const u8 *newkey,
--			     unsigned int newkeylen)
--{
--	struct crc_ctx *mctx = crypto_shash_ctx(tfm);
--
--	if (newkeylen != sizeof(mctx->key))
--		return -EINVAL;
--	mctx->key = be32_to_cpu(*(__be32 *)newkey);
--	return 0;
--}
--
--static int crc32le_vx_final(struct shash_desc *desc, u8 *out)
--{
--	struct crc_desc_ctx *ctx = shash_desc_ctx(desc);
--
--	*(__le32 *)out = cpu_to_le32p(&ctx->crc);
--	return 0;
--}
--
--static int crc32be_vx_final(struct shash_desc *desc, u8 *out)
--{
--	struct crc_desc_ctx *ctx = shash_desc_ctx(desc);
--
--	*(__be32 *)out = cpu_to_be32p(&ctx->crc);
--	return 0;
--}
--
--static int crc32c_vx_final(struct shash_desc *desc, u8 *out)
--{
--	struct crc_desc_ctx *ctx = shash_desc_ctx(desc);
--
--	/*
--	 * Perform a final XOR with 0xFFFFFFFF to be in sync
--	 * with the generic crc32c shash implementation.
--	 */
--	*(__le32 *)out = ~cpu_to_le32p(&ctx->crc);
--	return 0;
--}
--
--static int __crc32le_vx_finup(u32 *crc, const u8 *data, unsigned int len,
--			      u8 *out)
--{
--	*(__le32 *)out = cpu_to_le32(crc32_le_vx(*crc, data, len));
--	return 0;
--}
--
--static int __crc32be_vx_finup(u32 *crc, const u8 *data, unsigned int len,
--			      u8 *out)
--{
--	*(__be32 *)out = cpu_to_be32(crc32_be_vx(*crc, data, len));
--	return 0;
--}
--
--static int __crc32c_vx_finup(u32 *crc, const u8 *data, unsigned int len,
--			     u8 *out)
--{
--	/*
--	 * Perform a final XOR with 0xFFFFFFFF to be in sync
--	 * with the generic crc32c shash implementation.
--	 */
--	*(__le32 *)out = ~cpu_to_le32(crc32c_le_vx(*crc, data, len));
--	return 0;
--}
--
--
--#define CRC32_VX_FINUP(alg, func)					      \
--	static int alg ## _vx_finup(struct shash_desc *desc, const u8 *data,  \
--				   unsigned int datalen, u8 *out)	      \
--	{								      \
--		return __ ## alg ## _vx_finup(shash_desc_ctx(desc),	      \
--					      data, datalen, out);	      \
--	}
--
--CRC32_VX_FINUP(crc32le, crc32_le_vx)
--CRC32_VX_FINUP(crc32be, crc32_be_vx)
--CRC32_VX_FINUP(crc32c, crc32c_le_vx)
--
--#define CRC32_VX_DIGEST(alg, func)					      \
--	static int alg ## _vx_digest(struct shash_desc *desc, const u8 *data, \
--				     unsigned int len, u8 *out)		      \
--	{								      \
--		return __ ## alg ## _vx_finup(crypto_shash_ctx(desc->tfm),    \
--					      data, len, out);		      \
--	}
--
--CRC32_VX_DIGEST(crc32le, crc32_le_vx)
--CRC32_VX_DIGEST(crc32be, crc32_be_vx)
--CRC32_VX_DIGEST(crc32c, crc32c_le_vx)
--
--#define CRC32_VX_UPDATE(alg, func)					      \
--	static int alg ## _vx_update(struct shash_desc *desc, const u8 *data, \
--				     unsigned int datalen)		      \
--	{								      \
--		struct crc_desc_ctx *ctx = shash_desc_ctx(desc);	      \
--		ctx->crc = func(ctx->crc, data, datalen);		      \
--		return 0;						      \
--	}
--
--CRC32_VX_UPDATE(crc32le, crc32_le_vx)
--CRC32_VX_UPDATE(crc32be, crc32_be_vx)
--CRC32_VX_UPDATE(crc32c, crc32c_le_vx)
--
--
--static struct shash_alg crc32_vx_algs[] = {
--	/* CRC-32 LE */
--	{
--		.init		=	crc32_vx_init,
--		.setkey		=	crc32_vx_setkey,
--		.update		=	crc32le_vx_update,
--		.final		=	crc32le_vx_final,
--		.finup		=	crc32le_vx_finup,
--		.digest		=	crc32le_vx_digest,
--		.descsize	=	sizeof(struct crc_desc_ctx),
--		.digestsize	=	CRC32_DIGEST_SIZE,
--		.base		=	{
--			.cra_name	 = "crc32",
--			.cra_driver_name = "crc32-vx",
--			.cra_priority	 = 200,
--			.cra_flags	 = CRYPTO_ALG_OPTIONAL_KEY,
--			.cra_blocksize	 = CRC32_BLOCK_SIZE,
--			.cra_ctxsize	 = sizeof(struct crc_ctx),
--			.cra_module	 = THIS_MODULE,
--			.cra_init	 = crc32_vx_cra_init_zero,
--		},
--	},
--	/* CRC-32 BE */
--	{
--		.init		=	crc32_vx_init,
--		.setkey		=	crc32be_vx_setkey,
--		.update		=	crc32be_vx_update,
--		.final		=	crc32be_vx_final,
--		.finup		=	crc32be_vx_finup,
--		.digest		=	crc32be_vx_digest,
--		.descsize	=	sizeof(struct crc_desc_ctx),
--		.digestsize	=	CRC32_DIGEST_SIZE,
--		.base		=	{
--			.cra_name	 = "crc32be",
--			.cra_driver_name = "crc32be-vx",
--			.cra_priority	 = 200,
--			.cra_flags	 = CRYPTO_ALG_OPTIONAL_KEY,
--			.cra_blocksize	 = CRC32_BLOCK_SIZE,
--			.cra_ctxsize	 = sizeof(struct crc_ctx),
--			.cra_module	 = THIS_MODULE,
--			.cra_init	 = crc32_vx_cra_init_zero,
--		},
--	},
--	/* CRC-32C LE */
--	{
--		.init		=	crc32_vx_init,
--		.setkey		=	crc32_vx_setkey,
--		.update		=	crc32c_vx_update,
--		.final		=	crc32c_vx_final,
--		.finup		=	crc32c_vx_finup,
--		.digest		=	crc32c_vx_digest,
--		.descsize	=	sizeof(struct crc_desc_ctx),
--		.digestsize	=	CRC32_DIGEST_SIZE,
--		.base		=	{
--			.cra_name	 = "crc32c",
--			.cra_driver_name = "crc32c-vx",
--			.cra_priority	 = 200,
--			.cra_flags	 = CRYPTO_ALG_OPTIONAL_KEY,
--			.cra_blocksize	 = CRC32_BLOCK_SIZE,
--			.cra_ctxsize	 = sizeof(struct crc_ctx),
--			.cra_module	 = THIS_MODULE,
--			.cra_init	 = crc32_vx_cra_init_invert,
--		},
--	},
--};
--
--
--static int __init crc_vx_mod_init(void)
--{
--	return crypto_register_shashes(crc32_vx_algs,
--				       ARRAY_SIZE(crc32_vx_algs));
--}
--
--static void __exit crc_vx_mod_exit(void)
--{
--	crypto_unregister_shashes(crc32_vx_algs, ARRAY_SIZE(crc32_vx_algs));
--}
--
--module_cpu_feature_match(S390_CPU_FEATURE_VXRS, crc_vx_mod_init);
--module_exit(crc_vx_mod_exit);
--
--MODULE_AUTHOR("Hendrik Brueckner <brueckner@linux.vnet.ibm.com>");
--MODULE_DESCRIPTION("CRC-32 algorithms using z/Architecture Vector Extension Facility");
--MODULE_LICENSE("GPL");
--
--MODULE_ALIAS_CRYPTO("crc32");
--MODULE_ALIAS_CRYPTO("crc32-vx");
--MODULE_ALIAS_CRYPTO("crc32c");
--MODULE_ALIAS_CRYPTO("crc32c-vx");
-diff --git a/arch/s390/lib/Makefile b/arch/s390/lib/Makefile
-index f43f897d3fc02..14bbfe50033c7 100644
---- a/arch/s390/lib/Makefile
-+++ b/arch/s390/lib/Makefile
-@@ -22,5 +22,8 @@ obj-$(CONFIG_S390_MODULES_SANITY_TEST) += test_modules.o
- obj-$(CONFIG_S390_MODULES_SANITY_TEST_HELPERS) += test_modules_helpers.o
- 
- lib-$(CONFIG_FUNCTION_ERROR_INJECTION) += error-inject.o
- 
- obj-$(CONFIG_EXPOLINE_EXTERN) += expoline.o
-+
-+obj-$(CONFIG_CRC32_ARCH) += crc32-s390.o
-+crc32-s390-y := crc32-glue.o crc32le-vx.o crc32be-vx.o
-diff --git a/arch/s390/lib/crc32-glue.c b/arch/s390/lib/crc32-glue.c
-new file mode 100644
-index 0000000000000..6243132633aab
---- /dev/null
-+++ b/arch/s390/lib/crc32-glue.c
-@@ -0,0 +1,82 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * CRC-32 implemented with the z/Architecture Vector Extension Facility.
-+ *
-+ * Copyright IBM Corp. 2015
-+ * Author(s): Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-+ */
-+#define KMSG_COMPONENT	"crc32-vx"
-+#define pr_fmt(fmt)	KMSG_COMPONENT ": " fmt
-+
-+#include <linux/module.h>
-+#include <linux/cpufeature.h>
-+#include <linux/crc32.h>
-+#include <asm/fpu.h>
-+#include "crc32-vx.h"
-+
-+#define VX_MIN_LEN		64
-+#define VX_ALIGNMENT		16L
-+#define VX_ALIGN_MASK		(VX_ALIGNMENT - 1)
-+
-+static DEFINE_STATIC_KEY_FALSE(have_vxrs);
-+
-+/*
-+ * DEFINE_CRC32_VX() - Define a CRC-32 function using the vector extension
-+ *
-+ * Creates a function to perform a particular CRC-32 computation. Depending
-+ * on the message buffer, the hardware-accelerated or software implementation
-+ * is used.   Note that the message buffer is aligned to improve fetch
-+ * operations of VECTOR LOAD MULTIPLE instructions.
-+ */
-+#define DEFINE_CRC32_VX(___fname, ___crc32_vx, ___crc32_sw)		    \
-+	u32 ___fname(u32 crc, const u8 *data, size_t datalen)		    \
-+	{								    \
-+		unsigned long prealign, aligned, remaining;		    \
-+		DECLARE_KERNEL_FPU_ONSTACK16(vxstate);			    \
-+									    \
-+		if (datalen < VX_MIN_LEN + VX_ALIGN_MASK ||		    \
-+		    !static_branch_likely(&have_vxrs))			    \
-+			return ___crc32_sw(crc, data, datalen);		    \
-+									    \
-+		if ((unsigned long)data & VX_ALIGN_MASK) {		    \
-+			prealign = VX_ALIGNMENT -			    \
-+				  ((unsigned long)data & VX_ALIGN_MASK);    \
-+			datalen -= prealign;				    \
-+			crc = ___crc32_sw(crc, data, prealign);		    \
-+			data = (void *)((unsigned long)data + prealign);    \
-+		}							    \
-+									    \
-+		aligned = datalen & ~VX_ALIGN_MASK;			    \
-+		remaining = datalen & VX_ALIGN_MASK;			    \
-+									    \
-+		kernel_fpu_begin(&vxstate, KERNEL_VXR_LOW);		    \
-+		crc = ___crc32_vx(crc, data, aligned);			    \
-+		kernel_fpu_end(&vxstate, KERNEL_VXR_LOW);		    \
-+									    \
-+		if (remaining)						    \
-+			crc = ___crc32_sw(crc, data + aligned, remaining);  \
-+									    \
-+		return crc;						    \
-+	}								    \
-+	EXPORT_SYMBOL(___fname);
-+
-+DEFINE_CRC32_VX(crc32_le_arch, crc32_le_vgfm_16, crc32_le_base)
-+DEFINE_CRC32_VX(crc32_be_arch, crc32_be_vgfm_16, crc32_be_base)
-+DEFINE_CRC32_VX(crc32c_le_arch, crc32c_le_vgfm_16, crc32c_le_base)
-+
-+static int __init crc32_s390_init(void)
-+{
-+	if (cpu_have_feature(S390_CPU_FEATURE_VXRS))
-+		static_branch_enable(&have_vxrs);
-+	return 0;
-+}
-+arch_initcall(crc32_s390_init);
-+
-+static void __exit crc32_s390_exit(void)
-+{
-+}
-+module_exit(crc32_s390_exit);
-+
-+MODULE_AUTHOR("Hendrik Brueckner <brueckner@linux.vnet.ibm.com>");
-+MODULE_DESCRIPTION("CRC-32 algorithms using z/Architecture Vector Extension Facility");
-+MODULE_LICENSE("GPL");
-diff --git a/arch/s390/crypto/crc32-vx.h b/arch/s390/lib/crc32-vx.h
-similarity index 100%
-rename from arch/s390/crypto/crc32-vx.h
-rename to arch/s390/lib/crc32-vx.h
-diff --git a/arch/s390/crypto/crc32be-vx.c b/arch/s390/lib/crc32be-vx.c
-similarity index 100%
-rename from arch/s390/crypto/crc32be-vx.c
-rename to arch/s390/lib/crc32be-vx.c
-diff --git a/arch/s390/crypto/crc32le-vx.c b/arch/s390/lib/crc32le-vx.c
-similarity index 100%
-rename from arch/s390/crypto/crc32le-vx.c
-rename to arch/s390/lib/crc32le-vx.c
+ 	mutex_lock(&curseg->curseg_mutex);
+ 	down_write(&sit_i->sentry_lock);
 -- 
-2.47.0
+2.34.1
 
 
 
