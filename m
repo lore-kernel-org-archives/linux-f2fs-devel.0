@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D5EB7D3C93C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Oct 2024 00:30:11 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DC759D3C927
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Oct 2024 00:30:15 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t2gJH-0001lM-FO;
-	Mon, 21 Oct 2024 00:30:11 +0000
+	id 1t2gJK-0000xB-OJ;
+	Mon, 21 Oct 2024 00:30:15 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1t2gJB-0001ky-QC
+ (envelope-from <ebiggers@kernel.org>) id 1t2gJG-0000wb-LS
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Oct 2024 00:30:05 +0000
+ Mon, 21 Oct 2024 00:30:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LhGV10fDUMfbSCab0nex45a8ClhIsz2n3ws5TnM75Fg=; b=lPrs/j2jy3drANc1us/REFAbuB
- +AEGAjcQf+NhZT9D832YbnEZ8rMTLRqGzqOLxnnFQX8KfUnydduwxG+SgmY/a7+D8IlZBUIym7tQ0
- H8I7NQYZSOZ+aCgmsbrPO6/ZRkHkjtSiz+eDh9tQ84A4PU/k5v0XwVt+nUl1VEfhkhwc=;
+ bh=4S4vhWMj2ag6uErnKEwE2czsvweMUbb/RC8WslaX/Kw=; b=hNlCq74/QNgJr1icDdm/PT+OKW
+ IQcetK7lHGt1ObgAkkTNIaqfKDMlBV885emnD4ai9tqLVtVv8YJVojL7BvxjpY3rIBgY84turW/vR
+ yWrZ6kMSHf8DHKzcNPRQrupKpFphra9gAzMQZYwmcgjet27MIiBIsD4F2ngPTP0F/zQY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,38 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=LhGV10fDUMfbSCab0nex45a8ClhIsz2n3ws5TnM75Fg=; b=eORZozscsrRqyV/heIpnoyba/8
- vqEaRnu9YhqbtHTvY5mFA+yBRcTLihZbpdMASZ2tkeUGfyV3S6Ca4r4zeAE225FO/++2Nn9EFqRE+
- u+ej+JQ6NZDAZ15Q4MfZI1LAhETpGGZ1wWaSdP1u6rYOyV1HN36rE1Ikw9lYTL76iRHM=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=4S4vhWMj2ag6uErnKEwE2czsvweMUbb/RC8WslaX/Kw=; b=j35DglCd+QZ0ikaRjvVNv3gZJG
+ JP81WFAWUuv2KcjWW6gj/Ffn6Wte9pAVXuG3yb0fXgTBvp/k2iLS2Le5pkyEiCH4Bj18cIKrLsxhw
+ 8H6nYP6jJiNBM4re3OXYVzoklqLCU2jsu4HEkNUGU2x+zdOuBuTj/YaAmBoKdYkIoPdc=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t2gJA-0003sx-PZ for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Oct 2024 00:30:05 +0000
+ id 1t2gJF-0003td-1E for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Oct 2024 00:30:10 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 2670A5C58BE;
- Mon, 21 Oct 2024 00:29:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 061F5C4CEC7;
- Mon, 21 Oct 2024 00:29:57 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id EC1CFA40CA0;
+ Mon, 21 Oct 2024 00:29:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50170C4CEE8;
+ Mon, 21 Oct 2024 00:29:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1729470598;
- bh=4QrNTfxk1O5mqgXso3Uq4Yh9fW2+aliDT+yU3NaRHjU=;
+ s=k20201202; t=1729470595;
+ bh=K7IQXSlseSFWY09dP+sFW8amqlu8VZ4K90+uvPMkb5k=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=FdOAy7ShO/AIu2M7e2/271mIPF14WPY1XGHVgfMkByCmqKJXATBSNW69jUcXasSIz
- 6Oim46eD9B5dTBWt6nmgyPg4UMAVXuJsLkLL+lNyLjytgzlCpr3IPjkMy1DF6VXbar
- 8EVzZ0DEKZjdRjWlu3y1BaS5OTSPA+DBPd/1Asf81CkRl4d93oeP0JqzLo4nbyKgju
- kvA4UB7p6kTLItgXAtWMSY3Dx+Sx3wdf7P779SJHNOVnq9iLuJxD3w2UJzHd7JnH/s
- Vsuq5JUbm9HNa0fHQQMHG2fJnZeTF+dB1XXhRygSUbwAeBQzflon+jFnPmh8rCiWoX
- mGjddyhl8fmVA==
+ b=kRVIL6wxe6/gpNnilSebEdNmVWWiuy+cK9AnqQvhtiwG7fs8Bfcm5sg/WegtI9I81
+ 2MvpxWVvs4DLmyFb6a2pkKGpMaStFUAU7d5mqM+Sj7bEPIv0UNz6U5LJ/2PariLPce
+ MaH4Fgd8c+PzE9ploabkvBDygZ/sF8wGOPBjSEGmSBR5/09u1Wi463R2RfCusvd9+2
+ SnQrzfpkQqY7Z133rLcCOnv37OZBsDp89nlGziSOwgvUETzilUKeqLc5M8AXjLS1aq
+ ro0BFRM1A5U+wq+2rOQYIV2n8w2UZR5lEbcFXLMGmPB5lHFZHOADW1yVcPab4MzzAb
+ p+rIKzHF8XgHQ==
 To: linux-kernel@vger.kernel.org
-Date: Sun, 20 Oct 2024 17:29:34 -0700
-Message-ID: <20241021002935.325878-15-ebiggers@kernel.org>
+Date: Sun, 20 Oct 2024 17:29:29 -0700
+Message-ID: <20241021002935.325878-10-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241021002935.325878-1-ebiggers@kernel.org>
 References: <20241021002935.325878-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1t2gJA-0003sx-PZ
-Subject: [f2fs-dev] [PATCH 14/15] jbd2: switch to using the crc32c library
+X-Headers-End: 1t2gJF-0003td-1E
+Subject: [f2fs-dev] [PATCH 09/15] x86/crc32: update prototype for crc_pcl()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,194 +91,248 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Now that the crc32c() library function directly takes advantage of
-architecture-specific optimizations, it is unnecessary to go through the
-crypto API.  Just use crc32c().  This is much simpler, and it improves
-performance due to eliminating the crypto API overhead.
+- Change the len parameter from unsigned int to size_t, so that the
+  library function which takes a size_t can safely use this code.
+
+- Rename to crc32c_x86_3way() which is much clearer.
+
+- Move the crc parameter to the front, as this is the usual convention.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/jbd2/Kconfig      |  2 --
- fs/jbd2/journal.c    | 25 ++-----------------------
- include/linux/jbd2.h | 31 +++----------------------------
- 3 files changed, 5 insertions(+), 53 deletions(-)
+ arch/x86/crypto/crc32c-intel_glue.c       |  7 ++-
+ arch/x86/crypto/crc32c-pcl-intel-asm_64.S | 63 ++++++++++++-----------
+ 2 files changed, 35 insertions(+), 35 deletions(-)
 
-diff --git a/fs/jbd2/Kconfig b/fs/jbd2/Kconfig
-index 4ad2c67f93f15..9c19e1512101e 100644
---- a/fs/jbd2/Kconfig
-+++ b/fs/jbd2/Kconfig
-@@ -1,11 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config JBD2
- 	tristate
- 	select CRC32
--	select CRYPTO
--	select CRYPTO_CRC32C
- 	help
- 	  This is a generic journaling layer for block devices that support
- 	  both 32-bit and 64-bit block numbers.  It is currently used by
- 	  the ext4 and OCFS2 filesystems, but it could also be used to add
- 	  journal support to other file systems or block devices such
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 97f487c3d8fcf..56cea5a738a70 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1373,24 +1373,16 @@ static int journal_check_superblock(journal_t *journal)
- 		printk(KERN_ERR "JBD2: Can't enable checksumming v1 and v2/3 "
- 		       "at the same time!\n");
- 		return err;
- 	}
+diff --git a/arch/x86/crypto/crc32c-intel_glue.c b/arch/x86/crypto/crc32c-intel_glue.c
+index 52c5d47ef5a14..603d159de4007 100644
+--- a/arch/x86/crypto/crc32c-intel_glue.c
++++ b/arch/x86/crypto/crc32c-intel_glue.c
+@@ -39,12 +39,11 @@
+  * size is >= 512 to account
+  * for fpu state save/restore overhead.
+  */
+ #define CRC32C_PCL_BREAKEVEN	512
  
--	/* Load the checksum driver */
- 	if (jbd2_journal_has_csum_v2or3_feature(journal)) {
- 		if (sb->s_checksum_type != JBD2_CRC32C_CHKSUM) {
- 			printk(KERN_ERR "JBD2: Unknown checksum type\n");
- 			return err;
- 		}
+-asmlinkage unsigned int crc_pcl(const u8 *buffer, unsigned int len,
+-				unsigned int crc_init);
++asmlinkage u32 crc32c_x86_3way(u32 crc, const u8 *buffer, size_t len);
+ #endif /* CONFIG_X86_64 */
  
--		journal->j_chksum_driver = crypto_alloc_shash("crc32c", 0, 0);
--		if (IS_ERR(journal->j_chksum_driver)) {
--			printk(KERN_ERR "JBD2: Cannot load crc32c driver.\n");
--			err = PTR_ERR(journal->j_chksum_driver);
--			journal->j_chksum_driver = NULL;
--			return err;
--		}
- 		/* Check superblock checksum */
- 		if (sb->s_checksum != jbd2_superblock_csum(journal, sb)) {
- 			printk(KERN_ERR "JBD2: journal checksum error\n");
- 			err = -EFSBADCRC;
- 			return err;
-@@ -1611,12 +1603,10 @@ static journal_t *journal_init_common(struct block_device *bdev,
- 
- 	return journal;
- 
- err_cleanup:
- 	percpu_counter_destroy(&journal->j_checkpoint_jh_count);
--	if (journal->j_chksum_driver)
--		crypto_free_shash(journal->j_chksum_driver);
- 	kfree(journal->j_wbuf);
- 	jbd2_journal_destroy_revoke(journal);
- 	journal_fail_superblock(journal);
- 	kfree(journal);
- 	return ERR_PTR(err);
-@@ -2194,12 +2184,10 @@ int jbd2_journal_destroy(journal_t *journal)
- 	if (journal->j_proc_entry)
- 		jbd2_stats_proc_exit(journal);
- 	iput(journal->j_inode);
- 	if (journal->j_revoke)
- 		jbd2_journal_destroy_revoke(journal);
--	if (journal->j_chksum_driver)
--		crypto_free_shash(journal->j_chksum_driver);
- 	kfree(journal->j_fc_wbuf);
- 	kfree(journal->j_wbuf);
- 	kfree(journal);
- 
- 	return err;
-@@ -2340,23 +2328,14 @@ int jbd2_journal_set_features(journal_t *journal, unsigned long compat,
- 			pr_err("JBD2: Cannot enable fast commits.\n");
- 			return 0;
- 		}
- 	}
- 
--	/* Load the checksum driver if necessary */
--	if ((journal->j_chksum_driver == NULL) &&
--	    INCOMPAT_FEATURE_ON(JBD2_FEATURE_INCOMPAT_CSUM_V3)) {
--		journal->j_chksum_driver = crypto_alloc_shash("crc32c", 0, 0);
--		if (IS_ERR(journal->j_chksum_driver)) {
--			printk(KERN_ERR "JBD2: Cannot load crc32c driver.\n");
--			journal->j_chksum_driver = NULL;
--			return 0;
--		}
--		/* Precompute checksum seed for all metadata */
-+	/* Precompute checksum seed for all metadata */
-+	if (INCOMPAT_FEATURE_ON(JBD2_FEATURE_INCOMPAT_CSUM_V3))
- 		journal->j_csum_seed = jbd2_chksum(journal, ~0, sb->s_uuid,
- 						   sizeof(sb->s_uuid));
--	}
- 
- 	lock_buffer(journal->j_sb_buffer);
- 
- 	/* If enabling v3 checksums, update superblock */
- 	if (INCOMPAT_FEATURE_ON(JBD2_FEATURE_INCOMPAT_CSUM_V3)) {
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index 8aef9bb6ad573..33d25a3d15f14 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -26,11 +26,11 @@
- #include <linux/mutex.h>
- #include <linux/timer.h>
- #include <linux/slab.h>
- #include <linux/bit_spinlock.h>
- #include <linux/blkdev.h>
--#include <crypto/hash.h>
-+#include <linux/crc32c.h>
- #endif
- 
- #define journal_oom_retry 1
- 
- /*
-@@ -1239,17 +1239,10 @@ struct journal_s
- 	 * An opaque pointer to fs-private information.  ext3 puts its
- 	 * superblock pointer here.
+ static u32 crc32c_intel_le_hw_byte(u32 crc, unsigned char const *data, size_t length)
+ {
+ 	while (length--) {
+@@ -157,11 +156,11 @@ static int crc32c_pcl_intel_update(struct shash_desc *desc, const u8 *data,
+ 	 * use faster PCL version if datasize is large enough to
+ 	 * overcome kernel fpu state save/restore overhead
  	 */
- 	void *j_private;
- 
--	/**
--	 * @j_chksum_driver:
--	 *
--	 * Reference to checksum algorithm driver via cryptoapi.
--	 */
--	struct crypto_shash *j_chksum_driver;
--
- 	/**
- 	 * @j_csum_seed:
- 	 *
- 	 * Precomputed journal UUID checksum for seeding other checksums.
- 	 */
-@@ -1748,14 +1741,11 @@ static inline bool jbd2_journal_has_csum_v2or3_feature(journal_t *j)
- 	return jbd2_has_feature_csum2(j) || jbd2_has_feature_csum3(j);
+ 	if (len >= CRC32C_PCL_BREAKEVEN && crypto_simd_usable()) {
+ 		kernel_fpu_begin();
+-		*crcp = crc_pcl(data, len, *crcp);
++		*crcp = crc32c_x86_3way(*crcp, data, len);
+ 		kernel_fpu_end();
+ 	} else
+ 		*crcp = crc32c_intel_le_hw(*crcp, data, len);
+ 	return 0;
  }
- 
- static inline int jbd2_journal_has_csum_v2or3(journal_t *journal)
+@@ -169,11 +168,11 @@ static int crc32c_pcl_intel_update(struct shash_desc *desc, const u8 *data,
+ static int __crc32c_pcl_intel_finup(u32 *crcp, const u8 *data, unsigned int len,
+ 				u8 *out)
  {
--	WARN_ON_ONCE(jbd2_journal_has_csum_v2or3_feature(journal) &&
--		     journal->j_chksum_driver == NULL);
--
--	return journal->j_chksum_driver != NULL;
-+	return jbd2_journal_has_csum_v2or3_feature(journal);
- }
+ 	if (len >= CRC32C_PCL_BREAKEVEN && crypto_simd_usable()) {
+ 		kernel_fpu_begin();
+-		*(__le32 *)out = ~cpu_to_le32(crc_pcl(data, len, *crcp));
++		*(__le32 *)out = ~cpu_to_le32(crc32c_x86_3way(*crcp, data, len));
+ 		kernel_fpu_end();
+ 	} else
+ 		*(__le32 *)out =
+ 			~cpu_to_le32(crc32c_intel_le_hw(*crcp, data, len));
+ 	return 0;
+diff --git a/arch/x86/crypto/crc32c-pcl-intel-asm_64.S b/arch/x86/crypto/crc32c-pcl-intel-asm_64.S
+index 752812bc4991d..9b8770503bbcd 100644
+--- a/arch/x86/crypto/crc32c-pcl-intel-asm_64.S
++++ b/arch/x86/crypto/crc32c-pcl-intel-asm_64.S
+@@ -50,19 +50,20 @@
  
- static inline int jbd2_journal_get_num_fc_blks(journal_superblock_t *jsb)
- {
- 	int num_fc_blocks = be32_to_cpu(jsb->s_num_fc_blks);
-@@ -1794,26 +1784,11 @@ static inline unsigned long jbd2_log_space_left(journal_t *journal)
- #define JBD_MAX_CHECKSUM_SIZE 4
+ # Define threshold below which buffers are considered "small" and routed to
+ # regular CRC code that does not interleave the CRC instructions.
+ #define SMALL_SIZE 200
  
- static inline u32 jbd2_chksum(journal_t *journal, u32 crc,
- 			      const void *address, unsigned int length)
- {
--	struct {
--		struct shash_desc shash;
--		char ctx[JBD_MAX_CHECKSUM_SIZE];
--	} desc;
--	int err;
--
--	BUG_ON(crypto_shash_descsize(journal->j_chksum_driver) >
--		JBD_MAX_CHECKSUM_SIZE);
--
--	desc.shash.tfm = journal->j_chksum_driver;
--	*(u32 *)desc.ctx = crc;
--
--	err = crypto_shash_update(&desc.shash, address, length);
--	BUG_ON(err);
--
--	return *(u32 *)desc.ctx;
-+	return crc32c(crc, address, length);
- }
+-# unsigned int crc_pcl(const u8 *buffer, unsigned int len, unsigned int crc_init);
++# u32 crc32c_x86_3way(u32 crc, const u8 *buffer, size_t len);
  
- /* Return most recent uncommitted transaction */
- static inline tid_t  jbd2_get_latest_transaction(journal_t *journal)
- {
+ .text
+-SYM_FUNC_START(crc_pcl)
+-#define    bufp		  %rdi
+-#define    bufp_d	  %edi
+-#define    len		  %esi
+-#define    crc_init	  %edx
+-#define    crc_init_q	  %rdx
++SYM_FUNC_START(crc32c_x86_3way)
++#define    crc0		  %edi
++#define    crc0_q	  %rdi
++#define    bufp		  %rsi
++#define    bufp_d	  %esi
++#define    len		  %rdx
++#define    len_dw	  %edx
+ #define    n_misaligned	  %ecx /* overlaps chunk_bytes! */
+ #define    n_misaligned_q %rcx
+ #define    chunk_bytes	  %ecx /* overlaps n_misaligned! */
+ #define    chunk_bytes_q  %rcx
+ #define    crc1		  %r8
+@@ -83,13 +84,13 @@ SYM_FUNC_START(crc_pcl)
+ 	# Process 1 <= n_misaligned <= 7 bytes individually in order to align
+ 	# the remaining data to an 8-byte boundary.
+ .Ldo_align:
+ 	movq	(bufp), %rax
+ 	add	n_misaligned_q, bufp
+-	sub	n_misaligned, len
++	sub	n_misaligned_q, len
+ .Lalign_loop:
+-	crc32b	%al, crc_init		# compute crc32 of 1-byte
++	crc32b	%al, crc0		# compute crc32 of 1-byte
+ 	shr	$8, %rax		# get next byte
+ 	dec	n_misaligned
+ 	jne     .Lalign_loop
+ .Laligned:
+ 
+@@ -100,11 +101,11 @@ SYM_FUNC_START(crc_pcl)
+ 	cmp	$128*24, len
+ 	jae     .Lfull_block
+ 
+ .Lpartial_block:
+ 	# Compute floor(len / 24) to get num qwords to process from each lane.
+-	imul	$2731, len, %eax	# 2731 = ceil(2^16 / 24)
++	imul	$2731, len_dw, %eax	# 2731 = ceil(2^16 / 24)
+ 	shr	$16, %eax
+ 	jmp	.Lcrc_3lanes
+ 
+ .Lfull_block:
+ 	# Processing 128 qwords from each lane.
+@@ -123,20 +124,20 @@ SYM_FUNC_START(crc_pcl)
+ 	jl	.Lcrc_3lanes_4x_done
+ 
+ 	# Unroll the loop by a factor of 4 to reduce the overhead of the loop
+ 	# bookkeeping instructions, which can compete with crc32q for the ALUs.
+ .Lcrc_3lanes_4x_loop:
+-	crc32q	(bufp), crc_init_q
++	crc32q	(bufp), crc0_q
+ 	crc32q	(bufp,chunk_bytes_q), crc1
+ 	crc32q	(bufp,chunk_bytes_q,2), crc2
+-	crc32q	8(bufp), crc_init_q
++	crc32q	8(bufp), crc0_q
+ 	crc32q	8(bufp,chunk_bytes_q), crc1
+ 	crc32q	8(bufp,chunk_bytes_q,2), crc2
+-	crc32q	16(bufp), crc_init_q
++	crc32q	16(bufp), crc0_q
+ 	crc32q	16(bufp,chunk_bytes_q), crc1
+ 	crc32q	16(bufp,chunk_bytes_q,2), crc2
+-	crc32q	24(bufp), crc_init_q
++	crc32q	24(bufp), crc0_q
+ 	crc32q	24(bufp,chunk_bytes_q), crc1
+ 	crc32q	24(bufp,chunk_bytes_q,2), crc2
+ 	add	$32, bufp
+ 	sub	$4, %eax
+ 	jge	.Lcrc_3lanes_4x_loop
+@@ -144,42 +145,42 @@ SYM_FUNC_START(crc_pcl)
+ .Lcrc_3lanes_4x_done:
+ 	add	$4, %eax
+ 	jz	.Lcrc_3lanes_last_qword
+ 
+ .Lcrc_3lanes_1x_loop:
+-	crc32q	(bufp), crc_init_q
++	crc32q	(bufp), crc0_q
+ 	crc32q	(bufp,chunk_bytes_q), crc1
+ 	crc32q	(bufp,chunk_bytes_q,2), crc2
+ 	add	$8, bufp
+ 	dec	%eax
+ 	jnz	.Lcrc_3lanes_1x_loop
+ 
+ .Lcrc_3lanes_last_qword:
+-	crc32q	(bufp), crc_init_q
++	crc32q	(bufp), crc0_q
+ 	crc32q	(bufp,chunk_bytes_q), crc1
+ # SKIP  crc32q	(bufp,chunk_bytes_q,2), crc2	; Don't do this one yet
+ 
+ 	################################################################
+ 	## 4) Combine three results:
+ 	################################################################
+ 
+ 	lea	(K_table-8)(%rip), %rax		# first entry is for idx 1
+ 	pmovzxdq (%rax,chunk_bytes_q), %xmm0	# 2 consts: K1:K2
+ 	lea	(chunk_bytes,chunk_bytes,2), %eax # chunk_bytes * 3
+-	sub	%eax, len			# len -= chunk_bytes * 3
++	sub	%rax, len			# len -= chunk_bytes * 3
+ 
+-	movq	crc_init_q, %xmm1		# CRC for block 1
++	movq	crc0_q, %xmm1			# CRC for block 1
+ 	pclmulqdq $0x00, %xmm0, %xmm1		# Multiply by K2
+ 
+ 	movq    crc1, %xmm2			# CRC for block 2
+ 	pclmulqdq $0x10, %xmm0, %xmm2		# Multiply by K1
+ 
+ 	pxor    %xmm2,%xmm1
+ 	movq    %xmm1, %rax
+ 	xor	(bufp,chunk_bytes_q,2), %rax
+-	mov	crc2, crc_init_q
+-	crc32	%rax, crc_init_q
++	mov	crc2, crc0_q
++	crc32	%rax, crc0_q
+ 	lea	8(bufp,chunk_bytes_q,2), bufp
+ 
+ 	################################################################
+ 	## 5) If more blocks remain, goto (2):
+ 	################################################################
+@@ -191,38 +192,38 @@ SYM_FUNC_START(crc_pcl)
+ 
+ 	#######################################################################
+ 	## 6) Process any remainder without interleaving:
+ 	#######################################################################
+ .Lsmall:
+-	test	len, len
++	test	len_dw, len_dw
+ 	jz	.Ldone
+-	mov	len, %eax
++	mov	len_dw, %eax
+ 	shr	$3, %eax
+ 	jz	.Ldo_dword
+ .Ldo_qwords:
+-	crc32q	(bufp), crc_init_q
++	crc32q	(bufp), crc0_q
+ 	add	$8, bufp
+ 	dec	%eax
+ 	jnz	.Ldo_qwords
+ .Ldo_dword:
+-	test	$4, len
++	test	$4, len_dw
+ 	jz	.Ldo_word
+-	crc32l	(bufp), crc_init
++	crc32l	(bufp), crc0
+ 	add	$4, bufp
+ .Ldo_word:
+-	test	$2, len
++	test	$2, len_dw
+ 	jz	.Ldo_byte
+-	crc32w	(bufp), crc_init
++	crc32w	(bufp), crc0
+ 	add	$2, bufp
+ .Ldo_byte:
+-	test	$1, len
++	test	$1, len_dw
+ 	jz	.Ldone
+-	crc32b	(bufp), crc_init
++	crc32b	(bufp), crc0
+ .Ldone:
+-	mov	crc_init, %eax
++	mov	crc0, %eax
+         RET
+-SYM_FUNC_END(crc_pcl)
++SYM_FUNC_END(crc32c_x86_3way)
+ 
+ .section	.rodata, "a", @progbits
+ 	################################################################
+ 	## PCLMULQDQ tables
+ 	## Table is 128 entries x 2 words (8 bytes) each
 -- 
 2.47.0
 
