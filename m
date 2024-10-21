@@ -4,155 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9AAF3D3C927
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 20 Oct 2024 11:31:35 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 35856D3C927
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Oct 2024 00:30:01 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t2U9m-0004xP-WC;
-	Sun, 20 Oct 2024 11:31:34 +0000
+	id 1t2gJ5-0005ew-3s;
+	Mon, 21 Oct 2024 00:29:59 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <weilongping@oppo.com>) id 1t2U9b-0004xB-20
+ (envelope-from <ebiggers@kernel.org>) id 1t2gJ4-0005en-4u
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 20 Oct 2024 11:31:22 +0000
+ Mon, 21 Oct 2024 00:29:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
- :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mKPLZ/HxfMNYXuXYbcGmVRURGHED591fu3h5GMClQ3Q=; b=e5nb0pYeDY4Gn6WfyRWYauK6Q7
- JWK58ebT9ZcMMul0g/kBBk/gqqb0Al62HTk2WqnnYD7QkcwfEE9PAeSAjiH+qCfmVlcnENtBS1/wN
- bEErA9dbDK3YWZERIOelwASvW0PQ2zsZk6XIz2uwS8pPGwtXuuUJEKBNwXwSyWyzsvvY=;
+ bh=fQ50igwSJrd/WM7TfdsbtVs8aGON2eRB6lbIqdMdWUU=; b=XmP8Q/vjmDBUKRVAMIbkHXXhOc
+ vpsJmeoE4ubszwpqV7KWky8P5EjEjPPgQODZ0PFbScfb1KhKW2Rl0QJKq+S3PogvwTefk1NEWri9n
+ IHi1QDEfNHWwyUmvi3GJnf+fA+vJO0nk9n3zPypxqk80wtfrBGqqH87mVCzj1y7bB6rk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Date:
- Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=mKPLZ/HxfMNYXuXYbcGmVRURGHED591fu3h5GMClQ3Q=; b=B
- DKthe3F2agI1P5rFxnsjl1lO6nUy6v8UF2zZi6M0pEW+/W5coobG2XN+OFJdf+nIDwLNbu3aKNYER
- Xgw0cNEPiLFS66/dF0JjJyn1q2Dohqh8yB2Hg9uRHewcSMVKv1+w1qcLfatr3oLRTxprisYcvAcEV
- 2oZsGXlyau1mrqZ4=;
-Received: from mail-koreacentralazon11013046.outbound.protection.outlook.com
- ([40.107.44.46] helo=SEYPR02CU001.outbound.protection.outlook.com)
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=fQ50igwSJrd/WM7TfdsbtVs8aGON2eRB6lbIqdMdWUU=; b=cziWSfao8AFT/oymlqWOLK2Hh3
+ +4Z9C1PYtPYWuRf3EnLVdTl0dKWPeLCmx9SLkOUF8HvV+G/+03laZldZQE1KlTtP3dA5bojlepT19
+ S32a4JfBFjldwTZrvbuvCdEqjbTBWtDLJ+AtR9rbJzqIUOEW2iuWPa7OnHu1pjzEev2U=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t2U9Z-00054J-D9 for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 20 Oct 2024 11:31:22 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GQBRGGLe+1ORFcEInwElq0SAbiP8SzKQa5MuCNFBZt/OJEJxitt8tzGXf5cHFGLJQqKz5h63s0VGA4sbu9zSgASSCuWvcztMy2691PSBDjXtUBJVDpZB11vTzRqbewbe3FazMHuFITpsz6Mfqzd6do+dqK7diww9an2krsZpdOu6LHmM0ZhwP9H17KRL0tCXBgjRSKG3ppI/xZBLrFIFpNczvliIx0ov/Pve9hkcOHlKxyjq3p5dUEjid3+266PSnZ0NNvTUscCjXgBBuEk1kDXX+T6Q+30zd4WDFoSqHLufdWSejHON+GBzng9CchZ0qEW9BxlqJFKpCSxI8rACiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mKPLZ/HxfMNYXuXYbcGmVRURGHED591fu3h5GMClQ3Q=;
- b=K1ICNNhv/YsUFmVafLeiiavdQ+yhAmqPtUUTQjmRfMmzL5Q/bJsNfbTWGQFOq7UEylDHsxxOCkem2BN7NLKMn50n6cOF5PJ+lXnz/flHIUSU782nEaEdjTl4AEt5yLyePq5uArcz23SeiGTJC7TExVdGHDJwHUsOdgPVKbm/hXvaivuGPVHgs1KACEcQswbZMK/jlokq+pIYv+3irlMg0ubUjrO7EPuSsHxvxnhqmiVHAadLJMzGvay5uuIF1U/r8xkQharP+QnQEQR2WNgmldBAUIDZPNkR/CPdmkJE6GXlFZBV+ZMdzwvDn4Yq6Dzp9ijvavmbyQiiLUs3g+xtfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
- dkim=pass header.d=oppo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mKPLZ/HxfMNYXuXYbcGmVRURGHED591fu3h5GMClQ3Q=;
- b=Y7piOvgjsd3Ta0JnqQgfPJKsWdVY7WuozMa82AEDg5PxeWzqxE9bY3Rp6+BDWTnbjsFVje7KA3K27/nl9EhVtdFYnWMZcN4mVmexBDerxJ9GxPsA/HsJnRe5aZQEHjsOCmgZHb1tGebZV0x//f4OZjnmu7p0v945O9UKQv9jk1E=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oppo.com;
-Received: from SEZPR02MB7967.apcprd02.prod.outlook.com (2603:1096:101:22a::14)
- by PUZPR02MB6049.apcprd02.prod.outlook.com (2603:1096:301:e6::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Sun, 20 Oct
- 2024 10:58:26 +0000
-Received: from SEZPR02MB7967.apcprd02.prod.outlook.com
- ([fe80::5723:5b88:ed4c:d49b]) by SEZPR02MB7967.apcprd02.prod.outlook.com
- ([fe80::5723:5b88:ed4c:d49b%3]) with mapi id 15.20.8069.018; Sun, 20 Oct 2024
- 10:58:25 +0000
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Sun, 20 Oct 2024 18:57:52 +0800
-Message-Id: <20241020105752.1767730-1-weilongping@oppo.com>
-X-Mailer: git-send-email 2.34.1
-X-ClientProxiedBy: SG2PR01CA0131.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::35) To SEZPR02MB7967.apcprd02.prod.outlook.com
- (2603:1096:101:22a::14)
+ id 1t2gJ3-0003sg-7a for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Oct 2024 00:29:58 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id 4530A5C580F;
+ Mon, 21 Oct 2024 00:29:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AC21C4CEC7;
+ Mon, 21 Oct 2024 00:29:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1729470591;
+ bh=4oZ1Q3tWbzwSP9RLFVgxu8DMcPqFYU+tdgCV67sxyr0=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=dkF1gI1TEowluxz74dX7OKbuaCDeRq+XpeD/bfQlGdd/ID5XHN7W9L1BrNaGFJkmv
+ 7GDJ7X6cdmxo1p5lXFpXwvCTWfOr+PnCZDgUAc3FwfL0WXZKA+Sh3GmXyK76Ow8LNm
+ UPZ360jg78H90tFxQCk3DKP5itwXmJrSwZ6eKkHOQM1TQZcCj18DY9joSClQ4Yvh+S
+ N9xTgDGPTE4Mmt537gJGtS2VTuPEnTM02PpAgSpTZ5ICdbTpqT/RoQvl5N/O0yFdVh
+ MBDhvKQm8r63D4IIQ0qc744pF1Idy2e8hKBAf189TJlD3+3WzD/8AlM5FSWTtGJgCg
+ 6vmlxD+6wMUhw==
+To: linux-kernel@vger.kernel.org
+Date: Sun, 20 Oct 2024 17:29:21 -0700
+Message-ID: <20241021002935.325878-2-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241021002935.325878-1-ebiggers@kernel.org>
+References: <20241021002935.325878-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR02MB7967:EE_|PUZPR02MB6049:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4cd34fd-cc78-4a4d-f827-08dcf0f61f0a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|52116014|376014|1800799024|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?jH7FLGyWP32Qm4pHiCKdS+8x1cPoNiPrEY+UskJRpwtRkBupJ+/ddZSJ1B1h?=
- =?us-ascii?Q?1dJAmBNa+G6Ze4y00L9qF8A2h/GGLyhhN5uw7nC7viVNd92wlInS8Q9mbanT?=
- =?us-ascii?Q?mN9m7lrgHebEfV2tW+cOkpK9FOl7jVmjXmWbXH4fKCDW33NGbrV5GZSzg2tc?=
- =?us-ascii?Q?34KCjWiGb7P5jQ3fCxBEm6805IREbR6gctl7TNhcEkHeuWUi6JB201d/s4pJ?=
- =?us-ascii?Q?EG4Jw+UERY5OJ42hFRT2wuXRXm3fG9EOqXdOEKgAXRSXDOj+im0sqPCPE0Iy?=
- =?us-ascii?Q?7xw8kfB0PM6Xi9buQuw6dU1kQM3q452UMJ7HbMU5MmIbZvbhvlOhov6h/0Ue?=
- =?us-ascii?Q?vQdaAd4+lsdVHrCzf5b9mmr9fcfCpBaOEmJVOhPQoPl4slGiPZrndg+3bP9U?=
- =?us-ascii?Q?2aGn9GTUQ3LWHFIWm1jF6gXo4lUcPoveuog4urifyX2u38RgvX3Bn5E9HweZ?=
- =?us-ascii?Q?v7lKcbgDQz7JBSSk/806CXEa+EQv97gA3TfMyCgViveVB5HDWhVWpxevhdLo?=
- =?us-ascii?Q?0kBrilpvZ8WrAKPnBna4j0dFrwbVHVMr2rA3+1gurnKgW2cjxCLk8p3ahITL?=
- =?us-ascii?Q?W6x69XJbzsRJWLlHM3DaNWsx8BTlOVgaoelLqppYd+xMRxZniIe1ZVQsOEhk?=
- =?us-ascii?Q?HqRF5pUrWx0guq3X2srLDLVeERNAvmHN0gOegDOggf2+CFif+a248bzPcWIy?=
- =?us-ascii?Q?M31zwR19JODcddTTuASIzAlbkCnR1YOKJfkvv3aP9PYlXLxPf1oNcJX3HZwW?=
- =?us-ascii?Q?2VuwW8BXSJ/sLggehupcrSgUxakNCTzUO3R/TUvlJeTE3DGa31P/1glmhqYy?=
- =?us-ascii?Q?y763SNHP/xynGECw82eL81UNOLmgEELb4+Q10Z+D/FiFjllUJ5uJyJMGH7Ny?=
- =?us-ascii?Q?pUhYIkWRAebrGRqoIUVvUK9VQYbJqvoOG5Ir/b/CzcWc/KxrN/ZzuHgL2c4a?=
- =?us-ascii?Q?JJOltgJHitGlHsOwkG4IOrvsAqCEuFtk8Zah2a3iaFp5Kp0agqpSv5RIBteD?=
- =?us-ascii?Q?FgwJiBEmjdzN4humH/4ArUQCzHjEutgUwA9E/H5PciFcA5lMgqlTiUUC2mvS?=
- =?us-ascii?Q?wH8YuPOlmfOiQgOa/lNHb6MYm6ZoK7S6ZHEbi8C7bignnDjPVEilfwoy3WZX?=
- =?us-ascii?Q?r56syQj5joViGHN5+pyRxk9BZOrPATywK8npv1+3Oz3FMrEqpCdAC1qli+LH?=
- =?us-ascii?Q?qYnrE3yTXBr8F080Aw060a+qwyJ8vD46vzitztPEklxmoXfJ2qQpIoAp/zP+?=
- =?us-ascii?Q?F3rAgwPMsEaW4xevU5fvQLCz1maere2KJPvcCkTMALGFzhAAzb5fcmvdLj3x?=
- =?us-ascii?Q?aKKzmbURK8m+B4K8Fy020K3JQD7Uio6HAubSUOjeaRQGYo8HQGSBenF+UaZk?=
- =?us-ascii?Q?Dl9fDf0=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SEZPR02MB7967.apcprd02.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014); DIR:OUT;
- SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DQfL0snnVnxUtw2WLkqm/bjgpKS0FK39Gs8ZDwTsPSHI/Jqq6LVTyHxqgTCh?=
- =?us-ascii?Q?wBsLf2oDtaAV7TxiRVSYREVh7EQmCHQEMlD0B9B6T5wwmuAXNgrjlRBqdET7?=
- =?us-ascii?Q?/imZqBdAzFl46izt7TCfM3deh7e7K3bkMHx0cklriHfARuNoQ342fk2dO1JH?=
- =?us-ascii?Q?q+ckcIQkWKM6I12r/oSIvU5bsABT6cSAN2SWWbfdHMBF6QuDUYCw/ggqksam?=
- =?us-ascii?Q?DqwXs3HMIDBgmsGvvw5fB29Jq3VnlJQrppYDdS/fKpfzaw4A1kcmQ9mtPehC?=
- =?us-ascii?Q?hrYbJ/1bTD4oGuZNrAp9KkWWhd1KNoWyt7JNAp37cdTbmJXQ3uKYHM7bHvzk?=
- =?us-ascii?Q?N6qpZofIkUZTWriWE0BMH+oen3K5jh2cqK7Nf7uwDvtiCasKvWDt71k0zswY?=
- =?us-ascii?Q?oUHYKA78rRbPCM95JBntopBnhrfzWY+XxPfOlSEo6Qjx2/b6Y8236X912Pyw?=
- =?us-ascii?Q?ZvX+Lm1I6ty6fjBrkHu76DQ9uepWRukgE2zV0IQaP6Dd2PYmFEZhmI/DQ1Ci?=
- =?us-ascii?Q?WsMfop0+uJcMeeQOr/zH0Kye5pIqF71+P8e4Op98P1pKzn19HRe7TtXq9CPV?=
- =?us-ascii?Q?6gQNNvaEaEfr+dBVdVyWIcFH4HfcBHFDgWO6NW/NesKmwNQEzbv5yzl3o2/z?=
- =?us-ascii?Q?/1moAXHY66jEg0TV7YY3GmgpjMwskg3qg6cAiaxv3bNt9FG0NtcxCeyQ43wC?=
- =?us-ascii?Q?quIlxoGjPbS9JkKia1kySLozI/aQ8SSetffglqMf1EDHFAFh17Vm9q8qKO2g?=
- =?us-ascii?Q?lVCZ9wkkli24i6q7cEdGhIqdCSi1ky6ORBG9qFRmCE+MMv8CvaNKKW8fkDUE?=
- =?us-ascii?Q?kyXPtx610SnzQCOoVrL09pgKHN30AbtlCFJMgp93AwIAWjsCPKnisnzARBFJ?=
- =?us-ascii?Q?k9xrJ1s0l2jNILwgzeXhRbqrI0yXQj59UwXUh+Sc6D3UDh0funvORVMTcOcG?=
- =?us-ascii?Q?Ln0JrNSJG23yA3vts3ZbuJ29vzN9+DqN9U7OAIYiO3Yuk6e/mVCgsoYIXJV1?=
- =?us-ascii?Q?XT7RCA2zRBFeFnnXAHLB8j/j2gPVoq33DFbMz1VwKzmH3rrieR9/XTyjQbvO?=
- =?us-ascii?Q?vayznpXaMhJgv61aEDwqYAAlmRzv4GH9V56pWp5FbTw/ML1qnyVQIYEvvOna?=
- =?us-ascii?Q?KVBb3ZH31Joe3ciuFP3ym/VCRHTbpfv5gfAcx9tbH6LiJ18TZsQJw9FzX46v?=
- =?us-ascii?Q?zZ8VKfnwzBuGdJuAxDzDHVEx0teYAoBPs80rxkiXh49opM6pLmsF9fU5Ty5z?=
- =?us-ascii?Q?cJDjT+yeZVx/T+qayyKPM61wq9ZdLFMbFlKqInAJVlYAK0iRUfj8CbF9KTum?=
- =?us-ascii?Q?5yVKXtj1eMlfGSorm7HocbzVNkyxW1gUynSwpswpdl/f5wQnsNJh2KOF9ChJ?=
- =?us-ascii?Q?r2djSXsE1Bz+lDb9PrLuEFQ8xXaZp4/SVDwNjvJvqF1jGvZEVpQrDfFE3Rvn?=
- =?us-ascii?Q?/lyGQ7SM2NxPZRt4DU55F6x7sL1vfn46sX5gMPHFmMpSsN4v1DO22ffF34RV?=
- =?us-ascii?Q?HI64CpetbGlPAZ9EwdFhV1+zwDWQ2IRXAYXKWISoEPtVIiPfTaF62Eg5Ox1o?=
- =?us-ascii?Q?MDjtEHCfySDvnxUb7d7PIyQC+CR8YNM+sVP9We91WlcrT2p2k7xI/Y3GfQ3z?=
- =?us-ascii?Q?KA=3D=3D?=
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4cd34fd-cc78-4a4d-f827-08dcf0f61f0a
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR02MB7967.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2024 10:58:25.5727 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mr0PmomxBnVAZn7aNe5bq1SHgxhZ76iUj2AORW+mo2G01Cg9RuDtxcW6etv9jsY09wo+1yOZZL67UUT1TSY0qA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR02MB6049
-X-Headers-End: 1t2U9Z-00054J-D9
-Subject: [f2fs-dev] [PATCH] f2fs: fix the wrong f2fs_bug_on condition in
- f2fs_do_replace_block
+X-Headers-End: 1t2gJ3-0003sg-7a
+Subject: [f2fs-dev] [PATCH 01/15] lib/crc32: drop leading underscores from
+ __crc32c_le_base
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -164,40 +77,174 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: LongPing Wei via Linux-f2fs-devel
+From: Eric Biggers via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: LongPing Wei <weilongping@oppo.com>
-Cc: LongPing Wei <weilongping@oppo.com>, linux-f2fs-devel@lists.sourceforge.net
+Reply-To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-arch@vger.kernel.org, linux-s390@vger.kernel.org, x86@kernel.org,
+ linux-mips@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
+ sparclinux@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-ext4@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This f2fs_bug_on was introduced by commit 2c1905042c8c3("f2fs: check segment type in __f2fs_replace_block") when there were only 6 curseg types.
-After commit d0b9e42ab6155(f2fs: introduce inmem curseg) was introduced, the condition should be changed to checking curseg->seg_type.
+From: Eric Biggers <ebiggers@google.com>
 
-Fixes: d0b9e42ab6155("f2fs: introduce inmem curseg")
+Remove the leading underscores from __crc32c_le_base().
 
-Signed-off-by: LongPing Wei <weilongping@oppo.com>
+This is in preparation for adding crc32c_le_arch() and eventually
+renaming __crc32c_le() to crc32c_le().
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/segment.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/lib/crc32-glue.c | 2 +-
+ arch/riscv/lib/crc32.c      | 2 +-
+ crypto/crc32c_generic.c     | 8 ++++----
+ include/linux/crc32.h       | 2 +-
+ lib/crc32.c                 | 4 ++--
+ lib/crc32test.c             | 2 +-
+ 6 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 1766254279d2..7b54b1851d34 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3977,8 +3977,8 @@ void f2fs_do_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 		}
+diff --git a/arch/arm64/lib/crc32-glue.c b/arch/arm64/lib/crc32-glue.c
+index 295ae3e6b997a..ad015223d15df 100644
+--- a/arch/arm64/lib/crc32-glue.c
++++ b/arch/arm64/lib/crc32-glue.c
+@@ -42,11 +42,11 @@ u32 __pure crc32_le(u32 crc, unsigned char const *p, size_t len)
+ }
+ 
+ u32 __pure __crc32c_le(u32 crc, unsigned char const *p, size_t len)
+ {
+ 	if (!alternative_has_cap_likely(ARM64_HAS_CRC32))
+-		return __crc32c_le_base(crc, p, len);
++		return crc32c_le_base(crc, p, len);
+ 
+ 	if (len >= min_len && cpu_have_named_feature(PMULL) && crypto_simd_usable()) {
+ 		kernel_neon_begin();
+ 		crc = crc32c_le_arm64_4way(crc, p, len);
+ 		kernel_neon_end();
+diff --git a/arch/riscv/lib/crc32.c b/arch/riscv/lib/crc32.c
+index d7dc599af3ef6..333fb7af11922 100644
+--- a/arch/riscv/lib/crc32.c
++++ b/arch/riscv/lib/crc32.c
+@@ -224,11 +224,11 @@ u32 __pure crc32_le(u32 crc, unsigned char const *p, size_t len)
+ }
+ 
+ u32 __pure __crc32c_le(u32 crc, unsigned char const *p, size_t len)
+ {
+ 	return crc32_le_generic(crc, p, len, CRC32C_POLY_LE,
+-				CRC32C_POLY_QT_LE, __crc32c_le_base);
++				CRC32C_POLY_QT_LE, crc32c_le_base);
+ }
+ 
+ static inline u32 crc32_be_unaligned(u32 crc, unsigned char const *p,
+ 				     size_t len)
+ {
+diff --git a/crypto/crc32c_generic.c b/crypto/crc32c_generic.c
+index 7c2357c30fdf7..635599b255ec0 100644
+--- a/crypto/crc32c_generic.c
++++ b/crypto/crc32c_generic.c
+@@ -83,11 +83,11 @@ static int chksum_setkey(struct crypto_shash *tfm, const u8 *key,
+ static int chksum_update(struct shash_desc *desc, const u8 *data,
+ 			 unsigned int length)
+ {
+ 	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+ 
+-	ctx->crc = __crc32c_le_base(ctx->crc, data, length);
++	ctx->crc = crc32c_le_base(ctx->crc, data, length);
+ 	return 0;
+ }
+ 
+ static int chksum_update_arch(struct shash_desc *desc, const u8 *data,
+ 			      unsigned int length)
+@@ -106,11 +106,11 @@ static int chksum_final(struct shash_desc *desc, u8 *out)
+ 	return 0;
+ }
+ 
+ static int __chksum_finup(u32 *crcp, const u8 *data, unsigned int len, u8 *out)
+ {
+-	put_unaligned_le32(~__crc32c_le_base(*crcp, data, len), out);
++	put_unaligned_le32(~crc32c_le_base(*crcp, data, len), out);
+ 	return 0;
+ }
+ 
+ static int __chksum_finup_arch(u32 *crcp, const u8 *data, unsigned int len,
+ 			       u8 *out)
+@@ -198,16 +198,16 @@ static struct shash_alg algs[] = {{
+ }};
+ 
+ static int __init crc32c_mod_init(void)
+ {
+ 	/* register the arch flavor only if it differs from the generic one */
+-	return crypto_register_shashes(algs, 1 + (&__crc32c_le != &__crc32c_le_base));
++	return crypto_register_shashes(algs, 1 + (&__crc32c_le != &crc32c_le_base));
+ }
+ 
+ static void __exit crc32c_mod_fini(void)
+ {
+-	crypto_unregister_shashes(algs, 1 + (&__crc32c_le != &__crc32c_le_base));
++	crypto_unregister_shashes(algs, 1 + (&__crc32c_le != &crc32c_le_base));
+ }
+ 
+ subsys_initcall(crc32c_mod_init);
+ module_exit(crc32c_mod_fini);
+ 
+diff --git a/include/linux/crc32.h b/include/linux/crc32.h
+index 87f788c0d607b..5b07fc9081c47 100644
+--- a/include/linux/crc32.h
++++ b/include/linux/crc32.h
+@@ -37,11 +37,11 @@ static inline u32 crc32_le_combine(u32 crc1, u32 crc2, size_t len2)
+ {
+ 	return crc32_le_shift(crc1, len2) ^ crc2;
+ }
+ 
+ u32 __pure __crc32c_le(u32 crc, unsigned char const *p, size_t len);
+-u32 __pure __crc32c_le_base(u32 crc, unsigned char const *p, size_t len);
++u32 __pure crc32c_le_base(u32 crc, unsigned char const *p, size_t len);
+ 
+ /**
+  * __crc32c_le_combine - Combine two crc32c check values into one. For two
+  * 			 sequences of bytes, seq1 and seq2 with lengths len1
+  * 			 and len2, __crc32c_le() check values were calculated
+diff --git a/lib/crc32.c b/lib/crc32.c
+index ff587fee3893d..c67059b0082b4 100644
+--- a/lib/crc32.c
++++ b/lib/crc32.c
+@@ -205,12 +205,12 @@ EXPORT_SYMBOL(crc32_le);
+ EXPORT_SYMBOL(__crc32c_le);
+ 
+ u32 __pure crc32_le_base(u32, unsigned char const *, size_t) __alias(crc32_le);
+ EXPORT_SYMBOL(crc32_le_base);
+ 
+-u32 __pure __crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
+-EXPORT_SYMBOL(__crc32c_le_base);
++u32 __pure crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
++EXPORT_SYMBOL(crc32c_le_base);
+ 
+ u32 __pure crc32_be_base(u32, unsigned char const *, size_t) __alias(crc32_be);
+ 
+ /*
+  * This multiplies the polynomials x and y modulo the given modulus.
+diff --git a/lib/crc32test.c b/lib/crc32test.c
+index 03cf5c1f2f5dc..30b8da4d8be46 100644
+--- a/lib/crc32test.c
++++ b/lib/crc32test.c
+@@ -824,11 +824,11 @@ static void crc32test_regenerate(void)
+ 	for (i = 0; i < ARRAY_SIZE(test); i++) {
+ 		pr_info("{0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x},\n",
+ 			test[i].crc, test[i].start, test[i].length,
+ 			crc32_le_base(test[i].crc, test_buf + test[i].start, test[i].length),
+ 			crc32_be_base(test[i].crc, test_buf + test[i].start, test[i].length),
+-			__crc32c_le_base(test[i].crc, test_buf + test[i].start, test[i].length));
++			crc32c_le_base(test[i].crc, test_buf + test[i].start, test[i].length));
  	}
+ }
  
--	f2fs_bug_on(sbi, !IS_DATASEG(type));
- 	curseg = CURSEG_I(sbi, type);
-+	f2fs_bug_on(sbi, !IS_DATASEG(curseg->seg_type));
- 
- 	mutex_lock(&curseg->curseg_mutex);
- 	down_write(&sit_i->sentry_lock);
+ static int __init crc32test_init(void)
+ {
 -- 
-2.34.1
+2.47.0
 
 
 
