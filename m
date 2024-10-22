@@ -4,66 +4,154 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A7E8CD1CDB6
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Oct 2024 08:36:42 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B63C2D1CDC3
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Oct 2024 09:13:42 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t3ANd-0007SQ-TB;
-	Tue, 22 Oct 2024 08:36:41 +0000
+	id 1t3AxR-0007YT-3i;
+	Tue, 22 Oct 2024 09:13:41 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1t3ANb-0007SJ-DG
+ (envelope-from <hanqi@vivo.com>) id 1t3AxP-0007Y7-5E
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 22 Oct 2024 08:36:39 +0000
+ Tue, 22 Oct 2024 09:13:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
+ :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=IAQExpQ2VVXJqqOp1PjNKGgM0RL/TTaqEcQ4ZTKxblw=; b=L5iRTUhiJRlbVsvY4DPlrknkFn
- nAZnnWp7lY8adGxxgFhSrYB76sVoNqRbmSYO774XUssl9Dk1bP4WKcgPU94FE7Bw+4X6o9RnPHWdG
- ZK7+7olXwQmP2ciEPghFJ3qb1LcS0B3l9SjMhUPm4V0anJWvaX4c4JtitpIeK8bMnnc0=;
+ bh=c0YZGuPz4Edh9o/BFrP4xxZ84krhcxxNoOoFa0LR6QQ=; b=UL+8uTGP4Z5DOSEISNYcZs4V6e
+ 53k2L62rcJieBhtq5gf9vN+dC6tdVmF8I1XOofjZRr7ebfNnjCw/zAj361dY5Jb0rFEIWIsLv2K96
+ fifOvIsBaphjKRyZC/EIwaEUoSFz7CUEOlzTywFTx0EouqCfuJMSP7eTeVrHkkJTfv+g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ h=MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Date:
+ Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=IAQExpQ2VVXJqqOp1PjNKGgM0RL/TTaqEcQ4ZTKxblw=; b=B
- fP15bARLrhxbawv9dVV4guAaSe3oZ6/hoak4ODpbOzOGUhGPFZkNV09ItKr7UqS6D7um3hrlqii4T
- fr2AaOaSCbh2vEWet5n8CwccA/poBjb8iGGRWSTWqenSBzgp/EmX7LHy9+/H2FYSyR6P4Ye3Y/GlY
- lrD7TmydjA604m14=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ List-Owner:List-Archive; bh=c0YZGuPz4Edh9o/BFrP4xxZ84krhcxxNoOoFa0LR6QQ=; b=J
+ Q6TCly0boIdwzgDZtXyDvFHDfYD9m6N3o+8k9iU68JnWCDXzPRmtu/QIW1/pIJw3EhEMxYymQmYs3
+ qQKuMsu91mR7B8AKPCPTa0XxeB0DHzv1qfy5VL39tedwPXgjoiI1dhm1sObtRSfr9yVxl4NrK72pq
+ YXJ1dEOxGzvT0rwk=;
+Received: from mail-koreacentralazon11013059.outbound.protection.outlook.com
+ ([40.107.44.59] helo=SEYPR02CU001.outbound.protection.outlook.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t3ANa-000110-Ft for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 22 Oct 2024 08:36:39 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 98A2F5C42B7;
- Tue, 22 Oct 2024 08:36:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E30CC4CEC3;
- Tue, 22 Oct 2024 08:36:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1729586192;
- bh=cs3qnvWB45CLzEZtHHIHemYwXCravNhrfo6+sjOzGEI=;
- h=From:To:Cc:Subject:Date:From;
- b=PTTcR5kFjecbk2kTj1+N+U5csP5E00xLf3PwOvMxrVpdcMb3W1bRt8HsISsB2Tyt4
- 8J/shNDHPCZwo338KpTdXdxSGLrzveL0Hd40hkjQG5zEpriU541cy9GKb1evLsyAvu
- SlxXxpW7UyPj0pnZEvvHZZ/szVXt29mIuXyJfG/VppYXZX8SyABgCDKfzO8tMi45Ad
- cB3iFLYBMhPem/jA5JgGDHA09SKu335YbrAVFExDPMqcGsvx1j5666Kr/KyLQnCb9p
- zgdE/TcO3FPp8bOz6sQjKFY6JuMGlr0HoGN30K2WP2SJWvj4N+IgeEi8HpyAPeMeGl
- 8Onaa64CuE0vA==
-To: jaegeuk@kernel.org
-Date: Tue, 22 Oct 2024 16:36:23 +0800
-Message-Id: <20241022083623.2641434-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ id 1t3AxO-0004zD-6H for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 22 Oct 2024 09:13:39 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZrVMp89xpiL4Jq/sGYitxsy4bqiwIhSBTxpt+IW2n6A3rzGOesfR8sy1zBK5JQ8oVWw3MJCwEKjAWrbi2h/O3WNi3Q4zMmnmzU/MAuaG+QOuHT7RC+YBcJy7Wq5FJ8bB6hT2UK1X1Dola2freYKEgEbqZ/hUBDKTR4gMY/aLLZqz87doxI71LmHd+9sY1qdp5f9R7PZxk1OqVDbswTzusPXrKrl6GrL/4mleNhzAgveHOCBXgZEZKN+FEvDatzjLo+AKvxVny9p15zO4v0cdvRIiZDpgIWlbaB4d1Qtr9s2x/efIezBcCnvEQdOKW1+ORU+qr4Msul3Ita9dTNdehQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c0YZGuPz4Edh9o/BFrP4xxZ84krhcxxNoOoFa0LR6QQ=;
+ b=Y2ANsg2CYoKDlvktBLJFV0HEu9HqW+oUxIV8N7FtNmo7s+yPLvZaVI+fQlhWaTPVjJux221fdLFk93JHSaEJK2Q3CvbclhtsOmOBkY+M7zBnkBkWIBCyAMyVTV6RojvDai8dpaSxRy7iTUVyn8nqzngsLdcpcMsIIYTw+Aex+aFeEMyqgGVQjEp1uK06JfE86cME8v4up72G8wYKfrc0+boDzU2XXVea/UEqE+obxt+ZsL8TsD4N4rMkoDQLjmEl4S/gosAZz7G/XqIn/J8sXeyA1Dz7wF6V3lJX3QnernDs6IFNSQtV5O4ydQEGS522hh5nvxOuBU3C0fs6LvdF1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c0YZGuPz4Edh9o/BFrP4xxZ84krhcxxNoOoFa0LR6QQ=;
+ b=W7PlVoquMql3Cd5z/pEhkE6C3KteZ+Xm09NiFyjiRdN++E1VrgmVr/vBx+dj8BTXCYP0Af+cyhKrMy4nsY+KystbZr4CYODZJ4bQVE9VuKWDqm+7i4i6L9im28+6/et5Wm8b9pnEXK0mDqQAsMt4n3inwTwBOFcb7RA0NZu14LFhlbKv8WhKEnYdBflG9kqW6aZ0XaZ2O232YD0RFplndq31VvEY3l7IcDcMmAQTzlZ7qCR1cE8z2RQOAXDUlyFkotbC5Gth6T8G6q/NdJgni0/9W7hIJ27YT/u7TdjXfFAG/Yc+Rfg+ClcZ9BnKU1usxwtlXnjI/fCsNiP+7yZT6w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB7140.apcprd06.prod.outlook.com (2603:1096:101:228::14)
+ by SEZPR06MB7079.apcprd06.prod.outlook.com (2603:1096:101:1f5::7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Tue, 22 Oct
+ 2024 08:59:09 +0000
+Received: from SEZPR06MB7140.apcprd06.prod.outlook.com
+ ([fe80::9eaf:17a9:78b4:67c0]) by SEZPR06MB7140.apcprd06.prod.outlook.com
+ ([fe80::9eaf:17a9:78b4:67c0%6]) with mapi id 15.20.8093.014; Tue, 22 Oct 2024
+ 08:59:09 +0000
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Tue, 22 Oct 2024 03:15:25 -0600
+Message-Id: <20241022091525.1808542-1-hanqi@vivo.com>
+X-Mailer: git-send-email 2.25.1
+X-ClientProxiedBy: SG2PR01CA0180.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:28::36) To SEZPR06MB7140.apcprd06.prod.outlook.com
+ (2603:1096:101:228::14)
 MIME-Version: 1.0
-X-Headers-End: 1t3ANa-000110-Ft
-Subject: [f2fs-dev] [PATCH v2] f2fs: fix to avoid potential deadlock in
- f2fs_record_stop_reason()
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB7140:EE_|SEZPR06MB7079:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0235061f-1caf-41dc-d356-08dcf277ca4b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|52116014|376014|366016|1800799024|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?2gXnGt3jcmQLiTVaCu5X+fkd4EuK7Nwv3kILtvlKGQItp/PC+T5IcQLkUA24?=
+ =?us-ascii?Q?3+bWLk7shhr+q/18a4tRS2iBE5mEWW0ekphxlkbWy3E1O+04TE2hmBM0X5Pn?=
+ =?us-ascii?Q?l0wszXyLo0uKrm/JK+HGehcFcW75/MdHFKs/wsysIfmG7i3O/wcelA+Mf2Lp?=
+ =?us-ascii?Q?51hFjCZ2wTT9zdONWzkuTtgE36Z21GCEXvQdpXJXx4ifEOD3f6zXSNiMs8jp?=
+ =?us-ascii?Q?wVC2EC/I/VwmCTv6Jv6Z+K5BXK2cHmymmboT8cgDhea8PUlpXefHgXm2smvQ?=
+ =?us-ascii?Q?VVR6Q37xWlBxDB2uJrp/SJnUO2Q9BH0RPYAgHzg05IwcJPd33956jTTgLUEj?=
+ =?us-ascii?Q?BNQnRzA5i3EpsBZkPg9h1iJ4iT6NuTTaXRBDHGz2ZJ6YKIrGvJXPVZ9JkFRe?=
+ =?us-ascii?Q?drasRN3EiYbaZyVgs9kkG3CI0vi3PIRj6eqc7895Mort8eal/Itm+tUySjgm?=
+ =?us-ascii?Q?K5zJLkh4QO/ztuKHwF6yptH1HUjnsbCYhEyoGBXx6bufxAIg8f8gv7uZ+mBb?=
+ =?us-ascii?Q?OVJAxU9heQhepnB6OQDdXyWe0BN+HvNcHjshjIgq9v0sOo+rM4ORx5SzDRfq?=
+ =?us-ascii?Q?z4FSSVWg9ZvjIs5fi9REb56KdW9ojqabIxoD2gKK4P2DD36epgbffg+KK0dx?=
+ =?us-ascii?Q?0pvwTuZcJFbqQKNMTlNEvGoJX523kTCTfmVPu/KsAZn4HTFFBotLOSSJmYGD?=
+ =?us-ascii?Q?+6wK/nnGnApooZy4UmqMCZ9J57FEXwOhsADIlBc+qCAhhfX8Ovpc7dfNrniM?=
+ =?us-ascii?Q?+KjnLbj53IlXxnBrgefwOEC4LHO4j5oOIDgnrmCC/q6SeQrqRWUTRvQF+XFQ?=
+ =?us-ascii?Q?OaahAM2U6oZg/2qa8ZiPERJNYzcSuc7pXt+nqBbhZE6D7c2/irPw3LP1yqdp?=
+ =?us-ascii?Q?514PeEfEdRtHG502xF054Xvvt/eQxghTMUuyM8b/x5dTtIvXBAPB2VtAUIin?=
+ =?us-ascii?Q?dFPAveh4EMNBlPlB8ikDV1HMdZgIf5Mo+h/0a/IFwPLNotXAwlmZdGln1nZB?=
+ =?us-ascii?Q?KOJxKIFStIIngxomV1Py1gHLsNZ/mFtdsRTmZp1oCSdCuKsrd3iRP06obglV?=
+ =?us-ascii?Q?1XeEXR54w/drLZ/4IdwIGXwUQ8Jh1kQd0HN3sdVDpIB9Ff3Pqc5dvHTByAkd?=
+ =?us-ascii?Q?jjzS7M40yzwzCsVHuqGwWCA0qPBnOqnW7ytRyvkETeMErckPFUxLqoRugtWW?=
+ =?us-ascii?Q?ua8B00smSypF290upg2lgE/OCvhea9vIze7eEMbj+3IIXK1a2tLRgadbk1bM?=
+ =?us-ascii?Q?iVNJqWTXTU52/ZEmyqe4z3v5rJcCoOwuTXRr4FGblBO268Tw+/r2GmTQOxKM?=
+ =?us-ascii?Q?0KP3PEtEplC9Y5jN0atDBDHudKr0Ujb7gDP6eTNm9SrpKL99IxFGGbiDIesD?=
+ =?us-ascii?Q?t+qEExY=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SEZPR06MB7140.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014); DIR:OUT;
+ SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?SNoERFoZYjZJCEFQGBiaX4SUBX524f1vqOHUrZYoSK/S0NZ6ajJAUNeo8VBF?=
+ =?us-ascii?Q?xYtKtQGG0UKjqFVudmc1dNgSw5zV9mayAgDjB1p7m8IEaU3TPK0GxMnVzjPd?=
+ =?us-ascii?Q?X1JL6DTQiTL4GJHJd9KILsOKyviOpwNgvxVmhjkB+GlAE+oQumJG6DbGao+v?=
+ =?us-ascii?Q?r8aCOPcCB+71/mOtuBWsp8axT1hSno6I8rt9fGob4Vpo7d6DCwOZcQtbKUt7?=
+ =?us-ascii?Q?gl6U0+8Y4fEQN57QFX/HrCDpSbNrsWep5+POGJoLU/hmkCTiYs5YPJbe3735?=
+ =?us-ascii?Q?y+LAQzGelZYzDO4B8SfqE5CbUGmh2NmVVLXCGF7Va+0pJTjUIrDd6ibdE8SK?=
+ =?us-ascii?Q?dKgTMAA1BsDSOJ1sHP7xKY5OfZ/EI94d1CqqX6HWA2o5xjb5iyz8JJTwG5Gb?=
+ =?us-ascii?Q?R1UmlubRz8f2h1BoCnH5z5/cX7KtA+bnKJNw2nhaZf41QccyMDfgxrtFoBAf?=
+ =?us-ascii?Q?OHN/0XJR2lTqoySdasklIj8P1VINaWPlCYBmFXFER+Zi2T9+CotCONrRkZEX?=
+ =?us-ascii?Q?MLfpax149o1lbb/3ZxkbRGiByxszEuSvl2VjvOFOWJkv7gJPyIjPMBGok8Qf?=
+ =?us-ascii?Q?JLO8Ps6okGSLkWHClxdges3Z24CaaiwR3XnDHXg6Oobq2EkTpFPDRMqarPse?=
+ =?us-ascii?Q?vDIo0oad5PkXI2ybJkodK/D2I9fmQ3sW1QaVhq5ncXo0e+i50VMjUTMKgf9q?=
+ =?us-ascii?Q?e0qq/WmfkxbYP7JVJppvaPhsCysZ5KEcRJEJRcyc4j7xGvBLSTx0lc90yED9?=
+ =?us-ascii?Q?LI4qWzZCbSmkj4PUQtJoyfOC/55RsPNJ/rKrH6IoEv1SIxEoy/oiM3nY/clu?=
+ =?us-ascii?Q?Bag9HOmCBDNb+n244cr31e0z9Q1IhcIHtfwAdhXYtWCuh36qrzx77qm1psU4?=
+ =?us-ascii?Q?NbSSk3QnjfN5xQwmqwyg5PhEM+6pFSREXoy2yPXBuWEibg2ZWnqQu8AmsNr6?=
+ =?us-ascii?Q?QgW0rk+nYEMeIb7oMKtiBSRB5NylK0EPFjIdxq1MuR+qElPjiQe7lmZf/fks?=
+ =?us-ascii?Q?OmLX28DNxGsq7XDDyXG216DpAuzkrrGD68Y0LvguNzhnL2w0nqKF802c5Si5?=
+ =?us-ascii?Q?ejDrhc0NM4v1wHUAgezQSPOEflyh4lYLaZAr4H74LuPK2QWwA8SGNDbbNTig?=
+ =?us-ascii?Q?hV76LdUVc1BdJbL+FfsL1YaUo+vo+IqT6dVj3cIFTNUUAgvFSrZc+sh392OQ?=
+ =?us-ascii?Q?uXBHP5j2dGvyZyqdUgP1Q4tP2m8qtHKBikwgsQpm/rIFNBaiVLhWCwXuuSrq?=
+ =?us-ascii?Q?BaoK0PjvBIzQGG/WUQ5vUpd2wsYgoCGYAnSmK8qu2g/lH7Za6qY67tNKzRnw?=
+ =?us-ascii?Q?jrHGCwdUoskJsCGBExYnwET0Y0z7NIwJdTadeclCLa1GhkRki1zGUIwYUxOL?=
+ =?us-ascii?Q?Nz+jZ//xoty2I+KIEJ8fqzxv/ljJYiRwUrbJEyWKsDpSgow3Mt75sCCKlT1x?=
+ =?us-ascii?Q?mveLYeqDNm5iQMigFUlTij/m78Rnkjcsc2OeSUD4dLFAJyk1RHopccffTmqr?=
+ =?us-ascii?Q?+XHmHAx0cQKB7y2qE7tDxbtsGGcgMM4JD4J3S+r+dCtpETaA0HgkXOvfjkll?=
+ =?us-ascii?Q?qDQ3gaM/vet4+TEtvyf9R4bs6dBRpHUqQ0hX7zR3?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0235061f-1caf-41dc-d356-08dcf277ca4b
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB7140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 08:59:09.0210 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3rGC8dfLJIZRZx8j/DqamAxwsPoRV/U3tdU/Y2XwK6trCsfUMejfKY+tzyzcrGYqf6dzkq6BCjwMFcvUQCmZmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7079
+X-Headers-End: 1t3AxO-0004zD-6H
+Subject: [f2fs-dev] [PATCH v2] f2fs: modify f2fs_is_checkpoint_ready logic
+ to allow more data to be written with the CP disable
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -75,234 +163,81 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: syzbot+be4a9983e95a5e25c8d3@syzkaller.appspotmail.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Qi Han via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Qi Han <hanqi@vivo.com>
+Cc: Qi Han <hanqi@vivo.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-syzbot reports deadlock issue of f2fs as below:
+When the free segment is used up during CP disable, many write or
+ioctl operations will get ENOSPC error codes, even if there are
+still many blocks available. We can reproduce it in the following
+steps:
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-rc3-syzkaller-00087-gc964ced77262 #0 Not tainted
-------------------------------------------------------
-kswapd0/79 is trying to acquire lock:
-ffff888011824088 (&sbi->sb_lock){++++}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2199 [inline]
-ffff888011824088 (&sbi->sb_lock){++++}-{3:3}, at: f2fs_record_stop_reason+0x52/0x1d0 fs/f2fs/super.c:4068
+dd if=/dev/zero of=f2fs.img bs=1M count=65
+mkfs.f2fs -f f2fs.img
+mount f2fs.img f2fs_dir -o checkpoint=disable:10%
+cd f2fs_dir
+i=1 ; while [[ $i -lt 50 ]] ; do (file_name=./2M_file$i ; dd \
+if=/dev/random of=$file_name bs=1M count=2); i=$((i+1)); done
+sync
+i=1 ; while [[ $i -lt 50 ]] ; do (file_name=./2M_file$i ; truncate \
+-s 1K $file_name); i=$((i+1)); done
+sync
+i=1; while [[ $i -lt 10000000 ]]; do (file_name=./file$i; dd \
+if=/dev/random of=$file_name bs=1M count=0); i=$((i+1)); done
 
-but task is already holding lock:
-ffff88804bd92610 (sb_internal#2){.+.+}-{0:0}, at: f2fs_evict_inode+0x662/0x15c0 fs/f2fs/inode.c:842
+In f2fs_need_SSR() function, it is allowed to use SSR to allocate
+blocks when CP is disabled, so in f2fs_is_checkpoint_ready function,
+can we judge the number of invalid blocks when free segment is not
+enough, and return ENOSPC only if the number of invalid blocks is
+also not enough?
 
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (sb_internal#2){.+.+}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1716 [inline]
-       sb_start_intwrite+0x4d/0x1c0 include/linux/fs.h:1899
-       f2fs_evict_inode+0x662/0x15c0 fs/f2fs/inode.c:842
-       evict+0x4e8/0x9b0 fs/inode.c:725
-       f2fs_evict_inode+0x1a4/0x15c0 fs/f2fs/inode.c:807
-       evict+0x4e8/0x9b0 fs/inode.c:725
-       dispose_list fs/inode.c:774 [inline]
-       prune_icache_sb+0x239/0x2f0 fs/inode.c:963
-       super_cache_scan+0x38c/0x4b0 fs/super.c:223
-       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
-       shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
-       shrink_one+0x43b/0x850 mm/vmscan.c:4818
-       shrink_many mm/vmscan.c:4879 [inline]
-       lru_gen_shrink_node mm/vmscan.c:4957 [inline]
-       shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
-       kswapd_shrink_node mm/vmscan.c:6765 [inline]
-       balance_pgdat mm/vmscan.c:6957 [inline]
-       kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #1 (fs_reclaim){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       __fs_reclaim_acquire mm/page_alloc.c:3834 [inline]
-       fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3848
-       might_alloc include/linux/sched/mm.h:318 [inline]
-       prepare_alloc_pages+0x147/0x5b0 mm/page_alloc.c:4493
-       __alloc_pages_noprof+0x16f/0x710 mm/page_alloc.c:4722
-       alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
-       alloc_pages_noprof mm/mempolicy.c:2345 [inline]
-       folio_alloc_noprof+0x128/0x180 mm/mempolicy.c:2352
-       filemap_alloc_folio_noprof+0xdf/0x500 mm/filemap.c:1010
-       do_read_cache_folio+0x2eb/0x850 mm/filemap.c:3787
-       read_mapping_folio include/linux/pagemap.h:1011 [inline]
-       f2fs_commit_super+0x3c0/0x7d0 fs/f2fs/super.c:4032
-       f2fs_record_stop_reason+0x13b/0x1d0 fs/f2fs/super.c:4079
-       f2fs_handle_critical_error+0x2ac/0x5c0 fs/f2fs/super.c:4174
-       f2fs_write_inode+0x35f/0x4d0 fs/f2fs/inode.c:785
-       write_inode fs/fs-writeback.c:1503 [inline]
-       __writeback_single_inode+0x711/0x10d0 fs/fs-writeback.c:1723
-       writeback_single_inode+0x1f3/0x660 fs/fs-writeback.c:1779
-       sync_inode_metadata+0xc4/0x120 fs/fs-writeback.c:2849
-       f2fs_release_file+0xa8/0x100 fs/f2fs/file.c:1941
-       __fput+0x23f/0x880 fs/file_table.c:431
-       task_work_run+0x24f/0x310 kernel/task_work.c:228
-       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
-       exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
-       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-       syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
-       do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&sbi->sb_lock){++++}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
-       f2fs_down_write fs/f2fs/f2fs.h:2199 [inline]
-       f2fs_record_stop_reason+0x52/0x1d0 fs/f2fs/super.c:4068
-       f2fs_handle_critical_error+0x2ac/0x5c0 fs/f2fs/super.c:4174
-       f2fs_evict_inode+0xa61/0x15c0 fs/f2fs/inode.c:883
-       evict+0x4e8/0x9b0 fs/inode.c:725
-       f2fs_evict_inode+0x1a4/0x15c0 fs/f2fs/inode.c:807
-       evict+0x4e8/0x9b0 fs/inode.c:725
-       dispose_list fs/inode.c:774 [inline]
-       prune_icache_sb+0x239/0x2f0 fs/inode.c:963
-       super_cache_scan+0x38c/0x4b0 fs/super.c:223
-       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
-       shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
-       shrink_one+0x43b/0x850 mm/vmscan.c:4818
-       shrink_many mm/vmscan.c:4879 [inline]
-       lru_gen_shrink_node mm/vmscan.c:4957 [inline]
-       shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
-       kswapd_shrink_node mm/vmscan.c:6765 [inline]
-       balance_pgdat mm/vmscan.c:6957 [inline]
-       kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
-Chain exists of:
-  &sbi->sb_lock --> fs_reclaim --> sb_internal#2
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(sb_internal#2);
-                               lock(fs_reclaim);
-                               lock(sb_internal#2);
-  lock(&sbi->sb_lock);
-
-Root cause is there will be potential deadlock in between
-below tasks:
-
-Thread A				Kswapd
-- f2fs_ioc_commit_atomic_write
- - mnt_want_write_file -- down_read lock A
-					- balance_pgdat
-					 - __fs_reclaim_acquire  -- lock B
-					  - shrink_node
-					   - prune_icache_sb
-					    - dispose_list
-					     - f2fs_evict_inode
-					      - sb_start_intwrite  -- down_read lock A
- - f2fs_do_sync_file
-  - f2fs_write_inode
-   - f2fs_handle_critical_error
-    - f2fs_record_stop_reason
-     - f2fs_commit_super
-      - read_mapping_folio
-       - filemap_alloc_folio_noprof
-        - fs_reclaim_acquire  -- lock B
-
-Both threads try to acquire read lock of lock A, then its upcoming write
-lock grabber will trigger deadlock.
-
-Let's always create an asynchronous task in f2fs_handle_critical_error()
-rather than calling f2fs_record_stop_reason() synchronously to avoid
-this potential deadlock issue.
-
-Fixes: b62e71be2110 ("f2fs: support errors=remount-ro|continue|panic mountoption")
-Reported-by: syzbot+be4a9983e95a5e25c8d3@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/6704d667.050a0220.1e4d62.0081.GAE@google.com
-Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Qi Han <hanqi@vivo.com>
 ---
-v2:
-- remove unneeded irq_context parameter from
-f2fs_handle_critical_error() pointed by Daejun Park.
- fs/f2fs/checkpoint.c |  2 +-
- fs/f2fs/f2fs.h       |  3 +--
- fs/f2fs/super.c      | 13 +++++++------
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ fs/f2fs/segment.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 7f76460b721f..efda9a022981 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -32,7 +32,7 @@ void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io,
- 	f2fs_build_fault_attr(sbi, 0, 0);
- 	if (!end_io)
- 		f2fs_flush_merged_writes(sbi);
--	f2fs_handle_critical_error(sbi, reason, end_io);
-+	f2fs_handle_critical_error(sbi, reason);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 71adb4a43bec..b7af84a07435 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -637,12 +637,31 @@ static inline bool has_enough_free_secs(struct f2fs_sb_info *sbi,
+ 	return !has_not_enough_free_secs(sbi, freed, needed);
  }
  
- /*
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9b7fa960cd8b..18a3343d8831 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3644,8 +3644,7 @@ int f2fs_quota_sync(struct super_block *sb, int type);
- loff_t max_file_blocks(struct inode *inode);
- void f2fs_quota_off_umount(struct super_block *sb);
- void f2fs_save_errors(struct f2fs_sb_info *sbi, unsigned char flag);
--void f2fs_handle_critical_error(struct f2fs_sb_info *sbi, unsigned char reason,
--							bool irq_context);
-+void f2fs_handle_critical_error(struct f2fs_sb_info *sbi, unsigned char reason);
- void f2fs_handle_error(struct f2fs_sb_info *sbi, unsigned char error);
- void f2fs_handle_error_async(struct f2fs_sb_info *sbi, unsigned char error);
- int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 9325d8dc7f7d..d9e64ed14092 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4161,8 +4161,7 @@ static bool system_going_down(void)
- 		|| system_state == SYSTEM_RESTART;
- }
- 
--void f2fs_handle_critical_error(struct f2fs_sb_info *sbi, unsigned char reason,
--							bool irq_context)
-+void f2fs_handle_critical_error(struct f2fs_sb_info *sbi, unsigned char reason)
++static inline bool has_enough_free_blks(struct f2fs_sb_info *sbi)
++{
++	long long total_free_blocks = 0;
++	block_t avail_user_block_count;
++	block_t valid_block_count;
++
++	spin_lock(&sbi->stat_lock);
++
++	avail_user_block_count = get_available_block_count(sbi, NULL, true);
++	valid_block_count = valid_user_blocks(sbi);
++	total_free_blocks = avail_user_block_count - valid_block_count;
++
++	spin_unlock(&sbi->stat_lock);
++
++	return (total_free_blocks > 0) ? true : false;
++}
++
+ static inline bool f2fs_is_checkpoint_ready(struct f2fs_sb_info *sbi)
  {
- 	struct super_block *sb = sbi->sb;
- 	bool shutdown = reason == STOP_CP_REASON_SHUTDOWN;
-@@ -4174,10 +4173,12 @@ void f2fs_handle_critical_error(struct f2fs_sb_info *sbi, unsigned char reason,
- 	if (!f2fs_hw_is_readonly(sbi)) {
- 		save_stop_reason(sbi, reason);
+ 	if (likely(!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+ 		return true;
+ 	if (likely(has_enough_free_secs(sbi, 0, 0)))
+ 		return true;
++	if (likely(has_enough_free_blks(sbi)))
++		return true;
+ 	return false;
+ }
  
--		if (irq_context && !shutdown)
--			schedule_work(&sbi->s_error_work);
--		else
--			f2fs_record_stop_reason(sbi);
-+		/*
-+		 * always create an asynchronous task to record stop_reason
-+		 * in order to avoid potential deadlock when running into
-+		 * f2fs_record_stop_reason() synchronously.
-+		 */
-+		schedule_work(&sbi->s_error_work);
- 	}
- 
- 	/*
 -- 
-2.40.1
+2.39.0
 
 
 
