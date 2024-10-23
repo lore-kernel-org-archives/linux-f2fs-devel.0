@@ -4,66 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5675FD1CDC3
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Oct 2024 09:15:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BD671D2E008
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Oct 2024 01:50:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t3AzI-0002iv-FW;
-	Tue, 22 Oct 2024 09:15:35 +0000
+	id 1t3QW7-0003LW-0i;
+	Wed, 23 Oct 2024 01:50:31 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <Zhiguo.Niu@unisoc.com>) id 1t3AzG-0002in-Bu
+ (envelope-from <chao@kernel.org>) id 1t3QW5-0003LP-Dw
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 22 Oct 2024 09:15:33 +0000
+ Wed, 23 Oct 2024 01:50:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9HML3uyDAG/nve6/KatrgcixmFh44J84qki16Swq1zg=; b=VxuArcbuJi0TmQDw49GvGO0dOj
- QfwnRhU7+VOtV5ao8HLs52CbtDVU/izizziaIaFE4R3Lb985DPuJ6BY792LkZ1UnO3KwyHeNT0c5n
- SLOWhSN51AjpIq7Km8DML6yFe2AD+XUyyT2a/6wUKoyqxu916KdXZx/1ZFaZsffAOsvk=;
+ bh=y2bS0e7MGOkF3bSnFhLE0NevizDTgI9kOtZwTxjEnHg=; b=Z/wwTJy5hfVI6ZDNb8r9S1n8ye
+ b8G4/Gen+FAzyWnwXnJlFWkQEfTYfzw2E5hWs6TgzxnN+TACAsSPcptUHfPW3S+V6cyy+6M1TlQjv
+ cH8s1yZSfsH0GbtponSniSzTvX6xiikt5ghNY0zFRxbacrukKAcjoD/zXWIv7GSBifas=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=9HML3uyDAG/nve6/KatrgcixmFh44J84qki16Swq1zg=; b=X
- 1hztyjelCc+um8aFhSdH5rHzYWyaP6EEO2Xbmyb9xcUq2PFrkqXEjQOf652YJceUclXDHY75gyiNF
- dvq7yXYIhk/nse/CXVpCcJYazmEhxF5eBDpPL2zYaGt8s700ykm5KstMadywTqGrn+jjp6ti2VDsh
- JBHBVqrr5nlZ0VrI=;
-Received: from mx1.unisoc.com ([222.66.158.135] helo=SHSQR01.spreadtrum.com)
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=y2bS0e7MGOkF3bSnFhLE0NevizDTgI9kOtZwTxjEnHg=; b=diIKCOHaadXGOJZxAb4wrQDjBJ
+ A3MtpwXiCyn1QDdwjMuwblL8W+MhaAiMSsMi3YkRbDeZlH1OA9FprjAGXjW0hQKvjOR/ouM+r5wFu
+ XsXWGf8jRaPYOb0cw58UoyAf/Zlg2mgMzeRWDz5+jy2KMf4RVETXIxKaViz04uWPqUnE=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t3AzE-00056J-2h for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 22 Oct 2024 09:15:33 +0000
-Received: from dlp.unisoc.com ([10.29.3.86])
- by SHSQR01.spreadtrum.com with ESMTP id 49M9Exu2025686;
- Tue, 22 Oct 2024 17:14:59 +0800 (+08)
- (envelope-from Zhiguo.Niu@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
- by dlp.unisoc.com (SkyGuard) with ESMTPS id 4XXmhs3wV7z2Q4Wxt;
- Tue, 22 Oct 2024 17:14:37 +0800 (CST)
-Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Tue, 22 Oct 2024 17:14:57 +0800
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Tue, 22 Oct 2024 17:14:41 +0800
-Message-ID: <1729588481-29390-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Mailer: git-send-email 1.9.1
+ id 1t3QW4-00017e-JY for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 23 Oct 2024 01:50:29 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by nyc.source.kernel.org (Postfix) with ESMTP id B338DA4487B;
+ Wed, 23 Oct 2024 01:50:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EB6BC4CEC3;
+ Wed, 23 Oct 2024 01:50:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1729648217;
+ bh=fuIHtiUsA+MbgN9XYHvhFtdP/SML3ljCvOyUzUZ4WFg=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=KicYyBG9ekvv+qo87BnfJFJOQio1HD0iqzYU4dDgc2+In5PaQDsiHnB4hfXAH44h/
+ dUWDLrLiQFErw+ufvqQMDTweJ6Eb7sXGFN2kT3MPd/Bj0FJF/SaBlAVe7rMJjfS5+s
+ jC5DnQX4xLIVuAqi8IDUWRq6oV72Dzxu1LQ2uyIhjov3+Z0iczSBJEzn1DvLYv9yJn
+ uIN0kz5sU/UHw9yW8Dq1gU8WX3GDdkahUAYiRXNNHyvRsP93+sn9Hgnx4dXmAP382v
+ /c/WYuxSW99RFKxpGBX3KCbwU0qYNtTBTrp2MwK32qGw3uiiKw2p1bEK/sUkd50SUo
+ mHfQskTq4rSkw==
+Message-ID: <88cc50d5-b793-4faa-b29e-b9cf291dadde@kernel.org>
+Date: Wed, 23 Oct 2024 09:50:13 +0800
 MIME-Version: 1.0
-X-Originating-IP: [10.0.73.87]
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL: SHSQR01.spreadtrum.com 49M9Exu2025686
-X-Headers-End: 1t3AzE-00056J-2h
-Subject: [f2fs-dev] [PATCH] f2fs: fix to avoid use GC_AT when setting
- gc_mode as GC_URGENT_MID
+User-Agent: Mozilla Thunderbird
+To: Qi Han <hanqi@vivo.com>, jaegeuk@kernel.org
+References: <20241022091525.1808542-1-hanqi@vivo.com>
+Content-Language: en-US
+In-Reply-To: <20241022091525.1808542-1-hanqi@vivo.com>
+X-Headers-End: 1t3QW4-00017e-JY
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: modify f2fs_is_checkpoint_ready
+ logic to allow more data to be written with the CP disable
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -75,47 +78,97 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, zhiguo.niu@unisoc.com,
- Hao_hao.Wang@unisoc.com
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-GC_URGENT_MID is introduced by commit
-d98af5f45520 ("f2fs: introduce gc_urgent_mid mode"), aim to does GC
-forcibly uses cost benefit GC approach, but if ATGC is enabled at
-the same time, Age-threshold approach will be selected, which can only
-do amount of GC and it is much less than the numbers of CB approach.
+On 2024/10/22 17:15, Qi Han wrote:
+> When the free segment is used up during CP disable, many write or
+> ioctl operations will get ENOSPC error codes, even if there are
+> still many blocks available. We can reproduce it in the following
+> steps:
+> 
+> dd if=/dev/zero of=f2fs.img bs=1M count=65
+> mkfs.f2fs -f f2fs.img
+> mount f2fs.img f2fs_dir -o checkpoint=disable:10%
+> cd f2fs_dir
+> i=1 ; while [[ $i -lt 50 ]] ; do (file_name=./2M_file$i ; dd \
+> if=/dev/random of=$file_name bs=1M count=2); i=$((i+1)); done
+> sync
+> i=1 ; while [[ $i -lt 50 ]] ; do (file_name=./2M_file$i ; truncate \
+> -s 1K $file_name); i=$((i+1)); done
+> sync
+> i=1; while [[ $i -lt 10000000 ]]; do (file_name=./file$i; dd \
+> if=/dev/random of=$file_name bs=1M count=0); i=$((i+1)); done
 
-some traces:
-  f2fs_gc-254:48-396     [007] ..... 2311600.684028: f2fs_gc_begin: dev = (254,48), gc_type = Background GC, no_background_GC = 0, nr_free_secs = 0, nodes = 1053, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:0
-  f2fs_gc-254:48-396     [007] ..... 2311600.684527: f2fs_get_victim: dev = (254,48), type = No TYPE, policy = (Background GC, LFS-mode, Age-threshold), victim = 10, cost = 4294364975, ofs_unit = 1, pre_victim_secno = -1, prefree = 0, free = 44898
-  f2fs_gc-254:48-396     [007] ..... 2311600.714835: f2fs_gc_end: dev = (254,48), ret = 0, seg_freed = 0, sec_freed = 0, nodes = 1562, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:0
-  f2fs_gc-254:48-396     [007] ..... 2311600.714843: f2fs_background_gc: dev = (254,48), wait_ms = 50, prefree = 0, free = 44898
-  f2fs_gc-254:48-396     [007] ..... 2311600.771785: f2fs_gc_begin: dev = (254,48), gc_type = Background GC, no_background_GC = 0, nr_free_secs = 0, nodes = 1562, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:
-  f2fs_gc-254:48-396     [007] ..... 2311600.772275: f2fs_gc_end: dev = (254,48), ret = -61, seg_freed = 0, sec_freed = 0, nodes = 1562, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:0
+'dd if=/dev/zero of=./file bs=1M count=20' will be more quick to
+trigger SSR allocation.
 
-Fixes: d98af5f45520 ("f2fs: introduce gc_urgent_mid mode")
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
----
- fs/f2fs/gc.c | 1 +
- 1 file changed, 1 insertion(+)
+> 
+> In f2fs_need_SSR() function, it is allowed to use SSR to allocate
+> blocks when CP is disabled, so in f2fs_is_checkpoint_ready function,
+> can we judge the number of invalid blocks when free segment is not
+> enough, and return ENOSPC only if the number of invalid blocks is
+> also not enough?
+> 
+> Signed-off-by: Qi Han <hanqi@vivo.com>
+> ---
+>   fs/f2fs/segment.h | 19 +++++++++++++++++++
+>   1 file changed, 19 insertions(+)
+> 
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 71adb4a43bec..b7af84a07435 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -637,12 +637,31 @@ static inline bool has_enough_free_secs(struct f2fs_sb_info *sbi,
+>   	return !has_not_enough_free_secs(sbi, freed, needed);
+>   }
+>   
+> +static inline bool has_enough_free_blks(struct f2fs_sb_info *sbi)
+> +{
+> +	long long total_free_blocks = 0;
+> +	block_t avail_user_block_count;
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index e40bdd1..daecf69 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -257,6 +257,7 @@ static int select_gc_type(struct f2fs_sb_info *sbi, int gc_type)
- 
- 	switch (sbi->gc_mode) {
- 	case GC_IDLE_CB:
-+	case GC_URGENT_MID:
- 		gc_mode = GC_CB;
- 		break;
- 	case GC_IDLE_GREEDY:
--- 
-1.9.1
+long long avail_user_block_count;
+
+> +	block_t valid_block_count;
+> +
+> +	spin_lock(&sbi->stat_lock);
+> +
+> +	avail_user_block_count = get_available_block_count(sbi, NULL, true);
+> +	valid_block_count = valid_user_blocks(sbi);
+> +	total_free_blocks = avail_user_block_count - valid_block_count;
+
+total_free_blocks =
+	avail_user_block_count - (long long)valid_user_blocks(sbi);
+
+Then, we can avoid allocating & assigning valid_block_count variable.
+
+> +
+> +	spin_unlock(&sbi->stat_lock);
+> +
+> +	return (total_free_blocks > 0) ? true : false;
+
+return total_free_blocks > 0;
+
+Thanks,
+
+> +}
+> +
+>   static inline bool f2fs_is_checkpoint_ready(struct f2fs_sb_info *sbi)
+>   {
+>   	if (likely(!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+>   		return true;
+>   	if (likely(has_enough_free_secs(sbi, 0, 0)))
+>   		return true;
+> +	if (likely(has_enough_free_blks(sbi)))
+> +		return true;
+>   	return false;
+>   }
+>   
 
 
 
