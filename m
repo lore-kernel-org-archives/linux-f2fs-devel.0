@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4B140D149E7
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 917D4D149EA
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 25 Oct 2024 19:16:12 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t4Pn9-0001qL-85;
-	Fri, 25 Oct 2024 19:16:11 +0000
+	id 1t4PnA-0000KS-8Z;
+	Fri, 25 Oct 2024 19:16:12 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1t4Pn6-0001pq-RK
+ (envelope-from <ebiggers@kernel.org>) id 1t4Pn3-0000Ix-Ab
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 25 Oct 2024 19:16:09 +0000
+ Fri, 25 Oct 2024 19:16:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dvjZkh3zkAhMlbw52j1ldldjhDmcPTBwWYL8Z0l92B8=; b=WziwCfQT47zoQQE+uHf4SBdmWG
- JJbhvnT+D+eyfZYRzONQn0hTMq8GfeBjrNs9QJ0UgseLBQbFfx9fGaOIG2aB3/fSH1uaJvWZASGPA
- IglCWe/+jB78TTitFlswXMChA7dpBxv979OM9jGDhlVNVYLYsLPYE/eYszHSpji6MYhU=;
+ bh=rMnm9AwgmDXEuc2yh8LmdqCJvJnHE1qDq44Z13ehTrw=; b=PrIcTJxLnl0TRFzQlvweC+3L1i
+ wfA+v7f2oslh613b3i66fCz49/iJSCP+3cIIXUqxmB4KchsJGd1pa/la0y8fwqfL26YUi5vUZ2S7j
+ E8glS/zu75IlxcdEeznglNyTdRwmCz69bplJmB+PCUiu6UeJ5w7nBE1yXogKWYR9PclE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,39 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=dvjZkh3zkAhMlbw52j1ldldjhDmcPTBwWYL8Z0l92B8=; b=GWJznKv3tajUti5bCznfL1P0b1
- pI1Iqnvs7OjnTrPqsk+QnsU0VFev87paRpq0Ta4+DQb9WK+MWaOt2RzuVD4NDDsh24tIaOstvoVGi
- L7aTZpOCLDTnFkM6vLC3x1lmmHiNPeiFJjtjcHOQgGEa9YGXLRXgiIVdzMBPZjqVDhE4=;
+ bh=rMnm9AwgmDXEuc2yh8LmdqCJvJnHE1qDq44Z13ehTrw=; b=Fm9ZrAeCSkWfFLMuvtalofrgIb
+ XmQ3c6g0ha4JRioPEG8dief2rClQXV1kUhBvitQFd84CZlYV5vmOi0E9Rul2TN2aAze3wZZHq23oh
+ HYfhQFVwjKrXjDPZ2QiaSQBcBGDrKHSlfkG1qjQuyKWHW0mMgZMu43GnF1NuIQBx0hck=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t4Pn6-0005ly-Rd for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 25 Oct 2024 19:16:09 +0000
+ id 1t4Pn2-0005kT-IW for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 25 Oct 2024 19:16:05 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id DFB425C59BF;
- Fri, 25 Oct 2024 19:15:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F53C4CEC3;
- Fri, 25 Oct 2024 19:15:50 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id CF5535C59B9;
+ Fri, 25 Oct 2024 19:15:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47B18C4CEE5;
+ Fri, 25 Oct 2024 19:15:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1729883750;
- bh=kHWHhodawY/PaSA95ElCxVPVWHZVNPifFLwbM7bCJig=;
+ s=k20201202; t=1729883753;
+ bh=WfN2SwQ1SfAPzqKDOcxOjX9pk3UC1SwykLtsIrx3B8I=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=ioauDeBjed5AAxh0JktDhYhi//5q/79Oew//g2sBJO13l2hTcNiaOzFClw1uFOpJl
- rez/R7AKxxbYxkaWAyms6YMS+o3pM4bEihrrbv8z8UL37fGqhwnuntxVSI/7f43Wy6
- mZw7T3LOw+SABicICJJxn3z8hI/G+4Sa4T67U/vgn8DmjFTay1sHjWvOsj65tmEbes
- 6pv2MdY4dgWymSofU/faEl+xKBXglzLHDguJlmHKvBSGhErnz15T42CNOP4Uawgm9j
- dc/PHWgP+6kLGE9kFH4CvGiW+VriTxcErjLcw+o1XBxiYq0eauhf1GJ5XGdBxHiy0v
- rL2YEdWvEgIrQ==
+ b=uCCwJHNYYf343z6r1gEo9PunPQGR1ODph4209rcKOCpQYQ+Z9cKoDHqLtaqlEYjIN
+ 2z+sKje/XEHhSVs1cW9BMdxxPDBwY/8FQEVauYvT4cXN2A4iOYNINsY5i0l8MCF3Ai
+ 8q8X0FhxnigxeUIMEBJmTPwhzbSWVaA9MFxkKUhwN8wIFBFZxp4tuHQutYqCnUlmWV
+ cqk5IIIqvbKBQzhnndsielpobBKgJOaBd54yeDLDV1uZhFlv57rqiHuzwNWxJcKnNA
+ +UiwI5ZIfG85E83/zepiJUyaJTVqaFMCjzmt83JkiUljxXtaIcF4uNjlFC9cXsmWEg
+ OwXqjgm4rW7jQ==
 To: linux-kernel@vger.kernel.org
-Date: Fri, 25 Oct 2024 12:14:48 -0700
-Message-ID: <20241025191454.72616-13-ebiggers@kernel.org>
+Date: Fri, 25 Oct 2024 12:14:53 -0700
+Message-ID: <20241025191454.72616-18-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241025191454.72616-1-ebiggers@kernel.org>
 References: <20241025191454.72616-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1t4Pn6-0005ly-Rd
-Subject: [f2fs-dev] [PATCH v2 12/18] x86/crc32: update prototype for
- crc32_pclmul_le_16()
+X-Headers-End: 1t4Pn2-0005kT-IW
+Subject: [f2fs-dev] [PATCH v2 17/18] f2fs: switch to using the crc32 library
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,92 +92,140 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-- Change the len parameter from unsigned int to size_t, so that the
-  library function which takes a size_t can safely use this code.
-
-- Move the crc parameter to the front, as this is the usual convention.
+Now that the crc32() library function takes advantage of
+architecture-specific optimizations, it is unnecessary to go through the
+crypto API.  Just use crc32().  This is much simpler, and it improves
+performance due to eliminating the crypto API overhead.
 
 Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- arch/x86/crypto/crc32-pclmul_asm.S  | 19 +++++++++----------
- arch/x86/crypto/crc32-pclmul_glue.c |  4 ++--
- 2 files changed, 11 insertions(+), 12 deletions(-)
+ fs/f2fs/Kconfig |  3 +--
+ fs/f2fs/f2fs.h  | 19 +------------------
+ fs/f2fs/super.c | 15 ---------------
+ 3 files changed, 2 insertions(+), 35 deletions(-)
 
-diff --git a/arch/x86/crypto/crc32-pclmul_asm.S b/arch/x86/crypto/crc32-pclmul_asm.S
-index 5d31137e2c7d..f9637789cac1 100644
---- a/arch/x86/crypto/crc32-pclmul_asm.S
-+++ b/arch/x86/crypto/crc32-pclmul_asm.S
-@@ -56,30 +56,29 @@
- 	.octa 0x00000001F701164100000001DB710641
+diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
+index 68a1e23e1557..5916a02fb46d 100644
+--- a/fs/f2fs/Kconfig
++++ b/fs/f2fs/Kconfig
+@@ -2,12 +2,11 @@
+ config F2FS_FS
+ 	tristate "F2FS filesystem support"
+ 	depends on BLOCK
+ 	select BUFFER_HEAD
+ 	select NLS
+-	select CRYPTO
+-	select CRYPTO_CRC32
++	select CRC32
+ 	select F2FS_FS_XATTR if FS_ENCRYPTION
+ 	select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
+ 	select FS_IOMAP
+ 	select LZ4_COMPRESS if F2FS_FS_LZ4
+ 	select LZ4_DECOMPRESS if F2FS_FS_LZ4
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 33f5449dc22d..1fc5c2743c8d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1761,13 +1761,10 @@ struct f2fs_sb_info {
  
- #define CONSTANT %xmm0
+ 	/* For write statistics */
+ 	u64 sectors_written_start;
+ 	u64 kbytes_written;
  
- #ifdef __x86_64__
--#define BUF     %rdi
--#define LEN     %rsi
--#define CRC     %edx
-+#define CRC     %edi
-+#define BUF     %rsi
-+#define LEN     %rdx
- #else
--#define BUF     %eax
--#define LEN     %edx
--#define CRC     %ecx
-+#define CRC     %eax
-+#define BUF     %edx
-+#define LEN     %ecx
- #endif
+-	/* Reference to checksum algorithm driver via cryptoapi */
+-	struct crypto_shash *s_chksum_driver;
+-
+ 	/* Precomputed FS UUID checksum for seeding other checksums */
+ 	__u32 s_chksum_seed;
  
+ 	struct workqueue_struct *post_read_wq;	/* post read workqueue */
  
- 
- .text
- /**
-  *      Calculate crc32
-- *      BUF - buffer (16 bytes aligned)
-- *      LEN - sizeof buffer (16 bytes aligned), LEN should be grater than 63
-  *      CRC - initial crc32
-+ *      BUF - buffer (16 bytes aligned)
-+ *      LEN - sizeof buffer (16 bytes aligned), LEN should be greater than 63
-  *      return %eax crc32
-- *      uint crc32_pclmul_le_16(unsigned char const *buffer,
-- *	                     size_t len, uint crc32)
-+ *      u32 crc32_pclmul_le_16(u32 crc, const u8 *buffer, size_t len);
+@@ -1941,25 +1938,11 @@ static inline unsigned int f2fs_time_to_wait(struct f2fs_sb_info *sbi,
+  * Inline functions
   */
- 
- SYM_FUNC_START(crc32_pclmul_le_16) /* buffer and buffer size are 16 bytes aligned */
- 	movdqa  (BUF), %xmm1
- 	movdqa  0x10(BUF), %xmm2
-diff --git a/arch/x86/crypto/crc32-pclmul_glue.c b/arch/x86/crypto/crc32-pclmul_glue.c
-index 9f5e342b9845..9d14eac51c5b 100644
---- a/arch/x86/crypto/crc32-pclmul_glue.c
-+++ b/arch/x86/crypto/crc32-pclmul_glue.c
-@@ -44,11 +44,11 @@
- #define PCLMUL_MIN_LEN		64L     /* minimum size of buffer
- 					 * for crc32_pclmul_le_16 */
- #define SCALE_F			16L	/* size of xmm register */
- #define SCALE_F_MASK		(SCALE_F - 1)
- 
--u32 crc32_pclmul_le_16(unsigned char const *buffer, size_t len, u32 crc32);
-+u32 crc32_pclmul_le_16(u32 crc, const u8 *buffer, size_t len);
- 
- static u32 __attribute__((pure))
- 	crc32_pclmul_le(u32 crc, unsigned char const *p, size_t len)
+ static inline u32 __f2fs_crc32(struct f2fs_sb_info *sbi, u32 crc,
+ 			      const void *address, unsigned int length)
  {
- 	unsigned int iquotient;
-@@ -69,11 +69,11 @@ static u32 __attribute__((pure))
+-	struct {
+-		struct shash_desc shash;
+-		char ctx[4];
+-	} desc;
+-	int err;
+-
+-	BUG_ON(crypto_shash_descsize(sbi->s_chksum_driver) != sizeof(desc.ctx));
+-
+-	desc.shash.tfm = sbi->s_chksum_driver;
+-	*(u32 *)desc.ctx = crc;
+-
+-	err = crypto_shash_update(&desc.shash, address, length);
+-	BUG_ON(err);
+-
+-	return *(u32 *)desc.ctx;
++	return crc32(crc, address, length);
+ }
+ 
+ static inline u32 f2fs_crc32(struct f2fs_sb_info *sbi, const void *address,
+ 			   unsigned int length)
+ {
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 87ab5696bd48..003d3bcb0caa 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1670,12 +1670,10 @@ static void f2fs_put_super(struct super_block *sb)
+ 
+ 	f2fs_destroy_post_read_wq(sbi);
+ 
+ 	kvfree(sbi->ckpt);
+ 
+-	if (sbi->s_chksum_driver)
+-		crypto_free_shash(sbi->s_chksum_driver);
+ 	kfree(sbi->raw_super);
+ 
+ 	f2fs_destroy_page_array_cache(sbi);
+ 	f2fs_destroy_xattr_caches(sbi);
+ #ifdef CONFIG_QUOTA
+@@ -4419,19 +4417,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		INIT_LIST_HEAD(&sbi->inode_list[i]);
+ 		spin_lock_init(&sbi->inode_lock[i]);
  	}
- 	iquotient = len & (~SCALE_F_MASK);
- 	iremainder = len & SCALE_F_MASK;
+ 	mutex_init(&sbi->flush_lock);
  
- 	kernel_fpu_begin();
--	crc = crc32_pclmul_le_16(p, iquotient, crc);
-+	crc = crc32_pclmul_le_16(crc, p, iquotient);
- 	kernel_fpu_end();
+-	/* Load the checksum driver */
+-	sbi->s_chksum_driver = crypto_alloc_shash("crc32", 0, 0);
+-	if (IS_ERR(sbi->s_chksum_driver)) {
+-		f2fs_err(sbi, "Cannot load crc32 driver.");
+-		err = PTR_ERR(sbi->s_chksum_driver);
+-		sbi->s_chksum_driver = NULL;
+-		goto free_sbi;
+-	}
+-
+ 	/* set a block size */
+ 	if (unlikely(!sb_set_blocksize(sb, F2FS_BLKSIZE))) {
+ 		f2fs_err(sbi, "unable to set blocksize");
+ 		goto free_sbi;
+ 	}
+@@ -4872,12 +4861,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	fscrypt_free_dummy_policy(&F2FS_OPTION(sbi).dummy_enc_policy);
+ 	kvfree(options);
+ free_sb_buf:
+ 	kfree(raw_super);
+ free_sbi:
+-	if (sbi->s_chksum_driver)
+-		crypto_free_shash(sbi->s_chksum_driver);
+ 	kfree(sbi);
+ 	sb->s_fs_info = NULL;
  
- 	if (iremainder)
- 		crc = crc32_le(crc, p + iquotient, iremainder);
+ 	/* give only one another chance */
+ 	if (retry_cnt > 0 && skip_recovery) {
+@@ -5080,7 +5067,5 @@ module_init(init_f2fs_fs)
+ module_exit(exit_f2fs_fs)
  
+ MODULE_AUTHOR("Samsung Electronics's Praesto Team");
+ MODULE_DESCRIPTION("Flash Friendly File System");
+ MODULE_LICENSE("GPL");
+-MODULE_SOFTDEP("pre: crc32");
+-
 -- 
 2.47.0
 
