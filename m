@@ -4,121 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B7CE0D149CD
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 25 Oct 2024 17:50:18 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 13C66D149E8
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 25 Oct 2024 19:15:58 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t4OS1-0001Px-0H;
-	Fri, 25 Oct 2024 17:50:16 +0000
+	id 1t4Pmu-0000Hs-Ty;
+	Fri, 25 Oct 2024 19:15:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <dsterba@suse.cz>) id 1t4ORz-0001Pn-RF
+ (envelope-from <ebiggers@kernel.org>) id 1t4Pmt-0000Hj-Rv
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 25 Oct 2024 17:50:15 +0000
+ Fri, 25 Oct 2024 19:15:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=faWa8hUjhNnXYbB3wXK4vm2P4aNOrVk6VtNX9UfmEFk=; b=T+7n0f5C8LY/8QPOu+d5VXRanb
- Gw8Wrz0YzxaqZ8bx8nE1QwJXspiy+WskldhbAMOVe9JUd4BEGx23DjTkS+eLsYbjTC89/ZMAmOgHr
- bVb14k/6u2CHfHQtzhh6eG/ghy3QbTfVYKm8LDXi+jXaspFrlpX+aiTHWRIHbmMUbUGM=;
+ bh=VEpWY4sXA/S1bLoLnoNT9MT92zIxt9Oz+i41XLKt/cM=; b=JySK75zYGI04Fnj8dmgldaieuC
+ GwOhNtRcarLS93JYHHKs9UBBULXTyjcFV+JKSb0INlaXJOcFuy6fQyew1MkNOuqiyvja+pYRp/91e
+ VqbyGvCTTAhHGFdcy3zCzTlXEqFgEUxJ09HdVI+eVx7OOdD4RtthBp77wuwp8VoHWa6k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Reply-To:Message-ID:
- Subject:Cc:To:From:Date:Sender:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=faWa8hUjhNnXYbB3wXK4vm2P4aNOrVk6VtNX9UfmEFk=; b=ORSOh3JEr8IDOCPmPBpZhiIHd1
- +un+qmG2vbz9dXlIP67SeoezxC4X8hITIPRfHMR4CZy9IOAOS2QJ+VqvTcOpOY3ZH0T+cVRNCuLK9
- 31ej+yMT77Zk3gTkk6STAJ2PcRPDKNVJFBO/7mKzEh3O0JiZbSf9aPEq2/U8QYw0BWe8=;
-Received: from smtp-out2.suse.de ([195.135.223.131])
+ bh=VEpWY4sXA/S1bLoLnoNT9MT92zIxt9Oz+i41XLKt/cM=; b=gfrHspemLM0CixuBkhRif8awSY
+ YoYmqwoMZ+n3wY6Edfag5LcM6fhVQlBcNfKODbU+oWIxIpIh1WgcRRInKZEakjp5/eAsOpnopSBnB
+ gPI8wh6UBEg0BEnPGYZU9ffTduEw/RHn74DHXwOG5/APg7rj8oOqzVJq1cC+3GaWzwwk=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1t4ORx-0006E6-2P for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 25 Oct 2024 17:50:15 +0000
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id 8B7D01F7F9;
- Fri, 25 Oct 2024 17:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1729878601;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=faWa8hUjhNnXYbB3wXK4vm2P4aNOrVk6VtNX9UfmEFk=;
- b=ownTWJ9Lf5ejQQeGvycmodvURhMx88ltENj8SXBaltoPWz5ulsWweH7l8zDR1HzTg8S9+7
- BnTvjo7UW2XcgI1WQ26txumnQv6mDwliAU6xz5sy6S55/sySF+7cVRe28itJ3VauFMkDn5
- icbdKT9T+SjjnkG9eNm9GGVnZx5TgpA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1729878601;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=faWa8hUjhNnXYbB3wXK4vm2P4aNOrVk6VtNX9UfmEFk=;
- b=0VCK8/x2s1IpBCmfQqktzy6zLz7X+8fonFoj20qID/JA+o1WoGI/PnKUYhJAWOILdrlKYu
- wu99lT5t354oU7Dg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1729878601;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=faWa8hUjhNnXYbB3wXK4vm2P4aNOrVk6VtNX9UfmEFk=;
- b=ownTWJ9Lf5ejQQeGvycmodvURhMx88ltENj8SXBaltoPWz5ulsWweH7l8zDR1HzTg8S9+7
- BnTvjo7UW2XcgI1WQ26txumnQv6mDwliAU6xz5sy6S55/sySF+7cVRe28itJ3VauFMkDn5
- icbdKT9T+SjjnkG9eNm9GGVnZx5TgpA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1729878601;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=faWa8hUjhNnXYbB3wXK4vm2P4aNOrVk6VtNX9UfmEFk=;
- b=0VCK8/x2s1IpBCmfQqktzy6zLz7X+8fonFoj20qID/JA+o1WoGI/PnKUYhJAWOILdrlKYu
- wu99lT5t354oU7Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 51B2D132D3;
- Fri, 25 Oct 2024 17:50:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id 3LpvE0naG2deGwAAD6G6ig
- (envelope-from <dsterba@suse.cz>); Fri, 25 Oct 2024 17:50:01 +0000
-Date: Fri, 25 Oct 2024 19:49:59 +0200
-From: David Sterba <dsterba@suse.cz>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Message-ID: <20241025174959.GH31418@suse.cz>
-References: <20240926140121.203821-1-kernel@pankajraghav.com>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1t4Pmt-0005hI-1I for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 25 Oct 2024 19:15:55 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id 698025C061C;
+ Fri, 25 Oct 2024 19:14:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4FEAC4CEE3;
+ Fri, 25 Oct 2024 19:15:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1729883744;
+ bh=ABiaGm+ovhik7YFigewZFubogtN32tz5BD1p0OQq720=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=Vz1H2ANIZERjEpj+I85MKJfdlEpz1SofCIjzgMXNRgrjt8vSPi8NWgf8Q6R4pjn5r
+ X2cGZ6mXRM4KH4EJHSmPpw/sQpx1SXtGmPuNI0f4GTkha+23sVsdFNFd7oNgiKNIcK
+ Jeiz7i0/NpA9zcRhJUWRAgAppnb1vyaxtwlHI2wVbMQvS5SJL0WhiR5D+Epx1sd9PD
+ t6xEbw2ztBl7vtK2VjB5bf9Hc9lkERBR+cTObiA8hRyoMeNv+0AKkbhZIhy9ZUJYqD
+ nAQgRkoDXClPz1x5qFL7LMaY1913EqBa3xDEAbpa7lNBBD6ftJGS6Y6RMRGWhPAf/s
+ UKLLrPEYq5UmQ==
+To: linux-kernel@vger.kernel.org
+Date: Fri, 25 Oct 2024 12:14:37 -0700
+Message-ID: <20241025191454.72616-2-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241025191454.72616-1-ebiggers@kernel.org>
+References: <20241025191454.72616-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20240926140121.203821-1-kernel@pankajraghav.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.00 / 50.00]; BAYES_HAM(-3.00)[100.00%];
- NEURAL_HAM_LONG(-1.00)[-1.000];
- HAS_REPLYTO(0.30)[dsterba@suse.cz];
- NEURAL_HAM_SHORT(-0.20)[-1.000]; MIME_GOOD(-0.10)[text/plain];
- RCPT_COUNT_TWELVE(0.00)[30];
- R_RATELIMIT(0.00)[to_ip_from(RL56wjrisuox4ztiyaq54br4m8)];
- MIME_TRACE(0.00)[0:+]; RCVD_VIA_SMTP_AUTH(0.00)[];
- ARC_NA(0.00)[]; TO_DN_SOME(0.00)[]; MID_RHS_MATCH_FROM(0.00)[];
- RCVD_TLS_ALL(0.00)[]; FUZZY_BLOCKED(0.00)[rspamd.com];
- FROM_EQ_ENVFROM(0.00)[]; FROM_HAS_DN(0.00)[];
- DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
- REPLYTO_ADDR_EQ_FROM(0.00)[];
- DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:mid,suse.com:email,samsung.com:email];
- RCVD_COUNT_TWO(0.00)[2]; TO_MATCH_ENVRCPT_ALL(0.00)[];
- REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Headers-End: 1t4ORx-0006E6-2P
-Subject: Re: [f2fs-dev] [PATCH] fs/writeback: convert
- wbc_account_cgroup_owner to take a folio
+X-Headers-End: 1t4Pmt-0005hI-1I
+Subject: [f2fs-dev] [PATCH v2 01/18] lib/crc32: drop leading underscores
+ from __crc32c_le_base
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -130,51 +77,177 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: dsterba@suse.cz
-Cc: Jan Kara <jack@suse.cz>, linux-doc@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, Chris Mason <clm@fb.com>,
- Andreas Dilger <adilger.kernel@dilger.ca>, Zefan Li <lizefan.x@bytedance.com>,
- cgroups@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- gost.dev@samsung.com, willy@infradead.org, linux-ext4@vger.kernel.org,
- Pankaj Raghav <p.raghav@samsung.com>, Josef Bacik <josef@toxicpanda.com>,
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- David Sterba <dsterba@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, mcgrof@kernel.org,
- Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
- akpm@linux-foundation.org, linux-btrfs@vger.kernel.org
+From: Eric Biggers via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-arch@vger.kernel.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, x86@kernel.org, linux-mips@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-crypto@vger.kernel.org,
+ loongarch@lists.linux.dev, sparclinux@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-ext4@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, Ard Biesheuvel <ardb@kernel.org>,
+ linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Sep 26, 2024 at 04:01:21PM +0200, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
-> 
-> Most of the callers of wbc_account_cgroup_owner() are converting a folio
-> to page before calling the function. wbc_account_cgroup_owner() is
-> converting the page back to a folio to call mem_cgroup_css_from_folio().
-> 
-> Convert wbc_account_cgroup_owner() to take a folio instead of a page,
-> and convert all callers to pass a folio directly except f2fs.
-> 
-> Convert the page to folio for all the callers from f2fs as they were the
-> only callers calling wbc_account_cgroup_owner() with a page. As f2fs is
-> already in the process of converting to folios, these call sites might
-> also soon be calling wbc_account_cgroup_owner() with a folio directly in
-> the future.
-> 
-> No functional changes. Only compile tested.
-> 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> ---
->  fs/btrfs/extent_io.c                    | 7 +++----
->  fs/btrfs/inode.c                        | 2 +-
+From: Eric Biggers <ebiggers@google.com>
 
-If you ever want to continue with the conversion then for the btrfs part
+Remove the leading underscores from __crc32c_le_base().
 
-Acked-by: David Sterba <dsterba@suse.com>
+This is in preparation for adding crc32c_le_arch() and eventually
+renaming __crc32c_le() to crc32c_le().
+
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ arch/arm64/lib/crc32-glue.c | 2 +-
+ arch/riscv/lib/crc32.c      | 2 +-
+ crypto/crc32c_generic.c     | 8 ++++----
+ include/linux/crc32.h       | 2 +-
+ lib/crc32.c                 | 4 ++--
+ lib/crc32test.c             | 2 +-
+ 6 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm64/lib/crc32-glue.c b/arch/arm64/lib/crc32-glue.c
+index 295ae3e6b997..ad015223d15d 100644
+--- a/arch/arm64/lib/crc32-glue.c
++++ b/arch/arm64/lib/crc32-glue.c
+@@ -42,11 +42,11 @@ u32 __pure crc32_le(u32 crc, unsigned char const *p, size_t len)
+ }
+ 
+ u32 __pure __crc32c_le(u32 crc, unsigned char const *p, size_t len)
+ {
+ 	if (!alternative_has_cap_likely(ARM64_HAS_CRC32))
+-		return __crc32c_le_base(crc, p, len);
++		return crc32c_le_base(crc, p, len);
+ 
+ 	if (len >= min_len && cpu_have_named_feature(PMULL) && crypto_simd_usable()) {
+ 		kernel_neon_begin();
+ 		crc = crc32c_le_arm64_4way(crc, p, len);
+ 		kernel_neon_end();
+diff --git a/arch/riscv/lib/crc32.c b/arch/riscv/lib/crc32.c
+index d7dc599af3ef..333fb7af1192 100644
+--- a/arch/riscv/lib/crc32.c
++++ b/arch/riscv/lib/crc32.c
+@@ -224,11 +224,11 @@ u32 __pure crc32_le(u32 crc, unsigned char const *p, size_t len)
+ }
+ 
+ u32 __pure __crc32c_le(u32 crc, unsigned char const *p, size_t len)
+ {
+ 	return crc32_le_generic(crc, p, len, CRC32C_POLY_LE,
+-				CRC32C_POLY_QT_LE, __crc32c_le_base);
++				CRC32C_POLY_QT_LE, crc32c_le_base);
+ }
+ 
+ static inline u32 crc32_be_unaligned(u32 crc, unsigned char const *p,
+ 				     size_t len)
+ {
+diff --git a/crypto/crc32c_generic.c b/crypto/crc32c_generic.c
+index 7c2357c30fdf..635599b255ec 100644
+--- a/crypto/crc32c_generic.c
++++ b/crypto/crc32c_generic.c
+@@ -83,11 +83,11 @@ static int chksum_setkey(struct crypto_shash *tfm, const u8 *key,
+ static int chksum_update(struct shash_desc *desc, const u8 *data,
+ 			 unsigned int length)
+ {
+ 	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+ 
+-	ctx->crc = __crc32c_le_base(ctx->crc, data, length);
++	ctx->crc = crc32c_le_base(ctx->crc, data, length);
+ 	return 0;
+ }
+ 
+ static int chksum_update_arch(struct shash_desc *desc, const u8 *data,
+ 			      unsigned int length)
+@@ -106,11 +106,11 @@ static int chksum_final(struct shash_desc *desc, u8 *out)
+ 	return 0;
+ }
+ 
+ static int __chksum_finup(u32 *crcp, const u8 *data, unsigned int len, u8 *out)
+ {
+-	put_unaligned_le32(~__crc32c_le_base(*crcp, data, len), out);
++	put_unaligned_le32(~crc32c_le_base(*crcp, data, len), out);
+ 	return 0;
+ }
+ 
+ static int __chksum_finup_arch(u32 *crcp, const u8 *data, unsigned int len,
+ 			       u8 *out)
+@@ -198,16 +198,16 @@ static struct shash_alg algs[] = {{
+ }};
+ 
+ static int __init crc32c_mod_init(void)
+ {
+ 	/* register the arch flavor only if it differs from the generic one */
+-	return crypto_register_shashes(algs, 1 + (&__crc32c_le != &__crc32c_le_base));
++	return crypto_register_shashes(algs, 1 + (&__crc32c_le != &crc32c_le_base));
+ }
+ 
+ static void __exit crc32c_mod_fini(void)
+ {
+-	crypto_unregister_shashes(algs, 1 + (&__crc32c_le != &__crc32c_le_base));
++	crypto_unregister_shashes(algs, 1 + (&__crc32c_le != &crc32c_le_base));
+ }
+ 
+ subsys_initcall(crc32c_mod_init);
+ module_exit(crc32c_mod_fini);
+ 
+diff --git a/include/linux/crc32.h b/include/linux/crc32.h
+index 87f788c0d607..5b07fc9081c4 100644
+--- a/include/linux/crc32.h
++++ b/include/linux/crc32.h
+@@ -37,11 +37,11 @@ static inline u32 crc32_le_combine(u32 crc1, u32 crc2, size_t len2)
+ {
+ 	return crc32_le_shift(crc1, len2) ^ crc2;
+ }
+ 
+ u32 __pure __crc32c_le(u32 crc, unsigned char const *p, size_t len);
+-u32 __pure __crc32c_le_base(u32 crc, unsigned char const *p, size_t len);
++u32 __pure crc32c_le_base(u32 crc, unsigned char const *p, size_t len);
+ 
+ /**
+  * __crc32c_le_combine - Combine two crc32c check values into one. For two
+  * 			 sequences of bytes, seq1 and seq2 with lengths len1
+  * 			 and len2, __crc32c_le() check values were calculated
+diff --git a/lib/crc32.c b/lib/crc32.c
+index ff587fee3893..c67059b0082b 100644
+--- a/lib/crc32.c
++++ b/lib/crc32.c
+@@ -205,12 +205,12 @@ EXPORT_SYMBOL(crc32_le);
+ EXPORT_SYMBOL(__crc32c_le);
+ 
+ u32 __pure crc32_le_base(u32, unsigned char const *, size_t) __alias(crc32_le);
+ EXPORT_SYMBOL(crc32_le_base);
+ 
+-u32 __pure __crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
+-EXPORT_SYMBOL(__crc32c_le_base);
++u32 __pure crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
++EXPORT_SYMBOL(crc32c_le_base);
+ 
+ u32 __pure crc32_be_base(u32, unsigned char const *, size_t) __alias(crc32_be);
+ 
+ /*
+  * This multiplies the polynomials x and y modulo the given modulus.
+diff --git a/lib/crc32test.c b/lib/crc32test.c
+index 03cf5c1f2f5d..30b8da4d8be4 100644
+--- a/lib/crc32test.c
++++ b/lib/crc32test.c
+@@ -824,11 +824,11 @@ static void crc32test_regenerate(void)
+ 	for (i = 0; i < ARRAY_SIZE(test); i++) {
+ 		pr_info("{0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x},\n",
+ 			test[i].crc, test[i].start, test[i].length,
+ 			crc32_le_base(test[i].crc, test_buf + test[i].start, test[i].length),
+ 			crc32_be_base(test[i].crc, test_buf + test[i].start, test[i].length),
+-			__crc32c_le_base(test[i].crc, test_buf + test[i].start, test[i].length));
++			crc32c_le_base(test[i].crc, test_buf + test[i].start, test[i].length));
+ 	}
+ }
+ 
+ static int __init crc32test_init(void)
+ {
+-- 
+2.47.0
+
 
 
 _______________________________________________
