@@ -4,69 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 77552D339AC
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Oct 2024 17:40:51 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 405C5D339A9
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Oct 2024 17:40:53 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t5TjX-0005UY-56;
-	Mon, 28 Oct 2024 17:40:51 +0000
+	id 1t5TjY-0006a2-Tv;
+	Mon, 28 Oct 2024 17:40:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1t5TjV-0005UF-Hw
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1t5TjX-0006Zn-NM
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Oct 2024 17:40:49 +0000
+ Mon, 28 Oct 2024 17:40:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=J7HORIs4RAG1VqOetH5CF0vQI5uqYvd+1TGsl2XIL0o=; b=JKXSJ7u3l/rZKuaUPbQwY5KRr2
- onfQ8yQw2NAAMS1e767dAZmNfnIDVcjbIg8luoqFE3IyIHpYo1sXMXnnknQr/1cBQclZWQOWR99CZ
- xPuerFipT6fGmtAdWewD72tKi65T7/umwAv2nTPQH/VcnOk5f1KY63CfYBZFZZ46zpHw=;
+ bh=DtceajjdqrB9GpooweyjprIhbYebjP+TV/Wb8LsnbCA=; b=aytbrPTXYl8/Qn7/IEDmdkZ9z2
+ dPxVG1SzpQsI93d9QjwWPUfFZzGq2uIei/FHrk22l0gZCVMdADzaFVCl49yBE6EjmnBBsdJyX0njS
+ tVS9HQ1tPmOBqaH10/5w5kdurF3F0hp9X+wu47qY41EI0M2QSAxLEwAD/ciLeDClyG1E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=J7HORIs4RAG1VqOetH5CF0vQI5uqYvd+1TGsl2XIL0o=; b=lUoxBeSxpfkF4wTzO80hHqU4Gm
- L0Rp1gbCr7JGkV9FP/0KuJZfyANFPCsDhUJTrAJBBa3dc7dS6FkC1BU+r8epbG+FfqKdx7DsU/TmN
- WHeE3gpGv71tK9smGyu/TRz1YnZhmZaoS8tDH/ihADrGtZj0x3gul/Tb8fIEr3kNGRMw=;
+ bh=DtceajjdqrB9GpooweyjprIhbYebjP+TV/Wb8LsnbCA=; b=QIGmPfF/osn3vPAydew8E9P0pI
+ 8c4AB/aSvwRbn+viWl1DDcEnV3oE1Lf5ByYkwaQDQGxobXZRpXB580HUHwXxbz4cO6u2hs+oL+V1X
+ zbO9THyiFwVnUJCrRn6/ecZfwZHYC8db3vXVwjQ/qk3xnIIJ1cYEOPRfegxURhNwJhZE=;
 Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t5TjU-0005Ho-TJ for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Oct 2024 17:40:49 +0000
+ id 1t5TjX-0005I2-4b for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 28 Oct 2024 17:40:51 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 2A746A42A22;
- Mon, 28 Oct 2024 17:38:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9EA7C4CEC3;
- Mon, 28 Oct 2024 17:40:37 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id 6DB8AA42A3F;
+ Mon, 28 Oct 2024 17:38:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C73A0C4CEC7;
+ Mon, 28 Oct 2024 17:40:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1730137237;
- bh=IYZJMW0PqsDnvR/T7OuWRv3s0dXr/XWCPZbw4RXqxRo=;
+ s=k20201202; t=1730137244;
+ bh=oAVSG+yB+cyj+s/3SUnyZYVkU1Bj4kmt6Y62HezNCAU=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=XR4H32rxcjEjPoPeuFQAvvMMz5gyTuYrAgu/ik9SYyH22+ofCDhC69O2OQwcJkOoN
- wnEn0d6fDFDwfnj+lsIIvP5z/iQ06/buiCAT+ZH52Hrvm+n2D1ttVIO/3lKsjHRscf
- JinZ/qtlxP6Ii4DhTJkm3w+jf3hTFfmB4fZEjfprq8wgSUbMt4LbT0NYZsFvWo6Qt+
- ji8SVfigolnnwRXNG/GnQNxLV8er7jITBDGnYGtvzHgRdmE5ORv3iKU2QT0EnSK9dl
- reR+1IbPauMODCuGOIIAA9UdYo0Em3ye9BZG1RsqaIkhslP/262gvJG6v0LV76tdBR
- o0G57wPjbTDdA==
+ b=tXtXkxVpMOitrzx6nsiKVDmRlFsSzBrJvWquk3T/YquntvpfvnyzZ8A5AqcFi2UUT
+ 0Z8dqwpX6tSuOZxxKWa+dZ5ZT1mktkzjIIfejG9hlmTiOOBEfxv4tZtNfLGKRsMFkw
+ PEjDrQxrvsIiqJkAXik/VeJxWARVZ9ckR5CTCwV8pKAidesMpVI6jTAKKc+eNYGFQK
+ Ez9w8bqwrPk7Oi0LhskCD9vrhFJPZdHwXo6diaCvcql/sgNt2vV0SrflXzEZRG4ayN
+ aHzVYna2MNFKdhNv4RInL0knnmfWltnqjRb3kQW6fjaZAx5R9cNrvb6q22ZtJ6E5Ho
+ ke8Bfy02HRexA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 70C6D380AC1C; Mon, 28 Oct 2024 17:40:46 +0000 (UTC)
+ 70CC2380AC1C; Mon, 28 Oct 2024 17:40:53 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <173013724524.126843.7666285909402123945.git-patchwork-notify@kernel.org>
-Date: Mon, 28 Oct 2024 17:40:45 +0000
-References: <20240929080011.3802327-1-hanqi@vivo.com>
-In-Reply-To: <20240929080011.3802327-1-hanqi@vivo.com>
-To: Qi Han <hanqi@vivo.com>
-X-Headers-End: 1t5TjU-0005Ho-TJ
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: compress: fix inconsistent update
- of i_blocks in release_compress_blocks and reserve_compress_blocks
+Message-Id: <173013725198.126843.18427648602595118258.git-patchwork-notify@kernel.org>
+Date: Mon, 28 Oct 2024 17:40:51 +0000
+References: <20241021023147.1774412-1-weilongping@oppo.com>
+In-Reply-To: <20241021023147.1774412-1-weilongping@oppo.com>
+To: LongPing Wei <weilongping@oppo.com>
+X-Headers-End: 1t5TjX-0005I2-4b
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix the wrong f2fs_bug_on condition
+ in f2fs_do_replace_block
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,8 +81,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -92,31 +91,20 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Sun, 29 Sep 2024 02:00:10 -0600 you wrote:
-> After release a file and subsequently reserve it, the FSCK flag is set
-> when the file is deleted, as shown in the following backtrace:
+On Mon, 21 Oct 2024 10:31:47 +0800 you wrote:
+> This f2fs_bug_on was introduced by commit 2c1905042c8c ("f2fs: check
+> segment type in __f2fs_replace_block") when there were only 6 curseg types.
+> After commit d0b9e42ab615 ("f2fs: introduce inmem curseg") was introduced,
+> the condition should be changed to checking curseg->seg_type.
 > 
-> F2FS-fs (dm-48): Inconsistent i_blocks, ino:401231, iblocks:1448, sectors:1472
-> fs_rec_info_write_type+0x58/0x274
-> f2fs_rec_info_write+0x1c/0x2c
-> set_sbi_flag+0x74/0x98
-> dec_valid_block_count+0x150/0x190
-> f2fs_truncate_data_blocks_range+0x2d4/0x3cc
-> f2fs_do_truncate_blocks+0x2fc/0x5f0
-> f2fs_truncate_blocks+0x68/0x100
-> f2fs_truncate+0x80/0x128
-> f2fs_evict_inode+0x1a4/0x794
-> evict+0xd4/0x280
-> iput+0x238/0x284
-> do_unlinkat+0x1ac/0x298
-> __arm64_sys_unlinkat+0x48/0x68
-> invoke_syscall+0x58/0x11c
+> Fixes: d0b9e42ab615 ("f2fs: introduce inmem curseg")
+> Signed-off-by: LongPing Wei <weilongping@oppo.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: compress: fix inconsistent update of i_blocks in release_compress_blocks and reserve_compress_blocks
-    https://git.kernel.org/jaegeuk/f2fs/c/26413ce18e85
+  - [f2fs-dev,v2] f2fs: fix the wrong f2fs_bug_on condition in f2fs_do_replace_block
+    https://git.kernel.org/jaegeuk/f2fs/c/522e5de97dc1
 
 You are awesome, thank you!
 -- 
