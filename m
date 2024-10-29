@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C2867D2AB35
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6F5BBD2AB33
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 29 Oct 2024 12:27:37 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t5lJx-0004a7-EU;
+	id 1t5lJw-0006m1-Cc;
 	Tue, 29 Oct 2024 12:27:37 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong@oppo.com>) id 1t5lJw-0004Zr-9P
+ (envelope-from <shengyong@oppo.com>) id 1t5lJu-0006lk-3T
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 29 Oct 2024 12:27:36 +0000
+ Tue, 29 Oct 2024 12:27:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
  :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zS4GPqGXndJK4G7VDt8cMpBOpzTeT34OBTLuih9UEUg=; b=DvCh1hFDDy3AFKEw3fkIaGA+LA
- G7xSHyhQjPy+Dbi4U8l5jjNx1eZ3alyBCUvyljtXr9vsRrQdLf6NbxSA+NqBelJwpC0WybY4pQDze
- y9dP/Ro89hCWAn8qP9XquUxyy750MTBHNj0naY8+zpJ6RGuvrSTXc+W09dozaNhDfwmo=;
+ bh=Gy5s7n/f9sXm+lK7/nKIBoASAqOkWzuXhnAl2Y+nuf8=; b=A+sCxy/6TJRMPrekO77M5xyN6a
+ EK8qxut/6ahI/sHnpSBzgGv5qiVA49/dRKpBvApeigeqbuiokAUbNB1q5riJS+Thg6XGhw752vrMX
+ roKy8APCrCxxP2FpPw9uN1mRj+vKIaHLg9KcNLXJHGhPYQwpPCTF7wMUDPHweoEawu9U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Content-Type:Content-Transfer-Encoding:References:
@@ -33,44 +33,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=zS4GPqGXndJK4G7VDt8cMpBOpzTeT34OBTLuih9UEUg=; b=LtesXPUuGhrDeBORh4f+1K89hC
- iC4nxd/+6FfAg5HH5NiYohnqNLmEYCEpVah9v/Yilwep5/vzcFl6qq4PIoxYszw8qGCWMtp9TcOxo
- oRtfGrNUr36ct4qGQLtU23AcUOrGKaa/mrIxQK7N0OD3YGHmSsV/+Uhwpb66ekVqD/a4=;
+ bh=Gy5s7n/f9sXm+lK7/nKIBoASAqOkWzuXhnAl2Y+nuf8=; b=i6qEM0PfxWA7GWLBdw5o6i30Lp
+ trh5dpgZOic63me0pfE7wNUQaI0p1j9iLxa4JOqFkzhTDyJV0YZvTM4ppWm/9kd0Ramz7dP6fotOh
+ m4quK/+Fnq5RT27/kFNO6JbMbjf/3AnO3i5/KzeMHUcgygM0nOY6GmBroEp4Vs3gwR78=;
 Received: from mail-koreacentralazon11013071.outbound.protection.outlook.com
  ([40.107.44.71] helo=SEYPR02CU001.outbound.protection.outlook.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t5lJv-0000f1-5N for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 29 Oct 2024 12:27:36 +0000
+ id 1t5lJs-0000f1-6G for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 29 Oct 2024 12:27:34 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gthq5It8xjBTlxUd/3f4N8IchBCVhvRECy4jcmZbdHBWIC+g6Jf43gM9Y+rjF27KOE1H36VGc/Vmk3wRgWYTYm5ZRbp3vG0EHCd4AMS4viggY181lUUHdqwemHT68TiS6ydbI62GNqmjGcPXQ/qvZzSC4kaFfCiFd6zC/meiF+J7wPBywA+eV3UgjgSHEJIVZuzBMsfMon2RqTis4bz6QxpjiauiKKNRp8SLcpLc4e7ieyd25hbAT+XohmHkKrKtXww/px5aNEhLOrU0lHkZvfFUPy0TAtWKqsoVoTeFGuIOcpFUumPysYNP7bC6JVKoVl2fBIOfR7sqL+pyLzI2IQ==
+ b=UmgaQInFxhpjUzvZ9w3Et78/QE14a9Z8Sq7Iz6UsitfltQq4M9FjnnagIDSf1+a3SyPqmK9YpgGO4vkuAI10RgMnT1PxEoiC9TVwAcuFYR0AOH9TLm6OT+ixJdSaqbR5NJJWLkjInaVwbbig2Qd69KBegX9oH7O3/ITRARytq9sof3T8zAUtbdCBKbEIH8f91UKGtv2WOWO7mavyJag3JmoPNB5RtJlJtkXPlmf7vbRJWAdXC33yLlaYwhmgbIHLRQobwDY9qIMV1Mt5UF5i1aq7zYx+nAlqi2CDewOJ1E8FLzjRQ1dSbHz2yb6z0SegD4zKQZdAEeKQ1EImhFmRlA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zS4GPqGXndJK4G7VDt8cMpBOpzTeT34OBTLuih9UEUg=;
- b=KrRYaKpTf09fbI90XiJ26TZ7abKA7s27YtYIXRWrezCqNAwNyzAbgrkhcqLVp02HCtP0IlcMaGrOZAKpmWqOAc3GZVWOAOMdtnc6djR/QXju/+tlKQmqVj5XsHe74GJP8kN03FWLMNudxIbbIteIRUFcCa7oVXiovcU7WV3USTKqtG8w6yo9YgPSMneu4yJFvvb90rBP9eR28qBPRmkXWP7Kr8AhLcTamdhoiqHOUe0ew6t5XXbAFMeNTyiglNLZG+Aoe2GxiwhYzy5pMhqqjz1dXlTrdSN0hO1hvtjqz9OGLHyANIMSLS8a9WoXj7MGGLAWKQZqJm/i7fT9xDcQyg==
+ bh=Gy5s7n/f9sXm+lK7/nKIBoASAqOkWzuXhnAl2Y+nuf8=;
+ b=iV6ld1FrRsVoZ3d/Y0rt4IrZ8PfZiTYdDIzhVkvRVRKls1OA0ZISBSKwnl89MnLnp444R56/61F1QGiJ4r215P/teZK+IFpYO8LxurJWwGJrB+Zrw08NSIApo4BVQ3RPJIq6IaH9JFL6vo5LKODEqpjGSbvnkVyGuk3n76BY+H7SWZiwkecmIL71zYDiVASOzPfI6N8UGjJstShNmzyxIDKk5xjOq0uZ0GcxmVeM52RzRkqnvRkQGJM6oEeGHacuB9gZ0g79BXEX/YSrr1JQHcq14+NlpAveVrDVWcr+Q6Ahr0ViugJvrcQ/obUoNdr+aN34X1PsjOfpG8zQ34RhGA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
  dkim=pass header.d=oppo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zS4GPqGXndJK4G7VDt8cMpBOpzTeT34OBTLuih9UEUg=;
- b=cV6hR840qDyxriLo61IbUO0byckEND5+xqtTfqss68ILHycg8rn7jkEMpjQ3cSRnysnk0q683n9xOC0ZEtsS2rCAZ3NY2FwKq5Z713xkXiSxWpm9S20hloOdmBKDnsh8OI5iZyRSekaKrOOcd6MqhgJcaS2ETzjj9SsnwDN8C7Y=
+ bh=Gy5s7n/f9sXm+lK7/nKIBoASAqOkWzuXhnAl2Y+nuf8=;
+ b=SIkCvWjphoJ9MJJRJO403cFkKpDpTRwc6f1n7wkfUJRkUp6ivO2ucRu6HXROAg50FHRICJGqdkuIvCk2zyPKxtZWP2JeJ6rzjPPmHeD032q8o8xBvCb28FYf5p+FhR4gcYR5jTZeQ9xpH9oxhq4SpozvNE2ojmoLQtoHUz1Y46M=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oppo.com;
 Received: from SEYPR02MB6014.apcprd02.prod.outlook.com (2603:1096:101:6b::10)
  by TY0PR02MB6982.apcprd02.prod.outlook.com (2603:1096:405:e::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Tue, 29 Oct
- 2024 12:11:42 +0000
+ 2024 12:11:48 +0000
 Received: from SEYPR02MB6014.apcprd02.prod.outlook.com
  ([fe80::bb06:c283:a50:7796]) by SEYPR02MB6014.apcprd02.prod.outlook.com
  ([fe80::bb06:c283:a50:7796%7]) with mapi id 15.20.8093.023; Tue, 29 Oct 2024
- 12:11:42 +0000
+ 12:11:48 +0000
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 29 Oct 2024 20:09:44 +0800
-Message-Id: <20241029120956.4186731-13-shengyong@oppo.com>
+Date: Tue, 29 Oct 2024 20:09:49 +0800
+Message-Id: <20241029120956.4186731-18-shengyong@oppo.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20241029120956.4186731-1-shengyong@oppo.com>
 References: <20241029120956.4186731-1-shengyong@oppo.com>
@@ -80,80 +80,80 @@ X-ClientProxiedBy: SG2PR01CA0175.apcprd01.prod.exchangelabs.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SEYPR02MB6014:EE_|TY0PR02MB6982:EE_
-X-MS-Office365-Filtering-Correlation-Id: 652cd89b-2dd5-46b7-3aa5-08dcf812d947
+X-MS-Office365-Filtering-Correlation-Id: 32fbd625-fb75-482f-3337-08dcf812dcdb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|1800799024|366016|376014|52116014|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?paeo2ZvKARNV0+F415M8Bq7GrPdd4yGvhwpA4IY+qvrVb5TTS5JN+o/9T2AR?=
- =?us-ascii?Q?IAy3TzkTMB3E3R339Qm00bsluqzap6z9P59w8h4VDwOyKodyAcq5EO1KlTrH?=
- =?us-ascii?Q?pG4YTpMv/yL3ty1KLUzNJXOVTCtOtW5QcB3Ka2ZdCqbww4USV/kvJiAnbKRE?=
- =?us-ascii?Q?aA97nsuCS0yh67ZPSXX13dgAetZq6MfOz/IyFGMsnLk6SW9K4xdzXrz7FM5k?=
- =?us-ascii?Q?cpxVkmy5t+PtV4nLIHATek7sT2QyhZfQdawSazKJ6W62i1kU5HoKygKMpCgx?=
- =?us-ascii?Q?lPc/1FzXNBZL7FYuwxDrqEvL0eoNsoN9rPDW6zfXj/ZG3Ir8HjliLgNUUwDg?=
- =?us-ascii?Q?VYbwe6mq4F+lrlfmN2NYYjnyyFCxlVl13R4mpA6DShkghDhbl0oZpfGw79uq?=
- =?us-ascii?Q?fZCyrm8N1fQRMO1VeRsSmcMMFwfOaTKor0D69p9yNPRffHkYrjziCh8KqOvk?=
- =?us-ascii?Q?zKkrP4gPyzJYDa5MlKY6z66CwvjLKAsWdkXgrtrKxj8bEOCSHQ9BIbSbrDn0?=
- =?us-ascii?Q?T9abCLBrnsHZNUa4NtSh84640dqWIwO8tUl402fYxb0NKNIebdfGEZPf0hV/?=
- =?us-ascii?Q?0JpPVCrU3YCMvW9atFC0GaDMKrK68wLQCjjdcmrSn/1IU8fwtcr3PXE6CO1y?=
- =?us-ascii?Q?BNL9wb0S8Wl3CFfWQiaIxH1Mwycbcd8UG4boXpMbow+zRMPy+41+4lf6Zt8R?=
- =?us-ascii?Q?36mY32+tPt+/IT7F5VozNEbTdgdDV4qgtOrctr48Sv9E0ljsE5hAyE9nixYO?=
- =?us-ascii?Q?LMQApjFrDTv/FIdREuToF0TG3A2UobW+Y8q7poN58nLdxM/DDOHVfjdeYEO6?=
- =?us-ascii?Q?1wpOetEICO/upTRHh+776Jv9d5DifBAzgIOLCkmjeHaARrOayLwTulgloMIa?=
- =?us-ascii?Q?v9Y86OjJ7a2RxUwky8emQUQT/awtpvjrignRW4AbitOUMLsr4EbaofwrvRwH?=
- =?us-ascii?Q?G1LHGgG9q9bOkp7zy0Ku8VHY8VEqDq06z0u+604Baa59pUZh7JNocvAe6D+q?=
- =?us-ascii?Q?sDIiSc5e99Bhlg0RzwwWX9aoHvkHKlCRulgKgRphY9DQQ7OcQsWSkvdg8Lee?=
- =?us-ascii?Q?lCLzYJvdbRcl4tYQcYYR1+0wSzotffM/mtRVS6Zk5bBDq/MfHDRu58h/7s8e?=
- =?us-ascii?Q?8x7Cvkd6I9xtL/cSpmRhi4tUvZq0KkYRhZhnYYIW+ED9jcMovnTc2tULUxGX?=
- =?us-ascii?Q?X3SJK8iAq5NOhTRRLfoo7Ah6REfOFBLIpmpWun9xrvTs8g6Cln4wBWYsJT0P?=
- =?us-ascii?Q?/1JGUSZZZ6EShBBCk7x+e9g4mrx/fE9MVa9/UrKmGEYOGqdmCuhMIHMNWHaI?=
- =?us-ascii?Q?RCn67cHfc6ar0HP8G4w8UHqgrNMCm87Pqeh+HX9MHD9V3ps96Mt2LtBnVQeu?=
- =?us-ascii?Q?2QJ8TM4=3D?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?PU1BEuof3IbRglevsayzhxld6C98kH6XzznM8Uf/JaNJ1oC3GYozWmslnfu6?=
+ =?us-ascii?Q?FALPajHaXzg3ABl8iZI2DgHBDE5xhYG0ElVIhDOS8AB0O5fXizcwARImsfot?=
+ =?us-ascii?Q?fXF9Zs93iufF94c9uW9QP+P0K/rCoKDXHA2YoDPHCZZCFZwNyPszp6ryPyYa?=
+ =?us-ascii?Q?5BXf9cEPze9ER57fTyAoD1L+sQzIeA6rrRD2AZASlTPjghumslzkbOI2MeUF?=
+ =?us-ascii?Q?PX1CJm15l6kZJvzT3vY3s0TmNsEMQailRAdplyVI0LNyULtLFAxyJrIOz/6Y?=
+ =?us-ascii?Q?yrjjoys30EhQB573PFTCGhqo2UBG1jEjt5Wtqz1pyJNK4QeALT0AArP79MdE?=
+ =?us-ascii?Q?0iY6J5AeSdjgHuRUokJbx1zjegI2g1OrD4BHjMxGyQIErXbTn3p9+lbuNP8Q?=
+ =?us-ascii?Q?dxkKXqHrV9gcBegDsUgT+Ec+2xRJgmOHE5Veibh8e5ojvA8YSNICpvq/s+aR?=
+ =?us-ascii?Q?TvKO183vUuNrxWPeyfTMntXEt54QaLkBy28K8/ve8R7m86OuzDzooySk3Ah9?=
+ =?us-ascii?Q?TiGXzEBt8gRKnYX3q5V8N2jy7CcKLqdQNiKDyOaKAPnXbWem6Cmn1TZYTfes?=
+ =?us-ascii?Q?Qspqrn9YyviUSdpVdOncOPabCjtKzqQ4mUsMF6n5mP5G1T3pP1/8SGpajDpd?=
+ =?us-ascii?Q?OT4erWXtT9wI6B/8/RPs/rTgagOWNj4uoNfwncJWmvVCKeFw2/8YkIPuNJMY?=
+ =?us-ascii?Q?KV7MZB/A+4zJwfSfmhMkgEzhwUYqDlkp3Z7LxLK9VIWZTDqEIOEWu5Wi2aFa?=
+ =?us-ascii?Q?C7nthCA8TuwuUjcRNqh2LkmS62xRmfivR1PxebHMuD1UAMtN1rd+pVt2u0xJ?=
+ =?us-ascii?Q?aq1emuC892tPOwqfJHsw0HWulUr/BRVqyW3cWl6AhrpOXXx0ZijlS/CdUtNZ?=
+ =?us-ascii?Q?+3g9ZAgGAhm1TPc5pDCRm4o18qTk7zhoNNMgsQZKdTGAXhv6kywu1hpCjx9V?=
+ =?us-ascii?Q?e3+WWzqpw2P3g9lHSGhMY1yrk/I/0mMW0/YN3u/98+/N4PMYbl6GDtjqJPTx?=
+ =?us-ascii?Q?HRO4/RzifFjTISp0pbTJKax5PQYfEy7fiZkTi/M7gmRza2DPHvliSX6nqjl+?=
+ =?us-ascii?Q?s9ZHXWYZ5wr2auqWo9GlxyPFXFh78hDP0S8GaW63LcPJyyru14r0MequnpHT?=
+ =?us-ascii?Q?LM1ANJW5jyWTod+4CFsFCVUnVjszCBrc8c0BZ/KI0r9GEVsvhicDkOLcgLTE?=
+ =?us-ascii?Q?u0oFUf5vZJtL/qkakW5hMm5Bcg8M3pbZ2udDfK9OPNqA5Nyo2ZpAr2txbf3o?=
+ =?us-ascii?Q?1v3yVwwHa1vTI2SIZ4VkK4Qx1xNWNKGKyW8E6QhYghUMXUFwX3UWb+vEt0p3?=
+ =?us-ascii?Q?mNDP2QSBYb1z42EvnVIGo23DsmhF+sTz0cDJJtXMSqTlaGxg1Ic7yiH7L4Oi?=
+ =?us-ascii?Q?fzBPWYE=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SEYPR02MB6014.apcprd02.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014); DIR:OUT;
  SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Fho289C6xRykhnqz5bKt57niIfQ9G3210ISo4Hq9Fh7mBmTAVh78DYV3K3vR?=
- =?us-ascii?Q?9j7zntUhrA4SWy5U7+fBAJNEOMQ2z+9ES4Zt7Up5vs2IceuUQCe+des6rjyQ?=
- =?us-ascii?Q?whVZDtW6Fgpf2CD7/Am4c4eliHTzKuADLW8JoFkECCn/AViBNNTUEXxclk6i?=
- =?us-ascii?Q?Ii2KV8Pf4M4uLMfFJhsdxaisG6quLIwdan2Tv1qFviQanNOLe8YBwsujlLKU?=
- =?us-ascii?Q?4ad8At9i4LcP7A/yVnF2/qctsIOjDadDcpmz1IYyCXOl3Rh1c1B9Vg0RcID9?=
- =?us-ascii?Q?399GP2+mHqv6lMg7CU0waASG+Re5tVzuAupfn9sttV9YOhHfaJOFXiZA+hQt?=
- =?us-ascii?Q?uYOiE4MVtqLpBamBZOmycO2ikgTn9rwk7bNLH+rXXCcgIBEt/3inyVQJh48/?=
- =?us-ascii?Q?0MjE7ZwmCaJ1V78Xu2sYTkV7v4yxKSN/t0FBwtt018zj8KxlD2zGEnipWD37?=
- =?us-ascii?Q?pmYII3v6wOS5QynZ7zRWgQsPKBYJdV3lK6/GpP6k5hv2zzQizo/nvTLkonDP?=
- =?us-ascii?Q?97Rcm2mwphR+g9XkwGg1KfeZeapk26Z9iOB5wkc3q4qeAHiav0ADzeg3HQ4G?=
- =?us-ascii?Q?pwXUQXMlML6WkLTWkzkyLfXkDaJXKYkwUkNXYVm4Nu249jq7onaRRVEanxrt?=
- =?us-ascii?Q?CyKp6YZWT3ekyqzX4/srwkt/9Fmf6YEwUioCZJHLZZBjkvZoZE17s2Yv5/MW?=
- =?us-ascii?Q?WqUEarMPC/KMaP2s3CKgF5fT4vtmjq03uRYJFWLrO/Dfqq2aBZvnRZhN782O?=
- =?us-ascii?Q?s9+WLWPpG6SDtaLdiIZTFQPObh7EN1hvL+NYMv3eaNmIHWop7NYw94p4ZOp2?=
- =?us-ascii?Q?XR+3Lych8Jagb9u5T+K6/XfhYaKTAEau/C8+0wrGESE5sS1OFe1tlenlBau1?=
- =?us-ascii?Q?SQcx7SeHhgXiD8rZNjH39FB9ztVCbf0n5ZAD4tFMKA/Mr1ddDoZUMVEWKMMj?=
- =?us-ascii?Q?UtT8raC6kBE1KdvCTBV0jS6c7Y/cUS8viZxa5idMcUst+Ave5X4t8yA75j1l?=
- =?us-ascii?Q?xeK0OMeRUdCfn1vY+k17SyoQq/Yy+CDkukBtbHO+vcqarua1WjCmNk+UNARq?=
- =?us-ascii?Q?PCqlLDvyYb0xnIlSCeOTfaH20V0u8hmbn4O9YoXbHDfumwnSFur28TfaWBZu?=
- =?us-ascii?Q?oBw/jxx3Q0n8qwRnm6AoUJxWiXKjNFxBPvQZGKtHk6juiFIRjYa8bI2US6Rs?=
- =?us-ascii?Q?s+xD4zwJJ+MJh996mPHVqDsY3n6hv9wm5TJBCayIUbqe6M7j2fIEl8DvJ1Ro?=
- =?us-ascii?Q?rQHU9Ysh4yonGCUFlErzrcpVET4w/VKBXdBXtl/hFIxkiSi3reP9h8lI5NB4?=
- =?us-ascii?Q?YYY/FweYy6WXNljiw+dwm0415zX1hqqIAO/xfmgMA+d5JL//1BkMgTkrD6y7?=
- =?us-ascii?Q?DB+ss3eq9xmnMm1XIAAY6mJVBmVGCLxsyVjNht+TojfOJsKWbZOrKB+b3xb9?=
- =?us-ascii?Q?lUV6Dh7ip028SgMmblXvQgAycFF/QTSvSR7Pvwnqnbw+Z0sI9bwxQNvYeA6g?=
- =?us-ascii?Q?m6GZFLQuyZeeloMfCxhRRD7FAZZcwtVDxZHP0YJrCGoM0PjhA8G8oOutBuSD?=
- =?us-ascii?Q?ouU5uHRjq0yEEOpowdIle8Cswmv6v8nQpbL4MLBY?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?I0vveqL2jw/YEpFWvrNJ5nIYpu6GDxWBtMfKEnbiOJw4AiDy3f5+IJazs4uv?=
+ =?us-ascii?Q?XLK0XwQC7toy4gNlF0K1BeNpDSAASzj0P9KU7JoQ0VU/b/W6GUmbo96mb0JV?=
+ =?us-ascii?Q?iVoMvRq5q4ljAkNO143PbsLgqXsle0eAiSostEAO7AM948+pvE4LkPUzHGC/?=
+ =?us-ascii?Q?pdmYrFP4OXVyga6iUINuG8IXh/y3JgWOc15eDZua9hJh2dHMb1cGHRi+IvEL?=
+ =?us-ascii?Q?7KNfHJGSUfeqMI/sReTGaEmdV+MgPVD6SBjd6t/ssBM9QHXP+Oaz7j4skHoA?=
+ =?us-ascii?Q?srSqS7BwdTZreEoQ4/naV9wZZ/huVmWlJQpxPk0Wyp1dRGFwAw2i16/sd9yp?=
+ =?us-ascii?Q?ikQOvJULaJdLhTa6zVIm0dpoVt9PrKM/wiZnrkyDuaAZ1Q7dDhFr5oTyTwua?=
+ =?us-ascii?Q?RtP9DH06D2hthgPRrPHLUAp1kgHgGGuRetBay4+UGaiyANhhTWpkLV/NbAby?=
+ =?us-ascii?Q?14XshnLENkm9dgxbMssBi9JW8lwF3hmwj53+f75GOHVZ3ZRFBHBat8rKFGfL?=
+ =?us-ascii?Q?lz1a2h4Jwx+Z9kAFgQqV53GxzEqbI0MVtxVUMFzU7HAb5HfPTUg9BsoSYyvf?=
+ =?us-ascii?Q?dNLOSzMCboJod2ItgTnL4UqC5Kpx5Geq/J7WMKLPkZe/VMeLl7MVOYO62bcA?=
+ =?us-ascii?Q?j6RHTSDbXy35H7XIpqvpHm5Lyg8nGh7WkHbqBp5jUagJLaUZj3cj/HtvXLLW?=
+ =?us-ascii?Q?xlWC8yvl7tn8qYYA1fieOUq+5GQZCtr5ppmFgYrIbRR7Psnefx7tQkVURAIK?=
+ =?us-ascii?Q?tr+y75tLgxFRRFYvVLhIjum4uJrWr+rvHNH1ZvWiNLZ1wBR57JyuV6J4OOxb?=
+ =?us-ascii?Q?YOungzYZRPEklq69VLkk/+E089hczjwL5sqwIO7f5D415f3f/nGZ87DJUuKg?=
+ =?us-ascii?Q?iT9XJl9LGRH6H8SFZRr6HT4UKQQFTYkwZXZhpiW/Yn5830ilx4wv5Pw/TjJx?=
+ =?us-ascii?Q?oMsw++pSRg8AsXnMbZMLXkxQ6bayE3shGuJqhw3mKMX6rlfgxNZSUY12NxTc?=
+ =?us-ascii?Q?DJcboENxSORrok7Py5dyFlHtX/iv1SaLNXEQd1PV/dR19QA+xbXeN8TZwpiE?=
+ =?us-ascii?Q?kdlDqP/ewyk9TvO/zQjNf173n52YxioR8ksb4ZAlpuhMn/3MKX9IGG5NAkb7?=
+ =?us-ascii?Q?clPlRz51cTLOO1X0JaUTkoC2sdihQdI5OHffUpO/gu4koA9N2Sc8EHDY6wRb?=
+ =?us-ascii?Q?IHR0iA09YR0rOITAkgPWV7DzE9FxfP6hScnpwvxSqUcwhLb5SySdoux9INQl?=
+ =?us-ascii?Q?2HJE1oNLJfz5t+4XK4mJNw/iw+94YGHq9MmHnLQAqS0ePzEGJj/Jg1GTARum?=
+ =?us-ascii?Q?+eVyWbefGwefedKyFiv/q7LURAl1ET86yW6g5Th00NnUzeCmpd/11CmUG0WK?=
+ =?us-ascii?Q?u4wtNE+ercaGF3OMJ3qtdACxzf26Idqlx+uvdvpBo7rKxIgzY3taaMXaYNM2?=
+ =?us-ascii?Q?Akx11GcUFSXzN4/LlXVmGg+aEF0Fdu1lWs8t7GjwKGw/vQaj+B/fFze6eWI1?=
+ =?us-ascii?Q?CDsGn4Sifi/chJ+SQK9GWxrIDoYU4KoIibBOmTnWwdF0gwN8EaabQNqlUOBq?=
+ =?us-ascii?Q?wEDCRQc/LyPs1vJfN2J0P5DG/lHyXrL3mapBvoiH?=
 X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 652cd89b-2dd5-46b7-3aa5-08dcf812d947
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32fbd625-fb75-482f-3337-08dcf812dcdb
 X-MS-Exchange-CrossTenant-AuthSource: SEYPR02MB6014.apcprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 12:11:42.0007 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 12:11:47.9937 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oS/5+BTeyHUdqGM9sfhxhBtlTjB+paboxKJC9/FUfUh9psVY0eHX7NvqyHRwRE/e5MxddbFgPqo8LqjGai2uTA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: qXK1L6HEIXYhlyOu06g8vQogSp3IDzgFiIe1LjHbi11fPFtV5+poW+lRI96rEZGAdbmndveokpC+OIuhm8bXeA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR02MB6982
-X-Headers-End: 1t5lJv-0000f1-5N
-Subject: [f2fs-dev] [RFC PATCH 12/24] tests: add fsck testcase of fixing nat
- entry with invalid ino
+X-Headers-End: 1t5lJs-0000f1-6G
+Subject: [f2fs-dev] [RFC PATCH 17/24] tests: add fsck testcase of fixing sum
+ entry nid
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -174,51 +174,47 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Signed-off-by: Sheng Yong <shengyong@oppo.com>
 ---
- tests/f_nat_bad_ino/README    |  4 ++++
- tests/f_nat_bad_ino/expect.in | 39 +++++++++++++++++++++++++++++++++++
- tests/f_nat_bad_ino/script    | 39 +++++++++++++++++++++++++++++++++++
- 3 files changed, 82 insertions(+)
- create mode 100644 tests/f_nat_bad_ino/README
- create mode 100644 tests/f_nat_bad_ino/expect.in
- create mode 100644 tests/f_nat_bad_ino/script
+ tests/f_ssa_bad_nid/README    |  5 ++++
+ tests/f_ssa_bad_nid/expect.in | 34 +++++++++++++++++++++++++++
+ tests/f_ssa_bad_nid/script    | 44 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 83 insertions(+)
+ create mode 100644 tests/f_ssa_bad_nid/README
+ create mode 100644 tests/f_ssa_bad_nid/expect.in
+ create mode 100644 tests/f_ssa_bad_nid/script
 
-diff --git a/tests/f_nat_bad_ino/README b/tests/f_nat_bad_ino/README
+diff --git a/tests/f_ssa_bad_nid/README b/tests/f_ssa_bad_nid/README
 new file mode 100644
-index 000000000000..b97015297b25
+index 000000000000..d30e41c77c63
 --- /dev/null
-+++ b/tests/f_nat_bad_ino/README
-@@ -0,0 +1,4 @@
++++ b/tests/f_ssa_bad_nid/README
+@@ -0,0 +1,5 @@
 +1. create f2fs image
-+2. mount f2fs and create a regular file
-+3. inject ino in nat entry with value 0x12345 of the regular file
-+4. fsck fixes the nat entry by nullifying it
-diff --git a/tests/f_nat_bad_ino/expect.in b/tests/f_nat_bad_ino/expect.in
++2. mount f2fs and create a regular file and write data
++3. get a block address by dumping the inode
++4. inject nid in the ssa entry of the blkaddr with an unused nid
++5. fsck fixes the ssa entry
+diff --git a/tests/f_ssa_bad_nid/expect.in b/tests/f_ssa_bad_nid/expect.in
 new file mode 100644
-index 000000000000..99ad7705fd47
+index 000000000000..a3a6c94993a7
 --- /dev/null
-+++ b/tests/f_nat_bad_ino/expect.in
-@@ -0,0 +1,39 @@
++++ b/tests/f_ssa_bad_nid/expect.in
+@@ -0,0 +1,34 @@
 +Info: Force to fix corruption
 +Info: checkpoint state = x :  nat_bits crc compacted_summary unmount
-+[ASSERT] (sanity_check_nid: x)  --> nid[_INO_] nat_entry->ino[0x12345] footer.ino[_INO_]
-+[FIX] (__chk_dentries:x)  --> Unlink [_INO_] - testfile len[0x8], type[0x1]
++[ASSERT] (is_valid_ssa_data_blk: x)  --> Set data summary _SEGNO_ -> [_INO_] [0x0] [_OFS_IN_NODE_]
 +
-+NID[_INO_] is unreachable, blkaddr:_BLK_
-+[FSCK] Unreachable nat entries                        [Fail] [x]
-+[FSCK] SIT valid block bitmap checking                [Fail]
++[FSCK] Unreachable nat entries                        [Ok..] [x]
++[FSCK] SIT valid block bitmap checking                [Ok..]
 +[FSCK] Hard link checking for regular file            [Ok..] [x]
-+[FSCK] valid_block_count matching with CP             [Fail] [x]
-+[FSCK] valid_node_count matching with CP (de lookup)  [Fail] [x]
++[FSCK] valid_block_count matching with CP             [Ok..] [x]
++[FSCK] valid_node_count matching with CP (de lookup)  [Ok..] [x]
 +[FSCK] valid_node_count matching with CP (nat lookup) [Ok..] [x]
-+[FSCK] valid_inode_count matched with CP              [Fail] [x]
++[FSCK] valid_inode_count matched with CP              [Ok..] [x]
 +[FSCK] free segment_count matched with CP             [Ok..] [x]
 +[FSCK] next block offset is free                      [Ok..]
 +[FSCK] fixing SIT types
 +[FSCK] other corrupted bugs                           [Fail]
 +Info: Duplicate valid checkpoint to mirror position x -> x
-+Info: Write valid nat_bits in checkpoint
-+Info: write_checkpoint() cur_cp:x
-+[FIX] (nullify_nat_entry:x)  --> Remove nid [_INO_] in NAT
 +Info: Write valid nat_bits in checkpoint
 +Info: fix_checkpoint() cur_cp:x
 +
@@ -237,15 +233,15 @@ index 000000000000..99ad7705fd47
 +[FSCK] fixing SIT types
 +[FSCK] other corrupted bugs                           [Ok..]
 +
-diff --git a/tests/f_nat_bad_ino/script b/tests/f_nat_bad_ino/script
+diff --git a/tests/f_ssa_bad_nid/script b/tests/f_ssa_bad_nid/script
 new file mode 100644
-index 000000000000..18db1db97b03
+index 000000000000..ae57d979d148
 --- /dev/null
-+++ b/tests/f_nat_bad_ino/script
-@@ -0,0 +1,39 @@
-+#!/bin/sh
++++ b/tests/f_ssa_bad_nid/script
+@@ -0,0 +1,44 @@
++#!/bin/bash
 +
-+DESC="nat entry with invalid ino"
++DESC="ssa entry with invalid nid"
 +
 +. $TOPDIR/tests/helpers
 +
@@ -258,7 +254,7 @@ index 000000000000..18db1db97b03
 +	echo "cannot mount f2fs image"
 +	exit
 +fi
-+touch $TESTDIR/mntdir/testfile
++dd if=/dev/zero of=$TESTDIR/mntdir/testfile bs=4K count=513 status=none
 +ino=`stat -c "%i" $TESTDIR/mntdir/testfile`
 +safe_umount $TESTDIR/mntdir >> $LOG 2>&1
 +if [ $? -ne 0 ]; then
@@ -267,18 +263,23 @@ index 000000000000..18db1db97b03
 +fi
 +rm -rf $TESTDIR/mntdir
 +
-+blk=`$DUMP $DUMP_OPTS -i $ino -d 1 $META | grep nat_entry.block_addr | sed 's/.*nat_entry\.block_addr\s*\[\(0x[0-9a-f]\+\)\]/\1/g'`
++$DUMP $DUMP_OPTS -i $ino $META >> $LOG 2>&1
++base=`$DUMP $DUMP_OPTS -i $ino $META | grep i_addr | head -n 1 | sed 's/i_addr\[\(0x[0-9a-f]\+\)\].*$/\1/g'`
++blkaddr=`$DUMP $DUMP_OPTS -i $ino $META | grep "\[0x100\]" | sed 's/i_addr\[0x100\].*: \([0-9]*\)\]$/\1/g'`
++echo "ino:$ino blkaddr:$blkaddr" >> $LOG
 +
-+echo "ino:$ino blk:$blk" >> $LOG
-+
-+$INJECT --nat 1 --nid $ino --mb ino --val 0x12345 $META >> $LOG 2>&1
++$INJECT --ssa --blk $blkaddr --mb nid --val $(($ino + 100)) $META >> $LOG 2>&1
 +$FSCK $FSCK_OPTS -f $META > $OUT 2>&1
 +$FSCK $FSCK_OPTS -f $META >> $OUT 2>&1
 +cat $OUT >> $LOG
 +
++segno=`get_segno $blkaddr`
++SEGNO=`printf "0x%x" $segno`
 +INO=`printf "0x%x" $ino`
-+sed "s/_INO_/$INO/g" $TESTDIR/expect.in > $TESTDIR/expect
-+sed -i "s/_BLK_/$blk/g" $TESTDIR/expect
++OFS_IN_NODE=`printf "0x%x" $((0x100 - $base))`
++sed "s/_SEGNO_/$SEGNO/g" $TESTDIR/expect.in > $TESTDIR/expect
++sed -i "s/_INO_/$INO/g" $TESTDIR/expect
++sed -i "s/_OFS_IN_NODE_/$OFS_IN_NODE/g" $TESTDIR/expect
 +
 +check_result
 +cleanup post >> $LOG 2>&1
