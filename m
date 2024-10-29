@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8D024D2AB38
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 37FB4D2AB37
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 29 Oct 2024 12:11:58 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t5l4n-00040W-GH;
-	Tue, 29 Oct 2024 12:11:58 +0000
+	id 1t5l4n-00040L-4Q;
+	Tue, 29 Oct 2024 12:11:57 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong@oppo.com>) id 1t5l4k-00040A-6L
+ (envelope-from <shengyong@oppo.com>) id 1t5l4i-0003zv-1e
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 29 Oct 2024 12:11:54 +0000
+ Tue, 29 Oct 2024 12:11:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
  :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YuEjuxLobaTvyfQkV99PVdX4wNmQANwWNPnrhHLxbLk=; b=WxtgNufLLnsS9bx5wS8A0+apX4
- /jYc9otgxTOi3nwg/DQtKrPwHf/LCQLvt4JnaBGMrv0fm4S8PMOma5vY9oEBknPeux/rat5Rx0Gns
- YG3/NUNIvMCZDmjauBoepW1XuleBtTMGw9XCcZyW02pXeO5KsBkLelrtcfD0sTKp7vV4=;
+ bh=gWldwuJBCpQvptNjiclGUM1IsFPz45aBP3Agxu1j2Wg=; b=VzWEJ0CGaRwhgUBDQMW2RVJlj2
+ LdkY1I96f0SKdKxX5pTNw7FfCQA78vlgk4XGSJGWmdmYI+K+QJH+0wByT3nlZrwRonddwYwg6UBCb
+ nQJBs/iWRibx7yDsUn6knADu10QZzcCbhyFkbc5Yvyjy9Hp5d7sJ4nvpYn/XWrhFkB48=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Content-Type:Content-Transfer-Encoding:References:
@@ -33,44 +33,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=YuEjuxLobaTvyfQkV99PVdX4wNmQANwWNPnrhHLxbLk=; b=U5UqfTwws7qQur0jSkDSHf0WHt
- qNeYJ1x1u+JDd9/0z+m7MIZ1u0amNsU9Y6LEHOYy6Etv5CA2OIEr0GsRTI5fGzt4NQc/3JTizt3iT
- ozUNGVhIy7NftVcU5fcZ+oKb+MiuGOoxJs5uNe1seeSSZ+piBDgrTfJIlRABRNxi5HA4=;
-Received: from mail-eastasiaazon11010001.outbound.protection.outlook.com
- ([52.101.128.1] helo=HK2PR02CU002.outbound.protection.outlook.com)
+ bh=gWldwuJBCpQvptNjiclGUM1IsFPz45aBP3Agxu1j2Wg=; b=lrQlQqi1U2NCbfQMvIynZa9ynl
+ aaxATP+5gPJVKKopbSLqmepHkC0JtbAT2KPieF+ttsHSydQxfy23TZUvdJAcgG5ZrtJCVDGsygs0a
+ K1LHiBFzxs5HRsqlbd9yjV+kLsELKI4c5rcV9zyZDo/MqOKZO+rdD4wAyYWS1wP3XPYg=;
+Received: from mail-psaapc01on2053.outbound.protection.outlook.com
+ ([40.107.255.53] helo=APC01-PSA-obe.outbound.protection.outlook.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t5l4k-0007RS-6G for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 29 Oct 2024 12:11:54 +0000
+ id 1t5l4h-0007R0-PH for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 29 Oct 2024 12:11:52 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Kcx/bF3rL/n7YKdoCvyOQmpY9rcpUAI9YFbPDAiueddUkwPybptIRY0+P7XEdySAwxBQECz4Dfk7ATGELX5+FaODHARRpywMrA2InFl08Jut0ffQpV6A+e4HKUQlfDpgoDH6aJ1rd9x5/7tzRM4khxnFWh5sVezROlzJU1V4ywGOLgVd9tkw/1qHr4P9mAsgmPvdwg35ex0izTgVdRD9/cLSq/bLlq7wViV0msFhVtYKKbeDPCZkwgPoIA18X2N7m/7pPUt8kjUG+UXRL6bTWDmHGXnEZXtG5AzwRzisjbFD5K/DcoHoc1Xa4e/PG9f7RDfbWJf3DTYKFjG5xkZBUQ==
+ b=BH2bo6jikxIHJmlWWwLb/avnuNzBqJAktdUQkkArY6T39dTkKlwyJJzlGkxdJ4BHwIlYZ9n1fu5IHkiWGeQEZ2dYu4OcOCp0QY5mHXdwxyxVjZ6VGstOPHxjbW3De9ZxS+FYwJwZsynPMcl60oCFDZnbWQSqZdKfylb3DhsPRhzEUWgN/hLDPtrqH8xRkv5fg2kIXC2I/ds1KtCbRGIePiDBEP0t8vPH5ASwXCjZ4ZaBy1gb36eYlgsPKQFrGbJjJBgWRbCXMaHcZ/FD8SISqPfnNtYQ+8Qjzj7u1UFlKzovwAVAwsnbAka1S8N0k0UsGnKVPxnS7x3iqfzOjlqoVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YuEjuxLobaTvyfQkV99PVdX4wNmQANwWNPnrhHLxbLk=;
- b=Ks465ZNCv3lq99ToqZurk9MR5K1ZgNCBDqoPLeZvuj8zD8CYUUZBpXsCtWpjQI8Yqe1z8HmmWbSm8k4MPtXVu+mU5ArCMkbw8pTCUyz7wssU1wdIJqgGPTtJhE68kGxcE4aWDYaMz4MFGI97DDVWyQFBXaxfZY/AArcQAUDtg4nqdbKqMONQEbYSdf2L6iVmTilM0TVwZXHGY/ZioCNli0Zy17Gpx7Fcss/NvyYmSdbzky1EN6kldcY+Ym78XCW8t7xyuH3rMfmieopOvmiG692yJa+HXRi1zCADuWaGv+iRAHczokM2iC0Y8l8lEl2L5hmbkqtDJazMi1HP6ZAk6Q==
+ bh=gWldwuJBCpQvptNjiclGUM1IsFPz45aBP3Agxu1j2Wg=;
+ b=jNmdD1bhV7lJH5Ctz0AAPmIyyBUrWeIywGSLmItvetoER33iMUy5Z7CGdqq49QvtGM6WJvHwhigV1MhYSM7OEDAfPMdsbhZbvBrXxVzuRg6EKINL1buGicmxUiah6xEQdQgTdFAcLOJt97YxyBpNLrKHmM67Jm7SXp7ls2/dS8nYjSe2KvOpjB7qhCgrskFLzOAv5fZk4V+av/pcMcwYVHntsV8+o+x1GZT24GkVM2cT8eBC9laN+5yBLtPoeYYD3469oJNucKlNIHl5J4CoKFIW0Le9F4scr8+QKDhaFTYLbozaUDfHISfTYR7BWnuSxD4YKHFjBp28oE2YjC0dAg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
  dkim=pass header.d=oppo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YuEjuxLobaTvyfQkV99PVdX4wNmQANwWNPnrhHLxbLk=;
- b=EQG0KwqDPppytQ/akpTN9KzZ+7tQm9DJFVgktiuAlZcPMXNgV3VuQPjt/uNxto0fVISxB1fCtQULVwlAxrEZUBP605az4MlkzhPRjYaP0U+zMdyzN4N/UQpqcpQPD/s/Qbabnwjt6ipLbJxyO3lsCP1IRYnrd5VdvTq5bHOsgq0=
+ bh=gWldwuJBCpQvptNjiclGUM1IsFPz45aBP3Agxu1j2Wg=;
+ b=A5Hn0QAI3O3/bKlzmtZu07qtLVMaYpvNzFHZ76ww8ENM/kj4jLtbWzIBIOAg74xtZ0+oKQo4dn7ZdblzxJ5mD9m2PaOZLvNwJDgz3og0Z842TqHbYMf7Hd0190BXCqifucdI2/obu12GjkuG5tU/3NUQ2Z6mma6env+o7N4FZ+A=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oppo.com;
 Received: from SEYPR02MB6014.apcprd02.prod.outlook.com (2603:1096:101:6b::10)
- by KL1PR02MB7877.apcprd02.prod.outlook.com (2603:1096:820:13e::7)
+ by SEZPR02MB7326.apcprd02.prod.outlook.com (2603:1096:101:1f4::9)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.28; Tue, 29 Oct
- 2024 12:11:40 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Tue, 29 Oct
+ 2024 12:11:36 +0000
 Received: from SEYPR02MB6014.apcprd02.prod.outlook.com
  ([fe80::bb06:c283:a50:7796]) by SEYPR02MB6014.apcprd02.prod.outlook.com
  ([fe80::bb06:c283:a50:7796%7]) with mapi id 15.20.8093.023; Tue, 29 Oct 2024
- 12:11:40 +0000
+ 12:11:36 +0000
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 29 Oct 2024 20:09:43 +0800
-Message-Id: <20241029120956.4186731-12-shengyong@oppo.com>
+Date: Tue, 29 Oct 2024 20:09:39 +0800
+Message-Id: <20241029120956.4186731-8-shengyong@oppo.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20241029120956.4186731-1-shengyong@oppo.com>
 References: <20241029120956.4186731-1-shengyong@oppo.com>
@@ -79,81 +79,81 @@ X-ClientProxiedBy: SG2PR01CA0175.apcprd01.prod.exchangelabs.com
  (2603:1096:101:6b::10)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR02MB6014:EE_|KL1PR02MB7877:EE_
-X-MS-Office365-Filtering-Correlation-Id: ea0c7792-ad61-4d1e-0fad-08dcf812d892
+X-MS-TrafficTypeDiagnostic: SEYPR02MB6014:EE_|SEZPR02MB7326:EE_
+X-MS-Office365-Filtering-Correlation-Id: 29c823bc-b42a-4b73-cd42-08dcf812d5a0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|376014|52116014|1800799024|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?+4sCJg6J01INyejJGz/1JgAToJc/mVBaN3UR4rwGc+6Hru01krvSCHTXetd5?=
- =?us-ascii?Q?VPRXt9OGP4b8C5JI3J+YXrjD4OqYFKQUDh4HzYKmbRxdccblBxmK1Q5a+yGl?=
- =?us-ascii?Q?DTLwLyaWoux9DPrCQrlqD40datQkgr+/m7N+4SchBuhmKINvDmhf/C6zoOzy?=
- =?us-ascii?Q?F8PgnGYB9g4wGiQI9YJPMu7z39naS8NtJWlbKvHHKxOMBgO3RsQbDwIKX5D+?=
- =?us-ascii?Q?4UP9OW+7ap2ufH3LlARJ4jfpRdgtDwGYQ0FMS7T4UfAIJCrNOFm7iDhzd5eK?=
- =?us-ascii?Q?mxz2HNuzgPNvvy7EhqvCtQ+azytzeMaIFWIdvmZFiZEcJSso8vZsqjKAAEJt?=
- =?us-ascii?Q?cJIDNbHiu46NK9K8rt9+1rj2NpiyOmnlCXOuBvcl1hkhzM/0Xp3s4cb3F9kW?=
- =?us-ascii?Q?TRurv3uYxLzZOqK7fm79ZO806sIDxy2i7w3odFIDGAddNpvFB0Lq1aeSxx7j?=
- =?us-ascii?Q?IeydKkx78QYOXk2mRxIWkxIBR8pNJ7jgjy+QdguCDz+hAlqXXOmKgowFVcbN?=
- =?us-ascii?Q?pKpv/D0oJ0rF867/HXfGqHJL9m6xz4N++YLXb8QSKmYGImJxlefUd6H5gdPY?=
- =?us-ascii?Q?UROIwTpfa35crgC9uS4foap+TOfz81q/1oraM3xg9ZEmYNVSqaz9r5dCbsoQ?=
- =?us-ascii?Q?NiYdXSgEO4gsSqPnqd1AT1GtK+oV9wyXKComjxlHkxPjNQaGmtqjoc5w6kh3?=
- =?us-ascii?Q?qCfYrIOJRpBQhLepdkepbQ1nQ9aFkoRJOstQkGre8F3BKMg9/7lDqIfzoBMD?=
- =?us-ascii?Q?+HRpMWgrbMKlp6AKztKzW0GzA0PeQNzlKQZNXPpC/prOgVBNHu9czxQk/j00?=
- =?us-ascii?Q?JHOnvLuQtVd8kCt+5Otb3A9usIMEcaeD14NzYcD233vztDdUUX5yjhecT/gp?=
- =?us-ascii?Q?GSCJLkACf1Wpq3FZEgvxV9rMirC+nj78D+ODKXa1LZxwsB9EC1tNQWeK7JbP?=
- =?us-ascii?Q?Djh4OWskAEqTpRA5ziJJATxNAURd7ZLMnW0iXNz9mQQYG5j/H5yTxzm49RBj?=
- =?us-ascii?Q?WE2C5KtXRj0WGJRh6MqfmXIZ0Totc1zTUp2IpevklyIT8flyy/LSca396YH1?=
- =?us-ascii?Q?B+1w4nEk5x5lpzIq/y0ba4E4n1oTNWVfY54fivDxDMVT15WHZ4YHhLi+DnUw?=
- =?us-ascii?Q?hpHOEoa9vWwqRaw8UEJ7mwelSpn5xICVLMjPMvptUjPtrOX8CsaMw1ZjdvcS?=
- =?us-ascii?Q?XhGTKllXBGTWZe9+5R4uJDdZ4yMW5rgXcmzrQYzrykD7BfGz5QQmR+EURum+?=
- =?us-ascii?Q?O7D1lRpNdH1QCWEUpn4bqLH4RcRPyfA8PBSe99RgsvZCZIbEvDFoxjFWtJk8?=
- =?us-ascii?Q?UhzPxdBn6oL2XAPJdEjvNtamp15thYKlyKgDEz/eZQvDVoLlGjh79tnrjUB6?=
- =?us-ascii?Q?raL64QQ=3D?=
+ ARA:13230040|366016|52116014|376014|1800799024|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?bE6SDPwbnZG1oAUil8bd+yoBjwIAIuYrvxDZKSf6U5g8/zHgtKKdanUMls96?=
+ =?us-ascii?Q?YK3wyFW6Lqv7RavCVT8AlcgK/ZNUl4fkItnw4bFqoKcDrQ4YZlorJRZ1bx6Y?=
+ =?us-ascii?Q?1mbr7gPHF+aLlOKEhQvVwOUbbh4QLItmuiJwy8fL4Vr0Gososb1heeiw3ALu?=
+ =?us-ascii?Q?Szfkd0wvcAifUh4cBdI0QdtUs0jsNWvE4Ax1jG9Qw3rviK5sb8TPc2WdVawE?=
+ =?us-ascii?Q?rDxWR3OB09dr/QrlQunn5uV1W8L8ZVXimIvVJgNT8yaBGPtoQ34H0sdZ0MPz?=
+ =?us-ascii?Q?YHwDVtZRD5khBHMwUDy+BGq9GBWJcmJCcfwPwH4Q/WtSqqXHuivJf3UL2d3x?=
+ =?us-ascii?Q?u7L6vKTKOHIgUJZeqSXA4Am9uiVQLsUoERDiy+6/9fYW5VwfOtw4fZJkUkD3?=
+ =?us-ascii?Q?P5cwJ3pxzs5/YzKff1IPv+h7ruRdTHfAMm8wRA+AQ+cnVrFRdoRwnI3RHlmq?=
+ =?us-ascii?Q?YlrndaCIh3Da4B9sPWrAnLVV5uLBwjUjhX2M+32IM47CCGLegT4yO1r9+qTF?=
+ =?us-ascii?Q?BgxmXGfZ8l1936ROG6xrMN8CwZNuQmsWcHf+x7N6TwbVcoDido752/Iq8y44?=
+ =?us-ascii?Q?stB/UBoLTQwoLnp8ulN87O8yhh9K40fsQFGfEk3fSi6NRq+/gIuew6vjzuWi?=
+ =?us-ascii?Q?QJs5Lpex8cBIdq2f5skgNOs+DBq4pZTgnlNBLX63nhVXUAsS990GerBYkXEP?=
+ =?us-ascii?Q?rm8Wgkp64gs1N1E5owm6DZbfcqvpErgtMxJsgtTrvy5SC0/7PMLd/8OOGxLA?=
+ =?us-ascii?Q?46zN+RkaV8z+/zPrimbMD1TpkjZY50u1zJ3GYlRxFmYUWJbeWx8wNKf3MxBV?=
+ =?us-ascii?Q?ONoOvxBh/ClePH+x6PLntV/ylUire+eieMIuD7CaELwSvBRSxycH0brylYpp?=
+ =?us-ascii?Q?wbNDTrz41EE0XNiqAQGJGIjtiGAYLk7jus+ZAOSjgzfHop4sGqgbC+0zoEed?=
+ =?us-ascii?Q?Ky9o97riNr0vJKne/RNY0Y+c2p9QwbyrinLOVdbYFIY9zWJo65gyGR/bX9am?=
+ =?us-ascii?Q?KKIqQTr/3uBq5uh10Cfv8uBO6aUKnzB4nS4hyMf+8B5vuJmBjPpfuSI4Fl9f?=
+ =?us-ascii?Q?ngGGL9PE2H44on11NtIrxhqZKowro7sgIOKK9eCvVYR0R5mM2R0+Us9rqY5q?=
+ =?us-ascii?Q?t2nvvbCGnig6hFk8H70I6Qk9C1B99u46ulXJrKnxl8Cg87eWuOCKcyozqDs7?=
+ =?us-ascii?Q?5LSBhTkIx5cC0NdMsikdWqalhSgP20BkWTWF6ZJq/x57m88w+OWvMIu6LZIG?=
+ =?us-ascii?Q?Wg6n+s13jkwjSjTI4br2NID5vyUGJYKKHxz78T8XakYxjkr0tuvnNIjirClK?=
+ =?us-ascii?Q?rUYnHx6iKffFNxLU/y2N+sx9TJNcNUJ+AJ8HZ12tZTqmDeqU1rxEVD/UDuDp?=
+ =?us-ascii?Q?ULrw0PQ=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SEYPR02MB6014.apcprd02.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014); DIR:OUT;
+ SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014); DIR:OUT;
  SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?fkrrdV1IpILxBICzviDpl6dfNSnieD7XqogKOmKWK466QM6qbDM6ou/+WFe+?=
- =?us-ascii?Q?+TTUl5XK8VtDZDQSOEV4pgDhqtD7UpU3HfB2AikT76AL+fwGheUCJytGvBDU?=
- =?us-ascii?Q?sSlMPKq/FLLk86XHIUieQxaVvdhnuCK5wOx0tCUEYQ5jx4tI6xuRmncPlFc9?=
- =?us-ascii?Q?yBNtp56/oQaGefSLD6ryYXWQEBH68HDNU7yyLPkbZUSwwUyv3xPtaLhNYIzF?=
- =?us-ascii?Q?0XQM/1MDKk8boTBzEDlB55Y52AMD2f/+adMQaU+T69LfauLBBj19HFWSxxRK?=
- =?us-ascii?Q?bjRaTy+7GQV0rTxyqAM0eUDoHzQTsuyqhKkH1ltaoofIciMrqDubad9cIEId?=
- =?us-ascii?Q?m+NvLnYF/mbwr7yBgKMmJ6pqN5g2bAP6pQ0+qoUOHVOUqSKyDFeEMK1r5+pA?=
- =?us-ascii?Q?a+qNC0UJX1CZfSqug1af7OCE/SsV7+CsSalgE3I/d3/W76OCFTP9ujgyJWsF?=
- =?us-ascii?Q?4tnkLXeaLGPg5/Cw8S6yDsNIE3xVZRqZuGkAZKV5l6JAdDxC6EjfapceM/p4?=
- =?us-ascii?Q?jYEUs+NEm1xPsB7ZnEiG7Xs+htjx8wUzDZ6FV6zU4MJZJGycH90GHGpg+KQ6?=
- =?us-ascii?Q?Ir3p7c0QKVA9qnWUqr9PTk/n5OUt06VTMEZt9zVTbHC6q7gd/TJphaN/s3tB?=
- =?us-ascii?Q?evXvHv5DfHULJdD1bWWOkz4OWgp0yiP3TQ3BFNEO+fTUy45KYXg7v/pMHKoh?=
- =?us-ascii?Q?XvuZgM9WJoBiBthSfisSAKQmZXoWBpCpBRNdRPUtmBETJSpi8tIsaBr7Z9Aw?=
- =?us-ascii?Q?nZ/u1SPdYFxuHatrS4NevHOCdedGiMDVKI82hWw+jJf3Qeutrew/Nn8ZJasD?=
- =?us-ascii?Q?+jS3b5CziTksGlB0Nk4Kp2/MoqwqsgkkMfpHw5s7Qa5tioPboxL+rP3RCdlK?=
- =?us-ascii?Q?RY6qPNrmamDqDu9QybPUThV/Vl8naFl3BJrez5hwLweohpqQM4LusoSlL55t?=
- =?us-ascii?Q?b/J+wmnZ+KFhEruRQriEEo0JmRmmw8G35+qdh51zOYF/UAht52KYkukB14wK?=
- =?us-ascii?Q?rOfbHLy//gP92SFvZRiWIy/5jacQ6fc1gH0CLWSSCgRuog6zCCSliSST/bbO?=
- =?us-ascii?Q?PQLm4yEU+QNwgqxalzPqynVNy/a41rBv2rSmw5fPi9C4dkpSm9bzA/E7Y5jD?=
- =?us-ascii?Q?VWML25DGvj/x29LCWS+/xbEkbQ3El3y+rBIaRUmzmD/J99h3q/Ghhy7bosmG?=
- =?us-ascii?Q?TM5ZmYD82oItoJrA/bk7Fkez7rMf35nUSqGyi9yE0DQejGxh74TBzS9av3Jy?=
- =?us-ascii?Q?9YMXrkJqtqXGpaHRVMpLxKmoJREKS78I7tDQZ3Q/AL4ITWXAZt5ibe4ijsj1?=
- =?us-ascii?Q?FxM7P6k+OrAmFI7SvBjEpUP3wNkJNOlBtk5qtBWCd7YXGXkeKz8yXjBJQpzr?=
- =?us-ascii?Q?KIgfcln/sOxTzz/SJ1czAYsn5G9pkdcuY3N6och+9bKk0QT3vEbnzLXmqGOY?=
- =?us-ascii?Q?ztJ/6UXmWkTntQ53D9iM4B7Wx1riMVACB2cNokbYLoIEATwcT1+sLJVM8jSH?=
- =?us-ascii?Q?/xLvEqzcdg14NS8buEGy9Erd00zmBGYXT9YkH8X2cg8lGLVKJBNc5AX+RKPN?=
- =?us-ascii?Q?33C2etOEc5qdVCDmgumF3FnwKI1URxaWYc8FHuGI?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?2bYNssBQ04Y3iY19p48TfAfmOCoaAA4IruOcIESyJpHly8u2u/I7tbnOVY59?=
+ =?us-ascii?Q?z/A9HTeA7kSv48SX2/+V7hSw1ag426wY/5UpNkUsAzQchtFRyee13KUEURvN?=
+ =?us-ascii?Q?6BChJlDWT2tY3tTYTYPkARP/dp9VhRDmiJGnVfngfC99b7TXoeu33Lvfl5MV?=
+ =?us-ascii?Q?LN9RAPancomEajkuqKKEykUfqpEC5WOeuDaAy7cM1qACJi8fFfr67eYOfbNr?=
+ =?us-ascii?Q?nDaVNgYnMPqSWBFf5Gh7gsCnKRo5EgU9Jigq8q2rmCCeKk51ceCtP4VBgSp6?=
+ =?us-ascii?Q?BapVAOnrsJ3Z6AUoH8DOLrqr8HoJYPkErlc/eDA2MCkUJh1AVdsHl2YFNyGc?=
+ =?us-ascii?Q?XwzaLUS0vOe4k7WpkbKAZadT/+vMxXU5RZYB7WWmxVs7VkuTDCNBolUlc1Qd?=
+ =?us-ascii?Q?z4t7hdPMIcCziAl0MuUr0LnkALgHSCvrfZIihknU/ZaOkOOOv+4JG7kGW6J8?=
+ =?us-ascii?Q?stJwkRE/GMWRlQM4dWttHdQyDuSiJvZ8Kj8KfzFcE+IrghJsoeUOfU8EePuI?=
+ =?us-ascii?Q?kS5GiseCdVoG+NuIYZa06N+g0Wp0+pCBQMsgnIhpYyXhu4rFk7KsJVFYVLL0?=
+ =?us-ascii?Q?V3WlP/APFv2GRbyNGOI43vPw8cjaZ5H7H3eAJ5j7jCqIqLQyTaRWM00UpmWb?=
+ =?us-ascii?Q?Njwb04CqjmWinvVIFkf377xUTF4ok+fM+bJ6ORcNtBu27j1ShnwRzrbfbU2F?=
+ =?us-ascii?Q?31yr5lD+faGDQOkJ4//7DaiRlnt067m7mIfVR0fblcFfebVH8olwRasW0sM9?=
+ =?us-ascii?Q?rZmBYnvz56/atMLgsQpjZQwWELFZoyfI4bAYgX4LaKHccyBF2cddVyGTFg8C?=
+ =?us-ascii?Q?JVkhwhS1s3+TBFPw2nzAXiIoK75HlN7iils2CtkN1bhlCl2FJd/6zGBWFAfY?=
+ =?us-ascii?Q?vAcNBGG37fK0WMKAF+jynP5wqvS1reYjKzymlMeNhMZqgd8+AqSOXBhT6r3O?=
+ =?us-ascii?Q?7t7EGtwBCRuXhUhWaMUZQ+l5GRMsGRzPcl7KL/Q+HzA//SGZ+574VTvlg4Sl?=
+ =?us-ascii?Q?ZeG99AYrvkv8GxuAyCczteofBVEu0+WQ4zhMlgodD7hETGdDZq5dIBpCIMd7?=
+ =?us-ascii?Q?GmQh1gaWuO3UdI2oaxBYMJUdv0xBT2jzBcrHVm5+Hs275XEpE1aRyGW3v/Vf?=
+ =?us-ascii?Q?DhgejVyWaWGUm0WAuKrKqAe2HJM+OuOzNCwBgrm93lip5XtAqVecqbbv3Jgx?=
+ =?us-ascii?Q?BOdYHtpX9vA5h+G/L4x7sP/d5pGu/v2Og6InXjHIubZf3MbvO0Xx3kkIsltw?=
+ =?us-ascii?Q?T4P/5d8320Of17gz91wXKzgjdJo1bUmFn4Ui/+MHaa5sG7iqMXcbXuYEFmgC?=
+ =?us-ascii?Q?GoPTU0vQrGrgsEX8nspp4B43c5RH9IViMXilR6bZUr8IeOQT0LrLQhPGYZAg?=
+ =?us-ascii?Q?yAgErwaxBfZd5GhT+ulutr1LE33bgQSoPEXuVRWD4FtXDU4uKTjTzri+WeWO?=
+ =?us-ascii?Q?8ahKnJeEQYJ2l/zAxX4kpIET7MoTzDLbRve90v0VC8tm5bqBrqVtTQJwAstB?=
+ =?us-ascii?Q?TXTtVRAuCWWfhzy8Ki6ZcGMzytTbl/LpEya+tyz9GpzMIWaFNfLy1/HklMB2?=
+ =?us-ascii?Q?U2HsfmqHzvHo6pJjzxEAcmE46gNfF92gQb6/kfll?=
 X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea0c7792-ad61-4d1e-0fad-08dcf812d892
+X-MS-Exchange-CrossTenant-Network-Message-Id: 29c823bc-b42a-4b73-cd42-08dcf812d5a0
 X-MS-Exchange-CrossTenant-AuthSource: SEYPR02MB6014.apcprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 12:11:40.8026 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 12:11:35.9952 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: emY8ygYevCEbrY01mgBrYsKZI52u3RkQaT5YdYR62TXv9BpLV4mKIdrYLy0tOfM3MpmdCydftmZBkaWaU5h0Vw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR02MB7877
-X-Headers-End: 1t5l4k-0007RS-6G
-Subject: [f2fs-dev] [RFC PATCH 11/24] tests: add fsck testcase of fixing cp
- crc
+X-MS-Exchange-CrossTenant-UserPrincipalName: RQDm0KvOc5On7WNU6tFU0Nwu6E+Dcju15eLD+Husp7najqS3kcTCrA672MRZWm6XjhKS8FErdjhQfBCIB71unA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR02MB7326
+X-Headers-End: 1t5l4h-0007R0-PH
+Subject: [f2fs-dev] [RFC PATCH 07/24] inject.f2fs: add member `filename' in
+ inject_dentry
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -172,107 +172,258 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+This patch adds a new member `filename' in inject_dentry to inject
+dentry filename. The dentry is specified by nid option.
+
+Note that `.' and `..' dentries are special, because they are not in the
+parent directory of nid. So this patch also adds a new option `--dots'
+to inject these two dentries.
+
 Signed-off-by: Sheng Yong <shengyong@oppo.com>
 ---
- tests/f_cp_bad_crc/README    |  5 ++++
- tests/f_cp_bad_crc/expect.in | 22 +++++++++++++++++
- tests/f_cp_bad_crc/script    | 46 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 73 insertions(+)
- create mode 100644 tests/f_cp_bad_crc/README
- create mode 100644 tests/f_cp_bad_crc/expect.in
- create mode 100644 tests/f_cp_bad_crc/script
+ fsck/inject.c     | 94 ++++++++++++++++++++++++++++++++++++++++-------
+ fsck/inject.h     |  1 +
+ man/inject.f2fs.8 | 13 ++++++-
+ 3 files changed, 93 insertions(+), 15 deletions(-)
 
-diff --git a/tests/f_cp_bad_crc/README b/tests/f_cp_bad_crc/README
-new file mode 100644
-index 000000000000..250ece3f8b5a
---- /dev/null
-+++ b/tests/f_cp_bad_crc/README
-@@ -0,0 +1,5 @@
-+1. create f2fs image
-+2. create a new file
-+3. inject crc in current cp with value 0x12345
-+4. fsck fixes bad cp by copying backup cp
-+5. compare cp1 version with cp2 version, both cp should have the same version
-diff --git a/tests/f_cp_bad_crc/expect.in b/tests/f_cp_bad_crc/expect.in
-new file mode 100644
-index 000000000000..f21fecd2ae17
---- /dev/null
-+++ b/tests/f_cp_bad_crc/expect.in
-@@ -0,0 +1,22 @@
-+Info: Automatic fix mode enabled.
-+	Invalid CP CRC: offset:_OFFS_, crc:0x12345, calc:_CRC_
-+Info: checkpoint state = x :  nat_bits crc fsck compacted_summary unmount
+diff --git a/fsck/inject.c b/fsck/inject.c
+index 4a811b3a3302..bc8f09a67c1a 100644
+--- a/fsck/inject.c
++++ b/fsck/inject.c
+@@ -104,7 +104,7 @@ void inject_usage(void)
+ 	MSG(0, "  --sit <0|1|2> --mb <name> --blk <blk> [--idx <index>] --val <value> inject sit entry\n");
+ 	MSG(0, "  --ssa --mb <name> --blk <blk> [--idx <index>] --val <value> inject summary entry\n");
+ 	MSG(0, "  --node --mb <name> --nid <nid> [--idx <index>] --val <value> inject node\n");
+-	MSG(0, "  --dent --mb <name> --nid <ino> [--idx <index>] --val <value> inject ino's dentry\n");
++	MSG(0, "  --dent --mb <name> --nid <ino> [--dots <1|2>] --val/str <value/string> inject ino's dentry\n");
+ 	MSG(0, "  --dry-run do not really inject\n");
+ 
+ 	exit(1);
+@@ -211,12 +211,16 @@ static void inject_node_usage(void)
+ 
+ static void inject_dent_usage(void)
+ {
+-	MSG(0, "inject.f2fs --dent --mb <name> --nid <nid> [--idx <index>] --val <value> inject dentry\n");
++	MSG(0, "inject.f2fs --dent --mb <name> --nid <nid> [--dots <1|2>] --val/str <value/string> inject dentry\n");
++	MSG(0, "[dots]:\n");
++	MSG(0, "  1: inject \".\" in directory which is specified by nid\n");
++	MSG(0, "  2: inject \"..\" in directory which is specified by nid\n");
+ 	MSG(0, "[mb]:\n");
+ 	MSG(0, "  d_bitmap: inject dentry block d_bitmap of nid\n");
+ 	MSG(0, "  d_hash: inject dentry hash\n");
+ 	MSG(0, "  d_ino: inject dentry ino\n");
+ 	MSG(0, "  d_ftype: inject dentry ftype\n");
++	MSG(0, "  filename: inject dentry filename, its hash and len are updated implicitly\n");
+ }
+ 
+ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+@@ -240,6 +244,7 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+ 		{"ssa", no_argument, 0, 12},
+ 		{"node", no_argument, 0, 13},
+ 		{"dent", no_argument, 0, 14},
++		{"dots", required_argument, 0, 15},
+ 		{0, 0, 0, 0}
+ 	};
+ 
+@@ -336,6 +341,14 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+ 			opt->dent = true;
+ 			MSG(0, "Info: inject dentry\n");
+ 			break;
++		case 15:
++			opt->dots = atoi(optarg);
++			if (opt->dots != TYPE_DOT &&
++			    opt->dots != TYPE_DOTDOT)
++				return -ERANGE;
++			MSG(0, "Info: inject %s dentry\n",
++			    opt->dots == TYPE_DOT ? "dot" : "dotdot");
++			break;
+ 		case 'd':
+ 			if (optarg[0] == '-' || !is_digits(optarg))
+ 				return EWRONG_OPT;
+@@ -368,6 +381,9 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+ 			} else if (opt->dent) {
+ 				inject_dent_usage();
+ 				exit(0);
++			} else {
++				MSG(0, "\tError: Wrong option -%c (%d) %s\n",
++					o, o, optarg);
+ 			}
+ 			return EUNKNOWN_OPT;
+ 		}
+@@ -1056,12 +1072,12 @@ static int find_dir_entry(struct f2fs_dentry_ptr *d, nid_t ino)
+ 		}
+ 
+ 		de = &d->dentry[slot];
+-		if (le32_to_cpu(de->ino) == ino && de->hash_code != 0)
+-			return slot;
+ 		if (de->name_len == 0) {
+ 			slot++;
+ 			continue;
+ 		}
++		if (le32_to_cpu(de->ino) == ino)
++			return slot;
+ 		slot += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+ 	}
+ 
+@@ -1074,14 +1090,15 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 	struct f2fs_node *node_blk = NULL;
+ 	struct f2fs_inode *inode;
+ 	struct f2fs_dentry_ptr d;
+-	void *inline_dentry;
++	void *buf = NULL, *inline_dentry;
+ 	struct f2fs_dentry_block *dent_blk = NULL;
+ 	block_t addr = 0;
+-	void *buf = NULL;
+ 	struct f2fs_dir_entry *dent = NULL;
+ 	struct dnode_of_data dn;
+ 	nid_t pino;
+-	int slot = -ENOENT, ret;
++	int slot = -ENOENT, namelen, namecap, ret;
++	unsigned int dentry_hash;
++	char *name;
+ 
+ 	node_blk = malloc(F2FS_BLKSIZE);
+ 	ASSERT(node_blk != NULL);
+@@ -1090,12 +1107,25 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 	get_node_info(sbi, opt->nid, &ni);
+ 	ret = dev_read_block(node_blk, ni.blk_addr);
+ 	ASSERT(ret >= 0);
+-	pino = le32_to_cpu(node_blk->i.i_pino);
+ 
+-	/* get parent inode */
+-	get_node_info(sbi, pino, &ni);
+-	ret = dev_read_block(node_blk, ni.blk_addr);
+-	ASSERT(ret >= 0);
++	if (opt->dots) {
++		if (!LINUX_S_ISDIR(le16_to_cpu(node_blk->i.i_mode))) {
++			ERR_MSG("ino %u is not a directory, cannot inject "
++				"its %s\n", opt->nid,
++				opt->dots == TYPE_DOT ? "." : "..");
++			ret = -EINVAL;
++			goto out;
++		}
++		/* pino is itself */
++		pino = opt->nid;
++	} else {
++		pino = le32_to_cpu(node_blk->i.i_pino);
 +
-+[FSCK] Unreachable nat entries                        [Ok..] [x]
-+[FSCK] SIT valid block bitmap checking                [Ok..]
-+[FSCK] Hard link checking for regular file            [Ok..] [x]
-+[FSCK] valid_block_count matching with CP             [Ok..] [x]
-+[FSCK] valid_node_count matching with CP (de lookup)  [Ok..] [x]
-+[FSCK] valid_node_count matching with CP (nat lookup) [Ok..] [x]
-+[FSCK] valid_inode_count matched with CP              [Ok..] [x]
-+[FSCK] free segment_count matched with CP             [Ok..] [x]
-+[FSCK] next block offset is free                      [Ok..]
-+[FSCK] fixing SIT types
-+[FSCK] other corrupted bugs                           [Ok..]
-+Info: Duplicate valid checkpoint to mirror position x -> x
-+Info: Write valid nat_bits in checkpoint
-+Info: write_checkpoint() cur_cp:x
-+
-+Info: Automatic fix mode enabled.
-+Info: checkpoint state = x :  nat_bits unmount
-+Info: No error was reported
-diff --git a/tests/f_cp_bad_crc/script b/tests/f_cp_bad_crc/script
-new file mode 100644
-index 000000000000..5ef689c33ebe
---- /dev/null
-+++ b/tests/f_cp_bad_crc/script
-@@ -0,0 +1,46 @@
-+#!/bin/bash
-+
-+DESC="current cp with invalid crc"
-+
-+. $TOPDIR/tests/helpers
-+
-+cleanup pre > $LOG 2>&1
-+make_f2fs >> $LOG 2>&1
-+
-+mkdir $TESTDIR/mntdir
-+safe_mount $MNT_OPTS $META $TESTDIR/mntdir >> $LOG 2>&1
-+if [ $? -ne 0 ]; then
-+	echo "cannot mount f2fs image"
-+	exit
-+fi
-+touch $TESTDIR/mntdir/testfile
-+safe_umount $TESTDIR/mntdir >> $LOG 2>&1
-+if [ $? -ne 0 ]; then
-+	echo "cannot umount f2fs image"
-+	exit
-+fi
-+rm -rf $TESTDIR/mntdir
-+
-+offs=`get_cp checksum_offset`
-+crc=`get_cp crc`
-+
-+echo "crc:$crc offs:$offs" >> $LOG
-+
-+$INJECT --cp 0 --mb crc --val 0x12345 $META >> $LOG 2>&1
-+$FSCK $FSCK_OPTS -a $META > $OUT 2>&1
-+$FSCK $FSCK_OPTS -a $META >> $OUT 2>&1
-+
-+cp1_ver=`$INJECT --cp 1 --mb checkpoint_ver --val 0 --dry-run $META | grep "inject checkpoint_ver of cp" | awk '{print $(NF-2)}'`
-+cp2_ver=`$INJECT --cp 2 --mb checkpoint_ver --val 0 --dry-run $META | grep "inject checkpoint_ver of cp" | awk '{print $(NF-2)}'`
-+if [ $(($cp1_ver)) -ne $(($cp2_ver)) ]; then
-+	echo "cp1_ver: $cp1_ver" >> $OUT
-+	echo "cp2_ver: $cp2_ver" >> $OUT
-+fi
-+cat $OUT >> $LOG
-+
-+CRC=`printf "0x%x" $crc`
-+sed "s/_CRC_/$CRC/g" $TESTDIR/expect.in > $TESTDIR/expect
-+sed -i "s/_OFFS_/$offs/g" $TESTDIR/expect
-+
-+check_result
-+cleanup post >> $LOG 2>&1
++		/* get parent inode */
++		get_node_info(sbi, pino, &ni);
++		ret = dev_read_block(node_blk, ni.blk_addr);
++		ASSERT(ret >= 0);
++	}
+ 	inode = &node_blk->i;
+ 
+ 	/* find child dentry */
+@@ -1105,7 +1135,10 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 		addr = ni.blk_addr;
+ 		buf = node_blk;
+ 
+-		slot = find_dir_entry(&d, opt->nid);
++		if (opt->dots == TYPE_DOTDOT)
++			slot = find_dir_entry(&d, le32_to_cpu(node_blk->i.i_pino));
++		else
++			slot = find_dir_entry(&d, opt->nid);
+ 		if (slot >= 0)
+ 			dent = &d.dentry[slot];
+ 	} else {
+@@ -1141,7 +1174,10 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 			ASSERT(ret >= 0);
+ 
+ 			make_dentry_ptr(&d, node_blk, dent_blk, 1);
+-			slot = find_dir_entry(&d, opt->nid);
++			if (opt->dots == TYPE_DOTDOT)
++				slot = find_dir_entry(&d, le32_to_cpu(node_blk->i.i_pino));
++			else
++				slot = find_dir_entry(&d, opt->nid);
+ 			if (slot >= 0) {
+ 				dent = &d.dentry[slot];
+ 				buf = dent_blk;
+@@ -1175,6 +1211,36 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 		    "%d -> %d\n", opt->nid, dent->file_type,
+ 		    (u8)opt->val);
+ 		dent->file_type = (u8)opt->val;
++	} else if (!strcmp(opt->mb, "filename")) {
++		if (!opt->str) {
++			ERR_MSG("option str is needed\n");
++			ret = -EINVAL;
++			goto out;
++		}
++		namecap = ALIGN_UP(le16_to_cpu(dent->name_len), F2FS_SLOT_LEN);
++		namelen = strlen(opt->str);
++		if (namelen > namecap) {
++			ERR_MSG("option str too long\n");
++			ret = -EINVAL;
++			goto out;
++		}
++		name = (char *)d.filename[slot];
++		MSG(0, "Info: inject dentry filename of nid %u: "
++		    "%.*s -> %s\n", opt->nid, le16_to_cpu(dent->name_len),
++		    name, opt->str);
++		memcpy(name, opt->str, namelen);
++		MSG(0, "Info: inject dentry namelen of nid %u: "
++		    "%d -> %d\n", opt->nid, le16_to_cpu(dent->name_len),
++		    namelen);
++		dent->name_len = cpu_to_le16(namelen);
++		dentry_hash = f2fs_dentry_hash(get_encoding(sbi),
++						IS_CASEFOLDED(inode),
++						(unsigned char *)name,
++						namelen);
++		MSG(0, "Info: inject dentry d_hash of nid %u: "
++		    "0x%x -> 0x%x\n", opt->nid, le32_to_cpu(dent->hash_code),
++		    dentry_hash);
++		dent->hash_code = cpu_to_le32(dentry_hash);
+ 	} else {
+ 		ERR_MSG("unknown or unsupported member \"%s\"\n", opt->mb);
+ 		ret = -EINVAL;
+diff --git a/fsck/inject.h b/fsck/inject.h
+index 43c21b56a7eb..706a211bc645 100644
+--- a/fsck/inject.h
++++ b/fsck/inject.h
+@@ -30,6 +30,7 @@ struct inject_option {
+ 	int cp;			/* which cp */
+ 	int nat;		/* which nat pack */
+ 	int sit;		/* which sit pack */
++	int dots;		/* . or .. dentry */
+ 	bool ssa;
+ 	bool node;
+ 	bool dent;
+diff --git a/man/inject.f2fs.8 b/man/inject.f2fs.8
+index 691a40c889a0..3db3f4ecf85e 100644
+--- a/man/inject.f2fs.8
++++ b/man/inject.f2fs.8
+@@ -211,12 +211,20 @@ inode i_nid array specified by \fIidx\fP.
+ .RE
+ .TP
+ .BI \-\-dent
+-Inject dentry block or dir entry specified \fInid\fP.
++Inject dentry block or dir entry specified by \fInid\fP.
++.RS 1.2i
++.TP
++.BI \-\-dots " 1 or 2"
++The option means the "." or ".." directory entry of \fInid\fP is going to be injected.
++.RE
++.TP
++.BI ""
+ The available \fImb\fP of \fIdent\fP are:
+ .RS 1.2i
+ .TP
+ .BI d_bitmap
+ dentry block d_bitmap.
++dentry block d_bitmap.
+ .TP
+ .BI d_hash
+ dentry hash.
+@@ -226,6 +234,9 @@ dentry ino.
+ .TP
+ .BI d_ftype
+ dentry ftype.
++.TP
++.BI filename
++dentry filename, and corresponding d_hash and namelen are updated implicitly.
+ .RE
+ .TP
+ .BI \-\-dry\-run
 -- 
 2.40.1
 
