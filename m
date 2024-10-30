@@ -4,65 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 44E89D5CC8D
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Oct 2024 10:32:21 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B0C2BD5CC8C
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Oct 2024 10:32:20 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t65zw-00045m-49;
-	Wed, 30 Oct 2024 10:32:20 +0000
+	id 1t65zv-0006Nq-8F;
+	Wed, 30 Oct 2024 10:32:19 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <Yi.Sun@unisoc.com>) id 1t65zs-00045c-T1
+ (envelope-from <Yi.Sun@unisoc.com>) id 1t65zt-0006Nk-Lm
  for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 30 Oct 2024 10:32:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+gUkfEGpi3c7fSjkZbBFyExVCFF+uBCHB+dI+sBz+J8=; b=E9TxBI+5uzRJrhz1f3M2Lu9JNg
- LhHAWpczG0YOnYIMIk+gnoP49swoQe/cYftwc3C8pCHOLXRISZAM+UnwgrVr5QdzhyA23VIgUPyYr
- LRU+1M5K3xLttxas91KxTKQ2SVR951Zo0weccuwoR4yxqo6BIdjn9VbY07iNppxnlQ+g=;
+ bh=Ya+aLk0biOx6jdIGzdCPb91Pps+PGV7J3R6P1XkK4NM=; b=Lm+XfWuHcj6vYFHbyUNRGUOHZI
+ OJytwhKoQjboyj1rJ5Bz/9jNsP76EjFMtLr3ab1cJBAspKKrOrK/kqWwg8tbCTdV8aPSlmQIXXEX1
+ 3varZKSoFHigHOZKBbwc9zc4FbUzUE60JID5wOjZWmkJz0tuKohozRzOjryxczI+/Pl4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=+gUkfEGpi3c7fSjkZbBFyExVCFF+uBCHB+dI+sBz+J8=; b=H
- 1WFrkOGYVesBpF/ruqe3RGT+Csf8wRptQ06v2WopxKhYYMBRxgtGpH/uTfmEnbJksRMtkPjVHonKE
- 0Y7KsiP7NwocZgfOCtFf4a9DZx8yVQTFyykOE+cePpUmnD/IHn/zC3LE5T/fbfVZ3r4Xae7YUZ1q5
- 2owCO8R37U+5Ry8U=;
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=Ya+aLk0biOx6jdIGzdCPb91Pps+PGV7J3R6P1XkK4NM=; b=EK5HANL0arIBRDKpQ0bZrGqSjC
+ vB6F+wxSg+CWXI47u6Qf3UjszOvG5ilrDwOpfrk0ArjXAQ7nC/zDUtO/bs6lEIWvoGVURlA4RlxSd
+ mOp50nC5DAmV/STvyVcWSux1hnhfPMFq3cRDEUyhJuxTyfmmq2IxwsOfwWkiqh6qmkAk=;
 Received: from mx1.unisoc.com ([222.66.158.135] helo=SHSQR01.spreadtrum.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t65zs-0002E5-84 for linux-f2fs-devel@lists.sourceforge.net;
+ id 1t65zs-0002E6-F7 for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 30 Oct 2024 10:32:17 +0000
 Received: from dlp.unisoc.com ([10.29.3.86])
- by SHSQR01.spreadtrum.com with ESMTP id 49UAVevu026664;
- Wed, 30 Oct 2024 18:31:40 +0800 (+08)
+ by SHSQR01.spreadtrum.com with ESMTP id 49UAVgrR026815;
+ Wed, 30 Oct 2024 18:31:42 +0800 (+08)
  (envelope-from Yi.Sun@unisoc.com)
 Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
- by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Xdk1L6f7gz2K4lHM;
- Wed, 30 Oct 2024 18:31:02 +0800 (CST)
+ by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Xdk1N5Y5dz2K4lHM;
+ Wed, 30 Oct 2024 18:31:04 +0800 (CST)
 Received: from tj10379pcu1.spreadtrum.com (10.5.32.15) by
  BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 30 Oct 2024 18:31:38 +0800
+ 15.0.1497.23; Wed, 30 Oct 2024 18:31:40 +0800
 From: Yi Sun <yi.sun@unisoc.com>
 To: <chao@kernel.org>, <jaegeuk@kernel.org>
-Date: Wed, 30 Oct 2024 18:31:31 +0800
-Message-ID: <20241030103136.2874140-1-yi.sun@unisoc.com>
+Date: Wed, 30 Oct 2024 18:31:33 +0800
+Message-ID: <20241030103136.2874140-3-yi.sun@unisoc.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241030103136.2874140-1-yi.sun@unisoc.com>
+References: <20241030103136.2874140-1-yi.sun@unisoc.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.5.32.15]
 X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
  BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL: SHSQR01.spreadtrum.com 49UAVevu026664
-X-Headers-End: 1t65zs-0002E5-84
-Subject: [f2fs-dev] [PATCH v2 0/5] Speed up f2fs truncate
+X-MAIL: SHSQR01.spreadtrum.com 49UAVgrR026815
+X-Headers-End: 1t65zs-0002E6-F7
+Subject: [f2fs-dev] [PATCH v2 2/5] f2fs: expand
+ f2fs_invalidate_compress_page() to f2fs_invalidate_compress_pages_range()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,43 +84,69 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Deleting large files is time-consuming, and a large part
-of the time is spent in f2fs_invalidate_blocks()
-->down_write(sit_info->sentry_lock) and up_write().
+New function f2fs_invalidate_compress_pages_range() adds the @len
+parameter. So it can process some consecutive blocks at a time.
 
-If some blocks are continuous, we can process these blocks
-at the same time. This can reduce the number of calls to
-the down_write() and the up_write(), thereby improving the
-overall speed of doing truncate.
+Signed-off-by: Yi Sun <yi.sun@unisoc.com>
+---
+ fs/f2fs/compress.c | 7 ++++---
+ fs/f2fs/f2fs.h     | 9 +++++----
+ 2 files changed, 9 insertions(+), 7 deletions(-)
 
-Test steps:
-Set the CPU and DDR frequencies to the maximum.
-dd if=/dev/random of=./test.txt bs=1M count=100000
-sync
-rm test.txt
-
-Time Comparison of rm:
-original        optimization            ratio
-7.17s           3.27s                   54.39%
-
-Yi Sun (5):
-  f2fs: blocks need to belong to the same segment when using
-    update_sit_entry()
-  f2fs: expand f2fs_invalidate_compress_page() to
-    f2fs_invalidate_compress_pages_range()
-  f2fs: add parameter @len to f2fs_invalidate_internal_cache()
-  f2fs: add parameter @len to f2fs_invalidate_blocks()
-  f2fs: Optimize f2fs_truncate_data_blocks_range()
-
- fs/f2fs/compress.c | 11 +++---
- fs/f2fs/data.c     |  2 +-
- fs/f2fs/f2fs.h     | 16 +++++----
- fs/f2fs/file.c     | 78 ++++++++++++++++++++++++++++++++++++++----
- fs/f2fs/gc.c       |  2 +-
- fs/f2fs/node.c     |  4 +--
- fs/f2fs/segment.c  | 84 +++++++++++++++++++++++++++++++++++++++-------
- 7 files changed, 161 insertions(+), 36 deletions(-)
-
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 7f26440e8595..e607a7885b57 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1903,11 +1903,12 @@ struct address_space *COMPRESS_MAPPING(struct f2fs_sb_info *sbi)
+ 	return sbi->compress_inode->i_mapping;
+ }
+ 
+-void f2fs_invalidate_compress_page(struct f2fs_sb_info *sbi, block_t blkaddr)
++void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
++				block_t blkaddr, unsigned int len)
+ {
+-	if (!sbi->compress_inode)
++	if (!sbi->compress_inode || len == 0)
+ 		return;
+-	invalidate_mapping_pages(COMPRESS_MAPPING(sbi), blkaddr, blkaddr);
++	invalidate_mapping_pages(COMPRESS_MAPPING(sbi), blkaddr, blkaddr + len - 1);
+ }
+ 
+ void f2fs_cache_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 3c6f3cce5779..d3fe66a93a56 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4384,7 +4384,8 @@ void f2fs_destroy_page_array_cache(struct f2fs_sb_info *sbi);
+ int __init f2fs_init_compress_cache(void);
+ void f2fs_destroy_compress_cache(void);
+ struct address_space *COMPRESS_MAPPING(struct f2fs_sb_info *sbi);
+-void f2fs_invalidate_compress_page(struct f2fs_sb_info *sbi, block_t blkaddr);
++void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
++					block_t blkaddr, unsigned int len);
+ void f2fs_cache_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
+ 						nid_t ino, block_t blkaddr);
+ bool f2fs_load_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
+@@ -4439,8 +4440,8 @@ static inline int f2fs_init_page_array_cache(struct f2fs_sb_info *sbi) { return
+ static inline void f2fs_destroy_page_array_cache(struct f2fs_sb_info *sbi) { }
+ static inline int __init f2fs_init_compress_cache(void) { return 0; }
+ static inline void f2fs_destroy_compress_cache(void) { }
+-static inline void f2fs_invalidate_compress_page(struct f2fs_sb_info *sbi,
+-				block_t blkaddr) { }
++static inline void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
++				block_t blkaddr, unsigned int len) { }
+ static inline void f2fs_cache_compressed_page(struct f2fs_sb_info *sbi,
+ 				struct page *page, nid_t ino, block_t blkaddr) { }
+ static inline bool f2fs_load_compressed_page(struct f2fs_sb_info *sbi,
+@@ -4759,7 +4760,7 @@ static inline void f2fs_invalidate_internal_cache(struct f2fs_sb_info *sbi,
+ 								block_t blkaddr)
+ {
+ 	f2fs_truncate_meta_inode_pages(sbi, blkaddr, 1);
+-	f2fs_invalidate_compress_page(sbi, blkaddr);
++	f2fs_invalidate_compress_pages_range(sbi, blkaddr, 1);
+ }
+ 
+ #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
 -- 
 2.25.1
 
