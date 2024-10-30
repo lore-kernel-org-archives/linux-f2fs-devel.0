@@ -4,68 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 34590D5CC8A
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Oct 2024 10:32:20 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 44E89D5CC8D
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Oct 2024 10:32:21 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t65zu-0001kk-Md;
-	Wed, 30 Oct 2024 10:32:18 +0000
+	id 1t65zw-00045m-49;
+	Wed, 30 Oct 2024 10:32:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <Yi.Sun@unisoc.com>) id 1t65zr-0001kd-DM
+ (envelope-from <Yi.Sun@unisoc.com>) id 1t65zs-00045c-T1
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 30 Oct 2024 10:32:14 +0000
+ Wed, 30 Oct 2024 10:32:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hbCTiqgbC1DIBU4qzU/llGrs7QlAA+1MOYHeRIZA/xY=; b=OaWCRCHlNkSKUj/Fi+5ik77VKn
- ypizsq5HIREUijhpAqYzxRAtziYV44XCpkV1j5wOJPPuqeBK2fVb16O2UljLtWepI5lhfIHVfW9Yx
- RnKYcOyGa76ZaG9BztxleV3cmdUXX2p+vMIGr76yD5t1s7P5W07GjWKrnyBhZuQdp1Ig=;
+ bh=+gUkfEGpi3c7fSjkZbBFyExVCFF+uBCHB+dI+sBz+J8=; b=E9TxBI+5uzRJrhz1f3M2Lu9JNg
+ LhHAWpczG0YOnYIMIk+gnoP49swoQe/cYftwc3C8pCHOLXRISZAM+UnwgrVr5QdzhyA23VIgUPyYr
+ LRU+1M5K3xLttxas91KxTKQ2SVR951Zo0weccuwoR4yxqo6BIdjn9VbY07iNppxnlQ+g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=hbCTiqgbC1DIBU4qzU/llGrs7QlAA+1MOYHeRIZA/xY=; b=jOfXSW2PGxCPJ9BI+mfbznf7Y6
- XVEqy+6pDxU/BAoTtjd+XVkdF+qVUOWjc5Cg0kQM4eDkBeqTAbAgubVGnQbTn5zWRJf2UQ9icPII8
- 2lln+vAlGKZsq/zuYg3+rQxCdDWSru7AQQppwVcNXTkg5SCWnhBsEA67MvesuWOvi3Q4=;
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=+gUkfEGpi3c7fSjkZbBFyExVCFF+uBCHB+dI+sBz+J8=; b=H
+ 1WFrkOGYVesBpF/ruqe3RGT+Csf8wRptQ06v2WopxKhYYMBRxgtGpH/uTfmEnbJksRMtkPjVHonKE
+ 0Y7KsiP7NwocZgfOCtFf4a9DZx8yVQTFyykOE+cePpUmnD/IHn/zC3LE5T/fbfVZ3r4Xae7YUZ1q5
+ 2owCO8R37U+5Ry8U=;
 Received: from mx1.unisoc.com ([222.66.158.135] helo=SHSQR01.spreadtrum.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t65zp-0002Dx-1n for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 30 Oct 2024 10:32:14 +0000
+ id 1t65zs-0002E5-84 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 30 Oct 2024 10:32:17 +0000
 Received: from dlp.unisoc.com ([10.29.3.86])
- by SHSQR01.spreadtrum.com with ESMTP id 49UAVhEW026848;
- Wed, 30 Oct 2024 18:31:43 +0800 (+08)
+ by SHSQR01.spreadtrum.com with ESMTP id 49UAVevu026664;
+ Wed, 30 Oct 2024 18:31:40 +0800 (+08)
  (envelope-from Yi.Sun@unisoc.com)
 Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
- by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Xdk1P5JHRz2KSK4X;
- Wed, 30 Oct 2024 18:31:05 +0800 (CST)
+ by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Xdk1L6f7gz2K4lHM;
+ Wed, 30 Oct 2024 18:31:02 +0800 (CST)
 Received: from tj10379pcu1.spreadtrum.com (10.5.32.15) by
  BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 30 Oct 2024 18:31:41 +0800
+ 15.0.1497.23; Wed, 30 Oct 2024 18:31:38 +0800
 From: Yi Sun <yi.sun@unisoc.com>
 To: <chao@kernel.org>, <jaegeuk@kernel.org>
-Date: Wed, 30 Oct 2024 18:31:34 +0800
-Message-ID: <20241030103136.2874140-4-yi.sun@unisoc.com>
+Date: Wed, 30 Oct 2024 18:31:31 +0800
+Message-ID: <20241030103136.2874140-1-yi.sun@unisoc.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241030103136.2874140-1-yi.sun@unisoc.com>
-References: <20241030103136.2874140-1-yi.sun@unisoc.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.5.32.15]
 X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
  BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL: SHSQR01.spreadtrum.com 49UAVhEW026848
-X-Headers-End: 1t65zp-0002Dx-1n
-Subject: [f2fs-dev] [PATCH v2 3/5] f2fs: add parameter @len to
- f2fs_invalidate_internal_cache()
+X-MAIL: SHSQR01.spreadtrum.com 49UAVevu026664
+X-Headers-End: 1t65zs-0002E5-84
+Subject: [f2fs-dev] [PATCH v2 0/5] Speed up f2fs truncate
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,91 +81,43 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-New function can process some consecutive blocks at a time.
+Deleting large files is time-consuming, and a large part
+of the time is spent in f2fs_invalidate_blocks()
+->down_write(sit_info->sentry_lock) and up_write().
 
-Signed-off-by: Yi Sun <yi.sun@unisoc.com>
----
- fs/f2fs/data.c    | 2 +-
- fs/f2fs/f2fs.h    | 6 +++---
- fs/f2fs/gc.c      | 2 +-
- fs/f2fs/segment.c | 6 +++---
- 4 files changed, 8 insertions(+), 8 deletions(-)
+If some blocks are continuous, we can process these blocks
+at the same time. This can reduce the number of calls to
+the down_write() and the up_write(), thereby improving the
+overall speed of doing truncate.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 90fa8ab85194..37bc747aac89 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1420,7 +1420,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
- 		return err;
- 
- 	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO)
--		f2fs_invalidate_internal_cache(sbi, old_blkaddr);
-+		f2fs_invalidate_internal_cache(sbi, old_blkaddr, 1);
- 
- 	f2fs_update_data_blkaddr(dn, dn->data_blkaddr);
- 	return 0;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d3fe66a93a56..addd49af57ec 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4757,10 +4757,10 @@ static inline void f2fs_truncate_meta_inode_pages(struct f2fs_sb_info *sbi,
- }
- 
- static inline void f2fs_invalidate_internal_cache(struct f2fs_sb_info *sbi,
--								block_t blkaddr)
-+						block_t blkaddr, unsigned int len)
- {
--	f2fs_truncate_meta_inode_pages(sbi, blkaddr, 1);
--	f2fs_invalidate_compress_pages_range(sbi, blkaddr, 1);
-+	f2fs_truncate_meta_inode_pages(sbi, blkaddr, len);
-+	f2fs_invalidate_compress_pages_range(sbi, blkaddr, len);
- }
- 
- #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index e40bdd12e36d..155c1a4a0d74 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1410,7 +1410,7 @@ static int move_data_block(struct inode *inode, block_t bidx,
- 				page_address(mpage), PAGE_SIZE);
- 	f2fs_put_page(mpage, 1);
- 
--	f2fs_invalidate_internal_cache(fio.sbi, fio.old_blkaddr);
-+	f2fs_invalidate_internal_cache(fio.sbi, fio.old_blkaddr, 1);
- 
- 	set_page_dirty(fio.encrypted_page);
- 	if (clear_page_dirty_for_io(fio.encrypted_page))
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index a5bd101c63a1..92ddff285a65 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2567,7 +2567,7 @@ void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
- 	if (addr == NEW_ADDR || addr == COMPRESS_ADDR)
- 		return;
- 
--	f2fs_invalidate_internal_cache(sbi, addr);
-+	f2fs_invalidate_internal_cache(sbi, addr, 1);
- 
- 	/* add it into sit main buffer */
- 	down_write(&sit_i->sentry_lock);
-@@ -3845,7 +3845,7 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- 		goto out;
- 	}
- 	if (GET_SEGNO(fio->sbi, fio->old_blkaddr) != NULL_SEGNO)
--		f2fs_invalidate_internal_cache(fio->sbi, fio->old_blkaddr);
-+		f2fs_invalidate_internal_cache(fio->sbi, fio->old_blkaddr, 1);
- 
- 	/* writeout dirty page into bdev */
- 	f2fs_submit_page_write(fio);
-@@ -4037,7 +4037,7 @@ void f2fs_do_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 		update_sit_entry(sbi, new_blkaddr, 1);
- 	}
- 	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO) {
--		f2fs_invalidate_internal_cache(sbi, old_blkaddr);
-+		f2fs_invalidate_internal_cache(sbi, old_blkaddr, 1);
- 		if (!from_gc)
- 			update_segment_mtime(sbi, old_blkaddr, 0);
- 		update_sit_entry(sbi, old_blkaddr, -1);
+Test steps:
+Set the CPU and DDR frequencies to the maximum.
+dd if=/dev/random of=./test.txt bs=1M count=100000
+sync
+rm test.txt
+
+Time Comparison of rm:
+original        optimization            ratio
+7.17s           3.27s                   54.39%
+
+Yi Sun (5):
+  f2fs: blocks need to belong to the same segment when using
+    update_sit_entry()
+  f2fs: expand f2fs_invalidate_compress_page() to
+    f2fs_invalidate_compress_pages_range()
+  f2fs: add parameter @len to f2fs_invalidate_internal_cache()
+  f2fs: add parameter @len to f2fs_invalidate_blocks()
+  f2fs: Optimize f2fs_truncate_data_blocks_range()
+
+ fs/f2fs/compress.c | 11 +++---
+ fs/f2fs/data.c     |  2 +-
+ fs/f2fs/f2fs.h     | 16 +++++----
+ fs/f2fs/file.c     | 78 ++++++++++++++++++++++++++++++++++++++----
+ fs/f2fs/gc.c       |  2 +-
+ fs/f2fs/node.c     |  4 +--
+ fs/f2fs/segment.c  | 84 +++++++++++++++++++++++++++++++++++++++-------
+ 7 files changed, 161 insertions(+), 36 deletions(-)
+
 -- 
 2.25.1
 
