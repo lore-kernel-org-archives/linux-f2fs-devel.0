@@ -4,67 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7CF8BD7497F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Oct 2024 08:17:24 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 235A2D5CC8B
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Oct 2024 10:32:20 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t63tI-0002NK-7l;
-	Wed, 30 Oct 2024 08:17:20 +0000
+	id 1t65zv-00085q-3W;
+	Wed, 30 Oct 2024 10:32:19 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1t63tD-0002Le-Ab
+ (envelope-from <Yi.Sun@unisoc.com>) id 1t65zr-00085X-OB
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 30 Oct 2024 08:17:16 +0000
+ Wed, 30 Oct 2024 10:32:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WrNrGGvyzm46hgJTJ9wsXN4M7WMbPBNwZLd5HF6pXTY=; b=WCz8xN8s1Pe5i95GZfZ9qCY6O5
- m0rfzJIZRVBei+WoeSTGMgsdSMbZsaXQv0WhQMsHgcSHynru4z1uJIXk0v2lmzIss5fwhm3ne7dxR
- AjfHvruVd9w87o9fr1nz/DGjSuWWAKF6bCBzsl46OajUn2HVHJt9Gu6vhKxmz6TaFyr8=;
+ bh=xzITosxmx6kMCfyCQt/IxBYd+ITgoPCs6oZNNpv3CcM=; b=N6Op7DqFWaTGInGAqtUx8J4k7g
+ uiyT2LnaLQiigZuOu3kc2zTyLqg4O4Fo4oZnDHTh3OmscUjMOAOp3YsGwkczGqZfr8j4ks22liuJM
+ cm1CGiIa8XGWTV/DkIGZyOmVPi7wJBy8pUwmnDLxgzRQBjSQuY9DchkRk73A6eL4099U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=WrNrGGvyzm46hgJTJ9wsXN4M7WMbPBNwZLd5HF6pXTY=; b=T
- fAFYw8e0LEopyEfAm3mCmMWhZ1lnuWfCmzZnB5oCM/vhTMDmISVDLk+wDjNTcp8WPxyruU3lxpGyx
- 6tcGCxGnaXFFbfKqkZvU+B2514m0x5xIBNcyRuRNnIk4eYvS1/c2o8Etopbdu1720qomvESjds8L4
- tqC0/4WwyGZsLUFM=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=xzITosxmx6kMCfyCQt/IxBYd+ITgoPCs6oZNNpv3CcM=; b=hhXXpZhcKwxp2FnCp+MSgc4lLl
+ 1DdL+UMkk4rciJEYZIC0BQsFfCOZRy1Q0NZGG4N2znRq1qJhiAuW1WUlcZ63ViwICcs2KH6sCtNdt
+ t/hEtNcOP6RdPKxlprHPuzH3EqI9M949vb+KafFNb6Z1GOxyEOff07+2QHO/HYsDIo20=;
+Received: from mx1.unisoc.com ([222.66.158.135] helo=SHSQR01.spreadtrum.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t63tD-0008Ow-Af for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 30 Oct 2024 08:17:16 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id B20D4A43890
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 30 Oct 2024 08:15:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DFF5C4CEE4;
- Wed, 30 Oct 2024 08:17:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1730276229;
- bh=G0Jc5GwhCoQ+HTn/PbQQjj+Skqf8rx5u84YAdDP62Sc=;
- h=From:To:Cc:Subject:Date:From;
- b=dOx+MpUyPE4FK0GEJyZlgAS4dCoAOUAd/yPHA/RxZ2KEqFrsmKs4meZWnlYVnW+ro
- Cvc45xXgBRoiIaLphFODANzSc4KWr8yeXMTYAX/72+mqMBRsF8MIXQb3NY2dDC1mWO
- yrcgcsSSy2G+ZUeYv7o+YPVL/g8pfXJC1/qSuPrFjAGp5c4KxrUkPST+udrJps32Bq
- SOtgsosPs7dw3VHwIzi8ndDiQoa5NOdFrine7xsCklrSjZOsEevtKD9wIPSCtdtmLO
- U4vibdYffmVUAFYkpC2Nx4Ns7Ax6SkaIZmhVvGyCpuA/p+7bfyAxFZY2HMTWoKo6b1
- NOn7x/srXUQYw==
-To: jaegeuk@kernel.org
-Date: Wed, 30 Oct 2024 16:17:01 +0800
-Message-Id: <20241030081701.1853020-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ id 1t65zq-0002E1-PN for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 30 Oct 2024 10:32:15 +0000
+Received: from dlp.unisoc.com ([10.29.3.86])
+ by SHSQR01.spreadtrum.com with ESMTP id 49UAVfg6026716;
+ Wed, 30 Oct 2024 18:31:41 +0800 (+08)
+ (envelope-from Yi.Sun@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+ by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Xdk1M63kyz2KSK4X;
+ Wed, 30 Oct 2024 18:31:03 +0800 (CST)
+Received: from tj10379pcu1.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 30 Oct 2024 18:31:39 +0800
+From: Yi Sun <yi.sun@unisoc.com>
+To: <chao@kernel.org>, <jaegeuk@kernel.org>
+Date: Wed, 30 Oct 2024 18:31:32 +0800
+Message-ID: <20241030103136.2874140-2-yi.sun@unisoc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241030103136.2874140-1-yi.sun@unisoc.com>
+References: <20241030103136.2874140-1-yi.sun@unisoc.com>
 MIME-Version: 1.0
-X-Headers-End: 1t63tD-0008Ow-Af
-Subject: [f2fs-dev] [PATCH v2] f2fs: fix to convert log type to segment data
- type correctly
+X-Originating-IP: [10.5.32.15]
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL: SHSQR01.spreadtrum.com 49UAVfg6026716
+X-Headers-End: 1t65zq-0002E1-PN
+Subject: [f2fs-dev] [PATCH v2 1/5] f2fs: blocks need to belong to the same
+ segment when using update_sit_entry()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,83 +77,61 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, sunyibuaa@gmail.com, yi.sun@unisoc.com,
+ hao_hao.wang@unisoc.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch introduces a new helper log_type_to_seg_type() to convert
-log type to segment data type, and uses it to clean up opened codes
-in build_curseg(), and also it fixes to convert log type before use
-in do_write_page().
+When using update_sit_entry() to release consecutive blocks,
+ensure that the consecutive blocks belong to the same segment.
+Because after update_sit_entry_for_realese(), @segno is still
+in use in update_sit_entry().
 
-Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Yi Sun <yi.sun@unisoc.com>
 ---
-v2:
-- no logic change, just rebase to last dev-test branch
- fs/f2fs/segment.c | 36 ++++++++++++++++++++++++++++--------
- 1 file changed, 28 insertions(+), 8 deletions(-)
+ fs/f2fs/segment.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index a0347a59be6c..279ce3bd6ddd 100644
+index bb2fd98331cd..a5bd101c63a1 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -3833,10 +3833,35 @@ void f2fs_update_device_state(struct f2fs_sb_info *sbi, nid_t ino,
- 	}
+@@ -2424,6 +2424,10 @@ static void update_segment_mtime(struct f2fs_sb_info *sbi, block_t blkaddr,
+ 		SIT_I(sbi)->max_mtime = ctime;
  }
  
-+static int log_type_to_seg_type(enum log_type type)
-+{
-+	int seg_type = CURSEG_COLD_DATA;
-+
-+	switch (type) {
-+	case CURSEG_HOT_DATA:
-+	case CURSEG_WARM_DATA:
-+	case CURSEG_COLD_DATA:
-+	case CURSEG_HOT_NODE:
-+	case CURSEG_WARM_NODE:
-+	case CURSEG_COLD_NODE:
-+		seg_type = (int)type;
-+		break;
-+	case CURSEG_COLD_DATA_PINNED:
-+	case CURSEG_ALL_DATA_ATGC:
-+		seg_type = CURSEG_COLD_DATA;
-+		break;
-+	default:
-+		break;
-+	}
-+	return seg_type;
-+}
-+
- static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
++/*
++ * NOTE: when updating multiple blocks at the same time, please ensure
++ * that the consecutive input blocks belong to the same segment.
++ */
+ static int update_sit_entry_for_release(struct f2fs_sb_info *sbi, struct seg_entry *se,
+ 				block_t blkaddr, unsigned int offset, int del)
  {
--	int type = __get_segment_type(fio);
--	bool keep_order = (f2fs_lfs_mode(fio->sbi) && type == CURSEG_COLD_DATA);
-+	enum log_type type = __get_segment_type(fio);
-+	int seg_type = log_type_to_seg_type(type);
-+	bool keep_order = (f2fs_lfs_mode(fio->sbi) &&
-+				seg_type == CURSEG_COLD_DATA);
+@@ -2434,6 +2438,8 @@ static int update_sit_entry_for_release(struct f2fs_sb_info *sbi, struct seg_ent
+ 	int i;
+ 	int del_count = -del;
  
- 	if (keep_order)
- 		f2fs_down_read(&fio->sbi->io_order_lock);
-@@ -4818,12 +4843,7 @@ static int build_curseg(struct f2fs_sb_info *sbi)
- 				sizeof(struct f2fs_journal), GFP_KERNEL);
- 		if (!array[i].journal)
- 			return -ENOMEM;
--		if (i < NR_PERSISTENT_LOG)
--			array[i].seg_type = CURSEG_HOT_DATA + i;
--		else if (i == CURSEG_COLD_DATA_PINNED)
--			array[i].seg_type = CURSEG_COLD_DATA;
--		else if (i == CURSEG_ALL_DATA_ATGC)
--			array[i].seg_type = CURSEG_COLD_DATA;
-+		array[i].seg_type = log_type_to_seg_type(i);
- 		reset_curseg_fields(&array[i]);
- 	}
- 	return restore_curseg_summaries(sbi);
++	f2fs_bug_on(sbi, GET_SEGNO(sbi, blkaddr) != GET_SEGNO(sbi, blkaddr + del_count - 1));
++
+ 	for (i = 0; i < del_count; i++) {
+ 		exist = f2fs_test_and_clear_bit(offset + i, se->cur_valid_map);
+ #ifdef CONFIG_F2FS_CHECK_FS
+@@ -2476,6 +2482,11 @@ static int update_sit_entry_for_release(struct f2fs_sb_info *sbi, struct seg_ent
+ 	return del;
+ }
+ 
++/*
++ * If releasing blocks, this function supports updating multiple consecutive blocks
++ * at one time, but please note that these consecutive blocks need to belong to the
++ * same segment.
++ */
+ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ {
+ 	struct seg_entry *se;
 -- 
-2.40.1
+2.25.1
 
 
 
