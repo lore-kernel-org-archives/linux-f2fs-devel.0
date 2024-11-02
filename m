@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6C544E677F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  2 Nov 2024 11:09:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5234DE67808
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  2 Nov 2024 16:36:18 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t7C06-0000La-08;
-	Sat, 02 Nov 2024 11:09:02 +0000
+	id 1t7H6m-000340-4y;
+	Sat, 02 Nov 2024 16:36:16 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <herbert@gondor.apana.org.au>) id 1t7C01-0000LL-Fn
+ (envelope-from <ebiggers@kernel.org>) id 1t7H6l-00033u-3V
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 02 Nov 2024 11:08:57 +0000
+ Sat, 02 Nov 2024 16:36:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rJjP7GEhm9Yido8/2Yi7Kg/9NXfC12+1Hc68o0sqeZo=; b=PEIU/2OnxKX3xMf4N5hAMfN7kf
- o1dA6wYLRv5aKN/keEzuEJazQDNz9Q0l3Gd0Tc3cwE5Jf1WBjEwAUCdxZw0NAngXO6BToFilHzWDz
- ypaWiPDxolwwQKztrsCB08lAHno99Z1/aGwEKfIuk8Jhj2ffkcdBMY4kzyqYCGQo6cl4=;
+ bh=k39rYMoWjO6+nGMnJR7eYdIhWn0FMNGEl3Akb1BGe20=; b=LWSoLLO2hln1MBkhBbgRHgbEZ2
+ uiUCo8coiNgkCPv0PI3n/xoCD/7VStSyTsLfBBWvuCPZwOa+hiI7gisQqlUqpZCATJfV070jf4aG+
+ U9fMeNKxFASOQ3nXJiTQLjh5H5wbZXAQ/ucJJCtBDNbBY+ZGSXRxTGF5I0scNhAv2JPk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,45 +33,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=rJjP7GEhm9Yido8/2Yi7Kg/9NXfC12+1Hc68o0sqeZo=; b=OGRt143HuSIutTL4SWdA0JS2pZ
- KAXteCw5pOd4p4N8GZTvkx0/66cJUnJZ6dcd7stK+cXpc/GuUtX/VjjULyceztN2MxiiheLwFNGi3
- rK8XTNWk922eMeh+rq28hJoI/74qWsV8XVmYnOmMVCxq8zaRfJE3x604s+fphM0J/Sqw=;
-Received: from abb.hmeau.com ([144.6.53.87])
+ bh=k39rYMoWjO6+nGMnJR7eYdIhWn0FMNGEl3Akb1BGe20=; b=JweC95RzuCbvtS0a9rd84JaecE
+ pnd231RakoFKqwS5gD6PDIC1heZftiYcIa+AKsZpCDZk4kCdHSub33sDSStA5nr1hA1J+LGn5/ApF
+ KxrJ+cnIvOlc1GQwF2f4saNTzGmYJ6fdaOun3NamYhpitGz2hqrKFkUCjA4YcLYv12ik=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t7C00-0007qb-NU for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 02 Nov 2024 11:08:57 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com; 
- s=formenos;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
- Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=rJjP7GEhm9Yido8/2Yi7Kg/9NXfC12+1Hc68o0sqeZo=; b=ZL/lvV/0NG+jnrygJ/ulUipBlK
- qP9nNwqVQWNXM6Mo4bBB3wTvXS6oRzgEKSHf55UXhXhzl6CQWDcLaKiJVFPLfJWGDYzgQucVtLoXu
- EdgtwDpESedu90LNlQ/3ESKbF6ZllB13v5NTAUox4RYWGiwG0gPbhcB9nhH9k15mZ/+NFfBDzBZhT
- ZXkVWdsMEUU+MuBkn0bvppo0elNwSfGET6JHSBcIK+uM55LY9FOpzK7dAKO7wfzB9TVAXeFIWaCKY
- of25XbcMJoe7WP1/TZrB8M9THZkyGx/lpgRJ1Zogfa/NIqKJhYAzvuJg9eOUYUwS6oN1RCWC7zQ1Z
- rIC9NpXA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
- by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
- id 1t7Bzn-00DyOZ-3A; Sat, 02 Nov 2024 19:08:46 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation);
- Sat, 02 Nov 2024 19:08:43 +0800
-Date: Sat, 2 Nov 2024 19:08:43 +0800
-To: Ard Biesheuvel <ardb@kernel.org>
-Message-ID: <ZyYIO6RpjTFteaxH@gondor.apana.org.au>
+ id 1t7H6j-00062y-To for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 02 Nov 2024 16:36:15 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by nyc.source.kernel.org (Postfix) with ESMTP id B9844A40E05;
+ Sat,  2 Nov 2024 16:34:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CFD1C4CEC3;
+ Sat,  2 Nov 2024 16:36:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1730565367;
+ bh=efn4VpG7p6xFb/S4X3ANPIQCQKp6IXfEyCLH0VWZIIk=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=KlpVtnzWd/zB5XmFf980RxtRY6lt695NC4d5DAQWzdJq8P9d/vTpUIa9uhRZxXlNg
+ V1d2QzYc2hobwbFxK4fWDOeUmxR84BXOCx0bbPmSs0eqzXhWKKg5gbNDPcqLKd+ItV
+ 0pXNaQHtN/eHmbiDg0Z7SgO8wxZv7vCv329kh8IFtCEPWR/9ZVZ4PS1sF2pFzadm7O
+ KR046MH/33qcHZt/KH+f3V2nu048roFu5R/+fD2mNhDgdzzAq87Tul2/R4s/yR1t+w
+ 9f2q8hLJXw4bMrhpexvm+tOdexgGWME42h9ZVxDY348o62nZnpHwJGFG+M9IE+WQFR
+ 2wSFp9BrXYOKQ==
+Date: Sat, 2 Nov 2024 09:36:05 -0700
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Message-ID: <20241102163605.GA28213@sol.localdomain>
 References: <20241026040958.GA34351@sol.localdomain>
  <ZyX0uGHg4Cmsk2oz@gondor.apana.org.au>
  <CAMj1kXFfPtO0vd1KqTa+QNSkRWNR7SUJ_A_zX6-Hz5HVLtLYtw@mail.gmail.com>
  <ZyX8yEqnjXjJ5itO@gondor.apana.org.au>
  <CAMj1kXHje-BwJVffAxN9G96Gy4Gom3Ca7dJ-_K7sgcrz7_k7Kw@mail.gmail.com>
  <CAMj1kXG8Nqw_f8OsFTq_UKRbca6w58g4uyRAZXCoCr=OwC2sWA@mail.gmail.com>
+ <ZyYIO6RpjTFteaxH@gondor.apana.org.au>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXG8Nqw_f8OsFTq_UKRbca6w58g4uyRAZXCoCr=OwC2sWA@mail.gmail.com>
-X-Headers-End: 1t7C00-0007qb-NU
+In-Reply-To: <ZyYIO6RpjTFteaxH@gondor.apana.org.au>
+X-Headers-End: 1t7H6j-00062y-To
 Subject: Re: [f2fs-dev] [PATCH v2 04/18] crypto: crc32 - don't unnecessarily
  register arch algorithms
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -85,37 +83,73 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Herbert Xu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Herbert Xu <herbert@gondor.apana.org.au>
+From: Eric Biggers via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Eric Biggers <ebiggers@kernel.org>
 Cc: linux-arch@vger.kernel.org, linux-s390@vger.kernel.org,
  linux-scsi@vger.kernel.org, linux-mips@vger.kernel.org, x86@kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org,
- loongarch@lists.linux.dev, sparclinux@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-ext4@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+ linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
+ sparclinux@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-ext4@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Ard Biesheuvel <ardb@kernel.org>, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Sat, Nov 02, 2024 at 12:05:01PM +0100, Ard Biesheuvel wrote:
->
-> The only issue resulting from *not* taking this patch is that btrfs
-> may misidentify the CRC32 implementation as being 'slow' and take an
-> alternative code path, which does not necessarily result in worse
-> performance.
+On Sat, Nov 02, 2024 at 07:08:43PM +0800, Herbert Xu wrote:
+> On Sat, Nov 02, 2024 at 12:05:01PM +0100, Ard Biesheuvel wrote:
+> >
+> > The only issue resulting from *not* taking this patch is that btrfs
+> > may misidentify the CRC32 implementation as being 'slow' and take an
+> > alternative code path, which does not necessarily result in worse
+> > performance.
+> 
+> If we were removing crc32* (or at least crc32*-arch) from the Crypto
+> API then these patches would be redundant.  But if we're keeping them
+> because btrfs uses them then we should definitely make crc32*-arch
+> do the right thing.  IOW they should not be registered if they're
+> the same as crc32*-generic.
+> 
+> Thanks,
 
-If we were removing crc32* (or at least crc32*-arch) from the Crypto
-API then these patches would be redundant.  But if we're keeping them
-because btrfs uses them then we should definitely make crc32*-arch
-do the right thing.  IOW they should not be registered if they're
-the same as crc32*-generic.
+I would like to eventually remove crc32 and crc32c from the crypto API, but it
+will take some time to get all the users converted.  If there are AF_ALG users
+it could even be impossible, though the usual culprit, iwd, doesn't appear to
+use any CRCs, so hopefully we are fine there.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+I will plan to keep this patch, but change it to use a crc32_optimizations()
+function instead which was Ard's first suggestion.
+
+I don't think Ard's static_call suggestion would work as-is, since considering
+the following:
+
+    static inline u32 __pure crc32_le(u32 crc, const u8 *p, size_t len)
+    {
+            if (IS_ENABLED(CONFIG_CRC32_ARCH))
+                    return static_call(crc32_le_arch)(crc, p, len);
+            return crc32_le_base(crc, p, len);
+    }
+
+... the 'static_call(crc32_le_arch)(crc, p, len)' will be inlined into every
+user, which could be a loadable module which gets loaded after crc32-${arch}.ko.
+And AFAIK, static calls in that module won't be updated in that case.
+
+That could be avoided by making crc32_le() a non-inline function in lib/crc32.c,
+so the static call would only be in that one place.  That has the slight
+disadvantage that it would introduce an extra jump into the common case where
+the optimized function is enabled.  Considering that some users are passing
+small amounts of data into the CRC functions (e.g., 4 bytes), I would like to
+minimize the overhead as much as possible.
+
+It could also be avoided by making CRC32 and CRC32_ARCH bool rather than
+tristate.  I would prefer not to do that, since there can be situations where
+only loadable modules need these functions so they should not have to be built
+into the core kernel.
+
+So I plan to go with the crc32_optimizations() solution in v3.
+
+- Eric
 
 
 _______________________________________________
