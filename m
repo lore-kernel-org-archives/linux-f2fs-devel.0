@@ -4,114 +4,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A4A9AE6F09C
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  2 Nov 2024 00:25:33 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BC78BE677F8
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  2 Nov 2024 09:59:29 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t71xN-0001no-4d;
-	Sat, 02 Nov 2024 00:25:32 +0000
+	id 1t7Aul-0007LU-RJ;
+	Sat, 02 Nov 2024 09:59:27 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1t71xL-0001nh-BT
+ (envelope-from <ardb@kernel.org>) id 1t7Auj-0007LM-TA
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 02 Nov 2024 00:25:32 +0000
+ Sat, 02 Nov 2024 09:59:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZlM4+N10kw6nMH1yiqQEGwSTn0RtfgiXoedMyVvBi1U=; b=c13bQmHE3fDnFyF/xdbbr3H6RL
- HJw803t02HssUYQM0XDNfcPXulKw7yplj9xoDLClXVctgOAYRHH5kl/ZJLqV5LEuJLN/Rm9ojvree
- WyhEDGpYDmIZlanKzs+S81NkLNR1h+mmd73zu/2sff/TRv08La5LFA9v3kkYmfYuwnFo=;
+ bh=jzcc2qtlo3q2yjXZFmDXUgFRfJJPX4XAPzkwICumNQI=; b=UEUPlYGlTKueBQ4aPV8xqrNkCA
+ s3V4LImehVdktH/XXrDm76Q+MJC6t3N3TL8QpYH+cd1nux5GzVWMd431UNCmyR1duN9+0t24hkuQS
+ s8zLfkr9yercBAt73JBfYq+a2cvuqBnQ/KKCyugOC+bFv95H2zIyGQPGinafzgEnjuMU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ZlM4+N10kw6nMH1yiqQEGwSTn0RtfgiXoedMyVvBi1U=; b=baXyM8E6A/mrUQDFisazx65xhw
- yq7FKl4Q9pLrUB85nTCXaOqxvaRIwEqRT6Xn/ClLLfoD8GUGVwy3BIo8dsPohPAoGEKhb9E2C6voZ
- CjVroHkddhwhRO8p/ktXGqoCbuQzIUoLRBuBfzFkpeOjXZPPCpZwCGOXYHn1VBiL7smc=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ bh=jzcc2qtlo3q2yjXZFmDXUgFRfJJPX4XAPzkwICumNQI=; b=kSPvMCpg1J4qH6ab4Rrv7P0fCE
+ L0Cl2yX3qVqgruWbFomRycARZ6b2pgqwyDSYwyqfCq2xx7mRyu3g95nI5aO0HjkYPJKs5vdojauXS
+ 1DfPOXxG7To43zEwFDQ2jfrfaLXF+ujjXb0usmlbiDq1JUPj9OQTiRmSmY0sAYyLnAkE=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t71xJ-0004yU-Rn for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 02 Nov 2024 00:25:30 +0000
+ id 1t7Auj-0003tP-9q for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 02 Nov 2024 09:59:25 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id AD7A2A44F0E;
- Sat,  2 Nov 2024 00:23:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DB2C4CECD;
- Sat,  2 Nov 2024 00:25:22 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 9234A5C286A
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat,  2 Nov 2024 09:58:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FD81C4CED5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat,  2 Nov 2024 09:59:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1730507123;
- bh=PoBluuWksqSKIY8x+1s63UbYr0Aia1sRZxqjFKv/dW8=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=USHVKQuC7sGpL0OYwqRt1DfspdDNcqIPA6QozwMZMHvEbwmWXqulvRBDW4pwFgf6e
- h1xsVceuGJEmH1KPy4oVsUjd8Ra5mh5CZUN0nVs51KDer0yL7yr/zC5RJ9hAiMIpe3
- Zgh9HOsdeqtaLKKLB2U2/7ORacZDjJqJoh6A+C3xtTxPU741CXBfuM4ufq62qxL5Zv
- /tiokc5FPBKx1DGGOScxr+cmtxyKwDWQCXvqafeFMQ0rrZVK2G0Tp6j90ro6i7H9rP
- xa6BgasKX8tut8jQD9NCAFPE1KJg294bvZJGnwnfEWl4xpssAR9QYNyNyVTKVdt+JP
- 7i0d763sRbJMQ==
-Message-ID: <bdc6ecca-d527-4ca8-a476-1c00fcd1ad11@kernel.org>
-Date: Sat, 2 Nov 2024 08:25:23 +0800
+ s=k20201202; t=1730541554;
+ bh=jzcc2qtlo3q2yjXZFmDXUgFRfJJPX4XAPzkwICumNQI=;
+ h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+ b=pTAZ258u/Bm55mgKfduPxcJ4+l7utIbI96FN3uHiYroZBZHAbnvfCZty3m5Rr2XH+
+ F9H9kpY23mllFcm03reDqSDwYlj6z0PqW6iPcayBoJoKDOej6utxzDbE1LxiDgLJej
+ urb0cE+UNWmcsBfRHpQmITbawEzxNGoWVLCC3Y8Sm8pFGBsK9d4GCjck+Inw9773Iv
+ K9VihTfRaPahcmoyEauQixFxZyTUMGJWDTOfYvXPoPOgSsyaIxQpyV/cg9HQXOUiLk
+ wu2j/IQnCytheMbmA1fvWXZkbzI7ui/5dw0pO/X8IJ8Hh4LoxB9jvG2GJ0onELclPL
+ 6WJfZCxg2RXng==
+Received: by mail-lj1-f175.google.com with SMTP id
+ 38308e7fff4ca-2feeb1e8edfso1544461fa.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 02 Nov 2024 02:59:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWHkQk2hyRGl3wphTZFW+lyRhqvzCefn1T+CCTjBkikYYWC3O+k05GBD/tb7ke2140OQ00vSFVWZJSpUuZsQbmH@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YxuUBwVHJZpqIgJDyN2+JDALs++SmRzhmfL2/wTLzGKcQbJcM1y
+ 78dJ3JHNO+Sk3EambYFV5YgVpk+RR7krKpfAOc4jfPzfvgD7oEaqdf/CLQTzxgDK+QYzk2U3Mht
+ uzjZsybXZjqojToyYdXdO+DUVUaE=
+X-Google-Smtp-Source: AGHT+IEqeG8VCff0uhjP4V5ORLaNGD6KRrpJIJXC1kxDqwtW+gAEc3mfRLYGB8V+37TlYDdzVpYd4mw53pqQuHqGPG8=
+X-Received: by 2002:a05:651c:19a5:b0:2fa:de13:5c34 with SMTP id
+ 38308e7fff4ca-2fedb7c7ad4mr47293611fa.19.1730541552417; Sat, 02 Nov 2024
+ 02:59:12 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20241031102200.440407-1-chao@kernel.org>
- <ZyQtcbtzpixFd6Zs@google.com>
- <fede8a9b-8532-4d63-a4db-b52ed088d6f8@kernel.org>
- <ZyVC0R8JYwMZXM9u@google.com>
-Content-Language: en-US
-Autocrypt: addr=chao@kernel.org; keydata=
- xsFNBFYs6bUBEADJuxYGZRMvAEySns+DKVtVQRKDYcHlmj+s9is35mtlhrLyjm35FWJY099R
- 6DL9bp8tAzLJOMBn9RuTsu7hbRDErCCTiyXWAsFsPkpt5jgTOy90OQVyTon1i/fDz4sgGOrL
- 1tUfcx4m5i5EICpdSuXm0dLsC5lFB2KffLNw/ZfRuS+nNlzUm9lomLXxOgAsOpuEVps7RdYy
- UEC81IYCAnweojFbbK8U6u4Xuu5DNlFqRFe/MBkpOwz4Nb+caCx4GICBjybG1qLl2vcGFNkh
- eV2i8XEdUS8CJP2rnp0D8DM0+Js+QmAi/kNHP8jzr7CdG5tje1WIVGH6ec8g8oo7kIuFFadO
- kwy6FSG1kRzkt4Ui2d0z3MF5SYgA1EWQfSqhCPzrTl4rJuZ72ZVirVxQi49Ei2BI+PQhraJ+
- pVXd8SnIKpn8L2A/kFMCklYUaLT8kl6Bm+HhKP9xYMtDhgZatqOiyVV6HFewfb58HyUjxpza
- 1C35+tplQ9klsejuJA4Fw9y4lhdiFk8y2MppskaqKg950oHiqbJcDMEOfdo3NY6/tXHFaeN1
- etzLc1N3Y0pG8qS/mehcIXa3Qs2fcurIuLBa+mFiFWrdfgUkvicSYqOimsrE/Ezw9hYhAHq4
- KoW4LQoKyLbrdOBJFW0bn5FWBI4Jir1kIFHNgg3POH8EZZDWbQARAQABzRlDaGFvIFl1IDxj
- aGFvQGtlcm5lbC5vcmc+wsF3BBMBCgAhBQJWLOm1AhsDBQsJCAcDBRUKCQgLBRYCAwEAAh4B
- AheAAAoJEKTPgB1/p52Gm2MP/0zawCU6QN7TZuJ8R1yfdhYr0cholc8ZuPoGim69udQ3otet
- wkTNARnpuK5FG5la0BxFKPlazdgAU1pt+dTzCTS6a3/+0bXYQ5DwOeBPRWeFFklm5Frmk8sy
- wSTxxEty0UBMjzElczkJflmCiDfQunBpWGy9szn/LZ6jjIVK/BiR7CgwXTdlvKcCEkUlI7MD
- vTj/4tQ3y4Vdx+p7P53xlacTzZkP+b6D2VsjK+PsnsPpKwaiPzVFMUwjt1MYtOupK4bbDRB4
- NIFSNu2HSA0cjsu8zUiiAvhd/6gajlZmV/GLJKQZp0MjHOvFS5Eb1DaRvoCf27L+BXBMH4Jq
- 2XIyBMm+xqDJd7BRysnImal5NnQlKnDeO4PrpFq4JM0P33EgnSOrJuAb8vm5ORS9xgRlshXh
- 2C0MeyQFxL6l+zolEFe2Nt2vrTFgjYLsm2vPL+oIPlE3j7ToRlmm7DcAqsa9oYMlVTTnPRL9
- afNyrsocG0fvOYFCGvjfog/V56WFXvy9uH8mH5aNOg5xHB0//oG9vUyY0Rv/PrtW897ySEPh
- 3jFP/EDI0kKjFW3P6CfYG/X1eaw6NDfgpzjkCf2/bYm/SZLV8dL2vuLBVV+hrT1yM1FcZotP
- WwLEzdgdQffuQwJHovz72oH8HVHD2yvJf2hr6lH58VK4/zB/iVN4vzveOdzlzsFNBFYs6bUB
- EADZTCTgMHkb6bz4bt6kkvj7+LbftBt5boKACy2mdrFFMocT5zM6YuJ7Ntjazk5z3F3IzfYu
- 94a41kLY1H/G0Y112wggrxem6uAtUiekR9KnphsWI9lRI4a2VbbWUNRhCQA8ag7Xwe5cDIV5
- qb7r7M+TaKaESRx/Y91bm0pL/MKfs/BMkYsr3wA1OX0JuEpV2YHDW8m2nFEGP6CxNma7vzw+
- JRxNuyJcNi+VrLOXnLR6hZXjShrmU88XIU2yVXVbxtKWq8vlOSRuXkLh9NQOZn7mrR+Fb1EY
- DY1ydoR/7FKzRNt6ejI8opHN5KKFUD913kuT90wySWM7Qx9icc1rmjuUDz3VO+rl2sdd0/1h
- Q2VoXbPFxi6c9rLiDf8t7aHbYccst/7ouiHR/vXQty6vSUV9iEbzm+SDpHzdA8h3iPJs6rAb
- 0NpGhy3XKY7HOSNIeHvIbDHTUZrewD2A6ARw1VYg1vhJbqUE4qKoUL1wLmxHrk+zHUEyLHUq
- aDpDMZArdNKpT6Nh9ySUFzlWkHUsj7uUNxU3A6GTum2aU3Gh0CD1p8+FYlG1dGhO5boTIUsR
- 6ho73ZNk1bwUj/wOcqWu+ZdnQa3zbfvMI9o/kFlOu8iTGlD8sNjJK+Y/fPK3znFqoqqKmSFZ
- aiRALjAZH6ufspvYAJEJE9eZSX7Rtdyt30MMHQARAQABwsFfBBgBCgAJBQJWLOm1AhsMAAoJ
- EKTPgB1/p52GPpoP/2LOn/5KSkGHGmdjzRoQHBTdm2YV1YwgADg52/mU68Wo6viStZqcVEnX
- 3ALsWeETod3qeBCJ/TR2C6hnsqsALkXMFFJTX8aRi/E4WgBqNvNgAkWGsg5XKB3JUoJmQLqe
- CGVCT1OSQA/gTEfB8tTZAGFwlw1D3W988CiGnnRb2EEqU4pEuBoQir0sixJzFWybf0jjEi7P
- pODxw/NCyIf9GNRNYByUTVKnC7C51a3b1gNs10aTUmRfQuu+iM5yST5qMp4ls/yYl5ybr7N1
- zSq9iuL13I35csBOn13U5NE67zEb/pCFspZ6ByU4zxChSOTdIJSm4/DEKlqQZhh3FnVHh2Ld
- eG/Wbc1KVLZYX1NNbXTz7gBlVYe8aGpPNffsEsfNCGsFDGth0tC32zLT+5/r43awmxSJfx2P
- 5aGkpdszvvyZ4hvcDfZ7U5CBItP/tWXYV0DDl8rCFmhZZw570vlx8AnTiC1v1FzrNfvtuxm3
- 92Qh98hAj3cMFKtEVbLKJvrc2AO+mQlS7zl1qWblEhpZnXi05S1AoT0gDW2lwe54VfT3ySon
- 8Klpbp5W4eEoY21tLwuNzgUMxmycfM4GaJWNCncKuMT4qGVQO9SPFs0vgUrdBUC5Pn5ZJ46X
- mZA0DUz0S8BJtYGI0DUC/jAKhIgy1vAx39y7sAshwu2VILa71tXJ
-In-Reply-To: <ZyVC0R8JYwMZXM9u@google.com>
-X-Headers-End: 1t71xJ-0004yU-Rn
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to map blocks correctly for direct
- read
+References: <20241026040958.GA34351@sol.localdomain>
+ <ZyX0uGHg4Cmsk2oz@gondor.apana.org.au>
+In-Reply-To: <ZyX0uGHg4Cmsk2oz@gondor.apana.org.au>
+Date: Sat, 2 Nov 2024 10:58:53 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFfPtO0vd1KqTa+QNSkRWNR7SUJ_A_zX6-Hz5HVLtLYtw@mail.gmail.com>
+Message-ID: <CAMj1kXFfPtO0vd1KqTa+QNSkRWNR7SUJ_A_zX6-Hz5HVLtLYtw@mail.gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+X-Headers-End: 1t7Auj-0003tP-9q
+Subject: Re: [f2fs-dev] [PATCH v2 04/18] crypto: crc32 - don't unnecessarily
+ register arch algorithms
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -123,88 +93,38 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: kernel test robot <oliver.sang@intel.com>, linux-kernel@vger.kernel.org,
- Cyril Hrubis <chrubis@suse.cz>, linux-f2fs-devel@lists.sourceforge.net
+From: Ard Biesheuvel via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-arch@vger.kernel.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-mips@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ Eric Biggers <ebiggers@kernel.org>, linux-crypto@vger.kernel.org,
+ loongarch@lists.linux.dev, sparclinux@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-ext4@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2024/11/2 5:06, Jaegeuk Kim wrote:
-> On 11/01, Chao Yu wrote:
->> On 2024/11/1 9:22, Jaegeuk Kim wrote:
->>> On 10/31, Chao Yu wrote:
->>>> f2fs_map_blocks() supports to map continuous holes or preallocated
->>>> address, we should avoid setting F2FS_MAP_MAPPED for these cases
->>>> only, otherwise, it may fail f2fs_iomap_begin(), and make direct
->>>> write fallbacking to use buffered IO and flush, result in performance
->>>> regression.
->>>
->>> Is this fixing direct write or read?
->>
->> Direct write.
-> 
-> I was confising the patch subject is saying direct read.
+On Sat, 2 Nov 2024 at 10:45, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > While testing this patchset I notice that none of the crypto API drivers for
+> > crc32 or crc32c even need to be loaded on my system anymore, as everything on my
+> > system that uses those algorithms (such as ext4) just uses the library APIs now.
+> > That makes the "check /proc/crypto" trick stop working anyway.
+>
+> What's stopping us from removing them altogether?
+>
 
-Oops, sorry.
+At least btrfs supports a variety of checksums/hashes (crc32c, xxhash,
+sha) via the shash API.
 
-> 
->>
->>>
->>>>
->>>> Fixes: 9f0f6bf42714 ("f2fs: support to map continuous holes or preallocated address")
->>>> Reported-by: kernel test robot <oliver.sang@intel.com>
->>>> Closes: https://lore.kernel.org/oe-lkp/202409122103.e45aa13b-oliver.sang@intel.com
->>>> Cc: Cyril Hrubis <chrubis@suse.cz>
->>>> Signed-off-by: Chao Yu <chao@kernel.org>
->>>> ---
->>>>    fs/f2fs/data.c | 7 ++++++-
->>>>    1 file changed, 6 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>> index 306b86b0595d..38b85160c6bd 100644
->>>> --- a/fs/f2fs/data.c
->>>> +++ b/fs/f2fs/data.c
->>>> @@ -1676,7 +1676,12 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
->>>>    		/* reserved delalloc block should be mapped for fiemap. */
->>>>    		if (blkaddr == NEW_ADDR)
->>>>    			map->m_flags |= F2FS_MAP_DELALLOC;
->>>> -		if (flag != F2FS_GET_BLOCK_DIO || !is_hole)
->>>> +		/*
->>>> +		 * f2fs_map_blocks() supports to map continuous holes or
->>>> +		 * preallocated address, don't set F2FS_MAP_MAPPED for these
->>>> +		 * cases only.
->>>> +		 */
->>>> +		if (flag != F2FS_GET_BLOCK_DIO || map->m_may_create || !is_hole)
->>>
->>> So, this is adding map->m_may_create, which is for writes?
->>
->> map->m_may_create is added for write path, w/o this condition, f2fs_map_blocks()
->> may missed to tag F2FS_MAP_MAPPED, result in that f2fs_iomap_begin() will return
->> -ENOTBLK.
-> 
-> Is that something like this?
-> 
-> /* DIO READ and hole case, should not map the blocks. */
-> if (!(flag == F2FS_GET_BLOCK_DIO && is_hole && !map->m_may_create))
-
-More clear, will update w/ this.
-
-Thanks,
-
-> 
->>
->> Am I missing someting?
->>
->> Thanks,
->>
->>>
->>>>    			map->m_flags |= F2FS_MAP_MAPPED;
->>>>    		map->m_pblk = blkaddr;
->>>> -- 
->>>> 2.40.1
-
+There are some other remaining uses of crc32c using shash or sync
+ahash where the algo is hardcoded (NVMe, infiniband) so I imagine
+those might be candidates for conversion as well.
 
 
 _______________________________________________
