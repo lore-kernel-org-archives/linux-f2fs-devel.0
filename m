@@ -4,68 +4,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 13974D111A0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Nov 2024 03:46:39 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CD10FD132A2
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Nov 2024 09:44:25 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t7o35-0002wn-BF;
-	Mon, 04 Nov 2024 03:46:38 +0000
+	id 1t7tdH-0004fv-SG;
+	Mon, 04 Nov 2024 09:44:24 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <Yi.Sun@unisoc.com>) id 1t7o34-0002wf-6E
+ (envelope-from <jinsu1.lee@samsung.com>) id 1t7tdG-0004fl-1I
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 04 Nov 2024 03:46:37 +0000
+ Mon, 04 Nov 2024 09:44:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
+ Date:Message-ID:CC:To:From:Sender:Reply-To:Subject:Mime-Version:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+zIhgElDbL1vvgdfEkq5w6oJ/QayotD36DbN3nthIRw=; b=Z5BwnxGpeZ5vsL2NRUcIwQi7Mr
- i0tvs+Sql65P/FCxRkbt8VMQv3NpCyvpVDCT/qKX8dq2pIBp409sWZZ01ktyDaA5+kWEWwdwfl3da
- zVuZkMlj3Qjl30ky4UPjAskiOSYXmKRk2XJq14ufGZDAKBSAOpx2nto6EIHGMr/qxyQI=;
+ bh=M1miNIYhG1QwHyjzF59FHi1H9PWcn1lSEkKONcArFuM=; b=N3adLG/06qY+u6U0BTM+FeVX/b
+ wD6XXNOOg3hAQIu17fkWgTJ9Osr20LoDd0utRoLps2m3Jor3u36H+JdQR6nztGeg6XJThg9prmzhz
+ sqT9UI5PuyuMsNCdFOJ6bnxn1U4Rm63LqodIrH+oNIf++tW2s1qOOmtUN3jL9Gk6iqn0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=+zIhgElDbL1vvgdfEkq5w6oJ/QayotD36DbN3nthIRw=; b=NqDDCKJdhQHAwlAAWdjhiD6uOC
- TDbfs+AvOnTLmLoqtfNG3xCAZCCxHig7t0ZmJk4Ws1U4OqD53/OC6XQc1KO/kn6qcgc1Q0wq/gz1P
- y86P8Y1ZhKRLN2eIMQ0h+IAvWEpc0SHi5zJMsHISLhW3Sx1jnqPz5lkVNoh1zzPd9R9g=;
-Received: from mx1.unisoc.com ([222.66.158.135] helo=SHSQR01.spreadtrum.com)
+ h=References:Content-Type:Content-Transfer-Encoding:Date:Message-ID:CC:To:
+ From:Sender:Reply-To:Subject:Mime-Version:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=M1miNIYhG1QwHyjzF59FHi1H9PWcn1lSEkKONcArFuM=; b=I
+ x80NF/Ru5UOTgsTCRfnu5yv8UEBhpH5wpTa5ComD3qHdBPMk/b5OA2c/KdQlKj1uvZ0aVCdsV+Cpj
+ rq3VBDHN15wM2uy5zpA7Ac5/6Z6GAHMEMsadGRIIMOSXqTdQK7S2EGqA+lu6vt5+mydt1pvDpf0mZ
+ Hi52h5JIkJ6mhQbM=;
+Received: from mailout1.samsung.com ([203.254.224.24])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t7o32-0006D4-Co for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 04 Nov 2024 03:46:37 +0000
-Received: from dlp.unisoc.com ([10.29.3.86])
- by SHSQR01.spreadtrum.com with ESMTP id 4A43jrUo085789;
- Mon, 4 Nov 2024 11:45:53 +0800 (+08)
- (envelope-from Yi.Sun@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
- by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Xhcmd5Ljlz2KgRl5;
- Mon,  4 Nov 2024 11:45:05 +0800 (CST)
-Received: from tj10379pcu1.spreadtrum.com (10.5.32.15) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Mon, 4 Nov 2024 11:45:50 +0800
-From: Yi Sun <yi.sun@unisoc.com>
-To: <chao@kernel.org>, <jaegeuk@kernel.org>
-Date: Mon, 4 Nov 2024 11:45:44 +0800
-Message-ID: <20241104034545.497907-5-yi.sun@unisoc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241104034545.497907-1-yi.sun@unisoc.com>
-References: <20241104034545.497907-1-yi.sun@unisoc.com>
-MIME-Version: 1.0
-X-Originating-IP: [10.5.32.15]
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL: SHSQR01.spreadtrum.com 4A43jrUo085789
-X-Headers-End: 1t7o32-0006D4-Co
-Subject: [f2fs-dev] [PATCH v3 4/5] f2fs: add parameter @len to
- f2fs_invalidate_blocks()
+ id 1t7tdF-0002vE-86 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 04 Nov 2024 09:44:22 +0000
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+ by mailout1.samsung.com (KnoxPortal) with ESMTP id
+ 20241104094413epoutp01ebdf92458c9704cf3c7a0097323374a1~Eurd3wTek3186231862epoutp01E
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon,  4 Nov 2024 09:44:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com
+ 20241104094413epoutp01ebdf92458c9704cf3c7a0097323374a1~Eurd3wTek3186231862epoutp01E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+ s=mail20170921; t=1730713454;
+ bh=M1miNIYhG1QwHyjzF59FHi1H9PWcn1lSEkKONcArFuM=;
+ h=Subject:Reply-To:From:To:CC:Date:References:From;
+ b=IqugJYrULbVBD4BViH/D0rDpt6i01zWETZxKEuw06Yd0qHYV1wva0N6+723iEQIl5
+ HQO7Ck+04yTd/48tUhevPFYnFi6y9AutoAN2vwyOvtZe/ijKD6k9dUa37EQB8I/KCZ
+ Goi/niBEYBJrbkaBPZRFZ3tcTCSUgQ0qCN71mv8w=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+ epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+ 20241104094413epcas2p49f76cf369e11007548f4389b88cc4f3d~EurddPD2G0277502775epcas2p4K;
+ Mon,  4 Nov 2024 09:44:13 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.98]) by
+ epsnrtp4.localdomain (Postfix) with ESMTP id 4Xhml06wgmz4x9Q1; Mon,  4 Nov
+ 2024 09:44:12 +0000 (GMT)
+X-AuditID: b6c32a47-aefff70000002630-90-6728976c1761
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+ epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+ F5.2E.09776.C6798276; Mon,  4 Nov 2024 18:44:12 +0900 (KST)
+Mime-Version: 1.0
+From: =?UTF-8?B?7J207KeE7IiY?= <jinsu1.lee@samsung.com>
+To: "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20241104094412epcms2p13f82502b0ff6167ff30eb76c6dda41de@epcms2p1>
+Date: Mon, 04 Nov 2024 18:44:12 +0900
+X-CMS-MailID: 20241104094412epcms2p13f82502b0ff6167ff30eb76c6dda41de
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKKsWRmVeSWpSXmKPExsWy7bCmuW7OdI10g7bzRhanp55lsniyfhaz
+ xbWmiawWlxa5W1zeNYfNgdVj06pONo/dCz4zefRtWcXo8XmTXABLVLZNRmpiSmqRQmpecn5K
+ Zl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtBaJYWyxJxSoFBAYnGxkr6dTVF+
+ aUmqQkZ+cYmtUmpBSk6BeYFecWJucWleul5eaomVoYGBkSlQYUJ2xvcbd9gKjklUzDv1gL2B
+ catwFyMHh4SAiUTbW7MuRi4OIYEdjBKvZrWwgcR5BQQl/u4AKuHkEBYolDjxrJsFxBYSUJCY
+ 2rKJDSJuKXFx6T9WkHI2AXOJG73eIGERgXCJ+ct3sIOMZBY4xSjRuOsUK0hCQoBXYkb7UxYI
+ W1pi+/KtjBC2hsSPZb3MELaoxM3Vb9lh7PfH5kPViEi03jsLVSMo8eDnbqi4pMTOloVQ8XyJ
+ h+cfsYIslhBoYZQ4PWcKVJG+xLY/s8EW8wr4Smx72s4EYrMIqEqc2TEP6iAXiTXbesDizALy
+ EtvfzmEGeYxZQFNi/S59SFApSxy5xQJRwSfRcfgvO8xbO+Y9YYKwVSRWz90HdY6UxJwVk6Au
+ 8JC4NvUeGyQIAyVeb7vHNoFRYRYioGch2TsLYe8CRuZVjGKpBcW56anFRgXG8KhNzs/dxAhO
+ f1ruOxhnvP2gd4iRiYPxEKMEB7OSCO+8VPV0Id6UxMqq1KL8+KLSnNTiQ4ymQB9PZJYSTc4H
+ JuC8knhDE0sDEzMzQ3MjUwNzJXHee61zU4QE0hNLUrNTUwtSi2D6mDg4pRqYls1h8f3AfIR7
+ 1yXxns3zjDQbLh6JvrNx+cwvf+7ebDwtGz67QS/02IyPazWcPjt36uq18nVbWCj8c2/XcUpU
+ VOl9njn137Tfv4T1qxpkKhZN13+ly6Aaf/D+9mCuE2U/bP8s1dbfmcPR6HAtek6cuon0dmHN
+ SVdfzDmY7WbI88f7uNiRbdNFfCNYQ4zV1169tuLjge//b1akCCvru8e/C6tZKRO6nO9SxSE+
+ /eal6XMzv9f9mD8t1rbS/+TJxY/WbNSJFpzd8fHfCsY2lytBTXwyBYeSzSInNphN4VQPsFyX
+ nHj000KF1IcfbTIFH+x76vekW8gpMl5CRyhy1h/R9pgrmyc/jE8oj4p4sXKbEktxRqKhFnNR
+ cSIA4S5uuAgEAAA=
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241104094412epcms2p13f82502b0ff6167ff30eb76c6dda41de
+References: <CGME20241104094412epcms2p13f82502b0ff6167ff30eb76c6dda41de@epcms2p1>
+X-Headers-End: 1t7tdF-0002vE-86
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid forcing direct write to
+ use buffered IO on inline_data inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,192 +118,110 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, sunyibuaa@gmail.com, yi.sun@unisoc.com,
- Hao_hao.Wang@unisoc.com
+Reply-To: jinsu1.lee@samsung.com
+Cc: "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-New function can process some consecutive blocks at a time.
+>>> Jinsu Lee reported a performance regression issue, after commit
+>> 
+>>> 5c8764f8679e ("f2fs: fix to force buffered IO on inline_data
+>> 
+>>> inode"), we forced direct write to use buffered IO on inline_data
+>> 
+>>> inode, it will cause performace regression due to memory copy
+>> 
+>>> and data flush.
+>> 
+>> 
+>>> It's fine to not force direct write to use buffered IO, as it
+>> 
+>>> can convert inline inode before committing direct write IO.
+>> 
+>> 
+>>>> Fixes: 5c8764f8679e ("f2fs: fix to force buffered IO on inline_data inode")
+>> 
+>>> Reported-by: Jinsu Lee <jinsu1.lee@samsung.com>
+>> 
+>>> Closes: https://lore.kernel.org/linux-f2fs-devel/af03dd2c-e361-4f80-b2fd-39440766cf6e@kernel.org
+>> 
+>>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> 
+>>> ---
+>> 
+>>> fs/f2fs/file.c | 6 +++++-
+>> 
+>>> 1 file changed, 5 insertions(+), 1 deletion(-)
+>> 
+>> 
+>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> 
+>>> index 0e7a0195eca8..377a10b81bf3 100644
+>> 
+>>> --- a/fs/f2fs/file.c
+>> 
+>>> +++ b/fs/f2fs/file.c
+>> 
+>>> @@ -883,7 +883,11 @@ static bool f2fs_force_buffered_io(struct inode *inode, int rw)
+>> 
+>>>                  return true;
+>> 
+>>>          if (f2fs_compressed_file(inode))
+>> 
+>>>                  return true;
+>> 
+>>> -        if (f2fs_has_inline_data(inode))
+>> 
+>>> +        /*
+>> 
+>>> +         * only force direct read to use buffered IO, for direct write,
+>> 
+>>> +         * it expects inline data conversion before committing IO.
+>> 
+>>> +         */
+>> 
+>>> +        if (f2fs_has_inline_data(inode) && rw == READ)
+>> 
+>> 
+>> Chao Yu,
+>> 
+>> The fio direct performance problem I reported did not improve when reflecting this commit.
+>> 
+>> Rather, it has been improved when reflecting your commit below.
+>> 
+>> 
+>> The previous commit seems to be mistitled as read and the following commit appears to be the final version.
+>> 
+>> The reason for the improvement with the commit below is that there is no "m_may_create" condition
+>> 
+>> when performing "io_submit" directly, so performance regression issue may occur.
+>> 
+>> 
+>> I wonder if "rw == READ" should be additionally reflected.
+>
+> Alright, thanks for your feedback.
+>
+> I thought you have bisected this performance issue to commit
+> 5c8764f8679e ("f2fs: fix to force buffered IO on inline_data inode"),
+> so I sent this patch for comments.
+>
+> Can you please apply both below dio fixes, and help to check final
+> performance?
+>
+> https://lore.kernel.org/linux-f2fs-devel/20241104015016.228963-1-chao@kernel.org
+> https://lore.kernel.org/linux-f2fs-devel/20241104013551.218037-1-chao@kernel.org
+>
+> Thanks,
 
-Function f2fs_invalidate_blocks()->down_write() and up_write()
-are very time-consuming, so if f2fs_invalidate_blocks() can
-process consecutive blocks at one time, it will save a lot of time.
+Chao Yu,
+After reflecting the following two commits, the fio DIO seq write operates with normal performance.
 
-Signed-off-by: Yi Sun <yi.sun@unisoc.com>
----
- fs/f2fs/compress.c |  4 ++--
- fs/f2fs/f2fs.h     |  3 ++-
- fs/f2fs/file.c     |  8 ++++----
- fs/f2fs/node.c     |  4 ++--
- fs/f2fs/segment.c  | 32 +++++++++++++++++++++++++-------
- 5 files changed, 35 insertions(+), 16 deletions(-)
+https://lore.kernel.org/linux-f2fs-devel/20241104015016.228963-1-chao@kernel.org
+https://lore.kernel.org/linux-f2fs-devel/20241104013551.218037-1-chao@kernel.org
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index f6626f2feb0c..666912c1293e 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1374,7 +1374,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 			if (blkaddr == COMPRESS_ADDR)
- 				fio.compr_blocks++;
- 			if (__is_valid_data_blkaddr(blkaddr))
--				f2fs_invalidate_blocks(sbi, blkaddr);
-+				f2fs_invalidate_blocks(sbi, blkaddr, 1);
- 			f2fs_update_data_blkaddr(&dn, COMPRESS_ADDR);
- 			goto unlock_continue;
- 		}
-@@ -1384,7 +1384,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 
- 		if (i > cc->valid_nr_cpages) {
- 			if (__is_valid_data_blkaddr(blkaddr)) {
--				f2fs_invalidate_blocks(sbi, blkaddr);
-+				f2fs_invalidate_blocks(sbi, blkaddr, 1);
- 				f2fs_update_data_blkaddr(&dn, NEW_ADDR);
- 			}
- 			goto unlock_continue;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a1c9341789a1..d8691b834aaf 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3714,7 +3714,8 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi, nid_t ino);
- int f2fs_create_flush_cmd_control(struct f2fs_sb_info *sbi);
- int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
- void f2fs_destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool free);
--void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
-+void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr,
-+						unsigned int len);
- bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
- int f2fs_start_discard_thread(struct f2fs_sb_info *sbi);
- void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index b619f7e55640..9366e7fc7c39 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -652,7 +652,7 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 				valid_blocks++;
- 		}
- 
--		f2fs_invalidate_blocks(sbi, blkaddr);
-+		f2fs_invalidate_blocks(sbi, blkaddr, 1);
- 
- 		if (!released || blkaddr != COMPRESS_ADDR)
- 			nr_free++;
-@@ -750,7 +750,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
- 		unsigned int i;
- 
- 		for (i = 0; i < ei.len; i++)
--			f2fs_invalidate_blocks(sbi, ei.blk + i);
-+			f2fs_invalidate_blocks(sbi, ei.blk + i, 1);
- 
- 		dec_valid_block_count(sbi, inode, ei.len);
- 		f2fs_update_time(sbi, REQ_TIME);
-@@ -1319,7 +1319,7 @@ static int __roll_back_blkaddrs(struct inode *inode, block_t *blkaddr,
- 		ret = f2fs_get_dnode_of_data(&dn, off + i, LOOKUP_NODE_RA);
- 		if (ret) {
- 			dec_valid_block_count(sbi, inode, 1);
--			f2fs_invalidate_blocks(sbi, *blkaddr);
-+			f2fs_invalidate_blocks(sbi, *blkaddr, 1);
- 		} else {
- 			f2fs_update_data_blkaddr(&dn, *blkaddr);
- 		}
-@@ -1571,7 +1571,7 @@ static int f2fs_do_zero_range(struct dnode_of_data *dn, pgoff_t start,
- 			break;
- 		}
- 
--		f2fs_invalidate_blocks(sbi, dn->data_blkaddr);
-+		f2fs_invalidate_blocks(sbi, dn->data_blkaddr, 1);
- 		f2fs_set_data_blkaddr(dn, NEW_ADDR);
- 	}
- 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 7d904f2bd5b6..bb0261db5fd3 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -916,7 +916,7 @@ static int truncate_node(struct dnode_of_data *dn)
- 	}
- 
- 	/* Deallocate node address */
--	f2fs_invalidate_blocks(sbi, ni.blk_addr);
-+	f2fs_invalidate_blocks(sbi, ni.blk_addr, 1);
- 	dec_valid_node_count(sbi, dn->inode, dn->nid == dn->inode->i_ino);
- 	set_node_addr(sbi, &ni, NULL_ADDR, false);
- 
-@@ -2758,7 +2758,7 @@ int f2fs_recover_xattr_data(struct inode *inode, struct page *page)
- 	if (err)
- 		return err;
- 
--	f2fs_invalidate_blocks(sbi, ni.blk_addr);
-+	f2fs_invalidate_blocks(sbi, ni.blk_addr, 1);
- 	dec_valid_node_count(sbi, inode, false);
- 	set_node_addr(sbi, &ni, NULL_ADDR, false);
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 843171ce414b..ad0007294a3f 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -245,7 +245,7 @@ static int __replace_atomic_write_block(struct inode *inode, pgoff_t index,
- 		if (!__is_valid_data_blkaddr(new_addr)) {
- 			if (new_addr == NULL_ADDR)
- 				dec_valid_block_count(sbi, inode, 1);
--			f2fs_invalidate_blocks(sbi, dn.data_blkaddr);
-+			f2fs_invalidate_blocks(sbi, dn.data_blkaddr, 1);
- 			f2fs_update_data_blkaddr(&dn, new_addr);
- 		} else {
- 			f2fs_replace_block(sbi, &dn, dn.data_blkaddr,
-@@ -2559,25 +2559,43 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
- 		get_sec_entry(sbi, segno)->valid_blocks += del;
- }
- 
--void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
-+void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr,
-+				unsigned int len)
- {
- 	unsigned int segno = GET_SEGNO(sbi, addr);
- 	struct sit_info *sit_i = SIT_I(sbi);
-+	block_t addr_start = addr, addr_end = addr + len - 1;
-+	unsigned int seg_num = GET_SEGNO(sbi, addr_end) - segno + 1;
-+	unsigned int i = 1, max_blocks = sbi->blocks_per_seg, cnt;
- 
- 	f2fs_bug_on(sbi, addr == NULL_ADDR);
- 	if (addr == NEW_ADDR || addr == COMPRESS_ADDR)
- 		return;
- 
--	f2fs_invalidate_internal_cache(sbi, addr, 1);
-+	f2fs_invalidate_internal_cache(sbi, addr, len);
- 
- 	/* add it into sit main buffer */
- 	down_write(&sit_i->sentry_lock);
- 
--	update_segment_mtime(sbi, addr, 0);
--	update_sit_entry(sbi, addr, -1);
-+	if (seg_num == 1)
-+		cnt = len;
-+	else
-+		cnt = max_blocks - GET_BLKOFF_FROM_SEG0(sbi, addr);
- 
--	/* add it into dirty seglist */
--	locate_dirty_segment(sbi, segno);
-+	do {
-+		update_segment_mtime(sbi, addr_start, 0);
-+		update_sit_entry(sbi, addr_start, -cnt);
-+
-+		/* add it into dirty seglist */
-+		locate_dirty_segment(sbi, segno);
-+
-+		/* update @addr_start and @cnt and @segno */
-+		addr_start = START_BLOCK(sbi, ++segno);
-+		if (++i == seg_num)
-+			cnt = GET_BLKOFF_FROM_SEG0(sbi, addr_end) + 1;
-+		else
-+			cnt = max_blocks;
-+	} while (i <= seg_num);
- 
- 	up_write(&sit_i->sentry_lock);
- }
--- 
-2.25.1
-
+However, Antutu Apk's "AI READ" performance has more than tripled compared to before patch reflection, so it seems necessary to check if there is any problem with DIO performance.
 
 
 _______________________________________________
