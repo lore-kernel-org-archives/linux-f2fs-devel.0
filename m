@@ -4,68 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F2A94D11199
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  3 Nov 2024 22:32:53 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CC898D11194
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Nov 2024 01:18:02 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t7j9S-00054d-6s;
-	Sun, 03 Nov 2024 22:32:53 +0000
+	id 1t7ljD-0004aE-3h;
+	Mon, 04 Nov 2024 01:17:59 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1t7j9O-00054A-3S
+ (envelope-from <leo.lilong@huawei.com>) id 1t7ljB-0004Zy-9z
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 03 Nov 2024 22:32:49 +0000
+ Mon, 04 Nov 2024 01:17:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:CC:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1/uCDR2mcCmMhdB/nBnjhiY85i97KspoimfVar3LoPc=; b=IBEK9c9bg3r3sPZvkQXyH5B1sm
- PkvnzXNCVvVfyqITdtbx7O80ZjEWVNwdrXqEX+FTRPflPJIrMmcLDMtBz+cT0DYKIhkv89hJxPA20
- GtkvdQHhhaulG4Lsm7LaP1sITONOfTGZlfLlTikKAD0f1KsPsNUXa9GndPyjCLH4jv0A=;
+ bh=CU7p6vZB/A6gTd26XzpLYNZCftSgtQppK2Y2/7zzJCM=; b=kt/54bRtF7TgH/2kr1afnhZJ0V
+ 66T/E4YQXZHiD1VPOPttvybAvUNlRlq657mVRGyyhYv9Yk8jZHQ3a0+Lq2U+Egu9hivHn/o4Iujq0
+ ddOYxw/tghbbsisB7gkoB/NjZcQYieUTjOtjSbIhwniy76CrtQytMVKutm+VNShx7NDM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:CC:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=1/uCDR2mcCmMhdB/nBnjhiY85i97KspoimfVar3LoPc=; b=Js4E+B/2+1limcMMZdtKnSNK7l
- 2Bjwhh4MyDwDI7gP+yYblB5NMyuhAgk2NuVM0WMgqoonqS6SOR3GjL+Q52GNN4lLVM5pCsN31m2Nc
- 4/NA+8RCFV3yB45SAqR3HAmkRcW9SZRzVl0KVrx41ZPufA2IE0cyhZTZs9NFqQFeSY/I=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ bh=CU7p6vZB/A6gTd26XzpLYNZCftSgtQppK2Y2/7zzJCM=; b=PvYalmwKKoe5lOsFzZxc8V0uxa
+ p2M1HE9CVozjerpHXwp3mTYoF7se8s10vbUEpqF4+DAHP3ifJOQM/RDAlimt/cTaIzrO20TtBaJ2i
+ nTcsJ85TrlXS36us56tZ8fO6w0C6hizffLfunxpSJbeeLNcA1KU0VmEFCb53W4s0eDdo=;
+Received: from szxga02-in.huawei.com ([45.249.212.188])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t7j9M-0005t8-Ac for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 03 Nov 2024 22:32:49 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 92BA7A41EFF;
- Sun,  3 Nov 2024 22:30:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 458CFC4CECF;
- Sun,  3 Nov 2024 22:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1730673149;
- bh=fnuKyp+06/WpTmmC60ypZO4FJZaHFxjnVVTOpeE5DQA=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=aDRhvo56Z19nFZqZtFLodnd48686q5iREqnG/WgJSpfGnqUD7QeC6zOjhrQdqeM/P
- t8EqO6ZML4DuwU5V7Mqv8yvuMjQSBmea2FoczsqIbhTRMtdnGwoGBFTfBvpby0Cd2P
- IyPBMkVn+XXYxUl2cbqpLz52uJTDujfw5HhfKKlbVoQiiRHiAcyKjhPRGiZsYaRvOA
- Zi6HwUhTH+m90tNH08z9z92yRhbQFXGKe+GGEVp5BqtRcSJdCYbLM+P3weepBlAgqy
- QYNLHsMOBEqtjjs65opoModOZ4uAE7G0MP53EgbyIIvVzIy0AD2VOR19EFmF50tSBI
- x8/i0mVktOJ3A==
-To: linux-kernel@vger.kernel.org
-Date: Sun,  3 Nov 2024 14:31:46 -0800
-Message-ID: <20241103223154.136127-11-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241103223154.136127-1-ebiggers@kernel.org>
-References: <20241103223154.136127-1-ebiggers@kernel.org>
+ id 1t7lj8-00061z-6n for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 04 Nov 2024 01:17:57 +0000
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XhYRY43vjzfdBH;
+ Mon,  4 Nov 2024 09:15:05 +0800 (CST)
+Received: from dggpemf500017.china.huawei.com (unknown [7.185.36.126])
+ by mail.maildlp.com (Postfix) with ESMTPS id 55DA11402CB;
+ Mon,  4 Nov 2024 09:17:41 +0800 (CST)
+Received: from localhost (10.175.127.227) by dggpemf500017.china.huawei.com
+ (7.185.36.126) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 4 Nov
+ 2024 09:17:41 +0800
+Date: Mon, 4 Nov 2024 09:31:47 +0800
+To: Chao Yu <chao@kernel.org>, <jaegeuk@kernel.org>
+Message-ID: <20241104013147.GA892643@ceph-admin>
+References: <20241031064553.55283-1-leo.lilong@huawei.com>
+ <b822c677-b241-4469-a1fc-0aaf5b0e7895@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1t7j9M-0005t8-Ac
-Subject: [f2fs-dev] [PATCH v3 10/18] sparc/crc32: expose CRC32 functions
- through lib
+Content-Disposition: inline
+In-Reply-To: <b822c677-b241-4469-a1fc-0aaf5b0e7895@kernel.org>
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf500017.china.huawei.com (7.185.36.126)
+X-Headers-End: 1t7lj8-00061z-6n
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix race in concurrent
+ f2fs_stop_gc_thread
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,433 +76,138 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, x86@kernel.org, linux-mips@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-crypto@vger.kernel.org,
- loongarch@lists.linux.dev, sparclinux@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-ext4@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, Ard Biesheuvel <ardb@kernel.org>,
- linux-arm-kernel@lists.infradead.org
+From: Long Li via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Long Li <leo.lilong@huawei.com>
+Cc: lonuxli.64@gmail.com, yangerkun@huawei.com, yi.zhang@huawei.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+On Fri, Nov 01, 2024 at 10:56:59AM +0800, Chao Yu wrote:
+> On 2024/10/31 14:45, Long Li wrote:
+> > In my test case, concurrent calls to f2fs shutdown report the following
+> > stack trace:
+> > 
+> >   Oops: general protection fault, probably for non-canonical address 0xc6cfff63bb5513fc: 0000 [#1] PREEMPT SMP PTI
+> >   CPU: 0 UID: 0 PID: 678 Comm: f2fs_rep_shutdo Not tainted 6.12.0-rc5-next-20241029-g6fb2fa9805c5-dirty #85
+> >   Call Trace:
+> >    <TASK>
+> >    ? show_regs+0x8b/0xa0
+> >    ? __die_body+0x26/0xa0
+> >    ? die_addr+0x54/0x90
+> >    ? exc_general_protection+0x24b/0x5c0
+> >    ? asm_exc_general_protection+0x26/0x30
+> >    ? kthread_stop+0x46/0x390
+> >    f2fs_stop_gc_thread+0x6c/0x110
+> >    f2fs_do_shutdown+0x309/0x3a0
+> >    f2fs_ioc_shutdown+0x150/0x1c0
+> >    __f2fs_ioctl+0xffd/0x2ac0
+> >    f2fs_ioctl+0x76/0xe0
+> >    vfs_ioctl+0x23/0x60
+> >    __x64_sys_ioctl+0xce/0xf0
+> >    x64_sys_call+0x2b1b/0x4540
+> >    do_syscall_64+0xa7/0x240
+> >    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > 
+> > The root cause is a race condition in f2fs_stop_gc_thread() called from
+> > different f2fs shutdown paths:
+> > 
+> >    [CPU0]                       [CPU1]
+> >    ----------------------       -----------------------
+> >    f2fs_stop_gc_thread          f2fs_stop_gc_thread
+> >                                   gc_th = sbi->gc_thread
+> >      gc_th = sbi->gc_thread
+> >      kfree(gc_th)
+> >      sbi->gc_thread = NULL
+> >                                   < gc_th != NULL >
+> >                                   kthread_stop(gc_th->f2fs_gc_task) //UAF
+> 
+> Hi Long,
+> 
+> Thanks for catching this.
+> 
+> Can we cover f2fs_stop_gc_thread() w/ write lock of s_umount in
+> f2fs_do_shutdown()?
+> 
+> Thanks,
+> 
 
-Move the sparc CRC32C assembly code into the lib directory and wire it
-up to the library interface.  This allows it to be used without going
-through the crypto API.  It remains usable via the crypto API too via
-the shash algorithms that use the library interface.  Thus all the
-arch-specific "shash" code becomes unnecessary and is removed.
+Hi Chao,
 
-Note: to see the diff from arch/sparc/crypto/crc32c_glue.c to
-arch/sparc/lib/crc32_glue.c, view this commit with 'git show -M10'.
+If you think holding write lock inf2fs_do_shutdown() is better, I'll
+send v2 with this change.
 
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- arch/sparc/Kconfig                      |   1 +
- arch/sparc/crypto/Kconfig               |  10 --
- arch/sparc/crypto/Makefile              |   4 -
- arch/sparc/crypto/crc32c_glue.c         | 184 ------------------------
- arch/sparc/lib/Makefile                 |   2 +
- arch/sparc/lib/crc32_glue.c             |  93 ++++++++++++
- arch/sparc/{crypto => lib}/crc32c_asm.S |   2 +-
- 7 files changed, 97 insertions(+), 199 deletions(-)
- delete mode 100644 arch/sparc/crypto/crc32c_glue.c
- create mode 100644 arch/sparc/lib/crc32_glue.c
- rename arch/sparc/{crypto => lib}/crc32c_asm.S (92%)
+Thanks,
+Long Li
 
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index dcfdb7f1dae9..0f88123925a4 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -108,10 +108,11 @@ config SPARC64
- 	select ARCH_HAS_GIGANTIC_PAGE
- 	select HAVE_SOFTIRQ_ON_OWN_STACK
- 	select HAVE_SETUP_PER_CPU_AREA
- 	select NEED_PER_CPU_EMBED_FIRST_CHUNK
- 	select NEED_PER_CPU_PAGE_FIRST_CHUNK
-+	select ARCH_HAS_CRC32
- 
- config ARCH_PROC_KCORE_TEXT
- 	def_bool y
- 
- config CPU_BIG_ENDIAN
-diff --git a/arch/sparc/crypto/Kconfig b/arch/sparc/crypto/Kconfig
-index cfe5102b1c68..e858597de89d 100644
---- a/arch/sparc/crypto/Kconfig
-+++ b/arch/sparc/crypto/Kconfig
-@@ -14,20 +14,10 @@ config CRYPTO_DES_SPARC64
- 	  Length-preserving ciphers: DES with ECB and CBC modes
- 	  Length-preserving ciphers: Tripe DES EDE with ECB and CBC modes
- 
- 	  Architecture: sparc64
- 
--config CRYPTO_CRC32C_SPARC64
--	tristate "CRC32c"
--	depends on SPARC64
--	select CRYPTO_HASH
--	select CRC32
--	help
--	  CRC32c CRC algorithm with the iSCSI polynomial (RFC 3385 and RFC 3720)
--
--	  Architecture: sparc64
--
- config CRYPTO_MD5_SPARC64
- 	tristate "Digests: MD5"
- 	depends on SPARC64
- 	select CRYPTO_MD5
- 	select CRYPTO_HASH
-diff --git a/arch/sparc/crypto/Makefile b/arch/sparc/crypto/Makefile
-index d257186c27d1..a2d7fca40cb4 100644
---- a/arch/sparc/crypto/Makefile
-+++ b/arch/sparc/crypto/Makefile
-@@ -10,17 +10,13 @@ obj-$(CONFIG_CRYPTO_MD5_SPARC64) += md5-sparc64.o
- 
- obj-$(CONFIG_CRYPTO_AES_SPARC64) += aes-sparc64.o
- obj-$(CONFIG_CRYPTO_DES_SPARC64) += des-sparc64.o
- obj-$(CONFIG_CRYPTO_CAMELLIA_SPARC64) += camellia-sparc64.o
- 
--obj-$(CONFIG_CRYPTO_CRC32C_SPARC64) += crc32c-sparc64.o
--
- sha1-sparc64-y := sha1_asm.o sha1_glue.o
- sha256-sparc64-y := sha256_asm.o sha256_glue.o
- sha512-sparc64-y := sha512_asm.o sha512_glue.o
- md5-sparc64-y := md5_asm.o md5_glue.o
- 
- aes-sparc64-y := aes_asm.o aes_glue.o
- des-sparc64-y := des_asm.o des_glue.o
- camellia-sparc64-y := camellia_asm.o camellia_glue.o
--
--crc32c-sparc64-y := crc32c_asm.o crc32c_glue.o
-diff --git a/arch/sparc/crypto/crc32c_glue.c b/arch/sparc/crypto/crc32c_glue.c
-deleted file mode 100644
-index 913b9a09e885..000000000000
---- a/arch/sparc/crypto/crc32c_glue.c
-+++ /dev/null
-@@ -1,184 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/* Glue code for CRC32C optimized for sparc64 crypto opcodes.
-- *
-- * This is based largely upon arch/x86/crypto/crc32c-intel.c
-- *
-- * Copyright (C) 2008 Intel Corporation
-- * Authors: Austin Zhang <austin_zhang@linux.intel.com>
-- *          Kent Liu <kent.liu@intel.com>
-- */
--
--#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
--
--#include <linux/init.h>
--#include <linux/module.h>
--#include <linux/string.h>
--#include <linux/kernel.h>
--#include <linux/crc32.h>
--
--#include <crypto/internal/hash.h>
--
--#include <asm/pstate.h>
--#include <asm/elf.h>
--#include <linux/unaligned.h>
--
--#include "opcodes.h"
--
--/*
-- * Setting the seed allows arbitrary accumulators and flexible XOR policy
-- * If your algorithm starts with ~0, then XOR with ~0 before you set
-- * the seed.
-- */
--static int crc32c_sparc64_setkey(struct crypto_shash *hash, const u8 *key,
--				 unsigned int keylen)
--{
--	u32 *mctx = crypto_shash_ctx(hash);
--
--	if (keylen != sizeof(u32))
--		return -EINVAL;
--	*mctx = get_unaligned_le32(key);
--	return 0;
--}
--
--static int crc32c_sparc64_init(struct shash_desc *desc)
--{
--	u32 *mctx = crypto_shash_ctx(desc->tfm);
--	u32 *crcp = shash_desc_ctx(desc);
--
--	*crcp = *mctx;
--
--	return 0;
--}
--
--extern void crc32c_sparc64(u32 *crcp, const u64 *data, unsigned int len);
--
--static u32 crc32c_compute(u32 crc, const u8 *data, unsigned int len)
--{
--	unsigned int n = -(uintptr_t)data & 7;
--
--	if (n) {
--		/* Data isn't 8-byte aligned.  Align it. */
--		n = min(n, len);
--		crc = __crc32c_le(crc, data, n);
--		data += n;
--		len -= n;
--	}
--	n = len & ~7U;
--	if (n) {
--		crc32c_sparc64(&crc, (const u64 *)data, n);
--		data += n;
--		len -= n;
--	}
--	if (len)
--		crc = __crc32c_le(crc, data, len);
--	return crc;
--}
--
--static int crc32c_sparc64_update(struct shash_desc *desc, const u8 *data,
--				 unsigned int len)
--{
--	u32 *crcp = shash_desc_ctx(desc);
--
--	*crcp = crc32c_compute(*crcp, data, len);
--	return 0;
--}
--
--static int __crc32c_sparc64_finup(const u32 *crcp, const u8 *data,
--				  unsigned int len, u8 *out)
--{
--	put_unaligned_le32(~crc32c_compute(*crcp, data, len), out);
--	return 0;
--}
--
--static int crc32c_sparc64_finup(struct shash_desc *desc, const u8 *data,
--				unsigned int len, u8 *out)
--{
--	return __crc32c_sparc64_finup(shash_desc_ctx(desc), data, len, out);
--}
--
--static int crc32c_sparc64_final(struct shash_desc *desc, u8 *out)
--{
--	u32 *crcp = shash_desc_ctx(desc);
--
--	put_unaligned_le32(~*crcp, out);
--	return 0;
--}
--
--static int crc32c_sparc64_digest(struct shash_desc *desc, const u8 *data,
--				 unsigned int len, u8 *out)
--{
--	return __crc32c_sparc64_finup(crypto_shash_ctx(desc->tfm), data, len,
--				      out);
--}
--
--static int crc32c_sparc64_cra_init(struct crypto_tfm *tfm)
--{
--	u32 *key = crypto_tfm_ctx(tfm);
--
--	*key = ~0;
--
--	return 0;
--}
--
--#define CHKSUM_BLOCK_SIZE	1
--#define CHKSUM_DIGEST_SIZE	4
--
--static struct shash_alg alg = {
--	.setkey			=	crc32c_sparc64_setkey,
--	.init			=	crc32c_sparc64_init,
--	.update			=	crc32c_sparc64_update,
--	.final			=	crc32c_sparc64_final,
--	.finup			=	crc32c_sparc64_finup,
--	.digest			=	crc32c_sparc64_digest,
--	.descsize		=	sizeof(u32),
--	.digestsize		=	CHKSUM_DIGEST_SIZE,
--	.base			=	{
--		.cra_name		=	"crc32c",
--		.cra_driver_name	=	"crc32c-sparc64",
--		.cra_priority		=	SPARC_CR_OPCODE_PRIORITY,
--		.cra_flags		=	CRYPTO_ALG_OPTIONAL_KEY,
--		.cra_blocksize		=	CHKSUM_BLOCK_SIZE,
--		.cra_ctxsize		=	sizeof(u32),
--		.cra_module		=	THIS_MODULE,
--		.cra_init		=	crc32c_sparc64_cra_init,
--	}
--};
--
--static bool __init sparc64_has_crc32c_opcode(void)
--{
--	unsigned long cfr;
--
--	if (!(sparc64_elf_hwcap & HWCAP_SPARC_CRYPTO))
--		return false;
--
--	__asm__ __volatile__("rd %%asr26, %0" : "=r" (cfr));
--	if (!(cfr & CFR_CRC32C))
--		return false;
--
--	return true;
--}
--
--static int __init crc32c_sparc64_mod_init(void)
--{
--	if (sparc64_has_crc32c_opcode()) {
--		pr_info("Using sparc64 crc32c opcode optimized CRC32C implementation\n");
--		return crypto_register_shash(&alg);
--	}
--	pr_info("sparc64 crc32c opcode not available.\n");
--	return -ENODEV;
--}
--
--static void __exit crc32c_sparc64_mod_fini(void)
--{
--	crypto_unregister_shash(&alg);
--}
--
--module_init(crc32c_sparc64_mod_init);
--module_exit(crc32c_sparc64_mod_fini);
--
--MODULE_LICENSE("GPL");
--MODULE_DESCRIPTION("CRC32c (Castagnoli), sparc64 crc32c opcode accelerated");
--
--MODULE_ALIAS_CRYPTO("crc32c");
--
--#include "crop_devid.c"
-diff --git a/arch/sparc/lib/Makefile b/arch/sparc/lib/Makefile
-index ee5091dd67ed..5724d0f356eb 100644
---- a/arch/sparc/lib/Makefile
-+++ b/arch/sparc/lib/Makefile
-@@ -51,5 +51,7 @@ lib-$(CONFIG_SPARC64) += copy_in_user.o memmove.o
- lib-$(CONFIG_SPARC64) += mcount.o ipcsum.o xor.o hweight.o ffs.o
- 
- obj-$(CONFIG_SPARC64) += iomap.o
- obj-$(CONFIG_SPARC32) += atomic32.o
- obj-$(CONFIG_SPARC64) += PeeCeeI.o
-+obj-$(CONFIG_CRC32_ARCH) += crc32-sparc.o
-+crc32-sparc-y := crc32_glue.o crc32c_asm.o
-diff --git a/arch/sparc/lib/crc32_glue.c b/arch/sparc/lib/crc32_glue.c
-new file mode 100644
-index 000000000000..41076d2b1fd2
---- /dev/null
-+++ b/arch/sparc/lib/crc32_glue.c
-@@ -0,0 +1,93 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Glue code for CRC32C optimized for sparc64 crypto opcodes.
-+ *
-+ * This is based largely upon arch/x86/crypto/crc32c-intel.c
-+ *
-+ * Copyright (C) 2008 Intel Corporation
-+ * Authors: Austin Zhang <austin_zhang@linux.intel.com>
-+ *          Kent Liu <kent.liu@intel.com>
-+ */
-+
-+#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
-+
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/crc32.h>
-+#include <asm/pstate.h>
-+#include <asm/elf.h>
-+
-+static DEFINE_STATIC_KEY_FALSE(have_crc32c_opcode);
-+
-+u32 crc32_le_arch(u32 crc, const u8 *data, size_t len)
-+{
-+	return crc32_le_base(crc, data, len);
-+}
-+EXPORT_SYMBOL(crc32_le_arch);
-+
-+void crc32c_sparc64(u32 *crcp, const u64 *data, size_t len);
-+
-+u32 crc32c_le_arch(u32 crc, const u8 *data, size_t len)
-+{
-+	size_t n = -(uintptr_t)data & 7;
-+
-+	if (!static_branch_likely(&have_crc32c_opcode))
-+		return crc32c_le_base(crc, data, len);
-+
-+	if (n) {
-+		/* Data isn't 8-byte aligned.  Align it. */
-+		n = min(n, len);
-+		crc = crc32c_le_base(crc, data, n);
-+		data += n;
-+		len -= n;
-+	}
-+	n = len & ~7U;
-+	if (n) {
-+		crc32c_sparc64(&crc, (const u64 *)data, n);
-+		data += n;
-+		len -= n;
-+	}
-+	if (len)
-+		crc = crc32c_le_base(crc, data, len);
-+	return crc;
-+}
-+EXPORT_SYMBOL(crc32c_le_arch);
-+
-+u32 crc32_be_arch(u32 crc, const u8 *data, size_t len)
-+{
-+	return crc32_be_base(crc, data, len);
-+}
-+EXPORT_SYMBOL(crc32_be_arch);
-+
-+static int __init crc32_sparc_init(void)
-+{
-+	unsigned long cfr;
-+
-+	if (!(sparc64_elf_hwcap & HWCAP_SPARC_CRYPTO))
-+		return 0;
-+
-+	__asm__ __volatile__("rd %%asr26, %0" : "=r" (cfr));
-+	if (!(cfr & CFR_CRC32C))
-+		return 0;
-+
-+	static_branch_enable(&have_crc32c_opcode);
-+	pr_info("Using sparc64 crc32c opcode optimized CRC32C implementation\n");
-+	return 0;
-+}
-+arch_initcall(crc32_sparc_init);
-+
-+static void __exit crc32_sparc_exit(void)
-+{
-+}
-+module_exit(crc32_sparc_exit);
-+
-+u32 crc32_optimizations(void)
-+{
-+	if (static_key_enabled(&have_crc32c_opcode))
-+		return CRC32C_OPTIMIZATION;
-+	return 0;
-+}
-+EXPORT_SYMBOL(crc32_optimizations);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("CRC32c (Castagnoli), sparc64 crc32c opcode accelerated");
-diff --git a/arch/sparc/crypto/crc32c_asm.S b/arch/sparc/lib/crc32c_asm.S
-similarity index 92%
-rename from arch/sparc/crypto/crc32c_asm.S
-rename to arch/sparc/lib/crc32c_asm.S
-index b8659a479242..ee454fa6aed6 100644
---- a/arch/sparc/crypto/crc32c_asm.S
-+++ b/arch/sparc/lib/crc32c_asm.S
-@@ -1,11 +1,11 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #include <linux/linkage.h>
- #include <asm/visasm.h>
- #include <asm/asi.h>
- 
--#include "opcodes.h"
-+#include "../crypto/opcodes.h"
- 
- ENTRY(crc32c_sparc64)
- 	/* %o0=crc32p, %o1=data_ptr, %o2=len */
- 	VISEntryHalf
- 	lda	[%o0] ASI_PL, %f1
--- 
-2.47.0
 
+> > 
+> > The commit c7f114d864ac ("f2fs: fix to avoid use-after-free in
+> > f2fs_stop_gc_thread()") attempted to fix this issue by using a read
+> > semaphore to prevent races between shutdown and remount threads, but
+> > itfails to prevent all race conditions.
+> > 
+> > While upgrading to s_umount write lock in f2fs_do_shutdown() would fix
+> > the current issue, however, using s_umount lock requires extreme caution
+> > to avoid lock recursion. A better solution is to introduce a semaphore
+> > to prevent races between concurrent f2fs_stop_gc_thread calls.
+> > 
+> > Fixes: 7950e9ac638e ("f2fs: stop gc/discard thread after fs shutdown")
+> > Signed-off-by: Long Li <leo.lilong@huawei.com>
+> > ---
+> >   fs/f2fs/f2fs.h  | 1 +
+> >   fs/f2fs/gc.c    | 9 +++++++--
+> >   fs/f2fs/super.c | 1 +
+> >   3 files changed, 9 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 3c6f3cce5779..7ae1e2a4789f 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1679,6 +1679,7 @@ struct f2fs_sb_info {
+> >   						 * race between GC and GC or CP
+> >   						 */
+> >   	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
+> > +	struct semaphore gc_clean_lock;		/* semaphore for clean GC thread */
+> >   	struct atgc_management am;		/* atgc management */
+> >   	unsigned int cur_victim_sec;		/* current victim section num */
+> >   	unsigned int gc_mode;			/* current GC state */
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index e40bdd12e36d..e1b8bf98b5fa 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -232,14 +232,19 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
+> >   void f2fs_stop_gc_thread(struct f2fs_sb_info *sbi)
+> >   {
+> > -	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
+> > +	struct f2fs_gc_kthread *gc_th;
+> > -	if (!gc_th)
+> > +	down(&sbi->gc_clean_lock);
+> > +	gc_th = sbi->gc_thread;
+> > +	if (!gc_th) {
+> > +		up(&sbi->gc_clean_lock);
+> >   		return;
+> > +	}
+> >   	kthread_stop(gc_th->f2fs_gc_task);
+> >   	wake_up_all(&gc_th->fggc_wq);
+> >   	kfree(gc_th);
+> >   	sbi->gc_thread = NULL;
+> > +	up(&sbi->gc_clean_lock);
+> >   }
+> >   static int select_gc_type(struct f2fs_sb_info *sbi, int gc_type)
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index 80a53dbf1c38..47a15050ea9c 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -4419,6 +4419,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >   	/* initialize locks within allocated memory */
+> >   	init_f2fs_rwsem(&sbi->gc_lock);
+> > +	sema_init(&sbi->gc_clean_lock, 1);
+> >   	mutex_init(&sbi->writepages);
+> >   	init_f2fs_rwsem(&sbi->cp_global_sem);
+> >   	init_f2fs_rwsem(&sbi->node_write);
+> 
 
 
 _______________________________________________
