@@ -4,67 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7E52AD43357
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  8 Nov 2024 01:26:17 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A1971D5D695
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  8 Nov 2024 01:26:29 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1t9DlQ-0001tj-Df;
-	Fri, 08 Nov 2024 01:26:17 +0000
+	id 1t9Dld-0005iP-At;
+	Fri, 08 Nov 2024 01:26:29 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1t9DlO-0001td-MP
+ (envelope-from <chao@kernel.org>) id 1t9DlQ-0005hT-Jo
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 08 Nov 2024 01:26:15 +0000
+ Fri, 08 Nov 2024 01:26:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0bbD3VzG1ld2zlzpGbuW8oWGC1SGtlFWv17gGmQQ/Fc=; b=RqhgI8pB6OMmWMm+UxVnBZpU3G
- CL0f5a6iUJp3uXwIdSgvGnH+6c9RGiAgrbHPUWUEZtzorFUela4kSg/0FDbdwrMiSNtpM3V0WdxQv
- rkoaJ7qRXigJByiiYPTpJCFcFW9CZFXXVTvg6yHRuM4Udool349CMM0IUKNnqzfl4ZVE=;
+ bh=5DP1myu/2WmIVqkYSxOiUhGqWveBO8jNroBIxDaGWhs=; b=AaDrnwYwf6xGDETLvYSpalcDJG
+ 1EP4iefehSIh1QY2fFZ1LOBvR4B68rzzKcm8E0zQ20bXiK3pcuGrJFnwDpTIYteI44mIFJhZIZ1mS
+ mNTx1jEK8rAw6fUHWUOvz6PCvA6UdL7RE0hqW53CJ1O9ohQyYQOET3cPZGZgffqV3Fjc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=0bbD3VzG1ld2zlzpGbuW8oWGC1SGtlFWv17gGmQQ/Fc=; b=F
- FXw0UvTFusNL8N+9TP8nl+e+LaXFUxFEa0AFPV5sjE3oOwRPJW2ip7z/DySy6IlMNZGucV8o2dkFr
- zMVWsmLZ4NeNpTd2AM1a3Uir0V6O5KFAgnhH3BJevlV6RnEEXfG5eweFwQZ2N8/uAKl9f4k5jygFn
- Y9c0LVzRBlPVc20Q=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=5DP1myu/2WmIVqkYSxOiUhGqWveBO8jNroBIxDaGWhs=; b=l5+gih+CKknLmzJviQecJmYhYB
+ jYQKUpzPt5cuZ3Svm07DxUd2nRoK6+P++gdEMO/JOKw2QbP0glXkFNCTurO0krjeYxp0uZxruoaXH
+ RUGH+FomETPxeNdtJjlQ8rBHku6dNUKk4qhh1eEhYGdpFnEKRsyKLWuOsjq7HlVHdI6o=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1t9DlO-0006B9-RC for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 08 Nov 2024 01:26:15 +0000
+ id 1t9DlP-0006BB-Rt for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 08 Nov 2024 01:26:16 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id CF2FF5C0071
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri,  8 Nov 2024 01:25:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F40C4CECD;
- Fri,  8 Nov 2024 01:26:02 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id 604CAA44D91;
+ Fri,  8 Nov 2024 01:24:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 562B1C4CECC;
+ Fri,  8 Nov 2024 01:26:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1731029164;
- bh=V97j2w44oH4Bt64bhHsn481jd5vtLuRAKMSr57gdZ+c=;
- h=From:To:Cc:Subject:Date:From;
- b=XQ4yV3kD9VFPJHEyN/pRHQpBTtlIhQoCHnK69H8E+314TNESx78zuyjzTVYSHM1jS
- JsOCR+EOEMCRL8uh9gtOVLQbeAwyrXLG6Q0Jq/LgUwTYnypqWd7R64ElcfLVptutEH
- +OxG5hws8wID07BT9mZQDPwndJBDpml2a+Xx5nSWJx0KNn+S2129wt5f2Map9NJrh5
- AsWAbYyYiLmqzQUfBdvUem1J1Cbpeg7n7HOxbvigUg91YWuEPOZBm8SFH15LCpfcfy
- JJFzO7LS3mNnqj6XDOzwXhlguuLmU3Pzqoao181U3Oz3fLGvQxgFyTXvwESf0hdo+B
- HhGFvKssIEuXg==
+ s=k20201202; t=1731029170;
+ bh=gPIkxehSKAI0ucltkZ1fut7ZW6Iq4yCbo00XEqZNTOA=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=qYYuiUPyH2Mz0ezkEkyom8E7Qbs7K7xqKi2IvL1VTAx2L734ePruCTPrW7ThfMImg
+ /W4qtabEK7FGQmQTK9UPjmAdP3QGvnYuY24zgSL/zSu4WZGdoUqIygrKUeFW141Zst
+ mlNI+MchNG2a9DiCri44oi1jDnuKa8fUsTPBr44d/a8ZaxnFAwdanhG0eQxu5c3Hqv
+ L7Iz/po0ubzM4m9PBbKj5jaDQ+vgTJGkyLsPqBQ06LK5qF4OngOCSeX2Jb2fVLPHE3
+ Ys4b1voheyLFTfOzkw74JdCJalsk8Wefy+47L7AEjtickLM5BCC8JMgodZSTG1fNqy
+ TG2JnHsGOWi8Q==
 To: jaegeuk@kernel.org
-Date: Fri,  8 Nov 2024 09:25:54 +0800
-Message-Id: <20241108012557.572782-1-chao@kernel.org>
+Date: Fri,  8 Nov 2024 09:25:57 +0800
+Message-Id: <20241108012557.572782-4-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20241108012557.572782-1-chao@kernel.org>
+References: <20241108012557.572782-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1t9DlO-0006B9-RC
-Subject: [f2fs-dev] [PATCH 1/4] f2fs: fix to do cast in F2FS_{BLK_TO_BYTES,
- BTYES_TO_BLK} to avoid overflow
+X-Headers-End: 1t9DlP-0006BB-Rt
+Subject: [f2fs-dev] [PATCH 4/4] f2fs: fix to requery extent which cross
+ boundary of inquiry
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,38 +79,97 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-It missed to cast variable to unsigned long long type before
-bit shift, which will cause overflow, fix it.
+dd if=/dev/zero of=file bs=4k count=5
+xfs_io file -c "fiemap -v 2 16384"
+file:
+   EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+     0: [0..31]:         139272..139303      32 0x1000
+     1: [32..39]:        139304..139311       8 0x1001
+xfs_io file -c "fiemap -v 0 16384"
+file:
+   EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+     0: [0..31]:         139272..139303      32 0x1000
+xfs_io file -c "fiemap -v 0 16385"
+file:
+   EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+     0: [0..39]:         139272..139311      40 0x1001
 
-Fixes: f7ef9b83b583 ("f2fs: introduce macros to convert bytes and blocks in f2fs")
+There are two problems:
+- continuous extent is split to two
+- FIEMAP_EXTENT_LAST is missing in last extent
+
+The root cause is: if upper boundary of inquiry crosses extent,
+f2fs_map_blocks() will truncate length of returned extent to
+F2FS_BYTES_TO_BLK(len), and also, it will stop to query latter
+extent or hole to make sure current extent is last or not.
+
+In order to fix this issue, once we found an extent locates
+in the end of inquiry range by f2fs_map_blocks(), we need to
+expand inquiry range to requiry.
+
+Cc: stable@vger.kernel.org
+Fixes: 7f63eb77af7b ("f2fs: report unwritten area in f2fs_fiemap")
+Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- include/linux/f2fs_fs.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/f2fs/data.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index b0b821edfd97..3b2ad444c002 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -24,10 +24,10 @@
- #define NEW_ADDR		((block_t)-1)	/* used as block_t addresses */
- #define COMPRESS_ADDR		((block_t)-2)	/* used as compressed data flag */
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 69f1cb0490ee..ee5614324df0 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1896,7 +1896,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		u64 start, u64 len)
+ {
+ 	struct f2fs_map_blocks map;
+-	sector_t start_blk, last_blk;
++	sector_t start_blk, last_blk, blk_len, max_len;
+ 	pgoff_t next_pgofs;
+ 	u64 logical = 0, phys = 0, size = 0;
+ 	u32 flags = 0;
+@@ -1940,14 +1940,13 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
  
--#define F2FS_BYTES_TO_BLK(bytes)	((bytes) >> F2FS_BLKSIZE_BITS)
--#define F2FS_BLK_TO_BYTES(blk)		((blk) << F2FS_BLKSIZE_BITS)
-+#define F2FS_BYTES_TO_BLK(bytes)	((unsigned long long)(bytes) >> F2FS_BLKSIZE_BITS)
-+#define F2FS_BLK_TO_BYTES(blk)		((unsigned long long)(blk) << F2FS_BLKSIZE_BITS)
- #define F2FS_BLK_END_BYTES(blk)		(F2FS_BLK_TO_BYTES(blk + 1) - 1)
--#define F2FS_BLK_ALIGN(x)			(F2FS_BYTES_TO_BLK((x) + F2FS_BLKSIZE - 1))
-+#define F2FS_BLK_ALIGN(x)		(F2FS_BYTES_TO_BLK((x) + F2FS_BLKSIZE - 1))
+ 	start_blk = F2FS_BYTES_TO_BLK(start);
+ 	last_blk = F2FS_BYTES_TO_BLK(start + len - 1);
+-
+-	if (len & F2FS_BLKSIZE_MASK)
+-		len = round_up(len, F2FS_BLKSIZE);
++	blk_len = last_blk - start_blk + 1;
++	max_len = F2FS_BYTES_TO_BLK(maxbytes) - start_blk;
  
- /* 0, 1(node nid), 2(meta nid) are reserved node id */
- #define F2FS_RESERVED_NODE_NUM		3
+ next:
+ 	memset(&map, 0, sizeof(map));
+ 	map.m_lblk = start_blk;
+-	map.m_len = F2FS_BYTES_TO_BLK(len);
++	map.m_len = blk_len;
+ 	map.m_next_pgofs = &next_pgofs;
+ 	map.m_seg_type = NO_CHECK_TYPE;
+ 
+@@ -1970,6 +1969,17 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		flags |= FIEMAP_EXTENT_LAST;
+ 	}
+ 
++	/*
++	 * current extent may cross boundary of inquiry, increase len to
++	 * requery.
++	 */
++	if (!compr_cluster && (map.m_flags & F2FS_MAP_MAPPED) &&
++				map.m_lblk + map.m_len - 1 == last_blk &&
++				blk_len != max_len) {
++		blk_len = max_len;
++		goto next;
++	}
++
+ 	compr_appended = false;
+ 	/* In a case of compressed cluster, append this to the last extent */
+ 	if (compr_cluster && ((map.m_flags & F2FS_MAP_DELALLOC) ||
 -- 
 2.40.1
 
