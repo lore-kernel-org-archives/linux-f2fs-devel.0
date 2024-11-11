@@ -4,55 +4,156 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C76C0D12D71
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Nov 2024 04:47:10 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D7F7ED2E9C0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Nov 2024 08:51:59 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tAMKR-0006g0-FO;
-	Mon, 11 Nov 2024 04:47:07 +0000
+	id 1tAQ9N-0003s1-It;
+	Mon, 11 Nov 2024 08:51:57 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zangyangyang1@xiaomi.com>) id 1tAMKQ-0006fu-4V
+ (envelope-from <shengyong@oppo.com>) id 1tAQ9M-0003ru-R9
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 Nov 2024 04:47:06 +0000
+ Mon, 11 Nov 2024 08:51:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
+ :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Cb9kxIxTB4hN/2bwYH/DzwuMji7+6l/cH7U3EEtV6cM=; b=NQJw7pimK/XGCSsulybWCP0PYE
- rhJslJo8gdppDwX6zp8y1zKU5YdJN2/lIRqMQyCXx7BLpKzp22JBNk4TtiCFkk0hBQI2PTg84OrK8
- ws9kDxFsKZSNOs/DVvw2Nsw35loC19hqDFCE2ErHxvdm03SKKzNJZ3HMHUnFTdR8xq7Q=;
+ bh=gDc9TMGqj+jM3iAPfV5e8BYjhJJ6uyivPzzFrMvJmv4=; b=Uf/9qoNYK358PQJ5rfALKNlrZc
+ sCXncVB4c0EUmm0c3/edf6t7225ccGgaxs4jrrT0XF/h10Yz/5f1QLaqcHnGI/Oq/apEBqKL2XcxS
+ 9AcRVZLNUdBnEyoxPTO/sdZvl4NHE57cgEaP87YMwuVsltN5ur7iwEj2E5hk4Njypoi0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Cb9kxIxTB4hN/2bwYH/DzwuMji7+6l/cH7U3EEtV6cM=; b=d
- wAxOV9akACjSn+RdbPyJ32takLw8DUbF/bedr1lJL7jWyLTUb4N1gaxTknekbh0UumRvhuMRvm6RW
- ympYp3wj3eYGln3KANeaDrY+kPkBEFPtyZBBV7AM458zSAuXZgDgE2FX6HLMloZRamdmHJuFeyR+l
- l6oHYTYTC2gDgJLA=;
-Received: from outboundhk.mxmail.xiaomi.com ([118.143.206.90])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.95)
- id 1tAMKO-0008Ku-HC for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 Nov 2024 04:47:06 +0000
-X-CSE-ConnectionGUID: dYd0hPmPRWe0Gi2iPRsQ+Q==
-X-CSE-MsgGUID: FObFf8BDSkCih4PgzoUiig==
-X-IronPort-AV: E=Sophos;i="6.12,144,1728921600"; d="scan'208";a="100694526"
-To: <chao@kernel.org>
-Date: Mon, 11 Nov 2024 12:31:06 +0800
-Message-ID: <20241111043106.864722-1-zangyangyang1@xiaomi.com>
-X-Mailer: git-send-email 2.43.2
+ h=MIME-Version:Content-Type:Content-Transfer-Encoding:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=gDc9TMGqj+jM3iAPfV5e8BYjhJJ6uyivPzzFrMvJmv4=; b=cN8tLnSxMqemdRGtjw6zow9/Hv
+ v5PMxvBo9WLBKlkEcRAXE4rq9S4TNjuPGcePq8yfMDK/yiIWCHKXbobMBxyYhdG5ZMUzXTDfoMyAg
+ oxo/WUV+qBQYFzPzgv4n8t3Ww0YdvNaTIVn9K9zeeSGk6zuzignar7hcEpHVskDwFgIY=;
+Received: from mail-eastasiaazon11010049.outbound.protection.outlook.com
+ ([52.101.128.49] helo=HK2PR02CU002.outbound.protection.outlook.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1tAQ9M-00043C-5y for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 11 Nov 2024 08:51:56 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hlGMTv26N1DukiRkuFl1o9U6hHynLOYTiFlgftz7uu9Ohe6j7WQjTy6yeOoZBAIZBKKet4+szupQ3C2WkgWDieBqJibaSFmoqXiJzcRyXnhBIixH+/G5ZFLgql6yaOtTMiVf91ppNAoTJ/va/ELPv0xQEOvX8pOZNqSv+R9Da4V0fbdvwkXpeMeshsdYowHB156/DOFn3Lgnib52hFm5hGJuW5whSWni7Mfxkwmvu1raw3jmeonCWinKMGgLzyalKHu+WxovZwfUTfdAnuCywrtP6xpw5//QSfLtlCA21/9AaD2oXd5XODcCEt12vyNJXh9fHK5waQc/ytIxv31e0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gDc9TMGqj+jM3iAPfV5e8BYjhJJ6uyivPzzFrMvJmv4=;
+ b=VF1NQi8NLxIUfXy+Lclk+nEVrBQz0uaKB05A3bOqmKG48xEF15MchR3o7F6d13E7yjIdy3s0MZbmnIxsTA7WGfTlNqeiVWT2PAe/+zBQM2nJQlomEC34rPuearVu80Z9OYooXE+Tibq31PQwwjduCJiMaj3SN6zy4s6sPlSV44ZTpVSERhtFqAAnnUB5fBbPOtdMBXvsyjW09T1NCBa6DU+5QmhPpqT63HZNY/qo4/w/fddajLK0Dl/LaMs0rFurQNcX2V6Rzv8LilYHUyUXyZF2kxEwlNwlm3Q5CgTplxxJ+U+H5o6cbgvtm9x+7T0ciKQC8gk0lk4VUPflEC/YEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
+ dkim=pass header.d=oppo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gDc9TMGqj+jM3iAPfV5e8BYjhJJ6uyivPzzFrMvJmv4=;
+ b=udCEJqrp6SXrSwIB/iSfpEAWLLYzAjQhLskuST1mtks3vjK/H6AaFsIGya4N0mbafDo4UpG2xWU9/SVraJQI9GPllUSI6VvYsf+tlk0Ql8Vmp/U7mLqWCM+jtzgBGDlEpkX8xXZhC3Q4r7H8RjBe+NFHbBWkebJAyianpVmnZAI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oppo.com;
+Received: from SEYPR02MB6014.apcprd02.prod.outlook.com (2603:1096:101:6b::10)
+ by TYZPR02MB7393.apcprd02.prod.outlook.com (2603:1096:405:44::12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.26; Mon, 11 Nov
+ 2024 08:51:51 +0000
+Received: from SEYPR02MB6014.apcprd02.prod.outlook.com
+ ([fe80::bb06:c283:a50:7796]) by SEYPR02MB6014.apcprd02.prod.outlook.com
+ ([fe80::bb06:c283:a50:7796%7]) with mapi id 15.20.8137.027; Mon, 11 Nov 2024
+ 08:51:51 +0000
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Mon, 11 Nov 2024 16:50:58 +0800
+Message-Id: <20241111085058.4136077-2-shengyong@oppo.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20241111085058.4136077-1-shengyong@oppo.com>
+References: <20241111085058.4136077-1-shengyong@oppo.com>
+X-ClientProxiedBy: SI1PR02CA0011.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::19) To SEYPR02MB6014.apcprd02.prod.outlook.com
+ (2603:1096:101:6b::10)
 MIME-Version: 1.0
-X-Originating-IP: [10.149.39.118]
-X-ClientProxiedBy: yz-mbx05.mioffice.cn (10.237.88.125) To
- bj-mbx11.mioffice.cn (10.237.8.131)
-X-Headers-End: 1tAMKO-0008Ku-HC
-Subject: [f2fs-dev] [PATCH] f2fs: cache more dentry pages
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEYPR02MB6014:EE_|TYZPR02MB7393:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2441200c-3616-4e13-163e-08dd022e1560
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|52116014|1800799024|366016|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?3CCmO/MHuaDsoC6b8RXD2zCGeQuHNp5+pt0VMdbne7LUC8zCmTxbvoXtld5g?=
+ =?us-ascii?Q?ZR7NRirmPcnDPd5/TV/uTiyo2l/H1gTJGrfk96zUo63tZzK2cWukFUhH9nwP?=
+ =?us-ascii?Q?m1KZg80HK6mP5Wnkh7R3CBCEfmkqYbl+n646Cf8+AsrbEDKwokVxzyxvdNJT?=
+ =?us-ascii?Q?Zi5jolcXkTnIAT1CSiIX/0NxvYWIILmw+N5BA+hjwO1J3TH8qy+zmfh96sSf?=
+ =?us-ascii?Q?AbYc4GusoMfIHm5uv3BPYIFxBIadR957N5N9d0I6AF2IsIixWvulaVXQqV9l?=
+ =?us-ascii?Q?L2b0rckwXiWQNs+p7l3fcLkda1YcqE7yT7xOyhCD44/ib3kQCV7+OjeQ7wBC?=
+ =?us-ascii?Q?9GAeCQEFG1/dgoI0MTdI2Uk9b/+qc/mnpojr5e/Af+2N0UMloizEP+h7ZYq/?=
+ =?us-ascii?Q?hhEzOlEd/JEUyyVxznvLXi1zxFGYPj0O7MT2UkCXlAhFlan+YoLGV8epTZ2/?=
+ =?us-ascii?Q?tyY1tl8csEbjKwtfM5AdFhVgfrJZr/jufv4HQMSqmGo8RSI0dOtpuFE7oAkR?=
+ =?us-ascii?Q?BgAPztR7LyX/3NFdIpB26w5cuBmf4HnHNaCWLBtBCrGeNqpHRc+gCjwSi5Za?=
+ =?us-ascii?Q?aJUdMp9wxLxPANMJtscpI0+aCH6FZi2JnxIKvLWInhjkM9j9BUyopxKdZq1a?=
+ =?us-ascii?Q?nywcsEW0U21xWB6gpglcAznupehZO79PLO5JKuTSxyCr6riXgUFabFEHru6r?=
+ =?us-ascii?Q?1BW0kAt7yQo3bd05oDWpn8YFBSyVANDA5Wlbw0sMiLFQis6gY1mMCJs2XMKO?=
+ =?us-ascii?Q?D2VmtaDvhKQZDZbnqORy8jE5MEvyeZARU6mJkSi5bA/6RNcfp0nfXD4y/Guu?=
+ =?us-ascii?Q?KS93FA1ZOgD2PcvRyCcDj/AnuWyYa5miFnkEkI49RH+ftjLndFX9w5JDVBgr?=
+ =?us-ascii?Q?LqfZK2zUomofJYF0bPo5NwmpAhvJDWtnfWOHRZi6QAcbrP5/RWUIZNh8ToNl?=
+ =?us-ascii?Q?wFhdUTrqacB5mCiQmWxecFwttbe7355S+IVAB34IjqqvX2votNlGVioQRw6o?=
+ =?us-ascii?Q?qgs4RKs/a5+OjEEWGqgoxDLjhJVj+kieuxYxWekHzUfoCgqF7G5Izi4oGO8M?=
+ =?us-ascii?Q?/xlb7JfKK3uNE/nFKjy32Jhx86Xr5BdaU8QmXj4bZrnFHgb2Q/957/Gsf2kt?=
+ =?us-ascii?Q?afHpMB7VKrZ3DqYo+62fmVXSsSXKEpED+E5vITapfalh4zPjFbeyg+qxJjzj?=
+ =?us-ascii?Q?6kNMnEhe9AmqPqvFD2FPUf6kdt1HSRGDxXWnoRDPr/+eCtw1hgNozrtvbATx?=
+ =?us-ascii?Q?ruVvMZUxH+2ioyQGuJ6ESMi86KJvMCjYX7akIAy1qFfdSfETCf3u9+qt/aD3?=
+ =?us-ascii?Q?19NYpV9eLp/m6Ej80E2JxCRUW/ewatVBf/3P6OyO21abBgfqq5iBBht5M51g?=
+ =?us-ascii?Q?m9PTcg0=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SEYPR02MB6014.apcprd02.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014); DIR:OUT;
+ SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7hgBik2bP1X4YYg6pYeyq27Gyl92ufjIsuFApEyuQWS52wNEscvpF1feQ4iz?=
+ =?us-ascii?Q?hpXO+/G8Hb28QlVmfYv+NYy6jjmu+hZo1yWzatHs3SeCw+Awj5nXh9FA3lKR?=
+ =?us-ascii?Q?2AQVOuAYSs10+bWY9in4T7l7OXFCxwg3PJtfszoNmNeM5dXAPvdLl1Qoxcjl?=
+ =?us-ascii?Q?GjlNx42xNIiGguuZiBkQtDsdscZ8btdJQyCFgbviKeswpxoYWRc4PmmpJb/z?=
+ =?us-ascii?Q?vSnOgpxFXj21K4COI811aeB5cyVFpg7hXY5FvMBR4vyn6AHUwNvFkehuWpVc?=
+ =?us-ascii?Q?cw3vjn17rSEEIBc2RhmKJ9C4eRHaUElod6V//SWWjpA774DxMW8bSzQMwp3W?=
+ =?us-ascii?Q?CTD5H+xJEQ3V9Z/SuMsuuTyrsdG6XvrZWyRQcmdd+e4ttCX2bxRktior04bo?=
+ =?us-ascii?Q?8Rd+9jK0pAPcq3DkpTEXnHR+vV1a7lfetg2MhS/MWlsaGIdpu1WMl+/+cuou?=
+ =?us-ascii?Q?C/r/I96b9HxE9909kyZDqq9PCll4f923f2vK2Y0PpFyb5AEqwCOcF3hBwR2x?=
+ =?us-ascii?Q?poKebC32E89rzDgrBQZH08zy4JySIAutcZER914CitEiEC+2Q6RC43doxQ1r?=
+ =?us-ascii?Q?n7KEYnFKk4nBK6e7m31B+NroYEXRSY9WJU8Cwigt2lbYusaKHU1KG1wjVo4S?=
+ =?us-ascii?Q?NJnp+U/NlgQAyCIGfg+bqnz5uhPF9/duMDw5J8gLQ1ev3IfSI+erIxGye2rz?=
+ =?us-ascii?Q?1UYN3astYvBtfDsepypCnilJ1XDow0nNb8ezD0Uo2IdIgj6SyPLYMrU9fc9I?=
+ =?us-ascii?Q?K4NgSVW42/j4KK4K+tmw/hlL/rwr6qyBAB87aKYjCldtVcqrryu0SN8Uhm89?=
+ =?us-ascii?Q?TTBVq1K5DrUcMw9U/2nQ5ZtkwXTOcfwu3dScjFZvggNe/JGu7fzHxNpnt/ZX?=
+ =?us-ascii?Q?/RckwvLo/itpco+QN3Glu8a3ky9LX8ATFi//IdN0SmxDjYLieiZ98nepLBJf?=
+ =?us-ascii?Q?6RfmuZ367p2edWNakyplNqz1lPaEwLy8EMD1jFePq0RK9fekpG2bnFioR6sV?=
+ =?us-ascii?Q?qxwVQ03S8jKN7nk3mxDgcjRlWu1Ii93rmpB8wg0Ii1bo6bf2uZ031L+uhVJj?=
+ =?us-ascii?Q?sG663gpDeYkvGxYgovusiO8BRikQhMLMII4/XlqlwalewgyBQr9fXXDKb6+g?=
+ =?us-ascii?Q?EuUBmItccU/YGc3yf4V3Cg8qKLVT9bjQQ0H5XhkSlZaaRs5ss2yHGnhrpDVj?=
+ =?us-ascii?Q?i/k31Q3F3CFIA+SOCPuq2/hdCIP5r3e350Ky89z3GYs/HdhTBvnl2HyYp6TO?=
+ =?us-ascii?Q?ZkG14KiNIbes1U0UK+jkmL/Yiwvk7NJ0nIav5GUV2SeQyJfd6bWwRDC228y9?=
+ =?us-ascii?Q?AZ2yNs5bj+bICIzqhJz/XJ48m00zWiIo5KS1QMKJzhH3Q2pgK7WP70K1REF+?=
+ =?us-ascii?Q?F0CsWOnVdx+Es6A0WT1KbCt55W2HZAGnJh/QvbqJ3v5nQXjDkgW2tW8NklYc?=
+ =?us-ascii?Q?5BNk7S7OZ3euuhsf9Rj+p7HpK8kusnaJVyZEsHkiW+HDynvk2YfcsLYtFIVV?=
+ =?us-ascii?Q?o7Ww0XRHp223ru5v1CZdAxN6bUsRgIcH/QQsEkNAUFHQay6ElkNj093OBYuq?=
+ =?us-ascii?Q?TuFRtVUti2hH/Jf6Grsn6L4e83geNtiKMoAKiU83?=
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2441200c-3616-4e13-163e-08dd022e1560
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR02MB6014.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 08:51:50.9183 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tE6ZC4yJ+6u75R3hCovFS4V4ApjcW4J7pk4VXRtrDF/48amrIDhXmodOwnfO3em8FiwSV6CvGKkhbQqmH7uboA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR02MB7393
+X-Headers-End: 1tAQ9M-00043C-5y
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: clear SBI_POR_DOING before initing
+ inmem curseg
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -64,77 +165,51 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: zangyangyang1 via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: zangyangyang1 <zangyangyang1@xiaomi.com>
-Cc: jaegeuk@kernel.org, zangyangyang1 <zangyangyang1@xiaomi.com>,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: multipart/mixed; boundary="===============5413053574646030212=="
+From: Sheng Yong via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Sheng Yong <shengyong@oppo.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
---===============5413053574646030212==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
+SBI_POR_DOING can be cleared after recovery is completed, so that
+changes made before recovery can be persistent, and subsequent
+errors can be recorded into cp/sb.
 
-f2fs_find_data_page is used to find dentry pages,
-I think we should cache more dentry pages.
-
-Signed-off-by: zangyangyang1 <zangyangyang1@xiaomi.com>
+Signed-off-by: Song Feng <songfeng@oppo.com>
+Signed-off-by: Yongpeng Yang <yangyongpeng1@oppo.com>
+Signed-off-by: Sheng Yong <shengyong@oppo.com>
 ---
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/super.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 402e00d54c0b..71ca987fe7cd 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1286,7 +1286,7 @@ struct page *f2fs_find_data_page(struct inode *inode,=
- pgoff_t index,
-        struct address_space *mapping =3D inode->i_mapping;
-        struct page *page;
-
--       page =3D find_get_page(mapping, index);
-+       page =3D find_get_page_flags(mapping, index, FGP_ACCESSED);
-        if (page && PageUptodate(page))
-                return page;
-        f2fs_put_page(page, 0);
---
-2.43.2
-
-#/******=B1=BE=D3=CA=BC=FE=BC=B0=C6=E4=B8=BD=BC=FE=BA=AC=D3=D0=D0=A1=C3=D7=
-=B9=AB=CB=BE=B5=C4=B1=A3=C3=DC=D0=C5=CF=A2=A3=AC=BD=F6=CF=DE=D3=DA=B7=A2=CB=
-=CD=B8=F8=C9=CF=C3=E6=B5=D8=D6=B7=D6=D0=C1=D0=B3=F6=B5=C4=B8=F6=C8=CB=BB=F2=
-=C8=BA=D7=E9=A1=A3=BD=FB=D6=B9=C8=CE=BA=CE=C6=E4=CB=FB=C8=CB=D2=D4=C8=CE=BA=
-=CE=D0=CE=CA=BD=CA=B9=D3=C3=A3=A8=B0=FC=C0=A8=B5=AB=B2=BB=CF=DE=D3=DA=C8=AB=
-=B2=BF=BB=F2=B2=BF=B7=D6=B5=D8=D0=B9=C2=B6=A1=A2=B8=B4=D6=C6=A1=A2=BB=F2=C9=
-=A2=B7=A2=A3=A9=B1=BE=D3=CA=BC=FE=D6=D0=B5=C4=D0=C5=CF=A2=A1=A3=C8=E7=B9=FB=
-=C4=FA=B4=ED=CA=D5=C1=CB=B1=BE=D3=CA=BC=FE=A3=AC=C7=EB=C4=FA=C1=A2=BC=B4=B5=
-=E7=BB=B0=BB=F2=D3=CA=BC=FE=CD=A8=D6=AA=B7=A2=BC=FE=C8=CB=B2=A2=C9=BE=B3=FD=
-=B1=BE=D3=CA=BC=FE=A3=A1 This e-mail and its attachments contain confidenti=
-al information from XIAOMI, which is intended only for the person or entity=
- whose address is listed above. Any use of the information contained herein=
- in any way (including, but not limited to, total or partial disclosure, re=
-production, or dissemination) by persons other than the intended recipient(=
-s) is prohibited. If you receive this e-mail in error, please notify the se=
-nder by phone or email immediately and delete it!******/#
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 42224c71ae20..92e93899c033 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4756,13 +4756,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	if (err)
+ 		goto free_meta;
+ 
++	/* f2fs_recover_fsync_data() cleared this already */
++	clear_sbi_flag(sbi, SBI_POR_DOING);
++
+ 	err = f2fs_init_inmem_curseg(sbi);
+ 	if (err)
+ 		goto sync_free_meta;
+ 
+-	/* f2fs_recover_fsync_data() cleared this already */
+-	clear_sbi_flag(sbi, SBI_POR_DOING);
+-
+ 	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
+ 		err = f2fs_disable_checkpoint(sbi);
+ 		if (err)
+-- 
+2.40.1
 
 
---===============5413053574646030212==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============5413053574646030212==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 _______________________________________________
 Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============5413053574646030212==--
