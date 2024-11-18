@@ -4,78 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DD217D4920F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 18 Nov 2024 12:39:32 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D15A1D591A7
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 18 Nov 2024 17:00:58 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tD12Q-0007uM-Pd;
-	Mon, 18 Nov 2024 12:39:31 +0000
+	id 1tD57Q-0003g9-S7;
+	Mon, 18 Nov 2024 17:00:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <3ejU7ZwkbABMBHI3t44xAt881w.z77z4xDBxAv76Cx6C.v75@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
- id 1tD12P-0007uG-HV for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 18 Nov 2024 12:39:30 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tD57L-0003fW-C9
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 18 Nov 2024 17:00:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
- MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JoqvCgtdU4lMJOv2UffTj7/ARJEytxGntBglXk5Ifig=; b=S7xD6QimTUAVzMCoRJTxad9qDg
- T4AWm/E2oV+BQop9KDIXsgm9EUAibDiezLE2dOtjDAkURxh0MxHRNOO+QtSgaCRi2mM8xKDI3iRHA
- MoHVgwwURNVY9GmT+xg/jd5W45/1uIxirDU0H/RiQ6infYiLXi3xf5l6g0FtL2vvTUfI=;
+ bh=FDpI7TcRjqBvUbHPOpAejCasLszEdgLEnbBE3hpgLps=; b=IbVC/6eMHWwkmEHSmDGYwX7UGw
+ ubbnmlOeKnYdRDO/61Xzy1oU2ihQictn0iwJkodDlh4csHpS1Roc5J+RafseVB5O+6iQUFvNFlj7C
+ oU75gwmuTi+LPsAB9SJXwVx/7CwSgoeaqL7nFw0W5t5STD5b6BYPxUrDbq9aHXo0nnNQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
- :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=JoqvCgtdU4lMJOv2UffTj7/ARJEytxGntBglXk5Ifig=; b=c
- zMnP2mhtAXrwA5dFZL8OLi1JJXsUrzw1lth0lk/h+cAaUvSvd7kJKi6g5AQI331i0zIfIRbDFimQp
- IKP5H+ZJ5Ktjd0HBnQCzt1aGYAlYHCbjZhfECTo4KLxHVyuBut99i2JexhopkPIktBLDo5kBDbrpp
- Txk/Aj926x8Mx6+Y=;
-Received: from mail-io1-f72.google.com ([209.85.166.72])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=FDpI7TcRjqBvUbHPOpAejCasLszEdgLEnbBE3hpgLps=; b=jRuzYVAyvkM7+OV0fMNwEAy+Vs
+ niUAEpiePDEYB6niE7oug3L9tKxkVHwflmLZOGHpsRY3jbvPdxpJmLqSVAYKKjjbrYOH9ClOe7uw0
+ 7KbVCk8YZXT8SL3KVdd2ZcFg8EQCfMPr72PuQuKp9VPIpPnQMUiW0d5/2CJR+n/+KIb4=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1tD12O-000276-KE for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 18 Nov 2024 12:39:30 +0000
-Received: by mail-io1-f72.google.com with SMTP id
- ca18e2360f4ac-83abf68e7ffso473600939f.1
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1tD576-0000yI-CA for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 18 Nov 2024 17:00:41 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by nyc.source.kernel.org (Postfix) with ESMTP id 24215A416ED
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 18 Nov 2024 04:39:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1731933563; x=1732538363;
- h=to:from:subject:message-id:date:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=JoqvCgtdU4lMJOv2UffTj7/ARJEytxGntBglXk5Ifig=;
- b=CyQX5qeTeCHL7NLjXyJsTAWAcoW8nzcRe13skmdG7HDnLqA+G0qoCjimfr1j+44WCN
- /+g2KmfzE1WxRyFoAiWjMjTlcPAVKESrGXkX8OwlyAhZ3TlC4UD1E4KudF2D00/d2R2d
- jwegX5UCH9fhSbyK9fKLLwKNEdf0t7PGqtBCdf0gntnbiAR0h8rUywGqZ+Aedx8IPtbm
- IRSWtB/djmupkic5BMqO9tjvE8gQ46G4W9q0DoD0mWAX0OwIYkIumJsG6+vsGWSpsCLA
- KwZk/IgB5QgjyE1yktXCp6zj6KgMsrAMkp9C9f/iVB6w85Gx9ccAJ1NLe/jFOjwL4YQ+
- sbjQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVhjpCLJEWJ8PHyfvkoafEkB8hNcPn4SgEVQ5Vh7h5InAq+WaetMEkg2lytwcW+qbkQOQvqqi3bZa/oF7IZB8/A@lists.sourceforge.net
-X-Gm-Message-State: AOJu0Yx9tUomj90pMGMXMjD7karVdBSvvuWD4TO3p2PGNOrgnRKwZG+J
- hGBy/Y96dij3d2wSbo12tTXVweOcDkP+TrgWTDl+nZg+mTsYogQDPk3z2Ck7eMwqVD6OmGfRG0J
- tYgCC5eLLBt/gMknj9PLcf8Zr0lBwUzcHq9A1O7sOIJK4VHFjK0YDOWM=
-X-Google-Smtp-Source: AGHT+IF9mcBCCC9GPfOHSylucVBFguajg0Mg0J0fl5nAp/fpCTpCUXZ8MqkHvUNsT32nxmJyXSVkb35ODLRRyU28ZknoHd3/PNYu
+ Mon, 18 Nov 2024 16:58:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64930C4CECC;
+ Mon, 18 Nov 2024 17:00:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1731949230;
+ bh=qLWBUrU30pw/zPIYWpjpJqcg5yzpEUiM4v1tVieKRcY=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=tSZ5uyugusioRTS05iGs6lYpGWJ7be8GhhfPuvCNe1PQJyKl991NyGnoUQLwsQ56Q
+ 83oE+qob73r7zD/qGstBLDv0gdUClDYfv4/PkMT8T6LLJ9fjY5dHeGQFInzTYRbmOr
+ 7bt6+qFoiiiwxJRz7TU0zKMLpDDiTvo2NEy+4MyHQsSfJwUJwL+FE9gdFn0lMoMFLg
+ Gd0QplpCtE9UfPSbhZvBgSykdEjXahaJSYUrvbxvlY6lNL0nbV1OXzIFbW4K99tPa1
+ BKmR79nbcAx8jc7AVO/Weqhk2juc6hP+QMV8r+cvGL9vh6foji/kTgQ+z5j3U6BSk1
+ TaSoms0smI5Hg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+ by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
+ EAD2C3809A80; Mon, 18 Nov 2024 17:00:42 +0000 (UTC)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1522:b0:3a7:6721:7adb with SMTP id
- e9e14a558f8ab-3a767217ba0mr32243355ab.2.1731933562939; Mon, 18 Nov 2024
- 04:39:22 -0800 (PST)
-Date: Mon, 18 Nov 2024 04:39:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673b357a.050a0220.87769.003c.GAE@google.com>
-From: syzbot <syzbot+list9deb5e64e2106995cbb1@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
- syzkaller-bugs@googlegroups.com
-X-Headers-End: 1tD12O-000276-KE
-Subject: [f2fs-dev] [syzbot] Monthly f2fs report (Nov 2024)
+Message-Id: <173194924173.4109060.6198520262725543063.git-patchwork-notify@kernel.org>
+Date: Mon, 18 Nov 2024 17:00:41 +0000
+References: <20241104015016.228963-1-chao@kernel.org>
+In-Reply-To: <20241104015016.228963-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1tD576-0000yI-CA
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid forcing direct write to
+ use buffered IO on inline_data inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,41 +79,42 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: patchwork-bot+f2fs--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello f2fs maintainers/developers,
+Hello:
 
-This is a 31-day syzbot report for the f2fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/f2fs
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 6 issues are still open and 47 have already been fixed.
+On Mon,  4 Nov 2024 09:50:16 +0800 you wrote:
+> Jinsu Lee reported a performance regression issue, after commit
+> 5c8764f8679e ("f2fs: fix to force buffered IO on inline_data
+> inode"), we forced direct write to use buffered IO on inline_data
+> inode, it will cause performace regression due to memory copy
+> and data flush.
+> 
+> It's fine to not force direct write to use buffered IO, as it
+> can convert inline inode before committing direct write IO.
+> 
+> [...]
 
-Some of the still happening issues:
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix to avoid forcing direct write to use buffered IO on inline_data inode
+    https://git.kernel.org/jaegeuk/f2fs/c/26e6f59d0bba
 
-Ref Crashes Repro Title
-<1> 1182    Yes   INFO: task hung in f2fs_balance_fs
-                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
-<2> 72      No    INFO: task hung in vfs_rename
-                  https://syzkaller.appspot.com/bug?extid=6165bc9800cd6e1fe958
-<3> 4       No    WARNING: locking bug in f2fs_getxattr (2)
-                  https://syzkaller.appspot.com/bug?extid=44090b62afaabafe828a
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
 
 _______________________________________________
