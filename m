@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E772CD591A7
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 18 Nov 2024 17:01:10 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 47AC3D591A3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 18 Nov 2024 17:01:12 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tD57d-0002sC-P4;
-	Mon, 18 Nov 2024 17:01:09 +0000
+	id 1tD57g-0002JA-CR;
+	Mon, 18 Nov 2024 17:01:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tD57P-0002s2-OQ
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tD57P-0002IU-7L
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 18 Nov 2024 17:00:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,50 +23,50 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=liIHHR1U1YZBJtOJYregD3OLwIrH4UgPFRmciSapiUo=; b=L0Pd5G+Valco0QWLVdv/jvy3gI
- UdZaEtlSUbtcG4zyyZETNbDXuEQ+9aiZZnJHnDlWrEgKVbPlWJCcldTsDvA3wM/tEOgJBuVHIj3W2
- 5MzFjEsfGvMUo8qoW34tq8tzmTJwep62jHHcvE/Pe8uQgzgZ2+l64kr0gUjW+yr/3u2o=;
+ bh=/fwXoKCNGDj6b+p3ivQYm4zuSi5ERP47c/Py4deTrvM=; b=MfOnQlcuVMui+9xA3TCRK4Zk+o
+ XS5vO8FSwnwbf2Lj+qMQzcHctM5m6zjDYjFrJUQSw4caIChS7UAcLEEq33oobD9QIJ0LL7SPzRlCq
+ l6Km8HagsIx9N8/950I50iQWq46ZkbbWnrIbyb6Gpqv7dvjNHHHgjuApbgUzCOFxgz0g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=liIHHR1U1YZBJtOJYregD3OLwIrH4UgPFRmciSapiUo=; b=EP1Vsz50Az546yrsLxGnGRv5is
- EtCxWEK/Tnw6IdK0Og7I0GnrLHke7PI4V9Bld+bjLd17KcQeDAJcH8aPRCJ1gmv/+DjfU23Ck3GxK
- z/qgYToxRIz5CAq5Gp3sBwNZKexWR/GEluG0VqYmPfO8IrnEbaL4m7wPlDrYuyjM1Wos=;
+ bh=/fwXoKCNGDj6b+p3ivQYm4zuSi5ERP47c/Py4deTrvM=; b=dGTt+ErOaIBJHE7yBMlBtbVSBR
+ GNoHBxtRs9BSiX3QK6Cu9cHOjcZVMq3/i3igw7FeaMRHTxH1KZlvhUBDcpvLn+/85iz1zWbyOpDk1
+ ZSp2ur6eTPhkRM6gYCydufE1oKpci55kzARavm3Nz76L939m35hBS86f6J5aqWXI7ixg=;
 Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tD57B-0000yU-9d for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 18 Nov 2024 17:00:51 +0000
+ id 1tD577-0000yM-Ol for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 18 Nov 2024 17:00:45 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id DE4D1A41641;
- Mon, 18 Nov 2024 16:58:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B49C4CECC;
- Mon, 18 Nov 2024 17:00:29 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id 7B12DA416F2;
+ Mon, 18 Nov 2024 16:58:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE5BCC4CED6;
+ Mon, 18 Nov 2024 17:00:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1731949229;
- bh=aCMzkrnkmswBGkORH2PDGxYL9yDX2zO7PHnNpveln+c=;
+ s=k20201202; t=1731949231;
+ bh=pt9p5kclLLeN/+fpCGfjargQCDSHIstJnKgShg8P1Q8=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=DyUy6t421aI7preeDKTIOPxMqJNGTTbifTvLNLelkoISmTFeiZfv0rPEF9AFlLNCG
- 9qcKzF0Am+zaJfrR8byG5JBKQoXc6R6/WC9P9Rm4KwCaNS1A1+mT9D1bhTeWwFMyTd
- +ZJ9M12n/UZar8/ZccZOs0DXwHf/9jxP3dGmkh5rNqaUqMh1tTc3tKaSxxjm+IGRYB
- CQ1kdiXlZTxdJgUE5cAESiSkOSaHBfCxwxkcve0E//QKi0FaxGsFjIyfpjwksl+J9k
- Gd7w7P2kBz+RxDbj/4E3SgUhmedwGLu4UY4JYqL2+gJg3Wj2DxJmroKoLNAnLZQHUt
- aRnbUJZTFIsZw==
+ b=Tdose/qI25BUA+KS0D+KQ10UKrzpLf97p5KcnkjEdRvKzYjSDnTOgpXWUX2ACXRmw
+ O6o/q5TVUMm/9mmCtiqGA7zNeQ9w3neOm3bATB7RvslktDm4enFOgZ5gn3SjGu/M/V
+ 6BRgQ/yJXPl3jFNEL9yfKd1wtxwsRr7WiFOJbYWXIq0inlhmKV0LxV4C1tFVAL1Uu/
+ G+PoA/GGy3n77Zd3gjEmHQMNXBQxbZvsE6r8znmMUZoK+6KQVWUPPMGW5sBdC0WFKt
+ U17gxT8Q24dHYl0DlQs5jvyyere0tLQAgR49aS/2EsIVt+SmRWGBRaq6Skf4jJggD+
+ IEXCzFnwtfrZQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- ADE263809A80; Mon, 18 Nov 2024 17:00:41 +0000 (UTC)
+ 70DA03809A80; Mon, 18 Nov 2024 17:00:44 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <173194924030.4109060.8641898406336440438.git-patchwork-notify@kernel.org>
-Date: Mon, 18 Nov 2024 17:00:40 +0000
-References: <20241112010820.2788822-1-jaegeuk@kernel.org>
-In-Reply-To: <20241112010820.2788822-1-jaegeuk@kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1tD57B-0000yU-9d
-Subject: Re: [f2fs-dev] [PATCH] Revert "f2fs: remove unreachable lazytime
- mount option parsing"
+Message-Id: <173194924303.4109060.813014636748252195.git-patchwork-notify@kernel.org>
+Date: Mon, 18 Nov 2024 17:00:43 +0000
+References: <20241104013551.218037-1-chao@kernel.org>
+In-Reply-To: <20241104013551.218037-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1tD577-0000yM-Ol
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to map blocks correctly for
+ direct write
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,8 +81,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org, drosen@google.com,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, oliver.sang@intel.com, linux-kernel@vger.kernel.org,
+ chrubis@suse.cz, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -92,22 +92,24 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 12 Nov 2024 01:08:20 +0000 you wrote:
-> This reverts commit 54f43a10fa257ad4af02a1d157fefef6ebcfa7dc.
+On Mon,  4 Nov 2024 09:35:51 +0800 you wrote:
+> f2fs_map_blocks() supports to map continuous holes or preallocated
+> address, we should avoid setting F2FS_MAP_MAPPED for these cases
+> only, otherwise, it may fail f2fs_iomap_begin(), and make direct
+> write fallbacking to use buffered IO and flush, result in performance
+> regression.
 > 
-> The above commit broke the lazytime mount, given
-> 
-> mount("/dev/vdb", "/mnt/test", "f2fs", 0, "lazytime");
-> 
-> CC: stable@vger.kernel.org # 6.11+
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Fixes: 9f0f6bf42714 ("f2fs: support to map continuous holes or preallocated address")
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202409122103.e45aa13b-oliver.sang@intel.com
+> Cc: Cyril Hrubis <chrubis@suse.cz>
+> Signed-off-by: Chao Yu <chao@kernel.org>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] Revert "f2fs: remove unreachable lazytime mount option parsing"
-    https://git.kernel.org/jaegeuk/f2fs/c/f8bed73c6c52
+  - [f2fs-dev,v2] f2fs: fix to map blocks correctly for direct write
+    https://git.kernel.org/jaegeuk/f2fs/c/5dd00ebda337
 
 You are awesome, thank you!
 -- 
