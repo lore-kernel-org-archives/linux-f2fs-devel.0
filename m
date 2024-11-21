@@ -4,79 +4,157 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5CF51D75BCC
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Nov 2024 07:44:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 78469D75BCD
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Nov 2024 08:28:23 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tE1rf-0002OC-FY;
-	Thu, 21 Nov 2024 07:44:34 +0000
+	id 1tE2Y3-0007WI-1W;
+	Thu, 21 Nov 2024 08:28:23 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lkp@intel.com>) id 1tE1rd-0002O5-Ts
+ (envelope-from <shengyong@oppo.com>) id 1tE2Y2-0007W6-1T
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 21 Nov 2024 07:44:33 +0000
+ Thu, 21 Nov 2024 08:28:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
- From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
+ :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/7n9GnC/ITrcNKrMW2YifuRIWWtcthaKuCgV7h+9R50=; b=UPQRoGjglzguD+0m7yuAMKgnCT
- 2V93mGRQ/WiQ62LNze9R/KJPnRtliw96y7YCzyWg2eDWwAbuoutOnY/W9yKg0dLrzOTzytWvMBMWv
- yf0BYW7B4Lhd9ZtRVqHuz1ZnJrjhXFN/RlHONYux85uFVroxtVjJhUbKaYR/DoDHbtsQ=;
+ bh=7hSDkaOgxDxj42wa6Xm3IDycZHGXFlzxMJ0NklK4+QQ=; b=BzbYwCoSojorxqwCBzXijQN3BB
+ VFR90mWJIfRJwInJX0b1RIg7eubOK6tiwFfG+J1b6FzkD8hKAt7b9Ncs8SNi5UeklL1d+QoyxlmGX
+ o5donEFtYDsOj7Kv2gTBZg5w3B/OvgjqmYSo/IdyA7sAIiQn12pdMXMsGfCZ3mJ/kd/s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=/7n9GnC/ITrcNKrMW2YifuRIWWtcthaKuCgV7h+9R50=; b=j
- EuCHSyCXn/z/YUFDucWzA/HDDoJ4S1y/gfyR9iF31pwcJFpDZSFQ8nODojn0ei/BzLv2KK37+mv1g
- Qz3ZD9ooWGOprbcSSZ5H1vuQPpjRyKbv1zFzjvsMLZdNTQ20sOYtUQ4pe+C/OC6jr/O9Eo0jpQ8tV
- cWux4oc9oupHwjZw=;
-Received: from mgamail.intel.com ([198.175.65.18])
+ h=MIME-Version:Content-Type:Content-Transfer-Encoding:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=7hSDkaOgxDxj42wa6Xm3IDycZHGXFlzxMJ0NklK4+QQ=; b=PCgevgeOeSrENHmxACXHOo8WQH
+ g/2ZY2TpPm7TF94aJZTlBB2EPBxBGyQRKrIdBDANY1Sykqp0nMsylcHnAZnWFTPbZouIwzN6HymkW
+ 2dpp+416pXAAXPyqd4sZWfMrdl5IKB/qYzzu9prLbnHbqkGjxrSIS4r5qIEUiCJ49hQo=;
+Received: from mail-eastasiaazon11010049.outbound.protection.outlook.com
+ ([52.101.128.49] helo=HK2PR02CU002.outbound.protection.outlook.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tE1rZ-0007D0-2i for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 21 Nov 2024 07:44:33 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1732175069; x=1763711069;
- h=date:from:to:cc:subject:message-id:mime-version;
- bh=0TLbLPLBgcM3iGjdM8q6JOi1u/2UwoegboxVplByXgc=;
- b=dk5a94I0serDVSwuTwwEmrm+kCGeg8UVKx5qZF+qEsvsD5k8ZNSeYaGr
- Bxzc4I4SiO9Gsj4HX1QwqYmXp1xFNl0SCPu8iO9qf+hYjNvOWInmwXog7
- 9CzxDgV/+d8oqOrUrcrmc2PDWfk+4u0JPqwNwN2+gtyVwF4PLVljnjFmX
- TSbT9ZEM4mbf41F56W2Ri9pDR15hdsJibxdJamxrsQOJcTrPvfmZnzwej
- P/O0up8UwqGL3xoyUqh6JQsx+PGVfD1dMmmCNu/LCDUzf5/bnk9vwxAfy
- Z151Ht7ecVnKjzxARx4wjq/TxxV1Hdd4SJ82KPsZs0wEMW1dSiCnsLfZH A==;
-X-CSE-ConnectionGUID: LXgH+VKPTbOe33YG4vA7WA==
-X-CSE-MsgGUID: Hsj3yY1UTqmRkAHYCMYSfQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="32419537"
-X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; d="scan'208";a="32419537"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Nov 2024 23:44:23 -0800
-X-CSE-ConnectionGUID: Cta6EdotQ2a2azWLvS5Dpg==
-X-CSE-MsgGUID: yVnXHSnHTNKR1szQnH1Ycw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; d="scan'208";a="94237216"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
- by fmviesa003.fm.intel.com with ESMTP; 20 Nov 2024 23:44:20 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
- (envelope-from <lkp@intel.com>) id 1tE1rO-0002ep-1z;
- Thu, 21 Nov 2024 07:44:18 +0000
-Date: Thu, 21 Nov 2024 15:43:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sheng Yong <shengyong@oppo.com>
-Message-ID: <202411211538.Tus6kZm1-lkp@intel.com>
+ id 1tE2Y1-0002QN-EK for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 21 Nov 2024 08:28:21 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MpRlbBvg8yt7rr4yb7SFaMGSW8Rtm0zSKN28hTlBaEvgoGE9tqUa5QMznSBu0Vimk5jS6XjICk4SS3o0UKHCYslFifZhhReknxX7+B5LQrwGsr51jkK5t5PGxnx2lULAqIqeJskz98gCDtA81yJdWGIkRjlzhmr68wPNwgLgxkHVLiOEyEVLE/ePLj1ofMujK0GWv3fCRbWa1GIyTZ9QB/1MMuhcwbHaX+B7rL55tlmieHM+oEyilD732P6qeEGWJalHt3XYONBFFtfrFf4rAE3xwppYZ6ngm4PfUF+SI4WQ5JxZCW0GSg5zXPWCC0faIp2pV9XMxaqozBnIGTWBjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7hSDkaOgxDxj42wa6Xm3IDycZHGXFlzxMJ0NklK4+QQ=;
+ b=dnZKcuY2226tbO43PYoYFCpO9umqeJ/2QZpdjN+lr3SOs8OYRekec9MqDqGWfqSSwKRA0Lx7MqaUwjxNbkjP0anZB1vrSE14r/Dwug4k09Ml1DZQM3RYca6NI8f1xmrwWej6kNLyS7nCsFL95o+SYeq4MU0wxu+XIP79E8wl2dCzgPv6y9PNzW2QbImCG0zzE1omVLq6js93Trc7wjBRsKBHcrVNy+m9k+qGHQcsKUMHUCoOZDg7FHUZLeZHI+TxJOQGiS9nQV7gJw1oKlME7QqcTMRnMjafiIMsxDZLbZhAFJqDwCgUBZfdnh2ZRUpRw5qYGjWOZA5NPXVlc+j+NQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
+ dkim=pass header.d=oppo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7hSDkaOgxDxj42wa6Xm3IDycZHGXFlzxMJ0NklK4+QQ=;
+ b=EVZP9+gY1zYUVVI3D1O7buWAS3C5hLrw7n37tNkQDh96BKLgszz/qxf2f54X6PSPCUdx7OIxeQTD5f/0s1Cd2HPPuXfIlHd9lGYi9+Mk8V4WF5ZRLl69fsSiGP5Jd+tiN1HGQcyaiuwOj8BkX3Z7hpFZc0HFOrBY0VDx2/t3iMA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oppo.com;
+Received: from SEYPR02MB6014.apcprd02.prod.outlook.com (2603:1096:101:6b::10)
+ by TY0PR02MB6290.apcprd02.prod.outlook.com (2603:1096:400:265::10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Thu, 21 Nov
+ 2024 08:28:12 +0000
+Received: from SEYPR02MB6014.apcprd02.prod.outlook.com
+ ([fe80::bb06:c283:a50:7796]) by SEYPR02MB6014.apcprd02.prod.outlook.com
+ ([fe80::bb06:c283:a50:7796%7]) with mapi id 15.20.8158.019; Thu, 21 Nov 2024
+ 08:28:12 +0000
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Thu, 21 Nov 2024 16:26:57 +0800
+Message-Id: <20241121082657.2644346-2-shengyong@oppo.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20241121082657.2644346-1-shengyong@oppo.com>
+References: <202411211538.Tus6kZm1-lkp@intel.com>
+ <20241121082657.2644346-1-shengyong@oppo.com>
+X-ClientProxiedBy: SI2PR02CA0008.apcprd02.prod.outlook.com
+ (2603:1096:4:194::12) To SEYPR02MB6014.apcprd02.prod.outlook.com
+ (2603:1096:101:6b::10)
 MIME-Version: 1.0
-Content-Disposition: inline
-X-Headers-End: 1tE1rZ-0007D0-2i
-Subject: [f2fs-dev] [jaegeuk-f2fs:dev-test 35/36] ERROR: modpost:
- "f2fs_check_and_fix_write_pointer" [fs/f2fs/f2fs.ko] undefined!
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEYPR02MB6014:EE_|TY0PR02MB6290:EE_
+X-MS-Office365-Filtering-Correlation-Id: ddc56e49-4b4d-4440-2b04-08dd0a067008
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|1800799024|376014|52116014|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?GPl0Clp2H1OgEW2VSqr/EZL1guyTZ9M09LJp7ouTXK2zQBjKsX2DdbS02u4t?=
+ =?us-ascii?Q?AYnrBg7oqN6B7tG27nSGGe07RPog6k8hy2k1K2m0XNcc1kyVgSeNqgF9y/js?=
+ =?us-ascii?Q?VerO8fHXc3OKuLVmYLueZcQJv7Vkyaaz6Oom7UY8Zv3RvTq23ObBiMIuC2gO?=
+ =?us-ascii?Q?KZ9/EbuSj2Gbt6n5ccxi5bOvqEDm6J0FtD4uLKUk/lN2Kr8T0FOE2qzjFnd1?=
+ =?us-ascii?Q?DBnZqqYiv/5GHBdJsq4pmv8Fhi/dY7TxCdrD0lJLw3vwZC4p8+V19bIJiyl/?=
+ =?us-ascii?Q?4vIGk7hgsNcc+aQ7s+S80nor08YSrsduCzIoJzbFP/sz5Awf2u2nm/7KaTln?=
+ =?us-ascii?Q?zwC2vHwgW5zEMNqoB0yjh2FAjnP+UqZcjY/c6DwHYqfo06HzRuzcp0Yhmpdy?=
+ =?us-ascii?Q?J0ppld8lqaZQ9YfaR+BF6UNaz2irg1SoHwGJwd3c/Q0ZvGApAipnI0EJOnen?=
+ =?us-ascii?Q?Msx42uyEOcMjUaGDDnDhMPplbuvNpZoNJz8SyRte26Hxt828Y8JtBHIfTxCx?=
+ =?us-ascii?Q?F4HtDxKF9jMJTebp9QdoEY856nEOOH94ETVjXWFoKV58SP9XMXNzVC/OtEcM?=
+ =?us-ascii?Q?4gF+P/myGCwjf8/uoqhSa6c+9Lf7+JdUhNqqX0oNUCfplD+rJxl7E7nQbtK/?=
+ =?us-ascii?Q?DTHROBZ2fLQVK1lh4D23cTHqcS8OKljMfyYhRzIe6CcFC9hdblBWyXCmdzaO?=
+ =?us-ascii?Q?Celp7rrQ9d38CsX2hj+mndx5KOObi4S1u8VhgSmuBH97vfiDICzJ5kNEzHp6?=
+ =?us-ascii?Q?1IujrK+DIePysjmSzY8Gflf6plYCVtJe/+lhzV77IBMjKQGlZ4g6gdt4xPJ1?=
+ =?us-ascii?Q?n07XpA28BmxAD/k+yQdISOznY7wjgU2hxGqnjY6N6ofMaOvhTAv6+TgbRyTP?=
+ =?us-ascii?Q?WSJEAqwj18GQ5N71zr+RYMsqn1QWvo5VzF2w9bDe2C0d35Xc7kdeDsH2b0C3?=
+ =?us-ascii?Q?RTweNhBsJlbumHJcZQZJJpI0ls3MeT5gire4LiiFmSiGkViqWSw5EY3QO0pE?=
+ =?us-ascii?Q?zMw80NxLsJ0g8fViq7VfzPCF2CbqqHW8bfWcsR7dcTwBAQ512DFTOfpLpZEL?=
+ =?us-ascii?Q?dQvufTKmCjqHWKkyvJTzKGXlT4ZiSbcJ9KnKqGzsdWFyjGa5rsIywuEs4Y8p?=
+ =?us-ascii?Q?jrxFiIFTgR3CiHm4zJ5cTTAuNH7KGlO+GsPn0WGs3qfS+pp8qSxqr4PTdsRX?=
+ =?us-ascii?Q?Ybz/QG8Vwt2O2tQQio+AR2L5DSa25pvbp3ubklTZYOKRDu8Vo2fKeBuHK/Zs?=
+ =?us-ascii?Q?MinbWROMKxvfnJaAMUdTkv56hau+zom3huINj3XQnU9Hj9ucNAgaC1mtidTr?=
+ =?us-ascii?Q?a5nmMRIvTHZVbjL5Pi+4LU8qFE+1rsBLIhaJRFbx8lyYIFhgKlAFYu5bBP0t?=
+ =?us-ascii?Q?YQBK+hI=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SEYPR02MB6014.apcprd02.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014); DIR:OUT;
+ SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cgrvYHyGssRztQQwyZL53HfLGVy3vLBoywbwg4CV1Pewj2oak8HPrY5QzFfa?=
+ =?us-ascii?Q?i4Q53WngLmTOmfr7h5Yt4pEBpKpmu8kiMrjJBhU54KKKX2gwp7P42FaZhlc3?=
+ =?us-ascii?Q?gppa/Wn1uLTcL0Npi3KuMGAjW7CDeP0/HJ29/8jYrXXeIXaG1IZf0vFIuETG?=
+ =?us-ascii?Q?PJjrjAwY3jE3c2+aZnOXj2jyidT/nl5m0r1OPUsp6EjjwwZXTmtd6eZDW2YH?=
+ =?us-ascii?Q?uKjcu+Gmdu5rxjfo/SJdhsofBB3MgKf2Afd79M3bGf7pS5w3akbSN8MNkt5/?=
+ =?us-ascii?Q?WxK5taTiaNDgffdQM18YAjbyuZSBAbXLFKjmlnQTt7D5MVBfPfwZpRW6RPw3?=
+ =?us-ascii?Q?kyrVRaYGIp8dWE3JRLg0GwhiS0witCmjrWN5rmZB4hM8AdTaXlQxt9Ni2iAM?=
+ =?us-ascii?Q?tipBXEtaP4BExpES8jCBoWlKHWxUpL8HvEmI+/weXl80pLG5pgLjEFW55rRt?=
+ =?us-ascii?Q?zA108iXRV2uKrNMaGMJgSDeVZjvcs1dQfyAHponhPI2565joY1xsfXwG0Z8z?=
+ =?us-ascii?Q?vHgrv7T3DvifyNLUMGCL8RURLPPk7rY/wh0x/y4PXC0iDnsIUEM4OFJFwMY8?=
+ =?us-ascii?Q?Z2dhgATqsZ2E8vHvKx+Dst4L0ZPK6eMX0MReNGm/c9uB5rZLKaiHJdgNyJbW?=
+ =?us-ascii?Q?G+xAdMYOykir8/32at2S8A7ZGrLkUeBgcxA9i4aFOcv3zM+8g3zEr4EzboMW?=
+ =?us-ascii?Q?Tf7jcUrH5ct3hMu1i9968hLNRhxUNVM8QdB2wA0WnoY0W+Dm99k4O/464GcE?=
+ =?us-ascii?Q?RXtu1RF6g0ZXKz/omRVq8C2Cn8aDU6aZBRXs9uWK/8P+l6TSloDYq2EzSo4w?=
+ =?us-ascii?Q?fC8U//sBDmzAWz954fB2HDV8ud9BHYMlitV67eo/9S7tahhdqZBmWdAHJBru?=
+ =?us-ascii?Q?VZ0QyeuXRDz+Wh3Ix3PzeIr5N7RMESF+lEcmP1KjOxWVi5RG15hC/9+kmWTM?=
+ =?us-ascii?Q?s+1GISJjd9KXQirpekVC/rbjYX6PxZ5dYVp8Jq/Bn21Wci0rbudWm3t6addI?=
+ =?us-ascii?Q?t3avqcUgA+8NsOk00BqkALw9jGR5vEpWa28MHcYMq8AJECh0BT5vBXCrXFIS?=
+ =?us-ascii?Q?/VjjZ4OE9s2wRTeYz3wWTDMsHttlwz5HM/mRb7vwaThw/BBDZgFHuBoM+dpd?=
+ =?us-ascii?Q?141lyun3N7pllMSdkoMvX0Ca8bv5N3Z9sc8V0KF7GsjAWgSaGK+JgYMR1BvK?=
+ =?us-ascii?Q?m8hlj1DnMBemqVxkAymuzNTgNH+O5xotqp+9KjIUf+RpNNeR2sdj8cjXCfXd?=
+ =?us-ascii?Q?AFrhSS3jVA0MLxJEfHlYnlLq7ucHI/rkurT0JKe3nl1ue57t5ikc7NVdM/0A?=
+ =?us-ascii?Q?3t0Ftb6cH562VJEBVw9byEhBypOE+3HWzAI4qTQ7NBOa+u5O5jOv+S6Q6J4S?=
+ =?us-ascii?Q?TVkkdE1M/cVuimpr5qAxsoqexL4F5Q6khSuhaJQz1AJmB6t0d4PN8rAzCaX4?=
+ =?us-ascii?Q?Bs4Rm490Ph+G7yJLB1bW4mG09GPs0O/djzt1GFgQ9vxuhddkYiYMF87N42po?=
+ =?us-ascii?Q?WaZA+a8mtrP+MFP6PHaZQyIpLPwsva2B73X4z+ekSXunBbD5P9L4RdzRhrVb?=
+ =?us-ascii?Q?8+0EY1oWND1bQThXPTYylKJ+EAiupFkf60OwgW4o?=
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ddc56e49-4b4d-4440-2b04-08dd0a067008
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR02MB6014.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 08:28:12.4585 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2tq+3g0p2MSfCD0ew94yPKJI5qGvuCDs1PIF6S9PXDnIqBGdcqhe8KIe7w3XaD2pGEYbp4Y8RGgT+JKB3rt4Uw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR02MB6290
+X-Headers-End: 1tE2Y1-0002QN-EK
+Subject: [f2fs-dev] [PATCH v3 2/2] f2fs: clear SBI_POR_DOING before initing
+ inmem curseg
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,70 +166,49 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Chao Yu <yuchao0@huawei.com>, llvm@lists.linux.dev,
- linux-f2fs-devel@lists.sourceforge.net, oe-kbuild-all@lists.linux.dev,
- Jaegeuk Kim <jaegeuk@kernel.org>
+From: Sheng Yong via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Sheng Yong <shengyong@oppo.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
-head:   05735334776f7f446fbda9fd7efa7d9f835096ca
-commit: 98eebae9535e3ca2df2157d29a37c1b74d8deb79 [35/36] f2fs: fix changing cursegs if recovery fails on zoned device
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20241121/202411211538.Tus6kZm1-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241121/202411211538.Tus6kZm1-lkp@intel.com/reproduce)
+SBI_POR_DOING can be cleared after recovery is completed, so that
+changes made before recovery can be persistent, and subsequent
+errors can be recorded into cp/sb.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411211538.Tus6kZm1-lkp@intel.com/
+Signed-off-by: Song Feng <songfeng@oppo.com>
+Signed-off-by: Yongpeng Yang <yangyongpeng1@oppo.com>
+Signed-off-by: Sheng Yong <shengyong@oppo.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/super.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-All error/warnings (new ones prefixed by >>, old ones prefixed by <<):
-
-In file included from fs/f2fs/segment.c:9:
-In file included from include/linux/f2fs_fs.h:11:
-In file included from include/linux/pagemap.h:8:
-In file included from include/linux/mm.h:2213:
-include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-|                            ~~~~~~~~~~~~~~~~~~~~~ ^
-505 |                            item];
-|                            ~~~~
-include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-|                            ~~~~~~~~~~~~~~~~~~~~~ ^
-512 |                            NR_VM_NUMA_EVENT_ITEMS +
-|                            ~~~~~~~~~~~~~~~~~~~~~~
-include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-|                               ~~~~~~~~~~~ ^ ~~~
-include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-|                            ~~~~~~~~~~~~~~~~~~~~~ ^
-525 |                            NR_VM_NUMA_EVENT_ITEMS +
-|                            ~~~~~~~~~~~~~~~~~~~~~~
->> fs/f2fs/segment.c:5452:5: warning: no previous prototype for function 'f2fs_fix_curseg_write_pointer' [-Wmissing-prototypes]
-5452 | int f2fs_fix_curseg_write_pointer(struct f2fs_sb_info *sbi)
-|     ^
-fs/f2fs/segment.c:5452:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-5452 | int f2fs_fix_curseg_write_pointer(struct f2fs_sb_info *sbi)
-| ^
-| static
->> fs/f2fs/segment.c:5457:5: warning: no previous prototype for function 'f2fs_check_write_pointer' [-Wmissing-prototypes]
-5457 | int f2fs_check_write_pointer(struct f2fs_sb_info *sbi)
-|     ^
-fs/f2fs/segment.c:5457:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-5457 | int f2fs_check_write_pointer(struct f2fs_sb_info *sbi)
-| ^
-| static
-6 warnings generated.
---
->> ERROR: modpost: "f2fs_check_and_fix_write_pointer" [fs/f2fs/f2fs.ko] undefined!
-
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 0db3fb47ff6f..9aab877f152f 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4776,13 +4776,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	if (err)
+ 		goto free_meta;
+ 
++	/* f2fs_recover_fsync_data() cleared this already */
++	clear_sbi_flag(sbi, SBI_POR_DOING);
++
+ 	err = f2fs_init_inmem_curseg(sbi);
+ 	if (err)
+ 		goto sync_free_meta;
+ 
+-	/* f2fs_recover_fsync_data() cleared this already */
+-	clear_sbi_flag(sbi, SBI_POR_DOING);
+-
+ 	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
+ 		err = f2fs_disable_checkpoint(sbi);
+ 		if (err)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.40.1
+
 
 
 _______________________________________________
