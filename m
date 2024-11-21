@@ -4,69 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5CD37D7878C
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Nov 2024 16:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E1DA3D78789
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Nov 2024 16:20:50 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tE9vG-00056E-Vd;
+	id 1tE9vG-000565-Fk;
 	Thu, 21 Nov 2024 16:20:50 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tE9v1-00055n-4a
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tE9uv-00055d-CK
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 21 Nov 2024 16:20:35 +0000
+ Thu, 21 Nov 2024 16:20:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=F69dPqVihkEhukH+jhXCS1titaBePWikQd9qPzC55aM=; b=Yat5aKy/AW3LDqc6t4IHthPukf
- V4rLS+gq+OJAzwJQyVjcSIAmhAnjaPdeCqxjr8CYIMWpo1tdxDxpHB/BcQ+mKHlGpHT0fPfzw8TkK
- SahhWGKoOa8DW6wp8koj1TUkjbX/Nq16NMDy2kvReJKQuRLaq72pCEmzE43GhqEayYII=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=Ylf+9EqPXUZqi7nrXirRDoQlecAcZw41b2Z1mqPq1N4=; b=k/ZMCHzwy55ft4iaKBgedabsZ6
+ m59pGo2FiZ9hekvBY3228b4GK1H/bNUK41eXpqEwpRkJZwwXirpp4AL3XNH4UtlZCMeDG6HaAMPS9
+ bCmls9E0EI1nylaR5UQ7m01kSfHp8sajGiUvas3sWkcH7gKiBejm6kETAeX5VsMAD+mM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=F69dPqVihkEhukH+jhXCS1titaBePWikQd9qPzC55aM=; b=bC82qmK+ZlQhliB2XlHCoAXD2z
- edyF88JNE4P1DHMZXef/4M0dkCvzbnH37YmywBNQATuNDcMROfu/935QgIGrUCIxRV15y0hM4qKcc
- pi2qTEsiG/F9iOTa0f15712X17GQS+CpFlLEkjv81oppEQ6BNYhnmnHr+Dg8GUU8exoo=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ ;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=Ylf+9EqPXUZqi7nrXirRDoQlecAcZw41b2Z1mqPq1N4=; b=E
+ tXCCtE5aFUApNlFcwfoyQqjEok7z7qix1OzjF8Ld4Vj42ze5hdKU4w85w2bOPqnh8JZqBID9+GRvu
+ 6D7jTpi+l/4nKchdqcn2TSiJ8XlzB/FAh/G3sIcgck6jLLB2N1F0MP70s+qXCbTpLxxj7+7roVxYH
+ D9eBr0HBTxWFbXM0=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tE9v0-0003PS-Ha for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 21 Nov 2024 16:20:35 +0000
+ id 1tE9uu-0003P0-JP for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 21 Nov 2024 16:20:29 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 8C4C8A40B88;
- Thu, 21 Nov 2024 16:18:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82259C4CECD;
- Thu, 21 Nov 2024 16:20:23 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 62CE15C5567
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 21 Nov 2024 16:19:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E883DC4CECC
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 21 Nov 2024 16:20:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1732206023;
- bh=RGARQvB2BI7CSMbr1w+xiIywJu8/CNafzE06Oc++Uis=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=LQXPgOPSSJnZlW1PMrEG5sc+WXFNSTb7KD/V6aPfk/HcQMHpWwROh5hQjIsYnBEbW
- bTRVAZK0W7JI0rABvVEHhjfZTSjmFLUJP9C65zgq1fc4Hrrt8AHZyUNv3uaw2TbRz/
- DMfhLf/526gWjsnDPjXZyYAh5njkErVi8KtBfWtwVEqKiwArO6iUQRcJ5n9GO0JSyL
- IvlXMLP1MIlEmkz7PtlVhuQ/g7GGgnhTJnMY82qchY11Q8KmzEoWpHuAV1aLxu+hOr
- zYjHc4CJaduLMQuARR3i5F/mnZXyrqCZndDq6Xkpk7M/3ovAn2KUL6gGuuEz7RcnM3
- cXXDrEkqbE4BQ==
+ s=k20201202; t=1732206017;
+ bh=yFOAyNABjH6ZIGCDIJf9+ldK4ZrKZPRu7HyL5d9zVgQ=;
+ h=Subject:From:Date:To:From;
+ b=JZSIBf8KXy24KXXe8QzwgTndhtbg8tydrd3rL0LkD3d/J6Ztx40XDFuhjwfA7V0iE
+ /RLqIgBxMmt9SZUVdvDZ3z4wXAmCx5uPd3wSjhlzhZuvdPgjdrUMxZRYHu8/NMObhs
+ Xaa6fMIANCeWGjCZm9UTOtSoCluMqf5lmHVTmT85kPFouHwNubel3BERy1XZ7QjGRe
+ kQrCfhf7CwXAqmoTj6WrfKh2/ndt7oWVjEoNQT+/b6lqh4mNzPjzEIXQCb3R6GibMZ
+ cXSmdcb+5HifPEIK5gohC+nDN/mFL+c2+teESew7GhZlhdctdsCsSTNKxXPFtjktX3
+ 4MvJ6qxRKNcbg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- ADD063809A00; Thu, 21 Nov 2024 16:20:36 +0000 (UTC)
+ EF6B23809A00 for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 21 Nov 2024 16:20:30 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <173220603549.1977996.14578612741483518273.git-patchwork-notify@kernel.org>
-Date: Thu, 21 Nov 2024 16:20:35 +0000
-References: <20241107014602.3638020-1-chao@kernel.org>
-In-Reply-To: <20241107014602.3638020-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1tE9v0-0003PS-Ha
-Subject: Re: [f2fs-dev] [PATCH] f2fs: clean up w/ F2FS_{BLK_TO_BYTES,
- BTYES_TO_BLK}
+Message-Id: <173220602951.1977996.9439804708530834555.git-patchwork-summary@kernel.org>
+Date: Thu, 21 Nov 2024 16:20:29 +0000
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1tE9uu-0003P0-JP
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,33 +82,53 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, zhiguo.niu@unisoc.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-On Thu,  7 Nov 2024 09:46:02 +0800 you wrote:
-> f2fs doesn't support different blksize in one instance, so
-> bytes_to_blks() and blks_to_bytes() are equal to F2FS_BYTES_TO_BLK
-> and F2FS_BLK_TO_BYTES, let's use F2FS_BYTES_TO_BLK/F2FS_BLK_TO_BYTES
-> instead for cleanup.
-> 
-> Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> 
-> [...]
+Series: [f2fs-dev,1/4] f2fs: fix to do cast in F2FS_{BLK_TO_BYTES, BTYES_TO_BLK} to avoid overflow
+  Submitter: Chao Yu <chao@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=907585
+  Lore link: https://lore.kernel.org/r/20241108012557.572782-1-chao@kernel.org
+    Patches: [f2fs-dev,1/4] f2fs: fix to do cast in F2FS_{BLK_TO_BYTES, BTYES_TO_BLK} to avoid overflow
+             [f2fs-dev,2/4] f2fs: clean up w/ F2FS_{BLK_TO_BYTES, BTYES_TO_BLK}
+             [f2fs-dev,3/4] f2fs: fix to adjust appropriate length for fiemap
+             [f2fs-dev,4/4] f2fs: fix to requery extent which cross boundary of inquiry
 
-Here is the summary with links:
-  - [f2fs-dev] f2fs: clean up w/ F2FS_{BLK_TO_BYTES, BTYES_TO_BLK}
-    https://git.kernel.org/jaegeuk/f2fs/c/7461f3709418
+Patch: [f2fs-dev,v3] f2fs: replace deprecated strcpy with strscpy
+  Submitter: Daniel Yang <danielyangkang@gmail.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=910505
+  Lore link: https://lore.kernel.org/r/20241118070141.3474-1-danielyangkang@gmail.com
 
-You are awesome, thank you!
+Series: [f2fs-dev,v3,1/2] f2fs: fix changing cursegs if recovery fails on zoned device
+  Submitter: Sheng Yong <shengyong@oppo.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=911444
+  Lore link: https://lore.kernel.org/r/20241121082657.2644346-1-shengyong@oppo.com
+    Patches: [f2fs-dev,v3,1/2] f2fs: fix changing cursegs if recovery fails on zoned device
+             [f2fs-dev,v3,2/2] f2fs: clear SBI_POR_DOING before initing inmem curseg
+
+Patch: [f2fs-dev] f2fs: clean up w/ F2FS_{BLK_TO_BYTES, BTYES_TO_BLK}
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=907165
+  Lore link: https://lore.kernel.org/r/20241107014602.3638020-1-chao@kernel.org
+
+Patch: [f2fs-dev] f2fs: adjust unusable cap before checkpoint=disable mode
+  Submitter: Daeho Jeong <daeho43@gmail.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=910718
+  Lore link: https://lore.kernel.org/r/20241118184535.1047327-1-daeho43@gmail.com
+
+
+Total patches: 9
+
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
