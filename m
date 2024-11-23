@@ -4,70 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 11E9FD75E5B
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2484AD75E5C
 	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 23 Nov 2024 15:50:42 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tEsP9-00061f-Sa;
-	Sat, 23 Nov 2024 15:50:40 +0000
+	id 1tEsPB-0004XP-7J;
+	Sat, 23 Nov 2024 15:50:41 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tEsP8-00061Y-B0
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tEsPA-0004XD-4s
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 23 Nov 2024 15:50:39 +0000
+ Sat, 23 Nov 2024 15:50:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xAIuNU5ZYng/C7qQieVjvYjkkYjU4omMn9PqprxTWSY=; b=GnyO0EBaI+1uhpVh4+kMIn1DgH
- UBS8gwg9toTJ7TitvCQ/Araq+LtyVnE+4HdY0+ZsPiYX+mqhaIb+Vic34HxtgPHePAVis+V12xPil
- /TZ+HPvVwmaaChU4OuSt3xMXO8nSCwqFGq1JYRDhlIlcENhlXkWG29Cn2G6qcRXDyUz4=;
+ bh=zB1STr80DASHH3sV5+8MF55YMnHE+Em988IMRx9NsBg=; b=h/D6UB7HSCzRj2R3BHwNgA7NQt
+ A4kbV6IXkQtYFdfys8a+9alM5vHRMGKKBmw2X0HQwYURGKztv+yBfxQh+/4aBTDSZHsDD0dntlgI+
+ 2/4eWx5DgkRHPBjU3Q+ba5BgVoTNukQ0EcYvWbDcROUfBJx1pCDnuAfxgYxevC4K71Cc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xAIuNU5ZYng/C7qQieVjvYjkkYjU4omMn9PqprxTWSY=; b=BZr61W23rHhwkYn7wgX1U+/XcM
- 7QPzGbSEiyASqHuLQiNoFZXoO3xGwr+ucjAm9VpA5p85jgKlz0D1r90B/yPFAFm0xxIdIzgENsF1h
- jeSWZxVGmsTPQJN4HsXEpHB/yB6oit9ZDk2hqkibiZePOfNPs1mBqhMFNGvgm8H0+c2I=;
+ bh=zB1STr80DASHH3sV5+8MF55YMnHE+Em988IMRx9NsBg=; b=DA2eKmvd3Y9zeKXP5tgka3h1cN
+ qNaofDgnuxIOc/LHJ7SUUhWQsbT3SHWLAbWtLu9YSh8dbXsUuKj2zF8hPjV0kQMQBhdPEXv2uVNAa
+ ZQYG2/BXC93SbVgdx8ueqOAuAIc75xJIiskvUWhE+pkHS0sKCbKqxY1H9UDFEeE1qRfE=;
 Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tEsP7-0004M6-0y for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 23 Nov 2024 15:50:39 +0000
+ id 1tEsP9-0004MD-Go for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 23 Nov 2024 15:50:40 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 28360A403DF
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 23 Nov 2024 15:48:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05068C4CECD;
- Sat, 23 Nov 2024 15:50:26 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id A9FB9A4046E;
+ Sat, 23 Nov 2024 15:48:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86518C4CED0;
+ Sat, 23 Nov 2024 15:50:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1732377026;
- bh=XT9zzKOdfdchStJsLUSyFcrd594yylJRHhSHXGI1VVg=;
+ s=k20201202; t=1732377028;
+ bh=Kv86vApSh+6VFnQQ6AgK+uFE5X9tBqt+QALJDvB113o=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=DJtuPd2XOJby+FWLFQPznGujNiyucTulN0lI/PId/oFQUcpwQUxO8TPIOIXKytxZa
- FVT3PoTyQDrEMd4erPHGGoQCjKJEleuBtA1Y1l7t9EVaz8JyYjzYf2DQlcV9QHu8J9
- X6grHaYlc2CcnZdLX2dSPk0DM7bsIp4qqswy3WsjnQZUdx+2CMnz3RLmP5x2NvpG22
- wSF5vWXRu5WN4x6XEjJqmC/nrIPUghsp3855/O7Umqarzy8IQXQU3ARTh1GFjpiBIz
- 38BaZn0Q5UpF8sjNkDLfy7XIfBOLiJSTUc6QxxPVAkdkhtRUdgaPQDY8Z2R4TJRyUo
- yZz3+3IMx/Uww==
+ b=bAq553/b7313j0r3Q7+1/MQugShfI+vjwcY7wP5mqr8rjeU1cMEFBoisr79zfw1jD
+ Pv86bsFXfsOtU7/kOeOzAadEVKV1PocMPrYyw4/kQz3lY6pUTJM0y1hWQ6Ox0ecWq9
+ FpHMofQVYu7pkctzGm5TMXImM7RzBiVDCFIx5VB+z5Tn6Qeocxq4gb66PAxNLRhMkX
+ tJaW2M1qhJtdZ9mjxHAEceD6C6pquBuPNCTHcBwBJcmwyNKXxDYmutw/YcznJxe1lR
+ VpkXur7nZJ44nLIee7fXCp5RL8ZCH8EyuIRyY7Eikyg0aD7ScpmOxXUIpKtU7o5ZD8
+ nZ9TAiO37URpQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 71BCC3809A06; Sat, 23 Nov 2024 15:50:39 +0000 (UTC)
+ EBF933809A06; Sat, 23 Nov 2024 15:50:41 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <173237703828.3018181.12274971002493220671.git-patchwork-notify@kernel.org>
-Date: Sat, 23 Nov 2024 15:50:38 +0000
-References: <20241120065850.1345670-1-chao@kernel.org>
-In-Reply-To: <20241120065850.1345670-1-chao@kernel.org>
+Message-Id: <173237704074.3018181.13969811981387299887.git-patchwork-notify@kernel.org>
+Date: Sat, 23 Nov 2024 15:50:40 +0000
+References: <20241121141716.3018855-1-chao@kernel.org>
+In-Reply-To: <20241121141716.3018855-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1tEsP7-0004M6-0y
-Subject: Re: [f2fs-dev] [PATCH] f2fs: print message if fscorrupted was found
- in f2fs_new_node_page()
+X-Headers-End: 1tEsP9-0004MD-Go
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to drop all discards after
+ creating snapshot on lvm device
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,8 +81,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+ piergiorgio.sartor@nexgo.de, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -93,19 +92,24 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 20 Nov 2024 14:58:50 +0800 you wrote:
-> If fs corruption occurs in f2fs_new_node_page(), let's print
-> more information about corrupted metadata into kernel log.
+On Thu, 21 Nov 2024 22:17:16 +0800 you wrote:
+> Piergiorgio reported a bug in bugzilla as below:
 > 
-> Meanwhile, it updates to record ERROR_INCONSISTENT_NAT instead
-> of ERROR_INVALID_BLKADDR if blkaddr in nat entry is not
-> NULL_ADDR which means nat bitmap and nat entry is inconsistent.
+> ------------[ cut here ]------------
+> WARNING: CPU: 2 PID: 969 at fs/f2fs/segment.c:1330
+> RIP: 0010:__submit_discard_cmd+0x27d/0x400 [f2fs]
+> Call Trace:
+>  __issue_discard_cmd+0x1ca/0x350 [f2fs]
+>  issue_discard_thread+0x191/0x480 [f2fs]
+>  kthread+0xcf/0x100
+>  ret_from_fork+0x31/0x50
+>  ret_from_fork_asm+0x1a/0x30
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: print message if fscorrupted was found in f2fs_new_node_page()
-    https://git.kernel.org/jaegeuk/f2fs/c/81520c684ca6
+  - [f2fs-dev] f2fs: fix to drop all discards after creating snapshot on lvm device
+    https://git.kernel.org/jaegeuk/f2fs/c/bc8aeb04fd80
 
 You are awesome, thank you!
 -- 
