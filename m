@@ -4,88 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 41EA8E6ADCA
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 Nov 2024 22:45:54 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 33CDED75E59
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 23 Nov 2024 15:50:40 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tEcPO-0000PA-Va;
-	Fri, 22 Nov 2024 22:45:50 +0000
+	id 1tEsP9-0003FT-IQ;
+	Sat, 23 Nov 2024 15:50:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <bugzilla-daemon@kernel.org>) id 1tEcPM-0000P3-Th
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tEsP8-0003FK-95
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 22 Nov 2024 22:45:48 +0000
+ Sat, 23 Nov 2024 15:50:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1PxAbW0n8nKFzNCTYOcf9XaKaJ+Zt1C/W7C95jp7hY8=; b=kQVDuHPiRf5ClRuQ+Rr6mztE3y
- asTceoJi0BsTZtTzJ+tHJiyiN/qr6cHJzrXIo04bWnD2hob3Yquq5uF2S8dJGdxtcWJIpw6dShTAS
- SfbLsFuBdvXaFNDfvke0nKWJY28hra9piRsgEoZB0OF1KqrocOpRaCmUfUfq3zwPd12M=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=qSi3Tn4qvgEokYki2B6pXHigVIleGI41+v0Z3De+DY4=; b=SxDL//KlFSEoPc2JXWwqh8TWP+
+ BnDa8TbVkpSp3Dj0DGH+NmIT4UuR7jK+jGsfWdKwUA+c/Bssq0O8YZAXVesTXJDmSVLB+90MGHVaJ
+ XpMdt9SFjiMO3i9hebpsqByPpHPAK7+i6sBHSTrepbYKe4p1cLgWpOeM2PM5qwX+v0gs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=1PxAbW0n8nKFzNCTYOcf9XaKaJ+Zt1C/W7C95jp7hY8=; b=iLlgSt8eGMdRhgzU1w3ccKXCZD
- WLLd9xd4+SwkIz6JFzOLsrYQnYe/I2nHwka0qAtpDJ+FxIK7r8EM9D+PW5PhWXYJkOFcnurAFMZx9
- 3VTOTPpEEHP1bVtpBIbom5jhzB7Nw1Ho2R7JOLtdTeeMuAPHQWv0Ymrhu//jvgLMs3Us=;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=qSi3Tn4qvgEokYki2B6pXHigVIleGI41+v0Z3De+DY4=; b=T
+ 2vpysSysQF560696Dl1M689Kba+LraB54XdbAPgDZu7JI8u4Sq7LD2N1cT4Bubnoqg6Hl1u7j7fWL
+ 3/lDnfSIwLaWiWo8Efs9ZNv37lJ8qLuJkCqQzdM5b6WCKiuiBfEMKVnBFhwEc7FmrLcJYGSdL/fs5
+ 3rz8lfsK4nFZeKy4=;
 Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tEcPM-00066b-5m for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 22 Nov 2024 22:45:48 +0000
+ id 1tEsP5-0004M5-UC for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 23 Nov 2024 15:50:37 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 42995A40CD7
+ by nyc.source.kernel.org (Postfix) with ESMTP id 07B1EA4017F
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 22 Nov 2024 22:43:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 23E52C4CECE
+ Sat, 23 Nov 2024 15:48:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78FFC4CECD
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 22 Nov 2024 22:45:37 +0000 (UTC)
+ Sat, 23 Nov 2024 15:50:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1732315537;
- bh=1PxAbW0n8nKFzNCTYOcf9XaKaJ+Zt1C/W7C95jp7hY8=;
- h=From:To:Subject:Date:In-Reply-To:References:From;
- b=aSpsKTlnRPnF010GVb67z9W+TNm/rtjxdsvrwK077zxyx1j8YxKCznUUMbmKR/U3r
- idugEf8WcpHlhMqYAdKOVGRDfxMp559N57qZagsAD47OPkv9uZXq9nJRJAI1nV8e+8
- nCvTHHtgedPwMjiN69RWAPhQoyTNolkQjCchQEuvU2bDhOgsVBgzYIyirqkWnSqM2h
- DprKw1PITfmBowFy/O4B2/JsSJ+/doo4iDLWSU+i7jEq6MgU/AnILI7C49azmLXU3i
- RGBfrbgRfjy6btgLGNO+9ixsF00cc5FquMuv8tOpoDifggjULLtxMSVNPgE5yYE6Fk
- vJrOiBUQoBVZw==
-Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
- from userid 48) id 0E2DBC53BC5; Fri, 22 Nov 2024 22:45:37 +0000 (UTC)
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 22 Nov 2024 22:45:36 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: blocking
-X-Bugzilla-Who: piergiorgio.sartor@nexgo.de
-X-Bugzilla-Status: ASSIGNED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P3
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: 
-Message-ID: <bug-219484-202145-cLkHJzhJhG@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-219484-202145@https.bugzilla.kernel.org/>
-References: <bug-219484-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ s=k20201202; t=1732377024;
+ bh=IczqUtw4N4T1zfYAyLTMPPP0PSxeRcQKEQh95/avdwo=;
+ h=Subject:From:Date:To:From;
+ b=dtkhVpZixBY9K3H0hM91KmcCRf+vPkof5BSym9rp4Ijzm5WsHYVxduvwGhiUd95z7
+ QKAzJ7qI9L+276BYtEaJCS1YUAEmNmMaKitWEjH5iU6BQp9doahW+AOD7POZWFavyq
+ SXXL9XYIlL3iEuFKX2n4pafrO/nBjCKTGL6sx9g8OJYVEV153jD5xxxidJBI/5JtSV
+ bqam1YUSTiQ5jx9+/GTXHZ5bUhjeOo4Zg30Nkknzp13ovqY+z3DhnNp7R/R4LpuzjO
+ dcY8z76/sfK4fxOmIkJcSlwFm3F1fTIxndfIXtzXdW9FE/JSOPU8iA5Xd3XNx4Z2ON
+ PkYF6KgcbL6Nw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+ by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
+ 3E59E3809A06 for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 23 Nov 2024 15:50:38 +0000 (UTC)
 MIME-Version: 1.0
-X-Headers-End: 1tEcPM-00066b-5m
-Subject: [f2fs-dev] [Bug 219484] f2fs discard causes kernel NULL pointer
- dereferencing
+Message-Id: <173237703669.3018181.12874371347774322352.git-patchwork-summary@kernel.org>
+Date: Sat, 23 Nov 2024 15:50:36 +0000
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1tEsP5-0004M5-UC
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,30 +79,47 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: bugzilla-daemon--- via Linux-f2fs-devel
+From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: bugzilla-daemon@kernel.org
+Reply-To: patchwork-bot+f2fs@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=219484
+Hello:
 
---- Comment #8 from piergiorgio.sartor@nexgo.de ---
-Thanks for taking the time to reproduce the issue.
-I tried to compile the kernel with your patch, but it seems these days is not
-anymore as easy as it used to be. No success...
-Good the you manage to see the issue!
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-Thanks,
+Patch: [f2fs-dev] f2fs: print message if fscorrupted was found in f2fs_new_node_page()
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=911164
+  Lore link: https://lore.kernel.org/r/20241120065850.1345670-1-chao@kernel.org
 
-pg
+Series: [f2fs-dev,v2,1/2] f2fs: fix to shrink read extent node in batches
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=911680
+  Lore link: https://lore.kernel.org/r/20241122065005.3772987-1-chao@kernel.org
+    Patches: [f2fs-dev,v2,1/2] f2fs: fix to shrink read extent node in batches
+             [f2fs-dev,v2,2/2] f2fs: add a sysfs node to limit max read extent count per-inode
+
+Patch: [f2fs-dev] f2fs: fix to drop all discards after creating snapshot on lvm device
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=911530
+  Lore link: https://lore.kernel.org/r/20241121141716.3018855-1-chao@kernel.org
+
+
+Total patches: 4
 
 -- 
-You may reply to this email to add a comment.
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+
+
 
 _______________________________________________
 Linux-f2fs-devel mailing list
