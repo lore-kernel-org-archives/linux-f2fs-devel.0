@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 33DF5D65553
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2024 05:19:32 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 387C3D5E39F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2024 05:19:43 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tGWw8-0006ZA-Cd;
-	Thu, 28 Nov 2024 05:19:31 +0000
+	id 1tGWwI-0002q6-SN;
+	Thu, 28 Nov 2024 05:19:42 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tGWw6-0006Z1-KL
+ (envelope-from <willy@infradead.org>) id 1tGWwH-0002q0-RL
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Nov 2024 05:19:30 +0000
+ Thu, 28 Nov 2024 05:19:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DMYCD6A5DU3wmKj4OpzUGVB06E/Ax6cvClbm1RVzyrc=; b=PQJZW8t2v0jdXjRRMD0D4C5+pZ
- D1KFcJyIS6S6chA7aiXi+EtdKCdV+jBxSluU7lN2uNBxh0N4EhUCoUCjXr2w4FguPe2SvUGKTe9S+
- Z+5ehpSCl6Sur+6WKvorkp+aqngxsglQrm/iBQdbRrrrh9H7wAUNyrGsFPVPoYGcq31U=;
+ bh=iDnz3H/XmyzGleAhs0J7K4Tz2nIwaOQHxstlZ5KpVs0=; b=jGwoPAxo/mmzYd6P0v3reu+as8
+ 5aHFznRqLarv/QZTdggEk6zVunfweSysYS9QbFcNknoWCRFmKtt5Pxw+tOTfZV2aQVO8qSBKnXrKE
+ AxHMuRSCuWm2WztaYmOkCFAp06IJZg4LYJid9e69CD2778/0W5TnBHk0K3MY91GoTIAU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,37 +33,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=DMYCD6A5DU3wmKj4OpzUGVB06E/Ax6cvClbm1RVzyrc=; b=FMbOihgXf8GDzP6qjdjh7BLM2J
- aajfJ1eUN6b5rZXhsRsIoubnOsi0Qz3cGaAI01TUIgWSrzsCwGy/78iR2kElUOyxayifCN+s+yDxz
- rK1PF99KBiB3vC76Pfm6WnEt3/HVl+w1HyOhuwhU4vuPW6AFfcHUfDr5+jLwVGij8wvk=;
+ bh=iDnz3H/XmyzGleAhs0J7K4Tz2nIwaOQHxstlZ5KpVs0=; b=JCz+infD1tfkgUpIBhPQC/HmUD
+ vaRWYo5DU49cyQON2H52uPIDjZ54mv8TrVFGZ7Jqml6E5FfJbCnWa5zXwhJKUYrffT4JLpzDHRbJh
+ 2rR2dl40TCaaQZuA8y/8Ucp6KFFsxxCWV8DxJ1ITeOJtzAd7var40U+nT47/tKgtcNsI=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tGWw5-0004e1-94 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Nov 2024 05:19:29 +0000
+ id 1tGWwH-0004fP-6R for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 28 Nov 2024 05:19:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=DMYCD6A5DU3wmKj4OpzUGVB06E/Ax6cvClbm1RVzyrc=; b=M0Agvb8Nba2mWZ+k42lL7sHVL9
- CRDaZuSS+tl1UoESlZ2S1AN7XPnIn//G4wLuhDhvZMMqTOPxsM9DXbIcZjbutaP0u/ZoRBSecbWay
- WggwB9TSKbBmnTTkjal4qfwQs7fUSXHN5IKximkgYZfZcj41lU8w6Z57ryCjNzGC16JeaML619TOj
- 6zRLeFi90qUD9/x8qloJXYJQzJBEwVESvx0eMh2vdBcJuVj/JSW8cqTw+0hnxIN5UzpuwLwXKADWD
- KUyVB6HpeLYvzwTXAf0eiqx1npJLwZn72UKgetBLik6kYDKAMxGoB6rmjJVLg57c64xhTAa6VDNuI
- ELyeaOOQ==;
+ bh=iDnz3H/XmyzGleAhs0J7K4Tz2nIwaOQHxstlZ5KpVs0=; b=hPj1tYcj87LpkJe2LXuggfT9MS
+ KtFzBOyxbxVvU/sCx84CA3Bqrc1JaOARZDHPrqZK7Xdo92tpgrmdFBn0jubw35R8TWscJeU9h8PBr
+ /6YsVajgDQCPW4IYDCck9udTr+BcedCMt08Kp4eVnkqtg/WlcPFq7brUKa6pwGkji3/f4QX9vzaYm
+ XQXVo0OBp62X0tw90nMY+zXAerwbHoMAsdeAYNxnShfC5x0Gvx3+9rxbyOlgyut1Qt1kyyKKfEqBG
+ jmrbIqQtNEaHU/DqjLQNw5U5/BRbrc+xX8xANqgb1k64F0+FhsnSgLkvnfxgpV6jekFTa8JUvv0ja
+ wgBd90og==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat
- Linux)) id 1tGWbr-00000002DGB-19Db; Thu, 28 Nov 2024 04:58:35 +0000
+ Linux)) id 1tGWbr-00000002DG5-0aRk; Thu, 28 Nov 2024 04:58:35 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Thu, 28 Nov 2024 04:58:24 +0000
-Message-ID: <20241128045828.527559-10-willy@infradead.org>
+Date: Thu, 28 Nov 2024 04:58:23 +0000
+Message-ID: <20241128045828.527559-9-willy@infradead.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241128045828.527559-1-willy@infradead.org>
 References: <20241128045828.527559-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tGWw5-0004e1-94
-Subject: [f2fs-dev] [PATCH 09/11] f2fs: Use a data folio in
+X-Headers-End: 1tGWwH-0004fP-6R
+Subject: [f2fs-dev] [PATCH 08/11] f2fs: Use a folio more in
  f2fs_submit_page_bio()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -82,57 +82,48 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Remove a call to compound_head().  We can call bio_add_folio_nofail()
-here because we just allocated the bio, so we know it can't fail and
-thus the error path can never be taken.
+Cache the result of page_folio(fio->page) in a local variable so
+we don't have to keep calling it.  Saves a couple of calls to
+compound_head() and removes an access to page->mapping.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/data.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ fs/f2fs/data.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index cae5fa895b97..30d727808c92 100644
+index aa08ab387e58..cae5fa895b97 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -685,32 +685,28 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+@@ -684,6 +684,7 @@ void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi)
+ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
  {
  	struct bio *bio;
- 	struct folio *fio_folio = page_folio(fio->page);
--	struct page *page = fio->encrypted_page ?
--			fio->encrypted_page : fio->page;
-+	struct folio *data_folio = fio->encrypted_page ?
-+			page_folio(fio->encrypted_page) : fio_folio;
++	struct folio *fio_folio = page_folio(fio->page);
+ 	struct page *page = fio->encrypted_page ?
+ 			fio->encrypted_page : fio->page;
  
- 	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
- 			fio->is_por ? META_POR : (__is_meta_io(fio) ?
- 			META_GENERIC : DATA_GENERIC_ENHANCE)))
- 		return -EFSCORRUPTED;
- 
--	trace_f2fs_submit_folio_bio(page_folio(page), fio);
-+	trace_f2fs_submit_folio_bio(data_folio, fio);
- 
+@@ -697,8 +698,8 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
  	/* Allocate a new bio */
  	bio = __bio_alloc(fio, 1);
  
- 	f2fs_set_bio_crypt_ctx(bio, fio_folio->mapping->host,
- 			fio_folio->index, fio, GFP_NOIO);
--
--	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
--		bio_put(bio);
--		return -EFAULT;
--	}
-+	bio_add_folio_nofail(bio, data_folio, folio_size(data_folio), 0);
+-	f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
+-			page_folio(fio->page)->index, fio, GFP_NOIO);
++	f2fs_set_bio_crypt_ctx(bio, fio_folio->mapping->host,
++			fio_folio->index, fio, GFP_NOIO);
+ 
+ 	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
+ 		bio_put(bio);
+@@ -706,8 +707,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	}
  
  	if (fio->io_wbc && !is_read_io(fio->op))
- 		wbc_account_cgroup_owner(fio->io_wbc, fio_folio, PAGE_SIZE);
+-		wbc_account_cgroup_owner(fio->io_wbc, page_folio(fio->page),
+-					 PAGE_SIZE);
++		wbc_account_cgroup_owner(fio->io_wbc, fio_folio, PAGE_SIZE);
  
  	inc_page_count(fio->sbi, is_read_io(fio->op) ?
--			__read_io_type(page) : WB_DATA_TYPE(fio->page, false));
-+			__read_io_type(&data_folio->page) : WB_DATA_TYPE(fio->page, false));
- 
- 	if (is_read_io(bio_op(bio)))
- 		f2fs_submit_read_bio(fio->sbi, bio, fio->type);
+ 			__read_io_type(page) : WB_DATA_TYPE(fio->page, false));
 -- 
 2.45.2
 
