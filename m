@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 843A7D5E39F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2024 05:20:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D58B8D65553
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2024 05:20:39 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tGWx2-0002t8-70;
-	Thu, 28 Nov 2024 05:20:28 +0000
+	id 1tGWxE-0006d3-4d;
+	Thu, 28 Nov 2024 05:20:39 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tGWx0-0002t0-7q
+ (envelope-from <willy@infradead.org>) id 1tGWxC-0006ct-Q2
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Nov 2024 05:20:26 +0000
+ Thu, 28 Nov 2024 05:20:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=E4qvjk6xulwxLYsNACNgPuFsqf+6imceNlF2ACLP9HU=; b=ZlfHbiETo2W7b/xBotMPa8FLj2
- szSgMxiwI+9z//PKau34GBxp9k+pMvOywxdQC/3KnFhIWjC6ckZzRBS4Y24S1ySY0aOahsxSQhx4a
- x+drxhYL/gPCfi8GT/DF8fGOM2+/zxPRLM8E1eE02mTYJxtgsUcPHnBhtjbzOgWjnIx8=;
+ bh=HnHj92w7glRgaleaGhAntsffFpXU1keDJ8fk5N7/Y6s=; b=CF6ziqZpCq9KCigQOCOrXJ4c2z
+ Sa5bisxkrzBUb+ojFkVOXBgcx2NBB5vN56eYaacIz9gDw9fvrKVTaIvSX4Yz7P98EOt/CrAnIB3gt
+ j1/zoWcdi9i+oUOBS24lixYgWWxTAlQgQPPnbJwkGztOSE14yzWz8etnAmR6/I0IKRuQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,38 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=E4qvjk6xulwxLYsNACNgPuFsqf+6imceNlF2ACLP9HU=; b=SsN6ia6W7X5vye9hBnmhuBzeQ1
- I/BcKg7DIfsvSpRimXbWN44sAoELqk+A3zStSBGgiAoFIlrhOiVIAl87LYwjVV82b17uwSlVgW9Ca
- VK78xTexS53vWNQCFo8w1P6TEQ1iKbZGozN8Wo6wIf7jjfOPirfTGybNqT0KWQIMcdns=;
+ bh=HnHj92w7glRgaleaGhAntsffFpXU1keDJ8fk5N7/Y6s=; b=EO229rAjaEKbGf5HuSj8euYxht
+ 5NXWrp0c3kDwkqNKPhKbgPal7y7fclmH585xZ87U2nBKAC7GKewDrBjQC2HPYfk0KgqhqsP79Ohr/
+ qE86BqlqlmnEpsR5hC5Qak3PBuVNnWcn2JLjnfckW6+GQVbhhyfT6fzimnXaYI25qY5c=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tGWwz-0004ja-MX for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Nov 2024 05:20:26 +0000
+ id 1tGWxB-0004kz-H7 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 28 Nov 2024 05:20:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=E4qvjk6xulwxLYsNACNgPuFsqf+6imceNlF2ACLP9HU=; b=P5j13l5NZf+fGXWiD8862gLMJ4
- p2qyInW353nrzOk+e5PjXD8khsUk7L0sPz7AUZm6gFvRJiW7ODfEE/asZ3S0D6+KxrJ7WKGIaWJIM
- NL6yT5q0mdBkH2bEmV1oeNqZet9fMCoFrKuSERcZakyqwWDoLsMLdxxc0idO2fvGfijeIoyHZU2u3
- aFlmoNIvrez97m4rQdn1+tp3jAxmRja+VLacC2NNCwCLhAYkanpoyaEIvjfxCgUGx3qlU1L+GCdYD
- KuT7MHgKQl5JABFDCfxCo6wLYY8nIbGKBmURw4dpf/Vue50ZiRlgqtCbcCqrkDPgU6N/d1hDlNrQa
- RdxbpdSg==;
+ bh=HnHj92w7glRgaleaGhAntsffFpXU1keDJ8fk5N7/Y6s=; b=risKwemwvGQJdFOlbhgAlcI5B8
+ rYY0l1N/4KugWp7QNWcSd99Q+nbZRWPriLIpmWPg8lX9uVYSopdgiMIbtRNJMRflje8RCK1pbiaTx
+ l6juMz9PKAerhdG2yHmpkKHqNgXElys94QmI0SgZNwbFkJM19+eNA0+eErOO+aH2ogd7nT2nmzi7x
+ dlmuMq2FkwCTyfhjTnBOQSqVv+G1GOcVENf85ZrzN0Zd4oZlY85GdhRVrz34s7LQUVzoZgmaLKzc+
+ 6idhJxanLa6YHAyxgdlwx7/U7nS0+0BuUA5aO3v+XkXV/alpkkQkyPtfk3jm6eBtYlvvrKEtGPQ98
+ m0RQJ92Q==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat
- Linux)) id 1tGWbq-00000002DFh-2TNg; Thu, 28 Nov 2024 04:58:34 +0000
+ Linux)) id 1tGWbq-00000002DFV-1QpB; Thu, 28 Nov 2024 04:58:34 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Thu, 28 Nov 2024 04:58:19 +0000
-Message-ID: <20241128045828.527559-5-willy@infradead.org>
+Date: Thu, 28 Nov 2024 04:58:17 +0000
+Message-ID: <20241128045828.527559-3-willy@infradead.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241128045828.527559-1-willy@infradead.org>
 References: <20241128045828.527559-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tGWwz-0004ja-MX
-Subject: [f2fs-dev] [PATCH 04/11] f2fs: Use a folio in
- f2fs_write_compressed_pages()
+X-Headers-End: 1tGWxB-0004kz-H7
+Subject: [f2fs-dev] [PATCH 02/11] f2fs: Use a folio in
+ f2fs_compress_write_end()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,54 +82,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Remove accesses to page->index and an unnecessary reference to
-page->mapping.
+This removes an access of page->index.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/compress.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/f2fs/compress.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 494baa1e8bd3..0b55b2695c9b 100644
+index 9f8d0f4c8564..c91a2e4fe60c 100644
 --- a/fs/f2fs/compress.c
 +++ b/fs/f2fs/compress.c
-@@ -1282,6 +1282,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 		.encrypted = fscrypt_inode_uses_fs_layer_crypto(cc->inode) ?
- 									1 : 0,
+@@ -1197,7 +1197,8 @@ bool f2fs_compress_write_end(struct inode *inode, void *fsdata,
+ 		.cluster_size = F2FS_I(inode)->i_cluster_size,
+ 		.rpages = fsdata,
  	};
-+	struct folio *folio;
- 	struct dnode_of_data dn;
- 	struct node_info ni;
- 	struct compress_io_ctx *cic;
-@@ -1293,7 +1294,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
+-	bool first_index = (index == cc.rpages[0]->index);
++	struct folio *folio = page_folio(cc.rpages[0]);
++	bool first_index = (index == folio->index);
  
- 	/* we should bypass data pages to proceed the kworker jobs */
- 	if (unlikely(f2fs_cp_error(sbi))) {
--		mapping_set_error(cc->rpages[0]->mapping, -EIO);
-+		mapping_set_error(inode->i_mapping, -EIO);
- 		goto out_free;
- 	}
- 
-@@ -1320,7 +1321,8 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 			goto out_put_dnode;
- 	}
- 
--	psize = (loff_t)(cc->rpages[last_index]->index + 1) << PAGE_SHIFT;
-+	folio = page_folio(cc->rpages[last_index]);
-+	psize = folio_pos(folio) + folio_size(folio);
- 
- 	err = f2fs_get_node_info(fio.sbi, dn.nid, &ni, false);
- 	if (err)
-@@ -1343,7 +1345,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 
- 	for (i = 0; i < cc->valid_nr_cpages; i++) {
- 		f2fs_set_compressed_page(cc->cpages[i], inode,
--					cc->rpages[i + 1]->index, cic);
-+				page_folio(cc->rpages[i + 1])->index, cic);
- 		fio.compressed_page = cc->cpages[i];
- 
- 		fio.old_blkaddr = data_blkaddr(dn.inode, dn.node_page,
+ 	if (copied)
+ 		set_cluster_dirty(&cc);
 -- 
 2.45.2
 
