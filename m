@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D58B8D65553
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2024 05:20:39 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4532ED5E39F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2024 05:20:47 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tGWxE-0006d3-4d;
-	Thu, 28 Nov 2024 05:20:39 +0000
+	id 1tGWxK-00087N-S9;
+	Thu, 28 Nov 2024 05:20:46 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tGWxC-0006ct-Q2
+ (envelope-from <willy@infradead.org>) id 1tGWxJ-000875-1F
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Nov 2024 05:20:38 +0000
+ Thu, 28 Nov 2024 05:20:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HnHj92w7glRgaleaGhAntsffFpXU1keDJ8fk5N7/Y6s=; b=CF6ziqZpCq9KCigQOCOrXJ4c2z
- Sa5bisxkrzBUb+ojFkVOXBgcx2NBB5vN56eYaacIz9gDw9fvrKVTaIvSX4Yz7P98EOt/CrAnIB3gt
- j1/zoWcdi9i+oUOBS24lixYgWWxTAlQgQPPnbJwkGztOSE14yzWz8etnAmR6/I0IKRuQ=;
+ bh=FYR6uma4kwJlUKiQp0bjygTL3evPp9bgyV5eBjOdN58=; b=RzYiYlu3LfoniP6X81WvNDA1Y1
+ 4xWg8zo2kfAcNXeaNZfkA/G7RXFUKnBXjabptGEwhiE6F5+vN74960J6fqoDkL4mRMgbc0OZBaJbx
+ /+u64RGTDHQ6ffqSx5k86vFeI23CRlyqpgJmsEhOvvyPPk2ZWab7f93KYVb/obmSmZqY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,38 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=HnHj92w7glRgaleaGhAntsffFpXU1keDJ8fk5N7/Y6s=; b=EO229rAjaEKbGf5HuSj8euYxht
- 5NXWrp0c3kDwkqNKPhKbgPal7y7fclmH585xZ87U2nBKAC7GKewDrBjQC2HPYfk0KgqhqsP79Ohr/
- qE86BqlqlmnEpsR5hC5Qak3PBuVNnWcn2JLjnfckW6+GQVbhhyfT6fzimnXaYI25qY5c=;
+ bh=FYR6uma4kwJlUKiQp0bjygTL3evPp9bgyV5eBjOdN58=; b=fjDd+pKuUTLPDJk8N+VBwYKO0y
+ J0uYncZbWE5D+Bt+BbQPr0stuxvCl+yL72rzKc1OtLJZxk9cKYAAppM20Tru2MqWf3I3e05/nnCW2
+ R9vnPMi0MO+mVGrh0GrrSs1f+bjhIlU7j1FtSprrwUY+bAFYX45O43j0Y3bpyVBEWE78=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tGWxB-0004kz-H7 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Nov 2024 05:20:38 +0000
+ id 1tGWxI-0004lm-Dn for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 28 Nov 2024 05:20:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=HnHj92w7glRgaleaGhAntsffFpXU1keDJ8fk5N7/Y6s=; b=risKwemwvGQJdFOlbhgAlcI5B8
- rYY0l1N/4KugWp7QNWcSd99Q+nbZRWPriLIpmWPg8lX9uVYSopdgiMIbtRNJMRflje8RCK1pbiaTx
- l6juMz9PKAerhdG2yHmpkKHqNgXElys94QmI0SgZNwbFkJM19+eNA0+eErOO+aH2ogd7nT2nmzi7x
- dlmuMq2FkwCTyfhjTnBOQSqVv+G1GOcVENf85ZrzN0Zd4oZlY85GdhRVrz34s7LQUVzoZgmaLKzc+
- 6idhJxanLa6YHAyxgdlwx7/U7nS0+0BuUA5aO3v+XkXV/alpkkQkyPtfk3jm6eBtYlvvrKEtGPQ98
- m0RQJ92Q==;
+ bh=FYR6uma4kwJlUKiQp0bjygTL3evPp9bgyV5eBjOdN58=; b=MTy0ThX8PJ/KoBEdjaKb/PaWpv
+ HAXst2rDkuqMIOZG0JZ4aHN8jTa9z8ee4aqsliHsb82m711xhBDOFViCrBAxXYMwYe7/64tb8UMda
+ GRt1q5CusYbygjUEPi/dbPNaXEVMXpNEy1gG/TvYAA25ZCtq44KJpyzCe9vHjYTbHZbL4a1mCMi/W
+ QYOvpjc1hSLxjIDOYhUBEVSgLR0ZYiPXncW0Qzi6qrDbIXJgybXcvm2p/fV/3L2JHRRVmboS0qywD
+ wU5zLIYq7GKpReCIsO+By4Rs8iQw49uw4h8in3xZjDh2IvYrroGDdHXMQjhmSShpsu/HUZOTHZcIv
+ /EHRcc+A==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat
- Linux)) id 1tGWbq-00000002DFV-1QpB; Thu, 28 Nov 2024 04:58:34 +0000
+ Linux)) id 1tGWbq-00000002DFz-44U0; Thu, 28 Nov 2024 04:58:35 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Thu, 28 Nov 2024 04:58:17 +0000
-Message-ID: <20241128045828.527559-3-willy@infradead.org>
+Date: Thu, 28 Nov 2024 04:58:22 +0000
+Message-ID: <20241128045828.527559-8-willy@infradead.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241128045828.527559-1-willy@infradead.org>
 References: <20241128045828.527559-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tGWxB-0004kz-H7
-Subject: [f2fs-dev] [PATCH 02/11] f2fs: Use a folio in
- f2fs_compress_write_end()
+X-Headers-End: 1tGWxI-0004lm-Dn
+Subject: [f2fs-dev] [PATCH 07/11] f2fs: Convert f2fs_finish_read_bio() to
+ use folios
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,27 +82,57 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This removes an access of page->index.
+Use bio_for_each_folio_all() to iterate over each folio in the bio.
+This lets us use folio_end_read() which saves an atomic operation and
+memory barrier compared to marking the folio uptodate and unlocking
+it as two separate operations.  This also removes a few hidden calls
+to compound_head().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/compress.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/data.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 9f8d0f4c8564..c91a2e4fe60c 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1197,7 +1197,8 @@ bool f2fs_compress_write_end(struct inode *inode, void *fsdata,
- 		.cluster_size = F2FS_I(inode)->i_cluster_size,
- 		.rpages = fsdata,
- 	};
--	bool first_index = (index == cc.rpages[0]->index);
-+	struct folio *folio = page_folio(cc.rpages[0]);
-+	bool first_index = (index == folio->index);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7cb2272c723e..aa08ab387e58 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -136,27 +136,22 @@ struct bio_post_read_ctx {
+  */
+ static void f2fs_finish_read_bio(struct bio *bio, bool in_task)
+ {
+-	struct bio_vec *bv;
+-	struct bvec_iter_all iter_all;
++	struct folio_iter fi;
+ 	struct bio_post_read_ctx *ctx = bio->bi_private;
  
- 	if (copied)
- 		set_cluster_dirty(&cc);
+-	bio_for_each_segment_all(bv, bio, iter_all) {
+-		struct page *page = bv->bv_page;
++	bio_for_each_folio_all(fi, bio) {
++		struct folio *folio = fi.folio;
+ 
+-		if (f2fs_is_compressed_page(page)) {
++		if (f2fs_is_compressed_page(&folio->page)) {
+ 			if (ctx && !ctx->decompression_attempted)
+-				f2fs_end_read_compressed_page(page, true, 0,
++				f2fs_end_read_compressed_page(&folio->page, true, 0,
+ 							in_task);
+-			f2fs_put_page_dic(page, in_task);
++			f2fs_put_page_dic(&folio->page, in_task);
+ 			continue;
+ 		}
+ 
+-		if (bio->bi_status)
+-			ClearPageUptodate(page);
+-		else
+-			SetPageUptodate(page);
+-		dec_page_count(F2FS_P_SB(page), __read_io_type(page));
+-		unlock_page(page);
++		dec_page_count(F2FS_F_SB(folio), __read_io_type(&folio->page));
++		folio_end_read(folio, bio->bi_status == 0);
+ 	}
+ 
+ 	if (ctx)
 -- 
 2.45.2
 
