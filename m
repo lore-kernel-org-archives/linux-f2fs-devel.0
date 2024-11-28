@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4905DD65553
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2024 05:19:23 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 33DF5D65553
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2024 05:19:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tGWvx-0007w1-3v;
-	Thu, 28 Nov 2024 05:19:21 +0000
+	id 1tGWw8-0006ZA-Cd;
+	Thu, 28 Nov 2024 05:19:31 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tGWvt-0007vZ-TF
+ (envelope-from <willy@infradead.org>) id 1tGWw6-0006Z1-KL
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Nov 2024 05:19:19 +0000
+ Thu, 28 Nov 2024 05:19:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=iYZGvaxFuKDg9b09KhV0iM1YZejH6hOFdqKxNiu6a2k=; b=AobYGQxwAUd2PtVYeSqb2Kg1yh
- 9RoqZ/oDHuc4job+uYVz0z3AqmyCbUw1ejD5SeX5/7vg6tomNzHXROxGQiXaQxvqwKALr4ZRC2EGa
- d0r6Z3v9pGlRs8j/pdtCeVaRDvaMbAaRlL0vZj94IesIOgBhERoxVpzFuZoR7YXDZU4g=;
+ bh=DMYCD6A5DU3wmKj4OpzUGVB06E/Ax6cvClbm1RVzyrc=; b=PQJZW8t2v0jdXjRRMD0D4C5+pZ
+ D1KFcJyIS6S6chA7aiXi+EtdKCdV+jBxSluU7lN2uNBxh0N4EhUCoUCjXr2w4FguPe2SvUGKTe9S+
+ Z+5ehpSCl6Sur+6WKvorkp+aqngxsglQrm/iBQdbRrrrh9H7wAUNyrGsFPVPoYGcq31U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,37 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=iYZGvaxFuKDg9b09KhV0iM1YZejH6hOFdqKxNiu6a2k=; b=dC619BIPgTYn5ccKW43xYd2s+h
- o7o+gbXEMNYpri7FKdSVk1pVRMIrzS/XxwZZYTaRZQQB+IEBS65UeunezCvMgvWIANeICBEjPHWpj
- 0fOfezV+WH3mBhAKhtRWGyOQjD4KU2s3yVXwy60Ky4lLBYDhR+4s+tcTtNlu/sJX25NY=;
+ bh=DMYCD6A5DU3wmKj4OpzUGVB06E/Ax6cvClbm1RVzyrc=; b=FMbOihgXf8GDzP6qjdjh7BLM2J
+ aajfJ1eUN6b5rZXhsRsIoubnOsi0Qz3cGaAI01TUIgWSrzsCwGy/78iR2kElUOyxayifCN+s+yDxz
+ rK1PF99KBiB3vC76Pfm6WnEt3/HVl+w1HyOhuwhU4vuPW6AFfcHUfDr5+jLwVGij8wvk=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tGWvr-0004d6-W4 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Nov 2024 05:19:17 +0000
+ id 1tGWw5-0004e1-94 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 28 Nov 2024 05:19:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=iYZGvaxFuKDg9b09KhV0iM1YZejH6hOFdqKxNiu6a2k=; b=Az1m3dC4041vs92Lq3oCRomdoV
- 9XPejKCD5ROvR0cFZftUyOGKM8pQoWyUxTuDRJ3G0cE/TeEM27qReCZYGxsVpW4C1qGFR3XUeVlvI
- fT8NgBNc0RQHnV0XSmcVUOQ+6tl3Ak5YrWFsyS+QecOaDa71CpohHq8GsFQKCanGObz+q2BkLcsEi
- Zlb91zb+EAAK4jVO5C3DTHUT3WXFPx8Bj0Gw/iesAL72D+UEdHJWfMe1yjsbiEKcIrTs3jwS1Dyq3
- qL1lLMlsbhP38jKmlFAU+DlifLHzRHQupG+MerIvs/g/GSijyP31JhP2rmku+NgamQz+J7wl/hP0z
- 3ojoYYrA==;
+ bh=DMYCD6A5DU3wmKj4OpzUGVB06E/Ax6cvClbm1RVzyrc=; b=M0Agvb8Nba2mWZ+k42lL7sHVL9
+ CRDaZuSS+tl1UoESlZ2S1AN7XPnIn//G4wLuhDhvZMMqTOPxsM9DXbIcZjbutaP0u/ZoRBSecbWay
+ WggwB9TSKbBmnTTkjal4qfwQs7fUSXHN5IKximkgYZfZcj41lU8w6Z57ryCjNzGC16JeaML619TOj
+ 6zRLeFi90qUD9/x8qloJXYJQzJBEwVESvx0eMh2vdBcJuVj/JSW8cqTw+0hnxIN5UzpuwLwXKADWD
+ KUyVB6HpeLYvzwTXAf0eiqx1npJLwZn72UKgetBLik6kYDKAMxGoB6rmjJVLg57c64xhTAa6VDNuI
+ ELyeaOOQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat
- Linux)) id 1tGWbr-00000002DGN-2GPF; Thu, 28 Nov 2024 04:58:35 +0000
+ Linux)) id 1tGWbr-00000002DGB-19Db; Thu, 28 Nov 2024 04:58:35 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Thu, 28 Nov 2024 04:58:26 +0000
-Message-ID: <20241128045828.527559-12-willy@infradead.org>
+Date: Thu, 28 Nov 2024 04:58:24 +0000
+Message-ID: <20241128045828.527559-10-willy@infradead.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241128045828.527559-1-willy@infradead.org>
 References: <20241128045828.527559-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tGWvr-0004d6-W4
-Subject: [f2fs-dev] [PATCH 11/11] f2fs: Remove calls to folio_file_mapping()
+X-Headers-End: 1tGWw5-0004e1-94
+Subject: [f2fs-dev] [PATCH 09/11] f2fs: Use a data folio in
+ f2fs_submit_page_bio()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,64 +82,57 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-All folios that f2fs sees belong to f2fs and not to the swapcache
-so it can dereference folio->mapping directly like all other
-filesystems do.
+Remove a call to compound_head().  We can call bio_add_folio_nofail()
+here because we just allocated the bio, so we know it can't fail and
+thus the error path can never be taken.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/data.c              | 2 +-
- fs/f2fs/inline.c            | 2 +-
- include/trace/events/f2fs.h | 9 ++++-----
- 3 files changed, 6 insertions(+), 7 deletions(-)
+ fs/f2fs/data.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index e68a4dd9bc17..0657f731d4b7 100644
+index cae5fa895b97..30d727808c92 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -2455,7 +2455,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
- 
- static int f2fs_read_data_folio(struct file *file, struct folio *folio)
+@@ -685,32 +685,28 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
  {
--	struct inode *inode = folio_file_mapping(folio)->host;
-+	struct inode *inode = folio->mapping->host;
- 	int ret = -EAGAIN;
+ 	struct bio *bio;
+ 	struct folio *fio_folio = page_folio(fio->page);
+-	struct page *page = fio->encrypted_page ?
+-			fio->encrypted_page : fio->page;
++	struct folio *data_folio = fio->encrypted_page ?
++			page_folio(fio->encrypted_page) : fio_folio;
  
- 	trace_f2fs_readpage(folio, DATA);
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 005babf1bed1..cbd2a0d34804 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -81,7 +81,7 @@ bool f2fs_may_inline_dentry(struct inode *inode)
+ 	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
+ 			fio->is_por ? META_POR : (__is_meta_io(fio) ?
+ 			META_GENERIC : DATA_GENERIC_ENHANCE)))
+ 		return -EFSCORRUPTED;
  
- void f2fs_do_read_inline_data(struct folio *folio, struct page *ipage)
- {
--	struct inode *inode = folio_file_mapping(folio)->host;
-+	struct inode *inode = folio->mapping->host;
+-	trace_f2fs_submit_folio_bio(page_folio(page), fio);
++	trace_f2fs_submit_folio_bio(data_folio, fio);
  
- 	if (folio_test_uptodate(folio))
- 		return;
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 3253f45508e8..eb3b2f1326b1 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -1322,12 +1322,11 @@ DECLARE_EVENT_CLASS(f2fs__folio,
- 	),
+ 	/* Allocate a new bio */
+ 	bio = __bio_alloc(fio, 1);
  
- 	TP_fast_assign(
--		__entry->dev	= folio_file_mapping(folio)->host->i_sb->s_dev;
--		__entry->ino	= folio_file_mapping(folio)->host->i_ino;
-+		__entry->dev	= folio->mapping->host->i_sb->s_dev;
-+		__entry->ino	= folio->mapping->host->i_ino;
- 		__entry->type	= type;
--		__entry->dir	=
--			S_ISDIR(folio_file_mapping(folio)->host->i_mode);
--		__entry->index	= folio_index(folio);
-+		__entry->dir	= S_ISDIR(folio->mapping->host->i_mode);
-+		__entry->index	= folio->index;
- 		__entry->dirty	= folio_test_dirty(folio);
- 		__entry->uptodate = folio_test_uptodate(folio);
- 	),
+ 	f2fs_set_bio_crypt_ctx(bio, fio_folio->mapping->host,
+ 			fio_folio->index, fio, GFP_NOIO);
+-
+-	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
+-		bio_put(bio);
+-		return -EFAULT;
+-	}
++	bio_add_folio_nofail(bio, data_folio, folio_size(data_folio), 0);
+ 
+ 	if (fio->io_wbc && !is_read_io(fio->op))
+ 		wbc_account_cgroup_owner(fio->io_wbc, fio_folio, PAGE_SIZE);
+ 
+ 	inc_page_count(fio->sbi, is_read_io(fio->op) ?
+-			__read_io_type(page) : WB_DATA_TYPE(fio->page, false));
++			__read_io_type(&data_folio->page) : WB_DATA_TYPE(fio->page, false));
+ 
+ 	if (is_read_io(bio_op(bio)))
+ 		f2fs_submit_read_bio(fio->sbi, bio, fio->type);
 -- 
 2.45.2
 
