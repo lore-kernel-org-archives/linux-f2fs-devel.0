@@ -4,76 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 117C4D65559
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 26 Nov 2024 21:05:25 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4905DD65553
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2024 05:19:23 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tG2kO-0001Pf-8i;
-	Tue, 26 Nov 2024 21:05:23 +0000
+	id 1tGWvx-0007w1-3v;
+	Thu, 28 Nov 2024 05:19:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <pr-tracker-bot@kernel.org>) id 1tG2k4-0001PJ-8V
+ (envelope-from <willy@infradead.org>) id 1tGWvt-0007vZ-TF
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 26 Nov 2024 21:05:03 +0000
+ Thu, 28 Nov 2024 05:19:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:Date:Message-Id:References:In-Reply-To:From:
- Subject:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qSYTBlcseVNXlCo/KMiXDHlcPhcS9mB1dP8QGByVN8o=; b=aeQjMY/jchaSKMqJiV5Og2o+oW
- KSdZ7u2bBtM6FsuJxBE0zvO7tcCgVJUTzVaabvERpHsz0MNh7RuNp70YgjC8Vtb9obsvA5w2rnVhm
- 3Be7DroSDGZveCeaknO+G8Uf/PdHCp5yTXNaB2IdT+sfhnB4j3lIQCNF7Rsz7SPievsg=;
+ bh=iYZGvaxFuKDg9b09KhV0iM1YZejH6hOFdqKxNiu6a2k=; b=AobYGQxwAUd2PtVYeSqb2Kg1yh
+ 9RoqZ/oDHuc4job+uYVz0z3AqmyCbUw1ejD5SeX5/7vg6tomNzHXROxGQiXaQxvqwKALr4ZRC2EGa
+ d0r6Z3v9pGlRs8j/pdtCeVaRDvaMbAaRlL0vZj94IesIOgBhERoxVpzFuZoR7YXDZU4g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Cc:To:Date:Message-Id:References:In-Reply-To:From:Subject:Sender:Reply-To
- :MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qSYTBlcseVNXlCo/KMiXDHlcPhcS9mB1dP8QGByVN8o=; b=HLRZCYm3kWuNNI9ANPuuVVGWHq
- XQ3J8BidviU0K+QXbv1IT5KCmmdU9MPrVKVhX/aQ0bPfP7XzmYEv5khYy/m3o47pPZQSgAnQ7v2/v
- 8WrXfXl9vbfovUeTEF0IUppnAzyhfJbSappLyiCIJpK9OmVM8fNf8akl2X98cndgrjnA=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=iYZGvaxFuKDg9b09KhV0iM1YZejH6hOFdqKxNiu6a2k=; b=dC619BIPgTYn5ccKW43xYd2s+h
+ o7o+gbXEMNYpri7FKdSVk1pVRMIrzS/XxwZZYTaRZQQB+IEBS65UeunezCvMgvWIANeICBEjPHWpj
+ 0fOfezV+WH3mBhAKhtRWGyOQjD4KU2s3yVXwy60Ky4lLBYDhR+4s+tcTtNlu/sJX25NY=;
+Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tG2k3-000118-2e for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 26 Nov 2024 21:05:03 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 54DD45C5787;
- Tue, 26 Nov 2024 21:04:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 694BDC4CECF;
- Tue, 26 Nov 2024 21:04:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1732655097;
- bh=YPmXuQPcvXDeOU6wdX0I3xds4LdcmSU6DSZ03NIy33g=;
- h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
- b=VnjvQ8NyXU096Iil5A087LwqVPlILJelfnjfxil8E8A8NYDNX0ddYrCM+hTPlgfCh
- EbnRUsURyD64kuO/nvZYKsruYU1YGkJqeND4vOH0AM4juBJzT1vmC1LsIcw8WfaLy6
- rAsyEQmAbnbLBzZbcyLNpyp0GUN6Q62SLRVhgXLNdoCDjg1qXOQHIOlTLuT173CT8b
- RMJVcrdwPlv6Djtx3BXHGCjLNSAVCH6JUn0EuC/viZ0aZrlXvourAQIC0RYZDCEy4C
- isVqSF/Nr871GP9mIv9qtQwW55tWilnN4V2VN+hHD3EhYr37jjz4z8P6eduNC4CXOk
- tl4xNEwRQWlTw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 7E57C3809A00; Tue, 26 Nov 2024 21:05:11 +0000 (UTC)
-In-Reply-To: <Z0SdunZ61-OMaH1o@google.com>
-References: <Z0SdunZ61-OMaH1o@google.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Z0SdunZ61-OMaH1o@google.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
- tags/f2fs-for-6.13-rc1
-X-PR-Tracked-Commit-Id: bc8aeb04fd80cb8cfae3058445c84410fd0beb5e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 44b4d13b70f682a86fee356786cc3e17987fae4d
-Message-Id: <173265511031.539328.15285927195255109686.pr-tracker-bot@kernel.org>
-Date: Tue, 26 Nov 2024 21:05:10 +0000
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1tG2k3-000118-2e
-Subject: Re: [f2fs-dev] [GIT PULL] f2fs for 6.13-rc1
+ id 1tGWvr-0004d6-W4 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 28 Nov 2024 05:19:17 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+ References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+ Content-Type:Content-ID:Content-Description;
+ bh=iYZGvaxFuKDg9b09KhV0iM1YZejH6hOFdqKxNiu6a2k=; b=Az1m3dC4041vs92Lq3oCRomdoV
+ 9XPejKCD5ROvR0cFZftUyOGKM8pQoWyUxTuDRJ3G0cE/TeEM27qReCZYGxsVpW4C1qGFR3XUeVlvI
+ fT8NgBNc0RQHnV0XSmcVUOQ+6tl3Ak5YrWFsyS+QecOaDa71CpohHq8GsFQKCanGObz+q2BkLcsEi
+ Zlb91zb+EAAK4jVO5C3DTHUT3WXFPx8Bj0Gw/iesAL72D+UEdHJWfMe1yjsbiEKcIrTs3jwS1Dyq3
+ qL1lLMlsbhP38jKmlFAU+DlifLHzRHQupG+MerIvs/g/GSijyP31JhP2rmku+NgamQz+J7wl/hP0z
+ 3ojoYYrA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat
+ Linux)) id 1tGWbr-00000002DGN-2GPF; Thu, 28 Nov 2024 04:58:35 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Date: Thu, 28 Nov 2024 04:58:26 +0000
+Message-ID: <20241128045828.527559-12-willy@infradead.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241128045828.527559-1-willy@infradead.org>
+References: <20241128045828.527559-1-willy@infradead.org>
+MIME-Version: 1.0
+X-Headers-End: 1tGWvr-0004d6-W4
+Subject: [f2fs-dev] [PATCH 11/11] f2fs: Remove calls to folio_file_mapping()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,29 +75,73 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: pr-tracker-bot--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: pr-tracker-bot@kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
-MIME-Version: 1.0
+Cc: "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The pull request you sent on Mon, 25 Nov 2024 15:54:34 +0000:
+All folios that f2fs sees belong to f2fs and not to the swapcache
+so it can dereference folio->mapping directly like all other
+filesystems do.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.13-rc1
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/f2fs/data.c              | 2 +-
+ fs/f2fs/inline.c            | 2 +-
+ include/trace/events/f2fs.h | 9 ++++-----
+ 3 files changed, 6 insertions(+), 7 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/44b4d13b70f682a86fee356786cc3e17987fae4d
-
-Thank you!
-
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index e68a4dd9bc17..0657f731d4b7 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2455,7 +2455,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
+ 
+ static int f2fs_read_data_folio(struct file *file, struct folio *folio)
+ {
+-	struct inode *inode = folio_file_mapping(folio)->host;
++	struct inode *inode = folio->mapping->host;
+ 	int ret = -EAGAIN;
+ 
+ 	trace_f2fs_readpage(folio, DATA);
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 005babf1bed1..cbd2a0d34804 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -81,7 +81,7 @@ bool f2fs_may_inline_dentry(struct inode *inode)
+ 
+ void f2fs_do_read_inline_data(struct folio *folio, struct page *ipage)
+ {
+-	struct inode *inode = folio_file_mapping(folio)->host;
++	struct inode *inode = folio->mapping->host;
+ 
+ 	if (folio_test_uptodate(folio))
+ 		return;
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 3253f45508e8..eb3b2f1326b1 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -1322,12 +1322,11 @@ DECLARE_EVENT_CLASS(f2fs__folio,
+ 	),
+ 
+ 	TP_fast_assign(
+-		__entry->dev	= folio_file_mapping(folio)->host->i_sb->s_dev;
+-		__entry->ino	= folio_file_mapping(folio)->host->i_ino;
++		__entry->dev	= folio->mapping->host->i_sb->s_dev;
++		__entry->ino	= folio->mapping->host->i_ino;
+ 		__entry->type	= type;
+-		__entry->dir	=
+-			S_ISDIR(folio_file_mapping(folio)->host->i_mode);
+-		__entry->index	= folio_index(folio);
++		__entry->dir	= S_ISDIR(folio->mapping->host->i_mode);
++		__entry->index	= folio->index;
+ 		__entry->dirty	= folio_test_dirty(folio);
+ 		__entry->uptodate = folio_test_uptodate(folio);
+ 	),
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.45.2
+
 
 
 _______________________________________________
