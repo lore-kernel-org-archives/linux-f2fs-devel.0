@@ -4,67 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0DF04D65553
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2024 05:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 462BBD65553
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2024 05:21:06 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tGWxV-00045g-PQ;
-	Thu, 28 Nov 2024 05:20:58 +0000
+	id 1tGWxd-00046m-5j;
+	Thu, 28 Nov 2024 05:21:05 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tGWxU-00045Y-I7
+ (envelope-from <willy@infradead.org>) id 1tGWxb-00046Y-5D
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Nov 2024 05:20:57 +0000
+ Thu, 28 Nov 2024 05:21:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FQBW9QgG4KLuphkQ4f5nlHL2gjcLmM+r5DMaibDcNhA=; b=VR4l1+4Yug7b+lx/mvujYrYw7C
- 8ypMlLEsnBxKPl3fNl9BlB2eNyl1x/3yQuB7j8neVDVKY7qFW47/bkqHGE4uuXYotmdSOSJPPoaAd
- 3AR3cNaON5pktKbIVCJKyL5p4JiEBL7se4yz6kGk679KdstE0lF7eh5PvHaDoiBrLl2I=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=FQBW9QgG4KLuphkQ4f5nlHL2gjcLmM+r5DMaibDcNhA=; b=fbmTrlcNLYnZ7XGeHLenuqJT+b
- KcWeL4YI4uyhMw7ABTj/u4wqZVL3xFopBzE69FPBFjfkFkjThzS5bH9VRcjThspN44ISBwR2h8ed1
- QT/a8mHlnfXc00o7luzqiIw2ItPz6utxEnI6in48g3NuJqIm35r/U1xhE8+viAgBj+ZU=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=bXYZgyRUkeW2u8b7qt0UoQCZTVfllwtBY4MWT7T+Qu4=; b=UEtpqF5ZIBgPbhJsufJtgGvuDz
+ cgn5yafOmVNFtsLak5fePKM1iWcBUQKvhyUayBzpGMId3ntY/tOxHH/FughTuQoG5r5k181E2ku6O
+ hyf+yWEf7FSfsBNVCYH3PjubqrPZENFj/DpGra9vgP54T63rNpybC/E2LH70rfR7+9UI=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=bXYZgyRUkeW2u8b7qt0UoQCZTVfllwtBY4MWT7T+Qu4=; b=I
+ zXqAeKc95SbvI7z2UNr51IKFYelSF+L8LBPiXwnSnRgbyWlgkmP3cHNARgNDdO85Ls7rHbRKMf6Wc
+ nQi3i5CKWMlvcNwFei2ngUPI14RO2XzePqt3M96MWwiyaMHM/89St3WlKkE0SL8nFPS1l5gjJ4Poj
+ 7hIAjlD1msnXFvSE=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tGWxU-0004mx-El for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Nov 2024 05:20:56 +0000
+ id 1tGWxb-0004nb-BT for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 28 Nov 2024 05:21:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
- References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
- Content-Type:Content-ID:Content-Description;
- bh=FQBW9QgG4KLuphkQ4f5nlHL2gjcLmM+r5DMaibDcNhA=; b=jmxZI9T1pZoG4HG0nhepPiKTxv
- ksY/S87zjtYngqKQewOmYnHUdiJ0jUX8cEnHDUspNpyxXhkPqJrz2tCl6BvhhIyxuuhhkRu/HtzXO
- iknPOakFPpiYvxtyok1T3yAprpaxj88bkN+IM6/Bv2bGk1/k3p8eHJvibh+KmVnQsEWRhtyo1T3KO
- 1CkXn5M5SBNlp/fUQ5jD13L5WGQyRh6PCwPLFBGmj2Sm5ynGk1KM8fxIAdjxmTMvufRGmak8xTEJO
- s9XzBBPDzv1DfvQvYbjh3nsgIDc1PVXEt59ltFPd4qnL6IKYHmz4VOxRnGcOMAZOiFKht9BMef5Iw
- d9+3QhPA==;
+ Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:In-Reply-To:References;
+ bh=bXYZgyRUkeW2u8b7qt0UoQCZTVfllwtBY4MWT7T+Qu4=; b=Yj7w3S9JBsnQ1lxLp5io1lzIws
+ 5ZBxS/d3EI0Uk+UQU7jamijfIIwZ+RNoCprqGiNvaQTLKVPRJiRTda9FGnUyhjZFFQN3cnU79nstn
+ yJaDDk6nMGDtp8SwerNuSSqS2AgxGSwmsAWnLtVPGuB7d0z9hw9dLDEPxZdLlHg6VKT8J8luKIf6K
+ 7yjVgfN8bA5wW6QLY2hSkI1g/D0BzWv6xPHJK8zv5QFXOIaZG+FQL1ePlmfzozk0Zf9hvQDtUvzlG
+ HCdYz9HE3EBpjq9WPuLdKbYqdwDDj5lkhsFwi9sgub2BAlQAU9YfLq27usSgJIz9ZG2bntkCbNVgp
+ 7A+JwxBg==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat
- Linux)) id 1tGWbq-00000002DFb-1wXn; Thu, 28 Nov 2024 04:58:34 +0000
+ Linux)) id 1tGWbp-00000002DFQ-3a13; Thu, 28 Nov 2024 04:58:34 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Thu, 28 Nov 2024 04:58:18 +0000
-Message-ID: <20241128045828.527559-4-willy@infradead.org>
+Date: Thu, 28 Nov 2024 04:58:15 +0000
+Message-ID: <20241128045828.527559-1-willy@infradead.org>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241128045828.527559-1-willy@infradead.org>
-References: <20241128045828.527559-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tGWxU-0004mx-El
-Subject: [f2fs-dev] [PATCH 03/11] f2fs: Use a folio in
- f2fs_truncate_partial_cluster()
+X-Headers-End: 1tGWxb-0004nb-BT
+Subject: [f2fs-dev] [PATCH 00/11] f2fs folio patches
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,37 +79,34 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Convert the incoming page to a folio and use it throughout.
-Removes an access to page->index.
+This round of f2fs patches accomplishes two things:
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/f2fs/compress.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ - Removal of all references to page->index in f2fs.  I'm looking to
+   finish this conversion in the January merge window.
+ - Removal of all calls to page_file_mapping() and folio_file_mapping()
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index c91a2e4fe60c..494baa1e8bd3 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1242,13 +1242,14 @@ int f2fs_truncate_partial_cluster(struct inode *inode, u64 from, bool lock)
- 		int i;
- 
- 		for (i = cluster_size - 1; i >= 0; i--) {
--			loff_t start = rpages[i]->index << PAGE_SHIFT;
-+			struct folio *folio = page_folio(rpages[i]);
-+			loff_t start = folio->index << PAGE_SHIFT;
- 
- 			if (from <= start) {
--				zero_user_segment(rpages[i], 0, PAGE_SIZE);
-+				folio_zero_segment(folio, 0, folio_size(folio));
- 			} else {
--				zero_user_segment(rpages[i], from - start,
--								PAGE_SIZE);
-+				folio_zero_segment(folio, from - start,
-+						folio_size(folio));
- 				break;
- 			}
- 		}
+I have only compile-tested these patches.
+
+Matthew Wilcox (Oracle) (11):
+  f2fs: Use a folio in f2fs_all_cluster_page_ready()
+  f2fs: Use a folio in f2fs_compress_write_end()
+  f2fs: Use a folio in f2fs_truncate_partial_cluster()
+  f2fs: Use a folio in f2fs_write_compressed_pages()
+  f2fs: Convert submit tracepoints to take a folio
+  f2fs: Add F2FS_F_SB()
+  f2fs: Convert f2fs_finish_read_bio() to use folios
+  f2fs: Use a folio more in f2fs_submit_page_bio()
+  f2fs: Use a data folio in f2fs_submit_page_bio()
+  f2fs: Convert __read_io_type() to take a folio
+  f2fs: Remove calls to folio_file_mapping()
+
+ fs/f2fs/compress.c          | 28 ++++++++++++--------
+ fs/f2fs/data.c              | 53 +++++++++++++++----------------------
+ fs/f2fs/f2fs.h              |  7 ++++-
+ fs/f2fs/inline.c            |  2 +-
+ include/trace/events/f2fs.h | 39 +++++++++++++--------------
+ 5 files changed, 65 insertions(+), 64 deletions(-)
+
 -- 
 2.45.2
 
