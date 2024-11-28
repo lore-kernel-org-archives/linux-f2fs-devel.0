@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D7328D65553
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2024 05:19:56 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 76DDAD5E39F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2024 05:20:09 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tGWwW-00080C-GI;
-	Thu, 28 Nov 2024 05:19:56 +0000
+	id 1tGWwj-0006bD-OP;
+	Thu, 28 Nov 2024 05:20:09 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tGWwV-0007zy-Ev
+ (envelope-from <willy@infradead.org>) id 1tGWwi-0006b6-9v
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Nov 2024 05:19:55 +0000
+ Thu, 28 Nov 2024 05:20:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UZ7eeTM3jL+4AqsDmBAki6kUCktqtsseVplxJnGqLjk=; b=K9boW19rj1EjeumuEs5SIZmwy1
- Am/UzldIBZuhxVWqIehQRwcWolYN20IJ7sKx3xbnF+cPx/ZXjtCMddpSs50GJnItCseVymwh9E7vA
- hGNZuWZW1ZelVX8u9b+9STk2ceFFwrgrXnG8ksz39EgcQDjgAk5NSnqB++Zmv468IXoU=;
+ bh=CnXrj1DPaUR8ec+yHvj9N7vSnboioXigoKtrv3zbVEM=; b=VIyuB2dq+GUM3r0ytgPq1QJcKJ
+ ynwzYmp70myBRJc4krmVB2dJwZk7FKyIex8B0p3xOms2M8vV77AlKZ4JrGBN2I0A0S3R3LwfQprRV
+ u36n+fiQriRvfJIdENP9H3RTNpReD5NoMEw4I47WxDGWVnxgLLw0oWTHnUnh0UEWm34w=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,38 +33,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=UZ7eeTM3jL+4AqsDmBAki6kUCktqtsseVplxJnGqLjk=; b=OE0iNqZZ0DR/ZoITGn8ZXVXSQs
- /0/0U/SxnF9rZZiLIBvGNtMxPTbCh2rzjH6Vper4wT4yZzt/TM0mhxT+rz1g4VaosTISY0jKmv09a
- 1TC00FLu3Qmg9Iqgn0rais+5RcYsyor3h0de2aaLXKSDNUQtZxc36GFqz4I3Bd84kAJU=;
+ bh=CnXrj1DPaUR8ec+yHvj9N7vSnboioXigoKtrv3zbVEM=; b=ARvqOcEMSp1bFkJR7Jpbjzm+by
+ eHcEwS8RoJ1RGNQZlbDx5lwq/VomgcRDfczCx731YJ0K5SjKRX+SBo3XFGs5F+85Gxf7tOLpBKKfA
+ iZY6LU8wwScEHZQPcOKE68m1dZFvDP0GytfgJdo+mZkmMJY0c5dqwWNx7xzhlkiW2kHw=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tGWwU-0004gm-U7 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 Nov 2024 05:19:55 +0000
+ id 1tGWwg-0004hx-P3 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 28 Nov 2024 05:20:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=UZ7eeTM3jL+4AqsDmBAki6kUCktqtsseVplxJnGqLjk=; b=GwVx4uvcQTe/63mSWwPi3qgpEC
- N/zrf0+sR9dNI5fH74H8jMJpUXVsuPCZA6yrpFm+VsZH1QehXN5mUf+u5irX2ek85L6IHV5EpkmEh
- 6RggWWe2+T2ApmaVyTKkpzq2BiNx5HWGGYCD6XFPBSbAxU329OqwwyM96yiJe7a1i1qAOJSDIP08G
- cRqY06QkrNXe4Qdv6v7/HepoOZ1ygZ4yIxpxeS201jp1tu0yXZW85lXfAB+w8TO2Z2clJpX4L4MjC
- tHI/rJJdTbu1dyGqAuJ5V8uvC/CTOgRb18m8SzS0OGBb5M48pr1rvxROK3G5WLn/1Mt41cq6n6ffE
- 0qrFqSUA==;
+ bh=CnXrj1DPaUR8ec+yHvj9N7vSnboioXigoKtrv3zbVEM=; b=AUWf2kO1qq2yrDifmE2C7n/j0b
+ BzY8/qoymEO+HwTtyOHSl69WemX58iaF0plhy507TjQf46L8PwEmlwSSuuQftJb4E+PXgj4LM8/35
+ FYyJ4zjLAYsI+l82fgevcfDI9D9i45ACnlmlEyM03FDxr4LuJ49p2Biohc6bZ3abr9hY/uusnbX1u
+ sC+O+K3oiFBepjEEEjO9uT0HmmAU0xmcjpO1rbth9tqW5C7PPLAu5TvdhQoXmaH0WvZ/+GeZZsLFF
+ +oQEfGXwa9yOpnC64e8+3GmQ9+BNk7D5vnLkNrrYQPhagWBbtS4PZm8Eqn4Gdp9jR+pBIPaBqV366
+ JpD/ZoMQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat
- Linux)) id 1tGWbq-00000002DFS-0xCg; Thu, 28 Nov 2024 04:58:34 +0000
+ Linux)) id 1tGWbq-00000002DFt-3WJy; Thu, 28 Nov 2024 04:58:34 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Thu, 28 Nov 2024 04:58:16 +0000
-Message-ID: <20241128045828.527559-2-willy@infradead.org>
+Date: Thu, 28 Nov 2024 04:58:21 +0000
+Message-ID: <20241128045828.527559-7-willy@infradead.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241128045828.527559-1-willy@infradead.org>
 References: <20241128045828.527559-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tGWwU-0004gm-U7
-Subject: [f2fs-dev] [PATCH 01/11] f2fs: Use a folio in
- f2fs_all_cluster_page_ready()
+X-Headers-End: 1tGWwg-0004hx-P3
+Subject: [f2fs-dev] [PATCH 06/11] f2fs: Add F2FS_F_SB()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,41 +81,35 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Remove references to page->index and use folio_test_uptodate()
-instead of PageUptodate().
+This is the folio equivalent of F2FS_P_SB().  Removes a call to
+page_file_mapping() as we know folios seen by f2fs are never part of
+the swap cache.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/compress.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/f2fs/f2fs.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 7f26440e8595..9f8d0f4c8564 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -846,7 +846,7 @@ bool f2fs_cluster_can_merge_page(struct compress_ctx *cc, pgoff_t index)
- bool f2fs_all_cluster_page_ready(struct compress_ctx *cc, struct page **pages,
- 				int index, int nr_pages, bool uptodate)
- {
--	unsigned long pgidx = pages[index]->index;
-+	unsigned long pgidx = page_folio(pages[index])->index;
- 	int i = uptodate ? 0 : 1;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 6f2cbf4c5740..f523dd302bf6 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2003,9 +2003,14 @@ static inline struct f2fs_sb_info *F2FS_M_SB(struct address_space *mapping)
+ 	return F2FS_I_SB(mapping->host);
+ }
  
- 	/*
-@@ -860,9 +860,11 @@ bool f2fs_all_cluster_page_ready(struct compress_ctx *cc, struct page **pages,
- 		return false;
- 
- 	for (; i < cc->cluster_size; i++) {
--		if (pages[index + i]->index != pgidx + i)
-+		struct folio *folio = page_folio(pages[index + i]);
++static inline struct f2fs_sb_info *F2FS_F_SB(struct folio *folio)
++{
++	return F2FS_M_SB(folio->mapping);
++}
 +
-+		if (folio->index != pgidx + i)
- 			return false;
--		if (uptodate && !PageUptodate(pages[index + i]))
-+		if (uptodate && !folio_test_uptodate(folio))
- 			return false;
- 	}
+ static inline struct f2fs_sb_info *F2FS_P_SB(struct page *page)
+ {
+-	return F2FS_M_SB(page_file_mapping(page));
++	return F2FS_F_SB(page_folio(page));
+ }
  
+ static inline struct f2fs_super_block *F2FS_RAW_SUPER(struct f2fs_sb_info *sbi)
 -- 
 2.45.2
 
