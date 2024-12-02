@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2CACDD49797
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Dec 2024 01:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 165D6D49792
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Dec 2024 01:10:08 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tHuwz-0004yW-Di;
-	Mon, 02 Dec 2024 01:10:08 +0000
+	id 1tHuwy-0004xn-A2;
+	Mon, 02 Dec 2024 01:10:07 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1tHuwq-0004vi-Hj
+ (envelope-from <ebiggers@kernel.org>) id 1tHuwq-0004vR-Hi
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 02 Dec 2024 01:09:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XGcRzCrfNcjXr071QAMUMfztbHofCETxSPS/uaj2zh8=; b=bvd1PMWCbujSCvF8pXCOJl0DS6
- Vm1fyuDSkPmxyQVvliAoFka1z73wUvntmNX3CD/j2KsyrbWoTlJG75alYsfkqyYhDzSwsv9sNIq1b
- zapJFX2pBzB1mGL0QMspVYdR5OGQQqGk6Fp3s9Fe70lzF6DiSZKRi9MuPknctcgPFiFA=;
+ bh=KwoZH7ef6mygNjLtl37cENMcrZHETFivSc3KGqSPtC0=; b=RrPmwN43yUfWQzciVZygicFSJZ
+ K9uTftQaLSgLoSHqdUtAi6+T7dwVBpPU8jXtUiduNZUi3ZXRmvBBV6URPrnS/+kkEkGIh/eVlqMfS
+ BHewXoDacKWDXVOed+1/o8kOw2miAtkBK/R68fxjkVoNei66Sd1QmCBYVym1XENVKKiI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,38 +33,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=XGcRzCrfNcjXr071QAMUMfztbHofCETxSPS/uaj2zh8=; b=NFOJX9iImPAal8TPPX2bDPu1Ol
- UXcSzmraEjnqp5qjQAkua7SdTsLZ4IWXlV0+4ZG8kmkcz/Jd77jEzxEw3zE/kXii57tUWntdcqu1z
- xvD3+tEMSucSjM0lp8Mibk3weo2fhv53HHhOJns6eUQs5w+nEWFQW3Q6o0vT7NvqAUCg=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ bh=KwoZH7ef6mygNjLtl37cENMcrZHETFivSc3KGqSPtC0=; b=bIiKbqj3sRw/S8ba47gglkbipo
+ RBm+SnX5FJn8rkiicD3QialwW7dvIu9g2xeszQ0K36HzEBf5bannNK2OkXL8t+NxPZqHP+Xj8p8He
+ 4hvIwJ0Dyd1za3V0htAfgKjvxhG75W+ObOS7tlTj/i8Tkj8CParf3n3J4SuudZhSm8Ww=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tHuwg-0006MQ-Eb for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Dec 2024 01:09:51 +0000
+ id 1tHuwZ-0006Lq-TF for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Dec 2024 01:09:45 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 5CEFFA4014C;
- Mon,  2 Dec 2024 01:07:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AC18C4CEDA;
- Mon,  2 Dec 2024 01:09:39 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 63FD05C64FB;
+ Mon,  2 Dec 2024 01:08:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5B76C4CEDE;
+ Mon,  2 Dec 2024 01:09:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1733101779;
- bh=AmpykIxi5EHXCZZNUOYjzbitPtJlUSmwFTjzmFllNZE=;
+ s=k20201202; t=1733101773;
+ bh=3Vm4gL4AASed4s3Z8vLoz5YWsZOSfp+wZq827o/4JNA=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=K40uJjgdaSpQxJxjTf1Ty3dtyvE9ghcp5WA0mrzPbzI6dBtelzWFq9m4kTVTYkEag
- xqooP0n960OKVJDDNkhqcGKf1xSdwtx00AQvQi52CEOi+76exklxSjT1zIRyDRjMJ4
- xdUQnYKFZVqTy00scmIUmlzD+nPxKFubjD/a4OOTm9bes7qEpV0ZJ4CcMc2g0rP6cL
- ECr4tXwMcfuVHDeCV6ovAJOS46oKpbfiaTBiYXB48bjz6cVSmv5F1NwDDZ8nauGonF
- 6F90chiPDbnnhkW4zXZ2u/Wv5VBpn+2C4fXtZz/Ks+5ZYfx51AN/JYUQkXlqM/9gRn
- G5+jBDjogLuSw==
+ b=AIUotAPv56nWlIyh6eKk92j+SW8CwQx36XtKhHBwTX+4MrMaQ+0X70Uc0lM2g9YfK
+ uZFsPuor2FJn/lsXJD/1T5XLkSzI/M5eeNRGknBMND8MXMngF97bn0cHo6vQiIIcLh
+ Wj4qVdcF8VlTdlpjrnVTiCkoQFULEAWPVEDHwMVVnSNRvyShDwCfWx8nVSWkwq3RHS
+ W5FD9Ri13fjCOv8UjUNlZ9DCvw5U0UNriZ9G5pbEFjs0nsufFnGATk4gpr9bXUQTju
+ jA43a+txlXboRkoXnsSikUG/ND/4Flaz2OxJ1ee+joiX1PnAZFKe2rGQYyX4F0Jfw1
+ 6eB1L33jVFXew==
 To: linux-kernel@vger.kernel.org
-Date: Sun,  1 Dec 2024 17:08:43 -0800
-Message-ID: <20241202010844.144356-19-ebiggers@kernel.org>
+Date: Sun,  1 Dec 2024 17:08:32 -0800
+Message-ID: <20241202010844.144356-8-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241202010844.144356-1-ebiggers@kernel.org>
 References: <20241202010844.144356-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1tHuwg-0006MQ-Eb
-Subject: [f2fs-dev] [PATCH v4 18/19] f2fs: switch to using the crc32 library
+X-Headers-End: 1tHuwZ-0006Lq-TF
+Subject: [f2fs-dev] [PATCH v4 07/19] mips/crc32: expose CRC32 functions
+ through lib
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,153 +93,732 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Now that the crc32() library function takes advantage of
-architecture-specific optimizations, it is unnecessary to go through the
-crypto API.  Just use crc32().  This is much simpler, and it improves
-performance due to eliminating the crypto API overhead.
+Move the mips CRC32 assembly code into the lib directory and wire it up
+to the library interface.  This allows it to be used without going
+through the crypto API.  It remains usable via the crypto API too via
+the shash algorithms that use the library interface.  Thus all the
+arch-specific "shash" code becomes unnecessary and is removed.
+
+Note: to see the diff from arch/mips/crypto/crc32-mips.c to
+arch/mips/lib/crc32-mips.c, view this commit with 'git show -M10'.
 
 Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-Acked-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/Kconfig |  3 +--
- fs/f2fs/f2fs.h  | 20 +-------------------
- fs/f2fs/super.c | 15 ---------------
- 3 files changed, 2 insertions(+), 36 deletions(-)
+ arch/mips/Kconfig                     |   5 +-
+ arch/mips/configs/eyeq5_defconfig     |   1 -
+ arch/mips/configs/eyeq6_defconfig     |   1 -
+ arch/mips/configs/generic/32r6.config |   2 -
+ arch/mips/configs/generic/64r6.config |   1 -
+ arch/mips/crypto/Kconfig              |   9 -
+ arch/mips/crypto/Makefile             |   2 -
+ arch/mips/crypto/crc32-mips.c         | 354 --------------------------
+ arch/mips/lib/Makefile                |   2 +
+ arch/mips/lib/crc32-mips.c            | 192 ++++++++++++++
+ 10 files changed, 195 insertions(+), 374 deletions(-)
+ delete mode 100644 arch/mips/crypto/crc32-mips.c
+ create mode 100644 arch/mips/lib/crc32-mips.c
 
-diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
-index 68a1e23e1557..5916a02fb46d 100644
---- a/fs/f2fs/Kconfig
-+++ b/fs/f2fs/Kconfig
-@@ -2,12 +2,11 @@
- config F2FS_FS
- 	tristate "F2FS filesystem support"
- 	depends on BLOCK
- 	select BUFFER_HEAD
- 	select NLS
--	select CRYPTO
--	select CRYPTO_CRC32
-+	select CRC32
- 	select F2FS_FS_XATTR if FS_ENCRYPTION
- 	select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
- 	select FS_IOMAP
- 	select LZ4_COMPRESS if F2FS_FS_LZ4
- 	select LZ4_DECOMPRESS if F2FS_FS_LZ4
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6f2cbf4c5740..fd7e9cb6f893 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -22,11 +22,10 @@
- #include <linux/bio.h>
- #include <linux/blkdev.h>
- #include <linux/quotaops.h>
- #include <linux/part_stat.h>
- #include <linux/rw_hint.h>
--#include <crypto/hash.h>
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 467b10f4361a..a33f05e1ad6d 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -1993,15 +1993,15 @@ config CPU_MIPSR5
+ 	select MIPS_SPRAM
  
- #include <linux/fscrypt.h>
- #include <linux/fsverity.h>
+ config CPU_MIPSR6
+ 	bool
+ 	default y if CPU_MIPS32_R6 || CPU_MIPS64_R6
++	select ARCH_HAS_CRC32
+ 	select CPU_HAS_RIXI
+ 	select CPU_HAS_DIEI if !CPU_DIEI_BROKEN
+ 	select HAVE_ARCH_BITREVERSE
+ 	select MIPS_ASID_BITS_VARIABLE
+-	select MIPS_CRC_SUPPORT
+ 	select MIPS_SPRAM
  
- struct pagevec;
-@@ -1766,13 +1765,10 @@ struct f2fs_sb_info {
+ config TARGET_ISA_REV
+ 	int
+ 	default 1 if CPU_MIPSR1
+@@ -2473,13 +2473,10 @@ config MIPS_ASID_BITS
+ 	default 8
  
- 	/* For write statistics */
- 	u64 sectors_written_start;
- 	u64 kbytes_written;
+ config MIPS_ASID_BITS_VARIABLE
+ 	bool
  
--	/* Reference to checksum algorithm driver via cryptoapi */
--	struct crypto_shash *s_chksum_driver;
+-config MIPS_CRC_SUPPORT
+-	bool
 -
- 	/* Precomputed FS UUID checksum for seeding other checksums */
- 	__u32 s_chksum_seed;
- 
- 	struct workqueue_struct *post_read_wq;	/* post read workqueue */
- 
-@@ -1946,25 +1942,11 @@ static inline unsigned int f2fs_time_to_wait(struct f2fs_sb_info *sbi,
-  * Inline functions
-  */
- static inline u32 __f2fs_crc32(struct f2fs_sb_info *sbi, u32 crc,
- 			      const void *address, unsigned int length)
- {
--	struct {
--		struct shash_desc shash;
--		char ctx[4];
--	} desc;
--	int err;
+ # R4600 erratum.  Due to the lack of errata information the exact
+ # technical details aren't known.  I've experimentally found that disabling
+ # interrupts during indexed I-cache flushes seems to be sufficient to deal
+ # with the issue.
+ config WAR_R4600_V1_INDEX_ICACHEOP
+diff --git a/arch/mips/configs/eyeq5_defconfig b/arch/mips/configs/eyeq5_defconfig
+index ae9a09b16e40..ff7af5dc6d9d 100644
+--- a/arch/mips/configs/eyeq5_defconfig
++++ b/arch/mips/configs/eyeq5_defconfig
+@@ -97,11 +97,10 @@ CONFIG_NFS_FS=y
+ CONFIG_NFS_V3_ACL=y
+ CONFIG_NFS_V4=y
+ CONFIG_NFS_V4_1=y
+ CONFIG_NFS_V4_2=y
+ CONFIG_ROOT_NFS=y
+-CONFIG_CRYPTO_CRC32_MIPS=y
+ CONFIG_FRAME_WARN=1024
+ CONFIG_DEBUG_FS=y
+ # CONFIG_RCU_TRACE is not set
+ # CONFIG_FTRACE is not set
+ CONFIG_CMDLINE_BOOL=y
+diff --git a/arch/mips/configs/eyeq6_defconfig b/arch/mips/configs/eyeq6_defconfig
+index 6597d5e88b33..0afbb45a78e8 100644
+--- a/arch/mips/configs/eyeq6_defconfig
++++ b/arch/mips/configs/eyeq6_defconfig
+@@ -100,11 +100,10 @@ CONFIG_NFS_FS=y
+ CONFIG_NFS_V3_ACL=y
+ CONFIG_NFS_V4=y
+ CONFIG_NFS_V4_1=y
+ CONFIG_NFS_V4_2=y
+ CONFIG_ROOT_NFS=y
+-CONFIG_CRYPTO_CRC32_MIPS=y
+ CONFIG_FRAME_WARN=1024
+ CONFIG_DEBUG_FS=y
+ # CONFIG_RCU_TRACE is not set
+ # CONFIG_FTRACE is not set
+ CONFIG_CMDLINE_BOOL=y
+diff --git a/arch/mips/configs/generic/32r6.config b/arch/mips/configs/generic/32r6.config
+index 1a5d5ea4ab2b..ca606e71f4d0 100644
+--- a/arch/mips/configs/generic/32r6.config
++++ b/arch/mips/configs/generic/32r6.config
+@@ -1,4 +1,2 @@
+ CONFIG_CPU_MIPS32_R6=y
+ CONFIG_HIGHMEM=y
 -
--	BUG_ON(crypto_shash_descsize(sbi->s_chksum_driver) != sizeof(desc.ctx));
+-CONFIG_CRYPTO_CRC32_MIPS=y
+diff --git a/arch/mips/configs/generic/64r6.config b/arch/mips/configs/generic/64r6.config
+index 63b4e95f303d..23a300914957 100644
+--- a/arch/mips/configs/generic/64r6.config
++++ b/arch/mips/configs/generic/64r6.config
+@@ -2,7 +2,6 @@ CONFIG_CPU_MIPS64_R6=y
+ CONFIG_64BIT=y
+ CONFIG_MIPS32_O32=y
+ CONFIG_MIPS32_N32=y
+ 
+ CONFIG_CPU_HAS_MSA=y
+-CONFIG_CRYPTO_CRC32_MIPS=y
+ CONFIG_VIRTUALIZATION=y
+diff --git a/arch/mips/crypto/Kconfig b/arch/mips/crypto/Kconfig
+index 9003a5c1e879..7decd40c4e20 100644
+--- a/arch/mips/crypto/Kconfig
++++ b/arch/mips/crypto/Kconfig
+@@ -1,18 +1,9 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ menu "Accelerated Cryptographic Algorithms for CPU (mips)"
+ 
+-config CRYPTO_CRC32_MIPS
+-	tristate "CRC32c and CRC32"
+-	depends on MIPS_CRC_SUPPORT
+-	select CRYPTO_HASH
+-	help
+-	  CRC32c and CRC32 CRC algorithms
 -
--	desc.shash.tfm = sbi->s_chksum_driver;
--	*(u32 *)desc.ctx = crc;
+-	  Architecture: mips
 -
--	err = crypto_shash_update(&desc.shash, address, length);
--	BUG_ON(err);
+ config CRYPTO_POLY1305_MIPS
+ 	tristate "Hash functions: Poly1305"
+ 	depends on MIPS
+ 	select CRYPTO_ARCH_HAVE_LIB_POLY1305
+ 	help
+diff --git a/arch/mips/crypto/Makefile b/arch/mips/crypto/Makefile
+index 5e4105cccf9f..fddc88281412 100644
+--- a/arch/mips/crypto/Makefile
++++ b/arch/mips/crypto/Makefile
+@@ -1,12 +1,10 @@
+ # SPDX-License-Identifier: GPL-2.0
+ #
+ # Makefile for MIPS crypto files..
+ #
+ 
+-obj-$(CONFIG_CRYPTO_CRC32_MIPS) += crc32-mips.o
 -
--	return *(u32 *)desc.ctx;
-+	return crc32(crc, address, length);
- }
+ obj-$(CONFIG_CRYPTO_CHACHA_MIPS) += chacha-mips.o
+ chacha-mips-y := chacha-core.o chacha-glue.o
+ AFLAGS_chacha-core.o += -O2 # needed to fill branch delay slots
  
- static inline u32 f2fs_crc32(struct f2fs_sb_info *sbi, const void *address,
- 			   unsigned int length)
- {
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index fc7d463dee15..19b67828ae32 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1692,12 +1692,10 @@ static void f2fs_put_super(struct super_block *sb)
- 
- 	f2fs_destroy_post_read_wq(sbi);
- 
- 	kvfree(sbi->ckpt);
- 
--	if (sbi->s_chksum_driver)
--		crypto_free_shash(sbi->s_chksum_driver);
- 	kfree(sbi->raw_super);
- 
- 	f2fs_destroy_page_array_cache(sbi);
- 	f2fs_destroy_xattr_caches(sbi);
- #ifdef CONFIG_QUOTA
-@@ -4464,19 +4462,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		INIT_LIST_HEAD(&sbi->inode_list[i]);
- 		spin_lock_init(&sbi->inode_lock[i]);
- 	}
- 	mutex_init(&sbi->flush_lock);
- 
--	/* Load the checksum driver */
--	sbi->s_chksum_driver = crypto_alloc_shash("crc32", 0, 0);
--	if (IS_ERR(sbi->s_chksum_driver)) {
--		f2fs_err(sbi, "Cannot load crc32 driver.");
--		err = PTR_ERR(sbi->s_chksum_driver);
--		sbi->s_chksum_driver = NULL;
--		goto free_sbi;
+ obj-$(CONFIG_CRYPTO_POLY1305_MIPS) += poly1305-mips.o
+diff --git a/arch/mips/crypto/crc32-mips.c b/arch/mips/crypto/crc32-mips.c
+deleted file mode 100644
+index 90eacf00cfc3..000000000000
+--- a/arch/mips/crypto/crc32-mips.c
++++ /dev/null
+@@ -1,354 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * crc32-mips.c - CRC32 and CRC32C using optional MIPSr6 instructions
+- *
+- * Module based on arm64/crypto/crc32-arm.c
+- *
+- * Copyright (C) 2014 Linaro Ltd <yazen.ghannam@linaro.org>
+- * Copyright (C) 2018 MIPS Tech, LLC
+- */
+-
+-#include <linux/cpufeature.h>
+-#include <linux/init.h>
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/string.h>
+-#include <asm/mipsregs.h>
+-#include <linux/unaligned.h>
+-
+-#include <crypto/internal/hash.h>
+-
+-enum crc_op_size {
+-	b, h, w, d,
+-};
+-
+-enum crc_type {
+-	crc32,
+-	crc32c,
+-};
+-
+-#ifndef TOOLCHAIN_SUPPORTS_CRC
+-#define _ASM_SET_CRC(OP, SZ, TYPE)					  \
+-_ASM_MACRO_3R(OP, rt, rs, rt2,						  \
+-	".ifnc	\\rt, \\rt2\n\t"					  \
+-	".error	\"invalid operands \\\"" #OP " \\rt,\\rs,\\rt2\\\"\"\n\t" \
+-	".endif\n\t"							  \
+-	_ASM_INSN_IF_MIPS(0x7c00000f | (__rt << 16) | (__rs << 21) |	  \
+-			  ((SZ) <<  6) | ((TYPE) << 8))			  \
+-	_ASM_INSN32_IF_MM(0x00000030 | (__rs << 16) | (__rt << 21) |	  \
+-			  ((SZ) << 14) | ((TYPE) << 3)))
+-#define _ASM_UNSET_CRC(op, SZ, TYPE) ".purgem " #op "\n\t"
+-#else /* !TOOLCHAIN_SUPPORTS_CRC */
+-#define _ASM_SET_CRC(op, SZ, TYPE) ".set\tcrc\n\t"
+-#define _ASM_UNSET_CRC(op, SZ, TYPE)
+-#endif
+-
+-#define __CRC32(crc, value, op, SZ, TYPE)		\
+-do {							\
+-	__asm__ __volatile__(				\
+-		".set	push\n\t"			\
+-		_ASM_SET_CRC(op, SZ, TYPE)		\
+-		#op "	%0, %1, %0\n\t"			\
+-		_ASM_UNSET_CRC(op, SZ, TYPE)		\
+-		".set	pop"				\
+-		: "+r" (crc)				\
+-		: "r" (value));				\
+-} while (0)
+-
+-#define _CRC32_crc32b(crc, value)	__CRC32(crc, value, crc32b, 0, 0)
+-#define _CRC32_crc32h(crc, value)	__CRC32(crc, value, crc32h, 1, 0)
+-#define _CRC32_crc32w(crc, value)	__CRC32(crc, value, crc32w, 2, 0)
+-#define _CRC32_crc32d(crc, value)	__CRC32(crc, value, crc32d, 3, 0)
+-#define _CRC32_crc32cb(crc, value)	__CRC32(crc, value, crc32cb, 0, 1)
+-#define _CRC32_crc32ch(crc, value)	__CRC32(crc, value, crc32ch, 1, 1)
+-#define _CRC32_crc32cw(crc, value)	__CRC32(crc, value, crc32cw, 2, 1)
+-#define _CRC32_crc32cd(crc, value)	__CRC32(crc, value, crc32cd, 3, 1)
+-
+-#define _CRC32(crc, value, size, op) \
+-	_CRC32_##op##size(crc, value)
+-
+-#define CRC32(crc, value, size) \
+-	_CRC32(crc, value, size, crc32)
+-
+-#define CRC32C(crc, value, size) \
+-	_CRC32(crc, value, size, crc32c)
+-
+-static u32 crc32_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
+-{
+-	u32 crc = crc_;
+-
+-	if (IS_ENABLED(CONFIG_64BIT)) {
+-		for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
+-			u64 value = get_unaligned_le64(p);
+-
+-			CRC32(crc, value, d);
+-		}
+-
+-		if (len & sizeof(u32)) {
+-			u32 value = get_unaligned_le32(p);
+-
+-			CRC32(crc, value, w);
+-			p += sizeof(u32);
+-		}
+-	} else {
+-		for (; len >= sizeof(u32); len -= sizeof(u32)) {
+-			u32 value = get_unaligned_le32(p);
+-
+-			CRC32(crc, value, w);
+-			p += sizeof(u32);
+-		}
 -	}
 -
- 	/* set a block size */
- 	if (unlikely(!sb_set_blocksize(sb, F2FS_BLKSIZE))) {
- 		f2fs_err(sbi, "unable to set blocksize");
- 		goto free_sbi;
- 	}
-@@ -4917,12 +4906,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	fscrypt_free_dummy_policy(&F2FS_OPTION(sbi).dummy_enc_policy);
- 	kvfree(options);
- free_sb_buf:
- 	kfree(raw_super);
- free_sbi:
--	if (sbi->s_chksum_driver)
--		crypto_free_shash(sbi->s_chksum_driver);
- 	kfree(sbi);
- 	sb->s_fs_info = NULL;
- 
- 	/* give only one another chance */
- 	if (retry_cnt > 0 && skip_recovery) {
-@@ -5125,7 +5112,5 @@ module_init(init_f2fs_fs)
- module_exit(exit_f2fs_fs)
- 
- MODULE_AUTHOR("Samsung Electronics's Praesto Team");
- MODULE_DESCRIPTION("Flash Friendly File System");
- MODULE_LICENSE("GPL");
--MODULE_SOFTDEP("pre: crc32");
+-	if (len & sizeof(u16)) {
+-		u16 value = get_unaligned_le16(p);
 -
+-		CRC32(crc, value, h);
+-		p += sizeof(u16);
+-	}
+-
+-	if (len & sizeof(u8)) {
+-		u8 value = *p++;
+-
+-		CRC32(crc, value, b);
+-	}
+-
+-	return crc;
+-}
+-
+-static u32 crc32c_mips_le_hw(u32 crc_, const u8 *p, unsigned int len)
+-{
+-	u32 crc = crc_;
+-
+-	if (IS_ENABLED(CONFIG_64BIT)) {
+-		for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
+-			u64 value = get_unaligned_le64(p);
+-
+-			CRC32C(crc, value, d);
+-		}
+-
+-		if (len & sizeof(u32)) {
+-			u32 value = get_unaligned_le32(p);
+-
+-			CRC32C(crc, value, w);
+-			p += sizeof(u32);
+-		}
+-	} else {
+-		for (; len >= sizeof(u32); len -= sizeof(u32)) {
+-			u32 value = get_unaligned_le32(p);
+-
+-			CRC32C(crc, value, w);
+-			p += sizeof(u32);
+-		}
+-	}
+-
+-	if (len & sizeof(u16)) {
+-		u16 value = get_unaligned_le16(p);
+-
+-		CRC32C(crc, value, h);
+-		p += sizeof(u16);
+-	}
+-
+-	if (len & sizeof(u8)) {
+-		u8 value = *p++;
+-
+-		CRC32C(crc, value, b);
+-	}
+-	return crc;
+-}
+-
+-#define CHKSUM_BLOCK_SIZE	1
+-#define CHKSUM_DIGEST_SIZE	4
+-
+-struct chksum_ctx {
+-	u32 key;
+-};
+-
+-struct chksum_desc_ctx {
+-	u32 crc;
+-};
+-
+-static int chksum_init(struct shash_desc *desc)
+-{
+-	struct chksum_ctx *mctx = crypto_shash_ctx(desc->tfm);
+-	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+-
+-	ctx->crc = mctx->key;
+-
+-	return 0;
+-}
+-
+-/*
+- * Setting the seed allows arbitrary accumulators and flexible XOR policy
+- * If your algorithm starts with ~0, then XOR with ~0 before you set
+- * the seed.
+- */
+-static int chksum_setkey(struct crypto_shash *tfm, const u8 *key,
+-			 unsigned int keylen)
+-{
+-	struct chksum_ctx *mctx = crypto_shash_ctx(tfm);
+-
+-	if (keylen != sizeof(mctx->key))
+-		return -EINVAL;
+-	mctx->key = get_unaligned_le32(key);
+-	return 0;
+-}
+-
+-static int chksum_update(struct shash_desc *desc, const u8 *data,
+-			 unsigned int length)
+-{
+-	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+-
+-	ctx->crc = crc32_mips_le_hw(ctx->crc, data, length);
+-	return 0;
+-}
+-
+-static int chksumc_update(struct shash_desc *desc, const u8 *data,
+-			 unsigned int length)
+-{
+-	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+-
+-	ctx->crc = crc32c_mips_le_hw(ctx->crc, data, length);
+-	return 0;
+-}
+-
+-static int chksum_final(struct shash_desc *desc, u8 *out)
+-{
+-	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+-
+-	put_unaligned_le32(ctx->crc, out);
+-	return 0;
+-}
+-
+-static int chksumc_final(struct shash_desc *desc, u8 *out)
+-{
+-	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+-
+-	put_unaligned_le32(~ctx->crc, out);
+-	return 0;
+-}
+-
+-static int __chksum_finup(u32 crc, const u8 *data, unsigned int len, u8 *out)
+-{
+-	put_unaligned_le32(crc32_mips_le_hw(crc, data, len), out);
+-	return 0;
+-}
+-
+-static int __chksumc_finup(u32 crc, const u8 *data, unsigned int len, u8 *out)
+-{
+-	put_unaligned_le32(~crc32c_mips_le_hw(crc, data, len), out);
+-	return 0;
+-}
+-
+-static int chksum_finup(struct shash_desc *desc, const u8 *data,
+-			unsigned int len, u8 *out)
+-{
+-	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+-
+-	return __chksum_finup(ctx->crc, data, len, out);
+-}
+-
+-static int chksumc_finup(struct shash_desc *desc, const u8 *data,
+-			unsigned int len, u8 *out)
+-{
+-	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+-
+-	return __chksumc_finup(ctx->crc, data, len, out);
+-}
+-
+-static int chksum_digest(struct shash_desc *desc, const u8 *data,
+-			 unsigned int length, u8 *out)
+-{
+-	struct chksum_ctx *mctx = crypto_shash_ctx(desc->tfm);
+-
+-	return __chksum_finup(mctx->key, data, length, out);
+-}
+-
+-static int chksumc_digest(struct shash_desc *desc, const u8 *data,
+-			 unsigned int length, u8 *out)
+-{
+-	struct chksum_ctx *mctx = crypto_shash_ctx(desc->tfm);
+-
+-	return __chksumc_finup(mctx->key, data, length, out);
+-}
+-
+-static int chksum_cra_init(struct crypto_tfm *tfm)
+-{
+-	struct chksum_ctx *mctx = crypto_tfm_ctx(tfm);
+-
+-	mctx->key = ~0;
+-	return 0;
+-}
+-
+-static struct shash_alg crc32_alg = {
+-	.digestsize		=	CHKSUM_DIGEST_SIZE,
+-	.setkey			=	chksum_setkey,
+-	.init			=	chksum_init,
+-	.update			=	chksum_update,
+-	.final			=	chksum_final,
+-	.finup			=	chksum_finup,
+-	.digest			=	chksum_digest,
+-	.descsize		=	sizeof(struct chksum_desc_ctx),
+-	.base			=	{
+-		.cra_name		=	"crc32",
+-		.cra_driver_name	=	"crc32-mips-hw",
+-		.cra_priority		=	300,
+-		.cra_flags		=	CRYPTO_ALG_OPTIONAL_KEY,
+-		.cra_blocksize		=	CHKSUM_BLOCK_SIZE,
+-		.cra_ctxsize		=	sizeof(struct chksum_ctx),
+-		.cra_module		=	THIS_MODULE,
+-		.cra_init		=	chksum_cra_init,
+-	}
+-};
+-
+-static struct shash_alg crc32c_alg = {
+-	.digestsize		=	CHKSUM_DIGEST_SIZE,
+-	.setkey			=	chksum_setkey,
+-	.init			=	chksum_init,
+-	.update			=	chksumc_update,
+-	.final			=	chksumc_final,
+-	.finup			=	chksumc_finup,
+-	.digest			=	chksumc_digest,
+-	.descsize		=	sizeof(struct chksum_desc_ctx),
+-	.base			=	{
+-		.cra_name		=	"crc32c",
+-		.cra_driver_name	=	"crc32c-mips-hw",
+-		.cra_priority		=	300,
+-		.cra_flags		=	CRYPTO_ALG_OPTIONAL_KEY,
+-		.cra_blocksize		=	CHKSUM_BLOCK_SIZE,
+-		.cra_ctxsize		=	sizeof(struct chksum_ctx),
+-		.cra_module		=	THIS_MODULE,
+-		.cra_init		=	chksum_cra_init,
+-	}
+-};
+-
+-static int __init crc32_mod_init(void)
+-{
+-	int err;
+-
+-	err = crypto_register_shash(&crc32_alg);
+-
+-	if (err)
+-		return err;
+-
+-	err = crypto_register_shash(&crc32c_alg);
+-
+-	if (err) {
+-		crypto_unregister_shash(&crc32_alg);
+-		return err;
+-	}
+-
+-	return 0;
+-}
+-
+-static void __exit crc32_mod_exit(void)
+-{
+-	crypto_unregister_shash(&crc32_alg);
+-	crypto_unregister_shash(&crc32c_alg);
+-}
+-
+-MODULE_AUTHOR("Marcin Nowakowski <marcin.nowakowski@mips.com");
+-MODULE_DESCRIPTION("CRC32 and CRC32C using optional MIPS instructions");
+-MODULE_LICENSE("GPL v2");
+-
+-module_cpu_feature_match(MIPS_CRC32, crc32_mod_init);
+-module_exit(crc32_mod_exit);
+diff --git a/arch/mips/lib/Makefile b/arch/mips/lib/Makefile
+index 5d5b993cbc2b..9c024e6d5e54 100644
+--- a/arch/mips/lib/Makefile
++++ b/arch/mips/lib/Makefile
+@@ -12,7 +12,9 @@ obj-$(CONFIG_PCI)	+= iomap-pci.o
+ lib-$(CONFIG_GENERIC_CSUM)	:= $(filter-out csum_partial.o, $(lib-y))
+ 
+ obj-$(CONFIG_CPU_GENERIC_DUMP_TLB) += dump_tlb.o
+ obj-$(CONFIG_CPU_R3000)		+= r3k_dump_tlb.o
+ 
++obj-$(CONFIG_CRC32_ARCH)	+= crc32-mips.o
++
+ # libgcc-style stuff needed in the kernel
+ obj-y += bswapsi.o bswapdi.o multi3.o
+diff --git a/arch/mips/lib/crc32-mips.c b/arch/mips/lib/crc32-mips.c
+new file mode 100644
+index 000000000000..083e5d693a16
+--- /dev/null
++++ b/arch/mips/lib/crc32-mips.c
+@@ -0,0 +1,192 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * crc32-mips.c - CRC32 and CRC32C using optional MIPSr6 instructions
++ *
++ * Module based on arm64/crypto/crc32-arm.c
++ *
++ * Copyright (C) 2014 Linaro Ltd <yazen.ghannam@linaro.org>
++ * Copyright (C) 2018 MIPS Tech, LLC
++ */
++
++#include <linux/cpufeature.h>
++#include <linux/crc32.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <asm/mipsregs.h>
++#include <linux/unaligned.h>
++
++enum crc_op_size {
++	b, h, w, d,
++};
++
++enum crc_type {
++	crc32,
++	crc32c,
++};
++
++#ifndef TOOLCHAIN_SUPPORTS_CRC
++#define _ASM_SET_CRC(OP, SZ, TYPE)					  \
++_ASM_MACRO_3R(OP, rt, rs, rt2,						  \
++	".ifnc	\\rt, \\rt2\n\t"					  \
++	".error	\"invalid operands \\\"" #OP " \\rt,\\rs,\\rt2\\\"\"\n\t" \
++	".endif\n\t"							  \
++	_ASM_INSN_IF_MIPS(0x7c00000f | (__rt << 16) | (__rs << 21) |	  \
++			  ((SZ) <<  6) | ((TYPE) << 8))			  \
++	_ASM_INSN32_IF_MM(0x00000030 | (__rs << 16) | (__rt << 21) |	  \
++			  ((SZ) << 14) | ((TYPE) << 3)))
++#define _ASM_UNSET_CRC(op, SZ, TYPE) ".purgem " #op "\n\t"
++#else /* !TOOLCHAIN_SUPPORTS_CRC */
++#define _ASM_SET_CRC(op, SZ, TYPE) ".set\tcrc\n\t"
++#define _ASM_UNSET_CRC(op, SZ, TYPE)
++#endif
++
++#define __CRC32(crc, value, op, SZ, TYPE)		\
++do {							\
++	__asm__ __volatile__(				\
++		".set	push\n\t"			\
++		_ASM_SET_CRC(op, SZ, TYPE)		\
++		#op "	%0, %1, %0\n\t"			\
++		_ASM_UNSET_CRC(op, SZ, TYPE)		\
++		".set	pop"				\
++		: "+r" (crc)				\
++		: "r" (value));				\
++} while (0)
++
++#define _CRC32_crc32b(crc, value)	__CRC32(crc, value, crc32b, 0, 0)
++#define _CRC32_crc32h(crc, value)	__CRC32(crc, value, crc32h, 1, 0)
++#define _CRC32_crc32w(crc, value)	__CRC32(crc, value, crc32w, 2, 0)
++#define _CRC32_crc32d(crc, value)	__CRC32(crc, value, crc32d, 3, 0)
++#define _CRC32_crc32cb(crc, value)	__CRC32(crc, value, crc32cb, 0, 1)
++#define _CRC32_crc32ch(crc, value)	__CRC32(crc, value, crc32ch, 1, 1)
++#define _CRC32_crc32cw(crc, value)	__CRC32(crc, value, crc32cw, 2, 1)
++#define _CRC32_crc32cd(crc, value)	__CRC32(crc, value, crc32cd, 3, 1)
++
++#define _CRC32(crc, value, size, op) \
++	_CRC32_##op##size(crc, value)
++
++#define CRC32(crc, value, size) \
++	_CRC32(crc, value, size, crc32)
++
++#define CRC32C(crc, value, size) \
++	_CRC32(crc, value, size, crc32c)
++
++static DEFINE_STATIC_KEY_FALSE(have_crc32);
++
++u32 crc32_le_arch(u32 crc, const u8 *p, size_t len)
++{
++	if (!static_branch_likely(&have_crc32))
++		return crc32_le_base(crc, p, len);
++
++	if (IS_ENABLED(CONFIG_64BIT)) {
++		for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
++			u64 value = get_unaligned_le64(p);
++
++			CRC32(crc, value, d);
++		}
++
++		if (len & sizeof(u32)) {
++			u32 value = get_unaligned_le32(p);
++
++			CRC32(crc, value, w);
++			p += sizeof(u32);
++		}
++	} else {
++		for (; len >= sizeof(u32); len -= sizeof(u32)) {
++			u32 value = get_unaligned_le32(p);
++
++			CRC32(crc, value, w);
++			p += sizeof(u32);
++		}
++	}
++
++	if (len & sizeof(u16)) {
++		u16 value = get_unaligned_le16(p);
++
++		CRC32(crc, value, h);
++		p += sizeof(u16);
++	}
++
++	if (len & sizeof(u8)) {
++		u8 value = *p++;
++
++		CRC32(crc, value, b);
++	}
++
++	return crc;
++}
++EXPORT_SYMBOL(crc32_le_arch);
++
++u32 crc32c_le_arch(u32 crc, const u8 *p, size_t len)
++{
++	if (!static_branch_likely(&have_crc32))
++		return crc32c_le_base(crc, p, len);
++
++	if (IS_ENABLED(CONFIG_64BIT)) {
++		for (; len >= sizeof(u64); p += sizeof(u64), len -= sizeof(u64)) {
++			u64 value = get_unaligned_le64(p);
++
++			CRC32C(crc, value, d);
++		}
++
++		if (len & sizeof(u32)) {
++			u32 value = get_unaligned_le32(p);
++
++			CRC32C(crc, value, w);
++			p += sizeof(u32);
++		}
++	} else {
++		for (; len >= sizeof(u32); len -= sizeof(u32)) {
++			u32 value = get_unaligned_le32(p);
++
++			CRC32C(crc, value, w);
++			p += sizeof(u32);
++		}
++	}
++
++	if (len & sizeof(u16)) {
++		u16 value = get_unaligned_le16(p);
++
++		CRC32C(crc, value, h);
++		p += sizeof(u16);
++	}
++
++	if (len & sizeof(u8)) {
++		u8 value = *p++;
++
++		CRC32C(crc, value, b);
++	}
++	return crc;
++}
++EXPORT_SYMBOL(crc32c_le_arch);
++
++u32 crc32_be_arch(u32 crc, const u8 *p, size_t len)
++{
++	return crc32_be_base(crc, p, len);
++}
++EXPORT_SYMBOL(crc32_be_arch);
++
++static int __init crc32_mips_init(void)
++{
++	if (cpu_have_feature(cpu_feature(MIPS_CRC32)))
++		static_branch_enable(&have_crc32);
++	return 0;
++}
++arch_initcall(crc32_mips_init);
++
++static void __exit crc32_mips_exit(void)
++{
++}
++module_exit(crc32_mips_exit);
++
++u32 crc32_optimizations(void)
++{
++	if (static_key_enabled(&have_crc32))
++		return CRC32_LE_OPTIMIZATION | CRC32C_OPTIMIZATION;
++	return 0;
++}
++EXPORT_SYMBOL(crc32_optimizations);
++
++MODULE_AUTHOR("Marcin Nowakowski <marcin.nowakowski@mips.com");
++MODULE_DESCRIPTION("CRC32 and CRC32C using optional MIPS instructions");
++MODULE_LICENSE("GPL v2");
 -- 
 2.47.1
 
