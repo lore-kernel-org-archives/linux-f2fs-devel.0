@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 58BA5D49792
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AE879D49797
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Dec 2024 01:09:42 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tHuwY-0004v8-Ic;
-	Mon, 02 Dec 2024 01:09:41 +0000
+	id 1tHuwX-0003Yc-KK;
+	Mon, 02 Dec 2024 01:09:42 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1tHuwU-0004uz-OV
+ (envelope-from <ebiggers@kernel.org>) id 1tHuwX-0003YV-7h
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Dec 2024 01:09:38 +0000
+ Mon, 02 Dec 2024 01:09:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ao8tflQWLTU71VDlUOi8PQg09SXJJ1Vx4hZRzxHp6T0=; b=gBSxIRM+YpJkynsZ0tiVCHBMX/
- A20h8AxstzcOLX8RAOI/LZEAaa2BCWKHms2AGAH7+KAohthNh+tJfprfOhtckUAeMqL2A+Flr1Jsa
- po+QXdkFd16q+pVdtGpuPGVcrkjrKXgLehDOjf5IuudJxk8zVJHjva5nToeLTNTnLk8I=;
+ bh=wEBK/fagk0qoCIkYDm5bxamBl2lkvfsXC3rZ6fHqRYs=; b=VAX1K8HPmp7DRIYJiC/I3Pg2CV
+ QkeAG1m0hnt/t8071sNnlQw3Fb4Veg776R/OGEEqosoGnjYGMHU2w9ocdV8dnGtMXjqup4JxYyfOr
+ XfUbJB/fOMS7X+QVN3/aRlLqx+D8XLKjYAEM0SkZuDkGmmjl9FzJmvRcY/jmgYhJSEdc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,39 +33,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ao8tflQWLTU71VDlUOi8PQg09SXJJ1Vx4hZRzxHp6T0=; b=ErsVJ8ZX1T6Za+XP+g1vNlHchl
- /XOL1WhxxPC2OXP+E0uGjzeAQwCouSZm64YRGntB2OccCv1MTM8nvrXSeRbmXWDRELx5akAMks/rI
- OwWROViL1+Xp3/jKUN4rJ2V00Vcfqddq91u+SqP3SP/9ZWlLeL2PqzE3ZhmIzGq6n2ng=;
+ bh=wEBK/fagk0qoCIkYDm5bxamBl2lkvfsXC3rZ6fHqRYs=; b=BPWv9d7Lf6I04hEK8DrYs8Wsd6
+ 7y/QpjDiRlL7XkECfqFdak4kFh0zs1RlBz+KxJDZa4J98JhGEvRfoNgIM2mkH/E3gjyjfBeDfYwfT
+ FnqE/rDnkon247cQKuyAHxWax9j5r9iLEVuzu/lbMAAz2hQ5tISM4W04nFmtBQKesR+Q=;
 Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tHuwT-0006LA-Cr for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Dec 2024 01:09:38 +0000
+ id 1tHuwX-0006LL-42 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Dec 2024 01:09:41 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 3D673A40C19;
- Mon,  2 Dec 2024 01:07:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15699C4CECF;
- Mon,  2 Dec 2024 01:09:31 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id BA66FA40C11;
+ Mon,  2 Dec 2024 01:07:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C9FCC4CEDB;
+ Mon,  2 Dec 2024 01:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1733101771;
- bh=DVqvOO2dJ7B48PDR0q3vBCSu5cpkFSQ2aUVnhv21TuY=;
+ s=k20201202; t=1733101769;
+ bh=XJXyC/yKrtf0cLSncQGVE0nBCNxCm4pnDJzkPxa1c0Q=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=dGM9dNbDkh4kjxMlwvZZjcvmXWpivnf2zwumF4df0QwxFTWShfeo1b1l4dM+4cMC0
- 0O4fJ09RULF4/7nmCnxfh2b/ZGewuvBOcKYIM5WPwmv5/gXQswd1kfZkisK7vbq3rW
- 7qbZkRhEISePyJuoNrM4aAQp8ldMOUF4B9CBktrLsShhKV9/k+kgzzRmNUJv/cAeTz
- 7j3jVn9pZEbDxLj1PXTuXJodfecl7S6TkuMuWc4zXFPFXTET+zaWRzMa1xEnOAvrjv
- mLJOJYbwEio7E3J8J0Aj1rk9I4xquqen8dZa2LAnP6fynOpUK9ooR7gX7coIDkXlKy
- ziqjQEXHR/6Bw==
+ b=XxPCGhEmpdyeNVnHGt3GgFgOcPCXZxE2kuvYX4ud1TqfMLMu4sDiD0hJWPXiw4koy
+ IpcUpPa78d4mlPODJXyz5cD16bl6m01Jh1uCPRzwIHAj/hbnmGFNhmLjkrJj3+LQwY
+ 3DYoCgPoOiPRPQKwi2NDdfLeRFYCA5gChP5Dr55+9up6IihP1Ij/knWu57VXeFri/w
+ ZfbEOZuSpLWXGGWjxYhfYiFlRZDtliva/NuNnNRIf1DzhOQukwMzICDpCU4eGvyfrC
+ WaWwsSf+gr2NC8a90JZmccy5weLHlTkOHWZRURdxM5sgx5pLD+yGYStW4yPdOW3or3
+ +a76tKyJ//laA==
 To: linux-kernel@vger.kernel.org
-Date: Sun,  1 Dec 2024 17:08:29 -0800
-Message-ID: <20241202010844.144356-5-ebiggers@kernel.org>
+Date: Sun,  1 Dec 2024 17:08:26 -0800
+Message-ID: <20241202010844.144356-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241202010844.144356-1-ebiggers@kernel.org>
 References: <20241202010844.144356-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1tHuwT-0006LA-Cr
-Subject: [f2fs-dev] [PATCH v4 04/19] crypto: crc32 - don't unnecessarily
- register arch algorithms
+X-Headers-End: 1tHuwX-0006LL-42
+Subject: [f2fs-dev] [PATCH v4 01/19] lib/crc32: drop leading underscores
+ from __crc32c_le_base
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,84 +93,140 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Instead of registering the crc32-$arch and crc32c-$arch algorithms if
-the arch-specific code was built, only register them when that code was
-built *and* is not falling back to the base implementation at runtime.
+Remove the leading underscores from __crc32c_le_base().
 
-This avoids confusing users like btrfs which checks the shash driver
-name to determine whether it is crc32c-generic.
-
-(It would also make sense to change btrfs to test the crc32_optimization
-flags itself, so that it doesn't have to use the weird hack of parsing
-the driver name.  This change still makes sense either way though.)
+This is in preparation for adding crc32c_le_arch() and eventually
+renaming __crc32c_le() to crc32c_le().
 
 Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- crypto/crc32_generic.c  | 8 ++++++--
- crypto/crc32c_generic.c | 8 ++++++--
- 2 files changed, 12 insertions(+), 4 deletions(-)
+ arch/arm64/lib/crc32-glue.c | 2 +-
+ arch/riscv/lib/crc32.c      | 2 +-
+ crypto/crc32c_generic.c     | 8 ++++----
+ include/linux/crc32.h       | 2 +-
+ lib/crc32.c                 | 4 ++--
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/crypto/crc32_generic.c b/crypto/crc32_generic.c
-index cc064ea8240e..783a30b27398 100644
---- a/crypto/crc32_generic.c
-+++ b/crypto/crc32_generic.c
-@@ -155,19 +155,23 @@ static struct shash_alg algs[] = {{
- 	.base.cra_ctxsize	= sizeof(u32),
- 	.base.cra_module	= THIS_MODULE,
- 	.base.cra_init		= crc32_cra_init,
- }};
- 
-+static int num_algs;
-+
- static int __init crc32_mod_init(void)
- {
- 	/* register the arch flavor only if it differs from the generic one */
--	return crypto_register_shashes(algs, 1 + IS_ENABLED(CONFIG_CRC32_ARCH));
-+	num_algs = 1 + ((crc32_optimizations() & CRC32_LE_OPTIMIZATION) != 0);
-+
-+	return crypto_register_shashes(algs, num_algs);
+diff --git a/arch/arm64/lib/crc32-glue.c b/arch/arm64/lib/crc32-glue.c
+index 295ae3e6b997..ad015223d15d 100644
+--- a/arch/arm64/lib/crc32-glue.c
++++ b/arch/arm64/lib/crc32-glue.c
+@@ -42,11 +42,11 @@ u32 __pure crc32_le(u32 crc, unsigned char const *p, size_t len)
  }
  
- static void __exit crc32_mod_fini(void)
+ u32 __pure __crc32c_le(u32 crc, unsigned char const *p, size_t len)
  {
--	crypto_unregister_shashes(algs, 1 + IS_ENABLED(CONFIG_CRC32_ARCH));
-+	crypto_unregister_shashes(algs, num_algs);
+ 	if (!alternative_has_cap_likely(ARM64_HAS_CRC32))
+-		return __crc32c_le_base(crc, p, len);
++		return crc32c_le_base(crc, p, len);
+ 
+ 	if (len >= min_len && cpu_have_named_feature(PMULL) && crypto_simd_usable()) {
+ 		kernel_neon_begin();
+ 		crc = crc32c_le_arm64_4way(crc, p, len);
+ 		kernel_neon_end();
+diff --git a/arch/riscv/lib/crc32.c b/arch/riscv/lib/crc32.c
+index d7dc599af3ef..333fb7af1192 100644
+--- a/arch/riscv/lib/crc32.c
++++ b/arch/riscv/lib/crc32.c
+@@ -224,11 +224,11 @@ u32 __pure crc32_le(u32 crc, unsigned char const *p, size_t len)
  }
  
- subsys_initcall(crc32_mod_init);
- module_exit(crc32_mod_fini);
+ u32 __pure __crc32c_le(u32 crc, unsigned char const *p, size_t len)
+ {
+ 	return crc32_le_generic(crc, p, len, CRC32C_POLY_LE,
+-				CRC32C_POLY_QT_LE, __crc32c_le_base);
++				CRC32C_POLY_QT_LE, crc32c_le_base);
+ }
  
+ static inline u32 crc32_be_unaligned(u32 crc, unsigned char const *p,
+ 				     size_t len)
+ {
 diff --git a/crypto/crc32c_generic.c b/crypto/crc32c_generic.c
-index 04b03d825cf4..985da981d6e2 100644
+index 7c2357c30fdf..635599b255ec 100644
 --- a/crypto/crc32c_generic.c
 +++ b/crypto/crc32c_generic.c
-@@ -195,19 +195,23 @@ static struct shash_alg algs[] = {{
- 	.base.cra_ctxsize	= sizeof(struct chksum_ctx),
- 	.base.cra_module	= THIS_MODULE,
- 	.base.cra_init		= crc32c_cra_init,
+@@ -83,11 +83,11 @@ static int chksum_setkey(struct crypto_shash *tfm, const u8 *key,
+ static int chksum_update(struct shash_desc *desc, const u8 *data,
+ 			 unsigned int length)
+ {
+ 	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
+ 
+-	ctx->crc = __crc32c_le_base(ctx->crc, data, length);
++	ctx->crc = crc32c_le_base(ctx->crc, data, length);
+ 	return 0;
+ }
+ 
+ static int chksum_update_arch(struct shash_desc *desc, const u8 *data,
+ 			      unsigned int length)
+@@ -106,11 +106,11 @@ static int chksum_final(struct shash_desc *desc, u8 *out)
+ 	return 0;
+ }
+ 
+ static int __chksum_finup(u32 *crcp, const u8 *data, unsigned int len, u8 *out)
+ {
+-	put_unaligned_le32(~__crc32c_le_base(*crcp, data, len), out);
++	put_unaligned_le32(~crc32c_le_base(*crcp, data, len), out);
+ 	return 0;
+ }
+ 
+ static int __chksum_finup_arch(u32 *crcp, const u8 *data, unsigned int len,
+ 			       u8 *out)
+@@ -198,16 +198,16 @@ static struct shash_alg algs[] = {{
  }};
  
-+static int num_algs;
-+
  static int __init crc32c_mod_init(void)
  {
  	/* register the arch flavor only if it differs from the generic one */
--	return crypto_register_shashes(algs, 1 + IS_ENABLED(CONFIG_CRC32_ARCH));
-+	num_algs = 1 + ((crc32_optimizations() & CRC32C_OPTIMIZATION) != 0);
-+
-+	return crypto_register_shashes(algs, num_algs);
+-	return crypto_register_shashes(algs, 1 + (&__crc32c_le != &__crc32c_le_base));
++	return crypto_register_shashes(algs, 1 + (&__crc32c_le != &crc32c_le_base));
  }
  
  static void __exit crc32c_mod_fini(void)
  {
--	crypto_unregister_shashes(algs, 1 + IS_ENABLED(CONFIG_CRC32_ARCH));
-+	crypto_unregister_shashes(algs, num_algs);
+-	crypto_unregister_shashes(algs, 1 + (&__crc32c_le != &__crc32c_le_base));
++	crypto_unregister_shashes(algs, 1 + (&__crc32c_le != &crc32c_le_base));
  }
  
  subsys_initcall(crc32c_mod_init);
  module_exit(crc32c_mod_fini);
  
+diff --git a/include/linux/crc32.h b/include/linux/crc32.h
+index 87f788c0d607..5b07fc9081c4 100644
+--- a/include/linux/crc32.h
++++ b/include/linux/crc32.h
+@@ -37,11 +37,11 @@ static inline u32 crc32_le_combine(u32 crc1, u32 crc2, size_t len2)
+ {
+ 	return crc32_le_shift(crc1, len2) ^ crc2;
+ }
+ 
+ u32 __pure __crc32c_le(u32 crc, unsigned char const *p, size_t len);
+-u32 __pure __crc32c_le_base(u32 crc, unsigned char const *p, size_t len);
++u32 __pure crc32c_le_base(u32 crc, unsigned char const *p, size_t len);
+ 
+ /**
+  * __crc32c_le_combine - Combine two crc32c check values into one. For two
+  * 			 sequences of bytes, seq1 and seq2 with lengths len1
+  * 			 and len2, __crc32c_le() check values were calculated
+diff --git a/lib/crc32.c b/lib/crc32.c
+index ff587fee3893..c67059b0082b 100644
+--- a/lib/crc32.c
++++ b/lib/crc32.c
+@@ -205,12 +205,12 @@ EXPORT_SYMBOL(crc32_le);
+ EXPORT_SYMBOL(__crc32c_le);
+ 
+ u32 __pure crc32_le_base(u32, unsigned char const *, size_t) __alias(crc32_le);
+ EXPORT_SYMBOL(crc32_le_base);
+ 
+-u32 __pure __crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
+-EXPORT_SYMBOL(__crc32c_le_base);
++u32 __pure crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
++EXPORT_SYMBOL(crc32c_le_base);
+ 
+ u32 __pure crc32_be_base(u32, unsigned char const *, size_t) __alias(crc32_be);
+ 
+ /*
+  * This multiplies the polynomials x and y modulo the given modulus.
 -- 
 2.47.1
 
