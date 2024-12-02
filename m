@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3926AD49795
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Dec 2024 01:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 34BB3D49796
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Dec 2024 01:10:04 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tHuws-0008Vt-S7;
-	Mon, 02 Dec 2024 01:10:02 +0000
+	id 1tHuwt-0008WQ-QW;
+	Mon, 02 Dec 2024 01:10:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1tHuwb-0008U8-3C
+ (envelope-from <ebiggers@kernel.org>) id 1tHuwf-0008Ua-9Q
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Dec 2024 01:09:45 +0000
+ Mon, 02 Dec 2024 01:09:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Z01YEiWIkwjc8x9L8kcQOwem9ICeBreFJg860AfXFAM=; b=DU8xIbMP54tJMVPRPlVpyiAmkb
- zJN4SOhIzkCYSD0wiwQ6eXN5+NWXPbZnHJkhnERjGjEqUBAhvyvgbVTHUldaN2yDoIuZSnhgatjUJ
- FrQ10Ogd6Tn3x7bYiD62XLPJmBe6bogtwu/VXOg9Ff9kMVIa3BgUgfEhYhfK1iG+60Pk=;
+ bh=mIyT7//tyx7Rmb39BdKglp5hQkpRFJ5UhIVKEfF6HYM=; b=MO5kuJ5Ez14PvqzQWAPwUxsVNt
+ u1Oijs5B7fVTekgYeca81X6lUVucBtmy7gT7VbPkG5u5gny+26ijYXPR7RcjeqSE3nirlvCa5jpgQ
+ NrbR0L1tv3SZKVsk/J05GPU08dvnmvcrnRN6n1DTa1l6z0MhaQvSGO8u5lVE9vuF2St0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,39 +33,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Z01YEiWIkwjc8x9L8kcQOwem9ICeBreFJg860AfXFAM=; b=dFJlwyXwmF7+2fjlFMXZmqJaCH
- FgNB+xxTLIUuCe26GeF+t4IhpbWbrCuLL1eRh38rKs1yPt8BBiVFv1zYKNCVTxT78tRW5bmhFS5af
- Mc3MbagiQ40sKdG9Rg7Q1VXeGprIrCF7p61eKCrCnuyj8LqkkU4SCgSwCIIbsPUwd0VA=;
+ bh=mIyT7//tyx7Rmb39BdKglp5hQkpRFJ5UhIVKEfF6HYM=; b=HwmKpsqrpGtoP4vcB6MoWbUVVg
+ OZpPPSSoJestg3Cd65N7SSB4DrgrdzGpz+6EoVzTjU+VOsL0JfcvdtTgt5SVpqr2xqLn7xveqos0T
+ D/9XDr5JrOpAlk3/O1qbFjNBBj20tkWn2lNd+YD9NgizeOUFNFNjhIIBNdbUaMr0s5+Y=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tHuwZ-0006Ln-Az for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Dec 2024 01:09:45 +0000
+ id 1tHuwe-0006MC-6P for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Dec 2024 01:09:49 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id D523B5C64FD;
- Mon,  2 Dec 2024 01:08:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 368BCC4AF0C;
- Mon,  2 Dec 2024 01:09:32 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 712875C64F3;
+ Mon,  2 Dec 2024 01:08:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 953C3C4CEDC;
+ Mon,  2 Dec 2024 01:09:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1733101772;
- bh=9MRg3arg8xIHbSe8jMOPlp96zI/Is3Kr6q4YPWWNe6s=;
+ s=k20201202; t=1733101776;
+ bh=D5F39fdjHTU1OH+zbBo5HFMFL77Dsh+itq6bCXmnXn4=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Ykg5K20GPTLQ34m1z2AHDnv/sHdzZFQH3t9msYffOLYSfdDX+IQSk4iDptd4nXBN4
- 1cbAqlI4aZoRmAwdnrNtF+OBRAkCBniW019oqXhtKyBjGcQUfZaX8DDkGg9DMNWNaS
- FvgFQXG52QpV8dkgebCWlO+0mTY1CbNklmsV4fni3ur1z0/0lLayisDaGQOPY7vbSA
- BLZNs+jK8se3Kw8Qk9QZwUM8ef0PXOCQ6vFiaipduqqFlnDsQp0Xw+iHuzhv0/rvZG
- D2Xz6EW36tEYxYFBe9GjS6HJz1W18HQE766KGHt7/I/nmw6/FnVHboHDajFHAE0g8K
- xuw+T+AcTWiYw==
+ b=IpToFnxatNenxNvZYgw2OuCId18e6Y6+xfdiuPdJ5yR8tuaRgVfviyzfPg6DEAE9E
+ lXM4S3rG5wRUNMqblMuDCcFMLMu8OiNwH748nMPeRdENwfDWE3le2yrTX8+W4HmN8J
+ RkxBTXESKbRZ1F5KK2emdi3QKF5eqHz86F/YHTBNzUyXLp0ngfOB/emAvH1h1LUSDZ
+ pljK7ybrftKO6V/w5an6vOcRCn35Gz3zAglqWPj6/sXiW6TMMS5VKbn8hyCu7tFswt
+ UClhowHHnUU8HIhKDPNtkqrzRyHprfH4EZ1HyhrW+v56phV8Se44ZWDLGZG0UF5Ol8
+ jBqtuR08BbrlA==
 To: linux-kernel@vger.kernel.org
-Date: Sun,  1 Dec 2024 17:08:31 -0800
-Message-ID: <20241202010844.144356-7-ebiggers@kernel.org>
+Date: Sun,  1 Dec 2024 17:08:37 -0800
+Message-ID: <20241202010844.144356-13-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241202010844.144356-1-ebiggers@kernel.org>
 References: <20241202010844.144356-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1tHuwZ-0006Ln-Az
-Subject: [f2fs-dev] [PATCH v4 06/19] loongarch/crc32: expose CRC32 functions
- through lib
+X-Headers-End: 1tHuwe-0006MC-6P
+Subject: [f2fs-dev] [PATCH v4 12/19] x86/crc32: update prototype for
+ crc32_pclmul_le_16()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,563 +82,103 @@ From: Eric Biggers via Linux-f2fs-devel
 Reply-To: Eric Biggers <ebiggers@kernel.org>
 Cc: linux-arch@vger.kernel.org, linux-s390@vger.kernel.org,
  linux-scsi@vger.kernel.org, x86@kernel.org, linux-mips@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, WangYuli <wangyuli@uniontech.com>,
- linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
- sparclinux@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-ext4@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- Ard Biesheuvel <ardb@kernel.org>, linux-arm-kernel@lists.infradead.org
+ linux-f2fs-devel@lists.sourceforge.net, linux-crypto@vger.kernel.org,
+ loongarch@lists.linux.dev, sparclinux@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-ext4@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, Ard Biesheuvel <ardb@kernel.org>,
+ linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Move the loongarch CRC32 assembly code into the lib directory and wire
-it up to the library interface.  This allows it to be used without going
-through the crypto API.  It remains usable via the crypto API too via
-the shash algorithms that use the library interface.  Thus all the
-arch-specific "shash" code becomes unnecessary and is removed.
+- Change the len parameter from unsigned int to size_t, so that the
+  library function which takes a size_t can safely use this code.
 
-Note: to see the diff from arch/loongarch/crypto/crc32-loongarch.c to
-arch/loongarch/lib/crc32-loongarch.c, view this commit with
-'git show -M10'.
+- Move the crc parameter to the front, as this is the usual convention.
 
 Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-Reviewed-by: WangYuli <wangyuli@uniontech.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- arch/loongarch/Kconfig                     |   1 +
- arch/loongarch/configs/loongson3_defconfig |   1 -
- arch/loongarch/crypto/Kconfig              |   9 -
- arch/loongarch/crypto/Makefile             |   2 -
- arch/loongarch/crypto/crc32-loongarch.c    | 300 ---------------------
- arch/loongarch/lib/Makefile                |   2 +
- arch/loongarch/lib/crc32-loongarch.c       | 135 ++++++++++
- 7 files changed, 138 insertions(+), 312 deletions(-)
- delete mode 100644 arch/loongarch/crypto/crc32-loongarch.c
- create mode 100644 arch/loongarch/lib/crc32-loongarch.c
+ arch/x86/crypto/crc32-pclmul_asm.S  | 19 +++++++++----------
+ arch/x86/crypto/crc32-pclmul_glue.c |  4 ++--
+ 2 files changed, 11 insertions(+), 12 deletions(-)
 
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index dae3a9104ca6..1c4d13aa677e 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -13,10 +13,11 @@ config LOONGARCH
- 	select ARCH_ENABLE_MEMORY_HOTPLUG
- 	select ARCH_ENABLE_MEMORY_HOTREMOVE
- 	select ARCH_ENABLE_THP_MIGRATION if TRANSPARENT_HUGEPAGE
- 	select ARCH_HAS_ACPI_TABLE_UPGRADE	if ACPI
- 	select ARCH_HAS_CPU_FINALIZE_INIT
-+	select ARCH_HAS_CRC32
- 	select ARCH_HAS_CURRENT_STACK_POINTER
- 	select ARCH_HAS_DEBUG_VM_PGTABLE
- 	select ARCH_HAS_FAST_MULTIPLIER
- 	select ARCH_HAS_FORTIFY_SOURCE
- 	select ARCH_HAS_KCOV
-diff --git a/arch/loongarch/configs/loongson3_defconfig b/arch/loongarch/configs/loongson3_defconfig
-index 4dffc90192f7..2052452e241a 100644
---- a/arch/loongarch/configs/loongson3_defconfig
-+++ b/arch/loongarch/configs/loongson3_defconfig
-@@ -1038,11 +1038,10 @@ CONFIG_CRYPTO_LZ4=m
- CONFIG_CRYPTO_LZ4HC=m
- CONFIG_CRYPTO_USER_API_HASH=m
- CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_CRYPTO_USER_API_AEAD=m
--CONFIG_CRYPTO_CRC32_LOONGARCH=m
- CONFIG_CRYPTO_DEV_VIRTIO=m
- CONFIG_DMA_CMA=y
- CONFIG_DMA_NUMA_CMA=y
- CONFIG_CMA_SIZE_MBYTES=0
- CONFIG_PRINTK_TIME=y
-diff --git a/arch/loongarch/crypto/Kconfig b/arch/loongarch/crypto/Kconfig
-index 200a6e8b43b1..a0270b3e5b30 100644
---- a/arch/loongarch/crypto/Kconfig
-+++ b/arch/loongarch/crypto/Kconfig
-@@ -1,14 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/arch/x86/crypto/crc32-pclmul_asm.S b/arch/x86/crypto/crc32-pclmul_asm.S
+index 5d31137e2c7d..f9637789cac1 100644
+--- a/arch/x86/crypto/crc32-pclmul_asm.S
++++ b/arch/x86/crypto/crc32-pclmul_asm.S
+@@ -56,30 +56,29 @@
+ 	.octa 0x00000001F701164100000001DB710641
  
- menu "Accelerated Cryptographic Algorithms for CPU (loongarch)"
+ #define CONSTANT %xmm0
  
--config CRYPTO_CRC32_LOONGARCH
--	tristate "CRC32c and CRC32"
--	select CRC32
--	select CRYPTO_HASH
--	help
--	  CRC32c and CRC32 CRC algorithms
--
--	  Architecture: LoongArch with CRC32 instructions
--
- endmenu
-diff --git a/arch/loongarch/crypto/Makefile b/arch/loongarch/crypto/Makefile
-index d22613d27ce9..ba83755dde2b 100644
---- a/arch/loongarch/crypto/Makefile
-+++ b/arch/loongarch/crypto/Makefile
-@@ -1,6 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
- #
- # Makefile for LoongArch crypto files..
- #
--
--obj-$(CONFIG_CRYPTO_CRC32_LOONGARCH) += crc32-loongarch.o
-diff --git a/arch/loongarch/crypto/crc32-loongarch.c b/arch/loongarch/crypto/crc32-loongarch.c
-deleted file mode 100644
-index b7d9782827f5..000000000000
---- a/arch/loongarch/crypto/crc32-loongarch.c
-+++ /dev/null
-@@ -1,300 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * crc32.c - CRC32 and CRC32C using LoongArch crc* instructions
-- *
-- * Module based on mips/crypto/crc32-mips.c
-- *
-- * Copyright (C) 2014 Linaro Ltd <yazen.ghannam@linaro.org>
-- * Copyright (C) 2018 MIPS Tech, LLC
-- * Copyright (C) 2020-2023 Loongson Technology Corporation Limited
-- */
--
--#include <linux/module.h>
--#include <crypto/internal/hash.h>
--
--#include <asm/cpu-features.h>
--#include <linux/unaligned.h>
--
--#define _CRC32(crc, value, size, type)			\
--do {							\
--	__asm__ __volatile__(				\
--		#type ".w." #size ".w" " %0, %1, %0\n\t"\
--		: "+r" (crc)				\
--		: "r" (value)				\
--		: "memory");				\
--} while (0)
--
--#define CRC32(crc, value, size)		_CRC32(crc, value, size, crc)
--#define CRC32C(crc, value, size)	_CRC32(crc, value, size, crcc)
--
--static u32 crc32_loongarch_hw(u32 crc_, const u8 *p, unsigned int len)
--{
--	u32 crc = crc_;
--
--	while (len >= sizeof(u64)) {
--		u64 value = get_unaligned_le64(p);
--
--		CRC32(crc, value, d);
--		p += sizeof(u64);
--		len -= sizeof(u64);
--	}
--
--	if (len & sizeof(u32)) {
--		u32 value = get_unaligned_le32(p);
--
--		CRC32(crc, value, w);
--		p += sizeof(u32);
--	}
--
--	if (len & sizeof(u16)) {
--		u16 value = get_unaligned_le16(p);
--
--		CRC32(crc, value, h);
--		p += sizeof(u16);
--	}
--
--	if (len & sizeof(u8)) {
--		u8 value = *p++;
--
--		CRC32(crc, value, b);
--	}
--
--	return crc;
--}
--
--static u32 crc32c_loongarch_hw(u32 crc_, const u8 *p, unsigned int len)
--{
--	u32 crc = crc_;
--
--	while (len >= sizeof(u64)) {
--		u64 value = get_unaligned_le64(p);
--
--		CRC32C(crc, value, d);
--		p += sizeof(u64);
--		len -= sizeof(u64);
--	}
--
--	if (len & sizeof(u32)) {
--		u32 value = get_unaligned_le32(p);
--
--		CRC32C(crc, value, w);
--		p += sizeof(u32);
--	}
--
--	if (len & sizeof(u16)) {
--		u16 value = get_unaligned_le16(p);
--
--		CRC32C(crc, value, h);
--		p += sizeof(u16);
--	}
--
--	if (len & sizeof(u8)) {
--		u8 value = *p++;
--
--		CRC32C(crc, value, b);
--	}
--
--	return crc;
--}
--
--#define CHKSUM_BLOCK_SIZE	1
--#define CHKSUM_DIGEST_SIZE	4
--
--struct chksum_ctx {
--	u32 key;
--};
--
--struct chksum_desc_ctx {
--	u32 crc;
--};
--
--static int chksum_init(struct shash_desc *desc)
--{
--	struct chksum_ctx *mctx = crypto_shash_ctx(desc->tfm);
--	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
--
--	ctx->crc = mctx->key;
--
--	return 0;
--}
--
--/*
-- * Setting the seed allows arbitrary accumulators and flexible XOR policy
-- * If your algorithm starts with ~0, then XOR with ~0 before you set the seed.
-- */
--static int chksum_setkey(struct crypto_shash *tfm, const u8 *key, unsigned int keylen)
--{
--	struct chksum_ctx *mctx = crypto_shash_ctx(tfm);
--
--	if (keylen != sizeof(mctx->key))
--		return -EINVAL;
--
--	mctx->key = get_unaligned_le32(key);
--
--	return 0;
--}
--
--static int chksum_update(struct shash_desc *desc, const u8 *data, unsigned int length)
--{
--	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
--
--	ctx->crc = crc32_loongarch_hw(ctx->crc, data, length);
--	return 0;
--}
--
--static int chksumc_update(struct shash_desc *desc, const u8 *data, unsigned int length)
--{
--	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
--
--	ctx->crc = crc32c_loongarch_hw(ctx->crc, data, length);
--	return 0;
--}
--
--static int chksum_final(struct shash_desc *desc, u8 *out)
--{
--	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
--
--	put_unaligned_le32(ctx->crc, out);
--	return 0;
--}
--
--static int chksumc_final(struct shash_desc *desc, u8 *out)
--{
--	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
--
--	put_unaligned_le32(~ctx->crc, out);
--	return 0;
--}
--
--static int __chksum_finup(u32 crc, const u8 *data, unsigned int len, u8 *out)
--{
--	put_unaligned_le32(crc32_loongarch_hw(crc, data, len), out);
--	return 0;
--}
--
--static int __chksumc_finup(u32 crc, const u8 *data, unsigned int len, u8 *out)
--{
--	put_unaligned_le32(~crc32c_loongarch_hw(crc, data, len), out);
--	return 0;
--}
--
--static int chksum_finup(struct shash_desc *desc, const u8 *data, unsigned int len, u8 *out)
--{
--	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
--
--	return __chksum_finup(ctx->crc, data, len, out);
--}
--
--static int chksumc_finup(struct shash_desc *desc, const u8 *data, unsigned int len, u8 *out)
--{
--	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
--
--	return __chksumc_finup(ctx->crc, data, len, out);
--}
--
--static int chksum_digest(struct shash_desc *desc, const u8 *data, unsigned int length, u8 *out)
--{
--	struct chksum_ctx *mctx = crypto_shash_ctx(desc->tfm);
--
--	return __chksum_finup(mctx->key, data, length, out);
--}
--
--static int chksumc_digest(struct shash_desc *desc, const u8 *data, unsigned int length, u8 *out)
--{
--	struct chksum_ctx *mctx = crypto_shash_ctx(desc->tfm);
--
--	return __chksumc_finup(mctx->key, data, length, out);
--}
--
--static int chksum_cra_init(struct crypto_tfm *tfm)
--{
--	struct chksum_ctx *mctx = crypto_tfm_ctx(tfm);
--
--	mctx->key = 0;
--	return 0;
--}
--
--static int chksumc_cra_init(struct crypto_tfm *tfm)
--{
--	struct chksum_ctx *mctx = crypto_tfm_ctx(tfm);
--
--	mctx->key = ~0;
--	return 0;
--}
--
--static struct shash_alg crc32_alg = {
--	.digestsize		=	CHKSUM_DIGEST_SIZE,
--	.setkey			=	chksum_setkey,
--	.init			=	chksum_init,
--	.update			=	chksum_update,
--	.final			=	chksum_final,
--	.finup			=	chksum_finup,
--	.digest			=	chksum_digest,
--	.descsize		=	sizeof(struct chksum_desc_ctx),
--	.base			=	{
--		.cra_name		=	"crc32",
--		.cra_driver_name	=	"crc32-loongarch",
--		.cra_priority		=	300,
--		.cra_flags		=	CRYPTO_ALG_OPTIONAL_KEY,
--		.cra_blocksize		=	CHKSUM_BLOCK_SIZE,
--		.cra_ctxsize		=	sizeof(struct chksum_ctx),
--		.cra_module		=	THIS_MODULE,
--		.cra_init		=	chksum_cra_init,
--	}
--};
--
--static struct shash_alg crc32c_alg = {
--	.digestsize		=	CHKSUM_DIGEST_SIZE,
--	.setkey			=	chksum_setkey,
--	.init			=	chksum_init,
--	.update			=	chksumc_update,
--	.final			=	chksumc_final,
--	.finup			=	chksumc_finup,
--	.digest			=	chksumc_digest,
--	.descsize		=	sizeof(struct chksum_desc_ctx),
--	.base			=	{
--		.cra_name		=	"crc32c",
--		.cra_driver_name	=	"crc32c-loongarch",
--		.cra_priority		=	300,
--		.cra_flags		=	CRYPTO_ALG_OPTIONAL_KEY,
--		.cra_blocksize		=	CHKSUM_BLOCK_SIZE,
--		.cra_ctxsize		=	sizeof(struct chksum_ctx),
--		.cra_module		=	THIS_MODULE,
--		.cra_init		=	chksumc_cra_init,
--	}
--};
--
--static int __init crc32_mod_init(void)
--{
--	int err;
--
--	if (!cpu_has(CPU_FEATURE_CRC32))
--		return 0;
--
--	err = crypto_register_shash(&crc32_alg);
--	if (err)
--		return err;
--
--	err = crypto_register_shash(&crc32c_alg);
--	if (err)
--		return err;
--
--	return 0;
--}
--
--static void __exit crc32_mod_exit(void)
--{
--	if (!cpu_has(CPU_FEATURE_CRC32))
--		return;
--
--	crypto_unregister_shash(&crc32_alg);
--	crypto_unregister_shash(&crc32c_alg);
--}
--
--module_init(crc32_mod_init);
--module_exit(crc32_mod_exit);
--
--MODULE_AUTHOR("Min Zhou <zhoumin@loongson.cn>");
--MODULE_AUTHOR("Huacai Chen <chenhuacai@loongson.cn>");
--MODULE_DESCRIPTION("CRC32 and CRC32C using LoongArch crc* instructions");
--MODULE_LICENSE("GPL v2");
-diff --git a/arch/loongarch/lib/Makefile b/arch/loongarch/lib/Makefile
-index ccea3bbd4353..fae77809048b 100644
---- a/arch/loongarch/lib/Makefile
-+++ b/arch/loongarch/lib/Makefile
-@@ -9,5 +9,7 @@ lib-y	+= delay.o memset.o memcpy.o memmove.o \
- obj-$(CONFIG_ARCH_SUPPORTS_INT128) += tishift.o
+ #ifdef __x86_64__
+-#define BUF     %rdi
+-#define LEN     %rsi
+-#define CRC     %edx
++#define CRC     %edi
++#define BUF     %rsi
++#define LEN     %rdx
+ #else
+-#define BUF     %eax
+-#define LEN     %edx
+-#define CRC     %ecx
++#define CRC     %eax
++#define BUF     %edx
++#define LEN     %ecx
+ #endif
  
- obj-$(CONFIG_CPU_HAS_LSX) += xor_simd.o xor_simd_glue.o
  
- obj-$(CONFIG_FUNCTION_ERROR_INJECTION) += error-inject.o
-+
-+obj-$(CONFIG_CRC32_ARCH) += crc32-loongarch.o
-diff --git a/arch/loongarch/lib/crc32-loongarch.c b/arch/loongarch/lib/crc32-loongarch.c
-new file mode 100644
-index 000000000000..8af8113ecd9d
---- /dev/null
-+++ b/arch/loongarch/lib/crc32-loongarch.c
-@@ -0,0 +1,135 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * CRC32 and CRC32C using LoongArch crc* instructions
-+ *
-+ * Module based on mips/crypto/crc32-mips.c
-+ *
-+ * Copyright (C) 2014 Linaro Ltd <yazen.ghannam@linaro.org>
-+ * Copyright (C) 2018 MIPS Tech, LLC
-+ * Copyright (C) 2020-2023 Loongson Technology Corporation Limited
-+ */
-+
-+#include <asm/cpu-features.h>
-+#include <linux/crc32.h>
-+#include <linux/module.h>
-+#include <linux/unaligned.h>
-+
-+#define _CRC32(crc, value, size, type)			\
-+do {							\
-+	__asm__ __volatile__(				\
-+		#type ".w." #size ".w" " %0, %1, %0\n\t"\
-+		: "+r" (crc)				\
-+		: "r" (value)				\
-+		: "memory");				\
-+} while (0)
-+
-+#define CRC32(crc, value, size)		_CRC32(crc, value, size, crc)
-+#define CRC32C(crc, value, size)	_CRC32(crc, value, size, crcc)
-+
-+static DEFINE_STATIC_KEY_FALSE(have_crc32);
-+
-+u32 crc32_le_arch(u32 crc, const u8 *p, size_t len)
-+{
-+	if (!static_branch_likely(&have_crc32))
-+		return crc32_le_base(crc, p, len);
-+
-+	while (len >= sizeof(u64)) {
-+		u64 value = get_unaligned_le64(p);
-+
-+		CRC32(crc, value, d);
-+		p += sizeof(u64);
-+		len -= sizeof(u64);
-+	}
-+
-+	if (len & sizeof(u32)) {
-+		u32 value = get_unaligned_le32(p);
-+
-+		CRC32(crc, value, w);
-+		p += sizeof(u32);
-+	}
-+
-+	if (len & sizeof(u16)) {
-+		u16 value = get_unaligned_le16(p);
-+
-+		CRC32(crc, value, h);
-+		p += sizeof(u16);
-+	}
-+
-+	if (len & sizeof(u8)) {
-+		u8 value = *p++;
-+
-+		CRC32(crc, value, b);
-+	}
-+
-+	return crc;
-+}
-+EXPORT_SYMBOL(crc32_le_arch);
-+
-+u32 crc32c_le_arch(u32 crc, const u8 *p, size_t len)
-+{
-+	if (!static_branch_likely(&have_crc32))
-+		return crc32c_le_base(crc, p, len);
-+
-+	while (len >= sizeof(u64)) {
-+		u64 value = get_unaligned_le64(p);
-+
-+		CRC32C(crc, value, d);
-+		p += sizeof(u64);
-+		len -= sizeof(u64);
-+	}
-+
-+	if (len & sizeof(u32)) {
-+		u32 value = get_unaligned_le32(p);
-+
-+		CRC32C(crc, value, w);
-+		p += sizeof(u32);
-+	}
-+
-+	if (len & sizeof(u16)) {
-+		u16 value = get_unaligned_le16(p);
-+
-+		CRC32C(crc, value, h);
-+		p += sizeof(u16);
-+	}
-+
-+	if (len & sizeof(u8)) {
-+		u8 value = *p++;
-+
-+		CRC32C(crc, value, b);
-+	}
-+
-+	return crc;
-+}
-+EXPORT_SYMBOL(crc32c_le_arch);
-+
-+u32 crc32_be_arch(u32 crc, const u8 *p, size_t len)
-+{
-+	return crc32_be_base(crc, p, len);
-+}
-+EXPORT_SYMBOL(crc32_be_arch);
-+
-+static int __init crc32_loongarch_init(void)
-+{
-+	if (cpu_has_crc32)
-+		static_branch_enable(&have_crc32);
-+	return 0;
-+}
-+arch_initcall(crc32_loongarch_init);
-+
-+static void __exit crc32_loongarch_exit(void)
-+{
-+}
-+module_exit(crc32_loongarch_exit);
-+
-+u32 crc32_optimizations(void)
-+{
-+	if (static_key_enabled(&have_crc32))
-+		return CRC32_LE_OPTIMIZATION | CRC32C_OPTIMIZATION;
-+	return 0;
-+}
-+EXPORT_SYMBOL(crc32_optimizations);
-+
-+MODULE_AUTHOR("Min Zhou <zhoumin@loongson.cn>");
-+MODULE_AUTHOR("Huacai Chen <chenhuacai@loongson.cn>");
-+MODULE_DESCRIPTION("CRC32 and CRC32C using LoongArch crc* instructions");
-+MODULE_LICENSE("GPL v2");
+ 
+ .text
+ /**
+  *      Calculate crc32
+- *      BUF - buffer (16 bytes aligned)
+- *      LEN - sizeof buffer (16 bytes aligned), LEN should be grater than 63
+  *      CRC - initial crc32
++ *      BUF - buffer (16 bytes aligned)
++ *      LEN - sizeof buffer (16 bytes aligned), LEN should be greater than 63
+  *      return %eax crc32
+- *      uint crc32_pclmul_le_16(unsigned char const *buffer,
+- *	                     size_t len, uint crc32)
++ *      u32 crc32_pclmul_le_16(u32 crc, const u8 *buffer, size_t len);
+  */
+ 
+ SYM_FUNC_START(crc32_pclmul_le_16) /* buffer and buffer size are 16 bytes aligned */
+ 	movdqa  (BUF), %xmm1
+ 	movdqa  0x10(BUF), %xmm2
+diff --git a/arch/x86/crypto/crc32-pclmul_glue.c b/arch/x86/crypto/crc32-pclmul_glue.c
+index 9f5e342b9845..9d14eac51c5b 100644
+--- a/arch/x86/crypto/crc32-pclmul_glue.c
++++ b/arch/x86/crypto/crc32-pclmul_glue.c
+@@ -44,11 +44,11 @@
+ #define PCLMUL_MIN_LEN		64L     /* minimum size of buffer
+ 					 * for crc32_pclmul_le_16 */
+ #define SCALE_F			16L	/* size of xmm register */
+ #define SCALE_F_MASK		(SCALE_F - 1)
+ 
+-u32 crc32_pclmul_le_16(unsigned char const *buffer, size_t len, u32 crc32);
++u32 crc32_pclmul_le_16(u32 crc, const u8 *buffer, size_t len);
+ 
+ static u32 __attribute__((pure))
+ 	crc32_pclmul_le(u32 crc, unsigned char const *p, size_t len)
+ {
+ 	unsigned int iquotient;
+@@ -69,11 +69,11 @@ static u32 __attribute__((pure))
+ 	}
+ 	iquotient = len & (~SCALE_F_MASK);
+ 	iremainder = len & SCALE_F_MASK;
+ 
+ 	kernel_fpu_begin();
+-	crc = crc32_pclmul_le_16(p, iquotient, crc);
++	crc = crc32_pclmul_le_16(crc, p, iquotient);
+ 	kernel_fpu_end();
+ 
+ 	if (iremainder)
+ 		crc = crc32_le(crc, p + iquotient, iremainder);
+ 
 -- 
 2.47.1
 
