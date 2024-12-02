@@ -4,70 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8B3EAD7830E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Dec 2024 11:42:22 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8A6C4D7830E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Dec 2024 11:43:26 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tI4oo-0002JV-6D;
-	Mon, 02 Dec 2024 11:42:22 +0000
+	id 1tI4pq-00048L-5U;
+	Mon, 02 Dec 2024 11:43:26 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1tI4om-0002JP-UG
+ (envelope-from <chao@kernel.org>) id 1tI4po-00048E-US
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Dec 2024 11:42:20 +0000
+ Mon, 02 Dec 2024 11:43:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VzCKyn3kipdrQKkmdpjzPMEvjuaa7ZFd20pow5cmRcE=; b=KHEJD/AMpCjoYNWZJRiD4B2j4E
- 2YkICX0kvQS7ZrH2ak1BrofAiFKYiXFzpGSRdVHfutD6kRiWmlm3uPgDDHdqRFW1AJajKud3kpmbW
- FeyJTJkPoTIWkK7sFTQv6qE5PEJZ1qkhloW5FKukucPsdSY0WiBsasJifA7ZmhJGJb8Q=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=VzCKyn3kipdrQKkmdpjzPMEvjuaa7ZFd20pow5cmRcE=; b=MYpkuo3TrdhQt1DHu2Q1ymjPvh
- GUhxy3xF3GLixbzWKapy7eySdPAtVnFhF0+tLgBJfMAup5EorEcO6vb9fswGrA7ounlRPQSzedH4I
- iOc75x9MRKLBoLGbYfpZWMycipdReG/8YPXpbtfo8HX3QWK0Hooy4+LOK64UNZFCU76Y=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=lXehNYUV/kxz0GssWjqfkvliurWy4HJYsoUNocd0T10=; b=cI1Z/bRXWH1o4J6E57n5fTiiUP
+ Tj9GaAgXz4JV0gaBr83v8plbqcMHiQs7U+H0Va/RCDVTYqttPUZduyo9G7VhZRmYcfCIZGOPTKd/1
+ 63Vok6Q+2s93ktfcPk9zCXlZRkL4ILfTuEEXjLuzj9efkpbtG5EV7fKYJp4jSPgVZVlw=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=lXehNYUV/kxz0GssWjqfkvliurWy4HJYsoUNocd0T10=; b=N
+ OqNTuUEcHGpgFFDyg7+5luoYuI560ggf5o9mB+CiVzIcwHTJhjCI/UwuKMR3Mq+baEAZNPjMATw4q
+ W/YVYIPBOdGoZopmZ44yAo+8yMdtIvL19en/KsHXJwJKHUIT/msug7rN7Ea8Vhf7eouFteQDQb3KA
+ CnExAm/M5sniW7Pc=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tI4om-000627-9Z for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Dec 2024 11:42:20 +0000
+ id 1tI4po-0006B4-6j for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Dec 2024 11:43:24 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 40CF7A40B40
+ by dfw.source.kernel.org (Postfix) with ESMTP id D25C05C639D
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  2 Dec 2024 11:40:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6AF1C4CED1;
- Mon,  2 Dec 2024 11:42:07 +0000 (UTC)
+ Mon,  2 Dec 2024 11:42:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA02C4CED1;
+ Mon,  2 Dec 2024 11:43:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1733139729;
- bh=Nnyh6xskfE29vfL92J+XXFzsEGl4lmpiruvLoSERMBo=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=h4I6b/KzQHaGD2AYRELrgNM77ONY6x65fBPMeuTHqPuvJ512xcAvfNUpV0B0lLDs4
- 0VpaDo3fkgg2Dq1fHTgnF3B4AhUnzCZ5V8Thu7RJhS59l7H8uyRW4snzuJ5WU3fUFv
- KmsLAn/zvunikO+F1Ws5vZ1pmPVDYqxHp552k7vJY7To/YmP0fV/9kYI8u5yKH/7+L
- lGTDpeKAsSezK8BYn3MHXyuH83qHgAJJZox4tazWkbl6bMQhxIAnpVVP4V3q3YRR/x
- eLRk3QNNLZBk6wRF8wCpOkkbwnl3SwdB+H8fphpmot5AEl/5rCpVmy6aSsJVx6auDb
- 5gFDHyLCqa/ig==
+ s=k20201202; t=1733139793;
+ bh=hspy3GOF2R29pUWjr+WGkU33VslKmEFqfIpp0rB2bWA=;
+ h=From:To:Cc:Subject:Date:From;
+ b=Dlt8EKPpR+AKXdYBnibD+j0F1C4Nk4DlCk0YLWLoQ8f2EEsaAMmYOKLGBA/j2xfuz
+ fo710RYwY9Ey+0VVh1UqDGpJrvyqROGGRhxPK8YtmFI0CiNKyf1dmj+d8OQjxQQVxo
+ QQ0P8vHURLlETtK4DrTa01xqrXW+wj0At8jI0Fa/XFOIG70+/WfepWN4wQ+YoLux0T
+ 9cM+jdMFJfLaCGEASnz/J5+atGUDA3SPy8DHpmfShUDosi6DceW6OgokZmFUZA2mXu
+ SIrbRo6HCGjafpSerRBJy3uOJrVOOREreSWaaQx9s1oLKUprMs2NlYHeeZEYZziqB8
+ bu1xFUlXtFFUQ==
 To: Zorro Lang <zlang@kernel.org>,
 	fstests@vger.kernel.org
-Date: Mon,  2 Dec 2024 19:41:49 +0800
-Message-Id: <20241202114149.2666-3-chao@kernel.org>
+Date: Mon,  2 Dec 2024 19:43:07 +0800
+Message-Id: <20241202114307.2747-1-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20241202114149.2666-1-chao@kernel.org>
-References: <20241202114149.2666-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1tI4om-000627-9Z
-Subject: [f2fs-dev] [PATCH 3/3] f2fs/007: update commit id in
- _fixed_by_kernel_commit line
+X-Headers-End: 1tI4po-0006B4-6j
+Subject: [f2fs-dev] [PATCH] f2fs/008: test snapshot creation/deletion on lvm
+ device
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,30 +84,90 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The bug related to this regression testcase has been fixed by commit
-26413ce18e85 ("f2fs: compress: fix inconsistent update of i_blocks in
-release_compress_blocks and reserve_compress_blocks"), let's update
-commit id in _fixed_by_kernel_commit line.
+This patch introduce a regression testcase to check whether
+f2fs can handle discard correctly once underlying lvm device
+changes to not support discard after user creates snapshot
+on it.
+
+Related bug was fixed by commit bc8aeb04fd80 ("f2fs: fix to
+drop all discards after creating snapshot on lvm device")
 
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- tests/f2fs/007 | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tests/f2fs/008     | 53 ++++++++++++++++++++++++++++++++++++++++++++++
+ tests/f2fs/008.out |  2 ++
+ 2 files changed, 55 insertions(+)
+ create mode 100755 tests/f2fs/008
+ create mode 100644 tests/f2fs/008.out
 
-diff --git a/tests/f2fs/007 b/tests/f2fs/007
-index 6451d4b4..37388433 100755
---- a/tests/f2fs/007
-+++ b/tests/f2fs/007
-@@ -11,7 +11,7 @@
- . ./common/preamble
- _begin_fstest auto quick rw compress
- 
--_fixed_by_kernel_commit xxxxxxxxxxxx \
-+_fixed_by_kernel_commit 26413ce18e85 \
-         "f2fs: compress: fix inconsistent update of i_blocks in release_compress_blocks and reserve_compress_blocks"
- 
- _require_scratch
+diff --git a/tests/f2fs/008 b/tests/f2fs/008
+new file mode 100755
+index 00000000..a9a3f263
+--- /dev/null
++++ b/tests/f2fs/008
+@@ -0,0 +1,53 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (c) 2024 Oppo.  All Rights Reserved.
++#
++# FS QA Test No. f2fs/008
++#
++# This is a regression test to check whether f2fs can handle
++# discard correctly once underlying lvm device changes to not
++# support discard after user creates snapshot on it.
++#
++
++. ./common/preamble
++_begin_fstest auto quick rw
++
++_fixed_by_kernel_commit bc8aeb04fd80 \
++        "f2fs: fix to drop all discards after creating snapshot on lvm device"
++
++_require_scratch_nolvm
++_require_block_device $SCRATCH_DEV
++_require_command "$LVM_PROG" lvm
++
++lvname=lv_$sed
++vgname=vg_$Sseg
++testfile=$SCRATCH_MNT/testfile
++
++_cleanup()
++{
++	$LVM_PROG lvremove -f /dev/mapper/$lvname-snapshot $vgname >>$seqres.full 2>&1
++	$LVM_PROG lvremove -f /dev/mapper/$vgname-$lvname >>$seqres.full 2>&1
++	$LVM_PROG vgremove -f $vgname >>$seqres.full 2>&1
++	$LVM_PROG pvremove -f $SCRATCH_DEV >>$seqres.full 2>&1
++}
++
++$LVM_PROG pvcreate -f $SCRATCH_DEV >>$seqres.full 2>&1
++$LVM_PROG vgcreate -f $vgname $SCRATCH_DEV >>$seqres.full 2>&1
++$LVM_PROG lvcreate -L 1024m -n $lvname $vgname >>$seqres.full 2>&1
++
++$MKFS_F2FS_PROG /dev/mapper/$vgname-$lvname >>$seqres.full 2>&1
++mount -o discard /dev/mapper/$vgname-$lvname $SCRATCH_MNT >>$seqres.full 2>&1
++
++dd if=/dev/zero of=$testfile bs=1M count=20 >>$seqres.full 2>&1
++sync
++rm $testfile
++sync
++
++# create a snapshot on lvm device
++$LVM_PROG lvcreate -L 1024m -s -n $lvname-snapshot /dev/mapper/$vgname-$lvname >>$seqres.full 2>&1
++umount $SCRATCH_MNT
++
++echo "Silence is golden"
++
++status=0
++exit
+diff --git a/tests/f2fs/008.out b/tests/f2fs/008.out
+new file mode 100644
+index 00000000..dd68d5a4
+--- /dev/null
++++ b/tests/f2fs/008.out
+@@ -0,0 +1,2 @@
++QA output created by 008
++Silence is golden
 -- 
 2.40.1
 
