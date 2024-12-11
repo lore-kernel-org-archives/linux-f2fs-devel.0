@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E4731E77180
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Dec 2024 15:47:49 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B53EEE7717F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Dec 2024 00:08:41 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tL2Si-0002pl-JY;
-	Tue, 10 Dec 2024 15:47:48 +0000
+	id 1tLAHP-0001Mt-Pa;
+	Wed, 11 Dec 2024 00:08:39 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <bugzilla-daemon@kernel.org>) id 1tL2Sg-0002pe-Ms
+ (envelope-from <bugzilla-daemon@kernel.org>) id 1tLAHN-0001MW-Ol
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Dec 2024 15:47:46 +0000
+ Wed, 11 Dec 2024 00:08:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
  :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=R6CNNbKcS7G34+9XEbLFsL39VH45PzzBMIwqmXqnubU=; b=OGRZO5giC/vWwNuafPYttfC0GA
- 5TKGsaI4EkWCrRcbmacLX14XOnZL/QIiGsABTBZ4aNL8VxNBLWUOvSoaNrCOTYW9kp0n7V9qLj2OP
- k3Ppp1S5fhcCWttCwlJLWrM/BcUv1LhrYALiqUI9vQ2ZwecLNb34QF4P9yabbVuaEmCo=;
+ bh=ahj7oLcZR5oSlIOYvYkVlHmMkc1BWtQZgb7CuL32mB0=; b=UzFBVCuvUE5X2KBbsTu/qaVDsN
+ JF7fBOINclf7aNlqnTQeHxatPNz1zXdnVcoaR6+u1mwBrLTS1z9xH10tr+EflLE+rLYIgeyhacIPb
+ DOq/eV5ZsZADJWZv1wrLdIoFKqDDWBVGjZ02hnvkREV/3tZW6JJgtPSoAqBoG0eBep3M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
@@ -33,35 +33,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=R6CNNbKcS7G34+9XEbLFsL39VH45PzzBMIwqmXqnubU=; b=Mgyo6ZyOB1RE7A77hvpS0QB8ib
- yzRH5STG/VLu7iSoY+Xf2odGrm+lcWRqbrVrym1AOjAeuD3A+o2GGBYT42r6WTTOL9tmrm2DM0X6T
- Xif1e2OasOZ/g8n/tSM6GxErQDmL3vhqWbJG4XgcuRweTVEFtuk7pUWgXcxGpkKQ3YiI=;
+ bh=ahj7oLcZR5oSlIOYvYkVlHmMkc1BWtQZgb7CuL32mB0=; b=MOSKVAuowQgFJsgBUFTVsMVQo3
+ HtNzuMewtVMsibUfQz2RxTrnNaGV3o69zCaBaLG6dTApxc2ad+GiV3l3daeA7PQaUOMegADHK+4Bv
+ lrbE8FHXmcRBUnywVRGvDZV443XuMjZa/b9MJCIE8T1zePvK5KnPiLJGjRSYjzlnmt64=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tL2Sf-0000x1-FW for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Dec 2024 15:47:46 +0000
+ id 1tLAHL-0001DW-UJ for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 11 Dec 2024 00:08:37 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 9C80E5C4AF3
+ by dfw.source.kernel.org (Postfix) with ESMTP id 19F1F5C617A
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Dec 2024 15:46:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CFCA6C4CED6
+ Wed, 11 Dec 2024 00:07:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4970DC4CED6
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Dec 2024 15:47:34 +0000 (UTC)
+ Wed, 11 Dec 2024 00:08:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1733845654;
- bh=XKnIlDv0r3wOPhKXK9iR88q66cd2xd7dJ0qtB1VR3UQ=;
+ s=k20201202; t=1733875705;
+ bh=ahj7oLcZR5oSlIOYvYkVlHmMkc1BWtQZgb7CuL32mB0=;
  h=From:To:Subject:Date:In-Reply-To:References:From;
- b=X1dWcXVZ0JzEUeIVHwStmKexd1Qb3RSG+7ZerI7OiZSBvhpNQX5MAmlv6eQdl3WvG
- fjPMiJYyvJcLTA+KUP9XTsRPA5fuLH+nfNelu9w1cZWUVEP/F9Ua6cfRhxgUxfBvt9
- E3kyhaml8jUjotU98/GYoe35/tGvpl++JPUBStgWHI8lUcaosWjnHtt2noTHPZoP//
- vwTZvMMA3c4EcJancyQw0HXyFc7MueUK3plqeP0NtkQZakdz+sSRnMK0+uAjHDQDaW
- ZcM2CQUhwaph1y9WFp8Fh1Byh+1E58h7SdK3Sb2s0jGVj11Ty1lO/1taCXFK7GDhRH
- p/iz05bHO/+jg==
+ b=Kax+oyz1V/8841G8C61lCEWWjOL5JDrpxTavPHT6qfE0rlm1n66357K/hkaz1suym
+ WnoNJ7srgHn4WKT6l22sf0kiZu+1BpPC/5Yhv7uSPQSIoXlem36VPWYvQJ8yCctFOS
+ b4NfLwXHI+rv0FTzC0LPCMOb8cZKlGXio1siUU9gL4Rlp1nt8rprZiiDEfa5B9FfXA
+ 7cv5zd8ynvWukpRZXqJ3ekv2DQXvumrnLGZWRduLPBp3pImtSVig129zhMWz7TfXKY
+ 26NV0ePebvE+S1CFwdROJWCvfsCRrZlWTDBI46zh5tjpoHE0IHjBTlMQi/AjGHWqRA
+ oU3ogbjfpkS7g==
 Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
- from userid 48) id C0068C3279F; Tue, 10 Dec 2024 15:47:34 +0000 (UTC)
+ from userid 48) id 36F1CC3279F; Wed, 11 Dec 2024 00:08:25 +0000 (UTC)
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Tue, 10 Dec 2024 15:47:34 +0000
+Date: Wed, 11 Dec 2024 00:08:25 +0000
 X-Bugzilla-Reason: None
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
@@ -70,20 +70,20 @@ X-Bugzilla-Component: f2fs
 X-Bugzilla-Version: 2.5
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: blocking
-X-Bugzilla-Who: aros@gmx.com
+X-Bugzilla-Who: jaegeuk@kernel.org
 X-Bugzilla-Status: NEW
 X-Bugzilla-Resolution: 
 X-Bugzilla-Priority: P3
 X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
 X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: cf_bisect_commit cf_regression
-Message-ID: <bug-219586-202145-fxRD1RnrHO@https.bugzilla.kernel.org/>
+X-Bugzilla-Changed-Fields: 
+Message-ID: <bug-219586-202145-glXUgzdXwR@https.bugzilla.kernel.org/>
 In-Reply-To: <bug-219586-202145@https.bugzilla.kernel.org/>
 References: <bug-219586-202145@https.bugzilla.kernel.org/>
 X-Bugzilla-URL: https://bugzilla.kernel.org/
 Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-Headers-End: 1tL2Sf-0000x1-FW
+X-Headers-End: 1tLAHL-0001DW-UJ
 Subject: [f2fs-dev] [Bug 219586] Unable to find file after unicode change
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -105,13 +105,11 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 https://bugzilla.kernel.org/show_bug.cgi?id=219586
 
-Artem S. Tashkinov (aros@gmx.com) changed:
+--- Comment #1 from Jaegeuk Kim (jaegeuk@kernel.org) ---
+Hi,
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
- Bisected commit-id|                            |18b5f47e7da46d3a0d7331e48be
-                   |                            |fcaf151ed2ddf
-         Regression|No                          |Yes
+I think that unicode patch introduced a regression, as old and new paths gives
+a different file length. Wasn't that broken to fix?
 
 -- 
 You may reply to this email to add a comment.
