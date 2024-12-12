@@ -4,71 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 58DF0E7717F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Dec 2024 17:58:21 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 18433E7717F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Dec 2024 18:57:13 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tLnS8-0008L3-0r;
-	Thu, 12 Dec 2024 17:58:20 +0000
+	id 1tLoN6-0006E1-CG;
+	Thu, 12 Dec 2024 18:57:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <dmantipov@yandex.ru>) id 1tLnS4-0008Ks-Vm
+ (envelope-from <bugzilla-daemon@kernel.org>) id 1tLoN5-0006Dv-7X
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Dec 2024 17:58:17 +0000
+ Thu, 12 Dec 2024 18:57:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bmH6GuJazNfXe81elplaYoKMoKP4FehDWWNplzyTaKU=; b=KKRlmlLaz84mx/KOGy7eKRSHnL
- ZKVyq+3Cl9vHakMkTtQCsqdwCSFv8gjgriG7MXgeb/v0/lzbnraSIQdQzkfdIBSZfPatphfczrvmc
- tsgTrIDRihghajKVGz3Tbl3muE00Q7yg/ryWDIVvryGWT8CzH5ZiFodB5Wv0v7sTMe7Y=;
+ bh=lizXmmElrwpgJJFA8ucnUXU8UCQzbMk0kNwUz3kG6Sw=; b=IQPA2UdEhmL62NnDy9bnwTH2A+
+ 0f6pXyZVjDWH+5ROJ8TcHCNDmw+QjGXEwsABWQDnJ1lAknV7GEid2oi6PA1awtEQMJ1DDR2ZIQxuo
+ EPi7WUUrwGrobEcTgHlK2x2GkSHecmFoJ6fIni7nA8YXVa9kIT5zZA9PcjMbnabQo+gs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=bmH6GuJazNfXe81elplaYoKMoKP4FehDWWNplzyTaKU=; b=iK76QkCBF+fijgDaDJO+LptgAf
- Cr6FQZDb9qLKzDgwIIxOdRfT+UZ7FlXpthhHoMEvNyHeJ9G+b0QbWsND0PD89qsTw2UgRFDbxE2tR
- U7cmcFiuVRWTX45fka7iBvgFaR8ltdA3yixppAR44QtCayeCpMRIzzoPfrjCrIsDu1jo=;
-Received: from forward101d.mail.yandex.net ([178.154.239.212])
+ bh=lizXmmElrwpgJJFA8ucnUXU8UCQzbMk0kNwUz3kG6Sw=; b=FcZkQ1p+t9snapquG8b7qkZp1U
+ WmidL6C9Sq9YR19F1PwTguY4w2/micJvQcjwdRivTIPz6831B3zA0JIOoG8IIVoBvHHdOGsMKbC67
+ YqUHtVc9A8Q/0OrpBCufIBjlNMtRBI44szNcZeWBL5OocV2veBgbZ+H/c+DX0UAibGgU=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tLnS2-0004WT-Uw for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Dec 2024 17:58:16 +0000
-Received: from mail-nwsmtp-smtp-production-main-42.klg.yp-c.yandex.net
- (mail-nwsmtp-smtp-production-main-42.klg.yp-c.yandex.net
- [IPv6:2a02:6b8:c42:55a0:0:640:1286:0])
- by forward101d.mail.yandex.net (Yandex) with ESMTPS id BED506090C;
- Thu, 12 Dec 2024 20:58:07 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-42.klg.yp-c.yandex.net
- (smtp/Yandex) with ESMTPSA id 6wsmue1Oc4Y0-50jK10KK; 
- Thu, 12 Dec 2024 20:58:07 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
- t=1734026287; bh=bmH6GuJazNfXe81elplaYoKMoKP4FehDWWNplzyTaKU=;
- h=Message-ID:Date:In-Reply-To:Cc:Subject:References:To:From;
- b=OO/ksv0Q0glI4U5tWcz6UIGoEyO+R3g7LEEcXGoshn8fjPoBCpCYxIfyMb7AT84Rf
- U/r4e32Hml2Y7qN6tDdsnIzAONLkkFq/Qht7b+p6vssjLFuWGk0yM3aVVN1YiPdEeA
- ZSHuWv1fJqNZjtrzsMcG1zDohHWkJsiSLHWu0DNQ=
-Authentication-Results: mail-nwsmtp-smtp-production-main-42.klg.yp-c.yandex.net;
- dkim=pass header.i=@yandex.ru
-From: Dmitry Antipov <dmantipov@yandex.ru>
-To: Chao Yu <chao@kernel.org>
-Date: Thu, 12 Dec 2024 20:57:48 +0300
-Message-ID: <20241212175748.1750854-1-dmantipov@yandex.ru>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <ec2729cc-2846-49c2-b7ca-4c1efe004cd1@kernel.org>
-References: <ec2729cc-2846-49c2-b7ca-4c1efe004cd1@kernel.org>
+ id 1tLoN4-0008VQ-1I for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 12 Dec 2024 18:57:10 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id 4C3A05C6898
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 12 Dec 2024 18:56:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5F587C4CED0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 12 Dec 2024 18:57:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1734029824;
+ bh=lizXmmElrwpgJJFA8ucnUXU8UCQzbMk0kNwUz3kG6Sw=;
+ h=From:To:Subject:Date:In-Reply-To:References:From;
+ b=Lu/juHegBIvDgO7S1PHuSQr/7Fqb8h7kkwGSzQ+J2f+Thb4tefgz3tOttagkPyLOe
+ XNYM38BffNRT712xjumHomKm1Bvq7j/RU93rRTDGauY1NcRBHSVIiVgEThmmSea3JL
+ NG16GPX0D9U0Zfdy4apyKZRbP/g2oFttdUadLFOrr+vgLFw6KJrT5zU2O6ZNdVBuCj
+ cIsIHmibSI2NutuN1IFXpWk90to6JYL4ePuCnGLa9asqRKZHsVlmbnVvLeMz/6AG9g
+ JS8kq0m5hlBaYcN2y6YyY7HVMz3s9WSgqSlaSbK1eRowSIXL5QKdRamZxFngJlX3i2
+ IS8guioBnxYag==
+Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
+ from userid 48) id 4D552C3279F; Thu, 12 Dec 2024 18:57:04 +0000 (UTC)
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Thu, 12 Dec 2024 18:57:04 +0000
+X-Bugzilla-Reason: None
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Product: File System
+X-Bugzilla-Component: f2fs
+X-Bugzilla-Version: 2.5
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: blocking
+X-Bugzilla-Who: piergiorgio.sartor@nexgo.de
+X-Bugzilla-Status: ASSIGNED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: P3
+X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: 
+Message-ID: <bug-219484-202145-WQlevM0tFZ@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-219484-202145@https.bugzilla.kernel.org/>
+References: <bug-219484-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-Headers-End: 1tLnS2-0004WT-Uw
-Subject: [f2fs-dev] [PATCH v2] f2fs: ensure that node info flags are always
- initialized
+X-Headers-End: 1tLoN4-0008VQ-1I
+Subject: [f2fs-dev] [Bug 219484] f2fs discard causes kernel NULL pointer
+ dereferencing
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,64 +97,38 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: lvc-project@linuxtesting.org, Dmitry Antipov <dmantipov@yandex.ru>,
- linux-f2fs-devel@lists.sourceforge.net,
- syzbot+5141f6db57a2f7614352@syzkaller.appspotmail.com,
- linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>
+From: bugzilla-daemon--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: bugzilla-daemon@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Syzbot has reported the following KMSAN splat:
+https://bugzilla.kernel.org/show_bug.cgi?id=219484
 
-BUG: KMSAN: uninit-value in f2fs_new_node_page+0x1494/0x1630
- f2fs_new_node_page+0x1494/0x1630
- f2fs_new_inode_page+0xb9/0x100
- f2fs_init_inode_metadata+0x176/0x1e90
- f2fs_add_inline_entry+0x723/0xc90
- f2fs_do_add_link+0x48f/0xa70
- f2fs_symlink+0x6af/0xfc0
- vfs_symlink+0x1f1/0x470
- do_symlinkat+0x471/0xbc0
- __x64_sys_symlink+0xcf/0x140
- x64_sys_call+0x2fcc/0x3d90
- do_syscall_64+0xd9/0x1b0
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+--- Comment #9 from piergiorgio.sartor@nexgo.de ---
+Hi all,
 
-Local variable new_ni created at:
- f2fs_new_node_page+0x9d/0x1630
- f2fs_new_inode_page+0xb9/0x100
+I tested kernel-6.12.4-100.fc40.x86_64.rpm (Fedora 40, Koji build).
+This is supposed to include the patch and, for what I tested, it seems to work
+fine. No NULL pointer de-referencing, no crash, everything good as before.
 
-So adjust 'f2fs_get_node_info()' to ensure that 'flag'
-field of 'struct node_info' is always initialized.
+I think you can close the bug, in case something else will pop up in the
+future, I can re-open.
 
-Reported-by: syzbot+5141f6db57a2f7614352@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=5141f6db57a2f7614352
-Fixes: e05df3b115e7 ("f2fs: add node operations")
-Suggested-by: Chao Yu <chao@kernel.org>
-Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
----
-v2: move flag initialization to f2fs_get_node_info() as suggested by Chao
----
- fs/f2fs/node.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for the support!
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 0b900a7a48e5..c04ee1a7ce57 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -558,6 +558,7 @@ int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
- 	block_t blkaddr;
- 	int i;
- 
-+	ni->flag = 0;
- 	ni->nid = nid;
- retry:
- 	/* Check nat cache */
+Merry Christmas & Happy New Year!
+
+bye,
+
+pg
+
 -- 
-2.47.1
+You may reply to this email to add a comment.
 
-
+You are receiving this mail because:
+You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
