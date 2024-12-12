@@ -4,170 +4,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5870DE77180
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Dec 2024 14:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 038A9E77182
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Dec 2024 06:31:16 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tLNU3-0004XQ-JH;
-	Wed, 11 Dec 2024 14:14:35 +0000
+	id 1tLcjC-0005EA-Tb;
+	Thu, 12 Dec 2024 06:31:14 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong@oppo.com>) id 1tLNU2-0004XH-Cb
+ (envelope-from <dan.carpenter@linaro.org>) id 1tLcjB-0005Dv-Kh
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Dec 2024 14:14:34 +0000
+ Thu, 12 Dec 2024 06:31:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=slO5nFeW8wbchcAzkmlewbYcsFUMA++9BqMJh25WyAE=; b=hEmP+yQEm1tL+AHm9Ww5Zy5Fam
- afSyzItfse/ZYSf2xDbo57wBGmmfWDvjaAJ0THeWOW3agx2XdEznywqjnD10IPDdNt6AWHMoq1aev
- s6q+F9BUzQFvawVWmmbv43xBA/2EUggKtQ5eSBx1aerbAXBRsRszGDC/T+dc6P3Z72vw=;
+ bh=Wdk5mwj9oPpJlVtb093wBGQVMuKiQeDOvo82XEuEwwE=; b=hyAFL85ag476xmpmTP7LABIMwI
+ CLoUI8k81l4BLuWuuTLy41tAWxo9bAoxEMJ01L6aExmaeEl6kScAWeL9jgSCdabMca9ahSJURhsDo
+ 9G6jbtBU4EENqvzmDNWo/fhg/tSobHbHBbhDaMDZh+fm/QEMETOWmD10SexDr0TwP9es=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
- References:Cc:To:Subject:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=slO5nFeW8wbchcAzkmlewbYcsFUMA++9BqMJh25WyAE=; b=cDofsXtNwme7I4GGKRNEVM09bU
- KcmWKNe0JRdknGsBj8rg5xU31l5nCjn0ai0jY785EmSRsoqq/+btGW3p/WbN9i+kTY4g2Cwx17YbF
- dEzMo1SXCRP16z0EWhBkk2Dps1TFK9RftgseBqyUH1bHpjHMaT56I3jxwyoJRV4QSRa4=;
-Received: from mail-tyzapc01on2062.outbound.protection.outlook.com
- ([40.107.117.62] helo=APC01-TYZ-obe.outbound.protection.outlook.com)
+ bh=Wdk5mwj9oPpJlVtb093wBGQVMuKiQeDOvo82XEuEwwE=; b=UBak/4Xl0kqtdzWrNdWHPgTcqK
+ iIpskX5te9ZkCMdeVSlLI8XYrRvQvD7NRZFSU0+0xywLJ5dDVDNb06RedXFQiXUi3nZ9RT3Uw74VE
+ +YwDpUzL+qpp07OPp6l6l6tzHOn6WYpCJbP8u6KseqSiRphmvQbWKryAmBzvQWQ+CC78=;
+Received: from mail-wm1-f42.google.com ([209.85.128.42])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tLNU1-0001WS-Hb for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Dec 2024 14:14:34 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S3+fYs6RWr27M8p8/RNwNbjwA2W5c9boYGO2CMeeggvBUf2OoF7c+PgO/ZIT4iELzPLN3S5Tmj1pwsgugYsG/ma/o57n8IaH0APRPIFf1dsUfCOWC6RrJXO1GOQf5ooeUyLowt+PPp6DmQyVA1dbk0yFEtVsaWkjysslX8jB/PFHa7CRB27W+WmfwyXpeOyFt+XnpuqwuvHVUoCIzVoLTqThIgTW/OfNaspgtwk2ePTlOIuuFa+cGha98bZ8g6JV0wt+2jycHFw0dPSlU0ftmSRI6Sim/3ngjM3FpEOh9P+0dJYBgWs7CxfMRMIVeVWBhvRRv3h9d8L8Wd2ZCfmniA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=slO5nFeW8wbchcAzkmlewbYcsFUMA++9BqMJh25WyAE=;
- b=qLXnsmUT6sGp5Q3U8LjkqiuSlo6MWysL2S94VcKnNoo4elKAB+Z4p0tFPPXifPQwwXAkOITqJc0wS8utbi/7XY8EEyfnsLlKSriK2jt8g4wc5JEkuJfKBqDBrP5nYfRrqE0WWKOGmIHODxzYnnu4jzt0wXFzOf3T1HYPIKoFz4GkRMCbSAeZ8phpBYXZslcByLh/hNwNEvK7ufPQfCJOpcKm6w+F4CnJ8YFkZMAe7jykEKZtxmChWkVGOuESGyNbZ2yo4ERIbMQg9etF4GBfTqvfqjBXgaJjK5pCmAnplgfn6NQa/EfxnBnPlS9BXU9MjaJ3zUOuUMATAwbqMH67KA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
- dkim=pass header.d=oppo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=slO5nFeW8wbchcAzkmlewbYcsFUMA++9BqMJh25WyAE=;
- b=hYg1KDu+ifUls9H6qYQ8vwmUKNaS+A5vkgdzNi384EYXAr8O4XlaTN/sRRA5TVy+98ayyzeMxk6E84zPv9E+pRNOPTdSewH+7waWHt2DCfoxXrE5xCFhBx6lCCwq3UjhHZVz+zGi6TFkmP8gkhFZhsCpg0oGPbyLaqZkdd/TnVA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oppo.com;
-Received: from SEYPR02MB6014.apcprd02.prod.outlook.com (2603:1096:101:6b::10)
- by SG2PR02MB6023.apcprd02.prod.outlook.com (2603:1096:4:1d5::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.20; Wed, 11 Dec
- 2024 14:14:19 +0000
-Received: from SEYPR02MB6014.apcprd02.prod.outlook.com
- ([fe80::bb06:c283:a50:7796]) by SEYPR02MB6014.apcprd02.prod.outlook.com
- ([fe80::bb06:c283:a50:7796%6]) with mapi id 15.20.8230.016; Wed, 11 Dec 2024
- 14:14:18 +0000
-Message-ID: <c7febf9d-f743-475f-8473-0d391814eb07@oppo.com>
-Date: Wed, 11 Dec 2024 22:14:15 +0800
-User-Agent: Mozilla Thunderbird
-To: LongPing Wei <weilongping@oppo.com>, jaegeuk@kernel.org, chao@kernel.org
-References: <20241211001404.4120186-1-weilongping@oppo.com>
-Content-Language: en-US
-In-Reply-To: <20241211001404.4120186-1-weilongping@oppo.com>
-X-ClientProxiedBy: SGAP274CA0002.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::14)
- To SEYPR02MB6014.apcprd02.prod.outlook.com
- (2603:1096:101:6b::10)
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1tLcj9-0000eK-QL for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 12 Dec 2024 06:31:13 +0000
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-4361a50e337so1333625e9.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 11 Dec 2024 22:31:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=linaro.org; s=google; t=1733985065; x=1734589865; darn=lists.sourceforge.net;
+ h=in-reply-to:content-disposition:mime-version:references:message-id
+ :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+ bh=Wdk5mwj9oPpJlVtb093wBGQVMuKiQeDOvo82XEuEwwE=;
+ b=x1m+qXMYNHGCHg7SxtTp+FlM1wnEc9PHqQrjDfKdXKh0NLAUSu0i0GHSr0ygy9NLpr
+ iZxf2ozMOXJ9xoIxHWZnXSBR3M/sl+L5TGqOFGCCr924uJwmOt9fr3OAJ7jDS4MvijeH
+ oLpjgna9eT89YaltG2TpU2KDbmGV+mzFBx4/ibXHoc1wm3/94prshvh5MQaBtOPtE1bX
+ 56d36BUyQNUQFh155IOL/NOWuIsY6VkPgRjZ+l/rjJpEnS6c18WYxJCduMe/ViXOloLa
+ F8BT0nlhkpCaVIYlWqLJbIRMNHdvH84sIjTKWl2TZnEYK6yyzzxpW390BQAQA4jn7fJI
+ Q/rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1733985065; x=1734589865;
+ h=in-reply-to:content-disposition:mime-version:references:message-id
+ :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Wdk5mwj9oPpJlVtb093wBGQVMuKiQeDOvo82XEuEwwE=;
+ b=K2pfUj75gKhl3M4TjDb9vYrBptRxU4einQABgMNEpSeAHpH4TfNSP2ByljpF7n1lLB
+ RgGD2dVbixffRouVe4R3Q7iYlpOGLHuWAT/86LHzw0+E6+9oMu1F/91zCTq8dtCR8KEC
+ TR/26uAH+5YHPwqNMzg9dAXZo/kCvImpJZ4mufaRNlnnSJtdNwM8tK+fI/JvCKjnU73B
+ yr0NcKMZEqwcJgUcTJoIHfLR1mJjb7LkKx1RVbYsl2V2HIoyZZ2rnvQUBWMDhxUcQVnA
+ h4rtVqhvmom/5YJ8944UW4FcExZ3dgfJ6W3aLUreA7u1C0R/LU+PPr4NMubwenzjjhQd
+ IZ/w==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUNkfxOoaLpvhO3xDh9dCB2+V+Gbfw/Y8StAEeRu7AfWXNgyC4r/BSLLSNvoRPLqp84G7DO07ml+q9FReROZJIE@lists.sourceforge.net
+X-Gm-Message-State: AOJu0Yyrg92uVn1YGtESX0kKSEeB7gpkbO6QixePn4bE8QmYzfh76xBM
+ SyhKGZ7EvsgJ/NwFsJPkFq6SIgtitzLQOwoHECg5jNp3EuUYor7AeEL1myePQSQ=
+X-Gm-Gg: ASbGnctUzRxSKtmkrXEhKmRm+OTm/LxDS8Ff7s36CC45vJdsopjFseFbrVrnZwHFb0Q
+ AVKHFVQ74qnHqu28np+rQ4h6cziKF1nYZzN878/K27BR42XKXPOCWUNdG4JP/t0RVCnmOGS39+j
+ 0SmctxLx1GKjOIgt+Kf6g0QilrPb3NOp1OIWDGnH9c+Ula86Mquhq7jWuxyAFtP8UjEaoOKI0Nr
+ JTB/bAiz0Ct0dUS0iiOcv2e5Ljw5NLixvtwQFhCdFFcbH2OI0YlLj2cfSgZFg==
+X-Google-Smtp-Source: AGHT+IFh47uwV1k6ja045AtMme3ZSND7FaMgkXxQ8uSMkb7peRH8YY6TZ9EvoYikamy2Sx0aIhJQAw==
+X-Received: by 2002:a5d:6486:0:b0:386:33e8:20f4 with SMTP id
+ ffacd0b85a97d-3864cea578cmr4664052f8f.59.1733985065245; 
+ Wed, 11 Dec 2024 22:31:05 -0800 (PST)
+Received: from localhost ([196.207.164.177]) by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-43625550555sm6658685e9.5.2024.12.11.22.31.04
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 11 Dec 2024 22:31:04 -0800 (PST)
+Date: Thu, 12 Dec 2024 09:31:01 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Yeongjin Gil <youngjin.gil@samsung.com>
+Message-ID: <644671fc-b35d-4c53-ae25-356963466339@stanley.mountain>
+References: <CGME20240819083433epcas1p3861b773a5b21eea6f0332036a71bb5d7@epcas1p3.samsung.com>
+ <20240819083430.31852-1-youngjin.gil@samsung.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR02MB6014:EE_|SG2PR02MB6023:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f687668-29ce-4f96-b1fc-08dd19ee19b3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?MzhKUHUvZ0tUL2JHTHNtZkNuYVdKMFB3YmxCdmRFWitGa01HK2kzYkQ2THF2?=
- =?utf-8?B?dGNrVW1EYnNOT0NGOU5hbU9VQWZibEl1T3BSVUVwaTZoTGhJN2xFYVZSSUhE?=
- =?utf-8?B?UDU2SnZzemZycElHL3FnazQ5L1ZMaUkwdzZTL2lQQUNSQnY3YkZQT2E3VHMv?=
- =?utf-8?B?ZXpjWndyWmlxQmNmTVlKenp5a1JZQ1hRb09DU3kyK0x3bnk3cUcxVnIwanRm?=
- =?utf-8?B?eElUR1FMYWw3RDlMcWF3b1JCenFWOWxybFNSOGw3MFRPeTI2dXhjTkNGS0l3?=
- =?utf-8?B?OG9GT0hueTl0RlNPQjlTTnJ3aEJERTdmMzFBczgzeWNDRktCN3NqQ3FwNzFi?=
- =?utf-8?B?R2lWcWdvMjJodFZXRVI4ZE1qVy9vN3JMS01lTTBZWDUvRGh2bjlPM2pjN001?=
- =?utf-8?B?aytPbzY1d3V5V2lUQ2xWaUpMbUN5dGtOSFZCblNjeVFkUmdPdXNadHV0VTJ3?=
- =?utf-8?B?QnRxSHQveEJrTGYrNEgzNWdpM3hkbGJMSG5wKzJxczlBMmI4bGtzZmdLeW95?=
- =?utf-8?B?M25QQ1JUeG4rNXRzR1B6M04rRnNPMHRQNFA2dTdOS3dndjhKL0NiOWxsZmV4?=
- =?utf-8?B?K0dJSnhZUFRKNzlWUVNFbnpqU1hNUDZTbGhaVzlsdU9YWldBZlBOMnlaR081?=
- =?utf-8?B?NWZrSi9TODdhRFd4UDR0RUE2UzNKSGhOWFZYSVV4RVdQaFdncmJRU1hOS0hu?=
- =?utf-8?B?azF3d2ZpN2FhZitKWVk3NEVaczBmdUoyR3JCQXVYYk0wUGlOMHlERHpNWjZz?=
- =?utf-8?B?V3dFZUNGU3FabFJ3SmErdVRxcFoyWi85WGJ1MS9qTm5POUpEUTdkZVBSekwv?=
- =?utf-8?B?WC9wQlpDSEl1aFNrUnZlTjg4amNMTzgwN0Zvczc2TXRzK3hLc2xoUFJJNnR5?=
- =?utf-8?B?TXd1REd2T1dsMHBkT3h4OENQbHdOeDlJeWh1OExWYjdoS3RqTjljakt0SjNN?=
- =?utf-8?B?amQ0K2NFOFdnYTh6OHlHeDVvd0ozN2s5djhQWUUwcHJNM0FENXFrTFJKQVdU?=
- =?utf-8?B?eEtIbTJwNmROU2xKVUpaZ3FYZVN1Nzd6a3JCQ1J5S2JsVS9rNFp0NGREMjNs?=
- =?utf-8?B?d1pPUmdiRVh1ZDJ2WS8zWkV0RHlFNDA2QnMvSVhybGtLa0NYTjF6bWVIVGJC?=
- =?utf-8?B?N2d1SzFkMEc0V0N4RFVNLzRYcUw0OHlNYW5pbWN5anpPNlBJcHVSUStFWG1x?=
- =?utf-8?B?TlkwWkhKZURob3poOVN2SVArdUJkanZFY1lEWHFSTnZRVWxmcSt2cWJLTGgr?=
- =?utf-8?B?enRxL0V0L1ZEWjBQRXBKWFpzT2VUcHcyM2pSTFd0bEJMd0dyREh2dDZZamVw?=
- =?utf-8?B?ZmNha2tRQlM4UjlEWVFGZkRaWVZETndneEE4MHlwTWFvcWhUUlNnV3g1WEg5?=
- =?utf-8?B?VlVkbit6NXpBZGtHL3dKQUt5SlhVdTNBTFJVSFZRd1MwMTJ2bkQ3TUVtOHJJ?=
- =?utf-8?B?N242emEzSkt4bHJaZlhKL0JCQkkvN0tPZmx5cG9YdTNxNGFQN3F4b1J4d3dG?=
- =?utf-8?B?MTVmUU5uai84c1NyZlVUQ0xMVEVGWFZOTDNYZXFFK1Byclh0T3YrczJDcitn?=
- =?utf-8?B?MmdYRUdhNzJwZ1NXY3U4NWlCa2FOVkJqWlZqNFMyaUIwVklBOHVGeVdFL2NC?=
- =?utf-8?B?YUs3M2wyalh2Zzc5RE9XZld1VndJZkpTdmk3TlMrRzk2WkcrUTUyUU0yQ2ky?=
- =?utf-8?B?Tm9oSDQ3U2gxTHhVZWpUNVA4bU9VVzZLVUp3cit6U0JkZnFqalg3cXZvaWM2?=
- =?utf-8?B?N3BaWS9ad0RMOEFrRnhvTG95WXl2aGtxTm5rQTdjcHd1NVBGSThpTGxKRnpz?=
- =?utf-8?B?cmhuT01IaUUxUmh6YzVGZz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SEYPR02MB6014.apcprd02.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WW5ucjBPZXNRWkZKUGIybndxSkY1MlEwdmtycG5SdWRVa1h4dUVhOTRta1Ux?=
- =?utf-8?B?L1ZmTG50TVIrYk5tUUlnZmhvUGtXV21ObHFJQ2N3KzlIbjZFQkMvaUlNY3NY?=
- =?utf-8?B?YXFMZUszazgyeWZrWWdlY3I1bFBzTkVsSFF4ZktVTk9VaWpoSmduT2orRW80?=
- =?utf-8?B?U0NVTzM1MmpRNjQwRVJYdFVuRjQ3OVZzUTBEQmNSU2xmQXAxRVlkTTZsU1Vs?=
- =?utf-8?B?L0pXeTVodkpOV0dXT1l5YXlySUk1SUZrWVFWdlMrUEpPSEtnSVF4aVc4djU0?=
- =?utf-8?B?YlVYTGdGYkNLVGUzWmQvNTZRa3NqWmJ4VHhMOXU1TkR3UVovTU5kYXN1Rlkx?=
- =?utf-8?B?a2tQOTJHQWs2SzJRRUgzdzdta01xYnRZNFZwSERpNlJpRlgwbnExUlMwVndO?=
- =?utf-8?B?Q3k0bWlkc1ZKcVhRQzYyWng0SkFhelpTSEVXeG14LzBCMk0vQ3lCZExMOEJI?=
- =?utf-8?B?Um9xT1hYb1FOOUoxSVAvZkVjSTJqNG84ckh2UWJYSlNIMFl2Tk0xNDVFMGU2?=
- =?utf-8?B?eTlqdU5TMExjU3pDaWRZVWlDd3NmR3dZQUR4UTd3RDREYzVZRTAzVVNDc3Jp?=
- =?utf-8?B?VXRJVys3VVJVdmFjSkk0Qk5BRGV5V243ZmxIbnczeEV0TjFhVTYvVlNvWWJY?=
- =?utf-8?B?dU5jT2pJWEF2Z0d0UWlpMDk5ZWxuRlhCSVVCQVpwazJlaFBOZ25rVFdRK2t1?=
- =?utf-8?B?MnE1NjB2RHNUakZjd01ZWHF3RVlBMG5EWUtWK205YkFCK0FsSWs0by9TTVdq?=
- =?utf-8?B?VWdDREV4MWZibmF1UGdvV3h4OW9CV1VqUmEwSVZocys0KzVvanRhM2M2aGxj?=
- =?utf-8?B?K1hoczkrYlYrcTVFSWJyWjk5MjZVYnRVTnRRTU0xQ3NXL1pqRVVZc21FR1My?=
- =?utf-8?B?eWdIRU5ybWFDNlNwWHNYb3BkL0o4YnpEbjlZNTlIUTFna3VZSDFpV3dIaEQ3?=
- =?utf-8?B?MzJxNWlDSDFsdkhaVFpmdEYwR0ZMeHhKZzlwMzhYN0VUbmlrb296cjhpcnkw?=
- =?utf-8?B?NVBtckM2NWppaTh0a0E5cDg3YStxRmsyaDBNVTlmdFdZNGxRUFdKd1pyRmln?=
- =?utf-8?B?RERJWGdQWExsc0gxak0yQ2hwVnRZUFo0NG8yM2Rzc2RyaXNKblJKUzByd2xD?=
- =?utf-8?B?dkYxbC9wY25KYXp0b0d4b0dUdkdGZDhhY1NRcldMeFJkRStlQWg1MHJwRVRi?=
- =?utf-8?B?NjhZdGl4aHVoR3Y1MStSUFF5eVFKQ2YzZkVSeC83VDdtRGFqYzk0SmFpcDRy?=
- =?utf-8?B?cEJWMUhISktYVUdDNnU3UEo4Qjk0SHNoSVovaEFaWWNTc2NKU0xCWUVhc0Zt?=
- =?utf-8?B?SlJBK3A5ZnF0Ui9TelcvcndDNlVRbDQrWEdoV3IyRWJJSFBpR3FYbTRMWHp0?=
- =?utf-8?B?VWYzR25vQUhDOE1xM2x0U3JIUS8yb1hvMCtlV0xFS1YwUitvR1ZYajRES1Vu?=
- =?utf-8?B?RUY5cGdrTmtTVVF3NEFFOTdYb2NJZlp6dFdyYWR4TnV2WUdvNHYxQTRYbmVG?=
- =?utf-8?B?VmdubllCazBLZ2JEOEd6bFlMa0x2SzZRVytCVzRXL1Y5ZzJTaTFLa2R6dzlz?=
- =?utf-8?B?Um14R3k2Qk5xV2NEZDBtTWRaNlYxOGh2V1lueWxSNGptZzJ1VkJlMnVVd3JS?=
- =?utf-8?B?ZmJxSHVSbTZPdk9hMEJjK0Q4UGVJRjhWbFhtbHhqWEtIVHREZGcrQUFxWkRV?=
- =?utf-8?B?T0pHbEF0cHlDbFI3NFNaMWdaTHZYbDZKdnVteExDa0ZubForLzN0WGY1Z3dM?=
- =?utf-8?B?dHVwZXI0d1BFOER3am1ER0dheU9rMDMzWmJNVFZLaHAyVDduUlNPVHRpM0li?=
- =?utf-8?B?alpZM0NGdXh0MEt6ZFQ4eDlMdzhCZVpUcXNSdFBqYlk1UkhJS3p6Z2V0N3JW?=
- =?utf-8?B?VW0zL3loWTk1Q0t4cmo1N3lTdDdJckVNeUZEUFZNaDZZRWhhWnJaMkd6dHF1?=
- =?utf-8?B?MkNyZWhJZ3c3MTJEY2kyaDUzOXJKcll3YVkzdmJWZE5nU0FzWmJHM2RmajJW?=
- =?utf-8?B?OVRIa2lzdjBPMThZUkdGeFhBSDdjYmxPM0ZQQ1JNQkJWb2NWMS9RL1Jmb3pq?=
- =?utf-8?B?S3RqSG4wRmJxVUpFT1AvMEJkdHJXUXRhQmg4bERUc1FzOHdtWE1JUjM5VWM0?=
- =?utf-8?Q?SDkSBSLKIYaPNw9iWzau1baz2?=
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f687668-29ce-4f96-b1fc-08dd19ee19b3
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR02MB6014.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 14:14:18.3073 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Md5BIFiMIzb4QuvvEW7Yokc5uX7d3Ogl37BxKqDPhXmirOCppaU85HlBPTtL7+9fCvXeMbR6ui2S5cGePof/tw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR02MB6023
-X-Headers-End: 1tLNU1-0001WS-Hb
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs-tools: use pread and pwrite when
- they are available.
+Content-Disposition: inline
+In-Reply-To: <20240819083430.31852-1-youngjin.gil@samsung.com>
+X-Headers-End: 1tLcj9-0000eK-QL
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: compress: don't redirty sparse
+ cluster during {, de}compress
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -179,25 +107,42 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Sheng Yong via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Sheng Yong <shengyong@oppo.com>
-Cc: panglu2022@gmail.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: daehojeong@google.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
+ Sungjong Seo <sj1557.seo@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-
-
-On 2024/12/11 8:14, LongPing Wei wrote:
-> This patch wants to reduce the number of system calls to improve performance.
-> pread and pwrite will only be used when the target platform support them.
+On Mon, Aug 19, 2024 at 05:34:30PM +0900, Yeongjin Gil wrote:
+> In f2fs_do_write_data_page, when the data block is NULL_ADDR, it skips
+> writepage considering that it has been already truncated.
+> This results in an infinite loop as the PAGECACHE_TAG_TOWRITE tag is not
+> cleared during the writeback process for a compressed file including
+> NULL_ADDR in compress_mode=user.
 > 
-> Signed-off-by: LongPing Wei <weilongping@oppo.com>
+> This is the reproduction process:
+> 
+> 1. dd if=/dev/zero bs=4096 count=1024 seek=1024 of=testfile
+> 2. f2fs_io compress testfile
+> 3. dd if=/dev/zero bs=4096 count=1 conv=notrunc of=testfile
+> 4. f2fs_io decompress testfile
+> 
+> To prevent the problem, let's check whether the cluster is fully
+> allocated before redirty its pages.
+> 
 
-Reviewed-by: Sheng Yong <shengyong@oppo.com>
+We were discussing how to detect these sorts of things in the future.
+Presumably a user found this by chance?  Xfstests has two tests which deal
+with compression tests/f2fs/002 and tests/f2fs/007.  But it feels like
+xfstests is not really the right place for this sort of thing, it would
+be better as part of some sort of fuzz testing.
 
-thanks,
-shengyong
+What do you think?
+
+regards,
+dan carpenter
+
 
 
 _______________________________________________
