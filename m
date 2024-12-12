@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 84FAAE7717F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Dec 2024 15:13:22 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 04FB9E77180
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Dec 2024 15:13:43 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tLksU-0001jA-Lt;
-	Thu, 12 Dec 2024 15:13:22 +0000
+	id 1tLksn-0004rM-Kz;
+	Thu, 12 Dec 2024 15:13:41 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1tLksT-0001j2-VQ
+ (envelope-from <chao@kernel.org>) id 1tLksm-0004rG-4Z
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Dec 2024 15:13:21 +0000
+ Thu, 12 Dec 2024 15:13:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=R2Fo4b4Mxd9X0yHVbJclGKcnjXflMtqp05tt1vMeHZA=; b=AvOkTSis6kgEUVv5kNtjsfF+s/
- L4PUtOuY7mF8nGdm9m+Z8KNXRc6UpYaQRC9OOzU3L40xrHFmpN/IKFQHbJMY013OvAYxTtjW+fL3c
- PMuHWAWIRRA0MkY5CQ2KR8Dto4DLstLuoYtTX3IuIqg/VaUKWIYu3OmE9iIMdFAZ9BuE=;
+ bh=6vNR66otWewsSwF2pXHt3u3c5OJXuZW1I4jTkPNLxok=; b=TKMig7PLW7o5izGD63PMYMidHh
+ diHfZqVT3yVndJ/+/iFWURXvkgZsjZDOcixe4q8axIXotKFSnldcasAS2fBtoFAImSfZ5KBKpymDX
+ FNjOrX0kOyvfgqHYYM0uvRWy/FIySJii6EDbjBxnTzDbIUMdhtRmAridZ6Ih8lYpH/iM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -33,35 +33,36 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=R2Fo4b4Mxd9X0yHVbJclGKcnjXflMtqp05tt1vMeHZA=; b=VsLn+SQcqSIzppRLt81HfT8uh7
- G7W1YXMCCcFj3vIlcGG1kM/vo+ljpH7vvbx48Q/h0q1QYO4f9ciAxv0rpncjNhDbSFwu09PTvrr2e
- yU8uSnT/GBMZw5a8jqUwehPsGJwBQdCxBhmk/B0dmvUEQX4Yh/FJ1jW9EDqozaRBL3nk=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ bh=6vNR66otWewsSwF2pXHt3u3c5OJXuZW1I4jTkPNLxok=; b=MAUPIMdejRhQbbU77xGp9hUBjo
+ 4Kskvq/IAYIoKnsPQqNesVOzYAf1Dv8uHGJa1lZWHXNM3BZXHreCAE5qhZW00gzRgmK5ptko5uhGs
+ Eny2jRsh9jRnZNEuXm0smPiALil7hkWKYxGuzeCalZf9EUlHmkwT1qoNbsOJD4gTwnb0=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tLksS-0001Mu-O0 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Dec 2024 15:13:21 +0000
+ id 1tLksl-0001P2-FC for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 12 Dec 2024 15:13:40 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id CD179A42848;
- Thu, 12 Dec 2024 15:11:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CBC9C4CED7;
- Thu, 12 Dec 2024 15:13:12 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id B01335C679B;
+ Thu, 12 Dec 2024 15:12:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B66C4CED0;
+ Thu, 12 Dec 2024 15:13:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1734016394;
- bh=6o5Ac02DNGl3GQMajr6PS9SNsNN98EfkqM+hnrpF8E0=;
+ s=k20201202; t=1734016408;
+ bh=cbFrA2VGmfS/GQv0U4tKBge1smE4Ko1Yaly6RrMtRF0=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=JHlXPAvOGkQ74DU2pwk6yYeoHXmnHCiz+80W656+c3cXKiNTEs1O+wKEkjON+XvV8
- YCprHU7yGHK7uObDLTcgstMBtHrstImst/0rTXxI4Vl34eoL3NjXJUitCYOaXUddgi
- ixQMaz+xvW14YZNjP7ALTi6Pk+hYBNX26JLQQgyJeQXu7/o3ncHeXBuMu1UAQOXAZO
- /HUqzPBRxVfo5oLhfV6IT+edx/YLT33VOqB71b8/BcrGOMtkyxIWBbnKx2u3ssFdc2
- dtAiIBQY1Mfyfh73/B4BYWenD3aNssi4g1nJfEWx9gie4NdPYG5N1ZtpK9nBPDZIB0
- iKmtzxA/QLYxg==
-Message-ID: <47759d41-14a1-479e-82bb-7871f57b8089@kernel.org>
-Date: Thu, 12 Dec 2024 23:13:15 +0800
+ b=OilAfeDvpEhadKqL5sMEu+RVuqtlZtlqCPd04UyXXJJGqJBNZ+abNsGIUSP7Kte9k
+ cWVt9fQC/ylX9mJrvLaxw3b0PdFwjRwcWvQUjH0V6FaoSA8ZAQ2Ko3n/PQBVvNQxLo
+ OPJTaPZj0vV8+VpW6qyMgKSeOjKJkvVWHVTLK4OiEvn+y4R16/Ox1/7AsvwlMxvtQc
+ Lb43C3OIpCDJqPVcGmcwdITGqhq2I9vHA6u5Mt5LNRKOCf/8bPUMv2uFUvXl4/PfYd
+ 5lnckQECR+GbKqRXlZe9TsKlfwODm9Vsbjo44aMSUS8cYZJ4mYBD+gXZLH0k4HxX5H
+ +e5OCbEQy5D4w==
+Message-ID: <3616b58f-d856-4a55-a4e1-093aa05ddc9b@kernel.org>
+Date: Thu, 12 Dec 2024 23:13:29 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: LongPing Wei <weilongping@oppo.com>, jaegeuk@kernel.org
 References: <20241211001404.4120186-1-weilongping@oppo.com>
+ <20241211001404.4120186-2-weilongping@oppo.com>
 Content-Language: en-US
 Autocrypt: addr=chao@kernel.org; keydata=
  xsFNBFYs6bUBEADJuxYGZRMvAEySns+DKVtVQRKDYcHlmj+s9is35mtlhrLyjm35FWJY099R
@@ -105,10 +106,10 @@ Autocrypt: addr=chao@kernel.org; keydata=
  92Qh98hAj3cMFKtEVbLKJvrc2AO+mQlS7zl1qWblEhpZnXi05S1AoT0gDW2lwe54VfT3ySon
  8Klpbp5W4eEoY21tLwuNzgUMxmycfM4GaJWNCncKuMT4qGVQO9SPFs0vgUrdBUC5Pn5ZJ46X
  mZA0DUz0S8BJtYGI0DUC/jAKhIgy1vAx39y7sAshwu2VILa71tXJ
-In-Reply-To: <20241211001404.4120186-1-weilongping@oppo.com>
-X-Headers-End: 1tLksS-0001Mu-O0
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs-tools: use pread and pwrite when
- they are available.
+In-Reply-To: <20241211001404.4120186-2-weilongping@oppo.com>
+X-Headers-End: 1tLksl-0001P2-FC
+Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs-tools: add HAVE_PREAD and
+ HAVE_PWRITE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -128,8 +129,7 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 2024/12/11 8:14, LongPing Wei wrote:
-> This patch wants to reduce the number of system calls to improve performance.
-> pread and pwrite will only be used when the target platform support them.
+> This patch will enable pread and pwrite support on Android platform.
 > 
 > Signed-off-by: LongPing Wei <weilongping@oppo.com>
 
