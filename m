@@ -4,68 +4,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 72ECBE77180
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Dec 2024 16:40:43 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0F42CE7717F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Dec 2024 08:16:38 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tNE9C-00048V-DE;
-	Mon, 16 Dec 2024 16:40:43 +0000
+	id 1tNSku-00027d-5R;
+	Tue, 17 Dec 2024 08:16:36 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tNE91-00048H-BA
- for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Dec 2024 16:40:32 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <3vSxhZwcKANwAFSJJCCEMMEJC.AMK@flex--chullee.bounces.google.com>)
+ id 1tNSks-00027V-R0 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 17 Dec 2024 08:16:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
+ Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=b3iilGf0G7C2NvgED0U9IJ92Cbcdf0yMfhcGWFbZVPI=; b=Q8fPdY5STcwyo2uWlxkWPvQiVd
- tsrFiaTLwPvdbro15b9VSTuuh4fBiB0kD5HcS2Rau0CNE7BpF4+TztPiL60Vljnv2AslR9bts/sdq
- ELeqR5kGdf8oD4G3AWYKjoX1lc01JEZ/9Oi7vUtE3PuSIDCTU6wrjBE5yCayqqIf8rdE=;
+ bh=uzkj+oZY7b1p5AsRN5+ESM/ySLflwyn0YjSlF+T1L78=; b=IrbW/wrBj3i4TOgmyPiiNVB56H
+ LD9F2D90jWjSWSYRGVyUkuqT5/SGI6VBTacH8H5ylRHn3ZKu5v+nrlEc9SGGdji8ApmRyGdbnQogN
+ bIDQPFLT043qQFnTQQCGuz1lFqab1X9k7bOajXTO5NELlzbVYuSPls0GwXrbkB/E+Dkw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=b3iilGf0G7C2NvgED0U9IJ92Cbcdf0yMfhcGWFbZVPI=; b=mp8KjMavv/sj4CSIDZrX+4imXL
- loa5uBfttfdtJVONg6FGGrFktfOhUfSzIYNo5Y3Kdk6Y+fNuN7KD7lpUjB0bqdp1uHkdPUO4wmnSW
- 7+GmX59OceHm6mSEzuUHVhkQE+NytFPBZXbzXWx5JzFy/eydGA0rsoH6mCOGMtZoh+Ss=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ ;
+ h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=uzkj+oZY7b1p5AsRN5+ESM/ySLflwyn0YjSlF+T1L78=; b=L
+ pSHKRbYU7pBRDCy57pIIk2abLGgQ3wAbJrfzTBQQ4I38Fav7gq1HetqdZZpgHKTkzs0IWpwIpMWru
+ RYHYoVhxVvnWlfTqSWdsZt9Ak4B1yiJN8QDpIVvvD+nOID8vbPTXx3Ace674jay5ZQyGFx3Pv5A9i
+ Tpf5TVUphzKFrK9Y=;
+Received: from mail-il1-f202.google.com ([209.85.166.202])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tNE91-0000sV-Cg for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Dec 2024 16:40:32 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id E98D6A418A2;
- Mon, 16 Dec 2024 16:38:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 660C4C4CED0;
- Mon, 16 Dec 2024 16:40:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1734367220;
- bh=YNH07nHPKnlXGpv8fHd7rkLd3VTVER0I1hRDHu8vXcw=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=OmgDDY6QBIhppKyYQz51Y1E7goaaUsWC0Tqn7S4N7Mcl13kSp0Ye/yo62FMUcyzFY
- oACS58PrTUofAUXIKHTMy3PRWUR9FZ7MhdHlCyg228XUL3Sw5h0ZyrnusewSMgNc9X
- QX2Uq5ydxJQaeEKUKyN8FA0NCm9IxcmGmBIn0qXzqR6Fa8mNrlOKXenwt7eKEosF2D
- VO+jGQ/hdsBelO2MLkPVhdPFEvMJTbtI0TkiOFeTdnHD+a6VMOmWS6KR1KxbeuwpAm
- S42Oty7hpWgbfxnNlzXKtjoy6cZGdEVYa178Tg5oPK7g0hV6hUslXebzDmZwInzs4k
- UUMD/Eyn/3q0Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- AE96D3806656; Mon, 16 Dec 2024 16:40:38 +0000 (UTC)
-MIME-Version: 1.0
-Message-Id: <173436723750.272389.10899464874516532269.git-patchwork-notify@kernel.org>
-Date: Mon, 16 Dec 2024 16:40:37 +0000
-References: <20241128045828.527559-1-willy@infradead.org>
-In-Reply-To: <20241128045828.527559-1-willy@infradead.org>
-To: Matthew Wilcox (Oracle) <willy@infradead.org>
-X-Headers-End: 1tNE91-0000sV-Cg
-Subject: Re: [f2fs-dev] [PATCH 00/11] f2fs folio patches
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1tNSkr-0001bw-Sc for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 17 Dec 2024 08:16:34 +0000
+Received: by mail-il1-f202.google.com with SMTP id
+ e9e14a558f8ab-3a81754abb7so95314255ab.2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 17 Dec 2024 00:16:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=google.com; s=20230601; t=1734423383; x=1735028183;
+ darn=lists.sourceforge.net; 
+ h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=uzkj+oZY7b1p5AsRN5+ESM/ySLflwyn0YjSlF+T1L78=;
+ b=OVOUptqlgN47GKLg5l790AkmvbuFHJ5OF+rWawWUQuiB+vTeIJ6yY5y8dID5U/dbQB
+ kwD5bAt390v3CA3QwgWGPAZX46Neg2oY8Wx5aLdTdB3VvDGyJUrf/z/1Q/GCCBEA6fdU
+ MYUPEGtxqplOBOqSrHStuGbRH74bbB45CQprLN+7X6YX0kxALa4aq10ppYVoTGIlWQgJ
+ 2cjNqmK/YBdHlek5XIAsrDq0m57eGA80mwJu8kF+50Y72F6hRIjaKBaYsFPQN7im8IFG
+ 7qtWXG555J94x03YkhAmGiNlFvJNUOq4fV3gwFgz+LwW3vmwtOZCpn0yBmed/yn4GAjx
+ V5jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1734423383; x=1735028183;
+ h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=uzkj+oZY7b1p5AsRN5+ESM/ySLflwyn0YjSlF+T1L78=;
+ b=IWRX3a8xMZh2uSXzpr7O1lDwl/wGL/zkaCcLcF0mcbGv+J3GMaVDsdblQtZYGpUyBg
+ 74311RnCbsnex48TyajrENMLJn36zTDFvJDg5HbW5wgC8NVdEjesHnYcIAuUtigmw2T6
+ VJL/1PZRYF3DHdBWFBisuxq9jA4FxtMg0SWEAuWCGJD5Sbs4UMJ9kS3llqmpzwrvsKdc
+ LC3Tt8mRYwRIvev9WH9RiJ4jPbRHORZAJbvQh0Vs6/fEWCzgwpgNpEdIRptN6VQlVnbv
+ fH1h0b+GsE9fDL7R2z/tjOCOgkUjE3r6AfzZJQnWtYR4QmiFhtLGZmlCrvh6kDBm5rSq
+ 7AjQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVm7zCOWHtZTGoW6Bo0H1qPKFFSOjC+JFYjHGt1e6wPq5idjTJ+GNmIOYdEvBHNWJ95b+bijWBt4SjGa41qxl18@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YzgBD1LtNyrZhwwS9RbnANJYBQid2HTrgod2LHVtvxUxeab+4Xn
+ pFm9ggyoWNTSm406cIqONEf2DVgMcP+2Paclws/o0dw0+Y5G+xfqLnzSDquue52/7u7fUvYd5yk
+ 1qn0qsw==
+X-Google-Smtp-Source: AGHT+IHbbz8nZkTFLf6hTF6u5LTYLcTNscnGFWNr9QPUKimMKeYt53bAQZ/OkXRDqvVZT0L1PDMv0rGQgFzz
+X-Received: from pjbsc8.prod.google.com ([2002:a17:90b:5108:b0:2ef:85ba:108f])
+ (user=chullee job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:3d12:b0:2ee:ed1c:e451
+ with SMTP id 98e67ed59e1d1-2f28fb67922mr24903726a91.15.1734421693371; Mon, 16
+ Dec 2024 23:48:13 -0800 (PST)
+Date: Mon, 16 Dec 2024 23:47:29 -0800
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
+Message-ID: <20241217074730.1166912-1-chullee@google.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
+ linux-f2fs-devel@lists.sourceforge.net, 
+ open list <linux-kernel@vger.kernel.org>, --dry-run@google.com
+X-Headers-End: 1tNSkr-0001bw-Sc
+Subject: [f2fs-dev] [PATCH] f2fs: Introduce linear search for dentries
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,59 +99,208 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Daniel Lee via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Daniel Lee <chullee@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+This patch addresses an issue where some files in case-insensitive
+directories become inaccessible due to changes in how the kernel function,
+utf8_casefold(), generates case-folded strings from the commit 5c26d2f1d3f5
+("unicode: Don't special case ignorable code points").
 
-This series was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+F2FS uses these case-folded names to calculate hash values for locating
+dentries and stores them on disk. Since utf8_casefold() can produce
+different output across kernel versions, stored hash values and newly
+calculated hash values may differ. This results in affected files no
+longer being found via the hash-based lookup.
 
-On Thu, 28 Nov 2024 04:58:15 +0000 you wrote:
-> This round of f2fs patches accomplishes two things:
-> 
->  - Removal of all references to page->index in f2fs.  I'm looking to
->    finish this conversion in the January merge window.
->  - Removal of all calls to page_file_mapping() and folio_file_mapping()
-> 
-> I have only compile-tested these patches.
-> 
-> [...]
+To resolve this, the patch introduces a linear search fallback.
+If the initial hash-based search fails, F2FS will sequentially scan the
+directory entries.
 
-Here is the summary with links:
-  - [f2fs-dev,01/11] f2fs: Use a folio in f2fs_all_cluster_page_ready()
-    https://git.kernel.org/jaegeuk/f2fs/c/a909c1795353
-  - [f2fs-dev,02/11] f2fs: Use a folio in f2fs_compress_write_end()
-    https://git.kernel.org/jaegeuk/f2fs/c/ff6c82a934f7
-  - [f2fs-dev,03/11] f2fs: Use a folio in f2fs_truncate_partial_cluster()
-    https://git.kernel.org/jaegeuk/f2fs/c/1cda5bc0b2fe
-  - [f2fs-dev,04/11] f2fs: Use a folio in f2fs_write_compressed_pages()
-    https://git.kernel.org/jaegeuk/f2fs/c/ac866908d7a9
-  - [f2fs-dev,05/11] f2fs: Convert submit tracepoints to take a folio
-    https://git.kernel.org/jaegeuk/f2fs/c/87e2a15bc008
-  - [f2fs-dev,06/11] f2fs: Add F2FS_F_SB()
-    https://git.kernel.org/jaegeuk/f2fs/c/1cf746007005
-  - [f2fs-dev,07/11] f2fs: Convert f2fs_finish_read_bio() to use folios
-    https://git.kernel.org/jaegeuk/f2fs/c/e0821645dd2d
-  - [f2fs-dev,08/11] f2fs: Use a folio more in f2fs_submit_page_bio()
-    https://git.kernel.org/jaegeuk/f2fs/c/0765b3f989a7
-  - [f2fs-dev,09/11] f2fs: Use a data folio in f2fs_submit_page_bio()
-    https://git.kernel.org/jaegeuk/f2fs/c/f58d8645824b
-  - [f2fs-dev,10/11] f2fs: Convert __read_io_type() to take a folio
-    https://git.kernel.org/jaegeuk/f2fs/c/19bbd306ddfd
-  - [f2fs-dev,11/11] f2fs: Remove calls to folio_file_mapping()
-    https://git.kernel.org/jaegeuk/f2fs/c/c910a64bc4e2
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=219586
+Signed-off-by: Daniel Lee <chullee@google.com>
+---
+ fs/f2fs/dir.c    | 38 ++++++++++++++++++++++++++++----------
+ fs/f2fs/f2fs.h   |  6 ++++--
+ fs/f2fs/inline.c |  5 +++--
+ 3 files changed, 35 insertions(+), 14 deletions(-)
 
-You are awesome, thank you!
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 47a5c806cf16..a85d19b4e178 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -175,7 +175,8 @@ static unsigned long dir_block_index(unsigned int level,
+ static struct f2fs_dir_entry *find_in_block(struct inode *dir,
+ 				struct page *dentry_page,
+ 				const struct f2fs_filename *fname,
+-				int *max_slots)
++				int *max_slots,
++				bool use_hash)
+ {
+ 	struct f2fs_dentry_block *dentry_blk;
+ 	struct f2fs_dentry_ptr d;
+@@ -183,7 +184,7 @@ static struct f2fs_dir_entry *find_in_block(struct inode *dir,
+ 	dentry_blk = (struct f2fs_dentry_block *)page_address(dentry_page);
+ 
+ 	make_dentry_ptr_block(dir, &d, dentry_blk);
+-	return f2fs_find_target_dentry(&d, fname, max_slots);
++	return f2fs_find_target_dentry(&d, fname, max_slots, use_hash);
+ }
+ 
+ static inline int f2fs_match_name(const struct inode *dir,
+@@ -208,7 +209,8 @@ static inline int f2fs_match_name(const struct inode *dir,
+ }
+ 
+ struct f2fs_dir_entry *f2fs_find_target_dentry(const struct f2fs_dentry_ptr *d,
+-			const struct f2fs_filename *fname, int *max_slots)
++			const struct f2fs_filename *fname, int *max_slots,
++			bool use_hash)
+ {
+ 	struct f2fs_dir_entry *de;
+ 	unsigned long bit_pos = 0;
+@@ -231,7 +233,7 @@ struct f2fs_dir_entry *f2fs_find_target_dentry(const struct f2fs_dentry_ptr *d,
+ 			continue;
+ 		}
+ 
+-		if (de->hash_code == fname->hash) {
++		if (!use_hash || de->hash_code == fname->hash) {
+ 			res = f2fs_match_name(d->inode, fname,
+ 					      d->filename[bit_pos],
+ 					      le16_to_cpu(de->name_len));
+@@ -258,11 +260,12 @@ struct f2fs_dir_entry *f2fs_find_target_dentry(const struct f2fs_dentry_ptr *d,
+ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+ 					unsigned int level,
+ 					const struct f2fs_filename *fname,
+-					struct page **res_page)
++					struct page **res_page,
++					bool use_hash)
+ {
+ 	int s = GET_DENTRY_SLOTS(fname->disk_name.len);
+ 	unsigned int nbucket, nblock;
+-	unsigned int bidx, end_block;
++	unsigned int bidx, end_block, bucket_no;
+ 	struct page *dentry_page;
+ 	struct f2fs_dir_entry *de = NULL;
+ 	pgoff_t next_pgofs;
+@@ -272,8 +275,11 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+ 	nbucket = dir_buckets(level, F2FS_I(dir)->i_dir_level);
+ 	nblock = bucket_blocks(level);
+ 
++	bucket_no = use_hash ? le32_to_cpu(fname->hash) % nbucket : 0;
++
++start_find_bucket:
+ 	bidx = dir_block_index(level, F2FS_I(dir)->i_dir_level,
+-			       le32_to_cpu(fname->hash) % nbucket);
++			       bucket_no);
+ 	end_block = bidx + nblock;
+ 
+ 	while (bidx < end_block) {
+@@ -290,7 +296,7 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+ 			}
+ 		}
+ 
+-		de = find_in_block(dir, dentry_page, fname, &max_slots);
++		de = find_in_block(dir, dentry_page, fname, &max_slots, use_hash);
+ 		if (IS_ERR(de)) {
+ 			*res_page = ERR_CAST(de);
+ 			de = NULL;
+@@ -307,6 +313,9 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+ 		bidx++;
+ 	}
+ 
++	if (!use_hash && !de && ++bucket_no < nbucket)
++		goto start_find_bucket;
++
+ 	if (!de && room && F2FS_I(dir)->chash != fname->hash) {
+ 		F2FS_I(dir)->chash = fname->hash;
+ 		F2FS_I(dir)->clevel = level;
+@@ -323,11 +332,13 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+ 	struct f2fs_dir_entry *de = NULL;
+ 	unsigned int max_depth;
+ 	unsigned int level;
++	bool use_hash = true;
+ 
+ 	*res_page = NULL;
+ 
++start_find_entry:
+ 	if (f2fs_has_inline_dentry(dir)) {
+-		de = f2fs_find_in_inline_dir(dir, fname, res_page);
++		de = f2fs_find_in_inline_dir(dir, fname, res_page, use_hash);
+ 		goto out;
+ 	}
+ 
+@@ -343,11 +354,18 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+ 	}
+ 
+ 	for (level = 0; level < max_depth; level++) {
+-		de = find_in_level(dir, level, fname, res_page);
++		de = find_in_level(dir, level, fname, res_page, use_hash);
+ 		if (de || IS_ERR(*res_page))
+ 			break;
+ 	}
++
+ out:
++#if IS_ENABLED(CONFIG_UNICODE)
++	if (IS_CASEFOLDED(dir) && !de && use_hash) {
++		use_hash = false;
++		goto start_find_entry;
++	}
++#endif
+ 	/* This is to increase the speed of f2fs_create */
+ 	if (!de)
+ 		F2FS_I(dir)->task = current;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f523dd302bf6..1afebb9c4061 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3588,7 +3588,8 @@ int f2fs_prepare_lookup(struct inode *dir, struct dentry *dentry,
+ 			struct f2fs_filename *fname);
+ void f2fs_free_filename(struct f2fs_filename *fname);
+ struct f2fs_dir_entry *f2fs_find_target_dentry(const struct f2fs_dentry_ptr *d,
+-			const struct f2fs_filename *fname, int *max_slots);
++			const struct f2fs_filename *fname, int *max_slots,
++			bool use_hash);
+ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+ 			unsigned int start_pos, struct fscrypt_str *fstr);
+ void f2fs_do_make_empty_dir(struct inode *inode, struct inode *parent,
+@@ -4224,7 +4225,8 @@ int f2fs_write_inline_data(struct inode *inode, struct folio *folio);
+ int f2fs_recover_inline_data(struct inode *inode, struct page *npage);
+ struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
+ 					const struct f2fs_filename *fname,
+-					struct page **res_page);
++					struct page **res_page,
++					bool use_hash);
+ int f2fs_make_empty_inline_dir(struct inode *inode, struct inode *parent,
+ 			struct page *ipage);
+ int f2fs_add_inline_entry(struct inode *dir, const struct f2fs_filename *fname,
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index cbd2a0d34804..3e3c35d4c98b 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -352,7 +352,8 @@ int f2fs_recover_inline_data(struct inode *inode, struct page *npage)
+ 
+ struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
+ 					const struct f2fs_filename *fname,
+-					struct page **res_page)
++					struct page **res_page,
++					bool use_hash)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
+ 	struct f2fs_dir_entry *de;
+@@ -369,7 +370,7 @@ struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
+ 	inline_dentry = inline_data_addr(dir, ipage);
+ 
+ 	make_dentry_ptr_inline(dir, &d, inline_dentry);
+-	de = f2fs_find_target_dentry(&d, fname, NULL);
++	de = f2fs_find_target_dentry(&d, fname, NULL, use_hash);
+ 	unlock_page(ipage);
+ 	if (IS_ERR(de)) {
+ 		*res_page = ERR_CAST(de);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.47.1.613.gc27f4b7a9f-goog
 
 
 
