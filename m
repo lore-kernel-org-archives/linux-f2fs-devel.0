@@ -4,67 +4,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7B78EE7718B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Dec 2024 09:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 459B0E7718B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Dec 2024 14:13:40 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tPecR-0004BU-Kp;
-	Mon, 23 Dec 2024 09:20:55 +0000
+	id 1tPjBh-0001KG-Qo;
+	Mon, 23 Dec 2024 14:13:37 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <BATV+2ab8f4ca17c8b03b1993+7792+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1tPebs-0004Au-2E for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 23 Dec 2024 09:20:20 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <chao@kernel.org>) id 1tPjBf-0001K8-VO
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 23 Dec 2024 14:13:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FKi6OwAeOuymBx9/APs/sfo5EFcqTrkzLfNDNZUJI1w=; b=ggFoK8P1ca2i9p5yaaLfqwFkh+
- KHde5ghfjtAsPHBRroMu84N3icvVce0jtA4gOlM0MHBxsOhulb+Ag7aoRQCJZZRwbz9j5j1Vfa6/c
- lZghVCHPjdocHJ5Zsp4ga6ysTzeRsSo/gQ4ErpVbdFK1PceeU9OO8fpv2mekjuNm1me0=;
+ bh=KebQMvH5ekl0WbZYvyzk7R55WHOyOIf/D3I2qPonQMs=; b=HS5BkulRW5rJMbz4N2QyNcraPp
+ 3YJI5K96JqYpTCDWdL6YabYevVG16KMPSMdic0UQGC2JUZ8Do4dCXXapOeKJCB7jHKna+CIZdGcG4
+ M8s6gNkxIEMLPCUd/4oyCm8bI8w06Dk1E+cX9ckYFN6NE2ngasNyz18e/DnzvpYsF9WY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=FKi6OwAeOuymBx9/APs/sfo5EFcqTrkzLfNDNZUJI1w=; b=nDaQQBfQJnB6p3fr9BWmHCB6ER
- nTLVihGbKIWRwPG/NLhP6e73EQm1oiFQGJDiN6g9TaCJkggncrKWlsvslna4ys7tO9/2M2fv1RER3
- FY0zxKFgfJgcKrzepSk38EaO7kdfRdzi50WRAPM+QpzX9zkeJI/8O0qqde8U2gsQWxYQ=;
-Received: from bombadil.infradead.org ([198.137.202.133])
+ bh=KebQMvH5ekl0WbZYvyzk7R55WHOyOIf/D3I2qPonQMs=; b=bKQvvp1wO1i6MWhWC1k4MDH6gl
+ +w0BD1TF4IWJEQjdtYnMVrgrqsoxIB0r4B6+fY2wQFGfWVgeTtt2gXCfWJyin4Sb1K+wHW/RhCs7d
+ mGVDrn0rWThwqmamht1UILvj5SYYAH/xRYXUC+cnzAxHjNKsi3fx2lC+73CXdbhVuYwg=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tPebo-0000al-GL for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 23 Dec 2024 09:20:20 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
- :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=FKi6OwAeOuymBx9/APs/sfo5EFcqTrkzLfNDNZUJI1w=; b=cCBA5bDYEAyVjJNvvcO/dtJz+c
- J/pxz4lGXMpPgBsRbOKaZM38jHBYtbPLn7P4uTh3mNiY9VfQ9SoTuVNMfzX+WSWq1nZHs5IU9RNz5
- j6/MeioDZEjKY2GdBZlwPCdFGEoT+9gID94R4wyRnWWulOaNbp+/FjcA8yVZ/jWfKFmadGO3I13p3
- kKPURLRO8LYR9dvTPPxmbRgeGvLBbVN6P6acfIT0+KKrV2GXwskLvCydtfosR2Jge2pDM6DPudTpS
- 8sbq0/TG3j1gUhPacO9GEAOC4tV0RnO1SWZOBkJpQtXHo3hZuKzehaxpqZWWHJ49PH3hAm4Yocs5B
- QGkixDLQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat
- Linux)) id 1tPdlm-00000009aNp-3zRF; Mon, 23 Dec 2024 08:26:30 +0000
-Date: Mon, 23 Dec 2024 00:26:30 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Daniel Lee <chullee@google.com>
-Message-ID: <Z2ketmZiWmUVddpt@infradead.org>
-References: <20241220172136.1028811-1-chullee@google.com>
+ id 1tPjBf-0002k0-42 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 23 Dec 2024 14:13:35 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by nyc.source.kernel.org (Postfix) with ESMTP id 520CFA40D77;
+ Mon, 23 Dec 2024 14:11:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DCE1C4CED3;
+ Mon, 23 Dec 2024 14:13:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1734963209;
+ bh=su9knhlNxkMsyauWUBR8t/hhTw2AboVx5LlsHhCYf0k=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=jzw88RsoN6F94O8Ite0FFkE43qTrGVMXTR+JIOcd2o1QH8XlXOiJ3JX/+RWwB/ioX
+ oDIYg0cuPBbaFcX6u9tjE/33XWL2Rx5x9gxRsLwNLSyPe3du8YwCO4mtqQM+dnz1oo
+ zVOQmR0MFkMgsiUgVFBohatEwWPN8F7L06c4mUmV8GH1Md2vKxaAQmssXH+JJ0Bkoj
+ sKP8iik8pAJjntD63pJIBj2xCW+OC6NGMIk+kTg6w+ykc2iXzFltN6NxjuPXZFLeW4
+ 69gLeStLc01nezz1FMBv8oMTpDDz8s5ThEGjfbNLOuBT46KdAZcYGZ4p3QZUL+eiWC
+ csg1VOSl+Gv4A==
+Message-ID: <a441f694-b0f2-4a57-b4cc-b98cc995c323@kernel.org>
+Date: Mon, 23 Dec 2024 22:13:28 +0800
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20241220172136.1028811-1-chullee@google.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1tPebo-0000al-GL
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: Introduce linear search for dentries
+User-Agent: Mozilla Thunderbird
+To: syzbot <syzbot+69f5379a1717a0b982a1@syzkaller.appspotmail.com>,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <676864d5.050a0220.226966.002c.GAE@google.com>
+Content-Language: en-US
+Autocrypt: addr=chao@kernel.org; keydata=
+ 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
+In-Reply-To: <676864d5.050a0220.226966.002c.GAE@google.com>
+X-Headers-End: 1tPjBf-0002k0-42
+Subject: Re: [f2fs-dev] [syzbot] [f2fs?] UBSAN: array-index-out-of-bounds in
+ read_inline_xattr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,33 +122,83 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Dec 20, 2024 at 09:21:36AM -0800, Daniel Lee wrote:
-> This patch addresses an issue where some files in case-insensitive
-> directories become inaccessible due to changes in how the kernel function,
-> utf8_casefold(), generates case-folded strings from the commit 5c26d2f1d3f5
-> ("unicode: Don't special case ignorable code points").
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git wip
 
-That also breaks all other direct hashed and needs to be fixed.
-
+On 2024/12/23 3:13, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
 > 
-> F2FS uses these case-folded names to calculate hash values for locating
-> dentries and stores them on disk. Since utf8_casefold() can produce
-> different output across kernel versions, stored hash values and newly
-> calculated hash values may differ. This results in affected files no
-> longer being found via the hash-based lookup.
+> HEAD commit:    bcde95ce32b6 Merge tag 'devicetree-fixes-for-6.13-1' of gi..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=116c0adf980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=1234f097ee657d8b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=69f5379a1717a0b982a1
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=167f9f30580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=142d7cf8580000
 > 
-> To resolve this, the patch introduces a linear search fallback.
-> If the initial hash-based search fails, F2FS will sequentially scan the
-> directory entries.
-
-That means you have really bad worst case behavior for negative lookups.
-I don' think this is in any way a good idea.
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/be6d4de70f82/disk-bcde95ce.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/70993500a1e4/vmlinux-bcde95ce.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/1018443184c5/bzImage-bcde95ce.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/7e1b134be79c/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+69f5379a1717a0b982a1@syzkaller.appspotmail.com
+> 
+> F2FS-fs (loop0): Failed to enable quota tracking (type=1, err=-22). Please run fsck to fix.
+> F2FS-fs (loop0): Cannot turn on quotas: error -22
+> F2FS-fs (loop0): Mounted with checkpoint version = 1b41e954
+> ------------[ cut here ]------------
+> UBSAN: array-index-out-of-bounds in fs/f2fs/f2fs.h:3292:19
+> index 18446744073709500059 is out of range for type '__le32[923]' (aka 'unsigned int[923]')
+> CPU: 0 UID: 0 PID: 5820 Comm: syz-executor178 Not tainted 6.13.0-rc3-syzkaller-00301-gbcde95ce32b6 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> Call Trace:
+>   <TASK>
+>   __dump_stack lib/dump_stack.c:94 [inline]
+>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>   ubsan_epilogue lib/ubsan.c:231 [inline]
+>   __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
+>   read_inline_xattr+0x273/0x280
+>   lookup_all_xattrs fs/f2fs/xattr.c:341 [inline]
+>   f2fs_getxattr+0x57b/0x13b0 fs/f2fs/xattr.c:533
+>   __vfs_getxattr+0x433/0x470 fs/xattr.c:423
+>   smk_fetch+0xb1/0x140 security/smack/smack_lsm.c:306
+>   smack_d_instantiate+0x749/0xa50 security/smack/smack_lsm.c:3615
+>   security_d_instantiate+0x107/0x1f0 security/security.c:4070
+>   d_splice_alias+0x6f/0x330 fs/dcache.c:3001
+>   f2fs_lookup+0x4ff/0x820 fs/f2fs/namei.c:523
+>   lookup_one_qstr_excl+0x11f/0x260 fs/namei.c:1692
+>   filename_create+0x297/0x540 fs/namei.c:4081
+>   do_mkdirat+0xbd/0x3a0 fs/namei.c:4326
+>   __do_sys_mkdir fs/namei.c:4354 [inline]
+>   __se_sys_mkdir fs/namei.c:4352 [inline]
+>   __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4352
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f5566117ad7
+> Code: ff ff 77 07 31 c0 c3 0f 1f 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 b8 53 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fff7eab6a58 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5566117ad7
+> RDX: 0000000000000000 RSI: 00000000000001ff RDI: 0000000020000180
+> RBP: 0000000020000180 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007fff7eab6af0 R14: 0000000000000000 R15: 0000000000000000
+>   </TASK>
+> ---[ end trace ]---
+> 
+> 
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
 
 
