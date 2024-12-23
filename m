@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0B40FE7718B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Dec 2024 08:12:59 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D7BC1E7718D
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Dec 2024 08:13:00 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tPdYg-0008Io-UX;
-	Mon, 23 Dec 2024 08:12:59 +0000
+	id 1tPdYi-0002i3-HZ;
+	Mon, 23 Dec 2024 08:13:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <Yi.Sun@unisoc.com>) id 1tPdYe-0008ID-Pe
+ (envelope-from <Yi.Sun@unisoc.com>) id 1tPdYf-0002hu-H5
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 23 Dec 2024 08:12:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=d+sDygFdY5rjU9y6e1LIWsTMDe/WgwJXcLZMT+O9F1k=; b=V0EvpvAcD/ERFqoWRYdo/+JfD2
- OtGBUp2HECxVL/HHKkrjB8qzbKIEJwx3tkJemHgpk0cTIwI9FZlnHmHsQOWta8O8NyGBRf64bTWzI
- ABWa00g2k1AwZyyh2NJW25j2bbeir8OyzqIdvFKHjlZdTfaP8rzuWVyG7ZEO0BU/5ZOs=;
+ bh=Y6x0rnv9n1XrYKP/2XpA3B0XjAEftkZtg0oX5L9eKvk=; b=d7B7b5zl4b9SSOlFokT3d8U6iH
+ dIWJ3+lskBs3usOUim+6w6wNIFEwFDFNaLkDX2XCLvzaylMZiCYKxKGvvVlYWVNjGe/50FFTtVEXY
+ sZOEL9gJVNkeuPIjAkO8M9MuoAf27SxhReNXAHeObvqOfwDLIFGBZMbWIq7qrFge25Hw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -33,28 +33,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=d+sDygFdY5rjU9y6e1LIWsTMDe/WgwJXcLZMT+O9F1k=; b=by9VoW5lG4z3cHN+8Xv49ofpX2
- QNy1FrYgpRSkLGmFXIVijZRfsZ5jbGHoyG6BN5f5aAqJPke4O5lBvsek+O5aG4yDc/jSNfCLy5Jg4
- oW53+1jYQFMaHI1XiP28LQtbYtXJF2c6gIIN5AsHIZ+2Gy7yl7twXbKd7PRZ/moUKmog=;
+ bh=Y6x0rnv9n1XrYKP/2XpA3B0XjAEftkZtg0oX5L9eKvk=; b=SfAFrhtEMrOcMjOARvY1bs+jg8
+ noBVLn0+9UasWcKVFX3ld8DVrkln88V4WMSti+JPnCt9USfPBaXFMHLAEQpovh9e0TsSQ7kNy7yGC
+ 258UCCcgI7FIl6EiYwgPxajwrKZOoEM6k+3lneswEl66RKc7NmyCHcf0EETQn19rDj2o=;
 Received: from mx1.unisoc.com ([222.66.158.135] helo=SHSQR01.spreadtrum.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tPdYd-0007Ea-QK for linux-f2fs-devel@lists.sourceforge.net;
+ id 1tPdYd-0007EY-Eq for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 23 Dec 2024 08:12:56 +0000
 Received: from dlp.unisoc.com ([10.29.3.86])
- by SHSQR01.spreadtrum.com with ESMTP id 4BN8AnKr033236;
- Mon, 23 Dec 2024 16:10:49 +0800 (+08)
+ by SHSQR01.spreadtrum.com with ESMTP id 4BN8Aqej033642;
+ Mon, 23 Dec 2024 16:10:52 +0800 (+08)
  (envelope-from Yi.Sun@unisoc.com)
 Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
- by dlp.unisoc.com (SkyGuard) with ESMTPS id 4YGrHr1TsXz2NksVq;
- Mon, 23 Dec 2024 16:08:24 +0800 (CST)
+ by dlp.unisoc.com (SkyGuard) with ESMTPS id 4YGrHv0pVcz2MnTyj;
+ Mon, 23 Dec 2024 16:08:27 +0800 (CST)
 Received: from tj10379pcu1.spreadtrum.com (10.5.32.15) by
  BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Mon, 23 Dec 2024 16:10:47 +0800
+ 15.0.1497.23; Mon, 23 Dec 2024 16:10:50 +0800
 From: Yi Sun <yi.sun@unisoc.com>
 To: <chao@kernel.org>, <jaegeuk@kernel.org>
-Date: Mon, 23 Dec 2024 16:10:41 +0800
-Message-ID: <20241223081044.1126291-2-yi.sun@unisoc.com>
+Date: Mon, 23 Dec 2024 16:10:44 +0800
+Message-ID: <20241223081044.1126291-5-yi.sun@unisoc.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241223081044.1126291-1-yi.sun@unisoc.com>
 References: <20241223081044.1126291-1-yi.sun@unisoc.com>
@@ -62,10 +62,10 @@ MIME-Version: 1.0
 X-Originating-IP: [10.5.32.15]
 X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
  BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL: SHSQR01.spreadtrum.com 4BN8AnKr033236
-X-Headers-End: 1tPdYd-0007Ea-QK
-Subject: [f2fs-dev] [PATCH v4 1/4] f2fs: introduce
- update_sit_entry_for_release/alloc()
+X-MAIL: SHSQR01.spreadtrum.com 4BN8Aqej033642
+X-Headers-End: 1tPdYd-0007EY-Eq
+Subject: [f2fs-dev] [PATCH v4 4/4] f2fs: Optimize
+ f2fs_truncate_data_blocks_range()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,201 +84,129 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-No logical changes, just for cleanliness.
+Function f2fs_invalidate_blocks() can process continuous
+blocks at a time, so f2fs_truncate_data_blocks_range() is
+optimized to use the new functionality of
+f2fs_invalidate_blocks().
 
 Signed-off-by: Yi Sun <yi.sun@unisoc.com>
 ---
- fs/f2fs/segment.c | 162 ++++++++++++++++++++++++++--------------------
- 1 file changed, 93 insertions(+), 69 deletions(-)
+ fs/f2fs/file.c | 72 +++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 68 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 86e547f008f9..bc761d9b889a 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2426,16 +2426,103 @@ static void update_segment_mtime(struct f2fs_sb_info *sbi, block_t blkaddr,
- 		SIT_I(sbi)->max_mtime = ctime;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 81764b10840b..9980d17ef9f5 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -612,6 +612,15 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
+ 	return finish_preallocate_blocks(inode);
  }
  
--static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
-+static int update_sit_entry_for_release(struct f2fs_sb_info *sbi, struct seg_entry *se,
-+				block_t blkaddr, unsigned int offset, int del)
++static bool check_curr_block_is_consecutive(struct f2fs_sb_info *sbi,
++					block_t curr, block_t end)
 +{
-+	bool exist;
-+#ifdef CONFIG_F2FS_CHECK_FS
-+	bool mir_exist;
-+#endif
-+
-+	exist = f2fs_test_and_clear_bit(offset, se->cur_valid_map);
-+#ifdef CONFIG_F2FS_CHECK_FS
-+	mir_exist = f2fs_test_and_clear_bit(offset,
-+					se->cur_valid_map_mir);
-+	if (unlikely(exist != mir_exist)) {
-+		f2fs_err(sbi, "Inconsistent error when clearing bitmap, blk:%u, old bit:%d",
-+			blkaddr, exist);
-+		f2fs_bug_on(sbi, 1);
-+	}
-+#endif
-+	if (unlikely(!exist)) {
-+		f2fs_err(sbi, "Bitmap was wrongly cleared, blk:%u", blkaddr);
-+		f2fs_bug_on(sbi, 1);
-+		se->valid_blocks++;
-+		del = 0;
-+	} else if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
-+		/*
-+		 * If checkpoints are off, we must not reuse data that
-+		 * was used in the previous checkpoint. If it was used
-+		 * before, we must track that to know how much space we
-+		 * really have.
-+		 */
-+		if (f2fs_test_bit(offset, se->ckpt_valid_map)) {
-+			spin_lock(&sbi->stat_lock);
-+			sbi->unusable_block_count++;
-+			spin_unlock(&sbi->stat_lock);
-+		}
-+	}
-+
-+	if (f2fs_block_unit_discard(sbi) &&
-+			f2fs_test_and_clear_bit(offset, se->discard_map))
-+		sbi->discard_blks++;
-+
-+	if (!f2fs_test_bit(offset, se->ckpt_valid_map))
-+		se->ckpt_valid_blocks += del;
-+
-+	return del;
++	if (curr - end == 1 || curr == end)
++		return true;
++	else
++		return false;
 +}
 +
-+static int update_sit_entry_for_alloc(struct f2fs_sb_info *sbi, struct seg_entry *se,
-+				block_t blkaddr, unsigned int offset, int del)
+ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
  {
--	struct seg_entry *se;
--	unsigned int segno, offset;
--	long int new_vblocks;
- 	bool exist;
- #ifdef CONFIG_F2FS_CHECK_FS
- 	bool mir_exist;
- #endif
- 
-+	exist = f2fs_test_and_set_bit(offset, se->cur_valid_map);
-+#ifdef CONFIG_F2FS_CHECK_FS
-+	mir_exist = f2fs_test_and_set_bit(offset,
-+					se->cur_valid_map_mir);
-+	if (unlikely(exist != mir_exist)) {
-+		f2fs_err(sbi, "Inconsistent error when setting bitmap, blk:%u, old bit:%d",
-+			blkaddr, exist);
-+		f2fs_bug_on(sbi, 1);
-+	}
-+#endif
-+	if (unlikely(exist)) {
-+		f2fs_err(sbi, "Bitmap was wrongly set, blk:%u", blkaddr);
-+		f2fs_bug_on(sbi, 1);
-+		se->valid_blocks--;
-+		del = 0;
-+	}
-+
-+	if (f2fs_block_unit_discard(sbi) &&
-+			!f2fs_test_and_set_bit(offset, se->discard_map))
-+		sbi->discard_blks--;
-+
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+@@ -621,8 +630,27 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+ 	int cluster_index = 0, valid_blocks = 0;
+ 	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
+ 	bool released = !atomic_read(&F2FS_I(dn->inode)->i_compr_blocks);
 +	/*
-+	 * SSR should never reuse block which is checkpointed
-+	 * or newly invalidated.
++	 * Temporary record location.
++	 * When the current  @blkaddr and @blkaddr_end can be processed
++	 * together, update the value of @blkaddr_end.
++	 * When it is detected that current @blkaddr is not continues with
++	 * @blkaddr_end, it is necessary to process continues blocks
++	 * range [blkaddr_start, blkaddr_end].
 +	 */
-+	if (!is_sbi_flag_set(sbi, SBI_CP_DISABLED)) {
-+		if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map))
-+			se->ckpt_valid_blocks++;
-+	}
-+
-+	if (!f2fs_test_bit(offset, se->ckpt_valid_map))
-+		se->ckpt_valid_blocks += del;
-+
-+	return del;
-+}
-+
-+static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
-+{
-+	struct seg_entry *se;
-+	unsigned int segno, offset;
-+	long int new_vblocks;
-+
- 	segno = GET_SEGNO(sbi, blkaddr);
- 	if (segno == NULL_SEGNO)
- 		return;
-@@ -2451,73 +2538,10 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
++	block_t blkaddr_start, blkaddr_end;
++	/*.
++	 * To avoid processing various invalid data blocks.
++	 * Because @blkaddr_start and @blkaddr_end may be assigned
++	 * NULL_ADDR or invalid data blocks, @last_valid is used to
++	 * record this situation.
++	 */
++	bool last_valid = false;
++	/* Process the last @blkaddr separately? */
++	bool last_one = true;
  
- 	/* Update valid block bitmap */
- 	if (del > 0) {
--		exist = f2fs_test_and_set_bit(offset, se->cur_valid_map);
--#ifdef CONFIG_F2FS_CHECK_FS
--		mir_exist = f2fs_test_and_set_bit(offset,
--						se->cur_valid_map_mir);
--		if (unlikely(exist != mir_exist)) {
--			f2fs_err(sbi, "Inconsistent error when setting bitmap, blk:%u, old bit:%d",
--				 blkaddr, exist);
--			f2fs_bug_on(sbi, 1);
--		}
--#endif
--		if (unlikely(exist)) {
--			f2fs_err(sbi, "Bitmap was wrongly set, blk:%u",
--				 blkaddr);
--			f2fs_bug_on(sbi, 1);
--			se->valid_blocks--;
--			del = 0;
--		}
--
--		if (f2fs_block_unit_discard(sbi) &&
--				!f2fs_test_and_set_bit(offset, se->discard_map))
--			sbi->discard_blks--;
--
--		/*
--		 * SSR should never reuse block which is checkpointed
--		 * or newly invalidated.
--		 */
--		if (!is_sbi_flag_set(sbi, SBI_CP_DISABLED)) {
--			if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map))
--				se->ckpt_valid_blocks++;
--		}
-+		del = update_sit_entry_for_alloc(sbi, se, blkaddr, offset, del);
- 	} else {
--		exist = f2fs_test_and_clear_bit(offset, se->cur_valid_map);
--#ifdef CONFIG_F2FS_CHECK_FS
--		mir_exist = f2fs_test_and_clear_bit(offset,
--						se->cur_valid_map_mir);
--		if (unlikely(exist != mir_exist)) {
--			f2fs_err(sbi, "Inconsistent error when clearing bitmap, blk:%u, old bit:%d",
--				 blkaddr, exist);
--			f2fs_bug_on(sbi, 1);
--		}
--#endif
--		if (unlikely(!exist)) {
--			f2fs_err(sbi, "Bitmap was wrongly cleared, blk:%u",
--				 blkaddr);
--			f2fs_bug_on(sbi, 1);
--			se->valid_blocks++;
--			del = 0;
--		} else if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
--			/*
--			 * If checkpoints are off, we must not reuse data that
--			 * was used in the previous checkpoint. If it was used
--			 * before, we must track that to know how much space we
--			 * really have.
--			 */
--			if (f2fs_test_bit(offset, se->ckpt_valid_map)) {
--				spin_lock(&sbi->stat_lock);
--				sbi->unusable_block_count++;
--				spin_unlock(&sbi->stat_lock);
--			}
--		}
--
--		if (f2fs_block_unit_discard(sbi) &&
--			f2fs_test_and_clear_bit(offset, se->discard_map))
--			sbi->discard_blks++;
-+		del = update_sit_entry_for_release(sbi, se, blkaddr, offset, del);
+ 	addr = get_dnode_addr(dn->inode, dn->node_page) + ofs;
++	blkaddr_start = blkaddr_end = le32_to_cpu(*addr);
+ 
+ 	/* Assumption: truncation starts with cluster */
+ 	for (; count > 0; count--, addr++, dn->ofs_in_node++, cluster_index++) {
+@@ -638,24 +666,60 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+ 		}
+ 
+ 		if (blkaddr == NULL_ADDR)
+-			continue;
++			goto next;
+ 
+ 		f2fs_set_data_blkaddr(dn, NULL_ADDR);
+ 
+ 		if (__is_valid_data_blkaddr(blkaddr)) {
+ 			if (time_to_inject(sbi, FAULT_BLKADDR_CONSISTENCE))
+-				continue;
++				goto next;
+ 			if (!f2fs_is_valid_blkaddr_raw(sbi, blkaddr,
+ 						DATA_GENERIC_ENHANCE))
+-				continue;
++				goto next;
+ 			if (compressed_cluster)
+ 				valid_blocks++;
+ 		}
+ 
+-		f2fs_invalidate_blocks(sbi, blkaddr, 1);
++
++		if (check_curr_block_is_consecutive(sbi, blkaddr, blkaddr_end)) {
++			/*
++			 * The current block @blkaddr is continuous with
++			 * @blkaddr_end, so @blkaddr_end is updated.
++			 * And the f2fs_invalidate_blocks() is skipped
++			 * until @blkaddr that cannot be processed
++			 * together is encountered.
++			 */
++			blkaddr_end = blkaddr;
++			if (count == 1)
++				last_one = false;
++			else
++				goto skip_invalid;
++		}
++
++		f2fs_invalidate_blocks(sbi, blkaddr_start,
++					blkaddr_end - blkaddr_start + 1);
++		blkaddr_start = blkaddr_end = blkaddr;
++
++		if (count == 1 && last_one)
++			f2fs_invalidate_blocks(sbi, blkaddr, 1);
++
++skip_invalid:
++		last_valid = true;
+ 
+ 		if (!released || blkaddr != COMPRESS_ADDR)
+ 			nr_free++;
++
++		continue;
++
++next:
++		/* If consecutive blocks have been recorded, we need to process them. */
++		if (last_valid == true)
++			f2fs_invalidate_blocks(sbi, blkaddr_start,
++					blkaddr_end - blkaddr_start + 1);
++
++		blkaddr_start = blkaddr_end = le32_to_cpu(*(addr + 1));
++		last_valid = false;
++
  	}
--	if (!f2fs_test_bit(offset, se->ckpt_valid_map))
--		se->ckpt_valid_blocks += del;
  
- 	__mark_sit_entry_dirty(sbi, segno);
- 
+ 	if (compressed_cluster)
 -- 
 2.25.1
 
