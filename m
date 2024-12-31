@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 99728E77188
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 31 Dec 2024 11:57:29 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4391EE77188
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 31 Dec 2024 11:57:50 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tSasJ-0005x7-O1;
-	Tue, 31 Dec 2024 11:57:27 +0000
+	id 1tSasf-0001zI-Sm;
+	Tue, 31 Dec 2024 11:57:49 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <kovalev@altlinux.org>) id 1tSasI-0005wt-DR
+ (envelope-from <kovalev@altlinux.org>) id 1tSase-0001zC-Pd
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 31 Dec 2024 11:57:26 +0000
+ Tue, 31 Dec 2024 11:57:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=l/Nnv1VpJOSVMMKSyEqpGYDBCYXcfg1zyX6sGfGIRes=; b=ZpHnsr71qh5aFUJg7w00pTqaM7
- B5jHsGnAApP4i2k8PtixkksFYkzDl2rdKHDVc7rcV7osam+zesresOsQjfsyux8C4N2F86uY8BgAt
- wYDzztsQS8U08YMxacOCJSdm7flPMnhaa/mcJiZT5zdx07mRV9qLsHxO/1mgpFZOLkVE=;
+ bh=IEpAia4gki+Kf0rNaa0/MPsomm2MLI+KD1mOusAWeyk=; b=BViRFrxbBnmIqTqk5JrDffvlE0
+ VK4u3ySapuAu5ZE2bGvZLAd0pJU+hFsqbSuPnDKYHwTfQ9/MVna/bpiUUhbt2H0enIIgXdF3qOq3X
+ 0xssxCrdtG2f4300PXOqYwCjDppxqu8f6W3Qgwa8DmOpGeqgk6Ihv3DqHaMlLPopDYBY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=l/Nnv1VpJOSVMMKSyEqpGYDBCYXcfg1zyX6sGfGIRes=; b=K
- R5jYr3tGRemJ7O+b9EjLYRsbRRcYWNOUeEgya7m2RqpPDnR26rur8Ga3TwAvF71Anvs7AVGgYgxE1
- jjCP3HkVMIx1ShV2zNAA+T+qguYDY+7PDinYmwqQppx7KbiP+lHnPjmPtE9s+79u4XubcagXRvD2x
- bw7SEYk67IGDEK7Y=;
+ List-Owner:List-Archive; bh=IEpAia4gki+Kf0rNaa0/MPsomm2MLI+KD1mOusAWeyk=; b=d
+ 8EaAp6KAppqzlzkAqWNFlSdW9scbsoeourSfVmS7zYdTwTmvk02Cmol/q+rZX5j64kQnQRBs/Zk4C
+ iyLK1lMFQU0PydS6hnpfy56sMVcotCJd+IZoWskUH2c5JZFvPTcGIrCR9v4UQPa2KeTrO+3OPBare
+ sgN4Vo7yreKnsnIU=;
 Received: from air.basealt.ru ([193.43.8.18])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tSasH-0000jM-KN for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 31 Dec 2024 11:57:26 +0000
+ id 1tSasd-0000l9-St for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 31 Dec 2024 11:57:48 +0000
 Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
- by air.basealt.ru (Postfix) with ESMTPSA id F03942333B;
- Tue, 31 Dec 2024 14:57:13 +0300 (MSK)
+ by air.basealt.ru (Postfix) with ESMTPSA id 2591B2333B;
+ Tue, 31 Dec 2024 14:57:36 +0300 (MSK)
 From: Vasiliy Kovalev <kovalev@altlinux.org>
 To: stable@vger.kernel.org
-Date: Tue, 31 Dec 2024 14:57:13 +0300
-Message-Id: <20241231115713.1308081-1-kovalev@altlinux.org>
+Date: Tue, 31 Dec 2024 14:57:35 +0300
+Message-Id: <20241231115735.1308127-1-kovalev@altlinux.org>
 X-Mailer: git-send-email 2.33.8
 MIME-Version: 1.0
-X-Headers-End: 1tSasH-0000jM-KN
-Subject: [f2fs-dev] [PATCH 5.15.y] f2fs: fix to do sanity check on
+X-Headers-End: 1tSasd-0000l9-St
+Subject: [f2fs-dev] [PATCH 5.10.y] f2fs: fix to do sanity check on
  F2FS_INLINE_DATA flag in inode during GC
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -64,8 +64,9 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: kovalev@altlinux.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: lvc-project@linuxtesting.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kovalev@altlinux.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -122,12 +123,12 @@ Link: https://www.cve.org/CVERecord/?id=CVE-2024-44942
  1 file changed, 11 insertions(+)
 
 diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 9a57754e6e0c1d..ef09b7fc065fab 100644
+index 19d781a3d305a6..64ff51c2f3d642 100644
 --- a/fs/f2fs/gc.c
 +++ b/fs/f2fs/gc.c
-@@ -1479,6 +1479,17 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 					special_file(inode->i_mode))
+@@ -1457,6 +1457,17 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
  				continue;
+ 			}
  
 +			if (f2fs_has_inline_data(inode)) {
 +				iput(inode);
