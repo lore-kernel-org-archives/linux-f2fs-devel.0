@@ -4,69 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CB9D9E77188
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Jan 2025 04:43:01 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3DF93E77188
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Jan 2025 05:32:06 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tYHif-00019n-D3;
-	Thu, 16 Jan 2025 04:43:01 +0000
+	id 1tYIU6-0005vN-5s;
+	Thu, 16 Jan 2025 05:32:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1tYHie-00019Z-PC
+ (envelope-from <chao@kernel.org>) id 1tYIU5-0005v9-Cg
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 16 Jan 2025 04:43:00 +0000
+ Thu, 16 Jan 2025 05:32:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CS+OVoO2wkpj2Roe/xu1mPuxkK6ShjWCpSKMLwfqMlg=; b=TgyLV3VkMia3pEw8bbztU+hd1J
- s2EQmMzi9sybUOpeKEIELzCxVx79U5ggu5LLUiGCqpe3LCNk7N69oO6P8MLBxUVg9LBHoMMhYwDVU
- U3fK+C1iz8T4mfFy66OdD687pHMe9Y6+iKrd4wJF4GwvVQVclBIeTXRVcIzuN4zPqvgI=;
+ bh=edNXohfsVWxzzzQvqwV8JxSvJn1iR095CboWoyqmzCI=; b=AZgqX24GKPlUdagBPK58OtT9X0
+ sMZCMcEQXHQiklESRZJY4EM09o3nYzBM0m1iUESfVVJgJm0+Lll7fEMNjhi1vjQmqvIVDZ7BxYtxV
+ Rfvgpmx3PLuwUevWeUol9KQU2kF9nKEmlNC7vqgwHlKVKXx/lMqOWgdapXY4Oi51DQ2o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=CS+OVoO2wkpj2Roe/xu1mPuxkK6ShjWCpSKMLwfqMlg=; b=IFr/SGsOdcdvaPZ6+HkjZN9TS6
- f8G0Qxj/iG9PeG34lLWsY8NEjVcimEn2lWI3qhobRRsONU7djFkD1aK9GoZtS0d97njvdMQjv67mG
- m8ho5cqluBgtSzHwS5SV0vdj4EC0WW4HrU2dAmNDm3i5GRUiJ9UWpEzrbKvtpeK4JxGs=;
+ bh=edNXohfsVWxzzzQvqwV8JxSvJn1iR095CboWoyqmzCI=; b=m88NMFU6HytLLx8/H7LGwBXTiy
+ s5QohbnOqHpTv7X0L3uaYffEEOQi176yOtYcj1Cg+xHRRO0bFmkEt0dbaXaMLnDkDfSu909t+ohxs
+ VAbwRztD6Y/3xGUTIhIIRSUdg8knFpQLO4CFnuAB66MY3OOykwZMtiYvKzGPhso1MYdM=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tYHid-0002xJ-Q0 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 16 Jan 2025 04:43:00 +0000
+ id 1tYIU4-0006z0-Uv for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 16 Jan 2025 05:32:02 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id B54085C5A0B
+ by dfw.source.kernel.org (Postfix) with ESMTP id DB4DE5C5AE5
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 16 Jan 2025 04:42:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F5EFC4CED6;
- Thu, 16 Jan 2025 04:42:49 +0000 (UTC)
+ Thu, 16 Jan 2025 05:31:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7694DC4CED6;
+ Thu, 16 Jan 2025 05:31:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1737002569;
- bh=XlHcBZ563WFv6TpmZhykdRBIFy6ElS9jZPcxbfihTOA=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=bn+FdMuLw5qHbgvGoqxMnusgad8iBC0fSkDTnY7OeSCojoZpokzrUaydRgrfUSeps
- PHoqH9EYTvbKxiqycvMzFPeWQ4EXZBTvy29Sw92rDoNSVpKd3D/xkK0IN6f39U3L+J
- 62AF9jHT2d21R7OreyxPjEbmWURQu9ZqG884w+RMrMfT2Zkl0v/05FZAp4VSh8D1dT
- nLievsPC9+u+6JayXNHbSu4RB/zZd5Vsr0W4lBRCmzb90y7glTamig4f8xfk+v+JFj
- o7siujcockErphNOzPU0n6vbJuzveBgzB7cSTuoDgdpjWpQKzCPmPAiXVeZUbY9Qwo
- q0fbKYrztSovw==
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Date: Thu, 16 Jan 2025 04:42:00 +0000
-Message-ID: <20250116044245.1995715-2-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.48.0.rc2.279.g1de40edade-goog
-In-Reply-To: <20250116044245.1995715-1-jaegeuk@kernel.org>
-References: <20250116044245.1995715-1-jaegeuk@kernel.org>
+ s=k20201202; t=1737005515;
+ bh=O0airM1kroKCNqQRrQeo5+DYz48D200E79cWzHTm2qU=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=SfcR9nMa7BCTZ3nj8DN9PABvAnhjcTHI1uKr/O7buZ6vd+gSMzgUQiJJP4UNXDsFG
+ LociY3XH1uWHnd4lGDWEfBgq+wOdIFHM1Cyv4H0yGMdUTYG4wIsWmJ8OegbgsW+cTM
+ 8Poy8gbpo7NAf95XwmEv67qSjSESLzO9ElOS48PpvXZKdl+uiCVKS1KkgMIPEMa3OT
+ 4bdN4AhoPzlBWO24aSJuZ89xVVpzRHxqS+HnyQ8wWy2v5+7jKepGSG1TisNOTfJu6K
+ ismQ2gWrguc3kO1d0gJDBAVzl3wJVF2KmzgCCCTCZGtvK2msjE8TS1CrrMfg+XylQw
+ YyBvXWc4fHQUg==
+Message-ID: <328860a6-05d6-4b99-bac8-8eb73cac76be@kernel.org>
+Date: Thu, 16 Jan 2025 13:31:51 +0800
 MIME-Version: 1.0
-X-Headers-End: 1tYHid-0002xJ-Q0
-Subject: [f2fs-dev] [PATCH 1/2] f2fs: register inodes which is able to
+User-Agent: Mozilla Thunderbird
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20250116044245.1995715-1-jaegeuk@kernel.org>
+ <20250116044245.1995715-2-jaegeuk@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250116044245.1995715-2-jaegeuk@kernel.org>
+X-Headers-End: 1tYIU4-0006z0-Uv
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: register inodes which is able to
  donate pages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -79,259 +81,290 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch introduces an inode list to keep the page cache ranges that users
-can donate pages together.
+On 1/16/25 12:42, Jaegeuk Kim via Linux-f2fs-devel wrote:
+> This patch introduces an inode list to keep the page cache ranges that users
+> can donate pages together.
+> 
+>   #define F2FS_IOC_DONATE_RANGE		_IOW(F2FS_IOCTL_MAGIC, 27,	\
+> 						struct f2fs_donate_range)
+>   struct f2fs_donate_range {
+> 	__u64 start;
+> 	__u64 len;
+>   };
+> 
+> e.g., ioctl(F2FS_IOC_DONATE_RANGE, &range);
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>   fs/f2fs/debug.c           |  3 ++
+>   fs/f2fs/f2fs.h            | 12 +++++++-
+>   fs/f2fs/file.c            | 65 +++++++++++++++++++++++++++++++++++++++
+>   fs/f2fs/inode.c           | 14 +++++++++
+>   fs/f2fs/super.c           |  1 +
+>   include/uapi/linux/f2fs.h |  7 +++++
+>   6 files changed, 101 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+> index 468828288a4a..16c2dfb4f595 100644
+> --- a/fs/f2fs/debug.c
+> +++ b/fs/f2fs/debug.c
+> @@ -164,6 +164,7 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+>   	si->ndirty_imeta = get_pages(sbi, F2FS_DIRTY_IMETA);
+>   	si->ndirty_dirs = sbi->ndirty_inode[DIR_INODE];
+>   	si->ndirty_files = sbi->ndirty_inode[FILE_INODE];
+> +	si->ndonate_files = sbi->donate_files;
+>   	si->nquota_files = sbi->nquota_files;
+>   	si->ndirty_all = sbi->ndirty_inode[DIRTY_META];
+>   	si->aw_cnt = atomic_read(&sbi->atomic_files);
+> @@ -501,6 +502,8 @@ static int stat_show(struct seq_file *s, void *v)
+>   			   si->compr_inode, si->compr_blocks);
+>   		seq_printf(s, "  - Swapfile Inode: %u\n",
+>   			   si->swapfile_inode);
+> +		seq_printf(s, "  - Donate Inode: %u\n",
+> +			   si->ndonate_files);
+>   		seq_printf(s, "  - Orphan/Append/Update Inode: %u, %u, %u\n",
+>   			   si->orphans, si->append, si->update);
+>   		seq_printf(s, "\nMain area: %d segs, %d secs %d zones\n",
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 4bfe162eefd3..951fbc3f94c7 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -850,6 +850,11 @@ struct f2fs_inode_info {
+>   #endif
+>   	struct list_head dirty_list;	/* dirty list for dirs and files */
+>   	struct list_head gdirty_list;	/* linked in global dirty list */
+> +
+> +	/* linked in global inode list for cache donation */
+> +	struct list_head gdonate_list;
+> +	loff_t donate_start, donate_end; /* inclusive */
+> +
+>   	struct task_struct *atomic_write_task;	/* store atomic write task */
+>   	struct extent_tree *extent_tree[NR_EXTENT_CACHES];
+>   					/* cached extent_tree entry */
+> @@ -1274,6 +1279,7 @@ enum inode_type {
+>   	DIR_INODE,			/* for dirty dir inode */
+>   	FILE_INODE,			/* for dirty regular/symlink inode */
+>   	DIRTY_META,			/* for all dirtied inode metadata */
+> +	DONATE_INODE,			/* for all inode to donate pages */
+>   	NR_INODE_TYPE,
+>   };
+>   
+> @@ -1629,6 +1635,9 @@ struct f2fs_sb_info {
+>   	unsigned int warm_data_age_threshold;
+>   	unsigned int last_age_weight;
+>   
+> +	/* control donate caches */
+> +	unsigned int donate_files;
+> +
+>   	/* basic filesystem units */
+>   	unsigned int log_sectors_per_block;	/* log2 sectors per block */
+>   	unsigned int log_blocksize;		/* log2 block size */
+> @@ -3984,7 +3993,8 @@ struct f2fs_stat_info {
+>   	unsigned long long allocated_data_blocks;
+>   	int ndirty_node, ndirty_dent, ndirty_meta, ndirty_imeta;
+>   	int ndirty_data, ndirty_qdata;
+> -	unsigned int ndirty_dirs, ndirty_files, nquota_files, ndirty_all;
+> +	unsigned int ndirty_dirs, ndirty_files, ndirty_all;
+> +	unsigned int nquota_files, ndonate_files;
+>   	int nats, dirty_nats, sits, dirty_sits;
+>   	int free_nids, avail_nids, alloc_nids;
+>   	int total_count, utilization;
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 81764b10840b..ff475bdc2832 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -2429,6 +2429,68 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+>   	return ret;
+>   }
+>   
+> +static int f2fs_ioc_donate_range(struct file *filp, unsigned long arg)
+> +{
+> +	struct inode *inode = file_inode(filp);
+> +	struct mnt_idmap *idmap = file_mnt_idmap(filp);
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> +	struct f2fs_donate_range range;
+> +	u64 max_pages = F2FS_BLK_TO_BYTES(max_file_blocks(inode)) >> PAGE_SHIFT;
+> +	bool partial = range.start & PAGE_MASK;
+> +	int ret;
+> +
+> +	if (copy_from_user(&range, (struct f2fs_donate_range __user *)arg,
+> +							sizeof(range)))
+> +		return -EFAULT;
+> +
+> +	if (!inode_owner_or_capable(idmap, inode))
+> +		return -EACCES;
+> +
+> +	if (!S_ISREG(inode->i_mode))
+> +		return -EINVAL;
+> +
+> +	range.start >>= PAGE_SHIFT;
+> +	range.len = DIV_ROUND_UP(range.len, PAGE_SIZE) + partial ? 1: 0;
 
- #define F2FS_IOC_DONATE_RANGE		_IOW(F2FS_IOCTL_MAGIC, 27,	\
-						struct f2fs_donate_range)
- struct f2fs_donate_range {
-	__u64 start;
-	__u64 len;
- };
+e.g.
 
-e.g., ioctl(F2FS_IOC_DONATE_RANGE, &range);
+range.start = 2048
+range.len = 6144
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/debug.c           |  3 ++
- fs/f2fs/f2fs.h            | 12 +++++++-
- fs/f2fs/file.c            | 65 +++++++++++++++++++++++++++++++++++++++
- fs/f2fs/inode.c           | 14 +++++++++
- fs/f2fs/super.c           |  1 +
- include/uapi/linux/f2fs.h |  7 +++++
- 6 files changed, 101 insertions(+), 1 deletion(-)
+original range is [2048, 8192]
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 468828288a4a..16c2dfb4f595 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -164,6 +164,7 @@ static void update_general_status(struct f2fs_sb_info *sbi)
- 	si->ndirty_imeta = get_pages(sbi, F2FS_DIRTY_IMETA);
- 	si->ndirty_dirs = sbi->ndirty_inode[DIR_INODE];
- 	si->ndirty_files = sbi->ndirty_inode[FILE_INODE];
-+	si->ndonate_files = sbi->donate_files;
- 	si->nquota_files = sbi->nquota_files;
- 	si->ndirty_all = sbi->ndirty_inode[DIRTY_META];
- 	si->aw_cnt = atomic_read(&sbi->atomic_files);
-@@ -501,6 +502,8 @@ static int stat_show(struct seq_file *s, void *v)
- 			   si->compr_inode, si->compr_blocks);
- 		seq_printf(s, "  - Swapfile Inode: %u\n",
- 			   si->swapfile_inode);
-+		seq_printf(s, "  - Donate Inode: %u\n",
-+			   si->ndonate_files);
- 		seq_printf(s, "  - Orphan/Append/Update Inode: %u, %u, %u\n",
- 			   si->orphans, si->append, si->update);
- 		seq_printf(s, "\nMain area: %d segs, %d secs %d zones\n",
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4bfe162eefd3..951fbc3f94c7 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -850,6 +850,11 @@ struct f2fs_inode_info {
- #endif
- 	struct list_head dirty_list;	/* dirty list for dirs and files */
- 	struct list_head gdirty_list;	/* linked in global dirty list */
-+
-+	/* linked in global inode list for cache donation */
-+	struct list_head gdonate_list;
-+	loff_t donate_start, donate_end; /* inclusive */
-+
- 	struct task_struct *atomic_write_task;	/* store atomic write task */
- 	struct extent_tree *extent_tree[NR_EXTENT_CACHES];
- 					/* cached extent_tree entry */
-@@ -1274,6 +1279,7 @@ enum inode_type {
- 	DIR_INODE,			/* for dirty dir inode */
- 	FILE_INODE,			/* for dirty regular/symlink inode */
- 	DIRTY_META,			/* for all dirtied inode metadata */
-+	DONATE_INODE,			/* for all inode to donate pages */
- 	NR_INODE_TYPE,
- };
- 
-@@ -1629,6 +1635,9 @@ struct f2fs_sb_info {
- 	unsigned int warm_data_age_threshold;
- 	unsigned int last_age_weight;
- 
-+	/* control donate caches */
-+	unsigned int donate_files;
-+
- 	/* basic filesystem units */
- 	unsigned int log_sectors_per_block;	/* log2 sectors per block */
- 	unsigned int log_blocksize;		/* log2 block size */
-@@ -3984,7 +3993,8 @@ struct f2fs_stat_info {
- 	unsigned long long allocated_data_blocks;
- 	int ndirty_node, ndirty_dent, ndirty_meta, ndirty_imeta;
- 	int ndirty_data, ndirty_qdata;
--	unsigned int ndirty_dirs, ndirty_files, nquota_files, ndirty_all;
-+	unsigned int ndirty_dirs, ndirty_files, ndirty_all;
-+	unsigned int nquota_files, ndonate_files;
- 	int nats, dirty_nats, sits, dirty_sits;
- 	int free_nids, avail_nids, alloc_nids;
- 	int total_count, utilization;
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 81764b10840b..ff475bdc2832 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2429,6 +2429,68 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- 	return ret;
- }
- 
-+static int f2fs_ioc_donate_range(struct file *filp, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct mnt_idmap *idmap = file_mnt_idmap(filp);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct f2fs_donate_range range;
-+	u64 max_pages = F2FS_BLK_TO_BYTES(max_file_blocks(inode)) >> PAGE_SHIFT;
-+	bool partial = range.start & PAGE_MASK;
-+	int ret;
-+
-+	if (copy_from_user(&range, (struct f2fs_donate_range __user *)arg,
-+							sizeof(range)))
-+		return -EFAULT;
-+
-+	if (!inode_owner_or_capable(idmap, inode))
-+		return -EACCES;
-+
-+	if (!S_ISREG(inode->i_mode))
-+		return -EINVAL;
-+
-+	range.start >>= PAGE_SHIFT;
-+	range.len = DIV_ROUND_UP(range.len, PAGE_SIZE) + partial ? 1: 0;
-+
-+	if (range.start >= max_pages || range.len > max_pages ||
-+	    (range.start + range.len) > max_pages)
-+		return -EINVAL;
-+
-+	ret = mnt_want_write_file(filp);
-+	if (ret)
-+		return ret;
-+
-+	inode_lock(inode);
-+
-+	if (f2fs_is_atomic_file(inode))
-+		goto out;
-+
-+	spin_lock(&sbi->inode_lock[DONATE_INODE]);
-+	/* let's remove the range, if len = 0 */
-+	if (!range.len) {
-+		if (!list_empty(&F2FS_I(inode)->gdonate_list)) {
-+			list_del_init(&F2FS_I(inode)->gdonate_list);
-+			sbi->donate_files--;
-+		}
-+	} else {
-+		if (list_empty(&F2FS_I(inode)->gdonate_list)) {
-+			list_add_tail(&F2FS_I(inode)->gdonate_list,
-+					&sbi->inode_list[DONATE_INODE]);
-+			sbi->donate_files++;
-+		} else {
-+			list_move_tail(&F2FS_I(inode)->gdonate_list,
-+					&sbi->inode_list[DONATE_INODE]);
-+		}
-+		F2FS_I(inode)->donate_start = range.start;
-+		F2FS_I(inode)->donate_end = range.start + range.len - 1;
-+	}
-+	spin_unlock(&sbi->inode_lock[DONATE_INODE]);
-+out:
-+	inode_unlock(inode);
-+	mnt_drop_write_file(filp);
-+	return ret;
-+}
-+
- static int f2fs_ioc_fitrim(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-@@ -4458,6 +4520,8 @@ static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return -EOPNOTSUPP;
- 	case F2FS_IOC_SHUTDOWN:
- 		return f2fs_ioc_shutdown(filp, arg);
-+	case F2FS_IOC_DONATE_RANGE:
-+		return f2fs_ioc_donate_range(filp, arg);
- 	case FITRIM:
- 		return f2fs_ioc_fitrim(filp, arg);
- 	case FS_IOC_SET_ENCRYPTION_POLICY:
-@@ -5209,6 +5273,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case F2FS_IOC_RELEASE_VOLATILE_WRITE:
- 	case F2FS_IOC_ABORT_ATOMIC_WRITE:
- 	case F2FS_IOC_SHUTDOWN:
-+	case F2FS_IOC_DONATE_RANGE:
- 	case FITRIM:
- 	case FS_IOC_SET_ENCRYPTION_POLICY:
- 	case FS_IOC_GET_ENCRYPTION_PWSALT:
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 7de33da8b3ea..f9fc58f313f2 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -804,6 +804,19 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
- 	return 0;
- }
- 
-+static void f2fs_remove_donate_inode(struct inode *inode)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+
-+	if (list_empty(&F2FS_I(inode)->gdonate_list))
-+		return;
-+
-+	spin_lock(&sbi->inode_lock[DONATE_INODE]);
-+	list_del_init(&F2FS_I(inode)->gdonate_list);
-+	sbi->donate_files--;
-+	spin_unlock(&sbi->inode_lock[DONATE_INODE]);
-+}
-+
- /*
-  * Called at the last iput() if i_nlink is zero
-  */
-@@ -838,6 +851,7 @@ void f2fs_evict_inode(struct inode *inode)
- 
- 	f2fs_bug_on(sbi, get_dirty_pages(inode));
- 	f2fs_remove_dirty_inode(inode);
-+	f2fs_remove_donate_inode(inode);
- 
- 	if (!IS_DEVICE_ALIASING(inode))
- 		f2fs_destroy_extent_tree(inode);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index fc7d463dee15..ef639a6d82e5 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1441,6 +1441,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 	spin_lock_init(&fi->i_size_lock);
- 	INIT_LIST_HEAD(&fi->dirty_list);
- 	INIT_LIST_HEAD(&fi->gdirty_list);
-+	INIT_LIST_HEAD(&fi->gdonate_list);
- 	init_f2fs_rwsem(&fi->i_gc_rwsem[READ]);
- 	init_f2fs_rwsem(&fi->i_gc_rwsem[WRITE]);
- 	init_f2fs_rwsem(&fi->i_xattr_sem);
-diff --git a/include/uapi/linux/f2fs.h b/include/uapi/linux/f2fs.h
-index f7aaf8d23e20..cd38a7c166e6 100644
---- a/include/uapi/linux/f2fs.h
-+++ b/include/uapi/linux/f2fs.h
-@@ -44,6 +44,8 @@
- #define F2FS_IOC_COMPRESS_FILE		_IO(F2FS_IOCTL_MAGIC, 24)
- #define F2FS_IOC_START_ATOMIC_REPLACE	_IO(F2FS_IOCTL_MAGIC, 25)
- #define F2FS_IOC_GET_DEV_ALIAS_FILE	_IOR(F2FS_IOCTL_MAGIC, 26, __u32)
-+#define F2FS_IOC_DONATE_RANGE		_IOW(F2FS_IOCTL_MAGIC, 27,	\
-+						struct f2fs_donate_range)
- 
- /*
-  * should be same as XFS_IOC_GOINGDOWN.
-@@ -97,4 +99,9 @@ struct f2fs_comp_option {
- 	__u8 log_cluster_size;
- };
- 
-+struct f2fs_donate_range {
-+	__u64 start;
-+	__u64 len;
-+};
-+
- #endif /* _UAPI_LINUX_F2FS_H */
--- 
-2.48.0.rc2.279.g1de40edade-goog
+after calculation, the range becomes [0, 12288]?
+
+How about this?
+
+u64 max_size = F2FS_BLK_TO_BYTES(max_file_blocks(inode));
+u64 start, end;
+
+if (range.start >= max_size || range.len > max_size ||
+	(range.start + range.len) > max_pages)
+
+start = range.start >> PAGE_SHIFT;
+end = DIV_ROUND_UP(range.start + range.len, PAGE_SIZE);
+
+...
+
+/* let's remove the range, if len = 0 */
+if (start == end)
+
+...
+
+	F2FS_I(inode)->donate_start = start;
+	F2FS_I(inode)->donate_end = end;
+
+Thanks,
+
+> +
+> +	if (range.start >= max_pages || range.len > max_pages ||
+> +	    (range.start + range.len) > max_pages)
+> +		return -EINVAL;
+> +
+> +	ret = mnt_want_write_file(filp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	inode_lock(inode);
+> +
+> +	if (f2fs_is_atomic_file(inode))
+> +		goto out;
+> +
+> +	spin_lock(&sbi->inode_lock[DONATE_INODE]);
+> +	/* let's remove the range, if len = 0 */
+> +	if (!range.len) {
+> +		if (!list_empty(&F2FS_I(inode)->gdonate_list)) {
+> +			list_del_init(&F2FS_I(inode)->gdonate_list);
+> +			sbi->donate_files--;
+> +		}
+> +	} else {
+> +		if (list_empty(&F2FS_I(inode)->gdonate_list)) {
+> +			list_add_tail(&F2FS_I(inode)->gdonate_list,
+> +					&sbi->inode_list[DONATE_INODE]);
+> +			sbi->donate_files++;
+> +		} else {
+> +			list_move_tail(&F2FS_I(inode)->gdonate_list,
+> +					&sbi->inode_list[DONATE_INODE]);
+> +		}
+> +		F2FS_I(inode)->donate_start = range.start;
+> +		F2FS_I(inode)->donate_end = range.start + range.len - 1;
+> +	}
+> +	spin_unlock(&sbi->inode_lock[DONATE_INODE]);
+> +out:
+> +	inode_unlock(inode);
+> +	mnt_drop_write_file(filp);
+> +	return ret;
+> +}
+> +
+>   static int f2fs_ioc_fitrim(struct file *filp, unsigned long arg)
+>   {
+>   	struct inode *inode = file_inode(filp);
+> @@ -4458,6 +4520,8 @@ static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>   		return -EOPNOTSUPP;
+>   	case F2FS_IOC_SHUTDOWN:
+>   		return f2fs_ioc_shutdown(filp, arg);
+> +	case F2FS_IOC_DONATE_RANGE:
+> +		return f2fs_ioc_donate_range(filp, arg);
+>   	case FITRIM:
+>   		return f2fs_ioc_fitrim(filp, arg);
+>   	case FS_IOC_SET_ENCRYPTION_POLICY:
+> @@ -5209,6 +5273,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>   	case F2FS_IOC_RELEASE_VOLATILE_WRITE:
+>   	case F2FS_IOC_ABORT_ATOMIC_WRITE:
+>   	case F2FS_IOC_SHUTDOWN:
+> +	case F2FS_IOC_DONATE_RANGE:
+>   	case FITRIM:
+>   	case FS_IOC_SET_ENCRYPTION_POLICY:
+>   	case FS_IOC_GET_ENCRYPTION_PWSALT:
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 7de33da8b3ea..f9fc58f313f2 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -804,6 +804,19 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
+>   	return 0;
+>   }
+>   
+> +static void f2fs_remove_donate_inode(struct inode *inode)
+> +{
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> +
+> +	if (list_empty(&F2FS_I(inode)->gdonate_list))
+> +		return;
+> +
+> +	spin_lock(&sbi->inode_lock[DONATE_INODE]);
+> +	list_del_init(&F2FS_I(inode)->gdonate_list);
+> +	sbi->donate_files--;
+> +	spin_unlock(&sbi->inode_lock[DONATE_INODE]);
+> +}
+> +
+>   /*
+>    * Called at the last iput() if i_nlink is zero
+>    */
+> @@ -838,6 +851,7 @@ void f2fs_evict_inode(struct inode *inode)
+>   
+>   	f2fs_bug_on(sbi, get_dirty_pages(inode));
+>   	f2fs_remove_dirty_inode(inode);
+> +	f2fs_remove_donate_inode(inode);
+>   
+>   	if (!IS_DEVICE_ALIASING(inode))
+>   		f2fs_destroy_extent_tree(inode);
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index fc7d463dee15..ef639a6d82e5 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1441,6 +1441,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+>   	spin_lock_init(&fi->i_size_lock);
+>   	INIT_LIST_HEAD(&fi->dirty_list);
+>   	INIT_LIST_HEAD(&fi->gdirty_list);
+> +	INIT_LIST_HEAD(&fi->gdonate_list);
+>   	init_f2fs_rwsem(&fi->i_gc_rwsem[READ]);
+>   	init_f2fs_rwsem(&fi->i_gc_rwsem[WRITE]);
+>   	init_f2fs_rwsem(&fi->i_xattr_sem);
+> diff --git a/include/uapi/linux/f2fs.h b/include/uapi/linux/f2fs.h
+> index f7aaf8d23e20..cd38a7c166e6 100644
+> --- a/include/uapi/linux/f2fs.h
+> +++ b/include/uapi/linux/f2fs.h
+> @@ -44,6 +44,8 @@
+>   #define F2FS_IOC_COMPRESS_FILE		_IO(F2FS_IOCTL_MAGIC, 24)
+>   #define F2FS_IOC_START_ATOMIC_REPLACE	_IO(F2FS_IOCTL_MAGIC, 25)
+>   #define F2FS_IOC_GET_DEV_ALIAS_FILE	_IOR(F2FS_IOCTL_MAGIC, 26, __u32)
+> +#define F2FS_IOC_DONATE_RANGE		_IOW(F2FS_IOCTL_MAGIC, 27,	\
+> +						struct f2fs_donate_range)
+>   
+>   /*
+>    * should be same as XFS_IOC_GOINGDOWN.
+> @@ -97,4 +99,9 @@ struct f2fs_comp_option {
+>   	__u8 log_cluster_size;
+>   };
+>   
+> +struct f2fs_donate_range {
+> +	__u64 start;
+> +	__u64 len;
+> +};
+> +
+>   #endif /* _UAPI_LINUX_F2FS_H */
 
 
 
