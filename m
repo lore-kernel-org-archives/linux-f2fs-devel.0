@@ -4,69 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F3FD1C02183
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Jan 2025 17:24:50 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 46CC8C02188
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Jan 2025 17:24:53 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tYTbu-0008Qc-Iv;
-	Thu, 16 Jan 2025 17:24:50 +0000
+	id 1tYTbx-0002NP-GA;
+	Thu, 16 Jan 2025 17:24:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1tYTbt-0008QO-EW
+ (envelope-from <jaegeuk@kernel.org>) id 1tYTbw-0002NI-GG
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 16 Jan 2025 17:24:49 +0000
+ Thu, 16 Jan 2025 17:24:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=fsoFT5N3EGIDpoxQ1t1agFOvuK1si4Ro7hleUnqQP04=; b=Vd+IwC5Vy2GgOa7tKI4Dukcgrc
- hK4c9VFeF8v4XlgBViVzT2xzdsOC1cleRd8mTa/uXGWfZSdJaiKc9Ov7FBpzCwUQdd+Ezb4M8Muea
- Ej2T/H/Ebu9zDSCClrZ5m9YwWKtPIFbitaUamWx7AUpvsAN5/gmyz1Dg7YKsk2EhHhYc=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=fsoFT5N3EGIDpoxQ1t1agFOvuK1si4Ro7hleUnqQP04=; b=C1jvtuqe5qNkeVX5uh8/jDNPMG
- 4mWCSIWfgWlif/zyQI2Bs6LJz0Smy0ZxUsUSPNAoa3FTHq0Mqrm4kAdxtkeme0dPy9XRc87Cujxrc
- RCHjeG6wSj2Z7Ir5mwC8Isq091CvojfepTjelVs/Sn9L6v9l4D+pUv5qZ/PG5rOojJgs=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=6HvHWpigxqukTYq2bJCH66ZzPL4RmewNoh8kVi6nfJk=; b=PZ30hpwX+eu3Tr2MAS/U/guGDB
+ QegPMT+LZ+Y3+q3mOBIh7As7F9aJeygNlEo11Q0ybyvnQHE2bAZg5vJC8Zl0RU/0/Qty+HwCK3/Uf
+ 53mq7DmOtTId/U+nMaNDgIVOxW7JP2/yt0cLMH007MtaEURZcUOgwh1eSnjc5oJMZVeU=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=6HvHWpigxqukTYq2bJCH66ZzPL4RmewNoh8kVi6nfJk=; b=M
+ DYIC4vAMAjVvaJIRyEUDfbr4QzuDErIYRpySr/wdjKvnF0xHhmPlcemkOqpbFrV6Sj3xxut4eSzUy
+ k1ekjaAV42ixoRsLonC2mKZ+cN87xvwRcAnVodYd1OQyNn54rueE3/rxL6PDMvmNlRdlXmRTIhAKh
+ XVICO9lOibB7B1ew=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tYTbs-0002qF-OZ for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 16 Jan 2025 17:24:49 +0000
+ id 1tYTbv-0002r9-Ae for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 16 Jan 2025 17:24:51 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 0EF9CA4252B;
- Thu, 16 Jan 2025 17:22:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97462C4AF09;
- Thu, 16 Jan 2025 17:24:42 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 44D9C5C54CE
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 16 Jan 2025 17:24:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 982B1C4CED6;
+ Thu, 16 Jan 2025 17:24:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1737048282;
- bh=FZHDVA07TuX/CpfIs82bSFvSPD6dz+VV672WlmDYwVo=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=W0eLJrMwWmk+t2Y35jcsjkPkmFHHQT8NN3AcJATjQwDfn5x1YDTmoMbNYfVlQRVFX
- iH+VUXG9jwSERdS61zxABG/cT/UQmK7Xc42ckYDkBgCh07Q0QCrslj0+4LGUINht0H
- x2OkE6vxO3qwXhbBBAzFhWPI5GpN9Givxw/A1ZB3Yl5aVPbFKS1JmLavear26oSZsh
- GuM84GZ9g/Vvkh/Cfm2U9uVEH6662qUSDk9OCTgG1t3/1VV/SaosqthcwTFlVrxrpM
- jcKQu9Zg8wDfQoBzT8rlglMx7MKL9ofs27WQfc3jW+z/QlrLKQCP1CV7sATaIZxkfo
- XHItPrRmScbTA==
+ s=k20201202; t=1737048280;
+ bh=6oWoeFipBJAo5PN4YQJn255TPCp58SkFq27ebvx9C9Q=;
+ h=From:To:Cc:Subject:Date:From;
+ b=VaN7yTVAw619MefQZDhFvpbcHnkv4cIEbP85S6ViCIK726hvAiE/h7KcU5YDBLghy
+ wkDKcVbRf2qM9XhpDzOAN2LJs8HZkOqR06akpVWlN+EdaBSxsz1IWLs3/H5jWGsvaX
+ Y1mgm2qwsE7cifv3IQ+3sN0DbQZv0MP5/ofH86PVMJ1C96fhvMMGK3tLl38J2M3gb7
+ rfRetIiQu5GSMb2di8Jqrzh3M97ZqvegcHyMq6+zULUPRvVnJrD2Lwjvpw+KG1f83/
+ ujMhYYR56huC/3xtzZZwP0/JjnGz5DL3pDn8aHY7ELLSLc35wmK/4jcYXfvsfZIxqx
+ ms9cn8vrI+Inw==
 To: linux-kernel@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net
-Date: Thu, 16 Jan 2025 17:19:44 +0000
-Message-ID: <20250116172438.2143971-3-jaegeuk@kernel.org>
+Date: Thu, 16 Jan 2025 17:19:42 +0000
+Message-ID: <20250116172438.2143971-1-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.48.0.rc2.279.g1de40edade-goog
-In-Reply-To: <20250116172438.2143971-1-jaegeuk@kernel.org>
-References: <20250116172438.2143971-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1tYTbs-0002qF-OZ
-Subject: [f2fs-dev] [PATCH 2/2] f2fs: Optimize
- f2fs_truncate_data_blocks_range()
+X-Headers-End: 1tYTbv-0002r9-Ae
+Subject: [f2fs-dev] [PATCH 0/2 v5] add ioctl/sysfs to donate file-backed
+ pages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,93 +79,37 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Yi Sun <yi.sun@unisoc.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Yi Sun <yi.sun@unisoc.com>
+If users clearly know which file-backed pages to reclaim in system view, they
+can use this ioctl() to register in advance and reclaim all at once later.
 
-Function f2fs_invalidate_blocks() can process consecutive
-blocks at a time, so f2fs_truncate_data_blocks_range() is
-optimized to use the new functionality of
-f2fs_invalidate_blocks().
+Change log from v4:
+ - fix range handling
 
-Add two variables @blkstart and @blklen, @blkstart records
-the first address of the consecutive blocks, and @blkstart
-records the number of consecutive blocks.
+Change log from v3:
+ - cover partial range
 
-Signed-off-by: Yi Sun <yi.sun@unisoc.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/file.c | 29 +++++++++++++++++++++++++----
- 1 file changed, 25 insertions(+), 4 deletions(-)
+Change log from v2:
+ - add more boundary checks
+ - de-register the range, if len is zero
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 902f8f50cc27..6572970a988a 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -621,8 +621,11 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 	int cluster_index = 0, valid_blocks = 0;
- 	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
- 	bool released = !atomic_read(&F2FS_I(dn->inode)->i_compr_blocks);
-+	block_t blkstart;
-+	int blklen = 0;
- 
- 	addr = get_dnode_addr(dn->inode, dn->node_page) + ofs;
-+	blkstart = le32_to_cpu(*addr);
- 
- 	/* Assumption: truncation starts with cluster */
- 	for (; count > 0; count--, addr++, dn->ofs_in_node++, cluster_index++) {
-@@ -638,26 +641,44 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 		}
- 
- 		if (blkaddr == NULL_ADDR)
--			continue;
-+			goto next;
- 
- 		f2fs_set_data_blkaddr(dn, NULL_ADDR);
- 
- 		if (__is_valid_data_blkaddr(blkaddr)) {
- 			if (time_to_inject(sbi, FAULT_BLKADDR_CONSISTENCE))
--				continue;
-+				goto next;
- 			if (!f2fs_is_valid_blkaddr_raw(sbi, blkaddr,
- 						DATA_GENERIC_ENHANCE))
--				continue;
-+				goto next;
- 			if (compressed_cluster)
- 				valid_blocks++;
- 		}
- 
--		f2fs_invalidate_blocks(sbi, blkaddr, 1);
-+		if (blkstart + blklen == blkaddr) {
-+			blklen++;
-+		} else {
-+			f2fs_invalidate_blocks(sbi, blkstart, blklen);
-+			blkstart = blkaddr;
-+			blklen = 1;
-+		}
- 
- 		if (!released || blkaddr != COMPRESS_ADDR)
- 			nr_free++;
-+
-+		continue;
-+
-+next:
-+		if (blklen)
-+			f2fs_invalidate_blocks(sbi, blkstart, blklen);
-+
-+		blkstart = le32_to_cpu(*(addr + 1));
-+		blklen = 0;
- 	}
- 
-+	if (blklen)
-+		f2fs_invalidate_blocks(sbi, blkstart, blklen);
-+
- 	if (compressed_cluster)
- 		f2fs_i_compr_blocks_update(dn->inode, valid_blocks, false);
- 
+Jaegeuk Kim (1):
+  f2fs: add a sysfs entry to request donate file-backed pages
+
+Yi Sun (1):
+  f2fs: Optimize f2fs_truncate_data_blocks_range()
+
+ Documentation/ABI/testing/sysfs-fs-f2fs |  7 ++++++
+ fs/f2fs/f2fs.h                          |  2 ++
+ fs/f2fs/file.c                          | 29 +++++++++++++++++++++----
+ fs/f2fs/shrinker.c                      | 27 +++++++++++++++++++++++
+ fs/f2fs/sysfs.c                         |  8 +++++++
+ 5 files changed, 69 insertions(+), 4 deletions(-)
+
 -- 
 2.48.0.rc2.279.g1de40edade-goog
 
