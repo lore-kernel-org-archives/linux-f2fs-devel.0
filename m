@@ -4,69 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0F140C02183
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 17 Jan 2025 16:40:34 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 31242C02183
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 17 Jan 2025 16:44:09 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tYpOa-0001uD-VZ;
-	Fri, 17 Jan 2025 16:40:33 +0000
+	id 1tYpS4-0006tR-ST;
+	Fri, 17 Jan 2025 16:44:08 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1tYpOY-0001u0-Sk
+ (envelope-from <jaegeuk@kernel.org>) id 1tYpS2-0006tH-79
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 17 Jan 2025 16:40:31 +0000
+ Fri, 17 Jan 2025 16:44:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hcimtnLGILviAxlqpwslmiYlBQJ5lH7t+aU9K2U0DN4=; b=gdBus7bFPImQV0nYqBKH96i21v
- r5H5uO+zS2r3wtFo22UH8p+6Fal6sDL7F2B4Ip1U8oCWRdBb56hD1h1yE8w0Kh1FQULVqv5SJGXMN
- YfHv1N0M7XPEW/6KxwlCXXQvSDEChOChysOC3gw9+D1N76zr9rY7oPPvMzTTVxkyQvLY=;
+ bh=9apYPZCK6iiRlvg31grIPApRFGsdu1wFq4DyEMUcomA=; b=WW8zJ/d/aRxc7j+brPwFO9KefJ
+ 1RhNEnotNf/5B6LY2EMbSSjiiM+jUWdakh4oIWLpU2KBGGuKR5Ia6Csiwiz/6/NrqmwDpH468lhp+
+ 6DOznLjegI96+ia/iCLyhKYsKGdua9G9XnNSOTlO4KUBt8lwyEDO58GVFwNX61sdIYrA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hcimtnLGILviAxlqpwslmiYlBQJ5lH7t+aU9K2U0DN4=; b=dh8ReZlsAbZvVlRUs5e0oJLf5h
- LzubszypzdaHFiwjRcdGA4t5ouKfu6mDeqn/R1PcFMBiQAMqX5RyesGy386lN1UmxtteJmsH+T6gc
- VHUqVhBb/ttmsz0n+wmtIBDjVMWuEf1cCphi28SoOFIe6S2ZWMlpmDmqY9wmheqNsbpQ=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=9apYPZCK6iiRlvg31grIPApRFGsdu1wFq4DyEMUcomA=; b=gUqDgyZaWVojgJPbpvncJ/BaBe
+ s1O78jzL06Dw4E6ed/FZowC2L3U4ZP4leJxU4pIt2eK2dL2hLXs7w1gOyuarhrzwA4FgYIi2VobDP
+ hv7QPGI/rtqU8wjXtnKjR9DRfw3f+vJVGE9wyfCIj6frKO8J6QZU8AqfVCjNENpjEjy4=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tYpOY-0004zD-VC for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 17 Jan 2025 16:40:31 +0000
+ id 1tYpS0-0005Iz-P0 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 17 Jan 2025 16:44:05 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id E813D5C4A0F;
- Fri, 17 Jan 2025 16:39:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ECF2C4CEDD;
- Fri, 17 Jan 2025 16:40:25 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id 1F3E9A4322D
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 17 Jan 2025 16:42:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C046EC4CEE4;
+ Fri, 17 Jan 2025 16:43:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1737132025;
- bh=7ia9QXVnyp6GQ8EnTYC/sW6gQbchfcMyF3uTvTk7F1I=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=GZH0mcMpvosStXN/9FVC62YciAJGHG2pEJE+0sQO1U9TzysOa7vH00tqs8Jr9o3Ak
- fKEBgH+wdmobrE8rnLIJwB4lD3YgZ2KWBhTBLCITmGyMHkk0GSMDpdeChrCHUM07Sq
- rfE8Z9z92DZoE+V4MLQcKHJnN1df2M/GpgyPs8tDP7wZqkynBcwOyIe4RK1xD9bF6e
- SPKj2v+Y3Xqhru5enmQke4BZ+vCYK0GOBSwgeL0ih+kLtWxwNIeks0/5fcmXAqVS36
- 6JqJSbyeE6du/7Yq5cOuhSQounJEBOscgY4paFrSy511ASq4JdDD8u3lIguYUIkhJj
- 9HGSf90IBMItw==
-Date: Fri, 17 Jan 2025 16:40:23 +0000
-To: Christoph Hellwig <hch@infradead.org>
-Message-ID: <Z4qH9wD3oa2hfaLY@google.com>
-References: <20250116172438.2143971-1-jaegeuk@kernel.org>
- <Z4oNmx2xPkdzvkUd@infradead.org>
+ s=k20201202; t=1737132238;
+ bh=F0vkTJTkyTvfngV4uDlYkjuPGTuyhZdjL5IwXGCY0oc=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=l/p07+nLpXRj0WiPsh9fF1NE7XMzh09Qa/w+Vra5F5NbsyTvdYX24AMVeFUaPRZSd
+ vvgevZfpt3vgNL802WFab4d2Dt5fOPnkQ0xe+f6YvI/BggTZo+z40skRERDuuzG1B8
+ C/IQN/dMFQ2WyZfEOxXwyMNs8C/gAJFNyActsP/Qp/zz3ADyoD3V5kK4r8ntz8j6tx
+ iML8V788vIyGfre51L9Kkzw7gCMN9lCQZ6dP9PIOlKd9z3O4Qzhvyn15zumuydqtfb
+ RrU9sKvIUtOrEbFxe9/0sCgq8H7vKpnsRPOJX597Ab5fblHTcTjVP0MVX1RxzMaYsN
+ ct1VharAAT/FA==
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 17 Jan 2025 16:41:18 +0000
+Message-ID: <20250117164350.2419840-3-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.48.0.rc2.279.g1de40edade-goog
+In-Reply-To: <20250117164350.2419840-1-jaegeuk@kernel.org>
+References: <20250117164350.2419840-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <Z4oNmx2xPkdzvkUd@infradead.org>
-X-Headers-End: 1tYpOY-0004zD-VC
-Subject: Re: [f2fs-dev] [PATCH 0/2 v5] add ioctl/sysfs to donate file-backed
- pages
+X-Headers-End: 1tYpS0-0005Iz-P0
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: add a sysfs entry to request donate
+ file-backed pages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,57 +81,135 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 01/16, Christoph Hellwig wrote:
-> Still NAC for sneaking in an almost undocumented MM feature into
-> a file system ioctl.  Especially while a discussion on that is still
-> ongoin.
-> 
-> And it's still bad that you don't even bother to Cc fsdevel on this,
-> nor linux-api or in this case the mm list.
+1. ioctl(fd1, F2FS_IOC_DONATE_RANGE, {0,3});
+2. ioctl(fd2, F2FS_IOC_DONATE_RANGE, {1,2});
+3. ioctl(fd3, F2FS_IOC_DONATE_RANGE, {3,1});
+4. echo 3 > /sys/fs/f2fs/blk/donate_caches
 
-Well, I don't want to bother other groups for random APIs, unless I, myself, am
-super confident this is feasible for generic API.
-But, let me try to listen to other opinions.
+will reclaim 3 page cache ranges, registered by #1, #2, and #3.
 
-> 
-> On Thu, Jan 16, 2025 at 05:19:42PM +0000, Jaegeuk Kim wrote:
-> > If users clearly know which file-backed pages to reclaim in system view, they
-> > can use this ioctl() to register in advance and reclaim all at once later.
-> > 
-> > Change log from v4:
-> >  - fix range handling
-> > 
-> > Change log from v3:
-> >  - cover partial range
-> > 
-> > Change log from v2:
-> >  - add more boundary checks
-> >  - de-register the range, if len is zero
-> > 
-> > Jaegeuk Kim (1):
-> >   f2fs: add a sysfs entry to request donate file-backed pages
-> > 
-> > Yi Sun (1):
-> >   f2fs: Optimize f2fs_truncate_data_blocks_range()
-> > 
-> >  Documentation/ABI/testing/sysfs-fs-f2fs |  7 ++++++
-> >  fs/f2fs/f2fs.h                          |  2 ++
-> >  fs/f2fs/file.c                          | 29 +++++++++++++++++++++----
-> >  fs/f2fs/shrinker.c                      | 27 +++++++++++++++++++++++
-> >  fs/f2fs/sysfs.c                         |  8 +++++++
-> >  5 files changed, 69 insertions(+), 4 deletions(-)
-> > 
-> > -- 
-> > 2.48.0.rc2.279.g1de40edade-goog
-> > 
-> > 
-> ---end quoted text---
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs |  7 +++++++
+ fs/f2fs/f2fs.h                          |  2 ++
+ fs/f2fs/shrinker.c                      | 27 +++++++++++++++++++++++++
+ fs/f2fs/sysfs.c                         |  8 ++++++++
+ 4 files changed, 44 insertions(+)
+
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 3e1630c70d8a..6f9d8b8889fd 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -828,3 +828,10 @@ Date:		November 2024
+ Contact:	"Chao Yu" <chao@kernel.org>
+ Description:	It controls max read extent count for per-inode, the value of threshold
+ 		is 10240 by default.
++
++What:		/sys/fs/f2fs/<disk>/donate_caches
++Date:		December 2024
++Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
++Description:	It reclaims the certian file-backed pages registered by
++		ioctl(F2FS_IOC_DONATE_RANGE).
++		For example, writing N tries to drop N address spaces in LRU.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 951fbc3f94c7..399ddd10a94f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1637,6 +1637,7 @@ struct f2fs_sb_info {
+ 
+ 	/* control donate caches */
+ 	unsigned int donate_files;
++	unsigned int donate_caches;
+ 
+ 	/* basic filesystem units */
+ 	unsigned int log_sectors_per_block;	/* log2 sectors per block */
+@@ -4259,6 +4260,7 @@ unsigned long f2fs_shrink_count(struct shrinker *shrink,
+ 			struct shrink_control *sc);
+ unsigned long f2fs_shrink_scan(struct shrinker *shrink,
+ 			struct shrink_control *sc);
++void f2fs_donate_caches(struct f2fs_sb_info *sbi);
+ void f2fs_join_shrinker(struct f2fs_sb_info *sbi);
+ void f2fs_leave_shrinker(struct f2fs_sb_info *sbi);
+ 
+diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
+index 83d6fb97dcae..22f62813910b 100644
+--- a/fs/f2fs/shrinker.c
++++ b/fs/f2fs/shrinker.c
+@@ -130,6 +130,33 @@ unsigned long f2fs_shrink_scan(struct shrinker *shrink,
+ 	return freed;
+ }
+ 
++void f2fs_donate_caches(struct f2fs_sb_info *sbi)
++{
++	struct inode *inode;
++	struct f2fs_inode_info *fi;
++	int nfiles = sbi->donate_caches;
++
++	while (nfiles--) {
++		spin_lock(&sbi->inode_lock[DONATE_INODE]);
++		if (list_empty(&sbi->inode_list[DONATE_INODE])) {
++			spin_unlock(&sbi->inode_lock[DONATE_INODE]);
++			break;
++		}
++		fi = list_first_entry(&sbi->inode_list[DONATE_INODE],
++					struct f2fs_inode_info, gdonate_list);
++		list_move_tail(&fi->gdonate_list, &sbi->inode_list[DONATE_INODE]);
++		inode = igrab(&fi->vfs_inode);
++		spin_unlock(&sbi->inode_lock[DONATE_INODE]);
++
++		if (!inode)
++			continue;
++
++		invalidate_inode_pages2_range(inode->i_mapping,
++					fi->donate_start, fi->donate_end);
++		iput(inode);
++	}
++}
++
+ void f2fs_join_shrinker(struct f2fs_sb_info *sbi)
+ {
+ 	spin_lock(&f2fs_list_lock);
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 6b99dc49f776..f81190fabdd3 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -811,6 +811,12 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 		return count;
+ 	}
+ 
++	if (!strcmp(a->attr.name, "donate_caches")) {
++		sbi->donate_caches = min(t, sbi->donate_files);
++		f2fs_donate_caches(sbi);
++		return count;
++	}
++
+ 	*ui = (unsigned int)t;
+ 
+ 	return count;
+@@ -1030,6 +1036,7 @@ F2FS_SBI_GENERAL_RW_ATTR(max_victim_search);
+ F2FS_SBI_GENERAL_RW_ATTR(migration_granularity);
+ F2FS_SBI_GENERAL_RW_ATTR(migration_window_granularity);
+ F2FS_SBI_GENERAL_RW_ATTR(dir_level);
++F2FS_SBI_GENERAL_RW_ATTR(donate_caches);
+ #ifdef CONFIG_F2FS_IOSTAT
+ F2FS_SBI_GENERAL_RW_ATTR(iostat_enable);
+ F2FS_SBI_GENERAL_RW_ATTR(iostat_period_ms);
+@@ -1178,6 +1185,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(migration_granularity),
+ 	ATTR_LIST(migration_window_granularity),
+ 	ATTR_LIST(dir_level),
++	ATTR_LIST(donate_caches),
+ 	ATTR_LIST(ram_thresh),
+ 	ATTR_LIST(ra_nid_pages),
+ 	ATTR_LIST(dirty_nats_ratio),
+-- 
+2.48.0.rc2.279.g1de40edade-goog
+
 
 
 _______________________________________________
