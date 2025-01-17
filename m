@@ -4,70 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8CCB6C02188
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 17 Jan 2025 18:00:09 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A5B75C02185
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 17 Jan 2025 18:05:52 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tYqdb-0006ZN-Gx;
-	Fri, 17 Jan 2025 18:00:08 +0000
+	id 1tYqjA-0005or-6S;
+	Fri, 17 Jan 2025 18:05:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <mchehab+huawei@kernel.org>) id 1tYqda-0006ZF-2Y
+ (envelope-from <willy@infradead.org>) id 1tYqj8-0005ok-30
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 17 Jan 2025 18:00:06 +0000
+ Fri, 17 Jan 2025 18:05:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Sender:Content-Transfer-Encoding:MIME-Version:
- Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RimRJhO8mN/0VIbcekX4TIH+fDhZfzDhpoNRBIHOHSI=; b=AcFB2l69RU71ReWVA4Dev11udb
- +zLyo+g+QYRXl4Np3BK795Kktsv17aeeAlenKkt47t/Kn26+4RkhR6NAApUQB/PmZS8t2BtpGbabx
- 7S0rgUtf3vY+AMpoUVpHEd4tLyiBmGJUx00Z6Onzhqunk2Pp0bElFX0G0LjaXMOXoh50=;
+ bh=crFctZGK1/RGRGxYEhsR3mb5wLIScLWaRkZC5BjZqXk=; b=JvkyiQSEhpHA/bhN57BPjlgEts
+ 8oxWjYb1Z7dHnDrDTlatT8KF6JxXOC7FuHnn1CBgE/WdozYDYr6XV4u3gbjdYAxpnG2SIG4POjBcZ
+ pvSOPbSFg5HA4hhpS/jxQqHK2wyJdJSnO0tKsMJfVU3SUIRvxGVyhqbXYWqhRWYxOlWI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Sender:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:
- To:From:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=RimRJhO8mN/0VIbcekX4TIH+fDhZfzDhpoNRBIHOHSI=; b=B
- cHaO3C6IjxpDueUJDAWldtbFPV02BREYrYwkpZqNhl+wFaUGtvaMN0Wnn8D+PIYdsfNJJSmO8SmDV
- v44jzb/1jJG6JATnbGKLi2hIOB/lUsqfxqgOzaeUEV9xIx64Gg94ENqRjcshi7lYKB7SI2Cxovmt1
- rMCF9ZAmITeotRhI=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=crFctZGK1/RGRGxYEhsR3mb5wLIScLWaRkZC5BjZqXk=; b=i4u/LQz5ASJsSYTwEqq99TL878
+ 9rh3xvwPIz8+W1TAVGaeL32CflDDlvriaDToTbeLGLCNWmr0ZPT28n+yDUE4Gsi01cWNmjQTxlH4s
+ k3OOhweT62P17kQh4iB3fi6tQHgIO616xhAo84L84iJmZxoib2ieHi7i5jGtt8ADFg3w=;
+Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tYqdZ-0003Yw-UO for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 17 Jan 2025 18:00:06 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id D7AC25C63C8;
- Fri, 17 Jan 2025 17:59:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7FDAC4CEE2;
- Fri, 17 Jan 2025 17:59:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1737136795;
- bh=GbqeT7eeAHIjJRdLRDZggAAJcM/bUobSgiiZNrAeh2s=;
- h=From:To:Cc:Subject:Date:From;
- b=UJ4BLVfBc5CgoQgarhyz8frZd3QYr1vcDc2Q23SSXR+RqDZQtU/odh+ZiYIU39zNC
- 4Goye5M2FBfXHDElyZQ7t1tD2NWBMpzpZmfcf9XIpBWH4maYz2EhpE7hLxjaKdW9Ti
- Dm3xEBD0kdXOMipbvNS5HVNC1tSBM0ufLIFAeVkQf6CBKC3EtCxwJNQyfEKeoKXOY5
- 7CEBYMrCHsZabraQCo0XylISR1P8O2ATNSp57I8fO0WzV5AIvXNB89q4L/mh8J4zPB
- cZVttfxstovxydmK5i+zItsh6M/7UCwzlpHwCX1pueQUgv2Awf3n4imiO0Oj2vRDAY
- 6+sBgdQWecUsQ==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98)
- (envelope-from <mchehab+huawei@kernel.org>)
- id 1tYqdM-00000006AjU-1Ray; Fri, 17 Jan 2025 18:59:52 +0100
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 17 Jan 2025 18:59:29 +0100
-Message-ID: <cover.1737135484.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.47.1
+ id 1tYqj6-0003u0-4F for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 17 Jan 2025 18:05:50 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=crFctZGK1/RGRGxYEhsR3mb5wLIScLWaRkZC5BjZqXk=; b=wTSkYsV8/8R1DPP5PTZSUbjVKt
+ 7SS02vKzNybTsz2f3gvUwRlTvGiIqDZDxf+2n/CMCjPNyVCHDRGMaKZITpxBfeLwIXHaE/UJF0lBz
+ GAThwEcXWIzsXt0qOaJgQM/YwROOAmwwccTqwBiRhP0mKcZWB8ViXJHTsVl8jB+hhXCgYzgz4vtmh
+ hKDEtcxTTdU3BvOkD8n7wEXkhElCCWVnPlmkI0HtoJGO3FDupKSC9hU1DiQOooccul5xicwqscQ3s
+ wQYZcQopSoGqedln7PIeVUAwtvLsvPoB+6/D92xP4ShbH1xO59NBPMx5E2OLv3l+RpsBSm4NSRTc2
+ nEieqEpQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat
+ Linux)) id 1tYqiy-00000000UqK-17Vc; Fri, 17 Jan 2025 18:05:40 +0000
+Date: Fri, 17 Jan 2025 18:05:40 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Message-ID: <Z4qb9Pv-mEQZrrXc@casper.infradead.org>
+References: <20250117164350.2419840-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1tYqdZ-0003Yw-UO
-Subject: [f2fs-dev] [PATCH RFC 00/10] Improve ABI documentation generation
+Content-Disposition: inline
+In-Reply-To: <20250117164350.2419840-1-jaegeuk@kernel.org>
+X-Headers-End: 1tYqj6-0003u0-4F
+Subject: Re: [f2fs-dev] [PATCH 0/2 v6] add ioctl/sysfs to donate file-backed
+ pages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,99 +75,30 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Mauro Carvalho Chehab via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Jaegeuk Kim <mchehab+huawei@kernel.org>, James Clark <james.clark@linaro.org>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net,
- Johannes Berg <johannes@sipsolutions.net>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, Mike Leach <mike.leach@linaro.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jon/Greg,
+On Fri, Jan 17, 2025 at 04:41:16PM +0000, Jaegeuk Kim wrote:
+> If users clearly know which file-backed pages to reclaim in system view, they
+> can use this ioctl() to register in advance and reclaim all at once later.
+> 
+> To MM and others,
+> 
+> I'd like to propose this API in F2FS only, since
+> 1) the use-case is quite limited in Android at the moment. Once it's generall
+> accepted with more use-cases, happy to propose a generic API such as fadvise.
+> Please chime in, if there's any needs.
+> 
+> 2) it's file-backed pages which requires to maintain the list of inode objects.
+> I'm not sure this fits in MM tho, also happy to listen to any feedback.
 
-The main goal of this RFC is to give a heads up of a work I've been doing to
-replace the get_abi.pl script with a python version.
+You didn't cc the patches to linux-mm, so that's a bad start.
 
-Patches 1-6 are OK to be applied:
-- Patch 1 changes the sort criteria of the ABI generation to use alphabetic order:
-  currently, it is *almost* alphabetic, but, on some cases, it orders on a different
-  way. No changes at the content, just at the order. 
-  I wrote it mainly to use the same sort criteria as the new tool, but IMO it is
-  worth applying even before we switch to the python version.
-
-- Patches 2-6 fix some ABI tag problems. They're independent of the rest and
-  can also be applied without  other patches on this series.
-
-The remaining patches (7-10) are RFC for a new tool.
-
-The new tool uses a cleaned-up version of the same algorithms I wrote in Perl,
-re-writen in Python. While doing the conversion, I got rid of some stuff that aren't
-needed anymore.
-
-The new tool has two additional changes:
-- the validate tool now detects a duplicate definition when files with the same name
-  exists on different parts of the ABI documentation (if one asks to build them altogether);
-- it fixes a bug on one of the files whose "what" keys weren't properly parsed.
-
-Patches 7 and 8 are already in good shape (IMHO).
-
-Patch 9 replaces "get_abi.pl" by "get_abi.py" exec for htmldocs/pdfdocs targets.
-It is not on its final shape, as my end goal is to do a python include and use the
-class directly there instead of calling an exec file, but such change will require
-some work (I'll likely implement an interactor at the class instead of just returning
-a big amount of text).
-
-Patch 10 is just a boilerplate to one additional functionality of the perl script that
-would require a lot of work to implement: check undefined/bad defined symbols
-at the local machine's sysfs and compare with ABI.
-
-Before getting patches 7-10 merged, I'd like to implement patch 10. This may
-take some time, as the ABI check there is not the simplest code I wrote.
-
-Yet, I'd like to get some feedback about patches 7-9 while I'm working on 
-patch 10, so, let me send what I have so far as a RFC.
-
-I hope this would make more people look at the code, as right now, we had only
-6 persons/6 patches besides me that touched the code.
-
-Mauro Carvalho Chehab (10):
-  scripts/get_abi.pl use label to better sort ABI symbols and files
-  ABI: sysfs-class-rfkill: fix kernelversion tags
-  ABI: sysfs-bus-coresight-*: fix kernelversion tags
-  ABI: sysfs-driver-dma-idxd: fix date tags
-  ABI: sysfs-fs-f2fs: fix date tags
-  ABI: sysfs-power: fix a what tag
-  [RFC] scripts: add a get_abi.py tool to generate ReST output
-  [RFC] scripts/get_abi.py: add support for symbol search
-  [RFC] docs: use get_abi.py for ABI generation
-  [RFC BOILERPLATE] scripts/get_abi.py: add support for undefined ABIs
-
- Documentation/ABI/removed/sysfs-class-rfkill  |   2 +-
- Documentation/ABI/stable/sysfs-class-rfkill   |  12 +-
- .../ABI/stable/sysfs-driver-dma-idxd          |   4 +-
- .../testing/sysfs-bus-coresight-devices-cti   |  78 +-
- .../testing/sysfs-bus-coresight-devices-tpdm  |  52 +-
- Documentation/ABI/testing/sysfs-fs-f2fs       |   4 +-
- Documentation/ABI/testing/sysfs-power         |   2 +-
- Documentation/admin-guide/abi-obsolete.rst    |   1 -
- Documentation/admin-guide/abi-removed.rst     |   1 -
- Documentation/admin-guide/abi-stable.rst      |   1 -
- Documentation/admin-guide/abi-testing.rst     |   1 -
- Documentation/sphinx/kernel_abi.py            |  10 +-
- scripts/get_abi.pl                            |   3 +-
- scripts/get_abi.py                            | 678 ++++++++++++++++++
- 14 files changed, 760 insertions(+), 89 deletions(-)
- create mode 100755 scripts/get_abi.py
-
--- 
-2.47.1
-
-
+I don't understand how this is different from MADV_COLD.  Please
+explain.
 
 
 _______________________________________________
