@@ -4,70 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1AF83C0218C
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 28 Jan 2025 00:07:18 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 61B38C02190
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 28 Jan 2025 04:10:39 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tcZ8P-0007GL-Lk;
-	Tue, 28 Jan 2025 00:07:17 +0000
+	id 1tccvs-00032V-LR;
+	Tue, 28 Jan 2025 04:10:37 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <mchehab+huawei@kernel.org>) id 1tcZ8O-0007Ff-Ie
+ (envelope-from <jaegeuk@kernel.org>) id 1tccvq-00032N-K9
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 28 Jan 2025 00:07:15 +0000
+ Tue, 28 Jan 2025 04:10:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Sender:Content-Transfer-Encoding:MIME-Version:
- Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+ From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4nS+zcLGjC94QdNZM5xUIENfjbztQuxI85OTjKJkWDE=; b=kQ4G4L6E0nleVrt5Mnp62lLJW+
- 2L++cnVLC3h4MQIVZvkoVJ8iNJKGunm6XeKj8J8ER9BraPfq1VERjQpzSMefBhE/2GBUXPdn59F2x
- s8eGMskRCIBPSILB8GfBqsIcI/aVVi6E6m2dL/Ah4VJ4op/BLUJtXraofmrvMS6lIJhQ=;
+ bh=P+HVaaIHLKsoY4slCpUFzCXmH1vtIb5RLGg51OL4Mac=; b=Q3bifs7fRz8CtJ05JdLNRtIw9a
+ gNTJcug7Xux0eSGsrnVe/PIIB+UNAfLplV8/AGQ2YbZ8KQw6yb7sjTudIYILy7hHtl+zqC6nhejcQ
+ AO+0EULGbjDlA2kcENDzsdP4G7xkd9pkCg3+JRqPJxhn0765wFCYnSON16++QF0QqkJQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Sender:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:
- To:From:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=4nS+zcLGjC94QdNZM5xUIENfjbztQuxI85OTjKJkWDE=; b=b
- mGQvdDJMAwuvhicZX1dhR6HxrUaykK5QHb/b/039bxesVBVFU2S/csdFA65E4h4pPM7tG1YeQLAVp
- GTF8aySmhZV5JXc/p/3cDg3tCHhcMoD0qgOWhmcctS4mnI/QSpVSa9s5kRv4YflfGJFGzN99b5QG1
- Rnc4JdCkOePakFJs=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ List-Owner:List-Archive; bh=P+HVaaIHLKsoY4slCpUFzCXmH1vtIb5RLGg51OL4Mac=; b=T
+ TtFNBH44WVQSKUp896jJF3+LGh8NgoEqAMY13OcwIWCdvQcEvTW4zemCRv0QKyKpVpzpd4iwwW1Xr
+ FBUm4dXgLh7A2JQBMN3YnZgxX6kwHB/Vufoj47+4e8H59XFgDxLyn1aQ9YVgR5Nwb3lByIK9nTe0l
+ Anu8AyF5IOJqtKRQ=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tcZ7v-0007sY-QA for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 28 Jan 2025 00:06:48 +0000
+ id 1tccvq-0004a2-Ii for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 28 Jan 2025 04:10:35 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 28F90A41634;
- Tue, 28 Jan 2025 00:04:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA0CDC4CEE7;
- Tue, 28 Jan 2025 00:06:35 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 1398B5C5424;
+ Tue, 28 Jan 2025 04:09:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8A75C4CED3;
+ Tue, 28 Jan 2025 04:10:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1738022796;
- bh=x0APBPBQWrivChaCg4k0Jly7N3L+drRwEE2afrYm3Ko=;
- h=From:To:Cc:Subject:Date:From;
- b=YVMdUUsPMxPbkAk4qEzxydaiheiKgPq0V/bec3NjHqtsuNI4LbgEBDEej9+LgNza+
- ljIEnlJ8dOW66epiiZtLELOhM7CI9Xmfl04mwJsxOPi5DZqupGOzyLYI8OrEB0YMLK
- 2aabCdo/efDt+1ketrNTclboOiYMqtBF3chVGB2EMC4yfr4ULHJGHphSkN/9c0uXJr
- 2zeCibWgf8wkOz10yK0tDHg/2UyTNfnmjDli87oee4K3CFTkaD0PhvQA9VygWXf7kB
- Qo1Ry12uzmRsVIoEnhnI2jD01cboTneK2GBz8V4u2Zk1oJeS56JxjuAeS7Lo5BEMUu
- 9jWWaNQP5ViKg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98)
- (envelope-from <mchehab+huawei@kernel.org>)
- id 1tcZ7h-0000000DRKO-2KyQ; Tue, 28 Jan 2025 01:06:33 +0100
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 28 Jan 2025 01:05:49 +0100
-Message-ID: <cover.1738020236.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.48.1
+ s=k20201202; t=1738037423;
+ bh=QjjK0EVvl2V3iI3N6RLPL0h8OriQaqn1qcX7B5zcdvo=;
+ h=Date:From:To:Cc:Subject:From;
+ b=VyGI9gWNiWoxF+0Uh18Vc+SQ0Vk8GbOlE0TOsmL1bEt1xjAHhYEEk+SSzO0AxBH1D
+ jUzTyvIaHj64OYVy7qlAmWCQcEMkC4yEtwsnZrgyi7/QF3/CWrafLgXp0zV5SIuRSB
+ mI8aSLY1npCxv/XlSvG5MskIwbrT5Ks8g7izxZDw1wtr3pkvHZOP6YVJ+mdgissmBY
+ wHbGfLLowiES7r8hh13Olvo/3NkPGbKAdUvfF+CK9p6jfLrl+PU9r17dGRAmM/S6fe
+ WOiEbDRecwcXQpGpMCe/xVmSjNisd7DyiLMKO26Ui6rWka0qcc5XIup8nakceFRA7r
+ lxtpJVxik3+LA==
+Date: Tue, 28 Jan 2025 04:10:22 +0000
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <Z5hYrgYwNJuaPFF1@google.com>
 MIME-Version: 1.0
-X-Headers-End: 1tcZ7v-0007sY-QA
-Subject: [f2fs-dev] [RFC v2 00/38] Improve ABI documentation generation
+Content-Disposition: inline
+X-Headers-End: 1tccvq-0004a2-Ii
+Subject: [f2fs-dev] [GIT PULL] f2fs update for 6.14-rc1
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,203 +74,125 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Mauro Carvalho Chehab via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-pm@vger.kernel.org, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- netdev@vger.kernel.org, coresight@lists.linaro.org, linux-usb@vger.kernel.org,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-hardening@vger.kernel.org,
- workflows@vger.kernel.org, bpf@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jon/Greg,
+Hi Linus,
 
-That's the second version of my RFC patches meant to modenize the ABI
-parser that I wrote in Perl.
+Could you please consider this pull request?
 
-I originally started it due to some issues I noticed when searching for
-ABI symbols. While I could just go ahead and fix the already existing
-script, I noticed that the script maintainance didn't have much care over
-all those years, probably because it is easier to find Python programmers
-those days.
+Thanks,
 
-Also, the code is complex and was not using modules or classes and
-were using lots of global variables.
+The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
 
-So, I decided to rewrite it in Python. I started with a manual conversion
-for each function. Yet, to avoid future maintainership issues, I opted to
-divide the code on three classes. One class for the ABI parser, another
-one for regex conversion (used when checking symbols from local hardware,
-and an extra class for undefined symbols check.
+  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
 
-I opted to change the Sphinx integration gradually using different
-patch sets on 4 phases:
+are available in the Git repository at:
 
-1. minimal integration: just execute the new script on a similar way as
-   the perl one;
-2. the kernel_abi module was changed to import the ABI parser class,
-   using it directly;
-3. the logic at kernel_abi were rewritten to better integrate. As a bonus,
-   Sphinx now imports ReST data symbol by symbol. That solves one of
-   the issues I was discomfortable with the original approach: when lots
-   of data is sent to Sphinx parser, it stops in the middle of processing.
-   This was addressed in the past on a hacky way, but it could cause
-   problems in the future as the number of symbols increase;
-4. the ABI parser part is now called either by automarkup and kernel_abi.
-   This allowed automarkup to solve ABI symbols.
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.14-rc1
 
-Together with this series, I added some patches fixing issues and warnings
-when generating documentation.
+for you to fetch changes up to 03511e936916873bf880e6678c98d5fb59c19742:
 
-Some notes about this new RFC:
+  f2fs: fix inconsistent dirty state of atomic file (2025-01-25 01:12:12 +0000)
 
-- despite being able to generate documentation cross-references with
-  auto-markup, the documentation build timt didn't increase on my machine
-  (it was actually 5 seconds faster);
-- I rewrote some algorithms at the undefined symbol detection code. With
-  that, it is now a lot faster than the previous version, at least on my desktop
-  (wich has 24 CPU threads). I didn't try it on a server yet;
-- the undefined parser can optionally use multiple CPUs. This sounds
-  fancier than it seems: Python (up to version 3.12) is really bad with
-  multi-CPU support and doesn't have real multi-thread support. Python
-  3.13 has now an optional way to address that (although I didn't test yet,
-  as it requires Python manual compilation). When such feature becomes
-  standard, maybe the undefined symbols detection will be faster.
+----------------------------------------------------------------
+f2fs-for-6.14-rc1
 
-Btw, I'm opting to send this as an RFC because I'd like to have more
-people testing and checking it. In particular, the undefined ABI check
-is complex, as it requires lots of tricks to reduce the run time from hours
-to seconds.
-  
-On this series we have:
+In this series, there are several major improvements such as 1) folio conversion
+made by Matthew, 2) speed-up of block truncation, 3) caching more dentry pages.
+In addition, we implemented a linear dentry search to address recent unicode
+regression, and figured out some false alarms that we could get rid of.
 
-patches 1 to 11: several bug fixes addressing issues at ABI symbols;
-patch 12: a fix for scripts/documentation-file-ref-check
-patches 13-15: create new script with rest and search logic and 
-  minimally integrate with kernel_abi Sphinx extension(phase 1);
-patches 16-19: implement phase 2: class integration (phase 2);
-patch 20: fix a bug at kernel_abi: the way it splits lines is buggy;
-patches  21-24: rewrite kernel_abi logic to make it simpler and more
-  robust;
-patches 25-27: add cross-reference support at automarkup;
-patches 28-36: several ABI cleanups to cope with the improvements;
-patch 37: implement undefined command;
-patch 38: get rid of the old Perl script.
+Enhancement:
+ - foilio conversion in various IO paths
+ - optimize f2fs_truncate_data_blocks_range()
+ - cache more dentry pages
+ - remove unnecessary blk_finish_plug
+ - procfs: show mtime in segment_bits
 
-To make it easier to review/apply, I may end breaking the next version
-on a couple of different patchsets. Still it would be nice to have more
-people testing it and providing some feedback.
+Bug fix:
+ - introduce linear search for dentries
+ - don't call block truncation for aliased file
+ - fix using wrong 'submitted' value in f2fs_write_cache_pages
+ - fix to do sanity check correctly on i_inline_xattr_size
+ - avoid trying to get invalid block address
+ - fix inconsistent dirty state of atomic file
 
----
-RFC v2:
-  - Dropped a patch touching the perl script;
-  - Implemented phases 2-4 of the script's logic;
-  - Added ABI cross-references via automarkup;
-  - Added support for undefined logic;
-  - Added more ABI and scripts' fixes;
-  - Added undefined logic;
-  - Added a patch to remove the old tool.
+----------------------------------------------------------------
+Chao Yu (3):
+      f2fs: fix to do sanity check correctly on i_inline_xattr_size
+      f2fs: fix to avoid return invalid mtime from f2fs_get_section_mtime()
+      f2fs: procfs: show mtime in segment_bits
 
-Mauro Carvalho Chehab (38):
-  docs: power: video.rst: fix a footnote reference
-  docs: media: ipu3: fix two footnote references
-  docs: block: ublk.rst: remove a reference from a dropped text
-  docs: sphinx: remove kernellog.py file
-  docs: sphinx/kernel_abi: adjust coding style
-  docs: admin-guide: abi: add SPDX tags to ABI files
-  ABI: sysfs-class-rfkill: fix kernelversion tags
-  ABI: sysfs-bus-coresight-*: fix kernelversion tags
-  ABI: sysfs-driver-dma-idxd: fix date tags
-  ABI: sysfs-fs-f2fs: fix date tags
-  ABI: sysfs-power: fix a what tag
-  scripts/documentation-file-ref-check: don't check perl/python scripts
-  scripts/get_abi.py: add a Python tool to generate ReST output
-  scripts/get_abi.py: add support for symbol search
-  docs: use get_abi.py for ABI generation
-  scripts/get_abi.py: optimize parse_abi() function
-  scripts/get_abi.py: use an interactor for ReST output
-  docs: sphinx/kernel_abi: use AbiParser directly
-  docs: sphinx/kernel_abi: reduce buffer usage for ABI messages
-  docs: sphinx/kernel_abi: properly split lines
-  scripts/get_abi.pl: Add filtering capabilities to rest output
-  scripts/get_abi.pl: add support to parse ABI README file
-  docs: sphinx/kernel_abi: parse ABI files only once
-  docs: admin-guide/abi: split files from symbols
-  docs: sphinx/automarkup: add cross-references for ABI
-  docs: sphinx/kernel_abi: avoid warnings during Sphinx module init
-  scripts/get_abi.py: Rename title name for ABI files
-  docs: media: Allow creating cross-references for RC ABI
-  docs: thunderbolt: Allow creating cross-references for ABI
-  docs: arm: asymmetric-32bit: Allow creating cross-references for ABI
-  docs: arm: generic-counter: Allow creating cross-references for ABI
-  docs: iio: Allow creating cross-references ABI
-  docs: networking: Allow creating cross-references statistics ABI
-  docs: submit-checklist: Allow creating cross-references for ABI README
-  docs: translations: Allow creating cross-references for ABI README
-  docs: ABI: drop two duplicate symbols
-  scripts/get_abi.py: add support for undefined ABIs
-  scripts/get_abi.pl: drop now obsoleted script
+Daniel Lee (1):
+      f2fs: Introduce linear search for dentries
 
- Documentation/ABI/removed/sysfs-class-rfkill  |    2 +-
- Documentation/ABI/stable/sysfs-class-rfkill   |   12 +-
- .../ABI/stable/sysfs-devices-system-cpu       |   10 -
- .../ABI/stable/sysfs-driver-dma-idxd          |    4 +-
- .../testing/sysfs-bus-coresight-devices-cti   |   78 +-
- .../testing/sysfs-bus-coresight-devices-tpdm  |   52 +-
- Documentation/ABI/testing/sysfs-fs-f2fs       |    4 +-
- Documentation/ABI/testing/sysfs-power         |    2 +-
- .../admin-guide/abi-obsolete-files.rst        |    7 +
- Documentation/admin-guide/abi-obsolete.rst    |    6 +-
- Documentation/admin-guide/abi-readme-file.rst |    6 +
- .../admin-guide/abi-removed-files.rst         |    7 +
- Documentation/admin-guide/abi-removed.rst     |    6 +-
- .../admin-guide/abi-stable-files.rst          |    7 +
- Documentation/admin-guide/abi-stable.rst      |    6 +-
- .../admin-guide/abi-testing-files.rst         |    7 +
- Documentation/admin-guide/abi-testing.rst     |    6 +-
- Documentation/admin-guide/abi.rst             |   17 +
- Documentation/admin-guide/media/ipu3.rst      |   12 +-
- Documentation/admin-guide/thunderbolt.rst     |    2 +-
- Documentation/arch/arm64/asymmetric-32bit.rst |    2 +-
- Documentation/block/ublk.rst                  |    2 -
- Documentation/driver-api/generic-counter.rst  |    4 +-
- Documentation/driver-api/iio/core.rst         |    2 +-
- Documentation/iio/iio_devbuf.rst              |    2 +-
- Documentation/networking/statistics.rst       |    2 +-
- Documentation/power/video.rst                 |    2 +-
- Documentation/process/submit-checklist.rst    |    2 +-
- Documentation/sphinx/automarkup.py            |   56 +
- Documentation/sphinx/kernel_abi.py            |  162 +-
- Documentation/sphinx/kerneldoc.py             |   14 +-
- Documentation/sphinx/kernellog.py             |   22 -
- Documentation/sphinx/kfigure.py               |   81 +-
- .../it_IT/process/submit-checklist.rst        |    2 +-
- .../sp_SP/process/submit-checklist.rst        |    2 +-
- .../zh_CN/process/submit-checklist.rst        |    2 +-
- .../zh_TW/process/submit-checklist.rst        |    2 +-
- .../userspace-api/media/rc/rc-sysfs-nodes.rst |    2 +-
- scripts/documentation-file-ref-check          |    2 +-
- scripts/get_abi.pl                            | 1103 -------------
- scripts/get_abi.py                            | 1437 +++++++++++++++++
- 41 files changed, 1804 insertions(+), 1354 deletions(-)
- create mode 100644 Documentation/admin-guide/abi-obsolete-files.rst
- create mode 100644 Documentation/admin-guide/abi-readme-file.rst
- create mode 100644 Documentation/admin-guide/abi-removed-files.rst
- create mode 100644 Documentation/admin-guide/abi-stable-files.rst
- create mode 100644 Documentation/admin-guide/abi-testing-files.rst
- delete mode 100644 Documentation/sphinx/kernellog.py
- delete mode 100755 scripts/get_abi.pl
- create mode 100755 scripts/get_abi.py
+Dmitry Antipov (1):
+      f2fs: ensure that node info flags are always initialized
 
--- 
-2.48.1
+Jaegeuk Kim (3):
+      f2fs: don't call block truncation for aliased file
+      f2fs: remove blk_finish_plug
+      f2fs: avoid trying to get invalid block address
 
+Jianan Huang (1):
+      f2fs: fix inconsistent dirty state of atomic file
 
+Matthew Wilcox (Oracle) (11):
+      f2fs: Use a folio in f2fs_all_cluster_page_ready()
+      f2fs: Use a folio in f2fs_compress_write_end()
+      f2fs: Use a folio in f2fs_truncate_partial_cluster()
+      f2fs: Use a folio in f2fs_write_compressed_pages()
+      f2fs: Convert submit tracepoints to take a folio
+      f2fs: Add F2FS_F_SB()
+      f2fs: Convert f2fs_finish_read_bio() to use folios
+      f2fs: Use a folio more in f2fs_submit_page_bio()
+      f2fs: Use a data folio in f2fs_submit_page_bio()
+      f2fs: Convert __read_io_type() to take a folio
+      f2fs: Remove calls to folio_file_mapping()
+
+Nathan Chancellor (1):
+      f2fs: Fix format specifier in sanity_check_inode()
+
+Yi Sun (7):
+      f2fs: expand f2fs_invalidate_compress_page() to f2fs_invalidate_compress_pages_range()
+      f2fs: add parameter @len to f2fs_invalidate_internal_cache()
+      f2fs: introduce update_sit_entry_for_release/alloc()
+      f2fs: update_sit_entry_for_release() supports consecutive blocks.
+      f2fs: add parameter @len to f2fs_invalidate_blocks()
+      f2fs: Optimize f2fs_truncate_data_blocks_range()
+      f2fs: Clean up the loop outside of f2fs_invalidate_blocks()
+
+Yongpeng Yang (1):
+      f2fs: The GC triggered by ioctl also needs to mark the segno as victim
+
+Zhiguo Niu (1):
+      f2fs: fix to avoid changing 'check only' behaior of recovery
+
+zangyangyang1 (2):
+      f2fs: cache more dentry pages
+      f2fs: fix using wrong 'submitted' value in f2fs_write_cache_pages
+
+ fs/f2fs/compress.c          |  38 ++++----
+ fs/f2fs/data.c              |  62 ++++++-------
+ fs/f2fs/dir.c               |  53 +++++++----
+ fs/f2fs/f2fs.h              |  29 +++---
+ fs/f2fs/file.c              |  37 ++++++--
+ fs/f2fs/gc.c                |  13 +--
+ fs/f2fs/inline.c            |   7 +-
+ fs/f2fs/inode.c             |  19 ++--
+ fs/f2fs/namei.c             |   1 +
+ fs/f2fs/node.c              |  10 ++-
+ fs/f2fs/recovery.c          |   4 +-
+ fs/f2fs/segment.c           | 210 +++++++++++++++++++++++++++++---------------
+ fs/f2fs/sysfs.c             |   3 +-
+ include/trace/events/f2fs.h |  39 ++++----
+ 14 files changed, 324 insertions(+), 201 deletions(-)
 
 
 _______________________________________________
