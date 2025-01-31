@@ -4,63 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 183A1C0218D
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 31 Jan 2025 08:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 12348C0218F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 31 Jan 2025 22:25:12 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tdmW6-0003cg-Td;
-	Fri, 31 Jan 2025 08:36:46 +0000
+	id 1tdzRm-0004S9-42;
+	Fri, 31 Jan 2025 22:25:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <adrian.liszka@novaplan.pl>) id 1tdmW5-0003cU-Tv
+ (envelope-from <jaegeuk@kernel.org>) id 1tdzRk-0004Rt-9J
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 31 Jan 2025 08:36:45 +0000
+ Fri, 31 Jan 2025 22:25:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Subject:To:From:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jxb0oDMobd7GaIcoqojTSF8ZoNcoVg4kM8ohJkoHKb8=; b=Au7l9CRGcM3/GxPr/odIpIHLob
- 5v1q4WtkbMwjyQ/dvFN1werk1yet00e03JnX9l0kvMb+91Kd9/UTeAY0GuuLm4l3j+5exKbM2Uwun
- nKFgN/bcyUam9Z4aG4CLNPBqZuqnqA8HLv6QZ5WeUForN9kcUcB9CcDBtdTlLzrextKg=;
+ bh=juG8nUdV0WyyYnlPmmsUCrmKv5b3xnKpXZDvL3+zs6A=; b=AtDC/VUS7YKwWvN4LP3wV6EJ3u
+ ybMTJslnkSw4X1AkYYvWhPbl39e+Z8Z9hE/7q1OxKl3GRAAbuzFP67WFcwkHPwb1d4j7nwPKhq6D8
+ UN6QoI7vBzj/oiv0hK7Uw3Lje7KhPE18hbM/sMsx5cnRve+/sdK1yN8TfMB6fco9mNIw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:To:From:Date:
- Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=jxb0oDMobd7GaIcoqojTSF8ZoNcoVg4kM8ohJkoHKb8=; b=T
- 9AalYEe7CwGLRKJw+GDpuKHsVj1i4ne2ukdaH2yEohpS+yhxi8nPRp1nC4TiRchc7UZjDnQwLWEww
- tFTx+lX1Au02WD8eUgheqjuqWxcv/qyYhCCDf9ykecjsPQkZIxshKG0qKxC6xwWyS+i7glgjCfu/o
- gkPm89zoCvvGTVEo=;
-Received: from mail.novaplan.pl ([51.195.118.1])
+ List-Owner:List-Archive; bh=juG8nUdV0WyyYnlPmmsUCrmKv5b3xnKpXZDvL3+zs6A=; b=d
+ HmYkYh5y9T1KpzrVdRkwYTznX6sg0hNJsi1cp3wk7jwBu5Hvu9wWZkV+fNSdSfCQD8HkWHQZHcVja
+ XXuclrlWE5VJg0L422utXAbap8hPPhopnRifi1uZvHsU8jrpiaFMNH8hc2sUugxo2S/cTFM1QJ74t
+ LVW+l0nOE7DqFObc=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tdmW4-0006nK-38 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 31 Jan 2025 08:36:45 +0000
-Received: by mail.novaplan.pl (Postfix, from userid 1002)
- id 11E2DA3E0D; Fri, 31 Jan 2025 09:36:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novaplan.pl; s=mail;
- t=1738312589; bh=jxb0oDMobd7GaIcoqojTSF8ZoNcoVg4kM8ohJkoHKb8=;
- h=Date:From:To:Subject:From;
- b=G70D67uiyMgBE9U5vfkis+koSyrICUp1SGAwX9ikE0okRLpJX7nlAc9hmaEqVcbik
- xIp8Kn5YnyVjcHMb3DofCTkcNB2akqFxRWDsv//WjhVMzTZgSGBeaaXRA8DspS7gH1
- k1QjYDYH1zd3MOVgyhDEcDhdXg9eOm2uWmQL7aMcQzi+RIMosbJaDKUjLW8Dp0Qt+8
- 7nweqstwiIbO8NgFTD2xR4fd+X3btaNg1OtzUu3zTa11r62tX6ERUOIcHv5vCnh489
- H3DhskSU25y9A462conVd7HsecilLfmhSjua6LwSubyYsc8w4nPcfsFExao1WxYcDo
- e9yFc1inrhV+A==
-Received: by mail.novaplan.pl for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 31 Jan 2025 08:36:06 GMT
-Message-ID: <20250131084500-0.1.jl.15bg4.0.0fhrhfge4o@novaplan.pl>
-Date: Fri, 31 Jan 2025 08:36:06 GMT
-To: <linux-f2fs-devel@lists.sourceforge.net>
-X-Mailer: mail.novaplan.pl
+ id 1tdzRj-0003d8-KB for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 31 Jan 2025 22:25:08 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id 47B1E5C634D
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 31 Jan 2025 22:24:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9109C4CED1;
+ Fri, 31 Jan 2025 22:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1738362302;
+ bh=onDCTihKWJH6F+H8IdhFe7TFdJkEjG+vwnD/wYojOBQ=;
+ h=From:To:Cc:Subject:Date:From;
+ b=VxVh/1OnEZtTWaN5CCIGEU4ar79eHlsqhbmSAdxi5H1j6wTDaHACBcaFzfVqHY9x6
+ dSurFgTcM5AbVcoUHpgRH4PGoKxwjmJpVmojwt7umDY4Kxl5tydMyxGCP3DHFZXeOS
+ qyYJVCXjyxQgojV59OTi38LHng2xAMRgpF3oZSgzgS6MxzC3DyzZA+di7z9AdPpzKn
+ g7fiPvCNTA6sJVtwlgMQUOd3oCr/xEKBHgGgvkgK+dwDVNXi5P4UV481nQ2NE+MsSu
+ UoRl29X9bJ+5D2gsuldtf/UCi6DukMeGcdivUClEEy/EgrrkRFFOIju1C1eSZHLO+w
+ ajjRlg8G/2TTw==
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 31 Jan 2025 22:24:56 +0000
+Message-ID: <20250131222457.1634039-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.48.1.362.g079036d154-goog
 MIME-Version: 1.0
-X-Headers-End: 1tdmW4-0006nK-38
-Subject: [f2fs-dev] =?utf-8?q?Prosz=C4=99_o_kontakt?=
+X-Headers-End: 1tdzRj-0003d8-KB
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: don't kobject_put in the error case
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -72,18 +76,47 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Adrian Liszka via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Adrian Liszka <adrian.liszka@novaplan.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-RHppZcWEIGRvYnJ5LAoKQ3p5IGplc3QgbW/FvGxpd2/Fm8SHIG5hd2nEhXphbmlhIHdzcMOzxYJw
-cmFjeSB6IFBhxYRzdHdlbT8KClogY2jEmWNpxIUgcG9yb3ptYXdpYW0geiBvc29ixIUgemFqbXVq
-xIVjxIUgc2nEmSBkemlhxYJhbmlhbWkgendpxIV6YW55bWkgemUgc3ByemVkYcW8xIUuCgpQb21h
-Z2FteSBza3V0ZWN6bmllIHBvenlza2l3YcSHIG5vd3ljaCBrbGllbnTDs3cuCgpaYXByYXN6YW0g
-ZG8ga29udGFrdHUuCgoKWiBwb3pkcm93aWVuaWFtaQpBZHJpYW4gTGlzemthCgoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBt
-YWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6
-Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+Fix a wrong kobject_put in the error path.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/sysfs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index d15c68b28952..001e97cd0a96 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -1605,7 +1605,7 @@ int __init f2fs_init_sysfs(void)
+ 	ret = kobject_init_and_add(&f2fs_feat, &f2fs_feat_ktype,
+ 				   NULL, "features");
+ 	if (ret)
+-		goto put_kobject;
++		goto unregister_out;
+ 
+ 	f2fs_proc_root = proc_mkdir("fs/f2fs", NULL);
+ 	if (!f2fs_proc_root) {
+@@ -1616,6 +1616,7 @@ int __init f2fs_init_sysfs(void)
+ 	return 0;
+ put_kobject:
+ 	kobject_put(&f2fs_feat);
++unregister_out:
+ 	kset_unregister(&f2fs_kset);
+ 	return ret;
+ }
+-- 
+2.48.1.362.g079036d154-goog
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
