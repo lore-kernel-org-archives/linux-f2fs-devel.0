@@ -4,69 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E5E0FC02198
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 Feb 2025 10:06:16 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6C280C02198
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 Feb 2025 10:18:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1thQgA-0002sA-1n;
-	Mon, 10 Feb 2025 10:06:14 +0000
+	id 1thQs3-0003VR-Qe;
+	Mon, 10 Feb 2025 10:18:31 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1thQg8-0002ry-KM
+ (envelope-from <mchehab+huawei@kernel.org>) id 1thQs2-0003VK-JS
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 10 Feb 2025 10:06:13 +0000
+ Mon, 10 Feb 2025 10:18:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zh0hPKaFioJKBXfvS2O0P+W39XoCgedqOEET5BeByHo=; b=G5qk0WwgS17s6URYF1eoIo3ott
- EyoqyqYQ2NyC7cIwq3cGy4lPyBeRY1eWyRY2IZaQmtxZsebpRnJPyKpf0D8c0S1xnEhniWtIehAd1
- eYXGQtk/AEcW+T7FVTBfxQP+/e4tPWA0vLXvvGq5QgXNff4ipHTr07QVWqhHO/gT51uU=;
+ d=sourceforge.net; s=x; h=Sender:Content-Transfer-Encoding:MIME-Version:
+ References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To:
+ Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+ Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+ List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=bVsBvDiCc9njfA1OXYC3dR1E4IlAyaCYirzdSCdjIBA=; b=ScYnDGDiKqNPVUOcujrLMJmUjL
+ YgdkVaPV2qk2ayTXyDr6l8r08wsjb7DckWcL9PjCbK5r/u3Z8DxaXAIQw7nzDU6RVDcRIpiJ18rp5
+ y0gBacrtz6bYXSaH6Iv6wqml1mGAc/1bHnm/SHYIo+Rou5bn9SU8/pVYP890zJaFwfpQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Sender:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=zh0hPKaFioJKBXfvS2O0P+W39XoCgedqOEET5BeByHo=; b=PYjt32ElAyTmBsb8aXAOIavC6v
- KmJh+YggT4/kXjSpH7fONl6SaRNrjMj+2m2oRpktpBJCyu07OuundXGqpV2fHDgHUaBrq47zbtdNq
- rtsTAyWrQNC2Lzbi99/vhWUBfpGdAjgDkwZ8pI75dvr2TPrigzETATeSsdeHjbKCldbQ=;
+ bh=bVsBvDiCc9njfA1OXYC3dR1E4IlAyaCYirzdSCdjIBA=; b=EimM9Vt3XbwBuL5muXNnO95co+
+ yr7hOWw0fLfCirDYDqJ5AB2eV5myJrmxwYtSPyhmGNr/5rr4E7BJJOqWRIzFM+9Kwsh1nTYVnyRMu
+ LflX8hg0SxYk8/aeGU7CCp8QqveuMQhwERrkcY58BnZBjH6a9xEQrWe0tEQmVN5/W4xU=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1thQg8-0002bu-PF for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 10 Feb 2025 10:06:13 +0000
+ id 1thQs1-00041Q-Uy for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 10 Feb 2025 10:18:30 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id C77D25C4954;
- Mon, 10 Feb 2025 10:05:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90CCAC4CEE4;
- Mon, 10 Feb 2025 10:06:00 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id ECF8A5C4A82;
+ Mon, 10 Feb 2025 10:17:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD75C4CEEB;
+ Mon, 10 Feb 2025 10:18:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1739181962;
- bh=lF71qqCebU1OJC3HnOGdjiCKxuuDaM0gULKXsGw1eDw=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=dJ97+4SvIxmFfust64zmMcq2g3/KFZNFJQ1f7zV1y30VlqgOiSjcfUNox+6+06tMw
- y1+Lr/zTB32GR2K89Vjzf8I+Gkeaw8bE9/7qnUrDaJXXnUhlFiEoTTUt+sUuvMoJb4
- 40uT/+pY/cQXPneOMBDpiUgjFm16tRXoQZAUqF0CqJ4KKextTufrXAIVlQq/gdKidf
- M21ON/6KGY87sx+s9SafR4T9In7LuSYN7jigIMsTkPEF9a+IPRVI8YIGP0nM0oquR5
- ZFRj8tv0YS2Ll0A8NTfrJZY7b7OUq3+M2oXK4f4xeZSwGEbE/FzZZD3N3xh2xHQYH3
- 7wm+wNUkKWq4g==
-Message-ID: <5a1b2716-bcc4-4a5e-95ce-ba45f508738d@kernel.org>
-Date: Mon, 10 Feb 2025 18:05:58 +0800
+ s=k20201202; t=1739182704;
+ bh=LI59JQtyPV/HF12ShAdqHJX2HFF3NXc8/5bk+IONPNM=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=nO62iX7S28S3shm7FksdxtyPreI2cGS6vi10HoQx+ObzswtwhDDeWQtpScBku+cfh
+ gFhql5aAGvyOhNISZ5EmnbovIYanDSAbdfvNYT+CKFtBe6ShOJXPBPH62dZPUtSFsH
+ /9DXMZ5Za8qeXXjLFCBjJMQBdOUmiKF9a8r90j1LbiNP7OuZPI3Fz/XJt3ZLjQ3cy7
+ OMmb8sI73yuK0P0M54zqtxXza6o7rx4Jrr4iEiW7RQFwdUnO4k3Fsk2ZOmgg/S37TM
+ /1gYxlDf5k72He6hNuyZAtv/irgoR/KpiU0WidVNS2SX97c5eB1TEpJO0gNkTo0o2C
+ 8nocUmRXPqJ7A==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+ (envelope-from <mchehab+huawei@kernel.org>)
+ id 1thQru-00000006Cia-0CEy; Mon, 10 Feb 2025 11:18:22 +0100
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Date: Mon, 10 Feb 2025 11:17:56 +0100
+Message-ID: <336ab631c0636e419282a38e7dd5b5cfb52fcd2d.1739182025.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <cover.1739182025.git.mchehab+huawei@kernel.org>
+References: <cover.1739182025.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
-References: <1739150649-31850-1-git-send-email-zhiguo.niu@unisoc.com>
-Content-Language: en-US
-In-Reply-To: <1739150649-31850-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Headers-End: 1thQg8-0002bu-PF
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to return SHRINK_EMPTY if no
- objects to free
+X-Headers-End: 1thQs1-00041Q-Uy
+Subject: [f2fs-dev] [PATCH 07/27] ABI: sysfs-fs-f2fs: fix date tags
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,32 +79,49 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Hao_hao.Wang@unisoc.com
+From: Mauro Carvalho Chehab via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jaegeuk Kim <mchehab+huawei@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2/10/25 09:24, Zhiguo Niu wrote:
-> Quoted from include/linux/shrinker.h
-> "count_objects should return the number of freeable items in the cache. If
->  there are no objects to free, it should return SHRINK_EMPTY, while 0 is
->  returned in cases of the number of freeable items cannot be determined
->  or shrinker should skip this cache for this time (e.g., their number
->  is below shrinkable limit)."
+Some date tags are missing colons. Add them to comply with
+ABI description and produce right results when converted to html/pdf.
 
-Seems in 9b996468cfdb ("mm: add SHRINK_EMPTY shrinker methods return
-value"), it didn't convert most of filesystems, left most filesystems
-to return 0 which indicate there may have objects to free. :(
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 3e1630c70d8a..e44bb614964b 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -347,7 +347,7 @@ Description:	Used to control configure extension list:
+ 		- [c] means add/del cold file extension
+ 
+ What:		/sys/fs/f2fs/<disk>/unusable
+-Date		April 2019
++Date:		April 2019
+ Contact:	"Daniel Rosenberg" <drosen@google.com>
+ Description:	If checkpoint=disable, it displays the number of blocks that
+ 		are unusable.
+@@ -355,7 +355,7 @@ Description:	If checkpoint=disable, it displays the number of blocks that
+ 		would be unusable if checkpoint=disable were to be set.
+ 
+ What:		/sys/fs/f2fs/<disk>/encoding
+-Date		July 2019
++Date:		July 2019
+ Contact:	"Daniel Rosenberg" <drosen@google.com>
+ Description:	Displays name and version of the encoding set for the filesystem.
+ 		If no encoding is set, displays (none)
+-- 
+2.48.1
 
-Reviewed-by: Chao Yu <chao@kernel.org>
-
-Thanks,
 
 
 _______________________________________________
