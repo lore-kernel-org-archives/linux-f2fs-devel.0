@@ -4,71 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1C4F3C02198
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 Feb 2025 17:20:31 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C5D0DC0219B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 Feb 2025 17:30:21 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1thXSQ-0003i9-9I;
-	Mon, 10 Feb 2025 17:20:30 +0000
+	id 1thXbw-0002NA-8R;
+	Mon, 10 Feb 2025 17:30:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1thXSO-0003i1-CO
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1thXbu-0002Mx-SR
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 10 Feb 2025 17:20:28 +0000
+ Mon, 10 Feb 2025 17:30:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=pklYGgzM6xnfX5CyE/d340+EA7VudroV6w5u0YV+5jk=; b=ABwk/c1Y0RW8NhA8fmutYLjBwL
- DsuMX2r9cLA1i/xVxbSje+YBjzkev6x/15rH7Wmj0RJ+13JODMdUztPes3mKo1TehSVgz2UvjwKwa
- JekAuPKBs+yp5zB15BTbT8n0TTfv/nOqvTRWfU39k4cA5au/bJ489hMlosDAPRged2h8=;
+ bh=VtOBtpWpXL1G88rz26gKAlSoFKBQQ4AVk07VKGAXRmU=; b=ilWYGz09M2+PDtrOIP+l8mitPa
+ EOGaGXSVI2TdVfDGZoMYuzeqdWgcA1/O7amaFZd6zaiapz1DwigEOQeKObvWIKRbcb89/h3M7zYNr
+ 3L24mviEd4X2CJRJTeB8RirMIwNOsP7vghAlgN7jpRZHftfkbjdPOyFJOZOySGIrVnRM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=pklYGgzM6xnfX5CyE/d340+EA7VudroV6w5u0YV+5jk=; b=ATYK3TVIqvlhTZHZTbUporF8z+
- RDQWULdpPE361SpaNB6uuWFD5WpDri/vBwLTGe8SCV+hErAgoVQRmSmhNb5Kusf6gZG1JiOleeOXi
- pXWM+jcRBUA4dpaGLJL8egsqpyqwNmYcliAor3wT+km3pLEjQGxQzD4kPpIKZvdROD7w=;
-Received: from casper.infradead.org ([90.155.50.34])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=VtOBtpWpXL1G88rz26gKAlSoFKBQQ4AVk07VKGAXRmU=; b=F9RKPO1U2A/iRoQKebptaaChZn
+ udFmN+mdMAvG6q/7+2xs0CkQ2XKc1FFhbZRd6nGO6NDn23pOj/T7yr77I5NwsFSSx/ZhbNLLnD1Gx
+ 8mnsgQv4Igmd30OAdSNXb0gxbjJnnn24jS1BC5INsIpY5BxYmg59O5lpJWKqZlgfsMgo=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1thXSN-0004kn-71 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 10 Feb 2025 17:20:28 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=pklYGgzM6xnfX5CyE/d340+EA7VudroV6w5u0YV+5jk=; b=TV/IkCyS8FG7w8lnDCKRHnBTg5
- sZpJxCbY/q96exXJhUmIHL4RS1tiwKMIypxRT/uioC3OGrL+XYcyb76DkCDSRiBMrlGhZjZfEtFni
- d/fywoBGGYZneRBF7HOIVkp5DAmWikdoc3LQUW8xT5Jimm6ZRrmcTj6X2Cc8mYi2vmsQmggW5AfA4
- f2iqX6SH47GRcMc2TO+xXeeIjVq4H86cHHvPVtAHYQODuezfzHbfT0Oo2GxwQ7EGEZifhFyN0Z4EI
- wfJ7MzmtYiQriocPX3FDSUULfeMKH3Juh4WH+qqRm2A/2lVTaY08t65WKzFUn0UVFhJP0rmTWAWQU
- ZFDK2R8Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat
- Linux)) id 1thXS9-0000000GL8w-3XD9; Mon, 10 Feb 2025 17:20:13 +0000
-Date: Mon, 10 Feb 2025 17:20:13 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Message-ID: <Z6o1TcS7mQ2POrc9@casper.infradead.org>
-References: <20250117164350.2419840-1-jaegeuk@kernel.org>
- <Z4qb9Pv-mEQZrrXc@casper.infradead.org>
- <Z4qmF2n2pzuHqad_@google.com>
- <Z4qpurL9YeCHk5v2@casper.infradead.org>
- <Z4q_cd5qNRjqSG8i@google.com> <Z6JAcsAOCCWp-y66@google.com>
- <Z6owv7koMsTWH1uM@google.com>
+ id 1thXbt-0005Qm-U0 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 10 Feb 2025 17:30:19 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id E11BE5C5CFE;
+ Mon, 10 Feb 2025 17:29:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 379CDC4CED1;
+ Mon, 10 Feb 2025 17:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1739208612;
+ bh=bPe9LIG/drrnqprJKulv02oVjfrWQtDlPp/JMf9iM/I=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=UbhqunpiUj4T0dAHLKpFT4aonN16xuIIlkoRlE4BJ5Q2UK5D8l5w8fVZJRZ20TqfF
+ ODmg7nFDnfJbUmXrZCL/DCiC/qAhzNbww7kaziTjbE8/yFgeiDEEzTO8p7+ppMsVVR
+ 9JtQgBLvhDMqHAKe9m3XWLDqDbpuqGbZfKPoCQpV5v06JlDbi3HK8W0S8e3i8FuHYw
+ NhuauKMgm4XixzmGv8/XSn+C6ja46olg1UBe59uB9EjboAJoZ2+lXOAkJ/2V0OSweg
+ q8TMHjiIDa+lNvZkeRwgK7gjYgtIkUA/4ZbQz23fOpeR6ofl7Fkd+icxkzXCNwjsVC
+ HtLDXOTHkaVCg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+ by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
+ EAE27380AA66; Mon, 10 Feb 2025 17:30:41 +0000 (UTC)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <Z6owv7koMsTWH1uM@google.com>
-X-Headers-End: 1thXSN-0004kn-71
-Subject: Re: [f2fs-dev] [PATCH 0/2 v6] add ioctl/sysfs to donate file-backed
- pages
+Message-Id: <173920864074.3835961.7030694610964519057.git-patchwork-notify@kernel.org>
+Date: Mon, 10 Feb 2025 17:30:40 +0000
+References: <1739150649-31850-1-git-send-email-zhiguo.niu@unisoc.com>
+In-Reply-To: <1739150649-31850-1-git-send-email-zhiguo.niu@unisoc.com>
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>
+X-Headers-End: 1thXbt-0005Qm-U0
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to return SHRINK_EMPTY if no
+ objects to free
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,39 +78,41 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: patchwork-bot+f2fs--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
+ Hao_hao.Wang@unisoc.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Feb 10, 2025 at 05:00:47PM +0000, Jaegeuk Kim wrote:
-> On 02/04, Jaegeuk Kim wrote:
-> > On 01/17, Jaegeuk Kim wrote:
-> > > On 01/17, Matthew Wilcox wrote:
-> > > > On Fri, Jan 17, 2025 at 06:48:55PM +0000, Jaegeuk Kim wrote:
-> > > > > > I don't understand how this is different from MADV_COLD.  Please
-> > > > > > explain.
-> > > > > 
-> > > > > MADV_COLD is a vma range, while this is a file range. So, it's more close to
-> > > > > fadvise(POSIX_FADV_DONTNEED) which tries to reclaim the file-backed pages
-> > > > > at the time when it's called. The idea is to keep the hints only, and try to
-> > > > > reclaim all later when admin expects system memory pressure soon.
-> > > > 
-> > > > So you're saying you want POSIX_FADV_COLD?
-> > > 
-> > > Yeah, the intention looks similar like marking it cold and paging out later.
-> > 
-> > Kindly ping, for the feedback on the direction. If there's demand for something
-> > generalized api, I'm happy to explore.
+Hello:
+
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
+
+On Mon, 10 Feb 2025 09:24:09 +0800 you wrote:
+> Quoted from include/linux/shrinker.h
+> "count_objects should return the number of freeable items in the cache. If
+>  there are no objects to free, it should return SHRINK_EMPTY, while 0 is
+>  returned in cases of the number of freeable items cannot be determined
+>  or shrinker should skip this cache for this time (e.g., their number
+>  is below shrinkable limit)."
 > 
-> If there's no objection, let me push the change in f2fs and keep an eye on
-> who more will need this in general.
+> [...]
 
-I don't know why you're asking for direction.  I gave my direction: use
-fadvise().
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix to return SHRINK_EMPTY if no objects to free
+    https://git.kernel.org/jaegeuk/f2fs/c/bd409934c061
 
-Putting this directly in f2fs is a horrible idea.  NAK.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
 
 _______________________________________________
