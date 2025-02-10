@@ -4,68 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3EA5FC02198
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 Feb 2025 10:18:38 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 99653C02198
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 Feb 2025 17:00:16 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1thQs9-0003yq-36;
-	Mon, 10 Feb 2025 10:18:37 +0000
+	id 1thX8o-0003EI-SV;
+	Mon, 10 Feb 2025 17:00:14 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <mchehab+huawei@kernel.org>) id 1thQs6-0003yV-M4
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1thX8m-0003EB-Q2
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 10 Feb 2025 10:18:35 +0000
+ Mon, 10 Feb 2025 17:00:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Sender:Content-Transfer-Encoding:MIME-Version:
- Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=iWu6lxVdt4DkLo8TsXZLVD2K1CQXEitCDCNfEX4Lczg=; b=Iv2BQvAjMbZOnt1ibqd2HSge3e
- 44lDDYQc+hI27IMBoh5faB7aBpIZiKWNrrCbG9hlZ80m/zXhpqM5xmTqyino8ohPjqPyR4BlLBr2j
- 8sbskgJNgnESbM+1FbxmGgsDNRx2ox4xYw6X7Qskjq+UiieW1PQHW6d1eLDKidsWF+Lw=;
+ bh=CDepsnA+13v4X175Gm4/v01af7w+pXjFxZYqP/fnK5o=; b=NJG64YZk2j9Qy05mUE7SZca3Cy
+ vIoSLXeU3bVXYdMHRqawzJbZwDLrAyma6CyogVTnrffuK0NS2r/cS5+4vCMJLtk/7wLinpvuydhdg
+ B8xVeve95Anpg2IQ/4JTzIbMxNp2qI8KXf0hCxwszmilXRt9Gws5fRehZ7NIri1psD30=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Sender:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:
- To:From:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=iWu6lxVdt4DkLo8TsXZLVD2K1CQXEitCDCNfEX4Lczg=; b=g
- I9sqHAVmej246BwA1bqnmAF56uHLzbe1/bbb+hudhtL7vOspQYyIxTNKG+ay98bLRfa08wNWHBWr1
- U/nFAdDZ7DJf256WGvQTvP+PY22Lr5/B4+yH4o4oasKk1Qf9DMMxeXiMcxksJQuhO1PhnnjC+IBQ5
- gw+NfTidVuvxTAzI=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=CDepsnA+13v4X175Gm4/v01af7w+pXjFxZYqP/fnK5o=; b=YegSsW1LkIX6nzkRBXhH2m0cjU
+ g7A1O4nWW8Eqy2MbAiybl+2I7ysS9vAGwbNbjSWY1xyCFBo27MHu0YsitLEGNzCNgQsj4Yip0bU4Q
+ AxgvnCtoimBBZkXwt9nXbnexfB9R6H4Uj5KFE0k3e7zdklAIv4j6Td/QpnQvVXrOh4TE=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1thQs6-00041c-H7 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 10 Feb 2025 10:18:35 +0000
+ id 1thX8k-0002xI-SV for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 10 Feb 2025 17:00:12 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 8B88A5C48CC;
- Mon, 10 Feb 2025 10:17:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C56D2C4CEE6;
- Mon, 10 Feb 2025 10:18:23 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id D6EFA5C5CA0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 10 Feb 2025 16:59:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30BC6C4CED1;
+ Mon, 10 Feb 2025 17:00:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1739182703;
- bh=p8iRm7Gznn3ekKIRR91V/psR21ij9bK+0II7DymWAjA=;
- h=From:To:Cc:Subject:Date:From;
- b=PX0+CSSljZXtmDbUPsW3q/1UEAZkcJHQHMj/eR0Q8uSPrNmrv7jqsd3H+YWo1xOM/
- HjMrHdx6LlY4VekopfJmqAvseecf+sebvVrDYeBP2E4GKMMrmkGAF7v22e90DTf2Ge
- mjxsRdCf7qv3lINGQIUrTR/CKUR1x2WI5IgNnSnIRO7tiHp3FFc+3cqvsj/9hsWnKh
- QUvK4DWNq98U6G9Jmn/ZLIwMSS34I6YncKIZUQdrGDo3GiokB90neYSGG7qvgPEeX+
- u8zr8PFfVeA+4pAnIe0oPCCKpjgmBbYQ3zyMgD9kNY5qkMBCxcJD7jQPVUsrPO+vlG
- qr78nANSqX06Q==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98)
- (envelope-from <mchehab+huawei@kernel.org>)
- id 1thQrt-00000006Ci9-3Zgs; Mon, 10 Feb 2025 11:18:21 +0100
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Date: Mon, 10 Feb 2025 11:17:49 +0100
-Message-ID: <cover.1739182025.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.48.1
+ s=k20201202; t=1739206805;
+ bh=lmAr9JZeFVtK4OBbMlB6jDLFUvyqpzGaFYMfhehq9tY=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=L7AcfpjSUuVn/wWghYjCs/4wsp3Y2inLngkKSQQAKhR2NxUX//v8V5iJhp+3F/TdG
+ y8d7a4X5gbgFwlNeyZqU5UfZ/sQEt/DovAfIDDxNgRLg53CfAa/6cdjC78cZve17Qu
+ ZbMUNyfH7WgqgNSY/Wc019jeM1FO9QpKHN8pnPxtsGX7wxoWp7LCHQRBUclv9kYM/V
+ Z4oZAwvEF2VJHN9ss6sQTLph8Kye+1/Edr0WDFoW7NNj+5U7a7BQqZH/rKxD8gTs4J
+ Gi9ZYEZa290aOsIHh8oiFbui9wumRC5rjYjXBn6rfj7y+2eVYZwGau4X9qY9nuLzQK
+ O/TaFO0FJxKYQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+ by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
+ EAE18380AA66; Mon, 10 Feb 2025 17:00:34 +0000 (UTC)
 MIME-Version: 1.0
-X-Headers-End: 1thQs6-00041c-H7
-Subject: [f2fs-dev] [PATCH 00/27] Improve ABI documentation generation
+Message-Id: <173920683379.3829927.11086061258734830665.git-patchwork-notify@kernel.org>
+Date: Mon, 10 Feb 2025 17:00:33 +0000
+References: <20250208023321.3736348-1-chao@kernel.org>
+In-Reply-To: <20250208023321.3736348-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1thX8k-0002xI-SV
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: quota: fix to avoid warning in
+ dquot_writeback_dquots()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,132 +79,49 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Mauro Carvalho Chehab via Linux-f2fs-devel
+From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>, Jonathan Corbet <corbet@lwn.net>,
- Jaegeuk Kim <mchehab+huawei@kernel.org>, James Clark <james.clark@linaro.org>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-hardening@vger.kernel.org,
- coresight@lists.linaro.org, Johannes Berg <johannes@sipsolutions.net>,
- bpf@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Mike Leach <mike.leach@linaro.org>
+Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jon/Greg,
+Hello:
 
-This series replace get_abi.pl with a Python version.
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-I originally started it due to some issues I noticed when searching for
-ABI symbols. While I could just go ahead and fix the already existing
-script, I noticed that the script maintainance didn't have much care over
-all those years, probably because it is easier to find Python programmers
-those days.
+On Sat,  8 Feb 2025 10:33:21 +0800 you wrote:
+> F2FS-fs (dm-59): checkpoint=enable has some unwritten data.
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 6 PID: 8013 at fs/quota/dquot.c:691 dquot_writeback_dquots+0x2fc/0x308
+> pc : dquot_writeback_dquots+0x2fc/0x308
+> lr : f2fs_quota_sync+0xcc/0x1c4
+> Call trace:
+> dquot_writeback_dquots+0x2fc/0x308
+> f2fs_quota_sync+0xcc/0x1c4
+> f2fs_write_checkpoint+0x3d4/0x9b0
+> f2fs_issue_checkpoint+0x1bc/0x2c0
+> f2fs_sync_fs+0x54/0x150
+> f2fs_do_sync_file+0x2f8/0x814
+> __f2fs_ioctl+0x1960/0x3244
+> f2fs_ioctl+0x54/0xe0
+> __arm64_sys_ioctl+0xa8/0xe4
+> invoke_syscall+0x58/0x114
+> 
+> [...]
 
-Also, the code is complex and was not using modules or classes and
-were using lots of global variables.
+Here is the summary with links:
+  - [f2fs-dev,v3] f2fs: quota: fix to avoid warning in dquot_writeback_dquots()
+    https://git.kernel.org/jaegeuk/f2fs/c/eb85c2410d6f
 
-So, I decided to rewrite it in Python. I started with a manual conversion
-for each function. Yet, to avoid future maintainership issues, I opted to
-divide the main code on three classes, each on a sepaparate file.
-
-Just like the original RFC, I opted to keep the Sphinx kernel-abi module
-on three different phases:
-
-- call get_abi.py as an exec file;
-- import AbiParser on a minimal integration scenario;
-- cleanup the code to avoid needing to parse line numbers from the text.
-
-This way, if something goes wrong, it would be easier to just revert any
-offending patches, It also provides a better rationale about what each
-logical change is doing.
-
-The initial patches on this series do some preparation work and
-cleans some ABI symbol bugs that lack ":" delimiter.
-
-I opted to place on this series the Sphinx and Python version updates.
-
-I still have ~10 patches here with additional cleanups, from the original
-series I sent as RFC but let's get the main changes merged first.
-
-Mauro Carvalho Chehab (27):
-  docs: sphinx: remove kernellog.py file
-  docs: sphinx/kernel_abi: adjust coding style
-  docs: admin-guide: abi: add SPDX tags to ABI files
-  ABI: sysfs-class-rfkill: fix kernelversion tags
-  ABI: sysfs-bus-coresight-*: fix kernelversion tags
-  ABI: sysfs-driver-dma-idxd: fix date tags
-  ABI: sysfs-fs-f2fs: fix date tags
-  ABI: sysfs-power: fix a what tag
-  scripts/documentation-file-ref-check: don't check perl/python scripts
-  scripts/get_abi.py: add a Python tool to generate ReST output
-  scripts/get_abi.py: add support for symbol search
-  docs: use get_abi.py for ABI generation
-  scripts/lib/abi/abi_parser.py: optimize parse_abi() function
-  scripts/lib/abi/abi_parser.py: use an interactor for ReST output
-  docs: sphinx/kernel_abi: use AbiParser directly
-  docs: sphinx/kernel_abi: reduce buffer usage for ABI messages
-  docs: sphinx/kernel_abi: properly split lines
-  scripts/get_abi.pl: Add filtering capabilities to rest output
-  scripts/get_abi.pl: add support to parse ABI README file
-  docs: sphinx/kernel_abi: parse ABI files only once
-  docs: admin-guide/abi: split files from symbols
-  docs: sphinx/automarkup: add cross-references for ABI
-  docs: sphinx/kernel_abi: avoid warnings during Sphinx module init
-  scripts/lib/abi/abi_parser.py: Rename title name for ABI files
-  scripts/lib/abi/abi_parser.py: make it backward-compatible with Python
-    3.6
-  scripts/get_abi.py: add support for undefined ABIs
-  scripts/get_abi.pl: drop now obsoleted script
-
- Documentation/ABI/removed/sysfs-class-rfkill  |    2 +-
- Documentation/ABI/stable/sysfs-class-rfkill   |   12 +-
- .../ABI/stable/sysfs-driver-dma-idxd          |    4 +-
- .../testing/sysfs-bus-coresight-devices-cti   |   78 +-
- .../testing/sysfs-bus-coresight-devices-tpdm  |   52 +-
- Documentation/ABI/testing/sysfs-fs-f2fs       |    4 +-
- Documentation/ABI/testing/sysfs-power         |    2 +-
- .../admin-guide/abi-obsolete-files.rst        |    7 +
- Documentation/admin-guide/abi-obsolete.rst    |    6 +-
- Documentation/admin-guide/abi-readme-file.rst |    6 +
- .../admin-guide/abi-removed-files.rst         |    7 +
- Documentation/admin-guide/abi-removed.rst     |    6 +-
- .../admin-guide/abi-stable-files.rst          |    7 +
- Documentation/admin-guide/abi-stable.rst      |    6 +-
- .../admin-guide/abi-testing-files.rst         |    7 +
- Documentation/admin-guide/abi-testing.rst     |    6 +-
- Documentation/admin-guide/abi.rst             |   17 +
- Documentation/sphinx/automarkup.py            |   47 +
- Documentation/sphinx/kernel_abi.py            |  162 ++-
- Documentation/sphinx/kerneldoc.py             |   14 +-
- Documentation/sphinx/kernellog.py             |   22 -
- Documentation/sphinx/kfigure.py               |   81 +-
- scripts/documentation-file-ref-check          |    2 +-
- scripts/get_abi.pl                            | 1103 -----------------
- scripts/get_abi.py                            |  214 ++++
- scripts/lib/abi/abi_parser.py                 |  628 ++++++++++
- scripts/lib/abi/abi_regex.py                  |  234 ++++
- scripts/lib/abi/helpers.py                    |   38 +
- scripts/lib/abi/system_symbols.py             |  378 ++++++
- 29 files changed, 1830 insertions(+), 1322 deletions(-)
- create mode 100644 Documentation/admin-guide/abi-obsolete-files.rst
- create mode 100644 Documentation/admin-guide/abi-readme-file.rst
- create mode 100644 Documentation/admin-guide/abi-removed-files.rst
- create mode 100644 Documentation/admin-guide/abi-stable-files.rst
- create mode 100644 Documentation/admin-guide/abi-testing-files.rst
- delete mode 100644 Documentation/sphinx/kernellog.py
- delete mode 100755 scripts/get_abi.pl
- create mode 100755 scripts/get_abi.py
- create mode 100644 scripts/lib/abi/abi_parser.py
- create mode 100644 scripts/lib/abi/abi_regex.py
- create mode 100644 scripts/lib/abi/helpers.py
- create mode 100644 scripts/lib/abi/system_symbols.py
-
+You are awesome, thank you!
 -- 
-2.48.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
