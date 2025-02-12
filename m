@@ -4,67 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E1053C021A0
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Feb 2025 03:00:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AF057C0219E
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Feb 2025 03:24:40 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ti2zC-0000ho-Th;
-	Wed, 12 Feb 2025 03:00:28 +0000
+	id 1ti3Mc-0002GV-UM;
+	Wed, 12 Feb 2025 03:24:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1ti2zA-0000hh-Su
+ (envelope-from <jaegeuk@kernel.org>) id 1ti3MY-0002GL-AE
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Feb 2025 03:00:25 +0000
+ Wed, 12 Feb 2025 03:24:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8Oba+HTaJCgLk06g8kikxdRs3qo3BQ/Ju8DiOaK42NY=; b=ILkDIaWTwPkpf5QfU+WuwcJ3hC
- v4gU6yaRAOFFCC0S7hIjbRQ7lNbdLt7PVXxR4sqZYSe6Ejf9yML0BNCjQIIsJ6ESktEGwL7fX9GJC
- 4v29JTZMyVClMUbHr65owq+7syghXnapntJj3I4TGfxLdZwVUYGOmrC0s0uNe+xkkots=;
+ bh=3cF4jpPCbXZ21mBmW53+xVNbKvU91O0wI+8QggPdDcM=; b=YIUeE0Yx7F3o6yTOx53MGdxUUs
+ qoEGkU/+XcaqKOdBz1CWc3zj2/bl99wpDVy+tKhE+3mKKQc7hR20GLu5OhNzY9jGCQbXBAhZQNKwY
+ TbANgXBEl3EbeDp2Q9+mCFM29f/ax49iIVhjD+YiwW/zC7a9zNES3bMXGm9025wLGFTE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8Oba+HTaJCgLk06g8kikxdRs3qo3BQ/Ju8DiOaK42NY=; b=Td3nttkZit90UbIdKs7FKIeZS3
- CSR+PKVYA9VtveNvX6BjjVzX7jG2Hd7iVO4z7OQRRHpg9ZKy6Wd5RW0JXLtygRTfY9mk4o7wustV6
- fQ4auKJIAmJU4me25IzStfdoyWIQ4Xj0i+HCmMmsB8oE2VyO/4pDkhbCAGQEsRl+q/Yc=;
+ ;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=3cF4jpPCbXZ21mBmW53+xVNbKvU91O0wI+8QggPdDcM=; b=TGJitEQKJBPSh6S3+F93Oa6/JF
+ hVqZpvKlHdlW0fn91pIBL1JEoU646XZ01x1ZMzVjKlJHA5LY5jsvduwXttWyhsLRFmhestyGOyuk7
+ plU+580/HCQi/VXGfhVp4oOwHhqh+4JFTzunYquZX1bymFE1vwCwN5BBZKUtHZ4tbauk=;
 Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ti2z7-0002CF-P1 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Feb 2025 03:00:24 +0000
+ id 1ti3MX-0003JP-JU for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 12 Feb 2025 03:24:34 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 439EEA406C6;
- Wed, 12 Feb 2025 02:58:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A75BC4CEDD;
- Wed, 12 Feb 2025 03:00:10 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id 76599A402F6;
+ Wed, 12 Feb 2025 03:22:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F01FC4CEDF;
+ Wed, 12 Feb 2025 03:24:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1739329210;
- bh=s51PwjYiXgxoVGujUd7KagMqrOmjYUloowPDYEhHEn8=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=J4R6BsEsFngMhxMHInJf6ec0sVv19DPhPjwg0Wt2PslFHmUB6Haf2TvsznD/oZCnO
- FNoGw8X4V1yPGnLY4T4RiGjvHaDvUf/ac+VIwUhNhySEulK0S3jtm+L/UK3L9uWStJ
- kqHvAH8Yt/g3YNPc4uZ5u6Cw27ykbTqM3CzID6/g+t7bS8k7T3XomW4IDOdRoWhDyX
- OPtZtvQDheUf7qJsNaWIoGYUxadrLbY3uKOR5RcEdojt9iomd9KcP3DqKPHsfD633O
- qXSkNF3ffbPEzR0l5VGrTHUWYTI5bZzwy7xcC8EGkzcoT/I50cMDpQvzbwRrbQM41n
- cGbDBfI7xG+PQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 710FB380AAFF; Wed, 12 Feb 2025 03:00:40 +0000 (UTC)
-MIME-Version: 1.0
-Message-Id: <173932923927.82998.635511827116437277.git-patchwork-notify@kernel.org>
-Date: Wed, 12 Feb 2025 03:00:39 +0000
-References: <20250211071725.457343-1-chao@kernel.org>
-In-Reply-To: <20250211071725.457343-1-chao@kernel.org>
+ s=k20201202; t=1739330667;
+ bh=dy4F+MGp9D9JulVy4MJqpsD5oPjbC4M5GjqzusIpkoE=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=vMdZqc0EAKiHlAQPK8T0z5op3FSxOPWxOGBBaDFnCJqddUE7Yr4NLuE8C81/I1U4X
+ 7H9Dx0iKGAfA8p3KYCNiNuKPli2Q0UVUkvQi9p9z38weM0lqBCS7Iz5pxGwNl6hCVm
+ ZNEMDbh9He8jjMLlZry8iV6HqjpNrpsh8VsA/WGrfqKU4ZyINHGHgTD5WKW++AmtsW
+ yJsEZYJKkCuIByPh0Bb3YmeydYq/HyeytdSI8NLoafVX6IvBs0D11oHokb2bQ00age
+ UsUKLlercwaGpdm6eFuxcLZpqmpuX//bzV1LeQpOG+R6kzKkVmNw0UZq6QJQm41Kwa
+ NSwDYY8OXmR+g==
+Date: Wed, 12 Feb 2025 03:24:25 +0000
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1ti2z7-0002CF-P1
+Message-ID: <Z6wUaT91OnABzNfQ@google.com>
+References: <20250211071725.457343-1-chao@kernel.org>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20250211071725.457343-1-chao@kernel.org>
+X-Headers-End: 1ti3MX-0003JP-JU
 Subject: Re: [f2fs-dev] [PATCH v3 RESEND] f2fs: add check for deleted inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -77,22 +76,16 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, leocstone@gmail.com,
- syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, Leo Stone <leocstone@gmail.com>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
-
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Tue, 11 Feb 2025 15:17:25 +0800 you wrote:
+On 02/11, Chao Yu wrote:
 > From: Leo Stone <leocstone@gmail.com>
 > 
 > The syzbot reproducer mounts a f2fs image, then tries to unlink an
@@ -101,18 +94,43 @@ On Tue, 11 Feb 2025 15:17:25 +0800 you wrote:
 > 
 > Add a check to sanity_check_inode() for i_nlink == 0.
 > 
-> [...]
+> [Chao Yu: rebase the code]
+> Reported-by: syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=b01a36acd7007e273a83
+> Fixes: 39a53e0ce0df ("f2fs: add superblock and major in-memory structure")
+> Signed-off-by: Leo Stone <leocstone@gmail.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+> - no logic change, just rebase the code to last dev-test branch
+>  fs/f2fs/inode.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index d6ad7810df69..543fb942bec1 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -386,6 +386,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+>  		}
+>  	}
+>  
+> +	if (inode->i_nlink == 0) {
+> +		f2fs_warn(sbi, "%s: inode (ino=%lx) has a link count of 0",
+> +			  __func__, inode->i_ino);
+> +		return false;
+> +	}
 
-Here is the summary with links:
-  - [f2fs-dev,v3,RESEND] f2fs: add check for deleted inode
-    https://git.kernel.org/jaegeuk/f2fs/c/6e3019906688
+This gives a wrong EFSCORRUPTED when recoverying orphan inodes.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+f2fs_recover_orphan_inodes
+-> f2fs_iget_retry
+ -> orphan inode can have i_nlink = 0.
 
-
+> +
+>  	return true;
+>  }
+>  
+> -- 
+> 2.48.1.502.g6dc24dfdaf-goog
 
 
 _______________________________________________
