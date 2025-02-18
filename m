@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E4C92C021B1
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Feb 2025 05:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B58A7C021B2
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Feb 2025 05:52:28 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tkGWx-0006a7-Jf;
-	Tue, 18 Feb 2025 05:52:27 +0000
+	id 1tkGWy-0006ah-CR;
+	Tue, 18 Feb 2025 05:52:28 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tkGWl-0006ZA-Mu
+ (envelope-from <willy@infradead.org>) id 1tkGWn-0006ZM-Ep
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Feb 2025 05:52:15 +0000
+ Tue, 18 Feb 2025 05:52:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8fsH5DarnIkPPvANleakPOl+/DHdlSsWPg4cSSBvLV4=; b=nA8hY3sqKuQTDlkZ93T5oba4+5
- oBBIfmqGSO+R3cewD8r1irXg9rNnhjMJCFRqB8L2MP/BmEynGkqIa/ktmwrbBsTIG1mSA41DAsGCH
- l4D0oEg40hfk7qzcDDEmIqX5NKlfPTMi05H43sgiRz5L4hYkhP/XCFuGCotJrxBPtuv8=;
+ bh=8eCp/aYOgC7traLzeBHZGcZTwEdZmKw2uvFSR9Kleuc=; b=QA+GxwXlheIFRYKkz536PIZZhl
+ 0mToWqEWYpqceuejd2aJHTLCpdKMWr2GKUqzssTiBUJVgCPcDEQkKAM2YQNHEEf8XZHVHBOib0FtC
+ 9/4/GAo6QHzcDCc/WZn+DXTj2Le+3drR34scXnCS7/IKBZuOlvWNdzgSJnGtEK5JgYqU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,38 +33,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=8fsH5DarnIkPPvANleakPOl+/DHdlSsWPg4cSSBvLV4=; b=JG0V91ZhbSjBleVR3ZAeAu2hwz
- AtEPZQO9d97gBIhz9QOCXRE/8UtVpfAAkJ+ptnpmXjlSEQOSYHLzcwUeD+l/YRcoSOfQEUGt1mUan
- OEjDiaI3WqShgiVe1dV39Lh2B9tarTF6UY4a7c/AeB8vnvq+jYBKrGrQDbVPDmyqesxc=;
+ bh=8eCp/aYOgC7traLzeBHZGcZTwEdZmKw2uvFSR9Kleuc=; b=Geu4IqtFQUPJDXW3SCW3kfOpob
+ H6YBBJii673i2WhhO552YwaBKAuMc9XJmYTFXuVlkCwN4/larcSWfdOUvGzA65OEy6zW6qELFG2Ju
+ G9YeepBkOZYZezq3XRvnACVyJHKEdQWAubVtiZ1KP7hQA+NwBbBc7ncM2ZjXN0Kg+ek0=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tkGWj-0007bO-Bs for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Feb 2025 05:52:15 +0000
+ id 1tkGWm-0007c2-S5 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 18 Feb 2025 05:52:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=8fsH5DarnIkPPvANleakPOl+/DHdlSsWPg4cSSBvLV4=; b=OxlS5iHsxCBRvfY85wh4IGvPLF
- Vn8XUCIiVvmwtwfQg8HIrr5uUoDj2gBhIO9AyU4a9d7D/cRnOjnv/9/BU7zSI1EKyNwOuJ5Yx4IX2
- R9KcKC37ANhB1RGK5EM6hfpm5KES+7lPUy3i9Mp13y9A1jy+9dgG6mpoud56CExCiphE0BPaqPlAD
- //TW8Iwd3cSw/6MphORR0Ndj62ifPnoimkngDXyNRPzxVewrtWQOXOM94iHu/LP9X54bFbONvLW3m
- EafFhtRy+CsreuEGfF0qdEwsW3L+aBnMy7tEU841Tn0B7VTOkYch8hdAc7rhDL+V2Iri9bdgj3dk2
- cFM9j4VQ==;
+ bh=8eCp/aYOgC7traLzeBHZGcZTwEdZmKw2uvFSR9Kleuc=; b=Em2r42koRd2AWlroXM3Gw+K6mU
+ e9N5HW1/MIO6enKgzVwxbhWHB6LsdLDi47g3G+oeRXF/2Jx3vWVKz9vxT/bhWI4KPlXBp/q98LB3N
+ +pf/DUXvD1dZx5bpp+Z73rIkpnoyIIQOjVPEzJuW9JntA8Qiu2i6qLGI05mODkE+yfUo5A0hNAQm7
+ 724EzKq0O0ex9tZCLxNvlIwI0NlwQeGjEtC+4FAKe6Z4WGmRklGQxuJRdFWv3XtaTkXcGnuN6w8Xp
+ SfgRLQv3bDl/RCNZDfm2c0ygTWVNProN5hnjtX4mY1lBFrLjS5QgB4elUgqcdkDwEJmAzoBodEe8k
+ U/ayr+WA==;
 Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat
- Linux)) id 1tkGWb-00000002TrI-3Lw2; Tue, 18 Feb 2025 05:52:05 +0000
+ Linux)) id 1tkGWb-00000002Tr0-1wIX; Tue, 18 Feb 2025 05:52:05 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Tue, 18 Feb 2025 05:51:38 +0000
-Message-ID: <20250218055203.591403-5-willy@infradead.org>
+Date: Tue, 18 Feb 2025 05:51:36 +0000
+Message-ID: <20250218055203.591403-3-willy@infradead.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250218055203.591403-1-willy@infradead.org>
 References: <20250218055203.591403-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tkGWj-0007bO-Bs
-Subject: [f2fs-dev] [PATCH 04/27] f2fs: Convert f2fs_flush_inline_data() to
- use a folio
+X-Headers-End: 1tkGWm-0007c2-S5
+Subject: [f2fs-dev] [PATCH 02/27] mm: Remove wait_for_stable_page()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,64 +82,44 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use the folio APIs where they exist.  Saves several hidden calls to
-compound_head().  Also removes a reference to page->mapping.
+The last caller has been converted to call folio_wait_stable(), so
+we can remove this wrapper.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/node.c | 31 +++++++++++++------------------
- 1 file changed, 13 insertions(+), 18 deletions(-)
+ include/linux/pagemap.h | 1 -
+ mm/folio-compat.c       | 6 ------
+ 2 files changed, 7 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index f88392fc4ba9..522bf84c0209 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1951,32 +1951,27 @@ void f2fs_flush_inline_data(struct f2fs_sb_info *sbi)
- 		int i;
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 47bfc6b1b632..a19d8e334194 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -1256,7 +1256,6 @@ void folio_wait_writeback(struct folio *folio);
+ int folio_wait_writeback_killable(struct folio *folio);
+ void end_page_writeback(struct page *page);
+ void folio_end_writeback(struct folio *folio);
+-void wait_for_stable_page(struct page *page);
+ void folio_wait_stable(struct folio *folio);
+ void __folio_mark_dirty(struct folio *folio, struct address_space *, int warn);
+ void folio_account_cleaned(struct folio *folio, struct bdi_writeback *wb);
+diff --git a/mm/folio-compat.c b/mm/folio-compat.c
+index 1d1832e2a599..5766d135af1e 100644
+--- a/mm/folio-compat.c
++++ b/mm/folio-compat.c
+@@ -28,12 +28,6 @@ void wait_on_page_writeback(struct page *page)
+ }
+ EXPORT_SYMBOL_GPL(wait_on_page_writeback);
  
- 		for (i = 0; i < nr_folios; i++) {
--			struct page *page = &fbatch.folios[i]->page;
-+			struct folio *folio = fbatch.folios[i];
- 
--			if (!IS_INODE(page))
-+			if (!IS_INODE(&folio->page))
- 				continue;
- 
--			lock_page(page);
-+			folio_lock(folio);
- 
--			if (unlikely(page->mapping != NODE_MAPPING(sbi))) {
--continue_unlock:
--				unlock_page(page);
--				continue;
--			}
+-void wait_for_stable_page(struct page *page)
+-{
+-	return folio_wait_stable(page_folio(page));
+-}
+-EXPORT_SYMBOL_GPL(wait_for_stable_page);
 -
--			if (!PageDirty(page)) {
--				/* someone wrote it for us */
--				goto continue_unlock;
--			}
-+			if (unlikely(folio->mapping != NODE_MAPPING(sbi)))
-+				goto unlock;
-+			if (!folio_test_dirty(folio))
-+				goto unlock;
- 
- 			/* flush inline_data, if it's async context. */
--			if (page_private_inline(page)) {
--				clear_page_private_inline(page);
--				unlock_page(page);
--				flush_inline_data(sbi, ino_of_node(page));
-+			if (page_private_inline(&folio->page)) {
-+				clear_page_private_inline(&folio->page);
-+				folio_unlock(folio);
-+				flush_inline_data(sbi, ino_of_node(&folio->page));
- 				continue;
- 			}
--			unlock_page(page);
-+unlock:
-+			folio_unlock(folio);
- 		}
- 		folio_batch_release(&fbatch);
- 		cond_resched();
+ void mark_page_accessed(struct page *page)
+ {
+ 	folio_mark_accessed(page_folio(page));
 -- 
 2.47.2
 
