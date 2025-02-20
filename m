@@ -4,60 +4,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 671A6C021B1
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Feb 2025 08:51:43 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 77D7EC021B2
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Feb 2025 15:49:28 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tl2HW-0005F2-8Z;
-	Thu, 20 Feb 2025 08:51:41 +0000
+	id 1tl8nm-00023x-OF;
+	Thu, 20 Feb 2025 15:49:26 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <arefev@swemel.ru>) id 1tl2HH-0005Em-NL
+ (envelope-from <daeho43@gmail.com>) id 1tl8nc-00023j-L4
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 20 Feb 2025 08:51:27 +0000
+ Thu, 20 Feb 2025 15:49:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wv18Jol842R9T3SS69TEywGruu7oG3ejKG6BBb5YsZM=; b=emUiWMyU1bsaqXUM1R5QvtccKN
- AVhtrKkCEvItW8YqobuaaILd6Ytkj8l4QfGklgiUrHjbT3SlLqhmcIn3XFFUbi4pzNZanxZZKyecr
- UPXy83rfia+o/oQMqaCmvBQNPu6hnk0HwOWY/hwD9VcAXSW+XJ+GCPlvgCknOGSSz/No=;
+ bh=2E2MTvAYQWg7krEfkXP1hDGVQ7vMKcc+OhnV3fQUlZU=; b=Zn1KokuJ1TnVob+ywgwcsDBvTa
+ 12CgncX4/H/hPzHvrGldTynHkVelcEVU7pdGCNqjNPncw+pYSX7Pqd7OkU3nHcvXWs/T3aTL1TAdW
+ CiDCmoE6pjJV1QR0fq9S3AO+BI6cVzefA1Z1Udmwhrq6DvoUdqA8ssLXXxYl9fqCTZPg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=wv18Jol842R9T3SS69TEywGruu7oG3ejKG6BBb5YsZM=; b=H
- BpZeyhd1GSVGGZPqVgM9dami3w5tErKrimZyojlpVP9quzG/6na5qCUBvL8Yo0BX4YQQGzLUSDm+L
- 48i7R9u8SfaRKtz4CciJyOid1HvViyWcC4gXVzHvPMJCYBsFy96LGuCzv9de5u6kRWZdSoeLgJojI
- BmYMQtpIy/BM0P2E=;
-Received: from mx.swemel.ru ([95.143.211.150])
+ List-Owner:List-Archive; bh=2E2MTvAYQWg7krEfkXP1hDGVQ7vMKcc+OhnV3fQUlZU=; b=g
+ KE3+7NAhoVjw2FN1R0Nl2s42lFnmpV/2IOcGn55P3NEgC9VZzYY9hba4K7LL/RRNY1oyT0PoxkXov
+ sHm47mCZBuAUyq+c0HTxcLvb1bhmBhUxuNp6E+I1FLJYplWI8Flz2jZBxx+hvABHIq60EvlNN90Aw
+ T9LMxx/1S8MGYUo4=;
+Received: from mail-pj1-f46.google.com ([209.85.216.46])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tl2HF-0003hf-HD for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 20 Feb 2025 08:51:27 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
- t=1740040382;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding;
- bh=wv18Jol842R9T3SS69TEywGruu7oG3ejKG6BBb5YsZM=;
- b=Vjr+Jc8HelsS7C1LhZ31LJSFIMd6XxRKWgKY0fARhrUO++tbpFJcQShWls4eyY8Oh/hSeO
- bKgt2oTvN2JXKQ/uI5Cp+pOEejuq9R1aNoSZlnetrX8sK5InRFke8Unh7TkmQpQHWH169l
- 013wo5vMRmzs4VtBnizCnSPYM7Remj8=
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 20 Feb 2025 11:33:01 +0300
-Message-ID: <20250220083302.5902-1-arefev@swemel.ru>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1tl8nc-00015m-1d for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 20 Feb 2025 15:49:16 +0000
+Received: by mail-pj1-f46.google.com with SMTP id
+ 98e67ed59e1d1-2fce3b01efcso468664a91.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 20 Feb 2025 07:49:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1740066550; x=1740671350; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=2E2MTvAYQWg7krEfkXP1hDGVQ7vMKcc+OhnV3fQUlZU=;
+ b=gUppFRqdlNS6+lAhrED7oajVLICYnHBciwyF0nxZwQ81RRJQGURGDUAPkk7Ueq1+aL
+ G9YP0mIj9U0BJGnipWSvd55/owQYHNKZySlUZF5AhSBvy1A1mCM8ABASprzEc/t77hMW
+ o948ReaHPHzLhY+Av0O/671ZfHyi76OXMYnzlb6CRWJwmPU5LrDXZAOZqcJ68bRakNOM
+ py8S13YCMeMngzfE6nwr5GWz/0ebObyYs9+I75kYnCEU57+J+DZBFoHSMuB25vcbHHP6
+ fL6Oz4QXWpZeCWY0acb3RXWCll3l5kyfryR9km2Uey8wG8S/1pIgt446XTUcWW9GfhR2
+ lreQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1740066550; x=1740671350;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=2E2MTvAYQWg7krEfkXP1hDGVQ7vMKcc+OhnV3fQUlZU=;
+ b=OyTJckZDs+vZ8XE/z8LoJG4hfv4xWEm263s+3dpwqhsoInxWApUEDLEmoAT3idrzfG
+ yBPkgMkp0jnLb19Fs6isYyVw/tmmzXu7G5mr5wnv6LdDlWWUqxORasNXnIaeIvm5YuyN
+ oMOSzGVw5yPJDha8ssWzMS0ftO7Mpq4Zd4biI02KkLdK0us+RtwAHfQUYX8MoGxJCuZI
+ F02Qkpkm0FqYFqN69SVMDgHTlVF5gTEgTMoV+Lu1UQqpq7AD3r2wLqhUu10fiXafd7SR
+ pyGyzjlvUl0J64Z5TWc2wV/5Z+xjcQ12FGoWcjwIgUnDirtW+7XFJTrl6bQ8ktbhIyGX
+ 3rxQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCX2ZVSsQUtm/Wis+Sy2SNDBiG98RkvOvYlD5ehAamsgbnf9FjH0u87XIlApuhAwK4/EI4G1wK8rRd+NsoZ30rb0@lists.sourceforge.net
+X-Gm-Message-State: AOJu0Yxue1KSElaqfTUkrsGqcX8rz7w8Ne6fgq5uX/75Z+NJvi1vf4f3
+ FWUk2UNdf2OkPowOM53lyljVjnt8BZ7t8rsbUOxFdMpcBrCqOqRVIMgKDQ==
+X-Gm-Gg: ASbGncsrqZZqY/LFfMbscXxbroYzmHC53Z+p4b+o3cq1HhpcQLjp+IVV1UhQmGp02wp
+ uYBp/4GQSMcHxdWHpdB8scVmC3ElMHRdD0x7N3mwQtLXyVadkupzVoVGsytcTmQr+cGeSJMcYEm
+ FWvrXiW7iJ/h5E2u6sMVOgWkKMfwjgPp1cEqhIYxPaeTRCw5+3YYDcrh2pfR6A2JQd+ENoQ3GAF
+ I4VPSpYCt76/qV2ffFYdgM7/iuyWtL+T/XCJm2rJth/KazFde8mF+Sqwhc79vqe+LNAYHkQvXbM
+ P2Lx0urdQMMgorwHoiRp8Jb4/p0NxqOB/Au8GsPxW7jPvxf7326JArCnZx2XeBz39hDmHMUIIHy
+ YxtVfQLE=
+X-Google-Smtp-Source: AGHT+IFyTr4GZkLCpTuA2k65GDMtmNGCygaMOCQt011avMeIOZw1OH1WNoTpr4HlNT9cp+z23E6Uww==
+X-Received: by 2002:a17:90b:2644:b0:2fa:137f:5c5c with SMTP id
+ 98e67ed59e1d1-2fcb59e5914mr12072369a91.1.1740066550186; 
+ Thu, 20 Feb 2025 07:49:10 -0800 (PST)
+Received: from daehojeong-desktop.mtv.corp.google.com
+ ([2a00:79e0:2e14:7:d4e3:981c:2900:970e])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-2fc13aafa44sm14044962a91.5.2025.02.20.07.49.09
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 20 Feb 2025 07:49:09 -0800 (PST)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Thu, 20 Feb 2025 07:49:04 -0800
+Message-ID: <20250220154904.2698964-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
 MIME-Version: 1.0
-X-Headers-End: 1tl2HF-0003hf-HD
-Subject: [f2fs-dev] [PATCH 5.15] f2fs: fix shift-out-of-bounds in
- parse_options()
+X-Headers-End: 1tl8nc-00015m-1d
+Subject: [f2fs-dev] [PATCH] f2fs: do not use granularity control for segment
+ or section unit discard
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -69,68 +109,81 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Denis Arefev via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Denis Arefev <arefev@swemel.ru>
-Cc: lvc-project@linuxtesting.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-No upstream commit exists for this commit.
+From: Daeho Jeong <daehojeong@google.com>
 
-Using an arbitrary value that does not fall into the required range as an
-argument of the shift operator when outputting an error is wrong in itself.
+When we support segment or section unit discard, we should only focus on
+how actively we submit discard commands for only one type of size, such
+as segment or section. In this case, we don't have to manage smaller
+sized discards.
 
-Call Trace:
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e3/0x2cb lib/dump_stack.c:106
- ubsan_epilogue lib/ubsan.c:151 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3bf/0x420 lib/ubsan.c:321
- parse_options+0x4ad6/0x4ae0 fs/f2fs/super.c:919
- f2fs_fill_super+0x321b/0x7c40 fs/f2fs/super.c:4214
- mount_bdev+0x2c9/0x3f0 fs/super.c:1443
- legacy_get_tree+0xeb/0x180 fs/fs_context.c:632
- vfs_get_tree+0x88/0x270 fs/super.c:1573
- do_new_mount+0x2ba/0xb40 fs/namespace.c:3051
- do_mount fs/namespace.c:3394 [inline]
- __do_sys_mount fs/namespace.c:3602 [inline]
- __se_sys_mount+0x2d5/0x3c0 fs/namespace.c:3579
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x3b/0xb0 arch/x86/entry/common.c:81
- entry_SYSCALL_64_after_hwframe+0x68/0xd2
-
-There is a commit 87161a2b0aed ("f2fs: deprecate io_bits") that completely
-removes these strings, but it's not practical to backport it.
-
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-
-Link: syzbot+410500002694f3ff65b1@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=410500002694f3ff65b1
-Fixes: ec91538dccd4 ("f2fs: get io size bit from mount option")
-Signed-off-by: Denis Arefev <arefev@swemel.ru>
+Reported-by: Yohan Joung <yohan.joung@sk.com>
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
 ---
- fs/f2fs/super.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/segment.c | 29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f8aaff9b1784..c0fa7d785f3c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -891,8 +891,8 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			if (args->from && match_int(args, &arg))
- 				return -EINVAL;
- 			if (arg <= 0 || arg > __ilog2_u32(BIO_MAX_VECS)) {
--				f2fs_warn(sbi, "Not support %d, larger than %d",
--					  1 << arg, BIO_MAX_VECS);
-+				f2fs_warn(sbi, "Not support 2^%d, invalid argument %d",
-+					  arg, BIO_MAX_VECS);
- 				return -EINVAL;
- 			}
- 			F2FS_OPTION(sbi).write_io_size_bits = arg;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index c282e8a0a2ec..4316ff7aa0d1 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1661,12 +1661,20 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 				f2fs_time_over(sbi, UMOUNT_DISCARD_TIMEOUT))
+ 			break;
+ 
+-		if (i + 1 < dpolicy->granularity)
+-			break;
++		/*
++		 * Do not granularity control for segment or section
++		 * unit discard, since we have only one type of discard length.
++		 */
++		if (f2fs_block_unit_discard(sbi)) {
++			if (i + 1 < dpolicy->granularity)
++				break;
+ 
+-		if (i + 1 < dcc->max_ordered_discard && dpolicy->ordered) {
+-			__issue_discard_cmd_orderly(sbi, dpolicy, &issued);
+-			return issued;
++			if (i + 1 < dcc->max_ordered_discard &&
++					dpolicy->ordered) {
++				__issue_discard_cmd_orderly(sbi, dpolicy,
++						&issued);
++				return issued;
++			}
+ 		}
+ 
+ 		pend_list = &dcc->pend_list[i];
+@@ -1701,6 +1709,13 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 
+ 		if (issued >= dpolicy->max_requests || io_interrupted)
+ 			break;
++
++		/*
++		 * We only use the largest discard unit for segment or
++		 * section unit discard.
++		 */
++		if (!f2fs_block_unit_discard(sbi))
++			break;
+ 	}
+ 
+ 	if (dpolicy->type == DPOLICY_UMOUNT && issued) {
+@@ -2320,10 +2335,6 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+ 	dcc->discard_granularity = DEFAULT_DISCARD_GRANULARITY;
+ 	dcc->max_ordered_discard = DEFAULT_MAX_ORDERED_DISCARD_GRANULARITY;
+ 	dcc->discard_io_aware = DPOLICY_IO_AWARE_ENABLE;
+-	if (F2FS_OPTION(sbi).discard_unit == DISCARD_UNIT_SEGMENT)
+-		dcc->discard_granularity = BLKS_PER_SEG(sbi);
+-	else if (F2FS_OPTION(sbi).discard_unit == DISCARD_UNIT_SECTION)
+-		dcc->discard_granularity = BLKS_PER_SEC(sbi);
+ 
+ 	INIT_LIST_HEAD(&dcc->entry_list);
+ 	for (i = 0; i < MAX_PLIST_NUM; i++)
 -- 
-2.43.0
+2.48.1.601.g30ceb7b040-goog
 
 
 
