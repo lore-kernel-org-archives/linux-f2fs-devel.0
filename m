@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 36474C021B2
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Feb 2025 01:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BECD7C021BE
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Feb 2025 02:13:55 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tn6US-0003K4-Oi;
-	Wed, 26 Feb 2025 01:45:36 +0000
+	id 1tn6vp-0003wB-Si;
+	Wed, 26 Feb 2025 02:13:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1tn6UR-0003Jy-33
+ (envelope-from <chao@kernel.org>) id 1tn6vm-0003w3-J3
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 26 Feb 2025 01:45:35 +0000
+ Wed, 26 Feb 2025 02:13:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=djUeJ/rRw+7bVTqGeHEjffdnhFU5ObaLMZm6waEo/cM=; b=UwBZgJk2cJV8ux/ZvoDOOyI70V
- KYe0LC9Ee70F3UjN+jCjK4n1ZJHxwd7TGVSwXFvOn9DPQ9pomeXjLI5AXOXAD/eBWFmR1uWzbCSZF
- H/TRit+OXYg1qNfSD8WE7TxEH0h5Th2yVl5LIu7GFvzymnoup9NF6Lb2d3427NwJcEMM=;
+ bh=fJyYoMLJ2ZpLYSLKjQAd/SHkBwXYijcVGHc0YhQcEQk=; b=Cj6zb+BBByDGuZXJLf7q+3qZ0K
+ 7MuDyIIR7q3naBHL9FQEzHicjxlGtqtawpA6emVTYygINj8vl7xHyLrB7OOJmTNrZQZWlqslGd6nS
+ a1RKRlo7zYa0yNbe6bzS2jg6lP3M0gZ0u2J8UNWyVeVIz+TzcAZij6F6X2gimp03OsBY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -33,40 +33,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=djUeJ/rRw+7bVTqGeHEjffdnhFU5ObaLMZm6waEo/cM=; b=NaNgB/sD70WdvGNWF/gjUhZ49K
- z2hl11p/cxHNFKXf/xKNVJuAcnpie7Y1hasjFBtEUusIF0DpumWx4vHl4DIa0xG34COsnGcGVnFvs
- GLMsWTdYMEHcYplim2S54K5RNMjViU8jbbhhgMH2bT8tHH3binATsBTja4dIaqOmN6mc=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=fJyYoMLJ2ZpLYSLKjQAd/SHkBwXYijcVGHc0YhQcEQk=; b=TrVXBGeiKhcgzN89wuf4BuqdF4
+ 7wp5KmfPgttKvjzLTP31VYb7qW4yb+WqD0ruEDFzUehZAKOZasT8gahbdQQ23SyywmQZiCTLcQnmM
+ m0sI4lmXJqDbRVISuYiC0Cv/lHrfVUwwtiThP6/dOr7npufMrZVH+5hWggY09eLjTWFs=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tn6UQ-0001ZD-E7 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 26 Feb 2025 01:45:35 +0000
+ id 1tn6vl-0002hK-NC for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 26 Feb 2025 02:13:50 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 33C0B5C49B1;
- Wed, 26 Feb 2025 01:44:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 850BBC4CEDD;
- Wed, 26 Feb 2025 01:45:22 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id B736461205;
+ Wed, 26 Feb 2025 02:13:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E171C4CEE6;
+ Wed, 26 Feb 2025 02:13:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1740534323;
- bh=ngX5hmUBid2B/leasE/ldqcaQuKWY4R/b6bE5lXGa9g=;
+ s=k20201202; t=1740536023;
+ bh=OyjV96AUwXrteFLxY3N9fXfHXVnALSLioT3sBfWehFg=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=rTpTTGjYdx2MUuAKzqQZmH2+d0v8Kbdea04pfGIjqYXLovNpjxmSR8xlnwTElkR5M
- NxR1SjvxFJzLlqpXpEee9cB2M4LI+3e4m5pVxmKeKNB/CWu0/XIZ61PxW22rhvaAzy
- Av/PjMEKjuEYbM0ThtE04yKXMjEzQyHbLIf0v6W4g6Cs1kog/ZtaFj1rLDqcP8EU/h
- dnimeoOuJT1aNQXi9P7NyRvSTvPNtoa0B9y1m3D9cx37DRICtbTZg6f6nk4YCzcex/
- oWWrwdX6iZ0hW63LtdVPVKhtT87sCsrrHmciWynV4qCI00HKk7TMCuAWdDECl+yYTV
- Ba4STfOufVZNQ==
-Message-ID: <6f097ce3-5a0b-4d58-bd48-6b2ed135747f@kernel.org>
-Date: Wed, 26 Feb 2025 09:45:20 +0800
+ b=gv7EBa/VoBy3MfNwWBevyb/gzVzrjM9ylO6CA3FElUJi+lYbP5e8ix30cMTlfpCIJ
+ Kc3AyCy3gA6ER7VFux5s7m4f/Eso0StUTDJNPGIIi4WFy3TtWmEvfu9h5zhG8dweMz
+ e3XfwEcySNjles1+m9AMAFNuO7RgG4h9YSNKXVLZqVhV9XgDZl2Uo+oIbyjWzUoDBV
+ L49UrbupNEdRt5r+osK5/YQ/S6it5j45uOgrXGUGTEIbJcMh2MsaV4VwR2mRVclFZl
+ Bt1eZkf6F0vOfoe4l+DRZZoqs1NyLRG+UqD5aL626eLbg9m9+0dzDPua3sc3AzOg4Y
+ i0GpQImZVVQuA==
+Message-ID: <035589e7-aaf1-46f6-b259-9bdc4004af54@kernel.org>
+Date: Wed, 26 Feb 2025 10:13:40 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20250226002707.358601-1-daeho43@gmail.com>
+To: Salvatore Bonaccorso <carnil@debian.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <b022c507-9bfe-b080-4247-2cb5b76a181d@arcor.de>
+ <584c3164-0ebc-4402-bc84-6fcb8fc9aa80@arcor.de>
+ <b022c507-9bfe-b080-4247-2cb5b76a181d@arcor.de>
+ <Z7oW1khuNTx-jIw-@eldamar.lan> <Z74EbpqwFwwelUi7@eldamar.lan>
 Content-Language: en-US
-In-Reply-To: <20250226002707.358601-1-daeho43@gmail.com>
-X-Headers-End: 1tn6UQ-0001ZD-E7
-Subject: Re: [f2fs-dev] [PATCH] f2fs-tools: add ftruncate command in f2fs_io
+In-Reply-To: <Z74EbpqwFwwelUi7@eldamar.lan>
+X-Headers-End: 1tn6vl-0002hK-NC
+Subject: Re: [f2fs-dev] >= Kernel 5.19 reports corrupted f2fs without
+ apparent actual corruption
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,70 +83,76 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Daeho Jeong <daehojeong@google.com>
+Cc: Heinz Repp <heinz.repp@arcor.de>, 1021927@bugs.debian.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2/26/25 08:27, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
+On 2/26/25 01:57, Salvatore Bonaccorso wrote:
+> Hi
 > 
-> add ftruncate command to do file truncate.
+> I do realize the subject was badly choosed so replying again with a
+> better subject. The downstream Debian report can be found at
+> https://bugs.debian.org/1021927
 
-Need to update manual of f2fs_io as well?
+Hi Salvatore,
+
+Please don't worry, fsck has checked your device and reported that "Info: No
+error was reported", it means there is no inconsistent problem in your image.
+
+Eric has uploaded a patch to replace the unclear message "Info: Fix the reported
+corruption." w/ "Info: Automatic fix mode enabled." [1], I guess we will see
+the change in f2fs-tools 1.17.0+.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/commit/?h=dev-test&id=84a218572118382f73997c6411ff80c98d3f6f94
 
 Thanks,
 
 > 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> ---
->  tools/f2fs_io/f2fs_io.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
+> On Sat, Feb 22, 2025 at 07:26:30PM +0100, Salvatore Bonaccorso wrote:
+>> Hi Jaegeuk, hi Chao
+>>
+>> We got the following report in Debian (cf.
+>> https://bugs.debian.org/1021927) and quoted in the following:
+>>
+>> On Sat, Feb 22, 2025 at 02:44:07PM +0100, Heinz Repp wrote:
+>>> Since kernel 5.19.x this bug is present in all newer kernels, up to 6.12.12.
+>>> On every boot, it prints:
+>>>
+>>>> Info: Fix the reported corruption.
+>>>> Info: [/dev/sdb4] SanDisk SDSSDHTI
+>>>> Info: MKFS Version
+>>>>   "Linux version 4.3.0-1-amd64 (debian-kernel@lists.debian.org) (gcc version 5.3.1 20160101 (Debian 5.3.1-5) ) #1 SMP Debian 4.3.3-5 (2016-01-04)"
+>>>> Info: FSCK Version
+>>>>   from "Linux version 4.3.0-1-amd64 (debian-kernel@lists.debian.org) (gcc version 5.3.1 20160121 (Debian 5.3.1-7) ) #1 SMP Debian 4.3.5-1 (2016-02-06)"
+>>>>     to "Linux version 6.12.12-amd64 (debian-kernel@lists.debian.org) (x86_64-linux-gnu-gcc 14 (Debian 14.2.0-16) 14.2.0, GNU ld (GNU Binutils for Debian) 2.43.90.20250127) #1 SMP PREEMPT_DYNAMIC Debian 6.12.12-
+>>>> 1 (2025-02-02)"
+>>>> Info: superblock features = 0 :
+>>>> Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+>>>> Info: Segments per section = 1
+>>>> Info: Sections per zone = 1
+>>>> Info: Total FS sectors = 233906176 (114212 MB)
+>>>> Info: CKPT version = 4b0b40
+>>>> Info: checkpoint state = 42 :   crc orphan_inodes sudden-power-off
+>>>> Info: No error was reported
+>>>> [   10,619367]
+>>>
+>>> First, there is a reported corruption. But then, it says "No error was
+>>> reported". That's a little bit crazy. This came up with kernel 5.19, without
+>>> changing f2fs, but maybe this bug lives in f2fs?
+>>>
+>>> Greetings
+>>>
+>>> Heinz Repp
+>>
+>> Does this ring some bells to you?
+>>
 > 
-> diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-> index fa01f8f..08056a9 100644
-> --- a/tools/f2fs_io/f2fs_io.c
-> +++ b/tools/f2fs_io/f2fs_io.c
-> @@ -1887,6 +1887,31 @@ static void do_get_advise(int argc, char **argv, const struct cmd_desc *cmd)
->  	printf("\n");
->  }
->  
-> +#define ftruncate_desc "ftruncate a file"
-> +#define ftruncate_help					\
-> +"f2fs_io ftruncate [length] [file_path]\n\n"	\
-> +"Do ftruncate a file in file_path with the length\n"	\
-> +
-> +static void do_ftruncate(int argc, char **argv, const struct cmd_desc *cmd)
-> +{
-> +	int fd, ret;
-> +	off_t length;
-> +
-> +	if (argc != 3) {
-> +		fputs("Excess arguments\n\n", stderr);
-> +		fputs(cmd->cmd_help, stderr);
-> +		exit(1);
-> +	}
-> +
-> +	length = atoll(argv[1]);
-> +	fd = xopen(argv[2], O_WRONLY, 0);
-> +
-> +	ret = ftruncate(fd, length);
-> +	if (ret < 0)
-> +		die_errno("ftruncate failed");
-> +	exit(0);
-> +}
-> +
->  #define CMD_HIDDEN 	0x0001
->  #define CMD(name) { #name, do_##name, name##_desc, name##_help, 0 }
->  #define _CMD(name) { #name, do_##name, NULL, NULL, CMD_HIDDEN }
-> @@ -1932,6 +1957,7 @@ const struct cmd_desc cmd_list[] = {
->  	CMD(removexattr),
->  	CMD(lseek),
->  	CMD(get_advise),
-> +	CMD(ftruncate),
->  	{ NULL, NULL, NULL, NULL, 0 }
->  };
->  
+> Does this ring some bell?
+> 
+> Regards,
+> Salvatore
 
 
 
