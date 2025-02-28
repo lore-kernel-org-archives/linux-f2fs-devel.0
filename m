@@ -4,99 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 788DBC282C6
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Feb 2025 18:48:20 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4A0D7C282C6
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Feb 2025 19:09:19 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1to5PF-0007l6-3P;
-	Fri, 28 Feb 2025 18:48:17 +0000
+	id 1to5jZ-0004sC-Ra;
+	Fri, 28 Feb 2025 19:09:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1to5PC-0007kx-P5
+ (envelope-from <jaegeuk@kernel.org>) id 1to5jY-0004s2-RS
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 28 Feb 2025 18:48:15 +0000
+ Fri, 28 Feb 2025 19:09:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=x3dgsDqmXfnliiABPeZAGz8rEkw2FZi/RjCThCqfSpo=; b=iZE+b5jfEbMFjHsA4Wl7mdBKQ9
- ZA2feN98HMy6yGxWTT4pQG2XIXPEK0Gh5pdB0U/ZDZxnKECKViUlzw2OrYiXLvnbL44Euu3VkZu51
- m5lQhS2xPnOX7lYFFQQW9myHVmGHHCIjBYRnc50ByvJTgQqd67i78gcHLTvI+xW4uDCc=;
+ bh=RBWHALs+pQra8EBxbjJTamIGlpgwDEYEyC8sfc9N6p4=; b=NUSP2XsXABiYvq7I8gEWoQREwx
+ NYunzKyrJ9hPBOOx07xw48bLIPFsEDeK++aHjQ4bdHZ71VtK9JjpOKtLvYu9q1kpt9Zi0ss80ZxYJ
+ TrasWPjx8+3EEfsfOHOGslSGw7G6oRUoXC0iloQlImj5unjEOYBMq1EY4AE0CAl8eg14=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=x3dgsDqmXfnliiABPeZAGz8rEkw2FZi/RjCThCqfSpo=; b=W
- wuFUnczeUaQZ4vWnOeBQN42BWcr8TEmPIYw1l9oipdey44ssPGSz4HG09eyqUpXyo0jHDbmYD34Pw
- Vw63M4mR+y8LHLYyaV7RJrYNmESJbibWoaMt5lcDCyev+R7W7j4o9WnCdd4GM6Rl2kmPWwtgu8PpZ
- maBQzYYPjnUvgo1U=;
-Received: from mail-pj1-f50.google.com ([209.85.216.50])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=RBWHALs+pQra8EBxbjJTamIGlpgwDEYEyC8sfc9N6p4=; b=U9/bRoVxz3wk3wrhQIO0FZ6UpJ
+ lepCYKBrJm6+GAWWNnY4/zcqcHwF1VDGPD/A8Sf4qpdmNF/p5gRCTtOVgFm9n+MxvKeUpE9ebYuq8
+ TUUYSYlKZoT1Aq/I17hkUSFLOV7Ug2RSga27L+KgEH/6r5/AVYO9sobqQHPdudl92wNI=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1to5P7-0007vs-Ks for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 28 Feb 2025 18:48:15 +0000
-Received: by mail-pj1-f50.google.com with SMTP id
- 98e67ed59e1d1-2fbffe0254fso5084575a91.3
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1to5jO-0000ZR-T6 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 28 Feb 2025 19:09:17 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id A647D5C6995
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 28 Feb 2025 10:48:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1740768479; x=1741373279; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=x3dgsDqmXfnliiABPeZAGz8rEkw2FZi/RjCThCqfSpo=;
- b=c+Fxfa14VZ/oWfazq+eEV9degS/B2tU7nGtsLEt/FkzumvfvlimuyEety5iXh/P4RT
- 26CmaTUWYhtHo83es2U/fH1r7B5xFj1VGZwQCq4iKBAMVxOQ1ZkKFsfy9bhqKmQsAA2F
- MQtPprE737gFhpBqy5QDcmM7Ya0YfSZXs/rCr94Amx95Qcx1mZd4+dC6HT0UuHgkDPK7
- ZwQwYjD2+8lJbIyuMDydahpgWYJ+qZGfeGhNETGXe5neWcx3xFxUmKtXjx066N/ASJNa
- affI4RfrqSZeJcJnu+uSZ0sXm7tJksw80EIflQYraH+y85i2rfc82qyezll5j6cYW0pG
- egGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1740768479; x=1741373279;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=x3dgsDqmXfnliiABPeZAGz8rEkw2FZi/RjCThCqfSpo=;
- b=e8mFNyExTz3zG+0ZYpalStf6CcNtcXoHXpglw9Krq0b9NGYbkAZmn3k7u+HNzZzJtv
- m881pen16NQDR+JHZBnMCogMwMCwmDmRHUjD3aTdrKnbHesdVLOIM9trCq1kIpwRzMWo
- PytoneOJcpgfSw60840lK1U4zFR466PeEPkIKR8pyK/qa9lcaEuEZ9G/osSingHhBoCc
- G2gAFbPDrdo+NQvrUc8zVhGdqfDjZ/PXuUQxeCBXD8aRaa4KNcvD3RCc0ov53RabplDD
- 2UxePfUuuLUTghMxQGmfmR4V6o0vKofJHbKb12EqsEhHQ8ENrBs8jJfK3y3qJFyTjDLh
- a56g==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUPk+wa158zU1L2d1uVwzDUcjFeS8BBBSKLHYvoJzoTZP9LQkzkxYIAqVxGk5ox0Dh+CxBxT1XCKYkI+RAk1riJ@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YyMIl8cUCFrVwcU/1cCEJa/IEAXxGyivngNBMuLWNRTYb6OlVCp
- dHVVAA/WrN+OM+d2+VLSijihT7Y/N8UKeN62qnc2FvjvNhZtpf8p
-X-Gm-Gg: ASbGncv//AORpKHTWhLjXe6jHK3XAtwfRkQZa9wJrpfObXauPejohOfuwTTCy1eaWO3
- 4jSQzlMeFMbeDvHvNLuW1vHWh5dj3uxwJEqIz3DSBzihj8nlXDicm0IKjAkVvN3QPoWwPxIYQ+V
- bRS8Gd7lkMblbO3AOQi8H0OxQ3ESjkDAd42ncXzhaAuCQP81LVMyn0IlEmiXAFBmZZFUhvTNXqv
- noSxPaEjH8iG54/bn70EfefWEBr8VTRgs8u7XdVVSREfcy3JeeDpdiynwUrV3V6c+HWSzf+m0HB
- JZJyXi7cnS0SkG6wWQUNTwJ3Zut4KTfTHo9mu9E/7pRwaKgQuyH/PtDkE5w5HDIwHFL9WlcuJlC
- PnEuim0u32a8WixKDzQ==
-X-Google-Smtp-Source: AGHT+IE0AAxJrN5/b5vWobqize86OydpOF89aPSPX1g8h8GWdL+zHxB2tvIYlSBKzE1qSJDUXslo7w==
-X-Received: by 2002:a17:90b:268f:b0:2fe:b016:a6ac with SMTP id
- 98e67ed59e1d1-2febab71afcmr8040270a91.15.1740768478584; 
- Fri, 28 Feb 2025 10:47:58 -0800 (PST)
-Received: from daehojeong-desktop.mtv.corp.google.com
- ([2a00:79e0:2e14:7:adc7:2cc2:39e7:4e21])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-2fea696d58esm4164285a91.30.2025.02.28.10.47.57
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 28 Feb 2025 10:47:58 -0800 (PST)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Date: Fri, 28 Feb 2025 10:47:52 -0800
-Message-ID: <20250228184752.1668252-1-daeho43@gmail.com>
+ Fri, 28 Feb 2025 19:06:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B553C4CED6;
+ Fri, 28 Feb 2025 19:09:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1740769741;
+ bh=9YuEuWyD2rw96fYZspKuWjKx/UU5T7CzTFvFhynJyvo=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=S7P9mm+21YhRrnfZg62atZ+HolVEiqZnquBpwotZK6LlQxfxNoFjTSwfJ2iVZon3b
+ R0CwnncJ1Abz+o67KjSZ/SQ4KNVie7m4YcA1+/5VUbqDGBHaxWMS5oTAF66Jd1cBFx
+ eZynDJ/lFHkW/63M0xXCL5tTZU4QIp4BCmOi3Z7Fdoo+sWzDCCxk254scps8oLR74+
+ lKf5UxFEp2shLW4JoTJnWuYP3QX55+qArBpvsggOays4bbe2ShDYDxVTEsba4I/i+e
+ fJCE0+p+x+JBOQEmz1oIN+vr5D+vmcnk7V1uMDRgFUflr0gE6q90prKxcM7Qbtl2cs
+ 1UHJUI7fzmicg==
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 28 Feb 2025 19:08:54 +0000
+Message-ID: <20250228190854.422890-2-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+In-Reply-To: <20250228190854.422890-1-jaegeuk@kernel.org>
+References: <20250228190854.422890-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1to5P7-0007vs-Ks
-Subject: [f2fs-dev] [PATCH v2] f2fs-tools: add ftruncate command in f2fs_io
+X-Headers-End: 1to5jO-0000ZR-T6
+Subject: [f2fs-dev] [PATCH 2/2] f2fs_io: add ioprio command to give a io
+ priority hint
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -108,54 +78,54 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daeho Jeong <daehojeong@google.com>
+This adds a command to call ioctl(F2FS_IOC_IO_PRIO).
 
-add ftruncate command to do file truncate.
-
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
----
-v2: update f2fs_io documentation
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
  man/f2fs_io.8           |  3 +++
- tools/f2fs_io/f2fs_io.c | 26 ++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
+ tools/f2fs_io/f2fs_io.c | 35 +++++++++++++++++++++++++++++++++++
+ tools/f2fs_io/f2fs_io.h |  7 +++++++
+ 3 files changed, 45 insertions(+)
 
 diff --git a/man/f2fs_io.8 b/man/f2fs_io.8
-index 2ff22f7..648fba6 100644
+index 5def508e494f..b71965cf447a 100644
 --- a/man/f2fs_io.8
 +++ b/man/f2fs_io.8
-@@ -180,6 +180,9 @@ Trigger gc to move data blocks from specified address range
+@@ -181,6 +181,9 @@ Trigger gc to move data blocks from specified address range
  .TP
  \fBget_advise\fR \fI[file]\fR
  Get i_advise value and info in file
 +.TP
-+\fBftruncate\fR \fI[length] [file_path]\fR
-+Do ftruncate a file in file_path with the length
++\fBioprio\fR \fI[hint] [file]\fR
++Set ioprio to the file. The ioprio can be ioprio_write.
  .SH AUTHOR
  This version of
  .B f2fs_io
 diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index fa01f8f..08056a9 100644
+index 05126c8b44a6..155d44f147ad 100644
 --- a/tools/f2fs_io/f2fs_io.c
 +++ b/tools/f2fs_io/f2fs_io.c
-@@ -1887,6 +1887,31 @@ static void do_get_advise(int argc, char **argv, const struct cmd_desc *cmd)
- 	printf("\n");
+@@ -498,6 +498,40 @@ static void do_fadvise(int argc, char **argv, const struct cmd_desc *cmd)
+ 	exit(0);
  }
  
-+#define ftruncate_desc "ftruncate a file"
-+#define ftruncate_help					\
-+"f2fs_io ftruncate [length] [file_path]\n\n"	\
-+"Do ftruncate a file in file_path with the length\n"	\
++#define ioprio_desc "ioprio"
++#define ioprio_help						\
++"f2fs_io ioprio [hint] [file]\n\n"				\
++"ioprio given the file\n"					\
++"hint can be\n"							\
++" ioprio_write\n"						\
 +
-+static void do_ftruncate(int argc, char **argv, const struct cmd_desc *cmd)
++static void do_ioprio(int argc, char **argv, const struct cmd_desc *cmd)
 +{
-+	int fd, ret;
-+	off_t length;
++	int fd, hint;
 +
 +	if (argc != 3) {
 +		fputs("Excess arguments\n\n", stderr);
@@ -163,26 +133,59 @@ index fa01f8f..08056a9 100644
 +		exit(1);
 +	}
 +
-+	length = atoll(argv[1]);
-+	fd = xopen(argv[2], O_WRONLY, 0);
++	fd = xopen(argv[2], O_RDWR, 0);
 +
-+	ret = ftruncate(fd, length);
-+	if (ret < 0)
-+		die_errno("ftruncate failed");
++	if (!strcmp(argv[1], "ioprio_write")) {
++		hint = F2FS_IOPRIO_WRITE;
++	} else {
++		fputs("Not supported hint\n\n", stderr);
++		fputs(cmd->cmd_help, stderr);
++		exit(1);
++	}
++
++	if (ioctl(fd, F2FS_IOC_IO_PRIO, &hint) != 0)
++		die_errno("ioprio failed");
++
++	printf("ioprio_hint %d to a file: %s\n", hint, argv[2]);
 +	exit(0);
 +}
 +
- #define CMD_HIDDEN 	0x0001
- #define CMD(name) { #name, do_##name, name##_desc, name##_help, 0 }
- #define _CMD(name) { #name, do_##name, NULL, NULL, CMD_HIDDEN }
-@@ -1932,6 +1957,7 @@ const struct cmd_desc cmd_list[] = {
+ #define pinfile_desc "pin file control"
+ #define pinfile_help						\
+ "f2fs_io pinfile [get|set|unset] [file] {size}\n\n"		\
+@@ -1966,6 +2000,7 @@ const struct cmd_desc cmd_list[] = {
  	CMD(removexattr),
  	CMD(lseek),
  	CMD(get_advise),
-+	CMD(ftruncate),
++	CMD(ioprio),
  	{ NULL, NULL, NULL, NULL, 0 }
  };
  
+diff --git a/tools/f2fs_io/f2fs_io.h b/tools/f2fs_io/f2fs_io.h
+index c32def72fe45..22102884faab 100644
+--- a/tools/f2fs_io/f2fs_io.h
++++ b/tools/f2fs_io/f2fs_io.h
+@@ -94,6 +94,8 @@ typedef u32	__be32;
+ #define F2FS_IOC_DECOMPRESS_FILE        _IO(F2FS_IOCTL_MAGIC, 23)
+ #define F2FS_IOC_COMPRESS_FILE          _IO(F2FS_IOCTL_MAGIC, 24)
+ #define F2FS_IOC_START_ATOMIC_REPLACE	_IO(F2FS_IOCTL_MAGIC, 25)
++#define F2FS_IOC_GET_DEV_ALIAS_FILE	_IOR(F2FS_IOCTL_MAGIC, 26, __u32)
++#define F2FS_IOC_IO_PRIO		_IOW(F2FS_IOCTL_MAGIC, 28, __u32)
+ 
+ #ifndef FSCRYPT_POLICY_V1
+ #define FSCRYPT_POLICY_V1		0
+@@ -193,6 +195,11 @@ struct fsverity_enable_arg {
+ #define FADVISE_VERITY_BIT	0x40
+ #define FADVISE_TRUNC_BIT	0x80
+ 
++/* used for F2FS_IOC_IO_PRIO */
++enum {
++	F2FS_IOPRIO_WRITE = 1,  /* high write priority */
++};
++
+ #ifndef FS_IMMUTABLE_FL
+ #define FS_IMMUTABLE_FL			0x00000010 /* Immutable file */
+ #endif
 -- 
 2.48.1.711.g2feabab25a-goog
 
