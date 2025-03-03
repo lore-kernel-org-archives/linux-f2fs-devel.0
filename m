@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AFC10C19F32
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Mar 2025 03:18:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0A7C1C19F32
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Mar 2025 03:18:44 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1towJe-0007If-Vn;
-	Mon, 03 Mar 2025 03:18:02 +0000
+	id 1towKJ-0003fG-53;
+	Mon, 03 Mar 2025 03:18:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1towJd-0007IL-JK
+ (envelope-from <chao@kernel.org>) id 1towKF-0003f5-6D
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Mar 2025 03:18:01 +0000
+ Mon, 03 Mar 2025 03:18:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BpMcnf+siP/jOEf3mMzhuljOUVsaROuRufwS9vf+v0w=; b=aKxhWKJePvyJIpT1TZm9a95qYH
- PH6lsk5F0UKYCL7Izd6NriyAFOVXBdoCuoKKw5RmixfP74xZ+CdGSZEwrnwGFbhmrcqw/41D7I/tg
- 5kesPHImHxz0bRBPbLv0ZsRBe15+50pc2nHF0nJccNHxi00IO7imQBiRgJZb8NV5VTX0=;
+ bh=o3H8TOkwKSPrYXZx6QTbiRvkes4l3cvLIrDQMXlwFuw=; b=hs74r6e6jH3gkQXkolmOY1u3k/
+ UvbqB2M8WoZIUBrADd7fgsCGEWrYTvRiisXQ6txOQEz3GhPQcEF5xnZdha1MYNb8zCT9oK79ap5Uh
+ tTv6c+ytIdpgQFIm55RI36yEidZl0UeWoh4WUOnZQ8xX18zQ6SSbyR697uU/aa02ZBt8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -33,41 +33,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=BpMcnf+siP/jOEf3mMzhuljOUVsaROuRufwS9vf+v0w=; b=AoDQl5ntwwx0aNCmv30NJ4aX5f
- nplvliFhgQPQoyLv/dD9+XkTmq+/QBwbQ2A7m6zuO5mW/xO6Ebsk9m/aAkNcscjZjFEnslxO4/zda
- B/ZqO9QKHsWz+d7wuhykSQZusy3HHUOeMQLvSYparOl2i0VW2Cl0pJFghhwdRW9B/08w=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=o3H8TOkwKSPrYXZx6QTbiRvkes4l3cvLIrDQMXlwFuw=; b=aHQkXSOjoMOyIxJi9P2Sbp7kIu
+ edf5XfOgflp3hh4A69d6uqybILT/qGaPGhRbHZ71HV4DksWUF2vW49uhVhBPcd/5KO7J7PVv6zo6i
+ FtoToEEJ4TSE2xhaiSnXc3cAnViYWc78k/xzvz60F9kXhVVcRecFY4ZhqeneWzNJMd/M=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1towJb-00051j-OM for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Mar 2025 03:18:00 +0000
+ id 1towKA-00054x-3k for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Mar 2025 03:18:39 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 8FC8A61196
+ by dfw.source.kernel.org (Postfix) with ESMTP id E68985C1008
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  3 Mar 2025 03:17:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDD48C4CED6;
- Mon,  3 Mar 2025 03:17:47 +0000 (UTC)
+ Mon,  3 Mar 2025 03:16:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8DB0C4CED6;
+ Mon,  3 Mar 2025 03:18:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1740971868;
- bh=BpMcnf+siP/jOEf3mMzhuljOUVsaROuRufwS9vf+v0w=;
+ s=k20201202; t=1740971903;
+ bh=upBHyi5jjEffFgAacRtFBIMOktUNnKpZaTDp9pfP3zg=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=guPclwxCDpNlsl9Z2VVAAWITQJc+vm2+ym5jNVf3Wz3qNXACDQZtvJ79qjExh5sx2
- 9p7EbYJ2n0ZbA3AJuzXit2BIo/gs0nQin5Ui2zjwdOJcsGmYKmk9FjNEwxY4eQZL9n
- vJ/u0ShNVb7O6mPrVFGp7MAmr/exQ8iclTGdTrNLmbnX26ajLggz4ozDHbTwLZsgd/
- MBDnnMVGbNK3kKDFlz7z9mW0HpbyZlqLyrztKhnha51i6zSRQ7RxFrQwORnOyXkAqx
- /qV6Wznw5YP7KgT2WYRGbBS15CfSmcZ5B/S1cE6AjXuKC2SMwvr4rrvs0MZWjCmqJf
- V7M0taLu5c1Pg==
-Message-ID: <3aadcb7b-272c-4a14-b4e8-bac89903a18e@kernel.org>
-Date: Mon, 3 Mar 2025 11:17:45 +0800
+ b=cQ3EDlnL3PqwfJhYU9tSL5iqafL4QH/IPVAShQ0Svj4uaEe3PNatbhkqB/J+6ZoWG
+ qNtJwueaXGObnHG1Rgo15+v8TGOwttM0YTs+oJwf1F4lHfwqJioiLqwV4uRNhokczb
+ koKQ8W4jcHwKnA/sZHrR2DPYQrRF/YSxtIGH0e45RaYHn+N7ICAuCxtqY53X5BQZsO
+ pOnHlADSpzwxDBe+aKZFNbvGKkAoKfFmFRHRE8rayElRXbPK7HmtlJMdPvQ/BWO/67
+ J4Xa9Z0Qgr5bSJM26OwHrnCb8JY5dANfhADOTlaFcQSyg11RZQyaZPAxkRRehS4jI4
+ nuIKyop4cPqTQ==
+Message-ID: <c0f962c9-4946-4347-b26f-5bd4863aad47@kernel.org>
+Date: Mon, 3 Mar 2025 11:18:20 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 References: <20250228190854.422890-1-jaegeuk@kernel.org>
+ <20250228190854.422890-2-jaegeuk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20250228190854.422890-1-jaegeuk@kernel.org>
-X-Headers-End: 1towJb-00051j-OM
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs_io: support fadvise dontneed, random,
- and noreuse
+In-Reply-To: <20250228190854.422890-2-jaegeuk@kernel.org>
+X-Headers-End: 1towKA-00054x-3k
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs_io: add ioprio command to give a io
+ priority hint
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,6 +87,8 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 3/1/25 03:08, Jaegeuk Kim via Linux-f2fs-devel wrote:
+> This adds a command to call ioctl(F2FS_IOC_IO_PRIO).
+> 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
 Reviewed-by: Chao Yu <chao@kernel.org>
