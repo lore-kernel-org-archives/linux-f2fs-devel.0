@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1556EC282D2
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Mar 2025 17:21:58 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0B9C7C282D1
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Mar 2025 17:22:00 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tp9UL-0007ei-R7;
-	Mon, 03 Mar 2025 17:21:57 +0000
+	id 1tp9UM-0000zF-UM;
+	Mon, 03 Mar 2025 17:21:59 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sandeen@redhat.com>) id 1tp9UK-0007eW-99
+ (envelope-from <sandeen@redhat.com>) id 1tp9UL-0000yt-J5
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Mar 2025 17:21:55 +0000
+ Mon, 03 Mar 2025 17:21:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=content-type:Content-Transfer-Encoding:MIME-Version
  :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=q6tarKB1CfAIuXjfEy4x7dyKjThyUG3IiqyL5hoH5MY=; b=IcNCVREQqtvIhVIK1HNBONZZCz
- Zrjjzyci0CAZE7gznZoTv+rfzojg2IaBoDtWqP6423LG+7iWwVZwpszXeG7jhNx5pFZhF9WxyZosv
- Jr3oxq6GrkDSaQ5Jv7wOCwObSpGokxeaFDDIHo2PKezlFWObfniWcARhr2m3rxLE1zOY=;
+ bh=KK1GgQVMwTeet01ybpOk9tWnDU1x3paagR1u3Pnbig4=; b=e8XMUodo+kqynAxDBQmMBm0vLO
+ fFjeKUqFCQ5pKoA7KP2zY9gFmmkcWg4lxzlZBO45t7RRgyChn8fogVPHnKtIvSInkz1d7bdzh7bkn
+ xM7M0QR9tsdvf4xnheQHSEGbwrMIYu8TgCToMoYe218rDFYr+91+GsnqXFZATaIFR7Os=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=content-type:Content-Transfer-Encoding:MIME-Version:References:
@@ -33,81 +33,80 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=q6tarKB1CfAIuXjfEy4x7dyKjThyUG3IiqyL5hoH5MY=; b=dbSuLtS8SLLjGo5PcvQTE+qnRq
- 3dPHgTHT+B0ZwZyTMlVC1zNmixKdFtlSIO61MgMOnDcKYuv6nVzOH5WABZFPT6m9ecM0z+LGjwg+a
- K1+ePpY5UzGVi/4sXyfJxsBscm9HMEFWN4LBr4OwhRbcn8nbVWEk9w14oQ0aszLu25O8=;
+ bh=KK1GgQVMwTeet01ybpOk9tWnDU1x3paagR1u3Pnbig4=; b=iItyCtBJkQbWb8gT49NrgM29ht
+ bF/P/E87kY6uuKi4r9iT5tvUlGXi6zam+tLdP02o2hHizaBvsXjTZ0fSIY0m4tML6vEShvnU4yYOD
+ PYMAzaazSAOlbdbiiLuuyu3CBLleBeV8v8QiAMv2axci2gvrfbSidLBzfxq79PlOFHFs=;
 Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tp9UD-0008QS-V7 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Mar 2025 17:21:55 +0000
+ id 1tp9UB-0008QO-M2 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Mar 2025 17:21:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741022504;
+ s=mimecast20190719; t=1741022496;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=q6tarKB1CfAIuXjfEy4x7dyKjThyUG3IiqyL5hoH5MY=;
- b=Z9sF1C27Dt9BNcwIj4ON41HV6+kojz5DcO670aJFcYswJn1AdWksDXeR+V+IfpgfE+7O07
- zxB+dF9d8vejQKAGmSHd/d7lelsHe2e9Jw7K3JhFqVPQpvIlgFHL6h3ux7GWN+dZ+HkQN8
- t16rqqsqbbJVAPLtSECZg9BKM75EPog=
+ bh=KK1GgQVMwTeet01ybpOk9tWnDU1x3paagR1u3Pnbig4=;
+ b=FATMjDjFckc+SbAtBq8wqU1mss3c3lRV1KjC/WgZ44hgkb9/Bn4sgfxr2T7GJZnVxEdwft
+ wWXVrbmduvh0EWhtEO8elGcaBZYNcWy4sEEWuMaQ+/EJdypO4S81BBADypDWfgtyHe1LAw
+ ZKhqpTpZ2Kncj5LbZOAUFAVLYUU0GfE=
 Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
  [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-387-1tFF64RhNT6QuwOtJrRxVA-1; Mon, 03 Mar 2025 12:21:43 -0500
-X-MC-Unique: 1tFF64RhNT6QuwOtJrRxVA-1
-X-Mimecast-MFC-AGG-ID: 1tFF64RhNT6QuwOtJrRxVA_1741022502
+ us-mta-629-ewsgdmS3Owaej9aEGU359A-1; Mon, 03 Mar 2025 12:21:35 -0500
+X-MC-Unique: ewsgdmS3Owaej9aEGU359A-1
+X-Mimecast-MFC-AGG-ID: ewsgdmS3Owaej9aEGU359A_1741022495
 Received: by mail-io1-f69.google.com with SMTP id
- ca18e2360f4ac-85ad875acccso316021639f.3
+ ca18e2360f4ac-855a5457110so438973239f.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 03 Mar 2025 09:21:43 -0800 (PST)
+ Mon, 03 Mar 2025 09:21:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741022502; x=1741627302;
+ d=1e100.net; s=20230601; t=1741022495; x=1741627295;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=q6tarKB1CfAIuXjfEy4x7dyKjThyUG3IiqyL5hoH5MY=;
- b=v2PqF+bSVO8mTo9WKHuSfh0+AhcEsyItZ3S9kiJbALX1TKgXwyo5TyZJeUZRrOHSO5
- X7z9k8+Pos5jgr4dLpb5XQRkuJRxus93btyHfQGhRJHR47EWbfeYyfwL92zglquXusJH
- ZuiD0ZdRubS4KOmGmKErl3vIF5cs7/8vTvWvA3D2gLqvXY7r9vy8nysPX+/GEvV9/4ww
- 2bjKgnNsTkaMH02XtT7K7UkAneFS2mZbWnEWDcPISKulcYJLkrm1O8WLYf3a+6ic+wAh
- +q6vtLwpPczUP+bVnRGrKtxmVOCgy/2noI80uMIa732enQgBOPDY3U79lM3ZDzLZW1r0
- UUOQ==
-X-Gm-Message-State: AOJu0YwyFsSxm4+j9pa+os3e7thyrsZv85XM3v77suk46GGtYeSr6wE1
- t+LiVb18jiYo/Ub9etUMI7tIn8YgdKLIyyEDW3a0rGkvH8e2OjcEjQI88ITcpItZlh6Xywfow86
- aR6jj89/thWm5ClL0gO+N/DRtYZCsUy7ipUuY7sKmhtPenS1gw5gAnOJ0HBvw6HcWdYukWijNx7
- +K5ePuci0jFHLz++YDbdbbLcjOM4Q4etd3Z0rNOPmkgps6uqAtSf7nTbbZfw==
-X-Gm-Gg: ASbGncvQxWr8kxqVkg9uCu0L+eT/mB5BIGZsWW+CGCxFTcFsbnRqr40XXRqmXu+/w6K
- wNz67bAOOTMcIKmBam3raV7aS/9tS8U9IOFOYDdxQ4nCFsUllnKYGTLkmgqvrV4VA9BT9FqoS+n
- Cv+P52aCA4qLnnCIm5Wji0cz47IYJQ9IaCo0bMq1+oiE64yyd4BClpLyGoaU4EvAZzgHJupkjZe
- K//WRXYGenWI5VNu2STnlKSWFwjNI5Th8zfI4+mMDOV/Z5gHkOOt0Id5vHW6t0zXOtrEtehDLEv
- An7WOxQSwDpdlhp4Mj22UnHgf6uVSF4=
-X-Received: by 2002:a05:6602:3a82:b0:85a:e7c4:f6b9 with SMTP id
- ca18e2360f4ac-85ae7c4f81amr265636539f.9.1741022501862; 
- Mon, 03 Mar 2025 09:21:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHzrP/3MrFLUly11d4J7+M3FYe3B7Z4Sa8O1Ri1DRSKiJhgxCF8L6Y5elLPDbGRaUwqgULqnA==
-X-Received: by 2002:a05:6602:3a82:b0:85a:e7c4:f6b9 with SMTP id
- ca18e2360f4ac-85ae7c4f81amr265633139f.9.1741022501513; 
- Mon, 03 Mar 2025 09:21:41 -0800 (PST)
+ bh=KK1GgQVMwTeet01ybpOk9tWnDU1x3paagR1u3Pnbig4=;
+ b=sPg+8vnJ8b2vWd2ZDx53m+MvkEY0PhoXxKXOgPqeEuc+w7QkcE9IOIAMePmnj9BJca
+ xhEAigPhdls5ASQLXNndASqacba6Q3WTBcjRX3Ok49S2b5HxmPWU1IodAfFwQADtsnpp
+ mNBxmdThlKsYXAcRJwjXuEnC21ZZsbbvdVFvdkWFtgtEVf9Dx3/Tfla59UCyvfNqlXYb
+ ouUNq9RzFY1+kUzHR91LhobMruXTzjR9ZPock9IfiLM/4oEjaYRK+SNpZsXcmo2RqhyS
+ HHbWZ56XHKclO4KLd8X68KSPV7FMhjE0W7bAMgnp+CT0RQaWA55eQphIfaNkxb1xPa/O
+ G/KA==
+X-Gm-Message-State: AOJu0Yykqln6IXDDL+afz3zpq28dvXNBT5kA9hLtM7XxjXipmaKeEpWd
+ QOuJnzg4MEwuviCcXgZtTXQTXWekzoc3OfP6m1hdPa2xVuL1AKz+VMjUqHev5KVsczW2l5h2kJ0
+ bk2UG4Gx55DR6jIHRPZwJkD+EJHHlGaRkvLkbLvAw+FvUf0vjIIy2jj3Rr1p+1IgTGlA3RZDsQ3
+ rnwN/D0vk/ITQX6FAyIkK4uCAQrwbr+wTd05O1CZWSEfWo/DnbaGCsuqT3+Q==
+X-Gm-Gg: ASbGncuq0DGUNoz0EKR0KIS/4ytr/oJvRLEodK4JF36Q3VhEgkbyXubwfqi2h74V+fm
+ j0cIVwAiFj+L/CH3sBuDs23/i2WI94d+PVklCeaPgya/Myg3CM56ufNoLGgi/HBTe5RIpeUcDWO
+ nGAn1LC8Rubcc68noxQ9Pr+zGa6oRoJhR1BrRCoBOHplYp3m4714r/Jmn+V1GSJeUtbYFlPybs9
+ YUWzMTwmXrur4aBND3xvBlLIpKYBqerFjrtHFOUUsodyY0P2j82OLkoNO7j/P6hI99gKKjVISiz
+ QVKCMb7rLMs9FGnZslldmjRzb+ji9ks=
+X-Received: by 2002:a05:6602:601c:b0:851:efec:53ad with SMTP id
+ ca18e2360f4ac-85881f2fe85mr1488417539f.7.1741022494737; 
+ Mon, 03 Mar 2025 09:21:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGGTCqJ3svTWS7P8zrmjirxjCDnlIgb50sBjs7nrRoo7HXigvIdJ2BFDESd/oh4roTgxExtyQ==
+X-Received: by 2002:a05:6602:601c:b0:851:efec:53ad with SMTP id
+ ca18e2360f4ac-85881f2fe85mr1488413739f.7.1741022494344; 
+ Mon, 03 Mar 2025 09:21:34 -0800 (PST)
 Received: from fedora-rawhide.sandeen.net ([65.128.97.82])
  by smtp.gmail.com with ESMTPSA id
- ca18e2360f4ac-85add261b4csm49563939f.9.2025.03.03.09.21.40
+ ca18e2360f4ac-85add261b4csm49563939f.9.2025.03.03.09.21.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 03 Mar 2025 09:21:40 -0800 (PST)
+ Mon, 03 Mar 2025 09:21:33 -0800 (PST)
 From: Eric Sandeen <sandeen@redhat.com>
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon,  3 Mar 2025 11:12:19 -0600
-Message-ID: <20250303172127.298602-10-sandeen@redhat.com>
+Date: Mon,  3 Mar 2025 11:12:14 -0600
+Message-ID: <20250303172127.298602-5-sandeen@redhat.com>
 X-Mailer: git-send-email 2.48.0
 In-Reply-To: <20250303172127.298602-1-sandeen@redhat.com>
 References: <20250303172127.298602-1-sandeen@redhat.com>
 MIME-Version: 1.0
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: AhXmwcrQ5U__zTlHt3wk7CrY-LLlZG56ucxsA8fBGjs_1741022502
+X-Mimecast-MFC-PROC-ID: sT_uLqg17YIDU40NIsoaNoc0hxejU3cpWJ212knGJZs_1741022495
 X-Mimecast-Originator: redhat.com
-X-Headers-End: 1tp9UD-0008QS-V7
-Subject: [f2fs-dev] [PATCH 9/9] f2fs: pass sbi rather than sb to
- parse_options()
+X-Headers-End: 1tp9UB-0008QO-M2
+Subject: [f2fs-dev] [PATCH 4/9] f2fs: make INLINECRYPT a mount option flag
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -119,59 +118,58 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, lihongbo22@huawei.com,
- Eric Sandeen <sandeen@redhat.com>
+Cc: jaegeuk@kernel.org, Eric Sandeen <sandeen@sandeen.net>,
+ lihongbo22@huawei.com, Eric Sandeen <sandeen@redhat.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-With the new mount API the sb will not be available during initial option
-parsing, which will happen before fill_super reads sb from disk.
+From: Eric Sandeen <sandeen@sandeen.net>
 
-Now that the sb is no longer directly referenced in parse_options, switch
-it to use sbi.
-
-(Note that all calls to f2fs_sb_has_* originating from parse_options will
-need to be deferred to later before we can use the new mount API.)
+Set INLINECRYPT into sbi during parsing, and transfer it to the sb in
+fill_super, so that an sb is not required during option parsing.
 
 Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 ---
- fs/f2fs/super.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/f2fs/f2fs.h  | 1 +
+ fs/f2fs/super.c | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1afa7be16e7d..15e4f5a77eb5 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -114,6 +114,7 @@ extern const char *f2fs_fault_name[FAULT_MAX];
+ #define	F2FS_MOUNT_GC_MERGE		0x02000000
+ #define F2FS_MOUNT_COMPRESS_CACHE	0x04000000
+ #define F2FS_MOUNT_AGE_EXTENT_CACHE	0x08000000
++#define F2FS_MOUNT_INLINECRYPT		0x10000000
+ 
+ #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
+ #define clear_opt(sbi, option)	(F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 9edb200caae7..579c96a80fe2 100644
+index 7cfd5e4e806e..643d19bbc156 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -670,9 +670,8 @@ static int f2fs_set_zstd_level(struct f2fs_sb_info *sbi, const char *str)
+@@ -1036,7 +1036,7 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+ 			break;
+ 		case Opt_inlinecrypt:
+ #ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
+-			sb->s_flags |= SB_INLINECRYPT;
++			set_opt(sbi, INLINECRYPT);
+ #else
+ 			f2fs_info(sbi, "inline encryption not supported");
  #endif
- #endif
- 
--static int parse_options(struct super_block *sb, char *options, bool is_remount)
-+static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remount)
- {
--	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 	substring_t args[MAX_OPT_ARGS];
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	unsigned char (*ext)[F2FS_EXTENSION_LEN];
-@@ -2356,7 +2355,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	default_options(sbi, true);
- 
- 	/* parse mount options */
--	err = parse_options(sb, data, true);
-+	err = parse_options(sbi, data, true);
- 	if (err)
- 		goto restore_opts;
- 
-@@ -4496,7 +4495,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto free_sb_buf;
- 	}
- 
--	err = parse_options(sb, options, false);
-+	err = parse_options(sbi, options, false);
- 	if (err)
- 		goto free_options;
- 
+@@ -4535,6 +4535,9 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_time_gran = 1;
+ 	sb->s_flags = (sb->s_flags & ~SB_POSIXACL) |
+ 		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
++	if (test_opt(sbi, INLINECRYPT))
++		sb->s_flags |= SB_INLINECRYPT;
++
+ 	super_set_uuid(sb, (void *) raw_super->uuid, sizeof(raw_super->uuid));
+ 	super_set_sysfs_name_bdev(sb);
+ 	sb->s_iflags |= SB_I_CGROUPWB;
 -- 
 2.48.0
 
