@@ -4,110 +4,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7DCBDC282D1
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Mar 2025 17:21:50 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C8477C282CD
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Mar 2025 17:21:55 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tp9UD-0000xO-BL;
-	Mon, 03 Mar 2025 17:21:50 +0000
+	id 1tp9UI-0000db-WB;
+	Mon, 03 Mar 2025 17:21:55 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sandeen@redhat.com>) id 1tp9UB-0000x2-5s
+ (envelope-from <sandeen@redhat.com>) id 1tp9UH-0000dQ-En
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Mar 2025 17:21:47 +0000
+ Mon, 03 Mar 2025 17:21:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=content-type:Content-Transfer-Encoding:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ :Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3a71CP4rhUt2ebhd+8+Z2N85PjMH51h0fkBgqrQVK1g=; b=d8Cy1jAvHd6F3Xhp9MQTrbHJYN
- e6U4plm7uETNJWr1ZyeOcdqfRa3V9ieCRfzZxrBlEzRi3dcYqkhaj/HSW9yxVXMNnY4BE6OvNSRIf
- 3guMPq9a1/HdkeJ5LKvm7ULQwtSri4H+IwLWYD63spcPypfT2aSQXxR10mfdRTwqMYdE=;
+ bh=wjkxaiSyRL9ZcFVhc6bCCWuuOovruY1yyjEK6a00FNo=; b=VxI6qhd7GnbbATEYjzMwAC0T2u
+ ktT9eVksekt1gih2tHegwY+ltDCeU9T1OZfaAV0jWPn6w4/iYUIy8dzX6dimaFh87Cx6yO9firxp3
+ r9PsQKiADLYsswOzvQUygxRBlAs19IDJER/kvxsPya5z3nh0yx2drHghuVL5b36C8ZSk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=content-type:Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=3a71CP4rhUt2ebhd+8+Z2N85PjMH51h0fkBgqrQVK1g=; b=bQSFxgnFJIASreshOSM8nwTS/o
- mxuXuKgTcZitZMlyLZdiEL65wrMGEJUJ991T52M/kFKpMeeLS6kOHbzZJTiQ86F0YtGY00KfslufG
- Bk1LlHsMKvd5XV8nOewbCI/xPYcoDPYH0eymBr9/Al3BOOz2QcJunnh+FCbrNHx8BN78=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
+ h=content-type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=wjkxaiSyRL9ZcFVhc6bCCWuuOovruY1yyjEK6a00FNo=; b=a
+ imQ6l+2sAjonSh3tdhVnnyMI86j8jvoQa+KsjStv6X+qkyPIInwGEIsQlgrLJFhATYFF74A0/z27x
+ X2yBnxS2NSXT3OG/VDbfLMaaBx2GAeg3gz66sS970mK1/++41FVOEdLntqmo0+bH6tOKb381zIV+T
+ z1V+UBmKoMrDlL8A=;
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tp9UA-0008QM-4X for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Mar 2025 17:21:47 +0000
+ id 1tp9UC-0008QP-7Z for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Mar 2025 17:21:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741022495;
+ s=mimecast20190719; t=1741022497;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=3a71CP4rhUt2ebhd+8+Z2N85PjMH51h0fkBgqrQVK1g=;
- b=Zuchck3X8bdcsZdU4oj2O9H5I/yn2wPqwzLRkXCth8xUvY3gaAQS2R6Hrgx0dgDttXyCkw
- EX4TUjKJtgFx0QmiEu4fU+8Tpm/7e/NG8Ry+dfMqdK2JFlIaqjf3MA+V66E98JqgCGQGQe
- ZgCahUDENgVZquko01for7xga3gFTPY=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ content-transfer-encoding:content-transfer-encoding;
+ bh=wjkxaiSyRL9ZcFVhc6bCCWuuOovruY1yyjEK6a00FNo=;
+ b=gZqWg81oUx7LQ704UYA1mLNBuhDiJqgLECC7pBJny4vIXXyAuFzIsAbdQxIUf5axQrICLK
+ s4pio35tcfbn+Q3nUyny70PVSnzwYqTlgaC/TwURZGtN+HQ9JTAFFVaTfHbbM1jDgTovOU
+ UvjwO7TxmoGzOmYG3bM0cTgQLUcKMjo=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-665-RBQ-GiF-Pky5I1h7bJBiCg-1; Mon, 03 Mar 2025 12:21:34 -0500
-X-MC-Unique: RBQ-GiF-Pky5I1h7bJBiCg-1
-X-Mimecast-MFC-AGG-ID: RBQ-GiF-Pky5I1h7bJBiCg_1741022493
-Received: by mail-io1-f69.google.com with SMTP id
- ca18e2360f4ac-85adea539cbso174412739f.1
+ us-mta-88-p3WL0AMUPXKZd56POogQuw-1; Mon, 03 Mar 2025 12:21:31 -0500
+X-MC-Unique: p3WL0AMUPXKZd56POogQuw-1
+X-Mimecast-MFC-AGG-ID: p3WL0AMUPXKZd56POogQuw_1741022490
+Received: by mail-io1-f71.google.com with SMTP id
+ ca18e2360f4ac-85ada86653aso145119939f.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 03 Mar 2025 09:21:34 -0800 (PST)
+ Mon, 03 Mar 2025 09:21:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741022493; x=1741627293;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=3a71CP4rhUt2ebhd+8+Z2N85PjMH51h0fkBgqrQVK1g=;
- b=QCApPs5MN5srdfsYXb2whnxQ1kqeZcODNqnaR+yc8Lqu0V9zAr6E9kqbNNcMEAJqw5
- lV4NTNSM63wOwATvjx4q/1NmfXBplLzU2DYJ7qTG8XlF6YI2oV24TTv+1FpNdD291+oc
- hZp/ow5ae+Xwd/5ECdPdfAQpPsgPlSsl5U66tnQ5k1R9AI5Ynp+Y78LPgU2MnRolUBvQ
- jqUfAIVsM89729GNkko3or932XZUDbdnqg85ZxW7TADtSHG06T7ii334q0mMhrHi82/L
- sDZVEUbJ67SgtTmwgHCuT+sGpGWvF9Jl89dGf1Qx8dA2gKcnUlRQCQaX+yjuFX3xlA/s
- 66aA==
-X-Gm-Message-State: AOJu0YzA9FAzYP4bLYRHcUFeEtK/PABkos5ozzKLc533B184xRvLbBIv
- 5A+ZJrCAIRlVlFTLjssXMBAsydYh9OHDr0BBAkdsGeYlomaMhdDhBUjrtZvnzomKHzf7OqTNbYz
- 4ic9HhxLfOfmE2CCnCitMRJuhklx8q0d0Hy6xZufGEgqKMg5jxpvhR9URj99NObupT1jYCz0XcX
- eLfJ4bsa4lh5kprnj6zuc9xdn2tnPw7PRDRl6LsN2W/FrLAP0ddrw6GcT4dQ==
-X-Gm-Gg: ASbGncuhu7nlb2WJZ6M0Yyn195X79ulcvtIXeYrwfpFDoH70/GnwCJKKK5U/MXF6Som
- +CzS/ojBIMYNWHn1n5Vdh7HuaFnkt4YGeUazhLAOgWt0oslmDLo5g9DhKth7Pk/3yZBOvEF/qzo
- bqo6VKLS8ukCMQXsEDM0oyyqDL3LCQwQ2fcjyI2pSz1DIQaR665FdVb9dugb1bcs1AsL3QUnxDb
- vSr7Yl4LujRnGNbTPc7JVtoKF58MdLWDBbQmFHh/ndeoCNT8fps2+dGL74BRVdySapohAEpBs+n
- ZGhc2yLFUEJi7oX1wXiqbY+fY8ktKw0=
-X-Received: by 2002:a05:6602:3a81:b0:85a:ec03:b124 with SMTP id
- ca18e2360f4ac-85aec03b1edmr222852039f.4.1741022493447; 
- Mon, 03 Mar 2025 09:21:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHdB+2mmjIA6xrOj1G/sR+GfMIsrO4HpL6CaKlQ+6huwSCwGDZo9vSk87HI2Ud8mtJpqZBxag==
-X-Received: by 2002:a05:6602:3a81:b0:85a:ec03:b124 with SMTP id
- ca18e2360f4ac-85aec03b1edmr222848539f.4.1741022493139; 
- Mon, 03 Mar 2025 09:21:33 -0800 (PST)
+ d=1e100.net; s=20230601; t=1741022490; x=1741627290;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=wjkxaiSyRL9ZcFVhc6bCCWuuOovruY1yyjEK6a00FNo=;
+ b=Ehm44M09CK2Vclj9GaK1W4/Wa/etaosyjwF9QyiJXbngCgH+/KhQcFne7oEbl8hKi8
+ kK3LZKxMuZemtktEdVzuSaBu2v8FegILs40j1E+AicHoARKFvFfXceqpi7QsWkW2eTuR
+ KG6R/Nvl3td5QKTA0N6InbKTVRdIss0Qvgo+7/TZsj2cFcCzYVTDoaU9L/ZSKEx2abK6
+ G2x/lSM6kkqJ8tYyq06tDGigdHGCi/I/c+OyjFEAJAfR1w7evc5mJyrXJS+yLO3DzCxp
+ EtpiklnqjQR9iiTwaO77m/2JZx/v6UrS73OiNkJzv0LVQCcOPpT4/0ejBoTldgoi6/cH
+ 0JZA==
+X-Gm-Message-State: AOJu0YwQFuS8j2ZlnIbry9b4A0ABWDesx8bZWITphy2IQNVPO80sTGvs
+ pGnSIl9Gzd0GANitJsG/VqsCMiVGnx31HheV4IjpyCABGLL+UOCXo6epjEWaJSBlSBfW1dI9J/d
+ PbOdZJIdYD8S9GD/AHXsxVS+Dz/4Kwho3gsfv4d28ETWs8n2s2ltmRftbj1/9SeWPSR6wwx56+p
+ UQnhPNVJ0q4X/cpvYWzi05nuYzFn1GmNuJ4bewddOarhx31Qc4Zqdvf1XRNw==
+X-Gm-Gg: ASbGnctbwlXj+Zp2wZR+OdfAuawtqk6OZpgzL3FbqkiDYMPihGMQSlKJl3d1bvmMLf4
+ XlZtQmribP3YyQ2sYqIuuYVB7T5KqrKIn3BPx9UTVe7YMcrwNkTCkM58xXoTsugitVDA3bs/bOV
+ n6NlpwH+QQKp029xFA+e+77roLMXzJpvddUOBQ51Yo47CzlQm6PPUbUR8A/c4w7IhbJqjzR5OOM
+ AA4v5lk75IKBeAAsCcOrxmksSbhF4rudHFbWqLS+ZLyBrRKqvx8XD7lAZvXXyBxEgv86wWMTAbN
+ HZxsuqY8jMrXQVt0ZX5oahBxZL2ONJA=
+X-Received: by 2002:a05:6602:3708:b0:85a:e19c:d101 with SMTP id
+ ca18e2360f4ac-85ae19cd689mr397259539f.6.1741022490232; 
+ Mon, 03 Mar 2025 09:21:30 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFXOELLv1DJjnfGZi4jGSCSqi05CIWq2effcH/guTIma0YCbwFPx6zcoxu/nCRDpuJbwkC00g==
+X-Received: by 2002:a05:6602:3708:b0:85a:e19c:d101 with SMTP id
+ ca18e2360f4ac-85ae19cd689mr397256539f.6.1741022489911; 
+ Mon, 03 Mar 2025 09:21:29 -0800 (PST)
 Received: from fedora-rawhide.sandeen.net ([65.128.97.82])
  by smtp.gmail.com with ESMTPSA id
- ca18e2360f4ac-85add261b4csm49563939f.9.2025.03.03.09.21.32
+ ca18e2360f4ac-85add261b4csm49563939f.9.2025.03.03.09.21.28
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 03 Mar 2025 09:21:32 -0800 (PST)
+ Mon, 03 Mar 2025 09:21:29 -0800 (PST)
 From: Eric Sandeen <sandeen@redhat.com>
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon,  3 Mar 2025 11:12:13 -0600
-Message-ID: <20250303172127.298602-4-sandeen@redhat.com>
+Date: Mon,  3 Mar 2025 11:12:10 -0600
+Message-ID: <20250303172127.298602-1-sandeen@redhat.com>
 X-Mailer: git-send-email 2.48.0
-In-Reply-To: <20250303172127.298602-1-sandeen@redhat.com>
-References: <20250303172127.298602-1-sandeen@redhat.com>
 MIME-Version: 1.0
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: GAOHrf0nZAccjaOzXgIsjSlTR4wo6bWgn2gC-vWTMy4_1741022493
+X-Mimecast-MFC-PROC-ID: MQLF2EuYE-spI7KNkh8ghkqoFArjhPhh0MFQHThB8Y4_1741022490
 X-Mimecast-Originator: redhat.com
-X-Headers-End: 1tp9UA-0008QM-4X
-Subject: [f2fs-dev] [PATCH 3/9] f2fs: factor out an f2fs_default_check
- function
+X-Headers-End: 1tp9UC-0008QP-7Z
+Subject: [f2fs-dev] [PATCH 0/9] f2fs: first steps towards mount API
+ conversion
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -119,75 +116,40 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, Eric Sandeen <sandeen@sandeen.net>,
- lihongbo22@huawei.com, Eric Sandeen <sandeen@redhat.com>
+Cc: jaegeuk@kernel.org, lihongbo22@huawei.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Sandeen <sandeen@sandeen.net>
+I have been struggling to get to a good series to convert f2fs to the
+new mount API. f2fs is more complex, because much of the option parsing
+assumes that the superblock has already been read from disk, and uses
+that to test various on-disk features, etc. All of those tests will need
+to be moved to after parsing is complete, and this series is just a
+start.
 
-The current options parsing function both parses options and validates
-them - factor the validation out to reduce the size of the function and
-make transition to the new mount API possible, because under the new mount
-API, options are parsed one at a time, and cannot all be tested at the end
-of the parsing function.
+The first two patches in this series are incidental, just things I
+noticed when working on this. They are not critical to the conversion,
+but they may be desirable anyway.
 
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
----
- fs/f2fs/super.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+The rest of the patches move towards removal of explicit references to
+*sb in parse_options(), using *sbi instead. (The full conversion may use
+a private context structure instead of *sbi, since the *sbi is rather
+large.)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 29b3aa1ee99c..7cfd5e4e806e 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -687,7 +687,7 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 	int ret;
- 
- 	if (!options)
--		goto default_check;
-+		return 0;
- 
- 	while ((p = strsep(&options, ",")) != NULL) {
- 		int token;
-@@ -1318,7 +1318,11 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			return -EINVAL;
- 		}
- 	}
--default_check:
-+	return 0;
-+}
-+
-+static int f2fs_default_check(struct f2fs_sb_info *sbi)
-+{
- #ifdef CONFIG_QUOTA
- 	if (f2fs_check_quota_options(sbi))
- 		return -EINVAL;
-@@ -2364,6 +2368,10 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	}
- #endif
- 
-+	err = f2fs_default_check(sbi);
-+	if (err)
-+		goto restore_opts;
-+
- 	/* flush outstanding errors before changing fs state */
- 	flush_work(&sbi->s_error_work);
- 
-@@ -4489,6 +4497,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	if (err)
- 		goto free_options;
- 
-+	err = f2fs_default_check(sbi);
-+	if (err)
-+		goto free_options;
-+
- 	sb->s_maxbytes = max_file_blocks(NULL) <<
- 				le32_to_cpu(raw_super->log_blocksize);
- 	sb->s_max_links = F2FS_LINK_MAX;
--- 
-2.48.0
+It's up to you if you want to merge these now or not, but I thought I'd
+share the direction I was moving, to get some feedback about whether
+this seems to make sense. Next steps would be moving more of the feature
+checks to later in the mount process, after parsing is complete.
+
+This has been tested with random combinations of valid and invalid mount
+options, but it has not been tested with a wide range of on-disk
+features. My testing did not turn up any differences in behavior.
+(I also did explicit testing of direct mount syscalls with "lazytime" as
+an option string, keeping in mind the earlier regression there.)
+
+Thanks,
+-Eric
 
 
 
