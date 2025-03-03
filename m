@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E2649C282D2
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EC02AC282D1
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Mar 2025 17:22:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tp9UQ-0004Fr-In;
+	id 1tp9UR-0007fU-7P;
 	Mon, 03 Mar 2025 17:22:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sandeen@redhat.com>) id 1tp9UP-0004Fk-TX
+ (envelope-from <sandeen@redhat.com>) id 1tp9UP-0007fF-Sv
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 03 Mar 2025 17:22:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HNtb0WzQQqVfRRT8LeO2w0dai1vRf4isndM0H68L+7U=; b=k0XLmCkwsEkl1zGjoz9xF6e5c/
- lv12LY6USwfQa3INDFkCot4H5UPZf9I+36ggQPBuHFGN+G3Q3UUDxybg+iFBk5E/7oAsn5EsSLegD
- JXKAxiVtEqUWwRFIgQbf/aGUfcniIrIJ7rl7vJK3mFvsnc8DhH8a0DF+ea1Do7r7R37g=;
+ bh=tnfeTGnJi9mN0JKSqbiJYiLPQIxUPyH6sS/f3rf+dfg=; b=dNRh2qVK7eEmqDlII9QYbAApyh
+ bTO1uU9lb7fKcAOrCBOgwGfSxKJqq2aoDa4jViB3S44tU5LOdfAEK1zIfbWSapy2cidEz0M03GAhN
+ X7K5Ockn93w0rJcmXkVAfmLd5UK5lcuH2u0SuR3R/W8Zq8Ey1iW6z4N+g98Jdw5NMvE8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=content-type:Content-Transfer-Encoding:MIME-Version:References:
@@ -33,81 +33,81 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=HNtb0WzQQqVfRRT8LeO2w0dai1vRf4isndM0H68L+7U=; b=c/ISzsl7XXD+wi6LCs72S+ch1m
- eLwf4ou1FI/hSoowAH7k4As1lpRVZrF6IVCy3bWMjXHz3AYX57uPwp2QLkVrxTe1BO2uyqETw9qzu
- 75BTmr5tQoPHEpPRGMXN7y49ouCTSRcNk6TydXWrCXeffqY1jwy/HcHuch82xiISpdJQ=;
+ bh=tnfeTGnJi9mN0JKSqbiJYiLPQIxUPyH6sS/f3rf+dfg=; b=ZJB7jRMjWLcqCa92vNct/zoXMc
+ Hm33bSkn3hYBF9ZxY6y62ddCDe5ZuTj142ghb6MTizAo2XbH0eW9h0IRFV0FQB8soCxL2RbjfqJxw
+ +DdkXef/HjKl1ogsfCjl/iUpT0uRS4e8cRRsnl9eII6fQEEc0ypDM+8o/LdvAx0fnYcc=;
 Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tp9UF-0008QW-5K for linux-f2fs-devel@lists.sourceforge.net;
+ id 1tp9UO-0008R8-KM for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 03 Mar 2025 17:22:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1741022500;
+ s=mimecast20190719; t=1741022509;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=HNtb0WzQQqVfRRT8LeO2w0dai1vRf4isndM0H68L+7U=;
- b=XbFDBwl3d/31NZ8gIwEsQecXu+x8eMoTVmyrbfR9ZiHH8WB4JywANaOmppWoChvEBVPjJZ
- PMplJbcKqet9VVT1suLEpMNz71mtX+TNuiKuLlG/JqdfcaSxUo/dw9cHEzHBvUrNqfjLbV
- 4zdu8r8efQRse0Y2ixbZIXWMRCqoxvM=
+ bh=tnfeTGnJi9mN0JKSqbiJYiLPQIxUPyH6sS/f3rf+dfg=;
+ b=YSfm2o+LnBeXsSiEmjG9bD0Jdkc/gaGORSePO037D6lPBO4NZYJs7Y181mcw8pt2Ojn/12
+ LbwYOJCSSDVeKhZLLwCuk6rVOhg4G7LS1rGyp3SIjP0rMHv1aD4sWXONCwPMptzPQqFcwv
+ kwFiAuHsg6ZRy6eizCjl4DW8XfJ4VQY=
 Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
  [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-595-76itFTxqN9CnjR-wqn68uA-1; Mon, 03 Mar 2025 12:21:33 -0500
-X-MC-Unique: 76itFTxqN9CnjR-wqn68uA-1
-X-Mimecast-MFC-AGG-ID: 76itFTxqN9CnjR-wqn68uA_1741022493
+ us-mta-39-SH1-h1-zMq--MALyqY1lKg-1; Mon, 03 Mar 2025 12:21:38 -0500
+X-MC-Unique: SH1-h1-zMq--MALyqY1lKg-1
+X-Mimecast-MFC-AGG-ID: SH1-h1-zMq--MALyqY1lKg_1741022497
 Received: by mail-io1-f70.google.com with SMTP id
- ca18e2360f4ac-85ae1c53d9fso61778439f.1
+ ca18e2360f4ac-85ae5190d4fso86849839f.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 03 Mar 2025 09:21:33 -0800 (PST)
+ Mon, 03 Mar 2025 09:21:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1741022492; x=1741627292;
+ d=1e100.net; s=20230601; t=1741022497; x=1741627297;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=HNtb0WzQQqVfRRT8LeO2w0dai1vRf4isndM0H68L+7U=;
- b=sslQ1gnh+0Zp1jqYHwlNfpCPh9Exblrd3zkLgwPhLKy9apHJqSE/Dg1ecI1po3TKzX
- 6QxMTexpfn7dxrE5t7xsP8Sw5bsXLFnJFsI2rpo8+oNZMVBBz0fA+xyJduUokyNZfbvO
- ZMh/JYOtqwNx0r9UzizQZTvPUC+owwiB4Az4DYwpU4WkkO8C4sTIy0y3wyC3OoPZ0FJt
- HwVrEjpi6zr1k0usV8GdgqFtgGghpKClxKplgvyBBUwIaZwbdXp/9rj1sMd7rO6kuRqH
- ep0d2a8kxoUxWYyz65vwOZ1t/EpwHlIusv1OHbkIbZdxZfV7eDZk0Vz7JjgE3tnVvRN5
- IdlA==
-X-Gm-Message-State: AOJu0YyBK5KDV6E34xPXh6czPulmW5blmxKJt0rTldCPS8Vd0pm1ziQt
- rMmSgk0LKdjpqg5tF1V4CLQ6s3R4vYZgJQ0syGjUfFpcKfY1dekInsXEK+LurALcLgyqWEtLjdp
- sUj3l8/Q4wzcyrRdsgYuduqvcjmNshCEIwV5+Env12WozxmKU13+f4f0EQ1hHowGocrwFTFcWc8
- DIlsJY9332+DYfN5v87uol9LBx5hbX39E+dWfGogA2DE67MLddR18GQsIp0g==
-X-Gm-Gg: ASbGncvk5dyIF8Vqy0cJavapzrZQky64tqEIUCYhZCvZ1jVM/ZoGWyQG+uZgf3DrsA0
- 0pjjRxXO8sCcjH4Hx04i1EvN42Q8UDtNYU9xYjOeNxaVdSmkHOA5aqlNhBT5XkTmYGSHoYfxDoW
- 2UtR6VZ4lNI2IaRkzv7yFryBtgbS1S04a0y3biAgEUa0mp+ooqWoy8KqEEY0nz0wsCQsLpk58xl
- Ihf66Q3KbzpLH5zVblzvUC9TqfISWuqMX0R5VWp5efCWW4uk1MWO8mM5LEcRf5Qjq4uaP1yfSUF
- lNADJtTBp87YaPpRdqh7F/EYdsozxWE=
-X-Received: by 2002:a05:6602:3d2:b0:855:c476:8b97 with SMTP id
- ca18e2360f4ac-85881f33220mr1485014839f.8.1741022492455; 
- Mon, 03 Mar 2025 09:21:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGIqoYIsFI9g8LJvmlMWS9DAajpDgeNl7wWzqTZed7/KB7vi5InR7IRviL6Qny+wybYiL4zlQ==
-X-Received: by 2002:a05:6602:3d2:b0:855:c476:8b97 with SMTP id
- ca18e2360f4ac-85881f33220mr1485012239f.8.1741022492045; 
- Mon, 03 Mar 2025 09:21:32 -0800 (PST)
+ bh=tnfeTGnJi9mN0JKSqbiJYiLPQIxUPyH6sS/f3rf+dfg=;
+ b=WwCCQ6PpQi+Ew/TwgHwMJI4mvmcRJB1rJwZSerQq6ekm1LlfhJHzqqGLoQax6owRXP
+ ZxTvoavT7VXvzbrDLK5Yihfg7amlhGW6Y4ZTOW9egrcLkHbEepFxadMouutY1nEOlUse
+ KZERoEi/GEiMOgQKWjnfeCkKTaRiXrh5l+xmMAYvwC3JF3y99mCRG0fab5F7I5wRgYyb
+ CwqNxvmlDVigL0+Hyat9hrQOY59M060q2+cM/rp9uJRRblHB4v+bXPEkHZj4bYf8mSY6
+ MirniVYWLu2dso4N+1K4FUtLOXJGrULp9NMZ/JMekx53KDmnudrJ0XmWJry9wfFqz59P
+ EFaw==
+X-Gm-Message-State: AOJu0Yzs1/3hFpYW6ERMt8jmHrFUoLQvdHaxXP/rLrt1NA5t1XTwO5G/
+ 6wfiviJ1As9qS20Q/icS1RzV8yfblpBezPvtcYidTluBDlFcdu/yKHfEeOCdUz8JgLZOV5D7vdI
+ 3neDvekRv4V2LJ3BQYyCk8gfkrQVotPENFMtMjMIgRiFcORLJ/sPWZOIbTRugnjFBi5LrStJedT
+ /9jIgLepSdkulyx6MsXgt9DpICfme+MkGfFUBrs+ee2MmCSJXDuhbE1NlY0w==
+X-Gm-Gg: ASbGnctvUGvAIxRGEyJl2Vm44tTGWBsva0IvLjoQg36OrSUtb72QZK9+wCCxIXuM0Yu
+ NFIhBQ9DR8Kr8r2mbcFREAqlHyM3SqASWYETBd5UzTbV+DwdwG/7pDhKmh0cTRYa7LDn3PWrQEt
+ lO5rkkx6Nm7u8gu2WRFmklEOY4FDqbQCL365ODccOpELwAh11QN/05KT6w0Phm9RQr2chD3GdC0
+ b+PAiKCXBlUUYvSZksy+RcP/F2PQrIo8DcIxcAe0dhs3bph0LDzCi/NejH5EaARn5VdZaamw5/Q
+ r0KYIhMRm1RPtbh8df3/qdsWohBTuZ8=
+X-Received: by 2002:a05:6602:3fd1:b0:84f:2929:5ec0 with SMTP id
+ ca18e2360f4ac-85881f0a0c1mr1739259139f.4.1741022497162; 
+ Mon, 03 Mar 2025 09:21:37 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGtcYrPGoZKO383dfBXmGjrDcSGSI7XeGVAbKYy3Z1KkphtsM5+lcv/SaNbCjkonoe+cOhbrA==
+X-Received: by 2002:a05:6602:3fd1:b0:84f:2929:5ec0 with SMTP id
+ ca18e2360f4ac-85881f0a0c1mr1739255939f.4.1741022496833; 
+ Mon, 03 Mar 2025 09:21:36 -0800 (PST)
 Received: from fedora-rawhide.sandeen.net ([65.128.97.82])
  by smtp.gmail.com with ESMTPSA id
- ca18e2360f4ac-85add261b4csm49563939f.9.2025.03.03.09.21.31
+ ca18e2360f4ac-85add261b4csm49563939f.9.2025.03.03.09.21.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 03 Mar 2025 09:21:31 -0800 (PST)
+ Mon, 03 Mar 2025 09:21:36 -0800 (PST)
 From: Eric Sandeen <sandeen@redhat.com>
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon,  3 Mar 2025 11:12:12 -0600
-Message-ID: <20250303172127.298602-3-sandeen@redhat.com>
+Date: Mon,  3 Mar 2025 11:12:16 -0600
+Message-ID: <20250303172127.298602-7-sandeen@redhat.com>
 X-Mailer: git-send-email 2.48.0
 In-Reply-To: <20250303172127.298602-1-sandeen@redhat.com>
 References: <20250303172127.298602-1-sandeen@redhat.com>
 MIME-Version: 1.0
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: k2TI-EjBfrnmZUUacZqnND5cCqf7fUIJJXaoU4zjo8E_1741022493
+X-Mimecast-MFC-PROC-ID: Q4xRYwDfEsC7W7r2F_PRhTR6OJdeiE_iUxvE8jEe01Y_1741022497
 X-Mimecast-Originator: redhat.com
-X-Headers-End: 1tp9UF-0008QW-5K
-Subject: [f2fs-dev] [PATCH 2/9] f2fs: consolidate unsupported option
- handling errors
+X-Headers-End: 1tp9UO-0008R8-KM
+Subject: [f2fs-dev] [PATCH 6/9] f2fs: Pass sbi rather than sb to
+ f2fs_set_test_dummy_encryption
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -125,68 +125,40 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-When certain build-time options are disabled, some mount options are not
-accepted. For quota and compression, all related options are dismissed
-with a single error message. For xattr, acl, and fault injection, each
-option is handled individually. In addition, inline_xattr_size was missed
-when CONFIG_F2FS_FS_XATTR was disabled.
-
-Collapse xattr, acl, and fault injection errors into a single string, for
-simplicity, and handle the missing inline_xattr_size case.
+This removes another sb instance from parse_options()
 
 Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 ---
- fs/f2fs/super.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+ fs/f2fs/super.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index dd35d199775a..29b3aa1ee99c 100644
+index e63b3bd75f85..8866a74ce6aa 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -772,16 +772,11 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			break;
- #else
- 		case Opt_user_xattr:
--			f2fs_info(sbi, "user_xattr options not supported");
--			break;
- 		case Opt_nouser_xattr:
--			f2fs_info(sbi, "nouser_xattr options not supported");
--			break;
- 		case Opt_inline_xattr:
--			f2fs_info(sbi, "inline_xattr options not supported");
--			break;
- 		case Opt_noinline_xattr:
--			f2fs_info(sbi, "noinline_xattr options not supported");
-+		case Opt_inline_xattr_size:
-+			f2fs_info(sbi, "xattr options not supported");
- 			break;
+@@ -483,12 +483,11 @@ static int f2fs_check_quota_options(struct f2fs_sb_info *sbi)
+ }
  #endif
- #ifdef CONFIG_F2FS_FS_POSIX_ACL
-@@ -793,10 +788,8 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+ 
+-static int f2fs_set_test_dummy_encryption(struct super_block *sb,
++static int f2fs_set_test_dummy_encryption(struct f2fs_sb_info *sbi,
+ 					  const char *opt,
+ 					  const substring_t *arg,
+ 					  bool is_remount)
+ {
+-	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+ 	struct fs_parameter param = {
+ 		.type = fs_value_is_string,
+ 		.string = arg->from ? arg->from : "",
+@@ -1029,7 +1028,7 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+ 			kfree(name);
  			break;
- #else
- 		case Opt_acl:
--			f2fs_info(sbi, "acl options not supported");
--			break;
- 		case Opt_noacl:
--			f2fs_info(sbi, "noacl options not supported");
-+			f2fs_info(sbi, "acl options not supported");
- 			break;
- #endif
- 		case Opt_active_logs:
-@@ -919,11 +912,8 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			break;
- #else
- 		case Opt_fault_injection:
--			f2fs_info(sbi, "fault_injection options not supported");
--			break;
--
- 		case Opt_fault_type:
--			f2fs_info(sbi, "fault_type options not supported");
-+			f2fs_info(sbi, "fault injection options not supported");
- 			break;
- #endif
- 		case Opt_lazytime:
+ 		case Opt_test_dummy_encryption:
+-			ret = f2fs_set_test_dummy_encryption(sb, p, &args[0],
++			ret = f2fs_set_test_dummy_encryption(sbi, p, &args[0],
+ 							     is_remount);
+ 			if (ret)
+ 				return ret;
 -- 
 2.48.0
 
