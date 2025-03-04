@@ -4,68 +4,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 14C7CC021B8
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Mar 2025 17:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 68898C021B8
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Mar 2025 18:24:01 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tpVmv-0002i8-9b;
-	Tue, 04 Mar 2025 17:10:36 +0000
+	id 1tpWvx-0004HW-0Z;
+	Tue, 04 Mar 2025 18:24:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tpVmt-0002hy-2e
+ (envelope-from <daeho43@gmail.com>) id 1tpWvv-0004HO-So
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Mar 2025 17:10:34 +0000
+ Tue, 04 Mar 2025 18:23:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QsmfRGtSawkVi3Q5xCs3dPi+bvhR77BXSCQzfahsmeo=; b=cutg9nImNXaI37Q1oCcAhpGv76
- vXfdJBqWknpfcqYRTWxNCb8pzpig4150d9HUcAgaPZjBAd3QTF3y8+mnG9HrMaugnPdlvWWW3I8p5
- RMpe6LxiVjnGYW+U4M2ygn6PRszZtty48XVjtNEyFRTyFRwlotw10pdiJ8NKUv5+Oa+k=;
+ bh=UTvXX8sSlYolu/q7NpQQdlJiEqFKcsD2LSJ4GjwRKNM=; b=H9hMbcBQY2uScyFarrqaR7aJN7
+ CjoJJ6u16RyznTybZ9doWomHkX2FblJpzAEQpZtkWpS9KOfQh8+u/sH2xaPfCbmCi3JRHnCumbVF3
+ zFS1omTQq8vvQUpP1NfgG3RlvoARZ/xMyx6aBzbQQ28Ew0XMvq0tVfIOfNdieKqrEqjM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QsmfRGtSawkVi3Q5xCs3dPi+bvhR77BXSCQzfahsmeo=; b=G1Drag1S+Zq0TS2Wnpi10PMyZF
- UKjZkZzcQK/ORSlWuVoT2Fk4kHeIJfTf1ZBrifDh1k/nEBCBIegwgvBSQitmmabpq4+E2KfYsnELj
- o0rwk6+HUBUE0X0myedmMWoi1JbcCnnzLf2jmZGxeeOOMxAlDgB8cQPQlCcS5axOasf0=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ ;
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=UTvXX8sSlYolu/q7NpQQdlJiEqFKcsD2LSJ4GjwRKNM=; b=V54azuPuD0k34hMOEYDBEewkfI
+ JYJzGltA3XLhZtqbdQ2U+09KYSYTweq65agkyCZkxMdPpU2HMfVSu+vIzDOdgs1JdZ31PQ1vCAqCR
+ 3wbHLzCpEwUGTArOJOE3uJVUuBgO5n7jtDybZE5fE2aPux1AwF0c5kPWfBbGBLMAucNk=;
+Received: from mail-ua1-f54.google.com ([209.85.222.54])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tpVmg-0004oG-Je for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Mar 2025 17:10:33 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 1B140A459EA;
- Tue,  4 Mar 2025 17:04:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 917C0C4CEE5;
- Tue,  4 Mar 2025 17:10:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1741108211;
- bh=CXHGF5JE2IKfcCUn9rR5K/yFn0hXIzYaGLStVBBPqrg=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=nBM2iqAQwQlUhfxsD72F0/ft3h7w9FID3z/SRIwyS3T1CROHKkUnpP1Yxiw2DGPsn
- Jb9Z3t2FaKI3wpnfFaxekphyvgbJCe2gF9ubIFjfGuKd7SzY9Snw2IkjSOOqts6BE9
- A3g7HpUWdOdAfetMoRWpz0TmNWVnjLmiUJFcfngYYLS1TJ82BcIDHHcOK8TLbFM1PS
- 0lt9bLxNy09XVIPZeI/W7qZp+B2ipp8927EPekoFhvyBBAcurwnvC+f+Ac2RtEpScN
- 9qtyd45zAybQ707jRJZ78TrJk1UuR2HWhyfcZYxjIWUE8DkJMnsP1FW4V/YlGgpFqn
- w90zhzwzuvImg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- AE027380AA7F; Tue,  4 Mar 2025 17:10:45 +0000 (UTC)
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1tpWvp-0007vQ-KY for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Mar 2025 18:23:59 +0000
+Received: by mail-ua1-f54.google.com with SMTP id
+ a1e0cc1a2514c-86b3bd4d0faso2164853241.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 04 Mar 2025 10:23:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1741112628; x=1741717428; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=UTvXX8sSlYolu/q7NpQQdlJiEqFKcsD2LSJ4GjwRKNM=;
+ b=U4Z8vDMZymSRD6AnlFqMryCUpeKpSoY+9fQsKKBfSGSychHjGc101e8JLKcTavgTLF
+ bjVVpFXy0oMuWMJCsiB6pV2DRwkhQkxNjU8QswLQtXWZt2Bl+cgeS0s+jdGi2uTX18Ut
+ rsa58k1mYJh9RHSiDxghkrGKZLLxSxjY56DNHJaM6whtFNViGoW461HD/oD2elMU1OEa
+ Fvg+6xrwUx2qDQCO+jR3P4kFf7GjnR0RVHS7iZmrF+rYxNxAV3pdbwb6nCLX3SJYUHxc
+ M0pHncLmYrtZ5lxahgdpUkPka+f3NlVT1wcRaiQijAVh91aWnBk3Vqj1IFP1Ug9CQ3Dq
+ o8tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1741112628; x=1741717428;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=UTvXX8sSlYolu/q7NpQQdlJiEqFKcsD2LSJ4GjwRKNM=;
+ b=tdbPQc0LLT6r3zIuDpP2eyMxadPwnWoPKk5sjoMdp/st/LBsYVdy+WHNzVqNq37qVu
+ zu9kJvQ6cIeMvrcZJPFflsT4VBVAualw4sITyZFCygQc2wUlE8nNriP6KKMP7jf9k/7B
+ Iwe8q4sFeNPRoBazSgSrwBmNmV/z36roLXutHRsvJLepdpHxmzdIXXCDfDX+xn8klQXs
+ I+HXm0Z4BSi253f9LeWnarPtPicbsQY9/13ZAdXfMoEEe/JeSk1s5LEEfMvpohhL0qBB
+ SAcriKCau3wK8DXpyhUTNRtozXumB6OI8WlbAs7Y5l8DRaBZHVRZTmxxQ6XdlyqiV+1P
+ xwOA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXsHMK9DMIkZeu6EdL8w1mZVM+rdtFQFdAgkxHJfOUm4Sjaf9GRZMryplLBMxseS/as2/0RwoCnFq5FTXkogBBQ@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YxaVqHw5+XHAcUx0SQbjrRMPC5vfIyzW7gy/PJCI/7zRjKiddYn
+ TcEcStkdVy+L43ZFx9cg1GSwsJ/rmpMk+XjIUljYRAx4E//ndNlJpDwE+PA4lMfkvQ0B8NTWJIU
+ DyMlt9150izd3vnRq1LrA9dshH+c=
+X-Gm-Gg: ASbGnct6jkzH2Qn6x2pPj0+12EdYvv7PXWkDI0FPks0i3WmTuvoXf17cApGQfvlnef/
+ EV59u87n0pXWFtmRuhK8giK7dkrmIHLtUWUxrXxL0rIAAsd6FVNA6M+zLKhCk+MJx/ukJxHfyKk
+ zOs0rITuzfGhgCuqgIH2M+8J8SGwFSfnwZXz9bX+ukQExPn//mfXQogU+B
+X-Google-Smtp-Source: AGHT+IEZ/7BRp+uRS9nvklgUVf2SLGq8Z8YVnf3r6v7ElAdA67PrC/xXF/mqmYSEMUQX29CjECzNkD4WGfrOQXTiWbs=
+X-Received: by 2002:a05:6102:2924:b0:4bb:e2a1:183e with SMTP id
+ ada2fe7eead31-4c044a0017cmr10533700137.18.1741112627454; Tue, 04 Mar 2025
+ 10:23:47 -0800 (PST)
 MIME-Version: 1.0
-Message-Id: <174110824448.224349.9741584954553856935.git-patchwork-notify@kernel.org>
-Date: Tue, 04 Mar 2025 17:10:44 +0000
-References: <20250218055203.591403-1-willy@infradead.org>
-In-Reply-To: <20250218055203.591403-1-willy@infradead.org>
-To: Matthew Wilcox (Oracle) <willy@infradead.org>
-X-Headers-End: 1tpVmg-0004oG-Je
-Subject: Re: [f2fs-dev] [PATCH 00/27] f2fs folio conversions for v6.15
+References: <20250303221730.1284822-1-jaegeuk@kernel.org>
+In-Reply-To: <20250303221730.1284822-1-jaegeuk@kernel.org>
+From: Daeho Jeong <daeho43@gmail.com>
+Date: Tue, 4 Mar 2025 10:23:36 -0800
+X-Gm-Features: AQ5f1JpfsRQkcPF6KIFZ7YMYTdcL01aAD6xF-xk3YtBCXsNdVl8h0JTYeOohAe8
+Message-ID: <CACOAw_zmqS8UrpsYeMEEvyc_Xe9edx4ptWOtQBz3UufZM+iNag@mail.gmail.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+X-Headers-End: 1tpWvp-0007vQ-KY
+Subject: Re: [f2fs-dev] [PATCH] f2fs: set highest IO priority for checkpoint
+ thread
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,124 +103,32 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
-
-This series was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Tue, 18 Feb 2025 05:51:34 +0000 you wrote:
-> More f2fs folio conversions.  This time I'm focusing on removing
-> accesses to page->mapping as well as getting rid of accesses to
-> old APIs.  f2fs was the last user of wait_for_stable_page(),
-> grab_cache_page_write_begin() and wait_on_page_locked(), so
-> I've included those removals in this series too.
-> 
-> Matthew Wilcox (Oracle) (27):
->   f2fs: Add f2fs_folio_wait_writeback()
->   mm: Remove wait_for_stable_page()
->   f2fs: Add f2fs_folio_put()
->   f2fs: Convert f2fs_flush_inline_data() to use a folio
->   f2fs: Convert f2fs_sync_node_pages() to use a folio
->   f2fs: Pass a folio to flush_dirty_inode()
->   f2fs: Convert f2fs_fsync_node_pages() to use a folio
->   f2fs: Convert last_fsync_dnode() to use a folio
->   f2fs: Return a folio from last_fsync_dnode()
->   f2fs: Add f2fs_grab_cache_folio()
->   mm: Remove grab_cache_page_write_begin()
->   f2fs: Use a folio in __get_node_page()
->   f2fs: Use a folio in do_write_page()
->   f2fs: Convert f2fs_write_end_io() to use a folio_iter
->   f2fs: Mark some functions as taking a const page pointer
->   f2fs: Convert f2fs_in_warm_node_list() to take a folio
->   f2fs: Add f2fs_get_node_folio()
->   f2fs: Use a folio throughout f2fs_truncate_inode_blocks()
->   f2fs: Use a folio throughout __get_meta_page()
->   f2fs: Hoist the page_folio() call to the start of
->     f2fs_merge_page_bio()
->   f2fs: Add f2fs_get_read_data_folio()
->   f2fs: Add f2fs_get_lock_data_folio()
->   f2fs: Convert move_data_page() to use a folio
->   f2fs: Convert truncate_partial_data_page() to use a folio
->   f2fs: Convert gc_data_segment() to use a folio
->   f2fs: Add f2fs_find_data_folio()
->   mm: Remove wait_on_page_locked()
-> 
-> [...]
-
-Here is the summary with links:
-  - [f2fs-dev,01/27] f2fs: Add f2fs_folio_wait_writeback()
-    https://git.kernel.org/jaegeuk/f2fs/c/17683927d078
-  - [f2fs-dev,02/27] mm: Remove wait_for_stable_page()
-    https://git.kernel.org/jaegeuk/f2fs/c/36e1d6344aca
-  - [f2fs-dev,03/27] f2fs: Add f2fs_folio_put()
-    (no matching commit)
-  - [f2fs-dev,04/27] f2fs: Convert f2fs_flush_inline_data() to use a folio
-    https://git.kernel.org/jaegeuk/f2fs/c/015d9c56bd5e
-  - [f2fs-dev,05/27] f2fs: Convert f2fs_sync_node_pages() to use a folio
-    https://git.kernel.org/jaegeuk/f2fs/c/5d0a91284853
-  - [f2fs-dev,06/27] f2fs: Pass a folio to flush_dirty_inode()
-    https://git.kernel.org/jaegeuk/f2fs/c/de90f7614424
-  - [f2fs-dev,07/27] f2fs: Convert f2fs_fsync_node_pages() to use a folio
-    https://git.kernel.org/jaegeuk/f2fs/c/e23bebc3c0d2
-  - [f2fs-dev,08/27] f2fs: Convert last_fsync_dnode() to use a folio
-    https://git.kernel.org/jaegeuk/f2fs/c/18f3814fa6a8
-  - [f2fs-dev,09/27] f2fs: Return a folio from last_fsync_dnode()
-    https://git.kernel.org/jaegeuk/f2fs/c/e11a31139517
-  - [f2fs-dev,10/27] f2fs: Add f2fs_grab_cache_folio()
-    https://git.kernel.org/jaegeuk/f2fs/c/8d77f68daeb1
-  - [f2fs-dev,11/27] mm: Remove grab_cache_page_write_begin()
-    https://git.kernel.org/jaegeuk/f2fs/c/e33ce6bd4ea2
-  - [f2fs-dev,12/27] f2fs: Use a folio in __get_node_page()
-    https://git.kernel.org/jaegeuk/f2fs/c/48a34c598103
-  - [f2fs-dev,13/27] f2fs: Use a folio in do_write_page()
-    https://git.kernel.org/jaegeuk/f2fs/c/cd8f95718c89
-  - [f2fs-dev,14/27] f2fs: Convert f2fs_write_end_io() to use a folio_iter
-    https://git.kernel.org/jaegeuk/f2fs/c/fb9660481e3c
-  - [f2fs-dev,15/27] f2fs: Mark some functions as taking a const page pointer
-    https://git.kernel.org/jaegeuk/f2fs/c/521a46848690
-  - [f2fs-dev,16/27] f2fs: Convert f2fs_in_warm_node_list() to take a folio
-    https://git.kernel.org/jaegeuk/f2fs/c/1a58a41ccce6
-  - [f2fs-dev,17/27] f2fs: Add f2fs_get_node_folio()
-    https://git.kernel.org/jaegeuk/f2fs/c/4d417ae2bfce
-  - [f2fs-dev,18/27] f2fs: Use a folio throughout f2fs_truncate_inode_blocks()
-    https://git.kernel.org/jaegeuk/f2fs/c/520b17e093f4
-  - [f2fs-dev,19/27] f2fs: Use a folio throughout __get_meta_page()
-    https://git.kernel.org/jaegeuk/f2fs/c/922e24acb49e
-  - [f2fs-dev,20/27] f2fs: Hoist the page_folio() call to the start of f2fs_merge_page_bio()
-    https://git.kernel.org/jaegeuk/f2fs/c/b8fcb8423053
-  - [f2fs-dev,21/27] f2fs: Add f2fs_get_read_data_folio()
-    https://git.kernel.org/jaegeuk/f2fs/c/4ae71b1996ef
-  - [f2fs-dev,22/27] f2fs: Add f2fs_get_lock_data_folio()
-    https://git.kernel.org/jaegeuk/f2fs/c/20f974cd2124
-  - [f2fs-dev,23/27] f2fs: Convert move_data_page() to use a folio
-    https://git.kernel.org/jaegeuk/f2fs/c/6d1ba45c8db0
-  - [f2fs-dev,24/27] f2fs: Convert truncate_partial_data_page() to use a folio
-    https://git.kernel.org/jaegeuk/f2fs/c/ab907aa2a2f3
-  - [f2fs-dev,25/27] f2fs: Convert gc_data_segment() to use a folio
-    https://git.kernel.org/jaegeuk/f2fs/c/a86e109ee2c6
-  - [f2fs-dev,26/27] f2fs: Add f2fs_find_data_folio()
-    https://git.kernel.org/jaegeuk/f2fs/c/0cd402baa03b
-  - [f2fs-dev,27/27] mm: Remove wait_on_page_locked()
-    https://git.kernel.org/jaegeuk/f2fs/c/d96e2802a802
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gTW9uLCBNYXIgMywgMjAyNSBhdCAyOjE54oCvUE0gSmFlZ2V1ayBLaW0gdmlhIExpbnV4LWYy
+ZnMtZGV2ZWwKPGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0PiB3cm90ZToK
+Pgo+IFRoZSBjaGVja3BvaW50IGlzIHRoZSB0b3AgcHJpb3JpdHkgdGhyZWFkIHdoaWNoIGNhbiBz
+dG9wIGFsbCB0aGUgZmlsZXN5c3RlbQo+IG9wZXJhdGlvbnMuIExldCdzIG1ha2UgaXQgUlQgcHJp
+b3JpdHkuCj4KPiBTaWduZWQtb2ZmLWJ5OiBKYWVnZXVrIEtpbSA8amFlZ2V1a0BrZXJuZWwub3Jn
+Pgo+IC0tLQo+ICBmcy9mMmZzL2NoZWNrcG9pbnQuYyB8IDIgKy0KPiAgMSBmaWxlIGNoYW5nZWQs
+IDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9j
+aGVja3BvaW50LmMgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+IGluZGV4IGJkODkwNzM4Yjk0ZC4u
+OGRiYjgxNWEzNWMwIDEwMDY0NAo+IC0tLSBhL2ZzL2YyZnMvY2hlY2twb2ludC5jCj4gKysrIGIv
+ZnMvZjJmcy9jaGVja3BvaW50LmMKPiBAQCAtMjEsNyArMjEsNyBAQAo+ICAjaW5jbHVkZSAiaW9z
+dGF0LmgiCj4gICNpbmNsdWRlIDx0cmFjZS9ldmVudHMvZjJmcy5oPgo+Cj4gLSNkZWZpbmUgREVG
+QVVMVF9DSEVDS1BPSU5UX0lPUFJJTyAoSU9QUklPX1BSSU9fVkFMVUUoSU9QUklPX0NMQVNTX0JF
+LCAzKSkKPiArI2RlZmluZSBERUZBVUxUX0NIRUNLUE9JTlRfSU9QUklPIChJT1BSSU9fUFJJT19W
+QUxVRShJT1BSSU9fQ0xBU1NfUlQsIDMpKQo+Cj4gIHN0YXRpYyBzdHJ1Y3Qga21lbV9jYWNoZSAq
+aW5vX2VudHJ5X3NsYWI7Cj4gIHN0cnVjdCBrbWVtX2NhY2hlICpmMmZzX2lub2RlX2VudHJ5X3Ns
+YWI7Cj4gLS0KPiAyLjQ4LjEuNzExLmcyZmVhYmFiMjVhLWdvb2cKPgoKUmV2aWV3ZWQtYnk6IERh
+ZWhvIEplb25nIDxkYWVob2plb25nQGdvb2dsZS5jb20+Cgo+Cj4KPiBfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGlu
+ZyBsaXN0Cj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBodHRwczov
+L2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCgoK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJm
+cy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5u
+ZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJm
+cy1kZXZlbAo=
