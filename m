@@ -4,69 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 39D7BC021B8
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Mar 2025 17:10:30 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 554F6C282D2
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Mar 2025 17:10:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tpVmn-0007Ve-T6;
-	Tue, 04 Mar 2025 17:10:29 +0000
+	id 1tpVmp-0006IB-HT;
+	Tue, 04 Mar 2025 17:10:32 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tpVmj-0007VQ-Ub
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tpVml-0006I3-VY
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Mar 2025 17:10:25 +0000
+ Tue, 04 Mar 2025 17:10:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=poECJ9JaMGByGubg/kLfg+KqKkxr6xl7mflGWMzZmlw=; b=hNPkFNcdESXBgBWfnbIBDiGcJv
- tl0JhRThpw3zT8oVp/UdZ+6GTy19PBEhvilYECUZTM3CEWl4rLalmDf5WBTjQzbt7CrTZkvWhO4Iz
- 1feeHpMvBzswuPorOACzh27lsqYGzQm+ljDvylk2W1nZVXC5gttc7vY9CnYvetgB5KE4=;
+ bh=lNW4h9yoZI9P+uigbCXLQ88pE6T1nJEAZ0XYKYp804I=; b=HE+5q7ZE1ZDkL0WoXv4tsZkXMV
+ UKVp4s4DSqEK3RiDU4OX2ezmltTBLdQTZhoBPfPGXFkXPZ+ssvdNjve8Oov+fV1rDmzaUMcyV5bSp
+ MctA4PIA4u1JIidWFj3VpipfNQjTRIlSxs7DjPIH/b+0b+3FRtcRtqevl3m1Hn3gLs6Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=poECJ9JaMGByGubg/kLfg+KqKkxr6xl7mflGWMzZmlw=; b=iTDE/p/O/IT7zMuc13DdjLVucm
- 6Xb0mrIXqv0wjZKqxHzyMcQxIhdLxE0OpgfatpNKAxoAThOjaN67c9dVthb/K3IUxw4u+HfW0gnzR
- vKU2V8AlkCtFndLbVMcj0/Fo0KyfIIHyotuwC6lnhwmK0nH0V8oHK07l+jq01YlAzfUY=;
+ bh=lNW4h9yoZI9P+uigbCXLQ88pE6T1nJEAZ0XYKYp804I=; b=SS0vDI5gGSx1pxF2vTzplZbr8b
+ VNA6eXBglcU2QdGboX3ypzzBzwiD+EpyDs0rzC5s0oozEopv0muZO4znXGTxCb62ZnM4bzuDKNzY6
+ RzOi7bXh8G6jGLVBWTj/sHU60G4VxvsGoks7vaVg0F40aH84ZMShTmyg/1AJqyU3dobo=;
 Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tpVmj-0004oS-Bj for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Mar 2025 17:10:25 +0000
+ id 1tpVml-0004p3-Qo for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Mar 2025 17:10:28 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id D1994A459E3;
- Tue,  4 Mar 2025 17:04:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55E58C4CEE5;
- Tue,  4 Mar 2025 17:10:14 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id 57DE3A459E6
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue,  4 Mar 2025 17:04:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D226BC4CEE5;
+ Tue,  4 Mar 2025 17:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1741108214;
- bh=Jvj0r6ocwpbb8Xn0h34e4Fs/vyBMhR9edCgsHUHR8/o=;
+ s=k20201202; t=1741108216;
+ bh=KNixpme328BkPpO3f08aDQkLgSB0GOMOGQFqOcWIDAg=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=Hpqrps7080EncjT1pVgnXdf3wCRbxyTCbPh+OKddo9l91mEjuQOVyxPcvAm0tjcwM
- mT4JWvLqXSdxvWzIQ5f4bOaLDAMw6/25GIooNItjg1wFys4VT8+kfm+ND2zHKACL6p
- BV0FLnn20U2tM4NjrIpvibRgDS0EkW2nO1vskO4a8B0y4PrdfvFi3VLMetZmIOlP4w
- xY/B6cR6dccM3vbp9Bg3kVyhg9gGbKVDUOly1bhVgbF3Oe6uD4L646t1LCyj3NRybg
- AvAM5BkX+ihHddfqE9hgeVKbw8Eahn53tibYOV/1AKhfTVyB6VCtlgQDjmcNISjV59
- EmK860bRWbwJg==
+ b=Qw1zIxZtOEJMdtXazA3ZGdqTbyXyiMi2doEL0xxrV8a5Dod4a7HNmfGBdxphketD6
+ aJUlfnXd1YIqUrdpvhVWBFGDMXxfPcL2Rl/UaXDCtNnw5nRg+To1ub5oShlCvGs52+
+ fL3yIrH78/XE9cl3UGiETYicfYLSyBiLHEg37+wkwT1OLpbhME47ZCYyzL5PsuHbMI
+ Zthu+cW/+Bbk6mqrGCLuIWaoEhU6AK3pFZYbQjOb/iQLyMWUzBnlJKuTHby+O5aZN1
+ 1meL8OU51g7ewMpZAxVom9lvFflFGco6iaDxgQRXs7DfBtYMB9o6+TJ5g6Cn1MfBIH
+ 4kwnujfb25d4A==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 70D13380AA7F; Tue,  4 Mar 2025 17:10:48 +0000 (UTC)
+ EAD91380AA7F; Tue,  4 Mar 2025 17:10:50 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <174110824699.224349.2815838938637655716.git-patchwork-notify@kernel.org>
-Date: Tue, 04 Mar 2025 17:10:46 +0000
-References: <20250303032329.1309786-1-chao@kernel.org>
-In-Reply-To: <20250303032329.1309786-1-chao@kernel.org>
+Message-Id: <174110824973.224349.3484276359744907676.git-patchwork-notify@kernel.org>
+Date: Tue, 04 Mar 2025 17:10:49 +0000
+References: <20250303032500.1310215-1-chao@kernel.org>
+In-Reply-To: <20250303032500.1310215-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1tpVmj-0004oS-Bj
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix potential deadloop in
- prepare_compress_overwrite()
+X-Headers-End: 1tpVml-0004p3-Qo
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to call f2fs_recover_quota_end()
+ correctly
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,7 +82,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, jprusakowski@google.com, linux-kernel@vger.kernel.org,
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -92,19 +93,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon,  3 Mar 2025 11:23:29 +0800 you wrote:
-> Jan Prusakowski reported a kernel hang issue as below:
+On Mon,  3 Mar 2025 11:25:00 +0800 you wrote:
+> f2fs_recover_quota_begin() and f2fs_recover_quota_end() should be called
+> in pair, there is some cases we may skip calling f2fs_recover_quota_end(),
+> fix it.
 > 
-> When running xfstests on linux-next kernel (6.14.0-rc3, 6.12) I
-> encountered a problem in generic/475 test where fsstress process
-> gets blocked in __f2fs_write_data_pages() and the test hangs.
-> The options I used are:
+> Fixes: e1bb7d3d9cbf ("f2fs: fix to recover quota data correctly")
+> Signed-off-by: Chao Yu <chao@kernel.org>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix potential deadloop in prepare_compress_overwrite()
-    https://git.kernel.org/jaegeuk/f2fs/c/3147ee567dd9
+  - [f2fs-dev] f2fs: fix to call f2fs_recover_quota_end() correctly
+    https://git.kernel.org/jaegeuk/f2fs/c/d8f5b91d77a6
 
 You are awesome, thank you!
 -- 
