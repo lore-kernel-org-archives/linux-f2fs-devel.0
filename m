@@ -4,70 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 93E47C021B8
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Mar 2025 17:10:26 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 86F47C282D6
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Mar 2025 17:10:28 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tpVmj-0006Hj-Ld;
-	Tue, 04 Mar 2025 17:10:26 +0000
+	id 1tpVmm-0002hY-Po;
+	Tue, 04 Mar 2025 17:10:28 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tpVmg-0006HZ-4C
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tpVmk-0002hQ-2Z
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Mar 2025 17:10:22 +0000
+ Tue, 04 Mar 2025 17:10:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=O0JSyIuWE+u6XHXR8gkDeAm5XglbkciKsgNW99//JY8=; b=m2mOwcZEKm88Aqb/s4KiPpXDCc
- XFu7f6NWuxaoYWA5S0MpwA7UTtiayrD4HPEevlpxkzJpVnQKveBtdw5NFCqQQvxtLnOTW6oJWUGj9
- RCnfDeFYJBpOWl1J7Kv0MOTU1AsRBIxOElx52Q5f0vHvD5zcjRicoTuJYTAUo3JY7cls=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=D7znQesJF9QcW9oJFYM9lakswctG5RixeNiUwCajqLY=; b=OTaDSlzqYCZZ50EmyrxRTFdaf4
+ 5nO8AQe9CK9QWKN7ngeee0OIRbraKrIK5Xkbvrq15T28lslZMOu/FDq/L12WxdibkCJg0qijF/z1z
+ L6Wn0SmHT6YjiTD81/62yxzaYOcWEsAT9O+kdZIQcCU/LzAMuxABOXALo2GXShQSOLpo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=O0JSyIuWE+u6XHXR8gkDeAm5XglbkciKsgNW99//JY8=; b=UUPxbUdbRYGyDSWNrbocNXwuwx
- PDtx7A9KaGL/TLfFJN0QfwmGeuJHwZDAsshCxXa1m+RkoF3AAE5zUQLoesUP612UxZPZBJh/7y7Tg
- plSzcqjqaPwYjUJfavhhndWSQgy/tcjoeo+45PAW/9vIx1jR6EBSrkMr16feP+kaVtWQ=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ ;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=D7znQesJF9QcW9oJFYM9lakswctG5RixeNiUwCajqLY=; b=g
+ ZeLwcMUtbJY9hA65+P88lv4YaNsCrBORYQcDOwzoo6Y68J9ILhpk8VSjpP4p0rj1DuwR+49alB9qN
+ dsNbE1Z/+1PtFDDI5i3pBv1c0Wgv1rAdSrTufVHXllTY9hZpItD3h3p2XG5wWYooEWBxARYMYOT7c
+ 1cPr1PkYeGyqSJjo=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tpVmf-0004nv-R4 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Mar 2025 17:10:22 +0000
+ id 1tpVmf-0004nm-1w for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Mar 2025 17:10:25 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 15E32A459ED
+ by dfw.source.kernel.org (Postfix) with ESMTP id D7F4D5C5EE7
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  4 Mar 2025 17:04:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FFC5C4CEE5;
- Tue,  4 Mar 2025 17:10:15 +0000 (UTC)
+ Tue,  4 Mar 2025 17:07:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DFA9C4CEE5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue,  4 Mar 2025 17:10:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1741108215;
- bh=o43ff7R4e3i7w6mMMmeiN5+e4slUZu+u/De0cuXcQOg=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=hfjNTE+eToFjy7+bAUje04CdMveohZzVgbytFafuHToqn3jeT9uemTB+93vHWPLk/
- DeZGSkHmw1huQ/PhYeFkhrQvJN/GS7uSPXhaxOGz9W7cDrQhvueQ3optJ6MbFKi35r
- 2K1O5W7s9pKkoFzcH+HrLcQnt/0YJ9AoKf6c0SSX4HsENdODfuNb3H3XBMez3RNNlB
- 4bMv9WGtdRqo1JBVYSTCpIAkVsTLmXO951Sj64/bjS5dLpwiytIyqpArYBBxox+/sm
- 0CSMBbxNPkVZwQpgrS8utkkvqlqCdPYJy/coaurn4QQvxQxAzz+y/O5z9Oiaz3xFmG
- SM99zlZ7q6ekg==
+ s=k20201202; t=1741108210;
+ bh=KnZMZGV27mKsu0Zf3uZIVQxeZ37xYPWWuP5kWcT/Rxw=;
+ h=Subject:From:Date:To:From;
+ b=cPcCT6Gicf3bolq5d2z/XNc5X9UPgKrMbxo7Hab/qX3K7WZw/5gce5RKDpqGGqw7e
+ CltqR36Z1a+Sb1UkeHE5SpHeyVxA+g4eX18HiIZNjq52GDH/6nAGucmYTZBvlbOjJ0
+ uIW+L3vD1lk/gn+Kj0tiEpXWkYO39IPKjBgHHOmTTxvFrTmrR95AbgW8xN3c+LGkyq
+ NF1boJ5TcQ+R64cgXDNvAK0XdWuqjvkNpDSRjSJQS7WlgQbmKptBOdIdL8xxC7E6oh
+ cxzl83zQzNBepX2sSKmM5WbYdDamCvfzPnLh3m84FPIX9tC7RsI0eSlWMI5DCUoKH1
+ Vq/wP7uJyiJdg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- ADF79380AA7F; Tue,  4 Mar 2025 17:10:49 +0000 (UTC)
+ 70E28380AA7F for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue,  4 Mar 2025 17:10:44 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <174110824849.224349.8255576653519442579.git-patchwork-notify@kernel.org>
-Date: Tue, 04 Mar 2025 17:10:48 +0000
-References: <20250303035423.1357211-1-chao@kernel.org>
-In-Reply-To: <20250303035423.1357211-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1tpVmf-0004nv-R4
-Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: do sanity check on inode footer in
- f2fs_get_inode_page()
+Message-Id: <174110824298.224349.3568071271576900474.git-patchwork-summary@kernel.org>
+Date: Tue, 04 Mar 2025 17:10:42 +0000
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1tpVmf-0004nm-1w
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,44 +82,77 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-On Mon,  3 Mar 2025 11:54:21 +0800 you wrote:
-> This patch introduces a new wrapper f2fs_get_inode_page(), then, caller
-> can use it to load inode block to page cache, meanwhile it will do sanity
-> check on inode footer.
-> 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/data.c   |  6 ++---
->  fs/f2fs/dir.c    |  2 +-
->  fs/f2fs/f2fs.h   |  3 ++-
->  fs/f2fs/file.c   |  2 +-
->  fs/f2fs/inline.c | 22 +++++++++----------
->  fs/f2fs/inode.c  |  4 ++--
->  fs/f2fs/node.c   | 57 +++++++++++++++++++++++++++++++++---------------
->  fs/f2fs/node.h   |  6 +++++
->  fs/f2fs/xattr.c  |  4 ++--
->  9 files changed, 67 insertions(+), 39 deletions(-)
+Series: f2fs folio conversions for v6.15
+  Submitter: Matthew Wilcox (Oracle) <willy@infradead.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=934965
+  Lore link: https://lore.kernel.org/r/20250218055203.591403-1-willy@infradead.org
+    Patches: [f2fs-dev,01/27] f2fs: Add f2fs_folio_wait_writeback()
+             [f2fs-dev,02/27] mm: Remove wait_for_stable_page()
+             [f2fs-dev,04/27] f2fs: Convert f2fs_flush_inline_data() to use a folio
+             [f2fs-dev,05/27] f2fs: Convert f2fs_sync_node_pages() to use a folio
+             [f2fs-dev,06/27] f2fs: Pass a folio to flush_dirty_inode()
+             [f2fs-dev,07/27] f2fs: Convert f2fs_fsync_node_pages() to use a folio
+             [f2fs-dev,08/27] f2fs: Convert last_fsync_dnode() to use a folio
+             [f2fs-dev,09/27] f2fs: Return a folio from last_fsync_dnode()
+             [f2fs-dev,10/27] f2fs: Add f2fs_grab_cache_folio()
+             [f2fs-dev,11/27] mm: Remove grab_cache_page_write_begin()
+             [f2fs-dev,12/27] f2fs: Use a folio in __get_node_page()
+             [f2fs-dev,13/27] f2fs: Use a folio in do_write_page()
+             [f2fs-dev,14/27] f2fs: Convert f2fs_write_end_io() to use a folio_iter
+             [f2fs-dev,15/27] f2fs: Mark some functions as taking a const page pointer
+             [f2fs-dev,16/27] f2fs: Convert f2fs_in_warm_node_list() to take a folio
+             [f2fs-dev,17/27] f2fs: Add f2fs_get_node_folio()
+             [f2fs-dev,18/27] f2fs: Use a folio throughout f2fs_truncate_inode_blocks()
+             [f2fs-dev,19/27] f2fs: Use a folio throughout __get_meta_page()
+             [f2fs-dev,20/27] f2fs: Hoist the page_folio() call to the start of f2fs_merge_page_bio()
+             [f2fs-dev,21/27] f2fs: Add f2fs_get_read_data_folio()
+             [f2fs-dev,22/27] f2fs: Add f2fs_get_lock_data_folio()
+             [f2fs-dev,23/27] f2fs: Convert move_data_page() to use a folio
+             [f2fs-dev,24/27] f2fs: Convert truncate_partial_data_page() to use a folio
+             [f2fs-dev,25/27] f2fs: Convert gc_data_segment() to use a folio
+             [f2fs-dev,26/27] f2fs: Add f2fs_find_data_folio()
+             [f2fs-dev,27/27] mm: Remove wait_on_page_locked()
 
-Here is the summary with links:
-  - [f2fs-dev,1/3] f2fs: do sanity check on inode footer in f2fs_get_inode_page()
-    https://git.kernel.org/jaegeuk/f2fs/c/770648dd6abc
-  - [f2fs-dev,2/3] f2fs: do sanity check on xattr node footer in f2fs_get_xnode_page()
-    https://git.kernel.org/jaegeuk/f2fs/c/1078ec609e0a
-  - [f2fs-dev,3/3] f2fs: introduce FAULT_INCONSISTENT_FOOTER
-    https://git.kernel.org/jaegeuk/f2fs/c/4116a6f1172c
+Patch: [f2fs-dev] f2fs: fix to avoid out-of-bounds access in f2fs_truncate_inode_blocks()
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=939434
+  Lore link: https://lore.kernel.org/r/20250303034738.1355927-1-chao@kernel.org
 
-You are awesome, thank you!
+Patch: [f2fs-dev] f2fs: fix potential deadloop in prepare_compress_overwrite()
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=939421
+  Lore link: https://lore.kernel.org/r/20250303032329.1309786-1-chao@kernel.org
+
+Series: [f2fs-dev,1/3] f2fs: do sanity check on inode footer in f2fs_get_inode_page()
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=939436
+  Lore link: https://lore.kernel.org/r/20250303035423.1357211-1-chao@kernel.org
+    Patches: [f2fs-dev,1/3] f2fs: do sanity check on inode footer in f2fs_get_inode_page()
+             [f2fs-dev,2/3] f2fs: do sanity check on xattr node footer in f2fs_get_xnode_page()
+             [f2fs-dev,3/3] f2fs: introduce FAULT_INCONSISTENT_FOOTER
+
+Patch: [f2fs-dev] f2fs: fix to call f2fs_recover_quota_end() correctly
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=939422
+  Lore link: https://lore.kernel.org/r/20250303032500.1310215-1-chao@kernel.org
+
+
+Total patches: 32
+
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
