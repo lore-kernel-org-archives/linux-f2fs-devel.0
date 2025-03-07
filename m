@@ -4,66 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4E77BC282EC
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  7 Mar 2025 01:59:44 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 202FAC282D1
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  7 Mar 2025 02:12:45 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tqN03-0006IE-JQ;
-	Fri, 07 Mar 2025 01:59:43 +0000
+	id 1tqNCe-0002xZ-4R;
+	Fri, 07 Mar 2025 02:12:44 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1tqN02-0006I8-NE
+ (envelope-from <chao@kernel.org>) id 1tqNCZ-0002xP-Bh
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 07 Mar 2025 01:59:42 +0000
+ Fri, 07 Mar 2025 02:12:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zJWaFfgZ96ZQ4M0LEXSTVBzOALO1krZgLxb4xALCmrY=; b=O8fp9iVVNL39855Szr59Ssdx25
- 0CFTp8KbcVoCriv5ljTCHHUG/CFTCVkaCVR2VQBRNhIKh4/CMVPaIC5M0JmGnmQL1lQFtzINUr98Q
- TO0+WbmJwPy9E0ctALCnPUIkvCM7ANNF/HdJBRYI1UHTcvFUg0c6GoIYn2Lp+ijfSCjQ=;
+ bh=SU7V60xD36wTasvbx6q97GCs+MMfIWBMefaEUrq14rM=; b=EvGl8bsglrvcHYDjrFZacGBbBR
+ 2G7DZc27xHShPLOpmmA1Keev0RanpoHmRUNdmaniQ9+wmAbYfg2qeTLwRbFe+ZC9NiS1hrlW+Ogk8
+ L0kvjgE3OpiabTIezQ7fmUIWG0x/vkrqtXGFLNbkN1C1491JFT5umfdvpTH9KeZ+FhQg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=zJWaFfgZ96ZQ4M0LEXSTVBzOALO1krZgLxb4xALCmrY=; b=h
- XO2hFTSi4EDMm6kQKnlvEHzZtPt0LdiiONNHLrJymLQYWEBB32QTZWvwXOe2fgmQqcOfM+kMiImch
- 9LF7YIG5oa6A1jKEd5Eqa6m2DF87G63kVD8CVGOtwIfl5nb++szS+wMUs1Zo7EJXBwc5HrwRwFny5
- jr0Mq+r7JSm9xowU=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ List-Owner:List-Archive; bh=SU7V60xD36wTasvbx6q97GCs+MMfIWBMefaEUrq14rM=; b=a
+ EsfaLGvW7ofGYWa0fsQCApu6qUS4JYGvXHHBoWDUT73ztnJXFHTYePK9+3Q3dyyXCBgwNYzzcXapx
+ Rd/H2M2Q9/5BSvj2KCyg1xiMjpH3/NctBtFw9NqAwk+6uPekrghDamJ1Ky6qcwA3NaYeDQMZq7tSa
+ PWUnZLIeuz61H6ZM=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tqN01-0002ak-9G for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 07 Mar 2025 01:59:42 +0000
+ id 1tqNCO-0004Af-Lr for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 07 Mar 2025 02:12:39 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id E7036A453B6
+ by dfw.source.kernel.org (Postfix) with ESMTP id 7A3525C5B4A
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri,  7 Mar 2025 01:54:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 912CFC4CEE0;
- Fri,  7 Mar 2025 01:59:34 +0000 (UTC)
+ Fri,  7 Mar 2025 02:10:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1505EC4CEE0;
+ Fri,  7 Mar 2025 02:12:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1741312775;
- bh=y1TeRT/xJwOgfkIvXjd1ognWa6hRM/GXzy+JGbaOE6E=;
+ s=k20201202; t=1741313542;
+ bh=fuQsGdP76h1XNVMErM0U68quDO/0A8mW8DbjZgQ52uo=;
  h=From:To:Cc:Subject:Date:From;
- b=RpXmXqWP9UWU/QL611ul9JWrYlwsARc4THWNSOMNqQF+Yj3H3LSavfPK/iXpO2qJi
- NdV9/Yx8ZHiJlRjhS512wgLlkOUubzsJPMEooKyueFG8wvWeep9eS4GU0E5IpMd8Dn
- OYiPIpLWMBCqUFt50zeApNmY8atVS0GzUYBWaaL9uSktVdyVK+iiD9a7Mrw1QsVEqz
- mCIvcjM2KkediB8e022chCH6cfSHeDA2SbLko+ClUeYBU0EJjOsxXdFhtIgJtub/vj
- 1CSxJGXMcCgSaWg6su2zUoBRNMs+gZ+rEEcIh4YzKK7E9RuTe2p3KWHi01+cH603Mg
- wqAo2/VeWFDFA==
+ b=LeVrD2xNkbv+YtBfbf7yeZx4EPs58IBF1ZxZqMjUjwMjy3q0XFKqVfgpWkRNS5Xyy
+ 2+4adAnPrSkJ+514M0YB+JzFVjOX3zPyFjh87gvCH4JHk2yB/aU/aAFglr9kdAsed3
+ QdPWcyDaVmHL7NqsaPR+VcazJZHop8L30HmSk4nSCDqFNKouvZeLkOHVCEI3q1Z7U8
+ VVX+EfgMAxp1msso4kfwzUWOAvmVid3/BSJO2bIux2BywGdTfZd8Xfp92DqhBWjdtv
+ KBF/FosxbVLoNpN4Ws3iYGeC2SbiiQK8ntlu76e9/Wp2jjyFX0seQW2voLyV/Ckv29
+ zE67C6iWZj/gg==
 To: jaegeuk@kernel.org
-Date: Fri,  7 Mar 2025 09:59:25 +0800
-Message-Id: <20250307015925.9077-1-chao@kernel.org>
+Date: Fri,  7 Mar 2025 10:12:16 +0800
+Message-Id: <20250307021216.10890-1-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-X-Headers-End: 1tqN01-0002ak-9G
-Subject: [f2fs-dev] [PATCH v2] f2fs-tools: disable nat_bits by default in
+X-Headers-End: 1tqNCO-0004Af-Lr
+Subject: [f2fs-dev] [PATCH v3] f2fs-tools: disable nat_bits by default in
  Android
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -88,8 +88,8 @@ for other scenario, keep it on and keep an eye on it.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
-v2:
-- fix to disable nat_bits feature in fsck tool.
+v3:
+- set disabled feature in add_default_options().
  fsck/main.c             | 3 +++
  fsck/mount.c            | 3 ++-
  include/f2fs_fs.h       | 6 ++++++
@@ -98,19 +98,19 @@ v2:
  5 files changed, 14 insertions(+), 2 deletions(-)
 
 diff --git a/fsck/main.c b/fsck/main.c
-index 25d50e2..9e0f94e 100644
+index 25d50e2..97cab5d 100644
 --- a/fsck/main.c
 +++ b/fsck/main.c
-@@ -219,6 +219,9 @@ static void __add_fsck_options(void)
- {
- 	/* -a */
- 	c.auto_fix = 1;
+@@ -226,6 +226,9 @@ static void add_default_options(void)
+ 	switch (c.defset) {
+ 	case CONF_ANDROID:
+ 		__add_fsck_options();
 +
-+	/* disable nat_bits feature by default */
-+	c.disabled_feature |= F2FS_FEATURE_NAT_BITS;
++		/* disable nat_bits feature by default */
++		c.disabled_feature |= F2FS_FEATURE_NAT_BITS;
+ 	}
+ 	c.quota_fix = 1;
  }
- 
- static void add_default_options(void)
 diff --git a/fsck/mount.c b/fsck/mount.c
 index e493f22..0b05f00 100644
 --- a/fsck/mount.c
