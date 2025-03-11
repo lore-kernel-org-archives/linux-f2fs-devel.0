@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1664BC28B2F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Mar 2025 08:04:51 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 468B9C28B2E
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Mar 2025 08:05:01 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1trubb-0000xM-8u;
-	Tue, 11 Mar 2025 08:04:50 +0000
+	id 1trubi-00053u-6e;
+	Tue, 11 Mar 2025 08:04:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1trubZ-0000xD-Qd
+ (envelope-from <chao@kernel.org>) id 1trubg-00053f-AK
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Mar 2025 08:04:49 +0000
+ Tue, 11 Mar 2025 08:04:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FdDr/jZRFqrYxdexFRluuQTZGq+vwp4AAB++NjDbcDg=; b=ejQSJEhgLAP6oouA8Ex4hB5ccx
- QRJKI0B6NNGgWJzwEiKg3vKLHH50HXi3E/GtTc7Ami/nVgbDwmvuyFG/CZl17tS1CTLimllI38t5n
- 3ZRprhtyAwyetyJJ2fUDanRRpqYSxSSxY//HTQcGdwnl2PkxIXVhFJcv1bwILX/Zm9Ak=;
+ bh=AAUXgMeZK3Q64IQewCw6DtTIcrEWB9DeMBtGwE2AadE=; b=TOiPaMhAjBUmfamOrvK3GYraw1
+ KgNqhaIQH4EhN+atZgq41jAgcnZvdMgR7q0zjxxHYqo0aVceO7vdWzw2TDvZCxgK1kKf2aFkUU8Iz
+ zXGB06teVXb1hipjfVMWmf2O1fbk4JqiwCHw/tnrGQSxN9jo1MDdsxAYS5xBtxi6vp70=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,39 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=FdDr/jZRFqrYxdexFRluuQTZGq+vwp4AAB++NjDbcDg=; b=io+fxaishKFn4qjb6HlDDt2zbP
- BZy7KfuX+hoPkXn4AcbIQglYG9zEUNty+j99/1L5W1ExaUqKSu9fVOLzZK2o/uo54eqYwFgwsuv/Y
- soA4zWrchPlwZRpXyXmOLkDc1YvPckJI84DfaISjnYa50XSbsBpnulea07KbKcV6DZso=;
+ bh=AAUXgMeZK3Q64IQewCw6DtTIcrEWB9DeMBtGwE2AadE=; b=a4EuxhYWeo14/cvYJqzjFWA073
+ WTH5/J+i2DSWH6IhJ87i1k+T4UsnFlMO4fbqaeTXRPRKD1pfceMxfQOrQB8BtezDn1n3LgF8yMqM7
+ PO88sf3NSLN9m70LTch29ToC2gcT0S5+jLXJLDCOB5JJiwuv+Ax8I48s/mTaZLmrz1iY=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1trubT-00050g-A4 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Mar 2025 08:04:48 +0000
+ id 1trubb-00051w-Fw for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 11 Mar 2025 08:04:57 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 28B245C54EC;
- Tue, 11 Mar 2025 08:02:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E172C4CEEE;
- Tue, 11 Mar 2025 08:04:36 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 536E55C4CE5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 11 Mar 2025 08:02:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5D5CC4CEEE;
+ Tue, 11 Mar 2025 08:04:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1741680277;
- bh=xq2sFpKcMwD7O+8IUPL0qAjuOxbSP9sZA5L4A95ecbQ=;
+ s=k20201202; t=1741680280;
+ bh=n74Q+Fo38Qqi4LLhMmspI7Gq5r0ceUnTLDVgnA8ssQs=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=V1j9gKGWnVu0TT4SPUr9Usaqoml99nVWcf48BYRLQNPHDQaER0WHXRZQfCaok8R0f
- M+qRo8dMmyh/iE78KY/V/S9QKvale2+lGFFBUqE3dJwpphfpeZ1XZlIIanZS+M/zEv
- HCC8sT3vX9A6cufEKMnWMIi2W5unmw+WJDNBV1caVo4hwQCzdKvXFEM/KHl9RLgLds
- c0QWgP4dkGeGrgKxH8bj6cGcGR6bL/igPbDC6WIJspo+yOSPZC1BLpJwFhwOvVjDjW
- VFFbJgEZ3mCBZbtn++FOuhOFFFBQekFe4VlsDOFlcWvKD1TklytrrP2z43APenQDIX
- xYImm0+56j9Bw==
+ b=hs60DmJUdPqFhpK0PlioTPj/kRvct5XGLFK5rKGlyBP2mpSXBXPd8MxGmVfUuRj3w
+ mHMtTlLpcP9iu3sfs//x7WyoEsq/7MoX9ZgQXFKwJcppp2Xtg3v0XYo0oEnCu5mioR
+ 6vN5DQWqPV5wCagPf2oFpS102KNCKCrY4lL7a8J3N6JPAfHhAI1GItG1TyV+qhu3pa
+ olQLAiti65YZauTYiKpbgu5vY5N3kfGcAfmw8HaUTn4GV2KPiDhUqP1FZ6jA1/pqMz
+ VFfK05cNyZd0QDehV4L3wckTuEm8jkHRjzpRjr1hR6dO8ShkxxLjk1Gf757mSAHmI4
+ 9aYF+i2SGyXVg==
 To: Zorro Lang <zlang@kernel.org>,
 	fstests@vger.kernel.org
-Date: Tue, 11 Mar 2025 16:04:26 +0800
-Message-ID: <20250311080430.3696582-2-chao@kernel.org>
+Date: Tue, 11 Mar 2025 16:04:28 +0800
+Message-ID: <20250311080430.3696582-4-chao@kernel.org>
 X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
 In-Reply-To: <20250311080430.3696582-1-chao@kernel.org>
 References: <20250311080430.3696582-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1trubT-00050g-A4
-Subject: [f2fs-dev] [PATCH v3 2/6] common/config: export F2FS_INJECT_PROG
+X-Headers-End: 1trubb-00051w-Fw
+Subject: [f2fs-dev] [PATCH v3 4/6] common/rc: use -f for mkfs.f2fs by default
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,35 +80,45 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, David Disseldorp <ddiss@suse.de>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-export F2FS_INJECT_PROG w/ inject.f2fs, it can be used for fault injection.
+Otherwise, mkfs will fail due to there is an existing filesystem
+in the image.
 
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Reviewed-by: David Disseldorp <ddiss@suse.de>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
 v3:
-- no changes
- common/config | 1 +
- 1 file changed, 1 insertion(+)
+- split change from f2fs/009, and cover both _scratch_mkfs() and
+_try_scratch_mkfs_sized()
+ common/rc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/common/config b/common/config
-index aa525825..7d017a05 100644
---- a/common/config
-+++ b/common/config
-@@ -316,6 +316,7 @@ export MKFS_BTRFS_PROG=$(set_mkfs_prog_path_with_opts btrfs)
- export MKFS_F2FS_PROG=$(set_mkfs_prog_path_with_opts f2fs)
- export DUMP_F2FS_PROG=$(type -P dump.f2fs)
- export F2FS_IO_PROG=$(type -P f2fs_io)
-+export F2FS_INJECT_PROG=$(type -P inject.f2fs)
- export BTRFS_UTIL_PROG=$(type -P btrfs)
- export BTRFS_SHOW_SUPER_PROG=$(type -P btrfs-show-super)
- export BTRFS_CONVERT_PROG=$(type -P btrfs-convert)
+diff --git a/common/rc b/common/rc
+index ca755055..23b642f4 100644
+--- a/common/rc
++++ b/common/rc
+@@ -993,7 +993,7 @@ _scratch_mkfs()
+ 		mkfs_filter="grep -v -e ^Warning: -e \"^mke2fs \""
+ 		;;
+ 	f2fs)
+-		mkfs_cmd="$MKFS_F2FS_PROG"
++		mkfs_cmd="$MKFS_F2FS_PROG -f"
+ 		mkfs_filter="cat"
+ 		;;
+ 	ocfs2)
+@@ -1336,7 +1336,7 @@ _try_scratch_mkfs_sized()
+ 	f2fs)
+ 		# mkfs.f2fs requires # of sectors as an input for the size
+ 		local sector_size=`blockdev --getss $SCRATCH_DEV`
+-		$MKFS_F2FS_PROG $MKFS_OPTIONS "$@" $SCRATCH_DEV `expr $fssize / $sector_size`
++		$MKFS_F2FS_PROG -f $MKFS_OPTIONS "$@" $SCRATCH_DEV `expr $fssize / $sector_size`
+ 		;;
+ 	tmpfs)
+ 		local free_mem=`_free_memory_bytes`
 -- 
 2.48.1
 
