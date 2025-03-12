@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 019DBC28B28
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Mar 2025 03:11:22 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2FA6BC28B28
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Mar 2025 03:28:53 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tsCV7-0007Jn-9R;
-	Wed, 12 Mar 2025 03:11:22 +0000
+	id 1tsCm3-0005bV-UH;
+	Wed, 12 Mar 2025 03:28:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1tsCUy-0007Iz-9w
+ (envelope-from <chao@kernel.org>) id 1tsClw-0005bJ-1v
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Mar 2025 03:11:13 +0000
+ Wed, 12 Mar 2025 03:28:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dPFCF6gUxcMs97FDc+sodqLNlLCjCRIEHNoSWCuwn0g=; b=Cf6pNnHryUubFIXQljIVoVUZxi
- sdLoIrJW6Oi4WAueGfqYtpkmck84VwRlKdP7putEBfe+MuixuumYXFcee4UHittlcSOS4mqtBX1Pk
- L2UikWW8mYAhyp2Faf2SJdiVLaWTxL58JPTSVNuuTj/JVkOthU97Y0JLitxIt1jLevCg=;
+ bh=Rb269HAgWD2khN36YGd6sHBpnFOKFKBKi07OYBHydE0=; b=f56ou68eJMJAVbL4NTl7rleWoJ
+ uNMxTXLZ5sBMFsZ1kk/9lVhN3cmkncsaXi2YReW6/KI9yGygnff420b208j/00hRTYQbWVTxzQ/1z
+ BtqXiD1nwSkxPYrh1XU97W2lZWzoeH+9ocQX99oRyn3mjHeYjsDIDLwPoapaqKVm5VfQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -33,41 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=dPFCF6gUxcMs97FDc+sodqLNlLCjCRIEHNoSWCuwn0g=; b=U7A52ZoarkpNwvoX+nSW0r+wqD
- Y+syi83+Lw4U1M9xtphmLcbza10ep2rd1Ay91ufDuvGbThlbr/iYv4r/ItJcv2/qXY8uhis1XAyIm
- TLX77LBjZNdSWyYn96WUCn42IfW6kbT6F3yEqmsON3/QNX/NpeBY/S2Kdc6jL6DDGkko=;
+ bh=Rb269HAgWD2khN36YGd6sHBpnFOKFKBKi07OYBHydE0=; b=U+LFm8vyuZ/F4uGOj+dJWtUYWq
+ WQaVjug2rYTVjpn2glOoHTU/CIT4IWfBV6pBl4kjyKll76gOYIIkqVtn4sbZjhUiWOSi2+ruV2zXr
+ +xMK0jejHR3wDTrsVzw2vjxJkJ7fWG6X9pNY2sg+wX2s3/pnD9zizmIBXBOMyuUpBpYU=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tsCUo-0003P9-EN for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Mar 2025 03:11:13 +0000
+ id 1tsClq-0006pZ-FC for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 12 Mar 2025 03:28:43 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 4B2FD5C1A3D;
- Wed, 12 Mar 2025 03:08:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 810B7C4CEE9;
- Wed, 12 Mar 2025 03:10:50 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 4E5ED5C4041;
+ Wed, 12 Mar 2025 03:26:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA16CC4CEE3;
+ Wed, 12 Mar 2025 03:28:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1741749051;
- bh=JN9hrFcuVsm/kzMWV0C4GoKl1UA1F2QYyIAMQiXa21g=;
+ s=k20201202; t=1741750112;
+ bh=PxOjlGXYsgg1sfrevNlsLNEO99vX0xRmnLsLL6VicX0=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=KGCI2qmDF/nPuNmD95u3xguSDkH5F6psu+hRbWjekqCHHoj95yvAviTdBM99MNbnG
- x1FycFHck5Azx4EF935LOrgPIgDLYFy9KPCsENZr/5NCezNH5KhP487qzGwwtfIZbQ
- EFG2cs8yQ+O+EshhOEN5jNOmD2xAd++9NaJuyyTgJSuH3plUCXDoZOKuqojwNQGOuv
- GjJUbpzDRlc2ssFTvvrul4GviQkmGR+FTRYHLYdUO5QQaeOiB3tPGBxAN7rE4CpKwL
- sPNRCK9Y4RImPJe5wdQ0BWLBQsRyBOeOEuBWqCff/TiPNJ3VK/fD+jTAOljtbW1WTN
- 7t3z33loR4Rvg==
-Message-ID: <5f8c60ec-2186-4315-b8c2-74aee91205df@kernel.org>
-Date: Wed, 12 Mar 2025 11:10:48 +0800
+ b=uMQN6AyWQVvgwWI+4qw+lfQtz9+G6FLfTx0xm7UIHiQJ/oMIe+NtwWEotvMWyI9W2
+ a9Lqf+8E/WwFWM9PNSv+jzidILlibZ9prsMDjC6IrmjoLG2TnmIjgPajdSv7iSDFtS
+ towLhOmlMLrMRKZ3TloaT7/J6rtF/6IOtgtml4mRaPbK8EKgfFhoNaJ+hWdsS6Juno
+ CrrG02tdRSZ3FmPHSemCWXlke/0wdiQVPxRwr2JcUc3xcCMjphYOdkR4o2NeBZYLG6
+ OPLFg+ojIjSZweTDI4LLv9YEl74+q9fGu7MqjRVRUaDLydEblebP8G7J2L1OhFMKNy
+ Qazde3YH2tDPw==
+Message-ID: <d46a65f4-e755-4899-aead-bc2bd4f69b00@kernel.org>
+Date: Wed, 12 Mar 2025 11:28:29 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Eric Sandeen <sandeen@redhat.com>, linux-f2fs-devel@lists.sourceforge.net
 References: <20250303172127.298602-1-sandeen@redhat.com>
- <20250303172127.298602-4-sandeen@redhat.com>
+ <20250303172127.298602-5-sandeen@redhat.com>
 Content-Language: en-US
-In-Reply-To: <20250303172127.298602-4-sandeen@redhat.com>
-X-Headers-End: 1tsCUo-0003P9-EN
-Subject: Re: [f2fs-dev] [PATCH 3/9] f2fs: factor out an f2fs_default_check
- function
+In-Reply-To: <20250303172127.298602-5-sandeen@redhat.com>
+X-Headers-End: 1tsClq-0006pZ-FC
+Subject: Re: [f2fs-dev] [PATCH 4/9] f2fs: make INLINECRYPT a mount option
+ flag
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,75 +90,14 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 On 3/4/25 01:12, Eric Sandeen wrote:
 > From: Eric Sandeen <sandeen@sandeen.net>
 > 
-> The current options parsing function both parses options and validates
-> them - factor the validation out to reduce the size of the function and
-> make transition to the new mount API possible, because under the new mount
-> API, options are parsed one at a time, and cannot all be tested at the end
-> of the parsing function.
+> Set INLINECRYPT into sbi during parsing, and transfer it to the sb in
+> fill_super, so that an sb is not required during option parsing.
 > 
 > Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-> ---
->  fs/f2fs/super.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 29b3aa1ee99c..7cfd5e4e806e 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -687,7 +687,7 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
->  	int ret;
->  
->  	if (!options)
-> -		goto default_check;
 
-Eric, do you know in which condition options can be NULL, mount w/o any
-specified options?
-
-If so, maybe we'd keep this in order to chech whether default options
-generated from default_options() is conflicted or not? What do you think?
+Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
-
-> +		return 0;
->  
->  	while ((p = strsep(&options, ",")) != NULL) {
->  		int token;
-> @@ -1318,7 +1318,11 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
->  			return -EINVAL;
->  		}
->  	}
-> -default_check:
-> +	return 0;
-> +}
-> +
-> +static int f2fs_default_check(struct f2fs_sb_info *sbi)
-> +{
->  #ifdef CONFIG_QUOTA
->  	if (f2fs_check_quota_options(sbi))
->  		return -EINVAL;
-> @@ -2364,6 +2368,10 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->  	}
->  #endif
->  
-> +	err = f2fs_default_check(sbi);
-> +	if (err)
-> +		goto restore_opts;
-> +
->  	/* flush outstanding errors before changing fs state */
->  	flush_work(&sbi->s_error_work);
->  
-> @@ -4489,6 +4497,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  	if (err)
->  		goto free_options;
->  
-> +	err = f2fs_default_check(sbi);
-> +	if (err)
-> +		goto free_options;
-> +
->  	sb->s_maxbytes = max_file_blocks(NULL) <<
->  				le32_to_cpu(raw_super->log_blocksize);
->  	sb->s_max_links = F2FS_LINK_MAX;
-
 
 
 _______________________________________________
