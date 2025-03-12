@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 23413C28B28
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Mar 2025 03:30:58 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0332EC28B28
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Mar 2025 03:31:37 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tsCo4-0008PH-V9;
-	Wed, 12 Mar 2025 03:30:57 +0000
+	id 1tsCok-0008O7-8V;
+	Wed, 12 Mar 2025 03:31:37 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1tsCnw-0008P3-Q0
+ (envelope-from <chao@kernel.org>) id 1tsCoi-0008Nx-Tn
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Mar 2025 03:30:49 +0000
+ Wed, 12 Mar 2025 03:31:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZCqo2vOpN5bfsM8TrSXASjTUvj7UHazRbGNzpUUf/P0=; b=CJm+/E1XkHzPRUV/s8ujMF2Ow2
- eYTKP/s+CyXd98lyy6T+6NZ+n5spVt6EheWQmTQU5rB3DLI2fbE5MRCRkHYJK1cq2YZBU5iS6EQKK
- Ad0mcz0DPFv+jsZk4mxrlPc45ReAnPxxwvtGU+G8zsednT4SPZVBIBjgsbDMJ2dNmrZ8=;
+ bh=egPaMpCQU+tFLwdkClcuW3SKLxZx91aJHF9GhxtJScM=; b=WNpgdVIXaK0HuhLjPyeJ1UhQAI
+ cwBcnQPUHsDdowAlR+fQd+p37HidWMmHKGCRh6o5HPYWG9v7UIVlob3qOPEdpWIKCFvMqcyh9Rrd2
+ dkHUjXgdKVwiSxHF3pZfzkrPm7mEN/Dx5J+GMnSdULoxDRtRRwIr7NuGoPOLWjsHyA+s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -33,40 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ZCqo2vOpN5bfsM8TrSXASjTUvj7UHazRbGNzpUUf/P0=; b=AuBXrWqu4bR68FSaLSbbKrYO7/
- nBnDH0RGJqirNu5luE+3/dC+puRwr4+2fwsgub2A5UUKCsbbkNrUDzUAilWOnD2ZzmZ2qleqtrYp5
- 83IIIT+s44/RAAdfBwPnEIePrLaS7bz5SjrIOhzWsadUXxyVofdpecWuRsJFqnyutnL4=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ bh=egPaMpCQU+tFLwdkClcuW3SKLxZx91aJHF9GhxtJScM=; b=CbQYscvuQEJEr6Mg99kDQ6YuwI
+ +pr0YLO3dz5g3mS3rTU0Qp/flqEXqAmWpLFCymeCcQsHHxZTHMa+xhTCfYR9EC3dRu2Oub+lAebf7
+ cmLib6HxAYc2Quy7fwI+L1aVTfZwB4MFfFjeruQ9uaKiXhdYcYgeCB89TzAnL98ett/M=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tsCnw-0007I5-R5 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Mar 2025 03:30:49 +0000
+ id 1tsCoU-0007Q2-Ju for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 12 Mar 2025 03:31:33 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 2918DA46CCE;
- Wed, 12 Mar 2025 03:25:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6C22C4CEE3;
- Wed, 12 Mar 2025 03:30:36 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 77A035C48C6;
+ Wed, 12 Mar 2025 03:28:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01119C4CEE3;
+ Wed, 12 Mar 2025 03:31:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1741750237;
- bh=BELT6CDxjQ/If9Mrg5ejaES1naMln9mZRDL1yyCMao0=;
+ s=k20201202; t=1741750272;
+ bh=OZfavFvPSRew3S6ScA/hZQNXUX/p8PazPQ2mpZ6NtkY=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=EKwivp4Bt7WuKaV1xySF+8TMekjw5w0oDEWagcuKZ2vstVd6FpFMFn3C0ZdbH7IdB
- mwmW86IPHjNrtAF/hihVkKUT4RUPKbeksdz68vLFAKEIdSK/kuKqtc/BKbwVarSWfY
- BPLYhib/TuSDGvMHjDoi8RvwP4kvUSoTOkeIDfyuOvGhzE3+xNraQYAfurxMJ1zBHA
- NVwwcTDh6zXTceX1HPHnZHA6EIBxmp/+j+HwEkH6D6DRjw4JsQPvHwIgMoh87Ed8m7
- PiNjkXRL5qzcviQ6QeGVarUbhEbGJxPxnGqxKeTAFaWqGY2avjanzNkxrVuK54tW0U
- xhIAzv0xlTJGw==
-Message-ID: <fe455fcc-9feb-4952-b089-2198a586aa1f@kernel.org>
-Date: Wed, 12 Mar 2025 11:30:33 +0800
+ b=g/CFEg4NUbTKMI8+SSUmLEC3wO4VFnXodYlVzydNB2xgp2Jms0QGjvJ2fctopibnW
+ lhyGhDrfHC1FUAGBParKELmrkjOpR0TSiFHRn+8RPcAfRPo9rHcfmt2B6WNlM1Uy/l
+ gUAFhtoL8WXNt3vJutmqnXX1+fZaaMD1XPGEPKBBj1qPTK3dkC9fuOobb4JW6u06lf
+ BRmSvA867+qrn1czEZ/ergc226KZxbQrND4ohV56zH7aMAa5BceAU2sz580476AVYA
+ kbPSSj1Wk6pBIvwGW3I5Z2TcoxFnBTB6eZtvhZVT8jQg8zmfWLAQQbNFoLYtP7O090
+ pcITioCkKe4MQ==
+Message-ID: <2224cd48-5adc-444c-9141-5e26c9eee77b@kernel.org>
+Date: Wed, 12 Mar 2025 11:31:09 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Eric Sandeen <sandeen@redhat.com>, linux-f2fs-devel@lists.sourceforge.net
 References: <20250303172127.298602-1-sandeen@redhat.com>
- <20250303172127.298602-6-sandeen@redhat.com>
+ <20250303172127.298602-7-sandeen@redhat.com>
 Content-Language: en-US
-In-Reply-To: <20250303172127.298602-6-sandeen@redhat.com>
-X-Headers-End: 1tsCnw-0007I5-R5
-Subject: Re: [f2fs-dev] [PATCH 5/9] f2fs: make LAZYTIME a mount option flag
+In-Reply-To: <20250303172127.298602-7-sandeen@redhat.com>
+X-Headers-End: 1tsCoU-0007Q2-Ju
+Subject: Re: [f2fs-dev] [PATCH 6/9] f2fs: Pass sbi rather than sb to
+ f2fs_set_test_dummy_encryption
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,12 +87,7 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 3/4/25 01:12, Eric Sandeen wrote:
-> Set LAZYTIME into sbi during parsing, and transfer it to the sb in
-> fill_super, so that an sb is not required during option parsing.
-> 
-> (Note: While lazytime is normally handled via mount flag in the vfs,
-> some f2fs users do expect to be able to use it as an explicit mount
-> option string via the mount syscall, so this option must remain.)
+> This removes another sb instance from parse_options()
 > 
 > Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 
