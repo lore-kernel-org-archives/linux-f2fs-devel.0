@@ -4,68 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4F425C28B2F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Mar 2025 22:22:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BA336C282EC
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Mar 2025 22:30:11 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ttDPk-0001Tp-Cd;
-	Fri, 14 Mar 2025 22:22:00 +0000
+	id 1ttDXf-0002GV-4X;
+	Fri, 14 Mar 2025 22:30:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1ttDPj-0001Tj-6H
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1ttDXd-0002GN-Qc
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Mar 2025 22:21:59 +0000
+ Fri, 14 Mar 2025 22:30:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ivQn2WwHohzkMtNxCOJ0M6XkGvOtIV9+bdbVpzvMgEU=; b=MQBd1leD5oGASkBCKigf8rsUGb
- JW32BAOrf5dl+ilfP7yY002UQinynHGBGsgOiFPVzbDnpQLp0Z/SrUC5ATwZ9shyv5g4Jq+7YMnyh
- e0vm3P+YTRvihuLRX3gKMQSWgG+8fKznltl8l0n5Dhlf0XF5MMSEHQgOEo8PsHiTUj58=;
+ bh=cM1wyMGZgOBjTNaXrF/bnhitF/Jwqw5UH8fS6yl02HA=; b=MyvHWouaoSC6r/ltC8VTbdtw/6
+ KBcbAZL/i5A4Qd5Ea41WBX/p5H+tsmSNeqEUEofpVLpnPHMm8H71KNK45j5oEczD2bBdvwt4OWhDn
+ ID82IQtbCo1NHdXNbZrYZ5ki3uy2AXXicErtzkMobFNzx7Wuf55uMukovhz2eBBvKiIw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=ivQn2WwHohzkMtNxCOJ0M6XkGvOtIV9+bdbVpzvMgEU=; b=LIxnno9p6cO8uc1RszccNMzU6E
- U5n15JN6tJbLIbbETiBG0XmnX8krkTr6Q2adFv0C5eZbMfsk/djpVpbu4vnOsruAajI1KELMR1Zwg
- uvpjyeMffC0HWkitvR7z0VBx3xAbHpu2u0I3x92la+ECZ87P5EX6jM0XSqF2/vc5dJyg=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=cM1wyMGZgOBjTNaXrF/bnhitF/Jwqw5UH8fS6yl02HA=; b=EfFyAJyKr+TeoxO+D3JavhIRLO
+ kWizvwjWUqDZ9bsscruULBIM+wuIPexYZIqshzbmXV4wBV13p+RV5yExkG80rtJHu5KYiNS7U1UlF
+ OkmaENYZQ2A4MGFqRSw8pyc6p19ZWZBEYhCiDp1QGcZyTnkZl89GiD4GiNAVixGGJ2Fg=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ttDPd-0007GU-U8 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Mar 2025 22:21:59 +0000
+ id 1ttDXd-0007iz-6w for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 14 Mar 2025 22:30:09 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id B47425C55F4;
- Fri, 14 Mar 2025 22:19:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDED3C4CEE3;
- Fri, 14 Mar 2025 22:21:42 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 05D115C5402;
+ Fri, 14 Mar 2025 22:27:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EDA3C4CEE9;
+ Fri, 14 Mar 2025 22:29:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1741990903;
- bh=yXi4VV69OQ5J9Ch0qeBs+FaNnX2iPv7Ofe2QeSUOJQc=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=JPZyqGBdCCTlOuxqJOyOY/F0hpQQiyf/XDttYCvQLw/W9A2dB1OJBCexbEKyxnRhb
- V9Q5RpWD76b2LnGmJJMcyBdR6o9wxyND4oBSnPADxB5XokeViyyViTk4LgUVfteA2O
- tfi4zJdH4WZ1Bw/ZTnx7+ib2S8kxb8Roxgi7EMgKNg2mNQRhGQLUAdY6bXHyRbVyh0
- C2IgJkvfxcERKbZNyr/Fwy5qVf+VUboQatcnUpHi97UDaI4dVoCQUytBLCYd/ZA6w8
- rtvvHhEC/hICWn7/PsPG6AS2kj1XN9G0pfkLUer+mJKsBjFh/hWovJwyKAl5CH/mM/
- YkP6WZZoYMKAQ==
-Date: Fri, 14 Mar 2025 22:21:41 +0000
-To: Yeongjin Gil <youngjin.gil@samsung.com>
-Message-ID: <Z9Sr9cjNGHkOM74n@google.com>
-References: <CGME20250314120658epcas1p2d3ec037c294d4c907ce7fa2fe1c3aa27@epcas1p2.samsung.com>
- <20250314120651.443184-1-youngjin.gil@samsung.com>
- <Z9SkqFP93rWQrffm@google.com>
+ s=k20201202; t=1741991398;
+ bh=ZVN1gXmayXjszbtmz2X55ie4YM/+jBh6LnYxP8usMAk=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=XoJJWhnxgbgyUBrWJ+Q0You4CIaneFkMJfxD57iTPu0ZYE4H6jNLvbZUbzoDzTmoN
+ tc81Nwwj8vA8n3CVuM8ljmX6Ux31/XiPVU9rse7sit70yDydfTlCdM3iOS+04LhdFu
+ vKPhDhYTvyld1Wg3iGnQw0MMoAw0huMsy6ELDjLHRBDKdhinv8O9P2OYC/PzCV+lAw
+ PAE3G1WMDLyL0RXO55CL9kkavgZal8n/6L6YehkFkP8XVxBQeUDfkjTtOponGswDBA
+ AH8jzZpWY7AipGXgsm7QdlKOid5oX/Yoag3erxpmMxzXtphsTGWpAxrFf5ICrZVrCf
+ YMlvmkWPtV+gg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+ by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
+ 70F22380CFE7; Fri, 14 Mar 2025 22:30:34 +0000 (UTC)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <Z9SkqFP93rWQrffm@google.com>
-X-Headers-End: 1ttDPd-0007GU-U8
+Message-Id: <174199143325.2405968.380584551658170427.git-patchwork-notify@kernel.org>
+Date: Fri, 14 Mar 2025 22:30:33 +0000
+References: <20250314120651.443184-1-youngjin.gil@samsung.com>
+In-Reply-To: <20250314120651.443184-1-youngjin.gil@samsung.com>
+To: Yeongjin Gil <youngjin.gil@samsung.com>
+X-Headers-End: 1ttDXd-0007iz-6w
 Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid atomicity corruption of
  atomic file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -79,89 +78,44 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, daehojeong@google.com,
- linux-kernel@vger.kernel.org, sj1557.seo@samsung.com
+From: patchwork-bot+f2fs--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: daehojeong@google.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
+ sj1557.seo@samsung.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 03/14, Jaegeuk Kim wrote:
-> On 03/14, Yeongjin Gil wrote:
-> > In the case of the following call stack for an atomic file,
-> > FI_DIRTY_INODE is set, but FI_ATOMIC_DIRTIED is not subsequently set.
-> > 
-> > f2fs_file_write_iter
-> >   f2fs_map_blocks
-> >     f2fs_reserve_new_blocks
-> >       inc_valid_block_count
-> >         __mark_inode_dirty(dquot)
-> >           f2fs_dirty_inode
-> > 
-> > If FI_ATOMIC_DIRTIED is not set, atomic file can encounter corruption
-> > due to a mismatch between old file size and new data.
-> > 
-> > To resolve this issue, I changed to set FI_ATOMIC_DIRTIED when
-> > FI_DIRTY_INODE is set. This ensures that FI_DIRTY_INODE, which was
-> > previously cleared by the Writeback thread during the commit atomic, is
-> > set and i_size is updated.
-> > 
-> > Fixes: fccaa81de87e ("f2fs: prevent atomic file from being dirtied before commit")
-> > Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
-> > Reviewed-by: Sunmin Jeong <s_min.jeong@samsung.com>
-> > Signed-off-by: Yeongjin Gil <youngjin.gil@samsung.com>
-> > ---
-> >  fs/f2fs/inode.c | 4 +---
-> >  fs/f2fs/super.c | 4 ++++
-> >  2 files changed, 5 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > index aa2f41696a88..83f862578fc8 100644
-> > --- a/fs/f2fs/inode.c
-> > +++ b/fs/f2fs/inode.c
-> > @@ -34,10 +34,8 @@ void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
-> >  	if (f2fs_inode_dirtied(inode, sync))
-> >  		return;
-> >  
-> > -	if (f2fs_is_atomic_file(inode)) {
-> > -		set_inode_flag(inode, FI_ATOMIC_DIRTIED);
-> > +	if (f2fs_is_atomic_file(inode))
-> >  		return;
-> > -	}
-> >  
-> >  	mark_inode_dirty_sync(inode);
-> >  }
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 397df271885c..c08d52c6467a 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -1534,6 +1534,10 @@ int f2fs_inode_dirtied(struct inode *inode, bool sync)
-> >  		inc_page_count(sbi, F2FS_DIRTY_IMETA);
-> >  	}
-> >  	spin_unlock(&sbi->inode_lock[DIRTY_META]);
-> > +
-> > +	if (!ret && f2fs_is_atomic_file(inode))
-> > +		set_inode_flag(inode, FI_ATOMIC_DIRTIED);
-> > +
-> 
-> I'm not sure what's different here.
-> 
-> Before and after this patch, set_inode_flag(inode, FI_ATOMIC_DIRTIED) is called
-> only if f2fs_inode_dirtied() returns zero and f2fs_is_atomic_file(inode).
-> 
-> Note, f2fs_mark_inode_dirty_sync() looks the single caller of f2fs_inode_dirtied.
+Hello:
 
-Ok, I missed another caller, f2fs_dirty_inode, per discussion with Daeho.
-Let me apply this.
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
+On Fri, 14 Mar 2025 21:06:51 +0900 you wrote:
+> In the case of the following call stack for an atomic file,
+> FI_DIRTY_INODE is set, but FI_ATOMIC_DIRTIED is not subsequently set.
 > 
+> f2fs_file_write_iter
+>   f2fs_map_blocks
+>     f2fs_reserve_new_blocks
+>       inc_valid_block_count
+>         __mark_inode_dirty(dquot)
+>           f2fs_dirty_inode
 > 
-> >  	return ret;
-> >  }
-> >  
-> > -- 
-> > 2.34.1
+> [...]
+
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix to avoid atomicity corruption of atomic file
+    https://git.kernel.org/jaegeuk/f2fs/c/c60b556bfe0a
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
 
 _______________________________________________
