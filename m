@@ -4,69 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BA336C282EC
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EAA7AC28B30
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Mar 2025 22:30:11 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ttDXf-0002GV-4X;
-	Fri, 14 Mar 2025 22:30:11 +0000
+	id 1ttDXf-0004Mj-6c;
+	Fri, 14 Mar 2025 22:30:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1ttDXd-0002GN-Qc
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1ttDXd-0004Ma-HR
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Mar 2025 22:30:09 +0000
+ Fri, 14 Mar 2025 22:30:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cM1wyMGZgOBjTNaXrF/bnhitF/Jwqw5UH8fS6yl02HA=; b=MyvHWouaoSC6r/ltC8VTbdtw/6
- KBcbAZL/i5A4Qd5Ea41WBX/p5H+tsmSNeqEUEofpVLpnPHMm8H71KNK45j5oEczD2bBdvwt4OWhDn
- ID82IQtbCo1NHdXNbZrYZ5ki3uy2AXXicErtzkMobFNzx7Wuf55uMukovhz2eBBvKiIw=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=0LGGXe9J5FDTEKAzz4JE6ZtchzPqRTi34G6+zjtHCBc=; b=cQm3OSVsNbMlasSIhu7OiMd/zP
+ qFDL/pn6FBRQp+4RLGUO0ufVP36vSBGP6CA9UVXtXiVcY9nqMSbfo8QCBSWEt6b5yKoSEFG1SYwAh
+ wftj+zv0CccOP4FIfpkYdRKhYMnSwRPWN//BPbMo8LuBbMrGk0zaqL8+Ngfsj039lJRQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cM1wyMGZgOBjTNaXrF/bnhitF/Jwqw5UH8fS6yl02HA=; b=EfFyAJyKr+TeoxO+D3JavhIRLO
- kWizvwjWUqDZ9bsscruULBIM+wuIPexYZIqshzbmXV4wBV13p+RV5yExkG80rtJHu5KYiNS7U1UlF
- OkmaENYZQ2A4MGFqRSw8pyc6p19ZWZBEYhCiDp1QGcZyTnkZl89GiD4GiNAVixGGJ2Fg=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ ;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=0LGGXe9J5FDTEKAzz4JE6ZtchzPqRTi34G6+zjtHCBc=; b=A
+ qQcIWCzQD/U7KHo8B6pdS4vPXpMo1UkbYzGFoLLitZndXuidYEX9br3+O9cRuCRPeGq9wnMpmv9aM
+ YXQ6DORhlaINRCpoBB17RwgomrnbVkCpVv8kucgBVWo7za9n89sf9mClt+HsPfR8LfvaRfsDitmDd
+ sbJYWnvrYQuGB7Gs=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ttDXd-0007iz-6w for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Mar 2025 22:30:09 +0000
+ id 1ttDXX-0007iN-99 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 14 Mar 2025 22:30:08 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 05D115C5402;
- Fri, 14 Mar 2025 22:27:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EDA3C4CEE9;
- Fri, 14 Mar 2025 22:29:58 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id D025BA48939
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 14 Mar 2025 22:24:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D0C7C4CEE3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 14 Mar 2025 22:29:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1741991398;
- bh=ZVN1gXmayXjszbtmz2X55ie4YM/+jBh6LnYxP8usMAk=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=XoJJWhnxgbgyUBrWJ+Q0You4CIaneFkMJfxD57iTPu0ZYE4H6jNLvbZUbzoDzTmoN
- tc81Nwwj8vA8n3CVuM8ljmX6Ux31/XiPVU9rse7sit70yDydfTlCdM3iOS+04LhdFu
- vKPhDhYTvyld1Wg3iGnQw0MMoAw0huMsy6ELDjLHRBDKdhinv8O9P2OYC/PzCV+lAw
- PAE3G1WMDLyL0RXO55CL9kkavgZal8n/6L6YehkFkP8XVxBQeUDfkjTtOponGswDBA
- AH8jzZpWY7AipGXgsm7QdlKOid5oX/Yoag3erxpmMxzXtphsTGWpAxrFf5ICrZVrCf
- YMlvmkWPtV+gg==
+ s=k20201202; t=1741991397;
+ bh=EFDVYyDgEQesBVh7LtOLuEKLcxG0TJsTZtGfuVdMZuc=;
+ h=Subject:From:Date:To:From;
+ b=DA6E/0rqERWIqhYNw7MFjkJI7RM3duo11uDHtBxiemWbFVtC2pGTa0jZxsXC5qXJ5
+ 8J7Y+c3ebpF7jqXx3uCXsC+7mDou2APHhzWUV4JvfOs7FlHJICZGUGvKsq5Zc11s+4
+ QAnCVSVJP0JxI9STGKUBCzwWusBL0wNvTGu57ZFj3ACR/gys9VSyxkykZESnh1oHvN
+ ycndW1cj3vYEsnMokDw1uwI0G2VOpfqks+NzlVaL6k3EYGL+1A3x7zorAPmncTrj1f
+ 5djfLWdqmXsK2XacGqz3n1WWPJDrshl9hiFwmFZSlzOYzI+svUW5UJZOgnfZdh4ezd
+ JCe/VwmeU7tFA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 70F22380CFE7; Fri, 14 Mar 2025 22:30:34 +0000 (UTC)
+ 3747E380CFE7 for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 14 Mar 2025 22:30:33 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <174199143325.2405968.380584551658170427.git-patchwork-notify@kernel.org>
-Date: Fri, 14 Mar 2025 22:30:33 +0000
-References: <20250314120651.443184-1-youngjin.gil@samsung.com>
-In-Reply-To: <20250314120651.443184-1-youngjin.gil@samsung.com>
-To: Yeongjin Gil <youngjin.gil@samsung.com>
-X-Headers-End: 1ttDXd-0007iz-6w
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid atomicity corruption of
- atomic file
+Message-Id: <174199143189.2405968.13205296260052227378.git-patchwork-summary@kernel.org>
+Date: Fri, 14 Mar 2025 22:30:31 +0000
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1ttDXX-0007iN-99
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,36 +82,24 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: daehojeong@google.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
- sj1557.seo@samsung.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-On Fri, 14 Mar 2025 21:06:51 +0900 you wrote:
-> In the case of the following call stack for an atomic file,
-> FI_DIRTY_INODE is set, but FI_ATOMIC_DIRTIED is not subsequently set.
-> 
-> f2fs_file_write_iter
->   f2fs_map_blocks
->     f2fs_reserve_new_blocks
->       inc_valid_block_count
->         __mark_inode_dirty(dquot)
->           f2fs_dirty_inode
-> 
-> [...]
+Patch: [f2fs-dev] f2fs: fix to avoid atomicity corruption of atomic file
+  Submitter: Yeongjin Gil <youngjin.gil@samsung.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=943954
+  Lore link: https://lore.kernel.org/r/20250314120651.443184-1-youngjin.gil@samsung.com
 
-Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to avoid atomicity corruption of atomic file
-    https://git.kernel.org/jaegeuk/f2fs/c/c60b556bfe0a
 
-You are awesome, thank you!
+Total patches: 1
+
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
