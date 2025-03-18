@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7D24FC28B30
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Mar 2025 01:18:33 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BBE07C282EC
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Mar 2025 01:18:56 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tuLbE-0007z4-Be;
-	Tue, 18 Mar 2025 01:18:31 +0000
+	id 1tuLbc-0006kA-CW;
+	Tue, 18 Mar 2025 01:18:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1tuLbD-0007yw-1a
+ (envelope-from <chao@kernel.org>) id 1tuLbb-0006k1-EI
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Mar 2025 01:18:30 +0000
+ Tue, 18 Mar 2025 01:18:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=sDiOO/ddaZrM4JsWcaUfQSmbtWSKN1NyYCBVynSPkPU=; b=AVgI+BXz97y9FKFgHF9VRaO74R
- WrMC7GA4PHrjQYHbIs5gVKUN5fCO4PMlSs1faFBfNCdnjSsA/65Ry2P3X0vIXvEri4c3qSmgvs59n
- PY6hGVYb9YB2AaKN4OJkPh+HR5nDJKBSmIPac5GP+u2QMhOMDLXULWT2/f4Fs6G00vSg=;
+ bh=X2KJLwjkRG/UWj7qsWSfpguxvBDPT8z/siscjV75OsQ=; b=KORNfrlwaxNeESp6JV+98j1rs4
+ qYj03rTmGuotyyILWOwW+29e65IudVisgDTKeezwRBeDMvq4FPAuIPTdUObTB+NqmR2PB+BbXkGv+
+ 5aGKseq8K49m4Yrh3DLkJs2HE/LgwQlgimAgIy+vMhtjinUVskFjzyfMeVIH1H73hYSM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -33,39 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=sDiOO/ddaZrM4JsWcaUfQSmbtWSKN1NyYCBVynSPkPU=; b=MzafpwSOAE1WPmaUWdz8YFaQ9S
- H0jjhUf/fUYhM4DTKxBxrYADU5F9NWYvxYtzvnu3NCyAxo7stBUZMWdG0nDY/jEKrfaQd2OjyS0F5
- 0RIbSkLXh+2jgqqtHSXXy95/zo/Bw/lmtM80osdzAmV9+9elWT7xskB5RZV/Tc87XX9U=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=X2KJLwjkRG/UWj7qsWSfpguxvBDPT8z/siscjV75OsQ=; b=gce/uvy8IDOD/rpEhmu6IJvfLa
+ XwH+jK88E09/BSgfYaHkpQSowTvpy4Ava8SZu4GxAr+np1cJjpadvWJvjUJoXXeC2JB1IiiW8eviw
+ wtDdKz+UwyMwuEIPI7xQGeKk0gpCYGD0Y9zH5gGNzSlx8j79Px/gKJ1wldq4AAD8zAQ0=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tuLbB-0006Iq-Qh for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Mar 2025 01:18:30 +0000
+ id 1tuLba-0006Jk-NP for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 18 Mar 2025 01:18:55 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 8749F5C5470;
- Tue, 18 Mar 2025 01:16:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D54A5C4CEE3;
- Tue, 18 Mar 2025 01:18:17 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id 545D6A41AAB;
+ Tue, 18 Mar 2025 01:13:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7AD1C4CEE3;
+ Tue, 18 Mar 2025 01:18:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1742260699;
- bh=fMFPVorHOCpjg8ERi+zcOuznXgzdX23/BT/u3O+grH8=;
+ s=k20201202; t=1742260723;
+ bh=YSMbJQm0dtkQCgXKxD1IBYJdlWjjJpfSyCN7la2UKg8=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=OMdkQrR98Qcpvubm+QWe38fF8n7fs9ZDTIHcBVb9ta7m1xM+Lpue5wvUnuw5OshEf
- Dhl8qeKhUkaPSAA2EjFgIL3XO+NOBlEZxLIv5wX1+IZ4pP9LwQ1Y3jeC6g3u+CmIlN
- d2FoVgpnjdsjiFr4qtjbtyKfR1m4Ngyoj67Tgu02OMkTwGSpqWP5IS7E1EejEjuH0r
- 5KZbtRTiBcZQ++q5QPGnrj3ItAJbRMWkjkKVrfp3FkxhvLj4VmcB/bJoAUPNJADqIg
- sE+eNf15l077oD0PV9GhSRDxzF+ZKCGURXfqQ71RLDy+VhourbkipyoLNY+dTYkMir
- jHjTZ3RIEkRIg==
-Message-ID: <5562d492-2ac3-4bd2-b61b-70fea4e1c330@kernel.org>
-Date: Tue, 18 Mar 2025 09:18:16 +0800
+ b=NbQtkQ8sdbI2EhaGjfAO8JcdK/s5hZsL/zi0FGzYsodq27nzkUlP+cVHPWxqnt/dr
+ 4ZbbTMlB/Ce/7GAo65RwTnz4P71hcrileui7yCA/NZSsn+uMPUKPZ5QcCZ0mMOdUg+
+ M1pA7DjA58/4fH6DJZCPX7yQUJfF4wcLe5cM5Sm7GPb+8kSf2dRzisdiOcz8NE8hom
+ K8QWHzOPt9CZo1i628dvt1KosDWVUGo0O3tjwTx2/n2J7+6OrFmF23KEysFGhlz2am
+ PwYLxJNnQeyJyWuw8HRvVPMVVT4gFxdi74tUNnBSsj1RkbO1oNHSHuGyFfgX4zU4E7
+ 3qZxCtQIv80Ow==
+Message-ID: <0cbe2a82-6e1c-425d-a967-85e4de44067d@kernel.org>
+Date: Tue, 18 Mar 2025 09:18:41 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Yohan Joung <jyh429@gmail.com>, jaegeuk@kernel.org, daeho43@gmail.com
-References: <20250317133611.457-1-yohan.joung@sk.com>
+To: Chunhai Guo <guochunhai@vivo.com>, jaegeuk@kernel.org
+References: <20250317101624.3223575-1-guochunhai@vivo.com>
 Content-Language: en-US
-In-Reply-To: <20250317133611.457-1-yohan.joung@sk.com>
-X-Headers-End: 1tuLbB-0006Iq-Qh
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: optimize f2fs DIO overwrites
+In-Reply-To: <20250317101624.3223575-1-guochunhai@vivo.com>
+X-Headers-End: 1tuLba-0006Jk-NP
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix missing discard for active
+ segments
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,12 +85,58 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 3/17/25 21:36, Yohan Joung wrote:
-> this is unnecessary when we know we are overwriting already allocated
-> blocks and the overhead of starting a transaction can be significant
-> especially for multithreaded workloads doing small writes.
+On 3/17/25 18:16, Chunhai Guo wrote:
+> During a checkpoint, the current active segment X may not be handled
+> properly. This occurs when segment X has 0 valid blocks and a non-zero
+> number of discard blocks, for the following reasons:
 > 
-> Signed-off-by: Yohan Joung <yohan.joung@sk.com>
+> locate_dirty_segment() does not mark any active segment as a prefree
+> segment. As a result, segment X is not included in dirty_segmap[PRE], and
+> f2fs_clear_prefree_segments() skips it when handling prefree segments.
+> 
+> add_discard_addrs() skips any segment with 0 valid blocks, so segment X is
+> also skipped.
+> 
+> Consequently, no `struct discard_cmd` is actually created for segment X.
+> However, the ckpt_valid_map and cur_valid_map of segment X are synced by
+> seg_info_to_raw_sit() during the current checkpoint process. As a result,
+> it cannot find the missing discard bits even in subsequent checkpoints.
+> Consequently, the value of sbi->discard_blks remains non-zero. Thus, when
+> f2fs is umounted, CP_TRIMMED_FLAG will not be set due to the non-zero
+> sbi->discard_blks.
+> 
+> Relevant code process:
+> 
+> f2fs_write_checkpoint()
+>     f2fs_flush_sit_entries()
+>          list_for_each_entry_safe(ses, tmp, head, set_list) {
+>              for_each_set_bit_from(segno, bitmap, end) {
+>                  ...
+>                  add_discard_addrs(sbi, cpc, false); // skip segment X due to its 0 valid blocks
+>                  ...
+>                  seg_info_to_raw_sit(); // sync ckpt_valid_map with cur_valid_map for segment X
+>                  ...
+>              }
+>          }
+>     f2fs_clear_prefree_segments(); // segment X is not included in dirty_segmap[PRE] and is skipped
+> 
+> This issue is easy to reproduce with the following operations:
+> 
+> root # mkfs.f2fs -f /dev/f2fs_dev
+> root # mount -t f2fs /dev/f2fs_dev /mnt_point
+> root # dd if=/dev/blk_dev of=/mnt_point/1.bin bs=4k count=256
+> root # sync
+> root # rm /mnt_point/1.bin
+> root # umount /mnt_point
+> root # dump.f2fs /dev/f2fs_dev | grep "checkpoint state"
+> Info: checkpoint state = 45 :  crc compacted_summary unmount ---- 'trimmed' flag is missing
+> 
+> Since add_discard_addrs() can handle active segments with non-zero valid
+> blocks, it is reasonable to fix this issue by allowing it to also handle
+> active segments with 0 valid blocks.
+> 
+> Fixes: b29555505d81 ("f2fs: add key functions for small discards")
+> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
 
 Reviewed-by: Chao Yu <chao@kernel.org>
 
