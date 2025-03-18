@@ -4,68 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BE413C282EC
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Mar 2025 01:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 32FD7C282EC
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Mar 2025 03:13:09 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tuLmf-0008F0-1F;
-	Tue, 18 Mar 2025 01:30:20 +0000
+	id 1tuNO7-0001ke-Q7;
+	Tue, 18 Mar 2025 03:13:07 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1tuLmd-0008Et-P6
+ (envelope-from <jaegeuk@kernel.org>) id 1tuNNx-0001kA-5m
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Mar 2025 01:30:19 +0000
+ Tue, 18 Mar 2025 03:12:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Klex8/oVqmjH/Pqr7IoVJH0gH3iEnAIDQzivTuGWt+A=; b=KZKDGqou5yyoYa9rqIdD0H7O0B
- /Up7aW4jJijlZQTKvwXQmQJ9RjvM0BBE2NFv8gy/mPhNfKZQxH2t86+v+SApYty0tTU+seIXysGNN
- WUC6XqjuMtKERndIyiWao5m+GkI3SVi8aovQLGLouOVai7H/XT56bUtNzJzZFnM81d0M=;
+ bh=j30EyuKRkenIwnZLLKFdhA7RoWKdbbMnCAfNnTXUd4U=; b=dvnuuAKG8SC9/4SlFn0fIyYVMQ
+ bliufeHpIfpK1ZaXf0xk2QjiDphsW+dkiIVctfELHJv4iOjQ3Q9XZ87wzxHFnvmka0WqQW9WT2O/e
+ A5D/VpRG9wxRCLf4B4Uy3XWBk1LfV6S5G33IAn+QMg9nsD6TaGujpj+YyrKHQzivviL0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Klex8/oVqmjH/Pqr7IoVJH0gH3iEnAIDQzivTuGWt+A=; b=Iy6dur3XJNcI/kNznQnWKLfS0+
- PPSipbP2sNNMsDc6TwoYXVeGeMBTvblaSMctEfZNbvtuzv7JeGc/dUMNwuILsbLHVCte1G0kg57Jb
- NQ/rlwA4pBqP+S3kFqcIbIexXJex/574kryJq7sjZMxq5VlfVNP++45p9fjSkxDCCmxk=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ ;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:To:
+ From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=j30EyuKRkenIwnZLLKFdhA7RoWKdbbMnCAfNnTXUd4U=; b=Mz4VaExXRyQGEMPMi3WgFQMwmg
+ hD/GR2EvJDNwjsFarDFGOIJgYdadQYaulh2AQxiWKaBNz5NMKZNhEEQAmPNIMKafeNKIH3VuegpBf
+ vL8AbNRFZNcYxTxjICkQZ0Msrg9RxIfGwge5M8yFuk1yP8aja4fY2aC1fd1tMqXAZklM=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tuLmS-0006sW-Hw for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Mar 2025 01:30:19 +0000
+ id 1tuNNu-0003cl-3I for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 18 Mar 2025 03:12:54 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 38FB2A48E3C;
- Tue, 18 Mar 2025 01:24:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C75DC4CEE3;
- Tue, 18 Mar 2025 01:29:57 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id CEEB95C49A0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 18 Mar 2025 03:10:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50505C4CEED
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 18 Mar 2025 03:12:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1742261397;
- bh=qODT3Q9/1WjT2glxMbxvM/9CfPGjd3ZnWgJhKz5zS2M=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=aFwdSjhQYQS2Pi0fdcGJ26rOL2ODWWEIklq2fQcvT9clt8dvsRFOQAlvgqs6JlIeu
- CbL6RmWtNJ+o2OUNMLv2TUXOj7t9dRf/elt12vvyswh+KUAl2OOKmiWtpVtR8W3t3q
- wsPkvRQ1m6srQ1eDrTXfjdSDGLFxJlOeNxNPMl/19qPKkTEJAPYaoc7A++cYVScFev
- hHk8nEQKnpg9ejzsAzRlL6d0j7tx4RGLj2luNUKk+nf2aNhc5cq8upKpY1KQW2A21s
- YJoOsyWc6J1geYXOkWaNeySgRdSsDMT8S4G/FATMZEysQkorYMy/V+9iZBaBCgSrl3
- 8ExYlH1ImHoIQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- EB02E380DBEF; Tue, 18 Mar 2025 01:30:33 +0000 (UTC)
+ s=k20201202; t=1742267568;
+ bh=zWJrgld3kzX8lTcSqkFht/3E6ksq4zXOtBR3EA8SNwM=;
+ h=Date:From:To:Subject:References:In-Reply-To:From;
+ b=rU0fw1cIdUZHCjB+6jcrsWnMD1re/PaCB7AKmCFyztsyg2DZ/kZ8UdapduozD6jSd
+ MurysPFYiezPkuyrJPrDrfNzKq49N5wZkMCqV7vhbUPJLUQlc7soc2JaQFkOkvsONq
+ AxIx2yU9OM6x0Wp0JuRAaw/9Ahjti099MNhZihxvRg6+1+O6qFYUyAXdVveuNH2Zfm
+ J1bTABz2eE2nFrXuVpqDY16l+FU7xuIm1Oa3sSpvmehLD1wKPX7+FZ6OXR/L78DHR2
+ pOnHffCcHIszHltdSzs/5ITtzxuKJYGoEBgrOBui1WCowhhTonFao4LGYEdHC3R+vj
+ fR9+GOb6yfU0Q==
+Date: Tue, 18 Mar 2025 03:12:46 +0000
+To: linux-f2fs-devel@lists.sourceforge.net
+Message-ID: <Z9jkrorMIqWCzRT3@google.com>
+References: <20250304011036.1373650-1-jaegeuk@kernel.org>
+ <Z9iT2mbav0SNUKO4@google.com>
 MIME-Version: 1.0
-Message-Id: <174226143279.3976340.11320826422025580869.git-patchwork-notify@kernel.org>
-Date: Tue, 18 Mar 2025 01:30:32 +0000
-References: <20250317133611.457-1-yohan.joung@sk.com>
-In-Reply-To: <20250317133611.457-1-yohan.joung@sk.com>
-To: Yohan Joung <jyh429@gmail.com>
-X-Headers-End: 1tuLmS-0006sW-Hw
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: optimize f2fs DIO overwrites
+Content-Disposition: inline
+In-Reply-To: <Z9iT2mbav0SNUKO4@google.com>
+X-Headers-End: 1tuNNu-0003cl-3I
+Subject: Re: [f2fs-dev] [f2fs-dev v2] [PATCH] f2fs_io: add fragread command
+ to evaluate fragmented buffer for reads
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,40 +80,168 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+Ping.
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Mon, 17 Mar 2025 22:36:11 +0900 you wrote:
-> this is unnecessary when we know we are overwriting already allocated
-> blocks and the overhead of starting a transaction can be significant
-> especially for multithreaded workloads doing small writes.
+On 03/17, Jaegeuk Kim via Linux-f2fs-devel wrote:
+> This adds a fragread command in f2fs_io, which is able to measure the
+> read performance on fragmented data buffer.
 > 
-> Signed-off-by: Yohan Joung <yohan.joung@sk.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
 > ---
->  fs/f2fs/data.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-
-Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: optimize f2fs DIO overwrites
-    https://git.kernel.org/jaegeuk/f2fs/c/351bc761338d
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> 
+>  Change log from v1:
+>   - add mlock
+> 
+>  tools/f2fs_io/f2fs_io.c | 114 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 114 insertions(+)
+> 
+> diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+> index 44d389dbd771..57a931d5769c 100644
+> --- a/tools/f2fs_io/f2fs_io.c
+> +++ b/tools/f2fs_io/f2fs_io.c
+> @@ -1005,6 +1005,119 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
+>  	exit(0);
+>  }
+>  
+> +#define fragread_desc "read data with a fragmented buffer from file"
+> +#define fragread_help					\
+> +"f2fs_io fragread [chunk_size in 4kb] [offset in chunk_size] [count] [advice] [file_path]\n\n"	\
+> +"Read data in file_path and print nbytes\n"		\
+> +"advice can be\n"					\
+> +" 1 : set sequential|willneed\n"			\
+> +" 0 : none\n"						\
+> +
+> +#ifndef PAGE_SIZE
+> +#define PAGE_SIZE sysconf(_SC_PAGESIZE)
+> +#endif
+> +#define ALLOC_SIZE (2 * 1024 * 1024 - 4 * 1024) // 2MB - 4KB
+> +
+> +static void do_fragread(int argc, char **argv, const struct cmd_desc *cmd)
+> +{
+> +	u64 buf_size = 0, ret = 0, read_cnt = 0;
+> +	u64 offset;
+> +	char *buf = NULL;
+> +	uintptr_t idx, ptr;
+> +	unsigned bs, count, i;
+> +	u64 total_time = 0;
+> +	int flags = 0, alloc_count = 0;
+> +	void *mem_hole, **mem_holes;
+> +	int fd, advice;
+> +
+> +	if (argc != 6) {
+> +		fputs("Excess arguments\n\n", stderr);
+> +		fputs(cmd->cmd_help, stderr);
+> +		exit(1);
+> +	}
+> +
+> +	bs = atoi(argv[1]);
+> +	if (bs > 256 * 1024)
+> +		die("Too big chunk size - limit: 1GB");
+> +	buf_size = bs * F2FS_DEFAULT_BLKSIZE;
+> +
+> +	offset = atoi(argv[2]) * buf_size;
+> +	count = atoi(argv[3]);
+> +	advice = atoi(argv[4]);
+> +	mem_holes = xmalloc(sizeof(void *) * (buf_size / PAGE_SIZE));
+> +
+> +	/* 1. Allocate the buffer using mmap. */
+> +	buf = mmap(NULL, buf_size, PROT_READ | PROT_WRITE,
+> +				MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+> +
+> +	/* 2. Loop and touch each page. */
+> +	for (idx = (uintptr_t)buf; idx < (uintptr_t)buf + buf_size;
+> +						idx += PAGE_SIZE)
+> +	{
+> +		/* Touch the current page. */
+> +		volatile char *page = (volatile char *)idx;
+> +		*page;
+> +
+> +		/* 3. Allocate (2M - 4K) memory using mmap and touch all of it. */
+> +		mem_hole = mmap(NULL, ALLOC_SIZE, PROT_READ | PROT_WRITE,
+> +					MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+> +		if (mem_hole == MAP_FAILED)
+> +			die_errno("map failed");
+> +
+> +		/* Store the allocated memory pointer. */
+> +		mem_holes[alloc_count++] = mem_hole;
+> +
+> +		/* Touch all allocated memory. */
+> +		for (ptr = (uintptr_t)mem_hole;
+> +			ptr < (uintptr_t)mem_hole + ALLOC_SIZE;
+> +						ptr += PAGE_SIZE) {
+> +			volatile char *alloc_page = (volatile char *)ptr;
+> +			*alloc_page;
+> +		}
+> +	}
+> +	printf("Touched allocated memory: count = %u\n", alloc_count);
+> +	printf(" - allocated memory: = ");
+> +	for (idx = 0; idx < 5; idx++)
+> +		printf(" %p", mem_holes[idx]);
+> +	printf("\n");
+> +
+> +	/* Pin the pages. */
+> +	if (mlock(buf, buf_size))
+> +		die_errno("mlock failed");
+> +
+> +	fd = xopen(argv[5], O_RDONLY | flags, 0);
+> +
+> +	if (advice) {
+> +		if (posix_fadvise(fd, 0, F2FS_DEFAULT_BLKSIZE,
+> +				POSIX_FADV_SEQUENTIAL) != 0)
+> +			die_errno("fadvise failed");
+> +		if (posix_fadvise(fd, 0, F2FS_DEFAULT_BLKSIZE,
+> +				POSIX_FADV_WILLNEED) != 0)
+> +			die_errno("fadvise failed");
+> +		printf("fadvise SEQUENTIAL|WILLNEED to a file: %s\n", argv[5]);
+> +	}
+> +
+> +	total_time = get_current_us();
+> +
+> +	for (i = 0; i < count; i++) {
+> +		ret = pread(fd, buf, buf_size, offset + buf_size * i);
+> +		if (ret != buf_size) {
+> +			printf("pread expected: %"PRIu64", readed: %"PRIu64"\n",
+> +					buf_size, ret);
+> +			if (ret > 0)
+> +				read_cnt += ret;
+> +			break;
+> +		}
+> +
+> +		read_cnt += ret;
+> +	}
+> +	printf("Fragmented_Read %"PRIu64" bytes total_time = %"PRIu64" us, BW = %.Lf MB/s\n",
+> +		read_cnt, get_current_us() - total_time,
+> +		((long double)read_cnt / (get_current_us() - total_time)));
+> +	printf("\n");
+> +	exit(0);
+> +}
+> +
+>  #define randread_desc "random read data from file"
+>  #define randread_help					\
+>  "f2fs_io randread [chunk_size in 4kb] [count] [IO] [advise] [file_path]\n\n"	\
+> @@ -1989,6 +2102,7 @@ const struct cmd_desc cmd_list[] = {
+>  	CMD(write_advice),
+>  	CMD(read),
+>  	CMD(randread),
+> +	CMD(fragread),
+>  	CMD(fiemap),
+>  	CMD(gc_urgent),
+>  	CMD(defrag_file),
+> -- 
+> 2.49.0.rc1.451.g8f38331e32-goog
+> 
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 _______________________________________________
