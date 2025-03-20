@@ -4,69 +4,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4CDD3C35FFC
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Mar 2025 02:39:10 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BA081C28B30
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Mar 2025 03:33:23 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tv5oM-00085F-EU;
-	Thu, 20 Mar 2025 02:39:09 +0000
+	id 1tv6en-0003u1-E4;
+	Thu, 20 Mar 2025 03:33:22 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1tv5oK-000857-NV
+ (envelope-from <niuzhiguo84@gmail.com>) id 1tv6el-0003tl-TE
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 20 Mar 2025 02:39:08 +0000
+ Thu, 20 Mar 2025 03:33:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Aab7cQaaqPedLyeOwaeMNPGRH4++V2h8zn8+pMkTxmI=; b=MyLKZCdxO4Y3INgVynfZfNpKFP
- MxhAMCEoPa3OU5cv+C4khnUsz638htiq60r8ob0Ji1nq1m1bFT9mKza7nSquCWRWxdEgI+dQJzJ/7
- SI7bTsXr5rsqN0WXwERy780W/eGgB5LGbM897C8yuPoSvgupzZ7TrppqRWP9Vd0heCyw=;
+ bh=wAHNeXDKHyLVzzq0rwOTQsewoGoPfVxW3U1+mtmUEUk=; b=kB8FYJ7aWliGpVhrNRxnMvF3rG
+ YNJONoSbtLBmWBUm/rla0h2RzERb5nmLk8SBJOHRQdvTm2+j+QuVufPAhxGv/gqDDX9Q5Xq6qK4ny
+ rYoRi9mZFqQQSsKh5IasXUKvWdAPaYutar2xJpOIM/SnJsKokQm5GfMPFc2uEgKeDBhg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Aab7cQaaqPedLyeOwaeMNPGRH4++V2h8zn8+pMkTxmI=; b=hNXkgk+BT+aOHhBYlrorHTt+4B
- M3nlbx6dAdxv6CwJO/T1o0lgnESyHYBzSQLRPDxXcmtUG8R9KlrqWOJm8di6kxsJFXZs9R37WCQ1B
- G59P0RYHczDFv4e0jszCfC3p0WqMy2UecH2H192W1VAWjKpgkSUKV/aspoqUZFcCF9ww=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=wAHNeXDKHyLVzzq0rwOTQsewoGoPfVxW3U1+mtmUEUk=; b=Wif240OG0RDMyVuuCR5EXg/ZY3
+ gXSdsUDZqF/eu86T9wzEKVgawk+wUFSCowSGK7DtQiMzJ4GnUK9ToOfdtlxYZTuJTtKVwPmeAxBdr
+ NB+5oNy/94pFLbFA9T94GESmxlTdcFeTGaau1oBUFLib6IzPvvJUvpkppZqDSRZMTh3Y=;
+Received: from mail-wr1-f45.google.com ([209.85.221.45])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tv5oE-0000XL-8z for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 20 Mar 2025 02:39:08 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 6C0F843751
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1tv6el-0000kH-WB for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 20 Mar 2025 03:33:20 +0000
+Received: by mail-wr1-f45.google.com with SMTP id
+ ffacd0b85a97d-3912622c9c0so29455f8f.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 20 Mar 2025 02:22:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A00BDC4CEE8;
- Thu, 20 Mar 2025 02:22:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1742437366;
- bh=7+Yts5LeHOxEOmhtkUAzJyFa7c2XWV7zaUXjWc0iIys=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=keVJ3O1xNqwhqCBcZqW6EL+MgA/8ihCfTSSHVEXzvWr4LqmEC2FukSJtwyAshe4Sp
- CSAQRRPpSn3kQXiw68iAjeGkaArinWIXG/r8dJs4cYoJ2AYiJkzjWknynLmcz3RiEL
- 4Mv2LAjtbM6jS6mkaND29O6a0gB+O09od9YVd8yvrl7AfaiYh1CJnfIOT0Ct0vYYFa
- rnaDimRlj4aZNPNDPkg9KYomRiz60G/3K5gqTZFGPSYlWwdj3eQft84NQ1ST6lOZ5z
- Y66tJArcOhBH7ATz0hq4UDq1BO8MaBcqrW8LdgeHU9r83uKWzHJW26PGf4yIBPku/Z
- HrbSy4+6dfiXg==
-To: jaegeuk@kernel.org
-Date: Thu, 20 Mar 2025 10:22:30 +0800
-Message-ID: <20250320022230.1938110-2-chao@kernel.org>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-In-Reply-To: <20250320022230.1938110-1-chao@kernel.org>
-References: <20250320022230.1938110-1-chao@kernel.org>
+ Wed, 19 Mar 2025 20:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1742441588; x=1743046388; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=wAHNeXDKHyLVzzq0rwOTQsewoGoPfVxW3U1+mtmUEUk=;
+ b=COCw40Qp9ERqNfI9+YVU9uCD6h88F1kuvC+9lzz/byCG32z3davgDmWHmfpXwnFwId
+ S4cwEbVYhf5PJV/JB9eftR4ynXzadQDjdsufMnk38XMmwIKuBrjazN11iWViG5zADWB6
+ FgKNwKCejCykjwYgA9zIHji8DYLQyNjZa3dsv8ovCp2jPD4rVjpmOjE9Mnnf3s2FSVeZ
+ sbaaovVQwqgp+a7+zq0aU0K/77VjWMWDfgz4qXsjntewOa1oAR4h2Xfe0WHelip8PjYL
+ Jq8DWlLDqpWOU9BiEXU3YdPEtdYVkJMs6f6YnaajSemTYWLXKkCfI44vmfkqWMKkaNj5
+ HjRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1742441588; x=1743046388;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=wAHNeXDKHyLVzzq0rwOTQsewoGoPfVxW3U1+mtmUEUk=;
+ b=ee8VQMEIV6uDLPp35nAux+j0JuwfAvDpPI+FO2njxeukljscgNU+xKnVX63Bha5ABx
+ tPzidr11GpDGln3lzEVYRi/YPwH1O/NCGJ4yKz5OTcBmYw5z+kDR03iI2td29w/DQQUK
+ Ooi6K9W2qK7703cHcRQ5CN9XqbwiGegH0KttXGTYFdjNLKp9lkWvNJO6MVDRQUwEXcZU
+ p9IoY7Mq5v5N4lByLaMLOjyTJBIXABt//rdODkvwO3yYEb4ZLRJ81Z+3m26YcV0w+eC1
+ vKZ83NsDFe2gfakRoML/rQAf4cWDZ/XAK02zZpnnxXYuOXbR+pUjR0793pTHpqm85V2v
+ 3TKg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVDdCb0qEXwsHwTI6EpPAsX2aHBtPg5MKFi9+uNxBYJNLTzpbnAUyURDlepWTy3SylotU3pRAFmtXT5p3y/c5dV@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YzHcrC0SrrQT9Rxlg3TmLmSjZDYYjUYqYBaQUT46wzPIlrsiiHD
+ 96vtbYdGvIpSR5lU4o5RgBYorVxd3xw5EXV4PhOb0qlAg27BPAIWxqai6rOCvpNZXR7YU9dznXi
+ lkVVzRXJe4epyUyjTPgBjcUAgfSs=
+X-Gm-Gg: ASbGnctECf93Sg0gnZ7RXIbiiV9DIJY3k/KApzr4LWMn9hma6BROFEidCjCKuhvE/wM
+ IkPS6pTjWRv3Tf+SJyozy63WhGoVtHZsmwk8AyseuWbSh25d3pKst/NDJvNm4342OhhoiDJ4Y5l
+ VgFYsf13o0tlFX7voDk8qxkqBd2/w=
+X-Google-Smtp-Source: AGHT+IHEXNhJPFoziNZC1UXWkFDZ5g6z1JFopiu3vc9Q/LvecS+G6l7WSQf1W3Z/XhrusCBoW5rnkRD9RpvZB4oxqf4=
+X-Received: by 2002:a5d:6d8a:0:b0:38d:d743:7d36 with SMTP id
+ ffacd0b85a97d-39973afe524mr1531554f8f.10.1742441588158; Wed, 19 Mar 2025
+ 20:33:08 -0700 (PDT)
 MIME-Version: 1.0
-X-Headers-End: 1tv5oE-0000XL-8z
-Subject: [f2fs-dev] [PATCH v2 2/2] f2fs: fix to update injection attrs
- according to fault_option
+References: <20250320022230.1938110-1-chao@kernel.org>
+In-Reply-To: <20250320022230.1938110-1-chao@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Thu, 20 Mar 2025 11:32:57 +0800
+X-Gm-Features: AQ5f1JrS67VyAWqmg1qZYDDqtRgmbZBRzQk_sAgUFWj5Ju4NfXDkFsmP1V7ZhT8
+Message-ID: <CAHJ8P3+Z+LEJysum4ZLO0HGkdYP_JDUfWoTfBiLPcDuHFeBNRw@mail.gmail.com>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1tv6el-0000kH-WB
+Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: add a proc entry show inject
+ stats
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,187 +103,91 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-When we update inject type via sysfs, it shows wrong rate value as
-below, there is a same problem when we update inject rate, fix it.
-
-Before:
-F2FS-fs (vdd): build fault injection attr: rate: 0, type: 0xffff
-F2FS-fs (vdd): build fault injection attr: rate: 1, type: 0x0
-
-After:
-F2FS-fs (vdd): build fault injection type: 0x1
-F2FS-fs (vdd): build fault injection rate: 1
-
-Meanwhile, let's avoid turning on all fault types when we enable fault
-injection via fault_injection mount option, it will lead to shutdown
-filesystem or fail the mount() easily.
-
-mount -o fault_injection=4 /dev/vdd /mnt/f2fs
-F2FS-fs (vdd): build fault injection attr: rate: 4, type: 0x7fffff
-F2FS-fs (vdd): inject kmalloc in f2fs_kmalloc of f2fs_fill_super+0xbdf/0x27c0
-
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2
-- no changes
- fs/f2fs/checkpoint.c |  2 +-
- fs/f2fs/f2fs.h       | 14 ++++++++++----
- fs/f2fs/super.c      | 26 +++++++++++++-------------
- fs/f2fs/sysfs.c      |  4 ++--
- 4 files changed, 26 insertions(+), 20 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index cf77987d0698..85b7141f0d89 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -29,7 +29,7 @@ struct kmem_cache *f2fs_inode_entry_slab;
- void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io,
- 						unsigned char reason)
- {
--	f2fs_build_fault_attr(sbi, 0, 0);
-+	f2fs_build_fault_attr(sbi, 0, 0, FAULT_ALL);
- 	if (!end_io)
- 		f2fs_flush_merged_writes(sbi);
- 	f2fs_handle_critical_error(sbi, reason);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 986ee5b9326d..ca884e39a5ff 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -66,9 +66,14 @@ enum {
- 	FAULT_MAX,
- };
- 
--#ifdef CONFIG_F2FS_FAULT_INJECTION
--#define F2FS_ALL_FAULT_TYPE		(GENMASK(FAULT_MAX - 1, 0))
-+/* indicate which option to update */
-+enum fault_option {
-+	FAULT_RATE	= 1,	/* only update fault rate */
-+	FAULT_TYPE	= 2,	/* only update fault type */
-+	FAULT_ALL	= 4,	/* reset all fault injection options/stats */
-+};
- 
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
- struct f2fs_fault_info {
- 	atomic_t inject_ops;
- 	int inject_rate;
-@@ -4765,10 +4770,11 @@ static inline bool f2fs_need_verity(const struct inode *inode, pgoff_t idx)
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- extern int f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned long rate,
--							unsigned long type);
-+					unsigned long type, enum fault_option fo);
- #else
- static inline int f2fs_build_fault_attr(struct f2fs_sb_info *sbi,
--					unsigned long rate, unsigned long type)
-+					unsigned long rate, unsigned long type,
-+					enum fault_option fo)
- {
- 	return 0;
- }
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index dfe0604ab558..011925ee54f8 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -68,29 +68,30 @@ const char *f2fs_fault_name[FAULT_MAX] = {
- };
- 
- int f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned long rate,
--							unsigned long type)
-+				unsigned long type, enum fault_option fo)
- {
- 	struct f2fs_fault_info *ffi = &F2FS_OPTION(sbi).fault_info;
- 
--	if (rate) {
-+	if (fo & FAULT_ALL) {
-+		memset(ffi, 0, sizeof(struct f2fs_fault_info));
-+		return 0;
-+	}
-+
-+	if (fo & FAULT_RATE) {
- 		if (rate > INT_MAX)
- 			return -EINVAL;
- 		atomic_set(&ffi->inject_ops, 0);
- 		ffi->inject_rate = (int)rate;
-+		f2fs_info(sbi, "build fault injection rate: %lu", rate);
- 	}
- 
--	if (type) {
-+	if (fo & FAULT_TYPE) {
- 		if (type >= BIT(FAULT_MAX))
- 			return -EINVAL;
- 		ffi->inject_type = (unsigned int)type;
-+		f2fs_info(sbi, "build fault injection type: 0x%lx", type);
- 	}
- 
--	if (!rate && !type)
--		memset(ffi, 0, sizeof(struct f2fs_fault_info));
--	else
--		f2fs_info(sbi,
--			"build fault injection attr: rate: %lu, type: 0x%lx",
--								rate, type);
- 	return 0;
- }
- #endif
-@@ -897,8 +898,7 @@ static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remoun
- 		case Opt_fault_injection:
- 			if (args->from && match_int(args, &arg))
- 				return -EINVAL;
--			if (f2fs_build_fault_attr(sbi, arg,
--					F2FS_ALL_FAULT_TYPE))
-+			if (f2fs_build_fault_attr(sbi, arg, 0, FAULT_RATE))
- 				return -EINVAL;
- 			set_opt(sbi, FAULT_INJECTION);
- 			break;
-@@ -906,7 +906,7 @@ static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remoun
- 		case Opt_fault_type:
- 			if (args->from && match_int(args, &arg))
- 				return -EINVAL;
--			if (f2fs_build_fault_attr(sbi, 0, arg))
-+			if (f2fs_build_fault_attr(sbi, 0, arg, FAULT_TYPE))
- 				return -EINVAL;
- 			set_opt(sbi, FAULT_INJECTION);
- 			break;
-@@ -2209,7 +2209,7 @@ static void default_options(struct f2fs_sb_info *sbi, bool remount)
- 	set_opt(sbi, POSIX_ACL);
- #endif
- 
--	f2fs_build_fault_attr(sbi, 0, 0);
-+	f2fs_build_fault_attr(sbi, 0, 0, FAULT_ALL);
- }
- 
- #ifdef CONFIG_QUOTA
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 46fa94db08a8..3a3485622691 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -494,12 +494,12 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return ret;
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (a->struct_type == FAULT_INFO_TYPE) {
--		if (f2fs_build_fault_attr(sbi, 0, t))
-+		if (f2fs_build_fault_attr(sbi, 0, t, FAULT_TYPE))
- 			return -EINVAL;
- 		return count;
- 	}
- 	if (a->struct_type == FAULT_INFO_RATE) {
--		if (f2fs_build_fault_attr(sbi, t, 0))
-+		if (f2fs_build_fault_attr(sbi, t, 0, FAULT_RATE))
- 			return -EINVAL;
- 		return count;
- 	}
--- 
-2.48.1
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Q2hhbyBZdSB2aWEgTGludXgtZjJmcy1kZXZlbCA8bGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
+Y2Vmb3JnZS5uZXQ+CuS6jjIwMjXlubQz5pyIMjDml6Xlkajlm5sgMTA6MjflhpnpgZPvvJoKPgo+
+IFRoaXMgcGF0Y2ggYWRkcyBhIHByb2MgZW50cnkgbmFtZWQgaW5qZWN0X3N0YXRzIHRvIHNob3cg
+dG90YWwgaW5qZWN0ZWQKPiBjb3VudCBmb3IgZWFjaCBmYXVsdCB0eXBlLgo+Cj4gY2F0IC9wcm9j
+L2ZzL2YyZnMvPGRldj4vaW5qZWN0X3N0YXRzCj4gZmF1bHRfdHlwZSAgICAgICAgICAgICAgaW5q
+ZWN0ZWRfY291bnQKPiBrbWFsbG9jICAgICAgICAgICAgICAgICAwCj4ga3ZtYWxsb2MgICAgICAg
+ICAgICAgICAgMAo+IHBhZ2UgYWxsb2MgICAgICAgICAgICAgIDAKPiBwYWdlIGdldCAgICAgICAg
+ICAgICAgICAwCj4gYWxsb2MgYmlvKG9ic29sZXRlKSAgICAgMAo+IGFsbG9jIG5pZCAgICAgICAg
+ICAgICAgIDAKPiBvcnBoYW4gICAgICAgICAgICAgICAgICAwCj4gbm8gbW9yZSBibG9jayAgICAg
+ICAgICAgMAo+IHRvbyBiaWcgZGlyIGRlcHRoICAgICAgIDAKPiBldmljdF9pbm9kZSBmYWlsICAg
+ICAgICAwCj4gdHJ1bmNhdGUgZmFpbCAgICAgICAgICAgMAo+IHJlYWQgSU8gZXJyb3IgICAgICAg
+ICAgIDAKPiBjaGVja3BvaW50IGVycm9yICAgICAgICAwCj4gZGlzY2FyZCBlcnJvciAgICAgICAg
+ICAgMAo+IHdyaXRlIElPIGVycm9yICAgICAgICAgIDAKPiBzbGFiIGFsbG9jICAgICAgICAgICAg
+ICAwCj4gZHF1b3QgaW5pdGlhbGl6ZSAgICAgICAgMAo+IGxvY2tfb3AgICAgICAgICAgICAgICAg
+IDAKPiBpbnZhbGlkIGJsa2FkZHIgICAgICAgICAwCj4gaW5jb25zaXN0ZW50IGJsa2FkZHIgICAg
+MAo+IG5vIGZyZWUgc2VnbWVudCAgICAgICAgIDAKPiBpbmNvbnNpc3RlbnQgZm9vdGVyICAgICAw
+Cj4KPiBTaWduZWQtb2ZmLWJ5OiBDaGFvIFl1IDxjaGFvQGtlcm5lbC5vcmc+CgpSZXZpZXdlZC1i
+eTogWmhpZ3VvIE5pdSA8emhpZ3VvLm5pdUB1bmlzb2MuY29tPgp0aGFua3PvvIEKCj4gLS0tCj4g
+djI6Cj4gLSBhZGQgbWlzc2luZyBDT05GSUdfRjJGU19GQVVMVF9JTkpFQ1RJT04KPiAgZnMvZjJm
+cy9mMmZzLmggIHwgIDMgKysrCj4gIGZzL2YyZnMvc3VwZXIuYyB8ICAxICsKPiAgZnMvZjJmcy9z
+eXNmcy5jIHwgMjIgKysrKysrKysrKysrKysrKysrKysrKwo+ICAzIGZpbGVzIGNoYW5nZWQsIDI2
+IGluc2VydGlvbnMoKykKPgo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2YyZnMuaCBiL2ZzL2YyZnMv
+ZjJmcy5oCj4gaW5kZXggZjE1NzZkYzZlYzY3Li45ODZlZTViOTMyNmQgMTAwNjQ0Cj4gLS0tIGEv
+ZnMvZjJmcy9mMmZzLmgKPiArKysgYi9mcy9mMmZzL2YyZnMuaAo+IEBAIC03Myw2ICs3Myw4IEBA
+IHN0cnVjdCBmMmZzX2ZhdWx0X2luZm8gewo+ICAgICAgICAgYXRvbWljX3QgaW5qZWN0X29wczsK
+PiAgICAgICAgIGludCBpbmplY3RfcmF0ZTsKPiAgICAgICAgIHVuc2lnbmVkIGludCBpbmplY3Rf
+dHlwZTsKPiArICAgICAgIC8qIFVzZWQgdG8gYWNjb3VudCB0b3RhbCBjb3VudCBvZiBpbmplY3Rp
+b24gZm9yIGVhY2ggdHlwZSAqLwo+ICsgICAgICAgdW5zaWduZWQgaW50IGluamVjdF9jb3VudFtG
+QVVMVF9NQVhdOwo+ICB9Owo+Cj4gIGV4dGVybiBjb25zdCBjaGFyICpmMmZzX2ZhdWx0X25hbWVb
+RkFVTFRfTUFYXTsKPiBAQCAtMTkwMiw2ICsxOTA0LDcgQEAgc3RhdGljIGlubGluZSBib29sIF9f
+dGltZV90b19pbmplY3Qoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBpbnQgdHlwZSwKPiAgICAg
+ICAgIGF0b21pY19pbmMoJmZmaS0+aW5qZWN0X29wcyk7Cj4gICAgICAgICBpZiAoYXRvbWljX3Jl
+YWQoJmZmaS0+aW5qZWN0X29wcykgPj0gZmZpLT5pbmplY3RfcmF0ZSkgewo+ICAgICAgICAgICAg
+ICAgICBhdG9taWNfc2V0KCZmZmktPmluamVjdF9vcHMsIDApOwo+ICsgICAgICAgICAgICAgICBm
+ZmktPmluamVjdF9jb3VudFt0eXBlXSsrOwo+ICAgICAgICAgICAgICAgICBmMmZzX2luZm9fcmF0
+ZWxpbWl0ZWQoc2JpLCAiaW5qZWN0ICVzIGluICVzIG9mICVwUyIsCj4gICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBmMmZzX2ZhdWx0X25hbWVbdHlwZV0sIGZ1bmMsIHBhcmVudF9mdW5j
+KTsKPiAgICAgICAgICAgICAgICAgcmV0dXJuIHRydWU7Cj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMv
+c3VwZXIuYyBiL2ZzL2YyZnMvc3VwZXIuYwo+IGluZGV4IGYwODdiMmI3MWM4OS4uZGZlMDYwNGFi
+NTU4IDEwMDY0NAo+IC0tLSBhL2ZzL2YyZnMvc3VwZXIuYwo+ICsrKyBiL2ZzL2YyZnMvc3VwZXIu
+Ywo+IEBAIC00Nyw2ICs0Nyw3IEBAIGNvbnN0IGNoYXIgKmYyZnNfZmF1bHRfbmFtZVtGQVVMVF9N
+QVhdID0gewo+ICAgICAgICAgW0ZBVUxUX0tWTUFMTE9DXSAgICAgICAgICAgICAgICA9ICJrdm1h
+bGxvYyIsCj4gICAgICAgICBbRkFVTFRfUEFHRV9BTExPQ10gICAgICAgICAgICAgID0gInBhZ2Ug
+YWxsb2MiLAo+ICAgICAgICAgW0ZBVUxUX1BBR0VfR0VUXSAgICAgICAgICAgICAgICA9ICJwYWdl
+IGdldCIsCj4gKyAgICAgICBbRkFVTFRfQUxMT0NfQklPXSAgICAgICAgICAgICAgID0gImFsbG9j
+IGJpbyhvYnNvbGV0ZSkiLAo+ICAgICAgICAgW0ZBVUxUX0FMTE9DX05JRF0gICAgICAgICAgICAg
+ICA9ICJhbGxvYyBuaWQiLAo+ICAgICAgICAgW0ZBVUxUX09SUEhBTl0gICAgICAgICAgICAgICAg
+ICA9ICJvcnBoYW4iLAo+ICAgICAgICAgW0ZBVUxUX0JMT0NLXSAgICAgICAgICAgICAgICAgICA9
+ICJubyBtb3JlIGJsb2NrIiwKPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zeXNmcy5jIGIvZnMvZjJm
+cy9zeXNmcy5jCj4gaW5kZXggYzY5MTYxMzY2NDY3Li40NmZhOTRkYjA4YTggMTAwNjQ0Cj4gLS0t
+IGEvZnMvZjJmcy9zeXNmcy5jCj4gKysrIGIvZnMvZjJmcy9zeXNmcy5jCj4gQEAgLTE2NzksNiAr
+MTY3OSwyNCBAQCBzdGF0aWMgaW50IF9fbWF5YmVfdW51c2VkIGRpc2tfbWFwX3NlcV9zaG93KHN0
+cnVjdCBzZXFfZmlsZSAqc2VxLAo+ICAgICAgICAgcmV0dXJuIDA7Cj4gIH0KPgo+ICsjaWZkZWYg
+Q09ORklHX0YyRlNfRkFVTFRfSU5KRUNUSU9OCj4gK3N0YXRpYyBpbnQgX19tYXliZV91bnVzZWQg
+aW5qZWN0X3N0YXRzX3NlcV9zaG93KHN0cnVjdCBzZXFfZmlsZSAqc2VxLAo+ICsgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHZvaWQgKm9mZnNldCkKPiArewo+
+ICsgICAgICAgc3RydWN0IHN1cGVyX2Jsb2NrICpzYiA9IHNlcS0+cHJpdmF0ZTsKPiArICAgICAg
+IHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSA9IEYyRlNfU0Ioc2IpOwo+ICsgICAgICAgc3RydWN0
+IGYyZnNfZmF1bHRfaW5mbyAqZmZpID0gJkYyRlNfT1BUSU9OKHNiaSkuZmF1bHRfaW5mbzsKPiAr
+ICAgICAgIGludCBpOwo+ICsKPiArICAgICAgIHNlcV9wdXRzKHNlcSwgImZhdWx0X3R5cGUgICAg
+ICAgICAgICAgICBpbmplY3RlZF9jb3VudFxuIik7Cj4gKwo+ICsgICAgICAgZm9yIChpID0gMDsg
+aSA8IEZBVUxUX01BWDsgaSsrKQo+ICsgICAgICAgICAgICAgICBzZXFfcHJpbnRmKHNlcSwgIiUt
+MjRzJS0xMHVcbiIsIGYyZnNfZmF1bHRfbmFtZVtpXSwKPiArICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBmZmktPmluamVjdF9jb3VudFtpXSk7Cj4gKyAgICAg
+ICByZXR1cm4gMDsKPiArfQo+ICsjZW5kaWYKPiArCj4gIGludCBfX2luaXQgZjJmc19pbml0X3N5
+c2ZzKHZvaWQpCj4gIHsKPiAgICAgICAgIGludCByZXQ7Cj4gQEAgLTE3NzAsNiArMTc4OCwxMCBA
+QCBpbnQgZjJmc19yZWdpc3Rlcl9zeXNmcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBkaXNjYXJkX3BsaXN0X3NlcV9zaG93LCBzYik7
+Cj4gICAgICAgICBwcm9jX2NyZWF0ZV9zaW5nbGVfZGF0YSgiZGlza19tYXAiLCAwNDQ0LCBzYmkt
+PnNfcHJvYywKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRpc2tfbWFwX3NlcV9z
+aG93LCBzYik7Cj4gKyNpZmRlZiBDT05GSUdfRjJGU19GQVVMVF9JTkpFQ1RJT04KPiArICAgICAg
+IHByb2NfY3JlYXRlX3NpbmdsZV9kYXRhKCJpbmplY3Rfc3RhdHMiLCAwNDQ0LCBzYmktPnNfcHJv
+YywKPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGluamVjdF9zdGF0c19zZXFfc2hv
+dywgc2IpOwo+ICsjZW5kaWYKPiAgICAgICAgIHJldHVybiAwOwo+ICBwdXRfZmVhdHVyZV9saXN0
+X2tvYmo6Cj4gICAgICAgICBrb2JqZWN0X3B1dCgmc2JpLT5zX2ZlYXR1cmVfbGlzdF9rb2JqKTsK
+PiAtLQo+IDIuNDguMQo+Cj4KPgo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKPiBMaW51eC1mMmZz
+LWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2Uu
+bmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKCgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlz
+dApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNv
+dXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
