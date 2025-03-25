@@ -4,68 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 11EDDC35FFC
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Mar 2025 12:59:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0C4D0C35FFC
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Mar 2025 12:59:06 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tx3rx-0004ek-TJ;
-	Tue, 25 Mar 2025 12:59:02 +0000
+	id 1tx3s3-0002Kr-6y;
+	Tue, 25 Mar 2025 12:59:06 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1tx3rw-0004eQ-6V
+ (envelope-from <chao@kernel.org>) id 1tx3s0-0002Ki-DU
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Mar 2025 12:59:00 +0000
+ Tue, 25 Mar 2025 12:59:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4owFGDHGFII1nn+MJNhXXplCkn6+PQSJK57ZEeACwo4=; b=Whi2DX1CN75eVVAzX6h6xbu8Ll
- 8EhCMOPl4ctgVVzsCqNAlwBkajAL820frCwLWAlgTg4nKtbVSICZPJGXDNcBSpY1nHmkoOeDBy1oz
- 9ZXwPfZaDwpvz7L2oTrsh0+KdqMvtIIYQ4V3TugjlUz5OupmrRRPwPBe7s1ZwiEezrRc=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=4owFGDHGFII1nn+MJNhXXplCkn6+PQSJK57ZEeACwo4=; b=Om7+yxrXDDjrdC1bfTBzSYtPD3
- IVFWrGfK7Ruf7lJM0tTB2Q110S+jU7UtNvIgr0873OLtvA9GnP/46qQJsP2ijrEy1rfltvlxOFrjx
- 51s9szTCw6mwnx8xoMHKxLE5Z1GgTggb1xSOyV8z/FliYwR/42C+oyRBpmTE62WvAdZY=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=AlD4GyX22GKAmQD7Yr2YItmmbj/g1dOZzr2qXv7LT5o=; b=YvZOQhq54i/Fc1bIqbDgKOPA8U
+ sSEjiXbQtbXgHeblZ435vnQ5jeEDKJ5/egx0ocqP1T1jPhU+XFUoRb428Rn2qAsygB9fCjUs20cAd
+ rul5Gz4vmMpAprHClay/di1eYEO/F0MAlhOJmGd2KE796XQWwGeDmHFeftS7HdOxDoc4=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=AlD4GyX22GKAmQD7Yr2YItmmbj/g1dOZzr2qXv7LT5o=; b=T
+ 70ChigLqkbiCGO5K32vyXMDYisWpVZr7vkQiyHwu3EhEEs+EK9KhT0l3LFz8f4vM4i3MxCD+EdNN/
+ e6zTayA5cWTD11lRlwJLD+8p6hxCpjGyETTLhttJ+I8uQjYpC+3UEWQJmyBlRcSspT3YtoaB8SzoJ
+ eGtmvc7NsNaf3M0s=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tx3rr-0004AR-Cc for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Mar 2025 12:59:00 +0000
+ id 1tx3rp-0004AK-5R for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Mar 2025 12:59:03 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 0FA375C5F0F;
- Tue, 25 Mar 2025 12:56:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4798BC4CEED;
- Tue, 25 Mar 2025 12:58:42 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id CC88C5C5F04;
+ Tue, 25 Mar 2025 12:56:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A86A8C4CEE9;
+ Tue, 25 Mar 2025 12:58:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1742907524;
- bh=5VTc25eco32/jJpLDGVrxDEmip6J9yQmzC0ntM+IaW4=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=KomJ+VR+P1yXuLnJB++XCYLC0x3Xa0BhnyumNnCUyl4rCDC3J4yyYcBnxEs3IYadb
- 2KXCOUUPUklnglYzk9u36kGbQT06i6iihgy+ja2t/zMResmuH30168jBn+xS5arWn8
- U3tuwinI8bMaH6NWRiJvQI+yy3x8a2xrTtgCYyZ4rC1hXF3AeTgVZ/uVrmj6oq0Aa3
- a6kIjTUaXN5ZusHC7ktP2uFzpciHOfA5FLeizq+t1DADqdWKQlDnk8Zwr//Hift9lG
- zwd6Otlt5SHftBEd5KFFDLR3SnCkfXkIuo2v4mzVvibw291qSDip1uexfNH6+Lc0yy
- onLjQGaL4Qw5g==
+ s=k20201202; t=1742907522;
+ bh=9abPyMZNZpjPTxRIU3EzPNArc5vpHFGSWM5BVeufFRg=;
+ h=From:To:Cc:Subject:Date:From;
+ b=GGEdvDOF4c0J9AZD+9fFlsUuljfzST4iI6kV8FaT1c3DlWFuRSpV5QEn5AQpH7oOj
+ tkddKBdDGVNpfwiET+QZa1jpb3KmtvM0W6ZiflJwCdARkbL9rcmP2Zw25E/XKyUxwC
+ qn/ab7ttTY/MxpRu03qR7NcCi9FiikErjkolqR/xEfoiN7TVxG3/wewm6Ob+p/ifgT
+ xEhMIP4UXhM1jbP46IFJsvBadU8TnseQujpeOtQ8z0/Xj6EHch/VSzEoYohnhUxI5M
+ l1lelX8qT3i9xxGQuY+KlLnCesxgzIOtUX55h3EJhW+iNClkBhAF57tzJ4quXJMXFF
+ Dck5/PloSSN+A==
 To: Zorro Lang <zlang@kernel.org>,
 	fstests@vger.kernel.org
-Date: Tue, 25 Mar 2025 20:58:20 +0800
-Message-ID: <20250325125824.3367060-2-chao@kernel.org>
+Date: Tue, 25 Mar 2025 20:58:19 +0800
+Message-ID: <20250325125824.3367060-1-chao@kernel.org>
 X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-In-Reply-To: <20250325125824.3367060-1-chao@kernel.org>
-References: <20250325125824.3367060-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1tx3rr-0004AR-Cc
-Subject: [f2fs-dev] [PATCH v5 2/6] common/config: export F2FS_INJECT_PROG
+X-Headers-End: 1tx3rp-0004AK-5R
+Subject: [f2fs-dev] [PATCH v5 1/6] common/config: remove redundant export
+ variables
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,28 +84,37 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-export F2FS_INJECT_PROG w/ inject.f2fs, it can be used for fault injection.
+F2FS_IO_PROG and TIMEOUT_PROG are exported twice, remove the redudant
+one.
 
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Reviewed-by: David Disseldorp <ddiss@suse.de>
-Reviewed-by: Zorro Lang <zlang@redhat.com>
+Signed-off-by: Zorro Lang <zlang@redhat.com>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- common/config | 1 +
- 1 file changed, 1 insertion(+)
+ common/config | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/common/config b/common/config
-index aa525825..7d017a05 100644
+index 2afbda14..aa525825 100644
 --- a/common/config
 +++ b/common/config
-@@ -316,6 +316,7 @@ export MKFS_BTRFS_PROG=$(set_mkfs_prog_path_with_opts btrfs)
- export MKFS_F2FS_PROG=$(set_mkfs_prog_path_with_opts f2fs)
- export DUMP_F2FS_PROG=$(type -P dump.f2fs)
- export F2FS_IO_PROG=$(type -P f2fs_io)
-+export F2FS_INJECT_PROG=$(type -P inject.f2fs)
- export BTRFS_UTIL_PROG=$(type -P btrfs)
- export BTRFS_SHOW_SUPER_PROG=$(type -P btrfs-show-super)
- export BTRFS_CONVERT_PROG=$(type -P btrfs-convert)
+@@ -191,7 +191,6 @@ export XFS_COPY_PROG="$(type -P xfs_copy)"
+ export FSTRIM_PROG="$(type -P fstrim)"
+ export DUMPE2FS_PROG="$(type -P dumpe2fs)"
+ export RESIZE2FS_PROG="$(type -P resize2fs)"
+-export F2FS_IO_PROG="$(type -P f2fs_io)"
+ export FIO_PROG="$(type -P fio)"
+ export FILEFRAG_PROG="$(type -P filefrag)"
+ export E4DEFRAG_PROG="$(type -P e4defrag)"
+@@ -220,7 +219,6 @@ export UBIUPDATEVOL_PROG="$(type -P ubiupdatevol)"
+ export THIN_CHECK_PROG="$(type -P thin_check)"
+ export PYTHON3_PROG="$(type -P python3)"
+ export SQLITE3_PROG="$(type -P sqlite3)"
+-export TIMEOUT_PROG="$(type -P timeout)"
+ export SETCAP_PROG="$(type -P setcap)"
+ export GETCAP_PROG="$(type -P getcap)"
+ export CAPSH_PROG="$(type -P capsh)"
 -- 
 2.48.1
 
