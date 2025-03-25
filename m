@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A9501C36005
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Mar 2025 12:59:13 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4B023C35FFC
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Mar 2025 12:59:14 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tx3s8-0005Lm-S5;
+	id 1tx3sA-0002LX-IY;
 	Tue, 25 Mar 2025 12:59:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1tx3s7-0005LX-Id
+ (envelope-from <chao@kernel.org>) id 1tx3s9-0002LP-PV
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Mar 2025 12:59:12 +0000
+ Tue, 25 Mar 2025 12:59:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=eBnHpyGhdPRSoQ+DXKPK/C/Rg6jGXghB4pNCnlt2BvI=; b=m7w1xiQFIjcHWDzuyJ78BADgOB
- evPxLhaQqDRyVgpRuEHkB6YEb2dhouZIt6uj+ZsfqZOSXl8VleiVMNnW1lZyh5X+ModEUR6Tm97Ty
- FmBRXHhqbcIAA6kmIIMOIs33e+xJ71qlI8iP2Euvjr8+W7q/kFfzPBu4GC2HS/vChomY=;
+ bh=Rth/rSLHcIUrEnDXDxWpmudi7GYtb9ghls3vpdhmr14=; b=TYBE7WLO3RRmV/7ZIUsKpfI4/n
+ KkIhGibqp7WzocUt5VSMCrr/r98uDz5wZ/AWp8a4qBfCTx5XG1W1w80Nw4GvBwB+N3eF/C9/JrlgO
+ D8ebaFoctbL1Yf4+bRf1NJHDdXQRXwbwkH8OrCSyghX3m3lFysKA16c1LVw2ZFzoAHCM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,39 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=eBnHpyGhdPRSoQ+DXKPK/C/Rg6jGXghB4pNCnlt2BvI=; b=fFdBgbAXEDJ3N70FHUrjBqhDFp
- LhYHNaqae8JwJAvXpMl0Y5/0jLuZt+j4tWtbqdTC+M33MW1LGJ5Ba9Ekjvd73XCj5hfHhEA1L23s2
- W7ZSuCB5mukzU3edMr25uRfR/Fp2oxBZtKcitUpunEbj18PPfMPShr1Xzhti7THX1Rh8=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ bh=Rth/rSLHcIUrEnDXDxWpmudi7GYtb9ghls3vpdhmr14=; b=Yntl/DtkadP8tq+vIX9hqnc4rW
+ EkALknUmj3pZNma98v7aIA/M6BN3k5l80rbTyh6SlTd+6x1eIlSGWfD3C4K/nWfXBa55L29G71HYE
+ EN/4AJfbahY60G3I//e2dK1CE5Fk0A7RZuDyQJSoRzXx5G2O14Upd2xa5J7JoODyeKKA=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tx3rv-0004Af-8h for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Mar 2025 12:59:09 +0000
+ id 1tx3ry-0004Ar-9o for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Mar 2025 12:59:13 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 97028A434DF;
- Tue, 25 Mar 2025 12:53:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1AE8C4CEE4;
- Tue, 25 Mar 2025 12:58:46 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 81D696159E
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 25 Mar 2025 12:58:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 461EDC4CEE4;
+ Tue, 25 Mar 2025 12:58:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1742907528;
- bh=ZAcfeHuiPFV3sbyFPlA/8+VKHCU2VRylhvjIEQHs1Iw=;
+ s=k20201202; t=1742907531;
+ bh=RQvIBzy9bgK+sBeTLXLeBY1V+fYe6vVoOMsaan4bsAo=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=NZdQg6jAdsSbyM56p+QKV/COMjbvZPBpleTyOfMBjrWePpOYa1irzsSszZ6U1X1Ve
- 2WHYJGzS5tz7GgSTpzIuJY2rsOCKvoOeGJfG5E0tIcOj8YQCEAMHrCSp0CLSOf3ecE
- 1O8TGcwWnDqB4Vfk2zlMnqPH2qGVUm7SFT/1A0FBBn76Q6WD0vZQtR3iMMi3gnPW5o
- p+OJw/W+/4YFsT/rJJGSXmPZwPXhcPCbNuXke88BmDfsBA3pcKVAkvfhdaKjHry7lb
- B9iqKdu1FwmbFpKXVF06hY8E3MLLyvWNIb3aMeZPROTXcSxEbkrmvJ3r1Wol7b/sL/
- TMZivhcZ2DERQ==
+ b=FZf6xIXKU/sV5eIXWbbfwXe+VikVmrCO6GOa2mf/aV/4TBSO3BQwDUVub6/RfRACG
+ 0LayZkzm6moWPKWROfluC9SAFIa6mFzlJqvenLEP8NXNWuDEB/VosZIiIAh/3Vio6T
+ 8B4D4vd87yXCStFSgE1gzsyuYnpasJ7dem+QmgOyOj+3VuiQoxkjnhQWT0uRjyzInR
+ Rwb3TSdyjlb++huL74Bzjp+yJHc53LVkj+BHXZ3S+AlHDvFNOYzHW4hUoP6+xF6yab
+ aDpfhN6TEz5h8fCh6DwshzR6yIENwxmDppflMdmR8hIlQPzNk+KySgImA+xwCiZnMJ
+ ovqGVfgH3XF3A==
 To: Zorro Lang <zlang@kernel.org>,
 	fstests@vger.kernel.org
-Date: Tue, 25 Mar 2025 20:58:22 +0800
-Message-ID: <20250325125824.3367060-4-chao@kernel.org>
+Date: Tue, 25 Mar 2025 20:58:24 +0800
+Message-ID: <20250325125824.3367060-6-chao@kernel.org>
 X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
 In-Reply-To: <20250325125824.3367060-1-chao@kernel.org>
 References: <20250325125824.3367060-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1tx3rv-0004Af-8h
-Subject: [f2fs-dev] [PATCH v5 4/6] common/rc: use -f for mkfs.f2fs by default
+X-Headers-End: 1tx3ry-0004Ar-9o
+Subject: [f2fs-dev] [PATCH v5 6/6] f2fs/009: detect and repair nlink
+ corruption
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,44 +81,181 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, Zorro Lang <zlang@redhat.com>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Otherwise, mkfs will fail due to there is an existing filesystem
-in the image.
+This is a regression test to check whether fsck can handle corrupted
+nlinks correctly, it uses inject.f2fs to inject nlinks w/ wrong value,
+and expects fsck.f2fs can detect such corruption and do the repair.
 
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Reviewed-by: Zorro Lang <zlang@redhat.com>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- common/rc | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v5:
+- clean up codes suggested by Dave.
+ tests/f2fs/009     | 141 +++++++++++++++++++++++++++++++++++++++++++++
+ tests/f2fs/009.out |   2 +
+ 2 files changed, 143 insertions(+)
+ create mode 100755 tests/f2fs/009
+ create mode 100644 tests/f2fs/009.out
 
-diff --git a/common/rc b/common/rc
-index e5168638..ac2bac81 100644
---- a/common/rc
-+++ b/common/rc
-@@ -993,7 +993,7 @@ _scratch_mkfs()
- 		mkfs_filter="grep -v -e ^Warning: -e \"^mke2fs \""
- 		;;
- 	f2fs)
--		mkfs_cmd="$MKFS_F2FS_PROG"
-+		mkfs_cmd="$MKFS_F2FS_PROG -f"
- 		mkfs_filter="cat"
- 		;;
- 	ocfs2)
-@@ -1336,7 +1336,7 @@ _try_scratch_mkfs_sized()
- 	f2fs)
- 		# mkfs.f2fs requires # of sectors as an input for the size
- 		local sector_size=`blockdev --getss $SCRATCH_DEV`
--		$MKFS_F2FS_PROG $MKFS_OPTIONS "$@" $SCRATCH_DEV `expr $fssize / $sector_size`
-+		$MKFS_F2FS_PROG -f $MKFS_OPTIONS "$@" $SCRATCH_DEV `expr $fssize / $sector_size`
- 		;;
- 	tmpfs)
- 		local free_mem=`_free_memory_bytes`
+diff --git a/tests/f2fs/009 b/tests/f2fs/009
+new file mode 100755
+index 00000000..864fdcfb
+--- /dev/null
++++ b/tests/f2fs/009
+@@ -0,0 +1,141 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (c) 2025 Chao Yu.  All Rights Reserved.
++#
++# FS QA Test No. f2fs/009
++#
++# This is a regression test to check whether fsck can handle corrupted
++# nlinks correctly, it uses inject.f2fs to inject nlinks w/ wrong value,
++# and expects fsck.f2fs can detect such corruption and do the repair.
++#
++. ./common/preamble
++_begin_fstest auto quick
++
++if [ ! -x "$(type -P socket)" ]; then
++	_notrun "Couldn't find socket"
++fi
++
++_require_scratch
++_require_command "$F2FS_INJECT_PROG" inject.f2fs
++
++_fixed_by_git_commit f2fs-tools 958cd6e \
++	"fsck.f2fs: support to repair corrupted i_links"
++
++filename=$SCRATCH_MNT/foo
++hardlink=$SCRATCH_MNT/bar
++
++_cleanup()
++{
++	if [ -n "$pid" ]; then
++		kill $pid &> /dev/null
++		wait
++	fi
++	cd /
++	rm -r -f $tmp.*
++}
++
++_inject_and_check()
++{
++	local nlink=$1
++	local ino=$2
++
++	echo "ino:"$ino >> $seqres.full
++	echo "nlink:"$nlink >> $seqres.full
++
++	_scratch_unmount
++
++	$F2FS_INJECT_PROG --node --mb i_links --nid $ino --val $nlink $SCRATCH_DEV \
++		>> $seqres.full || _fail "fail to inject"
++
++	_check_scratch_fs >> $seqres.full 2>&1 && _fail "can't find corruption"
++	_repair_scratch_fs >> $seqres.full
++	_check_scratch_fs >> $seqres.full 2>&1 || _fail "fsck can't fix corruption"
++
++	_scratch_mount
++	_scratch_unmount
++
++	_scratch_mkfs >> $seqres.full
++	_scratch_mount
++}
++
++inject_and_check()
++{
++	local nlink=$1
++	local create_hardlink=$2
++	local ino=$3
++
++	if [ -z $ino ]; then
++		ino=`stat -c '%i' $filename`
++	fi
++
++	if [ $create_hardlink == 1 ]; then
++		ln $filename $hardlink
++	fi
++
++	_inject_and_check $nlink $ino
++}
++
++_scratch_mkfs >> $seqres.full
++_scratch_mount
++
++touch $filename
++inject_and_check 0 0
++
++mkdir $filename
++inject_and_check 1 0
++
++mknod $filename c 9 0
++inject_and_check 0 0
++
++mknod $filename b 8 0
++inject_and_check 0 0
++
++mkfifo $filename
++inject_and_check 0 0
++
++socket -s $filename >> $seqres.full 2>&1 &
++pid=$!
++sleep 2
++ino=`stat -c '%i' $filename`
++kill $pid >> $seqres.full 2>&1
++inject_and_check 0 0 $ino
++
++ln -s $SCRATCH_MNT/empty $filename
++inject_and_check 0 0
++
++touch $filename
++ino=`stat -c '%i' $filename`
++$F2FS_IO_PROG write 1 0 1 zero atomic_commit $filename 5000 >> $seqres.full 2>&1 &
++stat $filename >> $seqres.full
++rm $filename
++$F2FS_IO_PROG shutdown 1 $SCRATCH_MNT/ >> $seqres.full
++sleep 6
++inject_and_check 1 0 $ino
++
++# hardlink
++touch $filename
++inject_and_check 0 1
++
++mknod $filename c 9 0
++inject_and_check 0 1
++
++mknod $filename b 8 0
++inject_and_check 0 1
++
++mkfifo $filename
++inject_and_check 0 1
++
++socket -s $filename >> $seqres.full 2>&1 &
++pid=$!
++sleep 2
++ino=`stat -c '%i' $filename`
++kill $pid >> $seqres.full 2>&1
++inject_and_check 0 1 $ino
++
++ln -s $SCRATCH_MNT/empty $filename
++inject_and_check 0 1
++
++echo "Silence is golden"
++
++status=0
++exit
+diff --git a/tests/f2fs/009.out b/tests/f2fs/009.out
+new file mode 100644
+index 00000000..7e977155
+--- /dev/null
++++ b/tests/f2fs/009.out
+@@ -0,0 +1,2 @@
++QA output created by 009
++Silence is golden
 -- 
 2.48.1
 
