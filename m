@@ -4,70 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8DD9CC3600B
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Mar 2025 12:59:16 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 84423C36008
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Mar 2025 17:46:55 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tx3sB-0004gM-Ey;
-	Tue, 25 Mar 2025 12:59:16 +0000
+	id 1tx8MX-0005VJ-Ci;
+	Tue, 25 Mar 2025 17:46:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1tx3s7-0004fq-9I
- for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Mar 2025 12:59:12 +0000
+ (envelope-from <willy@infradead.org>) id 1tx8MW-0005VC-5q
+ for Linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Mar 2025 17:46:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kjdF9hYdVVwngjXbe4+CWCYmZrvO/e1agpEymOCh0iE=; b=Ed8sUzDQkxFr/fSCogtwrEQlpV
- 5emTsGhAYD0tmKs0U5bwx1qheumAXVWL5KZKdAA7bNG6C57WPEvoEspQqrvQnGczXVeTlJzOuNJQC
- pRjp0lTsf9+r9HpgT2iVmWMJyFNT3lRBWl7x+TA6G6diwj6dFbTeaJAu0JgNFw33Kh+s=;
+ bh=wokuoGqypkRW+N7f3s/ZfDKHdz0JBnoTTfAJnAbSOb8=; b=ZxNcWPv2J0wdcthHAbGLmo/lMZ
+ ep1GsYduiqbODlXOp2apR+gzANjtn7p+tOgA+sXYh/IP04lkgW8pNGvblDeraVsug5o0lMsFuJ4cK
+ bcZR6Ar9jYgokzj5MG5G5Wbm9d6LVdehWxPV8EMxgAoqYPxiZA+ts9aRww3q2bx9Q8hY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=kjdF9hYdVVwngjXbe4+CWCYmZrvO/e1agpEymOCh0iE=; b=ZSFtMLEYEnqbsrXaa+wfnBvYqP
- R/FLC+2TOO0FAcaoa+d2T7ToNCULgEttff+nYQuIdWJ2KwBGRjGyRshg4+B0vJRCDyA3PVBRdn1mO
- l+NlSctjppAuPooZi6dNNWbOqLf/RzS/3uujGFd/xWQXkcU2DvK40eKSlqT1CRAkroKo=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=wokuoGqypkRW+N7f3s/ZfDKHdz0JBnoTTfAJnAbSOb8=; b=foz0zYIq+4kf/ZKA3bQjsgAgIP
+ Gzd8w6MRQz1BscGzeXEiR517aqxA7dNtvFHZyUlFEnUofYYFjQH8qyVs1as9JIumewrZpx5PkauyV
+ PzVn8ndLm+ofE+2vvenml60I7wsDaDOeUfORAaj08HEwtYWJsJb2DjHH3CEcnsSHdUZ8=;
+Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tx3rw-0004An-Sv for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Mar 2025 12:59:11 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id F368E61596
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 25 Mar 2025 12:58:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7A5CC4CEED;
- Tue, 25 Mar 2025 12:58:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1742907529;
- bh=00DLigW1BznJ8vTs4yfqAv7qlo9NXstRvHEGDfH0+AU=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=rvqD+t/vGpY2tdZeuLreLdmIwRKIAfejszt4vOWSfuHf9r+gK5W4XmEVMBNmJ9yHW
- fySK7S+6yLZcttkhceiJXdl4tm1ABkR5ZcDtvkBKlBOigBrHTgrByFuIjpoo4fvl/Z
- 5cVcQmIe9lGSBafSEh1ZEKmbhCZbX5z1WEFuZEhgFT+BwnhaliQ/0PeiUEgbjrhfom
- i5pdV2QJ8WTkJTGT2JkgZaG7dRYS8qFYjgahQg1w6d7AMQHUH6rKxFx5fTxm3AqBfv
- j67053xcsZ9lM1jwpZKnbrHETcKefgik2rH6Zu+SfeFYphquIlFD3IKEPsiw/T6+tX
- gvxXbYNqq/sIw==
-To: Zorro Lang <zlang@kernel.org>,
-	fstests@vger.kernel.org
-Date: Tue, 25 Mar 2025 20:58:23 +0800
-Message-ID: <20250325125824.3367060-5-chao@kernel.org>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-In-Reply-To: <20250325125824.3367060-1-chao@kernel.org>
-References: <20250325125824.3367060-1-chao@kernel.org>
+ id 1tx8MV-00017l-PV for Linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Mar 2025 17:46:52 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=wokuoGqypkRW+N7f3s/ZfDKHdz0JBnoTTfAJnAbSOb8=; b=kELRTNN+zuQL3vKEARZjWHwaB+
+ 1RJBAF4nct4jXhY8Yj9kjLdGcFXH4UwbeG4qUtuKPBf4lZPGi0U67Oish6lcK86TUxQZozOohZPsW
+ EI0GZF2XASjJuqCEVMCO6kGoZ69ID0/gXlwkFZ0LOxE0D5paTLsW2qzvR2jdutj5dL+pou5ZzR5CN
+ wqfHVzHxdkzmEvIUnJ+LbG2hP/h3hYAakVUxN5tcJgJg7uhBXq5r+8+ldfM0nG7qGidsFLbW+xIAz
+ lmEWZ0KhcQXZVLqxKHVLGjxHdKl4RTNMu2udtWFsPg/TX9zvcLHwAEz/oiniIVKRECNgfH5V9j0hm
+ sjVO2mdQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red
+ Hat Linux)) id 1tx8MJ-00000007KAZ-3dXu;
+ Tue, 25 Mar 2025 17:46:39 +0000
+Date: Tue, 25 Mar 2025 17:46:39 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Nanzhe Zhao <nzzhao.sigma@gmail.com>
+Message-ID: <Z-Lr_xtkYakqpf0j@casper.infradead.org>
+References: <CAMLCH1FEuoDxFFQ8HuUdBDMfzsyaS2LWyVh+eyGCpgxnKGa7rA@mail.gmail.com>
+ <Z-Aai24gPXWQp8qi@casper.infradead.org>
+ <CAMLCH1HsT+AVZSXAh8Q7Zr9C3SzaegfMdE6fzKp0X0FDt9JSbA@mail.gmail.com>
+ <Z-KAP6Jz_bjuPuyx@casper.infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tx3rw-0004An-Sv
-Subject: [f2fs-dev] [PATCH v5 5/6] common/rc: introduce
- _check_f2fs_filesystem()
+Content-Disposition: inline
+In-Reply-To: <Z-KAP6Jz_bjuPuyx@casper.infradead.org>
+X-Headers-End: 1tx8MV-00017l-PV
+Subject: Re: [f2fs-dev] Inquiry regarding plans on vmscan pageout supporting
+ fs writepages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,101 +79,56 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-_check_generic_filesystem() will fail the test once it detects
-corruption, let's introduce _check_f2fs_filesystem() to just check
-filesystem w/ --dry-run option, and return the error number, then
-let caller to decide whether the corruption is as expected or not.
+On Tue, Mar 25, 2025 at 10:06:55AM +0000, Matthew Wilcox wrote:
+> On Mon, Mar 24, 2025 at 08:47:05AM +0800, Nanzhe Zhao wrote:
+> > Knowing that the F2FS community is currently heavily invested in the
+> > folio support effort, I wanted to also bring up some observations and
+> > questions regarding folio support in F2FS garbage collection.
+> > Specifically, I'm concerned about the challenge of allocating
+> > high-order folios due to non-contiguous index ranges during the GC
+> > process. I've initiated a discussion about this issue on the f2fs
+> > mailing list in an email
+> > thread.[https://lore.kernel.org/linux-f2fs-devel/CAMLCH1F8niz3qifu9pt6C3yLhonadD=feaPtWKhCaRD8FPJhRg@mail.gmail.com/T/#u]
+> > I would be grateful if you and other developers could take a look and
+> > share your thoughts.
+> 
+> Sorry, I'm at LSFMM this week and don't have time to dig into this.
+> I hope you saw my recent email about folios:
+> 
+> https://lore.kernel.org/linux-f2fs-devel/Z9RR2ubkS9CafUdE@casper.infradead.org/
+> 
+> The fundamental problem is that f2fs has no per-block data structure.  In
+> ext4, that's struct buffer_head.  For XFS, it's struct iomap_folio_state.
+> For btrfs, it's struct btrfs_subpage and for bcachefs, it's struct
+> bch_folio.
+> 
+> Either f2fs needs to grow its own, or it needs to share iomap with
+> XFS.  Both options are a lot of work; iomap doesn't support all the
+> functionality that f2fs needs.  But btrfs is looking to move to using
+> iomap and it has some of the same needs that f2fs has, so perhaps you
+> can help each other.
 
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- common/rc | 50 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+I think there are two reasonable projects you could undertake which
+would be generally helpful.
 
-diff --git a/common/rc b/common/rc
-index ac2bac81..cabd44de 100644
---- a/common/rc
-+++ b/common/rc
-@@ -3527,6 +3527,50 @@ _check_generic_filesystem()
-     return 0
- }
- 
-+_check_f2fs_filesystem()
-+{
-+    local device=$1
-+
-+    # If type is set, we're mounted
-+    local type=`_fs_type $device`
-+    local ok=1
-+
-+    if [ "$type" = "f2fs" ]
-+    then
-+        # mounted ...
-+        local mountpoint=`_umount_or_remount_ro $device`
-+    fi
-+
-+    $F2FS_FSCK_PROG --dry-run $device >$tmp.fsck.f2fs 2>&1
-+    if [ $? -ne 0 ];then
-+        _log_err "_check_f2fs_filesystem: filesystem on $device is inconsistent"
-+        echo "*** fsck.f2fs output ***" >>$seqres.full
-+        cat $tmp.fsck.f2fs              >>$seqres.full
-+        echo "*** end fsck.f2fs output" >>$seqres.full
-+
-+    ok=0
-+    fi
-+    rm -f $tmp.fsck.f2fs
-+
-+    if [ $ok -eq 0 ]
-+    then
-+        echo "*** mount output ***"		>>$seqres.full
-+        _mount					>>$seqres.full
-+        echo "*** end mount output"		>>$seqres.full
-+    elif [ "$type" = "f2fs" ]
-+    then
-+	# was mounted ...
-+	_mount_or_remount_rw "$MOUNT_OPTIONS" $device $mountpoint
-+	ok=$?
-+    fi
-+
-+    if [ $ok -eq 0 ]; then
-+	return 1
-+    fi
-+
-+    return 0
-+}
-+
- # Filter the knowen errors the UDF Verifier reports.
- _udf_test_known_error_filter()
- {
-@@ -3631,6 +3675,9 @@ _check_test_fs()
-     ubifs)
- 	# there is no fsck program for ubifs yet
- 	;;
-+    f2fs)
-+        _check_f2fs_filesystem $TEST_DEV
-+        ;;
-     *)
- 	_check_generic_filesystem $TEST_DEV
- 	;;
-@@ -3687,6 +3734,9 @@ _check_scratch_fs()
-     ubifs)
- 	# there is no fsck program for ubifs yet
- 	;;
-+    f2fs)
-+        _check_f2fs_filesystem $device
-+        ;;
-     *)
- 	_check_generic_filesystem $device
- 	;;
--- 
-2.48.1
+One is that you could add fsverity support to XFS.  You'd want to
+coordinate with the XFS developers as a number of them have Strongly Held
+Opinions on how this should be done.  There may even be prototype code;
+I haven't been following closely.
+
+The other is that you could help out with the ext4 large folio conversion.
+There are already patches for this:
+
+https://lore.kernel.org/linux-fsdevel/20241125114419.903270-1-yi.zhang@huaweicloud.com/
+
+As the cover letter says, "with the exception of fsverity, fscrypt,
+and data=journal mode."  So you could perhaps apply this patch series
+(patch 1 is now obsolete), and try to make fsverity work.
 
 
 
