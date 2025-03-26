@@ -4,71 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3F4E6C36005
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Mar 2025 03:37:54 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F3748C36008
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Mar 2025 09:26:52 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1txHaU-00037I-Bd;
-	Wed, 26 Mar 2025 03:37:53 +0000
+	id 1txN2A-0000Bd-QP;
+	Wed, 26 Mar 2025 09:26:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1txHaR-00037B-Oj
+ (envelope-from <chao@kernel.org>) id 1txN1y-0000BH-A8
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 26 Mar 2025 03:37:51 +0000
+ Wed, 26 Mar 2025 09:26:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=L9gY5XDPpqmKquXY3BqLMX31PuZvhv7/DdoNmhC/YwM=; b=iFHX7PbFsuGsfCa+hmo5MIfkS0
- C2jkeBDlQqaiVJjxHaRytNGKdAoeh+L1tKqO5dnBi8VqTuymcBdIF2B8uNI2yO05S9CyP+ZLAeaz9
- +xTuidd+Ms1uBcVsVUAFWQOI5P4NUTEUT1eXqp5MEmaIfc3Bhgyzl54fTv0C9VCxtYEQ=;
+ bh=R+WMssAgLWT0ouaiUGQbS9YXQ2gRvk/MDQT6upsblbI=; b=G1viY/D3o8HqAfdo1bSIpKCkP9
+ WIsGptBLbn5CLTzVPu5VgQGF6waB/USsZfH4wRXqm5wKnnM2TlSpZUDYsDVm57XzsNs3Fx0HBaQzt
+ aY+316awgT0YPZcm6HCNsAbckB+rAULmQx/uA5R9hcLzcJNist+Xa6uggKfrC5f9wRMQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=L9gY5XDPpqmKquXY3BqLMX31PuZvhv7/DdoNmhC/YwM=; b=b6G6vZr5Y/P4rZl4UVREtR5mdv
- H6uUyFRiRekQJz0BWCc5BgdS34+NyLOKzw26HhHhLbs4MVkifPzK2ZIfIpfPTqQXkPJAgzL/wGGzV
- dSg/KM1/8nQAslb/GLexrcaZU3sr3ODwVgq0vEGAtNw2NRd/cNfhCdfWsF3rmlrwj8Sk=;
-Received: from casper.infradead.org ([90.155.50.34])
+ bh=R+WMssAgLWT0ouaiUGQbS9YXQ2gRvk/MDQT6upsblbI=; b=BtGH3gPwqXNDaXqDj3TA27z37W
+ XIXbfGgt6T/fvWI8XKIkS6G6AUDoZxVG5k0yzEyc3Dan93avAVXbHADjBKQ8pGieLeCR4yUB4KYPc
+ owJaYKrmlzMwv9xUvUkWdmXHAVNOxSyCpvqGrQLBzEtk0CJb1W93LldqgP7MnHqHp9Yw=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1txHaQ-0001nO-3M for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 26 Mar 2025 03:37:51 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=L9gY5XDPpqmKquXY3BqLMX31PuZvhv7/DdoNmhC/YwM=; b=EyyeqoOT/aKCoe22c/C8AZwzBV
- BMOOqQYPO4Q+WikKexayR7wVXQtMhmXZCtlVN4BLeAKXl6BP0ZZhiQdbH+A7kuIrDr8TTZxbf/Jec
- YhKzLQ1ouVvRhh1P3xFkqbqP1wSvAArqmnnTOnTpPHnbWm159TLGM4lIuWNQEnoth4XkAO1cNMe3W
- A6OQG2AXvcuxqS24m7YYKebVyYKhKlAdvos86MSguig2vvJbn3IcVnXBiYAvmkf0iZsX94NTdUerI
- Kp34/RRzR3K8a2LbTz+aDHK4EMPjQwwhqIuEV8pjWIsKHpbHxaF1W+rA9nIomCZTYbsLEXapdrXpS
- 9xWH6LPQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red
- Hat Linux)) id 1txHaI-0000000H1Rc-3FJA;
- Wed, 26 Mar 2025 03:37:42 +0000
-Date: Wed, 26 Mar 2025 03:37:42 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Message-ID: <Z-N2hsKd2NJeNiKN@casper.infradead.org>
-References: <20250307182151.3397003-1-willy@infradead.org>
- <174172263873.214029.5458881997469861795.git-patchwork-notify@kernel.org>
- <Z9DSym8c9h53Xmr8@casper.infradead.org>
- <Z9Dh4UL7uTm3cQM3@google.com>
- <Z9RR2ubkS9CafUdE@casper.infradead.org>
- <Z9Shx72mSqnQxCh3@google.com>
+ id 1txN1n-0000kr-TZ for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 26 Mar 2025 09:26:38 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id 8AB2D5C6206;
+ Wed, 26 Mar 2025 09:24:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90A72C4CEE2;
+ Wed, 26 Mar 2025 09:26:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1742981182;
+ bh=1ud3vRRXqS1I2uDnOUgws83uw4pDL84Krm3xaR/sLdo=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=YGFQqUJlHJr+GggPvwrpWnZ3irOGWe8S9rr2aZlsFwWilypQ9hoSSuX48gO96QzTC
+ kZwU6aTEqr0GWBigPAa2ZhxybpJ7lwa7Zz0KhZ3q0ayFpbOifMuGm6JZmKyQ09ieEX
+ 9jg6DAQiDzv4WJ+6euRzMon/xuWcQeAxhBvvAbgdI2HKXVydyov17JpbSWKE8sBrGL
+ +Ej0/yMz0M5OO6X+dnXJLNkGACc1xo7yV/WztiV3V2KimN007erRBhnij9meIOO4Dk
+ 60bdtSg98IgeeS/ajGz3Z5EsDW4xLt3iYtoMSsHQD2MQB4FqBd0FCa9D4D9iRcmaJB
+ rbqOaPiKB8/Pw==
+Message-ID: <e4fb11ea-a97b-4ba0-aa28-f6f93e5a6134@kernel.org>
+Date: Wed, 26 Mar 2025 17:26:18 +0800
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <Z9Shx72mSqnQxCh3@google.com>
-X-Headers-End: 1txHaQ-0001nO-3M
-Subject: Re: [f2fs-dev] [PATCH 0/4] f2fs: Remove uses of writepage
+User-Agent: Mozilla Thunderbird
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>, daehojeong@google.com,
+ jaegeuk@kernel.org
+References: <1742978761-16264-1-git-send-email-zhiguo.niu@unisoc.com>
+Content-Language: en-US
+In-Reply-To: <1742978761-16264-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Headers-End: 1txN1n-0000kr-TZ
+Subject: Re: [f2fs-dev] [RFC PATCH] f2fs: remove some redundant flow about
+ FI_ATOMIC_DIRTIED
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,59 +79,143 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, Hao_hao.Wang@unisoc.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Mar 14, 2025 at 09:38:15PM +0000, Jaegeuk Kim wrote:
-> On 03/14, Matthew Wilcox wrote:
-> > Unfortunately, I thnk I have to abandon this effort.  It's only going
-> > to make supporting large folios harder (ie there would then need to be
-> > an equivalently disruptive series adding support for large folios).
-> > 
-> > The fundamental problem is that f2fs has no concept of block size !=
-> > PAGE_SIZE.  So if you create a filesystem on a 4kB PAGE_SIZE kernel,
-> > you can't mount it on a 16kB PAGE_SIZE kernel.  An example:
-> > 
-> > int f2fs_recover_inline_xattr(struct inode *inode, struct page *page)
-> > {
-> >         struct f2fs_inode *ri;
-> >         ipage = f2fs_get_node_page(F2FS_I_SB(inode), inode->i_ino);
-> >         ri = F2FS_INODE(page);
-> > 
-> > so an inode number is an index into the filesystem in PAGE_SIZE units,
-> > not in filesystem block size units.  Fixing this is a major effort, and
-> > I lack the confidence in my abilities to do it without breaking anything.
-> > 
-> > As an outline of what needs to happen, I think that rather than passing
-> > around so many struct page pointers, we should be passing around either
-> > folio + offset, or we should be passing around struct f2fs_inode pointers.
-> > My preference is for the latter.  We can always convert back to the
-> > folio containing the inode if we need to (eg to mark it dirty) and it
-> > adds some typesafety by ensuring that we're passing around pointers that
-> > we believe belong to an inode and not, say, a struct page which happens
-> > to contain a directory entry.
-> > 
-> > This is a monster task, I think.  I'm going to have to disable f2fs
-> > from testing with split page/folio.  This is going to be a big problem
-> > for Android.
+On 3/26/25 16:46, Zhiguo Niu wrote:
+> Commit fccaa81de87e ("f2fs: prevent atomic file from being dirtied before commit")
+> adds the processing of FI_ATOMIC_DIRTIED in the following two positions,
+> [1]
+> f2fs_commit_atomic_write
+>  - __f2fs_commit_atomic_write
+>   - sbi->committed_atomic_block += fi->atomic_write_cnt;
+>   - set_inode_flag(inode, FI_ATOMIC_COMMITTED);
+>   - if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
+>   -    clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
+>   -    f2fs_mark_inode_dirty_sync(inode, true);
+>   - }
+> [2]
+> f2fs_abort_atomic_write
+>   - if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
+>   -    clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
+>   -    f2fs_mark_inode_dirty_sync(inode, true);
+>   - }
 > 
-> I see. fyi; in Android, I'm thinking to run 16KB page kernel with 16KB format
-> natively to keep block_size = PAGE_SIZE. Wasn't large folio to support a set
-> of pages while keeping block_size = PAGE_SIZE?
+> but [1] seems to be redundant:
+> The atomic file flag FI_ATOMIC_FILE is still set here, so f2fs_mark_inode_dirty_sync
+> still does not set the dirty state to vfs. If FI_ATOMIC_DIRTIED was originally set
+> when atomic file is committing, then FI_ATOMIC_DIRTIED is just cleared here, and
+> then do the repeating action of setting FI_ATOMIC_DIRTIED?
+> So is it enough to do this only in [2]?
 
-Oh, I think I do see a possible argument for continuing this work.
+Hi Zhiguo,
 
-If we have an f2fs filesystem with a 16kB block size, we can use order-0
-folios with a 16kB PAGE_SIZE kernel, and if we want to mount it on a
-kernel with a 4kB PAGE_SIZE kernel, then we can use order-2 folios to
-do that.
+I checked the code again, finally, I got this, could you please take
+a look?
 
-Is that a useful improvement to f2fs?  It's not really the intent of
-large folios; it's supposed to be used to support arbitrary order folios.
-But we have all the pieces in place such that we could tell the page
-cache min-order = max-order = 2.
+Ping Daeho as well.
+
+Subject: [PATCH] f2fs: fix to set atomic write status more clear
+
+1. After we start atomic write in a database file, before committing
+all data, we'd better not set inode w/ vfs dirty status to avoid
+redundant updates, instead, we only set inode w/ atomic dirty status.
+
+2. After we commit all data, before committing metadata, we need to
+clear atomic dirty status, and set vfs dirty status to allow vfs flush
+dirty inode.
+
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/inode.c   |  4 +++-
+ fs/f2fs/segment.c | 10 ++++++----
+ fs/f2fs/super.c   |  4 +++-
+ 3 files changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 5c8634eaef7b..f5991e8751b9 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -34,7 +34,9 @@ void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
+ 	if (f2fs_inode_dirtied(inode, sync))
+ 		return;
+
+-	if (f2fs_is_atomic_file(inode))
++	/* only atomic file w/ FI_ATOMIC_COMMITTED can be set vfs dirty */
++	if (f2fs_is_atomic_file(inode) &&
++			!is_inode_flag_set(inode, FI_ATOMIC_COMMITTED))
+ 		return;
+
+ 	mark_inode_dirty_sync(inode);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index dc360b4b0569..28659a71891a 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -376,10 +376,12 @@ static int __f2fs_commit_atomic_write(struct inode *inode)
+ 	} else {
+ 		sbi->committed_atomic_block += fi->atomic_write_cnt;
+ 		set_inode_flag(inode, FI_ATOMIC_COMMITTED);
+-		if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
+-			clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
+-			f2fs_mark_inode_dirty_sync(inode, true);
+-		}
++
++		f2fs_bug_on(sbi, !is_inode_flag_set(inode, FI_ATOMIC_DIRTIED));
++
++		/* clear atomic dirty status and set vfs dirty status */
++		clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
++		f2fs_mark_inode_dirty_sync(inode, true);
+ 	}
+
+ 	__complete_revoke_list(inode, &revoke_list, ret ? true : false);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 9a42a1323f42..a5cc9f6ee16a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1532,7 +1532,9 @@ int f2fs_inode_dirtied(struct inode *inode, bool sync)
+ 	}
+ 	spin_unlock(&sbi->inode_lock[DIRTY_META]);
+
+-	if (!ret && f2fs_is_atomic_file(inode))
++	/* if atomic write is not committed, set inode w/ atomic dirty */
++	if (!ret && f2fs_is_atomic_file(inode) &&
++			!is_inode_flag_set(inode, FI_ATOMIC_COMMITTED))
+ 		set_inode_flag(inode, FI_ATOMIC_DIRTIED);
+
+ 	return ret;
+-- 
+2.48.1
+
+
+> 
+> Cc: Daeho Jeong <daehojeong@google.com>
+> Fixes: fccaa81de87e ("f2fs: prevent atomic file from being dirtied before commit")
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> ---
+>  fs/f2fs/segment.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 396ef71..d4ea3af 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -376,10 +376,6 @@ static int __f2fs_commit_atomic_write(struct inode *inode)
+>  	} else {
+>  		sbi->committed_atomic_block += fi->atomic_write_cnt;
+>  		set_inode_flag(inode, FI_ATOMIC_COMMITTED);
+> -		if (is_inode_flag_set(inode, FI_ATOMIC_DIRTIED)) {
+> -			clear_inode_flag(inode, FI_ATOMIC_DIRTIED);
+> -			f2fs_mark_inode_dirty_sync(inode, true);
+> -		}
+>  	}
+>  
+>  	__complete_revoke_list(inode, &revoke_list, ret ? true : false);
+
 
 
 _______________________________________________
