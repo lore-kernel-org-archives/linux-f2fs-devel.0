@@ -4,69 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 24270C36013
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 27 Mar 2025 21:58:13 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B0856C36011
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 27 Mar 2025 22:27:55 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1txvEq-0004Mn-At;
-	Thu, 27 Mar 2025 21:58:12 +0000
+	id 1txvhb-0002a3-2M;
+	Thu, 27 Mar 2025 22:27:55 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1txvEo-0004Me-Oa
+ (envelope-from <jaegeuk@kernel.org>) id 1txvha-0002Zx-AS
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 27 Mar 2025 21:58:11 +0000
+ Thu, 27 Mar 2025 22:27:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cdv9JRegSNswIU8NCARaciRk1V+G0Rq8cpGTpJkqjUo=; b=LXq7LDahpMl7/QXFG4ujsqansG
- yX59tGqRED1a2EcweDp1o4PKplED7r/pUcGZHUFiPG7ILHRnakLVSKgVBEmCxGXuiPfEVq47SFjL8
- PTw5uwzW2TqmirWhJoVfpW8i9M0sL/2NQLlXKsEZRRvuPdEz6+NOUk/n996hiS+LDhfU=;
+ bh=BQLhRRUns0wvtK+tj9shAxMJqCW3FhfLqBKTfUps+yE=; b=OMdGo3JmVTOGiYF2oFnPmU9XnR
+ AYqQ66e+RNmTN99JYrC8PWJc8KVDBwwq6TwG2XrvBMcbUNFrF+7g+ub9hgOFzyTrytVi3cwFluPhg
+ tcsZYaRiThm7R/oqA5nitTDKhg+KGnUZIrk6xf9U0JI9xnqgXKfRZsumwGl3vnJToL8Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cdv9JRegSNswIU8NCARaciRk1V+G0Rq8cpGTpJkqjUo=; b=LwhmV/P/d/muXllDLKaApMm0kZ
- g91fNB+/XsTd0LAcWLIjxfCFj640fV5HhJ2kp4xdJ2KWmsk/zjnpB/bwP3oeSHQAecVvp0G8jg5/n
- GQJuT7UeZLGCHBcgaBBlNL6wB/A0BltYCmveVVAr58eUAkSGGKO7n8w+jaAXzMub2Q2M=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ ;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=BQLhRRUns0wvtK+tj9shAxMJqCW3FhfLqBKTfUps+yE=; b=i22dCaqUlFPMQesqDSX3aJbTPL
+ uSxyHoCF+PaeQyDvEHwI6Eh2kW2rcThX7Sl1hwQYZ8hlR3QQzkd4zMYm5NLXm0jDjrTVhvnEnkjtb
+ QN/ov3Za1IJ4ajtMX4nMFef/kCR7Idrf+GCCbFJbZ5kdlBROATZYMUWXu6Oa+s0vfnhU=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1txvEe-0008Up-IH for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 27 Mar 2025 21:58:11 +0000
+ id 1txvhZ-0004ov-Gw for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 27 Mar 2025 22:27:54 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id D004AA42F20;
- Thu, 27 Mar 2025 21:52:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E3B8C4CEDD;
- Thu, 27 Mar 2025 21:57:49 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id AE1276113B;
+ Thu, 27 Mar 2025 22:27:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E4EAC4CEDD;
+ Thu, 27 Mar 2025 22:27:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1743112669;
- bh=yrJ82et3mj4de5bHGMGo8C0V7xBVxSQ6fqTazodMdsM=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=XJN7psxHDpp4GXjsNfkTOLtqTVZ25oYnkuVwp26YN2Zc14nkLj5oolvFlHVpgw/Hf
- 2+QLJBavHNVCJHD7dNlv/nUwJSiFEoZxKh13Ck6po89Wfc+HDJGmn9ZCLT/2nEYTsn
- ZCNqmMwiknbXVoIe1BVly3J35P4V2Ues6kHiWw7T/Fbp5HKRM8q2FU4VtZns+Pl4M4
- iMKo5wPw9kFkOHrWNUkZaYpS1oQOs32jeUUbxnOzcHugglnQBemyiVO1AxMnmoGzkX
- E7T7NMIUxYyEjZnIJyzqBg6e0wnITTul1cNUAOFb7EnVC5oIvRGtGM4SfWjAFzSVOr
- Sc84sNn3gBiSw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- EAEBB380AAFD; Thu, 27 Mar 2025 21:58:26 +0000 (UTC)
+ s=k20201202; t=1743114462;
+ bh=FzIjcx9dBnfY4ctyzoIH3XwzJbef24djr7Tb+00ZDJk=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=ppS7nWzqshJOtPe5St3wFnGfv9q45JbWKKvTn5/5mr7PaBtQ4goFI/XReyZxQZtOT
+ g8QOonmhqMCFDEhPyran1KmrG60CzHIaZpT9kHt+W3qNOmCgh/WywpMEDn9Fz74v2V
+ /LS7v1BzOgeRJk5BSvpihlI81ZTkK9EObGaiFzfwwir9jEC8o+8Rbwe6yFwkz3gGW2
+ /x56F57URYEaWr9Dd2BeGeOaajlAHU6hQfsPEgRL4CnB0fSSljPULzhU2f7nTKRkOZ
+ cCmrJ02Kc4XRH8Yo37xgsIWiiVV0P53R3LjkWQs9r05lmZQr096HYCr1cWrCVGpoJL
+ C1k8BEDzdVxJA==
+Date: Thu, 27 Mar 2025 22:27:40 +0000
+To: Matthew Wilcox <willy@infradead.org>
+Message-ID: <Z-XQ3NFrfi2-bd3U@google.com>
+References: <20250307182151.3397003-1-willy@infradead.org>
+ <174172263873.214029.5458881997469861795.git-patchwork-notify@kernel.org>
+ <Z9DSym8c9h53Xmr8@casper.infradead.org>
+ <Z9Dh4UL7uTm3cQM3@google.com>
+ <Z9RR2ubkS9CafUdE@casper.infradead.org>
+ <Z9Shx72mSqnQxCh3@google.com>
+ <Z-N2hsKd2NJeNiKN@casper.infradead.org>
 MIME-Version: 1.0
-Message-Id: <174311270549.2230226.7159828218594723399.git-patchwork-notify@kernel.org>
-Date: Thu, 27 Mar 2025 21:58:25 +0000
-References: <cover.1737135484.git.mchehab+huawei@kernel.org>
-In-Reply-To: <cover.1737135484.git.mchehab+huawei@kernel.org>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-X-Headers-End: 1txvEe-0008Up-IH
-Subject: Re: [f2fs-dev] [PATCH RFC 00/10] Improve ABI documentation
- generation
+Content-Disposition: inline
+In-Reply-To: <Z-N2hsKd2NJeNiKN@casper.infradead.org>
+X-Headers-End: 1txvhZ-0004ov-Gw
+Subject: Re: [f2fs-dev] [PATCH 0/4] f2fs: Remove uses of writepage
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,48 +82,65 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: linux-doc@vger.kernel.org, corbet@lwn.net, gregkh@linuxfoundation.org,
- james.clark@linaro.org, suzuki.poulose@arm.com, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- johannes@sipsolutions.net, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, mike.leach@linaro.org
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
-
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jonathan Corbet <corbet@lwn.net>:
-
-On Fri, 17 Jan 2025 18:59:29 +0100 you wrote:
-> Hi Jon/Greg,
+On 03/26, Matthew Wilcox wrote:
+> On Fri, Mar 14, 2025 at 09:38:15PM +0000, Jaegeuk Kim wrote:
+> > On 03/14, Matthew Wilcox wrote:
+> > > Unfortunately, I thnk I have to abandon this effort.  It's only going
+> > > to make supporting large folios harder (ie there would then need to be
+> > > an equivalently disruptive series adding support for large folios).
+> > > 
+> > > The fundamental problem is that f2fs has no concept of block size !=
+> > > PAGE_SIZE.  So if you create a filesystem on a 4kB PAGE_SIZE kernel,
+> > > you can't mount it on a 16kB PAGE_SIZE kernel.  An example:
+> > > 
+> > > int f2fs_recover_inline_xattr(struct inode *inode, struct page *page)
+> > > {
+> > >         struct f2fs_inode *ri;
+> > >         ipage = f2fs_get_node_page(F2FS_I_SB(inode), inode->i_ino);
+> > >         ri = F2FS_INODE(page);
+> > > 
+> > > so an inode number is an index into the filesystem in PAGE_SIZE units,
+> > > not in filesystem block size units.  Fixing this is a major effort, and
+> > > I lack the confidence in my abilities to do it without breaking anything.
+> > > 
+> > > As an outline of what needs to happen, I think that rather than passing
+> > > around so many struct page pointers, we should be passing around either
+> > > folio + offset, or we should be passing around struct f2fs_inode pointers.
+> > > My preference is for the latter.  We can always convert back to the
+> > > folio containing the inode if we need to (eg to mark it dirty) and it
+> > > adds some typesafety by ensuring that we're passing around pointers that
+> > > we believe belong to an inode and not, say, a struct page which happens
+> > > to contain a directory entry.
+> > > 
+> > > This is a monster task, I think.  I'm going to have to disable f2fs
+> > > from testing with split page/folio.  This is going to be a big problem
+> > > for Android.
+> > 
+> > I see. fyi; in Android, I'm thinking to run 16KB page kernel with 16KB format
+> > natively to keep block_size = PAGE_SIZE. Wasn't large folio to support a set
+> > of pages while keeping block_size = PAGE_SIZE?
 > 
-> The main goal of this RFC is to give a heads up of a work I've been doing to
-> replace the get_abi.pl script with a python version.
+> Oh, I think I do see a possible argument for continuing this work.
 > 
-> Patches 1-6 are OK to be applied:
-> - Patch 1 changes the sort criteria of the ABI generation to use alphabetic order:
->   currently, it is *almost* alphabetic, but, on some cases, it orders on a different
->   way. No changes at the content, just at the order.
->   I wrote it mainly to use the same sort criteria as the new tool, but IMO it is
->   worth applying even before we switch to the python version.
+> If we have an f2fs filesystem with a 16kB block size, we can use order-0
+> folios with a 16kB PAGE_SIZE kernel, and if we want to mount it on a
+> kernel with a 4kB PAGE_SIZE kernel, then we can use order-2 folios to
+> do that.
 > 
-> [...]
+> Is that a useful improvement to f2fs?  It's not really the intent of
+> large folios; it's supposed to be used to support arbitrary order folios.
+> But we have all the pieces in place such that we could tell the page
+> cache min-order = max-order = 2.
 
-Here is the summary with links:
-  - [f2fs-dev,RFC,05/10] ABI: sysfs-fs-f2fs: fix date tags
-    https://git.kernel.org/jaegeuk/f2fs/c/90800df0da78
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+It may be helpful in case where someone wants to try 4KB page kernel back,
+after Android ships 16KB page/block products. Does it require a big surgery?
 
 
 _______________________________________________
