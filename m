@@ -4,68 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0482DC3600B
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 27 Mar 2025 21:58:12 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 24270C36013
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 27 Mar 2025 21:58:13 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1txvEp-0001zQ-Ln;
-	Thu, 27 Mar 2025 21:58:11 +0000
+	id 1txvEq-0004Mn-At;
+	Thu, 27 Mar 2025 21:58:12 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1txvEm-0001zF-Ib
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1txvEo-0004Me-Oa
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 27 Mar 2025 21:58:08 +0000
+ Thu, 27 Mar 2025 21:58:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oO/QzIIMcjFyk5LwoSEjQbufVLaRzyJFjXFWeTu30gY=; b=DHv9SmPtPl0msYzWGinE35ZIyW
- 8fqViFJFb4UDoszrXG/yTpPAYwLK7pTUAGb44BDnOsfb1DVzmIa8+6qD3FKeWjK//VbqJpVZnZdxB
- l8en4Zn+VRjYtc/sLmbR0GIA6ewMDi842W4ctuYSFManxaNyrYBdfE4GuNDs33R/4BnA=;
+ bh=cdv9JRegSNswIU8NCARaciRk1V+G0Rq8cpGTpJkqjUo=; b=LXq7LDahpMl7/QXFG4ujsqansG
+ yX59tGqRED1a2EcweDp1o4PKplED7r/pUcGZHUFiPG7ILHRnakLVSKgVBEmCxGXuiPfEVq47SFjL8
+ PTw5uwzW2TqmirWhJoVfpW8i9M0sL/2NQLlXKsEZRRvuPdEz6+NOUk/n996hiS+LDhfU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oO/QzIIMcjFyk5LwoSEjQbufVLaRzyJFjXFWeTu30gY=; b=KmwxNtN/x2NOqPUiEVwqOgZPHB
- S99zGGMEnomIoTPtbgX0axwwTFH4YBKo8Lhz0AL2wnTSDl1pv9CZhLk5r+1Cci2/XC6WPZQ+iebPm
- bto89FyrbyRCb8WnKNkM8+eywTHXUVMiKdJ8aE28bKZiWg0zaRaPnIAiB1HKTFvfJ5zE=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=cdv9JRegSNswIU8NCARaciRk1V+G0Rq8cpGTpJkqjUo=; b=LwhmV/P/d/muXllDLKaApMm0kZ
+ g91fNB+/XsTd0LAcWLIjxfCFj640fV5HhJ2kp4xdJ2KWmsk/zjnpB/bwP3oeSHQAecVvp0G8jg5/n
+ GQJuT7UeZLGCHBcgaBBlNL6wB/A0BltYCmveVVAr58eUAkSGGKO7n8w+jaAXzMub2Q2M=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1txvEg-0008VB-Uk for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 27 Mar 2025 21:58:08 +0000
+ id 1txvEe-0008Up-IH for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 27 Mar 2025 21:58:11 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 71DBA5C692B;
- Thu, 27 Mar 2025 21:55:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DE61C4CEE4;
- Thu, 27 Mar 2025 21:57:52 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id D004AA42F20;
+ Thu, 27 Mar 2025 21:52:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E3B8C4CEDD;
+ Thu, 27 Mar 2025 21:57:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1743112672;
- bh=ZsADyA8KuiZgxQVVEb+zpMu58RecCjloMAnX+/v+buo=;
+ s=k20201202; t=1743112669;
+ bh=yrJ82et3mj4de5bHGMGo8C0V7xBVxSQ6fqTazodMdsM=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=bIwuxwijA27zYL/rKK5iPIKDyPcIVvdquEhX4uJ/0O7kDQfBlQSwDEduEq7lBgSUP
- CarnIwjQQXg0LMhX247Z0yfZPAOVXs7ox6Yl/6ng4ld4ZhQwFVO6+OhtpmtLqg1lIr
- iDGMaIq3M2g+x+DmwQyJ12DqWV+J6JbeUBhYNUPdvWYTWaBIIt5G7iXhiqcWwUeKfG
- P2Y7tLT318zO2AKeuygoe8PKsHUjMAL0rFr2YeLw15OUpvxyxy6sb/6z+2jWBhe0Mb
- ItMPzIq+nMKnGeobPtSLjSKUrJjsGUms2R5sXtzR1yJaJJrkYEwrRv0anEeepMmFm+
- aAae3Ciufjrwg==
+ b=XJN7psxHDpp4GXjsNfkTOLtqTVZ25oYnkuVwp26YN2Zc14nkLj5oolvFlHVpgw/Hf
+ 2+QLJBavHNVCJHD7dNlv/nUwJSiFEoZxKh13Ck6po89Wfc+HDJGmn9ZCLT/2nEYTsn
+ ZCNqmMwiknbXVoIe1BVly3J35P4V2Ues6kHiWw7T/Fbp5HKRM8q2FU4VtZns+Pl4M4
+ iMKo5wPw9kFkOHrWNUkZaYpS1oQOs32jeUUbxnOzcHugglnQBemyiVO1AxMnmoGzkX
+ E7T7NMIUxYyEjZnIJyzqBg6e0wnITTul1cNUAOFb7EnVC5oIvRGtGM4SfWjAFzSVOr
+ Sc84sNn3gBiSw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- ADC26380AAFD; Thu, 27 Mar 2025 21:58:29 +0000 (UTC)
+ EAEBB380AAFD; Thu, 27 Mar 2025 21:58:26 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <174311270850.2230226.4852455108648362564.git-patchwork-notify@kernel.org>
-Date: Thu, 27 Mar 2025 21:58:28 +0000
-References: <cover.1739182025.git.mchehab+huawei@kernel.org>
-In-Reply-To: <cover.1739182025.git.mchehab+huawei@kernel.org>
+Message-Id: <174311270549.2230226.7159828218594723399.git-patchwork-notify@kernel.org>
+Date: Thu, 27 Mar 2025 21:58:25 +0000
+References: <cover.1737135484.git.mchehab+huawei@kernel.org>
+In-Reply-To: <cover.1737135484.git.mchehab+huawei@kernel.org>
 To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-X-Headers-End: 1txvEg-0008VB-Uk
-Subject: Re: [f2fs-dev] [PATCH 00/27] Improve ABI documentation generation
+X-Headers-End: 1txvEe-0008Up-IH
+Subject: Re: [f2fs-dev] [PATCH RFC 00/10] Improve ABI documentation
+ generation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,10 +81,9 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: tony.luck@intel.com, linux-doc@vger.kernel.org, corbet@lwn.net,
+Cc: linux-doc@vger.kernel.org, corbet@lwn.net, gregkh@linuxfoundation.org,
  james.clark@linaro.org, suzuki.poulose@arm.com, linux-wireless@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- gpiccoli@igalia.com, bpf@vger.kernel.org, linux-hardening@vger.kernel.org,
  johannes@sipsolutions.net, coresight@lists.linaro.org,
  linux-arm-kernel@lists.infradead.org, mike.leach@linaro.org
 Content-Type: text/plain; charset="us-ascii"
@@ -95,21 +95,23 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jonathan Corbet <corbet@lwn.net>:
 
-On Mon, 10 Feb 2025 11:17:49 +0100 you wrote:
+On Fri, 17 Jan 2025 18:59:29 +0100 you wrote:
 > Hi Jon/Greg,
 > 
-> This series replace get_abi.pl with a Python version.
+> The main goal of this RFC is to give a heads up of a work I've been doing to
+> replace the get_abi.pl script with a python version.
 > 
-> I originally started it due to some issues I noticed when searching for
-> ABI symbols. While I could just go ahead and fix the already existing
-> script, I noticed that the script maintainance didn't have much care over
-> all those years, probably because it is easier to find Python programmers
-> those days.
+> Patches 1-6 are OK to be applied:
+> - Patch 1 changes the sort criteria of the ABI generation to use alphabetic order:
+>   currently, it is *almost* alphabetic, but, on some cases, it orders on a different
+>   way. No changes at the content, just at the order.
+>   I wrote it mainly to use the same sort criteria as the new tool, but IMO it is
+>   worth applying even before we switch to the python version.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,07/27] ABI: sysfs-fs-f2fs: fix date tags
+  - [f2fs-dev,RFC,05/10] ABI: sysfs-fs-f2fs: fix date tags
     https://git.kernel.org/jaegeuk/f2fs/c/90800df0da78
 
 You are awesome, thank you!
