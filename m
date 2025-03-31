@@ -4,65 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8E65AC3601A
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:13:24 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5FE7DC369A3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:13:25 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tzLVc-0003n9-71;
-	Mon, 31 Mar 2025 20:13:24 +0000
+	id 1tzLVc-0000wE-7F;
+	Mon, 31 Mar 2025 20:13:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tzLVW-0003kv-KT
+ (envelope-from <willy@infradead.org>) id 1tzLVY-0000u7-C6
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:18 +0000
+ Mon, 31 Mar 2025 20:13:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lfUpNjNSv203DHMXSowl5Wt0+hSiBd1WujJQZMIsjLU=; b=Udj58rIGThc2lLHuXTQKyxUkBZ
- Nzp0jQ6vJYp5xzD5aTk9uT79GL6QBfwRgU8fNTIYu64ZSt9Ybz6hyGtiePdFwxf9ycJlRsmPlwBUV
- 30oiwkua/cJz3FhFRQnsuTTc+d5P2+W6wv3vUDfTwe0+tNPOh8Z3Nh+s63hbqcuvEhD0=;
+ bh=PXGt9C/EfkopOrlCRmOuHBQ2hJLaZEI8mifqS/VerXU=; b=X3OGOb0ky2k7gFN5sZYAlO3eLx
+ emGPh7kMY9l8hp0JeIPKB5ilPJRNpaouMfsRmjgEMrvAIZfSnXAgZaehDaICKCHu3wOxbnc+eF4Nu
+ 29Iphb0GWhatuoGBqHz3FDIHSVSDGmk42SIUBupBKOdiJCSPt9bTYZa84Q0WdOHyNHbE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=lfUpNjNSv203DHMXSowl5Wt0+hSiBd1WujJQZMIsjLU=; b=J
- 3igVP9xeqy8Y04wPUtxx1+lf36TwWfcQIwoTepLTYINgry1mXClGBQ4dpBX9AqrUP+8op/1BV4koK
- SLZPa877eXftW5YYed7cgzgrTgJQIRJnhW5eo6TgfBHikZx5xfcRPz13zotuaH8rBXYm7t2o6dW3p
- fakHKjJ6U6lzqe+w=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=PXGt9C/EfkopOrlCRmOuHBQ2hJLaZEI8mifqS/VerXU=; b=GBi5K6ZguLI9X/376c6thbumgI
+ uOlWTdPDkKXD1jycQzfjeft03yvI24fx2TgjwNxUBHCtZlZzuC27Gpoff46TJw7jVesGwX/nDGpEw
+ 0wRuSvlo/hgO+Iin38M7srOzZrT1rHG199/9/MTekHfoQmbGvS9jA5SQKBWVEigGQbx4=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tzLVQ-0003Yf-KV for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:18 +0000
+ id 1tzLVY-0003ag-6Y for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Mar 2025 20:13:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
- Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:In-Reply-To:References;
- bh=lfUpNjNSv203DHMXSowl5Wt0+hSiBd1WujJQZMIsjLU=; b=cqBQjG7coykmoEyQhFDhTZ4BqK
- 3w8uJvJdOmVYhGZgE65dcuKlwYk4xwaiSTioWoM9T5oBvicvDkt8cpvlat7fM88/Ws3Aqavg0A1d4
- UWhM1tSJ9H3rPDsFYmEZjpZW2Oz8LPYZ/S/WBUkWy4gMXdoD0+ewP2pudqPSUW0TVLToImCj64Edu
- id5GtLR9Wl3NNn7F/uu9hehw3QFlKA9numYaxeoTDXbD3GUvftIb3B/P02EeXf/1asDfo6LYp0O4P
- hX2GNX5G6Le6FdL6CE/zZ36P7oKoL9THwhBx+sxaGXiobVVSCiiw1lCbCPrbeJJj1/odpDa11Rjp6
- NLvNqADA==;
+ References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+ Content-Type:Content-ID:Content-Description;
+ bh=PXGt9C/EfkopOrlCRmOuHBQ2hJLaZEI8mifqS/VerXU=; b=Q9EhGZRKEjqsjR3KdBA4/jMXi2
+ rFCGlmGt/F2g5brqj5iqJrq0ZE7sa37CFMBeR2UKaCKpZPhd/M6MaxZ6q7WSqtepWdgGOy6XuyXkH
+ mBmHSquQXQtyW3oLoZh647QCjIMTAdSC+WDtHQJzx2Fk1fUluNJEWHX720AmqLyoWFFcUy+iSKskS
+ Q63izhIAEXYF7v9ZpMpLZGwNBdOye6NOwdFDpeCWUsi+nwZvdTCbk4d0JeMZu7xRWzpVlQTk3Vf5e
+ MiankG0cExE+XQXpwvpni6NqCaLzC7Jol9BG0XbryCxGQeMnT7VPNBTnqP6wxJHzmNE2m/4nJQPvC
+ 6YtQ3jZQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red
- Hat Linux)) id 1tzLVF-00000004RTc-0bbe;
- Mon, 31 Mar 2025 20:13:01 +0000
+ Hat Linux)) id 1tzLVR-00000004RyW-1fQG;
+ Mon, 31 Mar 2025 20:13:13 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 31 Mar 2025 21:10:20 +0100
-Message-ID: <20250331201256.1057782-1-willy@infradead.org>
+Date: Mon, 31 Mar 2025 21:11:40 +0100
+Message-ID: <20250331201256.1057782-81-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250331201256.1057782-1-willy@infradead.org>
+References: <20250331201256.1057782-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tzLVQ-0003Yf-KV
-Subject: [f2fs-dev] [PATCH 000/153] f2fs folio conversions for 6.16
+X-Headers-End: 1tzLVY-0003ag-6Y
+Subject: [f2fs-dev] [PATCH 080/153] f2fs: Convert f2fs_move_node_page() to
+ f2fs_move_node_folio()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,193 +83,95 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Sorry for the length of this series.  Each patch in this series builds,
-but obviously I haven't done any testing.  It should be easy to bisect
-to any mistakes I've made.  This conversion isn't complete; I estimate
-another 100 or so patches will be needed.
+Pass the folio in from the one caller and use it throughout.
+Removes eight hidden calls to compound_head().
 
-Matthew Wilcox (Oracle) (153):
-  f2fs: Use a folio in f2fs_compress_free_page()
-  f2fs: Use a folio in f2fs_write_raw_pages()
-  f2fs: Introduce fio_inode()
-  f2fs: Use F2FS_P_SB() in f2fs_is_compressed_page()
-  f2fs: Use bio_for_each_folio_all() in __has_merged_page()
-  f2fs: Use a folio in add_ipu_page()
-  f2fs: Remove access to page->mapping in f2fs_is_cp_guaranteed()
-  f2fs: Use a folio in move_data_block()
-  f2fs: Use a folio in f2fs_quota_read()
-  f2fs: Add f2fs_grab_meta_folio()
-  f2fs: Use a folio in commit_checkpoint()
-  f2fs: Convert __f2fs_write_meta_page() to __f2fs_write_meta_folio()
-  f2fs: Use f2fs_folio_wait_writeback()
-  f2fs: Pass a folio to f2fs_submit_merged_ipu_write()
-  f2fs: Convert __get_meta_page() to __get_meta_folio()
-  f2fs: Convert f2fs_get_tmp_page() to f2fs_get_tmp_folio()
-  f2fs: Pass a folio to next_blkaddr_of_node()
-  f2fs: Use a folio in f2fs_ra_meta_pages()
-  f2fs: Use a folio in f2fs_ra_meta_pages_cond()
-  f2fs: Use a folio in write_orphan_inodes()
-  f2fs: Use a folio in get_next_nat_page()
-  f2fs: Convert get_next_sit_page() to get_next_sit_folio()
-  f2fs: Use a folio in f2fs_update_meta_page()
-  f2fs: Use a folio in write_current_sum_page()
-  f2fs: Use a folio in write_compacted_summaries()
-  f2fs: Remove f2fs_grab_meta_page()
-  f2fs: Add f2fs_get_meta_folio()
-  f2fs: Use a folio in build_sit_entries()
-  f2fs: Use a folio in f2fs_recover_orphan_inodes()
-  f2fs: Use a folio in validate_checkpoint()
-  f2fs: Use a folio in f2fs_get_valid_checkpoint()
-  f2fs: Use a folio in f2fs_get_node_info()
-  f2fs: Use a folio in __get_nat_bitmaps()
-  f2fs: Use a folio in read_compacted_summaries()
-  f2fs: Use a folio in read_normal_summaries()
-  f2fs: Remove f2fs_get_meta_page()
-  f2fs: Convert f2fs_get_meta_page_retry() to
-    f2fs_get_meta_folio_retry()
-  f2fs: Pass an address to scan_nat_page()
-  f2fs: Add f2fs_get_sum_folio()
-  f2fs: Use folios in do_garbage_collect()
-  f2fs: Use a folio in check_index_in_prev_nodes()
-  f2fs: Use a folio in change_curseg()
-  f2fs: Remove f2fs_get_sum_page()
-  f2fs: Use a folio in find_in_level()
-  f2fs: Use a folio in f2fs_delete_entry()
-  f2fs: Use a folio in f2fs_readdir()
-  f2fs: Remove f2fs_find_data_page()
-  f2fs: Use a folio in f2fs_get_new_data_page()
-  f2fs: Use a folio in f2fs_migrate_blocks()
-  f2fs: Add f2fs_get_new_data_folio()
-  highmem: Add memcpy_folio()
-  f2fs: Use a folio in __clone_blkaddrs()
-  f2fs: Use a folio in f2fs_defragment_range()
-  f2fs: Remove f2fs_get_lock_data_page()
-  f2fs: Use a folio in fill_zero()
-  f2fs: Use a folio in f2fs_add_regular_entry()
-  f2fs: Use a folio in make_empty_dir()
-  f2fs: Remove f2fs_get_new_data_page()
-  f2fs: Use a folio in f2fs_xattr_fiemap()
-  f2fs: Use a folio in ra_data_block()
-  f2fs: Use a folio in move_data_block()
-  f2fs: Use a folio in f2fs_convert_inline_inode()
-  f2fs: Use a folio in f2fs_move_inline_dirents()
-  f2fs: Add f2fs_new_node_folio()
-  f2fs: Use a folio in f2fs_ra_node_page()
-  f2fs: Convert read_node_page() to read_node_folio()
-  f2fs: Pass a folio to f2fs_inode_chksum_verify()
-  f2fs: Use a folio in f2fs_recover_inode_page()
-  f2fs: Remove f2fs_grab_cache_page()
-  f2fs: Add f2fs_get_xnode_folio()
-  f2fs: Use a folio in write_all_xattrs()
-  f2fs: Use a folio in f2fs_recover_xattr_data()
-  f2fs: Add f2fs_get_node_folio()
-  f2fs: Use folios in f2fs_get_dnode_of_data()
-  f2fs: Use a folio in truncate_node()
-  f2fs: Use a folio in truncate_nodes()
-  f2fs: Use folios in truncate_partial_nodes()
-  f2fs: Pass a folio to f2fs_ra_node_pages()
-  f2fs: Use a folio in gc_node_segment()
-  f2fs: Convert f2fs_move_node_page() to f2fs_move_node_folio()
-  f2fs: Convert __write_node_page() to __write_node_folio()
-  f2fs: Use a folio in is_alive()
-  f2fs: Use a folio in check_index_in_prev_nodes()
-  f2fs: Remove f2fs_get_node_page()
-  f2fs: Use a folio in prepare_write_begin
-  f2fs: Use a folio in __find_data_block()
-  f2fs: Use a folio in f2fs_init_inode_metadata()
-  f2fs: Pass a folio to make_empty_dir()
-  f2fs: Use a folio in f2fs_try_convert_inline_dir()
-  f2fs: Use a folio in f2fs_add_inline_entry()
-  f2fs: Pass a folio to f2fs_move_inline_dirents()
-  f2fs: Pass a folio to f2fs_move_rehashed_dirents()
-  f2fs: Use a folio in f2fs_do_truncate_blocks()
-  f2fs: Use a folio in f2fs_truncate_xattr_node()
-  f2fs: Pass folios to set_new_dnode()
-  f2fs: Convert f2fs_convert_inline_page() to
-    f2fs_convert_inline_folio()
-  f2fs: Use a folio in read_xattr_block()
-  f2fs: Remove f2fs_get_xnode_page()
-  f2fs: Use a folio in f2fs_write_inline_data()
-  f2fs: Use a folio in f2fs_read_inline_data()
-  f2fs: Use a folio in f2fs_recover_inline_data()
-  f2fs: Use a folio in f2fs_find_in_inline_dir()
-  f2fs: Use a folio in f2fs_empty_inline_dir()
-  f2fs: Use a folio in f2fs_read_inline_dir()
-  f2fs: Use a folio in f2fs_inline_data_fiemap()
-  f2fs: Use a folio in f2fs_update_inode_page()
-  f2fs: Use a folio in do_read_inode()
-  f2fs: Pass folios to f2fs_init_acl()
-  f2fs: Pass a folio to f2fs_setxattr()
-  f2fs: Pass a folio to __f2fs_setxattr()
-  f2fs: Pass a folio to write_all_xattrs()
-  f2fs: Use a folio in read_inline_xattr()
-  f2fs: Use a folio in f2fs_recover_inline_xattr()
-  f2fs: Remove f2fs_get_inode_page()
-  f2fs: Pass a folio to f2fs_getxattr()
-  f2fs: Pass a folio to read_inline_xattr()
-  f2fs: Pass a folio to do_recover_data()
-  f2fs: Pass a folio to f2fs_recover_inline_xattr()
-  f2fs: Pass a folio to inline_xattr_addr()
-  f2fs: Pass a folio to init_dent_inode()
-  f2fs: Pass a folio to f2fs_make_empty_inline_dir()
-  f2fs: Pass a folio to f2fs_has_enough_room()
-  f2fs: Convert dnode_of_data->inode_page to inode_folio
-  f2fs: Pass a folio to f2fs_do_read_inline_data()
-  f2fs: Pass a folio to f2fs_truncate_inline_inode()
-  f2fs: Pass a folio to __f2fs_find_entry()
-  f2fs: Pass a folio to f2fs_find_entry()
-  f2fs: Pass a folio to f2fs_parent_dir()
-  f2fs: Pass a folio to f2fs_delete_entry()
-  f2fs: Pass a folio to f2fs_delete_inline_entry()
-  f2fs: Pass a folio to f2fs_recover_inline_data()
-  f2fs: Pass a folio to __recover_inline_status()
-  f2fs: Pass a folio to inline_data_addr()
-  f2fs: Convert f2fs_put_page_dic() to f2fs_put_folio_dic()
-  f2fs: Pass a folio to f2fs_set_link()
-  f2fs: Use a folio in need_inode_page_update()
-  f2fs: Use a folio in f2fs_truncate_meta_inode_pages()
-  f2fs: Use a folio in f2fs_cache_compressed_page()
-  f2fs: Use a folio in prepare_compress_overwrite()
-  f2fs: Convert f2fs_load_compressed_page() to
-    f2fs_load_compressed_folio()
-  f2fs: Use a folio in f2fs_encrypt_one_page()
-  f2fs: Use a folio in redirty_blocks()
-  f2fs: Use a folio in f2fs_wait_on_block_writeback()
-  f2fs: Pass a folio to f2fs_init_read_extent_tree()
-  f2fs: Return a folio from f2fs_init_inode_metadata()
-  f2fs: Pass a folio to f2fs_update_inode()
-  f2fs: Pass a folio to set_nid()
-  f2fs: Convert dnode_of_data->node_page to node_folio
-  f2fs: Pass a folio to get_dnode_addr()
-  f2fs: Convert fsync_node_entry->page to folio
-  f2fs: Remove f2fs_new_node_page()
-  f2fs: Use a folio in flush_inline_data()
-  f2fs: Convert clear_node_page_dirty() to clear_node_folio_dirty()
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/f2fs/f2fs.h |  2 +-
+ fs/f2fs/gc.c   |  2 +-
+ fs/f2fs/node.c | 20 ++++++++++----------
+ 3 files changed, 12 insertions(+), 12 deletions(-)
 
- fs/f2fs/acl.c           |  33 ++-
- fs/f2fs/acl.h           |  10 +-
- fs/f2fs/checkpoint.c    | 193 +++++++--------
- fs/f2fs/compress.c      | 134 +++++-----
- fs/f2fs/data.c          | 208 ++++++++--------
- fs/f2fs/dir.c           | 240 +++++++++---------
- fs/f2fs/extent_cache.c  |  10 +-
- fs/f2fs/f2fs.h          | 184 +++++++-------
- fs/f2fs/file.c          | 155 ++++++------
- fs/f2fs/gc.c            | 140 ++++++-----
- fs/f2fs/inline.c        | 306 +++++++++++------------
- fs/f2fs/inode.c         |  94 +++----
- fs/f2fs/namei.c         | 112 ++++-----
- fs/f2fs/node.c          | 526 ++++++++++++++++++++--------------------
- fs/f2fs/node.h          |  12 +-
- fs/f2fs/recovery.c      | 178 +++++++-------
- fs/f2fs/segment.c       | 147 ++++++-----
- fs/f2fs/segment.h       |   6 +-
- fs/f2fs/super.c         |  36 ++-
- fs/f2fs/xattr.c         | 116 ++++-----
- fs/f2fs/xattr.h         |  24 +-
- include/linux/highmem.h |  27 +++
- 22 files changed, 1444 insertions(+), 1447 deletions(-)
-
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 0d32541993a0..92b5878dc5d3 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3735,7 +3735,7 @@ struct folio *f2fs_get_inode_folio(struct f2fs_sb_info *sbi, pgoff_t ino);
+ struct page *f2fs_get_inode_page(struct f2fs_sb_info *sbi, pgoff_t ino);
+ struct folio *f2fs_get_xnode_folio(struct f2fs_sb_info *sbi, pgoff_t xnid);
+ struct page *f2fs_get_xnode_page(struct f2fs_sb_info *sbi, pgoff_t xnid);
+-int f2fs_move_node_page(struct page *node_page, int gc_type);
++int f2fs_move_node_folio(struct folio *node_folio, int gc_type);
+ void f2fs_flush_inline_data(struct f2fs_sb_info *sbi);
+ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 			struct writeback_control *wbc, bool atomic,
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 56c0ca609fc1..5c58e6a306f4 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1088,7 +1088,7 @@ static int gc_node_segment(struct f2fs_sb_info *sbi,
+ 			continue;
+ 		}
+ 
+-		err = f2fs_move_node_page(&node_folio->page, gc_type);
++		err = f2fs_move_node_folio(node_folio, gc_type);
+ 		if (!err && gc_type == FG_GC)
+ 			submitted++;
+ 		stat_inc_node_blk_count(sbi, 1, gc_type);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 5df3065c18ea..20d62994cf46 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1789,7 +1789,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ 	return AOP_WRITEPAGE_ACTIVATE;
+ }
+ 
+-int f2fs_move_node_page(struct page *node_page, int gc_type)
++int f2fs_move_node_folio(struct folio *node_folio, int gc_type)
+ {
+ 	int err = 0;
+ 
+@@ -1800,30 +1800,30 @@ int f2fs_move_node_page(struct page *node_page, int gc_type)
+ 			.for_reclaim = 0,
+ 		};
+ 
+-		f2fs_wait_on_page_writeback(node_page, NODE, true, true);
++		f2fs_folio_wait_writeback(node_folio, NODE, true, true);
+ 
+-		set_page_dirty(node_page);
++		folio_mark_dirty(node_folio);
+ 
+-		if (!clear_page_dirty_for_io(node_page)) {
++		if (!folio_clear_dirty_for_io(node_folio)) {
+ 			err = -EAGAIN;
+ 			goto out_page;
+ 		}
+ 
+-		if (__write_node_page(node_page, false, NULL,
++		if (__write_node_page(&node_folio->page, false, NULL,
+ 					&wbc, false, FS_GC_NODE_IO, NULL)) {
+ 			err = -EAGAIN;
+-			unlock_page(node_page);
++			folio_unlock(node_folio);
+ 		}
+ 		goto release_page;
+ 	} else {
+ 		/* set page dirty and write it */
+-		if (!folio_test_writeback(page_folio(node_page)))
+-			set_page_dirty(node_page);
++		if (!folio_test_writeback(node_folio))
++			folio_mark_dirty(node_folio);
+ 	}
+ out_page:
+-	unlock_page(node_page);
++	folio_unlock(node_folio);
+ release_page:
+-	f2fs_put_page(node_page, 0);
++	f2fs_folio_put(node_folio, false);
+ 	return err;
+ }
+ 
 -- 
 2.47.2
 
