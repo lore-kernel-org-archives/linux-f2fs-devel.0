@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C4D6BC36014
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:14:18 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 424C6C369A2
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:14:21 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tzLWT-0001EC-Si;
-	Mon, 31 Mar 2025 20:14:18 +0000
+	id 1tzLWX-0006EG-Fy;
+	Mon, 31 Mar 2025 20:14:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tzLVn-0000pU-0D
+ (envelope-from <willy@infradead.org>) id 1tzLVv-0005oO-HU
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:35 +0000
+ Mon, 31 Mar 2025 20:13:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QQRoOYjUsR6MH11JnOX2eaI1Bi5I5K1aXsgWYBe5AWA=; b=fzg12Px8xXt9qCrj66S41KY47L
- 56ZiE4O0FENwWkBdRu9Sr7khPX6zrDYvWC0fw/sCVL2KjsWZPqEkWvkahmpslk32OR926fWnD24oO
- q5ZL/LihO1lfOGjPm9qJyQLFCY868gvcS4dh89VjMh2HSScqEAeOCdAssBi6cbF/1Mz4=;
+ bh=yGY/u+lvRpWuScvEez9iiYbturNoRoBWWWJMMGynQDo=; b=dGGiN2rBuJifw8UezIireV3Dqd
+ mVLPP5/FY9aKmXJV2wWKOQy++zDjwLDzyaPZWKwM7WW0xm0qEosV/FpXaikpkGYd7dV7nOVLG9bdT
+ JqKFMtLX+3TEZ9Dw9yPNUdJpe11Qra4plT6642FPLiSTZ5pQaKgx7f3Zgq/JftCXpUeY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,39 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=QQRoOYjUsR6MH11JnOX2eaI1Bi5I5K1aXsgWYBe5AWA=; b=bzj19f/Kt6YyELJATgnQsv9qjM
- ULD15/ogxjC8m9qBnwrE9LN164mv5b07bRsAnlatbULg87oRE6W/ZlfLhwkC32sVFOrpLtBxueTNy
- NN/1+bUPL+CxhBeNVmBtRUvHN4OH34dJJ77/U8rIs/EHmyoflnBaKX+b7MdDhBuNDuvk=;
+ bh=yGY/u+lvRpWuScvEez9iiYbturNoRoBWWWJMMGynQDo=; b=f1LrF1QbN0Yzclz3cG52mjWMzC
+ Cy4KfuTS0WBrEe7upGf2WhJJnzyY+8f9oLtjG/cdzsq1r4bp+tyS/bnI+z8/wlHivWhkoI6Hc2bjz
+ IK/UQ4yo38Q7QuE7oAd3KpLw3Kmj3AaCYxayBh1IggWKm+bBRzbsNcwKuGI/8pzr2md8=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tzLVh-0003ee-QO for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:35 +0000
+ id 1tzLVk-0003fq-71 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Mar 2025 20:13:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=QQRoOYjUsR6MH11JnOX2eaI1Bi5I5K1aXsgWYBe5AWA=; b=qoDPOH/IIZAwQIKkzj63xVmDum
- xo9W6TRqfADHTe1Cs8IzvyWyPcBoJoJ70cxH3PxA9KKO03LkVuUNUEfUCBB1BLOI7I3qIqL5pi2wT
- ACYbW0wb2/AWXHBAUonLDsXuIF6WZbpEmbPAO1Hnj+RBCDL7FgbTYMlg7j05vQXYbekDHmqwnPCEG
- 6mCHsEegsnO9sh0rv37/GnWyB9BTMpixAr3uFyWHpqp19SRPBaONUBD/wGWxDQDGT/5Zx3P+GnGeY
- kH8aYnHoMAUB5koAUAR2gNHGa1MP5W1AhkOfoeWcKwE31Osq3duXTgqKBy0pUE6dlW+5QC2FQVUW2
- sAu1AWyA==;
+ bh=yGY/u+lvRpWuScvEez9iiYbturNoRoBWWWJMMGynQDo=; b=Zn5hbKjqSC0T+oxF7cWsGX4iWg
+ p9PPUwi49OKXkHwh0GRO+5BnfBhA8Ov9y7dqMALlaK6zcxJLCKwdeINZduqWGPCOITzyTfrgcjYFU
+ 5U/tcN1fD0uiH28K4b3CRgLKDNVNyUzWmNJqEUaf59qw+/LI+AS/ExOz+Xm+GWDDBKusNSUkY0YEi
+ P1T1q5zPe/jl6XrYH2S6+5A1U2iEkqXpORJZVdtFFJU3SJqtmjQzVN5qbMYmKoq0twSfL0ewg7vIb
+ GL5IrdoxD0gNmVZOVs5rBfP+mSd0kYKKSMrepSjnYqz+0jzpatSm9kG29buIew6Rw6jnywEpg3gs7
+ 1xhMKqqQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red
- Hat Linux)) id 1tzLVW-00000004SCf-144C;
- Mon, 31 Mar 2025 20:13:18 +0000
+ Hat Linux)) id 1tzLVY-00000004SPn-3TY1;
+ Mon, 31 Mar 2025 20:13:20 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 31 Mar 2025 21:12:00 +0100
-Message-ID: <20250331201256.1057782-101-willy@infradead.org>
+Date: Mon, 31 Mar 2025 21:12:15 +0100
+Message-ID: <20250331201256.1057782-116-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250331201256.1057782-1-willy@infradead.org>
 References: <20250331201256.1057782-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tzLVh-0003ee-QO
-Subject: [f2fs-dev] [PATCH 100/153] f2fs: Use a folio in
- f2fs_read_inline_data()
+X-Headers-End: 1tzLVk-0003fq-71
+Subject: [f2fs-dev] [PATCH 115/153] f2fs: Pass a folio to f2fs_getxattr()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,51 +82,122 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Remove two calls to compound_head().
+The one caller of __f2fs_get_acl() which passes a non-NULL page already
+has a folio, so pass it in, then into f2fs_getxattr(), which lets us
+pass it to lookup_all_xattrs().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/inline.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ fs/f2fs/acl.c   |  8 ++++----
+ fs/f2fs/xattr.c | 12 ++++++------
+ fs/f2fs/xattr.h |  4 ++--
+ 3 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 55c0b82d43d5..245cbff2ca2c 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -117,27 +117,27 @@ void f2fs_truncate_inline_inode(struct inode *inode,
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index 0a4d160235e0..d4d7f329d23f 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -166,7 +166,7 @@ static void *f2fs_acl_to_disk(struct f2fs_sb_info *sbi,
+ }
  
- int f2fs_read_inline_data(struct inode *inode, struct folio *folio)
+ static struct posix_acl *__f2fs_get_acl(struct inode *inode, int type,
+-						struct page *dpage)
++						struct folio *dfolio)
  {
--	struct page *ipage;
-+	struct folio *ifolio;
+ 	int name_index = F2FS_XATTR_INDEX_POSIX_ACL_DEFAULT;
+ 	void *value = NULL;
+@@ -176,13 +176,13 @@ static struct posix_acl *__f2fs_get_acl(struct inode *inode, int type,
+ 	if (type == ACL_TYPE_ACCESS)
+ 		name_index = F2FS_XATTR_INDEX_POSIX_ACL_ACCESS;
  
--	ipage = f2fs_get_inode_page(F2FS_I_SB(inode), inode->i_ino);
--	if (IS_ERR(ipage)) {
-+	ifolio = f2fs_get_inode_folio(F2FS_I_SB(inode), inode->i_ino);
-+	if (IS_ERR(ifolio)) {
- 		folio_unlock(folio);
--		return PTR_ERR(ipage);
-+		return PTR_ERR(ifolio);
+-	retval = f2fs_getxattr(inode, name_index, "", NULL, 0, dpage);
++	retval = f2fs_getxattr(inode, name_index, "", NULL, 0, dfolio);
+ 	if (retval > 0) {
+ 		value = f2fs_kmalloc(F2FS_I_SB(inode), retval, GFP_F2FS_ZERO);
+ 		if (!value)
+ 			return ERR_PTR(-ENOMEM);
+ 		retval = f2fs_getxattr(inode, name_index, "", value,
+-							retval, dpage);
++							retval, dfolio);
  	}
  
- 	if (!f2fs_has_inline_data(inode)) {
--		f2fs_put_page(ipage, 1);
-+		f2fs_folio_put(ifolio, true);
- 		return -EAGAIN;
- 	}
+ 	if (retval > 0)
+@@ -371,7 +371,7 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
+ 	if (S_ISLNK(*mode) || !IS_POSIXACL(dir))
+ 		return 0;
  
- 	if (folio_index(folio))
- 		folio_zero_segment(folio, 0, folio_size(folio));
- 	else
--		f2fs_do_read_inline_data(folio, ipage);
-+		f2fs_do_read_inline_data(folio, &ifolio->page);
- 
- 	if (!folio_test_uptodate(folio))
- 		folio_mark_uptodate(folio);
--	f2fs_put_page(ipage, 1);
-+	f2fs_folio_put(ifolio, true);
- 	folio_unlock(folio);
+-	p = __f2fs_get_acl(dir, ACL_TYPE_DEFAULT, &dfolio->page);
++	p = __f2fs_get_acl(dir, ACL_TYPE_DEFAULT, dfolio);
+ 	if (!p || p == ERR_PTR(-EOPNOTSUPP)) {
+ 		*mode &= ~current_umask();
+ 		return 0;
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index 28b32728a113..ff49bcba96f3 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -314,7 +314,7 @@ static int read_xattr_block(struct inode *inode, void *txattr_addr)
  	return 0;
+ }
+ 
+-static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
++static int lookup_all_xattrs(struct inode *inode, struct folio *ifolio,
+ 				unsigned int index, unsigned int len,
+ 				const char *name, struct f2fs_xattr_entry **xe,
+ 				void **base_addr, int *base_size,
+@@ -338,7 +338,7 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
+ 
+ 	/* read from inline xattr */
+ 	if (inline_size) {
+-		err = read_inline_xattr(inode, ipage, txattr_addr);
++		err = read_inline_xattr(inode, &ifolio->page, txattr_addr);
+ 		if (err)
+ 			goto out;
+ 
+@@ -512,7 +512,7 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
+ }
+ 
+ int f2fs_getxattr(struct inode *inode, int index, const char *name,
+-		void *buffer, size_t buffer_size, struct page *ipage)
++		void *buffer, size_t buffer_size, struct folio *ifolio)
+ {
+ 	struct f2fs_xattr_entry *entry = NULL;
+ 	int error;
+@@ -528,11 +528,11 @@ int f2fs_getxattr(struct inode *inode, int index, const char *name,
+ 	if (len > F2FS_NAME_LEN)
+ 		return -ERANGE;
+ 
+-	if (!ipage)
++	if (!ifolio)
+ 		f2fs_down_read(&F2FS_I(inode)->i_xattr_sem);
+-	error = lookup_all_xattrs(inode, ipage, index, len, name,
++	error = lookup_all_xattrs(inode, ifolio, index, len, name,
+ 				&entry, &base_addr, &base_size, &is_inline);
+-	if (!ipage)
++	if (!ifolio)
+ 		f2fs_up_read(&F2FS_I(inode)->i_xattr_sem);
+ 	if (error)
+ 		return error;
+diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
+index e0f7b865c116..4fc0b2305fbd 100644
+--- a/fs/f2fs/xattr.h
++++ b/fs/f2fs/xattr.h
+@@ -130,7 +130,7 @@ extern const struct xattr_handler * const f2fs_xattr_handlers[];
+ int f2fs_setxattr(struct inode *, int, const char *, const void *,
+ 		size_t, struct folio *, int);
+ int f2fs_getxattr(struct inode *, int, const char *, void *,
+-		size_t, struct page *);
++		size_t, struct folio *);
+ ssize_t f2fs_listxattr(struct dentry *, char *, size_t);
+ int f2fs_init_xattr_caches(struct f2fs_sb_info *);
+ void f2fs_destroy_xattr_caches(struct f2fs_sb_info *);
+@@ -146,7 +146,7 @@ static inline int f2fs_setxattr(struct inode *inode, int index,
+ }
+ static inline int f2fs_getxattr(struct inode *inode, int index,
+ 			const char *name, void *buffer,
+-			size_t buffer_size, struct page *dpage)
++			size_t buffer_size, struct folio *dfolio)
+ {
+ 	return -EOPNOTSUPP;
  }
 -- 
 2.47.2
