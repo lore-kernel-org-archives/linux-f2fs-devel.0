@@ -4,65 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1AF91C28B20
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 02:54:45 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B22A7C28B20
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 03:01:19 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tz5IQ-0008I0-Ti;
-	Mon, 31 Mar 2025 02:54:42 +0000
+	id 1tz5Oo-0001DS-BN;
+	Mon, 31 Mar 2025 03:01:19 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1tz5IP-0008Hu-CV
+ (envelope-from <chao@kernel.org>) id 1tz5On-0001DG-88
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 02:54:41 +0000
+ Mon, 31 Mar 2025 03:01:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jyJbrO5XX1C2/Zzemuj7uSBO9DbfBsL0f0lasSutosc=; b=PoDYEg0bFgJrErdcAEXprZdlUx
- LUzkrdksxJfZOlher7XLOCyxvD5L+pCuh+RqIF8MudZXu2RToJxvhAk6F5dDHtQoc1P9bUpD8lnl4
- ZJfU6tSmkRR+t95iJR/sv1V4pzzOWfAncV1prXyU2qBNEFtovCG+lGQRSvhguEurtcZQ=;
+ bh=TsnnsTrnFJhl8fEYA5FxwatHi5rUFkmCpPMOrVSmzJc=; b=Y2Xo1cYU71jXt3cUp2INnqqsnL
+ xuBRLPMZk3pcGZ4dBgDJ8hhgJlia8JXYRN7mzFZPffzhEFa2wTmtZKVoy0P9uA5vddWyrMLDeyef4
+ +chdqQ77/HKzlbeHsjtKnGN82KyxjtobuKv/wn+wquIVArsPB25fNV04q5dPfIRGFYKM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=jyJbrO5XX1C2/Zzemuj7uSBO9DbfBsL0f0lasSutosc=; b=D
- YKuiaggB0HDV45dUs9kEEm4arDkt+dyx1vnECAjvSMBtHnQ7iPOkS/grul1+EtRpo8Xh/d7+dZxiN
- Br7mKKh+KpsTw02p2owV4FTE+x3tGLK2YylHFRtXCypsTYPeLCi1NbUMjE3r/goGNBeCY95+aBW67
- dLR09x8n5xgbCvaQ=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=TsnnsTrnFJhl8fEYA5FxwatHi5rUFkmCpPMOrVSmzJc=; b=IFx31zqjsetLkbTvvg9JD1pYJg
+ VBEyjjDVLA9JsnQQ8Ka5QjjYXm9zlWvJ/43NSjNFwKbwk/FYvoInHIDOknhk5o6P+c8g3YkWEjSoe
+ yBgQy8tQSYlY6TJXVKkhz4kLek3oRR65KI1dvHr4Cnv78NXu0XEJepltv7Lyakxq3Fp0=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tz5IO-00038Q-PT for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 02:54:41 +0000
+ id 1tz5On-0003UZ-Fb for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Mar 2025 03:01:17 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 762C95C4807;
- Mon, 31 Mar 2025 02:52:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C25DDC4CEDD;
- Mon, 31 Mar 2025 02:54:28 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 2ED4A5C4030
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 31 Mar 2025 02:58:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDA74C4CEED;
+ Mon, 31 Mar 2025 03:01:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1743389670;
- bh=7Z2EIHF8x4PJH3op9sBJfYoA1Ntx+xrA64V25jPhWzo=;
- h=From:To:Cc:Subject:Date:From;
- b=FeVND4DiKJWTvEhvuWBhi2UbberU3753Yrpjn7hpD2Pi9+bWMuR3GOvUhheHpc/Yp
- Yu1i+oN7TEu/5tymgp8f0Lc+xu+5gebCmtmCT5GMc7R3m8OMNUYCWKsfNztZjhwb2k
- v3ZfS3nBEZPxbpXLQSzm251MfG4BXp2MVI1UYw7UEsV52OByb0PJD8lF9a72u1r8mS
- TtEipzpPSq2kfYXl55vkowu32pfDIHQ1eBJM39yEwsImTtmZp0hUf496F8eSs/jWNh
- qlJYVO3Z5AyK4MEpfh6LhV50+SgymcQ7abcwISMPAbuDfhLY+wwn/FHpHLqnvlaCNg
- Of1+HhezJ1mxQ==
+ s=k20201202; t=1743390071;
+ bh=Jk0lyz1OnD5x5u/g1U1ZQ4V9AbwF9rbffTSHMwqi640=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=XJKOlYNU+Wvm+6W370CKif+GShtljqKOyFrz4426JkE10wRclTLtUlcLXkS9Zu6XB
+ x6RM/BoFAyyoXqGMPJgaXrhBLyoTpeFB841sQGW5yyhHSHGt+hIkOZvZ6m6k+s0LoI
+ FAOnakYjdBYcDXkoY8pyN7G2kmvdGXfdApgos0XShn5AnYhSe/SjcBlSfsbF4Xguxb
+ K0Q5ZSdrOOB3vMHugbAT1MGxRVyn//r5qafcHBlF5PWj84tv276fEBjNh0xUzkQaBf
+ 2Fnp3sB8cq75UJbfRxhgFKnRh0GJuT5vouW8shYdqTFJoW7XbiRyTVH5G3fJWEn1PA
+ 32HC9dCDZwOnA==
 To: jaegeuk@kernel.org
-Date: Mon, 31 Mar 2025 10:54:16 +0800
-Message-ID: <20250331025416.478380-1-chao@kernel.org>
+Date: Mon, 31 Mar 2025 11:00:33 +0800
+Message-ID: <20250331030034.481423-2-chao@kernel.org>
 X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
+In-Reply-To: <20250331030034.481423-1-chao@kernel.org>
+References: <20250331030034.481423-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1tz5IO-00038Q-PT
-Subject: [f2fs-dev] [PATCH] f2fs: support to disable linear lookup fallback
+X-Headers-End: 1tz5On-0003UZ-Fb
+Subject: [f2fs-dev] [PATCH 2/3] dump.f2fs: print s_encoding_flags
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,47 +79,30 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-After commit 91b587ba79e1 ("f2fs: Introduce linear search for
-dentries"), f2fs forced to use linear lookup whenever a hash-based
-lookup fails on casefolded directory, it may affect performance
-for scenarios: a) create a new file w/ filename it doesn't exist
-in directory, b) lookup a file which may be removed.
+It missed to print s_encoding_flags in print_raw_sb_info(), fix it.
 
-This patch supports to disable linear lookup fallback, so, once there
-is a solution for commit 5c26d2f1d3f5 ("unicode: Don't special case
-ignorable code points") to fix red heart unicode issue, then we can
-set an encodeing flag to disable the fallback for performance recovery.
-
-The way is kept in line w/ ext4, refer to commit 9e28059d5664 ("ext4:
-introduce linear search for dentries").
-
-Cc: Daniel Lee <chullee@google.com>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/dir.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fsck/mount.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 5a63ff0df03b..e12445afb95a 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -366,7 +366,8 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 0b05f00..e7c4069 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -555,6 +555,7 @@ printout:
+ 	DISP_u32(sb, qf_ino[PRJQUOTA]);
  
- out:
- #if IS_ENABLED(CONFIG_UNICODE)
--	if (IS_CASEFOLDED(dir) && !de && use_hash) {
-+	if (IS_CASEFOLDED(dir) && !de && use_hash &&
-+		!sb_no_casefold_compat_fallback(dir->i_sb)) {
- 		use_hash = false;
- 		goto start_find_entry;
- 	}
+ 	DISP_u16(sb, s_encoding);
++	DISP_u16(sb, s_encoding_flags);
+ 	DISP_u32(sb, crc);
+ 
+ 	print_sb_debug_info(sb);
 -- 
 2.49.0
 
