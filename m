@@ -4,94 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5F777C3600B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 16:31:48 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 31EDDC36014
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:13:19 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tzI38-0007fY-Ba;
-	Mon, 31 Mar 2025 16:31:46 +0000
+	id 1tzLVV-0000sR-8A;
+	Mon, 31 Mar 2025 20:13:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chullee@google.com>) id 1tzI37-0007fS-5O
+ (envelope-from <willy@infradead.org>) id 1tzLVO-0000rj-9F
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 16:31:45 +0000
+ Mon, 31 Mar 2025 20:13:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
- Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bCUNVEwXQjN/ZYMFDi8yyefx1Qb62gH/JvVinJDVFL0=; b=FdB2aGa1qIJuK9kYQ1MP9toOOK
- Lh77D3IYRTDOPFMRd1qvFznAMffcJlFHhzESEM7K3viBTfCys68jXDMTN+hbgJRfsYPGK5V/UuIAj
- sSxmqbNYdJRWS0o7fS7J07jkSHdl3RmOYcFh7oWsHUmiKjsGJJVTaJwjurBEnY1dwuO8=;
+ bh=FjOppThpLmYB/HtBc3gYJ90YO4RBGnLgSmU7TtJFrJo=; b=lokJRQ0Kp0BsC16E9NPwOGQA1J
+ on8Bxnpl7Ce0m4GadsTlCKCsAYhXLQTEr8/IEBBK614c/nqiF8laAbbXguycFawol973Cmv9ae443
+ XdfG9DD85mku9oGjjEP3CREsMHJY9zIUTmcToNOlXppsNmg9/jnPefh7/f3gP+ZoK9E0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
- :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=bCUNVEwXQjN/ZYMFDi8yyefx1Qb62gH/JvVinJDVFL0=; b=YaFfk9Ujtc/dKod0M/In1Qek/q
- 3ZRU4EPV5MrWMWQ37a/Qgp2D1w6wQH2Kn8RPPAK4Ym2nVeipgA1GYImBZ5vTpAFmlhWRHRZLjpryK
- A5ajeXBgv8yjah0LNWBfnPB3ofMF4IJwxz9SOzyhe4ZPNuUBE3zmzCTx1NS/LjEytk3A=;
-Received: from mail-ed1-f54.google.com ([209.85.208.54])
+ bh=FjOppThpLmYB/HtBc3gYJ90YO4RBGnLgSmU7TtJFrJo=; b=NUeg8wdiOuy1j55Ti5yQzFDgNl
+ OIrrfYK92eQf0g9qI0JtDwUPJE9fw88bffPvyEmW4jL0tjbZvxciOOy50cfvf0WTq/yNYHC0SLPwX
+ 31HLybNR3LBj/cW63Vx70hXWnMToMAwOPnL8tTRvqw6ssBZJsS9711ajBFeLnTBbsRNo=;
+Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1tzI35-0007ee-QS for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 16:31:44 +0000
-Received: by mail-ed1-f54.google.com with SMTP id
- 4fb4d7f45d1cf-5dbfc122b82so52a12.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 31 Mar 2025 09:31:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1743438692; x=1744043492;
- darn=lists.sourceforge.net; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=bCUNVEwXQjN/ZYMFDi8yyefx1Qb62gH/JvVinJDVFL0=;
- b=153nVyz1rSrm3y8VxMJakAZUd2F1IOJvtgKgzmWppeqmm0hMAf8+XCqoMYjTYD3Zf1
- xaEVJHCZ6Tq4Dr/U3mm4pu/l33NrYf7wOXh4FCYaAeTl8SJCVKjXM0PH/pAX7+Ex/ezj
- Jd2ccBgK6QljIad3Rg4L5CValm1EUNynpjSUSxdIg65SZgRyXZd6D1tof8wNFXNISFT8
- w2jc+ad030XCegIZI+jeperMwbjjycJ0pv9pfU8+awDzZdv/xsKRvfb8Xi2nbeD0VGg6
- PacjDT/XndPY0bG8iiLLrAljfmI1qeokH+AiZtuqGXbBceON6eN+Fblzi0iznRn1SDC4
- HnCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1743438692; x=1744043492;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=bCUNVEwXQjN/ZYMFDi8yyefx1Qb62gH/JvVinJDVFL0=;
- b=PwqkLiFiInH6RZXW+SrAV0Ya+to2hN7cuIekya+Guxtd+yn01HdzQ6h1xJktfxYLpk
- kP8zV4seEf9GW4GoEKqHm1CRITxUaJnyRf7kFIPAU8sPjoPBAIr0InQiVAwu4MYqECew
- VP9YBtiVcKpcw2FeX/tJvC6IGWOrPjlpu2YBUwPPQ5XoPuQzjgKibDq0ETNBwLeMqTp2
- U/TFRPgFSficiNHE/el/+K5G05UQTUJiEM3lpo749rDulElf04HZ9Bc2/U6kSlXJl77u
- iwq9DOHpC1OxqSbdC3q8ax38DTrKZCsvnLfuqSg5pU3hkgVwkr5tFPN6kQ0uGg6978Xt
- krkw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWb34FI3Ttpb3mYzzkLuLM33j1JXfD2vG5BKQ19Gz6HL5FX0sppQcNog6ZL2ZoKtks7tLvPjvH8dsZRdhRPcN5d@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YzQCe1H3xSaJfkYo/6qdUPa2+d/fVNPTpwDK32GcBgePuHCk4Yc
- gQRr0B9wz3Vb2/WEf1Jct4netXOOldm/5SAxITVk+VOWwQN1+PDCp4m211OwbX/OYQ5WSimFlTt
- A62VRideNzhTK6Dr1fmpL7V3OgRPlLcztLjys
-X-Gm-Gg: ASbGncvjobkhV7oZ1B6OD1+SWarU/bAUP+MT9kolTlZVTd9Vc4fvF8yPUveVACW2HrG
- byyc+1uKsavdUuUOMPA8QvvCAlZI83T2RJefM1oB4tSkxeC1TsurSVhzcECklJT/4HFdOURrcT+
- Irh7XtxV6EBTfqd1DWoCx6kM/01s+KT0foA7LVHdwmtm9grl5FDSMylVI6
-X-Google-Smtp-Source: AGHT+IFS75Z0XM5wuiNpOfgrNbtyh5kI8h29Nwu2aeDt7jd1u7vYMcdG/HRw0PtOOdN+1JfXFoeOy3TjhzP1Z5z0xXA=
-X-Received: by 2002:a05:6402:1496:b0:5eb:5d50:4fec with SMTP id
- 4fb4d7f45d1cf-5edfd9f7c30mr193132a12.0.1743438691972; Mon, 31 Mar 2025
- 09:31:31 -0700 (PDT)
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1tzLVO-0003YR-5o for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Mar 2025 20:13:10 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+ References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+ Content-Type:Content-ID:Content-Description;
+ bh=FjOppThpLmYB/HtBc3gYJ90YO4RBGnLgSmU7TtJFrJo=; b=K0F+wpMroYexti8/FDOPE6McZN
+ CImT5NOy1kuDmNBIRDuNgq7+utuhDhWFWvgIjr0IV0pZnvf1Cq5HqBBjArhB5v+obWqrQBnzBpnWJ
+ YIIxOnpxP3emhd32JDTO6wlCUQl2CUUgxRHhTu9a7ZWuE8DI9xZeByRApcnaNbZ9TQ24Tq4gTIsLa
+ Jy5keLf5FaQKyEegvmM05AEi50Rq8THqBEYEkCbfty3s2aqbvMjtS5pDLua2UNppe0qst2TMcfodN
+ GnYkBEDcqHjjRWSZSIlzNXDX8XALrj7RVdwrAMwkM+3T2Y59YOMGR8E86ViJMlCMpQLQjgJ5LRuK1
+ O+3kjgYw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red
+ Hat Linux)) id 1tzLVH-00000004RXs-3EiA;
+ Mon, 31 Mar 2025 20:13:03 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Date: Mon, 31 Mar 2025 21:10:39 +0100
+Message-ID: <20250331201256.1057782-20-willy@infradead.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250331201256.1057782-1-willy@infradead.org>
+References: <20250331201256.1057782-1-willy@infradead.org>
 MIME-Version: 1.0
-References: <20250331025416.478380-1-chao@kernel.org>
-In-Reply-To: <20250331025416.478380-1-chao@kernel.org>
-Date: Mon, 31 Mar 2025 09:31:20 -0700
-X-Gm-Features: AQ5f1Jo40vcwgWkYkmTPvqs1vtSU5KqyB2uPVh5Oo9YyNkgBQNmuj1T35rlyJpU
-Message-ID: <CALBjLoDnzALdShsEzii6pK+fxgbeNVh8weKVtb=PyFJ3XgS1NA@mail.gmail.com>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1tzI35-0007ee-QS
-Subject: Re: [f2fs-dev] [PATCH] f2fs: support to disable linear lookup
- fallback
+X-Headers-End: 1tzLVO-0003YR-5o
+Subject: [f2fs-dev] [PATCH 019/153] f2fs: Use a folio in
+ f2fs_ra_meta_pages_cond()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -103,44 +77,67 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Lee via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Lee <chullee@google.com>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>, jaegeuk@kernel.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gU3VuLCBNYXIgMzAsIDIwMjUgYXQgNzo1NOKAr1BNIENoYW8gWXUgPGNoYW9Aa2VybmVsLm9y
-Zz4gd3JvdGU6Cj4KPiBBZnRlciBjb21taXQgOTFiNTg3YmE3OWUxICgiZjJmczogSW50cm9kdWNl
-IGxpbmVhciBzZWFyY2ggZm9yCj4gZGVudHJpZXMiKSwgZjJmcyBmb3JjZWQgdG8gdXNlIGxpbmVh
-ciBsb29rdXAgd2hlbmV2ZXIgYSBoYXNoLWJhc2VkCj4gbG9va3VwIGZhaWxzIG9uIGNhc2Vmb2xk
-ZWQgZGlyZWN0b3J5LCBpdCBtYXkgYWZmZWN0IHBlcmZvcm1hbmNlCj4gZm9yIHNjZW5hcmlvczog
-YSkgY3JlYXRlIGEgbmV3IGZpbGUgdy8gZmlsZW5hbWUgaXQgZG9lc24ndCBleGlzdAo+IGluIGRp
-cmVjdG9yeSwgYikgbG9va3VwIGEgZmlsZSB3aGljaCBtYXkgYmUgcmVtb3ZlZC4KPgo+IFRoaXMg
-cGF0Y2ggc3VwcG9ydHMgdG8gZGlzYWJsZSBsaW5lYXIgbG9va3VwIGZhbGxiYWNrLCBzbywgb25j
-ZSB0aGVyZQo+IGlzIGEgc29sdXRpb24gZm9yIGNvbW1pdCA1YzI2ZDJmMWQzZjUgKCJ1bmljb2Rl
-OiBEb24ndCBzcGVjaWFsIGNhc2UKPiBpZ25vcmFibGUgY29kZSBwb2ludHMiKSB0byBmaXggcmVk
-IGhlYXJ0IHVuaWNvZGUgaXNzdWUsIHRoZW4gd2UgY2FuCj4gc2V0IGFuIGVuY29kZWluZyBmbGFn
-IHRvIGRpc2FibGUgdGhlIGZhbGxiYWNrIGZvciBwZXJmb3JtYW5jZSByZWNvdmVyeS4KPgo+IFRo
-ZSB3YXkgaXMga2VwdCBpbiBsaW5lIHcvIGV4dDQsIHJlZmVyIHRvIGNvbW1pdCA5ZTI4MDU5ZDU2
-NjQgKCJleHQ0Ogo+IGludHJvZHVjZSBsaW5lYXIgc2VhcmNoIGZvciBkZW50cmllcyIpLgo+Cj4g
-Q2M6IERhbmllbCBMZWUgPGNodWxsZWVAZ29vZ2xlLmNvbT4KPiBDYzogR2FicmllbCBLcmlzbWFu
-IEJlcnRhemkgPGtyaXNtYW5Ac3VzZS5kZT4KPiBTaWduZWQtb2ZmLWJ5OiBDaGFvIFl1IDxjaGFv
-QGtlcm5lbC5vcmc+Cj4gLS0tCj4gIGZzL2YyZnMvZGlyLmMgfCAzICsrLQo+ICAxIGZpbGUgY2hh
-bmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZnMv
-ZjJmcy9kaXIuYyBiL2ZzL2YyZnMvZGlyLmMKPiBpbmRleCA1YTYzZmYwZGYwM2IuLmUxMjQ0NWFm
-Yjk1YSAxMDA2NDQKPiAtLS0gYS9mcy9mMmZzL2Rpci5jCj4gKysrIGIvZnMvZjJmcy9kaXIuYwo+
-IEBAIC0zNjYsNyArMzY2LDggQEAgc3RydWN0IGYyZnNfZGlyX2VudHJ5ICpfX2YyZnNfZmluZF9l
-bnRyeShzdHJ1Y3QgaW5vZGUgKmRpciwKPgo+ICBvdXQ6Cj4gICNpZiBJU19FTkFCTEVEKENPTkZJ
-R19VTklDT0RFKQo+IC0gICAgICAgaWYgKElTX0NBU0VGT0xERUQoZGlyKSAmJiAhZGUgJiYgdXNl
-X2hhc2gpIHsKPiArICAgICAgIGlmIChJU19DQVNFRk9MREVEKGRpcikgJiYgIWRlICYmIHVzZV9o
-YXNoICYmCj4gKyAgICAgICAgICAgICAgICFzYl9ub19jYXNlZm9sZF9jb21wYXRfZmFsbGJhY2so
-ZGlyLT5pX3NiKSkgewoKCldvdWxkIGl0IGJlIGJlbmVmaWNpYWwgdG8gZXZhbHVhdGUKIXNiX25v
-X2Nhc2Vmb2xkX2NvbXBhdF9mYWxsYmFjayhkaXItPmlfc2IpIGZpcnN0IGZvciBzaG9ydC1jaXJj
-dWl0aW5nPwoKCj4KPiAgICAgICAgICAgICAgICAgdXNlX2hhc2ggPSBmYWxzZTsKPiAgICAgICAg
-ICAgICAgICAgZ290byBzdGFydF9maW5kX2VudHJ5Owo+ICAgICAgICAgfQo+IC0tCj4gMi40OS4w
-Cj4KCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51
-eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
-cmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51
-eC1mMmZzLWRldmVsCg==
+Remove a call to find_get_page().  Saves two hidden calls to
+compound_head().  Change f2fs_folio_put() to check for IS_ERR_OR_NULL
+to handle the case where we got an error pointer back from
+filemap_get_folio().
+
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/f2fs/checkpoint.c | 8 ++++----
+ fs/f2fs/f2fs.h       | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 1a5fbecd9356..30e68de82f73 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -325,16 +325,16 @@ int f2fs_ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+ void f2fs_ra_meta_pages_cond(struct f2fs_sb_info *sbi, pgoff_t index,
+ 							unsigned int ra_blocks)
+ {
+-	struct page *page;
++	struct folio *folio;
+ 	bool readahead = false;
+ 
+ 	if (ra_blocks == RECOVERY_MIN_RA_BLOCKS)
+ 		return;
+ 
+-	page = find_get_page(META_MAPPING(sbi), index);
+-	if (!page || !PageUptodate(page))
++	folio = filemap_get_folio(META_MAPPING(sbi), index);
++	if (IS_ERR(folio) || !folio_test_uptodate(folio))
+ 		readahead = true;
+-	f2fs_put_page(page, 0);
++	f2fs_folio_put(folio, 0);
+ 
+ 	if (readahead)
+ 		f2fs_ra_meta_pages(sbi, index, ra_blocks, META_POR, true);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 3d2be01f9363..f05185ed1c75 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2871,7 +2871,7 @@ static inline struct page *f2fs_pagecache_get_page(
+ 
+ static inline void f2fs_folio_put(struct folio *folio, bool unlock)
+ {
+-	if (!folio)
++	if (IS_ERR_OR_NULL(folio))
+ 		return;
+ 
+ 	if (unlock) {
+-- 
+2.47.2
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
