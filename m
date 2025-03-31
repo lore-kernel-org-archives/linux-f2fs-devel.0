@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CEF7CC36014
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 73CCCC3601F
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:13:21 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tzLVZ-0003lt-G0;
+	id 1tzLVZ-0003lg-4X;
 	Mon, 31 Mar 2025 20:13:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tzLVU-0003kj-9J
+ (envelope-from <willy@infradead.org>) id 1tzLVS-0003ka-Tv
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:16 +0000
+ Mon, 31 Mar 2025 20:13:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lmaktZtuhGTGtJ6DY21W4O1XBRHAzUus7Z4Fsu48/ac=; b=bDh9EUztM/M9Av4/hWrj/vhrO9
- 4W+g+FqmjyIis69ULBLkvfm2fwoluB1FZLZ3xxT04qs4KrITL7EbD6bQL+xMzua1NQptdf2KbRlri
- /9145j87EFND6i5hGxKa2icxCGPpPOtW6dcRPjBpVQ+KkLMmz8KuCSs5uPApGdqldOqg=;
+ bh=tGH5JqgzgRELLUEiXVTHl7+0Jqxe2s7dyC1bDLnmmuY=; b=dVFybIBo5wYY6WAelZG29sAPDW
+ BgzMKnk+TpoifWPlPZYSsHc8Dr8VzHZ+zeo3qchbO8cBDDRd/1qrs8CinLu9J1TIeP1OIP5JPiFrk
+ z5E4vDQfLRfLe21VbTHfddpJPdssnf6c75ZCRYn5tKxd+lPLtKbdjw4XUOmLXUcfGn+w=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,39 +33,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=lmaktZtuhGTGtJ6DY21W4O1XBRHAzUus7Z4Fsu48/ac=; b=mli8BnI7ZCrTOqO1Lr4dzv/6O5
- jprN7kFxgcXFPWKK6ypTQjXsK1tT4caiqGSfOpIjpssQijpg0Ugwe8Gk1dlSbcy/BDEFWShIt9g0R
- 0xkjAro5gdWSteUYZBMUpDUpqxXotb0+aE1tVLdrO2uNetr3UfUSvkimIr//BulQF12E=;
+ bh=tGH5JqgzgRELLUEiXVTHl7+0Jqxe2s7dyC1bDLnmmuY=; b=mP5WAlpMwJ7RraP2hZuQZqgc7Y
+ ykKFV64K/EkzBgcJk+TAaT8fPMbmT2kAJ4yOPzdzFWjRisQdc7w5yXDX0CC+4d80nLpvoqa8WnDp3
+ S3UFtnrb5HJo+hcMUizpPUvcUEaQAUy2XtoqGsRAedVE4P2rwTwCrVG19c3nZGvD5tFk=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tzLVT-0003ZL-GF for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:16 +0000
+ id 1tzLVS-0003Ys-7o for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Mar 2025 20:13:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=lmaktZtuhGTGtJ6DY21W4O1XBRHAzUus7Z4Fsu48/ac=; b=tgg6FSJVygeHbN/z2HNlATPznv
- UYEzDo/Q+ubH+iXpnV8J2X8JM/zimkggUFtapJ7G+gpqmWDcyE0eZnEosWjnUfJ/wt9x/WMOHvSx7
- p1Tx4BjxH9Wz6ERv06RpqV5xoBr6FYQ83m+CuiGHkkSWtr9nIuTilhA676HgzW7Y5rQ8Q+jVZ6Ije
- SpYARLRZnCkB1KVtHo9fNAbdDUN7ZHPCdfHxer4BXd42YrmI+UVmt6C7EAvXZUGAo3mircqxcnUi3
- pVMZ7aD9DrAYbRwQfUKN0eko668r/LTf6nBMppdED14CXXIfpzW/uWslUZg02fkxAm0fgOk/Pb8Jc
- 4i/0ES3Q==;
+ bh=tGH5JqgzgRELLUEiXVTHl7+0Jqxe2s7dyC1bDLnmmuY=; b=W4gjuPaKHhSjvM5i1cF/zwqJxN
+ weGkJzlJU3Tigg8/il9MS0ql+nFSDzPVY8os9aIa5b4KvvUVokR7DkbzcZvwmZFKaosj9b4vYl1kt
+ Y4+QJ1CoOZFlZ1AOYnQeTMFxchy1lUBYA/4pUwybUTNp4VHuIAARSnMAxtFL5IWWTblyHPEgZ+xer
+ +parJMCUI7puxWLw4m5fxq9KvNLhPdtT74Zs6IstyXj/TJjZ/wXezQoo0qHwj6WA/yoi5Yx9jIwZa
+ uJj9COHLpTzQw9JZzIIKCm+1dHXEGG2Y72RitYJYaTiN0XlfCK2rWJWtcFfGchypWU572uOVEvB8r
+ xmq8Lk1g==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red
- Hat Linux)) id 1tzLVI-00000004RYv-0pBB;
- Mon, 31 Mar 2025 20:13:04 +0000
+ Hat Linux)) id 1tzLVG-00000004RWQ-3kJy;
+ Mon, 31 Mar 2025 20:13:02 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 31 Mar 2025 21:10:42 +0100
-Message-ID: <20250331201256.1057782-23-willy@infradead.org>
+Date: Mon, 31 Mar 2025 21:10:32 +0100
+Message-ID: <20250331201256.1057782-13-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250331201256.1057782-1-willy@infradead.org>
 References: <20250331201256.1057782-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tzLVT-0003ZL-GF
-Subject: [f2fs-dev] [PATCH 022/153] f2fs: Convert get_next_sit_page() to
- get_next_sit_folio()
+X-Headers-End: 1tzLVS-0003Ys-7o
+Subject: [f2fs-dev] [PATCH 012/153] f2fs: Convert __f2fs_write_meta_page()
+ to __f2fs_write_meta_folio()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,103 +83,69 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Grab a folio instead of a page.  Also convert seg_info_to_sit_page() to
-seg_info_to_sit_folio() and use a folio in f2fs_flush_sit_entries().
-Saves a couple of calls to compound_head().
+All callers now have a folio so pass it in.  Saves three hidden calls to
+compound_head().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/segment.c | 20 ++++++++++----------
- fs/f2fs/segment.h |  6 +++---
- 2 files changed, 13 insertions(+), 13 deletions(-)
+ fs/f2fs/checkpoint.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 8476419db9e4..272490a50a04 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -4497,23 +4497,23 @@ static struct page *get_current_sit_page(struct f2fs_sb_info *sbi,
- 	return f2fs_get_meta_page(sbi, current_sit_addr(sbi, segno));
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 6e25975950fa..fdc310e9f261 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -340,12 +340,11 @@ void f2fs_ra_meta_pages_cond(struct f2fs_sb_info *sbi, pgoff_t index,
+ 		f2fs_ra_meta_pages(sbi, index, ra_blocks, META_POR, true);
  }
  
--static struct page *get_next_sit_page(struct f2fs_sb_info *sbi,
-+static struct folio *get_next_sit_folio(struct f2fs_sb_info *sbi,
- 					unsigned int start)
+-static int __f2fs_write_meta_page(struct page *page,
++static int __f2fs_write_meta_folio(struct folio *folio,
+ 				struct writeback_control *wbc,
+ 				enum iostat_type io_type)
  {
- 	struct sit_info *sit_i = SIT_I(sbi);
--	struct page *page;
-+	struct folio *folio;
- 	pgoff_t src_off, dst_off;
+-	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
+-	struct folio *folio = page_folio(page);
++	struct f2fs_sb_info *sbi = F2FS_F_SB(folio);
  
- 	src_off = current_sit_addr(sbi, start);
- 	dst_off = next_sit_addr(sbi, src_off);
+ 	trace_f2fs_writepage(folio, META);
  
--	page = f2fs_grab_meta_page(sbi, dst_off);
--	seg_info_to_sit_page(sbi, page, start);
-+	folio = f2fs_grab_meta_folio(sbi, dst_off);
-+	seg_info_to_sit_folio(sbi, folio, start);
+@@ -367,7 +366,7 @@ static int __f2fs_write_meta_page(struct page *page,
+ 	dec_page_count(sbi, F2FS_DIRTY_META);
  
--	set_page_dirty(page);
-+	folio_mark_dirty(folio);
- 	set_to_next_sit(sit_i, start);
+ 	if (wbc->for_reclaim)
+-		f2fs_submit_merged_write_cond(sbi, NULL, page, 0, META);
++		f2fs_submit_merged_write_cond(sbi, NULL, &folio->page, 0, META);
  
--	return page;
-+	return folio;
+ 	folio_unlock(folio);
+ 
+@@ -377,7 +376,7 @@ static int __f2fs_write_meta_page(struct page *page,
+ 	return 0;
+ 
+ redirty_out:
+-	redirty_page_for_writepage(wbc, page);
++	folio_redirty_for_writepage(wbc, folio);
+ 	return AOP_WRITEPAGE_ACTIVATE;
  }
  
- static struct sit_entry_set *grab_sit_entry_set(void)
-@@ -4643,7 +4643,7 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	 * #2, flush sit entries to sit page.
- 	 */
- 	list_for_each_entry_safe(ses, tmp, head, set_list) {
--		struct page *page = NULL;
-+		struct folio *folio = NULL;
- 		struct f2fs_sit_block *raw_sit = NULL;
- 		unsigned int start_segno = ses->start_segno;
- 		unsigned int end = min(start_segno + SIT_ENTRY_PER_BLOCK,
-@@ -4657,8 +4657,8 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 		if (to_journal) {
- 			down_write(&curseg->journal_rwsem);
- 		} else {
--			page = get_next_sit_page(sbi, start_segno);
--			raw_sit = page_address(page);
-+			folio = get_next_sit_folio(sbi, start_segno);
-+			raw_sit = folio_address(folio);
- 		}
+@@ -463,7 +462,7 @@ long f2fs_sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
+ 			if (!folio_clear_dirty_for_io(folio))
+ 				goto continue_unlock;
  
- 		/* flush dirty sit entries in region of current sit set */
-@@ -4704,7 +4704,7 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 		if (to_journal)
- 			up_write(&curseg->journal_rwsem);
- 		else
--			f2fs_put_page(page, 1);
-+			f2fs_folio_put(folio, true);
+-			if (__f2fs_write_meta_page(&folio->page, &wbc,
++			if (__f2fs_write_meta_folio(folio, &wbc,
+ 						io_type)) {
+ 				folio_unlock(folio);
+ 				break;
+@@ -1421,7 +1420,7 @@ static void commit_checkpoint(struct f2fs_sb_info *sbi,
+ 		f2fs_bug_on(sbi, 1);
  
- 		f2fs_bug_on(sbi, ses->entry_cnt);
- 		release_sit_entry_set(ses);
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 0465dc00b349..913f002668b4 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -385,8 +385,8 @@ static inline void __seg_info_to_raw_sit(struct seg_entry *se,
- 	rs->mtime = cpu_to_le64(se->mtime);
- }
- 
--static inline void seg_info_to_sit_page(struct f2fs_sb_info *sbi,
--				struct page *page, unsigned int start)
-+static inline void seg_info_to_sit_folio(struct f2fs_sb_info *sbi,
-+				struct folio *folio, unsigned int start)
- {
- 	struct f2fs_sit_block *raw_sit;
- 	struct seg_entry *se;
-@@ -395,7 +395,7 @@ static inline void seg_info_to_sit_page(struct f2fs_sb_info *sbi,
- 					(unsigned long)MAIN_SEGS(sbi));
- 	int i;
- 
--	raw_sit = (struct f2fs_sit_block *)page_address(page);
-+	raw_sit = folio_address(folio);
- 	memset(raw_sit, 0, PAGE_SIZE);
- 	for (i = 0; i < end - start; i++) {
- 		rs = &raw_sit->entries[i];
+ 	/* writeout cp pack 2 page */
+-	err = __f2fs_write_meta_page(&folio->page, &wbc, FS_CP_META_IO);
++	err = __f2fs_write_meta_folio(folio, &wbc, FS_CP_META_IO);
+ 	if (unlikely(err && f2fs_cp_error(sbi))) {
+ 		f2fs_folio_put(folio, true);
+ 		return;
 -- 
 2.47.2
 
