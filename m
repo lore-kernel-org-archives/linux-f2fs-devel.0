@@ -4,67 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 131E3C28B20
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 03:01:25 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 72A0EC28B20
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 03:01:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tz5Ov-0001sj-8h;
-	Mon, 31 Mar 2025 03:01:24 +0000
+	id 1tz5P2-0008Rp-1y;
+	Mon, 31 Mar 2025 03:01:32 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1tz5Ou-0001sb-2Q
+ (envelope-from <chao@kernel.org>) id 1tz5Ox-0008Re-Ec
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 03:01:23 +0000
+ Mon, 31 Mar 2025 03:01:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZYrlbo+vfYkkzipUD2eKhjiwz//+dAu92IlxWbCbjG4=; b=RPig65JIu5mo+TpH5iN4vYkqNW
- zkQTbVmdqFBToS2ropDE13IoVmzgDDDznCozLl3gHsB40vV5MkfY217FRYALu4TYxzJ579/o3VQBh
- Acor5k0Aye/S1nXrZAwITXmFjl/co4ulGEJVSpOwRFA/+5G3nEX+bT5scPAzAiL0tPmM=;
+ bh=NRhOZ0ZEnGTEMQyB+3BT+EH/lEDXWLsBLG8e37/7BOg=; b=kma0RfeHLpDK1/rZpr4OEYTLS8
+ oD/Dq88IUWxlZnFaXPc6P9DYt5kQdgya6tyHyOL42/RvNyKRdMtR8o+nNr/G+4cMKp3mCheapnZrG
+ VsfZJ4w4/UrDPAbuPEG0RoK4tddriP/VzZGLk7+mgQP3yeILaT6uAgT+uTaA9viWMxFc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:
- Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=ZYrlbo+vfYkkzipUD2eKhjiwz//+dAu92IlxWbCbjG4=; b=H
- 79U44rGrJBC5km92aYftlifzc/oPG7zSRWCJ/C0h+bPFiimc1roL14w+Irw8hqUidEINlZA+sxtXo
- vEiShcn4yFeS340DutOD8i39xIHqB8yM7cKszykOF4iPjXvBOJunc25ZAsY1SHSWE4iIkVrX4S26l
- fN0YVFogKkHtScKg=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=NRhOZ0ZEnGTEMQyB+3BT+EH/lEDXWLsBLG8e37/7BOg=; b=Ax5fJNGJHhvbS5cN6leTsbTLtc
+ WJWGIVjuXSFAqtfMB/FRFPcaxY0mvY/LJP8KlP/A5IHEhn96+tAM+DZExkHykD0W76J2ObabW4ZSB
+ hXaihiS+A0PaclJ860gPInqoOe9Mho/lf06zzECcOLYYAZ51NWMlvncls6+FPFD4OWMc=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tz5Or-0003Uu-PU for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 03:01:23 +0000
+ id 1tz5Ou-0003VC-6J for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Mar 2025 03:01:25 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 8632D61126
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 31 Mar 2025 03:01:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B045FC4CEEB;
- Mon, 31 Mar 2025 03:01:09 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id B60EBA42E3F;
+ Mon, 31 Mar 2025 02:55:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4005BC4CEE8;
+ Mon, 31 Mar 2025 03:01:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1743390070;
- bh=zjlpH+7NAmZ7JYB+oJsb74be5aYCAZv12EOln1aGszE=;
- h=From:To:Cc:Subject:Date:From;
- b=UzjDIYW+R+/UwpiiM+zVBYYeizqTRZdQoKaurLOU9b/3+OhPoawQu1c0g7kDWMAYb
- 205fbf4vR1jVnSsHE5GPXTK1279M7k5OZJl2+HXrafdjynFh3ddrpBzjCr3aiwhTxh
- Z8ArO5Y6FAXgUVd/lRbe5grY/3ugcZTkfldE2CzKcmQlxWXQ1yqozVcFDeg0n+FkS7
- n/7FXH6WaYd1rbcOG+oCN5T4kw8mjYNuyMkj6tV5C25YaOmO3tLqe/SKLTyOmOW7XC
- YaiSL1UR7+zmkFeetvQXRrKX1iaLtsFs0YJA6DDMywfHBb8qRiOd+Wb0SmCRLX2P5a
- JBl5nVXbVVFbQ==
+ s=k20201202; t=1743390073;
+ bh=2yS8zRNdPEtMiiY01HLBHF0MCg5mLo98UA1o28qOC9g=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=dWuBdDqLHqr/OsY08VD/dDRWYbC486CGHnlPLwpQ2TaWw392oApAfn4TGLF7/xQhU
+ lB3MXAaPCcJNw7MwqLatydoqzjG8S4qbzn8Akr7d9QHIRg+/u+dy8oYm8hG/jQHy2l
+ F0VWyhbhLuDM2DgGq3EsS7V1ONUjkF/mjKKvy8su2tblFb0/BdCFYAnkeGi6XFEpx8
+ Bvvq0nY6cZ6guV+W3hswdS8nzi67//0pWeq0vrZt0SVFDm/+22c0pk6pmCGLYMlHDk
+ X2hx+NhXW819wdBvAdYI1aHHIV7ikn0lzq/b3aSEkfdmHFWa61+ME5sypA50N3CmBu
+ f3L0QPn8/A3+g==
 To: jaegeuk@kernel.org
-Date: Mon, 31 Mar 2025 11:00:32 +0800
-Message-ID: <20250331030034.481423-1-chao@kernel.org>
+Date: Mon, 31 Mar 2025 11:00:34 +0800
+Message-ID: <20250331030034.481423-3-chao@kernel.org>
 X-Mailer: git-send-email 2.49.0.472.ge94155a9ec-goog
+In-Reply-To: <20250331030034.481423-1-chao@kernel.org>
+References: <20250331030034.481423-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1tz5Or-0003Uu-PU
-Subject: [f2fs-dev] [PATCH 1/3] dump.f2fs: support to dump hex of filename
- in dump_dirent()
+X-Headers-End: 1tz5Ou-0003VC-6J
+Subject: [f2fs-dev] [PATCH 3/3] fsck.f2fs: support to tune linear lookup
+ feature
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,28 +80,165 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-ZHVtcC5mMmZzIC1iICRibGthZGRyIC1kIDMgL2Rldi92ZGEKCltkdW1wX2RpcmVudDogOTkxXSBi
-aXRtYXAgcG9zWzB4Ml0gbmFtZVvinaTvuI9dIGxlblsweDZdIGhhc2hbMHgxOWRkNzEzMl0gaW5v
-WzB4NV0gdHlwZVsweDFdCltkdW1wX2RpcmVudDogOTk4XSBuYW1lKGhleClbMHhlMiAweDlkIDB4
-YTQgMHhlZiAweGI4IDB4OGYgMHgwXQoKU2lnbmVkLW9mZi1ieTogQ2hhbyBZdSA8Y2hhb0BrZXJu
-ZWwub3JnPgotLS0KIGZzY2svZHVtcC5jIHwgNyArKysrKystCiAxIGZpbGUgY2hhbmdlZCwgNiBp
-bnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZnNjay9kdW1wLmMgYi9m
-c2NrL2R1bXAuYwppbmRleCBkYzNjMTk5Li42NmQ2Yzc5IDEwMDY0NAotLS0gYS9mc2NrL2R1bXAu
-YworKysgYi9mc2NrL2R1bXAuYwpAQCAtOTM3LDcgKzkzNyw3IEBAIHN0YXRpYyB2b2lkIGR1bXBf
-ZGlyZW50KHUzMiBibGtfYWRkciwgaW50IGlzX2lubGluZSwgaW50IGVuY19uYW1lKQogewogCXN0
-cnVjdCBmMmZzX2RlbnRyeV9wdHIgZDsKIAl2b2lkICppbmxpbmVfZGVudHJ5LCAqYmxrOwotCWlu
-dCByZXQsIGkgPSAwOworCWludCByZXQsIGkgPSAwLCBqOwogCiAJYmxrID0gY2FsbG9jKEYyRlNf
-QkxLU0laRSwgMSk7CiAJQVNTRVJUKGJsayk7CkBAIC05OTIsNiArOTkyLDExIEBAIHN0YXRpYyB2
-b2lkIGR1bXBfZGlyZW50KHUzMiBibGtfYWRkciwgaW50IGlzX2lubGluZSwgaW50IGVuY19uYW1l
-KQogCQkJCWxlMzJfdG9fY3B1KGRlLT5pbm8pLAogCQkJCWRlLT5maWxlX3R5cGUpOwogCisJCURC
-RygxLCAiJXMiLCAibmFtZShoZXgpWyIpOworCQlmb3IgKGogPSAwOyBqIDwgRjJGU19OQU1FX0xF
-TiAmJiBlbltqXTsgaisrKQorCQkJTVNHKDEsICIweCV4ICIsICh1bnNpZ25lZCBjaGFyKWVuW2pd
-KTsKKwkJTVNHKDEsICIweCV4XVxuIiwgKHVuc2lnbmVkIGNoYXIpZW5bal0pOworCiAJCWkgKz0g
-R0VUX0RFTlRSWV9TTE9UUyhuYW1lX2xlbik7CiAJfQogCi0tIAoyLjQ5LjAKCgoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBt
-YWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6
-Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+Support a new option --nolinear-lookup=X for fsck.f2fs to tune
+linear lookup fallback conditionally, X=1: disable linear lookup,
+X=0: enable linear lookup.
+
+This can help to 1) add a regression testcase to check kernel
+whether linear lookup fallback has fixed unicode red heart lookup
+issue, 2) once unicode bug has been fixed, we can use this option
+to disable linear lookup for performance recovery.
+
+Cc: Daniel Lee <chullee@google.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fsck/fsck.c       | 26 +++++++++++++++++++++++++-
+ fsck/fsck.h       |  1 +
+ fsck/main.c       | 10 ++++++++++
+ include/f2fs_fs.h |  8 ++++++--
+ 4 files changed, 42 insertions(+), 3 deletions(-)
+
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 8155cbd..059ba61 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -2357,6 +2357,30 @@ int fsck_chk_quota_files(struct f2fs_sb_info *sbi)
+ 	return ret;
+ }
+ 
++void fsck_update_sb_flags(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
++	u16 flags = get_sb(s_encoding_flags);
++
++	if (c.nolinear_lookup) {
++		if (!(flags & F2FS_ENC_NO_COMPAT_FALLBACK_FL)) {
++			flags |= F2FS_ENC_NO_COMPAT_FALLBACK_FL;
++			set_sb(s_encoding_flags, flags);
++			c.fix_on = 1;
++			c.invalid_sb |= SB_ENCODE_FLAG;
++			DBG(0, "Casefold: enable nolinear lookup\n");
++		}
++	} else {
++		if (flags & F2FS_ENC_NO_COMPAT_FALLBACK_FL) {
++			flags &= ~F2FS_ENC_NO_COMPAT_FALLBACK_FL;
++			set_sb(s_encoding_flags, flags);
++			c.fix_on = 1;
++			c.invalid_sb |= SB_ENCODE_FLAG;
++			DBG(0, "Casefold: disable nolinear lookup\n");
++		}
++	}
++}
++
+ int fsck_chk_meta(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+@@ -3770,7 +3794,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
+ 		if (c.invalid_sb & SB_FS_ERRORS)
+ 			memset(sb->s_errors, 0, MAX_F2FS_ERRORS);
+ 
+-		if (c.invalid_sb & SB_NEED_FIX)
++		if (c.invalid_sb & (SB_NEED_FIX | SB_ENCODE_FLAG))
+ 			update_superblock(sb, SB_MASK_ALL);
+ 
+ 		/* to return FSCK_ERROR_CORRECTED */
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index b581d3e..40cb6d9 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -188,6 +188,7 @@ extern int fsck_chk_dentry_blk(struct f2fs_sb_info *, int,
+ int fsck_chk_inline_dentries(struct f2fs_sb_info *, struct f2fs_node *,
+ 		struct child_info *);
+ void fsck_chk_checkpoint(struct f2fs_sb_info *sbi);
++void fsck_update_sb_flags(struct f2fs_sb_info *sbi);
+ int fsck_chk_meta(struct f2fs_sb_info *sbi);
+ void fsck_chk_and_fix_write_pointers(struct f2fs_sb_info *);
+ int fsck_chk_curseg_info(struct f2fs_sb_info *);
+diff --git a/fsck/main.c b/fsck/main.c
+index 47ba6c9..524dbb1 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -91,6 +91,7 @@ void fsck_usage()
+ 	MSG(0, "  --no-kernel-check skips detecting kernel change\n");
+ 	MSG(0, "  --kernel-check checks kernel change\n");
+ 	MSG(0, "  --debug-cache to debug cache when -c is used\n");
++	MSG(0, "  --nolinear-lookup=X X=1: disable linear lookup, X=0: enable linear lookup\n");
+ 	exit(1);
+ }
+ 
+@@ -263,6 +264,7 @@ void f2fs_parse_options(int argc, char *argv[])
+ 			{"no-kernel-check", no_argument, 0, 2},
+ 			{"kernel-check", no_argument, 0, 3},
+ 			{"debug-cache", no_argument, 0, 4},
++			{"nolinear-lookup", required_argument, 0, 5},
+ 			{0, 0, 0, 0}
+ 		};
+ 
+@@ -287,6 +289,12 @@ void f2fs_parse_options(int argc, char *argv[])
+ 			case 4:
+ 				c.cache_config.dbg_en = true;
+ 				break;
++			case 5:
++				if (!optarg || !strcmp(optarg, "0"))
++					c.nolinear_lookup = 0;
++				else
++					c.nolinear_lookup = 1;
++				break;
+ 			case 'a':
+ 				c.auto_fix = 1;
+ 				MSG(0, "Info: Automatic fix mode enabled.\n");
+@@ -990,6 +998,8 @@ static int do_fsck(struct f2fs_sb_info *sbi)
+ 			F2FS_FT_DIR, TYPE_INODE, &blk_cnt, &cbc, &child);
+ 	fsck_chk_quota_files(sbi);
+ 
++	fsck_update_sb_flags(sbi);
++
+ 	ret = fsck_verify(sbi);
+ 	fsck_free(sbi);
+ 
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index bb40adc..d0eff91 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -682,7 +682,8 @@ enum {
+ #define IS_DEVICE_ALIASING(fi)	((fi)->i_flags & cpu_to_le32(F2FS_DEVICE_ALIAS_FL))
+ 
+ #define F2FS_ENC_UTF8_12_1	1
+-#define F2FS_ENC_STRICT_MODE_FL	(1 << 0)
++#define F2FS_ENC_STRICT_MODE_FL		(1 << 0)
++#define F2FS_ENC_NO_COMPAT_FALLBACK_FL	(1 << 1)
+ 
+ /* This flag is used by node and meta inodes, and by recovery */
+ #define GFP_F2FS_ZERO	(GFP_NOFS | __GFP_ZERO)
+@@ -1467,7 +1468,9 @@ enum {
+ #define SB_ABNORMAL_STOP	0x2	/* s_stop_reason is set except shutdown */
+ #define SB_FS_ERRORS		0x4	/* s_erros is set */
+ #define SB_INVALID		0x8	/* sb is invalid */
+-#define SB_NEED_FIX (SB_ABNORMAL_STOP | SB_FS_ERRORS | SB_INVALID)
++#define SB_ENCODE_FLAG		0x16	/* encode_flag */
++#define SB_NEED_FIX		(SB_ABNORMAL_STOP | SB_FS_ERRORS |	\
++				SB_INVALID | SB_ENCODE_FLAG)
+ 
+ #define MAX_CACHE_SUMS			8
+ 
+@@ -1541,6 +1544,7 @@ struct f2fs_configuration {
+ 	int preserve_limits;		/* preserve quota limits */
+ 	int large_nat_bitmap;
+ 	int fix_chksum;			/* fix old cp.chksum position */
++	int nolinear_lookup;		/* disable linear lookup */
+ 	unsigned int feature;			/* defined features */
+ 	unsigned int disabled_feature;	/* disabled feature, used for Android only */
+ 	unsigned int quota_bits;	/* quota bits */
+-- 
+2.49.0
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
