@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B662EC3601C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9753FC369AF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:13:31 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tzLVs-0005lp-U9;
-	Mon, 31 Mar 2025 20:13:40 +0000
+	id 1tzLVj-0005fl-Qi;
+	Mon, 31 Mar 2025 20:13:31 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tzLVf-0005bY-0S
+ (envelope-from <willy@infradead.org>) id 1tzLVb-0005am-L4
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:26 +0000
+ Mon, 31 Mar 2025 20:13:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ruG0c1xtMup0AjT5tZPu3UitFKzo2Cb5XfaI6CmpP5A=; b=YFcfpU8GrGyT6NPDu1uMfnDNBt
- Td5/VI9V41wP1ks3AP4O9NeHwfSu7OKpKXA+0m4JYGbyidUeNTJxPT1jOPdU/mc4/zXgWzqTrREvU
- iKihN1Rrx7+I2aws2EGrPgnNUNl/jpLB6jFN4u9GEhjxrnTORhlMrLuuFHR2ttMIf2pg=;
+ bh=9f5hy2Vlpud8/ktAkFddMFM7/+3sI2x7YF4v0A2AnS0=; b=E9VuALMoTQBI0G/pI2e5Og1wiH
+ yfpuJQzG1N0j52frhsJCmnvAhXUqew7kEKgbSb8gKuw7Ym+qKHQ9dg0Me9ReWPnB3/KAudNBH2J3X
+ MLFd88RGJYnmQFp1DO/zXfjioN3DhkBuUboPvAd2ks96AeGk9ZZbc1JKmK+T2utZ6Lpc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,38 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ruG0c1xtMup0AjT5tZPu3UitFKzo2Cb5XfaI6CmpP5A=; b=jGvy61yBA/TKfGNlRrF9AL4pDw
- dt9etNhNMhoYAsACuyAXEyAc54+LhSSkdkTHYtCTpuYIZb4ufAuN8UIKX9/3Oy1yIteo6H5BavMDR
- zy4NCJi6pTbBb2dZqsz4JkP9mX+M18gtS7+lKuLGHfYpVtTOyDRhEr57GKSID4jUjTKg=;
+ bh=9f5hy2Vlpud8/ktAkFddMFM7/+3sI2x7YF4v0A2AnS0=; b=UyPTMl+T6Hwl2awW/MVzg5Zyn7
+ s6CkSgQICsdORXum7s5T8zPHYXUzp0tgVXeeqQGEN+JSsOK3FbB0PxMS/RBTO1ZNET3sM/EFGNBdb
+ 2f/+JMcQDfmJC7Fdvq50A58YaxpL/co/2crzaFf8DbNEYIVFn13pK0t/19k5GQIKhrbE=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tzLVY-0003at-ME for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:26 +0000
+ id 1tzLVV-0003Zk-FI for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Mar 2025 20:13:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=ruG0c1xtMup0AjT5tZPu3UitFKzo2Cb5XfaI6CmpP5A=; b=VPbNTPPhRLU/cQuN1v4tJ1QR8d
- KM0VYa2VEg5VRMtkqdvddSYhaqJZvFG7Y7IMHLjmxbtrdnvAZyI30JVwGPXr6Vfip26+kyue0Eic+
- X25rM1/j4zR+y6vsq46eMqZu3xvtB4s3UjKxNTIomcONfZwCRJspEq6ZcIsBGgFyi62NkQzWGLJnV
- kwbb5Jm8VEaVYRkjQUXmEFeJfqC8aOvXt9Agbi482CG4iyO9hJOK/tgkTjoq85KOSSlASNxiEKxKs
- AXfXHOD4OdSPPYrqvBiuztm+DLz3UI07l4TWkBLvKBEz8CmN78/EsIb0JQQBc4ZpwqvEVl5G6gfAY
- oOUHnsOA==;
+ bh=9f5hy2Vlpud8/ktAkFddMFM7/+3sI2x7YF4v0A2AnS0=; b=VS0vJZvdjOADptdKbaggQSUnSN
+ +M98JqM82eA8uSacpjjR6dXM/Ch4kYRoAY70HYAgk3NaTW6N8hJVxbY3vjWzdaX4/5gWWtrmH1RUq
+ Ownvfb0AdJATx27C/lMTjS/81vtSqGaXviqU+dqVoA0+KFHlX6FLFJrq+iMlX6GhYt1BE4ZJtlckc
+ 48hsAHT6ha3rrubA8WpBB4g2WH1CyqYxpSutyC/PXRNn4cpQD7deYIuwgiAZI5rVyuLS9R45FIZQ3
+ 7suLCIpSCVBsB6oi7CKKuXwHaWk8hEKvJRJXWOWM/HhtBZMwWVjiXYOgsThTMiDEHaJs4SA2jz+os
+ y74ngNlQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red
- Hat Linux)) id 1tzLVN-00000004Rmg-11wi;
- Mon, 31 Mar 2025 20:13:09 +0000
+ Hat Linux)) id 1tzLVP-00000004RrU-06SE;
+ Mon, 31 Mar 2025 20:13:11 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 31 Mar 2025 21:11:15 +0100
-Message-ID: <20250331201256.1057782-56-willy@infradead.org>
+Date: Mon, 31 Mar 2025 21:11:25 +0100
+Message-ID: <20250331201256.1057782-66-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250331201256.1057782-1-willy@infradead.org>
 References: <20250331201256.1057782-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tzLVY-0003at-ME
-Subject: [f2fs-dev] [PATCH 055/153] f2fs: Use a folio in fill_zero()
+X-Headers-End: 1tzLVV-0003Zk-FI
+Subject: [f2fs-dev] [PATCH 065/153] f2fs: Use a folio in f2fs_ra_node_page()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,50 +82,49 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Remove three hidden calls to compound_head().
+Save a call to compound_head().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/file.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ fs/f2fs/node.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index ab46fb272cc2..90e71b54e1d0 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1161,7 +1161,7 @@ static int fill_zero(struct inode *inode, pgoff_t index,
- 					loff_t start, loff_t len)
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 5fe8f48b2ac5..083863557414 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1436,7 +1436,7 @@ static int read_node_page(struct page *page, blk_opf_t op_flags)
+  */
+ void f2fs_ra_node_page(struct f2fs_sb_info *sbi, nid_t nid)
  {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct page *page;
-+	struct folio *folio;
+-	struct page *apage;
++	struct folio *afolio;
+ 	int err;
  
- 	if (!len)
- 		return 0;
-@@ -1169,16 +1169,16 @@ static int fill_zero(struct inode *inode, pgoff_t index,
- 	f2fs_balance_fs(sbi, true);
+ 	if (!nid)
+@@ -1444,16 +1444,16 @@ void f2fs_ra_node_page(struct f2fs_sb_info *sbi, nid_t nid)
+ 	if (f2fs_check_nid_range(sbi, nid))
+ 		return;
  
- 	f2fs_lock_op(sbi);
--	page = f2fs_get_new_data_page(inode, NULL, index, false);
-+	folio = f2fs_get_new_data_folio(inode, NULL, index, false);
- 	f2fs_unlock_op(sbi);
+-	apage = xa_load(&NODE_MAPPING(sbi)->i_pages, nid);
+-	if (apage)
++	afolio = xa_load(&NODE_MAPPING(sbi)->i_pages, nid);
++	if (afolio)
+ 		return;
  
--	if (IS_ERR(page))
--		return PTR_ERR(page);
-+	if (IS_ERR(folio))
-+		return PTR_ERR(folio);
+-	apage = f2fs_grab_cache_page(NODE_MAPPING(sbi), nid, false);
+-	if (!apage)
++	afolio = f2fs_grab_cache_folio(NODE_MAPPING(sbi), nid, false);
++	if (IS_ERR(afolio))
+ 		return;
  
--	f2fs_wait_on_page_writeback(page, DATA, true, true);
--	zero_user(page, start, len);
--	set_page_dirty(page);
--	f2fs_put_page(page, 1);
-+	f2fs_folio_wait_writeback(folio, DATA, true, true);
-+	folio_zero_range(folio, start, len);
-+	folio_mark_dirty(folio);
-+	f2fs_folio_put(folio, true);
- 	return 0;
+-	err = read_node_page(apage, REQ_RAHEAD);
+-	f2fs_put_page(apage, err ? 1 : 0);
++	err = read_node_page(&afolio->page, REQ_RAHEAD);
++	f2fs_folio_put(afolio, err ? true : false);
  }
  
+ static int sanity_check_node_footer(struct f2fs_sb_info *sbi,
 -- 
 2.47.2
 
