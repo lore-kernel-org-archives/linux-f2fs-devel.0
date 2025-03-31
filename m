@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5FBF2C36014
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:13:29 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B913DC369A3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:13:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tzLVh-0005dE-IE;
-	Mon, 31 Mar 2025 20:13:28 +0000
+	id 1tzLVk-0000nG-T7;
+	Mon, 31 Mar 2025 20:13:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tzLVX-0005Zj-H6
+ (envelope-from <willy@infradead.org>) id 1tzLVV-0000js-1D
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:18 +0000
+ Mon, 31 Mar 2025 20:13:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=G47SGLCtoVM6r+58ciOIRuLoTqlI7vH4s0Lme90qFz8=; b=Hf6p51WV6MAJv7lvVSwxM0ZGr9
- Rgs/0f2d1CDtM+LOXzKMTi2Rtz3wSAJrAKuQ1c3Sq/TrVFO0B5CgBgpgEPgtvMZFKS/pG2TbwwDj6
- gnFp6ohZpO3RboDphRhwCvhXvCf63Xp0hoiD/D950CNJADLFvUo29Kz5sTLU9FbXXBjs=;
+ bh=lMdY0qXzo5KbTb7WvO3gkq1R1uWhCE2o0mn0dC+zxc4=; b=K60H2VzqbGHjkHBr5hGhZwIPC8
+ mb5h8KhQoMu7+sYtRPoTugI/hQWKW7h62mYf6uVBaEM2jnYP7WBW7B+JSLqEzfnGhi7rH6j306LOj
+ V528DYP87qB1ooWlRCyl0O8W+AmTBNtuV4SxIaL2y6ZH/yPH4oGddvo83OBHl8zv3D3k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,39 +33,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=G47SGLCtoVM6r+58ciOIRuLoTqlI7vH4s0Lme90qFz8=; b=cuDz6o4Uox1xzaUugV4oQtI+V7
- iSzmNvYeENOpMuRLC+riRO4hvkFVbKcWWHcnEdabljQ5WX3ZYT5QZZj1TJBUhg/jJbOhQhMEx4YGb
- Wjcg4Ym19puteXGn6yoLx7e5n19cNM6Ug7xcOEixh1t6EEXYOzbm9i+8dBHB3C1Oskpk=;
+ bh=lMdY0qXzo5KbTb7WvO3gkq1R1uWhCE2o0mn0dC+zxc4=; b=Jwrjlmm1OVsrWiacVrDwLIXodq
+ 55czWR7g/S/CvRpEGraNzchCsswY95hhpbFosIQlXMDz623r7CHkiyEOGu+C4QkNiJjbcsoE9w3xx
+ LSejnqImZ1Q9GzYmv3Oy0xSk8AkdUMGzoTx1nXj5giGdGs6DYrefLrUv8Zy/7rE/JMg8=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tzLVR-0003Yi-67 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:18 +0000
+ id 1tzLVU-0003Za-NQ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Mar 2025 20:13:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=G47SGLCtoVM6r+58ciOIRuLoTqlI7vH4s0Lme90qFz8=; b=k7JZwE5vPbzupxQYsR17QrGbpF
- yReFXipYYKi2VhSRGQJImQcNdMvvfYB8AsrztNnM9NVZSoz7IAJvm1JPgRyvPQSrFd/04bOR2Twgo
- 4bu2KkHN8UJo1GcqAqC/wXooXsRyxImKVLcyHMBi5dHGtzJDWiDy6T+xrC751yDU8eCoDMEA9Th5F
- 5ODMSEl2jbE+RPgOycgVz1D9kc8ERMz2elVk/SMffv6JfdRxO0EVT05vdC58AVaByYYNPN0frtUPK
- Q1p18sQIs1rBGUMBtnYncqxP817K0TrqchIGKpAUoEvb4a40knDdZ7esphh4gNNp49/UNJfnYQw03
- K0HmNJ/w==;
+ bh=lMdY0qXzo5KbTb7WvO3gkq1R1uWhCE2o0mn0dC+zxc4=; b=VcslomKX/w++3E/EIgs9PGGCig
+ mmAyDRb4jh6jLI+Xumcr2Y9+aLcl2n6udTTWi/WWYh81YDFrc1DRgw7MB8nINWdCasbA59KrDMzQU
+ otKQMwFA98c1T+4Tb0qB4Wlx1wnBNiA982sk+n6KiaRERVRE01wmPmpSVBmwc0HGEjRA/i3ynE+66
+ Mp7tboeNFioMBsjEJW1vw1lKRZrC90ZCwS0kCq3a6m0omtxNgSyNeWdliAsemRVeyJX0hKxFS2byz
+ 1t56kC9ixc8bRoiZr7vONXNeEGCGsuEYP9Vn0PswN8CWcL6dYr8fAQy4A4oVkoDNOCJYydehH/AK5
+ Mue1fNxw==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red
- Hat Linux)) id 1tzLVF-00000004RUh-3Xxu;
- Mon, 31 Mar 2025 20:13:01 +0000
+ Hat Linux)) id 1tzLVJ-00000004RbY-1XDA;
+ Mon, 31 Mar 2025 20:13:05 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 31 Mar 2025 21:10:25 +0100
-Message-ID: <20250331201256.1057782-6-willy@infradead.org>
+Date: Mon, 31 Mar 2025 21:10:51 +0100
+Message-ID: <20250331201256.1057782-32-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250331201256.1057782-1-willy@infradead.org>
 References: <20250331201256.1057782-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tzLVR-0003Yi-67
-Subject: [f2fs-dev] [PATCH 005/153] f2fs: Use bio_for_each_folio_all() in
- __has_merged_page()
+X-Headers-End: 1tzLVU-0003Za-NQ
+Subject: [f2fs-dev] [PATCH 031/153] f2fs: Use a folio in
+ f2fs_get_valid_checkpoint()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,107 +83,115 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Iterate over each folio rather than each page.  Convert
-f2fs_compress_control_page() to f2fs_compress_control_folio() since
-this is the only caller.  Removes a reference to page->mapping which
-is going away soon as well as calls to fscrypt_is_bounce_page() and
-fscrypt_pagecache_page().
+Convert validate_checkpoint() to return a folio and use it throughout
+f2fs_get_valid_checkpoint().  Saves five hidden calls to compound_head().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/compress.c |  6 ++++--
- fs/f2fs/data.c     | 19 +++++++++----------
- fs/f2fs/f2fs.h     |  4 ++--
- 3 files changed, 15 insertions(+), 14 deletions(-)
+ fs/f2fs/checkpoint.c | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index a01567bbcd33..a4cd957f6ade 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -137,9 +137,11 @@ static void f2fs_put_rpages_wbc(struct compress_ctx *cc,
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 8ae015b304db..c34add47ea8d 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -880,7 +880,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+ 	return 0;
+ }
+ 
+-static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
++static struct folio *validate_checkpoint(struct f2fs_sb_info *sbi,
+ 				block_t cp_addr, unsigned long long *version)
+ {
+ 	struct folio *cp_folio_1 = NULL, *cp_folio_2 = NULL;
+@@ -913,7 +913,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+ 	if (cur_version == pre_version) {
+ 		*version = cur_version;
+ 		f2fs_folio_put(cp_folio_2, true);
+-		return &cp_folio_1->page;
++		return cp_folio_1;
  	}
- }
- 
--struct page *f2fs_compress_control_page(struct page *page)
-+struct folio *f2fs_compress_control_folio(struct folio *folio)
+ 	f2fs_folio_put(cp_folio_2, true);
+ invalid_cp:
+@@ -925,7 +925,7 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
  {
--	return ((struct compress_io_ctx *)page_private(page))->rpages[0];
-+	struct compress_io_ctx *ctx = folio->private;
-+
-+	return page_folio(ctx->rpages[0]);
- }
+ 	struct f2fs_checkpoint *cp_block;
+ 	struct f2fs_super_block *fsb = sbi->raw_super;
+-	struct page *cp1, *cp2, *cur_page;
++	struct folio *cp1, *cp2, *cur_folio;
+ 	unsigned long blk_size = sbi->blocksize;
+ 	unsigned long long cp1_version = 0, cp2_version = 0;
+ 	unsigned long long cp_start_blk_no;
+@@ -952,22 +952,22 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
  
- int f2fs_init_compress_ctx(struct compress_ctx *cc)
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 597d1e82cb55..70dab1b6fdf4 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -548,8 +548,7 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
- static bool __has_merged_page(struct bio *bio, struct inode *inode,
- 						struct page *page, nid_t ino)
- {
--	struct bio_vec *bvec;
--	struct bvec_iter_all iter_all;
-+	struct folio_iter fi;
- 
- 	if (!bio)
- 		return false;
-@@ -557,25 +556,25 @@ static bool __has_merged_page(struct bio *bio, struct inode *inode,
- 	if (!inode && !page && !ino)
- 		return true;
- 
--	bio_for_each_segment_all(bvec, bio, iter_all) {
--		struct page *target = bvec->bv_page;
-+	bio_for_each_folio_all(fi, bio) {
-+		struct folio *target = fi.folio;
- 
--		if (fscrypt_is_bounce_page(target)) {
--			target = fscrypt_pagecache_page(target);
-+		if (fscrypt_is_bounce_folio(target)) {
-+			target = fscrypt_pagecache_folio(target);
- 			if (IS_ERR(target))
- 				continue;
- 		}
--		if (f2fs_is_compressed_page(target)) {
--			target = f2fs_compress_control_page(target);
-+		if (f2fs_is_compressed_page(&target->page)) {
-+			target = f2fs_compress_control_folio(target);
- 			if (IS_ERR(target))
- 				continue;
- 		}
- 
- 		if (inode && inode == target->mapping->host)
- 			return true;
--		if (page && page == target)
-+		if (page && page == &target->page)
- 			return true;
--		if (ino && ino == ino_of_node(target))
-+		if (ino && ino == ino_of_node(&target->page))
- 			return true;
+ 	if (cp1 && cp2) {
+ 		if (ver_after(cp2_version, cp1_version))
+-			cur_page = cp2;
++			cur_folio = cp2;
+ 		else
+-			cur_page = cp1;
++			cur_folio = cp1;
+ 	} else if (cp1) {
+-		cur_page = cp1;
++		cur_folio = cp1;
+ 	} else if (cp2) {
+-		cur_page = cp2;
++		cur_folio = cp2;
+ 	} else {
+ 		err = -EFSCORRUPTED;
+ 		goto fail_no_cp;
  	}
  
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index c37092e82354..443c9d27e5b6 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4428,7 +4428,7 @@ enum cluster_check_type {
- 	CLUSTER_RAW_BLKS    /* return # of raw blocks in a cluster */
- };
- bool f2fs_is_compressed_page(struct page *page);
--struct page *f2fs_compress_control_page(struct page *page);
-+struct folio *f2fs_compress_control_folio(struct folio *folio);
- int f2fs_prepare_compress_overwrite(struct inode *inode,
- 			struct page **pagep, pgoff_t index, void **fsdata);
- bool f2fs_compress_write_end(struct inode *inode, void *fsdata,
-@@ -4505,7 +4505,7 @@ static inline bool f2fs_is_compress_backend_ready(struct inode *inode)
- 	return false;
- }
- static inline bool f2fs_is_compress_level_valid(int alg, int lvl) { return false; }
--static inline struct page *f2fs_compress_control_page(struct page *page)
-+static inline struct folio *f2fs_compress_control_folio(struct folio *folio)
- {
- 	WARN_ON_ONCE(1);
- 	return ERR_PTR(-EINVAL);
+-	cp_block = (struct f2fs_checkpoint *)page_address(cur_page);
++	cp_block = folio_address(cur_folio);
+ 	memcpy(sbi->ckpt, cp_block, blk_size);
+ 
+-	if (cur_page == cp1)
++	if (cur_folio == cp1)
+ 		sbi->cur_cp_pack = 1;
+ 	else
+ 		sbi->cur_cp_pack = 2;
+@@ -982,30 +982,30 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 		goto done;
+ 
+ 	cp_blk_no = le32_to_cpu(fsb->cp_blkaddr);
+-	if (cur_page == cp2)
++	if (cur_folio == cp2)
+ 		cp_blk_no += BIT(le32_to_cpu(fsb->log_blocks_per_seg));
+ 
+ 	for (i = 1; i < cp_blks; i++) {
+ 		void *sit_bitmap_ptr;
+ 		unsigned char *ckpt = (unsigned char *)sbi->ckpt;
+ 
+-		cur_page = f2fs_get_meta_page(sbi, cp_blk_no + i);
+-		if (IS_ERR(cur_page)) {
+-			err = PTR_ERR(cur_page);
++		cur_folio = f2fs_get_meta_folio(sbi, cp_blk_no + i);
++		if (IS_ERR(cur_folio)) {
++			err = PTR_ERR(cur_folio);
+ 			goto free_fail_no_cp;
+ 		}
+-		sit_bitmap_ptr = page_address(cur_page);
++		sit_bitmap_ptr = folio_address(cur_folio);
+ 		memcpy(ckpt + i * blk_size, sit_bitmap_ptr, blk_size);
+-		f2fs_put_page(cur_page, 1);
++		f2fs_folio_put(cur_folio, 1);
+ 	}
+ done:
+-	f2fs_put_page(cp1, 1);
+-	f2fs_put_page(cp2, 1);
++	f2fs_folio_put(cp1, 1);
++	f2fs_folio_put(cp2, 1);
+ 	return 0;
+ 
+ free_fail_no_cp:
+-	f2fs_put_page(cp1, 1);
+-	f2fs_put_page(cp2, 1);
++	f2fs_folio_put(cp1, 1);
++	f2fs_folio_put(cp2, 1);
+ fail_no_cp:
+ 	kvfree(sbi->ckpt);
+ 	return err;
 -- 
 2.47.2
 
