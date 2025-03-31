@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AC0A6C369A4
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:13:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E7D3DC369A7
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:13:38 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tzLVn-0000qP-Qo;
-	Mon, 31 Mar 2025 20:13:36 +0000
+	id 1tzLVp-00016R-Q7;
+	Mon, 31 Mar 2025 20:13:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tzLVa-0000kW-Cp
+ (envelope-from <willy@infradead.org>) id 1tzLVd-0000yG-TQ
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:22 +0000
+ Mon, 31 Mar 2025 20:13:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0FiYv3MOh+8NO6NUSjF04eKQ/q9+GbajCYPDAtHYfes=; b=ISycL3BJj0aBR/Ag8rqrNoswuD
- j+w74bexzojfQxot4FH184FFS3OHBXlQwEQy7SJPz/5MjG7z9Rs41AmRnG7XCAsAPKwiRjcrihVvB
- Rxo6kiyIF5J7JuLf3gExuCxpVpfMsNB1svqYNWTIJjGQQO3zVxxYkusTrwJQaYfm4ROY=;
+ bh=g97wEabHU8gZQEQdy/oLz6nv5fpA1hKhTUeSYZS8p24=; b=foJjJHUIiyayTXB7nViuDZhk7g
+ UdChrNsi4BHw4h9Vraxv/36XLPj+1FOVdky+bnk0gVjhwccbcY2LvziQoYjo5veR6/BKdgMe5pKnW
+ fkQs9oAmvCsMltEVWbxq7wqkFZT7nL4lqyctKG/Rzzdl4Ht1dYt9ExbIqCCxqjHyOPYE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,38 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=0FiYv3MOh+8NO6NUSjF04eKQ/q9+GbajCYPDAtHYfes=; b=J31nwybKMza02oLyKbke3TfG3c
- H/r/Cc1aMFHUJ+8PYLVMzQkTb3FUIzS1SfRYk5eNBqLtaZoaNB/tR+aHznKHObhbwoOfdBiiqUUZC
- ikSeC6+TTAoQk3qvRAFskVBGZiglpBp7RjlYuxZLFEYOQUkZ3cfE5E53jmWQar7sMLaM=;
+ bh=g97wEabHU8gZQEQdy/oLz6nv5fpA1hKhTUeSYZS8p24=; b=ht/xLct22b50nxM8on1w5fvbf6
+ F2PqRKEc7FhoKtnYAGURMJdeJfjnfcRzyKHow8vvxzDCiOFm48KRPI3YJP2C0a3rMtYdg5Qy4AjbN
+ r0mcLbTBgFWbDYutWrLU72+lbvz4SOVM2LoPHAgZkYS2uBi5qWirP9mA4On2R5MwpTxo=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tzLVV-0003Ze-0q for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:22 +0000
+ id 1tzLVZ-0003b2-3v for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Mar 2025 20:13:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=0FiYv3MOh+8NO6NUSjF04eKQ/q9+GbajCYPDAtHYfes=; b=ugDZLaVNEooO6YWlDNHAeKdPZ0
- lnTAnK4HsGFVawhW0RDVUKfuzXEpCU13i/pxvNTsNf3OMDErPg0F7HfR/BZA4wrqDrOWR9p79clv/
- OJluQPTPOGKDFT0PYQAUjEkvRF/6tRKz3UU/ok58vgR+lS5avVtEEv39ATYn9Oe1g/WXrPlkKyYz7
- t3oG4hfS/W0R9JMCthXtECASxIA/yZJpwjseF5xZa4RzupWxruNPRDVnbsXSfxekroFkncMDS2pYi
- +MVsHPSIa7qNUTyEhwNW7mdLeHtmDa/7E1O0kRxMRFBki4CxcA4+VPrbOVzm2TWpxYyT0qZ27QYw5
- MQKskPcA==;
+ bh=g97wEabHU8gZQEQdy/oLz6nv5fpA1hKhTUeSYZS8p24=; b=qhXzgvk+/35UuUPT53wVsM2BX+
+ xab5pIeIz3ONfgW8tuDln3znHOEucjMOlEoE9OmZMjEXNomuhsdeHOnm8k+FdWZRWLR3glNnwfxcE
+ 9n4Ub0MWwQPKai/kpxO9XHg26BWj40rH+a6JcHdfCDHeZWtdnK/e11r0H81Mu/PeXZfdgDTghDob1
+ LKpkVsWnP91AKs2grXSdt9G8vuG5hel82TnIDJkhRaObEI12M8/Et5GT75NFo2soukw+vCQnxw2QZ
+ KjUIGN1sB/gMtf7vHw0IoNf/diDOTcP/ynB83NmHaslafG5JVHWHdmTAAMoMj9mtzCTuXKYkCgIEJ
+ 4XcNQAqw==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red
- Hat Linux)) id 1tzLVJ-00000004Rbz-2jAM;
- Mon, 31 Mar 2025 20:13:05 +0000
+ Hat Linux)) id 1tzLVN-00000004Rnk-2tf2;
+ Mon, 31 Mar 2025 20:13:09 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 31 Mar 2025 21:10:53 +0100
-Message-ID: <20250331201256.1057782-34-willy@infradead.org>
+Date: Mon, 31 Mar 2025 21:11:18 +0100
+Message-ID: <20250331201256.1057782-59-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250331201256.1057782-1-willy@infradead.org>
 References: <20250331201256.1057782-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tzLVV-0003Ze-0q
-Subject: [f2fs-dev] [PATCH 033/153] f2fs: Use a folio in __get_nat_bitmaps()
+X-Headers-End: 1tzLVZ-0003b2-3v
+Subject: [f2fs-dev] [PATCH 058/153] f2fs: Remove f2fs_get_new_data_page()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,39 +82,46 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Get a folio instead of a page.  Saves a hidden call to compound_head().
+All callers have been converted to call f2fs_get_new_data_folio()
+so delete this wrapper.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/node.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/f2fs/data.c | 2 +-
+ fs/f2fs/f2fs.h | 7 -------
+ 2 files changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 7e32763cc51e..e1fa3babb50f 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -3175,15 +3175,15 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
- 	nat_bits_addr = __start_cp_addr(sbi) + BLKS_PER_SEG(sbi) -
- 						nm_i->nat_bits_blocks;
- 	for (i = 0; i < nm_i->nat_bits_blocks; i++) {
--		struct page *page;
-+		struct folio *folio;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 52ca44b3c687..09b440e1dd12 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1258,7 +1258,7 @@ struct folio *f2fs_get_read_data_folio(struct inode *inode, pgoff_t index,
+ 	 * A new dentry page is allocated but not able to be written, since its
+ 	 * new inode page couldn't be allocated due to -ENOSPC.
+ 	 * In such the case, its blkaddr can be remained as NEW_ADDR.
+-	 * see, f2fs_add_link -> f2fs_get_new_data_page ->
++	 * see, f2fs_add_link -> f2fs_get_new_data_folio ->
+ 	 * f2fs_init_inode_metadata.
+ 	 */
+ 	if (dn.data_blkaddr == NEW_ADDR) {
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ca6ad66c9078..5ad799c12ce6 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3983,13 +3983,6 @@ int f2fs_init_post_read_wq(struct f2fs_sb_info *sbi);
+ void f2fs_destroy_post_read_wq(struct f2fs_sb_info *sbi);
+ extern const struct iomap_ops f2fs_iomap_ops;
  
--		page = f2fs_get_meta_page(sbi, nat_bits_addr++);
--		if (IS_ERR(page))
--			return PTR_ERR(page);
-+		folio = f2fs_get_meta_folio(sbi, nat_bits_addr++);
-+		if (IS_ERR(folio))
-+			return PTR_ERR(folio);
- 
- 		memcpy(nm_i->nat_bits + F2FS_BLK_TO_BYTES(i),
--					page_address(page), F2FS_BLKSIZE);
--		f2fs_put_page(page, 1);
-+					folio_address(folio), F2FS_BLKSIZE);
-+		f2fs_folio_put(folio, true);
- 	}
- 
- 	cp_ver |= (cur_cp_crc(ckpt) << 32);
+-static inline
+-struct page *f2fs_get_new_data_page(struct inode *inode,
+-			struct page *ipage, pgoff_t index, bool new_i_size)
+-{
+-	return &f2fs_get_new_data_folio(inode, ipage, index, new_i_size)->page;
+-}
+-
+ /*
+  * gc.c
+  */
 -- 
 2.47.2
 
