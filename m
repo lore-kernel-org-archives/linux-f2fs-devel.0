@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7A01BC369A4
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A223FC369A6
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:14:22 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tzLWW-0001I1-JN;
-	Mon, 31 Mar 2025 20:14:21 +0000
+	id 1tzLWX-0001Jx-R3;
+	Mon, 31 Mar 2025 20:14:22 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tzLVr-0000tj-Qt
+ (envelope-from <willy@infradead.org>) id 1tzLVu-0000vl-Jq
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:40 +0000
+ Mon, 31 Mar 2025 20:13:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=h+Hr3Razhl4fdLv/1P4AlCqacZHOpRP+1zSUj9tnPyA=; b=lrrkk3bvj739viE2Lr6o0PcRiJ
- 75OfdIQZCMOYPmCfSuncyurf87Tecf7PUlnwXx3ToGppS5lv5rzuAk8MdoQMmQ3YZ7idS+BMJxgAm
- LRzU/nuPH+55Oec3m27lF4Hr7UG42rWg14RBQAwaN54Rfd2RGsguU1WTbzSHLfV/DPNE=;
+ bh=rBimH4+XrYE/UpNaM4JFAJW07I/LS6/9YyR4raJsXlc=; b=GBFzDBU+SF9t/p8NMyDmwqkbY1
+ IZgDbxvxPhrdHTduSmga5V+J54VbhWRznNsbqaugtYI1fHZMYnGnzEcruPhxcN5FExpyiXa8Gkol3
+ jKo0zid9wX0r2CXmeEp91aKN/eTP90nmM6LjcbWaXkQVDUEkuiceJfZ6xfZSWivhC9os=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,39 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=h+Hr3Razhl4fdLv/1P4AlCqacZHOpRP+1zSUj9tnPyA=; b=CwCIxD2GMsfxRPnYUuyb5ZtPqL
- pUbQcQRndG1UBG9DvDenEP/bgbI6mvn3nhg43fInMZDqFqiVIX3KnmdjDNN2yLFS1rERErM41kAo5
- m+tFr+oQ7EkXrl7ryaTFvBLnvwPDeL08oVnMh5x1mthLEjcq2Z8dFKtpzwef23OpHI+0=;
+ bh=rBimH4+XrYE/UpNaM4JFAJW07I/LS6/9YyR4raJsXlc=; b=GAG6SwU3oa0qICmDvDOoMxH1Dh
+ qLUCLkg3TuVwtvCLMc73L23zVpfr5JZdyOi+3fagJtJzwAjN6VpoaeWhn6/NXLYifZjQkhWLWYz7v
+ oorx6vbxkMpAN7Bja7854mEKeBrH/8YHTkyPKROI3+ltHvX5jK9b/oNuWuQyA6jjqgb0=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tzLVm-0003h2-K6 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:40 +0000
+ id 1tzLVp-0003iB-BN for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Mar 2025 20:13:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=h+Hr3Razhl4fdLv/1P4AlCqacZHOpRP+1zSUj9tnPyA=; b=PpBFVhXh/dcvBoVaMpR4dKiE9g
- XHlDrkuQlZ1ObKVhpqfaAJtfz6kPw2Y5wusOENNlCSdRWM8kinpRAOrWxFM7ACdRSO6HHNHk9uY8i
- TNOHfs6BD8PAL/Ta6fVQ37ASDSmwjAkDybcaGYRLrFPMeF7m4kiaX6WX9nFP64bulMuUaqIqiX86l
- zt/2b9a7XaomActzgyYSvp+q0Obw8nc8xm9By19f/y2uoIDPvpIqdkkT6Ml4u8niDL/kxtJNiY2zR
- rZLqnykWXtYPRJEpczvj5v26F74jaXzsxFzZnceLwQqwDvevvGJ26S0+NshAPsmxKMOOFz/W5PrN8
- KlXTIECA==;
+ bh=rBimH4+XrYE/UpNaM4JFAJW07I/LS6/9YyR4raJsXlc=; b=enEs171Bfr8tWvPcj4W3mPDKsb
+ NX1sA2ZGrGD6yk2oN6jJ7gPgIP9hvApUTkIyIViKMf6MmmvGHQfSFLGcwAUcxO+NV9kdPVjfvtpww
+ G4P+JvgZaO4fMMHITIaEbbWGhP8PShojVLjD/TeOWsJ0Zd2AbmwWjjW3Khm5wBigf9hB9iFTKdE4I
+ woNypu9PTaEBdGpE6Q9SQI/9yU8iGEXm4T4yAW83P7duChl3XAjwXums0tAARy6M+0ITzuLgpRIb9
+ ngvp2xHwU/O1CoDyY5rvZJR/5/GcWKkOt3pQcBwPU0HI9yMwrbqTPOmLK0FkeCsETLMkMqQhO9J/X
+ bhDv88FQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red
- Hat Linux)) id 1tzLVb-00000004SXe-0uiV;
- Mon, 31 Mar 2025 20:13:23 +0000
+ Hat Linux)) id 1tzLVd-00000004Scu-42I6;
+ Mon, 31 Mar 2025 20:13:25 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 31 Mar 2025 21:12:30 +0100
-Message-ID: <20250331201256.1057782-131-willy@infradead.org>
+Date: Mon, 31 Mar 2025 21:12:46 +0100
+Message-ID: <20250331201256.1057782-147-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250331201256.1057782-1-willy@infradead.org>
 References: <20250331201256.1057782-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tzLVm-0003h2-K6
-Subject: [f2fs-dev] [PATCH 130/153] f2fs: Pass a folio to
- f2fs_delete_inline_entry()
+X-Headers-End: 1tzLVp-0003iB-BN
+Subject: [f2fs-dev] [PATCH 146/153] f2fs: Pass a folio to f2fs_update_inode()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,82 +82,152 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The caller now has a folio so pass it in.  Removes four calls to
+All callers now have a folio, so pass it in.  Remove two calls to
 compound_head().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/dir.c    |  2 +-
- fs/f2fs/f2fs.h   |  3 +--
- fs/f2fs/inline.c | 14 +++++++-------
- 3 files changed, 9 insertions(+), 10 deletions(-)
+ fs/f2fs/dir.c    |  4 ++--
+ fs/f2fs/f2fs.h   |  2 +-
+ fs/f2fs/inline.c |  2 +-
+ fs/f2fs/inode.c  | 16 ++++++++--------
+ fs/f2fs/node.c   |  6 +++---
+ 5 files changed, 15 insertions(+), 15 deletions(-)
 
 diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 610091345ac3..6dfe7f859265 100644
+index 7e35192de2d9..bb9ff8556fb8 100644
 --- a/fs/f2fs/dir.c
 +++ b/fs/f2fs/dir.c
-@@ -875,7 +875,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct folio *folio,
- 		f2fs_add_ino_entry(F2FS_I_SB(dir), dir->i_ino, TRANS_DIR_INO);
+@@ -578,7 +578,7 @@ struct folio *f2fs_init_inode_metadata(struct inode *inode, struct inode *dir,
  
- 	if (f2fs_has_inline_dentry(dir))
--		return f2fs_delete_inline_entry(dentry, &folio->page, dir, inode);
-+		return f2fs_delete_inline_entry(dentry, folio, dir, inode);
+ put_error:
+ 	clear_nlink(inode);
+-	f2fs_update_inode(inode, &folio->page);
++	f2fs_update_inode(inode, folio);
+ 	f2fs_folio_put(folio, true);
+ 	return ERR_PTR(err);
+ }
+@@ -737,7 +737,7 @@ int f2fs_add_regular_entry(struct inode *dir, const struct f2fs_filename *fname,
  
- 	folio_lock(folio);
- 	f2fs_folio_wait_writeback(folio, DATA, true, true);
+ 		/* synchronize inode page's data from inode cache */
+ 		if (is_inode_flag_set(inode, FI_NEW_INODE))
+-			f2fs_update_inode(inode, &folio->page);
++			f2fs_update_inode(inode, folio);
+ 
+ 		f2fs_folio_put(folio, true);
+ 	}
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6b0f572e1602..dc7463004c75 100644
+index 5d7d51c97bbf..a94e62c7d892 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -4289,8 +4289,7 @@ int f2fs_make_empty_inline_dir(struct inode *inode, struct inode *parent,
- int f2fs_add_inline_entry(struct inode *dir, const struct f2fs_filename *fname,
- 			struct inode *inode, nid_t ino, umode_t mode);
- void f2fs_delete_inline_entry(struct f2fs_dir_entry *dentry,
--				struct page *page, struct inode *dir,
--				struct inode *inode);
-+		struct folio *folio, struct inode *dir, struct inode *inode);
- bool f2fs_empty_inline_dir(struct inode *dir);
- int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
- 			struct fscrypt_str *fstr);
+@@ -3602,7 +3602,7 @@ void f2fs_inode_chksum_set(struct f2fs_sb_info *sbi, struct page *page);
+ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino);
+ struct inode *f2fs_iget_retry(struct super_block *sb, unsigned long ino);
+ int f2fs_try_to_free_nats(struct f2fs_sb_info *sbi, int nr_shrink);
+-void f2fs_update_inode(struct inode *inode, struct page *node_page);
++void f2fs_update_inode(struct inode *inode, struct folio *node_folio);
+ void f2fs_update_inode_page(struct inode *inode);
+ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc);
+ void f2fs_evict_inode(struct inode *inode);
 diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index c2e97e230cd1..1c6dc9731f2a 100644
+index 3b65adb4d1b0..72bb2bed28f8 100644
 --- a/fs/f2fs/inline.c
 +++ b/fs/f2fs/inline.c
-@@ -697,8 +697,8 @@ int f2fs_add_inline_entry(struct inode *dir, const struct f2fs_filename *fname,
- 	return err;
+@@ -683,7 +683,7 @@ int f2fs_add_inline_entry(struct inode *dir, const struct f2fs_filename *fname,
+ 
+ 		/* synchronize inode page's data from inode cache */
+ 		if (is_inode_flag_set(inode, FI_NEW_INODE))
+-			f2fs_update_inode(inode, &folio->page);
++			f2fs_update_inode(inode, folio);
+ 
+ 		f2fs_folio_put(folio, true);
+ 	}
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 0d45e3a249f8..201e3d2a9adf 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -651,18 +651,18 @@ struct inode *f2fs_iget_retry(struct super_block *sb, unsigned long ino)
+ 	return inode;
  }
  
--void f2fs_delete_inline_entry(struct f2fs_dir_entry *dentry, struct page *page,
--					struct inode *dir, struct inode *inode)
-+void f2fs_delete_inline_entry(struct f2fs_dir_entry *dentry,
-+		struct folio *folio, struct inode *dir, struct inode *inode)
+-void f2fs_update_inode(struct inode *inode, struct page *node_page)
++void f2fs_update_inode(struct inode *inode, struct folio *node_folio)
  {
- 	struct f2fs_dentry_ptr d;
- 	void *inline_dentry;
-@@ -706,18 +706,18 @@ void f2fs_delete_inline_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 	unsigned int bit_pos;
- 	int i;
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	struct f2fs_inode *ri;
+ 	struct extent_tree *et = fi->extent_tree[EX_READ];
  
--	lock_page(page);
--	f2fs_wait_on_page_writeback(page, NODE, true, true);
-+	folio_lock(folio);
-+	f2fs_folio_wait_writeback(folio, NODE, true, true);
+-	f2fs_wait_on_page_writeback(node_page, NODE, true, true);
+-	set_page_dirty(node_page);
++	f2fs_folio_wait_writeback(node_folio, NODE, true, true);
++	folio_mark_dirty(node_folio);
  
--	inline_dentry = inline_data_addr(dir, page);
-+	inline_dentry = inline_data_addr(dir, &folio->page);
- 	make_dentry_ptr_inline(dir, &d, inline_dentry);
+ 	f2fs_inode_synced(inode);
  
- 	bit_pos = dentry - d.dentry;
- 	for (i = 0; i < slots; i++)
- 		__clear_bit_le(bit_pos + i, d.bitmap);
+-	ri = F2FS_INODE(node_page);
++	ri = F2FS_INODE(&node_folio->page);
  
--	set_page_dirty(page);
--	f2fs_put_page(page, 1);
-+	folio_mark_dirty(folio);
-+	f2fs_folio_put(folio, true);
+ 	ri->i_mode = cpu_to_le16(inode->i_mode);
+ 	ri->i_advise = fi->i_advise;
+@@ -737,15 +737,15 @@ void f2fs_update_inode(struct inode *inode, struct page *node_page)
+ 		}
+ 	}
  
- 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	f2fs_mark_inode_dirty_sync(dir, false);
+-	__set_inode_rdev(inode, node_page);
++	__set_inode_rdev(inode, &node_folio->page);
+ 
+ 	/* deleted inode */
+ 	if (inode->i_nlink == 0)
+-		clear_page_private_inline(node_page);
++		clear_page_private_inline(&node_folio->page);
+ 
+ 	init_idisk_time(inode);
+ #ifdef CONFIG_F2FS_CHECK_FS
+-	f2fs_inode_chksum_set(F2FS_I_SB(inode), node_page);
++	f2fs_inode_chksum_set(F2FS_I_SB(inode), &node_folio->page);
+ #endif
+ }
+ 
+@@ -772,7 +772,7 @@ void f2fs_update_inode_page(struct inode *inode)
+ 		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_UPDATE_INODE);
+ 		return;
+ 	}
+-	f2fs_update_inode(inode, &node_folio->page);
++	f2fs_update_inode(inode, node_folio);
+ 	f2fs_folio_put(node_folio, true);
+ }
+ 
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index bf583cd2a589..152c664f94bf 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1872,7 +1872,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 				if (IS_INODE(&folio->page)) {
+ 					if (is_inode_flag_set(inode,
+ 								FI_DIRTY_INODE))
+-						f2fs_update_inode(inode, &folio->page);
++						f2fs_update_inode(inode, folio);
+ 					set_dentry_mark(&folio->page,
+ 						f2fs_need_dentry_mark(sbi, ino));
+ 				}
+@@ -1957,7 +1957,7 @@ static bool flush_dirty_inode(struct folio *folio)
+ 	if (!inode)
+ 		return false;
+ 
+-	f2fs_update_inode(inode, &folio->page);
++	f2fs_update_inode(inode, folio);
+ 	folio_unlock(folio);
+ 
+ 	iput(inode);
+@@ -2745,7 +2745,7 @@ int f2fs_recover_inline_xattr(struct inode *inode, struct folio *folio)
+ 	f2fs_folio_wait_writeback(ifolio, NODE, true, true);
+ 	memcpy(dst_addr, src_addr, inline_size);
+ update_inode:
+-	f2fs_update_inode(inode, &ifolio->page);
++	f2fs_update_inode(inode, ifolio);
+ 	f2fs_folio_put(ifolio, true);
+ 	return 0;
+ }
 -- 
 2.47.2
 
