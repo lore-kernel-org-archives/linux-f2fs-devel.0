@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 533B5C369A3
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:14:00 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C3C72C369B8
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:13:59 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tzLWB-0001Jq-4f;
+	id 1tzLWC-000633-1q;
 	Mon, 31 Mar 2025 20:13:59 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tzLVm-00014c-Gh
+ (envelope-from <willy@infradead.org>) id 1tzLVq-0005jq-2G
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:35 +0000
+ Mon, 31 Mar 2025 20:13:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=exu0DX3gMwxTwpzAUjNdoszcYjUuGZJncK4yrlRbkUw=; b=hxeNt6Ygl+SSz4LUNwvUGpoZig
- 9zJ2geWRW4TA4buBdEqQMbU0N/258V6q56lkWefAEUlHYSuIctN3W8R63apfsb1y1lKGuvKI2ydou
- bN78t1KOE2pkQsfiWaiDZ3atcycli0Tub7EF1xGuZoWq3KhP3QeH982uiJdx/trzv9sI=;
+ bh=oUVZyJA8DBletosZlFJmzLFyTCGy/CJwPZJaii47xKg=; b=PQGTgc2gWVrGkjHDOWm8a3mqtv
+ PncLljSvXbGIwie1PPCr6HMjKy60ziFhPE+Gyj8TcJdXfJmbjKVN93VdfkFvkqpYSSP0/HkJAsMKy
+ GepZqH3oC3MfOf7J6ELOQD3PJz+wSAUdLoQv6G/k9BhwaP8/oDzKnxiLdixLyE6/nIhE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,39 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=exu0DX3gMwxTwpzAUjNdoszcYjUuGZJncK4yrlRbkUw=; b=bCyWAZmb+zEoKJw5B3LPtSJtuo
- +H65lL5jEaNKl6FmNMgJcBCsW+A0LBiHD3JPfw/AXJyQu3CvV9Qd5bjIU6wZzvreuF/ugmt80OTRU
- wddT5ARKqrh0Mj6HTK4WCJ+SJ5p9PJWOz+D0ZWQTyYnrFrwR2XmzAUsQOjAwKPC6mdpU=;
+ bh=oUVZyJA8DBletosZlFJmzLFyTCGy/CJwPZJaii47xKg=; b=gupbhBvNX8wXrYBknBWAoiw5XG
+ cUn/ZPW0MlW7Gc0n8VawENHt263VmrZ+NZMHtFIt5Nyy6NOsJHJRZ+ORtIEs7J0nYXC4Xc9XrEdtn
+ KM2DiYiDeOx8AmqLoGL4mV2QihD/+fonorYiWwNaZy5OlGZOK8AnpMM9f5M8I8LaqkBo=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tzLVc-0003cG-GC for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:35 +0000
+ id 1tzLVe-0003d0-3Y for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Mar 2025 20:13:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=exu0DX3gMwxTwpzAUjNdoszcYjUuGZJncK4yrlRbkUw=; b=h9UcSw6ta/2ZxlbdDdNV6j7cQ2
- J7KwokD3SdlWV7t+ExTBshYhu4lw+ARTCVaFb57Vku5rBHh5gZjZPuqLsajxLiPjygYAgwwE0oWXS
- lERqo+w6iygTZK7GKkLH40puK9aFCjy5PTL84Vg8KE3z8VAcComQLe07/+SW3ZT9ObCdC9gzskCoM
- I3Ce8mqPxnzVGhPXWHCv/1fUtYXGGFDwNbyTFPde+OvC8+rsV38IcoBohxXW7Wq+sjBp62AKfOOvS
- BAFEThUc9jnw1es/gtH7S4dyox25ICyE6KPAZBkdFCbZ1cROBCKNWgFo8IjbsM34tY0xa/V3Xn7wb
- IIlpuocQ==;
+ bh=oUVZyJA8DBletosZlFJmzLFyTCGy/CJwPZJaii47xKg=; b=fPenic8s1iobXBAI0J1iwPbDpc
+ 9w9YEkRdz9fF434uTT7K3URL1kmG95LgVdGx9S71/DY/GZ34CUG6oG/3E+ChVQ6jpia1wiJ3/5W7d
+ FX5oE2Qh1Y07lz87jjiwNYuDliJXVog2DNqGRaqUsl75ygXrGjPowdhEgaZczlHMigN11tUSFdgdX
+ xfbF+KiMJGpFwfH5ZATIFaikDkHDckSqhfQXYvlRIKm+KB/kley3aNFOYKm1dmLo7d9IrLh8N7xUo
+ aEvp3aqpfczns5OOFjpWugyabgi+ZOuwdsxeFAUG0l6gOkzP2NaT3m0tddXAb/nYsckTPRR72LLjK
+ sVIrHsPA==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red
- Hat Linux)) id 1tzLVR-00000004Rxf-0Twd;
- Mon, 31 Mar 2025 20:13:13 +0000
+ Hat Linux)) id 1tzLVX-00000004SKW-398K;
+ Mon, 31 Mar 2025 20:13:19 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 31 Mar 2025 21:11:38 +0100
-Message-ID: <20250331201256.1057782-79-willy@infradead.org>
+Date: Mon, 31 Mar 2025 21:12:09 +0100
+Message-ID: <20250331201256.1057782-110-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250331201256.1057782-1-willy@infradead.org>
 References: <20250331201256.1057782-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tzLVc-0003cG-GC
-Subject: [f2fs-dev] [PATCH 078/153] f2fs: Pass a folio to
- f2fs_ra_node_pages()
+X-Headers-End: 1tzLVe-0003d0-3Y
+Subject: [f2fs-dev] [PATCH 109/153] f2fs: Pass a folio to f2fs_setxattr()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,65 +82,152 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Removes a call to compound_head().
+Also convert f2fs_initxattrs() to take a folio.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/node.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/f2fs/acl.c   |  2 +-
+ fs/f2fs/dir.c   |  2 +-
+ fs/f2fs/xattr.c | 16 ++++++++--------
+ fs/f2fs/xattr.h | 22 +++++++++++-----------
+ 4 files changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index e29828c2f7b5..5df3065c18ea 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -623,9 +623,9 @@ int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
- /*
-  * readahead MAX_RA_NODE number of node pages.
-  */
--static void f2fs_ra_node_pages(struct page *parent, int start, int n)
-+static void f2fs_ra_node_pages(struct folio *parent, int start, int n)
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index 1ec6125cadc5..0a4d160235e0 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -264,7 +264,7 @@ static int __f2fs_set_acl(struct mnt_idmap *idmap,
+ 		}
+ 	}
+ 
+-	error = f2fs_setxattr(inode, name_index, "", value, size, &ifolio->page, 0);
++	error = f2fs_setxattr(inode, name_index, "", value, size, ifolio, 0);
+ 
+ 	kfree(value);
+ 	if (!error)
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index bd404a5de4a1..4decec1800bf 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -542,7 +542,7 @@ struct page *f2fs_init_inode_metadata(struct inode *inode, struct inode *dir,
+ 
+ 		err = f2fs_init_security(inode, dir,
+ 					 fname ? fname->usr_fname : NULL,
+-					 &folio->page);
++					 folio);
+ 		if (err)
+ 			goto put_error;
+ 
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index dd632df8d944..10f4f82bdbde 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -136,7 +136,7 @@ static int f2fs_xattr_advise_set(const struct xattr_handler *handler,
+ 
+ #ifdef CONFIG_F2FS_FS_SECURITY
+ static int f2fs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
+-		void *page)
++		void *folio)
  {
--	struct f2fs_sb_info *sbi = F2FS_P_SB(parent);
-+	struct f2fs_sb_info *sbi = F2FS_F_SB(parent);
- 	struct blk_plug plug;
- 	int i, end;
- 	nid_t nid;
-@@ -636,7 +636,7 @@ static void f2fs_ra_node_pages(struct page *parent, int start, int n)
- 	end = start + n;
- 	end = min(end, (int)NIDS_PER_BLOCK);
- 	for (i = start; i < end; i++) {
--		nid = get_nid(parent, i, false);
-+		nid = get_nid(&parent->page, i, false);
- 		f2fs_ra_node_page(sbi, nid);
+ 	const struct xattr *xattr;
+ 	int err = 0;
+@@ -144,7 +144,7 @@ static int f2fs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
+ 	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
+ 		err = f2fs_setxattr(inode, F2FS_XATTR_INDEX_SECURITY,
+ 				xattr->name, xattr->value,
+-				xattr->value_len, (struct page *)page, 0);
++				xattr->value_len, folio, 0);
+ 		if (err < 0)
+ 			break;
  	}
+@@ -152,10 +152,10 @@ static int f2fs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
+ }
  
-@@ -1005,7 +1005,7 @@ static int truncate_nodes(struct dnode_of_data *dn, unsigned int nofs,
- 		return PTR_ERR(folio);
- 	}
+ int f2fs_init_security(struct inode *inode, struct inode *dir,
+-				const struct qstr *qstr, struct page *ipage)
++				const struct qstr *qstr, struct folio *ifolio)
+ {
+ 	return security_inode_init_security(inode, dir, qstr,
+-				&f2fs_initxattrs, ipage);
++				f2fs_initxattrs, ifolio);
+ }
+ #endif
  
--	f2fs_ra_node_pages(&folio->page, ofs, NIDS_PER_BLOCK);
-+	f2fs_ra_node_pages(folio, ofs, NIDS_PER_BLOCK);
+@@ -800,7 +800,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
  
- 	rn = F2FS_NODE(&folio->page);
- 	if (depth < 3) {
-@@ -1086,7 +1086,7 @@ static int truncate_partial_nodes(struct dnode_of_data *dn,
- 		nid[i + 1] = get_nid(&folios[i]->page, offset[i + 1], false);
- 	}
+ int f2fs_setxattr(struct inode *inode, int index, const char *name,
+ 				const void *value, size_t size,
+-				struct page *ipage, int flags)
++				struct folio *ifolio, int flags)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	int err;
+@@ -815,14 +815,14 @@ int f2fs_setxattr(struct inode *inode, int index, const char *name,
+ 		return err;
  
--	f2fs_ra_node_pages(&folios[idx]->page, offset[idx + 1], NIDS_PER_BLOCK);
-+	f2fs_ra_node_pages(folios[idx], offset[idx + 1], NIDS_PER_BLOCK);
+ 	/* this case is only from f2fs_init_inode_metadata */
+-	if (ipage)
++	if (ifolio)
+ 		return __f2fs_setxattr(inode, index, name, value,
+-						size, ipage, flags);
++						size, &ifolio->page, flags);
+ 	f2fs_balance_fs(sbi, true);
  
- 	/* free direct nodes linked to a partial indirect node */
- 	for (i = offset[idx + 1]; i < NIDS_PER_BLOCK; i++) {
-@@ -1505,7 +1505,7 @@ static struct folio *__get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
- 	}
+ 	f2fs_lock_op(sbi);
+ 	f2fs_down_write(&F2FS_I(inode)->i_xattr_sem);
+-	err = __f2fs_setxattr(inode, index, name, value, size, ipage, flags);
++	err = __f2fs_setxattr(inode, index, name, value, size, NULL, flags);
+ 	f2fs_up_write(&F2FS_I(inode)->i_xattr_sem);
+ 	f2fs_unlock_op(sbi);
  
- 	if (parent)
--		f2fs_ra_node_pages(&parent->page, start + 1, MAX_RA_NODE);
-+		f2fs_ra_node_pages(parent, start + 1, MAX_RA_NODE);
+diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
+index a005ffdcf717..e0f7b865c116 100644
+--- a/fs/f2fs/xattr.h
++++ b/fs/f2fs/xattr.h
+@@ -127,20 +127,20 @@ extern const struct xattr_handler f2fs_xattr_security_handler;
  
- 	folio_lock(folio);
+ extern const struct xattr_handler * const f2fs_xattr_handlers[];
  
+-extern int f2fs_setxattr(struct inode *, int, const char *,
+-				const void *, size_t, struct page *, int);
+-extern int f2fs_getxattr(struct inode *, int, const char *, void *,
+-						size_t, struct page *);
+-extern ssize_t f2fs_listxattr(struct dentry *, char *, size_t);
+-extern int f2fs_init_xattr_caches(struct f2fs_sb_info *);
+-extern void f2fs_destroy_xattr_caches(struct f2fs_sb_info *);
++int f2fs_setxattr(struct inode *, int, const char *, const void *,
++		size_t, struct folio *, int);
++int f2fs_getxattr(struct inode *, int, const char *, void *,
++		size_t, struct page *);
++ssize_t f2fs_listxattr(struct dentry *, char *, size_t);
++int f2fs_init_xattr_caches(struct f2fs_sb_info *);
++void f2fs_destroy_xattr_caches(struct f2fs_sb_info *);
+ #else
+ 
+ #define f2fs_xattr_handlers	NULL
+ #define f2fs_listxattr		NULL
+ static inline int f2fs_setxattr(struct inode *inode, int index,
+ 		const char *name, const void *value, size_t size,
+-		struct page *page, int flags)
++		struct folio *folio, int flags)
+ {
+ 	return -EOPNOTSUPP;
+ }
+@@ -155,11 +155,11 @@ static inline void f2fs_destroy_xattr_caches(struct f2fs_sb_info *sbi) { }
+ #endif
+ 
+ #ifdef CONFIG_F2FS_FS_SECURITY
+-extern int f2fs_init_security(struct inode *, struct inode *,
+-				const struct qstr *, struct page *);
++int f2fs_init_security(struct inode *, struct inode *,
++				const struct qstr *, struct folio *);
+ #else
+ static inline int f2fs_init_security(struct inode *inode, struct inode *dir,
+-				const struct qstr *qstr, struct page *ipage)
++				const struct qstr *qstr, struct folio *ifolio)
+ {
+ 	return 0;
+ }
 -- 
 2.47.2
 
