@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7BFDBC369AC
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:13:30 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E2A5DC3601C
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 31 Mar 2025 20:13:27 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1tzLVi-0003rJ-3B;
-	Mon, 31 Mar 2025 20:13:30 +0000
+	id 1tzLVg-0005bw-32;
+	Mon, 31 Mar 2025 20:13:27 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1tzLVa-0003mh-Oe
+ (envelope-from <willy@infradead.org>) id 1tzLVT-0005ZH-9Z
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:22 +0000
+ Mon, 31 Mar 2025 20:13:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gJhRbw+pNbMEDxBZdX/4VaHo2Vo4+yCtS0Ox73FF29M=; b=PWsuWAxja5LuiaUCM97JCNF02/
- EeVAI97yBE3/2QTs/5mHYGt1vDGTOHyoCnXVIB1TV/XNCPCzfIFUbPsFp9yPUGsNOMDo+tGTI01WP
- cbDrwrZ8nBGDGnaZnSeijedu/FTUgtGz6Ol2muderPTwd30DtR289FZTSS2vJ9pBRpqk=;
+ bh=KJqrOpz1CT/HziQlpTCAkPrgBlSRw4AVxB5qKur9UZw=; b=IhD0KyKuIeaUF9V65FhkjhOGYr
+ 7kiRhpjAUrCUa0sWgOBWy3pzz8cQXBCeRhUEdOztzA3l3zupUWk3apDEcC9paALwY9XbCozk0YThW
+ dBOMWgFklspYvmRgtcjaSpsZEyNkYIMRY7O3tHweYegreoDnZ8/Q+pqwfZ6+tmUVkbhs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -33,38 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=gJhRbw+pNbMEDxBZdX/4VaHo2Vo4+yCtS0Ox73FF29M=; b=RBC9NCNdwn/cZcFHdk6LxJ297H
- aJcKYz28q7BeU4pvBotjUcYMvZUemPb6tw67Q6bkJRxuwnHH/Tet3Fg44JvHalj+nJe5PBSySaEKC
- 7IOd/OMCVWuLSIurpD2B1ihUFZKQGzzkMA6Lzp7ShxU4ZJ4jfMPtoyztcQf5KSL/io8M=;
+ bh=KJqrOpz1CT/HziQlpTCAkPrgBlSRw4AVxB5qKur9UZw=; b=R1ck5oDV7e7XDUpIVPRTRc9NOA
+ vM6ehakPlN7UAxMo4tsiyaiFnwTIchiqSnuQbSh9g3uLK0dv6hiEEzMZJ5TGzVQfoddwOoYwovGBp
+ DmVbvdtDIdM1TVRPMPkfkcUoYSRKC/cxh/yjueOyBH5LggBx/joP75SF1nlvLJ1JTz+M=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1tzLVP-0003Yc-Ta for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 31 Mar 2025 20:13:22 +0000
+ id 1tzLVN-0003Y8-3v for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 31 Mar 2025 20:13:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=gJhRbw+pNbMEDxBZdX/4VaHo2Vo4+yCtS0Ox73FF29M=; b=baeZETCQWVDtGwC3SfGnGTfwe2
- 05vONrzG3coLwZpAEgQY04zmY0pBSPfxYOyQayYwXvqiNbxPthSC7r4ovQp9Xu6XazhVJfqPOhSkC
- 5W37qzJrq86iNdd9BcDDyrjqYMsem3hoSkjdfkQDfuy4ExtzUDbfv+uuRaRIET46RJaxr7Vgtnjwd
- QeyB1IY8xvUc0lbRCuk4HmiE8NKO1cTS271fk4rP5kxajUsVAE6LWWF4le0F+1emQ8MH0b+sRgj0s
- d+v0NmIW75F4uk7diNsgdnNvOdp32WMj0+RK5t3WXWokE1n4rZ6mKXe+FCRjUsHotr/64B+s7Vucq
- re0wCaYA==;
+ bh=KJqrOpz1CT/HziQlpTCAkPrgBlSRw4AVxB5qKur9UZw=; b=inyXvzHyBbQieWRvvFnbMvqWEG
+ ocirwt785uCIs7l5VfIP1scFw41hqSQ7LKMtZ8nL9v9SGTWEZnHWmXVIgFWIM4iOUA9S/zoTat3hk
+ uB5KkMp7O+PCu3i33WmViUmh3Mev0MRxvoq9qSRoyvmAA47tEBpIiJG8UJkyUgQJWHtlI3jSPQwl3
+ zi5MiIqRQ6dGP15SjIMn/C58wLrgVjG4YAF7x5iiiRXomVWpIMGlgxXyucccoUdYIIuwrE6aigTP+
+ VDYDF9NWFhTYSyr1qP+9mP49plhuI/jdqsqiqfSN6lwBdyNOPjFeAikKVKbRMHfmOX6eAJQPn1fyk
+ TneIxaag==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.1 #2 (Red
- Hat Linux)) id 1tzLVJ-00000004Rbj-22Og;
- Mon, 31 Mar 2025 20:13:05 +0000
+ Hat Linux)) id 1tzLVG-00000004RW4-2hYD;
+ Mon, 31 Mar 2025 20:13:02 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 31 Mar 2025 21:10:52 +0100
-Message-ID: <20250331201256.1057782-33-willy@infradead.org>
+Date: Mon, 31 Mar 2025 21:10:31 +0100
+Message-ID: <20250331201256.1057782-12-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250331201256.1057782-1-willy@infradead.org>
 References: <20250331201256.1057782-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1tzLVP-0003Yc-Ta
-Subject: [f2fs-dev] [PATCH 032/153] f2fs: Use a folio in f2fs_get_node_info()
+X-Headers-End: 1tzLVN-0003Y8-3v
+Subject: [f2fs-dev] [PATCH 011/153] f2fs: Use a folio in commit_checkpoint()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,46 +82,59 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Get a folio instead of a page.  Saves a hidden call to compound_head().
+Save four calls to compound_head().  Also remove the call
+to f2fs_wait_on_page_writeback() as this was already done by
+f2fs_grab_meta_folio() and writeback can't have restarted in the
+meantime since we hold the folio locked.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/node.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/f2fs/checkpoint.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 7c42dd5cd68b..7e32763cc51e 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -551,7 +551,7 @@ int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
- 	struct f2fs_journal *journal = curseg->journal;
- 	nid_t start_nid = START_NID(nid);
- 	struct f2fs_nat_block *nat_blk;
--	struct page *page = NULL;
-+	struct folio *folio = NULL;
- 	struct f2fs_nat_entry ne;
- 	struct nat_entry *e;
- 	pgoff_t index;
-@@ -601,14 +601,14 @@ int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
- 	index = current_nat_addr(sbi, nid);
- 	f2fs_up_read(&nm_i->nat_tree_lock);
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index bb4a2af73103..6e25975950fa 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1407,30 +1407,28 @@ static void commit_checkpoint(struct f2fs_sb_info *sbi,
+ 	};
  
--	page = f2fs_get_meta_page(sbi, index);
--	if (IS_ERR(page))
--		return PTR_ERR(page);
-+	folio = f2fs_get_meta_folio(sbi, index);
-+	if (IS_ERR(folio))
-+		return PTR_ERR(folio);
+ 	/*
+-	 * filemap_get_folios_tag and lock_page again will take
++	 * filemap_get_folios_tag and folio_lock again will take
+ 	 * some extra time. Therefore, f2fs_update_meta_pages and
+ 	 * f2fs_sync_meta_pages are combined in this function.
+ 	 */
+-	struct page *page = f2fs_grab_meta_page(sbi, blk_addr);
++	struct folio *folio = f2fs_grab_meta_folio(sbi, blk_addr);
+ 	int err;
  
--	nat_blk = (struct f2fs_nat_block *)page_address(page);
-+	nat_blk = folio_address(folio);
- 	ne = nat_blk->entries[nid - start_nid];
- 	node_info_from_raw_nat(ni, &ne);
--	f2fs_put_page(page, 1);
-+	f2fs_folio_put(folio, true);
- cache:
- 	blkaddr = le32_to_cpu(ne.block_addr);
- 	if (__is_valid_data_blkaddr(blkaddr) &&
+-	f2fs_wait_on_page_writeback(page, META, true, true);
++	memcpy(folio_address(folio), src, PAGE_SIZE);
+ 
+-	memcpy(page_address(page), src, PAGE_SIZE);
+-
+-	set_page_dirty(page);
+-	if (unlikely(!clear_page_dirty_for_io(page)))
++	folio_mark_dirty(folio);
++	if (unlikely(!folio_clear_dirty_for_io(folio)))
+ 		f2fs_bug_on(sbi, 1);
+ 
+ 	/* writeout cp pack 2 page */
+-	err = __f2fs_write_meta_page(page, &wbc, FS_CP_META_IO);
++	err = __f2fs_write_meta_page(&folio->page, &wbc, FS_CP_META_IO);
+ 	if (unlikely(err && f2fs_cp_error(sbi))) {
+-		f2fs_put_page(page, 1);
++		f2fs_folio_put(folio, true);
+ 		return;
+ 	}
+ 
+ 	f2fs_bug_on(sbi, err);
+-	f2fs_put_page(page, 0);
++	f2fs_folio_put(folio, false);
+ 
+ 	/* submit checkpoint (with barrier if NOBARRIER is not set) */
+ 	f2fs_submit_merged_write(sbi, META_FLUSH);
 -- 
 2.47.2
 
