@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3E750C36014
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Apr 2025 19:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C9420C36014
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Apr 2025 19:10:49 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1u0PxS-0007sA-40;
-	Thu, 03 Apr 2025 19:10:34 +0000
+	id 1u0Pxg-0007uX-N5;
+	Thu, 03 Apr 2025 19:10:49 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1u0PxE-0007qA-9D
+ (envelope-from <sashal@kernel.org>) id 1u0Pxf-0007uF-9e
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 03 Apr 2025 19:10:21 +0000
+ Thu, 03 Apr 2025 19:10:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=sfzndMBGoahKoGG09jWsZ6a7FzaqeEr5wfF8BBxZ3RM=; b=CCENE5Tfqv9Xf7+K3MIqxUwnhG
- oTabIqnVlvwNoaCKdSOh8uB6zzOh0RoJqXH4j4m2nTWb6elpkaqxq4ZGMsepbnJoKqQX1sOng4Dpb
- TqTpQAW0ISkOWfZc3G0eI9bBSThpBMtflp5PqhjswC5WEEuwN8Hu7e4SgxQAEuEVXK2U=;
+ bh=XkltLKH59vweE8GLqD5AjQlWk52rHhTMtAxi7p3vztc=; b=QlKB6u4EdkS44QUr2Cn562ybvT
+ 1QnUor0yYt6Uu38BcArWzfuK+V+j5WUulDeqkHk9ecnWbCSpl3LL+aBPgqrqmaRnIEKPzrP6llMqO
+ e10wZmKdU4Uo1bCJjy5joQtwpKRvdPrGUYWO3aTZppLUjUjqFvl7SyLaTZXtEPmueF8o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,42 +33,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=sfzndMBGoahKoGG09jWsZ6a7FzaqeEr5wfF8BBxZ3RM=; b=lzItecG9Kulfx88mvyHnW6U0Ru
- 3ytYFE7T2iFT1HbrMsL8Px1N9eB6La4+Xmslxpw6Wzpuqij6LTI6DmJcZbB/tIVmuxJEubnto+sY3
- HiB+hqWZTEIXyJN/xMz0Hl87jUFg+QR7mYrgvo8GRyzCGr7u8yLIdzP9lzF0HJvZTwmc=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=XkltLKH59vweE8GLqD5AjQlWk52rHhTMtAxi7p3vztc=; b=hD7uJxxQ91P3ICG5WGRryNL/bQ
+ s09+o0ftR+hGweohis9IsEIKqNspJMs54YxfeqsZ3rVFvzV2VYOO3oxG2jVPljZn63vLbk7Er4qXv
+ 7ummVIO/yA/vdFz8QDW2K1JqFEXmTQfomRRq+so+MJsWtCO1QBk4ZkkMIBNqcA4LZO1A=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1u0Pwr-0003Kj-3y for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 03 Apr 2025 19:10:12 +0000
+ id 1u0PxQ-0003Qf-7C for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 03 Apr 2025 19:10:47 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 5223844BD8;
- Thu,  3 Apr 2025 19:09:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E11C4C4CEE8;
- Thu,  3 Apr 2025 19:09:45 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id A2A94614B3;
+ Thu,  3 Apr 2025 19:10:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8582BC4CEE8;
+ Thu,  3 Apr 2025 19:10:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1743707386;
- bh=Zq+0AP8gsHqmJcUziJWmCJYKY0VglrKzpJLlKp0o9WA=;
+ s=k20201202; t=1743707421;
+ bh=RDZQYGGkqpJdsQ73Q6r1yW5EKOxH8EsrHW31yJCgSRY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=eXKDtJI9d71P4zeGmbde6xpCGZ1NDAAvkivB3jiHdHtPimyyMe0LQjLt5VnYzaDeL
- xqqpHQ4GLse8B3TB/lsS1L7MaLen+H6PQzZCokwPacXJp9CTWzxGMf1poSDAxsFUfF
- dX/18BSS8SUAkObK2DPi4mwYsRkTNLG/HaYtb1VgR6cOzMKmASo4esV/KWptkrbCUH
- RLrmnDfZglh1yXde8EALXHS6AMa0EsFGnEz0bbu7G44kRFWoRJH8BdNYa58TXdGqAk
- dhTurkYMjyxiKj236ce90xxs4XVPzq74ar7umo5ryJjcly5mGehlIRqe28anVMZvhf
- BC+2lsSKI2WoQ==
+ b=K6g66xbPd3ePK8a29lBFuGh3sT/ODJEkM+s2YpkSxIfVXGZbydzbSlsgFY7B1BlIN
+ 0+oLXIUSXdJeIpT1jF4kJxD8mFg/84inK5uoQHfprg+xLsz2OMpPB0KpC2WD15HuuU
+ sCyBhOAZ9S6LELt+waLe4Q1q9iyjLclxTVsbBjshUqwNuF4TxI+aB1eoOAp+xLTEQR
+ Rj62i+A4DYVJw5pm8RaPn393250fe5zjW5Mi5Jxcht6b2mqw7LuoE4+qJOsb3/U/h0
+ a/G/qeYJNBFH06JfNM7eeuXyVNvivkp0cnUk+6mRn7GyIUxijABbLS9H7NYUuDY1jn
+ g/V6U5JHPrVQg==
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Thu,  3 Apr 2025 15:09:16 -0400
-Message-Id: <20250403190924.2678291-8-sashal@kernel.org>
+Date: Thu,  3 Apr 2025 15:09:54 -0400
+Message-Id: <20250403191002.2678588-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250403190924.2678291-1-sashal@kernel.org>
-References: <20250403190924.2678291-1-sashal@kernel.org>
+In-Reply-To: <20250403191002.2678588-1-sashal@kernel.org>
+References: <20250403191002.2678588-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.179
-X-Headers-End: 1u0Pwr-0003Kj-3y
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.15 08/16] f2fs: fix to avoid
+X-stable-base: Linux 5.10.235
+X-Headers-End: 1u0PxQ-0003Qf-7C
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.10 07/15] f2fs: fix to avoid
  out-of-bounds access in f2fs_truncate_inode_blocks()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -156,10 +156,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index b6758887540f2..ae6d65f2ea06a 100644
+index 348ad1d6199ff..57baaba17174d 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -1105,7 +1105,14 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from)
+@@ -1047,7 +1047,14 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from)
  	trace_f2fs_truncate_inode_blocks_enter(inode, from);
  
  	level = get_node_path(inode, from, offset, noffset);
