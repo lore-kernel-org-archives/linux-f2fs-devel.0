@@ -4,60 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 59B2FC36014
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Apr 2025 04:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9A4DDC3601A
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Apr 2025 06:27:27 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1u0CGD-00007Y-8F;
-	Thu, 03 Apr 2025 04:33:00 +0000
+	id 1u0E2w-0002O2-Df;
+	Thu, 03 Apr 2025 06:27:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <thond2009@gmail.com>) id 1u0CGB-00007Q-Ai
+ (envelope-from <chao@kernel.org>) id 1u0E2v-0002Nv-Hy
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 03 Apr 2025 04:32:58 +0000
+ Thu, 03 Apr 2025 06:27:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GtsgyMd5k5S+RCVW953wEU0S2j9d9y2UJk6iVF/zlrc=; b=Uu9HwUVc8AJ8PBDvUXo2EzJeKU
- oW4Fq2Fjj9fLLNBX3FeBBGRF79fvKV3NHBA0OMlt9sYvEcF3s8nutwgn3jeQzJb3bZ23zS7rws89I
- keKsaN5UOURV4mIgjlJkMxxByMrM7f7i+SAKL2UNhutVYfSzx0PeLxrPwpalunupUxGQ=;
+ bh=HllgY4tp7lBMdSLSWodxX990WKdZ87Bx+R3XYrzUr8o=; b=QmuJicJ7nST9AfY944x5hYkDUY
+ m2EPuj4VhRCZSV2GD0GDkiycsfCplJ7xAilkL/61lAtxSt8gI/kv6xIbJidbWtoqbI3QcSrs/q3e1
+ VcB/Ss7jxC6E2aWn2wHbNDwCah1nG4TN303JS/XmAYRZ8zK0Kx4HkfAcWIuQbunrGc5A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=GtsgyMd5k5S+RCVW953wEU0S2j9d9y2UJk6iVF/zlrc=; b=h
- zltYrnwY2LxzCsOp83S1+NQp69H7kmLB1CPsohCWUlsttelDFvi4ii16mUL5dgRox6LSBLztMLwpD
- 8WX1iLeABvkZ6f87+/mV01+s3dQ9gsNOKUeTHTE1Kke4Ho1T0nmRDQxYTAlyYV9S50J2Zt5an5pwr
- UdJhSPauMSmh3oyM=;
-Received: from lgeamrelo11.lge.com ([156.147.23.51])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=HllgY4tp7lBMdSLSWodxX990WKdZ87Bx+R3XYrzUr8o=; b=Zs0sefm/CGxQHOtgPKWscGpG16
+ ZLbDyYhPU2CUtVnwHjna/lGfn8b+67bn1XoNYnlRuetJZzuQ+x4tdfZQwtJwuPSvHK9PmIwzSKWk3
+ rgoVLElq3UqigeJvd7rySA5izSHTFJfuPCub61RV0dG5taqUKeCw76AXyv9H7qxuFkpw=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1u0CFu-0006vL-Gt for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 03 Apr 2025 04:32:58 +0000
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
- by 156.147.23.51 with ESMTP; 3 Apr 2025 13:02:30 +0900
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: thond2009@gmail.com
-Received: from unknown (HELO tho3-nguyen-weboscsm.bee-live.svc.cluster.local)
- (10.185.60.101)
- by 156.147.1.126 with ESMTP; 3 Apr 2025 13:02:30 +0900
-X-Original-SENDERIP: 10.185.60.101
-X-Original-MAILFROM: thond2009@gmail.com
-From: Nguyen Dat Tho <thond2009@gmail.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Thu,  3 Apr 2025 13:02:20 +0900
-Message-Id: <20250403040220.305573-1-thond2009@gmail.com>
-X-Mailer: git-send-email 2.34.1
+ id 1u0E2f-0003te-6N for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 03 Apr 2025 06:27:24 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 1E14D43A0D;
+ Thu,  3 Apr 2025 06:26:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DE4CC4CEE9;
+ Thu,  3 Apr 2025 06:26:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1743661618;
+ bh=fXrJUM8SeTerC0x9RnCZjNaU2MJi1ObxumgAG3z2PmU=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=ZnZodorrqaY28iosFNvCGb6554ZQmXVNAbOUXZtG8yfiI2XoOSt3EXCsKDVOBtmIV
+ EuRUCgboPsDxu45o/cJ8+zOVIosM5BHSeTFZecyffaZ1AJMn3MojxnQ6gzRKZlWrtI
+ d6PqAsRIIooPyfkS1L7mhY4CgL/bd6H6w/I0+Lre/+VAhmx9apxmG5nwCELquvYB2n
+ UORX65QowVHd7pDq9EhJbd8ORZcJf0t+tSo44DPEG5nozTq7wSL0g7o9+YFrp9HWkc
+ g2fwKR7hmQNdrsIKn67NbzlTCOSbKDU0GeMklAlu3sJVkUjI9enPg13o1nqmJWyKGA
+ qMsfMODpDRMTw==
+Message-ID: <002ea626-8468-4587-b481-10d8b9bd7a0f@kernel.org>
+Date: Thu, 3 Apr 2025 14:26:59 +0800
 MIME-Version: 1.0
-X-Headers-End: 1u0CFu-0006vL-Gt
-Subject: [f2fs-dev] [PATCH] include/f2fs_fs.h: fix -std=c23 build failure
+User-Agent: Mozilla Thunderbird
+To: "yohan.joung" <yohan.joung@sk.com>, jaegeuk@kernel.org
+References: <20250402080428.2811-1-yohan.joung@sk.com>
+Content-Language: en-US
+In-Reply-To: <20250402080428.2811-1-yohan.joung@sk.com>
+X-Headers-End: 1u0E2f-0003te-6N
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: prevent the current section from
+ being selected as a victim during GC
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -69,47 +78,81 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Nguyen Dat Tho <tho3.nguyen@lge.com>
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: pilhyun.kim@sk.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Nguyen Dat Tho <tho3.nguyen@lge.com>
+On 2025/4/2 16:04, yohan.joung wrote:
+> When selecting a victim using next_victim_seg in a large section, the
+> selected section might already have been cleared and designated as the
+> new current section, making it actively in use.
+> This behavior causes inconsistency between the SIT and SSA.
+> 
+> F2FS-fs (dm-54): Inconsistent segment (70961) type [0, 1] in SSA and SIT
+> Call trace:
+> dump_backtrace+0xe8/0x10c
+> show_stack+0x18/0x28
+> dump_stack_lvl+0x50/0x6c
+> dump_stack+0x18/0x28
+> f2fs_stop_checkpoint+0x1c/0x3c
+> do_garbage_collect+0x41c/0x271c
+> f2fs_gc+0x27c/0x828
+> gc_thread_func+0x290/0x88c
+> kthread+0x11c/0x164
+> ret_from_fork+0x10/0x20
+> 
+> issue scenario
+> segs_per_sec=2
+> - seg#0 and seg#1 are all dirty
+> - all valid blocks are removed in seg#1
+> - gc select this sec and next_victim_seg=seg#0
+> - migrate seg#0, next_victim_seg=seg#1
+> - checkpoint -> sec(seg#0, seg#1)  becomes free
+> - allocator assigns sec(seg#0, seg#1) to curseg
+> - gc tries to migrate seg#1
+> 
+> Signed-off-by: yohan.joung <yohan.joung@sk.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>   fs/f2fs/segment.h | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 0465dc00b349..129df633d656 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -476,6 +476,12 @@ static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
+>   		if (next >= start_segno + usable_segs) {
+>   			if (test_and_clear_bit(secno, free_i->free_secmap))
+>   				free_i->free_sections++;
+> +
+> +			if (GET_SEC_FROM_SEG(sbi->next_victim_seg[BG_GC]) == secno)
+> +				sbi->next_victim_seg[BG_GC] = NULL_SEGNO;
+> +
+> +			if (GET_SEC_FROM_SEG(sbi->next_victim_seg[FG_GC]) == secno)
+> +				sbi->next_victim_seg[FG_GC] = NULL_SEGNO;
 
-gcc-15 switched to -std=c23 by default:
+Only need to reset next_victim_seg[] when setting section free?
 
-    https://gcc.gnu.org/git/?p=gcc.git;a=commitdiff;h=55e3bd376b2214e200fa76d12b67ff259b06c212
+if (!test_and_clear_bit(secno, free_i->free_secmap))
+	goto skip_free;
 
-As a result `f2fs-tools` fails as below, so only typedef u8 bool
-for __STDC_VERSION__ <= 201710L (C17)
+free_i->free_sections++;
 
-In file included from ../../git/lib/libf2fs_zoned.c:11:
-../../git/include/f2fs_fs.h:107:25: error: two or more data types in declaration specifiers
-  107 | typedef u8              bool;
-      |                         ^~~~
-../../git/include/f2fs_fs.h:107:1: warning: useless type name in empty declaration
-  107 | typedef u8              bool;
+if (GET_SEC_FROM_SEG(sbi->next_victim_seg[BG_GC]) == secno)
+	sbi->next_victim_seg[BG_GC] = NULL_SEGNO;
+if (GET_SEC_FROM_SEG(sbi->next_victim_seg[FG_GC]) == secno)
+	sbi->next_victim_seg[FG_GC] = NULL_SEGNO;
 
-Signed-off-by: Nguyen Dat Tho <tho3.nguyen@lge.com>
----
- include/f2fs_fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
 
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index f890634..1be77f1 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -103,7 +103,7 @@ typedef uint16_t	u16;
- typedef uint8_t		u8;
- typedef u32		block_t;
- typedef u32		nid_t;
--#ifndef bool
-+#if defined __STDC__ && defined __STDC_VERSION__ && __STDC_VERSION__ <= 201710L
- typedef u8		bool;
- #endif
- typedef unsigned long	pgoff_t;
--- 
-2.34.1
+>   		}
+>   	}
+>   skip_free:
 
 
 
