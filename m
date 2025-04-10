@@ -4,69 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6E6F6C369A5
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Apr 2025 04:10:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2745EC3601E
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Apr 2025 04:10:31 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1u2jFD-0003d8-Kr;
-	Thu, 10 Apr 2025 04:10:28 +0000
+	id 1u2jFF-0006gx-Vf;
+	Thu, 10 Apr 2025 04:10:30 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1u2jFB-0003cs-3v
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1u2jFD-0006gb-9M
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 10 Apr 2025 04:10:25 +0000
+ Thu, 10 Apr 2025 04:10:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NjxCX7cpKlvLf26wr9wvf1dgkxHIXsv4fbu/PPJWVMc=; b=HMoniWQK7BiTUpsUbaYv1URBfH
- BZ4Vc+DtBTKQcljfvnrqRtvdiOqqwaOzQKTIkHNiTec5fYrhfmD2UYSkhMGXwFBOvn8EuzBP6h62O
- 3h58R9IWkqHyzuIaJKH2RPH72/APZWrgmcQEmRhjBCnkv8uski4ntVE0RgHGfrOUXT5s=;
+ bh=PJQqeRXoWhCcPlzzD2+eAp2sFZbrOtN3HatOhmFsw3M=; b=Dw4T1c7LxhUSIzYaNdDl3/8oIl
+ lhZG67srgn62UkScC4Jg1oWmxkkoSuB0fa+oWGxRNiGAtUyavSoJHkwvE0ePmtrdJRE2nNDU8buXd
+ 0vaN1gkrWNcXLw9/UsCApYLzmLv1QWk43YKsFeHL+VxE3EX1iBEpc+9usJ08BQA2kP/o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NjxCX7cpKlvLf26wr9wvf1dgkxHIXsv4fbu/PPJWVMc=; b=fFXJJ2Qvq1kfxQ3j6o9xH/Ur7V
- jUYDfe0T+ym52qmchN+chvhjciN9Qd6c5rsbHattSPjcwQu5keqiatnjm02ZK7zjtqonvFUqAR16k
- h0JoTvRna9y+hfYwI7skWLjm7phLS0yp/6KH3W+6skndfC7zOxbJAxNTUmtKTpAa0MW8=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=PJQqeRXoWhCcPlzzD2+eAp2sFZbrOtN3HatOhmFsw3M=; b=Y4k4f5u9FuRZX5sCMTMTVt38iv
+ nQYXxcMxgT45wS2KBKEQ1+RPWquDgZgInPMuxeX5BU30LN8AMLiJc/xCnCnXKVweXhxYtEYZsVwkA
+ znChnOb/Yw76Nw0pqaeO9xh8o4NucyMr+Lnlwt+GDhv5AakA31ZrI5ynLejFNGVWjvzg=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1u2jEv-0001Ae-Rz for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 10 Apr 2025 04:10:25 +0000
+ id 1u2jEy-0001Ar-7h for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 10 Apr 2025 04:10:27 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id C0B084A3D3;
- Thu, 10 Apr 2025 04:10:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76393C4CEDD;
- Thu, 10 Apr 2025 04:10:04 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id B2A256116A;
+ Thu, 10 Apr 2025 04:09:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DE83C4CEE7;
+ Thu, 10 Apr 2025 04:10:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1744258204;
- bh=QiD5P4HIEFdEOWQbswZze8511DS0Gq0+nwdZBm2CxBw=;
+ s=k20201202; t=1744258201;
+ bh=3D0KxFdT7AaX3IlEJQU4ODQ06zsDhm92FFBCaoIfeG0=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=nwZVT9juCsOi6/s26O+7Z47BmCQeV5KnULgd5h9sUOP7ssUzOSbRAtaAMGBeGZ7lS
- Q322aUXiDhTPW5r4I95WVN2Dt7kqb+VnU12riNMbGOL7Y+U21pheclUbX/H/K5p+kw
- aOD7kpvHuNtCGO147/eHZuyvO2qK2TkimZ9TwLyf9qiQNgTKjvPkmF9N8FbDMMqCXH
- pAmnopYIa2D4J6jf3COr5Sx/M2XoXzksRfs+ZnK3vFmG6G2yxA9Ky38Cqys/zRhx9z
- l61YyFAHagSb9KHCE24TSJu92tYK3/ZF1hDQ62j+9ZhFUmeobWyT6W+IKqN39BRaoO
- B3Y2VZziw3Nkg==
+ b=pQdToegWpr7tOtIQL8BNqnnlcFNI0/LV5zIcgRxVR9lXOGZGg+TMU1ubuAP+W4q7e
+ 8Mc2A22Mj5yRHzL7UoCf3UNadtD1zkg2Opk5shiKTZEtUb43oSzPCVPO1cbljPTC2O
+ yRkpcTMAJPNV/vxVM2PTwv0KMb9/X6gFJO39F1d/fmNz/WpMzaOD3z+/2pXYeoZ0+i
+ amepeZETQBKkorGzKzptELKeIV8U3ns2DciOFHd6NsIFe9tJya47egOsuEQoyiwowE
+ X9crj2mIXV/BGsXikaFOutpes7tLaseAnxJ/TTS9MUqXu890e121y6bWP4FbDzWzme
+ EohSGnfnw8MRg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 33B5A380CEF9; Thu, 10 Apr 2025 04:10:43 +0000 (UTC)
+ 33D61380CEF9; Thu, 10 Apr 2025 04:10:40 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <174425824176.3146257.18250969661492747760.git-patchwork-notify@kernel.org>
-Date: Thu, 10 Apr 2025 04:10:41 +0000
-References: <20250325080646.3291947-1-chao@kernel.org>
-In-Reply-To: <20250325080646.3291947-1-chao@kernel.org>
+Message-Id: <174425823876.3146257.767452728339565870.git-patchwork-notify@kernel.org>
+Date: Thu, 10 Apr 2025 04:10:38 +0000
+References: <20250327055607.3829954-1-chao@kernel.org>
+In-Reply-To: <20250327055607.3829954-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1u2jEv-0001Ae-Rz
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: zone: fix to calculate
- first_zoned_segno correctly
+X-Headers-End: 1u2jEy-0001Ar-7h
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to set atomic write status more
+ clear
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,33 +81,32 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- daehojeong@google.com, linux-kernel@vger.kernel.org
+Cc: jaegeuk@kernel.org, zhiguo.niu@unisoc.com,
+ linux-f2fs-devel@lists.sourceforge.net, daehojeong@google.com,
+ linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 25 Mar 2025 16:06:45 +0800 you wrote:
-> A zoned device can has both conventional zones and sequential zones,
-> so we should not treat first segment of zoned device as first_zoned_segno,
-> instead, we need to check zone type for each zone during traversing zoned
-> device to find first_zoned_segno.
+On Thu, 27 Mar 2025 13:56:06 +0800 you wrote:
+> 1. After we start atomic write in a database file, before committing
+> all data, we'd better not set inode w/ vfs dirty status to avoid
+> redundant updates, instead, we only set inode w/ atomic dirty status.
 > 
-> Otherwise, for below case, first_zoned_segno will be 0, which could be
-> wrong.
+> 2. After we commit all data, before committing metadata, we need to
+> clear atomic dirty status, and set vfs dirty status to allow vfs flush
+> dirty inode.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2,1/2] f2fs: zone: fix to calculate first_zoned_segno correctly
-    (no matching commit)
-  - [f2fs-dev,v2,2/2] f2fs: zone: fix to avoid inconsistence in between SIT and SSA
-    https://git.kernel.org/jaegeuk/f2fs/c/773704c1ef96
+  - [f2fs-dev] f2fs: fix to set atomic write status more clear
+    https://git.kernel.org/jaegeuk/f2fs/c/db03c20c0850
 
 You are awesome, thank you!
 -- 
