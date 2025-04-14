@@ -4,71 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D2F00C369A2
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Apr 2025 03:49:53 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C6B6CC369B2
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Apr 2025 10:53:34 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1u4ApU-0002qo-JZ;
-	Mon, 14 Apr 2025 03:49:52 +0000
+	id 1u4HRU-0008Nk-EV;
+	Mon, 14 Apr 2025 10:53:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1u4ApT-0002qi-Ep
+ (envelope-from <chao@kernel.org>) id 1u4HRT-0008NW-20
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 14 Apr 2025 03:49:50 +0000
+ Mon, 14 Apr 2025 10:53:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=t7xrqrWkDOv8jdWXgRVoresGKoXhcbXpS3ric/htzxQ=; b=UJVwmsCuwWFvRvIwDRuABgsGly
- nXuqRKuul3b0ogX0A0+Mg44rcRrIfjDn2VGLKQFDhg+1X3BTnaoEVQfQRJi5rBHYRiOyvzABq9NXV
- xyyjWNcq7CpgTvWFCE9UJHYiMySQqFk/mzDEavX7zZv1PLkP7bb5Zfhtugq/d89+zgB8=;
+ bh=5BMwUIMGU3cR6zd4dIn6JUCDdm7FE1MWoQaM0BR4ODI=; b=MCYE2joSJqLPqTTLiPfHNBJmHB
+ YTosXlxMGtqDIS5S+DdfQyHP0YiRJZiqx9MGFsCMktteJ0Tg2zWJClzVGTcY7k3tVsO2TXc+z3MkA
+ yuwh7B0xWf7VnXEaj3chOObKt5KTm3MyIaYCsa4TkSGOZkw93pQvGhPTlBWLLv6gVZGs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=t7xrqrWkDOv8jdWXgRVoresGKoXhcbXpS3ric/htzxQ=; b=N1UvsR3xTLGwf06abgVUB6yWHn
- boC/w/oeB2EMfWT5WRPzjkNvCEEuqCExyCluxBzFQgExWI93+Hs9G/+TuHmgNc9UZntGT36zu71EO
- x3sVOsLHnwwqYncj3pa/Cm/v/IEzjHTpa3uKLp2zxzRaSOBQNyfiy2wT/kkTNi+jc5co=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ bh=5BMwUIMGU3cR6zd4dIn6JUCDdm7FE1MWoQaM0BR4ODI=; b=AoOmM7JzA3zE4Jn221FjLM/vN+
+ X01itHubiy3XxpRsD2w655osQ9pNL30ESr2BhuNL/XpE/RYUvbMZjEMfgm2cKJyCTrRRnvJMG5+Y1
+ fboK9HRSE1O1a1oBIJbEChp6y7R7MXxvWqctiQPUQ+TSOan4jjbYEdZXxuHimOoXVljo=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1u4ApD-00031h-0R for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 14 Apr 2025 03:49:50 +0000
+ id 1u4HRE-0005Tn-2B for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 14 Apr 2025 10:53:31 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id ED38DA46B7F
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 14 Apr 2025 03:44:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19C76C4CEE2;
- Mon, 14 Apr 2025 03:49:27 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id BA9084A48B;
+ Mon, 14 Apr 2025 10:53:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52312C4CEE5;
+ Mon, 14 Apr 2025 10:53:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1744602569;
- bh=lUcWQccR/bhfsFgTbctZHB2jErDD9Wr06l4iz/xmVTA=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=P9HV8NwIZZKJwXjQSLmrjRhR43gD86iTf6H7jryKuyUtAuNXiJHZVQjySJKsZgFgE
- C4OKXYPeFTKnEwEq0TbnYu/0q84agZxKWSC+oFHZTfIVG4osNLt2sxPLX973nUfI4s
- lij7g2WDDfeCam3vG3BOtSLL8BF2qbl6skvaALO3YCF6eOrrRqWqB7qzpYVy4TcYmc
- cfWeWLaI1G7Yid3GU+rMU3vQKo5uHvhN+2wop8CR5ASeJRvXyqNd5E3n63o73dQ07d
- Q1fZYlWCbXd4iCKjOTGHGA02TYeS+dSgSloYfO+KUl2hIqED68kPDTSinn4b71rm7Z
- yeqR5NIZFE17Q==
-Message-ID: <48ccf640-fe56-4253-9155-27aa32b2d9b8@kernel.org>
-Date: Mon, 14 Apr 2025 11:49:26 +0800
+ s=k20201202; t=1744627990;
+ bh=XJlZfQW1aybX0kMKYGtaAugSD+bmBNoAEbWNwMsoH2E=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=kuVMIAAHd3Udrv0tceg5VNIgKRV9mU0g7FyAysdm0ComUD4peaghAVgMdMnSgLSnn
+ 50QPu3XPPDp2L8nOHIKWymBK8dlABV96vC94oaagBnq6w63LyKUDmP7dqzvVJP4Q3T
+ db4vyDSdv3QGxlYLW5rg28mdU34Xz3XAo0JhM8GLAuiHZB5PQ6853P0vxmD3ZPL5ho
+ 8FMSqgl6Lm00zRtQ1wsnU2i2zSrGlnuJ91lnecOL6fxqHRNHiUr9xOG5yNJkL2y8GF
+ szpo4bPo3Q5GX2cqSmcXlSODR8E4aGK674xI3G+Tle1Ua06R+50Zi8KbaEsm1bL3vm
+ 5PqDwwYM/OJVQ==
+To: jaegeuk@kernel.org
+Date: Mon, 14 Apr 2025 18:52:37 +0800
+Message-ID: <20250414105237.728522-2-chao@kernel.org>
+X-Mailer: git-send-email 2.49.0.604.gff1f9ca942-goog
+In-Reply-To: <20250414105237.728522-1-chao@kernel.org>
+References: <20250414105237.728522-1-chao@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-References: <20250412214226.2907676-1-jaegeuk@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250412214226.2907676-1-jaegeuk@kernel.org>
-X-Headers-End: 1u4ApD-00031h-0R
-Subject: Re: [f2fs-dev] [PATCH] f2fs: prevent kernel warning due to negative
- i_nlink from corrupted image
+X-Headers-End: 1u4HRE-0005Tn-2B
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: fix to detect gcing page in
+ f2fs_is_cp_guaranteed()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,66 +79,92 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: stable@vger.kernel.org
+Cc: Jan Prusakowski <jprusakowski@google.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 4/13/25 05:42, Jaegeuk Kim via Linux-f2fs-devel wrote:
-> WARNING: CPU: 1 PID: 9426 at fs/inode.c:417 drop_nlink+0xac/0xd0
-> home/cc/linux/fs/inode.c:417
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 9426 Comm: syz-executor568 Not tainted
-> 6.14.0-12627-g94d471a4f428 #2 PREEMPT(full)
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-> 1.13.0-1ubuntu1.1 04/01/2014
-> RIP: 0010:drop_nlink+0xac/0xd0 home/cc/linux/fs/inode.c:417
-> Code: 48 8b 5d 28 be 08 00 00 00 48 8d bb 70 07 00 00 e8 f9 67 e6 ff
-> f0 48 ff 83 70 07 00 00 5b 5d e9 9a 12 82 ff e8 95 12 82 ff 90
-> &lt;0f&gt; 0b 90 c7 45 48 ff ff ff ff 5b 5d e9 83 12 82 ff e8 fe 5f e6
-> ff
-> RSP: 0018:ffffc900026b7c28 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff8239710f
-> RDX: ffff888041345a00 RSI: ffffffff8239717b RDI: 0000000000000005
-> RBP: ffff888054509ad0 R08: 0000000000000005 R09: 0000000000000000
-> R10: 0000000000000000 R11: ffffffff9ab36f08 R12: ffff88804bb40000
-> R13: ffff8880545091e0 R14: 0000000000008000 R15: ffff8880545091e0
-> FS:  000055555d0c5880(0000) GS:ffff8880eb3e3000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f915c55b178 CR3: 0000000050d20000 CR4: 0000000000352ef0
-> Call Trace:
->  <task>
->  f2fs_i_links_write home/cc/linux/fs/f2fs/f2fs.h:3194 [inline]
->  f2fs_drop_nlink+0xd1/0x3c0 home/cc/linux/fs/f2fs/dir.c:845
->  f2fs_delete_entry+0x542/0x1450 home/cc/linux/fs/f2fs/dir.c:909
->  f2fs_unlink+0x45c/0x890 home/cc/linux/fs/f2fs/namei.c:581
->  vfs_unlink+0x2fb/0x9b0 home/cc/linux/fs/namei.c:4544
->  do_unlinkat+0x4c5/0x6a0 home/cc/linux/fs/namei.c:4608
->  __do_sys_unlink home/cc/linux/fs/namei.c:4654 [inline]
->  __se_sys_unlink home/cc/linux/fs/namei.c:4652 [inline]
->  __x64_sys_unlink+0xc5/0x110 home/cc/linux/fs/namei.c:4652
->  do_syscall_x64 home/cc/linux/arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xc7/0x250 home/cc/linux/arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fb3d092324b
-> Code: 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66
-> 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 57 00 00 00 0f 05
-> &lt;48&gt; 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01
-> 48
-> RSP: 002b:00007ffdc232d938 EFLAGS: 00000206 ORIG_RAX: 0000000000000057
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb3d092324b
-> RDX: 00007ffdc232d960 RSI: 00007ffdc232d960 RDI: 00007ffdc232d9f0
-> RBP: 00007ffdc232d9f0 R08: 0000000000000001 R09: 00007ffdc232d7c0
-> R10: 00000000fffffffd R11: 0000000000000206 R12: 00007ffdc232eaf0
-> R13: 000055555d0cebb0 R14: 00007ffdc232d958 R15: 0000000000000001
->  </task>
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Jan Prusakowski reported a f2fs bug as below:
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+f2fs/007 will hang kernel during testing w/ below configs:
 
-Thanks,
+kernel 6.12.18 (from pixel-kernel/android16-6.12)
+export MKFS_OPTIONS="-O encrypt -O extra_attr -O project_quota -O quota"
+export F2FS_MOUNT_OPTIONS="test_dummy_encryption,discard,fsync_mode=nobarrier,reserve_root=32768,checkpoint_merge,atgc"
+
+cat /proc/<umount_proc_id>/stack
+f2fs_wait_on_all_pages+0xa3/0x130
+do_checkpoint+0x40c/0x5d0
+f2fs_write_checkpoint+0x258/0x550
+kill_f2fs_super+0x14f/0x190
+deactivate_locked_super+0x30/0xb0
+cleanup_mnt+0xba/0x150
+task_work_run+0x59/0xa0
+syscall_exit_to_user_mode+0x12d/0x130
+do_syscall_64+0x57/0x110
+entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+cat /sys/kernel/debug/f2fs/status
+
+  - IO_W (CP: -256, Data:  256, Flush: (   0    0    1), Discard: (   0    0)) cmd:    0 undiscard:   0
+
+CP IOs reference count becomes negative.
+
+The root cause is:
+
+After 4961acdd65c9 ("f2fs: fix to tag gcing flag on page during block
+migration"), we will tag page w/ gcing flag for raw page of cluster
+during its migration.
+
+However, if the inode is both encrypted and compressed, during
+ioc_decompress(), it will tag page w/ gcing flag, and it increase
+F2FS_WB_DATA reference count:
+- f2fs_write_multi_page
+ - f2fs_write_raw_page
+  - f2fs_write_single_page
+   - do_write_page
+    - f2fs_submit_page_write
+     - WB_DATA_TYPE(bio_page, fio->compressed_page)
+     : bio_page is encrypted, so mapping is NULL, and fio->compressed_page
+       is NULL, it returns F2FS_WB_DATA
+     - inc_page_count(.., F2FS_WB_DATA)
+
+Then, during end_io(), it decrease F2FS_WB_CP_DATA reference count:
+- f2fs_write_end_io
+ - f2fs_compress_write_end_io
+  - fscrypt_pagecache_folio
+  : get raw page from encrypted page
+  - WB_DATA_TYPE(&folio->page, false)
+  : raw page has gcing flag, it returns F2FS_WB_CP_DATA
+  - dec_page_count(.., F2FS_WB_CP_DATA)
+
+In order to fix this issue, we need to detect gcing flag in raw page
+in f2fs_is_cp_guaranteed().
+
+Fixes: 4961acdd65c9 ("f2fs: fix to tag gcing flag on page during block migration")
+Reported-by: Jan Prusakowski <jprusakowski@google.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 4f70755c30cc..0df60c3ca533 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -54,7 +54,7 @@ bool f2fs_is_cp_guaranteed(struct page *page)
+ 	struct f2fs_sb_info *sbi;
+ 
+ 	if (fscrypt_is_bounce_page(page))
+-		return false;
++		return page_private_gcing(fscrypt_pagecache_page(page));
+ 
+ 	inode = mapping->host;
+ 	sbi = F2FS_I_SB(inode);
+-- 
+2.49.0
+
 
 
 _______________________________________________
