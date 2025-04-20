@@ -4,99 +4,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3B312C369CF
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 18 Apr 2025 16:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 05E6AC369AB
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Apr 2025 14:00:52 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1u5p14-0001Zd-GW;
-	Fri, 18 Apr 2025 16:56:38 +0000
+	id 1u6rhb-0003oj-Cz;
+	Mon, 21 Apr 2025 14:00:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1u5p12-0001ZW-SP
+ (envelope-from <sandeen@redhat.com>) id 1u6rhZ-0003oc-WE
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 18 Apr 2025 16:56:36 +0000
+ Mon, 21 Apr 2025 14:00:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=content-type:Content-Transfer-Encoding:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TKlJr23HwQEEM3rBH5QpFzv6RecqhOO8MUz9X5DHGbA=; b=RjgwLMdKAk8K1MYTDvpXFBrX7u
- Dp55qtdg8LQMGK2b4OXGd/iX87arVajyDyI3FvTuf9ou9jvIoSpLTMiW8YNNTuKdOa+9okB5kOvaE
- LiRLbCT9xNYcxvw+g77BRhsQfVVIwDWGL+s8g0TQpTrFjMpYa3q01n5/oLYSorlDWT2c=;
+ bh=ZemooXzBmCB9xX4ZitlTfSWvN1M40kyBD1Fl2rGdnZc=; b=JLQLs6AeDUrVsUjJL9BrUx4nVy
+ vcm4KIJl1MHfGdr8+9BX7kilojFGaR1iBGovr7byfJ4xY7clqWCuYnxVf4+5T4LX1VFXLbrnamg3l
+ p4gg59Nzd+vuJ2E1CzQllZ6xddQqSIs9c7ilQVcYABnW/U4sAvKm4s5cpWA02WvMx/Bs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=TKlJr23HwQEEM3rBH5QpFzv6RecqhOO8MUz9X5DHGbA=; b=f
- KM2jFq89i4yHJ5fcXGlakHW1Z+g05WkFtUdpwgsSv8yledeDu85a3zMb4YbSoKKi86LGmNbNLEym3
- jfdV1Ob7t37Te735Qe8DpNl4U46U54RIq8p+MBSpDcrk4GzgFB4ZaErWO3U5RNcAyyHPqPsywuA30
- dxNupXKtjTkqBBUY=;
-Received: from mail-pj1-f46.google.com ([209.85.216.46])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1u5p0m-0002cE-HP for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 18 Apr 2025 16:56:36 +0000
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-301e05b90caso1938845a91.2
+ h=content-type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=ZemooXzBmCB9xX4ZitlTfSWvN1M40kyBD1Fl2rGdnZc=; b=WKonSKY/4SkwwQ52h/KQKR7F+M
+ n30GO/UIzgWMxYuZv7427BH9/pyATI6uHO9+OJcRPq12DrcPkYR/nNvDPSw0Z84MSE4/CVU80adh9
+ JgcGgak+4hNXBXD/s8MUtkfWkPibquoCGMhSjv7OOk8Q3FZjEB9hZ8BjJNudzJpB2Dmg=;
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.95)
+ id 1u6rhJ-0003xM-FJ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Apr 2025 14:00:49 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1745244022;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=ZemooXzBmCB9xX4ZitlTfSWvN1M40kyBD1Fl2rGdnZc=;
+ b=UyERkVqY5WBJ5gLMlRtGTi5QxwNJSxgan0F6dWInNRaHv3apC9C/1wOiJEKxtw5OcbY+sd
+ PFbHicjNtRGA2lozL77mgeGUBa4ATHwhHax6lPuiMqKHQ9Dtd1xAwRVnQjeTN9mX9gMHo8
+ y7GRfP42LpdC5vXLH428h8vmt97VFl0=
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
+ [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-453-0Lks7444MpGHmma6p8qDRA-1; Mon, 21 Apr 2025 10:00:21 -0400
+X-MC-Unique: 0Lks7444MpGHmma6p8qDRA-1
+X-Mimecast-MFC-AGG-ID: 0Lks7444MpGHmma6p8qDRA_1745244020
+Received: by mail-io1-f72.google.com with SMTP id
+ ca18e2360f4ac-85e7551197bso344814839f.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 18 Apr 2025 09:56:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1744995370; x=1745600170; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=TKlJr23HwQEEM3rBH5QpFzv6RecqhOO8MUz9X5DHGbA=;
- b=I6Fb5S4Jjy6GS0VQb+0KGQCB14t6HOGHyMAHG+/TFqiTBFLSY/9A5aM7YCsv4Kd+1v
- 3XbNhdrZBbz+4bxYCd6+EpHd9sdnHNZhomcWVzkc6cCbC0GjRRTxVWCUKlhdENfQ0BjU
- 0GnxHoMxsX0D+DHDeLReb3BObLZFRLEEUt17s/FkesIyq2fiY8YzG1V73ybFwOZemvwR
- 1MN9XVNLierc4zrg5oqJLX1G6wYUJSI9bKAmReGw1g8UsH/WRdoRfErfI0Q1M0+eOR8u
- kVXkoth42RhVwVM8Wx2ltQZh3Tjyq/VWvwtFraWFIwU66kC3cThaebBSJTInieVCm3ic
- GwlQ==
+ Mon, 21 Apr 2025 07:00:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1744995370; x=1745600170;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=TKlJr23HwQEEM3rBH5QpFzv6RecqhOO8MUz9X5DHGbA=;
- b=bcU0t+WzHuEdQ8NmBg2QfzK5/FS+gb7+FhNH+pdztwWot2/5jl55tD4tOH9ZVhyyIq
- FYRqWnqHoFS0WHgbWEOibhsRJSqH7TxGfMll2NqiV1pkHvrT4+Oy9Y9C+tFok2TXil3u
- YsznD7ZkJZxc02LjxgqPyLa+IawPiXXGtrM3C9Z7d/6cSKDn+toBprzcjJQr4WRfwSz9
- d8koJGQGiIBlEhTEmGn9YvlctUnfIsoi/AhP4LjgltzwUU0ICwFZ3LX+p9mfkLpTvrLh
- pMTj6ZyTZTi7eLLQ3sDtDWIYZ+Pd9o7pWJIQV9VkRn64eVIgTm8ffFOIXkVngYy7quhy
- DglQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCX9NhDKEdej+D2G7B1mZ1JycFC+VKe0aPQUX53YE+kQZAXPTLi79O7Sk/cX4CSm3nbuk/byK7spbTqoqQEF41AY@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YwM5HrrihDYPsExluCtgNN4Zphi+KEj5BsV8vr9KwBytaSCW37J
- Hpcspb8n3M2gzi/O97UL5md52wqgpJGyPJesla10rGve9pfmJWXa
-X-Gm-Gg: ASbGncvsriV0TNay+ABLhKJa9vhawS3WmtKWe2Z4Q869Hp89X5Pi77ZxWsNeWBS/7pO
- NNDmqR77v/ulmcqUYL8M76yzgVub2YxUvar73slAnyGTppM155iO/+RLeDnOKxhsCExn9fy3IrX
- YhpFRGRG+uGmMOe70W5B1yyQO/360QnRyZtkzH/EOq33oVbwkUTR0u7Kl1K1ytejMS3s/61/9+u
- 2sxdch7FWRjVn5+JvtJEDHaYG06/L4pya36ekuZEReRFoPpuE8iNPGZZLFcQYfAEij6ucy5ZgPw
- OcH94Ayf+zY2lKYu1Q8NifTeINyN2gs29Yq14eDh/lhM3t1zf5EE15T8Mfd04m98wcDMTSE85ey
- M3ToBlMHdtipedsjX5axGNPT6+4XEUcU=
-X-Google-Smtp-Source: AGHT+IHZqnsqBHDbnZitcF47A1nOMx1QkT4vqNOFU1E1Dta/4pCADVHaAElNjDeS6NuR01p2EKfONw==
-X-Received: by 2002:a17:90b:498d:b0:2ff:52e1:c49f with SMTP id
- 98e67ed59e1d1-3087bbad6a5mr4354743a91.26.1744995369612; 
- Fri, 18 Apr 2025 09:56:09 -0700 (PDT)
-Received: from daehojeong-desktop.mtv.corp.google.com
- ([2a00:79e0:2e14:7:2bec:a9ba:705:770f])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3087dee325bsm1658933a91.9.2025.04.18.09.56.08
+ d=1e100.net; s=20230601; t=1745244020; x=1745848820;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=ZemooXzBmCB9xX4ZitlTfSWvN1M40kyBD1Fl2rGdnZc=;
+ b=KAeiF8Lx+HRVWUd8NvzIydvwF+YMWa6+hP73GYGXnnUky8wSmJ3oTouPE5yiVN6c62
+ dA8AfF8T7tZ1bamZY39hVLirDMHr9oN+xUe+OB8ItbM9Pa2SrEqw+VfDxJM0qYnwnIdq
+ 6nof7Ql4fEWIfxt86zNWbUBxDRBn8X0zo3UIFZMlqTZX+O6hrY4BDW11wh07W15ifVyd
+ GNBlvN3dCSZFgceUU6QPdWWHPmygvapW0N/EpoDhp8JEB7bdr2bsDYnrbRdNihbiBpJz
+ P44tCmihlVUZcwSDTufX08ue4wYMozf3/l5MRadohMPJVdaAZw8DQlWKm9ZM4KRim3mp
+ O7Xw==
+X-Gm-Message-State: AOJu0YxfsRRLJT/zEx1CIN0GuKh5bhUJGUaqyRq8OgjYngGVGfJ61vcs
+ V40/xmpZboU2m5MWRV3xzLRm16ds2Lz8gGS2JDjr7rcq0ZEU/kWfd//EHMNbNIsJ49hRW+1Nbw3
+ jmLh7zbN90HB4K6rsLpJ1LyDNqD5ZlG7oPdVqYpaQCa+wcVF+W2IXwUi5GPEGnNyp2A+n2FdoT8
+ jLPUk/UrCbs9dBrOft2y9DcHhSk0qdeMHXCC7i3H3zzD230t2q2ErwQ3bwmA==
+X-Gm-Gg: ASbGncsgHeCUQQMy1Zl5rJL+ir9ECUSw0puehOtYSW74R+xX8X3+pmxiio9YXtTcB3C
+ elv6AVYxsd5W/y2++ALENA34as9W2bQcjSuP3gxu5qsqGtQ7uIOmwS9amNiURBCwANAQovxLKd7
+ ccsCcfNSs+4UnV1fgPozFBIAOFIW/PLSIUag+varC8YBxbFNMwq0SGy2pv2F3IlnIencDKaAmQ8
+ v4grLf+QaGOxNPGQ8n1X2Bw5XKZrmu3j6MUdbmdcv9dbOnqpk00ehYUAsUx7xAgkOZxjDbD92VB
+ UcBAMcuPdMG7/I0=
+X-Received: by 2002:a6b:4e0b:0:b0:858:7b72:ec89 with SMTP id
+ ca18e2360f4ac-861d89f12d9mr1065682639f.5.1745244019766; 
+ Mon, 21 Apr 2025 07:00:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEZ6SSLDQLW//k8veqFYQTshX2KgkWx0xnluXF+mev8GEmfas5PmCoD/JvRQ2E09J2az5Qc/g==
+X-Received: by 2002:a6b:4e0b:0:b0:858:7b72:ec89 with SMTP id
+ ca18e2360f4ac-861d89f12d9mr1065677839f.5.1745244019204; 
+ Mon, 21 Apr 2025 07:00:19 -0700 (PDT)
+Received: from fedora.. ([65.128.104.55]) by smtp.gmail.com with ESMTPSA id
+ 8926c6da1cb9f-4f6a3839336sm1788866173.73.2025.04.21.07.00.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 18 Apr 2025 09:56:09 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Date: Fri, 18 Apr 2025 09:56:01 -0700
-Message-ID: <20250418165601.3050393-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
+ Mon, 21 Apr 2025 07:00:18 -0700 (PDT)
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Sun, 20 Apr 2025 10:25:02 -0500
+Message-ID: <20250420154647.1233033-4-sandeen@redhat.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250420154647.1233033-1-sandeen@redhat.com>
+References: <20250420154647.1233033-1-sandeen@redhat.com>
 MIME-Version: 1.0
-X-Headers-End: 1u5p0m-0002cE-HP
-Subject: [f2fs-dev] [PATCH] f2fs-tools: introduce fault injection to fsck
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Di5el1Ah6lOz5zXeeaQvRtJ9E2SynPTfyVxfES-9Zew_1745244020
+X-Mimecast-Originator: redhat.com
+X-Headers-End: 1u6rhJ-0003xM-FJ
+Subject: [f2fs-dev] [PATCH 3/7] f2fs: Allow sbi to be NULL in f2fs_printk
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -108,522 +115,358 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>
+From: Eric Sandeen via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Eric Sandeen <sandeen@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, lihongbo22@huawei.com,
+ Eric Sandeen <sandeen@redhat.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daeho Jeong <daehojeong@google.com>
+From: Hongbo Li <lihongbo22@huawei.com>
 
-Due to the difficulty of intentionally corrupting specific metadata on
-some storage devices like zoned storage devices, it is challenging to
-effectively verify fsck functionality. To facilitate this verification,
-it is necessary to add a fault injection mode.
+At the parsing phase of the new mount api, sbi will not be
+available. So here allows sbi to be NULL in f2fs log helpers
+and use that in handle_mount_opt().
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+[sandeen: forward port]
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 ---
- fsck/fsck.c       | 106 +++++++++++++++++++++++++++++++++-------------
- fsck/main.c       |  22 ++++++++++
- fsck/mkquota.c    |   3 ++
- include/f2fs_fs.h |  54 +++++++++++++++++++++++
- man/fsck.f2fs.8   |  36 ++++++++++++++++
- 5 files changed, 192 insertions(+), 29 deletions(-)
+ fs/f2fs/super.c | 90 +++++++++++++++++++++++++++----------------------
+ 1 file changed, 49 insertions(+), 41 deletions(-)
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 8155cbd..e879d8c 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -16,6 +16,20 @@
- char *tree_mark;
- uint32_t tree_mark_size = 256;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 8343dc2a515d..aeb8e9a48bf6 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -321,11 +321,19 @@ void f2fs_printk(struct f2fs_sb_info *sbi, bool limit_rate,
+ 	vaf.fmt = printk_skip_level(fmt);
+ 	vaf.va = &args;
+ 	if (limit_rate)
+-		printk_ratelimited("%c%cF2FS-fs (%s): %pV\n",
+-			KERN_SOH_ASCII, level, sbi->sb->s_id, &vaf);
++		if (sbi)
++			printk_ratelimited("%c%cF2FS-fs (%s): %pV\n",
++				KERN_SOH_ASCII, level, sbi->sb->s_id, &vaf);
++		else
++			printk_ratelimited("%c%cF2FS-fs: %pV\n",
++				KERN_SOH_ASCII, level, &vaf);
+ 	else
+-		printk("%c%cF2FS-fs (%s): %pV\n",
+-			KERN_SOH_ASCII, level, sbi->sb->s_id, &vaf);
++		if (sbi)
++			printk("%c%cF2FS-fs (%s): %pV\n",
++				KERN_SOH_ASCII, level, sbi->sb->s_id, &vaf);
++		else
++			printk("%c%cF2FS-fs: %pV\n",
++				KERN_SOH_ASCII, level, &vaf);
  
-+const char *f2fs_fault_name[FAULT_MAX] = {
-+	[FAULT_SEG_TYPE]	= "invalid segment type",
-+	[FAULT_SUM_TYPE]	= "invalid summary type",
-+	[FAULT_SUM_ENT]		= "invalid summary entry",
-+	[FAULT_NAT]		= "invalid nat entry",
-+	[FAULT_NODE]		= "invalid node block",
-+	[FAULT_XATTR_ENT]	= "invalid xattr entry",
-+	[FAULT_COMPR]		= "invalid compression type",
-+	[FAULT_INODE]		= "invalid inode info",
-+	[FAULT_DENTRY]		= "invalid dentry",
-+	[FAULT_DATA]		= "invalid data block",
-+	[FAULT_QUOTA]		= "invalid quota",
-+};
-+
- int f2fs_set_main_bitmap(struct f2fs_sb_info *sbi, u32 blk, int type)
- {
- 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
-@@ -23,9 +37,9 @@ int f2fs_set_main_bitmap(struct f2fs_sb_info *sbi, u32 blk, int type)
- 	int fix = 0;
- 
- 	se = get_seg_entry(sbi, GET_SEGNO(sbi, blk));
--	if (se->type >= NO_CHECK_TYPE)
--		fix = 1;
--	else if (IS_DATASEG(se->type) != IS_DATASEG(type))
-+	if (time_to_inject(FAULT_SEG_TYPE) ||
-+			(se->type >= NO_CHECK_TYPE) ||
-+			(IS_DATASEG(se->type) != IS_DATASEG(type)))
- 		fix = 1;
- 
- 	/* just check data and node types */
-@@ -168,7 +182,8 @@ static int is_valid_ssa_node_blk(struct f2fs_sb_info *sbi, u32 nid,
- 
- 	sum_blk = get_sum_block(sbi, segno, &type);
- 
--	if (type != SEG_TYPE_NODE && type != SEG_TYPE_CUR_NODE) {
-+	if (time_to_inject(FAULT_SUM_TYPE) ||
-+			(type != SEG_TYPE_NODE && type != SEG_TYPE_CUR_NODE)) {
- 		/* can't fix current summary, then drop the block */
- 		if (!c.fix_on || type < 0) {
- 			ASSERT_MSG("Summary footer is not for node segment");
-@@ -189,7 +204,8 @@ static int is_valid_ssa_node_blk(struct f2fs_sb_info *sbi, u32 nid,
- 
- 	sum_entry = &(sum_blk->entries[offset]);
- 
--	if (le32_to_cpu(sum_entry->nid) != nid) {
-+	if (time_to_inject(FAULT_SUM_ENT) ||
-+			(le32_to_cpu(sum_entry->nid) != nid)) {
- 		if (!c.fix_on || type < 0) {
- 			DBG(0, "nid                       [0x%x]\n", nid);
- 			DBG(0, "target blk_addr           [0x%x]\n", blk_addr);
-@@ -282,7 +298,7 @@ static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- 	struct f2fs_summary *sum_entry;
- 	struct seg_entry * se;
- 	u32 segno, offset;
--	int need_fix = 0, ret = 0;
-+	int need_fix = 0, ret = 0, fault_sum_ent = 0;
- 	int type;
- 
- 	if (get_sb(feature) & F2FS_FEATURE_RO)
-@@ -293,7 +309,8 @@ static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- 
- 	sum_blk = get_sum_block(sbi, segno, &type);
- 
--	if (type != SEG_TYPE_DATA && type != SEG_TYPE_CUR_DATA) {
-+	if (time_to_inject(FAULT_SUM_TYPE) ||
-+			(type != SEG_TYPE_DATA && type != SEG_TYPE_CUR_DATA)) {
- 		/* can't fix current summary, then drop the block */
- 		if (!c.fix_on || type < 0) {
- 			ASSERT_MSG("Summary footer is not for data segment");
-@@ -314,7 +331,10 @@ static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- 
- 	sum_entry = &(sum_blk->entries[offset]);
- 
--	if (le32_to_cpu(sum_entry->nid) != parent_nid ||
-+	if (time_to_inject(FAULT_SUM_ENT))
-+		fault_sum_ent = 1;
-+
-+	if (fault_sum_ent || le32_to_cpu(sum_entry->nid) != parent_nid ||
- 			sum_entry->version != version ||
- 			le16_to_cpu(sum_entry->ofs_in_node) != idx_in_node) {
- 		if (!c.fix_on || type < 0) {
-@@ -333,7 +353,8 @@ static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- 			DBG(0, "Target data block addr    [0x%x]\n", blk_addr);
- 			ASSERT_MSG("Invalid data seg summary\n");
- 			ret = -EINVAL;
--		} else if (is_valid_summary(sbi, sum_entry, blk_addr)) {
-+		} else if (!fault_sum_ent &&
-+				is_valid_summary(sbi, sum_entry, blk_addr)) {
- 			/* delete wrong index */
- 			ret = -EINVAL;
+ 	va_end(args);
+ }
+@@ -735,13 +743,13 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ 	case Opt_discard:
+ 		if (result.negated) {
+ 			if (f2fs_hw_should_discard(sbi)) {
+-				f2fs_warn(sbi, "discard is required for zoned block devices");
++				f2fs_warn(NULL, "discard is required for zoned block devices");
+ 				return -EINVAL;
+ 			}
+ 			clear_opt(sbi, DISCARD);
  		} else {
-@@ -397,6 +418,9 @@ err:
- static int sanity_check_nat(struct f2fs_sb_info *sbi, u32 nid,
- 						struct node_info *ni)
- {
-+	if (time_to_inject(FAULT_NAT))
-+		return -EINVAL;
-+
- 	if (!IS_VALID_NID(sbi, nid)) {
- 		ASSERT_MSG("nid is not valid. [0x%x]", nid);
- 		return -EINVAL;
-@@ -436,6 +460,9 @@ static int sanity_check_nid(struct f2fs_sb_info *sbi, u32 nid,
- 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
- 	int ret;
- 
-+	if (time_to_inject(FAULT_NODE))
-+		return -EINVAL;
-+
- 	ret = sanity_check_nat(sbi, nid, ni);
- 	if (ret)
- 		return ret;
-@@ -865,7 +892,7 @@ int chk_extended_attributes(struct f2fs_sb_info *sbi, u32 nid,
- 				"end of list", nid);
- 		need_fix = true;
- 	}
--	if (need_fix && c.fix_on) {
-+	if ((time_to_inject(FAULT_XATTR_ENT) || need_fix) && c.fix_on) {
- 		memset(ent, 0, (u8 *)last_base_addr - (u8 *)ent);
- 		write_all_xattrs(sbi, inode, xattr_size, xattr);
- 		FIX_MSG("[0x%x] nullify wrong xattr entries", nid);
-@@ -907,7 +934,8 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	if (!compressed)
- 		goto check_next;
- 
--	if (!compr_supported || (node_blk->i.i_inline & F2FS_INLINE_DATA)) {
-+	if (time_to_inject(FAULT_COMPR) || !compr_supported ||
-+			(node_blk->i.i_inline & F2FS_INLINE_DATA)) {
- 		/*
- 		 * The 'compression' flag in i_flags affects the traverse of
- 		 * the node tree.  Thus, it must be fixed unconditionally
-@@ -943,12 +971,13 @@ check_next:
- 			f2fs_set_main_bitmap(sbi, ni->blk_addr,
- 							CURSEG_WARM_NODE);
- 
--			if (i_links == 0 && (ftype == F2FS_FT_CHRDEV ||
-+			if (time_to_inject(FAULT_INODE) ||
-+				(i_links == 0 && (ftype == F2FS_FT_CHRDEV ||
- 				ftype == F2FS_FT_BLKDEV ||
- 				ftype == F2FS_FT_FIFO ||
- 				ftype == F2FS_FT_SOCK ||
- 				ftype == F2FS_FT_SYMLINK ||
--				ftype == F2FS_FT_REG_FILE)) {
-+				ftype == F2FS_FT_REG_FILE))) {
- 				ASSERT_MSG("ino: 0x%x ftype: %d has i_links: %u",
- 							nid, ftype, i_links);
- 				if (c.fix_on) {
-@@ -1008,7 +1037,8 @@ check_next:
- 		if (c.feature & F2FS_FEATURE_EXTRA_ATTR) {
- 			unsigned int isize =
- 				le16_to_cpu(node_blk->i.i_extra_isize);
--			if (isize > 4 * DEF_ADDRS_PER_INODE) {
-+			if (time_to_inject(FAULT_INODE) ||
-+					(isize > 4 * DEF_ADDRS_PER_INODE)) {
- 				ASSERT_MSG("[0x%x] wrong i_extra_isize=0x%x",
- 						nid, isize);
- 				if (c.fix_on) {
-@@ -1038,8 +1068,9 @@ check_next:
- 			unsigned int inline_size =
- 				le16_to_cpu(node_blk->i.i_inline_xattr_size);
- 
--			if (!inline_size ||
--					inline_size > MAX_INLINE_XATTR_SIZE) {
-+			if (time_to_inject(FAULT_INODE) ||
-+					(!inline_size ||
-+					inline_size > MAX_INLINE_XATTR_SIZE)) {
- 				ASSERT_MSG("[0x%x] wrong inline_xattr_size:%u",
- 						nid, inline_size);
- 				if (c.fix_on) {
-@@ -1056,9 +1087,10 @@ check_next:
- 	}
- 	ofs = get_extra_isize(node_blk);
- 
--	if ((node_blk->i.i_flags & cpu_to_le32(F2FS_CASEFOLD_FL)) &&
--	    (!S_ISDIR(le16_to_cpu(node_blk->i.i_mode)) ||
--	     !(c.feature & F2FS_FEATURE_CASEFOLD))) {
-+	if (time_to_inject(FAULT_INODE) ||
-+		 ((node_blk->i.i_flags & cpu_to_le32(F2FS_CASEFOLD_FL)) &&
-+		  (!S_ISDIR(le16_to_cpu(node_blk->i.i_mode)) ||
-+		   !(c.feature & F2FS_FEATURE_CASEFOLD)))) {
- 		ASSERT_MSG("[0x%x] unexpected casefold flag", nid);
- 		if (c.fix_on) {
- 			FIX_MSG("ino[0x%x] clear casefold flag", nid);
-@@ -1077,7 +1109,8 @@ check_next:
- 			qf_szchk_type[cur_qtype] = QF_SZCHK_INLINE;
- 		block_t blkaddr = le32_to_cpu(node_blk->i.i_addr[ofs]);
- 
--		if (blkaddr != NULL_ADDR) {
-+		if (time_to_inject(FAULT_INODE) ||
-+				(blkaddr != NULL_ADDR)) {
- 			ASSERT_MSG("[0x%x] wrong inline reserve blkaddr:%u",
- 					nid, blkaddr);
- 			if (c.fix_on) {
-@@ -1088,7 +1121,8 @@ check_next:
- 				need_fix = 1;
- 			}
- 		}
--		if (i_size > inline_size) {
-+		if (time_to_inject(FAULT_INODE) ||
-+				(i_size > inline_size)) {
- 			ASSERT_MSG("[0x%x] wrong inline size:%lu",
- 					nid, (unsigned long)i_size);
- 			if (c.fix_on) {
-@@ -1118,7 +1152,7 @@ check_next:
- 		block_t blkaddr = le32_to_cpu(node_blk->i.i_addr[ofs]);
- 
- 		DBG(3, "ino[0x%x] has inline dentry!\n", nid);
--		if (blkaddr != 0) {
-+		if (time_to_inject(FAULT_INODE) || (blkaddr != 0)) {
- 			ASSERT_MSG("[0x%x] wrong inline reserve blkaddr:%u",
- 								nid, blkaddr);
- 			if (c.fix_on) {
-@@ -1728,6 +1762,9 @@ static int f2fs_check_hash_code(int encoding, int casefolded,
- 			struct f2fs_dir_entry *dentry,
- 			const unsigned char *name, u32 len, int enc_name)
- {
-+	if (time_to_inject(FAULT_DENTRY))
-+		return 1;
-+
- 	/* Casefolded Encrypted names require a key to compute siphash */
- 	if (enc_name && casefolded)
- 		return 0;
-@@ -1799,7 +1836,8 @@ static int __chk_dots_dentries(struct f2fs_sb_info *sbi,
- 	int fixed = 0;
- 
- 	if ((name[0] == '.' && len == 1)) {
--		if (le32_to_cpu(dentry->ino) != child->p_ino) {
-+		if (time_to_inject(FAULT_DENTRY) ||
-+				(le32_to_cpu(dentry->ino) != child->p_ino)) {
- 			ASSERT_MSG("Bad inode number[0x%x] for '.', parent_ino is [0x%x]\n",
- 				le32_to_cpu(dentry->ino), child->p_ino);
- 			dentry->ino = cpu_to_le32(child->p_ino);
-@@ -1809,13 +1847,16 @@ static int __chk_dots_dentries(struct f2fs_sb_info *sbi,
- 
- 	if (name[0] == '.' && name[1] == '.' && len == 2) {
- 		if (child->p_ino == F2FS_ROOT_INO(sbi)) {
--			if (le32_to_cpu(dentry->ino) != F2FS_ROOT_INO(sbi)) {
-+			if (time_to_inject(FAULT_DENTRY) ||
-+					(le32_to_cpu(dentry->ino) !=
-+					 F2FS_ROOT_INO(sbi))) {
- 				ASSERT_MSG("Bad inode number[0x%x] for '..'\n",
- 					le32_to_cpu(dentry->ino));
- 				dentry->ino = cpu_to_le32(F2FS_ROOT_INO(sbi));
- 				fixed = 1;
- 			}
--		} else if (le32_to_cpu(dentry->ino) != child->pp_ino) {
-+		} else if (time_to_inject(FAULT_DENTRY) ||
-+				(le32_to_cpu(dentry->ino) != child->pp_ino)) {
- 			ASSERT_MSG("Bad inode number[0x%x] for '..', parent parent ino is [0x%x]\n",
- 				le32_to_cpu(dentry->ino), child->pp_ino);
- 			dentry->ino = cpu_to_le32(child->pp_ino);
-@@ -1826,7 +1867,7 @@ static int __chk_dots_dentries(struct f2fs_sb_info *sbi,
- 	if (f2fs_check_hash_code(get_encoding(sbi), casefolded, dentry, name, len, enc_name))
- 		fixed = 1;
- 
--	if (name[len] != '\0') {
-+	if (time_to_inject(FAULT_DENTRY) || (name[len] != '\0')) {
- 		ASSERT_MSG("'.' is not NULL terminated\n");
- 		name[len] = '\0';
- 		memcpy(*filename, name, len);
-@@ -1889,7 +1930,8 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, int casefolded,
- 			i++;
- 			continue;
- 		}
--		if (!IS_VALID_NID(sbi, le32_to_cpu(dentry[i].ino))) {
-+		if (time_to_inject(FAULT_DENTRY) ||
-+				!IS_VALID_NID(sbi, le32_to_cpu(dentry[i].ino))) {
- 			ASSERT_MSG("Bad dentry 0x%x with invalid NID/ino 0x%x",
- 				    i, le32_to_cpu(dentry[i].ino));
- 			if (c.fix_on) {
-@@ -1903,7 +1945,9 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, int casefolded,
- 		}
- 
- 		ftype = dentry[i].file_type;
--		if ((ftype <= F2FS_FT_UNKNOWN || ftype > F2FS_FT_LAST_FILE_TYPE)) {
-+		if (time_to_inject(FAULT_DENTRY) ||
-+				(ftype <= F2FS_FT_UNKNOWN ||
-+				 ftype > F2FS_FT_LAST_FILE_TYPE)) {
- 			ASSERT_MSG("Bad dentry 0x%x with unexpected ftype 0x%x",
- 						le32_to_cpu(dentry[i].ino), ftype);
- 			if (c.fix_on) {
-@@ -1918,7 +1962,8 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, int casefolded,
- 
- 		name_len = le16_to_cpu(dentry[i].name_len);
- 
--		if (name_len == 0 || name_len > F2FS_NAME_LEN) {
-+		if (time_to_inject(FAULT_DENTRY) ||
-+				(name_len == 0 || name_len > F2FS_NAME_LEN)) {
- 			ASSERT_MSG("Bad dentry 0x%x with invalid name_len", i);
- 			if (c.fix_on) {
- 				FIX_MSG("Clear bad dentry 0x%x", i);
-@@ -2153,6 +2198,9 @@ int fsck_chk_data_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 		return 0;
- 	}
- 
-+	if (time_to_inject(FAULT_DATA))
-+		return -EINVAL;
-+
- 	if (!f2fs_is_valid_blkaddr(sbi, blk_addr, DATA_GENERIC)) {
- 		ASSERT_MSG("blkaddress is not valid. [0x%x]", blk_addr);
- 		return -EINVAL;
-diff --git a/fsck/main.c b/fsck/main.c
-index 47ba6c9..29792d8 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -91,6 +91,8 @@ void fsck_usage()
- 	MSG(0, "  --no-kernel-check skips detecting kernel change\n");
- 	MSG(0, "  --kernel-check checks kernel change\n");
- 	MSG(0, "  --debug-cache to debug cache when -c is used\n");
-+	MSG(0, "  --fault_injection=%%d to enable fault injection with specified injection rate\n");
-+	MSG(0, "  --fault_type=%%d to configure enabled fault injection type\n");
- 	exit(1);
- }
- 
-@@ -263,6 +265,8 @@ void f2fs_parse_options(int argc, char *argv[])
- 			{"no-kernel-check", no_argument, 0, 2},
- 			{"kernel-check", no_argument, 0, 3},
- 			{"debug-cache", no_argument, 0, 4},
-+			{"fault_injection", required_argument, 0, 5},
-+			{"fault_type", required_argument, 0, 6},
- 			{0, 0, 0, 0}
- 		};
- 
-@@ -287,6 +291,24 @@ void f2fs_parse_options(int argc, char *argv[])
- 			case 4:
- 				c.cache_config.dbg_en = true;
+ 			if (!f2fs_hw_support_discard(sbi)) {
+-				f2fs_warn(sbi, "device does not support discard");
++				f2fs_warn(NULL, "device does not support discard");
  				break;
-+			case 5:
-+				val = atoi(optarg);
-+				if ((unsigned int)val <= 1) {
-+					MSG(0, "\tError: injection rate must be larger "
-+							"than 1: %d\n", val);
-+					fsck_usage();
-+				}
-+				c.fault_info.inject_rate = val;
-+				c.fault_info.inject_type = F2FS_ALL_FAULT_TYPE;
-+				break;
-+			case 6:
-+				val = atoi(optarg);
-+				if (val >= (1UL << (FAULT_MAX))) {
-+					MSG(0, "\tError: Invalid inject type: %x\n", val);
-+					fsck_usage();
-+				}
-+				c.fault_info.inject_type = val;
-+				break;
- 			case 'a':
- 				c.auto_fix = 1;
- 				MSG(0, "Info: Automatic fix mode enabled.\n");
-diff --git a/fsck/mkquota.c b/fsck/mkquota.c
-index 2451b58..eb63fc9 100644
---- a/fsck/mkquota.c
-+++ b/fsck/mkquota.c
-@@ -372,6 +372,9 @@ errcode_t quota_compare_and_update(struct f2fs_sb_info *sbi,
- 	dict_t *dict = qctx->quota_dict[qtype];
- 	errcode_t err = 0;
+ 			}
+ 			set_opt(sbi, DISCARD);
+@@ -749,7 +757,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ 		break;
+ 	case Opt_noheap:
+ 	case Opt_heap:
+-		f2fs_warn(sbi, "heap/no_heap options were deprecated");
++		f2fs_warn(NULL, "heap/no_heap options were deprecated");
+ 		break;
+ #ifdef CONFIG_F2FS_FS_XATTR
+ 	case Opt_user_xattr:
+@@ -772,7 +780,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ 	case Opt_user_xattr:
+ 	case Opt_inline_xattr:
+ 	case Opt_inline_xattr_size:
+-		f2fs_info(sbi, "%s options not supported", param->key);
++		f2fs_info(NULL, "%s options not supported", param->key);
+ 		break;
+ #endif
+ #ifdef CONFIG_F2FS_FS_POSIX_ACL
+@@ -784,7 +792,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ 		break;
+ #else
+ 	case Opt_acl:
+-		f2fs_info(sbi, "%s options not supported", param->key);
++		f2fs_info(NULL, "%s options not supported", param->key);
+ 		break;
+ #endif
+ 	case Opt_active_logs:
+@@ -838,7 +846,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ 		break;
+ 	case Opt_reserve_root:
+ 		if (test_opt(sbi, RESERVE_ROOT)) {
+-			f2fs_info(sbi, "Preserve previous reserve_root=%u",
++			f2fs_info(NULL, "Preserve previous reserve_root=%u",
+ 				  F2FS_OPTION(sbi).root_reserved_blocks);
+ 		} else {
+ 			F2FS_OPTION(sbi).root_reserved_blocks = result.int_32;
+@@ -870,7 +878,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ #else
+ 	case Opt_fault_injection:
+ 	case Opt_fault_type:
+-		f2fs_info(sbi, "%s options not supported", param->key);
++		f2fs_info(NULL, "%s options not supported", param->key);
+ 		break;
+ #endif
+ 	case Opt_lazytime:
+@@ -933,7 +941,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ 	case Opt_usrjquota:
+ 	case Opt_grpjquota:
+ 	case Opt_prjjquota:
+-		f2fs_info(sbi, "quota operations not supported");
++		f2fs_info(NULL, "quota operations not supported");
+ 		break;
+ #endif
+ 	case Opt_alloc:
+@@ -951,7 +959,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ #ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
+ 		set_opt(sbi, INLINECRYPT);
+ #else
+-		f2fs_info(sbi, "inline encryption not supported");
++		f2fs_info(NULL, "inline encryption not supported");
+ #endif
+ 		break;
+ 	case Opt_checkpoint:
+@@ -991,7 +999,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	case Opt_compress_algorithm:
+ 		if (!f2fs_sb_has_compression(sbi)) {
+-			f2fs_info(sbi, "Image doesn't support compression");
++			f2fs_info(NULL, "Image doesn't support compression");
+ 			break;
+ 		}
+ 		name = param->string;
+@@ -1000,7 +1008,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ 			F2FS_OPTION(sbi).compress_level = 0;
+ 			F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZO;
+ #else
+-			f2fs_info(sbi, "kernel doesn't support lzo compression");
++			f2fs_info(NULL, "kernel doesn't support lzo compression");
+ #endif
+ 		} else if (!strncmp(name, "lz4", 3)) {
+ #ifdef CONFIG_F2FS_FS_LZ4
+@@ -1009,7 +1017,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ 				return -EINVAL;
+ 			F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZ4;
+ #else
+-			f2fs_info(sbi, "kernel doesn't support lz4 compression");
++			f2fs_info(NULL, "kernel doesn't support lz4 compression");
+ #endif
+ 		} else if (!strncmp(name, "zstd", 4)) {
+ #ifdef CONFIG_F2FS_FS_ZSTD
+@@ -1018,26 +1026,26 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ 				return -EINVAL;
+ 			F2FS_OPTION(sbi).compress_algorithm = COMPRESS_ZSTD;
+ #else
+-			f2fs_info(sbi, "kernel doesn't support zstd compression");
++			f2fs_info(NULL, "kernel doesn't support zstd compression");
+ #endif
+ 		} else if (!strcmp(name, "lzo-rle")) {
+ #ifdef CONFIG_F2FS_FS_LZORLE
+ 			F2FS_OPTION(sbi).compress_level = 0;
+ 			F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZORLE;
+ #else
+-			f2fs_info(sbi, "kernel doesn't support lzorle compression");
++			f2fs_info(NULL, "kernel doesn't support lzorle compression");
+ #endif
+ 		} else
+ 			return -EINVAL;
+ 		break;
+ 	case Opt_compress_log_size:
+ 		if (!f2fs_sb_has_compression(sbi)) {
+-			f2fs_info(sbi, "Image doesn't support compression");
++			f2fs_info(NULL, "Image doesn't support compression");
+ 			break;
+ 		}
+ 		if (result.uint_32 < MIN_COMPRESS_LOG_SIZE ||
+ 		    result.uint_32 > MAX_COMPRESS_LOG_SIZE) {
+-			f2fs_err(sbi,
++			f2fs_err(NULL,
+ 				"Compress cluster log size is out of range");
+ 			return -EINVAL;
+ 		}
+@@ -1045,7 +1053,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ 		break;
+ 	case Opt_compress_extension:
+ 		if (!f2fs_sb_has_compression(sbi)) {
+-			f2fs_info(sbi, "Image doesn't support compression");
++			f2fs_info(NULL, "Image doesn't support compression");
+ 			break;
+ 		}
+ 		name = param->string;
+@@ -1054,7 +1062,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
  
-+	if (time_to_inject(FAULT_QUOTA))
-+		return -EINVAL;
-+
- 	if (!dict)
- 		goto out;
+ 		if (strlen(name) >= F2FS_EXTENSION_LEN ||
+ 		    ext_cnt >= COMPRESS_EXT_NUM) {
+-			f2fs_err(sbi, "invalid extension length/number");
++			f2fs_err(NULL, "invalid extension length/number");
+ 			return -EINVAL;
+ 		}
  
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index bb40adc..3e1056c 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -1476,6 +1476,33 @@ enum {
- 	F2FS_FEATURE_NAT_BITS = 0x0001,
- };
+@@ -1068,7 +1076,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ 		break;
+ 	case Opt_nocompress_extension:
+ 		if (!f2fs_sb_has_compression(sbi)) {
+-			f2fs_info(sbi, "Image doesn't support compression");
++			f2fs_info(NULL, "Image doesn't support compression");
+ 			break;
+ 		}
+ 		name = param->string;
+@@ -1077,7 +1085,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
  
-+/* Fault inject control */
-+enum {
-+	FAULT_SEG_TYPE,
-+	FAULT_SUM_TYPE,
-+	FAULT_SUM_ENT,
-+	FAULT_NAT,
-+	FAULT_NODE,
-+	FAULT_XATTR_ENT,
-+	FAULT_COMPR,
-+	FAULT_INODE,
-+	FAULT_DENTRY,
-+	FAULT_DATA,
-+	FAULT_QUOTA,
-+	FAULT_MAX
-+};
-+
-+#define F2FS_ALL_FAULT_TYPE	((1UL << (FAULT_MAX)) - 1)
-+
-+struct f2fs_fault_info {
-+	int inject_ops;
-+	int inject_rate;
-+	unsigned int inject_type;
-+};
-+
-+extern const char *f2fs_fault_name[FAULT_MAX];
-+#define IS_FAULT_SET(fi, type) ((fi)->inject_type & (1UL << (type)))
-+
- struct f2fs_configuration {
- 	uint32_t conf_reserved_sections;
- 	uint32_t reserved_segments;
-@@ -1604,6 +1631,9 @@ struct f2fs_configuration {
- 		struct f2fs_journal nat_jnl;
- 		char nat_bytes[F2FS_MAX_BLKSIZE];
- 	};
-+
-+	/* Fault injection control */
-+	struct f2fs_fault_info fault_info;
- };
+ 		if (strlen(name) >= F2FS_EXTENSION_LEN ||
+ 			noext_cnt >= COMPRESS_EXT_NUM) {
+-			f2fs_err(sbi, "invalid extension length/number");
++			f2fs_err(NULL, "invalid extension length/number");
+ 			return -EINVAL;
+ 		}
  
- extern int utf8_to_utf16(char *, const char *, size_t, size_t);
-@@ -2131,4 +2161,28 @@ static inline void check_block_struct_sizes(void)
- 			+ NR_DENTRY_IN_BLOCK * F2FS_SLOT_LEN * sizeof(u8) == F2FS_BLKSIZE);
- }
+@@ -1091,21 +1099,21 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ 		break;
+ 	case Opt_compress_chksum:
+ 		if (!f2fs_sb_has_compression(sbi)) {
+-			f2fs_info(sbi, "Image doesn't support compression");
++			f2fs_info(NULL, "Image doesn't support compression");
+ 			break;
+ 		}
+ 		F2FS_OPTION(sbi).compress_chksum = true;
+ 		break;
+ 	case Opt_compress_mode:
+ 		if (!f2fs_sb_has_compression(sbi)) {
+-			f2fs_info(sbi, "Image doesn't support compression");
++			f2fs_info(NULL, "Image doesn't support compression");
+ 			break;
+ 		}
+ 		F2FS_OPTION(sbi).compress_mode = result.uint_32;
+ 		break;
+ 	case Opt_compress_cache:
+ 		if (!f2fs_sb_has_compression(sbi)) {
+-			f2fs_info(sbi, "Image doesn't support compression");
++			f2fs_info(NULL, "Image doesn't support compression");
+ 			break;
+ 		}
+ 		set_opt(sbi, COMPRESS_CACHE);
+@@ -1118,7 +1126,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+ 	case Opt_compress_chksum:
+ 	case Opt_compress_mode:
+ 	case Opt_compress_cache:
+-		f2fs_info(sbi, "compression options not supported");
++		f2fs_info(NULL, "compression options not supported");
+ 		break;
+ #endif
+ 	case Opt_atgc:
+@@ -1203,17 +1211,17 @@ static int f2fs_validate_options(struct f2fs_sb_info *sbi)
+ 		return -EINVAL;
+ #else
+ 	if (f2fs_sb_has_quota_ino(sbi) && !f2fs_readonly(sbi->sb)) {
+-		f2fs_info(sbi, "Filesystem with quota feature cannot be mounted RDWR without CONFIG_QUOTA");
++		f2fs_info(NULL, "Filesystem with quota feature cannot be mounted RDWR without CONFIG_QUOTA");
+ 		return -EINVAL;
+ 	}
+ 	if (f2fs_sb_has_project_quota(sbi) && !f2fs_readonly(sbi->sb)) {
+-		f2fs_err(sbi, "Filesystem with project quota feature cannot be mounted RDWR without CONFIG_QUOTA");
++		f2fs_err(NULL, "Filesystem with project quota feature cannot be mounted RDWR without CONFIG_QUOTA");
+ 		return -EINVAL;
+ 	}
+ #endif
  
-+/* Fault inject control */
-+#define time_to_inject(type) __time_to_inject(type, __func__, \
-+					__builtin_return_address(0))
-+static inline bool __time_to_inject(int type, const char *func,
-+		const char *parent_func)
-+{
-+	struct f2fs_fault_info *ffi = &c.fault_info;
-+
-+	if (!ffi->inject_rate)
-+		return false;
-+
-+	if (!IS_FAULT_SET(ffi, type))
-+		return false;
-+
-+	ffi->inject_ops++;
-+	if (ffi->inject_ops >= ffi->inject_rate) {
-+		ffi->inject_ops = 0;
-+		MSG(0, "inject %s in %s of %p\n",
-+				f2fs_fault_name[type], func, parent_func);
-+		return true;
-+	}
-+	return false;
-+}
-+
- #endif	/*__F2FS_FS_H */
-diff --git a/man/fsck.f2fs.8 b/man/fsck.f2fs.8
-index e39a846..3762e6d 100644
---- a/man/fsck.f2fs.8
-+++ b/man/fsck.f2fs.8
-@@ -67,6 +67,42 @@ Enable to show every directory entries in the partition.
- Specify the level of debugging options.
- The default number is 0, which shows basic debugging messages.
- .TP
-+.BI \-\-fault_injection=%d " enable fault injection"
-+Enable fault injection in all supported types with specified injection rate.
-+.TP
-+.BI \-\-fault_type=%d " configure fault injection type"
-+Support configuring fault injection type, should be enabled with
-+fault_injection option, fault type value is shown below, it supports
-+single or combined type.
-+.br
-+===========================      ===========
-+.br
-+Type_Name                        Type_Value
-+.br
-+===========================      ===========
-+.br
-+FAULT_SEG_TYPE                   0x000000001
-+.br
-+FAULT_SUM_TYPE                   0x000000002
-+.br
-+FAULT_SUM_ENT                    0x000000004
-+.br
-+FAULT_NAT                        0x000000008
-+.br
-+FAULT_NODE                       0x000000010
-+.br
-+FAULT_XATTR_ENT                  0x000000020
-+.br
-+FAULT_COMPR                      0x000000040
-+.br
-+FAULT_INODE                      0x000000080
-+.br
-+FAULT_DENTRY                     0x000000100
-+.br
-+FAULT_DATA                       0x000000200
-+.br
-+FAULT_QUOTA                      0x000000400
-+.TP
- .SH AUTHOR
- Initial checking code was written by Byoung Geun Kim <bgbg.kim@samsung.com>.
- Jaegeuk Kim <jaegeuk@kernel.org> reworked most parts of the codes to support
+ 	if (!IS_ENABLED(CONFIG_UNICODE) && f2fs_sb_has_casefold(sbi)) {
+-		f2fs_err(sbi,
++		f2fs_err(NULL,
+ 			"Filesystem with casefold feature cannot be mounted without CONFIG_UNICODE");
+ 		return -EINVAL;
+ 	}
+@@ -1227,24 +1235,24 @@ static int f2fs_validate_options(struct f2fs_sb_info *sbi)
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 		if (F2FS_OPTION(sbi).discard_unit !=
+ 						DISCARD_UNIT_SECTION) {
+-			f2fs_info(sbi, "Zoned block device doesn't need small discard, set discard_unit=section by default");
++			f2fs_info(NULL, "Zoned block device doesn't need small discard, set discard_unit=section by default");
+ 			F2FS_OPTION(sbi).discard_unit =
+ 					DISCARD_UNIT_SECTION;
+ 		}
+ 
+ 		if (F2FS_OPTION(sbi).fs_mode != FS_MODE_LFS) {
+-			f2fs_info(sbi, "Only lfs mode is allowed with zoned block device feature");
++			f2fs_info(NULL, "Only lfs mode is allowed with zoned block device feature");
+ 			return -EINVAL;
+ 		}
+ #else
+-		f2fs_err(sbi, "Zoned block device support is not enabled");
++		f2fs_err(NULL, "Zoned block device support is not enabled");
+ 		return -EINVAL;
+ #endif
+ 	}
+ 
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	if (f2fs_test_compress_extension(sbi)) {
+-		f2fs_err(sbi, "invalid compress or nocompress extension");
++		f2fs_err(NULL, "invalid compress or nocompress extension");
+ 		return -EINVAL;
+ 	}
+ #endif
+@@ -1254,11 +1262,11 @@ static int f2fs_validate_options(struct f2fs_sb_info *sbi)
+ 
+ 		if (!f2fs_sb_has_extra_attr(sbi) ||
+ 			!f2fs_sb_has_flexible_inline_xattr(sbi)) {
+-			f2fs_err(sbi, "extra_attr or flexible_inline_xattr feature is off");
++			f2fs_err(NULL, "extra_attr or flexible_inline_xattr feature is off");
+ 			return -EINVAL;
+ 		}
+ 		if (!test_opt(sbi, INLINE_XATTR)) {
+-			f2fs_err(sbi, "inline_xattr_size option should be set with inline_xattr option");
++			f2fs_err(NULL, "inline_xattr_size option should be set with inline_xattr option");
+ 			return -EINVAL;
+ 		}
+ 
+@@ -1267,24 +1275,24 @@ static int f2fs_validate_options(struct f2fs_sb_info *sbi)
+ 
+ 		if (F2FS_OPTION(sbi).inline_xattr_size < min_size ||
+ 				F2FS_OPTION(sbi).inline_xattr_size > max_size) {
+-			f2fs_err(sbi, "inline xattr size is out of range: %d ~ %d",
++			f2fs_err(NULL, "inline xattr size is out of range: %d ~ %d",
+ 				 min_size, max_size);
+ 			return -EINVAL;
+ 		}
+ 	}
+ 
+ 	if (test_opt(sbi, ATGC) && f2fs_lfs_mode(sbi)) {
+-		f2fs_err(sbi, "LFS is not compatible with ATGC");
++		f2fs_err(NULL, "LFS is not compatible with ATGC");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (f2fs_is_readonly(sbi) && test_opt(sbi, FLUSH_MERGE)) {
+-		f2fs_err(sbi, "FLUSH_MERGE not compatible with readonly mode");
++		f2fs_err(NULL, "FLUSH_MERGE not compatible with readonly mode");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (f2fs_sb_has_readonly(sbi) && !f2fs_readonly(sbi->sb)) {
+-		f2fs_err(sbi, "Allow to mount readonly mode only");
++		f2fs_err(NULL, "Allow to mount readonly mode only");
+ 		return -EROFS;
+ 	}
+ 
 -- 
-2.49.0.805.g082f7c87e0-goog
+2.47.0
 
 
 
