@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A862EC369D3
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Apr 2025 16:36:18 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BE507C369AB
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Apr 2025 17:38:31 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1u6u80-0007ix-Ic;
-	Mon, 21 Apr 2025 16:36:17 +0000
+	id 1u6v6E-0004VL-8V;
+	Mon, 21 Apr 2025 17:38:30 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lkp@intel.com>) id 1u6u7x-0007ia-C6
+ (envelope-from <lkp@intel.com>) id 1u6v65-0004V9-3W
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Apr 2025 16:36:14 +0000
+ Mon, 21 Apr 2025 17:38:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+xVhiIynlBbUjSvg+sRBr0begU4s2nH1Pst1br8v3RM=; b=VymexYtetHCGBIaa/Aq/ZjaPLH
- julJIcd6qoxl78qWug6IppOxV4dDRZEaohiYd1a0ONJOhH72HZyI6a7Myj89EbUOUoXMqY2wRz5g1
- FTgrVp9TfQzL3N9iH4XmGXXeiQwr8tSz1Y3WX9NsWwDxGh0qD353E97cL0U6PaaWK7xE=;
+ bh=qah0APVMSGihWRkEoheRa7TGqitqLm7tW0/D3xcCG7s=; b=fqdQbv/Y8/phhHAtzHVniMUlie
+ 3ChJo2FdiW2XBo5Vp8u+AO+gLUnWGm3vxM9+SV5BEzuzqf67M//7JgW4lMn14htAJ7aaUAAIu3Suv
+ 4whBbRxzO0bU8waXu+OpnRENzzh+MQ3PUE67O5MxEYp2ObaAXS1NyYz4jGENFyVvxlso=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,51 +33,51 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+xVhiIynlBbUjSvg+sRBr0begU4s2nH1Pst1br8v3RM=; b=eVXy1Sg6TNv4zEBa6T8trjFClA
- lhWwpPTRQCO+5PLGPOVk63ovue/OnTwbNShXpfn0pQt00ROZXVRMEYMuPaUtc5F/EwpKMBaikNQ8v
- SRrTEtbg8PrArWfWXTTi/7CQ8xo+KnSju7oF3w7ZG5KtuSNLaMSNyZlB8y3xAv0J1ENU=;
-Received: from mgamail.intel.com ([192.198.163.7])
+ bh=qah0APVMSGihWRkEoheRa7TGqitqLm7tW0/D3xcCG7s=; b=TQb0ujl5bLxs1jNqIyqdXklO5X
+ s3Sy8vG5sunIvYRoBA6HSEjoKL2yX6DzZLWTJtUv4vAGe8G+gAD2iMQb6+4dulDdGwZpAbXuMSinO
+ ly7f5ANuAMvuNx6qA+Ytv9cwCj6wsSfg17Z5G/MmOHNpE/zOBaOurYutTNfx3JGH/nmc=;
+Received: from mgamail.intel.com ([192.198.163.19])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1u6u7e-0001wz-Gf for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Apr 2025 16:36:14 +0000
+ id 1u6v5l-0005C5-UY for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Apr 2025 17:38:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1745253355; x=1776789355;
+ t=1745257082; x=1776793082;
  h=date:from:to:cc:subject:message-id:references:
  mime-version:in-reply-to;
- bh=BIzR/H1F8de4lehses21qFDRgo7tYE5kewNC7o51Z8s=;
- b=ILqtitmJrX/OVEc729nwrvJrxUcclld2b/OQT4i4cmflyD/sxZyiHvqO
- FQqPcniyRCZEcp9v6urajXbdm6uN0U326gZIhAb70fkNhu1a5KIQq+hVl
- tLAhXES6TyLr9eLWgUMc1TZqw1uMxMLtFxtf7cqOhY9p3xVxbvWKmsNSo
- qnnb8cyI5sT4WYvhTdKHjl+VSn7wgv5E7GCQrGjuJAt7GH5CJFhGPxkEt
- ihuHELoxiuiRYdYUuAcwQK3VAgJEqkgfLNvnm+Wa88XCT8y+JMu8hK0Fd
- s9U+r6Jy4EeDNkcE9vF+e2+4sBcgxMXRqOrhzycCMdDA3g7VMsZsmqt/t w==;
-X-CSE-ConnectionGUID: cMvxyUjJQLC+NT2LyRvr6A==
-X-CSE-MsgGUID: lQQcNCVaTJ+Zjiob8tV8lA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11410"; a="72183694"
-X-IronPort-AV: E=Sophos;i="6.15,228,1739865600"; d="scan'208";a="72183694"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 21 Apr 2025 09:35:44 -0700
-X-CSE-ConnectionGUID: Wh3D6qZUReScpja4mF35IQ==
-X-CSE-MsgGUID: 7PHXhzACSmiMwrQIePfuug==
+ bh=hooNiE6G7aVzSxlQfny0qh3eg6eQAhLJzoFCEHR1JR4=;
+ b=G2yV605Ia9alSA3LndjrRlmL6cfbsiouMqIiI9fLzhgUbYYEd7RcrWFO
+ 8TJMbVBwWl9j2LyhfOXMIwTJoEK0nG3KLg/JnsqtXyK3Hv4E5NBPxwZXZ
+ OTLbjICcgw0OgK4Bxt7Te5X1fYAUPw/XxU9HPELOK4Mcno69sBx8iP01i
+ FGfTgpmw1StKeA9kSfal/A1lP8IBgSvuP3pu75WoUayu/HoZfuNzMIfo1
+ VAi3tR79C0JD2PvZxMf28E8hme/P2nVBpqCnDiLq1g6uJlb7visNV5arv
+ fKCHmjFFb+QJUPXVNFrB8B8b36h+u7Cpog8GB2n7FkQcK1JjZhoDEMcwM A==;
+X-CSE-ConnectionGUID: N1d52bHiRpG8hLb3aZrizQ==
+X-CSE-MsgGUID: zR3LyWiVT1GASTFrZj4cVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11410"; a="45917068"
+X-IronPort-AV: E=Sophos;i="6.15,228,1739865600"; d="scan'208";a="45917068"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 21 Apr 2025 10:37:51 -0700
+X-CSE-ConnectionGUID: vNevb/ajSuu3HXlb4a8tyg==
+X-CSE-MsgGUID: cp6oC69sSYe/C/r9kCaF1A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,228,1739865600"; d="scan'208";a="132726322"
+X-IronPort-AV: E=Sophos;i="6.15,228,1739865600"; d="scan'208";a="136876064"
 Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
- by orviesa008.jf.intel.com with ESMTP; 21 Apr 2025 09:35:41 -0700
+ by fmviesa004.fm.intel.com with ESMTP; 21 Apr 2025 10:37:48 -0700
 Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
- (envelope-from <lkp@intel.com>) id 1u6u7P-0000El-1V;
- Mon, 21 Apr 2025 16:35:39 +0000
-Date: Tue, 22 Apr 2025 00:34:53 +0800
+ (envelope-from <lkp@intel.com>) id 1u6v5W-0000HV-0d;
+ Mon, 21 Apr 2025 17:37:46 +0000
+Date: Tue, 22 Apr 2025 01:37:44 +0800
 From: kernel test robot <lkp@intel.com>
 To: Eric Sandeen <sandeen@redhat.com>, linux-f2fs-devel@lists.sourceforge.net
-Message-ID: <202504220033.8EDCfvWU-lkp@intel.com>
+Message-ID: <202504220139.19wajgtO-lkp@intel.com>
 References: <20250420154647.1233033-6-sandeen@redhat.com>
 MIME-Version: 1.0
 Content-Disposition: inline
 In-Reply-To: <20250420154647.1233033-6-sandeen@redhat.com>
-X-Headers-End: 1u6u7e-0001wz-Gf
+X-Headers-End: 1u6v5l-0005C5-UY
 Subject: Re: [f2fs-dev] [PATCH 5/7] f2fs: separate the options parsing and
  options checking
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -100,10 +100,10 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hi Eric,
 
-kernel test robot noticed the following build warnings:
+kernel test robot noticed the following build errors:
 
-[auto build test WARNING on v6.15-rc3]
-[also build test WARNING on linus/master]
+[auto build test ERROR on v6.15-rc3]
+[also build test ERROR on linus/master]
 [cannot apply to jaegeuk-f2fs/dev-test jaegeuk-f2fs/dev next-20250417]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
@@ -113,34 +113,32 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Eric-Sandeen/f2fs-Add-fs-
 base:   v6.15-rc3
 patch link:    https://lore.kernel.org/r/20250420154647.1233033-6-sandeen%40redhat.com
 patch subject: [PATCH 5/7] f2fs: separate the options parsing and options checking
-config: arc-randconfig-001-20250421 (https://download.01.org/0day-ci/archive/20250422/202504220033.8EDCfvWU-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250422/202504220033.8EDCfvWU-lkp@intel.com/reproduce)
+config: i386-buildonly-randconfig-005-20250421 (https://download.01.org/0day-ci/archive/20250422/202504220139.19wajgtO-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250422/202504220139.19wajgtO-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504220033.8EDCfvWU-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504220139.19wajgtO-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
    In file included from include/linux/printk.h:7,
-                    from include/asm-generic/bug.h:22,
-                    from arch/arc/include/asm/bug.h:30,
-                    from include/linux/bug.h:5,
-                    from include/linux/thread_info.h:13,
-                    from include/asm-generic/preempt.h:5,
-                    from ./arch/arc/include/generated/asm/preempt.h:1,
-                    from include/linux/preempt.h:79,
-                    from include/linux/spinlock.h:56,
-                    from include/linux/mmzone.h:8,
-                    from include/linux/gfp.h:7,
-                    from include/linux/umh.h:4,
-                    from include/linux/kmod.h:9,
-                    from include/linux/module.h:17,
+                    from include/linux/kernel.h:31,
+                    from include/linux/cpumask.h:11,
+                    from arch/x86/include/asm/cpumask.h:5,
+                    from arch/x86/include/asm/msr.h:11,
+                    from arch/x86/include/asm/tsc.h:10,
+                    from arch/x86/include/asm/timex.h:6,
+                    from include/linux/timex.h:67,
+                    from include/linux/time32.h:13,
+                    from include/linux/time.h:60,
+                    from include/linux/stat.h:19,
+                    from include/linux/module.h:13,
                     from fs/f2fs/super.c:8:
    fs/f2fs/super.c: In function 'handle_mount_opt':
->> include/linux/kern_levels.h:5:25: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'unsigned int' [-Wformat=]
+   include/linux/kern_levels.h:5:25: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'unsigned int' [-Wformat=]
        5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
          |                         ^~~~~~
    include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
@@ -152,17 +150,134 @@ All warnings (new ones prefixed by >>):
    fs/f2fs/super.c:763:25: note: in expansion of macro 'f2fs_err'
      763 |                         f2fs_err(NULL, "inline xattr size is out of range: %lu ~ %lu",
          |                         ^~~~~~~~
-   fs/f2fs/super.c:718:15: warning: unused variable 'name' [-Wunused-variable]
-     718 |         char *name;
-         |               ^~~~
+   fs/f2fs/super.c: In function 'f2fs_check_quota_consistency':
+>> fs/f2fs/super.c:1285:27: error: 'sbi' undeclared (first use in this function); did you mean 'sb'?
+    1285 |         if (f2fs_readonly(sbi->sb))
+         |                           ^~~
+         |                           sb
+   fs/f2fs/super.c:1285:27: note: each undeclared identifier is reported only once for each function it appears in
 
 
-vim +5 include/linux/kern_levels.h
+vim +1285 fs/f2fs/super.c
 
-314ba3520e513a7 Joe Perches 2012-07-30  4  
-04d2c8c83d0e3ac Joe Perches 2012-07-30 @5  #define KERN_SOH	"\001"		/* ASCII Start Of Header */
-04d2c8c83d0e3ac Joe Perches 2012-07-30  6  #define KERN_SOH_ASCII	'\001'
-04d2c8c83d0e3ac Joe Perches 2012-07-30  7  
+  1182	
+  1183	/*
+  1184	 * Check quota settings consistency.
+  1185	 */
+  1186	static int f2fs_check_quota_consistency(struct fs_context *fc,
+  1187						struct super_block *sb)
+  1188	{
+  1189	 #ifdef CONFIG_QUOTA
+  1190		struct f2fs_fs_context *ctx = fc->fs_private;
+  1191		struct f2fs_sb_info *sbi = F2FS_SB(sb);
+  1192		bool quota_feature = f2fs_sb_has_quota_ino(sbi);
+  1193		bool quota_turnon = sb_any_quota_loaded(sb);
+  1194		char *old_qname, *new_qname;
+  1195		bool usr_qf_name, grp_qf_name, prj_qf_name, usrquota, grpquota, prjquota;
+  1196		int i;
+  1197	
+  1198		/*
+  1199		 * We do the test below only for project quotas. 'usrquota' and
+  1200		 * 'grpquota' mount options are allowed even without quota feature
+  1201		 * to support legacy quotas in quota files.
+  1202		 */
+  1203		if (ctx_test_opt(ctx, F2FS_MOUNT_PRJQUOTA) &&
+  1204				!f2fs_sb_has_project_quota(sbi)) {
+  1205			f2fs_err(sbi, "Project quota feature not enabled. Cannot enable project quota enforcement.");
+  1206			return -EINVAL;
+  1207		}
+  1208	
+  1209		if (ctx->qname_mask) {
+  1210			for (i = 0; i < MAXQUOTAS; i++) {
+  1211				if (!(ctx->qname_mask & (1 << i)))
+  1212					continue;
+  1213	
+  1214				old_qname = F2FS_OPTION(sbi).s_qf_names[i];
+  1215				new_qname = F2FS_CTX_INFO(ctx).s_qf_names[i];
+  1216				if (quota_turnon &&
+  1217					!!old_qname != !!new_qname)
+  1218					goto err_jquota_change;
+  1219	
+  1220				if (old_qname) {
+  1221					if (strcmp(old_qname, new_qname) == 0) {
+  1222						ctx->qname_mask &= ~(1 << i);
+  1223						continue;
+  1224					}
+  1225					goto err_jquota_specified;
+  1226				}
+  1227	
+  1228				if (quota_feature) {
+  1229					f2fs_info(sbi, "QUOTA feature is enabled, so ignore qf_name");
+  1230					ctx->qname_mask &= ~(1 << i);
+  1231					kfree(F2FS_CTX_INFO(ctx).s_qf_names[i]);
+  1232					F2FS_CTX_INFO(ctx).s_qf_names[i] = NULL;
+  1233				}
+  1234			}
+  1235		}
+  1236	
+  1237		/* Make sure we don't mix old and new quota format */
+  1238		usr_qf_name = F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
+  1239				F2FS_CTX_INFO(ctx).s_qf_names[USRQUOTA];
+  1240		grp_qf_name = F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
+  1241				F2FS_CTX_INFO(ctx).s_qf_names[GRPQUOTA];
+  1242		prj_qf_name = F2FS_OPTION(sbi).s_qf_names[PRJQUOTA] ||
+  1243				F2FS_CTX_INFO(ctx).s_qf_names[PRJQUOTA];
+  1244		usrquota = test_opt(sbi, USRQUOTA) ||
+  1245				ctx_test_opt(ctx, F2FS_MOUNT_USRQUOTA);
+  1246		grpquota = test_opt(sbi, GRPQUOTA) ||
+  1247				ctx_test_opt(ctx, F2FS_MOUNT_GRPQUOTA);
+  1248		prjquota = test_opt(sbi, PRJQUOTA) ||
+  1249				ctx_test_opt(ctx, F2FS_MOUNT_PRJQUOTA);
+  1250	
+  1251		if (usr_qf_name) {
+  1252			ctx_clear_opt(ctx, F2FS_MOUNT_USRQUOTA);
+  1253			usrquota = false;
+  1254		}
+  1255		if (grp_qf_name) {
+  1256			ctx_clear_opt(ctx, F2FS_MOUNT_GRPQUOTA);
+  1257			grpquota = false;
+  1258		}
+  1259		if (prj_qf_name) {
+  1260			ctx_clear_opt(ctx, F2FS_MOUNT_PRJQUOTA);
+  1261			prjquota = false;
+  1262		}
+  1263		if (usr_qf_name || grp_qf_name || prj_qf_name) {
+  1264			if (grpquota || usrquota || prjquota) {
+  1265				f2fs_err(sbi, "old and new quota format mixing");
+  1266				return -EINVAL;
+  1267			}
+  1268			if (!(ctx->spec_mask & F2FS_SPEC_jqfmt ||
+  1269					F2FS_OPTION(sbi).s_jquota_fmt)) {
+  1270				f2fs_err(sbi, "journaled quota format not specified");
+  1271				return -EINVAL;
+  1272			}
+  1273		}
+  1274		return 0;
+  1275	
+  1276	err_jquota_change:
+  1277		f2fs_err(sbi, "Cannot change journaled quota options when quota turned on");
+  1278		return -EINVAL;
+  1279	err_jquota_specified:
+  1280		f2fs_err(sbi, "%s quota file already specified",
+  1281			 QTYPE2NAME(i));
+  1282		return -EINVAL;
+  1283	
+  1284	#else
+> 1285		if (f2fs_readonly(sbi->sb))
+  1286			return 0;
+  1287		if (f2fs_sb_has_quota_ino(sbi)) {
+  1288			f2fs_info(sbi, "Filesystem with quota feature cannot be mounted RDWR without CONFIG_QUOTA");
+  1289			return -EINVAL;
+  1290		}
+  1291		if (f2fs_sb_has_project_quota(sbi)) {
+  1292			f2fs_err(sbi, "Filesystem with project quota feature cannot be mounted RDWR without CONFIG_QUOTA");
+  1293			return -EINVAL;
+  1294		}
+  1295	
+  1296		return 0;
+  1297	#endif
+  1298	}
+  1299	
 
 -- 
 0-DAY CI Kernel Test Service
