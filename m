@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 89D76C369D8
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A933EC369D9
 	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Apr 2025 13:51:48 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1u7wzT-0002D0-Nr;
+	id 1u7wzU-00044f-9u;
 	Thu, 24 Apr 2025 13:51:48 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sandeen@redhat.com>) id 1u7wzS-0002Ct-2n
+ (envelope-from <sandeen@redhat.com>) id 1u7wzS-00044W-5C
  for linux-f2fs-devel@lists.sourceforge.net;
  Thu, 24 Apr 2025 13:51:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=20X8W8gEmww41Q7n61pHQxjGF1NcC1fUPUqP1znWNZ8=; b=HCJoxMjlBpbFoDxK64IKMfF1HA
- +c3eZnkI0tZOeHoh8QH5rRCVrt8fv7Tkhof8CftGkuK9w9zKPKPAuUdkpjkpuq2e6xOuNYk+VD2Nb
- SvIIMKovneYCn2lzYpEZBVPFBsG/IvIGX8b9KO+PRBjzm54n2/UDXNxO9b7sycmCb1kY=;
+ bh=udKMH1CU1t2Ev+wjCTCy32K3ZTMMah0I4lS2t0dApE0=; b=m2plCnpwg4kscUDV7tcPbj6TrF
+ Ld+dQTbddnxPGwmqi5eGj+QjgeVidEDcrnmffm4roahC+zxLdkKSPEmFRrmBXF0BmMqtek6WfEc2x
+ pR3pYOoEVGkk1vYCJBUnhA/9ZKwnE+HNhujrqeh0aF94rXGECN63o+T4H1Zdo4mq/0cI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=content-type:Content-Transfer-Encoding:MIME-Version:References:
@@ -33,79 +33,79 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=20X8W8gEmww41Q7n61pHQxjGF1NcC1fUPUqP1znWNZ8=; b=BtWu4P1N4wGA0lt4FXnr9HMrdC
- UXsNcfy0qmQltYhStKM3/tFXHLt8bL0LNPBp4kFL2gSKnND+9F7DUk8fwEOgBR3enLFqH5DnTKnwO
- WGqhtC0BqaguXtMJf8qqJDW7Zx0vrbh7H413mFWaOo+O0Af7Afl0MN1pewQOcaH6CErM=;
+ bh=udKMH1CU1t2Ev+wjCTCy32K3ZTMMah0I4lS2t0dApE0=; b=h4LFjMkNbpCBHPzoilyXLMPzQ2
+ CUkihuxfprA9MqRqZjF4eNAxne1wfmM9taypvG19MyayuoFwf8wy1kgEQ+x1EzNtuVVqeCuim0RHN
+ yp7362HHvOAZN+rUFRhlUOZ9nm8PgGaP1Ib4PGAEP/2IPAPMnQ/zpSB9dgoQKhbxapSU=;
 Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.95)
- id 1u7wzC-0000nY-LV for linux-f2fs-devel@lists.sourceforge.net;
+ id 1u7wzC-0000nX-DO for linux-f2fs-devel@lists.sourceforge.net;
  Thu, 24 Apr 2025 13:51:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1745502669;
+ s=mimecast20190719; t=1745502674;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=20X8W8gEmww41Q7n61pHQxjGF1NcC1fUPUqP1znWNZ8=;
- b=Y9lvVRhnIQv4sZEYPjw40bX4+DX5NFJeU1Na+i/8dOsFQ9MegT8eo6yMrGzmBK/gm5Ethk
- 2w0XuEw6xSRAYJJh2DFpl+bo3gAgDtHuZtRyeTUcTxkcTaabuiO1tD75ueqg8SlQAiR7PP
- 17mgWfccqEaRp9ItJtG5nYKRtFW247c=
-Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com
- [209.85.210.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=udKMH1CU1t2Ev+wjCTCy32K3ZTMMah0I4lS2t0dApE0=;
+ b=i0wJoZiJfSZAn1Sr8xnmDuY0YUULgKE9s3lOAV3zev2cizF3DC6//CEE9hveR5haT76fmv
+ AuKYg8mnG+GWZ5de8ne/gioFPLYxo2t9EK67VZ0a0kvxMnY0nwB9yW78hLd8gwo/zSrSIV
+ ClikhkCluReo7rrmwoRndyj4yQAppQ8=
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
+ [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-549-NzWH1fWAMGC_6EDGtlaatQ-1; Thu, 24 Apr 2025 09:51:08 -0400
-X-MC-Unique: NzWH1fWAMGC_6EDGtlaatQ-1
-X-Mimecast-MFC-AGG-ID: NzWH1fWAMGC_6EDGtlaatQ_1745502668
-Received: by mail-ot1-f69.google.com with SMTP id
- 46e09a7af769-72c0d69b71aso393400a34.3
+ us-mta-607-9nd7-Y2PPB6oUWJejzhqQw-1; Thu, 24 Apr 2025 09:51:13 -0400
+X-MC-Unique: 9nd7-Y2PPB6oUWJejzhqQw-1
+X-Mimecast-MFC-AGG-ID: 9nd7-Y2PPB6oUWJejzhqQw_1745502672
+Received: by mail-ot1-f70.google.com with SMTP id
+ 46e09a7af769-72bc289077fso1130233a34.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 24 Apr 2025 06:51:08 -0700 (PDT)
+ Thu, 24 Apr 2025 06:51:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745502668; x=1746107468;
+ d=1e100.net; s=20230601; t=1745502672; x=1746107472;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=20X8W8gEmww41Q7n61pHQxjGF1NcC1fUPUqP1znWNZ8=;
- b=Zj916GMeHUj5/+3d2AWSOIRJEXkND8yz9TeJKqDCLX3wUViaA/3pzn1Mso02N+18t6
- jjF61bvqyMql2M8mHhku0m/8Sf2RF3rNi1OSlRGzOLNGSRAWfcEDq2xN4bfoUHb0BZmD
- hrtzBDRkDrD22bAKbBa6mISkDqHGyVZkrrYw5Z3Tvd5U1cslvY592TPnhawxIFD0Gm61
- sTEMazlvAOGaZ5CJsL6pT7ps0xkW6n3uUaB/YQ6/AXhZCa6bdpj2RcU711Cu2f7LDClu
- tWPJwmv+IDdBSXYEpi7RlrbovE7vFotfyArdeCmKzF+zcIppKTQ+sekyTTCp+pKd24Jf
- +kTA==
-X-Gm-Message-State: AOJu0Yz/vQH8DB/eIP1ffIvxm1c+bSDNoh/SKz2BBD6IobONa/nMASN2
- TDQAkjUMk4M6QpzoqXzMwufjHa3vLveYZNiWs+CWLPXxi1PF1u1f5ASeUhKGchqaka27+Z+Gw0V
- fvHq/eGldqsEjvjUnx2eXgvZIscYUIdaZtkBxAy8jZFE0jXw6Gh3e2MfR9Dzh+nQL1NrvMyZKoC
- NlIMT3HKgpR5WXnTM6hhLs44rvXJOkyn9tI+XKJ83ZmWKuRS/Br2W34cTmC5Ti
-X-Gm-Gg: ASbGncuB4Z326nO4iisE/JOqREabR7JJBIIdszkdQpWWpbueC4l+SjfiI5VLE1d/rYA
- X81FfFBDCyM5YMtJx6WNSjD09AeI2mk2RDaApCT/vroT7gyWRFeE9uCdZXsvUGZ/KwJPIh01eiY
- YChGl+pPbJh90Mt1dn7jJI6Mdf5ji/sF1HSgv6iITEFsdf0MVMxqSQTB62ZHKBkHL68ERGbrBIQ
- /xpRU8pm2jYsWO1tZz+6aUR5neJgtbod+iIgoqDSPSX77qZYg2pVqIv7it5jXAB2/VjGO2FU2Vt
- vdltpG+qYy8kAUGBTA68E2DbGtF/Ap2grdsM1uPVtMMr+0Y6CH+VaU8=
-X-Received: by 2002:a05:6830:369b:b0:72b:99eb:7ce3 with SMTP id
- 46e09a7af769-7304dbcd9admr1458748a34.18.1745502667425; 
- Thu, 24 Apr 2025 06:51:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHUBkT8IuBa3hPdLMhwDATE3HSR3z4HwnotaHQjVHnEdLznwt0jtuOY3c4oz91usD9ZH5XVCA==
-X-Received: by 2002:a05:6830:369b:b0:72b:99eb:7ce3 with SMTP id
- 46e09a7af769-7304dbcd9admr1458729a34.18.1745502666931; 
- Thu, 24 Apr 2025 06:51:06 -0700 (PDT)
+ bh=udKMH1CU1t2Ev+wjCTCy32K3ZTMMah0I4lS2t0dApE0=;
+ b=hW4RdDSU2m689hajmouYTjh3zn8A55CqUlargpUI6aWDQ6iy4jIeLJHMNxW87+RaZW
+ QGiYE4xokWSh/vrUBKUCjQr2RZO2AXzzsvEC7oz+M5TX0oPQXaqCiCI//rnAzp1F++3q
+ lL1x0V9MkTYXMcUOQMr+fIcnfhfGV1sEcAk1Ubyw62dJTwy3uy1TKrLgO49Hsz3lB3Sb
+ cj57ixnRJfFF5zRXC4hmkBvJipJF8XTlsIH77sbXmxT+aLbHxPZOER55MMMcTVvFMy83
+ qH7B6posaRXlMgwgMRUzZSdxbyB7L70qLBnY9YXRNysqdLSSF69VPhF/Vxhf5lDLguyc
+ d1yg==
+X-Gm-Message-State: AOJu0YzPW1trrQSp9sy3BleGxttsKOrEtPoV+UFdhnRHDACwi+ix+8ju
+ GPx0hUB+biytn6DrDgwAgrQ706B5jz91gZiyYO0aZn2Udx7x3NO6BTts27clZwbW8LSqF+V/2/8
+ TIms79DRbbALRkxqykz3pvmcfpuUha9nT6AS4LeltIxNvCVrS6MXNhUehJ+qPa5vCFLpy3ET5LM
+ cPY2eKRlFWPkFoC983UT45mh82f8I3zDknS8um2EjqopzOKfEgQbf783Knos/J
+X-Gm-Gg: ASbGncuqvavygHLN4DeEMrIH+OGxMpEzR+pGz6V+ixnBBQd36Fg5YqOrAt/v6ZzM12X
+ u4y0bIFQdiiHIkiNxnnQdxD+AuI1F8GC8VvNjwWypaMlrjfdm39UAGfB+3JzseuHIicT5llxBcB
+ 0114QCNj1+49pEveR5QWj1AmpKnZS56XgtzJ+CdtAloWtl/XP+gbkMOpymJyqlR2aAla4PtlvJm
+ sgaanLfxJAsByJ83LLBoORZ/bG/3nE4kgxrYESTECDM0QT/IsA+IJbqqPjFOwb2oQu6kLnAmubY
+ r+2Y4tvd0EO+JuM6PB9yXe97JoXU7An2kUvRKTaQcQTSHZav4JKooRc=
+X-Received: by 2002:a05:6830:699a:b0:727:876:c849 with SMTP id
+ 46e09a7af769-7304dbb0a68mr1810759a34.27.1745502672351; 
+ Thu, 24 Apr 2025 06:51:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHytkAZ6rDjaVBYhWIVU1VT8tqkJSUb23Y4x3ScNmZVhWKTjLIRxd6fQ/FI9xJUcBHGkyC2OQ==
+X-Received: by 2002:a05:6830:699a:b0:727:876:c849 with SMTP id
+ 46e09a7af769-7304dbb0a68mr1810747a34.27.1745502672075; 
+ Thu, 24 Apr 2025 06:51:12 -0700 (PDT)
 Received: from localhost.localdomain (nwtn-09-2828.dsl.iowatelecom.net.
  [67.224.43.12]) by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7304f37b158sm233595a34.49.2025.04.24.06.51.05
+ 46e09a7af769-7304f37b158sm233595a34.49.2025.04.24.06.51.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 24 Apr 2025 06:51:06 -0700 (PDT)
+ Thu, 24 Apr 2025 06:51:11 -0700 (PDT)
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Wed, 23 Apr 2025 12:08:45 -0500
-Message-ID: <20250423170926.76007-2-sandeen@redhat.com>
+Date: Wed, 23 Apr 2025 12:08:50 -0500
+Message-ID: <20250423170926.76007-7-sandeen@redhat.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250423170926.76007-1-sandeen@redhat.com>
 References: <20250423170926.76007-1-sandeen@redhat.com>
 MIME-Version: 1.0
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: vfv2bJNfM_gUzINcFNnnRCULK-7Przyq1UkUdDcnTm4_1745502668
+X-Mimecast-MFC-PROC-ID: TyRqnCly994ZZNPwsNk5j4_A52i8aIvV2F8nzdzW3s8_1745502672
 X-Mimecast-Originator: redhat.com
-X-Headers-End: 1u7wzC-0000nY-LV
-Subject: [f2fs-dev] [PATCH V3 1/7] f2fs: Add fs parameter specifications for
- mount options
+X-Headers-End: 1u7wzC-0000nX-DO
+Subject: [f2fs-dev] [PATCH V3 6/7] f2fs: introduce fs_context_operation
+ structure
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -128,162 +128,50 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Hongbo Li <lihongbo22@huawei.com>
 
-Use an array of `fs_parameter_spec` called f2fs_param_specs to
-hold the mount option specifications for the new mount api.
-
-Add constant_table structures for several options to facilitate
-parsing.
+The handle_mount_opt() helper is used to parse mount parameters,
+and so we can rename this function to f2fs_parse_param() and set
+it as .param_param in fs_context_operations.
 
 Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-[sandeen: forward port, minor fixes and updates, more fsparam_enum]
+[sandeen: forward port]
 Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 ---
- fs/f2fs/super.c | 122 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 122 insertions(+)
+ fs/f2fs/super.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 22f26871b7aa..ebea03bba054 100644
+index 149134775870..37497fd80bb9 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -27,6 +27,7 @@
- #include <linux/part_stat.h>
- #include <linux/zstd.h>
- #include <linux/lz4.h>
-+#include <linux/fs_parser.h>
+@@ -707,7 +707,7 @@ static int f2fs_set_zstd_level(struct f2fs_fs_context *ctx, const char *str)
+ #endif
+ #endif
  
- #include "f2fs.h"
- #include "node.h"
-@@ -194,9 +195,130 @@ enum {
- 	Opt_age_extent_cache,
- 	Opt_errors,
- 	Opt_nat_bits,
-+	Opt_jqfmt,
-+	Opt_checkpoint,
- 	Opt_err,
- };
+-static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
++static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ {
+ 	struct f2fs_fs_context *ctx = fc->fs_private;
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+@@ -1173,7 +1173,7 @@ static int parse_options(struct fs_context *fc, char *options)
+ 			param.key = key;
+ 			param.size = v_len;
  
-+static const struct constant_table f2fs_param_background_gc[] = {
-+	{"on",		BGGC_MODE_ON},
-+	{"off",		BGGC_MODE_OFF},
-+	{"sync",	BGGC_MODE_SYNC},
-+	{}
+-			ret = handle_mount_opt(fc, &param);
++			ret = f2fs_parse_param(fc, &param);
+ 			kfree(param.string);
+ 			if (ret < 0)
+ 				return ret;
+@@ -5277,6 +5277,10 @@ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
+ 	return mount_bdev(fs_type, flags, dev_name, data, f2fs_fill_super);
+ }
+ 
++static const struct fs_context_operations f2fs_context_ops = {
++	.parse_param	= f2fs_parse_param,
 +};
 +
-+static const struct constant_table f2fs_param_mode[] = {
-+	{"adaptive",		FS_MODE_ADAPTIVE},
-+	{"lfs",			FS_MODE_LFS},
-+	{"fragment:segment",	FS_MODE_FRAGMENT_SEG},
-+	{"fragment:block",	FS_MODE_FRAGMENT_BLK},
-+	{}
-+};
-+
-+static const struct constant_table f2fs_param_jqfmt[] = {
-+	{"vfsold",	QFMT_VFS_OLD},
-+	{"vfsv0",	QFMT_VFS_V0},
-+	{"vfsv1",	QFMT_VFS_V1},
-+	{}
-+};
-+
-+static const struct constant_table f2fs_param_alloc_mode[] = {
-+	{"default",	ALLOC_MODE_DEFAULT},
-+	{"reuse",	ALLOC_MODE_REUSE},
-+	{}
-+};
-+static const struct constant_table f2fs_param_fsync_mode[] = {
-+	{"posix",	FSYNC_MODE_POSIX},
-+	{"strict",	FSYNC_MODE_STRICT},
-+	{"nobarrier",	FSYNC_MODE_NOBARRIER},
-+	{}
-+};
-+
-+static const struct constant_table f2fs_param_compress_mode[] = {
-+	{"fs",		COMPR_MODE_FS},
-+	{"user",	COMPR_MODE_USER},
-+	{}
-+};
-+
-+static const struct constant_table f2fs_param_discard_unit[] = {
-+	{"block",	DISCARD_UNIT_BLOCK},
-+	{"segment",	DISCARD_UNIT_SEGMENT},
-+	{"section",	DISCARD_UNIT_SECTION},
-+	{}
-+};
-+
-+static const struct constant_table f2fs_param_memory_mode[] = {
-+	{"normal",	MEMORY_MODE_NORMAL},
-+	{"low",		MEMORY_MODE_LOW},
-+	{}
-+};
-+
-+static const struct constant_table f2fs_param_errors[] = {
-+	{"remount-ro",	MOUNT_ERRORS_READONLY},
-+	{"continue",	MOUNT_ERRORS_CONTINUE},
-+	{"panic",	MOUNT_ERRORS_PANIC},
-+	{}
-+};
-+
-+static const struct fs_parameter_spec f2fs_param_specs[] = {
-+	fsparam_enum("background_gc", Opt_gc_background, f2fs_param_background_gc),
-+	fsparam_flag("disable_roll_forward", Opt_disable_roll_forward),
-+	fsparam_flag("norecovery", Opt_norecovery),
-+	fsparam_flag_no("discard", Opt_discard),
-+	fsparam_flag("no_heap", Opt_noheap),
-+	fsparam_flag("heap", Opt_heap),
-+	fsparam_flag_no("user_xattr", Opt_user_xattr),
-+	fsparam_flag_no("acl", Opt_acl),
-+	fsparam_s32("active_logs", Opt_active_logs),
-+	fsparam_flag("disable_ext_identify", Opt_disable_ext_identify),
-+	fsparam_flag_no("inline_xattr", Opt_inline_xattr),
-+	fsparam_s32("inline_xattr_size", Opt_inline_xattr_size),
-+	fsparam_flag_no("inline_data", Opt_inline_data),
-+	fsparam_flag_no("inline_dentry", Opt_inline_dentry),
-+	fsparam_flag_no("flush_merge", Opt_flush_merge),
-+	fsparam_flag_no("barrier", Opt_barrier),
-+	fsparam_flag("fastboot", Opt_fastboot),
-+	fsparam_flag_no("extent_cache", Opt_extent_cache),
-+	fsparam_flag("data_flush", Opt_data_flush),
-+	fsparam_u32("reserve_root", Opt_reserve_root),
-+	fsparam_gid("resgid", Opt_resgid),
-+	fsparam_uid("resuid", Opt_resuid),
-+	fsparam_enum("mode", Opt_mode, f2fs_param_mode),
-+	fsparam_s32("fault_injection", Opt_fault_injection),
-+	fsparam_u32("fault_type", Opt_fault_type),
-+	fsparam_flag_no("lazytime", Opt_lazytime),
-+	fsparam_flag_no("quota", Opt_quota),
-+	fsparam_flag("usrquota", Opt_usrquota),
-+	fsparam_flag("grpquota", Opt_grpquota),
-+	fsparam_flag("prjquota", Opt_prjquota),
-+	fsparam_string_empty("usrjquota", Opt_usrjquota),
-+	fsparam_string_empty("grpjquota", Opt_grpjquota),
-+	fsparam_string_empty("prjjquota", Opt_prjjquota),
-+	fsparam_flag("nat_bits", Opt_nat_bits),
-+	fsparam_enum("jqfmt", Opt_jqfmt, f2fs_param_jqfmt),
-+	fsparam_enum("alloc_mode", Opt_alloc, f2fs_param_alloc_mode),
-+	fsparam_enum("fsync_mode", Opt_fsync, f2fs_param_fsync_mode),
-+	fsparam_string("test_dummy_encryption", Opt_test_dummy_encryption),
-+	fsparam_flag("test_dummy_encryption", Opt_test_dummy_encryption),
-+	fsparam_flag("inlinecrypt", Opt_inlinecrypt),
-+	fsparam_string("checkpoint", Opt_checkpoint),
-+	fsparam_flag_no("checkpoint_merge", Opt_checkpoint_merge),
-+	fsparam_string("compress_algorithm", Opt_compress_algorithm),
-+	fsparam_u32("compress_log_size", Opt_compress_log_size),
-+	fsparam_string("compress_extension", Opt_compress_extension),
-+	fsparam_string("nocompress_extension", Opt_nocompress_extension),
-+	fsparam_flag("compress_chksum", Opt_compress_chksum),
-+	fsparam_enum("compress_mode", Opt_compress_mode, f2fs_param_compress_mode),
-+	fsparam_flag("compress_cache", Opt_compress_cache),
-+	fsparam_flag("atgc", Opt_atgc),
-+	fsparam_flag_no("gc_merge", Opt_gc_merge),
-+	fsparam_enum("discard_unit", Opt_discard_unit, f2fs_param_discard_unit),
-+	fsparam_enum("memory", Opt_memory_mode, f2fs_param_memory_mode),
-+	fsparam_flag("age_extent_cache", Opt_age_extent_cache),
-+	fsparam_enum("errors", Opt_errors, f2fs_param_errors),
-+	{}
-+};
-+
- static match_table_t f2fs_tokens = {
- 	{Opt_gc_background, "background_gc=%s"},
- 	{Opt_disable_roll_forward, "disable_roll_forward"},
+ static void kill_f2fs_super(struct super_block *sb)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
 -- 
 2.49.0
 
