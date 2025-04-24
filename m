@@ -4,108 +4,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 202C1C369D5
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Apr 2025 13:51:56 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4ACFAC369AB
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Apr 2025 16:22:59 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1u7wzb-00045D-MU;
-	Thu, 24 Apr 2025 13:51:55 +0000
+	id 1u7zLl-0003mr-Rs;
+	Thu, 24 Apr 2025 16:22:57 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sandeen@redhat.com>) id 1u7wzY-000452-Jf
+ (envelope-from <daeho43@gmail.com>) id 1u7zLf-0003mb-1l
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 24 Apr 2025 13:51:52 +0000
+ Thu, 24 Apr 2025 16:22:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=content-type:Content-Transfer-Encoding:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=P8Zymk0Kj8HCRUhxG+lQBi8gkmrKKora1S9ZpPvrvdc=; b=ExwrmtNNdjaIrUUiT3g3G/g6og
- uhqhE/p4Vyuhp/ZhO7gwz2BR5swt7BnDxRwx1kBPNYem17jMS8j3ruXmT5x4ikCo7Q9334wbru09/
- 0yydLRdwRJDqlAYXmlWSSFBUb07OVq56+Xfr/5VuSHNHe5SG8wpedErtQrcN3YS434P0=;
+ bh=BuYl9yiQ5nqrtQHfuB/fsPXeerfUH6qiA5Wia4ATlfM=; b=WWXJ8DmiNyD71txQr2lMuOck/h
+ 35u9ak44D0WKX9sqg4jf17LRi90E/LNwP6jRZDEBTwsbWhJVuOBdW1SYIbwDNLwLhoFpEpVs/Of+J
+ wV3UwOShj4KUVcHvYcSmRVseBJmgTBcxZseEUwxvCaZxwpaUeSUGcudO6uBm1nvsps6Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=content-type:Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=P8Zymk0Kj8HCRUhxG+lQBi8gkmrKKora1S9ZpPvrvdc=; b=FVvTQ7h7Lo0zWzoDzk+EluX2cC
- CeySxChyyW1l6KUAOfvk/0sD3Szmo0gV9gjXGr+ApiqkCXtFhFFOaz9E59XU85+yfwl7/DEdat+gD
- xLbZ0J192ByVDHP66Cg3hIWbgzuyP/EEWagbG613DgZh1AASqAaxO8u83xYIm1u/WO9Q=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.95)
- id 1u7wzH-0000nm-Dp for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 24 Apr 2025 13:51:52 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1745502674;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=P8Zymk0Kj8HCRUhxG+lQBi8gkmrKKora1S9ZpPvrvdc=;
- b=bjcsM3TSaxlSnsPnvu9l6HiUB8u6DiOm4EgXWbWlf8x20bSgbKXVWYtPxqnCKUf6MMHF66
- ofYF8/3mWXXGv6kqNbUCzEx5N9zPronwUB76h+P6YyFw2gqa/LK8ABTRJXqCK4ipr0pfHL
- 2ZDRGcJokj0g6aeOzE2iPX9moGOcOpI=
-Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
- [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-651-QST5zbPPNK6pbSPPmNshDQ-1; Thu, 24 Apr 2025 09:51:13 -0400
-X-MC-Unique: QST5zbPPNK6pbSPPmNshDQ-1
-X-Mimecast-MFC-AGG-ID: QST5zbPPNK6pbSPPmNshDQ_1745502672
-Received: by mail-ot1-f72.google.com with SMTP id
- 46e09a7af769-72b841252e0so1063185a34.0
+ bh=BuYl9yiQ5nqrtQHfuB/fsPXeerfUH6qiA5Wia4ATlfM=; b=NG/sAFYSAxqGHXZL3zB8zGiu7q
+ v2l0OZwjDX+D5DsdYQgU3018c4TTbvY/AwHG3j6DpyeRllOwLRrTnsdILo2yG63yRWx/xeAtmHFV3
+ KfYnIHQ5WIfFUcDaNZIk603tHZHMLvFILfLfyq2tg12ZMAjxZwwtOMXHyWpv2U0vrYfk=;
+Received: from mail-vk1-f174.google.com ([209.85.221.174])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1u7zLN-0000zm-Ut for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 24 Apr 2025 16:22:50 +0000
+Received: by mail-vk1-f174.google.com with SMTP id
+ 71dfb90a1353d-5240b014f47so557483e0c.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 24 Apr 2025 06:51:13 -0700 (PDT)
+ Thu, 24 Apr 2025 09:22:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1745511743; x=1746116543; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=BuYl9yiQ5nqrtQHfuB/fsPXeerfUH6qiA5Wia4ATlfM=;
+ b=nBHFoCnhBld5lgIk+J9t4vt2LDC19PM5U9JWoO+Sm195SDDsjkiIJeKHq04fbhU7GT
+ SAU7wRwCJEjQ06h20n6dDGym3nI42rEwQ+VyxY2AN+pfv+6INW+RUWSzOTqnW1nB+TAP
+ HLKskjmuSpx47PlQogVXEDmZwVK2wv9fgj3kwHXP4wm9DGOD9UH8ZzFnETrWYYbjKUAC
+ JVxDz9Kkiw3Tf37dfSh6KmNs08FHnOyDJDUnR4L6pFzSLvRUqVxFlI6OTsO8xMsia9EA
+ 4FmA/sfVomZJ0O+Ibf1Jatlrw8NplJYtK2u5rNFW6Dn6vVE35iILNhbPEr8Mk0HsvVFM
+ JHwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1745502672; x=1746107472;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1745511743; x=1746116543;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=P8Zymk0Kj8HCRUhxG+lQBi8gkmrKKora1S9ZpPvrvdc=;
- b=pI7A0+q3Obm+h16S79wR3tc1k78dFPq7nXojrXkUVJ/77p45ttbEiIKK27YA0W6OUy
- F5BBl/Lrmy51zK6inWjLbaov6x5/f7ey70O93btQQKuzlnvHlde0iysNZNk4E2vaNIn4
- TmEwxJgWgCiK8lLZoxyA6dqdbBqgozo0f/24XMbqd1VISd1GO1sVAsN8nSAQ/rXBFPw5
- NVLM5LU6MkOruaVCmP3fLLl6ENVFKvzNU9PN3eT17Wn8wXJHGB0gi0op1Ts6k8q8Ekgt
- mo45+wBWjxFhscCyC8v07LkYUAmuUM4LWsiFS1bN0l0X1d0E1Y9M25O4a0/jreEKCtHW
- fRDw==
-X-Gm-Message-State: AOJu0YwornxanF4VEr/kEHFa8OECWF4kdLZcJ0lC8Pz0G8M0kESSww54
- R+gYDYexUWJmI2+qakl+WGvAHGme3nNJj2gmCrPMDpix5RFpomXN8pwZVLABUMTt3X307wBFeEG
- 3u2ioZ/mcRhqK8aLym2zPvBNhNoVq7w93GXKqdkyI0TjW9hbP30DZmZrKY1AhcniX/8lzdUQu/x
- xnPNpqw1ABbIUGsQ7alq3V2EEECrAbUQCtN36Fe3Cx6Ik7dZHmxKhjrK/o90d5
-X-Gm-Gg: ASbGncuaabVb97e52pbF6n0z1AOinxg96bjuTHcYhTpxZkiky+p7KrD2h/OGRMWBN+R
- ejKS6EhRGqpgL8DXN6JsyAH7Bb5cHcK9/3gfJy3YUHq8FUCJGArXW/qGDag0RbkkpmRuZ3D9Ip+
- dha2+W1Nx1aWFrAUVnV5Bh9tjrv0cyQUcJhQzlgAhU6IK2rtopzoaC5WOP8l3P04S0mQ/85jxy/
- YMqnh8FYp4kooKUVZW3nbKAQEXT48B94/TuxnNShAfxxG7YharuiA1TwkJTtTl9lxg9wF445Fjx
- 6uAU5Xv8uWW8AdpNJX3RVoutF6CygMzB+lgKkEnkpDc/xLIIQp3A8vM=
-X-Received: by 2002:a05:6830:6088:b0:72b:9c34:1361 with SMTP id
- 46e09a7af769-7304daf5a03mr1794837a34.15.1745502671843; 
- Thu, 24 Apr 2025 06:51:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFA7bjlVJ1Ur1XB63ek6KVBc9BicyI6rMyZERRRZx4PEAH7LeuAc0WD32tnSTn6kbmDxjSBWw==
-X-Received: by 2002:a05:6830:6088:b0:72b:9c34:1361 with SMTP id
- 46e09a7af769-7304daf5a03mr1794808a34.15.1745502671234; 
- Thu, 24 Apr 2025 06:51:11 -0700 (PDT)
-Received: from localhost.localdomain (nwtn-09-2828.dsl.iowatelecom.net.
- [67.224.43.12]) by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7304f37b158sm233595a34.49.2025.04.24.06.51.10
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 24 Apr 2025 06:51:10 -0700 (PDT)
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Wed, 23 Apr 2025 12:08:49 -0500
-Message-ID: <20250423170926.76007-6-sandeen@redhat.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250423170926.76007-1-sandeen@redhat.com>
-References: <20250423170926.76007-1-sandeen@redhat.com>
+ bh=BuYl9yiQ5nqrtQHfuB/fsPXeerfUH6qiA5Wia4ATlfM=;
+ b=d+tDfDXxE1wiSRbcH3pJjGICb2OE9emgZqMeqcXZ7YBYwV56Mr1aZqkms5gz17ZMmO
+ tcBSDqW5zL7PnyCoYJ4aQPZM3mFXt2T0Qq6pedJyUfE10nuyVQ6rpaFI3ewANI2Gb06O
+ vmnGTwAWYCqYl0r1h+xXMLjhy5NxhDXja8ikpDNybf5LmecSRPrghpGZbDtTH46OuUoe
+ DEnlFSwy22e79Mv6nxiY5dqpEFdgtzMWDAkGhnRA75CmMdrpto7o19G1vTFS78b/iJgp
+ nzNRqKTooD/aUw88/jh0pO15Xo5SSb5B5V9oZgBMKkf2b7/mWfawN+GhroLAkNnebaGH
+ zdAw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXRYeacVuNTaD7aE4S07SJvki5ljRp5JrjZxgXXJ6RgEC8HBvwZpVV98Nw4sr3A4ucar7Wpjvd5sZTGBhffGhIX@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YxhmSQ1wzIAoSI3d7SRENZSIl1jY1FIRi9Uh8ujrP+wAOv6ZdxZ
+ e1KPja+ZfKJZtbkrskGZfyA8Toyy5lPmQxRUd/2nSqE2L62Fuy1MzfskyYkPYxGfoSWvMmK/4Ra
+ FmsTk55crAWS/eBLkJnvgIeH2uY4=
+X-Gm-Gg: ASbGnctjZ8cJHqJKW1V1pm4Hm/P9Evp9hF5+R/7eW4cXa/9w0e6NCbipiu9OFp+v6nE
+ /KoEY4jrHqAR+sDNn1W2OmMDCGdCuaXtPtKsK8vvMoN2DgLmjnOw0q9IkxKWenbSbWsjhkltPcg
+ w9D+08cV3SL6vBIl2BUtu+2l+xcEBH2vpbDzvItVWR90yHXMzfbIrB
+X-Google-Smtp-Source: AGHT+IHfqWBopM/+R8WtCyu9ty2oRqqZ1QWxOdtpCdvQosj13QuZHS1+4+6dizVl3GIQg/PYfn/Mw2E5gZaBrfWJUNs=
+X-Received: by 2002:a05:6122:181b:b0:525:9ddc:381a with SMTP id
+ 71dfb90a1353d-52a85afeaa1mr344909e0c.6.1745511742694; Thu, 24 Apr 2025
+ 09:22:22 -0700 (PDT)
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: L6VZQ-yt2mYBzOc6zRlHxtJUSzjBmLXilKIhDG9WxoA_1745502672
-X-Mimecast-Originator: redhat.com
-X-Headers-End: 1u7wzH-0000nm-Dp
-Subject: [f2fs-dev] [PATCH V3 5/7] f2fs: separate the options parsing and
- options checking
+References: <20250418165601.3050393-1-daeho43@gmail.com>
+ <1f50d7cf-2c08-4dc5-8b64-2d30dc24f3bb@kernel.org>
+In-Reply-To: <1f50d7cf-2c08-4dc5-8b64-2d30dc24f3bb@kernel.org>
+From: Daeho Jeong <daeho43@gmail.com>
+Date: Thu, 24 Apr 2025 09:22:11 -0700
+X-Gm-Features: ATxdqUGxQQq8KNo2WKgzKuKQBCBYXnO3N6mBWDTZqUYNOudwd0KI45PMpNnYnrg
+Message-ID: <CACOAw_wO+uO4FmAYujo1uV5=SGRUmxqh_O_vAuofdyUuH=_m2Q@mail.gmail.com>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1u7zLN-0000zm-Ut
+Subject: Re: [f2fs-dev] [PATCH] f2fs-tools: introduce fault injection to fsck
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,1016 +103,437 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Sandeen via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Sandeen <sandeen@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, lihongbo22@huawei.com,
- Eric Sandeen <sandeen@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: Daeho Jeong <daehojeong@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Hongbo Li <lihongbo22@huawei.com>
-
-The new mount api separates option parsing and super block setup
-into two distinct steps and so we need to separate the options
-parsing out of the parse_options().
-
-In order to achieve this, here we handle the mount options with
-three steps:
-  - Firstly, we move sb/sbi out of handle_mount_opt.
-    As the former patch introduced f2fs_fs_context, so we record
-    the changed mount options in this context. In handle_mount_opt,
-    sb/sbi is null, so we should move all relative code out of
-    handle_mount_opt (thus, some check case which use sb/sbi should
-    move out).
-  - Secondly, we introduce the some check helpers to keep the option
-    consistent.
-    During filling superblock period, sb/sbi are ready. So we check
-    the f2fs_fs_context which holds the mount options base on sb/sbi.
-  - Thirdly, we apply the new mount options to sb/sbi.
-    After checking the f2fs_fs_context, all changed on mount options
-    are valid. So we can apply them to sb/sbi directly.
-
-After do these, option parsing and super block setting have been
-decoupled. Also it should have retained the original execution
-flow.
-
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-[sandeen: forward port, minor fixes and updates]
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
----
- fs/f2fs/super.c | 693 +++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 510 insertions(+), 183 deletions(-)
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 15befeb45c94..149134775870 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -360,6 +360,12 @@ static inline void ctx_clear_opt(struct f2fs_fs_context *ctx,
- 	ctx->opt_mask |= flag;
- }
- 
-+static inline bool ctx_test_opt(struct f2fs_fs_context *ctx,
-+				unsigned int flag)
-+{
-+	return ctx->info.opt & flag;
-+}
-+
- static inline void ctx_set_flags(struct f2fs_fs_context *ctx,
- 				 unsigned int flag)
- {
-@@ -533,51 +539,6 @@ static int f2fs_unnote_qf_name(struct fs_context *fc, int qtype)
- 	ctx->qname_mask |= 1 << qtype;
- 	return 0;
- }
--
--static int f2fs_check_quota_options(struct f2fs_sb_info *sbi)
--{
--	/*
--	 * We do the test below only for project quotas. 'usrquota' and
--	 * 'grpquota' mount options are allowed even without quota feature
--	 * to support legacy quotas in quota files.
--	 */
--	if (test_opt(sbi, PRJQUOTA) && !f2fs_sb_has_project_quota(sbi)) {
--		f2fs_err(sbi, "Project quota feature not enabled. Cannot enable project quota enforcement.");
--		return -1;
--	}
--	if (F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
--			F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
--			F2FS_OPTION(sbi).s_qf_names[PRJQUOTA]) {
--		if (test_opt(sbi, USRQUOTA) &&
--				F2FS_OPTION(sbi).s_qf_names[USRQUOTA])
--			clear_opt(sbi, USRQUOTA);
--
--		if (test_opt(sbi, GRPQUOTA) &&
--				F2FS_OPTION(sbi).s_qf_names[GRPQUOTA])
--			clear_opt(sbi, GRPQUOTA);
--
--		if (test_opt(sbi, PRJQUOTA) &&
--				F2FS_OPTION(sbi).s_qf_names[PRJQUOTA])
--			clear_opt(sbi, PRJQUOTA);
--
--		if (test_opt(sbi, GRPQUOTA) || test_opt(sbi, USRQUOTA) ||
--				test_opt(sbi, PRJQUOTA)) {
--			f2fs_err(sbi, "old and new quota format mixing");
--			return -1;
--		}
--
--		if (!F2FS_OPTION(sbi).s_jquota_fmt) {
--			f2fs_err(sbi, "journaled quota format not specified");
--			return -1;
--		}
--	}
--
--	if (f2fs_sb_has_quota_ino(sbi) && F2FS_OPTION(sbi).s_jquota_fmt) {
--		f2fs_info(sbi, "QUOTA feature is enabled, so ignore jquota_fmt");
--		F2FS_OPTION(sbi).s_jquota_fmt = 0;
--	}
--	return 0;
--}
- #endif
- 
- static int f2fs_parse_test_dummy_encryption(const struct fs_parameter *param,
-@@ -636,28 +597,28 @@ static bool is_compress_extension_exist(struct f2fs_mount_info *info,
-  * extension will be treated as special cases and will not be compressed.
-  * 3. Don't allow the non-compress extension specifies all files.
-  */
--static int f2fs_test_compress_extension(struct f2fs_sb_info *sbi)
-+static int f2fs_test_compress_extension(unsigned char (*noext)[F2FS_EXTENSION_LEN],
-+					int noext_cnt,
-+					unsigned char (*ext)[F2FS_EXTENSION_LEN],
-+					int ext_cnt)
- {
--	unsigned char (*ext)[F2FS_EXTENSION_LEN];
--	unsigned char (*noext)[F2FS_EXTENSION_LEN];
--	int ext_cnt, noext_cnt, index = 0, no_index = 0;
--
--	ext = F2FS_OPTION(sbi).extensions;
--	ext_cnt = F2FS_OPTION(sbi).compress_ext_cnt;
--	noext = F2FS_OPTION(sbi).noextensions;
--	noext_cnt = F2FS_OPTION(sbi).nocompress_ext_cnt;
-+	int index = 0, no_index = 0;
- 
- 	if (!noext_cnt)
- 		return 0;
- 
- 	for (no_index = 0; no_index < noext_cnt; no_index++) {
-+		if (strlen(noext[no_index]) == 0)
-+			continue;
- 		if (!strcasecmp("*", noext[no_index])) {
--			f2fs_info(sbi, "Don't allow the nocompress extension specifies all files");
-+			f2fs_info(NULL, "Don't allow the nocompress extension specifies all files");
- 			return -EINVAL;
- 		}
- 		for (index = 0; index < ext_cnt; index++) {
-+			if (strlen(ext[index]) == 0)
-+				continue;
- 			if (!strcasecmp(ext[index], noext[no_index])) {
--				f2fs_info(sbi, "Don't allow the same extension %s appear in both compress and nocompress extension",
-+				f2fs_info(NULL, "Don't allow the same extension %s appear in both compress and nocompress extension",
- 						ext[index]);
- 				return -EINVAL;
- 			}
-@@ -749,7 +710,6 @@ static int f2fs_set_zstd_level(struct f2fs_fs_context *ctx, const char *str)
- static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- {
- 	struct f2fs_fs_context *ctx = fc->fs_private;
--	struct f2fs_sb_info *sbi = fc->s_fs_info;
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	unsigned char (*ext)[F2FS_EXTENSION_LEN];
- 	unsigned char (*noext)[F2FS_EXTENSION_LEN];
-@@ -758,15 +718,12 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- #endif
- 	substring_t args[MAX_OPT_ARGS];
- 	struct fs_parse_result result;
--	int is_remount;
- 	int token, ret, arg;
- 
- 	token = fs_parse(fc, f2fs_param_specs, param, &result);
- 	if (token < 0)
- 		return token;
- 
--	is_remount = fc->purpose == FS_CONTEXT_FOR_RECONFIGURE;
--
- 	switch (token) {
- 	case Opt_gc_background:
- 		F2FS_CTX_INFO(ctx).bggc_mode = result.uint_32;
-@@ -780,19 +737,10 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		ctx_set_opt(ctx, F2FS_MOUNT_NORECOVERY);
- 		break;
- 	case Opt_discard:
--		if (result.negated) {
--			if (f2fs_hw_should_discard(sbi)) {
--				f2fs_warn(NULL, "discard is required for zoned block devices");
--				return -EINVAL;
--			}
-+		if (result.negated)
- 			ctx_clear_opt(ctx, F2FS_MOUNT_DISCARD);
--		} else {
--			if (!f2fs_hw_support_discard(sbi)) {
--				f2fs_warn(NULL, "device does not support discard");
--				break;
--			}
-+		else
- 			ctx_set_opt(ctx, F2FS_MOUNT_DISCARD);
--		}
- 		break;
- 	case Opt_noheap:
- 	case Opt_heap:
-@@ -812,6 +760,12 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 			ctx_set_opt(ctx, F2FS_MOUNT_INLINE_XATTR);
- 		break;
- 	case Opt_inline_xattr_size:
-+		if (result.int_32 < MIN_INLINE_XATTR_SIZE ||
-+			result.int_32 > MAX_INLINE_XATTR_SIZE) {
-+			f2fs_err(NULL, "inline xattr size is out of range: %zu ~ %zu",
-+				MIN_INLINE_XATTR_SIZE, MAX_INLINE_XATTR_SIZE);
-+			return -EINVAL;
-+		}
- 		ctx_set_opt(ctx, F2FS_MOUNT_INLINE_XATTR_SIZE);
- 		F2FS_CTX_INFO(ctx).inline_xattr_size = result.int_32;
- 		ctx->spec_mask |= F2FS_SPEC_inline_xattr_size;
-@@ -873,27 +827,18 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		ctx_set_opt(ctx, F2FS_MOUNT_FASTBOOT);
- 		break;
- 	case Opt_extent_cache:
--		if (result.negated) {
--			if (f2fs_sb_has_device_alias(sbi)) {
--				f2fs_err(sbi, "device aliasing requires extent cache");
--				return -EINVAL;
--			}
-+		if (result.negated)
- 			ctx_clear_opt(ctx, F2FS_MOUNT_READ_EXTENT_CACHE);
--		} else
-+		else
- 			ctx_set_opt(ctx, F2FS_MOUNT_READ_EXTENT_CACHE);
- 		break;
- 	case Opt_data_flush:
- 		ctx_set_opt(ctx, F2FS_MOUNT_DATA_FLUSH);
- 		break;
- 	case Opt_reserve_root:
--		if (test_opt(sbi, RESERVE_ROOT)) {
--			f2fs_info(NULL, "Preserve previous reserve_root=%u",
--				  F2FS_OPTION(sbi).root_reserved_blocks);
--		} else {
--			ctx_set_opt(ctx, F2FS_MOUNT_RESERVE_ROOT);
--			F2FS_CTX_INFO(ctx).root_reserved_blocks = result.uint_32;
--			ctx->spec_mask |= F2FS_SPEC_reserve_root;
--		}
-+		ctx_set_opt(ctx, F2FS_MOUNT_RESERVE_ROOT);
-+		F2FS_CTX_INFO(ctx).root_reserved_blocks = result.uint_32;
-+		ctx->spec_mask |= F2FS_SPEC_reserve_root;
- 		break;
- 	case Opt_resuid:
- 		F2FS_CTX_INFO(ctx).s_resuid = result.uid;
-@@ -909,7 +854,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		break;
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	case Opt_fault_injection:
--		if (f2fs_build_fault_attr(sbi, result.int_32, 0, FAULT_RATE))
-+		if (result.int_32 > INT_MAX)
- 			return -EINVAL;
- 		F2FS_CTX_INFO(ctx).fault_info.inject_rate = result.int_32;
- 		ctx->spec_mask |= F2FS_SPEC_fault_injection;
-@@ -917,7 +862,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		break;
- 
- 	case Opt_fault_type:
--		if (f2fs_build_fault_attr(sbi, 0, result.int_32, FAULT_TYPE))
-+		if (result.uint_32 > BIT(FAULT_MAX))
- 			return -EINVAL;
- 		F2FS_CTX_INFO(ctx).fault_info.inject_type = result.uint_32;
- 		ctx->spec_mask |= F2FS_SPEC_fault_type;
-@@ -1051,10 +996,6 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		break;
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	case Opt_compress_algorithm:
--		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(NULL, "Image doesn't support compression");
--			break;
--		}
- 		name = param->string;
- 		if (!strcmp(name, "lzo")) {
- #ifdef CONFIG_F2FS_FS_LZO
-@@ -1098,10 +1039,6 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 			return -EINVAL;
- 		break;
- 	case Opt_compress_log_size:
--		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(NULL, "Image doesn't support compression");
--			break;
--		}
- 		if (result.uint_32 < MIN_COMPRESS_LOG_SIZE ||
- 		    result.uint_32 > MAX_COMPRESS_LOG_SIZE) {
- 			f2fs_err(NULL,
-@@ -1112,10 +1049,6 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		ctx->spec_mask |= F2FS_SPEC_compress_log_size;
- 		break;
- 	case Opt_compress_extension:
--		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(NULL, "Image doesn't support compression");
--			break;
--		}
- 		name = param->string;
- 		ext = F2FS_CTX_INFO(ctx).extensions;
- 		ext_cnt = F2FS_CTX_INFO(ctx).compress_ext_cnt;
-@@ -1136,10 +1069,6 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		ctx->spec_mask |= F2FS_SPEC_compress_extension;
- 		break;
- 	case Opt_nocompress_extension:
--		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(NULL, "Image doesn't support compression");
--			break;
--		}
- 		name = param->string;
- 		noext = F2FS_CTX_INFO(ctx).noextensions;
- 		noext_cnt = F2FS_CTX_INFO(ctx).nocompress_ext_cnt;
-@@ -1160,26 +1089,14 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		ctx->spec_mask |= F2FS_SPEC_nocompress_extension;
- 		break;
- 	case Opt_compress_chksum:
--		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(NULL, "Image doesn't support compression");
--			break;
--		}
- 		F2FS_CTX_INFO(ctx).compress_chksum = true;
- 		ctx->spec_mask |= F2FS_SPEC_compress_chksum;
- 		break;
- 	case Opt_compress_mode:
--		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(NULL, "Image doesn't support compression");
--			break;
--		}
- 		F2FS_CTX_INFO(ctx).compress_mode = result.uint_32;
- 		ctx->spec_mask |= F2FS_SPEC_compress_mode;
- 		break;
- 	case Opt_compress_cache:
--		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(NULL, "Image doesn't support compression");
--			break;
--		}
- 		ctx_set_opt(ctx, F2FS_MOUNT_COMPRESS_CACHE);
- 		break;
- #else
-@@ -1224,24 +1141,15 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 	return 0;
- }
- 
--static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remount)
-+static int parse_options(struct fs_context *fc, char *options)
- {
- 	struct fs_parameter param;
--	struct fs_context fc;
--	struct f2fs_fs_context ctx;
- 	char *key;
- 	int ret;
- 
- 	if (!options)
- 		return 0;
- 
--	memset(&fc, 0, sizeof(fc));
--	fc.s_fs_info = sbi;
--	fc.fs_private = &ctx;
--
--	if (is_remount)
--		fc.purpose = FS_CONTEXT_FOR_RECONFIGURE;
--
- 	while ((key = strsep(&options, ",")) != NULL) {
- 		if (*key) {
- 			size_t v_len = 0;
-@@ -1265,7 +1173,7 @@ static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remoun
- 			param.key = key;
- 			param.size = v_len;
- 
--			ret = handle_mount_opt(&fc, &param);
-+			ret = handle_mount_opt(fc, &param);
- 			kfree(param.string);
- 			if (ret < 0)
- 				return ret;
-@@ -1274,24 +1182,293 @@ static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remoun
- 	return 0;
- }
- 
--static int f2fs_validate_options(struct f2fs_sb_info *sbi)
-+/*
-+ * Check quota settings consistency.
-+ */
-+static int f2fs_check_quota_consistency(struct fs_context *fc,
-+					struct super_block *sb)
- {
--#ifdef CONFIG_QUOTA
--	if (f2fs_check_quota_options(sbi))
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+ #ifdef CONFIG_QUOTA
-+	struct f2fs_fs_context *ctx = fc->fs_private;
-+	bool quota_feature = f2fs_sb_has_quota_ino(sbi);
-+	bool quota_turnon = sb_any_quota_loaded(sb);
-+	char *old_qname, *new_qname;
-+	bool usr_qf_name, grp_qf_name, prj_qf_name, usrquota, grpquota, prjquota;
-+	int i;
-+
-+	/*
-+	 * We do the test below only for project quotas. 'usrquota' and
-+	 * 'grpquota' mount options are allowed even without quota feature
-+	 * to support legacy quotas in quota files.
-+	 */
-+	if (ctx_test_opt(ctx, F2FS_MOUNT_PRJQUOTA) &&
-+			!f2fs_sb_has_project_quota(sbi)) {
-+		f2fs_err(sbi, "Project quota feature not enabled. Cannot enable project quota enforcement.");
- 		return -EINVAL;
-+	}
-+
-+	if (ctx->qname_mask) {
-+		for (i = 0; i < MAXQUOTAS; i++) {
-+			if (!(ctx->qname_mask & (1 << i)))
-+				continue;
-+
-+			old_qname = F2FS_OPTION(sbi).s_qf_names[i];
-+			new_qname = F2FS_CTX_INFO(ctx).s_qf_names[i];
-+			if (quota_turnon &&
-+				!!old_qname != !!new_qname)
-+				goto err_jquota_change;
-+
-+			if (old_qname) {
-+				if (strcmp(old_qname, new_qname) == 0) {
-+					ctx->qname_mask &= ~(1 << i);
-+					continue;
-+				}
-+				goto err_jquota_specified;
-+			}
-+
-+			if (quota_feature) {
-+				f2fs_info(sbi, "QUOTA feature is enabled, so ignore qf_name");
-+				ctx->qname_mask &= ~(1 << i);
-+				kfree(F2FS_CTX_INFO(ctx).s_qf_names[i]);
-+				F2FS_CTX_INFO(ctx).s_qf_names[i] = NULL;
-+			}
-+		}
-+	}
-+
-+	/* Make sure we don't mix old and new quota format */
-+	usr_qf_name = F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
-+			F2FS_CTX_INFO(ctx).s_qf_names[USRQUOTA];
-+	grp_qf_name = F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
-+			F2FS_CTX_INFO(ctx).s_qf_names[GRPQUOTA];
-+	prj_qf_name = F2FS_OPTION(sbi).s_qf_names[PRJQUOTA] ||
-+			F2FS_CTX_INFO(ctx).s_qf_names[PRJQUOTA];
-+	usrquota = test_opt(sbi, USRQUOTA) ||
-+			ctx_test_opt(ctx, F2FS_MOUNT_USRQUOTA);
-+	grpquota = test_opt(sbi, GRPQUOTA) ||
-+			ctx_test_opt(ctx, F2FS_MOUNT_GRPQUOTA);
-+	prjquota = test_opt(sbi, PRJQUOTA) ||
-+			ctx_test_opt(ctx, F2FS_MOUNT_PRJQUOTA);
-+
-+	if (usr_qf_name) {
-+		ctx_clear_opt(ctx, F2FS_MOUNT_USRQUOTA);
-+		usrquota = false;
-+	}
-+	if (grp_qf_name) {
-+		ctx_clear_opt(ctx, F2FS_MOUNT_GRPQUOTA);
-+		grpquota = false;
-+	}
-+	if (prj_qf_name) {
-+		ctx_clear_opt(ctx, F2FS_MOUNT_PRJQUOTA);
-+		prjquota = false;
-+	}
-+	if (usr_qf_name || grp_qf_name || prj_qf_name) {
-+		if (grpquota || usrquota || prjquota) {
-+			f2fs_err(sbi, "old and new quota format mixing");
-+			return -EINVAL;
-+		}
-+		if (!(ctx->spec_mask & F2FS_SPEC_jqfmt ||
-+				F2FS_OPTION(sbi).s_jquota_fmt)) {
-+			f2fs_err(sbi, "journaled quota format not specified");
-+			return -EINVAL;
-+		}
-+	}
-+	return 0;
-+
-+err_jquota_change:
-+	f2fs_err(sbi, "Cannot change journaled quota options when quota turned on");
-+	return -EINVAL;
-+err_jquota_specified:
-+	f2fs_err(sbi, "%s quota file already specified",
-+		 QTYPE2NAME(i));
-+	return -EINVAL;
-+
- #else
--	if (f2fs_sb_has_quota_ino(sbi) && !f2fs_readonly(sbi->sb)) {
--		f2fs_info(NULL, "Filesystem with quota feature cannot be mounted RDWR without CONFIG_QUOTA");
-+	if (f2fs_readonly(sbi->sb))
-+		return 0;
-+	if (f2fs_sb_has_quota_ino(sbi)) {
-+		f2fs_info(sbi, "Filesystem with quota feature cannot be mounted RDWR without CONFIG_QUOTA");
- 		return -EINVAL;
- 	}
--	if (f2fs_sb_has_project_quota(sbi) && !f2fs_readonly(sbi->sb)) {
--		f2fs_err(NULL, "Filesystem with project quota feature cannot be mounted RDWR without CONFIG_QUOTA");
-+	if (f2fs_sb_has_project_quota(sbi)) {
-+		f2fs_err(sbi, "Filesystem with project quota feature cannot be mounted RDWR without CONFIG_QUOTA");
- 		return -EINVAL;
- 	}
-+
-+	return 0;
- #endif
-+}
-+
-+static int f2fs_check_test_dummy_encryption(struct fs_context *fc,
-+					    struct super_block *sb)
-+{
-+	struct f2fs_fs_context *ctx = fc->fs_private;
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+
-+	if (!fscrypt_is_dummy_policy_set(&F2FS_CTX_INFO(ctx).dummy_enc_policy))
-+		return 0;
-+
-+	if (!f2fs_sb_has_encrypt(sbi)) {
-+		f2fs_err(sbi, "Encrypt feature is off");
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * This mount option is just for testing, and it's not worthwhile to
-+	 * implement the extra complexity (e.g. RCU protection) that would be
-+	 * needed to allow it to be set or changed during remount.  We do allow
-+	 * it to be specified during remount, but only if there is no change.
-+	 */
-+	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
-+		if (fscrypt_dummy_policies_equal(&F2FS_OPTION(sbi).dummy_enc_policy,
-+				&F2FS_CTX_INFO(ctx).dummy_enc_policy))
-+			return 0;
-+		f2fs_warn(sbi, "Can't set or change test_dummy_encryption on remount");
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
-+static inline bool test_compression_spec(unsigned int mask)
-+{
-+	return mask & (F2FS_SPEC_compress_algorithm
-+			| F2FS_SPEC_compress_log_size
-+			| F2FS_SPEC_compress_extension
-+			| F2FS_SPEC_nocompress_extension
-+			| F2FS_SPEC_compress_chksum
-+			| F2FS_SPEC_compress_mode);
-+}
-+
-+static inline void clear_compression_spec(struct f2fs_fs_context *ctx)
-+{
-+	ctx->spec_mask &= ~(F2FS_SPEC_compress_algorithm
-+						| F2FS_SPEC_compress_log_size
-+						| F2FS_SPEC_compress_extension
-+						| F2FS_SPEC_nocompress_extension
-+						| F2FS_SPEC_compress_chksum
-+						| F2FS_SPEC_compress_mode);
-+}
-+
-+static int f2fs_check_compression(struct fs_context *fc,
-+				  struct super_block *sb)
-+{
-+#ifdef CONFIG_F2FS_FS_COMPRESSION
-+	struct f2fs_fs_context *ctx = fc->fs_private;
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+	int i, cnt;
-+
-+	if (!f2fs_sb_has_compression(sbi)) {
-+		if (test_compression_spec(ctx->opt_mask) ||
-+			ctx_test_opt(ctx, F2FS_MOUNT_COMPRESS_CACHE))
-+			f2fs_info(sbi, "Image doesn't support compression");
-+		clear_compression_spec(ctx);
-+		ctx->opt_mask &= ~F2FS_MOUNT_COMPRESS_CACHE;
-+		return 0;
-+	}
-+	if (ctx->spec_mask & F2FS_SPEC_compress_extension) {
-+		cnt = F2FS_CTX_INFO(ctx).compress_ext_cnt;
-+		for (i = 0; i < F2FS_CTX_INFO(ctx).compress_ext_cnt; i++) {
-+			if (is_compress_extension_exist(&F2FS_OPTION(sbi),
-+					F2FS_CTX_INFO(ctx).extensions[i], true)) {
-+				F2FS_CTX_INFO(ctx).extensions[i][0] = '\0';
-+				cnt--;
-+			}
-+		}
-+		if (F2FS_OPTION(sbi).compress_ext_cnt + cnt > COMPRESS_EXT_NUM) {
-+			f2fs_err(sbi, "invalid extension length/number");
-+			return -EINVAL;
-+		}
-+	}
-+	if (ctx->spec_mask & F2FS_SPEC_nocompress_extension) {
-+		cnt = F2FS_CTX_INFO(ctx).nocompress_ext_cnt;
-+		for (i = 0; i < F2FS_CTX_INFO(ctx).nocompress_ext_cnt; i++) {
-+			if (is_compress_extension_exist(&F2FS_OPTION(sbi),
-+					F2FS_CTX_INFO(ctx).noextensions[i], false)) {
-+				F2FS_CTX_INFO(ctx).noextensions[i][0] = '\0';
-+				cnt--;
-+			}
-+		}
-+		if (F2FS_OPTION(sbi).nocompress_ext_cnt + cnt > COMPRESS_EXT_NUM) {
-+			f2fs_err(sbi, "invalid noextension length/number");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	if (f2fs_test_compress_extension(F2FS_CTX_INFO(ctx).noextensions,
-+				F2FS_CTX_INFO(ctx).nocompress_ext_cnt,
-+				F2FS_CTX_INFO(ctx).extensions,
-+				F2FS_CTX_INFO(ctx).compress_ext_cnt)) {
-+		f2fs_err(sbi, "invalid compress or nocompress extension");
-+		return -EINVAL;
-+	}
-+	if (f2fs_test_compress_extension(F2FS_CTX_INFO(ctx).noextensions,
-+				F2FS_CTX_INFO(ctx).nocompress_ext_cnt,
-+				F2FS_OPTION(sbi).extensions,
-+				F2FS_OPTION(sbi).compress_ext_cnt)) {
-+		f2fs_err(sbi, "invalid compress or nocompress extension");
-+		return -EINVAL;
-+	}
-+	if (f2fs_test_compress_extension(F2FS_OPTION(sbi).noextensions,
-+				F2FS_OPTION(sbi).nocompress_ext_cnt,
-+				F2FS_CTX_INFO(ctx).extensions,
-+				F2FS_CTX_INFO(ctx).compress_ext_cnt)) {
-+		f2fs_err(sbi, "invalid compress or nocompress extension");
-+		return -EINVAL;
-+	}
-+#endif
-+	return 0;
-+}
-+
-+static int f2fs_check_opt_consistency(struct fs_context *fc,
-+				      struct super_block *sb)
-+{
-+	struct f2fs_fs_context *ctx = fc->fs_private;
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+	int err;
-+
-+	if (ctx_test_opt(ctx, F2FS_MOUNT_NORECOVERY) && !f2fs_readonly(sb))
-+		return -EINVAL;
-+
-+	if (f2fs_hw_should_discard(sbi) && (ctx->opt_mask & F2FS_MOUNT_DISCARD)
-+				&& !ctx_test_opt(ctx, F2FS_MOUNT_DISCARD)) {
-+		f2fs_warn(sbi, "discard is required for zoned block devices");
-+		return -EINVAL;
-+	}
-+
-+	if (f2fs_sb_has_device_alias(sbi)) {
-+		f2fs_err(sbi, "device aliasing requires extent cache");
-+		return -EINVAL;
-+	}
-+
-+	if (!f2fs_hw_support_discard(sbi) && (ctx->opt_mask & F2FS_MOUNT_DISCARD)
-+				&& ctx_test_opt(ctx, F2FS_MOUNT_DISCARD)) {
-+		f2fs_warn(sbi, "device does not support discard");
-+		ctx_clear_opt(ctx, F2FS_MOUNT_DISCARD);
-+		ctx->opt_mask &= ~F2FS_MOUNT_DISCARD;
-+	}
-+
-+	if (test_opt(sbi, RESERVE_ROOT) && (ctx->opt_mask & F2FS_MOUNT_RESERVE_ROOT)
-+				&& ctx_test_opt(ctx, F2FS_MOUNT_RESERVE_ROOT)) {
-+		f2fs_info(sbi, "Preserve previous reserve_root=%u",
-+			F2FS_OPTION(sbi).root_reserved_blocks);
-+		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_ROOT);
-+		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_ROOT;
-+	}
-+
-+	err = f2fs_check_test_dummy_encryption(fc, sb);
-+	if (err)
-+		return err;
-+
-+	err = f2fs_check_compression(fc, sb);
-+	if (err)
-+		return err;
-+
-+	err = f2fs_check_quota_consistency(fc, sb);
-+	if (err)
-+		return err;
- 
- 	if (!IS_ENABLED(CONFIG_UNICODE) && f2fs_sb_has_casefold(sbi)) {
--		f2fs_err(NULL,
-+		f2fs_err(sbi,
- 			"Filesystem with casefold feature cannot be mounted without CONFIG_UNICODE");
- 		return -EINVAL;
- 	}
-@@ -1303,75 +1480,210 @@ static int f2fs_validate_options(struct f2fs_sb_info *sbi)
- 	 */
- 	if (f2fs_sb_has_blkzoned(sbi)) {
- #ifdef CONFIG_BLK_DEV_ZONED
--		if (F2FS_OPTION(sbi).discard_unit !=
--						DISCARD_UNIT_SECTION) {
--			f2fs_info(NULL, "Zoned block device doesn't need small discard, set discard_unit=section by default");
--			F2FS_OPTION(sbi).discard_unit =
--					DISCARD_UNIT_SECTION;
-+		if ((ctx->spec_mask & F2FS_SPEC_discard_unit) &&
-+		F2FS_CTX_INFO(ctx).discard_unit != DISCARD_UNIT_SECTION) {
-+			f2fs_info(sbi, "Zoned block device doesn't need small discard, set discard_unit=section by default");
-+			F2FS_CTX_INFO(ctx).discard_unit = DISCARD_UNIT_SECTION;
- 		}
- 
--		if (F2FS_OPTION(sbi).fs_mode != FS_MODE_LFS) {
--			f2fs_info(NULL, "Only lfs mode is allowed with zoned block device feature");
-+		if ((ctx->spec_mask & F2FS_SPEC_mode) &&
-+		F2FS_CTX_INFO(ctx).fs_mode != FS_MODE_LFS) {
-+			f2fs_info(sbi, "Only lfs mode is allowed with zoned block device feature");
- 			return -EINVAL;
- 		}
- #else
--		f2fs_err(NULL, "Zoned block device support is not enabled");
-+		f2fs_err(sbi, "Zoned block device support is not enabled");
- 		return -EINVAL;
- #endif
- 	}
- 
--#ifdef CONFIG_F2FS_FS_COMPRESSION
--	if (f2fs_test_compress_extension(sbi)) {
--		f2fs_err(NULL, "invalid compress or nocompress extension");
--		return -EINVAL;
--	}
--#endif
--
--	if (test_opt(sbi, INLINE_XATTR_SIZE)) {
--		int min_size, max_size;
--
-+	if (ctx_test_opt(ctx, F2FS_MOUNT_INLINE_XATTR_SIZE)) {
- 		if (!f2fs_sb_has_extra_attr(sbi) ||
- 			!f2fs_sb_has_flexible_inline_xattr(sbi)) {
--			f2fs_err(NULL, "extra_attr or flexible_inline_xattr feature is off");
--			return -EINVAL;
--		}
--		if (!test_opt(sbi, INLINE_XATTR)) {
--			f2fs_err(NULL, "inline_xattr_size option should be set with inline_xattr option");
-+			f2fs_err(sbi, "extra_attr or flexible_inline_xattr feature is off");
- 			return -EINVAL;
- 		}
--
--		min_size = MIN_INLINE_XATTR_SIZE;
--		max_size = MAX_INLINE_XATTR_SIZE;
--
--		if (F2FS_OPTION(sbi).inline_xattr_size < min_size ||
--				F2FS_OPTION(sbi).inline_xattr_size > max_size) {
--			f2fs_err(NULL, "inline xattr size is out of range: %d ~ %d",
--				 min_size, max_size);
-+		if (!ctx_test_opt(ctx, F2FS_MOUNT_INLINE_XATTR)) {
-+			f2fs_err(sbi, "inline_xattr_size option should be set with inline_xattr option");
- 			return -EINVAL;
- 		}
- 	}
- 
--	if (test_opt(sbi, ATGC) && f2fs_lfs_mode(sbi)) {
--		f2fs_err(NULL, "LFS is not compatible with ATGC");
-+	if (ctx_test_opt(ctx, F2FS_MOUNT_ATGC) &&
-+	    F2FS_CTX_INFO(ctx).fs_mode == FS_MODE_LFS) {
-+		f2fs_err(sbi, "LFS is not compatible with ATGC");
- 		return -EINVAL;
- 	}
- 
--	if (f2fs_is_readonly(sbi) && test_opt(sbi, FLUSH_MERGE)) {
--		f2fs_err(NULL, "FLUSH_MERGE not compatible with readonly mode");
-+	if (f2fs_is_readonly(sbi) && ctx_test_opt(ctx, F2FS_MOUNT_FLUSH_MERGE)) {
-+		f2fs_err(sbi, "FLUSH_MERGE not compatible with readonly mode");
- 		return -EINVAL;
- 	}
- 
- 	if (f2fs_sb_has_readonly(sbi) && !f2fs_readonly(sbi->sb)) {
--		f2fs_err(NULL, "Allow to mount readonly mode only");
-+		f2fs_err(sbi, "Allow to mount readonly mode only");
- 		return -EROFS;
- 	}
-+	return 0;
-+}
- 
--	if (test_opt(sbi, NORECOVERY) && !f2fs_readonly(sbi->sb)) {
--		f2fs_err(sbi, "norecovery requires readonly mount");
--		return -EINVAL;
-+static void f2fs_apply_quota_options(struct fs_context *fc,
-+				     struct super_block *sb)
-+{
-+#ifdef CONFIG_QUOTA
-+	struct f2fs_fs_context *ctx = fc->fs_private;
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+	bool quota_feature = f2fs_sb_has_quota_ino(sbi);
-+	char *qname;
-+	int i;
-+
-+	if (quota_feature)
-+		return;
-+
-+	for (i = 0; i < MAXQUOTAS; i++) {
-+		if (!(ctx->qname_mask & (1 << i)))
-+			continue;
-+
-+		qname = F2FS_CTX_INFO(ctx).s_qf_names[i];
-+		if (qname)
-+			set_opt(sbi, QUOTA);
-+		F2FS_OPTION(sbi).s_qf_names[i] = qname;
-+		F2FS_CTX_INFO(ctx).s_qf_names[i] = NULL;
- 	}
- 
--	return 0;
-+	if (ctx->spec_mask & F2FS_SPEC_jqfmt)
-+		F2FS_OPTION(sbi).s_jquota_fmt = F2FS_CTX_INFO(ctx).s_jquota_fmt;
-+
-+	if (quota_feature && F2FS_OPTION(sbi).s_jquota_fmt) {
-+		f2fs_info(sbi, "QUOTA feature is enabled, so ignore jquota_fmt");
-+		F2FS_OPTION(sbi).s_jquota_fmt = 0;
-+	}
-+#endif
-+}
-+
-+static void f2fs_apply_test_dummy_encryption(struct fs_context *fc,
-+					     struct super_block *sb)
-+{
-+	struct f2fs_fs_context *ctx = fc->fs_private;
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+
-+	if (!fscrypt_is_dummy_policy_set(&F2FS_CTX_INFO(ctx).dummy_enc_policy) ||
-+		/* if already set, it was already verified to be the same */
-+		fscrypt_is_dummy_policy_set(&F2FS_OPTION(sbi).dummy_enc_policy))
-+		return;
-+	F2FS_OPTION(sbi).dummy_enc_policy = F2FS_CTX_INFO(ctx).dummy_enc_policy;
-+	memset(&F2FS_CTX_INFO(ctx).dummy_enc_policy, 0,
-+		sizeof(F2FS_CTX_INFO(ctx).dummy_enc_policy));
-+	f2fs_warn(sbi, "Test dummy encryption mode enabled");
-+}
-+
-+static void f2fs_apply_compression(struct fs_context *fc,
-+				   struct super_block *sb)
-+{
-+#ifdef CONFIG_F2FS_FS_COMPRESSION
-+	struct f2fs_fs_context *ctx = fc->fs_private;
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+	unsigned char (*ctx_ext)[F2FS_EXTENSION_LEN];
-+	unsigned char (*sbi_ext)[F2FS_EXTENSION_LEN];
-+	int ctx_cnt, sbi_cnt, i;
-+
-+	if (ctx->spec_mask & F2FS_SPEC_compress_level)
-+		F2FS_OPTION(sbi).compress_level =
-+					F2FS_CTX_INFO(ctx).compress_level;
-+	if (ctx->spec_mask & F2FS_SPEC_compress_algorithm)
-+		F2FS_OPTION(sbi).compress_algorithm =
-+					F2FS_CTX_INFO(ctx).compress_algorithm;
-+	if (ctx->spec_mask & F2FS_SPEC_compress_log_size)
-+		F2FS_OPTION(sbi).compress_log_size =
-+					F2FS_CTX_INFO(ctx).compress_log_size;
-+	if (ctx->spec_mask & F2FS_SPEC_compress_chksum)
-+		F2FS_OPTION(sbi).compress_chksum =
-+					F2FS_CTX_INFO(ctx).compress_chksum;
-+	if (ctx->spec_mask & F2FS_SPEC_compress_mode)
-+		F2FS_OPTION(sbi).compress_mode =
-+					F2FS_CTX_INFO(ctx).compress_mode;
-+	if (ctx->spec_mask & F2FS_SPEC_compress_extension) {
-+		ctx_ext = F2FS_CTX_INFO(ctx).extensions;
-+		ctx_cnt = F2FS_CTX_INFO(ctx).compress_ext_cnt;
-+		sbi_ext = F2FS_OPTION(sbi).extensions;
-+		sbi_cnt = F2FS_OPTION(sbi).compress_ext_cnt;
-+		for (i = 0; i < ctx_cnt; i++) {
-+			if (strlen(ctx_ext[i]) == 0)
-+				continue;
-+			strscpy(sbi_ext[sbi_cnt], ctx_ext[i]);
-+			sbi_cnt++;
-+		}
-+		F2FS_OPTION(sbi).compress_ext_cnt = sbi_cnt;
-+	}
-+	if (ctx->spec_mask & F2FS_SPEC_nocompress_extension) {
-+		ctx_ext = F2FS_CTX_INFO(ctx).noextensions;
-+		ctx_cnt = F2FS_CTX_INFO(ctx).nocompress_ext_cnt;
-+		sbi_ext = F2FS_OPTION(sbi).noextensions;
-+		sbi_cnt = F2FS_OPTION(sbi).nocompress_ext_cnt;
-+		for (i = 0; i < ctx_cnt; i++) {
-+			if (strlen(ctx_ext[i]) == 0)
-+				continue;
-+			strscpy(sbi_ext[sbi_cnt], ctx_ext[i]);
-+			sbi_cnt++;
-+		}
-+		F2FS_OPTION(sbi).nocompress_ext_cnt = sbi_cnt;
-+	}
-+#endif
-+}
-+
-+static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
-+{
-+	struct f2fs_fs_context *ctx = fc->fs_private;
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+
-+	F2FS_OPTION(sbi).opt &= ~ctx->opt_mask;
-+	F2FS_OPTION(sbi).opt |= F2FS_CTX_INFO(ctx).opt;
-+	sb->s_flags &= ~ctx->sflags_mask;
-+	sb->s_flags |= ctx->sflags;
-+
-+	if (ctx->spec_mask & F2FS_SPEC_background_gc)
-+		F2FS_OPTION(sbi).bggc_mode = F2FS_CTX_INFO(ctx).bggc_mode;
-+	if (ctx->spec_mask & F2FS_SPEC_inline_xattr_size)
-+		F2FS_OPTION(sbi).inline_xattr_size =
-+					F2FS_CTX_INFO(ctx).inline_xattr_size;
-+	if (ctx->spec_mask & F2FS_SPEC_active_logs)
-+		F2FS_OPTION(sbi).active_logs = F2FS_CTX_INFO(ctx).active_logs;
-+	if (ctx->spec_mask & F2FS_SPEC_reserve_root)
-+		F2FS_OPTION(sbi).root_reserved_blocks =
-+					F2FS_CTX_INFO(ctx).root_reserved_blocks;
-+	if (ctx->spec_mask & F2FS_SPEC_resgid)
-+		F2FS_OPTION(sbi).s_resgid = F2FS_CTX_INFO(ctx).s_resgid;
-+	if (ctx->spec_mask & F2FS_SPEC_resuid)
-+		F2FS_OPTION(sbi).s_resuid = F2FS_CTX_INFO(ctx).s_resuid;
-+	if (ctx->spec_mask & F2FS_SPEC_mode)
-+		F2FS_OPTION(sbi).fs_mode = F2FS_CTX_INFO(ctx).fs_mode;
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
-+	if (ctx->spec_mask & F2FS_SPEC_fault_injection)
-+		(void)f2fs_build_fault_attr(sbi,
-+		F2FS_CTX_INFO(ctx).fault_info.inject_rate, 0, FAULT_RATE);
-+	if (ctx->spec_mask & F2FS_SPEC_fault_type)
-+		(void)f2fs_build_fault_attr(sbi, 0,
-+			F2FS_CTX_INFO(ctx).fault_info.inject_type, FAULT_TYPE);
-+#endif
-+	if (ctx->spec_mask & F2FS_SPEC_alloc_mode)
-+		F2FS_OPTION(sbi).alloc_mode = F2FS_CTX_INFO(ctx).alloc_mode;
-+	if (ctx->spec_mask & F2FS_SPEC_fsync_mode)
-+		F2FS_OPTION(sbi).fsync_mode = F2FS_CTX_INFO(ctx).fsync_mode;
-+	if (ctx->spec_mask & F2FS_SPEC_checkpoint_disable_cap)
-+		F2FS_OPTION(sbi).unusable_cap = F2FS_CTX_INFO(ctx).unusable_cap;
-+	if (ctx->spec_mask & F2FS_SPEC_checkpoint_disable_cap_perc)
-+		F2FS_OPTION(sbi).unusable_cap_perc =
-+					F2FS_CTX_INFO(ctx).unusable_cap_perc;
-+	if (ctx->spec_mask & F2FS_SPEC_discard_unit)
-+		F2FS_OPTION(sbi).discard_unit = F2FS_CTX_INFO(ctx).discard_unit;
-+	if (ctx->spec_mask & F2FS_SPEC_memory_mode)
-+		F2FS_OPTION(sbi).memory_mode = F2FS_CTX_INFO(ctx).memory_mode;
-+	if (ctx->spec_mask & F2FS_SPEC_errors)
-+		F2FS_OPTION(sbi).errors = F2FS_CTX_INFO(ctx).errors;
-+
-+	f2fs_apply_compression(fc, sb);
-+	f2fs_apply_test_dummy_encryption(fc, sb);
-+	f2fs_apply_quota_options(fc, sb);
- }
- 
- static struct inode *f2fs_alloc_inode(struct super_block *sb)
-@@ -2275,6 +2587,8 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 	struct f2fs_mount_info org_mount_opt;
-+	struct f2fs_fs_context ctx;
-+	struct fs_context fc;
- 	unsigned long old_sb_flags;
- 	int err;
- 	bool need_restart_gc = false, need_stop_gc = false;
-@@ -2331,11 +2645,22 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 
- 	default_options(sbi, true);
- 
-+	memset(&fc, 0, sizeof(fc));
-+	memset(&ctx, 0, sizeof(ctx));
-+	fc.fs_private = &ctx;
-+	fc.purpose = FS_CONTEXT_FOR_RECONFIGURE;
-+
- 	/* parse mount options */
--	err = parse_options(sbi, data, true);
-+	err = parse_options(&fc, data);
- 	if (err)
- 		goto restore_opts;
- 
-+	err = f2fs_check_opt_consistency(&fc, sb);
-+	if (err < 0)
-+		goto restore_opts;
-+
-+	f2fs_apply_options(&fc, sb);
-+
- #ifdef CONFIG_BLK_DEV_ZONED
- 	if (f2fs_sb_has_blkzoned(sbi) &&
- 		sbi->max_open_zones < F2FS_OPTION(sbi).active_logs) {
-@@ -2346,11 +2671,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		goto restore_opts;
- 	}
- #endif
--
--	err = f2fs_validate_options(sbi);
--	if (err)
--		goto restore_opts;
--
- 	/* flush outstanding errors before changing fs state */
- 	flush_work(&sbi->s_error_work);
- 
-@@ -4429,6 +4749,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- {
- 	struct f2fs_sb_info *sbi;
- 	struct f2fs_super_block *raw_super;
-+	struct f2fs_fs_context ctx;
-+	struct fs_context fc;
- 	struct inode *root;
- 	int err;
- 	bool skip_recovery = false, need_fsck = false;
-@@ -4445,6 +4767,9 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	raw_super = NULL;
- 	valid_super_block = -1;
- 	recovery = 0;
-+	memset(&fc, 0, sizeof(fc));
-+	memset(&ctx, 0, sizeof(ctx));
-+	fc.fs_private = &ctx;
- 
- 	/* allocate memory for f2fs-specific super block info */
- 	sbi = kzalloc(sizeof(struct f2fs_sb_info), GFP_KERNEL);
-@@ -4502,14 +4827,16 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto free_sb_buf;
- 	}
- 
--	err = parse_options(sbi, options, false);
-+	err = parse_options(&fc, options);
- 	if (err)
- 		goto free_options;
- 
--	err = f2fs_validate_options(sbi);
--	if (err)
-+	err = f2fs_check_opt_consistency(&fc, sb);
-+	if (err < 0)
- 		goto free_options;
- 
-+	f2fs_apply_options(&fc, sb);
-+
- 	sb->s_maxbytes = max_file_blocks(NULL) <<
- 				le32_to_cpu(raw_super->log_blocksize);
- 	sb->s_max_links = F2FS_LINK_MAX;
--- 
-2.49.0
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gV2VkLCBBcHIgMjMsIDIwMjUgYXQgNzowMeKAr1BNIENoYW8gWXUgPGNoYW9Aa2VybmVsLm9y
+Zz4gd3JvdGU6Cj4KPiBPbiA0LzE5LzI1IDAwOjU2LCBEYWVobyBKZW9uZyB3cm90ZToKPiA+IEZy
+b206IERhZWhvIEplb25nIDxkYWVob2plb25nQGdvb2dsZS5jb20+Cj4gPgo+ID4gRHVlIHRvIHRo
+ZSBkaWZmaWN1bHR5IG9mIGludGVudGlvbmFsbHkgY29ycnVwdGluZyBzcGVjaWZpYyBtZXRhZGF0
+YSBvbgo+ID4gc29tZSBzdG9yYWdlIGRldmljZXMgbGlrZSB6b25lZCBzdG9yYWdlIGRldmljZXMs
+IGl0IGlzIGNoYWxsZW5naW5nIHRvCj4gPiBlZmZlY3RpdmVseSB2ZXJpZnkgZnNjayBmdW5jdGlv
+bmFsaXR5LiBUbyBmYWNpbGl0YXRlIHRoaXMgdmVyaWZpY2F0aW9uLAo+ID4gaXQgaXMgbmVjZXNz
+YXJ5IHRvIGFkZCBhIGZhdWx0IGluamVjdGlvbiBtb2RlLgo+Cj4gRGFlaG8sCj4KPiBXaGF0IGRv
+IHlvdSB0aGluayBvZiBhZGRpbmcgc29tZSBzdGF0cyBmb3IgaG93IG1hbnkgdGltZSBpdCB3YXMg
+aW5qZWN0ZWQKPiBmb3IgZWFjaCBmYXVsdCB0eXBlPyB0aGVuIHdlIGNhbiBjaGVjayB3aGV0aGVy
+IGFsbCBmYXVsdHMgd2UgbmVlZGVkIGhhdmUKPiBiZWVuIHRyaWdnZXJlZCBhbmQgYWxzbyB3ZSBj
+YW4gZ2V0IHRoZSB0cmlnZ2VyZWQgY291bnQuCgpTb3VuZHMgZ29vZC4gVGhlbiwgY2FuIHdlIHNo
+b3cgdGhlIHJlc3VsdCBhdCB0aGUgZW5kIG9mIHRoZSBmc2NrIHJ1bj8KCj4KPiBUaGFua3MsCj4K
+PiA+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBEYWVobyBKZW9uZyA8ZGFlaG9qZW9uZ0Bnb29nbGUuY29t
+Pgo+ID4gLS0tCj4gPiAgZnNjay9mc2NrLmMgICAgICAgfCAxMDYgKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLQo+ID4gIGZzY2svbWFpbi5jICAgICAgIHwgIDIy
+ICsrKysrKysrKysKPiA+ICBmc2NrL21rcXVvdGEuYyAgICB8ICAgMyArKwo+ID4gIGluY2x1ZGUv
+ZjJmc19mcy5oIHwgIDU0ICsrKysrKysrKysrKysrKysrKysrKysrCj4gPiAgbWFuL2ZzY2suZjJm
+cy44ICAgfCAgMzYgKysrKysrKysrKysrKysrKwo+ID4gIDUgZmlsZXMgY2hhbmdlZCwgMTkyIGlu
+c2VydGlvbnMoKyksIDI5IGRlbGV0aW9ucygtKQo+ID4KPiA+IGRpZmYgLS1naXQgYS9mc2NrL2Zz
+Y2suYyBiL2ZzY2svZnNjay5jCj4gPiBpbmRleCA4MTU1Y2JkLi5lODc5ZDhjIDEwMDY0NAo+ID4g
+LS0tIGEvZnNjay9mc2NrLmMKPiA+ICsrKyBiL2ZzY2svZnNjay5jCj4gPiBAQCAtMTYsNiArMTYs
+MjAgQEAKPiA+ICBjaGFyICp0cmVlX21hcms7Cj4gPiAgdWludDMyX3QgdHJlZV9tYXJrX3NpemUg
+PSAyNTY7Cj4gPgo+ID4gK2NvbnN0IGNoYXIgKmYyZnNfZmF1bHRfbmFtZVtGQVVMVF9NQVhdID0g
+ewo+ID4gKyAgICAgW0ZBVUxUX1NFR19UWVBFXSAgICAgICAgPSAiaW52YWxpZCBzZWdtZW50IHR5
+cGUiLAo+ID4gKyAgICAgW0ZBVUxUX1NVTV9UWVBFXSAgICAgICAgPSAiaW52YWxpZCBzdW1tYXJ5
+IHR5cGUiLAo+ID4gKyAgICAgW0ZBVUxUX1NVTV9FTlRdICAgICAgICAgPSAiaW52YWxpZCBzdW1t
+YXJ5IGVudHJ5IiwKPiA+ICsgICAgIFtGQVVMVF9OQVRdICAgICAgICAgICAgID0gImludmFsaWQg
+bmF0IGVudHJ5IiwKPiA+ICsgICAgIFtGQVVMVF9OT0RFXSAgICAgICAgICAgID0gImludmFsaWQg
+bm9kZSBibG9jayIsCj4gPiArICAgICBbRkFVTFRfWEFUVFJfRU5UXSAgICAgICA9ICJpbnZhbGlk
+IHhhdHRyIGVudHJ5IiwKPiA+ICsgICAgIFtGQVVMVF9DT01QUl0gICAgICAgICAgID0gImludmFs
+aWQgY29tcHJlc3Npb24gdHlwZSIsCj4gPiArICAgICBbRkFVTFRfSU5PREVdICAgICAgICAgICA9
+ICJpbnZhbGlkIGlub2RlIGluZm8iLAo+ID4gKyAgICAgW0ZBVUxUX0RFTlRSWV0gICAgICAgICAg
+PSAiaW52YWxpZCBkZW50cnkiLAo+ID4gKyAgICAgW0ZBVUxUX0RBVEFdICAgICAgICAgICAgPSAi
+aW52YWxpZCBkYXRhIGJsb2NrIiwKPiA+ICsgICAgIFtGQVVMVF9RVU9UQV0gICAgICAgICAgID0g
+ImludmFsaWQgcXVvdGEiLAo+ID4gK307Cj4gPiArCj4gPiAgaW50IGYyZnNfc2V0X21haW5fYml0
+bWFwKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgdTMyIGJsaywgaW50IHR5cGUpCj4gPiAgewo+
+ID4gICAgICAgc3RydWN0IGYyZnNfZnNjayAqZnNjayA9IEYyRlNfRlNDSyhzYmkpOwo+ID4gQEAg
+LTIzLDkgKzM3LDkgQEAgaW50IGYyZnNfc2V0X21haW5fYml0bWFwKHN0cnVjdCBmMmZzX3NiX2lu
+Zm8gKnNiaSwgdTMyIGJsaywgaW50IHR5cGUpCj4gPiAgICAgICBpbnQgZml4ID0gMDsKPiA+Cj4g
+PiAgICAgICBzZSA9IGdldF9zZWdfZW50cnkoc2JpLCBHRVRfU0VHTk8oc2JpLCBibGspKTsKPiA+
+IC0gICAgIGlmIChzZS0+dHlwZSA+PSBOT19DSEVDS19UWVBFKQo+ID4gLSAgICAgICAgICAgICBm
+aXggPSAxOwo+ID4gLSAgICAgZWxzZSBpZiAoSVNfREFUQVNFRyhzZS0+dHlwZSkgIT0gSVNfREFU
+QVNFRyh0eXBlKSkKPiA+ICsgICAgIGlmICh0aW1lX3RvX2luamVjdChGQVVMVF9TRUdfVFlQRSkg
+fHwKPiA+ICsgICAgICAgICAgICAgICAgICAgICAoc2UtPnR5cGUgPj0gTk9fQ0hFQ0tfVFlQRSkg
+fHwKPiA+ICsgICAgICAgICAgICAgICAgICAgICAoSVNfREFUQVNFRyhzZS0+dHlwZSkgIT0gSVNf
+REFUQVNFRyh0eXBlKSkpCj4gPiAgICAgICAgICAgICAgIGZpeCA9IDE7Cj4gPgo+ID4gICAgICAg
+LyoganVzdCBjaGVjayBkYXRhIGFuZCBub2RlIHR5cGVzICovCj4gPiBAQCAtMTY4LDcgKzE4Miw4
+IEBAIHN0YXRpYyBpbnQgaXNfdmFsaWRfc3NhX25vZGVfYmxrKHN0cnVjdCBmMmZzX3NiX2luZm8g
+KnNiaSwgdTMyIG5pZCwKPiA+Cj4gPiAgICAgICBzdW1fYmxrID0gZ2V0X3N1bV9ibG9jayhzYmks
+IHNlZ25vLCAmdHlwZSk7Cj4gPgo+ID4gLSAgICAgaWYgKHR5cGUgIT0gU0VHX1RZUEVfTk9ERSAm
+JiB0eXBlICE9IFNFR19UWVBFX0NVUl9OT0RFKSB7Cj4gPiArICAgICBpZiAodGltZV90b19pbmpl
+Y3QoRkFVTFRfU1VNX1RZUEUpIHx8Cj4gPiArICAgICAgICAgICAgICAgICAgICAgKHR5cGUgIT0g
+U0VHX1RZUEVfTk9ERSAmJiB0eXBlICE9IFNFR19UWVBFX0NVUl9OT0RFKSkgewo+ID4gICAgICAg
+ICAgICAgICAvKiBjYW4ndCBmaXggY3VycmVudCBzdW1tYXJ5LCB0aGVuIGRyb3AgdGhlIGJsb2Nr
+ICovCj4gPiAgICAgICAgICAgICAgIGlmICghYy5maXhfb24gfHwgdHlwZSA8IDApIHsKPiA+ICAg
+ICAgICAgICAgICAgICAgICAgICBBU1NFUlRfTVNHKCJTdW1tYXJ5IGZvb3RlciBpcyBub3QgZm9y
+IG5vZGUgc2VnbWVudCIpOwo+ID4gQEAgLTE4OSw3ICsyMDQsOCBAQCBzdGF0aWMgaW50IGlzX3Zh
+bGlkX3NzYV9ub2RlX2JsayhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHUzMiBuaWQsCj4gPgo+
+ID4gICAgICAgc3VtX2VudHJ5ID0gJihzdW1fYmxrLT5lbnRyaWVzW29mZnNldF0pOwo+ID4KPiA+
+IC0gICAgIGlmIChsZTMyX3RvX2NwdShzdW1fZW50cnktPm5pZCkgIT0gbmlkKSB7Cj4gPiArICAg
+ICBpZiAodGltZV90b19pbmplY3QoRkFVTFRfU1VNX0VOVCkgfHwKPiA+ICsgICAgICAgICAgICAg
+ICAgICAgICAobGUzMl90b19jcHUoc3VtX2VudHJ5LT5uaWQpICE9IG5pZCkpIHsKPiA+ICAgICAg
+ICAgICAgICAgaWYgKCFjLmZpeF9vbiB8fCB0eXBlIDwgMCkgewo+ID4gICAgICAgICAgICAgICAg
+ICAgICAgIERCRygwLCAibmlkICAgICAgICAgICAgICAgICAgICAgICBbMHgleF1cbiIsIG5pZCk7
+Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgREJHKDAsICJ0YXJnZXQgYmxrX2FkZHIgICAgICAg
+ICAgIFsweCV4XVxuIiwgYmxrX2FkZHIpOwo+ID4gQEAgLTI4Miw3ICsyOTgsNyBAQCBzdGF0aWMg
+aW50IGlzX3ZhbGlkX3NzYV9kYXRhX2JsayhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHUzMiBi
+bGtfYWRkciwKPiA+ICAgICAgIHN0cnVjdCBmMmZzX3N1bW1hcnkgKnN1bV9lbnRyeTsKPiA+ICAg
+ICAgIHN0cnVjdCBzZWdfZW50cnkgKiBzZTsKPiA+ICAgICAgIHUzMiBzZWdubywgb2Zmc2V0Owo+
+ID4gLSAgICAgaW50IG5lZWRfZml4ID0gMCwgcmV0ID0gMDsKPiA+ICsgICAgIGludCBuZWVkX2Zp
+eCA9IDAsIHJldCA9IDAsIGZhdWx0X3N1bV9lbnQgPSAwOwo+ID4gICAgICAgaW50IHR5cGU7Cj4g
+Pgo+ID4gICAgICAgaWYgKGdldF9zYihmZWF0dXJlKSAmIEYyRlNfRkVBVFVSRV9STykKPiA+IEBA
+IC0yOTMsNyArMzA5LDggQEAgc3RhdGljIGludCBpc192YWxpZF9zc2FfZGF0YV9ibGsoc3RydWN0
+IGYyZnNfc2JfaW5mbyAqc2JpLCB1MzIgYmxrX2FkZHIsCj4gPgo+ID4gICAgICAgc3VtX2JsayA9
+IGdldF9zdW1fYmxvY2soc2JpLCBzZWdubywgJnR5cGUpOwo+ID4KPiA+IC0gICAgIGlmICh0eXBl
+ICE9IFNFR19UWVBFX0RBVEEgJiYgdHlwZSAhPSBTRUdfVFlQRV9DVVJfREFUQSkgewo+ID4gKyAg
+ICAgaWYgKHRpbWVfdG9faW5qZWN0KEZBVUxUX1NVTV9UWVBFKSB8fAo+ID4gKyAgICAgICAgICAg
+ICAgICAgICAgICh0eXBlICE9IFNFR19UWVBFX0RBVEEgJiYgdHlwZSAhPSBTRUdfVFlQRV9DVVJf
+REFUQSkpIHsKPiA+ICAgICAgICAgICAgICAgLyogY2FuJ3QgZml4IGN1cnJlbnQgc3VtbWFyeSwg
+dGhlbiBkcm9wIHRoZSBibG9jayAqLwo+ID4gICAgICAgICAgICAgICBpZiAoIWMuZml4X29uIHx8
+IHR5cGUgPCAwKSB7Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgQVNTRVJUX01TRygiU3VtbWFy
+eSBmb290ZXIgaXMgbm90IGZvciBkYXRhIHNlZ21lbnQiKTsKPiA+IEBAIC0zMTQsNyArMzMxLDEw
+IEBAIHN0YXRpYyBpbnQgaXNfdmFsaWRfc3NhX2RhdGFfYmxrKHN0cnVjdCBmMmZzX3NiX2luZm8g
+KnNiaSwgdTMyIGJsa19hZGRyLAo+ID4KPiA+ICAgICAgIHN1bV9lbnRyeSA9ICYoc3VtX2Jsay0+
+ZW50cmllc1tvZmZzZXRdKTsKPiA+Cj4gPiAtICAgICBpZiAobGUzMl90b19jcHUoc3VtX2VudHJ5
+LT5uaWQpICE9IHBhcmVudF9uaWQgfHwKPiA+ICsgICAgIGlmICh0aW1lX3RvX2luamVjdChGQVVM
+VF9TVU1fRU5UKSkKPiA+ICsgICAgICAgICAgICAgZmF1bHRfc3VtX2VudCA9IDE7Cj4gPiArCj4g
+PiArICAgICBpZiAoZmF1bHRfc3VtX2VudCB8fCBsZTMyX3RvX2NwdShzdW1fZW50cnktPm5pZCkg
+IT0gcGFyZW50X25pZCB8fAo+ID4gICAgICAgICAgICAgICAgICAgICAgIHN1bV9lbnRyeS0+dmVy
+c2lvbiAhPSB2ZXJzaW9uIHx8Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgbGUxNl90b19jcHUo
+c3VtX2VudHJ5LT5vZnNfaW5fbm9kZSkgIT0gaWR4X2luX25vZGUpIHsKPiA+ICAgICAgICAgICAg
+ICAgaWYgKCFjLmZpeF9vbiB8fCB0eXBlIDwgMCkgewo+ID4gQEAgLTMzMyw3ICszNTMsOCBAQCBz
+dGF0aWMgaW50IGlzX3ZhbGlkX3NzYV9kYXRhX2JsayhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmks
+IHUzMiBibGtfYWRkciwKPiA+ICAgICAgICAgICAgICAgICAgICAgICBEQkcoMCwgIlRhcmdldCBk
+YXRhIGJsb2NrIGFkZHIgICAgWzB4JXhdXG4iLCBibGtfYWRkcik7Cj4gPiAgICAgICAgICAgICAg
+ICAgICAgICAgQVNTRVJUX01TRygiSW52YWxpZCBkYXRhIHNlZyBzdW1tYXJ5XG4iKTsKPiA+ICAg
+ICAgICAgICAgICAgICAgICAgICByZXQgPSAtRUlOVkFMOwo+ID4gLSAgICAgICAgICAgICB9IGVs
+c2UgaWYgKGlzX3ZhbGlkX3N1bW1hcnkoc2JpLCBzdW1fZW50cnksIGJsa19hZGRyKSkgewo+ID4g
+KyAgICAgICAgICAgICB9IGVsc2UgaWYgKCFmYXVsdF9zdW1fZW50ICYmCj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBpc192YWxpZF9zdW1tYXJ5KHNiaSwgc3VtX2VudHJ5LCBibGtf
+YWRkcikpIHsKPiA+ICAgICAgICAgICAgICAgICAgICAgICAvKiBkZWxldGUgd3JvbmcgaW5kZXgg
+Ki8KPiA+ICAgICAgICAgICAgICAgICAgICAgICByZXQgPSAtRUlOVkFMOwo+ID4gICAgICAgICAg
+ICAgICB9IGVsc2Ugewo+ID4gQEAgLTM5Nyw2ICs0MTgsOSBAQCBlcnI6Cj4gPiAgc3RhdGljIGlu
+dCBzYW5pdHlfY2hlY2tfbmF0KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgdTMyIG5pZCwKPiA+
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3Qgbm9k
+ZV9pbmZvICpuaSkKPiA+ICB7Cj4gPiArICAgICBpZiAodGltZV90b19pbmplY3QoRkFVTFRfTkFU
+KSkKPiA+ICsgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7Cj4gPiArCj4gPiAgICAgICBpZiAo
+IUlTX1ZBTElEX05JRChzYmksIG5pZCkpIHsKPiA+ICAgICAgICAgICAgICAgQVNTRVJUX01TRygi
+bmlkIGlzIG5vdCB2YWxpZC4gWzB4JXhdIiwgbmlkKTsKPiA+ICAgICAgICAgICAgICAgcmV0dXJu
+IC1FSU5WQUw7Cj4gPiBAQCAtNDM2LDYgKzQ2MCw5IEBAIHN0YXRpYyBpbnQgc2FuaXR5X2NoZWNr
+X25pZChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHUzMiBuaWQsCj4gPiAgICAgICBzdHJ1Y3Qg
+ZjJmc19mc2NrICpmc2NrID0gRjJGU19GU0NLKHNiaSk7Cj4gPiAgICAgICBpbnQgcmV0Owo+ID4K
+PiA+ICsgICAgIGlmICh0aW1lX3RvX2luamVjdChGQVVMVF9OT0RFKSkKPiA+ICsgICAgICAgICAg
+ICAgcmV0dXJuIC1FSU5WQUw7Cj4gPiArCj4gPiAgICAgICByZXQgPSBzYW5pdHlfY2hlY2tfbmF0
+KHNiaSwgbmlkLCBuaSk7Cj4gPiAgICAgICBpZiAocmV0KQo+ID4gICAgICAgICAgICAgICByZXR1
+cm4gcmV0Owo+ID4gQEAgLTg2NSw3ICs4OTIsNyBAQCBpbnQgY2hrX2V4dGVuZGVkX2F0dHJpYnV0
+ZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCB1MzIgbmlkLAo+ID4gICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgImVuZCBvZiBsaXN0IiwgbmlkKTsKPiA+ICAgICAgICAgICAgICAgbmVl
+ZF9maXggPSB0cnVlOwo+ID4gICAgICAgfQo+ID4gLSAgICAgaWYgKG5lZWRfZml4ICYmIGMuZml4
+X29uKSB7Cj4gPiArICAgICBpZiAoKHRpbWVfdG9faW5qZWN0KEZBVUxUX1hBVFRSX0VOVCkgfHwg
+bmVlZF9maXgpICYmIGMuZml4X29uKSB7Cj4gPiAgICAgICAgICAgICAgIG1lbXNldChlbnQsIDAs
+ICh1OCAqKWxhc3RfYmFzZV9hZGRyIC0gKHU4ICopZW50KTsKPiA+ICAgICAgICAgICAgICAgd3Jp
+dGVfYWxsX3hhdHRycyhzYmksIGlub2RlLCB4YXR0cl9zaXplLCB4YXR0cik7Cj4gPiAgICAgICAg
+ICAgICAgIEZJWF9NU0coIlsweCV4XSBudWxsaWZ5IHdyb25nIHhhdHRyIGVudHJpZXMiLCBuaWQp
+Owo+ID4gQEAgLTkwNyw3ICs5MzQsOCBAQCB2b2lkIGZzY2tfY2hrX2lub2RlX2JsayhzdHJ1Y3Qg
+ZjJmc19zYl9pbmZvICpzYmksIHUzMiBuaWQsCj4gPiAgICAgICBpZiAoIWNvbXByZXNzZWQpCj4g
+PiAgICAgICAgICAgICAgIGdvdG8gY2hlY2tfbmV4dDsKPiA+Cj4gPiAtICAgICBpZiAoIWNvbXBy
+X3N1cHBvcnRlZCB8fCAobm9kZV9ibGstPmkuaV9pbmxpbmUgJiBGMkZTX0lOTElORV9EQVRBKSkg
+ewo+ID4gKyAgICAgaWYgKHRpbWVfdG9faW5qZWN0KEZBVUxUX0NPTVBSKSB8fCAhY29tcHJfc3Vw
+cG9ydGVkIHx8Cj4gPiArICAgICAgICAgICAgICAgICAgICAgKG5vZGVfYmxrLT5pLmlfaW5saW5l
+ICYgRjJGU19JTkxJTkVfREFUQSkpIHsKPiA+ICAgICAgICAgICAgICAgLyoKPiA+ICAgICAgICAg
+ICAgICAgICogVGhlICdjb21wcmVzc2lvbicgZmxhZyBpbiBpX2ZsYWdzIGFmZmVjdHMgdGhlIHRy
+YXZlcnNlIG9mCj4gPiAgICAgICAgICAgICAgICAqIHRoZSBub2RlIHRyZWUuICBUaHVzLCBpdCBt
+dXN0IGJlIGZpeGVkIHVuY29uZGl0aW9uYWxseQo+ID4gQEAgLTk0MywxMiArOTcxLDEzIEBAIGNo
+ZWNrX25leHQ6Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgZjJmc19zZXRfbWFpbl9iaXRtYXAo
+c2JpLCBuaS0+YmxrX2FkZHIsCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBDVVJTRUdfV0FSTV9OT0RFKTsKPiA+Cj4gPiAtICAgICAgICAg
+ICAgICAgICAgICAgaWYgKGlfbGlua3MgPT0gMCAmJiAoZnR5cGUgPT0gRjJGU19GVF9DSFJERVYg
+fHwKPiA+ICsgICAgICAgICAgICAgICAgICAgICBpZiAodGltZV90b19pbmplY3QoRkFVTFRfSU5P
+REUpIHx8Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAoaV9saW5rcyA9PSAwICYm
+IChmdHlwZSA9PSBGMkZTX0ZUX0NIUkRFViB8fAo+ID4gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgZnR5cGUgPT0gRjJGU19GVF9CTEtERVYgfHwKPiA+ICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIGZ0eXBlID09IEYyRlNfRlRfRklGTyB8fAo+ID4gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgZnR5cGUgPT0gRjJGU19GVF9TT0NLIHx8Cj4gPiAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBmdHlwZSA9PSBGMkZTX0ZUX1NZTUxJTksgfHwKPiA+IC0gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIGZ0eXBlID09IEYyRlNfRlRfUkVHX0ZJTEUpKSB7Cj4gPiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBmdHlwZSA9PSBGMkZTX0ZUX1JFR19GSUxFKSkpIHsK
+PiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEFTU0VSVF9NU0coImlubzogMHgleCBm
+dHlwZTogJWQgaGFzIGlfbGlua3M6ICV1IiwKPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5pZCwgZnR5cGUsIGlfbGlua3MpOwo+ID4gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKGMuZml4X29uKSB7Cj4gPiBAQCAtMTAwOCw3
+ICsxMDM3LDggQEAgY2hlY2tfbmV4dDoKPiA+ICAgICAgICAgICAgICAgaWYgKGMuZmVhdHVyZSAm
+IEYyRlNfRkVBVFVSRV9FWFRSQV9BVFRSKSB7Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgdW5z
+aWduZWQgaW50IGlzaXplID0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGxlMTZf
+dG9fY3B1KG5vZGVfYmxrLT5pLmlfZXh0cmFfaXNpemUpOwo+ID4gLSAgICAgICAgICAgICAgICAg
+ICAgIGlmIChpc2l6ZSA+IDQgKiBERUZfQUREUlNfUEVSX0lOT0RFKSB7Cj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgaWYgKHRpbWVfdG9faW5qZWN0KEZBVUxUX0lOT0RFKSB8fAo+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAoaXNpemUgPiA0ICogREVGX0FERFJTX1BF
+Ul9JTk9ERSkpIHsKPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEFTU0VSVF9NU0co
+IlsweCV4XSB3cm9uZyBpX2V4dHJhX2lzaXplPTB4JXgiLAo+ID4gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5pZCwgaXNpemUpOwo+ID4gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgaWYgKGMuZml4X29uKSB7Cj4gPiBAQCAtMTAzOCw4ICsxMDY4LDkg
+QEAgY2hlY2tfbmV4dDoKPiA+ICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgaW5s
+aW5lX3NpemUgPQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGUxNl90b19jcHUo
+bm9kZV9ibGstPmkuaV9pbmxpbmVfeGF0dHJfc2l6ZSk7Cj4gPgo+ID4gLSAgICAgICAgICAgICAg
+ICAgICAgIGlmICghaW5saW5lX3NpemUgfHwKPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgaW5saW5lX3NpemUgPiBNQVhfSU5MSU5FX1hBVFRSX1NJWkUpIHsKPiA+ICsg
+ICAgICAgICAgICAgICAgICAgICBpZiAodGltZV90b19pbmplY3QoRkFVTFRfSU5PREUpIHx8Cj4g
+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICghaW5saW5lX3NpemUgfHwK
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaW5saW5lX3NpemUgPiBN
+QVhfSU5MSU5FX1hBVFRSX1NJWkUpKSB7Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBBU1NFUlRfTVNHKCJbMHgleF0gd3JvbmcgaW5saW5lX3hhdHRyX3NpemU6JXUiLAo+ID4gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5pZCwgaW5saW5lX3Np
+emUpOwo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKGMuZml4X29uKSB7Cj4g
+PiBAQCAtMTA1Niw5ICsxMDg3LDEwIEBAIGNoZWNrX25leHQ6Cj4gPiAgICAgICB9Cj4gPiAgICAg
+ICBvZnMgPSBnZXRfZXh0cmFfaXNpemUobm9kZV9ibGspOwo+ID4KPiA+IC0gICAgIGlmICgobm9k
+ZV9ibGstPmkuaV9mbGFncyAmIGNwdV90b19sZTMyKEYyRlNfQ0FTRUZPTERfRkwpKSAmJgo+ID4g
+LSAgICAgICAgICghU19JU0RJUihsZTE2X3RvX2NwdShub2RlX2Jsay0+aS5pX21vZGUpKSB8fAo+
+ID4gLSAgICAgICAgICAhKGMuZmVhdHVyZSAmIEYyRlNfRkVBVFVSRV9DQVNFRk9MRCkpKSB7Cj4g
+PiArICAgICBpZiAodGltZV90b19pbmplY3QoRkFVTFRfSU5PREUpIHx8Cj4gPiArICAgICAgICAg
+ICAgICAoKG5vZGVfYmxrLT5pLmlfZmxhZ3MgJiBjcHVfdG9fbGUzMihGMkZTX0NBU0VGT0xEX0ZM
+KSkgJiYKPiA+ICsgICAgICAgICAgICAgICAoIVNfSVNESVIobGUxNl90b19jcHUobm9kZV9ibGst
+PmkuaV9tb2RlKSkgfHwKPiA+ICsgICAgICAgICAgICAgICAgIShjLmZlYXR1cmUgJiBGMkZTX0ZF
+QVRVUkVfQ0FTRUZPTEQpKSkpIHsKPiA+ICAgICAgICAgICAgICAgQVNTRVJUX01TRygiWzB4JXhd
+IHVuZXhwZWN0ZWQgY2FzZWZvbGQgZmxhZyIsIG5pZCk7Cj4gPiAgICAgICAgICAgICAgIGlmIChj
+LmZpeF9vbikgewo+ID4gICAgICAgICAgICAgICAgICAgICAgIEZJWF9NU0coImlub1sweCV4XSBj
+bGVhciBjYXNlZm9sZCBmbGFnIiwgbmlkKTsKPiA+IEBAIC0xMDc3LDcgKzExMDksOCBAQCBjaGVj
+a19uZXh0Ogo+ID4gICAgICAgICAgICAgICAgICAgICAgIHFmX3N6Y2hrX3R5cGVbY3VyX3F0eXBl
+XSA9IFFGX1NaQ0hLX0lOTElORTsKPiA+ICAgICAgICAgICAgICAgYmxvY2tfdCBibGthZGRyID0g
+bGUzMl90b19jcHUobm9kZV9ibGstPmkuaV9hZGRyW29mc10pOwo+ID4KPiA+IC0gICAgICAgICAg
+ICAgaWYgKGJsa2FkZHIgIT0gTlVMTF9BRERSKSB7Cj4gPiArICAgICAgICAgICAgIGlmICh0aW1l
+X3RvX2luamVjdChGQVVMVF9JTk9ERSkgfHwKPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIChibGthZGRyICE9IE5VTExfQUREUikpIHsKPiA+ICAgICAgICAgICAgICAgICAgICAgICBB
+U1NFUlRfTVNHKCJbMHgleF0gd3JvbmcgaW5saW5lIHJlc2VydmUgYmxrYWRkcjoldSIsCj4gPiAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5pZCwgYmxrYWRkcik7Cj4gPiAg
+ICAgICAgICAgICAgICAgICAgICAgaWYgKGMuZml4X29uKSB7Cj4gPiBAQCAtMTA4OCw3ICsxMTIx
+LDggQEAgY2hlY2tfbmV4dDoKPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5lZWRf
+Zml4ID0gMTsKPiA+ICAgICAgICAgICAgICAgICAgICAgICB9Cj4gPiAgICAgICAgICAgICAgIH0K
+PiA+IC0gICAgICAgICAgICAgaWYgKGlfc2l6ZSA+IGlubGluZV9zaXplKSB7Cj4gPiArICAgICAg
+ICAgICAgIGlmICh0aW1lX3RvX2luamVjdChGQVVMVF9JTk9ERSkgfHwKPiA+ICsgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIChpX3NpemUgPiBpbmxpbmVfc2l6ZSkpIHsKPiA+ICAgICAgICAg
+ICAgICAgICAgICAgICBBU1NFUlRfTVNHKCJbMHgleF0gd3JvbmcgaW5saW5lIHNpemU6JWx1IiwK
+PiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbmlkLCAodW5zaWduZWQg
+bG9uZylpX3NpemUpOwo+ID4gICAgICAgICAgICAgICAgICAgICAgIGlmIChjLmZpeF9vbikgewo+
+ID4gQEAgLTExMTgsNyArMTE1Miw3IEBAIGNoZWNrX25leHQ6Cj4gPiAgICAgICAgICAgICAgIGJs
+b2NrX3QgYmxrYWRkciA9IGxlMzJfdG9fY3B1KG5vZGVfYmxrLT5pLmlfYWRkcltvZnNdKTsKPiA+
+Cj4gPiAgICAgICAgICAgICAgIERCRygzLCAiaW5vWzB4JXhdIGhhcyBpbmxpbmUgZGVudHJ5IVxu
+IiwgbmlkKTsKPiA+IC0gICAgICAgICAgICAgaWYgKGJsa2FkZHIgIT0gMCkgewo+ID4gKyAgICAg
+ICAgICAgICBpZiAodGltZV90b19pbmplY3QoRkFVTFRfSU5PREUpIHx8IChibGthZGRyICE9IDAp
+KSB7Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgQVNTRVJUX01TRygiWzB4JXhdIHdyb25nIGlu
+bGluZSByZXNlcnZlIGJsa2FkZHI6JXUiLAo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBuaWQsIGJsa2FkZHIpOwo+ID4gICAg
+ICAgICAgICAgICAgICAgICAgIGlmIChjLmZpeF9vbikgewo+ID4gQEAgLTE3MjgsNiArMTc2Miw5
+IEBAIHN0YXRpYyBpbnQgZjJmc19jaGVja19oYXNoX2NvZGUoaW50IGVuY29kaW5nLCBpbnQgY2Fz
+ZWZvbGRlZCwKPiA+ICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZjJmc19kaXJfZW50cnkg
+KmRlbnRyeSwKPiA+ICAgICAgICAgICAgICAgICAgICAgICBjb25zdCB1bnNpZ25lZCBjaGFyICpu
+YW1lLCB1MzIgbGVuLCBpbnQgZW5jX25hbWUpCj4gPiAgewo+ID4gKyAgICAgaWYgKHRpbWVfdG9f
+aW5qZWN0KEZBVUxUX0RFTlRSWSkpCj4gPiArICAgICAgICAgICAgIHJldHVybiAxOwo+ID4gKwo+
+ID4gICAgICAgLyogQ2FzZWZvbGRlZCBFbmNyeXB0ZWQgbmFtZXMgcmVxdWlyZSBhIGtleSB0byBj
+b21wdXRlIHNpcGhhc2ggKi8KPiA+ICAgICAgIGlmIChlbmNfbmFtZSAmJiBjYXNlZm9sZGVkKQo+
+ID4gICAgICAgICAgICAgICByZXR1cm4gMDsKPiA+IEBAIC0xNzk5LDcgKzE4MzYsOCBAQCBzdGF0
+aWMgaW50IF9fY2hrX2RvdHNfZGVudHJpZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+ID4g
+ICAgICAgaW50IGZpeGVkID0gMDsKPiA+Cj4gPiAgICAgICBpZiAoKG5hbWVbMF0gPT0gJy4nICYm
+IGxlbiA9PSAxKSkgewo+ID4gLSAgICAgICAgICAgICBpZiAobGUzMl90b19jcHUoZGVudHJ5LT5p
+bm8pICE9IGNoaWxkLT5wX2lubykgewo+ID4gKyAgICAgICAgICAgICBpZiAodGltZV90b19pbmpl
+Y3QoRkFVTFRfREVOVFJZKSB8fAo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKGxl
+MzJfdG9fY3B1KGRlbnRyeS0+aW5vKSAhPSBjaGlsZC0+cF9pbm8pKSB7Cj4gPiAgICAgICAgICAg
+ICAgICAgICAgICAgQVNTRVJUX01TRygiQmFkIGlub2RlIG51bWJlclsweCV4XSBmb3IgJy4nLCBw
+YXJlbnRfaW5vIGlzIFsweCV4XVxuIiwKPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IGxlMzJfdG9fY3B1KGRlbnRyeS0+aW5vKSwgY2hpbGQtPnBfaW5vKTsKPiA+ICAgICAgICAgICAg
+ICAgICAgICAgICBkZW50cnktPmlubyA9IGNwdV90b19sZTMyKGNoaWxkLT5wX2lubyk7Cj4gPiBA
+QCAtMTgwOSwxMyArMTg0NywxNiBAQCBzdGF0aWMgaW50IF9fY2hrX2RvdHNfZGVudHJpZXMoc3Ry
+dWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+ID4KPiA+ICAgICAgIGlmIChuYW1lWzBdID09ICcuJyAm
+JiBuYW1lWzFdID09ICcuJyAmJiBsZW4gPT0gMikgewo+ID4gICAgICAgICAgICAgICBpZiAoY2hp
+bGQtPnBfaW5vID09IEYyRlNfUk9PVF9JTk8oc2JpKSkgewo+ID4gLSAgICAgICAgICAgICAgICAg
+ICAgIGlmIChsZTMyX3RvX2NwdShkZW50cnktPmlubykgIT0gRjJGU19ST09UX0lOTyhzYmkpKSB7
+Cj4gPiArICAgICAgICAgICAgICAgICAgICAgaWYgKHRpbWVfdG9faW5qZWN0KEZBVUxUX0RFTlRS
+WSkgfHwKPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKGxlMzJfdG9f
+Y3B1KGRlbnRyeS0+aW5vKSAhPQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgRjJGU19ST09UX0lOTyhzYmkpKSkgewo+ID4gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgQVNTRVJUX01TRygiQmFkIGlub2RlIG51bWJlclsweCV4XSBmb3IgJy4uJ1xuIiwKPiA+
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGUzMl90b19jcHUoZGVudHJ5
+LT5pbm8pKTsKPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRlbnRyeS0+aW5vID0g
+Y3B1X3RvX2xlMzIoRjJGU19ST09UX0lOTyhzYmkpKTsKPiA+ICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIGZpeGVkID0gMTsKPiA+ICAgICAgICAgICAgICAgICAgICAgICB9Cj4gPiAtICAg
+ICAgICAgICAgIH0gZWxzZSBpZiAobGUzMl90b19jcHUoZGVudHJ5LT5pbm8pICE9IGNoaWxkLT5w
+cF9pbm8pIHsKPiA+ICsgICAgICAgICAgICAgfSBlbHNlIGlmICh0aW1lX3RvX2luamVjdChGQVVM
+VF9ERU5UUlkpIHx8Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAobGUzMl90b19j
+cHUoZGVudHJ5LT5pbm8pICE9IGNoaWxkLT5wcF9pbm8pKSB7Cj4gPiAgICAgICAgICAgICAgICAg
+ICAgICAgQVNTRVJUX01TRygiQmFkIGlub2RlIG51bWJlclsweCV4XSBmb3IgJy4uJywgcGFyZW50
+IHBhcmVudCBpbm8gaXMgWzB4JXhdXG4iLAo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgbGUzMl90b19jcHUoZGVudHJ5LT5pbm8pLCBjaGlsZC0+cHBfaW5vKTsKPiA+ICAgICAgICAg
+ICAgICAgICAgICAgICBkZW50cnktPmlubyA9IGNwdV90b19sZTMyKGNoaWxkLT5wcF9pbm8pOwo+
+ID4gQEAgLTE4MjYsNyArMTg2Nyw3IEBAIHN0YXRpYyBpbnQgX19jaGtfZG90c19kZW50cmllcyhz
+dHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4gPiAgICAgICBpZiAoZjJmc19jaGVja19oYXNoX2Nv
+ZGUoZ2V0X2VuY29kaW5nKHNiaSksIGNhc2Vmb2xkZWQsIGRlbnRyeSwgbmFtZSwgbGVuLCBlbmNf
+bmFtZSkpCj4gPiAgICAgICAgICAgICAgIGZpeGVkID0gMTsKPiA+Cj4gPiAtICAgICBpZiAobmFt
+ZVtsZW5dICE9ICdcMCcpIHsKPiA+ICsgICAgIGlmICh0aW1lX3RvX2luamVjdChGQVVMVF9ERU5U
+UlkpIHx8IChuYW1lW2xlbl0gIT0gJ1wwJykpIHsKPiA+ICAgICAgICAgICAgICAgQVNTRVJUX01T
+RygiJy4nIGlzIG5vdCBOVUxMIHRlcm1pbmF0ZWRcbiIpOwo+ID4gICAgICAgICAgICAgICBuYW1l
+W2xlbl0gPSAnXDAnOwo+ID4gICAgICAgICAgICAgICBtZW1jcHkoKmZpbGVuYW1lLCBuYW1lLCBs
+ZW4pOwo+ID4gQEAgLTE4ODksNyArMTkzMCw4IEBAIHN0YXRpYyBpbnQgX19jaGtfZGVudHJpZXMo
+c3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBpbnQgY2FzZWZvbGRlZCwKPiA+ICAgICAgICAgICAg
+ICAgICAgICAgICBpKys7Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgY29udGludWU7Cj4gPiAg
+ICAgICAgICAgICAgIH0KPiA+IC0gICAgICAgICAgICAgaWYgKCFJU19WQUxJRF9OSUQoc2JpLCBs
+ZTMyX3RvX2NwdShkZW50cnlbaV0uaW5vKSkpIHsKPiA+ICsgICAgICAgICAgICAgaWYgKHRpbWVf
+dG9faW5qZWN0KEZBVUxUX0RFTlRSWSkgfHwKPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICFJU19WQUxJRF9OSUQoc2JpLCBsZTMyX3RvX2NwdShkZW50cnlbaV0uaW5vKSkpIHsKPiA+
+ICAgICAgICAgICAgICAgICAgICAgICBBU1NFUlRfTVNHKCJCYWQgZGVudHJ5IDB4JXggd2l0aCBp
+bnZhbGlkIE5JRC9pbm8gMHgleCIsCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgaSwgbGUzMl90b19jcHUoZGVudHJ5W2ldLmlubykpOwo+ID4gICAgICAgICAgICAgICAgICAg
+ICAgIGlmIChjLmZpeF9vbikgewo+ID4gQEAgLTE5MDMsNyArMTk0NSw5IEBAIHN0YXRpYyBpbnQg
+X19jaGtfZGVudHJpZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBpbnQgY2FzZWZvbGRlZCwK
+PiA+ICAgICAgICAgICAgICAgfQo+ID4KPiA+ICAgICAgICAgICAgICAgZnR5cGUgPSBkZW50cnlb
+aV0uZmlsZV90eXBlOwo+ID4gLSAgICAgICAgICAgICBpZiAoKGZ0eXBlIDw9IEYyRlNfRlRfVU5L
+Tk9XTiB8fCBmdHlwZSA+IEYyRlNfRlRfTEFTVF9GSUxFX1RZUEUpKSB7Cj4gPiArICAgICAgICAg
+ICAgIGlmICh0aW1lX3RvX2luamVjdChGQVVMVF9ERU5UUlkpIHx8Cj4gPiArICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAoZnR5cGUgPD0gRjJGU19GVF9VTktOT1dOIHx8Cj4gPiArICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgZnR5cGUgPiBGMkZTX0ZUX0xBU1RfRklMRV9UWVBFKSkg
+ewo+ID4gICAgICAgICAgICAgICAgICAgICAgIEFTU0VSVF9NU0coIkJhZCBkZW50cnkgMHgleCB3
+aXRoIHVuZXhwZWN0ZWQgZnR5cGUgMHgleCIsCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgbGUzMl90b19jcHUoZGVudHJ5W2ldLmlubyksIGZ0eXBlKTsK
+PiA+ICAgICAgICAgICAgICAgICAgICAgICBpZiAoYy5maXhfb24pIHsKPiA+IEBAIC0xOTE4LDcg
+KzE5NjIsOCBAQCBzdGF0aWMgaW50IF9fY2hrX2RlbnRyaWVzKHN0cnVjdCBmMmZzX3NiX2luZm8g
+KnNiaSwgaW50IGNhc2Vmb2xkZWQsCj4gPgo+ID4gICAgICAgICAgICAgICBuYW1lX2xlbiA9IGxl
+MTZfdG9fY3B1KGRlbnRyeVtpXS5uYW1lX2xlbik7Cj4gPgo+ID4gLSAgICAgICAgICAgICBpZiAo
+bmFtZV9sZW4gPT0gMCB8fCBuYW1lX2xlbiA+IEYyRlNfTkFNRV9MRU4pIHsKPiA+ICsgICAgICAg
+ICAgICAgaWYgKHRpbWVfdG9faW5qZWN0KEZBVUxUX0RFTlRSWSkgfHwKPiA+ICsgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIChuYW1lX2xlbiA9PSAwIHx8IG5hbWVfbGVuID4gRjJGU19OQU1F
+X0xFTikpIHsKPiA+ICAgICAgICAgICAgICAgICAgICAgICBBU1NFUlRfTVNHKCJCYWQgZGVudHJ5
+IDB4JXggd2l0aCBpbnZhbGlkIG5hbWVfbGVuIiwgaSk7Cj4gPiAgICAgICAgICAgICAgICAgICAg
+ICAgaWYgKGMuZml4X29uKSB7Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBGSVhf
+TVNHKCJDbGVhciBiYWQgZGVudHJ5IDB4JXgiLCBpKTsKPiA+IEBAIC0yMTUzLDYgKzIxOTgsOSBA
+QCBpbnQgZnNja19jaGtfZGF0YV9ibGsoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3Qg
+ZjJmc19pbm9kZSAqaW5vZGUsCj4gPiAgICAgICAgICAgICAgIHJldHVybiAwOwo+ID4gICAgICAg
+fQo+ID4KPiA+ICsgICAgIGlmICh0aW1lX3RvX2luamVjdChGQVVMVF9EQVRBKSkKPiA+ICsgICAg
+ICAgICAgICAgcmV0dXJuIC1FSU5WQUw7Cj4gPiArCj4gPiAgICAgICBpZiAoIWYyZnNfaXNfdmFs
+aWRfYmxrYWRkcihzYmksIGJsa19hZGRyLCBEQVRBX0dFTkVSSUMpKSB7Cj4gPiAgICAgICAgICAg
+ICAgIEFTU0VSVF9NU0coImJsa2FkZHJlc3MgaXMgbm90IHZhbGlkLiBbMHgleF0iLCBibGtfYWRk
+cik7Cj4gPiAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOwo+ID4gZGlmZiAtLWdpdCBhL2Zz
+Y2svbWFpbi5jIGIvZnNjay9tYWluLmMKPiA+IGluZGV4IDQ3YmE2YzkuLjI5NzkyZDggMTAwNjQ0
+Cj4gPiAtLS0gYS9mc2NrL21haW4uYwo+ID4gKysrIGIvZnNjay9tYWluLmMKPiA+IEBAIC05MSw2
+ICs5MSw4IEBAIHZvaWQgZnNja191c2FnZSgpCj4gPiAgICAgICBNU0coMCwgIiAgLS1uby1rZXJu
+ZWwtY2hlY2sgc2tpcHMgZGV0ZWN0aW5nIGtlcm5lbCBjaGFuZ2VcbiIpOwo+ID4gICAgICAgTVNH
+KDAsICIgIC0ta2VybmVsLWNoZWNrIGNoZWNrcyBrZXJuZWwgY2hhbmdlXG4iKTsKPiA+ICAgICAg
+IE1TRygwLCAiICAtLWRlYnVnLWNhY2hlIHRvIGRlYnVnIGNhY2hlIHdoZW4gLWMgaXMgdXNlZFxu
+Iik7Cj4gPiArICAgICBNU0coMCwgIiAgLS1mYXVsdF9pbmplY3Rpb249JSVkIHRvIGVuYWJsZSBm
+YXVsdCBpbmplY3Rpb24gd2l0aCBzcGVjaWZpZWQgaW5qZWN0aW9uIHJhdGVcbiIpOwo+ID4gKyAg
+ICAgTVNHKDAsICIgIC0tZmF1bHRfdHlwZT0lJWQgdG8gY29uZmlndXJlIGVuYWJsZWQgZmF1bHQg
+aW5qZWN0aW9uIHR5cGVcbiIpOwo+ID4gICAgICAgZXhpdCgxKTsKPiA+ICB9Cj4gPgo+ID4gQEAg
+LTI2Myw2ICsyNjUsOCBAQCB2b2lkIGYyZnNfcGFyc2Vfb3B0aW9ucyhpbnQgYXJnYywgY2hhciAq
+YXJndltdKQo+ID4gICAgICAgICAgICAgICAgICAgICAgIHsibm8ta2VybmVsLWNoZWNrIiwgbm9f
+YXJndW1lbnQsIDAsIDJ9LAo+ID4gICAgICAgICAgICAgICAgICAgICAgIHsia2VybmVsLWNoZWNr
+Iiwgbm9fYXJndW1lbnQsIDAsIDN9LAo+ID4gICAgICAgICAgICAgICAgICAgICAgIHsiZGVidWct
+Y2FjaGUiLCBub19hcmd1bWVudCwgMCwgNH0sCj4gPiArICAgICAgICAgICAgICAgICAgICAgeyJm
+YXVsdF9pbmplY3Rpb24iLCByZXF1aXJlZF9hcmd1bWVudCwgMCwgNX0sCj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgeyJmYXVsdF90eXBlIiwgcmVxdWlyZWRfYXJndW1lbnQsIDAsIDZ9LAo+ID4g
+ICAgICAgICAgICAgICAgICAgICAgIHswLCAwLCAwLCAwfQo+ID4gICAgICAgICAgICAgICB9Owo+
+ID4KPiA+IEBAIC0yODcsNiArMjkxLDI0IEBAIHZvaWQgZjJmc19wYXJzZV9vcHRpb25zKGludCBh
+cmdjLCBjaGFyICphcmd2W10pCj4gPiAgICAgICAgICAgICAgICAgICAgICAgY2FzZSA0Ogo+ID4g
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYy5jYWNoZV9jb25maWcuZGJnX2VuID0gdHJ1
+ZTsKPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGJyZWFrOwo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgIGNhc2UgNToKPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHZh
+bCA9IGF0b2kob3B0YXJnKTsKPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmICgo
+dW5zaWduZWQgaW50KXZhbCA8PSAxKSB7Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIE1TRygwLCAiXHRFcnJvcjogaW5qZWN0aW9uIHJhdGUgbXVzdCBiZSBsYXJnZXIg
+Igo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgInRoYW4gMTogJWRcbiIsIHZhbCk7Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIGZzY2tfdXNhZ2UoKTsKPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IH0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGMuZmF1bHRfaW5mby5pbmplY3Rf
+cmF0ZSA9IHZhbDsKPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGMuZmF1bHRfaW5m
+by5pbmplY3RfdHlwZSA9IEYyRlNfQUxMX0ZBVUxUX1RZUEU7Cj4gPiArICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBicmVhazsKPiA+ICsgICAgICAgICAgICAgICAgICAgICBjYXNlIDY6Cj4g
+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICB2YWwgPSBhdG9pKG9wdGFyZyk7Cj4gPiAr
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAodmFsID49ICgxVUwgPDwgKEZBVUxUX01B
+WCkpKSB7Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIE1TRygwLCAi
+XHRFcnJvcjogSW52YWxpZCBpbmplY3QgdHlwZTogJXhcbiIsIHZhbCk7Cj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIGZzY2tfdXNhZ2UoKTsKPiA+ICsgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIH0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGMu
+ZmF1bHRfaW5mby5pbmplY3RfdHlwZSA9IHZhbDsKPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIGJyZWFrOwo+ID4gICAgICAgICAgICAgICAgICAgICAgIGNhc2UgJ2EnOgo+ID4gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgYy5hdXRvX2ZpeCA9IDE7Cj4gPiAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBNU0coMCwgIkluZm86IEF1dG9tYXRpYyBmaXggbW9kZSBlbmFi
+bGVkLlxuIik7Cj4gPiBkaWZmIC0tZ2l0IGEvZnNjay9ta3F1b3RhLmMgYi9mc2NrL21rcXVvdGEu
+Ywo+ID4gaW5kZXggMjQ1MWI1OC4uZWI2M2ZjOSAxMDA2NDQKPiA+IC0tLSBhL2ZzY2svbWtxdW90
+YS5jCj4gPiArKysgYi9mc2NrL21rcXVvdGEuYwo+ID4gQEAgLTM3Miw2ICszNzIsOSBAQCBlcnJj
+b2RlX3QgcXVvdGFfY29tcGFyZV9hbmRfdXBkYXRlKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwK
+PiA+ICAgICAgIGRpY3RfdCAqZGljdCA9IHFjdHgtPnF1b3RhX2RpY3RbcXR5cGVdOwo+ID4gICAg
+ICAgZXJyY29kZV90IGVyciA9IDA7Cj4gPgo+ID4gKyAgICAgaWYgKHRpbWVfdG9faW5qZWN0KEZB
+VUxUX1FVT1RBKSkKPiA+ICsgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7Cj4gPiArCj4gPiAg
+ICAgICBpZiAoIWRpY3QpCj4gPiAgICAgICAgICAgICAgIGdvdG8gb3V0Owo+ID4KPiA+IGRpZmYg
+LS1naXQgYS9pbmNsdWRlL2YyZnNfZnMuaCBiL2luY2x1ZGUvZjJmc19mcy5oCj4gPiBpbmRleCBi
+YjQwYWRjLi4zZTEwNTZjIDEwMDY0NAo+ID4gLS0tIGEvaW5jbHVkZS9mMmZzX2ZzLmgKPiA+ICsr
+KyBiL2luY2x1ZGUvZjJmc19mcy5oCj4gPiBAQCAtMTQ3Niw2ICsxNDc2LDMzIEBAIGVudW0gewo+
+ID4gICAgICAgRjJGU19GRUFUVVJFX05BVF9CSVRTID0gMHgwMDAxLAo+ID4gIH07Cj4gPgo+ID4g
+Ky8qIEZhdWx0IGluamVjdCBjb250cm9sICovCj4gPiArZW51bSB7Cj4gPiArICAgICBGQVVMVF9T
+RUdfVFlQRSwKPiA+ICsgICAgIEZBVUxUX1NVTV9UWVBFLAo+ID4gKyAgICAgRkFVTFRfU1VNX0VO
+VCwKPiA+ICsgICAgIEZBVUxUX05BVCwKPiA+ICsgICAgIEZBVUxUX05PREUsCj4gPiArICAgICBG
+QVVMVF9YQVRUUl9FTlQsCj4gPiArICAgICBGQVVMVF9DT01QUiwKPiA+ICsgICAgIEZBVUxUX0lO
+T0RFLAo+ID4gKyAgICAgRkFVTFRfREVOVFJZLAo+ID4gKyAgICAgRkFVTFRfREFUQSwKPiA+ICsg
+ICAgIEZBVUxUX1FVT1RBLAo+ID4gKyAgICAgRkFVTFRfTUFYCj4gPiArfTsKPiA+ICsKPiA+ICsj
+ZGVmaW5lIEYyRlNfQUxMX0ZBVUxUX1RZUEUgICgoMVVMIDw8IChGQVVMVF9NQVgpKSAtIDEpCj4g
+PiArCj4gPiArc3RydWN0IGYyZnNfZmF1bHRfaW5mbyB7Cj4gPiArICAgICBpbnQgaW5qZWN0X29w
+czsKPiA+ICsgICAgIGludCBpbmplY3RfcmF0ZTsKPiA+ICsgICAgIHVuc2lnbmVkIGludCBpbmpl
+Y3RfdHlwZTsKPiA+ICt9Owo+ID4gKwo+ID4gK2V4dGVybiBjb25zdCBjaGFyICpmMmZzX2ZhdWx0
+X25hbWVbRkFVTFRfTUFYXTsKPiA+ICsjZGVmaW5lIElTX0ZBVUxUX1NFVChmaSwgdHlwZSkgKChm
+aSktPmluamVjdF90eXBlICYgKDFVTCA8PCAodHlwZSkpKQo+ID4gKwo+ID4gIHN0cnVjdCBmMmZz
+X2NvbmZpZ3VyYXRpb24gewo+ID4gICAgICAgdWludDMyX3QgY29uZl9yZXNlcnZlZF9zZWN0aW9u
+czsKPiA+ICAgICAgIHVpbnQzMl90IHJlc2VydmVkX3NlZ21lbnRzOwo+ID4gQEAgLTE2MDQsNiAr
+MTYzMSw5IEBAIHN0cnVjdCBmMmZzX2NvbmZpZ3VyYXRpb24gewo+ID4gICAgICAgICAgICAgICBz
+dHJ1Y3QgZjJmc19qb3VybmFsIG5hdF9qbmw7Cj4gPiAgICAgICAgICAgICAgIGNoYXIgbmF0X2J5
+dGVzW0YyRlNfTUFYX0JMS1NJWkVdOwo+ID4gICAgICAgfTsKPiA+ICsKPiA+ICsgICAgIC8qIEZh
+dWx0IGluamVjdGlvbiBjb250cm9sICovCj4gPiArICAgICBzdHJ1Y3QgZjJmc19mYXVsdF9pbmZv
+IGZhdWx0X2luZm87Cj4gPiAgfTsKPiA+Cj4gPiAgZXh0ZXJuIGludCB1dGY4X3RvX3V0ZjE2KGNo
+YXIgKiwgY29uc3QgY2hhciAqLCBzaXplX3QsIHNpemVfdCk7Cj4gPiBAQCAtMjEzMSw0ICsyMTYx
+LDI4IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBjaGVja19ibG9ja19zdHJ1Y3Rfc2l6ZXModm9pZCkK
+PiA+ICAgICAgICAgICAgICAgICAgICAgICArIE5SX0RFTlRSWV9JTl9CTE9DSyAqIEYyRlNfU0xP
+VF9MRU4gKiBzaXplb2YodTgpID09IEYyRlNfQkxLU0laRSk7Cj4gPiAgfQo+ID4KPiA+ICsvKiBG
+YXVsdCBpbmplY3QgY29udHJvbCAqLwo+ID4gKyNkZWZpbmUgdGltZV90b19pbmplY3QodHlwZSkg
+X190aW1lX3RvX2luamVjdCh0eXBlLCBfX2Z1bmNfXywgXAo+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBfX2J1aWx0aW5fcmV0dXJuX2FkZHJlc3MoMCkpCj4gPiArc3Rh
+dGljIGlubGluZSBib29sIF9fdGltZV90b19pbmplY3QoaW50IHR5cGUsIGNvbnN0IGNoYXIgKmZ1
+bmMsCj4gPiArICAgICAgICAgICAgIGNvbnN0IGNoYXIgKnBhcmVudF9mdW5jKQo+ID4gK3sKPiA+
+ICsgICAgIHN0cnVjdCBmMmZzX2ZhdWx0X2luZm8gKmZmaSA9ICZjLmZhdWx0X2luZm87Cj4gPiAr
+Cj4gPiArICAgICBpZiAoIWZmaS0+aW5qZWN0X3JhdGUpCj4gPiArICAgICAgICAgICAgIHJldHVy
+biBmYWxzZTsKPiA+ICsKPiA+ICsgICAgIGlmICghSVNfRkFVTFRfU0VUKGZmaSwgdHlwZSkpCj4g
+PiArICAgICAgICAgICAgIHJldHVybiBmYWxzZTsKPiA+ICsKPiA+ICsgICAgIGZmaS0+aW5qZWN0
+X29wcysrOwo+ID4gKyAgICAgaWYgKGZmaS0+aW5qZWN0X29wcyA+PSBmZmktPmluamVjdF9yYXRl
+KSB7Cj4gPiArICAgICAgICAgICAgIGZmaS0+aW5qZWN0X29wcyA9IDA7Cj4gPiArICAgICAgICAg
+ICAgIE1TRygwLCAiaW5qZWN0ICVzIGluICVzIG9mICVwXG4iLAo+ID4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgZjJmc19mYXVsdF9uYW1lW3R5cGVdLCBmdW5jLCBwYXJlbnRfZnVuYyk7
+Cj4gPiArICAgICAgICAgICAgIHJldHVybiB0cnVlOwo+ID4gKyAgICAgfQo+ID4gKyAgICAgcmV0
+dXJuIGZhbHNlOwo+ID4gK30KPiA+ICsKPiA+ICAjZW5kaWYgICAgICAgLypfX0YyRlNfRlNfSCAq
+Lwo+ID4gZGlmZiAtLWdpdCBhL21hbi9mc2NrLmYyZnMuOCBiL21hbi9mc2NrLmYyZnMuOAo+ID4g
+aW5kZXggZTM5YTg0Ni4uMzc2MmU2ZCAxMDA2NDQKPiA+IC0tLSBhL21hbi9mc2NrLmYyZnMuOAo+
+ID4gKysrIGIvbWFuL2ZzY2suZjJmcy44Cj4gPiBAQCAtNjcsNiArNjcsNDIgQEAgRW5hYmxlIHRv
+IHNob3cgZXZlcnkgZGlyZWN0b3J5IGVudHJpZXMgaW4gdGhlIHBhcnRpdGlvbi4KPiA+ICBTcGVj
+aWZ5IHRoZSBsZXZlbCBvZiBkZWJ1Z2dpbmcgb3B0aW9ucy4KPiA+ICBUaGUgZGVmYXVsdCBudW1i
+ZXIgaXMgMCwgd2hpY2ggc2hvd3MgYmFzaWMgZGVidWdnaW5nIG1lc3NhZ2VzLgo+ID4gIC5UUAo+
+ID4gKy5CSSBcLVwtZmF1bHRfaW5qZWN0aW9uPSVkICIgZW5hYmxlIGZhdWx0IGluamVjdGlvbiIK
+PiA+ICtFbmFibGUgZmF1bHQgaW5qZWN0aW9uIGluIGFsbCBzdXBwb3J0ZWQgdHlwZXMgd2l0aCBz
+cGVjaWZpZWQgaW5qZWN0aW9uIHJhdGUuCj4gPiArLlRQCj4gPiArLkJJIFwtXC1mYXVsdF90eXBl
+PSVkICIgY29uZmlndXJlIGZhdWx0IGluamVjdGlvbiB0eXBlIgo+ID4gK1N1cHBvcnQgY29uZmln
+dXJpbmcgZmF1bHQgaW5qZWN0aW9uIHR5cGUsIHNob3VsZCBiZSBlbmFibGVkIHdpdGgKPiA+ICtm
+YXVsdF9pbmplY3Rpb24gb3B0aW9uLCBmYXVsdCB0eXBlIHZhbHVlIGlzIHNob3duIGJlbG93LCBp
+dCBzdXBwb3J0cwo+ID4gK3NpbmdsZSBvciBjb21iaW5lZCB0eXBlLgo+ID4gKy5icgo+ID4gKz09
+PT09PT09PT09PT09PT09PT09PT09PT09PSAgICAgID09PT09PT09PT09Cj4gPiArLmJyCj4gPiAr
+VHlwZV9OYW1lICAgICAgICAgICAgICAgICAgICAgICAgVHlwZV9WYWx1ZQo+ID4gKy5icgo+ID4g
+Kz09PT09PT09PT09PT09PT09PT09PT09PT09PSAgICAgID09PT09PT09PT09Cj4gPiArLmJyCj4g
+PiArRkFVTFRfU0VHX1RZUEUgICAgICAgICAgICAgICAgICAgMHgwMDAwMDAwMDEKPiA+ICsuYnIK
+PiA+ICtGQVVMVF9TVU1fVFlQRSAgICAgICAgICAgICAgICAgICAweDAwMDAwMDAwMgo+ID4gKy5i
+cgo+ID4gK0ZBVUxUX1NVTV9FTlQgICAgICAgICAgICAgICAgICAgIDB4MDAwMDAwMDA0Cj4gPiAr
+LmJyCj4gPiArRkFVTFRfTkFUICAgICAgICAgICAgICAgICAgICAgICAgMHgwMDAwMDAwMDgKPiA+
+ICsuYnIKPiA+ICtGQVVMVF9OT0RFICAgICAgICAgICAgICAgICAgICAgICAweDAwMDAwMDAxMAo+
+ID4gKy5icgo+ID4gK0ZBVUxUX1hBVFRSX0VOVCAgICAgICAgICAgICAgICAgIDB4MDAwMDAwMDIw
+Cj4gPiArLmJyCj4gPiArRkFVTFRfQ09NUFIgICAgICAgICAgICAgICAgICAgICAgMHgwMDAwMDAw
+NDAKPiA+ICsuYnIKPiA+ICtGQVVMVF9JTk9ERSAgICAgICAgICAgICAgICAgICAgICAweDAwMDAw
+MDA4MAo+ID4gKy5icgo+ID4gK0ZBVUxUX0RFTlRSWSAgICAgICAgICAgICAgICAgICAgIDB4MDAw
+MDAwMTAwCj4gPiArLmJyCj4gPiArRkFVTFRfREFUQSAgICAgICAgICAgICAgICAgICAgICAgMHgw
+MDAwMDAyMDAKPiA+ICsuYnIKPiA+ICtGQVVMVF9RVU9UQSAgICAgICAgICAgICAgICAgICAgICAw
+eDAwMDAwMDQwMAo+ID4gKy5UUAo+ID4gIC5TSCBBVVRIT1IKPiA+ICBJbml0aWFsIGNoZWNraW5n
+IGNvZGUgd2FzIHdyaXR0ZW4gYnkgQnlvdW5nIEdldW4gS2ltIDxiZ2JnLmtpbUBzYW1zdW5nLmNv
+bT4uCj4gPiAgSmFlZ2V1ayBLaW0gPGphZWdldWtAa2VybmVsLm9yZz4gcmV3b3JrZWQgbW9zdCBw
+YXJ0cyBvZiB0aGUgY29kZXMgdG8gc3VwcG9ydAo+CgoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGlu
+dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vm
+b3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
