@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5F1A4C369D1
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 27 Apr 2025 11:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 496BEC369D1
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 27 Apr 2025 11:17:57 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1u8zmy-0000v0-JY;
-	Sun, 27 Apr 2025 11:03:12 +0000
+	id 1u901E-0001Cn-Gc;
+	Sun, 27 Apr 2025 11:17:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1u8zmx-0000uu-NL
+ (envelope-from <chao@kernel.org>) id 1u901A-0001Cd-HN
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 27 Apr 2025 11:03:11 +0000
+ Sun, 27 Apr 2025 11:17:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FITfeR2WhrRmkKcwe8nYyshLsEz++XPmIGf6oH0eRsM=; b=cd9FWxLjM+auGSgD62NT9/d4tj
- ++qn8nbCE/NjOrLV48ELyivPVJvlXecIsz0HdR16pp5D/uVWVfmJuywDRRA/64YLBStXg9brHGjWP
- sQxV81U2xjKDbI5pF6SZT2JqaIzkt45yr1igNzoxfnT55ctSP1G6aZCmj4P1JJXMwdvI=;
+ bh=TsMfZ5WJQgWgrRBKo0cxg3yco/6ptciL1FkLg4BgZLo=; b=dM5DtM5E4vFjan8tSR6R2oFOM9
+ hz7oVtrylKSdiJGpuAlW2x2y1pdSZu2cIYcvG3Nrwdvm2SffnwMLHFCkqR2YzcFWSzyhj1lubZDeH
+ k/4hEP604NrlH5j+dJ1PccsZhqaamrtMwi09WhRNiJcILR0F38dsGU7b8AsKbZh3otRE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -33,42 +33,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=FITfeR2WhrRmkKcwe8nYyshLsEz++XPmIGf6oH0eRsM=; b=DRnIr5roL8edLGwMEuGZN4QuEF
- soOzYmvqdroddyTSafd1OIpQ9KE2xHUyEwfbNnc/Cu0Qxr7ZZ5lij9PwsL+omTrUYpSmW8f2Hez23
- XFy95Vj1yIx5bjaiFpum0FpYGNnTh5TbJt0lcOe6SInBpHdf8UqLvxUuNgmXM1rhZOo8=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=TsMfZ5WJQgWgrRBKo0cxg3yco/6ptciL1FkLg4BgZLo=; b=bqDYm1JXS0PXC327lEYzaQHQqR
+ w0x4bWALARra1BQkPIdyzurn4n4sMTEkTJYn/ZCCClgqEQc32ZsYxQ1OubS6JSA+9TjkqYDl9+9yk
+ 7S9vXklYgW5X1epaCRkqNAU1+GslVIPCmeRpGnt1eLUH7husMHQpfrRV0nYFVNWbFtDo=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1u8zmh-0007Oe-T3 for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 27 Apr 2025 11:03:11 +0000
+ id 1u900u-000881-TG for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 27 Apr 2025 11:17:52 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 8527661157;
- Sun, 27 Apr 2025 11:02:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EB2EC4CEE3;
- Sun, 27 Apr 2025 11:02:43 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 9B219438EE;
+ Sun, 27 Apr 2025 11:17:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 325A5C4CEE3;
+ Sun, 27 Apr 2025 11:17:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1745751764;
- bh=UCfvjREysGMcDCPOWLe0mq+icCX1uJT9owRRV85psWQ=;
+ s=k20201202; t=1745752651;
+ bh=0RdPmJ6S12I8pynby/+EiS+mrp2oNDNGiEOXJi628Fo=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=DT43LldAhZ+lE/h0RnvlAW3ZQVpNhTgtA0A74Dj9BBD0zlrIPJuB8VeNEJYK8odUD
- 9L6tQ0nsD9256Gg9bCBrG0e5JxKk72WGDpxOu6ZPsoSdoiF9gX7HXP1BSinEqhXPm5
- MHWq1TMNPlAg6A/LYSJMwKYLuzu9/IyeFCa9VxShDoH+/CjzODB0k8NHQcJgQRrkrT
- AyncPmtt+i3ut2BA15vjKowRA4kl72ly4EFsmlr+YFKhhBrn+LMTDx1R6KACAVLonP
- oCshbsnKuCZie8OPXHCZ6WxtGGArJbJOpHiEGvgKgTGwprlcP6pezywvF/TZJ9Z0XI
- DnmPHL91WRQAQ==
-Message-ID: <d67890f5-9531-4814-a8e1-85c2dafd6bb2@kernel.org>
-Date: Sun, 27 Apr 2025 19:02:41 +0800
+ b=DNbLWayP4EQZA+0zMEI660XyzEDRzeTQG7INRqpoJlBz2TJFd03t8BIk82jeuIjoT
+ FtPRqGGlxPdzsBH8YD+33oSua35BiSBMY8sySqcChjF8mzb9G7uu47bRXbXTNaxLTB
+ oBcrq4Y56Ek5M/0SGMFDHx7hLFWC1c/WIGCI5WxLeGYlC1bCuJ0A7j90LU1rwSWnsV
+ jvk83j+tA/LEzCzTOOeHf9uBhdvOzUzMG9TbhkXBd8TPv+VU0PhHVCvQ9YtQH3P/KR
+ ZXShofJZSUBL0EiPm3NsblvR0N8q0JrJV7fFvmD8OA0Pg+J2EeDs8rN4NknUCH6Hkm
+ +vl2iTdww35mA==
+Message-ID: <dafb53c1-4b39-4c49-a482-d7e24f593d1a@kernel.org>
+Date: Sun, 27 Apr 2025 19:17:28 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Jaegeuk Kim <jaegeuk@kernel.org>
 References: <20250331201256.1057782-1-willy@infradead.org>
- <20250331201256.1057782-10-willy@infradead.org>
+ <20250331201256.1057782-20-willy@infradead.org>
 Content-Language: en-US
-In-Reply-To: <20250331201256.1057782-10-willy@infradead.org>
-X-Headers-End: 1u8zmh-0007Oe-T3
-Subject: Re: [f2fs-dev] [PATCH 009/153] f2fs: Use a folio in
- f2fs_quota_read()
+In-Reply-To: <20250331201256.1057782-20-willy@infradead.org>
+X-Headers-End: 1u900u-000881-TG
+Subject: Re: [f2fs-dev] [PATCH 019/153] f2fs: Use a folio in
+ f2fs_ra_meta_pages_cond()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,93 +88,66 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 4/1/25 04:10, Matthew Wilcox (Oracle) wrote:
-> Support arbitrary size folios and remove a few hidden calls to
-> compound_head().  Also remove an unnecessary test of the uptodaate flag;
-> if mapping_read_folio_gfp() cannot bring the folio uptodate, it will
-> return an error.
+> Remove a call to find_get_page().  Saves two hidden calls to
+> compound_head().  Change f2fs_folio_put() to check for IS_ERR_OR_NULL
+> to handle the case where we got an error pointer back from
+> filemap_get_folio().
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
->  fs/f2fs/super.c | 36 ++++++++++++++++--------------------
->  1 file changed, 16 insertions(+), 20 deletions(-)
+>  fs/f2fs/checkpoint.c | 8 ++++----
+>  fs/f2fs/f2fs.h       | 2 +-
+>  2 files changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index f087b2b71c89..fd93581bee89 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2689,12 +2689,9 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 1a5fbecd9356..30e68de82f73 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -325,16 +325,16 @@ int f2fs_ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+>  void f2fs_ra_meta_pages_cond(struct f2fs_sb_info *sbi, pgoff_t index,
+>  							unsigned int ra_blocks)
 >  {
->  	struct inode *inode = sb_dqopt(sb)->files[type];
->  	struct address_space *mapping = inode->i_mapping;
-> -	block_t blkidx = F2FS_BYTES_TO_BLK(off);
-> -	int offset = off & (sb->s_blocksize - 1);
->  	int tocopy;
->  	size_t toread;
->  	loff_t i_size = i_size_read(inode);
 > -	struct page *page;
+> +	struct folio *folio;
+>  	bool readahead = false;
 >  
->  	if (off > i_size)
->  		return 0;
-> @@ -2703,37 +2700,36 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
->  		len = i_size - off;
->  	toread = len;
->  	while (toread > 0) {
-> -		tocopy = min_t(unsigned long, sb->s_blocksize - offset, toread);
-> +		struct folio *folio;
-> +		size_t offset;
-> +
->  repeat:
-> -		page = read_cache_page_gfp(mapping, blkidx, GFP_NOFS);
-> -		if (IS_ERR(page)) {
-> -			if (PTR_ERR(page) == -ENOMEM) {
-> +		folio = mapping_read_folio_gfp(mapping, off >> PAGE_SHIFT,
-> +				GFP_NOFS);
-> +		if (IS_ERR(folio)) {
-> +			if (PTR_ERR(folio) == -ENOMEM) {
->  				memalloc_retry_wait(GFP_NOFS);
->  				goto repeat;
->  			}
->  			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-> -			return PTR_ERR(page);
-> +			return PTR_ERR(folio);
->  		}
-> +		offset = offset_in_folio(folio, off);
-> +		tocopy = min(folio_size(folio) - offset, toread);
+>  	if (ra_blocks == RECOVERY_MIN_RA_BLOCKS)
+>  		return;
 >  
-> -		lock_page(page);
-> +		folio_lock(folio);
->  
-> -		if (unlikely(page->mapping != mapping)) {
-> -			f2fs_put_page(page, 1);
-> +		if (unlikely(folio->mapping != mapping)) {
-> +			f2fs_folio_put(folio, true);
->  			goto repeat;
->  		}
-> -		if (unlikely(!PageUptodate(page))) {
+> -	page = find_get_page(META_MAPPING(sbi), index);
+> -	if (!page || !PageUptodate(page))
+> +	folio = filemap_get_folio(META_MAPPING(sbi), index);
+> +	if (IS_ERR(folio) || !folio_test_uptodate(folio))
+>  		readahead = true;
+> -	f2fs_put_page(page, 0);
+> +	f2fs_folio_put(folio, 0);
 
-How about adding f2fs_bug_on(, !folio_test_uptodate(folio)) here to detect
-any potential bug?
+if (IS_ERR(folio))
+	folio = NULL;
+
+if (!folio || !folio_test_uptodate(folio))
+	readahead = true;
+
+f2fs_folio_put(folio, false);
 
 Thanks,
 
-> -			f2fs_put_page(page, 1);
-> -			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
-> -			return -EIO;
-> -		}
 >  
-> -		memcpy_from_page(data, page, offset, tocopy);
-> -		f2fs_put_page(page, 1);
-> +		memcpy_from_folio(data, folio, offset, tocopy);
-> +		f2fs_folio_put(folio, true);
+>  	if (readahead)
+>  		f2fs_ra_meta_pages(sbi, index, ra_blocks, META_POR, true);
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 3d2be01f9363..f05185ed1c75 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2871,7 +2871,7 @@ static inline struct page *f2fs_pagecache_get_page(
 >  
-> -		offset = 0;
->  		toread -= tocopy;
->  		data += tocopy;
-> -		blkidx++;
-> +		off += tocopy;
->  	}
->  	return len;
->  }
+>  static inline void f2fs_folio_put(struct folio *folio, bool unlock)
+>  {
+> -	if (!folio)
+> +	if (IS_ERR_OR_NULL(folio))
+>  		return;
+>  
+>  	if (unlock) {
 
 
 
