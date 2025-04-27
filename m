@@ -4,67 +4,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 33DEAC369D8
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 27 Apr 2025 08:46:27 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A6C13C369D3
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 27 Apr 2025 09:31:07 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1u8xec-0006ex-4J;
-	Sun, 27 Apr 2025 08:46:26 +0000
+	id 1u8yLp-0004Np-0K;
+	Sun, 27 Apr 2025 09:31:04 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1u8xea-0006er-Se
+ (envelope-from <devnull@nl6720.me>) id 1u8yLl-0004NZ-IK
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 27 Apr 2025 08:46:24 +0000
+ Sun, 27 Apr 2025 09:31:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5KI2L5ivUK9NlFQoIhrgUx+i3n/Dom6NR1YxsrvYAco=; b=FCDuqOfdGTT1jrVa1cG8VfrYpO
- SgOn3a8jWUzdBl/HkaxAiK9/x3NFaVaYDlSGGSacZH3PUFKJ9Ed7ZP235c/GF+VvdDKtWqDvudDB2
- 32Baml7Q5Ou+4cSm6JtrL2qchG/y3VcUR9z12yby/JOIu2E+pLFWDzJ1E4ZqArUgln4E=;
+ bh=gAxXGz+cueX6GJNN9VFNOvGxujqk6DES7Tcl0skEl2U=; b=GN84awau98QqbR76zz6k95aWD1
+ i2sDzlwh/fvajg8c3YEuTmBy1wHiSXdjD7Q3IJC6igjXnZwXYUsFdD2SitwLdd4lQCb0lPJisrW0R
+ qAw++UKukUCEUt1xths6fVHEtuyc7vB6puExWDzPYUgGMeyHgSrK3RQHMxHOqOYFZwQY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=5KI2L5ivUK9NlFQoIhrgUx+i3n/Dom6NR1YxsrvYAco=; b=FsaPdrjNlRC75xWN67hpw7ndlt
- M3p7iidZNOgyeTjasVtLEOL5sMwPUuhyepzFROKmGXHGroa0qlvwaBOSEKMVAYpowFHNXifZGhxJ2
- VQECGYE/ID0oT6EZZgOzYPSk6TV1sCHMC3IOMMpdrHsX89nvN7eC0hKcFn1WD+cEBOK4=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=gAxXGz+cueX6GJNN9VFNOvGxujqk6DES7Tcl0skEl2U=; b=mB96BeAQ+kIKlCcIcrODGahD8j
+ nH4dHhq4ZT6tt1Cq2yfFyIWk7JIvYz7dNk6OF9IhHU1mfj7AqoRBc2birmPeOJ630lsi3VOTJTWZr
+ LJ8pnlFsY9r01p6wnLuxfVKSQd5uwqYbmKdJ8jehDIgY1QVEdIHizvaT6pgSCmELUEP8=;
+Received: from dane.soverin.net ([185.233.34.11])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1u8xeL-0000UO-5g for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 27 Apr 2025 08:46:24 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id C9B1F68444;
- Sun, 27 Apr 2025 08:45:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71E77C4CEE3;
- Sun, 27 Apr 2025 08:46:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1745743563;
- bh=rCcI+tdLs9zIz0fIv5ikr+V0j+yc/33LJttCK7iCtQY=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=jCVKBoGCifxhAKaeMdPE1idNaqnEAg1uILpj8Dx8a4VAYQ9YAkjgOE0VQ+peRQErh
- E/Tgyl39AQ/zWlXekae2UQirMEKixl+8LH6wKR6hvFOsaGzQz7+81i+EdCl0tZAx4A
- 7ze0lOWLjs1F4y42TEcQg/t0j9zAdBV/UlDw5wN5O+6Fz+L9L70zbmEuGcXzYNRw3h
- Qst8sLr4q1ZPZmMRvE9WwTUuTOzK+QVZyR6MWk5rdDJX/341R5VmXnWDa9QR9xJOxL
- ExRsv5iPsLrWKnGHWdTVRFej+tpwkOJIeyqWkUvIVYWYqiv8RtCZxxNTpVHlx8Ztxe
- zzw8DVpLNwgQA==
-Message-ID: <c2f5bc82-3e8d-4ca8-9818-d90be8ce374f@kernel.org>
-Date: Sun, 27 Apr 2025 16:45:59 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: nl6720 <devnull@nl6720.me>, linux-f2fs-devel@lists.sourceforge.net
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1u8yLU-00038z-Dy for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 27 Apr 2025 09:31:00 +0000
+Received: from smtp.soverin.net (unknown [10.10.4.74])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits))
+ (No client certificate requested)
+ by dane.soverin.net (Postfix) with ESMTPS id 4ZlhBw6gmRz18bc;
+ Sun, 27 Apr 2025 09:30:32 +0000 (UTC)
+Received: from smtp.soverin.net (smtp.soverin.net [10.10.4.99]) by soverin.net
+ (Postfix) with ESMTPSA id 4ZlhBw1Jd1z5F; 
+ Sun, 27 Apr 2025 09:30:32 +0000 (UTC)
+Authentication-Results: smtp.soverin.net; dkim=pass (2048-bit key;
+ unprotected) header.d=nl6720.me header.i=@nl6720.me header.a=rsa-sha256
+ header.s=soverin1 header.b=uPQh9P5d; dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nl6720.me; s=soverin1; 
+ t=1745746232;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=gAxXGz+cueX6GJNN9VFNOvGxujqk6DES7Tcl0skEl2U=;
+ b=uPQh9P5dYpBSmkf1gHxBl6VoQIFQI0vRXAf5q/m+fQTNHvB6a1IHrUEZEmNb4wS2hLbQXQ
+ wySm7fsD5Mee9kbzzspshb18gaYlSUXdoto1/nEg3HZOf2bh3dlPsdWk1YzWhG0ncaKU8Y
+ KtLU7qXKpC0DRSOHvw/aDQWsY5ZIE77Y2Lyl17h5FXhMiq0oVhtveFvWKwITN7rZtT4ILA
+ JRbOfRuLbw7RVFOtFGTbQR0GooZgC/nE6IcUqNQLckJQthxPq0MVfBEV/gVnfzPOZWRVBg
+ xfZZWdnqPwRVfU5Wo420Pb1Fch82hISNICiqiRt06kdxc1d0XnRrsUuFnb4a8w==
+X-CM-Analysis: v=2.4 cv=I7afRMgg c=1 sm=1 tr=0 ts=680df938
+ a=gDLi7OiDnwTL5vi9sMxOwA==:117 a=gDLi7OiDnwTL5vi9sMxOwA==:17
+ a=IkcTkHD0fZMA:10 a=MKtGQD3n3ToA:10 a=1oJP67jkp3AA:10 a=NEAV23lmAAAA:8
+ a=AbWLNOroRT5PHBGQ9kkA:9 a=QEXdDO2ut3YA:10 a=u4TTkWy4iRif133gqW0v:22
+X-CM-Envelope: MS4xfPog7ibLOulLLthqgzYSoW9JRTXFZRjpkQKG1bEAlxk+Hjb9Rt86n9ZBf0bQ3NVRX3on3GElgdvB5lTFZYRWm57R/arggN4D3cb5vmAc7L+w1VsXtdeW
+ QnoM7+pZEwZzsHHF0y7DjIJo59zE3JQgilWW51Cbr0BwS/DWk4gteRdBIywZCKJ06L1ND+WQjbmuJHYZ6aL75jfv82U1P+gQ6nygT4YHQEWpHJwmRwBrRDVM
+To: linux-f2fs-devel@lists.sourceforge.net, Chao Yu <chao@kernel.org>
+Date: Sun, 27 Apr 2025 12:30:31 +0300
+Message-ID: <2375737.ElGaqSPkdT@nl6720.me>
+In-Reply-To: <c2f5bc82-3e8d-4ca8-9818-d90be8ce374f@kernel.org>
 References: <20250425013623.918150-1-devnull@nl6720.me>
-Content-Language: en-US
-In-Reply-To: <20250425013623.918150-1-devnull@nl6720.me>
-X-Headers-End: 1u8xeL-0000UO-5g
+ <c2f5bc82-3e8d-4ca8-9818-d90be8ce374f@kernel.org>
+MIME-Version: 1.0
+X-Spampanel-Class: ham
+X-Headers-End: 1u8yLU-00038z-Dy
 Subject: Re: [f2fs-dev] [PATCH] f2fs-tools: prefer physical over logical
  block size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -78,63 +93,52 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
+From: nl6720 via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: nl6720 <devnull@nl6720.me>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 4/25/25 09:36, nl6720 via Linux-f2fs-devel wrote:
-> Some drives operate in "512e" configuration with their logical block
-> size set to 512 bytes for legacy compatibility reasons while providing
-> a more optimal 4096 byte value as the physical block size.
+On Sunday, 27 April 2025 11:45:59 EEST Chao Yu wrote:
+> On 4/25/25 09:36, nl6720 via Linux-f2fs-devel wrote:
+> > Some drives operate in "512e" configuration with their logical block
+> > size set to 512 bytes for legacy compatibility reasons while providing
+> > a more optimal 4096 byte value as the physical block size.
+> > 
+> > Since the physical block size is the smallest unit a physical storage
+> > device can write atomically, prefer it over the logical block size.
+> > 
+> > Closes: https://github.com/jaegeuk/f2fs-tools/issues/29
 > 
-> Since the physical block size is the smallest unit a physical storage
-> device can write atomically, prefer it over the logical block size.
-> 
-> Closes: https://github.com/jaegeuk/f2fs-tools/issues/29
+> f2fs uses PAGE_SIZE as block size, commonly it's 4096 rather than 512?
 
-f2fs uses PAGE_SIZE as block size, commonly it's 4096 rather than 512?
+The thing mkfs.f2fs calls "sector size" in its output is 512 on 512e drives
+instead of 4096.
+E.g.:
 
-Thanks,
+    F2FS-tools: mkfs.f2fs Ver: 1.16.0 (2023-04-11)
 
-> 
-> Signed-off-by: nl6720 <devnull@nl6720.me>
-> ---
->  lib/libf2fs.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-> index d2579d76a5c7eaf141dc8aad11c176eeadabad83..040ea4bc87288fa075cb4bf51df08b9db28a65b3 100644
-> --- a/lib/libf2fs.c
-> +++ b/lib/libf2fs.c
-> @@ -933,10 +933,15 @@ void get_kernel_uname_version(__u8 *version)
->  #define BLKSSZGET	_IO(0x12,104)
->  #endif
->  
-> +#if defined(__linux__) && defined(_IO) && !defined(BLKPBSZGET)
-> +#define BLKPBSZGET	_IO(0x12,123)
-> +#endif
-> +
->  #if defined(__APPLE__)
->  #include <sys/disk.h>
->  #define BLKGETSIZE	DKIOCGETBLOCKCOUNT
->  #define BLKSSZGET	DKIOCGETBLOCKCOUNT
-> +#define BLKPBSZGET	DKIOCGETBLOCKCOUNT
->  #endif /* APPLE_DARWIN */
->  
->  #ifndef _WIN32
-> @@ -1050,8 +1055,8 @@ int get_device_info(int i)
->  	} else if (S_ISREG(stat_buf->st_mode)) {
->  		dev->total_sectors = stat_buf->st_size / dev->sector_size;
->  	} else if (S_ISBLK(stat_buf->st_mode)) {
-> -#ifdef BLKSSZGET
-> -		if (ioctl(fd, BLKSSZGET, &sector_size) < 0)
-> +#if defined(BLKPBSZGET) && defined(BLKSSZGET)
-> +		if ((ioctl(fd, BLKPBSZGET, &sector_size) < 0) && (ioctl(fd, BLKSSZGET, &sector_size) < 0))
->  			MSG(0, "\tError: Using the default sector size\n");
->  		else if (dev->sector_size < sector_size)
->  			dev->sector_size = sector_size;
+Info: Disable heap-based policy
+Info: Debug level = 0
+Info: Trim is enabled
+Info: [/dev/disk/by-partlabel/512e] Disk Model: QEMU HARDDISK   
+Info: Segments per section = 1
+Info: Sections per zone = 1
+Info: sector size = 512
+Info: total sectors = 124997632 (61034 MB)
+Info: zone aligned segment0 blkaddr: 512
+Info: format version with
+  "Linux version 6.13.8-arch1-1 (linux@archlinux) (gcc (GCC) 14.2.1 20250207, GNU ld (GNU Binutils) 2.44) #1 SMP PREEMPT_DYNAMIC Sun, 23 Mar 2025 17:17:30 +0000"
+Info: [/dev/disk/by-partlabel/512e] Discarding device
+Info: This device doesn't support BLKSECDISCARD
+Info: Discarded 61034 MB
+Info: Overprovision ratio = 0.590%
+Info: Overprovision segments = 179 (GC reserved = 176)
+Info: format successful
+
+
+nl6720
+
 
 
 
