@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BAFCAC3ABA5
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Apr 2025 22:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EC383C369D5
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Apr 2025 22:40:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=XvxvkVZVxCczF8X6EVcI9N8hFYuI0PFfibQu2b+bmFc=; b=ixDWEjaWg9NjDjPbbCA4PpHYPV
-	3llcRMH+0opPvdJ+4KHRRZHstAzLaqMhJTZ+b05J3MFv/0sxdYVZn+wkMb8wn3en2LWZ9kz8n3Ryz
-	/v8GwvpYURvjX6l57q/MP4fDaAynXi/VJ3yd8fh2n0y9YA1qH6kHPch9CQsjRtvnkLjY=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=gssY7lp+QxvtglAyzQK6ANu81Wv3a1hStalL2qvnj6I=; b=SziXwwoPYkKcA885gb1McKSZk9
+	3obQ3RvYAGaF3+Y9Mf8McETco3jQcG30I/KFUTI4fd5fjdCoVz1MzAqW/3laAZZVnFofKgx1MyJII
+	t/oEHeyrzFPE6TgByrCskY5XTuOmTJ2ivVQMAtGm0MM6sxa+Vb3nH3V5mYsqDuB4nVYw=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1u9X9m-0003kN-Ee;
-	Mon, 28 Apr 2025 22:40:58 +0000
+	id 1u9X9n-0007bQ-J5;
+	Mon, 28 Apr 2025 22:40:59 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1u9X9c-0003jv-Ke
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1u9X9b-0007ao-4z
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Apr 2025 22:40:48 +0000
+ Mon, 28 Apr 2025 22:40:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wNi34zTbVbXPQmOfkkiUaRo/Bk5M8sYSOUmNZKBfYv8=; b=CquSgZaTxEhR7zTGHybhsnv14B
- fHPmxBl7xmFxRu8mwLa3hPb1A+cTcMOlpP1IMLuLr6ocSFAyBOys6j30TqU87OTSjbN1eWOSD/afM
- XFjC5j/sMwplxmrTD25eW75qPKpJM4RynUWhruonL/4y0/0Ni4UHVpeQNU20ciUvCS2s=;
+ bh=mf0nVh8ht9HlGg1vTaoV+rmK/RUWADwrTJMrfNAhStU=; b=AhcY9w+M6uNo2LWYgNkW1arQ97
+ xRa+JeNzHmweVhtK8gDkHXf5N7XwGBK3nJi7aOEpirlOaIZSs3xQXHVdyRewDjYBesllATyZ+gZmh
+ CIK6DNsZeCZLU1r9rZm5qb0FZRwGwvYMWlPY/70q89hWoGiiGu7lMO72FwHQUzmyaEoU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wNi34zTbVbXPQmOfkkiUaRo/Bk5M8sYSOUmNZKBfYv8=; b=Wit6D8atjP1IXFoVB41LFSb5fh
- taIxQ5ilMZaTJd/CqbdxTcSj2/roy/GWUyhxiZPxJ7abEYe7JTsT6nRhW7H6/s2Yw4ZjOr2XkaK65
- M1DyJ+dtyXn67A8GqXB+uO4UAr/ySCyBiVg29HrPRgKVtd/n3Bm7CJwuwWYwyHsgXmAk=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=mf0nVh8ht9HlGg1vTaoV+rmK/RUWADwrTJMrfNAhStU=; b=U307y/IeHDpsTa4Qmsg8CU1Jga
+ RIrRq4iLos5z5NyCCmoz1YFjaZ1JEet+K2lx39rF6oRSPCkddUZ+XtIzEDyXF6RxxhfboIrUTwJR3
+ SR5siIZWT7F/UDtakWKQLCdF5dg4N1Abxwat+DnNJ3NaOGqkN/1P7PntmRKaXgsM9sdY=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1u9X9J-0002KU-Uh for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Apr 2025 22:40:45 +0000
+ id 1u9X9L-0002KY-IC for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 28 Apr 2025 22:40:47 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 72D225C671E;
- Mon, 28 Apr 2025 22:38:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48802C4CEEE;
- Mon, 28 Apr 2025 22:40:19 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id B4A38614B8
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 28 Apr 2025 22:39:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C85DFC4CEED;
+ Mon, 28 Apr 2025 22:40:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1745880019;
- bh=hW8OBlEtNhGteY8BD89YhPa5txGl0BrBpZfLGBY/d7A=;
+ s=k20201202; t=1745880020;
+ bh=wHUyCaPqsLAIqZ+Di8Jk8P2mpZYVmeP+9/4ZjPsMVG0=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=lIRmMbgH90LNqQELKn/Ngr6Upt/UUJxwIUtHrjqPgugfamIJF1AL5FQcF2d4HfhNe
- fW7k1ZyHFwE8dTAxXS0ppCdOwividCqjAm/4iPkGhO5Zjx2xLgHI/LJ/x591fpBaYQ
- 7kN7zsScKHBsS2bRjU0vb2hsz/MlB2WN4nuUjL/lBiFz3kGQiGx+3/OrEAGUsBogY7
- dIxaEhnsjK5jaIDQz+sZoj1HYIiZ1Prs/3S1Je/qJl3RG+53tGU4JDVXJ2k/Sxrt3n
- fSdczVIUHpxQcB5Q4DjTC6IksugcdbNOdjaJgS1dU+hmYV47a3rm3skSqi7CCH0xoa
- WHicYTqlkTXPw==
+ b=bprNgRS3Rh3chgh2Xg8e2YutiRFCBUFZ0nDIyzRlUcjXcQWnc+XlYnT5fH8ybjN/b
+ Kt/OjRCtpGXmjC6b2kF5DrfDNyC+vAJc/YHNNzdsyRwAu6NACNr25mvJKWis2pUmSQ
+ tjwxwq/7oZoDkhy7YvZLMaN4HBwKjbEdlxNDzXEylM+zd7OBgEdxuWdlwR70XPwv27
+ y88GUIgKpmpi6h8jnHBaqSt4MFRTa9peoIpxtXOuT7c+Eom481tzqDtacYXCzNdmRN
+ F4fDdW34JpaJGzPrYg1NQ5DIg/eeSBE/IX6dEgtrnDX8xWwA1DNnz7NX+/NjZdd4cd
+ VEWkFXXU5jJhw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 70BFD3822D43; Mon, 28 Apr 2025 22:40:59 +0000 (UTC)
+ EABE83822D43; Mon, 28 Apr 2025 22:41:00 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <174588005823.1067750.16743465439008922626.git-patchwork-notify@kernel.org>
-Date: Mon, 28 Apr 2025 22:40:58 +0000
-References: <20250423204935.2335000-1-daeho43@gmail.com>
-In-Reply-To: <20250423204935.2335000-1-daeho43@gmail.com>
-To: Daeho Jeong <daeho43@gmail.com>
-X-Headers-End: 1u9X9J-0002KU-Uh
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: handle error cases of memory
- donation
+Message-Id: <174588005948.1067750.7393632112050436477.git-patchwork-notify@kernel.org>
+Date: Mon, 28 Apr 2025 22:40:59 +0000
+References: <20250422115638.123455-1-chao@kernel.org>
+In-Reply-To: <20250422115638.123455-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1u9X9L-0002KY-IC
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to bail out in get_new_segment()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,8 +90,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: daehojeong@google.com, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -101,19 +101,28 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 23 Apr 2025 13:49:34 -0700 you wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> In cases of removing memory donation, we need to handle some error cases
-> like ENOENT and EACCES (indicating the range already has been donated).
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+On Tue, 22 Apr 2025 19:56:38 +0800 you wrote:
+> ------------[ cut here ]------------
+> WARNING: CPU: 3 PID: 579 at fs/f2fs/segment.c:2832 new_curseg+0x5e8/0x6dc
+> pc : new_curseg+0x5e8/0x6dc
+> Call trace:
+>  new_curseg+0x5e8/0x6dc
+>  f2fs_allocate_data_block+0xa54/0xe28
+>  do_write_page+0x6c/0x194
+>  f2fs_do_write_node_page+0x38/0x78
+>  __write_node_page+0x248/0x6d4
+>  f2fs_sync_node_pages+0x524/0x72c
+>  f2fs_write_checkpoint+0x4bc/0x9b0
+>  __checkpoint_and_complete_reqs+0x80/0x244
+>  issue_checkpoint_thread+0x8c/0xec
+>  kthread+0x114/0x1bc
+>  ret_from_fork+0x10/0x20
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: handle error cases of memory donation
-    https://git.kernel.org/jaegeuk/f2fs/c/ad5291e2c1e5
+  - [f2fs-dev] f2fs: fix to bail out in get_new_segment()
+    https://git.kernel.org/jaegeuk/f2fs/c/9cada264501c
 
 You are awesome, thank you!
 -- 
