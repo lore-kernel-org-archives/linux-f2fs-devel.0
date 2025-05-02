@@ -4,89 +4,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B7D9EC3ABA5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 May 2025 04:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9DEE0C3ABAC
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 May 2025 08:32:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=MLdnzTHhFLosG+viD3D71FHd7YN+WPjCGvUV61YtBmY=; b=IRceXH7yFZ5QNRXDMOyc0OLo+0
-	2m62+Q/oFiejmPofmBS8ibAPz0MGmN/06pkr9jj3qg3FGeztt4zWOQULvWtHTRVykk5Ho3p7UW9A6
-	LkhlWEZrfTJY1G8dRmw37yM982kBdgWCHpsHarBg5Mlz2hCo6MCoUg0UeqrraoIjotY4=;
+	bh=pslQDPTzhUdC6L7Pri9LRHlokmT0Oh0XNtPr3D/RvYY=; b=VFnjD0+Hpku1/dXj5sQdSdlVO5
+	1Npm0Hakx/t/AaOjP2MMC4vPM6njwXqh8+065Yq0cr91GPO3AU2xROttzLmATcBLieVY+zl6wGMzd
+	WmUCmkjTa7VXMI6OcnbyqGgZ64J1c0ZQ+CEuO2uo6aahtGB9set4GrSzBTqWYIPVnlG0=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uAiEa-0004Z0-AV;
-	Fri, 02 May 2025 04:42:48 +0000
+	id 1uAlov-0000VZ-NW;
+	Fri, 02 May 2025 08:32:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <yohan.joung@sk.com>) id 1uAiEZ-0004Yt-IF
+ (envelope-from <ddiss@suse.de>) id 1uAlot-0000VT-Go
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 02 May 2025 04:42:47 +0000
+ Fri, 02 May 2025 08:32:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gIxkADXBMjVS6RCtgCqDSrjckUtVBi7pgQODS/kaQHY=; b=cKpoe/HZO676wetjlemG6KDQWn
- pmqFUJ9/EZWuHMLIYFBxznceF5PdGMFlKcFX8tXy0jp6DpRLtqBXhvu+cLc0RQf4dnluvqXsDlZ/K
- RDWEPJXJKholgMdGdXzMWtPeZv68zRoiDo8y+OanLfNOWn/+DPZaToiPEhBG6zouUPf4=;
+ bh=ghNeC+MG9IlvRYK0ofUl0CH49yiAXbaCcQhz5nsE1ds=; b=aWUJ4FzgkIUb19DZNnt4dDo+29
+ efeJTL76rdeaWkMdYNbAq8CdmTS8UHfAZCWxiVfz0yQcKQhi2bjDtdVrse9FilGfz9UH+jcdmtosr
+ VJmKyv8lR5tK8F86voM8FPCqIfQrvvnKw2r9sIiNb5ag09aGIC1d/LHrKq2NXyBaxLjE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+ In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=gIxkADXBMjVS6RCtgCqDSrjckUtVBi7pgQODS/kaQHY=; b=Xc9WrA51mpSWoz8+rctVElVNdi
- NJ/yzwlLJVxgAUPAWF/4EGvfOiBCxAXy9XD55LBMG/oFWaGvJdpx8IrerRFf5fqrNJcrIBbRXweMR
- KH6awUxco0vGDcuxFvpwJxE/eqmDXD0Ls5tgMGXJmpatc91e8VRCwIh5Y5qIQDGUFtJs=;
-Received: from exvmail3.skhynix.com ([166.125.252.90]
- helo=invmail3.skhynix.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.95)
- id 1uAiEJ-00030t-KR for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 02 May 2025 04:42:47 +0000
-X-AuditID: a67dfc59-057ff7000000aab6-48-68144d21cb0b
-From: "yohan.joung" <yohan.joung@sk.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org,
-	daehojeong@google.com
-Date: Fri,  2 May 2025 13:41:45 +0900
-Message-ID: <20250502044146.552-2-yohan.joung@sk.com>
-X-Mailer: git-send-email 2.49.0.windows.1
-In-Reply-To: <20250502044146.552-1-yohan.joung@sk.com>
-References: <20250502044146.552-1-yohan.joung@sk.com>
+ bh=ghNeC+MG9IlvRYK0ofUl0CH49yiAXbaCcQhz5nsE1ds=; b=BH8pbcA+wIigTquLvkOoEWSYDk
+ JTIbUgBBSXF5sQMq8nBmrVi6c8StqbPUPoOI3lJEiqDCLQZQK/f26zdk0xDkKhvLwKCx9kkuCfW6F
+ sZ4zrtYV5/NNE0qyK2v2sZ5NbHaEG/sSbTeM590nJS8BmqndYklXeFMDdjYYYmmahaps=;
+Received: from smtp-out1.suse.de ([195.135.223.130])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1uAlod-0003L8-7j for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 02 May 2025 08:32:31 +0000
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
+ [IPv6:2a07:de40:b281:104:10:150:64:97])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 65A5A211E3;
+ Fri,  2 May 2025 08:32:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+ t=1746174728; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=ghNeC+MG9IlvRYK0ofUl0CH49yiAXbaCcQhz5nsE1ds=;
+ b=IbYBtjxJ06IE7vZsge5QDZy9JmI/fVCmcHPhXEt7LEBephLZGM4FY0xiLlbYLM66+EUJ8S
+ wo3TYgTcAzj7hoQtTqFab7Zs3qwYRtauSHHrHN+XXzqpdOFUIB7NKjdOaWyyqFzNomOtfk
+ R0RudGv3zVEZrIseWRwJz9DZCmQ9TzA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+ s=susede2_ed25519; t=1746174728;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=ghNeC+MG9IlvRYK0ofUl0CH49yiAXbaCcQhz5nsE1ds=;
+ b=hLrJL5m89P4YbdRPOGpB8zehA930/FwyIMptNUR0b4ZGghqZZ2Lt0CTwHkjxrqZVMAUQ16
+ 0NJSF5JWj+YLcWCA==
+Authentication-Results: smtp-out1.suse.de;
+ dkim=pass header.d=suse.de header.s=susede2_rsa header.b=IbYBtjxJ;
+ dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=hLrJL5m8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+ t=1746174728; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=ghNeC+MG9IlvRYK0ofUl0CH49yiAXbaCcQhz5nsE1ds=;
+ b=IbYBtjxJ06IE7vZsge5QDZy9JmI/fVCmcHPhXEt7LEBephLZGM4FY0xiLlbYLM66+EUJ8S
+ wo3TYgTcAzj7hoQtTqFab7Zs3qwYRtauSHHrHN+XXzqpdOFUIB7NKjdOaWyyqFzNomOtfk
+ R0RudGv3zVEZrIseWRwJz9DZCmQ9TzA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+ s=susede2_ed25519; t=1746174728;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=ghNeC+MG9IlvRYK0ofUl0CH49yiAXbaCcQhz5nsE1ds=;
+ b=hLrJL5m89P4YbdRPOGpB8zehA930/FwyIMptNUR0b4ZGghqZZ2Lt0CTwHkjxrqZVMAUQ16
+ 0NJSF5JWj+YLcWCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 21F9A13687;
+ Fri,  2 May 2025 08:32:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+ by imap1.dmz-prg2.suse.org with ESMTPSA id D4svMwWDFGg7SgAAD6G6ig
+ (envelope-from <ddiss@suse.de>); Fri, 02 May 2025 08:32:05 +0000
+Date: Fri, 2 May 2025 18:31:56 +1000
+From: David Disseldorp <ddiss@suse.de>
+To: Chao Yu <chao@kernel.org>
+Message-ID: <20250502182729.2f6ec951.ddiss@suse.de>
+In-Reply-To: <20250430024731.2722027-1-chao@kernel.org>
+References: <20250430024731.2722027-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsXC9ZZnoa6Sr0iGQbe/xempZ5ksprbvZbR4
- sn4Ws8WlRe4Wl3fNYXNg9ViwqdRj06pONo/dCz4zeXzeJBfAEsVlk5Kak1mWWqRvl8CVceLF
- dNaC/zoVn/7cYG9gnKLaxcjJISFgIvHq5z9GGPv/wl8sIDabgIbEn95eZhBbRMBJ4v+NdvYu
- Ri4OZoE2Ron2o02sIAlhAQ+JQw9/gNksAqoSvz79YgOxeQVMJV5cPcIEMVRTYseX80A2Bwen
- gJlEzws7kLAQUMmfPy/ZIcoFJU7OfAK2l1lAXqJ562xmkF0SAh1sEvs372OBmCMpcXDFDZYJ
- jPyzkPTMQtKzgJFpFaNIZl5ZbmJmjrFecXZGZV5mhV5yfu4mRmA4Lqv9E7mD8duF4EOMAhyM
- Sjy8AQXCGUKsiWXFlbmHGCU4mJVEeGMMgEK8KYmVValF+fFFpTmpxYcYpTlYlMR5jb6VpwgJ
- pCeWpGanphakFsFkmTg4pRoYTWx9dy6xepx7e0VsqIp32pvsNfuLjs5K2jV3720xhj0sd9MO
- G5SXzjI557Kl//G1f2bGH1IbL/C+auA9sapxv7J5oaFC8cmDf48YPuL1fST3ekKM+Nw37Q7c
- 3T9/5AVKLP//x2LCHX813+UpE6WdHTYsiz+4/3adjurl+EbvtuWzf99WbZ94UImlOCPRUIu5
- qDgRAGjytjdDAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFLMWRmVeSWpSXmKPExsXCNUNljq6ir0iGwd1Hhhanp55lspjavpfR
- 4sn6WcwWlxa5W1zeNYfNYsLcq0wW77feY3Rg91iwqdRj06pONo/dCz4zeXy77eHxeZNcAGsU
- l01Kak5mWWqRvl0CV8aJF9NZC/7rVHz6c4O9gXGKahcjJ4eEgInE/4W/WEBsNgENiT+9vcwg
- toiAk8T/G+3sXYxcHMwCbYwS7UebWEESwgIeEoce/gCzWQRUJX59+sUGYvMKmEq8uHqECWKo
- psSOL+eBbA4OTgEziZ4XdiBhIaCSP39eskOUC0qcnPkEbC+zgLxE89bZzBMYeWYhSc1CklrA
- yLSKUSQzryw3MTPHTK84O6MyL7NCLzk/dxMjMMSW1f6ZtIPx22X3Q4wCHIxKPLwBBcIZQqyJ
- ZcWVuYcYJTiYlUR4YwyAQrwpiZVVqUX58UWlOanFhxilOViUxHm9wlMThATSE0tSs1NTC1KL
- YLJMHJxSDYyyOZ+/LayT2fOoL/e0je1ylbtlFaW2uZeumnz6x7jS5cK/UxqbV8pKsRbs2dSz
- XO6dib/pVA/ddK4e37l6v9tuOp6eyygz88O+wKwvSTc1We6bFW7bdJhFb3Hs7Gv3t7gUL9q8
- fhGHTNKDiuR9Ky8l/RHc49jlx2E7N/CT0+GowD2NyjYKUQFKLMUZiYZazEXFiQAFdf92LQIA
- AA==
-X-CFilter-Loop: Reflected
-X-Headers-End: 1uAiEJ-00030t-KR
-Subject: [f2fs-dev] [PATCH v2 2/2] f2fs: add ckpt_valid_blocks to the
- section entry
+X-Rspamd-Queue-Id: 65A5A211E3
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00]; BAYES_HAM(-3.00)[100.00%];
+ NEURAL_HAM_LONG(-1.00)[-1.000]; MID_CONTAINS_FROM(1.00)[];
+ R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+ NEURAL_HAM_SHORT(-0.20)[-1.000]; MIME_GOOD(-0.10)[text/plain];
+ MX_GOOD(-0.01)[]; ARC_NA(0.00)[]; RCVD_VIA_SMTP_AUTH(0.00)[];
+ ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+ MIME_TRACE(0.00)[0:+]; MISSING_XM_UA(0.00)[];
+ TO_DN_SOME(0.00)[]; RCVD_TLS_ALL(0.00)[];
+ DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+ RCPT_COUNT_FIVE(0.00)[6]; FROM_EQ_ENVFROM(0.00)[];
+ FROM_HAS_DN(0.00)[]; FUZZY_BLOCKED(0.00)[rspamd.com];
+ RCVD_COUNT_TWO(0.00)[2]; TO_MATCH_ENVRCPT_ALL(0.00)[];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
+ DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+ DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Headers-End: 1uAlod-0003L8-7j
+Subject: Re: [f2fs-dev] [PATCH] f2fs/013: test to check potential corruption
+ on atomic_write file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,180 +144,140 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: pilhyun.kim@sk.com, linux-kernel@vger.kernel.org,
+Cc: jaegeuk@kernel.org, Daeho Jeong <daehojeong@google.com>,
+ Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-when performing buffered writes in a large section,
-overhead is incurred due to the iteration through
-ckpt_valid_blocks within the section.
-when SEGS_PER_SEC is 128, this overhead accounts for 20% within
-the f2fs_write_single_data_page routine.
-as the size of the section increases, the overhead also grows.
-to handle this problem ckpt_valid_blocks is
-added within the section entries.
+Hi Chao Yu,
 
-Test
-insmod null_blk.ko nr_devices=1 completion_nsec=1  submit_queues=8
-hw_queue_depth=64 max_sectors=512 bs=4096 memory_backed=1
-make_f2fs /dev/block/nullb0
-make_f2fs -s 128 /dev/block/nullb0
-fio --bs=512k --size=1536M --rw=write --name=1
---filename=/mnt/test_dir/seq_write
---ioengine=io_uring --iodepth=64 --end_fsync=1
+On Wed, 30 Apr 2025 10:47:31 +0800, Chao Yu wrote:
 
-before
-SEGS_PER_SEC 1
-2556MiB/s
-SEGS_PER_SEC 128
-2145MiB/s
+> This is a regression testcase to check whether we will handle database
+> inode dirty status correctly:
+> 1. make sure disk quota is enabled
+> 2. create a regular file, and write data into the file
+> 3. start transaction on the file (via F2FS_IOC_START_ATOMIC_WRITE)
+> 4. write transaction data to the file
+> 5. commit and end the transaction (via F2FS_IOC_COMMIT_ATOMIC_WRITE)
+> 6. meanwhile loop call fsync in parallel
+> Before f098aeba04c9 ("f2fs: fix to avoid atomicity corruption of atomic
+> file"), database file may become corrupted after atomic write while
+> there is concurrent dirty inode flush in background.
+> 
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc: Daeho Jeong <daehojeong@google.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  tests/f2fs/013     | 73 ++++++++++++++++++++++++++++++++++++++++++++++
+>  tests/f2fs/013.out |  2 ++
+>  2 files changed, 75 insertions(+)
+>  create mode 100755 tests/f2fs/013
+>  create mode 100644 tests/f2fs/013.out
+> 
+> diff --git a/tests/f2fs/013 b/tests/f2fs/013
+> new file mode 100755
+> index 00000000..3db8448c
+> --- /dev/null
+> +++ b/tests/f2fs/013
+> @@ -0,0 +1,73 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2025 Chao Yu.  All Rights Reserved.
+> +#
+> +# FS QA Test No. f2fs/013
+> +#
+> +# This is a regression testcase to check whether we will handle database
+> +# inode dirty status correctly:
+> +# 1. make sure disk quota is enabled
 
-after
-SEGS_PER_SEC 1
-2556MiB/s
-SEGS_PER_SEC 128
-2556MiB/s
+Where is the check that disk quota is enabled?
 
-Signed-off-by: yohan.joung <yohan.joung@sk.com>
----
- fs/f2fs/segment.c | 29 ++++++++++++++++++++++-------
- fs/f2fs/segment.h | 29 ++++++++++++++++++-----------
- 2 files changed, 40 insertions(+), 18 deletions(-)
+> +# 2. create a regular file, and write data into the file
+> +# 3. start transaction on the file (via F2FS_IOC_START_ATOMIC_WRITE)
+> +# 4. write transaction data to the file
+> +# 5. commit and end the transaction (via F2FS_IOC_COMMIT_ATOMIC_WRITE)
+> +# 6. meanwhile loop call fsync in parallel
+> +# Before f098aeba04c9 ("f2fs: fix to avoid atomicity corruption of atomic
+> +# file"), database file may become corrupted after atomic write while
+> +# there is concurrent dirty inode flush in background.
+> +#
+> +. ./common/preamble
+> +_begin_fstest auto quick
+> +
+> +_cleanup()
+> +{
+> +	[ -n "$atomic_write_pid" ] && kill -9 $atomic_write_pid
+> +	wait
+> +	cd /
+> +	rm -r -f $tmp.*
+> +}
+> +
+> +_fixed_by_kernel_commit f098aeba04c9 \
+> +	"f2fs: fix to avoid atomicity corruption of atomic file"
+> +
+> +_require_scratch
+> +
+> +_scratch_mkfs >> $seqres.full
+> +# note that it relis on FAULT_TIMEOUT fault injection support in f2fs
+> +_scratch_mount "-o fault_injection=1,fault_type=4194304" >> $seqres.full
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 671bc5a8fd4a..09b66a755559 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2447,7 +2447,7 @@ static void update_segment_mtime(struct f2fs_sb_info *sbi, block_t blkaddr,
-  * that the consecutive input blocks belong to the same segment.
-  */
- static int update_sit_entry_for_release(struct f2fs_sb_info *sbi, struct seg_entry *se,
--				block_t blkaddr, unsigned int offset, int del)
-+				unsigned int segno, block_t blkaddr, unsigned int offset, int del)
- {
- 	bool exist;
- #ifdef CONFIG_F2FS_CHECK_FS
-@@ -2492,15 +2492,18 @@ static int update_sit_entry_for_release(struct f2fs_sb_info *sbi, struct seg_ent
- 				f2fs_test_and_clear_bit(offset + i, se->discard_map))
- 			sbi->discard_blks++;
- 
--		if (!f2fs_test_bit(offset + i, se->ckpt_valid_map))
-+		if (!f2fs_test_bit(offset + i, se->ckpt_valid_map)) {
- 			se->ckpt_valid_blocks -= 1;
-+			if (__is_large_section(sbi))
-+				get_sec_entry(sbi, segno)->ckpt_valid_blocks -= 1;
-+		}
- 	}
- 
- 	return del;
- }
- 
- static int update_sit_entry_for_alloc(struct f2fs_sb_info *sbi, struct seg_entry *se,
--				block_t blkaddr, unsigned int offset, int del)
-+				unsigned int segno, block_t blkaddr, unsigned int offset, int del)
- {
- 	bool exist;
- #ifdef CONFIG_F2FS_CHECK_FS
-@@ -2533,12 +2536,18 @@ static int update_sit_entry_for_alloc(struct f2fs_sb_info *sbi, struct seg_entry
- 	 * or newly invalidated.
- 	 */
- 	if (!is_sbi_flag_set(sbi, SBI_CP_DISABLED)) {
--		if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map))
-+		if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map)) {
- 			se->ckpt_valid_blocks++;
-+			if (__is_large_section(sbi))
-+				get_sec_entry(sbi, segno)->ckpt_valid_blocks++;
-+		}
- 	}
- 
--	if (!f2fs_test_bit(offset, se->ckpt_valid_map))
-+	if (!f2fs_test_bit(offset, se->ckpt_valid_map)) {
- 		se->ckpt_valid_blocks += del;
-+		if (__is_large_section(sbi))
-+			get_sec_entry(sbi, segno)->ckpt_valid_blocks += del;
-+	}
- 
- 	return del;
- }
-@@ -2569,9 +2578,9 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
- 
- 	/* Update valid block bitmap */
- 	if (del > 0) {
--		del = update_sit_entry_for_alloc(sbi, se, blkaddr, offset, del);
-+		del = update_sit_entry_for_alloc(sbi, se, segno, blkaddr, offset, del);
- 	} else {
--		del = update_sit_entry_for_release(sbi, se, blkaddr, offset, del);
-+		del = update_sit_entry_for_release(sbi, se, segno, blkaddr, offset, del);
- 	}
- 
- 	__mark_sit_entry_dirty(sbi, segno);
-@@ -5029,6 +5038,12 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 	}
- 	up_read(&curseg->journal_rwsem);
- 
-+	/* update ckpt_ckpt_valid_block */
-+	if (__is_large_section(sbi)) {
-+		for (unsigned int segno = 0; segno < MAIN_SEGS(sbi); segno += SEGS_PER_SEC(sbi))
-+			set_ckpt_valid_blocks(sbi, segno);
-+	}
-+
- 	if (err)
- 		return err;
- 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 345da052f0e1..cabcec5af1ae 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -209,6 +209,7 @@ struct seg_entry {
- 
- struct sec_entry {
- 	unsigned int valid_blocks;	/* # of valid blocks in a section */
-+	unsigned int ckpt_valid_blocks; /* # of valid blocks last cp in a section */
- };
- 
- #define MAX_SKIP_GC_COUNT			16
-@@ -345,20 +346,26 @@ static inline unsigned int get_valid_blocks(struct f2fs_sb_info *sbi,
- static inline unsigned int get_ckpt_valid_blocks(struct f2fs_sb_info *sbi,
- 				unsigned int segno, bool use_section)
- {
--	if (use_section && __is_large_section(sbi)) {
--		unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
--		unsigned int start_segno = GET_SEG_FROM_SEC(sbi, secno);
--		unsigned int blocks = 0;
--		int i;
-+	if (use_section && __is_large_section(sbi))
-+		return get_sec_entry(sbi, segno)->ckpt_valid_blocks;
-+	else
-+		return get_seg_entry(sbi, segno)->ckpt_valid_blocks;
-+}
-+
-+static inline void set_ckpt_valid_blocks(struct f2fs_sb_info *sbi,
-+		unsigned int segno)
-+{
-+	unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
-+	unsigned int start_segno = GET_SEG_FROM_SEC(sbi, secno);
-+	unsigned int blocks = 0;
-+	int i;
- 
--		for (i = 0; i < SEGS_PER_SEC(sbi); i++, start_segno++) {
--			struct seg_entry *se = get_seg_entry(sbi, start_segno);
-+	for (i = 0; i < SEGS_PER_SEC(sbi); i++, start_segno++) {
-+		struct seg_entry *se = get_seg_entry(sbi, start_segno);
- 
--			blocks += se->ckpt_valid_blocks;
--		}
--		return blocks;
-+		blocks += se->ckpt_valid_blocks;
- 	}
--	return get_seg_entry(sbi, segno)->ckpt_valid_blocks;
-+	get_sec_entry(sbi, segno)->ckpt_valid_blocks = blocks;
- }
- 
- static inline void seg_info_from_raw_sit(struct seg_entry *se,
--- 
-2.33.0
+This requires CONFIG_F2FS_FAULT_INJECTION=y, although now I see that
+parse_options() just ignores them and the test still passes fine with
+CONFIG_F2FS_FAULT_INJECTION unset. Does it make sense to run without
+FAULT_TIMEOUT injection? It'd likely make sense to just _notrun if fault
+injection is unavailable.
+
+> +dbfile=$SCRATCH_MNT/file.db
+> +
+> +# initialize database file
+> +$XFS_IO_PROG -c "pwrite 0 4k" -c "fsync" -f $dbfile >> $seqres.full
+> +
+> +# sync filesystem to clear dirty inode
+> +sync
+> +
+> +# start atomic_write on src.db database file and commit transaction
+> +$F2FS_IO_PROG write 1 0 2 zero atomic_commit $dbfile >> $seqres.full &
+> +atomic_write_pid=$!
+> +
+> +# call fsync to flush dirty inode of database file in parallel
+> +for ((j=0;j<1000;j++)) do
+> +	$F2FS_IO_PROG fsync $dbfile >> $seqres.full
+> +done
+> +
+> +wait $atomic_write_pid
+> +unset atomic_write_pid
+> +
+> +# flush dirty data and drop cache
+> +sync
+> +echo 3 > /proc/sys/vm/drop_caches
+> +
+> +newsize=`stat $dbfile -c %s`
+> +if [ "$newsize" != "8192" ]; then
+> +	_fail "filesize is inconsistent:"$newsize
+> +fi
+
+nit: I think it'd be simpler to do:
+  stat $dbfile -c %s
+...and just put the 8192 in the golden output.
+
+> +rm $dbfile
+> +sync
+> +
+> +echo "Silence is golden"
+> +
+> +status=0
+> +exit
+> diff --git a/tests/f2fs/013.out b/tests/f2fs/013.out
+> new file mode 100644
+> index 00000000..3e66423b
+> --- /dev/null
+> +++ b/tests/f2fs/013.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 013
+> +Silence is golden
 
 
 
