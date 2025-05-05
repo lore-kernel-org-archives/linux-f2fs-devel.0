@@ -4,103 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6599DC3ABAC
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 May 2025 08:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D7125C3ABB0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 May 2025 09:47:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=ZjSQ+jAC1NA995zIBa3tlwogH8kbnvRMHzgv3NzAc74=; b=b6uRlxU6wxbYIWfX/Phhu1Wveo
-	Mtf7jKXS+PbLx18vw+La9aGLO3R3qBhQPt+htaSvlH6M3ibF7e+7kzq2DdyRkkpBu6YyPcY9liWf4
-	aJ/9+yW8+QLbJOhyA8Kc9HhTwh2HrU1a65tvRfVlQlayVz4AYFd7NqBxKA2zn903kVwA=;
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=pgnIsQhra7Tfqw97verkPNC8QrafxgRdfuGmcfrR9ZA=; b=b57xi4uDMp8KCaPTFaUNGMb+CB
+	6fVJia++x9S45gCyi3gQK4ZffZZOzIW9Ua2yWmZFZSsSjLXbTL0yXKmnZr1YzmCZeP7bhVWp7Rc15
+	Bh70O06lZldxj9q8wchyXnf1+Y8pnCoYi61wLh4L6i8VhJGd8D5TqKk1eRVyBkMEEM10=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uAlyl-00045d-Do;
-	Fri, 02 May 2025 08:42:43 +0000
+	id 1uBsPt-000734-7M;
+	Mon, 05 May 2025 09:47:17 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <dan.carpenter@linaro.org>) id 1uAly2-00044i-Oc
- for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 02 May 2025 08:41:58 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+9b9d72b124a21f5aaaac+7925+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1uBsPq-00072x-Fg for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 05 May 2025 09:47:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
- From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=fsXoIHBbg4TXash19nLxZLVddPU286hTJ7W7k+dtKwg=; b=TfdwABSVFee9jREZgrKKNtQUvn
- hPAE9XHBntK3zrN/XeW4qv1LFlfqign18QMyoOCuQOgT7BRiyvjWJ2sQfMWEUiJJ/KZwNVAYWQKZv
- fhnvJnQGmXRoBL96VI5bxJSyKx42dTbiM6HX6xG0+langKk+idtzuB7XrWGJMQ9gEffs=;
+ bh=XtTvnTyq5mIhVTRdyBLDrwbTGyjJ80hJmgnWbsqgwSc=; b=VD9ZL02aOe5ETZlO1xkxWGPGDa
+ kwhPJPLdHJt/NlqPAY2K7dWL16CfDruv+MIbXk1+WpgBlQOiF9LGKHkdlZr2P5/GA4THaGtxmdIfS
+ lE26TKUvPBMpT5vo9zMoVk0ubHCfgpd1Irj/DfQbSQGeBFiKN0EKg+R7riFvdEI3nxas=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=fsXoIHBbg4TXash19nLxZLVddPU286hTJ7W7k+dtKwg=; b=c
- tiLjuNdiq54muoSMXbaxujPaBC9PTtiji4XJJ/7wUYVU2MSWPeBq9maAASmnsphTZwHyes/2EORH3
- EHV1aronl4UR/6vvEbzhnDERXFO5r2BeHKMoPz7ANu1TVi78jDIjdYKq0pfmrwsH7nWDvss5sQJ2/
- 5oKNehs2R3F47CKk=;
-Received: from mail-ed1-f51.google.com ([209.85.208.51])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=XtTvnTyq5mIhVTRdyBLDrwbTGyjJ80hJmgnWbsqgwSc=; b=EtPRL4DpnBRHe9V8XDeC8UcPpT
+ bmooD+jthoPryVRliO8kE+MoYOkLxAfPUS7MCF8ACja6chpatiSRgPqabflJolSkETUcy0bCfYxPk
+ FN+K4V4Qn0yMUNQaF5ao2JjOjQKVKLbZnDefU83nyIDHOkz/GRCU8xvAGkjh/R9BV6HE=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uAlxm-0003te-NK for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 02 May 2025 08:41:58 +0000
-Received: by mail-ed1-f51.google.com with SMTP id
- 4fb4d7f45d1cf-5efe8d9eb1eso2960161a12.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 02 May 2025 01:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=linaro.org; s=google; t=1746175291; x=1746780091; darn=lists.sourceforge.net;
- h=content-disposition:mime-version:message-id:subject:cc:to:from:date
- :from:to:cc:subject:date:message-id:reply-to;
- bh=fsXoIHBbg4TXash19nLxZLVddPU286hTJ7W7k+dtKwg=;
- b=iKMtQYbaMXK8AFD6GfcN6TkdSJo4ShouLYW7yapFP8CsKm0+CV47RcZQaJkxWPEDjh
- n8ZoiW8K4SPNmVB6ylgJVQ6pufGDzwEKrO1KcKyDmwZvF8VsF9OKJSogPj6MvqixGiAk
- jQYEvjWxoeRrC8Q3Mr+SxegYCvFiySydadUB2l8+8s6EgrMmDUuETswrYR0T8u3DT41D
- Tm4PtaWjb0vLMk9WPlG+sWeUCnq+WHRM/C7FXK6udeRFDUgZDy8IwMc07ZQ9pkAMz8Gv
- H3lCa/z2ju59LR/zdjZs6+iwiH0RQ0VPF0+MG7KxZsLoEF9PPiwPeJTFwOcyDnLsGHlp
- XwSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1746175291; x=1746780091;
- h=content-disposition:mime-version:message-id:subject:cc:to:from:date
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=fsXoIHBbg4TXash19nLxZLVddPU286hTJ7W7k+dtKwg=;
- b=QSYHZldFnVT/+NZLu66p3Kcmyqi/6KOxofjd8Kqk55KIRVhJs4NRRU3XOnQgAQmeEQ
- UHfctX3TbCzd1ROr4+f2XO5FycqDS9oB3EGEDLN2ywsM79wBjAiVFrXYrOd96ZqZqiko
- fpWggYMTCqJS7vdduqVx4yxxhlrK0UgK8gn53RBI/bj7Jhp9Kz7Jim4ActVspYXDvzJ5
- T0DlZm1AufQfPZCTUTerLzg2kSQYXAjOtunbzFRq65zy47OLf+T6XYQ9V4e1ricp8F5M
- JjTQ21HCxNOF1LyK/1qvMN9+YBMLICHoFeskj2IIuCKIRhqXmRM15+EnujjwMlLfP7VI
- TwDQ==
-X-Gm-Message-State: AOJu0YykdtFKH1N9nW9E2EqQxR9SMpV4E9fb59esAPLCi0rKNNOteHnP
- OEZtB7UyHJ14VcebAP+Kz5DdM3oxehZ+5AgoFGOK27Ud83o3LlG4dG7iXQ1me/UCgtqE8UCllbm
- q
-X-Gm-Gg: ASbGncstMPB81yNaKO20KwyZh3+mEKg9vUkcWKrR1xyWB3tXOXwarrTPr5Et8FRQn4R
- RjyavZCeZl8XQLqIyDPM7yVW/LSJ0AIwbzQ3wmIlc4MD8DCEYUnkcFUm+Fr82EAx8d5pka6VxCF
- p5zNQhaCplUQ3Mc4+3sIRwPBH2vBrMU60VpF49XlSTkW4gpJ9XBiuK1T5WMyWkCgirosTjUcgyt
- kZ+nPKMJ8bNnr5Yn8OtD7k3+KlZA1xKlGWgmXW6xcBD1z+utbsXyjdoLNR+YE5+3EPWGpKpLfgv
- Q+B5lji9q862ZqcWRst8bMnF3CPlLkBNWnfQBZB11zV/2g==
-X-Google-Smtp-Source: AGHT+IE9KUrZbbASjOPA2I5a1F7slvIv46ZP7JXIpgpcX0swM26KoVICOspNNiDVtwt+Wj1UZyvsgw==
-X-Received: by 2002:a5d:59ad:0:b0:39c:30f7:b6ad with SMTP id
- ffacd0b85a97d-3a098464114mr1401215f8f.18.1746173731305; 
- Fri, 02 May 2025 01:15:31 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
- by smtp.gmail.com with UTF8SMTPSA id
- ffacd0b85a97d-3a099b0f09dsm1443702f8f.63.2025.05.02.01.15.30
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 02 May 2025 01:15:30 -0700 (PDT)
-Date: Fri, 2 May 2025 11:15:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Matthew Wilcox <willy@infradead.org>
-Message-ID: <aBR_H0zPfg5Sbj4z@stanley.mountain>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1uBsPZ-0000UO-56 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 05 May 2025 09:47:14 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+ MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=XtTvnTyq5mIhVTRdyBLDrwbTGyjJ80hJmgnWbsqgwSc=; b=kDWV0f/Ebjc5oyeTodSvEuRgZP
+ 0RzVOIhsgExqqR2SiMgTqim7LvqW3PbvbOpDxziSyNEZPXvBmpsO68zuU+YwupjSKfdFgwbujQxan
+ w0OpdnV3W37wFiu4DyTW81b8AwzhgHZ5f7gC+YtmwBjs8gBK7okvBMWWCNma5/poIsFGmhne/wZki
+ 3XuwpoJ77jk5Z2TIeOlgTXb5lRwjmseWGn8x5BWwOtiZAn9kWnNXrkFMIYoRyveyu6oPXmyrqBu0R
+ 9I6WQPYmcyKFPr+NGqAUBsr/g7l832wO3b0XI2J26PTFQTyNceczZ4J3JzXFHKx8BvNZQMPOpM6cC
+ DuemWOIA==;
+Received: from
+ 2a02-8389-2341-5b80-c9f7-77ec-522e-47ca.cable.dynamic.v6.surfer.at
+ ([2a02:8389:2341:5b80:c9f7:77ec:522e:47ca] helo=localhost)
+ by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+ id 1uBs5k-00000006unv-1e6s; Mon, 05 May 2025 09:26:29 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Date: Mon,  5 May 2025 11:26:01 +0200
+Message-ID: <20250505092613.3451524-5-hch@lst.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250505092613.3451524-1-hch@lst.de>
+References: <20250505092613.3451524-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Disposition: inline
-X-Headers-End: 1uAlxm-0003te-NK
-Subject: [f2fs-dev] [bug report] f2fs: Use folios in do_garbage_collect()
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1uBsPZ-0000UO-56
+Subject: [f2fs-dev] [PATCH 4/4] f2f2: return bool from __write_node_folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -112,123 +89,110 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello Matthew Wilcox (Oracle),
+__write_node_folio can only return 0 or AOP_WRITEPAGE_ACTIVATE.
+As part of phasing out AOP_WRITEPAGE_ACTIVATE, switch to a bool return
+instead.
 
-Commit 5d895f7beae9 ("f2fs: Use folios in do_garbage_collect()") from
-Mar 31, 2025 (linux-next), leads to the following Smatch static
-checker warning:
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/f2fs/node.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
-	fs/f2fs/gc.c:1799 do_garbage_collect()
-	error: 'sum_folio' dereferencing possible ERR_PTR()
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index b9d9519c3da4..4008e09c3d58 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1651,7 +1651,7 @@ static struct folio *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
+ 	return last_folio;
+ }
+ 
+-static int __write_node_folio(struct folio *folio, bool atomic, bool *submitted,
++static bool __write_node_folio(struct folio *folio, bool atomic, bool *submitted,
+ 				struct writeback_control *wbc, bool do_balance,
+ 				enum iostat_type io_type, unsigned int *seq_id)
+ {
+@@ -1681,7 +1681,7 @@ static int __write_node_folio(struct folio *folio, bool atomic, bool *submitted,
+ 		folio_clear_uptodate(folio);
+ 		dec_page_count(sbi, F2FS_DIRTY_NODES);
+ 		folio_unlock(folio);
+-		return 0;
++		return true;
+ 	}
+ 
+ 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+@@ -1712,7 +1712,7 @@ static int __write_node_folio(struct folio *folio, bool atomic, bool *submitted,
+ 		dec_page_count(sbi, F2FS_DIRTY_NODES);
+ 		f2fs_up_read(&sbi->node_write);
+ 		folio_unlock(folio);
+-		return 0;
++		return true;
+ 	}
+ 
+ 	if (__is_valid_data_blkaddr(ni.blk_addr) &&
+@@ -1756,11 +1756,12 @@ static int __write_node_folio(struct folio *folio, bool atomic, bool *submitted,
+ 
+ 	if (do_balance)
+ 		f2fs_balance_fs(sbi, false);
+-	return 0;
++	return true;
+ 
+ redirty_out:
+ 	folio_redirty_for_writepage(wbc, folio);
+-	return AOP_WRITEPAGE_ACTIVATE;
++	folio_unlock(folio);
++	return false;
+ }
+ 
+ int f2fs_move_node_folio(struct folio *node_folio, int gc_type)
+@@ -1783,11 +1784,9 @@ int f2fs_move_node_folio(struct folio *node_folio, int gc_type)
+ 			goto out_page;
+ 		}
+ 
+-		if (__write_node_folio(node_folio, false, NULL,
+-					&wbc, false, FS_GC_NODE_IO, NULL)) {
++		if (!__write_node_folio(node_folio, false, NULL,
++					&wbc, false, FS_GC_NODE_IO, NULL))
+ 			err = -EAGAIN;
+-			folio_unlock(node_folio);
+-		}
+ 		goto release_page;
+ 	} else {
+ 		/* set page dirty and write it */
+@@ -1882,11 +1881,10 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 			if (!folio_clear_dirty_for_io(folio))
+ 				goto continue_unlock;
+ 
+-			if (__write_node_folio(folio, atomic &&
++			if (!__write_node_folio(folio, atomic &&
+ 						folio == last_folio,
+ 						&submitted, wbc, true,
+ 						FS_NODE_IO, seq_id)) {
+-				folio_unlock(folio);
+ 				f2fs_folio_put(last_folio, false);
+ 				ret = -EIO;
+ 				goto out;
+@@ -2090,10 +2088,9 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+ 			set_fsync_mark(&folio->page, 0);
+ 			set_dentry_mark(&folio->page, 0);
+ 
+-			ret = __write_node_folio(folio, false, &submitted,
+-						wbc, do_balance, io_type, NULL);
+-			if (ret)
+-				folio_unlock(folio);
++			if (!__write_node_folio(folio, false, &submitted,
++						wbc, do_balance, io_type, NULL))
++				ret = AOP_WRITEPAGE_ACTIVATE;
+ 			else if (submitted)
+ 				nwritten++;
+ 
+-- 
+2.47.2
 
-fs/f2fs/gc.c
-    1716 static int do_garbage_collect(struct f2fs_sb_info *sbi,
-    1717                                 unsigned int start_segno,
-    1718                                 struct gc_inode_list *gc_list, int gc_type,
-    1719                                 bool force_migrate, bool one_time)
-    1720 {
-    1721         struct blk_plug plug;
-    1722         unsigned int segno = start_segno;
-    1723         unsigned int end_segno = start_segno + SEGS_PER_SEC(sbi);
-    1724         unsigned int sec_end_segno;
-    1725         int seg_freed = 0, migrated = 0;
-    1726         unsigned char type = IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
-    1727                                                 SUM_TYPE_DATA : SUM_TYPE_NODE;
-    1728         unsigned char data_type = (type == SUM_TYPE_DATA) ? DATA : NODE;
-    1729         int submitted = 0;
-    1730 
-    1731         if (__is_large_section(sbi)) {
-    1732                 sec_end_segno = rounddown(end_segno, SEGS_PER_SEC(sbi));
-    1733 
-    1734                 /*
-    1735                  * zone-capacity can be less than zone-size in zoned devices,
-    1736                  * resulting in less than expected usable segments in the zone,
-    1737                  * calculate the end segno in the zone which can be garbage
-    1738                  * collected
-    1739                  */
-    1740                 if (f2fs_sb_has_blkzoned(sbi))
-    1741                         sec_end_segno -= SEGS_PER_SEC(sbi) -
-    1742                                         f2fs_usable_segs_in_sec(sbi);
-    1743 
-    1744                 if (gc_type == BG_GC || one_time) {
-    1745                         unsigned int window_granularity =
-    1746                                 sbi->migration_window_granularity;
-    1747 
-    1748                         if (f2fs_sb_has_blkzoned(sbi) &&
-    1749                                         !has_enough_free_blocks(sbi,
-    1750                                         sbi->gc_thread->boost_zoned_gc_percent))
-    1751                                 window_granularity *=
-    1752                                         BOOST_GC_MULTIPLE;
-    1753 
-    1754                         end_segno = start_segno + window_granularity;
-    1755                 }
-    1756 
-    1757                 if (end_segno > sec_end_segno)
-    1758                         end_segno = sec_end_segno;
-    1759         }
-    1760 
-    1761         sanity_check_seg_type(sbi, get_seg_entry(sbi, segno)->type);
-    1762 
-    1763         /* readahead multi ssa blocks those have contiguous address */
-    1764         if (__is_large_section(sbi))
-    1765                 f2fs_ra_meta_pages(sbi, GET_SUM_BLOCK(sbi, segno),
-    1766                                         end_segno - segno, META_SSA, true);
-    1767 
-    1768         /* reference all summary page */
-    1769         while (segno < end_segno) {
-    1770                 struct folio *sum_folio = f2fs_get_sum_folio(sbi, segno++);
-    1771                 if (IS_ERR(sum_folio)) {
-    1772                         int err = PTR_ERR(sum_folio);
-    1773 
-    1774                         end_segno = segno - 1;
-    1775                         for (segno = start_segno; segno < end_segno; segno++) {
-    1776                                 sum_folio = filemap_get_folio(META_MAPPING(sbi),
-    1777                                                 GET_SUM_BLOCK(sbi, segno));
-    1778                                 folio_put_refs(sum_folio, 2);
-    1779                         }
-    1780                         return err;
-    1781                 }
-    1782                 folio_unlock(sum_folio);
-    1783         }
-    1784 
-    1785         blk_start_plug(&plug);
-    1786 
-    1787         for (segno = start_segno; segno < end_segno; segno++) {
-    1788                 struct f2fs_summary_block *sum;
-    1789 
-    1790                 /* find segment summary of victim */
-    1791                 struct folio *sum_folio = filemap_get_folio(META_MAPPING(sbi),
-    1792                                         GET_SUM_BLOCK(sbi, segno));
-
-Smatch gets a bit confused here and thinks filemap_get_folio() can return
-a lot of different error pointers, but really filemap_get_folio() can only
-return ERR_PTR(-ENOENT).  And possibly in this context, it can't even
-return that?
-
-One time email warning etc.  I could also mark filemap_get_folio() as
-a no fail function to prevent false positives.
-
-    1793 
-    1794                 if (get_valid_blocks(sbi, segno, false) == 0)
-    1795                         goto freed;
-    1796                 if (gc_type == BG_GC && __is_large_section(sbi) &&
-    1797                                 migrated >= sbi->migration_granularity)
-    1798                         goto skip;
---> 1799                 if (!folio_test_uptodate(sum_folio) ||
-                                                  ^^^^^^^^^
-Dereferenced here.
-
-    1800                     unlikely(f2fs_cp_error(sbi)))
-    1801                         goto skip;
-    1802 
-
-regards,
-dan carpenter
 
 
 _______________________________________________
