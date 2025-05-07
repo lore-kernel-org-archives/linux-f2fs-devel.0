@@ -4,68 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 822D8C369DC
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 May 2025 07:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 70C23C369DC
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 May 2025 07:20:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=srsDGc/DlCPMp0TFzUJst/uV8AJCyUhZxTzACxx4jPY=; b=HZNxaOOzRA/MFuCBshIitpv/j7
-	8pS4IaAgZTWrs3ocLk67PACXhJk7NjU2+5QEsDD7RZ4cRFC04ZMA+rqpvVXCMHS1GsJv0N/+QOtmw
-	6FSt102hcSR692uywf42vZ4fseUVVOfpD/G9k4eO86dDfJKN1LldDgGFmxFh0lGMz7QA=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=3pR//ZxWcbQ5YGFdDLiu5XcZwYfgKnujCLTpzolXL+U=; b=FFNwI1N9qm6WLCSdl9uTn2D27X
+	zpm+1bmpXWcAb43wmgfmNcZGCkYg2TlClsZ4XmcaRtopC/+EAebTMPxW+uaeQtT5DFUf7MYpRQKe8
+	J4zGlymm/VBDt7C6vi4fWoCULj3aXEgq0ljRVeDiuFf34CNE4kFrgYNciA3KmUhq4mw0=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uCYvA-0002Nh-0l;
-	Wed, 07 May 2025 07:10:24 +0000
+	id 1uCZ54-0005C6-Vm;
+	Wed, 07 May 2025 07:20:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1uCYv8-0002N7-BU
+ (envelope-from <chao@kernel.org>) id 1uCZ4v-0005Br-1v
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 May 2025 07:10:22 +0000
+ Wed, 07 May 2025 07:20:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VPwga5KpIE2aVMvQjivhMpW7fXdT1gYlJZ1wQwuDdng=; b=hvNLT2s43lfcB+CZhPty3wRF6O
- xdiMfYv2YVdQn15q8URUuwpJh2fk96KQQuMhM5eFcSf2NirzQQo2Gfv1zpdgVShOIUhcymuGVmmb+
- S3SEfxgpRfVvStTCglh0YrznfqU12m7rkmpec4SrOmH4LKNxnefTPqzoXtVWWHZ8yqFk=;
+ bh=4CsLneG6vhKGLGnIGsr253fIbt0jSD8qS4uCM80fE5M=; b=LP2LOr8EJojWPGzILAgPdkMWng
+ JLfxoinB9Dw5B8q2YD5xF/OB1Ljw/4kvo2DXG+BurCV+XOslkGiwoI2rOqnpg7pci14nQIKjfQiiv
+ +xySxgXO4MBZdXiswPqs9nWjWNdv7JZW4/7sZ4WTZjJ1gc92j3hViSjqW6rfPhfd8FIk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VPwga5KpIE2aVMvQjivhMpW7fXdT1gYlJZ1wQwuDdng=; b=ARwwCNT5SsarKajwOaapxAulvw
- g0xL9m3MWdrzgTaxcKb+5aBV13aQmM00HdQCWKlX1xOtZ7C8XXm5recVO+csKVUudLxAIjCK8CT8W
- b/Y8PWqDw1An1O59lZy9aVvX/NLob2/A87JTnLB9dJsLaIOOqx06d5/ys8Ab0nvvG7/U=;
-Received: from verein.lst.de ([213.95.11.211])
+ bh=4CsLneG6vhKGLGnIGsr253fIbt0jSD8qS4uCM80fE5M=; b=UG3M96PGzbZIPHxLX4Wl6TsdXf
+ j5kTnrNQA1pPsZYSi7iHrCna4de9S8NCTk1iy9Y42vAPAHwF4kUkqTiA1GwliuzJNFGkIys31IuoZ
+ KdyqbQw4L6nEyhvButXrBOOHAVieadbdI53dOH+FjP1V0nw9ziKtXqu5ol1jbEWZNf4M=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uCYuo-0001xd-MV for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 May 2025 07:10:18 +0000
-Received: by verein.lst.de (Postfix, from userid 2407)
- id 21B5F68B05; Wed,  7 May 2025 08:44:38 +0200 (CEST)
-Date: Wed, 7 May 2025 08:44:37 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Chao Yu <chao@kernel.org>
-Message-ID: <20250507064437.GA31135@lst.de>
-References: <20250505092613.3451524-1-hch@lst.de>
- <20250505092613.3451524-3-hch@lst.de>
- <aab08ad6-22db-44f3-9924-97e096cb0619@kernel.org>
+ id 1uCZ4f-0002Q4-5k for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 07 May 2025 07:20:28 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by dfw.source.kernel.org (Postfix) with ESMTP id 80A255C588D;
+ Wed,  7 May 2025 07:17:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BEFCC4CEE7;
+ Wed,  7 May 2025 07:20:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1746602402;
+ bh=vwuudw/R1dLfo9sArQaDbUrhxRWphnXFmv5qQLkzTz8=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=TcfYAZTeLavqZSxb1K/iAE8gfjzqSp9MqKO5qa9QoIGkVtcWFauBdbqODFHH64A0R
+ +Ebx9WttBHPDc9kI8xPyiZa2G73NZ0Mo6Flid4T/z5TMJdEP60EcbiC+M7Rk4hqI6q
+ 0ktk3COIIMGsgBAyahO0Ki0xgVkMXVZmJulAESJOAHLSIVMAsXaXTvmoX9VIKMzupc
+ 9t0abcRZy9mj3gPBu25NxeYNeR0h3q2f3selIqxSpplhHZMVlBAO7mMSXED7r2liCx
+ c25uHw2SEFaxE49v40pYGwVc926VIMFdL8mtfbwQ6Djb0BQgboe7rUZHaYJC7n38jr
+ KpiMr9Gv32FSg==
+Message-ID: <8460a749-951c-44d8-a5fa-699eb7f902ca@kernel.org>
+Date: Wed, 7 May 2025 15:19:57 +0800
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <aab08ad6-22db-44f3-9924-97e096cb0619@kernel.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1uCYuo-0001xd-MV
-Subject: Re: [f2fs-dev] [PATCH 2/4] f2fs: don't return
- AOP_WRITEPAGE_ACTIVATE from f2fs_write_single_data_page
+User-Agent: Mozilla Thunderbird
+To: Christoph Hellwig <hch@lst.de>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20250505092613.3451524-1-hch@lst.de>
+ <20250505092613.3451524-4-hch@lst.de>
+Content-Language: en-US
+In-Reply-To: <20250505092613.3451524-4-hch@lst.de>
+X-Headers-End: 1uCZ4f-0002Q4-5k
+Subject: Re: [f2fs-dev] [PATCH 3/4] f2fs: simplify return value handling in
+ f2fs_fsync_node_pages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,29 +88,79 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Christoph Hellwig <hch@lst.de>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, May 07, 2025 at 02:28:55PM +0800, Chao Yu wrote:
-> > diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> > index e016b0f96313..ce63b3bfb28f 100644
-> > --- a/fs/f2fs/compress.c
-> > +++ b/fs/f2fs/compress.c
-> > @@ -1565,10 +1565,7 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
-> >  						NULL, NULL, wbc, io_type,
-> >  						compr_blocks, false);
-> >  		if (ret) {
-> > -			if (ret == AOP_WRITEPAGE_ACTIVATE) {
-> > -				folio_unlock(folio);
-> > -				ret = 0;
+On 5/5/25 17:26, Christoph Hellwig wrote:
+> Always assign ret where the error happens, and jump to out instead
+> of multiple loop exit conditions to prepare for changes in the
+> __write_node_folio calling convention.
 > 
-> Previously, for this case, it will goto out label rather than writing
-> left pages?
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/f2fs/node.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index ec74eb9982a5..b9d9519c3da4 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1882,17 +1882,17 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>  			if (!folio_clear_dirty_for_io(folio))
+>  				goto continue_unlock;
+>  
+> -			ret = __write_node_folio(folio, atomic &&
+> +			if (__write_node_folio(folio, atomic &&
+>  						folio == last_folio,
+>  						&submitted, wbc, true,
+> -						FS_NODE_IO, seq_id);
+> -			if (ret) {
+> +						FS_NODE_IO, seq_id)) {
+>  				folio_unlock(folio);
+>  				f2fs_folio_put(last_folio, false);
+> -				break;
+> -			} else if (submitted) {
+> -				nwritten++;
+> +				ret = -EIO;
+> +				goto out;
 
-Indeed.  Is that the right thing to do here?
+It missed to call folio_batch_release() here?
+
+Thanks,
+
+>  			}
+> +			if (submitted)
+> +				nwritten++;
+>  
+>  			if (folio == last_folio) {
+>  				f2fs_folio_put(folio, false);
+> @@ -1903,10 +1903,10 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>  		folio_batch_release(&fbatch);
+>  		cond_resched();
+>  
+> -		if (ret || marked)
+> +		if (marked)
+>  			break;
+>  	}
+> -	if (!ret && atomic && !marked) {
+> +	if (atomic && !marked) {
+>  		f2fs_debug(sbi, "Retry to write fsync mark: ino=%u, idx=%lx",
+>  			   ino, last_folio->index);
+>  		folio_lock(last_folio);
+> @@ -1918,7 +1918,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>  out:
+>  	if (nwritten)
+>  		f2fs_submit_merged_write_cond(sbi, NULL, NULL, ino, NODE);
+> -	return ret ? -EIO : 0;
+> +	return ret;
+>  }
+>  
+>  static int f2fs_match_ino(struct inode *inode, unsigned long ino, void *data)
+
 
 
 _______________________________________________
