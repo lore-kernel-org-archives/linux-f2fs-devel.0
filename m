@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 068CBC369DC
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 May 2025 06:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 94983C369DC
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 May 2025 07:10:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=VrtvHGfCFZST9A3XOhjGc0Czo5w/Iv0n1v8eQKxQY/0=; b=eK9DwyMNCyAy6+dhJa2EeoCVVk
-	sZ1mW9CNUqCD3httXMjyBQXPSvY2D5FqoDeiTu8cJP6VU6tdqKL9jw9rjRYDefDdKUXnqVdnGnVP0
-	6yDdk1yS1dgyXwWAcTzF7cqWALbq9WcCJtIvx6GidjfiaYwc/c3miQCNJQdiMDV/drn8=;
+	bh=Gc7bwPK1UkMMCbTGtWO624cIFeqKIcmt9tM+qZpZXkM=; b=cXpq784tkx4bygzWifndzvtLZa
+	i37qd21+yy5j6PWszXEfNodiIl/kJUUnvP3uMzocbO/2qKbwyGwLjOg8PmmojKn6e44arAlie1w5h
+	igvrA7dOl+K45TDMJHb6IZwqiYhNWR8Yvdy7p4fna0+YQ15R3QFDl2BaBlh5tswA8YGg=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uCYHd-0007Ig-QE;
-	Wed, 07 May 2025 06:29:33 +0000
+	id 1uCYup-0000oX-W4;
+	Wed, 07 May 2025 07:10:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1uCYHV-0007II-70
+ (envelope-from <chao@kernel.org>) id 1uCYul-0000nV-TS
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 May 2025 06:29:25 +0000
+ Wed, 07 May 2025 07:09:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mKcp6CMBbxLMsItKHCXRt5ldsGH05AoznacomwmOYF0=; b=bMKv3kIY3XYKiDNqjoV+etn/Qw
- sx7qVzNJ5rvkqxhzGHRpjhxeHuteQgXf+X1Qm+9VL5q256bWFodcdQrp1mmb70Ls1hO3b8tmxjup0
- RLgu5ns+lRgg3APfbddAqavEGggI9581qbfzbK0SYQkSBT+criu2aVvVijBW/48Z/6MM=;
+ bh=+HNCeEBiCibp2G5Pf7g4ULlLSkkSnZ1SxOCj9EVlvtA=; b=ihtuYtyDuiA/WDM2MpcBjOl96K
+ DduqzM5frWVsvzesnpcDiYGotSbhfdVNqC1s6TOkiKSyWbKvzP0AJNYQlQBsRQVY3tDjuRWMnAEbt
+ yMmURPFUWS8AQLtChVuVmNGhcnvIzA+j7kN0Bz0e6qEC3ibf5eb25YOnlA9bCbR70jO4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,39 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=mKcp6CMBbxLMsItKHCXRt5ldsGH05AoznacomwmOYF0=; b=LTxccshQq4x1P+FtnAhv1ssK3K
- AlZ3v8UJXfLy4Pq43bRt8f+XBp/+SRBB3K7V3+2T8Nw4q/kmTXbbvUVNJVX+m8FPEUUDmdALrj6o2
- Xy/qf3YNteFLmq3ldiqCtkaSdPB53HaMtfDfYwleNmoDxEBE6hJyFxFm4mzQ+ifsMOuE=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=+HNCeEBiCibp2G5Pf7g4ULlLSkkSnZ1SxOCj9EVlvtA=; b=b4Zu0AEZpbrDUzp3aMInjUVE9W
+ ouRgqApogwdwTMn4mmHPUrKmrdjHaDvD5PJ2WfOEXzjitj3Cg12CblxEEMYQ5DrQIGeJFEAJ8rk/0
+ q4qt0WlNOlxUVqYEo6gC69TGuhUoOCe+ckxjAe8fsz/EuiOJ/UJs+MWsCCJlKi258TGo=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uCYHF-0007qW-Iv for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 May 2025 06:29:25 +0000
+ id 1uCYuW-0001wu-5t for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 07 May 2025 07:09:59 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id DB2DD5C5AA6;
- Wed,  7 May 2025 06:26:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C21CAC4CEE7;
- Wed,  7 May 2025 06:28:57 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id AE47F44222;
+ Wed,  7 May 2025 07:09:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27951C4CEE7;
+ Wed,  7 May 2025 07:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1746599338;
- bh=Bw64KSmyq0PtEWjmClJdBAYx3Jvs46ZpRQzhQjkMaY0=;
+ s=k20201202; t=1746601778;
+ bh=QdsZwbUfeSm//b7NNqX/50NGWSbdSUMX1Gm8cyHuCXw=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=R24uxpymSfD8FgnaspKaiOvkS1fOgSJiEww6efZne6c0QijnmTRwgWJy5qzIgMZSx
- uj3FmImh/Nb+sp+qUvw49zRWDYrY2MLfuIAX9JDhjEGU8hpDd9DZaur+XYHH7pAesk
- Lx8+IKTs2siIZhnmPc3/5GipgCV3BAL4bGEedIk6HdrS5cow9Zjfcis2DL8h5jcHdh
- b+FT+ClB81FDGISBGgJsgMMJMjhy0lewS4Age2PxMYlWXGFACO7QQyaKH5zV+cJNXw
- kr7D/fCIuBPe2TmwKKJbPAka9FXLfETvdmx7y6sDPKmD45xzR1avzny6wNgRcayi+F
- TZtpFoZ0MpkUg==
-Message-ID: <aab08ad6-22db-44f3-9924-97e096cb0619@kernel.org>
-Date: Wed, 7 May 2025 14:28:55 +0800
+ b=sJ30fFQLJ/5HlQtH851cjhL9gN6YAiW7d2ZmkZoV2IMchhlaLleIorpmmDjHU2IV3
+ F4B1cUJxRQro/bT6yeKppu18oU9TJ1GvdupZ9/zDQL9pYoqtgd5x5/4qs/38eS/Mlg
+ pdoFiD3JQmpXSq0KN6TnwdSzyn4H+RUY8YljEdg9pPJfZ8Oh4D+LskuWnWk4Jt2uJL
+ LTar5q8HLohse9V3qKf44Y+aAe2wYdvoZgQ9zYzTJgDJIOiCtsYNgbSdW+AIVxZiyK
+ FDRouWHzq28mxwVwBvsLDpPZcieL4RjKRBMf34txMPtfdhPFXKFQnJxbTacsKMf2jU
+ gWYaf4+dkEDTA==
+Message-ID: <9b8e24ac-500e-4d53-acbe-a9f97794a498@kernel.org>
+Date: Wed, 7 May 2025 15:09:35 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Christoph Hellwig <hch@lst.de>, Jaegeuk Kim <jaegeuk@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
 References: <20250505092613.3451524-1-hch@lst.de>
  <20250505092613.3451524-3-hch@lst.de>
+ <aab08ad6-22db-44f3-9924-97e096cb0619@kernel.org>
+ <20250507064437.GA31135@lst.de>
 Content-Language: en-US
-In-Reply-To: <20250505092613.3451524-3-hch@lst.de>
-X-Headers-End: 1uCYHF-0007qW-Iv
+In-Reply-To: <20250507064437.GA31135@lst.de>
+X-Headers-End: 1uCYuW-0001wu-5t
 Subject: Re: [f2fs-dev] [PATCH 2/4] f2fs: don't return
  AOP_WRITEPAGE_ACTIVATE from f2fs_write_single_data_page
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -90,82 +92,37 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 5/5/25 17:25, Christoph Hellwig wrote:
-> Instead unlock the pages locally where that would happen and thus
-> consolidate the code in the callers.
+On 5/7/25 14:44, Christoph Hellwig wrote:
+> On Wed, May 07, 2025 at 02:28:55PM +0800, Chao Yu wrote:
+>>> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+>>> index e016b0f96313..ce63b3bfb28f 100644
+>>> --- a/fs/f2fs/compress.c
+>>> +++ b/fs/f2fs/compress.c
+>>> @@ -1565,10 +1565,7 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+>>>  						NULL, NULL, wbc, io_type,
+>>>  						compr_blocks, false);
+>>>  		if (ret) {
+>>> -			if (ret == AOP_WRITEPAGE_ACTIVATE) {
+>>> -				folio_unlock(folio);
+>>> -				ret = 0;
+>>
+>> Previously, for this case, it will goto out label rather than writing
+>> left pages?
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/f2fs/compress.c |  5 +----
->  fs/f2fs/data.c     | 13 ++++---------
->  2 files changed, 5 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index e016b0f96313..ce63b3bfb28f 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -1565,10 +1565,7 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
->  						NULL, NULL, wbc, io_type,
->  						compr_blocks, false);
->  		if (ret) {
-> -			if (ret == AOP_WRITEPAGE_ACTIVATE) {
-> -				folio_unlock(folio);
-> -				ret = 0;
+> Indeed.  Is that the right thing to do here?
 
-Previously, for this case, it will goto out label rather than writing
-left pages?
+IIRC, once it failed to write one page, it redirties all left pages, and tries
+to rewrite them again, it can avoid fragment as much as possible.
+
+So can we keep original implementation here?
 
 Thanks,
-
-> -			} else if (ret == -EAGAIN) {
-> +			if (ret == -EAGAIN) {
->  				ret = 0;
->  				/*
->  				 * for quota file, just redirty left pages to
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 08a8a107adcb..e32c9cf5b4f5 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2930,10 +2930,10 @@ int f2fs_write_single_data_page(struct folio *folio, int *submitted,
->  	 * file_write_and_wait_range() will see EIO error, which is critical
->  	 * to return value of fsync() followed by atomic_write failure to user.
->  	 */
-> -	if (!err || wbc->for_reclaim)
-> -		return AOP_WRITEPAGE_ACTIVATE;
->  	folio_unlock(folio);
-> -	return err;
-> +	if (err && !wbc->for_reclaim)
-> +		return err;
-> +	return 0;
->  }
->  
->  /*
-> @@ -3146,8 +3146,6 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->  			ret = f2fs_write_single_data_page(folio,
->  					&submitted, &bio, &last_block,
->  					wbc, io_type, 0, true);
-> -			if (ret == AOP_WRITEPAGE_ACTIVATE)
-> -				folio_unlock(folio);
->  #ifdef CONFIG_F2FS_FS_COMPRESSION
->  result:
->  #endif
-> @@ -3159,10 +3157,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->  				 * keep nr_to_write, since vfs uses this to
->  				 * get # of written pages.
->  				 */
-> -				if (ret == AOP_WRITEPAGE_ACTIVATE) {
-> -					ret = 0;
-> -					goto next;
-> -				} else if (ret == -EAGAIN) {
-> +				if (ret == -EAGAIN) {
->  					ret = 0;
->  					if (wbc->sync_mode == WB_SYNC_ALL) {
->  						f2fs_io_schedule_timeout(
 
 
 
