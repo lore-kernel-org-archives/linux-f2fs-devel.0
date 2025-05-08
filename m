@@ -4,79 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D990DC3ABBE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 May 2025 09:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DCC26C3ABC0
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 May 2025 12:59:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=sB4b50kjuVutEX+D5PJbcH4rAOXL4DlRNov3aTlIKZ8=; b=BHJyvrtXLbGY5PPAIsUxUqHw3K
-	pWV8ygzPm+nnb5qlaUQZtLeI0BmvYCLQrUm9TFAEBU/+kw8o4KkXpvdFCAM1z2DNf+xrXYFJdFR2y
-	3o80D5EK6oEJedVnBOSHnMeV8zjjdOcm/FXQNFPCRFruOttRvPmDVrvsPO4ujaUu/r9M=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=Le/AlXkBtCXql2A2DXR3/7DfcOGy8UVQGdE5GvjYyBc=; b=UHk925xyHIZ4TXRSuFk1kfO4gr
+	lrN02Z/bTKOk9fjVf4pvBcqytrp4qfhVGusVExzl54yzCA/k8CvqKlrVO9yktK2sYrWqEAHRpBWBW
+	jIoSPFOuB5UAC3fRgnhJoKpoMC6VT8+FqUVE395lVj3RRDhZQ50uYYlQuwNLyeHQblwY=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uCxwl-0002de-OS;
-	Thu, 08 May 2025 09:53:43 +0000
+	id 1uD0qA-0006af-1F;
+	Thu, 08 May 2025 12:59:06 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1uCxwk-0002dW-JI
+ (envelope-from <huangjianan@xiaomi.com>) id 1uD0q8-0006aW-Me
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 May 2025 09:53:42 +0000
+ Thu, 08 May 2025 12:59:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jvjVn9Ym2YUK+OeJ0lipLrva5zWTf4GfkVL62eI1YTQ=; b=a+PpiPev+f5dS/Rcou+AZ8dov/
- btZGGPFY7MZ1/aYBYQlPSRuerG+Yqmy4RpdWUQrG07iiUxZ0UoaVjC8x3x6faSnDGs6Pt5F9HbOMB
- 3fVj54TvAFS/T/8rzGLA79RMjVCQTQFmuSAQMveYz6TFIg83pUbhDGKPeMCIjTrjl75w=;
+ bh=jDHrx8CsSHVMNpB8kI2nIJeMeBfc8b0ndgxmwRLLVwM=; b=gu0B3hWAdzZ5c709zjqjkFwCDf
+ CGqKwh5+4gHd1wkvqqxlknItVoCtdug/y4LGWVvAAys0sIliFzXx3a2Px7S8PA/sti9q+eY5dINW5
+ 4O3djRdmSuyMSuCU5WeC5mKY9q9Ke0xsDuRITB3iPP/6dOsYEgq2T4AXBZ+/noEuXieI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=jvjVn9Ym2YUK+OeJ0lipLrva5zWTf4GfkVL62eI1YTQ=; b=aBc5cGO17zqczONp3o8bUqDAWS
- PRjVWj7kpsYow07xt3keIgFFHoZdVQ0LmMAU+bdDvuFbC696xSWRIPzXEgJhdFdPX+APBuNZkjxWg
- 0/hx8WTUv9vk34jJVccFBsSV5lRKYvrGAlPDZCVT6NjmCezbXGNnE5ZConr8RxUIswvc=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uCxwk-0003Ah-32 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 May 2025 09:53:42 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 7D9F65C6127;
- Thu,  8 May 2025 09:51:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CEDBC4CEE7;
- Thu,  8 May 2025 09:53:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1746698016;
- bh=xMnMByYvNQo7L2wosGfUBr8ckLgWP+gGQe30dSqfKUw=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=ijOv3946950TjJrdY+TKc5NYy2nbhIwGn7u05PeREp6n+DuxEeBU7Uh9tKVxtx9+T
- 2IazB/6pMEXxQ5OlGm7CuRVY7c0xGB6/Z7DXFWSCwkk4tFXc0kVvNkfzHs7Vgf9gtp
- cmBTL1iDeVIrixycRThzXFljL3IYPM/UygyqMcGejs6HVmRrCkG6jAkGkddzPcS6y9
- ydALNYlqHHvI5c6IOS3rvQfTBwlIQeSnUJ1ymN8XEUND0wEWph2mfY0hQ6WJ8CLPZo
- aUdn4OkM1/efAO2qZWcW0Qh9XsTj0WnH9Vbe5r8wVn0mVEIVcue/QS0qY6cXOJLgFd
- 68hxhMu47DOzA==
-Message-ID: <f4a01db1-0ae8-4822-a55e-3c41ea3ad998@kernel.org>
-Date: Thu, 8 May 2025 17:53:33 +0800
+ bh=jDHrx8CsSHVMNpB8kI2nIJeMeBfc8b0ndgxmwRLLVwM=; b=SpBDLKx7NqQ+CyeGd+QbuPEwwJ
+ zYgRHFQo1CIa20OwykSRBTKxCXOVG22ZjNLXZxfVq8mxlQAATjg5/xfsBIWGiQfC3nJCmv15d6gRG
+ XWjR0KftUgjEydndH3UhQ0euHWeD45qssKkqxpjoM9hJJvtK4Dd71xCZGYAOtsHBLKFg=;
+Received: from outboundhk.mxmail.xiaomi.com ([207.226.244.123])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.95)
+ id 1uD0q7-0005e6-PM for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 May 2025 12:59:04 +0000
+X-CSE-ConnectionGUID: XTc2FjkwROOutUX9/LHxFQ==
+X-CSE-MsgGUID: TnwNd7+xT8aKukVHJd7IuQ==
+X-IronPort-AV: E=Sophos;i="6.15,272,1739808000"; d="scan'208";a="139551818"
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+Date: Thu, 8 May 2025 20:42:35 +0800
+Message-ID: <20250508124235.58858-2-huangjianan@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250508124235.58858-1-huangjianan@xiaomi.com>
+References: <20250508124235.58858-1-huangjianan@xiaomi.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Christoph Hellwig <hch@lst.de>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250508051520.4169795-1-hch@lst.de>
- <20250508051520.4169795-6-hch@lst.de>
-Content-Language: en-US
-In-Reply-To: <20250508051520.4169795-6-hch@lst.de>
-X-Headers-End: 1uCxwk-0003Ah-32
-Subject: Re: [f2fs-dev] [PATCH 5/6] f2fs: simplify return value handling in
- f2fs_fsync_node_pages
+X-Originating-IP: [10.237.8.166]
+X-ClientProxiedBy: BJ-MBX03.mioffice.cn (10.237.8.123) To YZ-MBX05.mioffice.cn
+ (10.237.88.125)
+X-Headers-End: 1uD0q7-0005e6-PM
+Subject: [f2fs-dev] [PATCH 2/2] f2fs-tools: clean up dump.f2fs etc. when
+ uninstall
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,23 +76,40 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Jianan Huang via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jianan Huang <huangjianan@xiaomi.com>
+Cc: wanghui33@xiaomi.com, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 5/8/25 13:14, Christoph Hellwig wrote:
-> Always assign ret where the error happens, and jump to out instead
-> of multiple loop exit conditions to prepare for changes in the
-> __write_node_folio calling convention.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Otherwise, some lonely soft links will be left in /usr/local/bin.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Jianan Huang <huangjianan@xiaomi.com>
+---
+ fsck/Makefile.am | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Thanks,
+diff --git a/fsck/Makefile.am b/fsck/Makefile.am
+index ea3b26a..f0d7f87 100644
+--- a/fsck/Makefile.am
++++ b/fsck/Makefile.am
+@@ -21,3 +21,11 @@ install-data-hook:
+ 	ln -sf fsck.f2fs $(DESTDIR)/$(sbindir)/sload.f2fs
+ 	ln -sf fsck.f2fs $(DESTDIR)/$(sbindir)/f2fslabel
+ 	ln -sf fsck.f2fs $(DESTDIR)/$(sbindir)/inject.f2fs
++
++uninstall-hook:
++	-rm -f $(DESTDIR)/$(sbindir)/dump.f2fs
++	-rm -f $(DESTDIR)/$(sbindir)/defrag.f2fs
++	-rm -f $(DESTDIR)/$(sbindir)/resize.f2fs
++	-rm -f $(DESTDIR)/$(sbindir)/sload.f2fs
++	-rm -f $(DESTDIR)/$(sbindir)/f2fslabel
++	-rm -f $(DESTDIR)/$(sbindir)/inject.f2fs
+-- 
+2.43.0
+
 
 
 _______________________________________________
