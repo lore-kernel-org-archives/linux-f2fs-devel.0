@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 17C94C3ABBE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 May 2025 09:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D990DC3ABBE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 May 2025 09:53:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ymzmU5acFS2IfyUzrPL8LBdMuHjHs3qE8xKZcl8FIaY=; b=YaD0ByLd2x7msZwZF9dfgSdmRt
-	7/HpVpwhfxgqNixFGFdXdYL2EAP+Wc+AaUoA8LpUH/6H8+mzNUaN8UsggKA7i0aIsLQejuTgXWLEr
-	Rs/uYQ/mJx+F8w08n1tC074F6Pwkc2IDQAwQJHIYbPj8vVPJFNHNSn5da9YsjCXG2oGY=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=sB4b50kjuVutEX+D5PJbcH4rAOXL4DlRNov3aTlIKZ8=; b=BHJyvrtXLbGY5PPAIsUxUqHw3K
+	pWV8ygzPm+nnb5qlaUQZtLeI0BmvYCLQrUm9TFAEBU/+kw8o4KkXpvdFCAM1z2DNf+xrXYFJdFR2y
+	3o80D5EK6oEJedVnBOSHnMeV8zjjdOcm/FXQNFPCRFruOttRvPmDVrvsPO4ujaUu/r9M=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uCxsN-0008Of-Od;
-	Thu, 08 May 2025 09:49:11 +0000
+	id 1uCxwl-0002de-OS;
+	Thu, 08 May 2025 09:53:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1uCxsM-0008OR-64
+ (envelope-from <chao@kernel.org>) id 1uCxwk-0002dW-JI
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 May 2025 09:49:10 +0000
+ Thu, 08 May 2025 09:53:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hUVaQChkcQ9Md3lP2BzH31Nj+XNM9Qz8KD5S4JWkVyI=; b=Mff6Vye4cjfK8R0AClJazIH5p/
- Z9H4Vk8o6MYJvILM0SFiZ+KRHEFr8x0W3TVBZpSQlNdCrODZkaCq7LoWth2dVI63Xj8B+1+ctUeOE
- UTopcpLjj004DcVEkLc2twcNExZGwdqZIjlWamniU8K3dO1/+AmMko3rJkimpJ7w3tR0=;
+ bh=jvjVn9Ym2YUK+OeJ0lipLrva5zWTf4GfkVL62eI1YTQ=; b=a+PpiPev+f5dS/Rcou+AZ8dov/
+ btZGGPFY7MZ1/aYBYQlPSRuerG+Yqmy4RpdWUQrG07iiUxZ0UoaVjC8x3x6faSnDGs6Pt5F9HbOMB
+ 3fVj54TvAFS/T/8rzGLA79RMjVCQTQFmuSAQMveYz6TFIg83pUbhDGKPeMCIjTrjl75w=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,41 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hUVaQChkcQ9Md3lP2BzH31Nj+XNM9Qz8KD5S4JWkVyI=; b=F/HpEFX3l/IXJ3472PMiNPkl3x
- fgR0qS3c4U1dLVOKWOvPRWJpFqoKsxI64Qm0K892CMCmsu8iSW2vG3y6jOYzHKHMH/tLqvClUGPEM
- Rx6s4nUjQ9sG/vbi/XeGT4VAw7hvR1NsduvHKKRx+azaGpPzaSDCP8yxADhyHRRZOI1I=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=jvjVn9Ym2YUK+OeJ0lipLrva5zWTf4GfkVL62eI1YTQ=; b=aBc5cGO17zqczONp3o8bUqDAWS
+ PRjVWj7kpsYow07xt3keIgFFHoZdVQ0LmMAU+bdDvuFbC696xSWRIPzXEgJhdFdPX+APBuNZkjxWg
+ 0/hx8WTUv9vk34jJVccFBsSV5lRKYvrGAlPDZCVT6NjmCezbXGNnE5ZConr8RxUIswvc=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uCxsL-0002zf-I2 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 May 2025 09:49:10 +0000
+ id 1uCxwk-0003Ah-32 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 May 2025 09:53:42 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id DA3C5629EA;
- Thu,  8 May 2025 09:48:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88714C4CEE7;
- Thu,  8 May 2025 09:48:57 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 7D9F65C6127;
+ Thu,  8 May 2025 09:51:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CEDBC4CEE7;
+ Thu,  8 May 2025 09:53:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1746697738;
- bh=1M2D0kmPXyrtxUHUqV/QBCgUyN2yFLT+VGEt8oz9Ov4=;
+ s=k20201202; t=1746698016;
+ bh=xMnMByYvNQo7L2wosGfUBr8ckLgWP+gGQe30dSqfKUw=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=q35O//wgeFolfUtGFo2yu7zhlejGy8Sz3V7xZTakPq624qNcrv13dWsvdYbOrowi1
- Kq/TrA7HN26UnMs/TEc+zYaDRim29VwgtNG0drLYUOVDLQRpi85tYGine4NCh8xnz3
- Uj9V25fe6L2gRWvNB/ZzGA9ruBdNFSGWPo2dy6vnudyNy6ADAHwPauqI7LeaUCZ7/a
- O0ia9WJtNPLGATO1b+WzoFUt6+bxODUB4usIsk9NMetmBdjmWM55Jv5yWI/iPGDj/h
- QETbuNc8vS/KjE5WVFbl3pUHBdyt41WVUDEukLAXjV1RhFaiiQH9USJFcbtXWZrLEw
- MDKr8AuVw2E6Q==
-Message-ID: <c2d58d5c-54fa-4b50-97cf-bb7876e1bbab@kernel.org>
-Date: Thu, 8 May 2025 17:48:55 +0800
+ b=ijOv3946950TjJrdY+TKc5NYy2nbhIwGn7u05PeREp6n+DuxEeBU7Uh9tKVxtx9+T
+ 2IazB/6pMEXxQ5OlGm7CuRVY7c0xGB6/Z7DXFWSCwkk4tFXc0kVvNkfzHs7Vgf9gtp
+ cmBTL1iDeVIrixycRThzXFljL3IYPM/UygyqMcGejs6HVmRrCkG6jAkGkddzPcS6y9
+ ydALNYlqHHvI5c6IOS3rvQfTBwlIQeSnUJ1ymN8XEUND0wEWph2mfY0hQ6WJ8CLPZo
+ aUdn4OkM1/efAO2qZWcW0Qh9XsTj0WnH9Vbe5r8wVn0mVEIVcue/QS0qY6cXOJLgFd
+ 68hxhMu47DOzA==
+Message-ID: <f4a01db1-0ae8-4822-a55e-3c41ea3ad998@kernel.org>
+Date: Thu, 8 May 2025 17:53:33 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Christoph Hellwig <hch@lst.de>, Jaegeuk Kim <jaegeuk@kernel.org>
 References: <20250508051520.4169795-1-hch@lst.de>
- <20250508051520.4169795-5-hch@lst.de>
+ <20250508051520.4169795-6-hch@lst.de>
 Content-Language: en-US
-In-Reply-To: <20250508051520.4169795-5-hch@lst.de>
-X-Headers-End: 1uCxsL-0002zf-I2
-Subject: Re: [f2fs-dev] [PATCH 4/6] f2fs: always unlock the page in
- f2fs_write_single_data_page
+In-Reply-To: <20250508051520.4169795-6-hch@lst.de>
+X-Headers-End: 1uCxwk-0003Ah-32
+Subject: Re: [f2fs-dev] [PATCH 5/6] f2fs: simplify return value handling in
+ f2fs_fsync_node_pages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,11 +96,9 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 5/8/25 13:14, Christoph Hellwig wrote:
-> Consolidate the code to unlock the page in f2fs_write_single_data_page
-> instead of leaving it to the callers for the AOP_WRITEPAGE_ACTIVATE case.
-> Replace AOP_WRITEPAGE_ACTIVATE with a positive return of 1 as this case
-> now doesn't match the historic ->writepage special return code that is
-> on it's way out now that ->writepage has been removed.
+> Always assign ret where the error happens, and jump to out instead
+> of multiple loop exit conditions to prepare for changes in the
+> __write_node_folio calling convention.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
