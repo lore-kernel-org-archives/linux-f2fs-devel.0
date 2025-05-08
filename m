@@ -4,79 +4,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7FEB6C3ABBE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 May 2025 06:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 479A6C3ABC0
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 May 2025 07:48:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=IXHUfa52ho/DU36/aVUwaq3V+NsSepPTOi2q9cWbKtI=; b=MDnOpZ5f1sLCfBNkFu+mQrhnxA
-	bGFYWCFrHaK1fMAuW9Xrn/98hFnWM1WPJyOc81TLs4H/gdB9LZ9SC9ywsmIOVkyS2AEuoNOAODvfE
-	3x1mompGPio7yB5HQSc6BGnugKvdbSLM03DifgcalJaHhh4+NLfkdpFEK73VX80IS7EY=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=3bManL1S4DnewL1QHIqRVi1edps75E24FtB33H9WmxU=; b=IGNISFMtSlNPjk3HNlDsu4lHhJ
+	5PwRHhOcIxgVump0R2EAIrhD+w2ZTGbuvHG0x5C6D739YzxoNGLJOkKYO7EDu1XVn4rCKrUnGy87b
+	2TfgoIT36mmkPQzGSj97jvYjrsVcCFgCYde9VFhrUYqDBS2P1kNhibjkgLx2MX/5BENw=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uCuqZ-0008W2-EY;
-	Thu, 08 May 2025 06:35:07 +0000
+	id 1uCvzH-00084g-At;
+	Thu, 08 May 2025 07:48:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1uCuqX-0008Vs-Hi
+ (envelope-from <yohan.joung@sk.com>) id 1uCvzF-00084a-D3
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 May 2025 06:35:05 +0000
+ Thu, 08 May 2025 07:48:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=17Gwc1cD5LchZj7cFYmX+5TMzLVpP/m/2RS/2schTbU=; b=b/RN+KF5ceokMsGhNyoVJ9zlGT
- +MkoGz4LJ5Kd7QmIXE4fM/rE1bewZWuLgqPZyhu7UNOkcV4m7swa1U4Ndk/xWjILSV0uCk5nQY2Ag
- zd+z+p8dBtjycAh6lQbSg7QDweCXuKg28qxelBPQZfpuqBKaEwlpSOiGjQgVrcJKXY1E=;
+ bh=vlYuk+btyi2Cf5/JcFAtLtovKkypDT4IyDqFDMkoprU=; b=L+yoACIWt6BaosdWR9TE+Dl+lg
+ yaCkKfrxtkGciQY0Y79HpGvfruwwklmyCG2u99TnckAaQkacvvHPyd4EEjT4INV+6EYsRzYp6TsNR
+ MAV3Ep2HE2u/kbfIOJn2Q/HmUMBRC9HQqSCRONI86E+MZrKCpu5AGsFvXRXHHAXF8FT0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=17Gwc1cD5LchZj7cFYmX+5TMzLVpP/m/2RS/2schTbU=; b=YPaZkFEOwmifRvwcz+9NuWlhOi
- YcuGnS/bG0SiTjgl31fcaNAar8rgCL+JmYnnQKbZ87XPfs9yDgpqSEAGTuLv2A+I1HDr1F7v6cY5a
- dpHIeAtvReNjOEkGw3WR0jeKhU8eDAzqj0JlWhVgh6yQbMDgEIgYxXoxYJesPNfPlcZc=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uCuqX-0006x1-0S for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 May 2025 06:35:05 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 4AE4660010;
- Thu,  8 May 2025 06:34:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4621C4CEEB;
- Thu,  8 May 2025 06:34:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1746686099;
- bh=iRUqwdtVluzi8HRIkzz+g95ssxWFsQLhfah1v85A2gU=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=N3jeWaYdPn2Ex2T0rif9mSaRmPvo2z1LdpQBRDqVCadN/i3AzRTT+t7Egj7q5V9Aj
- uT7JEjFv2rgeWY1vuxvSiGNDcG28yDTXcG3Uq7HsXuAFWFx/X/yjebYxt1ge10gPHY
- J9kXsDjYWpn5meyuB+zC0zHZQJS/lSz3e+lekwZ69Pqzw8kY5FdbeTLJIgzhxq1M1a
- 9g3fJYQbIQ77mREBBg/hWrTJ2l1+WXufOw9fG7VsVCFy6TiDpPNKp1EsJOXUq68Rlj
- 8tSJ6BG5OzVTB36wpAOXJEuyN2LOuz0a7z4Yi0Lg5Pdj/pakt0R+RAMKrzn0MuVyQz
- 14YDPtm+f96Tw==
-Message-ID: <b4ec3021-9786-4712-b66c-0ec78b852e6c@kernel.org>
-Date: Thu, 8 May 2025 14:34:55 +0800
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=vlYuk+btyi2Cf5/JcFAtLtovKkypDT4IyDqFDMkoprU=; b=G
+ A01KA/XusU6MNNA26xnqXrCjexSt/TlEJ6qTrzcEMLXyKNhPlgjxikh2+37UXjxxVfxMIkHmVQL8A
+ pmci5CIRf17+HHRPSdkbGApUDUYDtxB3XXVzOT7v1MJHn6bPkRHjvvYvRdtkPOWYYoYmXF+t3idnk
+ rVvv/h1vEvkR8vKM=;
+Received: from exvmail3.skhynix.com ([166.125.252.90]
+ helo=invmail3.skhynix.com)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.95)
+ id 1uCvzE-0001ns-Gk for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 May 2025 07:48:09 +0000
+X-AuditID: a67dfc59-03fff7000000aab6-9b-681c61b00664
+From: "yohan.joung" <yohan.joung@sk.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org,
+	daehojeong@google.com
+Date: Thu,  8 May 2025 16:47:54 +0900
+Message-ID: <20250508074756.693-1-yohan.joung@sk.com>
+X-Mailer: git-send-email 2.49.0.windows.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Eric Sandeen <sandeen@redhat.com>, linux-f2fs-devel@lists.sourceforge.net
-References: <20250423170926.76007-1-sandeen@redhat.com>
- <20250423170926.76007-5-sandeen@redhat.com>
-Content-Language: en-US
-In-Reply-To: <20250423170926.76007-5-sandeen@redhat.com>
-X-Headers-End: 1uCuqX-0006x1-0S
-Subject: Re: [f2fs-dev] [PATCH V3 4/7] f2fs: Add f2fs_fs_context to record
- the mount options
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBLMWRmVeSWpSXmKPExsXC9ZZnke6GRJkMg9X3dCxOTz3LZDG1fS+j
+ xZP1s5gtLi1yt7i8aw6bA6vHgk2lHptWdbJ57F7wmcnj8ya5AJYoLpuU1JzMstQifbsErowZ
+ i3pZCjYJVjStqW5gXMzXxcjJISFgIrGkdwc7jH1y4xcmEJtNQEPiT28vM4gtIuAk8f9GO1AN
+ FwezQBujRPvRJtYuRg4OYYFiiVObEkFqWARUJbbNeMkIYvMKmErsPPyRGWKmpsSOL+eZIOKC
+ EidnPmEBsZkF5CWat85mBpkpIfCWVWL+436oIyQlDq64wTKBkXcWkp5ZSHoWMDKtYhTJzCvL
+ TczMMdYrzs6ozMus0EvOz93ECAyvZbV/IncwfrsQfIhRgINRiYfXwVs6Q4g1say4MvcQowQH
+ s5IIb1EjUIg3JbGyKrUoP76oNCe1+BCjNAeLkjiv0bfyFCGB9MSS1OzU1ILUIpgsEwenVAMj
+ T1BOyjy7gIiN3Ae/dAWaG6j+ks3lDp28bl+2zzdhGTGFea/T9DLf2V2JDXqXVs3y9nPxshc7
+ Ez/6Nt2xuc6w5HWGqLwMW3uiawSDS4jhG6XEGSf1VXJPHsh5I1a38emTx4YFVb7fNRbNzV55
+ 2CIg4ed1e+b3ois4/MpWOYcmb/t5Q8Zg32klluKMREMt5qLiRAB3kw6WKwIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkluLIzCtJLcpLzFFi42LhmqEyR3dDokyGQcsreYvTU88yWUxt38to
+ 8WT9LGaLS4vcLS7vmsNmMWHuVSaL91vvMTqweyzYVOqxaVUnm8fuBZ+ZPL7d9vD4vEkugDWK
+ yyYlNSezLLVI3y6BK2PGol6Wgk2CFU1rqhsYF/N1MXJySAiYSJzc+IUJxGYT0JD409vLDGKL
+ CDhJ/L/Rzt7FyMXBLNDGKNF+tIm1i5GDQ1igWOLUpkSQGhYBVYltM14ygti8AqYSOw9/ZIaY
+ qSmx48t5Joi4oMTJmU9YQGxmAXmJ5q2zmScwcs1CkpqFJLWAkWkVo0hmXlluYmaOmV5xdkZl
+ XmaFXnJ+7iZGYMAsq/0zaQfjt8vuhxgFOBiVeHgdvaUzhFgTy4orcw8xSnAwK4nwFjUChXhT
+ EiurUovy44tKc1KLDzFKc7AoifN6hacmCAmkJ5akZqemFqQWwWSZODilGhhbfqfausu8SCow
+ cZv+NMDyidX6lfUbXxxe+qTq3EfjzYoVv1d5uC9c+DDLuvnBk/9Z7E7Ln1QJMrE0+/Uta9/4
+ 638gz7LlT4ODXhtWv92Zarp1mUFY16d387/kM13VOOdx4fh5qR9yDBzJsWcUP+hFz78RO2EB
+ 5xGZKIcD2R8zymTu3bp12bBWiaU4I9FQi7moOBEAP5yI4BQCAAA=
+X-CFilter-Loop: Reflected
+X-Headers-End: 1uCvzE-0001ns-Gk
+Subject: [f2fs-dev] [PATCH v4 1/2] f2fs: add a method for calculating the
+ remaining blocks in the current segment in LFS mode.
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,33 +94,71 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, lihongbo22@huawei.com
+Cc: pilhyun.kim@sk.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 4/24/25 01:08, Eric Sandeen wrote:
-> From: Hongbo Li <lihongbo22@huawei.com>
-> 
-> At the parsing phase of mouont in the new mount api, options
-> value will be recorded with the context, and then it will be
-> used in fill_super and other helpers.
-> 
-> Note that, this is a temporary status, we want remove the sb
-> and sbi usages in handle_mount_opt. So here the f2fs_fs_context
-> only records the mount options, it will be copied in sb/sbi in
-> later process. (At this point in the series, mount options are
-> temporarily not set during mount.)
-> 
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> [sandeen: forward port, minor fixes and updates]
-> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+In LFS mode, the previous segment cannot use invalid blocks,
+so the remaining blocks from the next_blkoff of the current segment
+to the end of the section are calculated.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Signed-off-by: yohan.joung <yohan.joung@sk.com>
+---
+ fs/f2fs/segment.h | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 03c0f59be5a8..5777b385e7d2 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -102,6 +102,8 @@ static inline void sanity_check_seg_type(struct f2fs_sb_info *sbi,
+ #define CAP_SEGS_PER_SEC(sbi)					\
+ 	(SEGS_PER_SEC(sbi) -					\
+ 	BLKS_TO_SEGS(sbi, (sbi)->unusable_blocks_per_sec))
++#define GET_START_SEG_FROM_SEC(sbi, segno)			\
++	(rounddown(segno, SEGS_PER_SEC(sbi)))
+ #define GET_SEC_FROM_SEG(sbi, segno)				\
+ 	(((segno) == -1) ? -1 : (segno) / SEGS_PER_SEC(sbi))
+ #define GET_SEG_FROM_SEC(sbi, secno)				\
+@@ -582,8 +584,14 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
+ 		if (unlikely(segno == NULL_SEGNO))
+ 			return false;
+ 
+-		left_blocks = CAP_BLKS_PER_SEC(sbi) -
+-				get_ckpt_valid_blocks(sbi, segno, true);
++		if (f2fs_lfs_mode(sbi) && __is_large_section(sbi)) {
++			left_blocks = CAP_BLKS_PER_SEC(sbi) -
++				SEGS_TO_BLKS(sbi, (segno - GET_START_SEG_FROM_SEC(sbi, segno))) -
++				CURSEG_I(sbi, i)->next_blkoff;
++		} else {
++			left_blocks = CAP_BLKS_PER_SEC(sbi) -
++					get_ckpt_valid_blocks(sbi, segno, true);
++		}
+ 
+ 		blocks = i <= CURSEG_COLD_DATA ? data_blocks : node_blocks;
+ 		if (blocks > left_blocks)
+@@ -596,8 +604,15 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
+ 	if (unlikely(segno == NULL_SEGNO))
+ 		return false;
+ 
+-	left_blocks = CAP_BLKS_PER_SEC(sbi) -
+-			get_ckpt_valid_blocks(sbi, segno, true);
++	if (f2fs_lfs_mode(sbi) && __is_large_section(sbi)) {
++		left_blocks = CAP_BLKS_PER_SEC(sbi) -
++				SEGS_TO_BLKS(sbi, (segno - GET_START_SEG_FROM_SEC(sbi, segno))) -
++				CURSEG_I(sbi, CURSEG_HOT_DATA)->next_blkoff;
++	} else {
++		left_blocks = CAP_BLKS_PER_SEC(sbi) -
++				get_ckpt_valid_blocks(sbi, segno, true);
++	}
++
+ 	if (dent_blocks > left_blocks)
+ 		return false;
+ 	return true;
+-- 
+2.33.0
 
 
 
