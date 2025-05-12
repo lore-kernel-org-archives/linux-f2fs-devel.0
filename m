@@ -4,79 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2D189C3ABC3
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 May 2025 08:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E14A2C3ABC3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 May 2025 11:55:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=SA/anpYl4bLvT9ofUe7spOwsx+G1Mp8GGNQV1X5dlaI=; b=dgrmcFxKNyEu3Ffvl8ABzUHueC
-	EMMOq+Me35jxmLv2/wYRkyDouUmTou3P/m0Q+CceQztMwfTPnv18wCtVR5Xd3zPTdky1UOi4UvY/u
-	OlyNpdy3ZX9jlSHXzdmXrott2pdudw9yoLdbvwNFEbiXqiiTek/0WqqOy3mI8w3ZpW7A=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=py66vW85e61YoZ3HL8Y92xMwsXGmpYS+MtVEc5YCC20=; b=dwRpwF4XMyMmH6hEX8s1AkFxaS
+	sFQ0BOfCkF+ZimrzQiu0tviy1thYK88c/ADX+ZJ9cxKqMy1SreNWdaeQ8mOCjQPrKpTE/2V1koAli
+	jjXa5Jf4RktsXhKtReEem8hWFpb6CHzLwa3U73PyTFmyHxC1SGtYkdkGhHS9WV53MMH0=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uEObR-00037q-9j;
-	Mon, 12 May 2025 08:33:37 +0000
+	id 1uERkK-0001yT-Op;
+	Mon, 12 May 2025 11:55:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1uEObQ-00037f-8A
+ (envelope-from <chao@kernel.org>) id 1uERkG-0001yG-LR
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 May 2025 08:33:36 +0000
+ Mon, 12 May 2025 11:54:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/5uksM4q4xMAWezn0yFV8U+zpb/7Eo7ftBs334/3ZUE=; b=FWw2MQvcNlqlNYZ+ji1W+BFnPb
- bpgCRZ5wjMFla9HLinZbxlXtydVFJFVeq64YmesZ8JGPeqaz1GUJO7UONc8bvOw7fGN2d/ve0AM1i
- 5UsUzLcARqc8GKhSDVvto2Q7juhWQVaDU1PjpkjEDAvIqtMqDkXRll84ERVWdhW2HpDk=;
+ bh=WbjRZ5T2Z39BbipS0U9zuXWLRsvmp9jeoAeFrh6H92A=; b=j3Nl7HHe/E/9UeuoxnE4YZdaRD
+ pXWy+j/iD0rkwffx2Auya/C942GlUHMnSjvkjdJavx6iM5O/uqmqz6A3Je4AsvTuty2l+1zWwpGwf
+ 8WQFDz3GGrPilYV1ojMyR/URpks5DNP5wbt3pRVl1JqHeQV7b0o55GdJPVFHLKbD8Y7Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=/5uksM4q4xMAWezn0yFV8U+zpb/7Eo7ftBs334/3ZUE=; b=XKPJPuOKEvDJF3b1VsUVf9DKoO
- O5HvOWtOIyWRDvmCaFBKr/l/gHlsKFonn0E5qZ5Wx9gR99Uc8NtiDWELOhS2VBClUQwV7zLQxon8p
- I1BS3GlV+mzuz/dPjJhWSPpUv6BhTq1IGrGBlGQ3yXSwoxGz7YQxRiuVtadY2LYfPtY8=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=WbjRZ5T2Z39BbipS0U9zuXWLRsvmp9jeoAeFrh6H92A=; b=T1Qu3b4L17yyL0qbBwW1QnFEG7
+ 7SanXT+LfBrbIsZsdQ56RAXo4qt7qThttwIPogBi7NWMqcDYqDpZQ7uvcL7wlnz1I9loDuBU3oTf3
+ 5Uhvluc+6L0ofkKQJ0amOO3z0uttZVrjMtZ46dZLyqExCnTX1EpZNZNSB/YeMWKKPdT0=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uEObL-0007Me-Ku for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 May 2025 08:33:36 +0000
+ id 1uERkG-0007o1-6A for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 May 2025 11:54:56 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id E85FA61127;
- Mon, 12 May 2025 08:33:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 337F3C4CEE7;
- Mon, 12 May 2025 08:33:24 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 760B55C6419
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 12 May 2025 11:52:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 808B6C4CEED;
+ Mon, 12 May 2025 11:54:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1747038805;
- bh=nd5duePhvVCM8OdU6yge1gCN+fxPPRrIUgs4u3xivPE=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=Cts/VSrejSbRfItH6vXzHbogmV1M99xLr/djEvLIA8a8tmlcvEqV8QXJV1ptNsoSC
- Q5Wwpy2WU0wzlmCuK2ss1R5GxDY7/84YvOq1DxbEFt/A9aC0qEu8NTvqg/VBHvElIe
- 1MGtiYdv5JKCh8GrmlTiFLGhJDlM0M9FcarBw+I+MJTIJKreHlKs7a4sNkMTctnf/U
- 3nxDntcG2ntkPvTwP0Z6uihDRIEZxOZnELOD6EWbR/PfW1hp0WWOn4yhydGk8unxQb
- DSLA1tlmo/DC/LAjsczqn/m1+wnUfcH+GL4hlH20JzidqqtHJ5wx1uyjjBYCmoEFDb
- 8D16MvNWfppOQ==
-Message-ID: <f5c3fe27-78af-45f4-b76f-458dbcbbb0fe@kernel.org>
-Date: Mon, 12 May 2025 16:33:22 +0800
+ s=k20201202; t=1747050890;
+ bh=1FFzBQnFeOZIUJzz8/wDGrTvsea7fEZOK8Kl5euk03k=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=X2QSduM3JLHXmhCTO/td/ErbcOLhXOymr/zMqpkSEqJbRLux22A9O6+C2RC7EUhsU
+ 5H8M91C0X2jxpYwpJXRbUzvVYtfsejxUkLPKTvlbWDB79Zr0OCmKKWNDDYmgRjTnSM
+ wLeog9nb84NgusxQT1fkC/nsDiLKjfp6UIXS+AUL/ABODB9PxvHFc6woxrZa5hGI+Y
+ ze505nECNvyQW2PvlgeqRWEnV5T5/kT+yfRdZnswSh7+MCOlF2JzBD+aMUjHIG/XI3
+ zYC/4MBoLdGJdujZEpKOfIPNn9riFiv8qV49dNhcCtIZxfVyGm/rUejB89R3TPEidf
+ w/fTvdDpZRGTw==
+To: jaegeuk@kernel.org
+Date: Mon, 12 May 2025 19:54:42 +0800
+Message-ID: <20250512115442.2640895-2-chao@kernel.org>
+X-Mailer: git-send-email 2.49.0.1015.ga840276032-goog
+In-Reply-To: <20250512115442.2640895-1-chao@kernel.org>
+References: <20250512115442.2640895-1-chao@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: "yohan.joung" <yohan.joung@sk.com>, jaegeuk@kernel.org,
- daehojeong@google.com
-References: <20250512073611.718-1-yohan.joung@sk.com>
-Content-Language: en-US
-In-Reply-To: <20250512073611.718-1-yohan.joung@sk.com>
-X-Headers-End: 1uEObL-0007Me-Ku
-Subject: Re: [f2fs-dev] [PATCH v5 1/2] f2fs: add a method for calculating
- the remaining blocks in the current segment in LFS mode.
+X-Headers-End: 1uERkG-0007o1-6A
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: add f2fs_bug_on() in f2fs_quota_read()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,22 +88,45 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: pilhyun.kim@sk.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 5/12/25 15:36, yohan.joung wrote:
-> In LFS mode, the previous segment cannot use invalid blocks,
-> so the remaining blocks from the next_blkoff of the current segment
-> to the end of the section are calculated.
-> 
-> Signed-off-by: yohan.joung <yohan.joung@sk.com>
+mapping_read_folio_gfp() will return a folio, it should always be
+uptodate, let's check folio uptodate status to detect any potenial
+bug.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/super.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Thanks,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 0ee783224953..ea207a9edc10 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2973,6 +2973,17 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+ 			goto repeat;
+ 		}
+ 
++		/*
++		 * should never happen, just leave f2fs_bug_on() here to catch
++		 * any potential bug.
++		 */
++		if (unlikely(!folio_test_uptodate(folio))) {
++			f2fs_folio_put(folio, true);
++			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
++			f2fs_bug_on(F2FS_SB(sb), 1);
++			return -EIO;
++		}
++
+ 		memcpy_from_folio(data, folio, offset, tocopy);
+ 		f2fs_folio_put(folio, true);
+ 
+-- 
+2.49.0
+
 
 
 _______________________________________________
