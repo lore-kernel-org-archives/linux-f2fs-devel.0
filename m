@@ -4,79 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DFA46C3ABD8
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 May 2025 15:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 27E70C3ABD8
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 May 2025 15:40:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=9+TWC7xvBKsLitrnJoMF11RIkhD8nqwuul8dXG8+zBU=; b=PDq8XXYa4boFrwLPVHFjojFR3r
-	S/d4G519bgLwJVgXDGoV1KCOxL+CN1gbKttlc1R6dTHmsW4pchC1fa8Xbu5DlhYA5+wqYfnyxTRY7
-	M/4ix5NRfpWgbyOwqUCotEmXX5U8j9CnVd+J0WvePC75yQewCDqfJ+oWKgvwWONxKq9s=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=K0Mnas43O6T20wyRJghGuAHsQQcUGV9KFDpdRgWk3Zk=; b=h1znc4NbbFVBZdJT9tXHMFad4k
+	kkMN5qix63Zc9FtXsMSMtvOb2+ySZMZlhMQoqYsFnEO02/ZWrTcJMLyZRycvIe3w8XPTbPv0CGNrI
+	VLMgwcX7pDgt9pEtPbLirk8IjT5TScsB7EGucEZeFt6ahMlvaCGFHlXPDKXh+wLuwmR0=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uFEDJ-00009P-H9;
-	Wed, 14 May 2025 15:40:09 +0000
+	id 1uFEDM-0004mQ-Oz;
+	Wed, 14 May 2025 15:40:12 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uFEDG-00008j-4M
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uFEDK-0004mA-KD
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 14 May 2025 15:40:06 +0000
+ Wed, 14 May 2025 15:40:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AaZXqVY7waMgep4c09iIizguVyCrDd18a1b2yi3RZX0=; b=Kc/c8mrHpYxkWAAAetFMxjNPbQ
- K5g0Cy4bo5QgTOtkyvQFpFU53e9s9PfVdKcS92xR6lwcnxvuGlU+Ch305VvXcwCYFyLxAOrtJsuHV
- EXkW89E+5poDoRDGfMnE+ed0vNz6hwhtrfkbUPjsEn3ZJGejlxiW8mtLTJFcbFkFwHZ4=;
+ bh=bzAu0es6Oao511/+GUqFRNUDRzekYol8zZTTOW/qdh0=; b=CWFAQ8oGxBNBhkDnDL4duth58c
+ AqyuLxSgYn3Y/tHaVnfXj/FH98zbrnfxqGyV27+P+i3UaAm8mIqPGgjXxYBMnn1x9iaX8u8PwRVJM
+ u6LQVp9l4LcwnvdwEk4pboFVn9RUH8YR3m+yTMIeef1my8ZqZw2ss48uv7pgMFBzIPpU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AaZXqVY7waMgep4c09iIizguVyCrDd18a1b2yi3RZX0=; b=CMeXAOz9gctZsNDGMo40o0yziP
- gXKbDaUlssJF7qSfrndYFIiLh7IyVuFb9ZRkP+lADUuE/YbF80NPhLK1fiZtKMASdIX9yo0F51U9H
- t8/SsCpS0SCSLWO4ZRDFF1vAzwpA3lcTnBRSohb5eGRVgetUMIEAhVHKgqx0U6Zta5pI=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=bzAu0es6Oao511/+GUqFRNUDRzekYol8zZTTOW/qdh0=; b=IEnvYDgRxY9wNF7QgFr0YC5V6/
+ yU9C/IcU8CNkLz4sRWg6ZDzJzheAqcKF56SoAP/P6XNMroLmj0iHAD6MlH5Lz5dky+MfAhSmDrnyN
+ qRwGor6HYV2qjlHiMUcN6Jcze8RrzOMrzrb1YiZ5poo1MAU6f1vR7iIjnuNFBQYD60nM=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uFEDF-0002DO-Jc for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 14 May 2025 15:40:06 +0000
+ id 1uFEDK-0002E8-1z for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 14 May 2025 15:40:10 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id E46C05C55D9
+ by tor.source.kernel.org (Postfix) with ESMTP id 7AD3F61360
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 14 May 2025 15:37:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2844C4CEE9;
- Wed, 14 May 2025 15:39:54 +0000 (UTC)
+ Wed, 14 May 2025 15:39:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ECD4C4CEF6;
+ Wed, 14 May 2025 15:39:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1747237194;
- bh=XS01oqWI7MSKtVOwYi0RK+ZB6YU61HJHwn6jt2+5Eqo=;
+ s=k20201202; t=1747237199;
+ bh=CXW+8Kkek2ngZPRlgBBnb1RmAch5ngUtLPbJkneb+50=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=QFdj8DHABoRT7DQVWCEvQiWbQ+JZww14VKuXAugxR68XskrByFo4/5tqAdcWtbrbc
- KiMY3zNVB9YflpFTw6Lgo2mfTIJRP2hngDq9sRtkeGRn/6Efl5jwWpSmHVM3PKwpnn
- 1VgNJb0/e8WAAvshNhuP7wQhVUhypnfFKMXTl1nij1dEBm9mrQnJyUlHUNJE2Lv0kX
- T4V7yGet93/gbmFYkrxUn+M0+LAvYRcen1R5pQPVVpTIQPdfOytZBN1BmjLvM8EkyI
- XGu9yC59R8d6pPo5GhCBekFDlSZDmltMbGMFVZ56iJk/t3nKYTX6Eai4qoBBORrEQD
- 5+ti4SkkbaeGA==
+ b=nzStKIFW7HgaBXbpJo+kw03oJ7BqoIxAiw5AVk8siWT4Q1iI3ZJZRKenRUjyAImpy
+ vOUH74NFRlqrz2a4qx13NeT+QjtWTrbUCzeXREshKICW5Qf9IF8LQPQ6T+bzsyi8ct
+ HMlkR16M/15hTkJn0qOL24NzJL3mcPdqOggQaCsPtiYxdP2aCV2k9ebM6HMGZcmHXk
+ O5p2pfY8BTRVN2rvvF+onqcL7+hyPkvhy543XiuU17rMXJhpLkNoqi2Q2JOjTwiqs3
+ 4j2P3iyvgjq5RQIJlP1t4kYUnK2AK8nFuzdbgguktR5tH1WQrlwfctnOkyQSKSHAM/
+ Xvj5GLk/dN/LQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 711AD380AA66; Wed, 14 May 2025 15:40:33 +0000 (UTC)
+ ADD79380AA66; Wed, 14 May 2025 15:40:37 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <174723723226.2412407.3443427617975733647.git-patchwork-notify@kernel.org>
-Date: Wed, 14 May 2025 15:40:32 +0000
-References: <20250512115514.2641059-1-chao@kernel.org>
-In-Reply-To: <20250512115514.2641059-1-chao@kernel.org>
+Message-Id: <174723723649.2412407.16054768914286290257.git-patchwork-notify@kernel.org>
+Date: Wed, 14 May 2025 15:40:36 +0000
+References: <20250513055721.2918793-1-chao@kernel.org>
+In-Reply-To: <20250513055721.2918793-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1uFEDF-0002DO-Jc
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix 32-bits hexademical number in
- fault injection doc
+X-Headers-End: 1uFEDK-0002E8-1z
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: use vmalloc instead of kvmalloc in
+ .init_{, de}compress_ctx
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,22 +99,30 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon, 12 May 2025 19:55:14 +0800 you wrote:
-> FAULT_KMALLOC                    0x000000001
+On Tue, 13 May 2025 13:57:20 +0800 you wrote:
+> .init_{,de}compress_ctx uses kvmalloc() to alloc memory, it will try
+> to allocate physically continuous page first, it may cause more memory
+> allocation pressure, let's use vmalloc instead to mitigate it.
 > 
-> There is one redundant '0' in 32-bits hexademical number of fault type,
-> remove it.
-> 
-> Signed-off-by: Chao Yu <chao@kernel.org>
+> [Test]
+> cd /data/local/tmp
+> touch file
+> f2fs_io setflags compression file
+> f2fs_io getflags file
+> for i in $(seq 1 10); do sync; echo 3 > /proc/sys/vm/drop_caches;\
+> time f2fs_io write 512 0 4096 zero osync file; truncate -s 0 file;\
+> done
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix 32-bits hexademical number in fault injection doc
-    https://git.kernel.org/jaegeuk/f2fs/c/13be8795761b
+  - [f2fs-dev,1/2] f2fs: use vmalloc instead of kvmalloc in .init_{, de}compress_ctx
+    https://git.kernel.org/jaegeuk/f2fs/c/10b26e772b10
+  - [f2fs-dev,2/2] f2fs: introduce FAULT_VMALLOC
+    https://git.kernel.org/jaegeuk/f2fs/c/2c19d65bab04
 
 You are awesome, thank you!
 -- 
