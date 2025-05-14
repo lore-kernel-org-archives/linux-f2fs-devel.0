@@ -4,79 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8E346C3ABCC
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 May 2025 15:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DFA46C3ABD8
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 May 2025 15:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=Y2b552IdfKIth7sKeADdjFDADQnSLwQC7VkU2eyS+k4=; b=QIBMBVhd/b1XC8Lm0H0WfitpFl
-	DktnJ7+2XN6pW6hM4EudCm+qthfsEwNpjm91HvwXQ7jPU8psCtAvUne+/TlKeJiyRqgU9uFtmq/nm
-	jzVmRF2Iw6TFWRIIIBksTkXZpZsg1eOdHv7qT6kURy502dP3munPi1wQt54gjY/v0ykg=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=9+TWC7xvBKsLitrnJoMF11RIkhD8nqwuul8dXG8+zBU=; b=PDq8XXYa4boFrwLPVHFjojFR3r
+	S/d4G519bgLwJVgXDGoV1KCOxL+CN1gbKttlc1R6dTHmsW4pchC1fa8Xbu5DlhYA5+wqYfnyxTRY7
+	M/4ix5NRfpWgbyOwqUCotEmXX5U8j9CnVd+J0WvePC75yQewCDqfJ+oWKgvwWONxKq9s=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uFEDI-0005jS-7J;
-	Wed, 14 May 2025 15:40:08 +0000
+	id 1uFEDJ-00009P-H9;
+	Wed, 14 May 2025 15:40:09 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uFEDE-0005jJ-Mh
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uFEDG-00008j-4M
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 14 May 2025 15:40:04 +0000
+ Wed, 14 May 2025 15:40:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=G/5BuRTRcohLNp63mQptNz15e590xKC8mrlN6lqztdY=; b=JCcllx0J9zW/7WzR80Eo54slr7
- EeVbaxpdnjP03i+Zl4BDf/0kVSYR63+k4dZBRdmlVYA/XTxq1oXIQTkmQUx0P1PQ8TBV32ymtIbhT
- 4JgWn8mTjr9W8lwtgG97fOXOmgpxkYXctv0q2gArGbLxxsl/p3sMrA1tDUtdyeSA+DW8=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=AaZXqVY7waMgep4c09iIizguVyCrDd18a1b2yi3RZX0=; b=Kc/c8mrHpYxkWAAAetFMxjNPbQ
+ K5g0Cy4bo5QgTOtkyvQFpFU53e9s9PfVdKcS92xR6lwcnxvuGlU+Ch305VvXcwCYFyLxAOrtJsuHV
+ EXkW89E+5poDoRDGfMnE+ed0vNz6hwhtrfkbUPjsEn3ZJGejlxiW8mtLTJFcbFkFwHZ4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=G/5BuRTRcohLNp63mQptNz15e590xKC8mrlN6lqztdY=; b=V
- XLFxco3+bj3u6RC3g9zGEMDHb+GKwHPRLJ3ywUL1NZOFLWjyvuX/otW1CZpN+q/3wb9O6arquL1tj
- OaWjYwhMvaEXVMw3GMCOrb8+DS3j/kIAEzk+xHwFO9KcRnAt6lPoQX3704cbuT8NzhJRvJ/hmZbna
- oOqqdNcLhlz4mXhE=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=AaZXqVY7waMgep4c09iIizguVyCrDd18a1b2yi3RZX0=; b=CMeXAOz9gctZsNDGMo40o0yziP
+ gXKbDaUlssJF7qSfrndYFIiLh7IyVuFb9ZRkP+lADUuE/YbF80NPhLK1fiZtKMASdIX9yo0F51U9H
+ t8/SsCpS0SCSLWO4ZRDFF1vAzwpA3lcTnBRSohb5eGRVgetUMIEAhVHKgqx0U6Zta5pI=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uFEDE-0002DI-6M for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 14 May 2025 15:40:04 +0000
+ id 1uFEDF-0002DO-Jc for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 14 May 2025 15:40:06 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 7F9D25C1851
+ by dfw.source.kernel.org (Postfix) with ESMTP id E46C05C55D9
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 14 May 2025 15:37:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F1F4C4CEE3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 14 May 2025 15:39:52 +0000 (UTC)
+ Wed, 14 May 2025 15:37:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2844C4CEE9;
+ Wed, 14 May 2025 15:39:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1747237193;
- bh=Klfk8xKs1fZcYHznB7OVIHSbZtx7eLOz685R9eVqwVU=;
- h=Subject:From:Date:To:From;
- b=PHhOq+GgiUGs3D+CvP+SUZTK98/ZnkqUrltbA8XuVImog1GBQRcgj/EVeKqQGU1mG
- b2D0W9tsGwWRZCE+xONYQYjo9O8TMqLW672qakalNmQRH0efHARDHuxVv2Fmssafkt
- nob7OlnVi3dmzG3itN7mJ13+VHqSyHM/fYMWLNA793JiLSVDRvonbfhCKBEpumPaMK
- ZDthnAtg/iR6aifIMte17BYPEtftQo5Tlv4zgeI+pbVUxmtEX1sWpIQhsCfYcEDpma
- FAg1t7I6r1V3OCXGmTp2/oHKlY54rHLDqrOATdx+gcHL3/CsKsZy2NSnvM6tfIkZ2l
- o1K0MCwbVEZ8Q==
+ s=k20201202; t=1747237194;
+ bh=XS01oqWI7MSKtVOwYi0RK+ZB6YU61HJHwn6jt2+5Eqo=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=QFdj8DHABoRT7DQVWCEvQiWbQ+JZww14VKuXAugxR68XskrByFo4/5tqAdcWtbrbc
+ KiMY3zNVB9YflpFTw6Lgo2mfTIJRP2hngDq9sRtkeGRn/6Efl5jwWpSmHVM3PKwpnn
+ 1VgNJb0/e8WAAvshNhuP7wQhVUhypnfFKMXTl1nij1dEBm9mrQnJyUlHUNJE2Lv0kX
+ T4V7yGet93/gbmFYkrxUn+M0+LAvYRcen1R5pQPVVpTIQPdfOytZBN1BmjLvM8EkyI
+ XGu9yC59R8d6pPo5GhCBekFDlSZDmltMbGMFVZ56iJk/t3nKYTX6Eai4qoBBORrEQD
+ 5+ti4SkkbaeGA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- EEA22380AA66 for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 14 May 2025 15:40:30 +0000 (UTC)
+ 711AD380AA66; Wed, 14 May 2025 15:40:33 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <174723722955.2412407.3991451179335923045.git-patchwork-summary@kernel.org>
-Date: Wed, 14 May 2025 15:40:29 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1uFEDE-0002DI-6M
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+Message-Id: <174723723226.2412407.3443427617975733647.git-patchwork-notify@kernel.org>
+Date: Wed, 14 May 2025 15:40:32 +0000
+References: <20250512115514.2641059-1-chao@kernel.org>
+In-Reply-To: <20250512115514.2641059-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1uFEDF-0002DO-Jc
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix 32-bits hexademical number in
+ fault injection doc
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,53 +91,32 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Patch: [f2fs-dev] f2fs: don't over-report free space or inodes in statvfs
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=962404
-  Lore link: https://lore.kernel.org/r/20250513112538.2999915-1-chao@kernel.org
+On Mon, 12 May 2025 19:55:14 +0800 you wrote:
+> FAULT_KMALLOC                    0x000000001
+> 
+> There is one redundant '0' in 32-bits hexademical number of fault type,
+> remove it.
+> 
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> 
+> [...]
 
-Patch: [f2fs-dev] f2fs: fix 32-bits hexademical number in fault injection doc
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=961992
-  Lore link: https://lore.kernel.org/r/20250512115514.2641059-1-chao@kernel.org
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix 32-bits hexademical number in fault injection doc
+    https://git.kernel.org/jaegeuk/f2fs/c/13be8795761b
 
-Series: [f2fs-dev,1/2] f2fs: add f2fs_bug_on() to detect potential bug
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=961991
-  Lore link: https://lore.kernel.org/r/20250512115442.2640895-1-chao@kernel.org
-    Patches: [f2fs-dev,1/2] f2fs: add f2fs_bug_on() to detect potential bug
-
-Series: [f2fs-dev,v5,1/2] f2fs: add a method for calculating the remaining blocks in the current segment in LFS mode.
-  Submitter: yohan.joung <yohan.joung@sk.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=961892
-  Lore link: https://lore.kernel.org/r/20250512073611.718-1-yohan.joung@sk.com
-    Patches: [f2fs-dev,v5,1/2] f2fs: add a method for calculating the remaining blocks in the current segment in LFS mode.
-             [f2fs-dev,v5,2/2] f2fs: add ckpt_valid_blocks to the section entry
-
-Series: [f2fs-dev,1/2] f2fs: use vmalloc instead of kvmalloc in .init_{, de}compress_ctx
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=962278
-  Lore link: https://lore.kernel.org/r/20250513055721.2918793-1-chao@kernel.org
-    Patches: [f2fs-dev,1/2] f2fs: use vmalloc instead of kvmalloc in .init_{, de}compress_ctx
-             [f2fs-dev,2/2] f2fs: introduce FAULT_VMALLOC
-
-
-Total patches: 7
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
