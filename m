@@ -4,74 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5A79DC2D0CD
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 May 2025 11:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1D2EAC2D0CD
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 May 2025 11:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=u1bLpaCuaL0RLg7T3AZQ933KgaaBG5u9MvC0o4Cqt1M=; b=CP+j0VAR0IU8zqP92gFDj6ibo6
-	7L+ukVm0Tarq6oEvV5Fe2CGsT2rg+uxchaKZxxgIK72ZgdAWlhg6R7mHGNBDcN+Gc4oDtVRaMzLXU
-	k9ppm4qm1fHevmLdwyQ+mLzSAgxGSOfaykMUEGtBqB+oacfsHnKTyzOqJ5a7quZjIMwI=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=pYxOzq6FV9BrkvdJcm2ExsWzv7Tx8q5QGUijsGh4vLI=; b=M4Wb/TTUfExLiHtIdXczQa7jBL
+	dDgD6Pl2BPt5rxlK7GaEKdw2Vow/cSEeFgYCBHo/zUD4y6AbDMjzKaMz69V3UungwCwdzY5aBamdp
+	NffFi3roE+2foMHdcDyA0+4BDaDZk7Jub7TXxKBujobtQ67calbiywJynoByzjiX53oo=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uHhpT-0005Wl-VH;
-	Wed, 21 May 2025 11:41:47 +0000
+	id 1uHi48-0003aM-PB;
+	Wed, 21 May 2025 11:56:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1uHhpR-0005Wb-TE
+ (envelope-from <chao@kernel.org>) id 1uHi47-0003aC-JU
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 21 May 2025 11:41:45 +0000
+ Wed, 21 May 2025 11:56:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qWoPOKihgdILPpgm8J+Tj2bkVCQZq4BoM04voC+q2Zc=; b=aJsRr0jj6t2usI3NSSuenMkYkc
- 5gmQknQkXT5AViMOMCMZC1xbRpVrMF1jgnA/2VRXljL08rLN571RfH7pXt3WiAyagfiB+kMKLgg+p
- u00P6ZQvsx8Sok5qIgkDItoCmBpp/m6JUs6qYNrFgzH4PmRZYPGnxA45+BpdnQmpn2U8=;
+ bh=a+0Gd/KqfuvS+L+ASNmzhFKNy9NFDSniCcHyvz/K6+4=; b=X8rKQVMaXbbdj1RCXm6Lr7JJWy
+ WRZNSna/RQHtebq1c5bxaT6IxczMWerRh8N8HAqUPOVrU2lpKXM9Flz6nqD+/OnB529/FVMgWi1i7
+ bKqpcgXzpFNc/zrpLyaGeEZfqK7I68jn+jpvqXZjy5+9SFUR3Hj1x3z+hW4nRlGvtHEA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=qWoPOKihgdILPpgm8J+Tj2bkVCQZq4BoM04voC+q2Zc=; b=G
- I9Xu1HWPbn5/8GCihcEYM6ut4vpcU4MNhgFViBEd7MhEzhMlGWF273JmVoTGGgFxx3Uq6C+lduPym
- KhBsW//zRyBAp2ggzmpb0yk69LekHdV0I0VqN3mjGpFkWgLj9VxiyRz6ZTRsj1hfBubf1us5mpD3P
- ujPq57WrI9hgwhBE=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ List-Owner:List-Archive; bh=a+0Gd/KqfuvS+L+ASNmzhFKNy9NFDSniCcHyvz/K6+4=; b=E
+ zivLikv/G/IAHtVJzOXBsKYsrmbBtj48B06x6JgylJCeUQvCLQ4lMhUuopeHWwxgRt5oQzDqyIkV9
+ XARVIeAoAlpz3k0d53TI3W0nCcJM2M1fNoS1JGdLQqvpf03Pa0kk0b0/RrtOJK/JT7EKPcW0Yx+PF
+ m3g5Kkfcf/Kc4WWI=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uHhpR-0006AR-AI for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 21 May 2025 11:41:45 +0000
+ id 1uHi46-0007CH-Nc for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 21 May 2025 11:56:55 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 9D775A4EC87;
- Wed, 21 May 2025 11:41:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0803C4CEE4;
- Wed, 21 May 2025 11:41:37 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 382EA5C58CC;
+ Wed, 21 May 2025 11:54:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 926CAC4CEE4;
+ Wed, 21 May 2025 11:56:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1747827699;
- bh=MqsLTq+Q9ipAuMRrtVo5YYhsxU4uQvPSZlQLm21r3d4=;
+ s=k20201202; t=1747828609;
+ bh=32nBK1uDQNJmr5ueHl6ztx09emDA9JhlP9K7dSuMnWE=;
  h=From:To:Cc:Subject:Date:From;
- b=BZoqG/BpvalAwmzbxwUNX7uXOYiIJyRpidDQ6/kDo9axT7Ey9xSU7wAq0IjIEdHgc
- EySGyaKeA7K8nZLtVOJV1GPs1Agp/zbdgrteg465YGg5BSUgrEezuDq8yiOuA2lJjV
- vL8xYUNmhEURlyMaGDZZteqcNCoE99w4+PAqxhKfpDFdfD4gcRSo1o2pnqOrfppKQj
- etV5eae1wEX9IyTPO15iTz5NNun6rJc/OJezE6bwb5ybYppwa61XG63wIAPYGFrP+W
- ELm1y3IrXGIVAGxxJw0Ex7qEoRI32y0sdYi87pfmC5GZc6PLSTNI1frg8GwUeY95K5
- ACcAiKc+nZTBQ==
+ b=Oug/UbzsruDwihb3MtFAq6Bb7AJ9ArCPNvd0/swPUDl3nimBGnWm5LK0H8DypWeTv
+ HsypXXpqcpD5CT+XZuMR5IDNs8uHoagLKA8jLIAomYMvoc0EEPDEZh9PtXGLYCw0Nv
+ mn5m1SCubYoUf9RpR6SqCr/6NKNCmw9npIINo9v5LKLWldtMElcJEaI6Vvh+fv9LpR
+ 39EIW/qjqimE0jwfy3NPJNw98gpFN3z9YUq07iVYLA25iP2csXbamur2z/VYXJPfO7
+ M9SnQpSflBzFGHslcBruawj6YXqLUL86iztaR99iP1G4GiL5IxfcaHWm7XqVE6sf0o
+ 5trY5aAOP+Gsg==
 To: jaegeuk@kernel.org
-Date: Wed, 21 May 2025 19:41:32 +0800
-Message-ID: <20250521114132.824349-1-chao@kernel.org>
+Date: Wed, 21 May 2025 19:56:35 +0800
+Message-ID: <20250521115635.829744-1-chao@kernel.org>
 X-Mailer: git-send-email 2.49.0.1143.g0be31eac6b-goog
 MIME-Version: 1.0
-X-Headers-End: 1uHhpR-0006AR-AI
-Subject: [f2fs-dev] [PATCH] f2fs: fix to skip f2fs_balance_fs() if
+X-Headers-End: 1uHi46-0007CH-Nc
+Subject: [f2fs-dev] [PATCH v2] f2fs: fix to skip f2fs_balance_fs() if
  checkpoint is disabled
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -118,10 +118,10 @@ Call Trace:
  do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-The root cause is after 84b5bb8bf0f6 ("f2fs: modify f2fs_is_checkpoint_ready
-logic to allow more data to be written with the CP disable"), we will get
-chance to allow f2fs_is_checkpoint_ready() to return true once below
-conditions are all true:
+The root cause is after commit 84b5bb8bf0f6 ("f2fs: modify
+f2fs_is_checkpoint_ready logic to allow more data to be written with the
+CP disable"), we will get chance to allow f2fs_is_checkpoint_ready() to
+return true once below conditions are all true:
 1. checkpoint is disabled
 2. there are not enough free segments
 3. there are enough free blocks
@@ -158,10 +158,15 @@ checkpoint is disabled, we will just skip trigger foreground GC to
 avoid above deadloop issue.
 
 Reported-by: syzbot+aa5bb5f6860e08a60450@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-f2fs-devel/682d743a.a00a0220.29bc26.0289.GAE@google.com
 Fixes: 84b5bb8bf0f6 ("f2fs: modify f2fs_is_checkpoint_ready logic to allow more data to be written with the CP disable")
 Cc: Qi Han <hanqi@vivo.com>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
+v2:
+- add missing Closes line
+- fix to use git commit description style
+
  fs/f2fs/segment.c | 2 ++
  1 file changed, 2 insertions(+)
 
