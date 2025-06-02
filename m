@@ -4,65 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0996BC5B549
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Jun 2025 05:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 29265C54FB3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Jun 2025 09:03:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=WrZuUrhRSdJCo7mSITt/V9wdT6s7FT+tTLloxbV6xzQ=; b=jQvGy1/dD27t3UZeG2eiSFstHq
-	PQU2RUQnzbAH5QcHU/iXcO1tp4TWCTiJyqF5HYvOczp4f+Xk83EcAEoOXsJ/h1WBZm4zixEDRBOKm
-	ufQthSNExdZ+H2cbnvWv5bCP+ZMUbbVJ2C0+Tq6ytwcodVoAGlwe7DwmgaRngOGB2jVA=;
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=D9N84c5mL6v+kUvY1gNiTwlWiG0GpbVAnACmQbgLbNU=; b=DzEjT9NA56Qh8bayC+FPKTi53Z
+	uuFtqD2+CLNT/xZZ9JZd7DMcCqr6II3+SVManouAL7oKguZFSdJnPyAzo0+m/T7Il8ThlStAT/2Wk
+	dE5UcmIO7R8RNCIRfz/y94NEcAj40q4ZbtsEQHRmn/JwLtg29PqWrI27pIN13q/opih4=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uLxI5-0007fD-M4;
-	Mon, 02 Jun 2025 05:00:53 +0000
+	id 1uM14U-00044f-Tn;
+	Mon, 02 Jun 2025 09:03:06 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1uLxI4-0007f5-K1
+ (envelope-from <lihongbo22@huawei.com>) id 1uM14T-00044Z-9w
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Jun 2025 05:00:52 +0000
+ Mon, 02 Jun 2025 09:03:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lLEiW0T2qHCHUZjRLRubTtc7et929ZxcBizZQho0DTQ=; b=dyqKRUW/XC9NdEpwRf53pdZbFo
- xi1mH3X9DtSa6O3/43U8g3RqRGpC0b7pwG6+zTpNLFrEWzTJNLUOWkRH2mkTquN7J+7ys13+ujukQ
- 6wi35PFj2JTq0K1gcvfHjL2XptIvh8r1KztMw+evnstvC84qRejB31eaYXP8Zn+GGPvc=;
+ bh=Y5i91FbJsHXZUcaU0NKTc7HLqib1KI4jxMJ0sq2RNe8=; b=M112ZCM+EaYBcnBc2i4QRZGnVU
+ +ZozKrvRUKdfiqUTkS5hAxRo8bGhHUNMEOzymOh8sTnoiL7BJxiMmpy0GG2Un76+U2kr9SFLwvW8n
+ bGofR6r0gckdkUkhC8rGf9DX3FTr0jEgJcfjFerbbrIM5IAN+hpV21z8yDmxebrgVZds=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=lLEiW0T2qHCHUZjRLRubTtc7et929ZxcBizZQho0DTQ=; b=LR7lBipHjKg9eoJf3Kn/A6OlxZ
- 0GbGYbbbFmr8Xa1Gf9R7fLSJhYgOMPRdIiDs6lCAj0+pCy9E98RgzwkzXTIWZu2gBA77Q6UTwKGEV
- qRY4SUsIiVWBV3NN+lTc2bENEpkfYanQqf4lH5JQvWvdKNBcCiEfFw2B7IGfxoGpeySU=;
-Received: from verein.lst.de ([213.95.11.211])
+ bh=Y5i91FbJsHXZUcaU0NKTc7HLqib1KI4jxMJ0sq2RNe8=; b=B8hprgeni3hddbG85Mp75ddTfo
+ Y5MzHcZ3E0ftfDAyAdCeCfPGbf3sve3ynyF7Yldc9cQgnU4UYUBdiDzEX2WxEtovxIguZyd7ZfWl/
+ xDsvfLU/+HSobt8BtUiBmaydCxoc8Xa5yPiFr5puwy3cgMIbxG4OAFBI4Ngs7Ejs48bE=;
+Received: from szxga07-in.huawei.com ([45.249.212.35])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uLxHy-0004tP-6E for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Jun 2025 05:00:52 +0000
-Received: by verein.lst.de (Postfix, from userid 2407)
- id 577DB68CFE; Mon,  2 Jun 2025 07:00:31 +0200 (CEST)
-Date: Mon, 2 Jun 2025 07:00:30 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Message-ID: <20250602050030.GA21716@lst.de>
-References: <20250601002709.4094344-1-willy@infradead.org>
+ id 1uM14R-0007wo-Vq for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Jun 2025 09:03:05 +0000
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+ by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4b9ns40Nhxz1fy34;
+ Mon,  2 Jun 2025 17:01:44 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+ by mail.maildlp.com (Postfix) with ESMTPS id 6C8DC140109;
+ Mon,  2 Jun 2025 17:02:52 +0800 (CST)
+Received: from huawei.com (10.67.174.162) by kwepemo500009.china.huawei.com
+ (7.202.194.199) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 2 Jun
+ 2025 17:02:51 +0800
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+Date: Mon, 2 Jun 2025 09:02:23 +0000
+Message-ID: <20250602090224.485077-7-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20250602090224.485077-1-lihongbo22@huawei.com>
+References: <20250602090224.485077-1-lihongbo22@huawei.com>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20250601002709.4094344-1-willy@infradead.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1uLxHy-0004tP-6E
-Subject: Re: [f2fs-dev] [PATCH] f2fs: Fix __write_node_folio() conversion
+X-Originating-IP: [10.67.174.162]
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
+X-Headers-End: 1uM14R-0007wo-Vq
+Subject: [f2fs-dev] [PATCH v4 6/7] f2fs: introduce fs_context_operation
+ structure
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -74,21 +84,60 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net,
- syzbot+c0dc46208750f063d0e0@syzkaller.appspotmail.com,
- linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- Christoph Hellwig <hch@lst.de>
+From: Hongbo Li via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Hongbo Li <lihongbo22@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, sandeen@redhat.com, lihongbo22@huawei.com,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Sun, Jun 01, 2025 at 01:26:54AM +0100, Matthew Wilcox (Oracle) wrote:
-> This conversion moved the folio_unlock() to inside __write_node_folio(),
-> but missed one caller so we had a double-unlock on this path.
+The handle_mount_opt() helper is used to parse mount parameters,
+and so we can rename this function to f2fs_parse_param() and set
+it as .param_param in fs_context_operations.
 
-Looks good, thanks!
+Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+[sandeen: forward port]
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+---
+ fs/f2fs/super.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 9835e7cd1071..c503b7b92482 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -709,7 +709,7 @@ static int f2fs_set_zstd_level(struct f2fs_fs_context *ctx, const char *str)
+ #endif
+ #endif
+ 
+-static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
++static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ {
+ 	struct f2fs_fs_context *ctx = fc->fs_private;
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+@@ -1180,7 +1180,7 @@ static int parse_options(struct fs_context *fc, char *options)
+ 			param.key = key;
+ 			param.size = v_len;
+ 
+-			ret = handle_mount_opt(fc, &param);
++			ret = f2fs_parse_param(fc, &param);
+ 			kfree(param.string);
+ 			if (ret < 0)
+ 				return ret;
+@@ -5354,6 +5354,10 @@ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
+ 	return mount_bdev(fs_type, flags, dev_name, data, f2fs_fill_super);
+ }
+ 
++static const struct fs_context_operations f2fs_context_ops = {
++	.parse_param	= f2fs_parse_param,
++};
++
+ static void kill_f2fs_super(struct super_block *sb)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+-- 
+2.33.0
 
 
 
