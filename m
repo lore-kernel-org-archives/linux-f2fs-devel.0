@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7896AC54FB3
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Jun 2025 15:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D5F21C5AD49
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Jun 2025 16:05:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=qEFS+t7j/TiUfwJfdQdr6eAvQRmEFrdk9ieM54vaVIc=; b=a68M3FWSCzbr+tC3PZ7k2PVjI3
-	L9ls/dJA/vQjqQjY5wZiytvYJa+TKySZLJvkxYPAQj5j8ntgnf3unc9fufn5D+47hjSTYhfE/Njce
-	V00dB1S0STith4Rd0mMWFG/t6DXl37HTVynSgA21C09Zrl4oeblBEnCPRvbWpT3gf1GI=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=ojPOTH/NFWMqWRIPeqfgcZdtCDMQm40vLS8FZZ1d3sQ=; b=K3OOR5093HInlp5QkV0yFWEktX
+	P97Et9m+w+HPWyG3mlYXCvbxWWDMKtKLsVWKG3RRC+0rGggEtWP7L776iYplz6Dyphem2kEtc2ruR
+	RyGJDiC/3/g9JYj0biDEh5OVMzr27fOICDrJ3ML4GtqBc0ie/S4elUi1sRSu/Bz+9ABY=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uM7Vb-0004O2-A7;
-	Mon, 02 Jun 2025 15:55:31 +0000
+	id 1uM7fa-0002kF-6m;
+	Mon, 02 Jun 2025 16:05:50 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1uM7VT-0004Nj-PC
+ (envelope-from <jaegeuk@kernel.org>) id 1uM7fY-0002k6-RS
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Jun 2025 15:55:24 +0000
+ Mon, 02 Jun 2025 16:05:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2UdPStub+NFoWMWSmyIpI1lJVzeSgYs1uOJPL4D/yjc=; b=dxqJCvng3TguevU83cObYhVpF2
- bqajMbPcZwqNRoOHS6LNPUYYQCKifae2dA/nmfhKvrsXmyLQiY08M0muW3KOiTqF3F3nnSqhzrif0
- 8D3xvydHyk86zFRsdJIFe8xC0peniPMEDobA4T26J+TJ71fDDL+lME7xf3oBY52wor/U=;
+ bh=1Pblv7Cu1Hu56KZz+MM9QxPaQgqYt0qGWN/7FmuCOSw=; b=lb5L8qLyEf8I/wQfgjSpV6hIRj
+ wRjfvWDQ/9gz/HeKYsqIEJd+Y3ajx7HCasdzxUQ+hg2nYZx2tp4MSWWK+nPbfKwZZLXMa8x58BQ8M
+ N0h3EjhbpKsP6Kc5FEhI+SWUwtWOIq3W/3qPRv46hOTH5KiVmp8mbcuaDvIjXKys0cG8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,32 +42,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2UdPStub+NFoWMWSmyIpI1lJVzeSgYs1uOJPL4D/yjc=; b=ACGwt1aw3Kt9BxC8kzfSu8jVfN
- z3rFTYZk3EQgQCySxExy0nvVFjo/kL1F5biCtw1jzkYC27KTCOFm0XvqXK5czO20dwhPg/01p/ZkT
- ZMPUTgZLUMTh+tF++Ix7w6J5OA5UvkdSfIhiaw3ge119XL2xKA3dXGheqk2PuTGHiGoM=;
-Received: from verein.lst.de ([213.95.11.211])
+ bh=1Pblv7Cu1Hu56KZz+MM9QxPaQgqYt0qGWN/7FmuCOSw=; b=ed6EFbIUcmJXexBZf1XN5FMM6+
+ wgAnCJZa9ZRVqHyuF+A09l7Xa/1CIbPm7GuJnFLDUfAv7gvQmnI6/Yvp/ASNQd6difC125fn/W6Fi
+ 8aBcx39LQp277FUXcPWsrf5K5WNE16RSIKjtwL5mpswhqCm2DIUSXOKIa+2k0+4sMAGg=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uM7VS-0007cv-O2 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Jun 2025 15:55:23 +0000
-Received: by verein.lst.de (Postfix, from userid 2407)
- id 17D6168C7B; Mon,  2 Jun 2025 17:55:07 +0200 (CEST)
-Date: Mon, 2 Jun 2025 17:55:06 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Bernd Schubert <bernd@bsbernd.com>
-Message-ID: <20250602155506.GA29981@lst.de>
-References: <20250529111504.89912-1-kundan.kumar@samsung.com>
- <CGME20250529113257epcas5p4dbaf9c8e2dc362767c8553399632c1ea@epcas5p4.samsung.com>
- <20250529111504.89912-11-kundan.kumar@samsung.com>
- <20250602142157.GC21996@lst.de>
- <99f79383-479e-4df1-9650-61fa3c600171@bsbernd.com>
+ id 1uM7fX-0008GA-O4 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Jun 2025 16:05:48 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by nyc.source.kernel.org (Postfix) with ESMTP id 18A2EA5033A;
+ Mon,  2 Jun 2025 16:05:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AF35C4CEEB;
+ Mon,  2 Jun 2025 16:05:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1748880336;
+ bh=A3pRvyB9HIx3Zf3r/C3GJr+0BFFqJwPn2oxiWVZ6UJM=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=Bi/J6bL1HXjnT8nhjqkrb0BqipL5lEsfj9ZI9qP4FFyR0D5E+POyOXKP4SjvZJYGN
+ 8XRYEGfybih0xmsomVFL5/Bb4iW+fINUV77q9Z6fxvOqc2oFZdzsuwdDjIQFuM6rn6
+ AOhxRcYkfqWlOevVw420/1J43WoqK7sySa7TtlpG06r7i6adcUbDVD0fm6JC8JbPfm
+ xDI1hYc8q18wCyH6stmisn6LUIWCTQdNvbbr7FreJ7FOgeAjgJy/wyJ+zqr2n32uEk
+ eOl7xbbfhv4fUrlVG7Fu8gaKXlFfsFxdGRwGAkuZribyF4ha+FoeizY0vhZ3SRPEd/
+ YkKSgHCvdOC8w==
+Date: Mon, 2 Jun 2025 16:05:34 +0000
+To: Hongbo Li <lihongbo22@huawei.com>
+Message-ID: <aD3Lzsp-u6KuyGRt@google.com>
+References: <20250602090224.485077-1-lihongbo22@huawei.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <99f79383-479e-4df1-9650-61fa3c600171@bsbernd.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1uM7VS-0007cv-O2
-Subject: Re: [f2fs-dev] [PATCH 10/13] fuse: add support for multiple
- writeback contexts in fuse
+In-Reply-To: <20250602090224.485077-1-lihongbo22@huawei.com>
+X-Headers-End: 1uM7fX-0008GA-O4
+Subject: Re: [f2fs-dev] [PATCH v4 0/7] f2fs: new mount API conversion
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,37 +85,101 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: ritesh.list@gmail.com, jack@suse.cz, djwong@kernel.org, amir73il@gmail.com,
- david@fromorbit.com, gfs2@lists.linux.dev, linux-mm@kvack.org, clm@meta.com,
- Christoph Hellwig <hch@lst.de>, Joanne Koong <joannelkoong@gmail.com>,
- dave@stgolabs.net, agruenba@redhat.com, miklos@szeredi.hu,
- Kundan Kumar <kundan.kumar@samsung.com>, willy@infradead.org,
- p.raghav@samsung.com, Anuj Gupta <anuj20.g@samsung.com>,
- linux-nfs@vger.kernel.org, da.gomez@samsung.com, viro@zeniv.linux.org.uk,
- jaegeuk@kernel.org, axboe@kernel.dk, brauner@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, mcgrof@kernel.org, anna@kernel.org,
- gost.dev@samsung.com, linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
- trondmy@kernel.org
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, sandeen@redhat.com,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Jun 02, 2025 at 05:50:48PM +0200, Bernd Schubert wrote:
-> > Same here.  On pattern is that fuse and nfs both touch the node stat
-> > and the web stat, and having a common helper doing both would probably
-> > also be very helpful.
-> > 
-> > 
-> 
-> Note that Miklos' PR for 6.16 removes NR_WRITEBACK_TEMP through
-> patches from Joanne, i.e. only 
-> 
-> dec_wb_stat(&bdi->wb, WB_WRITEBACK);
-> 
-> is left over.
+Thanks you, Hongbo.
 
-That'll make it even easier to consolidate with the NFS version.
+I just applied this series to the dev-test branch as below, and will
+keep testing with incoming patches together. Let's see. :)
 
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/log/?h=dev-test
+
+On 06/02, Hongbo Li wrote:
+> In this version, we have finished the issues pointed in v3.
+> First, I'd like to express my sincere thanks to Jaegeuk and Chao
+> for reviewing this patch series and providing corrections. I also
+> appreciate Eric for rebasing the patches onto the latest branch to
+> ensure forward compatibility.
+> 
+> The latest patch series has addressed all the issues mentioned in
+> the previous set. For modified patches, I've re-added Signed-off-by
+> tags (SOB) and uniformly removed all Reviewed-by tags.
+> 
+> v4:
+>   - Change is_remount as bool type in patch 2.
+>   - Remove the warning reported by Dan for patch 5.
+>   - Enhance sanity check and fix some coding style suggested by
+>     Jaegeuk in patch 5.
+>   - Change the log info when compression option conflicts in patch 5.
+>   - Fix the issues reported by code-reviewing in patch 5.
+>   - Context modified in patch 7.
+> 
+> V3: https://lore.kernel.org/all/20250423170926.76007-1-sandeen@redhat.com/
+> - Rebase onto git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
+>   dev branch
+> - Fix up some 0day robot warnings
+> 
+> (Here is the origianl cover letter:)
+> 
+> Since many filesystems have done the new mount API conversion,
+> we introduce the new mount API conversion in f2fs.
+> 
+> The series can be applied on top of the current mainline tree
+> and the work is based on the patches from Lukas Czerner (has
+> done this in ext4[1]). His patch give me a lot of ideas.
+> 
+> Here is a high level description of the patchset:
+> 
+> 1. Prepare the f2fs mount parameters required by the new mount
+> API and use it for parsing, while still using the old API to
+> get mount options string. Split the parameter parsing and
+> validation of the parse_options helper into two separate
+> helpers.
+> 
+>   f2fs: Add fs parameter specifications for mount options
+>   f2fs: move the option parser into handle_mount_opt
+> 
+> 2. Remove the use of sb/sbi structure of f2fs from all the
+> parsing code, because with the new mount API the parsing is
+> going to be done before we even get the super block. In this
+> part, we introduce f2fs_fs_context to hold the temporary
+> options when parsing. For the simple options check, it has
+> to be done during parsing by using f2fs_fs_context structure.
+> For the check which needs sb/sbi, we do this during super
+> block filling.
+> 
+>   f2fs: Allow sbi to be NULL in f2fs_printk
+>   f2fs: Add f2fs_fs_context to record the mount options
+>   f2fs: separate the options parsing and options checking
+> 
+> 3. Switch the f2fs to use the new mount API for mount and
+> remount.
+> 
+>   f2fs: introduce fs_context_operation structure
+>   f2fs: switch to the new mount api
+> 
+> [1] https://lore.kernel.org/all/20211021114508.21407-1-lczerner@redhat.com/
+> 
+> Hongbo Li (7):
+>   f2fs: Add fs parameter specifications for mount options
+>   f2fs: move the option parser into handle_mount_opt
+>   f2fs: Allow sbi to be NULL in f2fs_printk
+>   f2fs: Add f2fs_fs_context to record the mount options
+>   f2fs: separate the options parsing and options checking
+>   f2fs: introduce fs_context_operation structure
+>   f2fs: switch to the new mount api
+> 
+>  fs/f2fs/super.c | 2108 +++++++++++++++++++++++++++--------------------
+>  1 file changed, 1197 insertions(+), 911 deletions(-)
+> 
+> -- 
+> 2.33.0
 
 
 _______________________________________________
