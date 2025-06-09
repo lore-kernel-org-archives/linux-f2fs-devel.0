@@ -4,77 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 81B5AC61CE8
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Jun 2025 20:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EE0D7C61CE8
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Jun 2025 20:56:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=RGTSuG5HfV3Rf3uZdRhzi2NWbJ0ySqA57DoKEkUCr+Q=; b=SEFfahbQUWA9trMzk2rMDohlPE
-	cJXsN8s+vZfWh64jxoWvfUfXT8I/PkdQayyWKtSF8rndvOQ9EP1gVdXIOrSErHiwVXnrdHXtTDguq
-	c3uTnRzgfudescVLWD8m7dEetu0F8RuZzmd3E+HqURYqbj8FRUkk5Qjl+sImHiZ1dtho=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=eKv2AwzHgMtzG9MIAmtkrMJlqtVhuLW7kLgNG3uaCP0=; b=XEGr04TLITRxEsLIXWH2ealsJ0
+	qVDQEsohJx2xqMtW4WdBrFZKd4Nxnkv6DmnTnlDYlTDU50w9a7nl4jvqzmn9omqFIcy2I84E85Jm2
+	kWTht5zy5yK6FfT9kXSJ78wdZP6I8++pA2DphR/i5hcHOS1Z68s58q08fAJr1TxAIWDM=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uOjXE-00037Z-74;
-	Mon, 09 Jun 2025 20:56:00 +0000
+	id 1uOjXG-0003k4-LQ;
+	Mon, 09 Jun 2025 20:56:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uOjXC-00037J-GH
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uOjXF-0003jn-Rh
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Jun 2025 20:55:58 +0000
+ Mon, 09 Jun 2025 20:56:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QfdQsLWwZo3e5dGAakjqB/svnI2XdYmgQclRhtWzm8I=; b=CFxGFTVvrym2GNuIs9Ka+nL4S9
- XhlFrFVO4hBIwe1Jvy8HgsrHwm8QZaO45ldAqM6G1iaqLL88l3Iq6+YiLI+FwyAKcx7Et4+KtXmRQ
- dS1vvwMc0aKDQ8FLF5e8dOo2qCO/9egoKoQwLjJGcXbWNhC/C1oJpXDwn56KDS5Rd51w=;
+ bh=6aUii8PFTq2fbXylsYk/SmATXiemVhUWzJIInA3rid4=; b=JwrEDcd9d0cY1ZpZEHevp7Lmxi
+ d/k485pk66KiKWFVEnwbXgpyHvqTFiaHXll4tia+09aGFU1unsq5oREV/EUw19no5e1Xft0zyEKy2
+ Rz5vQuIXk8pvJL+YNNz3OXzoMKeg7UUuW9aSp7mh9tJRyVJm7J3b744zGzlS6czDLQZM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QfdQsLWwZo3e5dGAakjqB/svnI2XdYmgQclRhtWzm8I=; b=aijRuqBtSkU4mB2y2fp+pQLiUH
- 1Z5jhybpqbEkFlILovEUhKuv+hDNm/uUKfK3dwma6Ffwv6qtqzuyaMn0tfybiOAXhUWl4t/5aaX//
- ULa59gIlVka1OyUxIfoKIKwfmUVKJ6ZC1n50dMDn0+unoqIfNf7FNt2njgIMjZpWdi6E=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=6aUii8PFTq2fbXylsYk/SmATXiemVhUWzJIInA3rid4=; b=ED73EYtBB4MZ5zEt6SLdijdxQQ
+ vapFHp6OQPjN+c3sU/YA6ilAgXyIDlVsomLhrBqhoDj4AeNVza1U9toCvKRRK9Jm2Rj0EJZHwLwyx
+ sHcm3IZinr+sKmCpJjYAyYqDD5l7W6TOCzrzebAWosyzrlONkkR5iEYlx5lb2F/9JPGA=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uOjXB-0004pB-WD for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Jun 2025 20:55:58 +0000
+ id 1uOjXF-0004pP-D8 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 09 Jun 2025 20:56:01 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id E06C55C548D;
- Mon,  9 Jun 2025 20:53:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40163C4CEEB;
- Mon,  9 Jun 2025 20:55:47 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id A2D11629E2;
+ Mon,  9 Jun 2025 20:55:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B32DC4CEF0;
+ Mon,  9 Jun 2025 20:55:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1749502547;
- bh=DTYx9Dawj/Zj6Ock61KyxoXhL18zAF98UER5Vrg69Lk=;
+ s=k20201202; t=1749502550;
+ bh=cqTQa8rm+F++IDXEr692KrwmjAEZKagK+bHhQ+bzCU4=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=Egmrf9dte6jKUR+x7ySX8UGIAkM5ZtoW/5xyZIKgCxARjDOw8Ixc3CkaI/Rdiyd6c
- LA3MDvz3bBIwck0BSC6MfNTOLkmtf+sPsUsOIABTnr7HTwfZ2U3H35dOrcEK1i3PUf
- 6HT1+WGwDEUG4jjOujCG+O4tB++JIrIr6IpZiJIvvZ325rZ/cAbnXR0gqQ7GQ3KP/q
- 60lE2BsSQjvzpdlD/YXy+YHsBrXTFReBtU1HT7xIL4YnSTGNCC7gossYRddX0oMwUX
- gnuGF1zX7i8Cf3dCNjFAQyFmoQN773RNEa1UbsJuvpR/Wa0Hwov+nJbt+tpeUGLZdv
- 2kId2umyrH/hA==
+ b=u1EBetkk6hR9Qmt5jAU/OlotzWfZAXdel5V1WwcDhfWXEHt3KQrqjj8vgNXTxnVNP
+ wAa9BFAz7NskMhX7Q0uLI+hBmhEbZovh1maS1jFnKpFOHbID83GbbjB8jzS7k2z0S3
+ 6707+6vAjgriU7A8nTfRBWTWIPTyDalIpd9Y8xjh0cLwVfB4dY6SyIOvQyzCsYIpJx
+ v2muC4yJfkEh0YxKCczO0ZAYLvin2GFNe3DinFbbrfuI58SRDGmSk2b4ZmS61rkF/k
+ XW0WsBg8hLAc0dBolf3EjpMkqG8WMuXVcGs4xMDfUJfsrAff0qf7FPsreqy72rI12f
+ th91gtHZ47qdA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 33BE33822D49; Mon,  9 Jun 2025 20:56:19 +0000 (UTC)
+ 33AE83822D49; Mon,  9 Jun 2025 20:56:22 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <174950257781.1531626.13890659221205140362.git-patchwork-notify@kernel.org>
-Date: Mon, 09 Jun 2025 20:56:17 +0000
-References: <20250427185908.90450-4-ryncsn@gmail.com>
-In-Reply-To: <20250427185908.90450-4-ryncsn@gmail.com>
+Message-Id: <174950258074.1531626.9419516015634434009.git-patchwork-notify@kernel.org>
+Date: Mon, 09 Jun 2025 20:56:20 +0000
+References: <20250430181052.55698-4-ryncsn@gmail.com>
+In-Reply-To: <20250430181052.55698-4-ryncsn@gmail.com>
 To: Kairui Song <ryncsn@gmail.com>
-X-Headers-End: 1uOjXB-0004pB-WD
-Subject: Re: [f2fs-dev] [PATCH 3/6] f2fs: drop usage of folio_index
+X-Headers-End: 1uOjXF-0004pP-D8
+Subject: Re: [f2fs-dev] [PATCH v3 3/6] f2fs: drop usage of folio_index
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,7 +89,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: kasong@tencent.com, nphamcs@gmail.com, david@redhat.com, chrisl@kernel.org,
+Cc: kasong@tencent.com, nphamcs@gmail.com, chrisl@kernel.org, david@redhat.com,
  hughd@google.com, linux-kernel@vger.kernel.org, willy@infradead.org,
  linux-f2fs-devel@lists.sourceforge.net, yosryahmed@google.com,
  linux-mm@kvack.org, hannes@cmpxchg.org, jaegeuk@kernel.org,
@@ -103,7 +103,7 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Andrew Morton <akpm@linux-foundation.org>:
 
-On Mon, 28 Apr 2025 02:59:05 +0800 you wrote:
+On Thu,  1 May 2025 02:10:49 +0800 you wrote:
 > From: Kairui Song <kasong@tencent.com>
 > 
 > folio_index is only needed for mixed usage of page cache and swap
@@ -111,13 +111,12 @@ On Mon, 28 Apr 2025 02:59:05 +0800 you wrote:
 > folio->index instead.
 > 
 > It can't be a swap cache folio here.  Swap mapping may only call into fs
-> through `swap_rw` and that is not supported for f2fs.  So just drop it
-> and use folio->index instead.
+> through `swap_rw` but f2fs does not use that method for swap.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,3/6] f2fs: drop usage of folio_index
+  - [f2fs-dev,v3,3/6] f2fs: drop usage of folio_index
     https://git.kernel.org/jaegeuk/f2fs/c/fe15ec046431
 
 You are awesome, thank you!
