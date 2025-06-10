@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 558D6C5B552
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:44:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F4201C5B543
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:44:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=jge9aRUpLkXL7fMVRJO7aMgoIX8mX70aCmZB1pWObnY=; b=FSzgz6GGq5inJio0U2RmVRqFah
-	9SZulR8PUC6AD2oAsN+SkokIL5Iwn97QAhPQ95RoSnFan3KC5B/8pFZPBVBkVQ10Yp238GiwFdqfY
-	ExprDmlg1V7Nz8zxKzLpTwkR8VAsZfkumxBDXe02n/Ya04ry3VWTZwGYKY4t9VIGnv/Y=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Fpo/eb9KJJ3ykWwlwgQU8Sso1x17q+H6wEst1U4531Y=; b=h9QGSrvcig3B+epQP7Ze1LHBD0
+	EOslqNV2cDMi1dxkgc61ZSBfEM3D1GB9Q4IyiI213IJ7LAQdEKtg6ifJCfxYJnAEkVBqJnm7rdIZB
+	aXdTksYSrsnzAxGv/ncONBsayIyXX/KZ++GvwCekgJyqX9mBmCyBqAkGSUXKfCrzUAwc=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uP18u-0000qH-VB;
-	Tue, 10 Jun 2025 15:44:04 +0000
+	id 1uP19F-00075Z-LO;
+	Tue, 10 Jun 2025 15:44:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uP18t-0000q8-HH
+ (envelope-from <shengyong2021@gmail.com>) id 1uP19E-00075S-Qr
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:44:03 +0000
+ Tue, 10 Jun 2025 15:44:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oABJ1CBvsChdhWT9C6qI8koFYAjMhz8JTY/1WSGfTLY=; b=NSEiSiuNd6h2+bb2gUd4JfbeRv
- LeS+xWGqNkNU6u3wGY8f+GoCz1uXIFcwbGrUJh1DiHCVDhOHIwaZUTzvf+G0gXK0zgyD9iOTLUNSj
- cmhwYN7Vye2xZ/g/grCDxEO12Zh4wnhCZPsoJ/U0qJoNvLblqifnGsyL+F3tuBo0In8E=;
+ bh=0x3b1l5jy79qRM5TPd5aERH5PA0eFVVgOVd3JdlBtZs=; b=glTFzuI4XEDXFqF3uRbHpnikPg
+ ELrTnlFaKcoYJceqf+o9pwo9B6Uzle8MgphF+06w940Vl9A1aVg/APQvuBSx3S0qZaG5KfFFq1yo/
+ RUF99/3ARM9I8QkA4X5vmyxnAmotUafXNWrtr5eOSHlgGD3Om0zWsp4enm5LP2P5804s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,72 +42,72 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=oABJ1CBvsChdhWT9C6qI8koFYAjMhz8JTY/1WSGfTLY=; b=kxdZMURqhVe5UG/0yuHDtwzanl
- DYv+cS6i156Pk3kSj68ZlZQ1UtUarwjWWhKrFKPc530sX9XVsNxaFzbxv1VBlssFJI93ygttty9fM
- vXQgIw9ElyJsZbi/HlfVFfWULne3wqyDJ9huL7dHsxMbYJ0RNlR86kA/OB+9ywGRw+Mk=;
-Received: from mail-qv1-f46.google.com ([209.85.219.46])
+ bh=0x3b1l5jy79qRM5TPd5aERH5PA0eFVVgOVd3JdlBtZs=; b=K0+7fqyDbToflLDxX4x49R5HpW
+ z+14AO1zu9p744LXf0kKaDMO6584aAz3qscxtxq5fdagwuTPBpLRVOY8cxphElXbWK64jmCsxO+KJ
+ 0NWwzC64Z7GaUEUYs5pGkaRUekfJswJVbRBMDJ1GwA8u8W2zrEUzfrg6bzTV7TS0XIxU=;
+Received: from mail-oa1-f51.google.com ([209.85.160.51])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uP18t-0006su-2a for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:44:03 +0000
-Received: by mail-qv1-f46.google.com with SMTP id
- 6a1803df08f44-6fb28d4ab79so9737936d6.0
+ id 1uP19E-0006wL-9i for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jun 2025 15:44:24 +0000
+Received: by mail-oa1-f51.google.com with SMTP id
+ 586e51a60fabf-2cc89c59cc0so3786289fac.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Jun 2025 08:44:03 -0700 (PDT)
+ Tue, 10 Jun 2025 08:44:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749570232; x=1750175032; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1749570253; x=1750175053; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=oABJ1CBvsChdhWT9C6qI8koFYAjMhz8JTY/1WSGfTLY=;
- b=W/kdvoBrBp9zUwW9ymUnIpNXrcXGPr06vbE5xl1B/ctvUAky14MX2mr4RL838SHua1
- PPXvaQU4BjXyXuNan5mynfrQ7LOfsLxQ42Z+UugMlU8RXg5UZHjaoEZpu2GsWd1y1cXD
- Ky9O1Ht62Np42fvEIjzP1it5Hy0XM5S8mvULm2FuHmOFOTVJAbtgCC9iOx/TbhjzGfhQ
- I5hd+vhTplP25Ps8t78c+xlO2XcHX5IPahdrGjYK/ElKFnSU/dWcU9Q7q6ztDzvepTx/
- TDDGlEgcYhs+8VfUwpxGY20eIWuZB9eqbiiHpwPO4tyAd+b8sSnKFwvO2J4gWB4IHXAJ
- 0+6A==
+ bh=0x3b1l5jy79qRM5TPd5aERH5PA0eFVVgOVd3JdlBtZs=;
+ b=hTzp3ucXiUPTNLRN+ssYjOnUD1pIPx0SN9SqcJwvqmx+ZbuAc3A0yhV8jdOs4BQChg
+ hRYjqxvavEqCX3kxHR7G2uxUhmgxoDrebkVSDTnOdRDBVQLU8i+bCzlTc8Ylfdmyu2Bm
+ 9rJiYnUqmxQGN6BbG4+v8feo8X53kTbqHBhcPa/jaIRS2EKPl6SXkX/X4RilhUwacWtl
+ eQszmxkB/hCLGVZcJ6N9AhkFxRDbFt1tmSyqBtXPpBstZmXhk9VBmoRpxdxfdF7RhV0w
+ 3BCCNb5rpH51IZ/kCcP1HEJyfKf/WUh3kuDB3oSvV6BdMBoPvIQ7iDt4BsSjCcsb0jmT
+ B+yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749570232; x=1750175032;
+ d=1e100.net; s=20230601; t=1749570253; x=1750175053;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=oABJ1CBvsChdhWT9C6qI8koFYAjMhz8JTY/1WSGfTLY=;
- b=okzTxLK+Lml0XA0q+m6PC+smj0s6bcvjmycPiqYaPIm/xWwd+E91iThAU1QP8yYoto
- zEQwtJZg52ESWCm2tl2OG4pIxEeIohtjnBynPlqDzr8ZS8xnZ9caOfofrO5JWakfx3w3
- mfvC2x6hUWcMrPx20Rnl7GFHvytx22D/rlGmqebk6Gqy6imiDv5UgBUSp8idQCqGb9EN
- cdzNceWMnDLziChPHlJCuPamWw0+kmEA+Bi2pVFpU2hLzKmXOBxkGvJ5L+U2A3erHppB
- IokAN0kiwXSCuQcHSBFFnsAl4jxPdTsDdIVjpXqYkgdj37onkU/tFBpEAvbCexzQ0R3O
- 7+CQ==
-X-Gm-Message-State: AOJu0YyGkuQ1SDxlevNa66cP8NOrnPx1y5iQbburHLF76m7yNurkXZ14
- KoyQI7LDqEN5GNe1eVP6+TywRYVDLHdWXpLi6b2YGvrsSw0z2B0UedopHXV9cA==
-X-Gm-Gg: ASbGnctseZL58xMyY/KyfKS4y92oQ+XdZ8xYtWScz9XxOaXTb5p0qluo21JbYcOyEML
- KLQnv3rlmDCfsjijqqddtojWk7JmiZJ7jQx/I8a2FTDDV+ct0C2t4BtQvirCNjUAHjVTv299Qwh
- Cxu7v78VEVHGNkwpPw6lfKgjpb7hXiV8uhckHzWlUkxOb3pfChrkA6iP6Cmr/QfTz5tU4HR7/LH
- iO1pOSTc5u8sKT0IqZBuqtIDbU4YfV9RNJbsX523jAWxtUhT+uTiAnnbR+h8PcrFwfJOwR/PrLu
- Q2LSXMJWLByjH8Dyx+ajFC4SIlkqH4RL8WbbYFE6e2biqNbYAP5QlCfwrObW6EiwREr+cEQelMx
- aoGc=
-X-Google-Smtp-Source: AGHT+IHPDIDqP+I69AyG1CUXWIiDxseqQU8VEBC9ZmRSJmRHyqfgqEe7YdgLep7jvUh8PaesFgw3LQ==
-X-Received: by 2002:a05:6a00:9a3:b0:747:b043:41e8 with SMTP id
- d2e1a72fcca58-74827f12808mr21240752b3a.15.1749559087784; 
- Tue, 10 Jun 2025 05:38:07 -0700 (PDT)
+ bh=0x3b1l5jy79qRM5TPd5aERH5PA0eFVVgOVd3JdlBtZs=;
+ b=RKZZOij98puw/P6GgzeKbY3h9VhNREjCK7fj86TBNxxuC8fSCy7y+4U79NU2yTcgzc
+ sNNgdzxMFR7mWOXTyBHBQg02Ck4+xaKo4HmctthfLU22QYEH3bxnb1OyF1J4JFJ3T2Sp
+ BeqEhWbUGhLa1HrVLCK7BiOcLxDidfE2eh/h09wdv1ven2J9osdK/dEm2bsLmebDfpXu
+ j52hdtTQfcz8TGA3cRUH+Rwx/PQrI6Q1JEvKTNYdNO43QYHjR6VHJLc23nDXonmKd9oE
+ oj73Y/5wM3gl+nphyvx3GSTAZcAjAPNOOENe9KjZ7KWn1ImVItE+esRSXEG/CGOs4Auf
+ cQ2Q==
+X-Gm-Message-State: AOJu0Yz/kEfm9HhBnDKp22lZgKELhBlEpliOhs38zfIaBa8QtMT23spd
+ W7sMziYRg947iPGYuIAnS4NqvywqZjxLAMBba0+fJzpGE9wip4TcZC/Q5VMnQg==
+X-Gm-Gg: ASbGncvKgdClrDhP2msdBI+qGh5gw4k13QyJ3TMuVS5uzVG2gHe0AOBels3WKFmzAv/
+ CnP+j5Lhb+7xDTbwEFuDfO4erOQpUP4+wqNlVjPE04lvdhB0AurseKltKwH8lRWhODmtSepZfCL
+ 7M5NvecrJ9hKRu0ySfStll9OqTEqwQkQawSwxoVSz4u6A1Po+fF5uD+dPzQKhheLgmG2U2qFI4d
+ kYAfNxjNJxIFpvJgtw4YuvVmmW2nA5l/cXtXhCkaAlm5BmcfWBV3EXlTugEYe16LbnMsPhFPuEk
+ hqF+Ie3QTHoVwYATorGAmxprRqICa1K4Xm2JWF87SnirPya2aQGAy1LuH5KjjCImvmMaSrrXLGW
+ jCIU=
+X-Google-Smtp-Source: AGHT+IF+7QK0B1WG44egfQOWzdR7Hd0GZuiWqlkD2wym8bm4CN4qDB0AEn3EyOY+i23I4u8j3hOv6A==
+X-Received: by 2002:a05:6a00:4f81:b0:746:1c67:f6cb with SMTP id
+ d2e1a72fcca58-7485ea435f8mr4566748b3a.5.1749559117809; 
+ Tue, 10 Jun 2025 05:38:37 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.06
+ d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 05:38:07 -0700 (PDT)
+ Tue, 10 Jun 2025 05:38:37 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 10 Jun 2025 20:37:13 +0800
-Message-ID: <20250610123743.667183-4-shengyong1@xiaomi.com>
+Date: Tue, 10 Jun 2025 20:37:28 +0800
+Message-ID: <20250610123743.667183-19-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
 References: <20250610123743.667183-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uP18t-0006su-2a
-Subject: [f2fs-dev] [RFC PATCH v2 03/32] f2fs-tools: cleanup
- {nid|segno}_in_journal
+X-Headers-End: 1uP19E-0006wL-9i
+Subject: [f2fs-dev] [RFC PATCH v2 18/32] tests: add fsck testcase of fixing
+ nat entry with invalid ino
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -128,93 +128,79 @@ From: Sheng Yong <shengyong1@xiaomi.com>
 
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 ---
- fsck/f2fs.h  |  4 ++--
- fsck/mount.c | 14 +++++++-------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ tests/f_nat_bad_ino/README    |  4 ++++
+ tests/f_nat_bad_ino/expect.in | 12 ++++++++++++
+ tests/f_nat_bad_ino/script    | 31 +++++++++++++++++++++++++++++++
+ 3 files changed, 47 insertions(+)
+ create mode 100644 tests/f_nat_bad_ino/README
+ create mode 100644 tests/f_nat_bad_ino/expect.in
+ create mode 100644 tests/f_nat_bad_ino/script
 
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index 187e73cf9aec..4c6c0c48b9ee 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -504,9 +504,9 @@ struct fsync_inode_entry {
- #define sits_in_cursum(jnl)             (le16_to_cpu(jnl->n_sits))
- 
- #define nat_in_journal(jnl, i)          (jnl->nat_j.entries[i].ne)
--#define nid_in_journal(jnl, i)          (jnl->nat_j.entries[i].nid)
-+#define nid_in_journal(jnl, i)          (le32_to_cpu(jnl->nat_j.entries[i].nid))
- #define sit_in_journal(jnl, i)          (jnl->sit_j.entries[i].se)
--#define segno_in_journal(jnl, i)        (jnl->sit_j.entries[i].segno)
-+#define segno_in_journal(jnl, i)        (le32_to_cpu(jnl->sit_j.entries[i].segno))
- 
- #define SIT_ENTRY_OFFSET(sit_i, segno)                                  \
- 	((segno) % sit_i->sents_per_block)
-diff --git a/fsck/mount.c b/fsck/mount.c
-index a7f16e78bae7..337acb6f8ff8 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1687,7 +1687,7 @@ static int f2fs_early_init_nid_bitmap(struct f2fs_sb_info *sbi)
- 			continue;
- 		}
- 
--		nid = le32_to_cpu(nid_in_journal(journal, i));
-+		nid = nid_in_journal(journal, i);
- 		if (!IS_VALID_NID(sbi, nid)) {
- 			MSG(0, "\tError: f2fs_init_nid_bitmap: nid(%u) is invalid!!!\n", nid);
- 			journal->n_nats = cpu_to_le16(i);
-@@ -2566,7 +2566,7 @@ void update_nat_blkaddr(struct f2fs_sb_info *sbi, nid_t ino,
- 	int ret, i;
- 
- 	for (i = 0; i < nats_in_cursum(journal); i++) {
--		if (le32_to_cpu(nid_in_journal(journal, i)) == nid) {
-+		if (nid_in_journal(journal, i) == nid) {
- 			entry = &nat_in_journal(journal, i);
- 			entry->block_addr = cpu_to_le32(newaddr);
- 			if (ino)
-@@ -2670,7 +2670,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 	}
- 
- 	for (i = 0; i < sits_in_cursum(journal); i++) {
--		segno = le32_to_cpu(segno_in_journal(journal, i));
-+		segno = segno_in_journal(journal, i);
- 
- 		if (segno >= MAIN_SEGS(sbi)) {
- 			MSG(0, "\tError: build_sit_entries: segno(%u) is invalid!!!\n", segno);
-@@ -2876,7 +2876,7 @@ next:
- 		return i;
- 	}
- 
--	nid = le32_to_cpu(nid_in_journal(journal, i));
-+	nid = nid_in_journal(journal, i);
- 
- 	entry_off = nid % NAT_ENTRY_PER_BLOCK;
- 	block_addr = current_nat_addr(sbi, nid, NULL);
-@@ -3275,7 +3275,7 @@ int lookup_nat_in_journal(struct f2fs_sb_info *sbi, u32 nid,
- 	int i = 0;
- 
- 	for (i = 0; i < nats_in_cursum(journal); i++) {
--		if (le32_to_cpu(nid_in_journal(journal, i)) == nid) {
-+		if (nid_in_journal(journal, i) == nid) {
- 			memcpy(raw_nat, &nat_in_journal(journal, i),
- 						sizeof(struct f2fs_nat_entry));
- 			DBG(3, "==> Found nid [0x%x] in nat cache\n", nid);
-@@ -3300,7 +3300,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
- 
- 	/* check in journal */
- 	for (i = 0; i < nats_in_cursum(journal); i++) {
--		if (le32_to_cpu(nid_in_journal(journal, i)) == nid) {
-+		if (nid_in_journal(journal, i) == nid) {
- 			memset(&nat_in_journal(journal, i), 0,
- 					sizeof(struct f2fs_nat_entry));
- 			FIX_MSG("Remove nid [0x%x] in nat journal", nid);
-@@ -3604,7 +3604,7 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
- 	/* Traverse nat journal, update the corresponding entries */
- 	for (i = 0; i < nats_in_cursum(journal); i++) {
- 		struct f2fs_nat_entry raw_nat;
--		nid = le32_to_cpu(nid_in_journal(journal, i));
-+		nid = nid_in_journal(journal, i);
- 		ni.nid = nid;
- 
- 		DBG(3, "==> Found nid [0x%x] in nat cache, update it\n", nid);
+diff --git a/tests/f_nat_bad_ino/README b/tests/f_nat_bad_ino/README
+new file mode 100644
+index 000000000000..b97015297b25
+--- /dev/null
++++ b/tests/f_nat_bad_ino/README
+@@ -0,0 +1,4 @@
++1. create f2fs image
++2. mount f2fs and create a regular file
++3. inject ino in nat entry with value 0x12345 of the regular file
++4. fsck fixes the nat entry by nullifying it
+diff --git a/tests/f_nat_bad_ino/expect.in b/tests/f_nat_bad_ino/expect.in
+new file mode 100644
+index 000000000000..4a70b0b27cff
+--- /dev/null
++++ b/tests/f_nat_bad_ino/expect.in
+@@ -0,0 +1,12 @@
++Info: Force to fix corruption
++[ASSERT] (sanity_check_nid: x)  --> nid[_INO_] nat_entry->ino[0x12345] footer.ino[_INO_]
++[FIX] (__chk_dentries:x)  --> Unlink [_INO_] - testfile len[0x8], type[0x1]
++[fsck_chk_quota_files:x] Fixing Quota file ([  0] ino [0x4])
++[FIX] (nullify_nat_entry:x)  --> Remove nid [0x4] in NAT
++[fsck_chk_quota_files:x] Fixing Quota file ([  1] ino [0x5])
++[FIX] (nullify_nat_entry:x)  --> Remove nid [0x5] in NAT
++[fsck_chk_quota_files:x] Fixing Quota file ([  2] ino [0x6])
++[FIX] (nullify_nat_entry:x)  --> Remove nid [0x6] in NAT
++NID[_INO_] is unreachable, blkaddr:_BLK_
++[FIX] (nullify_nat_entry:x)  --> Remove nid [_INO_] in NAT
++Info: Force to fix corruption
+diff --git a/tests/f_nat_bad_ino/script b/tests/f_nat_bad_ino/script
+new file mode 100644
+index 000000000000..ded5b2a602fb
+--- /dev/null
++++ b/tests/f_nat_bad_ino/script
+@@ -0,0 +1,31 @@
++#!/bin/bash
++
++DESC="nat entry with invalid ino"
++
++. $TOPDIR/tests/helpers
++
++cleanup
++make_f2fs > $LOG
++
++mkdir $TESTDIR/mntdir
++safe_mount $MNT_OPTS $META $TESTDIR/mntdir >> $LOG
++touch $TESTDIR/mntdir/testfile
++ino=`stat -c "%i" $TESTDIR/mntdir/testfile`
++safe_umount $TESTDIR/mntdir >> $LOG
++rm -rf $TESTDIR/mntdir
++
++blk=`$DUMP $DUMP_OPTS -i $ino -d 1 $META | grep nat_entry.block_addr | \
++	sed 's/.*nat_entry\.block_addr[[:space:]]*\[\(0x[0-9a-f]\{1,\}\)\]/\1/g'`
++
++echo "ino:$ino blk:$blk" >> $LOG
++
++$INJECT --nat 0 --nid $ino --mb ino --val 0x12345 $META >> $LOG
++$FSCK $FSCK_OPTS -f $META > $OUT
++$FSCK $FSCK_OPTS -f $META >> $OUT
++cat $OUT >> $LOG
++
++INO=`printf "0x%x" $ino`
++sed "s/_INO_/$INO/g" $TESTDIR/expect.in > $TESTDIR/expect
++sed -i "s/_BLK_/$blk/g" $TESTDIR/expect
++
++check_result
 -- 
 2.43.0
 
