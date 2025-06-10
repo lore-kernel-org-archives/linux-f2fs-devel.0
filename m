@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6BC89C5B543
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 933F6C5B543
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:18:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=3O+fblS8NHK+t+LXrYhskTCkETJWAbnv5w60ffHueMA=; b=PmcDgtqDqwBR26U0u1dt5oxY+d
-	4gtOuLAtzJE9IVEkMuS/xhIRyj7KFFcD3fwu7FLGzBRxigkuI4cWpKVTie4aAXnotKnmUfbdL9fLT
-	T/zayueWap1HUTzGxDVO/ti05WHRawil4EabKcndcM7g4VXOFLX1z9HU+x2bTtTQg/0I=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=C728Fn0PxZYx31jbU1wHDfpaq/PyJJDRrgvzlnijTKA=; b=Q0axfL2UsFEQS/01HkXo1eoNnM
+	hsQHlfvEF3mDUTY5IZyqUccmg88OHbCuFRlWEd5H62ZkLBKnwFLMcAdMP2Z6xynhHSzlovI6D16Q8
+	mYZYve6iqdkcN8FwfKnJm1noDypfEQM0TPte09nYmQyQcNMKv8IOPI8ycErCLer6iyJw=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uP0jt-0007g4-4P;
-	Tue, 10 Jun 2025 15:18:13 +0000
+	id 1uP0kC-00065T-98;
+	Tue, 10 Jun 2025 15:18:32 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uP0js-0007fy-Ec
+ (envelope-from <shengyong2021@gmail.com>) id 1uP0kB-00065L-Hn
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:18:12 +0000
+ Tue, 10 Jun 2025 15:18:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RjJQdiCPNX5Qw/32p0voEfGnyF3ncBUjYgBACXsb3ZI=; b=FhPzNdh1UjdWesNIx88DTHOLmL
- O71fCsjnOIA0mIvpE8FDS0kXfbMztVHfSMqKrZcaoZYOIHrF5QMMVjCwuUitD9sw5kzDSYo3lqHmu
- QWBG1kPgk2VoeZrkAj5arHHaGzBrEY+KEZ7x0U6IA2HnDJfDTODwIemVCY6NkWamjwGY=;
+ bh=SVrlDQ1iMaAnOcdQP1y1Vazx9sQfwLAK4wYur8e0Rss=; b=V+peUkaoy9meQblugpwCozr03R
+ G5p+CFF4oYgRkKxTeNp62ggzU7SK5tHoor4P7+RTkXWoadI509kHDqfwsGCQs5ZipH7Ppo1+z5XrI
+ NOLlICVtqQyVstgejOCyphZYxtOhOIb0CW/vEpK9BV4EwomJypDpIcYG3sFI1HQIgdcA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,71 +42,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=RjJQdiCPNX5Qw/32p0voEfGnyF3ncBUjYgBACXsb3ZI=; b=Fmc1qUb4mwltXR1c/Yd4WN9tTr
- aP4bMKL2oOGpDI4qHWyBEFLdRg9ms4s3WOVz1XTcRfDnNNPPL3VeUi+C/x34/Sxp9j+s7aRv/j7aY
- cFPuPHxEVsX/nAsCb5+dCCxzO6Mm9G377F9Jq6E8CGE6m5I68Jj/JcAALGosbnKpR+SQ=;
-Received: from mail-qv1-f48.google.com ([209.85.219.48])
+ bh=SVrlDQ1iMaAnOcdQP1y1Vazx9sQfwLAK4wYur8e0Rss=; b=kYBqkzN+uEAajyanzglmjDpSSC
+ sv9835kbgDy8gqvDG+hJdVtPRMeaFlVKh5IeKn3WXhsDPZ1JcPZo9pJxT7ajWUftpD57GAl/4LoR3
+ 8q1mBvSaVXVI5xXnI6BqO2QiLjZsGsMCznrU2ch1r4vsSEs4a7VK0bp7M6OZmiBBmbjI=;
+Received: from mail-oo1-f41.google.com ([209.85.161.41])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uP0jr-0003XI-Qz for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:18:12 +0000
-Received: by mail-qv1-f48.google.com with SMTP id
- 6a1803df08f44-6facc3b9559so78929346d6.0
+ id 1uP0kA-0003aa-WD for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jun 2025 15:18:31 +0000
+Received: by mail-oo1-f41.google.com with SMTP id
+ 006d021491bc7-60efc773b5fso3035303eaf.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Jun 2025 08:18:11 -0700 (PDT)
+ Tue, 10 Jun 2025 08:18:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749568681; x=1750173481; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1749568700; x=1750173500; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=RjJQdiCPNX5Qw/32p0voEfGnyF3ncBUjYgBACXsb3ZI=;
- b=aSrRvjfw106dqS8SLVR2EpfVGZePixsY/BSd1L2e/zY4SGy3MUuxaLiPOb3NuEZaEH
- VovuwXiJB+l4n74ubZGlgLki1322UqLn7RRLczrWPhlwRshkdOaMTQmSGtflAiM4ol8K
- ozdGVfufBKTk6L/y9QeBMAlmBgD7q+KVKBAB3NeQIZ7fxVIi5dQAtWdYRcwPokkKyB/s
- XUPzI9GKgHPrQhnqEXJcVQ+Kfhn3dknDr+X/6nv1OkbqTCMA0bo9/LUTn1ddjgHzUIH9
- b/oEXfTc2uWOiujtAv4zjCyohbKVYKbuZsZ53XAq5XowSiNgdfEp0tyc/yWlG89U8AMU
- GOkQ==
+ bh=SVrlDQ1iMaAnOcdQP1y1Vazx9sQfwLAK4wYur8e0Rss=;
+ b=fgkdew76g681jcxgu2lztNejNuAxFWJX8QJakVGsSJpzQI0S9f28FmBVNf+nXBPmSX
+ 6iymhVeSZEhSWgVonNUy7clRoq+dVQZzG4rlMEk1JnA01xsMILdxVFr6hgemiy7KjaQF
+ 2GyPW1mRrgS5ZC5gKPQdLd56BQbhLnFHhWNBbgrtcuA49joqC7Fak+hoqSeJyjYXLIf7
+ S3W0eMMiZYr4XTumA+76fxTXnpohZOoKJHjFGE3rW+wxdk4VTr2oDiggzNwqo6aN4XAf
+ 4I1dskV09F7O39N7lzzwnzgbEVlfjpDJtIJmV4Gr9K4CYrG+5TSLWefSBS/2L965GAFD
+ Cm9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749568681; x=1750173481;
+ d=1e100.net; s=20230601; t=1749568700; x=1750173500;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=RjJQdiCPNX5Qw/32p0voEfGnyF3ncBUjYgBACXsb3ZI=;
- b=T4w2/lCdJLHbYu9/sk2KZ3F6tlcX0DPrnBO+fEAVEnmtY+JJxoTGp5mCgts/Z/G3HU
- J1c/S05ioWGjvveVjjsDwuQ1JNIJQmj6cpfipXRDxgLKxsYz/TJY6Tesfa7OJZBjS4wj
- B+sYGbSQXAMFq0lnwgG6d2J1Fyq7qP2A2iY+jhUPu6aXKINFGkE/QMI9OK+opxJQYbQn
- VOV+yV9LPPrKUW/ZULZYqeJDr0GK3FBUjRaPnUllcPZv2qHn46idMj60nRzLA7T9lEMb
- KSfLzO6HPOE76+CIBLN9BCl/swVZ+Ci4j82KyssLPRROZ9Wbprca1mvHGC5JSd1S9j5s
- 1ufA==
-X-Gm-Message-State: AOJu0Yw5R5CfitHhVP2k7cmVRrnnQckouZ9jST2BXBXsuCwjJcwPCpFQ
- 3UVkEllK6k+qFEo876RGNoJJVbRvkTXR7wzBkmw+wraIs4vtL10lMQXiBk3+wA==
-X-Gm-Gg: ASbGncu4FeiUVBXe4mhf+skFZp9c15Hn1u2dEpnqDc7uUeu3zSB2B2V8ARvZv+u17hI
- 3Pi42xJIDV+OV1rbAabyhI+kEliGRuX2mwdvWw4tVJKcjIQ4Lafs3DacHx9dnv0CDU1EzNdZ3rg
- mC5kOmArABCitbpMXj89zVo110yUPObKj+7f7ZDgqYU9nty/r6RC7B6qk2AC+Fpzq8QcvDvnDPJ
- Fp1IIpYYbEln7vBHu+6z9kVLmHpGY92inu8P1syhpEV9vdc60be7rZjFvY23tdFh2k9006UPZSL
- L6L54ZeY2y2EQxp9lSg3wv8PwEHcDLTmp4NwBg94q0F1w/NKm0y2zj7pKzCtrqigwbEW
-X-Google-Smtp-Source: AGHT+IFhHRzQ3Cl8kyJgcWrO6MowivIg/TLRM6m6BYTx6dm3sdI3r2YYRWG9O/hgUDMztmyfwADZUg==
-X-Received: by 2002:a05:6a21:a43:b0:1f5:9d5d:bcdd with SMTP id
- adf61e73a8af0-21ee6851aeamr23296460637.1.1749559099682; 
- Tue, 10 Jun 2025 05:38:19 -0700 (PDT)
+ bh=SVrlDQ1iMaAnOcdQP1y1Vazx9sQfwLAK4wYur8e0Rss=;
+ b=PmQABM5IIlj+wdPs3492b8999AJEXxEPAh3PTb5O5RdJL6wHu5IxhKVfgctiIIMtmf
+ Az8p/maDz97O+xze1ix2abfhX85qJprjWA8FOxjIe83aGGlHlT6zRAU0oinmTAATNSXR
+ ZZgvNcxNNMPfqW77A6NwKVTdSVpinN3VsG6l4colMQA2nfmPX4maB2vmCpuRhdtiw5MA
+ nOytF29ziPiqNkbHZmSglmIoG0tQHOAjWaDSnwKJMzssUSnLIlXConTGN7toHC9LjGCw
+ I8kkXrYDeDaC3XqftWPVtX42x5sjxAL939prhx1YX35ab3WnIt8RAL5A9dIZjmcKiXkK
+ OCLw==
+X-Gm-Message-State: AOJu0YxiVtA8z9k9iOiMgpnRrGmJXyE19s9SiXC16aWPGQDF/A6seSb3
+ XeLbbr0B9uGbHYXp0kL5aoFSEJToELE4KXWr/MrDBfcD2rRUpVuN12udi51L3A==
+X-Gm-Gg: ASbGncsIiKFsqmHsP+OI+O09quArBuejgoiyvn2A/c0kP4FK7BlnwXFWMSyz6Mq5F64
+ p5xFu59UejbSq6xwsCLmGfVPlIw6LPtqjZMtxWEDlICnXLlRTYSkgxSlzMPfg+zDJO/uTwN8Nkw
+ CGNIFzOEcwAtKn7JVVWbLYxLKeLGC86wyQ7Q3SlDJxKXuGzZc9hYsPZ2RQXQPxHFP1iyirX/3t1
+ 7dj5bwfz7jnxKHwJDzfCstxmasjCS/6B8s/m7uRN68sARlMcOKhJxSqgdoaLspWK5RMyEDGkPkW
+ qlttBF+/k5wrkVcDQ01qzOx9NdeByGwnre0LubhYU1qij8NPUSdLC8Zdtexvs9i8/NWE
+X-Google-Smtp-Source: AGHT+IGlKLqsTxTBX/GlphoB2jFy9O+x7HnS6Rj88OAZHtqDleisf13Pa3xb7umzj+gGXMXWJ1ik7A==
+X-Received: by 2002:a05:6a21:50f:b0:21a:de8e:44b1 with SMTP id
+ adf61e73a8af0-21ee686203dmr25607870637.34.1749559106012; 
+ Tue, 10 Jun 2025 05:38:26 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.17
+ d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.24
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 05:38:19 -0700 (PDT)
+ Tue, 10 Jun 2025 05:38:25 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 10 Jun 2025 20:37:19 +0800
-Message-ID: <20250610123743.667183-10-shengyong1@xiaomi.com>
+Date: Tue, 10 Jun 2025 20:37:22 +0800
+Message-ID: <20250610123743.667183-13-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
 References: <20250610123743.667183-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uP0jr-0003XI-Qz
-Subject: [f2fs-dev] [RFC PATCH v2 09/32] inject.f2fs: fix and cleanup
- parsing numeric options
+X-Headers-End: 1uP0kA-0003aa-WD
+Subject: [f2fs-dev] [RFC PATCH v2 12/32] inject.f2fs: add members in
+ inject_node
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -125,89 +125,118 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Sheng Yong <shengyong1@xiaomi.com>
 
-This patch fixes:
-  * parsing hex optarg of --idx option
-  * converting -1 to 0xff...ff of --val option
-and do a little cleanup of converting string to a long integer.
+This patch adds new members in inject_node to inject inode:
+ * i_ext.fofs: extent fofs
+ * i_ext.blk_addr: extent blk_addr
+ * i_ext.len: extent len
+ * i_inline_xattr_size: inline xattr size
+ * i_compr_blocks: compression blocks
 
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 ---
- fsck/inject.c | 32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+ fsck/inject.c     | 28 ++++++++++++++++++++++++++++
+ man/inject.f2fs.8 | 17 ++++++++++++++++-
+ 2 files changed, 44 insertions(+), 1 deletion(-)
 
 diff --git a/fsck/inject.c b/fsck/inject.c
-index 96817a806f8f..c879ca99c0d8 100644
+index 0b5aecbf8061..8c2f8c5dc332 100644
 --- a/fsck/inject.c
 +++ b/fsck/inject.c
-@@ -236,8 +236,9 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
- 
- 	while ((o = getopt_long(argc, argv, option_string,
- 				long_opt, NULL)) != EOF) {
--		long nid, blk;
-+		long long val;
- 
-+		errno = 0;
- 		switch (o) {
- 		case 1:
- 			c.dry_run = 1;
-@@ -248,18 +249,19 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
- 			MSG(0, "Info: inject member %s\n", optarg);
- 			break;
- 		case 3:
--			if (!is_digits(optarg))
--				return EWRONG_OPT;
--			opt->idx = atoi(optarg);
--			MSG(0, "Info: inject slot index %d\n", opt->idx);
-+			val = strtoll(optarg, &endptr, 0);
-+			if (errno != 0 || val >= UINT_MAX || val < 0 ||
-+			    *endptr != '\0')
-+				return -ERANGE;
-+			opt->idx = (unsigned int)val;
-+			MSG(0, "Info: inject slot index %u\n", opt->idx);
- 			break;
- 		case 4:
--			opt->val = strtoll(optarg, &endptr, 0);
--			if (opt->val == LLONG_MAX || opt->val == LLONG_MIN ||
--			    *endptr != '\0')
-+			opt->val = strtoull(optarg, &endptr, 0);
-+			if (errno != 0 || *endptr != '\0')
- 				return -ERANGE;
- 			MSG(0, "Info: inject value %lld : 0x%llx\n", opt->val,
--			    (unsigned long long)opt->val);
-+			    opt->val);
- 			break;
- 		case 5:
- 			opt->str = strdup(optarg);
-@@ -292,11 +294,11 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
- 			MSG(0, "Info: inject nat pack %s\n", pack[opt->nat]);
- 			break;
- 		case 9:
--			nid = strtol(optarg, &endptr, 0);
--			if (nid >= UINT_MAX || nid < 0 ||
-+			val = strtoll(optarg, &endptr, 0);
-+			if (errno != 0 || val >= UINT_MAX || val < 0 ||
- 			    *endptr != '\0')
- 				return -ERANGE;
--			opt->nid = nid;
-+			opt->nid = (nid_t)val;
- 			MSG(0, "Info: inject nid %u : 0x%x\n", opt->nid, opt->nid);
- 			break;
- 		case 10:
-@@ -308,11 +310,11 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
- 			MSG(0, "Info: inject sit pack %s\n", pack[opt->sit]);
- 			break;
- 		case 11:
--			blk = strtol(optarg, &endptr, 0);
--			if (blk >= UINT_MAX || blk < 0 ||
-+			val = strtoll(optarg, &endptr, 0);
-+			if (errno != 0 || val >= UINT_MAX || val < 0 ||
- 			    *endptr != '\0')
- 				return -ERANGE;
--			opt->blk = blk;
-+			opt->blk = (block_t)val;
- 			MSG(0, "Info: inject blkaddr %u : 0x%x\n", opt->blk, opt->blk);
- 			break;
- 		case 12:
+@@ -198,8 +198,13 @@ static void inject_node_usage(void)
+ 	MSG(0, "  i_links: inject inode i_links\n");
+ 	MSG(0, "  i_size: inject inode i_size\n");
+ 	MSG(0, "  i_blocks: inject inode i_blocks\n");
++	MSG(0, "  i_ext.fofs: inject inode i_ext.fofs\n");
++	MSG(0, "  i_ext.blk_addr: inject inode i_ext.blk_addr\n");
++	MSG(0, "  i_ext.len: inject inode i_ext.len\n");
+ 	MSG(0, "  i_extra_isize: inject inode i_extra_isize\n");
++	MSG(0, "  i_inline_xattr_size: inject inode i_inline_xattr_size\n");
+ 	MSG(0, "  i_inode_checksum: inject inode i_inode_checksum\n");
++	MSG(0, "  i_compr_blocks: inject inode i_compr_blocks\n");
+ 	MSG(0, "  i_addr: inject inode i_addr array selected by --idx <index>\n");
+ 	MSG(0, "  i_nid: inject inode i_nid array selected by --idx <index>\n");
+ 	MSG(0, "  addr: inject {in}direct node nid/addr array selected by --idx <index>\n");
+@@ -967,16 +972,39 @@ static int inject_inode(struct f2fs_sb_info *sbi, struct f2fs_node *node,
+ 		MSG(0, "Info: inject inode i_blocks of nid %u: %"PRIu64" -> %"PRIu64"\n",
+ 		    opt->nid, le64_to_cpu(inode->i_blocks), (u64)opt->val);
+ 		inode->i_blocks = cpu_to_le64((u64)opt->val);
++	} else if (!strcmp(opt->mb, "i_ext.fofs")) {
++		MSG(0, "Info: inject inode i_ext.fofs of nid %u: %u -> %u\n",
++		    opt->nid, le32_to_cpu(inode->i_ext.fofs), (u32)opt->val);
++		inode->i_ext.fofs = cpu_to_le32((u32)opt->val);
++	} else if (!strcmp(opt->mb, "i_ext.blk_addr")) {
++		MSG(0, "Info: inject inode i_ext.blk_addr of nid %u: "
++		    "0x%x -> 0x%x\n", opt->nid,
++		    le32_to_cpu(inode->i_ext.blk_addr), (u32)opt->val);
++		inode->i_ext.blk_addr = cpu_to_le32((u32)opt->val);
++	} else if (!strcmp(opt->mb, "i_ext.len")) {
++		MSG(0, "Info: inject inode i_ext.len of nid %u: %u -> %u\n",
++		    opt->nid, le32_to_cpu(inode->i_ext.len), (u32)opt->val);
++		inode->i_ext.len = cpu_to_le32((u32)opt->val);
+ 	} else if (!strcmp(opt->mb, "i_extra_isize")) {
+ 		/* do not care if F2FS_EXTRA_ATTR is enabled */
+ 		MSG(0, "Info: inject inode i_extra_isize of nid %u: %d -> %d\n",
+ 		    opt->nid, le16_to_cpu(inode->i_extra_isize), (u16)opt->val);
+ 		inode->i_extra_isize = cpu_to_le16((u16)opt->val);
++	} else if (!strcmp(opt->mb, "i_inline_xattr_size")) {
++		MSG(0, "Info: inject inode i_inline_xattr_size of nid %u: "
++		    "%d -> %d\n", opt->nid,
++		    le16_to_cpu(inode->i_inline_xattr_size), (u16)opt->val);
++		inode->i_inline_xattr_size = cpu_to_le16((u16)opt->val);
+ 	} else if (!strcmp(opt->mb, "i_inode_checksum")) {
+ 		MSG(0, "Info: inject inode i_inode_checksum of nid %u: "
+ 		    "0x%x -> 0x%x\n", opt->nid,
+ 		    le32_to_cpu(inode->i_inode_checksum), (u32)opt->val);
+ 		inode->i_inode_checksum = cpu_to_le32((u32)opt->val);
++	} else if (!strcmp(opt->mb, "i_compr_blocks")) {
++		MSG(0, "Info: inject inode i_compr_blocks of nid %u: "
++		    "%lu -> %lu\n", opt->nid,
++		    le64_to_cpu(inode->i_compr_blocks), (u64)opt->val);
++		inode->i_compr_blocks = cpu_to_le64((u64)opt->val);
+ 	} else if (!strcmp(opt->mb, "i_addr")) {
+ 		/* do not care if it is inline data */
+ 		if (opt->idx >= DEF_ADDRS_PER_INODE) {
+diff --git a/man/inject.f2fs.8 b/man/inject.f2fs.8
+index 5ae556015a79..72d1c90f7ce4 100644
+--- a/man/inject.f2fs.8
++++ b/man/inject.f2fs.8
+@@ -145,7 +145,7 @@ summary entry ofs_in_node.
+ .RE
+ .TP
+ .BI \-\-node
+-Inject node block specified by \fInid\P.
++Inject node block specified by \fInid\fP.
+ The available \fImb\fP of \fInode\fP are:
+ .RS 1.2i
+ .TP
+@@ -182,12 +182,27 @@ inode i_size.
+ .BI i_blocks
+ inode i_blocks.
+ .TP
++.BI i_ext.fofs
++inode i_ext.fofs.
++.TP
++.BI i_ext.blk_addr
++inode i_ext.blk_addr.
++.TP
++.BI i_ext.len
++inode i_ext.len.
++.TP
+ .BI i_extra_isize
+ inode i_extra_isize.
+ .TP
++.BI i_inline_xattr_size
++inode i_inline_xattr_size.
++.TP
+ .BI i_inode_checksum
+ inode i_inode_checksum.
+ .TP
++.BI i_compr_blocks
++inode i_compr_blocks.
++.TP
+ .BI i_addr
+ inode i_addr array specified by \fIidx\fP.
+ .TP
 -- 
 2.43.0
 
