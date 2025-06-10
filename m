@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3C4A8C5B552
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3302CC5B552
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:16:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=DS2Vp44mI9QogBxLnjRcNBhLxJONhXhuD0/4rdi9Lrg=; b=iTPWEOifqDPVuKnBzwSAUvCEGY
-	dBjPsftTzrwAzRsKrM87NvWWjnFdFmciRtP0sNB0CjqlqTCE0GUy7mSnTGSuhf7Nus78sGEakpWoq
-	GmHU25IWzaQ5AAMOk3URSHYjV7q258c5gr8Z5bqt2hDL3SRRZZYIS7NS/CqhQo9P4TPc=;
+	bh=bqZn47FzQuI9sD9QOLSYLhHAObLl7wD4zMWxMWI4/cY=; b=ca32dr94+Kd8Ts3vbqfxoWfEm0
+	H0sKgtH38b83yWrvaBgyiWHoAYoGZggbxDVQeDQsKca6VSF5UXZKKEDPguezjEJ524BaWG31aaGxN
+	Ra5X2BHCj5Cn9pO1yLJlVYjgvt50H21nKUYfqIQvaDOfb1y88gWfAnCPSis8cwV4cVN8=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uP0gP-0005pF-RX;
-	Tue, 10 Jun 2025 15:14:37 +0000
+	id 1uP0hq-0005u3-Py;
+	Tue, 10 Jun 2025 15:16:06 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uP0gO-0005p6-IO
+ (envelope-from <shengyong2021@gmail.com>) id 1uP0hq-0005tu-84
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:14:36 +0000
+ Tue, 10 Jun 2025 15:16:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JSk9rawYxXsf9k9M7tLJDLFOJ6iCCpNPICjeBZC1AnI=; b=lrV0+GCqqUzw2ksLLv2ayBcB57
- JQOGSDlR7+wJ7RqHoc7POFWAYyTUH5SsN+WZWIwrLpoFSzTYOjCf4tYPN3N2/jU9O88w9FwZv1he7
- f82QMjS9h/P+LHN4rcZdn1dnah017YBdc2YLdrwlMYqz7SasKblLn+W7MJY/7HHisJow=;
+ bh=zNb4y/YgvMlqcunoawqZQihEjbHUq2NWUz+26/0fBXc=; b=TER6+YmDuxlBezXjgsV40dwdCc
+ 2z4zXJKXmPYZIdB55upqpLWzrjnaWoXkPsJFONzWAFY2nciVtuS5t62cYcBqz+dejamT3y3gz4xKX
+ rfU3d3X38taPa1bsU64hKOW/UMxlsOIEmT9V+SpA8kfoMUOev9Ot69LbJhqU4RxfH6rQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,71 +42,72 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=JSk9rawYxXsf9k9M7tLJDLFOJ6iCCpNPICjeBZC1AnI=; b=BXwIKSNXEtPqv8/1JlJAsc+8P1
- COEJwMniyuTYpLLqLALlMRWD+kY6NO1XDsic20VXavxPem9c24cOQECKUtURS8IrRQPrtbpjh1raG
- t9QCrbNaxwlnaWnuPO4UW1jHCAI5BW/Or+ERuyVDSMTPDyAO5Khj4pMSZrO5qc4uQvHA=;
-Received: from mail-oa1-f48.google.com ([209.85.160.48])
+ bh=zNb4y/YgvMlqcunoawqZQihEjbHUq2NWUz+26/0fBXc=; b=AmHqR5FqVOq/Ux8s0Y4u/BmNbG
+ rdP0g2AxtX02SIHbMyOSUCbgZVC81eym93sP980ccmv1zTd5Clj9Z+vEvTLWuJe2i+IYKJ7Zct0rC
+ ruiMl+X7yaeYECdlrGmGOd4VP9AJ7ALHW6Un0V9jP9Cgy4SdfnDiVNNJyJQkvxBP1x64=;
+Received: from mail-oa1-f44.google.com ([209.85.160.44])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uP0gN-00034c-RG for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:14:36 +0000
-Received: by mail-oa1-f48.google.com with SMTP id
- 586e51a60fabf-2d4e91512b4so3471595fac.1
+ id 1uP0hp-0003ED-M9 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jun 2025 15:16:06 +0000
+Received: by mail-oa1-f44.google.com with SMTP id
+ 586e51a60fabf-2e9071e3706so2821635fac.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Jun 2025 08:14:35 -0700 (PDT)
+ Tue, 10 Jun 2025 08:16:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749568465; x=1750173265; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1749568555; x=1750173355; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=JSk9rawYxXsf9k9M7tLJDLFOJ6iCCpNPICjeBZC1AnI=;
- b=eqfBkITNYYZ4ANl5v8c6juevSKarjLMh+zsarVZb1SWDRTWW3BWgx98/gZ386NYYIx
- C80shreta2nkhMUiRuVoQQU+ymoxnmdtPjtpN1oX7xiXi+ywbkYyaQ3fYz5dBVC+t/4Y
- X8+GkbqqWZ6JzCxl+AyznRSHb5E7hokikOMn4BSAaPnMznTkMVHKTOrguwXasiOyGPfs
- BBYzRLeceC/53z+NwLvZfEiyOyWYqH5+NgIVmertvEnA1kEw1XKb+8F1DlefsksgU/+h
- iMwT5019qQL/KQO1uSYxHEf71QcVb3+N+IfrMcnsWB4id4rE1JeaxWJonAlXI7fBka2w
- N0Ng==
+ bh=zNb4y/YgvMlqcunoawqZQihEjbHUq2NWUz+26/0fBXc=;
+ b=G/XJmI3yWBX6Pgk38tto4u+XKqLeMqPmL2E0Zm+piBfXTYd4Kb5PgPlzHjjOjKlexB
+ p5K4kgDcPyqqizyy8rXkhPE3XjFnKk4lR0bSQtAnZBbrHpD+49RQnjeX4e6ldEoNs+GZ
+ yAX/IxSq4WNaJBwkfAw/Nko0kKoQeL9GCwV7hP7EFfa53YWWMso6Vp/1gC6aKpnGII83
+ 0etfyfHr1ma1oKzxtPShraLq88PP/aMjnfpa0MOP5lGbntqZCAW5MuyduhtQBN4XJYwE
+ dE68IX0TCXkZiiOXaTvx1bTZmzBazjlz+zniIK7tP9BD6fnFDBZepvkM2bW7XcTOJobx
+ mbig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749568465; x=1750173265;
+ d=1e100.net; s=20230601; t=1749568555; x=1750173355;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=JSk9rawYxXsf9k9M7tLJDLFOJ6iCCpNPICjeBZC1AnI=;
- b=wMILa/9ciysem+Iv96qr6CR1jrc/2QkAQdErXZLnrX860flzEW64RxYutT+s7/cjaK
- arKeQs+P3l1RVNNRLBGGRcKMxirgXrwm3oz9lDVqWCmsTd0WmoQv4SAqkz2Tz2TyVp+n
- fOGrdBLiIe4F7cdZ21x61FegnRjtxraSlVcmBnh9z+A4S4wK1CDmjlp46glsbR3cuGYh
- xn15LvE9EZJVOByUGezCb9AxYIhDatFzs9sgHl9oOFiENiBuDsty7JFLze2xkTFPBhLr
- tU7L9mFj3PrsRUne7bDvo8sRJAfxWFQgbIFWHrSboF6ZhXeXNsxvJDT+4clBA/j3yNO0
- e1sw==
-X-Gm-Message-State: AOJu0YxVsGF3tG6V0w3tLywyR1vnwNKYqarElzKUaiCzgBK2IPcrNYWy
- rq6XVxQDNdrd2GX+V5Kii4GLLLZxnkJPW85/2UWToc8QiNzgzAq+4dEIqVRe7A==
-X-Gm-Gg: ASbGncvuDB2i0qKe/f8oqAJiwfZX22IxKHVqlEwG7Ewk78YIrR3dFVaQ9rjGo1nWFPi
- 0S0FqXKGAOeRtH9Uzn5UzhD8+Hf0uqG2Fp3BVL+RfjR1NAYW1FOdJ0IgpwRSfIdefeCj10ht7Be
- 5iCrBStxFrwklKu/T+fbJhuhWzVry+3iFZfsh2HuAuYqx2nTL+tEirQ9BE1k+bnICTsY7x09qjM
- 4NZoRZb5BnNNuWceBgn+mc8IeqjII1CxygjyZxpdvMcDbeRcXp8XGQw2B2vqvied8Ipp8g8/TGp
- 0pM0p69/Tt5t2CO5nRcdELhwdDP22hsv11bI7nWVQuvkojl601lpd1VINz2vzja0oSuDATW2jcv
- esLo=
-X-Google-Smtp-Source: AGHT+IEsQa8O8f5pJ33P2+FrfCvy6XAhZKfRMaKvI3tTykCYfkZ5PG1prTUVAmN63ulnxkcFpPf/7w==
-X-Received: by 2002:a05:6a21:600f:b0:1f3:418d:91b5 with SMTP id
- adf61e73a8af0-21ee256942amr26940200637.24.1749559089713; 
- Tue, 10 Jun 2025 05:38:09 -0700 (PDT)
+ bh=zNb4y/YgvMlqcunoawqZQihEjbHUq2NWUz+26/0fBXc=;
+ b=pJN8CungzhKaagPrS9bCZmXbmjhNBaGq2SCaLmsogEi7GR+wiwz5fmXVAJ1dRsCnGV
+ T2bWgsN+5fxza/NGH2rNpFa3Pozh/xdHS+YRBjaxuKJnJHuq6p6HGyE/PhoLj60CWqGU
+ RuRVBxsCz48JPCPQSlDZn2j6BT7CVE0ET37eIIgG/8DJUcUTkxNXZboBUEwueE7IwxcA
+ 0WBPMRBQA0Bst795WUw8JD/ZRVkMjVDL7GN8KxrwsFbyoShA5KjsdvdNNMPkPJuF9Atp
+ aYrB0mGnSbUxEqZflrwYq6FsJ48iKqGIt4aixsupjyI0lpXmdco64qnj7V5FaBc6Xhjl
+ gs5A==
+X-Gm-Message-State: AOJu0YzXUzcd+ycoSQYvLBUtuJ1vwTR1jX9qtW3usRjqJbCFHiZMPWfr
+ pNZBk9kpQ90f7Oy3+sBQYEvweZiegLVPpPFGldYfjwFRULzvQtpxAhrG9VuLyA==
+X-Gm-Gg: ASbGncun+DiRvtSH0gtMlrs+PKuAS+0VMcl8rnnKvyiNQbYQbEd2ieiMxUOXUH9XaeH
+ WuDlZ5m7V+qtvr11KRi/yPF5VUdueUmSjihS2a8BcR5w75pdAl7MmcngOfsBpeQXLUj7KAK4hZy
+ NWHKXh3+pEiOfQB946pcJrjX7eRTxq+/fW8dOFT9xfj9WUePWug5BadUiG5/ZGd1yM2pSUjFkOo
+ Vng9cIfYQw9sPUeYQ5iDodCie52zNMgp4OhxOuD7iEJaAkW2yvkFxJLa0stDzt7k1DhkCouhdry
+ Oj7XgVFp0LYRAa2QC7/QZ3Uktmk1Ds9siOooHQHaexyT9xz0EQivOOEFAT4konMhoYl8WGsqfLP
+ SmGg=
+X-Google-Smtp-Source: AGHT+IErSIImf4LQ6olAArrKUvMvoYzs1GnoiajwORi89iZvdAT1QSvuF0yRjvSuDRRy4RFGekCpuA==
+X-Received: by 2002:a05:6a21:a616:b0:21f:5532:1e53 with SMTP id
+ adf61e73a8af0-21f55321f30mr9385058637.33.1749559093546; 
+ Tue, 10 Jun 2025 05:38:13 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.08
+ d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 05:38:09 -0700 (PDT)
+ Tue, 10 Jun 2025 05:38:13 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 10 Jun 2025 20:37:14 +0800
-Message-ID: <20250610123743.667183-5-shengyong1@xiaomi.com>
+Date: Tue, 10 Jun 2025 20:37:16 +0800
+Message-ID: <20250610123743.667183-7-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
 References: <20250610123743.667183-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uP0gN-00034c-RG
-Subject: [f2fs-dev] [RFC PATCH v2 04/32] fsck.f2fs: fix invalidate checkpoint
+X-Headers-End: 1uP0hp-0003ED-M9
+Subject: [f2fs-dev] [RFC PATCH v2 06/32] f2fs-tools: add and export
+ lookup_sit_in_journal
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -125,68 +126,57 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Sheng Yong <shengyong1@xiaomi.com>
 
-If one cp is invalidate, set CP_FSCK_FLAG to allow fsck_verify() to
-fixing cp at the end of check.
+Add lookup_sit_in_journal() which is similar to lookup_nat_in_journal()
+to get the raw sit entry from journal if exist.
 
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 ---
- fsck/f2fs.h  |  6 ++++++
- fsck/mount.c | 11 ++++++++---
- 2 files changed, 14 insertions(+), 3 deletions(-)
+ fsck/f2fs.h  |  2 ++
+ fsck/mount.c | 18 ++++++++++++++++++
+ 2 files changed, 20 insertions(+)
 
 diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index 4c6c0c48b9ee..a4888a817284 100644
+index a4888a817284..60e3a2ebb0ee 100644
 --- a/fsck/f2fs.h
 +++ b/fsck/f2fs.h
-@@ -346,6 +346,12 @@ static inline __u64 cur_cp_crc(struct f2fs_checkpoint *cp)
- 	return le32_to_cpu(*((__le32 *)((unsigned char *)cp + crc_offset)));
+@@ -613,6 +613,8 @@ static inline int inline_xattr_size(struct f2fs_inode *inode)
  }
  
-+static inline void set_ckpt_flags(struct f2fs_checkpoint *cp, unsigned int f)
-+{
-+	unsigned int ckpt_flags = le32_to_cpu(cp->ckpt_flags);
-+	cp->ckpt_flags = cpu_to_le32(ckpt_flags | f);
-+}
-+
- static inline bool is_set_ckpt_flags(struct f2fs_checkpoint *cp, unsigned int f)
- {
- 	unsigned int ckpt_flags = le32_to_cpu(cp->ckpt_flags);
+ extern int lookup_nat_in_journal(struct f2fs_sb_info *sbi, u32 nid, struct f2fs_nat_entry *ne);
++extern int lookup_sit_in_journal(struct f2fs_sb_info *sbi, unsigned int segno,
++				 struct f2fs_sit_entry *raw_sit);
+ #define IS_SUM_NODE_SEG(sum)		(F2FS_SUMMARY_BLOCK_FOOTER(sum)->entry_type == SUM_TYPE_NODE)
+ #define IS_SUM_DATA_SEG(sum)		(F2FS_SUMMARY_BLOCK_FOOTER(sum)->entry_type == SUM_TYPE_DATA)
+ 
 diff --git a/fsck/mount.c b/fsck/mount.c
-index 337acb6f8ff8..b1f8e98dd7f0 100644
+index b1f8e98dd7f0..1f2cc960b9c0 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -1352,8 +1352,11 @@ void *validate_checkpoint(struct f2fs_sb_info *sbi, block_t cp_addr,
- 		return NULL;
+@@ -3290,6 +3290,24 @@ int lookup_nat_in_journal(struct f2fs_sb_info *sbi, u32 nid,
+ 	return -1;
+ }
  
- 	cp = (struct f2fs_checkpoint *)cp_page_1;
--	if (get_cp(cp_pack_total_block_count) > sbi->blocks_per_seg)
-+	if (get_cp(cp_pack_total_block_count) > sbi->blocks_per_seg) {
-+		MSG(0, "\tInvalid CP pack block count: %u\n",
-+		    get_cp(cp_pack_total_block_count));
- 		goto invalid_cp1;
++int lookup_sit_in_journal(struct f2fs_sb_info *sbi, unsigned int segno,
++					struct f2fs_sit_entry *raw_sit)
++{
++	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
++	struct f2fs_journal *journal = F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk);
++	int i;
++
++	for (i = 0; i < sits_in_cursum(journal); i++) {
++		if (segno_in_journal(journal, i) == segno) {
++			memcpy(raw_sit, &sit_in_journal(journal, i),
++						sizeof(struct f2fs_sit_entry));
++			DBG(3, "==> Found sit [0x%x] in sit cache\n", segno);
++			return i;
++		}
 +	}
- 
- 	pre_version = get_cp(checkpoint_ver);
- 
-@@ -1417,14 +1420,16 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
- 			sbi->cur_cp = 1;
- 			version = cp1_version;
- 		}
--	} else if (cp1) {
-+	} else if (cp1) { // cp2 is invalidate
- 		cur_page = cp1;
- 		sbi->cur_cp = 1;
- 		version = cp1_version;
--	} else if (cp2) {
-+		set_ckpt_flags(cp1, CP_FSCK_FLAG);
-+	} else if (cp2) { // cp1 is invalidate
- 		cur_page = cp2;
- 		sbi->cur_cp = 2;
- 		version = cp2_version;
-+		set_ckpt_flags(cp2, CP_FSCK_FLAG);
- 	} else
- 		goto fail_no_cp;
- 
++	return -1;
++}
++
+ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
 -- 
 2.43.0
 
