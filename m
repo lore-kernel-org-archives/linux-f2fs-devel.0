@@ -4,109 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 65D5EC5B552
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E9009C5B543
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 16:08:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=1JkB7dK6xbPbfyjQstNAv0oMWpcpukv42KNfYB/M0Kc=; b=RETkxquTjg0UJYewvN81qDOXf6
-	8xlU8eTvw0nu/z/Q5cn6Q1DaHl2ww+i0gxXd/RnvHgg1A/aqK32hLn24AgIPzSbOEzj9tigZbk0bL
-	quj9q2KZL50wV0XOh0vY5dqBVjpyVrJ/h18j5UEkzTT38nSayrq6ohU708O4WZGmTzrI=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=jY9STrpC1Xf1UJIC5AcjCQ+YRUyciPL1vOvJRpXTd00=; b=B6hQcGn54xB193QZz6m8l7Qis/
+	XegCf26yk5DA8IknBQc+Nn8+SiYH1Hzsp/OI2hdkZDGnOr1MKy7aaDOvN7zvYICFYMHDIYedMZyO3
+	gzIISfDJvgRdZhTvI2R0hJ5u7N/X9QTaX7J9972napA8rBoGoNt7CgBor+Q052evk99I=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uP1Ao-0007AV-2Y;
-	Tue, 10 Jun 2025 15:46:02 +0000
+	id 1uP1Wt-0006MD-8F;
+	Tue, 10 Jun 2025 16:08:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uP1An-0007AC-3c
+ (envelope-from <jaegeuk@kernel.org>) id 1uP1Wk-0006LT-Qq
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:46:01 +0000
+ Tue, 10 Jun 2025 16:08:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1086BviR+oImgXlsFqpY6zPEEkDZrQ9KrIVHCmPtDXs=; b=cnLkYM7pVa7O30RFb6zG8VIWd3
- E8MyWusn7flgpkm52jVrdFE/AcVbsAZZlx0JmJ7vcbNXVrlPGUIPdUvt34snkjN9vOIE0YMXOLE47
- y+9buFh0ng8TI1fIdcj89QMztubpo0A0l8ETnlgYGspA05BcyQC1OOQNCzw+IvRUPimw=;
+ bh=IN4jj/Y5sS3aHIqwno2PiQzDWLwYBHbc46T16vluFhw=; b=WsyWWQ1QsZ19A3FLxeq2x6N4qU
+ U1eXgniTJKOq1QDcfyHIjVx+6lx1fNkm+uVHZW04cSgiHk2NIlf2bHHoPZhwB2Uzd2+yx3mITSliQ
+ GvKWPbj+7oLH3wWchQhq7+mvK2OtVIZ/izCNn7nMaJN4B3VSNKDTEmUhDFYnL8sGdlNY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=1086BviR+oImgXlsFqpY6zPEEkDZrQ9KrIVHCmPtDXs=; b=hhzvsElvNEQkdjqpE5jY2sBooF
- 5/ZTkLuW5wnc0b7TnHXu1MN9RyqNZ+2F7yCv5ltI2Q2ELECsg5fS0AQyF3YZ541AJbmWCFLlBzlCN
- yEC5yJMy+nN81w+GuMlTqQiR6CmilgXno3/nDiCsuI3V1Wn+WEOoH6q94EST1jDbLl9Q=;
-Received: from mail-oa1-f44.google.com ([209.85.160.44])
+ bh=IN4jj/Y5sS3aHIqwno2PiQzDWLwYBHbc46T16vluFhw=; b=kJrdwVPvZIVMNkgtDXSuFafvw3
+ kKM2/j5mWOGkAY6lQqZiyg1i+lfNVL6i+q8Mv4jxuSWrhFDCiVwe+SttmUanwFbkS8ymhhfImUr2G
+ mGppCTLgUPtrKOHg7RGx0IpZ008jWKm9WoyPe5GaOb2sskRSt5v0uf8oXGRkEsE4Qibc=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uP1Am-00079O-Ee for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:46:01 +0000
-Received: by mail-oa1-f44.google.com with SMTP id
- 586e51a60fabf-2db2f23f174so3229130fac.2
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Jun 2025 08:46:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749570350; x=1750175150; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=1086BviR+oImgXlsFqpY6zPEEkDZrQ9KrIVHCmPtDXs=;
- b=lN54pDyFtsPYuqwEzIDE9rMff4cJfnIODMkqrf93uON2E1YgwJoqoicFHPuw4Ty1e6
- r+vUcjE6BDDRvYURM2funq+W+ICIHpHhchUA2B4vuT1w5WKxU736H97CVnbMjLo5rG/8
- fQTy/MbKKuBubBcnrNBHMu6xW5EjY+LvttgD02uFcZWsW24oPfUrvmDVWcgbKksDeFs3
- 4+gLBxsO64Qi1jChyGFNK8yDh16l+OXGm5svySE4Gx5EiFkYLiVciJzayz4M4IW6VBHn
- myhFbIb3f9bRSpzXuQ4PEnCUM+SaJ7/A+gwW8SrNkPzjXcGkDBrmyVRzE0E3GjGEm8VT
- Snqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749570350; x=1750175150;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=1086BviR+oImgXlsFqpY6zPEEkDZrQ9KrIVHCmPtDXs=;
- b=GtiNxvn0aGIiR86D/lxc+Wmn8UHao071oO1jDJs7tCQ4lJTdv9zkHc78Pof7F8FGg9
- s9ExoBfJcVqyzTbILzmBeMMslZb1jHFl6cKpIqgWycJOx5W+FMYAUWwePH4m6ogTe+V/
- 16LAUXUFrTYeIA2XGI7pcgcUyOR75DMgGRlMUllL8U8w7yqUXDm3kigtHpCQogiAstPh
- oS1Hs+Kzbz/qOVCxrGkirBOqpQVJ0a5PgYyFKFFdekO42Bl4qLQ/GDd+gbWYUi5ns4w+
- EpIhMm53GTwSSmmYh6xjYh+UcDrZoweI6UdOmzPaBR7nDkCIk3CYP6V1IIu28vQc5Z8f
- yGVA==
-X-Gm-Message-State: AOJu0Yy7+VwRNqldRQFYAwbfKt6a6H0nDlVNtYnKl2/NOFPbaJinlyhn
- 3ED61iENsqdQdwCOPFAdX+P2IcJRWkjJK1ftq4kfgI0qu8xluu+VG2BJ9P7QVA==
-X-Gm-Gg: ASbGncu6Bo1ZpHaHaJUojkkuGA7w0+HvmZQIbPTojhlZArYkR1IgzEYL3oxerHCvlwn
- yhEkvMvpBjRYE4P85bLmY8u9Z/8dG1h5PGpRiiaeiLOyGgI8/m+osqbuyx5w2ytWqcLkn66xYLX
- RiEc2ZwtNJtuPAemtXf3aFO6HcE06uK4oWMzNaym089LKm5jYKKapjO2i+mxSHAtQcM1W55Yv3U
- sS/nFWpHUDIiFq5GszqCgE7K1vLvuM9zCtUAn9FC0mrTTJY4VmMst87FioC3Q5FOCT3MjRempF6
- 1nsgt7VzYxlcuUK5p7r0m/1UfB2PJCpKtO01l62WqkoqOeVORbOIY9JWEPMaB0xfVtLA
-X-Google-Smtp-Source: AGHT+IFMeTd6kDjc6bWZ33NBX30ZLcuemhP3ABCc0oD0FjtdBBTfnQe6VuRgBnieFgZqd/xol80vYw==
-X-Received: by 2002:a05:6a20:431f:b0:203:bb65:995a with SMTP id
- adf61e73a8af0-21f78c60acfmr4422853637.30.1749559085848; 
- Tue, 10 Jun 2025 05:38:05 -0700 (PDT)
-Received: from PC.mioffice.cn ([43.224.245.249])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.04
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 05:38:05 -0700 (PDT)
-From: Sheng Yong <shengyong2021@gmail.com>
-X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Tue, 10 Jun 2025 20:37:12 +0800
-Message-ID: <20250610123743.667183-3-shengyong1@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
-References: <20250610123743.667183-1-shengyong1@xiaomi.com>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1uP1Wk-00014h-Bb for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jun 2025 16:08:42 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id DB0FA44BA6;
+ Tue, 10 Jun 2025 16:08:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42E0FC4CEF0;
+ Tue, 10 Jun 2025 16:08:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1749571711;
+ bh=USwOIsVhkg9+A/PdAnwHxSXCbsHxApVOGy15tnigTpU=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=nMzYR96Fynzp3sQAzKNWvM5Z4VgwmmPLWIhJsUYmsy632UmWgluCPVruUCW6sRvuO
+ s3ZyevWiEH3dmLRdHDKHapVNOpma34dD8NOmucqRnJ20rhQQ+vtuhxLO/OzoOykJxG
+ PNREOVlBcNi4q2tcXQYOr0mn4n+hSmHDY4ngMku0BOwuBhHghpKe7VMvS9uWTsP7tT
+ FnYawbySQa/ft0EgIJ07c5qwF86yMNM0taB/e/FS9EWI9qDEqMP9hgsPfLDs5afBPm
+ +96kG9e0pWOrQoG/K6D4JaZsHW7ffVY/F7JIvQvAQQDGvoT3sCYkoo8g0tvsw88MYI
+ Q7BPA5VdsuAiA==
+Date: Tue, 10 Jun 2025 16:08:29 +0000
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Message-ID: <aEhYfYrknbNzT8Or@google.com>
+References: <1749107920-17958-1-git-send-email-zhiguo.niu@unisoc.com>
 MIME-Version: 1.0
-X-Headers-End: 1uP1Am-00079O-Ee
-Subject: [f2fs-dev] [RFC PATCH v2 02/32] f2fs-tools: add option N to answer
- no for all questions
+Content-Disposition: inline
+In-Reply-To: <1749107920-17958-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Headers-End: 1uP1Wk-00014h-Bb
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: compress: fix UAF of
+ f2fs_inode_info in f2fs_free_dic
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -118,134 +86,124 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: shengyong1@xiaomi.com, linux-f2fs-devel@lists.sourceforge.net
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, baocong.liu@unisoc.com,
+ Hao_hao.Wang@unisoc.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Sheng Yong <shengyong1@xiaomi.com>
+Hi Zhiguo,
 
-In some scenario, such as autotest, it is not expected to answer
-question from fsck or dump. To simply answer no to all these questions,
-this patch adds an option `N' to do that.
+This patch causes CPU hang when running fsstress on compressed/non-compressed
+files. Please check.
 
-Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
----
- fsck/dump.c       |  3 +++
- fsck/fsck.c       |  2 +-
- fsck/main.c       | 14 +++++++++++---
- include/f2fs_fs.h |  1 +
- 4 files changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/fsck/dump.c b/fsck/dump.c
-index 66d6c791ae09..10df7e593bfe 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -681,6 +681,9 @@ static int dump_filesystem(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	if (c.show_file_map)
- 		return dump_inode_blk(sbi, ni->ino, node_blk);
- 
-+	if (c.answer_no)
-+		return 0;
-+
- 	printf("Do you want to dump this %s into %s/? [Y/N] ",
- 			S_ISDIR(imode) ? "folder" : "file",
- 			base_path);
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 4d05e1b4a21b..14677128dc2d 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -3834,7 +3834,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
- 	}
- 
- #ifndef WITH_ANDROID
--	if (nr_unref_nid && !c.ro) {
-+	if (nr_unref_nid && !c.ro && !c.answer_no) {
- 		char ans[255] = {0};
- 		int res;
- 
-diff --git a/fsck/main.c b/fsck/main.c
-index c5d41597934a..b01a22c8cf53 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -86,6 +86,7 @@ void fsck_usage()
- 	MSG(0, "  -t show directory tree\n");
- 	MSG(0, "  -q preserve quota limits\n");
- 	MSG(0, "  -y fix all the time\n");
-+	MSG(0, "  -N answer \"No\" for all questions\n");
- 	MSG(0, "  -V print the version number and exit\n");
- 	MSG(0, "  --dry-run do not really fix corruptions\n");
- 	MSG(0, "  --no-kernel-check skips detecting kernel change\n");
-@@ -114,6 +115,7 @@ void dump_usage()
- 	MSG(0, "  -f do not prompt before dumping\n");
- 	MSG(0, "  -H support write hint\n");
- 	MSG(0, "  -y alias for -f\n");
-+	MSG(0, "  -N answer \"No\" for all questions\n");
- 	MSG(0, "  -o dump inodes to the given path\n");
- 	MSG(0, "  -P preserve mode/owner/group for dumped inode\n");
- 	MSG(0, "  -L Preserves symlinks. Otherwise symlinks are dumped as regular files.\n");
-@@ -263,7 +265,7 @@ void f2fs_parse_options(int argc, char *argv[])
- 	}
- 
- 	if (!strcmp("fsck.f2fs", prog)) {
--		const char *option_string = ":aC:c:m:Md:fg:HlO:p:q:StyV";
-+		const char *option_string = ":aC:c:m:Md:fg:HlO:p:q:StyNV";
- 		int opt = 0, val;
- 		char *token;
- 		struct option long_opt[] = {
-@@ -396,6 +398,9 @@ void f2fs_parse_options(int argc, char *argv[])
- 				c.force = 1;
- 				MSG(0, "Info: Force to fix corruption\n");
- 				break;
-+			case 'N':
-+				c.answer_no = true;
-+				break;
- 			case 'q':
- 				c.preserve_limits = atoi(optarg);
- 				MSG(0, "Info: Preserve quota limits = %d\n",
-@@ -449,7 +454,7 @@ void f2fs_parse_options(int argc, char *argv[])
- 		}
- 	} else if (!strcmp("dump.f2fs", prog)) {
- #ifdef WITH_DUMP
--		const char *option_string = "d:fi:I:n:LMo:Prs:Sa:b:Vy";
-+		const char *option_string = "d:fi:I:n:LMo:Prs:Sa:b:VyN";
- 		static struct dump_option dump_opt = {
- 			.nid = 0,	/* default root ino */
- 			.start_nat = -1,
-@@ -527,6 +532,9 @@ void f2fs_parse_options(int argc, char *argv[])
- 			case 'f':
- 				c.force = 1;
- 				break;
-+			case 'N':
-+				c.answer_no = true;
-+				break;
- 			case 'r':
- 				dump_opt.use_root_nid = 1;
- 				break;
-@@ -1369,7 +1377,7 @@ fsck_again:
- 
- 	f2fs_do_umount(sbi);
- 
--	if (c.func == FSCK && c.bug_on) {
-+	if (c.func == FSCK && c.bug_on && !c.answer_no) {
- 		if (!c.ro && c.fix_on == 0 && c.auto_fix == 0 && !c.dry_run) {
- 			char ans[255] = {0};
- retry:
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index f7268d1e90ff..5cd4ad666c06 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -1593,6 +1593,7 @@ struct f2fs_configuration {
- 	int whint;
- 	int aliased_devices;
- 	uint32_t aliased_segments;
-+	bool answer_no;
- 
- 	/* mkfs parameters */
- 	int fake_seed;
--- 
-2.43.0
-
+On 06/05, Zhiguo Niu wrote:
+> The decompress_io_ctx may be released asynchronously after
+> I/O completion. If this file is deleted immediately after read,
+> and the kworker of processing post_read_wq has not been executed yet
+> due to high workloads, It is possible that the inode(f2fs_inode_info)
+> is evicted and freed before it is used f2fs_free_dic.
+> 
+>     The UAF case as below:
+>     Thread A                                      Thread B
+>     - f2fs_decompress_end_io
+>      - f2fs_put_dic
+>       - queue_work
+>         add free_dic work to post_read_wq
+>                                                    - do_unlink
+>                                                     - iput
+>                                                      - evict
+>                                                       - call_rcu
+>     This file is deleted after read.
+> 
+>     Thread C                                 kworker to process post_read_wq
+>     - rcu_do_batch
+>      - f2fs_free_inode
+>       - kmem_cache_free
+>      inode is freed by rcu
+>                                              - process_scheduled_works
+>                                               - f2fs_late_free_dic
+>                                                - f2fs_free_dic
+>                                                 - f2fs_release_decomp_mem
+>                                       read (dic->inode)->i_compress_algorithm
+> 
+> This patch use igrab before f2fs_free_dic and iput after free the dic when dic free
+> action is done by kworker.
+> 
+> Cc: Daeho Jeong <daehojeong@google.com>
+> Fixes: bff139b49d9f ("f2fs: handle decompress only post processing in softirq")
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> Signed-off-by: Baocong Liu <baocong.liu@unisoc.com>
+> ---
+> v3: use igrab to replace __iget
+> v2: use __iget/iput function
+> ---
+>  fs/f2fs/compress.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index b3c1df9..729ad16 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -1687,7 +1687,7 @@ static void f2fs_release_decomp_mem(struct decompress_io_ctx *dic,
+>  }
+>  
+>  static void f2fs_free_dic(struct decompress_io_ctx *dic,
+> -		bool bypass_destroy_callback);
+> +		bool bypass_destroy_callback, bool late_free);
+>  
+>  struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
+>  {
+> @@ -1743,12 +1743,12 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
+>  	return dic;
+>  
+>  out_free:
+> -	f2fs_free_dic(dic, true);
+> +	f2fs_free_dic(dic, true, false);
+>  	return ERR_PTR(ret);
+>  }
+>  
+>  static void f2fs_free_dic(struct decompress_io_ctx *dic,
+> -		bool bypass_destroy_callback)
+> +		bool bypass_destroy_callback, bool late_free)
+>  {
+>  	int i;
+>  
+> @@ -1775,6 +1775,8 @@ static void f2fs_free_dic(struct decompress_io_ctx *dic,
+>  	}
+>  
+>  	page_array_free(dic->inode, dic->rpages, dic->nr_rpages);
+> +	if (late_free)
+> +		iput(dic->inode);
+>  	kmem_cache_free(dic_entry_slab, dic);
+>  }
+>  
+> @@ -1783,16 +1785,18 @@ static void f2fs_late_free_dic(struct work_struct *work)
+>  	struct decompress_io_ctx *dic =
+>  		container_of(work, struct decompress_io_ctx, free_work);
+>  
+> -	f2fs_free_dic(dic, false);
+> +	f2fs_free_dic(dic, false, true);
+>  }
+>  
+>  static void f2fs_put_dic(struct decompress_io_ctx *dic, bool in_task)
+>  {
+>  	if (refcount_dec_and_test(&dic->refcnt)) {
+>  		if (in_task) {
+> -			f2fs_free_dic(dic, false);
+> +			f2fs_free_dic(dic, false, false);
+>  		} else {
+>  			INIT_WORK(&dic->free_work, f2fs_late_free_dic);
+> +			/* use igrab to avoid inode is evicted simultaneously */
+> +			f2fs_bug_on(F2FS_I_SB(dic->inode), !igrab(dic->inode));
+>  			queue_work(F2FS_I_SB(dic->inode)->post_read_wq,
+>  					&dic->free_work);
+>  		}
+> -- 
+> 1.9.1
 
 
 _______________________________________________
