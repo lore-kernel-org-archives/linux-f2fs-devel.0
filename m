@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2DB4DC5B552
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5BD87C5B552
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:21:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=LTa2az92XEguJRQ8rIh9eRElEDucbK+nqfFwS4ynxq0=; b=O5NsAKzqXQitVC3QMsnJnlvwDl
-	VA7105ppPqA1p0iDd4b30B/+M3gbEGVLAJrfmTMeX+z3GOdDL6E794zexjVha+trHh6hWaxgA2Xbt
-	NZ0tq4QvrKQJ33SsIOzTGAGshonp3UsMXkpGuOrKK0u01qgUNhO2F6JSTWhk4wYS8OBI=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=cJ66mE/A/WZkTT1ovGpuLwj7j1Vb8kwnAL1HoN7uCzk=; b=BsyTaiA5k9y1CqV/fXSojcQpUA
+	/O4jSAENfhI7jf1ePS/KKelqHla/3zp9PzC5xqEZu83iW6mGB5kYYHLz0Fm4aHU9/bFzbqbsCbSyj
+	Q8cnW0alNdDaUDqXMvPormtziyha2hxVV9/I9xegtAi3MT5l17LNBubB1AQ9ONnkmrBs=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uP0n3-0006EK-Rw;
-	Tue, 10 Jun 2025 15:21:29 +0000
+	id 1uP0nV-0003iT-1z;
+	Tue, 10 Jun 2025 15:21:57 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uP0n2-0006EC-9O
+ (envelope-from <shengyong2021@gmail.com>) id 1uP0nU-0003hS-4K
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:21:28 +0000
+ Tue, 10 Jun 2025 15:21:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jUihtedqGG7Eltxntk1PdtIBYi3N4bQKIHs5UFNNgAk=; b=b18GNJ3QYpRDLNFe4jPaAdbPtN
- QybIa0MaK7Y+qlWcsISFhP4xUor3lI2aL50pNeM5/5aKNkjw1HF8uEx5ywHcZiM7jygVIZPo910UQ
- 6eFB4/sQph73faX4lHmtbVw58x9deHqpFTP/JTvI0qSts7Pj1recuML74g/9f5vHIgM4=;
+ bh=3gCMTKNi77CA/eM6isaHiq32av1/cgavzeRb84Y1dkc=; b=SVEH6U7r1/w+gvf4e92As1ErFD
+ uvfk3sKGoE2GDNQBbztsqystgQZFS4V5ZuC1vtU21I4yJevpnvk85ZEBxnfTOPedN9uNkZ+2RpnMC
+ rh8mImUdeRvlVYZ3hAACsZ9mNFJDOLoAqTvmjMsuoL4vRaSJ6TyVo9o5TOPHXFw8pqwY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,71 +42,72 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=jUihtedqGG7Eltxntk1PdtIBYi3N4bQKIHs5UFNNgAk=; b=AhGyE+e11pcyHdZi0zv/Rvptun
- PcJFbOfdNqzWifSbWbmYaGpcp0+wQpq5sO/jlFwWYU1Bf6yMtGdwFDZDK+C1zqKeyWdr7nxEPqrCT
- U6Cm7YF6mWyk8+SDWB2Y3MraPRJCUGyqcy7ZbN8n6v4WkI74Z5OcYUWr1IwWceXfaKUM=;
-Received: from mail-yw1-f172.google.com ([209.85.128.172])
+ bh=3gCMTKNi77CA/eM6isaHiq32av1/cgavzeRb84Y1dkc=; b=Xs+Ld/yy0EYRcnSgWCvTPJtDg/
+ MoWok3sKnXgWhk4w6VvUBjbKK8RU2gXNumOJqa6itV5L3WgVedyLXXFe4wxvBqwTgzwhdkdUA8Bjx
+ XTF/TZemTVERqo17bmpfcuOaxhCE2jgx7GTAzI0Yrk+XFmo+Xw+8Dg/wrdfI+F2TtHBk=;
+Received: from mail-vs1-f46.google.com ([209.85.217.46])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uP0n1-00043R-SB for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:21:28 +0000
-Received: by mail-yw1-f172.google.com with SMTP id
- 00721157ae682-7113ac6d4b3so4701337b3.3
+ id 1uP0nJ-00045M-Kq for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jun 2025 15:21:47 +0000
+Received: by mail-vs1-f46.google.com with SMTP id
+ ada2fe7eead31-4e7949d9753so849864137.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Jun 2025 08:21:27 -0700 (PDT)
+ Tue, 10 Jun 2025 08:21:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749568877; x=1750173677; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1749568895; x=1750173695; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=jUihtedqGG7Eltxntk1PdtIBYi3N4bQKIHs5UFNNgAk=;
- b=kCKwP+6/zaMrRx0PQGu4FRP0rzyNUapmkLZIhWfMlDXvoH8gFuGwwdvi68kxp8OPsO
- WjMbDA4GU/p2TdGw6hoVh9VhDFC3TzwT1Uvr/zmW0fFm17F6uP5gBbiGCvDteoH8OZVs
- UU6pCWBCaVC7IT1ouTiLKdh6MLeb2iykzN3++QNdE2JOWaSsNJtA0JTuAFVyfdRBeAOE
- T7eXXCQ0SUdSYP0lTKx7OOUBcpVNZRGYeckp97nibX2A0PasrkyoAZMK1srUKs5nSrcS
- IX2HeZ/EotB84vtDro80K717912Zl6lfJmRp1R3Rh5Ml0kR7Cs4soNAqiuo43khQPe2M
- rMnA==
+ bh=3gCMTKNi77CA/eM6isaHiq32av1/cgavzeRb84Y1dkc=;
+ b=BNWZff6IOK5+pBW3R4VRRHKcJp924eJwwqyk04ph/5jfugy2wfw86nhl+EZtHBYbO4
+ 1dTqV8U4PMwdwiHw3bbZL8wYGyAxDGGqhHglfrofzBar2PcBly29lbRGQNYNDkCyq1us
+ ITQaRHUcr2ETLyNoz/wumpOHu9swgGMtJQvs10VWXXI0p6Lm8pkclOur2jO8GrzBU1jx
+ TK6TEPsurquaE3aneAuWoH631TX9Nl6mwk9virvcwREWYHc6V8YJlNSuLLxkAV5xP9B+
+ xVG0JoTNHQaBU/r02doP7FsHtB1Y2sU4drhrBIof+gCYUt/wvrPNBd0MtruL0Vj4xJPf
+ Ihtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749568877; x=1750173677;
+ d=1e100.net; s=20230601; t=1749568895; x=1750173695;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=jUihtedqGG7Eltxntk1PdtIBYi3N4bQKIHs5UFNNgAk=;
- b=jNzaUvvmtKnw1X3gZlAYqz9qEc05taZuQtiZEfPWQeJr/30EEMEpjJr6Ny5gYY0n+r
- Ia2466/ykBv4IoTkVw7EhGwGFcMxV1xooYLzPXwIO0xNNpuHMeAG0sWBOAMtlQve7ceh
- pWggXCZPnhArCQZpSiOgbuEOAEjX/g7PlVvcIUZMNbr9ZEabGvZPy285aIlKVy8WyY6j
- 62kMLbH6kttD1yLEB4LfkN80CUw9Qv5ihGkW9WqkSIbuX9BMfJ+kXOCn0lxfdNRt9sgA
- qQQMuQeYK72nsnJEHwgSfs8+HCF20s05NqJzbu5EwNbcrAOvAdtg4pghoA6uWeWLs+18
- goEg==
-X-Gm-Message-State: AOJu0YwA5OyCM5Q3V6BZC/2Xh9TtsiIBw+oFPxPN8FxEisEAI1bc6OWG
- oI2FBLn5MJKVTJFYBd4XgQXeT5uasjggXqTCX3hfSF3RQPRHimHRK7fLVr1pKg==
-X-Gm-Gg: ASbGnctIiFyxmoUxNviqqNKiGJcyTBtqfJIYv6W2lm9OIJWGpIgfc7pcabuc/xbBj7J
- SyyI7tPEGPLtzFtPT1s1aCUau3sBytv9LEzenuXULlZSLaIXxpte/dsx3h/Hs8kGRAZ5OStSYBj
- hup4Ys9dK7zo8XDUYZY4r7iAMnu0Jay5SMDTPuYC41rQPDQy9hhftCoaPDhYUcqDz4FD0gne+/r
- Gfs8u/UWXqv+MGFwIr0qe5YRzJwt+yzL4wHTTmx5Ut9KI9oly0FdyappPa4KGQQqFTF42oMNQSx
- zrgUKiyc8AX09Gv6vurX/9JdGot3kOJbeDqyQSe+n3i9KkKwYRxukz2OYMSQu89QXP1+
-X-Google-Smtp-Source: AGHT+IEFWEqR1I8ZH05V+Vt8JKfpoLb0SzCx8I7HKdHSxc5BiOkHHEG3/mVBvxDYAkKn7oMFiOUdNQ==
-X-Received: by 2002:a05:6a00:4f95:b0:747:accb:773c with SMTP id
- d2e1a72fcca58-74827ea574fmr22363653b3a.13.1749559119951; 
- Tue, 10 Jun 2025 05:38:39 -0700 (PDT)
+ bh=3gCMTKNi77CA/eM6isaHiq32av1/cgavzeRb84Y1dkc=;
+ b=iraCBwFJw9tKqT1qBonw02O+i85AgGgiZm/ivHuYECfFrg4Q64fMzM2JGfAXLFOAp4
+ w6QQv/c85QfhKwV+e/JSthN+OTF0c2rEu1mnMpHngoT1isdx2KQ8JZwBQ9y8egorTNhD
+ aZO0LGROqGx3zWRLhhF1+NnQFkQWg+85RS6BKGoFw3gVMAbUI+j2BJEf1ZaMvARcqDbq
+ htpEueW6uQzRi75VVYNk/k7WgjX3MBcEA/cn/ZXzlGSB6LD/zn4MCOFRN/i+VN7u1+SC
+ 9JtYOlKDWEHVi6hm/DApUFzVn+b9nrFHGUnKkC5G8ux4+kuvuuP2ngW/zDJGbu8pOl+J
+ G8kQ==
+X-Gm-Message-State: AOJu0YyUJdgiGeCNgeZ0o1GXzDpSisnbhOuAGpHs0agWZPULCdpx8Lz/
+ 7chap7TOcleNtG9fEfazxCqKZxv3FxHz9YUgK3jdBNoHbX+jwdLEejjddmoOOA==
+X-Gm-Gg: ASbGncuoSEmX2L93qBkv4M214iG+dBWzBKp0tStcWULyvt/qXZKcib9wdFBJilTlk3S
+ jfJ8SRXILiD1LLl5B6pUFQ8XpEoh1HoNS5pHtF+L3ykt+ifm8lFeElaoHs6PT9MRLXidBTh29HI
+ 6WGIs5xcs741MaajcnsdU4iJ09jSHdeAXixXFMkeWsqI4CttpCcVcTf1G30IeXvTpcwk5imXc5Y
+ buGvqGjFljEuP8Ty0Sq2KvSFhTNm0diBAnIEuVKAHjj3iT0FnxZcHYey0kTtHQEot4Rj8hqX9dD
+ vbxwmbitr1fK+DUQIZbWT7yr7iuq5SNQyoA9fDc8WypHdxx4fuHPgjfZHkBZh3lVfVnuQRgmR9b
+ PISU=
+X-Google-Smtp-Source: AGHT+IFlb7OOGw4y0ruykjlOkHtEj5ShNE5SAxs/fTDPYLVXdHsEhpEND2Gz2TQY1ykx257JAJ+hWw==
+X-Received: by 2002:a05:6a00:3cc8:b0:740:9c57:3907 with SMTP id
+ d2e1a72fcca58-74827f15b4dmr24679283b3a.19.1749559143651; 
+ Tue, 10 Jun 2025 05:39:03 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.38
+ d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.39.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 05:38:39 -0700 (PDT)
+ Tue, 10 Jun 2025 05:39:03 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 10 Jun 2025 20:37:29 +0800
-Message-ID: <20250610123743.667183-20-shengyong1@xiaomi.com>
+Date: Tue, 10 Jun 2025 20:37:41 +0800
+Message-ID: <20250610123743.667183-32-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
 References: <20250610123743.667183-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uP0n1-00043R-SB
-Subject: [f2fs-dev] [RFC PATCH v2 19/32] tests: add fsck testcase of fixing
- nat entry with invalid blkaddr
+X-Headers-End: 1uP0nJ-00045M-Kq
+Subject: [f2fs-dev] [RFC PATCH v2 31/32] tests: add inject testcase of
+ injecting META area
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -127,51 +128,100 @@ From: Sheng Yong <shengyong1@xiaomi.com>
 
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 ---
- tests/f_nat_bad_blkaddr/README    |  4 ++++
- tests/f_nat_bad_blkaddr/expect.in | 12 ++++++++++++
- tests/f_nat_bad_blkaddr/script    | 25 +++++++++++++++++++++++++
- 3 files changed, 41 insertions(+)
- create mode 100644 tests/f_nat_bad_blkaddr/README
- create mode 100644 tests/f_nat_bad_blkaddr/expect.in
- create mode 100644 tests/f_nat_bad_blkaddr/script
+ tests/i_meta/README    |   5 +
+ tests/i_meta/expect.in |  60 ++++++++++++
+ tests/i_meta/script    | 212 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 277 insertions(+)
+ create mode 100644 tests/i_meta/README
+ create mode 100644 tests/i_meta/expect.in
+ create mode 100644 tests/i_meta/script
 
-diff --git a/tests/f_nat_bad_blkaddr/README b/tests/f_nat_bad_blkaddr/README
+diff --git a/tests/i_meta/README b/tests/i_meta/README
 new file mode 100644
-index 000000000000..1545fb0fb342
+index 000000000000..2ad5bd5d90c5
 --- /dev/null
-+++ b/tests/f_nat_bad_blkaddr/README
-@@ -0,0 +1,4 @@
++++ b/tests/i_meta/README
+@@ -0,0 +1,5 @@
 +1. create f2fs image
-+2. mount f2fs and create a regular file
-+3. inject block_addr in nat entry with value 0x12345 of the regular file
-+4. fsck fixes the nat entry by nullifying it
-diff --git a/tests/f_nat_bad_blkaddr/expect.in b/tests/f_nat_bad_blkaddr/expect.in
++2. inject members in META area
++3. verify injected fields with dump.f2fs
++4. restore injected fields
++5. fsck checks f2fs image
+diff --git a/tests/i_meta/expect.in b/tests/i_meta/expect.in
 new file mode 100644
-index 000000000000..321aa14887ba
+index 000000000000..f9a306eaa918
 --- /dev/null
-+++ b/tests/f_nat_bad_blkaddr/expect.in
-@@ -0,0 +1,12 @@
-+Info: Force to fix corruption
-+[ASSERT] (sanity_check_nat: x)  --> blkaddress is not valid. [0x12345]
-+[FIX] (__chk_dentries:x)  --> Unlink [_INO_] - testfile len[0x8], type[0x1]
-+[fsck_chk_quota_files:x] Fixing Quota file ([  0] ino [0x4])
-+[FIX] (nullify_nat_entry:x)  --> Remove nid [0x4] in NAT
-+[fsck_chk_quota_files:x] Fixing Quota file ([  1] ino [0x5])
-+[FIX] (nullify_nat_entry:x)  --> Remove nid [0x5] in NAT
-+[fsck_chk_quota_files:x] Fixing Quota file ([  2] ino [0x6])
-+[FIX] (nullify_nat_entry:x)  --> Remove nid [0x6] in NAT
-+NID[_INO_] is unreachable, blkaddr:0x12345
-+[FIX] (nullify_nat_entry:x)  --> Remove nid [_INO_] in NAT
-+Info: Force to fix corruption
-diff --git a/tests/f_nat_bad_blkaddr/script b/tests/f_nat_bad_blkaddr/script
++++ b/tests/i_meta/expect.in
+@@ -0,0 +1,60 @@
++original feature:_ORIG_FEATURE_
++inject feature:feature [0x12345:74565]
++restore feature:_ORIG_FEATURE_
++original devs.path:devs[i].path [_ORIG_PATH_]
++inject devs.path:devs[i].path [_INJECT_PATH_]
++restore devs.path:devs[i].path [_ORIG_PATH_]
++original checkpoint_ver:
++checkpoint_ver [_ORIG_CPVER_HEX_:_ORIG_CPVER_DEC_]
++original ckpt_flags:
++ckpt_flags [_ORIG_FLAGS_HEX_:_ORIG_FLAGS_DEC_]
++original cur_node_segno[1]:
++cur_node_segno[1] [_ORIG_CUR_NODE_SEGNO_HEX_:_ORIG_CUR_NODE_SEGNO_DEC_]
++original cur_node_blkoff[1]:
++cur_node_blkoff[1] [_ORIG_CUR_NODE_BLKOFF_HEX_:_ORIG_CUR_NODE_BLKOFF_DEC_]
++original cur_data_segno[2]:
++cur_data_segno[2] [_ORIG_CUR_DATA_SEGNO_HEX_:_ORIG_CUR_DATA_SEGNO_DEC_]
++original cur_data_blkoff[2]:
++cur_data_blkoff[2] [_ORIG_CUR_DATA_BLKOFF_HEX_:_ORIG_CUR_DATA_BLKOFF_DEC_]
++original elapsed_time:
++elapsed_time [_ORIG_ELAPSED_TIME_HEX_:_ORIG_ELAPSED_TIME_DEC_]
++inject checkpoint_ver:
++checkpoint_ver [0xffffffffffffff0:1152921504606846960]
++inject ckpt_flags:
++ckpt_flags [0x12345:74565]
++inject cur_node_segno[1]:
++cur_node_segno[1] [0x1:1]
++inject cur_node_blkoff[1]:
++cur_node_blkoff[1] [0x2:2]
++inject cur_data_segno[2]:
++cur_data_segno[2] [0x3:3]
++inject cur_data_blkoff[2]:
++cur_data_blkoff[2] [0x4:4]
++inject elapsed_time:
++elapsed_time [0xffff0000:4294901760]
++restore checkpoint_ver:
++checkpoint_ver [_ORIG_CPVER_HEX_:_ORIG_CPVER_DEC_]
++restore ckpt_flags:
++ckpt_flags [_ORIG_FLAGS_HEX_:_ORIG_FLAGS_DEC_]
++restore cur_node_segno[1]:
++cur_node_segno[1] [_ORIG_CUR_NODE_SEGNO_HEX_:_ORIG_CUR_NODE_SEGNO_DEC_]
++restore cur_node_blkoff[1]:
++cur_node_blkoff[1] [_ORIG_CUR_NODE_BLKOFF_HEX_:_ORIG_CUR_NODE_BLKOFF_DEC_]
++restore cur_data_segno[2]:
++cur_data_segno[2] [_ORIG_CUR_DATA_SEGNO_HEX_:_ORIG_CUR_DATA_SEGNO_DEC_]
++restore cur_data_blkoff[2]:
++cur_data_blkoff[2] [_ORIG_CUR_DATA_BLKOFF_HEX_:_ORIG_CUR_DATA_BLKOFF_DEC_]
++restore elapsed_time:
++elapsed_time [_ORIG_ELAPSED_TIME_HEX_:_ORIG_ELAPSED_TIME_DEC_]
++original nat entry:
++nid:_INO_ ino:_INO_ ver:0 offset:0
++inject nat entry:
++nid:_INO_ ino:_INO_ ver:18 offset:0
++restore nat entry:
++nid:_INO_ ino:_INO_ ver:0 offset:0
++original sit entry:
++segno:_SEGNO_ vblocks:512 seg_type:1 mtime:0
++inject sit entry:
++segno:_SEGNO_ vblocks:512 seg_type:1 mtime:74565
++restore sit entry:
++segno:_SEGNO_ vblocks:512 seg_type:1 mtime:0
+diff --git a/tests/i_meta/script b/tests/i_meta/script
 new file mode 100644
-index 000000000000..d3ac65fb4f51
+index 000000000000..c1484bf470f5
 --- /dev/null
-+++ b/tests/f_nat_bad_blkaddr/script
-@@ -0,0 +1,25 @@
++++ b/tests/i_meta/script
+@@ -0,0 +1,212 @@
 +#!/bin/bash
 +
-+DESC="nat entry with invalid block_addr"
++DESC="verify injecting fields in META area"
 +
 +. $TOPDIR/tests/helpers
 +
@@ -180,20 +230,207 @@ index 000000000000..d3ac65fb4f51
 +
 +mkdir $TESTDIR/mntdir
 +safe_mount $MNT_OPTS $META $TESTDIR/mntdir >> $LOG
-+touch $TESTDIR/mntdir/testfile
++dd if=/dev/zero of=$TESTDIR/mntdir/testfile bs=4K count=513 status=none
 +ino=`stat -c "%i" $TESTDIR/mntdir/testfile`
 +safe_umount $TESTDIR/mntdir >> $LOG
 +rm -rf $TESTDIR/mntdir
 +
-+$INJECT --nat 0 --nid $ino --mb block_addr --val 0x12345 $META >> $LOG
-+$FSCK $FSCK_OPTS -f $META > $OUT
-+$FSCK $FSCK_OPTS -f $META >> $OUT
-+cat $OUT >> $LOG
++node=`$DUMP $DUMP_OPTS -i $ino $META`
++echo "$node" >> $LOG
++blkaddr=`get_mb_val "$node" 'i_addr\[0x100\]'`
++segno=`get_segno $blkaddr`
++echo "ino:$ino blkaddr:$blkaddr segno:$segno" >> $LOG
 +
-+INO=`printf "0x%x" $ino`
-+sed "s/_INO_/$INO/g" $TESTDIR/expect.in > $TESTDIR/expect
++## inject super block
++# member "magic", "s_stop_reason" and "s_errors" are verified by
++# f_sb_bad_magic and f_sb_errors
++
++orig_sb=`get_sb $META`
++orig_feats_val=`get_mb_val "$orig_sb" feature`
++orig_path_str=`get_mb_val "$orig_sb" 'devs\[i\]\.path'`
++
++# inject and restore feature
++orig_feats=`echo "$orig_sb" | grep "^feature" | trim_extra_space`
++echo "original feature:$orig_feats" > $OUT
++$INJECT --sb 0 --mb feature --val 0x12345 $META >> $LOG
++cur_sb=`get_sb $META`
++cur_feats=`echo "$cur_sb" | grep "^feature" | trim_extra_space`
++echo "inject feature:$cur_feats" >> $OUT
++$INJECT --sb 0 --mb feature --val $orig_feats_val $META >> $LOG
++cur_sb=`get_sb $META`
++cur_feats=`echo "$cur_sb" | grep "^feature" | trim_extra_space`
++echo "restore feature:$cur_feats" >> $OUT
++
++# inject and restore the first devs.path
++orig_path=`echo "$orig_sb" | grep '^devs\[i\]\.path' | awk "NR==1" | trim_extra_space`
++if [ x"$orig_path" = x"" ]; then
++	echo "original devs.path:devs[i].path []" >> $OUT
++	echo "inject devs.path:devs[i].path []" >> $OUT
++	echo "restore devs.path:devs[i].path []" >> $OUT
++else
++	echo "original devs.path:$orig_path" >> $OUT
++	new_meta_path=$TESTDIR/new_meta
++	rm -f $new_meta_path
++	ln -s $META $new_meta_path
++	$INJECT --sb 0 --mb devs.path --idx 0 --str $new_meta_path $META >> $LOG
++	cur_sb=`get_sb $new_meta_path`
++	cur_path=`echo "$cur_sb" | grep '^devs\[i\]\.path' | awk "NR==1" | trim_extra_space`
++	echo "inject devs.path:$cur_path" >> $OUT
++	$INJECT --sb 0 --mb devs.path --idx 0 --str $orig_path_str $new_meta_path >> $LOG
++	cur_sb=`get_sb $META`
++	cur_path=`echo "$cur_sb" | grep '^devs\[i\]\.path' | awk "NR==1" | trim_extra_space`
++	echo "restore devs.path:$cur_path" >> $OUT
++fi
++
++## inject checkpoint
++# member "next_blkaddr" and "crc" are verified by f_loop_fsync_dnodes and
++# f_cp_bad_crc
++
++# inject and restore cp members
++orig_cp=`get_cp $META`
++echo "original checkpoint_ver:" >> $OUT
++get_mb "$orig_cp" checkpoint_ver >> $OUT
++orig_cpver_val=`get_mb_val "$orig_cp" checkpoint_ver`
++echo "original ckpt_flags:" >> $OUT
++get_mb "$orig_cp" ckpt_flags >> $OUT
++orig_flags_val=`get_mb_val "$orig_cp" ckpt_flags`
++echo "original cur_node_segno[1]:" >> $OUT
++get_mb "$orig_cp" 'cur_node_segno\[1\]' >> $OUT
++orig_cur_node_segno_val=`get_mb_val "$orig_cp" 'cur_node_segno\[1\]'`
++echo "original cur_node_blkoff[1]:" >> $OUT
++get_mb "$orig_cp" 'cur_node_blkoff\[1\]' >> $OUT
++orig_cur_node_blkoff_val=`get_mb_val "$orig_cp" 'cur_node_blkoff\[1\]'`
++echo "original cur_data_segno[2]:" >> $OUT
++get_mb "$orig_cp" 'cur_data_segno\[2\]' >> $OUT
++orig_cur_data_segno_val=`get_mb_val "$orig_cp" 'cur_data_segno\[2\]'`
++echo "original cur_data_blkoff[2]:" >> $OUT
++get_mb "$orig_cp" 'cur_data_blkoff\[2\]' >> $OUT
++orig_cur_data_blkoff_val=`get_mb_val "$orig_cp" 'cur_data_blkoff\[2\]'`
++echo "original elapsed_time:" >> $OUT
++get_mb "$orig_cp" 'elapsed_time' >> $OUT
++orig_elapsed_time_val=`get_mb_val "$orig_cp" elapsed_time`
++$INJECT --cp 0 --mb checkpoint_ver --val 0xffffffffffffff0 $META >> $LOG
++$INJECT --cp 0 --mb ckpt_flags --val 0x12345 $META >> $LOG
++$INJECT --cp 0 --mb cur_node_segno --idx 1 --val 1 $META >> $LOG
++$INJECT --cp 0 --mb cur_node_blkoff --idx 1 --val 2 $META >> $LOG
++$INJECT --cp 0 --mb cur_data_segno --idx 2 --val 3 $META >> $LOG
++$INJECT --cp 0 --mb cur_data_blkoff --idx 2 --val 4 $META >> $LOG
++$INJECT --cp 0 --mb elapsed_time --val 0xffff0000 $META >> $LOG
++cur_cp=`get_cp $META`
++echo "inject checkpoint_ver:" >> $OUT
++get_mb "$cur_cp" checkpoint_ver >> $OUT
++echo "inject ckpt_flags:" >> $OUT
++get_mb "$cur_cp" ckpt_flags >> $OUT
++echo "inject cur_node_segno[1]:" >> $OUT
++get_mb "$cur_cp" 'cur_node_segno\[1\]' >> $OUT
++echo "inject cur_node_blkoff[1]:" >> $OUT
++get_mb "$cur_cp" 'cur_node_blkoff\[1\]' >> $OUT
++echo "inject cur_data_segno[2]:" >> $OUT
++get_mb "$cur_cp" 'cur_data_segno\[2\]' >> $OUT
++echo "inject cur_data_blkoff[2]:" >> $OUT
++get_mb "$cur_cp" 'cur_data_blkoff\[2\]' >> $OUT
++echo "inject elapsed_time:" >> $OUT
++get_mb "$cur_cp" 'elapsed_time' >> $OUT
++$INJECT --cp 0 --mb checkpoint_ver --val $orig_cpver_val $META >> $LOG
++$INJECT --cp 0 --mb ckpt_flags --val $orig_flags_val $META >> $LOG
++$INJECT --cp 0 --mb cur_node_segno --idx 1 --val $orig_cur_node_segno_val $META >> $LOG
++$INJECT --cp 0 --mb cur_node_blkoff --idx 1 --val $orig_cur_node_blkoff_val $META >> $LOG
++$INJECT --cp 0 --mb cur_data_segno --idx 2 --val $orig_cur_data_segno_val $META >> $LOG
++$INJECT --cp 0 --mb cur_data_blkoff --idx 2 --val $orig_cur_data_blkoff_val $META >> $LOG
++$INJECT --cp 0 --mb elapsed_time --val $orig_elapsed_time_val $META >> $LOG
++cur_cp=`get_cp $META`
++echo "restore checkpoint_ver:" >> $OUT
++get_mb "$cur_cp" checkpoint_ver >> $OUT
++echo "restore ckpt_flags:" >> $OUT
++get_mb "$cur_cp" ckpt_flags >> $OUT
++echo "restore cur_node_segno[1]:" >> $OUT
++get_mb "$cur_cp" 'cur_node_segno\[1\]' >> $OUT
++echo "restore cur_node_blkoff[1]:" >> $OUT
++get_mb "$cur_cp" 'cur_node_blkoff\[1\]' >> $OUT
++echo "restore cur_data_segno[2]:" >> $OUT
++get_mb "$cur_cp" 'cur_data_segno\[2\]' >> $OUT
++echo "restore cur_data_blkoff[2]:" >> $OUT
++get_mb "$cur_cp" 'cur_data_blkoff\[2\]' >> $OUT
++echo "restore elapsed_time:" >> $OUT
++get_mb "$cur_cp" 'elapsed_time' >> $OUT
++
++## inject nat entry
++# member "ino" and "block_addr" are verified by f_nat_bad_ino and
++# f_nat_bad_blkaddr
++
++# inject and restore version
++rm -f dump_nat
++$DUMP $DUMP_OPTS -n $ino~$((ino + 1)) $META >> $LOG
++echo "original nat entry:" >> $OUT
++cat dump_nat | trim_extra_space >> $OUT
++orig_ver=0 # orig_ver must be 0 in this testcase
++$INJECT --nat 0 --nid $ino --mb version --val 0x12 $META >> $LOG
++$DUMP $DUMP_OPTS -n $ino~$((ino + 1)) $META >> $LOG
++echo "inject nat entry:" >> $OUT
++cat dump_nat | trim_extra_space >> $OUT
++$INJECT --nat 0 --nid $ino --mb version --val $orig_ver $META >> $LOG
++$DUMP $DUMP_OPTS -n $ino~$((ino + 1)) $META >> $LOG
++echo "restore nat entry:" >> $OUT
++cat dump_nat | trim_extra_space >> $OUT
++
++## inject sit entry
++# member "type", "valid_map" and "vblocks" are verified by f_sit_bad_type,
++# f_sit_bad_valid_blocks and f_sit_bad_vblocks
++
++# inject and restore mtime
++rm -f dump_sit
++$DUMP $DUMP_OPTS -s $segno~$((segno + 1)) $META >> $LOG
++echo "original sit entry:" >> $OUT
++orig_sit=`grep "segno:" dump_sit | trim_extra_space`
++echo "$orig_sit" >> $OUT
++orig_mtime=`echo $orig_sit | sed 's/.* mtime:\([0-9]\{,1\}\) .*/\1/'`
++$INJECT --sit 0 --blk $blkaddr --mb mtime --val 0x12345 $META >> $LOG
++$DUMP $DUMP_OPTS -s $segno~$((segno + 1)) $META >> $LOG
++echo "inject sit entry:" >> $OUT
++grep "segno:" dump_sit | trim_extra_space >> $OUT
++$INJECT --sit 0 --blk $blkaddr --mb mtime --val $orig_mtime $META >> $LOG
++$DUMP $DUMP_OPTS -s $segno~$((segno + 1)) $META >> $LOG
++echo "restore sit entry:" >> $OUT
++grep "segno:" dump_sit | trim_extra_space >> $OUT
++
++## run fsck to check if there are any errors
++$FSCK $FSCK_OPTS -f $META >> $LOG
++if [ $? -ne 0 ]; then
++	echo "fsck fail" >> $OUT
++fi
++
++sed "s/_ORIG_FEATURE_/$orig_feats/g" $TESTDIR/expect.in > $TESTDIR/expect
++# escape '\' in path
++new_meta_path_str=`echo $new_meta_path | sed 's/\\//\\\\\//g'`
++orig_path_str=`echo $orig_path_str | sed 's/\\//\\\\\//g'`
++sed -i "s/_ORIG_PATH_/$orig_path_str/g" $TESTDIR/expect
++sed -i "s/_INJECT_PATH_/$new_meta_path_str/g" $TESTDIR/expect
++dec=$((orig_cpver_val)); hex=`printf "0x%x" $dec`
++sed -i "s/_ORIG_CPVER_HEX_/$hex/g" $TESTDIR/expect
++sed -i "s/_ORIG_CPVER_DEC_/$dec/g" $TESTDIR/expect
++dec=$((orig_flags_val)); hex=`printf "0x%x" $dec`
++sed -i "s/_ORIG_FLAGS_HEX_/$hex/g" $TESTDIR/expect
++sed -i "s/_ORIG_FLAGS_DEC_/$dec/g" $TESTDIR/expect
++dec=$((orig_cur_node_segno_val)); hex=`printf "0x%x" $dec`
++sed -i "s/_ORIG_CUR_NODE_SEGNO_HEX_/$hex/g" $TESTDIR/expect
++sed -i "s/_ORIG_CUR_NODE_SEGNO_DEC_/$dec/g" $TESTDIR/expect
++dec=$((orig_cur_node_blkoff_val)); hex=`printf "0x%x" $dec`
++sed -i "s/_ORIG_CUR_NODE_BLKOFF_HEX_/$hex/g" $TESTDIR/expect
++sed -i "s/_ORIG_CUR_NODE_BLKOFF_DEC_/$dec/g" $TESTDIR/expect
++dec=$((orig_cur_data_segno_val)); hex=`printf "0x%x" $dec`
++sed -i "s/_ORIG_CUR_DATA_SEGNO_HEX_/$hex/g" $TESTDIR/expect
++sed -i "s/_ORIG_CUR_DATA_SEGNO_DEC_/$dec/g" $TESTDIR/expect
++dec=$((orig_cur_data_blkoff_val)); hex=`printf "0x%x" $dec`
++sed -i "s/_ORIG_CUR_DATA_BLKOFF_HEX_/$hex/g" $TESTDIR/expect
++sed -i "s/_ORIG_CUR_DATA_BLKOFF_DEC_/$dec/g" $TESTDIR/expect
++dec=$((orig_elapsed_time_val)); hex=`printf "0x%x" $dec`
++sed -i "s/_ORIG_ELAPSED_TIME_HEX_/$hex/g" $TESTDIR/expect
++sed -i "s/_ORIG_ELAPSED_TIME_DEC_/$dec/g" $TESTDIR/expect
++sed -i "s/_INO_/$ino/g" $TESTDIR/expect
++sed -i "s/_SEGNO_/$segno/g" $TESTDIR/expect
 +
 +check_result
++rm -f $new_meta_path dump_nat dump_sit
 -- 
 2.43.0
 
