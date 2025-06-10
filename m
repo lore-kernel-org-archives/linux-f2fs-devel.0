@@ -4,106 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 66767C5B552
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5B728C5B543
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:31:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=NK8pvmoZQwfXFa0zUu82cDR15ARkVAN1sZuCv3mREZs=; b=dInrencCCMIDrQbSObEZ4zijVD
-	gQQRQjGHGI2HYEyMrgYDWdZpwuJE73I3DpZrLx1MbFVXjeLM3FLz9uf3ZLss4n5amrZqxjaoFNsOu
-	I2KTuF0wjwl45VOv8pw7vE5Gg2LZIbkcFIVQGj5hCBFg07WqtEafVvJL2ElCqXjwFIGU=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=FoD+C898EWhkeVCa2D6tHmb4nRWkF5uROCrgWcHUuGc=; b=GKEDw9oHfHAqujiEC6GBDf2bZ9
+	Yk2VNwQVr4/rzIyoPWGTdeLxZfkD39I1GPTk8/PrBuqnO5ddnGy5OYAvY5dAQynQp7pYlSIGySNPQ
+	2lC/0StIUBFMf1iav9ORiNbiDaL6Ceaixh0SwpicmT04+OAk1++f6rSDtmQgWS3s6LDE=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uP0wv-0006YW-2v;
-	Tue, 10 Jun 2025 15:31:41 +0000
+	id 1uP0x9-0000Ob-27;
+	Tue, 10 Jun 2025 15:31:55 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uP0wt-0006YL-Uh
+ (envelope-from <shengyong2021@gmail.com>) id 1uP0x7-0000OR-Qs
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:31:39 +0000
+ Tue, 10 Jun 2025 15:31:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=pmfMm7Nb1yNlzF6R6rI5VL4E5dOk2r0mgiTxkKHGcwI=; b=Jsr65LZ4FR2hXT9TPnBCl2L39I
- fBHUHeRramGQ2r8i0c/jenRGF+iT1DNsC7Y8DeECZD8tFha/3tYDV25wi11DVgzFDc+K/KijNDmLn
- 7FLhkslvBSPBIWB290gE1dzpV4w9+s3lbytpnwdD4bi9r5cY8/qpKwxoqOdxlXux9YVw=;
+ bh=m0IZxA6PKAlUrpKmhY5TVnbhi1aMK34z/DqnKn1rLtE=; b=TTMRRBpqKPWxvKQ28EglEUZH06
+ xqLlqoVPwE6CkBpvZj1R+ZxDVk+Kty14jCzXHEzTPTHGsV4B7LKhgSZrVFILZuDo8R1+1eOrab3jd
+ 00K0EqVka1GM3xazvPtn46HY8+pCBRM1A0EFsyXP+4hlBjCneaGdFkwjenk0kGN/j4kQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=pmfMm7Nb1yNlzF6R6rI5VL4E5dOk2r0mgiTxkKHGcwI=; b=R
- Fg9wnWimAu5MlgDjPrvoB1ABYxNoH4PwuxYOQJ+cwrHdWbs/vffH5Qwy5VubaLtwveK/cohEheQzs
- ctcxY+W3myrnE+oxSNBPqXaiI/OsD8qg7be+4BfSnLrvSNdAHeOR9aoP09GuWHY9Y7TLBg4mCUSx4
- cTQ1P4VI14otj7/Q=;
-Received: from mail-qv1-f42.google.com ([209.85.219.42])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=m0IZxA6PKAlUrpKmhY5TVnbhi1aMK34z/DqnKn1rLtE=; b=PbSc5j6Jsspt+giTRjw1c09R9g
+ dV55Yx1QVUk6bZoXf/zWQ9TNtNkJred47cLVEXgnHn5X/YjzHK491TFe+l1CdefiVUSmfCCB0jtzl
+ LH31cs8TscUwAS4WwOKFmYkgpMaXbTan+v6opVinubQQl85eJ7L/eh6IR9euVEudmRdQ=;
+Received: from mail-qv1-f46.google.com ([209.85.219.46])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uP0ws-0005HX-J1 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:31:39 +0000
-Received: by mail-qv1-f42.google.com with SMTP id
- 6a1803df08f44-6face367320so51149146d6.3
+ id 1uP0x6-0005Jh-QC for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jun 2025 15:31:53 +0000
+Received: by mail-qv1-f46.google.com with SMTP id
+ 6a1803df08f44-6fad3400ea3so50791046d6.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Jun 2025 08:31:38 -0700 (PDT)
+ Tue, 10 Jun 2025 08:31:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749569488; x=1750174288; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=pmfMm7Nb1yNlzF6R6rI5VL4E5dOk2r0mgiTxkKHGcwI=;
- b=DWhWhC6piAL13Zyh6wtjnIuEy6NxiCcu8bZgGyWfHSCY9cydKl4MyOqoMsYdt8Fktf
- ilnuJ8H5H59nbKA0nsGRfUHWl+pUEHZT9p5o0DfrRWXs/ITayTnIXJ1WSDNm6xSi7eWU
- O47Pkdjs8U0HHrHH9/mCL4mS92ITAbJGXrQJ9cymcUT5NOvGD4smlkrWML9Rrg8G5C0h
- iCD+EbKOWWsTTeK97614fZYpWyfc2iOW8SGxYS3uGEcOunl0+SCgTwjN/PLKgLov2F66
- Q6V/S7z3ZwpJcTV8qS+qo0i64hS77ZW/A6Ry7wm1Nbbj2Y9qRcngbH6jMJtS6nt99etd
- wxdw==
+ d=gmail.com; s=20230601; t=1749569507; x=1750174307; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=m0IZxA6PKAlUrpKmhY5TVnbhi1aMK34z/DqnKn1rLtE=;
+ b=BNhNUR1MpH+tyNE050tN6pG18iFZYVqMeTlGzU2cDtbtg2GLdOVepxB/btfuswC30a
+ VJ/tHdKobgsE/4OIcZSgH7DWoum9LsGlbinCo750jYKC9AnRXuPaDg5+Bl1YAodF8uot
+ 7hktKdsQ8EGnOOdQXBXAxe6A8twEU/atnTV3O93NTY4TsiWyCoDwnn9ldAtmvdxz2+ro
+ nS/9DXSuUpzwNf3vmviseBktjOdZwmFK39H6Ivg3rCkFYRXlK/7Fi9K2iDN73ayvOZsl
+ dRomkpG5zujC3sLewDCKUGV3VE+Xf8OaAshOPJkX81cmEuy5UPlMQuafp4huJXbivK4N
+ p6gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749569488; x=1750174288;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=pmfMm7Nb1yNlzF6R6rI5VL4E5dOk2r0mgiTxkKHGcwI=;
- b=rmi2F75YeL+Hg5+kelE4qH6BVPv7BzMANXXhn4dpQKKZChzfD+puR6BJCpB1IQ/WF4
- 6WyCH5xXLgmfasq/EuTokS9BXChQHsQ39I6/3bO5YX67+DMuqsmfqOh/ahZyIREZ9Rw+
- 05fdBj6vKvFRSMlsVrY9J7LGf0rOEiZkjmeuFXHX8BW/or1G4wk5X40/TZHvsXmLpCpJ
- LZWCnJoU5NrOrkUL6P/vpc02xpXEiOJDkGq0tmBaZOaAKJOEJeYzs7pAM7mjjRDty/6h
- rpNKx/gJiL1YQof/hbpbZR7DXk92fDO1en8vF8AMI9APIzk9NMNzoX+IprSHDiD2/wQs
- XS4g==
-X-Gm-Message-State: AOJu0YxLz+emUXF6JTMLQ/6iz83uduQyrKs8pHOU4eny7tpGKwwmagUv
- WMRMSzLvwb2+xCWMCYNHmIZCpmz72MeEQRtlOeOBB01dU/jE6kbGUp5TGPjSvQ==
-X-Gm-Gg: ASbGncuV4/F3h07hF8Cib3JXSkvXS9SeioH44NTERXA9pYUdXMAYWvm9v7rxn4WUDJz
- 9hH83zUZYyFzoPq0gr4Qf2loPOHJBsIRV5VSTpOGgbEe7/iOK/sNNFWTrvgwJ+YQLahJL1JEeqZ
- diLMvYC5dKHZ7NN+CTQoMxngPt/isexridLuaaUyJAXxnTb6gZx0QCjRqH2NQ3dfcz9ERolzCDg
- Gl3T0PLabc9uf8RdsTNCpc3vP9Z5hH/rzc9eAERzs0QvpLf9v+bulW8F4XZ/FwREi4bhQUoJi1G
- DLjutq0Ib7rw0895LBwruHDI7b647Tdul+VfOAup12s4qdzAhfMlu3u6E/4OmaxXV/0RLl5puHO
- aaGE=
-X-Google-Smtp-Source: AGHT+IHWHS/zaVodYaZBtZ0SDo4LUpPqudtQgvCNAXqncoFA+SdWL0cXO5qDPbXIWYnqt+UfQIOptw==
-X-Received: by 2002:a05:6a21:2d4b:b0:1f5:6c7b:8920 with SMTP id
- adf61e73a8af0-21ee24fd600mr24948393637.9.1749559081968; 
- Tue, 10 Jun 2025 05:38:01 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1749569507; x=1750174307;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=m0IZxA6PKAlUrpKmhY5TVnbhi1aMK34z/DqnKn1rLtE=;
+ b=S3rvhLNkQ3HFe3qB8yxbcQWQojPHZVBx0hlq6AR1OVILI7lg5aJVdHIyE/luVqh/fs
+ vRmNEugCNDl6shgz1JclDBxmlzCaYyW3cBUBKxzMUfvggeHGudqbg6CfG0GfrXzbokPP
+ fx7FY4baXZpv9tKiMysNs2kg1wxNbjxk4WShC+ii5PgAq2348EyptMFUo85aA240XBuJ
+ dR89wtP2KQX8fs+En5kU/cA45xxX4/lGL8QZvenOBdDrpJHtBWNbAGseynNNiUrsky6o
+ QnaNxhk+HJZTk8O1hsDybVOxboAuUFpTzQpt1P/Oe+PSOOXBIEQvFEoj5aophGg0rzL3
+ c8zA==
+X-Gm-Message-State: AOJu0YyUcPOzo/n4gHNYDMLogZWes3KJSNOa0QqXoauVr4HNFzjDuYp+
+ lkmmEVBtHfyF2YnXto1gYdxLI6IvJkI8eWknHOpVpKSMEN1JWbaghFm8k3P4Rw==
+X-Gm-Gg: ASbGncuP/V1AB4HyPrXyWtzcZfE9ForFj4mqxFl9IZPeu6EMASCHLG9ZPrFmObY/jPE
+ rDRFgbCT8xObrV061I+Wd0P4mIapmrHc5AmVsPDPfArmzWNXlqBCRcgNGy1dq9s1r9ZZn4JvKae
+ /HfuDQsXysHFiNQUOk35O2QW8h/Ztf0P6VzMDPFPKsqYelZQP5CzuzSX1FiZQGxNYZXy2q5r9Lm
+ zXh6pl4XMok1Bd00uwuLJDnuMbywbAFzVR8ESDHSw77Bza856VWibFn+H9kr17dUODCqsBemqxd
+ 7qAvMZ65q9Ki5on5++cw8EMpMu5WKUojQfm1c4C3t1ZZ4OmttYZ7pS5sHAdYVTN7RsGM2jlIE7k
+ B7WA=
+X-Google-Smtp-Source: AGHT+IEryjaUjuPdgJ45MZHngg7uZLn/GZc+PhMmdehdryZqre9Q2cmPInjrgdiqmO4A/qWIsyPAww==
+X-Received: by 2002:a05:6a20:3d86:b0:21c:faa4:9abb with SMTP id
+ adf61e73a8af0-21f78c49b90mr4508943637.20.1749559107963; 
+ Tue, 10 Jun 2025 05:38:27 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.00
+ d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.26
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 05:38:01 -0700 (PDT)
+ Tue, 10 Jun 2025 05:38:27 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 10 Jun 2025 20:37:10 +0800
-Message-ID: <20250610123743.667183-1-shengyong1@xiaomi.com>
+Date: Tue, 10 Jun 2025 20:37:23 +0800
+Message-ID: <20250610123743.667183-14-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
+References: <20250610123743.667183-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uP0ws-0005HX-J1
-Subject: [f2fs-dev] [RFC PATCH v2 00/32] f2fs-tools: add testcases
+X-Headers-End: 1uP0x6-0005Jh-QC
+Subject: [f2fs-dev] [RFC PATCH v2 13/32] inject.f2fs: add member `filename'
+ in inject_dentry
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -120,256 +124,254 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi, folks,
+From: Sheng Yong <shengyong1@xiaomi.com>
 
-This patchset tries to add an auto testsuit for f2fs-tools, including
-fsck.f2fs, inject.f2fs for now.
+This patch adds a new member `filename' in inject_dentry to inject
+dentry filename. The dentry is specified by nid option.
 
-The patchset can splited into 3 parts:
-  PATCH 1~9:   is a preparation for testcases. It fixes some errors in
-               fsck and inject, and do some cleanup and improvement for
-               f2fs-tools.
-  PATCH 10~13: add new injection members
-  PATCH 14~32: add testcases
+Note that '.' and '..' dentries are special, because they are not in the
+parent directory of nid. So this patch also adds a new option `--dots'
+to inject these two dentries.
 
-thanks,
-shengyong
+Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
+---
+ fsck/inject.c     | 94 ++++++++++++++++++++++++++++++++++++++++-------
+ fsck/inject.h     |  1 +
+ man/inject.f2fs.8 | 12 +++++-
+ 3 files changed, 92 insertions(+), 15 deletions(-)
 
--8<-
-
-The following is almost quoted from v1:
-
-The basic idea of these testcases are:
- 1. create f2fs image
- 2. corrupt the image by inject specific fields
- 3. fsck fixes the image
- 4. verify fsck output with expected message
-
-Some helper scripts are provided:
- * test_config.in: is used to derive basic configurations of all
-                   testcases.
- * runtests.in: is used to derive `runtests' which is used to run
-                testcases.
- * filter.sed: removes unnecessary messages and cleanup arbitrary
-               values.
- * helpers: provides helper functions
-
-The usage of `runtests':
- * run all testcases:
-     runtests
- * run one testcase:
-     runtests <testcase directory path>
- * cleanup previous results:
-     runtests clean
-
-To run the testcases on Android, only have to change settings in
-test_config:
- * set path of $META and $DATA
- * set path of tools
- * push tests directory to an Android phone
-NOTE TAHT: the testcases will format $META!!!
-
-Some testcase requires root permission to mount the image and create
-files.
-
-Each testcase should have a sub-directory, where three files are needed:
- * README: describe information of the testcase
- * script: testcase itself
- * expect.in: is used to derive expected output message
-
-New files are generated in the testcase directory after test:
- * log: output in detail
- * expect: derived from expect.in
- * out: output that will be compared with expect
- * PASS: testcase is passed
- * FAIL: testcase is failed, in which differ of out and expect is saved
-
-The name of testcase directory has some optional prefix:
- * f_: fsck testcase
- * i_: inject testcase
- * m_: mkfs testcase
-But there are only fsck and inject testcases for now.
-
-To run testcases, it's better to compile fsck.f2fs as statically linked
-executable, or `make install' installs tools and libraries. Otherwise,
-libtool compiles f2fs-tools in debug mode and create a wrapper script
-to locate elf executable and libraries. However, dump.f2fs and
-inject.f2fs cannot be used in the wrapper way.
-
-v2: * add some fix and cleanup
-    * remove img.tar.gz from testcases
-    * add testcases for injection
-    * cleanup helpers script and simplify filter.sed and expected.in
-v1: https://lore.kernel.org/linux-f2fs-devel/20241029120956.4186731-1-shengyong@oppo.com/
-
-Sheng Yong (32):
-  fsck.f2fs: do not finish/reset zone if dry-run is true
-  f2fs-tools: add option N to answer no for all questions
-  f2fs-tools: cleanup {nid|segno}_in_journal
-  fsck.f2fs: fix invalidate checkpoint
-  dump.f2fs: print more info
-  f2fs-tools: add and export lookup_sit_in_journal
-  inject.f2fs: fix injecting sit/nat in journal
-  inject.f2fs: fix injection on zoned device
-  inject.f2fs: fix and cleanup parsing numeric options
-  inject.f2fs: add members in inject_cp
-  inject.f2fs: add member `feature' in inject_sb
-  inject.f2fs: add members in inject_node
-  inject.f2fs: add member `filename' in inject_dentry
-  tests: prepare helper scripts for testcases
-  tests: add fsck testcase of fixing bad super magic
-  tests: add fsck testcase of fixing errors recorded in sb
-  tests: add fsck testcase of fixing cp crc
-  tests: add fsck testcase of fixing nat entry with invalid ino
-  tests: add fsck testcase of fixing nat entry with invalid blkaddr
-  tests: add fsck testcase of fixing sit entry type
-  tests: add fsck testcase of fixing sit entry vblocks
-  tests: add fsck testcase of fixing sit entry valid_map
-  tests: add fsck testcase of fixing sum entry nid
-  tests: add fsck testcase of fixing sum footer type
-  tests: add fsck testcase of fixing sum entry ofs_in_node
-  tests: add fsck testcase of fixing inode invalid i_addr
-  tests: add fsck testcase of fixing dentry hash code
-  tests: add fsck testcase of fixing lost dots
-  tests: add fsck testcase of fixing duplicated dots
-  tests: add fsck testcase of fixing loop fsync dnodes
-  tests: add inject testcase of injecting META area
-  tests: add inject testcase of injecting node block
-
- .gitignore                            |  14 +
- Makefile.am                           |   2 +-
- configure.ac                          |   1 +
- fsck/dump.c                           |  15 +-
- fsck/f2fs.h                           |  12 +-
- fsck/fsck.c                           |   2 +-
- fsck/fsck.h                           |   4 +-
- fsck/inject.c                         | 438 +++++++++++++++++++++-----
- fsck/inject.h                         |   1 +
- fsck/main.c                           |  14 +-
- fsck/mount.c                          |  61 ++--
- include/f2fs_fs.h                     |   1 +
- lib/libf2fs_zoned.c                   |   6 +-
- man/inject.f2fs.8                     |  43 ++-
- tests/Makefile.am                     |  26 ++
- tests/f_cp_bad_crc/README             |   5 +
- tests/f_cp_bad_crc/expect.in          |   4 +
- tests/f_cp_bad_crc/script             |  38 +++
- tests/f_dentry_bad_hash/README        |   8 +
- tests/f_dentry_bad_hash/expect.in     |   8 +
- tests/f_dentry_bad_hash/script        |  56 ++++
- tests/f_dentry_dup_dots/README        |  11 +
- tests/f_dentry_dup_dots/expect.in     |  26 ++
- tests/f_dentry_dup_dots/script        |  49 +++
- tests/f_dentry_lost_dots/README       |   7 +
- tests/f_dentry_lost_dots/expect.in    |  16 +
- tests/f_dentry_lost_dots/script       |  37 +++
- tests/f_inode_bad_iaddr/README        |   6 +
- tests/f_inode_bad_iaddr/expect.in     |  13 +
- tests/f_inode_bad_iaddr/script        |  50 +++
- tests/f_loop_fsync_dnodes/README      |   5 +
- tests/f_loop_fsync_dnodes/expect.in   |   6 +
- tests/f_loop_fsync_dnodes/script      |  46 +++
- tests/f_nat_bad_blkaddr/README        |   4 +
- tests/f_nat_bad_blkaddr/expect.in     |  12 +
- tests/f_nat_bad_blkaddr/script        |  25 ++
- tests/f_nat_bad_ino/README            |   4 +
- tests/f_nat_bad_ino/expect.in         |  12 +
- tests/f_nat_bad_ino/script            |  31 ++
- tests/f_sb_bad_magic/README           |   3 +
- tests/f_sb_bad_magic/expect.in        |   5 +
- tests/f_sb_bad_magic/script           |  15 +
- tests/f_sb_errors/README              |   5 +
- tests/f_sb_errors/expect.in           |   7 +
- tests/f_sb_errors/script              |  22 ++
- tests/f_sit_bad_type/README           |   5 +
- tests/f_sit_bad_type/expect.in        |   3 +
- tests/f_sit_bad_type/script           |  38 +++
- tests/f_sit_bad_valid_map/README      |   5 +
- tests/f_sit_bad_valid_map/expect.in   |   4 +
- tests/f_sit_bad_valid_map/script      |  43 +++
- tests/f_sit_bad_vblocks/README        |   5 +
- tests/f_sit_bad_vblocks/expect.in     |   3 +
- tests/f_sit_bad_vblocks/script        |  38 +++
- tests/f_ssa_bad_nid/README            |   5 +
- tests/f_ssa_bad_nid/expect.in         |   3 +
- tests/f_ssa_bad_nid/script            |  36 +++
- tests/f_ssa_bad_ofs_in_node/README    |   5 +
- tests/f_ssa_bad_ofs_in_node/expect.in |   3 +
- tests/f_ssa_bad_ofs_in_node/script    |  36 +++
- tests/f_ssa_bad_type/README           |   5 +
- tests/f_ssa_bad_type/expect.in        |   3 +
- tests/f_ssa_bad_type/script           |  31 ++
- tests/filter.sed                      |  69 ++++
- tests/helpers                         | 269 ++++++++++++++++
- tests/i_meta/README                   |   5 +
- tests/i_meta/expect.in                |  60 ++++
- tests/i_meta/script                   | 212 +++++++++++++
- tests/i_node/README                   |   5 +
- tests/i_node/expect.in                |  66 ++++
- tests/i_node/script                   | 166 ++++++++++
- tests/runtests.in                     |  48 +++
- tests/test_config.in                  |  53 ++++
- 73 files changed, 2284 insertions(+), 116 deletions(-)
- create mode 100644 tests/Makefile.am
- create mode 100644 tests/f_cp_bad_crc/README
- create mode 100644 tests/f_cp_bad_crc/expect.in
- create mode 100644 tests/f_cp_bad_crc/script
- create mode 100644 tests/f_dentry_bad_hash/README
- create mode 100644 tests/f_dentry_bad_hash/expect.in
- create mode 100644 tests/f_dentry_bad_hash/script
- create mode 100644 tests/f_dentry_dup_dots/README
- create mode 100644 tests/f_dentry_dup_dots/expect.in
- create mode 100644 tests/f_dentry_dup_dots/script
- create mode 100644 tests/f_dentry_lost_dots/README
- create mode 100644 tests/f_dentry_lost_dots/expect.in
- create mode 100644 tests/f_dentry_lost_dots/script
- create mode 100644 tests/f_inode_bad_iaddr/README
- create mode 100644 tests/f_inode_bad_iaddr/expect.in
- create mode 100644 tests/f_inode_bad_iaddr/script
- create mode 100644 tests/f_loop_fsync_dnodes/README
- create mode 100644 tests/f_loop_fsync_dnodes/expect.in
- create mode 100644 tests/f_loop_fsync_dnodes/script
- create mode 100644 tests/f_nat_bad_blkaddr/README
- create mode 100644 tests/f_nat_bad_blkaddr/expect.in
- create mode 100644 tests/f_nat_bad_blkaddr/script
- create mode 100644 tests/f_nat_bad_ino/README
- create mode 100644 tests/f_nat_bad_ino/expect.in
- create mode 100644 tests/f_nat_bad_ino/script
- create mode 100644 tests/f_sb_bad_magic/README
- create mode 100644 tests/f_sb_bad_magic/expect.in
- create mode 100644 tests/f_sb_bad_magic/script
- create mode 100644 tests/f_sb_errors/README
- create mode 100644 tests/f_sb_errors/expect.in
- create mode 100644 tests/f_sb_errors/script
- create mode 100644 tests/f_sit_bad_type/README
- create mode 100644 tests/f_sit_bad_type/expect.in
- create mode 100644 tests/f_sit_bad_type/script
- create mode 100644 tests/f_sit_bad_valid_map/README
- create mode 100644 tests/f_sit_bad_valid_map/expect.in
- create mode 100644 tests/f_sit_bad_valid_map/script
- create mode 100644 tests/f_sit_bad_vblocks/README
- create mode 100644 tests/f_sit_bad_vblocks/expect.in
- create mode 100644 tests/f_sit_bad_vblocks/script
- create mode 100644 tests/f_ssa_bad_nid/README
- create mode 100644 tests/f_ssa_bad_nid/expect.in
- create mode 100644 tests/f_ssa_bad_nid/script
- create mode 100644 tests/f_ssa_bad_ofs_in_node/README
- create mode 100644 tests/f_ssa_bad_ofs_in_node/expect.in
- create mode 100644 tests/f_ssa_bad_ofs_in_node/script
- create mode 100644 tests/f_ssa_bad_type/README
- create mode 100644 tests/f_ssa_bad_type/expect.in
- create mode 100644 tests/f_ssa_bad_type/script
- create mode 100644 tests/filter.sed
- create mode 100644 tests/helpers
- create mode 100644 tests/i_meta/README
- create mode 100644 tests/i_meta/expect.in
- create mode 100644 tests/i_meta/script
- create mode 100644 tests/i_node/README
- create mode 100644 tests/i_node/expect.in
- create mode 100644 tests/i_node/script
- create mode 100644 tests/runtests.in
- create mode 100644 tests/test_config.in
-
+diff --git a/fsck/inject.c b/fsck/inject.c
+index 8c2f8c5dc332..5eb913fefad7 100644
+--- a/fsck/inject.c
++++ b/fsck/inject.c
+@@ -105,7 +105,7 @@ void inject_usage(void)
+ 	MSG(0, "  --sit <0|1|2> --mb <name> --blk <blk> [--idx <index>] --val <value> inject sit entry\n");
+ 	MSG(0, "  --ssa --mb <name> --blk <blk> [--idx <index>] --val <value> inject summary entry\n");
+ 	MSG(0, "  --node --mb <name> --nid <nid> [--idx <index>] --val <value> inject node\n");
+-	MSG(0, "  --dent --mb <name> --nid <ino> [--idx <index>] --val <value> inject ino's dentry\n");
++	MSG(0, "  --dent --mb <name> --nid <ino> [--dots <1|2>] --val/str <value/string> inject ino's dentry\n");
+ 	MSG(0, "  --dry-run do not really inject\n");
+ 
+ 	exit(1);
+@@ -212,12 +212,16 @@ static void inject_node_usage(void)
+ 
+ static void inject_dent_usage(void)
+ {
+-	MSG(0, "inject.f2fs --dent --mb <name> --nid <nid> [--idx <index>] --val <value> inject dentry\n");
++	MSG(0, "inject.f2fs --dent --mb <name> --nid <nid> [--dots <1|2>] --val/str <value/string> inject dentry\n");
++	MSG(0, "[dots]:\n");
++	MSG(0, "  1: inject \".\" in directory which is specified by nid\n");
++	MSG(0, "  2: inject \"..\" in directory which is specified by nid\n");
+ 	MSG(0, "[mb]:\n");
+ 	MSG(0, "  d_bitmap: inject dentry block d_bitmap of nid\n");
+ 	MSG(0, "  d_hash: inject dentry hash\n");
+ 	MSG(0, "  d_ino: inject dentry ino\n");
+ 	MSG(0, "  d_ftype: inject dentry ftype\n");
++	MSG(0, "  filename: inject dentry filename, its hash and len are updated implicitly\n");
+ }
+ 
+ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+@@ -241,6 +245,7 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+ 		{"ssa", no_argument, 0, 12},
+ 		{"node", no_argument, 0, 13},
+ 		{"dent", no_argument, 0, 14},
++		{"dots", required_argument, 0, 15},
+ 		{0, 0, 0, 0}
+ 	};
+ 
+@@ -339,6 +344,14 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+ 			opt->dent = true;
+ 			MSG(0, "Info: inject dentry\n");
+ 			break;
++		case 15:
++			opt->dots = atoi(optarg);
++			if (opt->dots != TYPE_DOT &&
++			    opt->dots != TYPE_DOTDOT)
++				return -ERANGE;
++			MSG(0, "Info: inject %s dentry\n",
++			    opt->dots == TYPE_DOT ? "dot" : "dotdot");
++			break;
+ 		case 'd':
+ 			if (optarg[0] == '-' || !is_digits(optarg))
+ 				return EWRONG_OPT;
+@@ -371,6 +384,9 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
+ 			} else if (opt->dent) {
+ 				inject_dent_usage();
+ 				exit(0);
++			} else {
++				MSG(0, "\tError: Wrong option -%c (%d) %s\n",
++				    o, o, optarg);
+ 			}
+ 			return EUNKNOWN_OPT;
+ 		}
+@@ -1146,12 +1162,12 @@ static int find_dir_entry(struct f2fs_dentry_ptr *d, nid_t ino)
+ 		}
+ 
+ 		de = &d->dentry[slot];
+-		if (le32_to_cpu(de->ino) == ino && de->hash_code != 0)
+-			return slot;
+ 		if (de->name_len == 0) {
+ 			slot++;
+ 			continue;
+ 		}
++		if (le32_to_cpu(de->ino) == ino)
++			return slot;
+ 		slot += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+ 	}
+ 
+@@ -1164,14 +1180,15 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 	struct f2fs_node *node_blk = NULL;
+ 	struct f2fs_inode *inode;
+ 	struct f2fs_dentry_ptr d;
+-	void *inline_dentry;
++	void *buf = NULL, *inline_dentry;
+ 	struct f2fs_dentry_block *dent_blk = NULL;
+ 	block_t addr = 0;
+-	void *buf = NULL;
+ 	struct f2fs_dir_entry *dent = NULL;
+ 	struct dnode_of_data dn;
+ 	nid_t pino;
+-	int slot = -ENOENT, ret;
++	int slot = -ENOENT, namelen, namecap, ret;
++	unsigned int dentry_hash;
++	char *name;
+ 
+ 	node_blk = malloc(F2FS_BLKSIZE);
+ 	ASSERT(node_blk != NULL);
+@@ -1180,12 +1197,25 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 	get_node_info(sbi, opt->nid, &ni);
+ 	ret = dev_read_block(node_blk, ni.blk_addr);
+ 	ASSERT(ret >= 0);
+-	pino = le32_to_cpu(node_blk->i.i_pino);
+ 
+-	/* get parent inode */
+-	get_node_info(sbi, pino, &ni);
+-	ret = dev_read_block(node_blk, ni.blk_addr);
+-	ASSERT(ret >= 0);
++	if (opt->dots) {
++		if (!LINUX_S_ISDIR(le16_to_cpu(node_blk->i.i_mode))) {
++			ERR_MSG("ino %u is not a directory, cannot inject "
++				"its %s\n", opt->nid,
++				opt->dots == TYPE_DOT ? "." : "..");
++			ret = -EINVAL;
++			goto out;
++		}
++		/* pino is itself */
++		pino = opt->nid;
++	} else {
++		pino = le32_to_cpu(node_blk->i.i_pino);
++
++		/* get parent inode */
++		get_node_info(sbi, pino, &ni);
++		ret = dev_read_block(node_blk, ni.blk_addr);
++		ASSERT(ret >= 0);
++	}
+ 	inode = &node_blk->i;
+ 
+ 	/* find child dentry */
+@@ -1195,7 +1225,10 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 		addr = ni.blk_addr;
+ 		buf = node_blk;
+ 
+-		slot = find_dir_entry(&d, opt->nid);
++		if (opt->dots == TYPE_DOTDOT)
++			slot = find_dir_entry(&d, le32_to_cpu(node_blk->i.i_pino));
++		else
++			slot = find_dir_entry(&d, opt->nid);
+ 		if (slot >= 0)
+ 			dent = &d.dentry[slot];
+ 	} else {
+@@ -1231,7 +1264,10 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 			ASSERT(ret >= 0);
+ 
+ 			make_dentry_ptr(&d, node_blk, dent_blk, 1);
+-			slot = find_dir_entry(&d, opt->nid);
++			if (opt->dots == TYPE_DOTDOT)
++				slot = find_dir_entry(&d, le32_to_cpu(node_blk->i.i_pino));
++			else
++				slot = find_dir_entry(&d, opt->nid);
+ 			if (slot >= 0) {
+ 				dent = &d.dentry[slot];
+ 				buf = dent_blk;
+@@ -1265,6 +1301,36 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 		    "%d -> %d\n", opt->nid, dent->file_type,
+ 		    (u8)opt->val);
+ 		dent->file_type = (u8)opt->val;
++	} else if (!strcmp(opt->mb, "filename")) {
++		if (!opt->str) {
++			ERR_MSG("option str is needed\n");
++			ret = -EINVAL;
++			goto out;
++		}
++		namecap = ALIGN_UP(le16_to_cpu(dent->name_len), F2FS_SLOT_LEN);
++		namelen = strlen(opt->str);
++		if (namelen > namecap || namelen > F2FS_NAME_LEN) {
++			ERR_MSG("option str too long\n");
++			ret = -EINVAL;
++			goto out;
++		}
++		name = (char *)d.filename[slot];
++		MSG(0, "Info: inject dentry filename of nid %u: "
++		    "%.*s -> %s\n", opt->nid, le16_to_cpu(dent->name_len),
++		    name, opt->str);
++		memcpy(name, opt->str, namelen);
++		MSG(0, "Info: inject dentry namelen of nid %u: "
++		    "%d -> %d\n", opt->nid, le16_to_cpu(dent->name_len),
++		    namelen);
++		dent->name_len = cpu_to_le16(namelen);
++		dentry_hash = f2fs_dentry_hash(get_encoding(sbi),
++						IS_CASEFOLDED(inode),
++						(unsigned char *)name,
++						namelen);
++		MSG(0, "Info: inject dentry d_hash of nid %u: "
++		    "0x%x -> 0x%x\n", opt->nid, le32_to_cpu(dent->hash_code),
++		    dentry_hash);
++		dent->hash_code = cpu_to_le32(dentry_hash);
+ 	} else {
+ 		ERR_MSG("unknown or unsupported member \"%s\"\n", opt->mb);
+ 		ret = -EINVAL;
+diff --git a/fsck/inject.h b/fsck/inject.h
+index 43c21b56a7eb..706a211bc645 100644
+--- a/fsck/inject.h
++++ b/fsck/inject.h
+@@ -30,6 +30,7 @@ struct inject_option {
+ 	int cp;			/* which cp */
+ 	int nat;		/* which nat pack */
+ 	int sit;		/* which sit pack */
++	int dots;		/* . or .. dentry */
+ 	bool ssa;
+ 	bool node;
+ 	bool dent;
+diff --git a/man/inject.f2fs.8 b/man/inject.f2fs.8
+index 72d1c90f7ce4..27b66f59b77d 100644
+--- a/man/inject.f2fs.8
++++ b/man/inject.f2fs.8
+@@ -214,7 +214,14 @@ inode i_nid array specified by \fIidx\fP.
+ .RE
+ .TP
+ .BI \-\-dent
+-Inject dentry block or dir entry specified \fInid\fP.
++Inject dentry block or dir entry specified by \fInid\fP.
++.RS 1.2i
++.TP
++.BI \-\-dots " 1 or 2"
++The option means the "." or ".." directory entry of \fInid\fP is going to be injected.
++.RE
++.TP
++.BI ""
+ The available \fImb\fP of \fIdent\fP are:
+ .RS 1.2i
+ .TP
+@@ -229,6 +236,9 @@ dentry ino.
+ .TP
+ .BI d_ftype
+ dentry ftype.
++.TP
++.BI filename
++dentry filename, and corresponding d_hash and namelen are updated implicitly.
+ .RE
+ .TP
+ .BI \-\-dry\-run
 -- 
 2.43.0
 
