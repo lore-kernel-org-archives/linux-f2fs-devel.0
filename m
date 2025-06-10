@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 65956C5B543
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D1ACBC5B543
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:37:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=03C10NAzyy32YL8T81IMaUchO037SGmsxshiH3bx9Rc=; b=Tr+rZ1Dkj+YkwegrI9ZxjogEfB
-	kS0SmG3WPPhjPqdNd4sMRS9ZEARp6ifY5DuZEjaHvnN8R8DaI1J6jwKjP/Y7EDF8dIUj8UT8HagJP
-	nO21QsFSxLV4umHmY5OEWVJHLIWWvivfy7dX36j/d9mzIUanuw6raTVlX4RyUr8zTnBY=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=b7C8of/noY5su005Y39UNn8TQ8KVuRny1gxP/1ZO/Fs=; b=Qh/fe8peCSWO6HUD3xVohL65d7
+	f8wTteKfnQeXQo7CJxUsoMm/zIob7mDt03Dj0mmV+6fG8OmmycKHi6hkKlwyfZdVzGD89at+gB8ca
+	dlf+nd9gn39LxIqm5rRIVFQ+Od36ZFMdZNtwrFRuDeb/eZKCiLzoztdrrs+KDbm+Kajw=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uP12W-0000bN-Vw;
-	Tue, 10 Jun 2025 15:37:28 +0000
+	id 1uP131-0004v2-Gs;
+	Tue, 10 Jun 2025 15:37:59 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uP12V-0000bH-Ev
+ (envelope-from <shengyong2021@gmail.com>) id 1uP12t-0004uk-Ps
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:37:27 +0000
+ Tue, 10 Jun 2025 15:37:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=75nM+ZWGk/UcziH+fLt7f8HTsqMXf5oLWLlXgUA/bpM=; b=Wu8tgVoCcHWOCjvcJm/fdHEqbB
- El5gTlgmpCZEtXz52c4VEqkn9nYj+zlqwTYxSTXBmJJ77FJdV35QGFZkIWWn4/rbJa/j57nMETdy8
- LGbJ+mlwDIzXJ7WwSX9mVegKxaRDEpuAhhAjQNzXvtzA8Xwj6EmecM1rGAN6ogWkdv98=;
+ bh=nP3RtDppfdZEZjMINIhZ6V4gm6A6a+9c92Py7aCUbfY=; b=ESqnF98Btspbp3mppGGbI89R4H
+ XrGmQhR8NPydONdKLF5EX0OEWd6AEEizOD8F73yRIetpywn9tfoelA2uPVaqmT1EjHGu4gtGE/ALJ
+ fYM+5ucE/8TEjJtPJDZVdlfEDgcDD3urpYdgUFpgkc8hVlUg1SuG+xLCQItvScs8smIY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,71 +42,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=75nM+ZWGk/UcziH+fLt7f8HTsqMXf5oLWLlXgUA/bpM=; b=COx0Etl45xJrtVKglUgMbUfMdi
- Qjg5oQz/t/h4JT11Q5EeLNaJs4oc12gLLQBy9uo7Z0K7pME/yDrN5G3tmhvUPJlC2V8WPyenl1Kz8
- Mhf8XW7vONqxGTPqNibOQ2Sd/i1eqYLO0fH0WEaGx9HKedGz3O6Wj6tL9WG+M19trkmM=;
-Received: from mail-ot1-f45.google.com ([209.85.210.45])
+ bh=nP3RtDppfdZEZjMINIhZ6V4gm6A6a+9c92Py7aCUbfY=; b=GrXNUFBKQl3Hb68k7CMY3ewhwb
+ hA2O/kuir+yr3EgJgGXNXpO06cbpHtW7A42hp5Qx2EUHVgxOttSLtnFmX4qRNIV0cjmdBm8/p4TNS
+ qfHm7KoiXOxu1SpRDx3MNP2TYZh15pndVrDlDO8ucb4uTfN0Vu7T2bU/ge+TgMDtSgYY=;
+Received: from mail-io1-f46.google.com ([209.85.166.46])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uP12V-00063T-1o for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:37:27 +0000
-Received: by mail-ot1-f45.google.com with SMTP id
- 46e09a7af769-72bc3987a05so3582649a34.1
+ id 1uP12s-00066h-5D for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jun 2025 15:37:50 +0000
+Received: by mail-io1-f46.google.com with SMTP id
+ ca18e2360f4ac-861d7a09c88so160502939f.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Jun 2025 08:37:27 -0700 (PDT)
+ Tue, 10 Jun 2025 08:37:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749569836; x=1750174636; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1749569859; x=1750174659; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=75nM+ZWGk/UcziH+fLt7f8HTsqMXf5oLWLlXgUA/bpM=;
- b=bobQH72qP805U/wWmFF1Zt9CfY602Jj7C5KHXfOedJ7dqxe0udr7SJCVZvuLfeMres
- YDqDelgpjU7dbxPqPCgRZGudC4IG1MK4GOeLnt8iSnTEPwEKV+KzhPuB5LqLGsZN3W0V
- LWun7t1Bip9OPP2+tFWFBNsPu84ENmpBx60SMazIsgZgoaPuVK691/qofkP4PvmCHzP4
- gU76qjg1nYXv+lTTjZYVLWsEnkPtCOLCV6rvmIHUCrf60B0rSsELeV1YJucn+5N2Cjcz
- mTDgjahmZfIt3fGnVrXcfezLSYgs2Mdt4jdW7+YwRf8CLcIPwJG0z48ZI6XVx246nzcl
- a7EQ==
+ bh=nP3RtDppfdZEZjMINIhZ6V4gm6A6a+9c92Py7aCUbfY=;
+ b=Qcxxo7/zal0mtjOvr389+KOgI9cWHwEnsgea12BRZXmnopNSFhUrQFcnKZav+SzyW7
+ Efj2bBAOQgEomr5o5huaO1ZV3SId+uRfkoMYudlsctUTdWY3Xd6qphLVIKaEcItf3gSQ
+ OE9TSbjjGHEVqzE31WLP2ciog7frjYhihRl81fKxI6N42qmjokXTGbDxegGj7WlbKGqD
+ TZs5y0JNcIutDnyvDa0KaCEZ5sJyDxyzqbmG6iAxOr7WUGbEr2We6bh9VYwBF/05Mb9W
+ VKxGH6ePB+jASe1CWG2KQ6CVzWyH7QXLvFF+6DgF2yunzNTnUMYYVja4n8oMLrhpVxfM
+ OE/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749569836; x=1750174636;
+ d=1e100.net; s=20230601; t=1749569859; x=1750174659;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=75nM+ZWGk/UcziH+fLt7f8HTsqMXf5oLWLlXgUA/bpM=;
- b=J3EvYs/etNbBeIZOIPWoTrHwCnvPvEMeDdT9ostscqqaqxiOC1LpS/FyRysW3E9ycj
- uWcczBvMeIfceqnG7yn+SQEGS8XgaG/WLa+htNzHUCU7Dvyh7VI2gO2Hn8ZrXJQqYuEW
- 0uSMnzCYy2jcfNmRgMNYhUhbS/gJjl5yoPo/2Fl3JqCCjvjA9qPv2VgLZl+FJUsAFV/P
- mW+9OsWCo7KsAungvUbI9RI/RyMqbH8r+uFN+POTVtCtFtNS1nEEClnVG0rIiLg9OB7t
- xacqjGSbMXiQFShsWLD8eLukVc1R7JRGuq8jDQglWLLrb/exHDCk7J2t8DwpZDnAyH5m
- OFoQ==
-X-Gm-Message-State: AOJu0YwKJKNXIsPmd9caNfZema4gdBII9cYFXyKHiZlOhKI8KE939K4U
- AzyM6tHCtBJl2Ea4wv2XAQQfrEstALCDYmWC0qkrzR415O6gxl6NVfFJ/eHNIQ==
-X-Gm-Gg: ASbGncupWepaKCevmEE3O9h/4v9bARrEXTltrxFn7ZkpVG6C91LPSkQwY7KAYfycdky
- GsLLxxNvqS23uV+nmCDF8/fMntc5dQu8FOwFKzyQZZHwvrPeMEn1wOj3DFXRfo0CtJjgiNuMerv
- k3egPQ0VN7kjzIqmJjNPhiuB9N5/TpJmDnuOjs6BxB8OcRODPfcJfzox1MwaQwhFUcwUl9ENoPk
- 7UOJt8mLVqRStur10D+BRIM0J60Z4R0HAt+2WoxmGXNTmgvp1R0iLFQEeLzYyMa1dhqR9+EoUrA
- +TlT2EFMpRNzweUfyuPz/6Dl4bF6Zfzmoe5EUsVV6aievc09tWyhqnNN8GzvdD3S0IgB
-X-Google-Smtp-Source: AGHT+IEoCU724MpkHckKAKbz30e5mDgGVXnA/R8Vg/MC6uhviA5weYCL8rcjsS2VdjCi7pgsmpwmWw==
-X-Received: by 2002:a05:6a20:158a:b0:21d:98c:12c9 with SMTP id
- adf61e73a8af0-21f769bbabcmr5214182637.21.1749559125871; 
- Tue, 10 Jun 2025 05:38:45 -0700 (PDT)
+ bh=nP3RtDppfdZEZjMINIhZ6V4gm6A6a+9c92Py7aCUbfY=;
+ b=hY8byV9E0j0S2dHr7ty18OuGnCMhvLOoOj/o42ApmH+8XdzsT0wGHnzdetxS8Q5IiW
+ DV8+C9ZtXbjH/oCBrI+fbHSkPSPPuF0DvbeVBLskmgiDcgtlq3D1/470y32nKabDOFM+
+ YXBrlwbHku+fvx4AYKI/tZN73EWOpOkAc/pg/02nvmfLX5tr13+XF28juuXCtTCCASkz
+ VRB534iEB8PyCYSkchidCq7HVGYj1PRA6xa1uPNjRcAnYa15ePNiPuIsjvYw1igPqrVy
+ aMKcK8cfXTgJjcneqQQxMDu2feZ+a34JGbgonddxF/W170cUWUsrK48aKHb89Tf7UVIj
+ dVbg==
+X-Gm-Message-State: AOJu0YxrTRMho2OTQz1rld3iN0UKImD+2XjZXc7VvgtlyXtHcXjUJMNA
+ 7tLByMUJ8K5ACrGminJ/WpDhyt18HjIRUPIvETSYl0kQdEgBzGKbZJmtcAyLOQ==
+X-Gm-Gg: ASbGncuimWqVGbjk7KG6kW/cFg0bRlwzvuD2OJZ5zOb/pRpIdrLm/mHrP4f1Jrfwrvf
+ P6pdu8PcuKTS18nvLWpJqX2GH2xEWErOPJKPo+8pq927Y5oMThg51REk/1Q6To6NEfUXK5ERBuf
+ hmYH+GUDG5vo3mRPz/UDu5LGO0+ZA/YPn3EeAvDcgJ5Nd4HQ7QnU+wsTBl3Mz4aG3l6WhDbYU9s
+ +dRX34RfnDBMshLVCohqxN5pM4J2hLOtxA0jwcV7116Ig7ZgwbcykLaKTkeF8TkJaGw/h5A9r5I
+ snAzjFQJUB3zmuOUHyKmZkQvsWfpJzxtinMEpUWmH5wjctZh9StcLXdw1xzc3g7h60cr
+X-Google-Smtp-Source: AGHT+IGF5DVB0a8QQmcBhsmQWZ9/N9JykzDQ7rjiTJr45IlGU4wqDy1eQlEBp1lBSxZdqBP1qbzEGQ==
+X-Received: by 2002:a05:6a00:9a3:b0:747:b043:41e8 with SMTP id
+ d2e1a72fcca58-74827f12808mr21242154b3a.15.1749559112009; 
+ Tue, 10 Jun 2025 05:38:32 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.44
+ d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 05:38:45 -0700 (PDT)
+ Tue, 10 Jun 2025 05:38:31 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 10 Jun 2025 20:37:32 +0800
-Message-ID: <20250610123743.667183-23-shengyong1@xiaomi.com>
+Date: Tue, 10 Jun 2025 20:37:25 +0800
+Message-ID: <20250610123743.667183-16-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
 References: <20250610123743.667183-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uP12V-00063T-1o
-Subject: [f2fs-dev] [RFC PATCH v2 22/32] tests: add fsck testcase of fixing
- sit entry valid_map
+X-Headers-End: 1uP12s-00066h-5D
+Subject: [f2fs-dev] [RFC PATCH v2 15/32] tests: add fsck testcase of fixing
+ bad super magic
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -127,82 +127,53 @@ From: Sheng Yong <shengyong1@xiaomi.com>
 
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 ---
- tests/f_sit_bad_valid_map/README    |  5 ++++
- tests/f_sit_bad_valid_map/expect.in |  4 +++
- tests/f_sit_bad_valid_map/script    | 43 +++++++++++++++++++++++++++++
- 3 files changed, 52 insertions(+)
- create mode 100644 tests/f_sit_bad_valid_map/README
- create mode 100644 tests/f_sit_bad_valid_map/expect.in
- create mode 100644 tests/f_sit_bad_valid_map/script
+ tests/f_sb_bad_magic/README    |  3 +++
+ tests/f_sb_bad_magic/expect.in |  5 +++++
+ tests/f_sb_bad_magic/script    | 15 +++++++++++++++
+ 3 files changed, 23 insertions(+)
+ create mode 100644 tests/f_sb_bad_magic/README
+ create mode 100644 tests/f_sb_bad_magic/expect.in
+ create mode 100644 tests/f_sb_bad_magic/script
 
-diff --git a/tests/f_sit_bad_valid_map/README b/tests/f_sit_bad_valid_map/README
+diff --git a/tests/f_sb_bad_magic/README b/tests/f_sb_bad_magic/README
 new file mode 100644
-index 000000000000..5306bdd31ae5
+index 000000000000..a8887ebd2dfb
 --- /dev/null
-+++ b/tests/f_sit_bad_valid_map/README
-@@ -0,0 +1,5 @@
++++ b/tests/f_sb_bad_magic/README
+@@ -0,0 +1,3 @@
 +1. create f2fs image
-+2. mount f2fs and create a regular file and write data
-+3. get a block address by dumping the inode
-+4. inject bitmap in the sit entry of the blkaddr by clearing its bit
-+5. fsck fixes the bitmap
-diff --git a/tests/f_sit_bad_valid_map/expect.in b/tests/f_sit_bad_valid_map/expect.in
++2. inject magic in sb 1 with value 0x12345
++3. fsck fixes bad magic by copying sb 2
+diff --git a/tests/f_sb_bad_magic/expect.in b/tests/f_sb_bad_magic/expect.in
 new file mode 100644
-index 000000000000..b9929839707e
+index 000000000000..3dcfa1f7e46e
 --- /dev/null
-+++ b/tests/f_sit_bad_valid_map/expect.in
-@@ -0,0 +1,4 @@
++++ b/tests/f_sb_bad_magic/expect.in
+@@ -0,0 +1,5 @@
 +Info: Force to fix corruption
-+[ASSERT] (check_block_count:x)  --> Wrong SIT valid blocks: segno=_SEGNO_, 512 vs. 511
-+[ASSERT] (fsck_chk_data_blk:x)  --> SIT bitmap is 0x0. blk_addr[_BLKADDR_]
++Magic Mismatch, valid(0xf2f52010) - read(0x12345)
++	Can't find a valid F2FS superblock at 0x0
++Looking for secondary superblock assuming 4K Block Size
 +Info: Force to fix corruption
-diff --git a/tests/f_sit_bad_valid_map/script b/tests/f_sit_bad_valid_map/script
+diff --git a/tests/f_sb_bad_magic/script b/tests/f_sb_bad_magic/script
 new file mode 100644
-index 000000000000..8ce0b2016a9c
+index 000000000000..0a5d708af2d6
 --- /dev/null
-+++ b/tests/f_sit_bad_valid_map/script
-@@ -0,0 +1,43 @@
++++ b/tests/f_sb_bad_magic/script
+@@ -0,0 +1,15 @@
 +#!/bin/bash
 +
-+DESC="sit entry with invalid valid_map"
++DESC="superblock[1] with invalid magic number"
 +
 +. $TOPDIR/tests/helpers
 +
 +cleanup
 +make_f2fs > $LOG
 +
-+mkdir $TESTDIR/mntdir
-+safe_mount $MNT_OPTS $META $TESTDIR/mntdir >> $LOG
-+dd if=/dev/zero of=$TESTDIR/mntdir/testfile bs=4K count=513 status=none
-+ino=`stat -c "%i" $TESTDIR/mntdir/testfile`
-+safe_umount $TESTDIR/mntdir >> $LOG
-+rm -rf $TESTDIR/mntdir
-+
-+node=`$DUMP $DUMP_OPTS -i $ino $META`
-+echo "$node" >> $LOG
-+blkaddr=`get_mb_val "$node" 'i_addr\[0x100\]'`
-+echo "ino:$ino blkaddr:$blkaddr" >> $LOG
-+
-+offs=`offset_in_seg $blkaddr`
-+idx=$((offs >> 3))
-+mask=$((1 << (7 - (offs & 0x7))))
-+
-+val=`$INJECT --dry-run --sit 0 --blk $blkaddr --mb valid_map --idx $idx $META | \
-+	grep "inject sit entry valid_map" | awk '{print $(NF-2)}'`
-+echo "valid_map:$val mask:$mask" >> $LOG
-+val=$((val & (~mask & 0xff)))
-+echo "corrupt_map:$val" >> $LOG
-+
-+$INJECT --sit 0 --blk $blkaddr --mb valid_map --idx $idx --val $val $META >> $LOG
++$INJECT --sb 1 --mb magic --val 0x12345 $META >> $LOG
 +$FSCK $FSCK_OPTS -f $META > $OUT
 +$FSCK $FSCK_OPTS -f $META >> $OUT
 +cat $OUT >> $LOG
-+
-+BLKADDR=`printf "0x%x" $blkaddr`
-+segno=`get_segno $blkaddr`
-+SEGNO=`printf "0x%x" $segno`
-+sed "s/_BLKADDR_/$BLKADDR/g" $TESTDIR/expect.in > $TESTDIR/expect
-+sed -i "s/_SEGNO_/$SEGNO/g" $TESTDIR/expect
 +
 +check_result
 -- 
