@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C1EABC5B543
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7D764C5B552
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:38:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=+9J+eBZIOOZXHd5TO32moVqI6Fm1nSvoAfTTN2oi2vE=; b=hgF5b5RZ/4eJYVHKvNG3dIdH72
-	mylU0lSqXhwXmiG4A0aZ2WyAkjCXOhMuZDsq+pTrYT3fphZXu8buUWLqCAKRWZzJNe/0asYByCaeI
-	GMjSMopsGvBzSI+lnAe0qdGWwbR5PJHJHkEYpZp8erjYkLNZmTML9CsRVQLsiS2kCO5Q=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=wBqNXmfgm8IXVVaoAZsLI7w/hf14MvBFOnR6RgYNtdc=; b=Kdk6qssOAHsP1CMVirGYcOPQ21
+	2ZIDZ0FkYx1YoIzcOhqVldR7tGNghJcx4H3t14z1P9XRBzMIjMbrBT3fsNeq+MYiqe+g8hzLlWNCK
+	1GRXzU9pPf6dvOaovocMjkvB5h0B4g/KUk4UOPTz8MUGlgIB49/DVvtYwraBn9UjhZ9M=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uP13b-0006rW-FY;
-	Tue, 10 Jun 2025 15:38:35 +0000
+	id 1uP13o-0004yr-Mf;
+	Tue, 10 Jun 2025 15:38:48 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uP13a-0006rQ-4G
+ (envelope-from <shengyong2021@gmail.com>) id 1uP13n-0004yf-Aj
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:38:34 +0000
+ Tue, 10 Jun 2025 15:38:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cTVI4FLOkJgR1IBTXntC0n6q7eWiu3bCMoeoLntJDfI=; b=iFieaB13pwz+vONDX5FglnosXX
- Gcz0yYkqKRFbH6ILuKebr/lw2G6cP6yjCUBxnQfRqA53StP+TXHxN2iU4v5l5j0W8F7rflpjhKJY/
- yyR36zWp9C8o14jklZLzJXu0UtXeYRr2eCSiYdTsX4eSYr4wGC7NiGQCGqTh3WSJvorc=;
+ bh=TatYBFF4EQY4FVsr1eUsJdTcW6iVGtz/p6vtXugeSW0=; b=g7eW5wzkte6zpvtmF/XoM1X5QH
+ rMzcOrky5Vw7BOWCA8huMn4hVj4STMUnp5TLotXp0QKZGySoX0NXxf2DwaJJR+vHx18tdo7W2w8FQ
+ 7aai9lschWcfctkkNMc4ZXgY0vo1Con0pGufrspNCyy6zJK2dMU7Hoc22S30C38gXvOM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,71 +42,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=cTVI4FLOkJgR1IBTXntC0n6q7eWiu3bCMoeoLntJDfI=; b=RLIe7mXggi7f/KAid20LCECzkD
- v8uamj1ybqAq3RPXrM5OOnkx9gO0kOJJMdSqMtSGfb3IYye1qqRFMSosa5qXoZnuZx1e8ot3i6EMI
- ylg6O0OIM13egUhMnvY4/G8XJ5u/LwrTx47sVxpBTJ8GZI5j8fX+AhN2KWKWrE+yjEaU=;
-Received: from mail-qv1-f47.google.com ([209.85.219.47])
+ bh=TatYBFF4EQY4FVsr1eUsJdTcW6iVGtz/p6vtXugeSW0=; b=bN/vFDI8c/bCNfgKgEMI7A96rD
+ 0PmfB4iqhxeMMYknFDyE/rzJGBljbmEfzSfP5bowJP/lNObdTN7MMa8ZrhLcidyHLXBhZLca1AkaR
+ AXcwyp31t54RMg39VbhtXGbGWDm3IFzs1DFqqRZBXJ2LYhZex6c+j+JNQhilM12t/cjM=;
+Received: from mail-qv1-f42.google.com ([209.85.219.42])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uP13Z-0006AO-1m for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:38:34 +0000
-Received: by mail-qv1-f47.google.com with SMTP id
- 6a1803df08f44-6fb0eb0f0fbso43478846d6.1
+ id 1uP13m-0006CS-Tx for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jun 2025 15:38:47 +0000
+Received: by mail-qv1-f42.google.com with SMTP id
+ 6a1803df08f44-6fad79433bbso51259176d6.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Jun 2025 08:38:32 -0700 (PDT)
+ Tue, 10 Jun 2025 08:38:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749569902; x=1750174702; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1749569916; x=1750174716; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=cTVI4FLOkJgR1IBTXntC0n6q7eWiu3bCMoeoLntJDfI=;
- b=jkFwrDbhCIE6LUd3h7BDRpPzD2pXr5x34nDnJnb065zG2alccatxVQzO439hskhyqH
- FkOIsiqgWqsazrzS/vS9gW/sFlAmMKwKdaz57oDLVFpF1XOAgYwKg2YsZK2yEbdb6gg9
- JCxb2CaZ0uyJ5GyvqSL/2xownF92MFXGdZwao3rSxE8apt+t5Wijb1FJAs4/T43ZyleO
- olChca+8bXpHus3b2NXPEczMvfK93HPLL/7L8XXaxWtLcvja7OEm6sZPC9KgbLW+1bfQ
- OJ+bNDZEwVQSMzBaZmlSoMcg9sOjiDgs/qmeXCX8wz7MQDNM6LhFZ5rf5SRSA0nDLEyt
- 8ceg==
+ bh=TatYBFF4EQY4FVsr1eUsJdTcW6iVGtz/p6vtXugeSW0=;
+ b=C4DdFVDHbb1CvTSFzkhQ+5BO7o+IbvRL4AM2sRG8650/0ixanLPhgFDK1LXda3EQaq
+ kWL93nDBpgOQfCeySLsJIMbADZNWMkJgDqwIASghwwh84LeqdZUnTP3ydHWuReS8vVO6
+ uoJalJLVBtDsdsfwEQaHI3LQYUqAU+F6ilERbQDtEDjlnNYydX6WC06YVZ2zMc7XXUVS
+ UKOh7z8ffhSraAs8Zs/wuUsPlD0SGM0gWduJs4G/+bFlIrLGjB93msat2HPYLAyUfSPn
+ CaoTpOWB4rsSKmgKy5pevc7clXP6+9W0kLYsFduvy5Z8d9kJxLm7rJ+ftXCyAcAcOBBw
+ E9Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749569902; x=1750174702;
+ d=1e100.net; s=20230601; t=1749569916; x=1750174716;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=cTVI4FLOkJgR1IBTXntC0n6q7eWiu3bCMoeoLntJDfI=;
- b=ZPId4repZ/DzE5NMM8mzAro9UwoqjPF1okpMbzBwxrjUGVV2Ci+OB7XLW8E6H9PJVx
- laf3wTRf74zRzsxuSMjvdE/oKOjvF4/7Jlbt8lSvyyUlJkw30cS3dWTN1f4uykC7dA7U
- /yM240D3F7Wk7pSBUg44M0aZHjTuNXUVQN/W4yWpeFcM3M6Q93QMkFITja1XbDumBoxp
- 0/er7gJxuQbS9u9dqwy51YRPxonETXVON9xbDHX0XdwTp8g9ZX3lZQtpSa2dIYMSrwni
- n1YgP+nFfoR36+MXZQGhC9RUYoyj9DdBWCbJFO5NbwauzLcbGaDtgQr8B84EO55tf3hL
- N0Bg==
-X-Gm-Message-State: AOJu0Yy3rTplHaVLXMZX+TrBFE/K5L7wubPwJdNduV/ofXiTXlh2RZQF
- Cmdg53E/R2howzJOMEExFEahNhdjGrTVsXxYTukSz0z4XLKLVYQVC8DHETYjsg==
-X-Gm-Gg: ASbGnctPNl+nX+yAgfYTBbFWDmttHBCMJSQc6ILSUaTYoS/xVaq6wiTYXbGlzoYw2JZ
- mzaTy2Y/MROl2dNwdcD7A4FyedhpbQAQSZ3qGI8Un9DAraimF6T5AJxkjLaOBMrGUVDgCxkVPCo
- dHl0oYnDUxxqCy+oZ45DQxggIQ04O5lxZ8NbrgZC1RMD7Zc9ZJaCBUAkPJnlsi7AQhawZ9Lxjou
- JKIkeVvt8RBgjr038ILkC42QYwfk8y+s08tMJaaA2CUvMrzkdzE0VBch61Hcaolp51dpT44oJ+S
- xwHt0Yq7lzPJssA4z5zgKw4ghVFTWgph+5GdloIxczowJsJQlWeJpv0JL1o9jlOf+GKK
-X-Google-Smtp-Source: AGHT+IGdidQ90Ri5s3SEMExfXpzPBmuD9ru1EJ1JKb3RnuSmFgacWFpYHX9BPQYA1yiyhmIgvfM0RQ==
-X-Received: by 2002:a05:6a20:258d:b0:1f5:8cf7:de4b with SMTP id
- adf61e73a8af0-21f7693d1c1mr4796181637.16.1749559110062; 
- Tue, 10 Jun 2025 05:38:30 -0700 (PDT)
+ bh=TatYBFF4EQY4FVsr1eUsJdTcW6iVGtz/p6vtXugeSW0=;
+ b=LB6kyyHkjbD7z7qJHEhnCVZEI+Xw5Y5NWQUYoNpzFqeeDAQVK5+Z4jFftrC5P45rm6
+ 67QVQddb/fhbaupLkRuMTHhvjJPAkRwUHLytCkdieSe0O8C+wgIvqmPgkF7emsTpHpbc
+ 8PahtledluNGkr//PY5JRAU+WH4dMLXFcsW9DDv5xKx8oh1x3IhujxiC9njNCizwIUyC
+ MPfBn5hqw1KIOdeUaaSXGXfHMnfBt29M6HFHtE6D//aPFNcSSih3Ek0hKAO2mK+4X86p
+ RB3luxqlC4fR9Mfc4W4heo8h/UXx9ptFankwBeIniLWIJdGHMHA1DrAcmBhHhZM6GdMZ
+ 42Xw==
+X-Gm-Message-State: AOJu0YwSQLfSk29AEyapTZlNLjxqrBeMNnovUCdiRXVTALvCdgminW9E
+ u/coWK+oBId3UR3jCr77H35xnvSJxGmpMupBebGPQ8nCcqOgtCmttW3oz5aZpw==
+X-Gm-Gg: ASbGncv0CqlAJ77j+YFa7d0ldBXSJ3OjqKyOW9nJp74nGw7qXXhoHJ/XE2gVFal10Uk
+ nkyhb3pW0g7b6383nZLSxVzFelwlsIrIu8kML1wQwnGdfA9zRnWwiQ0Qs7pdTBZ6VlXq8E5XDXN
+ 83NOPHDr+Wtb6PCttt++lbjfUKCDbKe+BKHJbMT0xytfFuZ3ERfE5TQYOtjAqZL2ExbxQJdszvb
+ QLNvITtXa3PNocsADRDBbuStCsnoOzGjtsamp8TPky6/T1+hm3X4qv9KS7VvfWVIEndEkmGpAE7
+ VZYWFP4JgH5YMVV3Vp3gSMUF8UXJh1TfHf6W2UA7/hOYccpL43WQt0XjvDH+jAu6M3bZ
+X-Google-Smtp-Source: AGHT+IHep98VOv2OTCOyan37B6ziTa4xBJk0f62H9wPuieHSkZPNT+1s6ytj3Yp5ImCSFTboES3dDQ==
+X-Received: by 2002:a05:6a00:1882:b0:740:b5f8:ac15 with SMTP id
+ d2e1a72fcca58-74827e7b394mr20648701b3a.10.1749559123913; 
+ Tue, 10 Jun 2025 05:38:43 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.28
+ d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 05:38:29 -0700 (PDT)
+ Tue, 10 Jun 2025 05:38:43 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 10 Jun 2025 20:37:24 +0800
-Message-ID: <20250610123743.667183-15-shengyong1@xiaomi.com>
+Date: Tue, 10 Jun 2025 20:37:31 +0800
+Message-ID: <20250610123743.667183-22-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
 References: <20250610123743.667183-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uP13Z-0006AO-1m
-Subject: [f2fs-dev] [RFC PATCH v2 14/32] tests: prepare helper scripts for
- testcases
+X-Headers-End: 1uP13m-0006CS-Tx
+Subject: [f2fs-dev] [RFC PATCH v2 21/32] tests: add fsck testcase of fixing
+ sit entry vblocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -125,608 +125,80 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Sheng Yong <shengyong1@xiaomi.com>
 
-This patch addes helper scripts for auto testcases, and testcases of
-fsck will be submitted in the following commits.
-
-The basic idea of these testcases are:
- 1. create f2fs image
- 2. corrupt the image by inject specific fields
- 3. fsck fixes the corrupted image
- 4. verify fsck output with expected message
-
-The helper scripts include:
- * test_config.in: is used to generate the basic configurations of all
-                   testcases.
- * runtests.in: is used to generate `runtests'.
- * filter.sed: is used to remove unnecessary messages and cleanup
-               arbitrary values.
- * helpers: provides helper functions
-
-The usage of runtests:
- * run all testcases:
-     runtests
- * run one testcase:
-     runtests <testcase directory path>
- * cleanup previous results:
-     runtests clean
-
-Each testcase should have a sub-directory, where three files should be
-included:
- * README: describe information of the testcase
- * script: testcase itself
- * expect.in: expected output message
-
-New files are generated in the testcase directory after test:
- * log: output in detail
- * expect: derived from expect.in
- * out: output that will be compared with expect
- * PASS: testcase is passed
- * FAIL: testcase is failed
- * SKIP: testcase is skipped
-
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 ---
- .gitignore           |  14 +++
- Makefile.am          |   2 +-
- configure.ac         |   1 +
- tests/Makefile.am    |  26 +++++
- tests/filter.sed     |  69 +++++++++++
- tests/helpers        | 269 +++++++++++++++++++++++++++++++++++++++++++
- tests/runtests.in    |  48 ++++++++
- tests/test_config.in |  53 +++++++++
- 8 files changed, 481 insertions(+), 1 deletion(-)
- create mode 100644 tests/Makefile.am
- create mode 100644 tests/filter.sed
- create mode 100644 tests/helpers
- create mode 100644 tests/runtests.in
- create mode 100644 tests/test_config.in
+ tests/f_sit_bad_vblocks/README    |  5 ++++
+ tests/f_sit_bad_vblocks/expect.in |  3 +++
+ tests/f_sit_bad_vblocks/script    | 38 +++++++++++++++++++++++++++++++
+ 3 files changed, 46 insertions(+)
+ create mode 100644 tests/f_sit_bad_vblocks/README
+ create mode 100644 tests/f_sit_bad_vblocks/expect.in
+ create mode 100644 tests/f_sit_bad_vblocks/script
 
-diff --git a/.gitignore b/.gitignore
-index 49809446793d..68dbe1c407c5 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -46,6 +46,8 @@ stamp-h1
- 
- /mkfs/mkfs.f2fs
- /fsck/fsck.f2fs
-+/fsck/dump.f2fs
-+/fsck/inject.f2fs
- /tools/fibmap.f2fs
- /tools/parse.f2fs
- /tools/f2fscrypt
-@@ -54,3 +56,15 @@ stamp-h1
- # cscope files
- cscope.*
- ncscope.*
-+
-+# testcase files
-+tests/*/log
-+tests/*/out
-+tests/*/PASS
-+tests/*/FAIL
-+tests/*/SKIP
-+tests/*/expect
-+tests/meta.img
-+tests/data.img
-+tests/runtests
-+tests/test_config
-diff --git a/Makefile.am b/Makefile.am
-index d2921d626e48..0c9ec66d02b6 100644
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -2,4 +2,4 @@
- 
- ACLOCAL_AMFLAGS = -I m4
- 
--SUBDIRS = man lib mkfs fsck tools
-+SUBDIRS = man lib mkfs fsck tools tests
-diff --git a/configure.ac b/configure.ac
-index ddfc3b0f30e2..a819dde93ed1 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -265,6 +265,7 @@ AC_CONFIG_FILES([
- 	fsck/Makefile
- 	tools/Makefile
- 	tools/f2fs_io/Makefile
-+	tests/Makefile
- ])
- 
- AC_CHECK_MEMBER([struct blk_zone.capacity],
-diff --git a/tests/Makefile.am b/tests/Makefile.am
+diff --git a/tests/f_sit_bad_vblocks/README b/tests/f_sit_bad_vblocks/README
 new file mode 100644
-index 000000000000..1b4dfdc70e44
+index 000000000000..4ca21c766b2d
 --- /dev/null
-+++ b/tests/Makefile.am
-@@ -0,0 +1,26 @@
-+## Makefile.am
-+
-+noinst_SCRIPTS = test_config runtests
-+EXTRA_DIST = test_config.in runtests.in
-+
-+test_config: $(srcdir)/test_config.in
-+	@echo "Creating test_config script..."
-+	@[ -f test_config ] && chmod u+w test_config || true
-+	@echo "#!/bin/bash" > test_config
-+	@echo "" >> test_config
-+	@echo "TOPDIR=@top_srcdir@" >> test_config
-+	@cat $(srcdir)/test_config.in >> test_config
-+	@chmod +x-w test_config
-+
-+runtests: $(srcdir)/runtests.in
-+	@echo "Creating runtests script..."
-+	@[ -f runtests ] && chmod u+w runtests || true
-+	@echo "#!/bin/bash" > runtests
-+	@echo "" >> runtests
-+	@echo "SRCDIR=@srcdir@" >> runtests
-+	@cat $(srcdir)/runtests.in >> runtests
-+	@chmod +x-w runtests
-+
-+clean-local:
-+	@[ -f runtests ] && ${SHELL} runtests clean || true
-+	@rm -f $(noinst_SCRIPTS)
-diff --git a/tests/filter.sed b/tests/filter.sed
++++ b/tests/f_sit_bad_vblocks/README
+@@ -0,0 +1,5 @@
++1. create f2fs image
++2. mount f2fs and create a regular file and write data
++3. get a block address by dumping the inode
++4. inject vblocks in the sit entry of the blkaddr by subtracting 1
++5. fsck fixes the vblocks
+diff --git a/tests/f_sit_bad_vblocks/expect.in b/tests/f_sit_bad_vblocks/expect.in
 new file mode 100644
-index 000000000000..b2161a55d454
+index 000000000000..9e31f38c458b
 --- /dev/null
-+++ b/tests/filter.sed
-@@ -0,0 +1,69 @@
-+# output messages that could be removed or ignored
-+#
-+# Note that some sed only supports POSIX Basic Regular Expression (BRE)
-+# syntax. In BRE, metacharacters, for example '|', '\s', '\+', are not
-+# supported. So BRE is recommended in this file.
-+
-+# remove messages which start with "^Info: ", expect for:
-+#  - Info: Automatic fix mode enabled
-+#    indicate that fsck -a is used.
-+#  - Info: Force to fix corruption
-+#    indicate that fsck -f is used.
-+#  - Info: No error was reported
-+#    indicate that fsck does not detect any errors.
-+#  - Info: checkpoint stop reason
-+#  - Info: fs errors
-+#    indicate that fsck detects error recorded in super block.
-+/^Info: MKFS version/,+1d
-+/^Info: FSCK version/,+2d
-+/^Info: Host-managed zoned block device:/,+3d
-+/^Info: /{
-+	/Info: Automatic fix mode enabled/b out;
-+	/Info: Force to fix corruption/b out;
-+	/Info: No error was reported/b out;
-+	/Info: checkpoint stop reason/b out;
-+	/Info: fs errors/b out;
-+	d
-+}
-+# e.g [update_block: 904] Info: Done to update superblock
-+/^\[[a-zA-Z_][0-9a-zA-Z_]*:[[:space:]]*[0-9]\{1,\}\] Info: /d
-+# e.g [INFO] (fsck_update_sb_flags:2389)  --> Casefold: linear_lookup [enable]
-+/^\[INFO\]/d
-+
-+# remove fsck statistics messages
-+# e.g [FSCK] valid_block_count matching with CP             [Ok..][0xc]
-+/^\[FSCK\]/d
-+
-+# remove trivial messages
-+/be careful to overwrite a mounted loopback file/d
-+/^Done: [0-9\.]\{1,\} secs/d
-+/^update nat(nid:.*) blkaddr \[.*\] in journal/d
-+
-+# some messages contain arbitrary numeric, ignore them
-+# e.g [ASSERT] (is_valid_ssa_data_blk: 340) => [ASSERT] (is_valid_ssa_data_blk: x)
-+s/\(\[ASSERT\] ([a-zA-Z_][0-9a-zA-Z_]*:[[:space:]]*\)[0-9]\{1,\})/\1x)/g
-+# e.g [FIX] (nullify_nat_entry:3274) => [FIX] (nullify_nat_entry:x)
-+s/\(\[FIX\] ([a-zA-Z_][0-9a-zA-Z_]*:[[:space:]]*\)[0-9]\{1,\})/\1x)/g
-+# e.g [fsck_chk_quota_files:2242] => [fsck_chk_quota_files:x]
-+s/^\(\[[a-zA-Z_][0-9a-zA-Z_]*:[[:space:]]*\)[0-9]\{1,\}\]/\1x\]/g
-+
-+# exceptions
-+# the message is only shown on zoned device, but I don't find a better way
-+# to keep this message in expect.in for both zoned and legacy UFS. So remove
-+# it for now.
-+/Reset write pointer of zone at segment/d
-+
-+# cut dump messages
-+# e.g nid: 7 ino: 7 ver: 0 offset: 0 blkaddr: 28642878 pack:1 cp_ver:0xe42573115ffc7cfc =>
-+#     nid: 7 ino: 7 ver: 0 offset: 0
-+s/\(^nid:.*\) blkaddr:[0-9]\{1,\} pack:[12] cp_ver:0x[0-9a-fA-F]\{1,\}/\1/g
-+# e.g segno: 55968 vblocks:512 seg_type:1 mtime:0 sit_pack:2 =>
-+#     segno: 55968 vblocks:512 seg_type:1 mtime:0
-+s/\(^segno:.*\) sit_pack:[12]/\1/g
-+
-+# keep the following at the end of the file
-+:out
-+# remove empty lines
-+/^$/d
-+# remove tail spaces
-+s/[[:space:]]\{1,\}$//g
-diff --git a/tests/helpers b/tests/helpers
++++ b/tests/f_sit_bad_vblocks/expect.in
+@@ -0,0 +1,3 @@
++Info: Force to fix corruption
++[ASSERT] (check_block_count:x)  --> Wrong SIT valid blocks: segno=_SEGNO_, 511 vs. 512
++Info: Force to fix corruption
+diff --git a/tests/f_sit_bad_vblocks/script b/tests/f_sit_bad_vblocks/script
 new file mode 100644
-index 000000000000..03853f803598
+index 000000000000..6dd684555011
 --- /dev/null
-+++ b/tests/helpers
-@@ -0,0 +1,269 @@
++++ b/tests/f_sit_bad_vblocks/script
+@@ -0,0 +1,38 @@
 +#!/bin/bash
 +
-+OUT=$TESTDIR/out
-+EXP=$TESTDIR/expect
-+LOG=$TESTDIR/log
++DESC="sit entry with invalid vblocks"
 +
-+# $1: string to be trimed
-+trim_extra_space() {
-+	local line=""
-+	while IFS= read -r line; do
-+		# trim multiple spaces as one
-+		line=`echo "$line" | sed "s/[[:space:]]\{1,\}/ /g"`
-+		# delete space in hex values
-+		line=`echo "$line" | sed "s/0x /0x/g"`
-+		# delete space before and after ":"
-+		echo "$line" | sed "s/ *: */:/g"
-+	done
-+}
++. $TOPDIR/tests/helpers
 +
-+# clean up temporary files
-+cleanup() {
-+	[ -f $TESTDIR/PASS ] && rm $TESTDIR/PASS || true
-+	[ -f $TESTDIR/FAIL ] && rm $TESTDIR/FAIL || true
-+	[ -f $TESTDIR/SKIP ] && rm $TESTDIR/SKIP || true
-+	[ -f $TESTDIR/expect ] && rm $TESTDIR/expect || true
-+	[ -f $OUT ] && rm $OUT || true
-+	[ -f $LOG ] && rm $LOG || true
-+}
++cleanup
++make_f2fs > $LOG
 +
-+# check test result
-+check_result() {
-+	local NAME=`basename $TESTDIR`
++mkdir $TESTDIR/mntdir
++safe_mount $MNT_OPTS $META $TESTDIR/mntdir >> $LOG
++dd if=/dev/zero of=$TESTDIR/mntdir/testfile bs=4K count=513 status=none
++ino=`stat -c "%i" $TESTDIR/mntdir/testfile`
++safe_umount $TESTDIR/mntdir >> $LOG
++rm -rf $TESTDIR/mntdir
 +
-+	if [ -e $TESTDIR/SKIP ]; then
-+		echo "$NAME: $DESC: skip"
-+		return
-+	fi
++node=`$DUMP $DUMP_OPTS -i $ino $META`
++echo "$node" >> $LOG
++blkaddr=`get_mb_val "$node" 'i_addr\[0x100\]'`
++echo "ino:$ino blkaddr:$blkaddr" >> $LOG
 +
-+	if [ ! -e $EXP ]; then
-+		cp "$EXP".in $EXP
-+	fi
-+	sed -f $FILTER -i $OUT
-+	cmp -s $OUT $EXP
-+	if [ x"$?" = x"0" ]; then
-+		echo "$NAME: $DESC: pass"
-+		touch $TESTDIR/PASS
-+	else
-+		echo "$NAME: $DESC: fail"
-+		echo "diff $EXP $OUT"
-+		diff $EXP $OUT > $TESTDIR/FAIL
-+		exit
-+	fi
-+}
++SIT_VBLOCKS_SHIFT=10
++SIT_VBLOCKS_MASK=$(((1 << SIT_VBLOCKS_SHIFT) - 1))
++val=`$INJECT --dry-run --sit 0 --blk $blkaddr --mb vblocks $META | \
++	grep "inject sit entry vblocks" | awk '{print $(NF-2)}'`
++vblocks=$((val & SIT_VBLOCKS_MASK))
++val=$(((val & ~SIT_VBLOCKS_MASK) | (vblocks - 1)))
 +
-+# $1: dev path
-+is_block_dev() {
-+	if [ ! -e $1 ]; then
-+		return 0
-+	fi
-+	local dev_real_path=`realpath $1`
-+	if [ -b $dev_real_path ]; then
-+		# dev is block device
-+		return 1
-+	fi
-+	# dev is not block device
-+	return 0
-+}
++$INJECT --sit 0 --blk $blkaddr --mb vblocks --val $val $META >> $LOG
++$FSCK $FSCK_OPTS -f $META > $OUT
++$FSCK $FSCK_OPTS -f $META >> $OUT
++cat $OUT >> $LOG
 +
-+# $1: path of image file
-+# $2: size in MB
-+create_img_file() {
-+	is_block_dev $1
-+	if [ $? -eq 1 ]; then
-+		# dev is block device, return directly
-+		return
-+	fi
-+	truncate -s $2"M" $1
-+}
++segno=`get_segno $blkaddr`
++SEGNO=`printf "0x%x" $segno`
++sed "s/_SEGNO_/$SEGNO/g" $TESTDIR/expect.in > $TESTDIR/expect
 +
-+make_f2fs() {
-+	local metasize=10
-+	local datasize=118
-+	local opts="$MKFS_OPTS"
-+
-+	if [ $SEGS_PER_SEC -gt 1 ]; then
-+		metasize=$((3 * (SEGS_PER_SEC * 2)))
-+		datasize=$((11 * (SEGS_PER_SEC * 2)))
-+		opts="$MKFS_OPTS -s $SEGS_PER_SEC"
-+	fi
-+	if [ $MULTIDEV -eq 1 ]; then
-+		create_img_file $META $metasize
-+		create_img_file $DATA $datasize
-+		opts = "$MKFS_OPTS -c $DATA"
-+	else
-+		create_img_file $META $((metasize + datasize))
-+	fi
-+
-+	$MKFS $opts $META
-+	if [ $? -ne 0 ]; then
-+		echo "failed to format f2fs" >&2
-+		exit
-+	fi
-+	$DUMP -d 1 $META
-+}
-+
-+safe_mount() {
-+	if [ $MULTIDEV -eq 1 ]; then
-+		is_block_dev $DATA
-+		if [ $? -eq 0 ]; then
-+			# If multiple devices are used and DATA is not
-+			# a block device, DATA should be associated to
-+			# a loop device in advance.
-+			# dump/fsck will check the path of the DATA
-+			# device, to make them happy, replace devs[1].path
-+			# with the loop device before mount, and restore
-+			# it after umount.
-+			local dev=`losetup -f`
-+			losetup $dev $DATA
-+			if [ $? -ne 0 ]; then
-+				echo "cannot setup loop dev: losetup $dev $DATA" >&2
-+				exit
-+			fi
-+			$INJECT --sb 1 --mb devs.path --idx 1 --str $dev $META
-+		fi
-+	fi
-+
-+	mount -t f2fs $*
-+	if [ $? -ne 0 ]; then
-+		echo "cannot mount f2fs image" >&2
-+		exit
-+	fi
-+}
-+
-+# $1: mntpoint
-+safe_umount() {
-+	local max_retry=10
-+	local dev=""
-+	local i=0
-+
-+	umount $1
-+	while [ $? -ne 0 ]; do
-+		i=$((i + 1))
-+		if [ $i -gt $max_retry ]; then
-+			echo "cannot umount f2fs image" >&2
-+			exit
-+		fi
-+		echo "cannot umount f2fs image, retry: $i"
-+		sleep 1
-+		umount $1
-+	done
-+
-+	if [ ! -e $DATA ]; then
-+		return
-+	fi
-+	dev=`losetup -j $DATA | cut -d ":" -f 1`
-+	if [ x"$dev" != x"" ]; then
-+		losetup -d $dev
-+		# restore devs[1].path from $dev to $DATA
-+		$INJECT --sb 1 --mb devs.path --idx 1 --str $DATA $META
-+	fi
-+}
-+
-+# $1: subject: cp, sb or node
-+# $2: member of subject
-+# $3: the number of output lines if there are multiple results, default is 1
-+get_mb() {
-+	if [ x"$3" = x"" ]; then
-+		local nth=1
-+	else
-+		local nth=$3
-+	fi
-+	echo "$1" | grep "^$2" | awk "NR==$nth" | trim_extra_space
-+}
-+
-+# $1: subject: cp, sb or node
-+# $2: member of subject
-+# $3: the number of output lines if there are multiple results, default is 1
-+get_mb_val() {
-+	if [ x"$3" = x"" ]; then
-+		local nth=1
-+	else
-+		local nth=$3
-+	fi
-+	local val=`echo "$1" | grep "^$2" | awk "NR==$nth" | \
-+		   sed "s/^$2[[:space:]]*\[\(.*\)\]$/\1/g"`
-+	echo "$val" | grep ":" > /dev/null
-+	if [ $? -eq 0 ]; then
-+		val=`echo $val | sed "s/.*:[[:space:]]*\([0-9]\{1,\}\)$/\1/g"`
-+	fi
-+	echo $val
-+}
-+
-+# $1: device
-+get_sb() {
-+	local sb_cp="`$DUMP $DUMP_OPTS -d 1 $1`"
-+	local cut_here=`echo "$sb_cp" | awk '/^\| Checkpoint/ {print NR}'`
-+	local sb="`echo "$sb_cp" | head -n $((cut_here - 2))`"
-+	echo "$sb"
-+}
-+
-+# $1: device
-+get_cp() {
-+	local sb_cp="`$DUMP $DUMP_OPTS -d 1 $1`"
-+	local cut_here=`echo "$sb_cp" | awk '/^\| Checkpoint/ {print NR}'`
-+	local cp="`echo "$sb_cp" | tail -n +$((cut_here - 2))`"
-+	echo "$cp"
-+}
-+
-+# $1: blkaddr
-+get_segno() {
-+	local sb=`get_sb $META`
-+	local main_blkaddr=`get_mb_val "$sb" main_blkaddr`
-+	local log_blks_per_seg=`get_mb_val "$sb" log_blocks_per_seg`
-+	echo $((($1 - main_blkaddr) >> log_blks_per_seg))
-+}
-+
-+# $1: segno
-+start_block() {
-+	local sb=`get_sb $META`
-+	local main_blkaddr=`get_mb_val "$sb" main_blkaddr`
-+	local log_blks_per_seg=`get_mb_val "$sb" log_blocks_per_seg`
-+	echo $((main_blkaddr + ($1 << log_blks_per_seg)))
-+}
-+
-+# $1: blkaddr
-+offset_in_seg() {
-+	local sb=`get_sb $META`
-+	local main_blkaddr=`get_mb_val "$sb" main_blkaddr`
-+	local log_blks_per_seg=`get_mb_val "$sb" log_blocks_per_seg`
-+	echo $((($1 - main_blkaddr) % (1 << log_blks_per_seg)))
-+}
-+
-+# reference INIT_FEATURE_TABLE
-+# $1: feature
-+test_sb_feature() {
-+	local sb=`get_sb $META`
-+	local feats=`get_mb_val "$sb" feature`
-+	case $1 in
-+		"encrypt")
-+			return $((!!(feats & 0x1)));;
-+		"blkzoned")
-+			return $((!!(feats & 0x2)));;
-+		"extra_attr")
-+			return $((!!(feats & 0x8)));;
-+		"project_quota")
-+			return $((!!(feats & 0x10)));;
-+		"inode_checksum")
-+			return $((!!(feats & 0x20)));;
-+		"flexible_inline_xattr")
-+			return $((!!(feats & 0x40)));;
-+		"quota")
-+			return $((!!(feats & 0x80)));;
-+		"inode_crtime")
-+			return $((!!(feats & 0x100)));;
-+		"lost_found")
-+			return $((!!(feats & 0x200)));;
-+		"verity")
-+			return $((!!(feats & 0x400)));;
-+		"sb_checksum")
-+			return $((!!(feats & 0x800)));;
-+		"casefold")
-+			return $((!!(feats & 0x1000)));;
-+		"compression")
-+			return $((!!(feats & 0x2000)));;
-+		"ro")
-+			return $((!!(feats & 0x4000)));;
-+	esac
-+	return 0
-+}
-diff --git a/tests/runtests.in b/tests/runtests.in
-new file mode 100644
-index 000000000000..29db79a4a95c
---- /dev/null
-+++ b/tests/runtests.in
-@@ -0,0 +1,48 @@
-+#!/bin/bash
-+#
-+# run testcases
-+#
-+# run all testcases:
-+#   runtests
-+#
-+# run one testcase:
-+#   runtests <testcase directory path>
-+#
-+# cleanup:
-+#   runtests clean
-+#
-+
-+# clean temporary files
-+if [ x"$1" = x"clean" ]; then
-+	find $SRCDIR \( -name FAIL -o -name PASS -o -name SKIP -o \
-+			-name expect -o -name log -o -name out -o \
-+			-name meta.img -o -name data.img \) -exec rm -f {} \;
-+	exit
-+fi
-+
-+TEST_CONFIG=$SRCDIR/test_config
-+. $TEST_CONFIG
-+
-+# $1: path of testcase path
-+run_one_test() {
-+	local subdir=`realpath $1`
-+	local name=`basename $subdir`
-+	echo "Run testcase: $name ..."
-+	TESTDIR=$subdir
-+	. $subdir/script
-+	echo ""
-+}
-+
-+# run one testcase
-+# $1: testcase path
-+if [ x"$1" != x"" ]; then
-+	run_one_test $1
-+	exit
-+fi
-+
-+# run all testcases
-+TESTS=`find ./ -type f -name script`
-+for testcase in ${TESTS[@]}; do
-+	subdir=`dirname $testcase`
-+	run_one_test $subdir
-+done
-diff --git a/tests/test_config.in b/tests/test_config.in
-new file mode 100644
-index 000000000000..41ce50052197
---- /dev/null
-+++ b/tests/test_config.in
-@@ -0,0 +1,53 @@
-+#!/bin/bash
-+#
-+# Test Configuration
-+#
-+
-+check_executable() {
-+	file $1 | grep ELF > /dev/null
-+	[ $? -ne 0 ] && { echo "ERROR: $1 not ELF"; exit; }
-+}
-+
-+check_diff() {
-+	diff $1 $2 > /dev/null
-+	[ $? -ne 0 ] && { echo "WARNING: $1 and $2 differ"; }
-+}
-+
-+# path of devices
-+# If multiple devices are used, META is the first device and DATA is the
-+# second device. If there is only one device, META is used only.
-+META=`realpath $TOPDIR/tests/meta.img`
-+DATA=`realpath $TOPDIR/tests/data.img`
-+
-+# path of tools
-+MKFS="$TOPDIR/mkfs/mkfs.f2fs"
-+FSCK="$TOPDIR/fsck/fsck.f2fs"
-+DUMP="$TOPDIR/fsck/dump.f2fs"
-+INJECT="$TOPDIR/fsck/inject.f2fs"
-+F2FS_IO="$TOPDIR/tools/f2fs_io/f2fs_io"
-+FILTER="$TOPDIR/tests/filter.sed"
-+[ ! -e $MKFS ] && { echo "$MKFS not exist"; exit; }
-+[ ! -e $FSCK ] && { echo "$FSCK not exist"; exit; }
-+check_executable $FSCK
-+[ ! -e $DUMP ] && { cp $FSCK $DUMP; }
-+check_executable $DUMP
-+check_diff $FSCK $DUMP
-+[ ! -e $F2FS_IO ] && { echo "$F2FS_IO not exist"; exit; }
-+[ ! -e $INJECT ] && { cp $FSCK $INJECT; }
-+check_executable $INJECT
-+check_diff $FSCK $INJECT
-+
-+# config of mkfs
-+F2FS_FEATURES="encrypt,quota,project_quota,extra_attr,verity,compression"
-+MKFS_OPTS="-O $F2FS_FEATURES -f"
-+MULTIDEV=0
-+SEGS_PER_SEC=1
-+
-+# config of fsck
-+FSCK_OPTS="--no-kernel-check -N"
-+
-+# config of dump
-+DUMP_OPTS="-N"
-+
-+# config of mount
-+MNT_OPTS=""
++check_result
 -- 
 2.43.0
 
