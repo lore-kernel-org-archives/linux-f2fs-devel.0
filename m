@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B0D67C5B543
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9BD06C5B543
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:31:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=O0TSQySNK4V5nSnni3v0o7/7fSX/WC28v63k9i9JPO0=; b=XKcl5DSfkp/GS1YHanA50bfvwl
-	uVFKtl/xTbKcWAF2BdrMSi2gq7fCi8ZttZmi4cJFRgBmb1VVgz+zAAK6cgpsQ9BPDIcH6teZUHzLs
-	pasqnfPpweSneJJnMqQ8z6OV1Btravonvr7rfQzhP7rVBmhv98FT/b/8HEYu7qVz1YOk=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=nCB5sCwTMm77RxKZwq3u7iCbtSD6JjBc9+DCCqitqK4=; b=g0t7fbcvf97Dc4WZoLC6l+VNhZ
+	THmiFS5XVDy8axQO6aVS4Y49OjMdKZl+f3W3Afeu+ZB2l+AlvjsatMNS8jJ4mz8Ej9GOdfvEmBNiI
+	fgtyN29+wi7zWVagLSLBYhmmVhtzSpmLjpkliNqcFSNRorxWrkRw2PWaowbech4lQpII=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uP0w6-0000L0-CL;
-	Tue, 10 Jun 2025 15:30:50 +0000
+	id 1uP0wo-0004fv-92;
+	Tue, 10 Jun 2025 15:31:34 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uP0w4-0000Ks-BV
+ (envelope-from <shengyong2021@gmail.com>) id 1uP0wn-0004fp-36
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:30:48 +0000
+ Tue, 10 Jun 2025 15:31:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KUVftHKR6DeD8bmWL1tMcDlBI42NuJKlFF8lwSZU4zM=; b=aVOUje4aPNY2dCcP2RSNlkGn20
- Ik7O+Yr8u1SVd9zKp6LkqwetSDMozl4AE7gMJbAPxFIqU9VYHEqTw8oZmsS8SEXBO/V7+gErXTDWg
- rHOGyLj/0gIBXJHzVd6zaUv7P68uR9SWKbcyLWITC+cWCtgRxRDtLwoK+fVqaOvlRVRI=;
+ bh=UgZP4biksOlKQrYyedMm+VAfl4FYZRtJpwc87dQde8U=; b=BgolOeaNg2IUQY+nxF+I/CwtX0
+ 8p+jWHS93cqRhbg/BtINEHWGEW9YaEaVE99ncQLos5Z7Lh8g2nc+jdatbLUy5OulpvfIWRgpKlmHO
+ oxiaNYkjgQj4AQsBZCPhCTbHZIWpFbM0DbpiLh5aqCMko4sqCZzgg1wkUuJA6VAH9LK4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,72 +42,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=KUVftHKR6DeD8bmWL1tMcDlBI42NuJKlFF8lwSZU4zM=; b=G+uwVZu6A8U1MCJOeoaklFyHSR
- VqX1RWpxwk6Z7RUR0xgWLRKgPJreX+RbrCJrJaq02WvTVUYLdP6yhd9Dc1pIsvKA3rnKN3nb5KFVR
- ExmhfCyREfVVLgNY6cjbTKCpSK9dbifqxsb3Zhx3ki+4BHsYOALHdJXfGmovH8c9GMDg=;
-Received: from mail-ot1-f48.google.com ([209.85.210.48])
+ bh=UgZP4biksOlKQrYyedMm+VAfl4FYZRtJpwc87dQde8U=; b=IgVHd8io/TpyfeFXRF90XCsm2K
+ GhVajDL7krcBvz29zc+g+C9vdfubF1jmBUTqZMaSdiECQuWsFNPE0Wnn27l6++iVO/dLdJbwVFyhi
+ AU6zYWUpfI4QyUdETX6LstevWOVIRksh5buFTES0y3RdP0IR72bSKmA1Ihyu0efKvlvI=;
+Received: from mail-ot1-f41.google.com ([209.85.210.41])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uP0w3-0005BH-Kf for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:30:48 +0000
-Received: by mail-ot1-f48.google.com with SMTP id
- 46e09a7af769-72ecc0eeb8bso1898036a34.0
+ id 1uP0wm-0005GX-LP for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jun 2025 15:31:33 +0000
+Received: by mail-ot1-f41.google.com with SMTP id
+ 46e09a7af769-735ac221670so2974827a34.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Jun 2025 08:30:47 -0700 (PDT)
+ Tue, 10 Jun 2025 08:31:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749569442; x=1750174242; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1749569482; x=1750174282; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KUVftHKR6DeD8bmWL1tMcDlBI42NuJKlFF8lwSZU4zM=;
- b=l/e7Ng+Fh4NPMF/E+XhpQ6dM4Q7E1Pql5roBM/wfjsEAlP2ytWk7zzUpB/bngS2HB+
- U+lWKed3eQaWA5HLeyazMap57qvRYGoh0J9AU7sOl5eQFWOOG8qGPCha9FLI4glzELEW
- qrf/UxbglWsbu+3yqkN52oE+h3OvgrIo7FWzNVcX58aAvl3i3zOHKHFtrClbL91xx96f
- 13EItJBE092dGJQr5fwdOwOZvgDAZqG9SbT4YWEEYqrv+kqki+Ivo8xTXYJ3xcUcgDvZ
- P/WB8MyWEI+/35hJDaXywpW2dWAhR2G595JeJonf85sPj7EGdjIqKpe77BHDQXtdq5O2
- SBcg==
+ bh=UgZP4biksOlKQrYyedMm+VAfl4FYZRtJpwc87dQde8U=;
+ b=hLi6wmO4VEEiixMovgg/dEuEaiTzZua48WxYT9RLdfQBGoec8bTNk0YxvtTdSjlYmY
+ CuKr6vtkvGh0byy6N583quEJOUmmvWc7S6ksCsr4yo9uH5D78R8pwscnri/oxlWFIdZ4
+ 1l2D+n/vLLdoJB0x6pXl1JyRU7e0fUqOEJhKvxdpQxQexAuiOu+t6IshFwZkIBIisggU
+ 4xiNM39EnAc8RvwnbRcX5g7wQAmw3JN2swgzN6jgux5GR+7WoS1cAoUAPuoz9c2zMFo+
+ dEbJE6HmSLwHW0Po7IC7DUxRtabIoPKOEnUQvIXlBKQuLdaJm6M4XagHl0TWGbgNqevM
+ m5HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749569442; x=1750174242;
+ d=1e100.net; s=20230601; t=1749569482; x=1750174282;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=KUVftHKR6DeD8bmWL1tMcDlBI42NuJKlFF8lwSZU4zM=;
- b=SKDja6cQXsa2qDJ5s2TNqeOslmZtQGV5FiVbWxj75hafJgwuEDG7DNb9+Z63gFeCHV
- /XR5stuvvs3tRC8ZzKKZke24GSDot47Xd4eXa/Pnkx4TyyvsFKTagDElwUkBme/oCrKY
- BR04hTtUFxhKGQ9zYlpiWgaRuUPu8O4bv/gJzeCQ8cGWG0g8oHfsuExmfsxOQD+j6BX4
- SgaMRqpaO9L28eG+JSAj+h/IVGa2IIp0fKS6Opo6vJ3A5tJeJBTPs5ed0f6QH0kdbFhB
- 1mEvObGcdU9cNBRhrqGeii2EEeef+pKTnYBSkBIn6TugbHijPnt6U6pE+t6/8SbBYxMX
- ysqA==
-X-Gm-Message-State: AOJu0YwzVN2Y4dhpLDMLB/1sU/RMKuRTkwWVC3uSlaOpaSKGCUguofI9
- 6u+mhVft35r8HNHSHP0mXXTmSK8UDnH96OnbCcSQtXSpa8Dcyfd1h5N6D+cb1Q==
-X-Gm-Gg: ASbGnctmQtCe23k6zrC81tdp94qQOlqvSfGL4eDtDF+OrJJq+flPew3UYLOsIZaGDNI
- dcc7dmHoWyJvX4fWd+Hp2OVatCNFv9v9bM9zBIhDtwNzsT6mMxcnZN20sO39CkvAewwA3zer96f
- +4jtdCiQ2h1sDPcSkVnf554wWv6KbhWjfM3utQyRDGhgDTtB3W62SYJz7a6DJmfKdEdn/0dnSsv
- mw8218YsDj1m50TnamKO0O7o8jg2wIFb6FYQ2B9CiNApl61zfUsjMo4QiMA8u+NKOQexhdEFRTd
- IHnASOvQqZEdvLH3OctRH/mQ8CajZQiA4QFlZ8eG18K5iJMGU3zKA40vr6otqtPAI1gNzdM1bmx
- mc1k=
-X-Google-Smtp-Source: AGHT+IFC+Yhl1YwhiJ3GbLCxXghnMsGe+K/SIp3ifm8sucIsbPcwb03G+ri9EpcZdnVSvtARi01hWg==
-X-Received: by 2002:a05:6a00:ace:b0:73d:ff02:8d83 with SMTP id
- d2e1a72fcca58-748617de51cmr3524599b3a.3.1749559115927; 
- Tue, 10 Jun 2025 05:38:35 -0700 (PDT)
+ bh=UgZP4biksOlKQrYyedMm+VAfl4FYZRtJpwc87dQde8U=;
+ b=YPi/IV6v2esf3aeZOjUHs5GYGY3KFfAs5lJufb6rIsSKT0HAvGjV8XESW8Yoey7mc4
+ OaD5tEAyZlXACSy6ex5IU6MgPivC7y36Qy2//b+f7g3lSUyd0DCOrpSst6nxyZ5zbCbT
+ HBm5RAKEVOYsBQEgMtetQs4qfm0NxbXdcPV0k8CLXuY1ZKEj5CzawUB3PuNP+jpPVxz9
+ wk84ry1KBMd6H5l6dWqrn/srFdIkV7qr5RGlLKzKBG5DDSceYgnEOtaQPMr6quw02Yp6
+ RjWbt9jMp4bZ+7UsBsBv2ciZ2vqhJzLVpPBR49Z2G1aTqtzh9s6jNQnXHrLrl8XS8HkA
+ TX0w==
+X-Gm-Message-State: AOJu0YxURfiZXDVhcnWcRGw2puqhPGIQrd1v0J7DM53e/uCDOqJRby7y
+ Sm+wzGqbm0+yG8mENBN5KGrghdyNoKcdOkK61bHNTpM279Qq2cMPHsftjw6oMQ==
+X-Gm-Gg: ASbGncsE2BRbcVfzLNEw9T7EufkWwgM5RRB/sNHq0xqrxeU/N4pFtI4qZvYVv1qFVjQ
+ X1+DAgoKFTtxyYVZv2646HdjG6CfWUDBF/blyzHW25QIu/nKQXGT5QGXHI1piaXG4uy8sbNWg0y
+ AdLgC3PaNGaen6FfZigDDX43y6nDq+CXdu1fl6Y7ES6Mygjj/eNlGwJqlCCUbKgGncQDUhKwDwJ
+ nd46/tf2bUtCC33oCvVjWmyMlb8vAZHCht/dOiUkYcV/X+d5/UE4kLcnoG9ovWc+dJ23fTTgv+b
+ 859eYKC2pTuLonRaV1i4090a1/7EV6R0xWOZoAO6uv78ctlCOt2LXAf4E0vFrMgM0PiJ
+X-Google-Smtp-Source: AGHT+IHuXQ8m9Wts5djhgK3xKVv7X595pTzof1aI4qXemyn2BdVvjebaFqE7/EaTSQJn87cR6vXBqQ==
+X-Received: by 2002:a05:6a00:18a8:b0:742:b9d2:dc8f with SMTP id
+ d2e1a72fcca58-7485ea28be0mr3885687b3a.1.1749559135651; 
+ Tue, 10 Jun 2025 05:38:55 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.34
+ d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.53
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 05:38:35 -0700 (PDT)
+ Tue, 10 Jun 2025 05:38:55 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 10 Jun 2025 20:37:27 +0800
-Message-ID: <20250610123743.667183-18-shengyong1@xiaomi.com>
+Date: Tue, 10 Jun 2025 20:37:37 +0800
+Message-ID: <20250610123743.667183-28-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
 References: <20250610123743.667183-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uP0w3-0005BH-Kf
-Subject: [f2fs-dev] [RFC PATCH v2 17/32] tests: add fsck testcase of fixing
- cp crc
+X-Headers-End: 1uP0wm-0005GX-LP
+Subject: [f2fs-dev] [RFC PATCH v2 27/32] tests: add fsck testcase of fixing
+ dentry hash code
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -128,44 +127,51 @@ From: Sheng Yong <shengyong1@xiaomi.com>
 
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 ---
- tests/f_cp_bad_crc/README    |  5 +++++
- tests/f_cp_bad_crc/expect.in |  4 ++++
- tests/f_cp_bad_crc/script    | 38 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 47 insertions(+)
- create mode 100644 tests/f_cp_bad_crc/README
- create mode 100644 tests/f_cp_bad_crc/expect.in
- create mode 100644 tests/f_cp_bad_crc/script
+ tests/f_dentry_bad_hash/README    |  8 +++++
+ tests/f_dentry_bad_hash/expect.in |  8 +++++
+ tests/f_dentry_bad_hash/script    | 56 +++++++++++++++++++++++++++++++
+ 3 files changed, 72 insertions(+)
+ create mode 100644 tests/f_dentry_bad_hash/README
+ create mode 100644 tests/f_dentry_bad_hash/expect.in
+ create mode 100644 tests/f_dentry_bad_hash/script
 
-diff --git a/tests/f_cp_bad_crc/README b/tests/f_cp_bad_crc/README
+diff --git a/tests/f_dentry_bad_hash/README b/tests/f_dentry_bad_hash/README
 new file mode 100644
-index 000000000000..250ece3f8b5a
+index 000000000000..f36c44f7c7bd
 --- /dev/null
-+++ b/tests/f_cp_bad_crc/README
-@@ -0,0 +1,5 @@
++++ b/tests/f_dentry_bad_hash/README
+@@ -0,0 +1,8 @@
 +1. create f2fs image
-+2. create a new file
-+3. inject crc in current cp with value 0x12345
-+4. fsck fixes bad cp by copying backup cp
-+5. compare cp1 version with cp2 version, both cp should have the same version
-diff --git a/tests/f_cp_bad_crc/expect.in b/tests/f_cp_bad_crc/expect.in
++2. mount f2fs
++3. create an inline dentry directory, and create a file in it
++4. inject dentry's hash_code of the file
++5. fsck fixes the dentry's hash_code
++6. create a non-inline dentry directory (by converting), and create a file in it
++7. inject dentry's hash_code of the file
++8. fsck fixes the dentry's hash_code
+diff --git a/tests/f_dentry_bad_hash/expect.in b/tests/f_dentry_bad_hash/expect.in
 new file mode 100644
-index 000000000000..d21fdab7304a
+index 000000000000..074388fa6849
 --- /dev/null
-+++ b/tests/f_cp_bad_crc/expect.in
-@@ -0,0 +1,4 @@
-+Info: Automatic fix mode enabled.
-+	Invalid CP CRC: offset:_OFFS_, crc:0x12345, calc:_CRC_
-+Info: Automatic fix mode enabled.
-+Info: No error was reported
-diff --git a/tests/f_cp_bad_crc/script b/tests/f_cp_bad_crc/script
++++ b/tests/f_dentry_bad_hash/expect.in
+@@ -0,0 +1,8 @@
++Info: Force to fix corruption
++[ASSERT] (f2fs_check_hash_code:x)  --> Mismatch hash_code for "testfile1" [12345:_HASH1_]
++[FIX] (f2fs_check_hash_code:x)  --> Fix hash_code for "testfile1" from 12345 to _HASH1_
++Info: Force to fix corruption
++Info: Force to fix corruption
++[ASSERT] (f2fs_check_hash_code:x)  --> Mismatch hash_code for "testfile2" [12345:_HASH2_]
++[FIX] (f2fs_check_hash_code:x)  --> Fix hash_code for "testfile2" from 12345 to _HASH2_
++Info: Force to fix corruption
+diff --git a/tests/f_dentry_bad_hash/script b/tests/f_dentry_bad_hash/script
 new file mode 100644
-index 000000000000..b5181614f537
+index 000000000000..4a2d31198e54
 --- /dev/null
-+++ b/tests/f_cp_bad_crc/script
-@@ -0,0 +1,38 @@
++++ b/tests/f_dentry_bad_hash/script
+@@ -0,0 +1,56 @@
 +#!/bin/bash
 +
-+DESC="current cp with invalid crc"
++DESC="dentry with invalid hash_code"
 +
 +. $TOPDIR/tests/helpers
 +
@@ -173,32 +179,50 @@ index 000000000000..b5181614f537
 +make_f2fs > $LOG
 +
 +mkdir $TESTDIR/mntdir
++# inject inline dentry
 +safe_mount $MNT_OPTS $META $TESTDIR/mntdir >> $LOG
-+touch $TESTDIR/mntdir/testfile
++mkdir $TESTDIR/mntdir/testdir1
++touch $TESTDIR/mntdir/testdir1/testfile1
++ino=`stat -c "%i" $TESTDIR/mntdir/testdir1/testfile1`
++safe_umount $TESTDIR/mntdir >> $LOG
++
++hash_code=`$INJECT --dry-run --dent --nid $ino --mb d_hash $META | \
++	grep "Info: inject dentry d_hash of nid" | awk '{print $(NF-2)}'`
++echo "ino:$ino hash_code:$hash_code" >> $LOG
++
++$INJECT --dent --nid $ino --mb d_hash --val 0x12345 $META >> $LOG
++$FSCK $FSCK_OPTS -f $META > $OUT
++$FSCK $FSCK_OPTS -f $META >> $OUT
++cat $OUT >> $LOG
++skip_lines=`wc -l $OUT`
++
++HASH_CODE=`printf "%x" $hash_code`
++sed "s/_HASH1_/$HASH_CODE/g" $TESTDIR/expect.in > $TESTDIR/expect
++
++# inject non-inline dentry
++safe_mount $MNT_OPTS $META $TESTDIR/mntdir >> $LOG
++mkdir $TESTDIR/mntdir/testdir2
++i=0
++while [ $i -lt 30 ]; do
++	touch $TESTDIR/mntdir/testdir2/loooooooooooooooooooooooooognametestfile$i
++	i=$((i + 1))
++done
++touch $TESTDIR/mntdir/testdir2/testfile2
++ino=`stat -c "%i" $TESTDIR/mntdir/testdir2/testfile2`
 +safe_umount $TESTDIR/mntdir >> $LOG
 +rm -rf $TESTDIR/mntdir
 +
-+cp=`get_cp $META`
-+offs=`get_mb_val "$cp" checksum_offset`
-+crc=`get_mb_val "$cp" '\<checksum\>'`
++hash_code=`$INJECT --dry-run --dent --nid $ino --mb d_hash $META | \
++	grep "Info: inject dentry d_hash of nid" | awk '{print $(NF-2)}'`
++echo "ino:$ino hash_code:$hash_code" >> $LOG
 +
-+echo "crc:$crc offs:$offs" >> $LOG
++$INJECT --dent --nid $ino --mb d_hash --val 0x12345 $META >> $LOG
++$FSCK $FSCK_OPTS -f $META >> $OUT
++$FSCK $FSCK_OPTS -f $META >> $OUT
++cat $OUT | tail -n +$skip_lines >> $LOG
 +
-+$INJECT --cp 0 --mb crc --val 0x12345 $META >> $LOG
-+$FSCK $FSCK_OPTS -a $META > $OUT
-+$FSCK $FSCK_OPTS -a $META >> $OUT
-+
-+cp1_ver=`$INJECT --cp 1 --mb checkpoint_ver --val 0 --dry-run $META | grep "inject checkpoint_ver of cp" | awk '{print $(NF-2)}'`
-+cp2_ver=`$INJECT --cp 2 --mb checkpoint_ver --val 0 --dry-run $META | grep "inject checkpoint_ver of cp" | awk '{print $(NF-2)}'`
-+if [ $((cp1_ver)) -ne $((cp2_ver)) ]; then
-+	echo "cp1_ver: $cp1_ver" >> $OUT
-+	echo "cp2_ver: $cp2_ver" >> $OUT
-+fi
-+cat $OUT >> $LOG
-+
-+CRC=`printf "0x%x" $crc`
-+sed "s/_CRC_/$CRC/g" $TESTDIR/expect.in > $TESTDIR/expect
-+sed -i "s/_OFFS_/$offs/g" $TESTDIR/expect
++HASH_CODE=`printf "%x" $hash_code`
++sed -i "s/_HASH2_/$HASH_CODE/g" $TESTDIR/expect
 +
 +check_result
 -- 
