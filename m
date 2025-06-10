@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 77CFDC5B543
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 43F15C5B543
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:17:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=cEPTqUieJse1Es1fwapeZ6/XmdvPoZXYrY0wK5C6R5U=; b=YgmbZDj4jqp3SARFsi/H+bV/2o
-	fuMW3hzR4HeS11xLfu3iOHHpdcziDvD+8UR3qt06nMgtiYy6WdPpQMs4Xrj9pGB1M46DHWKbC9pdc
-	b+MEwVo9ZjMTd7MXN/CunYP0RVQbjObmN1I+y9cmtwMzSbLGnWLDkOwizWRSWYRWUqwY=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=T0JTKWHTq/+vrKVDUMMebm3Pd8stdxDfI+20h270Bl8=; b=HTxPWgU8lK+Qu4qd/yKbgOvZLC
+	IGEYUt76d59/MVvyzF//5AlQK6yhX4miSqUt+Bn6n41QmGy0F/XTzYZTqH+diRdkA/mNiuibtljOT
+	cAw/qCGcTA9JZbChhPTre4OYuQmDA3U2FuA9DaaMJe4v1yLkZI+ERXmLT1j032Qd4AU4=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uP0j1-0003Cs-4g;
-	Tue, 10 Jun 2025 15:17:19 +0000
+	id 1uP0j3-0005zS-V1;
+	Tue, 10 Jun 2025 15:17:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uP0iz-0003Cc-Ti
+ (envelope-from <shengyong2021@gmail.com>) id 1uP0j2-0005zI-LJ
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:17:17 +0000
+ Tue, 10 Jun 2025 15:17:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HrXGevSpkqQGJt6hJc3wfUeGw8/a6fFht5XxIsZZ9o4=; b=hdZO0LZfETtAdyG3vkAEINMGUT
- NB9Dxo8iNae9tJ0qx75rtfpDg4urKgxiDeQn9Cf9wpFRz07Q7TprSraeKYzUuC4ETWw2Ic3oym61n
- r4uguvRV3ts4fPunEz4yReAcykRvKmpABYLFunAcvU9Yw9mAopn93u1joQ7AJ+9o0lv0=;
+ bh=qhiz3zikIrPHrDXZsvf7ap5bKuyfgTpux6qcahqxxAo=; b=BhkmYJSEHDTqtJwjKzBdRi2wuz
+ qOfUOzCfk2Q8RH/RveXvGTkUOCf+LvEV/f1H7VxvJXkVMB5Ncm2kqwYZBPeysyNHd5ZFhwHtMG6V5
+ 7SAy45/u0uOfghZSkp3eioH6RSWxs2ePJ/ThXiWlAgDtk7psonxGQPF3M0tyrzCXPiFs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,71 +42,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=HrXGevSpkqQGJt6hJc3wfUeGw8/a6fFht5XxIsZZ9o4=; b=GcGXaRX4mcqTDKlE9sNZHMHDnt
- 5OW1ukTwh2GH4Ll7W2ECI0MTzc9pTixvpgiyPQb3LcPwC5CInlh1kzz43Dl5KbykIy6a1FkWs3PPS
- XQ1Xv7weQzs+zUnNGNwDQqg6PDHmdr2feuJEC8yMS1yg5Dn1F24Y9ZXTGKtzyJp99m+Y=;
-Received: from mail-pl1-f178.google.com ([209.85.214.178])
+ bh=qhiz3zikIrPHrDXZsvf7ap5bKuyfgTpux6qcahqxxAo=; b=awAcREH5J8dnMyv+fGQHiveSPw
+ CJr5bb1orGKV1J35vStahftmCEUIG618sN4CWUj17DWUs2DtefquzyXjGxB3YR1qH/fBLrwkOWuLN
+ Yn8zscUNERNPEBYQwnLBEx259aGmoJEcHpfcgBRnkmAV/J8eHFQ8+voZR7hoqONtmmXM=;
+Received: from mail-ot1-f51.google.com ([209.85.210.51])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uP0iz-0003Nt-Fn for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:17:17 +0000
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-2352400344aso48745335ad.2
+ id 1uP0j2-0003OS-9b for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jun 2025 15:17:20 +0000
+Received: by mail-ot1-f51.google.com with SMTP id
+ 46e09a7af769-739dcdb012fso543962a34.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Jun 2025 08:17:17 -0700 (PDT)
+ Tue, 10 Jun 2025 08:17:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749568627; x=1750173427; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1749568629; x=1750173429; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=HrXGevSpkqQGJt6hJc3wfUeGw8/a6fFht5XxIsZZ9o4=;
- b=nE1jo45GDFOmt9KvX21R38TDbxu+JoUdVVUlBOQZnJKsh6FEsCfonZPRs7Dv7ORU5b
- NbKJ3gWgUXfrZ7si3I81ut8piYAJXPTDZbcJGARLqB7nQ0UrzzGuAOnGEAkvrKMeG0sG
- IU1KFBE3WWtJXzVYhYKZAMNc6l68tYP9+4yDE3HgTLaB1qjgXUgMK8jEarb3ez7iToZA
- 0ML3iahY/AyJC7+mrsi7lT9eVKukWCMbaaXhiF1rEjkaGxVBGMwp9kboGuhaRZM2GviU
- 8TxpCkPnUsO6nSLuMoArl7sljVKqWZewQcdFa6mcKKPeEWvUnG72WJKEpA7WXMa48r9D
- JC0Q==
+ bh=qhiz3zikIrPHrDXZsvf7ap5bKuyfgTpux6qcahqxxAo=;
+ b=SBCrtwr2CXPsG3+uTvGCLUBXAvcLXvMUGp/VBfwfx4wG4zQ83duC6bH5iqjtlX3bRL
+ npGvFXULqpFx+SGSCCzaqe+IOOIWdMmw6fro60FuAQsE18CeVFQLO2HvItT2FlCVVKLx
+ xL9gSi6ELOJ/d2wLEidx9DGFDcIFfC4nQpReQBJKFVAT6T1qHEDhzjmcPLsmmvQ9g8AI
+ Dn2LnWaS+pgcOndEjsvAVvDZAhpoD8va80PVd8TYKRP5LJ05OmBH5MuV9oHNPDwCr6Xo
+ GL9+zXePE3D/oI8BCv1ipkmFRAss/1G1Gf3xVxHo3/XpkIj28DpiEQrG9l/HXx0KmnTL
+ poLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749568627; x=1750173427;
+ d=1e100.net; s=20230601; t=1749568629; x=1750173429;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=HrXGevSpkqQGJt6hJc3wfUeGw8/a6fFht5XxIsZZ9o4=;
- b=jCe5cV30qs0Mdrp4VnCM3yhLFJK+FbSBlvmaAl2GE7P+ztr1KoxNaF9duAz4JY+Rrd
- Nqg1dAQ+lWmCKK3V0vk8WXrxSLUi3F8UdDeizhK8dQ2mr+bhTkpjTJaxBC4VcV4ezmC9
- oMRS6KnCerx+UGdjKEI4ZjZkXIM2y8VJb7jK+seYK/fJEIOW+Ebf42d7M53x57UYjHrX
- og9f9Z5KWjR8iq5OKGEWIoVOe8IZ5n2+eqZMSrS8tMOwIm+XHqhGOT72cO+dwLw2Lnwl
- It3AmIot0gGUNUi1BSKVxB0DZlSLMBeph4/X5wXJSOuWh/oFIFtbyTLt+1BwtJWmzEE2
- Rouw==
-X-Gm-Message-State: AOJu0YyAaPf4Zk9vZ/oj5+sswNqLbEt0wDNNb29d8MexKYMgvF4fCj2D
- 9qMZ1o83wJ6rlri0UTb4PWAviQnWog57ebdzEdL1VxH9rVyWAsfPARzzfm6lnA==
-X-Gm-Gg: ASbGncsse2wOpeIDqYsEttYByK3SHbiaIhuRrXE4/gKNnLgQqkgActAwcnYYxhq7opI
- oRFHj6FewbWRR0r/Er5ufx3dRgLXOsNH1NqsUus5vvZoF1ZL+sRPEbqAyI5/lC0+wij+Tpr7uad
- 9ao9bJHIGHAZ6fcC+LUmHWHFMMp9aQntpGAiUV/AEiplU1eCdgjXBDiUwcaVWr+49EYPt3HVmbx
- 730h9WHMdlG90ANu46FaBFhz93meEgZEZk3ntfwwWb4vFgBGo9AO96aDXRXUWX/njDbokPL0e+v
- +jDhR0Kc2rR5JKwyNeESNLZIQzYp4vxJ/+wN1R8E8AFK4SfKXKozcU+4n/nCYdFm1mYt
-X-Google-Smtp-Source: AGHT+IFjUV6+1BpuEEkdChFxN4QuygtkQi37tntgniBiGVtU9am9pIWflJz/fRaLZkJSPF4izOltwA==
-X-Received: by 2002:a05:6a21:9988:b0:215:e1a0:805f with SMTP id
- adf61e73a8af0-21ee685cd85mr21196407637.31.1749559137577; 
- Tue, 10 Jun 2025 05:38:57 -0700 (PDT)
+ bh=qhiz3zikIrPHrDXZsvf7ap5bKuyfgTpux6qcahqxxAo=;
+ b=uKsO72qm3tXgUENedudyY1CuEu+A2Kven/V3ZrUvJpEMm10RLdgNzcyLelHTM96nRu
+ Z8nuxWSNfsIdNb3NK1GPqjo7BHaJWNKBZR0ZWPjg/KfgQN6zg09iHVGLDXBaiP39D/2C
+ WCCRtcBVA0rlCiI5bt3KaEFqQ6wI9XlM0doVHK48zTWraTjNvEhY1IcUHeVaEp/qFe7D
+ uOYrziQu/kEohej5laDfjAGTHbSYAonMY60Q53jH0SwU9Z9HV7S4hOfbL+1flgA414N1
+ 9A/Hd7qeNLSw+W0rE+EO6TM3UVpF4IUPQNuhTgoCwOdp0EiuDDlcLXW4L0RvPcm8slHN
+ /2tw==
+X-Gm-Message-State: AOJu0YzLKyFG9cOlP73JKoW6L0cap7YlKly5RPHYODbZ7tLOk5Y9bqQn
+ rqJKvDvqLCuqZH1lt2LKjde+F4intHcQGxaVxjIw5px703eOQG/eN8B6o3aXqg==
+X-Gm-Gg: ASbGncuo3d9EYdj0Vx+C0MPMgqKZ4sRKsLHaM9wnkY9CiYkEXlhzMLtWOBsnd23f6u6
+ WB1/c8+h/Y1XJXukQFcxZT7dvroFW6QWch2bVZKTwDbaKwRUIRUqJP9IWXoo77hVMlwDKXFOmfw
+ 396itm4tsOL7VLRc/y51W9/H4qCeA46iJgtqrhfXkGHmk/N/9Rs+l1XAgE02x9csUgsh7AzU3fM
+ s0CC/+TOdY8L/Emxg0PZveOR3odsK7IfcBLumAh76yLzMra1xq9IL5uKtbbPwLsHeYQq85PO38x
+ uf3lmgotU1NQmZWvfGPk1bsmisr1x6LF7YwXOuZwBag+/iD1vbAhvFVTIX909wlJwTbk
+X-Google-Smtp-Source: AGHT+IHkNOjKkCHwOuIcmI/WK0blscJCjYCz6Pxm4UgNKh7CnC1RC0xStBltf1VmMe6ORbw28wQfMw==
+X-Received: by 2002:a05:6a21:e85:b0:1f5:9330:29fe with SMTP id
+ adf61e73a8af0-21ee68a45ffmr21206924637.17.1749559097618; 
+ Tue, 10 Jun 2025 05:38:17 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.55
+ d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 05:38:57 -0700 (PDT)
+ Tue, 10 Jun 2025 05:38:17 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 10 Jun 2025 20:37:38 +0800
-Message-ID: <20250610123743.667183-29-shengyong1@xiaomi.com>
+Date: Tue, 10 Jun 2025 20:37:18 +0800
+Message-ID: <20250610123743.667183-9-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
 References: <20250610123743.667183-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uP0iz-0003Nt-Fn
-Subject: [f2fs-dev] [RFC PATCH v2 28/32] tests: add fsck testcase of fixing
- lost dots
+X-Headers-End: 1uP0j2-0003OS-9b
+Subject: [f2fs-dev] [RFC PATCH v2 08/32] inject.f2fs: fix injection on zoned
+ device
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -125,94 +125,46 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Sheng Yong <shengyong1@xiaomi.com>
 
+Because node and data blocks are updated out of place on zoned device,
+sit_area_bitmap and main_area_bitmap are required to record which
+blocks are allocated, sit should be flushed to reflect changes in
+block address, and checkpoint should be rewritten to update cursegs.
+
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 ---
- tests/f_dentry_lost_dots/README    |  7 ++++++
- tests/f_dentry_lost_dots/expect.in | 16 +++++++++++++
- tests/f_dentry_lost_dots/script    | 37 ++++++++++++++++++++++++++++++
- 3 files changed, 60 insertions(+)
- create mode 100644 tests/f_dentry_lost_dots/README
- create mode 100644 tests/f_dentry_lost_dots/expect.in
- create mode 100644 tests/f_dentry_lost_dots/script
+ fsck/inject.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/tests/f_dentry_lost_dots/README b/tests/f_dentry_lost_dots/README
-new file mode 100644
-index 000000000000..f07a1165b8cc
---- /dev/null
-+++ b/tests/f_dentry_lost_dots/README
-@@ -0,0 +1,7 @@
-+1. create f2fs image
-+2. mount f2fs
-+3. create a directory, and create a file in it
-+4. inject dot dentry in the directory by invalidating its valid bit
-+5. fsck fixes by adding a new dot dentry
-+6. inject dotdot dentry in the directory by invalidating its valid bit
-+7. fsck fixes by adding a new dotdot dentry
-diff --git a/tests/f_dentry_lost_dots/expect.in b/tests/f_dentry_lost_dots/expect.in
-new file mode 100644
-index 000000000000..c024e683908d
---- /dev/null
-+++ b/tests/f_dentry_lost_dots/expect.in
-@@ -0,0 +1,16 @@
-+Info: Force to fix corruption
-+[ASSERT] (fsck_chk_inode_blk:x)  --> ino: _INO_HEX_ has no '.' and/or '..' dirents, dot: 0, dotdot: 1
-+[FIX] (fsck_chk_inode_blk:x)  --> convert inline dentry ino: _INO_DEC_, pino: _PINO_DEC_, ret: 0
-+[FIX] (fsck_chk_inode_blk:x)  --> add missing '.' dirent in ino: _INO_DEC_, pino: _PINO_DEC_, ret:0
-+[fsck_chk_quota_files:x] Fixing Quota file ([  0] ino [0x4])
-+[FIX] (nullify_nat_entry:x)  --> Remove nid [0x4] in NAT
-+[fsck_chk_quota_files:x] Fixing Quota file ([  1] ino [0x5])
-+[FIX] (nullify_nat_entry:x)  --> Remove nid [0x5] in NAT
-+[fsck_chk_quota_files:x] Fixing Quota file ([  2] ino [0x6])
-+[FIX] (nullify_nat_entry:x)  --> Remove nid [0x6] in NAT
-+Info: Force to fix corruption
-+Info: Force to fix corruption
-+[ASSERT] (fsck_chk_inode_blk:x)  --> ino: _INO_HEX_ has no '.' and/or '..' dirents, dot: 1, dotdot: 0
-+[FIX] (fsck_chk_inode_blk:x)  --> convert inline dentry ino: _INO_DEC_, pino: _PINO_DEC_, ret: 0
-+[FIX] (fsck_chk_inode_blk:x)  --> add missing '..' dirent in ino: _INO_DEC_, pino: _PINO_DEC_, ret:0
-+Info: Force to fix corruption
-diff --git a/tests/f_dentry_lost_dots/script b/tests/f_dentry_lost_dots/script
-new file mode 100644
-index 000000000000..38bfd36f0266
---- /dev/null
-+++ b/tests/f_dentry_lost_dots/script
-@@ -0,0 +1,37 @@
-+#!/bin/bash
+diff --git a/fsck/inject.c b/fsck/inject.c
+index b3228621de48..96817a806f8f 100644
+--- a/fsck/inject.c
++++ b/fsck/inject.c
+@@ -1172,6 +1172,9 @@ int do_inject(struct f2fs_sb_info *sbi)
+ 	struct inject_option *opt = (struct inject_option *)c.private;
+ 	int ret = -EINVAL;
+ 
++	if (c.zoned_model == F2FS_ZONED_HM)
++		fsck_init(sbi);
 +
-+DESC="directory missing dot or dotdot"
+ 	if (opt->sb >= 0)
+ 		ret = inject_sb(sbi, opt);
+ 	else if (opt->cp >= 0)
+@@ -1187,5 +1190,15 @@ int do_inject(struct f2fs_sb_info *sbi)
+ 	else if (opt->dent)
+ 		ret = inject_dentry(sbi, opt);
+ 
++	if (c.zoned_model == F2FS_ZONED_HM) {
++		if (!ret && (opt->node || opt->dent)) {
++			write_curseg_info(sbi);
++			flush_journal_entries(sbi);
++			flush_sit_entries(sbi);
++			write_checkpoint(sbi);
++		}
++		fsck_free(sbi);
++	}
 +
-+. $TOPDIR/tests/helpers
-+
-+cleanup
-+make_f2fs > $LOG
-+
-+mkdir $TESTDIR/mntdir
-+safe_mount $MNT_OPTS $META $TESTDIR/mntdir >> $LOG
-+mkdir $TESTDIR/mntdir/testdir
-+touch $TESTDIR/mntdir/testdir/testfile
-+ino=`stat -c "%i" $TESTDIR/mntdir/testdir`
-+pino=`stat -c "%i" $TESTDIR/mntdir/testdir/..`
-+safe_umount $TESTDIR/mntdir >> $LOG
-+rm -rf  $TESTDIR/mntdir
-+
-+echo "ino:$ino pino:$pino" >> $LOG
-+
-+# inject dot
-+$INJECT --dent --nid $ino --mb d_bitmap --dots 1 --val 0 $META >> $LOG
-+$FSCK $FSCK_OPTS -f $META > $OUT
-+$FSCK $FSCK_OPTS -f $META >> $OUT
-+
-+# inject dotdot
-+$INJECT --dent --nid $ino --mb d_bitmap --dots 2 --val 0 $META >> $LOG
-+$FSCK $FSCK_OPTS -f $META >> $OUT
-+$FSCK $FSCK_OPTS -f $META >> $OUT
-+cat $OUT >> $LOG
-+
-+INO_HEX=`printf "0x%x" $ino`
-+sed "s/_INO_HEX_/$INO_HEX/g" $TESTDIR/expect.in > $TESTDIR/expect
-+sed -i "s/_INO_DEC_/$ino/g" $TESTDIR/expect
-+sed -i "s/_PINO_DEC_/$pino/g" $TESTDIR/expect
-+
-+check_result
+ 	return ret;
+ }
 -- 
 2.43.0
 
