@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 43F15C5B543
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AC602C5B543
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:17:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=T0JTKWHTq/+vrKVDUMMebm3Pd8stdxDfI+20h270Bl8=; b=HTxPWgU8lK+Qu4qd/yKbgOvZLC
-	IGEYUt76d59/MVvyzF//5AlQK6yhX4miSqUt+Bn6n41QmGy0F/XTzYZTqH+diRdkA/mNiuibtljOT
-	cAw/qCGcTA9JZbChhPTre4OYuQmDA3U2FuA9DaaMJe4v1yLkZI+ERXmLT1j032Qd4AU4=;
+	bh=sG0Qjo9GoFFLhDQCO6XzLbJspTRdCaYUyRzMlSJ1WQg=; b=OPRLZx2bhVKqkg2Q2dTCMSGtfS
+	btBBiW5FeVxmep8S1D4h3I4VmmLcSXSVFC5Mw2yVmDAPZ1mY8PJEm8VPk/ZYiNtX5nTeXcH0AQbN/
+	e7qG108h613lN0HiiVOGh1cZ6NW/lop3ZO3pNX4m5F2QSwR2NZLHLUQHdduwIZorXgn4=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uP0j3-0005zS-V1;
-	Tue, 10 Jun 2025 15:17:21 +0000
+	id 1uP0jK-00060n-CK;
+	Tue, 10 Jun 2025 15:17:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uP0j2-0005zI-LJ
+ (envelope-from <shengyong2021@gmail.com>) id 1uP0jI-00060g-RZ
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:17:20 +0000
+ Tue, 10 Jun 2025 15:17:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qhiz3zikIrPHrDXZsvf7ap5bKuyfgTpux6qcahqxxAo=; b=BhkmYJSEHDTqtJwjKzBdRi2wuz
- qOfUOzCfk2Q8RH/RveXvGTkUOCf+LvEV/f1H7VxvJXkVMB5Ncm2kqwYZBPeysyNHd5ZFhwHtMG6V5
- 7SAy45/u0uOfghZSkp3eioH6RSWxs2ePJ/ThXiWlAgDtk7psonxGQPF3M0tyrzCXPiFs=;
+ bh=+PlVO7wjgyW9d5v8KBmKdQqa97/8MSH9m70txGueAmg=; b=WZUVqaTF62pMk+PEm2S8/XmdU2
+ C7aIbpKJ6KrD2t/bRCVkdf8VCEVwuj+ebkdWev65UG7YL6YRSlSWCf3hmmY5siQh7KxelDQ1Li+v9
+ ZlfhoShvW3dwhj80CGLiTatcdJqXsobV/c3d0Udy5xLxcwrkmuQdZjxw2UhzuuncMMdI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,71 +42,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qhiz3zikIrPHrDXZsvf7ap5bKuyfgTpux6qcahqxxAo=; b=awAcREH5J8dnMyv+fGQHiveSPw
- CJr5bb1orGKV1J35vStahftmCEUIG618sN4CWUj17DWUs2DtefquzyXjGxB3YR1qH/fBLrwkOWuLN
- Yn8zscUNERNPEBYQwnLBEx259aGmoJEcHpfcgBRnkmAV/J8eHFQ8+voZR7hoqONtmmXM=;
-Received: from mail-ot1-f51.google.com ([209.85.210.51])
+ bh=+PlVO7wjgyW9d5v8KBmKdQqa97/8MSH9m70txGueAmg=; b=b+u/vj0l+y2+hY340r7Vi+lsxs
+ m5NJNgGG3jBA8gSBdKPoBF4peIQVqduHkvvTzieOzRlHXjkvngnvDV5rxYWBevlSFiSopY2H/ab/Z
+ rtxgBWPfqDf4+20TXXuS568bup9kSAhQp5LWoxd9kSlD7hPlPlClPKSyIlK7ZiNNctDw=;
+Received: from mail-qk1-f174.google.com ([209.85.222.174])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uP0j2-0003OS-9b for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:17:20 +0000
-Received: by mail-ot1-f51.google.com with SMTP id
- 46e09a7af769-739dcdb012fso543962a34.2
+ id 1uP0jH-0003Qb-RR for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jun 2025 15:17:36 +0000
+Received: by mail-qk1-f174.google.com with SMTP id
+ af79cd13be357-7d09ab17244so527788885a.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Jun 2025 08:17:20 -0700 (PDT)
+ Tue, 10 Jun 2025 08:17:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749568629; x=1750173429; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1749568645; x=1750173445; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=qhiz3zikIrPHrDXZsvf7ap5bKuyfgTpux6qcahqxxAo=;
- b=SBCrtwr2CXPsG3+uTvGCLUBXAvcLXvMUGp/VBfwfx4wG4zQ83duC6bH5iqjtlX3bRL
- npGvFXULqpFx+SGSCCzaqe+IOOIWdMmw6fro60FuAQsE18CeVFQLO2HvItT2FlCVVKLx
- xL9gSi6ELOJ/d2wLEidx9DGFDcIFfC4nQpReQBJKFVAT6T1qHEDhzjmcPLsmmvQ9g8AI
- Dn2LnWaS+pgcOndEjsvAVvDZAhpoD8va80PVd8TYKRP5LJ05OmBH5MuV9oHNPDwCr6Xo
- GL9+zXePE3D/oI8BCv1ipkmFRAss/1G1Gf3xVxHo3/XpkIj28DpiEQrG9l/HXx0KmnTL
- poLw==
+ bh=+PlVO7wjgyW9d5v8KBmKdQqa97/8MSH9m70txGueAmg=;
+ b=H+JEws2vxqqWtF0AneJlg65KqUrROYNicukZkgEm20lwhNGZTo6hyGjKLPW+YTPvj+
+ U6D+UCrsYxciPwFr8IKUoEezpk3tYrBYUa/DsfEC7tFzVYWziB8YkA7dSmRj2AJ41Mrj
+ oUNQQlTD2nKK2/S28V518XwcYWGbcMuDxoEHDWT0dFGGLu1y5Rvg/WGwlvcxPWmWfGK9
+ SiLx3x73D8moVG51u4jDHaPVOPXqO/7mgQZptvt0Ckc4XkNafVKchc8qiXJYNVWNvQ3i
+ b5dr13dUn/j75YvmUZA46flyNPSZuwC4m9XgjhB8Y1ntdnay+vzPM9kN5wG5DVTLSI+8
+ bRNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749568629; x=1750173429;
+ d=1e100.net; s=20230601; t=1749568645; x=1750173445;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=qhiz3zikIrPHrDXZsvf7ap5bKuyfgTpux6qcahqxxAo=;
- b=uKsO72qm3tXgUENedudyY1CuEu+A2Kven/V3ZrUvJpEMm10RLdgNzcyLelHTM96nRu
- Z8nuxWSNfsIdNb3NK1GPqjo7BHaJWNKBZR0ZWPjg/KfgQN6zg09iHVGLDXBaiP39D/2C
- WCCRtcBVA0rlCiI5bt3KaEFqQ6wI9XlM0doVHK48zTWraTjNvEhY1IcUHeVaEp/qFe7D
- uOYrziQu/kEohej5laDfjAGTHbSYAonMY60Q53jH0SwU9Z9HV7S4hOfbL+1flgA414N1
- 9A/Hd7qeNLSw+W0rE+EO6TM3UVpF4IUPQNuhTgoCwOdp0EiuDDlcLXW4L0RvPcm8slHN
- /2tw==
-X-Gm-Message-State: AOJu0YzLKyFG9cOlP73JKoW6L0cap7YlKly5RPHYODbZ7tLOk5Y9bqQn
- rqJKvDvqLCuqZH1lt2LKjde+F4intHcQGxaVxjIw5px703eOQG/eN8B6o3aXqg==
-X-Gm-Gg: ASbGncuo3d9EYdj0Vx+C0MPMgqKZ4sRKsLHaM9wnkY9CiYkEXlhzMLtWOBsnd23f6u6
- WB1/c8+h/Y1XJXukQFcxZT7dvroFW6QWch2bVZKTwDbaKwRUIRUqJP9IWXoo77hVMlwDKXFOmfw
- 396itm4tsOL7VLRc/y51W9/H4qCeA46iJgtqrhfXkGHmk/N/9Rs+l1XAgE02x9csUgsh7AzU3fM
- s0CC/+TOdY8L/Emxg0PZveOR3odsK7IfcBLumAh76yLzMra1xq9IL5uKtbbPwLsHeYQq85PO38x
- uf3lmgotU1NQmZWvfGPk1bsmisr1x6LF7YwXOuZwBag+/iD1vbAhvFVTIX909wlJwTbk
-X-Google-Smtp-Source: AGHT+IHkNOjKkCHwOuIcmI/WK0blscJCjYCz6Pxm4UgNKh7CnC1RC0xStBltf1VmMe6ORbw28wQfMw==
-X-Received: by 2002:a05:6a21:e85:b0:1f5:9330:29fe with SMTP id
- adf61e73a8af0-21ee68a45ffmr21206924637.17.1749559097618; 
- Tue, 10 Jun 2025 05:38:17 -0700 (PDT)
+ bh=+PlVO7wjgyW9d5v8KBmKdQqa97/8MSH9m70txGueAmg=;
+ b=qDzA3V58i/s1x2O9P+LMMnQNnZXpYmmqt98FfuyQ6fnBAFnxJ3XwYLfuIhdLlWGfXq
+ B62hbSfGxG9QbPS5YLpeBoXpdlbbDHC5JqdjJX8dpCFC9ilitEu1ylVkICFlyPLBC29R
+ XQQjU5xutBqVPTknwNWm8a5lkdAWVEEq2hh7v7vpas0tWgpIUBaNmTb60rN5uDpIe44B
+ RMBPtB1yj59oDgZE0VzH/46cc+KkPCIS74Xt/9IgsLl52aHE0WidzHreX6kStXQbhDhD
+ lNjhKJK5u1vf1AWor8SV2Hfi/ZrJ9uiIZM4k85r+WUrZHdOHOWIwT8HXXhCwB1sx+xsw
+ Vj/Q==
+X-Gm-Message-State: AOJu0YzO+RLDg/1P8kjh4zZvJCNms1S15guYLVtcByiHkuI7+cIKTTxV
+ FnUK0tqtjlkvc3co1Jid/RKDWDUkaDTCATxhZbg/fW7hFA1/FxpgU8BjrwFigA==
+X-Gm-Gg: ASbGncsn/66vp0dZ7QJYE1fXS9eQAZH1qJzk0VxlBwXuCHJxNn2AOwXdt2zbdUWEwm+
+ NLQSZBJ+QsRS3I8m8HmAGtD1ve7Uo262iHz+vTL08sVZZ2NzGSfk6fEdeyDr/C50ffUE4ek/x/+
+ GCDyMwzH+YIGlBABHz8/smLZ4CB1YqsnXwdtHDwUjixUqzGHQyM9HXYl+9qj2B4UEdaFvkCxCKt
+ kk/gY3FlaTAGeI6SvqY/2YHxHIpXGnErtubZdh5g9/WKbdAYZZ4s3WAn2vUi3UM/sa2d3MOpD0q
+ 3kFkdg3scS144NkKxz+KHpggPdQ88BMnVso3FtLJiBxpJTwWOimek8ljyqeqWA6Kk+HN
+X-Google-Smtp-Source: AGHT+IH2ubCTNaqfLV9Yq2MxzofLD0mvduHfQS11cNJ4Ix51nhIoIh2cLHVXNCpCzxucUmDvMmLKlg==
+X-Received: by 2002:a05:6a00:80a:b0:72d:3b2e:fef9 with SMTP id
+ d2e1a72fcca58-748280d4ca6mr24020253b3a.20.1749559103685; 
+ Tue, 10 Jun 2025 05:38:23 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.15
+ d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 05:38:17 -0700 (PDT)
+ Tue, 10 Jun 2025 05:38:23 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 10 Jun 2025 20:37:18 +0800
-Message-ID: <20250610123743.667183-9-shengyong1@xiaomi.com>
+Date: Tue, 10 Jun 2025 20:37:21 +0800
+Message-ID: <20250610123743.667183-12-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
 References: <20250610123743.667183-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uP0j2-0003OS-9b
-Subject: [f2fs-dev] [RFC PATCH v2 08/32] inject.f2fs: fix injection on zoned
- device
+X-Headers-End: 1uP0jH-0003Qb-RR
+Subject: [f2fs-dev] [RFC PATCH v2 11/32] inject.f2fs: add member `feature'
+ in inject_sb
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -125,46 +125,51 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Sheng Yong <shengyong1@xiaomi.com>
 
-Because node and data blocks are updated out of place on zoned device,
-sit_area_bitmap and main_area_bitmap are required to record which
-blocks are allocated, sit should be flushed to reflect changes in
-block address, and checkpoint should be rewritten to update cursegs.
+This patch adds a new member `feature' in inject_sb to inject features.
 
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 ---
- fsck/inject.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ fsck/inject.c     | 5 +++++
+ man/inject.f2fs.8 | 3 +++
+ 2 files changed, 8 insertions(+)
 
 diff --git a/fsck/inject.c b/fsck/inject.c
-index b3228621de48..96817a806f8f 100644
+index 53667730775f..0b5aecbf8061 100644
 --- a/fsck/inject.c
 +++ b/fsck/inject.c
-@@ -1172,6 +1172,9 @@ int do_inject(struct f2fs_sb_info *sbi)
- 	struct inject_option *opt = (struct inject_option *)c.private;
- 	int ret = -EINVAL;
- 
-+	if (c.zoned_model == F2FS_ZONED_HM)
-+		fsck_init(sbi);
-+
- 	if (opt->sb >= 0)
- 		ret = inject_sb(sbi, opt);
- 	else if (opt->cp >= 0)
-@@ -1187,5 +1190,15 @@ int do_inject(struct f2fs_sb_info *sbi)
- 	else if (opt->dent)
- 		ret = inject_dentry(sbi, opt);
- 
-+	if (c.zoned_model == F2FS_ZONED_HM) {
-+		if (!ret && (opt->node || opt->dent)) {
-+			write_curseg_info(sbi);
-+			flush_journal_entries(sbi);
-+			flush_sit_entries(sbi);
-+			write_checkpoint(sbi);
-+		}
-+		fsck_free(sbi);
-+	}
-+
- 	return ret;
+@@ -122,6 +122,7 @@ static void inject_sb_usage(void)
+ 	MSG(0, "  magic: inject magic number\n");
+ 	MSG(0, "  s_stop_reason: inject s_stop_reason array selected by --idx <index>\n");
+ 	MSG(0, "  s_errors: inject s_errors array selected by --idx <index>\n");
++	MSG(0, "  feature: inject feature\n");
+ 	MSG(0, "  devs.path: inject path in devs array selected by --idx <index> specified by --str <string>\n");
  }
+ 
+@@ -415,6 +416,10 @@ static int inject_sb(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 		MSG(0, "Info: inject s_errors[%d] of sb %d: %x -> %x\n",
+ 		    opt->idx, opt->sb, sb->s_errors[opt->idx], (u8)opt->val);
+ 		sb->s_errors[opt->idx] = (u8)opt->val;
++	} else if (!strcmp(opt->mb, "feature")) {
++		MSG(0, "Info: inject feature of sb %d: 0x%x -> 0x%x\n",
++		    opt->sb, get_sb(feature), (u32)opt->val);
++		set_sb(feature, (u32)opt->val);
+ 	} else if (!strcmp(opt->mb, "devs.path")) {
+ 		if (opt->idx >= MAX_DEVICES) {
+ 			ERR_MSG("invalid index %u of sb->devs[]\n", opt->idx);
+diff --git a/man/inject.f2fs.8 b/man/inject.f2fs.8
+index 975d8c65030a..5ae556015a79 100644
+--- a/man/inject.f2fs.8
++++ b/man/inject.f2fs.8
+@@ -53,6 +53,9 @@ s_stop_reason array.
+ .BI s_errors
+ s_errors array.
+ .TP
++.BI feature
++features.
++.TP
+ .BI devs.path
+ path in devs array.
+ .RE
 -- 
 2.43.0
 
