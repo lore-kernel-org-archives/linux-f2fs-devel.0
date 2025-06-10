@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5B728C5B543
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DA850C5B552
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:32:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=FoD+C898EWhkeVCa2D6tHmb4nRWkF5uROCrgWcHUuGc=; b=GKEDw9oHfHAqujiEC6GBDf2bZ9
-	Yk2VNwQVr4/rzIyoPWGTdeLxZfkD39I1GPTk8/PrBuqnO5ddnGy5OYAvY5dAQynQp7pYlSIGySNPQ
-	2lC/0StIUBFMf1iav9ORiNbiDaL6Ceaixh0SwpicmT04+OAk1++f6rSDtmQgWS3s6LDE=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=I4vkgiqbHSzp5BrMvF72KsyT27xPNgyEDCZh5gjkcMM=; b=boEOUeOEvLRRUTeruPvviUwO/M
+	bh4QA3bhDTVyrUOwTcKzDTSMgONm5QI1tSHEl8a7EukOZsz/olhoH56IUB+e9H0yM6MDdEvqh5yUA
+	bqqR8pQihFYazANIWKFOMdVFsfyZxamIhAfjg5CvZGzo5D6zw/A8m2bskHLa/Hkh0/IM=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uP0x9-0000Ob-27;
-	Tue, 10 Jun 2025 15:31:55 +0000
+	id 1uP0xW-0004is-C1;
+	Tue, 10 Jun 2025 15:32:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uP0x7-0000OR-Qs
+ (envelope-from <shengyong2021@gmail.com>) id 1uP0xV-0004ik-Cd
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:31:53 +0000
+ Tue, 10 Jun 2025 15:32:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=m0IZxA6PKAlUrpKmhY5TVnbhi1aMK34z/DqnKn1rLtE=; b=TTMRRBpqKPWxvKQ28EglEUZH06
- xqLlqoVPwE6CkBpvZj1R+ZxDVk+Kty14jCzXHEzTPTHGsV4B7LKhgSZrVFILZuDo8R1+1eOrab3jd
- 00K0EqVka1GM3xazvPtn46HY8+pCBRM1A0EFsyXP+4hlBjCneaGdFkwjenk0kGN/j4kQ=;
+ bh=SWGRVWpKYUbwQO4Sngl5/pxKsLRBpsIEYZ3eb21nAeE=; b=CqVnIM7fXCVpmH6lVHe7XUWMRj
+ Hb9rJ9MPXKMNXlY4xL1/+zpoCwoiC9j8R+0UlOgzEffXZR16Ii+cxnvEHSSMJxeWQrzkd2Qd6Kt59
+ MZCvsgTVEK44GEEhJsdlSdghmqpyrivRn1+Tt9a7Ql1f8B9v7/tsC1aKYAt41FiTq1LE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,72 +42,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=m0IZxA6PKAlUrpKmhY5TVnbhi1aMK34z/DqnKn1rLtE=; b=PbSc5j6Jsspt+giTRjw1c09R9g
- dV55Yx1QVUk6bZoXf/zWQ9TNtNkJred47cLVEXgnHn5X/YjzHK491TFe+l1CdefiVUSmfCCB0jtzl
- LH31cs8TscUwAS4WwOKFmYkgpMaXbTan+v6opVinubQQl85eJ7L/eh6IR9euVEudmRdQ=;
-Received: from mail-qv1-f46.google.com ([209.85.219.46])
+ bh=SWGRVWpKYUbwQO4Sngl5/pxKsLRBpsIEYZ3eb21nAeE=; b=LiY0wwv1UQP9N2PUDBvZ/XdPJ5
+ 5QCrI9iT9lhnVYwJXQuR9sDnCN3KZaUSveoSuTPVC2Ndexr6V5H1/Tp+xnucMGneE6Rr7fVlgv4ip
+ KxvFGjaSpRiXZRnf07JcB27YDF9ogx6bSvZBpTn7ABJsY2Q72XMO0My2f79nm4KCZ6dY=;
+Received: from mail-oa1-f47.google.com ([209.85.160.47])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uP0x6-0005Jh-QC for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:31:53 +0000
-Received: by mail-qv1-f46.google.com with SMTP id
- 6a1803df08f44-6fad3400ea3so50791046d6.0
+ id 1uP0xU-0005Nr-ND for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jun 2025 15:32:17 +0000
+Received: by mail-oa1-f47.google.com with SMTP id
+ 586e51a60fabf-2da73155e91so2282797fac.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Jun 2025 08:31:52 -0700 (PDT)
+ Tue, 10 Jun 2025 08:32:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749569507; x=1750174307; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1749569526; x=1750174326; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=m0IZxA6PKAlUrpKmhY5TVnbhi1aMK34z/DqnKn1rLtE=;
- b=BNhNUR1MpH+tyNE050tN6pG18iFZYVqMeTlGzU2cDtbtg2GLdOVepxB/btfuswC30a
- VJ/tHdKobgsE/4OIcZSgH7DWoum9LsGlbinCo750jYKC9AnRXuPaDg5+Bl1YAodF8uot
- 7hktKdsQ8EGnOOdQXBXAxe6A8twEU/atnTV3O93NTY4TsiWyCoDwnn9ldAtmvdxz2+ro
- nS/9DXSuUpzwNf3vmviseBktjOdZwmFK39H6Ivg3rCkFYRXlK/7Fi9K2iDN73ayvOZsl
- dRomkpG5zujC3sLewDCKUGV3VE+Xf8OaAshOPJkX81cmEuy5UPlMQuafp4huJXbivK4N
- p6gA==
+ bh=SWGRVWpKYUbwQO4Sngl5/pxKsLRBpsIEYZ3eb21nAeE=;
+ b=FjtXhO0VmZ/PGexajv9hNk7T+W48+Nxj/iZMj6eauT5dsoiHUekgMVkAJrER9V84Wm
+ 8Aby99/7jP+Up2+GjyZiVGZX2hJLeIu70tFwnx8Za9m1VQjFPLCrrYAslQY3kp/tNYC+
+ MrpQCkEW5AuT3v92pAmUPWmnmz/e0VkMidDsmErmIvniHGrfXSXTPnFvT2eaJc7dCQP7
+ 6uzoyU8BChTiRH2JcfBKvZAVu6GkD6sYzzUDKuXRboa9nTi/us4glX2S+u1oUQlhZ60n
+ c8qvHt3g6k49DVLikv5B2tk+x3Z9iGglytpILmdNMf8FOPv+yuGk9hvbIRy4vh7/Pvrg
+ iGAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749569507; x=1750174307;
+ d=1e100.net; s=20230601; t=1749569526; x=1750174326;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=m0IZxA6PKAlUrpKmhY5TVnbhi1aMK34z/DqnKn1rLtE=;
- b=S3rvhLNkQ3HFe3qB8yxbcQWQojPHZVBx0hlq6AR1OVILI7lg5aJVdHIyE/luVqh/fs
- vRmNEugCNDl6shgz1JclDBxmlzCaYyW3cBUBKxzMUfvggeHGudqbg6CfG0GfrXzbokPP
- fx7FY4baXZpv9tKiMysNs2kg1wxNbjxk4WShC+ii5PgAq2348EyptMFUo85aA240XBuJ
- dR89wtP2KQX8fs+En5kU/cA45xxX4/lGL8QZvenOBdDrpJHtBWNbAGseynNNiUrsky6o
- QnaNxhk+HJZTk8O1hsDybVOxboAuUFpTzQpt1P/Oe+PSOOXBIEQvFEoj5aophGg0rzL3
- c8zA==
-X-Gm-Message-State: AOJu0YyUcPOzo/n4gHNYDMLogZWes3KJSNOa0QqXoauVr4HNFzjDuYp+
- lkmmEVBtHfyF2YnXto1gYdxLI6IvJkI8eWknHOpVpKSMEN1JWbaghFm8k3P4Rw==
-X-Gm-Gg: ASbGncuP/V1AB4HyPrXyWtzcZfE9ForFj4mqxFl9IZPeu6EMASCHLG9ZPrFmObY/jPE
- rDRFgbCT8xObrV061I+Wd0P4mIapmrHc5AmVsPDPfArmzWNXlqBCRcgNGy1dq9s1r9ZZn4JvKae
- /HfuDQsXysHFiNQUOk35O2QW8h/Ztf0P6VzMDPFPKsqYelZQP5CzuzSX1FiZQGxNYZXy2q5r9Lm
- zXh6pl4XMok1Bd00uwuLJDnuMbywbAFzVR8ESDHSw77Bza856VWibFn+H9kr17dUODCqsBemqxd
- 7qAvMZ65q9Ki5on5++cw8EMpMu5WKUojQfm1c4C3t1ZZ4OmttYZ7pS5sHAdYVTN7RsGM2jlIE7k
- B7WA=
-X-Google-Smtp-Source: AGHT+IEryjaUjuPdgJ45MZHngg7uZLn/GZc+PhMmdehdryZqre9Q2cmPInjrgdiqmO4A/qWIsyPAww==
-X-Received: by 2002:a05:6a20:3d86:b0:21c:faa4:9abb with SMTP id
- adf61e73a8af0-21f78c49b90mr4508943637.20.1749559107963; 
- Tue, 10 Jun 2025 05:38:27 -0700 (PDT)
+ bh=SWGRVWpKYUbwQO4Sngl5/pxKsLRBpsIEYZ3eb21nAeE=;
+ b=JHJmhdgDOS72cEI96cQ49SgatzHasDuH2XaTfue23XFc8PyqSDoTR+DXwmokFhD0fY
+ AJDVza6/zaWVG+sKSgGx8Cr8rXedqzuqZMl0Vyd5CysKlKBG0I4/YeLPj6xL9kWezw0D
+ uRHzln+xFvLq6BEusLyTR9BAsYpBto+9Itx4kIGLCrFfs6yY5XTiUcWyednIDYmHSTq7
+ d7mCa51SBJ4fVPJf4/g542qlOSPKPh86BBzirb1FyIyAZ5WbYyPzv5byKkDhV1XUDJaZ
+ zTo/+x8Z1bEIVoNznWjtbza8X9TxoWTy1IEmPM3CfEg6EIKoUbA6pCi5OmZP4aCJK8hL
+ 5KiA==
+X-Gm-Message-State: AOJu0YzeZNTNXMPf2NxorVPWlMfY19+WSOrXrNqoFQ7cu6hESOmV3D+a
+ gZpP4ZDdbY0ZliPjQ6pFTxEUGaEKcrsRyja8CKOC5O6xNAiM+33yizxlKIBA8A==
+X-Gm-Gg: ASbGncsR+15fqlZJ9iHLx5byhMYPR1H2DEdRLEuyvspMGOrIyub/JXTcfd0k1ZRyUYK
+ zBe6+V0H9aHrvPglc6P04OvDbIUsc0N9SC5xw1QlqtpdOB8mEGC42NCNeM43bL1Z7H6Zz+x9JJd
+ rLd1UG97jcVOU3seyGkFIdpSNGVWstn8t4YTHvsM0K5M6uJR+1WcMef1on3U96pSL2CIVP/tuQF
+ dIwUoAPw6JpnMQSeDxrN5+tvMf2e/KohIdOQaSlkGYFmExS33YBmdUczrjTZ8OOIxps8OmPBO6g
+ ab0FsF8ZIkJWlAXZsTHw8DMOaP4o+e0f5Pe/WO64K7Pdpa91H9QGj1HM2mdanHFmTNed
+X-Google-Smtp-Source: AGHT+IFAJb3c+ORQtvOiOyKOwnjApOcYtqF7MEQrtvW3cS4JEKyE4wOj73UWYJGzUvp1Fw4uiwVIHg==
+X-Received: by 2002:a05:6a00:244f:b0:740:596e:1489 with SMTP id
+ d2e1a72fcca58-74827f3d35emr22331142b3a.23.1749559095665; 
+ Tue, 10 Jun 2025 05:38:15 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.26
+ d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 05:38:27 -0700 (PDT)
+ Tue, 10 Jun 2025 05:38:15 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 10 Jun 2025 20:37:23 +0800
-Message-ID: <20250610123743.667183-14-shengyong1@xiaomi.com>
+Date: Tue, 10 Jun 2025 20:37:17 +0800
+Message-ID: <20250610123743.667183-8-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
 References: <20250610123743.667183-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uP0x6-0005Jh-QC
-Subject: [f2fs-dev] [RFC PATCH v2 13/32] inject.f2fs: add member `filename'
- in inject_dentry
+X-Headers-End: 1uP0xU-0005Nr-ND
+Subject: [f2fs-dev] [RFC PATCH v2 07/32] inject.f2fs: fix injecting sit/nat
+ in journal
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -126,252 +125,290 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Sheng Yong <shengyong1@xiaomi.com>
 
-This patch adds a new member `filename' in inject_dentry to inject
-dentry filename. The dentry is specified by nid option.
-
-Note that '.' and '..' dentries are special, because they are not in the
-parent directory of nid. So this patch also adds a new option `--dots'
-to inject these two dentries.
+Previously when injecting sit/nat entry, we only inject SIT/NAT pack.
+If the valid target is in journal, the injection has no effect. So we
+have to check whether the valid target is in journal, and inject the
+target at its valid position.
 
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 ---
- fsck/inject.c     | 94 ++++++++++++++++++++++++++++++++++++++++-------
- fsck/inject.h     |  1 +
- man/inject.f2fs.8 | 12 +++++-
- 3 files changed, 92 insertions(+), 15 deletions(-)
+ fsck/inject.c | 181 ++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 132 insertions(+), 49 deletions(-)
 
 diff --git a/fsck/inject.c b/fsck/inject.c
-index 8c2f8c5dc332..5eb913fefad7 100644
+index bd6ab8480972..b3228621de48 100644
 --- a/fsck/inject.c
 +++ b/fsck/inject.c
-@@ -105,7 +105,7 @@ void inject_usage(void)
- 	MSG(0, "  --sit <0|1|2> --mb <name> --blk <blk> [--idx <index>] --val <value> inject sit entry\n");
- 	MSG(0, "  --ssa --mb <name> --blk <blk> [--idx <index>] --val <value> inject summary entry\n");
- 	MSG(0, "  --node --mb <name> --nid <nid> [--idx <index>] --val <value> inject node\n");
--	MSG(0, "  --dent --mb <name> --nid <ino> [--idx <index>] --val <value> inject ino's dentry\n");
-+	MSG(0, "  --dent --mb <name> --nid <ino> [--dots <1|2>] --val/str <value/string> inject ino's dentry\n");
- 	MSG(0, "  --dry-run do not really inject\n");
+@@ -10,6 +10,7 @@
+  */
  
- 	exit(1);
-@@ -212,12 +212,16 @@ static void inject_node_usage(void)
+ #include <getopt.h>
++#include "f2fs.h"
+ #include "node.h"
+ #include "inject.h"
  
- static void inject_dent_usage(void)
- {
--	MSG(0, "inject.f2fs --dent --mb <name> --nid <nid> [--idx <index>] --val <value> inject dentry\n");
-+	MSG(0, "inject.f2fs --dent --mb <name> --nid <nid> [--dots <1|2>] --val/str <value/string> inject dentry\n");
-+	MSG(0, "[dots]:\n");
-+	MSG(0, "  1: inject \".\" in directory which is specified by nid\n");
-+	MSG(0, "  2: inject \"..\" in directory which is specified by nid\n");
- 	MSG(0, "[mb]:\n");
- 	MSG(0, "  d_bitmap: inject dentry block d_bitmap of nid\n");
- 	MSG(0, "  d_hash: inject dentry hash\n");
- 	MSG(0, "  d_ino: inject dentry ino\n");
- 	MSG(0, "  d_ftype: inject dentry ftype\n");
-+	MSG(0, "  filename: inject dentry filename, its hash and len are updated implicitly\n");
+@@ -533,6 +534,31 @@ out:
+ 	return ret;
  }
  
- int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
-@@ -241,6 +245,7 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
- 		{"ssa", no_argument, 0, 12},
- 		{"node", no_argument, 0, 13},
- 		{"dent", no_argument, 0, 14},
-+		{"dots", required_argument, 0, 15},
- 		{0, 0, 0, 0}
- 	};
- 
-@@ -339,6 +344,14 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
- 			opt->dent = true;
- 			MSG(0, "Info: inject dentry\n");
- 			break;
-+		case 15:
-+			opt->dots = atoi(optarg);
-+			if (opt->dots != TYPE_DOT &&
-+			    opt->dots != TYPE_DOTDOT)
-+				return -ERANGE;
-+			MSG(0, "Info: inject %s dentry\n",
-+			    opt->dots == TYPE_DOT ? "dot" : "dotdot");
-+			break;
- 		case 'd':
- 			if (optarg[0] == '-' || !is_digits(optarg))
- 				return EWRONG_OPT;
-@@ -371,6 +384,9 @@ int inject_parse_options(int argc, char *argv[], struct inject_option *opt)
- 			} else if (opt->dent) {
- 				inject_dent_usage();
- 				exit(0);
-+			} else {
-+				MSG(0, "\tError: Wrong option -%c (%d) %s\n",
-+				    o, o, optarg);
- 			}
- 			return EUNKNOWN_OPT;
- 		}
-@@ -1146,12 +1162,12 @@ static int find_dir_entry(struct f2fs_dentry_ptr *d, nid_t ino)
- 		}
- 
- 		de = &d->dentry[slot];
--		if (le32_to_cpu(de->ino) == ino && de->hash_code != 0)
--			return slot;
- 		if (de->name_len == 0) {
- 			slot++;
- 			continue;
- 		}
-+		if (le32_to_cpu(de->ino) == ino)
-+			return slot;
- 		slot += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
- 	}
- 
-@@ -1164,14 +1180,15 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
- 	struct f2fs_node *node_blk = NULL;
- 	struct f2fs_inode *inode;
- 	struct f2fs_dentry_ptr d;
--	void *inline_dentry;
-+	void *buf = NULL, *inline_dentry;
- 	struct f2fs_dentry_block *dent_blk = NULL;
- 	block_t addr = 0;
--	void *buf = NULL;
- 	struct f2fs_dir_entry *dent = NULL;
- 	struct dnode_of_data dn;
- 	nid_t pino;
--	int slot = -ENOENT, ret;
-+	int slot = -ENOENT, namelen, namecap, ret;
-+	unsigned int dentry_hash;
-+	char *name;
- 
- 	node_blk = malloc(F2FS_BLKSIZE);
- 	ASSERT(node_blk != NULL);
-@@ -1180,12 +1197,25 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
- 	get_node_info(sbi, opt->nid, &ni);
- 	ret = dev_read_block(node_blk, ni.blk_addr);
- 	ASSERT(ret >= 0);
--	pino = le32_to_cpu(node_blk->i.i_pino);
- 
--	/* get parent inode */
--	get_node_info(sbi, pino, &ni);
--	ret = dev_read_block(node_blk, ni.blk_addr);
--	ASSERT(ret >= 0);
-+	if (opt->dots) {
-+		if (!LINUX_S_ISDIR(le16_to_cpu(node_blk->i.i_mode))) {
-+			ERR_MSG("ino %u is not a directory, cannot inject "
-+				"its %s\n", opt->nid,
-+				opt->dots == TYPE_DOT ? "." : "..");
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+		/* pino is itself */
-+		pino = opt->nid;
-+	} else {
-+		pino = le32_to_cpu(node_blk->i.i_pino);
++static void rewrite_nat_in_journal(struct f2fs_sb_info *sbi, u32 nid,
++				   struct f2fs_nat_entry *nat)
++{
++	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
++	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
++	struct f2fs_journal *journal = F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk);
++	block_t blkaddr;
++	int ret, i;
 +
-+		/* get parent inode */
-+		get_node_info(sbi, pino, &ni);
-+		ret = dev_read_block(node_blk, ni.blk_addr);
-+		ASSERT(ret >= 0);
++	for (i = 0; i < nats_in_cursum(journal); i++) {
++		if (nid_in_journal(journal, i) == nid) {
++			memcpy(&nat_in_journal(journal, i), nat, sizeof(*nat));
++			break;
++		}
 +	}
- 	inode = &node_blk->i;
++
++	if (is_set_ckpt_flags(cp, CP_UMOUNT_FLAG))
++		blkaddr = sum_blk_addr(sbi, NR_CURSEG_TYPE, CURSEG_HOT_DATA);
++	else
++		blkaddr = sum_blk_addr(sbi, NR_CURSEG_DATA_TYPE, CURSEG_HOT_DATA);
++
++	ret = dev_write_block(curseg->sum_blk, blkaddr, WRITE_LIFE_NONE);
++	ASSERT(ret >= 0);
++}
++
+ static int inject_nat(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+@@ -541,7 +567,7 @@ static int inject_nat(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 	struct f2fs_nat_entry *ne;
+ 	block_t blk_addr;
+ 	unsigned int offs;
+-	bool is_set;
++	bool is_set, in_journal = false;
+ 	int ret;
  
- 	/* find child dentry */
-@@ -1195,7 +1225,10 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
- 		addr = ni.blk_addr;
- 		buf = node_blk;
+ 	if (!IS_VALID_NID(sbi, opt->nid)) {
+@@ -555,38 +581,49 @@ static int inject_nat(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 	nat_blk = calloc(F2FS_BLKSIZE, 1);
+ 	ASSERT(nat_blk);
  
--		slot = find_dir_entry(&d, opt->nid);
-+		if (opt->dots == TYPE_DOTDOT)
-+			slot = find_dir_entry(&d, le32_to_cpu(node_blk->i.i_pino));
-+		else
-+			slot = find_dir_entry(&d, opt->nid);
- 		if (slot >= 0)
- 			dent = &d.dentry[slot];
+-	/* change NAT version bitmap temporarily to select specified pack */
+-	is_set = f2fs_test_bit(opt->nid, nm_i->nat_bitmap);
+-	if (opt->nat == 0) {
+-		opt->nat = is_set ? 2 : 1;
++	if (lookup_nat_in_journal(sbi, opt->nid, &nat_blk->entries[0]) >= 0) {
++		offs = 0;
++		in_journal = true;
  	} else {
-@@ -1231,7 +1264,10 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
- 			ASSERT(ret >= 0);
- 
- 			make_dentry_ptr(&d, node_blk, dent_blk, 1);
--			slot = find_dir_entry(&d, opt->nid);
-+			if (opt->dots == TYPE_DOTDOT)
-+				slot = find_dir_entry(&d, le32_to_cpu(node_blk->i.i_pino));
+-		if (opt->nat == 1)
+-			f2fs_clear_bit(opt->nid, nm_i->nat_bitmap);
+-		else
+-			f2fs_set_bit(opt->nid, nm_i->nat_bitmap);
++		/*
++		 * read nat entry from NAT area, change NAT version bitmap
++		 * temporarily to select specified pack
++		 */
++		is_set = f2fs_test_bit(opt->nid, nm_i->nat_bitmap);
++		if (opt->nat == 0) {
++			opt->nat = is_set ? 2 : 1;
++		} else {
++			if (opt->nat == 1)
++				f2fs_clear_bit(opt->nid, nm_i->nat_bitmap);
 +			else
-+				slot = find_dir_entry(&d, opt->nid);
- 			if (slot >= 0) {
- 				dent = &d.dentry[slot];
- 				buf = dent_blk;
-@@ -1265,6 +1301,36 @@ static int inject_dentry(struct f2fs_sb_info *sbi, struct inject_option *opt)
- 		    "%d -> %d\n", opt->nid, dent->file_type,
- 		    (u8)opt->val);
- 		dent->file_type = (u8)opt->val;
-+	} else if (!strcmp(opt->mb, "filename")) {
-+		if (!opt->str) {
-+			ERR_MSG("option str is needed\n");
-+			ret = -EINVAL;
-+			goto out;
++				f2fs_set_bit(opt->nid, nm_i->nat_bitmap);
 +		}
-+		namecap = ALIGN_UP(le16_to_cpu(dent->name_len), F2FS_SLOT_LEN);
-+		namelen = strlen(opt->str);
-+		if (namelen > namecap || namelen > F2FS_NAME_LEN) {
-+			ERR_MSG("option str too long\n");
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+		name = (char *)d.filename[slot];
-+		MSG(0, "Info: inject dentry filename of nid %u: "
-+		    "%.*s -> %s\n", opt->nid, le16_to_cpu(dent->name_len),
-+		    name, opt->str);
-+		memcpy(name, opt->str, namelen);
-+		MSG(0, "Info: inject dentry namelen of nid %u: "
-+		    "%d -> %d\n", opt->nid, le16_to_cpu(dent->name_len),
-+		    namelen);
-+		dent->name_len = cpu_to_le16(namelen);
-+		dentry_hash = f2fs_dentry_hash(get_encoding(sbi),
-+						IS_CASEFOLDED(inode),
-+						(unsigned char *)name,
-+						namelen);
-+		MSG(0, "Info: inject dentry d_hash of nid %u: "
-+		    "0x%x -> 0x%x\n", opt->nid, le32_to_cpu(dent->hash_code),
-+		    dentry_hash);
-+		dent->hash_code = cpu_to_le32(dentry_hash);
++		blk_addr = current_nat_addr(sbi, opt->nid, NULL);
++		ret = dev_read_block(nat_blk, blk_addr);
++		ASSERT(ret >= 0);
++		offs = opt->nid % NAT_ENTRY_PER_BLOCK;
+ 	}
+-
+-	blk_addr = current_nat_addr(sbi, opt->nid, NULL);
+-
+-	ret = dev_read_block(nat_blk, blk_addr);
+-	ASSERT(ret >= 0);
+-
+-	offs = opt->nid % NAT_ENTRY_PER_BLOCK;
+ 	ne = &nat_blk->entries[offs];
+ 
+ 	if (!strcmp(opt->mb, "version")) {
+ 		MSG(0, "Info: inject nat entry version of nid %u "
+-		    "in pack %d: %d -> %d\n", opt->nid, opt->nat,
++		    "in %s %d: %d -> %d\n", opt->nid,
++		    in_journal ? "journal" : "pack",
++		    in_journal ? 0 : opt->nat,
+ 		    ne->version, (u8)opt->val);
+ 		ne->version = (u8)opt->val;
+ 	} else if (!strcmp(opt->mb, "ino")) {
+ 		MSG(0, "Info: inject nat entry ino of nid %u "
+-		    "in pack %d: %d -> %d\n", opt->nid, opt->nat,
++		    "in %s %d: %d -> %d\n", opt->nid,
++		    in_journal ? "journal" : "pack",
++		    in_journal ? 0 : opt->nat,
+ 		    le32_to_cpu(ne->ino), (nid_t)opt->val);
+ 		ne->ino = cpu_to_le32((nid_t)opt->val);
+ 	} else if (!strcmp(opt->mb, "block_addr")) {
+ 		MSG(0, "Info: inject nat entry block_addr of nid %u "
+-		    "in pack %d: 0x%x -> 0x%x\n", opt->nid, opt->nat,
++		    "in %s %d: 0x%x -> 0x%x\n", opt->nid,
++		    in_journal ? "journal" : "pack",
++		    in_journal ? 0 : opt->nat,
+ 		    le32_to_cpu(ne->block_addr), (block_t)opt->val);
+ 		ne->block_addr = cpu_to_le32((block_t)opt->val);
  	} else {
- 		ERR_MSG("unknown or unsupported member \"%s\"\n", opt->mb);
- 		ret = -EINVAL;
-diff --git a/fsck/inject.h b/fsck/inject.h
-index 43c21b56a7eb..706a211bc645 100644
---- a/fsck/inject.h
-+++ b/fsck/inject.h
-@@ -30,6 +30,7 @@ struct inject_option {
- 	int cp;			/* which cp */
- 	int nat;		/* which nat pack */
- 	int sit;		/* which sit pack */
-+	int dots;		/* . or .. dentry */
- 	bool ssa;
- 	bool node;
- 	bool dent;
-diff --git a/man/inject.f2fs.8 b/man/inject.f2fs.8
-index 72d1c90f7ce4..27b66f59b77d 100644
---- a/man/inject.f2fs.8
-+++ b/man/inject.f2fs.8
-@@ -214,7 +214,14 @@ inode i_nid array specified by \fIidx\fP.
- .RE
- .TP
- .BI \-\-dent
--Inject dentry block or dir entry specified \fInid\fP.
-+Inject dentry block or dir entry specified by \fInid\fP.
-+.RS 1.2i
-+.TP
-+.BI \-\-dots " 1 or 2"
-+The option means the "." or ".." directory entry of \fInid\fP is going to be injected.
-+.RE
-+.TP
-+.BI ""
- The available \fImb\fP of \fIdent\fP are:
- .RS 1.2i
- .TP
-@@ -229,6 +236,9 @@ dentry ino.
- .TP
- .BI d_ftype
- dentry ftype.
-+.TP
-+.BI filename
-+dentry filename, and corresponding d_hash and namelen are updated implicitly.
- .RE
- .TP
- .BI \-\-dry\-run
+@@ -596,16 +633,45 @@ static int inject_nat(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 	}
+ 	print_raw_nat_entry_info(ne);
+ 
+-	ret = dev_write_block(nat_blk, blk_addr, WRITE_LIFE_NONE);
+-	ASSERT(ret >= 0);
+-	/* restore NAT version bitmap */
+-	if (is_set)
+-		f2fs_set_bit(opt->nid, nm_i->nat_bitmap);
+-	else
+-		f2fs_clear_bit(opt->nid, nm_i->nat_bitmap);
++	if (in_journal) {
++		rewrite_nat_in_journal(sbi, opt->nid, ne);
++	} else {
++		ret = dev_write_block(nat_blk, blk_addr, WRITE_LIFE_NONE);
++		ASSERT(ret >= 0);
++		/* restore NAT version bitmap */
++		if (is_set)
++			f2fs_set_bit(opt->nid, nm_i->nat_bitmap);
++		else
++			f2fs_clear_bit(opt->nid, nm_i->nat_bitmap);
++	}
+ 
+ 	free(nat_blk);
+-	return ret;
++	return 0;
++}
++
++static void rewrite_sit_in_journal(struct f2fs_sb_info *sbi, unsigned int segno,
++				   struct f2fs_sit_entry *sit)
++{
++	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
++	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
++	struct f2fs_journal *journal = F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk);
++	block_t blkaddr;
++	int ret, i;
++
++	for (i = 0; i < sits_in_cursum(journal); i++) {
++		if (segno_in_journal(journal, i) == segno) {
++			memcpy(&sit_in_journal(journal, i), sit, sizeof(*sit));
++			break;
++		}
++	}
++
++	if (is_set_ckpt_flags(cp, CP_UMOUNT_FLAG))
++		blkaddr = sum_blk_addr(sbi, NR_CURSEG_TYPE, CURSEG_COLD_DATA);
++	else
++		blkaddr = sum_blk_addr(sbi, NR_CURSEG_DATA_TYPE, CURSEG_COLD_DATA);
++
++	ret = dev_write_block(curseg->sum_blk, blkaddr, WRITE_LIFE_NONE);
++	ASSERT(ret >= 0);
+ }
+ 
+ static int inject_sit(struct f2fs_sb_info *sbi, struct inject_option *opt)
+@@ -614,7 +680,7 @@ static int inject_sit(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 	struct f2fs_sit_block *sit_blk;
+ 	struct f2fs_sit_entry *sit;
+ 	unsigned int segno, offs;
+-	bool is_set;
++	bool is_set, in_journal = false;
+ 
+ 	if (!f2fs_is_valid_blkaddr(sbi, opt->blk, DATA_GENERIC)) {
+ 		ERR_MSG("Invalid blkaddr 0x%x (valid range [0x%x:0x%lx])\n",
+@@ -627,29 +693,39 @@ static int inject_sit(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 	ASSERT(sit_blk);
+ 
+ 	segno = GET_SEGNO(sbi, opt->blk);
+-	/* change SIT version bitmap temporarily to select specified pack */
+-	is_set = f2fs_test_bit(segno, sit_i->sit_bitmap);
+-	if (opt->sit == 0) {
+-		opt->sit = is_set ? 2 : 1;
++	if (lookup_sit_in_journal(sbi, segno, &sit_blk->entries[0]) >= 0) {
++		offs = 0;
++		in_journal = true;
+ 	} else {
+-		if (opt->sit == 1)
+-			f2fs_clear_bit(segno, sit_i->sit_bitmap);
+-		else
+-			f2fs_set_bit(segno, sit_i->sit_bitmap);
++		/*
++		 * read sit entry from SIT area, change SIT version bitmap
++		 * temporarily to select specified pack
++		 */
++		is_set = f2fs_test_bit(segno, sit_i->sit_bitmap);
++		if (opt->sit == 0) {
++			opt->sit = is_set ? 2 : 1;
++		} else {
++			if (opt->sit == 1)
++				f2fs_clear_bit(segno, sit_i->sit_bitmap);
++			else
++				f2fs_set_bit(segno, sit_i->sit_bitmap);
++		}
++		get_current_sit_page(sbi, segno, sit_blk);
++		offs = SIT_ENTRY_OFFSET(sit_i, segno);
+ 	}
+-	get_current_sit_page(sbi, segno, sit_blk);
+-	offs = SIT_ENTRY_OFFSET(sit_i, segno);
+ 	sit = &sit_blk->entries[offs];
+ 
+ 	if (!strcmp(opt->mb, "vblocks")) {
+ 		MSG(0, "Info: inject sit entry vblocks of block 0x%x "
+-		    "in pack %d: %u -> %u\n", opt->blk, opt->sit,
++		    "in %s %d: %u -> %u\n", opt->blk,
++		    in_journal ? "journal" : "pack",
++		    in_journal ? 0 : opt->sit,
+ 		    le16_to_cpu(sit->vblocks), (u16)opt->val);
+ 		sit->vblocks = cpu_to_le16((u16)opt->val);
+ 	} else if (!strcmp(opt->mb, "valid_map")) {
+ 		if (opt->idx == -1) {
+-			MSG(0, "Info: auto idx = %u\n", offs);
+-			opt->idx = offs;
++			opt->idx = OFFSET_IN_SEG(sbi, opt->blk);
++			MSG(0, "Info: auto idx = %u\n", opt->idx);
+ 		}
+ 		if (opt->idx >= SIT_VBLOCK_MAP_SIZE) {
+ 			ERR_MSG("invalid idx %u of valid_map[]\n", opt->idx);
+@@ -657,8 +733,10 @@ static int inject_sit(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 			return -ERANGE;
+ 		}
+ 		MSG(0, "Info: inject sit entry valid_map[%d] of block 0x%x "
+-		    "in pack %d: 0x%02x -> 0x%02x\n", opt->idx, opt->blk,
+-		    opt->sit, sit->valid_map[opt->idx], (u8)opt->val);
++		    "in %s %d: 0x%02x -> 0x%02x\n", opt->idx, opt->blk,
++		    in_journal ? "journal" : "pack",
++		    in_journal ? 0 : opt->sit,
++		    sit->valid_map[opt->idx], (u8)opt->val);
+ 		sit->valid_map[opt->idx] = (u8)opt->val;
+ 	} else if (!strcmp(opt->mb, "mtime")) {
+ 		MSG(0, "Info: inject sit entry mtime of block 0x%x "
+@@ -672,12 +750,17 @@ static int inject_sit(struct f2fs_sb_info *sbi, struct inject_option *opt)
+ 	}
+ 	print_raw_sit_entry_info(sit);
+ 
+-	rewrite_current_sit_page(sbi, segno, sit_blk);
+-	/* restore SIT version bitmap */
+-	if (is_set)
+-		f2fs_set_bit(segno, sit_i->sit_bitmap);
+-	else
+-		f2fs_clear_bit(segno, sit_i->sit_bitmap);
++	if (in_journal) {
++		rewrite_sit_in_journal(sbi, segno, sit);
++	} else {
++		rewrite_current_sit_page(sbi, segno, sit_blk);
++
++		/* restore SIT version bitmap */
++		if (is_set)
++			f2fs_set_bit(segno, sit_i->sit_bitmap);
++		else
++			f2fs_clear_bit(segno, sit_i->sit_bitmap);
++	}
+ 
+ 	free(sit_blk);
+ 	return 0;
 -- 
 2.43.0
 
