@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F4201C5B543
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 65D5EC5B552
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jun 2025 15:46:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Fpo/eb9KJJ3ykWwlwgQU8Sso1x17q+H6wEst1U4531Y=; b=h9QGSrvcig3B+epQP7Ze1LHBD0
-	EOslqNV2cDMi1dxkgc61ZSBfEM3D1GB9Q4IyiI213IJ7LAQdEKtg6ifJCfxYJnAEkVBqJnm7rdIZB
-	aXdTksYSrsnzAxGv/ncONBsayIyXX/KZ++GvwCekgJyqX9mBmCyBqAkGSUXKfCrzUAwc=;
+	bh=1JkB7dK6xbPbfyjQstNAv0oMWpcpukv42KNfYB/M0Kc=; b=RETkxquTjg0UJYewvN81qDOXf6
+	8xlU8eTvw0nu/z/Q5cn6Q1DaHl2ww+i0gxXd/RnvHgg1A/aqK32hLn24AgIPzSbOEzj9tigZbk0bL
+	quj9q2KZL50wV0XOh0vY5dqBVjpyVrJ/h18j5UEkzTT38nSayrq6ohU708O4WZGmTzrI=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uP19F-00075Z-LO;
-	Tue, 10 Jun 2025 15:44:25 +0000
+	id 1uP1Ao-0007AV-2Y;
+	Tue, 10 Jun 2025 15:46:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uP19E-00075S-Qr
+ (envelope-from <shengyong2021@gmail.com>) id 1uP1An-0007AC-3c
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:44:24 +0000
+ Tue, 10 Jun 2025 15:46:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0x3b1l5jy79qRM5TPd5aERH5PA0eFVVgOVd3JdlBtZs=; b=glTFzuI4XEDXFqF3uRbHpnikPg
- ELrTnlFaKcoYJceqf+o9pwo9B6Uzle8MgphF+06w940Vl9A1aVg/APQvuBSx3S0qZaG5KfFFq1yo/
- RUF99/3ARM9I8QkA4X5vmyxnAmotUafXNWrtr5eOSHlgGD3Om0zWsp4enm5LP2P5804s=;
+ bh=1086BviR+oImgXlsFqpY6zPEEkDZrQ9KrIVHCmPtDXs=; b=cnLkYM7pVa7O30RFb6zG8VIWd3
+ E8MyWusn7flgpkm52jVrdFE/AcVbsAZZlx0JmJ7vcbNXVrlPGUIPdUvt34snkjN9vOIE0YMXOLE47
+ y+9buFh0ng8TI1fIdcj89QMztubpo0A0l8ETnlgYGspA05BcyQC1OOQNCzw+IvRUPimw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,72 +42,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=0x3b1l5jy79qRM5TPd5aERH5PA0eFVVgOVd3JdlBtZs=; b=K0+7fqyDbToflLDxX4x49R5HpW
- z+14AO1zu9p744LXf0kKaDMO6584aAz3qscxtxq5fdagwuTPBpLRVOY8cxphElXbWK64jmCsxO+KJ
- 0NWwzC64Z7GaUEUYs5pGkaRUekfJswJVbRBMDJ1GwA8u8W2zrEUzfrg6bzTV7TS0XIxU=;
-Received: from mail-oa1-f51.google.com ([209.85.160.51])
+ bh=1086BviR+oImgXlsFqpY6zPEEkDZrQ9KrIVHCmPtDXs=; b=hhzvsElvNEQkdjqpE5jY2sBooF
+ 5/ZTkLuW5wnc0b7TnHXu1MN9RyqNZ+2F7yCv5ltI2Q2ELECsg5fS0AQyF3YZ541AJbmWCFLlBzlCN
+ yEC5yJMy+nN81w+GuMlTqQiR6CmilgXno3/nDiCsuI3V1Wn+WEOoH6q94EST1jDbLl9Q=;
+Received: from mail-oa1-f44.google.com ([209.85.160.44])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uP19E-0006wL-9i for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Jun 2025 15:44:24 +0000
-Received: by mail-oa1-f51.google.com with SMTP id
- 586e51a60fabf-2cc89c59cc0so3786289fac.0
+ id 1uP1Am-00079O-Ee for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jun 2025 15:46:01 +0000
+Received: by mail-oa1-f44.google.com with SMTP id
+ 586e51a60fabf-2db2f23f174so3229130fac.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Jun 2025 08:44:24 -0700 (PDT)
+ Tue, 10 Jun 2025 08:46:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1749570253; x=1750175053; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1749570350; x=1750175150; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=0x3b1l5jy79qRM5TPd5aERH5PA0eFVVgOVd3JdlBtZs=;
- b=hTzp3ucXiUPTNLRN+ssYjOnUD1pIPx0SN9SqcJwvqmx+ZbuAc3A0yhV8jdOs4BQChg
- hRYjqxvavEqCX3kxHR7G2uxUhmgxoDrebkVSDTnOdRDBVQLU8i+bCzlTc8Ylfdmyu2Bm
- 9rJiYnUqmxQGN6BbG4+v8feo8X53kTbqHBhcPa/jaIRS2EKPl6SXkX/X4RilhUwacWtl
- eQszmxkB/hCLGVZcJ6N9AhkFxRDbFt1tmSyqBtXPpBstZmXhk9VBmoRpxdxfdF7RhV0w
- 3BCCNb5rpH51IZ/kCcP1HEJyfKf/WUh3kuDB3oSvV6BdMBoPvIQ7iDt4BsSjCcsb0jmT
- B+yA==
+ bh=1086BviR+oImgXlsFqpY6zPEEkDZrQ9KrIVHCmPtDXs=;
+ b=lN54pDyFtsPYuqwEzIDE9rMff4cJfnIODMkqrf93uON2E1YgwJoqoicFHPuw4Ty1e6
+ r+vUcjE6BDDRvYURM2funq+W+ICIHpHhchUA2B4vuT1w5WKxU736H97CVnbMjLo5rG/8
+ fQTy/MbKKuBubBcnrNBHMu6xW5EjY+LvttgD02uFcZWsW24oPfUrvmDVWcgbKksDeFs3
+ 4+gLBxsO64Qi1jChyGFNK8yDh16l+OXGm5svySE4Gx5EiFkYLiVciJzayz4M4IW6VBHn
+ myhFbIb3f9bRSpzXuQ4PEnCUM+SaJ7/A+gwW8SrNkPzjXcGkDBrmyVRzE0E3GjGEm8VT
+ Snqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749570253; x=1750175053;
+ d=1e100.net; s=20230601; t=1749570350; x=1750175150;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=0x3b1l5jy79qRM5TPd5aERH5PA0eFVVgOVd3JdlBtZs=;
- b=RKZZOij98puw/P6GgzeKbY3h9VhNREjCK7fj86TBNxxuC8fSCy7y+4U79NU2yTcgzc
- sNNgdzxMFR7mWOXTyBHBQg02Ck4+xaKo4HmctthfLU22QYEH3bxnb1OyF1J4JFJ3T2Sp
- BeqEhWbUGhLa1HrVLCK7BiOcLxDidfE2eh/h09wdv1ven2J9osdK/dEm2bsLmebDfpXu
- j52hdtTQfcz8TGA3cRUH+Rwx/PQrI6Q1JEvKTNYdNO43QYHjR6VHJLc23nDXonmKd9oE
- oj73Y/5wM3gl+nphyvx3GSTAZcAjAPNOOENe9KjZ7KWn1ImVItE+esRSXEG/CGOs4Auf
- cQ2Q==
-X-Gm-Message-State: AOJu0Yz/kEfm9HhBnDKp22lZgKELhBlEpliOhs38zfIaBa8QtMT23spd
- W7sMziYRg947iPGYuIAnS4NqvywqZjxLAMBba0+fJzpGE9wip4TcZC/Q5VMnQg==
-X-Gm-Gg: ASbGncvKgdClrDhP2msdBI+qGh5gw4k13QyJ3TMuVS5uzVG2gHe0AOBels3WKFmzAv/
- CnP+j5Lhb+7xDTbwEFuDfO4erOQpUP4+wqNlVjPE04lvdhB0AurseKltKwH8lRWhODmtSepZfCL
- 7M5NvecrJ9hKRu0ySfStll9OqTEqwQkQawSwxoVSz4u6A1Po+fF5uD+dPzQKhheLgmG2U2qFI4d
- kYAfNxjNJxIFpvJgtw4YuvVmmW2nA5l/cXtXhCkaAlm5BmcfWBV3EXlTugEYe16LbnMsPhFPuEk
- hqF+Ie3QTHoVwYATorGAmxprRqICa1K4Xm2JWF87SnirPya2aQGAy1LuH5KjjCImvmMaSrrXLGW
- jCIU=
-X-Google-Smtp-Source: AGHT+IF+7QK0B1WG44egfQOWzdR7Hd0GZuiWqlkD2wym8bm4CN4qDB0AEn3EyOY+i23I4u8j3hOv6A==
-X-Received: by 2002:a05:6a00:4f81:b0:746:1c67:f6cb with SMTP id
- d2e1a72fcca58-7485ea435f8mr4566748b3a.5.1749559117809; 
- Tue, 10 Jun 2025 05:38:37 -0700 (PDT)
+ bh=1086BviR+oImgXlsFqpY6zPEEkDZrQ9KrIVHCmPtDXs=;
+ b=GtiNxvn0aGIiR86D/lxc+Wmn8UHao071oO1jDJs7tCQ4lJTdv9zkHc78Pof7F8FGg9
+ s9ExoBfJcVqyzTbILzmBeMMslZb1jHFl6cKpIqgWycJOx5W+FMYAUWwePH4m6ogTe+V/
+ 16LAUXUFrTYeIA2XGI7pcgcUyOR75DMgGRlMUllL8U8w7yqUXDm3kigtHpCQogiAstPh
+ oS1Hs+Kzbz/qOVCxrGkirBOqpQVJ0a5PgYyFKFFdekO42Bl4qLQ/GDd+gbWYUi5ns4w+
+ EpIhMm53GTwSSmmYh6xjYh+UcDrZoweI6UdOmzPaBR7nDkCIk3CYP6V1IIu28vQc5Z8f
+ yGVA==
+X-Gm-Message-State: AOJu0Yy7+VwRNqldRQFYAwbfKt6a6H0nDlVNtYnKl2/NOFPbaJinlyhn
+ 3ED61iENsqdQdwCOPFAdX+P2IcJRWkjJK1ftq4kfgI0qu8xluu+VG2BJ9P7QVA==
+X-Gm-Gg: ASbGncu6Bo1ZpHaHaJUojkkuGA7w0+HvmZQIbPTojhlZArYkR1IgzEYL3oxerHCvlwn
+ yhEkvMvpBjRYE4P85bLmY8u9Z/8dG1h5PGpRiiaeiLOyGgI8/m+osqbuyx5w2ytWqcLkn66xYLX
+ RiEc2ZwtNJtuPAemtXf3aFO6HcE06uK4oWMzNaym089LKm5jYKKapjO2i+mxSHAtQcM1W55Yv3U
+ sS/nFWpHUDIiFq5GszqCgE7K1vLvuM9zCtUAn9FC0mrTTJY4VmMst87FioC3Q5FOCT3MjRempF6
+ 1nsgt7VzYxlcuUK5p7r0m/1UfB2PJCpKtO01l62WqkoqOeVORbOIY9JWEPMaB0xfVtLA
+X-Google-Smtp-Source: AGHT+IFMeTd6kDjc6bWZ33NBX30ZLcuemhP3ABCc0oD0FjtdBBTfnQe6VuRgBnieFgZqd/xol80vYw==
+X-Received: by 2002:a05:6a20:431f:b0:203:bb65:995a with SMTP id
+ adf61e73a8af0-21f78c60acfmr4422853637.30.1749559085848; 
+ Tue, 10 Jun 2025 05:38:05 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.36
+ d2e1a72fcca58-7482b0847aesm7539815b3a.105.2025.06.10.05.38.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Jun 2025 05:38:37 -0700 (PDT)
+ Tue, 10 Jun 2025 05:38:05 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Tue, 10 Jun 2025 20:37:28 +0800
-Message-ID: <20250610123743.667183-19-shengyong1@xiaomi.com>
+Date: Tue, 10 Jun 2025 20:37:12 +0800
+Message-ID: <20250610123743.667183-3-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
 References: <20250610123743.667183-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uP19E-0006wL-9i
-Subject: [f2fs-dev] [RFC PATCH v2 18/32] tests: add fsck testcase of fixing
- nat entry with invalid ino
+X-Headers-End: 1uP1Am-00079O-Ee
+Subject: [f2fs-dev] [RFC PATCH v2 02/32] f2fs-tools: add option N to answer
+ no for all questions
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -126,81 +125,124 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Sheng Yong <shengyong1@xiaomi.com>
 
+In some scenario, such as autotest, it is not expected to answer
+question from fsck or dump. To simply answer no to all these questions,
+this patch adds an option `N' to do that.
+
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 ---
- tests/f_nat_bad_ino/README    |  4 ++++
- tests/f_nat_bad_ino/expect.in | 12 ++++++++++++
- tests/f_nat_bad_ino/script    | 31 +++++++++++++++++++++++++++++++
- 3 files changed, 47 insertions(+)
- create mode 100644 tests/f_nat_bad_ino/README
- create mode 100644 tests/f_nat_bad_ino/expect.in
- create mode 100644 tests/f_nat_bad_ino/script
+ fsck/dump.c       |  3 +++
+ fsck/fsck.c       |  2 +-
+ fsck/main.c       | 14 +++++++++++---
+ include/f2fs_fs.h |  1 +
+ 4 files changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/tests/f_nat_bad_ino/README b/tests/f_nat_bad_ino/README
-new file mode 100644
-index 000000000000..b97015297b25
---- /dev/null
-+++ b/tests/f_nat_bad_ino/README
-@@ -0,0 +1,4 @@
-+1. create f2fs image
-+2. mount f2fs and create a regular file
-+3. inject ino in nat entry with value 0x12345 of the regular file
-+4. fsck fixes the nat entry by nullifying it
-diff --git a/tests/f_nat_bad_ino/expect.in b/tests/f_nat_bad_ino/expect.in
-new file mode 100644
-index 000000000000..4a70b0b27cff
---- /dev/null
-+++ b/tests/f_nat_bad_ino/expect.in
-@@ -0,0 +1,12 @@
-+Info: Force to fix corruption
-+[ASSERT] (sanity_check_nid: x)  --> nid[_INO_] nat_entry->ino[0x12345] footer.ino[_INO_]
-+[FIX] (__chk_dentries:x)  --> Unlink [_INO_] - testfile len[0x8], type[0x1]
-+[fsck_chk_quota_files:x] Fixing Quota file ([  0] ino [0x4])
-+[FIX] (nullify_nat_entry:x)  --> Remove nid [0x4] in NAT
-+[fsck_chk_quota_files:x] Fixing Quota file ([  1] ino [0x5])
-+[FIX] (nullify_nat_entry:x)  --> Remove nid [0x5] in NAT
-+[fsck_chk_quota_files:x] Fixing Quota file ([  2] ino [0x6])
-+[FIX] (nullify_nat_entry:x)  --> Remove nid [0x6] in NAT
-+NID[_INO_] is unreachable, blkaddr:_BLK_
-+[FIX] (nullify_nat_entry:x)  --> Remove nid [_INO_] in NAT
-+Info: Force to fix corruption
-diff --git a/tests/f_nat_bad_ino/script b/tests/f_nat_bad_ino/script
-new file mode 100644
-index 000000000000..ded5b2a602fb
---- /dev/null
-+++ b/tests/f_nat_bad_ino/script
-@@ -0,0 +1,31 @@
-+#!/bin/bash
+diff --git a/fsck/dump.c b/fsck/dump.c
+index 66d6c791ae09..10df7e593bfe 100644
+--- a/fsck/dump.c
++++ b/fsck/dump.c
+@@ -681,6 +681,9 @@ static int dump_filesystem(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 	if (c.show_file_map)
+ 		return dump_inode_blk(sbi, ni->ino, node_blk);
+ 
++	if (c.answer_no)
++		return 0;
 +
-+DESC="nat entry with invalid ino"
-+
-+. $TOPDIR/tests/helpers
-+
-+cleanup
-+make_f2fs > $LOG
-+
-+mkdir $TESTDIR/mntdir
-+safe_mount $MNT_OPTS $META $TESTDIR/mntdir >> $LOG
-+touch $TESTDIR/mntdir/testfile
-+ino=`stat -c "%i" $TESTDIR/mntdir/testfile`
-+safe_umount $TESTDIR/mntdir >> $LOG
-+rm -rf $TESTDIR/mntdir
-+
-+blk=`$DUMP $DUMP_OPTS -i $ino -d 1 $META | grep nat_entry.block_addr | \
-+	sed 's/.*nat_entry\.block_addr[[:space:]]*\[\(0x[0-9a-f]\{1,\}\)\]/\1/g'`
-+
-+echo "ino:$ino blk:$blk" >> $LOG
-+
-+$INJECT --nat 0 --nid $ino --mb ino --val 0x12345 $META >> $LOG
-+$FSCK $FSCK_OPTS -f $META > $OUT
-+$FSCK $FSCK_OPTS -f $META >> $OUT
-+cat $OUT >> $LOG
-+
-+INO=`printf "0x%x" $ino`
-+sed "s/_INO_/$INO/g" $TESTDIR/expect.in > $TESTDIR/expect
-+sed -i "s/_BLK_/$blk/g" $TESTDIR/expect
-+
-+check_result
+ 	printf("Do you want to dump this %s into %s/? [Y/N] ",
+ 			S_ISDIR(imode) ? "folder" : "file",
+ 			base_path);
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 4d05e1b4a21b..14677128dc2d 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -3834,7 +3834,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
+ 	}
+ 
+ #ifndef WITH_ANDROID
+-	if (nr_unref_nid && !c.ro) {
++	if (nr_unref_nid && !c.ro && !c.answer_no) {
+ 		char ans[255] = {0};
+ 		int res;
+ 
+diff --git a/fsck/main.c b/fsck/main.c
+index c5d41597934a..b01a22c8cf53 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -86,6 +86,7 @@ void fsck_usage()
+ 	MSG(0, "  -t show directory tree\n");
+ 	MSG(0, "  -q preserve quota limits\n");
+ 	MSG(0, "  -y fix all the time\n");
++	MSG(0, "  -N answer \"No\" for all questions\n");
+ 	MSG(0, "  -V print the version number and exit\n");
+ 	MSG(0, "  --dry-run do not really fix corruptions\n");
+ 	MSG(0, "  --no-kernel-check skips detecting kernel change\n");
+@@ -114,6 +115,7 @@ void dump_usage()
+ 	MSG(0, "  -f do not prompt before dumping\n");
+ 	MSG(0, "  -H support write hint\n");
+ 	MSG(0, "  -y alias for -f\n");
++	MSG(0, "  -N answer \"No\" for all questions\n");
+ 	MSG(0, "  -o dump inodes to the given path\n");
+ 	MSG(0, "  -P preserve mode/owner/group for dumped inode\n");
+ 	MSG(0, "  -L Preserves symlinks. Otherwise symlinks are dumped as regular files.\n");
+@@ -263,7 +265,7 @@ void f2fs_parse_options(int argc, char *argv[])
+ 	}
+ 
+ 	if (!strcmp("fsck.f2fs", prog)) {
+-		const char *option_string = ":aC:c:m:Md:fg:HlO:p:q:StyV";
++		const char *option_string = ":aC:c:m:Md:fg:HlO:p:q:StyNV";
+ 		int opt = 0, val;
+ 		char *token;
+ 		struct option long_opt[] = {
+@@ -396,6 +398,9 @@ void f2fs_parse_options(int argc, char *argv[])
+ 				c.force = 1;
+ 				MSG(0, "Info: Force to fix corruption\n");
+ 				break;
++			case 'N':
++				c.answer_no = true;
++				break;
+ 			case 'q':
+ 				c.preserve_limits = atoi(optarg);
+ 				MSG(0, "Info: Preserve quota limits = %d\n",
+@@ -449,7 +454,7 @@ void f2fs_parse_options(int argc, char *argv[])
+ 		}
+ 	} else if (!strcmp("dump.f2fs", prog)) {
+ #ifdef WITH_DUMP
+-		const char *option_string = "d:fi:I:n:LMo:Prs:Sa:b:Vy";
++		const char *option_string = "d:fi:I:n:LMo:Prs:Sa:b:VyN";
+ 		static struct dump_option dump_opt = {
+ 			.nid = 0,	/* default root ino */
+ 			.start_nat = -1,
+@@ -527,6 +532,9 @@ void f2fs_parse_options(int argc, char *argv[])
+ 			case 'f':
+ 				c.force = 1;
+ 				break;
++			case 'N':
++				c.answer_no = true;
++				break;
+ 			case 'r':
+ 				dump_opt.use_root_nid = 1;
+ 				break;
+@@ -1369,7 +1377,7 @@ fsck_again:
+ 
+ 	f2fs_do_umount(sbi);
+ 
+-	if (c.func == FSCK && c.bug_on) {
++	if (c.func == FSCK && c.bug_on && !c.answer_no) {
+ 		if (!c.ro && c.fix_on == 0 && c.auto_fix == 0 && !c.dry_run) {
+ 			char ans[255] = {0};
+ retry:
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index f7268d1e90ff..5cd4ad666c06 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -1593,6 +1593,7 @@ struct f2fs_configuration {
+ 	int whint;
+ 	int aliased_devices;
+ 	uint32_t aliased_segments;
++	bool answer_no;
+ 
+ 	/* mkfs parameters */
+ 	int fake_seed;
 -- 
 2.43.0
 
