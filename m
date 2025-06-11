@@ -4,78 +4,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 87FE8C71136
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Jun 2025 00:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B3B6CC71136
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Jun 2025 01:24:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	List-Unsubscribe:List-Id:Subject:To:Message-ID:References:Mime-Version:
+	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=0+RSqsRY9zSeUINIWynKRgEZYyvg32U67vSIiNthevc=; b=SGN9zp4iDwg/u2DA9waviLXBGI
-	h3ULy0iO1CAMvJ8c7cgdQ49tURQOfzEa7fArrx+rAubnfmoC1Vvy4oW3GwRbjxs5kUjZPp8HZiThH
-	DcraYhbUY3iYGY/bUsFvk9dko3RN+8VzKg9k3C7fobNm4bz6AcATRgCa8v2YYgEzYvhw=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=3rJm94nbqOf7T0DZiz21Cj4qxiP2eTQnJ64K+iGrS8k=; b=mJGE4Jz/R5RIYWhoJFe/gaGEhe
+	IGSHPi0zOWkmMhSIGlg3TWrVFurEVjkuKDr/BSHWe9XFgTyzYvj3ayiy8kHWlUpMrYGp+a3JPbD0R
+	5oaWOJeCCqJ5uZKAM+lShO2MoX8lF0wGm5igENDyla3B/2BbSV8hmrhVga4NePTmFwBQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uPWHt-0006NG-5O;
-	Thu, 12 Jun 2025 00:59:25 +0000
+	id 1uPWfs-0007dE-61;
+	Thu, 12 Jun 2025 01:24:12 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1uPWHr-0006N9-8G
- for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Jun 2025 00:59:23 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <3lRNKaAcKAC4MReVVOOQYYQVO.MYW@flex--chullee.bounces.google.com>)
+ id 1uPWfr-0007d8-AZ for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 12 Jun 2025 01:24:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VgdA/brGVKWRJ3BiUx7Nubq9TxbIqGAD4o6ifrXDSYk=; b=NrfFW6ETLEcvCXpybelxAHfwPB
- LBu/+1JRpvNUZPWM/7O4rVTEk9XNY8zsa4TRMXxzGSN/36jVP8xnNBKu0We/0DPYj69vN2a9Tw9KI
- hoHwVls74g0IlGX0n1p8dTSx4w+GJVa7F5/EnLCCapfYyXOS2LGeWC06KuH6oSATFfWo=;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
+ References:Mime-Version:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=mKx7Yg2jyt4RiAGTCJpC9bEvueSIsR5D/X+k7Jjceso=; b=QhlwGOnf8t+16JS3aEetpHdyWh
+ zCd+UjfMLOWDDW7j8ZhpTH1G5006EQfrV4bmXbG9CzQ1GA18Bwz1W1wghhVd1d2vBQzs2wc7YELVK
+ /Z8j5gAypCzpsVlSK+3E5nEkVn69Gp9inkckrQF0b9UwZ/m+h36sD6XuZd65ZksZ3uSE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Type:Cc:To:From:Subject:Message-ID:References:Mime-Version:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VgdA/brGVKWRJ3BiUx7Nubq9TxbIqGAD4o6ifrXDSYk=; b=TO5EG7XFbeTFcO/rwuwx7WpYKP
- WuJVLWxMIoPou8M5ZY8PWtBFZHe1e2t3HJp36OlCEKwAEl8mXabgQv2JHCsZkmOQZ2J7ElZ4iKZyj
- WwTkD0p/0kMk04geOTNxayfA/CTfZCwG4j2NW/+MM5Xg3dQ0UhWF5qsjaikkfGVAv0L8=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=mKx7Yg2jyt4RiAGTCJpC9bEvueSIsR5D/X+k7Jjceso=; b=CGyliHtwagCgB+DegXVd+Bswyu
+ sHemAFp4BeFyJENh/XOio53TxgdTV9TaKG8XY/H/rwnhT4i6iP+2/t2TU81zyDdtx40nXP4JKmkwf
+ TzPPeFRzuOHUkzwMh+piuIyLtrOEKlxZGzaE5O6Yjnt3MGzRk+Oz1DSSLQBKPI/nYkr0=;
+Received: from mail-oi1-f201.google.com ([209.85.167.201])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uPWHq-0007ng-PI for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Jun 2025 00:59:23 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 94871629E6;
- Thu, 12 Jun 2025 00:59:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03066C4CEE3;
- Thu, 12 Jun 2025 00:59:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1749689956;
- bh=1pLf5bk/3PFIluwpReZ5mviAqg4CGwb1cCQQmcLw6f0=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=kn8RsBx4W5wwKgjX2bn2GPL7w7pbuxS4bXmDFzdgWA+KONs14NmKhmdJn+9//1d2a
- U2/Kgaq61LJNRw8jMvkf4uuYNdcYZYbu5E+O60TZXvsvNQ7wT7YrPZUrelkhOW+wAN
- Xy4kBVI1wepj/dFanHYyWK6/6/i0/d1i+/QhVo9b/rG0Xb9jNoDgkijJvYExFr7dwj
- Y6UevZfed66WMmM3EFdMAmC1ngqx06O96BHAbNL6wlbVp6LW3w7GkeJKZz9M+LSMyL
- WAnmQ488J49VwokEuqF6q/94k3A/56jKE7K5zazfC8qQE2LLdby/S/Sdex/T3xWbx8
- ZwyP9Yt+uFe7A==
-Date: Thu, 12 Jun 2025 00:59:14 +0000
-To: Simon Richter <Simon.Richter@hogyros.de>
-Message-ID: <20250612005914.GA546455@google.com>
-References: <20250611205859.80819-1-ebiggers@kernel.org>
- <7f63be76-289b-4a99-b802-afd72e0512b8@hogyros.de>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <7f63be76-289b-4a99-b802-afd72e0512b8@hogyros.de>
-X-Headers-End: 1uPWHq-0007ng-PI
-Subject: Re: [f2fs-dev] [PATCH] fscrypt: don't use hardware offload Crypto
- API drivers
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1uPWfq-0000NC-UT for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 12 Jun 2025 01:24:11 +0000
+Received: by mail-oi1-f201.google.com with SMTP id
+ 5614622812f47-408df250dfbso309330b6e.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 11 Jun 2025 18:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=google.com; s=20230601; t=1749691445; x=1750296245;
+ darn=lists.sourceforge.net; 
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=mKx7Yg2jyt4RiAGTCJpC9bEvueSIsR5D/X+k7Jjceso=;
+ b=WxlO+CUbm1TZhOBKSRmAzUh7e5NTNbkvKtuCleEBMRwL/a3dIgytKpFyGX7+7c05Mi
+ aYMg8vZ0Ie9G5x7CdvLWoP3O3VncD9wjCkSQsUP3ScxPURCVn1zhHoOaz7+WE+rW6cXH
+ wTy+Bltr9KuVeLZDAgMCoGUehr4T7it8kWg5jroDovtCilgMuv9nQAlL7IJcOJSW0n2g
+ NSp5LFcKGCqf3mKqNSrsN8dHIJY/WfNYgSx11YbpXzWFSpTkj2qEQmQgHmP30ws04RXC
+ 3KgsHEO/j82kRrH7DFMYCKBsOlaaQpiT3UgVx0tzOR9++5PaHXDXNCSboY6GQRoxlicb
+ gogw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1749691445; x=1750296245;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=mKx7Yg2jyt4RiAGTCJpC9bEvueSIsR5D/X+k7Jjceso=;
+ b=hgPCcXdzPxt9aSMNnHlsH254ekkHdv8wf2a9VTy7fMfl7h6ruIotWzXxBDb/j295rt
+ 6Q7gsSqIl01J71X5ZjA4rtsLxhOn0aZLoKxDMm9Ac+PrJiUvMDpw4mvNjHHlQRb1JxHY
+ HjP4/NQgcn1MuioYUWsB523BbiZmfEOIBqGsBbp8SuSU7NLqxDn5LYWf9tlYDB5Yr7uo
+ +NZDqsQlKsTK9nWOV3A2HrrWORQfao4Ds9zPODBh8DXSdBs7JgaMy3yV8m9QjB8/eX4O
+ o3x+S20vQS4QUxKs8VfXp/WNuxBNWgPGwy1KHeWAo7y63DPa1WoRG+ffDzYej7BT07V6
+ ocng==
+X-Gm-Message-State: AOJu0YwYaGRUYNWsQPtkb4d05OU7IBLVTrVPJgaMeWb9mUYLQwZaWWMB
+ DtprmC56W8a0cDFQwOBrCoiK477KmCBMMhiV3TK7T2BCzlX4oOmS3A1/0Pcb/TvjCbNCNCQDvlN
+ svWkejcca8A==
+X-Google-Smtp-Source: AGHT+IExOy2ZqSqSTK/clN9/wYzarZU68QG4F25PAWsHxKFVOwclfiyTYH7HAxonpwyrzvA47ScUnqZ0Yswr
+X-Received: from pga1.prod.google.com ([2002:a05:6a02:4f81:b0:b2f:a31c:f7bc])
+ (user=chullee job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:7283:b0:216:1ea0:a526
+ with SMTP id adf61e73a8af0-21f9bc097f1mr981622637.40.1749685141492; Wed, 11
+ Jun 2025 16:39:01 -0700 (PDT)
+Date: Wed, 11 Jun 2025 16:37:06 -0700
+In-Reply-To: <20250611233706.572784-1-chullee@google.com>
+Mime-Version: 1.0
+References: <20250611233706.572784-1-chullee@google.com>
+X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
+Message-ID: <20250611233706.572784-3-chullee@google.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+X-Headers-End: 1uPWfq-0000NC-UT
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: use ioprio hint for hot and pinned
+ files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,67 +107,118 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-crypto@vger.kernel.org, ceph-devel@vger.kernel.org,
- linux-ext4@vger.kernel.org
+From: Daniel Lee via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Daniel Lee <chullee@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jun 12, 2025 at 09:21:26AM +0900, Simon Richter wrote:
-> Hi,
-> 
-> On 6/12/25 05:58, Eric Biggers wrote:
-> 
-> > But
-> > otherwise this style of hardware offload is basically obsolete and has
-> > been superseded by hardware-accelerated crypto instructions directly on
-> > the CPU as well as inline storage encryption (UFS/eMMC).
-> 
-> For desktop, yes, but embedded still has quite a few of these, for example
-> the STM32 crypto offload engine, and I expect quite a few FPGA based
-> implementations exist, so this would require vendors to maintain a fork to
-> keep their out-of-tree drivers functional when updating the kernel.
-> 
-> POWER also has an asynchronous offload engine with AES, SHA and gzip
-> support, these are significantly faster than the CPU.
+Apply the `ioprio_hint` to set `F2FS_IOPRIO_WRITE` priority
+on files identified as "hot" at creation and on files that are
+pinned via ioctl.
 
-Do you know if anyone is actually still using a legacy-style accelerator with
-fscrypt, and if so what specific performance improvements are they getting?
+Signed-off-by: Daniel Lee <chullee@google.com>
+---
+ fs/f2fs/f2fs.h  | 21 +++++++++++++++++++++
+ fs/f2fs/file.c  |  3 +++
+ fs/f2fs/namei.c | 11 +++++++----
+ 3 files changed, 31 insertions(+), 4 deletions(-)
 
-Arguing that legacy-style crypto acceleration could theoretically be useful in
-general isn't really relevant here.  What's relevant here is whether it's
-actually useful and worthwhile with this specific kernel subsystem.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 162d79a3c1a5..0b05b3b6386b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3441,6 +3441,27 @@ static inline void set_file(struct inode *inode, int type)
+ 	f2fs_mark_inode_dirty_sync(inode, true);
+ }
+ 
++static inline int get_ioprio(struct inode *inode)
++{
++	return F2FS_I(inode)->ioprio_hint;
++}
++
++static inline void set_ioprio(struct inode *inode, int level)
++{
++	if (get_ioprio(inode) == level)
++		return;
++	F2FS_I(inode)->ioprio_hint = level;
++	f2fs_mark_inode_dirty_sync(inode, true);
++}
++
++static inline void clear_ioprio(struct inode *inode)
++{
++	if (get_ioprio(inode) == 0)
++		return;
++	F2FS_I(inode)->ioprio_hint = 0;
++	f2fs_mark_inode_dirty_sync(inode, true);
++}
++
+ static inline void clear_file(struct inode *inode, int type)
+ {
+ 	if (!is_file(inode, type))
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 4fd45e94661a..95a3b4b59dd1 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3496,6 +3496,7 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
+ 
+ 	if (!pin) {
+ 		clear_inode_flag(inode, FI_PIN_FILE);
++		clear_ioprio(inode);
+ 		f2fs_i_gc_failures_write(inode, 0);
+ 		goto done;
+ 	} else if (f2fs_is_pinned_file(inode)) {
+@@ -3529,6 +3530,8 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
+ 	}
+ 
+ 	set_inode_flag(inode, FI_PIN_FILE);
++	file_set_hot(inode);
++	set_ioprio(inode, F2FS_IOPRIO_WRITE);
+ 	ret = F2FS_I(inode)->i_gc_failures;
+ done:
+ 	f2fs_update_time(sbi, REQ_TIME);
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 07e333ee21b7..0f96a0b86c40 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -191,9 +191,10 @@ static void set_compress_new_inode(struct f2fs_sb_info *sbi, struct inode *dir,
+ }
+ 
+ /*
+- * Set file's temperature for hot/cold data separation
++ * Set file's temperature (for hot/cold data separation) and
++ * I/O priority, based on filename extension
+  */
+-static void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
++static void set_file_temp_prio(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		const unsigned char *name)
+ {
+ 	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
+@@ -212,8 +213,10 @@ static void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
+ 
+ 	if (i < cold_count)
+ 		file_set_cold(inode);
+-	else
++	else {
+ 		file_set_hot(inode);
++		set_ioprio(inode, F2FS_IOPRIO_WRITE);
++	}
+ }
+ 
+ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
+@@ -317,7 +320,7 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
+ 		set_inode_flag(inode, FI_INLINE_DATA);
+ 
+ 	if (name && !test_opt(sbi, DISABLE_EXT_IDENTIFY))
+-		set_file_temperature(sbi, inode, name);
++		set_file_temp_prio(sbi, inode, name);
+ 
+ 	stat_inc_inline_xattr(inode);
+ 	stat_inc_inline_inode(inode);
+-- 
+2.50.0.rc1.591.g9c95f17f64-goog
 
-As I mentioned, fscrypt has never been optimized for legacy-style accelerators
-anyway, and no one has ever tried to do so.  It just hasn't been relevant.
-
-Meanwhile, the real feedback I *do* get from users is that these drivers are
-causing problems for users, since the Crypto API (unwisely) enables them by
-default and thus fscrypt uses them by default.
-
-There are people who do care about some of these drivers, but they tend to be
-the manufacturer of the hardware, not the users.  To me it seems like more of a
-check-box exercise than something that is actually worth using in practice.
-
-> If a buggy engine passes self-test, can this simply be fixed by adding more
-> tests? :>
-
-The crypto self-tests are disabled by default, just like any other kernel
-subsystem.  They are supposed to be run before a kernel is released, but for
-most of the drivers they aren't, since people don't have the hardware.  Thus, a
-lot of drivers in-tree don't even pass the tests we do have.
-
-Some distros do enable the crypto self-tests in production kernels, but only the
-fast tests; the full set of tests is too slow to enable in production.  But even
-the full tests don't properly test the hardware offload drivers, which have
-unique challenges that do not exist in software code.
-
-- Eric
 
 
 _______________________________________________
