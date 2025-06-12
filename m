@@ -4,98 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B3B6CC71136
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Jun 2025 01:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 003E3C61CE8
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Jun 2025 03:47:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Message-ID:References:Mime-Version:
-	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=3rJm94nbqOf7T0DZiz21Cj4qxiP2eTQnJ64K+iGrS8k=; b=mJGE4Jz/R5RIYWhoJFe/gaGEhe
-	IGSHPi0zOWkmMhSIGlg3TWrVFurEVjkuKDr/BSHWe9XFgTyzYvj3ayiy8kHWlUpMrYGp+a3JPbD0R
-	5oaWOJeCCqJ5uZKAM+lShO2MoX8lF0wGm5igENDyla3B/2BbSV8hmrhVga4NePTmFwBQ=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=fT71vrrj1ryU78pNaWNlwDJQy3XRfsiXp/FWdjNwEZw=; b=nOSRrdN+ZyGAgfdzNhgjjHIcsV
+	ULj6ODJv+9Igqun/CAj5GpYkTRTZ+DwZREx2JJaQyb8chF1mzia3oyDgC5xvObhnP6X6ul114ZQCj
+	vf+HVQqNUzrBLFFtYzu/ngi+dRASTmd02l+VHTMh7AH1Se+oWuZZW7/9hRc4bxtxSxUg=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uPWfs-0007dE-61;
-	Thu, 12 Jun 2025 01:24:12 +0000
+	id 1uPYua-00086a-VT;
+	Thu, 12 Jun 2025 03:47:32 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <3lRNKaAcKAC4MReVVOOQYYQVO.MYW@flex--chullee.bounces.google.com>)
- id 1uPWfr-0007d8-AZ for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Jun 2025 01:24:11 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <wangzijie1@honor.com>) id 1uPYuM-00086L-2R
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 12 Jun 2025 03:47:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- References:Mime-Version:In-Reply-To:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mKx7Yg2jyt4RiAGTCJpC9bEvueSIsR5D/X+k7Jjceso=; b=QhlwGOnf8t+16JS3aEetpHdyWh
- zCd+UjfMLOWDDW7j8ZhpTH1G5006EQfrV4bmXbG9CzQ1GA18Bwz1W1wghhVd1d2vBQzs2wc7YELVK
- /Z8j5gAypCzpsVlSK+3E5nEkVn69Gp9inkckrQF0b9UwZ/m+h36sD6XuZd65ZksZ3uSE=;
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=Bj6Yb/B0kxfBN84dDxcTkyX8ZTsX5mKiUyzvHVa6M1s=; b=gD4WLTBsKt3FeqLgS5QFkZecrr
+ ChUSxJKcGwav/VRZCDEhGXgncs/3Juoc+IAuPaN7/JC7eqf2NgmUCC2nT4maOCBsjU6nr1xbiAwPj
+ IQTlDzhjOzz22STt1CDHzCrIQhyQ+AiZ8SCCCBvGo8bZl2KIRGOctl4F6NTYUpY/ExYI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:References:Mime-Version:
- In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=mKx7Yg2jyt4RiAGTCJpC9bEvueSIsR5D/X+k7Jjceso=; b=CGyliHtwagCgB+DegXVd+Bswyu
- sHemAFp4BeFyJENh/XOio53TxgdTV9TaKG8XY/H/rwnhT4i6iP+2/t2TU81zyDdtx40nXP4JKmkwf
- TzPPeFRzuOHUkzwMh+piuIyLtrOEKlxZGzaE5O6Yjnt3MGzRk+Oz1DSSLQBKPI/nYkr0=;
-Received: from mail-oi1-f201.google.com ([209.85.167.201])
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=Bj6Yb/B0kxfBN84dDxcTkyX8ZTsX5mKiUyzvHVa6M1s=; b=g
+ HZ4CefBtyOn2cVt37eVfHTzElfwISRPTjeJ9L2jwjaXcP0+WhGBOZd8Qeq9XbWMCD5wLJuKhRqtcv
+ x53yJXN4SlROFroJWPuFhpVOr0TkKjXxra5YIty8chujvidAvEBj/1UWm5Ev189/bJwnRfkRtbOZ+
+ 0Ni1lFkasgAuJT+4=;
+Received: from mta22.honor.com ([81.70.192.198] helo=mta22.hihonor.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uPWfq-0000NC-UT for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 12 Jun 2025 01:24:11 +0000
-Received: by mail-oi1-f201.google.com with SMTP id
- 5614622812f47-408df250dfbso309330b6e.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 11 Jun 2025 18:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1749691445; x=1750296245;
- darn=lists.sourceforge.net; 
- h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
- :date:from:to:cc:subject:date:message-id:reply-to;
- bh=mKx7Yg2jyt4RiAGTCJpC9bEvueSIsR5D/X+k7Jjceso=;
- b=WxlO+CUbm1TZhOBKSRmAzUh7e5NTNbkvKtuCleEBMRwL/a3dIgytKpFyGX7+7c05Mi
- aYMg8vZ0Ie9G5x7CdvLWoP3O3VncD9wjCkSQsUP3ScxPURCVn1zhHoOaz7+WE+rW6cXH
- wTy+Bltr9KuVeLZDAgMCoGUehr4T7it8kWg5jroDovtCilgMuv9nQAlL7IJcOJSW0n2g
- NSp5LFcKGCqf3mKqNSrsN8dHIJY/WfNYgSx11YbpXzWFSpTkj2qEQmQgHmP30ws04RXC
- 3KgsHEO/j82kRrH7DFMYCKBsOlaaQpiT3UgVx0tzOR9++5PaHXDXNCSboY6GQRoxlicb
- gogw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1749691445; x=1750296245;
- h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
- :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=mKx7Yg2jyt4RiAGTCJpC9bEvueSIsR5D/X+k7Jjceso=;
- b=hgPCcXdzPxt9aSMNnHlsH254ekkHdv8wf2a9VTy7fMfl7h6ruIotWzXxBDb/j295rt
- 6Q7gsSqIl01J71X5ZjA4rtsLxhOn0aZLoKxDMm9Ac+PrJiUvMDpw4mvNjHHlQRb1JxHY
- HjP4/NQgcn1MuioYUWsB523BbiZmfEOIBqGsBbp8SuSU7NLqxDn5LYWf9tlYDB5Yr7uo
- +NZDqsQlKsTK9nWOV3A2HrrWORQfao4Ds9zPODBh8DXSdBs7JgaMy3yV8m9QjB8/eX4O
- o3x+S20vQS4QUxKs8VfXp/WNuxBNWgPGwy1KHeWAo7y63DPa1WoRG+ffDzYej7BT07V6
- ocng==
-X-Gm-Message-State: AOJu0YwYaGRUYNWsQPtkb4d05OU7IBLVTrVPJgaMeWb9mUYLQwZaWWMB
- DtprmC56W8a0cDFQwOBrCoiK477KmCBMMhiV3TK7T2BCzlX4oOmS3A1/0Pcb/TvjCbNCNCQDvlN
- svWkejcca8A==
-X-Google-Smtp-Source: AGHT+IExOy2ZqSqSTK/clN9/wYzarZU68QG4F25PAWsHxKFVOwclfiyTYH7HAxonpwyrzvA47ScUnqZ0Yswr
-X-Received: from pga1.prod.google.com ([2002:a05:6a02:4f81:b0:b2f:a31c:f7bc])
- (user=chullee job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:7283:b0:216:1ea0:a526
- with SMTP id adf61e73a8af0-21f9bc097f1mr981622637.40.1749685141492; Wed, 11
- Jun 2025 16:39:01 -0700 (PDT)
-Date: Wed, 11 Jun 2025 16:37:06 -0700
-In-Reply-To: <20250611233706.572784-1-chullee@google.com>
-Mime-Version: 1.0
-References: <20250611233706.572784-1-chullee@google.com>
-X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
-Message-ID: <20250611233706.572784-3-chullee@google.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-X-Headers-End: 1uPWfq-0000NC-UT
-Subject: [f2fs-dev] [PATCH 2/2] f2fs: use ioprio hint for hot and pinned
- files
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1uPYuL-00064s-Ed for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 12 Jun 2025 03:47:18 +0000
+Received: from w013.hihonor.com (unknown [10.68.26.19])
+ by mta22.hihonor.com (SkyGuard) with ESMTPS id 4bHnwp3n60zYlZl1;
+ Thu, 12 Jun 2025 11:25:46 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w013.hihonor.com
+ (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 12 Jun
+ 2025 11:27:45 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 12 Jun
+ 2025 11:27:45 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+Date: Thu, 12 Jun 2025 11:27:42 +0800
+Message-ID: <20250612032742.1734852-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+X-Originating-IP: [10.144.23.14]
+X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a011.hihonor.com
+ (10.68.31.243)
+X-Headers-End: 1uPYuL-00064s-Ed
+Subject: [f2fs-dev] [PATCH] f2fs: continue to allocate pinned section when
+ gc happens EAGAIN
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -107,117 +84,55 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Lee via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Lee <chullee@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: wangzijie <wangzijie1@honor.com>, linux-kernel@vger.kernel.org,
+ bo.wu@vivo.com, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Apply the `ioprio_hint` to set `F2FS_IOPRIO_WRITE` priority
-on files identified as "hot" at creation and on files that are
-pinned via ioctl.
+Wu Bo once mentioned a fallocate fail scenario in this link[1].
+After commit 3fdd89b452c2("f2fs: prevent writing without fallocate()
+for pinned files"), we cannot directly generate 4K size file and
+pin it, but we can still generate non-segment aligned pinned file:
 
-Signed-off-by: Daniel Lee <chullee@google.com>
+touch test_file
+./f2fs_io pinfile set test_file
+./f2fs_io fallocate 0 0 8192 test_file
+truncate -s 4096 test_file
+
+By doing this, pin+fallocate failure(gc happens EAGAIN but f2fs shows
+enough spare space) may occurs.
+
+From message in commit 2e42b7f817ac("f2fs: stop allocating pinned sections
+if EAGAIN happens"), gc EAGAIN doesn't guarantee a free section, so we stop
+allocating. But after commit 48ea8b200414 ("f2fs: fix to avoid panic once 
+fallocation fails for pinfile"), we have a way to avoid panic caused by
+concurrent pinfile allocation run out of free section, so I think that we 
+can continue to allocate pinned section when gc happens EAGAIN. Even if we
+don't have free section, f2fs_allocate_pinning_section() can fail with ENOSPC.
+
+[1] https://lore.kernel.org/linux-f2fs-devel/20231030094024.263707-1-bo.wu@vivo.com/t/#u
+
+Signed-off-by: wangzijie <wangzijie1@honor.com>
 ---
- fs/f2fs/f2fs.h  | 21 +++++++++++++++++++++
- fs/f2fs/file.c  |  3 +++
- fs/f2fs/namei.c | 11 +++++++----
- 3 files changed, 31 insertions(+), 4 deletions(-)
+ fs/f2fs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 162d79a3c1a5..0b05b3b6386b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3441,6 +3441,27 @@ static inline void set_file(struct inode *inode, int type)
- 	f2fs_mark_inode_dirty_sync(inode, true);
- }
- 
-+static inline int get_ioprio(struct inode *inode)
-+{
-+	return F2FS_I(inode)->ioprio_hint;
-+}
-+
-+static inline void set_ioprio(struct inode *inode, int level)
-+{
-+	if (get_ioprio(inode) == level)
-+		return;
-+	F2FS_I(inode)->ioprio_hint = level;
-+	f2fs_mark_inode_dirty_sync(inode, true);
-+}
-+
-+static inline void clear_ioprio(struct inode *inode)
-+{
-+	if (get_ioprio(inode) == 0)
-+		return;
-+	F2FS_I(inode)->ioprio_hint = 0;
-+	f2fs_mark_inode_dirty_sync(inode, true);
-+}
-+
- static inline void clear_file(struct inode *inode, int type)
- {
- 	if (!is_file(inode, type))
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 4fd45e94661a..95a3b4b59dd1 100644
+index 6bd3de64f..05c80d2b5 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -3496,6 +3496,7 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
- 
- 	if (!pin) {
- 		clear_inode_flag(inode, FI_PIN_FILE);
-+		clear_ioprio(inode);
- 		f2fs_i_gc_failures_write(inode, 0);
- 		goto done;
- 	} else if (f2fs_is_pinned_file(inode)) {
-@@ -3529,6 +3530,8 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
- 	}
- 
- 	set_inode_flag(inode, FI_PIN_FILE);
-+	file_set_hot(inode);
-+	set_ioprio(inode, F2FS_IOPRIO_WRITE);
- 	ret = F2FS_I(inode)->i_gc_failures;
- done:
- 	f2fs_update_time(sbi, REQ_TIME);
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 07e333ee21b7..0f96a0b86c40 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -191,9 +191,10 @@ static void set_compress_new_inode(struct f2fs_sb_info *sbi, struct inode *dir,
- }
- 
- /*
-- * Set file's temperature for hot/cold data separation
-+ * Set file's temperature (for hot/cold data separation) and
-+ * I/O priority, based on filename extension
-  */
--static void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
-+static void set_file_temp_prio(struct f2fs_sb_info *sbi, struct inode *inode,
- 		const unsigned char *name)
- {
- 	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
-@@ -212,8 +213,10 @@ static void set_file_temperature(struct f2fs_sb_info *sbi, struct inode *inode,
- 
- 	if (i < cold_count)
- 		file_set_cold(inode);
--	else
-+	else {
- 		file_set_hot(inode);
-+		set_ioprio(inode, F2FS_IOPRIO_WRITE);
-+	}
- }
- 
- static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
-@@ -317,7 +320,7 @@ static struct inode *f2fs_new_inode(struct mnt_idmap *idmap,
- 		set_inode_flag(inode, FI_INLINE_DATA);
- 
- 	if (name && !test_opt(sbi, DISABLE_EXT_IDENTIFY))
--		set_file_temperature(sbi, inode, name);
-+		set_file_temp_prio(sbi, inode, name);
- 
- 	stat_inc_inline_xattr(inode);
- 	stat_inc_inline_inode(inode);
+@@ -1859,7 +1859,7 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
+ 			f2fs_down_write(&sbi->gc_lock);
+ 			stat_inc_gc_call_count(sbi, FOREGROUND);
+ 			err = f2fs_gc(sbi, &gc_control);
+-			if (err && err != -ENODATA) {
++			if (err && err != -ENODATA && err != -EAGAIN) {
+ 				f2fs_up_write(&sbi->pin_sem);
+ 				goto out_err;
+ 			}
 -- 
-2.50.0.rc1.591.g9c95f17f64-goog
+2.25.1
 
 
 
