@@ -4,75 +4,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7F538C61CE8
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 15 Jun 2025 04:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 903E6C71135
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 15 Jun 2025 15:07:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=X2qW72oZ/Ev6dxVY4XjpPYtmkfGWvRI6rXmh2mU2ydE=; b=IS8V3LZcxevz8SzZYnvC2bi2rN
-	gfBLgIWB/jyWWrtRLRU+JI0Q1+dVALLcnzrTWYaoZaJBPXF2xkAlgEcQDwYbx8QAZRZAAHQkQKD+2
-	0NKhVi1tC6CSwbEQVg2lxAKy/2QPyIMTgS2klq80OlJjv5sl7NqJJQnNMF6gPG0NXMPA=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:Message-ID:References:Mime-Version:
+	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=HcBmA49aX3TIVbkMq5afAU+cHvjeqY9ffBH5q5FkuSc=; b=IZfWGTj7sbhwW1RSrkjfyZ+bO7
+	asA9pR3o7OX7DsAu5N7IwKQJKPeUjrWEj+X1yB21uvDsXvsRFSeDFsV2bA9WvAP8GD7fqRiwAHRnj
+	nGVDxwHkPbQP4r7FkTYmuismv5tuiZw5GsnhHUtEgfFqO3fjJ99UPttDIDUxiBxEJXVk=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uQfNQ-0000TF-Vj;
-	Sun, 15 Jun 2025 04:53:52 +0000
+	id 1uQown-0000u2-Il;
+	Sun, 15 Jun 2025 15:07:01 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1uQfNP-0000T9-TT
- for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 15 Jun 2025 04:53:51 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <349tOaAcKACA8DQHHAACKKCHA.8KI@flex--chullee.bounces.google.com>)
+ id 1uQowm-0000to-6x for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 15 Jun 2025 15:07:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ehat2ZSrQr1gCyGC8v7FJXXUICcQLrjl3bZgAk7qcwE=; b=K4pBJk1GAllg7dHOfUn6RVAR1Y
- is32aEJgkJVSG6ZOSmbuL8zI/75nx37Yp5IessZRw5miXvomaJqSUeOrhXeHLVleK4ScJjvfSkK+j
- y7eLnpayN5L1MpHDoosSoBzJWg2TJpEEfAZfX7Tq89bjnBotCCY95+Ww837ASmtuHWG8=;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
+ References:Mime-Version:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=1FP1lr7F8Nfg636WYePAdThDfLRPJuPcNEgEc6zg7pA=; b=Tr+K/wQuU2v1Yo1WyeRbILcO//
+ D2SJMnHmN/UmZPqQthwtDxHylUJewxQjRbqRwQH7D43ILjLMeFJ4gnL8fPSfPkj7P3MVLzeweJlQr
+ 4d09ovmzYH7TKXl9Gs/njZyPUxwf8HOvyOmaykGX5KW9Wah+8nQNbHpR+blEP4Qbwgqc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=ehat2ZSrQr1gCyGC8v7FJXXUICcQLrjl3bZgAk7qcwE=; b=X
- 9pkPHw8/Z2OwlQsg7GdOdpvQsF6zxagStuEgBfDFjkfVToFwMH0vK7itO43x4rBsbI5of/qc2rdJK
- IpcyrV/PBLPHiwZ1F1TqdWGqLjKMpcLD6u2BUw2fJxM9Dyl/tS1UtI86tXTjoSoZ2hJ3BR6AL43iM
- r6ulp9Q2AG3JIAig=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ h=Content-Type:Cc:To:From:Subject:Message-ID:References:Mime-Version:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=1FP1lr7F8Nfg636WYePAdThDfLRPJuPcNEgEc6zg7pA=; b=cyZgCHH8v73xglvhd0Q+D2LveB
+ J+2x1jt5ff4rqV17kVrQjSIYV0qvHS9cEpgFviJkRafuYpvUI6pPDEedLXeGaaRZNY33d+F12TUAN
+ 1uvxA5KW0WJIsKAy8FHYQQxr+Wazp0FUMMFfkuVIwDZbu07FaAYiGxQ0rRTGPmKbeoss=;
+Received: from mail-ot1-f73.google.com ([209.85.210.73])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uQfNP-0008D5-7l for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 15 Jun 2025 04:53:51 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id CAA0B4A7A8;
- Sun, 15 Jun 2025 04:53:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 560C4C4CEE3;
- Sun, 15 Jun 2025 04:53:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1749963225;
- bh=jKskpqcoXOguF1H1TjZ0pWmBZVDnOT0/xNqcoD0cSAE=;
- h=From:To:Cc:Subject:Date:From;
- b=Ho4jYYIKxZ5jOqawvrhaEPBhEZPCrM8ChRozSncyaAqNV+riPwKkyanQnMEwAdbVm
- /XRV6xyzV0raa/vd5Vhy6VpZ8GrTZtwKLpy7aNs7hKsQojtsMYvTe4DMgacX8pDInr
- a0nfAZcxldXCif58iYfsInWiFqV6glddb5yOs9caUGyMCurbwn84kg4SOsvfVqmUGB
- Wo3qxBpEPl9p0JEvf41ii0/lxxoogeSXHuFEhDZ2/SG3fUxUxujR9c7exo5bBPUZzE
- GPlWpZSiPtJDcT+Br/m9zwgcOyyBKtPXd8G/lx6adWU0CoQnHdvVGNZu/NSTRtgW+q
- /J7vgLI1jS06A==
-To: linux-fscrypt@vger.kernel.org
-Date: Sat, 14 Jun 2025 21:51:45 -0700
-Message-ID: <20250615045145.224567-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.49.0
-MIME-Version: 1.0
-X-Headers-End: 1uQfNP-0008D5-7l
-Subject: [f2fs-dev] [PATCH v2] fscrypt: don't use problematic non-inline
- crypto accelerators
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1uQowl-0004YX-PU for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 15 Jun 2025 15:07:00 +0000
+Received: by mail-ot1-f73.google.com with SMTP id
+ 46e09a7af769-739f234f43bso3750128a34.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 15 Jun 2025 08:06:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=google.com; s=20230601; t=1750000014; x=1750604814;
+ darn=lists.sourceforge.net; 
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=1FP1lr7F8Nfg636WYePAdThDfLRPJuPcNEgEc6zg7pA=;
+ b=RBPjAg1x1k/QXy5X02sVPGdlGJjKA9Cp7Uqad91fDb3EUi2gZ2SFeudmFWaW13p1Fb
+ sblFMunabpPzCyM3JDrdvGbLJ24G8Gy0MdGfdJl9Z9rmsKYhtsvHcXPM2MM78Q+NJSVG
+ dME6x2Dlo5zfusKbEXDiS1GHc5JDf3Cxfeh06H2bFXWKo9Jim+PX9nybASrZVJm3sM3D
+ lYneZlKw+IodpZUa1wfTo/82/9wB70AdUQxHzY7qUFcr/YBApRZP9qTFpyx1HF0L62Hv
+ A/3deSv122nms6UaoymCsHJUSoYEJwHT4GgE0nYFbiUsEgQE0tNIi+itS/GaLvG6xXjN
+ Nqlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1750000014; x=1750604814;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=1FP1lr7F8Nfg636WYePAdThDfLRPJuPcNEgEc6zg7pA=;
+ b=HN4jhM05VmYizp6tUTHZYZ8zQif6WN0ofVBJyd7uJpjfMHACNwqH2Dz7dsP9KQYeye
+ /87e/jbae3ba1LhPDGjSia0Uy2K2ePsV/zq/YfMDYfKhu6UdDHln26I90GKwhT5PLT2R
+ X4Pgjm77ex2bUCyYBx62a/VRo/hPFZiZFAGZ60584i87/PS46CH9h5elNDdAl05Mmzk0
+ 7/tVKxdJgsXyt2G4grhfEe8fgRessI/8FaJ0CO0JH2e0dH8+gafCNrWya8iQ+biJa5PL
+ NdTxIdO1DCZNOXZWDFL2faUJ8RBhxmKE6kDelCmUvvIhLTvaGssSGHeyO/WwM/UseL5n
+ L1jQ==
+X-Gm-Message-State: AOJu0Yy5pDaFmv5WyG+CYDQFC3IeU6/KeBhoAfS9FAywHEj2MOu7f8w5
+ ol3ppAAxR1sfA5Nbe/Fd+RPEwNXAWgWPRigVGbGK4eONv92jvxxQMJbQHQ1UJin28eognD9x7ht
+ jadr/s17j5A==
+X-Google-Smtp-Source: AGHT+IHzP7AUKodFfcUQEoSRgZ1jidwGwp2ewdXVIHXUuxsVHg64QnNNcwNp4YCCkeylIh30mSg5nKzfGvto
+X-Received: from pfjc11.prod.google.com ([2002:a05:6a00:8b:b0:746:2e25:5c93])
+ (user=chullee job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:10c9:b0:748:2d1d:f7b3
+ with SMTP id d2e1a72fcca58-7489d008a33mr7049901b3a.22.1749998563600; Sun, 15
+ Jun 2025 07:42:43 -0700 (PDT)
+Date: Sun, 15 Jun 2025 07:42:34 -0700
+In-Reply-To: <20250615144235.1836469-1-chullee@google.com>
+Mime-Version: 1.0
+References: <20250615144235.1836469-1-chullee@google.com>
+X-Mailer: git-send-email 2.50.0.rc1.591.g9c95f17f64-goog
+Message-ID: <20250615144235.1836469-2-chullee@google.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+X-Headers-End: 1uQowl-0004YX-PU
+Subject: [f2fs-dev] [PATCH v2 1/2] f2fs: Apply bio flags to direct I/O
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,197 +106,106 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org,
- linux-crypto@vger.kernel.org, ceph-devel@vger.kernel.org,
- linux-ext4@vger.kernel.org
+From: Daniel Lee via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Daniel Lee <chullee@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+Bio flags like REQ_PRIO, REQ_META, and REQ_FUA, determined by
+f2fs_io_flags(), were not being applied to direct I/O (DIO) writes.
+This meant that DIO writes would not respect filesystem-level hints
+(for REQ_META/FUA) or inode-level hints (like F2FS_IOPRIO_WRITE).
 
-Make fscrypt no longer use Crypto API drivers for non-inline crypto
-accelerators, even when the Crypto API prioritizes them over CPU-based
-code (which unfortunately it often does).  These drivers tend to be
-really problematic, especially for fscrypt's synchronous workload.
+This patch refactors f2fs_io_flags() to use a direct inode pointer
+instead of deriving it from a page. The function is then called from
+the DIO write path, ensuring that bio flags are handled consistently
+for both buffered and DIO writes.
 
-Specifically, exclude drivers that have CRYPTO_ALG_KERN_DRIVER_ONLY or
-CRYPTO_ALG_ALLOCATES_MEMORY set.  (Later, CRYPTO_ALG_ASYNC should be
-excluded too.  That's omitted for now to keep this commit backportable,
-since until recently some CPU-based code had CRYPTO_ALG_ASYNC set.)
-
-There are two major issues with these drivers: bugs and performance.
-
-First, these drivers tend to be buggy.  They're fundamentally much more
-error-prone and harder to test than the CPU-based code, and they often
-don't get tested before kernel releases.  Released drivers have
-en/decrypted data incorrectly.  These bugs cause real issues for fscrypt
-users who often didn't even want to use these drivers, for example:
-
-- https://github.com/google/fscryptctl/issues/32
-- https://github.com/google/fscryptctl/issues/9
-- https://lore.kernel.org/r/PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com
-
-These drivers have also caused issues for dm-crypt users, including data
-corruption and deadlocks.  Since Linux v5.10, dm-crypt has disabled most
-of these drivers by excluding CRYPTO_ALG_ALLOCATES_MEMORY.
-
-Second, the CPU-based crypto tends to be faster, often *much* faster.
-This may seem counterintuitive, but benchmarks clearly show it.  There's
-a *lot* of overhead associated with going to a hardware driver, off the
-CPU, and back again.  Measuring synchronous AES-256-XTS encryption of
-4096-byte messages (fscrypt's workload) on two platforms with non-inline
-crypto accelerators that I have access to:
-
-  Intel Emerald Rapids server:
-
-     xts-aes-vaes-avx512:  16171 MB/s  [CPU-based, Vector AES]
-     xts(ecb(aes-generic)):  305 MB/s  [CPU-based, generic C code]
-     qat_aes_xts:            289 MB/s  [Offload, Intel QuickAssist]
-
-  Qualcomm SM8650 HDK:
-
-     xts-aes-ce:            4301 MB/s  [CPU-based, ARMv8 Crypto Extensions]
-     xts(ecb(aes-generic)):  265 MB/s  [CPU-based, generic C code]
-     xts-aes-qce:             73 MB/s  [Offload, Qualcomm Crypto Engine]
-
-So, using the "accelerators" is over 50 times slower than just using the
-CPU.  Not only that, it's even slower than the generic C code, which
-suggests that even on platforms whose CPUs lack AES instructions the
-performance benefit of any accelerator would be marginal at best.
-
-The usefulness of the accelerators could be improved with a different
-software architecture that allows blocks to be efficiently en/decrypted
-in parallel.  But fscrypt does not do that today, and even the async
-support in the Crypto API isn't really all that efficient.  And even if
-the accelerator was used perfectly efficiently, it seems unlikely to
-help on small I/O requests, for which latency is really important.
-
-As of this writing, the Crypto API prioritizes qat_aes_xts over
-xts-aes-vaes-avx512.  Therefore, this commit greatly improves fscrypt
-performance on Intel servers that have QAT and the QAT driver enabled.
-qat_aes_xts is going to be deprioritized in the Crypto API (like I did
-for xts-aes-qce recently too).  But as this seems to be a common pattern
-with all the "accelerators", fscrypt should just disable all of them.
-
-An argument that has been given in favor of non-inline crypto
-accelerators is that they can protect keys in hardware.  But fscrypt
-does not take advantage of that, so it is irrelevant.  (Also, it would
-be quite difficult for fscrypt to do that.)
-
-Note that fscrypt does support inline encryption engines, using raw or
-hardware-wrapped keys.  These actually do work well and are widely used.
-These do not use the "Crypto API" and are unaffected by this commit.
-
-Fixes: b30ab0e03407 ("ext4 crypto: add ext4 encryption facilities")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Daniel Lee <chullee@google.com>
 ---
+ fs/f2fs/data.c | 10 +++++-----
+ fs/f2fs/f2fs.h |  1 +
+ fs/f2fs/file.c | 11 +++++++++++
+ 3 files changed, 17 insertions(+), 5 deletions(-)
 
-Changed in v2:
-- Improved commit message and comment
-- Dropped CRYPTO_ALG_ASYNC from the mask, to make this patch
-  backport-friendly
-- Added Fixes and Cc stable
-
- fs/crypto/fscrypt_private.h | 16 ++++++++++++++++
- fs/crypto/hkdf.c            |  2 +-
- fs/crypto/keysetup.c        |  3 ++-
- fs/crypto/keysetup_v1.c     |  3 ++-
- 4 files changed, 21 insertions(+), 3 deletions(-)
-
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index c1d92074b65c5..0e95c7a095d49 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -43,10 +43,26 @@
-  * hardware-wrapped keys has made it misleading as it's only for raw keys.
-  * Don't use it in kernel code; use one of the above constants instead.
-  */
- #undef FSCRYPT_MAX_KEY_SIZE
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 31e892842625..71dde494b892 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -416,10 +416,9 @@ int f2fs_target_device_index(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 	return 0;
+ }
  
-+/*
-+ * This mask is passed as the third argument to the crypto_alloc_*() functions
-+ * to prevent fscrypt from using the Crypto API drivers for non-inline crypto
-+ * accelerators.  Those drivers have been problematic for fscrypt.  fscrypt
-+ * users have reported hangs and even incorrect en/decryption with these
-+ * drivers.  Since going to the driver, off CPU, and back again is really slow,
-+ * such drivers can be over 50 times slower than the CPU-based code for
-+ * fscrypt's synchronous workload.  Even on platforms that lack AES instructions
-+ * on the CPU, any performance benefit is likely to be marginal at best.
-+ *
-+ * Note that fscrypt also supports inline encryption engines.  Those don't use
-+ * the Crypto API and work much better than non-inline accelerators.
-+ */
-+#define FSCRYPT_CRYPTOAPI_MASK \
-+	(CRYPTO_ALG_ALLOCATES_MEMORY | CRYPTO_ALG_KERN_DRIVER_ONLY)
+-static blk_opf_t f2fs_io_flags(struct f2fs_io_info *fio)
++blk_opf_t f2fs_io_flags(struct f2fs_io_info *fio, struct inode *inode)
+ {
+ 	unsigned int temp_mask = GENMASK(NR_TEMP_TYPE - 1, 0);
+-	struct folio *fio_folio = page_folio(fio->page);
+ 	unsigned int fua_flag, meta_flag, io_flag;
+ 	blk_opf_t op_flags = 0;
+ 
+@@ -446,8 +445,8 @@ static blk_opf_t f2fs_io_flags(struct f2fs_io_info *fio)
+ 	if (BIT(fio->temp) & fua_flag)
+ 		op_flags |= REQ_FUA;
+ 
+-	if (fio->type == DATA &&
+-	    F2FS_I(fio_folio->mapping->host)->ioprio_hint == F2FS_IOPRIO_WRITE)
++	if (inode && fio->type == DATA &&
++	    F2FS_I(inode)->ioprio_hint == F2FS_IOPRIO_WRITE)
+ 		op_flags |= REQ_PRIO;
+ 
+ 	return op_flags;
+@@ -459,10 +458,11 @@ static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
+ 	struct block_device *bdev;
+ 	sector_t sector;
+ 	struct bio *bio;
++	struct inode *inode = fio->page ? fio->page->mapping->host : NULL;
+ 
+ 	bdev = f2fs_target_device(sbi, fio->new_blkaddr, &sector);
+ 	bio = bio_alloc_bioset(bdev, npages,
+-				fio->op | fio->op_flags | f2fs_io_flags(fio),
++				fio->op | fio->op_flags | f2fs_io_flags(fio, inode),
+ 				GFP_NOIO, &f2fs_bioset);
+ 	bio->bi_iter.bi_sector = sector;
+ 	if (is_read_io(fio->op)) {
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9333a22b9a01..3e02687c1b58 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3972,6 +3972,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio);
+ struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
+ 		block_t blk_addr, sector_t *sector);
+ int f2fs_target_device_index(struct f2fs_sb_info *sbi, block_t blkaddr);
++blk_opf_t f2fs_io_flags(struct f2fs_io_info *fio, struct inode *inode);
+ void f2fs_set_data_blkaddr(struct dnode_of_data *dn, block_t blkaddr);
+ void f2fs_update_data_blkaddr(struct dnode_of_data *dn, block_t blkaddr);
+ int f2fs_reserve_new_blocks(struct dnode_of_data *dn, blkcnt_t count);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 696131e655ed..3eb40d7bf602 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -5015,6 +5015,17 @@ static void f2fs_dio_write_submit_io(const struct iomap_iter *iter,
+ 	enum log_type type = f2fs_rw_hint_to_seg_type(sbi, inode->i_write_hint);
+ 	enum temp_type temp = f2fs_get_segment_temp(sbi, type);
+ 
++	/* if fadvise set to hot, override the temperature */
++	struct f2fs_io_info fio = {
++		.sbi = sbi,
++		.type = DATA,
++		.op = REQ_OP_WRITE,
++		.temp = file_is_hot(inode) ? HOT : temp,
++		.op_flags = bio->bi_opf,
++		.page = NULL,
++	};
++	bio->bi_opf |= f2fs_io_flags(&fio, inode);
 +
- #define FSCRYPT_CONTEXT_V1	1
- #define FSCRYPT_CONTEXT_V2	2
- 
- /* Keep this in sync with include/uapi/linux/fscrypt.h */
- #define FSCRYPT_MODE_MAX	FSCRYPT_MODE_AES_256_HCTR2
-diff --git a/fs/crypto/hkdf.c b/fs/crypto/hkdf.c
-index 0f3028adc9c72..5b9c21cfe2b45 100644
---- a/fs/crypto/hkdf.c
-+++ b/fs/crypto/hkdf.c
-@@ -56,11 +56,11 @@ int fscrypt_init_hkdf(struct fscrypt_hkdf *hkdf, const u8 *master_key,
- 	struct crypto_shash *hmac_tfm;
- 	static const u8 default_salt[HKDF_HASHLEN];
- 	u8 prk[HKDF_HASHLEN];
- 	int err;
- 
--	hmac_tfm = crypto_alloc_shash(HKDF_HMAC_ALG, 0, 0);
-+	hmac_tfm = crypto_alloc_shash(HKDF_HMAC_ALG, 0, FSCRYPT_CRYPTOAPI_MASK);
- 	if (IS_ERR(hmac_tfm)) {
- 		fscrypt_err(NULL, "Error allocating " HKDF_HMAC_ALG ": %ld",
- 			    PTR_ERR(hmac_tfm));
- 		return PTR_ERR(hmac_tfm);
- 	}
-diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-index 0d71843af9469..d8113a7196979 100644
---- a/fs/crypto/keysetup.c
-+++ b/fs/crypto/keysetup.c
-@@ -101,11 +101,12 @@ fscrypt_allocate_skcipher(struct fscrypt_mode *mode, const u8 *raw_key,
- 			  const struct inode *inode)
- {
- 	struct crypto_skcipher *tfm;
- 	int err;
- 
--	tfm = crypto_alloc_skcipher(mode->cipher_str, 0, 0);
-+	tfm = crypto_alloc_skcipher(mode->cipher_str, 0,
-+				    FSCRYPT_CRYPTOAPI_MASK);
- 	if (IS_ERR(tfm)) {
- 		if (PTR_ERR(tfm) == -ENOENT) {
- 			fscrypt_warn(inode,
- 				     "Missing crypto API support for %s (API name: \"%s\")",
- 				     mode->friendly_name, mode->cipher_str);
-diff --git a/fs/crypto/keysetup_v1.c b/fs/crypto/keysetup_v1.c
-index b70521c55132b..158ceae8a5bce 100644
---- a/fs/crypto/keysetup_v1.c
-+++ b/fs/crypto/keysetup_v1.c
-@@ -50,11 +50,12 @@ static int derive_key_aes(const u8 *master_key,
- {
- 	int res = 0;
- 	struct skcipher_request *req = NULL;
- 	DECLARE_CRYPTO_WAIT(wait);
- 	struct scatterlist src_sg, dst_sg;
--	struct crypto_skcipher *tfm = crypto_alloc_skcipher("ecb(aes)", 0, 0);
-+	struct crypto_skcipher *tfm =
-+		crypto_alloc_skcipher("ecb(aes)", 0, FSCRYPT_CRYPTOAPI_MASK);
- 
- 	if (IS_ERR(tfm)) {
- 		res = PTR_ERR(tfm);
- 		tfm = NULL;
- 		goto out;
-
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+ 	bio->bi_write_hint = f2fs_io_type_to_rw_hint(sbi, DATA, temp);
+ 	submit_bio(bio);
+ }
 -- 
-2.49.0
+2.50.0.rc1.591.g9c95f17f64-goog
 
 
 
