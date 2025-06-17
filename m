@@ -4,78 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E77C8C7114A
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Jun 2025 05:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A409FC71155
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Jun 2025 06:12:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=unQ9Al+nzAYbEFij+hviH6QiKjS+z2BWLrdcGqW+cik=; b=IbqKrqKrygsDwh5N5+zVGsdzON
-	fUiwN9nxDf/QLDbeG0STZQPGec/WWaX0a9MKX1UvVAoyGK7wiB8Fs2940RoMuusbZa5n1qAIWHc3i
-	nPAW4DnfzMLzIJvDKkqn41p8Ja6ECrWdUc4XLehF4HfQ84LynMDMrNlPw+T3A5lg+onE=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=FepJwxFTyEwypGZGUmy9CCXtpGyT25+9LUkyqKBeV7Y=; b=D7oWA2GJFg+OvS7eOpHaOlO+Gk
+	VIFkhQQm+JF5lGvhbHfLXhdgAo46ur+77lRLqZkVJzgL+cnIKc9o6Oa8xDxCsChdSWKHwO1G9NGsF
+	n2MWBNQttXEIEQgvzsQ+4WZNSAKigHHb8a4kduol4c3H9JR0mflaLaVse8QhJf/ecoYQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uRP1a-0002Op-DG;
-	Tue, 17 Jun 2025 05:38:22 +0000
+	id 1uRPYD-0006hb-5Y;
+	Tue, 17 Jun 2025 06:12:05 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1uRP1V-0002Of-Hj
+ (envelope-from <huangjianan@xiaomi.com>) id 1uRPYA-0006hS-3v
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 17 Jun 2025 05:38:17 +0000
+ Tue, 17 Jun 2025 06:12:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DLCsjEo6jEcNDySaQhIrgTeAu0wsZh4LpzfoSFa+BAM=; b=OrDtsgu8gLYjLJIT/IdWmHzF30
- nMY1obAC4zqm4STDI1rzgJII1I0TrTHRejXLyCa6zPqOLPBsjlbDaSpilm94bUR14BWLuSnWkTKxJ
- jIl8t0SlnNF4pzahy9YDarmoRrxHql4P58MuAM9qoomjz3bsMdcWfGzQQedzX4UCwae4=;
+ bh=t31Otl3ie785jJ19i79mUlMQutNG+jPslfUz/3JPpB4=; b=d11Ijw9YAbSETK01oqp4Uz2fd/
+ jpMttODpofofFGffg3GQoKXdtuSxHvzGVF5qZYixjJBLvPbWgD41S4HB/yL56mTUmo9/whMP1qj+k
+ 3RAe/pTEmJ9KSZQ4GZjN7284t3D1YJ8qIH3aw9rYZY4jTyCzMHhs/CnKM+yM51Tba1yI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=DLCsjEo6jEcNDySaQhIrgTeAu0wsZh4LpzfoSFa+BAM=; b=Ubp81wVy7VcGXlJxob2qSAt/Nz
- nrSgFp6SA6Im35kXNDgba4qmJwyeuqnemQxgIg3ME8zfJQZ0F5sh6Q5kvlinA16esR2uaznFPnEyb
- z+71Oo2egGQNna10gOmknf/05XlQ2YB70jk35myOWbOvQq2HBP3UdPP9NAlNFHdfO3D8=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uRP1V-0003v3-4P for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 17 Jun 2025 05:38:17 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 7FE5BA43163;
- Tue, 17 Jun 2025 05:38:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6BD6C4CEE3;
- Tue, 17 Jun 2025 05:38:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1750138691;
- bh=FbkeenEsIpXeuGcFiRuqBUmJZXXbBLKDpHvRSQRQAhQ=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=G8Qlw7dxlyuAis5O7Xfc+47Z9gkeDoib0rJUeVaZ5/iHFGpKrbym5CTqwK+WfDYYp
- BT2ND9ZuLAW6HvIA+/X8gusnUmtBWKZ+oKrMfGEyplZgOEBn/9VG3exHEX2Oii/slk
- CApO7i7WCF29ZoPSN20urMOE/5Qps6p7jORMWRuhIEt7OyUYl1GjXC8ASlZ8GK0vSb
- J2zgZPjISXmgHmnx2D4mgAdnrwBdnFfd3JAcS/xgH9dctL2Kc09j1yff56qAuQFbv1
- cN1MjQ1MX1xLLIWbvWTBZ63jK0IO6zJPGqEOwezVmQk9OkozKCgpppFrLGGEDQmMy6
- CrTwk99tkQ4pQ==
-Message-ID: <5e0b43d2-df0f-4378-91c2-d7ad204c4380@kernel.org>
-Date: Tue, 17 Jun 2025 13:38:07 +0800
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=t31Otl3ie785jJ19i79mUlMQutNG+jPslfUz/3JPpB4=; b=g
+ XgYYqES6sr/rk6rvF2Mwgp7FYtwJ2WPXJnPCDqDqjcloVNFn4S+c+kj9Nr/vFYl+OCUho0YbJy0mL
+ OtaH7nYjm+wF73rsSklZY/frW4J3PN2SAOJ1Gvh5l4u+4Khs+19nEm0eSLSW4JtQUYcjTv3/h7h8z
+ z8mVtcjDBJTJ8TG4=;
+Received: from outboundhk.mxmail.xiaomi.com ([207.226.244.123])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.95)
+ id 1uRPY9-0005wR-I6 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 17 Jun 2025 06:12:02 +0000
+X-CSE-ConnectionGUID: XDt/ZtQDS0WweoeaI/0mfQ==
+X-CSE-MsgGUID: tju3whUUQ+KxvXAjjN8WOA==
+X-IronPort-AV: E=Sophos;i="6.16,242,1744041600"; d="scan'208";a="143362134"
+To: <linux-f2fs-devel@lists.sourceforge.net>, <chao@kernel.org>,
+ <jaegeuk@kernel.org>
+Date: Tue, 17 Jun 2025 13:55:42 +0800
+Message-ID: <20250617055542.218681-1-huangjianan@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: "yohan.joung" <yohan.joung@sk.com>, jaegeuk@kernel.org
-References: <20250616050445.1492-1-yohan.joung@sk.com>
-Content-Language: en-US
-In-Reply-To: <20250616050445.1492-1-yohan.joung@sk.com>
-X-Headers-End: 1uRP1V-0003v3-4P
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: enable tuning of
- boost_zoned_gc_percent via sysfs
+X-Originating-IP: [10.237.8.167]
+X-ClientProxiedBy: BJ-MBX07.mioffice.cn (10.237.8.127) To YZ-MBX05.mioffice.cn
+ (10.237.88.125)
+X-Headers-End: 1uRPY9-0005wR-I6
+Subject: [f2fs-dev] [PATCH] f2fs: avoid splitting bio when reading multiple
+ pages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,60 +75,76 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: pilhyun.kim@sk.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+From: Jianan Huang via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jianan Huang <huangjianan@xiaomi.com>
+Cc: Sheng Yong <shengyong1@xiaomi.com>, wanghui33@xiaomi.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 6/16/25 13:04, yohan.joung wrote:
-> to allow users to dynamically tune
-> the boost_zoned_gc_percent parameter
-> 
-> Signed-off-by: yohan.joung <yohan.joung@sk.com>
-> ---
->  fs/f2fs/gc.h    | 3 ++-
->  fs/f2fs/sysfs.c | 5 +++++
->  2 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-> index 5c1eaf55e127..11fba7636af7 100644
-> --- a/fs/f2fs/gc.h
-> +++ b/fs/f2fs/gc.h
-> @@ -194,6 +194,7 @@ static inline bool has_enough_invalid_blocks(struct f2fs_sb_info *sbi)
->  static inline bool need_to_boost_gc(struct f2fs_sb_info *sbi)
->  {
->  	if (f2fs_sb_has_blkzoned(sbi))
-> -		return !has_enough_free_blocks(sbi, LIMIT_BOOST_ZONED_GC);
-> +		return !has_enough_free_blocks(sbi,
-> +				sbi->gc_thread->boost_zoned_gc_percent);
->  	return has_enough_invalid_blocks(sbi);
->  }
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index 75134d69a0bd..6c26b5e10c8f 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -628,6 +628,11 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
->  		return count;
->  	}
->  
-> +	if (!strcmp(a->attr.name, "gc_boost_zoned_gc_percent")) {
-> +		if (t > 100)
-> +			return -EINVAL;
+When fewer pages are read, nr_pages may be smaller than nr_cpages. Due
+to the nr_vecs limit, the compressed pages will be split into multiple
+bios and then merged at the block level. In this case, nr_cpages should
+be used to pre-allocate bvecs.
 
-We'd better assign boost_zoned_gc_percent here and return directly to
-avoid all below unnecessary comparison between a->attr.name and entry
-names.
+Signed-off-by: Jianan Huang <huangjianan@xiaomi.com>
+Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
+---
+ fs/f2fs/data.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Thanks,
-
-> +	}
-> +
->  #ifdef CONFIG_F2FS_IOSTAT
->  	if (!strcmp(a->attr.name, "iostat_enable")) {
->  		sbi->iostat_enable = !!t;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 31e892842625..c7773b09d83f 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2303,7 +2303,8 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 		}
+ 
+ 		if (!bio) {
+-			bio = f2fs_grab_read_bio(inode, blkaddr, nr_pages,
++			bio = f2fs_grab_read_bio(inode, blkaddr,
++					max(nr_pages, cc->nr_cpages) - i,
+ 					f2fs_ra_op_flags(rac),
+ 					folio->index, for_write);
+ 			if (IS_ERR(bio)) {
+@@ -2373,7 +2374,6 @@ static int f2fs_mpage_readpages(struct inode *inode,
+ 	pgoff_t index;
+ #endif
+ 	unsigned nr_pages = rac ? readahead_count(rac) : 1;
+-	unsigned max_nr_pages = nr_pages;
+ 	int ret = 0;
+ 
+ 	map.m_pblk = 0;
+@@ -2400,7 +2400,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
+ 		/* there are remained compressed pages, submit them */
+ 		if (!f2fs_cluster_can_merge_page(&cc, index)) {
+ 			ret = f2fs_read_multi_pages(&cc, &bio,
+-						max_nr_pages,
++						nr_pages,
+ 						&last_block_in_bio,
+ 						rac, false);
+ 			f2fs_destroy_compress_ctx(&cc, false);
+@@ -2432,7 +2432,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
+ read_single_page:
+ #endif
+ 
+-		ret = f2fs_read_single_page(inode, folio, max_nr_pages, &map,
++		ret = f2fs_read_single_page(inode, folio, nr_pages, &map,
+ 					&bio, &last_block_in_bio, rac);
+ 		if (ret) {
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+@@ -2450,7 +2450,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
+ 			/* last page */
+ 			if (nr_pages == 1 && !f2fs_cluster_is_empty(&cc)) {
+ 				ret = f2fs_read_multi_pages(&cc, &bio,
+-							max_nr_pages,
++							nr_pages,
+ 							&last_block_in_bio,
+ 							rac, false);
+ 				f2fs_destroy_compress_ctx(&cc, false);
+-- 
+2.43.0
 
 
 
