@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5DF04C7114A
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Jun 2025 05:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 472F2C71155
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Jun 2025 05:12:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=On64trZG32ZbEw6W1MHrCQAxPAtXuwBilvlc9Be14cU=; b=NwLNEsv532euTmozgctkFQyGt8
-	fr59XNsU61hwOhOyUVI2YNy9H6e3NxchHM7yYdpt8olrd4L29uXYPNGV1dwZF96M9WOoVLweSMdVz
-	deBrMNXp+1o0/k06Q+jqn5RQCCJh6n+VCh2tCowkRQlR6kjnvR6V7XDCICeIrq7E2aVk=;
+	bh=vhJOcpt1Sfz8yUkIObJ6H4OoVhRfi44bzmL5FQKRFqc=; b=ICeL2pHtP5cC3hyPXHk0iTBSp5
+	MpboOSJ9VoufflJqhwlzZKaKgE7EgnO6Ld6d3qfpGKtR4xJd8o6166RyL48oEZ4UHu5VLKldOCGJl
+	Bvm9Z6HO53IoUxVcstTHrDKHfWS/1ucXRJPZLFInnh3+YB2xKUh/TFkzf7pEujag5GCU=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uRObK-0006Fu-VK;
-	Tue, 17 Jun 2025 05:11:14 +0000
+	id 1uROc9-0006JO-UR;
+	Tue, 17 Jun 2025 05:12:05 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+4b43f024140bdadcbbf7+7968+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1uRObJ-0006Fi-Ux; Tue, 17 Jun 2025 05:11:13 +0000
+ id 1uROc8-0006JB-GP; Tue, 17 Jun 2025 05:12:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7hewv5VaHf/nCFVYzE18Jb3sDfwjWx9bJqENJtpan9o=; b=IsZwhGNJZefPFCtH1xotZKpYSU
- IFUtkTIOXhMtYh2sx0AzaifDYvTWV1/IGWS58/qbjH9punv2wE/lPhc9OqotVQnnQusqrHfXTLyiI
- KFzd/FpZD+uvDHE2ipExUeXwHpkWZPj8iQLTJlubZ2QAXUKQjTvYvrGoItxhHqHdvn+s=;
+ bh=WPsxJQ/JXacvbaipg//fOLi1s4GO46A+9y4pCE6t2y4=; b=S2zlx5Eo5NtgpI1nBj/iVcZdxS
+ 2531A6ft0Uy+oNj/LbVdj2qrw6/SJsKkFaODXAsa4DO+hCsJg5DmpHuPeW6H7/YxnM5BDNJsEwxgm
+ KFk3Ub9eTxz5/im5p8dk6SnDvnoHN46bY9UwG8Xv5Q+GEuWwIyQhqgZmVLs9Fm8/ViWI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -41,40 +41,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=7hewv5VaHf/nCFVYzE18Jb3sDfwjWx9bJqENJtpan9o=; b=BtBCcBT/Ekb9OQVEwpjLEsc2vK
- di8l5yZS34YCnFvN/iuHdoh7d4Lh9mqldZDoGaeyxR/+gAGFNDNuaBVqK8HW+YAzppoAbkvsPPNmO
- Dd1xP8Z1anYQUDYduVKkdpSKJrFqW6yLiD7X+rLxm+y66oyWhcRWzXe1/1IvfduCRJ9k=;
+ bh=WPsxJQ/JXacvbaipg//fOLi1s4GO46A+9y4pCE6t2y4=; b=Vr5lAuoVrCnG2sAjuxQrAFu/rm
+ 2rDH4IneZnqELm0WK5uNOWBONnC6f4ifF4ym88AeE2MJKCRNOuNa6wiB/3MPlxJSWpaOaEOh7Wp7a
+ KPdg4Stn50QdOMjHZGRmvqZ2S5Kv5KcRv9KpwtK1SNMEUx4XUZr+BoZ6Zfpq1mGk1e9g=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uRObJ-0002hV-J2; Tue, 17 Jun 2025 05:11:13 +0000
+ id 1uROc8-0002ju-5k; Tue, 17 Jun 2025 05:12:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
  :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=7hewv5VaHf/nCFVYzE18Jb3sDfwjWx9bJqENJtpan9o=; b=JLzFVcD4P4hX82nyMOI+BRPTFS
- 9m9nUf8QSnN3KcOf1hfPPNg8SY5CD8KGmTwZG9p42mwem0h3+g+jr8vmH1IdJ03DA5flPOfwfb8Kb
- 2p/Z3NPif2HWA7V7Zh1b/Hzs0cuKS7D2jEWqmC6rRRVe5v+D58zBUGfE4pJ1gAH0HUd1EKkuocvQE
- /AS7xYTlLDrNF7H7t6M6DnRrb6AncDawE5sQF8d0UGBLNipdl/wWjLzy7Aye1Ze+VzA+g0jzxlIg8
- VUglo0acb2sgxrdZjdYWcBo4907Ol02gnYVbwtHB4bd+XE+ZjOsUlox9yo8MazTrsTyF2g2LImZhO
- mwKximfw==;
+ bh=WPsxJQ/JXacvbaipg//fOLi1s4GO46A+9y4pCE6t2y4=; b=xCxiDspWK79oWST3sh2t7cjJwF
+ 3VtKzrTMd1ZyyEY3Yl1sQsmN0c46B/BWpmLx7GLhCFM16aw7g83BPPAETUVk7GelPlveK5I6sQ8E5
+ ZxtytrGUEhUU9WZrIuJuMFvFwuFp4vj1nvN+EaRMqHi+KIfudASk+LhjQu9+lmF+F3IZYi7Ydf/Wk
+ JTa1n3Fl61HKkjYiCIqjoqvwn7L3e/9n7XP0zshPQ9POdY/W9y4mdeV8e8mm04X6AEWaAswnDA8V3
+ ZzeHtQqEnK2Y08dx0p/c6HZZCAPv4hvcg6CW2TmaFuNbCfjDhPGzoMVT4DrV3ggoDKSwdUATpVwPQ
+ nIJAAeQw==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red
- Hat Linux)) id 1uROac-00000006E8g-3Ody;
- Tue, 17 Jun 2025 05:10:30 +0000
-Date: Mon, 16 Jun 2025 22:10:30 -0700
+ Hat Linux)) id 1uRObY-00000006ERs-1HY9;
+ Tue, 17 Jun 2025 05:11:28 +0000
+Date: Mon, 16 Jun 2025 22:11:28 -0700
 From: Christoph Hellwig <hch@infradead.org>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Message-ID: <aFD4xtpot22xvTEq@infradead.org>
+Message-ID: <aFD5AP7B80np-Szz@infradead.org>
 References: <cover.1750099179.git.lorenzo.stoakes@oracle.com>
- <8d389f4994fa736aa8f9172bef8533c10a9e9011.1750099179.git.lorenzo.stoakes@oracle.com>
+ <b68145b609532e62bab603dd9686faa6562046ec.1750099179.git.lorenzo.stoakes@oracle.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <8d389f4994fa736aa8f9172bef8533c10a9e9011.1750099179.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <b68145b609532e62bab603dd9686faa6562046ec.1750099179.git.lorenzo.stoakes@oracle.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1uRObJ-0002hV-J2
-Subject: Re: [f2fs-dev] [PATCH 01/10] mm: rename call_mmap/mmap_prepare to
- vfs_mmap/mmap_prepare
+X-Headers-End: 1uROc8-0002ju-5k
+Subject: Re: [f2fs-dev] [PATCH 03/10] fs: consistently use
+ file_has_valid_mmap_hooks() helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -152,21 +152,25 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Jun 16, 2025 at 08:33:20PM +0100, Lorenzo Stoakes wrote:
-> The call_mmap() function violates the existing convention in
-> include/linux/fs.h whereby invocations of virtual file system hooks is
-> performed by functions prefixed with vfs_xxx().
+On Mon, Jun 16, 2025 at 08:33:22PM +0100, Lorenzo Stoakes wrote:
+> Since commit c84bf6dd2b83 ("mm: introduce new .mmap_prepare() file
+> callback"), the f_op->mmap() hook has been deprecated in favour of
+> f_op->mmap_prepare().
 > 
-> Correct this by renaming call_mmap() to vfs_mmap(). This also avoids
-> confusion as to the fact that f_op->mmap_prepare may be invoked here.
+> Additionally, commit bb666b7c2707 ("mm: add mmap_prepare() compatibility
+> layer for nested file systems") permits the use of the .mmap_prepare() hook
+> even in nested filesystems like overlayfs.
 > 
-> Also rename __call_mmap_prepare() function to vfs_mmap_prepare() and adjust
-> to accept a file parameter, this is useful later for nested file systems.
+> There are a number of places where we check only for f_op->mmap - this is
+> incorrect now mmap_prepare exists, so update all of these to use the
+> general helper file_has_valid_mmap_hooks().
 > 
-> Finally, fix up the VMA userland tests and ensure the mmap_prepare -> mmap
-> shim is implemented there.
+> Most notably, this updates the elf logic to allow for the ability to
+> execute binaries on filesystems which have the .mmap_prepare hook, but
+> additionally we update nested filesystems.
 
-Can we please just kill these silly call_* helpers instead?
+Can you please give the function a better name before spreading it?
+file operations aren't hooks by any classic definition.
 
 
 
