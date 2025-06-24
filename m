@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 42500C7EE30
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Jun 2025 00:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 92EDFC77B7C
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Jun 2025 00:40:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=QOa0HZTiv2J8EWJvq3dUWUg5PfTd64nXkdKq1aG+gjg=; b=bZJChtL2qACSd03K4EZ5zYv+1B
-	HdmIwtl/3nk0XgA0ce3D8V/MtpsG0DtQt5j4LQKzfZzr+G/NW9kjrhBzAR/HTKPNtSnyOPbtPOc+W
-	bfPlKtJfrYoDBKJsm2+KiKwXDglfpt9rb1N9HX0ft537moizLKcnNKLaSh7b0lLd6NHA=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=xg/EI56kK+FI+hV6TpL9qkjCq+0421yDHDq4HCe0UNA=; b=NvVZNpHxnA2yQJKP00ZZmN8BzG
+	VXuY2irI53gdUJ+nV3r8JnFDS9cmsbSL51HgICwBQu65deIBR4hHVUP0225jogelZ3DmDW/Uw3Jrw
+	FRAmzPkFT3S3TRHPYLh/kHHyJd/8C8N5TmpruFPM8ezc+NkLHU4v8TElj4wT3onEFJaU=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uTriY-0001dw-V6;
-	Tue, 24 Jun 2025 00:40:54 +0000
+	id 1uTria-0002OD-8k;
+	Tue, 24 Jun 2025 00:40:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uTriG-0001dA-UA
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uTriJ-0002NV-N3
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Jun 2025 00:40:36 +0000
+ Tue, 24 Jun 2025 00:40:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KdVlMV9q7sRn9JjW4YkRQugjuqsr7nz381xw2zSqHI0=; b=TQb/VUz71dR+GN4HTlgYMl+Wf/
- lGUFmdrPmxy//cIyM60Q+7zTRlXriKU5HF1LQvF75wye0CkJqMS5GR8uEvFBnyRWjOjWlJKshP3bQ
- MKVLXiCysrBJciKtNCisPPdkcVFzn5FloX5aWuFc8vnxW2f15IRaA98mnDXd+UQxoc04=;
+ bh=ekWdd1l3cnjlOXWisLfKPyfQkaODtKLwbwCdeNLozd4=; b=HUgUull9Z8ZMu6XgS++1QVWTgB
+ VpSRJ49wFxPwnMfGPrDU1REcCrVSxQaCOeKy9n833HJJcexiqCKujvnHts1YH1zg9FTsDWMT/+LF/
+ 8OzhEu7SAzaxYU4SQ8I0x4ioiuRlZEm64lyv6fKhl2VL41N+KV9EIgrRAgCFkY5pwg8o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KdVlMV9q7sRn9JjW4YkRQugjuqsr7nz381xw2zSqHI0=; b=Ppc/zNVQxE3qZzRZn/+cicEH7/
- VK4P9WhmR+YUVtAWzaaUoOWpq7AwKFN/dct8XIPT5FTBxgl2w2J5B7edaUiHdoFQ9027Skpf7WsG9
- Xn1FY1pUl9wfUSTVs8iPmBRehKgKSVhjSrgrfmM8dCBCW6/aWJc4Kj0bSwfhO65YtNNA=;
+ bh=ekWdd1l3cnjlOXWisLfKPyfQkaODtKLwbwCdeNLozd4=; b=WbAB/Evc2JS4mPVRe0CIeDDNUz
+ AeiIfj420Jyw6UPgkS/UaN9dp0bkgY+yIztZ790QRzH20MW4CleS1GD5Ci0NVVyDD8c6OD712lFVl
+ kSrhnDySysYFEcD3LYs91AAbB+LiXW+oyDgFy+4RUAIeawCoUbXdW13lCgv4+zdycCao=;
 Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uTriG-0006xs-Bu for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Jun 2025 00:40:36 +0000
+ id 1uTriJ-0006y9-6O for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 24 Jun 2025 00:40:39 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 96A4EA50AA8;
- Tue, 24 Jun 2025 00:40:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AC59C4CEEA;
- Tue, 24 Jun 2025 00:40:25 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id 7F198A51385
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 24 Jun 2025 00:40:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D002C4CEED;
+ Tue, 24 Jun 2025 00:40:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1750725625;
- bh=HSdCQQWxVeeErIFv7WqAXQehp59S8Y03qaZKyPJC5qo=;
+ s=k20201202; t=1750725633;
+ bh=JOohz5CpylJwMb4/VsRDLhJkRFPmCKGfkJaLP7xenXI=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=PX8XEXhmPW7ftop/zlrGyZTLveBRA2KNT3sTc5BccH0hCz2cDcjCPfaJKhrNiCbqE
- agmX8X7CyECp3iIynflrqidvZSOrkM73rAoG7bcVu7i0RJtrmGHUHWlFtvMoG9OITo
- IVDUTL+cmKFjRm9x/DbKrU7C46DLUy+ZA8hTLX63wpaegzvSVeOEOtl3+vO080xkFc
- EBEZNb5Dlg4O6uF3CspZmobnlO1/kbW0u2tz2Qfd31BDoxfIFmNGRmipQz/Vswl8zx
- BTUyiV4dMZC5Axo4HglkkPDggFrthsZ1WfIdmFZkaSpUm0hIMdQNkyXaoj3+L3q913
- xbEEg9cuL0m+g==
+ b=lJ+CORPX1P+4hVWu2i3ap2zVfOuP2N9D7HiQZcMuWW7LV31tGTO7cvUODjuONN0dz
+ WVQ9VLjoXSJq+F+ioTXpNtH8j/7PHamUhqrqAjA1UpjhAbfy89tErAJGRAjTOg5jAb
+ 0nls2/PF0UmYj9DT+UUSpUAH1a/mkQWeZfbdgkPkLfQcTVDYJXgiJ+SpmrV3AIafjz
+ wL8hmPBPqP0WQXjZDhlPEiM8ZQzNkOk6cel2VMOqwA2DPzCMcHRTTPF/PN7IHijvqw
+ q865XCIYev6eJPNxlw2CER7niJAnXfWwCSJolzkoA2gW5pWp/LFIb2aDmwQYDuZ5kT
+ oQro+bWCrqfWg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 70DA539FEB7D; Tue, 24 Jun 2025 00:40:53 +0000 (UTC)
+ 70CB339FEB7D; Tue, 24 Jun 2025 00:41:01 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <175072565225.3346761.9321054958830239968.git-patchwork-notify@kernel.org>
-Date: Tue, 24 Jun 2025 00:40:52 +0000
-References: <20250529222532.1088106-1-daeho43@gmail.com>
-In-Reply-To: <20250529222532.1088106-1-daeho43@gmail.com>
-To: Daeho Jeong <daeho43@gmail.com>
-X-Headers-End: 1uTriG-0006xs-Bu
-Subject: Re: [f2fs-dev] [PATCH] f2fs: make sure zoned device GC to use FG_GC
- in shortage of free section
+Message-Id: <175072566023.3346761.5670110283778494132.git-patchwork-notify@kernel.org>
+Date: Tue, 24 Jun 2025 00:41:00 +0000
+References: <20250611084218.62774-1-chao@kernel.org>
+In-Reply-To: <20250611084218.62774-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1uTriJ-0006y9-6O
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid invalid wait context issue
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,8 +90,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: daehojeong@google.com, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -101,19 +101,47 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 29 May 2025 15:25:32 -0700 you wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> We already use FG_GC when we have free sections under
-> gc_boost_zoned_gc_percent. So, let's make it consistent.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+On Wed, 11 Jun 2025 16:42:18 +0800 you wrote:
+> =============================
+> [ BUG: Invalid wait context ]
+> 6.13.0-rc1 #84 Tainted: G           O
+> -----------------------------
+> cat/56160 is trying to lock:
+> ffff888105c86648 (&cprc->stat_lock){+.+.}-{3:3}, at: update_general_status+0x32a/0x8c0 [f2fs]
+> other info that might help us debug this:
+> context-{5:5}
+> 2 locks held by cat/56160:
+>  #0: ffff88810a002a98 (&p->lock){+.+.}-{4:4}, at: seq_read_iter+0x56/0x4c0
+>  #1: ffffffffa0462638 (f2fs_stat_lock){....}-{2:2}, at: stat_show+0x29/0x1020 [f2fs]
+> stack backtrace:
+> CPU: 0 UID: 0 PID: 56160 Comm: cat Tainted: G           O       6.13.0-rc1 #84
+> Tainted: [O]=OOT_MODULE
+> Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x88/0xd0
+>  dump_stack+0x14/0x20
+>  __lock_acquire+0x8d4/0xbb0
+>  lock_acquire+0xd6/0x300
+>  _raw_spin_lock+0x38/0x50
+>  update_general_status+0x32a/0x8c0 [f2fs]
+>  stat_show+0x50/0x1020 [f2fs]
+>  seq_read_iter+0x116/0x4c0
+>  seq_read+0xfa/0x130
+>  full_proxy_read+0x66/0x90
+>  vfs_read+0xc4/0x350
+>  ksys_read+0x74/0xf0
+>  __x64_sys_read+0x1d/0x20
+>  x64_sys_call+0x17d9/0x1b80
+>  do_syscall_64+0x68/0x130
+>  entry_SYSCALL_64_after_hwframe+0x67/0x6f
+> RIP: 0033:0x7f2ca53147e2
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: make sure zoned device GC to use FG_GC in shortage of free section
-    https://git.kernel.org/jaegeuk/f2fs/c/24bf3ee37fb8
+  - [f2fs-dev] f2fs: fix to avoid invalid wait context issue
+    https://git.kernel.org/jaegeuk/f2fs/c/90d5c9ba3ed9
 
 You are awesome, thank you!
 -- 
