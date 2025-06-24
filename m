@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B12BBC7EE33
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A1243C77B7F
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Jun 2025 00:40:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,71 +12,70 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Ep6YO51s7sMyHUAzizF55Z9p6BvI/JNllw15w1uOPZA=; b=f9aPkAuo5aeek+GWVWGq+Gq4DL
-	YpSEeuBzgONnmdU+QaVlpHimelHH1nJPSSVyvzSGcuZ4hnxmfdIDCbzvbCPMVcL/O9WR6iIT23Gdd
-	/nLif48+02sSoGNMpquSdJLrpeLHg07Bqq6KRGb3uHEXgCrOHjEmdSYLF3wbBGtwwPm8=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=ebHq9Ng4Aw30KowsvUXPgNxyluVvarCOqerLH3PC47M=; b=Houqn51UbQO4gqA7sa5wuqilcf
+	WcpNwKH//Ho1C+sc1TFDHkHBSHbIf9is+19bsd8SBK7dg3in9qWyOuU68RmyOD4a88GvSRdDGZxFQ
+	eBMQPDZEqJMvzSVj2xgJRVo1lCALZYBqMjPG3Fnq8pKiUIKPgmvAgAfqSTwSP9an9B3I=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uTriX-0007l5-Bw;
+	id 1uTriX-0005gb-9s;
 	Tue, 24 Jun 2025 00:40:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uTriM-0007kj-Q8
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uTriH-0005gF-MN
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Jun 2025 00:40:42 +0000
+ Tue, 24 Jun 2025 00:40:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gtdNRvrj36wAT0biOy9gg99Aae/9XYVK/GxJeXo6u3I=; b=BP9DkSqW6Cwu+51wM9i07q6MgR
- OQrMn+AWi/fzvlWUcZ1MjfoJERKDJsE5IAP/3vsWXyFv1AHSN+VPbv1hG1NzEYM/kQyAEedrjn4FI
- +SYWkas59BA6LVqw/2nHV8Nh0ctEBiFia7rJA0s11/NxxbdJvHsEj+W7uguJfC7NLHOo=;
+ bh=cca7dy6+doPZZXlfhi/nJ4Y5Tt8q+Xr5Hf9hvQKWY3E=; b=aG3AMukbqLzr139tQcSyZN/3aV
+ rixMcsLCkoZU423+pNDOmLwTMr/ZiD436VYDVNUNZ4n16k2GtS2vCtRzNVc1LFgG9fskBpLYoBWxi
+ M4R7tKGJOycl9qx5kWY4rGyVYq3ehxp+0Or4Q1QylyyU9ThwSIw80I3FBTY/cUlWi7t4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gtdNRvrj36wAT0biOy9gg99Aae/9XYVK/GxJeXo6u3I=; b=kMGSOsFKkgxDmyWRk0HKpnQj6n
- dzSIcj1SfeEBU0ZKjfS33d6HgVQ77IYczVEBa0liY1+uHM5FsDdOTA+X6NsZubhPlvb+euKoF+fH+
- oUaAjtJIsIZ2qjMkPbJ6xSS5SKDPFDRkHyp3oIDH9ado8aflCunrEKZChz50lbVAbves=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=cca7dy6+doPZZXlfhi/nJ4Y5Tt8q+Xr5Hf9hvQKWY3E=; b=dCW3K/WT0yy8WpRQEwKXFN1CP8
+ eIsnhCcs+VaxlxDt6cusBgNwFMEo9RptyZAEL2UtS6qxklF/HzrAhHcn6qen2VY8MCc9kNFjQRs5H
+ ImnOSHkDFp5wNqDe7mf/OixvRWV0VT1ZC+wf5tgbPWt9Q/OldtlaEgIIHygM3ivmpO0c=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uTriM-0006yf-Aq for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Jun 2025 00:40:42 +0000
+ id 1uTriH-0006xy-7S for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 24 Jun 2025 00:40:37 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 0D98B4AC3A
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 24 Jun 2025 00:40:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5B85C4CEEA;
- Tue, 24 Jun 2025 00:40:31 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 506945C06B6;
+ Tue, 24 Jun 2025 00:38:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CA3AC4CEED;
+ Tue, 24 Jun 2025 00:40:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1750725631;
- bh=dLtQNA42iMbpSsSLCp5csx0b9bOIqDZ/GCWrS/GAOlg=;
+ s=k20201202; t=1750725626;
+ bh=e3rVs/o0fMu7m5NY/hFfYGBx06zdfmD7O3z/hZ4Omog=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=VkrrOnaWFROkxeh4gq5kv8R9uf3AfO4ro2IbrsHTYk7uy3F+/Kwys019DS6BTLNoE
- VNxc5GDROqkszJ3VtljGW8bcd2tUpn2XPzT7BDgMZNl41Y7g9Oad/YWO8ikINaOFIY
- FpuD5YKoqMQ6xQCLlC46LmH9N1PKwLs+tgWdXPhjpkIuqHfWvOxwgo9iFtkaH7RSa5
- xXpIDhMjCrnT40ktuufKiPe4kj5qWq9TzX2OFN1fbj8WvYTv1OEa6IZlCzlIc5O223
- Ax62nw7yUaz+l+gJURB8F/3FFI3J0MMyRSZaS7whLQY990ZcluCS8uv5qRsGOrsxM8
- RIqw610UndTcg==
+ b=jOw47j8lkcUMJED6Asq+ovL4LDrLyngn3SYYSXIvRmYdeEnPUdnxQwV8hhzUo5j7D
+ AbFyhqdMVn3qsmBqunASStoZi0pRRNN+skzS3wIJSynALZc+Fwj/0j1VUK+a7iS1Cj
+ xKpto5GUHhJ2k6Xirs/nFF7TgpBL2l4Cl8VBGw8TdYqsoaWVqK/wI4qdL2AOsybke6
+ Yqa3rB8+zSBmRFubhAkP0jsvC6lPoiebEHnAP95Y7ZQCZtduquXSx8xGH0vdJD7X38
+ 3hIXgmTGav10EpQhU2MoCnmZRC9bneCn0mVwMOuVQOpQj0TeKzPY5IibxG2yAePj6w
+ FtqFivvcnb8dg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 33C1939FEB7D; Tue, 24 Jun 2025 00:41:00 +0000 (UTC)
+ ADDD439FEB7D; Tue, 24 Jun 2025 00:40:54 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <175072565899.3346761.9675336685729970783.git-patchwork-notify@kernel.org>
-Date: Tue, 24 Jun 2025 00:40:58 +0000
-References: <20250613055109.2335-1-chao@kernel.org>
-In-Reply-To: <20250613055109.2335-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1uTriM-0006yf-Aq
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: introduce reserved_pin_section
- sysfs entry
+Message-Id: <175072565349.3346761.16728721043040341618.git-patchwork-notify@kernel.org>
+Date: Tue, 24 Jun 2025 00:40:53 +0000
+References: <20250606184904.224811-1-daeho43@gmail.com>
+In-Reply-To: <20250606184904.224811-1-daeho43@gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>
+X-Headers-End: 1uTriH-0006xy-7S
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: turn off one_time when forcibly set
+ to foreground GC
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,8 +90,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: daehojeong@google.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -102,19 +101,21 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Fri, 13 Jun 2025 13:51:09 +0800 you wrote:
-> This patch introduces /sys/fs/f2fs/<dev>/reserved_pin_section for tuning
-> @needed parameter of has_not_enough_free_secs(), if we configure it w/
-> zero, it can avoid f2fs_gc() as much as possible while fallocating on
-> pinned file.
+On Fri,  6 Jun 2025 11:49:04 -0700 you wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> Signed-off-by: Chao Yu <chao@kernel.org>
+> one_time mode is only for background GC. So, we need to set it back to
+> false when foreground GC is enforced.
+> 
+> Fixes: 9748c2ddea4a ("f2fs: do FG_GC when GC boosting is required for zoned devices")
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> Reviewed-by: Chao Yu <chao@kernel.org>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: introduce reserved_pin_section sysfs entry
-    https://git.kernel.org/jaegeuk/f2fs/c/59c1c89e9ba8
+  - [f2fs-dev,v2] f2fs: turn off one_time when forcibly set to foreground GC
+    https://git.kernel.org/jaegeuk/f2fs/c/8142daf8a538
 
 You are awesome, thank you!
 -- 
