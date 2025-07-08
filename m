@@ -4,112 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0C1A9C83030
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Jul 2025 23:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 34D7AC83030
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  8 Jul 2025 00:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=M+QyBDE8+wesjS51bVD7FTBpR/Cm79PXw4/qA9Howgc=; b=lASRrTl3WvsTOi4FS84VoQc8qS
-	d5HV/pn3Wtda6D0JsD8MEOxgxLs4GZfqwrGeU7qh6z8p8ZANGAbp9lDtZK+0/u7FQehejOu+bcJKU
-	BIM+54i5pABGZu2G/Mbn9PxiW1iRSOHX38ypxZ77mXk7o4Y1iZpeXD2/n9bzOsSVwW6I=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=YPl2R6mIiAZKCI2mkR2yAdcfLIqbRvMyRU0Ku+wr6Vk=; b=kn1xiRVkP/Yd0dr6B1Pieq8jkJ
+	E+JoDFDUA5imDPU6x0iTJubeY9yTy7RbuD6hm8/qiXGlIxC4LAOq9JEwVcAUokgwpJr+b4CfRg8w2
+	rhSfni/1LYOJ5XGmJssxrvi/uJg9NbVPeted1vSJUVJrYmgYXzAL0PWTbgi3Qp+NHpHY=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uYvIn-0000WM-Bt;
-	Mon, 07 Jul 2025 23:31:13 +0000
+	id 1uYwSw-0005zp-5q;
+	Tue, 08 Jul 2025 00:45:46 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <david@fromorbit.com>) id 1uYvIm-0000WG-Eq
+ (envelope-from <djwong@kernel.org>) id 1uYwSv-0005zc-37
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Jul 2025 23:31:12 +0000
+ Tue, 08 Jul 2025 00:45:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+ MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=c4pktmlF1vRQduNDQ1SA6N8TiSZQUsg3NAWNf5AHgsY=; b=bX9urX19tzmPN/o9M1pp4EQbsM
- 1XaMo9EqCBeoFUcaH9wd0JtqZ2lSNLPo1i7kSO5O3PsIsjHcLqYrtionU6eVcSlzSLdla5tlKvR6C
- k4je11WQFoEUMEyRpe8MwdUeHiGJUDprt3YER2xRe+ZdumUmryCJs9CNXHuIln/bGxE4=;
+ bh=pTZTGaWM4zipEWtBIxc66onI18FS2dN1V8xkAV5zPeQ=; b=enVgn7atF9DlGW4G155NQLc0up
+ LG9LkSVItk13LdfHqVt2nVGMV+06raUr4+h8Y38V4LqfWoHWussB3CkUz4wPnQ5hXEOvrblLXyUeh
+ /om9IoglVdOhQPOnKeLz3lLud6VRq6kZNDt7qbZIKdm/u5DF5shMMZv861VvKfajAfTw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=c4pktmlF1vRQduNDQ1SA6N8TiSZQUsg3NAWNf5AHgsY=; b=CFfYoc30pKBqot2KTfEyuJerVX
- JFvVmIRdep9HM/4QQiuOmq6FinYuhAd6fXk2uEvxNhhbDU+qDXWxy45q4q3WSNWjvKoHrtHDlHGPM
- o032TA74XDsQqT9+CrjYN43Ckw306bBDVwnNVjSDwMJhU01eJABx6tN7lTi3mjGUXcHY=;
-Received: from mail-qv1-f49.google.com ([209.85.219.49])
+ bh=pTZTGaWM4zipEWtBIxc66onI18FS2dN1V8xkAV5zPeQ=; b=hK9uhAWNeXhBlogV8xU1dLr9Jg
+ LJYDB54sMNlnFq0cPlRd5zCoFL/bW9Rg1zPAUzNlDe/zcKY9+no9PebKZJ/NrngTbqu9McdywY0zm
+ lWaUV83O7j5ZgoKnT4AXFkd/ekfjYhCfP8pcSIAo8E1F6dZX0wYAjqFAC9+sw3hANqEI=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uYvIi-0001Rm-76 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 07 Jul 2025 23:31:12 +0000
-Received: by mail-qv1-f49.google.com with SMTP id
- 6a1803df08f44-700fee04941so36839626d6.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 07 Jul 2025 16:31:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1751931057; x=1752535857;
- darn=lists.sourceforge.net; 
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
- bh=c4pktmlF1vRQduNDQ1SA6N8TiSZQUsg3NAWNf5AHgsY=;
- b=2vZXUNqhwa7NOazbH9xnK135aA9mSXC3zBUYVi0RrSpnH1nLdlMtzMCJbbwn246LjY
- FmMSVQVonMtaj2DcMof/doNeI87K5fj5nSPrIrmOe6G+z5SHnc9cUOetKMVmtt7fAYFL
- CcBYWa/qkZSVzQmUbYi+lyF+0LUwGREll2kY0h3uHk8mXqZmGp2pKSqEsxq80ZIalv79
- ycAGIy9xVYR82cnDBfw0k0W/t/mK1jzrdH/UGhcwao8QMn21SM0f6onq8ti8TtVxSfyq
- ZmvcqGucPIDTzoPUr2XigH+P3SIorW7v+naAROZiW6q+r6Y9AKX8QNS/zErQpmNUkFMm
- oLsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1751931057; x=1752535857;
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=c4pktmlF1vRQduNDQ1SA6N8TiSZQUsg3NAWNf5AHgsY=;
- b=scmBL+A685wkzoiJrFPg17nCPi8hXpTyIE6ka72I9bPynsaYsz/QTRz4RFTyR8qUqi
- KNvuPvFAA0ALS3aoHFgLzIOE6BeheiukKgDBUn/hLbYrmP6PrUyJ37lHhMZUiPI2Qv0c
- mRoC4YPz0aHXrTDs0alVBUnUCPp2ONj4q/FoIQYV0eCKH1pxtrjz22a/33QJeDznrXMc
- t2B8HI6u12Z6glOFcfmm43tF5Uf/KFixKvfYckPrg8+kQKdDJfrgdNGMf6f8TyAOhd65
- gyzd4hU+nAJjiHZ4RFkwvnWPhbIGv9vXCj2eeYkSpBRRBHhYLuPmr2AuC3LKusbZKGFf
- QmAQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCU+hj+Hs4awXT9C9CIssnbBU5UyjwneiMyC0cJ1+KaPsaoGcOVTvoCndUeejS/Mx01Ulh2CH3Wk3IHZx4shmCBu@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YynPdGJE86goZw97pC+meC4vCvfZ9Ge2kBZNOGPSccUea3baTO8
- Xn1rbZAFLy4b6AgQnnRx8Jaya0T40CUfQ5zYzlNVHS6vqeo5DArn1+LgaHXWfyxp6hWAlEBCm8W
- I9RLg
-X-Gm-Gg: ASbGncu7z+0FbdxGQbGFRXSdJDkoEdHi1eyD5wFRX2MLmtRBgNgkxGkbpTC8+LWm6UJ
- vhjKv3E0Gn7PU9yeMZ177XZ1wM+zbm/OvOXSv9AEwmrZVF1xICuKN6VlMzyeylDVNirYZoB/wLN
- +wFK+OsK0YA+tNx9ZzuhkBa4L23lwgPr4g/c9W8POXi07SCvDS1J4Fn7l4wMN5CuWmXkqhxrGgM
- P1QugrS/F7I1gCKdj5Lp+S2KxapapbA/Ac6954UpkUMnsFGZz6zBNDCbG1xwN9rwXIivCE/4Vnk
- jgbTW3WV8xhI5ZI0yoCbEB6vCpppsE0PwBPscb8AIoHFebooWyibNfreuEwUuUCM6iDPfRNg8Hx
- Aonslxw6oKnkzM2nFabJJwp8NKcML2JLkvOJRcQ==
-X-Google-Smtp-Source: AGHT+IEmTi6zrkNyOcS4BN99ZoRqMQGa5CBIfG1MgDs1BPtD4rrI5GMD5dIJM6aSPlLP7bK+loeCfw==
-X-Received: by 2002:a17:902:ce10:b0:234:8ec1:4ad3 with SMTP id
- d9443c01a7336-23dd1d5cc19mr6352555ad.40.1751929375710; 
- Mon, 07 Jul 2025 16:02:55 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-184-88.pa.nsw.optusnet.com.au.
- [49.180.184.88]) by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-23c8431a1f0sm102785765ad.32.2025.07.07.16.02.55
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Jul 2025 16:02:55 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
- (envelope-from <david@fromorbit.com>) id 1uYurM-00000008CeO-1qLV;
- Tue, 08 Jul 2025 09:02:52 +1000
-Date: Tue, 8 Jul 2025 09:02:52 +1000
-To: Qu Wenruo <wqu@suse.com>
-Message-ID: <aGxSHKeyldrR1Q0T@dread.disaster.area>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1uYwSu-0005o0-GQ for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 08 Jul 2025 00:45:45 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by tor.source.kernel.org (Postfix) with ESMTP id D88376000A;
+ Tue,  8 Jul 2025 00:45:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D4F0C4CEE3;
+ Tue,  8 Jul 2025 00:45:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1751935533;
+ bh=SyfWNoh9Z00/hpkgQeKtTe7VULbEcE6tZnu4VonKfXY=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=An1g12mbj+OPThp27l2LzBK6Kea6/V6HUSsPuGBFzUqOcTzLXKzTOESP1Gp8cJb7I
+ vS8coYw0RH69GLJUnemTExyhystL08DjRV2f88I5+Cg/PMZq/fJqaB8HIAJrZKmYyZ
+ JVVls6+h1qG4156UWQySe6HTkDhY6zXIqi9hxDd1SL8yJ7UtR22lmk+mSGsm+BIcAf
+ RTLqBN2/BO+SeJPVIQoMhf7pxvne28//yJVkK4MX34dhu4hLLl6TY2BEeaykR4IMw8
+ l8ZJYhHrzXu0tiHFh7xJUAIgg+j2RbIg/1Bf4Rks5N17T3tGtjAiM8aMe6QHxE+Z6i
+ katjEBgQCVkOQ==
+Date: Mon, 7 Jul 2025 17:45:32 -0700
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Message-ID: <20250708004532.GA2672018@frogsfrogsfrogs>
 References: <cover.1751589725.git.wqu@suse.com>
  <de25bbdb572c75df38b1002d3779bf19e3ad0ff6.1751589725.git.wqu@suse.com>
+ <aGxSHKeyldrR1Q0T@dread.disaster.area>
+ <dbd955f7-b9b4-402f-97bf-6b38f0c3237e@gmx.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <de25bbdb572c75df38b1002d3779bf19e3ad0ff6.1751589725.git.wqu@suse.com>
-X-Headers-End: 1uYvIi-0001Rm-76
+In-Reply-To: <dbd955f7-b9b4-402f-97bf-6b38f0c3237e@gmx.com>
+X-Headers-End: 1uYwSu-0005o0-GQ
 Subject: Re: [f2fs-dev] [PATCH v4 1/6] fs: enhance and rename shutdown()
  callback to remove_bdev()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -123,86 +89,99 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Dave Chinner via Linux-f2fs-devel
+From: "Darrick J. Wong via Linux-f2fs-devel"
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Dave Chinner <david@fromorbit.com>
+Reply-To: "Darrick J. Wong" <djwong@kernel.org>
 Cc: brauner@kernel.org, ntfs3@lists.linux.dev, jack@suse.cz,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+ Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jul 04, 2025 at 10:12:29AM +0930, Qu Wenruo wrote:
-> Currently all the filesystems implementing the
-> super_opearations::shutdown() callback can not afford losing a device.
-> 
-> Thus fs_bdev_mark_dead() will just call the shutdown() callback for the
-> involved filesystem.
-> 
-> But it will no longer be the case, with multi-device filesystems like
-> btrfs and bcachefs the filesystem can handle certain device loss without
-> shutting down the whole filesystem.
-> 
-> To allow those multi-device filesystems to be integrated to use
-> fs_holder_ops:
-> 
-> - Replace super_opearation::shutdown() with
->   super_opearations::remove_bdev()
->   To better describe when the callback is called.
-
-This conflates cause with action.
-
-The shutdown callout is an action that the filesystem must execute,
-whilst "remove bdev" is a cause notification that might require an
-action to be take.
-
-Yes, the cause could be someone doing hot-unplug of the block
-device, but it could also be something going wrong in software
-layers below the filesystem. e.g. dm-thinp having an unrecoverable
-corruption or ENOSPC errors.
-
-We already have a "cause" notification: blk_holder_ops->mark_dead().
-
-The generic fs action that is taken by this notification is
-fs_bdev_mark_dead().  That action is to invalidate caches and shut
-down the filesystem.
-
-btrfs needs to do something different to a blk_holder_ops->mark_dead
-notification. i.e. it needs an action that is different to
-fs_bdev_mark_dead().
-
-Indeed, this is how bcachefs already handles "single device
-died" events for multi-device filesystems - see
-bch2_fs_bdev_mark_dead().
-
-Hence Btrfs should be doing the same thing as bcachefs. The
-bdev_handle_ops structure exists precisly because it allows the
-filesystem to handle block device events in the exact manner they
-require....
-
-> - Add a new @bdev parameter to remove_bdev() callback
->   To allow the fs to determine which device is missing, and do the
->   proper handling when needed.
-> 
-> For the existing shutdown callback users, the change is minimal.
-
-Except for the change in API semantics. ->shutdown is an external
-shutdown trigger for the filesystem, not a generic "block device
-removed" notification.
-
-Hooking blk_holder_ops->mark_dead means that btrfs can also provide
-a ->shutdown implementation for when something external other than a
-block device removal needs to shut down the filesystem....
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gVHVlLCBKdWwgMDgsIDIwMjUgYXQgMDg6NTI6NDdBTSArMDkzMCwgUXUgV2VucnVvIHdyb3Rl
+Ogo+IAo+IAo+IOWcqCAyMDI1LzcvOCAwODozMiwgRGF2ZSBDaGlubmVyIOWGmemBkzoKPiA+IE9u
+IEZyaSwgSnVsIDA0LCAyMDI1IGF0IDEwOjEyOjI5QU0gKzA5MzAsIFF1IFdlbnJ1byB3cm90ZToK
+PiA+ID4gQ3VycmVudGx5IGFsbCB0aGUgZmlsZXN5c3RlbXMgaW1wbGVtZW50aW5nIHRoZQo+ID4g
+PiBzdXBlcl9vcGVhcmF0aW9uczo6c2h1dGRvd24oKSBjYWxsYmFjayBjYW4gbm90IGFmZm9yZCBs
+b3NpbmcgYSBkZXZpY2UuCj4gPiA+IAo+ID4gPiBUaHVzIGZzX2JkZXZfbWFya19kZWFkKCkgd2ls
+bCBqdXN0IGNhbGwgdGhlIHNodXRkb3duKCkgY2FsbGJhY2sgZm9yIHRoZQo+ID4gPiBpbnZvbHZl
+ZCBmaWxlc3lzdGVtLgo+ID4gPiAKPiA+ID4gQnV0IGl0IHdpbGwgbm8gbG9uZ2VyIGJlIHRoZSBj
+YXNlLCB3aXRoIG11bHRpLWRldmljZSBmaWxlc3lzdGVtcyBsaWtlCj4gPiA+IGJ0cmZzIGFuZCBi
+Y2FjaGVmcyB0aGUgZmlsZXN5c3RlbSBjYW4gaGFuZGxlIGNlcnRhaW4gZGV2aWNlIGxvc3Mgd2l0
+aG91dAo+ID4gPiBzaHV0dGluZyBkb3duIHRoZSB3aG9sZSBmaWxlc3lzdGVtLgo+ID4gPiAKPiA+
+ID4gVG8gYWxsb3cgdGhvc2UgbXVsdGktZGV2aWNlIGZpbGVzeXN0ZW1zIHRvIGJlIGludGVncmF0
+ZWQgdG8gdXNlCj4gPiA+IGZzX2hvbGRlcl9vcHM6Cj4gPiA+IAo+ID4gPiAtIFJlcGxhY2Ugc3Vw
+ZXJfb3BlYXJhdGlvbjo6c2h1dGRvd24oKSB3aXRoCj4gPiA+ICAgIHN1cGVyX29wZWFyYXRpb25z
+OjpyZW1vdmVfYmRldigpCj4gPiA+ICAgIFRvIGJldHRlciBkZXNjcmliZSB3aGVuIHRoZSBjYWxs
+YmFjayBpcyBjYWxsZWQuCj4gPiAKPiA+IFRoaXMgY29uZmxhdGVzIGNhdXNlIHdpdGggYWN0aW9u
+Lgo+ID4gCj4gPiBUaGUgc2h1dGRvd24gY2FsbG91dCBpcyBhbiBhY3Rpb24gdGhhdCB0aGUgZmls
+ZXN5c3RlbSBtdXN0IGV4ZWN1dGUsCj4gPiB3aGlsc3QgInJlbW92ZSBiZGV2IiBpcyBhIGNhdXNl
+IG5vdGlmaWNhdGlvbiB0aGF0IG1pZ2h0IHJlcXVpcmUgYW4KPiA+IGFjdGlvbiB0byBiZSB0YWtl
+Lgo+ID4gCj4gPiBZZXMsIHRoZSBjYXVzZSBjb3VsZCBiZSBzb21lb25lIGRvaW5nIGhvdC11bnBs
+dWcgb2YgdGhlIGJsb2NrCj4gPiBkZXZpY2UsIGJ1dCBpdCBjb3VsZCBhbHNvIGJlIHNvbWV0aGlu
+ZyBnb2luZyB3cm9uZyBpbiBzb2Z0d2FyZQo+ID4gbGF5ZXJzIGJlbG93IHRoZSBmaWxlc3lzdGVt
+LiBlLmcuIGRtLXRoaW5wIGhhdmluZyBhbiB1bnJlY292ZXJhYmxlCj4gPiBjb3JydXB0aW9uIG9y
+IEVOT1NQQyBlcnJvcnMuCj4gPiAKPiA+IFdlIGFscmVhZHkgaGF2ZSBhICJjYXVzZSIgbm90aWZp
+Y2F0aW9uOiBibGtfaG9sZGVyX29wcy0+bWFya19kZWFkKCkuCj4gPiAKPiA+IFRoZSBnZW5lcmlj
+IGZzIGFjdGlvbiB0aGF0IGlzIHRha2VuIGJ5IHRoaXMgbm90aWZpY2F0aW9uIGlzCj4gPiBmc19i
+ZGV2X21hcmtfZGVhZCgpLiAgVGhhdCBhY3Rpb24gaXMgdG8gaW52YWxpZGF0ZSBjYWNoZXMgYW5k
+IHNodXQKPiA+IGRvd24gdGhlIGZpbGVzeXN0ZW0uCj4gPiAKPiA+IGJ0cmZzIG5lZWRzIHRvIGRv
+IHNvbWV0aGluZyBkaWZmZXJlbnQgdG8gYSBibGtfaG9sZGVyX29wcy0+bWFya19kZWFkCj4gPiBu
+b3RpZmljYXRpb24uIGkuZS4gaXQgbmVlZHMgYW4gYWN0aW9uIHRoYXQgaXMgZGlmZmVyZW50IHRv
+Cj4gPiBmc19iZGV2X21hcmtfZGVhZCgpLgo+ID4gCj4gPiBJbmRlZWQsIHRoaXMgaXMgaG93IGJj
+YWNoZWZzIGFscmVhZHkgaGFuZGxlcyAic2luZ2xlIGRldmljZQo+ID4gZGllZCIgZXZlbnRzIGZv
+ciBtdWx0aS1kZXZpY2UgZmlsZXN5c3RlbXMgLSBzZWUKPiA+IGJjaDJfZnNfYmRldl9tYXJrX2Rl
+YWQoKS4KPiAKPiBJIGRvIG5vdCB0aGluayBpdCdzIHRoZSBjb3JyZWN0IHdheSB0byBnbywgZXNw
+ZWNpYWxseSB3aGVuIHRoZXJlIGlzIGFscmVhZHkKPiBmc19ob2xkZXJfb3BzLgo+IAo+IFdlJ3Jl
+IGFsd2F5cyBnb2luZyB0b3dhcmRzIGEgbW9yZSBnZW5lcmljIHNvbHV0aW9uLCBvdGhlciB0aGFu
+IGxldHRpbmcgdGhlCj4gaW5kaXZpZHVhbCBmcyB0byBkbyB0aGUgc2FtZSB0aGluZyBzbGlnaHRs
+eSBkaWZmZXJlbnRseS4KCk9uIHNlY29uZCB0aG91Z2h0IC0tIGl0J3Mgd2VpcmQgdGhhdCB5b3Un
+ZCBmbHVzaCB0aGUgZmlsZXN5c3RlbSBhbmQKc2hyaW5rIHRoZSBpbm9kZS9kZW50cnkgY2FjaGVz
+IGluIGEgInlvdXIgZGV2aWNlIHdlbnQgYXdheSIgaGFuZGxlci4KRmFuY3kgZmlsZXN5c3RlbXMg
+bGlrZSBiY2FjaGVmcyBhbmQgYnRyZnMgd291bGQgbGlrZWx5IGp1c3Qgc2hpZnQgSU8gdG8KYSBk
+aWZmZXJlbnQgYmRldiwgcmlnaHQ/ICBBbmQgdGhlcmUncyBubyBnb29kIHJlYXNvbiB0byBydW4g
+c2hyaW5rZXJzIG9uCmVpdGhlciBvZiB0aG9zZSBmc2VzLCByaWdodD8KCj4gWWVzLCB0aGUgbmFt
+aW5nIGlzIG5vdCBwZXJmZWN0IGFuZCBtaXhpbmcgY2F1c2UgYW5kIGFjdGlvbiwgYnV0IHRoZSBl
+bmQKPiByZXN1bHQgaXMgc3RpbGwgYSBtb3JlIGdlbmVyaWMgYW5kIGxlc3MgZHVwbGljYXRlZCBj
+b2RlIGJhc2UuCgpJIHRoaW5rIGRjaGlubmVyIG1ha2VzIGEgZ29vZCBwb2ludCB0aGF0IGlmIHlv
+dXIgZmlsZXN5c3RlbSBjYW4gZG8Kc29tZXRoaW5nIGNsZXZlciBvbiBkZXZpY2UgcmVtb3ZhbCwg
+aXQgc2hvdWxkIHByb3ZpZGUgaXRzIG93biBibG9jawpkZXZpY2UgaG9sZGVyIG9wcyBpbnN0ZWFk
+IG9mIHVzaW5nIGZzX2hvbGRlcl9vcHMuICBJIGRvbid0IHVuZGVyc3RhbmQKd2h5IHlvdSBuZWVk
+IGEgImdlbmVyaWMiIHNvbHV0aW9uIGZvciBidHJmcyB3aGVuIGl0J3Mgbm90IGdvaW5nIHRvIGRv
+CndoYXQgdGhlIG90aGVycyBkbyBhbnl3YXkuCgpBd2t3YXJkIG5hbWluZyBpcyBvZnRlbiBhIHNp
+Z24gdGhhdCBmdXJ0aGVyIHRob3VnaHQgKG9yIGF0IGxlYXN0CnNlcGFyYXRpb24gb2YgY29kZSkg
+aXMgbmVlZGVkLgoKQXMgYW4gYXNpZGU6Cid0d291bGQgYmUgbmljZSBpZiB3ZSBjb3VsZCBsaWZ0
+IHRoZSAqRlNfSU9DX1NIVVRET1dOIGRpc3BhdGNoIG91dCBvZgpldmVyeW9uZSdzIGlvY3RsIGZ1
+bmN0aW9ucyBpbnRvIHRoZSBWRlMsIGFuZCB0aGVuIG1vdmUgdGhlICJJIGFtIGRlYWQiCnN0YXRl
+IGludG8gc3VwZXJfYmxvY2sgc28gdGhhdCB5b3UgY291bGQgYWN0dWFsbHkgc2h1dCBkb3duIGFu
+eQpmaWxlc3lzdGVtLCBub3QganVzdCB0aGUgc2V2ZW4gdGhhdCBjdXJyZW50bHkgaW1wbGVtZW50
+IGl0LgoKLS1ECgo+ID4gSGVuY2UgQnRyZnMgc2hvdWxkIGJlIGRvaW5nIHRoZSBzYW1lIHRoaW5n
+IGFzIGJjYWNoZWZzLiBUaGUKPiA+IGJkZXZfaGFuZGxlX29wcyBzdHJ1Y3R1cmUgZXhpc3RzIHBy
+ZWNpc2x5IGJlY2F1c2UgaXQgYWxsb3dzIHRoZQo+ID4gZmlsZXN5c3RlbSB0byBoYW5kbGUgYmxv
+Y2sgZGV2aWNlIGV2ZW50cyBpbiB0aGUgZXhhY3QgbWFubmVyIHRoZXkKPiA+IHJlcXVpcmUuLi4u
+Cj4gPiAKPiA+ID4gLSBBZGQgYSBuZXcgQGJkZXYgcGFyYW1ldGVyIHRvIHJlbW92ZV9iZGV2KCkg
+Y2FsbGJhY2sKPiA+ID4gICAgVG8gYWxsb3cgdGhlIGZzIHRvIGRldGVybWluZSB3aGljaCBkZXZp
+Y2UgaXMgbWlzc2luZywgYW5kIGRvIHRoZQo+ID4gPiAgICBwcm9wZXIgaGFuZGxpbmcgd2hlbiBu
+ZWVkZWQuCj4gPiA+IAo+ID4gPiBGb3IgdGhlIGV4aXN0aW5nIHNodXRkb3duIGNhbGxiYWNrIHVz
+ZXJzLCB0aGUgY2hhbmdlIGlzIG1pbmltYWwuCj4gPiAKPiA+IEV4Y2VwdCBmb3IgdGhlIGNoYW5n
+ZSBpbiBBUEkgc2VtYW50aWNzLiAtPnNodXRkb3duIGlzIGFuIGV4dGVybmFsCj4gPiBzaHV0ZG93
+biB0cmlnZ2VyIGZvciB0aGUgZmlsZXN5c3RlbSwgbm90IGEgZ2VuZXJpYyAiYmxvY2sgZGV2aWNl
+Cj4gPiByZW1vdmVkIiBub3RpZmljYXRpb24uCj4gCj4gVGhlIHByb2JsZW0gaXMsIHRoZXJlIGlz
+IG5vIG9uZSB1dGlsaXppbmcgLT5zaHV0ZG93bigpIG91dCBvZgo+IGZzX2JkZXZfbWFya19kZWFk
+KCkuCj4gCj4gSWYgc2h1dGRvd24gaW9jdGwgaXMgaGFuZGxlZCB0aHJvdWdoIHN1cGVyX29wZXJh
+dGlvbnM6OnNodXRkb3duLCBpdCB3aWxsIGJlCj4gbW9yZSBtZWFuaW5nZnVsIHRvIHNwbGl0IHNo
+dXRkb3duIGFuZCBkZXYgcmVtb3ZhbC4KPiAKPiBCdXQgdGhhdCdzIG5vdCB0aGUgY2FzZSwgYW5k
+IGRpZmZlcmVudCBmc2VzIGV2ZW4gaGF2ZSBzbGlnaHRseSBkaWZmZXJlbnQKPiBoYW5kbGluZyBm
+b3IgdGhlIHNodXRkb3duIGZsYWdzIChub3QgYWxsIGZzZXMgZXZlbiB1dGlsaXplIGpvdXJuYWwg
+dG8KPiBwcm90ZWN0IHRoZWlyIG1ldGFkYXRhKS4KPiAKPiBUaGFua3MsCj4gUXUKPiAKPiAKPiA+
+IAo+ID4gSG9va2luZyBibGtfaG9sZGVyX29wcy0+bWFya19kZWFkIG1lYW5zIHRoYXQgYnRyZnMg
+Y2FuIGFsc28gcHJvdmlkZQo+ID4gYSAtPnNodXRkb3duIGltcGxlbWVudGF0aW9uIGZvciB3aGVu
+IHNvbWV0aGluZyBleHRlcm5hbCBvdGhlciB0aGFuIGEKPiA+IGJsb2NrIGRldmljZSByZW1vdmFs
+IG5lZWRzIHRvIHNodXQgZG93biB0aGUgZmlsZXN5c3RlbS4uLi4KPiA+IAo+ID4gLURhdmUuCj4g
+CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgt
+ZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3Jn
+ZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgt
+ZjJmcy1kZXZlbAo=
