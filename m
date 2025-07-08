@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3EC68C83F12
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  8 Jul 2025 17:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2F4D2C83F17
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  8 Jul 2025 17:05:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=IljKG6ZT4MLH/9/+W6gqAZXubW2H+BxOiyA9PeA0Qmc=; b=TXOhhnR9OqUnAO8kV7FAs5pEoS
-	qGSduYy76wM7HLT0QglLXAd1YMsargXXeyCnQMbF3FR+Y8ZN2NQFzVaeLYXoJZR5sjtN2SZAv2FA5
-	4MxPJzqpgIpYiTvCQNZyfUeiJO+fwbxLvXFFWzYcqNMihM59EsFB1MZnozKwr4pOodRA=;
+	bh=OVWTAPV3lAtKsVsRTRKXdscYx0xrozNoauR7kuj56N4=; b=XOKWhSRNAbYLOeJS9zvRICVeXF
+	dA6mPedUdMerjV78HeahfZsa3KNyGEL+y41ZcL1iZu8jMq39jNgesddPr4LzO0E+mHy0wfy+50Vi+
+	fr+w4B8Bl0mYq3NwH9wlbWPPeLl3TLVPtznh0rG5/W3uPXsGX2VqXBbo8eQqVSq+thtU=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uZBkx-0005kq-Td;
-	Tue, 08 Jul 2025 17:05:23 +0000
+	id 1uZBkz-0005mf-SQ;
+	Tue, 08 Jul 2025 17:05:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1uZBjv-0005Wb-AV
+ (envelope-from <willy@infradead.org>) id 1uZBjy-0005XF-Lu
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 08 Jul 2025 17:04:19 +0000
+ Tue, 08 Jul 2025 17:04:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hSMQb+SWYpViwvTg9ZX1b9lsNUU470zp4x+LGbACxs8=; b=MQ51akBFMt4VLahZXGOSOLxwTs
- xygZDbKiIWZJaTayhNACf/00DPaoOq8GSMjqEh3Ii4Qlkp4WKl9KEUNrySrKwoTQD+5qG7qYl8JVg
- 21ThQoWL0/IfLVAJLZqtBm8Sj9ddaSHsk30zK9Z5EkQXArPwkW1bT0zyfzCtoi6+gNgE=;
+ bh=cjb9GrSqelcYJ3RDFl6DJ+3hKKzXOwq3bnXSpFPOOw8=; b=JXHbu26paHakr4TR2YvcG04cXT
+ txAjFfs107gFwT1ruY9s0LoYTDgz10an9MBZ5MtsJTQcMl0oOsFCrj/iTtXP6ezyfMbNxbQmSYJQL
+ RlBmzWxFSe4BV3rJqkU7xFn8BTS0F+dbO4xdRoSy784Mbm1+/ZpHEA/RikCilp2dfSgM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,38 +42,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hSMQb+SWYpViwvTg9ZX1b9lsNUU470zp4x+LGbACxs8=; b=dgjV/a3+YJWiGp5y2fnTYzduzW
- vJCSvaktMLoGYFRJcJs+UasYhPFbqHVImLZbk8yrjm0zlC6WjKHMUBsuSYhY/6imHbXqUF97KyZaT
- nTuyBuHPBbkR04cgMj4r++A9xILHC+8PFNki0hQ/QaAWTRAknIKX2LEl1U75xDlOBxSc=;
+ bh=cjb9GrSqelcYJ3RDFl6DJ+3hKKzXOwq3bnXSpFPOOw8=; b=kXXkxQc0z6UAadAwiOLDkSf9GS
+ J1TUPBeqXhqvOx7XHYqnbkRxepeFwMvlnZT/rpp0v4AySCjiLBUAV+G2hs3UjhaMtIp0/MMWsnSKr
+ PriRg8vShSr8eR7p1OaK6eDRDQ2LjncrwPNiEwKBeQvAC7U8EXPWiAHryotK1thc8ISA=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uZBju-0006Fh-EQ for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 08 Jul 2025 17:04:19 +0000
+ id 1uZBjv-0006G8-CL for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 08 Jul 2025 17:04:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=hSMQb+SWYpViwvTg9ZX1b9lsNUU470zp4x+LGbACxs8=; b=jIa0N0E0nsprc5mh7HQ26qHV3T
- 13Nc6ps+tyE1GGRlYfBXc7IK8PInXCHld7XGWvMujx7aoYicnCHG91Tplgy7b0IQh7xh7lh8fU2gd
- ovsoCTUATw1Vui813qP+Uf0DaXiJ8tptG1DAuAhD0lo/gavtTU0VEDC/bjf1tKBIdqZQe4LUa9MGc
- oSpUGTpP78MurYBY6CjInfc6hJY5MlFKddp4LV/Lz0nHz01CRafNzn6HfxzN8fro32cX7RcN0Y62h
- QODY5a2U9URYO5mNHDBwcr3Z1yq7Yr3AAQb/hA4SKDkmfx3CtjxIfuS9lb6own17y1jMXKNUQKbSb
- wVBwtGcg==;
+ bh=cjb9GrSqelcYJ3RDFl6DJ+3hKKzXOwq3bnXSpFPOOw8=; b=Ozp9o7RCt0wSUo+t+gxG/4C9bq
+ dHVNT9OXxqFwGNrjHHH7NlUbm8JFuiEKi21xtifSD/nm2VnBprR/K3//ki9pBQypVs1dJNKiHuJF7
+ VkGE7ilpN1LAMuOs41oyLAIXLLUUbHJ7hJcIS/I4AzdOQXhF4P9m9VcBII/mnBny0rsawM7qHZgp6
+ YyuyJH9n3cAaVKxt8DuwkEL/VQuNh6/9MdNVXqvp7P7Ov9kINTYC/pUiHXTW2+gpW1krOmZlMOm30
+ kcwiee857UGs/QrObqGrxkWAMLM6xGmbd+wOGUW51iu2K9w2CFzXqlr0EZceI56eibD1pii7sgv+3
+ 9bvtM6PA==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red
- Hat Linux)) id 1uZBji-00000000T72-3bjG;
- Tue, 08 Jul 2025 17:04:06 +0000
+ Hat Linux)) id 1uZBjj-00000000T7o-3Vfo;
+ Tue, 08 Jul 2025 17:04:07 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Tue,  8 Jul 2025 18:03:34 +0100
-Message-ID: <20250708170359.111653-38-willy@infradead.org>
+Date: Tue,  8 Jul 2025 18:03:41 +0100
+Message-ID: <20250708170359.111653-45-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250708170359.111653-1-willy@infradead.org>
 References: <20250708170359.111653-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1uZBju-0006Fh-EQ
-Subject: [f2fs-dev] [PATCH 37/60] f2fs: Pass a folio to IS_INODE()
+X-Headers-End: 1uZBjv-0006G8-CL
+Subject: [f2fs-dev] [PATCH 44/60] f2fs: Use a bio in f2fs_submit_page_write()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,212 +91,67 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-All callers now have a folio so pass it in.  Also make it const to help
-the compiler.
+Convert bio_page to bio_folio and use it throughout.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/f2fs.h          |  6 +++---
- fs/f2fs/file.c          |  2 +-
- fs/f2fs/gc.c            |  2 +-
- fs/f2fs/inline.c        |  2 +-
- fs/f2fs/inode.c         |  2 +-
- fs/f2fs/node.c          | 14 ++++++--------
- fs/f2fs/recovery.c      |  8 ++++----
- include/linux/f2fs_fs.h |  2 +-
- 8 files changed, 18 insertions(+), 20 deletions(-)
+ fs/f2fs/data.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 3463fa414b55..f6f566cf065f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3019,9 +3019,9 @@ static inline void f2fs_radix_tree_insert(struct radix_tree_root *root,
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 01c0358ef66f..4649c0a510a0 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -949,7 +949,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	struct f2fs_sb_info *sbi = fio->sbi;
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
+ 	struct f2fs_bio_info *io = sbi->write_io[btype] + fio->temp;
+-	struct page *bio_page;
++	struct folio *bio_folio;
+ 	enum count_type type;
  
- #define RAW_IS_INODE(p)	((p)->footer.nid == (p)->footer.ino)
+ 	f2fs_bug_on(sbi, is_read_io(fio->op));
+@@ -980,33 +980,33 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	verify_fio_blkaddr(fio);
  
--static inline bool IS_INODE(struct page *page)
-+static inline bool IS_INODE(const struct folio *folio)
- {
--	struct f2fs_node *p = F2FS_NODE(page);
-+	struct f2fs_node *p = F2FS_NODE(&folio->page);
+ 	if (fio->encrypted_page)
+-		bio_page = fio->encrypted_page;
++		bio_folio = page_folio(fio->encrypted_page);
+ 	else if (fio->compressed_page)
+-		bio_page = fio->compressed_page;
++		bio_folio = page_folio(fio->compressed_page);
+ 	else
+-		bio_page = fio->page;
++		bio_folio = fio->folio;
  
- 	return RAW_IS_INODE(p);
- }
-@@ -3041,7 +3041,7 @@ static inline int f2fs_has_extra_attr(struct inode *inode);
- static inline unsigned int get_dnode_base(struct inode *inode,
- 					struct folio *node_folio)
- {
--	if (!IS_INODE(&node_folio->page))
-+	if (!IS_INODE(node_folio))
- 		return 0;
+ 	/* set submitted = true as a return value */
+ 	fio->submitted = 1;
  
- 	return inode ? get_extra_isize(inode) :
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index c444f2e43df1..8995b128c29c 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -820,7 +820,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
- 	count -= dn.ofs_in_node;
- 	f2fs_bug_on(sbi, count < 0);
+-	type = WB_DATA_TYPE(bio_page, fio->compressed_page);
++	type = WB_DATA_TYPE(&bio_folio->page, fio->compressed_page);
+ 	inc_page_count(sbi, type);
  
--	if (dn.ofs_in_node || IS_INODE(&dn.node_folio->page)) {
-+	if (dn.ofs_in_node || IS_INODE(dn.node_folio)) {
- 		f2fs_truncate_data_blocks_range(&dn, count);
- 		free_from += count;
+ 	if (io->bio &&
+ 	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
+ 			      fio->new_blkaddr) ||
+ 	     !f2fs_crypt_mergeable_bio(io->bio, fio_inode(fio),
+-				page_folio(bio_page)->index, fio)))
++				bio_folio->index, fio)))
+ 		__submit_merged_bio(io);
+ alloc_new:
+ 	if (io->bio == NULL) {
+ 		io->bio = __bio_alloc(fio, BIO_MAX_VECS);
+ 		f2fs_set_bio_crypt_ctx(io->bio, fio_inode(fio),
+-				page_folio(bio_page)->index, fio, GFP_NOIO);
++				bio_folio->index, fio, GFP_NOIO);
+ 		io->fio = *fio;
  	}
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index b681d0f23c57..58977f05f3b3 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1162,7 +1162,7 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 		return false;
+ 
+-	if (bio_add_page(io->bio, bio_page, PAGE_SIZE, 0) < PAGE_SIZE) {
++	if (!bio_add_folio(io->bio, bio_folio, folio_size(bio_folio), 0)) {
+ 		__submit_merged_bio(io);
+ 		goto alloc_new;
  	}
- 
--	if (IS_INODE(&node_folio->page)) {
-+	if (IS_INODE(node_folio)) {
- 		base = offset_in_addr(F2FS_INODE(node_folio));
- 		max_addrs = DEF_ADDRS_PER_INODE;
- 	} else {
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 9851310cdb87..51adc43d5a5c 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -305,7 +305,7 @@ int f2fs_recover_inline_data(struct inode *inode, struct folio *nfolio)
- 	 *    x       o  -> remove data blocks, and then recover inline_data
- 	 *    x       x  -> recover data blocks
- 	 */
--	if (IS_INODE(&nfolio->page))
-+	if (IS_INODE(nfolio))
- 		ri = F2FS_INODE(nfolio);
- 
- 	if (f2fs_has_inline_data(inode) &&
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 68510c2d90a9..9d532ae131d7 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -124,7 +124,7 @@ bool f2fs_enable_inode_chksum(struct f2fs_sb_info *sbi, struct folio *folio)
- 	if (!f2fs_sb_has_inode_chksum(sbi))
- 		return false;
- 
--	if (!IS_INODE(&folio->page) || !(ri->i_inline & F2FS_EXTRA_ATTR))
-+	if (!IS_INODE(folio) || !(ri->i_inline & F2FS_EXTRA_ATTR))
- 		return false;
- 
- 	if (!F2FS_FITS_IN_INODE(ri, le16_to_cpu(ri->i_extra_isize),
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index db81c54ef7f6..edc9c57daebd 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -973,7 +973,7 @@ static int truncate_dnode(struct dnode_of_data *dn)
- 	else if (IS_ERR(folio))
- 		return PTR_ERR(folio);
- 
--	if (IS_INODE(&folio->page) || ino_of_node(folio) != dn->inode->i_ino) {
-+	if (IS_INODE(folio) || ino_of_node(folio) != dn->inode->i_ino) {
- 		f2fs_err(sbi, "incorrect node reference, ino: %lu, nid: %u, ino_of_node: %u",
- 				dn->inode->i_ino, dn->nid, ino_of_node(folio));
- 		set_sbi_flag(sbi, SBI_NEED_FSCK);
-@@ -1474,10 +1474,8 @@ static int sanity_check_node_footer(struct f2fs_sb_info *sbi,
- 					struct folio *folio, pgoff_t nid,
- 					enum node_type ntype)
- {
--	struct page *page = &folio->page;
--
- 	if (unlikely(nid != nid_of_node(folio) ||
--		(ntype == NODE_TYPE_INODE && !IS_INODE(page)) ||
-+		(ntype == NODE_TYPE_INODE && !IS_INODE(folio)) ||
- 		(ntype == NODE_TYPE_XATTR &&
- 		!f2fs_has_xattr_block(ofs_of_node(folio))) ||
- 		time_to_inject(sbi, FAULT_INCONSISTENT_FOOTER))) {
-@@ -1867,7 +1865,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 			if (!atomic || folio == last_folio) {
- 				set_fsync_mark(folio, 1);
- 				percpu_counter_inc(&sbi->rf_node_block_count);
--				if (IS_INODE(&folio->page)) {
-+				if (IS_INODE(folio)) {
- 					if (is_inode_flag_set(inode,
- 								FI_DIRTY_INODE))
- 						f2fs_update_inode(inode, folio);
-@@ -1976,7 +1974,7 @@ void f2fs_flush_inline_data(struct f2fs_sb_info *sbi)
- 		for (i = 0; i < nr_folios; i++) {
- 			struct folio *folio = fbatch.folios[i];
- 
--			if (!IS_INODE(&folio->page))
-+			if (!IS_INODE(folio))
- 				continue;
- 
- 			folio_lock(folio);
-@@ -2077,7 +2075,7 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
- 			}
- 
- 			/* flush dirty inode */
--			if (IS_INODE(&folio->page) && flush_dirty_inode(folio))
-+			if (IS_INODE(folio) && flush_dirty_inode(folio))
- 				goto lock_node;
- write_node:
- 			f2fs_folio_wait_writeback(folio, NODE, true, true);
-@@ -2213,7 +2211,7 @@ static bool f2fs_dirty_node_folio(struct address_space *mapping,
- 	if (!folio_test_uptodate(folio))
- 		folio_mark_uptodate(folio);
- #ifdef CONFIG_F2FS_CHECK_FS
--	if (IS_INODE(&folio->page))
-+	if (IS_INODE(folio))
- 		f2fs_inode_chksum_set(F2FS_M_SB(mapping), folio);
- #endif
- 	if (filemap_dirty_folio(mapping, folio)) {
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 11e8387419b0..83d39fbd2293 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -437,7 +437,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
- 			bool quota_inode = false;
- 
- 			if (!check_only &&
--					IS_INODE(&folio->page) &&
-+					IS_INODE(folio) &&
- 					is_dent_dnode(folio)) {
- 				err = f2fs_recover_inode_page(sbi, folio);
- 				if (err) {
-@@ -463,7 +463,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
- 		}
- 		entry->blkaddr = blkaddr;
- 
--		if (IS_INODE(&folio->page) && is_dent_dnode(folio))
-+		if (IS_INODE(folio) && is_dent_dnode(folio))
- 			entry->last_dentry = blkaddr;
- next:
- 		/* check next segment */
-@@ -628,7 +628,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 	int err = 0, recovered = 0;
- 
- 	/* step 1: recover xattr */
--	if (IS_INODE(&folio->page)) {
-+	if (IS_INODE(folio)) {
- 		err = f2fs_recover_inline_xattr(inode, folio);
- 		if (err)
- 			goto out;
-@@ -809,7 +809,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 		 * In this case, we can lose the latest inode(x).
- 		 * So, call recover_inode for the inode update.
- 		 */
--		if (IS_INODE(&folio->page)) {
-+		if (IS_INODE(folio)) {
- 			err = recover_inode(entry->inode, folio);
- 			if (err) {
- 				f2fs_folio_put(folio, true);
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 25857877eaec..2f8b8bfc0e73 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -268,7 +268,7 @@ struct node_footer {
- /* Node IDs in an Indirect Block */
- #define NIDS_PER_BLOCK		((F2FS_BLKSIZE - sizeof(struct node_footer)) / sizeof(__le32))
- 
--#define ADDRS_PER_PAGE(folio, inode)	(addrs_per_page(inode, IS_INODE(&folio->page)))
-+#define ADDRS_PER_PAGE(folio, inode)	(addrs_per_page(inode, IS_INODE(folio)))
- 
- #define	NODE_DIR1_BLOCK		(DEF_ADDRS_PER_INODE + 1)
- #define	NODE_DIR2_BLOCK		(DEF_ADDRS_PER_INODE + 2)
 -- 
 2.47.2
 
