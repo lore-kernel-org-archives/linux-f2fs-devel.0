@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2AA10C83F22
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  8 Jul 2025 17:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F31FEC83F27
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  8 Jul 2025 17:04:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=uG82UGbe1/dy7Brj80WwSUWgOJCrRwRqIgPDQ4sfurc=; b=FXeFsYIMLfELDfs+8jBSr+t6l1
-	vnbHKpJZwJbzOVQfZwjMg6czJ+XkZZb0zsBoovEH+ryZrZU8Q5eYVEC+45/MGoP9B1r9xIkpyqsoz
-	/BlyfAgcUYdc6yULxX6Oci1kYPgJJdciksnoZY823vP899luzwgpVjUMVsEVNjP+IrgE=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=UWiIZw/Ji6OUaroy6dw5V1rsI1MLnqPPcN6EFMhH7k8=; b=j/5XK/WUsFJ6cpbqxu+uOIS9Tm
+	IKsaEcpkagfiBGQBWFLfC8XgjDce/TOCeiB54cj3KuB51210YhEPNohPefU+APGC8vb7b0+9/zSgC
+	k3Mz+rmuxIhafafkpRyR1GA8+uEx5ou9R6Vto6k9jgj7OHRKzeW/0hCXr25GTDB/6fAM=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uZBjx-0007Ny-QO;
-	Tue, 08 Jul 2025 17:04:21 +0000
+	id 1uZBk0-0005KO-KW;
+	Tue, 08 Jul 2025 17:04:24 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1uZBju-0007LQ-Iz
+ (envelope-from <willy@infradead.org>) id 1uZBjw-0005H7-NP
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 08 Jul 2025 17:04:18 +0000
+ Tue, 08 Jul 2025 17:04:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XJM8cJ24IQBQo7fb8GN3ydjysfJ97cAh+gRDkGOaq9s=; b=B9w+Jq0y/adTfUdo+rb1pobtqX
- REjeuXwsx2MTXgthCtQt/CiRns6lYRhavQXwqkpZ1Ovd4POVxZ+my4btkW9yfx7djnPgnwyWpqSop
- 2nYeol4xVrYpBd/FKs1SeMsHNZZxDuBuGY4/3/SsszlGWRNz5w/Mvzup53O7Y/9kwzuQ=;
+ bh=aVnWk+ROyZIY2e3Z8xtum92JmN2Dp5pWHAXMnsqOrBs=; b=M5OLr3mGyUnTNV/xuyM/fd0epw
+ 8FhVJQNPejGJYI6NKRC2atM+GCHiKQyUEOoZDs100JCOgxPZi+nYQIrRZM7PF9QsfEszQCkDalN/X
+ exTO/iqzYbhpOIudZB4QybrF0rF3QkuU5UbnOHOvK+WQsZF+u1tzMw9VbcCdQLXo3+tk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=XJM8cJ24IQBQo7fb8GN3ydjysfJ97cAh+gRDkGOaq9s=; b=B6r4BAMcnUwIcwHmiVqj5C3rem
- 3wWcBp/Z7SW2q2L2mGh4KtF9QUG1tlCCXeQy+t69r3F4htPASLy6/Nh2bpTbl4Hi3ARVydjWzIf+q
- LlGlA9uDOCVl7iH7v/JVwtJT3oagZYmDXbQntPP3m1fvp7ZHzcfFymHKF2NkbUQXzHhQ=;
+ bh=aVnWk+ROyZIY2e3Z8xtum92JmN2Dp5pWHAXMnsqOrBs=; b=a8vBerprpaU+91SwBJPxS3+5ax
+ GPLCV0jBOR4+T6zl+s5lWKhFHS6lXFfsBIe9jfkkjMrM+hTlNIXO2G/8Ht837gakUqNoMa+Ymqs1S
+ THQG7WrC2uVmM3TWVh3OWW9muAlF3gAa9HQM0sNNpr3h7D3giud8Ba8CII7qNTQVe15A=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uZBjq-0006EW-Cq for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 08 Jul 2025 17:04:18 +0000
+ id 1uZBjw-0006Gs-4F for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 08 Jul 2025 17:04:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=XJM8cJ24IQBQo7fb8GN3ydjysfJ97cAh+gRDkGOaq9s=; b=BfIM5dqZcu3JL+92HmW1ZG9Pse
- tA7T9jrbbGkLSFIHGtMFwdsRFAUDljeUeg7TfWX7kaiU5Za/B2+u5XP1Eud3aQz9Zs/41tCipyRcr
- ad01fHAqqSfSRx9GHhraJpr8UXAnM9cVa74z0ktnrRr/Ah4q3S1HazzxodCVnX2YVpGGghKKYt0N6
- DQiHKAuwp1t0Fn72c0kFiBit4pps/wQuGmaVBNoSD1u0a+iEvY/P1N9YrKpMb54hLN21Kw3PwK962
- UVd2jjoyMhYbf4ClvWKZ3gq1M7tzYtExbZNZH616ca9rkG0rFPAi3p/Z265LkhPrsfY5NaiiaBCao
- jDh7HpAA==;
+ bh=aVnWk+ROyZIY2e3Z8xtum92JmN2Dp5pWHAXMnsqOrBs=; b=mN2zK51eGO72IoJOxqcNXNcvxw
+ DKpR4XagoMaLAwgpzGhKUhfPp8Ow8Jt7CiE0Swza6Wn30ayxrI9rYUjrpUC6yRDnseMafAMGJGeze
+ lw7LkVZldNOvs68j9zMEwbYeIwtIL6hqoWg7rbX8X0jXyc2sC0eR8OWUvYjZJBrIZ32MhqBiK17jO
+ u1lZ5FLlIvissV8iaK8KCgc6T2T4F3lcw0n8W9e3JMxNsPge7D9q9fFrFHsGsaOHtL3J6xFlXTwjq
+ Uux3chpID51UCBjlTkr7qR90vpy5wBRGkuGZO6CALjUn//6VVnWJOV5iQCVPNSY74uD+BgpPt5szc
+ MLR0WQFg==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red
- Hat Linux)) id 1uZBjj-00000000T7u-46jc;
+ Hat Linux)) id 1uZBjk-00000000T8Q-2jET;
  Tue, 08 Jul 2025 17:04:08 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Tue,  8 Jul 2025 18:03:42 +0100
-Message-ID: <20250708170359.111653-46-willy@infradead.org>
+Date: Tue,  8 Jul 2025 18:03:47 +0100
+Message-ID: <20250708170359.111653-51-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250708170359.111653-1-willy@infradead.org>
 References: <20250708170359.111653-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1uZBjq-0006EW-Cq
-Subject: [f2fs-dev] [PATCH 45/60] f2fs: Pass a folio to WB_DATA_TYPE() and
- f2fs_is_cp_guaranteed()
+X-Headers-End: 1uZBjw-0006Gs-4F
+Subject: [f2fs-dev] [PATCH 50/60] f2fs: Convert get_next_nat_page() to
+ get_next_nat_folio()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,104 +92,81 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-All callers now have a folio so pass it in.  Removes a call to
-compound_head().
+Return a folio from this function and convert its one caller.
+Removes a call to compound_head().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/compress.c |  2 +-
- fs/f2fs/data.c     | 11 +++++------
- fs/f2fs/f2fs.h     |  6 +++---
- 3 files changed, 9 insertions(+), 10 deletions(-)
+ fs/f2fs/node.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index c1334e61823c..10b4230607de 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1478,7 +1478,7 @@ void f2fs_compress_write_end_io(struct bio *bio, struct folio *folio)
- 	struct page *page = &folio->page;
- 	struct f2fs_sb_info *sbi = bio->bi_private;
- 	struct compress_io_ctx *cic = folio->private;
--	enum count_type type = WB_DATA_TYPE(page,
-+	enum count_type type = WB_DATA_TYPE(folio,
- 				f2fs_is_compressed_page(page));
- 	int i;
- 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 4649c0a510a0..067270f9486b 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -47,9 +47,8 @@ void f2fs_destroy_bioset(void)
- 	bioset_exit(&f2fs_bioset);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index ab534557a80e..7c01206bd3d6 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -135,7 +135,7 @@ static struct folio *get_current_nat_folio(struct f2fs_sb_info *sbi, nid_t nid)
+ 	return f2fs_get_meta_folio_retry(sbi, current_nat_addr(sbi, nid));
  }
  
--bool f2fs_is_cp_guaranteed(const struct page *page)
-+bool f2fs_is_cp_guaranteed(const struct folio *folio)
+-static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
++static struct folio *get_next_nat_folio(struct f2fs_sb_info *sbi, nid_t nid)
  {
--	const struct folio *folio = page_folio(page);
- 	struct address_space *mapping = folio->mapping;
- 	struct inode *inode;
- 	struct f2fs_sb_info *sbi;
-@@ -346,7 +345,7 @@ static void f2fs_write_end_io(struct bio *bio)
- 		}
- #endif
+ 	struct folio *src_folio;
+ 	struct folio *dst_folio;
+@@ -149,7 +149,7 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
+ 	/* get current nat block page with lock */
+ 	src_folio = get_current_nat_folio(sbi, nid);
+ 	if (IS_ERR(src_folio))
+-		return &src_folio->page;
++		return src_folio;
+ 	dst_folio = f2fs_grab_meta_folio(sbi, dst_off);
+ 	f2fs_bug_on(sbi, folio_test_dirty(src_folio));
  
--		type = WB_DATA_TYPE(&folio->page, false);
-+		type = WB_DATA_TYPE(folio, false);
+@@ -161,7 +161,7 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
  
- 		if (unlikely(bio->bi_status != BLK_STS_OK)) {
- 			mapping_set_error(folio->mapping, -EIO);
-@@ -713,7 +712,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 		wbc_account_cgroup_owner(fio->io_wbc, fio_folio, PAGE_SIZE);
+ 	set_to_next_nat(nm_i, nid);
  
- 	inc_page_count(fio->sbi, is_read_io(fio->op) ?
--			__read_io_type(data_folio) : WB_DATA_TYPE(fio->page, false));
-+			__read_io_type(data_folio) : WB_DATA_TYPE(fio->folio, false));
+-	return &dst_folio->page;
++	return dst_folio;
+ }
  
- 	if (is_read_io(bio_op(bio)))
- 		f2fs_submit_read_bio(fio->sbi, bio, fio->type);
-@@ -914,7 +913,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 	if (fio->io_wbc)
- 		wbc_account_cgroup_owner(fio->io_wbc, folio, folio_size(folio));
+ static struct nat_entry *__alloc_nat_entry(struct f2fs_sb_info *sbi,
+@@ -3010,7 +3010,7 @@ static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	bool to_journal = true;
+ 	struct f2fs_nat_block *nat_blk;
+ 	struct nat_entry *ne, *cur;
+-	struct page *page = NULL;
++	struct folio *folio = NULL;
  
--	inc_page_count(fio->sbi, WB_DATA_TYPE(&data_folio->page, false));
-+	inc_page_count(fio->sbi, WB_DATA_TYPE(data_folio, false));
+ 	/*
+ 	 * there are two steps to flush nat entries:
+@@ -3024,11 +3024,11 @@ static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	if (to_journal) {
+ 		down_write(&curseg->journal_rwsem);
+ 	} else {
+-		page = get_next_nat_page(sbi, start_nid);
+-		if (IS_ERR(page))
+-			return PTR_ERR(page);
++		folio = get_next_nat_folio(sbi, start_nid);
++		if (IS_ERR(folio))
++			return PTR_ERR(folio);
  
- 	*fio->last_block = fio->new_blkaddr;
- 	*fio->bio = bio;
-@@ -989,7 +988,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 	/* set submitted = true as a return value */
- 	fio->submitted = 1;
+-		nat_blk = page_address(page);
++		nat_blk = folio_address(folio);
+ 		f2fs_bug_on(sbi, !nat_blk);
+ 	}
  
--	type = WB_DATA_TYPE(&bio_folio->page, fio->compressed_page);
-+	type = WB_DATA_TYPE(bio_folio, fio->compressed_page);
- 	inc_page_count(sbi, type);
+@@ -3064,8 +3064,8 @@ static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	if (to_journal) {
+ 		up_write(&curseg->journal_rwsem);
+ 	} else {
+-		__update_nat_bits(sbi, start_nid, page);
+-		f2fs_put_page(page, 1);
++		__update_nat_bits(sbi, start_nid, &folio->page);
++		f2fs_folio_put(folio, true);
+ 	}
  
- 	if (io->bio &&
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f86c89a9dd99..5c1c21808489 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1123,8 +1123,8 @@ struct f2fs_sm_info {
-  * f2fs monitors the number of several block types such as on-writeback,
-  * dirty dentry blocks, dirty node blocks, and dirty meta blocks.
-  */
--#define WB_DATA_TYPE(p, f)			\
--	(f || f2fs_is_cp_guaranteed(p) ? F2FS_WB_CP_DATA : F2FS_WB_DATA)
-+#define WB_DATA_TYPE(folio, f)			\
-+	(f || f2fs_is_cp_guaranteed(folio) ? F2FS_WB_CP_DATA : F2FS_WB_DATA)
- enum count_type {
- 	F2FS_DIRTY_DENTS,
- 	F2FS_DIRTY_DATA,
-@@ -3992,7 +3992,7 @@ void f2fs_init_ckpt_req_control(struct f2fs_sb_info *sbi);
-  */
- int __init f2fs_init_bioset(void);
- void f2fs_destroy_bioset(void);
--bool f2fs_is_cp_guaranteed(const struct page *page);
-+bool f2fs_is_cp_guaranteed(const struct folio *folio);
- int f2fs_init_bio_entry_cache(void);
- void f2fs_destroy_bio_entry_cache(void);
- void f2fs_submit_read_bio(struct f2fs_sb_info *sbi, struct bio *bio,
+ 	/* Allow dirty nats by node block allocation in write_begin */
 -- 
 2.47.2
 
