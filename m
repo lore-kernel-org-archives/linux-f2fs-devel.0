@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EDD07C83F26
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  8 Jul 2025 17:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7AB90C83F18
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  8 Jul 2025 17:04:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=09oCuOPe7qO7r5F7jfkrWIX6Hjh8EHrSSqEcEGTcIxI=; b=Ty6uo28T+CA8/kNn3q5+OjAQvL
-	SPREeZl2Orazh+niLCqlpVVVHkfEGa+bGhjtuz/9J0uKBo8o+rBwkSKpztqQjE7tHvjA1Z8zb6Xme
-	rVaW5OWI4i/tS5vjfPB4aictprIqj7efH0OQ47Vu1HEUDpK/3Usvt7llI5qKTs7QYdVE=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=yoF+0MeekxH1o/9yEYmODGvqS71E5sVQowuVu1/gTq8=; b=m4XVppyvZLz6u28G5+mzpBIQWK
+	chx8B+ky4PTY/IRUmkSHmUxFpACGFjDwXbI7gcTOP+qUfotp4h/WHTiFklOm6etK7mN3dyKaPNiNF
+	irVvxlx4Gf3Oc1oRRiwc3tCsxfEoCs/5fUxiZofvVvooHkbIqyVz27nj+Qh46R0o+6Y8=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uZBk0-0002sl-Jx;
-	Tue, 08 Jul 2025 17:04:24 +0000
+	id 1uZBjy-0005I6-4v;
+	Tue, 08 Jul 2025 17:04:22 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1uZBjx-0002qX-UD
+ (envelope-from <willy@infradead.org>) id 1uZBju-0005Fm-IK
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 08 Jul 2025 17:04:21 +0000
+ Tue, 08 Jul 2025 17:04:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HtLgyPVOH2toaYTm2SMwGjy4upOF9YiheG2RSXlIRgo=; b=iCvQfthEXZbvM5FsrP7sKEIbiO
- 6Ay1qTX+34eWSpcaDLe5vuz8u5+zo7OkiWNfFzVdQPQu35+ec6BgPrP3i1ph72wAwFLXmXkz9e75k
- Gl+LdBnsUo7BWZWA5IMTwGBqiPzv/8dDuQomAIJRU4W8Gyrbp2gsmvH/cN5FkPLMOUfo=;
+ bh=AZp9UX0CE168x4PJWjZ3VHXWl6nB1HhF4TSGgM6muBs=; b=cq+f4wvzOPU2tNW3rvH3mHbxIF
+ la0dqnTwzO7kBr3bsf3vN5tUT8dnA6tIfsXy8XpJz6uhjK7ZXpJLCCNmtllZeQ5X2nC2Tx80Np35m
+ kMdBMeA00S14OQnuP46xtmsxoabSthXyzKFgJwujwigHW81JtWC7AmCBMuiacYS0pEsQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=HtLgyPVOH2toaYTm2SMwGjy4upOF9YiheG2RSXlIRgo=; b=ayf/DKO4qPw8ohzKuMtmfIT4Aj
- v2SMbdYojN5G6FEl15A0uVp8tMXDg9p4F0Mi3Jsx8renLhmqUE15aD2lburN7ePwOmESYi3/N8/Vy
- fXjuNUfEI7PicBR5mne+6Ah3lDXS8rDeA4MTH5CMK2LRHFdpcbZ2TResNQx2XJONJ2Fc=;
+ bh=AZp9UX0CE168x4PJWjZ3VHXWl6nB1HhF4TSGgM6muBs=; b=FlcZ4soHy7n3nSRTSf0y0CnB8z
+ 1Sr0BrjbTq1mz7IEM+hvVVJG0ibg65VMXZ1X/teycfs2W9wOl/La8sPA3XLUN19aUKDxd9piBeYiD
+ VYXy6/X1uZtdGprvGxJj5tDMV77/Qgk4HGKxAyeYbAeaMi739Lk3OZIGZPVnwmH7yEvM=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uZBjx-0006HR-C2 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 08 Jul 2025 17:04:21 +0000
+ id 1uZBjs-0006F2-9k for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 08 Jul 2025 17:04:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=HtLgyPVOH2toaYTm2SMwGjy4upOF9YiheG2RSXlIRgo=; b=GkIVCHA8klnOx4pZJJeuNNO2rU
- q1oeZwWB2C1ZpYKYF7SdxeVDAAMc1SekGQEkndxmwzp/nzwOqQ+SLTw35m3v3O1cFZ4Nrm6mv+e6j
- FyDPASfq9UZoZ4AZ+GDREyddlYMP4ozksMpdopNAp1FcaNmVvQ0fNBabOIqdMLSYTWM7V0nQs+tDI
- IUiyvg9lM9dCywX2+vuyKs1zjFlQbw2Cic/RGSXR1UVLvCYSw6RbXaBKd34zH9Y1YSUCap+MSoqTv
- oI1T4+M9vkdzkQdionltimk2peGLS7JW4tuihYNyKyxlUapZ++pU51Ugx8ng5/IXvG/1b7ItjZI03
- zcAvlJfQ==;
+ bh=AZp9UX0CE168x4PJWjZ3VHXWl6nB1HhF4TSGgM6muBs=; b=L3w3OXSQfwvz9iIuV1DqDpxlHJ
+ +3kithGrNxi+D9Sif+xeMIDi1lj+Nv14x8A2ySzvNs5ZynPWgYoIYlWqUy96FgTQJIj0O08oLFY7d
+ LHXXC5UO2KJo0RwFFBJUi3H3seoP0eYly3Vd9oYLRCPW8Nr3XfxUfvktULCGwOSgNoiVaL5YMQ4lZ
+ SQMeRAi0WTNeAnN3IA6lJOxDQse1JQGjwNmOOm28apPh119y32HYJBpmqNHa7SKSbcjuQEtnP39R0
+ qZ0GcaORjVooSPTbFSEgKYQYTJGjbMd8YrFlUsjEKCVVgzJdhm75RuHkGA9cPzH1/G7cCcK4GpXtb
+ S5FxmKCw==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red
- Hat Linux)) id 1uZBjl-00000000T9e-3qr4;
- Tue, 08 Jul 2025 17:04:09 +0000
+ Hat Linux)) id 1uZBjg-00000000T5V-3bDy;
+ Tue, 08 Jul 2025 17:04:04 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Tue,  8 Jul 2025 18:03:55 +0100
-Message-ID: <20250708170359.111653-59-willy@infradead.org>
+Date: Tue,  8 Jul 2025 18:03:20 +0100
+Message-ID: <20250708170359.111653-24-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250708170359.111653-1-willy@infradead.org>
 References: <20250708170359.111653-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1uZBjx-0006HR-C2
-Subject: [f2fs-dev] [PATCH 58/60] f2fs: Pass a folio to
- f2fs_submit_merged_write_cond()
+X-Headers-End: 1uZBjs-0006F2-9k
+Subject: [f2fs-dev] [PATCH 23/60] f2fs: Pass folios to copy_node_footer()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,77 +91,47 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Most callers pass NULL, and the one that passes a page already has a
-folio.  Also convert __submit_merged_write_cond() to take a folio.
+The only caller has folios so pass them in.  Also mark them as const to help
+the compiler.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/data.c    | 8 ++++----
- fs/f2fs/f2fs.h    | 2 +-
- fs/f2fs/segment.c | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ fs/f2fs/node.h     | 7 ++++---
+ fs/f2fs/recovery.c | 2 +-
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 18c5b619f48e..b82d8784248e 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -638,7 +638,7 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index d1c15fc0ddd8..0fd4a09d6e2f 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -293,10 +293,11 @@ static inline void fill_node_footer(struct page *page, nid_t nid,
+ 					(old_flag & OFFSET_BIT_MASK));
  }
  
- static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
--				struct inode *inode, struct page *page,
-+				struct inode *inode, struct folio *folio,
- 				nid_t ino, enum page_type type, bool force)
+-static inline void copy_node_footer(struct page *dst, struct page *src)
++static inline void copy_node_footer(const struct folio *dst,
++		const struct folio *src)
  {
- 	enum temp_type temp;
-@@ -650,7 +650,7 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
- 			struct f2fs_bio_info *io = sbi->write_io[btype] + temp;
+-	struct f2fs_node *src_rn = F2FS_NODE(src);
+-	struct f2fs_node *dst_rn = F2FS_NODE(dst);
++	struct f2fs_node *src_rn = F2FS_NODE(&src->page);
++	struct f2fs_node *dst_rn = F2FS_NODE(&dst->page);
+ 	memcpy(&dst_rn->footer, &src_rn->footer, sizeof(struct node_footer));
+ }
  
- 			f2fs_down_read(&io->io_rwsem);
--			ret = __has_merged_page(io->bio, inode, page, ino);
-+			ret = __has_merged_page(io->bio, inode, &folio->page, ino);
- 			f2fs_up_read(&io->io_rwsem);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 380055000083..185632ef790f 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -758,7 +758,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
  		}
- 		if (ret)
-@@ -668,10 +668,10 @@ void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type)
- }
+ 	}
  
- void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
--				struct inode *inode, struct page *page,
-+				struct inode *inode, struct folio *folio,
- 				nid_t ino, enum page_type type)
- {
--	__submit_merged_write_cond(sbi, inode, page, ino, type, false);
-+	__submit_merged_write_cond(sbi, inode, folio, ino, type, false);
- }
- 
- void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1ea8ecffec83..3ae1f15205c5 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3982,7 +3982,7 @@ void f2fs_submit_read_bio(struct f2fs_sb_info *sbi, struct bio *bio,
- int f2fs_init_write_merge_io(struct f2fs_sb_info *sbi);
- void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
- void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
--				struct inode *inode, struct page *page,
-+				struct inode *inode, struct folio *folio,
- 				nid_t ino, enum page_type type);
- void f2fs_submit_merged_ipu_write(struct f2fs_sb_info *sbi,
- 					struct bio **bio, struct folio *folio);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 667611c86f8c..ab64c262dcf6 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -4197,7 +4197,7 @@ void f2fs_folio_wait_writeback(struct folio *folio, enum page_type type,
- 		struct f2fs_sb_info *sbi = F2FS_F_SB(folio);
- 
- 		/* submit cached LFS IO */
--		f2fs_submit_merged_write_cond(sbi, NULL, &folio->page, 0, type);
-+		f2fs_submit_merged_write_cond(sbi, NULL, folio, 0, type);
- 		/* submit cached IPU IO */
- 		f2fs_submit_merged_ipu_write(sbi, NULL, folio);
- 		if (ordered) {
+-	copy_node_footer(&dn.node_folio->page, &folio->page);
++	copy_node_footer(dn.node_folio, folio);
+ 	fill_node_footer(&dn.node_folio->page, dn.nid, ni.ino,
+ 					ofs_of_node(&folio->page), false);
+ 	folio_mark_dirty(dn.node_folio);
 -- 
 2.47.2
 
