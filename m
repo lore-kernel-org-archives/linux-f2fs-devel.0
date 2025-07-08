@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4E202C83F15
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CFCB2C83F16
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  8 Jul 2025 17:05:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,29 +12,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=txR868N3aJVes+g8tT+b2uyoFmS6OqpQlt/zG/olp0s=; b=XPQkjK9LDv4twNpCsoBcklslFK
-	MvRM7goRtRO4U4slgYCqOsGMU1qM6aKumDoLT8EyG8SGDa0sKFaR0RxupQAEbXfotN6fCUFxnmkrM
-	v9V8x/tiWcPpBZMQ1fa9eK//GVoJCXaJLkMVAq/u09CYC9iBGxkDuScuVONLtd9qVkg4=;
+	bh=Rv0QIRjff7V+pbQULDRTeWfx3NgfXc+CYO39GIaKf/k=; b=QPCPWAYgMLX+QB3ePiFzV/qywc
+	T7NoRZIWcZVSRc0jGxT2sv5yI90VNsSii/I8QjXbMa6gQbG1qJpTJWDFompw7ID0LAZmvUYvq0Kwt
+	zVAayh69mJRhsaT3VnbveXktmm2YXCpOkXZou2YTXLD+Yan7nUenqrS4rvHhoeENKgnY=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uZBkz-0005lV-02;
+	id 1uZBkz-0005mA-Gx;
 	Tue, 08 Jul 2025 17:05:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1uZBjx-0005Wy-L5
+ (envelope-from <willy@infradead.org>) id 1uZBjy-0005X6-4I
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 08 Jul 2025 17:04:21 +0000
+ Tue, 08 Jul 2025 17:04:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZskhtZXIOkW0EpZtkCvrqd18jrvXAqL2b5rZXmvtpZk=; b=nNkXzoKhw939F+ZRvlbQZI7Cz2
- vHlBrIvIvEe6rZeLDQGaZh/u1tO2OwKQ2akNLNdpG9cL6ZaZEachi3arIHsU2x7om/jow5j+6I2Of
- YJd5HJoqNN1Wrl37cpo3LBL12fJcIB7lviUAS2Xcf9sHSY80I+9kuor3hBDP/h433ITw=;
+ bh=UtdQKp3KPv5DtVrtenTFsPDTQ/3FUnzoQRxI/3fCb8I=; b=NnQqvIlTU9rv/pbFda+lXfggzZ
+ pLtaBQSmaL0zUX1Nbk5JUD4ALU6p5z3b4MARPBaaiKUDz1K8quQzfjFywyzwKHiB25lahWY6xwrSS
+ L7aICpWgH9Ha9gCxzFSjxuE6KEd7BzdDYV7d50eMHNVRBeaT60xkaglF+MyOv2ZQ94Pk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ZskhtZXIOkW0EpZtkCvrqd18jrvXAqL2b5rZXmvtpZk=; b=NGla/DtHwckSiGCCmxKbnj+udX
- Ws2o3G8a8Jh14heI6eaxXD92d7FzS+V3TlXCTQPwg+KUkmsGxdfHnp+An8E+YTgKmt9+rIACgk4V8
- 8wWeztwXPphEWlF8B7H/cnWFtvVaP8x58dVNFg1BG0NEw0fYTr5Ez0CLyFnLhnI1e4Ck=;
+ bh=UtdQKp3KPv5DtVrtenTFsPDTQ/3FUnzoQRxI/3fCb8I=; b=VdIOV6TGPK4LTd13auP841gu4r
+ 7CgaZivfW0BausgaHja5uciwUDR9tjt79GfAjUCyA9lpbpMFWi7lcyFnZsLC/QF6ZkBs+wTUx1e4q
+ vd0TMbF8ehG6hwHZzbogaML2SBJ9i+5GbhsAU+IHLm987GbRfevdBiInuX3VT9BFpVhM=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uZBjs-0006FE-OH for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 08 Jul 2025 17:04:21 +0000
+ id 1uZBjv-0006GS-Lw for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 08 Jul 2025 17:04:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=ZskhtZXIOkW0EpZtkCvrqd18jrvXAqL2b5rZXmvtpZk=; b=ARxs0TGFstisfhaBL8K1IVb+iI
- 28I6QKkEnm5WNSWgLFO0e+ORcFMqDhYlV3KCV3FoA8PIwDLzm9IWoyJszpbgteBLK/7v4CrwyvvsD
- CwVBIaBTXBzcpeO4rMTj3IPGeNV2Xo7FZEWFD/vlNWMev5irvKm/Z6XtrjlRBpFlpSCUbVSD231h2
- 3uLfb39WL3z35BgP0M124FBsUX1N532m4vglEBb/xV6JpSTfQir96/uJnzDu8DGBEK0xHBdhKfdtG
- Boj3neQe5Mgnrowwv6O76IWLX4I/r6+TDgcdLzYk8Qi8X6SZIXuKs4EuOC33+TPUBTdtQhIOVk8xN
- MUXc3HyQ==;
+ bh=UtdQKp3KPv5DtVrtenTFsPDTQ/3FUnzoQRxI/3fCb8I=; b=tAQbO+QopMK2dAwi841dE8Xnsp
+ vA0NSCInaPWdUmfmEcWWKzAVnXSgKEJf908CysWHMNtSfkjEoLbul8fkKcyE+sSXmiI94ug/URsAO
+ DrVR5TPstTHBL7co9dknE2ra5pKFtMbrCCSlOb+bKmPa9QdfMlMx4PCalZJt17yzK4jNGvFXdiLkq
+ EVip1w8t7TIY0+UPqEq1vdTceAg3jaHYQbdymbptlhAovNP1VB0bRUKo6nCsJ6av/dAUTZr7dYK6G
+ wTytBXdqZoX9DmoZJDL2jhBwfpO3pzOaK76nqSn7BQQYVhjEIJceCbh8cWPblunqswP50CMsgiUUl
+ eUM9wt7Q==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red
- Hat Linux)) id 1uZBjh-00000000T5o-0zHk;
- Tue, 08 Jul 2025 17:04:05 +0000
+ Hat Linux)) id 1uZBjk-00000000T80-0QiE;
+ Tue, 08 Jul 2025 17:04:08 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Tue,  8 Jul 2025 18:03:23 +0100
-Message-ID: <20250708170359.111653-27-willy@infradead.org>
+Date: Tue,  8 Jul 2025 18:03:43 +0100
+Message-ID: <20250708170359.111653-47-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250708170359.111653-1-willy@infradead.org>
 References: <20250708170359.111653-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1uZBjs-0006FE-OH
-Subject: [f2fs-dev] [PATCH 26/60] f2fs: Pass a folio to
- f2fs_recover_xattr_data()
+X-Headers-End: 1uZBjv-0006GS-Lw
+Subject: [f2fs-dev] [PATCH 46/60] f2fs: Use a folio iterator in
+ f2fs_handle_step_decompress()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,66 +92,40 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-One caller passes NULL and the other caller already has a folio so
-pass it in.
+Change from bio_for_each_segment_all() to bio_for_each_folio_all()
+to iterate over each folio instead of each page.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/f2fs.h     | 2 +-
- fs/f2fs/node.c     | 6 +++---
- fs/f2fs/recovery.c | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ fs/f2fs/data.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 49312008fedb..12b14fc406c5 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3790,7 +3790,7 @@ void f2fs_alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid);
- void f2fs_alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid);
- int f2fs_try_to_free_nids(struct f2fs_sb_info *sbi, int nr_shrink);
- int f2fs_recover_inline_xattr(struct inode *inode, struct folio *folio);
--int f2fs_recover_xattr_data(struct inode *inode, struct page *page);
-+int f2fs_recover_xattr_data(struct inode *inode, struct folio *folio);
- int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct folio *folio);
- int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
- 			unsigned int segno, struct f2fs_summary_block *sum);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 89a27bbc0226..f8620b262b72 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2753,7 +2753,7 @@ int f2fs_recover_inline_xattr(struct inode *inode, struct folio *folio)
- 	return 0;
- }
- 
--int f2fs_recover_xattr_data(struct inode *inode, struct page *page)
-+int f2fs_recover_xattr_data(struct inode *inode, struct folio *folio)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 067270f9486b..a3f231d47bdd 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -233,16 +233,15 @@ static void f2fs_verify_and_finish_bio(struct bio *bio, bool in_task)
+ static void f2fs_handle_step_decompress(struct bio_post_read_ctx *ctx,
+ 		bool in_task)
  {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	nid_t prev_xnid = F2FS_I(inode)->i_xattr_nid;
-@@ -2791,8 +2791,8 @@ int f2fs_recover_xattr_data(struct inode *inode, struct page *page)
- 	f2fs_update_inode_page(inode);
+-	struct bio_vec *bv;
+-	struct bvec_iter_all iter_all;
++	struct folio_iter fi;
+ 	bool all_compressed = true;
+ 	block_t blkaddr = ctx->fs_blkaddr;
  
- 	/* 3: update and set xattr node page dirty */
--	if (page) {
--		memcpy(F2FS_NODE(&xfolio->page), F2FS_NODE(page),
-+	if (folio) {
-+		memcpy(F2FS_NODE(&xfolio->page), F2FS_NODE(&folio->page),
- 				VALID_XATTR_BLOCK_SIZE);
- 		folio_mark_dirty(xfolio);
- 	}
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 2de28bdfa670..01704055b4c2 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -633,7 +633,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 		if (err)
- 			goto out;
- 	} else if (f2fs_has_xattr_block(ofs_of_node(&folio->page))) {
--		err = f2fs_recover_xattr_data(inode, &folio->page);
-+		err = f2fs_recover_xattr_data(inode, folio);
- 		if (!err)
- 			recovered++;
- 		goto out;
+-	bio_for_each_segment_all(bv, ctx->bio, iter_all) {
+-		struct page *page = bv->bv_page;
++	bio_for_each_folio_all(fi, ctx->bio) {
++		struct folio *folio = fi.folio;
+ 
+-		if (f2fs_is_compressed_page(page))
+-			f2fs_end_read_compressed_page(page, false, blkaddr,
++		if (f2fs_is_compressed_page(&folio->page))
++			f2fs_end_read_compressed_page(&folio->page, false, blkaddr,
+ 						      in_task);
+ 		else
+ 			all_compressed = false;
 -- 
 2.47.2
 
