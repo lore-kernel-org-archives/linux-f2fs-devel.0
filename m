@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A525AC83F03
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Jul 2025 18:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A5B75C83F0F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Jul 2025 18:10:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=XWxW1DwxTKv6j1h4Yk/kxZeoxBOwMbKKMH2bwFFlhdw=; b=Iji4jQl/wcZa4YVqOUyi/rZ66P
-	wxrm7xfEZOrCKMguo7nJSJvouUBuoTqMh+S9E+39qGvXxFrl2RifX9B4YZcleKvSr1sEehciwJ8Yy
-	zOdvAeOzHvshFr3Z8roat5fw6TxFVQirEU7QqqxIVOkN+x3Y8jDhBjbInOfdHQALxM90=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=bfDWi3eYI79vpFn1oqzWKnvE/AMqAw+SMmjUeqTkJXg=; b=HEUbO4eidtZho6xi+GNiKOsx+f
+	sInti6iC0mY040TTtiyhkz3rfpjm/SXq1jrsMTri4U9GyD5cKdokRLdpyJ/aH9Fsk39E7RiMeYXaq
+	vqUL1So1bY0VsMMSycqVxFbo1v5dpHtegcGgN2ige9Cs58y8WUGZdfABzHb+klRz90MU=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uZZEv-0003CZ-5G;
-	Wed, 09 Jul 2025 18:09:53 +0000
+	id 1uZZF2-0004u2-9j;
+	Wed, 09 Jul 2025 18:10:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uZZEu-0003CT-Cd
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uZZF1-0004tt-9T
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Jul 2025 18:09:52 +0000
+ Wed, 09 Jul 2025 18:09:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=21tx1HhE+tOhQ7JSU1DNZVLdwiBWJS/2JMaq3kSbKek=; b=c9s8+/MSyFjQD136R8qz5BKQWC
- hN96B+gyFjGL+3ew9iMUEE0zCCFl8Qtp6OkX7TyJG2EcZbykUOi/t2TmNuwbp2wtB2C1l4KjzYU+V
- vV2gbUlSSbPhlF1JSnavt2i5TcFD0QDFqpbvpA2biswBss+nZh1Jj0RsjcRRUNNF7tD4=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=uvKDtjeuE7wR2pgrTUF5WRhRKpimFnhDxpXHbhoNSUw=; b=fAIhrPL2fenYne4FdyyVASt0R9
+ W6AX2cQK6LXdq4bD+6bQ4pGy16W1uMGxJO538llVHUKO9cpoQOo3LoEhCAErKsViUVUFDc7JzbFf4
+ TpLO05Z6/75K/7/AKaCvQW0k4tyJSj49rrkgJU0ePmFhzfVtV7x0YVGYiv+uKvA1f27E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=21tx1HhE+tOhQ7JSU1DNZVLdwiBWJS/2JMaq3kSbKek=; b=Z
- Tb3LMJq2/hlkZYiw8e+Idf4hRTBWlakH60kqyx0fyZd+u8zspImpD6uZFFXMmVv6C0QRxMcjskAQ4
- KTlHyhNgG+Z3QPRfqnjYcgNp3CRQ/axrzAQNUPQ1ctUQdYQ96tCSEuJEmUSPaiAnjaijNStCaiYdW
- Yq7Of2dYp4urpTC0=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=uvKDtjeuE7wR2pgrTUF5WRhRKpimFnhDxpXHbhoNSUw=; b=CCU6aLXOnjCPtPB+C+UQ1M2I6W
+ WDRWHs85d7bF52nE2yABqNnAkFg3kPnotr7V14202GDintxUjn90khgWYFNm08DvKtaMwcpHf948C
+ cr7aVDpY8JMXZnw7KFI2xaaiFURAVg48QYzEGGuNk6lG42mn7BlkICw5pfTo1FeZGg+0=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uZZEt-000135-Qq for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Jul 2025 18:09:52 +0000
+ id 1uZZF0-00013U-RK for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 09 Jul 2025 18:09:59 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 2DC3861152
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed,  9 Jul 2025 18:09:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D56DBC4CEEF
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed,  9 Jul 2025 18:09:45 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 8EDE646A69;
+ Wed,  9 Jul 2025 18:09:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7207EC4CEEF;
+ Wed,  9 Jul 2025 18:09:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1752084585;
- bh=zv0MLcJUUtQ89xH6gYQk6QD/dJLAf4ZnM812gO/xT0o=;
- h=Subject:From:Date:To:From;
- b=ZAL7pTleuDXhIR7TvFKNc9JcTxG9Jy65mn03zPLMN8gI+OKFtXXEejG2hx8MsNxFR
- VFBsC03pkppJQwL9HRm0vWEV+XQV4C+HcBBrD+0i7yGT7SOIlMOnDNERu1ql+eKSSu
- 6ZpzERMNAcBJ4muSWIW4lcxh/+zQ+BhUyclRXneKm3p5h3mi06tSaD5T71f+tJoUkh
- MuTuiOnwS4Q7vyHRei4+CPEZhnIPYJDfe58+xsYtrmoXcKHDdEf3y8oelfigBn6n+6
- mm78eM1SW/feRWO3r1ypksn1u7HQSmSPCyxhJttXfPKlnoNiYR1LL48YnSm2PWGTPC
- JXnLEDhC7iK8Q==
+ s=k20201202; t=1752084588;
+ bh=BsOGMwnuVXVpxz2AP8u8d6e3+gRAhs6ZI8AQjqzy5Yc=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=NImqP9NwFNL4Bfwe8gFXCoPICs82sfyFJOOHb8n6vbxwXPKSDC04ucnnVTc8NjX+B
+ VDNfSSGu2zJ73+jrX3TCnLOaCWCbpXADtZMNSeJ/61gW0MXR7M5XJ1YfeM1z+UXXZr
+ 6zJSE3T9CKxpyZigWulmbcAAtGaf5LG5aMq2B04/L9oXIpNd8xjuZhSX87O/9t84uG
+ YucrL8TFLoJWg7xJeCXjh6yisxsvTExvFmuOTAVMJD6IokcuKYh34LhX6r3TNxCXFs
+ Qq8etC9DVvC8JJcpHQIeaTd7xc1BSPANgaUGguq6+07iDnkHvV/sgMBrKviEIzW9yw
+ EV7NN25ZJiRAg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 760AB380DBEE for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed,  9 Jul 2025 18:10:09 +0000 (UTC)
+ 33BC5380DBEE; Wed,  9 Jul 2025 18:10:12 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <175208460812.806926.18079984227752717145.git-patchwork-summary@kernel.org>
-Date: Wed, 09 Jul 2025 18:10:08 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1uZZEt-000135-Qq
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+Message-Id: <175208461075.806926.14733447162737936340.git-patchwork-notify@kernel.org>
+Date: Wed, 09 Jul 2025 18:10:10 +0000
+References: <20250625001408.1961-1-yohan.joung@sk.com>
+In-Reply-To: <20250625001408.1961-1-yohan.joung@sk.com>
+To: yohan.joung <yohan.joung@sk.com>
+X-Headers-End: 1uZZF0-00013U-RK
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to check upper boundary for value
+ of gc_boost_zoned_gc_percent
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,111 +90,30 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, pilhyun.kim@sk.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Patch: [f2fs-dev,v4] f2fs: avoid splitting bio when reading multiple pages
-  Submitter: Huang Jianan <huangjianan@xiaomi.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=977311
-  Lore link: https://lore.kernel.org/r/20250630125753.650630-1-huangjianan@xiaomi.com
+On Wed, 25 Jun 2025 09:14:07 +0900 you wrote:
+> to check the upper boundary when setting gc_boost_zoned_gc_percent
+> 
+> Signed-off-by: yohan.joung <yohan.joung@sk.com>
+> ---
+>  fs/f2fs/sysfs.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 
-Patch: [f2fs-dev] f2fs: fix to check upper boundary for value of gc_boost_zoned_gc_percent
-  Submitter: yohan.joung <yohan.joung@sk.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=975513
-  Lore link: https://lore.kernel.org/r/20250625001408.1961-1-yohan.joung@sk.com
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix to check upper boundary for value of gc_boost_zoned_gc_percent
+    https://git.kernel.org/jaegeuk/f2fs/c/10dcaa56ef93
 
-Series: [f2fs-dev,v5,1/2] f2fs: convert F2FS_I_SB to sbi in f2fs_setattr()
-  Submitter: wangzijie <wangzijie1@honor.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=977251
-  Lore link: https://lore.kernel.org/r/20250630095454.3912441-1-wangzijie1@honor.com
-    Patches: [f2fs-dev,v5,1/2] f2fs: convert F2FS_I_SB to sbi in f2fs_setattr()
-
-Patch: [f2fs-dev] f2fs: use kfree() instead of kvfree() to free some memory
-  Submitter: Jiazi Li <jqqlijiazi@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=978475
-  Lore link: https://lore.kernel.org/r/20250703061358.13425-1-jqqlijiazi@gmail.com
-
-Patch: [f2fs-dev,v4] f2fs: enable tuning of boost_zoned_gc_percent via sysfs
-  Submitter: yohan.joung <yohan.joung@sk.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=975512
-  Lore link: https://lore.kernel.org/r/20250625001336.1937-1-yohan.joung@sk.com
-
-Patch: [f2fs-dev] f2fs: Fix the typos in comments
-  Submitter: Swarna Prabhu <sw.prabhu6@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=973077
-  Lore link: https://lore.kernel.org/r/20250617174047.1511951-1-s.prabhu@samsung.com
-
-Patch: [f2fs-dev,v4] f2fs: fix KMSAN uninit-value in extent_info usage
-  Submitter: Abinash Singh <abinashlalotra@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=975731
-  Lore link: https://lore.kernel.org/r/20250625110537.22806-1-abinashsinghlalotra@gmail.com
-
-Patch: [f2fs-dev] f2fs: fix to use f2fs_is_valid_blkaddr_raw() in do_write_page()
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=977643
-  Lore link: https://lore.kernel.org/r/20250701092610.511964-1-chao@kernel.org
-
-Patch: [f2fs-dev] f2fs: check the generic conditions first
-  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=977389
-  Lore link: https://lore.kernel.org/r/20250630160839.1142073-1-jaegeuk@kernel.org
-
-Patch: [f2fs-dev,v2] f2fs: fix to avoid UAF in f2fs_sync_inode_meta()
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=979979
-  Lore link: https://lore.kernel.org/r/20250708095339.3079788-1-chao@kernel.org
-
-Patch: [f2fs-dev] f2fs: doc: fix wrong quota mount option description
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=978047
-  Lore link: https://lore.kernel.org/r/20250702064925.1002176-1-chao@kernel.org
-
-Patch: [f2fs-dev,v2] f2fs: fix to avoid panic in f2fs_evict_inode
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=979982
-  Lore link: https://lore.kernel.org/r/20250708095657.3081188-1-chao@kernel.org
-
-Series: [f2fs-dev,1/2] f2fs: fix to check upper boundary for gc_valid_thresh_ratio
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=976428
-  Lore link: https://lore.kernel.org/r/20250627023818.146534-1-chao@kernel.org
-    Patches: [f2fs-dev,1/2] f2fs: fix to check upper boundary for gc_valid_thresh_ratio
-             [f2fs-dev,2/2] f2fs: fix to check upper boundary for gc_no_zoned_gc_percent
-
-Patch: [f2fs-dev] f2fs: introduce is_cur{seg,sec}()
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=979652
-  Lore link: https://lore.kernel.org/r/20250707114614.2769306-1-chao@kernel.org
-
-Patch: [f2fs-dev] f2fs: account and print more stats during recovery
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=976434
-  Lore link: https://lore.kernel.org/r/20250627025944.152334-1-chao@kernel.org
-
-
-Total patches: 16
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
