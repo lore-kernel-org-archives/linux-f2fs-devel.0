@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9CF48C83F0A
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Jul 2025 18:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 48268C83F03
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Jul 2025 18:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=2C+EzCKoYyFBMMUL9SM5ZOkg/dts3TOsFIilnulMtiE=; b=cL3/XKRH3MqMT3aiuGgdQNG2Xv
-	c2BaQ1eIKUpvyv7bzytvY1lhPfSOa/3Ykmt47YlvGJdu7FBctNtCfaxYVlsuxysFWWJYxAeCbz3SD
-	TWIPQpoJT4C11RKiADSOrIUvJ6HeQ2a04vrJcGPEatqT+4w7YTBa1dzfc3zlJih1uuu4=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=qOpYWrRtgBoRkRY/BEH6708EBwJVulle274KTZkLPL8=; b=fby47MUMkdrRRecxrb0grJUqSc
+	a+1y7/VT3oKiPnS2aZ6rBhcBTQLWtMKHKOaHzx/+xkLnb4lhOTzYK7AoE1Bi/0aXeFruDgKdiWa2K
+	+U9UTf2BMjQgX37Uiuo0LuTBZdjDJX5n0tOYIPHBfX15cGUy91HPGhS2okUA1y1+0ctY=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uZZF1-00005m-Kq;
-	Wed, 09 Jul 2025 18:09:59 +0000
+	id 1uZZF4-0004AW-U3;
+	Wed, 09 Jul 2025 18:10:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uZZF0-00005a-1M
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uZZF3-00049k-5g
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Jul 2025 18:09:58 +0000
+ Wed, 09 Jul 2025 18:10:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=T62vOfwKKgXpldNpaGeog8aLK9lzrK4YjQVRbF3orWk=; b=KQSVBUVkumQwPPVo9b1zokUJqY
- X+oBDXisKbebD1DGpLU7OnJcthkb9FlbTc8uTtou4oOELxC5OrxCXLZH7hlJyFNZ22zbAutZW3TBZ
- C25IHXVnwvKuWnN21SMXhFDNMMdXgAXUc6b9+V5qfQ7hZ/KFXSnUR+lVsUCCL4qy1UdI=;
+ bh=kJBFSqcYbOU3QWXr1pRWSUxaSh0B+miv5BASVFBPOLw=; b=CgASr0SgoqFQan3XtgPGx0qUZF
+ 7JcnMaHzl9mMcl3UWXw9TgecccUNVikvup6RXjBXvO9AiNG7884POS3NnWWSgxTXM/+1GmGwIHfEL
+ 3mbW2rcjoq/vkzKE9vaVWaUGhWjQvn3LPwJUQ4UfxHtsBJaVm8jiNMY2TNTjsdfWtVpg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=T62vOfwKKgXpldNpaGeog8aLK9lzrK4YjQVRbF3orWk=; b=YPKtWQ5E3QPkCS7GOl8OinZXTv
- Z/jE2Lc/dzZKkhykwh1AaUxNa0GouqkNZocTWz3BVXudAFuHvOhluv7GkKq847DQucntqtmzcbp0I
- dNRqjeX8fa1TeZAvYrMWXhS9E4bUl6mI1IUE/sCjJ2hixVJ/erLr2UZqka0htocSTzVM=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=kJBFSqcYbOU3QWXr1pRWSUxaSh0B+miv5BASVFBPOLw=; b=YSKcY7VKm0q6GyPzqNWy0J3LaN
+ gee8HuWkz6nhIMG7pNx75AaAEcOzlpXdudK/bSjCrLs5QVqzmI7TYpC/+Fxjpe2931/9znpcT+LlE
+ YbkixAsjuSJCg4go6q+trVUPwSRIx4TaiXRRcw6T7akHcaGw4zl4pFUT2zexqJyrEUr0=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uZZEz-00013N-HI for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Jul 2025 18:09:57 +0000
+ id 1uZZF2-00013d-MA for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 09 Jul 2025 18:10:01 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 28EBE42B8A;
- Wed,  9 Jul 2025 18:09:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06EABC4CEEF;
- Wed,  9 Jul 2025 18:09:46 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id 18C6DA548A6;
+ Wed,  9 Jul 2025 18:09:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1238C4CEF0;
+ Wed,  9 Jul 2025 18:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1752084587;
- bh=phHLJ3EvywfcPLMn5ezWfhv0ep2yOCJcyMLvx/syR+Q=;
+ s=k20201202; t=1752084589;
+ bh=qtyAN7Bob3SIVjNlHPMQVn0lrcTTxnFfB41foDJISKk=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=cx8Uo8YAvjT97aO21/vTtiJvX22G60EJjJhzYhGh+QCf+5/FTLdoOTDAmsKd99TSJ
- SR8p2HwLbEAhUBggtbun3Y1Nhj+ydiLBm/wk7whGzijAdowOfLrNriYwNb+uLYTsSs
- 12dT2aBF0wmeep1TclUQ2WahK+Btlnvcq8nqFuJFHJZUhrpIwESUvjNH2ew0QSXpqc
- C6qCcz8ltLK7dhvLpPIDO/7Fhl8saRmZs8+nSqowDK9IMx4AiDJTW4bLC2kqOZ//Qh
- O/Vd11GLarjWOG8QRJjqqd8uqcCkrSLs6jrRztjOwYDAVNQiVcgnMM9PqVggsUE7NC
- Jwbcst1/CWpUQ==
+ b=CzPlKGvCIxHIs1GY12sNYFpmu0W2sAiDAfwDSTV20sSj5o6eRjeH0zL3NoBTdmILE
+ x5jTKbSLy8pUdGEdFcfd76TTfxkX8BoqPDFOJC6XUKgQcSXY0UJ7yoc6t/3Sr9cQ5a
+ i8ZXNiDZSMAAGqcCZl/rRmWwRQ9/qUzeoiTWkxk0ArCz94s+OKnJbcT5RNMQ59OvwG
+ zd2Z/JU3ix6U/c//vM0FWuqa5NXSi8nG7qD6BU1mQd5GpTm4cjfVKxRnX0+mi+EfJB
+ 5R4V9OyWz72ztt/X+MhOhFpQxi42s9IpssHOhCOhj2XpyXwuULxEDHNZrLzvFZtrjF
+ jj10qg0BWF5Tw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- AE24F380DBEE; Wed,  9 Jul 2025 18:10:10 +0000 (UTC)
+ 71B56380DBEE; Wed,  9 Jul 2025 18:10:13 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <175208460952.806926.13620512272731608715.git-patchwork-notify@kernel.org>
-Date: Wed, 09 Jul 2025 18:10:09 +0000
-References: <20250630125753.650630-1-huangjianan@xiaomi.com>
-In-Reply-To: <20250630125753.650630-1-huangjianan@xiaomi.com>
-To: Huang Jianan <huangjianan@xiaomi.com>
-X-Headers-End: 1uZZEz-00013N-HI
-Subject: Re: [f2fs-dev] [PATCH v4] f2fs: avoid splitting bio when reading
- multiple pages
+Message-Id: <175208461224.806926.6216509429033190385.git-patchwork-notify@kernel.org>
+Date: Wed, 09 Jul 2025 18:10:12 +0000
+References: <20250630095454.3912441-1-wangzijie1@honor.com>
+In-Reply-To: <20250630095454.3912441-1-wangzijie1@honor.com>
+To: wangzijie <wangzijie1@honor.com>
+X-Headers-End: 1uZZF2-00013d-MA
+Subject: Re: [f2fs-dev] [PATCH v5 1/2] f2fs: convert F2FS_I_SB to sbi in
+ f2fs_setattr()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,31 +90,31 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: shengyong1@xiaomi.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
- wanghui33@xiaomi.com
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, feng.han@honor.com,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon, 30 Jun 2025 20:57:53 +0800 you wrote:
-> When fewer pages are read, nr_pages may be smaller than nr_cpages. Due
-> to the nr_vecs limit, the compressed pages will be split into multiple
-> bios and then merged at the block level. In this case, nr_cpages should
-> be used to pre-allocate bvecs.
-> To handle this case, align max_nr_pages to cluster_size, which should be
-> enough for all compressed pages.
+On Mon, 30 Jun 2025 17:54:53 +0800 you wrote:
+> Introduce sbi in f2fs_setattr() and convert F2FS_I_SB to it. No logic
+> change, just cleanup and prepare to get CAP_BLKS_PER_SEC(sbi).
 > 
-> [...]
+> Signed-off-by: wangzijie <wangzijie1@honor.com>
+> ---
+>  fs/f2fs/file.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev,v4] f2fs: avoid splitting bio when reading multiple pages
-    https://git.kernel.org/jaegeuk/f2fs/c/185f203a6991
+  - [f2fs-dev,v5,1/2] f2fs: convert F2FS_I_SB to sbi in f2fs_setattr()
+    https://git.kernel.org/jaegeuk/f2fs/c/90c5ce37adf0
+  - [f2fs-dev,v5,2/2] f2fs: don't allow unaligned truncation to smaller/equal size on pinned file
+    (no matching commit)
 
 You are awesome, thank you!
 -- 
