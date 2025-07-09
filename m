@@ -4,78 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9D318C83F03
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Jul 2025 18:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 26A83C83F15
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Jul 2025 18:10:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=fcWOvXTovRS5gU6IaZSPBRk9ca8nUSySFeVhDiak5u0=; b=Mkj3YmEu0C/h5YqcYkpqKx70Jq
-	4O0IVozh119QB6VpdFe9VHyTnVMmS5Wcq2JF3dbjA5vx2B3j+EfGzFzqh/IIzAs9o06ExHO1opj+l
-	GpHi0qmdiJfdabGGUdY610VVHmfPxB9PPNRhoiN71cxw/xzjAemk5yFvM7Od+FSMQsWM=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Jwm7AWRPHTaoAWvMB9cPJEiuvmzKYiuByrWML8jJOoQ=; b=JxDU9xdqCyVnzORYothd8IoOdl
+	Lwbs+mylWvJGfMM+MQTf59sfXlTVxk1z07qydpUgR7ZxXesqxKqKe3Bi2RCp+MhgN4y6BLoanQEn3
+	6DOhV3nCpx5cmn5yAk/iMiLguvyRD8+HtLp5rmI67MNbZfCrXeN/R5QqdypxB781xnYE=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uZZF7-0004B2-9F;
-	Wed, 09 Jul 2025 18:10:05 +0000
+	id 1uZZF8-0003Es-R3;
+	Wed, 09 Jul 2025 18:10:06 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uZZF5-0004Al-VB
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uZZF7-0003Ec-Dl
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Jul 2025 18:10:03 +0000
+ Wed, 09 Jul 2025 18:10:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HWOpeSr3t+oehSJSHBULj436Ey7BR5gVkKTYM5JW86Q=; b=XTPSj+mXIypQZSb92IiibtKvPV
- /qkexv24GwlM76pUQKf62eh5/6qNbxNRwLjbAsR5cmPsgQ5ZxlDDAbuQ+GK3d/yUg0SdbUtr9MFd2
- +4z8bL5/+XPmW7c84tDGVUcc7VQUiOg5krVGuNbKpJAPbRMGYaPYrNLV9R7ssyE/qHFc=;
+ bh=0DIs1Q4XlWRxX+wkfuf4qsi6K6EUqBjlUF/NpVuCoBI=; b=SAp3q+iRk1cXv8kaK7LCqXIP2e
+ zA4dPaUqjW0efQ4/DA6K41FDWmIkV0Cu2PrW+UHddNdUtqaHgiHINzCFzBKeiSCkApcSc/WYQwY7U
+ 3rSXG7JBKJlIELIXH8jkBArQY1ARYC+juaBk9zcMvuChkb5QAF7YFaKSIdvxhJFF3les=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HWOpeSr3t+oehSJSHBULj436Ey7BR5gVkKTYM5JW86Q=; b=PoNwmqOiRp0zU1dMosCCCey7/D
- 506IUSFQrFolYTW7a7nWRRtNWonI1TC3uB43dyZ8EqZSWOxNLH399Ty0RH7lyiKLqHJKWJRsZcKPL
- RalJurFqg9yhHSHPoiTv13ZVzvND8nFN0lwf67oHDIuydPqXHDW4hd0Xt4yb1pQwigxg=;
+ bh=0DIs1Q4XlWRxX+wkfuf4qsi6K6EUqBjlUF/NpVuCoBI=; b=S54/oejh7zN2oevoCesAGl0SX1
+ jp4U3n6AmLuH/m+Y7YT3se6NaMK81fMAchv4ot7gaWse07G3vg6Cbt/D3aIIsuY3fRpuPG/iXPUQF
+ nqcrs6obLSHF3VvlTm75l3WRV/1XXpvZFt5AlL+1OKKcUOq6cHhZT1n/dqn039Y7CkZ8=;
 Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uZZF5-00013q-Ek for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Jul 2025 18:10:03 +0000
+ id 1uZZF6-00013y-TD for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 09 Jul 2025 18:10:05 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id CC154A548C1;
- Wed,  9 Jul 2025 18:09:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7520BC4CEEF;
- Wed,  9 Jul 2025 18:09:52 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id 4AE88A548C2;
+ Wed,  9 Jul 2025 18:09:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7E1EC4CEF4;
+ Wed,  9 Jul 2025 18:09:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1752084592;
- bh=sA5J+muO6rD3pT+tp/xSgnrdLGmaAE23n4SGICzARtc=;
+ s=k20201202; t=1752084593;
+ bh=deWznCu+qIVvHco4q82pWqu7tD2dtpJCvTArIsFwwoo=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=H9Qeq4cZqHeWNs54ca7LX9aAoGcJZmwDX4Bye3hypNcVB9cHo9H2eCg6sIWtVoHss
- zFsPno0WJHDEhqY8mUZ6oCaBe5B4PSXFaJVx3B5F20cKxSikmTHHFJNPaEEQnG1+av
- mRVv3I3JY3bzk5lkJMuIksPSpylGz5ASri3Ky9TAowsozkJ184MlIu1PshchetZve3
- ZTzOI4Niwhf7LF4eCSW2cRKH7O+21JavalY1fwHhWXUtt2tagemJp/uKXoAw2fNiKD
- ap+IfvYj9YnfrWBGzsdbHBdLMoUQqXYllSB8LacTCxFNd+WTYDnVIfBwm9czWDiUR0
- Ll3mV0tg6u0BA==
+ b=pcg89k/5aI50z22ZC0VOG+RaCBBRuG0I2Rxs0OESF+As77JBKssJToQQvS/UpzHuV
+ wj00tFkwiG6JcbRm0hlzPIASIOzpyIGa3PHs43Vv+/l4egALWvnHvOkam2jbemkZAU
+ mxk2u9qQzqMwtcyGhB+N2n+F0d4A332lXpQPgnAx97dTOw4ueVGP4TikyjwXZ/lMBN
+ dfJQ3/gnxp2IorXT941oMpQyPod9pwWptUl5eXyF5xlvgOauilLqFnJOyr4snZncJw
+ Vw9U1jVzELHWNTmPFovgBl0fIclSHSRoUBG5y4uDTFxqKvRks8D/2DkHqb4ZTidapc
+ WpCMqN9s9ikfg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 343DB380DBEE; Wed,  9 Jul 2025 18:10:16 +0000 (UTC)
+ AE363380DBEE; Wed,  9 Jul 2025 18:10:17 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <175208461478.806926.9492710512867516204.git-patchwork-notify@kernel.org>
-Date: Wed, 09 Jul 2025 18:10:14 +0000
-References: <20250625001336.1937-1-yohan.joung@sk.com>
-In-Reply-To: <20250625001336.1937-1-yohan.joung@sk.com>
-To: yohan.joung <yohan.joung@sk.com>
-X-Headers-End: 1uZZF5-00013q-Ek
-Subject: Re: [f2fs-dev] [PATCH v4] f2fs: enable tuning of
- boost_zoned_gc_percent via sysfs
+Message-Id: <175208461625.806926.1915540263699572760.git-patchwork-notify@kernel.org>
+Date: Wed, 09 Jul 2025 18:10:16 +0000
+References: <20250617174047.1511951-1-s.prabhu@samsung.com>
+In-Reply-To: <20250617174047.1511951-1-s.prabhu@samsung.com>
+To: Swarna Prabhu <sw.prabhu6@gmail.com>
+X-Headers-End: 1uZZF6-00013y-TD
+Subject: Re: [f2fs-dev] [PATCH] f2fs: Fix the typos in comments
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,8 +89,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, pilhyun.kim@sk.com
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ mcgrof@kernel.org, s.prabhu@samsung.com, jaegeuk@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -101,18 +100,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 25 Jun 2025 09:13:35 +0900 you wrote:
-> to allow users to dynamically tune
-> the boost_zoned_gc_percent parameter
+On Tue, 17 Jun 2025 17:40:47 +0000 you wrote:
+> This patch fixes minor typos in comments in f2fs.
 > 
-> Signed-off-by: yohan.joung <yohan.joung@sk.com>
+> Signed-off-by: Swarna Prabhu <s.prabhu@samsung.com>
 > ---
->  fs/f2fs/gc.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  fs/f2fs/f2fs.h  | 6 +++---
+>  fs/f2fs/node.h  | 2 +-
+>  fs/f2fs/super.c | 2 +-
+>  3 files changed, 5 insertions(+), 5 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev,v4] f2fs: enable tuning of boost_zoned_gc_percent via sysfs
-    https://git.kernel.org/jaegeuk/f2fs/c/956b81b3d41a
+  - [f2fs-dev] f2fs: Fix the typos in comments
+    https://git.kernel.org/jaegeuk/f2fs/c/1f136890263c
 
 You are awesome, thank you!
 -- 
