@@ -4,77 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 26A83C83F15
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Jul 2025 18:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 98085C83F0A
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Jul 2025 18:10:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Jwm7AWRPHTaoAWvMB9cPJEiuvmzKYiuByrWML8jJOoQ=; b=JxDU9xdqCyVnzORYothd8IoOdl
-	Lwbs+mylWvJGfMM+MQTf59sfXlTVxk1z07qydpUgR7ZxXesqxKqKe3Bi2RCp+MhgN4y6BLoanQEn3
-	6DOhV3nCpx5cmn5yAk/iMiLguvyRD8+HtLp5rmI67MNbZfCrXeN/R5QqdypxB781xnYE=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=hst1CpzZX0vYDhbnV/yBQVGXikh5pFUZ/u2v66/LgTo=; b=ckXfEXzwAQaZnlOvAFv+UMVLBJ
+	itWr+Ffcv+ThalweRa9N+Jt+7u9Ko3ZltMS1WUvTafCR7uQ7rptuRgebfXsWAllv2xY2GGriun7vO
+	i/IGr1TSbp3+OoCSbAQcDWAUH3WbqUTWLjh5grwnqZXSn6MgzmoUeJJJNbi/1qjjVFpE=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uZZF8-0003Es-R3;
-	Wed, 09 Jul 2025 18:10:06 +0000
+	id 1uZZFD-0004wJ-A0;
+	Wed, 09 Jul 2025 18:10:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uZZF7-0003Ec-Dl
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uZZFB-0004vy-2a
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Jul 2025 18:10:05 +0000
+ Wed, 09 Jul 2025 18:10:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0DIs1Q4XlWRxX+wkfuf4qsi6K6EUqBjlUF/NpVuCoBI=; b=SAp3q+iRk1cXv8kaK7LCqXIP2e
- zA4dPaUqjW0efQ4/DA6K41FDWmIkV0Cu2PrW+UHddNdUtqaHgiHINzCFzBKeiSCkApcSc/WYQwY7U
- 3rSXG7JBKJlIELIXH8jkBArQY1ARYC+juaBk9zcMvuChkb5QAF7YFaKSIdvxhJFF3les=;
+ bh=iNMG4n/hgt6f8LBRAFgX95hB+f3AcWkKb6m+RF43Oyk=; b=TLWVUXHKPd1AoR59HKrXVq1MSd
+ SbvEUuBhu6gGGOYbE9HKaeOrwf/ycbv0PDPTMlphHA4Dj9zgfRqMoWADMOY0MtPnd0mAn9Seqr1y2
+ VSJ0/fK25Kwuxd+wLqdGB3oi79jZAGaRVLFspMw13V7pyCPZqbAqVtn4lbI9QXT8xt7c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0DIs1Q4XlWRxX+wkfuf4qsi6K6EUqBjlUF/NpVuCoBI=; b=S54/oejh7zN2oevoCesAGl0SX1
- jp4U3n6AmLuH/m+Y7YT3se6NaMK81fMAchv4ot7gaWse07G3vg6Cbt/D3aIIsuY3fRpuPG/iXPUQF
- nqcrs6obLSHF3VvlTm75l3WRV/1XXpvZFt5AlL+1OKKcUOq6cHhZT1n/dqn039Y7CkZ8=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ bh=iNMG4n/hgt6f8LBRAFgX95hB+f3AcWkKb6m+RF43Oyk=; b=fhAJnLTCg8Gh8YWP2URRjeM1Hk
+ lX0DoT/CIrvHiGNHomnvbaTLaYSXhyr93Q8PQNWD8FOsaaNXj9Mne0VvM775nq1pgkEQh8kOCCkOO
+ arm0QyWDwqAtFFV4uoBhKm28G5DWSmIy+LihIWZLubQF4Q7Byg5rxpGmJ7v8HTYX7wvQ=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uZZF6-00013y-TD for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 09 Jul 2025 18:10:05 +0000
+ id 1uZZFA-00014v-Is for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 09 Jul 2025 18:10:09 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 4AE88A548C2;
- Wed,  9 Jul 2025 18:09:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7E1EC4CEF4;
- Wed,  9 Jul 2025 18:09:53 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 4DAD942B8A
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed,  9 Jul 2025 18:09:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32985C4CEEF;
+ Wed,  9 Jul 2025 18:09:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1752084593;
- bh=deWznCu+qIVvHco4q82pWqu7tD2dtpJCvTArIsFwwoo=;
+ s=k20201202; t=1752084598;
+ bh=PKgtzgcV/ujkOAVJ93cjdK7VUxmhwe/fYDKEX/qBY2c=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=pcg89k/5aI50z22ZC0VOG+RaCBBRuG0I2Rxs0OESF+As77JBKssJToQQvS/UpzHuV
- wj00tFkwiG6JcbRm0hlzPIASIOzpyIGa3PHs43Vv+/l4egALWvnHvOkam2jbemkZAU
- mxk2u9qQzqMwtcyGhB+N2n+F0d4A332lXpQPgnAx97dTOw4ueVGP4TikyjwXZ/lMBN
- dfJQ3/gnxp2IorXT941oMpQyPod9pwWptUl5eXyF5xlvgOauilLqFnJOyr4snZncJw
- Vw9U1jVzELHWNTmPFovgBl0fIclSHSRoUBG5y4uDTFxqKvRks8D/2DkHqb4ZTidapc
- WpCMqN9s9ikfg==
+ b=Ez9WwemlwXgWPpRJYi6waK0cw98qZ/rZP7chh0KdElvol6VTRL3N3HrJdBwdrOd7j
+ MvYoU7gNE/zB4yNDyvQUTcmFfNKqD5MNcFV2ZzEPd6mgJGPZqDFkwj+prt1WsotMGU
+ cT6IZD5OeMuRSR+gRJeJI55PBszo8SgoapsMwKROHnnr2AGUAP3ainhrJpTEyL+ycX
+ r7UBaVRCOV5fOE3l7yC+BEVljJ5UrsTpV7kTbSNhuLBqmV2CRMX4ssMH0rF5mOecnc
+ COtBhqTBWHMjdbp2wRt46eTyyWEKfkkNNn3TK8nK+gPq8J0FMdGgO4EH+Bx+k859Ig
+ 2TEvNTTYn27qA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- AE363380DBEE; Wed,  9 Jul 2025 18:10:17 +0000 (UTC)
+ EAF6C380DBEE; Wed,  9 Jul 2025 18:10:21 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <175208461625.806926.1915540263699572760.git-patchwork-notify@kernel.org>
-Date: Wed, 09 Jul 2025 18:10:16 +0000
-References: <20250617174047.1511951-1-s.prabhu@samsung.com>
-In-Reply-To: <20250617174047.1511951-1-s.prabhu@samsung.com>
-To: Swarna Prabhu <sw.prabhu6@gmail.com>
-X-Headers-End: 1uZZF6-00013y-TD
-Subject: Re: [f2fs-dev] [PATCH] f2fs: Fix the typos in comments
+Message-Id: <175208462050.806926.15984243723421568237.git-patchwork-notify@kernel.org>
+Date: Wed, 09 Jul 2025 18:10:20 +0000
+References: <20250630160839.1142073-1-jaegeuk@kernel.org>
+In-Reply-To: <20250630160839.1142073-1-jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+X-Headers-End: 1uZZFA-00014v-Is
+Subject: Re: [f2fs-dev] [PATCH] f2fs: check the generic conditions first
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,8 +90,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- mcgrof@kernel.org, s.prabhu@samsung.com, jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -100,19 +100,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 17 Jun 2025 17:40:47 +0000 you wrote:
-> This patch fixes minor typos in comments in f2fs.
+On Mon, 30 Jun 2025 16:08:38 +0000 you wrote:
+> Let's return errors caught by the generic checks. This fixes generic/494 where
+> it expects to see EBUSY by setattr_prepare instead of EINVAL by f2fs for active
+> swapfile.
 > 
-> Signed-off-by: Swarna Prabhu <s.prabhu@samsung.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  fs/f2fs/f2fs.h  | 6 +++---
->  fs/f2fs/node.h  | 2 +-
->  fs/f2fs/super.c | 2 +-
->  3 files changed, 5 insertions(+), 5 deletions(-)
+>  fs/f2fs/file.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: Fix the typos in comments
-    https://git.kernel.org/jaegeuk/f2fs/c/1f136890263c
+  - [f2fs-dev] f2fs: check the generic conditions first
+    https://git.kernel.org/jaegeuk/f2fs/c/e23ab8028de0
 
 You are awesome, thank you!
 -- 
