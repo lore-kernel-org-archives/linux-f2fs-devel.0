@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8536CC83F17
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Jul 2025 14:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 25D56C83F1B
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Jul 2025 15:16:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=fyUOGmdyoiY7C1oaH2KbPn/uzrbGYVEmmTwDNP2KYFQ=; b=R8ngtrmYjPaiwUfLEZoVcAd//i
-	PAwOX0fECikboeIQbtqm76eHBAmt+bda/3Vt2fo/FsaTVD91xRmz18zpmeLjNRWIT8fnrqx5kSifV
-	VdymSywd8LXYccczT+VRE5HYnN1pT9T8RiXiObkZQe2lp7inNtIz3FR2pq6oTtsMGJS8=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=oyHzHyBxekFhcrunfYUuKSLLMFc0zZZZbKNdYAU4yrQ=; b=d4pXAodhVcs55Ad7j3URSA6KZp
+	S2VMgHXYrZAoPHGcXj8HZ3Bp2U66hf+jewSe8HcK69cT4kqoffmd9X+zEBhz/i/um0IwAciW1X2P3
+	2xubTHbFNjvrcPc+ZnYgPpEjMA8+KnONGMlk4DlJUSPkeLI0BmUtbmJN5KnI9fRp6DUw=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uZsEa-0005sZ-JG;
-	Thu, 10 Jul 2025 14:26:48 +0000
+	id 1uZt0j-0006wY-M0;
+	Thu, 10 Jul 2025 15:16:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1uZsEZ-0005sR-2V
+ (envelope-from <willy@infradead.org>) id 1uZt0g-0006wO-D6
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 10 Jul 2025 14:26:47 +0000
+ Thu, 10 Jul 2025 15:16:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0XXQ0CyvwzUphx5QxTNvf//JvGRg/TNzMExJiYovkYA=; b=aepi2VRysWsmwzgnTJiY6gBYcX
- ajVVShB/yPomxoNuBNCUc9B/XwkR8g/tTnJGExgczN+8NkOWs7HhC/pnYgSeUnfxc9BXdP93ZCCKQ
- vAWt+5x4BlcXg7JF6445A6sINXTS6RzTkwV2KVSsrMAi+yYxCHuqbSIghwxLgIhS6dvM=;
+ bh=dCyye3w36JnUFiPIq95/oWrAw2cPUnmqpcC331RPtaI=; b=evNyqNxooPN6v9icj7eyjc7mYF
+ hsbPw6JOEcp/E90vijuQ+xt8x5NBxlpJHtVqmawsaz5tfIHMMPqbOKqlf3NQXSQbydswQxjH2oNpY
+ 6wJa0mCuViTzh8DpJQPWqLbjThEKSdqXsN74juyAJwLm2FNJbIvOx0lb/IjcOuLj+64w=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,38 +42,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=0XXQ0CyvwzUphx5QxTNvf//JvGRg/TNzMExJiYovkYA=; b=KkT+0PLhrkTHH+DweiqhmphN3f
- cSJRMmBqT3RcKNQaehX/VndNbEzpqWZegc6KfeThhlVD1RFUmHdJYDDqvVEbXp6PaPUreao+Y6OI+
- Z4sDMEhLejqdZ4dg8JWIs2Syh3UkLYVl/HCactYC5f90eDKSOwYQSjM54IklKIdIhp9s=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=dCyye3w36JnUFiPIq95/oWrAw2cPUnmqpcC331RPtaI=; b=P6ElXu7ZD/v54s34Eafe/6dmRI
+ bev7PIteSYKSo34jsVmmNgE3gTDqSGNO+CCeR38NJEvD8H3/Ycv85xRuTAvqmj9aZnwsVhT2adWQa
+ X7gaXECHctQ7fA8gSisdOExnYWuLyGWmeIYSSGGS4kNNPHMuD4ggNrx4Ryof7CikIaJo=;
+Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uZsEX-0000HT-ST for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 10 Jul 2025 14:26:47 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 7C1905C4C9F;
- Thu, 10 Jul 2025 14:26:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF374C4CEE3;
- Thu, 10 Jul 2025 14:26:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1752157600;
- bh=y7y/n/lbP5p1Mhyo9ICE4LSsULATO697OeoGKbocUjw=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=Lsuph2be6bg2CFbf17Rfua5VksJBwoAzCeLeQ1M+JRZHzOGlYLjNUcL2DuORoCAdU
- Xw0SVuenvn865tAx4xupjM282/sd8HiyWbG5mViQbmtjgSpm+vC85LZfbMYsVyYIG8
- 3EwrFdDlakeamY21LaV+8/MxeR6vnBLhWoxDE0c7K7sgG4lXZFn/6HHSsiH6l9XrcS
- sius+4vVDqlRFtiknj2wJSG6MR0Tqttot7pJOg8zvxc3rzhaR0Jt5gJiyjZP1m0mLC
- mEMWSRK1DGf98OYRVqXDPY4dL8cbn+9gcAbKJfz5WwLJaDNYZBaRIOpCeZGkRxReHw
- nfvicmcvcrCaA==
-Date: Thu, 10 Jul 2025 14:26:38 +0000
-To: Matthew Wilcox <willy@infradead.org>
-Message-ID: <aG_NntbzliX0WUGB@google.com>
+ id 1uZt0g-0002f8-37 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 10 Jul 2025 15:16:30 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=dCyye3w36JnUFiPIq95/oWrAw2cPUnmqpcC331RPtaI=; b=bKn1V6oq8IRD2nhci8CIPiHFMX
+ G11Y0urNFT3GBPLjgs0IEKnFVv2GNn0v39ayvH371pC3fRAR/9cUFvJkg5+bpXFWcJrGjcfS9R3zU
+ jcBrQPxgBtnPImqTQAZUqgq3rZHeZWA310FXAJPTlq2qdyibN9RSHPxZl97QXsi0pO8oIMlXx43B0
+ XCOT5O+dEvMMJ9j0pN5vl6TTslHLLFG+r0cpvJzyptrXhlFDZXo7HJqr7QwTuXFD/B0afnknpVmQi
+ tdQzAM41NyNzncADRjh/PUGMjdmaEdXr0XqF0ubiXPUWtYVQpRb2lEVp0OXYIlY4DqPMPGhqVL2r8
+ haf4u0UA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red
+ Hat Linux)) id 1uZt0T-00000009N9c-1d6B;
+ Thu, 10 Jul 2025 15:16:17 +0000
+Date: Thu, 10 Jul 2025 16:16:17 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Message-ID: <aG_ZQYONhf9UQJDq@casper.infradead.org>
 References: <202507101412.50ND2WEX-lkp@intel.com>
  <aG_Gr8NvCiXC4SyU@casper.infradead.org>
+ <aG_NntbzliX0WUGB@google.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <aG_Gr8NvCiXC4SyU@casper.infradead.org>
-X-Headers-End: 1uZsEX-0000HT-ST
+In-Reply-To: <aG_NntbzliX0WUGB@google.com>
+X-Headers-End: 1uZt0g-0002f8-37
 Subject: Re: [f2fs-dev] [jaegeuk-f2fs:dev-test 65/93] fs/f2fs/data.c:58:56:
  error: passing 'const struct folio *' to parameter of type 'struct folio *'
  discards qualifiers
@@ -88,52 +88,38 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: llvm@lists.linux.dev, linux-f2fs-devel@lists.sourceforge.net,
  kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 07/10, Matthew Wilcox wrote:
-> On Thu, Jul 10, 2025 at 03:17:28PM +0800, kernel test robot wrote:
-> > >> fs/f2fs/data.c:58:56: error: passing 'const struct folio *' to parameter of type 'struct folio *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-> >       58 |                 return folio_test_f2fs_gcing(fscrypt_pagecache_folio(folio));
-> >          |                                                                      ^~~~~
-> >    include/linux/fscrypt.h:527:67: note: passing argument to parameter 'bounce_folio' here
-> >      527 | static inline struct folio *fscrypt_pagecache_folio(struct folio *bounce_folio)
+On Thu, Jul 10, 2025 at 02:26:38PM +0000, Jaegeuk Kim wrote:
+> On 07/10, Matthew Wilcox wrote:
+> > On Thu, Jul 10, 2025 at 03:17:28PM +0800, kernel test robot wrote:
+> > > >> fs/f2fs/data.c:58:56: error: passing 'const struct folio *' to parameter of type 'struct folio *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+> > >       58 |                 return folio_test_f2fs_gcing(fscrypt_pagecache_folio(folio));
+> > >          |                                                                      ^~~~~
+> > >    include/linux/fscrypt.h:527:67: note: passing argument to parameter 'bounce_folio' here
+> > >      527 | static inline struct folio *fscrypt_pagecache_folio(struct folio *bounce_folio)
+> > 
+> > Ah; I changed only one of the definitions of fscrypt_pagecache_folio.
+> > 
+> > Jaegeuk, can you fold in this fix?
 > 
-> Ah; I changed only one of the definitions of fscrypt_pagecache_folio.
+> Will this break ext4?
 > 
-> Jaegeuk, can you fold in this fix?
-
-Will this break ext4?
-
-In ext4,
-		struct folio *folio = fi.folio;
-		...
-
-		if (fscrypt_is_bounce_folio(folio)) {
-			io_folio = folio;
-			folio = fscrypt_pagecache_folio(folio);
-		}
-
+> In ext4,
+> 		struct folio *folio = fi.folio;
+> 		...
 > 
-> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-> index b334c0538864..8d9127a0fdb3 100644
-> --- a/include/linux/fscrypt.h
-> +++ b/include/linux/fscrypt.h
-> @@ -524,7 +524,8 @@ static inline bool fscrypt_is_bounce_folio(const struct folio *folio)
->  	return false;
->  }
->  
-> -static inline struct folio *fscrypt_pagecache_folio(struct folio *bounce_folio)
-> +static inline
-> +struct folio *fscrypt_pagecache_folio(const struct folio *bounce_folio)
->  {
->  	WARN_ON_ONCE(1);
->  	return ERR_PTR(-EINVAL);
+> 		if (fscrypt_is_bounce_folio(folio)) {
+> 			io_folio = folio;
+> 			folio = fscrypt_pagecache_folio(folio);
+> 		}
+
+No, you can pass a mutable folio to a function which takes a const
+folio.  Just not the other way around.
 
 
 _______________________________________________
