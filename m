@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 59F6FC83F17
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Jul 2025 12:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1391BC83F22
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Jul 2025 12:16:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=8HTPNUuHs+LhVZHIBqRWQSR0ojrHDwLmzarG23aN++8=; b=kgcZzwC1Mh4fCeEgUnkiQX9nm5
-	41Bffby2Mmb7qUM9eybGgWe3+L78leTh8NiyARQsRzQk7DP6VDFsfTxBcLcQ3T3rKYQio0zseF10k
-	8TXk760AXVCriaz4fl0jiI1MjbDEnHUUmgLIX1Osx52FNCtF3Xreb1omcs40cdD8acKk=;
+	bh=u+j8neTxatRvf8vALC82JMx84kWxTB4iHnLGZdzTpA4=; b=aEdi7x5uz3zi6wVXntZDeg5QlD
+	aMb04y00wTkIbsVMKtIQduhSrsES0dGyOqRi8pYMAM85TjIVglh0szrcEb+MH/E1hF3MAHmtn9j0b
+	IG86vVX5WneOLSAXLOZcTnM0wWSLCPr6R3ziKI+jJh9vkjdLnc1h/GFDMPYZ+77018xw=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uZqC0-0002sM-1N;
-	Thu, 10 Jul 2025 12:16:00 +0000
+	id 1uZqC2-0002t3-J6;
+	Thu, 10 Jul 2025 12:16:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lihongbo22@huawei.com>) id 1uZqBy-0002sG-Nv
+ (envelope-from <lihongbo22@huawei.com>) id 1uZqC1-0002sd-4Z
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 10 Jul 2025 12:15:58 +0000
+ Thu, 10 Jul 2025 12:16:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
  :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=J9yeO2hM8bCHufjPgQ9OIf/XFBHkk+PKAoPxxLJ9MAo=; b=cme3ae4AYUiVo+1dmL8knNalEc
- nsCYwCWXCyc3i8N+Id3MnQGMYnjnf2tMjofIeCjDQ/aJTwmDNEcY0OdC0CmHOUO88SJaw6nP7ItJ6
- 1Tpvr3cPyKFqyfzfk4ud7LQ4Byr6tvu1MEAAT/lLuLHIG2SJRs8pkFQxOTI48AlkbR+g=;
+ bh=LhqhUWdRpsNrRbDvtARHTq6+8v5yTAZlQIn2wtLuZHs=; b=dHJle3cZj95OEq4HVqgU7+A4Nm
+ AgMExM0AesbgtfiS0MhOPnUu7ao6FB4aPYSAv4GgtPMECiShgQ52hjQETeQ+JM3hY32LV42AwwZkU
+ 8zYCDZf86HcxJ2WpuMf6rj5tF3ZMpPRVjYNzp9dqI+H7H/8UnBcwbVNEhaFZhpGCyn1A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -42,27 +42,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=J9yeO2hM8bCHufjPgQ9OIf/XFBHkk+PKAoPxxLJ9MAo=; b=F7bC8Nd1lXJobRbp9f4K31iRnN
- bA1YZAKno347Z7YRxktGcxbf0zpckWc/hekJbCkK9YROtTbXpwkW968/xMrfMCfVcTJO8vpo1X3Yu
- CYF/hf9FsqxOhbcrOmNxlRtoKj1bgdR2LOtJDpsTr/nq/WVukdL/603MgUp6cl18sGMI=;
-Received: from szxga02-in.huawei.com ([45.249.212.188])
+ bh=LhqhUWdRpsNrRbDvtARHTq6+8v5yTAZlQIn2wtLuZHs=; b=CQLYoBoMdmVBIhI8HYzBv4NAKJ
+ TrT9Hdtp83V2fKFk3iC003Y/+jq9Z9bP0fK1rosi8FLJmWqGlkE066/6e/pcCfBVyuDEEL7jLkdC1
+ 6FDS72cYi98AYmq/Yg4aJ9R658YRWwEgcAZCQBOs7FbmD0HvIfn/5NzHdsXo2verV2kI=;
+Received: from szxga04-in.huawei.com ([45.249.212.190])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uZqBw-00020a-Qw for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 10 Jul 2025 12:15:58 +0000
-Received: from mail.maildlp.com (unknown [172.19.163.174])
- by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bdDGG0P33zXf7w;
- Thu, 10 Jul 2025 20:11:18 +0800 (CST)
+ id 1uZqBz-00020M-CV for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 10 Jul 2025 12:16:01 +0000
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bdDGj0p18z2CdlK;
+ Thu, 10 Jul 2025 20:11:41 +0800 (CST)
 Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id 526A11401F4;
- Thu, 10 Jul 2025 20:15:44 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 6FB5F1402C4;
+ Thu, 10 Jul 2025 20:15:45 +0800 (CST)
 Received: from huawei.com (10.67.174.162) by kwepemo500009.china.huawei.com
  (7.202.194.199) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Jul
- 2025 20:15:43 +0800
+ 2025 20:15:44 +0800
 To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Thu, 10 Jul 2025 12:14:11 +0000
-Message-ID: <20250710121415.628398-4-lihongbo22@huawei.com>
+Date: Thu, 10 Jul 2025 12:14:14 +0000
+Message-ID: <20250710121415.628398-7-lihongbo22@huawei.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20250710121415.628398-1-lihongbo22@huawei.com>
 References: <20250710121415.628398-1-lihongbo22@huawei.com>
@@ -70,8 +70,9 @@ MIME-Version: 1.0
 X-Originating-IP: [10.67.174.162]
 X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
  kwepemo500009.china.huawei.com (7.202.194.199)
-X-Headers-End: 1uZqBw-00020a-Qw
-Subject: [f2fs-dev] [PATCH v5 3/7] f2fs: Allow sbi to be NULL in f2fs_printk
+X-Headers-End: 1uZqBz-00020M-CV
+Subject: [f2fs-dev] [PATCH v5 6/7] f2fs: introduce fs_context_operation
+ structure
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,345 +92,50 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-At the parsing phase of the new mount api, sbi will not be
-available. So here allows sbi to be NULL in f2fs log helpers
-and use that in handle_mount_opt().
+The handle_mount_opt() helper is used to parse mount parameters,
+and so we can rename this function to f2fs_parse_param() and set
+it as .param_param in fs_context_operations.
 
 Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
 [sandeen: forward port]
 Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 ---
- fs/f2fs/super.c | 90 +++++++++++++++++++++++++++----------------------
- 1 file changed, 49 insertions(+), 41 deletions(-)
+ fs/f2fs/super.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index fddd33b1118c..4f0cd790a24e 100644
+index e0c64b33d254..17786d79cedd 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -325,11 +325,19 @@ void f2fs_printk(struct f2fs_sb_info *sbi, bool limit_rate,
- 	vaf.fmt = printk_skip_level(fmt);
- 	vaf.va = &args;
- 	if (limit_rate)
--		printk_ratelimited("%c%cF2FS-fs (%s): %pV\n",
--			KERN_SOH_ASCII, level, sbi->sb->s_id, &vaf);
-+		if (sbi)
-+			printk_ratelimited("%c%cF2FS-fs (%s): %pV\n",
-+				KERN_SOH_ASCII, level, sbi->sb->s_id, &vaf);
-+		else
-+			printk_ratelimited("%c%cF2FS-fs: %pV\n",
-+				KERN_SOH_ASCII, level, &vaf);
- 	else
--		printk("%c%cF2FS-fs (%s): %pV\n",
--			KERN_SOH_ASCII, level, sbi->sb->s_id, &vaf);
-+		if (sbi)
-+			printk("%c%cF2FS-fs (%s): %pV\n",
-+				KERN_SOH_ASCII, level, sbi->sb->s_id, &vaf);
-+		else
-+			printk("%c%cF2FS-fs: %pV\n",
-+				KERN_SOH_ASCII, level, &vaf);
+@@ -700,7 +700,7 @@ static int f2fs_set_zstd_level(struct f2fs_fs_context *ctx, const char *str)
+ #endif
+ #endif
  
- 	va_end(args);
+-static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
++static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ {
+ 	struct f2fs_fs_context *ctx = fc->fs_private;
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+@@ -1171,7 +1171,7 @@ static int parse_options(struct fs_context *fc, char *options)
+ 			param.key = key;
+ 			param.size = v_len;
+ 
+-			ret = handle_mount_opt(fc, &param);
++			ret = f2fs_parse_param(fc, &param);
+ 			kfree(param.string);
+ 			if (ret < 0)
+ 				return ret;
+@@ -5352,6 +5352,10 @@ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
+ 	return mount_bdev(fs_type, flags, dev_name, data, f2fs_fill_super);
  }
-@@ -739,13 +747,13 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 	case Opt_discard:
- 		if (result.negated) {
- 			if (f2fs_hw_should_discard(sbi)) {
--				f2fs_warn(sbi, "discard is required for zoned block devices");
-+				f2fs_warn(NULL, "discard is required for zoned block devices");
- 				return -EINVAL;
- 			}
- 			clear_opt(sbi, DISCARD);
- 		} else {
- 			if (!f2fs_hw_support_discard(sbi)) {
--				f2fs_warn(sbi, "device does not support discard");
-+				f2fs_warn(NULL, "device does not support discard");
- 				break;
- 			}
- 			set_opt(sbi, DISCARD);
-@@ -753,7 +761,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		break;
- 	case Opt_noheap:
- 	case Opt_heap:
--		f2fs_warn(sbi, "heap/no_heap options were deprecated");
-+		f2fs_warn(NULL, "heap/no_heap options were deprecated");
- 		break;
- #ifdef CONFIG_F2FS_FS_XATTR
- 	case Opt_user_xattr:
-@@ -776,7 +784,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 	case Opt_user_xattr:
- 	case Opt_inline_xattr:
- 	case Opt_inline_xattr_size:
--		f2fs_info(sbi, "%s options not supported", param->key);
-+		f2fs_info(NULL, "%s options not supported", param->key);
- 		break;
- #endif
- #ifdef CONFIG_F2FS_FS_POSIX_ACL
-@@ -788,7 +796,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		break;
- #else
- 	case Opt_acl:
--		f2fs_info(sbi, "%s options not supported", param->key);
-+		f2fs_info(NULL, "%s options not supported", param->key);
- 		break;
- #endif
- 	case Opt_active_logs:
-@@ -842,7 +850,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		break;
- 	case Opt_reserve_root:
- 		if (test_opt(sbi, RESERVE_ROOT)) {
--			f2fs_info(sbi, "Preserve previous reserve_root=%u",
-+			f2fs_info(NULL, "Preserve previous reserve_root=%u",
- 				  F2FS_OPTION(sbi).root_reserved_blocks);
- 		} else {
- 			F2FS_OPTION(sbi).root_reserved_blocks = result.int_32;
-@@ -873,7 +881,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- #else
- 	case Opt_fault_injection:
- 	case Opt_fault_type:
--		f2fs_info(sbi, "%s options not supported", param->key);
-+		f2fs_info(NULL, "%s options not supported", param->key);
- 		break;
- #endif
- 	case Opt_lazytime:
-@@ -936,7 +944,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 	case Opt_usrjquota:
- 	case Opt_grpjquota:
- 	case Opt_prjjquota:
--		f2fs_info(sbi, "quota operations not supported");
-+		f2fs_info(NULL, "quota operations not supported");
- 		break;
- #endif
- 	case Opt_alloc:
-@@ -954,7 +962,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- #ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
- 		set_opt(sbi, INLINECRYPT);
- #else
--		f2fs_info(sbi, "inline encryption not supported");
-+		f2fs_info(NULL, "inline encryption not supported");
- #endif
- 		break;
- 	case Opt_checkpoint:
-@@ -1001,7 +1009,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	case Opt_compress_algorithm:
- 		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(sbi, "Image doesn't support compression");
-+			f2fs_info(NULL, "Image doesn't support compression");
- 			break;
- 		}
- 		name = param->string;
-@@ -1010,7 +1018,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 			F2FS_OPTION(sbi).compress_level = 0;
- 			F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZO;
- #else
--			f2fs_info(sbi, "kernel doesn't support lzo compression");
-+			f2fs_info(NULL, "kernel doesn't support lzo compression");
- #endif
- 		} else if (!strncmp(name, "lz4", 3)) {
- #ifdef CONFIG_F2FS_FS_LZ4
-@@ -1019,7 +1027,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 				return -EINVAL;
- 			F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZ4;
- #else
--			f2fs_info(sbi, "kernel doesn't support lz4 compression");
-+			f2fs_info(NULL, "kernel doesn't support lz4 compression");
- #endif
- 		} else if (!strncmp(name, "zstd", 4)) {
- #ifdef CONFIG_F2FS_FS_ZSTD
-@@ -1028,26 +1036,26 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 				return -EINVAL;
- 			F2FS_OPTION(sbi).compress_algorithm = COMPRESS_ZSTD;
- #else
--			f2fs_info(sbi, "kernel doesn't support zstd compression");
-+			f2fs_info(NULL, "kernel doesn't support zstd compression");
- #endif
- 		} else if (!strcmp(name, "lzo-rle")) {
- #ifdef CONFIG_F2FS_FS_LZORLE
- 			F2FS_OPTION(sbi).compress_level = 0;
- 			F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZORLE;
- #else
--			f2fs_info(sbi, "kernel doesn't support lzorle compression");
-+			f2fs_info(NULL, "kernel doesn't support lzorle compression");
- #endif
- 		} else
- 			return -EINVAL;
- 		break;
- 	case Opt_compress_log_size:
- 		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(sbi, "Image doesn't support compression");
-+			f2fs_info(NULL, "Image doesn't support compression");
- 			break;
- 		}
- 		if (result.uint_32 < MIN_COMPRESS_LOG_SIZE ||
- 		    result.uint_32 > MAX_COMPRESS_LOG_SIZE) {
--			f2fs_err(sbi,
-+			f2fs_err(NULL,
- 				"Compress cluster log size is out of range");
- 			return -EINVAL;
- 		}
-@@ -1055,7 +1063,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		break;
- 	case Opt_compress_extension:
- 		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(sbi, "Image doesn't support compression");
-+			f2fs_info(NULL, "Image doesn't support compression");
- 			break;
- 		}
- 		name = param->string;
-@@ -1064,7 +1072,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
  
- 		if (strlen(name) >= F2FS_EXTENSION_LEN ||
- 		    ext_cnt >= COMPRESS_EXT_NUM) {
--			f2fs_err(sbi, "invalid extension length/number");
-+			f2fs_err(NULL, "invalid extension length/number");
- 			return -EINVAL;
- 		}
- 
-@@ -1078,7 +1086,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		break;
- 	case Opt_nocompress_extension:
- 		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(sbi, "Image doesn't support compression");
-+			f2fs_info(NULL, "Image doesn't support compression");
- 			break;
- 		}
- 		name = param->string;
-@@ -1087,7 +1095,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 
- 		if (strlen(name) >= F2FS_EXTENSION_LEN ||
- 			noext_cnt >= COMPRESS_EXT_NUM) {
--			f2fs_err(sbi, "invalid extension length/number");
-+			f2fs_err(NULL, "invalid extension length/number");
- 			return -EINVAL;
- 		}
- 
-@@ -1101,21 +1109,21 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 		break;
- 	case Opt_compress_chksum:
- 		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(sbi, "Image doesn't support compression");
-+			f2fs_info(NULL, "Image doesn't support compression");
- 			break;
- 		}
- 		F2FS_OPTION(sbi).compress_chksum = true;
- 		break;
- 	case Opt_compress_mode:
- 		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(sbi, "Image doesn't support compression");
-+			f2fs_info(NULL, "Image doesn't support compression");
- 			break;
- 		}
- 		F2FS_OPTION(sbi).compress_mode = result.uint_32;
- 		break;
- 	case Opt_compress_cache:
- 		if (!f2fs_sb_has_compression(sbi)) {
--			f2fs_info(sbi, "Image doesn't support compression");
-+			f2fs_info(NULL, "Image doesn't support compression");
- 			break;
- 		}
- 		set_opt(sbi, COMPRESS_CACHE);
-@@ -1128,7 +1136,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
- 	case Opt_compress_chksum:
- 	case Opt_compress_mode:
- 	case Opt_compress_cache:
--		f2fs_info(sbi, "compression options not supported");
-+		f2fs_info(NULL, "compression options not supported");
- 		break;
- #endif
- 	case Opt_atgc:
-@@ -1213,17 +1221,17 @@ static int f2fs_validate_options(struct f2fs_sb_info *sbi)
- 		return -EINVAL;
- #else
- 	if (f2fs_sb_has_quota_ino(sbi) && !f2fs_readonly(sbi->sb)) {
--		f2fs_info(sbi, "Filesystem with quota feature cannot be mounted RDWR without CONFIG_QUOTA");
-+		f2fs_info(NULL, "Filesystem with quota feature cannot be mounted RDWR without CONFIG_QUOTA");
- 		return -EINVAL;
- 	}
- 	if (f2fs_sb_has_project_quota(sbi) && !f2fs_readonly(sbi->sb)) {
--		f2fs_err(sbi, "Filesystem with project quota feature cannot be mounted RDWR without CONFIG_QUOTA");
-+		f2fs_err(NULL, "Filesystem with project quota feature cannot be mounted RDWR without CONFIG_QUOTA");
- 		return -EINVAL;
- 	}
- #endif
- 
- 	if (!IS_ENABLED(CONFIG_UNICODE) && f2fs_sb_has_casefold(sbi)) {
--		f2fs_err(sbi,
-+		f2fs_err(NULL,
- 			"Filesystem with casefold feature cannot be mounted without CONFIG_UNICODE");
- 		return -EINVAL;
- 	}
-@@ -1237,24 +1245,24 @@ static int f2fs_validate_options(struct f2fs_sb_info *sbi)
- #ifdef CONFIG_BLK_DEV_ZONED
- 		if (F2FS_OPTION(sbi).discard_unit !=
- 						DISCARD_UNIT_SECTION) {
--			f2fs_info(sbi, "Zoned block device doesn't need small discard, set discard_unit=section by default");
-+			f2fs_info(NULL, "Zoned block device doesn't need small discard, set discard_unit=section by default");
- 			F2FS_OPTION(sbi).discard_unit =
- 					DISCARD_UNIT_SECTION;
- 		}
- 
- 		if (F2FS_OPTION(sbi).fs_mode != FS_MODE_LFS) {
--			f2fs_info(sbi, "Only lfs mode is allowed with zoned block device feature");
-+			f2fs_info(NULL, "Only lfs mode is allowed with zoned block device feature");
- 			return -EINVAL;
- 		}
- #else
--		f2fs_err(sbi, "Zoned block device support is not enabled");
-+		f2fs_err(NULL, "Zoned block device support is not enabled");
- 		return -EINVAL;
- #endif
- 	}
- 
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	if (f2fs_test_compress_extension(sbi)) {
--		f2fs_err(sbi, "invalid compress or nocompress extension");
-+		f2fs_err(NULL, "invalid compress or nocompress extension");
- 		return -EINVAL;
- 	}
- #endif
-@@ -1264,11 +1272,11 @@ static int f2fs_validate_options(struct f2fs_sb_info *sbi)
- 
- 		if (!f2fs_sb_has_extra_attr(sbi) ||
- 			!f2fs_sb_has_flexible_inline_xattr(sbi)) {
--			f2fs_err(sbi, "extra_attr or flexible_inline_xattr feature is off");
-+			f2fs_err(NULL, "extra_attr or flexible_inline_xattr feature is off");
- 			return -EINVAL;
- 		}
- 		if (!test_opt(sbi, INLINE_XATTR)) {
--			f2fs_err(sbi, "inline_xattr_size option should be set with inline_xattr option");
-+			f2fs_err(NULL, "inline_xattr_size option should be set with inline_xattr option");
- 			return -EINVAL;
- 		}
- 
-@@ -1277,24 +1285,24 @@ static int f2fs_validate_options(struct f2fs_sb_info *sbi)
- 
- 		if (F2FS_OPTION(sbi).inline_xattr_size < min_size ||
- 				F2FS_OPTION(sbi).inline_xattr_size > max_size) {
--			f2fs_err(sbi, "inline xattr size is out of range: %d ~ %d",
-+			f2fs_err(NULL, "inline xattr size is out of range: %d ~ %d",
- 				 min_size, max_size);
- 			return -EINVAL;
- 		}
- 	}
- 
- 	if (test_opt(sbi, ATGC) && f2fs_lfs_mode(sbi)) {
--		f2fs_err(sbi, "LFS is not compatible with ATGC");
-+		f2fs_err(NULL, "LFS is not compatible with ATGC");
- 		return -EINVAL;
- 	}
- 
- 	if (f2fs_is_readonly(sbi) && test_opt(sbi, FLUSH_MERGE)) {
--		f2fs_err(sbi, "FLUSH_MERGE not compatible with readonly mode");
-+		f2fs_err(NULL, "FLUSH_MERGE not compatible with readonly mode");
- 		return -EINVAL;
- 	}
- 
- 	if (f2fs_sb_has_readonly(sbi) && !f2fs_readonly(sbi->sb)) {
--		f2fs_err(sbi, "Allow to mount readonly mode only");
-+		f2fs_err(NULL, "Allow to mount readonly mode only");
- 		return -EROFS;
- 	}
- 
++static const struct fs_context_operations f2fs_context_ops = {
++	.parse_param	= f2fs_parse_param,
++};
++
+ static void kill_f2fs_super(struct super_block *sb)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
 -- 
 2.33.0
 
