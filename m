@@ -4,76 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 13793C83F1A
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 11 Jul 2025 07:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 10B0DC8303C
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 11 Jul 2025 07:46:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=4mNTw3vc9lxVLI7eGtb1jPy7C/fFUqlicHaHID6j2ws=; b=Few+/L57mrvKm7DUIHRPDSch0h
-	QIJsEsVUEmfJIglULWFkb7e67zCo6oKg55je+FO1fSj0ywSv86NQEdXiXxjeCEH/d1dXi5PpfQYOe
-	MwhpX6V+M1o/xhHhypscZFs4TuJYiZEnXhB3mtW/ECzHxjyn5yeuzGO7182sq1QZ79sc=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=PrNLhV7mbAvngldAnXh9TP3V0lHMsTPlHBBGUqOtlsw=; b=UeVWcOhpufEXjweRyizybHzMm6
+	CazHEA5+pw1C6sCgSqmcHkkUwF9gPiVNnRymo44nhj7fydmCJh7tL5seHcrP0ctulJA5ba84Ppy1a
+	FMzhydxuzKqKD6FOurMQgqG9wtgZ7QAka8oons89NUavsP6RraOMmpk0fINCQeY0YKnE=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ua8SR-0001j3-Jw;
-	Fri, 11 Jul 2025 07:46:11 +0000
+	id 1ua8ST-0002HM-39;
+	Fri, 11 Jul 2025 07:46:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1ua8SP-0001iw-Rt
+ (envelope-from <chao@kernel.org>) id 1ua8SQ-0002HD-Ng
  for linux-f2fs-devel@lists.sourceforge.net;
  Fri, 11 Jul 2025 07:46:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3NSNVh/QFYSE6f+ShmYnUo4p5d0aRTuS0cW+PYQiDgw=; b=jmJEzc++sqT+Sjj/bLmNfpm8x3
- K6bjrIDETaGFg51wJzPvzdorgwSbCYeZJwj0pJP7wnKYHuqYIN28clAG/RFuNA9VMbRFwkKBpDfNb
- k6/aIds0r2s61I4amk9dokVgCopImDbS7IeawWUK+MsvlZyg4PW4POVDOoWlOjTaP41g=;
+ bh=GXE1cfd0PhZrlRe83G8MeasbsGDzhTtvlCjV8eTgCKA=; b=a5ScKrLsQ/GrpJAuMTat3KgiVB
+ CYFaWcfWM2e3bFAQyy9+ZaqiakUZ/03bCLbTtcYhZr/ZcCTMhGqXOQQlZOZfPZ24CtwoEFf4IPXKE
+ IewwkMJ5gV8rA19osgH1NeNNgf+TT7y2a3+yOvdGDxETNQG9lwujMXoVoLYB4zFHGtd0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=3NSNVh/QFYSE6f+ShmYnUo4p5d0aRTuS0cW+PYQiDgw=; b=Z
- ezMIBfGErdlb17XTL4gFp3xwV4jQaC4lDhT8umC0v29aIgKfFxz8h9KvMde9RNzuNW9lSgVE4MH+y
- dXuIRDsiJkMTgLCWaUuSk6go7TQYGYor8KPO6xDnuC/IndxkTqwXZppk4yMd4Vox6E77JuUG/HcKa
- 0l2ax8/DTRC4sb+E=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=GXE1cfd0PhZrlRe83G8MeasbsGDzhTtvlCjV8eTgCKA=; b=mh8T5nbR8Vz81plUUTVsG/ex2t
+ ddycnMek5PWlhZsp++AV/713bWAs0tnX8Dml3ceqmCwNowizc5OQ80/DncDPYsNmTf8fISNe+DYCy
+ 0R3+BHlnreTygAPlV9BU+fAv71S57OdtGYtBC5X2t4DyzcgriollqU3RewICBt0OyJuk=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ua8SL-0002WO-Ji for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 11 Jul 2025 07:46:09 +0000
+ id 1ua8SO-0002Wb-2K for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 11 Jul 2025 07:46:10 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id C79896115D
+ by sea.source.kernel.org (Postfix) with ESMTP id A6ED2470A3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 11 Jul 2025 07:45:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FB93C4CEED;
- Fri, 11 Jul 2025 07:45:58 +0000 (UTC)
+ Fri, 11 Jul 2025 07:46:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6D08C4CEF5;
+ Fri, 11 Jul 2025 07:46:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1752219959;
- bh=921vVFRFTboXidfmunKqTGrsbzazjgFSQp95Mq3e5Zk=;
- h=From:To:Cc:Subject:Date:From;
- b=b5QD/kUg8fftP8gNf7GW9gEDiJxQIyGWdJnGqwQv3+lqQi/JaNDgzOFu4wjg43G82
- CVnovMky2mGzyISMVNwrQ4V1bKwRdxEoCUQ3MKZC0BEGQ2qkqw0yesRYxRxJ8lri0O
- /g6ax0xU7JjMbceyK8Fq83v9Fd7Xj4tSGXA9/6R/UOkJj+AIb+gwvpdhwxx3nLVNqd
- 0n1e2FTFHQifi2eMIpXKSXByEhFjGwHiS0S+EJvRoUrFsQvE4feZpkeaaOSoSxOYp0
- BmDdbMbr5ufsHQ3PUOzO9DFpVuMuCkN0qVtr+1fxLsacR/5pAk7rmwJPOU1rTYNSqj
- ZFP/YG6ng/ycQ==
+ s=k20201202; t=1752219962;
+ bh=y6KO6ZnlSWukFCwnxKTjw51LvnPFD65LY2+fhz9Ofww=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=Qek5JIYzfHeb6woVVwYFTN47npBzsGuv/I9JK5ghFVtiI//VYduez0TxgBQywiwyD
+ wSfp9UoQ45uNPkeIg2kN2BDjj6kg8Aj4xrWo37yS1QJZhTM09YQQx7Z/1gUL/cB+8Y
+ 8gaXtDPCopQ3xQtHt6iL0gSyuaxzBfu7wL/1pNQcRmdx/I1eNaxEwKtCYz8uoftymN
+ dVLm67IWsCDpDTJHfE53HLohE8gVhdV9oxpc3eyyW/h+yQ0w+OBpySFSt5AfvVn0AU
+ 7Kv6w68duog5SDlttQjcd7r2y9J+aYfoaSXBT5zhRTRMMf95fnZYrrUcEYkAgsMzV1
+ 9L95orMTxF/zg==
 To: jaegeuk@kernel.org
-Date: Fri, 11 Jul 2025 15:45:49 +0800
-Message-ID: <20250711074551.216069-1-chao@kernel.org>
+Date: Fri, 11 Jul 2025 15:45:51 +0800
+Message-ID: <20250711074551.216069-3-chao@kernel.org>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+In-Reply-To: <20250711074551.216069-1-chao@kernel.org>
+References: <20250711074551.216069-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ua8SL-0002WO-Ji
-Subject: [f2fs-dev] [PATCH 1/3] fsck.f2fs: allow to print more infos before
- assert() in init_sb_info()
+X-Headers-End: 1ua8SO-0002Wb-2K
+Subject: [f2fs-dev] [PATCH 3/3] fsck.f2fs: fix to use strncmp to avoid
+ out-of-boundary access
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,34 +94,38 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-It allows to print more informations once assert() is triggered
-in init_sb_info().
+Otherwise, if length of main device path is equal to MAX_PATH_LEN,
+it will trigger assert() as below:
+
+[ASSERT] (init_sb_info:1264) !strcmp((char *)sb->devs[i].path, (char *)c.devices[i].path)
+
+This is because there is no null character in the end of devcie
+path string, result in out-of-boundary access in devs.path[].
+
+Let's use strncmp instead of strcmp to compare device path to fix
+this issue.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fsck/mount.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ fsck/mount.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/fsck/mount.c b/fsck/mount.c
-index a7f16e7..dbbeb56 100644
+index dbbeb56..a1c4cbb 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -1261,8 +1261,13 @@ int init_sb_info(struct f2fs_sb_info *sbi)
+@@ -1261,8 +1261,9 @@ int init_sb_info(struct f2fs_sb_info *sbi)
  			if (get_device_info(i))
  				ASSERT(0);
  		} else if (c.func != INJECT) {
--			ASSERT(!strcmp((char *)sb->devs[i].path,
--						(char *)c.devices[i].path));
-+			if (strcmp((char *)sb->devs[i].path,
-+					(char *)c.devices[i].path)) {
-+				MSG(0, "paths mismatch: %s, %s\n",
-+					(char *)sb->devs[i].path,
-+					(char *)c.devices[i].path);
-+				ASSERT(0);
-+			}
- 		}
- 
- 		c.devices[i].total_segments =
+-			if (strcmp((char *)sb->devs[i].path,
+-					(char *)c.devices[i].path)) {
++			if (strncmp((char *)sb->devs[i].path,
++					(char *)c.devices[i].path,
++					MAX_PATH_LEN)) {
+ 				MSG(0, "paths mismatch: %s, %s\n",
+ 					(char *)sb->devs[i].path,
+ 					(char *)c.devices[i].path);
 -- 
 2.49.0
 
