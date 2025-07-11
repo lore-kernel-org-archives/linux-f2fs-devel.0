@@ -4,77 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D6480C83F1B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 11 Jul 2025 16:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 10641C83F20
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 11 Jul 2025 16:30:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=vmmC+KoOCg7U5HFilco+9x/OMUfILTT7TsOZmHx0h74=; b=BKbVnWqlnrRaOoxxVlrLQXbHSD
-	DxvyN+23rhKAMDOWTgCc7lGF05Euw06JbrC6WSwqJ4VbiLfuOax/IBlqDcToVzKdnPUnuM5/yC9AB
-	OHwHI7FWS4Abq6exrTESLvJv8m8uk+HJVApCDXEhIfCAy0PDwPIDmY738ZqV6RfNZa18=;
+	bh=anw7P0f0G2zv+YjiWWj0ca2oC+/KXFTwFJ5DIy1cl4w=; b=MKKlyklDv91ALOFJoq0oIXa7sq
+	+byzqffcQ7joNevnHONUyDoY73xZzXMLuqZX2YFd3jqbNSI5PVTZgSDem0vau2GG7TBWgLVD7PHZX
+	sswL7m0d8iJA/QDFko/CDQlhOgc+Zc2XSO82KaK/aBJZ7+wd0wp29cA4gIA5lcfKsY6A=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uaGdN-0004oP-AP;
-	Fri, 11 Jul 2025 16:30:01 +0000
+	id 1uaGdP-0004oq-O0;
+	Fri, 11 Jul 2025 16:30:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uaGdE-0004nS-2l
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uaGdN-0004nh-8e
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 11 Jul 2025 16:29:52 +0000
+ Fri, 11 Jul 2025 16:30:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bPS/mQBWI30tDWyaHAxm/XHazt47t7w+iaPK7KSwr08=; b=j+NKuDe54o28Vlby7r5XtoNs8s
- qflBSeP3QRbKX+y4TtIk+1j3YlofrG40XxXNCkK3lPIIxhpOcckLB+PRSOAyJ8w6ZhQ+duX/n19V0
- E8rL5plfDT+DnaU8nu3FPiGpCmpKueNXQsfGVu+Zxx5n2IfDjYfty/dLQxc8iQlT4sqI=;
+ bh=k0bQL3pDdikn9fszSnn0O4VEzOVXpYjSyjP6MhsxigU=; b=XPxSxoZlvjvS0cnOReKChcUIir
+ jRI+ZHczIBuSztqG1OwQaJwZiCim5FJmkWKflt46liAou7W2tQOOfGfexGrS4+q0lHqDLhqa5VqA+
+ ynGzZmAI2ov+fvQKNPaX0dMWPx0cu1p1SbyQoBlCkUN1TeC8jgQoIitoEOx6JUpzuL4U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bPS/mQBWI30tDWyaHAxm/XHazt47t7w+iaPK7KSwr08=; b=UnkKeTScpV9+xdCGF6s1NJy5TR
- rNIHwZ5zVJ+2E+9Jq3uVSgvh7L47GJjNfPBxvOCG/gI3MVjFYD6W9WkGmOYL3Re4iAqQcH+dAyBJ3
- jkT63v0FVshqm7DTv9PZo7AL/xD9vCr1dCn54syUehHGa4+wJyG2dBQ0jFQsFSvt9oKU=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=k0bQL3pDdikn9fszSnn0O4VEzOVXpYjSyjP6MhsxigU=; b=VxXX3AkV5v4SPjH3RNxdjJ8zen
+ lRFY9buvAKuCXhDYC1xAwM47wvyZ2qBdmFHS2gl1VF5fC6b3nmZDnBScxuQ7UVQPS2O73siqSzevy
+ R2UEqWqjcvllL2/XjfrGFulOAL2YcB3qdsRUN8CAPm3NAWUq6r1hptCPtxXKeO4KT9oA=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uaGdD-0006Tp-Ko for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 11 Jul 2025 16:29:52 +0000
+ id 1uaGdL-0006UT-I6 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 11 Jul 2025 16:29:59 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 3BA625C721E;
- Fri, 11 Jul 2025 16:29:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0415EC4CEED;
- Fri, 11 Jul 2025 16:29:46 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 28D7143F0A;
+ Fri, 11 Jul 2025 16:29:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BB1C4CEEF;
+ Fri, 11 Jul 2025 16:29:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1752251386;
- bh=incKL2zc0l+sFdNc3xEoLvkCgWmIEiVGwblLyaSzneg=;
+ s=k20201202; t=1752251389;
+ bh=2OGQGgPpKvvNdMjGBIOmpAcS0bNRC4IugzOe+tpf3aM=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=kG4kxYHHIISUREQL+FSJUpJQWkjFU51Cg+MHi/9q6CrWSeUOqBQsslL3l4oF8hiGU
- APpE/gmOOg52TAExukNyNEMYtZfMys887+06OmiFk83zoRUzoVlPHU4FC5IMZLi/qB
- HsHHCj75KnCQeKU2FCTiwXprY0VliSZJcR+YJdXyG0D86hKEDNtWQH+Q1qXFgYquGH
- E2YCALtQeiz4cwzw2W5sIUMuqRwUlbAu65N3QdVQuFf7d/l2FsID9ZGjf3bLg09gEe
- rU1MoQsosbi6g0cFRM8ChLhTJ4KacOWl3MqzdNmTDxsfZ5xa01/1wGmvoPGHs8w1jD
- fx4r2k/voYocg==
+ b=TesEnwQGrpHC2OLod6aPqiCZcNw8EHJmjNIYTld6j4TcvWVRRBaIOplawF1kwmfTe
+ dN3Ej7vKYpwMNT3/FduE/QB66bt/6tJtVaGOSqBqn3WvFaap8WwrCKAAlmfKlMTS4H
+ 1F3IH95k4BqxyxczCDrU6yKtOtfzzD0kuNubS3R3X69XO9Ac/YDOCJdsVIZG08Wvl5
+ 8S7rRMVoIe4ALFslCmykFy8slTL1raNM66op/h3I2TwlR0BF3h+JO6H7gm1zP5kvjl
+ k7+hiNO5ldIFRYbLCcafPxr/WINDn53qvOGWkIoKrm+bKwsa/R984NiN613TTc5/gP
+ ciNL0qXCzlW9w==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 33E8F383B275; Fri, 11 Jul 2025 16:30:09 +0000 (UTC)
+ 3402B383B275; Fri, 11 Jul 2025 16:30:12 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <175225140803.2328592.14468679828174241013.git-patchwork-notify@kernel.org>
-Date: Fri, 11 Jul 2025 16:30:08 +0000
-References: <20250710121415.628398-1-lihongbo22@huawei.com>
-In-Reply-To: <20250710121415.628398-1-lihongbo22@huawei.com>
-To: Hongbo Li <lihongbo22@huawei.com>
-X-Headers-End: 1uaGdD-0006Tp-Ko
-Subject: Re: [f2fs-dev] [PATCH v5 0/7] f2fs: new mount API conversion
+Message-Id: <175225141074.2328592.18102776950880358340.git-patchwork-notify@kernel.org>
+Date: Fri, 11 Jul 2025 16:30:10 +0000
+References: <20250420154647.1233033-1-sandeen@redhat.com>
+In-Reply-To: <20250420154647.1233033-1-sandeen@redhat.com>
+To: Eric Sandeen <sandeen@redhat.com>
+X-Headers-End: 1uaGdL-0006UT-I6
+Subject: Re: [f2fs-dev] [PATCH 0/7 V2] f2fs: new mount API conversion
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,8 +89,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, sandeen@redhat.com
+Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, lihongbo22@huawei.com,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -100,34 +100,33 @@ Hello:
 This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 10 Jul 2025 12:14:08 +0000 you wrote:
-> In this version, we have finished the issues pointed in v4.
-> First, I'd like to express my sincere thanks to Jaegeuk and Chao
-> for reviewing this patch series and providing corrections. I also
-> appreciate Eric for rebasing the patches onto the latest branch to
-> ensure forward compatibility.
+On Sun, 20 Apr 2025 10:24:59 -0500 you wrote:
+> This is a forward-port of Hongbo's original f2fs mount API conversion,
+> posted last August at
+> https://lore.kernel.org/linux-f2fs-devel/20240814023912.3959299-1-lihongbo22@huawei.com/
 > 
-> The latest patch series has addressed all the issues mentioned in
-> the previous set. For modified patches, I've re-added Signed-off-by
-> tags (SOB) and uniformly removed all Reviewed-by tags.
+> I had been trying to approach this with a little less complexity,
+> but in the end I realized that Hongbo's approach (which follows
+> the ext4 approach) was a good one, and I was not making any progrss
+> myself. ;)
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v5,1/7] f2fs: Add fs parameter specifications for mount options
+  - [f2fs-dev,1/7] f2fs: Add fs parameter specifications for mount options
     https://git.kernel.org/jaegeuk/f2fs/c/a3277c98b64f
-  - [f2fs-dev,v5,2/7] f2fs: move the option parser into handle_mount_opt
-    https://git.kernel.org/jaegeuk/f2fs/c/b03e9e44e135
-  - [f2fs-dev,v5,3/7] f2fs: Allow sbi to be NULL in f2fs_printk
+  - [f2fs-dev,2/7] f2fs: move the option parser into handle_mount_opt
+    (no matching commit)
+  - [f2fs-dev,3/7] f2fs: Allow sbi to be NULL in f2fs_printk
     https://git.kernel.org/jaegeuk/f2fs/c/405e5e00bfee
-  - [f2fs-dev,v5,4/7] f2fs: Add f2fs_fs_context to record the mount options
-    https://git.kernel.org/jaegeuk/f2fs/c/d870b85ae2de
-  - [f2fs-dev,v5,5/7] f2fs: separate the options parsing and options checking
-    https://git.kernel.org/jaegeuk/f2fs/c/85d2da63b8a5
-  - [f2fs-dev,v5,6/7] f2fs: introduce fs_context_operation structure
+  - [f2fs-dev,4/7] f2fs: Add f2fs_fs_context to record the mount options
+    (no matching commit)
+  - [f2fs-dev,5/7] f2fs: separate the options parsing and options checking
+    (no matching commit)
+  - [f2fs-dev,6/7] f2fs: introduce fs_context_operation structure
     https://git.kernel.org/jaegeuk/f2fs/c/54e12a4e0209
-  - [f2fs-dev,v5,7/7] f2fs: switch to the new mount api
-    https://git.kernel.org/jaegeuk/f2fs/c/a0512c55d7f8
+  - [f2fs-dev,7/7] f2fs: switch to the new mount api
+    (no matching commit)
 
 You are awesome, thank you!
 -- 
