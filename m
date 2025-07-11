@@ -4,131 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C09FCC83F1B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 11 Jul 2025 15:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 475BDC83F1A
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 11 Jul 2025 16:20:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=UQC3W9LfstaNnDZnd2TkzA+QtqiC3Ymny+3wegDo2Bk=; b=bDjbEI0+RzWZOYKf9TBUr7yG3T
-	w+UFc9G/D3WLzoch9IbygwKJP5maJOx9zW4f+th7dwPNxUbXPjW4VMR71j9cADa3teffkSET+yZ/z
-	pBwXuEq3PE/v7VqkyjEytfnKTVuaSq+Fq8gHUhgDgvhOhzMCAdIS8Urf9NFiGQZvKrqE=;
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=VAtIU+rc/dCtIBWIsj41YKLBkwDgONHQeQY0iE5qDLM=; b=cofxLmp7NPmabyrF2Ln1kMQ6ps
+	5DU+i8JI+g0VebvY3Uv5HZtoZg40iEDKOBDgRSoov/D4F9h5ioZGoVszdJHiGd7R2YSEJBeNTC20l
+	ZWH/mMTODLF2T4/R0i7B51m3+EKS+NURd8Hqh43ObaStf5h/2P4XRB3CJn53fZkBAsXw=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uaFam-00036U-JB;
-	Fri, 11 Jul 2025 15:23:16 +0000
+	id 1uaGTq-0004a1-74;
+	Fri, 11 Jul 2025 16:20:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jack@suse.cz>) id 1uaFak-00036J-SV
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uaGTp-0004Zv-7M
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 11 Jul 2025 15:23:14 +0000
+ Fri, 11 Jul 2025 16:20:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=D/iUuBciPB10/GBE/cvyXk+fAHjQFIQzuLxCgcwiNTw=; b=E/0KUisfCDSLMvFA+xtCDJS2hJ
- vZjla80Ek6CL58idsgg1p6hO2kFYA+ajiqYeZFQz+xWrM/Tutv2mtF+mfHUmLs0eNKu3z189K8Oj3
- AdVi32xC9wdjqcV1H/BaJ0agjF3CEeiTiJNIoVms+J9OiuRdUVzzrQAsINo8nTDk/bQc=;
+ bh=UfPV5cfJtM+3/YeJbN8J2yKn/Ep9hqgDB6ezeWuSGVo=; b=U1De8whXINZ3xziVuoAqlzJ+iv
+ t6S3NJ6H/7kHo3J01Xx1OBlJv3Hr5FYGHKN/2UfZfT12psAEcLm4P77rWKBfT1fofGXg8ngtPN4Ve
+ 9A63+xGlHp9OFEZ9krhd433Ph4ft/KyvirVzWc9p+bH/vYuzXQW/s0N+v/XERYU8brew=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=D/iUuBciPB10/GBE/cvyXk+fAHjQFIQzuLxCgcwiNTw=; b=loyaai4DlmUnNWtiRIgm6ctGKB
- woQjDDiQRV+k5vSENQk6vndRW0xJBkypEYgP2ylbB8hWm3Ihu5cKrtjHpiZolQXE/PivRw6LcWd93
- aD36z2B1Pr+HXlh5BW0s9ouQ7XshomaY91AQXnRlFy0CWPiihh8sfUF8uJ8ATq6pRQqA=;
-Received: from smtp-out2.suse.de ([195.135.223.131])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=UfPV5cfJtM+3/YeJbN8J2yKn/Ep9hqgDB6ezeWuSGVo=; b=kLw4f42Fnhosf24FTco+UIGD1y
+ JV7BbWTf+QA+syoLHXVqk0Y1tKaYqMfaAE9M2Pf5vp8Lx8WOizdALhZxDRK4caheK0gyaStDLRx6z
+ TtpYU2v9NxTmTDc6ugRha6TyLciZjwEpQMATUEjmd6+BYREEPP7bO+XhmB//W2RYBG28=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uaFak-0002HJ-3V for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 11 Jul 2025 15:23:14 +0000
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id ED3021F451;
- Fri, 11 Jul 2025 14:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1752243630; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=D/iUuBciPB10/GBE/cvyXk+fAHjQFIQzuLxCgcwiNTw=;
- b=iX1o9G0tQdGrIsFeduAag1UKYp0cCjcMneL5vkrGGsPO92IZ2wxRp3jlmkahOOPG6WWUdv
- kphrQqTmuCs0hFXOYtVS/MTvH2l2OLesUm41gQ9wmp2cCzNfPFtwMVQvJjSqo+rsQgFnL2
- AMVwa6gD0pvN07DATLyiZYLUdKljBsQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1752243630;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=D/iUuBciPB10/GBE/cvyXk+fAHjQFIQzuLxCgcwiNTw=;
- b=ZczmLcnkQK5dNLlNTg8btwaNoh3cOk1Vp66mW8PYqJOkMEfNWn+8CqQJvQTp6bEmbseXU7
- uZsBkQaJmbIzZ5CQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1752243629; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=D/iUuBciPB10/GBE/cvyXk+fAHjQFIQzuLxCgcwiNTw=;
- b=0Q0gC33a1LGOhCbS2e7YuGBLzHB9x14F4WpfW+gopjwadYEbCJBLsXBX1lrlouwrAzrte8
- Ja2l7L3cX4rIo5fBm9TI3OIj2eDgYJhQcbpHguaCI/kUbudLCh5yRivfoo+5PhBxoWhjQZ
- cz2QUREuEnRdT0PPcT2EjFDPWJ86WlE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1752243629;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=D/iUuBciPB10/GBE/cvyXk+fAHjQFIQzuLxCgcwiNTw=;
- b=zb1CZyGS3J1toAy5quPu7DqexLZJc5vm8joEbFL90hWTmpTZCle3U5zFrK6F+5uIBXY376
- tOkCVn3qxUstlVCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D9000138A5;
- Fri, 11 Jul 2025 14:20:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id qT+vNK0dcWjEUQAAD6G6ig
- (envelope-from <jack@suse.cz>); Fri, 11 Jul 2025 14:20:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
- id 57DE8A099A; Fri, 11 Jul 2025 16:20:24 +0200 (CEST)
-Date: Fri, 11 Jul 2025 16:20:24 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Message-ID: <icnwgogkmgui2kzshst23dujkqdghiwpd62giipxyrbdkyf6bo@lf52wyqpnxn2>
-References: <343vlonfhw76mnbjnysejihoxsjyp2kzwvedhjjjml4ccaygbq@72m67s3e2ped>
- <y2rpp6u6pksjrzgxsn5rtcsl2vspffkcbtu6tfzgo7thn7g23p@7quhaixfx5yh>
- <kgolzhhd47x3iqkdrwyzh65ng4mm6cauxdjgiao2otztncyc3f@rskadwaph2l5>
- <5xno4s25lsd2sqq6judn7moorgy2h3konejgassnzlccfa6jsf@ez6ciofy3bwp>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1uaGTo-0005ro-6W for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 11 Jul 2025 16:20:09 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id E382844F18
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 11 Jul 2025 16:19:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C28F0C4CEED;
+ Fri, 11 Jul 2025 16:19:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1752250797;
+ bh=1Cc4/JfdEwYxt9wDCzQswq8lMP1iCeM+kgPAm365koM=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=RWNZcYEOQkKajxdfntCy4fNxtgO8cTjwrYtATtWgSn//qj5ZYENkJsJTn2yyWEOES
+ 8nxjJY2QYTCVVc2G9Ee1774aI6WTfEZ2oCKyb7QJOKh7eIG/Qt+QIwEpF+7gWQWx3K
+ GdIbmI3PirIjSPEqKEf79U5bNmYY3RX/d+ehIe9EkrE0wcwqNfywMLkG7Hw7yuIHW+
+ 4iFfX6fsWogdGiqM9BCdlBrE4MZ8MpyDiYbYcPEm4IrdAQfkDaMSaXHpqHibchCOb4
+ /SA+coo1TCIdF+7pXgUiY+FcYRqbK2oAa+0kGF9OwWtlls4xaMDD7gODXU0O/miemg
+ Gg9Z7jkA02eJg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+ by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
+ EAFBB383B275; Fri, 11 Jul 2025 16:20:20 +0000 (UTC)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <5xno4s25lsd2sqq6judn7moorgy2h3konejgassnzlccfa6jsf@ez6ciofy3bwp>
-X-Spamd-Result: default: False [-3.80 / 50.00]; BAYES_HAM(-3.00)[100.00%];
- NEURAL_HAM_LONG(-1.00)[-1.000]; MID_RHS_NOT_FQDN(0.50)[];
- NEURAL_HAM_SHORT(-0.20)[-0.999]; MIME_GOOD(-0.10)[text/plain];
- RCVD_VIA_SMTP_AUTH(0.00)[]; ARC_NA(0.00)[];
- MISSING_XM_UA(0.00)[]; MIME_TRACE(0.00)[0:+];
- FUZZY_RATELIMITED(0.00)[rspamd.com];
- RCPT_COUNT_TWELVE(0.00)[15]; RCVD_COUNT_THREE(0.00)[3];
- FREEMAIL_ENVRCPT(0.00)[gmx.com];
- DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
- FROM_HAS_DN(0.00)[];
- FREEMAIL_CC(0.00)[suse.cz,fromorbit.com,kernel.org,gmx.com,suse.com,vger.kernel.org,zeniv.linux.org.uk,lists.sourceforge.net,lists.linux.dev];
- TO_DN_SOME(0.00)[]; FROM_EQ_ENVFROM(0.00)[];
- RCVD_TLS_LAST(0.00)[]; TO_MATCH_ENVRCPT_ALL(0.00)[];
- DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Headers-End: 1uaFak-0002HJ-3V
-Subject: Re: [f2fs-dev] [PATCH v4 1/6] fs: enhance and rename shutdown()
- callback to remove_bdev()
+Message-Id: <175225081949.2325425.16515007956966725798.git-patchwork-notify@kernel.org>
+Date: Fri, 11 Jul 2025 16:20:19 +0000
+References: <20250711071450.207302-1-chao@kernel.org>
+In-Reply-To: <20250711071450.207302-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1uaGTo-0005ro-6W
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid out-of-boundary access in
+ devs.path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -140,67 +88,43 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Christian Brauner <brauner@kernel.org>, ntfs3@lists.linux.dev,
- Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
- Dave Chinner <david@fromorbit.com>, Qu Wenruo <quwenruo.btrfs@gmx.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- Qu Wenruo <wqu@suse.com>, viro@zeniv.linux.org.uk
+From: patchwork-bot+f2fs--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu 10-07-25 14:41:18, Kent Overstreet wrote:
-> On Thu, Jul 10, 2025 at 03:10:04PM +0200, Jan Kara wrote:
-> > On Wed 09-07-25 13:49:12, Kent Overstreet wrote:
-> > > On Wed, Jul 09, 2025 at 07:23:07PM +0200, Jan Kara wrote:
-> > > > > It also avoids the problem of ->mark_dead events being generated
-> > > > > from a context that holds filesystem/vfs locks and then deadlocking
-> > > > > waiting for those locks to be released.
-> > > > > 
-> > > > > IOWs, a multi-device filesystem should really be implementing
-> > > > > ->mark_dead itself, and should not be depending on being able to
-> > > > > lock the superblock to take an active reference to it.
-> > > > > 
-> > > > > It should be pretty clear that these are not issues that the generic
-> > > > > filesystem ->mark_dead implementation should be trying to
-> > > > > handle.....
-> > > > 
-> > > > Well, IMO every fs implementation needs to do the bdev -> sb transition and
-> > > > make sb somehow stable. It may be that grabbing s_umount and active sb
-> > > > reference is not what everybody wants but AFAIU btrfs as the second
-> > > > multi-device filesystem would be fine with that and for bcachefs this
-> > > > doesn't work only because they have special superblock instantiation
-> > > > behavior on mount for independent reasons (i.e., not because active ref
-> > > > + s_umount would be problematic for them) if I understand Kent right.
-> > > > So I'm still not fully convinced each multi-device filesystem should be
-> > > > shipping their special method to get from device to stable sb reference.
-> > > 
-> > > Honestly, the sync_filesystem() call seems bogus.
-> > > 
-> > > If the block device is truly dead, what's it going to accomplish?
-> > 
-> > Notice that fs_bdev_mark_dead() calls sync_filesystem() only in case
-> > 'surprise' argument is false - meaning this is actually a notification
-> > *before* the device is going away. I.e., graceful device hot unplug when
-> > you can access the device to clean up as much as possible.
+Hello:
+
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
+
+On Fri, 11 Jul 2025 15:14:50 +0800 you wrote:
+> - touch /mnt/f2fs/012345678901234567890123456789012345678901234567890123
+> - truncate -s $((1024*1024*1024)) \
+>   /mnt/f2fs/012345678901234567890123456789012345678901234567890123
+> - touch /mnt/f2fs/file
+> - truncate -s $((1024*1024*1024)) /mnt/f2fs/file
+> - mkfs.f2fs /mnt/f2fs/012345678901234567890123456789012345678901234567890123 \
+>   -c /mnt/f2fs/file
+> - mount /mnt/f2fs/012345678901234567890123456789012345678901234567890123 \
+>   /mnt/f2fs/loop
 > 
-> That doesn't seem to be hooked up to anything?
+> [...]
 
-__del_gendisk()
-  if (!test_bit(GD_DEAD, &disk->state))
-    blk_report_disk_dead(disk, false);
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix to avoid out-of-boundary access in devs.path
+    https://git.kernel.org/jaegeuk/f2fs/c/65eeef059d04
 
-Is the path which results in "surprise" to be false. I have to admit I
-didn't check deeper into drivers whether this is hooked up properly but
-del_gendisk() is a standard call to tear down a disk so it would seem so
-from the first glance.
-
-								Honza
+You are awesome, thank you!
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
 
 _______________________________________________
