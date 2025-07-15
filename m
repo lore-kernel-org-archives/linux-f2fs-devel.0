@@ -4,75 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1AC01C83F17
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 15 Jul 2025 03:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E0950C83F17
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 15 Jul 2025 06:53:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=wxS08OvhCGQn6dIgqMEjyrt/9UUm3HBpeQewSW0/72c=; b=WoHirXA6Kt5JkRhN6MhfLjdlWH
-	ifUynFE+PvxU2JTrzbgpniFhHn7uWFuzorT26Q4BYkrw9ZhgGsKqIz9YC8HIvbAEGpMp9/+AqTR6H
-	jXQjKLS0/8Vr8t5BcTqy2SR8cgQLigxRx6t0hHvZqjPXIbJFxd3PACRgLQuWJMlWIXKY=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=GAu+VP1hoXb7rG3kR8Rx9MSqOPz4FvLsGkLRSOb41Xo=; b=EvcINmuUJnZHHYPdvNOQgNqptB
+	JBPG1pljH63TJC2ddMklUMYRvPrZkDygm3dqtkeB2VNZGd9KcUhZXC1P/dm/yhGqE8ZetQPS8Zh0D
+	xg7Z1UeLKThnlCqmAundrks9cuO8Nw2EIxlOFgWg4lTWMppqNhZCUxI5ChFj09anrc00=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ubWel-0004Q4-LP;
-	Tue, 15 Jul 2025 03:48:39 +0000
+	id 1ubZXO-000853-5V;
+	Tue, 15 Jul 2025 06:53:14 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1ubWeh-0004Pv-3O
+ (envelope-from <chao@kernel.org>) id 1ubZXN-00084r-EZ
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 15 Jul 2025 03:48:35 +0000
+ Tue, 15 Jul 2025 06:53:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8ZsWC/xy6ivAVLgGoptxG17kDa5kqp7XduKtycp6Dj0=; b=iDxdRmhaA1cSJKuUsQUJNGdsFE
- 1O04e+8cZqIqYdLca8WllWNGe7dLeiVtkgDxxurc5v+tdoplKUY9sNom27xxT1JbSd6vB813M5gRn
- rGYz6ec9LQik+gIzHt88IMTED2PZCdgX2dfAL2NV9KMa6JMPxK+vsIz7E1YS4Ea1b1KQ=;
+ bh=w0YDxMx5PfIWOapuM8BgoL0J++A+gFAXtSimmzieKtE=; b=B4Iq1BXHluhbi1mE2kV5QOJ5VM
+ EnVAhQ0Gt8ndFVyAr7SEoSVmSrw5MhK5tiJ/OA4GFybM0zZBXDvOwUWEM+PmXhMWg8xi0HbHA2zjd
+ 8AzelTEj2UsBdxkKx+9TxXW8KDAZDnGRA/BA8AZ2KzvYJn8gV76ahORRHAU8+a00xhwg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=8ZsWC/xy6ivAVLgGoptxG17kDa5kqp7XduKtycp6Dj0=; b=b
- mgR7bqWYjx3sTWp8dHSjTPxQXRXzrKYiYgdLDJYSjmhJKURGh1zZqR7q7k/Xt0OkYKdoGudC2aMVz
- eAE9ynDPAUBCcroRLyvdtSOxHoJt+Hxfjs/nkRAMuAxkN8DcwUjhcB3bZlTuDRjroQnoIN4BFHBzS
- TAxjlpU3foHvCrLo=;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=w0YDxMx5PfIWOapuM8BgoL0J++A+gFAXtSimmzieKtE=; b=m8ZyvXXE6S7VtR4OPHHfDV4+BP
+ z9VaahqdIiTNXU3g8w7mWmgc+Kn1C4FvbNRDdZy4LtZ/stUOeNdXnT94fs5muTG5Al5sMW+fQBlIF
+ uDmNbBH0uHpzZbOFkAOfS9PdF2eelQ38Gf+TdHuvErEIRg1A/ggBsOfYzEwOpbuDWzMI=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ubWeg-00038p-Pg for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 15 Jul 2025 03:48:35 +0000
+ id 1ubZXN-0008Mo-TZ for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 15 Jul 2025 06:53:14 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id CCBE543767
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 15 Jul 2025 02:30:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE822C4CEED;
- Tue, 15 Jul 2025 02:30:42 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 945F544EEA;
+ Tue, 15 Jul 2025 06:53:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91A62C4CEE3;
+ Tue, 15 Jul 2025 06:53:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1752546643;
- bh=96GljATNHlwW+Ta+iLWZI2r2gbQnVj4VFyRi/hkx3vA=;
- h=From:To:Cc:Subject:Date:From;
- b=SCOir/75NKgRfmOROV7oW92Rq7SVk9qXgDZMgoz5OrKJ7zti6Ap3c73fk6lqrY91D
- eN8CFNX1GoeiJ2m62noJxY19CP/KLJ6tFehygSigJLzWXovNDkdmnSap9H3yBsqvkl
- Ja8yrsa9ef4kMpjb3g2w7nFM5pJala6rCaP7XN8lbyV+aOdswCpfLh1xoB+zBdVnfT
- CKZsTfhmOGhBQwQAS74tVp86aSBb7mhek9/z67JPi4BtylYgqM2C3OHIiYy/Fnq84x
- j2hASHXb877wzinudC/i8wl4S2LLWuTGKrYmNzBkRfRpF4pGnV9h604nxUkBSgc50h
- 5pIAHlGsZaJJw==
-To: jaegeuk@kernel.org
-Date: Tue, 15 Jul 2025 10:30:35 +0800
-Message-ID: <20250715023035.487742-1-chao@kernel.org>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+ s=k20201202; t=1752562383;
+ bh=gctr3UrrZmHgV9GHXNCIpomEZVRjbpV9dPhmuF19aVk=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=Hj2czy5GCGio5UT1hG42ewYMU/KLvtTssahBpdxXWoOiKxfX2K3zLpLRv9H3mFlZF
+ e0IWn4y/sn98HpemFMnaDh9g82DePoZ7ltfgdcRNvRd+2+47JSNlz7USxEdT7uk3oB
+ tpn9fcAllaNJHvzKUgusxnASC3xOuPfIZiixyWAbXY44YyL7X/WB3DEkpw1hv4O+kx
+ CQO5wt+goiilMybXlUd9Kz3m4bAnLaaSkVr9OOBGfE+s+fSwoxXprjyIEaOV7BswVa
+ 2eDfRaSuqoVlqyjm1r7IHldTppGTRyxQVCYEwbD4ORp4ik35NoJ9c8c0nWLbyOaBwK
+ 3FgZu+Ne382Gw==
+Message-ID: <5982c766-5170-4d0d-b49b-8f1adf6f506a@kernel.org>
+Date: Tue, 15 Jul 2025 14:52:58 +0800
 MIME-Version: 1.0
-X-Headers-End: 1ubWeg-00038p-Pg
-Subject: [f2fs-dev] [PATCH v2] f2fs_io: fix doc of test_lookup_perf
+User-Agent: Mozilla Thunderbird
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
+References: <1752486705-9498-1-git-send-email-zhiguo.niu@unisoc.com>
+Content-Language: en-US
+In-Reply-To: <1752486705-9498-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Headers-End: 1ubZXN-0008Mo-TZ
+Subject: Re: [f2fs-dev] [PATCH] mkfs.f2fs: adjust zone alignment check to
+ correct position
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,36 +89,22 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, Hao_hao.Wang@unisoc.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch fixes wrong parameter in usage of test_lookup_perf.
+On 7/14/25 17:51, Zhiguo Niu wrote:
+> Should check these after c.devices[1].start_blkaddr is assigned
+> when c.ndevs > 1.
+> 
+> Fixes: 316e128fe3dc ("mkfs.f2fs: adjust zone alignment when using multi-partitions")
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- drop change for f2fs_io manual
- tools/f2fs_io/f2fs_io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index 8e81ba9..f282190 100644
---- a/tools/f2fs_io/f2fs_io.c
-+++ b/tools/f2fs_io/f2fs_io.c
-@@ -2241,7 +2241,7 @@ static void do_test_create_perf(int argc, char **argv, const struct cmd_desc *cm
- 
- #define test_lookup_perf_desc "measure readdir/stat speed"
- #define test_lookup_perf_help						\
--"f2fs_io test_lookup_perf [-s] [-S] <dir> <num_files>\n\n"		\
-+"f2fs_io test_lookup_perf [-i] [-v] <dir> <num_files>\n\n"		\
- "Measures readdir/stat performance.\n"				\
- "  <dir>          The target directory in where it will test on.\n"	\
- "  <num_files>    The total number of files the test will initialize or test.\n"\
--- 
-2.49.0
-
+Thanks,
 
 
 _______________________________________________
