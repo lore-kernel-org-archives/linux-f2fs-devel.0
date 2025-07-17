@@ -4,76 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9F490C83F1B
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Jul 2025 02:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A5F3BC83F34
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Jul 2025 03:18:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=9JXC7yXZXTmsIxQkVtfGFkMXK9veWRJ3D2G7pvO/gAY=; b=j7meLAUIGZBxHCc4OwsbXVd2oJ
-	pyTOesz14uUbS8YBB5LxK9247D5+41Ty9m8AvUQBD1oZXkLAe3heEbAn/Qmx/33BOW120H2LcbaAS
-	8aoodo3XO6xjE1ZvJOfWAGvJiR/NLBLN0ohflJndaP/WP8M/Q00EXJ4Tjn6x36RIrNBg=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:From:References:To:MIME-Version:Date:Message-ID:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=WQOn/KdxEuRtHlZ5gnBR8PZzaQBcD5thgrKSgAwjWJE=; b=M5JHd/4nvFF6HlBuVba+aOE1MN
+	KAov8ZzNDyHhKgBewmFlCfEujmk8uXVwVfQSBRFx+2v2EmgRlBBYX9T0sfDQZX8/c/7wVr3I+jg4C
+	8+cMSiFKXKVDzBoNpe0VAdnYRs2ew2yKo1qzVTba2NHQG6QFgtgo7hCh9Kog1dEIrnng=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ucEh9-0003j9-IX;
-	Thu, 17 Jul 2025 02:50:03 +0000
+	id 1ucF8m-00042o-0R;
+	Thu, 17 Jul 2025 03:18:36 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1ucEh8-0003iy-Ta
+ (envelope-from <hsiangkao@linux.alibaba.com>) id 1ucF8j-00042T-P4
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 17 Jul 2025 02:50:02 +0000
+ Thu, 17 Jul 2025 03:18:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=n2mVmLfdEaLhFKe7KNMxfXRgw5ihLFB2hA1zHsFemk0=; b=gaRerct5KIU0Qisqb5GCxafLZF
- es5irlKvkiewiV1dJ/r9SkV+7M8XUuDNVgxrIuw2qe4Iga3ccQuGNFJw7r5N20XwRiuDLbU0SNvD5
- uNJaZUtrA898LFwGAr/mj8ukb1lUXf3ANTncLqPYQQDjYDPLyQ4Uet7A7D60v0DbN7qg=;
+ bh=4gUaF7R4/EBDJfRjJRTdp0icwbrWb7f2nyKt3jMgey4=; b=lF+07i8khTXLWpcpSDbCMnN0CF
+ nQbzhYPvY3Z8EKh1SgCxL5kA4tgeCOMpAcGqbskhLu8X/yXQPmNGW5OeCP/ooqNelk2rPaGsJ9ds/
+ GDlY6igQVmc2qDQpgTSZadeyKQO6lowxaiITqQE9k9QpPNJKCpUr3FwF9zaTRQK/DI0U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=n2mVmLfdEaLhFKe7KNMxfXRgw5ihLFB2hA1zHsFemk0=; b=DClw6XjTbyihtlbWle/AYRgJod
- UD3vVfKHIXldtvvbDPOa5C+1uGjRdymiJTlz3888wDTu939nsqkL9mBOwb8hGDipBuj6egXYsV33S
- Qqqzwe97ZRrpX57p6q+0FrGN8Tai8lpmsS3KYfgNHrC8slNDDfB80vChJOYewbnIZOyE=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ bh=4gUaF7R4/EBDJfRjJRTdp0icwbrWb7f2nyKt3jMgey4=; b=DmQu/gS0sCgqAZTgWspJCFJ774
+ WWc1TIoEAdf7mkXUDU/9nfxKvxPsG4WuZS8OiRQmD0z+ZflBx3gERp7FgFWIzfEvwxyM6BD/rpNbb
+ afhGk3KqDdb7LrnraXY47Ttzv16G8CxXMq0ywOHRla0CFXzFhUhruXjxQDF6e9EiDCFY=;
+Received: from out30-100.freemail.mail.aliyun.com ([115.124.30.100])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ucEh8-0007iq-C5 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 17 Jul 2025 02:50:02 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id A53B2A576DD;
- Thu, 17 Jul 2025 02:49:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E1B0C4CEE7;
- Thu, 17 Jul 2025 02:49:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1752720591;
- bh=+3M7g91K1wbKWaHCHWCVlTkf6dVFqoCHka6+sKX8uc0=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=Dxj0Av8D5AZtIisXh2L9yJig4uXBQuxbS9ixY/JMlxvl70bIPu8iWlVqGEzCoOgUi
- +5jU7iXSPRY863B1eVwqkKI4XyGU8N1oiPiSPYP3NlYWjMsCzjY3/zNUSeI4PfvJj0
- n7GfspSMnUer51mMfjRjFN8s+TltBz1xAqzFf/4SamHGdauI6kCAc8//1mfU95Af06
- zzmzEaGEDSNSTgcJHuXYUJGBMCRzfTCgpsxnK/GcWE+60f/gZxYXyl9b+IaN0vufU4
- oIMmh0U1QCuDEp6Cvy24xlk5jGum/YFcnprJ1x7H5mudjZboZP0UCU72iFYOMe7L+u
- czU/b0esZtW6Q==
-Date: Wed, 16 Jul 2025 19:49:03 -0700
-To: Phillip Lougher <phillip@squashfs.org.uk>
-Message-ID: <20250717024903.GA1288@sol>
+ id 1ucF8j-0000UW-Tb for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 17 Jul 2025 03:18:34 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=linux.alibaba.com; s=default;
+ t=1752722301; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+ bh=4gUaF7R4/EBDJfRjJRTdp0icwbrWb7f2nyKt3jMgey4=;
+ b=N2KlNCfULoPaHg2HsLHiXH7o7NBbs4UlhRpN5jU97WfU57/CWeL8g+QEBMDJD7adoqakPuz1cBfa4p7QU6tcTL1yTRAFWuPVhM2kuo0nuShAxq1K5X3cEkkl710FHkmlb9m8rUTwIDz+mM1gwaPO05l7ca4i/xvFRST4A58qZl8=
+Received: from 30.221.131.143(mailfrom:hsiangkao@linux.alibaba.com
+ fp:SMTPD_---0Wj6YBs9_1752722299 cluster:ay36) by smtp.aliyun-inc.com;
+ Thu, 17 Jul 2025 11:18:20 +0800
+Message-ID: <51c92913-6176-4516-8b14-bd12e2a85697@linux.alibaba.com>
+Date: Thu, 17 Jul 2025 11:18:18 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Eric Biggers <ebiggers@kernel.org>,
+ Phillip Lougher <phillip@squashfs.org.uk>
 References: <aHa8ylTh0DGEQklt@casper.infradead.org>
  <f4b9faf9-8efd-4396-b080-e712025825ab@squashfs.org.uk>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <f4b9faf9-8efd-4396-b080-e712025825ab@squashfs.org.uk>
-X-Headers-End: 1ucEh8-0007iq-C5
+ <20250717024903.GA1288@sol>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20250717024903.GA1288@sol>
+X-Headers-End: 1ucF8j-0000UW-Tb
 Subject: Re: [f2fs-dev] Compressed files & the page cache
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -86,9 +82,6 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
 Cc: Jan Kara <jack@suse.cz>, Paulo Alcantara <pc@manguebit.org>,
  Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
  Chris Mason <clm@fb.com>, linux-mtd@lists.infradead.org,
@@ -100,50 +93,38 @@ Cc: Jan Kara <jack@suse.cz>, Paulo Alcantara <pc@manguebit.org>,
  linux-f2fs-devel@lists.sourceforge.net, Steve French <sfrench@samba.org>,
  linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev, ntfs3@lists.linux.dev,
  linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Jul 16, 2025 at 11:37:28PM +0100, Phillip Lougher wrote:
-> > There also seems to be some discrepancy between filesystems whether the
-> > decompression involves vmap() of all the memory allocated or whether the
-> > decompression routines can handle doing kmap_local() on individual pages.
-> > 
-> 
-> Squashfs does both, and this depends on whether the decompression
-> algorithm implementation in the kernel is multi-shot or single-shot.
-> 
-> The zlib/xz/zstd decompressors are multi-shot, in that you can call them
-> multiply, giving them an extra input or output buffer when it runs out.
-> This means you can get them to output into a 4K page at a time, without
-> requiring the pages to be contiguous.  kmap_local() can be called on each
-> page before passing it to the decompressor.
 
-While those compression libraries do provide streaming APIs, it's sort
-of an illusion.  They still need the uncompressed data in a virtually
-contiguous buffer for the LZ77 match finding and copying to work.  So,
-internally they copy the uncompressed data into a virtually contiguous
-buffer.  I suspect that vmap() (or vm_map_ram() which is what f2fs uses)
-is actually more efficient than these streaming APIs, since it avoids
-the internal copy.  But it would need to be measured.
 
-> > So, my proposal is that filesystems tell the page cache that their minimum
-> > folio size is the compression block size.  That seems to be around 64k,
-> > so not an unreasonable minimum allocation size.  That removes all the
-> > extra code in filesystems to allocate extra memory in the page cache.
-> > It means we don't attempt to track dirtiness at a sub-folio granularity
-> > (there's no point, we have to write back the entire compressed bock
-> > at once).  We also get a single virtually contiguous block ... if you're
-> > willing to ditch HIGHMEM support.  Or there's a proposal to introduce a
-> > vmap_file() which would give us a virtually contiguous chunk of memory
-> > (and could be trivially turned into a noop for the case of trying to
-> > vmap a single large folio).
+On 2025/7/17 10:49, Eric Biggers wrote:
+> On Wed, Jul 16, 2025 at 11:37:28PM +0100, Phillip Lougher wrote:
 
-... but of course, if we could get a virtually contiguous buffer
-"for free" (at least in the !HIGHMEM case) as in the above proposal,
-that would clearly be the best option.
+...
 
-- Eric
+> buffer.  I suspect that vmap() (or vm_map_ram() which is what f2fs uses)
+> is actually more efficient than these streaming APIs, since it avoids
+> the internal copy.  But it would need to be measured.
+
+Of course vm_map_ram() (that is what erofs relies on first for
+decompression in tree since 2018, then the f2fs one) will be
+efficient for decompression and avoid polluting unnecessary
+caching (considering typical PIPT or VIPT.)
+
+Especially for large compressed extents such as 1MiB, another
+memcpy() will cause much extra overhead over lz4.
+
+But as for gzip, xz and zstd, they just implement internal lz77
+dictionaries then memcpy for streaming APIs.  Since those
+algorithms are relatively slow (for example Zstd still relies
+on Huffman and FSE), I don't think it causes much difference
+to avoid memcpy() in the whole I/O path (because Huffman tree
+and FSE table are already slow), but lz4 matters.
+
+Thanks,
+Gao Xiang
 
 
 _______________________________________________
