@@ -4,95 +4,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3B7B9C83F1A
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Jul 2025 18:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 77440C83F1A
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 18 Jul 2025 07:22:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Message-ID:Mime-Version:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=0X+ouSKfYRLMSL4+bcvRB4uuRN7sv0es9kqJpVxiaNU=; b=aMCxBLDSYbF36DygSI+k3gxG/4
-	rCdq7kfAwpKM3gE+xXbU+QOKp5jUZpaOJmpS07Sgw+SzZp07vAGY2/JrbTJt4a3UOOoeQ3HegZQn6
-	kgRBVktNjWQlmOkcLEIyw58JsUN84jgMmJnqjx/goBBUej1IC9NVpadOKc1TtQJRoq/Y=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Cc:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=mUo12ZsSTYG8giyZw+Kln4xr5n/yXqULuzoVOBKr6Io=; b=LtDRcGBQ9KtyZZ3TSPDag13kbs
+	HZY/aWB5EA/cEq07Yo65622+wQxVtHpoqrf17g+ijMG4Je3SOPwH1pxGq8jNtlrpGCyXhOcNbq3he
+	Wx7cb1bAE8PuVijnkW0FG1VBGPuAlkyg8F/G9oRXXL5QEF1W9qJyIeeUW4B1JlsiUq0Y=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ucTEC-0006Dl-QL;
-	Thu, 17 Jul 2025 18:21:08 +0000
+	id 1ucfQX-00071c-A2;
+	Fri, 18 Jul 2025 07:22:42 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <3DT95aAcKALohmzqqjjlttlqj.htr@flex--chullee.bounces.google.com>)
- id 1ucTEB-0006Df-QG for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 17 Jul 2025 18:21:07 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <bugzilla-daemon@kernel.org>) id 1ucfQV-00071N-V3
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 18 Jul 2025 07:22:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mfXgZvOQlG/9husypXNws7ooRDQP6iBVEudkKK8jYDQ=; b=d9+VG7TFgyTxeVCg9VnP0LmQrU
- siEJV1aIowsZVOu6cwwqFbGCG+GYFpZZ5eLQtRmVGSe0SusJQbP7RcIx3arY1pV5F0UxCxcq5p+pP
- h4muLy3hYdlc9Uh8foKxTGWR16C6ZgGRiANJsOSh8Px3lLYZRdoCll6OKFGoqqNV3ONQ=;
+ bh=aSl37PZ5OaaAOunb2ieb5zyjM3MWZZx1w1E7CgCHwg4=; b=lgdKcorNqIM9C6/5Oap6vEUaGc
+ xUa0cftylXTi/fzVF4wMoJyL/nqMKIevy0PftDfALvezWI7gGB2Fmg2J9VFIL5Dx09DdAPO1vNe6E
+ /sZ84Sj9GaFzhLnDSwmKUxOcQs0d2z6GFAYkD2k+W1yqKZpRa4eDrID4n8wzCUdv6y5w=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=mfXgZvOQlG/9husypXNws7ooRDQP6iBVEudkKK8jYDQ=; b=a
- /AHj2HVOZURrhatg6RRL649ibYXDcnZiJfIiikCABcm5hwlLEKzV+zc/eEuQ5VuHY1PLlwTyvmDJm
- X3+PpEtFnfq8ohQvsIXXfw8AvVrPiAa5CP/x4q5kcQxoRzLQZNC8jNXeEIxQZb/xOAOOFofWFopMq
- o6zx7Pl4StvIXBZQ=;
-Received: from mail-pf1-f201.google.com ([209.85.210.201])
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=aSl37PZ5OaaAOunb2ieb5zyjM3MWZZx1w1E7CgCHwg4=; b=gGwAvyJLivzw4MGGVnAEoUcphh
+ q8+aLkrY+XZrR0dlKdvMZ5UWHr7J3Gd+qkg2UhaPS8rM8keOl+h1lVxRHfNYde3vZN/kc4LB+gpWn
+ +A4wvzc4IJGlQsHckR08/aHwvP1nzJ4V1KJfmgJduPoctoqG7u3dXmBo+q8/wWcvQ5eM=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1ucTEB-0006EN-F8 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 17 Jul 2025 18:21:07 +0000
-Received: by mail-pf1-f201.google.com with SMTP id
- d2e1a72fcca58-74b29ee4f8bso1234151b3a.2
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1ucfQW-0008Iy-6y for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 18 Jul 2025 07:22:40 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by tor.source.kernel.org (Postfix) with ESMTP id 8735B601D3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 17 Jul 2025 11:21:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1752776462; x=1753381262;
- darn=lists.sourceforge.net; 
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=mfXgZvOQlG/9husypXNws7ooRDQP6iBVEudkKK8jYDQ=;
- b=vMnnXk2kOh5NKXxKWSmJzIIOkZimRwwzyEkcKCAKEESaLWSSaITCahzvouSYgaAzOL
- B07CknPwm2TDYP0uem9LcpDQJkRYGyp3E9o3NhkXhCA0OxLj4snENv6BOy7ZCxgyvRB3
- CHloOniXcqocEu7qEYVGFLuZ03c4vlfyxyaG9twMhBajNgtpylxthSO3/WeL0YaPOrpM
- TLfEcMJIWQnvFvgd2nNyf3kT/rCO+571nIMSoSgr65nLB1pmMV6wnmSsmKPqmZRRkqzC
- Ti+KhG4GAtE7IbvIxzE8nze75xVDTm6Q7XRQdkThwn6FU5YNae7V6MGIYs9TdMma+FON
- dRNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1752776462; x=1753381262;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=mfXgZvOQlG/9husypXNws7ooRDQP6iBVEudkKK8jYDQ=;
- b=dnkCzcH53cfUClSSLh83BY+cA1wU5tAiWfveIknw/X5AFHx/yqcDcL2bwatEsNgWQU
- NasWy/6BA+L5ch6Unqx7yZE+MDJdfhXjnb8FfL+TKSqmdR43yi5YNfqHZkAQsR39sWiG
- 7801vRVI66MvsS/iQdbiy2HmB1zU7KNSdLr3gCJkiRr+sHTVkCNJe6IwOYsmQ15NbB6S
- 4aR1fZNuWwDXiihJAkE/L6Dnx6DePPH4+lraWqx7KqU6z264plkzmDAoYon/mn5Syo7W
- ejYghZPdZJGLbENNoAALdomlX3RlNTCRCh1h9Agilj1IjxgJt+4gx8UxSvEz3RIfa/ux
- vitQ==
-X-Gm-Message-State: AOJu0YxmMvOHJaEfBOP3DQuMQGf+HiUjtO86XaBldUShBmhtulbxN2e4
- PFSb62KbONNahdydAfhBInsMJtqIt6UOmRq6KtOgFsQ1RtnMEcLfwp744PYzymkkq+bxsxL3MvJ
- 1yyLXWX++sQ==
-X-Google-Smtp-Source: AGHT+IEQ7rkPHnS9YRb93MIrU94SXzzNy6ODI8qIl500/SQedeEGhzCYI8tNFn7RDdPKRc1b+Gbk6Oa91Jd5
-X-Received: from pfbgt11.prod.google.com ([2002:a05:6a00:4e0b:b0:73e:665:360])
- (user=chullee job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:14d0:b0:74e:aa6f:eae1
- with SMTP id d2e1a72fcca58-75723e744d2mr10645238b3a.14.1752776461663; Thu, 17
- Jul 2025 11:21:01 -0700 (PDT)
-Date: Thu, 17 Jul 2025 11:20:57 -0700
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250717182057.1284333-1-chullee@google.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-X-Headers-End: 1ucTEB-0006EN-F8
-Subject: [f2fs-dev] [PATCH] f2fs_io: fix format mismatch for ino_t
+ Fri, 18 Jul 2025 07:22:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3D838C4CEED
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 18 Jul 2025 07:22:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1752823354;
+ bh=nU8Eudp2I2J/KnrTn/DvUYFAl21lZvEvVAi3j0JrGQI=;
+ h=From:To:Subject:Date:In-Reply-To:References:From;
+ b=GaS3xudW5FPE4T1yqG5sM3lgycmMqficRucOYKp2E3E6TmMwCMT5PycAwXDADDX3H
+ mMAGdUEO59NTCKIVwrBsVmcofGLaqR3TsouPwXHupjy45MprLpuYTbBljQcwX++UMq
+ 2EPi3p4J6K/6I1H51ZrhJzn9kmae8tr6+vNY9LRIpLMgzrRrxUUTfRj+1LWr86qxbn
+ eTRw6ZKg75Y1f+cSK90NoXOIBt7oBNuRdhGPZxVXzv/WB1l3LaQmuLo7kcULw/6i7o
+ WKXF64bDhtX+R4jExeZPkEbnwyJmnEQclnxMSC7y7NeD1B0Jx6OyDY+6hNzFVsrke5
+ HwWmFAK2kN5rA==
+Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
+ from userid 48) id 36A29C433E1; Fri, 18 Jul 2025 07:22:34 +0000 (UTC)
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 18 Jul 2025 07:22:34 +0000
+X-Bugzilla-Reason: None
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Product: File System
+X-Bugzilla-Component: f2fs
+X-Bugzilla-Version: 2.5
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: hy50.seo@samsung.com
+X-Bugzilla-Status: NEW
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: P3
+X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: 
+Message-ID: <bug-220321-202145-6PBprASWvU@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-220321-202145@https.bugzilla.kernel.org/>
+References: <bug-220321-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
+MIME-Version: 1.0
+X-Headers-End: 1ucfQW-0008Iy-6y
+Subject: [f2fs-dev] [Bug 220321] F2FS: workqueue: WQ_MEM_RECLAIM
+ writeback:wb_workfn is flushing !WQ_MEM_RECLAIM
+ events_unbound:quota_release_workfn
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -104,40 +107,43 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Lee via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Lee <chullee@google.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+From: bugzilla-daemon--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: bugzilla-daemon@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The ino_t type can be defined as either 'unsigned long' or
-'unsigned long long'.
+https://bugzilla.kernel.org/show_bug.cgi?id=220321
 
-Signed-off-by: Daniel Lee <chullee@google.com>
----
- tools/f2fs_io/f2fs_io.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--- Comment #3 from SEO HOYOUNG (hy50.seo@samsung.com) ---
+Our development system occurred this problem again.
+It seems that write data to f2fs using write back option.
 
-diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index 8e81ba9..595d1e6 100644
---- a/tools/f2fs_io/f2fs_io.c
-+++ b/tools/f2fs_io/f2fs_io.c
-@@ -2329,8 +2329,8 @@ static void do_test_lookup_perf(int argc, char **argv, const struct cmd_desc *cm
- 		if (!verb)
- 			continue;
- 
--		printf("%-8lu %-10s %-9d %-8jd %s\n",
--			dp->d_ino,
-+		printf("%-8llu %-10s %-9d %-8jd %s\n",
-+			(unsigned long long)dp->d_ino,
- 			(dp->d_type == DT_REG) ?  "regular" :
- 			(dp->d_type == DT_DIR) ?  "directory" :
- 			(dp->d_type == DT_FIFO) ? "FIFO" :
+The wb_wrokfn function use writeback workqueue.
+And the writeback workqueue created using WQ_MEM_RECLAIM option.
+
+ static int __init default_bdi_init(void)
+ {
+         bdi_wq = alloc_workqueue("writeback", WQ_MEM_RECLAIM | WQ_UNBOUND |
+                                  WQ_SYSFS, 0);
+         if (!bdi_wq)
+                 return -ENOMEM;
+         return 0;
+ }
+
+So it occurred kernel panic when insert quota_release_work to system_unbound_wq
+during wb_workfn working.
+But it seems that could not add WQ_MEM_RECLAIM to system_unbound_wq.
+Therefore, it would be better to remove the WQ_MEM_RECLAIM flag from the bdi_wq
+workcue.
+Is it possible?
+
 -- 
-2.50.0.727.gbf7dc18ff4-goog
+You may reply to this email to add a comment.
 
-
+You are receiving this mail because:
+You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
