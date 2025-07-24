@@ -4,103 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F3E47C87FC5
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Jul 2025 15:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8EF9DC83F26
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Jul 2025 20:30:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=fVtA3I+2hnGe213VDRT4ealvtzuQtu8YD1oGiR2U7xc=; b=e3fQo8GH41S+qse0Dn/91KvsrE
-	4SzlGWLD6+Xigv9iLaF9LiZRcdrJhXRsWx6wTS1r/sFLGSWWDw2A1nNqHfwxWwaIacgK6G8QrvJ92
-	+nTo0vHMrpc7RgmgxSqXWTdYYB9mKOUn5ZBRHC8Gulzo4BwxBQBjiKg+saRLk8Djr9eM=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=2prHgz285Izhui36Mr+CN8igR+hbniGzKMcGNKngWGY=; b=Tc4fbuVy4DXL/72aQIJX3CpCy3
+	Dg84csdx9Ncb/cyCflt3n3Gai3LVxOZPClEsBe3t31vAQ2Gjiwtjh5NF+4m9p0k2K+7iA4TwXJbqK
+	LhTvcbNqFURxsW+j0bPw5NY1A4pZpvLBtIpoLIRLTFKnw3QXNGYVl/67wb9px54t4lS4=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ueyMP-00070z-EC;
-	Thu, 24 Jul 2025 15:59:57 +0000
+	id 1uf2Zi-0004sT-Tw;
+	Thu, 24 Jul 2025 20:29:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <masonzhang.linuxer@gmail.com>) id 1ueyMO-00070q-8F
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1uf2Zh-0004sN-Jz
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 24 Jul 2025 15:59:56 +0000
+ Thu, 24 Jul 2025 20:29:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WuBmFWQwikfC8gPKY8IQE2fOku/rGKmQAuOX1glBpG4=; b=j0X1yCgDU0Dxgo1UTVNim66Cr2
- zRHjhRCcefoGABVQ2HXrx+lZ7DfevD77//Z2gmOhru0H2wE0r9Sk+MjmJVErw0BkzPEjL8d0d2QD6
- G8eOmZ+qmFrQPycsKElDXJbiXwVih/om4JdPdd62oJNMU3lHvlGzHgi5yBTP84oNoaXs=;
+ bh=Gl7CpfTCd5GUeOfECgdW/iptUw00V+mu5W9FWr+AR9U=; b=DgwNjr47qJ/CT7ShmKr6uT3LFE
+ QHm2nNIxSaW3yeGVmEdsh9qAxMAb16Ktkk4ouWB/fXBWv/KAxXYOSSiPKLazzODBs0dN5LVc3o1i3
+ MpapoZaUDeg5A7UWdzD1gLn8pkwVReC57oQbeRY+xwn/Ej66U5Iii8M6eau0ZWtNXJ2E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=WuBmFWQwikfC8gPKY8IQE2fOku/rGKmQAuOX1glBpG4=; b=H
- l6ZHiO7ZU14CNxQPsE7ET/IfGmtWkznYEkji1CUsdUJzAYp04SvAWptThlnoLpX5JSnSbfsqVd/SF
- KvfOXhMalLTF0jrkkstGYrDuil4UE8M5n1gWyz+5KQWVNnGUlqHtZAGdxKLD8CESOyFUWZvbwqDJA
- Q5NbA3BiDuKN9lrU=;
-Received: from mail-pg1-f182.google.com ([209.85.215.182])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=Gl7CpfTCd5GUeOfECgdW/iptUw00V+mu5W9FWr+AR9U=; b=SvhkUHCCHtoEws4DqLXCNiL9A7
+ 2aZjehMCcRAtImbDZajFVxqXuURVs3cmptfO2C99RCJcCJkbYWRZpbmFDQXRr7cAe7qMHFoY5HpeF
+ kpLSxPSzmJDu2nlYYMZL77gBg4ZncrjahTHnocVETlDxsGTkA2CrBBWYZPXruP3JzJw8=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1ueyMN-0004XH-Uq for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 24 Jul 2025 15:59:56 +0000
-Received: by mail-pg1-f182.google.com with SMTP id
- 41be03b00d2f7-b3508961d43so1188729a12.3
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1uf2Zh-00011L-2k for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 24 Jul 2025 20:29:57 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by tor.source.kernel.org (Postfix) with ESMTP id 6B9CE6112C
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 24 Jul 2025 08:59:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1753372790; x=1753977590; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=WuBmFWQwikfC8gPKY8IQE2fOku/rGKmQAuOX1glBpG4=;
- b=SOyPwwGSCXWvKf8aT6pZy04IPMbIIg+hQhfnSpWRmgj+otxYYW7BvCQVdsjmqQUe2u
- Q5lyDb22vseBP5vyOkRjztAGl5tW5ESzg8u6OAvuELgJ/o3MparUzYeVCktoMntQ2spZ
- i8cZwp62FoLtC7q4F3+D7tyX8XDmGTwKRwbLUyVutXO2i3Ks4UTgBvrJpABujSPP/MpR
- XfaMehKoM4737Q/QEI9VWq35SqYKTKmL4UbRonGyk/O9T7pj/gMm8u8gwZ3gN6KnUo20
- d34z79XV7yeTgp+hQS0GbyaPRWkFW6Kl8lHPx2RwBLOrQuaqF+YF+REJS+ChIhvQ11EA
- vCBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753372790; x=1753977590;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=WuBmFWQwikfC8gPKY8IQE2fOku/rGKmQAuOX1glBpG4=;
- b=eSNCxiJs16QURCQQHZIYMg4ApbXoEJ4YGPtw2MY0ABmikwCfo0aPtgzOV4D0ROzJNZ
- SBNsSZKEZQEnCxoT9sjYJTHDJfwzfmlJ9jJ1sUvs8wZUvbqgs0Fskr3Zj4Y5xOHI9xE7
- G3g+qKwr971+6tFUG92gS1Ji2bMvFLAzoTgmV+9XGAgutTXXRr1eEhl0dXWWcrXlVs9Z
- 4dCcrK9ySDlI4C/52mBA8vhFjnG5w1rV8Rl/edQHJMCQBvVNOt+dUnczc9L4SpvHsJk2
- 1UJDheeUARkM8piawSNixqAHrZUSVNcq+2fVQxsAXzbihWVRJhv9/ttARCcu8aC9HXlA
- RnXQ==
-X-Gm-Message-State: AOJu0YyoI41jhNTblp7bnOnvL3qD8d1yj3b/gfHKYsqKg2x9piqrUrLE
- FBOhou5XSra9/eAVZ7gG+k3cLatk9jqq1xmsMDb5x+30Ikv9qOtNCUm1
-X-Gm-Gg: ASbGncvGoHLor70ewjlr99aI95UcqSmQs+Pw+iE9VjXnroWtNkZFebySaGd1dlHfO3i
- vwa9oSiOq5RhdPptrxJQ1ZT8cKsQgIa0g26iiQ19ip9uuDScDqR5NLzeks4udRk96QZHZrXjHqN
- NYUXnGbC6q7G3Kf2ITNied0y2cDtoICJ92am+e4+wNjToCeC3zBHn/eUZLoW3IPDdCoL7Sf1dH6
- Idv544+wU7sH2Vl/NLMF8N/LYW9qFaRwReSiEhj3vONrEyI6L+3eJYthAL2GKd4sfgsUkhkl8eK
- CuCcPa3Y6Z8PRs1G2y/5zBMxcKaiB5a576vRA3QEdRQc6b/3uUkdkqMjTJjKxAIqPknfz6WnK/o
- BFfAPkGH2yJUd5r+z9leJY0T//Js9khXzSwVY3z+xnuaxcCldkS8=
-X-Google-Smtp-Source: AGHT+IEHPy9G1eCQC0UKeFfiz9xGRT9b/0wCsPG0VhqcmscnBnx5mZqt6oMjqwWw8Ndyu5+wJUkHvg==
-X-Received: by 2002:a05:6a20:7343:b0:1f5:9098:e42e with SMTP id
- adf61e73a8af0-23d48fb1f73mr12003645637.7.1753372790189; 
- Thu, 24 Jul 2025 08:59:50 -0700 (PDT)
-Received: from localhost ([61.152.143.57]) by smtp.gmail.com with UTF8SMTPSA id
- 41be03b00d2f7-b3f6c10ab56sm1747924a12.45.2025.07.24.08.59.48
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 24 Jul 2025 08:59:49 -0700 (PDT)
-From: "mason.zhang" <masonzhang.linuxer@gmail.com>
-To: chao@kernel.org
-Date: Thu, 24 Jul 2025 23:59:45 +0800
-Message-ID: <20250724155945.206801-1-masonzhang.linuxer@gmail.com>
-X-Mailer: git-send-email 2.50.0
+ Thu, 24 Jul 2025 20:29:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E76C4CEF6;
+ Thu, 24 Jul 2025 20:29:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1753388991;
+ bh=8omJxnDmdLt4PCSaTRYHGUJhtLkmAWmpNQRwr/jaSUk=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=rH4563OUE1trZPVxlHrlpmqT0BnZY1P5WVADs/cjCaCSKUb9fjC1k2UXVTt0+ZPjn
+ 5lA25Phj8YS6Vw1ka0zF4+dk0xn8+BAmzwMoE4ioZwLQgPtgEdp+PvJ+lBkNoZcZKP
+ y0qNYOGROWQB3hCzMhKsmlS4Kpe5m+llPiZDKI6YDe/Ym059fUFhMVhJzSe5diXXD+
+ bqs/Y9JGtNawPjB2LZubkW6KneyHbKfyXXKx6BvdD/P5AwEwb28bdQcQLgtbPLNBje
+ 44/tbEP6jiy80wGLj015yAZ1JZcBmLR9G/jtfgFMIbxF620XIkjqSH0QrTCOQAkAuC
+ +oDZHpdvDcjrw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+ by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
+ 33AD5383BF4E; Thu, 24 Jul 2025 20:30:10 +0000 (UTC)
 MIME-Version: 1.0
-X-Headers-End: 1ueyMN-0004XH-Uq
-Subject: [f2fs-dev] [PATCH] f2fs: add error checking in do_write_page()
+Message-Id: <175338900874.2519964.9616561185237270230.git-patchwork-notify@kernel.org>
+Date: Thu, 24 Jul 2025 20:30:08 +0000
+References: <20250721020231.2482090-1-chao@kernel.org>
+In-Reply-To: <20250721020231.2482090-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1uf2Zh-00011L-2k
+Subject: Re: [f2fs-dev] [PATCH] f2fs: don't break allocation when crossing
+ contiguous sections
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -112,42 +88,39 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: patchwork-bot+f2fs--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Otherwise, the filesystem may unaware of potential file corruption.
+Hello:
 
-Signed-off-by: mason.zhang <masonzhang.linuxer@gmail.com>
----
- fs/f2fs/segment.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index ae1223ef648f..ce80ba226aed 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3936,12 +3936,15 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- 	int seg_type = log_type_to_seg_type(type);
- 	bool keep_order = (f2fs_lfs_mode(fio->sbi) &&
- 				seg_type == CURSEG_COLD_DATA);
-+	int err;
- 
- 	if (keep_order)
- 		f2fs_down_read(&fio->sbi->io_order_lock);
- 
--	if (f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
--			&fio->new_blkaddr, sum, type, fio)) {
-+	err = f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
-+			&fio->new_blkaddr, sum, type, fio);
-+	if (unlikely(err)) {
-+		f2fs_err(fio->sbi, "Failed to allocate data block(%d)", err);
- 		if (fscrypt_inode_uses_fs_layer_crypto(folio->mapping->host))
- 			fscrypt_finalize_bounce_page(&fio->encrypted_page);
- 		folio_end_writeback(folio);
+On Mon, 21 Jul 2025 10:02:31 +0800 you wrote:
+> Commit 0638a3197c19 ("f2fs: avoid unused block when dio write in LFS
+> mode") has fixed unused block issue for dio write in lfs mode.
+> 
+> However, f2fs_map_blocks() may break and return smaller extent when
+> last allocated block locates in the end of section, even allocator
+> can allocate contiguous blocks across sections.
+> 
+> [...]
+
+Here is the summary with links:
+  - [f2fs-dev] f2fs: don't break allocation when crossing contiguous sections
+    https://git.kernel.org/jaegeuk/f2fs/c/f0a7adfedcc8
+
+You are awesome, thank you!
 -- 
-2.50.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
 
