@@ -4,103 +4,115 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7BCBAC87FC9
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Jul 2025 10:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DD290C87FCB
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Jul 2025 15:21:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=1Uq9qvS/279qUFaMoAb66sQ3V/it6miRFZuIpwsWdDg=; b=NUN5TDphNcNiuyzUKpKV4BBEKJ
-	IfKCmjTa4QH9TMss4AbGT5MklgiYKc27PBqpf5tj8sEo7g1tN1qnI/X0zug0txJwKrF4tq1G/XtUQ
-	YnNDucGkqU/2CQdu86iM4V1zCEl7Yp6MmxkfjMIdRVtJqNHdK++NrFzIJkXvqzyUC/5s=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:In-Reply-To:From:References:To:MIME-Version:Date:Message-ID:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=T373MNsiDInLNxbv2F5Oem9AAxaPwGUHM08vr0PsN80=; b=kDcprvAmqo0Za8JcdlhlBEdY0z
+	9oRYRRnzg/0NJUGM12qDJiY9+Vo0OmSI6qpSU024dFpv/+jjyzZtkp0xp/T9uf3PU4emsAkWehwFP
+	gM/ajfE64bpBpkbJSgKfzlHafICpdivia84jmwNgjtCxt+i31Yro8n4CYAzdfCVQVfVw=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uh3hw-0000Yn-IY;
-	Wed, 30 Jul 2025 10:06:49 +0000
+	id 1uh8cF-0000Tv-Fl;
+	Wed, 30 Jul 2025 15:21:15 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <masonzhang.linuxer@gmail.com>) id 1uh3hr-0000YE-At
+ (envelope-from <axboe@kernel.dk>) id 1uh8cB-0000To-VN
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 30 Jul 2025 10:06:44 +0000
+ Wed, 30 Jul 2025 15:21:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=a3NHXtKl1WYxzEukpqzzAix9WcGat22WB22yDRcRvYU=; b=fUICcSIhrlf+m4dgY/JrucZJBP
- B4RgHO+lq2mHJEF5LYlw/E8Jf5jUWuwq5eOSVubdgMGi0Y7axw5qHyjDHQUvHuwwWf0ZfVwqJA4h1
- b+MteJGEVMAfN1JZ8QnM1n9Up70xSVJLfCsczvJoMvrPIGxq+XR4iMpOWsLaxmrI0Jdk=;
+ bh=dGvN81tK3SiKuUwwOdxVCQ6vX1YLyW1gSNQPEFsAu5s=; b=IiplDZITn+WhAf5lSka1JS+kCw
+ WfJK5ohGS3n1+0niEhAPgEHkjrRcZazNwHc+A1FvdJPnkW4Id0eNUZcumB1OjttqLTc2hLqDJPuPa
+ utSlby6D1+spGuo+kEZuSgGBlRAk84BNvJoOZnVnhnbcJEnm87a54NeIbHzxhF3Sfclw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=a3NHXtKl1WYxzEukpqzzAix9WcGat22WB22yDRcRvYU=; b=T
- cCKc2h6Ue6ceGx+luV/cYPGbBodChvot87QDDOFIY+w7QIXJpdUUYIzedV+vnZ6Xj5q5havB7yNHS
- G5vB3vxHX8cKNvXpE+KyAu2glXDJ6olceRFeAIm+zom1FYXup1Ip02Mfpc7cLQb2IIQpCWZAY6GxK
- YcGjlZ06xoQSyS50=;
-Received: from mail-pl1-f178.google.com ([209.85.214.178])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=dGvN81tK3SiKuUwwOdxVCQ6vX1YLyW1gSNQPEFsAu5s=; b=ZdZBXVKDJju2q23I3gqii44eXZ
+ pRvv8dD5pa7Ls1u8YabuEHm4YW/1vEmRgR8XXWn+nOC/uoQloBOcGPYUootTkaJGWoHuZOJ8NMFWV
+ 3x9EeaP+BHt4qWOLnPSJgRAG1nP7VJzuJRBsZQaAVgq+zcS/0AK5wGWkm/ZbcsiBSDa0=;
+Received: from mail-io1-f51.google.com ([209.85.166.51])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uh3hr-0005iB-Nt for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 30 Jul 2025 10:06:44 +0000
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-24063eac495so20112465ad.0
+ id 1uh8c9-0002C0-Pv for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 30 Jul 2025 15:21:11 +0000
+Received: by mail-io1-f51.google.com with SMTP id
+ ca18e2360f4ac-87c28e9e7ddso89509239f.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 30 Jul 2025 03:06:43 -0700 (PDT)
+ Wed, 30 Jul 2025 08:21:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1753869998; x=1754474798; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=a3NHXtKl1WYxzEukpqzzAix9WcGat22WB22yDRcRvYU=;
- b=izfbv/pHRqeCYOF0uY9XBiaPZ2mK6VkD0LRKa8lfzZspeHgBSeHkK3Ik/weWG2pRYn
- 81L52CUcijNJaCTt41KFlZKfMaRoPmkUxs0LHFgz+zqOcvVzfKq2tpJJFtak8JXySF9u
- AP7zwJRWXhoa+7ru1QK49IYsxJuUpRW0NrEcnG2PiQKgXamKETCwDGuY02UU/BYiQg4s
- LHr2KcGQSo0LkxuO20RrWbniiI9d4XtHgLNmT55MrRPoO4LepkslqUCTlsD2zeWyPug/
- Si7tL9uVuQRNIIgBGMrB0fRmisZxE7CrXpnBM7wjjK6KSPZ17rVaeme8YZsNdQZj42t4
- XhMQ==
+ d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753888857; x=1754493657;
+ darn=lists.sourceforge.net; 
+ h=content-transfer-encoding:in-reply-to:content-language:from
+ :references:cc:to:subject:user-agent:mime-version:date:message-id
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=dGvN81tK3SiKuUwwOdxVCQ6vX1YLyW1gSNQPEFsAu5s=;
+ b=el52P58Bjf+bpVD8kap53JMEak6V4dLSANoh7QLUktMNbN5Ty8SE/jx/yTFfVRwuiu
+ UjDckKFDq2A4KUihMkd5A3165Hy4Yvw6yS+qCVPA8iI34QKQAIv94EtuQukEYW7VJ8xf
+ 8mGPbZv7ujFLT48gtBypBmbu2RNu3PFKiIppob0M2qBr6NKDoRsN+YEEIA1WUANFeIAU
+ 8oKsgPfIv2bUDo8X6Sd+yKeGi7ZBPhnZG+ZCw0qWH6oMSWN2d9B4qNKVZQG3Zkc09JeP
+ w4+ni9cNZiH1tRn1+rDXtxQuTG+e6UQFxjmMDzZNhzOJcxkntDof7nuCb6CZSa7nkWrO
+ eURA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1753869998; x=1754474798;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=a3NHXtKl1WYxzEukpqzzAix9WcGat22WB22yDRcRvYU=;
- b=ryMMR7NvHUZl6SSbnt7Xb3ncUt1vanuhvO43Uqhx7GOQESGycAA/JwveCizI+nZ87z
- MhGmyai2s461hJ42SZMLKpO6tMqy+Svni8sJG4pY7cY8Iyx6M4zrP1hlfMLhsvs4BewB
- zqsgoNELe8ObO/oKA6tH5KczDyK+80Jqzz63ef35Vyxuo5OwsrQ8l0+XlOiyWa8pbceW
- Og5RzEEej/jIgkReVYIcyUHt2OKvLv1aRehU0z9qEiDx3iBtk3fKFXHW+x6u7vz5aUTG
- 5bD66necmPXkrU5b0cDr6nWsUnWQqVpjnIU7HIghXiD0Mkz9HSLes4MFROzZEmFIVt7e
- YNgg==
-X-Gm-Message-State: AOJu0YzipVwPBSWgTQh4bRZGn6MuewlXo0+HIDQXI2S4jldYjIyJ7DIE
- tkPtwZB62X2mpEDf38ZXADisQNGnRWAHgVbqwNQdl8+Y33qMaGfTuQTo
-X-Gm-Gg: ASbGncvsn5HUwa79N9Tg0cdaLi8xuKLr/sMP1ZvS+zFbJn7Cp8IzY7aMjZwAfd38I87
- jSPYSJN6JQYJxC9RjFeWA6Wa8zuCLq+6GP6OWRpdObh8J6htr/rDauEAmGogvusDVua5sIsj6p8
- y0joM6qXgTboVeb7oYdn1v9kAKibAR5sv/TJfACsqjfO5pdW3MntFfbV5QWe2Rf94gGP7dSxNM3
- Nra2MRD0teU1TOr8JoUFAvOx1n5cE6Om0mY981sXYOcdpn9ZUVe8jjVE2Mb3kZrdk6UsUoLVUrG
- za8+ELvHpBSajy01Y4G/8sObxKKQ6AbLt6HHt4tJuUMVYUlYk3Ai0+PaZ20u95+aO82rzFyZz4E
- WlEn8N77wBUvzUkEFXaLMXmQwRvZAAA==
-X-Google-Smtp-Source: AGHT+IGjmz171p/eMAUj0vv69q71m0C38ra0zQDkESB7ci9lp4BxyaZXgaej7D+7K682ECMo73417w==
-X-Received: by 2002:a17:902:fc50:b0:234:ef42:5d65 with SMTP id
- d9443c01a7336-24096c0dcf7mr38804835ad.52.1753869997911; 
- Wed, 30 Jul 2025 03:06:37 -0700 (PDT)
-Received: from localhost ([61.152.143.57]) by smtp.gmail.com with UTF8SMTPSA id
- d9443c01a7336-24007d98b25sm76878685ad.97.2025.07.30.03.06.36
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 30 Jul 2025 03:06:37 -0700 (PDT)
-From: "mason.zhang" <masonzhang.linuxer@gmail.com>
-To: chao@kernel.org
-Date: Wed, 30 Jul 2025 18:06:33 +0800
-Message-ID: <20250730100633.26292-1-masonzhang.linuxer@gmail.com>
-X-Mailer: git-send-email 2.48.1
+ d=1e100.net; s=20230601; t=1753888857; x=1754493657;
+ h=content-transfer-encoding:in-reply-to:content-language:from
+ :references:cc:to:subject:user-agent:mime-version:date:message-id
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=dGvN81tK3SiKuUwwOdxVCQ6vX1YLyW1gSNQPEFsAu5s=;
+ b=Mbc9Im7F+9ybUS9GYRXZnx9RDAfaiYiYrRM5SDT25gIY9ZuK6r1QJ2LlivVq38dUEV
+ Hy2nlzMcSNV65yaHS2/vSihuSMXeybl5lulveNIOTfvgFgHIdv3PoNZ5LDwj040LfWBb
+ ttSs/LbQgFNoLdzXSpHXCxmvclpZCYJY1i8s2apGLnZN4YdHIZMsajJG1oX3nlwf/FGs
+ GXDi3keSWMbU6cBM9cMmF5WZKg1n2OzsQKapzckxxIUxwe/NmRT3TCUOsWwCEe+nmu7e
+ RAeVfoEGnWe+sKp24vMBewaRnUo2nOWZoBN+pLfX76wE/VJGhF3+kn0G8bLlAuoLTh1L
+ rqYA==
+X-Gm-Message-State: AOJu0YxnMiOzANKccg1+5f8dIXBbR/F3cOu+m/OMplfI2WBZaVVYKcNE
+ 0MQEBNpEnnUtV3l1OWpocnZLBYIfTBHFK1n0T53fyumGdSV3jBDhS9cx1xragCgMXCV4ZXy/EiC
+ Ktx2B
+X-Gm-Gg: ASbGncupbsonD4eXYH5np7oQs18jvJaJtrt01qbRdf3tDrQ38mDKQfAddtGvWzyc8sV
+ YA3l1fHvQUF6CR4SHZ9f41Agu6TCMoBI6zGxaCSC4LPByX8nsBekPlUCWKRZLezT7VAw4EoJAwB
+ HDyvIc+8gTWws9kwBkqAqdMe8w9iLBHQBVXUQfk6gH3fPuNKLf0X9ejTLXklJiiEoaTRy+ex7fh
+ /0c/8xTpWGElDuVyC1Go43ZUJkBEQT26hszvdGiCPRWdC13RrEH+uOWtl9zOjuynvYIDM3u3Sca
+ AglQ6OK058vRX7BonhpgFYjLsPKAuVvNvcaIMrRK/yLjawxnYCFMiM56XNhRF1xzKnC5BS4zf7V
+ 2XRnBtRLYMH6dQbCr4A==
+X-Google-Smtp-Source: AGHT+IEYoOQssgXqmLYl6Ge/P/+WMJXz1cstrJMMaV4kH+gwrSXxse4HeKT5xLsNZC2QjL8pj4jG4g==
+X-Received: by 2002:a05:6e02:2388:b0:3e2:9253:a19 with SMTP id
+ e9e14a558f8ab-3e3f624cea4mr59279225ab.13.1753888857506; 
+ Wed, 30 Jul 2025 08:20:57 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+ by smtp.gmail.com with ESMTPSA id
+ 8926c6da1cb9f-508c93751a4sm3317700173.96.2025.07.30.08.20.56
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Wed, 30 Jul 2025 08:20:56 -0700 (PDT)
+Message-ID: <1b420389-d46b-48ef-aa49-585d84e2710f@kernel.dk>
+Date: Wed, 30 Jul 2025 09:20:56 -0600
 MIME-Version: 1.0
-X-Headers-End: 1uh3hr-0005iB-Nt
-Subject: [f2fs-dev] [PATCH v2] f2fs: add error checking in do_write_page()
+User-Agent: Mozilla Thunderbird
+To: hanqi <hanqi@vivo.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
+References: <20250725075310.1614614-1-hanqi@vivo.com>
+ <d258ab6d-a97a-4232-bf90-5afedd5cccb2@kernel.org>
+ <e1a1dbfe-165f-4cb3-9d5b-8ac4ba61265e@vivo.com>
+ <087f7937-20b5-4151-8a3f-5b6b2b045b41@kernel.org>
+ <b1cf56a6-d23d-40ca-acaa-07944140b1b5@vivo.com>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <b1cf56a6-d23d-40ca-acaa-07944140b1b5@vivo.com>
+X-Headers-End: 1uh8c9-0002C0-Pv
+Subject: Re: [f2fs-dev] [PATCH] f2fs: f2fs supports uncached buffered I/O
+ read
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,40 +129,54 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Otherwise, the filesystem may unaware of potential file corruption.
+On 7/28/25 2:28 AM, hanqi wrote:
+> ? 2025/7/28 16:07, Chao Yu ??:
+>> On 7/28/25 16:03, hanqi wrote:
+>>> ? 2025/7/28 15:38, Chao Yu ??:
+>>>
+>>>> On 7/25/25 15:53, Qi Han wrote:
+>>>>> Jens has already completed the development of uncached buffered I/O
+>>>>> in git [1], and in f2fs, uncached buffered I/O read can be enabled
+>>>>> simply by setting the FOP_DONTCACHE flag in f2fs_file_operations.
+>>>> IIUC, we may suffer lock issue when we call pwritev(.. ,RWF_DONTCACHE)?
+>>>> as Jen mentioned in below path, right?
+>>>>
+>>>> soft-irq
+>>>> - folio_end_writeback()
+>>>>    - filemap_end_dropbehind_write()
+>>>>     - filemap_end_dropbehind()
+>>>>      - folio_unmap_invalidate()
+>>>>       - lock i_lock
+>>>>
+>>>> Thanks,
+>>> That's how I understand it.
+>> So I guess we need to wait for the support RWF_DONTCACHE on write path, unless
+>> you can walk around for write path in this patch.
+>>
+>> Thanks,
+> 
+> I think the read and write paths can be submitted separately.
+> Currently, uncached buffered I/O write requires setting the
+> FGP_DONTCACHE flag when the filesystem allocates a folio. In
+> f2fs, this is done in the following path:
+> 
+> - write_begin
+>  - f2fs_write_begin
+>   - __filemap_get_folio
+>   As I understand it, if we don't set the FGP_DONTCACHE flag here, this
+> issue shouldn't occur.
 
-Signed-off-by: mason.zhang <masonzhang.linuxer@gmail.com>
----
- fs/f2fs/segment.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+It won't cause an issue, but it also won't work in the sense that the
+intent is that if the file system doesn't support DONTCACHE, it would
+get errored at submission time. Your approach would just ignore the flag
+for writes, rather than return -EOPNOTSUPP as would be expected.
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index ae1223ef648f..10aaa32defca 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3936,12 +3936,17 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- 	int seg_type = log_type_to_seg_type(type);
- 	bool keep_order = (f2fs_lfs_mode(fio->sbi) &&
- 				seg_type == CURSEG_COLD_DATA);
-+	int err;
- 
- 	if (keep_order)
- 		f2fs_down_read(&fio->sbi->io_order_lock);
- 
--	if (f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
--			&fio->new_blkaddr, sum, type, fio)) {
-+	err = f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
-+			&fio->new_blkaddr, sum, type, fio);
-+	if (unlikely(err)) {
-+		f2fs_err_ratelimited(fio->sbi,
-+			"%s Failed to allocate data block, ino:%u, type:%d, err:%d",
-+			__func__, fio->ino, type, err);
- 		if (fscrypt_inode_uses_fs_layer_crypto(folio->mapping->host))
- 			fscrypt_finalize_bounce_page(&fio->encrypted_page);
- 		folio_end_writeback(folio);
+You could potentially make it work just on the read side by having the
+f2fs write submit side check DONTCACHE on the write side and error them
+out.
+
 -- 
-2.48.1
-
+Jens Axboe
 
 
 _______________________________________________
