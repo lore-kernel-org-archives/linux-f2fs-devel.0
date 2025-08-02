@@ -4,78 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CB946C87FCB
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  2 Aug 2025 02:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B546EC87FCB
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  2 Aug 2025 02:37:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=UhjnNCG1zGk21ZH97Bkyw1rNx4isyVqQ8smlqV2EXio=; b=Tn9f77MelCs4/HCgLEGMj0zGjz
-	9YHEzEX3XAxE6ZNbOyGsR4CF1gRKr+DTfyVwu1ttK4pP4NuMuRW/vsAYZV9mod/VmciQUJBOUE6Du
-	gcs508fp5mKqr9B8+thCvb13PmH+uqicL9rTT9z8HlhVne78Zu9DS51j+iXfo3xOqEuw=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=+kPbnowqFKOWY6N5auJkbNXht2PvWj1dpARGwUFsrPg=; b=m637+IW1Qv+k1y+Qq+dQvunp9p
+	oQn424hKyC/8vIw8sqLRyOsBjTNCA8fcU4h5slYwXjSCASPXLVCpn70vEZHgLnCzqKfKoox0As0Vw
+	gs/b3Va+tK7N1o0dkhWCZ3jobkjLQzT3MxzBo1RqMD60DBoQnMEA4jQhcv/peqzzhQZ8=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ui1pk-0003UT-9W;
-	Sat, 02 Aug 2025 02:18:53 +0000
+	id 1ui289-0000Cb-VU;
+	Sat, 02 Aug 2025 02:37:54 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1ui1pi-0003UE-UN
+ (envelope-from <chao@kernel.org>) id 1ui288-0000CT-Te
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 02 Aug 2025 02:18:51 +0000
+ Sat, 02 Aug 2025 02:37:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0CSDxqOupRz7+Z/++lkrWUVrSO3BrOWzm7BmU1GHs08=; b=et6r95fzwsDpCpr0Th9LZBihdt
- J7Ufqyp52Hae5Ofb0RRwvKXTpFn364JuJ5ofMiG+WDrOtxEM0PGMMZyG9U/QcUZ2PfMC07XeB8zK5
- jRrYGHyNAKSy10zjaysrQHEm0BcM8tXGCp4+kNNiO03jIBEkNUYfIBRD+QhcLZk0zQEY=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=0CSDxqOupRz7+Z/++lkrWUVrSO3BrOWzm7BmU1GHs08=; b=enA295rfdGr/YS9DDyEQIF6dKS
- KcqUQm/0iT0PFvItIIjh50rAfbQvePUmjdfPS8fmwJrO5GV2RKB4bFLX4oY8/+PyvhTO36IwqtSVU
- 3SkwyVT4YIc9jPEv7zSdNcgr6R20zTD5+BVFnrE8MCFQrdqZI71ary8W2V82pqWbSbJw=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=osM4hxE7Ep6v26ia6KeM1/OaarCJ5VPNY2ADqDdHkdo=; b=bVBSBVUuLaSXlB6Zvm+5IKFDff
+ Lu0OT2WymBe/rXDl+ll3Q4drcTtIV+1Yy0O+Ruf5khpWEKVwTG4SvS6/1uYLSfdPIXYWhNwThPvhj
+ ZtXasEZbUhrQ13eAs+hSKRpX2mfA6m4W1MNo+yshU5ODsj428EJAXVkvO7MJdD4xzzm8=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=osM4hxE7Ep6v26ia6KeM1/OaarCJ5VPNY2ADqDdHkdo=; b=D
+ 5Jxamef2fI9syKb9OwoPdIuac9M+6TijrC4oEkJFlWrFuf2zvKvM9MKO8dABtp/1s5U/pal+bC4ov
+ ZfGOooWR4zleQWhUEHk4yBu5GkfkKNHfUsaA+Egmwc13Y5Qhqic+yZ5hMqpQzykQDLCCnmeZ0ZQQb
+ s7AQ/ZzTqMDkhHkw=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ui1pj-00039r-8u for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 02 Aug 2025 02:18:51 +0000
+ id 1ui288-0004Ke-IR for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 02 Aug 2025 02:37:52 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 8CB33A558C2
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat,  2 Aug 2025 02:18:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17814C4CEEB;
- Sat,  2 Aug 2025 02:18:38 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id D4CEA600AE;
+ Sat,  2 Aug 2025 02:37:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E105AC4CEE7;
+ Sat,  2 Aug 2025 02:37:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1754101120;
- bh=kaagW9dCMsb7y1ucHeMk+t7TtIVB1BcK8b6ccYWtXKU=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=s0ULzKrQMOZ1TiWPi4rX330kc4BLPqMn7LnPzne8TmtVfQRSFTsIjCqKQTPHYsqSv
- oWe8BuMV1/FwwcN95vEsQAcvAhUaZR6tI3CnvnctRBAdZv3/klbiv8VvFjDdGFXrie
- gF9SZVg6RPTtx1R6cuxUEVpxyXt/IYvr0p3804wrfafymoRUAjboOQtSvISJRbEu96
- 2aiYXjW+5ryld16DEEDIk4ufP8lWI4YPeDT2wHWZvs0fWo26aoC+zq2/VF6WS+mmwL
- 5d1B6J7shoMboPBYvrsTNVU+uwNRGlT2pQVPJc/zSFhNWiQTSlT3NeAilf/sA2PV71
- ICrqy+8PKA2Zw==
+ s=k20201202; t=1754102261;
+ bh=SnMGNBU0WevBcEDt0U0KrwRwiB+AubWXiRuNhkpiDR0=;
+ h=From:To:Cc:Subject:Date:From;
+ b=mXmhydbWdO5IiuKtmOjWtXxTEy6KJEAmvlSmKZ+6Pa7u1WtZT7IQ2cKpwK2k21484
+ TZcTDbt8MzqhrRdexg9BNy6RinGzGdfcBOykVVLm19dfm1HqIIsOIceFHUHis9KQFu
+ 2+pO66zmKttEODPoSosqRFD6WLYovB8yoeizU5ABg08/OaJmVVr6KZRca2SnB2tltZ
+ TTLTj86P+p7wKc9PhOsNGjaZWaRIQlvQshADiltr40iIuyA4z7+dMpwUGDBLi0Oxl1
+ 4nCqbgRNPOuHRWzt74vbKHWV1L/un0/bye/8p1kfioNky5+vDil334fPiCM7P3z4rv
+ WWxa4id4mh1pg==
 To: jaegeuk@kernel.org
-Date: Sat,  2 Aug 2025 10:18:31 +0800
-Message-ID: <20250802021832.1882302-2-chao@kernel.org>
+Date: Sat,  2 Aug 2025 10:37:33 +0800
+Message-ID: <20250802023733.1890349-1-chao@kernel.org>
 X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-In-Reply-To: <20250802021832.1882302-1-chao@kernel.org>
-References: <20250802021832.1882302-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ui1pj-00039r-8u
-Subject: [f2fs-dev] [PATCH 2/3] f2fs: clean up
- f2fs_truncate_partial_cluster()
+X-Headers-End: 1ui288-0004Ke-IR
+Subject: [f2fs-dev] [PATCH] f2fs: fix to return -EOPNOTSUPP for uncached
+ write
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,79 +86,41 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jens Axboe <axboe@kernel.dk>, Qi Han <hanqi@vivo.com>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Clean up codes as below:
-- avoid unnecessary "err > 0" check condition
-- simply if-else condition in the loop
-- use "1 << log_cluster_size" instead of F2FS_I(inode)->i_cluster_size
+From: Qi Han <hanqi@vivo.com>
 
-No logic changes.
+f2fs doesn't support uncached write yet, for write() w/ IOCB_DONTCACHE
+flag, let's return -EOPNOTSUPP instead of ignoring IOCB_DONTCACHE flag
+and write w/o uncached IO.
 
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Qi Han <hanqi@vivo.com>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/compress.c | 33 +++++++++++++++------------------
- 1 file changed, 15 insertions(+), 18 deletions(-)
+ fs/f2fs/file.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 6cd8902849cf..e37a7ed801e5 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1215,9 +1215,11 @@ int f2fs_truncate_partial_cluster(struct inode *inode, u64 from, bool lock)
- {
- 	void *fsdata = NULL;
- 	struct page *pagep;
-+	struct page **rpages;
- 	int log_cluster_size = F2FS_I(inode)->i_log_cluster_size;
- 	pgoff_t start_idx = from >> (PAGE_SHIFT + log_cluster_size) <<
- 							log_cluster_size;
-+	int i;
- 	int err;
- 
- 	err = f2fs_is_compressed_cluster(inode, start_idx);
-@@ -1238,26 +1240,21 @@ int f2fs_truncate_partial_cluster(struct inode *inode, u64 from, bool lock)
- 	if (err <= 0)
- 		return err;
- 
--	if (err > 0) {
--		struct page **rpages = fsdata;
--		int cluster_size = F2FS_I(inode)->i_cluster_size;
--		int i;
--
--		for (i = cluster_size - 1; i >= 0; i--) {
--			struct folio *folio = page_folio(rpages[i]);
--			loff_t start = (loff_t)folio->index << PAGE_SHIFT;
--
--			if (from <= start) {
--				folio_zero_segment(folio, 0, folio_size(folio));
--			} else {
--				folio_zero_segment(folio, from - start,
--						folio_size(folio));
--				break;
--			}
--		}
-+	rpages = fsdata;
-+
-+	for (i = (1 << log_cluster_size) - 1; i >= 0; i--) {
-+		struct folio *folio = page_folio(rpages[i]);
-+		loff_t start = (loff_t)folio->index << PAGE_SHIFT;
- 
--		f2fs_compress_write_end(inode, fsdata, start_idx, true);
-+		if (from > start) {
-+			folio_zero_segment(folio, from - start,
-+					folio_size(folio));
-+			break;
-+		}
-+		folio_zero_segment(folio, 0, folio_size(folio));
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 9b8d24097b7a..7f09cad6b6d7 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -5185,6 +5185,11 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		goto out;
  	}
-+
-+	f2fs_compress_write_end(inode, fsdata, start_idx, true);
- 	return 0;
- }
  
++	if (iocb->ki_flags & IOCB_DONTCACHE) {
++		ret = -EOPNOTSUPP;
++		goto out;
++	}
++
+ 	if (!f2fs_is_compress_backend_ready(inode)) {
+ 		ret = -EOPNOTSUPP;
+ 		goto out;
 -- 
 2.49.0
 
