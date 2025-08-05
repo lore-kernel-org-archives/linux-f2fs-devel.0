@@ -4,76 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4A604C87FD1
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  5 Aug 2025 06:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B507BC87FCB
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  5 Aug 2025 06:29:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=HAIYDQaCV/MlGt3amOZYCHxtWfZQFCnxQ7kADScQAMA=; b=gA9htVXjmd9J12rOj1I0pzH6uP
-	5+2PGnDdYTeJZKscnTdpA6z1Cvyy8/rarcZAYht1Ujxhfz3as4QPqyck7bFQOnMr0dlPBMiJV2une
-	gLZ9SxOPFehu0LjvfsXpiUFEVQt7yY5OtqvrTbhy4HPC2MZg4mdU9iBDKdmdMuPFMwYg=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=8DCdZw/b9yIWpTbtfu2C6hzcK5N0ODt8hh/YjEQPzwo=; b=jVfkeMGccuoSdDdc9TQ0JW2Ybu
+	SQwrb/VKUwlPwB5xZE6McrNz3+4iSxQBdb2NXaYp+ICSMPJq3lKu/PvScRsqTuWBRl1ULgkJFvRSd
+	GjC/zo7AJS9UOOs1B1GpVObfFEssM3okKps3EyAwr83Kqdk8ys62levkRUYwRUZL8K8E=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ujBAw-00010T-M8;
-	Tue, 05 Aug 2025 06:29:30 +0000
+	id 1ujBAz-0002te-IX;
+	Tue, 05 Aug 2025 06:29:34 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1ujBAw-00010M-7M
+ (envelope-from <chao@kernel.org>) id 1ujBAy-0002tU-TV
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 05 Aug 2025 06:29:30 +0000
+ Tue, 05 Aug 2025 06:29:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Vaq9Yco3vTyBJ8qZvlsAf5lq3aFYkZW7PDRrVBSIqA4=; b=Per0YHstZxzdnDQIEkFARybuZC
- YlZd0xc0+unyOTgBB4wlHaiFAFMHrVbYeedFx2Cfsb+Htqchpyu/c3yCX8uNBa8fPZC/gyPGYBPj7
- W1jasSUqpPrWqTeMxcjqp1T45I0afyzZFqu07ECo3CwIe0ZpeB0jAK9w3lvZw+q6dxBs=;
+ bh=HegJRdMyzDf0sOKpPWgFXSOxg/2fegcgjXkSJzQwOIQ=; b=BKYvTfrCwOf0T+M4BHUM66BRou
+ G7X0/NwdD4RV0jh874WyQjMk4Tks5gcL6ByPX2HXzQvS18m66VVR3+rCJvrSlVu5NC/RotIwVzuuo
+ NK+VIz6P3VZoOb6VUEYrdDfuP+X4uujowkrdazyMeC9yZKWwtzbZI3XuK2+pn3gF6SUs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Vaq9Yco3vTyBJ8qZvlsAf5lq3aFYkZW7PDRrVBSIqA4=; b=Q
- OBcKUuWarqFVZrujzICIBElpc5F1bv7A7WCtogMwoidWWjQZbfdhBiCeHr8Ajha5TxxHTWAxFHVjs
- DsDqpvs2Rl8AsMTjvryb/v/Ovcu4HP3vRyOckn3LMcGTMjLV3gy3jY1yezBEUmdaDZwybEoExTZfG
- 95apx5luJ/nbYi0A=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=HegJRdMyzDf0sOKpPWgFXSOxg/2fegcgjXkSJzQwOIQ=; b=Eqc7qcl4AO/QRPAE9r0PyYIc3W
+ 08uedYXiCfHmb5HG8If7ENSf7PLeQ6IlZAI1P0UVXr3XtwkrR/vCRpg2guo0RqG6bsgMQTba7Zt2C
+ kMYK4KdoonbshWf8LKeOmoDHREw8MaGZu+wCJUqvDNDu7DdMdQsq2tGFjTNYTN2NA6sA=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ujBAv-0003ch-Hm for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 05 Aug 2025 06:29:30 +0000
+ id 1ujBAz-0003dA-70 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 05 Aug 2025 06:29:33 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 3C37A44E49
+ by sea.source.kernel.org (Postfix) with ESMTP id E86C745B35
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  5 Aug 2025 06:29:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0467CC4CEF4;
- Tue,  5 Aug 2025 06:29:17 +0000 (UTC)
+ Tue,  5 Aug 2025 06:29:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0254C4AF0D;
+ Tue,  5 Aug 2025 06:29:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1754375359;
- bh=nibfP85OrtQzeUHNPYnVq5ZQtUssf0yOK2wCjiWDsmE=;
- h=From:To:Cc:Subject:Date:From;
- b=J1q+hd5+nkJMEGBGayUV29fS5leHdv+JzlcpcCxaNGvsAXpafOfbwXblVvjrJb93o
- HACOvTrrKJ5DVTLDCp2f8+uA+YJsqKLJYx3/3+z6jcyL2fJ2Wd4D3AqclkK+twBx9F
- 3860CebAMKDo2epd5KARPSLDrC232RywcsgfiBs0G5GWlywawQW5yoY5Y2ZHMy1qZf
- hvxBuCv7Zlxa6s7/cH2nikqDFf9mgA8mHSQhA/pmvB5BvZDV82lED0pR9XZ1mzAgwL
- /LUFspRUk6Sd/7OVfHx2HoQkdhyTTbMEqoI5XORrF1cwuO3wAmAWdHsb9FJr5kAMf5
- oPE/SRq/47PCQ==
+ s=k20201202; t=1754375362;
+ bh=Vb/Dm0dQFvdRHWdK+5sVG86+h2p/gCamzKl892mrR6Y=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=D+UsNfclfl5Wxh/F0HCdm7OiPUTaUri5qTrqt1DalNxK3eX4BW3NlatLVPRMJ3v7j
+ ig1Q/BZC+BX1uirRkc7oJKlZa8cDI2Q7W7Hmxrk7HvHg7+IGS7QWlmEyhGXVcOvhYh
+ IWO1R8szbJoReO1MbU62YRzd86+/6LUywY/i8Kw0rHFb2dzteg8zZiRCDgudUH4YPZ
+ lMU8WSyYkJHqx/kvuzEO02PfAv4t5tBhmGJ+rEYI70LDQCuMesljnJaavNfyz3CJvx
+ pWUVpbVCHshB/LGQLAsWpzw4SsSgrvXi0zcU5BnxypVM2PjZ5WT2H0xuUBegBWpAEh
+ 3E0BztPbEO60Q==
 To: jaegeuk@kernel.org
-Date: Tue,  5 Aug 2025 14:29:10 +0800
-Message-ID: <20250805062912.3070949-1-chao@kernel.org>
+Date: Tue,  5 Aug 2025 14:29:12 +0800
+Message-ID: <20250805062912.3070949-3-chao@kernel.org>
 X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+In-Reply-To: <20250805062912.3070949-1-chao@kernel.org>
+References: <20250805062912.3070949-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ujBAv-0003ch-Hm
-Subject: [f2fs-dev] [PATCH v3 1/3] f2fs: fix to avoid overflow while left
- shift operation
+X-Headers-End: 1ujBAz-0003dA-70
+Subject: [f2fs-dev] [PATCH v3 3/3] f2fs: clean up
+ f2fs_truncate_partial_cluster()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,28 +94,89 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Should cast type of folio->index from pgoff_t to loff_t to avoid overflow
-while left shift operation.
+Clean up codes as below:
+- avoid unnecessary "err > 0" check condition
+- use "1 << log_cluster_size" instead of F2FS_I(inode)->i_cluster_size
 
-Fixes: 3265d3db1f16 ("f2fs: support partial truncation on compressed inode")
+No logic changes.
+
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/compress.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v3:
+- reorder patch 2 and patch 3
+ fs/f2fs/compress.c | 42 +++++++++++++++++++-----------------------
+ 1 file changed, 19 insertions(+), 23 deletions(-)
 
 diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 5c1f47e45dab..6cd8902849cf 100644
+index 72bc05b913af..6ad8d3bc6df7 100644
 --- a/fs/f2fs/compress.c
 +++ b/fs/f2fs/compress.c
-@@ -1245,7 +1245,7 @@ int f2fs_truncate_partial_cluster(struct inode *inode, u64 from, bool lock)
+@@ -1215,9 +1215,11 @@ int f2fs_truncate_partial_cluster(struct inode *inode, u64 from, bool lock)
+ {
+ 	void *fsdata = NULL;
+ 	struct page *pagep;
++	struct page **rpages;
+ 	int log_cluster_size = F2FS_I(inode)->i_log_cluster_size;
+ 	pgoff_t start_idx = from >> (PAGE_SHIFT + log_cluster_size) <<
+ 							log_cluster_size;
++	int i;
+ 	int err;
  
- 		for (i = cluster_size - 1; i >= 0; i--) {
- 			struct folio *folio = page_folio(rpages[i]);
--			loff_t start = folio->index << PAGE_SHIFT;
-+			loff_t start = (loff_t)folio->index << PAGE_SHIFT;
+ 	err = f2fs_is_compressed_cluster(inode, start_idx);
+@@ -1238,36 +1240,30 @@ int f2fs_truncate_partial_cluster(struct inode *inode, u64 from, bool lock)
+ 	if (err <= 0)
+ 		return err;
  
- 			if (from <= start) {
- 				folio_zero_segment(folio, 0, folio_size(folio));
+-	if (err > 0) {
+-		struct page **rpages = fsdata;
+-		int cluster_size = F2FS_I(inode)->i_cluster_size;
+-		int i;
++	rpages = fsdata;
+ 
+-		for (i = cluster_size - 1; i >= 0; i--) {
+-			struct folio *folio = page_folio(rpages[i]);
+-			loff_t start = (loff_t)folio->index << PAGE_SHIFT;
+-			loff_t offset = from > start ? from - start : 0;
++	for (i = (1 << log_cluster_size) - 1; i >= 0; i--) {
++		struct folio *folio = page_folio(rpages[i]);
++		loff_t start = (loff_t)folio->index << PAGE_SHIFT;
++		loff_t offset = from > start ? from - start : 0;
+ 
+-			folio_zero_segment(folio, offset, folio_size(folio));
++		folio_zero_segment(folio, offset, folio_size(folio));
+ 
+-			if (from >= start)
+-				break;
+-		}
++		if (from >= start)
++			break;
++	}
+ 
+-		f2fs_compress_write_end(inode, fsdata, start_idx, true);
++	f2fs_compress_write_end(inode, fsdata, start_idx, true);
+ 
+-		err = filemap_write_and_wait_range(inode->i_mapping,
+-				round_down(from, cluster_size << PAGE_SHIFT),
+-				LLONG_MAX);
+-		if (err)
+-			return err;
++	err = filemap_write_and_wait_range(inode->i_mapping,
++			round_down(from, 1 << log_cluster_size << PAGE_SHIFT),
++			LLONG_MAX);
++	if (err)
++		return err;
+ 
+-		truncate_pagecache(inode, from);
++	truncate_pagecache(inode, from);
+ 
+-		err = f2fs_do_truncate_blocks(inode,
+-				round_up(from, PAGE_SIZE), lock);
+-	}
+-	return err;
++	return f2fs_do_truncate_blocks(inode, round_up(from, PAGE_SIZE), lock);
+ }
+ 
+ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
 -- 
 2.49.0
 
