@@ -4,74 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 75978C87FD1
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  5 Aug 2025 06:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0A8FDC87FD1
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  5 Aug 2025 06:19:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=tTSSCoHLaAFEnIsgiGM+C7b4164u+eRxqm8w6GFK1J8=; b=IKwXHd2lfNoYIw6jtc6yCdZqic
-	FZ24lSpfBNhT8y/3Z9vjwXOkdee8tLFiOZp2wfgwqh30zU96eNkLCFmeFASa2SzRXkNU1HcCBeIpu
-	SazFqla61GRfh68POey7GYKYjPnhGbvD56NUOW0aFOGFwu7EVjtKg6Dw9knuFN7UaAgk=;
+	bh=tTSSCoHLaAFEnIsgiGM+C7b4164u+eRxqm8w6GFK1J8=; b=detIMmdoG+xibFGH30caQ+s6rQ
+	zFZ0nCDAvki2DHCS2sVzlELn1cIZKsUztp5eXWL23UZHrOQWH6aPhf+Lu6xJqcuTDt/2f9wF12cU1
+	X3+RL/vuaXe/tC4Ay29jsT5wD/ElCB3aTaOzBlm2UzgBiM05y4ts8uK8m6+thzp/dtp8=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ujB06-0000kR-9z;
-	Tue, 05 Aug 2025 06:18:18 +0000
+	id 1ujB1L-0000n1-0v;
+	Tue, 05 Aug 2025 06:19:35 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1ujB04-0000kK-KO
+ (envelope-from <chao@kernel.org>) id 1ujB1J-0000ms-MN
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 05 Aug 2025 06:18:16 +0000
+ Tue, 05 Aug 2025 06:19:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=J59J8guxVVPodt5W64UarY1vroYIU1cEs3+PXa+qLkU=; b=Nleswe4Su3fRztrK34BKhdjU4H
- hDUBSNa0Gg3+oE2smLNYBjS6539UrmZ02qmJkaRCxxYdfEiM1CgaeX4dsNijC2w9NFdoTKD3ZWW63
- TTGZ997QispuAsQM+/hgqHwt1HBaQ1/9ti2UOBGTqOKmSyBtsmrHz468Wslz0pSsb6Vs=;
+ bh=J59J8guxVVPodt5W64UarY1vroYIU1cEs3+PXa+qLkU=; b=m3O1wMT9fXruXX80mYMb0VfzQQ
+ thZ2CFwqFG6LvGHGofndbXZ0+InOI4KU/qBryWVmte47kjPXGwvk30H5oNKQNXf2ojO96HTYdFFLV
+ QvysCpJD3Oh5jYmai23o8kn8c/La+1SZeqNmOeCZxYayR97MLvOlEXFz08gm+81bNSyE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=J59J8guxVVPodt5W64UarY1vroYIU1cEs3+PXa+qLkU=; b=a
- 6NEyMhpGDv4Uv0Q08DHOqAdo7jtMXV4JTAdgh2dE2igxI9kb/OqJc5XY++lTx1okdX6fpHDHnxPDK
- JAQhaU2DZDh/EinDsFQk5xuK93Z8tC/eLbqptaNsu6XIt1FZGRDN0qaNwjYdaXRNocaskAShn4Tv2
- nRTCLjXmyr3Bk3f4=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ List-Owner:List-Archive; bh=J59J8guxVVPodt5W64UarY1vroYIU1cEs3+PXa+qLkU=; b=Y
+ fgD7xWDBecRxluVo06lU8u3EHoUNDE5pwgvjsJwvygoKuISSCHFJRxDoGeoLy7KqsWVXRDWmFOynB
+ Mr7XrMxj9EZf2EOrkAw7YGIKRrH/wAUbf5z6sgJN+m/01iufCyEw8wsQiiayx/GwGFkiWZOxElmhI
+ GeN37kPW+e1ydTnQ=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ujB04-0002ve-8u for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 05 Aug 2025 06:18:16 +0000
+ id 1ujB1J-0002xz-CA for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 05 Aug 2025 06:19:33 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id A0CB860052;
- Tue,  5 Aug 2025 06:18:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7736AC4CEF4;
- Tue,  5 Aug 2025 06:18:03 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id 06ABB5C63FE;
+ Tue,  5 Aug 2025 06:19:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9EB0C4CEF4;
+ Tue,  5 Aug 2025 06:19:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1754374685;
+ s=k20201202; t=1754374762;
  bh=DgJ6jHIbxLVmiXFgEe6KR9nH8EMJtdShONp10yEpRuw=;
  h=From:To:Cc:Subject:Date:From;
- b=iugcPsXVN40dyxh6qeY63pueNSJoFp1Su4a2x7lykPOQTZi4OBwcuBDSbV0+Asknt
- 8IqffZzhfSURGRH4khM4ql+HmEZcF6d1ZqCWlGs6RitXFfv3quZs1EathBSNBNUjdJ
- 6vvIF67bLG6qWDwFZtq61o7VDk6vuoxHeRv8eM0wI8omFXmuUe9nK2jCjx3Fq5tZ0E
- eF3HmIrVWGwbi8kz4hxJyvGSYVkXfp2FlNFxCj/GyW5uT8kc43sSpQa9bIKnemohvF
- 43kxj1Q2FDw5uewualYomPHrsx7/EZCHOwK1tQF5PTHGtt8XwJ39OZ7CcFs6Im5E3s
- ESW/yTXLa8rgg==
+ b=BoXuP7/XHPnGo8bvR8bgj8MUSC9E/9FMTu198MFG24jHl9lIm/uLA+UpNhinzI8TD
+ i8n7rYsycPxIX0+qIXEJVq8RULdbCBvpcP/5lauxCDhKtJYvW+iIYO+X8UDqbU92le
+ a4/E50saBbAoJtpky/XRr1S+MLjA0jnAkg+xmlFXQGWnutkWgk84GtA/b1iV0IhLvo
+ TWF3YLy137uJaWVvpSeXWXGvXa8hOzf0+L8hdvlNmb7Mbqt6UQRJvOFuPR0INw8V4m
+ muDSgIA4h2++f767oY54Ki7VJLOywNprsNdR/Dhf8tebQ+jNBXU29rru6rMzQrAXlU
+ w43fINSO6TX0A==
 To: jaegeuk@kernel.org
-Date: Tue,  5 Aug 2025 14:17:33 +0800
-Message-ID: <20250805061733.3067254-1-chao@kernel.org>
+Date: Tue,  5 Aug 2025 14:19:14 +0800
+Message-ID: <20250805061914.3067747-1-chao@kernel.org>
 X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
 MIME-Version: 1.0
-X-Headers-End: 1ujB04-0002ve-8u
-Subject: [f2fs-dev] [PATCH] f2fs: fix to return -EOPNOTSUPP for uncached
+X-Headers-End: 1ujB1J-0002xz-CA
+Subject: [f2fs-dev] [PATCH v2] f2fs: fix to return -EOPNOTSUPP for uncached
  write
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
