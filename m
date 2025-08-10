@@ -4,78 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2C075CA0EC0
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2748AC87FCF
 	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 10 Aug 2025 08:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=/3BIDy2qsbB6R0KVR6/FowB4bqjKxkho3I8rQGoPUHo=; b=WTGH8xuIfamGCZKEQRkiv8lmjL
-	p2a9LGrnOiOkMrn50em0V+t1pSGXXhgiAfFgwUaj1iG8uFGFtzycN5VlkAy/DQOiLu1+/bUjuhodM
-	dKanPOEe/V6i3XfinCBmc011GKrAeKX9o5y6zSP4e1TUygOPRkwTly/mlkHJbpbnuV0Y=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=Wb60tN6ua8Q9Pkq9RvvIjVcNkF1QEJWyxp7h8278BkA=; b=fFDVbhah1NVII7YpV+NYYwnl2a
+	NT+nU74h/QLai55pG0ROyVuotkTtZi9OiR7q2T3hbcURBz17Bt1L4c7KDrfuhOsLIg7Ymmjudzj1C
+	oG0b42kl/4+YpZyE5+6AgKa5EyuVLNjKMTjR/z77lklfQwVQ8YUrkPYK0GeJIulbx7SQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ul0yX-0008Lu-4y;
-	Sun, 10 Aug 2025 08:00:17 +0000
+	id 1ul0yV-00020b-QJ;
+	Sun, 10 Aug 2025 08:00:15 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1ul0yV-0008Lo-Uu
+ (envelope-from <ebiggers@kernel.org>) id 1ul0yV-00020V-8K
  for linux-f2fs-devel@lists.sourceforge.net;
  Sun, 10 Aug 2025 08:00:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jEWlUZlkE4+g7GRHFs3/q9TcoG16IqXhpaTAcFUdi4w=; b=itBScNnO3VNqK0Bj+04x6x7fVj
- 2AB6b5qpmYg18JI+J3nCYWDmBDWGxg/xD6Z6jtXNvu0LEBE0qY+AQWx4wM8+DSVm4fqkxTY2hK01k
- 9WOYsPf7knE/yrt+CEbz0aICzt/kzkOfEHsS7nVJKMzmGRwQm9ZM9pS8aSZ+9L/J+93E=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=jEWlUZlkE4+g7GRHFs3/q9TcoG16IqXhpaTAcFUdi4w=; b=m6kstOb4lyp8w9thNYjyo1NH4H
- 3DOxaQv09c+w/I3mVW3krxvjcQyFB+/+kpmRJWuKocdwtKbSUYRe8pYnypEiTK8wgdH1+g18y8aer
- jiFiJTIpn3EDGI89tYc4QxXnkuGGQXPqnYnOXGBP4WxZpFgbNksZopJJhDm7zlZEzid4=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=GdPH/+NcW6TAbXooVQlTd8faOiYQtXgqsrfPYMPIfhQ=; b=dSX+NWErfVBfLKuv7NqCkCfeSk
+ TvUwpOV5UuVZafbWZ5mrL9iGIw2cq64XfiOaPn2HnoTGSKixqtbdTXU9fJ3VYhVWwE9dDb/UEP3Uy
+ 4pNCKcL3g2o3u3rNzHKIECQFvelEKnkNPtqx3mstNQtxXTFbiLBmpqu6rLaORHH+QT1E=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=GdPH/+NcW6TAbXooVQlTd8faOiYQtXgqsrfPYMPIfhQ=; b=O
+ sOuNkCFd8G9ijxRoUxHXz4sNx+E94CTAFxbQ3S5gqyZ+Ig7xkUyN08BS+AIMcdslna4cxZKZF+XJf
+ +RsIDgR6XAjbxyr0/yjbbUMPA1m82hY08rv+HwgsBbyc1dYLDR2xKPrZvgyJqV17Xoh54qB1dqpJp
+ BqJXWNw1Lv0nrz2s=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ul0yU-00010R-RE for linux-f2fs-devel@lists.sourceforge.net;
+ id 1ul0yU-00010M-7t for linux-f2fs-devel@lists.sourceforge.net;
  Sun, 10 Aug 2025 08:00:15 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 8528245C60;
- Sun, 10 Aug 2025 08:00:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22C70C4CEF8;
- Sun, 10 Aug 2025 08:00:09 +0000 (UTC)
+ by nyc.source.kernel.org (Postfix) with ESMTP id 72453A54F4E;
+ Sun, 10 Aug 2025 08:00:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E84DC4CEEB;
+ Sun, 10 Aug 2025 08:00:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1754812809;
- bh=Dg7N4Yxhd1Q0fVMr+QNgQgiF2vNBJPVNwSrIaGVuBhA=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=VEb0L+26rIN6EuClQPwD6XWh/x1ogGk1gHqNfKeABEaGso81WskiRPvahQXrAuCOZ
- w2k9gwPcM4MVzy2Xtu93ICIZqwGAZiFUmW03irgpEFgGPONzVBlgA6iWwZdW2VAjvp
- ckA/LCdmP5MZbWj/9vUZG482qZtgY9xS1gsOTEm/SHQJRHZ0jQf5v0AOB5kVLhzAr5
- SOjntj25+qR6WW2NoRSLMXpdEylk+m4qP1c0l4gHM7T7zu0GwfPp1aBhPwApR2RcmI
- cIXrdjVQsfxC0fsbYUTOYO6xUsGL+VNBvyFbKBM5ODIr83OGKk7cOz9+EyNoG4ihpm
- vskpt49wZ+FMw==
+ s=k20201202; t=1754812807;
+ bh=aTHyx1cf8uUcKi9iLPhMiaHNvBZweQxvaRFblGuIkU0=;
+ h=From:To:Cc:Subject:Date:From;
+ b=WJdGfnTNdEQ6MVf/hGAbh0JwTqoz1Yh+pYp0k313F/a1j/rorDF8R07LPBEZ0sLKf
+ 6TxIZXJpfRkfiRSg79aTBLrOKodHRWnOYxIzpGNzqukX7W9ZpAjrTaSykO5VbJXU6M
+ rkyXb6XfNgNUexzXDTYxsxC562eZhrAIUbuI29XD8/0xg59FuqKZjrrfxyllWOp+0H
+ pVx0Qmp2Zi2NnZkdXh0MsxAXjpQMVsGoNDFQBesUFz9qP+u5Wtl/oSyI7pmdRGsa5n
+ +v/4jBd7cw61Mw1MmUKzH2i7rF9Ljz955U2e9s4ryWyazVca4ZmDDM7IWpIX6vR9d2
+ covGiQZeubuTQ==
 To: linux-fscrypt@vger.kernel.org,
 	fsverity@lists.linux.dev
-Date: Sun, 10 Aug 2025 00:56:57 -0700
-Message-ID: <20250810075706.172910-5-ebiggers@kernel.org>
+Date: Sun, 10 Aug 2025 00:56:53 -0700
+Message-ID: <20250810075706.172910-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250810075706.172910-1-ebiggers@kernel.org>
-References: <20250810075706.172910-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ul0yU-00010R-RE
-Subject: [f2fs-dev] [PATCH v5 04/13] f2fs: move crypt info pointer to
- fs-specific part of inode
+X-Headers-End: 1ul0yU-00010M-7t
+Subject: [f2fs-dev] [PATCH v5 00/13] Move fscrypt and fsverity info out of
+ struct inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,84 +97,89 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Move the fscrypt_inode_info pointer into the filesystem-specific part of
-the inode by adding the field f2fs_inode_info::i_crypt_info and
-configuring fscrypt_operations::inode_info_offs accordingly.
+This is a cleaned-up implementation of moving the i_crypt_info and
+i_verity_info pointers out of 'struct inode' and into the fs-specific
+part of the inode, as proposed previously by Christian at
+https://lore.kernel.org/r/20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org/
 
-This is a prerequisite for a later commit that removes
-inode::i_crypt_info, saving memory and improving cache efficiency with
-filesystems that don't support fscrypt.
+The high-level concept is still the same: fs/crypto/ and fs/verity/
+locate the pointer by adding an offset to the address of struct inode.
+The offset is retrieved from fscrypt_operations or fsverity_operations.
 
-Co-developed-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- fs/f2fs/f2fs.h  | 3 +++
- fs/f2fs/super.c | 7 ++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+I've cleaned up a lot of the details, including:
+- Grouped changes into patches differently
+- Rewrote commit messages and comments to be clearer
+- Adjusted code formatting to be consistent with existing code
+- Removed unneeded #ifdefs
+- Improved choice and location of VFS_WARN_ON_ONCE() statements
+- Added missing kerneldoc for ubifs_inode::i_crypt_info
+- Moved field initialization to init_once functions when they exist
+- Improved ceph offset calculation and removed unneeded static_asserts
+- fsverity_get_info() now checks IS_VERITY() instead of v_ops
+- fscrypt_put_encryption_info() no longer checks IS_ENCRYPTED(), since I
+  no longer think it's actually correct there.
+- verity_data_blocks() now keeps doing a raw dereference
+- Dropped fscrypt_set_inode_info() 
+- Renamed some functions
+- Do offset calculation using int, so we don't rely on unsigned overflow
+- And more.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 46be7560548ce..2f5c30c069c3c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -905,10 +905,13 @@ struct f2fs_inode_info {
- 	unsigned char i_compress_flag;		/* compress flag */
- 	unsigned int i_cluster_size;		/* cluster size */
- 
- 	unsigned int atomic_write_cnt;
- 	loff_t original_i_size;		/* original i_size before atomic write */
-+#ifdef CONFIG_FS_ENCRYPTION
-+	struct fscrypt_inode_info *i_crypt_info; /* filesystem encryption info */
-+#endif
- };
- 
- static inline void get_read_extent_info(struct extent_info *ext,
- 					struct f2fs_extent *i_ext)
- {
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index e16c4e2830c29..b42b55280d9e3 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -478,10 +478,13 @@ static inline void adjust_unusable_cap_perc(struct f2fs_sb_info *sbi)
- static void init_once(void *foo)
- {
- 	struct f2fs_inode_info *fi = (struct f2fs_inode_info *) foo;
- 
- 	inode_init_once(&fi->vfs_inode);
-+#ifdef CONFIG_FS_ENCRYPTION
-+	fi->i_crypt_info = NULL;
-+#endif
- }
- 
- #ifdef CONFIG_QUOTA
- static const char * const quotatypes[] = INITQFNAMES;
- #define QTYPE2NAME(t) (quotatypes[t])
-@@ -3568,10 +3571,12 @@ static struct block_device **f2fs_get_devices(struct super_block *sb,
- 	*num_devs = sbi->s_ndevs;
- 	return devs;
- }
- 
- static const struct fscrypt_operations f2fs_cryptops = {
-+	.inode_info_offs	= (int)offsetof(struct f2fs_inode_info, i_crypt_info) -
-+				  (int)offsetof(struct f2fs_inode_info, vfs_inode),
- 	.needs_bounce_pages	= 1,
- 	.has_32bit_inodes	= 1,
- 	.supports_subblock_data_units = 1,
- 	.legacy_key_prefix	= "f2fs:",
- 	.get_context		= f2fs_get_context,
-@@ -3579,11 +3584,11 @@ static const struct fscrypt_operations f2fs_cryptops = {
- 	.get_dummy_policy	= f2fs_get_dummy_policy,
- 	.empty_dir		= f2fs_empty_dir,
- 	.has_stable_inodes	= f2fs_has_stable_inodes,
- 	.get_devices		= f2fs_get_devices,
- };
--#endif
-+#endif /* CONFIG_FS_ENCRYPTION */
- 
- static struct inode *f2fs_nfs_get_inode(struct super_block *sb,
- 		u64 ino, u32 generation)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+For v4 and earlier, see
+https://lore.kernel.org/r/20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org/
+
+I'd like to take this series through the fscrypt tree for 6.18.
+(fsverity normally has a separate tree, but by choosing just one tree
+for this, we'll avoid conflicts in some places.)
+
+Eric Biggers (13):
+  fscrypt: replace raw loads of info pointer with helper function
+  fscrypt: add support for info in fs-specific part of inode
+  ext4: move crypt info pointer to fs-specific part of inode
+  f2fs: move crypt info pointer to fs-specific part of inode
+  ubifs: move crypt info pointer to fs-specific part of inode
+  ceph: move crypt info pointer to fs-specific part of inode
+  fs: remove inode::i_crypt_info
+  fsverity: add support for info in fs-specific part of inode
+  ext4: move verity info pointer to fs-specific part of inode
+  f2fs: move verity info pointer to fs-specific part of inode
+  btrfs: move verity info pointer to fs-specific part of inode
+  fs: remove inode::i_verity_info
+  fsverity: check IS_VERITY() in fsverity_cleanup_inode()
+
+ fs/btrfs/btrfs_inode.h       |  5 ++++
+ fs/btrfs/inode.c             |  3 ++
+ fs/btrfs/verity.c            |  2 ++
+ fs/ceph/crypto.c             |  2 ++
+ fs/ceph/inode.c              |  1 +
+ fs/ceph/super.h              |  1 +
+ fs/crypto/bio.c              |  2 +-
+ fs/crypto/crypto.c           | 14 +++++----
+ fs/crypto/fname.c            | 11 +++----
+ fs/crypto/fscrypt_private.h  |  4 +--
+ fs/crypto/hooks.c            |  2 +-
+ fs/crypto/inline_crypt.c     | 12 ++++----
+ fs/crypto/keysetup.c         | 43 ++++++++++++++++-----------
+ fs/crypto/policy.c           |  7 +++--
+ fs/ext4/crypto.c             |  2 ++
+ fs/ext4/ext4.h               |  8 +++++
+ fs/ext4/super.c              |  6 ++++
+ fs/ext4/verity.c             |  2 ++
+ fs/f2fs/f2fs.h               |  6 ++++
+ fs/f2fs/super.c              | 10 ++++++-
+ fs/f2fs/verity.c             |  2 ++
+ fs/ubifs/crypto.c            |  2 ++
+ fs/ubifs/ubifs.h             |  4 +++
+ fs/verity/enable.c           |  6 ++--
+ fs/verity/fsverity_private.h |  9 +++---
+ fs/verity/open.c             | 23 ++++++++-------
+ fs/verity/verify.c           |  2 +-
+ include/linux/fs.h           | 10 -------
+ include/linux/fscrypt.h      | 40 +++++++++++++++++++++++--
+ include/linux/fsverity.h     | 57 +++++++++++++++++++++++++++++-------
+ 30 files changed, 215 insertions(+), 83 deletions(-)
+
+
+base-commit: 561c80369df0733ba0574882a1635287b20f9de2
 -- 
 2.50.1
 
