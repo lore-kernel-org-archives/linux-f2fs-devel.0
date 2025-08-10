@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4E2BBCA0ED3
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 10 Aug 2025 08:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E7AC4CA0EC0
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 10 Aug 2025 08:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=IlfReYFjXQjRVkTWOPCOfz/HivKwc75Bl7AFb2PFDCI=; b=YbJ5Qrpnir9Q7Xy6uEHLIkI5R0
-	HuPkm6263cw9VFkm3woa6cImY6oSwVrLfM/NFoSKF75VnnhBgZYQRUrHYGutdbrMqVvVixVQb7pck
-	2wLl9HoFAQ9ogeUBatODdmUk6GwAgSlV1XABCkjwmGQq2f7MMvh4M2H42qnmhKxJwefE=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=znNhfCP25NQoAi/Y32Rw/iZA5tO3cll7Ssv9Ty4S5is=; b=eckdo+S+JrLLQMCYGYT9Asremy
+	A5f3YmlVpuSeDCVfDvNFR18S7QHtH3yTt9AVO92eggXulGVoYbnMn1s5nwVHUAg6hZXGwK2LHUhqZ
+	9nZv6Cz+2FpT1YVJEp4/a39zDb6I9+4cYmE/LXaRAWKTgisTmpSpd4femps3Z3yqsiR0=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ul0yd-0003Ui-6b;
-	Sun, 10 Aug 2025 08:00:23 +0000
+	id 1ul0yh-0008O3-2c;
+	Sun, 10 Aug 2025 08:00:27 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1ul0yb-0003UR-IS
+ (envelope-from <ebiggers@kernel.org>) id 1ul0yg-0008Nr-7F
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 10 Aug 2025 08:00:22 +0000
+ Sun, 10 Aug 2025 08:00:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=an/Nm0YyxhaeNBwQIVRjaENL/kJQbhVoPBR/IBOTgcs=; b=Oosk5MMVVPkzPBipNeOFxZnG0b
- TNSlQ3SjgCmPpUnOrm+gMNc7M7FI/wZwM/yvOYZylFUu0sZhCk6z+b7s1l8O5Ivy1vhw0balD9UX5
- KbBfR//h4+ZlmRIuic2NovQrBVZzZ1TdyY5GWhxQvlj+IxeNYthSp1SK19HunDGK3jnQ=;
+ bh=g9JylLnL0eba7y3HOqAM+3BZqbuw02S5HsaaoPbcRaQ=; b=X+9r4054M+jOj+qJ5bhKSrRsQD
+ QEFzgbwSWGjc271h+pQf+B71u+pV+nz1uJ3xGyJdgCwpCAi+qPGDs2y2PuwbTnXdBwdfx3IfD7d9i
+ P34pkiyBS3r5t3fsyEZHoEA7GkBLxl7+cKxyQ+dYCZ0FvQmPBl4lHt3+pI52BrAQBlDc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=an/Nm0YyxhaeNBwQIVRjaENL/kJQbhVoPBR/IBOTgcs=; b=SGNxPxpSm1r8Lgi25/ztBe/z+j
- s5dz0EXxQ0OnJEH7pGfa7+GGxSQo/EckYiJzdiPq1GtB4mm/WUrTdwqRwoqzvRSAwQuVZW0m3rdna
- BwaQHVGKN6XLvupIKc2d9DkFHzTcaJOoqOP7tXjPyKdOQ7pz9VkFDSUSpwsVRJ+hbW1A=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ bh=g9JylLnL0eba7y3HOqAM+3BZqbuw02S5HsaaoPbcRaQ=; b=l6VVcsb26GhewZXvYENAqPthtp
+ gu4jhB5JBbWC/by1+dA+1QiP867mLiC6QVa9tFj3W6b2fZQe7KfvzQq0eKXAHyyjciJJBR1ziqjQC
+ itcYcZBLwgt8kS/baKzMrPtIGlTmzbe/39SO1Xy+2qOE+NvRxWOYerhAhsw7ZjelOJWY=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ul0yb-00011T-Ok for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 10 Aug 2025 08:00:22 +0000
+ id 1ul0yf-00012K-SR for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 10 Aug 2025 08:00:26 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 188EDA55134;
- Sun, 10 Aug 2025 08:00:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FAB9C4CEEB;
- Sun, 10 Aug 2025 08:00:10 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 7C3D445C59;
+ Sun, 10 Aug 2025 08:00:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 199D3C4CEEB;
+ Sun, 10 Aug 2025 08:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1754812810;
- bh=hTLksDqAG7iJZbJnGqd8JyQQhFVP3K3qP+WNZUyThvI=;
+ s=k20201202; t=1754812813;
+ bh=rH4xOjWHyO4rXuGnXUPR48o6Mlex3OOttISDvsv5E9s=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=SLFlFAFYjVyvx9ggNdb5bWTXUqjDAUbaAo7N9/6UnJmEJtn+vKgzQPSAsWKAsRRRL
- So3V9vSSaOSZ6Ds6ARu8XEUs1FVfS4QUCRq4ZHQrfPc+rBVQhL3v9wIQaxwh3+aQXB
- k2ubttllOoJvrh7zV/bz9kqO1TlYZEs1y0/O8Oyc1IkXRMPZ74rzJNYA4fyBXPEpMJ
- /brqN4ToKmH+IcQQqnwa6y3VbfRNfVQosWIZdaAiMRv8+lLvNNZA8f1nmW1uL0/aTx
- NURcg6NCqctDVHUqEvUCetLBqq3zGe3Ta/k9LE0yd/xaBpAv3jwBpD7nQrShG7pq1M
- V6O2XmUIE9Lsg==
+ b=sMaXqJKa2KxH6f4tMBBaWdPiIEWUPBUacPolQNKXvYj7y1z5EdTS9Ztn04re75Tzb
+ Von+ZDv71Est4yhSEseq9WQNpCJ5tYDDeTnayh3M7Ljc6Z5LkP+X1xTHvCmVmnK62o
+ 3fFoQXIgkxTTpk30YcZ1TJeOyR6HE6cw0xQlu6QUNcpP4gKaVMPy6BWuJYymPZm+si
+ 9rGzeRe7mySUbOWFc0+2EcQHLZTC4EgyqFre8OARwwRm7N8e3UuA4+gMwWTizV3tt5
+ i+cgenU4mq/isXW8C68emNfvbILzzQPczeVWKyKRxfEEbcTnIOkWQnm7zeTHl03ugW
+ 6uTqLHCGI1q/g==
 To: linux-fscrypt@vger.kernel.org,
 	fsverity@lists.linux.dev
-Date: Sun, 10 Aug 2025 00:57:00 -0700
-Message-ID: <20250810075706.172910-8-ebiggers@kernel.org>
+Date: Sun, 10 Aug 2025 00:57:06 -0700
+Message-ID: <20250810075706.172910-14-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250810075706.172910-1-ebiggers@kernel.org>
 References: <20250810075706.172910-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ul0yb-00011T-Ok
-Subject: [f2fs-dev] [PATCH v5 07/13] fs: remove inode::i_crypt_info
+X-Headers-End: 1ul0yf-00012K-SR
+Subject: [f2fs-dev] [PATCH v5 13/13] fsverity: check IS_VERITY() in
+ fsverity_cleanup_inode()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,83 +99,44 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Now that all fscrypt-capable filesystems store the pointer to
-fscrypt_inode_info in the filesystem-specific part of the inode
-structure, inode::i_crypt_info is no longer needed.  Update
-fscrypt_inode_info_addr() to no longer support the fallback to
-inode::i_crypt_info.  Finally, remove inode::i_crypt_info itself along
-with the now-unnecessary forward declaration of fscrypt_inode_info.
+Since getting the address of the fsverity_info has gotten a bit more
+expensive, make fsverity_cleanup_inode() check for IS_VERITY() instead.
+This avoids adding more overhead to non-verity files.
 
-The end result of the migration to the filesystem-specific pointer is
-memory savings on CONFIG_FS_ENCRYPTION=y kernels for all filesystems
-that don't support fscrypt.  Specifically, their in-memory inodes are
-now smaller by the size of a pointer: either 4 or 8 bytes.
+This assumes that verity info is never set when !IS_VERITY(), which is
+currently true, but add a VFS_WARN_ON_ONCE() that asserts that.  (This
+of course defeats the optimization, but only when CONFIG_VFS_DEBUG=y.)
 
-Co-developed-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- include/linux/fs.h      | 5 -----
- include/linux/fscrypt.h | 8 ++++++--
- 2 files changed, 6 insertions(+), 7 deletions(-)
+ include/linux/fsverity.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d7ab4f96d7051..1dafa18169be6 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -70,11 +70,10 @@ struct vfsmount;
- struct cred;
- struct swap_info_struct;
- struct seq_file;
- struct workqueue_struct;
- struct iov_iter;
--struct fscrypt_inode_info;
- struct fscrypt_operations;
- struct fsverity_info;
- struct fsverity_operations;
- struct fsnotify_mark_connector;
- struct fsnotify_sb_info;
-@@ -778,14 +777,10 @@ struct inode {
- 	__u32			i_fsnotify_mask; /* all events this inode cares about */
- 	/* 32-bit hole reserved for expanding i_fsnotify_mask */
- 	struct fsnotify_mark_connector __rcu	*i_fsnotify_marks;
- #endif
- 
--#ifdef CONFIG_FS_ENCRYPTION
--	struct fscrypt_inode_info	*i_crypt_info;
--#endif
--
- #ifdef CONFIG_FS_VERITY
- 	struct fsverity_info	*i_verity_info;
- #endif
- 
- 	void			*i_private; /* fs or device private pointer */
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index d7ff53accbfef..516aba5b858b5 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -199,15 +199,19 @@ struct fscrypt_operations {
- };
- 
- int fscrypt_d_revalidate(struct inode *dir, const struct qstr *name,
- 			 struct dentry *dentry, unsigned int flags);
- 
-+/*
-+ * Returns the address of the fscrypt info pointer within the
-+ * filesystem-specific part of the inode.  (To save memory on filesystems that
-+ * don't support fscrypt, a field in 'struct inode' itself is no longer used.)
-+ */
- static inline struct fscrypt_inode_info **
- fscrypt_inode_info_addr(const struct inode *inode)
+diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+index 844f7b8b56bbc..5bc7280425a71 100644
+--- a/include/linux/fsverity.h
++++ b/include/linux/fsverity.h
+@@ -188,12 +188,19 @@ void __fsverity_cleanup_inode(struct inode *inode);
+  *
+  * Filesystems must call this on inode eviction to free the inode's verity info.
+  */
+ static inline void fsverity_cleanup_inode(struct inode *inode)
  {
--	if (inode->i_sb->s_cop->inode_info_offs == 0)
--		return (struct fscrypt_inode_info **)&inode->i_crypt_info;
-+	VFS_WARN_ON_ONCE(inode->i_sb->s_cop->inode_info_offs == 0);
- 	return (void *)inode + inode->i_sb->s_cop->inode_info_offs;
+-	if (*fsverity_info_addr(inode))
++	/*
++	 * Only IS_VERITY() inodes can have verity info, so start by checking
++	 * for IS_VERITY() (which is faster than retrieving the pointer to the
++	 * verity info).  This minimizes overhead for non-verity inodes.
++	 */
++	if (IS_VERITY(inode))
+ 		__fsverity_cleanup_inode(inode);
++	else
++		VFS_WARN_ON_ONCE(*fsverity_info_addr(inode) != NULL);
  }
  
- /*
-  * Load the inode's fscrypt info pointer, using a raw dereference.  Since this
+ /* read_metadata.c */
+ 
+ int fsverity_ioctl_read_metadata(struct file *filp, const void __user *uarg);
 -- 
 2.50.1
 
