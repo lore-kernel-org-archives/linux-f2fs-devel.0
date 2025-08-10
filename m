@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5BA9CCA0EC1
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9546AC87FCA
 	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 10 Aug 2025 08:00:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,29 +12,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=xk/25hcVFBn+kLjqaGIakM8mhhp1V4LD5jtSxBXUE/I=; b=AmFabIOM6Qi1iOoggMFhonq6ND
-	60rVsT15lNLDsSlBv4HDvs0vhJDrWlPPy6BVJgrQzFftwGi++hYV6SUVqblUj0Dov+qg+n0NLd+6O
-	+3fmvSOA4rV2dKQQqAuRzRO7Mu5s6SwEcI3YYaARaOTcYJesYotWaVnmfD8AHMB5jS34=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=5lD+5gZbBlgjiVt3x//QDM0u7RKf34VEVzllhv++ErE=; b=LmiPVt1SZut9wfRphodw6utPyo
+	XNxqm32mADq2JN7b7emvKpXZQJpJqHsf6WXMldL8DYbvNcQkMKjbFwkdr3CUKDG4tiIx6pR3moeYP
+	EkZ/nYuJjnnpN7qsKHuVXS+OjcelkJCYjTUYbysg3Qsk6IZeiMr16lxs6M7n8HIFs2aw=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ul0yW-0003Tg-Bq;
-	Sun, 10 Aug 2025 08:00:17 +0000
+	id 1ul0ya-0002Xh-96;
+	Sun, 10 Aug 2025 08:00:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1ul0yV-0003Ta-JM
+ (envelope-from <ebiggers@kernel.org>) id 1ul0yY-0002XV-Dh
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 10 Aug 2025 08:00:16 +0000
+ Sun, 10 Aug 2025 08:00:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kDS6Qm+ARvJ1Ux5PbS8NB1R1tfva1Nms5ie0IOsUZuA=; b=eVOtBesXu0b4SLYFv7M+ugj9t2
- +pGnqIW9/Jj5w/SBZ3+mg3j1yNy3+lXlQP1Y14GHwCwnktMY6fYH+D9IFV0tgG98hB3fXm5Vgp+Hh
- R/v4kp9QN/pEjQpMcNa8Y9P+GwaPOHWMkinJ1QQ/H4JzW7bHYrMpdcZIGY05GFyXieko=;
+ bh=bCfUr9pWbmQD3yJvMtwetcY/5gPxduPf1schk1P7ZLw=; b=CufPpSBmT1AIvi8FrH5kVIHGPx
+ FbkZxnXCSEeUBAG010i505x4M4JFHBrR0VdVhLlb/GNMd6zNbNOuckB4dOpqRU9RkcCOkA3dMHaXN
+ Oq6E0oeGQkaCn+wal5uVFCf0WCMNiQJOwjWxVrXVAXv85KnGHHDYoqycbN6z2cTlDzWY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=kDS6Qm+ARvJ1Ux5PbS8NB1R1tfva1Nms5ie0IOsUZuA=; b=S/QpEFJwawEgPIGA872QHpwHG3
- ZvglLR6vYslhtJJt8dlvDxJBR7wt8qfX/LzgTDaP/MRqlwkKVfAuNYPaQ5zFJfleogLqyPSuvDPli
- IupuZRxSrcgeAnxmfYAjoQNxnvFkySVGe3wsDK8w7aQC0KLFti6yONx/KULhXaAJYOGw=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ bh=bCfUr9pWbmQD3yJvMtwetcY/5gPxduPf1schk1P7ZLw=; b=dksDaKwLQ5DjtNoQcOXvXqD+jq
+ lXWZFNKQbVJX7T97YB490aCjXBXb0pc9oztm//V9Os3/5Tt2bzrEHa+fHA9aOwLGumAq2EbX1EJgh
+ raVjG+9qf9nQkt3zslFt99qr/pBTSUzUD+Jic77zF1O0oMyYEBReEfuq9l1sm32zyGnU=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ul0yV-00010W-SV for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 10 Aug 2025 08:00:16 +0000
+ id 1ul0yX-00010f-Ap for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 10 Aug 2025 08:00:18 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 3C55EA55132;
- Sun, 10 Aug 2025 08:00:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D421C4CEEB;
- Sun, 10 Aug 2025 08:00:09 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id EA4825C5721;
+ Sun, 10 Aug 2025 08:00:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FFA2C4CEF0;
+ Sun, 10 Aug 2025 08:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1754812809;
- bh=Qm1plsgVlmTBCpbZLW/xcJNpj1w2kpvFy1WqJ9hSAZw=;
+ s=k20201202; t=1754812811;
+ bh=0W2QfxH3SEgQE9yRuqSbCQDiVKMNeIT6t0Ume6h8gTo=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=IBNeIHJ2heVgM/csrEC21oBuVod6FeprqFqd1W+zzBuMWSAFjawLCDuBK4bneu7ou
- 0AlF0wyE4wt//266UDH7gUEIzRcrV+jXb8aeubS8u1tpfdXci4muagNyNZfgTKW7z6
- jF+JQtHOfsQEB/S3jXe+F3X3rWlXyf4VbWi7aYpAxVSjgjSsDaWRFTSxEVW7ec7/Rc
- kHShVks2Ht5rGE4vyY02UuKKgzsrXLCZoQMGvSwhz/kAeIpVrCuHfxcKEFzFAG1/fr
- XCR8JpQGpS8e3uHh5SXlecIvhE6bSOWV5WiT27UJA8SYlbR+nXiMx3EeZEKqt1YvaB
- x54EA9wnkMuUw==
+ b=nbO0fBqNeeMZN0WDI+kgBFdzKJGAGVEHnaPJxNqqowTDLniJGOt0j4uw17U+6FdFo
+ H1Rc+/DvLZMsGO2D5fctgnRrjZXcK7So5ofrPTD2H2yqTs1twguCtFJ2JNW4cMPtPp
+ TrBjF8WHO/Fqi8b5bl1QcFjUuAV1wELwTmlaoVQa+YVbKZI//49bHAJwmSo25dwBt1
+ 9Velrja88wsmjHCfWt9uhUSDzFuUBb8Ukug6Giba73mFWBZs8MnCbze0Ch6npBgJ7e
+ PSD9t23xAMkrpUHkqc+5V+32XM9Fgs/eeDPf3ADl5GWNi5DG2oJSS8jBlPWdvKu8/N
+ WR+Wmk3zLpjvA==
 To: linux-fscrypt@vger.kernel.org,
 	fsverity@lists.linux.dev
-Date: Sun, 10 Aug 2025 00:56:58 -0700
-Message-ID: <20250810075706.172910-6-ebiggers@kernel.org>
+Date: Sun, 10 Aug 2025 00:57:02 -0700
+Message-ID: <20250810075706.172910-10-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250810075706.172910-1-ebiggers@kernel.org>
 References: <20250810075706.172910-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ul0yV-00010W-SV
-Subject: [f2fs-dev] [PATCH v5 05/13] ubifs: move crypt info pointer to
+X-Headers-End: 1ul0yX-00010f-Ap
+Subject: [f2fs-dev] [PATCH v5 09/13] ext4: move verity info pointer to
  fs-specific part of inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -99,72 +99,77 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Move the fscrypt_inode_info pointer into the filesystem-specific part of
-the inode by adding the field ubifs_inode::i_crypt_info and configuring
-fscrypt_operations::inode_info_offs accordingly.
+Move the fsverity_info pointer into the filesystem-specific part of the
+inode by adding the field ext4_inode_info::i_verity_info and configuring
+fsverity_operations::inode_info_offs accordingly.
 
 This is a prerequisite for a later commit that removes
-inode::i_crypt_info, saving memory and improving cache efficiency with
-filesystems that don't support fscrypt.
-
-Note that the initialization of ubifs_inode::i_crypt_info to NULL on
-inode allocation is handled by the memset() in ubifs_alloc_inode().
+inode::i_verity_info, saving memory and improving cache efficiency on
+filesystems that don't support fsverity.
 
 Co-developed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- fs/ubifs/crypto.c | 2 ++
- fs/ubifs/ubifs.h  | 4 ++++
- 2 files changed, 6 insertions(+)
+ fs/ext4/ext4.h   | 4 ++++
+ fs/ext4/super.c  | 3 +++
+ fs/ext4/verity.c | 2 ++
+ 3 files changed, 9 insertions(+)
 
-diff --git a/fs/ubifs/crypto.c b/fs/ubifs/crypto.c
-index fb5ac358077b1..0b14d004a095b 100644
---- a/fs/ubifs/crypto.c
-+++ b/fs/ubifs/crypto.c
-@@ -86,10 +86,12 @@ int ubifs_decrypt(const struct inode *inode, struct ubifs_data_node *dn,
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index c897109dadb15..6cb784a56b3ba 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -1184,10 +1184,14 @@ struct ext4_inode_info {
+ 	kprojid_t i_projid;
  
- 	return 0;
- }
- 
- const struct fscrypt_operations ubifs_crypt_operations = {
-+	.inode_info_offs	= (int)offsetof(struct ubifs_inode, i_crypt_info) -
-+				  (int)offsetof(struct ubifs_inode, vfs_inode),
- 	.legacy_key_prefix	= "ubifs:",
- 	.get_context		= ubifs_crypt_get_context,
- 	.set_context		= ubifs_crypt_set_context,
- 	.empty_dir		= ubifs_crypt_empty_dir,
- };
-diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
-index 5db45c9e26ee0..49e50431741cd 100644
---- a/fs/ubifs/ubifs.h
-+++ b/fs/ubifs/ubifs.h
-@@ -363,10 +363,11 @@ struct ubifs_gced_idx_leb {
-  * @compr_type: default compression type used for this inode
-  * @last_page_read: page number of last page read (for bulk read)
-  * @read_in_a_row: number of consecutive pages read in a row (for bulk read)
-  * @data_len: length of the data attached to the inode
-  * @data: inode's data
-+ * @i_crypt_info: inode's fscrypt information
-  *
-  * @ui_mutex exists for two main reasons. At first it prevents inodes from
-  * being written back while UBIFS changing them, being in the middle of an VFS
-  * operation. This way UBIFS makes sure the inode fields are consistent. For
-  * example, in 'ubifs_rename()' we change 4 inodes simultaneously, and
-@@ -414,10 +415,13 @@ struct ubifs_inode {
- 	int flags;
- 	pgoff_t last_page_read;
- 	pgoff_t read_in_a_row;
- 	int data_len;
- 	void *data;
-+#ifdef CONFIG_FS_ENCRYPTION
-+	struct fscrypt_inode_info *i_crypt_info;
+ #ifdef CONFIG_FS_ENCRYPTION
+ 	struct fscrypt_inode_info *i_crypt_info;
+ #endif
++
++#ifdef CONFIG_FS_VERITY
++	struct fsverity_info *i_verity_info;
 +#endif
  };
  
- /**
-  * struct ubifs_unclean_leb - records a LEB recovered under read-only mode.
-  * @list: list
+ /*
+  * File system states
+  */
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 0c3059ecce37c..46138a6cb32a3 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1471,10 +1471,13 @@ static void init_once(void *foo)
+ 	inode_init_once(&ei->vfs_inode);
+ 	ext4_fc_init_inode(&ei->vfs_inode);
+ #ifdef CONFIG_FS_ENCRYPTION
+ 	ei->i_crypt_info = NULL;
+ #endif
++#ifdef CONFIG_FS_VERITY
++	ei->i_verity_info = NULL;
++#endif
+ }
+ 
+ static int __init init_inodecache(void)
+ {
+ 	ext4_inode_cachep = kmem_cache_create_usercopy("ext4_inode_cache",
+diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
+index d9203228ce979..b0acb0c503137 100644
+--- a/fs/ext4/verity.c
++++ b/fs/ext4/verity.c
+@@ -387,10 +387,12 @@ static int ext4_write_merkle_tree_block(struct inode *inode, const void *buf,
+ 
+ 	return pagecache_write(inode, buf, size, pos);
+ }
+ 
+ const struct fsverity_operations ext4_verityops = {
++	.inode_info_offs	= (int)offsetof(struct ext4_inode_info, i_verity_info) -
++				  (int)offsetof(struct ext4_inode_info, vfs_inode),
+ 	.begin_enable_verity	= ext4_begin_enable_verity,
+ 	.end_enable_verity	= ext4_end_enable_verity,
+ 	.get_verity_descriptor	= ext4_get_verity_descriptor,
+ 	.read_merkle_tree_page	= ext4_read_merkle_tree_page,
+ 	.write_merkle_tree_block = ext4_write_merkle_tree_block,
 -- 
 2.50.1
 
