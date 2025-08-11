@@ -4,77 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E2C22CA0EC0
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E5D0FCA0EC1
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Aug 2025 09:45:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=z5yj7eN5D6ejytixrwDZbxMvH8tVLOT7EQ6wLvVMSec=; b=Lc7jdfYqhbIOuwEh+fRmIkiBbq
-	TE8r7aJRreP12zOwwi3n8VCspJBghsgHSyNB+5xGa8yu0YIyaSn8uf1EGwM0WlgK+CAGSgHPD9s2T
-	uraWL0U/s1Tfgh61rZ4YCA3QOZOAjH3cqUC1R8DXiErumP+eiw/jyK0iUkxowHRYxKgM=;
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=HZiTFZS0KoGA8X+Nk3R61Ff9Ol1rfQlu055IGdrNeA4=; b=mvSKWARuQfugm6IIUrNmD40c8x
+	QwCgKgdQRzO45VI07pBzHmB2kQfI6mndtkt8vhuo0n+kao8UvI+TckoZkUyT60WXZ8iUX4naCj2Zs
+	aEaeC3YRsA4IPxPgjk6STKAwXWCoRzOGVIk8SJK9zAx1VGhZAdEbCEHpkW0cheIfLtmk=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ulP5O-0008B2-QO;
-	Mon, 11 Aug 2025 09:44:58 +0000
+	id 1ulP5Q-0008BE-8P;
+	Mon, 11 Aug 2025 09:45:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1ulP54-0008AT-5b
+ (envelope-from <chao@kernel.org>) id 1ulP5O-0008Ad-PX
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 Aug 2025 09:44:38 +0000
+ Mon, 11 Aug 2025 09:44:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZOA6dUJV991CSOeT6O1HjdRq7OMd4Yti1MtTwPnT4BY=; b=ScKRcmMbGzNZnkuO2B9WOudq42
- ABAKGSF403Az7bILi7tFAfYlDYx5WpUN7geJiCFee7SXWfqZ5UIzjLgmBUE7vsrZJYFIyYrgGcxX4
- 5P3/fKL294STxsFZ08yRomVk9QsfG3goncASdUJwG+S4/opzXWuCk3+XYBE1p0uU1kZ8=;
+ bh=YvNGa/+i8Ohmb/T6vpZ7vHS4hyhpFFf1OLF0yLGYVo8=; b=lV0mdLaNJnGkOXfiLjYrvk+iYY
+ KTi1CbUCCd+H35reT+J9o4TGl4beJC19pOHkDbZJydDe+tfhfki+Si3TrSkIy5d0lq1JXrEg+F8RF
+ vdemVtj4zTwweJWtAhsZFkUMbIXzj9mMK1epeNUMpKC5UDm7KqKUVNuh9LFQq+EDqqJI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=ZOA6dUJV991CSOeT6O1HjdRq7OMd4Yti1MtTwPnT4BY=; b=Z
- YVY67ZwKTBaxPqQVu5+apb2b9BL4YA0GY7yXYZgDbzagPQgW6syNNn7lh1SPn/NePfb76SpxqWYx6
- k/FYyQtjCR2joSPXELEQNWHI/tN3sR3zsOX0vANY3MSquOn/uKr9u9VjMboTTwp/F/63uzALzxtfH
- emsymDJkfnqkNvK0=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=YvNGa/+i8Ohmb/T6vpZ7vHS4hyhpFFf1OLF0yLGYVo8=; b=SPSWim7aXhERpPYFZ8BQ6IvUnF
+ m6tZ6k+8VZLSVcTHd8qewzPV0f5gCjmitXiEwB6W6VkiyRk5xh7LQiGZFEsm1VR3tA61lFGwK2gt1
+ 3i5OO61LUjVTJCcbmgUBf9fv9/4+RYhQMlu23EegLYTs1i/e2X9Pp/rtaNzBfV34HEmU=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ulP53-0001yT-ON for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 Aug 2025 09:44:38 +0000
+ id 1ulP58-0001zi-Pf for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 11 Aug 2025 09:44:43 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id 1A000A56CAF
+ by dfw.source.kernel.org (Postfix) with ESMTP id 07DF65C5F80
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 11 Aug 2025 09:44:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63F2CC4CEF7;
- Mon, 11 Aug 2025 09:44:24 +0000 (UTC)
+ Mon, 11 Aug 2025 09:44:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E76BC4CEED;
+ Mon, 11 Aug 2025 09:44:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1754905466;
- bh=zq73lEqMNIN5nVGXtc894pn3tXcy2I8u6DhVq5U9hvU=;
- h=From:To:Cc:Subject:Date:From;
- b=BUsOPRQ3tnCzSbSTt1LIpiMwqQam093jZv0o6uhtpHBqUTQd5kDBRIrvDDu6MuyXq
- 5wLtH6L0d4ieZywdBCZW4VkPgd5QCw+skhgeRiElPsqZl7ucdD8VkFPSvt2GY9SbNm
- O8zdySABRDW/W0GndWa9XAGGX8l/BUzJwROmwK1BSV/wbT/WFrAUFRgf3YTfX7TUld
- V1q6n02f8Sb3K9Qwx3aeaQJzoyWhK38f23p0vwQ4tf3fSCdbJSmrdYuN/29cZDnhL/
- 9eX0L1O8Ac6PTlxvc5Xd0nmbBRdoE0XUFaX+oxCCXgdaRjt0YtWGp2NSzqDcS7zH4C
- zPwYb15xhh1uw==
+ s=k20201202; t=1754905471;
+ bh=LKcb1574o+3PoXZ7MKHkrqJSJnJcs5pnN0cceyo12IE=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=AXoZ88IFZJesgEgXhZJao5GyQtO1veDMVXUjly/qVnnXTvdoi8UqIhjtcqEavmTWM
+ fSn3V1cyjY0n3hWQwbyrrLwm88yIP0heb6dnLjfzihzGfoNfcGEFoc4TSynTnUHvlA
+ Vq2fh64Ou3bKsiPTGdL92SzQRf/LDxf74bY0N+x7cwtV4YWLrRB8ytexL38YLMfitz
+ 2NKYTXe7V6fSlCdB+sjh9XBAm3GWKypecWLcpx7zdoMRTeK6mpghqvO9ogmqevSNyX
+ gqwCnIQJvyYA4r3M/QmmWy1LNb22HqOdeAwH+iYRMSrJflfNS1PTiaVVsyvgRtb5qU
+ ZfyDEtXHu/RmA==
 To: Zorro Lang <zlang@kernel.org>,
 	fstests@vger.kernel.org
-Date: Mon, 11 Aug 2025 17:44:13 +0800
-Message-ID: <20250811094415.1053545-1-chao@kernel.org>
+Date: Mon, 11 Aug 2025 17:44:15 +0800
+Message-ID: <20250811094415.1053545-3-chao@kernel.org>
 X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
+In-Reply-To: <20250811094415.1053545-1-chao@kernel.org>
+References: <20250811094415.1053545-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ulP53-0001yT-ON
-Subject: [f2fs-dev] [PATCH 1/3] f2fs/018: check data eof after partial
- truncation on compressed cluster
+X-Headers-End: 1ulP58-0001zi-Pf
+Subject: [f2fs-dev] [PATCH 3/3] f2fs/020: do sanity check on i_xattr_nid
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,94 +94,84 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This is a regression testcase, it is added to check below case
-and its variants:
-- write 16k data into compressed file (data will be compressed)
-- truncate file to 12k (truncate partial data in compressed cluster)
-- truncate file to 20k
-- verify data in range of [12k, 16k] to see whether data is all zero
-or not
+This is a regression test:
+1. create directory
+2. add a new xattr entry to create xattr node
+3. use inject.f2fs to inject nid of xattr node w/ ino in a file
+4. check whether f2fs kernel module will detect and report such
+   corruption in the file
 
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- tests/f2fs/018     | 58 ++++++++++++++++++++++++++++++++++++++++++++++
- tests/f2fs/018.out |  2 ++
- 2 files changed, 60 insertions(+)
- create mode 100755 tests/f2fs/018
- create mode 100644 tests/f2fs/018.out
+ tests/f2fs/020     | 50 ++++++++++++++++++++++++++++++++++++++++++++++
+ tests/f2fs/020.out |  2 ++
+ 2 files changed, 52 insertions(+)
+ create mode 100755 tests/f2fs/020
+ create mode 100644 tests/f2fs/020.out
 
-diff --git a/tests/f2fs/018 b/tests/f2fs/018
+diff --git a/tests/f2fs/020 b/tests/f2fs/020
 new file mode 100755
-index 00000000..ca727d24
+index 00000000..a6a08c8f
 --- /dev/null
-+++ b/tests/f2fs/018
-@@ -0,0 +1,58 @@
++++ b/tests/f2fs/020
+@@ -0,0 +1,50 @@
 +#! /bin/bash
 +# SPDX-License-Identifier: GPL-2.0
 +# Copyright (c) 2025 Chao Yu.  All Rights Reserved.
 +#
-+# FS QA Test No. f2fs/018
++# FS QA Test No. f2fs/020
 +#
-+# This is a regression test to check whether page eof will be
-+# zero or not after we truncate partial data in compressed
-+# cluster.
++# This is a regression test:
++# 1. create directory
++# 2. add a new xattr entry to create xattr node
++# 3. use inject.f2fs to inject nid of xattr node w/ ino in a file
++# 4. check whether f2fs kernel module will detect and report such
++#    corruption in the file
 +#
 +. ./common/preamble
-+_begin_fstest auto quick rw compress
++_begin_fstest auto quick rw
 +
-+_fixed_by_kernel_commit ba8dac350faf \
-+	"f2fs: fix to zero post-eof page"
-+_fixed_by_kernel_commit xxxxxxxxxxxx \
-+	"f2fs: fix to zero data after EOF for compressed file correctly"
-+
-+_require_scratch
-+_require_fio
-+
-+testfile=$SCRATCH_MNT/testfile
-+
-+check_data_eof()
++_cleanup()
 +{
-+	local eof_start=$1
-+	local eof_size=$2
-+	local filesize=$3
-+	local offset1=$4
-+	local offset2=$5
-+	local offset3=$6
-+
-+	_scratch_mkfs "-O extra_attr,compression" >> $seqres.full || _fail "mkfs failed"
-+	_scratch_mount "-o compress_extension=*" >> $seqres.full
-+
-+	xfs_io -f -c "pwrite 0 $filesize" -c "fsync" $testfile >> $seqres.full
-+	xfs_io -c "truncate $offset1" $testfile
-+	xfs_io -c "truncate $offset2" $testfile
-+
-+	if [ "$offset3" ]; then
-+		xfs_io -c "truncate $offset3" $testfile
-+	fi
-+
-+	$FIO_PROG --name=verify-data --filename=$testfile --rw=read --verify=pattern \
-+		--verify_pattern=0x00 --do_verify=1 --verify_only --offset=$eof_start \
-+		--size=$eof_size >> $seqres.full 2>&1 || _fail "eof data is not zero"
-+	_scratch_unmount
++	_scratch_mkfs >> $seqres.full
 +}
 +
-+check_data_eof 12k 4k 16k 12k 20k
-+check_data_eof 10k 6k 16k 10k 20k
-+check_data_eof 12k 4k 16k 8k 12k 20k
-+check_data_eof 10k 6k 16k 8k 10k 20k
++_fixed_by_kernel_commit 061cf3a84bde \
++	"f2fs: fix to do sanity check on ino and xnid"
++
++export MKFS_OPTIONS=""
++_require_scratch
++_require_command "$F2FS_INJECT_PROG" inject.f2fs
++
++testdir=$SCRATCH_MNT/testdir
++
++_scratch_mkfs >> $seqres.full
++_scratch_mount "-o user_xattr,noinline_xattr"
++
++mkdir $testdir
++# add a new xattr entry to create xattr node
++setfattr -n user.abc -v 123 $testdir
++
++_scratch_unmount
++
++# inject i_xattr_nid w/ nid of inode node
++$F2FS_INJECT_PROG --node --mb i_xattr_nid --nid 4 --val 4 $SCRATCH_DEV >> $seqres.full
++
++_scratch_mount
++mkdir $testdir/dir >> $seqres.full 2>&1
++_scratch_unmount
 +
 +echo "Silence is golden"
 +
 +status=0
 +exit
-diff --git a/tests/f2fs/018.out b/tests/f2fs/018.out
+diff --git a/tests/f2fs/020.out b/tests/f2fs/020.out
 new file mode 100644
-index 00000000..8849e303
+index 00000000..20d7944e
 --- /dev/null
-+++ b/tests/f2fs/018.out
++++ b/tests/f2fs/020.out
 @@ -0,0 +1,2 @@
-+QA output created by 018
++QA output created by 020
 +Silence is golden
 -- 
 2.49.0
