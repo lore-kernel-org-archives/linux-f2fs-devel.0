@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 216EFC87FD2
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Aug 2025 14:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ABD41CA0EC4
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Aug 2025 16:40:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=mDoeXStWrwotMxIPFM4IzeialWxOGU4a+sw+s8BS/MY=; b=GWL9b5tlLjdhc9hSYsOYhLuOMy
-	2wLS+L1Y6+Zb5IWtKG8WHhQ92cUQOV+EZMTUw/+KBfBtbnZSMvU3Y20gZTfHr+qrsO+EmJH78sBYb
-	6Jlh67rKuVhaqMVphucWvcVwGL38KgSpB4+KjMOoiKT1uitszibEOYS1jPnzFc+bvuis=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=PTh/BaCZXLfn1jlKyGRVmOtq499P+Br8qxppqiiDsiw=; b=NntzprgC1+DzPc7UncJMD4e124
+	vs0vdGva+NznopZNdO/pS85Mj1sWyM/3r/PeF/7QgFJ48hLrVtbgj+kLNxEIKKGylsiAk3KT3oo+Q
+	kfYFlbzieUrCZ6OmTaPgbTk4cpueMnjuWXGxa5b0oAfW3/XcA8LRD/DyBSxMqhQOe4wo=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ulT6f-0003pO-T6;
-	Mon, 11 Aug 2025 14:02:34 +0000
+	id 1ulVZI-0000OO-VJ;
+	Mon, 11 Aug 2025 16:40:16 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <brauner@kernel.org>) id 1ulT6e-0003p7-Rt
+ (envelope-from <ebiggers@kernel.org>) id 1ulVZH-0000OH-Jh
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 Aug 2025 14:02:33 +0000
+ Mon, 11 Aug 2025 16:40:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=g+wHT+PT93hDCFnxg5ehJ/knwkjGZnIt2PT+tfJfvuQ=; b=izTtOIrsUmrCcoiIQD3NqoKuH+
- Pbj5ZZZjXZqfnjyJZ1CApTnSb08jWMeLE82OMDmVoh5H8dpkHD302p1x1Nn3uh5jjoUFxiO+5jd/U
- iCA7Ot42AAnzn60XRCRD4gVlWrkxl8MUFUw+3P8B8i0Zc7hEYWHYb7vfJQRZ/0xS2Sko=;
+ bh=TcFYawCKlBU+EvI4OkNk8ImxWR9ERYxc0RFnlH7ptdI=; b=aK9FvY1rnGObkGHOliL4vyHSvm
+ cDL6bydKtclQnkEVFtjNzqPv4rIO4tc6/kBjS+fkUPK3vtts9nwsug9bVTIG+ecPeKdvJ3GYEwtmG
+ 6Kni/tvDGdWSV8e2avJllwcx4fQ/O9Mt6m+9heQ8bg+Xq0Z3m8wbr9DmnTSrguoRy7iA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,38 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=g+wHT+PT93hDCFnxg5ehJ/knwkjGZnIt2PT+tfJfvuQ=; b=koNdSJbNnvyq4b+HQm7NQhxp9D
- D7I0Wwhltqm141i9EtOqhWCX1yRjvdRYb9pJMJ9Jo53MDNoczmDyqQxXQXBZwWtDt2UlOEm661eQY
- Y0dHGd7f3Tap0kM79ccmRhd53cgaq2rhf7QrGq8RiAgozh/CTECy7/bqhzgbJYx5e3fk=;
+ bh=TcFYawCKlBU+EvI4OkNk8ImxWR9ERYxc0RFnlH7ptdI=; b=loonvqg99Zs9wJl2rWHLUOZ66Q
+ DQbGjGkU62VsdsTE9SLKx//g2uhgjfEtTAfy8X/OcIgE23UN3IBYktcNlTIviO4gcQBK+hJUtdpgT
+ ctZWCSQCW0yXC5hKafDwBFWVa+jHkczumd2lWGNjSHeaReQA/rqr9+uCQ51HleyWej1o=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ulSge-0004e3-3k for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 Aug 2025 13:35:40 +0000
+ id 1ulVZH-000571-0R for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 11 Aug 2025 16:40:15 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id B001C45357;
- Mon, 11 Aug 2025 13:35:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E39DC4CEED;
- Mon, 11 Aug 2025 13:35:27 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 8E89D43DC5;
+ Mon, 11 Aug 2025 16:40:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B361C4CEED;
+ Mon, 11 Aug 2025 16:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1754919329;
- bh=JU+C8jrRoBvIHpuTBFOVPaJSBYeLJuKp6ZRbyTV8tUc=;
+ s=k20201202; t=1754930409;
+ bh=yfY9fEwE5prSXu7c0Ar8fQ1UlOn+Yver65cw9lpRakc=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=QanpJ1FFAEOTenI/ZExSMKMWz/vWwwP0RGPtT6qjmkKBX4nap9yqO0U3SmhN0mft7
- 0XEsDyKzmiQ3MPArUXx7Xibr1PndFK+QUTgL3JK9LaIVUhTreuZbdIBreTgk2CfMxQ
- Gm8/UGW+xYIDrCTnXv0I60EocErHUvb+5Kqq7DSDZ/mQ7zNKRfJUzcxUkMhzug1uD1
- 8bh6XQagbanat13424yqY1iXeT3fLg0pvOpA0uXXnszQuwLw3dGXGt6BbyRF22ekUs
- JmUCratJjiyWB9323y6oClHqu5I+dElILQ4KxZ59JBn8QQ28Rbay5gQFZ4RXLQSWSB
- iV0FOE4Xqmf/Q==
-Date: Mon, 11 Aug 2025 15:35:25 +0200
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20250811-weismachen-anhieb-987a766c8e6e@brauner>
+ b=pGsk5/BBpOcOyGSEi4YMVtKP9l1LnkIw0E8k1OWWmvEzjR8tWPYLRCdVWgDivYzB0
+ QBjs/iXUHLQNSFF4scAcafi5A8kFz1Z8tWfjAEZfNb9NTb5L3WGctIErpbHiBvkSjS
+ jAGC82roagiAIKtNyS3bUDO/rDabILKuUtEMC3vtmh4MpO1+42hJvpurkyNYZzA8f6
+ uJ8+z6YbJb9LNnmANY2gQPZvA+X+dfQdOzHLdtSWb7wVG3CjCC6waAV6DvQSRz5Mm4
+ JlzXaWwIgprKlf+tsPTkwngce/DAsh+8U1uF1N3mPSSegfPMWUPEc15lr9rK5LUNSN
+ vJdnzKs0VS1gA==
+Date: Mon, 11 Aug 2025 09:39:07 -0700
+To: Christian Brauner <brauner@kernel.org>
+Message-ID: <20250811163907.GA1268@sol>
 References: <20250810075706.172910-1-ebiggers@kernel.org>
- <aJixkUfWPo5t8Ron@infradead.org> <20250810170311.GA16624@sol>
+ <20250810-tortur-gerammt-8d9ffd00da19@brauner>
+ <20250810090302.GA1274@sol>
+ <20250811-distribuieren-nilpferd-bef047fa7992@brauner>
+ <20250811-unbedacht-vollmond-1a805b76212b@brauner>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20250810170311.GA16624@sol>
-X-Headers-End: 1ulSge-0004e3-3k
+In-Reply-To: <20250811-unbedacht-vollmond-1a805b76212b@brauner>
+X-Headers-End: 1ulVZH-000571-0R
 Subject: Re: [f2fs-dev] [PATCH v5 00/13] Move fscrypt and fsverity info out
  of struct inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -87,24 +90,99 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Christian Brauner via Linux-f2fs-devel
+From: Eric Biggers via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Christian Brauner <brauner@kernel.org>
+Reply-To: Eric Biggers <ebiggers@kernel.org>
 Cc: fsverity@lists.linux.dev, linux-f2fs-devel@lists.sourceforge.net,
- Christoph Hellwig <hch@infradead.org>, linux-fscrypt@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-btrfs@vger.kernel.org
+ linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-> The fs-specific field solution from this patchset is much more efficient
-> than the rhashtable: efficient enough that we don't really have to worry
-> about it, regardless of fscrypt or fsverity.  So I think it's a good
-> middle ground, and I'd like to just do it this way.
+On Mon, Aug 11, 2025 at 03:34:35PM +0200, Christian Brauner wrote:
+> On Mon, Aug 11, 2025 at 03:17:01PM +0200, Christian Brauner wrote:
+> > On Sun, Aug 10, 2025 at 02:03:02AM -0700, Eric Biggers wrote:
+> > > On Sun, Aug 10, 2025 at 10:47:32AM +0200, Christian Brauner wrote:
+> > > > On Sun, Aug 10, 2025 at 12:56:53AM -0700, Eric Biggers wrote:
+> > > > > This is a cleaned-up implementation of moving the i_crypt_info and
+> > > > > i_verity_info pointers out of 'struct inode' and into the fs-specific
+> > > > > part of the inode, as proposed previously by Christian at
+> > > > > https://lore.kernel.org/r/20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org/
+> > > > > 
+> > > > > The high-level concept is still the same: fs/crypto/ and fs/verity/
+> > > > > locate the pointer by adding an offset to the address of struct inode.
+> > > > > The offset is retrieved from fscrypt_operations or fsverity_operations.
+> > > > > 
+> > > > > I've cleaned up a lot of the details, including:
+> > > > > - Grouped changes into patches differently
+> > > > > - Rewrote commit messages and comments to be clearer
+> > > > > - Adjusted code formatting to be consistent with existing code
+> > > > > - Removed unneeded #ifdefs
+> > > > > - Improved choice and location of VFS_WARN_ON_ONCE() statements
+> > > > > - Added missing kerneldoc for ubifs_inode::i_crypt_info
+> > > > > - Moved field initialization to init_once functions when they exist
+> > > > > - Improved ceph offset calculation and removed unneeded static_asserts
+> > > > > - fsverity_get_info() now checks IS_VERITY() instead of v_ops
+> > > > > - fscrypt_put_encryption_info() no longer checks IS_ENCRYPTED(), since I
+> > > > >   no longer think it's actually correct there.
+> > > > > - verity_data_blocks() now keeps doing a raw dereference
+> > > > > - Dropped fscrypt_set_inode_info() 
+> > > > > - Renamed some functions
+> > > > > - Do offset calculation using int, so we don't rely on unsigned overflow
+> > > > > - And more.
+> > > > > 
+> > > > > For v4 and earlier, see
+> > > > > https://lore.kernel.org/r/20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org/
+> > > > > 
+> > > > > I'd like to take this series through the fscrypt tree for 6.18.
+> > > > > (fsverity normally has a separate tree, but by choosing just one tree
+> > > > > for this, we'll avoid conflicts in some places.)
+> > > > 
+> > > > Woh woh. First, I had a cleaned up version ready for v6.18 so if you
+> > > > plan on taking over someone's series and resend then maybe ask the
+> > > > author first whether that's ok or not. I haven't seen you do that. You
+> > > > just caused duplicated work for no reason.
+> > > 
+> > > Ah, sorry about that.  When I started looking at it again yesterday
+> > > there turned out to be way too many cleanups and fixes I wanted to make
+> > > (beyond the comments I gave earlier), and I hadn't seen activity from
+> > > you on it in a while.  So I figured it would be easier to just send a
+> > > series myself.  But I should have asked you first, sorry.
+> > 
+> > So I started working on this pretty much right away. And I had planned
+> > on sending it out rather soon but then thought to better wait for -rc1
+> > to be released because I saw you had a bunch of crypto changes in for
+> > -rc1 that would've caused merge conflicts. It's no big deal overall but
+> > I just don't like that I wasted massaging all that stuff. So next time a
+> > heads-up would be nice. Thank you!
+> 
+> I just pulled the series and now I see that you also changed the
+> authorship of every single patch in the series from me to you and put my
+> Co-developed-by in there.
+> 
+> I mean I acknowledge that there's changes between the branches and
+> there's some function renaming but it's not to the point where
+> authorship should be changed. And if you think that's necessary than it
+> would be something you would want to talk to me about first.
+> 
+> I don't care about the stats but it was always hugely frustrating to me
+> when I started kernel development when senior kernel developers waltzed
+> in and thought they'd just take things over so I try very hard to not do
+> that unless this is agreed upon first.
 
-I agree.
+If you want to keep the authorship that's fine with me.  Make sure
+you've checked the diff: the diff between v4 and v5 is larger than the
+diff between the base and either version.  And as I mentioned, I rewrote
+the commit messages and divided some of the changes into commits
+differently as well.  If the situation was flipped, I wouldn't want to
+be kept as the author.  But I realize there are different opinions about
+this sort of thing, and I'm totally fine with whatever you prefer.
+
+Thanks,
+
+- Eric
 
 
 _______________________________________________
