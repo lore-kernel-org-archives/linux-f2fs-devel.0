@@ -4,80 +4,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8C9D5C87FDB
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Aug 2025 13:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F2DAEC87FDB
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Aug 2025 13:59:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=bwAWaNBKfGexqKDvTRDvkjs83mwGgIDuMwYQhfbGCCU=; b=AuUNAGjbRsYleXB7mFp2D+Xzlk
-	AxrmWf/vBGg+KyMDe4MEyhL6QAIa0tKX6IFarqI/ohtNXk2GwIVx6s6T8EG11uyTgITdUSX+3UAXO
-	y1UTHh2/8NJswZFGsqEiJNaUXsBYSqlqy9KQ7thEzDSix7Nj3JeHyWQvInAWkF7C7moc=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=jSm8RCQPOwIzKfQVSTfHepitz+QoVpdWMYmdBVxmMQs=; b=Jmyrlymc4e4al05dpVAq/Y0NgV
+	YhQOEBPZ3fenH4CiybcLcnQLVECmfWe2OcvBSBEwAtJr1+FXyzPuV0BCFOpsdxUpND3i9RzNz/7J0
+	MHGSqCz5ilk9T+1FgzJnak25n2Q3IqH36wLcQXX+B2cIl0CeO5nHC81R2ctAZzfm+Za8=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ulSg3-0002hi-Bo;
-	Mon, 11 Aug 2025 13:35:04 +0000
+	id 1ulT3w-0005Gy-WD;
+	Mon, 11 Aug 2025 13:59:45 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <brauner@kernel.org>) id 1ulSfm-0002fk-Eh
+ (envelope-from <bvanassche@acm.org>) id 1ulT3W-0005GV-Al
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 Aug 2025 13:34:47 +0000
+ Mon, 11 Aug 2025 13:59:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9NKcbzMNK1dqdqxa+9jK+mYAujg4EnLVK62c/Rfcssw=; b=aqRl0atyWGXxpJH75QmR2i5t+X
- E3t3h1/cXx3nkU+PkZV/pe2BqzlNpvBUsXfbOuGjOoSp0g8Xts4kzUWXSWWXbZT5JjySx1hjXZSPm
- JpTOC53cYih8HEHI8+l7Z06dcCJlxYKcROypzhDzIlyM2PBHgaT//APpHa2hE5Wcy0Cg=;
+ bh=6RgpocCbKdVK3rc0ouSRaRbCuDPNs0B+gHPMVM2wrSs=; b=kbozhItz9wW8e+gHKvzNJiNAUa
+ Why9mACI9VE3pR9m+VA2huTiL+wYefJoEkiSjWNUSnxdA1EjrJ9/VBry1HYjYNynUWqXY+No+48CN
+ AjSomo+H726rE1hZa6JyiKfUdOJNZKEbYkhF7zI18O6QcIvktDfsRSkL1EKXYJeTHd1w=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9NKcbzMNK1dqdqxa+9jK+mYAujg4EnLVK62c/Rfcssw=; b=aRe6PyX6LvTkEaCBBW27h2X1lz
- 12jZu6SXutXE7Uit5DLue9hUJbGtvEHJuAuCbYxCKQG2uvBvY3Bkkr6N6R7zNZXSqF2C1L9q0PIEB
- WYmHLqpM4waVWhLm14Y4FEDzU823bl/ozy2tmdirkFIzZsIOEtX/doFJU+ImiMUp2Fm8=;
-Received: from nyc.source.kernel.org ([147.75.193.91])
+ bh=6RgpocCbKdVK3rc0ouSRaRbCuDPNs0B+gHPMVM2wrSs=; b=Yp5/9rg/rh1lhpEB8J0h7VSBmi
+ DwustP+kVohvvFpEeySo+9LM9zOMLUAVX31ad7gk+kzSMPkDCyHU1NqeKeTdLj4LX+41yW4b4mIz7
+ gFB3NtWumPhQgv4wLl9vpOJlbB0LZBNyx6KExLIi0d/awUbCeEWiRSSnkmxXxviVXioo=;
+Received: from 003.mia.mailroute.net ([199.89.3.6])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ulSfm-0004U9-A1 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 Aug 2025 13:34:47 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by nyc.source.kernel.org (Postfix) with ESMTP id A685BA4ED70;
- Mon, 11 Aug 2025 13:34:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EB39C4CEED;
- Mon, 11 Aug 2025 13:34:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1754919280;
- bh=Ba4T8JRIhY1ucolU1ke77/oTfZPh0CpkbfaJTVmXDGs=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=OLF36AqIkTxYij3rbRxLgiTKeAc20fE19pNkSF+6AsTmK4O7x7hqc6h9W1w8JaKxB
- F6Yd6j+Zuz3C0Z725mv1ub40YX4pJKu9nCeUFh2JxNvosAsHrd4mTQ2qzKY1GIBjIw
- utXSwPyDvH5GbbB4gOpKORIsVNVeawQrxrddtJU038mcQ5W0vgkBBoWX+bWpmCh+K1
- wrIWKmD6rZBzQrW6phPG619xf0GlruQdThXJEfKIWfoZkrpK2I9COSa5cZMyFHZNg/
- LG8LJcdQ3DDiYJIXqSDznqH/6+C6ULpc7F7fNadE2owbTdrJ+LR0jcwygpsMArWBYA
- ZgrzYeoo58MPw==
-Date: Mon, 11 Aug 2025 15:34:35 +0200
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20250811-unbedacht-vollmond-1a805b76212b@brauner>
-References: <20250810075706.172910-1-ebiggers@kernel.org>
- <20250810-tortur-gerammt-8d9ffd00da19@brauner>
- <20250810090302.GA1274@sol>
- <20250811-distribuieren-nilpferd-bef047fa7992@brauner>
+ id 1ulT3V-0000Ih-M8 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 11 Aug 2025 13:59:18 +0000
+Received: from localhost (localhost [127.0.0.1])
+ by 003.mia.mailroute.net (Postfix) with ESMTP id 4c0wph1WmjzlgqVH;
+ Mon, 11 Aug 2025 13:44:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+ content-transfer-encoding:content-type:content-type:in-reply-to
+ :from:from:content-language:references:subject:subject
+ :user-agent:mime-version:date:date:message-id:received:received;
+ s=mr01; t=1754919850; x=1757511851; bh=6RgpocCbKdVK3rc0ouSRaRbC
+ uDPNs0B+gHPMVM2wrSs=; b=vnBct1XtLEmuWRMwhpQxh3008HbQS4f/9t+Kpm6N
+ MZLmGuJnFN3K6+NLl59WG1eFBv5js+ZWTuiRWovAIhjbBAVuYtBrrsR9rUGV5IY8
+ z90sHuF7C5Nq6Gid/5FwhLT169NHs8viX/Z3rAOXsKaQ5LcOisegWMykZX8Agjbc
+ 8ZDGxQVTToUJKHOn/dlXmpoqAIbFJQuBft5gvf8VysExz8ezU+IBRGURYghKvEO5
+ HW0P7ctLhWLa1PLxm/ddoA0RQdQMwrgMiVkD4KjnJ9l4Lt1M+098YxfMGMBd4Zji
+ urN+4YfslxDNO8d9iwgBCLozeTavC0WkgJtLBLREwRpARA==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 9mPmr6_UW5sq; Mon, 11 Aug 2025 13:44:10 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net
+ [73.231.117.72])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ (Authenticated sender: bvanassche@acm.org)
+ by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4c0wpZ1BwpzlrnQ6;
+ Mon, 11 Aug 2025 13:44:04 +0000 (UTC)
+Message-ID: <7a2534f5-bf20-4d3c-afe7-afcb8f340929@acm.org>
+Date: Mon, 11 Aug 2025 06:44:01 -0700
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20250811-distribuieren-nilpferd-bef047fa7992@brauner>
-X-Headers-End: 1ulSfm-0004U9-A1
-Subject: Re: [f2fs-dev] [PATCH v5 00/13] Move fscrypt and fsverity info out
- of struct inode
+User-Agent: Mozilla Thunderbird
+To: Christoph Hellwig <hch@infradead.org>, Chao Yu <chao@kernel.org>
+References: <20250807034838.3829794-1-chao@kernel.org>
+ <aJnLXmepVBD4V2QH@infradead.org>
+Content-Language: en-US
+In-Reply-To: <aJnLXmepVBD4V2QH@infradead.org>
+X-Headers-End: 1ulT3V-0000Ih-M8
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: introduce flush_policy sysfs entry
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,105 +98,40 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Christian Brauner via Linux-f2fs-devel
+From: Bart Van Assche via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Christian Brauner <brauner@kernel.org>
-Cc: fsverity@lists.linux.dev, linux-f2fs-devel@lists.sourceforge.net,
- linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+Reply-To: Bart Van Assche <bvanassche@acm.org>
+Cc: linux-block@vger.kernel.org, jaegeuk@kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Aug 11, 2025 at 03:17:01PM +0200, Christian Brauner wrote:
-> On Sun, Aug 10, 2025 at 02:03:02AM -0700, Eric Biggers wrote:
-> > On Sun, Aug 10, 2025 at 10:47:32AM +0200, Christian Brauner wrote:
-> > > On Sun, Aug 10, 2025 at 12:56:53AM -0700, Eric Biggers wrote:
-> > > > This is a cleaned-up implementation of moving the i_crypt_info and
-> > > > i_verity_info pointers out of 'struct inode' and into the fs-specific
-> > > > part of the inode, as proposed previously by Christian at
-> > > > https://lore.kernel.org/r/20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org/
-> > > > 
-> > > > The high-level concept is still the same: fs/crypto/ and fs/verity/
-> > > > locate the pointer by adding an offset to the address of struct inode.
-> > > > The offset is retrieved from fscrypt_operations or fsverity_operations.
-> > > > 
-> > > > I've cleaned up a lot of the details, including:
-> > > > - Grouped changes into patches differently
-> > > > - Rewrote commit messages and comments to be clearer
-> > > > - Adjusted code formatting to be consistent with existing code
-> > > > - Removed unneeded #ifdefs
-> > > > - Improved choice and location of VFS_WARN_ON_ONCE() statements
-> > > > - Added missing kerneldoc for ubifs_inode::i_crypt_info
-> > > > - Moved field initialization to init_once functions when they exist
-> > > > - Improved ceph offset calculation and removed unneeded static_asserts
-> > > > - fsverity_get_info() now checks IS_VERITY() instead of v_ops
-> > > > - fscrypt_put_encryption_info() no longer checks IS_ENCRYPTED(), since I
-> > > >   no longer think it's actually correct there.
-> > > > - verity_data_blocks() now keeps doing a raw dereference
-> > > > - Dropped fscrypt_set_inode_info() 
-> > > > - Renamed some functions
-> > > > - Do offset calculation using int, so we don't rely on unsigned overflow
-> > > > - And more.
-> > > > 
-> > > > For v4 and earlier, see
-> > > > https://lore.kernel.org/r/20250723-work-inode-fscrypt-v4-0-c8e11488a0e6@kernel.org/
-> > > > 
-> > > > I'd like to take this series through the fscrypt tree for 6.18.
-> > > > (fsverity normally has a separate tree, but by choosing just one tree
-> > > > for this, we'll avoid conflicts in some places.)
-> > > 
-> > > Woh woh. First, I had a cleaned up version ready for v6.18 so if you
-> > > plan on taking over someone's series and resend then maybe ask the
-> > > author first whether that's ok or not. I haven't seen you do that. You
-> > > just caused duplicated work for no reason.
-> > 
-> > Ah, sorry about that.  When I started looking at it again yesterday
-> > there turned out to be way too many cleanups and fixes I wanted to make
-> > (beyond the comments I gave earlier), and I hadn't seen activity from
-> > you on it in a while.  So I figured it would be easier to just send a
-> > series myself.  But I should have asked you first, sorry.
+On 8/11/25 3:52 AM, Christoph Hellwig wrote:
+> On Thu, Aug 07, 2025 at 11:48:38AM +0800, Chao Yu wrote:
+>> This patch introduces a new sysfs entry /sys/fs/f2fs/<disk>/flush_policy
+>> in order to tune performance of f2fs data flush flow.
+>>
+>> For example, checkpoint will use REQ_FUA to persist CP metadata, however,
+>> some kind device has bad performance on REQ_FUA command, result in that
+>> checkpoint being blocked for long time, w/ this sysfs entry, we can give
+>> an option to use REQ_PREFLUSH command instead of REQ_FUA during checkpoint,
+>> it can help to mitigate long latency of checkpoint.
 > 
-> So I started working on this pretty much right away. And I had planned
-> on sending it out rather soon but then thought to better wait for -rc1
-> to be released because I saw you had a bunch of crypto changes in for
-> -rc1 that would've caused merge conflicts. It's no big deal overall but
-> I just don't like that I wasted massaging all that stuff. So next time a
-> heads-up would be nice. Thank you!
+> That's and odd place to deal with this.  If that's a real issue it
+> should be a block layer tweak to disable FUA, potentially with a quirk
+> entry in the driver to disable it rather than having to touch a file
+> system sysfs attribute.
 
-I just pulled the series and now I see that you also changed the
-authorship of every single patch in the series from me to you and put my
-Co-developed-by in there.
+Chao, two years ago Christoph already suggested to integrate this
+functionality in the UFS driver. From
+https://lore.kernel.org/linux-scsi/Y+NCDzvuLJYGwyhC@infradead.org/:
+"Please add quirks for the actually affected devices, and do not
+block fua for an entire transport."
 
-I mean I acknowledge that there's changes between the branches and
-there's some function renaming but it's not to the point where
-authorship should be changed. And if you think that's necessary than it
-would be something you would want to talk to me about first.
+See also the ufs_fixups[] array in drivers/ufs/core/ufshcd.c.
 
-I don't care about the stats but it was always hugely frustrating to me
-when I started kernel development when senior kernel developers waltzed
-in and thought they'd just take things over so I try very hard to not do
-that unless this is agreed upon first.
-
-> > > And second general infrastructure changes that touch multiple fses and
-> > > generic fs infrastructure I very much want to go through VFS trees.
-> > > We'll simply use a shared tree.
-> > 
-> > So you'd like to discontinue the fscrypt and fsverity trees?  That's
-> > what they are for: general infrastructure shared by multiple
-> > filesystems.  Or is this comment just for this series in particular,
-> > presumably because it touches 'struct inode'?
-> 
-> My comment just applies this series. I'm not here to take away your
-> trees ofc unless you would like to have them go through the VFS batch.
-> That's something that some people like Amir have started doing.
-> 
-> I'll put the series into vfs-6.17.inode and push it out then you can
-> base any additional changes on top of that. I'll not touch it unless you
-> tell me to. Linus knows that VFS trees often have work that is used as
-> the base for other trees so he will merge VFS trees before any of the
-> smaller trees and I always mention this to him.
+Bart.
 
 
 _______________________________________________
