@@ -4,75 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 142B9CA0EC4
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Aug 2025 04:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 62377C87FCF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Aug 2025 09:38:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Cc:List-Subscribe:List-Help:
+	List-Post:List-Archive:List-Unsubscribe:List-Id:Subject:MIME-Version:
+	Message-Id:Date:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=0rfHSFCPYXEeQsyuhBJ+zdDfcxA1H5g8GmCzRmEfol8=; b=aH7vVfKuZdHmHT47+7oHg65tRx
-	9OS9lydGz/Pd/nu25C90WwzaZiDKZan7AmxVYt6acuzwb4SB5J8Lv9ttDHW7dv0OpyjSh8fn+h9qY
-	7CzVztPznUObj5g+AgAmL8thWXsgzw5qv8CXJHsEGBltAQ8DAFNq1v/AROy2MYXdz8WU=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Jtjvm/RtQKItTsBXF2ZMsWqZoy1J+kf1tKr5Ne4ymbY=; b=Eq/x27c3tq21s5pcYBndpW1ItJ
+	0T7+ChAgVkZi3XRcsT5Ype0r61nGRIqfWydh4b8sUwySsczpdRuP6N8qJQfgkEG8YDygmv+T8MjYt
+	j89rGGUwwD5WsXgX6jS+lYppRGddF7OdDV6l5y8SzowNCy8BIRc0pYFfWcqGJtU0mHQI=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1um2ji-0001zv-Ku;
-	Wed, 13 Aug 2025 04:05:14 +0000
+	id 1um7wV-00044z-AT;
+	Wed, 13 Aug 2025 09:38:48 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <wangzijie1@honor.com>) id 1um2jg-0001zo-ET
+ (envelope-from <nzzhao@126.com>) id 1um7wU-00044o-E7
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Aug 2025 04:05:12 +0000
+ Wed, 13 Aug 2025 09:38:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=d1p2fd57ffNrSUT/L05rvPi3VFitxrLnrFeS+517ZH0=; b=btWn3yxlcgCh9BA27t1tVdukEX
- vm7DPfhwrjb29unf+Vi7zZWoJ4IL3k8G2tbgtDnwXhXCVXouXuAEX1SMo3KkiS+1KsU9kweI26hqf
- UiY2EqB4TMS7F53XU/8GNjPCcDm8QI6Q0BOT+Y6ficP3/ZOpHVuPnFNikqRZ2g2DzTHE=;
+ bh=QwdKSo3YK0esWLMX0A++CG41fz927dLcjOBFe+UWw9c=; b=HfD5zW0HXqEL+zd2QK/RCMoqNG
+ kZnmEWXi0RjvMvbztf8C9HXWZbrB4MZeRa31dWHpab5YpbwCvIaQKMIgqpFwsiQ5RwCJuFaDy3KBJ
+ 8GZ530PdgcwAUm3AwhUXnUCkRxjM37UWDKqYQlZqnYZx5qHtETpm5vLNfTTBFu4u+LjI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-Id:Date:
+ Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
  :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=d1p2fd57ffNrSUT/L05rvPi3VFitxrLnrFeS+517ZH0=; b=f
- rAQsmzcRurbhP8+vB48adLECoyIDLUf143CXSd1RkvL3cZfIIBUKUakNHNCywPN+4wD/FL1inUJwm
- +Tftxo6f5YgmSl7i5wUNPqrqBQCdxllm5n3ryWhvzaXKSW6GfJltW7mOdqQnEakwkaL14G5DYtBAr
- rM0MKZBDaeX/wgX4=;
-Received: from mta21.honor.com ([81.70.160.142] helo=mta21.hihonor.com)
+ List-Owner:List-Archive; bh=QwdKSo3YK0esWLMX0A++CG41fz927dLcjOBFe+UWw9c=; b=U
+ kqQh0vGHcIwnj/uoEB+xseSD+0ATYaq/GNvRtirjkB0C8xfhkm5gXk/MREpzZwpPm75Djz831ctFU
+ 364nKjDGDyqn0uXZlnl84+k6ZejgfVOiqYv/zMm3oLBWFfM2wbbK6AGVFsxOmXsD7DHotnmUyzwbU
+ JexBvJ1yWYzsDfcA=;
+Received: from m16.mail.126.com ([220.197.31.7])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1um2jd-0003c3-LC for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Aug 2025 04:05:12 +0000
-Received: from w012.hihonor.com (unknown [10.68.27.189])
- by mta21.hihonor.com (SkyGuard) with ESMTPS id 4c1vsG14q2zYlKMn;
- Wed, 13 Aug 2025 12:04:50 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w012.hihonor.com
- (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 13 Aug
- 2025 12:04:57 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 13 Aug
- 2025 12:04:56 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Wed, 13 Aug 2025 12:04:55 +0800
-Message-ID: <20250813040455.3900073-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
+ id 1um7wT-0004Ue-Uz for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 13 Aug 2025 09:38:47 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+ s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
+ Content-Type; bh=QwdKSo3YK0esWLMX0A++CG41fz927dLcjOBFe+UWw9c=;
+ b=DNAea/8TLFIG7NkeiHI0hALSRJueZrU9EacU2792bTf+OJeaMGWVYB6QcGdUxN
+ vEXrafT8qzHemdxhe++0VoPP/cohWwC1PHORVy7gehZieGRI4PhiMR50mzhGnkK9
+ 3IVKym73xPF9qJese67gBI5qsCwFCAHDHfqw2zLGdK03M=
+Received: from YLLaptop.. (unknown [])
+ by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id
+ _____wD3tyv8XJxo_MzyBQ--.54250S2; 
+ Wed, 13 Aug 2025 17:38:16 +0800 (CST)
+From: Nanzhe Zhao <nzzhao@126.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org
+Date: Wed, 13 Aug 2025 17:37:46 +0800
+Message-Id: <20250813093755.47599-1-nzzhao@126.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Originating-IP: [10.144.23.14]
-X-ClientProxiedBy: w012.hihonor.com (10.68.27.189) To a011.hihonor.com
- (10.68.31.243)
-X-Headers-End: 1um2jd-0003c3-LC
-Subject: [f2fs-dev] [PATCH] f2fs: reduce nat_tree_lock hold time when flush
- nat entries
+X-CM-TRANSID: _____wD3tyv8XJxo_MzyBQ--.54250S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+ VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUO6pPDUUUU
+X-Originating-IP: [58.240.165.118]
+X-CM-SenderInfo: xq22xtbr6rjloofrz/1tbiFg+oz2icTc3h1wAAs8
+X-Headers-End: 1um7wT-0004Ue-Uz
+Subject: [f2fs-dev] [RESEND RFC PATCH 0/9] f2fs: Enable buffered read/write
+ large folios support with extended iomap
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,223 +86,198 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: wangzijie <wangzijie1@honor.com>, linux-kernel@vger.kernel.org,
- feng.han@honor.com, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: Nanzhe Zhao <nzzhao@126.com>, Barry Song <21cnbao@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>, Yi Zhang <yi.zhang@huawei.com>
+Content-Type: multipart/mixed; boundary="===============1352238858601975141=="
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Sometimes I suffered the nat_tree_lock contention between f2fs_write_checkpoint
-and f2fs_get_node_info. Commit a9419b6("f2fs: do not bother checkpoint by
-f2fs_get_node_info") also mentioned that situation.
+--===============1352238858601975141==
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 
-My idea is, when flush nat entries, we can use some structures to record nat
-pages we may read, and readahead them before hold nat_tree_lock. Before
-impletement code, I did some survey and found a submittion in community.
+Resend: original patch was misspelling
+the linux-f2fs-devel@lists.sourceforge.net address.
+No code changes.
 
-Subject: f2fs: use bucket sort to avoid tree lookup and list sort when nat flushing
-Link: https://lore.kernel.org/linux-f2fs-devel/20170520122435.17574-2-houpengyang@huawei.com/
-This patch aims to improve nat entry set sort by using bucket.
-I steal that structure and readahead nat pages contain nat entry set which cannot be moved
-to journal according to dirty nat entry set bucket.
+This RFC series enable buffered read/write paths large folio support
+with F2FS-specific extended iomap, combined with some other preparation
+work for large folio integration.
 
-By doing this, I think there are two benefits to reducing nat_tree_lock hold time when
-when flush nat entries.
-1. avoid nat set tree lookup and sort
-2. readahead nat pages before holding nat_tree_lock
+Because this is my first time to send a patch series to the kernel
+mailing list,
+I might have missed some conventions.
+The patch passes checkpatch.pl with no errors,
+but a few warnings remain.
+I wasn't sure about the best way to address them,
+so I would appreciate your guidance.
+I am happy to fix them if needed.
 
-Signed-off-by: wangzijie <wangzijie1@honor.com>
----
- fs/f2fs/f2fs.h |  1 +
- fs/f2fs/node.c | 70 ++++++++++++++++++++++++--------------------------
- fs/f2fs/node.h |  2 +-
- 3 files changed, 35 insertions(+), 38 deletions(-)
+Motivations:
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 46be75605..b27cc059f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -975,6 +975,7 @@ struct f2fs_nm_info {
- 	struct radix_tree_root nat_set_root;/* root of the nat set cache */
- 	struct f2fs_rwsem nat_tree_lock;	/* protect nat entry tree */
- 	struct list_head nat_entries;	/* cached nat entry list (clean) */
-+	struct list_head nat_dirty_set[NAT_ENTRY_PER_BLOCK + 1];	/* store dirty nat set */
- 	spinlock_t nat_list_lock;	/* protect clean nat entry list */
- 	unsigned int nat_cnt[MAX_NAT_STATE]; /* the # of cached nat entries */
- 	unsigned int nat_blocks;	/* # of nat blocks */
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 27743b93e..87c975ee8 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -244,6 +244,12 @@ static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
- 	__free_nat_entry(e);
- }
- 
-+static void __relocate_nat_entry_set(struct f2fs_nm_info *nm_i,
-+							struct nat_entry_set *set)
-+{
-+	list_move_tail(&set->set_list, &nm_i->nat_dirty_set[set->entry_cnt]);
-+}
-+
- static struct nat_entry_set *__grab_nat_entry_set(struct f2fs_nm_info *nm_i,
- 							struct nat_entry *ne)
- {
-@@ -260,6 +266,7 @@ static struct nat_entry_set *__grab_nat_entry_set(struct f2fs_nm_info *nm_i,
- 		head->set = set;
- 		head->entry_cnt = 0;
- 		f2fs_radix_tree_insert(&nm_i->nat_set_root, set, head);
-+		__relocate_nat_entry_set(nm_i, head);
- 	}
- 	return head;
- }
-@@ -279,8 +286,10 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
- 	 * 2. update old block address to new one;
- 	 */
- 	if (!new_ne && (get_nat_flag(ne, IS_PREALLOC) ||
--				!get_nat_flag(ne, IS_DIRTY)))
-+				!get_nat_flag(ne, IS_DIRTY))) {
- 		head->entry_cnt++;
-+		__relocate_nat_entry_set(nm_i, head);
-+	}
- 
- 	set_nat_flag(ne, IS_PREALLOC, new_ne);
- 
-@@ -309,6 +318,7 @@ static void __clear_nat_cache_dirty(struct f2fs_nm_info *nm_i,
- 
- 	set_nat_flag(ne, IS_DIRTY, false);
- 	set->entry_cnt--;
-+	__relocate_nat_entry_set(nm_i, set);
- 	nm_i->nat_cnt[DIRTY_NAT]--;
- 	nm_i->nat_cnt[RECLAIMABLE_NAT]++;
- }
-@@ -2976,24 +2986,6 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
- 	up_write(&curseg->journal_rwsem);
- }
- 
--static void __adjust_nat_entry_set(struct nat_entry_set *nes,
--						struct list_head *head, int max)
--{
--	struct nat_entry_set *cur;
--
--	if (nes->entry_cnt >= max)
--		goto add_out;
--
--	list_for_each_entry(cur, head, set_list) {
--		if (cur->entry_cnt >= nes->entry_cnt) {
--			list_add(&nes->set_list, cur->set_list.prev);
--			return;
--		}
--	}
--add_out:
--	list_add_tail(&nes->set_list, head);
--}
--
- static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
- 		const struct f2fs_nat_block *nat_blk)
- {
-@@ -3095,6 +3087,7 @@ static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 
- 	/* Allow dirty nats by node block allocation in write_begin */
- 	if (!set->entry_cnt) {
-+		list_del(&set->set_list);
- 		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
- 		kmem_cache_free(nat_entry_set_slab, set);
- 	}
-@@ -3109,11 +3102,8 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
- 	struct f2fs_journal *journal = curseg->journal;
--	struct nat_entry_set *setvec[NAT_VEC_SIZE];
- 	struct nat_entry_set *set, *tmp;
--	unsigned int found;
--	nid_t set_idx = 0;
--	LIST_HEAD(sets);
-+	int i;
- 	int err = 0;
- 
- 	/*
-@@ -3129,6 +3119,16 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	if (!nm_i->nat_cnt[DIRTY_NAT])
- 		return 0;
- 
-+	/* readahead sets which cannot be moved to journal */
-+	if (!__has_cursum_space(journal, nm_i->nat_cnt[DIRTY_NAT], NAT_JOURNAL)) {
-+		for (i = MAX_NAT_JENTRIES(journal); i <= NAT_ENTRY_PER_BLOCK; i++) {
-+			list_for_each_entry_safe(set, tmp, &nm_i->nat_dirty_set[i], set_list) {
-+				f2fs_ra_meta_pages(sbi, set->set, 1,
-+								META_NAT, true);
-+			}
-+		}
-+	}
-+
- 	f2fs_down_write(&nm_i->nat_tree_lock);
- 
- 	/*
-@@ -3141,21 +3141,13 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 			nm_i->nat_cnt[DIRTY_NAT], NAT_JOURNAL))
- 		remove_nats_in_journal(sbi);
- 
--	while ((found = __gang_lookup_nat_set(nm_i,
--					set_idx, NAT_VEC_SIZE, setvec))) {
--		unsigned idx;
--
--		set_idx = setvec[found - 1]->set + 1;
--		for (idx = 0; idx < found; idx++)
--			__adjust_nat_entry_set(setvec[idx], &sets,
--						MAX_NAT_JENTRIES(journal));
--	}
--
- 	/* flush dirty nats in nat entry set */
--	list_for_each_entry_safe(set, tmp, &sets, set_list) {
--		err = __flush_nat_entry_set(sbi, set, cpc);
--		if (err)
--			break;
-+	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++) {
-+		list_for_each_entry_safe(set, tmp, &nm_i->nat_dirty_set[i], set_list) {
-+			err = __flush_nat_entry_set(sbi, set, cpc);
-+			if (err)
-+				break;
-+		}
- 	}
- 
- 	f2fs_up_write(&nm_i->nat_tree_lock);
-@@ -3249,6 +3241,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	unsigned char *version_bitmap;
- 	unsigned int nat_segs;
-+	int i;
- 	int err;
- 
- 	nm_i->nat_blkaddr = le32_to_cpu(sb_raw->nat_blkaddr);
-@@ -3275,6 +3268,9 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- 	INIT_LIST_HEAD(&nm_i->nat_entries);
- 	spin_lock_init(&nm_i->nat_list_lock);
- 
-+	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++)
-+		INIT_LIST_HEAD(&nm_i->nat_dirty_set[i]);
-+
- 	mutex_init(&nm_i->build_lock);
- 	spin_lock_init(&nm_i->nid_list_lock);
- 	init_f2fs_rwsem(&nm_i->nat_tree_lock);
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 030390543..d805d4ce7 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -158,7 +158,7 @@ enum mem_type {
- };
- 
- struct nat_entry_set {
--	struct list_head set_list;	/* link with other nat sets */
-+	struct list_head set_list;	/* link with nat sets which have same entry_cnt */
- 	struct list_head entry_list;	/* link with dirty nat entries */
- 	nid_t set;			/* set number*/
- 	unsigned int entry_cnt;		/* the # of nat entries in set */
--- 
-2.25.1
+* **Why iomap**:
+  * F2FS couples pages directly to BIOs without a per-block tracking
+    struct like buffer-head or sub-page.
+    A naive large-folio port would cause:
+    * Write-amplification.
+    * Premature folio_end_read() / folio_end_writeback()
+      when multi sub-ranges of a large folio are in io concurrently.
+    Above issues has already been handled cleanly by iomap_folio_state.
+
+  * Original buffered write path unlocks a folio halfway,causes status
+    recheck for large folios carried with iomap_folio_state
+    or partially trucnated folio tricky.iomap handles all locking
+    unlocking operations automatically.
+
+* **Why extends iomap**
+  * F2FS stores its flags in the folio's private field,
+    which conflicts with iomap_folio_state.
+  * To resolve this, we designed f2fs_iomap_folio_state,
+    compatible with iomap_folio_state's layout while extending
+    its flexible state array for F2FS private flags.
+  * We store a magic number in read_bytes_pending to distinguish
+    whether a folio uses the original or F2FS's iomap_folio_state.
+    It's chosen because it remains 0 after readahead completes.
+
+Implementation notes:
+
+* New Kconfig: `CONFIG_F2FS_IOMAP_FOLIO_STATE`; when off,falls back
+  to the legacy buffered io path.
+
+Limitations
+
+* Don't support BLOCK_SIZE > PAGE_SIZE now.
+* Don't support large folios for encrypted and fsverity files.
+* Page writeback and compressed files large folios support is still WIP.
+
+Why RFC:
+
+* Need review and potential improvement on
+ `f2fs_iomap_folio_state` design and implementation.
+* Limited test coverage so far.Any extra testing is highly appreciated.
+* Two runtime issues remain (see below).
+
+Performance Testing:
+
+* Platform: x86-64 laptop (PCIe 4.0 NVMe) -> qemu-arm64 VM, 4 GiB RAM
+* Kernel: gcc-13.2, defconfig + `CONFIG_F2FS_IOMAP_FOLIO_STATE=y`
+fio 3.35, `ioengine=psync`, `size=1G`, `numjobs=1`
+
+Read throughput (MiB/s):
+
+--- Kernel: iomap_v1 file type: normal ---
+Block Size (bs)      | Avg. Bandwidth (MiB/s)       | Avg. IOPS
+---------------------+------------------------------+-----------------
+100M                 | 2809.60                      | 27.50
+10M                  | 3184.60                      | 317.90
+128k                 | 1376.20                      | 11000.80
+1G                   | 1954.70                      | 1.20
+1M                   | 2717.00                      | 2716.70
+4k                   | 616.50                       | 157800.00
+
+--- Kernel: vanilla  file type: normal ---
+Block Size (bs)      | Avg. Bandwidth (MiB/s)       | Avg. IOPS
+---------------------+------------------------------+-----------------
+100M                 | 994.60                       | 9.60
+10M                  | 986.50                       | 98.10
+128k                 | 693.80                       | 5550.90
+1G                   | 816.90                       | 0.00
+1M                   | 968.90                       | 968.40
+4k                   | 429.80                       | 109990.00
+--- Kernel: iomap_v1 file type: hole ---
+Block Size (bs)      | Avg. Bandwidth (MiB/s)       | Avg. IOPS
+---------------------+------------------------------+-----------------
+100M                 | 1825.60                      | 17.70
+10M                  | 1989.24                      | 198.42
+1G                   | 1312.80                      | 0.90
+1M                   | 2326.02                      | 2325.42
+4k                   | 799.40                       | 204700.00
+
+--- Kernel: vanilla file type: hole ---
+Block Size (bs)      | Avg. Bandwidth (MiB/s)       | Avg. IOPS
+---------------------+------------------------------+-----------------
+100M                 | 708.90                       | 6.50
+10M                  | 735.00                       | 73.10
+128k                 | 786.70                       | 6292.20
+1G                   | 613.20                       | 0.00
+1M                   | 764.50                       | 764.25
+4k                   | 478.80                       | 122400.00
+
+Sparse-file numbers on qemu look skewed; further bare-metal tests planned.
+
+Write benchmarks are currently blocked by the issues below.
+
+Known issues (help appreciated)
+
+**Write throttling stalls**
+  ```sh
+  dd if=/dev/zero of=test.img bs=1G count=1 conv=fsync
+  ```
+  Write speed decays; task spins in `iomap_write_iter`
+  ->`balance_dirty_pages_ratelimited_flags`.
+
+**fsync dead-lock**
+  ```sh
+  fio --rw=write --bs=4K --fsync=1 --size=1G --ioengine=psync …
+  ```
+  Task Hangs in `f2fs_issue_flush`->'submit_bio_wait'
+
+Full traces will be posted in a follow-up.
+
+Nanzhe Zhao (9):
+  f2fs: Introduce f2fs_iomap_folio_state
+  f2fs: Integrate f2fs_iomap_folio_state into f2fs page private helpers
+  f2fs: Using `folio_detach_f2fs_private` in invalidate and release
+    folio
+  f2fs: Convert outplace write path page private funcions to folio
+    private functions.
+  f2fs:Refactor `f2fs_is_compressed_page` to `f2fs_is_compressed_folio`
+  f2fs: Extend f2fs_io_info to support sub-folio ranges
+  f2fs:Make GC aware of large folios
+  f2fs: Introduce F2FS_GET_BLOCK_IOMAP and map_blocks he lpers
+  f2fs: Enable buffered read/write path large folios support for normal
+    and atomic file with iomap
+
+ fs/f2fs/Kconfig    |  10 ++
+ fs/f2fs/Makefile   |   1 +
+ fs/f2fs/compress.c |  11 +-
+ fs/f2fs/data.c     | 389 ++++++++++++++++++++++++++++++++++++------
+ fs/f2fs/f2fs.h     | 412 ++++++++++++++++++++++++++++++++++-----------
+ fs/f2fs/f2fs_ifs.c | 221 ++++++++++++++++++++++++
+ fs/f2fs/f2fs_ifs.h |  79 +++++++++
+ fs/f2fs/file.c     |  33 +++-
+ fs/f2fs/gc.c       |  37 ++--
+ fs/f2fs/inline.c   |  15 +-
+ fs/f2fs/inode.c    |  27 +++
+ fs/f2fs/namei.c    |   7 +
+ fs/f2fs/segment.c  |   2 +-
+ fs/f2fs/super.c    |   3 +
+ 14 files changed, 1082 insertions(+), 165 deletions(-)
+ create mode 100644 fs/f2fs/f2fs_ifs.c
+ create mode 100644 fs/f2fs/f2fs_ifs.h
 
 
+base-commit: b45116aef78ff0059abf563b339e62a734487a50
+--
+2.34.1
+
+
+
+--===============1352238858601975141==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============1352238858601975141==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============1352238858601975141==--
