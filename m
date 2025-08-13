@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1C17ECA0EE0
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Aug 2025 09:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3FEBFCA0EE4
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Aug 2025 09:38:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=93/A8OtyGalMlS8wNcB6NpU9uwXV57Y3wdocXDeZRBU=; b=kXOIYWj6lALN4h/7Lvc4RCS1FT
-	CwBUzblm67biDKxDioSRUM+mxdOacc3jQG+gfLIHHoVUZjio/MTQ6JQUUQQxJzoUWj5MOmdxkmm78
-	4Ii+9KN91cdAfnbtl0XbMVspt4lAcTtw4CQk1GiHBFqrXoXmE4Iu9u+QSvZ8PuhOiULw=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=n4cb1w1CLqM4+Qlod7yWed+gfqob9Eg3VNDOUh92hQc=; b=gepXncmcHpNH82p1NgKgbpgYXC
+	6r7FujDujiXfUaOM1sfWBvA00AkgC89HxWpeL0YyRDUBx0MV0qOURv/yf2mJ10QsEQgrYB46Gjapf
+	feJxVOysXIXxXkDs7CgSeIN8t5UqpK7ClG+Li3G7b5m5WQw6C5ZJEN67V2fiQGcKo5y0=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1um7wf-0007pi-AU;
-	Wed, 13 Aug 2025 09:38:57 +0000
+	id 1um7wg-00047B-2M;
+	Wed, 13 Aug 2025 09:38:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao@126.com>) id 1um7wa-0007pK-LH
+ (envelope-from <nzzhao@126.com>) id 1um7we-00046k-1T
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Aug 2025 09:38:52 +0000
+ Wed, 13 Aug 2025 09:38:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/ch+z7GSB5KCZPQlJoVXou/MWaJL2wpBA5pjQ8l8kXg=; b=RB3pZMofrm7ZrAwf83enu42OPm
- dGSYfV2dShNN8X2YGcWsTB2EwttmX5lvMluJUO5K/vlvK5G5A+4eYZ2oQnMRiL5GABQLlW6rpSoKj
- 7971ayEliWzfrMDTnY9s18g6TN6KKR0LgsqYK/eEeWAQzlQ45Cc1GHQgpd5XU7j99SdQ=;
+ bh=JXrrH1GuF3TyhMQNJeF8+XDV9FdDsRz5WCLevGpnP98=; b=kZseJHRPWGndo2Yu3VVHV4tR47
+ ub+Aq8chTLWWaHeZ4cPozqwf9y7jSd6mfL8BsW3PjthLWUI/YJhlb7kBj/HV7GkmDGt22fnQmbl7b
+ u/KdFMdp4x8fVwmb9Xpw7PDDxPcoKyP1zJBh+2VLwbVgvCcOQmA9L6w3WBiQfq121gss=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,43 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=/ch+z7GSB5KCZPQlJoVXou/MWaJL2wpBA5pjQ8l8kXg=; b=lY7OH9SDjt4i+vEPI7CQmpHZhX
- 9NT9Tm9/qd3yLg0GJRFZo0iMPiO30sOyDqZPPEwEgeiWcjPF6B1JGdLg87IvhXAWQCFoH0+rPvpgF
- Tjbwp+4x3a6tAayGQ5+BBEeVyRywWFqCyoLinzWg9GQ0M7J2dH+hZmGDVrPTeLzJksgY=;
-Received: from m16.mail.126.com ([117.135.210.8])
+ bh=JXrrH1GuF3TyhMQNJeF8+XDV9FdDsRz5WCLevGpnP98=; b=WHgB6aX0THRNWFKBEVmuMmnebC
+ xw+nZGN6Tuf1yU/QR3oCEJ0dloruVaR6+LH5dArMSBjtfJPCkUdXmOouuXGN7jWpVgJoNh8HlZ2xH
+ vsludlcqFdR+I+oiCSBvSlXk8tvJ6l9d1aa4pueWNNn3XcAVDMedyxIZjw6Tr0f9A+jE=;
+Received: from m16.mail.126.com ([117.135.210.7])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1um7wZ-0004Uw-QJ for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Aug 2025 09:38:52 +0000
+ id 1um7we-0004VL-20 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 13 Aug 2025 09:38:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
- s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=/c
- h+z7GSB5KCZPQlJoVXou/MWaJL2wpBA5pjQ8l8kXg=; b=PYwIZp98vzM+x7NSzW
- YDqRTzKPx91ihzhG6kwK4I4gfVpT1UK5gGLIF0TZy58IXkMN4n3QMfsQFX5GDdhH
- xvfc0m8b4Imu24HZrHJ/55YQ4LePNcfW1UakU/gMZxzUbRjTWRPfvqYOdAfcKewS
- SQxoBTMhYfKpGE2hs2YqARNYs=
+ s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=JX
+ rrH1GuF3TyhMQNJeF8+XDV9FdDsRz5WCLevGpnP98=; b=CHl88+t/JfbXKe8jVE
+ 9mrhoSWaalCxHNXpwdKTRNpqWxs4hNuxNH3IC14HSicpRg5j5t4fUQhyuk0QEDt9
+ zFOz7IXt8Y/R7fOAxv9AzTQXwQxi52NCeQQ9jGYuePfoCSkfDprXsDACD0MefpAC
+ BI6mXr4pac9M+rmXBjhhEdknI=
 Received: from YLLaptop.. (unknown [])
  by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id
- _____wD3tyv8XJxo_MzyBQ--.54250S7; 
- Wed, 13 Aug 2025 17:38:26 +0800 (CST)
+ _____wD3tyv8XJxo_MzyBQ--.54250S9; 
+ Wed, 13 Aug 2025 17:38:29 +0800 (CST)
 From: Nanzhe Zhao <nzzhao@126.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
  linux-fsdevel@vger.kernel.org
-Date: Wed, 13 Aug 2025 17:37:51 +0800
-Message-Id: <20250813093755.47599-6-nzzhao@126.com>
+Date: Wed, 13 Aug 2025 17:37:53 +0800
+Message-Id: <20250813093755.47599-8-nzzhao@126.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250813093755.47599-1-nzzhao@126.com>
 References: <20250813093755.47599-1-nzzhao@126.com>
 MIME-Version: 1.0
-X-CM-TRANSID: _____wD3tyv8XJxo_MzyBQ--.54250S7
-X-Coremail-Antispam: 1Uf129KBjvJXoWxur4kXF1DWry5WF45Kw4rXwb_yoWrur1rpF
- W8KrykJrWxWrZ8Wr1kJFsY9r1fKryFqayUXFWxKw1ft3Waqrna9F10vw1rZF4UJryrZ3Z7
- Za1jkFyUXF45tF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zij-ewUUUUU=
+X-CM-TRANSID: _____wD3tyv8XJxo_MzyBQ--.54250S9
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZr4DXFW7WryDXw45JrW5Jrb_yoWrJw18pF
+ W5GF9xGrs5JF17urn2yFn8Zr1rta4Ivr4UAFWxCw4xXa1UXwn5K3W0y3WfZF1DtrykArWI
+ qF1rtry5WF4UJF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRPl1PUUUUU=
 X-Originating-IP: [58.240.165.118]
-X-CM-SenderInfo: xq22xtbr6rjloofrz/1tbiFhCoz2icTc3imwAAss
-X-Headers-End: 1um7wZ-0004Uw-QJ
-Subject: [f2fs-dev] [RFC PATCH 5/9] f2fs:Refactor `f2fs_is_compressed_page`
- to `f2fs_is_compressed_folio`
+X-CM-SenderInfo: xq22xtbr6rjloofrz/1tbiZA6oz2icUlqdGgABs3
+X-Headers-End: 1um7we-0004VL-20
+Subject: [f2fs-dev] [RFC PATCH 7/9] f2fs:Make GC aware of large folios
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,126 +95,120 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-`f2fs_is_compressed_page` now already accept a folio as
-a parameter.So the name now is confusing.
-Rename it to `f2fs_is_compressed_folio`.
-If a folio has f2fs_iomap_folio_state then it must not be
-a compressed folio.
+Previously, the GC (Garbage Collection) logic for performing I/O and
+marking folios dirty only supported order-0 folios and lacked awareness
+of higher-order folios. To enable GC to correctly handle higher-order
+folios, we made two changes:
+
+- In `move_data_page`, we now use `f2fs_iomap_set_range_dirty` to mark
+  only the sub-part of the folio corresponding to `bidx` as dirty,
+  instead of the entire folio.
+
+- The `f2fs_submit_page_read` function has been augmented with an
+  `index` parameter, allowing it to precisely identify which sub-page
+  of the current folio is being submitted.
 
 Signed-off-by: Nanzhe Zhao <nzzhao@126.com>
 ---
- fs/f2fs/compress.c | 11 ++++++-----
- fs/f2fs/data.c     | 10 +++++-----
- fs/f2fs/f2fs.h     |  7 +++++--
- 3 files changed, 16 insertions(+), 12 deletions(-)
+ fs/f2fs/data.c | 13 +++++++------
+ fs/f2fs/gc.c   | 37 +++++++++++++++++++++++--------------
+ 2 files changed, 30 insertions(+), 20 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 6ad8d3bc6df7..627013ef856c 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -71,13 +71,14 @@ static pgoff_t start_idx_of_cluster(struct compress_ctx *cc)
- 	return cc->cluster_idx << cc->log_cluster_size;
- }
- 
--bool f2fs_is_compressed_page(struct folio *folio)
-+bool f2fs_is_compressed_folio(struct folio *folio)
- {
--	if (!folio->private)
-+	if (!folio_test_private(folio))
- 		return false;
- 	if (folio_test_f2fs_nonpointer(folio))
- 		return false;
--
-+	if (folio_get_f2fs_ifs(folio)) /*compressed folio current don't support higer order*/
-+		return false;
- 	f2fs_bug_on(F2FS_F_SB(folio),
- 		*((u32 *)folio->private) != F2FS_COMPRESSED_PAGE_MAGIC);
- 	return true;
-@@ -1483,8 +1484,8 @@ void f2fs_compress_write_end_io(struct bio *bio, struct folio *folio)
- 	struct page *page = &folio->page;
- 	struct f2fs_sb_info *sbi = bio->bi_private;
- 	struct compress_io_ctx *cic = folio->private;
--	enum count_type type = WB_DATA_TYPE(folio,
--				f2fs_is_compressed_page(folio));
-+	enum count_type type =
-+		WB_DATA_TYPE(folio, f2fs_is_compressed_folio(folio));
- 	int i;
- 
- 	if (unlikely(bio->bi_status != BLK_STS_OK))
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 5589280294c1..a9dc2572bdc4 100644
+index b7bef2a28c8e..5ecd08a3dd0b 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -142,7 +142,7 @@ static void f2fs_finish_read_bio(struct bio *bio, bool in_task)
- 	bio_for_each_folio_all(fi, bio) {
- 		struct folio *folio = fi.folio;
- 
--		if (f2fs_is_compressed_page(folio)) {
-+		if (f2fs_is_compressed_folio(folio)) {
- 			if (ctx && !ctx->decompression_attempted)
- 				f2fs_end_read_compressed_page(folio, true, 0,
- 							in_task);
-@@ -186,7 +186,7 @@ static void f2fs_verify_bio(struct work_struct *work)
- 		bio_for_each_folio_all(fi, bio) {
- 			struct folio *folio = fi.folio;
- 
--			if (!f2fs_is_compressed_page(folio) &&
-+			if (!f2fs_is_compressed_folio(folio) &&
- 			    !fsverity_verify_page(&folio->page)) {
- 				bio->bi_status = BLK_STS_IOERR;
- 				break;
-@@ -239,7 +239,7 @@ static void f2fs_handle_step_decompress(struct bio_post_read_ctx *ctx,
- 	bio_for_each_folio_all(fi, ctx->bio) {
- 		struct folio *folio = fi.folio;
- 
--		if (f2fs_is_compressed_page(folio))
-+		if (f2fs_is_compressed_folio(folio))
- 			f2fs_end_read_compressed_page(folio, false, blkaddr,
- 						      in_task);
- 		else
-@@ -344,7 +344,7 @@ static void f2fs_write_end_io(struct bio *bio)
- 		}
- 
- #ifdef CONFIG_F2FS_FS_COMPRESSION
--		if (f2fs_is_compressed_page(folio)) {
-+		if (f2fs_is_compressed_folio(folio)) {
- 			f2fs_compress_write_end_io(bio, folio);
- 			continue;
- 		}
-@@ -568,7 +568,7 @@ static bool __has_merged_page(struct bio *bio, struct inode *inode,
- 			if (IS_ERR(target))
- 				continue;
- 		}
--		if (f2fs_is_compressed_page(target)) {
-+		if (f2fs_is_compressed_folio(target)) {
- 			target = f2fs_compress_control_folio(target);
- 			if (IS_ERR(target))
- 				continue;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a14bef4dc394..9f88be53174b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4677,7 +4677,7 @@ enum cluster_check_type {
- 	CLUSTER_COMPR_BLKS, /* return # of compressed blocks in a cluster */
- 	CLUSTER_RAW_BLKS    /* return # of raw blocks in a cluster */
- };
--bool f2fs_is_compressed_page(struct folio *folio);
-+bool f2fs_is_compressed_folio(struct folio *folio);
- struct folio *f2fs_compress_control_folio(struct folio *folio);
- int f2fs_prepare_compress_overwrite(struct inode *inode,
- 			struct page **pagep, pgoff_t index, void **fsdata);
-@@ -4744,7 +4744,10 @@ void f2fs_invalidate_compress_pages(struct f2fs_sb_info *sbi, nid_t ino);
- 		sbi->compr_saved_block += diff;				\
- 	} while (0)
- #else
--static inline bool f2fs_is_compressed_page(struct folio *folio) { return false; }
-+static inline bool f2fs_is_compressed_folio(struct folio *folio)
-+{
-+	return false;
-+}
- static inline bool f2fs_is_compress_backend_ready(struct inode *inode)
+@@ -1096,7 +1096,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+ /* This can handle encryption stuffs */
+ static int f2fs_submit_page_read(struct inode *inode, struct folio *folio,
+ 				 block_t blkaddr, blk_opf_t op_flags,
+-				 bool for_write)
++				 pgoff_t index, bool for_write)
  {
- 	if (!f2fs_compressed_file(inode))
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct bio *bio;
+@@ -1109,7 +1109,8 @@ static int f2fs_submit_page_read(struct inode *inode, struct folio *folio,
+ 	/* wait for GCed page writeback via META_MAPPING */
+ 	f2fs_wait_on_block_writeback(inode, blkaddr);
+ 
+-	if (!bio_add_folio(bio, folio, PAGE_SIZE, 0)) {
++	if (!bio_add_folio(bio, folio, PAGE_SIZE,
++			   (index - folio->index) << PAGE_SHIFT)) {
+ 		iostat_update_and_unbind_ctx(bio);
+ 		if (bio->bi_private)
+ 			mempool_free(bio->bi_private, bio_post_read_ctx_pool);
+@@ -1276,8 +1277,8 @@ struct folio *f2fs_get_read_data_folio(struct inode *inode, pgoff_t index,
+ 		return folio;
+ 	}
+ 
+-	err = f2fs_submit_page_read(inode, folio, dn.data_blkaddr,
+-						op_flags, for_write);
++	err = f2fs_submit_page_read(inode, folio, dn.data_blkaddr, op_flags,
++				    index, for_write);
+ 	if (err)
+ 		goto put_err;
+ 	return folio;
+@@ -3651,8 +3652,8 @@ static int f2fs_write_begin(const struct kiocb *iocb,
+ 			goto put_folio;
+ 		}
+ 		err = f2fs_submit_page_read(use_cow ?
+-				F2FS_I(inode)->cow_inode : inode,
+-				folio, blkaddr, 0, true);
++			F2FS_I(inode)->cow_inode : inode, folio,
++			blkaddr, 0, folio->index, true);
+ 		if (err)
+ 			goto put_folio;
+ 
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 098e9f71421e..6d28f01bec42 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1475,22 +1475,31 @@ static int move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 			err = -EAGAIN;
+ 			goto out;
+ 		}
+-		folio_mark_dirty(folio);
+ 		folio_set_f2fs_gcing(folio);
++#ifdef CONFIG_F2FS_IOMAP_FOLIO_STATE
++		if (!folio_test_large(folio)) {
++			folio_mark_dirty(folio);
++		} else {
++			f2fs_iomap_set_range_dirty(folio, (bidx - folio->index) << PAGE_SHIFT,
++				PAGE_SIZE);
++		}
++#else
++		folio_mark_dirty(folio);
++#endif
+ 	} else {
+-		struct f2fs_io_info fio = {
+-			.sbi = F2FS_I_SB(inode),
+-			.ino = inode->i_ino,
+-			.type = DATA,
+-			.temp = COLD,
+-			.op = REQ_OP_WRITE,
+-			.op_flags = REQ_SYNC,
+-			.old_blkaddr = NULL_ADDR,
+-			.folio = folio,
+-			.encrypted_page = NULL,
+-			.need_lock = LOCK_REQ,
+-			.io_type = FS_GC_DATA_IO,
+-		};
++		struct f2fs_io_info fio = { .sbi = F2FS_I_SB(inode),
++					    .ino = inode->i_ino,
++					    .type = DATA,
++					    .temp = COLD,
++					    .op = REQ_OP_WRITE,
++					    .op_flags = REQ_SYNC,
++					    .old_blkaddr = NULL_ADDR,
++					    .folio = folio,
++					    .encrypted_page = NULL,
++					    .need_lock = LOCK_REQ,
++					    .io_type = FS_GC_DATA_IO,
++					    .idx = bidx - folio->index,
++					    .cnt = 1 };
+ 		bool is_dirty = folio_test_dirty(folio);
+ 
+ retry:
 -- 
 2.34.1
 
