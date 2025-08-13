@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 92246CA0EE6
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Aug 2025 09:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CF89AC87FCF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Aug 2025 09:38:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=a6OAXOaaWlcTyUx+xg5vSYe6Il0z+xWbiCcQZ3w9pCY=; b=lEgJ4n2ZXz4kGCHHWSvGVeyXXf
-	gyq8s26wJffF91dBaTCN0a2rYQds1s0+VIKmJWfhAfBJ6z6aF0hO1pWUfU70K5U/UgLA4aLucayXy
-	e0VjZqah0VTeCxZ1hPKKOZ89HhlIaGMvFqpvgxAIgFprDVT1aoGFrmHPU9t7cS+l9pgk=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=1g/BtojX2gXGqRTSVA+8/R1eg/JwNrZ+SpmJMAbpb8I=; b=RoTWOcKBiItIiKiJdmZP3TIqVi
+	84ud0/dh9v7+UxGX6te4v0/hA5Yg4o/sVsFaFZkU/gk+jEbBgCy68e89ehri0yu2iTnOVmV9hy0vz
+	HRSURs8m8Mykpmk42sBAVp0rF1n1rot0yM/ZPTPelfNkawMMQ91XZ1Fz4klEY7IPUqJE=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1um7wa-00060I-8q;
-	Wed, 13 Aug 2025 09:38:52 +0000
+	id 1um7wc-0000YQ-Gn;
+	Wed, 13 Aug 2025 09:38:54 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao@126.com>) id 1um7wY-000606-0f
+ (envelope-from <nzzhao@126.com>) id 1um7wb-0000YG-Lw
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Aug 2025 09:38:50 +0000
+ Wed, 13 Aug 2025 09:38:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QX1yHOS3iNusdtYkEEgfT0ZrvEnWSBmajEEebMi+mQI=; b=Xas72a1HPdybq2AijzhPfVVbMH
- eBH293jqJ2+YJ15HdQzXWmVmEipOyo15MfS4L+oAE/MVfuDCaHWeDtkZK6iaxwZq47w2Tc++aopnY
- p3veVHdyaC9qBhaMxz3DzPXVhglolwJj50NEYO07YK40GxKgzeA2I8jrd1bzEDj/XGsw=;
+ bh=16xZxNhapx1zmrqQvDVTERS6UOfNY3zsXg4rsnEQ910=; b=QQIu4QLmYSWmQLyr4GjnytepG6
+ wAMVPuxPuSgCI9WslQkNn5dHiViMyIDETQQ4go65pG6BFAKn7kIkRhKWHUVXLQt/Ksz6VdX63auWo
+ yvYIIiI2FhDFTSygYN6GoR7pYM5nKDW/ocq+/Hl8yf7MdD6IFFL5kSim6OlS00uzebmE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,42 +42,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=QX1yHOS3iNusdtYkEEgfT0ZrvEnWSBmajEEebMi+mQI=; b=Ovj5yb2lqjF73p2qf1xXauxt8E
- K/jmcFXYUEHjJ9L3sTNXs/f1j8g2Xet30GwgKRAskPFalCi1stMakbnyZB28tRyxFDTud2WdBJWHl
- 5zaP1QcZIFzVvsDQvRiOfVBl4wDc4GKuM3RBQRvC2OMgrgdAB9di6NzZwiPL8cxt0Jck=;
-Received: from m16.mail.126.com ([117.135.210.9])
+ bh=16xZxNhapx1zmrqQvDVTERS6UOfNY3zsXg4rsnEQ910=; b=dclnxH2DQpx7Kh2ArnJumc5D/q
+ VGB/jR8UMhetjVnSJ9q36BqxWownxdRSqGN5uazSuOynIlSmqd0o/8VVxwfazjkh9CdrCZ6I03UU5
+ Axcf1HmUkO4nIfFehmOmZy/Pcw5LTLk+8xbEBb8Hl8mgOKLKxaJv/MhveamMMMBfy0iM=;
+Received: from m16.mail.126.com ([220.197.31.7])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1um7wU-0004Uh-Pt for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 Aug 2025 09:38:49 +0000
+ id 1um7wa-0004V2-NC for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 13 Aug 2025 09:38:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
- s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=QX
- 1yHOS3iNusdtYkEEgfT0ZrvEnWSBmajEEebMi+mQI=; b=PHPNzeyVYjVUdGXKje
- I8r4tug1rzIF9/XGNqEfO5P/QvQRPLhDRv0syGQ14buPOxWFrmzfyw7Cr0JWOys/
- WRH90GEXU3x85nXVw54AdgcyjRkIoyRiWXMAZm2a+0MZ2VQGUMd0zFfwTR3F+Eu1
- lEfAjZch17mfoErOKIjvpQRQA=
+ s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=16
+ xZxNhapx1zmrqQvDVTERS6UOfNY3zsXg4rsnEQ910=; b=ClvGGN57mNF4WAPJEs
+ UfRl8twLY5O2SD/h2CodjCFFx6pDel9FfgeQsOFfEjkbMA5vYXoB/dXq3RmkEWDA
+ iiE4zoc+Zt3SA8LzJw3qpDJIufdxlCUUKesWDqS0ym1iHnJJJrmieP2gy8K9l6W/
+ i36Oj5ZqA42Uy5DOIVn1khFp4=
 Received: from YLLaptop.. (unknown [])
  by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id
- _____wD3tyv8XJxo_MzyBQ--.54250S3; 
- Wed, 13 Aug 2025 17:38:19 +0800 (CST)
+ _____wD3tyv8XJxo_MzyBQ--.54250S10; 
+ Wed, 13 Aug 2025 17:38:30 +0800 (CST)
 From: Nanzhe Zhao <nzzhao@126.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
  linux-fsdevel@vger.kernel.org
-Date: Wed, 13 Aug 2025 17:37:47 +0800
-Message-Id: <20250813093755.47599-2-nzzhao@126.com>
+Date: Wed, 13 Aug 2025 17:37:54 +0800
+Message-Id: <20250813093755.47599-9-nzzhao@126.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250813093755.47599-1-nzzhao@126.com>
 References: <20250813093755.47599-1-nzzhao@126.com>
 MIME-Version: 1.0
-X-CM-TRANSID: _____wD3tyv8XJxo_MzyBQ--.54250S3
-X-Coremail-Antispam: 1Uf129KBjvAXoW3Kr17Xr1DJFy3ZFW5ArWfuFg_yoW8JF1kGo
- WSgw4jqw48KrWUArWjkr17WFy7ua98Ca47JF4fCrs8uFnrXa4q9rW7KrsxJa4I9rn5JF12
- 939xJF47GFWfX3Wxn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJvtCUUUUU
+X-CM-TRANSID: _____wD3tyv8XJxo_MzyBQ--.54250S10
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKFyDXFy3ZF43WF4DKw1rZwb_yoW7Gw4DpF
+ yDAF1rGrs0grWxWF4fta1Uur1S9r1Ik3W7Ca93X3s8G3yqqr1SqFnYya43u3Z8tr4fJr1q
+ qFs8K348KayxGFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziUDGOUUUUU=
 X-Originating-IP: [58.240.165.118]
-X-CM-SenderInfo: xq22xtbr6rjloofrz/1tbiExioz2icVjthxgAAsS
-X-Headers-End: 1um7wU-0004Uh-Pt
-Subject: [f2fs-dev] [RFC PATCH 1/9] f2fs: Introduce f2fs_iomap_folio_state
+X-CM-SenderInfo: xq22xtbr6rjloofrz/1tbiExSoz2icVjtiagAAsx
+X-Headers-End: 1um7wa-0004V2-NC
+Subject: [f2fs-dev] [RFC PATCH 8/9] f2fs: Introduce F2FS_GET_BLOCK_IOMAP and
+ map_blocks he lpers
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,395 +96,151 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Add f2fs's own per-folio structure to track
-per-block dirty state of a folio.
+    Introduce the `F2FS_GET_BLOCK_IOMAP` flag for `f2fs_ma
+p_blocks`.
 
-The reason for introducing this structure is that f2fs's private flag
-would conflict with iomap_folio_state's use of the folio->private field.
-Thanks to Mr. Matthew for providing the idea. See for details:
-[https://lore.kernel.org/linux-f2fs-devel/Z-oPTUrF7kkhzJg_
-@casper.infradead.org/]
+    With this flag, holes encountered during buffered I/O
+iterative mapping
+    can now be merged under `map_is_mergeable`. Furthermor
+e, when this flag
+    is passed, `f2fs_map_blocks` will by default store the
+ mapped block
+    information (from the `f2fs_map_blocks` structure) int
+o the extent cache,
+    provided the resulting extent size is greater than the
+ minimum allowed
+    length for the f2fs extent cache.
+    Notably, both holes and `NEW_ADDR`
+    extents will also be cached under the influence of thi
+s flag.
+    This improves buffered write performance for sparse fi
+les.
 
-The memory layout of this structure is the same as iomap_folio_state,
-except that we set read_bytes_pending to a magic number. This is because
-we need to be able to distinguish it from the original iomap_folio_state.
-We additionally allocate an unsigned long at the end of the state array
-to store f2fs-specific flags.
-
-This implementation is compatible with high-order folios, order-0 folios,
-and metadata folios.
-However, it does not support compressed data folios.
-
-Introduction to related functions:
-
-- f2fs_ifs_alloc: Allocates f2fs's own f2fs_iomap_folio_state. If it
-  detects that folio->private already has a value, we distinguish
-  whether it is f2fs's own flag value or an iomap_folio_state. If it is
-  the latter, we will copy its content to our f2fs_iomap_folio_state
-  and then free it.
-
-- folio_detach_f2fs_private: Serves as a unified interface to release
-  f2fs's private resources, no matter what it is.
-
-- f2fs_ifs_clear_range_uptodate && f2fs_ifs_set_range_dirty: Helper
-  functions copied and slightly modified from fs/iomap.
-
-- folio_get_f2fs_ifs: Specifically used to get f2fs_iomap_folio_state.
-  It cannot be used to get f2fs's own fields used on compressed folios.
-  For the former, we return a null pointer to indicate that the current
-  folio does not hold an f2fs_iomap_folio_state. For the latter, we
-  directly BUG_ON.
+    Additionally, two helper functions are introduced:
+    - `f2fs_map_blocks_iomap`: A simple wrapper for `f2fs_
+map_blocks` that
+      enables the `F2FS_GET_BLOCK_IOMAP` flag.
+    - `f2fs_map_blocks_prealloc`: A simple wrapper for usi
+ng
+      `f2fs_map_blocks` to preallocate blocks.
 
 Signed-off-by: Nanzhe Zhao <nzzhao@126.com>
 ---
- fs/f2fs/Kconfig    |  10 ++
- fs/f2fs/Makefile   |   1 +
- fs/f2fs/f2fs_ifs.c | 221 +++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/f2fs_ifs.h |  79 ++++++++++++++++
- 4 files changed, 311 insertions(+)
- create mode 100644 fs/f2fs/f2fs_ifs.c
- create mode 100644 fs/f2fs/f2fs_ifs.h
+ fs/f2fs/data.c | 49 +++++++++++++++++++++++++++++++++++++++++++------
+ fs/f2fs/f2fs.h |  5 +++++
+ 2 files changed, 48 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
-index 5916a02fb46d..480b8536fa39 100644
---- a/fs/f2fs/Kconfig
-+++ b/fs/f2fs/Kconfig
-@@ -150,3 +150,13 @@ config F2FS_UNFAIR_RWSEM
- 	help
- 	  Use unfair rw_semaphore, if system configured IO priority by block
- 	  cgroup.
-+
-+config F2FS_IOMAP_FOLIO_STATE
-+	bool "F2FS folio per-block I/O state tracking"
-+	depends on F2FS_FS && FS_IOMAP
-+	help
-+	  Enable a custom F2FS structure for tracking the I/O state
-+	  (up-to-date, dirty) on a per-block basis within a memory folio.
-+	  This structure stores F2FS private flag in its state flexible
-+	  array while keeping compatibility with generic iomap_folio_state.
-+	  Must be enabled if using iomap large folios support in F2FS.
-\ No newline at end of file
-diff --git a/fs/f2fs/Makefile b/fs/f2fs/Makefile
-index 8a7322d229e4..3b9270d774e8 100644
---- a/fs/f2fs/Makefile
-+++ b/fs/f2fs/Makefile
-@@ -10,3 +10,4 @@ f2fs-$(CONFIG_F2FS_FS_POSIX_ACL) += acl.o
- f2fs-$(CONFIG_FS_VERITY) += verity.o
- f2fs-$(CONFIG_F2FS_FS_COMPRESSION) += compress.o
- f2fs-$(CONFIG_F2FS_IOSTAT) += iostat.o
-+f2fs-$(CONFIG_F2FS_IOMAP_FOLIO_STATE) += f2fs_ifs.o
-diff --git a/fs/f2fs/f2fs_ifs.c b/fs/f2fs/f2fs_ifs.c
-new file mode 100644
-index 000000000000..6b7503474580
---- /dev/null
-+++ b/fs/f2fs/f2fs_ifs.c
-@@ -0,0 +1,221 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/fs.h>
-+#include <linux/f2fs_fs.h>
-+
-+#include "f2fs.h"
-+#include "f2fs_ifs.h"
-+
-+/*
-+ * Have to set parameter ifs's type to void*
-+ * and have to interpret ifs as f2fs_ifs to access its fields because
-+ * we cannot see iomap_folio_state definition
-+ */
-+static void ifs_to_f2fs_ifs(void *ifs, struct f2fs_iomap_folio_state *fifs,
-+			    struct folio *folio)
-+{
-+	struct f2fs_iomap_folio_state *src_ifs =
-+		(struct f2fs_iomap_folio_state *)ifs;
-+	size_t iomap_longs = f2fs_ifs_iomap_longs(folio);
-+
-+	fifs->read_bytes_pending = READ_ONCE(src_ifs->read_bytes_pending);
-+	atomic_set(&fifs->write_bytes_pending,
-+		   atomic_read(&src_ifs->write_bytes_pending));
-+	memcpy(fifs->state, src_ifs->state,
-+	       iomap_longs * sizeof(unsigned long));
-+}
-+
-+static inline bool is_f2fs_ifs(struct folio *folio)
-+{
-+	struct f2fs_iomap_folio_state *fifs;
-+
-+	if (!folio_test_private(folio))
-+		return false;
-+
-+	// first directly test no pointer flag is set or not
-+	if (test_bit(PAGE_PRIVATE_NOT_POINTER,
-+		     (unsigned long *)&folio->private))
-+		return false;
-+
-+	fifs = (struct f2fs_iomap_folio_state *)folio->private;
-+	if (!fifs)
-+		return false;
-+
-+	if (READ_ONCE(fifs->read_bytes_pending) == F2FS_IFS_MAGIC)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 5ecd08a3dd0b..37eaf431ab42 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1537,8 +1537,11 @@ static bool map_is_mergeable(struct f2fs_sb_info *sbi,
+ 		return true;
+ 	if (flag == F2FS_GET_BLOCK_PRE_DIO)
+ 		return true;
+-	if (flag == F2FS_GET_BLOCK_DIO &&
+-		map->m_pblk == NULL_ADDR && blkaddr == NULL_ADDR)
++	if (flag == F2FS_GET_BLOCK_DIO && map->m_pblk == NULL_ADDR &&
++	    blkaddr == NULL_ADDR)
 +		return true;
-+
-+	return false;
-+}
-+
-+struct f2fs_iomap_folio_state *f2fs_ifs_alloc(struct folio *folio, gfp_t gfp,
-+					      bool force_alloc)
++	if (flag == F2FS_GET_BLOCK_IOMAP && map->m_pblk == NULL_ADDR &&
++	    blkaddr == NULL_ADDR)
+ 		return true;
+ 	return false;
+ }
+@@ -1676,6 +1679,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 			if (map->m_next_pgofs)
+ 				*map->m_next_pgofs = pgofs + 1;
+ 			break;
++		case F2FS_GET_BLOCK_IOMAP:
++			if (map->m_next_pgofs)
++				*map->m_next_pgofs = pgofs + 1;
++			break;
+ 		default:
+ 			/* for defragment case */
+ 			if (map->m_next_pgofs)
+@@ -1741,8 +1748,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 	else if (dn.ofs_in_node < end_offset)
+ 		goto next_block;
+ 
+-	if (flag == F2FS_GET_BLOCK_PRECACHE) {
+-		if (map->m_flags & F2FS_MAP_MAPPED) {
++	if (flag == F2FS_GET_BLOCK_PRECACHE || flag == F2FS_GET_BLOCK_IOMAP) {
++		if (map->m_flags & F2FS_MAP_MAPPED &&
++		    map->m_len > F2FS_MIN_EXTENT_LEN) {
+ 			unsigned int ofs = start_pgofs - map->m_lblk;
+ 
+ 			f2fs_update_read_extent_cache_range(&dn,
+@@ -1786,8 +1794,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 		}
+ 	}
+ 
+-	if (flag == F2FS_GET_BLOCK_PRECACHE) {
+-		if (map->m_flags & F2FS_MAP_MAPPED) {
++	if (flag == F2FS_GET_BLOCK_PRECACHE || flag == F2FS_GET_BLOCK_IOMAP) {
++		if (map->m_flags & F2FS_MAP_MAPPED &&
++		    map->m_len > F2FS_MIN_EXTENT_LEN) {
+ 			unsigned int ofs = start_pgofs - map->m_lblk;
+ 
+ 			f2fs_update_read_extent_cache_range(&dn,
+@@ -1808,6 +1817,34 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 	return err;
+ }
+ 
++int f2fs_map_blocks_iomap(struct inode *inode, block_t start, block_t len,
++			  struct f2fs_map_blocks *map)
 +{
-+	struct inode *inode = folio->mapping->host;
-+	size_t alloc_size = 0;
++	int err = 0;
 +
-+	if (!folio_test_large(folio)) {
-+		if (!force_alloc) {
-+			WARN_ON_ONCE(1);
-+			return NULL;
-+		}
-+		/*
-+		 * GC can store private flag in 0 order folio's folio->private
-+		 * causes iomap buffered write mistakenly interpret as a pointer
-+		 * we add a bool force_alloc to deal with this case
-+		 */
-+		struct f2fs_iomap_folio_state *fifs;
-+
-+		alloc_size = sizeof(*fifs) + 2 * sizeof(unsigned long);
-+		fifs = kmalloc(alloc_size, gfp);
-+		if (!fifs)
-+			return NULL;
-+		spin_lock_init(&fifs->state_lock);
-+		WRITE_ONCE(fifs->read_bytes_pending, F2FS_IFS_MAGIC);
-+		atomic_set(&fifs->write_bytes_pending, 0);
-+		unsigned int nr_blocks =
-+			i_blocks_per_folio(inode, folio);
-+		if (folio_test_uptodate(folio))
-+			bitmap_set(fifs->state, 0, nr_blocks);
-+		if (folio_test_dirty(folio))
-+			bitmap_set(fifs->state, nr_blocks, nr_blocks);
-+		*f2fs_ifs_private_flags_ptr(fifs, folio) = 0;
-+		folio_attach_private(folio, fifs);
-+		return fifs;
-+	}
-+
-+	struct f2fs_iomap_folio_state *fifs;
-+	void *old_private;
-+	size_t iomap_longs;
-+	size_t total_longs;
-+
-+	WARN_ON_ONCE(!inode); // Should have an inode
-+
-+	old_private = folio_get_private(folio);
-+
-+	if (old_private) {
-+		// Check if it's already our type using the magic number directly
-+		if (READ_ONCE(((struct f2fs_iomap_folio_state *)old_private)
-+				      ->read_bytes_pending) == F2FS_IFS_MAGIC) {
-+			return (struct f2fs_iomap_folio_state *)
-+				old_private; // Already ours
-+		}
-+		// Non-NULL, not ours -> Allocate, Copy, Replace path
-+		total_longs = f2fs_ifs_total_longs(folio);
-+		alloc_size = sizeof(*fifs) +
-+				total_longs * sizeof(unsigned long);
-+
-+		fifs = kmalloc(alloc_size, gfp);
-+		if (!fifs)
-+			return NULL;
-+
-+		spin_lock_init(&fifs->state_lock);
-+		*f2fs_ifs_private_flags_ptr(fifs, folio) = 0;
-+		// Copy data from the presumed iomap_folio_state (old_private)
-+		ifs_to_f2fs_ifs(old_private, fifs, folio);
-+		WRITE_ONCE(fifs->read_bytes_pending, F2FS_IFS_MAGIC);
-+		folio_change_private(folio, fifs);
-+		kfree(old_private);
-+		return fifs;
-+	}
-+
-+	iomap_longs = f2fs_ifs_iomap_longs(folio);
-+	total_longs = iomap_longs + 1;
-+	alloc_size =
-+		sizeof(*fifs) + total_longs * sizeof(unsigned long);
-+
-+	fifs = kzalloc(alloc_size, gfp);
-+	if (!fifs)
-+		return NULL;
-+
-+	spin_lock_init(&fifs->state_lock);
-+
-+	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
-+
-+	if (folio_test_uptodate(folio))
-+		bitmap_set(fifs->state, 0, nr_blocks);
-+	if (folio_test_dirty(folio))
-+		bitmap_set(fifs->state, nr_blocks, nr_blocks);
-+	WRITE_ONCE(fifs->read_bytes_pending, F2FS_IFS_MAGIC);
-+	atomic_set(&fifs->write_bytes_pending, 0);
-+	folio_attach_private(folio, fifs);
-+	return fifs;
++	map->m_lblk = start; // Logical block number for the start pos
++	map->m_len = len; // Length in blocks
++	map->m_may_create = false;
++	map->m_seg_type =
++		f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode), inode->i_write_hint);
++	err = f2fs_map_blocks(inode, map, F2FS_GET_BLOCK_IOMAP);
++	return err;
 +}
 +
-+void folio_detach_f2fs_private(struct folio *folio)
++int f2fs_map_blocks_preallocate(struct inode *inode, block_t start, block_t len,
++				struct f2fs_map_blocks *map)
 +{
-+	struct f2fs_iomap_folio_state *fifs;
++	int err = 0;
 +
-+	if (!folio_test_private(folio))
-+		return;
-+
-+	// Check if it's using direct flags
-+	if (test_bit(PAGE_PRIVATE_NOT_POINTER,
-+		     (unsigned long *)&folio->private)) {
-+		folio_detach_private(folio);
-+		return;
-+	}
-+
-+	fifs = folio_detach_private(folio);
-+	if (!fifs)
-+		return;
-+
-+	if (is_f2fs_ifs(folio)) {
-+		WARN_ON_ONCE(READ_ONCE(fifs->read_bytes_pending) !=
-+			     F2FS_IFS_MAGIC);
-+		WARN_ON_ONCE(atomic_read(&fifs->write_bytes_pending));
-+	} else {
-+		WARN_ON_ONCE(READ_ONCE(fifs->read_bytes_pending) != 0);
-+		WARN_ON_ONCE(atomic_read(&fifs->write_bytes_pending));
-+	}
-+
-+	kfree(fifs);
++	map->m_lblk = start;
++	map->m_len = len; // Length in blocks
++	map->m_may_create = true;
++	map->m_seg_type =
++		f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode), inode->i_write_hint);
++	err = f2fs_map_blocks(inode, map, F2FS_GET_BLOCK_PRE_AIO);
++	return err;
 +}
 +
-+struct f2fs_iomap_folio_state *folio_get_f2fs_ifs(struct folio *folio)
-+{
-+	if (!folio_test_private(folio))
-+		return NULL;
-+
-+	if (test_bit(PAGE_PRIVATE_NOT_POINTER,
-+		     (unsigned long *)&folio->private))
-+		return NULL;
-+	/*
-+	 * Note we assume folio->private can be either ifs or f2fs_ifs here.
-+	 * Compresssed folios should not call this function
-+	 */
-+	f2fs_bug_on(F2FS_F_SB(folio),
-+		    *((u32 *)folio->private) == F2FS_COMPRESSED_PAGE_MAGIC);
-+	return folio->private;
-+}
-+
-+void f2fs_ifs_clear_range_uptodate(struct folio *folio,
-+				   struct f2fs_iomap_folio_state *fifs,
-+				   size_t off, size_t len)
-+{
-+	struct inode *inode = folio->mapping->host;
-+	unsigned int first_blk = (off >> inode->i_blkbits);
-+	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
-+	unsigned int nr_blks = last_blk - first_blk + 1;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&fifs->state_lock, flags);
-+	bitmap_clear(fifs->state, first_blk, nr_blks);
-+	spin_unlock_irqrestore(&fifs->state_lock, flags);
-+}
-+
-+void f2fs_iomap_set_range_dirty(struct folio *folio, size_t off, size_t len)
-+{
-+	struct f2fs_iomap_folio_state *fifs = folio_get_f2fs_ifs(folio);
-+
-+	if (fifs) {
-+		struct inode *inode = folio->mapping->host;
-+		unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
-+		unsigned int first_blk = (off >> inode->i_blkbits);
-+		unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
-+		unsigned int nr_blks = last_blk - first_blk + 1;
-+		unsigned long flags;
-+
-+		spin_lock_irqsave(&fifs->state_lock, flags);
-+		bitmap_set(fifs->state, first_blk + blks_per_folio, nr_blks);
-+		spin_unlock_irqrestore(&fifs->state_lock, flags);
-+	}
-+}
-diff --git a/fs/f2fs/f2fs_ifs.h b/fs/f2fs/f2fs_ifs.h
-new file mode 100644
-index 000000000000..3b16deda8a1e
---- /dev/null
-+++ b/fs/f2fs/f2fs_ifs.h
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#ifndef F2FS_IFS_H
-+#define F2FS_IFS_H
-+
-+#include <linux/fs.h>
-+#include <linux/bug.h>
-+#include <linux/f2fs_fs.h>
-+#include <linux/mm.h>
-+#include <linux/iomap.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/atomic.h>
-+
-+#include "f2fs.h"
-+
-+#define F2FS_IFS_MAGIC 0xf2f5
-+#define F2FS_IFS_PRIVATE_LONGS 1
-+
-+/*
-+ * F2FS structure for folio private data, mimicking iomap_folio_state layout.
-+ * F2FS private flags/data are stored in extra space allocated at the end
-+ */
-+struct f2fs_iomap_folio_state {
-+	spinlock_t state_lock;
-+	unsigned int read_bytes_pending;
-+	atomic_t write_bytes_pending;
-+	/*
-+	 * Flexible array member.
-+	 * Holds [0...iomap_longs-1] for iomap uptodate/dirty bits.
-+	 * Holds [iomap_longs] for F2FS private flags/data (unsigned long).
-+	 */
-+	unsigned long state[];
-+};
-+
-+static inline bool
-+f2fs_ifs_block_is_uptodate(struct f2fs_iomap_folio_state *ifs,
-+			   unsigned int block)
-+{
-+	return test_bit(block, ifs->state);
-+}
-+
-+static inline size_t f2fs_ifs_iomap_longs(const struct folio *folio)
-+{
-+	struct inode *inode = folio->mapping->host;
-+
-+	WARN_ON_ONCE(!inode);
-+	unsigned int nr_blocks =
-+		i_blocks_per_folio(inode, (struct folio *)folio);
-+	return BITS_TO_LONGS(2 * nr_blocks);
-+}
-+
-+static inline size_t f2fs_ifs_total_longs(struct folio *folio)
-+{
-+	return f2fs_ifs_iomap_longs(folio) + F2FS_IFS_PRIVATE_LONGS;
-+}
-+
-+static inline unsigned long *
-+f2fs_ifs_private_flags_ptr(struct f2fs_iomap_folio_state *fifs,
-+			   const struct folio *folio)
-+{
-+	return &fifs->state[f2fs_ifs_iomap_longs(folio)];
-+}
-+
-+struct f2fs_iomap_folio_state *f2fs_ifs_alloc(struct folio *folio, gfp_t gfp,
-+					      bool force_alloc);
-+void folio_detach_f2fs_private(struct folio *folio);
-+struct f2fs_iomap_folio_state *folio_get_f2fs_ifs(struct folio *folio);
-+
-+/*
-+ * 0-order and fully dirty folio has no fifs
-+ * they store private flag directly in their folio->private field
-+ * as original f2fs page private behaviour
-+ */
-+void f2fs_ifs_clear_range_uptodate(struct folio *folio,
-+				   struct f2fs_iomap_folio_state *fifs,
-+				   size_t off, size_t len);
-+void f2fs_iomap_set_range_dirty(struct folio *folio, size_t off, size_t len);
-+
-+#endif /* F2FS_IFS_H */
+ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
+ {
+ 	struct f2fs_map_blocks map;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c6b23fa63588..ac9a6ac13e1f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -788,6 +788,7 @@ enum {
+ 	F2FS_GET_BLOCK_PRE_DIO,
+ 	F2FS_GET_BLOCK_PRE_AIO,
+ 	F2FS_GET_BLOCK_PRECACHE,
++	F2FS_GET_BLOCK_IOMAP,
+ };
+ 
+ /*
+@@ -4232,6 +4233,10 @@ struct folio *f2fs_get_new_data_folio(struct inode *inode,
+ 			struct folio *ifolio, pgoff_t index, bool new_i_size);
+ int f2fs_do_write_data_page(struct f2fs_io_info *fio);
+ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag);
++int f2fs_map_blocks_iomap(struct inode *inode, block_t start, block_t len,
++			  struct f2fs_map_blocks *map);
++int f2fs_map_blocks_preallocate(struct inode *inode, block_t start, block_t len,
++				struct f2fs_map_blocks *map);
+ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 			u64 start, u64 len);
+ int f2fs_encrypt_one_page(struct f2fs_io_info *fio);
 -- 
 2.34.1
 
