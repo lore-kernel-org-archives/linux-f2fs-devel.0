@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 28B70CA0ED1
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Aug 2025 16:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B28F4CA0EE4
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Aug 2025 16:40:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=uFhfa7TrfgZXx2EHu77rDumut4FSEtKU9re3yWYvuDM=; b=R3m3/aaw+dw0DMkDp/em0phzoM
-	weATdKR34XFlJPvHG8o2I06aJFFGnUGLQyB1cXOY3CNqmwqmzLuncxm/uL4dy3o7YKRW6/h4thvpX
-	If3xfjpaeY7FywazMYR6LWy57zMgw23uTqcsqdIn8s2AX77sy4Ojvb0cN+xDs3tDdf/8=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=dNZGTwEFOGTT9EgDPsKOYD5GIDLOkbkjZgT6DBDOl2w=; b=QRsZaufKJhnCQH4pOsIuZ/DCtp
+	sy/h2MyXNWmfIhSjR/1QiB4k23M57IlGUE/xNX3HGWLwo3VxAxWKT6Z8b3L9LzpahTcf9DI9zOxIY
+	K0luTSLA6wARnGrjjhOuCwqiv14guzRWwomWJGy9917JbhBPp9U+HgX1HCHyfBigTNF0=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1umxTW-0006VL-RM;
-	Fri, 15 Aug 2025 16:40:18 +0000
+	id 1umxTX-0002yo-KX;
+	Fri, 15 Aug 2025 16:40:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1umxTV-0006V4-EH
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1umxTW-0002yY-GS
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 15 Aug 2025 16:40:17 +0000
+ Fri, 15 Aug 2025 16:40:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MdPHRCIKN88O+20VfqS3EagK9jzXCeN5tp06UON1v4M=; b=Lq1EymQnc1Qb8Mk3KRthR91+e7
- 49XRQLFcd8F1TgElR+qJyRDaYTPwxGIspbieuloNYqvw3FybrIjRDJNgC79BjZH5wz4neOKErXHCf
- BRTeHVDtuIv8ed84B98zpZs3iarJqMwBnVOhwjoDO9FiPix4beqP5k7zQxNwfZfhHY/Y=;
+ bh=KNID5HeuBXihLPE25V/Yd7vjz2q9US3AG/tGJMSwrmY=; b=B1rnMRh85/YxMqWMHD3UZVYRES
+ kMof6ygtd7k+wBrNqc5tbdaXS8CQWYlnxwA0IG773/EhdxPdjhWzjNvMUSHgGIOmaXDbviVdsAzEx
+ dhVAK94phl4SczDwn24Puoi+TSqzsZhF4bSMeX89e7UT8AS70GzWiI1+KKZqweYchQHk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MdPHRCIKN88O+20VfqS3EagK9jzXCeN5tp06UON1v4M=; b=csOfsqtpM3sKDyLinpDugedDOJ
- 4Fn3B9io65/Pb+7l+mYd6SqQBIt+trXM62e186Zz5zytv7c6eEx+EKeNPGhP1xnB9QLcDqQJ/oasp
- xqFlOxrg5UWh9UjWHasBlGz3mzfB477XNOFY12odlBylsFn8JPHG2A3Bk6x5a0CmPh4M=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=KNID5HeuBXihLPE25V/Yd7vjz2q9US3AG/tGJMSwrmY=; b=nFtOx7D7EYFHeRJSWsxJSsbRjL
+ Scbizpyp72ub7Wjog4a44hPfeBOwTN4zh0Eta7GMNglnQ5zxUxAjOKCAcwAJtNLtQWDnRGvJlGoxB
+ 8+X9PM/YgtxlBim84yWVbcLo2DdIwnHUBeR2qQV7sOEF6j08vB/oPUPpIqmrcdd6ZHwM=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1umxTU-00018i-Un for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 15 Aug 2025 16:40:17 +0000
+ id 1umxTW-00018w-OP for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 15 Aug 2025 16:40:19 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id 925265C547E
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 15 Aug 2025 16:40:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 621E8C4CEEB;
- Fri, 15 Aug 2025 16:40:11 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 7A0BB4644A;
+ Fri, 15 Aug 2025 16:40:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C532C4CEEB;
+ Fri, 15 Aug 2025 16:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1755276011;
- bh=7+LOQoLikyi18MadAlEPOle4980wKp4w/1YuWDRWYmc=;
+ s=k20201202; t=1755276008;
+ bh=RhBMzittFhmG7ktz9MBDQLEthMJkvOD/tT2dKiafvtM=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=j2Vw1muaTRl4q6chHJR0Wukm/m74RlWfEVjGwMQYZgFPn9CtkNie65rdpaIWAC4VO
- vk8iQ2KCZx+bTK3OZ4sJGbmFdCxD1rOdKNKvr388u1hhRDg/rvZwopVPz27IMb4Rlo
- Md5o69HCoHhz/pewPwLJF80Y8OviR/kfq+0uTg+8hoqV3GSZ7hbKpO9LVfnvRLfOdn
- FuBClfXuEoK5McBl1HDPb08xyLlP4tjrohKX6WdEPGRR2ptI6c9ZxqoJmjz3SWAvNN
- U0DVB6sBJ9TCi6o+w5rSNZZczReNUsXUSAMK1OlBpxf61KAH5Z7uJdvwMnbhU6g4Ld
- aiLl1jZss2ZtA==
+ b=Usb42rLsJ9pyDlv1rhmuuQXoNkNRRimTnGuy1Qc0xN7qFH/aXuUIdwYrN+24r5hKB
+ Acdqv0BF8o7X1vRWhcJx49vWFL3sDaRK/2tojpx+Zry1ZhibDwgTQy6pTGRUt8cn2C
+ YIYKyPNsmZfAm/BK8O///4btqVDze9uY6czWuVEekMaPbVxTnn+Bbo0VVLYZP2JeX7
+ EHvliz/osyIo/mc8NMj92XWhmNapZoEdoee9USx0mAAZyQ7PnH0dOjuqF1gjQJX/AL
+ fFNaFi1uAgkhZY04Kd2HpDPbYwN4bqOTtu2qE9jdlCkx7cRcGY76ASl9HtxGlV7jPc
+ PfYobG2faibrA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- ADBB139D0C3D; Fri, 15 Aug 2025 16:40:23 +0000 (UTC)
+ ADC8839D0C3D; Fri, 15 Aug 2025 16:40:20 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <175527602223.1161945.8969283986568227588.git-patchwork-notify@kernel.org>
-Date: Fri, 15 Aug 2025 16:40:22 +0000
-References: <20250731053405.1127197-1-chao@kernel.org>
-In-Reply-To: <20250731053405.1127197-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1umxTU-00018i-Un
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: dump more information when
- checkpoint was blocked for long time
+Message-Id: <175527601949.1161945.7999749862771332410.git-patchwork-notify@kernel.org>
+Date: Fri, 15 Aug 2025 16:40:19 +0000
+References: <20250807133501.551848-1-guochunhai@vivo.com>
+In-Reply-To: <20250807133501.551848-1-guochunhai@vivo.com>
+To: Chunhai Guo <guochunhai@vivo.com>
+X-Headers-End: 1umxTW-00018w-OP
+Subject: Re: [f2fs-dev] [PATCH v6] f2fs: add reserved nodes for privileged
+ users
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,27 +98,22 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 31 Jul 2025 13:34:04 +0800 you wrote:
-> generic/299 w/ mode=lfs will cause long time latency of checkpoint,
-> let's dump more information once we hit case.
+On Thu,  7 Aug 2025 21:35:01 +0800 you wrote:
+> This patch allows privileged users to reserve nodes via the
+> 'reserve_node' mount option, which is similar to the existing
+> 'reserve_root' option.
 > 
-> CP merge:
->   - Queued :    0
->   - Issued :    1
->   - Total :    1
->   - Cur time : 9765(ms)
->   - Peak time : 9765(ms)
+> "-o reserve_node=<N>" means <N> nodes are reserved for privileged
+> users only.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,1/2] f2fs: dump more information when checkpoint was blocked for long time
-    https://git.kernel.org/jaegeuk/f2fs/c/3fcf228b6494
-  - [f2fs-dev,2/2] f2fs: add time stats of checkpoint for debug
-    https://git.kernel.org/jaegeuk/f2fs/c/57e74035ad5e
+  - [f2fs-dev,v6] f2fs: add reserved nodes for privileged users
+    https://git.kernel.org/jaegeuk/f2fs/c/a3b0697610ba
 
 You are awesome, thank you!
 -- 
