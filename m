@@ -4,79 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2FEDCCA0ED1
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Aug 2025 16:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0F296CA0EE9
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Aug 2025 16:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=CPstllWRalUJGp/Gu47+QXYmKUs3Ox0Q3C6hLOSKKjg=; b=k+Oz+YJArNX61omxaHHh4xcBae
-	FK+Qq/3WeyolGDrY+tGWaD5cAcBrjdcrqrbnElOat7f4ETxXIDUwF/mHTb1bKZsD5KZgGCkKpKI3y
-	lV87qodgXjCLxonzXo5TZl0co8vqFesEjVIhpdTDjgYZLExxcX7Y5ZwGXys0Q0TSPSM0=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=h2sCTHM+l+fCOZcJjUAF1hd+DlOuQbJ2f9Uiukzp4j0=; b=hM/ZGeKvJcM4UQlf+lmhevT6nb
+	49vNEobvx+lW24OYVNfO6vuNOOzW2zW110X7CE88OiYvkx4K1ChQGICTlUWOKzc3q5AY+DujZw/Ky
+	gdtVxWFWv4axGMxMT8+ye8cYeVbqiO3AXNV7X2BlweaVrWYR7tydr8fVAg0ptIurhSVk=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1umxTQ-0006Oo-QE;
-	Fri, 15 Aug 2025 16:40:12 +0000
+	id 1umxTQ-0002wr-VG;
+	Fri, 15 Aug 2025 16:40:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1umxTO-0006NP-MH
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1umxTO-0002wZ-Lc
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 15 Aug 2025 16:40:10 +0000
+ Fri, 15 Aug 2025 16:40:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hinqvrdubEIx4nyZxx0JFbh3nHJBN2J4En0U/9ZY0v4=; b=brTM6pzI0Vg6iuI9EhEkvW03eK
- B61MI29pUj96GQIzSSQ2DRTM8m+lC/D9wP/9qGaKy78loouWrKkrmDe4e6v03Wz0rjjBIu6NLFFts
- bZBnAZz2JTWwGNkJ+CoWFi3EByMJLges8p9qVjEgXJ6GiE3VtFTXJms+h7AD3AOcA74I=;
+ bh=abtAWJJHGMCdglZYDaRjnj+ppbxISQ8Eq3MxujxAFn8=; b=eglUMJE9KhISbmRbonPR4bk1tI
+ gDv0QlxVfvI/w6KVp0zOAs81PUYYjEbFPcv3UabAU46aoF3ASxgGt1LkrkfmuEdAxnI9Y7NzMS09A
+ k4rV1Fpeyxb6j34k6CnViZCYq5N6ajWOIkmuCh1XsDOSGQCFCx180Pa3O6VdAG/au6Ww=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hinqvrdubEIx4nyZxx0JFbh3nHJBN2J4En0U/9ZY0v4=; b=bLROIX8bsvIzArC6rl9ElS02JY
- haJQQaqAf/aNMuwNVkM0OYf75EUYXNrfeWAVDQrinLd0TSh1wFCZZJMVYGypJLncb0LoGpxZD+PK0
- ZKt0kkBXXtfU84VyOrnUaCSTpzdXoyEoDHYUyvcBcFtC8w04Mxgmn/aGgSGpUS1g+8rU=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=abtAWJJHGMCdglZYDaRjnj+ppbxISQ8Eq3MxujxAFn8=; b=R1iumk271KJ0RuL03lFShdn4lJ
+ B0GLluraVR6z65UQSxk8JFmp1gsOOkbgsPfs4qQWVFJgDU6XKHqxCrsDSf2pcFkanKnR3aPEgrNjK
+ Y3IW1ppJ+7/pLOfZypzL9dq//tjkaZR4oLdaoCWqWKBnExb0NVhDHsoP+5gKx5gxO66M=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1umxTM-000184-Gd for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 15 Aug 2025 16:40:09 +0000
+ id 1umxTO-00018F-V8 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 15 Aug 2025 16:40:11 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id B2E1861142
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 15 Aug 2025 16:39:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68238C4CEEB;
- Fri, 15 Aug 2025 16:39:57 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id A825C46426;
+ Fri, 15 Aug 2025 16:40:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88450C4CEEB;
+ Fri, 15 Aug 2025 16:40:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1755275997;
- bh=p2Hrk0jNkFpeyIZ+yHC/114UdEbnaXh3w+7d1l+rP1w=;
+ s=k20201202; t=1755276000;
+ bh=EeeFqZS4JJOHrZXRZU/ZngCmex+Ibm/qQWj1VUkvDbM=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=gwnxqZd9mB57Jng0RG3NpBj7DJFW8UIbTzKj8hRWqcphyDm7+1AbBkhrMD+qOadzs
- cbDqJOPXXDHL9SEPpnGaG7Zh/2F14xXCRVvgOfSUezsGYpZy9CHET/uWlEEBBrLmR0
- sqAcNVraxXQDKrp09q+U/71M5TGaDXdPMFlwuwCre7x+aG+CA5ibrmGEtt+nHX0zfA
- 4leLAKJbqvHaJN+fnC2mFVZKKPnihsVzAb6oZn2un3ekJKmTJW1pmzTJDwZvVExAi7
- bQ3UxOPzE254vIG9FvJFT+08IeFZzNYtJZydTXEaObw+OOoMq84QBqUUqU4k+hlJMl
- bXYsj7IsegdQg==
+ b=PNzn9niGtpjSlMCPAdlOHPVYo2b1EIvGe6rpFljmPiZf2SatkqXwYRNdo5BSGbC1l
+ NVLTjA4xOSC+L306eWyoV7CmUUX/u2mfxri64XcK2S7PPXXaNWv3dBijfYo8oD9bUH
+ t+5e4NDcfLyYtX8wN8jXiBATS0JaLUpVQBUFpkMbfOD/r7Kymf+Zlk5X6Q4AEO/lTI
+ xVnUQWAIuYVd9luuBgvim8UlwMXcOpj7mL/gzM6MSfFt2hFTe+LjizqnzczgXBOQFg
+ G9kBhcwHa0XNZ8CZpfT6eGCFUGv3MpKZxiDJ6fD03L//l7kqQcOEPNl9Qmi4qxqzpU
+ 4hPUSeaCeDBGQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- ADE9D39D0C3D; Fri, 15 Aug 2025 16:40:09 +0000 (UTC)
+ 70E5E39D0C3D; Fri, 15 Aug 2025 16:40:12 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <175527600850.1161945.18051756127566725689.git-patchwork-notify@kernel.org>
-Date: Fri, 15 Aug 2025 16:40:08 +0000
-References: <20250807014836.3780988-1-chao@kernel.org>
-In-Reply-To: <20250807014836.3780988-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1umxTM-000184-Gd
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to clear unusable_cap for
- checkpoint=enable
+Message-Id: <175527601124.1161945.12842294818231800884.git-patchwork-notify@kernel.org>
+Date: Fri, 15 Aug 2025 16:40:11 +0000
+References: <20250805065228.1473089-1-chullee@google.com>
+In-Reply-To: <20250805065228.1473089-1-chullee@google.com>
+To: Daniel Lee <chullee@google.com>
+X-Headers-End: 1umxTO-00018F-V8
+Subject: Re: [f2fs-dev] [PATCH v3 1/2] f2fs: add lookup_mode mount option
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,25 +97,25 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu,  7 Aug 2025 09:48:35 +0800 you wrote:
-> mount -t f2fs -o checkpoint=disable:10% /dev/vdb /mnt/f2fs/
-> mount -t f2fs -o remount,checkpoint=enable /dev/vdb /mnt/f2fs/
+On Mon,  4 Aug 2025 23:52:26 -0700 you wrote:
+> For casefolded directories, f2fs may fall back to a linear search if
+> a hash-based lookup fails. This can cause severe performance
+> regressions.
 > 
-> kernel log:
-> F2FS-fs (vdb): Adjust unusable cap for checkpoint=disable = 204440 / 10%
-> 
-> If we has assigned checkpoint=enable mount option, unusable_cap{,_perc}
-> parameters of checkpoint=disable should be reset, then calculation and
-> log print could be avoid in adjust_unusable_cap_perc().
+> While this behavior can be controlled by userspace tools (e.g. mkfs,
+> fsck) by setting an on-disk flag, a kernel-level solution is needed
+> to guarantee the lookup behavior regardless of the on-disk state.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to clear unusable_cap for checkpoint=enable
-    https://git.kernel.org/jaegeuk/f2fs/c/743d13d8a600
+  - [f2fs-dev,v3,1/2] f2fs: add lookup_mode mount option
+    https://git.kernel.org/jaegeuk/f2fs/c/632f0b6c3e32
+  - [f2fs-dev,v3,2/2] f2fs: add sysfs entry for effective lookup mode
+    https://git.kernel.org/jaegeuk/f2fs/c/1bd119da0b93
 
 You are awesome, thank you!
 -- 
