@@ -4,77 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 45AA9CA0EE0
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Aug 2025 08:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 861BFCA0ED1
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Aug 2025 10:38:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=+SaR0nqraSUq70f8sjPUdEzGEpOujzGOX3TDeRqniEA=; b=DFcorffJGTMpad7f9jYpEoemT7
-	okHj959O7pZgYsi9GWJD6qDtfy8a3/ZhYx1qeenyDrK6xmL7TD8dmRVWAgi00y8pyeZp2dBv9Xxx1
-	DIc2pAFW+m0z6++odbeHWQx1S6YKuXixXCPwTDBc63BQzSLxVzXDVvT9hPdHQyCcM/fM=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=JfOiyRm5ZSWUVjKCck4rsHgxQfdzmbDyBlwFRHetvwY=; b=I7FFeWYDX6gel1Jbd2X6PMH5Zb
+	crbNY8hwVZvYNx7UssMPhukAUUR5pv6ZHuJZGu8zlIt+LrcfdYpTcvapNiriGR+wI5+swEosrQvRK
+	2xVsd2+YhyhC3IJO3tSyljr40DrfFe5fl0iluOv17JYDKrtDXNSJWnE56qNm7AOeUqf0=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1umpZx-0005WI-AS;
-	Fri, 15 Aug 2025 08:14:25 +0000
+	id 1umrpf-0001sK-CE;
+	Fri, 15 Aug 2025 10:38:47 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1umpZv-0005WB-Sx
+ (envelope-from <chao@kernel.org>) id 1umrpe-0001sD-1R
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 15 Aug 2025 08:14:23 +0000
+ Fri, 15 Aug 2025 10:38:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4w21+L7N5chWuzuECESOcm54VH/L+IeKJFhMorpzVHs=; b=c2QN4ZA5oeAUsJAd9w+pIWOefb
- fDg8j6isFSOjRwvmR81hMQ0eT62Z4cmfa+VGA/Z8jISOvHeStS8XJRZ/dc0JlvTr5HMrr3HmROSpx
- pf0puBNryITXMaG6S7/gKklNm/u1kGk1YHabs+TB53hTI92mYFEM4kobpyy/P3/Vnjjg=;
+ bh=uMTxzclq7VLFi6As9MP2FQFB0+0+Y5SetsDQ9iIV2c4=; b=BPt9kZ+tP0sW1smok/neY6+v9x
+ kS5HPp7QvyGeBViuhTHEx1+lGH72ieUx4dUdBxRPMGHsFKxCCXZX3VNKyWyqhocgjpRXAjOHLzEhh
+ SrRauBQUWewQ+Xfqb3LFBWlkW1+Q+5qG/GNx2QtX1+yZAV+l1PG5QIskgnB9bhStDak8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=4w21+L7N5chWuzuECESOcm54VH/L+IeKJFhMorpzVHs=; b=D
- 2DrBtcT6HWS76rxPHQ7ayRax9K5dZr9u7Hzb/21eDa8hxF84ZwI+Q+4fabuFlGAQSkkST3ylxdvPy
- b0eQdZ5caKKOAnQB54FyZwXQBNzMqLkwHsLbU8X05V6RUiwPSb31xSEcAo7nQxBac7P9r55MBWK++
- g7Oo4vadTyhO6Qwc=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=uMTxzclq7VLFi6As9MP2FQFB0+0+Y5SetsDQ9iIV2c4=; b=U8u+JfZUk8PEStJziEKLP8nTKW
+ KL0JLqplZBxoLIiTqCBa5Q6pPrarUP5my6UQ9eCs4/KG8YbhT1UkicB525k6fvcpab6GgNipF2FI3
+ exVch2m+yp+gwetbXEp21eGVxjREmzT8TEmLb0srqvabvHkKHs4ylHCaZDoB/U/Efqx0=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1umpZv-0006Mb-BL for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 15 Aug 2025 08:14:23 +0000
+ id 1umrpd-0006tt-5E for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 15 Aug 2025 10:38:45 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 915C86116E
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 15 Aug 2025 08:14:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FADFC4CEEB;
- Fri, 15 Aug 2025 08:14:10 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id D1ADB44A10;
+ Fri, 15 Aug 2025 10:38:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97DE4C4CEEB;
+ Fri, 15 Aug 2025 10:38:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1755245652;
- bh=QsHEVt06CDo9H2tnF/vlxmAvcKj6cilFpixxqBet9ME=;
- h=From:To:Cc:Subject:Date:From;
- b=qTH08axzFyJFIaLwJ0qtgZrQaOS+4tcepPdvEVi/JIi91C9n19UJEhoQ1aEISq+hw
- OuLgRZXAFdpY0GaWUi8yys9wEYcAsu3XN8nlQ4iAkJc6ilcuCFPwwliN/aL9moBZlN
- +kIxVPZUPdebIGll76TXZtlnEsiBokMawJYBDgdDRS5wBDNorNX+RyGGfNCQb+rRwv
- GmxP5/0rCXYzOV6IEKt2drxlUWxBrMmBzgGocEMhKrALwBfeCUKBNX/9VK/BwnRFEX
- oMv06xVlmQZ9dt1aqzwDz83mFHwNYz2BF/YcQeHG2+egyRTamZIKgqlyKCpl2JziCx
- kqFW7XXRfwtSg==
-To: Zorro Lang <zlang@kernel.org>,
-	fstests@vger.kernel.org
-Date: Fri, 15 Aug 2025 16:14:03 +0800
-Message-ID: <20250815081405.2523015-1-chao@kernel.org>
-X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
+ s=k20201202; t=1755254314;
+ bh=mKYDbbJ3xVFVHZoiVD+mzpsoNqWI0ScdalWH8aW4MdQ=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=ryXP3W3i1h+r3ZBa/WgHxFiq2YOmhKHbSRdQb2l/4dfjuifDylBsaNC2nLwGlpJrg
+ 6p26y8TZfW11CybLGk+TKZqURkOV++dF/MiA51u/EN5wrqpKeQkJ5FWFlMy1LA3Se7
+ 4GUU6ul/zNUM5AIRs8argRHd7XIMZUTwS5pgyyRZpSoU0R8US1QPjrC8kOQZgOzoL/
+ ABQGL+GzoEhfO27tmSZLdcYIk/zSExDvk5xOcqKt0Vg9OPDVA0pEN4chsDFnC7zZ17
+ MAJv6vXKY/9cK0xzjwngUHicGLHGFzK4wk1G07aGbMTmwtSdD+B4T7xDopnUxElL1F
+ 9EbcPvrLyTY0w==
+Message-ID: <7a49cf29-a721-450c-9bd1-c0a5de268ce1@kernel.org>
+Date: Fri, 15 Aug 2025 18:38:31 +0800
 MIME-Version: 1.0
-X-Headers-End: 1umpZv-0006Mb-BL
-Subject: [f2fs-dev] [PATCH v3 1/3] f2fs/018: check data eof after partial
- truncation on compressed cluster
+User-Agent: Mozilla Thunderbird
+To: Sheng Yong <shengyong2021@gmail.com>, jaegeuk@kernel.org
+References: <20250610123743.667183-1-shengyong1@xiaomi.com>
+Content-Language: en-US
+In-Reply-To: <20250610123743.667183-1-shengyong1@xiaomi.com>
+X-Headers-End: 1umrpd-0006tt-5E
+Subject: Re: [f2fs-dev] [RFC PATCH v2 00/32] f2fs-tools: add testcases
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,138 +88,267 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: shengyong1@xiaomi.com, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This is a regression testcase, it is added to check below case
-and its variants:
-- write 16k data into compressed file (data will be compressed)
-- truncate file to 12k (truncate partial data in compressed cluster)
-- truncate file to 20k
-- verify data in range of [12k, 16k] to see whether data is all zero
-or not
+Yong,
 
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v3:
-- introduce build_fio_config() for cleanup
-- use run_check() to check return value of check_data_eof()
-- add _cleanup
-- use $XFS_IO_PROG instead of xfs_io
- tests/f2fs/018     | 89 ++++++++++++++++++++++++++++++++++++++++++++++
- tests/f2fs/018.out |  2 ++
- 2 files changed, 91 insertions(+)
- create mode 100755 tests/f2fs/018
- create mode 100644 tests/f2fs/018.out
+Could you please split this patchset to two, 1~13 and 14~32? and update
+1~13 first? I guess 1~13 are almost clear to be merged.
 
-diff --git a/tests/f2fs/018 b/tests/f2fs/018
-new file mode 100755
-index 00000000..8013042d
---- /dev/null
-+++ b/tests/f2fs/018
-@@ -0,0 +1,89 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2025 Chao Yu.  All Rights Reserved.
-+#
-+# FS QA Test No. f2fs/018
-+#
-+# This is a regression test to check whether page eof will be
-+# zero or not after we truncate partial data in compressed
-+# cluster.
-+#
-+. ./common/preamble
-+_begin_fstest auto quick rw compress
-+
-+_fixed_by_kernel_commit ba8dac350faf \
-+	"f2fs: fix to zero post-eof page"
-+_fixed_by_kernel_commit xxxxxxxxxxxx \
-+	"f2fs: fix to zero data after EOF for compressed file correctly"
-+
-+_require_xfs_io_command "truncate"
-+_require_scratch
-+
-+testfile=$SCRATCH_MNT/testfile
-+fio_config=$tmp.fio
-+
-+build_fio_config()
-+{
-+	local offset=$1
-+	local size=$2
-+
-+	cat >$fio_config <<EOF
-+[verify-data]
-+filename=$testfile
-+rw=read
-+verify=pattern
-+verify_pattern=0x00
-+do_verify=1
-+verify_only
-+offset=$offset
-+size=$size
-+numjobs=1
-+EOF
-+	cat $fio_config >> $seqres.full
-+}
-+
-+build_fio_config 0 4k
-+_require_fio $fio_config
-+
-+_cleanup()
-+{
-+       rm -f $testfile
-+}
-+
-+_scratch_mkfs "-O extra_attr,compression" >> $seqres.full || _fail "mkfs failed"
-+_scratch_mount "-o compress_extension=*" >> $seqres.full
-+
-+check_data_eof()
-+{
-+	local eof_start=$1
-+	local eof_size=$2
-+	local filesize=$3
-+	local offset1=$4
-+	local offset2=$5
-+	local offset3=$6
-+
-+	rm -f $testfile
-+
-+	$XFS_IO_PROG -f -c "pwrite 0 $filesize" -c "fsync" $testfile >> $seqres.full
-+	$XFS_IO_PROG -c "truncate $offset1" $testfile
-+	$XFS_IO_PROG -c "truncate $offset2" $testfile
-+
-+	if [ "$offset3" ]; then
-+		$XFS_IO_PROG -c "truncate $offset3" $testfile
-+	fi
-+
-+	build_fio_config $eof_start $eof_size
-+	$FIO_PROG $fio_config >> $seqres.full 2>&1
-+
-+	return $?
-+}
-+
-+run_check check_data_eof 12k 4k 16k 12k 20k
-+run_check check_data_eof 10k 6k 16k 10k 20k
-+run_check check_data_eof 12k 4k 16k 8k 12k 20k
-+run_check check_data_eof 10k 6k 16k 8k 10k 20k
-+
-+echo "Silence is golden"
-+
-+status=0
-+exit
-diff --git a/tests/f2fs/018.out b/tests/f2fs/018.out
-new file mode 100644
-index 00000000..8849e303
---- /dev/null
-+++ b/tests/f2fs/018.out
-@@ -0,0 +1,2 @@
-+QA output created by 018
-+Silence is golden
--- 
-2.49.0
+On 6/10/25 20:37, Sheng Yong wrote:
+> Hi, folks,
+> 
+> This patchset tries to add an auto testsuit for f2fs-tools, including
+> fsck.f2fs, inject.f2fs for now.
+> 
+> The patchset can splited into 3 parts:
+>   PATCH 1~9:   is a preparation for testcases. It fixes some errors in
+>                fsck and inject, and do some cleanup and improvement for
+>                f2fs-tools.
+>   PATCH 10~13: add new injection members
+>   PATCH 14~32: add testcases
+> 
+> thanks,
+> shengyong
+> 
+> -8<-
+> 
+> The following is almost quoted from v1:
+> 
+> The basic idea of these testcases are:
+>  1. create f2fs image
+>  2. corrupt the image by inject specific fields
+>  3. fsck fixes the image
+>  4. verify fsck output with expected message
+> 
+> Some helper scripts are provided:
+>  * test_config.in: is used to derive basic configurations of all
+>                    testcases.
+>  * runtests.in: is used to derive `runtests' which is used to run
+>                 testcases.
+>  * filter.sed: removes unnecessary messages and cleanup arbitrary
+>                values.
+>  * helpers: provides helper functions
+> 
+> The usage of `runtests':
+>  * run all testcases:
+>      runtests
+>  * run one testcase:
+>      runtests <testcase directory path>
+>  * cleanup previous results:
+>      runtests clean
+> 
+> To run the testcases on Android, only have to change settings in
+> test_config:
+>  * set path of $META and $DATA
+>  * set path of tools
+>  * push tests directory to an Android phone
+> NOTE TAHT: the testcases will format $META!!!
+> 
+> Some testcase requires root permission to mount the image and create
+> files.
+> 
+> Each testcase should have a sub-directory, where three files are needed:
+>  * README: describe information of the testcase
+>  * script: testcase itself
+>  * expect.in: is used to derive expected output message
+> 
+> New files are generated in the testcase directory after test:
+>  * log: output in detail
+>  * expect: derived from expect.in
+>  * out: output that will be compared with expect
+>  * PASS: testcase is passed
+>  * FAIL: testcase is failed, in which differ of out and expect is saved
+> 
+> The name of testcase directory has some optional prefix:
+>  * f_: fsck testcase
+>  * i_: inject testcase
+>  * m_: mkfs testcase
+> But there are only fsck and inject testcases for now.
+> 
+> To run testcases, it's better to compile fsck.f2fs as statically linked
+> executable, or `make install' installs tools and libraries. Otherwise,
+> libtool compiles f2fs-tools in debug mode and create a wrapper script
+> to locate elf executable and libraries. However, dump.f2fs and
+> inject.f2fs cannot be used in the wrapper way.
+> 
+> v2: * add some fix and cleanup
+>     * remove img.tar.gz from testcases
+>     * add testcases for injection
+>     * cleanup helpers script and simplify filter.sed and expected.in
+> v1: https://lore.kernel.org/linux-f2fs-devel/20241029120956.4186731-1-shengyong@oppo.com/
+> 
+> Sheng Yong (32):
+>   fsck.f2fs: do not finish/reset zone if dry-run is true
+>   f2fs-tools: add option N to answer no for all questions
+>   f2fs-tools: cleanup {nid|segno}_in_journal
+>   fsck.f2fs: fix invalidate checkpoint
+>   dump.f2fs: print more info
+>   f2fs-tools: add and export lookup_sit_in_journal
+>   inject.f2fs: fix injecting sit/nat in journal
+>   inject.f2fs: fix injection on zoned device
+>   inject.f2fs: fix and cleanup parsing numeric options
+>   inject.f2fs: add members in inject_cp
+>   inject.f2fs: add member `feature' in inject_sb
+>   inject.f2fs: add members in inject_node
+>   inject.f2fs: add member `filename' in inject_dentry
+>   tests: prepare helper scripts for testcases
+>   tests: add fsck testcase of fixing bad super magic
+>   tests: add fsck testcase of fixing errors recorded in sb
+>   tests: add fsck testcase of fixing cp crc
+>   tests: add fsck testcase of fixing nat entry with invalid ino
+>   tests: add fsck testcase of fixing nat entry with invalid blkaddr
+>   tests: add fsck testcase of fixing sit entry type
+>   tests: add fsck testcase of fixing sit entry vblocks
+>   tests: add fsck testcase of fixing sit entry valid_map
+>   tests: add fsck testcase of fixing sum entry nid
+>   tests: add fsck testcase of fixing sum footer type
+>   tests: add fsck testcase of fixing sum entry ofs_in_node
+>   tests: add fsck testcase of fixing inode invalid i_addr
+>   tests: add fsck testcase of fixing dentry hash code
+>   tests: add fsck testcase of fixing lost dots
+>   tests: add fsck testcase of fixing duplicated dots
+>   tests: add fsck testcase of fixing loop fsync dnodes
+>   tests: add inject testcase of injecting META area
+>   tests: add inject testcase of injecting node block
+> 
+>  .gitignore                            |  14 +
+>  Makefile.am                           |   2 +-
+>  configure.ac                          |   1 +
+>  fsck/dump.c                           |  15 +-
+>  fsck/f2fs.h                           |  12 +-
+>  fsck/fsck.c                           |   2 +-
+>  fsck/fsck.h                           |   4 +-
+>  fsck/inject.c                         | 438 +++++++++++++++++++++-----
+>  fsck/inject.h                         |   1 +
+>  fsck/main.c                           |  14 +-
+>  fsck/mount.c                          |  61 ++--
+>  include/f2fs_fs.h                     |   1 +
+>  lib/libf2fs_zoned.c                   |   6 +-
+>  man/inject.f2fs.8                     |  43 ++-
+>  tests/Makefile.am                     |  26 ++
+>  tests/f_cp_bad_crc/README             |   5 +
+>  tests/f_cp_bad_crc/expect.in          |   4 +
+>  tests/f_cp_bad_crc/script             |  38 +++
+>  tests/f_dentry_bad_hash/README        |   8 +
+>  tests/f_dentry_bad_hash/expect.in     |   8 +
+>  tests/f_dentry_bad_hash/script        |  56 ++++
+>  tests/f_dentry_dup_dots/README        |  11 +
+>  tests/f_dentry_dup_dots/expect.in     |  26 ++
+>  tests/f_dentry_dup_dots/script        |  49 +++
+>  tests/f_dentry_lost_dots/README       |   7 +
+>  tests/f_dentry_lost_dots/expect.in    |  16 +
+>  tests/f_dentry_lost_dots/script       |  37 +++
+>  tests/f_inode_bad_iaddr/README        |   6 +
+>  tests/f_inode_bad_iaddr/expect.in     |  13 +
+>  tests/f_inode_bad_iaddr/script        |  50 +++
+>  tests/f_loop_fsync_dnodes/README      |   5 +
+>  tests/f_loop_fsync_dnodes/expect.in   |   6 +
+>  tests/f_loop_fsync_dnodes/script      |  46 +++
+>  tests/f_nat_bad_blkaddr/README        |   4 +
+>  tests/f_nat_bad_blkaddr/expect.in     |  12 +
+>  tests/f_nat_bad_blkaddr/script        |  25 ++
+>  tests/f_nat_bad_ino/README            |   4 +
+>  tests/f_nat_bad_ino/expect.in         |  12 +
+>  tests/f_nat_bad_ino/script            |  31 ++
+>  tests/f_sb_bad_magic/README           |   3 +
+>  tests/f_sb_bad_magic/expect.in        |   5 +
+>  tests/f_sb_bad_magic/script           |  15 +
+>  tests/f_sb_errors/README              |   5 +
+>  tests/f_sb_errors/expect.in           |   7 +
+>  tests/f_sb_errors/script              |  22 ++
+>  tests/f_sit_bad_type/README           |   5 +
+>  tests/f_sit_bad_type/expect.in        |   3 +
+>  tests/f_sit_bad_type/script           |  38 +++
+>  tests/f_sit_bad_valid_map/README      |   5 +
+>  tests/f_sit_bad_valid_map/expect.in   |   4 +
+>  tests/f_sit_bad_valid_map/script      |  43 +++
+>  tests/f_sit_bad_vblocks/README        |   5 +
+>  tests/f_sit_bad_vblocks/expect.in     |   3 +
+>  tests/f_sit_bad_vblocks/script        |  38 +++
+>  tests/f_ssa_bad_nid/README            |   5 +
+>  tests/f_ssa_bad_nid/expect.in         |   3 +
+>  tests/f_ssa_bad_nid/script            |  36 +++
+>  tests/f_ssa_bad_ofs_in_node/README    |   5 +
+>  tests/f_ssa_bad_ofs_in_node/expect.in |   3 +
+>  tests/f_ssa_bad_ofs_in_node/script    |  36 +++
+>  tests/f_ssa_bad_type/README           |   5 +
+>  tests/f_ssa_bad_type/expect.in        |   3 +
+>  tests/f_ssa_bad_type/script           |  31 ++
+>  tests/filter.sed                      |  69 ++++
+>  tests/helpers                         | 269 ++++++++++++++++
+>  tests/i_meta/README                   |   5 +
+>  tests/i_meta/expect.in                |  60 ++++
+>  tests/i_meta/script                   | 212 +++++++++++++
+>  tests/i_node/README                   |   5 +
+>  tests/i_node/expect.in                |  66 ++++
+>  tests/i_node/script                   | 166 ++++++++++
+>  tests/runtests.in                     |  48 +++
+>  tests/test_config.in                  |  53 ++++
+>  73 files changed, 2284 insertions(+), 116 deletions(-)
+>  create mode 100644 tests/Makefile.am
+>  create mode 100644 tests/f_cp_bad_crc/README
+>  create mode 100644 tests/f_cp_bad_crc/expect.in
+>  create mode 100644 tests/f_cp_bad_crc/script
+>  create mode 100644 tests/f_dentry_bad_hash/README
+>  create mode 100644 tests/f_dentry_bad_hash/expect.in
+>  create mode 100644 tests/f_dentry_bad_hash/script
+>  create mode 100644 tests/f_dentry_dup_dots/README
+>  create mode 100644 tests/f_dentry_dup_dots/expect.in
+>  create mode 100644 tests/f_dentry_dup_dots/script
+>  create mode 100644 tests/f_dentry_lost_dots/README
+>  create mode 100644 tests/f_dentry_lost_dots/expect.in
+>  create mode 100644 tests/f_dentry_lost_dots/script
+>  create mode 100644 tests/f_inode_bad_iaddr/README
+>  create mode 100644 tests/f_inode_bad_iaddr/expect.in
+>  create mode 100644 tests/f_inode_bad_iaddr/script
+>  create mode 100644 tests/f_loop_fsync_dnodes/README
+>  create mode 100644 tests/f_loop_fsync_dnodes/expect.in
+>  create mode 100644 tests/f_loop_fsync_dnodes/script
+>  create mode 100644 tests/f_nat_bad_blkaddr/README
+>  create mode 100644 tests/f_nat_bad_blkaddr/expect.in
+>  create mode 100644 tests/f_nat_bad_blkaddr/script
+>  create mode 100644 tests/f_nat_bad_ino/README
+>  create mode 100644 tests/f_nat_bad_ino/expect.in
+>  create mode 100644 tests/f_nat_bad_ino/script
+>  create mode 100644 tests/f_sb_bad_magic/README
+>  create mode 100644 tests/f_sb_bad_magic/expect.in
+>  create mode 100644 tests/f_sb_bad_magic/script
+>  create mode 100644 tests/f_sb_errors/README
+>  create mode 100644 tests/f_sb_errors/expect.in
+>  create mode 100644 tests/f_sb_errors/script
+>  create mode 100644 tests/f_sit_bad_type/README
+>  create mode 100644 tests/f_sit_bad_type/expect.in
+>  create mode 100644 tests/f_sit_bad_type/script
+>  create mode 100644 tests/f_sit_bad_valid_map/README
+>  create mode 100644 tests/f_sit_bad_valid_map/expect.in
+>  create mode 100644 tests/f_sit_bad_valid_map/script
+>  create mode 100644 tests/f_sit_bad_vblocks/README
+>  create mode 100644 tests/f_sit_bad_vblocks/expect.in
+>  create mode 100644 tests/f_sit_bad_vblocks/script
+>  create mode 100644 tests/f_ssa_bad_nid/README
+>  create mode 100644 tests/f_ssa_bad_nid/expect.in
+>  create mode 100644 tests/f_ssa_bad_nid/script
+>  create mode 100644 tests/f_ssa_bad_ofs_in_node/README
+>  create mode 100644 tests/f_ssa_bad_ofs_in_node/expect.in
+>  create mode 100644 tests/f_ssa_bad_ofs_in_node/script
+>  create mode 100644 tests/f_ssa_bad_type/README
+>  create mode 100644 tests/f_ssa_bad_type/expect.in
+>  create mode 100644 tests/f_ssa_bad_type/script
+>  create mode 100644 tests/filter.sed
+>  create mode 100644 tests/helpers
+>  create mode 100644 tests/i_meta/README
+>  create mode 100644 tests/i_meta/expect.in
+>  create mode 100644 tests/i_meta/script
+>  create mode 100644 tests/i_node/README
+>  create mode 100644 tests/i_node/expect.in
+>  create mode 100644 tests/i_node/script
+>  create mode 100644 tests/runtests.in
+>  create mode 100644 tests/test_config.in
+> 
 
 
 
