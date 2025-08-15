@@ -4,80 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1F606CA0ED1
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Aug 2025 08:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 04115CA0EE4
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Aug 2025 08:14:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=eR5nCvHDWA60JY2ptkPHbA3B/6Fe7qFFMWWxrMI2Mjs=; b=KVLNG7SIU6uQWHTjXK5i38n+lb
-	7MG9mFvMy9NAbAZfVguS/V9jgPuRqv89SCePX9uvJcCfssK5SXQ8oxdB4zlh99yJnTwCIQ/t15g7F
-	0UW+9rgXwc2rNHQCKDu7ZwbvxNbQg6hJPIb1zXp1a+sMvWAAkcAwRK/MuKS4QCLA2ycI=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=41+mhJITvaLHYz4NzMl7DlIPlM1qUJ21LYKPNDtRLFQ=; b=HDboBYWYsYa07rOztMGiWO2gMq
+	7tTnHnYGbMoS8Wt2yqYDXkzSz4u3r44j5/794ExZDtZsuGmuxI4PRFPcsV2XOLN8nF7t8BXg6sOV3
+	I+dmyvyaifcA5WLcccK7suRisqCCxFXNtQxFp3A+98ooGt4GQlOfnbcFZtkiGdQunyUc=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1umpON-0005FI-Vl;
-	Fri, 15 Aug 2025 08:02:27 +0000
+	id 1umpZv-0003zU-5i;
+	Fri, 15 Aug 2025 08:14:23 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1umpOM-0005FB-Sk
+ (envelope-from <chao@kernel.org>) id 1umpZt-0003zG-Hs
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 15 Aug 2025 08:02:26 +0000
+ Fri, 15 Aug 2025 08:14:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZgVTCOQv5MQBuMoojY7WP2Wvds4jJp95n2Bn5QmuhMg=; b=C8O5hbRvsC4p5LPMnMmZYpLthy
- ADLhHnoGwez0/UNkTpkKfZErMlt64zCjYCADGgMHKHNGUu0PA1f0YVX52jDvOfD18N5BdgQPiHzQT
- JxD67qbIHbN5sidFQcOPRRmX4fyEydTaua7NBpHjTYbbIp1XzYRYzFEmy1+DAerH0G7k=;
+ bh=Yn/A7kPTkuEdT4ng6RzxvZF9RiAgXp98mgE8bHHjqwM=; b=mCl4MdQP1hhpf1/qI6A3PVkC7S
+ b5vIe2Iu6YKJ9qwZOP+Dw1Zl2eZoWocursbxUNTruE5AuULvDwXuEUDVMo9lg2jkOkRmBZMITTGbY
+ 8KP4xOTT82o91Z4psnRBobXD42NkUUjKUmEbYbVtjLKdz7A1GxRXNkgbx9eMHEFgIk0k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ZgVTCOQv5MQBuMoojY7WP2Wvds4jJp95n2Bn5QmuhMg=; b=DZghA7fmfX2hbjGwsFXZDAfprb
- dZP0uQjTiRsKGZR3hKjJRG8YSdpe7gp7spWiExasnrcF9rwP+0GLsg9Ov+1mkHHGuEPO0InDzU0a0
- Jxb2DqaYtcCjTjbwHk0vxHfNGj1y467K++v/9IGsnRDQPR/H8mzVqdR4As6aZw+yxSjk=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=Yn/A7kPTkuEdT4ng6RzxvZF9RiAgXp98mgE8bHHjqwM=; b=OuIYlFRUA9ZlmtBYyTwfPgy4dE
+ pMXIX26KmnymRZshFXzv35wTnjeX2TWOLkvVvL4K+HOAZ7mkDH+/vYXiUxDGbSBsmRfPSpJqtyeCu
+ zGWqZHw7ztMmmGU+5fopSCdJmepmUvqDKpr5CuXncrBclNGJ9nWOrV5fNNaXADEuGzO4=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1umpOM-0005dZ-BY for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 15 Aug 2025 08:02:26 +0000
+ id 1umpZt-0006MY-Sx for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 15 Aug 2025 08:14:22 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id EB9F85C39D4;
- Fri, 15 Aug 2025 08:02:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88187C4CEEB;
- Fri, 15 Aug 2025 08:02:14 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 54DE26115D
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 15 Aug 2025 08:14:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5C08C4CEEB;
+ Fri, 15 Aug 2025 08:14:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1755244935;
- bh=UqMlmB6aIlDbiFKHI3lMYWxu0bnYqjVX62W5hnkci3M=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=Is2lKH6rISoJW5rHQ3qyMjwO+boP8zmQwf5O66nHIuxwy9fHzjoHKm2Gs460xCwaQ
- iBCXvmgXqauAWcx+AqiXMTL2RHULBulqRcdYvWIg6nnHYk3os82XVqmoY9pkO28U5S
- LfTSNe/XlSpz4o81a7aoE1B3jxMTBSHHH/CqPTjZQfDE2dezKb5Ov3tt3DfqFIdzEy
- +r2lUwyqQ4htEj20WBW+l8rPC/EzOXXeMXo5eZAJONDQgTf7KA7UFh9QvI/lOPPm33
- Ig8xZw8raE4e3PT7GEYDT7aOwood21FnGFCvuYLHfQqJpry3cundVc0KTWdw6LUpMK
- LQREPeZO7goRA==
-Message-ID: <40587d4a-44a2-4d82-9f9f-2934c52aba87@kernel.org>
-Date: Fri, 15 Aug 2025 16:02:12 +0800
+ s=k20201202; t=1755245656;
+ bh=g9W+KR8VTvP30/K9dU4YxJpyh9Nh4m0whgOQj9vtep4=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=Xe1ZY7ocA4eVqD0VIZOqT0p0FLTSczacl0u+lLog0Mn0ZJnsUscUDf9EAx+Zy/yud
+ fT4r45qYWpJplFkdiSRvcoxD9eF7HAbgDRh6kBW1MqUke3FnYLItZIp+tO4Gl+NY64
+ 0nu6Gs3oEPfAjb/zm31fsPTBAdhebGfTAAGdIGbbbkIrO2vx87+HTDdt8mMfWVrhjs
+ PR6Bx9oUH+0fWoMTVu+i1ibwvOV3D0ZlzhzNa/AxY3qvI/jNvvm5KNVDG0Ln3GvPlB
+ CiTGLPyal3xcc5MlV3FICrYcXHipQdNxajm0yKnhOf5GdQ5w+5PbBSIUTNcqOwuXqG
+ hIQF1is1ndlpg==
+To: Zorro Lang <zlang@kernel.org>,
+	fstests@vger.kernel.org
+Date: Fri, 15 Aug 2025 16:14:05 +0800
+Message-ID: <20250815081405.2523015-3-chao@kernel.org>
+X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
+In-Reply-To: <20250815081405.2523015-1-chao@kernel.org>
+References: <20250815081405.2523015-1-chao@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zorro Lang <zlang@redhat.com>
-References: <20250814090712.2119455-1-chao@kernel.org>
- <20250814090712.2119455-3-chao@kernel.org>
- <20250814211838.64o3q3jurbxvwp3a@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-Content-Language: en-US
-In-Reply-To: <20250814211838.64o3q3jurbxvwp3a@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-X-Headers-End: 1umpOM-0005dZ-BY
-Subject: Re: [f2fs-dev] [PATCH v2 3/3] f2fs/020: do sanity check on
- i_xattr_nid
+X-Headers-End: 1umpZt-0006MY-Sx
+Subject: [f2fs-dev] [PATCH v3 3/3] f2fs/020: do sanity check on i_xattr_nid
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,129 +89,97 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 8/15/25 05:18, Zorro Lang wrote:
-> On Thu, Aug 14, 2025 at 05:07:12PM +0800, Chao Yu wrote:
->> This is a regression test:
->> 1. create directory
->> 2. add a new xattr entry to create xattr node
->> 3. use inject.f2fs to inject nid of xattr node w/ ino in a file
->> 4. check whether f2fs kernel module will detect and report such
->>    corruption in the file
->>
->> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->> v3:
->> - use _require_scratch_nocheck instead of _require_scratch
->> - add missing _require_attrs user
->> - add comments for why exporting MKFS_OPTIONS=""
->>  tests/f2fs/020     | 51 ++++++++++++++++++++++++++++++++++++++++++++++
->>  tests/f2fs/020.out |  2 ++
->>  2 files changed, 53 insertions(+)
->>  create mode 100755 tests/f2fs/020
->>  create mode 100644 tests/f2fs/020.out
->>
->> diff --git a/tests/f2fs/020 b/tests/f2fs/020
->> new file mode 100755
->> index 00000000..7ce1f92f
->> --- /dev/null
->> +++ b/tests/f2fs/020
->> @@ -0,0 +1,51 @@
->> +#! /bin/bash
->> +# SPDX-License-Identifier: GPL-2.0
->> +# Copyright (c) 2025 Chao Yu.  All Rights Reserved.
->> +#
->> +# FS QA Test No. f2fs/020
->> +#
->> +# This is a regression test:
->> +# 1. create directory
->> +# 2. add a new xattr entry to create xattr node
->> +# 3. use inject.f2fs to inject nid of xattr node w/ ino in a file
->> +# 4. check whether f2fs kernel module will detect and report such
->> +#    corruption in the file
->> +#
->> +. ./common/preamble
->> +_begin_fstest auto quick rw
->> +
->> +. ./common/attr
->> +
->> +_fixed_by_kernel_commit 061cf3a84bde \
->> +	"f2fs: fix to do sanity check on ino and xnid"
->> +
->> +_require_scratch_nocheck
->> +_require_command "$F2FS_INJECT_PROG" inject.f2fs
->> +_require_attrs user
->> +
->> +# remove all mkfs options to avoid layout change of on-disk inode
->> +export MKFS_OPTIONS=""
->> +
->> +testdir=$SCRATCH_MNT/testdir
->> +
->> +_scratch_mkfs >> $seqres.full
->> +_scratch_mount "-o user_xattr,noinline_xattr"
->> +
->> +mkdir $testdir
->> +# add a new xattr entry to create xattr node
->> +$SETFATTR_PROG -n user.abc -v 123 $testdir
->> +
->> +_scratch_unmount
->> +
->> +# inject i_xattr_nid w/ nid of inode node
->> +$F2FS_INJECT_PROG --node --mb i_xattr_nid --nid 4 --val 4 $SCRATCH_DEV >> $seqres.full
+This is a regression test:
+1. create directory
+2. add a new xattr entry to create xattr node
+3. use inject.f2fs to inject nid of xattr node w/ ino in a file
+4. check whether f2fs kernel module will detect and report such
+   corruption in the file
 
-Zorro, I missed one thing, this testcase relies on a f2fs-tools patch, please apply
-this before running the testcase.
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v3:
+- fix mount option
+- check return value of inject.f2fs
+ tests/f2fs/020     | 51 ++++++++++++++++++++++++++++++++++++++++++++++
+ tests/f2fs/020.out |  2 ++
+ 2 files changed, 53 insertions(+)
+ create mode 100755 tests/f2fs/020
+ create mode 100644 tests/f2fs/020.out
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/commit/?h=dev-test&id=2174461cdd0a22edc5e7d172605bff4740582438
-
-Do I need to create a _require_* function for f2fs to verify whether f2fs-tools
-support the required feature or not?
-
->> +
->> +_scratch_mount
-
-Oh, I may missed to add "-o acl,user_xattr" here.
-
->> +# may potentially trigger a deadlock w/ double inode_lock on parent's inode
->> +mkdir $testdir/dir >> $seqres.full 2>&1
->> +_scratch_unmount
-> 
-> Can you provide a test result to prove this test case trigger a failure
-> on general kernel (not debug kernel). If it can, then this version is good
-> to me :)
-
-Well, expectation is it will hang kernel, so that the f2fs/020 will stop here
-once we encounter the issue.
-
-Thanks,
-
-> 
-> Thanks,
-> Zorro
-> 
->> +
->> +echo "Silence is golden"
->> +
->> +status=0
->> +exit
->> diff --git a/tests/f2fs/020.out b/tests/f2fs/020.out
->> new file mode 100644
->> index 00000000..20d7944e
->> --- /dev/null
->> +++ b/tests/f2fs/020.out
->> @@ -0,0 +1,2 @@
->> +QA output created by 020
->> +Silence is golden
->> -- 
->> 2.49.0
->>
-> 
+diff --git a/tests/f2fs/020 b/tests/f2fs/020
+new file mode 100755
+index 00000000..38bc6582
+--- /dev/null
++++ b/tests/f2fs/020
+@@ -0,0 +1,51 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (c) 2025 Chao Yu.  All Rights Reserved.
++#
++# FS QA Test No. f2fs/020
++#
++# This is a regression test:
++# 1. create directory
++# 2. add a new xattr entry to create xattr node
++# 3. use inject.f2fs to inject nid of xattr node w/ ino in a file
++# 4. check whether f2fs kernel module will detect and report such
++#    corruption in the file
++#
++. ./common/preamble
++_begin_fstest auto quick rw
++
++. ./common/attr
++
++_fixed_by_kernel_commit 061cf3a84bde \
++	"f2fs: fix to do sanity check on ino and xnid"
++
++_require_scratch_nocheck
++_require_command "$F2FS_INJECT_PROG" inject.f2fs
++_require_attrs user
++
++# remove all mkfs options to avoid layout change of on-disk inode
++export MKFS_OPTIONS=""
++
++testdir=$SCRATCH_MNT/testdir
++
++_scratch_mkfs >> $seqres.full
++_scratch_mount "-o user_xattr,noinline_xattr"
++
++mkdir $testdir
++# add a new xattr entry to create xattr node
++$SETFATTR_PROG -n user.abc -v 123 $testdir
++
++_scratch_unmount
++
++# inject i_xattr_nid w/ nid of inode node
++$F2FS_INJECT_PROG --node --mb i_xattr_nid --nid 4 --val 4 $SCRATCH_DEV >> $seqres.full || _fail "failed to inject"
++
++_scratch_mount "-o acl,user_xattr"
++# may potentially trigger a deadlock w/ double inode_lock on parent's inode
++mkdir $testdir/dir >> $seqres.full 2>&1
++_scratch_unmount
++
++echo "Silence is golden"
++
++status=0
++exit
+diff --git a/tests/f2fs/020.out b/tests/f2fs/020.out
+new file mode 100644
+index 00000000..20d7944e
+--- /dev/null
++++ b/tests/f2fs/020.out
+@@ -0,0 +1,2 @@
++QA output created by 020
++Silence is golden
+-- 
+2.49.0
 
 
 
