@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9EA9ACA0EF5
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 Aug 2025 12:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 418B4CA0EE4
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 Aug 2025 12:43:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=q1/dhxVWSO1Lr6h1RJ/dJ55+k1JSJiJpRVkBnGcXcVQ=; b=VnWNUI8q/jqO5/bFuAszGJbPV7
-	0DPgX/MYLJOdXIPPgrZGVjesacI2kgKAVu4havny9U1swWn0dLgrLg2aZ8/4hhf4YDwas4EAaBQKz
-	+o81T6Z6akyIYjhcP2dwtnK9l1mrJgVxXb/l550OnxJgjz3NflQ4m9+wA/ADiHPA6Yc8=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=eJ9HnzNr1gp5NGT4LfcB2RqzvMrE0C/92CB2P3xEhpU=; b=moExNxcXU7tOrdnrGLqfDPUwHB
+	zYIgwePf8MhmNsdsihYaJyxI5THfC6YWDudmaj86iObf98pKDCYlFLBtcAhRDXDGvmMq33xeWhtJx
+	NOteVYEkijRZFOWxE9fU/z6bNu2RqrtYyV8kda6OL4kXwxWyLad9Yscgg1u8P4yg6sUc=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uoi9w-00059v-2M;
+	id 1uoi9w-0008Rb-LV;
 	Wed, 20 Aug 2025 12:43:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uoi9r-000599-Vs
+ (envelope-from <shengyong2021@gmail.com>) id 1uoi9w-0008RT-2R
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 Aug 2025 12:43:16 +0000
+ Wed, 20 Aug 2025 12:43:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=IO3IO0G39YQlC6WTuO3l4hM9bgIKK5Faz6uUUKkNtWk=; b=DC4QFjhps8vhkZdEfymY3/9B9L
- sF49NOLk0uf6D9raSKGLiNvGQfeeKtkqFPbivwwGAn8wNPgtmU9Yfl+2ExGgN6gU5RKuAA9udODzW
- L7aL0NL4dpgDvdc6x1CPeFTol/gLNBIovx0huCkImH6KOYXcUzKjIl3X4GXnZe26icnc=;
+ bh=EAb8oZnCF32xuOImVSoD7G6BFLhOj6lwjbQtH1giaF4=; b=DMUU5ErErDEV7VmS2zsHQDbypj
+ WYjn2BVlHUIamdlUcybHim+0nD5GjRTGEjROG73yLKWxwueLqz6qbJM1MtL1d8Kuk1WsNM2Zx1ABB
+ PZM0NmFixd/KkMQnlnqTtOxsWAgnuk/ibAS0HmVNEQHry9jIzYxXAuoTtHk+aJRx+WK0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,71 +42,72 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=IO3IO0G39YQlC6WTuO3l4hM9bgIKK5Faz6uUUKkNtWk=; b=UkC4vBHwA31VODY6Ib2ZAV1qpF
- Jm5nWxFUaJRmAnywCMAN/x4wQmluL9VOtoxQCdKyL1Fw45TC5kfyvtP/mU5aSrsIT7o64Ux54cJpu
- 2RY/Umru6oVzZBUWrLk546xLEhA7ZhPL7c725tw9mhoFpKlIKK2x1DGRJ7D1fLyPJoZc=;
-Received: from mail-pl1-f181.google.com ([209.85.214.181])
+ bh=EAb8oZnCF32xuOImVSoD7G6BFLhOj6lwjbQtH1giaF4=; b=CzyHWGtSc3qe143rk6pxnG97U5
+ +vQCLsSnBQk8WT0GzQZxOdn76kwQgb654vv2Gr/vlwpNpS7T7ZnSA+8ovIJ8mFhFKDhU9zDIeNeAd
+ 3kZhdtd8U5bm/un9Fo/S9RR07yPS5i+f9YPfhp3GfzRIR6hg/dNeQrqHycZIy+NuRCJg=;
+Received: from mail-pg1-f176.google.com ([209.85.215.176])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uoi9q-0003m0-Nr for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 Aug 2025 12:43:15 +0000
-Received: by mail-pl1-f181.google.com with SMTP id
- d9443c01a7336-2445806d44fso53487535ad.1
+ id 1uoi9v-0003mL-NB for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 20 Aug 2025 12:43:20 +0000
+Received: by mail-pg1-f176.google.com with SMTP id
+ 41be03b00d2f7-b47174beb13so4624699a12.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 20 Aug 2025 05:43:14 -0700 (PDT)
+ Wed, 20 Aug 2025 05:43:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1755693784; x=1756298584; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1755693789; x=1756298589; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=IO3IO0G39YQlC6WTuO3l4hM9bgIKK5Faz6uUUKkNtWk=;
- b=F7aylUJCRJvqJq31S3W9kbsKWdL2ZayciexvdERFbmH3JRmvL2DtF3x8zKCb2li9UO
- +bXZ5/D6MeRAk/z04RC7sXzn7ql+qnuAFBi5KThLjQRqrA6MA73UxEXJ+YXlUv3AOdce
- Ff/9AXQfGkrdKmmKz28/PTqtrfBQSEzX2zDbbVSI/jEzQbjJr6RG27jcr39pAB1wyRWi
- Z3p4ATCU+ww0MpdGI1/tL3FPrPiWOlvUqm6ZKKc09tUoPZ32YxicjWGczYmdao3k8VuR
- OGAk8Oh8Os4YCZbRW5rfRfFnVJFtUwOPEpgi/FUYmQmH3XAg01xH60YfSQ+6buE/z+A+
- VjQA==
+ bh=EAb8oZnCF32xuOImVSoD7G6BFLhOj6lwjbQtH1giaF4=;
+ b=Cp3sjZnQaSq3/mgif0yd1wc0Le0WgW/+c3ja2t29zUdmP50GodQgvt8LIk4CTtUruW
+ yRqNt3o6PPFKVSMh6laZNV1hyY4w1O4hfJkvigqZ1aYchXmoJKM/tEl1AUeoaRG3al4d
+ JgPjKOF6YZDQZwGMT1DG+iSpjCTUVSSA/6FYH0yBENRofrC7SIMAa6SzRW27qEskecB9
+ mDjdaqmACEees7lFLYlu+TNckO6KIW468T/672o0MD9riIy3YeB1uTGfSV+wsPm2plHl
+ sUl43j7eEjvP3mnehITuhWQEQypOwYvgU4NzdQABredJUKjVdDogn5RxYStvockLnhH1
+ 5/7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755693784; x=1756298584;
+ d=1e100.net; s=20230601; t=1755693789; x=1756298589;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=IO3IO0G39YQlC6WTuO3l4hM9bgIKK5Faz6uUUKkNtWk=;
- b=bh6gIZLoCsIvsdXHkPeGiURdIdDx+wAP4UbC223z37xnBs9jykfV6+3SPs2zk9o8Vq
- gw0u4VxcPqavrNmhRvyfrdHsMuRfBHCSiFC72+9oQpSxt7dUmZUQ7H+NKHIFL1TbuNr0
- YPTAKULLZcY79IK5yJdPdtqJmHSFvnlrycKsenoSz6jAnhX8DtFX4q/xc0KvMIFgfOzo
- oMhW5oiPcohqYXNpl0yhMdtPELEUkdqLEzp+RxJ9UfpJXMApFmqTyvIyVDkMpdEUrXxA
- P9bMmomIKLe2ydZ//Ln0E+pXst44BgYgkTwf8tj8uYX5fYTTuetynEo7YaZUCy4UJBP1
- Idlg==
-X-Gm-Message-State: AOJu0Yy42JJ0bXC+gT5sVk9I34RDkwUcV5O/kEsLqrVFGZXHW9jZZWMN
- x2y+ZxxEhmAkrcu1IrRmvV4fglpe3VwEhVW92TLV5JDcMb4IW+zIZfRyr3KyHg==
-X-Gm-Gg: ASbGncsmhfbcMm5wsAKnlEh6zBfHBV8cG1G7aQNpqvARL8JXbmEX+8SpitzYgeLs9g2
- x9WAgpYFLTwS3Hr4Zxw25PkBOqmweL6pQJObXiN+Gcm21A2XWkziQtrUquPaJLO+6R2VtQg35CC
- hsJn6YDGpcBLGkx67UFfdms+DnXb40Ac+n/zRjk5YzI37wJBxarH1dDk4ub84dn3hO3Pi9Eofoa
- wWYonAt1sIRfLzimKrub4ILOOer+d2IWD4dn6Lzg5pVbIpjBeL86oWmMgLlEx1urX0bJb86v4hD
- l0+7VsjO2Zwlo6FgyeHMn3lgZ3h3U/fFN4/1P5FLnpH9SvD4hdGTQ/g9WjFRsJZwfk4h2TS2GoG
- M6L0j+toRgc+R/ln7uARO2wAA8dA1
-X-Google-Smtp-Source: AGHT+IG62ta7P0Jp2UJCp8kFDPUFV0y7jcf7NnyZGoT82XRcJjy/Xn8V3/a9n3DubTSv7tKbybvApA==
-X-Received: by 2002:a17:902:ecce:b0:243:47:f61b with SMTP id
- d9443c01a7336-245ef239393mr37196975ad.45.1755693783846; 
- Wed, 20 Aug 2025 05:43:03 -0700 (PDT)
+ bh=EAb8oZnCF32xuOImVSoD7G6BFLhOj6lwjbQtH1giaF4=;
+ b=gcaRGyJ/XskzORL7k+auZBUPRV0sokN8h6JcLrlE3HFVWjAV6SR7jFQDgR8Hrqwt6y
+ 5rmTzDjQ7zb3rcxLrgCeI1vyH2sD7R5oli/y/fHyvR20Dm5L9P6Z5+LA+aZnav076N9D
+ ju44u5pXKVHDtTfEqhSbzI/42t2LKlnPTSVMOlnyqq2uEo9jw0/gxpSiLQRJ6O6F1ZIS
+ GexT0ItKQTAJfPXGmctJKp+9g3sz6qRiB1LLndY+4jTbJVlFcCg0xhYPfoNFSpg9E79H
+ FJQmHJv73PkcWmbPDgMHDQOHHG95Mk2/cYf8Jvgsk/LYVghUt2uHbXrixjAMmB7KeeNt
+ P9DA==
+X-Gm-Message-State: AOJu0YxNIh9LbmUoNsN2+GEMfIFlI78fV2cFwnS5gWaYvc0mbrAb6KDo
+ H4Vz9bZG+1ZPVxjCFX2LAbNIFduLdjJ7h46cOBlQbNcXL9jQ/OLuhGax
+X-Gm-Gg: ASbGnctV0a23QeCzPsiwLOWrRkunFmwm1V1IhbnvQALiRwtFsaUeC4u5oAD/z6Svbgq
+ rrv6JVhpTRMkQ9DQObACAV482zAsmBqQxT8Yz8khQhoDcTbpqHBZnXrBCDqdXjP0lKlUltPq+Iq
+ u8pLe1Nzff4mzgpEcj6RrZJ5aAQNq5Fqa/S3jclJSiikPsN5aH0qAyGIUT53aCBrXXmNKkmHnPK
+ f6UuHAaozbzde7DJ0ujM9+FO4tR0dyGP9d0/Ei2o/JVQfI0fYCVByWLyIW4obkfhhk+ki7LwlrF
+ OK2NSaVon461dKC6ETsz44DH4tAIFlawJPxSQjFuKZpBZmXPa/hsDJj5x4Pd8qEKkd7ML42OBel
+ HYowM/rNzDaPGetuKDyFoMTrHRY0F
+X-Google-Smtp-Source: AGHT+IEIR4PRUfVXfXhlQLCgiviZRGHnPWLI9ELAjPPhY1DSQAw5IW7/yKqCqkxpv64mMvWZ17f0dA==
+X-Received: by 2002:a17:903:124f:b0:242:9aaa:1351 with SMTP id
+ d9443c01a7336-245ef141014mr29815245ad.13.1755693788959; 
+ Wed, 20 Aug 2025 05:43:08 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-245ed51b3dfsm25962545ad.142.2025.08.20.05.43.01
+ d9443c01a7336-245ed51b3dfsm25962545ad.142.2025.08.20.05.43.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 20 Aug 2025 05:43:03 -0700 (PDT)
+ Wed, 20 Aug 2025 05:43:08 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Wed, 20 Aug 2025 20:42:29 +0800
-Message-ID: <20250820124238.3785621-5-shengyong1@xiaomi.com>
+Date: Wed, 20 Aug 2025 20:42:31 +0800
+Message-ID: <20250820124238.3785621-7-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250820124238.3785621-1-shengyong1@xiaomi.com>
 References: <20250820124238.3785621-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uoi9q-0003m0-Nr
-Subject: [f2fs-dev] [PATCH v3 04/13] fsck.f2fs: fix invalidate checkpoint
+X-Headers-End: 1uoi9v-0003mL-NB
+Subject: [f2fs-dev] [PATCH v3 06/13] f2fs-tools: add and export
+ lookup_sit_in_journal
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -125,68 +126,57 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Sheng Yong <shengyong1@xiaomi.com>
 
-If one cp is invalidate, set CP_FSCK_FLAG to allow fsck_verify() to
-fixing cp at the end of check.
+Add lookup_sit_in_journal() which is similar to lookup_nat_in_journal()
+to get the raw sit entry from journal if exist.
 
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 ---
- fsck/f2fs.h  |  6 ++++++
- fsck/mount.c | 11 ++++++++---
- 2 files changed, 14 insertions(+), 3 deletions(-)
+ fsck/f2fs.h  |  2 ++
+ fsck/mount.c | 18 ++++++++++++++++++
+ 2 files changed, 20 insertions(+)
 
 diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index 4c6c0c48b9ee..a4888a817284 100644
+index a4888a817284..60e3a2ebb0ee 100644
 --- a/fsck/f2fs.h
 +++ b/fsck/f2fs.h
-@@ -346,6 +346,12 @@ static inline __u64 cur_cp_crc(struct f2fs_checkpoint *cp)
- 	return le32_to_cpu(*((__le32 *)((unsigned char *)cp + crc_offset)));
+@@ -613,6 +613,8 @@ static inline int inline_xattr_size(struct f2fs_inode *inode)
  }
  
-+static inline void set_ckpt_flags(struct f2fs_checkpoint *cp, unsigned int f)
-+{
-+	unsigned int ckpt_flags = le32_to_cpu(cp->ckpt_flags);
-+	cp->ckpt_flags = cpu_to_le32(ckpt_flags | f);
-+}
-+
- static inline bool is_set_ckpt_flags(struct f2fs_checkpoint *cp, unsigned int f)
- {
- 	unsigned int ckpt_flags = le32_to_cpu(cp->ckpt_flags);
+ extern int lookup_nat_in_journal(struct f2fs_sb_info *sbi, u32 nid, struct f2fs_nat_entry *ne);
++extern int lookup_sit_in_journal(struct f2fs_sb_info *sbi, unsigned int segno,
++				 struct f2fs_sit_entry *raw_sit);
+ #define IS_SUM_NODE_SEG(sum)		(F2FS_SUMMARY_BLOCK_FOOTER(sum)->entry_type == SUM_TYPE_NODE)
+ #define IS_SUM_DATA_SEG(sum)		(F2FS_SUMMARY_BLOCK_FOOTER(sum)->entry_type == SUM_TYPE_DATA)
+ 
 diff --git a/fsck/mount.c b/fsck/mount.c
-index 1fe2b110942b..c671811941ad 100644
+index c671811941ad..f9f780d4aff6 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -1359,8 +1359,11 @@ void *validate_checkpoint(struct f2fs_sb_info *sbi, block_t cp_addr,
- 		return NULL;
+@@ -3297,6 +3297,24 @@ int lookup_nat_in_journal(struct f2fs_sb_info *sbi, u32 nid,
+ 	return -1;
+ }
  
- 	cp = (struct f2fs_checkpoint *)cp_page_1;
--	if (get_cp(cp_pack_total_block_count) > sbi->blocks_per_seg)
-+	if (get_cp(cp_pack_total_block_count) > sbi->blocks_per_seg) {
-+		MSG(0, "\tInvalid CP pack block count: %u\n",
-+		    get_cp(cp_pack_total_block_count));
- 		goto invalid_cp1;
++int lookup_sit_in_journal(struct f2fs_sb_info *sbi, unsigned int segno,
++					struct f2fs_sit_entry *raw_sit)
++{
++	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
++	struct f2fs_journal *journal = F2FS_SUMMARY_BLOCK_JOURNAL(curseg->sum_blk);
++	int i;
++
++	for (i = 0; i < sits_in_cursum(journal); i++) {
++		if (segno_in_journal(journal, i) == segno) {
++			memcpy(raw_sit, &sit_in_journal(journal, i),
++						sizeof(struct f2fs_sit_entry));
++			DBG(3, "==> Found sit [0x%x] in sit cache\n", segno);
++			return i;
++		}
 +	}
- 
- 	pre_version = get_cp(checkpoint_ver);
- 
-@@ -1424,14 +1427,16 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
- 			sbi->cur_cp = 1;
- 			version = cp1_version;
- 		}
--	} else if (cp1) {
-+	} else if (cp1) { // cp2 is invalidate
- 		cur_page = cp1;
- 		sbi->cur_cp = 1;
- 		version = cp1_version;
--	} else if (cp2) {
-+		set_ckpt_flags(cp1, CP_FSCK_FLAG);
-+	} else if (cp2) { // cp1 is invalidate
- 		cur_page = cp2;
- 		sbi->cur_cp = 2;
- 		version = cp2_version;
-+		set_ckpt_flags(cp2, CP_FSCK_FLAG);
- 	} else
- 		goto fail_no_cp;
- 
++	return -1;
++}
++
+ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
 -- 
 2.43.0
 
