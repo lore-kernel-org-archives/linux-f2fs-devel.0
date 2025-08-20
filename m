@@ -4,77 +4,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 157A4CA0EE6
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 Aug 2025 02:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C8FD1CA0EF5
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 Aug 2025 04:34:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=hjuplkqU7r3Us2ifjL1VU1QCzy/+KcGa0SnBNnAfGhM=; b=kUiBxeUQNspLh46lFpC6r4EJLT
-	ZcjhxIInMjHEo7yy2QWnX1TPXBkwziVdsQmm9GZf0e/ZjuWFrS38+09D90BdIbZ5faW6z2hxA2uiH
-	J7uttoD9CdHTD86+D82o/5ApPmmn/V1VO3dbIM3fKCwmAsRZzEoqP/n2+Q/BTmN5Uw8U=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=Mdl2V5pu+ie7bWFzRT8i09XMY8k/hU7+o+NHJ6bGVUA=; b=T1596uiIrajjmIlzt1Mqb2q9C7
+	UoIU1duVwjK4HZzWlWGUK8bh2GlvUM3k0SyNJU+kHJI1dIObtS/nnXVW3zSuePIvnPyPm/r2ak1zA
+	wiwPKC8ufAPZ1/iA1PtiJG8HKpgMSOBvty0Rm6/PMIydf/EHTa4gAwdgn6eOHF2jFLqs=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uoZ2N-000648-Um;
-	Wed, 20 Aug 2025 02:58:56 +0000
+	id 1uoaX9-0004bY-2x;
+	Wed, 20 Aug 2025 04:34:47 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1uoZ2M-00063u-UK
+ (envelope-from <bagasdotme@gmail.com>) id 1uoaX7-0004bR-Ki
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 Aug 2025 02:58:55 +0000
+ Wed, 20 Aug 2025 04:34:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ui8EwnvhxBhLX+viI+0x0menalDMTme/fjqyPNxWEfA=; b=KwLei89MFEwb5D0RoD4K3Wcmq0
- Uoo/M+fzU5aoWGMkV2SgjbklYIp9uvAfpcVpqJ0GVrX6PZuQRi1lsX3MGBSp+l6rDjPEwpR7plf7j
- GeGJbmo2Ol1hj8TjidPtR4jkWlRtjoDUq+01hsKHXDPoC6XHZjquMokEHO2KaKmPWPlg=;
+ bh=ln0od7Z4vv9pu4v2OzT1GPO1Pii9c7VKabfV2KE9JTQ=; b=JD92sXbsg+ozvFL6A58tZS6YEA
+ gHAeBv4GFLj4uP5Rg9BMWouu4DdxpttYkt8Paxo+3YOj/j7LOXwoE9ah/udZxUxDaqLu/YL0GEDm3
+ hFWf8Mnu9b8VRS2IeupauchDWb9YLew5vbSkUk67nOjK0OYvbYjqUzP7ouNagd9x292A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Ui8EwnvhxBhLX+viI+0x0menalDMTme/fjqyPNxWEfA=; b=NV3Glj4JOEa9sDgu9gHRGEiFqu
- U+jmg5L9fdyGDz70SM9oWS6293JqRtIyrYA2LS5shfcDKL4aExnFV89WhvTvKfJMaiaxLdOIIcgPS
- KJ691fZARwxF3q/MG84nelk91TISSgFnX7R6DspSmDoUHUQ2I7EMkslhZVbw0IE4+8Vk=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=ln0od7Z4vv9pu4v2OzT1GPO1Pii9c7VKabfV2KE9JTQ=; b=PWI+lldmF1T/LTSQbQArHuybjx
+ b36GoclP91HNL/3ZgytkZMzSWlpJf3g386SAegcSIwuylEBug1PRAB81FykM+eatrQFTFfdwxgKFJ
+ ClwwvuWKLZOkts8xmS0lUehui970vi2emTm49ZD3shSVzEOnFOrbqIGrTjHQT5WzV7kw=;
+Received: from mail-pf1-f171.google.com ([209.85.210.171])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uoZ2N-0002Rs-CK for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 Aug 2025 02:58:55 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by dfw.source.kernel.org (Postfix) with ESMTP id CC7BE5C1127;
- Wed, 20 Aug 2025 02:58:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48A55C4CEF1;
- Wed, 20 Aug 2025 02:58:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1755658729;
- bh=2Zi9h4GXmdMyUs8RyLnCYmlY8a0oIBkL4KA959j2gjo=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=FL7h+52JMJbqB1HctPVzM90ZX4dyBeRKSrm5HyNlhiMlx7IkLEMx5tU8fYNFdzweI
- lOxPeS7ncH2vLnr3Qj11YVDetYkoChvw9H4ih+Cqwv3frQoBof2zZdI7xmspsT1GI+
- aBLbgtIE6Fuhyh9tahOy/BgoiraQh4YxKENV1AL81rT7VH+pyHwKLu2vIUz0lTOhT0
- W6JTmP3L9apxoIoE2qXdaDfOFsE4zyZoAiXYi+LT6gpCYlNVTEPx+8RLzx5HTtd2Mn
- FYxAMFilbrtmB/MUWbkUBKB9FbopHdNEO5OUp2Yr6dvtk/cdiG1Twf1IEgdXEUctQa
- iKj4Sbv/FHskA==
-Message-ID: <cd82a673-aa43-46bc-be67-6924500376ef@kernel.org>
-Date: Wed, 20 Aug 2025 10:58:46 +0800
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1uoaX7-0006Vp-4P for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 20 Aug 2025 04:34:45 +0000
+Received: by mail-pf1-f171.google.com with SMTP id
+ d2e1a72fcca58-76e2eb9ae80so4845869b3a.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 19 Aug 2025 21:34:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1755664479; x=1756269279; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=ln0od7Z4vv9pu4v2OzT1GPO1Pii9c7VKabfV2KE9JTQ=;
+ b=i2E0vkxjHSps/ejVfIPLBpaQQhjuOaU7XXxZjYbrG8ebEIDAO1ETi43sLzcsHSJD5a
+ kzT4d+6yHQUzuye4HxQKgB/sqiHeunEGb7T6s2SeA3+tUu178kM+NZp7P88VsD2sv6nS
+ zEPhuahzggfQgWQaL8XBgxteyu8sDkhmq9/JEvUF3E+eRNkyJlmD5COszzjdAL14LW55
+ EnCT6OqF1HdpQpjCLhhEzxELbH2ghGBjyx6Li5W0Eupsi2mLHDnKKWqvqMvj449bXQCO
+ jrRzQphkGBYtPAckxxWQHg3+6LgPAEUSoJSb+E6oer2siqfMa38zVdTshhuCaWz6PGa0
+ Mz2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1755664479; x=1756269279;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=ln0od7Z4vv9pu4v2OzT1GPO1Pii9c7VKabfV2KE9JTQ=;
+ b=tTSD0sFY4PGc82ag0Sh4KYpuUrXZU2jC4O2v/CkaehpyqVyBqgDN7peDml9lh6uxNM
+ Fw6WVHU1EkK7wHpM8QZWInIL6KEIK6qxtX0ANHvKamOU+TH5QVR+WvdLxNzBqzkBEgg3
+ 4uvmQLRjfMhiu74jSrQKp7gRSbf8SKQWxG9cLh4iYRPXYeI4vKExmEcHh6FLRjk01AkV
+ YobCikuZ3FtkOr+z8hgnzneJ8QH6q7eZqTk+itLP02oj5nghxuW7MzEjrMSoL/n3ZcjH
+ 5IKnEfmNA9Q08rCO/gZezTsycNkeZEnvmL8811GSjlgBRJ7iC0G6Bv88P7D9ek6O8iaa
+ u9AQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXf98DOd6S+BAkD1cE8dwuQ+g5GPTgQCW+SlQubuhgDRDfb11/+2RynykWZvPEFrOoKk24wKfeRIHjKWdgLxZUD@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YzhhP1h4h3Dc2DKVTXVAsQmOcxevLDIZWFJdjiC6jaz9mUMbLG2
+ gSbhyq1PWWgvOzk+vOJChkFARcNSiDMB2EYQA4IrgcL7j6PJSRAN1lnk
+X-Gm-Gg: ASbGncvxdErpMmyH+Q/JvPXgHge81zzkXr46QJjhVkwiTjalTkkZ88rO2kGAOPSIhKK
+ BulzpyxJImE4TWvYKqyuchAFKUj9dV6wggG87g46xYTLyrQfnF/gwLLI+oZeguHyHbXBwvMHaKd
+ JagtD80O6TvtDQ0tGWPWVS7iNlsMXnBbLxhvHt/eI0ieznPdPYg1BVB8m6TCO4VC3yHL1bWMTjU
+ p/K2vT50m3GJjjXPUZgZWfF0WA3cawD6f3ptiCSchU1sGVmx1n2AyYuxfr1wRFlhFJvgZX2Lw9J
+ yEQFLCL9jIeD9yH0Qa/H4bxCmMGvqu3B5zVbwPxUSRQ2qsM886x5dl97VdDnbGPj7lqLOhwxri4
+ qh0ci9npEQ9mXUhm01SM3aw==
+X-Google-Smtp-Source: AGHT+IFUrF3nY//FbHCmRJnSjf8PGBS6sQaGnh0boWKFjVAtouYQCTp8sIA3TCct7jxHiBbbS2BbPQ==
+X-Received: by 2002:a05:6a20:72a8:b0:220:78b9:f849 with SMTP id
+ adf61e73a8af0-2431b84772cmr2759936637.24.1755664479355; 
+ Tue, 19 Aug 2025 21:34:39 -0700 (PDT)
+Received: from archie.me ([103.124.138.155]) by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-324e264c470sm857925a91.25.2025.08.19.21.34.37
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 19 Aug 2025 21:34:38 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+ id 99FDF436C400; Wed, 20 Aug 2025 11:34:35 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux F2FS <linux-f2fs-devel@lists.sourceforge.net>
+Date: Wed, 20 Aug 2025 11:34:29 +0700
+Message-ID: <20250820043432.22509-4-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250820043432.22509-1-bagasdotme@gmail.com>
+References: <20250820043432.22509-1-bagasdotme@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: "mason.zhang" <masonzhang.linuxer@gmail.com>
-References: <20250806123236.4389-1-masonzhang.linuxer@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20250806123236.4389-1-masonzhang.linuxer@gmail.com>
-X-Headers-End: 1uoZ2N-0002Rs-CK
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix CURSEG_HOT_DATA left space check
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1300; i=bagasdotme@gmail.com;
+ h=from:subject; bh=u0ScB7oJe040CLbxIigtJvBlv0iClHGKbewou78MoPk=;
+ b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlL/bf16/pGnG/fE1Mh+bX6z5z990Jvaqz0O2F2ZdmOq
+ veHasWOdJSyMIhxMciKKbJMSuRrOr3LSORC+1pHmDmsTCBDGLg4BWAiXlqMDM/Pz1jXukfId9cn
+ 3vzSh1w7Os7z7LMXuCETknaP2Xfhwf0Mf8XsdM4cvGx/bvWhE/+ulORMa/l0aWXPoV25/Bk9/t4
+ CG9gB
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp;
+ fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+X-Headers-End: 1uoaX7-0006Vp-4P
+Subject: [f2fs-dev] [PATCH 3/6] Documentation: f2fs: Span write hint table
+ section rows
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,42 +130,43 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Daeho Jeong <daehojeong@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ Yangtao Li <frank.li@vivo.com>, Bagas Sanjaya <bagasdotme@gmail.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Yuanye Ma <yuanye.ma20@gmail.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 8/6/25 20:32, mason.zhang wrote:
-> This fix combines the space check for data_blocks and dent_blocks when
-> verifying HOT_DATA segment capacity, preventing potential insufficient
-> space issues during checkpoint.
-> 
-> Fixes: bf34c93d2645 ("f2fs: check curseg space before foreground GC")
-> Signed-off-by: mason.zhang <masonzhang.linuxer@gmail.com>
+Write hint policy table has two rows which act as section rows: buffered
+io and direct io, yet these rows are written as normal rows instead.
 
-It breaks f2fs/005 of xfstests, can you please take a look?
+Column-span them.
 
-Thanks,
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ Documentation/filesystems/f2fs.rst | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> ---
->  fs/f2fs/segment.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index db619fd2f51a..d8dae0049b6a 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -649,7 +649,7 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
->  				get_ckpt_valid_blocks(sbi, segno, true);
->  	}
->  
-> -	if (dent_blocks > left_blocks)
-> +	if (dent_blocks + data_blocks > left_blocks)
->  		return false;
->  	return true;
->  }
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 132c3080ad5c4c..85e015b712c2e1 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -800,11 +800,13 @@ ioctl(COLD)           COLD_DATA                WRITE_LIFE_EXTREME
+ extension list        "                        "
+ 
+ -- buffered io
++------------------------------------------------------------------
+ N/A                   COLD_DATA                WRITE_LIFE_EXTREME
+ N/A                   HOT_DATA                 WRITE_LIFE_SHORT
+ N/A                   WARM_DATA                WRITE_LIFE_NOT_SET
+ 
+ -- direct io
++------------------------------------------------------------------
+ WRITE_LIFE_EXTREME    COLD_DATA                WRITE_LIFE_EXTREME
+ WRITE_LIFE_SHORT      HOT_DATA                 WRITE_LIFE_SHORT
+ WRITE_LIFE_NOT_SET    WARM_DATA                WRITE_LIFE_NOT_SET
+-- 
+An old man doll... just what I always wanted! - Clara
 
 
 
