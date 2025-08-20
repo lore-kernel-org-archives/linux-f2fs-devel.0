@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BDAD3CA0EFA
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 Aug 2025 04:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A594FCA0EF5
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 Aug 2025 04:34:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=CYlYzEf/iG0F3ZjpvHCmGZlXCzAj2vo8foFO3Y3GDJk=; b=eHgVIQoJflYeWwmezdjRcx+aLg
-	xKEIUsJhcaTvvPdhg8xWyf/C+2hBOwNuZqGEz0kFoOvTeEkSAJ5yJvsLAvWli92u6ljr0EHzCiNT2
-	FfRjLmKFzhPOm3jc3EnC5SveJcTW5TBid6mrAXUG2stcOmY23lUzCwcHE9aMNBgkRQg0=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=AEryeyb8WsfhIWIOK+UoD99hd4BFca7gj6CX3vshyC8=; b=DWxE2erBoIY9l9xKKL3j0Lzf0H
+	IAU5ctRbLs2kVdBBvAC5xKw+TYWc64bOwMmNDhaO2jix+aoMiXV2HGIIfF0uf6ymZ3/iHYC+JQ3oO
+	D13T4MlWttUatpqDe9Oa4dB8LzcKhgYfRoSHqIL0Ph6Z4wzd5PjM7DRPXgaI7Svu3GQU=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uoaXF-0004c7-EH;
-	Wed, 20 Aug 2025 04:34:53 +0000
+	id 1uoaXF-0007dm-I3;
+	Wed, 20 Aug 2025 04:34:54 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <bagasdotme@gmail.com>) id 1uoaXF-0004bz-1A
+ (envelope-from <bagasdotme@gmail.com>) id 1uoaXE-0007dZ-88
  for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 20 Aug 2025 04:34:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CyKlYZwnzyrTJtobVTaGI66bJYC4L/kYAJqhoIFuK3I=; b=cQE4/wmikLgaaSM75LMFByp1R/
- Dp08syLGLStks8fGz9cfVKUIJ5v4Bd7zc5Nli5w2/ealAYPjvVtrY0fONiAlSxt5vtZf36DiAJPFE
- C1bn86kB8hYEDb+KGFRrIxbSGfDWQxuE6Z6DDzXeOX1nMij/DDRllRKtBnPOvsL+8tWs=;
+ bh=1hdzCk77MP3wx+nUo2C99H0YrbUbbbgXAPHawwUGevU=; b=SzKgI3VHL/0zA3QXhP73GNT7MO
+ xQzGYN4IuwstZQ8WQN44VHaFm7Vjgj/t3M+2d5m7iRvpKhr2MoNOWKi7ix6lcCmMC+lvusV99HN11
+ ueLT/M/ERE2nZ147zsaL7SR243Ez1bmyQ1vOPIfRdjscBBj8cZeThlW3AshxoWRVRerc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,16 +42,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=CyKlYZwnzyrTJtobVTaGI66bJYC4L/kYAJqhoIFuK3I=; b=Q7Xm0gg3ZMx7FtayWb14W51Hpr
- HcTB+1ATKE+4hD3eNpjujcfZp3CTu5bnIzOC8nt1BEDLma+PjVJ7ZYS1GI59n6wqFIL6ZZBAt3XZp
- jjfkIXR1O2sQOM7WLl6iowgFwhpe9zXR4DY1ZfM5BY1mJOwBh3Jd18eJP4Bl0cxyZUjw=;
-Received: from mail-pf1-f178.google.com ([209.85.210.178])
+ bh=1hdzCk77MP3wx+nUo2C99H0YrbUbbbgXAPHawwUGevU=; b=DrpQxo3t6GPNjX9D/ajbMwSgw0
+ vsPwpDIgO41fBnl4jG34Nnr8WMxAsmKoNWj6Wfu5JH0YQJKijsXalq9EqdjCj2GzaEeY7tQhcVJFf
+ PprMfYCpJ4XQNe/QumA4gMvKBg5PecfrtdroBVA4pqHdDNf7H4CIPr6/TioFZnpW6cEQ=;
+Received: from mail-pj1-f43.google.com ([209.85.216.43])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uoaXE-0006WI-Nx for linux-f2fs-devel@lists.sourceforge.net;
+ id 1uoaXE-0006WH-EO for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 20 Aug 2025 04:34:52 +0000
-Received: by mail-pf1-f178.google.com with SMTP id
- d2e1a72fcca58-76e2e89bebaso4464333b3a.1
+Received: by mail-pj1-f43.google.com with SMTP id
+ 98e67ed59e1d1-32326bd4f4dso513026a91.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
  Tue, 19 Aug 2025 21:34:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
@@ -59,66 +59,66 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=CyKlYZwnzyrTJtobVTaGI66bJYC4L/kYAJqhoIFuK3I=;
- b=EKpEfRM6d3oRj6tJBs+qTOso3Nfhd+NTnL+ajL5deoR0X2kjLrjRmN6rEC4574l1af
- f486QWMVSkwH1MPpKxSj950gL3rq871BBEirgEvIHhlLIEbp7yHvhhHBNh7Tmpg/tt8g
- edRe4XaaCzQf0yzrxyb8RkThAAtuKxw2grPJbCm1YOjWNtbB5Wt8ZaX3oK9NVkqgfGWT
- eNDMIELjjYXSK3HrvUysAJwcA63q64tWK4HT9HmAAdcIOmWs+Y2K2K2sIwyp2SIATTge
- rfQANjpL4GgMqNIBcAvtuzjfp7KEt8eMnEdCiXqwrcU/U/gq1bU7mOJTu4J9MPkNEjgy
- Edjg==
+ bh=1hdzCk77MP3wx+nUo2C99H0YrbUbbbgXAPHawwUGevU=;
+ b=iQbbfeDRPQfSiUEU1BB7bhW1L6ooK3YdJf9rx7T+Uw86Q75gY+9jsYdifd20BdFeIX
+ CKI2FyODsHEUKSudKXnFkexdHmWil9WAsNgcWNTedhzTZL8MGCWxHHtlJKYq2Q8JDzKm
+ aCOA8ngUaztDXquyAHr/oPtFmKJy88dbiZlIktQAFAWoanO57Gj05llHTU1aq1+KJxr0
+ Dr276o75zXMcp9eNXil+8fnKkW7cyhxkwUjJ9LLPNtcxD6o0U6AP6XtaxnR/jR4CYQKy
+ EBsSIBRFWOvIgMNtyiHOYSm6ww59p9FffxVa3VD8EJjUC8ahxcN5KUthUK5nIjjmfL7l
+ up6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20230601; t=1755664482; x=1756269282;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=CyKlYZwnzyrTJtobVTaGI66bJYC4L/kYAJqhoIFuK3I=;
- b=QMNfCVJPEWnAkXieHq14Ioq/kvcFqEwylhqGojXeAaxlNd1H6/YJTlEadw6YI6Zid+
- 4IbQUn3DBXAHCuNXeybKMa0bWAfeccAPp3SL1vo+KvbXbsJOrGxkeG3HVUDp/WyY6wva
- o9WMOEcNAXrFNIoIemtxVGj6zlgGXvBI0HgVzY4UP2GZtkTWDy8ZjySP3kX567bZr/bM
- msCISD+uQOmTuYK/gxTWilk9LzU0FKTEViTtNxya0t7Ty3Qog/JfZD1glqYJoL0Dych4
- 1ysni9Sn4Rf6tN9EJeHaXkjfsIhrnkWIIdPNuOUqrFFLL72dAe03Y4aDM6GpAvQKWyGC
- BhTw==
+ bh=1hdzCk77MP3wx+nUo2C99H0YrbUbbbgXAPHawwUGevU=;
+ b=eOuSSa28YsnxLQSSP0IprXeLoHYKQkNofD86p4f1r2W8iD7UzmFRa3Lbah7sJ4qbLo
+ UW9Umlq+4WstUmdmYU60qTai/4QCLeAbqkHExtiuxhMbP8EeF6RB9f2d6dYqGWj7Po1A
+ 7oMilqyo4RtoVBOqewNa8XrlWZoMMZr+v3qGwxlWHW1U/bdrUjl/q72gEI9DnEVFnUSg
+ Ed6gIob93H8GdzmnJwkDIE+xbd+BP6fAOgrqBHh+Lfnyf+cRpmZaTvUcSZiWT6Urp+Xg
+ KkApxnJGaZLa/mx0V14f9TjSnGCvwTSR60yGStMaKyMNFDVpHoYvABgv34tu26Y/UVoH
+ ks+Q==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUSBqc1xbph92qRRnKH+iBDEcfF2VM6LBkip2h/WfZAX1XuDZnd78qHAuXG5PL6RG2guONyct1PDKhn0/+6SPHj@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YwLYi7gSr/gXw5kn3fCPYeoR6QKLb1FWlKw4E/DhVYxQmRVaePD
- iHgl8msq03acUkcPKp2iXvWoSDZP02BVbZsnZIuz/H+tyb240lOsOk37
-X-Gm-Gg: ASbGnctxxniIDtXifB9/XU4g2xpdCuo+6gNj8QZJgnUbNv8wn5VXBfgonoeevA9KP9b
- 1XXw+tJOGlUz2afhnop7I4vaqKI866dEWqsIhJ006hgaCC9ZfvE+iN8/GH5oJRtsU3j3B//XDRo
- dqMBJGFU0fhbpo492lPBkb4c38R+gZ/iwGC/kNF1e72vJuv81KsygqkGyQCyaP62jjfmiJI+YTw
- l5Nt3xCWUP6JBK4zu4csyh0PEjuGjQJPVHY9zkoop1R0zFvRfTbIIBAVpLmKh7LiZoBFD7q2pt3
- NgJrbwb4OQnb+RWHK3bV/3FQ3Z3T+2KvKht0ZSTTDOvO0g8jYx4sxTrbRoOgO2B0Jfx3rQTYvXk
- pVZst4rQO4DY4a5FRsqqlDQ==
-X-Google-Smtp-Source: AGHT+IFoO+aW2FNquc4nftkyJudwML7Au6CjGFNuS72S7hftyJIUJSX6dF3jYDiBLuVRPRWnryJwNg==
-X-Received: by 2002:a05:6a00:85a9:b0:74d:f997:1b45 with SMTP id
- d2e1a72fcca58-76e8dc80626mr2056170b3a.8.1755664481907; 
+ AJvYcCW+PlPLkI7lQLLn3Lg/rfdtDDK8mhQMvGLJWoMD3e4HCFnduvCB5sS8iLIyCrW4KIfDqap4Pc6DwhuPME6iz3xM@lists.sourceforge.net
+X-Gm-Message-State: AOJu0Yxxn9r4fZU2KiCl1wIj91C0jo+ceyWyok43vk0+Y44kJyHyhvc2
+ ca1iTPEiWI0ShesRTb8J3AmVT1oE4vQDDRWWVmFOis64mgsyYEbBZerf
+X-Gm-Gg: ASbGncv+fFinBXhbcgHvuYZgw2vVkE+wR79WUZNkfAqEpV9scovHIgIu3b1qGWJlWIh
+ P0vnF7rjljJrlS/XCTEHm/ZpXk77Mgq5cA867ci2HBZbQ1vc32UC5ojcT+htOFq5aXLqHlpnb1R
+ eLdevvYsiiFG4VewOA8hILEHOfWmigAeEinjBN1vAJVViezQJVDpZIRD1sOvbg07p1LPzjxmOml
+ exLrZ1WcD726obarWGQygpdvXN1wx67iMhU+pCyPur4H5Mh49+JJN7av9LZHBOoL58B5UvfuHCq
+ l+MgngFQ4YV+iLGFCUmLiw1dlzAQCAdNeQ/JPy8IxWT6NPjeKE2OXaajROr/TaOfdFISMFhGHiQ
+ 0OnlsEq7d4BCqM9aFz/JECA==
+X-Google-Smtp-Source: AGHT+IFTBnYvJdFNjUjbHaO8K9ArV262MbVxRpC7WHVNKKM82f8tJt+j5pADxmY6u0U0ZYYHiq2leg==
+X-Received: by 2002:a17:90b:5247:b0:321:c9cf:deaa with SMTP id
+ 98e67ed59e1d1-324d356c5f9mr5988168a91.17.1755664481545; 
  Tue, 19 Aug 2025 21:34:41 -0700 (PDT)
 Received: from archie.me ([103.124.138.155]) by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-76e7d4f77fdsm3979674b3a.66.2025.08.19.21.34.38
+ 98e67ed59e1d1-324e254c74fsm861928a91.13.2025.08.19.21.34.37
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 19 Aug 2025 21:34:39 -0700 (PDT)
+ Tue, 19 Aug 2025 21:34:38 -0700 (PDT)
 Received: by archie.me (Postfix, from userid 1000)
- id 2030442DCF34; Wed, 20 Aug 2025 11:34:34 +0700 (WIB)
+ id B56EA436C401; Wed, 20 Aug 2025 11:34:35 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Linux Documentation <linux-doc@vger.kernel.org>,
  Linux F2FS <linux-f2fs-devel@lists.sourceforge.net>
-Date: Wed, 20 Aug 2025 11:34:27 +0700
-Message-ID: <20250820043432.22509-2-bagasdotme@gmail.com>
+Date: Wed, 20 Aug 2025 11:34:30 +0700
+Message-ID: <20250820043432.22509-5-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250820043432.22509-1-bagasdotme@gmail.com>
 References: <20250820043432.22509-1-bagasdotme@gmail.com>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1071; i=bagasdotme@gmail.com;
- h=from:subject; bh=qm3G9ju8uPlL4X0b7erdGuQwywlcIsY7m9cduvwOOnY=;
- b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlL/bdNjZkbP+W9nk2ud9G+gKONF/hk/jiU1G8r233+Y
- NfCyJW5HaUsDGJcDLJiiiyTEvmaTu8yErnQvtYRZg4rE8gQBi5OAZiIiiAjwzfuH1r6p2vYXq8x
- nLO2pECm1+5L6PbruamX9kjfmCIz/S8jw2t154CHGjOtDv1b+XTRZ8bkRVVnGR+rqeq8aHBYu1z
- jOhMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3599; i=bagasdotme@gmail.com;
+ h=from:subject; bh=IE+YVmONe8+OmcHFwhNiUC5Y6aV43BEeC0O3nKJgnVQ=;
+ b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlL/bddebbG9/ziyqP3fGvffJbs/bXswLpFM7df/b7v8
+ PeEVZ7BIR2lLAxiXAyyYooskxL5mk7vMhK50L7WEWYOKxPIEAYuTgGYyNFHDL/ZkiSCqtefvZDm
+ pOvybic3c5Hzuo2Lj+zZxHrGLa3+6nlThv9Rh5r/zYzY+uZzWtOXYyWhO95vWRWcbF0kfW3Tl/p
+ 1S5ZyAAA=
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp;
  fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-X-Headers-End: 1uoaXE-0006WI-Nx
-Subject: [f2fs-dev] [PATCH 1/6] Documentation: f2fs: Separate errors mode
- subtable
+X-Headers-End: 1uoaXE-0006WH-EO
+Subject: [f2fs-dev] [PATCH 4/6] Documentation: f2fs: Wrap snippets in
+ literal code blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -137,27 +137,98 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-errors=%s subtable is shown in htmldocs output as long-running paragraph
-instead due to missing separator from its previous paragraph. Add it.
+Compression mode code and device aliasing shell snippets are shown
+in htmldocs output as long-running paragraph instead. Wrap them.
 
-Fixes: b62e71be2110 ("f2fs: support errors=remount-ro|continue|panic mountoption")
+Fixes: 602a16d58e9a ("f2fs: add compress_mode mount option")
+Fixes: 128d333f0dff ("f2fs: introduce device aliasing file")
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/filesystems/f2fs.rst | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/filesystems/f2fs.rst | 58 +++++++++++++++---------------
+ 1 file changed, 29 insertions(+), 29 deletions(-)
 
 diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-index e5bb89452aff29..203631566a2c58 100644
+index 85e015b712c2e1..0f9472ae62f2cb 100644
 --- a/Documentation/filesystems/f2fs.rst
 +++ b/Documentation/filesystems/f2fs.rst
-@@ -357,6 +357,7 @@ errors=%s		 Specify f2fs behavior on critical errors. This supports modes:
- 			 panic immediately, continue without doing anything, and remount
- 			 the partition in read-only mode. By default it uses "continue"
- 			 mode.
-+
- 			 ====================== =============== =============== ========
- 			 mode			continue	remount-ro	panic
- 			 ====================== =============== =============== ========
+@@ -931,15 +931,15 @@ target file and the timing. The user can do manual compression/decompression on
+ compression enabled files using F2FS_IOC_DECOMPRESS_FILE and F2FS_IOC_COMPRESS_FILE
+ ioctls like the below.
+ 
+-To decompress a file,
++To decompress a file::
+ 
+-fd = open(filename, O_WRONLY, 0);
+-ret = ioctl(fd, F2FS_IOC_DECOMPRESS_FILE);
++  fd = open(filename, O_WRONLY, 0);
++  ret = ioctl(fd, F2FS_IOC_DECOMPRESS_FILE);
+ 
+-To compress a file,
++To compress a file::
+ 
+-fd = open(filename, O_WRONLY, 0);
+-ret = ioctl(fd, F2FS_IOC_COMPRESS_FILE);
++  fd = open(filename, O_WRONLY, 0);
++  ret = ioctl(fd, F2FS_IOC_COMPRESS_FILE);
+ 
+ NVMe Zoned Namespace devices
+ ----------------------------
+@@ -969,32 +969,32 @@ reserved and used by another filesystem or for different purposes. Once that
+ external usage is complete, the device aliasing file can be deleted, releasing
+ the reserved space back to F2FS for its own use.
+ 
+-<use-case>
++.. code-block::
+ 
+-# ls /dev/vd*
+-/dev/vdb (32GB) /dev/vdc (32GB)
+-# mkfs.ext4 /dev/vdc
+-# mkfs.f2fs -c /dev/vdc@vdc.file /dev/vdb
+-# mount /dev/vdb /mnt/f2fs
+-# ls -l /mnt/f2fs
+-vdc.file
+-# df -h
+-/dev/vdb                            64G   33G   32G  52% /mnt/f2fs
++   # ls /dev/vd*
++   /dev/vdb (32GB) /dev/vdc (32GB)
++   # mkfs.ext4 /dev/vdc
++   # mkfs.f2fs -c /dev/vdc@vdc.file /dev/vdb
++   # mount /dev/vdb /mnt/f2fs
++   # ls -l /mnt/f2fs
++   vdc.file
++   # df -h
++   /dev/vdb                            64G   33G   32G  52% /mnt/f2fs
+ 
+-# mount -o loop /dev/vdc /mnt/ext4
+-# df -h
+-/dev/vdb                            64G   33G   32G  52% /mnt/f2fs
+-/dev/loop7                          32G   24K   30G   1% /mnt/ext4
+-# umount /mnt/ext4
++   # mount -o loop /dev/vdc /mnt/ext4
++   # df -h
++   /dev/vdb                            64G   33G   32G  52% /mnt/f2fs
++   /dev/loop7                          32G   24K   30G   1% /mnt/ext4
++   # umount /mnt/ext4
+ 
+-# f2fs_io getflags /mnt/f2fs/vdc.file
+-get a flag on /mnt/f2fs/vdc.file ret=0, flags=nocow(pinned),immutable
+-# f2fs_io setflags noimmutable /mnt/f2fs/vdc.file
+-get a flag on noimmutable ret=0, flags=800010
+-set a flag on /mnt/f2fs/vdc.file ret=0, flags=noimmutable
+-# rm /mnt/f2fs/vdc.file
+-# df -h
+-/dev/vdb                            64G  753M   64G   2% /mnt/f2fs
++   # f2fs_io getflags /mnt/f2fs/vdc.file
++   get a flag on /mnt/f2fs/vdc.file ret=0, flags=nocow(pinned),immutable
++   # f2fs_io setflags noimmutable /mnt/f2fs/vdc.file
++   get a flag on noimmutable ret=0, flags=800010
++   set a flag on /mnt/f2fs/vdc.file ret=0, flags=noimmutable
++   # rm /mnt/f2fs/vdc.file
++   # df -h
++   /dev/vdb                            64G  753M   64G   2% /mnt/f2fs
+ 
+ So, the key idea is, user can do any file operations on /dev/vdc, and
+ reclaim the space after the use, while the space is counted as /data.
 -- 
 An old man doll... just what I always wanted! - Clara
 
