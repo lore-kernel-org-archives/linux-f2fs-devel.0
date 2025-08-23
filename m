@@ -4,78 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B0720CA0EEB
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 Aug 2025 22:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DDC1BCA0EFA
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 23 Aug 2025 08:28:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=FY/yZrHRqHT6h/HcXRql4k3qE0GS/LxwVMTZfItF6Is=; b=UXxBA2xcoHGTNjgXK4O7HfFjVC
-	xReRAksznHz/i6PB3FdhOLv3T+aob3YsojXppJifk/dhAHExrJM49/si3M8iRWoYmwDoXmEghoUWY
-	ug3RPgyOjWk40dpNUPOaxPtN6BbCY7dO+bqffbNxhUMbwHMBJA1eX3IMTAoDXFpHmmFQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=AcPDmARFsYAV1F71E3MawnhvHBdfcmGi4JyshfZdkqs=; b=TarGvl/j3GCcwniWvQH7zNSDOf
+	g9o1sqD8p2ZyDb120F13u/mjII+jQ+SOgcTmKB+gLtTHDYdcwEpMaV/ukkguS2Vx5HXM55jbNHfkD
+	tOZYEi7lpbFtLeWxqRB53sBFMGoCpo23lAYUFk6US2xg/hGz+PrGBGOIEWuV6n+ScXKo=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1upaPh-00052R-Qs;
-	Fri, 22 Aug 2025 22:39:13 +0000
+	id 1upjcC-0000me-PY;
+	Sat, 23 Aug 2025 08:28:45 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hdanton@sina.com>) id 1upaPf-00052I-Oc
+ (envelope-from <chao@kernel.org>) id 1upjc7-0000mR-Ll
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 22 Aug 2025 22:39:12 +0000
+ Sat, 23 Aug 2025 08:28:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xOdS66SCcN0JdxkrGeAwvRm0Sza843iOzyTOuNvFpH4=; b=bdEI66HRYZ1M65hNwacSyCKYW4
- THv5cGAr3vxAXnAMMyKkd84kGw8Q5rndjFoMo2HjpdXPOcLp1VfxnDBXMws/t55GXXYQr9M8q2dQC
- jTtvLSrRijPcD67TWRjy/oVjp7oP05qN+0cUlHQMCB6OcwEyqy46B1anWNaSbr9kVXm4=;
+ bh=GVjpO8vKnBUiZ/BPXcNveC4AiQrSSZSfdoyOm1U3UN8=; b=h/rzvgcjxptuq5sGJtIPJpv1Pb
+ RVI3prf+lHn14ps/1Huk20C89og4NwrqCy6gKgVQ49DFLGbT8D2UfpzGgerqrm3t1CqhilDhhUiYp
+ x7jtOtvdrYeV0Xzjb92Ev4Re6Nv1iSAXHmsdXUmFO8ivkvUTszq/uy8O42w8wMYJVjZc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=xOdS66SCcN0JdxkrGeAwvRm0Sza843iOzyTOuNvFpH4=; b=S2JnPPQXnW73IlBTJEzdNCXNBf
- ylD/61hc374Liya5mfIOyOaq2UvGm/zUgIpgOBDnxWn5FnHiZZB1ozK/G/XLl1tcDG/YRLS5qbv6Z
- IPFO6sf5+UDPTR9UZSdQmKA52zc5JeXHxwotzmnkGaRsng7Lh0ym5dyN0jLtS2bQNJ+8=;
-Received: from r3-24.sinamail.sina.com.cn ([202.108.3.24])
+ bh=GVjpO8vKnBUiZ/BPXcNveC4AiQrSSZSfdoyOm1U3UN8=; b=Lq8D4NFoqNRVerCp2pTxkS3dcG
+ fjvtKVV212+C/2b5kV4Qv/W6nP5bEPOEsEKPtOLcNycLT1DV2xxKAS/SRPrWyUF7C7CMPwO+RdI01
+ u4JIevhHzZMa5pZPRYu2pkdAyMsVx/Q0/YWtK8jQQ7D72oK+DRbWqyAxk9Pvh8cQBD9o=;
+Received: from nyc.source.kernel.org ([147.75.193.91])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1upaPe-0005cE-Bd for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 22 Aug 2025 22:39:11 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208;
- t=1755902350; bh=xOdS66SCcN0JdxkrGeAwvRm0Sza843iOzyTOuNvFpH4=;
- h=From:Subject:Date:Message-ID;
- b=eLLuqrmOoIzgeSO11AUL1Oy+B5AzzxbqvBrewRyPM13XSSI9B1hTA1R3t7LyIG/0L
- Baoca5UmPXox0GHiAbjubvXHKisuwcrMqrzcGuxHRPvpwN+/+E1Otq7vvdyxIzDUzc
- 7azDm8b7k89RQmrz+l5bojthmhpNWaXZT/NSzDdg=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
- by sina.com (10.54.253.31) with ESMTP
- id 68A8EDFB000004C9; Fri, 23 Aug 2025 06:23:57 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com; spf=none smtp.mailfrom=hdanton@sina.com;
- dkim=none header.i=none;
- dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 4221746816311
-X-SMAIL-UIID: 907608D5001B44E89DD36BDBAA03B020-20250823-062357-1
-From: Hillf Danton <hdanton@sina.com>
-To: chao@kernel.org
-Date: Sat, 23 Aug 2025 06:23:44 +0800
-Message-ID: <20250822222346.5267-1-hdanton@sina.com>
-In-Reply-To: <68a8bd5b.050a0220.37038e.005b.GAE@google.com>
-References: 
+ id 1upjc5-0007xH-OV for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 23 Aug 2025 08:28:38 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by nyc.source.kernel.org (Postfix) with ESMTP id 24C02A58BC6;
+ Sat, 23 Aug 2025 08:28:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7170FC4CEE7;
+ Sat, 23 Aug 2025 08:28:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1755937706;
+ bh=996SurDcbUXCCjxdISDE5LrvQQDDtS4PNGYhV53nlno=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=p65KVYfSdiR77Oa8isM0hLDHgZ2oOooVMJA4C38JjYdnqzg2fkW8z2Aq4MmHnK5hd
+ 4VSp7niCoGCT7CKVPlXdlzOExaAAQTnDjPw2/qfS4RMCkNW3jK+JxvnN54Oj+k2u2E
+ ek4qsklkA7979mE4Fh4sA9i6i0q6JDCbRscLTsUQGfLFEkUW/R5Nxkg8jTRT71BVjG
+ sMD2WLmo7HV6lYiEfKskib/mBCOsGRFgZxGIPcULw3IccQyPFhJ1hdK4xwnmDkTW6L
+ PrST72Y5Wxavtf1ATD0YK69fqwr9N4YewM90BBou1XfX2zKoHZNOGww5aIybM5BKgA
+ iEtU80v1vZipA==
+Message-ID: <0521479a-4173-4bf8-b0a8-47de61982d44@kernel.org>
+Date: Sat, 23 Aug 2025 16:28:23 +0800
 MIME-Version: 1.0
-X-Headers-End: 1upaPe-0005cE-Bd
-Subject: Re: [f2fs-dev] [syzbot] [f2fs?] INFO: task hung in f2fs_llseek
+User-Agent: Mozilla Thunderbird
+To: Sheng Yong <shengyong2021@gmail.com>, jaegeuk@kernel.org
+References: <20250820124238.3785621-1-shengyong1@xiaomi.com>
+ <20250820124238.3785621-11-shengyong1@xiaomi.com>
+Content-Language: en-US
+In-Reply-To: <20250820124238.3785621-11-shengyong1@xiaomi.com>
+X-Headers-End: 1upjc5-0007xH-OV
+Subject: Re: [f2fs-dev] [PATCH v3 10/13] inject.f2fs: add members in
+ inject_cp
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,140 +88,297 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: syzkaller-bugs@googlegroups.com,
- syzbot <syzbot+942fb6ce3ac2843a1420@syzkaller.appspotmail.com>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: shengyong1@xiaomi.com, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-> Date: Fri, 22 Aug 2025 11:56:27 -0700
-> Hello,
+On 8/20/2025 8:42 PM, Sheng Yong wrote:
+> From: Sheng Yong <shengyong1@xiaomi.com>
 > 
-> syzbot found the following issue on:
+> The following members are added to inject more fields in cp:
 > 
-> HEAD commit:    3957a5720157 Merge tag 'cgroup-for-6.17-rc2-fixes' of git:..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13e20c42580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=942fb6ce3ac2843a1420
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17db07bc580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f62a34580000
+> * next_blkaddr: inject fsync dnodes
 > 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/c5cbe8650b9a/disk-3957a572.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/51911bea9855/vmlinux-3957a572.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/b07279b5fcc2/bzImage-3957a572.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/f35e0e9a079a/mount_0.gz
->   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=10a5dfa2580000)
+>    An error is returned if no fsync dnode is found.
+>    Furthermore, the injection is not supported on a zoned device. This
+>    is because fsync dnodes must remains at the end of current warm node
+>    segment, any dnode change causes all previous dnodes in the chain to
+>    be updated out-of-place, and there may not have enough space left in
+>    the curseg. To simplify the injection, it returns an error on the
+>    zoned device.
+>    An example of dnode chain shows:
+>      [inject_cp: 608] [   0] blkaddr:0x1204
+>      [inject_cp: 608] [   1] blkaddr:0x1205
+>      [inject_cp: 608] [   2] blkaddr:0x1206
+>      [inject_cp: 608] [   3] blkaddr:0x1207
+>      [inject_cp: 608] [   4] blkaddr:0x1208
+>      [inject_cp: 608] [   5] blkaddr:0x1209
+>      [inject_cp: 608] [   6] blkaddr:0x120a
+>      [inject_cp: 608] [   7] blkaddr:0x120b
+>      [inject_cp: 608] [   8] blkaddr:0x120c
+>      [inject_cp: 608] [   9] blkaddr:0x120d
+>    where `0' indicates next free blkaddr of warm node curseg, thus
+>    start blkaddr + next_blkoff of warm node curseg, which cannot be
+>    injected. `1~9` indicate next_blkaddr in node_footer of dnodes in
+>    the chain, which can be injected.
 > 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+942fb6ce3ac2843a1420@syzkaller.appspotmail.com
+> * alloc_type: inject curseg's alloc type
+> * crc: inject cp's checksum
+> * elapsed_time: inject cp's mount elapsed time
 > 
-> INFO: task syz.1.23:6086 blocked for more than 143 seconds.
->       Tainted: G        W           syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz.1.23        state:D stack:29352 pid:6086  tgid:6081  ppid:6062   task_flags:0x400040 flags:0x00004004
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5357 [inline]
->  __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
->  __schedule_loop kernel/sched/core.c:7043 [inline]
->  rt_mutex_schedule+0x77/0xf0 kernel/sched/core.c:7339
->  rt_mutex_slowlock_block kernel/locking/rtmutex.c:1647 [inline]
->  __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
->  __rt_mutex_slowlock_locked+0x1e04/0x25e0 kernel/locking/rtmutex.c:1760
->  __rwbase_read_lock+0xbc/0x180 kernel/locking/rwbase_rt.c:114
->  rwbase_read_lock kernel/locking/rwbase_rt.c:147 [inline]
->  __down_read kernel/locking/rwsem.c:1466 [inline]
->  down_read+0x127/0x1f0 kernel/locking/rwsem.c:1539
->  inode_lock_shared include/linux/fs.h:884 [inline]
->  f2fs_seek_block fs/f2fs/file.c:458 [inline]
->  f2fs_llseek+0x1e5/0x1840 fs/f2fs/file.c:545
->  vfs_llseek fs/read_write.c:389 [inline]
->  ksys_lseek fs/read_write.c:402 [inline]
->  __do_sys_lseek fs/read_write.c:412 [inline]
->  __se_sys_lseek fs/read_write.c:410 [inline]
->  __x64_sys_lseek+0x155/0x1f0 fs/read_write.c:410
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f7c9077ebe9
-> RSP: 002b:00007f7c8fdcd038 EFLAGS: 00000246 ORIG_RAX: 0000000000000008
-> RAX: ffffffffffffffda RBX: 00007f7c909a6090 RCX: 00007f7c9077ebe9
-> RDX: 0000000000000004 RSI: 0000000000000008 RDI: 0000000000000004
-> RBP: 00007f7c90801e19 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f7c909a6128 R14: 00007f7c909a6090 R15: 00007fffeb5fe138
->  </TASK>
-> INFO: lockdep is turned off.
-> NMI backtrace for cpu 1
-> CPU: 1 UID: 0 PID: 39 Comm: khungtaskd Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)} 
-> Tainted: [W]=WARN
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->  nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
->  nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
->  trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
->  check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
->  watchdog+0xf93/0xfe0 kernel/hung_task.c:491
->  kthread+0x70e/0x8a0 kernel/kthread.c:463
->  ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->  </TASK>
-> Sending NMI from CPU 1 to CPUs 0:
-> NMI backtrace for cpu 0
-> CPU: 0 UID: 0 PID: 6274 Comm: syz.3.43 Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)} 
-> Tainted: [W]=WARN
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> RIP: 0010:unwind_next_frame+0x175d/0x2390 arch/x86/kernel/unwind_orc.c:648
-> Code: 28 84 c0 0f 85 19 0b 00 00 48 89 d0 48 c1 e8 03 0f b6 04 28 84 c0 0f 85 2b 0b 00 00 48 0f bf 03 49 01 c4 49 8d 56 40 4c 89 f7 <4c> 89 e6 eb 5d 49 8d 5e 40 48 89 d8 48 c1 e8 03 80 3c 28 00 74 08
-> RSP: 0018:ffffc90003b06438 EFLAGS: 00000283
-> RAX: fffffffffffffff0 RBX: ffffffff8fd32106 RCX: 0000000000000000
-> RDX: ffffc90003b06548 RSI: 0000000000000001 RDI: ffffc90003b06508
-> RBP: dffffc0000000000 R08: ffffc90003b06567 R09: 0000000000000000
-> R10: ffffc90003b06558 R11: fffff52000760cad R12: ffffc90003b069d0
-> R13: ffffc90003b06558 R14: ffffc90003b06508 R15: 1ffffffff1fa6421
-> FS:  00007f0008c3c6c0(0000) GS:ffff8881268c4000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f8cae82bf98 CR3: 000000005b1bc000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
->  stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
->  kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
->  kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
->  slab_free_hook mm/slub.c:2378 [inline]
->  slab_free mm/slub.c:4680 [inline]
->  kmem_cache_free+0x3ef/0x510 mm/slub.c:4782
->  f2fs_read_end_io+0x398/0x9d0 fs/f2fs/data.c:-1
->  f2fs_submit_page_read+0x116/0x190 fs/f2fs/data.c:1110
->  f2fs_get_read_data_folio+0x4a4/0x7d0 fs/f2fs/data.c:1268
->  gc_data_segment fs/f2fs/gc.c:1641 [inline]
->  do_garbage_collect+0x3898/0x6410 fs/f2fs/gc.c:1826
->  f2fs_gc+0xca9/0x2580 fs/f2fs/gc.c:1931
->  f2fs_balance_fs+0x5fb/0x7f0 fs/f2fs/segment.c:466
->  f2fs_map_blocks+0x345f/0x4130 fs/f2fs/data.c:1792
->  f2fs_expand_inode_data+0x5b1/0xa60 fs/f2fs/file.c:1923
->  f2fs_fallocate+0x4f8/0x990 fs/f2fs/file.c:2026
+> Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
+> ---
+> v3: * update commit message to show dnode chain and the injectable range
+>      * free(node) before return
+> ---
+>   fsck/fsck.h       |  4 ++-
+>   fsck/inject.c     | 86 ++++++++++++++++++++++++++++++++++++++++++++++-
+>   fsck/mount.c      | 18 +++++-----
+>   man/inject.f2fs.8 | 11 +++++-
+>   4 files changed, 108 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fsck/fsck.h b/fsck/fsck.h
+> index 40cb6d9a6417..05daa2de9531 100644
+> --- a/fsck/fsck.h
+> +++ b/fsck/fsck.h
+> @@ -223,6 +223,8 @@ extern int f2fs_ra_meta_pages(struct f2fs_sb_info *, block_t, int, int);
+>   extern int f2fs_do_mount(struct f2fs_sb_info *);
+>   extern void f2fs_do_umount(struct f2fs_sb_info *);
+>   extern int f2fs_sparse_initialize_meta(struct f2fs_sb_info *);
+> +extern int f2fs_find_fsync_inode(struct f2fs_sb_info *, struct list_head *);
+> +extern void f2fs_destroy_fsync_dnodes(struct list_head *);
+>   
+>   extern void flush_journal_entries(struct f2fs_sb_info *);
+>   extern void update_curseg_info(struct f2fs_sb_info *, int);
+> @@ -239,7 +241,7 @@ extern void duplicate_checkpoint(struct f2fs_sb_info *);
+>   extern void write_checkpoint(struct f2fs_sb_info *);
+>   extern void write_checkpoints(struct f2fs_sb_info *);
+>   extern void write_raw_cp_blocks(struct f2fs_sb_info *sbi,
+> -			struct f2fs_checkpoint *cp, int which);
+> +			struct f2fs_checkpoint *cp, int which, bool update_crc);
+>   extern void update_superblock(struct f2fs_super_block *, int);
+>   extern void update_data_blkaddr(struct f2fs_sb_info *, nid_t, u16, block_t,
+>   			struct f2fs_node *);
+> diff --git a/fsck/inject.c b/fsck/inject.c
+> index 5ca105b60f8e..272a4a64dc05 100644
+> --- a/fsck/inject.c
+> +++ b/fsck/inject.c
+> @@ -151,6 +151,10 @@ static void inject_cp_usage(void)
+>   	MSG(0, "  cur_node_blkoff: inject cur_node_blkoff array selected by --idx <index>\n");
+>   	MSG(0, "  cur_data_segno: inject cur_data_segno array selected by --idx <index>\n");
+>   	MSG(0, "  cur_data_blkoff: inject cur_data_blkoff array selected by --idx <index>\n");
+> +	MSG(0, "  alloc_type: inject alloc_type array selected by --idx <index>\n");
+> +	MSG(0, "  next_blkaddr: inject next_blkaddr of fsync dnodes selected by --idx <index>\n");
+> +	MSG(0, "  crc: inject crc checksum\n");
+> +	MSG(0, "  elapsed_time: inject elapsed_time\n");
+>   }
+>   
+>   static void inject_nat_usage(void)
+> @@ -456,6 +460,7 @@ out:
+>   static int inject_cp(struct f2fs_sb_info *sbi, struct inject_option *opt)
+>   {
+>   	struct f2fs_checkpoint *cp, *cur_cp = F2FS_CKPT(sbi);
+> +	bool update_crc = true;
+>   	char *buf = NULL;
+>   	int ret = 0;
+>   
+> @@ -534,6 +539,85 @@ static int inject_cp(struct f2fs_sb_info *sbi, struct inject_option *opt)
+>   		    opt->idx, opt->cp, get_cp(cur_data_blkoff[opt->idx]),
+>   		    (u16)opt->val);
+>   		set_cp(cur_data_blkoff[opt->idx], (u16)opt->val);
+> +	} else if (!strcmp(opt->mb, "alloc_type")) {
+> +		if (opt->idx >= MAX_ACTIVE_LOGS) {
+> +			ERR_MSG("invalid index %u of cp->alloc_type[]\n",
+> +				opt->idx);
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+> +		MSG(0, "Info: inject alloc_type[%d] of cp %d: 0x%x -> 0x%x\n",
+> +		    opt->idx, opt->cp, cp->alloc_type[opt->idx],
+> +		    (unsigned char)opt->val);
+> +		cp->alloc_type[opt->idx] = (unsigned char)opt->val;
+> +	} else if (!strcmp(opt->mb, "next_blkaddr")) {
+> +		struct fsync_inode_entry *entry;
+> +		struct list_head inode_list = LIST_HEAD_INIT(inode_list);
+> +		struct f2fs_node *node;
+> +		block_t blkaddr;
+> +		int i = 0;
+> +
+> +		if (c.zoned_model == F2FS_ZONED_HM) {
+> +			ERR_MSG("inject fsync dnodes not supported in "
+> +				"zoned device\n");
+> +			ret = -EOPNOTSUPP;
+> +			goto out;
+> +		}
+> +
+> +		if (!need_fsync_data_record(sbi)) {
+> +			ERR_MSG("no need to recover fsync dnodes\n");
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		ret = f2fs_find_fsync_inode(sbi, &inode_list);
+> +		if (ret) {
+> +			ERR_MSG("failed to find fsync inodes: %d\n", ret);
+> +			goto out;
+> +		}
+> +
+> +		list_for_each_entry(entry, &inode_list, list) {
+> +			if (i == opt->idx)
+> +				blkaddr = entry->blkaddr;
+> +			DBG(0, "[%4d] blkaddr:0x%x\n", i++, entry->blkaddr);
+> +		}
+> +
+> +		f2fs_destroy_fsync_dnodes(&inode_list);
+> +
+> +		if (opt->idx == 0 || opt->idx >= i) {
+> +			ERR_MSG("invalid index %u of fsync dnodes range [1, %u]\n",
+> +				opt->idx, i);
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		MSG(0, "Info: inject next_blkaddr[%d] of cp %d: 0x%x -> 0x%x\n",
+> +		    opt->idx, opt->cp, blkaddr, (u32)opt->val);
+> +
+> +		node = malloc(F2FS_BLKSIZE);
+> +		ASSERT(node);
+> +		ret = dev_read_block(node, blkaddr);
+> +		ASSERT(ret >= 0);
+> +		F2FS_NODE_FOOTER(node)->next_blkaddr = cpu_to_le32((u32)opt->val);
+> +		if (IS_INODE(node))
+> +			ret = update_inode(sbi, node, &blkaddr);
+> +		else
+> +			ret = update_block(sbi, node, &blkaddr, NULL);
+> +		free(node);
+> +		ASSERT(ret >= 0);
+> +		goto out;
+> +	} else if (!strcmp(opt->mb, "crc")) {
+> +		__le32 *crc = (__le32 *)((unsigned char *)cp +
+> +						get_cp(checksum_offset));
+> +
+> +		MSG(0, "Info: inject crc of cp %d: 0x%x -> 0x%x\n",
+> +		    opt->cp, le32_to_cpu(*crc), (u32)opt->val);
+> +		*crc = cpu_to_le32((u32)opt->val);
+> +		update_crc = false;
+> +	} else if (!strcmp(opt->mb, "elapsed_time")) {
+> +		MSG(0, "Info: inject elapsed_time of cp %d: %llu -> %"PRIu64"\n",
+> +		    opt->cp, get_cp(elapsed_time), (u64)opt->val);
+> +		set_cp(elapsed_time, (u64)opt->val);
+>   	} else {
+>   		ERR_MSG("unknown or unsupported member \"%s\"\n", opt->mb);
+>   		ret = -EINVAL;
+> @@ -541,7 +625,7 @@ static int inject_cp(struct f2fs_sb_info *sbi, struct inject_option *opt)
+>   	}
+>   
+>   	print_ckpt_info(sbi);
+> -	write_raw_cp_blocks(sbi, cp, opt->cp);
+> +	write_raw_cp_blocks(sbi, cp, opt->cp, update_crc);
+>   
+>   out:
+>   	free(buf);
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index f9f780d4aff6..f03fa2d6861a 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -3510,17 +3510,19 @@ void write_checkpoints(struct f2fs_sb_info *sbi)
+>   	write_checkpoint(sbi);
+>   }
+>   
+> -void write_raw_cp_blocks(struct f2fs_sb_info *sbi,
+> -			 struct f2fs_checkpoint *cp, int which)
+> +void write_raw_cp_blocks(struct f2fs_sb_info *sbi, struct f2fs_checkpoint *cp,
+> +			 int which, bool update_crc)
+>   {
+>   	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+>   	uint32_t crc;
+>   	block_t cp_blkaddr;
+>   	int ret;
+>   
+> -	crc = f2fs_checkpoint_chksum(cp);
+> -	*((__le32 *)((unsigned char *)cp + get_cp(checksum_offset))) =
+> +	if (update_crc) {
+> +		crc = f2fs_checkpoint_chksum(cp);
+> +		*((__le32 *)((unsigned char *)cp + get_cp(checksum_offset))) =
+>   							cpu_to_le32(crc);
+> +	}
+>   
+>   	cp_blkaddr = get_sb(cp_blkaddr);
+>   	if (which == 2)
+> @@ -3754,7 +3756,7 @@ static void del_fsync_inode(struct fsync_inode_entry *entry)
+>   	free(entry);
+>   }
+>   
+> -static void destroy_fsync_dnodes(struct list_head *head)
+> +void f2fs_destroy_fsync_dnodes(struct list_head *head)
+>   {
+>   	struct fsync_inode_entry *entry, *tmp;
+>   
+> @@ -3860,7 +3862,7 @@ static int sanity_check_node_chain(struct f2fs_sb_info *sbi,
+>   	return 0;
+>   }
+>   
+> -static int find_fsync_inode(struct f2fs_sb_info *sbi, struct list_head *head)
+> +int f2fs_find_fsync_inode(struct f2fs_sb_info *sbi, struct list_head *head)
+>   {
+>   	struct curseg_info *curseg;
+>   	struct f2fs_node *node_blk, *node_blk_fast;
+> @@ -4056,7 +4058,7 @@ static int record_fsync_data(struct f2fs_sb_info *sbi)
+>   	if (!need_fsync_data_record(sbi))
+>   		return 0;
+>   
+> -	ret = find_fsync_inode(sbi, &inode_list);
+> +	ret = f2fs_find_fsync_inode(sbi, &inode_list);
+>   	if (ret)
+>   		goto out;
+>   
+> @@ -4071,7 +4073,7 @@ static int record_fsync_data(struct f2fs_sb_info *sbi)
+>   
+>   	ret = traverse_dnodes(sbi, &inode_list);
+>   out:
+> -	destroy_fsync_dnodes(&inode_list);
+> +	f2fs_destroy_fsync_dnodes(&inode_list);
+>   	return ret;
+>   }
+>   
+> diff --git a/man/inject.f2fs.8 b/man/inject.f2fs.8
+> index 65ac658a129b..0e7cd5065a15 100644
+> --- a/man/inject.f2fs.8
+> +++ b/man/inject.f2fs.8
+> @@ -45,7 +45,7 @@ The available \fImb\fP of \fIsb\fP are:
+>   .RS 1.2i
+>   .TP
+>   .BI magic
+> -magic numbe.
+> +magic number.
+>   .TP
+>   .BI s_stop_reason
+>   s_stop_reason array.
+> @@ -79,6 +79,15 @@ cur_data_segno array.
+>   .TP
+>   .BI cur_data_blkoff
+>   cur_data_blkoff array.
 
-This report complains that it took more than 100s for f2fs_fallocate() to
-complete after locking inode [1], right?
+alloc_type entry.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/f2fs/file.c#n1991
+Thanks,
 
->  vfs_fallocate+0x672/0x7f0 fs/open.c:342
->  ioctl_preallocate fs/ioctl.c:290 [inline]
->  file_ioctl+0x61d/0x780 fs/ioctl.c:-1
->  do_vfs_ioctl+0xb36/0x1440 fs/ioctl.c:577
->  __do_sys_ioctl fs/ioctl.c:596 [inline]
->  __se_sys_ioctl+0x82/0x170 fs/ioctl.c:584
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> +.TP
+> +.BI next_blkaddr
+> +fsync dnodes.
+> +.TP
+> +.BI crc
+> +crc checksum.
+> +.TP
+> +.BI elapsed_time
+> +elapsed mount time.
+>   .RE
+>   .TP
+>   .BI \-\-nat " 0 or 1 or 2"
+
 
 
 _______________________________________________
