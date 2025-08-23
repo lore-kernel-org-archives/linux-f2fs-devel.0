@@ -4,75 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CBC0FCA0EE4
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 23 Aug 2025 08:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 90313CA0EE4
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 23 Aug 2025 08:45:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=deUvebcCVo6kJpu/29gRiTsk8g3GzTzKHSrn7Ehg6/Q=; b=JbT93m02BXCY/Ymti3ApSSF8tQ
-	NdiUetE9XU9TKB/0dm6JYC1EM2Nye7Cn0h6tlSPuGzYIWBgNCFisLpHGgK7vfcys2RWJArsn2HFG/
-	yl1IwIsFaXR1jqsV9OEa3WTTLcEihH0GYy2LGRzj4Be9yBEkBaBN95cc8N1IGLcBuszM=;
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=1AsfLENJNrWwcnN9W+ONvjlF67eK+6xaXv1crA22b8M=; b=RBYWV4cx15Qo7D5MjRipSohnZd
+	jPv8mVGKeFLwFt65jU+0uTkPC5lar+JYGnpchplOW95wHFK49rNt+Kct4/pK7Rpm0h8XkKGSKPKWc
+	i2wM1OWMuN6uYxSLArZvxO+sJWi5D1YiQIVltIzNmsWqqZrf5jNW+friRF6DnorOwLX4=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1upjkL-0005nk-8T;
-	Sat, 23 Aug 2025 08:37:09 +0000
+	id 1upjsO-0008PX-60;
+	Sat, 23 Aug 2025 08:45:28 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1upjkJ-0005nV-Qq
+ (envelope-from <chao@kernel.org>) id 1upjs3-0008MC-W5
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 23 Aug 2025 08:37:07 +0000
+ Sat, 23 Aug 2025 08:45:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cRLE+83IYW2xhH/6y4p6XhRmKZRGNvvBkGPL/G7ZfSI=; b=hjeMwbe70sKzir0jQLauL+C5qC
- QHX71wFSURtsvflrfbNJT7TBluDWGlrAQ/bWT/Gy+pjW3J/yC8G9zcuC8qAA0PIsOHtHdw72tuh3N
- eheUdPmdhQJAE4ncswm3HUGLKyzZo6lHvTnIT4OIidotNh2igK1PMgrOA9cjB0HtEKrM=;
+ bh=M0jhDvF/CT26D83R60EJsZzg6z1iATR3Ji5gqZpYzC4=; b=E+MlY5scaoyg13/RQy1p3qk5Ev
+ n9nJE3vtPQV8K+jeHIC4PXu8fHOY1kKe4LYUHCLECCRSW1HGpL4heqanTFhTBtQUz1rEnceeRHTlR
+ Q+Aj4hSkc5N/dGmwOW8XXPSu2HMrFwy4iU9UxX/S/RqS4xtMj7cBW20yBwZkxGEatTSU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=cRLE+83IYW2xhH/6y4p6XhRmKZRGNvvBkGPL/G7ZfSI=; b=K
- A9rDyR5qydfrC1yUsghs32Sk862E1cGXLc/bic8cqtfpsb1+6Mk6NZlz8/GuWEDlvCrr8Jl1LjFly
- pP11hWeaBorQE1P4OMY6o6eONRG68dELETmVfIE96qHEkOPO7d5LlWu+Gceoyl1FTATQPeTVPLRVo
- NbnsafUB6YGGUnz4=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=M0jhDvF/CT26D83R60EJsZzg6z1iATR3Ji5gqZpYzC4=; b=hnuqJ+pTsJ+OOho6Dn1TspmeoU
+ 97XVrfuNiS0JkPqywg886lfgkFAptSQ8mHp3L+Zdc2VT+k5jXoJ2ZdXYHa3EAQ0ktXn4eNYkm0yun
+ P9BtKrXjcGRBn0MuKsgRN9eNwt+QogFiIbC+rIyi8GfgmgzaY60yUgL/8agA8JHZ2/MQ=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1upjkJ-0000FL-2I for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 23 Aug 2025 08:37:07 +0000
+ id 1upjs3-0001Ou-9g for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 23 Aug 2025 08:45:07 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 68DE460243;
- Sat, 23 Aug 2025 08:36:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B9BAC4CEE7;
- Sat, 23 Aug 2025 08:36:54 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTP id DF7595C2720;
+ Sat, 23 Aug 2025 08:45:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3A85C4CEE7;
+ Sat, 23 Aug 2025 08:44:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1755938216;
- bh=pEXIJRsKWMgfwe7mP0cGm5NGO0n6J1mDZ42J7yTw1Ws=;
- h=From:To:Cc:Subject:Date:From;
- b=npLmb3i0i0FmfVbQPF/fTAqDUSJLcEWU2RNp+rO3wBIQuZoNGehjPjlkqCXCS5NaV
- G+CXcAM0b98eriPXWSO+TZolMsJZLmt1W+1hDDAmGj8u5iPodoUI99voqLYspunXnl
- m6hBY0M1ajBVl5+3/a/FF6W5XFOku0xs8A7+kC8AD2P7u9lKn8K0LlL6HXNNrXUsA9
- yN7zsi6RhSz4NIS//tvj61uoJLXY8KKRg6pud3oZrKNfS9AHQ6j7f2tMVwA4bRclj0
- +ks0cW1U/3GbvtOf/DRV/DhL/XiO0lnqwqj+Y+ycCFhLWVXIUDkLzRjmKP9Am8h8WJ
- +SzY+tHMGyzOw==
-To: jaegeuk@kernel.org
-Date: Sat, 23 Aug 2025 13:45:34 +0800
-Message-Id: <20250823054534.41037-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ s=k20201202; t=1755938701;
+ bh=3ChhdxgBY1t4EUIcbTAY3hW36/kaApvdTgZ+gvLjtnQ=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=WRz+K1sLVmqExK0PkZ8WTGd4p9mvmV6oxoosYMRAm8dRw4PT+GdrGLeVo6Qk9W/nj
+ BdMOCEa0l0tnu+x2kYLegVu7IgRUy04sF9uV7SyxPEkUMWzRqZRk+6AtvztCp7GGRZ
+ uyAfCBlIPdw9wGKP+T6nHTdZMrIyuDABlhcM5I0dv2Bx89qIjDuO5J5Cjik/RcruE0
+ TfCsx5lvvxW7hfRlWU84gVv4JGYu+vkHDoI8Sl1EdtAGW11+MS+vAJr0nePavR56Lo
+ UW0qPLPk8dmYwri4I0cnVoxkhLT5HbplSFcZZxCTURtsILC4J8gkgQ9qY1K4RteY67
+ r/Noxp/rSKnEA==
+Message-ID: <69bafc73-d147-4e7d-939d-4b99e68e0678@kernel.org>
+Date: Sat, 23 Aug 2025 16:44:58 +0800
 MIME-Version: 1.0
-X-Headers-End: 1upjkJ-0000FL-2I
-Subject: [f2fs-dev] [PATCH] f2fs: fix to do sanity check on node footer for
- non inode dnode
+User-Agent: Mozilla Thunderbird
+To: Hillf Danton <hdanton@sina.com>
+References: <20250822222346.5267-1-hdanton@sina.com>
+Content-Language: en-US
+In-Reply-To: <20250822222346.5267-1-hdanton@sina.com>
+X-Headers-End: 1upjs3-0001Ou-9g
+Subject: Re: [f2fs-dev] [syzbot] [f2fs?] INFO: task hung in f2fs_llseek
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,250 +88,146 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: syzbot+b9c7ffd609c3f09416ab@syzkaller.appspotmail.com, stable@kernel.org,
+Cc: syzkaller-bugs@googlegroups.com,
+ syzbot <syzbot+942fb6ce3ac2843a1420@syzkaller.appspotmail.com>,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-As syzbot reported below:
+On 8/23/2025 6:23 AM, Hillf Danton wrote:
+>> Date: Fri, 22 Aug 2025 11:56:27 -0700
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    3957a5720157 Merge tag 'cgroup-for-6.17-rc2-fixes' of git:..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=13e20c42580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=942fb6ce3ac2843a1420
+>> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17db07bc580000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f62a34580000
+>>
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/c5cbe8650b9a/disk-3957a572.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/51911bea9855/vmlinux-3957a572.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/b07279b5fcc2/bzImage-3957a572.xz
+>> mounted in repro: https://storage.googleapis.com/syzbot-assets/f35e0e9a079a/mount_0.gz
+>>    fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=10a5dfa2580000)
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+942fb6ce3ac2843a1420@syzkaller.appspotmail.com
+>>
+>> INFO: task syz.1.23:6086 blocked for more than 143 seconds.
+>>        Tainted: G        W           syzkaller #0
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>> task:syz.1.23        state:D stack:29352 pid:6086  tgid:6081  ppid:6062   task_flags:0x400040 flags:0x00004004
+>> Call Trace:
+>>   <TASK>
+>>   context_switch kernel/sched/core.c:5357 [inline]
+>>   __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
+>>   __schedule_loop kernel/sched/core.c:7043 [inline]
+>>   rt_mutex_schedule+0x77/0xf0 kernel/sched/core.c:7339
+>>   rt_mutex_slowlock_block kernel/locking/rtmutex.c:1647 [inline]
+>>   __rt_mutex_slowlock kernel/locking/rtmutex.c:1721 [inline]
+>>   __rt_mutex_slowlock_locked+0x1e04/0x25e0 kernel/locking/rtmutex.c:1760
+>>   __rwbase_read_lock+0xbc/0x180 kernel/locking/rwbase_rt.c:114
+>>   rwbase_read_lock kernel/locking/rwbase_rt.c:147 [inline]
+>>   __down_read kernel/locking/rwsem.c:1466 [inline]
+>>   down_read+0x127/0x1f0 kernel/locking/rwsem.c:1539
+>>   inode_lock_shared include/linux/fs.h:884 [inline]
+>>   f2fs_seek_block fs/f2fs/file.c:458 [inline]
+>>   f2fs_llseek+0x1e5/0x1840 fs/f2fs/file.c:545
+>>   vfs_llseek fs/read_write.c:389 [inline]
+>>   ksys_lseek fs/read_write.c:402 [inline]
+>>   __do_sys_lseek fs/read_write.c:412 [inline]
+>>   __se_sys_lseek fs/read_write.c:410 [inline]
+>>   __x64_sys_lseek+0x155/0x1f0 fs/read_write.c:410
+>>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>   do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> RIP: 0033:0x7f7c9077ebe9
+>> RSP: 002b:00007f7c8fdcd038 EFLAGS: 00000246 ORIG_RAX: 0000000000000008
+>> RAX: ffffffffffffffda RBX: 00007f7c909a6090 RCX: 00007f7c9077ebe9
+>> RDX: 0000000000000004 RSI: 0000000000000008 RDI: 0000000000000004
+>> RBP: 00007f7c90801e19 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+>> R13: 00007f7c909a6128 R14: 00007f7c909a6090 R15: 00007fffeb5fe138
+>>   </TASK>
+>> INFO: lockdep is turned off.
+>> NMI backtrace for cpu 1
+>> CPU: 1 UID: 0 PID: 39 Comm: khungtaskd Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)}
+>> Tainted: [W]=WARN
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+>> Call Trace:
+>>   <TASK>
+>>   dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>>   nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+>>   nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+>>   trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+>>   check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
+>>   watchdog+0xf93/0xfe0 kernel/hung_task.c:491
+>>   kthread+0x70e/0x8a0 kernel/kthread.c:463
+>>   ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+>>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>>   </TASK>
+>> Sending NMI from CPU 1 to CPUs 0:
+>> NMI backtrace for cpu 0
+>> CPU: 0 UID: 0 PID: 6274 Comm: syz.3.43 Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)}
+>> Tainted: [W]=WARN
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+>> RIP: 0010:unwind_next_frame+0x175d/0x2390 arch/x86/kernel/unwind_orc.c:648
+>> Code: 28 84 c0 0f 85 19 0b 00 00 48 89 d0 48 c1 e8 03 0f b6 04 28 84 c0 0f 85 2b 0b 00 00 48 0f bf 03 49 01 c4 49 8d 56 40 4c 89 f7 <4c> 89 e6 eb 5d 49 8d 5e 40 48 89 d8 48 c1 e8 03 80 3c 28 00 74 08
+>> RSP: 0018:ffffc90003b06438 EFLAGS: 00000283
+>> RAX: fffffffffffffff0 RBX: ffffffff8fd32106 RCX: 0000000000000000
+>> RDX: ffffc90003b06548 RSI: 0000000000000001 RDI: ffffc90003b06508
+>> RBP: dffffc0000000000 R08: ffffc90003b06567 R09: 0000000000000000
+>> R10: ffffc90003b06558 R11: fffff52000760cad R12: ffffc90003b069d0
+>> R13: ffffc90003b06558 R14: ffffc90003b06508 R15: 1ffffffff1fa6421
+>> FS:  00007f0008c3c6c0(0000) GS:ffff8881268c4000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 00007f8cae82bf98 CR3: 000000005b1bc000 CR4: 00000000003526f0
+>> Call Trace:
+>>   <TASK>
+>>   arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
+>>   stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
+>>   kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
+>>   kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
+>>   slab_free_hook mm/slub.c:2378 [inline]
+>>   slab_free mm/slub.c:4680 [inline]
+>>   kmem_cache_free+0x3ef/0x510 mm/slub.c:4782
+>>   f2fs_read_end_io+0x398/0x9d0 fs/f2fs/data.c:-1
+>>   f2fs_submit_page_read+0x116/0x190 fs/f2fs/data.c:1110
+>>   f2fs_get_read_data_folio+0x4a4/0x7d0 fs/f2fs/data.c:1268
+>>   gc_data_segment fs/f2fs/gc.c:1641 [inline]
+>>   do_garbage_collect+0x3898/0x6410 fs/f2fs/gc.c:1826
+>>   f2fs_gc+0xca9/0x2580 fs/f2fs/gc.c:1931
+>>   f2fs_balance_fs+0x5fb/0x7f0 fs/f2fs/segment.c:466
+>>   f2fs_map_blocks+0x345f/0x4130 fs/f2fs/data.c:1792
+>>   f2fs_expand_inode_data+0x5b1/0xa60 fs/f2fs/file.c:1923
+>>   f2fs_fallocate+0x4f8/0x990 fs/f2fs/file.c:2026
+> 
+> This report complains that it took more than 100s for f2fs_fallocate() to
+> complete after locking inode [1], right?
 
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/file.c:1243!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5354 Comm: syz.0.0 Not tainted 6.17.0-rc1-syzkaller-00211-g90d970cade8e #0 PREEMPT(full)
-RIP: 0010:f2fs_truncate_hole+0x69e/0x6c0 fs/f2fs/file.c:1243
-Call Trace:
- <TASK>
- f2fs_punch_hole+0x2db/0x330 fs/f2fs/file.c:1306
- f2fs_fallocate+0x546/0x990 fs/f2fs/file.c:2018
- vfs_fallocate+0x666/0x7e0 fs/open.c:342
- ksys_fallocate fs/open.c:366 [inline]
- __do_sys_fallocate fs/open.c:371 [inline]
- __se_sys_fallocate fs/open.c:369 [inline]
- __x64_sys_fallocate+0xc0/0x110 fs/open.c:369
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1e65f8ebe9
+I guess so, seems f2fs_gc() was blocked or in a deadloop somehow.
 
-w/ a fuzzed image, f2fs may encounter panic due to it detects inconsistent
-truncation range in direct node in f2fs_truncate_hole().
+Thanks,
 
-The root cause is: a non-inode dnode may has the same footer.ino and
-footer.nid, so the dnode will be parsed as an inode, then ADDRS_PER_PAGE()
-may return wrong blkaddr count which may be 923 typically, by chance,
-dn.ofs_in_node is equal to 923, then count can be calculated to 0 in below
-statement, later it will trigger panic w/ f2fs_bug_on(, count == 0 || ...).
-
-	count = min(end_offset - dn.ofs_in_node, pg_end - pg_start);
-
-This patch introduces a new node_type NODE_TYPE_NON_INODE, then allowing
-passing the new_type to sanity_check_node_footer in f2fs_get_node_folio()
-to detect corruption that a non-inode dnode has the same footer.ino and
-footer.nid.
-
-Scripts to reproduce:
-mkfs.f2fs -f /dev/vdb
-mount /dev/vdb /mnt/f2fs
-touch /mnt/f2fs/foo
-touch /mnt/f2fs/bar
-dd if=/dev/zero of=/mnt/f2fs/foo bs=1M count=8
-umount /mnt/f2fs
-inject.f2fs --node --mb i_nid --nid 4 --idx 0 --val 5 /dev/vdb
-mount /dev/vdb /mnt/f2fs
-xfs_io /mnt/f2fs/foo -c "fpunch 6984k 4k"
-
-Cc: stable@kernel.org
-Reported-by: syzbot+b9c7ffd609c3f09416ab@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-f2fs-devel/68a68e27.050a0220.1a3988.0002.GAE@google.com
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/f2fs.h     |  4 +++-
- fs/f2fs/gc.c       |  4 ++--
- fs/f2fs/node.c     | 58 +++++++++++++++++++++++++++++++---------------
- fs/f2fs/node.h     |  1 +
- fs/f2fs/recovery.c |  2 +-
- 5 files changed, 46 insertions(+), 23 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1e3d0f6d1d4c..bba9ff617ea6 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3817,6 +3817,7 @@ void f2fs_hash_filename(const struct inode *dir, struct f2fs_filename *fname);
-  * node.c
-  */
- struct node_info;
-+enum node_type;
- 
- int f2fs_check_nid_range(struct f2fs_sb_info *sbi, nid_t nid);
- bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type);
-@@ -3839,7 +3840,8 @@ int f2fs_remove_inode_page(struct inode *inode);
- struct folio *f2fs_new_inode_folio(struct inode *inode);
- struct folio *f2fs_new_node_folio(struct dnode_of_data *dn, unsigned int ofs);
- void f2fs_ra_node_page(struct f2fs_sb_info *sbi, nid_t nid);
--struct folio *f2fs_get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid);
-+struct folio *f2fs_get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
-+						enum node_type node_type);
- struct folio *f2fs_get_inode_folio(struct f2fs_sb_info *sbi, pgoff_t ino);
- struct folio *f2fs_get_xnode_folio(struct f2fs_sb_info *sbi, pgoff_t xnid);
- int f2fs_move_node_folio(struct folio *node_folio, int gc_type);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index b57b8fd64747..ed3acbfc83ca 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1071,7 +1071,7 @@ static int gc_node_segment(struct f2fs_sb_info *sbi,
- 		}
- 
- 		/* phase == 2 */
--		node_folio = f2fs_get_node_folio(sbi, nid);
-+		node_folio = f2fs_get_node_folio(sbi, nid, NODE_TYPE_REGULAR);
- 		if (IS_ERR(node_folio))
- 			continue;
- 
-@@ -1145,7 +1145,7 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 	nid = le32_to_cpu(sum->nid);
- 	ofs_in_node = le16_to_cpu(sum->ofs_in_node);
- 
--	node_folio = f2fs_get_node_folio(sbi, nid);
-+	node_folio = f2fs_get_node_folio(sbi, nid, NODE_TYPE_REGULAR);
- 	if (IS_ERR(node_folio))
- 		return false;
- 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 109bc8898bc6..68d210f7798a 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -876,7 +876,8 @@ int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
- 		}
- 
- 		if (!done) {
--			nfolio[i] = f2fs_get_node_folio(sbi, nids[i]);
-+			nfolio[i] = f2fs_get_node_folio(sbi, nids[i],
-+						NODE_TYPE_NON_INODE);
- 			if (IS_ERR(nfolio[i])) {
- 				err = PTR_ERR(nfolio[i]);
- 				f2fs_folio_put(nfolio[0], false);
-@@ -994,7 +995,7 @@ static int truncate_dnode(struct dnode_of_data *dn)
- 		return 1;
- 
- 	/* get direct node */
--	folio = f2fs_get_node_folio(sbi, dn->nid);
-+	folio = f2fs_get_node_folio(sbi, dn->nid, NODE_TYPE_NON_INODE);
- 	if (PTR_ERR(folio) == -ENOENT)
- 		return 1;
- 	else if (IS_ERR(folio))
-@@ -1038,7 +1039,8 @@ static int truncate_nodes(struct dnode_of_data *dn, unsigned int nofs,
- 
- 	trace_f2fs_truncate_nodes_enter(dn->inode, dn->nid, dn->data_blkaddr);
- 
--	folio = f2fs_get_node_folio(F2FS_I_SB(dn->inode), dn->nid);
-+	folio = f2fs_get_node_folio(F2FS_I_SB(dn->inode), dn->nid,
-+						NODE_TYPE_NON_INODE);
- 	if (IS_ERR(folio)) {
- 		trace_f2fs_truncate_nodes_exit(dn->inode, PTR_ERR(folio));
- 		return PTR_ERR(folio);
-@@ -1116,7 +1118,8 @@ static int truncate_partial_nodes(struct dnode_of_data *dn,
- 	/* get indirect nodes in the path */
- 	for (i = 0; i < idx + 1; i++) {
- 		/* reference count'll be increased */
--		folios[i] = f2fs_get_node_folio(F2FS_I_SB(dn->inode), nid[i]);
-+		folios[i] = f2fs_get_node_folio(F2FS_I_SB(dn->inode), nid[i],
-+							NODE_TYPE_NON_INODE);
- 		if (IS_ERR(folios[i])) {
- 			err = PTR_ERR(folios[i]);
- 			idx = i - 1;
-@@ -1501,21 +1504,37 @@ static int sanity_check_node_footer(struct f2fs_sb_info *sbi,
- 					struct folio *folio, pgoff_t nid,
- 					enum node_type ntype)
- {
--	if (unlikely(nid != nid_of_node(folio) ||
--		(ntype == NODE_TYPE_INODE && !IS_INODE(folio)) ||
--		(ntype == NODE_TYPE_XATTR &&
--		!f2fs_has_xattr_block(ofs_of_node(folio))) ||
--		time_to_inject(sbi, FAULT_INCONSISTENT_FOOTER))) {
--		f2fs_warn(sbi, "inconsistent node block, node_type:%d, nid:%lu, "
--			  "node_footer[nid:%u,ino:%u,ofs:%u,cpver:%llu,blkaddr:%u]",
--			  ntype, nid, nid_of_node(folio), ino_of_node(folio),
--			  ofs_of_node(folio), cpver_of_node(folio),
--			  next_blkaddr_of_node(folio));
--		set_sbi_flag(sbi, SBI_NEED_FSCK);
--		f2fs_handle_error(sbi, ERROR_INCONSISTENT_FOOTER);
--		return -EFSCORRUPTED;
-+	if (unlikely(nid != nid_of_node(folio)))
-+		goto out_err;
-+
-+	switch (ntype) {
-+	case NODE_TYPE_INODE:
-+		if (!IS_INODE(folio))
-+			goto out_err;
-+		break;
-+	case NODE_TYPE_XATTR:
-+		if (!f2fs_has_xattr_block(ofs_of_node(folio)))
-+			goto out_err;
-+		break;
-+	case NODE_TYPE_NON_INODE:
-+		if (IS_INODE(folio))
-+			goto out_err;
-+		break;
-+	default:
-+		break;
- 	}
-+	if (time_to_inject(sbi, FAULT_INCONSISTENT_FOOTER))
-+		goto out_err;
- 	return 0;
-+out_err:
-+	f2fs_warn(sbi, "inconsistent node block, node_type:%d, nid:%lu, "
-+		  "node_footer[nid:%u,ino:%u,ofs:%u,cpver:%llu,blkaddr:%u]",
-+		  ntype, nid, nid_of_node(folio), ino_of_node(folio),
-+		  ofs_of_node(folio), cpver_of_node(folio),
-+		  next_blkaddr_of_node(folio));
-+	set_sbi_flag(sbi, SBI_NEED_FSCK);
-+	f2fs_handle_error(sbi, ERROR_INCONSISTENT_FOOTER);
-+	return -EFSCORRUPTED;
- }
- 
- static struct folio *__get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
-@@ -1572,9 +1591,10 @@ static struct folio *__get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
- 	return ERR_PTR(err);
- }
- 
--struct folio *f2fs_get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid)
-+struct folio *f2fs_get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
-+						enum node_type node_type)
- {
--	return __get_node_folio(sbi, nid, NULL, 0, NODE_TYPE_REGULAR);
-+	return __get_node_folio(sbi, nid, NULL, 0, node_type);
- }
- 
- struct folio *f2fs_get_inode_folio(struct f2fs_sb_info *sbi, pgoff_t ino)
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 030390543b54..9cb8dcf8d417 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -57,6 +57,7 @@ enum node_type {
- 	NODE_TYPE_REGULAR,
- 	NODE_TYPE_INODE,
- 	NODE_TYPE_XATTR,
-+	NODE_TYPE_NON_INODE,
- };
- 
- /*
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 842b2daffa85..870b68c2c032 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -548,7 +548,7 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
- 	}
- 
- 	/* Get the node page */
--	node_folio = f2fs_get_node_folio(sbi, nid);
-+	node_folio = f2fs_get_node_folio(sbi, nid, NODE_TYPE_REGULAR);
- 	if (IS_ERR(node_folio))
- 		return PTR_ERR(node_folio);
- 
--- 
-2.40.1
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/f2fs/file.c#n1991
+> 
+>>   vfs_fallocate+0x672/0x7f0 fs/open.c:342
+>>   ioctl_preallocate fs/ioctl.c:290 [inline]
+>>   file_ioctl+0x61d/0x780 fs/ioctl.c:-1
+>>   do_vfs_ioctl+0xb36/0x1440 fs/ioctl.c:577
+>>   __do_sys_ioctl fs/ioctl.c:596 [inline]
+>>   __se_sys_ioctl+0x82/0x170 fs/ioctl.c:584
+>>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>   do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
 
 
