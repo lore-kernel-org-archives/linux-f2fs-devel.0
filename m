@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AB465CA0EED
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C12B0CA0EFF
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 25 Aug 2025 01:56:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,29 +12,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=PzmK+bYvhzQkRB8ugctrkovck/LVn/ww4+dsnSXtz/4=; b=htWr7pMtvmO72ir83cQPUr76Cd
-	ctvhbQIS3k+K0bdvIFVFxu912x8rocNvPejM3cQ8Q8G5dq4Dl5lvVz59T0Ra7HpN85/+uLNzpEzML
-	/ziL0kBLrLIQTxTf4XxPtJPhMB2nMeXHdk8JhruNKg6GbgzdeubcrynoZKQPEolDjPIg=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=HVmlGqnhaETabdxIEo1Halspig3gA9qsi0B2ZqmNgHo=; b=gqYTKm7RljQJqYlLtqV9PEUFGO
+	laxWxu0LBbMk7JExdKecaSBXK+x+b//LUwwJoDWcqR4xtT+RJhP5mtLrcDqN0DbWXSaoz9/hHUHoU
+	tj4lQ+NEqU7+wlYFnzf8dCteec+ux2RVcKAvUApoeVZVkb85Zi1+1YqmQWFeOvFybCSE=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uqMRU-0007TB-8m;
-	Mon, 25 Aug 2025 01:56:16 +0000
+	id 1uqMRU-000401-TD;
+	Mon, 25 Aug 2025 01:56:17 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uqMRS-0007T5-S4
+ (envelope-from <shengyong2021@gmail.com>) id 1uqMRS-0003zl-Ue
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 25 Aug 2025 01:56:14 +0000
+ Mon, 25 Aug 2025 01:56:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nlj+k/R/UR32l62u4VVQNzlAoc95P52L4kB0ydPemJU=; b=id+p8krjYduf+N56CUcLw3a07u
- 6yCY/SfEfJaR8FSMjjSvqOZ9QN0pB29k86F9wIGl3fCqNQ5kbmQsaurG07XzMLTIxAZTCE31C7NaS
- BIAYPXMjW529Tp60z+KnMbogOZGeWpGJy9B3ymnuozEsKLAM3iXu99HVjLDkb7GoexNk=;
+ bh=ewsJv9L9UxB9lCqBAppmzYWrTvuTQARSd8m0wCeMyZU=; b=VxGEa0ZMQF+pQ0aayS1BW+skPJ
+ xTd3LtiPvTzXISk1Rh55thkzcIL3NuLDewFLd8UwdzuMbtKt9ZxeABaJWeTKSyQDhj22tL5kCsZ6f
+ APeKboBUg33UQspsORp3DL3uWW7yWgWJO1aKbuDVddbOT6Nng/Swfaur02w3WK4KbaxE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,72 +42,72 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=nlj+k/R/UR32l62u4VVQNzlAoc95P52L4kB0ydPemJU=; b=Wm9p2pZvf3us0sUx+Ve7oGrxwx
- cAZOPO5HSd1Q/vZRTHih8Kg1xVrdi7is3ElkVswBPsjkBfMv3k8RfjqevthE1VzuZds0hMGdyHcfb
- w7U9sXA5c6IYwkRur20OhT4oYR2s52bNhp3lC4/TnuM+u6d01BBGeUEEnHTOkkOP7qcQ=;
-Received: from mail-pg1-f181.google.com ([209.85.215.181])
+ bh=ewsJv9L9UxB9lCqBAppmzYWrTvuTQARSd8m0wCeMyZU=; b=lv9DomQ+TVnEhGDIEP35Ahv8Kd
+ TfkL0W+JwY/4wlxf+5vb8xWfiHKAIMYMBZNaXqFwicrGJ5AdUOZQvDnba1T/K9L6DL7xIrN4i3p3N
+ suCUSRK9laO0bFJpwFb4pOZi/W4zge/IPrqqGyMpjbDRfnl7/aORjJ+CMxng7ar+DMUQ=;
+Received: from mail-pj1-f51.google.com ([209.85.216.51])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uqMRS-0002on-BG for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 25 Aug 2025 01:56:14 +0000
-Received: by mail-pg1-f181.google.com with SMTP id
- 41be03b00d2f7-b482fd89b0eso3096081a12.2
+ id 1uqMRT-0002ov-DW for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 25 Aug 2025 01:56:15 +0000
+Received: by mail-pj1-f51.google.com with SMTP id
+ 98e67ed59e1d1-32326e09f58so4527699a91.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 24 Aug 2025 18:56:14 -0700 (PDT)
+ Sun, 24 Aug 2025 18:56:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1756086969; x=1756691769; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1756086965; x=1756691765; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=nlj+k/R/UR32l62u4VVQNzlAoc95P52L4kB0ydPemJU=;
- b=FPchIM4XR+ZrSOL3P+yEKsfdNecK6yxH3RnriKGIiXqL9sUy91vSk7x2QDyR5MHXwg
- KOaHpR3jEu6RKD3EBQZVZM9wlwghIK0piefUWENSqmkNk3S6snvqEgzGHO2+uYbNsbSE
- kQMhisxgljwoqpBOstcwQBSpOrRRBE9IdeQq68xoCq+tR0yoK9mT8THeZYFa4/tUhCbB
- mP5bv/3hfJQgtzXqhm048F+ThpvzyPTHN6E3nl2ZT4rxPszmNwsO0QTWuwAux4QeMd0I
- R5EPib1dT9G9d3qTM7ROVXT6CF+VwfbiX99ATK1hvYuhArA7OIYSZ0SZEBER3KwaMbZJ
- FsQA==
+ bh=ewsJv9L9UxB9lCqBAppmzYWrTvuTQARSd8m0wCeMyZU=;
+ b=jFjGCWqAicZdvnORYAmD5jrt9nXb7Snxny7fEHC8S/4Pl+ycQUie/gAj2hAc8BQZ+W
+ 2WFWAsBdTQyWJ7rstcsYXCkBKvDgUtK7NlyIvYJtTa5O/kqHJO5RcVXp00Bw3GNjaxK2
+ h5X6vb+l57jkc+kuCDgVBXOf6ghyCxtm6rMSnb+CB4Nj3jOGlqtVaI/R2HpZfDzCa+Qf
+ Sw1ImfS+jB8BR0SOhKlOf0QRoyEcN2+4z6sKNhL0b8HofFqr65VTErQjyZDEXo/qrHJa
+ G7iEa2i5SLPjexQn5Umzd9NmT1thwjgB1hyYwzHx0bBGzOp+nCTX6SNm+rUb9KRkoaye
+ Z8pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756086969; x=1756691769;
+ d=1e100.net; s=20230601; t=1756086965; x=1756691765;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=nlj+k/R/UR32l62u4VVQNzlAoc95P52L4kB0ydPemJU=;
- b=dxyvv1BLN8EdmG/ODpbDjzbAHpjmhmrDjN4ReQDaMUdOAzu1AoChElE1zHwruIhzFo
- I8IwmF7Kca+aUIPD74F5RylmJsoqFHyQVbhR6nA4lgRunlpDF8NTyKpR9n7BJfuZHbR8
- cQPzsGXhDyxzS5sIwjYTTsFhYN3vNscT24o1nKOqyfvScur6nf2kXMjs9HC1UxXvjGte
- 3kLDeCMAD43pyUOD/eN6DZkzAQPNEH8qtPv0XLQ4ZrWIRh+GV65/Yi026xRwS1mJgmIw
- nhqrE4BClALE+jL93aNETA/ceeNHujw7QowbKuNjKUAwDvx3UzBl002hO4qAa9Sktp24
- 36RA==
-X-Gm-Message-State: AOJu0YwnSNvfmIugf7FwbweJXEgAwnvcdTItrpiFy2li0BLolWtlIAnq
- GHGMBJ8uNWJLv4yOxW+m7zYKj+qVckajDtgmPNgpmtSpfOwEEMxQ5humpg8WxQ==
-X-Gm-Gg: ASbGnctFVBS8y9jJW3tmohQVqvRDwwS7jLkcWG34aw8Jg+FGEuRk2R2rWRxbUylN+Zn
- a0VvVDL3byOsfDPQPRrDs7nPdjjUKw8zCH5fI1ZYREtZi7eeCZXZcY7xRJiGxEye9xIJOjWfK+W
- oW1FJClwUGsWZHqgdUg3gIRmPiEblhc4Lr9ZLY47ajNUI1pYs9EeRlWVEDFoTYAukj8EbHTxHSj
- y169OaafltvyR74jij8Ujsi87/JbdF1tq7pWcBLlfkMWmJDam/TF/lgoPHKpjeaPJ2Q1k0WFJx5
- HunIjfM9rXbeA9qEJSl+F5ZwtKKlpsZU/mMophZV2j8YGmKYdVL2cYosKLIZYeyVIqEHs1NXNhZ
- joakT3tO1Vf5zWl5PgJt3wJOcZfMeKuz1PA1jKwM=
-X-Google-Smtp-Source: AGHT+IEl1QKXTd4Oz78zNGIPnO62Oqy3llJmtB8HU6IFQAD4yWYSIRu8rZyDs3YJNe0hrhrPG7URCA==
-X-Received: by 2002:a05:6a20:3c89:b0:23d:e0a6:d56e with SMTP id
- adf61e73a8af0-24340cd393dmr15290938637.29.1756086968620; 
- Sun, 24 Aug 2025 18:56:08 -0700 (PDT)
+ bh=ewsJv9L9UxB9lCqBAppmzYWrTvuTQARSd8m0wCeMyZU=;
+ b=K6DsHMHpXMr02niogQwQhsLf+Ip05E/GfrNnV53Za0vKhiMLpALOosVMDX54SudhAO
+ z/XM7TJKMGbSRgml/i4dEHhjTpnZCXtvqewde87wdM0LOi/OzUYBaH2KYa51jTzS5cWO
+ E4Av2Lr8NIrw2SrVTkVte+KKgslKJgdke2vqMrBeiz5E1A1RiuD6PTzFcI2buubrrWD3
+ Ikf2IzwxLkZmrU1DsN0z0wn36OfJsfVTmzGRgLgPX/XD4eO8aQEwlwiUfJhSp6GVcop1
+ g2eCQ8m6zxV8Mjh/xjzi0A9viyc+IAj9GPPB5k0gO1GvZDBQukW/fCd/gAzb++C3kkXH
+ AbBw==
+X-Gm-Message-State: AOJu0YypbrM32TMmjxZjdRi26YXiEpYSaJnfzhddVs7ULibc8OL8gR4l
+ 7cqJ1eYhAoyX677cVtXqKSzGHYDnCMjF4BQ+KPhkZPCKPimMWGHgH3phcb6RHA==
+X-Gm-Gg: ASbGnctX0WofcdK5WUDjRUB/cli4BBBrYPTWWpaYWoayNipaH5BGsyilZqkScv9nZsF
+ 4AVGdFeggyWfWmfTdCZfv3Ajzwp3RbzCRIqdFgpaumrWbOZ/fh/wyNOgdEoe6dCmL+o4uG4wB0B
+ xMfTgmAf8BK+819yDKB9Pw/yIYJZwbduCtAR4sHbQ7V4trcYqcXmOupIGzGPykajF8agdr6cSph
+ 98JU0mfcTv0EVI7P0CB7ZyBk5f4o98r32UFZR8q+FZYFC5HZ7avofTO9w6+NkuBPXGLrTPu6eB3
+ AEPq8Cwd88WeLwfj/BTZB0DaZiisi+Fe5/y6OHnqakwPGSbRxd3IzmzGfCtqdnNht3lU2CiKfgK
+ XEe7/Fyh81mK12z7CN67c8Ow7nSb0
+X-Google-Smtp-Source: AGHT+IGv1ExadPBEB83m2IfiaY2h6XDQ/Cp1DYouwgd7m1bf4MOagRymo4HcBBdF/yvGggjMXE+LEA==
+X-Received: by 2002:a17:90b:17d2:b0:311:f684:d3cd with SMTP id
+ 98e67ed59e1d1-32515ef7240mr14142115a91.12.1756086964658; 
+ Sun, 24 Aug 2025 18:56:04 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b49cb8b1989sm5147883a12.18.2025.08.24.18.56.06
+ 41be03b00d2f7-b49cb8b1989sm5147883a12.18.2025.08.24.18.56.02
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 24 Aug 2025 18:56:08 -0700 (PDT)
+ Sun, 24 Aug 2025 18:56:04 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Mon, 25 Aug 2025 09:54:45 +0800
-Message-ID: <20250825015455.3826644-4-shengyong1@xiaomi.com>
+Date: Mon, 25 Aug 2025 09:54:43 +0800
+Message-ID: <20250825015455.3826644-2-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250825015455.3826644-1-shengyong1@xiaomi.com>
 References: <20250825015455.3826644-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uqMRS-0002on-BG
-Subject: [f2fs-dev] [PATCH v4 03/13] f2fs-tools: cleanup
- {nid|segno}_in_journal
+X-Headers-End: 1uqMRT-0002ov-DW
+Subject: [f2fs-dev] [PATCH v4 01/13] fsck.f2fs: do not finish/reset zone if
+ dry-run is true
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -129,93 +129,40 @@ From: Sheng Yong <shengyong1@xiaomi.com>
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 Reviewed-by: Chao Yu <chao@kernel.org>
 ---
- fsck/f2fs.h  |  4 ++--
- fsck/mount.c | 14 +++++++-------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ lib/libf2fs_zoned.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index 187e73cf9aec..4c6c0c48b9ee 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -504,9 +504,9 @@ struct fsync_inode_entry {
- #define sits_in_cursum(jnl)             (le16_to_cpu(jnl->n_sits))
+diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
+index 6730bba0da82..92791a768807 100644
+--- a/lib/libf2fs_zoned.c
++++ b/lib/libf2fs_zoned.c
+@@ -429,7 +429,7 @@ int f2fs_reset_zone(int i, void *blkzone)
+ 	struct blk_zone_range range;
+ 	int ret;
  
- #define nat_in_journal(jnl, i)          (jnl->nat_j.entries[i].ne)
--#define nid_in_journal(jnl, i)          (jnl->nat_j.entries[i].nid)
-+#define nid_in_journal(jnl, i)          (le32_to_cpu(jnl->nat_j.entries[i].nid))
- #define sit_in_journal(jnl, i)          (jnl->sit_j.entries[i].se)
--#define segno_in_journal(jnl, i)        (jnl->sit_j.entries[i].segno)
-+#define segno_in_journal(jnl, i)        (le32_to_cpu(jnl->sit_j.entries[i].segno))
+-	if (!blk_zone_seq(blkz) || blk_zone_empty(blkz))
++	if (!blk_zone_seq(blkz) || blk_zone_empty(blkz) || c.dry_run)
+ 		return 0;
  
- #define SIT_ENTRY_OFFSET(sit_i, segno)                                  \
- 	((segno) % sit_i->sents_per_block)
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 5399f16c6bf0..1fe2b110942b 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1694,7 +1694,7 @@ static int f2fs_early_init_nid_bitmap(struct f2fs_sb_info *sbi)
- 			continue;
- 		}
+ 	/* Non empty sequential zone: reset */
+@@ -484,7 +484,7 @@ int f2fs_reset_zones(int j)
+ 		blkz = (struct blk_zone *)(rep + 1);
+ 		for (i = 0; i < rep->nr_zones && sector < total_sectors; i++) {
+ 			if (blk_zone_seq(blkz) &&
+-			    !blk_zone_empty(blkz)) {
++			    !blk_zone_empty(blkz) && !c.dry_run) {
+ 				/* Non empty sequential zone: reset */
+ 				range.sector = blk_zone_sector(blkz);
+ 				range.nr_sectors = blk_zone_length(blkz);
+@@ -513,7 +513,7 @@ int f2fs_finish_zone(int i, void *blkzone)
+ 	struct blk_zone_range range;
+ 	int ret;
  
--		nid = le32_to_cpu(nid_in_journal(journal, i));
-+		nid = nid_in_journal(journal, i);
- 		if (!IS_VALID_NID(sbi, nid)) {
- 			MSG(0, "\tError: f2fs_init_nid_bitmap: nid(%u) is invalid!!!\n", nid);
- 			journal->n_nats = cpu_to_le16(i);
-@@ -2573,7 +2573,7 @@ void update_nat_blkaddr(struct f2fs_sb_info *sbi, nid_t ino,
- 	int ret, i;
+-	if (!blk_zone_seq(blkz) || !blk_zone_open(blkz))
++	if (!blk_zone_seq(blkz) || !blk_zone_open(blkz) || c.dry_run)
+ 		return 0;
  
- 	for (i = 0; i < nats_in_cursum(journal); i++) {
--		if (le32_to_cpu(nid_in_journal(journal, i)) == nid) {
-+		if (nid_in_journal(journal, i) == nid) {
- 			entry = &nat_in_journal(journal, i);
- 			entry->block_addr = cpu_to_le32(newaddr);
- 			if (ino)
-@@ -2677,7 +2677,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 	}
- 
- 	for (i = 0; i < sits_in_cursum(journal); i++) {
--		segno = le32_to_cpu(segno_in_journal(journal, i));
-+		segno = segno_in_journal(journal, i);
- 
- 		if (segno >= MAIN_SEGS(sbi)) {
- 			MSG(0, "\tError: build_sit_entries: segno(%u) is invalid!!!\n", segno);
-@@ -2883,7 +2883,7 @@ next:
- 		return i;
- 	}
- 
--	nid = le32_to_cpu(nid_in_journal(journal, i));
-+	nid = nid_in_journal(journal, i);
- 
- 	entry_off = nid % NAT_ENTRY_PER_BLOCK;
- 	block_addr = current_nat_addr(sbi, nid, NULL);
-@@ -3282,7 +3282,7 @@ int lookup_nat_in_journal(struct f2fs_sb_info *sbi, u32 nid,
- 	int i = 0;
- 
- 	for (i = 0; i < nats_in_cursum(journal); i++) {
--		if (le32_to_cpu(nid_in_journal(journal, i)) == nid) {
-+		if (nid_in_journal(journal, i) == nid) {
- 			memcpy(raw_nat, &nat_in_journal(journal, i),
- 						sizeof(struct f2fs_nat_entry));
- 			DBG(3, "==> Found nid [0x%x] in nat cache\n", nid);
-@@ -3307,7 +3307,7 @@ void nullify_nat_entry(struct f2fs_sb_info *sbi, u32 nid)
- 
- 	/* check in journal */
- 	for (i = 0; i < nats_in_cursum(journal); i++) {
--		if (le32_to_cpu(nid_in_journal(journal, i)) == nid) {
-+		if (nid_in_journal(journal, i) == nid) {
- 			memset(&nat_in_journal(journal, i), 0,
- 					sizeof(struct f2fs_nat_entry));
- 			FIX_MSG("Remove nid [0x%x] in nat journal", nid);
-@@ -3611,7 +3611,7 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
- 	/* Traverse nat journal, update the corresponding entries */
- 	for (i = 0; i < nats_in_cursum(journal); i++) {
- 		struct f2fs_nat_entry raw_nat;
--		nid = le32_to_cpu(nid_in_journal(journal, i));
-+		nid = nid_in_journal(journal, i);
- 		ni.nid = nid;
- 
- 		DBG(3, "==> Found nid [0x%x] in nat cache, update it\n", nid);
+ 	/* Non empty sequential zone: finish */
 -- 
 2.43.0
 
