@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5C6A7CA0FE1
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 25 Aug 2025 01:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 96807CA0EFF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 25 Aug 2025 01:56:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=3onjLHF8XeVWsZn/hh+WwDfjUy9VvFkNL0c1ANct39M=; b=Fm5jZ664HaCRzsKO5RvhxIKukN
-	fGk0Roogw+T7BEzRkH0lU9nQPw++vLVf/novl83sxyzquEHuYPfDX8v6n6olfq/poFLK9I2eD1ZLX
-	Bk3CXRY3n0N34zegjDTbTWAEnP+BHnjx3EYoIWeByUaLpHNYSgn7zU/0gEGCLyaRTgSA=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=8FHTjnhZVr7dYhzpeZsWnb40HmSoDNhvPQFIMv/heBs=; b=JsyOlT+OAue9rDyq1gsQE82SM2
+	jl2aFSZMP/WVnaoA3NCvHVvCeuNWNmGqOnu3xbW2JV0h2s0AFO8U/negAVZuvTViawWbFuU1NFQ7s
+	0TG/rFnKT3AaX8ZQgs6bSHlZTozbeEpHG2QbdfkBP1VxBGL0rs3Ix6/EWjFTP9ytgjhQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uqMRe-0007UJ-2L;
-	Mon, 25 Aug 2025 01:56:26 +0000
+	id 1uqMRf-0004ZY-9s;
+	Mon, 25 Aug 2025 01:56:27 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong2021@gmail.com>) id 1uqMRc-0007U6-M0
+ (envelope-from <shengyong2021@gmail.com>) id 1uqMRb-0004ZR-Ta
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 25 Aug 2025 01:56:24 +0000
+ Mon, 25 Aug 2025 01:56:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=c4+Ogxb8p/Ttt//jYnUTFmxPbRhsG2H2JzkQcUoAVHo=; b=hgTLB8s02JYYMtf3iRzXNVy2TR
- ca/nJJinHTqxpOApj6E0ApxuEVZCDmk8TBIdJHGtnK2aThwpYb18MjwjSfV1OR7YbISOwjn+tDFA1
- WXo0krlp8tGwiOCJrmkJh7MBT0JBFNUspTIAp087Mi1mIH+yLL7vc23eqvmQtTDTG79U=;
+ bh=1weaUcKvNE/6g730dU/CYsTgau3ibpm9eJP8OK2bY1c=; b=cEXucvW5EiiuZTnIwQURLoxeFn
+ BtiKOA2+BFfKaqnzo3+xw0nDrf4U7UNKIcX5n9AEkfBUjiCp7YegzYR/qVkMgSpr/i8n17Ijw2VQ0
+ py4umWJ26JvTF6QcnETny1Y9RuId3akSldmgqY+gMsLtNB24VbJ0HCLCJ3fXweCZy68g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,72 +42,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=c4+Ogxb8p/Ttt//jYnUTFmxPbRhsG2H2JzkQcUoAVHo=; b=eAH1qDolwT/4u3uwS7gENnp9ur
- wdffK4O/EMYBKXTEDZCsrq5YpyPXwM3zNLG4TDu5cMlIgSfZ7Kh3daEREEw9KNlQ9tLQiRvqppfyn
- xFWEN6pt854vLf2Gx0A9ZVh6PTuPDDu5yMTKtEQnchOYURiNEnV1L2MsW4XtCKs7ZKdA=;
-Received: from mail-pf1-f182.google.com ([209.85.210.182])
+ bh=1weaUcKvNE/6g730dU/CYsTgau3ibpm9eJP8OK2bY1c=; b=CklOGSVYOhD09KoQWdTNIjx2UB
+ fAxqRuk0MHNFQOsiIFbYvdWv01yqKwhnm1bY1kPyTJXe4nlEuKOzUVtlsI+7pRzjX4FIOVr36rk5Y
+ 0qb7RFtte2RImMjlH+1es+b/GaJ5ihJtw1pNwxc7Zl4KzdTt0eYhXSoaXR9DpRViP2fo=;
+Received: from mail-pf1-f172.google.com ([209.85.210.172])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1uqMRc-0002pe-BI for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 25 Aug 2025 01:56:24 +0000
-Received: by mail-pf1-f182.google.com with SMTP id
- d2e1a72fcca58-76e2ea933b7so3330386b3a.1
+ id 1uqMRb-0002pa-J7 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 25 Aug 2025 01:56:23 +0000
+Received: by mail-pf1-f172.google.com with SMTP id
+ d2e1a72fcca58-76e2eb6d07bso3174362b3a.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 24 Aug 2025 18:56:24 -0700 (PDT)
+ Sun, 24 Aug 2025 18:56:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1756086979; x=1756691779; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1756086973; x=1756691773; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=c4+Ogxb8p/Ttt//jYnUTFmxPbRhsG2H2JzkQcUoAVHo=;
- b=Y5mOpIUwfowz8U6EgVtCavQpHwujcRIqbJH9jF1AJYThgrBEmBfuztfuWJzIlcffT/
- tVrh+BFm/DCsb/X5FYfPDrCyXSoqIN3NeOW5loN6ZHBd/zAOVq2hnl/ldpFkr5/rBOCm
- MD0cdLGg70JV4S4Yr/CeRu1lTPzCwYGi0Cip1Uwuo5BUOtafc6YDbz+2ihXKPBqmjV5e
- SWgqAnZsru4TfQht9kk9wPGVbm2V/oMhrtl6hyJBlmoFhjE5J04QNWJuZK/7q4668L9Y
- wpyx8XfeRYuaiRr/CikNLu/a2fq8N44Vt4eKfIpbXJr5uQEdAtoG2fraCNhA5cTSxumk
- EHEw==
+ bh=1weaUcKvNE/6g730dU/CYsTgau3ibpm9eJP8OK2bY1c=;
+ b=RtKkhKSX7t6i3ksf5aLC7sguSRA6sAVKyluW64nlHfQ/s/6138Ukmk1sKj0J8t4S2o
+ DstkxsdHgtTdJH52v86LlFLs4fhqO+lwoW5e/bM5NCFnoaN6MlaX09h4TJntlgTA2BAp
+ aH4pkU4E5153Y+Bpej5atZpiOLo0ooTTJMNmJiENAvh+Zc7odAtRKX155LP809+AsHzP
+ 8CjqtmyB6tZy8dx5zZSH1jFbYW4FwqCHERVk0GcNtMQnEchzEgLNxPK3C4UvEBFlSsmt
+ 6WOnEgCB9UfbVfqYe3JbffYbhmuXx7zftEA4gLwQmKJvuRw6hnjtN8t3bxkL9MI9A7pR
+ HLHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756086979; x=1756691779;
+ d=1e100.net; s=20230601; t=1756086973; x=1756691773;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=c4+Ogxb8p/Ttt//jYnUTFmxPbRhsG2H2JzkQcUoAVHo=;
- b=onpvI+5tdCmNqidEknKGaKIb9hvJ47XWxTYwviK5A45k0jsbt65ZYPLMfAZgwVdYYj
- iQqNpvSDZ51Owa98u13iVmdNuccRGjNR1bGm7UeN7zGf/tGjFFBzRnSwKi2fXusa+dnq
- JmgGIZsz6Ab/g2Vlo0KC01Gbd1rfVZM7IeoRXyZZmNm2LQp5Feo2LvIzlFH8+CBD6hd0
- Q+XYuUfeQV9mf8LIIQujDYrPHntl8PPPznkjtrnC9XEJX45XXMMnaumy+kfb+HEuYy60
- xSmDskqEMHlSPllWaJtYNQa/zdujqR8YWOKmx8AgVTz6dEZN3R9skn2hem0kH34BDyll
- 86+A==
-X-Gm-Message-State: AOJu0YwHC+Cna/uc6BRJ0gC0CfdKSSuFq5dLxq3z4TJNKYaRjPG/mdf4
- PuT9hpfvpnfSLLEHa0ZdJ0jGibyUlvo+1gocLg4WqxLdS9Xl63Y2kZnL
-X-Gm-Gg: ASbGncuisjWRbKpU9ZiEgladRuk6d3ThNfWLE63rFLNkv0CCfvMaggZbXmII7IrQz7e
- 9Ei9414Gxq4dixrOEUFkHcKKa3H8FisaCh7w7KLuvL1h5UKNvRICEr5YNhPgwzx/7Kqrb/cP3MV
- XYhcXjCfnl+2oR7D38Cmg+7nMGOwcCk21CdyZs+qTcrpU7LLdHl2Rc3LZNFC2+yenuPWETbnH7J
- 3LVjosQgI8J/FBaOyy68ItLePd46S7dHom78mke6nC/HEMYHisDLQvlD6Ar5pfz1jyG3QACwNXw
- 9qsiW+FiWXnSvcE3HsT+TEumN4qY9yg/+XPwUPpQC5v/doe8iBRnjm9wZ0NK1IAKP0q0pO79qeF
- bjKZUJAWdzT7cU3AWqrW99CLSG6PO8689XHg1Yik=
-X-Google-Smtp-Source: AGHT+IG8kWTa1NT7qh6jcm8Z/xo/ig65ajUUshW69Ugr5L4m1hMzSkyjcg0bEVKNVvP/zNid2GYXjQ==
-X-Received: by 2002:a05:6a20:9146:b0:240:8d5:624d with SMTP id
- adf61e73a8af0-2433028be98mr21455105637.15.1756086978643; 
- Sun, 24 Aug 2025 18:56:18 -0700 (PDT)
+ bh=1weaUcKvNE/6g730dU/CYsTgau3ibpm9eJP8OK2bY1c=;
+ b=Ws7GhBr6ljTx1ujFeSIlQALUDK0ELsCKhAJmpygjREpt4JwoSXx0ChlcESUJb2dmX/
+ jnzLcu5UYl/GLrciX5ToHrKdtACvH4tpwiDZuLWDQ3Xdy+DsCxj1Ui6tghH8BQIpX0sf
+ 9bcnPK569MdJHtgWDpR7AWf+qiux4G05VPBei4O56VYTJp8/fQaBZ+pNRXbQGRWAsO20
+ 8I/9JpOBdIynjkZdYrUfz8B08vyWTsfNyCJ2ijemlHuGpw4h05k6sTaKgFLSfiEKGcVk
+ SRE1JDwN0ErCx60Lpxpr3Ty3CuRM1L+0UIwUYzz9GoxbSfkmtQB+CAQN4FVcy2a0mhat
+ OsmQ==
+X-Gm-Message-State: AOJu0YwwLg8gRElu8Aj7CkVGRfiGIdZPdjT7vyvS8FvT4e9J3m5pg5si
+ AwLnPtt5bBKwoHfPkTCMOtx5DEm49LhbDuCjPIn55DpQbSqi3WChq5S9+OReBw==
+X-Gm-Gg: ASbGnctsDMn1EvzcIWLyJuBO0nv6o4BNPvXS8YcVjLA9ZXVWFYxs2xiBfW6Y7RTx/nk
+ E9eFKerVg5Rdnre3qrlI70dDuB8ulxd0yfGoMZF8qxqVucjqDwAmYWzFJ9lL5A3qNrN6856/VE7
+ qXw9KtdTzpPs47jtmD0tC7C+/5+333/fXc2jniFT7ve6/Kjy0td43mLFz27wS0+02iEhgsI1fJY
+ a0bRCqF3beXvCFhpyRVg/ogXz1spUM9bgR0fRg3VpwJx8iqff0LoqmYT43PneYMbgyKS4dgnTuJ
+ EIWJwtErafZzlJFp8r+326ApNGDCa8kXYr/0dJpMCglld0ynL1KH0CczUq1gJKTNfAZ5sbdfkGY
+ tr+HardeTW5ycvL/SDt8L5CNwtmmbT5tjEjJcpwo=
+X-Google-Smtp-Source: AGHT+IEb0Sd9dVSSJpbobuIXwu4T1Te0Bt4XCQfACWOzLA9Y119xQYiOwtMPGzoeirRAfeJPUn3b7Q==
+X-Received: by 2002:a05:6a20:9389:b0:235:5f88:32fc with SMTP id
+ adf61e73a8af0-24340c47a7dmr13869075637.18.1756086972745; 
+ Sun, 24 Aug 2025 18:56:12 -0700 (PDT)
 Received: from PC.mioffice.cn ([43.224.245.249])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b49cb8b1989sm5147883a12.18.2025.08.24.18.56.16
+ 41be03b00d2f7-b49cb8b1989sm5147883a12.18.2025.08.24.18.56.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 24 Aug 2025 18:56:18 -0700 (PDT)
+ Sun, 24 Aug 2025 18:56:12 -0700 (PDT)
 From: Sheng Yong <shengyong2021@gmail.com>
 X-Google-Original-From: Sheng Yong <shengyong1@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Mon, 25 Aug 2025 09:54:50 +0800
-Message-ID: <20250825015455.3826644-9-shengyong1@xiaomi.com>
+Date: Mon, 25 Aug 2025 09:54:47 +0800
+Message-ID: <20250825015455.3826644-6-shengyong1@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250825015455.3826644-1-shengyong1@xiaomi.com>
 References: <20250825015455.3826644-1-shengyong1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1uqMRc-0002pe-BI
-Subject: [f2fs-dev] [PATCH v4 08/13] inject.f2fs: fix injection on zoned
- device
+X-Headers-End: 1uqMRb-0002pa-J7
+Subject: [f2fs-dev] [PATCH v4 05/13] dump.f2fs: print more info
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -126,47 +125,58 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Sheng Yong <shengyong1@xiaomi.com>
 
-Because node and data blocks are updated out of place on zoned device,
-sit_area_bitmap and main_area_bitmap are required to record which
-blocks are allocated, sit should be flushed to reflect changes in
-block address, and checkpoint should be rewritten to update cursegs.
+dump.f2fs shows more info:
+ * nat entry version
+ * sit entry mtime
 
 Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 Reviewed-by: Chao Yu <chao@kernel.org>
 ---
- fsck/inject.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ fsck/dump.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/fsck/inject.c b/fsck/inject.c
-index aae3db0c6524..674881043a76 100644
---- a/fsck/inject.c
-+++ b/fsck/inject.c
-@@ -1227,6 +1227,9 @@ int do_inject(struct f2fs_sb_info *sbi)
- 	struct inject_option *opt = (struct inject_option *)c.private;
- 	int ret = -EINVAL;
+diff --git a/fsck/dump.c b/fsck/dump.c
+index 10df7e593bfe..21de2acf80b5 100644
+--- a/fsck/dump.c
++++ b/fsck/dump.c
+@@ -70,10 +70,10 @@ void nat_dump(struct f2fs_sb_info *sbi, nid_t start_nat, nid_t end_nat)
+ 			ASSERT(ret >= 0);
+ 			if (ni.blk_addr != 0x0) {
+ 				len = snprintf(buf, BUF_SZ,
+-					"nid:%5u\tino:%5u\toffset:%5u"
++					"nid:%5u\tino:%5u\tver:%3d\toffset:%5u"
+ 					"\tblkaddr:%10u\tpack:%d"
+ 					"\tcp_ver:0x%" PRIx64 "\n",
+-					ni.nid, ni.ino,
++					ni.nid, ni.ino, ni.version,
+ 					le32_to_cpu(footer->flag) >> OFFSET_BIT_SHIFT,
+ 					ni.blk_addr, pack,
+ 					le64_to_cpu(footer->cp_ver));
+@@ -91,10 +91,10 @@ void nat_dump(struct f2fs_sb_info *sbi, nid_t start_nat, nid_t end_nat)
+ 			ret = dev_read_block(node_block, ni.blk_addr);
+ 			ASSERT(ret >= 0);
+ 			len = snprintf(buf, BUF_SZ,
+-				"nid:%5u\tino:%5u\toffset:%5u"
++				"nid:%5u\tino:%5u\tver:%3d\toffset:%5u"
+ 				"\tblkaddr:%10u\tpack:%d"
+ 				"\tcp_ver:0x%" PRIx64 "\n",
+-				ni.nid, ni.ino,
++				ni.nid, ni.ino, ni.version,
+ 				le32_to_cpu(footer->flag) >> OFFSET_BIT_SHIFT,
+ 				ni.blk_addr, pack,
+ 				le64_to_cpu(footer->cp_ver));
+@@ -135,8 +135,10 @@ void sit_dump(struct f2fs_sb_info *sbi, unsigned int start_sit,
+ 		offset = SIT_BLOCK_OFFSET(sit_i, segno);
+ 		memset(buf, 0, BUF_SZ);
+ 		snprintf(buf, BUF_SZ,
+-		"\nsegno:%8u\tvblocks:%3u\tseg_type:%d\tsit_pack:%d\n\n",
++		"\nsegno:%8u\tvblocks:%3u\tseg_type:%d\tmtime:%llu\t"
++		"sit_pack:%d\n\n",
+ 			segno, se->valid_blocks, se->type,
++			(unsigned long long)se->mtime,
+ 			f2fs_test_bit(offset, sit_i->sit_bitmap) ? 2 : 1);
  
-+	if (c.zoned_model == F2FS_ZONED_HM)
-+		fsck_init(sbi);
-+
- 	if (opt->sb >= 0)
- 		ret = inject_sb(sbi, opt);
- 	else if (opt->cp >= 0)
-@@ -1242,5 +1245,15 @@ int do_inject(struct f2fs_sb_info *sbi)
- 	else if (opt->dent)
- 		ret = inject_dentry(sbi, opt);
- 
-+	if (c.zoned_model == F2FS_ZONED_HM) {
-+		if (!ret && (opt->node || opt->dent)) {
-+			write_curseg_info(sbi);
-+			flush_journal_entries(sbi);
-+			flush_sit_entries(sbi);
-+			write_checkpoint(sbi);
-+		}
-+		fsck_free(sbi);
-+	}
-+
- 	return ret;
- }
+ 		ret = write(fd, buf, strlen(buf));
 -- 
 2.43.0
 
