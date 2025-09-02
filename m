@@ -4,87 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BC9FACA1007
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Sep 2025 18:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1875DCA1005
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Sep 2025 20:20:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:From:Message-ID:Date:MIME-Version:Sender:Reply-To:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=C1xV8b1hDEzoUbmn80dpNWm6AiO6fpBstZldjV89m9Q=; b=f2HI2MZu196ZC8BWMXDi8vMjPj
-	5IqAmzoXUjpO9BFhpTsOxIlPO/AQCDoew/wDM1DKHQpXg+5LtC2YfKj3Whc8zqLN2oe4kAzQzjbt1
-	tbXA5evSWXHUTmf8fwTMfj0QUIGeAXJH6UWQBsu8ZaoBhP8biMJyZG0kinJQTxQNKQqI=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=grHsB18i8SAzWT5HGvzuuME1qVsPu8J4NMerhKOSKOQ=; b=hcXJXYkROXO5aZsbgVnQGqP5n9
+	07C6e+OHYVMg1vvmwNc/nJD7HuzCmy6qJcd1XbN6vso0ZdhktkHM6WcZykt3ewOeCTBpyZDfYhY+2
+	bCNmjEW+ZdtedM5Lm5ff2ToEHcwc1/OGGgPT6IHyDTu08GwnYBYpZ2/7vpslEvzwFvP4=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1utVLU-0002U6-Ok;
-	Tue, 02 Sep 2025 18:03:05 +0000
+	id 1utXUB-0006ak-1l;
+	Tue, 02 Sep 2025 20:20:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <34ba2aAkbAHYmsteUffYlUjjcX.aiiafYomYlWihnYhn.Wig@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
- id 1utVLT-0002Tr-7c for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 02 Sep 2025 18:03:04 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1utXU9-0006ae-Tu
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 02 Sep 2025 20:20:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
- MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Osa16BAe0oPttsuktQJPR9uoZh+5UDs3WW7uk5/b//U=; b=NJcOmpbGGwbQrlBPMpj6srFtPS
- CNPi50WOlcgys6CGZa86MrLuH0/ZmA17LAVpJTuHhuTFI9JCln6IjWbdEu2gQQLqYUS4ddWl1jmzq
- MeF0fN6cLv/XQk2H8FeT31VEU6AphRGwuLBHd1Qluxh2OFvwIN0/2acUw1V/UJBDKIyQ=;
+ bh=G8rGqZyU324u76ItPG+i6tY/U/lJxJRVxTWjmIn1sNk=; b=UTtLWnmKCAgudbqPUfFyaiLiN2
+ Ok/6Za20vVU6a57AKU3Jc0SP6/ykeZzN0arS1o+MC4QflFWpY2+uHCPBZZBL5C7dWURxnGJapHSHu
+ jjRHyXi0M+ZMECsrlcDPeGJ3ihiQbdmstVYMQrI0166P7EAorC8sChI6JX4o98esNeHo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
- :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Osa16BAe0oPttsuktQJPR9uoZh+5UDs3WW7uk5/b//U=; b=U
- 7yT3XuKgE1S9c1nThQC/joUH6+gixNSszD36bb5oprUhUo6zwEaWDsTOyIIUuWDoinR+iV4rclonZ
- dhB0EvWDGH+SY8vHk6t1xySLcOfrcgqeK+/hDxn16VYv3znx4zbyElKyJBSmyDIZxikaGUD8gjHSE
- gwA01FeO+o2IeXMs=;
-Received: from mail-ot1-f69.google.com ([209.85.210.69])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=G8rGqZyU324u76ItPG+i6tY/U/lJxJRVxTWjmIn1sNk=; b=N8xbyLOo1MiC+6FsNmXfX4dw/7
+ AiFxdWDULJEJzOV/D43CKsO5SU4NEObRc5JLv4gR0daNehdUGV++hGt3ERNhD94NqvSJn2MAD1EZE
+ IY++hFTwb613sY1AtgEBQ7iT68cSEzGbsYbDEnPLmDpCUvEGJRHsHfGM6dSvT2YqGCPU=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1utVLS-0005C5-Pv for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 02 Sep 2025 18:03:03 +0000
-Received: by mail-ot1-f69.google.com with SMTP id
- 46e09a7af769-74381f3b806so5591108a34.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 02 Sep 2025 11:03:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756836177; x=1757440977;
- h=to:from:subject:message-id:date:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=Osa16BAe0oPttsuktQJPR9uoZh+5UDs3WW7uk5/b//U=;
- b=JrpKkM2b7Ucack+dJkCHbJ8cP1h30NOwr0Isr9PQAZjMQt6vyCBhLsbXlT9OG54aEg
- fdZIT74xyGwFqcuD17DJnWJAu7/8iw+RQhgLYLgAMz6n3R4HcBqLK+ejCJQVeF6bku7p
- BmjQHFdwEW1mpKM1Coff5Tn/l1nLfsXeRbI4lA33ld2akw5sshQolcjLrbRYWnQOaIT0
- 7Ys/VwBL+43NdRBcN8xfSa4sVdO8BTj3e8mpUB0HDD1O+Snl/s1e24g9/TcdJ6W1pB/D
- toEzzH/S1lrb8MI9QDAOEWKA9fZt8gYui/IOApQzaOMbmFW2Zl5u/9CWmw1NJzOGCo6+
- CBPg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXMCyxPR2pIHDBwOAeR03O6deAUNHeJSErmi/hKwqPPqe2lY67X1F/WlCChczhyj5Bt38upmQJwrZBz9fd3G2RW@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YwyBAC/h+eLTVJ8v6Z3ZPt/ZGIHVH664MzxI2j/gGIA4i5mUnA9
- nT3gmtOnppCV1LDjmQRdqB8HEM/wi3lFG+jquWDmI8lUUCtSO7Ne97uAI/1tAldKH9aWnD6Pr5J
- PWJS5jcmpwY3JAPf9MpFfzgfymGh5DkBs+77zEumhAInQYRFmayJWXGADvTc=
-X-Google-Smtp-Source: AGHT+IE0aLMHTHvzdjyedkAA9IhTemTUqBrycikGy0pxsSkflnUQVyEIXRP/pHtC26uBzz/R5qakBZqRZJ7h81hMXsMcSLeMwD1t
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1utXU8-0004AW-LU for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 02 Sep 2025 20:20:09 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 53D2244B5C;
+ Tue,  2 Sep 2025 20:20:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EB3EC4CEED;
+ Tue,  2 Sep 2025 20:20:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1756844403;
+ bh=RQup03V63i7JEJuwQszfY9xKRSyVG3eKOhMwJxz9NC0=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=XKJDGi4aRNKN8F3wJFCxTbqydOZbTXfKRa747xXMRHo6j+qAMKYMFbvOtfJjCsvAe
+ 6qou6xouMp9nCNhuhwDgEIToRpjDzR/oVfpvcBbsAnW4+F6VzGATvASG6li5ivqzj9
+ prUjAZG3TGnkPpPXNUUoDhFJOUHSY/9FbBbPFQTe6G8D5lgqJ6fsFrnrPk3Y46HNak
+ CUK7yxXp11CKlBdnhzEATEa1730nHHSOfM3+nK85kdxxPSpXZrTMGAvPPEmsqBUy/U
+ 4pSf93w5i3D6SOtnUyUzzueyzTGomNcmw5tce5PdDqAGiJOKGfskTMD7ppvxRKX70v
+ 4m56yqS+e9HLg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+ by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
+ AE6CF383BF64; Tue,  2 Sep 2025 20:20:09 +0000 (UTC)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2196:b0:3f0:40fd:9d1c with SMTP id
- e9e14a558f8ab-3f40066c444mr170838375ab.9.1756804833293; Tue, 02 Sep 2025
- 02:20:33 -0700 (PDT)
-Date: Tue, 02 Sep 2025 02:20:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b6b6e1.050a0220.3db4df.01cb.GAE@google.com>
-From: syzbot <syzbot+listf2b14a23ee18fa1ce2ab@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
- syzkaller-bugs@googlegroups.com
-X-Headers-End: 1utVLS-0005C5-Pv
-Subject: [f2fs-dev] [syzbot] Monthly f2fs report (Sep 2025)
+Message-Id: <175684440854.425353.17772733460715458985.git-patchwork-notify@kernel.org>
+Date: Tue, 02 Sep 2025 20:20:08 +0000
+References: <20250823054534.41037-1-chao@kernel.org>
+In-Reply-To: <20250823054534.41037-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1utXU8-0004AW-LU
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to do sanity check on node footer
+ for non inode dnode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,41 +87,55 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: patchwork-bot+f2fs--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: syzbot+b9c7ffd609c3f09416ab@syzkaller.appspotmail.com, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, stable@kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello f2fs maintainers/developers,
+Hello:
 
-This is a 31-day syzbot report for the f2fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/f2fs
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-During the period, 4 new issues were detected and 0 were fixed.
-In total, 9 issues are still open and 63 have already been fixed.
+On Sat, 23 Aug 2025 13:45:34 +0800 you wrote:
+> As syzbot reported below:
+> 
+> ------------[ cut here ]------------
+> kernel BUG at fs/f2fs/file.c:1243!
+> Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+> CPU: 0 UID: 0 PID: 5354 Comm: syz.0.0 Not tainted 6.17.0-rc1-syzkaller-00211-g90d970cade8e #0 PREEMPT(full)
+> RIP: 0010:f2fs_truncate_hole+0x69e/0x6c0 fs/f2fs/file.c:1243
+> Call Trace:
+>  <TASK>
+>  f2fs_punch_hole+0x2db/0x330 fs/f2fs/file.c:1306
+>  f2fs_fallocate+0x546/0x990 fs/f2fs/file.c:2018
+>  vfs_fallocate+0x666/0x7e0 fs/open.c:342
+>  ksys_fallocate fs/open.c:366 [inline]
+>  __do_sys_fallocate fs/open.c:371 [inline]
+>  __se_sys_fallocate fs/open.c:369 [inline]
+>  __x64_sys_fallocate+0xc0/0x110 fs/open.c:369
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f1e65f8ebe9
+> 
+> [...]
 
-Some of the still happening issues:
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix to do sanity check on node footer for non inode dnode
+    https://git.kernel.org/jaegeuk/f2fs/c/c18ecd99e0c7
 
-Ref Crashes Repro Title
-<1> 1301    Yes   INFO: task hung in f2fs_balance_fs
-                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
-<2> 1006    Yes   kernel BUG in f2fs_evict_inode (4)
-                  https://syzkaller.appspot.com/bug?extid=5c81eb8c0a380fa578b5
-<3> 81      Yes   INFO: task hung in f2fs_issue_checkpoint (2)
-                  https://syzkaller.appspot.com/bug?extid=8a7eea50810efde15b0a
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
 
 _______________________________________________
