@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 610B1CA1005
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Sep 2025 20:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E84E3CA100C
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Sep 2025 20:20:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=Z0WL5uLQTGI9do7lJpmd8GLNsHq1ppOHts9gjepiGR4=; b=FV+JptLgJ7G1L0V5wHubmCIBfM
-	OYHnwe9w7LnCtrxgHgQYwy6svo5A5P7EtM62m3cms6jDxL6fAABVCLlV2vM1WvqnRUvVaPMQXeyo6
-	aHOut+8vsm6FDlp2uXCRQHyjHVImG71PFuqn3YSfFXYsfuRKp7bKOD3jp9h7ojady6e8=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=aupur+hN/T1LOwa9bu2oI/rIM38LEBTy/q6emykEtbI=; b=YBfZlfo0vMHcXisjV+p+5WdAEh
+	aROOOkPxxWLpzUQ6nEtcuzcPGlYkRzqEmTnlnuJc+rscgHozEqsz2ofs7EAw/lNw/zpiU6tM9KmWr
+	9+MILGiyd4ylt4b8JjxHwuvF3lVA0ogv3vhk+j55yAKdWQ9QQmJXHo3+HCACqetlNRVg=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1utXUE-0004LR-Ht;
-	Tue, 02 Sep 2025 20:20:14 +0000
+	id 1utXUI-0003aD-JR;
+	Tue, 02 Sep 2025 20:20:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1utXUD-0004LL-42
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1utXUG-0003a4-OY
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 02 Sep 2025 20:20:13 +0000
+ Tue, 02 Sep 2025 20:20:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=uvMTG0+yt6Mc8pe7FJ1VqOZTA1j6Xl3L0Zu3duCzB+I=; b=STVnHHzRGpNmhLN8p9jgwGvZiU
- ghL6/RqYb+9j29CK08DHqWfzWd4eE/+Bcpb/zhw0zY6gF3WpeHJF7GKOOrtx8PFo6O2j6MuJtdAXY
- DmUEkTCMhg6mJLQfd0k8AcLXP3I0fV/9aVFhFBYRfhyZJnXXBVrPp2M4nxIOg6MxmycI=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=wA2VhuySUKdAvnvNMNxdiJx9ISXDlpmTHfBmHwHdNA4=; b=YHVM6S5lE4LO7hqyDao6TROWor
+ VrxjCY2cHpZAOlm+WG2Im0TKROLOuNatbc+08Jfs/mn1WZmlwcvDXkBidMUaGvA3WkY3NSXtlPxJu
+ Sj858VVriuEyvsIPR8f1DwrQpWzvBlr2FtRWMnkpcuK41IzdNGaWPYMxovy/8Lp2QV9o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=uvMTG0+yt6Mc8pe7FJ1VqOZTA1j6Xl3L0Zu3duCzB+I=; b=Y
- +P4J9CW+AOBGzm9ky/FCbGnqeyg+N9BPZpJUy7P6CSK3NnZdvdrFgg1XA48+o1xOvhiIlZdgKo9gj
- qSRCdL3iHHYGqBqtaj5NG3PY+ZUMKlliRKnqJZW3LHd3lTYZgCcM0l1af0Ui8KbvM6lKS8McKwocR
- XE92S5Td6YRkAN9o=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=wA2VhuySUKdAvnvNMNxdiJx9ISXDlpmTHfBmHwHdNA4=; b=a++PuOrGCoH8ffrlS8ozv8a6wP
+ guUbwnWfK/RK4fKWUht+zRbxu2JnrdIRiTbE29g4cvGok2cxYRMaEZYghEkd5Minz82v3X4ZEwK7C
+ yPpK+fgx5d5Fvj5Igsd5XJmlHxe4Yn7a5vfV/y9BhVy3rE4K9M+u93irUBlgZVF6h7S0=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1utXUC-0004Al-Jv for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 02 Sep 2025 20:20:13 +0000
+ id 1utXUG-0004B6-9i for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 02 Sep 2025 20:20:16 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 207D641716
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  2 Sep 2025 20:20:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 006EFC4CEED
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  2 Sep 2025 20:20:02 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id F403544BCD;
+ Tue,  2 Sep 2025 20:20:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D333CC4CEF7;
+ Tue,  2 Sep 2025 20:20:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1756844402;
- bh=Wo1BG7za93oIzpwx9b1YiEVZohLZBlxwS03ue+CuAec=;
- h=Subject:From:Date:To:From;
- b=f7iYD1PX7sDrfobw0RF9LNFTiy8JssUGb4pKd2gaRp9//ZUGro3FnXhefK7KxaeWI
- bBY/d46bDm2oKdmGweqs2er6puL8p8rJySEZPa8geAQ/RdwUdVcsvnWiHEeI9fE1Ok
- PhscrXhEBAK+TJdt4V/WDlw3JSu9GPsVdPWcSf0fFaeHCkqC6AfSfuPB+9cuaML9Xg
- vcVC4YAGEY2vozTegyVPC91vKZtSQ+yJ7CLMx+770JhlIGLbisWEmsACBi70cFPB3M
- Wt+DnPwMVi9yLoVPAhXpgTNBwx7/qie9/+XRCyg+7+uUdK8knlZzf6Ep96lpvUng9v
- bDUeKF/wOZgDg==
+ s=k20201202; t=1756844405;
+ bh=a5xpJDyI0ZmkMroZh29UOG676SY5u7SLb7dCmmTu9+k=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=NmiWcB3IHJz772F5DpEGAcas6VNa8+Fkz0cWwJYTpPsFHcdGm9LSKNHOT3E6sljHG
+ 9Zw3hiTzj1Sa7/U21AivFGIehnF5jo6I2tg7sAr45YzdSWJHKJ2mHivBuMk5bM523X
+ ne69b7UTaXNzWbop7uiYb+ia3Wk06CpVW9Tbgmss9bLhpVdnw7XSebvlVcWNKT2vGr
+ 5AVcI7xZUBTQex40S6s2qga/6M4+cRW4bTjZveK9lRoCn2Xm4onDs46f7EqUIqoQXI
+ Xg9rdM8gt20ZNilLuhvmUCTSTBZ58wLAFi12s1CNuAHHIwqyXa5HShINl8+pKtmN8O
+ 9AbSPRBAERtGw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 77371383BF64 for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  2 Sep 2025 20:20:08 +0000 (UTC)
+ 72A5A383BF64; Tue,  2 Sep 2025 20:20:12 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <175684440710.425353.2089583493073598988.git-patchwork-summary@kernel.org>
-Date: Tue, 02 Sep 2025 20:20:07 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1utXUC-0004Al-Jv
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+Message-Id: <175684441099.425353.9345467792269228265.git-patchwork-notify@kernel.org>
+Date: Tue, 02 Sep 2025 20:20:10 +0000
+References: <20250828081130.392736-1-liaoyuanhong@vivo.com>
+In-Reply-To: <20250828081130.392736-1-liaoyuanhong@vivo.com>
+To: Liao Yuanhong <liaoyuanhong@vivo.com>
+X-Headers-End: 1utXUG-0004B6-9i
+Subject: Re: [f2fs-dev] [PATCH v4] f2fs: Use allocate_section_policy to
+ control write priority in multi-devices setups
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,56 +90,34 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Patch: [f2fs-dev] f2fs: fix to do sanity check on node footer for non inode dnode
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=994765
-  Lore link: https://lore.kernel.org/r/20250823054534.41037-1-chao@kernel.org
+On Thu, 28 Aug 2025 16:11:30 +0800 you wrote:
+> Introduces two new sys nodes: allocate_section_hint and
+> allocate_section_policy. The allocate_section_hint identifies the boundary
+> between devices, measured in sections; it defaults to the end of the device
+> for single storage setups, and the end of the first device for multiple
+> storage setups. The allocate_section_policy determines the write strategy,
+> with a default value of 0 for normal sequential write strategy. A value of
+> 1 prioritizes writes before the allocate_section_hint, while a value of 2
+> prioritizes writes after it.
+> 
+> [...]
 
-Series: f2fs: documentation formatting cleanup and improvements
-  Submitter: Bagas Sanjaya <bagasdotme@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=993300
-  Lore link: https://lore.kernel.org/r/20250820043432.22509-1-bagasdotme@gmail.com
-    Patches: [f2fs-dev,1/6] Documentation: f2fs: Separate errors mode subtable
-             [f2fs-dev,2/6] Documentation: f2fs: Format compression level subtable
-             [f2fs-dev,3/6] Documentation: f2fs: Span write hint table section rows
-             [f2fs-dev,4/6] Documentation: f2fs: Wrap snippets in literal code blocks
-             [f2fs-dev,5/6] Documentation: f2fs: Indent compression_mode option list
-             [f2fs-dev,6/6] Documentation: f2fs: Reword title
+Here is the summary with links:
+  - [f2fs-dev,v4] f2fs: Use allocate_section_policy to control write priority in multi-devices setups
+    https://git.kernel.org/jaegeuk/f2fs/c/b639c20e748c
 
-Patch: [f2fs-dev,v4] f2fs: Use allocate_section_policy to control write priority in multi-devices setups
-  Submitter: Liao Yuanhong <liaoyuanhong@vivo.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=996359
-  Lore link: https://lore.kernel.org/r/20250828081130.392736-1-liaoyuanhong@vivo.com
-
-Series: [f2fs-dev,1/2] f2fs: fix to avoid NULL pointer dereference in f2fs_check_quota_consistency()
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=992339
-  Lore link: https://lore.kernel.org/r/20250818020939.3529802-1-chao@kernel.org
-    Patches: [f2fs-dev,1/2] f2fs: fix to avoid NULL pointer dereference in f2fs_check_quota_consistency()
-             [f2fs-dev,2/2] f2fs: fix to allow removing qf_name
-
-Patch: [f2fs-dev] f2fs: allocate HOT_DATA for IPU writes
-  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=996232
-  Lore link: https://lore.kernel.org/r/20250827215222.1615844-1-jaegeuk@kernel.org
-
-
-Total patches: 11
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
