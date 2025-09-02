@@ -4,84 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A1714CA0FE8
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Sep 2025 02:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0A67CCA1005
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Sep 2025 14:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=paH/G0kfsh3/MfeM/ohUHqe+twTo6zP2v6aKL5klZQI=; b=BSEpj3URTupA+teSRsQYn6OE//
-	FbTR44zMCUasmt8L9RvY6ArwgBy5u1uBjIx+iqlRUVRuq1SGbU0Xt9yBHKUA+e5oBRHsc3yav5D/R
-	sD8uGc14uueIQCxcVY3kWEpgbvJl9+mtr62gtmLmxSdQi2VzSr8cYsdadDted2wvL5QQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=wId5biMu95CElFt5w16J9tC3j7ydHTzZ6cz0p4veszA=; b=IJFxvjiYVbMTzUEEuj62YjMhIu
+	8O1JRyzUUNf4ubJYFJ/8v3aejTcbvBrjkY6tWK/o4BID4N325jyxBI5z9qdrnPRpTNRqPe/3+lAgP
+	H5gOnrxI8AF0XZ+ZI9qzFNBsvbbTlWBi31IqF00jnhib/IY/2alGpJKfaf+quy9+n1dg=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1usu50-00080e-9F;
-	Mon, 01 Sep 2025 02:15:34 +0000
+	id 1utSNZ-0000iM-Pb;
+	Tue, 02 Sep 2025 14:53:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1usu4z-00080V-1T
+ (envelope-from <chao@kernel.org>) id 1utSNY-0000iC-GV
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 01 Sep 2025 02:15:33 +0000
+ Tue, 02 Sep 2025 14:53:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YeU4nxw6rTsKOWRN+TFAzD0qHOGBBfxiVT4K2uHcqb4=; b=C2MsYh+XmzySxL1B4Mjndsri0G
- 38URcj1plvpolW3HmcJJG/JFPlAvFkaraYBdrIvUXjsZY1AADCI5bopaPwxf2lreXD1boDv7U3Nqo
- LgyllV/nTu7kRGhVZhLLbFqRAhSLXUidCJ9lHKXdSKvFDUNtGCALHXOqC4/qc+WIU9rs=;
+ bh=Ep/0IfumP45hCoTXBBN7BbLl3Oq9qqAZ0ENj5B+FFOA=; b=j3UlPrz19Z25JQ0EFrCD39Bf5T
+ etzvNO0cqH2SB8x/jJ+Tut06ggn0vkAGpkasFfndbZGSy7t2U8NpArLtaZZWPK1f2znGG3egyYWW0
+ vQnv4S1Cq+othwRc5CjY/FBtQxKzTeVVbF6pHCLgSxXReqkK/pVGws9wBb7IfkD5hJz8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=YeU4nxw6rTsKOWRN+TFAzD0qHOGBBfxiVT4K2uHcqb4=; b=ZXv2wHdtXt07G26ijQkg2LEFCb
- sGhChMWg9ai1O8qijV8dyJOTvwlavi9ur81XaizAtxcMmHIvNbBCWRgxqpKOMgsQWH+Nxa55DqPKm
- p0nfIVXcYxwfdaBDHtzMuwwYgQIrdzWnXBXU0VgJfgebg5W0Kkp35fO+WhlL5SQc8Yos=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=Ep/0IfumP45hCoTXBBN7BbLl3Oq9qqAZ0ENj5B+FFOA=; b=lE1W9+xGSlcgRKn8Ofr9zGYQFs
+ U31WsC3PD0kvPvM3iCONiXoJfNaFngs8iqr2pAxOMvb30leLL1gKNl64ewjEURqWWY+rp2W44qp95
+ H+TlAbnyLGXfaqrl+ttcIrjuKsjgua0O6RCQ9wO+pDwEvUDUrogJ/fv5JD9Rs2RcId8s=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1usu4y-0005NJ-Lq for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 01 Sep 2025 02:15:32 +0000
+ id 1utSNY-00014R-DN for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 02 Sep 2025 14:53:01 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 48D854383D
+ by tor.source.kernel.org (Postfix) with ESMTP id D53C46020C
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  1 Sep 2025 02:15:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 653D8C4CEED;
- Mon,  1 Sep 2025 02:15:26 +0000 (UTC)
+ Tue,  2 Sep 2025 12:27:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E0DEC4CEED;
+ Tue,  2 Sep 2025 12:27:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1756692927;
- bh=XO+FH4L46snPbiIleHTk7JE9h89KztDGTl+m6r5W5nw=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=mX//IuTxF22YSaGeKcAgIaJaBlL5eM8DglNPukYlc4M5IYozCEtLtYY7gvuyMiT/7
- vsIccJ8jN4JsKnGCRaleNqacj5OGZvgBPx5Hrvta3RxkWQJtCbMIFLf0VplK6MC7BX
- Cnaics/y4UK+8I4BQ2hd2iiD/D0BOo/ypdQ0vzZdVtgB+0vFpPMRMNk0j9rhY7ruP5
- ac1WzNYNEIalMQAT6pNjK+ui79cdnGkJk/m93H1y9gSbjD3bfZO3Kbw7aEkn2BztZ5
- wSLbm7ymsyawnLR+nGOJdOUTB8PAZeIq0173JxWVwve8vUoFXUuf1iBHaCRBnq/3UB
- Ycd0W/4T3JW1A==
-Message-ID: <887d9b30-0069-4f4d-8107-48662379fd30@kernel.org>
-Date: Mon, 1 Sep 2025 10:15:24 +0800
+ s=k20201202; t=1756816051;
+ bh=kLqXIyG7JMsCDuJdIBF+lJeJW74pc8LBnf2tM9jt1Uk=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=WFYoUvU/a82+Q+mx2ySc9N2qiKVLdYxSlJsty9hmy7XzBLjTBxMGJQQsMpSTXHRGq
+ IvBsM/QlErZsKuKfefYFfzNVraTP8QuVZtqRsd9Dxso+prgMAVS++xJGf7XBmyH2MU
+ 3Lr62k2RMxFvo83xqejOtW8es9olKbOL0IXj2vci5oqXuPw3Gayry9dxLs1vOq/L0C
+ L3hqoBK1TbGO+17imDn2zjnx5rzr7FLSdzeBImHr3tXgG0pjJlvZDl/iW/jEstBLQr
+ 7TJSdR7NS3csfRchEHdnu4RKmQ9n31kJn1xcmPvVbzYyxJgcNYQArDbxTX48nruyUD
+ iUIpnk+0wmsAQ==
+To: jaegeuk@kernel.org
+Date: Tue,  2 Sep 2025 20:27:20 +0800
+Message-ID: <20250902122720.2750481-2-chao@kernel.org>
+X-Mailer: git-send-email 2.51.0.338.gd7d06c2dae-goog
+In-Reply-To: <20250902122720.2750481-1-chao@kernel.org>
+References: <20250902122720.2750481-1-chao@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250827215222.1615844-1-jaegeuk@kernel.org>
- <bfbd5db4-c103-4a08-8568-1d27c8eba676@kernel.org>
- <aLB0XeQh_tm2tXIA@google.com>
- <c7a0afdc-3f33-4de7-b36d-b0d5f55216e2@kernel.org>
- <aLIR7BaaAizkdzgl@google.com>
- <d0357cd2-5435-4d99-af31-cc56fc05ce9a@kernel.org>
- <aLOPPQFJEqoYQg24@google.com>
-Content-Language: en-US
-In-Reply-To: <aLOPPQFJEqoYQg24@google.com>
-X-Headers-End: 1usu4y-0005NJ-Lq
-Subject: Re: [f2fs-dev] [PATCH] f2fs: allocate HOT_DATA for IPU writes
+X-Headers-End: 1utSNY-00014R-DN
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: clean up error handing of
+ f2fs_submit_page_read()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,69 +94,121 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 8/31/25 07:54, Jaegeuk Kim wrote:
-> On 08/30, Chao Yu wrote:
->> On 8/30/2025 4:47 AM, Jaegeuk Kim wrote:
->>> On 08/29, Chao Yu wrote:
->>>> On 8/28/2025 11:23 PM, Jaegeuk Kim wrote:
->>>>> On 08/28, Chao Yu wrote:
->>>>>> On 8/28/25 05:52, Jaegeuk Kim via Linux-f2fs-devel wrote:
->>>>>>> Let's split IPU writes in hot data area to improve the GC efficiency.
->>>>>>
->>>>>> I didn't get it, IPU may be not friendly for migrating data along w/ write in
->>>>>> hot area?
->>>>>
->>>>> This deals with IPU in the LFS mode.
->>>>
->>>> Okay, so, we missed to add f2fs_lfs_mode() condition, right?
->>>
->>> Why do we need that?
->>
->> As you mentioned above, this deals w/ IPU in the LFS mode. Am I missing
->> something?
-> 
-> The IPU flag indicates the data is hot. In lfs_mode, we missed to allocate
-> it into HOT_DATA. In normal mode, IPU will update the data in place, which
-> doesn't affect anything, while newly create data is also good to store in
-> HOT_DATA as well. So, I think we don't need other condition here.
+Below two functions should never fail, clean up error handling in their
+callers:
+1) f2fs_grab_read_bio() in f2fs_submit_page_read()
+2) bio_add_folio() in f2fs_submit_page_read()
 
-It makes sense, thanks for the explanation.
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/data.c | 41 ++++++++---------------------------------
+ 1 file changed, 8 insertions(+), 33 deletions(-)
 
-Reviewed-by: Chao Yu <chao@kernel.org>
-
-Thanks,
-
-> 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>>
->>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>> ---
->>>>>>>    fs/f2fs/segment.c | 3 ++-
->>>>>>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>>>> index e0f6589c6a1c..bb79dad55ac9 100644
->>>>>>> --- a/fs/f2fs/segment.c
->>>>>>> +++ b/fs/f2fs/segment.c
->>>>>>> @@ -3688,7 +3688,8 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
->>>>>>>    		if (file_is_hot(inode) ||
->>>>>>>    				is_inode_flag_set(inode, FI_HOT_DATA) ||
->>>>>>> -				f2fs_is_cow_file(inode))
->>>>>>> +				f2fs_is_cow_file(inode) ||
->>>>>>> +				is_inode_flag_set(inode, FI_NEED_IPU))
->>>>>>>    			return CURSEG_HOT_DATA;
->>>>>>>    		return f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode),
->>>>>>>    						inode->i_write_hint);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7961e0ddfca3..990ff6ee322b 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1083,7 +1083,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+ }
+ 
+ /* This can handle encryption stuffs */
+-static int f2fs_submit_page_read(struct inode *inode, struct folio *folio,
++static void f2fs_submit_page_read(struct inode *inode, struct folio *folio,
+ 				 block_t blkaddr, blk_opf_t op_flags,
+ 				 bool for_write)
+ {
+@@ -1092,23 +1092,16 @@ static int f2fs_submit_page_read(struct inode *inode, struct folio *folio,
+ 
+ 	bio = f2fs_grab_read_bio(inode, blkaddr, 1, op_flags,
+ 					folio->index, for_write);
+-	if (IS_ERR(bio))
+-		return PTR_ERR(bio);
+ 
+ 	/* wait for GCed page writeback via META_MAPPING */
+ 	f2fs_wait_on_block_writeback(inode, blkaddr);
+ 
+-	if (!bio_add_folio(bio, folio, PAGE_SIZE, 0)) {
+-		iostat_update_and_unbind_ctx(bio);
+-		if (bio->bi_private)
+-			mempool_free(bio->bi_private, bio_post_read_ctx_pool);
+-		bio_put(bio);
+-		return -EFAULT;
+-	}
++	if (!bio_add_folio(bio, folio, PAGE_SIZE, 0))
++		f2fs_bug_on(sbi, 1);
++
+ 	inc_page_count(sbi, F2FS_RD_DATA);
+ 	f2fs_update_iostat(sbi, NULL, FS_DATA_READ_IO, F2FS_BLKSIZE);
+ 	f2fs_submit_read_bio(sbi, bio, DATA);
+-	return 0;
+ }
+ 
+ static void __set_data_blkaddr(struct dnode_of_data *dn, block_t blkaddr)
+@@ -1265,10 +1258,8 @@ struct folio *f2fs_get_read_data_folio(struct inode *inode, pgoff_t index,
+ 		return folio;
+ 	}
+ 
+-	err = f2fs_submit_page_read(inode, folio, dn.data_blkaddr,
++	f2fs_submit_page_read(inode, folio, dn.data_blkaddr,
+ 						op_flags, for_write);
+-	if (err)
+-		goto put_err;
+ 	return folio;
+ 
+ put_err:
+@@ -2145,16 +2136,10 @@ static int f2fs_read_single_page(struct inode *inode, struct folio *folio,
+ 		f2fs_submit_read_bio(F2FS_I_SB(inode), bio, DATA);
+ 		bio = NULL;
+ 	}
+-	if (bio == NULL) {
++	if (bio == NULL)
+ 		bio = f2fs_grab_read_bio(inode, block_nr, nr_pages,
+ 				f2fs_ra_op_flags(rac), index,
+ 				false);
+-		if (IS_ERR(bio)) {
+-			ret = PTR_ERR(bio);
+-			bio = NULL;
+-			goto out;
+-		}
+-	}
+ 
+ 	/*
+ 	 * If the page is under writeback, we need to wait for
+@@ -2303,18 +2288,10 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 			bio = NULL;
+ 		}
+ 
+-		if (!bio) {
++		if (!bio)
+ 			bio = f2fs_grab_read_bio(inode, blkaddr, nr_pages - i,
+ 					f2fs_ra_op_flags(rac),
+ 					folio->index, for_write);
+-			if (IS_ERR(bio)) {
+-				ret = PTR_ERR(bio);
+-				f2fs_decompress_end_io(dic, ret, true);
+-				f2fs_put_dnode(&dn);
+-				*bio_ret = NULL;
+-				return ret;
+-			}
+-		}
+ 
+ 		if (!bio_add_folio(bio, folio, blocksize, 0))
+ 			goto submit_and_realloc;
+@@ -3639,11 +3616,9 @@ static int f2fs_write_begin(const struct kiocb *iocb,
+ 			err = -EFSCORRUPTED;
+ 			goto put_folio;
+ 		}
+-		err = f2fs_submit_page_read(use_cow ?
++		f2fs_submit_page_read(use_cow ?
+ 				F2FS_I(inode)->cow_inode : inode,
+ 				folio, blkaddr, 0, true);
+-		if (err)
+-			goto put_folio;
+ 
+ 		folio_lock(folio);
+ 		if (unlikely(folio->mapping != mapping)) {
+-- 
+2.49.0
 
 
 
