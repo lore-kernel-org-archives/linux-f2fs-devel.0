@@ -4,77 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EBF7DCAC599
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Sep 2025 06:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 83474CAC599
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Sep 2025 07:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=doqw4lgcSfZBl7IIjSHqsbwApfhRAbEeV7W710Ysasg=; b=OEuKDq2lg/syfaJghEQFiUV+CX
-	n+vZqZ7WrUEnr3axZ6yYtSCm8GQG4sgAxsqW/+ChyQKVEX5Rkrxp2ltklzDxs9/8QNaDd6R8zK7rW
-	07mTgKcjMPOwynHPWf+8fZpfsPj9jxu9B4D+NGtfIDMsrk2PZ3Vp5iI35eSJCl54RCxc=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=6j0vUdHYcJ8p4n4mdRG5I70BpB3FIlx7oV8UCeqhuwI=; b=h2/+WoENC0g6A6v9BHA9X+3h7I
+	vSOwuetfXSag/J48eKSR/0k14kLVvHmwOmvdSkEKbYAhcWyF+r5ZisCy1nWDE8JkmbW6HcT4e+xcT
+	VaPLQ80GvracpdUsYX6qmnhx32Y8cwNTpazRnURP4oniLmDbb/tVUQG+1MoLkKw2tJvo=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1uyPSf-0002qr-1s;
-	Tue, 16 Sep 2025 06:46:45 +0000
+	id 1uyPp6-0004GG-CW;
+	Tue, 16 Sep 2025 07:09:57 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1uyPSd-0002qj-Jn
+ (envelope-from <wangzijie1@honor.com>) id 1uyPp5-0004G3-96
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 16 Sep 2025 06:46:43 +0000
+ Tue, 16 Sep 2025 07:09:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vossqSEMCOWwoL0QHfJZTKuwM9m1G8Y9mJxaDrhVrgA=; b=RkKb8FONfFEpnACIyJK5mZKSij
- c/49GSwQgIyrnkPk9bqCZiVVoXkgPEYGpol4xE7ANZjSS8l8Rej/qXDxzllq0C+GXjCFf+Nw0+sQb
- eYq5X+sWt0+cUuzXiGh0CKoCmKOeN/44qCqvNRHNO1deqnpCHQWr/s0wvxclgyP8LaRw=;
+ bh=IvtSllYDS72dTTar+irfGZzDHyNWzuiEVqG6Dto4jQE=; b=SGTbITaTjfDzTSSuAju8/a+BF6
+ HKxZBVg5a1S+1Iz7l5RHFtwEYHYPROxJWE8e6o/ccWFOa/0EnW8GjVf8oI51M3bKAG//J9NmBdPVy
+ q2jy2scAlSklyNyPxvo5cXF3HYixnjc8OJ3yU+NLcpKbt30p7R1ucXBJ/ROfpRaOxcf0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=vossqSEMCOWwoL0QHfJZTKuwM9m1G8Y9mJxaDrhVrgA=; b=ck/nFQuMiqOUdgD1dg7bpzEL9r
- o1hVn2jCHyzi0xGsfk27blvizea3+mKuH2P4LUHsd2nZDDXhoL9vAAlPfUq+kuok6lVXKOq0iXwLT
- EPtMU2EL8acu7kZaGYjGYbvM0lCZD4mwnon0GSYxdB/qBCEb2YkfdisqHkRC8qb3zIm8=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=IvtSllYDS72dTTar+irfGZzDHyNWzuiEVqG6Dto4jQE=; b=NvC707mUm3TMOKGJsU66+GE27E
+ ChI+uPbdPvJpk7uEDIbLhddh2dEL3j7X+MMw1/gSGZOLBvSXa+/Z38HkSe0Y6C1S25DyY1WZ6niDS
+ Kmo3DLNEB1rmBfPBNPenuA1nwlF7WMvdkj+RAVEvd9nmPPwjXB/Pc5rPZdwJRth2RHpI=;
+Received: from mta20.honor.com ([81.70.206.69] helo=mta20.hihonor.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1uyPSd-0008Qn-51 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 16 Sep 2025 06:46:43 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id C4C6944486;
- Tue, 16 Sep 2025 06:46:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16336C4CEEB;
- Tue, 16 Sep 2025 06:46:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1758005197;
- bh=UyM89QNHpSkF9EPdMvI0ufnD9cqqHBkKnIr4Bp93Jls=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=MnjHAgWHPS7HptB1RfjVSZIclIB093kS0ElAzTzDMc/EYx4FMTRlwipSOo+BDwFDQ
- 9JaGDVv5hD3Xyrd17dsEhFpASZYAtK0K0VvpvF08RZSyqlyAZzHGjTp2+Ora+3eeet
- DR02tnIhboy18qriLoMpcwhrEftELgG/jgoArTBlLvU1TuqWfSi+JvqZowNf018mCI
- zjaQGcpSRn/F3d7uFyY4i70NHPVrhiEDs8N45FXWVLepXEWs6fdSalNjng8GClmAtC
- AU8SPUTO4Otx3SR69mbOKJCsS17w9tsQCy4YQQw3YqjGAj3pIk/c8CfNOTrgcCKqO+
- l4cMG1RJk9onA==
-Message-ID: <f6b74555-f10c-4a8e-8caa-1797a3d7a7cf@kernel.org>
-Date: Tue, 16 Sep 2025 14:46:33 +0800
+ id 1uyPp4-0000zK-PD for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 16 Sep 2025 07:09:56 +0000
+Received: from w002.hihonor.com (unknown [10.68.28.120])
+ by mta20.hihonor.com (SkyGuard) with ESMTPS id 4cQtLN5P1BzYlv4M;
+ Tue, 16 Sep 2025 15:09:16 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w002.hihonor.com
+ (10.68.28.120) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
+ 2025 15:09:46 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
+ 2025 15:09:46 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <chao@kernel.org>
+Date: Tue, 16 Sep 2025 15:09:46 +0800
+Message-ID: <20250916070946.231825-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <f6b74555-f10c-4a8e-8caa-1797a3d7a7cf@kernel.org>
+References: <f6b74555-f10c-4a8e-8caa-1797a3d7a7cf@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: wangzijie <wangzijie1@honor.com>, jaegeuk@kernel.org
-References: <aMjJwkQ3wQ0uNJXX@google.com>
- <20250916052224.223500-1-wangzijie1@honor.com>
-Content-Language: en-US
-In-Reply-To: <20250916052224.223500-1-wangzijie1@honor.com>
-X-Headers-End: 1uyPSd-0008Qn-51
+X-Originating-IP: [10.144.23.14]
+X-ClientProxiedBy: w003.hihonor.com (10.68.17.88) To a011.hihonor.com
+ (10.68.31.243)
+X-Headers-End: 1uyPp4-0000zK-PD
 Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: fix infinite loop in
  __insert_extent_tree()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -88,72 +86,82 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, feng.han@honor.com,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: feng.han@honor.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
+ wangzijie1@honor.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 9/16/25 13:22, wangzijie wrote:
->> On 09/15, wangzijie wrote:
->>> When we get wrong extent info data, and look up extent_node in rb tree,
->>> it will cause infinite loop (CONFIG_F2FS_CHECK_FS=n). Avoiding this by
->>> return NULL.
->>
->> This is the exact buggy case which we should fix the original one. Have
->> you seen this error? In that case, can we consider writing some kernel
->> message and handle the error properly?
-> 
-> Hi Jaegeuk,
-> The original one is the bug I mentioned in the first patch of this patch set
-> ("f2fs: fix zero-sized extent for precache extents"). 
-
-Zijie,
-
-Did you suffer this problem in product? right?
-
-> 
-> When we use a wrong extent_info(zero-sized) to do update, and there exists a
-> extent_node which has same fofs as the wrong one, we will skip "invalidate all extent
-> nodes in range [fofs, fofs + len - 1]"(en->ei.fofs = end = tei->fofs + tei->len = tei->fofs),
-> which cause the infinite loop in __insert_extent_tree().
-> 
-> So we can add f2fs_bug_on() when there occurs zero-sized extent
-> in f2fs_update_read_extent_cache_range(), and give up this zero-sized
-> extent update to handle other unknown buggy cases. Do you think this will be better?
-> 
-> And do we need to solve this infinite loop?
-
-IMO, it's worth to end such loop if there is any corrupted extent in rbtree to
-avoid kernel hang, no matter it is caused by software bug or hardware flaw
-potentially.
-
-Thanks,
-
-> 
-> 
+>On 9/16/25 13:22, wangzijie wrote:
+>>> On 09/15, wangzijie wrote:
+>>>> When we get wrong extent info data, and look up extent_node in rb tree,
+>>>> it will cause infinite loop (CONFIG_F2FS_CHECK_FS=n). Avoiding this by
+>>>> return NULL.
 >>>
->>> Signed-off-by: wangzijie <wangzijie1@honor.com>
->>> ---
->>>  fs/f2fs/extent_cache.c | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
->>> index 199c1e7a8..6ed6f3d1d 100644
->>> --- a/fs/f2fs/extent_cache.c
->>> +++ b/fs/f2fs/extent_cache.c
->>> @@ -605,6 +605,7 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
->>>  			leftmost = false;
->>>  		} else {
->>>  			f2fs_bug_on(sbi, 1);
->>> +			return NULL;
->>>  		}
->>>  	}
->>>  
->>> -- 
->>> 2.25.1
+>>> This is the exact buggy case which we should fix the original one. Have
+>>> you seen this error? In that case, can we consider writing some kernel
+>>> message and handle the error properly?
+>> 
+>> Hi Jaegeuk,
+>> The original one is the bug I mentioned in the first patch of this patch set
+>> ("f2fs: fix zero-sized extent for precache extents"). 
+>
+>Zijie,
+>
+>Did you suffer this problem in product? right?
+
+Hi Chao,
+Yes, and I can confirm that infinite loop cases I suffered are caused by the bug I
+mentioned in the first patch of this patch set. But I'm not sure if there are
+other cases that can cause this infinite loop.
+
+>> 
+>> When we use a wrong extent_info(zero-sized) to do update, and there exists a
+>> extent_node which has same fofs as the wrong one, we will skip "invalidate all extent
+>> nodes in range [fofs, fofs + len - 1]"(en->ei.fofs = end = tei->fofs + tei->len = tei->fofs),
+>> which cause the infinite loop in __insert_extent_tree().
+>> 
+>> So we can add f2fs_bug_on() when there occurs zero-sized extent
+>> in f2fs_update_read_extent_cache_range(), and give up this zero-sized
+>> extent update to handle other unknown buggy cases. Do you think this will be better?
+>> 
+>> And do we need to solve this infinite loop?
+>
+>IMO, it's worth to end such loop if there is any corrupted extent in rbtree to
+>avoid kernel hang, no matter it is caused by software bug or hardware flaw
+>potentially.
+>
+>Thanks,
+
+And do you think we need this?
+"add f2fs_bug_on() when there occurs zero-sized extent in f2fs_update_read_extent_cache_range(),
+and give up this zero-sized extent update to handle other unknown buggy cases".
+
+
+
+>> 
+>> 
+>>>>
+>>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
+>>>> ---
+>>>>  fs/f2fs/extent_cache.c | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+>>>> index 199c1e7a8..6ed6f3d1d 100644
+>>>> --- a/fs/f2fs/extent_cache.c
+>>>> +++ b/fs/f2fs/extent_cache.c
+>>>> @@ -605,6 +605,7 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
+>>>>  			leftmost = false;
+>>>>  		} else {
+>>>>  			f2fs_bug_on(sbi, 1);
+>>>> +			return NULL;
+>>>>  		}
+>>>>  	}
+>>>>  
+>>>> -- 
+>>>> 2.25.1
 
 
 
