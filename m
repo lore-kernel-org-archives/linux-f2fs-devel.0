@@ -4,75 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 92979CAC5BB
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 28 Sep 2025 08:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2A882CAC5B5
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 28 Sep 2025 09:21:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=ZpxBE63krTWwYRTOWLH4G9gYtPasVxyrjhcazjnk7cM=; b=LVBDafOSXx6ieGkQ7SB1KQvYGO
-	pAAiCmqozfcVOCypZfTEyBbZQt5SRcY8nD96ti3szXfYmnvF3qpZOJRe2nrBZ2ENNfk+8mgR2NLOr
-	EGPoo+1Q8oTsTmmo1Oh/TWzGK/BDr3wklGz2lhD9/hNnIC3MWCNPaAUpOwTkQchl7qEM=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=5tpDUCEReMDJS5jCqLwfaSLIPdkVNs3yftRh7KbwJzA=; b=kJYxC6Vd0lk+XxwyCUKyOLsxDr
+	4gKzTAbpqhuoBMmrO+Je5Xu4TzrlfpYOcZ591fYbHxrmhYz28z2KAZBThO86fUOTDI+6GHzFpOInH
+	Um3RfnxhYEK3vnAZgS3OoYauuLo5ApXsByS/FI36RWnEGLXtFMoQ1aAiiNNXXInXxG1c=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v2n9k-0003eV-8J;
-	Sun, 28 Sep 2025 08:53:20 +0000
+	id 1v2naj-0001jF-MN;
+	Sun, 28 Sep 2025 09:21:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1v2n9W-0003Zr-MI
+ (envelope-from <chao@kernel.org>) id 1v2nai-0001j9-FX
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 28 Sep 2025 08:53:06 +0000
+ Sun, 28 Sep 2025 09:21:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ad3T196/dLizt/AhkoqjVxZyh17JnDos0z3/w3MrHvo=; b=Qv5Xr1W+aqLqqmFGcBpKFptIuP
- 4fLIh5gxLD23C9On7yYuxKmbh1WK6QZT9WNyhC0eyzsh6IdeJQ4jr2jVPl/ztVGJKw6eofO2aa2wO
- SZnDSoikirvwTXd0Qbom/BoBR6elKSMZiCb6Lg2ZnofnnmIvdkGi1V0WkP7e/nb4lj+c=;
+ bh=auCqVl/CmKDG3UYDmaPFONYkfxZQmzNFH6SYuQlvXNI=; b=ZS41U/iMd5NpWoJDxkDvI5ZFmJ
+ QeptJjXVC3ctH23h2dBXET0oo8e/LiXqoDyyinyWi8DIHiZ0Iw2t7rWtw95bZgvBi5L6ud+4I4cmf
+ 8IrwXbOHseSyO6AO5Qp5MpbNvuv+r0XDHTCIUY3fHmIZhO0bNZ8sI8fifuDhWGbb0ME4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Ad3T196/dLizt/AhkoqjVxZyh17JnDos0z3/w3MrHvo=; b=N
- 8pZQcrAHHt8xQuv+V9NSa3txNT1oIV3+EquVm07KjFsW+z4G9USWOXc9B6zM4++86UP6M5afWKITu
- YnupiHXL2fReAvP+IZMEarL8uPldKPxpFXPi5H3GdbeIhk1+Kem79jb4+nz8MOYoSchTaY/keeZKM
- GYoFrtb1fW/TS7Q0=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ List-Owner:List-Archive; bh=auCqVl/CmKDG3UYDmaPFONYkfxZQmzNFH6SYuQlvXNI=; b=d
+ LhQk5ZE9naEEeVlzyCvq1oLu53OpK/oO9O1y+0S26fX892e0YbZOHAyawVsWr5Nrqkgkqtf6Rny2G
+ jeCK/5AoEooqgkzbIEylqJOGAJeai+SmHR/WoRIN+3ZIx3kHGs+3sZP5GbesnjjEpp8zI3TNKOLfO
+ 6JVLElWE7VX8Yfe8=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1v2n9W-0004Zi-9t for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 28 Sep 2025 08:53:06 +0000
+ id 1v2naf-000626-Th for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 28 Sep 2025 09:21:12 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id EBD4243A20;
- Sun, 28 Sep 2025 08:53:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92CECC4CEF0;
- Sun, 28 Sep 2025 08:52:59 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 22BB06024F
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 28 Sep 2025 09:20:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9EA1C4CEF0;
+ Sun, 28 Sep 2025 09:20:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1759049580;
- bh=5nUj7RWeOwj694q2m5C7FBsq7V+t+XNUadgoVrwldWo=;
+ s=k20201202; t=1759051258;
+ bh=HGSCBqF0nvehYR+QitbLZiNNu/TWckHchcmeVXOC/Nc=;
  h=From:To:Cc:Subject:Date:From;
- b=qizxVdi6JS6kzNnRDXc7YDA1cfMhumLgG1A8pX2tEeV63CvOU0msO55iPkHR4XkDQ
- t2jqGFXL1YCpihSRZORQOKoANvVwJ2rs/lIo2olis3FT/kK/l3k9tPIXgi286eBgEq
- eTpQuvN/ACj5Z6O4P3miZ3P/+qJDy+1BiLQDFGgWgFyo6j3PDtRQqwosSriW2+shUX
- Jkasm03tuPkHuQYUvYTtILFTs67aASnyiQIMwkUop3+bwo86NjCytKNGL0ClUeJN2i
- NP+VqqMOj+RVn5Z4SoIcxuhSrNVxYN9WKRKlHmkLOujOZtw1DGeL8srHuXdRSonWz7
- QdDYkF15etkDg==
-To: Zorro Lang <zlang@kernel.org>,
-	fstests@vger.kernel.org
-Date: Sun, 28 Sep 2025 16:34:41 +0800
-Message-Id: <20250928083442.7955-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ b=VaxlDwFTKd+5LjXs2erIuWRg6NXFgMX4ZNe8FXYTjGgpFIH/D3iSzGg3tQDYCuFgL
+ pXijOmFW9YAkfAXXDhSbaviAgxnhVbbq4YkCBe/IXkaXyziIIcpLFgLzT7i+ms6XuB
+ /7QeihPc8qd4QVb8J9RsE5cTMAOY9Iu3mqtdNWVaGiIvi/IcAFY8HMszwlzAwUhrza
+ 8dbZ6q3sb55+nJ8mGcmMST6DssfwK70eF2bn9IsoZjszOZEA6NbTMFx4iKveuo5BGL
+ RaUtkAcKLsPMm3kS3P62M1duPnSJpo2Vpr/y02gbulA6zPA04YcapHqujdz+E0Mw3L
+ fysAUVdZC3HHA==
+To: jaegeuk@kernel.org
+Date: Sun, 28 Sep 2025 17:20:50 +0800
+Message-ID: <20250928092050.287779-1-chao@kernel.org>
+X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
 MIME-Version: 1.0
-X-Headers-End: 1v2n9W-0004Zi-9t
-Subject: [f2fs-dev] [PATCH v2 1/2] f2fs/021: test quota mount option
+X-Headers-End: 1v2naf-000626-Th
+Subject: [f2fs-dev] [PATCH RFC] f2fs: freeze fs operations during
+ f2fs_enable_checkpoint()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,76 +87,143 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, Zorro Lang <zlang@redhat.com>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This testcase tries to check whether f2fs can handle "usrjquota="
-during remount correctly, it expects kernel will encounter NULL
-pointer dereference bug w/o the fix ("f2fs: fix to avoid NULL pointer
-dereference in f2fs_check_quota_consistency()").
+If there are too many background IOs during f2fs_enable_checkpoint(),
+sync_inodes_sb() may be blocked for long time due to it will loop to
+write dirty datas which are generated by in parallel write()
+continuously.
 
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Reviewed-by: Zorro Lang <zlang@redhat.com>
+Let's change as below to resolve this issue:
+- freeze fs operations to avoid race condition
+- decrease DEF_ENABLE_INTERVAL from 16 to 5
+
+In addition, dump more logs during f2fs_enable_checkpoint().
+
+Testcase:
+1. fill data to dirty filesystem
+2. mount -o remount,checkpoint=disable:10% /data
+3. fio --rw=randwrite  --bs=4kb  --size=1GB  --numjobs=10  \
+--iodepth=64  --ioengine=psync  --time_based  --runtime=600 &
+4. mount -o remount,checkpoint=enable /data
+
+Before:
+F2FS-fs (dm-51): f2fs_enable_checkpoint() finishes, writeback:7232, sync:39793, cp:457
+
+After:
+F2FS-fs (dm-51): f2fs_enable_checkpoint() finishes, writeback:5945, lock:28, sync:9289, cp:0, 434, 0
+
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
-v2:
-- add the testcase to 'quota' and 'remount' group
-- add reviewed-by tag from Zorro
- tests/f2fs/021     | 30 ++++++++++++++++++++++++++++++
- tests/f2fs/021.out |  2 ++
- 2 files changed, 32 insertions(+)
- create mode 100755 tests/f2fs/021
- create mode 100644 tests/f2fs/021.out
+ fs/f2fs/f2fs.h  |  2 +-
+ fs/f2fs/super.c | 49 +++++++++++++++++++++++++++++++++++++++++--------
+ 2 files changed, 42 insertions(+), 9 deletions(-)
 
-diff --git a/tests/f2fs/021 b/tests/f2fs/021
-new file mode 100755
-index 00000000..96fc97c4
---- /dev/null
-+++ b/tests/f2fs/021
-@@ -0,0 +1,30 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2025 Chao Yu.  All Rights Reserved.
-+#
-+# FS QA Test No. f2fs/021
-+#
-+# This testcase tries to check whether f2fs can handle "usrjquota="
-+# during remount correctly
-+#
-+. ./common/preamble
-+_begin_fstest auto quick mount quota remount
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c4a197c4d804..060a4603a779 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -281,7 +281,7 @@ enum {
+ #define DEF_CP_INTERVAL			60	/* 60 secs */
+ #define DEF_IDLE_INTERVAL		5	/* 5 secs */
+ #define DEF_DISABLE_INTERVAL		5	/* 5 secs */
+-#define DEF_ENABLE_INTERVAL		16	/* 16 secs */
++#define DEF_ENABLE_INTERVAL		5	/* 5 secs */
+ #define DEF_DISABLE_QUICK_INTERVAL	1	/* 1 secs */
+ #define DEF_UMOUNT_DISCARD_TIMEOUT	5	/* 5 secs */
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 1e0678e37a30..dfdd3c3795a2 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2626,12 +2626,25 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+ 	return err;
+ }
+ 
++static void f2fs_freeze_operations(struct super_block *sb)
++{
++	percpu_down_write(sb->s_writers.rw_sem + SB_FREEZE_WRITE - 1);
++	percpu_down_write(sb->s_writers.rw_sem + SB_FREEZE_PAGEFAULT - 1);
++}
 +
-+_fixed_by_kernel_commit xxxxxxxxxxxx \
-+	"f2fs: fix to avoid NULL pointer dereference in f2fs_check_quota_consistency()"
++static void f2fs_unfreeze_operations(struct super_block *sb)
++{
++	percpu_up_write(sb->s_writers.rw_sem + SB_FREEZE_PAGEFAULT - 1);
++	percpu_up_write(sb->s_writers.rw_sem + SB_FREEZE_WRITE - 1);
++}
 +
-+_require_scratch
+ static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
+ {
+ 	unsigned int nr_pages = get_pages(sbi, F2FS_DIRTY_DATA) / 16;
+-	long long start, writeback, end;
++	long long start, writeback, lock, sync_inode, end;
+ 
+-	f2fs_info(sbi, "f2fs_enable_checkpoint() starts, meta: %lld, node: %lld, data: %lld",
++	f2fs_info(sbi, "%s start, meta: %lld, node: %lld, data: %lld",
++					__func__,
+ 					get_pages(sbi, F2FS_DIRTY_META),
+ 					get_pages(sbi, F2FS_DIRTY_NODES),
+ 					get_pages(sbi, F2FS_DIRTY_DATA));
+@@ -2650,11 +2663,18 @@ static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
+ 	}
+ 	writeback = ktime_get();
+ 
+-	sync_inodes_sb(sbi->sb);
++	f2fs_freeze_operations(sbi->sb);
 +
-+_scratch_mkfs >> $seqres.full
-+_scratch_mount "-o usrquota"
-+quotacheck -uc $SCRATCH_MNT
-+_scratch_unmount
++	lock = ktime_get();
 +
-+_scratch_mount "-o usrjquota=aquota.user,jqfmt=vfsold"
-+_scratch_mount "-o remount,usrjquota=,jqfmt=vfsold"
-+_scratch_unmount
++	if (get_pages(sbi, F2FS_DIRTY_DATA))
++		sync_inodes_sb(sbi->sb);
+ 
+ 	if (unlikely(get_pages(sbi, F2FS_DIRTY_DATA)))
+-		f2fs_warn(sbi, "checkpoint=enable has some unwritten data: %lld",
+-					get_pages(sbi, F2FS_DIRTY_DATA));
++		f2fs_warn(sbi, "%s: has some unwritten data: %lld",
++			__func__, get_pages(sbi, F2FS_DIRTY_DATA));
 +
-+echo "Silence is golden"
++	sync_inode = ktime_get();
+ 
+ 	f2fs_down_write(&sbi->gc_lock);
+ 	f2fs_dirty_to_prefree(sbi);
+@@ -2663,16 +2683,29 @@ static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
+ 	set_sbi_flag(sbi, SBI_IS_DIRTY);
+ 	f2fs_up_write(&sbi->gc_lock);
+ 
++	f2fs_info(sbi, "%s sync_fs, meta: %lld, imeta: %lld, node: %lld, dents: %lld, qdata: %lld",
++					__func__,
++					get_pages(sbi, F2FS_DIRTY_META),
++					get_pages(sbi, F2FS_DIRTY_IMETA),
++					get_pages(sbi, F2FS_DIRTY_NODES),
++					get_pages(sbi, F2FS_DIRTY_DENTS),
++					get_pages(sbi, F2FS_DIRTY_QDATA));
+ 	f2fs_sync_fs(sbi->sb, 1);
+ 
+ 	/* Let's ensure there's no pending checkpoint anymore */
+ 	f2fs_flush_ckpt_thread(sbi);
+ 
++	f2fs_unfreeze_operations(sbi->sb);
 +
-+status=0
-+exit
-diff --git a/tests/f2fs/021.out b/tests/f2fs/021.out
-new file mode 100644
-index 00000000..09f4062d
---- /dev/null
-+++ b/tests/f2fs/021.out
-@@ -0,0 +1,2 @@
-+QA output created by 021
-+Silence is golden
+ 	end = ktime_get();
+ 
+-	f2fs_info(sbi, "f2fs_enable_checkpoint() finishes, writeback:%llu, sync:%llu",
+-					ktime_ms_delta(writeback, start),
+-					ktime_ms_delta(end, writeback));
++	f2fs_info(sbi, "%s end, writeback:%llu, "
++				"lock:%llu, sync_inode:%llu, sync_fs:%llu",
++				__func__,
++				ktime_ms_delta(writeback, start),
++				ktime_ms_delta(lock, writeback),
++				ktime_ms_delta(sync_inode, lock),
++				ktime_ms_delta(end, sync_inode));
+ }
+ 
+ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
 -- 
-2.40.1
+2.49.0
 
 
 
