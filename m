@@ -4,74 +4,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 02303CAC5BB
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 28 Sep 2025 10:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9346ECAC5B5
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 28 Sep 2025 13:51:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=y0HtaC9/QsuSJH/VMFNHwpnnPVDBgBgK52hodmAp3Jg=; b=cD1wLvep5Rk4WQKAv56eOQ0GZj
-	SsqHLOvDh6jRNcoCs336LlYPpjv6wCBJ6pgAccvdYBZ1zeeYkhrP+uLHA8x6IzE7Do274UY4NzZ/x
-	z9L9eLH04WwVaBlKVdH9iuk2mC6IksQIvkMwFKEs+aykI41q19dnDnNdVavZqFmV/cMw=;
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=3F80f+sH/fUXC8lu0fv65woPDcFeQ0fBQexJAOPk5rc=; b=OT0i/lRju7P/ONKhf04eq2nVJj
+	iAsMkW8aaUZVAtmsZd4TQL37kHPqwo/Jan1OyF9pGQ23eHaohBB/H3dmhnRD+DxsDA/qxlYIg44R3
+	SCjAYaRcchVKpSwL4H5buZWfoBuVxxKPj+bBQEzod9rRBXk77WJrGLnUlEXHXIJnwKEM=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v2oyF-0003jv-3P;
-	Sun, 28 Sep 2025 10:49:35 +0000
+	id 1v2rob-0007Z2-Dw;
+	Sun, 28 Sep 2025 13:51:49 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1v2oyD-0003jc-I5
+ (envelope-from <zlang@redhat.com>) id 1v2roZ-0007Yt-Ru
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 28 Sep 2025 10:49:33 +0000
+ Sun, 28 Sep 2025 13:51:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:In-Reply-To:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=blQdSWC1XawFVwE+HN6BevfF6cRExgF1/1cBq0PSpkw=; b=Pw14pzj0wUMYSi/OjrWKqy5FYG
- gaiLge6XnG1hY5ugL1kZah8x5JiNZK/KLinyR2KOMkr1wwWtsmOXDaEVubWofNIUfsHRJ62Ml4GhN
- vRvgbcasdH/V5p7wWFCVZgEO0d65qSd1Bs5WGIaqqkEOP9ZT4+6pWvhe3Yo+8yW2mKvY=;
+ bh=j9JpqdLLT9z1M051j1qXRqMQ5SMaqtTYMmpk/UjNV5Q=; b=GH59sFtiBvDRLtyeeZY3lxi42R
+ jl46wni/7hJ14dlN/lfepUi3SEFKpzyMvoRpdxVh+UPJyeuyamifQYsFWZwyuD0attQwelgFnktWo
+ cU3mqNWKU7fgakZSpUppxn5h6AaMiSt1eGyIRcTi4dF4Tda+A5nu1LztS+WBXgbzRbuw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=blQdSWC1XawFVwE+HN6BevfF6cRExgF1/1cBq0PSpkw=; b=U
- D+2Cf7Fm5QkIWZY0d735LfOSBm8L/6QyDrn4qFKfTyApcMZupCuoT/WRHIt62fhoIc/sOGi6EWwoT
- zGspJsgCq9FzQPQ0JhWpnpjM0RklbXBJ6YsBRZv5RMBGucTRe6r+a8xxq0fX8GmaZ1Del9ICahtP2
- +ZF1j06B6FQAT+h8=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Content-Type:In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=j9JpqdLLT9z1M051j1qXRqMQ5SMaqtTYMmpk/UjNV5Q=; b=OWUCZb6PjKlZQ+Oys5txIeAWhE
+ GWrELuPJ7j+MsuI4B7YgKOcX8SMNP94+oi9Z3iwokLMM90GT8TNslo8CIDKwcBPlsM5yPMK1NMatX
+ TSQjv0BsPFcQjN9JCrlR4fiSH1JdiOCZDvuRksRqb76E07RrT6HihAtvW/OA7vA7+MC0=;
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1v2oaC-00014R-In for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 28 Sep 2025 10:24:45 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id D169262153;
- Sun, 28 Sep 2025 10:24:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55264C4CEF0;
- Sun, 28 Sep 2025 10:24:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1759055073;
- bh=0SFpAeRsj+73ToPc1OCYE3veDt4HP4vYJm03fBRLVFE=;
- h=From:To:Cc:Subject:Date:From;
- b=M0w1x+sSdZtVvYm0WP1ebGpHK0/h2vx/PYXiyih7hcXRENwvq/tHs3H5tCQG47n2G
- ZMkt8QrzTerKDYx9+Zec+DvaZg4+p1ermiQRK9jxMKWHqAcA4BnkU0IMNhqu+bIPZx
- CgSHwnbldWWwwBE7jyr6LoF2ZIUJdEFexve3BtSj9cle9wFRahYJEHJQyTYH40M/0L
- YSYq1QIwrbb89KiyzhybVzqiOsCVUDTsKixmhgyD1h4TA1iUG/V0qU3ufJN2pFZJ+3
- buvVnSu7k/cstow3Up5U8yIKpMdePiZKX5JM43fz52mWl4c/gtDi1Oo5yIb+liBy6I
- uGGhxtX6u4B2A==
-To: jaegeuk@kernel.org
-Date: Sun, 28 Sep 2025 18:24:22 +0800
-Message-ID: <20250928102422.300429-1-chao@kernel.org>
-X-Mailer: git-send-email 2.51.0.536.g15c5d4f767-goog
+ id 1v2roZ-0005QB-9i for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 28 Sep 2025 13:51:47 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1759067496;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=j9JpqdLLT9z1M051j1qXRqMQ5SMaqtTYMmpk/UjNV5Q=;
+ b=eY2eB71TfvvHleCBYqcDsNRcAkEeUJlscC4V9RJ+HgKllVuNE5YAp8nVpMX8q/n35rfgWj
+ pdRZi4PxemZmZ3aOZUhMX4zXHj0wtKGyFC1Lzd0zt/aJ6pruTlij8ZfEnqVbuTIdk37f5V
+ ftLSYxPhhD503saOvpkYoL6fOd2gz+w=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-588-rNwDF1f3PguerjAfY-XHPw-1; Sun, 28 Sep 2025 09:51:35 -0400
+X-MC-Unique: rNwDF1f3PguerjAfY-XHPw-1
+X-Mimecast-MFC-AGG-ID: rNwDF1f3PguerjAfY-XHPw_1759067494
+Received: by mail-pg1-f199.google.com with SMTP id
+ 41be03b00d2f7-b4f86568434so2722096a12.2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 28 Sep 2025 06:51:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1759067494; x=1759672294;
+ h=in-reply-to:content-disposition:mime-version:references:message-id
+ :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=j9JpqdLLT9z1M051j1qXRqMQ5SMaqtTYMmpk/UjNV5Q=;
+ b=HmZKgyioEW1QwQbUfeE6PdAWEWnGpt7X/YVAUyKqpcASd5VKGLnBpEtCCG/V+F7D6E
+ GVM5Lv0kLIfdy79wjM9K1qc+eKhBkCWnfKzvzYPT0NQIWen5a1Ojv1ZaKGLsI9zwNeuk
+ xqTgHYZtyfVlanWAejf1u5h2+kem7yMXxKFNnqCKsc2kAgKufJxugPrF3K8h0NqvXZ9F
+ o03Eb5NtnKxwxFxdw6VOlQ52a2jO9BpLwKEL57xv6kPJUreyx86/13/IvFac81UQ0CDO
+ KyA8Ganv47oAiq2+0AR2iqO9uw82hFsSEXATFNdWkNa1/7LN/AbvHtpiTHJWDEAjJG9m
+ VOaQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWCLqTs/w/o6YhCzYISRMFy+IxGYJBUv17fmsnQoFPWJifUf5Mv7olq346xJKi1VsbvqLQGPSRHxMxhAARiy5wf@lists.sourceforge.net
+X-Gm-Message-State: AOJu0Yzfj40QXTNYRxUfo59fLTANBQmLa2VgSnpfjeeLfF6QJoxf461R
+ FPfor3R/kU220LzRfFV8ZF1UhutwhJjunOpo2qL3Rc785NDPrPxxjegE7zUbPXSPOFo8xldEDQ8
+ TkyU0UyCt/zsN36c4gQ4XuDuAN/9kWsBVm3Y84i+FITmRC8wEKermSIqY9ObOzNA9fO0zZ/D5Ze
+ KqpYQ=
+X-Gm-Gg: ASbGncsnDX75cVTRStmJgJkgV3u9MXR8Iq5Tv8u4gMcizxmnLSvxnzHSKgYOmOKEra4
+ dSxBFReOGbTVHsSFu0b3F0BQq7tzsFiFFzCqfdqnxrP+BocbXKiQTrk2BrG7vZHrewHvEtaKiOk
+ R0FaEWGF8n/tyMrhf3HWEWptypuijhkAoyEy6CRPs68ipLA9z8nmV+H+g7eZ+k0Ngy6DpjKB26M
+ aVi3UbVB3/tnNYXbk5SQwplnMbH5iivPW7Oq5A59/7+kVrNWFetjIoAPFQaJpzc3U/qX4t21PQq
+ MZX+WKQedd2f0fZhjy9aW+tDJ6ElXDO1WzpVkrPx1nRIicMicg90hNFGS9B9N0FsS63z04nVoLN
+ 4A4Th
+X-Received: by 2002:a05:6a21:e098:b0:24d:38c:26bd with SMTP id
+ adf61e73a8af0-2e7d1ff0a57mr18099760637.43.1759067493889; 
+ Sun, 28 Sep 2025 06:51:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGg04/G4NfqhTpCpCPdtRAQV4uvWVXc/77oQZV+4Ld5cvDuBuQgZe2sLsXaxO5UGEano05WVA==
+X-Received: by 2002:a05:6a21:e098:b0:24d:38c:26bd with SMTP id
+ adf61e73a8af0-2e7d1ff0a57mr18099734637.43.1759067493381; 
+ Sun, 28 Sep 2025 06:51:33 -0700 (PDT)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-78102c279f8sm8916171b3a.98.2025.09.28.06.51.31
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 28 Sep 2025 06:51:33 -0700 (PDT)
+Date: Sun, 28 Sep 2025 21:51:28 +0800
+To: Chao Yu <chao@kernel.org>
+Message-ID: <20250928135128.s57p4hj6y223gvf7@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20250928083442.7955-1-chao@kernel.org>
+ <20250928083442.7955-2-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1v2oaC-00014R-In
-Subject: [f2fs-dev] [PATCH] f2fs: fix UAF issue in f2fs_merge_page_bio()
+In-Reply-To: <20250928083442.7955-2-chao@kernel.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: cipCfPythIEZRp6W7OlgIOm7R0TsQUjllPMyhn_PD9g_1759067494
+X-Mimecast-Originator: redhat.com
+Content-Disposition: inline
+X-Headers-End: 1v2roZ-0005QB-9i
+Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs/022: do sanity check on footer
+ of non inode dnode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,111 +130,113 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, JY <JY.Ho@mediatek.com>,
+From: Zorro Lang via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Zorro Lang <zlang@redhat.com>
+Cc: jaegeuk@kernel.org, Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-As JY reported in bugzilla [1],
+On Sun, Sep 28, 2025 at 04:34:42PM +0800, Chao Yu wrote:
+> This is a regression test:
+> 1. create foo & bar
+> 2. write 8M data to foo
+> 3. use inject.f2fs to inject i_nid[0] of foo w/ ino of bar
+> 4. fpunch in foo w/ specified range
+> 
+> If we haven't applied kernel patch ("f2fs: fix to do sanity check on
+> node footer for non inode dnode"), f2fs may missed to do sanity check
+> on corrupted dnode, result in panic or deadloop in step 4).
+> 
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+> v2:
+> - remove "_require_kernel_config CONFIG_F2FS_CHECK_FS"
+> - update comments a bit
 
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-pc : [0xffffffe51d249484] f2fs_is_cp_guaranteed+0x70/0x98
-lr : [0xffffffe51d24adbc] f2fs_merge_page_bio+0x520/0x6d4
-CPU: 3 UID: 0 PID: 6790 Comm: kworker/u16:3 Tainted: P    B   W  OE      6.12.30-android16-5-maybe-dirty-4k #1 5f7701c9cbf727d1eebe77c89bbbeb3371e895e5
-Tainted: [P]=PROPRIETARY_MODULE, [B]=BAD_PAGE, [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-Workqueue: writeback wb_workfn (flush-254:49)
-Call trace:
- f2fs_is_cp_guaranteed+0x70/0x98
- f2fs_inplace_write_data+0x174/0x2f4
- f2fs_do_write_data_page+0x214/0x81c
- f2fs_write_single_data_page+0x28c/0x764
- f2fs_write_data_pages+0x78c/0xce4
- do_writepages+0xe8/0x2fc
- __writeback_single_inode+0x4c/0x4b4
- writeback_sb_inodes+0x314/0x540
- __writeback_inodes_wb+0xa4/0xf4
- wb_writeback+0x160/0x448
- wb_workfn+0x2f0/0x5dc
- process_scheduled_works+0x1c8/0x458
- worker_thread+0x334/0x3f0
- kthread+0x118/0x1ac
- ret_from_fork+0x10/0x20
+This version looks good to me,
 
-[1] https://bugzilla.kernel.org/show_bug.cgi?id=220575
+Reviewed-by: Zorro Lang <zlang@redhat.com>
 
-The panic was caused by UAF issue w/ below race condition:
-
-kworker
-- writepages
- - f2fs_write_cache_pages
-  - f2fs_write_single_data_page
-   - f2fs_do_write_data_page
-    - f2fs_inplace_write_data
-     - f2fs_merge_page_bio
-      - add_inu_page
-      : cache page #1 into bio & cache bio in
-        io->bio_list
-  - f2fs_write_single_data_page
-   - f2fs_do_write_data_page
-    - f2fs_inplace_write_data
-     - f2fs_merge_page_bio
-      - add_inu_page
-      : cache page #2 into bio which is linked
-        in io->bio_list
-						write
-						- f2fs_write_begin
-						: write page #1
-						 - f2fs_folio_wait_writeback
-						  - f2fs_submit_merged_ipu_write
-						   - f2fs_submit_write_bio
-						   : submit bio which inclues page #1 and #2
-
-						software IRQ
-						- f2fs_write_end_io
-						 - fscrypt_free_bounce_page
-						 : freed bounced page which belongs to page #2
-      - inc_page_count( , WB_DATA_TYPE(data_folio), false)
-      : data_folio points to fio->encrypted_page
-        the bounced page can be freed before
-        accessing it in f2fs_is_cp_guarantee()
-
-It can reproduce w/ below testcase:
-Run below script in shell #1:
-for ((i=1;i>0;i++)) do xfs_io -f /mnt/f2fs/enc/file \
--c "pwrite 0 32k" -c "fdatasync"
-
-Run below script in shell #2:
-for ((i=1;i>0;i++)) do xfs_io -f /mnt/f2fs/enc/file \
--c "pwrite 0 32k" -c "fdatasync"
-
-So, in f2fs_merge_page_bio(), let's avoid using fio->encrypted_page after
-commit page into internal ipu cache.
-
-Fixes: 0b20fcec8651 ("f2fs: cache global IPU bio")
-Reported-by: JY <JY.Ho@mediatek.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 82ae31b8ecc4..9d1d439e2650 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -919,7 +919,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 	if (fio->io_wbc)
- 		wbc_account_cgroup_owner(fio->io_wbc, folio, folio_size(folio));
- 
--	inc_page_count(fio->sbi, WB_DATA_TYPE(data_folio, false));
-+	inc_page_count(fio->sbi, WB_DATA_TYPE(folio, false));
- 
- 	*fio->last_block = fio->new_blkaddr;
- 	*fio->bio = bio;
--- 
-2.49.0
+>  tests/f2fs/022     | 54 ++++++++++++++++++++++++++++++++++++++++++++++
+>  tests/f2fs/022.out |  2 ++
+>  2 files changed, 56 insertions(+)
+>  create mode 100755 tests/f2fs/022
+>  create mode 100644 tests/f2fs/022.out
+> 
+> diff --git a/tests/f2fs/022 b/tests/f2fs/022
+> new file mode 100755
+> index 00000000..ed3b4f2b
+> --- /dev/null
+> +++ b/tests/f2fs/022
+> @@ -0,0 +1,54 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2025 Chao Yu.  All Rights Reserved.
+> +#
+> +# FS QA Test No. f2fs/022
+> +#
+> +# This is a regression test:
+> +# 1. create foo & bar
+> +# 2. write 8M data to foo
+> +# 3. use inject.f2fs to inject i_nid[0] of foo w/ ino of bar
+> +# 4. fpunch in foo w/ specified range
+> +#
+> +. ./common/preamble
+> +_begin_fstest auto quick rw
+> +
+> +. ./common/attr
+> +
+> +_fixed_by_kernel_commit xxxxxxxxxxxx \
+> +	"f2fs: fix to do sanity check on node footer for non inode dnode"
+> +
+> +_require_scratch_nocheck
+> +_require_command "$F2FS_INJECT_PROG" inject.f2fs
+> +
+> +# remove all mkfs options to avoid layout change of on-disk inode
+> +export MKFS_OPTIONS=""
+> +
+> +foo_path=$SCARTCH_MNT/foo
+> +bar_path=$SCARTCH_MNT/bar
+> +
+> +_scratch_mkfs >> $seqres.full
+> +_scratch_mount
+> +
+> +touch $foo_path
+> +touch $bar_path
+> +$XFS_IO_PROG $foo_path -c "pwrite 0 8M"
+> +sync
+> +foo_ino=`stat -c '%i' $foo_path`
+> +bar_ino=`stat -c '%i' $bar_path`
+> +_scratch_unmount
+> +
+> +# inject foo inode to replace i_nid[0] w/ to bar ino
+> +$F2FS_INJECT_PROG --node --mb i_nid --nid $foo_ino --idx 0 --val $bar_ino $SCRATCH_DEV >> $seqres.full || _fail "failed to inject"
+> +
+> +_scratch_mount
+> +
+> +# if CONFIG_F2FS_CHECK_FS is enabled, it will trigger a kernel panic,
+> +# otherwise, it will enter a deadloop.
+> +$XFS_IO_PROG $foo_path -c "fpunch 6984k 4k"
+> +_scratch_unmount
+> +
+> +echo "Silence is golden"
+> +
+> +status=0
+> +exit
+> diff --git a/tests/f2fs/022.out b/tests/f2fs/022.out
+> new file mode 100644
+> index 00000000..394c6a7c
+> --- /dev/null
+> +++ b/tests/f2fs/022.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 022
+> +Silence is golden
+> -- 
+> 2.40.1
+> 
 
 
 
