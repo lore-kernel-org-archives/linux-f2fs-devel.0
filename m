@@ -4,78 +4,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 61BB6CAC5BB
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 28 Sep 2025 09:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 79076CAC5B5
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 28 Sep 2025 10:31:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=5QM4QDJL8Cw5zZcJHpVpHqhhaytT9u0ZL03bNS471qY=; b=T6w8roJ1uRigAWmQYYar+PFsk7
-	B0CQzfns482Md8NFfsXNR/PY72vs7Xm+Xsq152JNv4rA9vbntomA25tapSdhgYIlwmVBCwJz/TmC7
-	SrYs0S+oW69ALNfBpbDX9x/qEtimrOCt1LUKUHHv+7s9B9jwMhWKwaVztW0FL1mVKTa4=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Cc:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=4K/TVnr8KR9nRMH/fwFxw5Jxw+Slt65s/LULRu+GCxs=; b=Q6wWPjNsOHyUICl00WjhWad6PT
+	fjSH/R/nYdvu0mfgk3W2E1XVrVmKRZ7kWy5dXq1GfxlWzlyKiw3YS3F+j9SECiW0ACZtW4qAvJXfH
+	cScMUwnGWGNgEodq9nptHKsZM0MHF5GPmMciZ6sdQkagX9Yv0pv+yxLS9jVPHSTSBnpI=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v2nk8-00024i-EX;
-	Sun, 28 Sep 2025 09:30:56 +0000
+	id 1v2ogE-0008GE-Mj;
+	Sun, 28 Sep 2025 10:30:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1v2nju-00024R-IT
+ (envelope-from <bugzilla-daemon@kernel.org>) id 1v2ogD-0008G7-Jk
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 28 Sep 2025 09:30:42 +0000
+ Sun, 28 Sep 2025 10:30:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Jm4lpcGHH6QufM46bZuQqCTq5oZuUOQh3Q+OzEHATwM=; b=bZoh3e/L8XxvJAaQl8p0WqizrV
- YB4gaQX/P/SgPz6hWC2MVy3bY7deSKXtB+shgGwAyoG8qLPnOXNC5xq3l3N/eSKPkdXfqmPBN5qpJ
- 5wrXJwMnHQXoff23Q6Vo7LbaI8/+/ZUnBEMxiTibhuSin1CuQq28nHgn+y6x8rnyQBhI=;
+ bh=Jk2fNPwDRqEUJlcUd5mPEdGXnBrI1eDgG0iGw8OIYCA=; b=AfcK0luODs+OD6eep5Ep2OXr8u
+ EETJ2NBmDrNa8havlSCorkygcxvit3anNO3oKk4rNWHTn6fc0FCd43uMRnDulPdjFYr2wwPuIO+uI
+ vjmToVtqJnnrH8pzud0L7FikjHsFiQhCYCPIxalfHCdCGoKgNMOKcOdFzDnZTMv6kuTI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Jm4lpcGHH6QufM46bZuQqCTq5oZuUOQh3Q+OzEHATwM=; b=agriZuxtSIYgpbOpj7UXe34ZXs
- k8lRmjEgAlZ2G5ff7vdk7PDbf+gxnZvSv2lQ8+vFiPYcBpZDY+8JGiqCNt20Zz3OoK7GdVhieJriK
- /OdX1CIYnTcYDZOJ3fUr1beOBmiSx1rCCP7sEIv7kxusLgJsqmQhGFnRxoSwkGO/3Ojg=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=Jk2fNPwDRqEUJlcUd5mPEdGXnBrI1eDgG0iGw8OIYCA=; b=MFb7v9aLJvzOkYrIakuYQE5QXy
+ L+HdPeyoRtQw3yk4DDMSpzf8smbKtjv/WIwkPjmhVWHpUTlAM04MHoTa2bLHqlfXICOfgwBzTbAUp
+ +pGQiqTnwU+RGTSw/Y5XmX2F26jrNIceo6KCVunsnogt7lvf1MGqYS0Fp/4NpwSkfGis=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1v2nju-0006Nx-5c for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 28 Sep 2025 09:30:42 +0000
+ id 1v2ogD-0001Km-3v for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 28 Sep 2025 10:30:57 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 72D586212A;
- Sun, 28 Sep 2025 09:30:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E74DC116B1;
- Sun, 28 Sep 2025 09:30:34 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id ACB3D444D1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 28 Sep 2025 10:30:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 898F2C4CEF7
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 28 Sep 2025 10:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1759051836;
- bh=Azl5SLDOTEZ7t3KEBMBXasVPE/4KvOxX1+sg5HSVNMU=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=vC3eo0/pn7J9kdVw/Dcs59pXs6c/8W+0fuS1sKaFu4TFTpX/OW5zI7x4gZ9B3SSIm
- ib4e8hYM3KWl8ow+0K/ZzB1wOF/P61RdvEMSbIN1PjwBEGNAHXPmTHLpV71hJvzrF0
- wxcn1BvZtpBVUVv15/4fSRcA7DCoYmQTF8ORzKQs2JXnm9BzKCAmgj7qWbW0GO1NTK
- 2yi/p0dB1NdMYt8/EsbGZeGckcw06RPwefYfPjXsxa8EwqmJCv9y5HMd3kt4uQOkGg
- ZtgI68hnXDTEiox3K29RYxDWv4nx+hfIwn5eUYWFtgppwEWScuvH9Hms7GXJOdIeUD
- USjgVuywpFWZw==
-Message-ID: <1a931cfa-0846-488b-ab1a-f3dee33e1d21@kernel.org>
-Date: Sun, 28 Sep 2025 17:30:34 +0800
+ s=k20201202; t=1759055451;
+ bh=qkJ1UTnTKAq9IHWwNlAzf7Mr9PQxg4x4Je7Aa+jgxcU=;
+ h=From:To:Subject:Date:In-Reply-To:References:From;
+ b=othqsTZCcQT6ivwX+wrxY89bp2Wo1Ujwu5+Rs9I/Xy1Ms7ywCKsBz68IcPYqvK1uJ
+ J2v3ql2tUwzZwBVfIz4cAlaryZVBc0T8Xyr8BsdgF6+22PFVRr91oZ+gUAPq58tY4+
+ YpNVDqJgT7FeV6EvLg5gafSZOuAibA+44Ed019r4eXzbZ9ZbsISwJJuoJBiE1Wzpkj
+ sZnGz6zOVOIZDu/ygPPaF2n/vMsX9Mr1DiqnCG6TQbUxlqsybCEUiy7DgxY0bELusD
+ K+uFy3qYg2SUjOqudseVxg9PVh/EzGxK9JvPrJPrVcS69vsl/ugIyCJGeIxu9UKmJK
+ 9HxNh6/qS/vmw==
+Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
+ from userid 48) id 76BD6C3279F; Sun, 28 Sep 2025 10:30:51 +0000 (UTC)
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Sun, 28 Sep 2025 10:30:51 +0000
+X-Bugzilla-Reason: None
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Product: File System
+X-Bugzilla-Component: f2fs
+X-Bugzilla-Version: 2.5
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: chao@kernel.org
+X-Bugzilla-Status: ASSIGNED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: P3
+X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_status
+Message-ID: <bug-220575-202145-4NV5jZmjgQ@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-220575-202145@https.bugzilla.kernel.org/>
+References: <bug-220575-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Akiyoshi Kurita <weibu@redadmin.org>, jaegeuk@kernel.org
-References: <20250926180134.35329-1-weibu@redadmin.org>
-Content-Language: en-US
-In-Reply-To: <20250926180134.35329-1-weibu@redadmin.org>
-X-Headers-End: 1v2nju-0006Nx-5c
-Subject: Re: [f2fs-dev] [PATCH] Documentation: f2fs: Fix typos in
- sysfs-fs-f2fs
+X-Headers-End: 1v2ogD-0001Km-3v
+Subject: [f2fs-dev] [Bug 220575] Unable to handle kernel NULL pointer
+ dereference at virtual address 0000000000000000
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,24 +106,45 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: bugzilla-daemon--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: bugzilla-daemon@kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 9/27/2025 2:01 AM, Akiyoshi Kurita wrote:
-> Fix two spelling mistakes in the f2fs sysfs ABI documentation:
-> - deivces -> devices
-> - substracting -> subtracting
-> 
-> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+https://bugzilla.kernel.org/show_bug.cgi?id=220575
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Chao Yu (chao@kernel.org) changed:
 
-Thanks,
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |ASSIGNED
 
+--- Comment #12 from Chao Yu (chao@kernel.org) ---
+Hi JY,
+
+I've figured out a reproducer as below:
+
+1. mkdir /mnt/f2fs/enc & encrypt /mnt/f2fs/enc
+
+2. Run below script in shell #1:
+for ((i=1;i>0;i++)) do xfs_io -f /mnt/f2fs/enc/file \
+-c "pwrite 0 32k" -c "fdatasync"
+
+3. Run below script in shell #2:
+for ((i=1;i>0;i++)) do xfs_io -f /mnt/f2fs/enc/file \
+-c "pwrite 0 32k" -c "fdatasync"
+
+Now, testing below fix.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=bugfix/syzbot&id=1d024fd4c6fed3767f063db79746bcd2d0be49d1
+
+-- 
+You may reply to this email to add a comment.
+
+You are receiving this mail because:
+You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
