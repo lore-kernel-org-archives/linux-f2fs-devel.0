@@ -4,77 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0E60DCAC5B0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Sep 2025 22:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 907F2CAC5B9
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Sep 2025 22:30:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=lasA2aPCFAASJsHL9iq+Z0zqjKtMnuro95UI4Mj5KX0=; b=YcJMQKZ74OMyFd2+/1CM3tRUjy
-	9IRC/55PdK7vpRLwdfX4Ej0MeUC3c81GurjcJph8Lb/VBd1+ccyVEFPkJXcK7PE8HdFrOGxsq29St
-	vclfhFIOeoJVZny4ZfF1HPAIpc5eQrMMjwDMzIh7U2lPbKAWRNyyLC+tD/QZEfvaeGQg=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=H0nYy+rRokMTk3N9RcPR08ZCVfArsV2cIZ4PVT0ieDA=; b=Rcuw7vx7ielEtvnYG1ZCCKYu7k
+	3+IMQ2tYmJkFYl82a0v2xeK7luZcOME7uk4M4wZylfMkSf1RxlVSguVvclx6V5BHHxFgX8fwVNiNf
+	sjo/ULCCwaRMWbtqBVlQ1vB8X+QeTNecAc8nkp9QMBVbe4svjxxUOnn113WZJzZDTe6g=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v3MOA-0007WM-Rp;
-	Mon, 29 Sep 2025 22:30:34 +0000
+	id 1v3MON-00033z-Es;
+	Mon, 29 Sep 2025 22:30:48 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1v3MO9-0007WF-7U
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1v3MOL-00033b-NF
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 29 Sep 2025 22:30:33 +0000
+ Mon, 29 Sep 2025 22:30:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ymEQ/OlfaoZFLsHMREXR3uL1Zzq63pdcfkNBhonRFD0=; b=QPSf5JCtVODv7O2ZqMgV5X42qg
- bcMlAAs6IxKgNkUZZBeD1DgtC8iQjXFHeX0Dsrt/CHv+WZieULWPajV+1qmXEk93gv8XiAUpZ9CQF
- +AIzv52OLn6VUg3jz4/W+f/3DLMpVN5Ldt3vxZ9+vlFC2FiQK+fgvBBW39IiVrtQ6fkw=;
+ bh=mRpBZiPaSWVK2Cx8P9vc8qmYYjfk6XzoVXjcYA/dzRY=; b=id3uZu15dn7hSWd5XRKrFDkcSv
+ du5bN8l43EjLyCU840okXLLWoNLg0ofynTIj/Vva3jBu8vCyXhB0CPMLs7B943TTR07IiUmbCLv+G
+ 1U9nc1lUqh0EeQucjCoCDCNcLKJgJXccW/uKLtx07W9vFJ13k9OnXUvs9qR7zgYaL7ak=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ymEQ/OlfaoZFLsHMREXR3uL1Zzq63pdcfkNBhonRFD0=; b=DdaiXxyUbLCs0k3Gn/+r05tRbj
- gIoYR85KPZ5GYPnSvDxQG0JpNXMtXcrIoq1bmml/cuK21dNq5/rlxW/ky4bBriiz+5Pw/EELAsao6
- hWyZCnF1srG+Mi0kI7eXk0pwdfNBEP9ziI1XDd69UQJMIpNbbv/03wKyhpfVjJPmbW/0=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=mRpBZiPaSWVK2Cx8P9vc8qmYYjfk6XzoVXjcYA/dzRY=; b=C4m5BMfuEkKKp8DXFj5a6T0Xxt
+ wxNSkt6LpgV+dOeskgG7DTxPigl//E42qj2EtZqcdqzDjOGZVsQAcTiS1NXabsIYb3DEIncZ7asCs
+ eqmR3ZnUgFqmtTveFIj4CrkxDPaL7ZS/7JXypy01f0X5SdUUnJEl2GDtGDuV66s0NoCo=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1v3MO8-0005My-Kt for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 29 Sep 2025 22:30:33 +0000
+ id 1v3MOE-0005NY-H0 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 29 Sep 2025 22:30:46 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 1414E60256;
- Mon, 29 Sep 2025 22:30:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C4AC4CEF4;
- Mon, 29 Sep 2025 22:30:26 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 266ED416EB;
+ Mon, 29 Sep 2025 22:30:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0149CC4CEF4;
+ Mon, 29 Sep 2025 22:30:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1759185026;
- bh=yKPgLINx6rQbQbu2rBfYvO4HKLsgtmUQUDYDyamD624=;
+ s=k20201202; t=1759185033;
+ bh=gQYDaku1kF/Js+UoZZtUqouT1kwVsGXgv5zZeWdLxJE=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=GzLyu33ZQkDQYV5tlnTGp1sB4o7Yp25+j4vZNGAxHUJapiXOZtl3p13xFDTzUmQ0O
- haSn93VvH5iREzOlZqKJOcesqeI0lNLLpVz9neREIhy4Iq2PYVc1WibUDUPbjS3c8x
- h3GjZgoqXY1XfSiBfaHbGHtMyrN7mc+pWTwqkPiQzFDZEH0DN04RIsAuiF9Vhyu2cJ
- 0c+Gi2zMwNoQamvNvV+ZL23daFLHu1bB/GrHAt8vZPBBreTnYNrfmxTvNMaatUMySn
- wUMn1G3/Y2irwpeLCRUkV7vdo0c2Mx07lUDzlSQLdOvjfkESIbxtP+7nQU1Jufmo2C
- sflmkIsNs3UBw==
+ b=QxId//ioZ9HbdlO8iF7p5g/kOzQJO6oXtCQNrMJL2arowN1YQzCJ5/ogN3JS0IqqG
+ zF9ayL/lSxTjMshVmWYd/l7pFIvnYTUOrhRhZk/sMqj5GGa1Vf3qwWvFnCx7u3k6Ir
+ myjh0Vpr1t7GVOA8mnNTIU8fybsc1pd5Wd7Eif5xp6gsPMO3eWk2nhvSFCiZAI16DU
+ vGODjGJ852jwxyI+fHcZAnVxqhbojFMOdoAJKEYxY2lt8bV5TgbAZ+DI3ssA6BZMga
+ YvR6Famx1GhG+zi/4trIMh2lkQ1MWhVpb9xztR5TYjEvgJ/r4PkD+56IUFzqdRIrN/
+ 2KaEdObQqTaIA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 70B0439D0C1A; Mon, 29 Sep 2025 22:30:21 +0000 (UTC)
+ ADB1F39D0C1A; Mon, 29 Sep 2025 22:30:27 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <175918502025.1733438.16761795407237847575.git-patchwork-notify@kernel.org>
-Date: Mon, 29 Sep 2025 22:30:20 +0000
-References: <20250901020416.2172182-1-chao@kernel.org>
-In-Reply-To: <20250901020416.2172182-1-chao@kernel.org>
+Message-Id: <175918502620.1733438.7002406299096595747.git-patchwork-notify@kernel.org>
+Date: Mon, 29 Sep 2025 22:30:26 +0000
+References: <20250910084024.1722790-1-chao@kernel.org>
+In-Reply-To: <20250910084024.1722790-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1v3MO8-0005My-Kt
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid migrating empty section
+X-Headers-End: 1v3MOE-0005NY-H0
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to truncate first page in error
+ path of f2fs_truncate()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,8 +90,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- daehojeong@google.com, linux-kernel@vger.kernel.org
+Cc: jaegeuk@kernel.org, syzbot+90266696fe5daacebd35@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -100,27 +101,20 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon,  1 Sep 2025 10:04:15 +0800 you wrote:
-> It reports a bug from device w/ zufs:
+On Wed, 10 Sep 2025 16:40:24 +0800 you wrote:
+> syzbot reports a bug as below:
 > 
-> F2FS-fs (dm-64): Inconsistent segment (173822) type [1, 0] in SSA and SIT
-> F2FS-fs (dm-64): Stopped filesystem due to reason: 4
-> 
-> Thread A				Thread B
-> - f2fs_expand_inode_data
->  - f2fs_allocate_pinning_section
->   - f2fs_gc_range
->    - do_garbage_collect w/ segno #x
-> 					- writepage
-> 					 - f2fs_allocate_data_block
-> 					  - new_curseg
-> 					   - allocate segno #x
+> loop0: detected capacity change from 0 to 40427
+> F2FS-fs (loop0): Wrong SSA boundary, start(3584) end(4096) blocks(3072)
+> F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
+> F2FS-fs (loop0): invalid crc value
+> F2FS-fs (loop0): f2fs_convert_inline_folio: corrupted inline inode ino=3, i_addr[0]:0x1601, run fsck to fix.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to avoid migrating empty section
-    https://git.kernel.org/jaegeuk/f2fs/c/d625a2b08c08
+  - [f2fs-dev] f2fs: fix to truncate first page in error path of f2fs_truncate()
+    https://git.kernel.org/jaegeuk/f2fs/c/9251a9e6e871
 
 You are awesome, thank you!
 -- 
