@@ -4,127 +4,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9967FCAC5B5
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Sep 2025 10:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 69E12CAC5B5
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Sep 2025 10:51:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=fEEk/Ye/icyGikjSfYCzub6t0Jb4efZnkuetAttbkys=; b=Dq7OhmaFdkeN0+aAkzXOTHz1v5
-	QiVMlXhf2wfsxp/ckO1Gps0C69xS/OAsJYznQ3AiSwqe41DcP1TzAYnBKcppCh5Yi2nR/P+1/CFd/
-	d/k2r1+dDKmoJJ500p+M4Oa+w5vAtO52xYT2swu0SD1tXFvgLN3fuFOW1RqjMXKlKDO4=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=gR1nq7Cvgdu5HRpKQrGdQYYx3kpadeZOPMTL7FNON4I=; b=J0QOV0AY28krmoWBCUtY47eiXV
+	NOYl5MLeCRBiAJzmDZ2x1JAQikAE/zX2ybpBt0UuRNhw4KuqypE9kQ4Y+/0B+7ApWqWJKdERWw0D2
+	v+72hbKYo8vrWFuf0lx3gbpYbFP5TYSJQgWJYUl8JSlt5E7osK9bVssU5RdL+C4NdZzc=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v3Axk-0004ZY-AJ;
-	Mon, 29 Sep 2025 10:18:32 +0000
+	id 1v3BTU-0003Ac-Be;
+	Mon, 29 Sep 2025 10:51:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jack@suse.cz>) id 1v3Axj-0004ZS-4T
+ (envelope-from <sunjunchao@bytedance.com>) id 1v3BT5-00038O-Is
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 29 Sep 2025 10:18:31 +0000
+ Mon, 29 Sep 2025 10:50:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=O2yBKi9Fq0nOViIKZg3SIh9QmVDk29CqUOt+SEIPUkE=; b=J/fFKwrEpGPG/rzT5MRgd8Kq+/
- Hty2PS7Vl2kwjUazvDtAO4wzeJQz7nzB6NUab6IlsBbbKRPs4dN6i6eD3X8JWpu9Xo/QSPHxXRIvK
- jpuuuDZI2i6bazUMOVRfknz9b/heJO+DRz3C4g51zrGIctnlYMT0TccVc57N/dA5xzJA=;
+ bh=QLANQMIWJTPxhp0UxI/MYcM22Jdt4bQPda2xSN2U3BU=; b=C9pc0n7UPMnHuwvA4im4pVE3sD
+ iq00U1WMhcxuFZXICnSdSsQqLISFURNDlofvTAEyIxhS8JX2yjmxlRYCMnIbPjVO+6ZDzpkgC6erS
+ 9UN2HaGgcbOTe0JkwTxlwqCjeIwLk0ZxfPoSfhtFiWOuYVvlItGWG/dKM+V1OUq0zjZk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=O2yBKi9Fq0nOViIKZg3SIh9QmVDk29CqUOt+SEIPUkE=; b=cEn4D8st6CawdaOJl3AH70xU26
- UX4VHKB8V+q7jxRqzUVqpYEDjw5YSAURHm8PC0ICBcDGa6dRxQ7WhNYB0axzplgs4nLsAU3USgaW/
- i5pXhqQHhNWsgOOfsJff+9GWRTOroQypfQufSdxRSLdvknF1JdzfIZJDJCi12oZFe7EU=;
-Received: from smtp-out2.suse.de ([195.135.223.131])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=QLANQMIWJTPxhp0UxI/MYcM22Jdt4bQPda2xSN2U3BU=; b=A
+ kK8HqADwp4RcTH6Skjwj2NMuBUz+lI3LUoUe4pU/sPSzVXMjcA6IHbg3PnC5FiB2PLgoTpHoh9sdJ
+ 6rM1BDhfX69mHVQRFEwBTZB7oIi+GTk8SR1qxXQjP6vnBMaB6ketmNjaFmxLdfnw1H4IvNv4HoC0a
+ PKDMqbYSnIWG7dh0=;
+Received: from mail-qt1-f177.google.com ([209.85.160.177])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1v3Axi-00080K-7A for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 29 Sep 2025 10:18:31 +0000
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id A1EE330DC9;
- Mon, 29 Sep 2025 10:18:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1759141098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=O2yBKi9Fq0nOViIKZg3SIh9QmVDk29CqUOt+SEIPUkE=;
- b=ze0uavD5fcj6zgsYfAAoXp3CaBdBChk073NpR64CDwUZ9V3HqLcpul8tg4dL6/zYb/G16n
- 58fgcgV4xECQEjgKIgp7hrExw3Yp1t/g/cUq72DiJpGcz1ttJTFgP6Bbxxa6OgagyGGFIX
- XC5T0aPkQmua+WyHwC7wBaA+Ur/bgDE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1759141098;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=O2yBKi9Fq0nOViIKZg3SIh9QmVDk29CqUOt+SEIPUkE=;
- b=kx+H4A4QTF4A4FST6e8sO/r5cOZxgOnk95kb9xh3cRBunKnQCDM+e9GImfLaMKpNmdnzj/
- KDpDB8t+RtbDASCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1759141098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=O2yBKi9Fq0nOViIKZg3SIh9QmVDk29CqUOt+SEIPUkE=;
- b=ze0uavD5fcj6zgsYfAAoXp3CaBdBChk073NpR64CDwUZ9V3HqLcpul8tg4dL6/zYb/G16n
- 58fgcgV4xECQEjgKIgp7hrExw3Yp1t/g/cUq72DiJpGcz1ttJTFgP6Bbxxa6OgagyGGFIX
- XC5T0aPkQmua+WyHwC7wBaA+Ur/bgDE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1759141098;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=O2yBKi9Fq0nOViIKZg3SIh9QmVDk29CqUOt+SEIPUkE=;
- b=kx+H4A4QTF4A4FST6e8sO/r5cOZxgOnk95kb9xh3cRBunKnQCDM+e9GImfLaMKpNmdnzj/
- KDpDB8t+RtbDASCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 91FC613A21;
- Mon, 29 Sep 2025 10:18:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id tYCaI+pc2mjOWAAAD6G6ig
- (envelope-from <jack@suse.cz>); Mon, 29 Sep 2025 10:18:18 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
- id 3412BA0A96; Mon, 29 Sep 2025 12:18:14 +0200 (CEST)
-Date: Mon, 29 Sep 2025 12:18:14 +0200
-From: Jan Kara <jack@suse.cz>
-To: Julian Sun <sunjunchao@bytedance.com>
-Message-ID: <jvryicw6lssdnji4y42rblchxt3procns2otfa4bdc6spekyh7@e6xqcjfpirck>
-References: <20250929095544.308392-1-sunjunchao@bytedance.com>
+ id 1v3BT5-0001GA-Qh for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 29 Sep 2025 10:50:56 +0000
+Received: by mail-qt1-f177.google.com with SMTP id
+ d75a77b69052e-4db0b56f6e7so38391741cf.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 29 Sep 2025 03:50:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=bytedance.com; s=google; t=1759143050; x=1759747850;
+ darn=lists.sourceforge.net; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=QLANQMIWJTPxhp0UxI/MYcM22Jdt4bQPda2xSN2U3BU=;
+ b=VCNv4mLp7e0maxS604+QaE0VJQCSohXqnxJqvnGD6hAMtghU7qq2LUluNInxMAxDzE
+ gCi6IYTO9L/eeDIN6EydftJ/ujFF7GJNIEP/d9MIPpF7a3hDFHIqMXrltkQiv8EhhQEa
+ vGjzrqnJMJ5j0sy94BAafLfyZo5XMSVN1L6Nfp3BiC8btE34A+gyxDlQ9vaN5eHjoWiQ
+ w2Y3sXElq+er9eWpI8FfTPu6o4C9reMKm8uizwl+hlGaieNVuc3DmRz6TeVftxwuit3i
+ COuSLmdvh0IBIuLujt1uKSvmI6r+P8E0vOc4FMBn3gc6+g7QnyAA3RaWIFsTKDuz64vi
+ xy6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1759143050; x=1759747850;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=QLANQMIWJTPxhp0UxI/MYcM22Jdt4bQPda2xSN2U3BU=;
+ b=hXFB8abgYz4BQQ0AMUf/2R9FA+Vv6IcjXhCEIi+Qe+viNkuSoKAdnA6l6eJ6cLNnOq
+ sWbytJNw9BuSalXWYHZsOyC3Ujs+Rx/8xfCMOAOQc1Jb7mXpQwYB5Fuae+20sx2Q6GcM
+ KyEgkGguEiGIjrNJaAtBE10li01gKQ2L5RH0OdTQg/pu/D7cg+/B3haqcxheP98FjY+E
+ XBRJtqniGw2Yo/jfc2Wm/I+YLV7zBQBKiEg0Yx8io7bNcTkcTdcp24PCC6iBOYKey3sk
+ EX7Dwfun/RmjlYtSv5R1Bb7QfZryTSJteVNUozaDBRHzP5XKiZyt4heTsuWGvm02Fyhm
+ C4Iw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXpyyTskhI22g+oy6jLQy2v+ISG4UTAhg9N5wYSSM/Vr3KNHB7C9qV3cr5OilIOMSwpxVEz3SdGI4PbiL+XvCcP@lists.sourceforge.net
+X-Gm-Message-State: AOJu0Yx3f151Ivq5H2CTMcxzIJwl+LwcFCXtvRNY4mI6C++sC3lrv+fO
+ 07fHfHfS0lUdKBZH7WgTGJIPn/xB0LJIvchnKTgrO52LDNgkVBXvIyTgLJwQ6Gg+XtU2mBUXmOv
+ FkTNLmVg=
+X-Gm-Gg: ASbGncvZ5sIpTc3jOOnGYpbslI3KJk3lTvGEP5LnpvDwuTkCtxSrTzgFebJqzBW5h7/
+ lqkFSRUvWZRigxJPqVtof5JZ682WeFQenl37q9QTEA9Kkweur7LNeMTaFsgj7ALeLd5+nuNS0n1
+ 0WdYLKHYltyrUz7Tzy8EoSJn0mTpFB8WcsHhxj5t/h0+mRG7fVbisXU8m5QeGIMI5eo+FSp9+PY
+ KxfPBh6M1bJtVb9xMXZOU9CBs32q4y7HfLX6Em8Mqm+45iSwMGxshhP2e52svFryuJDN5xbMxb/
+ RZUnz9J0sDYH23EFPlgIfbIBZSmcQZf7IXvYbEelaBr0iUJFjhRNQ2id4Sacao2AFu80QQf318b
+ 1AkFDCr2SI194Adv6Hsqxx6Neax44ajqVqg==
+X-Google-Smtp-Source: AGHT+IGeeirzmmNucPpJRQY6OaCfZcWNOwMOpAFnjpyd+Ec/bpOStvzlr/XHiA7xXQcwxFRBs/UP5Q==
+X-Received: by 2002:a17:902:dad0:b0:27e:d66e:8729 with SMTP id
+ d9443c01a7336-27ed6799205mr136594755ad.0.1759139747281; 
+ Mon, 29 Sep 2025 02:55:47 -0700 (PDT)
+Received: from localhost ([106.38.226.135]) by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-27ed6ab640esm126029965ad.128.2025.09.29.02.55.46
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 29 Sep 2025 02:55:46 -0700 (PDT)
+To: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-ext4@vger.kernel.org, ceph-devel@vger.kernel.org,
+ linux-btrfs@vger.kernel.org
+Date: Mon, 29 Sep 2025 17:55:44 +0800
+Message-Id: <20250929095544.308392-1-sunjunchao@bytedance.com>
+X-Mailer: git-send-email 2.39.5
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20250929095544.308392-1-sunjunchao@bytedance.com>
-X-Spamd-Result: default: False [-3.80 / 50.00]; BAYES_HAM(-3.00)[100.00%];
- NEURAL_HAM_LONG(-1.00)[-1.000]; MID_RHS_NOT_FQDN(0.50)[];
- NEURAL_HAM_SHORT(-0.20)[-0.999]; MIME_GOOD(-0.10)[text/plain];
- RCVD_COUNT_THREE(0.00)[3]; FUZZY_RATELIMITED(0.00)[rspamd.com];
- ARC_NA(0.00)[]; MIME_TRACE(0.00)[0:+];
- DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
- RCPT_COUNT_TWELVE(0.00)[18]; FREEMAIL_ENVRCPT(0.00)[gmail.com];
- TO_MATCH_ENVRCPT_ALL(0.00)[]; TO_DN_SOME(0.00)[];
- FROM_EQ_ENVFROM(0.00)[]; FROM_HAS_DN(0.00)[];
- RCVD_TLS_LAST(0.00)[]; RCVD_VIA_SMTP_AUTH(0.00)[];
- FREEMAIL_CC(0.00)[vger.kernel.org,lists.sourceforge.net,fb.com,suse.com,redhat.com,gmail.com,mit.edu,dilger.ca,kernel.org,infradead.org,suse.cz];
- MISSING_XM_UA(0.00)[];
- DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,bytedance.com:email]
-X-Headers-End: 1v3Axi-00080K-7A
-Subject: Re: [f2fs-dev] [PATCH] fs: Make wbc_to_tag() extern and use it in
- fs.
+X-Headers-End: 1v3BT5-0001GA-Qh
+Subject: [f2fs-dev] [PATCH] fs: Make wbc_to_tag() extern and use it in fs.
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -136,152 +117,140 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: brauner@kernel.org, xiubli@redhat.com, tytso@mit.edu, agruenba@redhat.com,
- jack@suse.cz, willy@infradead.org, linux-f2fs-devel@lists.sourceforge.net,
- clm@fb.com, dsterba@suse.com, jaegeuk@kernel.org,
- linux-fsdevel@vger.kernel.org, adilger.kernel@dilger.ca,
- ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org, idryomov@gmail.com,
- linux-btrfs@vger.kernel.org
+From: Julian Sun via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Julian Sun <sunjunchao@bytedance.com>
+Cc: brauner@kernel.org, tytso@mit.edu, agruenba@redhat.com, jack@suse.cz,
+ willy@infradead.org, clm@fb.com, adilger.kernel@dilger.ca, dsterba@suse.com,
+ jaegeuk@kernel.org, idryomov@gmail.com, xiubli@redhat.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon 29-09-25 17:55:44, Julian Sun wrote:
-> The logic in wbc_to_tag() is widely used in file systems, so modify this
-> function to be extern and use it in file systems.
-> 
-> This patch has only passed compilation tests, but it should be fine.
-> 
-> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
+The logic in wbc_to_tag() is widely used in file systems, so modify this
+function to be extern and use it in file systems.
 
-Yeah, good idea. Feel free to add:
+This patch has only passed compilation tests, but it should be fine.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
+---
+ fs/btrfs/extent_io.c      | 5 +----
+ fs/ceph/addr.c            | 6 +-----
+ fs/ext4/inode.c           | 5 +----
+ fs/f2fs/data.c            | 5 +----
+ fs/gfs2/aops.c            | 5 +----
+ include/linux/writeback.h | 1 +
+ mm/page-writeback.c       | 2 +-
+ 7 files changed, 7 insertions(+), 22 deletions(-)
 
-								Honza
-
-> ---
->  fs/btrfs/extent_io.c      | 5 +----
->  fs/ceph/addr.c            | 6 +-----
->  fs/ext4/inode.c           | 5 +----
->  fs/f2fs/data.c            | 5 +----
->  fs/gfs2/aops.c            | 5 +----
->  include/linux/writeback.h | 1 +
->  mm/page-writeback.c       | 2 +-
->  7 files changed, 7 insertions(+), 22 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index b21cb72835cc..0fea58287175 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -2390,10 +2390,7 @@ static int extent_write_cache_pages(struct address_space *mapping,
->  			       &BTRFS_I(inode)->runtime_flags))
->  		wbc->tagged_writepages = 1;
->  
-> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
-> -		tag = PAGECACHE_TAG_TOWRITE;
-> -	else
-> -		tag = PAGECACHE_TAG_DIRTY;
-> +	tag = wbc_to_tag(wbc);
->  retry:
->  	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
->  		tag_pages_for_writeback(mapping, index, end);
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 322ed268f14a..63b75d214210 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -1045,11 +1045,7 @@ void ceph_init_writeback_ctl(struct address_space *mapping,
->  	ceph_wbc->index = ceph_wbc->start_index;
->  	ceph_wbc->end = -1;
->  
-> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages) {
-> -		ceph_wbc->tag = PAGECACHE_TAG_TOWRITE;
-> -	} else {
-> -		ceph_wbc->tag = PAGECACHE_TAG_DIRTY;
-> -	}
-> +	ceph_wbc->tag = wbc_to_tag(wbc);
->  
->  	ceph_wbc->op_idx = -1;
->  	ceph_wbc->num_ops = 0;
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 5b7a15db4953..196eba7fa39c 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -2619,10 +2619,7 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
->  	handle_t *handle = NULL;
->  	int bpp = ext4_journal_blocks_per_folio(mpd->inode);
->  
-> -	if (mpd->wbc->sync_mode == WB_SYNC_ALL || mpd->wbc->tagged_writepages)
-> -		tag = PAGECACHE_TAG_TOWRITE;
-> -	else
-> -		tag = PAGECACHE_TAG_DIRTY;
-> +	tag = wbc_to_tag(mpd->wbc);
->  
->  	mpd->map.m_len = 0;
->  	mpd->next_pos = mpd->start_pos;
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 7961e0ddfca3..101e962845db 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -3003,10 +3003,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->  		if (wbc->range_start == 0 && wbc->range_end == LLONG_MAX)
->  			range_whole = 1;
->  	}
-> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
-> -		tag = PAGECACHE_TAG_TOWRITE;
-> -	else
-> -		tag = PAGECACHE_TAG_DIRTY;
-> +	tag = wbc_to_tag(wbc);
->  retry:
->  	retry = 0;
->  	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
-> diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-> index 47d74afd63ac..12394fc5dd29 100644
-> --- a/fs/gfs2/aops.c
-> +++ b/fs/gfs2/aops.c
-> @@ -311,10 +311,7 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
->  			range_whole = 1;
->  		cycled = 1; /* ignore range_cyclic tests */
->  	}
-> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
-> -		tag = PAGECACHE_TAG_TOWRITE;
-> -	else
-> -		tag = PAGECACHE_TAG_DIRTY;
-> +	tag = wbc_to_tag(wbc);
->  
->  retry:
->  	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
-> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> index a2848d731a46..884811596e10 100644
-> --- a/include/linux/writeback.h
-> +++ b/include/linux/writeback.h
-> @@ -370,6 +370,7 @@ int do_writepages(struct address_space *mapping, struct writeback_control *wbc);
->  void writeback_set_ratelimit(void);
->  void tag_pages_for_writeback(struct address_space *mapping,
->  			     pgoff_t start, pgoff_t end);
-> +xa_mark_t wbc_to_tag(struct writeback_control *wbc);
->  
->  bool filemap_dirty_folio(struct address_space *mapping, struct folio *folio);
->  bool folio_redirty_for_writepage(struct writeback_control *, struct folio *);
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 3e248d1c3969..243808e19445 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2434,7 +2434,7 @@ static bool folio_prepare_writeback(struct address_space *mapping,
->  	return true;
->  }
->  
-> -static xa_mark_t wbc_to_tag(struct writeback_control *wbc)
-> +xa_mark_t wbc_to_tag(struct writeback_control *wbc)
->  {
->  	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
->  		return PAGECACHE_TAG_TOWRITE;
-> -- 
-> 2.39.5
-> 
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index b21cb72835cc..0fea58287175 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -2390,10 +2390,7 @@ static int extent_write_cache_pages(struct address_space *mapping,
+ 			       &BTRFS_I(inode)->runtime_flags))
+ 		wbc->tagged_writepages = 1;
+ 
+-	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+-		tag = PAGECACHE_TAG_TOWRITE;
+-	else
+-		tag = PAGECACHE_TAG_DIRTY;
++	tag = wbc_to_tag(wbc);
+ retry:
+ 	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+ 		tag_pages_for_writeback(mapping, index, end);
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 322ed268f14a..63b75d214210 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1045,11 +1045,7 @@ void ceph_init_writeback_ctl(struct address_space *mapping,
+ 	ceph_wbc->index = ceph_wbc->start_index;
+ 	ceph_wbc->end = -1;
+ 
+-	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages) {
+-		ceph_wbc->tag = PAGECACHE_TAG_TOWRITE;
+-	} else {
+-		ceph_wbc->tag = PAGECACHE_TAG_DIRTY;
+-	}
++	ceph_wbc->tag = wbc_to_tag(wbc);
+ 
+ 	ceph_wbc->op_idx = -1;
+ 	ceph_wbc->num_ops = 0;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 5b7a15db4953..196eba7fa39c 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -2619,10 +2619,7 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
+ 	handle_t *handle = NULL;
+ 	int bpp = ext4_journal_blocks_per_folio(mpd->inode);
+ 
+-	if (mpd->wbc->sync_mode == WB_SYNC_ALL || mpd->wbc->tagged_writepages)
+-		tag = PAGECACHE_TAG_TOWRITE;
+-	else
+-		tag = PAGECACHE_TAG_DIRTY;
++	tag = wbc_to_tag(mpd->wbc);
+ 
+ 	mpd->map.m_len = 0;
+ 	mpd->next_pos = mpd->start_pos;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7961e0ddfca3..101e962845db 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3003,10 +3003,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 		if (wbc->range_start == 0 && wbc->range_end == LLONG_MAX)
+ 			range_whole = 1;
+ 	}
+-	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+-		tag = PAGECACHE_TAG_TOWRITE;
+-	else
+-		tag = PAGECACHE_TAG_DIRTY;
++	tag = wbc_to_tag(wbc);
+ retry:
+ 	retry = 0;
+ 	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+index 47d74afd63ac..12394fc5dd29 100644
+--- a/fs/gfs2/aops.c
++++ b/fs/gfs2/aops.c
+@@ -311,10 +311,7 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
+ 			range_whole = 1;
+ 		cycled = 1; /* ignore range_cyclic tests */
+ 	}
+-	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+-		tag = PAGECACHE_TAG_TOWRITE;
+-	else
+-		tag = PAGECACHE_TAG_DIRTY;
++	tag = wbc_to_tag(wbc);
+ 
+ retry:
+ 	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+index a2848d731a46..884811596e10 100644
+--- a/include/linux/writeback.h
++++ b/include/linux/writeback.h
+@@ -370,6 +370,7 @@ int do_writepages(struct address_space *mapping, struct writeback_control *wbc);
+ void writeback_set_ratelimit(void);
+ void tag_pages_for_writeback(struct address_space *mapping,
+ 			     pgoff_t start, pgoff_t end);
++xa_mark_t wbc_to_tag(struct writeback_control *wbc);
+ 
+ bool filemap_dirty_folio(struct address_space *mapping, struct folio *folio);
+ bool folio_redirty_for_writepage(struct writeback_control *, struct folio *);
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 3e248d1c3969..243808e19445 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2434,7 +2434,7 @@ static bool folio_prepare_writeback(struct address_space *mapping,
+ 	return true;
+ }
+ 
+-static xa_mark_t wbc_to_tag(struct writeback_control *wbc)
++xa_mark_t wbc_to_tag(struct writeback_control *wbc)
+ {
+ 	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+ 		return PAGECACHE_TAG_TOWRITE;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.39.5
+
 
 
 _______________________________________________
