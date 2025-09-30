@@ -4,77 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AF4C0CAC5B0
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Sep 2025 02:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B39FDCAC5B9
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Sep 2025 02:37:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=cy3eMGc7ntFPEu2NN/04XXDp5f4U+AW7iVSHfYkwPZs=; b=WaxMQBteReTDP4iEuyjGXsmqzG
-	nW9FLKQ7feqaJvACdcCxwAD+3VNeh54zoKegq6nceWaXYSC+zZPDXK+kp6ZCqGyoJZWYrt+ZPHx9A
-	eKV/YBEE2yP9qoiUQWda6UEUO0RUlIJaImC+CoE0pDESGlkRHTKLzetic9BHLaiQ0O5s=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=Ewu51n+29Zxboscv5R3dU3j+BhnkQRQNLQkrCq6J+H0=; b=EdMz6LfHZiLWoNcyp+Zd2/b3Dp
+	f9rvFaD/mxIYtv9G77jS8hY4V/IUBD1IJCw5TnGSECcXFk4DhlCGksBOJAf1otRDjQeJYNsvABDc2
+	vsQ+DajebGt9ThNV6T5uyj84MUY5h3AX7TR1mfAxHYsgI2pUoIxbgGTUb/b6wmX9ZBVw=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v3QEw-0004ka-TE;
-	Tue, 30 Sep 2025 02:37:18 +0000
+	id 1v3QF0-00031p-7d;
+	Tue, 30 Sep 2025 02:37:23 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1v3QEw-0004kU-HO
+ (envelope-from <jaegeuk@kernel.org>) id 1v3QEy-00031Y-Cz
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 Sep 2025 02:37:18 +0000
+ Tue, 30 Sep 2025 02:37:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qv7YaSup9Hulu19lcLJNimECYVS5T1RBsI6LpiH11Cw=; b=bGygyUT1iqSd8W/cCd8k/jWWa1
- AOBY3eObb6qrjRr+zNEdfqJXt7IPZOMpF4MOJPPkb08a9OFbXlAbVkPy6Gh0S6k0A19dVKzfLgC9z
- okuoimcEBl9rYzp5CEPo2uOU/ms7NkqoTLO6uh8GXRp0FTQjbBfD2gDEtVxwzuGtjyIM=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=qv7YaSup9Hulu19lcLJNimECYVS5T1RBsI6LpiH11Cw=; b=Fll615t7BtvxnKPlYt1qHyTlue
- kCdQvLPaP17oLkXwD5Cg27Rwb4drDKaacnun8FtkirXSP8VNB3UWF/3b1vSltO4rKdizRsmWSUca1
- sKzufGidMXrs+ctJ1LMmJcs4sq0ktEBHHMiIyWerPKB5aT5TfzAMdvNDVEjbu7KkwE9o=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=sAdIw1E8Fnisp+SraOebvpd+dbpoQWz2gU/NsGjWric=; b=F3C6dg7NFEQuJdawpPBrkayEhK
+ t7O4erFCUb3tIV1ZBikgojOZ+heHeLWWyA8RnTKFJHnLYM4FLPSzJkwYDUjlfAyIaer5YVJH5arSv
+ NUwZqBsAxYf30MZ91ppTO2IED/Gsi3vqtcnjeTvQrl9x1Duuvz9bfq15NLpt0PYsx/uQ=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=sAdIw1E8Fnisp+SraOebvpd+dbpoQWz2gU/NsGjWric=; b=g
+ FVpGQ42rJvgJRtW3oQtrXfEUGQZmWA+czIkO0UA9P/gNzublgxfXb7ZI7h9xqEVIjJd54nSpXaNTh
+ deSKvo5wkmP5dTVbLC5j+lN407K/o3mZQZjSbLNOlOn/yaPYx0kIZ61ay8UWHDFBlW8ADb92FbToA
+ 3nZ+9n7bMcqZin7U=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1v3QEv-0004Si-SS for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 Sep 2025 02:37:18 +0000
+ id 1v3QEy-0004Sx-R4 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 30 Sep 2025 02:37:21 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 131C560334
+ by tor.source.kernel.org (Postfix) with ESMTP id 344F860324
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 30 Sep 2025 02:37:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8105C116B1;
- Tue, 30 Sep 2025 02:37:11 +0000 (UTC)
+ Tue, 30 Sep 2025 02:37:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF415C4CEF4;
+ Tue, 30 Sep 2025 02:37:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1759199831;
- bh=yMng9dMYvfLmnxdsrXSdqrFDGeOWgX9dyvH+/0zYrDo=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=WVYThWjTEdYg0/h8dGUtc23CPcRLYsEkSeyl9CdTSoM1nGSC4Bpr8zp4KygJOonLi
- HTqSyz9e2c66t9CLUPOlcZYQca/D+I9G5v7nGhjuAcJqbalsFSUeZnKBp/5sMqFZrl
- o2uWxqY4GR8giPmtQ3Ob0zOKBojKQAD5ziG2TocNcHMaUsDJ4vOVn+1tUkCjAXUM5d
- 13NW1Xyeif2uIw08NxdggRK4YZijLFGFb+OrqufXUNmo1bfDEBsctHTuSkPS8DIXGd
- 0cGvf2XTLOE5P9qGkfUZ0D6MnFgG5yotOoiUqPPXZgEkAo/icOC731x6ol42vVn5z8
- TfWX6WqrOHS0w==
+ s=k20201202; t=1759199829;
+ bh=cesNJVP4/rITPlUKirhyJV1JzmDLylcIBDXxNfH/qxc=;
+ h=From:To:Cc:Subject:Date:From;
+ b=G1xb+l1qzt1ushTTNQPuxF+N0bx1f+2RlWSdQGdIdXMBvK5ark80BPQ8+t7yGl8s9
+ dumF+43l7u6ZPtuHKxdBnVdtBazYzxYub1Amsoaf7vos9C1jTPCmeTugvxeU92E9vn
+ nI3bs7JASpSrgkcFAg+JMUpWNCQ2YR6rCQLN853TOakJFKrq+Aq+MsntKw5ZmcE/dv
+ 81QU0fMLXOXfLxZPs2bMANNLAWMAOxyUbb9rsQo81tRG/mJR1RHFoe5g+h0NWYqct+
+ tPgLp5yeGzXdD0bgzbfl8U17tdbxklrn5qiLatDuqHIojTTjw6knBuZ+ZDRMqLqDBG
+ zzl7wXgbLdH1w==
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Tue, 30 Sep 2025 02:37:02 +0000
-Message-ID: <20250930023704.3019074-3-jaegeuk@kernel.org>
+Date: Tue, 30 Sep 2025 02:37:00 +0000
+Message-ID: <20250930023704.3019074-1-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-In-Reply-To: <20250930023704.3019074-1-jaegeuk@kernel.org>
-References: <20250930023704.3019074-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1v3QEv-0004Si-SS
-Subject: [f2fs-dev] [PATCH 3/5] f2fs_io: add mlock to measure the read speed
+X-Headers-End: 1v3QEy-0004Sx-R4
+Subject: [f2fs-dev] [PATCH 1/5] f2fs_io: measure a fsync latency
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,118 +91,37 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Add missing mmap mode in man page.
-
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- man/f2fs_io.8           |  6 ++++++
- tools/f2fs_io/f2fs_io.c | 34 +++++++++++++++++++++++++++-------
- 2 files changed, 33 insertions(+), 7 deletions(-)
+ tools/f2fs_io/f2fs_io.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/man/f2fs_io.8 b/man/f2fs_io.8
-index 6f3e11e96ed6..8e54aa644a00 100644
---- a/man/f2fs_io.8
-+++ b/man/f2fs_io.8
-@@ -127,6 +127,12 @@ buffered I/O
- .TP
- .B dio
- direct I/O
-+.TP
-+.B mmap
-+mmap(MAP_POPULATE)
-+.TP
-+.B mlock
-+mmap() + mlock()
- .RE
- .TP
- \fBfiemap\fR \fI[offset in 4kb] [count] [file_path]\fR
 diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index b9bf9bc5f797..028ffe59d0c7 100644
+index 2bd5fd001b82..1f6bfcfff556 100644
 --- a/tools/f2fs_io/f2fs_io.c
 +++ b/tools/f2fs_io/f2fs_io.c
-@@ -931,6 +931,7 @@ static void do_write_advice(int argc, char **argv, const struct cmd_desc *cmd)
- "  buffered : buffered IO\n"				\
- "  dio      : direct IO\n"				\
- "  mmap     : mmap IO\n"				\
-+"  mlock    : mmap + mlock\n"				\
- "advice can be\n"					\
- " 1 : set sequential|willneed\n"			\
- " 0 : none\n"						\
-@@ -940,12 +941,13 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
- 	u64 buf_size = 0, ret = 0, read_cnt = 0;
- 	u64 offset;
- 	char *buf = NULL;
--	char *data;
-+	char *data = NULL;
- 	char *print_buf = NULL;
- 	unsigned bs, count, i, print_bytes;
- 	u64 total_time = 0;
- 	int flags = 0;
- 	int do_mmap = 0;
-+	int do_mlock = 0;
- 	int fd, advice;
+@@ -160,6 +160,7 @@ static u64 get_current_us()
+ static void do_fsync(int argc, char **argv, const struct cmd_desc *cmd)
+ {
+ 	int fd;
++	u64 total_time;
  
- 	if (argc != 8) {
-@@ -968,6 +970,8 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
- 		flags |= O_DIRECT;
- 	else if (!strcmp(argv[4], "mmap"))
- 		do_mmap = 1;
-+	else if (!strcmp(argv[4], "mlock"))
-+		do_mlock = 1;
- 	else if (strcmp(argv[4], "buffered"))
- 		die("Wrong IO type");
+ 	if (argc != 2) {
+ 		fputs("Excess arguments\n\n", stderr);
+@@ -169,10 +170,12 @@ static void do_fsync(int argc, char **argv, const struct cmd_desc *cmd)
  
-@@ -993,11 +997,24 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
- 	total_time = get_current_us();
- 	if (do_mmap) {
- 		data = mmap(NULL, count * buf_size, PROT_READ,
--						MAP_SHARED | MAP_POPULATE, fd, offset);
-+				MAP_SHARED | MAP_POPULATE, fd, offset);
- 		if (data == MAP_FAILED)
- 			die("Mmap failed");
--	}
--	if (!do_mmap) {
-+
-+		read_cnt = count * buf_size;
-+		memcpy(print_buf, data, print_bytes);
-+	} else if (do_mlock) {
-+		data = mmap(NULL, count * buf_size, PROT_READ,
-+				MAP_SHARED, fd, offset);
-+		if (data == MAP_FAILED)
-+			die("Mmap failed");
-+		if (posix_fadvise(fd, offset, count * buf_size,
-+					POSIX_FADV_WILLNEED) != 0)
-+			die_errno("fadvise failed");
-+		if (mlock(data, count * buf_size))
-+			die_errno("mlock failed");
-+		read_cnt = count * buf_size;
-+	} else {
- 		for (i = 0; i < count; i++) {
- 			ret = pread(fd, buf, buf_size, offset + buf_size * i);
- 			if (ret != buf_size) {
-@@ -1014,9 +1031,6 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
- 			if (i == 0)
- 				memcpy(print_buf, buf, print_bytes);
- 		}
--	} else {
--		read_cnt = count * buf_size;
--		memcpy(print_buf, data, print_bytes);
- 	}
- 	printf("Read %"PRIu64" bytes total_time = %"PRIu64" us, BW = %.Lf MB/s print %u bytes:\n",
- 		read_cnt, get_current_us() - total_time,
-@@ -1029,6 +1043,12 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
- 		else if (i % 2 == 0)
- 			printf(" ");
- 	}
-+	if (do_mmap) {
-+		munmap(data, count * buf_size);
-+	} else if (do_mlock) {
-+		munlock(data, count * buf_size);
-+		munmap(data, count * buf_size);
-+	}
- 	printf("\n");
+ 	fd = xopen(argv[1], O_WRONLY, 0);
+ 
++	total_time = get_current_us();
+ 	if (fsync(fd) != 0)
+ 		die_errno("fsync failed");
+ 
+-	printf("fsync a file\n");
++	printf("fsync total_time = %"PRIu64" us\n",
++			get_current_us() - total_time);
  	exit(0);
  }
+ 
 -- 
 2.51.0.618.g983fd99d29-goog
 
