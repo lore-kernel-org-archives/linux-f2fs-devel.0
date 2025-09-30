@@ -4,93 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 262D5CAC5B0
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Sep 2025 01:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AF4C0CAC5B0
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Sep 2025 02:37:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=1LsuDbO2t6ersPkVYYxFyT6kytyMSssUr5zHFFBevLw=; b=CyI+UBO2xKXI43m7dyKC8o3PGw
-	2wQFo2/u2jQ14w0IpRFZy+w+2+O3SzZVTIDUFQtUCETfvRf4/qMnpq97c2wzfGfpW5veFUTFFdzYc
-	AbofQ03lvpSJjkG8wFeSZoIL+p+gK0R5EQC1I2x54zuefZwT3kSzVeAEuV5nwXNqHH6o=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=cy3eMGc7ntFPEu2NN/04XXDp5f4U+AW7iVSHfYkwPZs=; b=WaxMQBteReTDP4iEuyjGXsmqzG
+	nW9FLKQ7feqaJvACdcCxwAD+3VNeh54zoKegq6nceWaXYSC+zZPDXK+kp6ZCqGyoJZWYrt+ZPHx9A
+	eKV/YBEE2yP9qoiUQWda6UEUO0RUlIJaImC+CoE0pDESGlkRHTKLzetic9BHLaiQ0O5s=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v3Pdo-0007M1-0s;
-	Tue, 30 Sep 2025 01:58:56 +0000
+	id 1v3QEw-0004ka-TE;
+	Tue, 30 Sep 2025 02:37:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lkp@intel.com>) id 1v3Pdm-0007LS-Ld
+ (envelope-from <jaegeuk@kernel.org>) id 1v3QEw-0004kU-HO
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 Sep 2025 01:58:55 +0000
+ Tue, 30 Sep 2025 02:37:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1nsYuIjh0ltXaFbCvTOuVOiGRKap14d+svRrQ63WfSI=; b=QgS5Crk7Zmh9ArFEkxl9fseCKI
- kWaHo/+KYph1QfnlS0Jy6Fg7ijy9A2zjfT2UMDVwoctZz+ovYxfMsdHMm8aJjVNHjQ/8uydCeMmss
- vrj3o0TxaX+Y7X4eTLxi9mI6cT9MtP4uK7bkLuA+vXz2wkZq7T1srFKdWUD1Cb14c8mY=;
+ bh=qv7YaSup9Hulu19lcLJNimECYVS5T1RBsI6LpiH11Cw=; b=bGygyUT1iqSd8W/cCd8k/jWWa1
+ AOBY3eObb6qrjRr+zNEdfqJXt7IPZOMpF4MOJPPkb08a9OFbXlAbVkPy6Gh0S6k0A19dVKzfLgC9z
+ okuoimcEBl9rYzp5CEPo2uOU/ms7NkqoTLO6uh8GXRp0FTQjbBfD2gDEtVxwzuGtjyIM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=1nsYuIjh0ltXaFbCvTOuVOiGRKap14d+svRrQ63WfSI=; b=HiglhkGkPD2/LEIOvw7JuLB5tg
- sut88JdqRRxAxXSwDOns9+bVKMtzj/JYLlOfN2eoQUSbYbJxNPhUEUQJD568kPT5UwqWBtCWQcjyA
- yat3JOMMhLQyYsva3mECfPCQUwTMSvpl20HjbyU0ohuE+wNVpHbUp304FEMhXcKIhHM0=;
-Received: from mgamail.intel.com ([198.175.65.18])
+ bh=qv7YaSup9Hulu19lcLJNimECYVS5T1RBsI6LpiH11Cw=; b=Fll615t7BtvxnKPlYt1qHyTlue
+ kCdQvLPaP17oLkXwD5Cg27Rwb4drDKaacnun8FtkirXSP8VNB3UWF/3b1vSltO4rKdizRsmWSUca1
+ sKzufGidMXrs+ctJ1LMmJcs4sq0ktEBHHMiIyWerPKB5aT5TfzAMdvNDVEjbu7KkwE9o=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1v3Pdm-0002lY-Ns for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 Sep 2025 01:58:55 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759197535; x=1790733535;
- h=date:from:to:cc:subject:message-id:references:
- mime-version:in-reply-to;
- bh=tB20YtoaQNm1TRsLJW3oQQhC60mlpvbrxY7xlXH5rUU=;
- b=Amr7v9wwQW0Ehspfyi2ODGgCAjs/EzVHgRcJzDM3ALYePVwLHnWLt4gX
- 6wtRIpsHAras/lXR/N/y3SiXtA1cmUjud8pq0KR1QRePqim9aAj3GbCyM
- Yvk9uKnt8VN3ORinOeMwvNACpbmUihNir3cZ+qq/EpjfiCtpR9nO+FfeN
- oO+RG+5AhQJGP6w5k/9dhGLsV9CkSIJmVYQ4JyNE6JeN6krslUIA0AwKz
- 35pFQgTc+GDOHEeCxZYEioH+i73ORArQd6C6sc7S1c1Q8pLiwJtPglTFU
- +iRulu6deUbgp6rW2/XNK/Oz/69gk7uGyQzP6oK4zcKK7aerTKFve5XEK Q==;
-X-CSE-ConnectionGUID: jWtvdDxkQxKgRLPBJYd3Fg==
-X-CSE-MsgGUID: JearZp3uQRWWa9uW/ZlGlQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61489970"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="61489970"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Sep 2025 18:58:44 -0700
-X-CSE-ConnectionGUID: uCXbLUXmRxehKCeiFvuH/A==
-X-CSE-MsgGUID: vc2P2cxGS5ujUsnH2zHRzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,303,1751266800"; d="scan'208";a="178188959"
-Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
- by orviesa007.jf.intel.com with ESMTP; 29 Sep 2025 18:58:40 -0700
-Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
- (envelope-from <lkp@intel.com>) id 1v3PdV-0000p5-1R;
- Tue, 30 Sep 2025 01:58:37 +0000
-Date: Tue, 30 Sep 2025 09:57:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Julian Sun <sunjunchao@bytedance.com>, linux-fsdevel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
- ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org
-Message-ID: <202509300940.yjAtss49-lkp@intel.com>
-References: <20250929111349.448324-1-sunjunchao@bytedance.com>
+ id 1v3QEv-0004Si-SS for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 30 Sep 2025 02:37:18 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by tor.source.kernel.org (Postfix) with ESMTP id 131C560334
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 30 Sep 2025 02:37:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8105C116B1;
+ Tue, 30 Sep 2025 02:37:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1759199831;
+ bh=yMng9dMYvfLmnxdsrXSdqrFDGeOWgX9dyvH+/0zYrDo=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=WVYThWjTEdYg0/h8dGUtc23CPcRLYsEkSeyl9CdTSoM1nGSC4Bpr8zp4KygJOonLi
+ HTqSyz9e2c66t9CLUPOlcZYQca/D+I9G5v7nGhjuAcJqbalsFSUeZnKBp/5sMqFZrl
+ o2uWxqY4GR8giPmtQ3Ob0zOKBojKQAD5ziG2TocNcHMaUsDJ4vOVn+1tUkCjAXUM5d
+ 13NW1Xyeif2uIw08NxdggRK4YZijLFGFb+OrqufXUNmo1bfDEBsctHTuSkPS8DIXGd
+ 0cGvf2XTLOE5P9qGkfUZ0D6MnFgG5yotOoiUqPPXZgEkAo/icOC731x6ol42vVn5z8
+ TfWX6WqrOHS0w==
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Tue, 30 Sep 2025 02:37:02 +0000
+Message-ID: <20250930023704.3019074-3-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+In-Reply-To: <20250930023704.3019074-1-jaegeuk@kernel.org>
+References: <20250930023704.3019074-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20250929111349.448324-1-sunjunchao@bytedance.com>
-X-Headers-End: 1v3Pdm-0002lY-Ns
-Subject: Re: [f2fs-dev] [PATCH v2] fs: Make wbc_to_tag() inline and use it
- in fs.
+X-Headers-End: 1v3QEv-0004Si-SS
+Subject: [f2fs-dev] [PATCH 3/5] f2fs_io: add mlock to measure the read speed
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -102,98 +86,128 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: brauner@kernel.org, tytso@mit.edu, agruenba@redhat.com, jack@suse.cz,
- willy@infradead.org, clm@fb.com, adilger.kernel@dilger.ca,
- oe-kbuild-all@lists.linux.dev, dsterba@suse.com, jaegeuk@kernel.org,
- idryomov@gmail.com, xiubli@redhat.com
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Julian,
+Add missing mmap mode in man page.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ man/f2fs_io.8           |  6 ++++++
+ tools/f2fs_io/f2fs_io.c | 34 +++++++++++++++++++++++++++-------
+ 2 files changed, 33 insertions(+), 7 deletions(-)
 
-[auto build test ERROR on kdave/for-next]
-[also build test ERROR on ceph-client/testing ceph-client/for-linus tytso-ext4/dev jaegeuk-f2fs/dev-test jaegeuk-f2fs/dev gfs2/for-next akpm-mm/mm-everything linus/master v6.17 next-20250929]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Julian-Sun/fs-Make-wbc_to_tag-inline-and-use-it-in-fs/20250929-191847
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250929111349.448324-1-sunjunchao%40bytedance.com
-patch subject: [PATCH v2] fs: Make wbc_to_tag() inline and use it in fs.
-config: arc-randconfig-001-20250930 (https://download.01.org/0day-ci/archive/20250930/202509300940.yjAtss49-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 9.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250930/202509300940.yjAtss49-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509300940.yjAtss49-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   mm/page-writeback.c: In function 'writeback_get_folio':
->> mm/page-writeback.c:2456:5: error: implicit declaration of function 'wbc_to_tag' [-Werror=implicit-function-declaration]
-    2456 |     wbc_to_tag(wbc), &wbc->fbatch);
-         |     ^~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   fs/f2fs/data.c: In function 'f2fs_write_cache_pages':
->> fs/f2fs/data.c:3006:8: error: implicit declaration of function 'wbc_to_tag' [-Werror=implicit-function-declaration]
-    3006 |  tag = wbc_to_tag(wbc);
-         |        ^~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   fs/btrfs/extent_io.c: In function 'extent_write_cache_pages':
->> fs/btrfs/extent_io.c:2463:8: error: implicit declaration of function 'wbc_to_tag' [-Werror=implicit-function-declaration]
-    2463 |  tag = wbc_to_tag(wbc);
-         |        ^~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   fs/ext4/inode.c: In function 'mpage_prepare_extent_to_map':
->> fs/ext4/inode.c:2622:8: error: implicit declaration of function 'wbc_to_tag' [-Werror=implicit-function-declaration]
-    2622 |  tag = wbc_to_tag(mpd->wbc);
-         |        ^~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/wbc_to_tag +2456 mm/page-writeback.c
-
-751e0d559c62a8 Matthew Wilcox (Oracle  2024-02-15  2444) 
-e6d0ab87c8efe9 Matthew Wilcox (Oracle  2024-02-15  2445) static struct folio *writeback_get_folio(struct address_space *mapping,
-751e0d559c62a8 Matthew Wilcox (Oracle  2024-02-15  2446) 		struct writeback_control *wbc)
-751e0d559c62a8 Matthew Wilcox (Oracle  2024-02-15  2447) {
-e6d0ab87c8efe9 Matthew Wilcox (Oracle  2024-02-15  2448) 	struct folio *folio;
-e6d0ab87c8efe9 Matthew Wilcox (Oracle  2024-02-15  2449) 
-a2cbc13638d909 Matthew Wilcox (Oracle  2024-02-15  2450) retry:
-e6d0ab87c8efe9 Matthew Wilcox (Oracle  2024-02-15  2451) 	folio = folio_batch_next(&wbc->fbatch);
-e6d0ab87c8efe9 Matthew Wilcox (Oracle  2024-02-15  2452) 	if (!folio) {
-751e0d559c62a8 Matthew Wilcox (Oracle  2024-02-15  2453) 		folio_batch_release(&wbc->fbatch);
-751e0d559c62a8 Matthew Wilcox (Oracle  2024-02-15  2454) 		cond_resched();
-751e0d559c62a8 Matthew Wilcox (Oracle  2024-02-15  2455) 		filemap_get_folios_tag(mapping, &wbc->index, wbc_end(wbc),
-751e0d559c62a8 Matthew Wilcox (Oracle  2024-02-15 @2456) 				wbc_to_tag(wbc), &wbc->fbatch);
-e6d0ab87c8efe9 Matthew Wilcox (Oracle  2024-02-15  2457) 		folio = folio_batch_next(&wbc->fbatch);
-a2cbc13638d909 Matthew Wilcox (Oracle  2024-02-15  2458) 		if (!folio)
-a2cbc13638d909 Matthew Wilcox (Oracle  2024-02-15  2459) 			return NULL;
-e6d0ab87c8efe9 Matthew Wilcox (Oracle  2024-02-15  2460) 	}
-e6d0ab87c8efe9 Matthew Wilcox (Oracle  2024-02-15  2461) 
-a2cbc13638d909 Matthew Wilcox (Oracle  2024-02-15  2462) 	folio_lock(folio);
-a2cbc13638d909 Matthew Wilcox (Oracle  2024-02-15  2463) 	if (unlikely(!folio_prepare_writeback(mapping, wbc, folio))) {
-a2cbc13638d909 Matthew Wilcox (Oracle  2024-02-15  2464) 		folio_unlock(folio);
-a2cbc13638d909 Matthew Wilcox (Oracle  2024-02-15  2465) 		goto retry;
-a2cbc13638d909 Matthew Wilcox (Oracle  2024-02-15  2466) 	}
-a2cbc13638d909 Matthew Wilcox (Oracle  2024-02-15  2467) 
-a2cbc13638d909 Matthew Wilcox (Oracle  2024-02-15  2468) 	trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
-e6d0ab87c8efe9 Matthew Wilcox (Oracle  2024-02-15  2469) 	return folio;
-751e0d559c62a8 Matthew Wilcox (Oracle  2024-02-15  2470) }
-751e0d559c62a8 Matthew Wilcox (Oracle  2024-02-15  2471) 
-
+diff --git a/man/f2fs_io.8 b/man/f2fs_io.8
+index 6f3e11e96ed6..8e54aa644a00 100644
+--- a/man/f2fs_io.8
++++ b/man/f2fs_io.8
+@@ -127,6 +127,12 @@ buffered I/O
+ .TP
+ .B dio
+ direct I/O
++.TP
++.B mmap
++mmap(MAP_POPULATE)
++.TP
++.B mlock
++mmap() + mlock()
+ .RE
+ .TP
+ \fBfiemap\fR \fI[offset in 4kb] [count] [file_path]\fR
+diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+index b9bf9bc5f797..028ffe59d0c7 100644
+--- a/tools/f2fs_io/f2fs_io.c
++++ b/tools/f2fs_io/f2fs_io.c
+@@ -931,6 +931,7 @@ static void do_write_advice(int argc, char **argv, const struct cmd_desc *cmd)
+ "  buffered : buffered IO\n"				\
+ "  dio      : direct IO\n"				\
+ "  mmap     : mmap IO\n"				\
++"  mlock    : mmap + mlock\n"				\
+ "advice can be\n"					\
+ " 1 : set sequential|willneed\n"			\
+ " 0 : none\n"						\
+@@ -940,12 +941,13 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
+ 	u64 buf_size = 0, ret = 0, read_cnt = 0;
+ 	u64 offset;
+ 	char *buf = NULL;
+-	char *data;
++	char *data = NULL;
+ 	char *print_buf = NULL;
+ 	unsigned bs, count, i, print_bytes;
+ 	u64 total_time = 0;
+ 	int flags = 0;
+ 	int do_mmap = 0;
++	int do_mlock = 0;
+ 	int fd, advice;
+ 
+ 	if (argc != 8) {
+@@ -968,6 +970,8 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
+ 		flags |= O_DIRECT;
+ 	else if (!strcmp(argv[4], "mmap"))
+ 		do_mmap = 1;
++	else if (!strcmp(argv[4], "mlock"))
++		do_mlock = 1;
+ 	else if (strcmp(argv[4], "buffered"))
+ 		die("Wrong IO type");
+ 
+@@ -993,11 +997,24 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
+ 	total_time = get_current_us();
+ 	if (do_mmap) {
+ 		data = mmap(NULL, count * buf_size, PROT_READ,
+-						MAP_SHARED | MAP_POPULATE, fd, offset);
++				MAP_SHARED | MAP_POPULATE, fd, offset);
+ 		if (data == MAP_FAILED)
+ 			die("Mmap failed");
+-	}
+-	if (!do_mmap) {
++
++		read_cnt = count * buf_size;
++		memcpy(print_buf, data, print_bytes);
++	} else if (do_mlock) {
++		data = mmap(NULL, count * buf_size, PROT_READ,
++				MAP_SHARED, fd, offset);
++		if (data == MAP_FAILED)
++			die("Mmap failed");
++		if (posix_fadvise(fd, offset, count * buf_size,
++					POSIX_FADV_WILLNEED) != 0)
++			die_errno("fadvise failed");
++		if (mlock(data, count * buf_size))
++			die_errno("mlock failed");
++		read_cnt = count * buf_size;
++	} else {
+ 		for (i = 0; i < count; i++) {
+ 			ret = pread(fd, buf, buf_size, offset + buf_size * i);
+ 			if (ret != buf_size) {
+@@ -1014,9 +1031,6 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
+ 			if (i == 0)
+ 				memcpy(print_buf, buf, print_bytes);
+ 		}
+-	} else {
+-		read_cnt = count * buf_size;
+-		memcpy(print_buf, data, print_bytes);
+ 	}
+ 	printf("Read %"PRIu64" bytes total_time = %"PRIu64" us, BW = %.Lf MB/s print %u bytes:\n",
+ 		read_cnt, get_current_us() - total_time,
+@@ -1029,6 +1043,12 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
+ 		else if (i % 2 == 0)
+ 			printf(" ");
+ 	}
++	if (do_mmap) {
++		munmap(data, count * buf_size);
++	} else if (do_mlock) {
++		munlock(data, count * buf_size);
++		munmap(data, count * buf_size);
++	}
+ 	printf("\n");
+ 	exit(0);
+ }
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0.618.g983fd99d29-goog
+
 
 
 _______________________________________________
