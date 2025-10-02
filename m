@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 694EACAC5B0
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D7C36CAC5B8
 	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  2 Oct 2025 20:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=pizPg6UMSLM6oPU0KZ4nBPkVPl9vGardedMAHW73Bvo=; b=Sc3cunqw4Uw+be9XeY+sW1deWY
-	vlWyGcBGSarmUkZlwKMRywkzO0syVVLDnhaACOl25GPmMGnGgrMHde+fj/bTnB+G1ez64PDdB2xqr
-	oWktWi15v44TI0PgK04TKkCs9U666RIJezgaY4LC0AyFIpz2AzKYwoLjxo3L5Hec6ChY=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=H+JE0YaeyvR5iAnYbvBI/ChNKHMUZbIONxgyL9ZZU74=; b=f9V0uaBK4JDb1NJCuH9gmGCtTE
+	1jUA5GD7k+8KrhWGmAp28KZ4eylotRKEcVWFdvmpLQmNCdJ4SsN7hvfZlzGfte8DcMPuKfjsoifYP
+	kW/y8QEiH+G6GGPf8dZth80NfO7pOJlqX4AX4mbeAUNFn15axF5qMskX+6F0lLFIJnGA=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v4QFy-0004TG-H7;
-	Thu, 02 Oct 2025 20:50:31 +0000
+	id 1v4QG1-0002pH-4M;
+	Thu, 02 Oct 2025 20:50:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1v4QFn-0004SU-7X
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1v4QFv-0002p5-SE
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 02 Oct 2025 20:50:20 +0000
+ Thu, 02 Oct 2025 20:50:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3Bzy8PEhmcdlMYmLTuEbG0Pn+w7SZzse3wBK0DigEnw=; b=OTEQOAAQw6ur48w5CT1JAbvgn5
- UKz9p3NAJxOFmDdLPBuTRsGd+gY5aGpTqJ/EFJIKwh/VpSeLDxHnVPhOx6LAjV3IqUk213P6t0C5r
- 37pj6kufoW0ZGv4MZMxUD2NGE/wNWRcbxY7T4bl2kzClsKHewq2B0HiiAll9sGfFMA6A=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=rKDM34Xgle42j7CRHCEHvleWkLtA/uvFKmHh9gDL6W0=; b=moDuhTCSq5p4h6IMHpxbKml6v3
+ M6KS7XXU7r9WnAxVH1GUdr+dAFIq8J0DuSsXBv0VHv83V5mB8Qmh992m0E1TavgB5ShLWQy92k9Uv
+ HDEM7ZQPR3qaBsFi/GQZBJPU5tdijMtavjbkZHtYi3iG6BNGDTD8lXEiJwESlM+Mr9qI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=3Bzy8PEhmcdlMYmLTuEbG0Pn+w7SZzse3wBK0DigEnw=; b=e
- y5gQEEajS7qyx8DPKP2GkvbLt9rzNlj3CPxMObcwCnnQT8ffuUnggDioKJ1xw+VFVpV8v+OYCuoSr
- Z+J8rUQfQ7zzQ4KePIxXSWVBQsjhtT+fniC5hLcYsXCzLraRwxVFuDtDpfsuF0QzESrsUt9OJasB/
- Y7MomeYRp5r7axlw=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=rKDM34Xgle42j7CRHCEHvleWkLtA/uvFKmHh9gDL6W0=; b=CsWOwaKvLc7GAmgxcOGfEFdWq7
+ 2mgnO4lfvVBXSpeVj0nWMiOGd7ienp/YpCA5sRKXRs6e3V0TclZcDqiDpW5Rvn0SQ91Lsqoa0kfTf
+ CCVNNGZdXkv+/nOAc5LNQKjxj8Usvk7S+rbm2NrkqZIQX2ZvKs1e+BYoIW6x31qD1oqU=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1v4QFn-0006vi-Gj for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 02 Oct 2025 20:50:19 +0000
+ id 1v4QFv-0006ww-AS for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 02 Oct 2025 20:50:27 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 26E8948705
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  2 Oct 2025 20:50:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03FCAC4CEF9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  2 Oct 2025 20:50:14 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id B7B9063EE6;
+ Thu,  2 Oct 2025 20:50:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 682DCC4CEFA;
+ Thu,  2 Oct 2025 20:50:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1759438214;
- bh=CJLesYTj2rs5bzAB1fC+U2biZwFMPrQJVMIgntkl5Fk=;
- h=Subject:From:Date:To:From;
- b=sCo7JJPFk2y4im18i7+O3Hheavhf1Gs66n1z5Mz/mpIazmvgR5mZFG8n/N9t2LaOx
- KZU3O9jxFzcn0QVWK+4dttctxSaFVPxmqji52Op9b8NDujj2pficfURWIf1NZnS+Ib
- PLcS8QzfaNNeebgJAWFgU2bIQdxz/fQPpPlelJoqAef39nRJE58V/RKgoePBb9E5bq
- HIwtDHVLi0DoxC+bbBCG4XUbQn/oQSCb49qOw2pAefU8B59QOGXz7LNsq/eHfW1Bl9
- udzjlPFrjziWiXreS5ejf+L2A90+Z+u+7lbSvFSFRzLz1sf47JnTX+HW+0EQuwC15t
- Fdn2oMucQR6jA==
+ s=k20201202; t=1759438216;
+ bh=EXhKnU3EDHpJYtT4b6I9iscaUcjmn1BwkTdxsF58duI=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=lFwMJG3Ap/dfw78C5j55wWJzhX+v6JR0pMgVsu9zW59cVqn/ohJlWUo0AloogtP99
+ BWTplnBM8DsaVZ17yveyb9Q1q6MQ7saVAVXyW80qy7DazRagQgUL6VXQQB3a3j5CW1
+ hWYeAjkpozBHH4hr+g2pZEroVJYkGsf2ldfNOzeT/zcKbMSmz5d5cg3iY7tk6Aey6s
+ syY9OgF1iGlY05jZ14SbjFnZowEsy9sloSURiEp6wugZyXuwZF8y3GIKzOLfOhM67n
+ oGZQNSzF5nYylq5invIAx22r5oEfWMGJEaa+BVFFJpD8gy8tG6RDMvvniVCXhjDx+T
+ FqBpJ5yFIQ/ig==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- EFB0239D0C1A for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  2 Oct 2025 20:50:06 +0000 (UTC)
+ 7102039D0C1A; Thu,  2 Oct 2025 20:50:09 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <175943820555.3449937.9711384032965236964.git-patchwork-summary@kernel.org>
-Date: Thu, 02 Oct 2025 20:50:05 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1v4QFn-0006vi-Gj
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+Message-Id: <175943820824.3449937.3681276954916769253.git-patchwork-notify@kernel.org>
+Date: Thu, 02 Oct 2025 20:50:08 +0000
+References: <tencent_3FA2C956B557ED4D050EB26922B50D3CF40A@qq.com>
+In-Reply-To: <tencent_3FA2C956B557ED4D050EB26922B50D3CF40A@qq.com>
+To: Haofeng Li <920484857@qq.com>
+X-Headers-End: 1v4QFv-0006ww-AS
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix ifolio memory leak in
+ f2fs_move_inline_dirents error path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,30 +90,36 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: 13266079573@163.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
+ lihaofeng@kylinos.cn
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Patch: [f2fs-dev] f2fs: add missing dput() when printing the donation list
-  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1007867
-  Lore link: https://lore.kernel.org/r/20251002015645.3588322-1-jaegeuk@kernel.org
+On Tue, 30 Sep 2025 17:16:21 +0800 you wrote:
+> From: Haofeng Li <lihaofeng@kylinos.cn>
+> 
+> Fixes a memory leak issue in f2fs_move_inline_dirents() where
+> the ifolio is not properly released in certain error paths.
+> 
+> Problem Analysis:
+> - In f2fs_try_convert_inline_dir(), ifolio is acquired via f2fs_get_inode_folio()
+> - When do_convert_inline_dir() fails, the caller expects ifolio to be released
+> - However, in f2fs_move_inline_dirents(), two specific error paths don't release ifolio
+> 
+> [...]
 
-Patch: [f2fs-dev] f2fs: fix ifolio memory leak in f2fs_move_inline_dirents error path
-  Submitter: Haofeng Li <920484857@qq.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1007350
-  Lore link: https://lore.kernel.org/r/tencent_3FA2C956B557ED4D050EB26922B50D3CF40A@qq.com
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix ifolio memory leak in f2fs_move_inline_dirents error path
+    https://git.kernel.org/jaegeuk/f2fs/c/9fc1840e0217
 
-
-Total patches: 2
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
