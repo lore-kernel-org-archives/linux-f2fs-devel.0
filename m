@@ -4,77 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C6787CCD182
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  2 Oct 2025 20:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6CA66CAC5B8
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Oct 2025 01:27:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=PnlRRN8pZuLH4cOkWGXbeyYNJBXFHqsi9Fcm3FHE8aA=; b=VR40YmdA8tuD6BB+qWER1VUyJP
-	/nGqmtidS6VMJvNRnhJYVSXlJQmouI9/NwhxCc9IKMDnkkTcUR4fS6ja1s5LlGupQ2E4rJYoNa81f
-	huIg/QTpIt9TfWNHbI7EEaAOg0wmXKBv+QiUDDdb17qvfrLI8ZaVi1VjwWQw8NF69b+c=;
+	bh=i11eHrrziLcUU7XAAvgwYlj/gToPyTIfRZbM4FbJ4v0=; b=V5xcEKHq7vfhEwhKbzY299BRsY
+	ahy1CrNx4z4A3KB6pV65i9E4Y+Y5zGiAwK3a9Smw13M/rrddBkplF2qpJxGS3ZFIqD1+dCbtAbajx
+	MdJHHLWcbeLlBE4CQQjFfnzOGv0W8+OiaX0UtgOnvGOiOYl48GPiKzrEi/03LsGWEj9Q=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v4QG0-0003lY-PQ;
-	Thu, 02 Oct 2025 20:50:32 +0000
+	id 1v4UaF-0001Wc-DG;
+	Fri, 03 Oct 2025 01:27:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1v4QFu-0003lO-NZ
+ (envelope-from <chao@kernel.org>) id 1v4UaD-0001WU-T4
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 02 Oct 2025 20:50:26 +0000
+ Fri, 03 Oct 2025 01:27:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MgcIbTrl9j8Nu1XqqMsuv/i6yTlzfGJxq4eQQD2i91E=; b=Hy12d4i4mzebF2j4GDDOw0CxkC
- XV7tI/Z5am9WjBtoJiDB0d9xCD3amhswXP5nI2uzxU3RF87JMluO/4gg7gNA102/7yKybx3TQ9pOE
- iToNr2mawcUyLLED2dWDE0GtIoyySLNYlT5CleejI3QiWsTCgCZb0iKFX7fsL8imXA0A=;
+ bh=KjoYhlRCJ8FKZJhE1JIi4rm0d/AseUKY2RxpqNRpXNI=; b=NAMjvYxLr1U6r6EfQHNYbBEPo4
+ 1QFDNRM5m1Qu/8lFA4nJBSFZ1/FI3uyUZ1tpenlFlrXTo9arJu5h1gpDiZ1KrZytfJWEEs6Rp2eHS
+ FfLAKYHxvvuBz6gZUcg5uddmtRNg+LFFHmcQqv2lL50tnOkx1czh/9nIjFWdt59Gyh90=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MgcIbTrl9j8Nu1XqqMsuv/i6yTlzfGJxq4eQQD2i91E=; b=HUWM8IVWVmx045X6rCmCWBsKjM
- FZTDI7t76AkI/vxdUh7mgAVdQHpZK0Sls80kD6xHMJuId0uTMZ/vsu7s2gHNt8uxwZZiqpE9TTHHN
- N5x9qaOSj14Q8oHDkUqikHTL1AGZDy0H14sF32FDXfyE8k9k+MtkaDfc6tegtRqlH2+M=;
+ ;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=KjoYhlRCJ8FKZJhE1JIi4rm0d/AseUKY2RxpqNRpXNI=; b=j2KThMdzle43nR5zzzy2Ao/Yff
+ T1ayZ4vxq/Mpfu2CmvhP09ibO5jha6O/uoJ69hD4s3fIMSyeKAeBC4p+8+2uo9hZ3s029DUjbmcBQ
+ h1+fsRIyyCM0b/ApNM/HwDV/eKg8HFqbU0qoBn7mAv/xUkaEcku4ZHVZCPfAoqr9YF0U=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1v4QFu-0006wp-8r for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 02 Oct 2025 20:50:26 +0000
+ id 1v4UaD-0004rn-G5 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 03 Oct 2025 01:27:41 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 850BB63DCC
+ by tor.source.kernel.org (Postfix) with ESMTP id CB3E6601AE
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  2 Oct 2025 20:50:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34831C4CEF9;
- Thu,  2 Oct 2025 20:50:15 +0000 (UTC)
+ Fri,  3 Oct 2025 01:27:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40B4FC4CEF4;
+ Fri,  3 Oct 2025 01:27:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1759438215;
- bh=dWaLZLlgwysF2Co+urXzVTdaa8JC6sE5XfuYvZ5vCFc=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=k2F6ycf5C41WDi8otHClr720iKpFJ/6r6F181Cg1YbRjlpUWaP73XQj85TiIw3sMD
- KrXOm4w0swxtpbaDmxffdFxZUNd+JZo8pwiq9qsMxlh+40suZf8h207wn+aEQYFhyx
- oehWuUb1K/fNR75T8f3PHYjdqlbF2lbNixSNWyMME8MhGxCN5syD8nNQk/w99Okiz0
- OTliSiHvt3/IgiMiS6a07wVeLzKTWZKUA598kY2hPCFGJ/aQbRHzduWyT/Q2iyW/fq
- Sx63ZeW3v1dK/7QCvx3Ooq4pr+WdDJCugE6Kgw+YdX0ySMr7dJ8GYF8nTFNeMu/Tbj
- +dfO6jAZCm7Ww==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 344FF39D0C1A; Thu,  2 Oct 2025 20:50:08 +0000 (UTC)
+ s=k20201202; t=1759454854;
+ bh=7VsGLTYzGHWM+abr1cFG7wV/s7mUQcTViJnAxj7363c=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=ZwkrTOKw55Oiv0Pct7iJyoxUY+J+zrCh2ofOK23EiZP9OB4VM+9OkmTh3sFodue1k
+ rU2XIXgX+P8W6GDYh6FN/QRBgyAO9AzrBZ6QlQp0+Q78LiejQ5tdJRdhvyn7LFZU5h
+ NbQ2Xs6w9VttAhLQPlo/OuY9B7QThsqIVQMROWqgoii5YibKNsnC/N67JcBuyfk37s
+ Sy5L0O9sdBexVz5aYIUeZrmhmjEAWmoVIrKyPYFXO9zBwW9iPtlVpwxx66HdruSiBY
+ u6ddSMMJ7EVoQOa1a3qsWDO/0JziSWru6tw8pAEmiklQphxoHrCEQnbxAlnuvo7UzM
+ Ut4nkQ+PJxQ9A==
+Message-ID: <cca96baf-6e97-473b-b77a-9ddc28060f4a@kernel.org>
+Date: Fri, 3 Oct 2025 09:27:21 +0800
 MIME-Version: 1.0
-Message-Id: <175943820701.3449937.17994967060851018856.git-patchwork-notify@kernel.org>
-Date: Thu, 02 Oct 2025 20:50:07 +0000
+User-Agent: Mozilla Thunderbird
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 References: <20251002015645.3588322-1-jaegeuk@kernel.org>
+Content-Language: en-US
 In-Reply-To: <20251002015645.3588322-1-jaegeuk@kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1v4QFu-0006wp-8r
+X-Headers-End: 1v4UaD-0004rn-G5
 Subject: Re: [f2fs-dev] [PATCH] f2fs: add missing dput() when printing the
  donation list
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -88,38 +89,20 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
-
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Thu,  2 Oct 2025 01:56:45 +0000 you wrote:
+On 2025/10/2 09:56, Jaegeuk Kim via Linux-f2fs-devel wrote:
 > We missed to call dput() on the grabbed dentry.
 > 
 > Fixes: f1a49c1b112b ("f2fs: show the list of donation files")
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/sysfs.c | 1 +
->  1 file changed, 1 insertion(+)
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-Here is the summary with links:
-  - [f2fs-dev] f2fs: add missing dput() when printing the donation list
-    https://git.kernel.org/jaegeuk/f2fs/c/e34b65fd0c7f
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks,
 
 
 _______________________________________________
