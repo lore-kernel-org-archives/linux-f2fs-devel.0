@@ -4,77 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B627ECCA470
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Oct 2025 17:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 72688CAC5B8
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Oct 2025 18:00:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=iiCPCnYLRvRLnaimseZUsavihpArY0PJicymGxu3oyU=; b=HfGeQEQnpjZ4Htr3uuDWWKbyUW
-	9XN5D6Wo2jqqcAhwkXxcf5WSTzoVrSsLVOtNHa50cRtlzP1JUcfl0PPDEuCBgb3ld5TUBI0oAThT+
-	vFUOjmyRhhRNPNtyYbXygxXFzuHSJcXuluiMufnndkPJ2MX3HbEPILqKFtQ3tKNV/lHg=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=i5iur/d120yImXljbIVmRQopVvxsYufip0c1sG8dOPg=; b=TPfRjuQp6vVr+7TfiH90Wf+zim
+	ysNBWk98ojyEFMzUwgSNaZtGddE1efrCsCV284aMbmGIrF8GrrpeDkDAiRF9Txi7abANU/XfNoj/W
+	yEfP6bGrZUX8PH2PJLElf+hDIhmHEy09DNqaTOAFbpM3bSqBMxt4+JV32AvGy/Z3LZco=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v5pAa-0002ce-2W;
-	Mon, 06 Oct 2025 17:38:44 +0000
+	id 1v5pVc-0001pP-BB;
+	Mon, 06 Oct 2025 18:00:29 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1v5pAY-0002cY-TM
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1v5pVb-0001pC-2V
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 Oct 2025 17:38:42 +0000
+ Mon, 06 Oct 2025 18:00:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=A3FqYUCJtRgBg3wKrJ8TliYE5Ewk88NVwcr0q/Yn6P4=; b=fBnOSHdmeBBFiA0UN7zjzdQIix
- uEL0CfJVtByD/i6ImGrNsNLRxaJy9jAQFMwme8qxJWK5cSR0rxIAlzvS5aHAUB2DlQUq7Kze1GaC3
- rWFfI4hlFOVmuKAJhQ1kAr0l9bxpEZRMjj9cG/pS0aLgzxaXbWyENHV3430o7or41NDg=;
+ bh=yT9r8Exp0PxwG/jWE7FissOSb7pRHm2tAy5/mrM9e3Y=; b=WOWS09jPrzGOVwGTORU9jCA2IQ
+ PE+95T+U8ZmfUyLg9Oaot4wXRU3L7gOgC/jsoeWGmTU+eNy0LKnNaZICmLrvfaK634fKA9KdYCs09
+ S76syZO4gocFObREsDSkngxnt7ok2mVpeB1G1ilkHx3pWYZdxIk8pBSTHMxYdUCZqgOM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=A3FqYUCJtRgBg3wKrJ8TliYE5Ewk88NVwcr0q/Yn6P4=; b=Gwsy8gi3YxLlvG6QNKjQR2znhb
- zIvQRwPTH4vmtkroT4MRr5rmzJq0MnwimFP4ro1c9E9/nOHV45+GJAk09bNkIk8xDi3cfPpzn9iKJ
- iZvhW7Qod14Er+oMJqz8KKxFh6KvzMbyX1IQWsXPNwHaBRkcyxE4JKSy3VjN1a67G658=;
+ bh=yT9r8Exp0PxwG/jWE7FissOSb7pRHm2tAy5/mrM9e3Y=; b=WspgDn7zhYZ//s0XNr3SnIHE2l
+ w13wGpQaqwfOnv89q5RJLP5axlid157O74rr8ij33GiXvI56l8jXSPm2bnSstp2dYWWGkgarRklgu
+ Tv7r3iO0BrPHcR6dgoKl/igLJgHhoCoWgEWBrCWfTs9u+Gd7TGGtjOWqda8QiQI5irHQ=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1v5pAY-0001g6-Cy for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 Oct 2025 17:38:42 +0000
+ id 1v5pVb-0002xJ-Bp for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 06 Oct 2025 18:00:27 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 00EF243B3D;
- Mon,  6 Oct 2025 17:38:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2AABC4CEF5;
- Mon,  6 Oct 2025 17:38:31 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 03BF644659;
+ Mon,  6 Oct 2025 18:00:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D087FC4CEF5;
+ Mon,  6 Oct 2025 18:00:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1759772311;
- bh=Oh5hYDV0H1cKbRUiUHONhkC9FY9iVP3YY0oPxwsBdMI=;
+ s=k20201202; t=1759773616;
+ bh=4oQM312+pd6+1kpC4XhmpsurK9XSGqTTsWN0CjZ8lq4=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=CaMM2Bp4ZCv2x9Fo5TLYVRrIE3hX9Fok+hS6qRPyS5xmGVS41P7I9IJyINiIP7Kwb
- rPDvNWxTL/QHGz+th1u35DFigkcVBI+0l4XU23C2J7nPHw79Gsq135TRfjJWJLlJQw
- e1QnXx5wQP5um2OM5rtymErODY17epMWYZEn4LK6YYmo7fIi8zo4Bz78OnL3MwNm3Q
- fEh0uZOGBznYqxIatKRHOOyVlDKhII+lMD8oxThiOQUvS8626tJVJImSgVwkl5G2ps
- +j/sZ8lMo+uHy/OAhrK4n9hKqRP9yM8VdSvvvo+rvI7XYWCGoWZAaHNjAqJq5pWIQ8
- 1/ZHAgZ+Rih9w==
+ b=O2yuGutB4qL5lsb4SdXQAtzJxblp7OLs5ozdOvhZYN3EEd27ojLWaNCTVyYL4eo7X
+ NRX8fL7Yvj6ODvFH3L+keK20OWxGZEIasa2yEcp7qpsm2iJc+omRu4PEznFN0Wieo4
+ dbDgNz0D2x3kIJq/foX2Zlht8KGTkYklOft0mekxFdKV0hb5fUWZQsJDtCcoQaEFL4
+ /MK1omnuizEJm3aanHWZ26UllzGSAok1o0oGINyA0XcpO+KVpP8MMlvASsGqb7/Zrl
+ egY2pfpFi8Xbm1GYBJSjK8/12SgnStNjcdaWr6ltXlnwYaY/vewT44dmjNrcaZOwGX
+ HLQte2R/SgXlg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- AE00239D0C1A; Mon,  6 Oct 2025 17:38:22 +0000 (UTC)
+ AE17839D0C1A; Mon,  6 Oct 2025 18:00:07 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <175977230150.1449062.13164485414655381958.git-patchwork-notify@kernel.org>
-Date: Mon, 06 Oct 2025 17:38:21 +0000
-References: <aOAOS864BmSwjfGm@google.com>
-In-Reply-To: <aOAOS864BmSwjfGm@google.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1v5pAY-0001g6-Cy
-Subject: Re: [f2fs-dev] [GIT PULL] f2fs for 6.18-rc1
+Message-Id: <175977360652.1498132.2436692293138075252.git-patchwork-notify@kernel.org>
+Date: Mon, 06 Oct 2025 18:00:06 +0000
+References: <20250930232957.14361-1-mjguzik@gmail.com>
+In-Reply-To: <20250930232957.14361-1-mjguzik@gmail.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+X-Headers-End: 1v5pVb-0002xJ-Bp
+Subject: Re: [f2fs-dev] [PATCH] f2fs: don't call iput() from
+ f2fs_drop_inode()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,31 +90,32 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: brauner@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ oliver.sang@intel.com, oe-lkp@lists.linux.dev, josef@toxicpanda.com,
+ ltp@lists.linux.it
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This pull request was applied to jaegeuk/f2fs.git (dev)
-by Linus Torvalds <torvalds@linux-foundation.org>:
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Fri, 3 Oct 2025 17:56:27 +0000 you wrote:
-> Hi Linus,
+On Wed,  1 Oct 2025 01:29:57 +0200 you wrote:
+> iput() calls the problematic routine, which does a ->i_count inc/dec
+> cycle. Undoing it with iput() recurses into the problem.
 > 
-> Could you please consider this pull request?
-> 
-> Thanks,
-> 
-> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+> Note f2fs should not be playing games with the refcount to begin with,
+> but that will be handled later. Right now solve the immediate
+> regression.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,GIT,PULL] f2fs for 6.18-rc1
-    https://git.kernel.org/jaegeuk/f2fs/c/86d563ac5fb0
+  - [f2fs-dev] f2fs: don't call iput() from f2fs_drop_inode()
+    https://git.kernel.org/jaegeuk/f2fs/c/8ec5fc1ff77e
 
 You are awesome, thank you!
 -- 
