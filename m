@@ -4,79 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 94587CCD18A
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  9 Oct 2025 09:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4791ACCD187
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  9 Oct 2025 09:10:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=7mT0cUKMd2A3dMgQZbthN3GL9caBvvYPDwZuKIOE9mk=; b=fApujWZZbm7iNu7IMzBZYorI3Z
-	OijFIkjqRNQ2IclR5uzerqUJPgpGWHbtOX5BfR1gaS5L3Wl2qCdyv+/59bjYvfn1sKe5bL/MVHShJ
-	8ZMVHhyYYutfyQWN9Y0tn+N+uEydmF/Mu64sweM1HS2DQZEaqdLSZZ5nTT/hVbi0lfVA=;
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=G0ZPyCFrrpr4AQo+MS5bm6FHEelK27MKuN3wnfYF4YY=; b=LvZOb5K4N8Lht9khl2NElBy+ug
+	+DLZCJD8MG2YhE+Ng+950YILFf9InmwFhF9d3vye2shl3FaNvjxkLA2cybKRXpkxaYv1XgtN2Pja+
+	MSsfClDPVzQ06JFq8nkl0Ze4U5dBPeLw0vr9WGGNCpHpkB1F4ec4Q5dTRYBODcDbNFQs=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v6me9-0006Ly-GG;
-	Thu, 09 Oct 2025 09:09:14 +0000
+	id 1v6mfI-0006UJ-66;
+	Thu, 09 Oct 2025 09:10:24 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1v6me0-0006LM-8c
+ (envelope-from <chao@kernel.org>) id 1v6mfH-0006U7-6v
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 09 Oct 2025 09:09:05 +0000
+ Thu, 09 Oct 2025 09:10:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=i+fIgJTsbU5A5j9BLGd5/yHHkKgzK4Bwh50zzj7Gawo=; b=GLss3hGydRzC9/dqcU1iWzWuY2
- LZfQYm2JS4EWll8c9rcWpsMF665Eo2agm1DhH3DttaYyCR6XoCLHEn318wm7gDx0/xbW1VFVV1oE2
- xD92fkcx55twY3pWNDGSGgWSBUOTxcLqrAFUXbFaHJSeauwU0s38DYMbfau6aimWEUdc=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=i+fIgJTsbU5A5j9BLGd5/yHHkKgzK4Bwh50zzj7Gawo=; b=lHMFLV/yMVtbR32cHLaQUwFqF4
- 1tSmCuxYF9CrJSaeFqzGJOSdYSVMA1x9pwGyj+//pnvrA+JijJiUTWdV1aXZ6VgtcFcillQXh9+D/
- 9P0f3yH+YU3s6LNUdNEOjf1FLxNKBMjR5xhd+pJ+DBRLq+JYQJbINaXKhEYrajYLlaDM=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=VQhcw0ydQ0pW6s+crKm9/vjcyk+PtD6VXiNHwnCXat0=; b=WiCOQksrJk/gvWilcrCjwlXN7c
+ RUrJgUDRbCIWrE31F1/+tXDsX40l4ct1Hk8d7gvWzFUZ9lpL+UH2D4ArjznKGuEsr9Fxi4vqwbunb
+ xry7VMS3Xz4mX8weHjnBnngIy0sAQEhbQB/ZZ4zr0CnB6K7a94qSIivXODKIqPAQYTSY=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=VQhcw0ydQ0pW6s+crKm9/vjcyk+PtD6VXiNHwnCXat0=; b=Z
+ NL7BJd0fTXWRoIiQRFGdSotGLE1AX9lwfyPSv6g08XKUIoUKjZbqQCJgArXPQHaHnwtoX68YkldHM
+ NQVdK2zuXmCLHHLlm0cXfDNfWOVLe8ObkO7UctXn4mqVFcfOYBEdcgaXDHAaj/LeM54CjOLHkMXoA
+ 4+YzC3df2PF9aLhE=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1v6me0-0006G2-H2 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 09 Oct 2025 09:09:04 +0000
+ id 1v6mfH-0006KI-He for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 09 Oct 2025 09:10:23 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id D8C356224C
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  9 Oct 2025 09:08:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15633C113D0;
- Thu,  9 Oct 2025 09:08:51 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 2EAD245090;
+ Thu,  9 Oct 2025 09:10:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5A42C4CEF9;
+ Thu,  9 Oct 2025 09:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1760000933;
- bh=7qX7dSyEVqUMvvtMzL7YjED76he7BdxUoYprgSlpf9Y=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=o7ehBCcI9x2GyzJeYX8iDpERFl/6bOwZJ/WqEsN2ORa+kPGudRDmZpWgyESSafqzx
- u8NcItMtmH8vDASt39/hOQ4Ge25S24XvVxH5MbgsjNQLi3wRgAY8Ib99FxErpuE94p
- O00XY9pkz82QeAyRc2ppobj2CvBvjLxQ1Sd9Oidd/vMvRuwXtp802kPdltugqVMFkN
- kCYLw/TGyoSCzUcoZ0ScuUMtvx/vo5/WGKi97KWChf4yS2ad6LNdiZsYfRu01gwpvI
- a6KI/zosBE0zJgIfH5CMVdzIGFDduTVrHcESQzcfQFWwz/JnRqIbSpV5ep+Y6GOE1U
- rybByh3Xr+WIQ==
-To: Zorro Lang <zlang@kernel.org>,
-	fstests@vger.kernel.org
-Date: Thu,  9 Oct 2025 16:50:42 +0800
-Message-Id: <20251009085043.16910-2-chao@kernel.org>
+ s=k20201202; t=1760001018;
+ bh=cQmyOA1kdsDXT6q0amBPUls1NNiXk6QdOgjeKYuRvB0=;
+ h=From:To:Cc:Subject:Date:From;
+ b=D/JRXv8I6v9O04pRy64kW+PaTp1lVj8R3x4mwsrA7lzrzjEDHfjUjhwSuSoUBMKiM
+ z9KgsCvzwbJ/CoWpN6fDcrF0DaUPwwdO2+F9v+NTolaj6t5mNuL4v2l6gv94w8rFuc
+ cefaoPU4J16ywJ3VWWoN29V9awNcsoB8GudrUKemKbNjCBg1zqjZj7IISbEes85hiI
+ B3hhOBeshcMMaV87IjAsy0Hx3KTq8XJdm/+Y0KnREFgmMrIrRCDPrfxJiZTNozeM45
+ nWjXQnECJ0xk8EAS/LYT8ZZow6M/Lul5fXD9gv634wI9lX4NxywfqCxtEv/I6C6sIE
+ Ov9Ipq7CH9q0w==
+To: jaegeuk@kernel.org
+Date: Thu,  9 Oct 2025 16:52:30 +0800
+Message-Id: <20251009085230.17146-1-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20251009085043.16910-1-chao@kernel.org>
-References: <20251009085043.16910-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1v6me0-0006G2-H2
-Subject: [f2fs-dev] [PATCH 2/3] common/rc: move _check_f2fs_filesystem() to
- common/f2fs
+X-Headers-End: 1v6mfH-0006KI-He
+Subject: [f2fs-dev] [PATCH] f2fs: fix to avoid updating zero-sized extent in
+ extent cache
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,128 +86,68 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org,
+ syzbot+24124df3170c3638b35f@syzkaller.appspotmail.com,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-_check_f2fs_filesystem() is f2fs specific, it's better to move it to
-common/f2fs.
+As syzbot reported:
 
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+F2FS-fs (loop0): __update_extent_tree_range: extent len is zero, type: 0, extent [0, 0, 0], age [0, 0]
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/extent_cache.c:678!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5336 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full)
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__update_extent_tree_range+0x13bc/0x1500 fs/f2fs/extent_cache.c:678
+Call Trace:
+ <TASK>
+ f2fs_update_read_extent_cache_range+0x192/0x3e0 fs/f2fs/extent_cache.c:1085
+ f2fs_do_zero_range fs/f2fs/file.c:1657 [inline]
+ f2fs_zero_range+0x10c1/0x1580 fs/f2fs/file.c:1737
+ f2fs_fallocate+0x583/0x990 fs/f2fs/file.c:2030
+ vfs_fallocate+0x669/0x7e0 fs/open.c:342
+ ioctl_preallocate fs/ioctl.c:289 [inline]
+ file_ioctl+0x611/0x780 fs/ioctl.c:-1
+ do_vfs_ioctl+0xb33/0x1430 fs/ioctl.c:576
+ __do_sys_ioctl fs/ioctl.c:595 [inline]
+ __se_sys_ioctl+0x82/0x170 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f07bc58eec9
+
+In error path of f2fs_zero_range(), it may add a zero-sized extent
+into extent cache, it should be avoided.
+
+Fixes: 6e9619499f53 ("f2fs: support in batch fzero in dnode page")
+Reported-by: syzbot+24124df3170c3638b35f@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-f2fs-devel/68e5d698.050a0220.256323.0032.GAE@google.com
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- common/f2fs | 44 ++++++++++++++++++++++++++++++++++++++++++++
- common/rc   | 44 --------------------------------------------
- 2 files changed, 44 insertions(+), 44 deletions(-)
+ fs/f2fs/file.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/common/f2fs b/common/f2fs
-index 1b39d8ce..4d0d688b 100644
---- a/common/f2fs
-+++ b/common/f2fs
-@@ -25,3 +25,47 @@ _require_scratch_f2fs_compression()
- 		_scratch_unmount
- 	fi
- }
-+
-+_check_f2fs_filesystem()
-+{
-+    local device=$1
-+
-+    # If type is set, we're mounted
-+    local type=`_fs_type $device`
-+    local ok=1
-+
-+    if [ "$type" = "f2fs" ]
-+    then
-+        # mounted ...
-+        local mountpoint=`_umount_or_remount_ro $device`
-+    fi
-+
-+    $F2FS_FSCK_PROG --dry-run $device >$tmp.fsck.f2fs 2>&1
-+    if [ $? -ne 0 ];then
-+        _log_err "_check_f2fs_filesystem: filesystem on $device is inconsistent"
-+        echo "*** fsck.f2fs output ***" >>$seqres.full
-+        cat $tmp.fsck.f2fs              >>$seqres.full
-+        echo "*** end fsck.f2fs output" >>$seqres.full
-+
-+    ok=0
-+    fi
-+    rm -f $tmp.fsck.f2fs
-+
-+    if [ $ok -eq 0 ]
-+    then
-+        echo "*** mount output ***"		>>$seqres.full
-+        _mount					>>$seqres.full
-+        echo "*** end mount output"		>>$seqres.full
-+    elif [ "$type" = "f2fs" ]
-+    then
-+	# was mounted ...
-+	_mount_or_remount_rw "$MOUNT_OPTIONS" $device $mountpoint
-+	ok=$?
-+    fi
-+
-+    if [ $ok -eq 0 ]; then
-+	return 1
-+    fi
-+
-+    return 0
-+}
-diff --git a/common/rc b/common/rc
-index 1ec84263..4d121a1b 100644
---- a/common/rc
-+++ b/common/rc
-@@ -3566,50 +3566,6 @@ _check_generic_filesystem()
-     return 0
- }
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index ffa045b39c01..c045e38e60ee 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1654,8 +1654,11 @@ static int f2fs_do_zero_range(struct dnode_of_data *dn, pgoff_t start,
+ 		f2fs_set_data_blkaddr(dn, NEW_ADDR);
+ 	}
  
--_check_f2fs_filesystem()
--{
--    local device=$1
--
--    # If type is set, we're mounted
--    local type=`_fs_type $device`
--    local ok=1
--
--    if [ "$type" = "f2fs" ]
--    then
--        # mounted ...
--        local mountpoint=`_umount_or_remount_ro $device`
--    fi
--
--    $F2FS_FSCK_PROG --dry-run $device >$tmp.fsck.f2fs 2>&1
--    if [ $? -ne 0 ];then
--        _log_err "_check_f2fs_filesystem: filesystem on $device is inconsistent"
--        echo "*** fsck.f2fs output ***" >>$seqres.full
--        cat $tmp.fsck.f2fs              >>$seqres.full
--        echo "*** end fsck.f2fs output" >>$seqres.full
--
--    ok=0
--    fi
--    rm -f $tmp.fsck.f2fs
--
--    if [ $ok -eq 0 ]
--    then
--        echo "*** mount output ***"		>>$seqres.full
--        _mount					>>$seqres.full
--        echo "*** end mount output"		>>$seqres.full
--    elif [ "$type" = "f2fs" ]
--    then
--	# was mounted ...
--	_mount_or_remount_rw "$MOUNT_OPTIONS" $device $mountpoint
--	ok=$?
--    fi
--
--    if [ $ok -eq 0 ]; then
--	return 1
--    fi
--
--    return 0
--}
--
- # Filter the knowen errors the UDF Verifier reports.
- _udf_test_known_error_filter()
- {
+-	f2fs_update_read_extent_cache_range(dn, start, 0, index - start);
+-	f2fs_update_age_extent_cache_range(dn, start, index - start);
++	if (index > start) {
++		f2fs_update_read_extent_cache_range(dn, start, 0,
++							index - start);
++		f2fs_update_age_extent_cache_range(dn, start, index - start);
++	}
+ 
+ 	return ret;
+ }
 -- 
 2.40.1
 
