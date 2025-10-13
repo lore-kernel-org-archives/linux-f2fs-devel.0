@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 42E4CCCA476
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Oct 2025 12:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 064C7CCD183
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Oct 2025 12:53:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=m9KK3zpUJNg1vXWSrPSwdApi9uu0VoeVwYpikW3hy2Y=; b=Uru3A3vKxz+Dt+4kXA11+gb/uS
-	foSPVyHpJJMSkppJcmBJi4wgRl47dftH5R+6j5ZsxV0yerQLFaHfX/k6vF+ej55PjnzcfGJiKSaJ7
-	OJH5+m904UC98wyU22hFFiG4gxi/Hm6Zn4wp0Pg3x7G6uiBVbwPg2LmTF8y/CuiYloeQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=3Na+WkVNbwTkZjg3/jreucPG+Ef+ZX7ySopkF04b/qg=; b=NB+ZDMuwyZByCK46SmWD1H4mZn
+	IziFR9VJVr4WVPXKffBtn5M20fuj8Md2a+YY4VI2CYk33arBs/KsL908bBt2sL1nuuSHKxJRC6bxl
+	Im6uqb9r6jQIq7sMR4wRQAR/DaNNHVDCzgkmHaNw0GNS6GVBaM4BVgHhe3axKCgQgXp4=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v8HUz-0003YS-VH;
-	Mon, 13 Oct 2025 12:17:57 +0000
+	id 1v8I3F-0004Y3-Ne;
+	Mon, 13 Oct 2025 12:53:22 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1v8HUy-0003YI-2i
+ (envelope-from <chao@kernel.org>) id 1v8I3D-0004Xl-P2
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 13 Oct 2025 12:17:56 +0000
+ Mon, 13 Oct 2025 12:53:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cNBt6XQiZ/+NaSp0TS3jSAdmtUE0g5qbutLoigyPMvE=; b=H2rWBlxcO6eQw6IL1WjfiIMn+q
- nVpOx2KXsqaX5u5iWbQuWs7rDFeQAGzpY5WUqCDuDWatPhD2P+RnnKJa1M3nJPhY78L8g68ZqCd5N
- HpIYvEkSzghRjMgG50MKA8f9BYLt/rbTvXFlODkN027LdzqNzv6Uf7+IscwV73Cx6Plo=;
+ bh=mYpo+l5PNf76evMSN4afl29rfwLyqniqdOUNijxkvH4=; b=SNnPe85axLL8l2fp16+g0husuL
+ uFMzv7QwCtafYgfJHKO6vvh6Yqisfowk+FBAOp4x1QsfSjlHgjQGptgQpSsY5W96RwUrM9HDBPiiN
+ 5KsnQ4h8A2zM6AYH/YlnpWKBm1vSwgvnFMNZF6cGp78gJi04oFbLIONDGMg2nkFzkY+o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=cNBt6XQiZ/+NaSp0TS3jSAdmtUE0g5qbutLoigyPMvE=; b=m534PO5lzBggVoGNTO97hcJARG
- iISC+5XtTxZfrfcqCfflfhDbjoaZzZ/hcULr71y3PGfBAq1hv+hZb6VH4jKrHQPe2JTAG3j0Yvgv6
- qBg/XetWqU+Y/yqxFVvp/EiPwfdDmzcHwx7mSXHT5J2j9xkBtCz4td8gIlWG+gRLhXiY=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=mYpo+l5PNf76evMSN4afl29rfwLyqniqdOUNijxkvH4=; b=Ju8ivnYbnx7/N6YV9U7RpaaX0e
+ F/Innn8AwjqftvwgptLy48UxglbdlS5sH9xLsEgh15RpqHb7FaQipnjOPIgSUs3RjeGCqBBIUE8oH
+ +O7/Wue+WWsIQ1JlPoM2KtMPhn86LpKTdRHmkxQndpoxATriHt+yhS/QkP8v1jQlnfbE=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1v8HUx-00031G-6k for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 13 Oct 2025 12:17:56 +0000
+ id 1v8I3D-0005dC-V3 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 13 Oct 2025 12:53:20 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 732BF61247;
- Mon, 13 Oct 2025 12:17:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0EB6C4CEE7;
- Mon, 13 Oct 2025 12:17:42 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 9990045312;
+ Mon, 13 Oct 2025 12:53:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B590C4CEE7;
+ Mon, 13 Oct 2025 12:53:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1760357864;
- bh=+jYXDRLpjwEw8GFFhe53cceg4sI5lK14lhsG8z3fDbQ=;
+ s=k20201202; t=1760359989;
+ bh=QrfJt2hUMOOD+gjf01fYxogMQriU6KiB9/iGzz3A5eo=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=NnuK1ggMpWBbD6NHzcHjvNU7o0Ye3K1smB4h/XK23B9JTXtr92esX4GOxsiuwrEde
- hU0FQh5t7jtc3WwdPf7HajlWdjgUIBlURzCwnB/KKkn1eHtssCrZQx6vsDau2J5on6
- nRDK74Q4gGafofW7k1teayqZjQ3dT33rwSE5feKfCTHblzNSS+upLTGVV/8doUqHMt
- lwlp4fvssI0hz0Y/wV+Fq2hmGnC2iHkxbWu2GsruKzgqOWvoUdHFWYfB2cMmB05edk
- fDsue5fu1PmlO4jlowBLStl6XjIupjj4UpjAa9HRkYcIpVfTNRkxnKen5eQlFJJGm9
- E79MODIa7EZBw==
-Message-ID: <03d71905-14af-4ed8-b0e3-ebe75d5f8202@kernel.org>
-Date: Mon, 13 Oct 2025 20:17:40 +0800
+ b=O5G6+SKanFheTVhhE+NeS8tIo4vNAICs41T/v/LM0moYsBF5dCxC6lZ/k4VedORqe
+ uDuWtvh8BxrwZuEUb4qa59egVmQcTSFIarFOMePK9ZuzZT7TbWgcC+WLDnmLB3ogHl
+ LEFpkJ0bJ+JiwKQfaZI2lPxTAqf4I0YlANkFEMyu7vJ/aUfNjZJdkuZdv9SaEMDTwT
+ M3a6N7Ntf/uaCeib128QNXqJwqYo/grlDmLPo70/+QujHYLi3epUIGXJc2ZRqDN4gV
+ SygHaeJagr/v9PsqvUgV4MYUqjEjGUxUryFzO0i4qcYn2pxmAN49LdAqXcck84RIWM
+ qzBhQqxdfI8gg==
+Message-ID: <9d0fef9d-4093-4a80-af3f-6dc45ffe886c@kernel.org>
+Date: Mon, 13 Oct 2025 20:53:04 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: "HONG, Yun" <yhong@link.cuhk.edu.hk>,
- "jaegeuk@kernel.org" <jaegeuk@kernel.org>
-References: <TYCP286MB3686D500C8AF350E0BE8B4F2C11BA@TYCP286MB3686.JPNP286.PROD.OUTLOOK.COM>
+To: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
+References: <20251003134731.470392-1-zlatistiv@gmail.com>
+ <839306c1-5f7a-4e89-b2cf-7534d279a03c@kernel.org>
+ <gupgic53ouhmdwrglwdviw2mzeaqfjsvyr47u3ebu2ztayswy4@4oxvnu252rdb>
 Content-Language: en-US
-In-Reply-To: <TYCP286MB3686D500C8AF350E0BE8B4F2C11BA@TYCP286MB3686.JPNP286.PROD.OUTLOOK.COM>
-X-Headers-End: 1v8HUx-00031G-6k
-Subject: Re: [f2fs-dev] [Crash Report] WARNING in f2fs_init_xattr_caches
+In-Reply-To: <gupgic53ouhmdwrglwdviw2mzeaqfjsvyr47u3ebu2ztayswy4@4oxvnu252rdb>
+X-Headers-End: 1v8I3D-0005dC-V3
+Subject: Re: [f2fs-dev] [PATCH] f2fs: Perform sanity check before unlinking
+ directory inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,174 +91,122 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: david.hunter.linux@gmail.com,
+ syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ khalid@kernel.org, skhan@linuxfoundation.org, jaegeuk@kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-SGkgSG9uZywKCk9uIDkvMjkvMjUgMTk6NDMsIEhPTkcsIFl1biB3cm90ZToKPiBIaSwKPiAKPiBJ
-IHdvdWxkIGxpa2UgdG8ga2luZGx5IHJlcG9ydCBhIGNyYXNoIEkgZW5jb3VudGVyZWQsIGlkZW50
-aWZpZWQgYXMgIldBUk5JTkcgaW4gZjJmc19pbml0X3hhdHRyX2NhY2hlcyIuIFRoaXMgaXNzdWUg
-Y2FuIGJlIHJlcHJvZHVjZWQgd2l0aCBhIFN5emxhbmcgcmVwcm9kdWNlciBvbiB0aGUgbWFpbmxp
-bmUgdmVyc2lvbiBkb3dubG9hZGVkIGZyb20gaHR0cHM6Ly93d3cua2VybmVsLm9yZy8KPiBGb3Ig
-eW91ciBjb252ZW5pZW5jZSwgSSBoYXZlIGluY2x1ZGVkIGEgc2FtcGxlIGNyYXNoIHJlcG9ydCwg
-dGhlIGNvbmZpZ3VyYXRpb24gZmlsZSwgYW5kIGEgcmVwcm9kdWN0aW9uIHByb2dyYW0gYXMgYXR0
-YWNobWVudHMuCgpUaGFua3MgZm9yIHByb3ZpZGluZyB5b3VyIHNjcmlwdHMgYW5kIGltYWdlcywg
-bm93IEkgY2FuIHJlcHJvZHVjZSB0aGlzIGJ1Zy4KCkNvdWxkIHlvdSBwbGVhc2UgaGVscCB0byB0
-ZXN0IGJlbG93IHBhdGNoPwoKRnJvbSA1MTlhMWNiZmIxZjI4N2RlNWVkZGVkNTk2ZjAxYTQxYWYw
-Y2YyNWVjIE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBDaGFvIFl1IDxjaGFvQGtlcm5l
-bC5vcmc+CkRhdGU6IE1vbiwgMTMgT2N0IDIwMjUgMTk6NDI6MzYgKzA4MDAKU3ViamVjdDogW1BB
-VENIXSBmMmZzOiB1c2UgZ2xvYmFsIGlubGluZV94YXR0cl9zbGFiIGluc3RlYWQgb2YgcGVyLXNi
-IHNsYWIKIGNhY2hlCk1JTUUtVmVyc2lvbjogMS4wCkNvbnRlbnQtVHlwZTogdGV4dC9wbGFpbjsg
-Y2hhcnNldD1VVEYtOApDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiA4Yml0CgpBcyBIb25nIFl1
-biByZXBvcnRlZCBpbiBtYWlsaW5nIGxpc3Q6Cgpsb29wNzogZGV0ZWN0ZWQgY2FwYWNpdHkgY2hh
-bmdlIGZyb20gMCB0byAxMzEwNzIKLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0t
-CmttZW1fY2FjaGUgb2YgbmFtZSAnZjJmc194YXR0cl9lbnRyeS03OjcnIGFscmVhZHkgZXhpc3Rz
-CldBUk5JTkc6IENQVTogMCBQSUQ6IDI0NDI2IGF0IG1tL3NsYWJfY29tbW9uLmM6MTEwIGttZW1f
-Y2FjaGVfc2FuaXR5X2NoZWNrIG1tL3NsYWJfY29tbW9uLmM6MTA5IFtpbmxpbmVdCldBUk5JTkc6
-IENQVTogMCBQSUQ6IDI0NDI2IGF0IG1tL3NsYWJfY29tbW9uLmM6MTEwIF9fa21lbV9jYWNoZV9j
-cmVhdGVfYXJncysweGE2LzB4MzIwIG1tL3NsYWJfY29tbW9uLmM6MzA3CkNQVTogMCBVSUQ6IDAg
-UElEOiAyNDQyNiBDb21tOiBzeXouNy4xMzcwIE5vdCB0YWludGVkIDYuMTcuMC1yYzQgIzEgUFJF
-RU1QVChmdWxsKQpIYXJkd2FyZSBuYW1lOiBRRU1VIFN0YW5kYXJkIFBDIChpNDQwRlggKyBQSUlY
-LCAxOTk2KSwgQklPUyAxLjEzLjAtMXVidW50dTEuMSAwNC8wMS8yMDE0ClJJUDogMDAxMDprbWVt
-X2NhY2hlX3Nhbml0eV9jaGVjayBtbS9zbGFiX2NvbW1vbi5jOjEwOSBbaW5saW5lXQpSSVA6IDAw
-MTA6X19rbWVtX2NhY2hlX2NyZWF0ZV9hcmdzKzB4YTYvMHgzMjAgbW0vc2xhYl9jb21tb24uYzoz
-MDcKQ2FsbCBUcmFjZToKwqBfX2ttZW1fY2FjaGVfY3JlYXRlIGluY2x1ZGUvbGludXgvc2xhYi5o
-OjM1MyBbaW5saW5lXQrCoGYyZnNfa21lbV9jYWNoZV9jcmVhdGUgZnMvZjJmcy9mMmZzLmg6Mjk0
-MyBbaW5saW5lXQrCoGYyZnNfaW5pdF94YXR0cl9jYWNoZXMrMHhhNS8weGUwIGZzL2YyZnMveGF0
-dHIuYzo4NDMKwqBmMmZzX2ZpbGxfc3VwZXIrMHgxNjQ1LzB4MjYyMCBmcy9mMmZzL3N1cGVyLmM6
-NDkxOArCoGdldF90cmVlX2JkZXZfZmxhZ3MrMHgxZmIvMHgyNjAgZnMvc3VwZXIuYzoxNjkyCsKg
-dmZzX2dldF90cmVlKzB4NDMvMHgxNDAgZnMvc3VwZXIuYzoxODE1CsKgZG9fbmV3X21vdW50KzB4
-MjAxLzB4NTUwIGZzL25hbWVzcGFjZS5jOjM4MDgKwqBkb19tb3VudCBmcy9uYW1lc3BhY2UuYzo0
-MTM2IFtpbmxpbmVdCsKgX19kb19zeXNfbW91bnQgZnMvbmFtZXNwYWNlLmM6NDM0NyBbaW5saW5l
-XQrCoF9fc2Vfc3lzX21vdW50KzB4Mjk4LzB4MmYwIGZzL25hbWVzcGFjZS5jOjQzMjQKwqBkb19z
-eXNjYWxsX3g2NCBhcmNoL3g4Ni9lbnRyeS9zeXNjYWxsXzY0LmM6NjMgW2lubGluZV0KwqBkb19z
-eXNjYWxsXzY0KzB4OGUvMHgzYTAgYXJjaC94ODYvZW50cnkvc3lzY2FsbF82NC5jOjk0CsKgZW50
-cnlfU1lTQ0FMTF82NF9hZnRlcl9od2ZyYW1lKzB4NzYvMHg3ZQoKVGhlIGJ1ZyBjYW4gYmUgcmVw
-cm9kdWNlZCB3LyBiZWxvdyBzY3JpcHRzOgotIG1vdW50IC9kZXYvdmRiIC9tbnQxCi0gbW91bnQg
-L2Rldi92ZGMgL21udDIKLSB1bW91bnQgL21udDEKLSBtb3VubnQgL2Rldi92ZGIgL21udDEKClRo
-ZSByZWFzb24gaXMgaWYgd2UgY3JlYXRlZCB0d28gc2xhYiBjYWNoZXMsIG5hbWVkIGYyZnNfeGF0
-dHJfZW50cnktNzozCmFuZCBmMmZzX3hhdHRyX2VudHJ5LTc6NywgYW5kIHRoZXkgaGF2ZSB0aGUg
-c2FtZSBzbGFiIHNpemUuIEFjdHVhbGx5LApzbGFiIHN5c3RlbSB3aWxsIG9ubHkgY3JlYXRlIG9u
-ZSBzbGFiIGNhY2hlIGNvcmUgc3RydWN0dXJlIHdoaWNoIGhhcwpzbGFiIG5hbWUgb2YgImYyZnNf
-eGF0dHJfZW50cnktNzozIiwgYW5kIHR3byBzbGFiIGNhY2hlcyBzaGFyZSB0aGUgc2FtZQpzdHJ1
-Y3R1cmUgYW5kIGNhY2hlIGFkZHJlc3MuCgpTbywgaWYgd2UgZGVzdHJveSBmMmZzX3hhdHRyX2Vu
-dHJ5LTc6MyBjYWNoZSB3LyBjYWNoZSBhZGRyZXNzLCBpdCB3aWxsCmRlY3JlYXNlIHJlZmVyZW5j
-ZSBjb3VudCBvZiBzbGFiIGNhY2hlLCByYXRoZXIgdGhhbiByZWxlYXNlIHNsYWIgY2FjaGUKZW50
-aXJlbHksIHNpbmNlIHRoZXJlIGlzIG9uZSBtb3JlIHVzZXIgaGFzIHJlZmVyZW5jZWQgdGhlIGNh
-Y2hlLgoKVGhlbiwgaWYgd2UgdHJ5IHRvIGNyZWF0ZSBzbGFiIGNhY2hlIHcvIG5hbWUgImYyZnNf
-eGF0dHJfZW50cnktNzozIiBhZ2FpbiwKc2xhYiBzeXN0ZW0gd2lsbCBmaW5kIHRoYXQgdGhlcmUg
-aXMgZXhpc3RlZCBjYWNoZSB3aGljaCBoYXMgdGhlIHNhbWUgbmFtZQphbmQgdHJpZ2dlciB0aGUg
-d2FybmluZy4KCkxldCdzIGNoYW5nZXMgdG8gdXNlIGdsb2JhbCBpbmxpbmVfeGF0dHJfc2xhYiBp
-bnN0ZWFkIG9mIHBlci1zYiBzbGFiIGNhY2hlCmZvciBmaXhpbmcuCgpGaXhlczogYTk5OTE1MGY0
-ZmUzICgiZjJmczogdXNlIGttZW1fY2FjaGUgcG9vbCBkdXJpbmcgaW5saW5lIHhhdHRyIGxvb2t1
-cHMiKQpDYzogc3RhYmxlQGtlcm5lbC5vcmcKUmVwb3J0ZWQtYnk6IEhvbmcgWXVuIDx5aG9uZ0Bs
-aW5rLmN1aGsuZWR1LmhrPgpTaWduZWQtb2ZmLWJ5OiBDaGFvIFl1IDxjaGFvQGtlcm5lbC5vcmc+
-Ci0tLQogZnMvZjJmcy9mMmZzLmggIHwgIDMgLS0tCiBmcy9mMmZzL3N1cGVyLmMgfCAxNyArKysr
-KysrKy0tLS0tLS0tLQogZnMvZjJmcy94YXR0ci5jIHwgMzIgKysrKysrKysrKystLS0tLS0tLS0t
-LS0tLS0tLS0tLS0KIGZzL2YyZnMveGF0dHIuaCB8IDEwICsrKysrKy0tLS0KIDQgZmlsZXMgY2hh
-bmdlZCwgMjUgaW5zZXJ0aW9ucygrKSwgMzcgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMv
-ZjJmcy9mMmZzLmggYi9mcy9mMmZzL2YyZnMuaAppbmRleCA4MzkwMzJhNGRhMzkuLmM1ODlhZWQw
-NjlkOSAxMDA2NDQKLS0tIGEvZnMvZjJmcy9mMmZzLmgKKysrIGIvZnMvZjJmcy9mMmZzLmgKQEAg
-LTE4OTIsOSArMTg5Miw2IEBAIHN0cnVjdCBmMmZzX3NiX2luZm8gewogCXNwaW5sb2NrX3QgZXJy
-b3JfbG9jazsJCQkvKiBwcm90ZWN0IGVycm9ycy9zdG9wX3JlYXNvbiBhcnJheSAqLwogCWJvb2wg
-ZXJyb3JfZGlydHk7CQkJLyogZXJyb3JzIG9mIHNiIGlzIGRpcnR5ICovCgotCXN0cnVjdCBrbWVt
-X2NhY2hlICppbmxpbmVfeGF0dHJfc2xhYjsJLyogaW5saW5lIHhhdHRyIGVudHJ5ICovCi0JdW5z
-aWduZWQgaW50IGlubGluZV94YXR0cl9zbGFiX3NpemU7CS8qIGRlZmF1bHQgaW5saW5lIHhhdHRy
-IHNsYWIgc2l6ZSAqLwotCiAJLyogRm9yIHJlY2xhaW1lZCBzZWdzIHN0YXRpc3RpY3MgcGVyIGVh
-Y2ggR0MgbW9kZSAqLwogCXVuc2lnbmVkIGludCBnY19zZWdtZW50X21vZGU7CQkvKiBHQyBzdGF0
-ZSBmb3IgcmVjbGFpbWVkIHNlZ21lbnRzICovCiAJdW5zaWduZWQgaW50IGdjX3JlY2xhaW1lZF9z
-ZWdzW01BWF9HQ19NT0RFXTsJLyogUmVjbGFpbWVkIHNlZ3MgZm9yIGVhY2ggbW9kZSAqLwpkaWZm
-IC0tZ2l0IGEvZnMvZjJmcy9zdXBlci5jIGIvZnMvZjJmcy9zdXBlci5jCmluZGV4IDZlNTJlMzZj
-MWYxYS4uMmFlMzQxNzY4YTM5IDEwMDY0NAotLS0gYS9mcy9mMmZzL3N1cGVyLmMKKysrIGIvZnMv
-ZjJmcy9zdXBlci5jCkBAIC0yMDI3LDcgKzIwMjcsNiBAQCBzdGF0aWMgdm9pZCBmMmZzX3B1dF9z
-dXBlcihzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiKQogCWtmcmVlKHNiaS0+cmF3X3N1cGVyKTsKCiAJ
-ZjJmc19kZXN0cm95X3BhZ2VfYXJyYXlfY2FjaGUoc2JpKTsKLQlmMmZzX2Rlc3Ryb3lfeGF0dHJf
-Y2FjaGVzKHNiaSk7CiAjaWZkZWYgQ09ORklHX1FVT1RBCiAJZm9yIChpID0gMDsgaSA8IE1BWFFV
-T1RBUzsgaSsrKQogCQlrZnJlZShGMkZTX09QVElPTihzYmkpLnNfcWZfbmFtZXNbaV0pOwpAQCAt
-NTAxNiwxMyArNTAxNSw5IEBAIHN0YXRpYyBpbnQgZjJmc19maWxsX3N1cGVyKHN0cnVjdCBzdXBl
-cl9ibG9jayAqc2IsIHN0cnVjdCBmc19jb250ZXh0ICpmYykKIAlpZiAoZXJyKQogCQlnb3RvIGZy
-ZWVfaW9zdGF0OwoKLQkvKiBpbml0IHBlciBzYmkgc2xhYiBjYWNoZSAqLwotCWVyciA9IGYyZnNf
-aW5pdF94YXR0cl9jYWNoZXMoc2JpKTsKLQlpZiAoZXJyKQotCQlnb3RvIGZyZWVfcGVyY3B1Owog
-CWVyciA9IGYyZnNfaW5pdF9wYWdlX2FycmF5X2NhY2hlKHNiaSk7CiAJaWYgKGVycikKLQkJZ290
-byBmcmVlX3hhdHRyX2NhY2hlOworCQlnb3RvIGZyZWVfcGVyY3B1OwoKIAkvKiBnZXQgYW4gaW5v
-ZGUgZm9yIG1ldGEgc3BhY2UgKi8KIAlzYmktPm1ldGFfaW5vZGUgPSBmMmZzX2lnZXQoc2IsIEYy
-RlNfTUVUQV9JTk8oc2JpKSk7CkBAIC01MzUxLDggKzUzNDYsNiBAQCBzdGF0aWMgaW50IGYyZnNf
-ZmlsbF9zdXBlcihzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiLCBzdHJ1Y3QgZnNfY29udGV4dCAqZmMp
-CiAJc2JpLT5tZXRhX2lub2RlID0gTlVMTDsKIGZyZWVfcGFnZV9hcnJheV9jYWNoZToKIAlmMmZz
-X2Rlc3Ryb3lfcGFnZV9hcnJheV9jYWNoZShzYmkpOwotZnJlZV94YXR0cl9jYWNoZToKLQlmMmZz
-X2Rlc3Ryb3lfeGF0dHJfY2FjaGVzKHNiaSk7CiBmcmVlX3BlcmNwdToKIAlkZXN0cm95X3BlcmNw
-dV9pbmZvKHNiaSk7CiBmcmVlX2lvc3RhdDoKQEAgLTU1NTUsMTAgKzU1NDgsMTUgQEAgc3RhdGlj
-IGludCBfX2luaXQgaW5pdF9mMmZzX2ZzKHZvaWQpCiAJZXJyID0gZjJmc19jcmVhdGVfY2FzZWZv
-bGRfY2FjaGUoKTsKIAlpZiAoZXJyKQogCQlnb3RvIGZyZWVfY29tcHJlc3NfY2FjaGU7Ci0JZXJy
-ID0gcmVnaXN0ZXJfZmlsZXN5c3RlbSgmZjJmc19mc190eXBlKTsKKwllcnIgPSBmMmZzX2luaXRf
-eGF0dHJfY2FjaGUoKTsKIAlpZiAoZXJyKQogCQlnb3RvIGZyZWVfY2FzZWZvbGRfY2FjaGU7CisJ
-ZXJyID0gcmVnaXN0ZXJfZmlsZXN5c3RlbSgmZjJmc19mc190eXBlKTsKKwlpZiAoZXJyKQorCQln
-b3RvIGZyZWVfeGF0dHJfY2FjaGU7CiAJcmV0dXJuIDA7CitmcmVlX3hhdHRyX2NhY2hlOgorCWYy
-ZnNfZGVzdHJveV94YXR0cl9jYWNoZSgpOwogZnJlZV9jYXNlZm9sZF9jYWNoZToKIAlmMmZzX2Rl
-c3Ryb3lfY2FzZWZvbGRfY2FjaGUoKTsKIGZyZWVfY29tcHJlc3NfY2FjaGU6CkBAIC01NTk5LDYg
-KzU1OTcsNyBAQCBzdGF0aWMgaW50IF9faW5pdCBpbml0X2YyZnNfZnModm9pZCkKIHN0YXRpYyB2
-b2lkIF9fZXhpdCBleGl0X2YyZnNfZnModm9pZCkKIHsKIAl1bnJlZ2lzdGVyX2ZpbGVzeXN0ZW0o
-JmYyZnNfZnNfdHlwZSk7CisJZjJmc19kZXN0cm95X3hhdHRyX2NhY2hlKCk7CiAJZjJmc19kZXN0
-cm95X2Nhc2Vmb2xkX2NhY2hlKCk7CiAJZjJmc19kZXN0cm95X2NvbXByZXNzX2NhY2hlKCk7CiAJ
-ZjJmc19kZXN0cm95X2NvbXByZXNzX21lbXBvb2woKTsKZGlmZiAtLWdpdCBhL2ZzL2YyZnMveGF0
-dHIuYyBiL2ZzL2YyZnMveGF0dHIuYwppbmRleCA1ODYzMmEyYjY2MTMuLjlmMjBiNjdlOTBkMSAx
-MDA2NDQKLS0tIGEvZnMvZjJmcy94YXR0ci5jCisrKyBiL2ZzL2YyZnMveGF0dHIuYwpAQCAtMjMs
-MTEgKzIzLDEyIEBACiAjaW5jbHVkZSAieGF0dHIuaCIKICNpbmNsdWRlICJzZWdtZW50LmgiCgor
-c3RydWN0IGttZW1fY2FjaGUgKmlubGluZV94YXR0cl9zbGFiOwogc3RhdGljIHZvaWQgKnhhdHRy
-X2FsbG9jKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgaW50IHNpemUsIGJvb2wgKmlzX2lubGlu
-ZSkKIHsKLQlpZiAobGlrZWx5KHNpemUgPT0gc2JpLT5pbmxpbmVfeGF0dHJfc2xhYl9zaXplKSkg
-eworCWlmIChsaWtlbHkoc2l6ZSA9PSBERUZBVUxUX1hBVFRSX1NMQUJfU0laRSkpIHsKIAkJKmlz
-X2lubGluZSA9IHRydWU7Ci0JCXJldHVybiBmMmZzX2ttZW1fY2FjaGVfYWxsb2Moc2JpLT5pbmxp
-bmVfeGF0dHJfc2xhYiwKKwkJcmV0dXJuIGYyZnNfa21lbV9jYWNoZV9hbGxvYyhpbmxpbmVfeGF0
-dHJfc2xhYiwKIAkJCQkJR0ZQX0YyRlNfWkVSTywgZmFsc2UsIHNiaSk7CiAJfQogCSppc19pbmxp
-bmUgPSBmYWxzZTsKQEAgLTM4LDcgKzM5LDcgQEAgc3RhdGljIHZvaWQgeGF0dHJfZnJlZShzdHJ1
-Y3QgZjJmc19zYl9pbmZvICpzYmksIHZvaWQgKnhhdHRyX2FkZHIsCiAJCQkJCQkJYm9vbCBpc19p
-bmxpbmUpCiB7CiAJaWYgKGlzX2lubGluZSkKLQkJa21lbV9jYWNoZV9mcmVlKHNiaS0+aW5saW5l
-X3hhdHRyX3NsYWIsIHhhdHRyX2FkZHIpOworCQlrbWVtX2NhY2hlX2ZyZWUoaW5saW5lX3hhdHRy
-X3NsYWIsIHhhdHRyX2FkZHIpOwogCWVsc2UKIAkJa2ZyZWUoeGF0dHJfYWRkcik7CiB9CkBAIC04
-MzAsMjUgKzgzMSwxNCBAQCBpbnQgZjJmc19zZXR4YXR0cihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBp
-bnQgaW5kZXgsIGNvbnN0IGNoYXIgKm5hbWUsCiAJcmV0dXJuIGVycjsKIH0KCi1pbnQgZjJmc19p
-bml0X3hhdHRyX2NhY2hlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCitpbnQgX19pbml0IGYy
-ZnNfaW5pdF94YXR0cl9jYWNoZSh2b2lkKQogewotCWRldl90IGRldiA9IHNiaS0+c2ItPnNfYmRl
-di0+YmRfZGV2OwotCWNoYXIgc2xhYl9uYW1lWzMyXTsKLQotCXNwcmludGYoc2xhYl9uYW1lLCAi
-ZjJmc194YXR0cl9lbnRyeS0ldToldSIsIE1BSk9SKGRldiksIE1JTk9SKGRldikpOwotCi0Jc2Jp
-LT5pbmxpbmVfeGF0dHJfc2xhYl9zaXplID0gRjJGU19PUFRJT04oc2JpKS5pbmxpbmVfeGF0dHJf
-c2l6ZSAqCi0JCQkJCXNpemVvZihfX2xlMzIpICsgWEFUVFJfUEFERElOR19TSVpFOwotCi0Jc2Jp
-LT5pbmxpbmVfeGF0dHJfc2xhYiA9IGYyZnNfa21lbV9jYWNoZV9jcmVhdGUoc2xhYl9uYW1lLAot
-CQkJCQlzYmktPmlubGluZV94YXR0cl9zbGFiX3NpemUpOwotCWlmICghc2JpLT5pbmxpbmVfeGF0
-dHJfc2xhYikKLQkJcmV0dXJuIC1FTk9NRU07Ci0KLQlyZXR1cm4gMDsKKwlpbmxpbmVfeGF0dHJf
-c2xhYiA9IGYyZnNfa21lbV9jYWNoZV9jcmVhdGUoImYyZnNfeGF0dHJfZW50cnkiLAorCQkJCQlE
-RUZBVUxUX1hBVFRSX1NMQUJfU0laRSk7CisJcmV0dXJuIGlubGluZV94YXR0cl9zbGFiID8gMCA6
-IC1FTk9NRU07CiB9Cgotdm9pZCBmMmZzX2Rlc3Ryb3lfeGF0dHJfY2FjaGVzKHN0cnVjdCBmMmZz
-X3NiX2luZm8gKnNiaSkKK3ZvaWQgZjJmc19kZXN0cm95X3hhdHRyX2NhY2hlKHZvaWQpCiB7Ci0J
-a21lbV9jYWNoZV9kZXN0cm95KHNiaS0+aW5saW5lX3hhdHRyX3NsYWIpOwotfQorCWttZW1fY2Fj
-aGVfZGVzdHJveShpbmxpbmVfeGF0dHJfc2xhYik7Cit9ClwgTm8gbmV3bGluZSBhdCBlbmQgb2Yg
-ZmlsZQpkaWZmIC0tZ2l0IGEvZnMvZjJmcy94YXR0ci5oIGIvZnMvZjJmcy94YXR0ci5oCmluZGV4
-IDRmYzBiMjMwNWZiZC4uOWFjZjYyNTQxYTcxIDEwMDY0NAotLS0gYS9mcy9mMmZzL3hhdHRyLmgK
-KysrIGIvZnMvZjJmcy94YXR0ci5oCkBAIC04OSw2ICs4OSw4IEBAIHN0cnVjdCBmMmZzX3hhdHRy
-X2VudHJ5IHsKIAkJCUYyRlNfVE9UQUxfRVhUUkFfQVRUUl9TSVpFIC8gc2l6ZW9mKF9fbGUzMikg
-LQlcCiAJCQlERUZfSU5MSU5FX1JFU0VSVkVEX1NJWkUgLQkJCVwKIAkJCU1JTl9JTkxJTkVfREVO
-VFJZX1NJWkUgLyBzaXplb2YoX19sZTMyKSkKKyNkZWZpbmUgREVGQVVMVF9YQVRUUl9TTEFCX1NJ
-WkUJKERFRkFVTFRfSU5MSU5FX1hBVFRSX0FERFJTICoJCVwKKwkJCQlzaXplb2YoX19sZTMyKSAr
-IFhBVFRSX1BBRERJTkdfU0laRSkKCiAvKgogICogT24tZGlzayBzdHJ1Y3R1cmUgb2YgZjJmc194
-YXR0cgpAQCAtMTMyLDggKzEzNCw4IEBAIGludCBmMmZzX3NldHhhdHRyKHN0cnVjdCBpbm9kZSAq
-LCBpbnQsIGNvbnN0IGNoYXIgKiwgY29uc3Qgdm9pZCAqLAogaW50IGYyZnNfZ2V0eGF0dHIoc3Ry
-dWN0IGlub2RlICosIGludCwgY29uc3QgY2hhciAqLCB2b2lkICosCiAJCXNpemVfdCwgc3RydWN0
-IGZvbGlvICopOwogc3NpemVfdCBmMmZzX2xpc3R4YXR0cihzdHJ1Y3QgZGVudHJ5ICosIGNoYXIg
-Kiwgc2l6ZV90KTsKLWludCBmMmZzX2luaXRfeGF0dHJfY2FjaGVzKHN0cnVjdCBmMmZzX3NiX2lu
-Zm8gKik7Ci12b2lkIGYyZnNfZGVzdHJveV94YXR0cl9jYWNoZXMoc3RydWN0IGYyZnNfc2JfaW5m
-byAqKTsKK2ludCBfX2luaXQgZjJmc19pbml0X3hhdHRyX2NhY2hlKHZvaWQpOwordm9pZCBmMmZz
-X2Rlc3Ryb3lfeGF0dHJfY2FjaGUodm9pZCk7CiAjZWxzZQoKICNkZWZpbmUgZjJmc194YXR0cl9o
-YW5kbGVycwlOVUxMCkBAIC0xNTAsOCArMTUyLDggQEAgc3RhdGljIGlubGluZSBpbnQgZjJmc19n
-ZXR4YXR0cihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBpbnQgaW5kZXgsCiB7CiAJcmV0dXJuIC1FT1BO
-T1RTVVBQOwogfQotc3RhdGljIGlubGluZSBpbnQgZjJmc19pbml0X3hhdHRyX2NhY2hlcyhzdHJ1
-Y3QgZjJmc19zYl9pbmZvICpzYmkpIHsgcmV0dXJuIDA7IH0KLXN0YXRpYyBpbmxpbmUgdm9pZCBm
-MmZzX2Rlc3Ryb3lfeGF0dHJfY2FjaGVzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkgeyB9Citz
-dGF0aWMgaW50IF9faW5pdCBmMmZzX2luaXRfeGF0dHJfY2FjaGUodm9pZCkgeyByZXR1cm4gMDsg
-fQorc3RhdGljIHZvaWQgZjJmc19kZXN0cm95X3hhdHRyX2NhY2hlKHZvaWQpIHsgfQogI2VuZGlm
-CgogI2lmZGVmIENPTkZJR19GMkZTX0ZTX1NFQ1VSSVRZCi0tIAoyLjQ5LjAKCgoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBt
-YWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6
-Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+On 10/13/25 05:19, Nikola Z. Ivanov wrote:
+> On Thu, Oct 09, 2025 at 10:54:40AM +0800, Chao Yu wrote:
+>> On 10/3/2025 9:47 PM, Nikola Z. Ivanov wrote:
+>>> Current i_nlink corruption check does not take into account
+>>> directory inodes which have one additional i_nlink for their "." entry.
+>>>
+>>> Add additional check and a common corruption path.
+>>>
+>>> Reported-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+>>> Closes: https://syzkaller.appspot.com/bug?extid=c07d47c7bc68f47b9083
+>>> Fixes: 81edb983b3f5 ("f2fs: add check for deleted inode")
+>>> Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
+>>> ---
+>>>   fs/f2fs/namei.c | 28 ++++++++++++++++++++--------
+>>>   1 file changed, 20 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+>>> index b882771e4699..68b33e8089b0 100644
+>>> --- a/fs/f2fs/namei.c
+>>> +++ b/fs/f2fs/namei.c
+>>> @@ -502,12 +502,14 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+>>>   		goto out;
+>>>   	}
+>>> -	if (inode->i_nlink == 0) {
+>>> +	if (unlikely(inode->i_nlink == 0)) {
+>>>   		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
+>>>   			  __func__, inode->i_ino);
+>>> -		err = -EFSCORRUPTED;
+>>> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+>>> -		goto out_iput;
+>>> +		goto corrupted;
+>>> +	} else if (unlikely(S_ISDIR(inode->i_mode) && inode->i_nlink == 1)) {
+>>> +		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
+>>> +			  __func__, inode->i_ino);
+>>> +		goto corrupted;
+>>
+>> Can we detect such corruption in sanity_check_inode() as well? So that if
+>> f2fs internal flow calls f2fs_iget() on corrupted inode, we can set SBI_NEED_FSCK
+>> flag and then triggering fsck repairment later.
+>>
+>> Thanks,
+>>
+>>>   	}
+>>>   	if (IS_ENCRYPTED(dir) &&
+>>> @@ -533,6 +535,9 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+>>>   	trace_f2fs_lookup_end(dir, !IS_ERR_OR_NULL(new) ? new : dentry,
+>>>   				ino, IS_ERR(new) ? PTR_ERR(new) : err);
+>>>   	return new;
+>>> +corrupted:
+>>> +	err = -EFSCORRUPTED;
+>>> +	set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+>>>   out_iput:
+>>>   	iput(inode);
+>>>   out:
+>>> @@ -572,10 +577,11 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+>>>   	if (unlikely(inode->i_nlink == 0)) {
+>>>   		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
+>>>   			  __func__, inode->i_ino);
+>>> -		err = -EFSCORRUPTED;
+>>> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+>>> -		f2fs_folio_put(folio, false);
+>>> -		goto fail;
+>>> +		goto corrupted;
+>>> +	} else if (unlikely(S_ISDIR(inode->i_mode) && inode->i_nlink == 1)) {
+>>> +		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
+>>> +			  __func__, inode->i_ino);
+>>> +		goto corrupted;
+>>>   	}
+>>>   	f2fs_balance_fs(sbi, true);
+>>> @@ -601,6 +607,12 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+>>>   	if (IS_DIRSYNC(dir))
+>>>   		f2fs_sync_fs(sbi->sb, 1);
+>>> +
+>>> +	goto fail;
+>>> +corrupted:
+>>> +	err = -EFSCORRUPTED;
+>>> +	set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+>>> +	f2fs_folio_put(folio, false);
+>>>   fail:
+>>>   	trace_f2fs_unlink_exit(inode, err);
+>>>   	return err;
+>>
+> 
+> Hi Chao,
+> 
+> Thank you for the suggestion.
+> I will add this to sanity_check_inode and remove it
+> from f2fs_lookup as it becomes redundant since f2fs_lookup
+> obtains the inode through f2fs_iget. For f2fs_unlink I will
+> move the i_nlink == 1 check to f2fs_rmdir.
+
+Hi Nikola,
+
+I meant we can move the i_nlink == 1 check from both f2fs_lookup() and
+f2fs_unlink() to sanity_check_inode(), because before we create in-memory
+inode, we will always call sanity_check_inode().
+
+Let me know if you have other concerns.
+
+Thanks,
+
+> 
+> I will send v2 as soon as I do some more testing.
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
