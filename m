@@ -4,75 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AAF5BCCD187
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Oct 2025 06:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 409B5CCD184
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Oct 2025 06:27:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=/4uId9+w7hzqYbLKLJGVDeCfgXqtqyCeQPxQ8x9WMR4=; b=WI5fvyAv+Bu4Y4jzEzcS1p4C2Z
-	6ii2aAzDXq4hnfTZoP3fUrdZr5I4vp+PA3gm7wooOEj6V4I5eBQmLtXDcsNSU/kc8x0UVZjFHtzgB
-	+CQPUaqeYbCfpk0EfPG5RJnIA5ctv7xjqEW/xUKON1uCYg8nuwB+HeqXThs/B2sErKFI=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=vJtkFRRsvHk7OJZpWtUyc5KB7ogP5jEbyglNuIxGldg=; b=GGT0WV8ETMPC4WDGfjvK9grQqB
+	oqJAmTwY3JP/YQfKi2EeIXpAODe92KterBtEMD4ojgvqM9JcZiavPzUl0pAGHoy03tjiqGgP/jiJj
+	4J2LzhmmD4CyOR0E9Weni/hmZ2Wo7b0b/OkpvhgiHtvLZemn+X6oX/zMHmIX8RBatl6A=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v8YVI-0008H0-7A;
-	Tue, 14 Oct 2025 06:27:24 +0000
+	id 1v8YVI-00073j-OT;
+	Tue, 14 Oct 2025 06:27:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1v8YVG-0008Gt-6h
+ (envelope-from <chao@kernel.org>) id 1v8YVI-00073Y-0x
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 14 Oct 2025 06:27:22 +0000
+ Tue, 14 Oct 2025 06:27:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=w0UF21LErYax9FY/A7OAW/d7WDsDJg6ijqN1COXyeS8=; b=N1LumarAcwFgsrx9W+CrGHQeuh
- OuRqsJdTnaNlKwHKREE9sz7k8YKpxebJbPO+a2n1fT2S8r8tTUqFeSJqQ51JrMyI1qQWJkW3yw/cp
- 9pZ+/xYosrjDzNnRfgKiUk6rhF7lz/o+a6AEf6eHNciY6k4NyXeIepODDP/CsZKS2erQ=;
+ bh=r3RsWBV8kgTVyUle6m8vjHFDOgFxQ0VKgGZN1KwAalM=; b=Z+LaJZ49SIFxMkt3MoWFc0rOVU
+ EscXWRh43/Y49xBECGvPsbHCjO2FVzqPak8+r2QjDw+a3pxMvGXBlimR6ssek1sZtYd/tT1AoBQH9
+ 5OWyxmwaNSAcHocnpM++ivGvxzHWluEuN6M5G+ZKogA2abwzp8YqDU/Qe7rQw211ZBaw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=w0UF21LErYax9FY/A7OAW/d7WDsDJg6ijqN1COXyeS8=; b=F
- rF/I/8SuRdQ1K93SSk2G0dWDvYgjQOuadQ/NE1Za2AYXsAruaP9Uf8LY28p+s0wTId0mLhM4zaHnk
- aN4YQzdWtk5t0+K4DHcLaHM1btQv6RIpGLnrsyCWyBqPc8UhEcceVX6ROMkyEkw09oG8i4Z1KeT0N
- ccVN6mbzLSiwx8Cg=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=r3RsWBV8kgTVyUle6m8vjHFDOgFxQ0VKgGZN1KwAalM=; b=jUTN//YmOfdbJ1rFXN3Nvq3KfT
+ YWHExzKB06uAWtMjRABMymf9ufESKAxNB4+yDgdyY1uQNjkBz9SwbrbQatxBXInx+Ul4vQrw4+QmT
+ KUoCxfInPKg5PuZSyELZ6szvrHaKe75ViFBQVzLSPS52qYZJ5ILyVnCzkMLzJtmuKwGo=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1v8YVE-0001hr-OE for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 14 Oct 2025 06:27:21 +0000
+ id 1v8YVI-0001iD-EF for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 14 Oct 2025 06:27:24 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 1370D621BB
+ by sea.source.kernel.org (Postfix) with ESMTP id 2B24F4889B
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 14 Oct 2025 06:27:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D05F6C4CEE7;
- Tue, 14 Oct 2025 06:27:08 +0000 (UTC)
+ Tue, 14 Oct 2025 06:27:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2F3AC4CEE7;
+ Tue, 14 Oct 2025 06:27:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1760423229;
- bh=5l9A5JJC7HoCgkgNBAkY442qtM7rkd2EIFEaDAIJIMU=;
- h=From:To:Cc:Subject:Date:From;
- b=NPAacUhItq15Y9mwO0PO0P//CUmzJy6k1IhnUl5PjpBvJ8Rb2eiuMo99KULXjHr7m
- dmdH8LdDwV0m/q15FLtUZ6hwFPIaPOYcpNBKHNZ5MPVY7oYSV/sEk0i83/L3oDB5z5
- lBalEoK1fTWkzJ7Vl2zQy0TKtPJWzPSYNal8eRvT8NI8RHJOrWuu+EFKatSim34P4b
- DxKFSaE+QDtyAfjQUXR7u5cd9dkNpdfR6CgrefVF3njgeWgleUTWGBdCE5ODQ+G97O
- ct85EqRY69qJaLBZUs02BcKTXOE8VFyHrr1/oaJufFnN5K7d1mvmkQl0d9WbcnqX3w
- laNZniYJxihxg==
+ s=k20201202; t=1760423234;
+ bh=PNTKEmXKtFVp+YUrykXB7+qvHmZ2GbnocnQ5aHbHOFo=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=lMBrqawULRzvYy0wurRKyyANwKU0YOvBSGJ2zy40SVWKz4mRmwYIRlBJ47cMDgggp
+ hwo3RASu8FI70WBUgEJ/78paOSgtC44iIGy44VWTGeXLO/bvBsHz+FIMaM/UrSZBmH
+ TcooA1nviR3eWioycxFliXC0gDmYV+aNQ0+QnWMrjzxsh7MoyEaSnSyPeOFWy4VVFD
+ 4C+VTDkXfO9y6DgVxH3f15+ySCUimEJ1yW7aZLgpvRgNM0Sj5WvRvFta+z0S/FKl72
+ d31LFFIOoLNub/DMtJ9dAynQepqgskp7f5WNo4eMiPEsGrt7Z2547HPNzSfXVjbWYE
+ NJNW8RyLUgTJw==
 To: jaegeuk@kernel.org
-Date: Tue, 14 Oct 2025 14:27:01 +0800
-Message-ID: <20251014062704.1734984-1-chao@kernel.org>
+Date: Tue, 14 Oct 2025 14:27:04 +0800
+Message-ID: <20251014062704.1734984-4-chao@kernel.org>
 X-Mailer: git-send-email 2.51.0.760.g7b8bcc2412-goog
+In-Reply-To: <20251014062704.1734984-1-chao@kernel.org>
+References: <20251014062704.1734984-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1v8YVE-0001hr-OE
-Subject: [f2fs-dev] [PATCH 1/4] f2fs: clean up w/ bio_add_folio_nofail()
+X-Headers-End: 1v8YVI-0001iD-EF
+Subject: [f2fs-dev] [PATCH 4/4] f2fs: use f2fs_filemap_get_folio() to
+ support fault injection
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,47 +94,54 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In add_bio_entry(), adding a page to newly allocated bio should never fail,
-let's use bio_add_folio_nofail() instead of bio_add_page() & unnecessary
-error handling for cleanup.
+Use f2fs_filemap_get_folio() instead of __filemap_get_folio() in:
+- f2fs_find_data_folio
+- f2fs_write_begin
+- f2fs_read_merkle_tree_page
+
+So that, we can trigger fault injection in those places.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/data.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/f2fs/data.c   | 4 ++--
+ fs/f2fs/verity.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 775aa4f63aa3..50538c26c1a1 100644
+index 0279340336be..f993ffed89df 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -752,7 +752,7 @@ static bool io_is_mergeable(struct f2fs_sb_info *sbi, struct bio *bio,
- }
+@@ -1273,7 +1273,7 @@ struct folio *f2fs_find_data_folio(struct inode *inode, pgoff_t index,
+ 	struct address_space *mapping = inode->i_mapping;
+ 	struct folio *folio;
  
- static void add_bio_entry(struct f2fs_sb_info *sbi, struct bio *bio,
--				struct page *page, enum temp_type temp)
-+				struct folio *folio, enum temp_type temp)
- {
- 	struct f2fs_bio_info *io = sbi->write_io[DATA] + temp;
- 	struct bio_entry *be;
-@@ -761,8 +761,7 @@ static void add_bio_entry(struct f2fs_sb_info *sbi, struct bio *bio,
- 	be->bio = bio;
- 	bio_get(bio);
+-	folio = __filemap_get_folio(mapping, index, FGP_ACCESSED, 0);
++	folio = f2fs_filemap_get_folio(mapping, index, FGP_ACCESSED, 0);
+ 	if (IS_ERR(folio))
+ 		goto read;
+ 	if (folio_test_uptodate(folio))
+@@ -3567,7 +3567,7 @@ static int f2fs_write_begin(const struct kiocb *iocb,
+ 	 * Do not use FGP_STABLE to avoid deadlock.
+ 	 * Will wait that below with our IO control.
+ 	 */
+-	folio = __filemap_get_folio(mapping, index,
++	folio = f2fs_filemap_get_folio(mapping, index,
+ 				FGP_LOCK | FGP_WRITE | FGP_CREAT, GFP_NOFS);
+ 	if (IS_ERR(folio)) {
+ 		err = PTR_ERR(folio);
+diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
+index f0ab9a3c7a82..05b935b55216 100644
+--- a/fs/f2fs/verity.c
++++ b/fs/f2fs/verity.c
+@@ -263,7 +263,7 @@ static struct page *f2fs_read_merkle_tree_page(struct inode *inode,
  
--	if (bio_add_page(bio, page, PAGE_SIZE, 0) != PAGE_SIZE)
--		f2fs_bug_on(sbi, 1);
-+	bio_add_folio_nofail(bio, folio, folio_size(folio), 0);
+ 	index += f2fs_verity_metadata_pos(inode) >> PAGE_SHIFT;
  
- 	f2fs_down_write(&io->bio_list_lock);
- 	list_add_tail(&be->list, &io->bio_list);
-@@ -904,7 +903,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 		f2fs_set_bio_crypt_ctx(bio, folio->mapping->host,
- 				folio->index, fio, GFP_NOIO);
+-	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
++	folio = f2fs_filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
+ 	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
+ 		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
  
--		add_bio_entry(fio->sbi, bio, &data_folio->page, fio->temp);
-+		add_bio_entry(fio->sbi, bio, data_folio, fio->temp);
- 	} else {
- 		if (add_ipu_page(fio, &bio, &data_folio->page))
- 			goto alloc_new;
 -- 
 2.49.0
 
