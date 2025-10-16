@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B97ACCCD19A
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Oct 2025 18:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5C5B9CCD183
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Oct 2025 18:25:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=N4mydVU3wq+d5x0RCYLB1lXjg4Jyz5xt5byfNjTKJpE=; b=ej7tDAz6jQyinn6t7RzlV4V40S
-	mCI07/5Tm/vgFEVNjOSw+wcgwnXzWzLwlv2B7gm5U3sH7Wypc7g/48Yq8AJ2m3mq6ASMNPazQHkJ7
-	2dqa0XljfE/GmklJr8ABhB6G+/GqeUVMHL9VrTLh/MNhTfwJa3f/Be7Jr/R4pos96KfA=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=1Zqbp4VrlrsYuk3xe/3e6/xSfFZ+rT1vJcyPReK6byY=; b=Cxgqk7zcPN2cMj8z2N4ZD0pv+H
+	bOEAxaAyVVlfbPy3vpw02ongjP3Xq1kZ4uvMtWi8DK25uoslpq1Mjm7JvbXM0HX6mi2gtF3T/o1+6
+	gn743aGtxwhCRqbi4mz6fWm71GetHiXA1WPR08kfkZd9DdcG6qsUEIyfLUO1YFnJZQso=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1v9See-0006YF-4W;
-	Thu, 16 Oct 2025 18:24:48 +0000
+	id 1v9Seo-0003XG-TU;
+	Thu, 16 Oct 2025 18:24:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1v9Sec-0006Y7-Fo
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1v9Seh-0003Wt-2C
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 16 Oct 2025 18:24:46 +0000
+ Thu, 16 Oct 2025 18:24:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yHASrSkdLDXdCmktnbcdvT55e8AtZzrIDarMPTEj6QM=; b=KA2EAGW86/EwxREq/1J/KGpgzc
- ieceILtF0fXXjUQTKGsWKmVEaZ9pU3LzRuT1OxAuGhm1cu+cSWWT0TqbnkpTxhqY0XfhNiJZClZt7
- Criy7Hjc3nP2ldhn2Buy3w6xJgzBREbGurGcAl34Dch8Bmgx8f0E8FTJczXQa2h4LDJU=;
+ bh=hLejMYbXQGzJ5lMtMeru7CchvCdBbqgv0I2wcQtiIyw=; b=EAsdxdObyCjmybgddpjRPDzx7B
+ jSjE5rBcfyS4olmPxxfgGLUpg4etaD5mWz0d9wMz0HQIcCaZwHPiaUEjRcI2V0h23NsmFRE2thGyV
+ YemcQ2asqahIJmPURBxk2muANuWf55/ZgHng4PhZ9/BQJKw23G20kA3VQHbJqEtisLUk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yHASrSkdLDXdCmktnbcdvT55e8AtZzrIDarMPTEj6QM=; b=SvnKUmxmwI6kBoExOj/wxzBm/e
- 7CeUuMYb0JyfFWkFhX8IudC1Us4mN32Xoy0a1qgjPwXD4mosPte6hiDgXPNQRlycuyeBHJVU5039m
- dnPqwUOdf8hi9UX7y4F8H2r+6Qa/mk+FiOAHJB3nI/jTWk/s+40nLHbxENuC9eXGCJFI=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=hLejMYbXQGzJ5lMtMeru7CchvCdBbqgv0I2wcQtiIyw=; b=kBcj/3XTNeOwwqjgeQYrT5UGsk
+ +M/a8m4NsUHMTTvEiGTGMmRHSH6pEQWPIHf3EwdV+xykzos6MiYQFI51Owrn83Qo3hn1hdh7CdXNS
+ vsczcIkfcQ1W7jhHUGlrCH0ev/Ez9ucMcANk2BW1qFGPdVkm3h6947an2S/Ir9x3e4G4=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1v9Seb-0001yS-VX for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 16 Oct 2025 18:24:46 +0000
+ id 1v9Seg-0001yv-HM for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 16 Oct 2025 18:24:51 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id AC70743BF2;
- Thu, 16 Oct 2025 18:24:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89E02C4CEF1;
- Thu, 16 Oct 2025 18:24:35 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id F12066040C;
+ Thu, 16 Oct 2025 18:24:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C05CEC4CEFE;
+ Thu, 16 Oct 2025 18:24:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1760639075;
- bh=TPTHCPwqGZ9LOOxGmtMZ+cselDo9inzb2+E40aM+RIc=;
+ s=k20201202; t=1760639079;
+ bh=3G6NU7adcx9IxXLVXQAvw/QZhqU2AWiAKM0inqmninM=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=SAPKydVdK5R30Jule55EwpR11Eb1Kh9FiLjoLwYfpyLCzR+sCRDx/nLzzG6+aRByv
- 3oD2sqLGaV9Q7nXcD2/EiU2auzSrBxS1rkw4F+pBPN/PSq6xghguRgqG/4Xq/XjdbX
- UC/CqWIBUrUyLnUDMsVd2W7OxmcXaqHqY1pQJXAUCak+KxpXMH7Q7TjI3sxngIXU6q
- JBfvcpJdXJSAKIK4FIIXE5qzyntTwqdzOWgGNYzDpAGVBOdmII7D9XMEjFHM991JQx
- IwtS+yt0LcQhdWtREoV1qaHqHPNmDrhtV3LoWYGt0t+S5nFSyn2vfhjEl+uTpTuHoZ
- wPnwVM28lGaYA==
+ b=goe5tqm1EaTaojhQIPSv05S1b2ECgZeF+7CrBlLDSrRa/fYLmOOG0qA6wF8ZPyeYX
+ Tnc8YPJcnI/fMOEZAwojiR59ErBATIQ0yp9Tp31/e/uZ53LWt4rr0TVirD2UKDhwYQ
+ qVxeX+lqEOajUkBJmYl2ueJVLMfLBpZO8e/N6+0C9QhnhEtkAhL1fr8ZGzd4PJMaDs
+ pMA+VrF0ZmZXuVsbi683lQ9iQTxGI2WyvlYwbpxdlbRYVf5tK9+a0RhzcQwTOf3iG7
+ PsbdFIRCebo4l2czY4dXSGQ/h3MSjG9bSuNLiFTQU/TJQjtco78AAF6BTBTcpbtA2u
+ +loGqfSFSXE2g==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- EAE2D39B167A; Thu, 16 Oct 2025 18:24:20 +0000 (UTC)
+ 33A7739B167A; Thu, 16 Oct 2025 18:24:25 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176063905975.1852182.15050146332743005367.git-patchwork-notify@kernel.org>
-Date: Thu, 16 Oct 2025 18:24:19 +0000
-References: <20251003224308.1948874-1-daeho43@gmail.com>
-In-Reply-To: <20251003224308.1948874-1-daeho43@gmail.com>
+Message-Id: <176063906374.1852182.11763854243841197701.git-patchwork-notify@kernel.org>
+Date: Thu, 16 Oct 2025 18:24:23 +0000
+References: <20251007164614.3631594-1-daeho43@gmail.com>
+In-Reply-To: <20251007164614.3631594-1-daeho43@gmail.com>
 To: Daeho Jeong <daeho43@gmail.com>
-X-Headers-End: 1v9Seb-0001yS-VX
-Subject: Re: [f2fs-dev] [PATCH] f2fs: maintain one time GC mode is enabled
- during whole zoned GC cycle
+X-Headers-End: 1v9Seg-0001yv-HM
+Subject: Re: [f2fs-dev] [PATCH] f2fs: set default valid_thresh_ratio to 80
+ for zoned devices
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,21 +101,23 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Fri,  3 Oct 2025 15:43:08 -0700 you wrote:
+On Tue,  7 Oct 2025 09:46:14 -0700 you wrote:
 > From: Daeho Jeong <daehojeong@google.com>
 > 
-> The current version missed setting one time GC for normal zoned GC
-> cycle. So, valid threshold control is not working. Need to fix it to
-> prevent excessive GC for zoned devices.
+> Zoned storage devices provide marginal over-capacity space, typically
+> around 10%, for filesystem level storage control.
 > 
-> Fixes: e791d00bd06c ("f2fs: add valid block ratio not to do excessive GC for one time GC")
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> By utilizing this extra capacity, we can safely reduce the default
+> 'valid_thresh_ratio' to 80. This action helps to significantly prevent
+> excessive garbage collection (GC) and the resulting power consumption,
+> as the filesystem becomes less aggressive about cleaning segments
+> that still hold a high percentage of valid data.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: maintain one time GC mode is enabled during whole zoned GC cycle
-    https://git.kernel.org/jaegeuk/f2fs/c/5d431cc8759b
+  - [f2fs-dev] f2fs: set default valid_thresh_ratio to 80 for zoned devices
+    https://git.kernel.org/jaegeuk/f2fs/c/9a25aeb2be7a
 
 You are awesome, thank you!
 -- 
