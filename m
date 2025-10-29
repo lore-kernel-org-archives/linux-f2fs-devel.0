@@ -4,98 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6EA73CCF9EB
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Oct 2025 09:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CBD7BCCF9E9
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Oct 2025 10:48:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Message-ID:Mime-Version:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=Ph6p/nOy36Uliv8FU8xFnMPTWt0nPDwgr4lkSHgdw4I=; b=cD8cpz1zfpEAKSnoGiRDMuJRfy
-	dMu1X2XOwcOF+dihDe6lQbRjLNlnO90y72DzgTPnYD3ZNJBS44QE0bjSzb7VCO4A30O0gLl2qRvJP
-	Gm2tL5F2Nrc5jo0TlxOqiM9wM8hAnJ6eNLlSjgcINlbKpsEtWF9dYP6HWe9BHxwukaOY=;
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=dTBiqysEB+o7Qu70ddanSB6RFlPqe6GU5Mtp29ebhQU=; b=PsxKGJ9DhLN9fl3LtDsz5nw27u
+	yx8NQK85O1+lou1V3KnrN+hQfcLTDWjF5K3qRlOa9VxGNCEzfGV1P/Y+AAyWrY454n4u9vLAqmGBu
+	6onjJst+7qyC+28vxJRtOUWMS1/+PJtPNhENFrNThB7rDVWNq5m8IbTP1St1G1XsWKgc=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vE2wo-00042p-EX;
-	Wed, 29 Oct 2025 09:58:31 +0000
+	id 1vE3iv-0007to-LL;
+	Wed, 29 Oct 2025 10:48:14 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <3zt8BaQsKAOMOTFSSJHMNJSLTTLQJ.HTR@flex--joannechien.bounces.google.com>)
- id 1vE2wm-00042Y-Fr for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Oct 2025 09:58:29 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <chao@kernel.org>) id 1vE3iu-0007td-Hf
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 29 Oct 2025 10:48:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TG7hKlVVldxlYKW/0fbCkRJaaVtKZa4iA2igZCm5fjo=; b=XykN+RdSDFHWUK1vdaAFmgXem0
- tPigjmEFJWDs7tsVqoFKm7a8+UgB1aRg10Tp4kB4VXxNdvssIhEuznO+fgq98WpX2j/4sJnFXkR0K
- QmWKe7XKeGA3MlOLe/z1l48ZAWWpQyn9kDkOpCTqvPNMEM7S/6A8pyELldHHIRBQQdqY=;
+ bh=B7XW3TPX8WqEX01s3plPlaGfHsRE6PJHN9Cuil4gTyc=; b=Uv4HPwZtg8fxTK2YKYsYQsfHFd
+ +OZG3zNF7hhQhwtbGyW7UzvdWnWN7NllZ6dS3YZsnWTSh7CV4Tx8qq25G1ZlIScviX/kMgzTPsG/i
+ QD8XMUmpIxcE64F82pJdchDPFXfdlMj1Nqe8RDQ9EtUUuF6hmdzKVmscNfzJhqe/GWgw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=TG7hKlVVldxlYKW/0fbCkRJaaVtKZa4iA2igZCm5fjo=; b=K
- GmcOM6jsS0gnUE/3x3K31c1cws+neaI5Biuin6OKok0fQpcFFazghaNoxKF1yIsRfBpl0OANsggz8
- cISUoMTRajqPavSypB6dV0t3SOw+GOxf5GTB62wqCl8Qo5lFMc+51OpAgGxK/ThB9Qkxft7Exis8W
- AQ93Z3eDtdMIyZ6s=;
-Received: from mail-oi1-f201.google.com ([209.85.167.201])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=B7XW3TPX8WqEX01s3plPlaGfHsRE6PJHN9Cuil4gTyc=; b=gwBmzGe6gyqomgZJDkDOK12p8y
+ Qk5E6Med+iXlGhZbMfxyN07AwRELEu2VAZd9P+BcQemErqBOjymO5EmgCB99Onsnni9SxEvPDi5Fy
+ NcXAGwoXFfeH4EAh8D1CqMlhFK5BomwgXmS51F6c3P2YegOakRlpm3TSu2sW7PFD+imU=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vE2wm-0001Xg-T5 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Oct 2025 09:58:29 +0000
-Received: by mail-oi1-f201.google.com with SMTP id
- 5614622812f47-44da774cbecso8853418b6e.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 29 Oct 2025 02:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1761731898; x=1762336698;
- darn=lists.sourceforge.net; 
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=TG7hKlVVldxlYKW/0fbCkRJaaVtKZa4iA2igZCm5fjo=;
- b=OOI/sAVKd306ga5iJFI67CxssPnOjm8hbgH9IkuBKCQURmb6fQotTSIfEIV1BmU6Ba
- 1GshR2iaJBlzqZw5ewocHTXBABBLX3QMhhyk5kF6+uYfg4qfCcX2Y7RP8KvCsugMV3W1
- ogs0D6MkigkCyfy/1wylBwOYut2GjHQNf80Zqeq0vUQoIsmdAf/84rW5GSSWPZYjSe1i
- ZtG18kSi09fkeJ+/2nbiMZMgOAzaRpQ4uExIRsJx3sry1nEkgqvDULaTUUFx/tpM7Wh+
- lzizdE0ywscfd1EpSA+bTqRzC540iGFS6pcXK9zg9EUzSL4QBQD0yClWq7884dlTaY4/
- DQSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761731898; x=1762336698;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=TG7hKlVVldxlYKW/0fbCkRJaaVtKZa4iA2igZCm5fjo=;
- b=OaD57le0i6x7F7kOvEvD3MvUDlp+iuPdz4G3EjerB5sHhR3Me6OgM3iZG+HZIBgnYd
- WbfqhnL40g92HNFU4VlucYTRO+E5MikclQB0zPXnqE1bP6F7MSuyjmmmIYYeVQKLLcWn
- DwqCw3Qv+JxVtkqA3vzfyCm6rPLkCsHAeNQFdDVbFnjT4acDlvgFnMNx0d35RVWDJd2e
- /yMYNbw90Ju/586xxnEfS4dsc1cA2xxrL5fb6Y+PzDVwLURI/dSVLmvjhTVGJU+xTC7O
- lYe7NDeMQR+Qhjw9exvBajpUHme/Td5Mrsy03tRbwO5PjcdDWBqL7zL/ul4/rBq5rtoJ
- FEkw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUe3G3S1vhgVH4CjTXLgVK7qgpDGxgDkfKBYfvIsNnqeKlMwewHqjvY1+fDgYSfRiNeyU/8N7Ww+PA3wwQBZJcF@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YzHzvCLNYpce2Wn94K6rnOYKEkrUbE3w6OxZI5cUuoOpdoqUbyO
- yZD+pC9KPZ6kWWYJs2PuaYd8/M10mEiyP826xhRGm4Ym7GpiV5UezLzS0FNViOUDKLbXHTCW8SM
- bncmpyQRTh+UtdBvb4DWwz55vjw==
-X-Google-Smtp-Source: AGHT+IHR8YkI7WIhmnwbsdBqu8NfFmfXLDaTUM4XSvRgD3OsxYZdVP7ypYFRVuhN2SG9DLeF+gErD7zEhckJvL/uIw==
-X-Received: from pjbcp12.prod.google.com ([2002:a17:90a:fb8c:b0:339:ee99:5e9b])
- (user=joannechien job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:498c:b0:340:299e:dbc with SMTP id
- 98e67ed59e1d1-3403a265483mr2712365a91.16.1761730510939; 
- Wed, 29 Oct 2025 02:35:10 -0700 (PDT)
-Date: Wed, 29 Oct 2025 09:34:57 +0000
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
-Message-ID: <20251029093457.183578-1-joannechien@google.com>
-To: Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org
-X-Headers-End: 1vE2wm-0001Xg-T5
-Subject: [f2fs-dev] [PATCH v1] f2fs/011: use random data to avoid file
- compression
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1vE3iu-0004kA-P2 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 29 Oct 2025 10:48:13 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by tor.source.kernel.org (Postfix) with ESMTP id 14145603AB;
+ Wed, 29 Oct 2025 10:48:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05B59C4CEF7;
+ Wed, 29 Oct 2025 10:48:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1761734886;
+ bh=k0xyPnnJykAXBImiZDPRP273138hbAIuyyyIm7R6xac=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=bqcfmcKFQe+GzaDSYYHETpRQo8NMmKt/GCgw4hb5XGq4+JrTvlk3E3TOx+g5iLXW/
+ 1BxBb861dAKu+KRPxeOfNFTZCKARdbnhEGnpBDk5Gf862KVmlSC2AY4Tu0HJpfDrcM
+ k7nUt1GFIi//ILheiSJGNoIxj6MDGp0AeoyYg1OTp2WUIgUW/W45MwVKnKMSOr3LAG
+ bI6XIRkmaAVL8pBWE71+uzleiISXvYXrq82CNsTTcjZ7XLf6MXfIV3lQ/WIeFQ5dlj
+ AwlkAH1X07bCQL9mtvfwf7BBF/Al9Y4ER4m/HtJeSCfFWJkXgFYohkiWO5ebl//ikv
+ Ae4gQGYKeWq1w==
+Message-ID: <f2ff436b-d0de-4d68-8374-1c6bf777d6ee@kernel.org>
+Date: Wed, 29 Oct 2025 18:48:03 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Xiaole He <hexiaole1994@126.com>, linux-f2fs-devel@lists.sourceforge.net
+References: <20251029051807.3804-1-hexiaole1994@126.com>
+Content-Language: en-US
+In-Reply-To: <20251029051807.3804-1-hexiaole1994@126.com>
+X-Headers-End: 1vE3iu-0004kA-P2
+Subject: Re: [f2fs-dev] [PATCH v1] f2fs: fix uninitialized one_time_gc in
+ victim_sel_policy
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -107,46 +87,98 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Joanne Chang via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Joanne Chang <joannechien@google.com>
-Cc: Joanne Chang <joannechien@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, stable@kernel.org, daehojeong@google.com,
+ linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Currently, the created files are filled with 0. When filesystem level
-compression is used, they take up much less space than expected. So
-the final fallocate does not show an error.
+On 10/29/25 13:18, Xiaole He wrote:
+> The one_time_gc field in struct victim_sel_policy is conditionally
+> initialized but unconditionally read, leading to undefined behavior
+> that triggers UBSAN warnings.
+> 
+> In f2fs_get_victim() at fs/f2fs/gc.c:774, the victim_sel_policy
+> structure is declared without initialization:
+> 
+>     struct victim_sel_policy p;
+> 
+> The field p.one_time_gc is only assigned when the 'one_time' parameter
+> is true (line 789):
+> 
+>     if (one_time) {
+>         p.one_time_gc = one_time;
+>         ...
+>     }
+> 
+> However, this field is unconditionally read in subsequent get_gc_cost()
+> at line 395:
+> 
+>     if (p->one_time_gc && (valid_thresh_ratio < 100) && ...)
+> 
+> When one_time is false, p.one_time_gc contains uninitialized stack
+> memory. Hence p.one_time_gc is an invalid bool value.
+> 
+> UBSAN detects this invalid bool value:
+> 
+>     UBSAN: invalid-load in fs/f2fs/gc.c:395:7
+>     load of value 77 is not a valid value for type '_Bool'
+>     CPU: 3 UID: 0 PID: 1297 Comm: f2fs_gc-252:16 Not tainted 6.18.0-rc3
+>     #5 PREEMPT(voluntary)
+>     Hardware name: OpenStack Foundation OpenStack Nova,
+>     BIOS 1.13.0-1ubuntu1.1 04/01/2014
+>     Call Trace:
+>      <TASK>
+>      dump_stack_lvl+0x70/0x90
+>      dump_stack+0x14/0x20
+>      __ubsan_handle_load_invalid_value+0xb3/0xf0
+>      ? dl_server_update+0x2e/0x40
+>      ? update_curr+0x147/0x170
+>      f2fs_get_victim.cold+0x66/0x134 [f2fs]
+>      ? sched_balance_newidle+0x2ca/0x470
+>      ? finish_task_switch.isra.0+0x8d/0x2a0
+>      f2fs_gc+0x2ba/0x8e0 [f2fs]
+>      ? _raw_spin_unlock_irqrestore+0x12/0x40
+>      ? __timer_delete_sync+0x80/0xe0
+>      ? timer_delete_sync+0x14/0x20
+>      ? schedule_timeout+0x82/0x100
+>      gc_thread_func+0x38b/0x860 [f2fs]
+>      ? gc_thread_func+0x38b/0x860 [f2fs]
+>      ? __pfx_autoremove_wake_function+0x10/0x10
+>      kthread+0x10b/0x220
+>      ? __pfx_gc_thread_func+0x10/0x10 [f2fs]
+>      ? _raw_spin_unlock_irq+0x12/0x40
+>      ? __pfx_kthread+0x10/0x10
+>      ret_from_fork+0x11a/0x160
+>      ? __pfx_kthread+0x10/0x10
+>      ret_from_fork_asm+0x1a/0x30
+>      </TASK>
+> 
+> This issue is reliably reproducible with the following steps on a
+> 100GB SSD /dev/vdb:
+> 
+>     mkfs.f2fs -f /dev/vdb
+>     mount /dev/vdb /mnt/f2fs_test
+>     fio --name=gc --directory=/mnt/f2fs_test --rw=randwrite \
+>         --bs=4k --size=8G --numjobs=12 --fsync=4 --runtime=10 \
+>         --time_based
+>     echo 1 > /sys/fs/f2fs/vdb/gc_urgent
+> 
+> The uninitialized value causes incorrect GC victim selection, leading
+> to unpredictable garbage collection behavior.
+> 
+> Fix by zero-initializing the entire victim_sel_policy structure to
+> ensure all fields have defined values.
+> 
+> Fixes: e791d00bd06c ("f2fs: add valid block ratio not to do excessive GC for one time GC")
+> Cc: stable@kernel.org
+> Signed-off-by: Xiaole He <hexiaole1994@126.com>
 
-The created files are filled by /dev/urandom instead to ensure they
-are not compressed. This way the files take up the same space whether
-compression is used or not.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-Signed-off-by: Joanne Chang <joannechien@google.com>
----
- tests/f2fs/011 | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/tests/f2fs/011 b/tests/f2fs/011
-index c21cb586..75679b36 100755
---- a/tests/f2fs/011
-+++ b/tests/f2fs/011
-@@ -35,8 +35,9 @@ _scratch_mount -o checkpoint=disable:10%
- pinfile=$SCRATCH_MNT/file
- 
- # simulate fragment status in f2fs
--for ((i=0;i<256;i++)) do
--	$XFS_IO_PROG -f -c "pwrite 0 1m" $SCRATCH_MNT/$i >>$seqres.full
-+dd if=/dev/urandom of=$SCRATCH_MNT/0 bs=1M count=1 2> /dev/null
-+for ((i=1;i<256;i++)) do
-+	cp $SCRATCH_MNT/0 $SCRATCH_MNT/$i
- done
- sync
- 
--- 
-2.51.1.851.g4ebd6896fd-goog
+Thanks,
 
 
 
