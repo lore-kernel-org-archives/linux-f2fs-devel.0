@@ -4,91 +4,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1D8D4CCFA02
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  2 Nov 2025 05:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 524DDCCF9E3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Nov 2025 01:49:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:From:Message-ID:In-Reply-To:Date:MIME-Version:Sender:Reply-To:Cc:
+	Subject:MIME-Version:Message-ID:In-Reply-To:Date:From:To:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:References:List-Owner;
-	bh=d48M9k8RKTyX+DFqdwhxFiWIpdslBOtes5oPWK7YeL4=; b=mUGbfHGKvO0b2xi5CaonkY4G97
-	uXFRMsJjgS3flZBVWcpUf+uVVDN54qqwCLK7kldvz1OQbWgPf9Psg/um6IrFzD4Vj3MzOiUwpNJ4q
-	9Vz+Clg8vlVNQTPL2J1knBWJgRUQ4f5daiiG2JS72U7yDuZupJ+DWttS1pHyoE76JTCw=;
+	bh=uK5p4g98XTNWsWUL/h46CL9hfhxQ7czIkNtUb/dczYg=; b=LBaRj2BXviKaxyiB55zaPlea1u
+	r/YcUCtPQ6TNf13ZlfLhylCsy5fSRROzeuH9YMqKZvg8q+lsx0LHKHjfIs5UBmEntdeEN88s6CHbK
+	scThMkCdaJUZhdrjrsz/GccoUrz5MKTd+B8b/Qe7dY5gCZYaya3/1fWbN6OmezJYamJg=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vFQo7-0003MW-9x;
-	Sun, 02 Nov 2025 05:39:15 +0000
+	id 1vFjgt-0001cN-Uy;
+	Mon, 03 Nov 2025 01:49:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <3du4GaQkbAL0v12ndoohudsslg.jrrjohxvhufrqwhqw.frp@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
- id 1vFQo5-0003MN-Pq for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 02 Nov 2025 05:39:13 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <gregkh@linuxfoundation.org>) id 1vFjgs-0001cH-Ey
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Nov 2025 01:49:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Subject:Content-Type:To:From:Message-ID:In-Reply-To
- :Date:MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :Message-ID:In-Reply-To:Date:From:Cc:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=I5gofQLv9ATheBLZFs5eVxjk1NYdTx1xDPMzfJ3PQe4=; b=S5MLQ5xAp0TtEp8p7yvPXgyawM
- kstna31F4DpF0u8GHyxeA+3WmH2c9htAXSab9GETVkANMLXAmRz87QhrxbCqCAQGTkxzasWIdK9lc
- vQ3YEyzL6nxtpUvCGz/yQ5qI37RP79hv0ggh0KFRaYriBEooU0IoJvpBf5O2+Seb10hs=;
+ bh=LdxYvJPwRA4Ep/k/nBODjc430Es3F6j3UNp/gg1LTdI=; b=BGSwnbcsG1R4L65BHzCvVke/Ze
+ KgMQJfnoU9so6Li2SlYP5CvPJNDvDUqBCNXp1+BRVH9QT/EfavK/MHjimqYcmW5IGKjFuCmGx86mK
+ XZEXcWObRqNHDIghXujkhWkHxhNh5TyRR7PypYj1RC73zvgT2bh/UoL6LXG3gWk8HYTQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Subject:Content-Type:To:From:Message-ID:In-Reply-To:Date:MIME-Version:
- Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=I5gofQLv9ATheBLZFs5eVxjk1NYdTx1xDPMzfJ3PQe4=; b=V
- xHQxSMnKLqCh+kS8ThfdwVq98Y06cX+sZaG2kpr5suZDQ94kUgoUxx3V/TXYIidEcwU4wpljt8UJm
- TQZF1QPgVrJk0LRxjqvg/FHIdBRWL948E9RxpLovv3Vofz2KXuoajazK0rDsB/yRZ8JBdNBQozN/x
- C8qPrALqvmOVGS9g=;
-Received: from mail-il1-f197.google.com ([209.85.166.197])
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+ In-Reply-To:Date:From:Cc:To:Subject:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=LdxYvJPwRA4Ep/k/nBODjc430Es3F6j3UNp/gg1LTdI=; b=L8G99VSZfVRmr2NyB4gHiS4Cy0
+ akKDZtdBTFWisNHQZaBoLKd20Pg010KQOn7kHGhj/GTDNESe0b0cz550vk/jQm+m6zFwdBH9R/P4H
+ tNI1ME73b4GqIE16fFPX7Z2HYExEMJVD//gcHX/zhnEaQ/KCI3paiaejNTyTY0FYSldo=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vFQo5-0004xR-9g for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 02 Nov 2025 05:39:13 +0000
-Received: by mail-il1-f197.google.com with SMTP id
- e9e14a558f8ab-432f8352633so98346075ab.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 01 Nov 2025 22:39:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762061942; x=1762666742;
- h=to:from:subject:message-id:in-reply-to:date:mime-version
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=I5gofQLv9ATheBLZFs5eVxjk1NYdTx1xDPMzfJ3PQe4=;
- b=EHTb8BrcFWe2FM7Lu4Xrc9ufgXr73OJqjRHEbKO0HMnXggeJLA5AHdnJbWRStfpvHB
- PdI5+fnDjO2Pl+jZkzL1HoKW9utbcLzUuhUHgHZKzUhmxs8cAlHvf45t+xwdcxt1N1hT
- ebHKKisZ8Vwe0L24T5OFkUt6ogVRotIucwEPcNLPOoJ0xyJcfPUAdgma/Gx1Tx0bUfji
- HuCyochEaya1zA3oPGUFOr4SMjpK6TvzZkoCjEi7fTH8ECdzKxd22bTQPN67dPvLKW3a
- RAN6tabzpkb0dPlVQK3M309uoGl20ApNWdup4pKuIaAbslPbLshN33x11RfLjrw1pFeK
- kttQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWbNsccuryU9cJe8TJrPwT9ZUCILnvCXViDUOr/8xXTXpcPQjKj4EpHPacRbWtH4/+AhFcgZuudjae+YcLXABJx@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YwJRw2wympcUD2poJtREWpyU9XSiWebZERqOWqSl8krDtuW27Mc
- d7A9MhPc2VeErbaDsXhMyyFm7fydTCUDFOghXGCZIIlCZLZYtFsuXB82C2SIhhH4NG5nhDTzP3D
- o7OEJ6Ge8dKSMDtwrYBJ0WaTHo7pEf7KEj2eZXqvVksbkRsDTC+BlhgaWx7U=
-X-Google-Smtp-Source: AGHT+IHCp5x9Csze7ts1+FeJTWPJ23oGo3DuAx7NFNbgLSzgUoEWPJQbXpSqgSY8kC3XvptviGA3Mx7pJPxr111i/n4AQSQen7Gh
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1vFjgr-0007LO-PJ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Nov 2025 01:49:02 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 56372419F8;
+ Mon,  3 Nov 2025 01:48:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7DF1C116C6;
+ Mon,  3 Nov 2025 01:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+ s=korg; t=1762134531;
+ bh=BQ+0lxQkpcXa/tD37ekUWLzbNim2icgZVv3J5UVRVrg=;
+ h=Subject:To:Cc:From:Date:In-Reply-To:From;
+ b=NKCIS4nUJJRTzUf4zGcO36QcbhNBLyPrRYww5MJcr80mpPufA97nf0gKTvB0IktoS
+ qRe38UqFhM4KN94IYa+9fi14ACTmNO5pIDKxmmCoEFpOTMaj86QxIclwzEgRYonYms
+ J01tx+EqT5YO3ZE5gjywbQBqynkwRgJHWO6gw3Bo=
+To: adilger.kernel@dilger.ca, akpm@linux-foundation.org, anna@kernel.org,
+ axboe@kernel.dk, brauner@kernel.org, chao@kernel.org, djwong@kernel.org,
+ dlemoal@kernel.org, gregkh@linuxfoundation.org, hare@suse.de,
+ hch@infradead.org, hch@lst.de, idryomov@gmail.com, jaegeuk@kernel.org,
+ jlayton@kernel.org, johannes.thumshirn@wdc.com, konishi.ryusuke@gmail.com,
+ linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org, mcgrof@kernel.org,
+ mngyadam@amazon.de, nagy@khwaternagy.com, trond.myklebust@hammerspace.com,
+ tytso@mit.edu, viro@zeniv.linux.org.uk, willy@infradead.org, xiubli@redhat.com
+From: <gregkh@linuxfoundation.org>
+Date: Mon, 03 Nov 2025 10:46:56 +0900
+In-Reply-To: <20251021070353.96705-8-mngyadam@amazon.de>
+Message-ID: <2025110356-pushiness-kangaroo-bfbf@gregkh>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4c18:b0:433:2389:e0ad with SMTP id
- e9e14a558f8ab-4332389e21fmr37683605ab.8.1762061942596; Sat, 01 Nov 2025
- 22:39:02 -0700 (PDT)
-Date: Sat, 01 Nov 2025 22:39:02 -0700
-In-Reply-To: <68cc0578.050a0220.28a605.0006.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6906ee76.050a0220.29fc44.0016.GAE@google.com>
-From: syzbot <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>
-To: brauner@kernel.org, chao@kernel.org, djwong@kernel.org, jaegeuk@kernel.org,
- joannelkoong@gmail.com, linux-f2fs-devel@lists.sourceforge.net, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-X-VA-Spam-Flag: YES
-X-Headers-End: 1vFQo5-0004xR-9g
-Subject: [f2fs-dev] [SPAM] Re: [syzbot] [iomap?] kernel BUG in
- folio_end_read (2)
+X-stable: commit
+X-Patchwork-Hint: ignore
+X-Headers-End: 1vFjgr-0007LO-PJ
+Subject: [f2fs-dev] Patch "block: open code __generic_file_write_iter for
+ blkdev writes" has been added to the 6.1-stable tree
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,32 +91,137 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: stable-commits@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-syzbot has bisected this issue to:
 
-commit 51311f045375984dabdf8cc523e80d39a4c3dd5a
-Author: Joanne Koong <joannelkoong@gmail.com>
-Date:   Fri Sep 26 00:26:02 2025 +0000
+This is a note to let you know that I've just added the patch titled
 
-    iomap: track pending read bytes more optimally
+    block: open code __generic_file_write_iter for blkdev writes
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=103a0012580000
-start commit:   98bd8b16ae57 Add linux-next specific files for 20251031
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=123a0012580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=143a0012580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=63d09725c93bcc1c
-dashboard link: https://syzkaller.appspot.com/bug?extid=3686758660f980b402dc
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=176fc342580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10403f34580000
+to the 6.1-stable tree which can be found at:
+    http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
 
-Reported-by: syzbot+3686758660f980b402dc@syzkaller.appspotmail.com
-Fixes: 51311f045375 ("iomap: track pending read bytes more optimally")
+The filename of the patch is:
+     block-open-code-__generic_file_write_iter-for-blkdev-writes.patch
+and it can be found in the queue-6.1 subdirectory.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+If you, or anyone else, feels it should not be added to the stable tree,
+please let <stable@vger.kernel.org> know about it.
+
+
+From stable+bounces-188301-greg=kroah.com@vger.kernel.org Tue Oct 21 16:18:34 2025
+From: Mahmoud Adam <mngyadam@amazon.de>
+Date: Tue, 21 Oct 2025 09:03:41 +0200
+Subject: block: open code __generic_file_write_iter for blkdev writes
+To: <stable@vger.kernel.org>
+Cc: <gregkh@linuxfoundation.org>, <nagy@khwaternagy.com>, Christoph Hellwig <hch@lst.de>, Johannes Thumshirn <johannes.thumshirn@wdc.com>, "Christian Brauner" <brauner@kernel.org>, Hannes Reinecke <hare@suse.de>, "Luis Chamberlain" <mcgrof@kernel.org>, Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong" <djwong@kernel.org>, Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, "Ryusuke Konishi" <konishi.ryusuke@gmail.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, "Damien Le Moal" <dlemoal@kernel.org>, <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <ceph-devel@vger.kernel.org>, <linu
+ x-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>, <linux-xfs@vger.kernel.org>, <linux-nfs@vger.kernel.org>, <linux-nilfs@vger.kernel.org>, <linux-mm@kvack.org>
+Message-ID: <20251021070353.96705-8-mngyadam@amazon.de>
+
+From: Christoph Hellwig <hch@lst.de>
+
+commit 727cfe976758b79f8d2f8051c75a5ccb14539a56 upstream.
+
+Open code __generic_file_write_iter to remove the indirect call into
+->direct_IO and to prepare using the iomap based write code.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Reviewed-by: Christian Brauner <brauner@kernel.org>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Link: https://lore.kernel.org/r/20230801172201.1923299-4-hch@lst.de
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[fix contextual changes]
+Signed-off-by: Mahmoud Adam <mngyadam@amazon.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ block/fops.c |   45 +++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 43 insertions(+), 2 deletions(-)
+
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -515,6 +515,30 @@ static int blkdev_close(struct inode *in
+ 	return 0;
+ }
+ 
++static ssize_t
++blkdev_direct_write(struct kiocb *iocb, struct iov_iter *from)
++{
++	size_t count = iov_iter_count(from);
++	ssize_t written;
++
++	written = kiocb_invalidate_pages(iocb, count);
++	if (written) {
++		if (written == -EBUSY)
++			return 0;
++		return written;
++	}
++
++	written = blkdev_direct_IO(iocb, from);
++	if (written > 0) {
++		kiocb_invalidate_post_direct_write(iocb, count);
++		iocb->ki_pos += written;
++		count -= written;
++	}
++	if (written != -EIOCBQUEUED)
++		iov_iter_revert(from, count - iov_iter_count(from));
++	return written;
++}
++
+ /*
+  * Write data to the block device.  Only intended for the block device itself
+  * and the raw driver which basically is a fake block device.
+@@ -524,7 +548,8 @@ static int blkdev_close(struct inode *in
+  */
+ static ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+-	struct block_device *bdev = iocb->ki_filp->private_data;
++	struct file *file = iocb->ki_filp;
++	struct block_device *bdev = file->private_data;
+ 	struct inode *bd_inode = bdev->bd_inode;
+ 	loff_t size = bdev_nr_bytes(bdev);
+ 	struct blk_plug plug;
+@@ -553,7 +578,23 @@ static ssize_t blkdev_write_iter(struct
+ 	}
+ 
+ 	blk_start_plug(&plug);
+-	ret = __generic_file_write_iter(iocb, from);
++	ret = file_remove_privs(file);
++	if (ret)
++		return ret;
++
++	ret = file_update_time(file);
++	if (ret)
++		return ret;
++
++	if (iocb->ki_flags & IOCB_DIRECT) {
++		ret = blkdev_direct_write(iocb, from);
++		if (ret >= 0 && iov_iter_count(from))
++			ret = direct_write_fallback(iocb, from, ret,
++					generic_perform_write(iocb, from));
++	} else {
++		ret = generic_perform_write(iocb, from);
++	}
++
+ 	if (ret > 0)
+ 		ret = generic_write_sync(iocb, ret);
+ 	iov_iter_reexpand(from, iov_iter_count(from) + shorted);
+
+
+Patches currently in stable-queue which might be from mngyadam@amazon.de are
+
+queue-6.1/block-fix-race-between-set_blocksize-and-read-paths.patch
+queue-6.1/filemap-add-a-kiocb_invalidate_pages-helper.patch
+queue-6.1/fs-factor-out-a-direct_write_fallback-helper.patch
+queue-6.1/direct_write_fallback-on-error-revert-the-ki_pos-update-from-buffered-write.patch
+queue-6.1/filemap-update-ki_pos-in-generic_perform_write.patch
+queue-6.1/filemap-add-a-kiocb_invalidate_post_direct_write-helper.patch
+queue-6.1/nilfs2-fix-deadlock-warnings-caused-by-lock-dependency-in-init_nilfs.patch
+queue-6.1/block-open-code-__generic_file_write_iter-for-blkdev-writes.patch
 
 
 _______________________________________________
