@@ -4,79 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A4394CCF9F8
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Nov 2025 09:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E4501CCF9F8
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Nov 2025 11:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=0ASUIUjvx9pLhl5/015LxwFOiHa49Cpqrg9urOgkhgQ=; b=QgUbYIybLQJJsDMI0q0z3odSvm
-	w6S0utwAoDWpOHwTCSfP0HsYHJCGw6vQMUDsEnnaKIhZXBEf/aYjEV1HwFLvfJUAndsSNrpBo2Vos
-	Ux4LDvcwAMBOqQ/mTGEVi/kl+F3XKUWE3YYwTc/1V1Jia5r6pWHiRakjhxlWubZrc4g8=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=xgpfCsL5HcJ4819M2qB3aGiove/JIkFD8BIByqDPHPA=; b=Bkb++fICPi5NeoEgOCMNhPh+gQ
+	GGDzgjKj/eDf/EGI4DAcLA55vPc/AQ4nJRwcU5AowODeEuGLBbMtRw0PO7FDab6uwYX/VuQvF/19w
+	PpGRo5DNZ2SAo8KxoeoXwfHuYeBv7hHIegELbAcS1jPilUsY9djus3YMl8pj9Yh4y6wk=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vGa2g-00066X-Ij;
-	Wed, 05 Nov 2025 09:43:02 +0000
+	id 1vGbOv-0007Dc-1T;
+	Wed, 05 Nov 2025 11:10:05 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vGa2f-000668-5J
+ (envelope-from <zlatistiv@gmail.com>) id 1vGbOu-0007DQ-0z
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Nov 2025 09:43:01 +0000
+ Wed, 05 Nov 2025 11:10:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KXRok4kE6mJNe0TR4x/emmi/alRKWb8RgbjHL1qHZzM=; b=XlkV+LCliQk0+Kn2PnsO8O6DEW
- BIKzJKEzDu7Kk6ePOoBJU6ZLBHW7TjEpAcfG2jifVIosSWEpUI3wbYnjGC8VTbA9rLoGz0ZC3b3eo
- 2y3GrQctX0pFrehxqbxncnWydi+oFyCDpH9gqh1KIxXeDzrY2kCgOwur3zlbnpfK4FB4=;
+ bh=s7tqhsuXnKDfa3LKYm+5yorAhNtlPrbMypXt017HtZM=; b=kpy98z0pXverJg6BUiTvDBH1ds
+ RWlu8mBjO25MtBCGbQjEUWWr7+GV63zFGvMEoAzL4feu+q/S1LpeVcUgbqd+XXstX//Pr/7zWvHd6
+ yhsSWFlAa91RcsGKQ3q9ZxvvMdQvXGN80W0gMYTA63/0+nSPtzGoE2gdteal0pL2CPi0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=KXRok4kE6mJNe0TR4x/emmi/alRKWb8RgbjHL1qHZzM=; b=ZMbjFw1wwuHwmlwiNgSJNd+BtX
- e5czoNeRFvV17JqTk+QdjhAdbY6SKapnkJ83LeqHa5veoCVPK81mkG6wrp/8TKQ3dEf5VSuaYDUGz
- 1Zo8ayJVksgLg+rcfrKTmblUWOY0ol3UYGpoyFTA2L9VNr7I33Lvt0jDI63+Sxdq5ob4=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=s7tqhsuXnKDfa3LKYm+5yorAhNtlPrbMypXt017HtZM=; b=FKmvvBTa7fVqGMbC69NnYF7dG6
+ nQ2OmOJh6t9tusBul9XmsGxVOPdtNzpTxkD52DQmhhqLjrJjU0b7Ubf7M9srz0GAtQHEW51kDvtiR
+ 6W1nJNWid+onQQ3O80JKx9k+bgXxo3tCyG8gOym+YZEoAkjhedo5Y7av55MdHhSnf0Xg=;
+Received: from mail-wm1-f54.google.com ([209.85.128.54])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vGa2e-0007oK-CO for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Nov 2025 09:43:00 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id A1C0560205;
- Wed,  5 Nov 2025 09:42:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F15F8C4CEF8;
- Wed,  5 Nov 2025 09:42:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1762335769;
- bh=gR67EH2yP9lSn4ONpm8uJrVynpMjctZL7TDFZrX7Q0c=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=i05Nw8ZxqtMlhl2W3pqtrYZXd/6jrcpaHYNgmhcV/UX4nVr2dpOiic2dBqDa9b50A
- z09N2HXHoXkZG84XKsfGZwycAz7xzQMOucMN0dk5x/sjxuXkJMbwRi1JD7vO0AxE0t
- pHVibjAz5qpfR2LLZQRFehpX7nDU783Y+lZ02SY413CmZFcM2XWS5r/4m9OmekJDth
- lFZor0/CIFgI30jrG77yJL2TaoK/6YV3NcF7s38r06B+xyqWd2suzpyraLQe22/1fY
- ESjiS9IUMJht8ZeKn8irTZ72kD+GuZoZ2pBrlTgOALQgO8C3ceaQAYUeDoWQVpzVdh
- mnPDa8OK8RWPQ==
-Message-ID: <84a7c83b-529a-4fca-a5d0-4d2015bdeeab@kernel.org>
-Date: Wed, 5 Nov 2025 17:42:45 +0800
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1vGbOu-0005F6-Fe for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 05 Nov 2025 11:10:04 +0000
+Received: by mail-wm1-f54.google.com with SMTP id
+ 5b1f17b1804b1-4775a52e045so4308655e9.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 05 Nov 2025 03:10:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1762340998; x=1762945798; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=s7tqhsuXnKDfa3LKYm+5yorAhNtlPrbMypXt017HtZM=;
+ b=LC8qACnX6jkwpW+AtbB4U2MXm58jTyQ7jXJF6Wqumrig13IaxfzVQ9FxMYr4WqxFuJ
+ LHEAVvfJ8D7UMGRe45xtr4Ofg6QAdp5Q60niCkuoYu1jGy0OxR5lIIshSy0+/SN8HQG9
+ JgZio5FElNPFPeqgCCjVNVtFcV2MPs5GeNwmxbFjDrbSHRgu2Iyj0+r/F5yDz/Ghscql
+ 30Oz/BaGE+GDscRmiY0CoSMpT9GbcvvVXUg4sPLePGmY17vSs7bPJQ1nONPrBU5Wt9dV
+ ePQp/zgRzG03ZnWf3uh91UQlV0c4OsAKx7lDyDnxbhfz0kboZ8CkLGgQSLYqwPc0ZI0N
+ goOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762340998; x=1762945798;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=s7tqhsuXnKDfa3LKYm+5yorAhNtlPrbMypXt017HtZM=;
+ b=p4vnm7ad3h5LAs9ceoNA4MZluYMc2HIKg9ln+pwPh7rPVnbnSygIRMHiDEU5TyaHoy
+ OEUPQqLdt9N5rQdc/kQha9N7GfG+CTRRhGdYLHulT2BfmeH8odAlMOPKm5/FmBfwFFvT
+ 9IW+1lu82e4vw/ImnYATZF8clj+LFAl+Toy2oRapzKsH25J7UdIssSbSslnHutI6TGe9
+ PprJ30SbjrZN9i6pFSNvBitWKoqQe45J+M6DbNJIDcDzLyV69yvXEezjNI+3LGTvF5EY
+ /zZepb5VGYrn47l/NHu5lUsXdYHMNt/LPdZ2ATfsprOtWjJJsJJdj9ypAEI+mlsJKga0
+ z2ig==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWl8tEaiklLiVLzJ8v156Zaj+eXnUwA8tzADJcp0hka44FgRRkNYycqC9ycaRycGuRnebkastPbHCMs3MWrAnHL@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YwRfvydojNXDtwMGcAfSOlLqnwKTcEN6VOBP9tqYlogcpiZK5AP
+ n5XBfzZFdQbtTVaVWacC496KTQYTIr1DRGsKRrtxqJEyq60NgG+ONa2C
+X-Gm-Gg: ASbGncsnHF8n1Iz38MiG2bK7G1WoUiditfezr8t7dUkvYgf/U7Uh9+G3Yim5Q2lhTD8
+ kuKrK0WdDHefBmr+C0l8F9fpBUMA8+9I9bzVnDK6b1ynXM7+h7wMcnhGK1q4Xdwby9VtyCqHouP
+ xMEIsgST66cZRwGYxjMYUQ874y+xdlmJ9qlxUYu9plai5PWb05k2SX14CZOhDwyQCQOvVHUZ9LL
+ nlVq3djV4X+I/iPo7teKzHnBo6wV7XbjauE5daQGXpm6y4YfxZEix183+XZ/46pGbRz8KZRSbKG
+ +EHXqA3QjCTwfOlMzHm+Mryu/lCWZ0EPN/lI5KwknNfmysTqp2yvDZWdLLVaCCbJyZGleyAaTmj
+ n9/5yuIP/ltdgipXV3IEbKnf1H9XQ8bw2PRQkduymFRn0GPDaKkH2wOaez+Dl2yRH9MU4BujQnV
+ 7r2+avspgQXoM=
+X-Google-Smtp-Source: AGHT+IHJpcEdw1607F+Ey1V4LbwjmDQawpeGTA8lma3MVtT0pEJj48H/kPwEqm38rL5rx3ziZa4wPw==
+X-Received: by 2002:a05:600c:3487:b0:471:115e:9605 with SMTP id
+ 5b1f17b1804b1-4775ce3d8a1mr28339055e9.35.1762340997771; 
+ Wed, 05 Nov 2025 03:09:57 -0800 (PST)
+Received: from localhost.localdomain ([46.10.223.24])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-477558c42adsm39728415e9.4.2025.11.05.03.09.56
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 05 Nov 2025 03:09:57 -0800 (PST)
+From: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
+To: jaegeuk@kernel.org, chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Date: Wed,  5 Nov 2025 13:09:42 +0200
+Message-ID: <eb59e101f0b201afb65cb40b38e1b1598039ac82.1762339963.git.zlatistiv@gmail.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1762339963.git.zlatistiv@gmail.com>
+References: <cover.1762339963.git.zlatistiv@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20251104162226.919906-1-daeho43@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20251104162226.919906-1-daeho43@gmail.com>
-X-Headers-End: 1vGa2e-0007oK-CO
-Subject: Re: [f2fs-dev] [PATCH v4] f2fs-tools: revert summary entry count
- from 2048 to 512 in 16kb block support
+X-Headers-End: 1vGbOu-0005F6-Fe
+Subject: [f2fs-dev] [PATCH v4 1/2] f2fs: Rename f2fs_unlink exit label
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,31 +119,82 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: Daeho Jeong <daehojeong@google.com>
+Cc: david.hunter.linux@gmail.com, linux-kernel@vger.kernel.org,
+ khalid@kernel.org, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linuxfoundation.org, stable@kernel.org,
+ "Nikola Z. Ivanov" <zlatistiv@gmail.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 11/5/25 00:22, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> The recent increase in the number of Segment Summary Area (SSA) entries
-> from 512 to 2048 was an unintentional change in logic of 16kb block
-> support. This commit corrects the issue.
-> 
-> To better utilize the space available from the erroneous 2048-entry
-> calculation, we are implementing a solution to share the currently
-> unused SSA space with neighboring segments. This enhances overall
-> SSA utilization without impacting the established 8MB segment size.
-> 
-> Fixes: 50fd00b168d7 ("f2fs-tools: Support different block sizes")
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Rename "fail" label to "out" as it's used as a default
+exit path out of f2fs_unlink as well as error path.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
+---
+ fs/f2fs/namei.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index b882771e4699..40cf80fd9d9a 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -552,21 +552,21 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+ 		err = -EIO;
+-		goto fail;
++		goto out;
+ 	}
+ 
+ 	err = f2fs_dquot_initialize(dir);
+ 	if (err)
+-		goto fail;
++		goto out;
+ 	err = f2fs_dquot_initialize(inode);
+ 	if (err)
+-		goto fail;
++		goto out;
+ 
+ 	de = f2fs_find_entry(dir, &dentry->d_name, &folio);
+ 	if (!de) {
+ 		if (IS_ERR(folio))
+ 			err = PTR_ERR(folio);
+-		goto fail;
++		goto out;
+ 	}
+ 
+ 	if (unlikely(inode->i_nlink == 0)) {
+@@ -575,7 +575,7 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 		err = -EFSCORRUPTED;
+ 		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+ 		f2fs_folio_put(folio, false);
+-		goto fail;
++		goto out;
+ 	}
+ 
+ 	f2fs_balance_fs(sbi, true);
+@@ -585,7 +585,7 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 	if (err) {
+ 		f2fs_unlock_op(sbi);
+ 		f2fs_folio_put(folio, false);
+-		goto fail;
++		goto out;
+ 	}
+ 	f2fs_delete_entry(de, folio, dir, inode);
+ 	f2fs_unlock_op(sbi);
+@@ -601,7 +601,7 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 
+ 	if (IS_DIRSYNC(dir))
+ 		f2fs_sync_fs(sbi->sb, 1);
+-fail:
++out:
+ 	trace_f2fs_unlink_exit(inode, err);
+ 	return err;
+ }
+-- 
+2.51.0
+
 
 
 _______________________________________________
