@@ -4,98 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AA87BCCF9F8
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  7 Nov 2025 20:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CE364CCF9F8
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  7 Nov 2025 20:04:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=hmdUHVWPcfzoyLjw86IHUYo01fxk2EexkleQ81nDNLI=; b=Pfxs225fIN6CQPpoj29KRASvl/
-	/aDLvbUkS8+R5sty2pLIle/jpwmwzldpyuVOkB6bXDCu5ODsQlBYg852/UjB1pxhCkxZvLlMGPeEO
-	jFXbPBJrOcb2PAzrB+NKRLirz9ygayEEs7LeQYv2IPjAEOUxnk4RDcQUoJpSbKeRlikA=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=aUl0MEl0o2eNOZjEsiNElhtktONkxmT3GTuc9OMv9Pg=; b=RxtNsJxSVqwh+JP8b7306iMrie
+	f3F858NWeUfDj364Fc3CzBM8ATHjQXVwLKJiFOkZPsxadFOqghGnHIRzQ26hE2japnD8qX24okqdP
+	jVv5wqaQFZDeVDPRKxgmy6yIIbCjlRLFS0YcxEldU0HxSwrbMP3ssFmRiIOKJcY9Zjdw=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vHSg1-0002sH-Au;
-	Fri, 07 Nov 2025 20:03:18 +0000
+	id 1vHShe-0007hF-Gk;
+	Fri, 07 Nov 2025 20:04:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <pmladek@suse.com>) id 1vHSg0-0002s7-K9
+ (envelope-from <pmladek@suse.com>) id 1vHShd-0007h9-49
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 07 Nov 2025 20:03:17 +0000
+ Fri, 07 Nov 2025 20:04:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=IeO70OJ5TY7FEk0BCI4hVN3mDp8lmCuzmxRyi+G2tng=; b=QE39I6m4pPV7E62lDUkvf+8b85
- CZ/diXBrVydUma7M7weZJuJxwHZ820dzNpvQNpfTGY9zL6chaYEY9hesjrv202cQM+M+1HPa8GOQB
- AFjl4resyj+A6DfOSN4Wr0Iv56pIsdGYqHkDQnJuslYu1XppS7SoNJSQSkLwJEkq70Hc=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=IeO70OJ5TY7FEk0BCI4hVN3mDp8lmCuzmxRyi+G2tng=; b=i90qBv2nrhJB+Faqj21FPWvaW6
- Z3PDMPj/nY+wfsdv19ftI936utk2bowjNb1/e3vNrMgDFsWMlkttNIsO5ZANv8m3o5angp61Ag2U5
- G4OQcu/odXXeBAXZ3Q59nxrCNnOZ6boI14lJyEEYOXf9rhGFxyBAPGXlvof3CR3UXbVs=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=KtC7rzSK0aTgwHJiLrZd7KjHwgNeZ15oPHoIeGdUNXA=; b=RBUmGKt0p6li+gZCkjvA+5Rnj5
+ NNQgMPvISCh5X4RbEOz+Myo7+W/Z6WXMTxyHn+DOQlEmU/1bH/HZYsQki6j+AFm8hOQs3KUcHQ9Te
+ jBy+ZLlIO7T+aqDXb/xFSN1Koa3KSNFIRv6PEQAv7dYQUErh345/OXHDl4ageCUP3Zdc=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=KtC7rzSK0aTgwHJiLrZd7KjHwgNeZ15oPHoIeGdUNXA=; b=G
+ 9B7uQ+AqCI0FJdZD8jkBuUItEG8acqTWVmLqETDeNqJ/VdYhpmj6QhzEqtPNgUX8l8HxM0zrUKjn9
+ ioRg5eik1b0FnNbMLoSOB2xVcBp72rAcbFaWAKAKzCWzUfT9arWjH6IOQXljAasfXJZEatUJ8kEvH
+ F/Y6h7x5bysF6G68=;
 Received: from smtp-out2.suse.de ([195.135.223.131])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vHSg0-0000hf-MQ for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 07 Nov 2025 20:03:17 +0000
+ id 1vHShc-0000nS-Fe for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 07 Nov 2025 20:04:57 +0000
 Received: from pathway.suse.cz (unknown [10.100.208.146])
- by smtp-out2.suse.de (Postfix) with ESMTP id 14CC32056D;
- Fri,  7 Nov 2025 19:48:18 +0000 (UTC)
+ by smtp-out2.suse.de (Postfix) with ESMTP id 9CF432057A;
+ Fri,  7 Nov 2025 19:47:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
- t=1762544899; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=IeO70OJ5TY7FEk0BCI4hVN3mDp8lmCuzmxRyi+G2tng=;
- b=qkvbxtBQDmIDilJnTOR0vYQytDAYcCw71oDIP3POIkLEhr8bapI3sWiATSNDFvTeRucO8H
- LIPX1a3YE3GSiy6axv1llPkccnytvEYkFxzhT98XYRO1rfkRjHLL56Ile/Y7srAVPSM4yN
- Wh1TV2iE8VQSmTV4FVbXIZHKINQOAAg=
+ t=1762544876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version: content-transfer-encoding:content-transfer-encoding;
+ bh=KtC7rzSK0aTgwHJiLrZd7KjHwgNeZ15oPHoIeGdUNXA=;
+ b=rkvbqOoLf/C/5wQktFj0MjJl0kWvB1Y/VlxHjJm4yYgjz4pdo+nzkCZ1V1IbsAY+whRSDQ
+ 8CuVv8FFzC9Sk/cgk8VuWeB3rBfjguZB3bBmqQTT08wgh5S1kls6Sz/KprVLoEkK5pPk2P
+ JtchIAocLGTX7/9zj2+n1bQ/IK6D5C0=
 Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
- t=1762544898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=IeO70OJ5TY7FEk0BCI4hVN3mDp8lmCuzmxRyi+G2tng=;
- b=qDmQYczDGUxbgVIUIjLuV4gS0bREuJF+39GbqXFP+0r/zTMv+p7W8nNHpW5N2tdqeAOCt6
- 2m6dtwSCm6xiG1m1D4OKACkz/bwP1gft3kKFiW0IdHQX4f8je6VBm4eSN3JxEVoDbiC1oH
- RlvIJmhpoywOTxhEAVMBPPDpTIxuuIg=
+ t=1762544875; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version: content-transfer-encoding:content-transfer-encoding;
+ bh=KtC7rzSK0aTgwHJiLrZd7KjHwgNeZ15oPHoIeGdUNXA=;
+ b=JAQh3SljtpaRNpy8XtXBtdDrcg6qpsHyxTJ69siFOUXMzSS2fh1Ov9qye8HHQ7UNaWOGHf
+ Ou4vNqzCdzWFhe4qkvH5EdXRXLW52AfxJ43Us360WIQbeGPMUM+7tnzlTWpowfNzpRxsr9
+ +gAGBHFsXEtmbaOqJeOlNdRoJLXs5+I=
 To: John Ogness <john.ogness@linutronix.de>
-Date: Fri,  7 Nov 2025 20:47:20 +0100
-Message-ID: <20251107194720.1231457-3-pmladek@suse.com>
+Date: Fri,  7 Nov 2025 20:47:18 +0100
+Message-ID: <20251107194720.1231457-1-pmladek@suse.com>
 X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251107194720.1231457-1-pmladek@suse.com>
-References: <20251107194720.1231457-1-pmladek@suse.com>
 MIME-Version: 1.0
-X-Spamd-Result: default: False [-6.79 / 50.00]; REPLY(-4.00)[];
- BAYES_HAM(-3.00)[100.00%]; MID_CONTAINS_FROM(1.00)[];
- NEURAL_HAM_LONG(-1.00)[-1.000]; R_MISSING_CHARSET(0.50)[];
- NEURAL_HAM_SHORT(-0.19)[-0.942]; MIME_GOOD(-0.10)[text/plain];
- ARC_NA(0.00)[]; MIME_TRACE(0.00)[0:+]; TO_DN_SOME(0.00)[];
- RCPT_COUNT_TWELVE(0.00)[13];
- FUZZY_RATELIMITED(0.00)[rspamd.com];
+X-Spamd-Result: default: False [-2.78 / 50.00]; BAYES_HAM(-3.00)[99.99%];
+ MID_CONTAINS_FROM(1.00)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
+ R_MISSING_CHARSET(0.50)[]; NEURAL_HAM_SHORT(-0.18)[-0.907];
+ MIME_GOOD(-0.10)[text/plain];
+ FUZZY_RATELIMITED(0.00)[rspamd.com]; MIME_TRACE(0.00)[0:+];
+ RCPT_COUNT_TWELVE(0.00)[13]; ARC_NA(0.00)[];
+ RCVD_COUNT_ZERO(0.00)[0];
  DKIM_SIGNED(0.00)[suse.com:s=susede1];
- R_RATELIMIT(0.00)[to_ip_from(RLreigq8okzrb3g3qsqhoz9iaq)];
+ TO_MATCH_ENVRCPT_ALL(0.00)[];
  FREEMAIL_CC(0.00)[gmail.com,thegoodpenguin.co.uk,kernel.org,lists.sourceforge.net,vger.kernel.org,googlegroups.com,suse.com];
- RCVD_COUNT_ZERO(0.00)[0]; FROM_HAS_DN(0.00)[];
- TO_MATCH_ENVRCPT_ALL(0.00)[]; FROM_EQ_ENVFROM(0.00)[];
- FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Headers-End: 1vHSg0-0000hf-MQ
-Subject: [f2fs-dev] [PATCH 2/2] printk_ringbuffer: Create a helper function
- to decide whether a more space is needed
+ TO_DN_SOME(0.00)[]; FROM_HAS_DN(0.00)[];
+ FROM_EQ_ENVFROM(0.00)[]; FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Headers-End: 1vHShc-0000nS-Fe
+Subject: [f2fs-dev] [PATCH 0/2] printk_ringbuffer: Fix regression in
+ get_data() and clean up data size checks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -119,93 +112,38 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The decision whether some more space is needed is tricky in the printk
-ring buffer code:
+This is outcome of the long discussion about the regression caused
+by 67e1b0052f6bb82 ("printk_ringbuffer: don't needlessly wrap data blocks around"),
+see https://lore.kernel.org/all/69096836.a70a0220.88fb8.0006.GAE@google.com/
 
-  1. The given lpos values might overflow. A subtraction must be used
-     instead of a simple "lower than" check.
+The 1st patch fixes the regression as agreed, see
+https://lore.kernel.org/all/87ecqb3qd0.fsf@jogness.linutronix.de/
 
-  2. Another CPU might reuse the space in the mean time. It can be
-     detected when the subtraction is bigger than DATA_SIZE(data_ring).
+The 2nd patch adds a helper function to unify the checks whether
+a more space is needed. I did my best to address all the concerns
+about various proposed variants.
 
-  3. There is exactly enough space when the result of the subtraction
-     is zero. But more space is needed when the result is exactly
-     DATA_SIZE(data_ring).
+Note that I called the new helper function "need_more_space()" in the end.
+It avoids all the problems with "before" vs. "lt" vs "le",
+and "_safe" vs. "_sane" vs. "_bounded".
 
-Add a helper function to make sure that the check is done correctly
-in all situations. Also it helps to make the code consistent and
-better documented.
+IMHO, the name "need_more_space()" fits very well in all three
+locations, surprisingly even in data_realloc(). But it is possible
+that you disagree. Let me know if you hate it ;-)
 
-Suggested-by: John Ogness <john.ogness@linutronix.de>
-Link: https://lore.kernel.org/r/87tsz7iea2.fsf@jogness.linutronix.de
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
- kernel/printk/printk_ringbuffer.c | 31 +++++++++++++++++++++++++++----
- 1 file changed, 27 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
-index 3e6fd8d6fa9f..ede3039dd041 100644
---- a/kernel/printk/printk_ringbuffer.c
-+++ b/kernel/printk/printk_ringbuffer.c
-@@ -411,6 +411,23 @@ static bool data_check_size(struct prb_data_ring *data_ring, unsigned int size)
- 	return to_blk_size(size) <= DATA_SIZE(data_ring) / 2;
- }
- 
-+/*
-+ * Compare the current and requested logical position and decide
-+ * whether more space needed.
-+ *
-+ * Return false when @lpos_current is already at or beyond @lpos_target.
-+ *
-+ * Also return false when the difference between the positions is bigger
-+ * than the size of the data buffer. It might happen only when the caller
-+ * raced with another CPU(s) which already made and used the space.
-+ */
-+static bool need_more_space(struct prb_data_ring *data_ring,
-+			    unsigned long lpos_current,
-+			    unsigned long lpos_target)
-+{
-+	return lpos_target - lpos_current - 1 < DATA_SIZE(data_ring);
-+}
-+
- /* Query the state of a descriptor. */
- static enum desc_state get_desc_state(unsigned long id,
- 				      unsigned long state_val)
-@@ -577,7 +594,7 @@ static bool data_make_reusable(struct printk_ringbuffer *rb,
- 	unsigned long id;
- 
- 	/* Loop until @lpos_begin has advanced to or beyond @lpos_end. */
--	while ((lpos_end - lpos_begin) - 1 < DATA_SIZE(data_ring)) {
-+	while (need_more_space(data_ring, lpos_begin, lpos_end)) {
- 		blk = to_block(data_ring, lpos_begin);
- 
- 		/*
-@@ -668,7 +685,7 @@ static bool data_push_tail(struct printk_ringbuffer *rb, unsigned long lpos)
- 	 * sees the new tail lpos, any descriptor states that transitioned to
- 	 * the reusable state must already be visible.
- 	 */
--	while ((lpos - tail_lpos) - 1 < DATA_SIZE(data_ring)) {
-+	while (need_more_space(data_ring, tail_lpos, lpos)) {
- 		/*
- 		 * Make all descriptors reusable that are associated with
- 		 * data blocks before @lpos.
-@@ -1148,8 +1165,14 @@ static char *data_realloc(struct printk_ringbuffer *rb, unsigned int size,
- 
- 	next_lpos = get_next_lpos(data_ring, blk_lpos->begin, size);
- 
--	/* If the data block does not increase, there is nothing to do. */
--	if (head_lpos - next_lpos < DATA_SIZE(data_ring)) {
-+	/*
-+	 * Use the current data block when the size does not increase.
-+	 *
-+	 * Note that need_more_space() could never return false here because
-+	 * the difference between the positions was bigger than the data
-+	 * buffer size. The data block is reopened and can't get reused.
-+	 */
-+	if (!need_more_space(data_ring, head_lpos, next_lpos)) {
- 		if (wrapped)
- 			blk = to_block(data_ring, 0);
- 		else
+The patchset applies on top of printk/linux.git, branch for-6.19.
+It should apply on top of linux-next as well.
+
+Petr Mladek (2):
+  printk_ringbuffer: Fix check of valid data size when blk_lpos
+    overflows
+  printk_ringbuffer: Create a helper function to decide whether a more
+    space is needed
+
+ kernel/printk/printk_ringbuffer.c | 40 +++++++++++++++++++++++++------
+ 1 file changed, 33 insertions(+), 7 deletions(-)
+
 -- 
 2.51.1
 
