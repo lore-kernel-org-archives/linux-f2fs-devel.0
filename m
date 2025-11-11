@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B72E4CCFA18
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Nov 2025 22:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DB217CCFA1A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Nov 2025 22:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=atDFGb3Ex+s/PP+W13mVA4OwWniqx3xdfLZUo8A71Is=; b=nCLHwUSRR9BZdzzGdi35TZXyS1
-	F3Hl+qUK94ylwN20ixScZZhRiTi6Y9gQu7VvHwQAfpJBSs/ijpXN3VBgoYoy8FFD51tgBeMcr+aLl
-	bg5F+zh56gA7ktySu2m8OHA3RJP7CbOi/ofBAuwMC5zyXYGz72k8ryv14z7vkUk7sNy0=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=/YZbt54dP7+n38sqdPpGWHobjPBHSK65GcL7PP6N2Ok=; b=b7mcCEdnzbboypKp5DF+Im2XMu
+	GGY0CQTrGW+XoAOV50xL9z1a7eCABkDowlNzq4wD/c4686tYrtphYvtsFqYcKoJ+dkCNT9i4CvxZQ
+	9PXzHarhfgo0OO6piMSJf25Z7GELK5ZHL1PZqcYAaRVgsAh+4yurgLwxr3QpiLW3BElw=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vIxCT-0004b8-Ar;
-	Tue, 11 Nov 2025 22:50:57 +0000
+	id 1vIxCW-0002Vr-HY;
+	Tue, 11 Nov 2025 22:51:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vIxCP-0004au-5o
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vIxCS-0002VT-V6
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Nov 2025 22:50:53 +0000
+ Tue, 11 Nov 2025 22:50:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jkUisRGrOYRfKmnyO3uhG28xxtG08HmE3ivrN+hfvNc=; b=fNEP/Ywvnz835Bh7dLTsLUSgHu
- MRPlumNpV7fHCMhS5CZC7mpSIS+yYuFN4fvkEvZmAnKiDgKaVYU3UzdEb48Qc//8xxCE7/9V0uIiN
- L8wGar2IxFnLHmyLfNVH7l7NZHgsgCaOxVpxYCWHPKFP4Ycd8tXAfe0NzXJLfYLdBpU8=;
+ bh=AULfrnAyOFjhQbbKqc0K7v+YoEuIvgQd1DEDVZGGJUg=; b=A2yHQH72LjnqVQfz62O6oyDp24
+ NqNJeEcTXtS2CDcPUT6hUFGG8IgjI9ZYmUFIWmyXxlN1uBV17UaeyIdtX7hpHfSlqO8rQ61pIQmxf
+ g0NywG8mD2zkHbFDZSuUVnWXxyKZiMXlWbd5ngVjhFOsYUcEilBbTVSdj2CgENztnQos=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jkUisRGrOYRfKmnyO3uhG28xxtG08HmE3ivrN+hfvNc=; b=JcnPP1QooBeN0/G90p2es1pe8v
- rjuji2bIt8MvcgTZ74WKT/g/pkWVMUiArqnwBKssv+aqVH1zK1w5oVL8cNYX/iuUpKHbxTd/aBuyP
- Da4Rz77Odkcn8EodULEzk+Nn8jV0xHsYUtLoJF++C0OoDEn53Q/sG/rsbrhpaSw746BQ=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=AULfrnAyOFjhQbbKqc0K7v+YoEuIvgQd1DEDVZGGJUg=; b=OaGs6IGgXmAyJkUKpgXbEJcsac
+ BCVmqlC3fGeYvKwkLh+cGTGvOb3cJwZ95Jne6eRiAQK5fTaih7bNUzKuo+m5NbYCYFH1teZSmCa3/
+ gQo10M9B3I2cwYLASZbyaUEzWB+1I+374uKCrWB7vUu4bqXwthC+W5/IP023qwnCFo+g=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vIxCO-00046A-Ns for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Nov 2025 22:50:53 +0000
+ id 1vIxCS-00046V-1U for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 11 Nov 2025 22:50:56 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 7479243734;
- Tue, 11 Nov 2025 22:50:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5752BC116B1;
- Tue, 11 Nov 2025 22:50:42 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 750A16020B;
+ Tue, 11 Nov 2025 22:50:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2495DC113D0;
+ Tue, 11 Nov 2025 22:50:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1762901442;
- bh=k7EjqMDIXZOmAEX20bRumuCAP0u89RkyCZoaXm+jFug=;
+ s=k20201202; t=1762901450;
+ bh=vn2gL6MOI11wVy8RMceFUcCj5h0SeTBKfJ0/P0DfPKg=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=Eau7k2KHVnHTTROVeAzCv4PVFCDlX/6akmpwuIvNALZI81Isw6M/afwH1L2m4PdNp
- T864nvv49XxgjAoQDks6DQ3le387FFxbEWDl99F1LNWLQreBU6LvUPlmT/53a/ab2N
- GboVE+uuxH+Bz1EXP9RbGkHvRh2HikQRIS8lb5HKpUWLkVJ/ySU4F+YyFszSb6s38L
- tY1RAjv1k1thd/hZvJZvkbZ6JHeeW44IgvxGE4E58sBaZQhQ0n+MQCby6zrIhFw20/
- x9a2/AV6nBH84gNqcbTHA5rUa0ivBjvVe4ObVnKxmO0D3FIxocVdDgC/mYL1s1VbLe
- tv7pWOU0b23Kw==
+ b=cosvdhqLr34OeP8XAUE3+1jUYM8RTNQxEYagv9YUqbW70wGIiaLcN8vvqahXsyAhY
+ 10IWJsh3jKoOvclBo3p7a4U7hW9+HIvNbjCtUN9HNzMqJ8BbMU3VutWn6ChWY/tAzO
+ Q8u48QbL8j/iyzPAAChTxtLLL/FzLEOCsKsRzfRkqAhyuiT5/aQE7V5kTgUwjLD2q1
+ L5I8Rka3tu1fg2AT6DbXD6tFnzSa8k9tthj4Cm4UVlCO6LA9k2B3TOkqpp8NBIi3OP
+ u5tjbskCR2/TU/EdiYmoTZvXmgrA/FJ+PR2Q93Ui+xFB4stBoGaZofyV1l3pNlwSr/
+ efBLis0aQfk3A==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- ADCEB380DBCD; Tue, 11 Nov 2025 22:50:13 +0000 (UTC)
+ 70D3F380DBCD; Tue, 11 Nov 2025 22:50:21 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176290141215.3596344.6840868487944552761.git-patchwork-notify@kernel.org>
-Date: Tue, 11 Nov 2025 22:50:12 +0000
-References: <20251024143746.187140-1-yangyongpeng.storage@gmail.com>
-In-Reply-To: <20251024143746.187140-1-yangyongpeng.storage@gmail.com>
-To: Yongpeng Yang <yangyongpeng.storage@gmail.com>
-X-Headers-End: 1vIxCO-00046A-Ns
-Subject: Re: [f2fs-dev] [PATCH] f2fs: ensure minimum trim granularity
- accounts for all devices
+Message-Id: <176290142024.3596344.13243926252945264194.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Nov 2025 22:50:20 +0000
+References: <20251027130635.13739-1-kartikey406@gmail.com>
+In-Reply-To: <20251027130635.13739-1-kartikey406@gmail.com>
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+X-Headers-End: 1vIxCS-00046V-1U
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: invalidate dentry cache on failed
+ whiteout creation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,8 +90,9 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, yangyongpeng@xiaomi.com,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: syzbot+632cf32276a9a564188d@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -101,20 +102,24 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Fri, 24 Oct 2025 22:37:46 +0800 you wrote:
-> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
+On Mon, 27 Oct 2025 18:36:34 +0530 you wrote:
+> F2FS can mount filesystems with corrupted directory depth values that
+> get runtime-clamped to MAX_DIR_HASH_DEPTH. When RENAME_WHITEOUT
+> operations are performed on such directories, f2fs_rename performs
+> directory modifications (updating target entry and deleting source
+> entry) before attempting to add the whiteout entry via f2fs_add_link.
 > 
-> When F2FS uses multiple block devices, each device may have a
-> different discard granularity. The minimum trim granularity must be
-> at least the maximum discard granularity of all devices, excluding
-> zoned devices. Use max_t instead of the max() macro to compute the
-> maximum value.
+> If f2fs_add_link fails due to the corrupted directory structure, the
+> function returns an error to VFS, but the partial directory
+> modifications have already been committed to disk. VFS assumes the
+> entire rename operation failed and does not update the dentry cache,
+> leaving stale mappings.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: ensure minimum trim granularity accounts for all devices
-    https://git.kernel.org/jaegeuk/f2fs/c/5dc50bdb96e1
+  - [f2fs-dev,v2] f2fs: invalidate dentry cache on failed whiteout creation
+    https://git.kernel.org/jaegeuk/f2fs/c/5e8c6aae36ad
 
 You are awesome, thank you!
 -- 
