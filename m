@@ -4,79 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 54907CCFA18
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Nov 2025 22:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 91746CD13D2
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Nov 2025 22:51:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=KSc0ojCFYsI02ikoYQLoYMM7XlSpxlmzGQmInqMA/vo=; b=ZV73/+U171A/yERr17UOxOodEI
-	QqBd3G+E6ntgLKUvXgsZEzmYXqTtDNaJh2dX65GW/AFjT85MiaFVrOjhgeJdPynLJ78UfVT+h9ktX
-	kmw7Hf1bJHFooU9AxSdfgbkwNbLoLQJGHDn50gsIa/9FXBVjgkszZrr+ZfzPdvIFSlzY=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=6vbS2DC3XG6deMgvAq07XKO/SwsCKaF8ScbA+U4RsnY=; b=djD8w5W16YsNMwSi9jnJ7mAdmm
+	UJAYqNOHLSU8w0Nda0gn6P2gUJFe3ponv5KLsRPu3uZqs8Vu+9+rbGC0vbICzyuM99XwyoEY4tI4Y
+	iL4gvA+LlLeqG8udaN4SHsiVgZHrb/V15ONILRKKOY9C8jAdcFew7dEj2YVTtP8NciOU=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vIxCX-0004bp-10;
-	Tue, 11 Nov 2025 22:51:01 +0000
+	id 1vIxCY-0002yq-8s;
+	Tue, 11 Nov 2025 22:51:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vIxCT-0004bI-MH
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vIxCS-0002yF-Uy
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Nov 2025 22:50:57 +0000
+ Tue, 11 Nov 2025 22:50:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dVssa95qYaxIJaRdTeyFuOQX6+WqyTabAyyHiivyt7Q=; b=lYUcAT8Ei/6WCICP2SF6gLYVzE
- Zvy6OiBLpPLjGMsKYHUlCqe7mAeOhk++o8OzUTCb7+4kRhR0b1cwaLzv331IvQZMD3mK2jZNy5gLL
- If05WenuolRdejgHVR0YOLK4pAn8tXC/r7dXdt+mwOnhGOfofBVs3UgCxCqRka3GUKtY=;
+ bh=Saxw2KCWUjGjqwUaverz3YSXi+y34iho60NeMiVCyLc=; b=Uu5ZrAlf6SX/IqHrvDzjvyJUKV
+ HNXeFruKVOpw23YNmIajfjPFhdT0mHjjCRhjpnNVbhEy+xE+xy+4/4EC70qsiJDH27nWUD8cmfp5c
+ 25Xl3NR4aiOwaU3320ayyElBz9DDYm76rcs12oe3Tj/WPukQpBN5MDmAtcEphImOh/0Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dVssa95qYaxIJaRdTeyFuOQX6+WqyTabAyyHiivyt7Q=; b=gd+JmuDoUUXzhHkOCYGqFHs2+5
- 2EBfpOhHy4mNVDGz3ePVAg9dHL87e5ucRkXSlyPdAbIkVhjR/KnWKDQK4NqR/0e3CziXuhkS+ZPjm
- +pzuR3WrgJbQskI4ukrKmoTbssfkUKULN0RSNETZAP7MugmjmdQxpzZ5LNKdV9ZrUAPE=;
+ bh=Saxw2KCWUjGjqwUaverz3YSXi+y34iho60NeMiVCyLc=; b=DPqJviKNU6WIxkEkb+6H+A1oJt
+ Tv64/3y1/sHtPq7ZA4qTA4zbdVjoZzN9PTik0IoMqks/8WkPO0SJigo79Bgmnt63wTU+Fa5pTyWgs
+ VpEivULMkVJN5DXD2RgMKf5DTSfDmC+cj60VzS6WtnvuN/SwySuMjhd3EXItznYZbtSE=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vIxCT-00046g-1c for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Nov 2025 22:50:57 +0000
+ id 1vIxCR-00046R-9g for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 11 Nov 2025 22:50:55 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id BBA38446AB
+ by sea.source.kernel.org (Postfix) with ESMTP id 044B5446BD
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 11 Nov 2025 22:50:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A415C116B1;
- Tue, 11 Nov 2025 22:50:51 +0000 (UTC)
+ Tue, 11 Nov 2025 22:50:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD14CC116B1;
+ Tue, 11 Nov 2025 22:50:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1762901451;
- bh=aBeUVRElA6skoKpJp7e24LRjOo41rE3IgWMUo5RwVfo=;
+ s=k20201202; t=1762901444;
+ bh=XwfyhGg09HKqiv7zmaScf+pdUnoKEQvBL1rZ1pJG430=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=oV4wwU7PMLNL8tSbxjcJBNKJZR2Yl7nZx1Bb/IvL3mHJ01hzFaUBvgK1qG8bD7hsV
- /DtyjbEDN/rG8im93qORWJ34LamMOqIhE/OJiCAnD8BRURQN2z4DeUx+xwRyLcsEeJ
- CwH8DPMUW5pNgVEMxysMZXpvRFBymo1xvjsJSLnV11gt4VjUpzwQSCSk5smqXgqxUR
- hmWU/KWEdPu5M3qvluZGjSmRcR6jq1vUY4dKYoYt3LLshIeBRemur5yfOJDaSuACR4
- PsXU+iVbPKDB7aK/GFtENSCoqaRLyMEK8Nm7kmwW16JXNz3IzM8NnJa4bUbMlymm8m
- 1emtmFAaPklMQ==
+ b=JilYNZfxLPmfHyaCTQJoVFJb3IeTwYf5amGNtREVrvu9EaRpy6VsL0dLlventvjK9
+ yOauQRBGWWXQ4+UweOPMHrABqf5oZdSGcLuLWgADsIMCVY6XxdBYqiVTF61RFoX36O
+ GjNy3499ULqolGFQRX1UhfcVnvD050TZvxWCJ7/SQtXj2OIpcpwTbhmTaQCw1ur1HV
+ GFX92QtmonljbCflEvGwXp9LcmOq4tUA1E0X0enULGbRN4WV+8CZyXwiiyRl8zcis+
+ GIx9HG5u/iEU6eYpwnc1xDL2jyuma6MPGwyQvnsZH+gyDsosaODx6PYLXus78Qc8Fj
+ oyCh64XDPOZRg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- EB26E380DBCD; Tue, 11 Nov 2025 22:50:22 +0000 (UTC)
+ 33C87380DBCD; Tue, 11 Nov 2025 22:50:16 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176290142149.3596344.6185023964431728544.git-patchwork-notify@kernel.org>
-Date: Tue, 11 Nov 2025 22:50:21 +0000
-References: <20251105065023.3656975-1-chao@kernel.org>
-In-Reply-To: <20251105065023.3656975-1-chao@kernel.org>
+Message-Id: <176290141484.3596344.169057131556061047.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Nov 2025 22:50:14 +0000
+References: <20251027063534.103963-1-chao@kernel.org>
+In-Reply-To: <20251027063534.103963-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1vIxCT-00046g-1c
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix return value of
- f2fs_recover_fsync_data()
+X-Headers-End: 1vIxCR-00046R-9g
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix to propagate error from
+ f2fs_enable_checkpoint()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -102,28 +102,21 @@ Hello:
 This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed,  5 Nov 2025 14:50:22 +0800 you wrote:
-> With below scripts, it will trigger panic in f2fs:
+On Mon, 27 Oct 2025 14:35:33 +0800 you wrote:
+> In order to let userspace detect such error rather than suffering
+> silent failure.
 > 
-> mkfs.f2fs -f /dev/vdd
-> mount /dev/vdd /mnt/f2fs
-> touch /mnt/f2fs/foo
-> sync
-> echo 111 >> /mnt/f2fs/foo
-> f2fs_io fsync /mnt/f2fs/foo
-> f2fs_io shutdown 2 /mnt/f2fs
-> umount /mnt/f2fs
-> mount -o ro,norecovery /dev/vdd /mnt/f2fs
-> or
-> mount -o ro,disable_roll_forward /dev/vdd /mnt/f2fs
+> Fixes: 4354994f097d ("f2fs: checkpoint disabling")
+> Cc: stable@kernel.org
+> Signed-off-by: Chao Yu <chao@kernel.org>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,1/2] f2fs: fix return value of f2fs_recover_fsync_data()
-    https://git.kernel.org/jaegeuk/f2fs/c/d05faa07e7da
-  - [f2fs-dev,2/2] f2fs: fix to detect recoverable inode during dryrun of find_fsync_dnodes()
-    https://git.kernel.org/jaegeuk/f2fs/c/ca244e9242a1
+  - [f2fs-dev,1/2] f2fs: fix to propagate error from f2fs_enable_checkpoint()
+    https://git.kernel.org/jaegeuk/f2fs/c/9e2d7d763a3c
+  - [f2fs-dev,2/2] f2fs: block cache/dio write during f2fs_enable_checkpoint()
+    https://git.kernel.org/jaegeuk/f2fs/c/ba4591f78dc1
 
 You are awesome, thank you!
 -- 
