@@ -4,77 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D2F0FCCFA1A
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Nov 2025 22:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 25EB2CCFA1A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Nov 2025 22:51:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=n4rGWRazCFrdKHyAFndh7LoMEupgaYsbcBpBXOef5HI=; b=UOsBDzJAWvOGKhYFo1NSAcRmyF
-	NkVjmsI8iagCneGGkeqbxc5Jv3UkdvKbuxEA1z7lP8acTWHxMaOtcNQqkdNxrKdI5NYiSdkeZ95PN
-	SXAx1bgupQuH/+JTYrk/RfbvpKhLCPFweNqhWmJ1U516jvsFNI/A1mNY8YPECGCdK5KA=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Nl3LzE13VFECZthwbJgcoL89xoLL7oOKPMr1kKDRHrs=; b=mLiBsPpmmZA7ih/oNjZQ5IB/Se
+	YumPsHgAb+S7ZCQSLXZQ/JYHstnKjaybGGFyjsJBdXVHaXwdoAHCHZAfqz4zRbHZbuk4eSR97iPJ4
+	tN9yEEcobWD9Uu40Gvd05iAtFQuelnGZWck8gFtJfUB+7mRzcNH8mFeXrpg6pggEndRk=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vIxCd-0002XW-Fo;
-	Tue, 11 Nov 2025 22:51:07 +0000
+	id 1vIxCj-0004eN-R7;
+	Tue, 11 Nov 2025 22:51:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vIxCb-0002XF-GG
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vIxCf-0004dy-P2
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Nov 2025 22:51:05 +0000
+ Tue, 11 Nov 2025 22:51:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kzFEqmHHao4yag6MBZ1jPsxBj0gNoMxcBQvzsDDOVvA=; b=SsjnQ5eXbKNTp4ZKaEuWVmCl5n
- H2CH2YX1d2hEoPSZOzx1uj7U8NRNbKMt+lxqjIYuZ6aQbsTPvK1WVjMqPRUaG2VbbxAWzvhdhl/JP
- O/G65wbYblUHxsHyeuHqOpA5YVnzIWbb2N/OpQO40AHSOfNZbbXEJaKR32cEf0OnYzyM=;
+ bh=63LLY5nJKUWRoxLjKyV/YVRNj/QyS2ZNMecTGrQ18qI=; b=YfXc2sgkbX4yi6aRz3uxucd4GW
+ flHkNAXUo/1i0QagzKvpMGv27shWlKYB0l8/lRUfKipYBBfwAUDLYfXOHnRsXWpgrxY/Av/mxzA80
+ atropK5noHFQzzZzw/nA/tLWmdz5o4ph7T1BcJxPFTtek7FFi1KueNlQUV9hD4WWxJQs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kzFEqmHHao4yag6MBZ1jPsxBj0gNoMxcBQvzsDDOVvA=; b=DvFZPG/Xb9eyiudMT1o6HivJSB
- 5M7RCKkgYxYQy7hLihGzU8ec8PHSrXy05yzGbvH/jYbw03aJbgHLQlhE3rWh0UMPzOjPupZ/vWTlR
- KF04WlH1pDqJ4AKZAhta3f9GH2DdlJ2BTdgql6iEsn4p5dYXpRG+2+LrPK6ifIOF0US0=;
+ bh=63LLY5nJKUWRoxLjKyV/YVRNj/QyS2ZNMecTGrQ18qI=; b=OMWZLESWDBU5XQoQNTnJDC1sg/
+ J6SJWRqoECdbSY0BgTHkP7qlXXMM8Ly9Wbvdj0st6DUmKxmHp5W/abK1YUxupzdd4jrFRE5wDw6co
+ JONYhHrctysG2jirXVFFvMvUkbpuwA681d193JlC8Pl1t7E3ph+YL8RLaYXI1/46TCGQ=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vIxCb-00047q-1A for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Nov 2025 22:51:05 +0000
+ id 1vIxCf-00048Q-A1 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 11 Nov 2025 22:51:09 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id B6962439E4;
- Tue, 11 Nov 2025 22:50:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ADB2C116D0;
- Tue, 11 Nov 2025 22:50:54 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 0610F40472;
+ Tue, 11 Nov 2025 22:50:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6FBBC19425;
+ Tue, 11 Nov 2025 22:50:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1762901454;
- bh=+ki5olCxPHtVL97ACk4grcpZP3cvZifs8mdZYMe7rRA=;
+ s=k20201202; t=1762901458;
+ bh=nD71wI0XDv1kv2m82/Iq4eGjVSvOsCDAGUPZWot8Yus=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=dElx1JKswnyuBs+3p+5BAWqARZTtjn9r/ua21RH5hZdVx8VHWITe/YMiEbft5kPzw
- 98Uf7tjAMqyyp99Ox3hP6uDojzFVVFBmZx8jqNXE8/HQmuNgMNBafy3S+Vmg3zMd+i
- d6WIMixYDHIQpXlfiTO7hkEIOal9MQtmDuWj6RUSijrFlOIyrzW1zw8DSm8q7yJeyJ
- 7ifWIQbmyYoKDSjDMdZaXf1K+vLVrvGxPYpxNfmrHV5mRPsqFJoIcZTEqEE861wg5X
- uUNVE3Wsi41SmugNVTXpZGSTupLf+YPDKMSRemHePySFJfzJ9cC0/9YZV7B+2F+uxu
- egVYY3c/z/eew==
+ b=ny9fwatzQJizAzvfCE0J5IWJhtliyWffvA+iL5AuHxiq16h46NWVoPjk3nn+pFnhm
+ FyHMcekOXkTjqmfpBz2FL4nK5YctqIsEItLfKlIrYN4PVJTxXuYD3sxW9PVlodQdPt
+ nXi08oOOuCK3MuLBZN4SyR14jSi9IC3f3XJiBUYMZBgTYxGU8BqZIoVwqDbAaXM4cJ
+ ww+DNjPXupugpGk9feOH73Eh9BKDrciBFIRp5u2fKMShdPRDOf7ZQrpSujoXt+hv51
+ msP4qldA0iEEnrNSp0jdM/UHkdotTF5mwDK1sv/wqSThU3ESn8+ppD1q3O+GVeYXws
+ 1zwcJXc6T80tA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- EAFC3380DBCD; Tue, 11 Nov 2025 22:50:25 +0000 (UTC)
+ 33AFC380DBCD; Tue, 11 Nov 2025 22:50:30 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176290142449.3596344.13635086090138758618.git-patchwork-notify@kernel.org>
-Date: Tue, 11 Nov 2025 22:50:24 +0000
-References: <20251014114735.1840965-1-chao@kernel.org>
-In-Reply-To: <20251014114735.1840965-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1vIxCb-00047q-1A
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid potential deadlock
+Message-Id: <176290142873.3596344.6498894062602696343.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Nov 2025 22:50:28 +0000
+References: <20251027125543.633506-1-yangyongpeng.storage@gmail.com>
+In-Reply-To: <20251027125543.633506-1-yangyongpeng.storage@gmail.com>
+To: Yongpeng Yang <yangyongpeng.storage@gmail.com>
+X-Headers-End: 1vIxCf-00048Q-A1
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: change the unlock parameter of
+ f2fs_put_page to bool
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,9 +90,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: syzbot+14b90e1156b9f6fc1266@syzkaller.appspotmail.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- r772577952@gmail.com, jaegeuk@kernel.org, stable@kernel.org
+Cc: jaegeuk@kernel.org, yangyongpeng@xiaomi.com,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -101,20 +101,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 14 Oct 2025 19:47:35 +0800 you wrote:
-> As Jiaming Zhang and syzbot reported, there is potential deadlock in
-> f2fs as below:
+On Mon, 27 Oct 2025 20:55:43 +0800 you wrote:
+> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 > 
-> Chain exists of:
->   &sbi->cp_rwsem --> fs_reclaim --> sb_internal#2
+> Change the type of the unlock parameter of f2fs_put_page to bool.
+> All callers should consistently pass true or false. No logical change.
 > 
->  Possible unsafe locking scenario:
+> Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to avoid potential deadlock
-    https://git.kernel.org/jaegeuk/f2fs/c/7976ef973cab
+  - [f2fs-dev,v2] f2fs: change the unlock parameter of f2fs_put_page to bool
+    https://git.kernel.org/jaegeuk/f2fs/c/096c6cf89318
 
 You are awesome, thank you!
 -- 
