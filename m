@@ -4,78 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D573ACD13CF
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Nov 2025 22:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 20DC3CCFA18
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Nov 2025 01:48:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ZrxJRHhlNxbxKXItN8weeClK8c+hg8tizGfnEgNCoEA=; b=E4jbYt1FrI04TZ2IB2nbkXD7ei
-	2DJWEmZ4BvIgCgspJcNAtLZZnhcb0xQYwHIq6EVXj56K3VBuZkzglD33/c6AV8dPe9qAvxfQZS1dh
-	Ekxfgj463ztVEz9W00eRVeFTs/ET5ld3kKEo6fb8o0kXe/pKxRtSLhPiSWvpqQQ3a1Ak=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=UrPw8W97XoJ3xIWcSRlUa0advbA+ptpMkKqcuIP03fg=; b=Vxf4B5B/v9uMwWYfTvdA3U3d5x
+	U6q017X1NtBEsk7RSSS1JLg5VCaJ73LPZYWtNCEjiJHToMSKRP17Og18KfGOG8eZEaELfxvYiHuxU
+	iKIU9lKhhA3IZr4wfEvqeJMTZwnoqtM8AvPG4Z7V8A+pLy5gJ8gMYXSkj5eEqwIkBsm8=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vIxCk-0008UW-Pd;
-	Tue, 11 Nov 2025 22:51:15 +0000
+	id 1vIzxw-0003ah-Bm;
+	Wed, 12 Nov 2025 01:48:08 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vIxCh-0008To-0Y
+ (envelope-from <chao@kernel.org>) id 1vIzxu-0003aa-QE
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Nov 2025 22:51:11 +0000
+ Wed, 12 Nov 2025 01:48:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=E+lhYZ65D5rS51OljvZt496ol2qV3x8VzqDGXCM/R1U=; b=Ah1qlm+ddiyKcaQF7w5kI/+Zod
- 2CQHn7tqjyvzJrrSXcScv9khmZ5PZFbjV3e4+RZWmtYlrcWNtLWagseT8Ogf7AP5qJmCQkOMYmqSI
- dw18yGO3uhmA8ms3x5tY1Q1MPSj0XDBVLUHN05PuQe9trV/ISSXMv45Mzzy3wrAyPagY=;
+ bh=gTDBJsPSHdWM1Ct6VQAhjYiTygkjyqfjmJ15sTEVY7k=; b=F2miS0O5F4vJpZmIPUpaUDgt7X
+ Tf2ixnH4oo7K4rehiipRJII+1583DrhcLxfDY/HrERfMht+Y97+hoP2i32iRS+r8O61C1ztzg798T
+ G6/cqycB1F00IrIF+MJJFMFiO6YZkpd4rAOan3alH2LQQ2G0ULxAtsdPFSTUi1wWH//o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=E+lhYZ65D5rS51OljvZt496ol2qV3x8VzqDGXCM/R1U=; b=auEOVGN+L7XK1OIwVne9AnofgR
- xkWa4WIkbBY7AWKo7n/cYHV3Yy2SmdCvC8BWGyICbMV4L43XOhCBVqb2PYDU9QF0MBGeWFmwJAA/d
- OjdB7SihHbZBzRBEvEljHwTsxTxZaPrWeeaWrB8qz0byDVsxW2NNCG03MUMq6h25zepk=;
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=gTDBJsPSHdWM1Ct6VQAhjYiTygkjyqfjmJ15sTEVY7k=; b=cXXcpcNX9QbC1VNg/5q+nT0Hw4
+ iEDp98jk720RvTbnPZ/BNwHCMY7dgpjn9hPEBDO4igoMWfQAJ+6Y6u5K3f5tuwFgXTQnxzXFnZ5Vm
+ V4YU5K2wVfnYUSY8I7yFO0/Lu1oMlDw9uXNPr8Jko4R9OrYy+Y3D+vWjq4fKNiymCsxM=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vIxCh-00048b-B3 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Nov 2025 22:51:11 +0000
+ id 1vIzxu-0004uB-5K for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 12 Nov 2025 01:48:06 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id BE4E560051;
- Tue, 11 Nov 2025 22:51:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C4D2C116D0;
- Tue, 11 Nov 2025 22:51:00 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 66B9C6020B
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 12 Nov 2025 01:48:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAEA3C116B1;
+ Wed, 12 Nov 2025 01:47:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1762901460;
- bh=u51U8yVkwn+sqh38JGcORAerkrd9IH4FeT/eOeCwWMs=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=cFL9lVU8P8B2/FgWp6hFLkhO91Fq6rOeAvHISsN9tQvyuIL1WuHHXdaARX7v1qBwM
- a4bhiVaTySMFg8DbTTYtU99hX46T1hopgYn4zgJW0ry6mn/o+tTnbA7t9BJdafAlij
- vWW1bPNlDftqWyPCycJPe+LknhgWuRYb/p7mMxbqq+v3Mh7PUPlyiGHF3DZxcvRRZQ
- +E/7G5TZkF0au7h4Ycl7StFz/UNwRUi5iLDsB7tLzTVN7NcUDxZiO4f0wjBLibAfIK
- lUSbxNm+MXHlJUhx9TQuAq2NQynjgywcgOqPDBamufXfitqoi2Xvj/pIEQNAOLHwhi
- /13YQ0BIrQ7Sg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- ADDA8380DBCD; Tue, 11 Nov 2025 22:50:31 +0000 (UTC)
+ s=k20201202; t=1762912080;
+ bh=caTNvumpR+KdHLkJSpfpObyy4nYXY+CobTC0ucALsd0=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=EMMFj4Fuavf+prqYjQuL/Fcq6Xe8sqIkFZ0/uxFszO5/RZ74/Man62RlZk2UHdu0o
+ J21e/F9ZUPB9tN0/K4yu+AqlYQqEKHtFlcy7/8zuqqs45ZWDnQoY07kUuHgvWKFZQo
+ ZOCRUDMrUpuBDVrcoS/j34epKGvXzmd2OkymnxB/8QggASDfk779iaQzDJhyeQpJZ7
+ 58y7TV5W1c/ffl51/ZePRm3mv1xcOkMrDvTzkJoKzqmEVueYLjEpxeQE2CT/Fq3dbj
+ Fc5zFfzYHUAEMN3IbLDAgCG3OSLG0meyQ+FfgwbBWjrRooPc1VNfeN8VJdueEGoEPJ
+ Hvq3VA8eUjEmg==
+To: jaegeuk@kernel.org
+Date: Wed, 12 Nov 2025 09:47:48 +0800
+Message-ID: <20251112014749.2006439-2-chao@kernel.org>
+X-Mailer: git-send-email 2.52.0.rc1.455.g30608eb744-goog
+In-Reply-To: <20251112014749.2006439-1-chao@kernel.org>
+References: <20251112014749.2006439-1-chao@kernel.org>
 MIME-Version: 1.0
-Message-Id: <176290143023.3596344.4932276486991628363.git-patchwork-notify@kernel.org>
-Date: Tue, 11 Nov 2025 22:50:30 +0000
-References: <20251010-origin-dev-v2-1-952a3c98cd9c@amlogic.com>
-In-Reply-To: <20251010-origin-dev-v2-1-952a3c98cd9c@amlogic.com>
-To: Jiucheng Xu <jiucheng.xu@amlogic.com>
-X-Headers-End: 1vIxCh-00048b-B3
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: Use mapping->gfp_mask to get file
- cache for writing
+X-Headers-End: 1vIzxu-0004uB-5K
+Subject: [f2fs-dev] [PATCH v2 2/3] f2fs: introduce f2fs_schedule_timeout()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,42 +86,188 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: devnull+jiucheng.xu.amlogic.com@kernel.org, jianxin.pan@amlogic.com,
- tuan.zhang@amlogic.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+In f2fs retry logic, we will call f2fs_io_schedule_timeout() to sleep as
+uninterruptible state (waiting for IO) for a while, however, in several
+paths below, we are not blocked by IO:
+- f2fs_write_single_data_page() return -EAGAIN due to racing on cp_rwsem.
+- f2fs_flush_device_cache() failed to submit preflush command.
+- __issue_discard_cmd_range() sleeps periodically in between two in batch
+discard submissions.
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+So, in order to reveal state of task more accurate, let's introduce
+f2fs_schedule_timeout() and call it in above paths in where we are waiting
+for non-IO reasons.
 
-On Fri, 10 Oct 2025 10:45:50 +0000 you wrote:
-> From: Jiucheng Xu <jiucheng.xu@amlogic.com>
-> 
-> On 32-bit architectures, when GFP_NOFS is used, the file cache for write
-> operations cannot be allocated from the highmem and CMA.
-> 
-> Since mapping->gfp_mask is set to GFP_HIGHUSER_MOVABLE during inode
-> allocation, using mapping_gfp_mask(mapping) as the GFP flag of getting file
-> cache for writing is more efficient for 32-bit architectures.
-> 
-> [...]
+Then we can get real reason of uninterruptible sleep for a thread in
+tracepoint, perfetto, etc.
 
-Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: Use mapping->gfp_mask to get file cache for writing
-    https://git.kernel.org/jaegeuk/f2fs/c/2308de27c03d
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v2:
+- get rid of f2fs_schedule_timeout() replacement in retry logic for no
+memory error.
+ fs/f2fs/checkpoint.c |  4 ++--
+ fs/f2fs/compress.c   |  4 ++--
+ fs/f2fs/data.c       |  4 ++--
+ fs/f2fs/f2fs.h       | 22 +++++++++++++++-------
+ fs/f2fs/segment.c    |  4 ++--
+ fs/f2fs/super.c      |  2 +-
+ 6 files changed, 24 insertions(+), 16 deletions(-)
 
-You are awesome, thank you!
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index bbe07e3a6c75..4c401b5b2933 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1318,7 +1318,7 @@ void f2fs_wait_on_all_pages(struct f2fs_sb_info *sbi, int type)
+ 			f2fs_submit_merged_write(sbi, DATA);
+ 
+ 		prepare_to_wait(&sbi->cp_wait, &wait, TASK_UNINTERRUPTIBLE);
+-		io_schedule_timeout(DEFAULT_IO_TIMEOUT);
++		io_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
+ 	}
+ 	finish_wait(&sbi->cp_wait, &wait);
+ }
+@@ -1974,7 +1974,7 @@ void f2fs_flush_ckpt_thread(struct f2fs_sb_info *sbi)
+ 
+ 	/* Let's wait for the previous dispatched checkpoint. */
+ 	while (atomic_read(&cprc->queued_ckpt))
+-		io_schedule_timeout(DEFAULT_IO_TIMEOUT);
++		io_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
+ }
+ 
+ void f2fs_init_ckpt_req_control(struct f2fs_sb_info *sbi)
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 716004ba44dc..148bb925b03b 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1057,7 +1057,7 @@ static void cancel_cluster_writeback(struct compress_ctx *cc,
+ 		f2fs_submit_merged_write(F2FS_I_SB(cc->inode), DATA);
+ 		while (atomic_read(&cic->pending_pages) !=
+ 					(cc->valid_nr_cpages - submitted + 1))
+-			f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
++			f2fs_io_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
+ 	}
+ 
+ 	/* Cancel writeback and stay locked. */
+@@ -1574,7 +1574,7 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+ 				 */
+ 				if (IS_NOQUOTA(cc->inode))
+ 					goto out;
+-				f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
++				f2fs_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
+ 				goto retry_write;
+ 			}
+ 			goto out;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index d8e163cc7308..48c20386f031 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3150,8 +3150,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 				} else if (ret == -EAGAIN) {
+ 					ret = 0;
+ 					if (wbc->sync_mode == WB_SYNC_ALL) {
+-						f2fs_io_schedule_timeout(
+-							DEFAULT_IO_TIMEOUT);
++						f2fs_schedule_timeout(
++							DEFAULT_SCHEDULE_TIMEOUT);
+ 						goto retry_write;
+ 					}
+ 					goto next;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a4439175eabf..0d0e0a01a659 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -656,8 +656,8 @@ enum {
+ 
+ #define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO or flush count */
+ 
+-/* congestion wait timeout value, default: 20ms */
+-#define	DEFAULT_IO_TIMEOUT	(msecs_to_jiffies(20))
++/* IO/non-IO congestion wait timeout value, default: 20ms */
++#define	DEFAULT_SCHEDULE_TIMEOUT	(msecs_to_jiffies(20))
+ 
+ /* timeout value injected, default: 1000ms */
+ #define DEFAULT_FAULT_TIMEOUT	(msecs_to_jiffies(1000))
+@@ -4919,22 +4919,30 @@ static inline bool f2fs_block_unit_discard(struct f2fs_sb_info *sbi)
+ 	return F2FS_OPTION(sbi).discard_unit == DISCARD_UNIT_BLOCK;
+ }
+ 
+-static inline void f2fs_io_schedule_timeout(long timeout)
++static inline void __f2fs_schedule_timeout(long timeout, bool io)
+ {
+ 	set_current_state(TASK_UNINTERRUPTIBLE);
+-	io_schedule_timeout(timeout);
++	if (io)
++		io_schedule_timeout(timeout);
++	else
++		schedule_timeout(timeout);
+ }
+ 
++#define f2fs_io_schedule_timeout(timeout)		\
++			__f2fs_schedule_timeout(timeout, true)
++#define f2fs_schedule_timeout(timeout)			\
++			__f2fs_schedule_timeout(timeout, false)
++
+ static inline void f2fs_io_schedule_timeout_killable(long timeout)
+ {
+ 	while (timeout) {
+ 		if (fatal_signal_pending(current))
+ 			return;
+ 		set_current_state(TASK_UNINTERRUPTIBLE);
+-		io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+-		if (timeout <= DEFAULT_IO_TIMEOUT)
++		io_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
++		if (timeout <= DEFAULT_SCHEDULE_TIMEOUT)
+ 			return;
+-		timeout -= DEFAULT_IO_TIMEOUT;
++		timeout -= DEFAULT_SCHEDULE_TIMEOUT;
+ 	}
+ }
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index d968a4250b1a..993ec8afe2db 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -750,7 +750,7 @@ int f2fs_flush_device_cache(struct f2fs_sb_info *sbi)
+ 		do {
+ 			ret = __submit_flush_wait(sbi, FDEV(i).bdev);
+ 			if (ret)
+-				f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
++				f2fs_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
+ 		} while (ret && --count);
+ 
+ 		if (ret) {
+@@ -3471,7 +3471,7 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+ 			blk_finish_plug(&plug);
+ 			mutex_unlock(&dcc->cmd_lock);
+ 			trimmed += __wait_all_discard_cmd(sbi, NULL);
+-			f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
++			f2fs_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
+ 			goto next;
+ 		}
+ skip:
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 2bd7c2320d4f..d47ec718f3be 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2652,7 +2652,7 @@ static int f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
+ 	/* we should flush all the data to keep data consistency */
+ 	while (get_pages(sbi, F2FS_DIRTY_DATA)) {
+ 		writeback_inodes_sb_nr(sbi->sb, nr_pages, WB_REASON_SYNC);
+-		f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
++		f2fs_io_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
+ 
+ 		if (f2fs_time_over(sbi, ENABLE_TIME))
+ 			break;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.49.0
 
 
 
