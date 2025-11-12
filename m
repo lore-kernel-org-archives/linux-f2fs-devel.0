@@ -4,76 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 79B17CCFA1A
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Nov 2025 01:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0E76ACCFA1A
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Nov 2025 01:48:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=Keyy5O6D89FDoqvWYJ6cIoTrj00jQmHUQKkkf1IhNtY=; b=OMrekwR2m3fSzmXhr458TtE8ok
-	ePDECaKKYpMXPLCGo3cfgmK9UouUQzSCU3n8WUvFgPNUaCZepRUIHxQfLYic0hDmxUrfUyCjfk47M
-	VUQCioqsBqhopZsi5tC/40AosnZGeLKMs6zdXOot5MZzvbfTCVwWKg4dJPyVCOLD77Sc=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=+y6NQX/6mlxOl1FCROTcmVie5ArdhoyuQOt153ePnVs=; b=j8ACfX1PZW7129rEiTZ/DSySZo
+	W560yTuTKIaahWb/5Hv96q1ekFvkmj7B1+8iIX1nWd3K4kMbIHUOFEfR8mRv945ibyfbbFioD5Ib0
+	HYDEcLu6W0tRt3ijQkHO2JsiOSHTn4k171en2WFcBfxYkWyq8M8Pdg1olL4Of2LYzJqU=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vIzxy-00058w-BM;
-	Wed, 12 Nov 2025 01:48:11 +0000
+	id 1vIzy1-0006dJ-M4;
+	Wed, 12 Nov 2025 01:48:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vIzxw-00058e-Oy
+ (envelope-from <chao@kernel.org>) id 1vIzy0-0006dD-EC
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Nov 2025 01:48:09 +0000
+ Wed, 12 Nov 2025 01:48:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KpljFRKDEQmLBYPD4V8f0xXhR8SBvZlzs1OV5RDUEEM=; b=R0jjiJZ1lXfdZMJe9+e3/tSQa1
- wWX9ZhikzOh1dFoTAci1jwAHuu+oTIegt00CvLRHWHweEEj5/wmFnnqBMuWgjXZYbkkfSvCSKI+jV
- u8zQ/SagOW0fXsNTUuAHIzncIwnJXCfMAttrv1sVzdvw1qIBak40hDFH57mUHALunxBY=;
+ bh=qINicFXnxxqQCJ3Aky0ZqnVGL1InwO54BphZielxX5g=; b=Yco2DG7k1DuvAFbqozNyoUb/U/
+ XWkWdhJPYTPCaIvX/6OgHcOXGwLEZ6+MHeEYK/kW3bksuSwdDJtXSp1B/4JjBgz5AJ3GzRDJHHlQz
+ OGxSIKSka0eO8vKp+1hG1SrfCyJkiBifUaUNuaryQiS+tN5JvNIbdW14KTH3Ek5ZO2zU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=KpljFRKDEQmLBYPD4V8f0xXhR8SBvZlzs1OV5RDUEEM=; b=d
- V/O9tNaUrS9foyOQbnLG6m3FrjlKC3KpAPLNLQy2EoxQDqJiiC11qN57z5i4GL+09dAtv9O53wWTJ
- vZZwZTU+WuU40B4CM8rtrV+JfgDvRjI+7iB482B/Tl8UMjIcJYiZsRe1eBYmPs6mltB8pIi3pgscy
- To30ZyWB2Fzlfjtw=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=qINicFXnxxqQCJ3Aky0ZqnVGL1InwO54BphZielxX5g=; b=S5IQWbK3plyt7cmmflnpn6Cv99
+ +hrKz1Bd93E98HMW3EYkTcCuG6chjtUzcsxSNc9SIgFA1ZvBhaLlNVPM6b9ztaAKC9aOzs5Nc2lUW
+ /EFGxfx3X1GhejmSUbpmVJ6aTpynUGCBZzblBwo462xJEKMKzGoIbE60IxB7ujmZfUkQ=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vIzxx-0004uN-41 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Nov 2025 01:48:09 +0000
+ id 1vIzy0-0004uZ-1H for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 12 Nov 2025 01:48:12 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id A434141522
+ by sea.source.kernel.org (Postfix) with ESMTP id BB87943DEC
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 12 Nov 2025 01:47:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 702C2C4CEF5;
- Wed, 12 Nov 2025 01:47:57 +0000 (UTC)
+ Wed, 12 Nov 2025 01:48:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF49C2BCB2;
+ Wed, 12 Nov 2025 01:48:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1762912078;
- bh=7nv5fT4fdF0GW5Fyx2VzArTblyNuA16QWAh/M13oABQ=;
- h=From:To:Cc:Subject:Date:From;
- b=RbIIWY48hxQmIvBzZZvWl8aRbPpmsC35EYVpuUd9H0st4AZZl85rxnrSWe6kvXO3u
- hxVU8lUltClEx7IWlmCvycCfn+5ylCQU627mJcMA6DoK8GuIcGYVj4uXcGuMHfUKG8
- Afb/T3a4XYqP05qOuP6C+Qw88DMX7ApEhaHwS1hKltS5cScbq8TYhT+mqdHbJgyQp+
- vKHWeh9ps+/IivR49PX7k7z8sGq8cgrDwtKxUlEMQRLEUhEwvkmr/9MXQvvCrkL0Dk
- DwJDUpaf0eVXQEBhMNHl8GQmLikZrw4DpWMfi6kZErZ0PR/0fZmX/FXvrGfwdpOLPv
- 64FvLnp18nzPA==
+ s=k20201202; t=1762912081;
+ bh=l89OBBRuQN/2/Z1dA51l4gZkGX3b0zGt4ZmsQETNW/s=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=L6KYpWbIiBqm5vcfQSXUIGVJZzyFysOP0qOUCKRymJJiifLwvg9C6M9WDAJbRGqpF
+ FoEVyBxSA0eCYIzL1NNpI5Ci+x8Pz2qm7bPLHsS5iDSOd5I94rrECvCpmpjD+w5cD+
+ gtOGHkOdwFqZjbYbDyU+ALOqL42T3nJ3hS2H45TQ0fGmrO+dl7/Ok5cddWHEBSmNPm
+ gL1Cpfc5XS3sBPHCINH5NqhzcCzkv6mykk77W3B+vDhmoKM0qPP9lXx7XOTmmiS4RM
+ RJWuM63YGteGtGeycYyXxSCqLyoUX4qyQpAnM+bQce9slz566bXJz63lLlS8++nvRF
+ 0YbqbTt75gLsA==
 To: jaegeuk@kernel.org
-Date: Wed, 12 Nov 2025 09:47:47 +0800
-Message-ID: <20251112014749.2006439-1-chao@kernel.org>
+Date: Wed, 12 Nov 2025 09:47:49 +0800
+Message-ID: <20251112014749.2006439-3-chao@kernel.org>
 X-Mailer: git-send-email 2.52.0.rc1.455.g30608eb744-goog
+In-Reply-To: <20251112014749.2006439-1-chao@kernel.org>
+References: <20251112014749.2006439-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1vIzxx-0004uN-41
-Subject: [f2fs-dev] [PATCH v2 1/3] f2fs: use memalloc_retry_wait() as much
- as possible
+X-Headers-End: 1vIzy0-0004uZ-1H
+Subject: [f2fs-dev] [PATCH v2 3/3] f2fs: change default schedule timeout
+ value
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,42 +94,58 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-memalloc_retry_wait() is recommended in memory allocation retry logic,
-use it as much as possible.
+This patch changes default schedule timeout value from 20ms to 1ms,
+in order to give caller more chances to check whether IO or non-IO
+congestion condition has already been mitigable.
+
+In addition, default interval of periodical discard submission is
+kept to 20ms.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
-use memalloc_retry_wait() instead of f2fs_io_schedule_timeout()
+v2:
+- no changes
+ fs/f2fs/f2fs.h    | 6 ++++--
  fs/f2fs/segment.c | 2 +-
- fs/f2fs/super.c   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 0d0e0a01a659..74cbbd84f39b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -407,6 +407,8 @@ struct discard_entry {
+ #define DEFAULT_DISCARD_GRANULARITY		16
+ /* default maximum discard granularity of ordered discard, unit: block count */
+ #define DEFAULT_MAX_ORDERED_DISCARD_GRANULARITY	16
++/* default interval of periodical discard submission */
++#define DEFAULT_DISCARD_INTERVAL	(msecs_to_jiffies(20))
+ 
+ /* max discard pend list number */
+ #define MAX_PLIST_NUM		512
+@@ -656,8 +658,8 @@ enum {
+ 
+ #define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO or flush count */
+ 
+-/* IO/non-IO congestion wait timeout value, default: 20ms */
+-#define	DEFAULT_SCHEDULE_TIMEOUT	(msecs_to_jiffies(20))
++/* IO/non-IO congestion wait timeout value, default: 1ms */
++#define	DEFAULT_SCHEDULE_TIMEOUT	(msecs_to_jiffies(1))
+ 
+ /* timeout value injected, default: 1000ms */
+ #define DEFAULT_FAULT_TIMEOUT	(msecs_to_jiffies(1000))
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 10d873d1b328..d968a4250b1a 100644
+index 993ec8afe2db..8375dca7ed9e 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -234,7 +234,7 @@ static int __replace_atomic_write_block(struct inode *inode, pgoff_t index,
- 	err = f2fs_get_dnode_of_data(&dn, index, ALLOC_NODE);
- 	if (err) {
- 		if (err == -ENOMEM) {
--			f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
-+			memalloc_retry_wait(GFP_NOFS);
- 			goto retry;
+@@ -3471,7 +3471,7 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+ 			blk_finish_plug(&plug);
+ 			mutex_unlock(&dcc->cmd_lock);
+ 			trimmed += __wait_all_discard_cmd(sbi, NULL);
+-			f2fs_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
++			f2fs_schedule_timeout(DEFAULT_DISCARD_INTERVAL);
+ 			goto next;
  		}
- 		return err;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c2161b3469b3..2bd7c2320d4f 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3139,7 +3139,7 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
- 							&folio, &fsdata);
- 		if (unlikely(err)) {
- 			if (err == -ENOMEM) {
--				f2fs_io_schedule_timeout(DEFAULT_IO_TIMEOUT);
-+				memalloc_retry_wait(GFP_NOFS);
- 				goto retry;
- 			}
- 			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+ skip:
 -- 
 2.49.0
 
