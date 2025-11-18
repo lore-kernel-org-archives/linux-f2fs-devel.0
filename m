@@ -4,99 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7C244CEBF93
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Nov 2025 06:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 14120CEBF93
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Nov 2025 07:43:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Message-ID:Mime-Version:Date:Sender:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=VVvnX3ILElxn+dqmnNeu205BzjV2uJi94/il3W52GEs=; b=KcZe1feHXwXDjL5iTpHWfP8Lll
-	Okx0n10DLVqWpltDn/S/MJR3uwtjgRUibHDzh2M4cGcZ5rcdIKMLxiOvFppdFKhfxSHchfN8Bp3rM
-	vMKbNBsJU2XqfJcODQ6upx05asGY3d/eT5xHmhAFUVnbPPJ4qsNhKqMgXXktpsn0RR/0=;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-Id:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=Q3u2hy26uUs3Wo0qgpNKuQ14+uJZ1URu6oJwNnaPLkE=; b=KHJLwPEdhnezBqhvoLN7MOxCYX
+	TWE0W+TioGRx89dLkR16TbBMy5qoVUAQb8pVdyP9oZ7q+ASV9Ioh+1y3uFkRxyTpkMdeSVwGtKjIK
+	gtlBb1+o+mGHxuGvCZDrI0a6NfhQnxd9AbXyTHADbaEoQ+s0Sj02vZTUhQrvpSerjEh8=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vLFam-0004fH-Vm;
-	Tue, 18 Nov 2025 06:53:32 +0000
+	id 1vLGMe-0005gP-RZ;
+	Tue, 18 Nov 2025 07:43:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <3exAcaQQKEFwSBFCAIIAF8.6IGFCHOR-9W9M-78P8FFCMNM.MIOL689ILA8.H8N@flex--yhli.bounces.google.com>)
- id 1vLFal-0004f7-P9 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Nov 2025 06:53:31 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <ckulkarnilinux@gmail.com>) id 1vLGMd-0005gJ-Fe
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 18 Nov 2025 07:42:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ht0bGJ+qMeoh2nKXD0gUXCN3fVl6s6OTYvnWp4jySD0=; b=RAU9bGpKPtEHNAQ/vqJI3YPtn8
- 6L9VJAFX87Pq5ybtWwYCaBI3d0+PqfDuO/Fz7yq0u2wGq9FBqyjsuc5C7tWeg6caCo4pw/YqcwlMR
- dot+ePFSXYgamwL1lTYP1b2xGdpd1/qJBh+FWcMVeMqjKyk1TZjh2sTcBj86Y30BCQoE=;
+ bh=NxywsA1nA8TGs2RT9uGSCEgSdjJBrPjC0KiHZ/jaP8E=; b=jIFviLip9A71rHHLk5JYafbZS1
+ YtFBnNQDL/vgjegwu7VHdvmM+jUYx7OaSpPq1MluVzVmWq4rUS/G87fG9KOg4O5AH3CfMPO3vzbd5
+ GrddrmLtQHzE+mBm9OcPv9I4H4O2XYD/98m6G/KvwVIGEzzXrmRx2SYYfu93lDug7Fz0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=ht0bGJ+qMeoh2nKXD0gUXCN3fVl6s6OTYvnWp4jySD0=; b=g
- eQSExYI945F6TSfejioH5z+Ai4aU2bdhH87tY7KLVTB9OPsP9rI0oaWZmQjHUETdfJT98E79arr8c
- SXfOUno1mCBkUHBmWuOUaNE0bwscnhQwml2iH1DxE+J3IkF3xQy9p3H7yVLjQGLj+Y3sgoChJP98A
- mCl/KlcDXnUDZs8E=;
-Received: from mail-oo1-f74.google.com ([209.85.161.74])
+ List-Owner:List-Archive; bh=NxywsA1nA8TGs2RT9uGSCEgSdjJBrPjC0KiHZ/jaP8E=; b=U
+ 2CZVaGoBeLXqsIkx5UvjgOfstx89lED3U4KBrXu9L+B8HsWy9yUokOMKC81W3auzKcIMFl4vbkTb3
+ 8xNEqRFnl0nIn2IIjug8Hd9K4lNjgVz8vQIJYmr9g6gITmcrxLwMXfIe0wvplK35SRPdqmwDSqPIX
+ h83YZ5POjrPb/wIY=;
+Received: from mail-pf1-f175.google.com ([209.85.210.175])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vLFal-0008PO-9b for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Nov 2025 06:53:31 +0000
-Received: by mail-oo1-f74.google.com with SMTP id
- 006d021491bc7-6574ff2be86so2855219eaf.0
+ id 1vLGMc-0001qh-Sy for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 18 Nov 2025 07:42:59 +0000
+Received: by mail-pf1-f175.google.com with SMTP id
+ d2e1a72fcca58-7ba92341f83so1230835b3a.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 17 Nov 2025 22:53:31 -0800 (PST)
+ Mon, 17 Nov 2025 23:42:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1763448800; x=1764053600;
- darn=lists.sourceforge.net; 
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=ht0bGJ+qMeoh2nKXD0gUXCN3fVl6s6OTYvnWp4jySD0=;
- b=P5oLlSI3jr2z16uuXGevfOmCFLoCTP/f29EHRy7RNenJNjBqmpzb5GP8gL/N80K/u8
- OSYSaO837gveUoePhm7M9CDsyO2a/cnyWqz9VeeOl/kbai0LhanI6j2MV9sOdC6MTfsN
- 3o7naFmLwM6kE3MJt29ExEquuz9U4JlPW0KdVBAKhmfJZO301VnCkWkS3CiAm5Fx4JE5
- 1VtSW1o6y0PRm3/Yhv9B8ttOH3Rx219R6KIj7bFf5WBolh4RxaAXnbb8OL8p6And0KqQ
- 9q4BsE3TrTJeTFzPPoz8vPcHUuCuTy4ZJXrsU4X6Tn2xLqhfcYo0LPiS9xCG4hKVC5hU
- CgLA==
+ d=gmail.com; s=20230601; t=1763451768; x=1764056568; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=NxywsA1nA8TGs2RT9uGSCEgSdjJBrPjC0KiHZ/jaP8E=;
+ b=BD9CviJ2JMuLofF6kWaJdLIcgkVuT+88UInDnXNCAwn3JHiZU4KSvz5GqqEmnQOqA5
+ WP/1q5bURqfFwl4nAcWd68kT2QurXN2l3JBLC04jQpw2kzrgSWlJG/DSNVRx3ZWbeV2l
+ pAoeEqfBT+OtuBRiR3yVcqO0+/u7sWFLUfy4wvuwuFL0ovP/6GS3ComrCNVnEmB4ToDD
+ NaOkc4r4f0CqUp5s7SPTUN+TO1erSJcNCZSMAyAZGwjebkuJjLOpRsjSQGs0qqOujLlz
+ zJPmohk2eAJadXxUghD+KAuFPooxBKGM+yvT+QG+CI/sbYVEe5ZScxRv5Xf5DXpLgLc3
+ JK2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1763448800; x=1764053600;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=ht0bGJ+qMeoh2nKXD0gUXCN3fVl6s6OTYvnWp4jySD0=;
- b=VK6bN2Rf6lE2s+kp60A92RKoEqgFKQdfgmmp8OpC0bA04p1QYYXSOdbPQH1YmpFv51
- Frc7ZLKLlq6l+292Um2+8ZSSUuZkKv02+Z4ynUYpeybWrxplnfZjQ7HPrUXRAi4K2AIA
- pdGGkiw3a2jkLEcz8vTiL4+7FYcDw3SXi90R160IshFPLmoy41RItrryD3W/HOO+UUuN
- /T8mZ9pIzLzJL8OLYw6mzAWkBFbLX8eCA6/d4yMTxYZxAhznBCNVt8tKpTVX/dLo81cp
- gRUwK+2HJlSeZ+x6JX4DX1oxs5Ys5sQy0Ac6SDEH4iH249Bgf/VhN7k+DOpq7x2dFDiy
- dC8g==
+ d=1e100.net; s=20230601; t=1763451768; x=1764056568;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=NxywsA1nA8TGs2RT9uGSCEgSdjJBrPjC0KiHZ/jaP8E=;
+ b=NCFR1ho3Kdinc9xZIaZcXKkmFdMUZyh7uwemLzuuDyeIbHtvrkvUNEhYzjVRY2sZO9
+ LRBiRazCKjVDp38L1ITvkVyYcHkQbDPA2YL2rkextwmb2JhmRdXVKRAlRwt7WmkxT8ZD
+ /c0rAZWcvw7I3hm3WhEGJtMCnz7DMrwyJA1tGYbvH5J437CnAxCytpKcmrPWSHMIpwso
+ cD0BbFtDxlHzkDHmD5Fg1/ZPbnlj2bEki6N6D8/kYnnBOD1M5YXP+ioS5W4/Qcp9+7qn
+ QHHJlpSKa9PNGHQR4QAT6EsR2uYiMs8gifZxdfnwLDnJpstvGwRGo9X8FUjKL9fuNKzH
+ ThzA==
 X-Forwarded-Encrypted: i=1;
- AJvYcCVrWxlGZQOBvfpjoDK3EuttQEm9b9IHxOp8DLbxqUKKUZXAXcc/SoDOmrIn+W3eUf7Iu46vO/S0Irwj2xmoVxKj@lists.sourceforge.net
-X-Gm-Message-State: AOJu0Yxr3Hj0eX4d9davJVk4HCQc8EjJs3hRQvL52MosWIYFSsNNvbY7
- RlD1uyWCLJuoKxbeZMlwFH4WHPoS+RjVgarVL7Lke/KWrxHWOPod7Syj52WPPAksn+GrMuiu5Q=
- =
-X-Google-Smtp-Source: AGHT+IG4lunFThAtiGTvAVuvfp+1YhoKbyAo8dba1DkSZ/pQCkz4PLegWIzFsFufPnDN4ny5AWU4BtGG
-X-Received: from pfblh5.prod.google.com ([2002:a05:6a00:7105:b0:7b2:129d:2cc1])
- (user=yhli job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:33a4:b0:35f:7431:5d98
- with SMTP id adf61e73a8af0-35f74316cb8mr7492913637.15.1763446907068; Mon, 17
- Nov 2025 22:21:47 -0800 (PST)
-Date: Tue, 18 Nov 2025 14:21:32 +0800
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.52.0.rc1.455.g30608eb744-goog
-Message-ID: <20251118062132.678025-1-yhli@google.com>
-To: jaegeuk@kernel.org, chao@kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-X-Headers-End: 1vLFal-0008PO-9b
-Subject: [f2fs-dev] [PATCH] f2fs: optimize trace_f2fs_write_checkpoint with
- enums
+ AJvYcCWN41Hi1xWLP26Vh0bqtG+ytpA+3ULa5vFH+DKyaA88LukutCdMjx47DIDLAV4X6AEeCPUYJrYUkRFU5ULUVRmo@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YwEYN2utPq+PhbgZ7XAIY7lYQaCn6BbQ07ltQ2ELQrSuTQEZH4Z
+ lGsnHbqppfNXUY4NtKboBlhsMktsj7c/ctIamujrJaeEmyLErg9WPS40
+X-Gm-Gg: ASbGncunbS6PPglyXd0tFax6QtHc2+qeT/2UheL69SACOoBvT581n2DCtk4WCZXGcFD
+ 6XPB8nX7g3NpXqRqKINCgvrHpkptXCpJYZKwxsIcrnEdJ+rYYPv9VVWQ0G8bV6tSmVDHmcjY7NI
+ qApnq/VLuY568y4mnttfQY966D0Pf27XVQxhKO9XfTROtksw2aql4RECU0EIETV/+k2/NTwfaEg
+ RofR5W8SpmBZksyqWForOx+sKJVoHqYK4tNaN7LntZiOHpEudtC9cIq6DZ3zvOfc9yFZKtnWDvG
+ JDPuiqNgoANM7fX2E5Gtj1+Xi/BkMgjLwR5Q1aGmNJV3wuEpGkrwjLYbCBjR1GGU/mrINf2fE12
+ oNVxYXjjIPyU5yxv6j9V3A+QQl/jikX+fLJG9GoKfbh2OkiWATCuH93FsovGFPD+5YYOKaB7PZe
+ PMiUP971PClDz7DYBjEBKr5nLwbyjTM45jRdMcAKH3ZXL474Az5b+U92W78w==
+X-Google-Smtp-Source: AGHT+IEP4Fiq1WYi0fQwUxT7w8CcXRrYGmKQQRpSmtx18AEGOxK4QGIRV7JKkjFv4nGOrRKeWjhvWA==
+X-Received: by 2002:a05:7022:69aa:b0:11b:3742:1257 with SMTP id
+ a92af1059eb24-11b4120ca2amr9929883c88.34.1763451767829; 
+ Mon, 17 Nov 2025 23:42:47 -0800 (PST)
+Received: from localhost (ip70-175-132-216.oc.oc.cox.net. [70.175.132.216])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-11b06088625sm58814092c88.8.2025.11.17.23.42.46
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 17 Nov 2025 23:42:47 -0800 (PST)
+From: Chaitanya Kulkarni <ckulkarnilinux@gmail.com>
+To: linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
+Date: Mon, 17 Nov 2025 23:42:43 -0800
+Message-Id: <20251118074243.636812-1-ckulkarnilinux@gmail.com>
+X-Mailer: git-send-email 2.40.0
+MIME-Version: 1.0
+X-Headers-End: 1vLGMc-0001qh-Sy
+Subject: [f2fs-dev] [RFC PATCH] block: change __blkdev_issue_discard()
+ return type to void
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -108,139 +119,252 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: YH Lin via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: YH Lin <yhli@google.com>
+Cc: axboe@kernel.dk, kch@nvidia.com, sagi@grimberg.me, cem@kernel.org,
+ snitzer@kernel.org, song@kernel.org,
+ Chaitanya Kulkarni <ckulkarnilinux@gmail.com>, mpatocka@redhat.com,
+ jaegeuk@kernel.org, yukuai3@huawei.com, hch@lst.de, agk@redhat.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch optimizes the tracepoint by replacing these hardcoded strings
-with a new enumeration f2fs_cp_phase.
+__blkdev_issue_discard() always returns 0, making all error checking
+at call sites dead code. The function simply stops allocating bios 
+and returns 0.
 
-1.Defines enum f2fs_cp_phase with values for each checkpoint phase.
-2.Updates trace_f2fs_write_checkpoint to accept a u16 phase argument
-instead of a string pointer.
-3.Uses __print_symbolic in TP_printk to convert the enum values
-back to their corresponding strings for human-readable trace output.
+Discard operations are advisory/optimization, not critical. Some callers
+have dead error checking code expecting wrong return codes such as
+-ENOTSUPP when 0 is only returned. 
 
-This change reduces the storage overhead for each trace event
-by replacing a variable-length string with a 2-byte integer,
-while maintaining the same readable output in ftrace.
+This patch changes __blkdev_issue_discard() return type to void and
+removes dead error checking code from all call sites:
 
-Signed-off-by: YH Lin <yhli@google.com>
+* Block layer:
+  blk-lib.c: Remove return value, update blkdev_issue_discard() caller
+
+* Device mapper:
+  dm-thin.c: Change issue_discard() to void, update both callers
+  md.c: Simplify conditional to just check for NULL bio
+
+* NVMe target:
+  io-cmd-bdev.c: Remove dead error handling and error_slba assignment
+
+* Filesystems:
+  f2fs/segment.c: Preserve fault injection
+  xfs/xfs_discard.c: Update both xfs_discard_extents() and
+  xfs_discard_rtdev_extents() to remove dead error checks
+
+Signed-off-by: Chaitanya Kulkarni <ckulkarnilinux@gmail.com>
 ---
- fs/f2fs/checkpoint.c        |  6 +++---
- include/trace/events/f2fs.h | 28 +++++++++++++++++++++++-----
- 2 files changed, 26 insertions(+), 8 deletions(-)
+Hi,
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index bbe07e3a6c75..b04f82fdd143 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1673,7 +1673,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 		goto out;
+Due to involvement of all the subsystem making it as an RFC, ideally
+it shuoldn't be an RFC.
+
+-ck
+---
+ block/blk-lib.c                   |  7 +++----
+ drivers/md/dm-thin.c              | 12 +++++-------
+ drivers/md/md.c                   |  4 ++--
+ drivers/nvme/target/io-cmd-bdev.c |  7 +------
+ fs/f2fs/segment.c                 |  2 +-
+ fs/xfs/xfs_discard.c              | 17 +++--------------
+ include/linux/blkdev.h            |  2 +-
+ 7 files changed, 16 insertions(+), 35 deletions(-)
+
+diff --git a/block/blk-lib.c b/block/blk-lib.c
+index 3030a772d3aa..ca78ec6b5326 100644
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -60,7 +60,7 @@ struct bio *blk_alloc_discard_bio(struct block_device *bdev,
+ 	return bio;
+ }
+ 
+-int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
++void __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+ 		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop)
+ {
+ 	struct bio *bio;
+@@ -68,7 +68,6 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+ 	while ((bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects,
+ 			gfp_mask)))
+ 		*biop = bio_chain_and_submit(*biop, bio);
+-	return 0;
+ }
+ EXPORT_SYMBOL(__blkdev_issue_discard);
+ 
+@@ -90,8 +89,8 @@ int blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+ 	int ret;
+ 
+ 	blk_start_plug(&plug);
+-	ret = __blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, &bio);
+-	if (!ret && bio) {
++	__blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, &bio);
++	if (bio) {
+ 		ret = submit_bio_wait(bio);
+ 		if (ret == -EOPNOTSUPP)
+ 			ret = 0;
+diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+index c84149ba4e38..77c76f75c85f 100644
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -395,13 +395,13 @@ static void begin_discard(struct discard_op *op, struct thin_c *tc, struct bio *
+ 	op->bio = NULL;
+ }
+ 
+-static int issue_discard(struct discard_op *op, dm_block_t data_b, dm_block_t data_e)
++static void issue_discard(struct discard_op *op, dm_block_t data_b, dm_block_t data_e)
+ {
+ 	struct thin_c *tc = op->tc;
+ 	sector_t s = block_to_sectors(tc->pool, data_b);
+ 	sector_t len = block_to_sectors(tc->pool, data_e - data_b);
+ 
+-	return __blkdev_issue_discard(tc->pool_dev->bdev, s, len, GFP_NOIO, &op->bio);
++	__blkdev_issue_discard(tc->pool_dev->bdev, s, len, GFP_NOIO, &op->bio);
+ }
+ 
+ static void end_discard(struct discard_op *op, int r)
+@@ -1113,9 +1113,7 @@ static void passdown_double_checking_shared_status(struct dm_thin_new_mapping *m
+ 				break;
+ 		}
+ 
+-		r = issue_discard(&op, b, e);
+-		if (r)
+-			goto out;
++		issue_discard(&op, b, e);
+ 
+ 		b = e;
+ 	}
+@@ -1188,8 +1186,8 @@ static void process_prepared_discard_passdown_pt1(struct dm_thin_new_mapping *m)
+ 		struct discard_op op;
+ 
+ 		begin_discard(&op, tc, discard_parent);
+-		r = issue_discard(&op, m->data_block, data_end);
+-		end_discard(&op, r);
++		issue_discard(&op, m->data_block, data_end);
++		end_discard(&op, 0);
+ 	}
+ }
+ 
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 41c476b40c7a..7fc0bb7a3814 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -9041,8 +9041,8 @@ void md_submit_discard_bio(struct mddev *mddev, struct md_rdev *rdev,
+ {
+ 	struct bio *discard_bio = NULL;
+ 
+-	if (__blkdev_issue_discard(rdev->bdev, start, size, GFP_NOIO,
+-			&discard_bio) || !discard_bio)
++	__blkdev_issue_discard(rdev->bdev, start, size, GFP_NOIO, &discard_bio);
++	if (!discard_bio)
+ 		return;
+ 
+ 	bio_chain(discard_bio, bio);
+diff --git a/drivers/nvme/target/io-cmd-bdev.c b/drivers/nvme/target/io-cmd-bdev.c
+index 8d246b8ca604..f26010c46c33 100644
+--- a/drivers/nvme/target/io-cmd-bdev.c
++++ b/drivers/nvme/target/io-cmd-bdev.c
+@@ -366,16 +366,11 @@ static u16 nvmet_bdev_discard_range(struct nvmet_req *req,
+ 		struct nvme_dsm_range *range, struct bio **bio)
+ {
+ 	struct nvmet_ns *ns = req->ns;
+-	int ret;
+ 
+-	ret = __blkdev_issue_discard(ns->bdev,
++	__blkdev_issue_discard(ns->bdev,
+ 			nvmet_lba_to_sect(ns, range->slba),
+ 			le32_to_cpu(range->nlb) << (ns->blksize_shift - 9),
+ 			GFP_KERNEL, bio);
+-	if (ret && ret != -EOPNOTSUPP) {
+-		req->error_slba = le64_to_cpu(range->slba);
+-		return errno_to_nvme_status(req, ret);
+-	}
+ 	return NVME_SC_SUCCESS;
+ }
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index b45eace879d7..e6078176f733 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1346,7 +1346,7 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+ 		if (time_to_inject(sbi, FAULT_DISCARD)) {
+ 			err = -EIO;
+ 		} else {
+-			err = __blkdev_issue_discard(bdev,
++			__blkdev_issue_discard(bdev,
+ 					SECTOR_FROM_BLOCK(start),
+ 					SECTOR_FROM_BLOCK(len),
+ 					GFP_NOFS, &bio);
+diff --git a/fs/xfs/xfs_discard.c b/fs/xfs/xfs_discard.c
+index ee49f20875af..f82cc07806df 100644
+--- a/fs/xfs/xfs_discard.c
++++ b/fs/xfs/xfs_discard.c
+@@ -116,7 +116,6 @@ xfs_discard_extents(
+ 	struct xfs_extent_busy	*busyp;
+ 	struct bio		*bio = NULL;
+ 	struct blk_plug		plug;
+-	int			error = 0;
+ 
+ 	blk_start_plug(&plug);
+ 	list_for_each_entry(busyp, &extents->extent_list, list) {
+@@ -126,18 +125,10 @@ xfs_discard_extents(
+ 
+ 		trace_xfs_discard_extent(xg, busyp->bno, busyp->length);
+ 
+-		error = __blkdev_issue_discard(btp->bt_bdev,
++		__blkdev_issue_discard(btp->bt_bdev,
+ 				xfs_gbno_to_daddr(xg, busyp->bno),
+ 				XFS_FSB_TO_BB(mp, busyp->length),
+ 				GFP_KERNEL, &bio);
+-		if (error && error != -EOPNOTSUPP) {
+-			xfs_info(mp,
+-	 "discard failed for extent [0x%llx,%u], error %d",
+-				 (unsigned long long)busyp->bno,
+-				 busyp->length,
+-				 error);
+-			break;
+-		}
  	}
  
--	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "start block_ops");
-+	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, CP_PHASE_START_BLOCK_OPS);
+ 	if (bio) {
+@@ -149,7 +140,7 @@ xfs_discard_extents(
+ 	}
+ 	blk_finish_plug(&plug);
  
- 	err = block_operations(sbi);
- 	if (err)
-@@ -1681,7 +1681,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+-	return error;
++	return 0;
+ }
  
- 	stat_cp_time(cpc, CP_TIME_OP_LOCK);
+ /*
+@@ -496,12 +487,10 @@ xfs_discard_rtdev_extents(
  
--	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "finish block_ops");
-+	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, CP_PHASE_FINISH_BLOCK_OPS);
+ 		trace_xfs_discard_rtextent(mp, busyp->bno, busyp->length);
  
- 	f2fs_flush_merged_writes(sbi);
+-		error = __blkdev_issue_discard(bdev,
++		__blkdev_issue_discard(bdev,
+ 				xfs_rtb_to_daddr(mp, busyp->bno),
+ 				XFS_FSB_TO_BB(mp, busyp->length),
+ 				GFP_NOFS, &bio);
+-		if (error)
+-			break;
+ 	}
+ 	xfs_discard_free_rtdev_extents(tr);
  
-@@ -1747,7 +1747,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index f0ab02e0a673..b05c37d20b09 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1258,7 +1258,7 @@ extern void blk_io_schedule(void);
  
- 	/* update CP_TIME to trigger checkpoint periodically */
- 	f2fs_update_time(sbi, CP_TIME);
--	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "finish checkpoint");
-+	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, CP_PHASE_FINISH_CHECKPOINT);
- out:
- 	if (cpc->reason != CP_RESIZE)
- 		f2fs_up_write(&sbi->cp_global_sem);
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index e00611ead024..a87aab397457 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -11,6 +11,15 @@
- #define show_dev(dev)		MAJOR(dev), MINOR(dev)
- #define show_dev_ino(entry)	show_dev(entry->dev), (unsigned long)entry->ino
- 
-+#ifndef _TRACE_F2FS_ENUM_H
-+#define _TRACE_F2FS_ENUM_H
-+enum f2fs_cp_phase {
-+	CP_PHASE_START_BLOCK_OPS,
-+	CP_PHASE_FINISH_BLOCK_OPS,
-+	CP_PHASE_FINISH_CHECKPOINT,
-+};
-+#endif /* _TRACE_F2FS_ENUM_H */
-+
- TRACE_DEFINE_ENUM(NODE);
- TRACE_DEFINE_ENUM(DATA);
- TRACE_DEFINE_ENUM(META);
-@@ -50,6 +59,9 @@ TRACE_DEFINE_ENUM(CP_PAUSE);
- TRACE_DEFINE_ENUM(CP_RESIZE);
- TRACE_DEFINE_ENUM(EX_READ);
- TRACE_DEFINE_ENUM(EX_BLOCK_AGE);
-+TRACE_DEFINE_ENUM(CP_PHASE_START_BLOCK_OPS);
-+TRACE_DEFINE_ENUM(CP_PHASE_FINISH_BLOCK_OPS);
-+TRACE_DEFINE_ENUM(CP_PHASE_FINISH_CHECKPOINT);
- 
- #define show_block_type(type)						\
- 	__print_symbolic(type,						\
-@@ -175,6 +187,12 @@ TRACE_DEFINE_ENUM(EX_BLOCK_AGE);
- #define S_ALL_PERM	(S_ISUID | S_ISGID | S_ISVTX |	\
- 			S_IRWXU | S_IRWXG | S_IRWXO)
- 
-+#define show_cp_phase(phase)					\
-+	__print_symbolic(phase,						\
-+		{ CP_PHASE_START_BLOCK_OPS,		"start block_ops" },			\
-+		{ CP_PHASE_FINISH_BLOCK_OPS,	"finish block_ops" },			\
-+		{ CP_PHASE_FINISH_CHECKPOINT,	"finish checkpoint" })
-+
- struct f2fs_sb_info;
- struct f2fs_io_info;
- struct extent_info;
-@@ -1573,26 +1591,26 @@ TRACE_EVENT(f2fs_readpages,
- 
- TRACE_EVENT(f2fs_write_checkpoint,
- 
--	TP_PROTO(struct super_block *sb, int reason, const char *msg),
-+	TP_PROTO(struct super_block *sb, int reason, u16 phase),
- 
--	TP_ARGS(sb, reason, msg),
-+	TP_ARGS(sb, reason, phase),
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
- 		__field(int,	reason)
--		__string(dest_msg, msg)
-+		__field(u16, phase)
- 	),
- 
- 	TP_fast_assign(
- 		__entry->dev		= sb->s_dev;
- 		__entry->reason		= reason;
--		__assign_str(dest_msg);
-+		__entry->phase		= phase;
- 	),
- 
- 	TP_printk("dev = (%d,%d), checkpoint for %s, state = %s",
- 		show_dev(__entry->dev),
- 		show_cpreason(__entry->reason),
--		__get_str(dest_msg))
-+		show_cp_phase(__entry->phase))
- );
- 
- DECLARE_EVENT_CLASS(f2fs_discard,
+ int blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+ 		sector_t nr_sects, gfp_t gfp_mask);
+-int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
++void __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+ 		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop);
+ int blkdev_issue_secure_erase(struct block_device *bdev, sector_t sector,
+ 		sector_t nr_sects, gfp_t gfp);
 -- 
-2.52.0.rc1.455.g30608eb744-goog
+2.40.0
 
 
 
