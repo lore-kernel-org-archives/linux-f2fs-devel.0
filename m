@@ -4,75 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 84801CEBF61
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 17 Nov 2025 12:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6969DCED243
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Nov 2025 06:22:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=B2qsGjykbG5CDMFZ+5FtEX/OaMMpmUjropCAST3OmdU=; b=epcDMqE2JjH0FBWIj4tOCFOsQD
-	c2kinNYl2QoX+rePpt764zP7IpJZwpMG8/ktYqOIaI7Kzq/pJarHNlknDUBFILnl0tRgKMlYQBWyB
-	uSvPT5Fkb5oWCsB7URtG5MrWw9vWUONcl14pYARwzKeNd2K7mvaF4ewUs1NjLrLIZ5Wg=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=jqhS6MDl1VA2vBInNNXUbuZfk0USkR++YfocMW2E0X8=; b=mLAPGQx/zf7BoaNTl9nH99gaAk
+	WWDn+f6w0jyM+vV9Koq5oierVFQUu9HfImG0bJ0l0dK9/s3gGJehvL/DJ5twPIS2URBHPDsmyfz6p
+	N+aNHlX7mL6RI7PTs4MP2IONbTdbKOh0BMWelWN+RYQWa9Qz1k/mY2W8yF8x4daiOF1w=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vKycg-0006ti-HL;
-	Mon, 17 Nov 2025 12:46:23 +0000
+	id 1vLF6d-0003sa-Il;
+	Tue, 18 Nov 2025 06:22:23 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vKyce-0006tZ-BI
- for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 17 Nov 2025 12:46:21 +0000
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+0812c32a4ab075f64334+8122+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1vLF6a-0003sT-6G for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 18 Nov 2025 06:22:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7eESbnWbLaJSfYy6UrXyATQj/0RQBr2ZQKgi+Rcjl6s=; b=hG8xhjwiSfAk0Or2MZaV11AfPM
- 9ym/TV18AVwsgCwMJDoPylkk5MHokphrtknGV3WJyXC7GghwO/7mMum5620l21Fqtdka/IvhNthgg
- LF0yzKNgadr/kF98X96ejWEfpcdnsF/yi5SSOD9HmuDgjgUS/zTt6nS3kdZhlCAJov+s=;
+ bh=xRGDQlHnczKIUXO+TmIW+WyJeT9hPKks9Od5qE6nNxM=; b=g6BY5rBTpvqy0Nnq3XeQnHkKGp
+ iDbzyqt/m0Vczx6PE/DwdVjFhHgJBTeSeyZpcgdyEI6Jagb+tzL1X5ptz2jRE7+hGtMg4RHtzlceF
+ AWXn++fxZmfa7A0d9uwG8UcMHMV+OIKvLzrFYyxQBlPgIlaPOIuXrdGDNjOiMw1cKO3Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=7eESbnWbLaJSfYy6UrXyATQj/0RQBr2ZQKgi+Rcjl6s=; b=X
- smHAmYmRRt9GNTk1CDnGFvFKti+JagAG0OnAFIfGi4Tg7qTAE5xKE7aUfFcjvp8VcZWCOyzBBl9gT
- duDYteyKpkJ0ZXgcC85V54L4HHjlkdVgdshJLNyk+oh8pj9hV0nJUEqcR3vXFT4mJ5DgeQo53cgN4
- Ayl0YOJ56mcZj+dM=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ List-Owner:List-Archive; bh=xRGDQlHnczKIUXO+TmIW+WyJeT9hPKks9Od5qE6nNxM=; b=K
+ Yl3QydX2RtgtAChlGi/MZfcnJPw5OuLkTMq4/JhlzEa6Hx2WMGgFyJc8c0g4taNSEDUqhuWf4510D
+ BFLHGhhgmEfiLhqNffGTEV7kwiESKngb0EcGydJc7WmQuJyHoJlyViN+C1OsCix2DJxDt5tPc8fR6
+ N1hwWY3T0KH7YWzM=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vKyce-0005LI-G1 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 17 Nov 2025 12:46:21 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id D3197601AD
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 17 Nov 2025 12:46:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E38C2BC87;
- Mon, 17 Nov 2025 12:46:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1763383574;
- bh=HivUi9YosfRvvoVNT7TOnBDDKhbW86aXFPoc5OH3G70=;
- h=From:To:Cc:Subject:Date:From;
- b=hSFVvtSsdGiHTt6HFGENoCKhaKTwoaI+SJ5hs3ti5zNSitEppC3XTNNm7csNonU7I
- 9ZFLck9jxXITNe5QoPTTUst5m7cA6Rh+mAsKA/evkh/o0nlkR+AVEXsLdDFSAzBJq7
- l1MP6GXOyfRTf/GsvCEA+ShY1fPWBh/IkKcq+XP82RvcVBiddGPetx+3T5r9v0k5S1
- /9fYeXaRSVLYxSOsD10IoBppEuigJzZmLR/yu7tCHCMIhH9l+5bmwCDkCXlE9pVRV9
- /eVgzUSkyz5AMVveIwH/W4GIiat/kWTrOpZshn+wl0yL+KIM1PZVy8/0IrnjQLYzOx
- 3tez7QwzThS1Q==
-To: jaegeuk@kernel.org
-Date: Mon, 17 Nov 2025 20:45:59 +0800
-Message-ID: <20251117124559.1634936-1-chao@kernel.org>
-X-Mailer: git-send-email 2.52.0.rc1.455.g30608eb744-goog
+ id 1vLF6Z-0007DY-It for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 18 Nov 2025 06:22:20 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+ MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:In-Reply-To:References;
+ bh=xRGDQlHnczKIUXO+TmIW+WyJeT9hPKks9Od5qE6nNxM=; b=UjwADqvLrMmeBzU+K4k2KvS/Ly
+ ttrbhZY7relSVo65q7B1SN9FBiT/DlRf3fGwzH8FMn3hGklt/shngR0PbsV1SGOAXEdu5Rdx69FhJ
+ i9d2/L25TSw0CvTtLwtXn+XYEelSXTzh+QNxQrzEPrcYNdzL02Hcp6x664E6yowicHVgzmlejmFKs
+ JWi5Mr3hDB3BVkTBGY3Yvr+3wJrBt5Azng9lwyX1TUwFu0eTlfk1XP38i0GmkpgX4x7ZdF9F3/bdm
+ whE4HSuj3Wdr/H1FwyZmMGUhHXDB+kc+p+PtYceKKYVHj9qeu8GrbTHKV4hShktEfGf0pKPCQ2V0H
+ KAaliWSA==;
+Received: from
+ 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at
+ ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
+ by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+ id 1vLF6N-0000000HUNw-2BiG; Tue, 18 Nov 2025 06:22:08 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Date: Tue, 18 Nov 2025 07:21:43 +0100
+Message-ID: <20251118062159.2358085-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-X-Headers-End: 1vKyce-0005LI-G1
-Subject: [f2fs-dev] [PATCH] f2fs: expand scalability of f2fs mount option
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1vLF6Z-0007DY-It
+Subject: [f2fs-dev] fscrypt API cleanups
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,236 +86,43 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Christian Brauner <brauner@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fscrypt@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
+ linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-opt field in structure f2fs_mount_info and opt_mask field in structure
-f2fs_fs_context is 32-bits variable, now we're running out of available
-bits in them, let's expand them to 64-bits for better scalability.
+Hi all,
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/f2fs.h  | 85 ++++++++++++++++++++++++++-----------------------
- fs/f2fs/super.c | 36 ++++++++++-----------
- 2 files changed, 63 insertions(+), 58 deletions(-)
+this series cleans up various fscrypt APIs to pass logical offsets in
+and lengths in bytes, and on-disk sectors as 512-byte sector units,
+like most of the VFS and block code.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index dffe8958b580..5f104518c414 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -96,47 +96,52 @@ extern const char *f2fs_fault_name[FAULT_MAX];
- /*
-  * For mount options
-  */
--#define F2FS_MOUNT_DISABLE_ROLL_FORWARD	0x00000001
--#define F2FS_MOUNT_DISCARD		0x00000002
--#define F2FS_MOUNT_NOHEAP		0x00000004
--#define F2FS_MOUNT_XATTR_USER		0x00000008
--#define F2FS_MOUNT_POSIX_ACL		0x00000010
--#define F2FS_MOUNT_DISABLE_EXT_IDENTIFY	0x00000020
--#define F2FS_MOUNT_INLINE_XATTR		0x00000040
--#define F2FS_MOUNT_INLINE_DATA		0x00000080
--#define F2FS_MOUNT_INLINE_DENTRY	0x00000100
--#define F2FS_MOUNT_FLUSH_MERGE		0x00000200
--#define F2FS_MOUNT_NOBARRIER		0x00000400
--#define F2FS_MOUNT_FASTBOOT		0x00000800
--#define F2FS_MOUNT_READ_EXTENT_CACHE	0x00001000
--#define F2FS_MOUNT_DATA_FLUSH		0x00002000
--#define F2FS_MOUNT_FAULT_INJECTION	0x00004000
--#define F2FS_MOUNT_USRQUOTA		0x00008000
--#define F2FS_MOUNT_GRPQUOTA		0x00010000
--#define F2FS_MOUNT_PRJQUOTA		0x00020000
--#define F2FS_MOUNT_QUOTA		0x00040000
--#define F2FS_MOUNT_INLINE_XATTR_SIZE	0x00080000
--#define F2FS_MOUNT_RESERVE_ROOT		0x00100000
--#define F2FS_MOUNT_DISABLE_CHECKPOINT	0x00200000
--#define F2FS_MOUNT_NORECOVERY		0x00400000
--#define F2FS_MOUNT_ATGC			0x00800000
--#define F2FS_MOUNT_MERGE_CHECKPOINT	0x01000000
--#define	F2FS_MOUNT_GC_MERGE		0x02000000
--#define F2FS_MOUNT_COMPRESS_CACHE	0x04000000
--#define F2FS_MOUNT_AGE_EXTENT_CACHE	0x08000000
--#define F2FS_MOUNT_NAT_BITS		0x10000000
--#define F2FS_MOUNT_INLINECRYPT		0x20000000
--/*
-- * Some f2fs environments expect to be able to pass the "lazytime" option
-- * string rather than using the MS_LAZYTIME flag, so this must remain.
-- */
--#define F2FS_MOUNT_LAZYTIME		0x40000000
--#define F2FS_MOUNT_RESERVE_NODE		0x80000000
-+enum f2fs_mount_opt {
-+	F2FS_MOUNT_DISABLE_ROLL_FORWARD,
-+	F2FS_MOUNT_DISCARD,
-+	F2FS_MOUNT_NOHEAP,
-+	F2FS_MOUNT_XATTR_USER,
-+	F2FS_MOUNT_POSIX_ACL,
-+	F2FS_MOUNT_DISABLE_EXT_IDENTIFY,
-+	F2FS_MOUNT_INLINE_XATTR,
-+	F2FS_MOUNT_INLINE_DATA,
-+	F2FS_MOUNT_INLINE_DENTRY,
-+	F2FS_MOUNT_FLUSH_MERGE,
-+	F2FS_MOUNT_NOBARRIER,
-+	F2FS_MOUNT_FASTBOOT,
-+	F2FS_MOUNT_READ_EXTENT_CACHE,
-+	F2FS_MOUNT_DATA_FLUSH,
-+	F2FS_MOUNT_FAULT_INJECTION,
-+	F2FS_MOUNT_USRQUOTA,
-+	F2FS_MOUNT_GRPQUOTA,
-+	F2FS_MOUNT_PRJQUOTA,
-+	F2FS_MOUNT_QUOTA,
-+	F2FS_MOUNT_INLINE_XATTR_SIZE,
-+	F2FS_MOUNT_RESERVE_ROOT,
-+	F2FS_MOUNT_DISABLE_CHECKPOINT,
-+	F2FS_MOUNT_NORECOVERY,
-+	F2FS_MOUNT_ATGC,
-+	F2FS_MOUNT_MERGE_CHECKPOINT,
-+	F2FS_MOUNT_GC_MERGE,
-+	F2FS_MOUNT_COMPRESS_CACHE,
-+	F2FS_MOUNT_AGE_EXTENT_CACHE,
-+	F2FS_MOUNT_NAT_BITS,
-+	F2FS_MOUNT_INLINECRYPT,
-+	/*
-+	 * Some f2fs environments expect to be able to pass the "lazytime" option
-+	 * string rather than using the MS_LAZYTIME flag, so this must remain.
-+	 */
-+	F2FS_MOUNT_LAZYTIME,
-+	F2FS_MOUNT_RESERVE_NODE,
-+};
- 
- #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
--#define clear_opt(sbi, option)	(F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
--#define set_opt(sbi, option)	(F2FS_OPTION(sbi).opt |= F2FS_MOUNT_##option)
--#define test_opt(sbi, option)	(F2FS_OPTION(sbi).opt & F2FS_MOUNT_##option)
-+#define clear_opt(sbi, option)		\
-+	(F2FS_OPTION(sbi).opt &= ~BIT(F2FS_MOUNT_##option))
-+#define set_opt(sbi, option)		\
-+	(F2FS_OPTION(sbi).opt |= BIT(F2FS_MOUNT_##option))
-+#define test_opt(sbi, option)		\
-+	(F2FS_OPTION(sbi).opt & BIT(F2FS_MOUNT_##option))
- 
- #define ver_after(a, b)	(typecheck(unsigned long long, a) &&		\
- 		typecheck(unsigned long long, b) &&			\
-@@ -183,7 +188,7 @@ struct f2fs_rwsem {
- };
- 
- struct f2fs_mount_info {
--	unsigned int opt;
-+	unsigned long long opt;
- 	block_t root_reserved_blocks;	/* root reserved blocks */
- 	block_t root_reserved_nodes;	/* root reserved nodes */
- 	kuid_t s_resuid;		/* reserved blocks for uid */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index d47ec718f3be..ccb477086444 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -352,7 +352,7 @@ static match_table_t f2fs_checkpoint_tokens = {
- 
- struct f2fs_fs_context {
- 	struct f2fs_mount_info info;
--	unsigned int	opt_mask;	/* Bits changed */
-+	unsigned long long opt_mask;	/* Bits changed */
- 	unsigned int	spec_mask;
- 	unsigned short	qname_mask;
- };
-@@ -360,23 +360,23 @@ struct f2fs_fs_context {
- #define F2FS_CTX_INFO(ctx)	((ctx)->info)
- 
- static inline void ctx_set_opt(struct f2fs_fs_context *ctx,
--			       unsigned int flag)
-+			       enum f2fs_mount_opt flag)
- {
--	ctx->info.opt |= flag;
--	ctx->opt_mask |= flag;
-+	ctx->info.opt |= BIT(flag);
-+	ctx->opt_mask |= BIT(flag);
- }
- 
- static inline void ctx_clear_opt(struct f2fs_fs_context *ctx,
--				 unsigned int flag)
-+				 enum f2fs_mount_opt flag)
- {
--	ctx->info.opt &= ~flag;
--	ctx->opt_mask |= flag;
-+	ctx->info.opt &= ~BIT(flag);
-+	ctx->opt_mask |= BIT(flag);
- }
- 
- static inline bool ctx_test_opt(struct f2fs_fs_context *ctx,
--				unsigned int flag)
-+				enum f2fs_mount_opt flag)
- {
--	return ctx->info.opt & flag;
-+	return ctx->info.opt & BIT(flag);
- }
- 
- void f2fs_printk(struct f2fs_sb_info *sbi, bool limit_rate,
-@@ -1371,7 +1371,7 @@ static int f2fs_check_compression(struct fs_context *fc,
- 			ctx_test_opt(ctx, F2FS_MOUNT_COMPRESS_CACHE))
- 			f2fs_info(sbi, "Image doesn't support compression");
- 		clear_compression_spec(ctx);
--		ctx->opt_mask &= ~F2FS_MOUNT_COMPRESS_CACHE;
-+		ctx->opt_mask &= ~BIT(F2FS_MOUNT_COMPRESS_CACHE);
- 		return 0;
- 	}
- 	if (ctx->spec_mask & F2FS_SPEC_compress_extension) {
-@@ -1439,42 +1439,42 @@ static int f2fs_check_opt_consistency(struct fs_context *fc,
- 		return -EINVAL;
- 
- 	if (f2fs_hw_should_discard(sbi) &&
--			(ctx->opt_mask & F2FS_MOUNT_DISCARD) &&
-+			(ctx->opt_mask & BIT(F2FS_MOUNT_DISCARD)) &&
- 			!ctx_test_opt(ctx, F2FS_MOUNT_DISCARD)) {
- 		f2fs_warn(sbi, "discard is required for zoned block devices");
- 		return -EINVAL;
- 	}
- 
- 	if (!f2fs_hw_support_discard(sbi) &&
--			(ctx->opt_mask & F2FS_MOUNT_DISCARD) &&
-+			(ctx->opt_mask & BIT(F2FS_MOUNT_DISCARD)) &&
- 			ctx_test_opt(ctx, F2FS_MOUNT_DISCARD)) {
- 		f2fs_warn(sbi, "device does not support discard");
- 		ctx_clear_opt(ctx, F2FS_MOUNT_DISCARD);
--		ctx->opt_mask &= ~F2FS_MOUNT_DISCARD;
-+		ctx->opt_mask &= ~BIT(F2FS_MOUNT_DISCARD);
- 	}
- 
- 	if (f2fs_sb_has_device_alias(sbi) &&
--			(ctx->opt_mask & F2FS_MOUNT_READ_EXTENT_CACHE) &&
-+			(ctx->opt_mask & BIT(F2FS_MOUNT_READ_EXTENT_CACHE)) &&
- 			!ctx_test_opt(ctx, F2FS_MOUNT_READ_EXTENT_CACHE)) {
- 		f2fs_err(sbi, "device aliasing requires extent cache");
- 		return -EINVAL;
- 	}
- 
- 	if (test_opt(sbi, RESERVE_ROOT) &&
--			(ctx->opt_mask & F2FS_MOUNT_RESERVE_ROOT) &&
-+			(ctx->opt_mask & BIT(F2FS_MOUNT_RESERVE_ROOT)) &&
- 			ctx_test_opt(ctx, F2FS_MOUNT_RESERVE_ROOT)) {
- 		f2fs_info(sbi, "Preserve previous reserve_root=%u",
- 			F2FS_OPTION(sbi).root_reserved_blocks);
- 		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_ROOT);
--		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_ROOT;
-+		ctx->opt_mask &= ~BIT(F2FS_MOUNT_RESERVE_ROOT);
- 	}
- 	if (test_opt(sbi, RESERVE_NODE) &&
--			(ctx->opt_mask & F2FS_MOUNT_RESERVE_NODE) &&
-+			(ctx->opt_mask & BIT(F2FS_MOUNT_RESERVE_NODE)) &&
- 			ctx_test_opt(ctx, F2FS_MOUNT_RESERVE_NODE)) {
- 		f2fs_info(sbi, "Preserve previous reserve_node=%u",
- 			F2FS_OPTION(sbi).root_reserved_nodes);
- 		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_NODE);
--		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_NODE;
-+		ctx->opt_mask &= ~BIT(F2FS_MOUNT_RESERVE_NODE);
- 	}
- 
- 	err = f2fs_check_test_dummy_encryption(fc, sb);
--- 
-2.49.0
+Note that this is based on top of fscrypt/for-current and not
+fscrypt/for-next to pick up "fscrypt: fix left shift underflow when
+inode->i_blkbits > PAGE_SHIFT".  There also is a minor conflict in
+linux-next with the iomap tree tue to that tree changing and adjacent
+line to one changes in this patch.
 
+Eric only asked for the first two patches to be sent out, but I more of
+my stack as I think it should be useful.  Feel free to apply as many
+as you think are suitable.
+
+Diffstat:
+ fs/crypto/bio.c             |  108 +++++++++++++++++++++++++-------------------
+ fs/crypto/fscrypt_private.h |    3 -
+ fs/crypto/inline_crypt.c    |   34 ++++++-------
+ fs/crypto/keysetup.c        |    2 
+ fs/ext4/inode.c             |    5 +-
+ fs/ext4/readpage.c          |    7 +-
+ fs/f2fs/data.c              |    7 ++
+ fs/f2fs/file.c              |    4 +
+ fs/iomap/direct-io.c        |    6 --
+ include/linux/fscrypt.h     |   19 +++----
+ 10 files changed, 105 insertions(+), 90 deletions(-)
 
 
 _______________________________________________
