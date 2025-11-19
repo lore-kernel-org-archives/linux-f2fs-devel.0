@@ -4,66 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F2FEACEBF97
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Nov 2025 08:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1E2ACCF2570
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Nov 2025 06:01:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=urxI0DaAWLGcGrfEJz6iFfaIBNS4XGhHU/ONQ4+hrWY=; b=hNup4XUFROlr3PECwaMd5WwDuu
-	IFzzcgcc/3c4qrpzy0ZjG4nyEUy5n4p/XbC+ysuBZIn5arcRcQrMeycLb/OE8TCKWaCqlXHdniz5N
-	PE1b4v8SsuacBbIncnfdBVQrFKCSK+sazIa6KKS8EDXDMccw7v6zBVsTzvcuEwLbNpzg=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=n+O3LwNAssBjB2hTVNazSHQR+/N8KvOa0NdPCaWhQX4=; b=FiLtgZCxAq2TOj8gtM7TsRp/Dg
+	fRCNrfBXobVzilsSchYDnaqBh7Fyc+yJk+2Wa6LfAgbqki8C781LvFFzzdUsV/rKoYwhQZkm67mY0
+	UXwuMcFXO46v/5yNfRflvvP6Zhd8Ztb/7ePvJjDMs2m9H6aaTqeeYP4R+cqWGWlhSPeQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vLGhg-0006BT-AY;
-	Tue, 18 Nov 2025 08:04:44 +0000
+	id 1vLbGA-0000ws-K7;
+	Wed, 19 Nov 2025 06:01:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1vLGhf-0006BN-6I
+ (envelope-from <hexiaole1994@126.com>) id 1vLbG4-0000wO-T4
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Nov 2025 08:04:43 +0000
+ Wed, 19 Nov 2025 06:01:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2ae9dVXaMyDnd4Kw/4lTGXVV+GojOzw7T+c7SR5U7ak=; b=lnx4NtaaEFqKcgFqR2fXhFyNEY
- YaNyVpgtNQWHcccryr/jtkdrUvJmi7yZP7LnKru46nwJUnIkGNjUGbBKPdi3LMLJOQjNkoU5qYxkY
- +wSuHbCdA1DCXGqjNRqmhMUEjKHl238NDa67WwmsWOIRdeoATlkG6w3olwYpTcysJD/U=;
+ bh=MZPhud8od52BCgGqIiMYwZw4MsJdQ/HMY6OVZrgo2ws=; b=iEO9DOIxAu66X+eGKDswfCew+x
+ ABCxSmHvrtIwT0nhH5Vs+oMa6ldoASxFP12z/nnCMrEf1VcR7pemZE8mTvz61uX6TqEBq0uLTD24A
+ O5gD12H30q+bYoWe+S//2KizRPEeVKOewxnoL6zwk/9r0dlE1UgBa6bkT8FNDMmNN8fI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=2ae9dVXaMyDnd4Kw/4lTGXVV+GojOzw7T+c7SR5U7ak=; b=WNZSfl7Ar65ZgMiEXd1LEIPQEd
- dAo42o4IveaJ0gOCjsy2wo9mJ72hxi/JFdQQ5Rhmtr9/7uwNdBgzyapYXASC4RfYxDRyRJ4QVVB6y
- SpdJkAcgOdLt/0k0u7hznWDSlcUHqVcZDpDPzCLw6PZHllBKJOH1WNvMHPKef273r7fk=;
-Received: from verein.lst.de ([213.95.11.211])
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=MZPhud8od52BCgGqIiMYwZw4MsJdQ/HMY6OVZrgo2ws=; b=J
+ u+XCSdOmSvuuKbTYKzycBfQGLExBIA5+PQg3caWLpufDj0M4XRr1i6VJvwai9G6mC8qiInd62tQ7/
+ mKvIs/19pF3YDdiOtf6iy3DTWx7Tgm0Iskd+OUGOQnxVp+0LbDHbgGgL0bdibSfpql/oo+i/S4m/0
+ 8lUFkfJR9d3StXio=;
+Received: from m16.mail.126.com ([220.197.31.8])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vLGhe-0002zA-FH for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Nov 2025 08:04:43 +0000
-Received: by verein.lst.de (Postfix, from userid 2407)
- id 4C26167373; Tue, 18 Nov 2025 09:04:27 +0100 (CET)
-Date: Tue, 18 Nov 2025 09:04:27 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Chaitanya Kulkarni <ckulkarnilinux@gmail.com>
-Message-ID: <20251118080427.GA26299@lst.de>
-References: <20251118074243.636812-1-ckulkarnilinux@gmail.com>
+ id 1vLbG4-0002Ga-Hs for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 19 Nov 2025 06:01:37 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+ s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=MZ
+ Phud8od52BCgGqIiMYwZw4MsJdQ/HMY6OVZrgo2ws=; b=eL95G/D37I3vXG84yQ
+ NjKCgsVeMPfttfpzQu6nv2oJWDmx5ScGcz4c9OGrer4Qen9hD3Dm7lwgd8mJF1Q/
+ EFSEbsUlq7GKik0DuWZ0xaxgSzWaqDy2Fb9s5WFbiXpoiO/Ze/g+1JXvaXTmmMr7
+ hoQWa10u+xW+sW+7ZC5WnTwys=
+Received: from hpz640.. (unknown [])
+ by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id
+ _____wD3v+kSXR1pVGleAA--.27189S2; 
+ Wed, 19 Nov 2025 14:00:51 +0800 (CST)
+From: Xiaole He <hexiaole1994@126.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Wed, 19 Nov 2025 14:00:45 +0800
+Message-ID: <20251119060045.52471-1-hexiaole1994@126.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20251118074243.636812-1-ckulkarnilinux@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1vLGhe-0002zA-FH
-Subject: Re: [f2fs-dev] [RFC PATCH] block: change __blkdev_issue_discard()
- return type to void
+X-CM-TRANSID: _____wD3v+kSXR1pVGleAA--.27189S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXF4rWr1DWr1UCFy5Kr4DArb_yoWrZryDpr
+ Z0qF93trWrXFy7Xas5tF4FkryS93y2y3y3Jr1xXw1S9rW5CwnYqF10kr1vvr1YgF93AF17
+ Zw12y3Z7C3ykJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U5Ks8UUUUU=
+X-Originating-IP: [202.110.209.182]
+X-CM-SenderInfo: 5kh0xt5rohimizu6ij2wof0z/1tbiegELBmkdW2wf0gAAs4
+X-Headers-End: 1vLbG4-0002Ga-Hs
+Subject: [f2fs-dev] [PATCH v1] mkfs.f2fs: fix incorrect start_sector
+ detection due to typo in HDIO_GETGEO macro check
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -75,86 +87,161 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, kch@nvidia.com,
- sagi@grimberg.me, cem@kernel.org, snitzer@kernel.org,
- linux-nvme@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-block@vger.kernel.org, song@kernel.org, mpatocka@redhat.com,
- axboe@kernel.dk, jaegeuk@kernel.org, yukuai3@huawei.com, hch@lst.de,
- linux-xfs@vger.kernel.org, agk@redhat.com
+Cc: jaegeuk@kernel.org, shengyong1@xiaomi.com, Xiaole He <hexiaole1994@126.com>,
+ daehojeong@google.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Nov 17, 2025 at 11:42:43PM -0800, Chaitanya Kulkarni wrote:
-> Due to involvement of all the subsystem making it as an RFC, ideally
-> it shuoldn't be an RFC.
+The code was checking for a non-existent macro `HDIO_GETGIO` instead of
+`HDIO_GETGEO`, which caused the ioctl() call to never be executed.
+This resulted in start_sector always being set to 0, even when the
+partition actually starts at a different sector (e.g., 2048).
 
-I think best would be a series that drops error checking first,
-and then changes the return type.  That way we can maybe get all
-the callers fixed up in this merge window and then drop the return
-value after -rc1.
->  			gfp_mask)))
->  		*biop = bio_chain_and_submit(*biop, bio);
-> -	return 0;
->  }
->  EXPORT_SYMBOL(__blkdev_issue_discard);
->  
-> @@ -90,8 +89,8 @@ int blkdev_issue_discard(struct block_device *bdev, sector_t sector,
->  	int ret;
->  
->  	blk_start_plug(&plug);
-> -	ret = __blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, &bio);
-> -	if (!ret && bio) {
-> +	__blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, &bio);
+This bug affects:
+- lib/libf2fs.c: get_device_info() function (lines 967, 1076)
+- tools/fibmap.c: stat_bdev() function (lines 91, 108)
 
-ret now needs to be initialized to 0 above.
+Reproducer:
+1. Create a partition starting at sector 2048:
+   # parted -s /dev/sdb mklabel gpt
+   # parted -s /dev/sdb mkpart primary 2048s 32GiB
 
-> index 8d246b8ca604..f26010c46c33 100644
-> --- a/drivers/nvme/target/io-cmd-bdev.c
-> +++ b/drivers/nvme/target/io-cmd-bdev.c
-> @@ -366,16 +366,11 @@ static u16 nvmet_bdev_discard_range(struct nvmet_req *req,
->  		struct nvme_dsm_range *range, struct bio **bio)
->  {
->  	struct nvmet_ns *ns = req->ns;
-> -	int ret;
->  
-> -	ret = __blkdev_issue_discard(ns->bdev,
-> +	__blkdev_issue_discard(ns->bdev,
->  			nvmet_lba_to_sect(ns, range->slba),
->  			le32_to_cpu(range->nlb) << (ns->blksize_shift - 9),
->  			GFP_KERNEL, bio);
-> -	if (ret && ret != -EOPNOTSUPP) {
-> -		req->error_slba = le64_to_cpu(range->slba);
-> -		return errno_to_nvme_status(req, ret);
-> -	}
->  	return NVME_SC_SUCCESS;
+2. Verify the partition start sector:
+   # cat /sys/block/sdb/sdb1/start
+   2048
 
-nvmet_bdev_discard_range can return void now.
+3. Format with f2fs-tools (before fix) and verify incorrect calculation:
+   # mkfs.f2fs /dev/sdb1
+   # Info: zone aligned segment0 blkaddr: 512
 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index b45eace879d7..e6078176f733 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1346,7 +1346,7 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
->  		if (time_to_inject(sbi, FAULT_DISCARD)) {
->  			err = -EIO;
->  		} else {
-> -			err = __blkdev_issue_discard(bdev,
-> +			__blkdev_issue_discard(bdev,
->  					SECTOR_FROM_BLOCK(start),
->  					SECTOR_FROM_BLOCK(len),
->  					GFP_NOFS, &bio);
+   The calculation happens in
+   mkfs/f2fs_format.c:f2fs_prepare_super_block():
 
-Please fold the following 'if (err)' block directly into the injection
-one, and either initialize err to 0, or use a direct return from that
-block to skip the last branch in the function checking err.
+   With default values:
+   - blk_size_bytes = 4096
+   - c.blks_per_seg = 512
+   - c.segs_per_sec = 1
+   - c.secs_per_zone = 1
+   - zone_size_bytes = blk_size_bytes * c.secs_per_zone
+                       * c.segs_per_sec * c.blks_per_seg
+                     = 4096 * 1 * 1 * 512 = 2,097,152 bytes (2MB)
+   - alignment_bytes = zone_size_bytes (for non-zoned or single device)
 
->  	blk_finish_plug(&plug);
->  
-> -	return error;
-> +	return 0;
+   With c.start_sector = 0 (bug case):
+   - zone_align_start_offset
+       = ((c.start_sector * DEFAULT_SECTOR_SIZE +
+          2 * F2FS_BLKSIZE + alignment_bytes - 1) /
+          alignment_bytes * alignment_bytes) -
+          (c.start_sector * DEFAULT_SECTOR_SIZE)
+       = ((0 * 512 + 2 * 4096 + 2,097,152 - 1) /
+          2,097,152 * 2,097,152) - (0 * 512)
+       = ((8,192 + 2,097,152 - 1) / 2,097,152 * 2,097,152) - 0
+       = 2,097,152 - 0 = 2,097,152 bytes (2MB)
+   - segment0_blkaddr = zone_align_start_offset / blk_size_bytes
+       = 2,097,152 / 4,096 = 512 blocks
 
-Please drop the error return for xfs_discard_extents entirely.
+   This matches the output "segment0 blkaddr: 512".
+
+   With c.start_sector = 2048 (correct case):
+   - zone_align_start_offset
+       = ((2048 * 512 + 2 * 4096 + 2,097,152 - 1) /
+          2,097,152 * 2,097,152) - (2048 * 512)
+       = ((1,048,576 + 8,192 + 2,097,152 - 1) /
+          2,097,152 * 2,097,152) - 1,048,576
+       = 2,097,152 - 1,048,576 = 1,048,576 bytes (1MB)
+   - segment0_blkaddr = zone_align_start_offset / blk_size_bytes
+       = 1,048,576 / 4,096 = 256 blocks
+
+4. Confirm the bug with gdb:
+   So the correct output should be "segment0 blkaddr: 256", not 512.
+
+   # gdb --args mkfs.f2fs /dev/sdb1
+   (gdb) b lib/libf2fs.c:1075
+   (gdb) run
+   1075                    if (i == 0) {
+   (gdb) l
+   1075                    if (i == 0) {
+   1076    #ifdef HDIO_GETGIO
+   1077                            if (ioctl(fd, HDIO_GETGEO, &geom) < 0)
+   1078                                    c.start_sector = 0;
+   1079                            else
+   1080                                    c.start_sector = geom.start;
+   1081    #else
+   1082                            c.start_sector = 0;
+   1083    #endif
+   1084                    }
+   (gdb) n
+   1082                            c.start_sector = 0;
+   # At line 1076: #ifdef HDIO_GETGIO (bug - this macro doesn't exist)
+   # The ioctl() call at line 1077 is skipped, and execution goes
+   # directly to line 1082, setting c.start_sector = 0
+
+After fix:
+   mkfs.f2fs output:
+   Info: zone aligned segment0 blkaddr: 256
+
+   gdb output:
+   (gdb) p c.start_sector
+   $1 = 2048
+
+   The ioctl() correctly retrieves the partition start sector (2048),
+   and zone_align_start_offset is calculated correctly, resulting in
+   segment0_blkaddr = 256.
+
+Fixes: 43bb7b6c99fa ("f2fs-tools: build binaries in Mac")
+Signed-off-by: Xiaole He <hexiaole1994@126.com>
+---
+ lib/libf2fs.c  | 4 ++--
+ tools/fibmap.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 1a496b7..a3508c8 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -964,7 +964,7 @@ int get_device_info(int i)
+ 	uint32_t total_sectors;
+ #endif
+ 	struct stat *stat_buf;
+-#ifdef HDIO_GETGIO
++#ifdef HDIO_GETGEO
+ 	struct hd_geometry geom;
+ #endif
+ #if !defined(WITH_ANDROID) && defined(__linux__)
+@@ -1073,7 +1073,7 @@ int get_device_info(int i)
+ 		dev->total_sectors /= dev->sector_size;
+ 
+ 		if (i == 0) {
+-#ifdef HDIO_GETGIO
++#ifdef HDIO_GETGEO
+ 			if (ioctl(fd, HDIO_GETGEO, &geom) < 0)
+ 				c.start_sector = 0;
+ 			else
+diff --git a/tools/fibmap.c b/tools/fibmap.c
+index 3acc77b..0a92551 100644
+--- a/tools/fibmap.c
++++ b/tools/fibmap.c
+@@ -88,7 +88,7 @@ static void stat_bdev(struct stat *st, unsigned int *start_lba)
+ #endif
+ {
+ 	struct stat bdev_stat;
+-#ifdef HDIO_GETGIO
++#ifdef HDIO_GETGEO
+ 	struct hd_geometry geom;
+ #endif
+ 	char devname[32] = { 0, };
+@@ -105,7 +105,7 @@ static void stat_bdev(struct stat *st, unsigned int *start_lba)
+ 		goto out;
+ 
+ 	if (S_ISBLK(bdev_stat.st_mode)) {
+-#ifdef HDIO_GETGIO
++#ifdef HDIO_GETGEO
+ 		if (ioctl(fd, HDIO_GETGEO, &geom) < 0)
+ 			*start_lba = 0;
+ 		else
+-- 
+2.43.0
 
 
 
