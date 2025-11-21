@@ -4,77 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B2B6CCFA465
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Nov 2025 01:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 433A0CFA466
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Nov 2025 01:48:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=j8SLjt/KgXXjoNPkH9me7Lh2XqK1tl31CiZmAYorWCY=; b=izE3K7AZjnf4oJK/62yvcFF8kq
-	I9HtTG1WwYBlf32lBSmBl4mKuJyRajfA7XrUM87EJ5onk60dKURGfqtlDKyaTIx4IhU0XOoljpJFJ
-	a7/NoU43p52Wzpd/+SzAjO6jNEq/VzYzX+P9kZPXvbVcmI1SkNLAEW6vG3Bo49DerraM=;
+	bh=qlPzVnOcThas9ZOIHRHwMVccHR/QR9P6JVqWlI4+wQk=; b=igIy4RKmIsdnZka7eNH8avNzg2
+	fC6vKzmS2IEwS8j9czD9pmwHoTpUTaxzgssejmsQW+q/88nLKBUthTPFB10uDsiL6yEsbL0i+e2n6
+	D+obZ4z9Ye0FywL0B8Y0IxO+7jyAYjlESGAyz8cQylmf2uoun+mKne/XZnpCOljhQJdA=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vMGAE-0003qL-G6;
-	Fri, 21 Nov 2025 01:42:19 +0000
+	id 1vMGGA-0004Tx-HE;
+	Fri, 21 Nov 2025 01:48:27 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1vMGAD-0003q7-7W
+ (envelope-from <jaegeuk@kernel.org>) id 1vMGG8-0004Tf-SD
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Nov 2025 01:42:18 +0000
+ Fri, 21 Nov 2025 01:48:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=uel6u2m6m2rH/vo9WVbOcnft/0hpm0yuhiyYz5CRlb0=; b=GDbUwSEfeIMlP2YTFBRDP53bCB
- 9O/rm2Zecs3nj2B+SNpIl6kYnRqdIxZ++bVoF62yZUi9+Fa64G4paXSsnWuy97zXaO6nKmH44HHAa
- Ic8KYaNhvIHu3gz9ZNsQfaURa7jseRiymBoGIFlgMc1zm6APluBXegZRhDIYcAsC2Puk=;
+ bh=E/LPU4N7wLTa6sOoERYwS5vWU1GBzVgpajxpSeD5mk0=; b=J0Hep7gJGdQkur0k3G74EWwJUK
+ 54l0ClzTmQu8USUe9EkwpprE5udoUxXkufeHhd6HxOUVd1ZlmLMn/q1m4V7076qT478RMYOAdD3Vz
+ RQVii+KXjHtDq13fEoj+VA1MpXuCRPK2SKdJmdfbUsKnbIVY7BuGYn5sEgRlW57Qn/zo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=uel6u2m6m2rH/vo9WVbOcnft/0hpm0yuhiyYz5CRlb0=; b=Y
- NmM54HeOKsFbwmYE7/oqvi/oqfEMFwvCXOc/N5tOp+YsmNaHo0zDmTtV88UyoXX7k3iWS6Ojro9t2
- dFjR2JyQIJtO6T7nfrePa2jQhIOjnYvRkDXcS9dXN06CQvjniu4iMTDtn+5JFGk98Jc5Ofc+SEWKm
- WhZ7BVUO21ayfK4s=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ List-Owner:List-Archive; bh=E/LPU4N7wLTa6sOoERYwS5vWU1GBzVgpajxpSeD5mk0=; b=H
+ jI0IsxwNbHYlg0E+L8QX9MCOpNp0L0BOTgfxu3A0hEBLA/Zj3JJbPt5Ktzc69w6gSFn00/EcbKb1U
+ eOQx534jlTVvsJXo1UFyOYepPpc+w5ch0x7fXmLLBM3BZLF1tQDcxPhvQb7D5gk7ve0HZHbHPvAYG
+ rxIy3o9TWvtmZ0Go=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vMGAD-0005RJ-H4 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Nov 2025 01:42:17 +0000
+ id 1vMGG9-0005vP-93 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 21 Nov 2025 01:48:25 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 1BADA42DB1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 21 Nov 2025 01:42:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCE1FC4CEF1;
- Fri, 21 Nov 2025 01:42:06 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 97F1C6020E;
+ Fri, 21 Nov 2025 01:48:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E3B5C4CEF1;
+ Fri, 21 Nov 2025 01:48:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1763689327;
- bh=H5IeIodtSnxgkULtRM08GYwKpOM7MhVP+ZZoALsPL/Q=;
+ s=k20201202; t=1763689694;
+ bh=L/FBZ6EX8BBEKd+oHDA9ozKPVRqFKy89jllHraqtJqY=;
  h=From:To:Cc:Subject:Date:From;
- b=iCkKQt8uBHQqOEyvzmKYLwKjFQWdZxszn4TFQRfEpvAfDeag6BOjewlJsecYa3txz
- 2jS37Gxdp65o6RjRyH7gLls+e0cgm0GM5e25C6q6Z9R7cJtHZyj/g4XZSjC4z74ZV3
- MPU40EBxaXGOPp0mzX7XepfISIay0Xbt05tkkOLLEdGLyQwQs1cgv4ptpZDC1IXkrS
- JK6kMf2tkm0MtBKfyMrqaM/Dn/4v431WiZX6bzO7MrMdMN4T6BNrp/Nth06/kac96w
- qF+F2v7dTlO4a2/fKNDE93pJItOVpd3zjF/gE3L/pfKzOeB/mLjv7DULUrx3xmLmjh
- fYo5SguULawew==
+ b=AsWFE2/ZaJzeSyKw92X+LJqR8iMDxGzF7BfywN9uJZldHmP/9N8GsNpj1cvruVbkl
+ 2aBBEyX+YBLzTUTnSfn8cwON/9TvmjTKeqxdmdpymJrCIkSiw3TEH03ZqcxxkeQGLv
+ HVRmjj6X8+qbRGLAp+J2+7dku2GCARWkmw87ZL2O+FABcyrGHez3omBgb+vz5TOs8i
+ oHsbrXK0FcHHESByFIvc97gY0iyooDsv+mV3XdiwL0c40nAint/RXIbjQEQayLEOjb
+ 1V8qVNa1Aj0MUiFTXn76iS9eewI0uabRinSbRNObvQPw3Fo/YTlbMLSuXFZxAQB2sm
+ nME3O9AFjTZ0A==
 To: linux-kernel@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 21 Nov 2025 01:42:01 +0000
-Message-ID: <20251121014202.1969909-1-jaegeuk@kernel.org>
+Date: Fri, 21 Nov 2025 01:48:11 +0000
+Message-ID: <20251121014811.1971698-1-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.52.0.487.g5c8c507ade-goog
 MIME-Version: 1.0
-X-Headers-End: 1vMGAD-0005RJ-H4
-Subject: [f2fs-dev] [PATCH 1/2] f2fs: improve readahead for
- POSIX_FADV_WILLNEED
+X-Headers-End: 1vMGG9-0005vP-93
+Subject: [f2fs-dev] [PATCH] mm/readahead: add a desired folio order for
+ readhead
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,124 +87,63 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
+ "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+ David Hildenbrand <david@redhat.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch boosts readahead for POSIX_FADV_WILLNEED.
+This patch adds a desired folio order in file_ra_state in order to get
+non-zero-order allocation for readahead.
 
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c | 61 ++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/f2fs.h |  1 +
- fs/f2fs/file.c |  9 +++++---
- 3 files changed, 68 insertions(+), 3 deletions(-)
+ include/linux/fs.h | 1 +
+ mm/filemap.c       | 2 +-
+ mm/readahead.c     | 2 +-
+ 3 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index a0433c8a4d84..d95974d79fb3 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2710,6 +2710,67 @@ static void f2fs_readahead(struct readahead_control *rac)
- 	f2fs_mpage_readpages(inode, rac, NULL);
- }
- 
-+int f2fs_readahead_pages(struct file *file, loff_t offset, loff_t len)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct address_space *mapping = file->f_mapping;
-+	pgoff_t start_index = offset >> PAGE_SHIFT;
-+	loff_t endbyte = offset + len;
-+	pgoff_t end_index;
-+	unsigned long nrpages;
-+	unsigned long ra_pages = (16 * 1024 * 1024) / PAGE_SIZE;
-+	DEFINE_READAHEAD(ractl, NULL, &file->f_ra, mapping, start_index);
-+
-+	if (!S_ISREG(inode->i_mode))
-+		return -EOPNOTSUPP;
-+
-+	/* Should be read only. */
-+	if (!(file->f_mode & FMODE_READ))
-+		return -EBADF;
-+
-+	/* Do not support compressed file for large folio. */
-+	if (f2fs_compressed_file(inode))
-+		return -EINVAL;
-+
-+	if (!mapping || len < 0)
-+		return -EINVAL;
-+
-+	if (unlikely(!mapping->a_ops->read_folio && !mapping->a_ops->readahead))
-+		return -EINVAL;
-+
-+	/* Load extent cache at the first readahead. */
-+	f2fs_precache_extents(inode);
-+
-+	/*
-+	 * Careful about overflows. Len == 0 means "as much as possible".  Use
-+	 * unsigned math because signed overflows are undefined and UBSan
-+	 * complains.
-+	 */
-+	if (!len || endbyte > i_size_read(inode) || endbyte < len)
-+		endbyte = i_size_read(inode) - 1;
-+	else
-+		endbyte--;		/* inclusive */
-+
-+	/* First and last PARTIAL page! */
-+	end_index = endbyte >> PAGE_SHIFT;
-+
-+	if (start_index > end_index)
-+		return 0;
-+
-+	nrpages = end_index - start_index + 1;
-+
-+	while (nrpages) {
-+		unsigned long this_chunk = min(nrpages, ra_pages);
-+
-+		ractl.ra->ra_pages = this_chunk;
-+
-+		page_cache_sync_ra(&ractl, this_chunk << 1);
-+
-+		nrpages -= this_chunk;
-+	}
-+	return 0;
-+}
-+
- int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
- {
- 	struct inode *inode = fio_inode(fio);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 3340db04a7c2..934287cc5624 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4047,6 +4047,7 @@ int f2fs_init_bio_entry_cache(void);
- void f2fs_destroy_bio_entry_cache(void);
- void f2fs_submit_read_bio(struct f2fs_sb_info *sbi, struct bio *bio,
- 			  enum page_type type);
-+int f2fs_readahead_pages(struct file *file, loff_t offset, loff_t len);
- int f2fs_init_write_merge_io(struct f2fs_sb_info *sbi);
- void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
- void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index d7047ca6b98d..b6f71efd6d2a 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -5305,9 +5305,12 @@ static int f2fs_file_fadvise(struct file *filp, loff_t offset, loff_t len,
- 		filp->f_mode &= ~FMODE_RANDOM;
- 		spin_unlock(&filp->f_lock);
- 		return 0;
--	} else if (advice == POSIX_FADV_WILLNEED && offset == 0) {
--		/* Load extent cache at the first readahead. */
--		f2fs_precache_extents(inode);
-+	} else if (advice == POSIX_FADV_WILLNEED) {
-+		if (offset == 0 && len == -1) {
-+			f2fs_precache_extents(inode);
-+			return 0;
-+		}
-+		return f2fs_readahead_pages(filp, offset, len);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c895146c1444..8233b166139b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1167,6 +1167,7 @@ struct file_ra_state {
+ 	unsigned int async_size;
+ 	unsigned int ra_pages;
+ 	unsigned short order;
++	unsigned short desired_order;
+ 	unsigned short mmap_miss;
+ 	loff_t prev_pos;
+ };
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 13f0259d993c..6aa0e26c5d17 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3332,7 +3332,7 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+ 		ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
+ 		ra->size = ra->ra_pages;
+ 		ra->async_size = ra->ra_pages / 4;
+-		ra->order = 0;
++		ra->order = ra->desired_order;
  	}
  
- 	err = generic_fadvise(filp, offset, len, advice);
+ 	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 3a4b5d58eeb6..5194211dfdee 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -621,7 +621,7 @@ void page_cache_sync_ra(struct readahead_control *ractl,
+ 	ra->size = min(contig_count + req_count, max_pages);
+ 	ra->async_size = 1;
+ readit:
+-	ra->order = 0;
++	ra->order = ra->desired_order;
+ 	ractl->_index = ra->start;
+ 	page_cache_ra_order(ractl, ra);
+ }
 -- 
 2.52.0.487.g5c8c507ade-goog
 
