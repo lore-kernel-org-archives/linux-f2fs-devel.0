@@ -4,79 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0285FCFD313
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 18:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8BB13CFD34B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 18:50:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=ij+sPWJetQxalkFq8E10Y28VeTsFnpRTD4t37+Aalw8=; b=g6/BCjW+Egk36QelJpchbL8ew7
-	cba+U+epAxufkuLqLqgL2TxQIdo/TLroUEaNgOKjnwIcIOQGb0SmtkWyCE9Mqvug/2sBERVi1qyjS
-	4NkYofa7NkjKD99NcITaLggClaUCSs0hoa08CP7qewdgBlHy19qekkswviCXsF7e3RY4=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=zsKCguEfxDf+RjQ8fyiS67HzlEodIYLTMiUUgwjoghY=; b=bBlwvHSZjs+5QjYYIhQo+ZUnyK
+	cRTUJ480G7h+lrc/ACltxRsSEfNR26fTBdE1YmZsHJdP0OUVQBok19pSyAQTuMGeSHJx2ZWXw9QQW
+	FfLUajCcGyLF2FuTRkqOOKyLpSaIwv4FZdWS7Ckx6ya0oSm446KDa6JflJ2LdmMu6ibY=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vNbeG-00060V-2W;
-	Mon, 24 Nov 2025 18:50:52 +0000
+	id 1vNbeI-0003jv-BW;
+	Mon, 24 Nov 2025 18:50:55 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vNbeE-00060K-Qo
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vNbeH-0003ji-JU
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Nov 2025 18:50:50 +0000
+ Mon, 24 Nov 2025 18:50:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=u3u0KcYzRJUuKde/2lp9V8AXASK9lKwO8Zl2Ssse5RA=; b=EWu4VnMfqXvLbJQ3qw8G/9TDVh
- ivxriYplmNVHpwZrjeVQLndAWEEkWgVI4tW+/xWKb1nwukdbqVBaRireCjIKJ88JQTwj3viw/36X5
- Kvp0jw4djGuGeHNZwyfOa7WNP3wEITKvnRS5ZmjuN7YL63Hz1aSuYr14fAeai6cP8/0I=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=XQf/9pHcMC/VDDfIUuGqwizfPlib4NnNnznkGSxD67c=; b=WfPRxpKffzU8+zqotNqoW5anhk
+ nzuocToshMK60dotcU7VWkygUPJ6Qvq9LLkgadRInR/lTto+pZqVxI/r+2RPgVzULWVp6JsIycUf3
+ CiWhqZ8XFD3yIu2pDq45PNp1tgk8nZFF0iqfhT7Y049n4+JxFQXN2tidIOz1ygS2BYW0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=u3u0KcYzRJUuKde/2lp9V8AXASK9lKwO8Zl2Ssse5RA=; b=T
- dkoyKKATaijOyXJB3H76dBB7u+lMXI9O9Hz+nOUs5DwbJ/hwN0D86x4dCgfJedAoK2/GndJJLyAoP
- VANP1iGP/PisXcm2C1OVfw0YkI0DPQFg2zuAoHEsvPaMNMbynj3EoN6k4H4daQ1T9PvZId0pxACeM
- TugyIEAZoEfjn8NM=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=XQf/9pHcMC/VDDfIUuGqwizfPlib4NnNnznkGSxD67c=; b=ErL+zBCb3AhQuLGUOknpmgSm2M
+ 6a2/lrsxy4DXVS9BWmqOGXitMFab7YfiT9k1g4E7w/53xTmZuVmMMWopEgo77NK4gFO6thNwTQR+c
+ EuZlXcD/zsBjjKrijGCIZ+XH3qItx7zcBR8HER7/AJnM3Hab2IWaVwIMdFdBg7vWufKE=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vNbeD-0002dJ-Px for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Nov 2025 18:50:50 +0000
+ id 1vNbeH-0002e5-LY for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Nov 2025 18:50:54 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 449CD42D9F
+ by sea.source.kernel.org (Postfix) with ESMTP id 60DD74419E
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Nov 2025 18:50:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24C01C4CEF1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Nov 2025 18:50:44 +0000 (UTC)
+ Mon, 24 Nov 2025 18:50:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FF38C4CEF1;
+ Mon, 24 Nov 2025 18:50:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1764010244;
- bh=QPr93+LAbvcRreHeHf5RbUhwapswH2y3ZDw7mtqW8wc=;
- h=Subject:From:Date:To:From;
- b=fU22+qQeGccgAWhf6uvoHx5w7oiDmjYDPi5QacA4ua5HKC7KpZWTflt0Wc60xNjci
- xFZlkquLRawXzo7S1C6hfojPT2EdrHaRgLmfc4ZqvxPXHJIfnbh4x3kDeDdzReTrPc
- YRQWLeGCXVoc3JWiqGJXvxHt5MLzVjlNxyV+pEIum2Djj4OKaETkyyP9hKlB9YvG90
- rMIpagKHVQE3/sMUiLFWobVocZ3V4e3WO1G+/Q18w6S8Pxgmq5M3nI+Vmkj1TiYorL
- LUD8Re8sQIm25t1a5lPukCikfEO8vGfthpLQ2x8Jaa4rbuVeGHmEGrlP9q2fwwocMB
- A6x/n8HeQUOIw==
+ s=k20201202; t=1764010248;
+ bh=81TwqGSrD3HsK2AoJY51n9CmO/PS/aw8f2nlNC3KZZ8=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=i0gasd8GqrySZW6rfBjapTghq6KZgo9Jz+4nchNC9Mk01pi0MdktsrARWfILKirLA
+ 3WjnHBUe11Ygg7y1UWjwapWD7Sd+inVmoKARzzTgGZ6VB+QhfX/16p1Sb1uK2TY3sb
+ kh9lnY6mUIQxcxJKq0554hK5F3rIi6i59WEITMzKqMxR8gcSH5BLBPxW60iLlU2TLW
+ 0UFXW266dlYt31XqMXIAWv4qqmXor3C87M0uQBRP4xJgG75ZiE5UN2VeAblSqegoqq
+ CrKwvStTUSBNXwEDPF8XYLi0B/dACBo09ynJm3zJe5a5fzPazZlaSdRQf/TVaWRXLg
+ g+4xaWFXspVMw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 382653A86296 for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Nov 2025 18:50:08 +0000 (UTC)
+ 70EC23A86296; Mon, 24 Nov 2025 18:50:12 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176401020671.42009.14354151108309181667.git-patchwork-summary@kernel.org>
-Date: Mon, 24 Nov 2025 18:50:06 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1vNbeD-0002dJ-Px
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+Message-Id: <176401021111.42009.2835774626378827103.git-patchwork-notify@kernel.org>
+Date: Mon, 24 Nov 2025 18:50:11 +0000
+References: <20251112014749.2006439-1-chao@kernel.org>
+In-Reply-To: <20251112014749.2006439-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1vNbeH-0002e5-LY
+Subject: Re: [f2fs-dev] [PATCH v2 1/3] f2fs: use memalloc_retry_wait() as
+ much as possible
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,72 +91,37 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Series: [f2fs-dev,v2,1/3] f2fs: wrap all unusable_blocks_per_sec code in CONFIG_BLK_DEV_ZONED
-  Submitter: Yongpeng Yang <yangyongpeng.storage@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1021430
-  Lore link: https://lore.kernel.org/r/20251110082223.902207-1-yangyongpeng.storage@gmail.com
-    Patches: [f2fs-dev,v2,1/3] f2fs: wrap all unusable_blocks_per_sec code in CONFIG_BLK_DEV_ZONED
-             [f2fs-dev,v2,2/3] f2fs: add a sysfs entry to show max open zones
+On Wed, 12 Nov 2025 09:47:47 +0800 you wrote:
+> memalloc_retry_wait() is recommended in memory allocation retry logic,
+> use it as much as possible.
+> 
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+> use memalloc_retry_wait() instead of f2fs_io_schedule_timeout()
+>  fs/f2fs/segment.c | 2 +-
+>  fs/f2fs/super.c   | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-Patch: [f2fs-dev,v1] f2fs: simplify list initialization in f2fs_recover_fsync_data()
-  Submitter: Baolin Liu <liubaolin12138@163.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1022044
-  Lore link: https://lore.kernel.org/r/20251111121728.29433-1-liubaolin12138@163.com
+Here is the summary with links:
+  - [f2fs-dev,v2,1/3] f2fs: use memalloc_retry_wait() as much as possible
+    https://git.kernel.org/jaegeuk/f2fs/c/00e24c488596
+  - [f2fs-dev,v2,2/3] f2fs: introduce f2fs_schedule_timeout()
+    https://git.kernel.org/jaegeuk/f2fs/c/517eb4747ad8
+  - [f2fs-dev,v2,3/3] f2fs: change default schedule timeout value
+    https://git.kernel.org/jaegeuk/f2fs/c/2f4c126cc08b
 
-Series: [f2fs-dev,v2,1/3] f2fs: use memalloc_retry_wait() as much as possible
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1022266
-  Lore link: https://lore.kernel.org/r/20251112014749.2006439-1-chao@kernel.org
-    Patches: [f2fs-dev,v2,1/3] f2fs: use memalloc_retry_wait() as much as possible
-             [f2fs-dev,v2,2/3] f2fs: introduce f2fs_schedule_timeout()
-             [f2fs-dev,v2,3/3] f2fs: change default schedule timeout value
-
-Patch: [f2fs-dev,v7] f2fs: revert summary entry count from 2048 to 512 in 16kb block support
-  Submitter: Daeho Jeong <daeho43@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1022171
-  Lore link: https://lore.kernel.org/r/20251111175246.17202-1-daeho43@gmail.com
-
-Patch: [f2fs-dev,v5] docs: f2fs: wrap ASCII tables in literal blocks to fix LaTeX build
-  Submitter: Masaharu Noguchi <nogunix@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1024235
-  Lore link: https://lore.kernel.org/r/20251117122754.297742-1-nogunix@gmail.com
-
-Patch: [f2fs-dev] f2fs: expand scalability of f2fs mount option
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1024236
-  Lore link: https://lore.kernel.org/r/20251117124559.1634936-1-chao@kernel.org
-
-Series: [f2fs-dev,1/2] f2fs: introduce f2fs_schedule_timeout()
-  Submitter: Chao Yu <chao@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1022034
-  Lore link: https://lore.kernel.org/r/20251111115229.1729729-1-chao@kernel.org
-    Patches: [f2fs-dev,1/2] f2fs: introduce f2fs_schedule_timeout()
-             [f2fs-dev,2/2] f2fs: change default schedule timeout value
-
-Patch: [f2fs-dev,v2] f2fs: fix has_curseg_enough_space to check all data segments for dentry blocks
-  Submitter: Xiaole He <hexiaole1994@126.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1021869
-  Lore link: https://lore.kernel.org/r/20251111061051.337547-1-hexiaole1994@126.com
-
-
-Total patches: 12
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
