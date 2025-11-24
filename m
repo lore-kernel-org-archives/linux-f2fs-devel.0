@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8BB13CFD34B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 18:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 61D02CFD34C
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 18:50:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=zsKCguEfxDf+RjQ8fyiS67HzlEodIYLTMiUUgwjoghY=; b=bBlwvHSZjs+5QjYYIhQo+ZUnyK
-	cRTUJ480G7h+lrc/ACltxRsSEfNR26fTBdE1YmZsHJdP0OUVQBok19pSyAQTuMGeSHJx2ZWXw9QQW
-	FfLUajCcGyLF2FuTRkqOOKyLpSaIwv4FZdWS7Ckx6ya0oSm446KDa6JflJ2LdmMu6ibY=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=9inhDmDsX3hcQ0suNmIAit+lOeUhY+6q94BuR55FXpo=; b=G/iztKnopt6Eueh5ex90v0/MRj
+	135GQ5ULtIxAyb2s9B/qvabSGnhvUAJjEVBwSwe7P9Vw/cCqViADgyBT2j7mAtLZVRQnwNfh/YUOh
+	Khq4p5saJN+rDQwupaUv7eMTuAsBSu7aZLPOAUIsVIO5wqNU54y9j4+hbHf+9oVRpDPs=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vNbeI-0003jv-BW;
-	Mon, 24 Nov 2025 18:50:55 +0000
+	id 1vNbeK-0008Vo-Uu;
+	Mon, 24 Nov 2025 18:50:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vNbeH-0003ji-JU
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vNbeG-0008Va-NK
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Nov 2025 18:50:54 +0000
+ Mon, 24 Nov 2025 18:50:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XQf/9pHcMC/VDDfIUuGqwizfPlib4NnNnznkGSxD67c=; b=WfPRxpKffzU8+zqotNqoW5anhk
- nzuocToshMK60dotcU7VWkygUPJ6Qvq9LLkgadRInR/lTto+pZqVxI/r+2RPgVzULWVp6JsIycUf3
- CiWhqZ8XFD3yIu2pDq45PNp1tgk8nZFF0iqfhT7Y049n4+JxFQXN2tidIOz1ygS2BYW0=;
+ bh=l9ajbIX5y/xf/Qzk8QC66lEkE5QoyuQCz8SrC0LBVks=; b=FBtYDmUY5A40gUSmJxA4+c8EZY
+ mYkaRyZMKZxT2ZUIOyeDkF1YGL2xTxfO/GGEh2oICTm1wKEF7y9SAS1wiYrulFmYm1uYd1MUDCRZZ
+ gIAPtRrldKYmWcja1kp2/bknydz3mXA6lu/k9YHj9dUDlSojnfwNPEY9nymMVeVOzmYs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XQf/9pHcMC/VDDfIUuGqwizfPlib4NnNnznkGSxD67c=; b=ErL+zBCb3AhQuLGUOknpmgSm2M
- 6a2/lrsxy4DXVS9BWmqOGXitMFab7YfiT9k1g4E7w/53xTmZuVmMMWopEgo77NK4gFO6thNwTQR+c
- EuZlXcD/zsBjjKrijGCIZ+XH3qItx7zcBR8HER7/AJnM3Hab2IWaVwIMdFdBg7vWufKE=;
+ bh=l9ajbIX5y/xf/Qzk8QC66lEkE5QoyuQCz8SrC0LBVks=; b=J/l5DJLPDQSdvcUKuXKOWtpPqO
+ LqLoHAqOKisMxYT6geCW5DStLgVBvoYQ7/tWYQa5/FgHhTHuJJ92RQZbO2uDsqXidwiCz6fX7tVCX
+ oL7qMXkF4GcGUjOLvjFAS/YbTFaNVYBSm8GQ27Fgk11YbvUClXPqzh/QobyKqb00w3mo=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vNbeH-0002e5-LY for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Nov 2025 18:50:54 +0000
+ id 1vNbeG-0002ds-6n for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Nov 2025 18:50:52 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 60DD74419E
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Nov 2025 18:50:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FF38C4CEF1;
- Mon, 24 Nov 2025 18:50:48 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id E1E5043CB5;
+ Mon, 24 Nov 2025 18:50:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6D84C4CEF1;
+ Mon, 24 Nov 2025 18:50:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1764010248;
- bh=81TwqGSrD3HsK2AoJY51n9CmO/PS/aw8f2nlNC3KZZ8=;
+ s=k20201202; t=1764010246;
+ bh=bfsPXkJE7FB7meK8tjgJ4UMQE4p6ZXOLoA5SAQjd6vs=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=i0gasd8GqrySZW6rfBjapTghq6KZgo9Jz+4nchNC9Mk01pi0MdktsrARWfILKirLA
- 3WjnHBUe11Ygg7y1UWjwapWD7Sd+inVmoKARzzTgGZ6VB+QhfX/16p1Sb1uK2TY3sb
- kh9lnY6mUIQxcxJKq0554hK5F3rIi6i59WEITMzKqMxR8gcSH5BLBPxW60iLlU2TLW
- 0UFXW266dlYt31XqMXIAWv4qqmXor3C87M0uQBRP4xJgG75ZiE5UN2VeAblSqegoqq
- CrKwvStTUSBNXwEDPF8XYLi0B/dACBo09ynJm3zJe5a5fzPazZlaSdRQf/TVaWRXLg
- g+4xaWFXspVMw==
+ b=ZUUCA61inLWxUtwYFFabkJsuRTIwPb+Eqr/uezX1FHxu2IvLfiYjIS0gE/iWQp0DK
+ 3iKvcxuYFSbikJqEbr2q6sSqnOGqW/F5bffhD6OpjfHntgPml92ayaDwSOo4AAxo2u
+ pTQdIBPNt9NVg7vXaNrC9ialV4kwrNAhPPIheGjZka0kpidKCxFYu7V2rH0sAOJ21w
+ I2V03R6cfxiU5uFuFENLiyYL2WrJt8bF9Y+9FupcxGSCinsWo2wNPBAKmQfwEUDa2B
+ 81D1zbghkslUuQRxIWywjDmBj5dEamzjkhR158Qc6D2AteN17Cb6D31rMRIdNnzju5
+ v2e7u1RU77f6Q==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 70EC23A86296; Mon, 24 Nov 2025 18:50:12 +0000 (UTC)
+ EB0A23A86296; Mon, 24 Nov 2025 18:50:10 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176401021111.42009.2835774626378827103.git-patchwork-notify@kernel.org>
-Date: Mon, 24 Nov 2025 18:50:11 +0000
-References: <20251112014749.2006439-1-chao@kernel.org>
-In-Reply-To: <20251112014749.2006439-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1vNbeH-0002e5-LY
-Subject: Re: [f2fs-dev] [PATCH v2 1/3] f2fs: use memalloc_retry_wait() as
- much as possible
+Message-Id: <176401020949.42009.2139954343027110885.git-patchwork-notify@kernel.org>
+Date: Mon, 24 Nov 2025 18:50:09 +0000
+References: <20251111121728.29433-1-liubaolin12138@163.com>
+In-Reply-To: <20251111121728.29433-1-liubaolin12138@163.com>
+To: Baolin Liu <liubaolin12138@163.com>
+X-Headers-End: 1vNbeG-0002ds-6n
+Subject: Re: [f2fs-dev] [PATCH v1] f2fs: simplify list initialization in
+ f2fs_recover_fsync_data()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,35 +90,31 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, liubaolin@kylinos.cn
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 12 Nov 2025 09:47:47 +0800 you wrote:
-> memalloc_retry_wait() is recommended in memory allocation retry logic,
-> use it as much as possible.
+On Tue, 11 Nov 2025 20:17:28 +0800 you wrote:
+> From: Baolin Liu <liubaolin@kylinos.cn>
 > 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
-> use memalloc_retry_wait() instead of f2fs_io_schedule_timeout()
->  fs/f2fs/segment.c | 2 +-
->  fs/f2fs/super.c   | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> In f2fs_recover_fsync_data(),use LIST_HEAD() to declare and
+> initialize the list_head in one step instead of using
+> INIT_LIST_HEAD() separately.
+> 
+> No functional change.
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2,1/3] f2fs: use memalloc_retry_wait() as much as possible
-    https://git.kernel.org/jaegeuk/f2fs/c/00e24c488596
-  - [f2fs-dev,v2,2/3] f2fs: introduce f2fs_schedule_timeout()
-    https://git.kernel.org/jaegeuk/f2fs/c/517eb4747ad8
-  - [f2fs-dev,v2,3/3] f2fs: change default schedule timeout value
-    https://git.kernel.org/jaegeuk/f2fs/c/2f4c126cc08b
+  - [f2fs-dev,v1] f2fs: simplify list initialization in f2fs_recover_fsync_data()
+    https://git.kernel.org/jaegeuk/f2fs/c/82fbca2067aa
 
 You are awesome, thank you!
 -- 
