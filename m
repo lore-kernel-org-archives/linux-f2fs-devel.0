@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5496FCFD31F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 23:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AB871CFD31F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 23:48:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=xZWiHzfM3jKAcBpWpqK+vUNLkp7UQ7h5eGWEr3dQnPY=; b=g3G+HipCpY9Mcu1iE0b/OLLXOo
-	7TRY/Dr88Sxj8TCJ3VaaM98QlngEOgTq0Gpj25Er1pqDtGHZqbeWoaU7345l0IxxXvGW8aoYgvWIX
-	7h48QFXtX0mlHdgVXB1cV+6us/l6vNsuO/93ARrIycxznTcPfL7ApFjVvsIUiwFF78CQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Wjzhm4KYZZApmeC0CbCWkVvN1k1W7qznBtMVfFRxfqo=; b=U4Wl0riUbUxyN3oif3gYcZSGVS
+	20wphx6yty39yQM2qRhZWf/KW48F1oU5Kj8CLSWcWIEXVu5H1z9FEiUV1P2L54fbRYP0nrJKP+qiB
+	biXMDEP6+ygxNOVSC6vQQgL5pGYWaFro5wV++2XvZTrPt9tenYjYmBJt+vUmYGpQBfvw=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vNgIR-0007v2-1B;
+	id 1vNgIQ-0003dm-Qo;
 	Mon, 24 Nov 2025 23:48:39 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ckulkarnilinux@gmail.com>) id 1vNgIM-0007uf-Uy
+ (envelope-from <ckulkarnilinux@gmail.com>) id 1vNgIL-0003d7-Jg
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 24 Nov 2025 23:48:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9hEyetpjb5QpX08wjji0bcnEJUxus+pp0XTDG4Zkk6c=; b=M3PmzcEsgMcRiUB/K7U6lSftYN
- F71yx6SbmsK0YMjLeoaiH472BhTl98TTho9cYfoOkEBONBz7AQpyaCSvhlsXk0InO2Pw2IFARdr3V
- +RFMV5g3N9GInK0lR0sE1XNKSUuWQCn0ClrIak0NpdpcvIBzfdtXrSnvYdkKSP047xCI=;
+ bh=14mujLSQeTKxSJUy/um1pAgQzTbPorW1qBu/kH6klR8=; b=hLg9GwF+FQjWdENKCVQMA6QlYU
+ d0MdE+AiZy0FQ+Suj63IpOEtyHroPm1GFhnOVNgYW6BdOYErLE+Ql44gh68MQuZRhCswZjNW6h962
+ EqBP1CcsFdKS8SUIkHuhRkUzev+PD7uBQKtuxO0ESZqF8e5BHpAACd7+p2trSmXxxGUg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,74 +42,74 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9hEyetpjb5QpX08wjji0bcnEJUxus+pp0XTDG4Zkk6c=; b=AcX2w7+Dh4Y4Lmm1sStZBvhsO2
- NjGPcy2XV5+wn4fZVRJWCs/EkFL3zVltn/Rwvwtt+7eXQ1MPIRYL56ywmzBGti8FTkboKwjdqdvub
- 66A0fUhfDtFHos743FV+lr0/EdjVS10uQqOClJa0ewHbUgkbXTnoGa9Tz/mPeyj2AUS8=;
-Received: from mail-dl1-f41.google.com ([74.125.82.41])
+ bh=14mujLSQeTKxSJUy/um1pAgQzTbPorW1qBu/kH6klR8=; b=h6srCq3IcFYi4g4KuDApx4su50
+ xcPoTWVuZx0SStHYZ69rGaVkBZJd+swFa1ynyEz55FL3Un0wW/SwWTv1k7e2hbXwsp2EHImSGEwrs
+ 4EvdTcZsH3QP482LlsXw87yDvn5dvcYVLFcKrDQ04ImrJ3PBzbzYVvmVmGHFpVnyxn6s=;
+Received: from mail-pl1-f179.google.com ([209.85.214.179])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vNgIM-0006Ki-Jl for linux-f2fs-devel@lists.sourceforge.net;
+ id 1vNgIL-0006Kc-RY for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 24 Nov 2025 23:48:34 +0000
-Received: by mail-dl1-f41.google.com with SMTP id
- a92af1059eb24-11b6bc976d6so6067023c88.0
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-2953ad5517dso60331495ad.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Nov 2025 15:48:34 -0800 (PST)
+ Mon, 24 Nov 2025 15:48:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1764028104; x=1764632904; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1764028108; x=1764632908; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=9hEyetpjb5QpX08wjji0bcnEJUxus+pp0XTDG4Zkk6c=;
- b=Am75wVhM7SfblW7os21H/RMsaU6s/iDV32Cs+Jr77m15jUfxXkONVJP+tpsttXxHcJ
- th6+47eTRdb0jiJ+WdgZKB8r/nyjGlipw3Jl/BNQBD6vxf5EpvWnfKWG6AkpYIr0eeLx
- kFttP7Q4JAhLZRyI8vjfRi8TP7U3cdRocJfx6GsL9DQ27mwhyZslJHUypX0Dr678wkkg
- 0q6EPCRiwOcA6U3D/9V2b/7JBkghLg2MWFc3VcBC63tXG6L64EaugRWKr2tc1yDyeMo4
- QR6RLCNiX1ZQbegieao5Y4Jnvw0ryOGvE7IcVbwEXlpLtFtxAZJQEIEJ+dVKWfUDpmuh
- 2lNg==
+ bh=14mujLSQeTKxSJUy/um1pAgQzTbPorW1qBu/kH6klR8=;
+ b=hsBLjat1kFyJG2S0/vMo6twOI1samn9PIZFdEz+csdCnwJvrTbp0mkht7q/SG8P7y3
+ Fy5OyZ/4Mrhhsv21xuLG7uE3dRrkhYDQ5fwJ3ZwaZWwhLcWFFMHGKms659pWnF1o9++N
+ tAYKZz2eavsx3NPPu0e/NyK9ZJLQ2ZDt0qdY3HiKcDItZ4iB7YZomjP8THDdFEUVJKXI
+ B4Zg9geVpwnfjYyBTA/1I1T1W+uficZzJzLEHvX0VFJrkHYHGPre3Z5NLnb716mh99oJ
+ b4LuEmPldspuQnk6Upt9rCUd26zGPrdJZLwCO5BgI4Ysi2aRZ+cxhiBQS7CUTVqA7J1Q
+ gjlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764028104; x=1764632904;
+ d=1e100.net; s=20230601; t=1764028108; x=1764632908;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=9hEyetpjb5QpX08wjji0bcnEJUxus+pp0XTDG4Zkk6c=;
- b=wjvsbZAVfKTBU/vqOObm6J/174uqfQ8l5lJe8f55YOkI1cKMorfvygIfztETj/S2tL
- kI/qFVUSB0jLzxZpBBz76qJIcvGxC1PWHIUwRPjOHe+3bY0BOAs2bJYdoWY33KM+HxEs
- B7+G0bnVJwHh00DnOu2KlL+O1x3N2tlGV4M+ju4GEhnZgX5AQwYRwJQVBUcRCjIehfmJ
- DuijZY4PLY5d3YHMDdYvZcbT1Jl3VZumqU8H15ZYYmj2DsOcsqPkx2wJhG97Ew2+pTSQ
- tBFkpu276FNx9IiF4PPluOV4ao8JHw66Zn6j/dbqTy49FznXAxncOzB0l2FvK4BDQq/O
- xn0g==
+ bh=14mujLSQeTKxSJUy/um1pAgQzTbPorW1qBu/kH6klR8=;
+ b=IaY8UzT01vIkvZfDScybjHNsR/ezArwRw8/mM8OCq30m714AL6FKSlVSm3cmbfkoyf
+ nm0a78ZB5lJUP4ucIS7eWWvZOv8chxk1l8FynJdVuaaZVXtfU6LeBkO5nzJgFY+K4GgA
+ THRXBcR/BdroGhE5URn/6ZPFPgRJLCAw9yVituiiLUJeVKDF7KK86uiJZwPBG5y6DgVo
+ hNWes5quwpy/e4us1mu0VRsRuVzYIgNrSUCbzNU+nXOk4nWoejxKRBOwLAtXXcmyvkuB
+ qH3/plI/lkCr3L2wPeeyylwAy0U1YIJ/AT+iTr4pQqyjyIVDSNYBy7Etnx5sKhG2FcRe
+ dPzQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWxZti4c6Yso1L0ZGvUWCytoUJznWmMxw4ZyMZeRA4z7mLLBaJOLoLe1yckz+qdz+Y3Tb6filDZGh+fcsipC7no@lists.sourceforge.net
-X-Gm-Message-State: AOJu0Yw7LvZuaw1yU3BARivm8PmMpXA4bBap/utmpLFz+dJgfzPCc6QN
- TTbxrEDXHSnPcbILKDrHUrBNaE+yh4q8kfTu0JxEJI29IyLzzpskXJnT
-X-Gm-Gg: ASbGncvRUuz9o8p5xrrX6QfKo4gkCeh/jhCMxLp3lyES+ML4NAk/Og4UFqxd4GPM7Z3
- WfOdMOjHqit1EyfNq2oMlDiYlKg0NEDppXojdZ/Lljf8I5razb2FevBDM2mzWs57DqS7LINVIyB
- li0o3EoOhwdjMp8YX7VJk0ONDzOkaESbv9DvMQoa6tjwV6/hDhUwjDuaz7M+H530KqtAWVQJhrE
- JsARyOb/UvBF9ZPr+bxox+9lVQDJtvDfWOF0TvoCnirkK5CffTkCx8zHTvXDQbooRXMJxbNN7zg
- KMe7mfXIQMeYmaU0bCYW6V5iIkiy2It/37GoeM7DLBCDjVbIRu6D3GgHzc85IRd52udWYlofnsa
- bXzY4/nmTPPtexOcKVDtq+yXVvtraIEqpuk/nxjxpuK/bdxFTeT3qrsG3G5LhO/CnuF1wHIEPxP
- pZ85zOE9J2sIVryT0taHQClmJL0NLBZKZyTrvdwLiwhGzUFwM=
-X-Google-Smtp-Source: AGHT+IG0os1yUTB1U8y0wFQR2JhU9wfG8RKwx2eS9+a2sORTH4Ie8rtwmUzrvPIYkCFTBjjRJcm4Ew==
-X-Received: by 2002:a05:7022:ec17:b0:11b:9386:a382 with SMTP id
- a92af1059eb24-11c9cabc4f0mr8878128c88.21.1764028103912; 
- Mon, 24 Nov 2025 15:48:23 -0800 (PST)
+ AJvYcCXV+adAhU3QdVPRorcd/rmXL1EupA5VR2BzU1psbavTulgZRqGksLmzBpCurfmgLWkENAATqbVTMzkRcZXq5Ict@lists.sourceforge.net
+X-Gm-Message-State: AOJu0Yy3ISYhfQD1xZTZzmdDjLZ/W6OVfT44tufbDlm2L2GFTtfoGIgl
+ DVt5IzdbmQsg9w7ADgl/drCDTyKF0vJhxxOmQe7rvdHej1sFz6NWDVII
+X-Gm-Gg: ASbGncupKs3QAvXKidmUwOnPgzGEaJHIc4m5gpej4m1PkObs5U56udCYIxeiliVc5sz
+ ntTpKw8wslaQnRBhI+TkHIo+Pqun3mULvyPCAH+4EbUh3zX/nb9q9IoG1lTApjV75nVTcp0GRxR
+ GDYXgQmzjWRyh+Qg0D1JjbtQnLwRwwolVb6DyskWlYqMJmAOvZIVhkXVjhS0NF/44ZCE7UlapyU
+ BBpdErNhax4Zefm2G+fk4eMow+O8hP5NFlHPLAGU02MpKk3LL/yXWuikZBEWO+R5cgiOTUV7EoR
+ t09Ju2DdfZ0fa7alJ4x+YjqTIT5yZEUW5ZL/8IAcOxnBtpbsCBB3ag0u103QefKz/dFd1HWd2E5
+ uVT44ljk5bl5COUFCd3t5qjKgBxV1EULZ6oDBTf5LInsEsWfoL+S8FFoLeaMDfv2lH5efkMjxYC
+ bOyJZdO/BRW7d8sYqoGDKs4aqaTG+U/VGbXpm7l0XoKKhYG7I=
+X-Google-Smtp-Source: AGHT+IFryzmc/XiOW9LSO9isjtYB1LRYx6LJmKSX/rJnv82E/9f71NMvnHJMZsWalBLPhm0XU6n7Vg==
+X-Received: by 2002:a05:7022:ec88:b0:119:e55a:9bf5 with SMTP id
+ a92af1059eb24-11cb3ef2594mr558577c88.17.1764028108043; 
+ Mon, 24 Nov 2025 15:48:28 -0800 (PST)
 Received: from localhost (ip70-175-132-216.oc.oc.cox.net. [70.175.132.216])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-11c93cd457dsm72215229c88.0.2025.11.24.15.48.23
+ a92af1059eb24-11c93de6d5csm50934844c88.4.2025.11.24.15.48.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Nov 2025 15:48:23 -0800 (PST)
+ Mon, 24 Nov 2025 15:48:27 -0800 (PST)
 From: Chaitanya Kulkarni <ckulkarnilinux@gmail.com>
 To: axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
  song@kernel.org, yukuai@fnnas.com, hch@lst.de, sagi@grimberg.me,
  kch@nvidia.com, jaegeuk@kernel.org, chao@kernel.org, cem@kernel.org
-Date: Mon, 24 Nov 2025 15:48:02 -0800
-Message-Id: <20251124234806.75216-3-ckulkarnilinux@gmail.com>
+Date: Mon, 24 Nov 2025 15:48:05 -0800
+Message-Id: <20251124234806.75216-6-ckulkarnilinux@gmail.com>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20251124234806.75216-1-ckulkarnilinux@gmail.com>
 References: <20251124234806.75216-1-ckulkarnilinux@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1vNgIM-0006Ki-Jl
-Subject: [f2fs-dev] [PATCH V3 2/6] md: ignore discard return value
+X-Headers-End: 1vNgIL-0006Kc-RY
+Subject: [f2fs-dev] [PATCH V3 5/6] f2fs: ignore discard return value
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -131,35 +131,54 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-__blkdev_issue_discard() always returns 0, making all error checking at
-call sites dead code.
+__blkdev_issue_discard() always returns 0, making the error assignment
+in __submit_discard_cmd() dead code.
 
-Simplify md to only check !discard_bio by ignoring the
-__blkdev_issue_discard() value.
+Initialize err to 0 and remove the error assignment from the
+__blkdev_issue_discard() call to err. Move fault injection code into
+already present if branch where err is set to -EIO.
+
+This preserves the fault injection behavior while removing dead error
+handling.
 
 Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Chaitanya Kulkarni <ckulkarnilinux@gmail.com>
 ---
- drivers/md/md.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/segment.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 7b5c5967568f..aeb62df39828 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -9132,8 +9132,8 @@ void md_submit_discard_bio(struct mddev *mddev, struct md_rdev *rdev,
- {
- 	struct bio *discard_bio = NULL;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index b45eace879d7..22b736ec9c51 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1343,15 +1343,9 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
  
--	if (__blkdev_issue_discard(rdev->bdev, start, size, GFP_NOIO,
--			&discard_bio) || !discard_bio)
-+	__blkdev_issue_discard(rdev->bdev, start, size, GFP_NOIO, &discard_bio);
-+	if (!discard_bio)
- 		return;
+ 		dc->di.len += len;
  
- 	bio_chain(discard_bio, bio);
++		err = 0;
+ 		if (time_to_inject(sbi, FAULT_DISCARD)) {
+ 			err = -EIO;
+-		} else {
+-			err = __blkdev_issue_discard(bdev,
+-					SECTOR_FROM_BLOCK(start),
+-					SECTOR_FROM_BLOCK(len),
+-					GFP_NOFS, &bio);
+-		}
+-		if (err) {
+ 			spin_lock_irqsave(&dc->lock, flags);
+ 			if (dc->state == D_PARTIAL)
+ 				dc->state = D_SUBMIT;
+@@ -1360,6 +1354,8 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+ 			break;
+ 		}
+ 
++		__blkdev_issue_discard(bdev, SECTOR_FROM_BLOCK(start),
++				SECTOR_FROM_BLOCK(len), GFP_NOFS, &bio);
+ 		f2fs_bug_on(sbi, !bio);
+ 
+ 		/*
 -- 
 2.40.0
 
