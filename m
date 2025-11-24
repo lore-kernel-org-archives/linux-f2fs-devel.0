@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6586ECFD351
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 18:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B548FCFD34F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 18:51:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=wQ+tWL7mPOY19z/StBYUuMA9xbTaU5gNWzy3mHDWYo4=; b=hotsIYjk9MDlLnMCN2xXQ7gReX
-	pWOxTtziUrd703MplTj1iGGFpPVxWH4ugy9ErWasy6PgCfKVBvFTsX1L0V5654iRVdMmq+EgKrW27
-	4za6u6JVHPJt2qw9MRw46OSFaSugFjuTYf0TALAryo9bDhAfLGMVNQtxT/o89f86dyWk=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=943WLoH9mzBA5RuldDKE6+WPwd+9IPeRdxyUJN4xjDg=; b=lzJTRC24d3VNYWvaYEtdPmdfdG
+	lt8e8nTOBJJMxikmuChjQhxGSYnUo1wo13ST/1ITUz8XzBLKIWIC/zPTaj+tWfqycRXCnRvHsCYBM
+	4avNXlvDn2rjf8a1yxKVtch6HXxF+k9zihfWZkb2qtbzjL85V6yaI5FQaaFV8EHL8UwI=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vNbeR-0001ud-2C;
-	Mon, 24 Nov 2025 18:51:03 +0000
+	id 1vNbeP-0003lh-J2;
+	Mon, 24 Nov 2025 18:51:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vNbeP-0001uO-Tt
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vNbeO-0003lT-MO
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 24 Nov 2025 18:51:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,50 +32,50 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=V2u+27z6kuqQ6PV9MyNbRAN/0gwxXiTH3bc1VAlDiig=; b=CKqmahCzCAbSiZZU5rffMDyvze
- wMOUkEUVk7vOn4zl5wr/c2Z7TTHmftK5Sdj4SdiPZJYaQjIJLdRA+rGddomYp1pcnbKAlQHRH0bFI
- mzOmI7drYC477YWsql2Xr7boV2aHvZFNMemXl1xbiWRkMwv6EZTFGlk+RYruviJsZdw8=;
+ bh=NfkTMyNMJhmRhNOWUyOt2+CAd2RmzrbSAEBiuNkZjMc=; b=DF/N4lp/SeLpF6+6+LqW3R0TVu
+ JgMLcZeHIL0+7I/8cDCxEos5hVFBkXqm2R6CpRCtvjgm+9YtrmDiqOwmjl8ZdHwbSBsaZRnqb3cMx
+ H4HCF6VMvlMeK4im1hytNiVFcH9qSlRoTwlD0QgdChPwl0z6VT7oqU+FGbveMSf526Rw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=V2u+27z6kuqQ6PV9MyNbRAN/0gwxXiTH3bc1VAlDiig=; b=SopS9e5nA1VLXHgtSYfVOiTij+
- VijP5QyCC7CidgLQTYClmgIRePf7A13f1KDGQovTsMAafIt424MkkPCZBpQUKtrJktCx3SdoQ6LhI
- BvjnVzGbsQoIHAVQ1Amo6APGUl/qzYFlnCg7l2DEcuBYduul2KFFi5zWuAD+uVnMgTC0=;
+ bh=NfkTMyNMJhmRhNOWUyOt2+CAd2RmzrbSAEBiuNkZjMc=; b=F3Vm2/SQwkRQD2okUehkz2+QG5
+ NuTpncFwUk9/Gbf6ex/FWIRSUfan/OMzGlDIOhBVWbA1osPDQ5RanGhYKh8RTHJuhfTDAFJN5xFWL
+ 3SGRxbmPTq10r8Kre0j2H6DfadkaijFvidzECQP1NQVs/Hx6AXSt/eOH7aiW8IqW4E78=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vNbeP-0002fY-5E for linux-f2fs-devel@lists.sourceforge.net;
+ id 1vNbeO-0002fT-Oj for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 24 Nov 2025 18:51:01 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 962EF601E8;
- Mon, 24 Nov 2025 18:50:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4312EC4CEF1;
- Mon, 24 Nov 2025 18:50:55 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 1B55360199;
+ Mon, 24 Nov 2025 18:50:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0C21C16AAE;
+ Mon, 24 Nov 2025 18:50:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1764010255;
- bh=ZlK/4H05DLojINQDJP3H0QFDwaycUmg2yoM6N1gwdrw=;
+ s=k20201202; t=1764010249;
+ bh=JodGyJVAuTMIaTL+Pe3dZHLFpnKeoveKGQwrMbmUs94=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=J9G0ahgVEx487Lw3wa7hN0FftApabQVvxM0k93u0UTB4OgTYkxclaAbwqZMZ8lztQ
- ucRp93n4BC76iO5/C2DJMbh8CRZXQsl7sQnac5fQAajRdDZXyHOlhvTsL1JvtOYd02
- J3o2O4mQSGVRNi9AamxP7Hm4/4RFU7zUP7LFNSgRmL2sOOnZNvObcRrTZfMgbrCN87
- ekBQIpwQ7n4X5Onmdkf5x4Ss9CsV9QdFAToQwxRQGc9OKgSIEWDi0ooPWHlzAFG5Ya
- PTOZTId+IUbuobJDKFg00iaOmQpA4fKDfmqRMapXvlFYBRQbOIMYoMcag1LjY0/lMi
- wjJWWfLVZAFtQ==
+ b=U/bpXGM19oVp1ItoS/U1u14OQL21vk6RbL4ULUZFBWxgsmbUKArtbjXL/xYVfBgZ9
+ nlUoN7p2NdYKI/hs6/S24dS4bpQMuioOmKdK4pOyAiD7kKsBgWCiwJNcxPJjGIp9q/
+ fuu8i93CLIBmr2UI4sXffpI8Z16WjBZ+Z2z/cxceNvYt5Cwo0OQroGT24rJdwUATLQ
+ RVy7wx35qhMa3hWLwG+DVa2xBddHVCNAgSklWLmRnAfX0kQox/COwvomGEGRC9qgfb
+ ThfEKCy/2IiupjgFYrod9YDiHTxjDHGWcxDvIcOrZ1FVfTx1MmiH+yNgGle4HuR8AM
+ FxNhB+4+wdijA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 712783A86296; Mon, 24 Nov 2025 18:50:19 +0000 (UTC)
+ EAFBC3A86296; Mon, 24 Nov 2025 18:50:13 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176401021825.42009.3887972145540432748.git-patchwork-notify@kernel.org>
-Date: Mon, 24 Nov 2025 18:50:18 +0000
-References: <20251111061051.337547-1-hexiaole1994@126.com>
-In-Reply-To: <20251111061051.337547-1-hexiaole1994@126.com>
-To: Xiaole He <hexiaole1994@126.com>
-X-Headers-End: 1vNbeP-0002fY-5E
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix has_curseg_enough_space to
- check all data segments for dentry blocks
+Message-Id: <176401021249.42009.11472621798052596767.git-patchwork-notify@kernel.org>
+Date: Mon, 24 Nov 2025 18:50:12 +0000
+References: <20251111175246.17202-1-daeho43@gmail.com>
+In-Reply-To: <20251111175246.17202-1-daeho43@gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>
+X-Headers-End: 1vNbeO-0002fT-Oj
+Subject: Re: [f2fs-dev] [PATCH v7] f2fs: revert summary entry count from
+ 2048 to 512 in 16kb block support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,8 +90,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, stable@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: daehojeong@google.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -101,19 +101,23 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 11 Nov 2025 14:10:51 +0800 you wrote:
-> When active_logs == 6, dentry blocks can be allocated to HOT, WARM, or
-> COLD segments based on various conditions in __get_segment_type_6():
-> - age extent cache (if enabled)
-> - FI_HOT_DATA flag (set when dirty_pages <= min_hot_blocks)
-> - rw_hint (defaults to WARM via f2fs_rw_hint_to_seg_type)
-> - file_is_hot(), FI_NEED_IPU, f2fs_is_cow_file(), etc.
+On Tue, 11 Nov 2025 09:52:46 -0800 you wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> The recent increase in the number of Segment Summary Area (SSA) entries
+> from 512 to 2048 was an unintentional change in logic of 16kb block
+> support. This commit corrects the issue.
+> 
+> To better utilize the space available from the erroneous 2048-entry
+> calculation, we are implementing a solution to share the currently
+> unused SSA space with neighboring segments. This enhances overall
+> SSA utilization without impacting the established 8MB segment size.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: fix has_curseg_enough_space to check all data segments for dentry blocks
-    https://git.kernel.org/jaegeuk/f2fs/c/6d87364f7e94
+  - [f2fs-dev,v7] f2fs: revert summary entry count from 2048 to 512 in 16kb block support
+    https://git.kernel.org/jaegeuk/f2fs/c/9434e14d36ce
 
 You are awesome, thank you!
 -- 
