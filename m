@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EB139CFD36C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 23:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5496FCFD31F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 23:48:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=fX5Ax4M+M1dlE9tUi5ihlCgOLzRgHqSz1r/z5m56r38=; b=FBq+qjLQTX6eCDpP1K4RQ+tiYv
-	vHylewE+sm3xIdgwB9lVAoIzsEwP857FK20WKpx13R+7OWkHugKiQFwzP2Pmo/4/8OMV7311RQ1s7
-	OWkVCJxeLvz1gz76puzXO7XDG8bezVCTVuPp3xaVlkSo0dtGxJcsb2uzcyv5lorcyP68=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=xZWiHzfM3jKAcBpWpqK+vUNLkp7UQ7h5eGWEr3dQnPY=; b=g3G+HipCpY9Mcu1iE0b/OLLXOo
+	7TRY/Dr88Sxj8TCJ3VaaM98QlngEOgTq0Gpj25Er1pqDtGHZqbeWoaU7345l0IxxXvGW8aoYgvWIX
+	7h48QFXtX0mlHdgVXB1cV+6us/l6vNsuO/93ARrIycxznTcPfL7ApFjVvsIUiwFF78CQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vNgIN-0005Wn-Kq;
-	Mon, 24 Nov 2025 23:48:35 +0000
+	id 1vNgIR-0007v2-1B;
+	Mon, 24 Nov 2025 23:48:39 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ckulkarnilinux@gmail.com>) id 1vNgIL-0005Wd-39
+ (envelope-from <ckulkarnilinux@gmail.com>) id 1vNgIM-0007uf-Uy
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Nov 2025 23:48:33 +0000
+ Mon, 24 Nov 2025 23:48:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KD9mOy62HqGMPaOYo+qJ4jLF6S4k7Y6n0q2fK45fvpw=; b=TIqkWW6E/z9DD1BoOa7zknLsWD
- Niq/JqJ+amp04KHKc5Gnpb1A33UELeqqjjduNLyWJl+UK/ZhQSGzrQgsrTBMyoJpe5aqfKvj76VWS
- S2JBR4u4NnAmjk2+ExIJJQ9dP8UhSjt+XNdwqQ1bSS2NH6qPxNA+2TStH7sJHP9QiJr4=;
+ bh=9hEyetpjb5QpX08wjji0bcnEJUxus+pp0XTDG4Zkk6c=; b=M3PmzcEsgMcRiUB/K7U6lSftYN
+ F71yx6SbmsK0YMjLeoaiH472BhTl98TTho9cYfoOkEBONBz7AQpyaCSvhlsXk0InO2Pw2IFARdr3V
+ +RFMV5g3N9GInK0lR0sE1XNKSUuWQCn0ClrIak0NpdpcvIBzfdtXrSnvYdkKSP047xCI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,74 +42,74 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=KD9mOy62HqGMPaOYo+qJ4jLF6S4k7Y6n0q2fK45fvpw=; b=JQHEJG05ChmCtoaEHigeEL/nAa
- dlq4+sZqERKGhwDHOB0WgHVFfJfo77N7bVNXwnv0rgNMf7dEjYJyP6EkQiI6irG/oXXA4jp2cjnOl
- QVpWyP6+TIWyE9skS96i/NW6XQiEpvTMW6qGewmy61xssRnB3xIojpGfSfb1vdvKVK9o=;
-Received: from mail-pg1-f178.google.com ([209.85.215.178])
+ bh=9hEyetpjb5QpX08wjji0bcnEJUxus+pp0XTDG4Zkk6c=; b=AcX2w7+Dh4Y4Lmm1sStZBvhsO2
+ NjGPcy2XV5+wn4fZVRJWCs/EkFL3zVltn/Rwvwtt+7eXQ1MPIRYL56ywmzBGti8FTkboKwjdqdvub
+ 66A0fUhfDtFHos743FV+lr0/EdjVS10uQqOClJa0ewHbUgkbXTnoGa9Tz/mPeyj2AUS8=;
+Received: from mail-dl1-f41.google.com ([74.125.82.41])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vNgIK-0006KY-Kj for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Nov 2025 23:48:33 +0000
-Received: by mail-pg1-f178.google.com with SMTP id
- 41be03b00d2f7-bc59a785697so4218086a12.0
+ id 1vNgIM-0006Ki-Jl for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Nov 2025 23:48:34 +0000
+Received: by mail-dl1-f41.google.com with SMTP id
+ a92af1059eb24-11b6bc976d6so6067023c88.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Nov 2025 15:48:32 -0800 (PST)
+ Mon, 24 Nov 2025 15:48:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1764028107; x=1764632907; darn=lists.sourceforge.net;
+ d=gmail.com; s=20230601; t=1764028104; x=1764632904; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KD9mOy62HqGMPaOYo+qJ4jLF6S4k7Y6n0q2fK45fvpw=;
- b=Qxypl1VTG1sF7AN3aesVjFOXn4LCAoDmnjtFyvaMMp3fLA69FmitTzchmCRyxgc9Zo
- GKvPvO78L9B3iEHjeVQkVXcWXX59JcbeB5Y7OyOgdXgvdYX6KGAx9956a97AecBnS2F0
- 9l2YwnNtsEMMAXZmWiUpIiHSYIgMq1gfpidqoZB1uOE/VhnjS4FJ4pW5YbJT3hzRlGlQ
- h8TaHAA+hyrMmBiTTydoNh+rtaAmH5BPQg5B99Cb2Os42GhpSlQVnLsSJuAjzvwYARhA
- t1YIjim110woebxaLdEmAozLKZ6HAkqRRsbk/82ZgdD6YTjA7LzMPQdKieNjLJqK64Ej
- 44gQ==
+ bh=9hEyetpjb5QpX08wjji0bcnEJUxus+pp0XTDG4Zkk6c=;
+ b=Am75wVhM7SfblW7os21H/RMsaU6s/iDV32Cs+Jr77m15jUfxXkONVJP+tpsttXxHcJ
+ th6+47eTRdb0jiJ+WdgZKB8r/nyjGlipw3Jl/BNQBD6vxf5EpvWnfKWG6AkpYIr0eeLx
+ kFttP7Q4JAhLZRyI8vjfRi8TP7U3cdRocJfx6GsL9DQ27mwhyZslJHUypX0Dr678wkkg
+ 0q6EPCRiwOcA6U3D/9V2b/7JBkghLg2MWFc3VcBC63tXG6L64EaugRWKr2tc1yDyeMo4
+ QR6RLCNiX1ZQbegieao5Y4Jnvw0ryOGvE7IcVbwEXlpLtFtxAZJQEIEJ+dVKWfUDpmuh
+ 2lNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1764028107; x=1764632907;
+ d=1e100.net; s=20230601; t=1764028104; x=1764632904;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=KD9mOy62HqGMPaOYo+qJ4jLF6S4k7Y6n0q2fK45fvpw=;
- b=veE+Atev7UCAebQBRbAvnKketxhLL5747uaoT3Akx7rvkmjmky3dFLyaGnTigOAILR
- WpjhAAHRoOWSVTUV05AdM1jOXybdfncqjZvXGMna38YqMAGvN/HjOp7xAfcecU4M2tFB
- 6qzK2ETDEc+17KvD5GO9V7cqKsFo8hKaAFPhFRgBQNQm2QihCJqFH+MSjx/wjlZwR5W9
- yDUqFP/v1XvAoXqUdD57Wp+cFTVwyPWlWz6RZLg8RlxEB8OGNwmwnwJyMnsrqEnjtL8T
- 4DHbAncQoVBlIf8EHMYGcOwVPXhpc7brpYU4WG1C5n1lTYfMr4PSUFdALkzEMwcp/03c
- VS3g==
+ bh=9hEyetpjb5QpX08wjji0bcnEJUxus+pp0XTDG4Zkk6c=;
+ b=wjvsbZAVfKTBU/vqOObm6J/174uqfQ8l5lJe8f55YOkI1cKMorfvygIfztETj/S2tL
+ kI/qFVUSB0jLzxZpBBz76qJIcvGxC1PWHIUwRPjOHe+3bY0BOAs2bJYdoWY33KM+HxEs
+ B7+G0bnVJwHh00DnOu2KlL+O1x3N2tlGV4M+ju4GEhnZgX5AQwYRwJQVBUcRCjIehfmJ
+ DuijZY4PLY5d3YHMDdYvZcbT1Jl3VZumqU8H15ZYYmj2DsOcsqPkx2wJhG97Ew2+pTSQ
+ tBFkpu276FNx9IiF4PPluOV4ao8JHw66Zn6j/dbqTy49FznXAxncOzB0l2FvK4BDQq/O
+ xn0g==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUPiazkuhyOUvZGm65DOjELavB6Q68WPht10xKM/smjSos8n2H3QQaR2KlSfHsWZ3IhZ+QtHSEzDcPY5eYLzXEI@lists.sourceforge.net
-X-Gm-Message-State: AOJu0Ywd1jPzbq+dDDrOOjzcDJOFYqf1O/TRsckGd6fe4EqgnIKJPEdU
- CO9r/TaIWA7WrjxMViyrGZ52AKRN33HbRcKSNzlz5lhNDzVVM1lIAHpb
-X-Gm-Gg: ASbGncsGMhywkhUUlxengEmZozEtLvQGJYrIPQ/aWeIqgGEJx/lXPJHrQ0NC81MR/H9
- kb8uOoWMJvMqLNKoLZOOAcTpXqGhaAu1llT1dexBS/DzCd0hXQ0Z+QvXDll0hfoqixNGj3pM4Tu
- 8RpO3WVAbXQGzhvpgYs2TWRl2DWgR3VUpzF2+8OnbGzbCJfATca4Xlp2nO8/hshdftY5uJvgy/g
- 7IOThV1oTzznIw7z5H5N+3a2oe3N4h65P8rvPVqcAkNcDCWuMT+SPfPrvWQRHU/4YVfVoAUph4s
- KpMKUYbP17Amz+Roq7mCb7XlY6LQNK9KqgQJ6B2Z8anoYPFbRqgUB8I/tzhtigKXyLBQthxie+R
- sVNvprrSIyBATJI+uYbDIOOMxHmEGxPPtftPoqvj3wddBeR82c6mbVq8m2da61+nC3T9cP5R6Qu
- dOgem22y6t3OVDEIcuCqIl7AqLs/dnGVSHhHCMcH73+E3dZbM=
-X-Google-Smtp-Source: AGHT+IGqGWPp3dbaz9P/oMvxkH8tM768OBnx1ym9H6OndIwxHy5XjYnjyPQDBtMIVrKtoM7S3ehYMw==
-X-Received: by 2002:a05:693c:810c:b0:2a4:3593:9697 with SMTP id
- 5a478bee46e88-2a719279965mr8848102eec.20.1764028106837; 
- Mon, 24 Nov 2025 15:48:26 -0800 (PST)
+ AJvYcCWxZti4c6Yso1L0ZGvUWCytoUJznWmMxw4ZyMZeRA4z7mLLBaJOLoLe1yckz+qdz+Y3Tb6filDZGh+fcsipC7no@lists.sourceforge.net
+X-Gm-Message-State: AOJu0Yw7LvZuaw1yU3BARivm8PmMpXA4bBap/utmpLFz+dJgfzPCc6QN
+ TTbxrEDXHSnPcbILKDrHUrBNaE+yh4q8kfTu0JxEJI29IyLzzpskXJnT
+X-Gm-Gg: ASbGncvRUuz9o8p5xrrX6QfKo4gkCeh/jhCMxLp3lyES+ML4NAk/Og4UFqxd4GPM7Z3
+ WfOdMOjHqit1EyfNq2oMlDiYlKg0NEDppXojdZ/Lljf8I5razb2FevBDM2mzWs57DqS7LINVIyB
+ li0o3EoOhwdjMp8YX7VJk0ONDzOkaESbv9DvMQoa6tjwV6/hDhUwjDuaz7M+H530KqtAWVQJhrE
+ JsARyOb/UvBF9ZPr+bxox+9lVQDJtvDfWOF0TvoCnirkK5CffTkCx8zHTvXDQbooRXMJxbNN7zg
+ KMe7mfXIQMeYmaU0bCYW6V5iIkiy2It/37GoeM7DLBCDjVbIRu6D3GgHzc85IRd52udWYlofnsa
+ bXzY4/nmTPPtexOcKVDtq+yXVvtraIEqpuk/nxjxpuK/bdxFTeT3qrsG3G5LhO/CnuF1wHIEPxP
+ pZ85zOE9J2sIVryT0taHQClmJL0NLBZKZyTrvdwLiwhGzUFwM=
+X-Google-Smtp-Source: AGHT+IG0os1yUTB1U8y0wFQR2JhU9wfG8RKwx2eS9+a2sORTH4Ie8rtwmUzrvPIYkCFTBjjRJcm4Ew==
+X-Received: by 2002:a05:7022:ec17:b0:11b:9386:a382 with SMTP id
+ a92af1059eb24-11c9cabc4f0mr8878128c88.21.1764028103912; 
+ Mon, 24 Nov 2025 15:48:23 -0800 (PST)
 Received: from localhost (ip70-175-132-216.oc.oc.cox.net. [70.175.132.216])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2a6fc5b122dsm56253333eec.5.2025.11.24.15.48.26
+ a92af1059eb24-11c93cd457dsm72215229c88.0.2025.11.24.15.48.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Nov 2025 15:48:26 -0800 (PST)
+ Mon, 24 Nov 2025 15:48:23 -0800 (PST)
 From: Chaitanya Kulkarni <ckulkarnilinux@gmail.com>
 To: axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
  song@kernel.org, yukuai@fnnas.com, hch@lst.de, sagi@grimberg.me,
  kch@nvidia.com, jaegeuk@kernel.org, chao@kernel.org, cem@kernel.org
-Date: Mon, 24 Nov 2025 15:48:04 -0800
-Message-Id: <20251124234806.75216-5-ckulkarnilinux@gmail.com>
+Date: Mon, 24 Nov 2025 15:48:02 -0800
+Message-Id: <20251124234806.75216-3-ckulkarnilinux@gmail.com>
 X-Mailer: git-send-email 2.40.0
 In-Reply-To: <20251124234806.75216-1-ckulkarnilinux@gmail.com>
 References: <20251124234806.75216-1-ckulkarnilinux@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1vNgIK-0006KY-Kj
-Subject: [f2fs-dev] [PATCH V3 4/6] nvmet: ignore discard return value
+X-Headers-End: 1vNgIM-0006Ki-Jl
+Subject: [f2fs-dev] [PATCH V3 2/6] md: ignore discard return value
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -131,73 +131,35 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-__blkdev_issue_discard() always returns 0, making the error checking
-in nvmet_bdev_discard_range() dead code.
+__blkdev_issue_discard() always returns 0, making all error checking at
+call sites dead code.
 
-Kill the function nvmet_bdev_discard_range() and call
-__blkdev_issue_discard() directly from nvmet_bdev_execute_discard(),
-since no error handling is needed anymore for __blkdev_issue_discard()
-call.
+Simplify md to only check !discard_bio by ignoring the
+__blkdev_issue_discard() value.
 
 Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Chaitanya Kulkarni <ckulkarnilinux@gmail.com>
 ---
- drivers/nvme/target/io-cmd-bdev.c | 28 +++++++---------------------
- 1 file changed, 7 insertions(+), 21 deletions(-)
+ drivers/md/md.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvme/target/io-cmd-bdev.c b/drivers/nvme/target/io-cmd-bdev.c
-index 8d246b8ca604..ca7731048940 100644
---- a/drivers/nvme/target/io-cmd-bdev.c
-+++ b/drivers/nvme/target/io-cmd-bdev.c
-@@ -362,29 +362,14 @@ u16 nvmet_bdev_flush(struct nvmet_req *req)
- 	return 0;
- }
- 
--static u16 nvmet_bdev_discard_range(struct nvmet_req *req,
--		struct nvme_dsm_range *range, struct bio **bio)
--{
--	struct nvmet_ns *ns = req->ns;
--	int ret;
--
--	ret = __blkdev_issue_discard(ns->bdev,
--			nvmet_lba_to_sect(ns, range->slba),
--			le32_to_cpu(range->nlb) << (ns->blksize_shift - 9),
--			GFP_KERNEL, bio);
--	if (ret && ret != -EOPNOTSUPP) {
--		req->error_slba = le64_to_cpu(range->slba);
--		return errno_to_nvme_status(req, ret);
--	}
--	return NVME_SC_SUCCESS;
--}
--
- static void nvmet_bdev_execute_discard(struct nvmet_req *req)
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 7b5c5967568f..aeb62df39828 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -9132,8 +9132,8 @@ void md_submit_discard_bio(struct mddev *mddev, struct md_rdev *rdev,
  {
-+	struct nvmet_ns *ns = req->ns;
- 	struct nvme_dsm_range range;
- 	struct bio *bio = NULL;
-+	sector_t nr_sects;
- 	int i;
--	u16 status;
-+	u16 status = NVME_SC_SUCCESS;
+ 	struct bio *discard_bio = NULL;
  
- 	for (i = 0; i <= le32_to_cpu(req->cmd->dsm.nr); i++) {
- 		status = nvmet_copy_from_sgl(req, i * sizeof(range), &range,
-@@ -392,9 +377,10 @@ static void nvmet_bdev_execute_discard(struct nvmet_req *req)
- 		if (status)
- 			break;
+-	if (__blkdev_issue_discard(rdev->bdev, start, size, GFP_NOIO,
+-			&discard_bio) || !discard_bio)
++	__blkdev_issue_discard(rdev->bdev, start, size, GFP_NOIO, &discard_bio);
++	if (!discard_bio)
+ 		return;
  
--		status = nvmet_bdev_discard_range(req, &range, &bio);
--		if (status)
--			break;
-+		nr_sects = le32_to_cpu(range.nlb) << (ns->blksize_shift - 9);
-+		__blkdev_issue_discard(ns->bdev,
-+				nvmet_lba_to_sect(ns, range.slba), nr_sects,
-+				GFP_KERNEL, &bio);
- 	}
- 
- 	if (bio) {
+ 	bio_chain(discard_bio, bio);
 -- 
 2.40.0
 
