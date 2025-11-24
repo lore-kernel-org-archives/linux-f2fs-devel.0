@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B548FCFD34F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 18:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 174D7CFD350
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 18:51:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=943WLoH9mzBA5RuldDKE6+WPwd+9IPeRdxyUJN4xjDg=; b=lzJTRC24d3VNYWvaYEtdPmdfdG
-	lt8e8nTOBJJMxikmuChjQhxGSYnUo1wo13ST/1ITUz8XzBLKIWIC/zPTaj+tWfqycRXCnRvHsCYBM
-	4avNXlvDn2rjf8a1yxKVtch6HXxF+k9zihfWZkb2qtbzjL85V6yaI5FQaaFV8EHL8UwI=;
+	bh=9ER+zokLKYEjd/9ZFzroSMuS0QzSm8Cs7l5JHvk8taU=; b=YAWwAEDVHsi85/IfDtlXcMuklR
+	w9ImafRDJyt/8eOYnzH4H3MZ7a6GUwnAyDltigHyPSkaXwDmecJzWy6LF1MC8XbaXmM5AjzlbK2U2
+	Bg7fReNYu8hKB2zzPBSSaFM/KvbFv/DgumlKEOVc+tS6+Qfcwx4+yCNsOYC2eqej5EWQ=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vNbeP-0003lh-J2;
-	Mon, 24 Nov 2025 18:51:02 +0000
+	id 1vNbeT-0003mq-U1;
+	Mon, 24 Nov 2025 18:51:06 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vNbeO-0003lT-MO
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vNbeS-0003mO-3j
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Nov 2025 18:51:01 +0000
+ Mon, 24 Nov 2025 18:51:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NfkTMyNMJhmRhNOWUyOt2+CAd2RmzrbSAEBiuNkZjMc=; b=DF/N4lp/SeLpF6+6+LqW3R0TVu
- JgMLcZeHIL0+7I/8cDCxEos5hVFBkXqm2R6CpRCtvjgm+9YtrmDiqOwmjl8ZdHwbSBsaZRnqb3cMx
- H4HCF6VMvlMeK4im1hytNiVFcH9qSlRoTwlD0QgdChPwl0z6VT7oqU+FGbveMSf526Rw=;
+ bh=WECSOkJ2CeFyJl3Wepb/hCaFB3zvZXRNF3eGMr+2DIY=; b=cBcbkV3dDEGFuO+wMcYaHmnZfD
+ lydXKDx5I5joxvK356pPStnInLq4Rq1eVMaaYY24/EnWFkDzkXT6+WSZxDj7Pu7J9UiZLpGDnoL7e
+ wKhVuPGNu1R3QzBQPZ4QDPJuPFa/COevJjp4V2IzwqY45mz3Rdkqt//HUxXWtx4n08tY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NfkTMyNMJhmRhNOWUyOt2+CAd2RmzrbSAEBiuNkZjMc=; b=F3Vm2/SQwkRQD2okUehkz2+QG5
- NuTpncFwUk9/Gbf6ex/FWIRSUfan/OMzGlDIOhBVWbA1osPDQ5RanGhYKh8RTHJuhfTDAFJN5xFWL
- 3SGRxbmPTq10r8Kre0j2H6DfadkaijFvidzECQP1NQVs/Hx6AXSt/eOH7aiW8IqW4E78=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=WECSOkJ2CeFyJl3Wepb/hCaFB3zvZXRNF3eGMr+2DIY=; b=dbD8VV/o/nBW3gompm6XyCx4Xi
+ F2x5p3VYg4cIH+ixEn0NaDp7Yq04aC5DBc3iz0mgMLZXUfdc3E4wSJGBZWFUli7DHVosSYe5B3hVB
+ 6q0tZlRZ0D4PO7o4u18y3Vxh/XZLHl5/WgJc4HDWXnOr8ek8cibvsxDC/X9WNt+ZtW2E=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vNbeO-0002fT-Oj for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Nov 2025 18:51:01 +0000
+ id 1vNbeS-0002g4-EJ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Nov 2025 18:51:04 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 1B55360199;
- Mon, 24 Nov 2025 18:50:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0C21C16AAE;
- Mon, 24 Nov 2025 18:50:49 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 2AE2D42D9F
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 24 Nov 2025 18:50:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A518C4CEF1;
+ Mon, 24 Nov 2025 18:50:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1764010249;
- bh=JodGyJVAuTMIaTL+Pe3dZHLFpnKeoveKGQwrMbmUs94=;
+ s=k20201202; t=1764010254;
+ bh=/1gJqD4abMS1sWOKYbQMTYGZchGjFWq4WNl/gDqvVIA=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=U/bpXGM19oVp1ItoS/U1u14OQL21vk6RbL4ULUZFBWxgsmbUKArtbjXL/xYVfBgZ9
- nlUoN7p2NdYKI/hs6/S24dS4bpQMuioOmKdK4pOyAiD7kKsBgWCiwJNcxPJjGIp9q/
- fuu8i93CLIBmr2UI4sXffpI8Z16WjBZ+Z2z/cxceNvYt5Cwo0OQroGT24rJdwUATLQ
- RVy7wx35qhMa3hWLwG+DVa2xBddHVCNAgSklWLmRnAfX0kQox/COwvomGEGRC9qgfb
- ThfEKCy/2IiupjgFYrod9YDiHTxjDHGWcxDvIcOrZ1FVfTx1MmiH+yNgGle4HuR8AM
- FxNhB+4+wdijA==
+ b=SsZybSeazFmJYVFAVfKfxKuoMBBdvThOmDWehh/8rrRzcnLsHGx1wyqEJLOv5zfiy
+ MPbOyOXunPXSOqx6pcjG7fGqauNPass093r+rEuA4wBjDcKwLOarpnCGnLvJWcZFeB
+ 7PCsGIDXnwC8sGCxkxRmt4odhTLQVciKOehypPMwc5948upXJBqzMqmGITxW7f20Fg
+ rsXws21wt4HTiHb5Vpu3q0XcccKrG1ya3UWQCmSpC7Xf+JlKVZvK9J2SZM01crNcvv
+ 7l6ZJTo5wUPoPaEk4K5Gh6UHinC4QAeZW6/VhbvX0McQSsFlIX5+jhMw8pmUZJPzbD
+ KKYfHE210A6Gw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- EAFBC3A86296; Mon, 24 Nov 2025 18:50:13 +0000 (UTC)
+ 3471D3A86296; Mon, 24 Nov 2025 18:50:18 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176401021249.42009.11472621798052596767.git-patchwork-notify@kernel.org>
-Date: Mon, 24 Nov 2025 18:50:12 +0000
-References: <20251111175246.17202-1-daeho43@gmail.com>
-In-Reply-To: <20251111175246.17202-1-daeho43@gmail.com>
-To: Daeho Jeong <daeho43@gmail.com>
-X-Headers-End: 1vNbeO-0002fT-Oj
-Subject: Re: [f2fs-dev] [PATCH v7] f2fs: revert summary entry count from
- 2048 to 512 in 16kb block support
+Message-Id: <176401021675.42009.13430401093424290304.git-patchwork-notify@kernel.org>
+Date: Mon, 24 Nov 2025 18:50:16 +0000
+References: <20251111115229.1729729-1-chao@kernel.org>
+In-Reply-To: <20251111115229.1729729-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1vNbeS-0002g4-EJ
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: introduce f2fs_schedule_timeout()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,34 +90,35 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: daehojeong@google.com, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 11 Nov 2025 09:52:46 -0800 you wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> The recent increase in the number of Segment Summary Area (SSA) entries
-> from 512 to 2048 was an unintentional change in logic of 16kb block
-> support. This commit corrects the issue.
-> 
-> To better utilize the space available from the erroneous 2048-entry
-> calculation, we are implementing a solution to share the currently
-> unused SSA space with neighboring segments. This enhances overall
-> SSA utilization without impacting the established 8MB segment size.
+On Tue, 11 Nov 2025 19:52:28 +0800 you wrote:
+> In f2fs retry logic, we will call f2fs_io_schedule_timeout() to sleep as
+> uninterruptible state (waiting for IO) for a while, however, in several
+> paths below, we are not blocked by IO:
+> - f2fs_write_single_data_page() return -EAGAIN due to racing on cp_rwsem.
+> - f2fs_quota_write() and __replace_atomic_write_block() failed due to
+> no memory.
+> - f2fs_flush_device_cache() failed to submit preflush command.
+> - __issue_discard_cmd_range() sleeps periodically in between two in batch
+> discard submissions.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v7] f2fs: revert summary entry count from 2048 to 512 in 16kb block support
-    https://git.kernel.org/jaegeuk/f2fs/c/9434e14d36ce
+  - [f2fs-dev,1/2] f2fs: introduce f2fs_schedule_timeout()
+    (no matching commit)
+  - [f2fs-dev,2/2] f2fs: change default schedule timeout value
+    https://git.kernel.org/jaegeuk/f2fs/c/2f4c126cc08b
 
 You are awesome, thank you!
 -- 
