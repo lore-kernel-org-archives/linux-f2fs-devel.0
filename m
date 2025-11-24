@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DD288CFD34D
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 18:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6E601CFD34E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Nov 2025 18:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Yqd3Yru42fILDCLP+Vjauv7Jrdf+9AOBtp8ASfkh/gc=; b=UUQpGp/tIaGszr/O6enDn/AQ6f
-	TwVscN8HEh/IRwWq+ZydnLeFUrK13KCRTsXUgTSZFvK3PkeYDKtyvg+KLozizG+leQyAmRPY80BuW
-	c1IvJ3day92elUuY9J/omvtcoP3y3ZB7vnvrCHA0QdYM5bxWTxjWLt1oNoa56dFGUlbI=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Mnz/IsOd4D1dKkpx9fMDPSsxZ8j6BnCenBohi71uCFE=; b=eUgr3HMdX5F79s6CZJrqvjlDfC
+	v7ZyhY6HKwff3/zAXnUJtBrMaXLQp6YLqkKNZ/AP+4Q1ji+Yd+eiUCqPvMmeWRAHMN1RsKCvHscrs
+	yQqQcvNmi7cGV+90asZYqwfaK0kzwQS0HT4M4yLTa1LZbc4U8uCRrXmY87itxq3a8uKM=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vNbeL-00061F-GY;
-	Mon, 24 Nov 2025 18:50:57 +0000
+	id 1vNbeN-0008WH-9L;
+	Mon, 24 Nov 2025 18:50:59 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vNbeK-000611-D7
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vNbeL-0008Vy-Fz
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Nov 2025 18:50:56 +0000
+ Mon, 24 Nov 2025 18:50:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KXTpi6PAeI4doBNu7jWNypMy5YYmlo4H4CSZwGpWwQI=; b=d52qQvsiEpl+Hvo+ToBJG2YLYz
- J1vpkKm3fAeIUoC1uNF7h/dwDDD+Kfi11d17rE5t/w7MRWQnp/uUpC6LQx0bio5VJA1qUVpn+bk26
- jc8B9+USQNFA2t0kxBbVLuoTRK+7vBj4lz6kmMe71d85Wi43AXVwvcxrfS5OJVgoAwFo=;
+ bh=7z/XyG14aF0a8KW1/HqdQ+5YuBjG5fpNj9sOKg7k/cc=; b=StMsdD76SNHnpsdp4nRJ6mz9L+
+ A4u0rUfoQDs/wS40twytanpyyoOOP0NpOtXTQ26DqQGqwBYnFaJPqU8Y8bEM4qfKAonU3jNOWKIR/
+ h2hUs/fBEOlUrUd9nmJYKndJMj93J0VkLZKjVBpxxBSizWUGFrgAbj/MxjwX5jqZ6v20=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KXTpi6PAeI4doBNu7jWNypMy5YYmlo4H4CSZwGpWwQI=; b=MXa+NFDZcEsPxJyFk86XkTSO0g
- YarSafk0QqU/s0b6dnIZcDzgPo7zE20Ivw8bgsTw9Io28vyd27r5dJs1zk//7JfoyjOJtiJjca4m9
- YqGUcgUSQzNtCPzhlotrBEcPqTyRM3XIPxcJmEsKm83jhQZWBFeg5lpKza73WnfCdkdg=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=7z/XyG14aF0a8KW1/HqdQ+5YuBjG5fpNj9sOKg7k/cc=; b=ihGoJxKBTPj6ktm/oUQUP8BT4A
+ FjXn82ReR2S4k0+5TfiBZkAVN+x0Ir60XtvySRcNESN01lIdk3cmpJVl+SifJAbMIvrf3JWMv0Qbb
+ O8D+K2YNw7M++mJt0nhrah2tj29zvftpM8ShyNhajmQ+K6BCvH4LtDVhxyiRJLH4baAE=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vNbeJ-0002eV-Mz for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Nov 2025 18:50:56 +0000
+ id 1vNbeL-0002en-02 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Nov 2025 18:50:57 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 6CFAE43BA7;
- Mon, 24 Nov 2025 18:50:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A54BC4CEF1;
- Mon, 24 Nov 2025 18:50:45 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 6616B601A7;
+ Mon, 24 Nov 2025 18:50:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 104B3C116C6;
+ Mon, 24 Nov 2025 18:50:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1764010245;
- bh=6+hOJU+ZUlkzpexFcleys5ODzLBpIoCb5W70nUHZDwg=;
+ s=k20201202; t=1764010251;
+ bh=Lc2rgNw0FBZB7sMzSaFcGumFZq9VWirjAsP2esRZd+I=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=FVAQcs2GUnMLMsTA06WVInbK7cPJjVvIQPEOkJ6v4jr3YwZWvqyj6z6PXMTn4enzR
- +6NihjnlzUVD2ZhGUI2SIV3v67p7TjaL9HuWdTlNSLT0hAJ0lwQcaYM2IOwi3vKETR
- CMRa38wuO4LrEfEMc0tE45+sY2hhty1NRj82L2IdDu+yvpK0IdQBYuAf5F6HTyXRmF
- piA9j0hrQPH/Fwk9czuV708EmRmziKunCBQjtyIbjFmnoGvL6pH9RkUnTetZQCsoeX
- 2b2+5hV/K2+TEasf2O7hMS63u4H1U2otIDJb7kfg0EkJoHcsIQkCPAghqi/nibFuJV
- cUPyjn52LEoQA==
+ b=Qpx4HciwZWwrS5FeBQwj6PE+DcmgEevKz8fRIWxiSNa4Osz6rz8dQth5AWG/xDoF5
+ kqiTp/82HhbnrmXu4QL1yOqGkHexMh3Qmi52jQon6BSJWdegEeaetvvBAHAiCMGAlb
+ SyHqxOpW/clCvBkGzffWvuIHCzmvNSgefMRxmyp6XOKZKnOegQ4EYH0JBjxNvvBKJe
+ pRWV27jIVu33XS49vY5KYy65fhP9RR+s3PGqfwFseGz9/b1Q1eBJ9SBE60mcGPHu5f
+ SnvOuo/qOaVQm4c9735Y7tGjkQ+XI9z2in/pwxWP/dInDVhr3RNcraihrlNC5tZ71m
+ rrVBFBBXNsuDA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 70E343A86296; Mon, 24 Nov 2025 18:50:09 +0000 (UTC)
+ 3428D3A86296; Mon, 24 Nov 2025 18:50:15 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176401020826.42009.7400663025827347208.git-patchwork-notify@kernel.org>
-Date: Mon, 24 Nov 2025 18:50:08 +0000
-References: <20251110082223.902207-1-yangyongpeng.storage@gmail.com>
-In-Reply-To: <20251110082223.902207-1-yangyongpeng.storage@gmail.com>
-To: Yongpeng Yang <yangyongpeng.storage@gmail.com>
-X-Headers-End: 1vNbeJ-0002eV-Mz
-Subject: Re: [f2fs-dev] [PATCH v2 1/3] f2fs: wrap all
- unusable_blocks_per_sec code in CONFIG_BLK_DEV_ZONED
+Message-Id: <176401021399.42009.9871104675547871251.git-patchwork-notify@kernel.org>
+Date: Mon, 24 Nov 2025 18:50:13 +0000
+References: <20251117122754.297742-1-nogunix@gmail.com>
+In-Reply-To: <20251117122754.297742-1-nogunix@gmail.com>
+To: Masaharu Noguchi <nogunix@gmail.com>
+X-Headers-End: 1vNbeL-0002en-02
+Subject: Re: [f2fs-dev] [PATCH v5] docs: f2fs: wrap ASCII tables in literal
+ blocks to fix LaTeX build
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,35 +90,33 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, yangyongpeng@xiaomi.com,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, akiyks@gmail.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ bagasdotme@gmail.com, jaegeuk@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon, 10 Nov 2025 16:22:21 +0800 you wrote:
-> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
+On Mon, 17 Nov 2025 21:27:54 +0900 you wrote:
+> Sphinx's LaTeX builder fails when converting the nested ASCII tables in
+> f2fs.rst, producing the following error:
 > 
-> The usage of unusable_blocks_per_sec is already wrapped by
-> CONFIG_BLK_DEV_ZONED, except for its declaration and the definitions of
-> CAP_BLKS_PER_SEC and CAP_SEGS_PER_SEC. This patch ensures that all code
-> related to unusable_blocks_per_sec is properly wrapped under the
-> CONFIG_BLK_DEV_ZONED option.
+>   "Markup is unsupported in LaTeX: longtable does not support nesting a table."
+> 
+> Wrap the affected ASCII tables in literal code blocks to force Sphinx to
+> render them verbatim. This prevents nested longtables and fixes the PDF
+> build failure on Sphinx 8.2.x.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2,1/3] f2fs: wrap all unusable_blocks_per_sec code in CONFIG_BLK_DEV_ZONED
-    https://git.kernel.org/jaegeuk/f2fs/c/9e1244d45e7d
-  - [f2fs-dev,v2,2/3] f2fs: add a sysfs entry to show max open zones
-    https://git.kernel.org/jaegeuk/f2fs/c/823190ca76b0
-  - [f2fs-dev,v2,3/3] f2fs: fix handling of zoned block devices with max_open_zones == 0
-    (no matching commit)
+  - [f2fs-dev,v5] docs: f2fs: wrap ASCII tables in literal blocks to fix LaTeX build
+    https://git.kernel.org/jaegeuk/f2fs/c/c0ee17208345
 
 You are awesome, thank you!
 -- 
