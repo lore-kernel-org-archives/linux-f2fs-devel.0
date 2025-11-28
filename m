@@ -4,79 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D6151CFD2F6
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 27 Nov 2025 16:31:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BB512CFD376
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Nov 2025 03:34:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	Reply-To:List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:
-	List-Id:Subject:MIME-Version:Date:Message-ID:To:From:Sender:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=tZNh9OAWZC2DOd4HCXBT7OVRryD/+0SNFPe7jxS1U+g=; b=VMlXTh7luS7Pu9Z1C7MeJflumX
-	Eado7OYsqDxTFXKIngfVvTIm92j/KOSsHu88w7DCKQJhpPZK7GKPtKEY7QneZeJLWYVd6OeAcr3MX
-	SkubceoL8HJM6NOq2ybwSqpMOC/MUEC+36NHrJwc5cBvoqcTceuYbOz39fHVETBE60DQ=;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=Yc6b8yIKkEvAFNt3RXrUpcOp93XvfnamDaC1K96539U=; b=MiGYrNWFKDaFYS+gLtS+f6jEb4
+	m+RNDYbOFF2pl6Wu77RevI0d+7+l3sFhTtbJ3wOpECKtGAKZ191uM96qdZ4jgt+d3xg2CrCut65YP
+	nEpIeedu+2Mot/1mc5POCimolsHtGPZEpwJmHpBjcML84wPTBVPWFzWzscYx99+ZYF2A=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vOetf-0002Hg-Of;
-	Thu, 27 Nov 2025 16:31:07 +0000
+	id 1vOpFk-0008Lg-P2;
+	Fri, 28 Nov 2025 03:34:36 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <90295@msa.hinet.net>) id 1vOetd-0002HZ-Lo
+ (envelope-from <chao@kernel.org>) id 1vOpFj-0008La-EI
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 27 Nov 2025 16:31:05 +0000
+ Fri, 28 Nov 2025 03:34:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Subject:Content-Type:MIME-Version:Date:
- Content-Transfer-Encoding:Message-ID:Reply-To:To:From:Sender:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZNYtndDCKh6r4EUXo/etIwC6qOR4mP2L9/5ZFk7yiPc=; b=hUCj3NcIkxXjqGrtguEyQv56sQ
- JDGi46FK/P8t6GO2RC/dbHhtl0aOcxzTAGeB+x44cfq33yT/pBy8aZIajAu6Kr+m8fj8ghbUrpZOs
- QWzFN6KDWVpU7ZRgpzs2PQcWL8bewnOW4telR3F51qRpOFl6/XzxnEQNGevI9nvgV4S4=;
+ bh=S2tWEmUExidGd3GPYxN5Tuv/4VFNcNNoXm7ZsTopx1o=; b=BWhjw2bGJrQJUBBNWlODUN8kFJ
+ Xrlr+v5oItzfghD2pRCThnaP9C8o+34LtOkWr8aXWU+POPnbdfd2USD492Pm5Kr5iCnHmyN1yo6K4
+ 6Hewb6SSP81kvK5DKL2tHmyV9vNWAzPKK2FdXWM5JlIPaJ8QAr695VAq29DgulSpLbdk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Subject:Content-Type:MIME-Version:Date:Content-Transfer-Encoding:
- Message-ID:Reply-To:To:From:Sender:Cc:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ZNYtndDCKh6r4EUXo/etIwC6qOR4mP2L9/5ZFk7yiPc=; b=lrmJqYkt3BPQ1C3rjBaz2gkkoH
- HTaKcSkPUwcWsTVWV+noD9RiUXTe5t8C0reUmULBp3qGtRH7JxUKMjFoVUDp2tI9A0ppXwR2j80O8
- sBpfXU5tSwHdLMOLRBPH8Hh93FBq+fK5JJhcbRHInVDHX1zw4znH9n6UOE2o9ZITpIw4=;
-Received: from 210-65-1-144.hinet-ip.hinet.net ([210.65.1.144]
- helo=cdmsr1.hinet.net) by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=S2tWEmUExidGd3GPYxN5Tuv/4VFNcNNoXm7ZsTopx1o=; b=UHv8lAnwQDiWlWjGGwhJ+C1dDL
+ 5c1GYIWkfK5eyIizeS/yRTpaNZtmtJHK65efAi640eKekC/rv9a7T9nwFF7ZqEWA4hXghYOSzkk7k
+ UnuIGe/lQRoxsgZ0Th+Do74oEXhI2kKng5iCAfpLej76UfB37sfsVV2ScoADj/FXuDbc=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vOetY-0005Vm-Vl for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 27 Nov 2025 16:31:05 +0000
-Received: from cmsr3.hinet.net ([10.199.216.82])
- by cdmsr1.hinet.net (8.15.2/8.15.2) with ESMTPS id 5ARGUV2u406675
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)
- for <linux-f2fs-devel@lists.sourceforge.net>; Fri, 28 Nov 2025 00:30:52 +0800
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; d=msa.hinet.net;
- s=default; t=1764261052; bh=0Ol2toTlJ4QpUNzN+eX+mnim/uE=;
- h=From:To:Subject:Date;
- b=mMYd4MROk4MCgxCw9Tf0M8yXHygTxMhHrQwNrmHHK4iQrFZ4m1hJfjEr2eLwhzjqJ
- 43kYEdfLxJgL/PQbQnRKaEZ4whNLJxQHvDpAj3D16tgO7H6yeSnYo7qm+RpMcmznxv
- 5jRK13favBDF6aCyW/LyZpOEFWFmBFeafnS6RNyM=
-Received: from [127.0.0.1] (1-160-126-177.dynamic-ip.hinet.net [1.160.126.177])
- by cmsr3.hinet.net (8.15.2/8.15.2) with ESMTPS id 5ARGPdx9884070
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO)
- for <linux-f2fs-devel@lists.sourceforge.net>; Fri, 28 Nov 2025 00:27:25 +0800
-From: "Fadel - Crona" <90295@msa.hinet.net>
-To: linux-f2fs-devel@lists.sourceforge.net
-Message-ID: <6e167afa-1fd7-a447-61b0-9a0af604bc13@msa.hinet.net>
-Date: Thu, 27 Nov 2025 16:27:24 +0000
+ id 1vOpFj-000894-2W for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 28 Nov 2025 03:34:35 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id AB96E43B6D;
+ Fri, 28 Nov 2025 03:34:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61461C116B1;
+ Fri, 28 Nov 2025 03:34:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1764300869;
+ bh=yAAwbLdNBs4YIvLQRMeyqSnLX/Fe4ol7FBJAHqTjRq0=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=P7qkuRAxl1PzCoqJ2K+ATE/Dtivso7yl/BqICRso5hJGwcxfppKBKo0kZAo2THtFL
+ jkl+J/jka/8nT5wHQ2ZhcVCMEhL+G+cQtlwWYEPzv47xEYe6GDYYQYR3I17wXbrLLl
+ 0KKM4DzuJfqYyRLVoiKRs5M7ZLA40nx1clucPqX5qV4cAz1sg7cUYnpzONa4Mqtn0c
+ fsFx9IssAPQKE6bWRvdHpvGeyMjceWGXvEIFcd72LzvAdTdNAzxhEANB4SCldqoMI9
+ Sm/E7f8s7GxWXVkD8LU+c8CGxgfS6b4x8ZTjLNPnQl3mUsAf4bfNrTDmVqCA//mKE9
+ tsQpsxQXRfsgg==
+Message-ID: <25a50204-73c0-4426-8680-f7f87599ac05@kernel.org>
+Date: Fri, 28 Nov 2025 11:34:26 +0800
 MIME-Version: 1.0
-X-HiNet-Brightmail: Spam
-X-CMAE-Score: 100
-X-CMAE-Analysis: v=2.4 cv=PoUwbBM3 c=0 sm=1 tr=0 ts=69287bee
- p=86hzbzkIsB4A:10 a=xjlYW2c7PS4V/2/8fD5bfw==:117
-X-VA-Spam-Flag: YES
-X-Headers-End: 1vOetY-0005Vm-Vl
-Subject: [f2fs-dev] =?utf-8?q?=5BSPAM=5D_LPO_39845_Thursday=2C_November_27?=
- =?utf-8?q?=2C_2025_at_05=3A27=3A23_PM?=
+User-Agent: Mozilla Thunderbird
+To: Christoph Hellwig <hch@infradead.org>
+References: <20251126061437.658896-1-chao@kernel.org>
+ <aSahEs04brIrBcue@infradead.org>
+Content-Language: en-US
+In-Reply-To: <aSahEs04brIrBcue@infradead.org>
+X-Headers-End: 1vOpFj-000894-2W
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to check bio after
+ __blkdev_issue_discard()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,24 +88,30 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: Procurement <sb199047@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, stable@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-RGVhciBMaW51eC1mMmZzLWRldmVsLAoKSSBob3BlIHlvdeKAmXJlIGRvaW5nIHdlbGwuIEnigJlt
-IHJlYWNoaW5nIG91dCB0byBsZWFybiBtb3JlIGFib3V0IHRoZSBwcm9kdWN0cyBsaXN0ZWQgaW4g
-dGhlIGF0dGFjaGVkIGRvY3VtZW50IGFuZCB3b3VsZCByZWFsbHkgYXBwcmVjaWF0ZSB5b3VyIHBy
-b21wdCBmZWVkYmFjay4KCkNvdWxkIHlvdSBwbGVhc2Ugc2hhcmUgZGV0YWlscyBhYm91dCBwcmlj
-aW5nLCBhdmFpbGFiaWxpdHksIHNwZWNpZmljYXRpb25zLCBhbmQgYW55IGN1cnJlbnQgb2ZmZXJz
-IG9yIHByb21vdGlvbnM/IEl0IHdvdWxkIGFsc28gYmUgZ3JlYXQgdG8ga25vdyBhYm91dCB5b3Vy
-IHNoaXBwaW5nIG9wdGlvbnMgYW5kIGVzdGltYXRlZCBkZWxpdmVyeSB0aW1lcy4KCllvdXIgcXVp
-Y2sgcmVzcG9uc2Ugd2lsbCBoZWxwIG1lIG1vdmUgZm9yd2FyZCB3aXRoIG15IGRlY2lzaW9uLCBz
-byBJ4oCZZCBiZSBncmF0ZWZ1bCBpZiB5b3UgY291bGQgZ2V0IGJhY2sgdG8gbWUgYXQgeW91ciBl
-YXJsaWVzdCBjb252ZW5pZW5jZS4KClRoYW5rIHlvdSBzbyBtdWNoIGZvciB5b3VyIHRpbWUgYW5k
-IGFzc2lzdGFuY2Ug4oCUIEkgdHJ1bHkgYXBwcmVjaWF0ZSBpdCBhbmQgbG9vayBmb3J3YXJkIHRv
-IGhlYXJpbmcgZnJvbSB5b3Ugc29vbi4KCldhcm0gcmVnYXJkcywKTXMuIEVybmVzdG8gRmVlbmV5
-CkhlYWQgb2YgUHJvY3VyZW1lbnQKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRl
-dmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9s
-aXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+On 11/26/25 14:41, Christoph Hellwig wrote:
+> It can only return blk_alloc_discard_bio if the the gfp_mask doesn't
+> allow sleeping (which isn't the case here), or nr_sect is zero,
+> which I hope is also not the case as __submit_discard_cmd would
+> run into various other problems.  So no, I don't think this is
+> patch makes any sense.
+
+Oh, I checked details in bio_alloc_bioset() again, it seems I missed
+something for mempool_alloc(), as you mentioned, it may only fail due
+to caller is in non-sleep context passing gfp w/ GFP_ATOMIC or
+GFP_NOWAIT, which is not the case for f2fs discard.
+
+Thanks,
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
