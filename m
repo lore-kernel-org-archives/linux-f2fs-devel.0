@@ -4,78 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3754ED116F1
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Dec 2025 21:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A0182D116F3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Dec 2025 21:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=sihlPz2971invK69NTL2ywidkAhvu1vVIxmfSLb45w0=; b=FBjrPPl7TvhjxSO3dRb0R3i4b2
-	ygF3xoZnXNuHOcTqEgwQ2xmNrg0UkZ+6wA5RoQkOdW2XzNSiPXE7lFb8kIy1JFKz5mSQuAykue5wo
-	I4Xs09qEdqiJkCvTHYwyOISSBc9V4JbwPLmKvBqrZ58UewmAUzKAeU9L+c52L/hyEskw=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=e/tKn6kyIPSL5faoiIzJYrSEpDTfAaV1HaKOTcOrleo=; b=TgN8rheWTHvk+kmeXrNwvgWUZ3
+	Dp40CDk80vsjoT4Sxin90QbWoZ9/gPmI9LitJ7ltyvy4yQecV8MGDYgGA/2LPXTEJ00e/mKJeNM27
+	uGNv5j0uPNmZvA2uiuerzcA8mFFvVcS/O8MiwgfEJ6PPM3uc3cVpUSNW02fH7Ix2tIDw=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vQB2A-0002Wm-Ji;
-	Mon, 01 Dec 2025 21:02:11 +0000
+	id 1vQBJc-00082K-IM;
+	Mon, 01 Dec 2025 21:20:12 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1vQB29-0002WZ-6n
+ (envelope-from <willy@infradead.org>) id 1vQBJa-00082C-PI
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 01 Dec 2025 21:02:10 +0000
+ Mon, 01 Dec 2025 21:20:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QSBqYxxy/T7c0tL0QgHIJ+bqW6B0TnyjGvwsIKHwgpg=; b=FkgteYTwMH3fHHoJCbs9B6CN9y
- 7OVk8uqYJgr4Ei60zBgS9xsllibGM7EhnE1zT21RJmJo6CG3L1aWgu6Q8oad7FbKMmzhxZgZtKoSI
- bHegnxpTFTF81Un22SQ9+wwkeSAvufdb1v/rZCI5CnIs/0FRykwQb5MGQg9EheoRZo98=;
+ bh=WiTdOzM04TmD+7whCaojUYm7mGYFeydQ5w051q8EpM8=; b=PumirFpqe0Qz88sCGzEejI9Evb
+ ZEKEFAvgcji3syCslNX1sTvY+iJ35xBpNoZWUk66O2iXMsOFB+R42cJi0yM95B/qTjLcf8MsVhM3m
+ mAaS+IUrZgTnjvZl1F3//ByXbGtL9iWxhozkDXYavDaVaC3n38j2Q3pM8bGG0taeAmUs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=QSBqYxxy/T7c0tL0QgHIJ+bqW6B0TnyjGvwsIKHwgpg=; b=QNolCcXCagYzViLMrrsjCkrFBO
- kJ02JXLvllkADfmdO3ideTMMqMiN514Wd690mJdWRJHOEGQ7byGz47B/pWJS43v0XNyQXk+9ytJfn
- 9VliQjv/RPv3rSJ78dVmtKjCZTYJsBJDq8ch5O1zVnMob5oPDzwByqnShwFGvKwEeKxM=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=WiTdOzM04TmD+7whCaojUYm7mGYFeydQ5w051q8EpM8=; b=QQ4oUYqXxEK9awXF8lzRXqbur7
+ Yp9KRTa/nAyY+yIvw8xIdHkJ+/6XJ3SclI2r+6tzgka7PJhOoktAQ3RhfQIzwpYtXqS4QgWwT3rd7
+ Blb6B8MN+QImu6sq5SIU2wHDm5D6qiI91wKgBA3UmUT6StWK5w4VHRvaeo2tL3yyR3fc=;
+Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vQB29-0001ic-CA for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 01 Dec 2025 21:02:09 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 1B2B3443AA;
- Mon,  1 Dec 2025 21:01:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E148CC4CEF1;
- Mon,  1 Dec 2025 21:01:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1764622919;
- bh=TSjhUrQK4osexZsfhBcSoBUl/lcIsaNtwDeF27hGiGU=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=rH4NodVe/BbU+oexIBoGMxXa4yul2HcmP/E0rEL1mlQvVrW+YYjbwO98IE75BhVBQ
- kU0mbhK+ePjRcwdhQsyEfjun9kEBtd6UJSmZhPtDKENtY9w0/+uxNfyv+ykywTvFpD
- gbDUjEFjrWPvP8wIBVVopkd8OFc5mUK+fjRkiVUQ8OtD6mOLLKGZ1hYsB/6DJ+pSqB
- /AZahR5VraMQsf/qXL4EZ9SADBYiPF24f/qfdA0u4SmjZBmnlACh0G2ybixs9iuNV2
- lOnwWhvkWv0xOZ6WDBM20lGWMs8EO/iig+dVhoLSyoxJdlZv0dcUfoEw+gTxs+ciYH
- +cepQRB4NaolQ==
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>
-Date: Mon,  1 Dec 2025 21:01:26 +0000
-Message-ID: <20251201210152.909339-4-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.52.0.107.ga0afd4fd5b-goog
-In-Reply-To: <20251201210152.909339-1-jaegeuk@kernel.org>
+ id 1vQBJZ-0002rh-D8 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 01 Dec 2025 21:20:10 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=WiTdOzM04TmD+7whCaojUYm7mGYFeydQ5w051q8EpM8=; b=v/1wqjVQuVqUG/+O5g8v+0grIj
+ P1nnzXYsylJ3+vn50/5fcldCEWTjr1aELVUcxaJQtNsdoQBhsvwSpjTJo6XJdZTKhHeTHF2fKwvPL
+ Fj8jVOeuyZt9q3M6YcJ4CVd4CWZHUZtkx65fKuQfkRCAEXo18n7VA/h+o2haxIwvapGJGUtayaSw4
+ N/z3YzyeJBiFIDDR5zHljspUkRY9iOrT5N80nvesmtQA5c08KSEWOITB7oIqsblySL7IRXxyHa7iU
+ yhEqJxI0XnsbO5RLFr2AQW2hqZVoKCrs/3AEe6E47E8e6QIq32Cq/s76VbiSVgeBqhxp+dQupk6FN
+ a2C/6frA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red
+ Hat Linux)) id 1vQBJR-00000000FYG-1Pcz;
+ Mon, 01 Dec 2025 21:20:01 +0000
+Date: Mon, 1 Dec 2025 21:20:01 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Message-ID: <aS4GgfzfuYRHJdg_@casper.infradead.org>
 References: <20251201210152.909339-1-jaegeuk@kernel.org>
+ <20251201210152.909339-4-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1vQB29-0001ic-CA
-Subject: [f2fs-dev] [PATCH 3/4] mm/readahead: add a_ops->ra_folio_order to
- get a desired folio order
+Content-Disposition: inline
+In-Reply-To: <20251201210152.909339-4-jaegeuk@kernel.org>
+X-Headers-End: 1vQBJZ-0002rh-D8
+Subject: Re: [f2fs-dev] [PATCH 3/4] mm/readahead: add a_ops->ra_folio_order
+ to get a desired folio order
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,94 +86,21 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch introduces a new address operation, a_ops->ra_folio_order(), which
-proposes a new folio order based on the adjusted order for page_cache_sync_ra.
+On Mon, Dec 01, 2025 at 09:01:26PM +0000, Jaegeuk Kim wrote:
+> This patch introduces a new address operation, a_ops->ra_folio_order(), which
+> proposes a new folio order based on the adjusted order for page_cache_sync_ra.
+> 
+> Hence, each filesystem can set the desired minimum order of folio allocation
+> when requesting fadvise(POSIX_FADV_WILLNEED).
 
-Hence, each filesystem can set the desired minimum order of folio allocation
-when requesting fadvise(POSIX_FADV_WILLNEED).
-
-Cc: linux-mm@kvack.org
-Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- include/linux/fs.h      |  4 ++++
- include/linux/pagemap.h | 12 ++++++++++++
- mm/readahead.c          |  6 ++++--
- 3 files changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c895146c1444..ddab68b7e03b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -472,6 +472,10 @@ struct address_space_operations {
- 	void (*is_dirty_writeback) (struct folio *, bool *dirty, bool *wb);
- 	int (*error_remove_folio)(struct address_space *, struct folio *);
- 
-+	/* Min folio order to allocate pages. */
-+	unsigned int (*ra_folio_order)(struct address_space *mapping,
-+			unsigned int order);
-+
- 	/* swapfile support */
- 	int (*swap_activate)(struct swap_info_struct *sis, struct file *file,
- 				sector_t *span);
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 09b581c1d878..e1fe07477220 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -476,6 +476,18 @@ mapping_min_folio_order(const struct address_space *mapping)
- 	return (mapping->flags & AS_FOLIO_ORDER_MIN_MASK) >> AS_FOLIO_ORDER_MIN;
- }
- 
-+static inline unsigned int
-+mapping_ra_folio_order(struct address_space *mapping, unsigned int order)
-+{
-+	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-+		return 0;
-+
-+	if (!mapping->a_ops->ra_folio_order)
-+		return order;
-+
-+	return mapping->a_ops->ra_folio_order(mapping, order);
-+}
-+
- static inline unsigned long
- mapping_min_folio_nrpages(const struct address_space *mapping)
- {
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 5beaf7803554..8c7d08af6e00 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -592,8 +592,10 @@ void page_cache_sync_ra(struct readahead_control *ractl,
- 	 * A start of file, oversized read, or sequential cache miss:
- 	 * trivial case: (index - prev_index) == 1
- 	 * unaligned reads: (index - prev_index) == 0
-+	 * if filesystem sets high-order allocation
- 	 */
--	if (!index || req_count > max_pages || index - prev_index <= 1UL) {
-+	if (!index || req_count > max_pages || index - prev_index <= 1UL ||
-+	    mapping_ra_folio_order(ractl->mapping, 0)) {
- 		ra->start = index;
- 		ra->size = get_init_ra_size(req_count, max_pages);
- 		ra->async_size = ra->size > req_count ? ra->size - req_count :
-@@ -627,7 +629,7 @@ void page_cache_sync_ra(struct readahead_control *ractl,
- 	ra->size = min(contig_count + req_count, max_pages);
- 	ra->async_size = 1;
- readit:
--	ra->order = 0;
-+	ra->order = mapping_ra_folio_order(ractl->mapping, 0);
- 	ractl->_index = ra->start;
- 	page_cache_ra_order(ractl, ra);
- }
--- 
-2.52.0.107.ga0afd4fd5b-goog
-
+Again, you've said what but not why.  Does the mm code not ramp up the
+folio order sufficiently quickly?  What are you trying to accomplish?
 
 
 _______________________________________________
