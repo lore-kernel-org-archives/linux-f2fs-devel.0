@@ -4,76 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 685A4D116F3
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Dec 2025 01:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ADA36D116F6
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Dec 2025 01:32:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=JkQkrgRd1pHok7YE0xrDt2sfQaNfb21pG09Un7E8cPo=; b=CPXQhmkr6o8Cqer1nSDCrQTOvD
-	P1Fpc1Te0MTtRlLTcF37zKHf267wi4EAnVuI4A/jpLXnajgTIGhkfDwZR83Xm6tFYO69n/4SbhL2w
-	PQpEqr0NVNYsCH01QWX3WoC1uYCqNa6wrIs4RPWGKdqSeynGNAghKT9S7radW45uvZTk=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=1vEzxDSeUwYJ0EByqX0gmRGQAyydggOo+mnHmJfsQAQ=; b=JYHB1dMZGOX0lH9F907f31cjmg
+	2R/lWFHLZT3GivvesyQLvOHZelsBFnvq6LQMxOi4NZFelwQYglDhRgJWlqLRLx4axThFUVr9qZyrP
+	XIyEKcKpI/jTIlTFTetFLWpziP28ddE/rK9gFozLsQYnA92fdIbrX+C2xkl1gEQHM78w=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vQFFl-0001c1-1U;
-	Tue, 02 Dec 2025 01:32:29 +0000
+	id 1vQFFl-0003xe-HS;
+	Tue, 02 Dec 2025 01:32:30 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1vQFFj-0001bt-63
+ (envelope-from <jaegeuk@kernel.org>) id 1vQFFk-0003xS-Ia
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 02 Dec 2025 01:32:27 +0000
+ Tue, 02 Dec 2025 01:32:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Kz+PDRrOLbvncsu2HtZG2sODnHbczkORDvE4BiuxYgY=; b=JtdHlOdn7meR68z+p4PPe7frb0
- /LoBH9f+8q2XPZAzUDINh4pn3+m4Cn5GnUERo0dFqQ6Mroi/Le8Iq2/t9vWsWb/dHbqIisVqerczz
- /Mv0juO7PmKaAkFkrDCxdS3spEQynwO3LtJVBm8I1gIXJqRyQGYHfsW6D+UDKpLbEaDY=;
+ bh=aE0HwMs18Vm+zeitaHi8xyIfgDHcAH908O8Y2KqWKvc=; b=a0Mo2q0XfAjwi2H1GKm6Uk1uod
+ T+pg7EIBNRFG8tx7ksfYwSSJyM2WL75jsxpJripMo83NvCGEYIaLq8Btu8QxFs0TQ8fsYFRcdGtpj
+ rpVsywpEImuHzJAf1P0v9Sq0B0ga0BdEFXjM44hRd3JJPj7N/3DzcrTOm2MQNbUxeyog=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Kz+PDRrOLbvncsu2HtZG2sODnHbczkORDvE4BiuxYgY=; b=b
- 6bZCB+XjOVb5k+SY5oxbNGMoIJ0+6EbeEtqd/2xlau301WCM8hJVGQHO1QqRCns2b0GEWze0CpJsM
- CCCH/zhKVJ0Dx51p6MsIUydEKE6eUPptFGAimuX12ooOHpJHYED8gE9WoXbSRZsPf+J6JTirJeFcP
- /AzoKB+WwqrQK3rU=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=aE0HwMs18Vm+zeitaHi8xyIfgDHcAH908O8Y2KqWKvc=; b=TIXNBgwNsMH580CY6lJyqHq6gI
+ eEHryooVuBbe2JVZHrYc1BsdhATTBDdyYk6ej1aZy645ob3jrPxS1Tw4q/ZSNrj3LZObLgZLMrAfJ
+ QaADyX5BtLJJq6pv2jjJCEngSj672S2ep2JMR9/y/8WNmaHsmSf4Jc0mOlfnTyppd4pU=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vQFFi-0006FV-Pr for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 02 Dec 2025 01:32:27 +0000
+ id 1vQFFk-0006Fp-M8 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 02 Dec 2025 01:32:29 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 2544060140;
- Tue,  2 Dec 2025 01:32:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCD3FC4CEF1;
- Tue,  2 Dec 2025 01:32:15 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 1EE046018C;
+ Tue,  2 Dec 2025 01:32:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7560C19421;
+ Tue,  2 Dec 2025 01:32:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1764639135;
- bh=Mc2opyTryZLDKEEpjyKDvLiL+kNz0NWn/iSTPRRI+m0=;
- h=From:To:Cc:Subject:Date:From;
- b=Fm4uEjS2CKU4OvJc9S5bTn9rCfeW04ZJuO3UO1Es3IXjfyqpNR8u7Bk6Xe/wJBNIM
- 26pMFuiOjRefGf/s7MZd4z817Rmhf3OImKaXSZQjLBS70Tlw9qZSd9NqexdAQw1jLF
- YWv5hzsGY0t0BABlofjahcsJL7AUcG5W1ik9ic+ksgvuZBE0CIuEqvvRVZfJS5e3rF
- cPWGKPXdYAVicr6bX8DOzEFgmAd+KxlMO6OFJYoT5mpBQzxP8yH10zZ+sfCSBbTGHX
- 5tWTti7fdFq5DPSOWnpQ8VYaaQNS8PbXDmnDMqzGU7v2RyK2amEbeSLZSyvDTv3wpb
- OCY4V9hl09NUw==
+ s=k20201202; t=1764639137;
+ bh=BpU3vRCEK3UYtGGHaZpkgnwj8upX/nDTSQm3S16WZKw=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=ITwt/47d5odXjPpW5XsmIr+DppcqY0pR7w2OmyMxX/v9Vx+G5bblrfvU+3LW1uPv+
+ W+yq4wTfC97UROaid0R1bZ9j1N80QXn5A+jKF2SlL96b/I4oGr8gCEOcjFfEnBOiHv
+ PCPHEM8/Pf1yit1bd1W48L5cGbhjX9vty78//0ezC86uRWVYhR9mo2fyD4gFVlDmNU
+ ZyU4n2fPng8NyawGr8oc76ZyYOoO07QsBYQjMgL7nb5oUCR8TNrLSTkOrNcY564dH5
+ qiQuLPh50ysMiu+tjCCv3z2MzK4f5kTtuzYnB8RYzg+yxjUd+wF32DWNLXSDr1vZ17
+ F0GD94JUSw90Q==
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>
-Date: Tue,  2 Dec 2025 01:30:10 +0000
-Message-ID: <20251202013212.964298-1-jaegeuk@kernel.org>
+Date: Tue,  2 Dec 2025 01:30:12 +0000
+Message-ID: <20251202013212.964298-3-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.52.0.107.ga0afd4fd5b-goog
+In-Reply-To: <20251202013212.964298-1-jaegeuk@kernel.org>
+References: <20251202013212.964298-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1vQFFi-0006FV-Pr
-Subject: [f2fs-dev] [PATCH 0/3 v2] improve fadvise(POSIX_FADV_WILLNEED) with
- large folio
+X-Headers-End: 1vQFFk-0006Fp-M8
+Subject: [f2fs-dev] [PATCH 2/3] mm/readahead: use page_cache_sync_ra for
+ FADVISE_FAV_WILLNEED
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,20 +94,93 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch series aims to improve fadvise(POSIX_FADV_WILLNEED). The first patch
-fixes the broken logic which was not reading the entire range ahead, and second
-patch converts the readahead function to adopt large folio, and the thrid one
-bumps up the folio order for high-order page allocation accordingly.
+This patch replaces page_cache_ra_unbounded() with page_cache_sync_ra() in
+fadvise(FADVISE_FAV_WILLNEED) to support the large folio.
 
-Jaegeuk Kim (3):
-  mm/readahead: fix the broken readahead for POSIX_FADV_WILLNEED
-  mm/readahead: use page_cache_sync_ra for FADVISE_FAV_WILLNEED
-  mm/readahead: try to allocate high order pages for
-    FADVISE_FAV_WILLNEED
+Before:
+ f2fs_fadvise: dev = (252,16), ino = 14, i_size = 4294967296 offset:0, len:4294967296, advise:3
+ page_cache_ra_unbounded: dev=252:16 ino=e index=0 nr_to_read=2048 lookahead_size=0
+ page_cache_ra_unbounded: dev=252:16 ino=e index=2048 nr_to_read=2048 lookahead_size=0
+ page_cache_ra_unbounded: dev=252:16 ino=e index=4096 nr_to_read=2048 lookahead_size=0
+ page_cache_ra_unbounded: dev=252:16 ino=e index=6144 nr_to_read=2048 lookahead_size=0
+ page_cache_ra_unbounded: dev=252:16 ino=e index=8192 nr_to_read=2048 lookahead_size=0
+ page_cache_ra_unbounded: dev=252:16 ino=e index=10240 nr_to_read=2048 lookahead_size=0
+ page_cache_ra_unbounded: dev=252:16 ino=e index=12288 nr_to_read=2048 lookahead_size=0
+ page_cache_ra_unbounded: dev=252:16 ino=e index=14336 nr_to_read=2048 lookahead_size=0
+ page_cache_ra_unbounded: dev=252:16 ino=e index=16384 nr_to_read=2048 lookahead_size=0
+ page_cache_ra_unbounded: dev=252:16 ino=e index=18432 nr_to_read=2048 lookahead_size=0
+ page_cache_ra_unbounded: dev=252:16 ino=e index=20480 nr_to_read=2048 lookahead_size=0
+ page_cache_ra_unbounded: dev=252:16 ino=e index=22528 nr_to_read=2048 lookahead_size=0
+ page_cache_ra_unbounded: dev=252:16 ino=e index=24576 nr_to_read=2048 lookahead_size=0
+ ...
+ page_cache_ra_unbounded: dev=252:16 ino=e index=1042432 nr_to_read=2048 lookahead_size=0
 
- mm/readahead.c | 43 +++++++++++++++++++++++++------------------
- 1 file changed, 25 insertions(+), 18 deletions(-)
+Note, this is all order-zero page allocation.
 
+After:
+ f2fs_fadvise: dev = (252,16), ino = 14, i_size = 4294967296 offset:0, len:536870912, advise:3
+ page_cache_sync_ra: dev=252:16 ino=e index=0 req_count=2048 order=0 size=0 async_size=0 ra_pages=2048 mmap_miss=0 prev_pos=-1
+ page_cache_ra_order: dev=252:16 ino=e index=0 order=0 size=2048 async_size=1024 ra_pages=2048
+ page_cache_sync_ra: dev=252:16 ino=e index=2048 req_count=2048 order=0 size=2048 async_size=1024 ra_pages=2048 mmap_miss=0 prev_pos=-1
+ page_cache_ra_unbounded: dev=252:16 ino=e index=2048 nr_to_read=2048 lookahead_size=0
+ page_cache_sync_ra: dev=252:16 ino=e index=4096 req_count=2048 order=0 size=2048 async_size=1024 ra_pages=2048 mmap_miss=0 prev_pos=-1
+ page_cache_ra_unbounded: dev=252:16 ino=e index=4096 nr_to_read=2048 lookahead_size=0
+ page_cache_sync_ra: dev=252:16 ino=e index=6144 req_count=2048 order=0 size=2048 async_size=1024 ra_pages=2048 mmap_miss=0 prev_pos=-1
+ page_cache_ra_unbounded: dev=252:16 ino=e index=6144 nr_to_read=2048 lookahead_size=0
+...
+ page_cache_sync_ra: dev=252:16 ino=e index=129024 req_count=2048 order=0 size=2048 async_size=1024 ra_pages=2048 mmap_miss=0 prev_pos=-1
+ page_cache_ra_unbounded: dev=252:16 ino=e index=129024 nr_to_read=2048 lookahead_size=0
+
+Cc: linux-mm@kvack.org
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ mm/readahead.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/mm/readahead.c b/mm/readahead.c
+index e88425ce06f7..54c78f8276fe 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -340,6 +340,7 @@ void force_page_cache_ra(struct readahead_control *ractl,
+ 		unsigned long nr_to_read)
+ {
+ 	struct address_space *mapping = ractl->mapping;
++	struct inode *inode = mapping->host;
+ 	struct backing_dev_info *bdi = inode_to_bdi(mapping->host);
+ 	unsigned long this_chunk;
+ 
+@@ -352,11 +353,19 @@ void force_page_cache_ra(struct readahead_control *ractl,
+ 	this_chunk = max_t(unsigned long, bdi->io_pages, ractl->ra->ra_pages);
+ 
+ 	while (nr_to_read) {
+-		this_chunk = min_t(unsigned long, this_chunk, nr_to_read);
++		unsigned long index = readahead_index(ractl);
++		pgoff_t end_index = (i_size_read(inode) - 1) >> PAGE_SHIFT;
+ 
+-		if (do_page_cache_ra(ractl, this_chunk, 0))
++		if (index > end_index)
+ 			break;
+ 
++		if (nr_to_read > end_index - index)
++			nr_to_read = end_index - index + 1;
++
++		this_chunk = min_t(unsigned long, this_chunk, nr_to_read);
++
++		page_cache_sync_ra(ractl, this_chunk);
++
+ 		nr_to_read -= this_chunk;
+ 	}
+ }
+@@ -573,7 +582,7 @@ void page_cache_sync_ra(struct readahead_control *ractl,
+ 
+ 	/* be dumb */
+ 	if (do_forced_ra) {
+-		force_page_cache_ra(ractl, req_count);
++		do_page_cache_ra(ractl, req_count, 0);
+ 		return;
+ 	}
+ 
 -- 
 2.52.0.107.ga0afd4fd5b-goog
 
