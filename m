@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DC42CD3B98B
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  9 Dec 2025 17:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4A6F4D3B985
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  9 Dec 2025 17:22:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=NrnAK+0vX6qSpU6CaCtRZor+t6/AORyQ7JvM0t2YN2I=; b=RutgBMM4jCSFGXee3cUdpYYv71
-	P0gS6xtmM8vlzC1aeQUpUeME2qb8i1DOvbi9TkKu88ZOhjSY3bvqTqcJFEvhXiaU31IJrjBCOuoBf
-	duw3nWjGGfrhMLDttxPjSuLhaUBeoM5TXU/NtUEPmbJGlI5Lwumvi0LP7fiShlJIAjP4=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=A630GwVYtnkcpDZBuhzunIo8B+/vxV3mttNh9uHlWBo=; b=GfdR0L/Ya5hEDeGCktvqA3DSC3
+	SMGI5PVvmlAPqMVoCSuC57i/zFWa37fVTqpzP4qMtauZXJpKJECFeCV8gmPafCLEGOwjVD0uN8vQm
+	3zgTvkSbJlAelGhIHC8X56ze0qgbnmgWDqazditAskyOxmvGdQhQXD5HM1NfuPbzNi1Y=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vT1Pi-0003Te-FM;
-	Tue, 09 Dec 2025 17:22:14 +0000
+	id 1vT1Pl-0003Z4-Ux;
+	Tue, 09 Dec 2025 17:22:17 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vT1PY-0003TP-FS
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vT1PY-0003YX-FR
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 09 Dec 2025 17:22:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,51 +32,49 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2OfZnJKQD65zAnOpqdjAiOAqDFP91IDQbUjGaeDV9mA=; b=Qme4Bz1udH4JkKyA6ooM5Dvc7W
- 9YYX/szVId/FI5VpZdCeXLcp2rh5JfPrV5xEhdSPvrQhRfJMI05+Xgo+6HHt24BFsnksqKFT0Jrwu
- +i+NZfCfrty2i5fmeUxeC7MCABuR0IjaKsce4Coy7UuoDgpSnNDGcUsFe5v+ZFAO79V4=;
+ bh=3z9G3lTRcxZ+IB1QoPmw4T1KLdARSXgqL4TaBex+T4w=; b=JCWo8inTvBFeMWGRq/1UI5kUM0
+ SLy54+NSU9uIQxvDezUJ9sb2TmtzobTJia9kb9Rm7MYVha2rESOdVHfmcTwvpjYAphYzuLE8WMs60
+ E4qTW7cbhKUvVSwPGBsa9xx33FuMNVbs4hXfizIss1KqUpM9UHzrscZ/E9j7cc4+gOko=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2OfZnJKQD65zAnOpqdjAiOAqDFP91IDQbUjGaeDV9mA=; b=MIFH9Mpq34dxEVYpHQrjGgG039
- Wudn0gQSxvkHaqEyZX4XJ5YA72A5HgkFKcyvuAbXvZQkqARSvYOqEMnvy+k4DbzeDes7yckjag1gQ
- TEGL3fD71TDPPI8CKNSZlGypQnxxARo8E3k/BF1UWdZSbshYr0CP01Rqamiu6um9DHAs=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=3z9G3lTRcxZ+IB1QoPmw4T1KLdARSXgqL4TaBex+T4w=; b=LVIXbnTGEzxIuE2h3+XdyJCA13
+ jpxOaRxI/EB6lxDuwdY35upop2CMqLjaYcnrKVrSarVUUT6wOT77doAXMPE5H8KSIfZFdzmcqQBfQ
+ yqN7Q5xHJz3MGnUI5g268SbWDvsh8EMQ+bNpQOE4pvHVUcapmfkzBtTHgPCEb8QsS/7E=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vT1PW-00010F-Fb for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 09 Dec 2025 17:22:03 +0000
+ id 1vT1PT-0000zv-Ij for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 09 Dec 2025 17:21:59 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id C0853601AF;
- Tue,  9 Dec 2025 17:21:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73601C4CEFB;
- Tue,  9 Dec 2025 17:21:51 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 4E41D444C7;
+ Tue,  9 Dec 2025 17:21:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31953C4CEF5;
+ Tue,  9 Dec 2025 17:21:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1765300911;
- bh=6JzHwVMsw3oVBaLB929QEwdcMxFilfqVMX3zcgp6eKA=;
+ s=k20201202; t=1765300914;
+ bh=myGVRalgrsbtvRWYKHHOrkm0sXCxbKG58e5Al9NBxgY=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=Psg4CKLAi9h/A9vrvljHnRqp9p5yz8B5YCapKgSBCEr6kmloaOVwmNaYxp96nI0Jm
- E1pbyJ1ln1w7L+cwykG7ZYqv4qRzAcWJFrrDoVllnAKtP9kV9HNNc0yvVFDPPFwIkZ
- zlIrgsKzfz9N31t7zC7ENkzXvNMPaNLtaoUlwGSCq0lbSmlyoP3LMxcO1rKyc+86dE
- NNhWUd3A/NHLJln9jL7sW0vI/gKw88UtIG56vYvOYlGCOJt2PmPeBPQ+WVB8pAbtZB
- YUlzouJwNa/r7jfn9C9CtIGicL5PvCAPTPMpQEpILvgU65s/m796Uhb97EubDbNHcQ
- BLbAhrtl11WCQ==
+ b=OrEbx/X4K6wBSSKwU0WbMdK8zz6f2QVZ2bc/SDpB7azF59Mv1wmjhDUxlHoxviwFf
+ YPffS438MwrcZBTso9ikk/QUa2hLyE/W4cZ9W2IHTsEwpujcI4Z4n4r6XlLDMCZDAS
+ QqnTpY1QLIbdF+snSu2TCFpDGpXzyqXQu/PYIODcU2BR7O8j3PXIglGcnSZNTbsVWR
+ FXpPxX4L4ceGKssMw4ZJ0gk4MNgLAqclRe8zQE5yRjjfnC5n/VA6icIIU4lMLmeotH
+ aZfpkEXFS1W8J8mnQxAeOmNc5h6BQ73MzjFUg5UYUeTXyxStazYK9+m7r+oliu9VnC
+ vHfAnSPG5yxjA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- B591F3808200; Tue,  9 Dec 2025 17:18:47 +0000 (UTC)
+ 788153808200; Tue,  9 Dec 2025 17:18:50 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176530072652.4018985.15391772848132749035.git-patchwork-notify@kernel.org>
-Date: Tue, 09 Dec 2025 17:18:46 +0000
-References: <20250827175247.83322-2-shivankg@amd.com>
-In-Reply-To: <20250827175247.83322-2-shivankg@amd.com>
-To: Garg@aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org,
- Shivank <shivankg@amd.com>
-X-Headers-End: 1vT1PW-00010F-Fb
-Subject: Re: [f2fs-dev] [PATCH kvm-next V11 0/7] Add NUMA mempolicy support
- for KVM guest-memfd
+Message-Id: <176530072903.4018985.4925454806084370297.git-patchwork-notify@kernel.org>
+Date: Tue, 09 Dec 2025 17:18:49 +0000
+References: <20251024170822.1427218-6-willy@infradead.org>
+In-Reply-To: <20251024170822.1427218-6-willy@infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+X-Headers-End: 1vT1PT-0000zv-Ij
+Subject: Re: [f2fs-dev] [PATCH 05/10] f2fs: Use folio_next_pos()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,76 +89,32 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: gshan@redhat.com, mhocko@suse.com, jack@suse.cz, jgg@nvidia.com,
- kvm@vger.kernel.org, david@redhat.com, tabba@google.com, kalyazin@amazon.com,
- peterx@redhat.com, clm@fb.com, rppt@kernel.org, ddutile@redhat.com,
- linux-kselftest@vger.kernel.org, jaegeuk@kernel.org, papaluri@amd.com,
- ying.huang@linux.alibaba.com, shuah@kernel.org, matthew.brost@intel.com,
- zbestahu@gmail.com, lorenzo.stoakes@oracle.com, pvorel@suse.cz,
- ira.weiny@intel.com, dhavale@google.com, jmorris@namei.org,
- willy@infradead.org, hch@infradead.org, linux-bcachefs@vger.kernel.org,
- cgzones@googlemail.com, ziy@nvidia.com, rientjes@google.com,
- brauner@kernel.org, xiang@kernel.org, roypat@amazon.co.uk, chao.gao@intel.com,
- jgowans@amazon.com, thomas.lendacky@amd.com, ashish.kalra@amd.com,
- chao.p.peng@intel.com, yan.y.zhao@intel.com, byungchul@sk.com,
- michael.day@amd.com, Neeraj.Upadhyay@amd.com, michael.roth@amd.com,
- bfoster@redhat.com, bharata@amd.com, josef@toxicpanda.com,
- Liam.Howlett@oracle.com, ackerleytng@google.com, suzuki.poulose@arm.com,
- linux-coco@lists.linux.dev, dsterba@suse.com, shdhiman@amd.com,
- dan.j.williams@intel.com, gourry@gourry.net, surenb@google.com, vbabka@suse.cz,
- yuzhao@google.com, joshua.hahnjy@gmail.com, apopple@nvidia.com, nikunj@amd.com,
- vannapurve@google.com, quic_eberman@quicinc.com, paul@paul-moore.com,
- linux-mm@kvack.org, seanjc@google.com, kent.overstreet@linux.dev,
- rakie.kim@sk.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, pankaj.gupta@amd.com,
- linux-security-module@vger.kernel.org, lihongbo22@huawei.com,
- jefflexu@linux.alibaba.com, aik@amd.com, amit@infradead.org,
- linux-fsdevel@vger.kernel.org, pbonzini@redhat.com, akpm@linux-foundation.org,
- serge@hallyn.com, linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org,
- viro@zeniv.linux.org.uk
+Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, brauner@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
-by Sean Christopherson <seanjc@google.com>:
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Christian Brauner <brauner@kernel.org>:
 
-On Wed, 27 Aug 2025 17:52:41 +0000 you wrote:
-> This series introduces NUMA-aware memory placement support for KVM guests
-> with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
-> that enabled host-mapping for guest_memfd memory [1] and can be applied
-> directly applied on KVM tree [2] (branch kvm-next, base commit: a6ad5413,
-> Merge branch 'guest-memfd-mmap' into HEAD)
+On Fri, 24 Oct 2025 18:08:13 +0100 you wrote:
+> This is one instruction more efficient than open-coding folio_pos() +
+> folio_size().  It's the equivalent of (x + y) << z rather than
+> x << z + y << z.
 > 
-> == Background ==
-> KVM's guest-memfd memory backend currently lacks support for NUMA policy
-> enforcement, causing guest memory allocations to be distributed across host
-> nodes  according to kernel's default behavior, irrespective of any policy
-> specified by the VMM. This limitation arises because conventional userspace
-> NUMA control mechanisms like mbind(2) don't work since the memory isn't
-> directly mapped to userspace when allocations occur.
-> Fuad's work [1] provides the necessary mmap capability, and this series
-> leverages it to enable mbind(2).
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc: Chao Yu <chao@kernel.org>
+> Cc: linux-f2fs-devel@lists.sourceforge.net
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,kvm-next,V11,1/7] mm/filemap: Add NUMA mempolicy support to filemap_alloc_folio()
-    (no matching commit)
-  - [f2fs-dev,kvm-next,V11,2/7] mm/filemap: Extend __filemap_get_folio() to support NUMA memory policies
-    https://git.kernel.org/jaegeuk/f2fs/c/16a542e22339
-  - [f2fs-dev,kvm-next,V11,3/7] mm/mempolicy: Export memory policy symbols
-    https://git.kernel.org/jaegeuk/f2fs/c/f634f10809ec
-  - [f2fs-dev,kvm-next,V11,4/7] KVM: guest_memfd: Use guest mem inodes instead of anonymous inodes
-    (no matching commit)
-  - [f2fs-dev,kvm-next,V11,5/7] KVM: guest_memfd: Add slab-allocated inode cache
-    (no matching commit)
-  - [f2fs-dev,kvm-next,V11,6/7] KVM: guest_memfd: Enforce NUMA mempolicy using shared policy
-    (no matching commit)
-  - [f2fs-dev,kvm-next,V11,7/7] KVM: guest_memfd: selftests: Add tests for mmap and NUMA policy support
-    (no matching commit)
+  - [f2fs-dev,05/10] f2fs: Use folio_next_pos()
+    https://git.kernel.org/jaegeuk/f2fs/c/4fcafa30b70a
 
 You are awesome, thank you!
 -- 
