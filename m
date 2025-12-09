@@ -4,77 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5C54DD3B985
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  9 Dec 2025 17:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7E63ED3B98A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  9 Dec 2025 17:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=2dgkyzMIGH72CNRLRJJwAUcTuT0oiBZffNLS7QmjPcI=; b=LpaOaxmOBFE4R9vjLWRpxfTHdt
-	el9nLQchtDmOp2MAlJeJUcF3+dAnmVmPSm6US65nBrNh5n0F7RLXuUeRF+FUxOvE3ba55CNLrWp1R
-	ney7UAFOhrfzT4e6MTakDbmI4QF+uMJFjFPSaiQEx9mIr/c4roYZ7C+qeGb3FDzuBkHk=;
+	bh=cVgNCE8nTBpTG44Fa7arTnCzJUzXvBI7VfZSO8J9uzw=; b=lnmzHuP+asDikMtbAyIhdmCn1/
+	8mEs8BXNK7HqPPOkob4+zEL64FUy5RJGVkiazW3hwmH9Ish8F4pYa9RKgLmgsAkTYSlQBkbbYg9O7
+	8mg7A2KwQiWPKX+B0kKYLoE1tf90PXjj2Uil9HXxoLwjdJwaSYzNP4liVLlp24eHo+Lw=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vT1Ph-0004d1-05;
-	Tue, 09 Dec 2025 17:22:13 +0000
+	id 1vT1Pj-0004dN-Ah;
+	Tue, 09 Dec 2025 17:22:16 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vT1PQ-0004bg-GN
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vT1PX-0004bv-2x
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 09 Dec 2025 17:21:57 +0000
+ Tue, 09 Dec 2025 17:22:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=q1pcU+kDRpDIxiDaT/25l4+DzxPb40V+5bVi0iEwmi4=; b=lsnA41NDV1cGQl76fWAQNvo3u0
- w68YUxnK9Q8X8+SWWcDV4q2/z9XyuCcfWHqmQSCOpGjE82KWn/wvzXL8E0m+j2TufkZwBMyFj/nc+
- nE8RE8EUYQLHrQHJ5q5xIar5Qku2SePpUYP42AcCPCT4y3MQ2ztxiGrBGMWhDkvISD5g=;
+ bh=jpc1/790a/fIVeMUOKaoWtoTbCzKwQ4S6SVyK6PxGUc=; b=IQ13cezO+oRKrRLXFPFvT/Lot9
+ 81Egq+Jfpf2uA8CwC711tjAucmRUIKSjJQhuwUlHeRZE2/J+nfXn1Mv9wkIE9SKuA75ty/JlTXENv
+ asASTNxO6wHEFBewVjSLKl/gqbFWa0FR+tN8DjgU/wZU/xppyZFFSzhsk5Bb4kOPij9A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=q1pcU+kDRpDIxiDaT/25l4+DzxPb40V+5bVi0iEwmi4=; b=BNZ/kcaQI9t9BFr+rg5pRz4Ozu
- QQS5z2856fXCi3o4BRCizhFBkp/+uaMwJ4E5D8l7HPCgaKLA9hurVcF11d9ozRyPxWPZGUS43gq9l
- +nIJHfPVJ+kaM47j9tcG7R7jFtlOM8HbCx+ZNfiXKLwcvK0wmiv5yER2o5p9cdooNfbk=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=jpc1/790a/fIVeMUOKaoWtoTbCzKwQ4S6SVyK6PxGUc=; b=dGuOoWG+gihQTsEIYCUzqIPLCg
+ taTUQTf6L78BD/WvDGZJyDmzmbW2znX8Kz25uI0c8vSoIJ2YOCuAHiTSWX/avXszulr7WV8dKJRWu
+ 8Msq3e2bRjAswQH8m2sl74mru+7BJP5+Gvw6H3z23ya7KwDV6R/fm94Pom60E/uaDgdw=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vT1PQ-0000zZ-54 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 09 Dec 2025 17:21:57 +0000
+ id 1vT1PX-00010O-50 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 09 Dec 2025 17:22:03 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 7C7A360178;
- Tue,  9 Dec 2025 17:21:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31DEBC4CEF5;
- Tue,  9 Dec 2025 17:21:50 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id C73FF444D1;
+ Tue,  9 Dec 2025 17:21:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2988C4CEF5;
+ Tue,  9 Dec 2025 17:21:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1765300910;
- bh=Zd0VvxmLuYiKbV2JePqY399umXBYCfKNdeZAputHSLA=;
+ s=k20201202; t=1765300912;
+ bh=4D7MGFxeRJTDY1I7TVqNGOxjKxHrYX8Xu/NQUp33yQY=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=A7gK5ucHvEwBNjU3heBXBXpOhoe1l2cQIKNcXCXYBPBhUWs+m7IAs4W6VeZMla8aO
- Yoi0CVMYGFivv1vQHWWNc3EzusjYiqfhU/rkXjiQ2sYksBjzkHrLcTySFgW3/Oh68b
- wog5zc3ISm9w4uFpUrbfCjrcqSY+UD5BJjGaskuv8XHTTzuWkbe/kHYWhA7Hzzwdas
- 6f57QW+yvEt/j9gWLUk6NkLGHI1PktctOvPCtWgyYSGonAWxGvOZs2mxKxxDboCS4f
- gb+rV6g+gh/20ndzZdKJ8Hn/6K/mYbTS1ZIOZz5WtnDCtJ4mTUkhOmOKb4T0YfbTKB
- sAVHFJgdfBMsw==
+ b=ZuUNgvto237oQlEXMdNAwfCle3hrlKfTdWltwxprsJTDwDSOdfrCe6Lc0w70aYteg
+ USDyX2OxNMDGgtWaUvicOUoeIciT2t7tAOw3WDlhOMzTKJeRy4m0i+RWtaUBFa7E/C
+ Fh64065DCj12G8NmPeComkTbsyqVXopIMgdcUxuhBpB7h2CHxjNtePOG2zHBH1ffFn
+ jYf9fNs4YEVS13NGMzinskDsNMCoWsCgmTtfmDYOQcD1Rw43ZeZ7C07/EiBlJbd9QX
+ ILeieRrStbLL0RC69ydyLES/kPMYSQcagtEyRshqmJjUXuvmVrcEofuvPcdhc/bh6r
+ wr318dPlMkLHw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 789293808200; Tue,  9 Dec 2025 17:18:46 +0000 (UTC)
+ F2AFB3808200; Tue,  9 Dec 2025 17:18:48 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176530072529.4018985.10409239168317720126.git-patchwork-notify@kernel.org>
-Date: Tue, 09 Dec 2025 17:18:45 +0000
-References: <aTc4QJ9A-0qKfBzM@google.com>
-In-Reply-To: <aTc4QJ9A-0qKfBzM@google.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1vT1PQ-0000zZ-54
-Subject: Re: [f2fs-dev] [GIT PULL] f2fs for 6.19-rc1
+Message-Id: <176530072781.4018985.3920629164173659180.git-patchwork-notify@kernel.org>
+Date: Tue, 09 Dec 2025 17:18:47 +0000
+References: <20251124234806.75216-1-ckulkarnilinux@gmail.com>
+In-Reply-To: <20251124234806.75216-1-ckulkarnilinux@gmail.com>
+To: Chaitanya Kulkarni <ckulkarnilinux@gmail.com>
+X-Headers-End: 1vT1PX-00010O-50
+Subject: Re: [f2fs-dev] [PATCH V3 0/6] block: ignore
+ __blkdev_issue_discard() ret value
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,31 +90,48 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: axboe@kernel.dk, dm-devel@lists.linux.dev, kch@nvidia.com, sagi@grimberg.me,
+ linux-xfs@vger.kernel.org, linux-block@vger.kernel.org, cem@kernel.org,
+ snitzer@kernel.org, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-raid@vger.kernel.org, song@kernel.org, mpatocka@redhat.com,
+ jaegeuk@kernel.org, bpf@vger.kernel.org, yukuai@fnnas.com, hch@lst.de,
+ agk@redhat.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This pull request was applied to jaegeuk/f2fs.git (dev)
-by Linus Torvalds <torvalds@linux-foundation.org>:
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jens Axboe <axboe@kernel.dk>:
 
-On Mon, 8 Dec 2025 20:42:40 +0000 you wrote:
-> Hi Linus,
+On Mon, 24 Nov 2025 15:48:00 -0800 you wrote:
+> Hi,
 > 
-> Could you please consider this pull request?
+> __blkdev_issue_discard() only returns value 0, that makes post call
+> error checking code dead. This patch series revmoes this dead code at
+> all the call sites and adjust the callers.
 > 
-> Thanks,
-> 
-> The following changes since commit d2818517e3486d11c9bd55aca3e14059e4c69886:
+> Please note that it doesn't change the return type of the function from
+> int to void in this series, it will be done once this series gets merged
+> smoothly.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,GIT,PULL] f2fs for 6.19-rc1
-    https://git.kernel.org/jaegeuk/f2fs/c/cb015814f8b6
+  - [f2fs-dev,V3,1/6] block: ignore discard return value
+    https://git.kernel.org/jaegeuk/f2fs/c/7d09a8e25121
+  - [f2fs-dev,V3,2/6] md: ignore discard return value
+    (no matching commit)
+  - [f2fs-dev,V3,3/6] dm: ignore discard return value
+    (no matching commit)
+  - [f2fs-dev,V3,4/6] nvmet: ignore discard return value
+    (no matching commit)
+  - [f2fs-dev,V3,5/6] f2fs: ignore discard return value
+    (no matching commit)
+  - [f2fs-dev,V3,6/6] xfs: ignore discard return value
+    (no matching commit)
 
 You are awesome, thank you!
 -- 
