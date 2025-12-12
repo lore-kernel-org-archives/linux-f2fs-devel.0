@@ -4,75 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 14555D4335B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 12 Dec 2025 00:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 84904D41D74
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 12 Dec 2025 00:56:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=nSV92CEkA/3msPIsxM6+qIQmD23/wxoP3i2E3AEDwPE=; b=gux7ZHDWdAkf81eAf561O0dy55
-	7zc10IGkUmYJlPZGlW/HyTsy37vWcjCVROLK50MNBbw+VCuuOptRJII7QtHXjCp2yeG31JnHFyuQ0
-	1JxJgikOkKcjOUcG7NLEOiNNhzYq+TzKI5JuDtAkfFJBXzBUz9WFm2NiZh9YvM8JlQv8=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=6piw7K54+H9heEPVBWp6RaS6n0Ia7pqqQZr7W4Ix9y8=; b=TK8PNbH1oHCUApy2wMzNaLgre5
+	MD/fq8mw5sOhRj7Pc+QNaJxDR6oDHP/LwHhaCLmZipYyiF4hZk9aZvtYb0ENjJEcIcKfAXtoWwt/7
+	0r/WF1Ai2OBtMELo6NJO0tSSlM0no+Bc4b8KfrPudMxLIm+vGfRFf4qXNBDctzZOIxj0=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vTqnh-000374-FB;
-	Fri, 12 Dec 2025 00:14:25 +0000
+	id 1vTrRr-0008CE-CX;
+	Fri, 12 Dec 2025 00:55:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1vTqng-00036y-9G
+ (envelope-from <jaegeuk@kernel.org>) id 1vTrRq-0008C1-Ar
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 12 Dec 2025 00:14:24 +0000
+ Fri, 12 Dec 2025 00:55:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tgdL5QlBYwrAFSzcFQKWD0h48HydBdLAxcLszJItmzs=; b=lBH32lo/58OGhAGQagr2ae8dEl
- JhBIRb8iWOJ0+uqvoGi3sljtCUoqGKsJQvtH0GRcs7y2h5YE4lQkxy5hgwT7XgoQ2UmiVUXXeJraQ
- ZmMck9BBAiofUpejguSfRZGoiLF5QXo7GxWUo1Y0VIbqT66InG0vDW1H4SGXZRWErH6c=;
+ bh=m7K6wCf3C9XdOSlTYiOKm6EMVsQPvxMsio8Khc8XZAs=; b=Pw1/NDM06KCJZyODcNpG+fQ1++
+ Wf8X9nalKg+hjxtqfQnQKK+r8hXURfrJdlj+3PTJtwFiqpQc8MMGBoCElXKaXHbjtWgAr1xxG7p3M
+ SZa6hhdze1qQp6OauHBpnh0L+fq1MkwfUEIjjJGDDVOWJz1WAauIOvOeLE2SR6XFWrF0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=tgdL5QlBYwrAFSzcFQKWD0h48HydBdLAxcLszJItmzs=; b=P
- EAE8XVUNfZAr4QywA7e0R3ykoW/oKqJpg23ZOsaM5eHtKCioG73ZKwwUYQVmO7O2M8UN2zcO7Cqqt
- HsCGxuQFDYzruuLZgeNHUTSdwdRWsF7fm7yu1Vbvj811uMHNzfnK77mwWJhz+Q6Pv58ApWnXbLCo9
- K2KHuRSMCMmstqr0=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=m7K6wCf3C9XdOSlTYiOKm6EMVsQPvxMsio8Khc8XZAs=; b=cTquYMdpLhrQVlRA42Zm9QeiVn
+ Npz0Fa43hgka27u8n1Rl3qL9Co9W2zwud1+eI08Vwrk6CC8BXm3gg3k/BXLLts4aQb/PL4XVIptev
+ uH47hAcS2YcQ2CWNqgGnoVmh82wpBurq0XfRd4v4W/tHBVSwa7r0Jc3b3mQbFiSZFLPQ=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vTqnf-0004Ze-UK for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 12 Dec 2025 00:14:24 +0000
+ id 1vTrRp-0006iu-Qi for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 12 Dec 2025 00:55:55 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id A0A3C41968
+ by sea.source.kernel.org (Postfix) with ESMTP id 7710B43B8D
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 12 Dec 2025 00:14:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EB91C4CEF7;
- Fri, 12 Dec 2025 00:14:13 +0000 (UTC)
+ Fri, 12 Dec 2025 00:55:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46BE5C113D0;
+ Fri, 12 Dec 2025 00:55:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1765498453;
- bh=zWfwlH8F6GWly4N2Yujse7et3xXJQIwsT6Ep6XyH5XY=;
- h=From:To:Cc:Subject:Date:From;
- b=o/c9Nr1j4xbWDXmY4xFbRnh+g2zc67NIB6rgXbOLDVBjjdOyau3UGRv3xuGNmkadb
- 85JKJxP8pTU5A82KeFgQt0sNEYDJO//hauYAiwB/gfUctkIDM+dxCVAhEwltJKxLSv
- 5k/UGAYJ3CTdQSnouexJMQNE4LwV2lpH1kzjF/il0wiK9XxQEn+Q1YAj6Tgu+F+zQC
- zEFHpTHC9QYA7VZdC4+NfJ8jvV0vgl4s0MPlzpUdR7uog6Kui75bDDIBXMACaeAR2Z
- YyROwwHT1bi/Y/6AZepfymAt6jD52aqeN5WNFXL3tVocEJSQutfcU8oKcSpaEBKmR/
- cYWpcYpRNCmuw==
+ s=k20201202; t=1765500948;
+ bh=yuPQYCGW5ybMBdSkpQ+PdQYWjY2OCBA/QlRQ8ykf30A=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=gXYT//kVvzrFHz0/aICDu79E3ozfKBGYopMZmTdripMd2NaeGbsJ2BeS6bUPQRTCM
+ RCL8JsH/MoAPqWdlpVZilo4siWgzFCeUScuyv8H3vQizmqCopvaS68ici4yhNv+3xb
+ NFknqArO1TtMnEX27NUHSLflAjgEYqBOdR2J2/lA2P+KtmUgRPhfCPu2/DjM4HMUKm
+ v7DkBXCEBE8/wW6/35YpoEblrfEip98xcaob66uHPEFGnIgcSyyPOaaJ6UhswY5ejO
+ CMgGmZoMm6SHZajbaV1d2TYgWy953LXMQkpU3zs3jh/AjrgwOYA4rV+o8lrlHvDzX8
+ 3Zg92anReCFaw==
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 12 Dec 2025 00:14:11 +0000
-Message-ID: <20251212001411.3901279-1-jaegeuk@kernel.org>
+Date: Fri, 12 Dec 2025 00:55:45 +0000
+Message-ID: <20251212005545.3912333-2-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.52.0.305.g3fc767764a-goog
+In-Reply-To: <20251212005545.3912333-1-jaegeuk@kernel.org>
+References: <20251212005545.3912333-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1vTqnf-0004Ze-UK
-Subject: [f2fs-dev] [PATCH] Fix to get the right IO bandwidth
+X-Headers-End: 1vTrRp-0006iu-Qi
+Subject: [f2fs-dev] [PATCH 2/2] f2fs_io: add more description in read test
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,22 +95,28 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- tools/f2fs_io/f2fs_io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/f2fs_io/f2fs_io.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index 35c367bd67e7..4429e0b0459c 100644
+index 08f3c9b79cdf..390c9df26aff 100644
 --- a/tools/f2fs_io/f2fs_io.c
 +++ b/tools/f2fs_io/f2fs_io.c
-@@ -1093,7 +1093,7 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
- 	printf("Read %"PRIu64" bytes total_time = %"PRIu64" us, BW = %.Lf MB/s, "
- 		"IO time = %"PRIu64" us, mlock time = %"PRIu64" us, print %u bytes:\n",
- 		read_cnt, get_current_us() - io_time_start,
--		((long double)read_cnt / (get_current_us() - io_time_start)),
-+		((long double)read_cnt / (io_time_end - io_time_start)),
- 		io_time_end - io_time_start,
- 		mlock_time_end - mlock_time_start,
- 		print_bytes);
+@@ -937,10 +937,10 @@ static void do_write_advice(int argc, char **argv, const struct cmd_desc *cmd)
+ "  buffered : buffered IO\n"				\
+ "  dontcache: buffered IO + dontcache\n"		\
+ "  dio      : direct IO\n"				\
+-"  mmap     : mmap IO\n"				\
+-"  mlock    : mmap + mlock\n"				\
+-"  madvise  : mmap + mlock2 + madvise\n"		\
+-"  fadvise  : mmap + fadvise + mlock\n"			\
++"  mmap     : mmap(MAP_POPULATE) + mlock()\n"		\
++"  mlock    : mmap() + mlock()\n"			\
++"  madvise  : mmap() + mlock2(MLOCK_ONFAULT) + madvise(MADV_POPULATE_READ)\n"		\
++"  fadvise  : mmap() + fadvise(POSIX_FADV_WILLNEED) + mlock()\n"			\
+ "advice can be\n"					\
+ " 1 : set sequential|willneed\n"			\
+ " 0 : none\n"						\
 -- 
 2.52.0.305.g3fc767764a-goog
 
