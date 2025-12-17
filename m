@@ -4,79 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 69EF0D609D7
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Dec 2025 19:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CB792D637DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Dec 2025 00:42:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=KBDbpuJZT49D8HioByjsLvxFyhlgtnA5tI+OsdlZVak=; b=O1pUVt3UuXCVDYqc5N/+WHBDMg
-	I9+k2ldUFckioqAtsSvOeQKSYwR6Rd+RNp+4zSugQhRs903tlMARGUpw1YyqqanUrWTdt3sFYtnDA
-	pH7LBOdREdnlzIzBYvm/UURZrw7ZWS4POiPTfp8xw33xNqWL9VaWlP5wpxgslbbt4iAU=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=o0OloHzbIu/3QISi1Obl6t7iCmpxgF6hiUswi5vUavY=; b=Wu4vh70esmI+sPakgH1JbK7Rzw
+	qtzfhDxd/h/mLTs+t/S+aJX0JURiYKgildOiQGNYPBk0s9U/YSVHZI/eXzpm2i+NtdJtAnGqWvY5+
+	teUbM4/5HeKdbnEYZLz3SvBS2f5XJ2M8JVmovxlBvKPlYwvI0TxeBSBojupi2DcX2970=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vVadq-0006tQ-QG;
-	Tue, 16 Dec 2025 19:23:26 +0000
+	id 1vVfcp-0004ZN-KQ;
+	Wed, 17 Dec 2025 00:42:44 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vVadp-0006tK-Cc
+ (envelope-from <jaegeuk@kernel.org>) id 1vVfco-0004Z7-13
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 16 Dec 2025 19:23:25 +0000
+ Wed, 17 Dec 2025 00:42:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6uCaNsP3vl0m60975CpBTHh9PY1AzVuglcgh29ZD70c=; b=idQ3DBp3dRYzMjKaETWdhydUBt
- wJLyiYMSDMGlL+frSqQ2A5UHjZ0U301itIDawM5z/56qTOI2PzMmxVIxR/bOwpyuERTv7+zxBgCTX
- hTX75/duIAOu+drtFd8AAGar6B8dr+yhBKrGh5UAshZMCpjljTWHeJAi3vGCpTdhz5Hs=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=goXKEzjuAI77ZuJK0HzNEk+izIWs/PeVTXtqHfggE54=; b=ZLSofltiImjgoz4kShKNKuUuTh
+ GCuphXNgJUkFc02XEm6t9M2onsY8xvDn/c2U9jLpCes8rzfdZNC9gVrhAAanxut85hYA2BZaqOxQP
+ sAR4kzWkLkpxuXE+Xqu/64m4clAddBnU7oheqORCzbnvdpdZ9bSjtWx/Iiy8flhnAkxc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=6uCaNsP3vl0m60975CpBTHh9PY1AzVuglcgh29ZD70c=; b=O
- ihpCpMuDERJo/kv/6GutlriYmqqyK5WXJ3iKqDM0o4BhyGrUnCccmS725fin62rcQWTFSfloY1/Gd
- RA66ldF2p3H/5i/pX7CBHj6y3+Cr0AlA/GkQ+IbOXT+UF+QjB69wXbVPBj3ssdOJCIevrAbbD6+ps
- d/POb8Ooi6NNo4r8=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=goXKEzjuAI77ZuJK0HzNEk+izIWs/PeVTXtqHfggE54=; b=A5fAXNrLaES8tm5aBpqUG4AVE5
+ W7z2kyNySqGunusjJBvKlh1Dn8SU7MxXk7rEfuF+8jVWveRrWhyT0c9QmNrQoCJ91R9W4A9JzGZtn
+ 8e+SXZoVs0Yopl0bKIV8LZmjhMyyECFF2kqiVfCIPKQNQTUROxRZyYTQ3JsYptVqrioo=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vVado-0004nQ-L2 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 16 Dec 2025 19:23:25 +0000
+ id 1vVfco-0007ld-87 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 17 Dec 2025 00:42:42 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 346BD42A26
+ by tor.source.kernel.org (Postfix) with ESMTP id 8BD7060132
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 16 Dec 2025 19:23:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13EA1C4CEF1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 16 Dec 2025 19:23:14 +0000 (UTC)
+ Wed, 17 Dec 2025 00:42:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A5B4C4CEF1;
+ Wed, 17 Dec 2025 00:42:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1765912994;
- bh=uAJN7GUVHTb2glmlxYwx9FBcetXWtCszA+Iw2//R5DQ=;
- h=Subject:From:Date:To:From;
- b=UnJUaEtC8OOQajZrKNxPFVBPWEWOSH48IwOeTnfax2U0UdsU6iRSiZ7A6a4scuFyB
- bt3qwESsfA+Ss4TStg1TOGG9161KIH8ogjS49jUOXQu5G6db457YhXZXhwxzBtUkjf
- NAqYJjEewqTfFtzsd3rv959yv199UAhPS6rTkyKJOJVssunvftbd291d2QVIrxH7nU
- rICeneGh72WbvbkITcCUl5KHcLj40jMCTu6g5Mr7G+gWbqvD0oCtcYxYLdjVj5t1dw
- IFsvGMN67uPZ0UU9465G6RBKSnkiX0chago2KmyV9MB1rfqfsN+BJ6VUqIPq1KeduX
- AiGgAOKdbetTw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- BC5303808200 for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 16 Dec 2025 19:20:05 +0000 (UTC)
+ s=k20201202; t=1765932156;
+ bh=YmKMZxc+U1GyTm2Zojd+a1Kqc7YSX4sAlWBdBeEhjh8=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=hZd5/ty1epgHOw0KcR0fsj96gs+XbCQ4DDDgLwWpq04lXDQcfcGiLPweAg0FnEXPL
+ ixcUYVjDQNkUWEcDek4SMONVw4I5ePe7Ly5/MFDc8nAYDuIL6gOEc7QkY9DeEh+1JI
+ 0NfyD/rJuZf1CpDeIGvftkYD+hKi0HhbUOTisIKXV3xeJD9S9PWdnZ6J+eDlR0Z7kB
+ FW2QEMGBeCpyBd2ZpleG9dobV+EjbnFFfVQfb4JStUXkbgstjlAtKpAfwK4TUAJUE1
+ l7nPS6s3WpH+3C11AplXNRCwY2TMsOzSY2kal/2OJH768zEFVuDwuliLPvN5SMWnE2
+ 067ZqUYht/bdA==
+Date: Wed, 17 Dec 2025 00:42:34 +0000
+To: Chao Yu <chao@kernel.org>
+Message-ID: <aUH8eoMdDeK7uMbj@google.com>
+References: <20251212005545.3912333-1-jaegeuk@kernel.org>
+ <1a169058-245a-4ce7-8f95-83dc96fd90c2@kernel.org>
 MIME-Version: 1.0
-Message-Id: <176591280438.1247282.17036154063099690532.git-patchwork-summary@kernel.org>
-Date: Tue, 16 Dec 2025 19:20:04 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1vVado-0004nQ-L2
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+Content-Disposition: inline
+In-Reply-To: <1a169058-245a-4ce7-8f95-83dc96fd90c2@kernel.org>
+X-Headers-End: 1vVfco-0007ld-87
+Subject: Re: [f2fs-dev] [PATCH 1/2 v2] f2fs_io: add mlock() option in the
+ read test
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,38 +88,72 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+ Change log from v1:
+  - give mlock/io time together
 
-Series: [f2fs-dev,1/2] f2fs: support large folio for immutable non-compressed case
-  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1026070
-  Lore link: https://lore.kernel.org/r/20251120235446.1947532-1-jaegeuk@kernel.org
-    Patches: [f2fs-dev,1/2] f2fs: support large folio for immutable non-compressed case
-             [f2fs-dev,2/2] f2fs: add a tracepoint to see large folio read submission
+ tools/f2fs_io/f2fs_io.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Patch: [f2fs-dev,v1] f2fs: improve check for enough free sections
-  Submitter: Joanne Chang <joannechien@google.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1032585
-  Lore link: https://lore.kernel.org/r/20251212084034.2878836-1-joannechien@google.com
-
-
-Total patches: 3
-
+diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+index 4429e0b0459c..1b290bc669f8 100644
+--- a/tools/f2fs_io/f2fs_io.c
++++ b/tools/f2fs_io/f2fs_io.c
+@@ -938,6 +938,7 @@ static void do_write_advice(int argc, char **argv, const struct cmd_desc *cmd)
+ "  dontcache: buffered IO + dontcache\n"		\
+ "  dio      : direct IO\n"				\
+ "  mmap     : mmap IO\n"				\
++"  mlock    : mmap + mlock\n"				\
+ "  madvise  : mmap + mlock2 + madvise\n"		\
+ "  fadvise  : mmap + fadvise + mlock\n"			\
+ "advice can be\n"					\
+@@ -956,6 +957,7 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
+ 	u64 mlock_time_start = 0, mlock_time_end = 0;
+ 	int flags = 0;
+ 	int do_mmap = 0;
++	int do_mlock = 0;
+ 	int do_fadvise = 0;
+ 	int do_madvise = 0;
+ 	int do_dontcache = 0;
+@@ -981,6 +983,8 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
+ 		flags |= O_DIRECT;
+ 	else if (!strcmp(argv[4], "mmap"))
+ 		do_mmap = 1;
++	else if (!strcmp(argv[4], "mlock"))
++		do_mlock = 1;
+ 	else if (!strcmp(argv[4], "madvise"))
+ 		do_madvise = 1;
+ 	else if (!strcmp(argv[4], "fadvise"))
+@@ -1027,6 +1031,18 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
+ 		mlock_time_end = get_current_us();
+ 		read_cnt = count * buf_size;
+ 		memcpy(print_buf, data, print_bytes);
++	} else if (do_mlock) {
++		data = mmap(NULL, count * buf_size, PROT_READ,
++				MAP_SHARED, fd, offset);
++		if (data == MAP_FAILED)
++			die("Mmap failed");
++
++		io_time_start = mlock_time_start = get_current_us();
++		if (mlock(data, count * buf_size))
++			die_errno("mlock failed");
++		io_time_end = mlock_time_end = get_current_us();
++		read_cnt = count * buf_size;
++		memcpy(print_buf, data, print_bytes);
+ 	} else if (do_madvise) {
+ 		data = mmap(NULL, count * buf_size, PROT_READ,
+ 				MAP_SHARED, fd, offset);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.52.0.305.g3fc767764a-goog
 
 
 
