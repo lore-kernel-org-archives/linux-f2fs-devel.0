@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1D4E1D711D3
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 19 Dec 2025 03:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E9CECD711D3
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 19 Dec 2025 03:05:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=0X0yqPLcsDUOwvlvtXfG2p+joWiL/p4GiED0LKCWrVI=; b=Y0V22YTDvOOkATIihiU57fFp/b
-	DGFxAALcCghJUmrXSGMwler6Rps+9cw3dYNrPHHcX+5akcmb7HRWTWf9Gylv2TeZzp6415UPgc/V8
-	vqyBKbuDBjDs/7PHkiUaSuxjkYTGN0LU83BWn3pytUBAI+ve4ROIxrkkWJqJBtn50dTE=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=wpIwo3wDjM/Bwbr88MnsSKd8myb2vhZlHZXnwgdF6ZE=; b=U4OBuW9gyiOS6u17UTLGrEstAI
+	UXz9htkfSQGAH6Hty+IvzFkea7DR7EDw2Dt0UMk8u46XOInbrtLkogq9WnGX7Gy8llJPOug2Ao5mK
+	nYs6PhVO1sgH1rr10286b19QrjCxWfQhIBhkpeYAMCSOmQSCCd7uuQ/t7FoPJDNZt7VU=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vWQkn-0003WT-M4;
-	Fri, 19 Dec 2025 03:02:06 +0000
+	id 1vWQnq-0005X0-KT;
+	Fri, 19 Dec 2025 03:05:14 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vWQkm-0003WH-FT
+ (envelope-from <chao@kernel.org>) id 1vWQno-0005Ws-Ai
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 19 Dec 2025 03:02:05 +0000
+ Fri, 19 Dec 2025 03:05:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/EQD+hccUSauJFJJdJRlnzlmzt3T3fxeAao3IqIEud8=; b=XOeGUfAc4Watl03qqBh9fOwQqB
- DvzsZ8pYqGUBq/BNNyWbaHtCGZwJhmmxN3kbeqsai1AfOLNTDs2CWyLW5gYBQMeOBQBiRhezKlEMI
- wYRWp2S7DgSiMIEaN671gtf8dy9nck5KUIfZr+Wz0ieRvLEAjptM88Q1DfhDqaPBZTUQ=;
+ bh=RpTQAhduS/p88pTSKq8wFYA4tmls/qxKNY7z/4YzKoI=; b=mWXtb5Q+5d7jcBm2wKKnHzwy9R
+ iFuj31zKr7Miy2zxyDZRjGH+qpfE7ZyAx5fXQRkZe8ARJEX2SJKUybkW0kWm8VcWdRRy5NE070m6S
+ BWq3EBky7mZ7/qgoWjqpEaVOnHpVYkqibcHqdiU7NiCiofFkzkQYKdw9P7hiaj00fodE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=/EQD+hccUSauJFJJdJRlnzlmzt3T3fxeAao3IqIEud8=; b=mEsK2/NKxchP2LyCbUOM2CnvAx
- Ae+Urqzrg1V4qhEn0vuG4vFEm12AhmlPAHtFw09ECotVzNoNG2Nq8QV4z3fMdodj6AcMGUkZDplnV
- sa4JcM/ILzPvIuuDDpUEMvCJlV1ehxC6MXYflWU17iBB4z+0W038r31BKNN25mm/7xi0=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=RpTQAhduS/p88pTSKq8wFYA4tmls/qxKNY7z/4YzKoI=; b=EyTBhUWNl0UT8Ik8wh3HU2qVS8
+ +gJ0PRXcwmpKeIsbmgVbk5vkt7CEVsVjQZmb8YExn0oX7Tn1+luDHGGNJGuh+6ou9bnBoL3mhMYdJ
+ jHkMKKDsoCQsV6Y2zfH0twiO5E1ofSuvOdwXg/WvBK+EeQZsfPDYkq/cvMcnibPaUZjI=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vWQkm-00018H-LN for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 19 Dec 2025 03:02:05 +0000
+ id 1vWQnn-0001Pa-Lr for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 19 Dec 2025 03:05:12 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id CE12160008;
- Fri, 19 Dec 2025 03:01:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6AFFC4CEFB;
- Fri, 19 Dec 2025 03:01:56 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 517E0443C0;
+ Fri, 19 Dec 2025 03:05:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 920EEC4CEFB;
+ Fri, 19 Dec 2025 03:04:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1766113318;
- bh=P3HTB97dOIB/wo/U7y7d5iqf0kKIfoha/N6sRkEIjRE=;
+ s=k20201202; t=1766113501;
+ bh=2N7Nd1I3u9+iaoc4QKDk9Mo3qLacyv0s2hTDz7iIxzg=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=AILFH8BFwySMEPEtYbqETM4LovwHWuSnIuLbTFHRnA7oufiaD2XmMsD6j0WqBgASY
- gbj+48/0irdjtIfuhefTuRfU02ZJPT/hTDwa+uy58biAFcSYeWcIuCuQ7gEGDbWrRU
- Zwku0vKVXBBuBQw3/DCiwVMdS3tkgWiI79esGL9O0XjZr/79YsS358B4LPEk26wafR
- D8x+/n9NHFtDL7QmYVqPW9H1/75xm/3S5vS2POVGK1ITZ9bmpyUL5chNnGMK2TiJTo
- oc4xGdjJdntQmQxt8ivp6XDoFF5mq9ECwHbnf+TJ99idoYQ7jZhPrVmXPdtZS/cvN7
- lWg1LFDzAsCdQ==
-Message-ID: <987ebef0-f7f6-4a2c-80a0-7bf1fd9b64b1@kernel.org>
-Date: Fri, 19 Dec 2025 11:01:58 +0800
+ b=SYbymAgjVvZ0D+WJOkzawUjjoXLIwCCLkABzORS8SXJbe9YSOjGDBLFF40nXC2VHf
+ bBKDhhyUepJI7W4u351vPgTih4AORQTPW1lhQX61DXfy4fds4PGdWWdFwUkTftyHA1
+ bhF4ll1vw4Azt65DyPmHtiTJYsR0ushdB4fBkdWoB8ijq4ZHxKeWD+D4eqDeHAIOe/
+ 9VAE54qGdIi5RlTovj5jef6/McSukaBwTUROI7m0rirEhciKsD9IOcO6tCZmV8avxE
+ nEQOAgyB96/jsEkfjz27UzDSI3wBnWZw6NErdIV9fPzgColbokIaNW9XcgBI6irlTj
+ hL9ICxxCcJoVw==
+Message-ID: <d9faceb9-d90e-45f4-b272-d26ae5d1c8ce@kernel.org>
+Date: Fri, 19 Dec 2025 11:05:02 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
-References: <1765957529-4285-1-git-send-email-zhiguo.niu@unisoc.com>
+References: <1765957574-4386-1-git-send-email-zhiguo.niu@unisoc.com>
 Content-Language: en-US
-In-Reply-To: <1765957529-4285-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Headers-End: 1vWQkm-00018H-LN
-Subject: Re: [f2fs-dev] [PATCH] f2fs: remove some redundant codes in
- f2fs_quota_enable
+In-Reply-To: <1765957574-4386-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Headers-End: 1vWQnn-0001Pa-Lr
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to add gc count stat in
+ f2fs_gc_range
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,16 +95,33 @@ Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 12/17/2025 3:45 PM, Zhiguo Niu wrote:
-> 1. qf_inum has been got and checked in its caller f2fs_enable_quotas
-> 2. f2fs_sb_has_quota_ino has bee checked in its all callers
-> 3. use sbi cleanup F2FS_SB(sb)
+On 12/17/2025 3:46 PM, Zhiguo Niu wrote:
+> It missed the stat count in f2fs_gc_range.
 > 
-> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Cc: stable@kernel.org
+And add Fixes line?
 
 Thanks,
+
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> ---
+>   fs/f2fs/gc.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 6afd57f..58b291d 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -2096,6 +2096,7 @@ int f2fs_gc_range(struct f2fs_sb_info *sbi,
+>   	if (unlikely(f2fs_cp_error(sbi)))
+>   		return -EIO;
+>   
+> +	stat_inc_gc_call_count(sbi, FOREGROUND);
+>   	for (segno = start_seg; segno <= end_seg; segno += SEGS_PER_SEC(sbi)) {
+>   		struct gc_inode_list gc_list = {
+>   			.ilist = LIST_HEAD_INIT(gc_list.ilist),
+
 
 
 _______________________________________________
