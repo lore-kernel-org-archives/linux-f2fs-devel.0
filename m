@@ -4,77 +4,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 00E42C2A06C
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  4 Jan 2026 02:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 45956C2A06F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  4 Jan 2026 03:21:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=i8D5ujoFRmew7j1MVAKlb9pML14ddMMzirUQzeUQukQ=; b=Pq4ml20mb4YulffoBXSq0q/XMO
-	kGg3ghaVEJI2PlDQDICmwOLa+V3OpBKr6H/EaTstRhxP9FLafHkhIfyHFLOorfuLoW8bSnlBkx+ir
-	bydzxmL2oZNZqX9/1SDFKWjIs8gJHLGrK1iukxOZIOkdaS2VPQzRrua4uN3dHzLT+5E8=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=JghYwKOHsZb5Zikt/N8i3oy8t9e2qAxnR3aq1XlspT0=; b=jIuCWZUdQgb7de6gbylXd3BtqK
+	27qZjA+/7XsPwd7/jHSzNgUpxt1+ygZ02hJuAS7FXQ0b2piARrJwjxFLce7LIxFaXevUvqse6BhYT
+	iEUZHgr+7yOM6QjL+Cvov75tksv2kLePNFMD3Veyj020XFJphe81NbnD0L9H9XftTRWo=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vcDXk-00070O-TD;
-	Sun, 04 Jan 2026 02:08:33 +0000
+	id 1vcEfq-0003I7-Sh;
+	Sun, 04 Jan 2026 03:20:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vcDXj-0006zy-Of
+ (envelope-from <jaegeuk@kernel.org>) id 1vcEfp-0003I1-It
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 04 Jan 2026 02:08:32 +0000
+ Sun, 04 Jan 2026 03:20:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/6gRj0d7hShDenZGInQSMjbDl356wvx8hDrc2oAgKLQ=; b=bTXthtni7Zh7QGL994W3QDb8Fg
- sCBq62wmjJoyvDdyJWZEhzoNTgKb+xl3wYeux9jFUAr/kcnl6KLacDiN3ztOrqQBg3z9IWdhh3zXI
- LXEpkp5STCwwPjaG7jBkKvexsWb0bDG/xsnOzDWgkwGMClq2KMvc/VrpyecaaS8INIks=;
+ bh=8Z/DgKNB3MVVWxeV4tf+forbqz+lURTKlMhik/mlSoo=; b=i8LC7l7CF1u/el4IfgD3MQ+1qc
+ ZFLv9dzws7s/+w8zBHJbZL4swKmt9JRt1zvCFIFyMPvQDcb/ur8ZY+LpEflWXszdKzYefaZowXQxC
+ 2k6qhCOnUunbQ61e1epUgmwkvhgn8w0xCyNGlPi9IrJvE8xtXVXRcoBteQDTyIALfsKM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=/6gRj0d7hShDenZGInQSMjbDl356wvx8hDrc2oAgKLQ=; b=JTvP5fJJ1P5pKCOTdIQzW9d4Y4
- ZWtTA3Qf/W5EqMvF+OqNL790qwEnlkWnnBZvn1L3sxuci8nMimw+2xmGYuByjSb4hTYRPtX6plEVG
- Pn6jIelUGLLrt29tY4cGyiJ3leFVGOFgGw1C5YV7jOZvwC3pfgpDIFhU2W5jBxv8c1LE=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=8Z/DgKNB3MVVWxeV4tf+forbqz+lURTKlMhik/mlSoo=; b=F2Sy6J2x8POSHj87wNvyZdPF/i
+ EVf+1FYosHX8iXyJmMbuSYcA4d4hJDcSjm/q+2qnq4bH0Zr1gmjcDimJ4tg2iFz8Vmoxgjo08fgSa
+ o7UQ8uu2X7T9ZOh0zO6fum1cHMqEgQc6r9inM4yurjA2wRzC8ohcfdMbXxjABBoHhXKg=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vcDXk-0005oS-3s for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 04 Jan 2026 02:08:32 +0000
+ id 1vcEfo-0007QT-69 for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 04 Jan 2026 03:20:57 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id D1DFD44357
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun,  4 Jan 2026 02:08:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B86DDC113D0;
- Sun,  4 Jan 2026 02:08:20 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 0BB9160017;
+ Sun,  4 Jan 2026 03:20:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80A9DC4CEF7;
+ Sun,  4 Jan 2026 03:20:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1767492501;
- bh=i04Bk13G8JvXw51LzcCEHT7YmJ8DM1rKYrGoAlPDpsM=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=EHQ46Rts0nqU+KkTAPgrAVZY0RKJTLK2tOcLcCiLNsIB3n5T/0zPicnRX2bQo6vdu
- Yo0gRHBdWtn0hdDhd1x21eMtyiaXXGQiGlrg6YScbchRtzAukYIgiEbtvC8/tCl4fI
- VcsKjIJNmcbTzXQKdMA7U6qtJFbIyf4yZBhN/N4E4IzBg78uuP/rHfmfaxTTDlx5ec
- Bq0L70tlLOO73xszSc9zVpIYkvbFDokd0sdIOba8gZfzbkxSbM+IKXleNukaqMPglo
- +/1xlbHNZZ7KkSxUQHYpy9F2cgP+zsoIeAEpVt8zDwpmVeW1brFQmns1Dc6RJ9wvLj
- OKbluwts/qEiQ==
-To: jaegeuk@kernel.org
-Date: Sun,  4 Jan 2026 10:07:28 +0800
-Message-ID: <20260104020729.1064529-13-chao@kernel.org>
-X-Mailer: git-send-email 2.52.0.358.g0dd7633a29-goog
-In-Reply-To: <20260104020729.1064529-1-chao@kernel.org>
-References: <20260104020729.1064529-1-chao@kernel.org>
+ s=k20201202; t=1767496844;
+ bh=docKMmc0VR5dmjWUdAB2Vta8AaFQPvJ08yVISnVbnrA=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=WL3uCsYswzadGDaLTGGC8zX6v/IeVPkptDULPDx2g7gHHFD0XogF7eE574nfLrPOe
+ IP49fSm9a372IMuc8pL/c3R5KUz8e3+UCMohP/N9YzIxLs5KNkOEaCOhApth2fQ3lb
+ duSpWNC8/8LWWzTITN+qb0e71/EM9scWEbOAy7CA3aaRHE8RiUuwjhTa6GSNG9HV7M
+ 2iNwQhuXApr0uxxnTW9VMltwHhkwe+CZGLIImMbMdSgZqqC7lPWP4IDoLiBpseIqnd
+ 5LDbQpwk7QcxIOb0avlbaZk++O0hnuLtl97aKIffv+9Au5TPCW8fFB92sjqaBzfoL6
+ U43N9DAHApVmA==
+Date: Sun, 4 Jan 2026 03:20:42 +0000
+To: Nanzhe Zhao <nzzhao@126.com>
+Message-ID: <aVncihATY3KXN59M@google.com>
+References: <20251120235446.1947532-1-jaegeuk@kernel.org>
+ <0153ff69-789d-4fe1-a89c-0c607a9a7d6c@kernel.org>
+ <aS3s98fgy80_xDuK@google.com> <aS4W7NBYFPwP6KEQ@google.com>
+ <aS5RG6IQ8AlXrLwT@google.com>
+ <0bf2eedd-eebb-440b-96f5-72ac3a68b608@kernel.org>
+ <aThslGwzpYmEXzU5@google.com>
+ <a7f7efde-53e3-48c3-9caf-9410b018b1e1@126.com>
+ <aVdkSZeuwzsNq7pE@google.com>
+ <16d92acc.17ac.19b837e5d80.Coremail.nzzhao@126.com>
 MIME-Version: 1.0
-X-Headers-End: 1vcDXk-0005oS-3s
-Subject: [f2fs-dev] [PATCH 13/14] f2fs: introduce FAULT_LOCK_TIMEOUT
+Content-Disposition: inline
+In-Reply-To: <16d92acc.17ac.19b837e5d80.Coremail.nzzhao@126.com>
+X-Headers-End: 1vcEfo-0007QT-69
+Subject: Re: [f2fs-dev] [PATCH 1/2 v4] f2fs: support large folio for
+ immutable non-compressed case
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,92 +94,60 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch introduce a new fault type FAULT_LOCK_TIMEOUT, it can
-be used to inject timeout into lock duration.
+On 01/03, Nanzhe Zhao wrote:
+> Dear Kim:
+> Thanks for your quick reply!
+> 
+> I applied the two bug fixes on my local branch and found that
+> I still couldn't pass my test of generating and reading a heavily
+> fragmented file.
+> 
+> The root cause is that current code will treat hole blocks as mapped
+> blocks as well and mistakenly increment read_pages_pending, resulting
+> task hung in readahead.
+> 
+> Inside f2fs_map_blocks():
+> 
+> /* DIO READ and hole case, should not map the blocks. */
+> if (!(flag == F2FS_GET_BLOCK_DIO && is_hole && !map->m_may_create))
+> 	map->m_flags |= F2FS_MAP_MAPPED;
+> 
+> it will have map->m_flags marked with F2FS_MAP_MAPPED in non-DIO and
+> no blocks creation context for NULL_ADDR and NEW_ADDR, except for
+> holes mapped to an unallocated dnode.
+> 
+> Personally, I think a better fix is to add a helper function
+> f2fs_block_needs_zeroing(). The condition could be: return true if the
+> current blkaddr is NULL_ADDR or NEW_ADDR.
+> 
+> Then we can reverse the order of the checks under the got_it: label:
+> first `if (f2fs_block_needs_zeroing()) ...`, and then `else if
+> (map->m_flags & F2FS_MAP_MAPPED)`, while keeping all the logic inside
+> those statements unchanged.
+> 
+> For the parameters of f2fs_block_needs_zeroing(), I think we can pass
+> `struct f2fs_map_blocks` directly, because it already contains all the
+> information we need. Also, if we later want to support batching
+> contiguous physical block mappings and bio additions inside the loop,
+> this signature should be more extensible.
+> 
+> If you think this approach makes sense, I can send a patch to fix all
+> three bugs. Thank you.
 
-Timeout type can be set via /sys/fs/f2fs/<disk>/inject_timeout_type
+I think that's feasbile. Could you please post a patch to discuss further?
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- Documentation/ABI/testing/sysfs-fs-f2fs | 1 +
- Documentation/filesystems/f2fs.rst      | 1 +
- fs/f2fs/checkpoint.c                    | 3 +++
- fs/f2fs/f2fs.h                          | 1 +
- fs/f2fs/super.c                         | 1 +
- 5 files changed, 7 insertions(+)
+Thanks,
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index de5a80124e04..4b0bec3c0746 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -743,6 +743,7 @@ Description:	Support configuring fault injection type, should be
- 		FAULT_INCONSISTENT_FOOTER        0x00200000
- 		FAULT_ATOMIC_TIMEOUT             0x00400000 (1000ms)
- 		FAULT_VMALLOC                    0x00800000
-+		FAULT_LOCK_TIMEOUT               0x01000000 (1000ms)
- 		===========================      ==========
- 
- What:		/sys/fs/f2fs/<disk>/discard_io_aware_gran
-diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-index 2d71efa7db7a..33d2166ac6b7 100644
---- a/Documentation/filesystems/f2fs.rst
-+++ b/Documentation/filesystems/f2fs.rst
-@@ -217,6 +217,7 @@ fault_type=%d		 Support configuring fault injection type, should be
- 			     FAULT_INCONSISTENT_FOOTER        0x00200000
- 			     FAULT_ATOMIC_TIMEOUT             0x00400000 (1000ms)
- 			     FAULT_VMALLOC                    0x00800000
-+			     FAULT_LOCK_TIMEOUT               0x01000000 (1000ms)
- 			     ===========================      ==========
- mode=%s			 Control block allocation mode which supports "adaptive"
- 			 and "lfs". In "lfs" mode, there should be no random
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 86656231ce83..f2ab5ba8fb6a 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -63,6 +63,9 @@ static inline void trace_lock_elapsed_time_end(struct f2fs_rwsem *sem,
- 	if (!lc->lock_trace)
- 		return;
- 
-+	if (time_to_inject(sem->sbi, FAULT_LOCK_TIMEOUT))
-+		f2fs_io_schedule_timeout_killable(DEFAULT_FAULT_TIMEOUT);
-+
- 	get_lock_elapsed_time(&tts);
- 
- 	total_time = div_u64(tts.total_time - lc->ts.total_time, npm);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8c0ce9fd954f..4f8eb1292ebf 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -65,6 +65,7 @@ enum {
- 	FAULT_INCONSISTENT_FOOTER,
- 	FAULT_ATOMIC_TIMEOUT,
- 	FAULT_VMALLOC,
-+	FAULT_LOCK_TIMEOUT,
- 	FAULT_MAX,
- };
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 9e41fe39dbf6..1915d194153e 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -69,6 +69,7 @@ const char *f2fs_fault_name[FAULT_MAX] = {
- 	[FAULT_INCONSISTENT_FOOTER]	= "inconsistent footer",
- 	[FAULT_ATOMIC_TIMEOUT]		= "atomic timeout",
- 	[FAULT_VMALLOC]			= "vmalloc",
-+	[FAULT_LOCK_TIMEOUT]		= "lock timeout",
- };
- 
- int f2fs_build_fault_attr(struct f2fs_sb_info *sbi, unsigned long rate,
--- 
-2.49.0
-
+> 
+> Best regards,
+> Nanzhe Zhao
 
 
 _______________________________________________
