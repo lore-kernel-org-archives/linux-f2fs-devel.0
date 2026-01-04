@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CB517C2A06C
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  4 Jan 2026 02:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 62C0BC2A06A
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  4 Jan 2026 02:08:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=lh602R2mLJ3UmFS6b/0lkdV1vqIZ2pp8dpVedr+EGJE=; b=fzGW9zMHvZF7v0ccTQjHJBUoLh
-	TMkdXunjEeHknbe3tNfnUmHHgrPRwnVFMd8ODRvmlcrLqtpeDlgx+pyRpOXZkXTdAhkFQ71Ev5CMY
-	erA9C6kB5gR8eebXtacxzzg8guc5zS3W8k6kMV7KQBiZv77IsSwVHZ9bZ0Yru4MyuXKI=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=4RZKOnaS9BP8cikFVNmdOExf4b4jcEes3l3Y/roaAH0=; b=ea2XyAMtF1GlLAZjrE58Wl/UqB
+	X+ZfhyCbobS1VVVbRf7oQL+IA5aOR7nHdebtYegk5cmQ7pD75smZiRPzpv0V2xv4yEfe76xmtjyWs
+	UVvf41wHVXa2Tj+F/sLlMfL/9fI+LY+gnAkH7ySuaJtlkRIMF0bOMXTtF8F05pfAEWiE=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vcDXZ-0000Ig-E0;
-	Sun, 04 Jan 2026 02:08:21 +0000
+	id 1vcDXa-0000gE-0R;
+	Sun, 04 Jan 2026 02:08:22 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vcDXY-0000IX-D9
+ (envelope-from <chao@kernel.org>) id 1vcDXX-0000g6-Uh
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 04 Jan 2026 02:08:20 +0000
+ Sun, 04 Jan 2026 02:08:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=l1+7+lDHzZXhxV3XZ6ZzJ6jCZ/EGtpo2RrgoZVMEPxc=; b=d8S87vjEqEHzTQOSFEIo0a5pNP
- 4y3n2xsec4LsLHMjqVzzl1vxNILbiOvMLABn6l4Ro6kRxTbfSF7qgktdPuBHDYlVSLpuMuaVmRYs1
- Fhf8LJSGyBjCgN3uKda32Ve5AcwkO0+OB1qcg3Sngw6UkbFxJiVVnrua1oovNK/ZenVM=;
+ bh=GCtwMZPCIuHwYXV1QlFGo7TQumwb+CRMxnj5cuc99z0=; b=bCO9bkdb1yE4E+BpDiiqqVKAK2
+ //9YO1tRQ6Q2F3vQqGr/MKrHLbuGKeaTr4YrFSLELQFFr3LieuadvyHxCVAjRr9IQwlXMy/2fQgQM
+ SW4s9SdmvmUeX9FyC6XndH1+c1GCq5/g/uH2FegdOhKgv3ATHMvd+um9iL9QOH88Vbkc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=l1+7+lDHzZXhxV3XZ6ZzJ6jCZ/EGtpo2RrgoZVMEPxc=; b=NoSO0qCi4LBRZUqcAUZAjB20cV
- tjl94m/wxdfWLWNd1deQasaPjrbevUNwu6KtVT9v/tTIOafi7tpS889BnHvg/fTb5OXrSJkQuYheV
- v5j7CZAUET9ibK3+3z10NzGzmk7RvtdSGnEpS3a+5Nf2ovzJjUbS2f7sB9YfYdHK8qlQ=;
+ bh=GCtwMZPCIuHwYXV1QlFGo7TQumwb+CRMxnj5cuc99z0=; b=LiwolfDxa6m1jraZJx6q9VfWwq
+ JcBFsYNKhqgFjRJMwMskDkE7VLiGx7J8YY53rYIQ5cdxEfwbV13MHjUyWYQ1uiXOD6DsOmlLGXF+N
+ /AeYYL6lgL5jBLOIILlwXfjnzilWuN6GG3rWL4ZOBDSb1PeEUO4rEZGbt45w/yRPZ0GQ=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vcDXX-0005ni-U3 for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 04 Jan 2026 02:08:20 +0000
+ id 1vcDXX-0005nh-7D for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 04 Jan 2026 02:08:19 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id A47BE4435C
+ by sea.source.kernel.org (Postfix) with ESMTP id EC0724427A
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun,  4 Jan 2026 02:08:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A9B7C113D0;
- Sun,  4 Jan 2026 02:08:13 +0000 (UTC)
+ Sun,  4 Jan 2026 02:08:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CED15C19423;
+ Sun,  4 Jan 2026 02:08:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1767492494;
- bh=8zLFMaibD9G+3ikVEMFJ0AfRrJDHoPsUZ+l/9DR/1eM=;
+ s=k20201202; t=1767492488;
+ bh=FjxPDkPb0b6ALOwmCLq6MsIiEbneVQ9Q1d4PppU8+tA=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=SktH6TN5mkTYmABbR3J5cNP6kEj7q04BkXPOww0uWwnQJMRjbePxu8O0oobEU8TvM
- vvGYHp0uU0BF8rbl59QKZ/dSMt+OW2Y4rBKpEe9zHPOF+0DCqLvwrvhuHJBqhM+6TB
- l4dAmLiLszq9Izm77lVOlaIL3cK4hRtLdWRtFQeQfqGnueJJP1vf0OPkuk+251g2IC
- mzNS88htkZkua9yqNuzaTjffSwW8TLzXnb3x+foUDE383f84OCfke+RMdlPDGVKo1M
- cy/Hu2QteoFNpt/Z9XoEtIWvw/ThCqefOrg6uuPdlIEwAnFHzeULHeTNxBFf99zlFH
- igfzQB0lXG2hg==
+ b=AWYRXeih4MO46MPjN3tbVqoxA2sd5j22OppBIBq+AzszC9hYySubS4DQqkybxblC1
+ HPqf2+L1joIJsijRio2y6QzWSBtV6yzEj4LZL1Cb1mqXH/FNMgCZmw7izV98rwRdhl
+ dpuaE1XLOVvDcwyoH0M95wLXXtGV4uGatT8kqBnzktwUXcKRiXaU98MHkbYHnLN3hR
+ 91UWAxdbvJeEnt2BKYvoIKjHFqnKvJyJQY6s2PW8GWHVrX+W8RlZg76cpTfu7Nv9vN
+ 99buHy8MTNwVEsqhjhDXX1XZwioQzxSErhCEJFi+m4hBuUNcT6wyFza9JhtGPtrWlg
+ SyilBMKlXuyiQ==
 To: jaegeuk@kernel.org
-Date: Sun,  4 Jan 2026 10:07:23 +0800
-Message-ID: <20260104020729.1064529-8-chao@kernel.org>
+Date: Sun,  4 Jan 2026 10:07:19 +0800
+Message-ID: <20260104020729.1064529-4-chao@kernel.org>
 X-Mailer: git-send-email 2.52.0.358.g0dd7633a29-goog
 In-Reply-To: <20260104020729.1064529-1-chao@kernel.org>
 References: <20260104020729.1064529-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1vcDXX-0005ni-U3
-Subject: [f2fs-dev] [PATCH 08/14] f2fs: trace elapsed time for io_rwsem lock
+X-Headers-End: 1vcDXX-0005nh-7D
+Subject: [f2fs-dev] [PATCH 04/14] f2fs: trace elapsed time for node_change
+ lock
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,109 +94,74 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use f2fs_{down,up}_{read,write}_trace for io_rwsem to trace lock elapsed time.
+Use f2fs_{down,up}_read_trace for node_change to trace lock elapsed time.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/data.c              | 18 +++++++++++-------
- fs/f2fs/f2fs.h              |  1 +
- include/trace/events/f2fs.h |  3 ++-
- 3 files changed, 14 insertions(+), 8 deletions(-)
+ fs/f2fs/data.c              | 4 ++--
+ fs/f2fs/f2fs.h              | 1 +
+ fs/f2fs/super.c             | 2 +-
+ include/trace/events/f2fs.h | 3 ++-
+ 4 files changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 79455d7acba5..7dee58fbfc0b 100644
+index 73fcafbc8191..5469547142e7 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -620,7 +620,8 @@ int f2fs_init_write_merge_io(struct f2fs_sb_info *sbi)
- 		for (j = HOT; j < n; j++) {
- 			struct f2fs_bio_info *io = &sbi->write_io[i][j];
- 
--			init_f2fs_rwsem(&io->io_rwsem);
-+			init_f2fs_rwsem_trace(&io->io_rwsem, sbi,
-+						LOCK_NAME_IO_RWSEM);
- 			io->sbi = sbi;
- 			io->bio = NULL;
- 			io->last_block_in_bio = 0;
-@@ -644,8 +645,9 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
+@@ -1472,7 +1472,7 @@ static void f2fs_map_lock(struct f2fs_sb_info *sbi,
  {
- 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
- 	struct f2fs_bio_info *io = sbi->write_io[btype] + temp;
-+	struct f2fs_lock_context lc;
- 
--	f2fs_down_write(&io->io_rwsem);
-+	f2fs_down_write_trace(&io->io_rwsem, &lc);
- 
- 	if (!io->bio)
- 		goto unlock_out;
-@@ -659,7 +661,7 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
- 	}
- 	__submit_merged_bio(io);
- unlock_out:
--	f2fs_up_write(&io->io_rwsem);
-+	f2fs_up_write_trace(&io->io_rwsem, &lc);
+ 	f2fs_down_read(&sbi->cp_enable_rwsem);
+ 	if (flag == F2FS_GET_BLOCK_PRE_AIO)
+-		f2fs_down_read(&sbi->node_change);
++		f2fs_down_read_trace(&sbi->node_change, lc);
+ 	else
+ 		f2fs_lock_op(sbi, lc);
  }
- 
- static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
-@@ -674,10 +676,11 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
- 		if (!force)	{
- 			enum page_type btype = PAGE_TYPE_OF_BIO(type);
- 			struct f2fs_bio_info *io = sbi->write_io[btype] + temp;
-+			struct f2fs_lock_context lc;
- 
--			f2fs_down_read(&io->io_rwsem);
-+			f2fs_down_read_trace(&io->io_rwsem, &lc);
- 			ret = __has_merged_page(io->bio, inode, folio, ino);
--			f2fs_up_read(&io->io_rwsem);
-+			f2fs_up_read_trace(&io->io_rwsem, &lc);
- 		}
- 		if (ret) {
- 			__f2fs_submit_merged_write(sbi, type, temp);
-@@ -987,11 +990,12 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
- 	struct f2fs_bio_info *io = sbi->write_io[btype] + fio->temp;
- 	struct folio *bio_folio;
-+	struct f2fs_lock_context lc;
- 	enum count_type type;
- 
- 	f2fs_bug_on(sbi, is_read_io(fio->op));
- 
--	f2fs_down_write(&io->io_rwsem);
-+	f2fs_down_write_trace(&io->io_rwsem, &lc);
- next:
- #ifdef CONFIG_BLK_DEV_ZONED
- 	if (f2fs_sb_has_blkzoned(sbi) && btype < META && io->zone_pending_bio) {
-@@ -1073,7 +1077,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 	if (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN) ||
- 				!f2fs_is_checkpoint_ready(sbi))
- 		__submit_merged_bio(io);
--	f2fs_up_write(&io->io_rwsem);
-+	f2fs_up_write_trace(&io->io_rwsem, &lc);
- }
- 
- static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+@@ -1482,7 +1482,7 @@ static void f2fs_map_unlock(struct f2fs_sb_info *sbi,
+ 				int flag)
+ {
+ 	if (flag == F2FS_GET_BLOCK_PRE_AIO)
+-		f2fs_up_read(&sbi->node_change);
++		f2fs_up_read_trace(&sbi->node_change, lc);
+ 	else
+ 		f2fs_unlock_op(sbi, lc);
+ 	f2fs_up_read(&sbi->cp_enable_rwsem);
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index baaae854c74f..59615f590d79 100644
+index 03f5eb7549a6..972cff745e63 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -180,6 +180,7 @@ enum f2fs_lock_name {
- 	LOCK_NAME_NODE_WRITE,
- 	LOCK_NAME_GC_LOCK,
- 	LOCK_NAME_CP_GLOBAL,
-+	LOCK_NAME_IO_RWSEM,
+@@ -176,6 +176,7 @@ enum device_allocation_policy {
+ enum f2fs_lock_name {
+ 	LOCK_NAME_NONE,
+ 	LOCK_NAME_CP_RWSEM,
++	LOCK_NAME_NODE_CHANGE,
  };
  
  /*
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index d60b91292c23..0d406fc8bc22 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4897,7 +4897,7 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	mutex_init(&sbi->writepages);
+ 	init_f2fs_rwsem(&sbi->cp_global_sem);
+ 	init_f2fs_rwsem(&sbi->node_write);
+-	init_f2fs_rwsem(&sbi->node_change);
++	init_f2fs_rwsem_trace(&sbi->node_change, sbi, LOCK_NAME_NODE_CHANGE);
+ 	spin_lock_init(&sbi->stat_lock);
+ 	init_f2fs_rwsem_trace(&sbi->cp_rwsem, sbi, LOCK_NAME_CP_RWSEM);
+ 	init_f2fs_rwsem(&sbi->cp_enable_rwsem);
 diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 859de7c8d1c7..c3b6b509472f 100644
+index f4f13ddbe104..d472f47eedec 100644
 --- a/include/trace/events/f2fs.h
 +++ b/include/trace/events/f2fs.h
-@@ -190,7 +190,8 @@ TRACE_DEFINE_ENUM(CP_PHASE_FINISH_CHECKPOINT);
- 		{ LOCK_NAME_NODE_CHANGE,	"node_change" },	\
- 		{ LOCK_NAME_NODE_WRITE,		"node_write" },		\
- 		{ LOCK_NAME_GC_LOCK,		"gc_lock" },		\
--		{ LOCK_NAME_CP_GLOBAL,		"cp_global" })
-+		{ LOCK_NAME_CP_GLOBAL,		"cp_global" },		\
-+		{ LOCK_NAME_IO_RWSEM,		"io_rwsem" })
+@@ -186,7 +186,8 @@ TRACE_DEFINE_ENUM(CP_PHASE_FINISH_CHECKPOINT);
+ 
+ #define show_lock_name(lock)						\
+ 	__print_symbolic(lock,						\
+-		{ LOCK_NAME_CP_RWSEM,		"cp_rwsem" })
++		{ LOCK_NAME_CP_RWSEM,		"cp_rwsem" },		\
++		{ LOCK_NAME_NODE_CHANGE,	"node_change" })
  
  struct f2fs_sb_info;
  struct f2fs_io_info;
