@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 62C0BC2A06A
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  4 Jan 2026 02:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 824F2C2A06D
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  4 Jan 2026 02:08:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=4RZKOnaS9BP8cikFVNmdOExf4b4jcEes3l3Y/roaAH0=; b=ea2XyAMtF1GlLAZjrE58Wl/UqB
-	X+ZfhyCbobS1VVVbRf7oQL+IA5aOR7nHdebtYegk5cmQ7pD75smZiRPzpv0V2xv4yEfe76xmtjyWs
-	UVvf41wHVXa2Tj+F/sLlMfL/9fI+LY+gnAkH7ySuaJtlkRIMF0bOMXTtF8F05pfAEWiE=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=8EpYMuVSPQE8Ru34gAsmWWiq8ZYO5s+uc1klEXr9kwE=; b=fN+pkx9jLYqjM6ZFAPLl+AQ/AR
+	cwNK/zAMMsrdTneMZqrJ8rrTU3BHv9FND5IzNR3aEBgypAdoQXQI/tmPfhHF9uFkjY7GpCxWJPe07
+	uOgbBoreZauNOr0BlvkdQGdTruzqLwt3nnvGHQsFgIk7If4N1RPqMDPBL7NYdhXYfPNo=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vcDXa-0000gE-0R;
-	Sun, 04 Jan 2026 02:08:22 +0000
+	id 1vcDXb-0001oZ-7H;
+	Sun, 04 Jan 2026 02:08:23 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vcDXX-0000g6-Uh
+ (envelope-from <chao@kernel.org>) id 1vcDXZ-0001oT-Qg
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 04 Jan 2026 02:08:19 +0000
+ Sun, 04 Jan 2026 02:08:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GCtwMZPCIuHwYXV1QlFGo7TQumwb+CRMxnj5cuc99z0=; b=bCO9bkdb1yE4E+BpDiiqqVKAK2
- //9YO1tRQ6Q2F3vQqGr/MKrHLbuGKeaTr4YrFSLELQFFr3LieuadvyHxCVAjRr9IQwlXMy/2fQgQM
- SW4s9SdmvmUeX9FyC6XndH1+c1GCq5/g/uH2FegdOhKgv3ATHMvd+um9iL9QOH88Vbkc=;
+ bh=kF+rMkUmwyk6JLKU+jcq3unZupoXvD+Oj8/x6ng2aMQ=; b=h/jQnxe8m4uwX745dsnHe7/MQ0
+ M/5XWv34Bfz+a1A+VzSycJcjigscrZ/T2c5nY213ECSgO7naRo4zLxXu93dEV8KCPMNe7eTnCDzks
+ XjrgUttBuVAWmmGnzh2B6b+P1sJ4v9C6cNwFLDggUXBROYy9XeqcC/4cA1LykqwX62Jc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GCtwMZPCIuHwYXV1QlFGo7TQumwb+CRMxnj5cuc99z0=; b=LiwolfDxa6m1jraZJx6q9VfWwq
- JcBFsYNKhqgFjRJMwMskDkE7VLiGx7J8YY53rYIQ5cdxEfwbV13MHjUyWYQ1uiXOD6DsOmlLGXF+N
- /AeYYL6lgL5jBLOIILlwXfjnzilWuN6GG3rWL4ZOBDSb1PeEUO4rEZGbt45w/yRPZ0GQ=;
+ bh=kF+rMkUmwyk6JLKU+jcq3unZupoXvD+Oj8/x6ng2aMQ=; b=b5hzRXJyUW9OtVm4xw8CDS9Cms
+ NpYaXdsX1pPGHBQ9OFjbKrEKsj10GZmWmuvYMVC/pqbMjFcBSyTPlMTEAVnt/x5rWcu+cJniEU0zC
+ Ttd2k829SOovrsv4X2jYnnTx4bfXtXWTOMw8X0ZysI9iAkR2+MzyRVMPsKNgt2BC4Zvw=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vcDXX-0005nh-7D for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 04 Jan 2026 02:08:19 +0000
+ id 1vcDXZ-0005no-Cy for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 04 Jan 2026 02:08:21 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id EC0724427A
+ by sea.source.kernel.org (Postfix) with ESMTP id 23942440E1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun,  4 Jan 2026 02:08:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CED15C19423;
- Sun,  4 Jan 2026 02:08:07 +0000 (UTC)
+ Sun,  4 Jan 2026 02:08:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4111C19423;
+ Sun,  4 Jan 2026 02:08:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1767492488;
- bh=FjxPDkPb0b6ALOwmCLq6MsIiEbneVQ9Q1d4PppU8+tA=;
+ s=k20201202; t=1767492496;
+ bh=WFWTDOe5Mo4IfsILZHZfmp53EMemb/I14Nce94LbeZY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=AWYRXeih4MO46MPjN3tbVqoxA2sd5j22OppBIBq+AzszC9hYySubS4DQqkybxblC1
- HPqf2+L1joIJsijRio2y6QzWSBtV6yzEj4LZL1Cb1mqXH/FNMgCZmw7izV98rwRdhl
- dpuaE1XLOVvDcwyoH0M95wLXXtGV4uGatT8kqBnzktwUXcKRiXaU98MHkbYHnLN3hR
- 91UWAxdbvJeEnt2BKYvoIKjHFqnKvJyJQY6s2PW8GWHVrX+W8RlZg76cpTfu7Nv9vN
- 99buHy8MTNwVEsqhjhDXX1XZwioQzxSErhCEJFi+m4hBuUNcT6wyFza9JhtGPtrWlg
- SyilBMKlXuyiQ==
+ b=E3w1SX5Erz++QpQ+bGHaL8s5H1GAVVORKQ413MMsLk4dIRh42aPP12BYg8lzrIq9Q
+ oCiYeL2MwWnWYWXIovWw/Yb3E3ILIDc9mXX5BSn/STGxqY3PaojFJ47/TjqufcJFnc
+ hzA9QBjmKRAm9mJMTl7kxMN/ywdVaoUUteqA4qTEaNdM7r6+TBcjKjwjqhRsam4Ph5
+ hENW805NvOwco5USpCvCQONWwEGWThyyNVmkUf7798XpePGcVpi7/w6fTFElEgu4O1
+ VJmxZW5GA225qciVwLIVmzcim+1TTXwRKSDQC/UuRp6h8iRe0EQjfAq6/1ePVK72Wc
+ Byyk0j8s6jYwQ==
 To: jaegeuk@kernel.org
-Date: Sun,  4 Jan 2026 10:07:19 +0800
-Message-ID: <20260104020729.1064529-4-chao@kernel.org>
+Date: Sun,  4 Jan 2026 10:07:24 +0800
+Message-ID: <20260104020729.1064529-9-chao@kernel.org>
 X-Mailer: git-send-email 2.52.0.358.g0dd7633a29-goog
 In-Reply-To: <20260104020729.1064529-1-chao@kernel.org>
 References: <20260104020729.1064529-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1vcDXX-0005nh-7D
-Subject: [f2fs-dev] [PATCH 04/14] f2fs: trace elapsed time for node_change
- lock
+X-Headers-End: 1vcDXZ-0005no-Cy
+Subject: [f2fs-dev] [PATCH 09/14] f2fs: clean up w/ __f2fs_schedule_timeout()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,77 +93,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use f2fs_{down,up}_read_trace for node_change to trace lock elapsed time.
+No logic changes.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/data.c              | 4 ++--
- fs/f2fs/f2fs.h              | 1 +
- fs/f2fs/super.c             | 2 +-
- include/trace/events/f2fs.h | 3 ++-
- 4 files changed, 6 insertions(+), 4 deletions(-)
+ fs/f2fs/f2fs.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 73fcafbc8191..5469547142e7 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1472,7 +1472,7 @@ static void f2fs_map_lock(struct f2fs_sb_info *sbi,
- {
- 	f2fs_down_read(&sbi->cp_enable_rwsem);
- 	if (flag == F2FS_GET_BLOCK_PRE_AIO)
--		f2fs_down_read(&sbi->node_change);
-+		f2fs_down_read_trace(&sbi->node_change, lc);
- 	else
- 		f2fs_lock_op(sbi, lc);
- }
-@@ -1482,7 +1482,7 @@ static void f2fs_map_unlock(struct f2fs_sb_info *sbi,
- 				int flag)
- {
- 	if (flag == F2FS_GET_BLOCK_PRE_AIO)
--		f2fs_up_read(&sbi->node_change);
-+		f2fs_up_read_trace(&sbi->node_change, lc);
- 	else
- 		f2fs_unlock_op(sbi, lc);
- 	f2fs_up_read(&sbi->cp_enable_rwsem);
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 03f5eb7549a6..972cff745e63 100644
+index 59615f590d79..cb9e94904c6b 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -176,6 +176,7 @@ enum device_allocation_policy {
- enum f2fs_lock_name {
- 	LOCK_NAME_NONE,
- 	LOCK_NAME_CP_RWSEM,
-+	LOCK_NAME_NODE_CHANGE,
- };
- 
- /*
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index d60b91292c23..0d406fc8bc22 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4897,7 +4897,7 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	mutex_init(&sbi->writepages);
- 	init_f2fs_rwsem(&sbi->cp_global_sem);
- 	init_f2fs_rwsem(&sbi->node_write);
--	init_f2fs_rwsem(&sbi->node_change);
-+	init_f2fs_rwsem_trace(&sbi->node_change, sbi, LOCK_NAME_NODE_CHANGE);
- 	spin_lock_init(&sbi->stat_lock);
- 	init_f2fs_rwsem_trace(&sbi->cp_rwsem, sbi, LOCK_NAME_CP_RWSEM);
- 	init_f2fs_rwsem(&sbi->cp_enable_rwsem);
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index f4f13ddbe104..d472f47eedec 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -186,7 +186,8 @@ TRACE_DEFINE_ENUM(CP_PHASE_FINISH_CHECKPOINT);
- 
- #define show_lock_name(lock)						\
- 	__print_symbolic(lock,						\
--		{ LOCK_NAME_CP_RWSEM,		"cp_rwsem" })
-+		{ LOCK_NAME_CP_RWSEM,		"cp_rwsem" },		\
-+		{ LOCK_NAME_NODE_CHANGE,	"node_change" })
- 
- struct f2fs_sb_info;
- struct f2fs_io_info;
+@@ -4988,8 +4988,7 @@ static inline void f2fs_io_schedule_timeout_killable(long timeout)
+ 	while (timeout) {
+ 		if (fatal_signal_pending(current))
+ 			return;
+-		set_current_state(TASK_UNINTERRUPTIBLE);
+-		io_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
++		__f2fs_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT, true);
+ 		if (timeout <= DEFAULT_SCHEDULE_TIMEOUT)
+ 			return;
+ 		timeout -= DEFAULT_SCHEDULE_TIMEOUT;
 -- 
 2.49.0
 
