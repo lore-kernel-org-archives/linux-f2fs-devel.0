@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D426FC79F9F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Jan 2026 15:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 93214C79F9E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Jan 2026 15:31:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=kEPar+IunaxmUmHJfr6FcxNL+/1EnbOpLWCKUmLf1eE=; b=m0QTboVyXBkhGfeqdoCh+dX1fD
-	IxNYerYn4zC36+pIX5JpuMdsrxbQs74zTm4wOKK1JR9cEWhKzbhrUU84CCntrQ2Bp87q1r62bA/3O
-	i66R7Uq+tLYNrm90A8tMsO1YjI3I+PlhX0YUrYxLdu3f5njKlc1PCDsYqJk1voVXLzcw=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=NJpDCgOR9KlZj3JPTvQzYAYIozKGmqSVhq6lldLSr6M=; b=W/2H3ESiNXWTwdq7X4qHsaLTHo
+	b54tkwF2W9ZNrSVTALfxB3ztgUHmAQ0ScDrKX2LiS4ROHWIdOm2ZaLbSs9KMb5QKCZGdQ90u12O0D
+	EXTAZq3TkiFk99TvIzqPZYcb45Py2H/krbZUVFgIJPZ6Xoadq1IzikAs515znRmazrMg=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vcmYY-0002FE-9c;
-	Mon, 05 Jan 2026 15:31:43 +0000
+	id 1vcmYa-0004to-9J;
+	Mon, 05 Jan 2026 15:31:44 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao@126.com>) id 1vcmYX-0002F1-0N
+ (envelope-from <nzzhao@126.com>) id 1vcmYV-0004te-NW
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 05 Jan 2026 15:31:42 +0000
+ Mon, 05 Jan 2026 15:31:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bFFmAVAmIX+RPOqrfHAqM7ezbKNEISuZL8Xxh41Ccqw=; b=NpFy6Be4+1UxD6jeBl6EUZvIZ6
- MyEVkVOMG2MI6+50FNf4KuMrkcZpcl5uTY2bYCtGWE/rI3jY62O21hPa0nroM0XmeZIBunzK0aQeD
- l/uENndkUo+SYk2fq5xTGPu9XqHsHhDZNMb1NAl25YKplSzxut7sEfAbLbWNZXGrfyAY=;
+ bh=tiYLZz94d9LLQaDgoW6RxRSXj1GY6myv0dr2n31N658=; b=EDqkE1ooy/yLt7RncJ+3oHYmV1
+ z6ky151ZoJw7xPfxBOcaj0STaWCBFz/DLP4OMxcndAg6gu+2/lPHzCgpXQPIRpQnEihGmSN1PNhKb
+ EYoTqVbpVaFL2xd/dgHf6THZ+vthZ2JB3lnXjHbEGg8DmEeXN2oXHP66kbStt0+bGEyk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,41 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=bFFmAVAmIX+RPOqrfHAqM7ezbKNEISuZL8Xxh41Ccqw=; b=a2Q4Wqj4UH8aLXpJSPKd9V66EB
- za9QAYMC9baSbo4x+Av3S9ETkYv0qUXliYc6CO+zwijpazIOxMFwChSb/X4s9Eb8Ixuc1hup5HjMm
- RzTgAS9soiYJEx8ckolI9h+4Yf8Pr4sXdiN20BMFhqSz6YOi6R2KtTmfuMXJxMvcty0k=;
-Received: from m16.mail.126.com ([220.197.31.8])
+ bh=tiYLZz94d9LLQaDgoW6RxRSXj1GY6myv0dr2n31N658=; b=FzV5zcIz9hmCZsigUzV7ktrAV/
+ r4RFKrtQnDzl0zQGJ1tMZBEIM0FYQ5nbvkVR6pdP+OuDMKSyP57hUBHLxodh0SS1D8wHp1ZsQ9+3u
+ BVB14UJHkkGlex81V8C5/JH0I8pC9UysRu9IKFveRq0U7+FNQ0sC38+zwCWBT2O5jEmI=;
+Received: from m16.mail.126.com ([117.135.210.7])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vcmYW-0006EU-W3 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 05 Jan 2026 15:31:41 +0000
+ id 1vcmYU-0006EH-TX for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 05 Jan 2026 15:31:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
- s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=bF
- FmAVAmIX+RPOqrfHAqM7ezbKNEISuZL8Xxh41Ccqw=; b=btf4AX9fjc1P66WLjq
- otpUXAaoMUL3RMDHCCxt6p4B7BtzM8F+ByqjyurnLlB6j06LlGnVup6NpiUIw1rO
- d5ySJplZCIFiqR/MOmNVH2ComQ0NbXBm24z7dCCEF5fnU9gVAsvnCuN31+6NFU8i
- j0QriKjA38gITw1/SoJwye1H0=
+ s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ti
+ YLZz94d9LLQaDgoW6RxRSXj1GY6myv0dr2n31N658=; b=S3lbzwazwBjl+OviT0
+ x/cOP0ZvC3s0wO1wMtTQNLxCS3xwTfRLbgUhs8qgfZydNanRjVCOou6DhoUkKN02
+ SSwUq8Ub1gc1nunuxtht6BbLluROa1JiZ4bQ+h0+jRI40yAg1VmKl2oCMLn6lRWr
+ 3qjSL4WheQMiP+Tygi/tjcNVw=
 Received: from YLLaptop.. (unknown [])
- by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3t6092Vtp4nHABA--.665S6;
+ by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3t6092Vtp4nHABA--.665S5;
  Mon, 05 Jan 2026 23:31:12 +0800 (CST)
 From: Nanzhe Zhao <nzzhao@126.com>
 To: Kim Jaegeuk <jaegeuk@kernel.org>
-Date: Mon,  5 Jan 2026 23:31:00 +0800
-Message-Id: <20260105153101.152892-5-nzzhao@126.com>
+Date: Mon,  5 Jan 2026 23:30:59 +0800
+Message-Id: <20260105153101.152892-4-nzzhao@126.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260105153101.152892-1-nzzhao@126.com>
 References: <20260105153101.152892-1-nzzhao@126.com>
 MIME-Version: 1.0
-X-CM-TRANSID: _____wD3t6092Vtp4nHABA--.665S6
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Aw4xurWrCw4DKryrXryUAwb_yoW8Cry8pr
- ykKF95KFZ8JFW8ur48t3Z0vw1Sk348Wa1UGFWfCw1fAasxXas5KFyvq3WY9F1UtFn5J3WI
- qF4FvryUWFsrtF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRkwIgUUUUU=
+X-CM-TRANSID: _____wD3t6092Vtp4nHABA--.665S5
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WF1fWw1xZw4DWFy3CryDJrb_yoW5Jr1DpF
+ y7Gr15Grs3GF4IgF4xJ3Z8uFn09348Kw4UuFZ3A34fWayYqr9agFnYya45uF1Y9rZ7XFn2
+ qF48K34kCa45taDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U2NtxUUUUU=
 X-Originating-IP: [2409:8a20:4df7:2871:d124:26e2:5013:1aa3]
-X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBsAG3h2lb2UFHhQAA3p
-X-Headers-End: 1vcmYW-0006EU-W3
-Subject: [f2fs-dev] [PATCH v1 4/5] f2fs: add 'folio_in_bio' to handle
- readahead folios with no BIO submission
+X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBsQC3h2lb2UBIxwAA3l
+X-Headers-End: 1vcmYU-0006EH-TX
+Subject: [f2fs-dev] [PATCH v1 3/5] f2fs: add f2fs_block_needs_zeroing() to
+ handle hole blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,61 +94,71 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-f2fs_read_data_large_folio() can build a single read BIO across multiple
-folios during readahead. If a folio ends up having none of its subpages
-added to the BIO (e.g. all subpages are zeroed / treated as holes), it
-will never be seen by f2fs_finish_read_bio(), so folio_end_read() is
-never called. This leaves the folio locked and not marked uptodate.
+f2fs_read_data_large_folio() relies on f2fs_map_blocks() to decide whether
+a subpage should be zero-filled or queued to a read bio.
 
-Track whether the current folio has been added to a BIO via a local
-'folio_in_bio' bool flag, and when iterating readahead folios, explicitly
-mark the folio uptodate (on success) and unlock it when nothing was added.
+However, f2fs_map_blocks() can set F2FS_MAP_MAPPED for NULL_ADDR and
+NEW_ADDR in the non-DIO, no-create path. The large folio read code then
+treats such hole blocks as mapped blocks, and may account them
+in read_pages_pending and attempt to build bios for them, which can
+leave tasks stuck in readahead for heavily fragmented files.
+
+Add a helper, f2fs_block_needs_zeroing(), which detects NULL_ADDR and
+NEW_ADDR from struct f2fs_map_blocks. Use it to prioritize the zeroing
+path by checking f2fs_block_needs_zeroing() before
+(map.m_flags & F2FS_MAP_MAPPED) under got_it: label.
 
 Signed-off-by: Nanzhe Zhao <nzzhao@126.com>
 ---
- fs/f2fs/data.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/f2fs/data.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 66ab7a43a56f..ac569a396914 100644
+index 4bef04560924..66ab7a43a56f 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -2430,6 +2430,7 @@ static int f2fs_read_data_large_folio(struct inode *inode,
- 	unsigned nrpages;
- 	struct f2fs_folio_state *ffs;
- 	int ret = 0;
-+	bool folio_in_bio = false;
+@@ -2413,6 +2413,11 @@ static void ffs_detach_free(struct folio *folio)
+ 	kmem_cache_free(ffs_entry_slab, ffs);
+ }
 
- 	if (!IS_IMMUTABLE(inode))
- 		return -EOPNOTSUPP;
-@@ -2445,6 +2446,7 @@ static int f2fs_read_data_large_folio(struct inode *inode,
- 	if (!folio)
- 		goto out;
++static inline bool f2fs_block_needs_zeroing(const struct f2fs_map_blocks *map)
++{
++	return map->m_pblk == NULL_ADDR || map->m_pblk == NEW_ADDR;
++}
++
+ static int f2fs_read_data_large_folio(struct inode *inode,
+ 		struct readahead_control *rac, struct folio *folio)
+ {
+@@ -2468,14 +2473,7 @@ static int f2fs_read_data_large_folio(struct inode *inode,
+ 		if (ret)
+ 			goto err_out;
+ got_it:
+-		if ((map.m_flags & F2FS_MAP_MAPPED)) {
+-			block_nr = map.m_pblk + index - map.m_lblk;
+-			if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), block_nr,
+-						DATA_GENERIC_ENHANCE_READ)) {
+-				ret = -EFSCORRUPTED;
+-				goto err_out;
+-			}
+-		} else {
++		if ((f2fs_block_needs_zeroing(&map))) {
+ 			folio_zero_range(folio, offset << PAGE_SHIFT, PAGE_SIZE);
+ 			if (f2fs_need_verity(inode, index) &&
+ 			    !fsverity_verify_page(folio_file_page(folio,
+@@ -2484,6 +2482,13 @@ static int f2fs_read_data_large_folio(struct inode *inode,
+ 				goto err_out;
+ 			}
+ 			continue;
++		} else if((map.m_flags & F2FS_MAP_MAPPED)) {
++			block_nr = map.m_pblk + index - map.m_lblk;
++			if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), block_nr,
++						DATA_GENERIC_ENHANCE_READ)) {
++				ret = -EFSCORRUPTED;
++				goto err_out;
++			}
+ 		}
 
-+	folio_in_bio = false
- 	index = folio->index;
- 	offset = 0;
- 	ffs = NULL;
-@@ -2530,6 +2532,7 @@ static int f2fs_read_data_large_folio(struct inode *inode,
- 					offset << PAGE_SHIFT))
- 			goto submit_and_realloc;
-
-+		folio_in_bio = true;
- 		inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
- 		f2fs_update_iostat(F2FS_I_SB(inode), NULL, FS_DATA_READ_IO,
- 				F2FS_BLKSIZE);
-@@ -2539,6 +2542,11 @@ static int f2fs_read_data_large_folio(struct inode *inode,
- 	}
- 	trace_f2fs_read_folio(folio, DATA);
- 	if (rac) {
-+		if (!folio_in_bio) {
-+			if (!ret)
-+				folio_mark_uptodate(folio);
-+			folio_unlock(folio);
-+	}
- 		folio = readahead_folio(rac);
- 		goto next_folio;
- 	}
+ 		/* We must increment read_pages_pending before possible BIOs submitting
 --
 2.34.1
 
