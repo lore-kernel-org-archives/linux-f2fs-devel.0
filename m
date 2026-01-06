@@ -4,80 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 40EE6CDC170
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Jan 2026 11:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 57B1DCDC183
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Jan 2026 12:13:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=Hw0m6oYghvMvBbADlf+scNSl6tfKFF1ilirJD6f3LO4=; b=iEAqOI5j+AiffMEWAR0i7Jh5Sw
-	9u6ylrV82FIvMpUS0kASHd3JCyIQMW6sAt4UKSfr+smjQm9NIP4REgKwIkclr7y4X4oAY77QguiJq
-	q/DwSKsEXS4aeWsPOWT2R/oV12K+b1DqY66ZZgmqu3HIuo6p3UCOTXm1QYY72qE2qhCE=;
+	bh=xcVnazuwdN1Az4cWGyExBE7a3hQHJ3z8q4xxaScd4mQ=; b=aedZnzL85CoB4lCd88HEaW5hBK
+	8bmyQvYUjsKotgaBVELyJ3hUVZzr0BIn7DhPgNLBnkqtrl+GdYv9FaQ0u+pafF8VlTUGRKViEhRM7
+	RCsbTxrclC1831fbHvoUy78updgEuHIOsAAWzyTZcrDtVCCyXKYfCqvNQv1Jlcxs06bk=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vd5i8-0000HB-Tb;
-	Tue, 06 Jan 2026 11:58:52 +0000
+	id 1vd5wJ-0000aL-E5;
+	Tue, 06 Jan 2026 12:13:31 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <monty_pavel@sina.com>) id 1vd5i7-0000H3-5k
+ (envelope-from <monty_pavel@sina.com>) id 1vd5wE-0000aB-83
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Jan 2026 11:58:51 +0000
+ Tue, 06 Jan 2026 12:13:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3eOCqxSTHaFVEPpv0IIsJ2vdIsLsstvABCNzhMEKB94=; b=fwo52hzouHlVDqZNcGtTwHNxdq
- QxbY6DR5NLnoUU2dabVihrWd0IfkaMaKpwv4p9GrPxfarkqogl8+iOMWOeKNl/4j7HOianxHNSkWt
- 6RO2vPDZYN4WX4XhdgSUWlAU/V9X+iW1jiQLFMw/4H+PkIXsBLiZsVAxIYIISsJkml9s=;
+ bh=xnwE/dxPmR9y606KXbcSyZTmDWhYIg0ueEqtvjfK2xo=; b=Rn6myM9LpJtco3KHUlpAPD4fNZ
+ 1nOhjhT5NKdfEtGFy2ijSltSpCRakGokj6+SxciUhYseYIeUQo4IfOwRFv2CO8l8QSRLe7cGlWdVx
+ VFsDn7QCe0bgNYDK6KmGVMMP9wBTVI8f7a9won58se5Jfh5RqXzlvvOlhuV5tP/61Q7I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=3eOCqxSTHaFVEPpv0IIsJ2vdIsLsstvABCNzhMEKB94=; b=g
- RJuiqiVwsIwi/vZffhCz5OjfEVMpKTvA8Ilu0/YpBFfsfQkdXQoA3313zb7j+AHf67CT1J6ZU84eG
- Xl9gOjHHqwVHmtTzxRY5Mc9mWV5X3Oxst/8vemXQcqhlFFWSBqlLgNMPKLWKrXHWpA0OrOLwu6VX5
- tGFtIycTr8IZLD7s=;
-Received: from mail3-166.sinamail.sina.com.cn ([202.108.3.166])
+ List-Owner:List-Archive; bh=xnwE/dxPmR9y606KXbcSyZTmDWhYIg0ueEqtvjfK2xo=; b=j
+ nLDtn8/thlf1QEj4b4bOel1KGh/mYr2C/KIBr4zT3pKf2V5VR5iNVYuXPelvkdRfh40+mROU8BAa5
+ i+tV4UKxyrkTlImkIkPxODuE4BHN4DcqfTkyPdstgcQ1OgIxqW20/GH3QKS59OesctRXZE5m63yd2
+ pECdgPOZvEmbwVkQ=;
+Received: from r3-21.sinamail.sina.com.cn ([202.108.3.21])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vd5i6-0004pQ-2E for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Jan 2026 11:58:51 +0000
+ id 1vd5wC-0005Nl-1g for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 06 Jan 2026 12:13:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208;
- t=1767700730; bh=3eOCqxSTHaFVEPpv0IIsJ2vdIsLsstvABCNzhMEKB94=;
+ t=1767701604; bh=xnwE/dxPmR9y606KXbcSyZTmDWhYIg0ueEqtvjfK2xo=;
  h=From:Subject:Date:Message-ID;
- b=Aj8GWu/JQ8c5jvzl6xIysb3XDRIHqyKiWITIyI5yawtNEnbzbpflG28NmntQi/ge4
- MaVQWS+DMG2XiJ9bpq9nPeZI5dZ7nSWL4Hj3hmLDdbqFfSx3bkU1ezTzQFEd4u7WM3
- nVVrhMRREJi+nTq3mrkgdfz/0i1MZUn94TwagXeg=
+ b=iZ3kTUMmnxaHDrrmv9VkzU1p9PNSN6auIf80jXHLBLkZY/+5YiwSoOT6I7Jr944Sk
+ 0RPOhBnHx0I0RdYAGD5DfS46H+IZ9LSCcXvHG6HyzHhqyMHIAb3z43pkMCtyqfkE2x
+ wWsv2GNabhMqjn/u8ANR6SASJLrV69yGPy7DeSlk=
 X-SMAIL-HELO: xiaomi-ThinkCentre-M760t.mioffice.cn
 Received: from unknown (HELO
  xiaomi-ThinkCentre-M760t.mioffice.cn)([114.247.175.249])
- by sina.com (10.54.253.31) with ESMTP
- id 695CF8E8000043F7; Tue, 6 Jan 2026 19:58:35 +0800 (CST)
+ by sina.com (10.54.253.33) with ESMTP
+ id 695CFC5400003623; Tue, 6 Jan 2026 20:13:10 +0800 (CST)
 X-Sender: monty_pavel@sina.com
 X-Auth-ID: monty_pavel@sina.com
 Authentication-Results: sina.com; spf=none smtp.mailfrom=monty_pavel@sina.com;
  dkim=none header.i=none;
  dmarc=none action=none header.from=monty_pavel@sina.com
-X-SMAIL-MID: 3785126816075
-X-SMAIL-UIID: BCCD461A40B34BEAB9D1B0B8B90ADE5D-20260106-195835-1
+X-SMAIL-MID: 9812866684957
+X-SMAIL-UIID: 91DC28E8DD1549C3819ABD9097EE49C1-20260106-201310-1
 From: Yongpeng Yang <monty_pavel@sina.com>
 To: Chao Yu <chao@kernel.org>,
 	Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Tue,  6 Jan 2026 19:56:45 +0800
-Message-ID: <20260106115644.2368389-3-monty_pavel@sina.com>
+Date: Tue,  6 Jan 2026 20:12:11 +0800
+Message-ID: <20260106121210.2374783-2-monty_pavel@sina.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-X-Headers-End: 1vd5i6-0004pQ-2E
-Subject: [f2fs-dev] [PATCH v2 1/2] f2fs: fix out-of-bounds access in sysfs
- attribute read/write
+X-Headers-End: 1vd5wC-0005Nl-1g
+Subject: [f2fs-dev] [PATCH v5 1/1] f2fs: fix IS_CHECKPOINTED flag
+ inconsistency issue caused by concurrent atomic commit and checkpoint
+ writes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,7 +91,7 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: Jinbao Liu <jinbaoliu365@gmail.com>, Jinbao Liu <liujinbao1@xiaomi.com>,
- Yongpeng Yang <yangyongpeng@xiaomi.com>,
+ Sheng Yong <shengyong1@xiaomi.com>, Yongpeng Yang <yangyongpeng@xiaomi.com>,
  linux-f2fs-devel@lists.sourceforge.net, Yongpeng Yang <monty_pavel@sina.com>,
  stable@kernel.org
 Content-Type: text/plain; charset="us-ascii"
@@ -99,170 +100,104 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 
-Some f2fs sysfs attributes suffer from out-of-bounds memory access and
-incorrect handling of integer values whose size is not 4 bytes.
+During SPO tests, when mounting F2FS, an -EINVAL error was returned from
+f2fs_recover_inode_page. The issue occurred under the following scenario
 
-For example:
-vm:~# echo 65537 > /sys/fs/f2fs/vde/carve_out
-vm:~# cat /sys/fs/f2fs/vde/carve_out
-65537
-vm:~# echo 4294967297 > /sys/fs/f2fs/vde/atgc_age_threshold
-vm:~# cat /sys/fs/f2fs/vde/atgc_age_threshold
-1
+Thread A                                     Thread B
+f2fs_ioc_commit_atomic_write
+ - f2fs_do_sync_file // atomic = true
+  - f2fs_fsync_node_pages
+    : last_folio = inode folio
+    : schedule before folio_lock(last_folio) f2fs_write_checkpoint
+                                              - block_operations// writeback last_folio
+                                              - schedule before f2fs_flush_nat_entries
+    : set_fsync_mark(last_folio, 1)
+    : set_dentry_mark(last_folio, 1)
+    : folio_mark_dirty(last_folio)
+    - __write_node_folio(last_folio)
+      : f2fs_down_read(&sbi->node_write)//block
+                                              - f2fs_flush_nat_entries
+                                                : {struct nat_entry}->flag |= BIT(IS_CHECKPOINTED)
+                                              - unblock_operations
+                                                : f2fs_up_write(&sbi->node_write)
+                                             f2fs_write_checkpoint//return
+      : f2fs_do_write_node_page()
+f2fs_ioc_commit_atomic_write//return
+                                             SPO
 
-carve_out maps to {struct f2fs_sb_info}->carve_out, which is a 8-bit
-integer. However, the sysfs interface allows setting it to a value
-larger than 255, resulting in an out-of-range update.
+Thread A calls f2fs_need_dentry_mark(sbi, ino), and the last_folio has
+already been written once. However, the {struct nat_entry}->flag did not
+have the IS_CHECKPOINTED set, causing set_dentry_mark(last_folio, 1) and
+write last_folio again after Thread B finishes f2fs_write_checkpoint.
 
-atgc_age_threshold maps to {struct atgc_management}->age_threshold,
-which is a 64-bit integer, but its sysfs interface cannot correctly set
-values larger than UINT_MAX.
+After SPO and reboot, it was detected that {struct node_info}->blk_addr
+was not NULL_ADDR because Thread B successfully write the checkpoint.
 
-The root causes are:
-1. __sbi_store() treats all default values as unsigned int, which
-prevents updating integers larger than 4 bytes and causes out-of-bounds
-writes for integers smaller than 4 bytes.
+This issue only occurs in atomic write scenarios. For regular file
+fsync operations, the folio must be dirty. If
+block_operations->f2fs_sync_node_pages successfully submit the folio
+write, this path will not be executed. Otherwise, the
+f2fs_write_checkpoint will need to wait for the folio write submission
+to complete, as sbi->nr_pages[F2FS_DIRTY_NODES] > 0. Therefore, the
+situation where f2fs_need_dentry_mark checks that the {struct
+nat_entry}->flag /wo the IS_CHECKPOINTED flag, but the folio write has
+already been submitted, will not occur.
 
-2. f2fs_sbi_show() also assumes all default values are unsigned int,
-leading to out-of-bounds reads and incorrect access to integers larger
-than 4 bytes.
+Therefore, for atomic file fsync, sbi->node_write should be acquired
+through __write_node_folio to ensure that the IS_CHECKPOINTED flag
+correctly indicates that the checkpoint write has been completed.
 
-This patch introduces {struct f2fs_attr}->size to record the actual size
-of the integer associated with each sysfs attribute. With this
-information, sysfs read and write operations can correctly access and
-update values according to their real data size, avoiding memory
-corruption and truncation.
-
-Fixes: b59d0bae6ca3("f2fs: add sysfs support for controlling the gc_thread")
+Fixes: 608514deba38 ("f2fs: set fsync mark only for the last dnode")
 Cc: stable@kernel.org
+Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
 Signed-off-by: Jinbao Liu <liujinbao1@xiaomi.com>
 Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
 ---
+v5:
+- Add Cc tag for the stable mailling list.
+v4:
+- Clarify when the last_folio write completes in the commit message.
+v3:
+- Add detailed explanations for why fsync operations on regular files do
+not hit this issue.
 v2:
-- Replace gc_pin_file_thresh example with carve_out in the commit
-message.
+- If atomic is true, set_dentry_mark in __write_node_folio.
 ---
- fs/f2fs/sysfs.c | 60 ++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 52 insertions(+), 8 deletions(-)
+ fs/f2fs/node.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index c42f4f979d13..e6a98ddd73b3 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -58,6 +58,7 @@ struct f2fs_attr {
- 			 const char *buf, size_t len);
- 	int struct_type;
- 	int offset;
-+	int size;
- 	int id;
- };
- 
-@@ -344,11 +345,30 @@ static ssize_t main_blkaddr_show(struct f2fs_attr *a,
- 			(unsigned long long)MAIN_BLKADDR(sbi));
- }
- 
-+static ssize_t __sbi_show_value(struct f2fs_attr *a,
-+		struct f2fs_sb_info *sbi, char *buf,
-+		unsigned char *value)
-+{
-+	switch (a->size) {
-+	case 1:
-+		return sysfs_emit(buf, "%u\n", *(u8 *)value);
-+	case 2:
-+		return sysfs_emit(buf, "%u\n", *(u16 *)value);
-+	case 4:
-+		return sysfs_emit(buf, "%u\n", *(u32 *)value);
-+	case 8:
-+		return sysfs_emit(buf, "%llu\n", *(u64 *)value);
-+	default:
-+		f2fs_bug_on(sbi, 1);
-+		return sysfs_emit(buf,
-+				"show sysfs node value with wrong type\n");
-+	}
-+}
-+
- static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 			struct f2fs_sb_info *sbi, char *buf)
- {
- 	unsigned char *ptr = NULL;
--	unsigned int *ui;
- 
- 	ptr = __struct_ptr(sbi, a->struct_type);
- 	if (!ptr)
-@@ -428,9 +448,30 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 				atomic_read(&sbi->cp_call_count[BACKGROUND]));
- #endif
- 
--	ui = (unsigned int *)(ptr + a->offset);
-+	return __sbi_show_value(a, sbi, buf, ptr + a->offset);
-+}
- 
--	return sysfs_emit(buf, "%u\n", *ui);
-+static void __sbi_store_value(struct f2fs_attr *a,
-+			struct f2fs_sb_info *sbi,
-+			unsigned char *ui, unsigned long value)
-+{
-+	switch (a->size) {
-+	case 1:
-+		*(u8 *)ui = value;
-+		break;
-+	case 2:
-+		*(u16 *)ui = value;
-+		break;
-+	case 4:
-+		*(u32 *)ui = value;
-+		break;
-+	case 8:
-+		*(u64 *)ui = value;
-+		break;
-+	default:
-+		f2fs_bug_on(sbi, 1);
-+		f2fs_err(sbi, "store sysfs node value with wrong type");
-+	}
- }
- 
- static ssize_t __sbi_store(struct f2fs_attr *a,
-@@ -906,7 +947,7 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return count;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 482a362f2625..2c6102bee349 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1774,8 +1774,13 @@ static bool __write_node_folio(struct folio *folio, bool atomic, bool *submitted
+ 		goto redirty_out;
  	}
  
--	*ui = (unsigned int)t;
-+	__sbi_store_value(a, sbi, ptr + a->offset, t);
+-	if (atomic && !test_opt(sbi, NOBARRIER))
+-		fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
++	if (atomic) {
++		if (!test_opt(sbi, NOBARRIER))
++			fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
++		if (IS_INODE(folio))
++			set_dentry_mark(folio,
++				f2fs_need_dentry_mark(sbi, ino_of_node(folio)));
++	}
  
- 	return count;
- }
-@@ -1053,24 +1094,27 @@ static struct f2fs_attr f2fs_attr_sb_##_name = {		\
- 	.id	= F2FS_FEATURE_##_feat,				\
- }
- 
--#define F2FS_ATTR_OFFSET(_struct_type, _name, _mode, _show, _store, _offset) \
-+#define F2FS_ATTR_OFFSET(_struct_type, _name, _mode, _show, _store, _offset, _size) \
- static struct f2fs_attr f2fs_attr_##_name = {			\
- 	.attr = {.name = __stringify(_name), .mode = _mode },	\
- 	.show	= _show,					\
- 	.store	= _store,					\
- 	.struct_type = _struct_type,				\
--	.offset = _offset					\
-+	.offset = _offset,					\
-+	.size = _size						\
- }
- 
- #define F2FS_RO_ATTR(struct_type, struct_name, name, elname)	\
- 	F2FS_ATTR_OFFSET(struct_type, name, 0444,		\
- 		f2fs_sbi_show, NULL,				\
--		offsetof(struct struct_name, elname))
-+		offsetof(struct struct_name, elname),		\
-+		sizeof_field(struct struct_name, elname))
- 
- #define F2FS_RW_ATTR(struct_type, struct_name, name, elname)	\
- 	F2FS_ATTR_OFFSET(struct_type, name, 0644,		\
- 		f2fs_sbi_show, f2fs_sbi_store,			\
--		offsetof(struct struct_name, elname))
-+		offsetof(struct struct_name, elname),		\
-+		sizeof_field(struct struct_name, elname))
- 
- #define F2FS_GENERAL_RO_ATTR(name) \
- static struct f2fs_attr f2fs_attr_##name = __ATTR(name, 0444, name##_show, NULL)
+ 	/* should add to global list before clearing PAGECACHE status */
+ 	if (f2fs_in_warm_node_list(sbi, folio)) {
+@@ -1916,8 +1921,9 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 					if (is_inode_flag_set(inode,
+ 								FI_DIRTY_INODE))
+ 						f2fs_update_inode(inode, folio);
+-					set_dentry_mark(folio,
+-						f2fs_need_dentry_mark(sbi, ino));
++					if (!atomic)
++						set_dentry_mark(folio,
++							f2fs_need_dentry_mark(sbi, ino));
+ 				}
+ 				/* may be written by other thread */
+ 				if (!folio_test_dirty(folio))
 -- 
 2.43.0
 
