@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 83205CF6BE2
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jan 2026 03:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 121D5CF6BEA
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jan 2026 03:33:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ERWR3a9ZmSBR7tD7KbxPhZe4qqQmkTnNlpYjKlEJ5k0=; b=OsAKwewxKqbC9QgIEcXz2NYEt8
-	GiIuJP5dn9vgYNvz9sBuMBocF5YuYudvTxuvqPtnydtcQ0Vvj1EyPqNkbUOx/NGdPDBJqaP0DpSPe
-	mA6XmQHRGOcFEfkKk2N2LhxeX/w1oddwXL1Jq789LksSMWoK7lTs2r5j5bBfK+RhSpkE=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=+Bil4e0MRk+wlzpYg+wCB3CCy+/zOTz7l+eFvOjaxXw=; b=hR6ip2oOswAFPkaYu/LlGDDYNS
+	mnjSZUbTXfVRzQ31SYv8IQvTvHKPqiyO8ossR4UFFnGfSWcoat8fHeJWj89ye+i4VdBqxgJW4vgwP
+	XMQY6zneRJOzyZAqCZsQuxqv24YVu3bJej1ChwXPfZkEvJDMPYVGNKAVExCqo6jCH8sw=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vdKIt-0001do-6q;
-	Wed, 07 Jan 2026 03:33:47 +0000
+	id 1vdKIr-0006pK-Ri;
+	Wed, 07 Jan 2026 03:33:45 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vdKIs-0001di-0j
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vdKIq-0006pE-5x
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Jan 2026 03:33:46 +0000
+ Wed, 07 Jan 2026 03:33:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Xlf9kmq3mtUIcInqnd15lcfB4YuuDE09EUuQB3Sx0v0=; b=XlSLwPNV1FjbuEQjUetxiHIPqI
- LItwYyMdQ7ChMBvOl0Ly7IPm+Q3zdDaABBFe409q2dQKg+3NnHr7jzR9iuwWkzAGOab6Dat3bJB0q
- +gGFCI75FyEvmrxFX4mC4k3J4jQer5sLLR15oevtLJ9WYfkad1K8Z/XpPsEkwr3TZ+eU=;
+ bh=jZlkUJ0fNgI6DRsRajhqs+PCTxJHIcKs8F9hpv8mhDI=; b=TizZRoJiSQT28jKatAt9vb+d/l
+ N4+MmgbgJ63aNby++LtjUrH4RtOSy9Wia4HbhTBOQLcwAk/OIyDdKbQwPdcy27QwqAtiU7kRPol8n
+ wP1ycn+HlKgzNP8zU1PBeUyjsX13LTzK5r/0G3EU/VaQq5D6S1f/sipvAnVnifx0IJKU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Xlf9kmq3mtUIcInqnd15lcfB4YuuDE09EUuQB3Sx0v0=; b=geu+DDZqp5AUZonltYIgbggQp9
- 8nyY23t00t6rshP58iBsVG4aAlpuO3Klw9Sc6kAEz+cWVdXdA6uc4DQXt5Wr6BlHT5zmHEYyu+Jyh
- b35d+p6fCMO86c9MmDpysAfYcTr20onXYH/fwLpf81qVtR9G6Aa8Q8VGAtoGCgGYZv5M=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=jZlkUJ0fNgI6DRsRajhqs+PCTxJHIcKs8F9hpv8mhDI=; b=J+X2Iqm2FKxxb9uhFXOU4vMTdH
+ ypjZmH++GT4YCas5geQ8NrymbIS0a1KTuMPJ7fXE8ZrxRumeZMfIPgNPGaapNdxN3XOotcvKKBQdT
+ Ey451Vi7ElrAMxPMp8QYTvCJmdsCd6+w2JXIF6vlpCncDwiUdeS9TWv/Kpp8SfPfkS0U=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vdKIr-0004Y3-FO for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Jan 2026 03:33:45 +0000
+ id 1vdKIp-0004Xu-MX for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 07 Jan 2026 03:33:44 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 3119543F8D
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed,  7 Jan 2026 03:33:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11174C4CEF7;
- Wed,  7 Jan 2026 03:33:35 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 240FF60141;
+ Wed,  7 Jan 2026 03:33:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0298C4CEF7;
+ Wed,  7 Jan 2026 03:33:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1767756815;
- bh=9wLdBMl9J4DS8hO/SDzAEIivmTkhRy+hggga6K/6R8w=;
+ s=k20201202; t=1767756817;
+ bh=d/UjRsAiBGfKR+QybRPg1W0kCdRY/JDBOHEsrfQeOFQ=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=ZRYczZ7CO1pMZ2SMouY7rYTJhFwRqbKXWThoJUZzjw3WTbE5DOiTn7IEYdYt+t1lk
- Rv4S5g+rcA99ne2hiUzx7BoXyH5wZplIJcuzH+YEgJoHh6/0+xGO92/MmKr44Lkyvn
- AHzzg+2XZAJ35P2npe2wdwoBTyTwSsJGsTJA4wsEy50HrbUMCpS4AsXQILY3LEPS8o
- B+2Gp16DeTP5tk8IucdbcbMpPB4pMv2kcTQoJyZX1ZVnVC7B+RAKQEvXUAt4FwUFRu
- h34m78R2AwpzI1MfpU1h9jIyJSwcPxRWsdcjI/1mm+MZJ32hPXGuQI2V5YZQYMTGbk
- OGTIIM34BinrQ==
+ b=aFc+5S+tlKvK7pwuVUsy2zuhC9EX2FO2oeQrMmSdmoeelf8xAbtMn1XUyDrBQzzbX
+ mqGeVrZ4VL4zSoh7TljVEHtCAeW58djSk5oMsc01uUxp4HU/RJ1yUBtd1HWGPQfOfH
+ qsayLjOeQ+8+mjE/WeWrqYsqF/pLaThA68blfHER+BQ3kBDxgDBBDyJGFAZH4/uL75
+ 8w6wkv5mVfucWgij4DIkm8WbbXe0lUGfJ2ccGTcx0wluB5Dbp2JF4nHfxRMSJsvPw7
+ QnDJ7ls9Ncg3XRGhKjvmFeTyYp+A9H62smCWfE04rbadNJ5lQawLiaq5cJ4W5xXlJ3
+ okahtIJsboe6A==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- B5727380CEF5; Wed,  7 Jan 2026 03:30:13 +0000 (UTC)
+ 785D3380CEF5; Wed,  7 Jan 2026 03:30:16 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176775661252.2218650.8734034218364835852.git-patchwork-notify@kernel.org>
-Date: Wed, 07 Jan 2026 03:30:12 +0000
-References: <20260104020729.1064529-1-chao@kernel.org>
-In-Reply-To: <20260104020729.1064529-1-chao@kernel.org>
+Message-Id: <176775661502.2218650.16626451247711229213.git-patchwork-notify@kernel.org>
+Date: Wed, 07 Jan 2026 03:30:15 +0000
+References: <20251219025104.12256-1-chao@kernel.org>
+In-Reply-To: <20251219025104.12256-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1vdKIr-0004Y3-FO
-Subject: Re: [f2fs-dev] [PATCH 01/14] f2fs: add lock elapsed time trace
- facility for f2fs rwsemphore
+X-Headers-End: 1vdKIp-0004Xu-MX
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to do sanity check on nat entry of
+ quota inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,7 +90,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+Cc: jaegeuk@kernel.org, zhiguo.niu@unisoc.com, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -99,59 +98,23 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Sun,  4 Jan 2026 10:07:16 +0800 you wrote:
-> This patch adds lock elapsed time trace facility for f2fs rwsemphore.
+On Fri, 19 Dec 2025 10:51:04 +0800 you wrote:
+> As Zhiguo reported, nat entry of quota inode could be corrupted:
 > 
-> If total elapsed time of critical region covered by lock exceeds a
-> threshold, it will print tracepoint to dump information of lock related
-> context, including:
-> - thread information
-> - CPU/IO priority
-> - lock information
-> - elapsed time
->  - total time
->  - running time (depend on CONFIG_64BIT)
->  - runnable time (depend on CONFIG_SCHED_INFO and CONFIG_SCHEDSTATS)
->  - io sleep time (depend on CONFIG_TASK_DELAY_ACCT and
-> 		  /proc/sys/kernel/task_delayacct)
->  - other time    (by default other time will account nonio sleep time,
->                   but, if above kconfig is not defined, other time will
->                   include runnable time and/or io sleep time as wll)
+> "ino/block_addr=NULL_ADDR in nid=4 entry"
+> 
+> We'd better to do sanity check on quota inode to detect and record
+> nat.blk_addr inconsistency, so that we can have a chance to repair
+> it w/ later fsck.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,01/14] f2fs: add lock elapsed time trace facility for f2fs rwsemphore
-    https://git.kernel.org/jaegeuk/f2fs/c/79b3cebc70fc
-  - [f2fs-dev,02/14] f2fs: sysfs: introduce max_lock_elapsed_time
-    https://git.kernel.org/jaegeuk/f2fs/c/e4b75621fc43
-  - [f2fs-dev,03/14] f2fs: trace elapsed time for cp_rwsem lock
-    https://git.kernel.org/jaegeuk/f2fs/c/66e9e0d55d11
-  - [f2fs-dev,04/14] f2fs: trace elapsed time for node_change lock
-    https://git.kernel.org/jaegeuk/f2fs/c/f9f93602512b
-  - [f2fs-dev,05/14] f2fs: trace elapsed time for node_write lock
-    https://git.kernel.org/jaegeuk/f2fs/c/bb28b66875cc
-  - [f2fs-dev,06/14] f2fs: trace elapsed time for gc_lock lock
-    (no matching commit)
-  - [f2fs-dev,07/14] f2fs: trace elapsed time for cp_global_sem lock
-    https://git.kernel.org/jaegeuk/f2fs/c/ce9fe67c9cdb
-  - [f2fs-dev,08/14] f2fs: trace elapsed time for io_rwsem lock
-    https://git.kernel.org/jaegeuk/f2fs/c/67972c2b8974
-  - [f2fs-dev,09/14] f2fs: clean up w/ __f2fs_schedule_timeout()
-    https://git.kernel.org/jaegeuk/f2fs/c/b5da276ae6ab
-  - [f2fs-dev,10/14] f2fs: fix to use jiffies based precision for DEFAULT_SCHEDULE_TIMEOUT
-    https://git.kernel.org/jaegeuk/f2fs/c/da90b6715567
-  - [f2fs-dev,11/14] f2fs: fix timeout precision of f2fs_io_schedule_timeout_killable()
-    https://git.kernel.org/jaegeuk/f2fs/c/6fa116053951
-  - [f2fs-dev,12/14] f2fs: rename FAULT_TIMEOUT to FAULT_ATOMIC_TIMEOUT
-    https://git.kernel.org/jaegeuk/f2fs/c/7a127c80b0ee
-  - [f2fs-dev,13/14] f2fs: introduce FAULT_LOCK_TIMEOUT
-    https://git.kernel.org/jaegeuk/f2fs/c/c56254e2e042
-  - [f2fs-dev,14/14] f2fs: sysfs: introduce inject_lock_timeout
-    https://git.kernel.org/jaegeuk/f2fs/c/d36de29f4bb5
+  - [f2fs-dev] f2fs: fix to do sanity check on nat entry of quota inode
+    https://git.kernel.org/jaegeuk/f2fs/c/3cb396a2c790
 
 You are awesome, thank you!
 -- 
