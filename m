@@ -4,78 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 73EB2CF6BE4
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jan 2026 03:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7EC9CCF6BE4
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jan 2026 03:33:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Lhk7MVgrmfr+fS6bCDcTotmlM7X5kXEwSt2bVsgl16E=; b=O6SbWzwXWFIboXTEvq+LD8k5iF
-	8SfjJi9rKAF9zEtwGfve7LXZdxJpYqymHYc6r3vSAIy7lrtgVzEcONfurjnIbaMoXqEN77S0UXPl7
-	DefBUycS4lAOzUr4nks3ku7uX+JrlZGiROaw5GdSEU06qZ3ZvOwC8U6ny4YICjxYnktQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=OEF73017zv5Gec9BJTtxD+J6XW9UbLe81ZuBns1tRQ4=; b=CGnoUHU5QGELyV9QUDpffOPdNu
+	mJL9IcKtRsqwzSFRW/+cmpDLwmIS7E6oSsOxtWKcIQwEzAvwWhRbwXStSr4gRcUHYR2JxznzutXWn
+	nj570hqf5IX5oYoziMIzu77uP7T+WC3Mu06C+90YyPnSzXrUC4twqgbhm5+09HnBuy30=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vdKIu-0006oN-CB;
-	Wed, 07 Jan 2026 03:33:49 +0000
+	id 1vdKIy-0006pu-6S;
+	Wed, 07 Jan 2026 03:33:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vdKIs-0006oA-VX
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vdKIw-0006pj-Ng
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Jan 2026 03:33:47 +0000
+ Wed, 07 Jan 2026 03:33:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BsayvvdE5P19A5QpGfH2S4GYzoj5+JwIOWx0uVeRG/c=; b=NtOdexsJcNA/zbG8awhduLCxUz
- ZtnGXjTLI0Gl1xt841Z5sDaXKwMXly/H62g/MvFzIhtt7HJKYi3EuvBd9o9BmAOHq5d0l7SdwyEvG
- 9hKAwtW+GRAyIM8tsmvEGNl59AHILeFJrSERVwytTbJPOF4BlyAka3MeKGgoGCBRPUXk=;
+ bh=2pHTJSfaHitN4/wgKS+90QIfTPadJxwsUdVlZLDJSno=; b=NcQRfOba9D5KVs9Nqs8dkJx3Bu
+ WSRC+fKNPJQ77UOK2gryMYbjyaf4UTFxSxDOQitu8jJAH84Cx5IIXX7W+bQTIs3BW3NGLUqxggJLr
+ pzUUDBNXVhjjoVcClHXYa5VTmk179Ojz5bpw38h4g2wvj0z/cCL3+/QdPGGKrH5yx9JQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BsayvvdE5P19A5QpGfH2S4GYzoj5+JwIOWx0uVeRG/c=; b=AYCCD+P2P+wRnvwpq7R3EsKIKJ
- l/h3FQncnZ111sVpwQ/e9jBPAxUQLDLChRvfhCzWT0s9y3z0+IGjLrYcYD0mr5FUgWcGFUyG3R3cz
- SR+9Ndnna2ZsIBfLHEVD0+kX+G5kwRyBlg47bLL7bpcsCvsbp1iFMwg42cEZrLau7vA0=;
+ bh=2pHTJSfaHitN4/wgKS+90QIfTPadJxwsUdVlZLDJSno=; b=i4LeABNQdhVp7nRAOWmXBCJbtD
+ yQ9LedTUZfZGTWeyV5zHFz3SQsJhOXGoEOE22txgjFDscjjl8k+mS2wLhXkwWNxzOD6ihKWDrcQFE
+ BmPKxUinE+L6jcjo0/GZsxhty7PKSbajUr959w6YoFAFBSL8E7D/3QypYah373fe/MCY=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vdKIt-0004Y6-74 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Jan 2026 03:33:47 +0000
+ id 1vdKIw-0004YJ-8i for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 07 Jan 2026 03:33:50 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id A5ECE60143;
- Wed,  7 Jan 2026 03:33:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DDF3C19423;
- Wed,  7 Jan 2026 03:33:36 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id A6ADE6014C;
+ Wed,  7 Jan 2026 03:33:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CB69C19424;
+ Wed,  7 Jan 2026 03:33:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1767756816;
- bh=rCpqug8uBrukJbb1Y2Vur0wLSTBfmlPAi5rkdknuZeM=;
+ s=k20201202; t=1767756819;
+ bh=PgUnEHH/rQE9ZAD5rQDKLsa85i3tRS0l86okO4XwnY4=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=eSG6JxMnNiEcLf+4sjQTM9vrf+VxxcRDaS4rvbLJvk8GRXyuY3qDHzbDbKvgRLjeV
- BxAGppD/XDNEXGe9IlX2JaDnuN9ykam28gC47ss5blBi/Moluexo5d5Ia7N/6gg1ro
- gr++MCiC19/GaMa//RJN4ikHFwltKomNQBPpaa8YZ0dbfnys4qV7mEyoMQJhSGyidn
- 2/5tqN6/AgSUpyl3Edyn66A8vTyTUMxMKP5E8Sfm2lRM0qhBl4zrg/ystzs01Qy59l
- QXOuGN51kVbicUHkr2zwHNtP55YIJJYqwZX2av7lI1rqKOLPk0qdp5+ImkPgTG/ddE
- stiOt/3WXZvzQ==
+ b=f+MACgFVirDaX4UpklRkwaxrNY33gdpqnlL+fvFCS4RJniMhZg0oIyGP1IB/Yj50X
+ dBFKsYpcGKcxv41EfBP1vEOrAgklum5WOikLJj4o+ZNg37tREyva2EwOUntmw+yl86
+ VSfjW5zrd9QWbn77PPLynndO0dg7vvdSQB8BO7aS2UWIFIe6wWez0JE0u4oj+/K8yJ
+ vYf+9tYkxGguVnsVSXCw0qTT4B/dffxDjnWd6hqgBBP/SqPudu4W13kSDfVv44X6/y
+ UVfR8mrvfG9AEgh3mZoM6ZH/EEOXW1Ah4h8e+6WLeDbxxum9U96bOrmjMaGlzXfo7s
+ e4Zgfl7JifIMg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- F29FD380CEF5; Wed,  7 Jan 2026 03:30:14 +0000 (UTC)
+ F2861380CEF5; Wed,  7 Jan 2026 03:30:17 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176775661377.2218650.1801784841331297522.git-patchwork-notify@kernel.org>
-Date: Wed, 07 Jan 2026 03:30:13 +0000
-References: <20251230173845.2310677-1-daeho43@gmail.com>
-In-Reply-To: <20251230173845.2310677-1-daeho43@gmail.com>
-To: Daeho Jeong <daeho43@gmail.com>
-X-Headers-End: 1vdKIt-0004Y6-74
-Subject: Re: [f2fs-dev] [PATCH] f2fs: flush plug periodically during GC to
- maximize readahead effect
+Message-Id: <176775661652.2218650.14618578319542873198.git-patchwork-notify@kernel.org>
+Date: Wed, 07 Jan 2026 03:30:16 +0000
+References: <20251230081429.8243-2-yangyongpeng.storage@gmail.com>
+In-Reply-To: <20251230081429.8243-2-yangyongpeng.storage@gmail.com>
+To: Yongpeng Yang <yangyongpeng.storage@gmail.com>
+X-Headers-End: 1vdKIw-0004YJ-8i
+Subject: Re: [f2fs-dev] [PATCH v4 1/1] f2fs: fix IS_CHECKPOINTED flag
+ inconsistency issue caused by concurrent atomic commit and checkpoint
+ writes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,8 +91,9 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: daehojeong@google.com, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: jinbaoliu365@gmail.com, yangyongpeng@xiaomi.com, liujinbao1@xiaomi.com,
+ shengyong1@xiaomi.com, linux-f2fs-devel@lists.sourceforge.net,
+ jaegeuk@kernel.org, yangyongpeng.storage@outlook.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -101,20 +103,39 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 30 Dec 2025 09:38:45 -0800 you wrote:
-> From: Daeho Jeong <daehojeong@google.com>
+On Tue, 30 Dec 2025 16:14:30 +0800 you wrote:
+> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 > 
-> During the garbage collection process, F2FS submits readahead I/Os for
-> valid blocks. However, since the GC loop runs within a single plug scope
-> without intermediate flushing, these readahead I/Os often accumulate in
-> the block layer's plug list instead of being dispatched to the device
-> immediately.
+> During SPO tests, when mounting F2FS, an -EINVAL error was returned from
+> f2fs_recover_inode_page. The issue occurred under the following scenario
+> 
+> Thread A                                     Thread B
+> f2fs_ioc_commit_atomic_write
+>  - f2fs_do_sync_file // atomic = true
+>   - f2fs_fsync_node_pages
+>     : last_folio = inode folio
+>     : schedule before folio_lock(last_folio) f2fs_write_checkpoint
+>                                               - block_operations// writeback last_folio
+>                                               - schedule before f2fs_flush_nat_entries
+>     : set_fsync_mark(last_folio, 1)
+>     : set_dentry_mark(last_folio, 1)
+>     : folio_mark_dirty(last_folio)
+>     - __write_node_folio(last_folio)
+>       : f2fs_down_read(&sbi->node_write)//block
+>                                               - f2fs_flush_nat_entries
+>                                                 : {struct nat_entry}->flag |= BIT(IS_CHECKPOINTED)
+>                                               - unblock_operations
+>                                                 : f2fs_up_write(&sbi->node_write)
+>                                              f2fs_write_checkpoint//return
+>       : f2fs_do_write_node_page()
+> f2fs_ioc_commit_atomic_write//return
+>                                              SPO
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: flush plug periodically during GC to maximize readahead effect
-    https://git.kernel.org/jaegeuk/f2fs/c/7ec199117c32
+  - [f2fs-dev,v4,1/1] f2fs: fix IS_CHECKPOINTED flag inconsistency issue caused by concurrent atomic commit and checkpoint writes
+    https://git.kernel.org/jaegeuk/f2fs/c/7633a7387eb4
 
 You are awesome, thank you!
 -- 
