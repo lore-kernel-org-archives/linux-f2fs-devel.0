@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A3DAAD1D484
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jan 2026 17:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1C0ADD1D484
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jan 2026 17:40:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=BGJvcGfi1Zk9jZxaslaaYQS24vXA4C102+H+7hATBSc=; b=EkCfGIEm8fgOlNhm9DLWvyqzxy
-	Dqgo2+cAU6JU/41/i/Hoxbqwcpo9YNLxkJeYK+NAD3v426HQyaHg9kIfRQovECemVQhTvwt2LNRlv
-	OchsDoWlZ8LZSt97yI4VSVoiDu4EfMORL7GI8G0UZiKMMTdAaY+m68f8mqWi7jvHntTs=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=POELJM+wp2EcIrzCEx5McBVPI+0/NC7REubmQSZV5wM=; b=myqE36cF2Yjq1B9WTvfUDB8EV3
+	Qjm+8s2yIg/tGSh7cz7KjBA2R3PjmgeRyaHpv805rceFtrNiBWXpC77kZ7rwJ9aB80JfOyuU9jxi+
+	V8yNJpiGi8Qg4/F/o3qCPEOMiYFQ+Cq0lW43fUn8PNpqhwuXz8jRLnabccM00cfAMDKY=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vdtzj-0004u7-Aj;
-	Thu, 08 Jan 2026 17:40:23 +0000
+	id 1vdtzs-0005lx-0O;
+	Thu, 08 Jan 2026 17:40:32 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jack@suse.cz>) id 1vdtzh-0004tx-RR
+ (envelope-from <jack@suse.cz>) id 1vdtzq-0005lp-3w
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jan 2026 17:40:21 +0000
+ Thu, 08 Jan 2026 17:40:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=F+CPMws/FnGYdGWk6ohH7U7LIk13uVJdlWREsvgP22k=; b=AiBsGE3J/dOUJwqIQ7hrC79NG3
- iHMrBPu+LAXcAQSJgtzZnOUOKCDvoKbmvI+ac9IfRHM9cs2XrYMXs3ZybSr1OA1BmniwNaLUHe7NW
- FTsp7fePe6o+Jn50k/WMivp1XWtd88HAgowH3kaFKc43PalSZhwS8uhrgPoZHS5FT6G0=;
+ bh=pbYulziCehk0+dq0CXHXUlJblsepps/x0pBz736+F88=; b=SW7u8CU1YT+/2LEudV4BwKstt2
+ KuyFve2iqOyOQjwVb35JFHOugMcMqP+bI9HelZbecHjqELBZ3s0Tl1ePskUSzqMh20kvhhbXgsrf4
+ QIf9o/tvKaaeR8SZlYmwR1Oy2TMPNUV4h33OT61H3lYXx7kPjmGxyE5IojvaQuC+9JIU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,74 +42,73 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=F+CPMws/FnGYdGWk6ohH7U7LIk13uVJdlWREsvgP22k=; b=eYMqW5zcAM+P/f+hJEXZPXpwX9
- Am4JPBFI4/0xi5RhbbKDqGTZcE946UN4V+yCY2yh/s8uKMgi499exp18IgvOfDIN8i6S9JcebJJNf
- 5rvLnAeaHChyszD6aZ8FcD8pqrOZmw2emnTa9m/Xif+ieCJK9aN9ynROfvQzczgsyvJg=;
+ bh=pbYulziCehk0+dq0CXHXUlJblsepps/x0pBz736+F88=; b=B1d8Q5vbhQiStNDTZR1tAWgyu0
+ 4PEH19CMJvG6cHhWofxI4EvTAX3R1QTRmGTpU+rv1SZh9GTr8tyeS8EogmAcPiEMxF+c+4Ywx5pVZ
+ wYTbZNRE8K9kf4+mQTO8rVwl/bQY4tBodk+ShLPUS48fn2+nWXi5kEisR/1hmz6BLUYY=;
 Received: from smtp-out2.suse.de ([195.135.223.131])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vdtzf-0000Iz-8k for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jan 2026 17:40:19 +0000
+ id 1vdtzp-0000Js-WC for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 Jan 2026 17:40:30 +0000
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id 35D805CBBF;
- Thu,  8 Jan 2026 17:34:18 +0000 (UTC)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 722E55CBEB;
+ Thu,  8 Jan 2026 17:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1767893658; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1767894008; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=F+CPMws/FnGYdGWk6ohH7U7LIk13uVJdlWREsvgP22k=;
- b=v/EZdGITitw8CsQiMuaGfXbUwWWx8X5TD/YRa/XZZpZ68ngQ9xwJ0IIhpHdhcnkJ73fsRf
- p+mufimcDsVx7itgUk6q88o1BMvGZdhe3E1n/AChQ7pU+p1eYtiCRpkctujSCJSu5bivTP
- E3j+OIjCP6YUECLftS1PCmGaQtp0d/g=
+ bh=pbYulziCehk0+dq0CXHXUlJblsepps/x0pBz736+F88=;
+ b=v6o0xZIIolBq3Kc+VF6+9Ya5E6t2G34FsAJ4qlruIPlrp3yRFZ1mosmLKssOtf8GopFPv6
+ pdM5KNdg6uqkpzJC2OCiQs93p2MdVtM1C1AsH2TngC8tV9OjZ7anbkGl2iE3fhCSU9mvhX
+ K1VxnfPudBQRQJ1Q1ovU0oM49Yj5Rmo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1767893658;
+ s=susede2_ed25519; t=1767894008;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=F+CPMws/FnGYdGWk6ohH7U7LIk13uVJdlWREsvgP22k=;
- b=ThMGOBotWNLGznhXYptjblJw1E5rrD2imFij6R6Qug5s3TyXHn8Vw/C9Wgt+x5X6XILeTi
- WJvEzDPbx8aSLDBg==
+ bh=pbYulziCehk0+dq0CXHXUlJblsepps/x0pBz736+F88=;
+ b=iQxzzizVuPHl0WVwxtpKrivs8r+dbY1HBg67emHdQ+8PTu3CciNeemY/i1L/NaN8QOR0LX
+ w4waIzEE2aIOLGCA==
 Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1767893658; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1767894008; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=F+CPMws/FnGYdGWk6ohH7U7LIk13uVJdlWREsvgP22k=;
- b=v/EZdGITitw8CsQiMuaGfXbUwWWx8X5TD/YRa/XZZpZ68ngQ9xwJ0IIhpHdhcnkJ73fsRf
- p+mufimcDsVx7itgUk6q88o1BMvGZdhe3E1n/AChQ7pU+p1eYtiCRpkctujSCJSu5bivTP
- E3j+OIjCP6YUECLftS1PCmGaQtp0d/g=
+ bh=pbYulziCehk0+dq0CXHXUlJblsepps/x0pBz736+F88=;
+ b=v6o0xZIIolBq3Kc+VF6+9Ya5E6t2G34FsAJ4qlruIPlrp3yRFZ1mosmLKssOtf8GopFPv6
+ pdM5KNdg6uqkpzJC2OCiQs93p2MdVtM1C1AsH2TngC8tV9OjZ7anbkGl2iE3fhCSU9mvhX
+ K1VxnfPudBQRQJ1Q1ovU0oM49Yj5Rmo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1767893658;
+ s=susede2_ed25519; t=1767894008;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=F+CPMws/FnGYdGWk6ohH7U7LIk13uVJdlWREsvgP22k=;
- b=ThMGOBotWNLGznhXYptjblJw1E5rrD2imFij6R6Qug5s3TyXHn8Vw/C9Wgt+x5X6XILeTi
- WJvEzDPbx8aSLDBg==
+ bh=pbYulziCehk0+dq0CXHXUlJblsepps/x0pBz736+F88=;
+ b=iQxzzizVuPHl0WVwxtpKrivs8r+dbY1HBg67emHdQ+8PTu3CciNeemY/i1L/NaN8QOR0LX
+ w4waIzEE2aIOLGCA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 214E83EA65;
- Thu,  8 Jan 2026 17:34:18 +0000 (UTC)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5CF653EA65;
+ Thu,  8 Jan 2026 17:40:08 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id 4jgcCJrqX2kmfQAAD6G6ig
- (envelope-from <jack@suse.cz>); Thu, 08 Jan 2026 17:34:18 +0000
+ by imap1.dmz-prg2.suse.org with ESMTPSA id TDitFvjrX2kXBAAAD6G6ig
+ (envelope-from <jack@suse.cz>); Thu, 08 Jan 2026 17:40:08 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
- id C390EA0B23; Thu,  8 Jan 2026 18:34:13 +0100 (CET)
-Date: Thu, 8 Jan 2026 18:34:13 +0100
+ id 0782CA0B23; Thu,  8 Jan 2026 18:40:08 +0100 (CET)
+Date: Thu, 8 Jan 2026 18:40:07 +0100
 From: Jan Kara <jack@suse.cz>
 To: Jeff Layton <jlayton@kernel.org>
-Message-ID: <j3qkk6xh6q76uorxfrqfp5gubc44qe6d3gqeshb55yxi3miexu@udfpls76gitt>
+Message-ID: <m3mywef74xhcakianlrovrnaadnhzhfqjfusulkcnyioforfml@j2xnk7dzkmv4>
 References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
- <20260108-setlease-6-20-v1-23-ea4dec9b67fa@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260108-setlease-6-20-v1-23-ea4dec9b67fa@kernel.org>
+In-Reply-To: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
 X-Spamd-Result: default: False [-2.30 / 50.00]; BAYES_HAM(-3.00)[100.00%];
  SUSPICIOUS_RECIPS(1.50)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
  MID_RHS_NOT_FQDN(0.50)[]; NEURAL_HAM_SHORT(-0.20)[-1.000];
@@ -124,10 +123,10 @@ X-Spamd-Result: default: False [-2.30 / 50.00]; BAYES_HAM(-3.00)[100.00%];
  TO_MATCH_ENVRCPT_SOME(0.00)[]; RCPT_COUNT_GT_50(0.00)[86];
  RCVD_TLS_LAST(0.00)[];
  DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
- DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Headers-End: 1vdtzf-0000Iz-8k
-Subject: Re: [f2fs-dev] [PATCH 23/24] filelock: default to returning -EINVAL
- when ->setlease operation is NULL
+ DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Headers-End: 1vdtzp-0000Js-WC
+Subject: Re: [f2fs-dev] [PATCH 00/24] vfs: require filesystems to explicitly
+ opt-in to lease support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -189,81 +188,140 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu 08-01-26 12:13:18, Jeff Layton wrote:
-> Now that most filesystems where we expect to need lease support have
-> their ->setlease() operations explicitly set, change kernel_setlease()
-> to return -EINVAL when the setlease is a NULL pointer.
+On Thu 08-01-26 12:12:55, Jeff Layton wrote:
+> Yesterday, I sent patches to fix how directory delegation support is
+> handled on filesystems where the should be disabled [1]. That set is
+> appropriate for v6.19. For v7.0, I want to make lease support be more
+> opt-in, rather than opt-out:
 > 
-> Also update the Documentation/ with info about this change.
+> For historical reasons, when ->setlease() file_operation is set to NULL,
+> the default is to use the kernel-internal lease implementation. This
+> means that if you want to disable them, you need to explicitly set the
+> ->setlease() file_operation to simple_nosetlease() or the equivalent.
 > 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> This has caused a number of problems over the years as some filesystems
+> have inadvertantly allowed leases to be acquired simply by having left
+> it set to NULL. It would be better if filesystems had to opt-in to lease
+> support, particularly with the advent of directory delegations.
+> 
+> This series has sets the ->setlease() operation in a pile of existing
+> local filesystems to generic_setlease() and then changes
+> kernel_setlease() to return -EINVAL when the setlease() operation is not
+> set.
+> 
+> With this change, new filesystems will need to explicitly set the
+> ->setlease() operations in order to provide lease and delegation
+> support.
+> 
+> I mainly focused on filesystems that are NFS exportable, since NFS and
+> SMB are the main users of file leases, and they tend to end up exporting
+> the same filesystem types. Let me know if I've missed any.
 
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
+So, what about kernfs and fuse? They seem to be exportable and don't have
+.setlease set...
 
 								Honza
 
+> 
+> [1]: https://lore.kernel.org/linux-fsdevel/20260107-setlease-6-19-v1-0-85f034abcc57@kernel.org/
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  Documentation/filesystems/porting.rst | 9 +++++++++
->  Documentation/filesystems/vfs.rst     | 9 ++++++---
->  fs/locks.c                            | 3 +--
->  3 files changed, 16 insertions(+), 5 deletions(-)
+> Jeff Layton (24):
+>       fs: add setlease to generic_ro_fops and read-only filesystem directory operations
+>       affs: add setlease file operation
+>       btrfs: add setlease file operation
+>       erofs: add setlease file operation
+>       ext2: add setlease file operation
+>       ext4: add setlease file operation
+>       exfat: add setlease file operation
+>       f2fs: add setlease file operation
+>       fat: add setlease file operation
+>       gfs2: add a setlease file operation
+>       jffs2: add setlease file operation
+>       jfs: add setlease file operation
+>       nilfs2: add setlease file operation
+>       ntfs3: add setlease file operation
+>       ocfs2: add setlease file operation
+>       orangefs: add setlease file operation
+>       overlayfs: add setlease file operation
+>       squashfs: add setlease file operation
+>       tmpfs: add setlease file operation
+>       udf: add setlease file operation
+>       ufs: add setlease file operation
+>       xfs: add setlease file operation
+>       filelock: default to returning -EINVAL when ->setlease operation is NULL
+>       fs: remove simple_nosetlease()
 > 
-> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-> index 3397937ed838e5e7dfacc6379a9d71481cc30914..c0f7103628ab5ed70d142a5c7f6d95ca4734c741 100644
-> --- a/Documentation/filesystems/porting.rst
-> +++ b/Documentation/filesystems/porting.rst
-> @@ -1334,3 +1334,12 @@ end_creating() and the parent will be unlocked precisely when necessary.
->  
->  kill_litter_super() is gone; convert to DCACHE_PERSISTENT use (as all
->  in-tree filesystems have done).
-> +
-> +---
-> +
-> +**mandatory**
-> +
-> +The ->setlease() file_operation must now be explicitly set in order to provide
-> +support for leases. When set to NULL, the kernel will now return -EINVAL to
-> +attempts to set a lease. Filesystems that wish to use the kernel-internal lease
-> +implementation should set it to generic_setlease().
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index 670ba66b60e4964927164a57e68adc0edfc681ee..21dc8921dd9ebedeafc4c108de7327f172138b6e 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -1180,9 +1180,12 @@ otherwise noted.
->  	method is used by the splice(2) system call
->  
->  ``setlease``
-> -	called by the VFS to set or release a file lock lease.  setlease
-> -	implementations should call generic_setlease to record or remove
-> -	the lease in the inode after setting it.
-> +	called by the VFS to set or release a file lock lease.  Local
-> +	filesystems that wish to use the kernel-internal lease implementation
-> +	should set this to generic_setlease(). Other setlease implementations
-> +	should call generic_setlease() to record or remove the lease in the inode
-> +	after setting it. When set to NULL, attempts to set or remove a lease will
-> +	return -EINVAL.
->  
->  ``fallocate``
->  	called by the VFS to preallocate blocks or punch a hole.
-> diff --git a/fs/locks.c b/fs/locks.c
-> index e2036aa4bd3734be415296f9157d8f17166878aa..ea38a18f373c2202ba79e8e37125f8d32a0e2d42 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -2016,8 +2016,7 @@ kernel_setlease(struct file *filp, int arg, struct file_lease **lease, void **pr
->  		setlease_notifier(arg, *lease);
->  	if (filp->f_op->setlease)
->  		return filp->f_op->setlease(filp, arg, lease, priv);
-> -	else
-> -		return generic_setlease(filp, arg, lease, priv);
-> +	return -EINVAL;
->  }
->  EXPORT_SYMBOL_GPL(kernel_setlease);
->  
+>  Documentation/filesystems/porting.rst |  9 +++++++++
+>  Documentation/filesystems/vfs.rst     |  9 ++++++---
+>  fs/9p/vfs_dir.c                       |  2 --
+>  fs/9p/vfs_file.c                      |  2 --
+>  fs/affs/dir.c                         |  2 ++
+>  fs/affs/file.c                        |  2 ++
+>  fs/befs/linuxvfs.c                    |  2 ++
+>  fs/btrfs/file.c                       |  2 ++
+>  fs/btrfs/inode.c                      |  2 ++
+>  fs/ceph/dir.c                         |  2 --
+>  fs/ceph/file.c                        |  1 -
+>  fs/cramfs/inode.c                     |  2 ++
+>  fs/efs/dir.c                          |  2 ++
+>  fs/erofs/data.c                       |  2 ++
+>  fs/erofs/dir.c                        |  2 ++
+>  fs/exfat/dir.c                        |  2 ++
+>  fs/exfat/file.c                       |  2 ++
+>  fs/ext2/dir.c                         |  2 ++
+>  fs/ext2/file.c                        |  2 ++
+>  fs/ext4/dir.c                         |  2 ++
+>  fs/ext4/file.c                        |  2 ++
+>  fs/f2fs/dir.c                         |  2 ++
+>  fs/f2fs/file.c                        |  2 ++
+>  fs/fat/dir.c                          |  2 ++
+>  fs/fat/file.c                         |  2 ++
+>  fs/freevxfs/vxfs_lookup.c             |  2 ++
+>  fs/fuse/dir.c                         |  1 -
+>  fs/gfs2/file.c                        |  3 +--
+>  fs/isofs/dir.c                        |  2 ++
+>  fs/jffs2/dir.c                        |  2 ++
+>  fs/jffs2/file.c                       |  2 ++
+>  fs/jfs/file.c                         |  2 ++
+>  fs/jfs/namei.c                        |  2 ++
+>  fs/libfs.c                            | 20 ++------------------
+>  fs/locks.c                            |  3 +--
+>  fs/nfs/dir.c                          |  1 -
+>  fs/nfs/file.c                         |  1 -
+>  fs/nilfs2/dir.c                       |  3 ++-
+>  fs/nilfs2/file.c                      |  2 ++
+>  fs/ntfs3/dir.c                        |  3 +++
+>  fs/ntfs3/file.c                       |  3 +++
+>  fs/ocfs2/file.c                       |  5 +++++
+>  fs/orangefs/dir.c                     |  4 +++-
+>  fs/orangefs/file.c                    |  1 +
+>  fs/overlayfs/file.c                   |  2 ++
+>  fs/overlayfs/readdir.c                |  2 ++
+>  fs/qnx4/dir.c                         |  2 ++
+>  fs/qnx6/dir.c                         |  2 ++
+>  fs/read_write.c                       |  2 ++
+>  fs/smb/client/cifsfs.c                |  1 -
+>  fs/squashfs/dir.c                     |  2 ++
+>  fs/squashfs/file.c                    |  4 +++-
+>  fs/udf/dir.c                          |  2 ++
+>  fs/udf/file.c                         |  2 ++
+>  fs/ufs/dir.c                          |  2 ++
+>  fs/ufs/file.c                         |  2 ++
+>  fs/vboxsf/dir.c                       |  1 -
+>  fs/vboxsf/file.c                      |  1 -
+>  fs/xfs/xfs_file.c                     |  3 +++
+>  include/linux/fs.h                    |  1 -
+>  mm/shmem.c                            |  2 ++
+>  61 files changed, 116 insertions(+), 42 deletions(-)
+> ---
+> base-commit: 731ce71a6c8adb8b8f873643beacaeedc1564500
+> change-id: 20260107-setlease-6-20-299eb5695c5a
 > 
+> Best regards,
 > -- 
-> 2.52.0
+> Jeff Layton <jlayton@kernel.org>
 > 
 -- 
 Jan Kara <jack@suse.com>
