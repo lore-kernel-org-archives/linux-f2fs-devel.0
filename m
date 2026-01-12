@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 52864CF45B7
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A770FCF45BC
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jan 2026 17:47:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,18 +12,18 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=fLi+hNQtO1DfQxwoj58y4a5Ge+2fBtWt3HRGpHYvnTc=; b=ik0Cs3nFGiFd4/9rTxfY9MQb5S
-	9eyNxObZKPBsib77n0P7cbRfF7Q1LE4OyHpgas10tZjw/ssrA4sIqSVFFYbwEoFGO/BOikF4MMbnN
-	UJ2EWYB8CByI+y962iI2McjLohcQIg9bWFXBY/CVqTm4CBDFuE031XPa3U4EZUZcwzbQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=+o+r02BrLpwy8sR8Xks7fZD8SZTl9RauqZr89ye488c=; b=YF91k3OCrHQbxPDy9pIb/lXFXI
+	f7JPxX3ENFJB/4LxUc5GRLSA1MTU5AAwpfZWVq72so5h5TMh2D3olfHsdGI4cLD3aO6Oh1fhWTR55
+	pTUm8B/RA2zf0P8nuGyzw1uSU3mtrZQWQHXmjTJ1655v6AKc2s02EDH+TcJwLGWSaiYo=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vfM0R-0003nk-12;
+	id 1vfM0R-0003Q9-AK;
 	Mon, 12 Jan 2026 17:47:07 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <cel@kernel.org>) id 1vfM0P-0003nW-GV
+ (envelope-from <cel@kernel.org>) id 1vfM0P-0003Pu-VY
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 12 Jan 2026 17:47:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TN6mxUhZRIrpmWuSsfEe7dU1vNjGknsbJJ3amkxS2mE=; b=SmXQ4nICuAxNh+9ilLx1aFlnJE
- fFxwQmbUamfbIRL/sdTXnX8wp0SMBLrZDGoASngF701ZkiFFBk+V2wUcJXEJFLmfW4C5zwixikSgr
- 84ucklu3wAU0+xRqZg0xzcAUchEKoOFHShUg/ROrFY6K4EADZIM6wFyGJ9LPrpcEOkj4=;
+ bh=mBVU+folzmGBopmacaKXPd69VL1wHdHLNmPttJKCtt4=; b=ghFkm88bQLm3CeyTHQ0W4LaQvX
+ t9uX/hEHwObYnJlpVYkBxEEJ8c4Jq4BlnjRzuLaumC9O2Zb+o1KAP9CHJiSnVbGBmNhztGIAf2a88
+ EMKJPX1GtXnKPKjvpwmVLafTumhxBTcPMw1nZWq07C4kvN+D3Lv4ysBkkOczlR7BCB9g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,41 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TN6mxUhZRIrpmWuSsfEe7dU1vNjGknsbJJ3amkxS2mE=; b=d5QqDFHIgOsblibNQaEmLBVfph
- TAvRAq9mjJsFkwY/yL8MOTZYVwn873sGKgcJht5QfEWe98jh4gv7au2UQZ3/OM7DlfbsB9B6sb32s
- iBB1sZmPOysp9Hzt4yIBIV18OpAu13i22/ZeDb7KbyjuNfHCqIYxidgVR7+vUgMzIay4=;
+ bh=mBVU+folzmGBopmacaKXPd69VL1wHdHLNmPttJKCtt4=; b=X0wIOd1xc9E6Eg4vYjbEv2S8RI
+ 0rj0QKiOff8eX2HyJL3APnu6je2etW3TNpjQJrdc+VvgZuokyfLq+eAivPj3D6ZJJPS/2ldEpqFVX
+ 6PrMU37OYiA3y+gGi+F3zqk3fkJ4FjwH3aBW8g0U3e5B6zit6iW1bqmBZAJVh2Z5VK2M=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vfM0P-0008TS-5i for linux-f2fs-devel@lists.sourceforge.net;
+ id 1vfM0P-0008TR-5I for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 12 Jan 2026 17:47:05 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id DCEB643603;
- Mon, 12 Jan 2026 17:46:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8266BC116D0;
- Mon, 12 Jan 2026 17:46:52 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id DB95E431C1;
+ Mon, 12 Jan 2026 17:46:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A99CC19422;
+ Mon, 12 Jan 2026 17:46:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1768240014;
- bh=adSYz/aH/JJhedd8LYc9zNP3COoAonVjNEu8GDlmYN0=;
+ s=k20201202; t=1768240019;
+ bh=At0fQCc3FQ3zKNDHqidvloik5FrnQ4NzzfoSuAvgNIs=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=H1YEe+sGuhJi2JzEnSEQOyOSwvYlYMSE7wCuiosOgAuf2xeSKcPV45t8RfNFxwfFi
- YpvBLv419Mi7UO+E+WF6n1IFJ47Wb53mx8s4sA7BFIWm6+xyEI0OM7UxdjHlfBdRLg
- Y/fUWVTAKEVJAXsq2nJq+C616NW7vStwnPGwMTVQCImwsbWURRMmSukYqLXKL7rKy0
- SCZYOORfI3aj2e2+wauvVKczlgj0XniWIKwWP9aA6e4SG9sKlVIcA9icjUeGkP0bPY
- o6gGAGvHoA4vOUOjbESXPtOfb3YN7x/bu3x2qWuVPbkN4F+4d/ld04d2Okp9fLvhF2
- OaaVFRp7yK5ww==
+ b=YAdfgj/yAUCl9caiUT16MzbxiGTHUBrmOwV1L/HdFQI6NvlS9sQha3Fg0KoIYcE5s
+ eTSiENNe7Iy3Av6ixqojz26FEZ9wNtCZVf6oWhzwd9s97UYKC5mgUUuv9mdG/Vzj8w
+ 2XrHWORQCdTbIRevKlNiiBkQjmkbBs7LEgajxbcGh7dhoiM7QOrA9fCFL7364fqogH
+ fAqwnKZN7gwEw8mgPk81zex34j1C10eyxAP4vnBcqvMJcOa6drVM3ZJv0Ljr63fy6n
+ XtFfv5PtJOLM/cgmg+2JBRvPUFLTuyB2Zb2l1pKV8UmE/p0NAIS/995S5G5Jgnqj5n
+ A5DLnquShCjPw==
 To: vira,
 	Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>
-Date: Mon, 12 Jan 2026 12:46:20 -0500
-Message-ID: <20260112174629.3729358-8-cel@kernel.org>
+Date: Mon, 12 Jan 2026 12:46:22 -0500
+Message-ID: <20260112174629.3729358-10-cel@kernel.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260112174629.3729358-1-cel@kernel.org>
 References: <20260112174629.3729358-1-cel@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1vfM0P-0008TS-5i
-Subject: [f2fs-dev] [PATCH v3 07/16] ext4: Report case sensitivity in
- fileattr_get
+X-Headers-End: 1vfM0P-0008TR-5I
+Subject: [f2fs-dev] [PATCH v3 09/16] cifs: Implement fileattr_get for case
+ sensitivity
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -106,37 +106,91 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-Report ext4's case sensitivity behavior via file_kattr boolean
-fields. ext4 always preserves case at rest.
+Upper layers such as NFSD need a way to query whether a filesystem
+handles filenames in a case-sensitive manner. The file_kattr
+structure now provides case_insensitive and case_preserving fields
+for this purpose, but CIFS does not yet report its case sensitivity
+behavior through this interface.
 
-Case sensitivity is a per-directory setting in ext4. If the queried
-inode is a casefolded directory, report case-insensitive; otherwise
-report case-sensitive (standard POSIX behavior).
+Implement cifs_fileattr_get() to report CIFS/SMB case handling
+behavior. CIFS servers (typically Windows or Samba) are usually
+case-insensitive but case-preserving, meaning they ignore case
+during lookups but store filenames exactly as provided.
+
+The implementation reports case sensitivity based on the nocase
+mount option, which reflects whether the client expects the server
+to perform case-insensitive comparisons. When nocase is set, the
+mount is reported as case-insensitive. The case_preserving field
+is always set to true since SMB servers preserve filename case at
+rest.
+
+The callback is registered in all three inode_operations
+structures (directory, file, and symlink) to ensure consistent
+reporting across all inode types.
 
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/ext4/ioctl.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/smb/client/cifsfs.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index 7ce0fc40aec2..653035017c7f 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -996,6 +996,14 @@ int ext4_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
- 	if (ext4_has_feature_project(inode->i_sb))
- 		fa->fsx_projid = from_kprojid(&init_user_ns, ei->i_projid);
+diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+index d9664634144d..407afe60ee6c 100644
+--- a/fs/smb/client/cifsfs.c
++++ b/fs/smb/client/cifsfs.c
+@@ -30,6 +30,7 @@
+ #include <linux/xattr.h>
+ #include <linux/mm.h>
+ #include <linux/key-type.h>
++#include <linux/fileattr.h>
+ #include <uapi/linux/magic.h>
+ #include <net/ipv6.h>
+ #include "cifsfs.h"
+@@ -1193,6 +1194,21 @@ struct file_system_type smb3_fs_type = {
+ MODULE_ALIAS_FS("smb3");
+ MODULE_ALIAS("smb3");
  
-+	/*
-+	 * ext4 always preserves case. If this inode is a casefolded
-+	 * directory, report case-insensitive; otherwise report
-+	 * case-sensitive (standard POSIX behavior).
-+	 */
-+	fa->case_insensitive = IS_CASEFOLDED(inode);
-+	fa->case_preserving = true;
++static int cifs_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
++{
++	struct cifs_sb_info *cifs_sb = CIFS_SB(dentry->d_sb);
++	struct cifs_tcon *tcon = cifs_sb_master_tcon(cifs_sb);
 +
- 	return 0;
- }
++	/*
++	 * CIFS/SMB servers are typically case-insensitive but
++	 * case-preserving. The nocase mount option reflects what
++	 * the client expects from the server.
++	 */
++	fa->case_insensitive = tcon->nocase;
++	fa->case_preserving = true;
++	return 0;
++}
++
+ const struct inode_operations cifs_dir_inode_ops = {
+ 	.create = cifs_create,
+ 	.atomic_open = cifs_atomic_open,
+@@ -1210,6 +1226,7 @@ const struct inode_operations cifs_dir_inode_ops = {
+ 	.listxattr = cifs_listxattr,
+ 	.get_acl = cifs_get_acl,
+ 	.set_acl = cifs_set_acl,
++	.fileattr_get = cifs_fileattr_get,
+ };
  
+ const struct inode_operations cifs_file_inode_ops = {
+@@ -1220,6 +1237,7 @@ const struct inode_operations cifs_file_inode_ops = {
+ 	.fiemap = cifs_fiemap,
+ 	.get_acl = cifs_get_acl,
+ 	.set_acl = cifs_set_acl,
++	.fileattr_get = cifs_fileattr_get,
+ };
+ 
+ const char *cifs_get_link(struct dentry *dentry, struct inode *inode,
+@@ -1254,6 +1272,7 @@ const struct inode_operations cifs_symlink_inode_ops = {
+ 	.setattr = cifs_setattr,
+ 	.permission = cifs_permission,
+ 	.listxattr = cifs_listxattr,
++	.fileattr_get = cifs_fileattr_get,
+ };
+ 
+ /*
 -- 
 2.52.0
 
