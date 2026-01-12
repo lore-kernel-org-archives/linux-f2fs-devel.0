@@ -4,76 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D6029D25043
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jan 2026 08:03:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 19C70D25043
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jan 2026 08:03:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=jihTMuTtqRZKr0g8RGobx31ZUuXZil93j0ch389jpOY=; b=aL8JfuGI6y+3Vm8zOh0z69by2X
-	ZQ1wFDA9ZcLlEHXnGdP7Ww5rEgsu2iTZoiuSGq6aOTvkD5aQSxb26cWF5HbLb1+20tert5dfkgCvy
-	SfgKE6EipMK/DqMqggEf76sqYAcaM1fXApopQrMte1jHaP5bXhaFf4zWJ33p+ROxwPgA=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-Id:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=ajoZSBz81itYMQygU8pMjjBggeRR347lIW2opHVRUr8=; b=cfsO/M2DxsCnqUvOA24SyMRZ7j
+	5Fnc5/s6V4n8mnfrYvXNyJITFHNpWSxyQ6s0egSLKZilG7vDSpCKk6TsQkl2TIqe+H+R5fQCan1rC
+	O2mRD/tbi+rjEyMabiNHVnHf8o/0MiwNDHj8MoEPyRj90DBHH+6tnf446fGDuFIfupPU=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vfCtX-0004Kw-O7;
-	Mon, 12 Jan 2026 08:03:24 +0000
+	id 1vfCtc-0007JK-P4;
+	Mon, 12 Jan 2026 08:03:28 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vfCtV-0004Kc-2O
+ (envelope-from <chao@kernel.org>) id 1vfCtY-0007HX-Mq
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jan 2026 08:03:21 +0000
+ Mon, 12 Jan 2026 08:03:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=OLN/bSb3jaS58Awcgcjqazqt3N2G1QVYKzcwuiTodQ8=; b=l74yHbcP6RUdNrA8viSlVtObLp
- XbaPmmKCdULLWEJztqEQytEmXfFkngpOohAVyjAoVoa0xcTYYlLYjqRvxQWg7GKNmBbfvL38x3qyl
- eAk86JHYVIJqZKaa1Ulexjjk14G8+IsMrgJjOvQ1EfOL+gIHh5RvcQzPd3crgR/6tFjE=;
+ bh=TjxAzqYnhsBHIlpoB58i5yuEhi5ASygP8u5auiqE5Qo=; b=Z2OsMYf+a+mqoxriOmyvofR/Zs
+ qQLoNYTePS5YIkWZ38W3bE6DdEV26anO0y538OLE0Nm31V85TWh5XYQWkf+RKit5B0ycIBnuQNIbz
+ 5SuOLh50zR+1Lkh6LWNnz962z/VBaUYAIYlbEwuNrAPfnu/TCT4jMOgl8X+HLEwSckHk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=OLN/bSb3jaS58Awcgcjqazqt3N2G1QVYKzcwuiTodQ8=; b=Y
- D1h4DKHaWrSjiWD/6sujvsseMBO+Id2JZ6+msv5rtqzEaNMZcLg69x9W/EG6QpMBJfi5Oc7sN1K1o
- n7hPZrdBJG+Z+/YnSAodzwCdEhwHw4utiAbaILg7KG3VzrY09Zj+CfEJ+S6wvOM5r1Phs2p3uKO/1
- 9HudQ9tZRG1pkowA=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=TjxAzqYnhsBHIlpoB58i5yuEhi5ASygP8u5auiqE5Qo=; b=RpdYU3qX73uyepa9qTpIYuOOlS
+ 4rjTaoSS7NIfoIsNsoG3IRrI8vnFE6QcJV9pMRkoJvYxtdsCgc/rRfnaRI+2/Eb1gkwpjiGlqSSjB
+ URa7aCWZFbXe6HssFIN/Js/tSIMKmwRq1AfAarL7JRxw0ojQQxmj7XdJKjQdFlBSqu5U=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vfCtV-00041K-By for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jan 2026 08:03:21 +0000
+ id 1vfCtY-00041f-B9 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Jan 2026 08:03:24 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id BB41B6020E
+ by sea.source.kernel.org (Postfix) with ESMTP id EA8D94438C
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 12 Jan 2026 08:03:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62E06C19423;
- Mon, 12 Jan 2026 08:03:14 +0000 (UTC)
+ Mon, 12 Jan 2026 08:03:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2098C19422;
+ Mon, 12 Jan 2026 08:03:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1768204995;
- bh=btnJhDi7Y97Tem7m+oEy0y6GOKJPKQIxGoTpGV5/VlY=;
- h=From:To:Cc:Subject:Date:From;
- b=TIizG4/+9LJgmsS/E1R61edXKLmbsSllBnKv6JarDdu6GPf8RYwxZ88xCOoaEYE6G
- eWrEe6biOXenfDLwtuAYNsFqnqITWIsNrXpmrDJFMws8t120/fUPqJaatRwL0EMa2f
- qHdC90DCOc8vJDPScZZl33tmjZ0pOXS096aIH1cwF94AcYLqV+hKhDgnC3Mx8+xx+S
- Jn/LbD528IE7mYnu8OeOCUYa4XmQQ28OIKdJHSYt/45rglnTqr8UUpV3gCgkQWIOEJ
- 1feShjcIyRZ3IWaN0u9IrzKEIgVaKjYS82QCIpAFGNbJclgw+aqsfZdTaiGwK7ZTEP
- 8YC0o52DSwTuw==
+ s=k20201202; t=1768204998;
+ bh=+S81VkDwUjl2ErYw3m0WiPBfUE/SwQLze82OjbLOVoY=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=mlnoW9+vPazu+kFEXnuFloiRzRMdrom+4ASnXCkIzukmXfASkjQZibM374/nx4wi5
+ b36wUmu+qHwi2lviib5R2EzgBZmRCyIUmz1ClCsMWf6h7M4bzHPHgQwgjsrOG3CZne
+ 6lGtrXfEbFB5N2c2w9vrSeVB/Nz1nYmhomuTz4jwDVpxHiOKJRqi14meMNtolih3i0
+ VsUArtw1fisrhtPaYhk1ORTBkMi4ZClmrUL+w4f4B3zLupBG5GBZGfpy5lesTHY7RE
+ cH0ysrM6OTC5+B2O+QquULndeTvpPgMUnIMZfYyzT9mUti8CJVV5yennZBjMDSSgqJ
+ bp+5jynNU/mqg==
 To: jaegeuk@kernel.org
-Date: Mon, 12 Jan 2026 15:49:15 +0800
-Message-Id: <20260112074917.40107-1-chao@kernel.org>
+Date: Mon, 12 Jan 2026 15:49:17 +0800
+Message-Id: <20260112074917.40107-3-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20260112074917.40107-1-chao@kernel.org>
+References: <20260112074917.40107-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1vfCtV-00041K-By
-Subject: [f2fs-dev] [PATCH v5 1/3] f2fs: fix to do sanity check on node
- footer in __write_node_folio()
+X-Headers-End: 1vfCtY-00041f-B9
+Subject: [f2fs-dev] [PATCH v5 3/3] f2fs: detect more inconsistent cases in
+ sanity_check_node_footer()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,35 +94,62 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Add node footer sanity check during node folio's writeback, if sanity
-check fails, let's shutdown filesystem to avoid looping to redirty
-and writeback in .writepages.
+Let's enhance sanity_check_node_footer() to detect more inconsistent
+cases as below:
+
+Node Type			Node Footer Info
+===================		=============================
+NODE_TYPE_REGULAR		inode = true and xnode = true
+NODE_TYPE_INODE			inode = false or xnode = true
+NODE_TYPE_XATTR			inode = true or xnode = false
+NODE_TYPE_NON_INODE		inode = false
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
 v5:
-- split original [patch 1/2] to two, in this patch, just use
-sanity_check_node_footer() to do sanity check during writeback.
- fs/f2fs/node.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+- split original patch 1/2 to two, in this patch, fix to not sanity check
+on uninitialized i_mode for new inode page, instead, let's enhance
+sanity_check_node_footer() to detect more inconsistent cases in node footer.
+ fs/f2fs/node.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 99e425e8c00a..bd4681a8a646 100644
+index e8b2618fcac7..c79af2bc5728 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -1763,7 +1763,11 @@ static bool __write_node_folio(struct folio *folio, bool atomic, bool *submitted
- 
- 	/* get old block addr of this node page */
- 	nid = nid_of_node(folio);
--	f2fs_bug_on(sbi, folio->index != nid);
+@@ -1515,20 +1515,29 @@ int f2fs_sanity_check_node_footer(struct f2fs_sb_info *sbi,
+ 					struct folio *folio, pgoff_t nid,
+ 					enum node_type ntype, bool in_irq)
+ {
++	bool is_inode, is_xnode;
 +
-+	if (sanity_check_node_footer(sbi, folio, nid, NODE_TYPE_REGULAR)) {
-+		f2fs_handle_critical_error(sbi, STOP_CP_REASON_CORRUPTED_NID);
-+		goto redirty_out;
-+	}
+ 	if (unlikely(nid != nid_of_node(folio)))
+ 		goto out_err;
  
- 	if (f2fs_get_node_info(sbi, nid, &ni, !do_balance))
- 		goto redirty_out;
++	is_inode = IS_INODE(folio);
++	is_xnode = f2fs_has_xattr_block(ofs_of_node(folio));
++
+ 	switch (ntype) {
++	case NODE_TYPE_REGULAR:
++		if (is_inode && is_xnode)
++			goto out_err;
++		break;
+ 	case NODE_TYPE_INODE:
+-		if (!IS_INODE(folio))
++		if (!is_inode || is_xnode)
+ 			goto out_err;
+ 		break;
+ 	case NODE_TYPE_XATTR:
+-		if (!f2fs_has_xattr_block(ofs_of_node(folio)))
++		if (is_inode || !is_xnode)
+ 			goto out_err;
+ 		break;
+ 	case NODE_TYPE_NON_INODE:
+-		if (IS_INODE(folio))
++		if (is_inode)
+ 			goto out_err;
+ 		break;
+ 	default:
 -- 
 2.40.1
 
