@@ -4,108 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8C541D25032
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jan 2026 07:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9777ED25032
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jan 2026 07:53:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=GGmrVPdSqG95nMhrqjuQj/2jwIWSJWrYxWna+pE8o6Y=; b=CLDkPrfv5bRn/ehlW0Tf9y1pJ5
-	8844svzJW7SA98gHSzb0xADNfEIkjyBVCLTGOLVWgF9W5aJpCknl+adxDg77niYMKy9icpUC1iixt
-	JWnCqZQqEhcwI39jlfiIoi9cnwbjZ8MpObtrzD2olj5vYWGZlvhM1VAm4WUXGrTv0Qfg=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=o2Vgkku94hd+ERoKF/F3kQa88754osGrcDiU9t0AGmU=; b=KGWa0WDpZjcZiRL5HbFLwO27b3
+	a9jr8a6JdfJLKV1Zif6IwN4Ul7tYJ9CKRSpNVX4c9Qz6cxcPLxZMRH4ywhu/DYxqFnLPpJEVZYteZ
+	kamW2GpLuUmIhE75HanyBA74GJOHU8qwUUPJrZWNadxTttduA8BRIcAeXIfJDdA/Q+Lg=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vfCeE-0008EH-W2;
-	Mon, 12 Jan 2026 07:47:34 +0000
+	id 1vfCkA-0005IW-Ug;
+	Mon, 12 Jan 2026 07:53:42 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zangyangyang66@gmail.com>) id 1vfCeD-0008E8-HC
+ (envelope-from <chao@kernel.org>) id 1vfCk8-0005IO-7D
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jan 2026 07:47:33 +0000
+ Mon, 12 Jan 2026 07:53:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=OzJP0UpthqFsaHqtOIbj3L/Hl3UzU6+1jqfoGjhLqtk=; b=dWKM4tsCss5lZxIUbAq2j0FR1p
- qQBKz4AyKF79a6yDW8FZxtTjLcUDmr5tGuP/fDYD+RdkVoDcYhzsfBMvDMZ9kJVzjq0Iiz9d8h56G
- ckV18eeAvmyE4PVt58ya76m/lyVBSJCxMOSv//2Vl7vRzD1sxiDZobEw9Mc2YhWsE6oA=;
+ bh=shIorUB1tAvGTy6DISQIQcsgNkGtcnwnBpiVRL447mI=; b=i9EoSlY1uz23rHwb+qX/3i2lli
+ 23twj+gFxEAdXwZEQxsPOC/Etob6zyrL/JcRNTAVL9a1LtXr4n8Kw/a8b8zY6vu7nVHsy5nRXlMnO
+ lAc3jvM1Dp7Z5MfN55gTxV5OpCFI6wBYO6vszJY93KhEzLiurVGhAL2xSncztFjGls5g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=OzJP0UpthqFsaHqtOIbj3L/Hl3UzU6+1jqfoGjhLqtk=; b=K
- MYyWYnXMUrDH4E72gS/nDQpN653JHManpWjHYbJm2jQx4zrUHN5KmwnNp6T6ffslCLX4bHrHm/+dD
- qm9x0aryuZ3E8mFsWdrzzZ/7qhh0T+fQmWs7Qixd8Ev0AC0WTHG1/Bm/TDrv+EpkSBEZxdb+9m+tF
- yESDhjnAtUzvyu8U=;
-Received: from mail-pj1-f52.google.com ([209.85.216.52])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=shIorUB1tAvGTy6DISQIQcsgNkGtcnwnBpiVRL447mI=; b=UFFMxqQur8sleWuUCsBQuf626Q
+ jFrDJ0lTzHQvforCLHoBupzO2zB0vKivXglIKg7gBv2DiDTCQkmmKd34eHU7VR/21rsrzSO8z0odK
+ Di1XwRA2Vn/ndA6Dg84OdWL3Lrz1OyfJt30opr61kxh6AvcqNNs4OvvhvJCFU5MnNhzg=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vfCeD-0003UX-1z for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jan 2026 07:47:33 +0000
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-34c93e0269cso2763984a91.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 11 Jan 2026 23:47:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1768204042; x=1768808842; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=OzJP0UpthqFsaHqtOIbj3L/Hl3UzU6+1jqfoGjhLqtk=;
- b=DV9FZrAruzYVCK6cd1AI9fVpG6hG8oV/CogXuf6PH0U9AO9CGih8qyjV8INfpDMuql
- H5Fsf7SePQS+QtDEkN61XvW+p1GFzvHe2f8CwbeEv7PhrUlW2McS22PCC3Q+QEwO7Azg
- UUZsgb7L8wDrNa8XSd+zN+etaR1qP+dWIMMcaNJehSNt+H8dxs4/oRVCTZwqxW83OEOk
- E8jtq5XKWZ6/7++p+wkrPeIS5JXLMWPNkFGe4bIr/bm7X6FHFldXje0EEn/gPfku2clG
- M/+uJXF9OqjZzyrWjUJk5d5UOWx8raWaf9du3p+Au9G6rk1j81kNtF2LhHoAXIy7nMG5
- oo/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1768204042; x=1768808842;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=OzJP0UpthqFsaHqtOIbj3L/Hl3UzU6+1jqfoGjhLqtk=;
- b=VqTHm4Ate3vhZFMEIJYoLUIkJkCfjBVsDwC8b39GUdElnThSDHHH90eT3fdO3exvfW
- njJEwC3FqCpEOP5WOjx8fZG30dU0swN/mbW0W/uMWLn54UwhqX+n43af4q36mXZ5KmT2
- qzqx0KlBOqFhzaNSopd6uR8j47cnovGQ/dVhDihLiMUiaSQodyMKq8VJ+f+kYwTiMkF+
- 4gfjXc6TEs0vWUN7iBM5SBSobM3NrD53qu7vhuy/MncqPzXegPa+w9TocoWEf4mXs7Iy
- aAbG8rzMqMV+iBEl0+Yv6inxVttmr38nKv6vkxcAqQa0px59XnSbqr2JACWYH0oHu0sN
- 6nbg==
-X-Gm-Message-State: AOJu0YyotwaPVZAp5MF/tdQi+npIge0TZThLRWc1BbPp8pV75K0ueZgI
- kgtyGOBTDkvZWlSIkVpwJfanc9UU5oNm/YrRddPRy64AljWZYbwDYOzg
-X-Gm-Gg: AY/fxX71HHbC1Y2r1SAM2XmYM4Qqf9+dJDki0xqDa2o5TSKXXZu772sJecg57NKekNU
- TbgdiUdLWa7NPSi1v9inkZpJjmhySsIgoTlX56hzRQBdvznSXTeFTPkv+YtpYIQs0f8lEZtx10b
- POFqnypo9vgTdJ38e0RBv5Br3yUjTYZUzSyB9sf5ZFaNp3TyHmj6oXUsct698wRehf47X4z7sAN
- K9SYJfxj4haSdsH2S/j8X9koK+mnMgihgtZ86VrWQM6Sn0r/v35kWHA4U6qap7yrcXmchjRMDNi
- b5GuNTwsA8Y3af68pt1617rIyZDIZ1yzjiB1N8ks6RUsMf35tzffLtqdDbhInUQKRqdmPA3nB6+
- 3CqKXwye+32NyAIBuA1A3Zw9UZQ40qfZnv+B7ZI7CUmAqbCoL3JGMQPbIFTKKWNKlRT9rVd1bKu
- nvxzo38Xbw6NcshrwYj1+g
-X-Google-Smtp-Source: AGHT+IH2/MHJIzmgtKz+8J2Y72gYzifFxUdyTxn+1zjCrajunanK+gFUjreYI8k7Z9EkNuX+whSVOg==
-X-Received: by 2002:a17:90b:314c:b0:340:b501:7b83 with SMTP id
- 98e67ed59e1d1-34f68c019c2mr14846419a91.10.1768204042258; 
- Sun, 11 Jan 2026 23:47:22 -0800 (PST)
-Received: from zyy.mioffice.cn ([2408:8607:1b00:8:ee4e:db5f:cca6:b6bb])
- by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-c4cc9e7e8afsm16509740a12.29.2026.01.11.23.47.19
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 11 Jan 2026 23:47:21 -0800 (PST)
-From: Yangyang Zang <zangyangyang66@gmail.com>
-X-Google-Original-From: Yangyang Zang <zangyangyang1@xiaomi.com>
-To: chao@kernel.org,
-	jaegeuk@kernel.org
-Date: Mon, 12 Jan 2026 15:46:35 +0800
-Message-ID: <20260112074635.3405176-1-zangyangyang1@xiaomi.com>
-X-Mailer: git-send-email 2.43.2
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1vfCk7-0003eN-Lm for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Jan 2026 07:53:40 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by tor.source.kernel.org (Postfix) with ESMTP id 02E1460159;
+ Mon, 12 Jan 2026 07:53:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E78E5C116D0;
+ Mon, 12 Jan 2026 07:53:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1768204408;
+ bh=lw/ASAZHtx8I/KQllpsSupv/M5jMcIbDtQMmmCr3HIM=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=YWrLIZoEHo5pPhGRW/KLzIpDn0CzbBXXAGJBZT+j4sa9L67xbkIclEAWo59OpESEb
+ kmCHRJ5HJBRHGsa7Ng+q/YnW0vi6BOanC3ett5W0SwiPyfippbc2lET7cyrb/ZN5jf
+ h0GP0vszSEOQs5QU7IgKI9RV9TbQcW+5B8QXqcM1RsyfO0QPbmrgcCSPZISCm6hFj/
+ 2v2wq1i3rvdLgAKJmj363sNwH2HGlgTyZSz4T4/Xn4S6hkKfPTGNRYHN7AneFThjF4
+ VwdKb987hAIy+l7TZe2sfbhu6UY8CsqFIqSbmW5s1O1LkIHaMc/Nbo/aSLC71E4yeU
+ hBM6ZmuCiuIoA==
+Message-ID: <5139492a-945c-408b-9ccf-e88800f1afb4@kernel.org>
+Date: Mon, 12 Jan 2026 15:53:28 +0800
 MIME-Version: 1.0
-X-Headers-End: 1vfCeD-0003UX-1z
-Subject: [f2fs-dev] [PATCH] f2fs: clean up the type parameter in
- f2fs_sync_meta_pages()
+User-Agent: Mozilla Thunderbird
+To: liujinbao1 <jinbaoliu365@gmail.com>, jaegeuk@kernel.org
+References: <20260112061100.702501-1-jinbaoliu365@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20260112061100.702501-1-jinbaoliu365@gmail.com>
+X-Headers-End: 1vfCk7-0003eN-Lm
+Subject: Re: [f2fs-dev] [PATCH v2 1/1] f2fs-tools: Check and clear invalid
+ dent flag flags during recovery
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,112 +87,116 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Yangyang Zang <zangyangyang1@xiaomi.com>,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: Yongpeng Yang <yangyongpeng@xiaomi.com>, Sheng Yong <shengyong1@xiaomi.com>,
+ liujinbao1 <liujinbao1@xiaomi.com>, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Clean up code to improve readability, no logic changes.
+Jinbao,
 
-Signed-off-by: Yangyang Zang <zangyangyang1@xiaomi.com>
----
- fs/f2fs/checkpoint.c | 15 +++++++--------
- fs/f2fs/f2fs.h       |  4 ++--
- fs/f2fs/file.c       |  2 +-
- 3 files changed, 10 insertions(+), 11 deletions(-)
+On 1/12/2026 2:11 PM, liujinbao1 wrote:
+> From: liujinbao1 <liujinbao1@xiaomi.com>
+> 
+> During SPO tests, when mounting F2FS, an -EINVAL error was returned.
+> The issue originates from the f2fs_recover_inode_page function's
+> check, where old_ni.blk_addr != NULL_ADDR under the conditions of
+> IS_INODE(folio) && is_dent_dnode(folio).
+> Add detection and repair for this scenario in fsck.
+> 
+> Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
+> Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
+> Signed-off-by: Jinbao Liu <liujinbao1@xiaomi.com>
+> ---
+> v2:
+> - Clear the node_blk dent flag, proceed with recovery
+> of this and subsequent data.
+> ---
+> v1:
+> - Clear the node_blk fsync flag, set next_blkaddr=NULL,
+> skip recovery of this and later data.
+> ---
+>   fsck/mount.c | 21 ++++++++++++++++++++-
+>   fsck/node.h  | 13 +++++++++++++
+>   2 files changed, 33 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index 6f640a0..8254644 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -3878,6 +3878,7 @@ int f2fs_find_fsync_inode(struct f2fs_sb_info *sbi, struct list_head *head)
+>   
+>   	while (1) {
+>   		struct fsync_inode_entry *entry;
+> +		struct f2fs_nat_entry nat_entry;
+>   
+>   		if (!f2fs_is_valid_blkaddr(sbi, blkaddr, META_POR))
+>   			break;
+> @@ -3902,8 +3903,26 @@ int f2fs_find_fsync_inode(struct f2fs_sb_info *sbi, struct list_head *head)
+>   		}
+>   		entry->blkaddr = blkaddr;
+>   
+> -		if (IS_INODE(node_blk) && is_dent_dnode(node_blk))
+> +		if (IS_INODE(node_blk) && is_dent_dnode(node_blk)) {
+> +			get_nat_entry(sbi, ino_of_node(node_blk), &nat_entry);
+> +			if (is_valid_data_blkaddr(nat_entry.block_addr)) {
+> +				ASSERT_MSG("Invalid dent flag: blkaddr = %#x, "
+> +					"ino: %u, is_dent:%d, nat entry blkaddr is %#X\n",
+> +					blkaddr, ino_of_node(node_blk), is_dent_dnode(node_blk),
+> +					nat_entry.block_addr);
+> +				if (c.fix_on && f2fs_dev_is_writable()) {
+> +					int ret = 0;
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 3dfc83a0813e..8bb38cfcce6e 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -534,7 +534,7 @@ static int f2fs_write_meta_pages(struct address_space *mapping,
- 
- 	trace_f2fs_writepages(mapping->host, wbc, META);
- 	diff = nr_pages_to_write(sbi, META, wbc);
--	written = f2fs_sync_meta_pages(sbi, META, wbc->nr_to_write, FS_META_IO);
-+	written = f2fs_sync_meta_pages(sbi, wbc->nr_to_write, FS_META_IO);
- 	f2fs_up_write_trace(&sbi->cp_global_sem, &lc);
- 	wbc->nr_to_write = max((long)0, wbc->nr_to_write - written - diff);
- 	return 0;
-@@ -545,8 +545,8 @@ static int f2fs_write_meta_pages(struct address_space *mapping,
- 	return 0;
- }
- 
--long f2fs_sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
--				long nr_to_write, enum iostat_type io_type)
-+long f2fs_sync_meta_pages(struct f2fs_sb_info *sbi, long nr_to_write,
-+				enum iostat_type io_type)
- {
- 	struct address_space *mapping = META_MAPPING(sbi);
- 	pgoff_t index = 0, prev = ULONG_MAX;
-@@ -607,7 +607,7 @@ long f2fs_sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
- 	}
- stop:
- 	if (nwritten)
--		f2fs_submit_merged_write(sbi, type);
-+		f2fs_submit_merged_write(sbi, META);
- 
- 	blk_finish_plug(&plug);
- 
-@@ -1450,8 +1450,7 @@ void f2fs_wait_on_all_pages(struct f2fs_sb_info *sbi, int type)
- 			break;
- 
- 		if (type == F2FS_DIRTY_META)
--			f2fs_sync_meta_pages(sbi, META, LONG_MAX,
--							FS_CP_META_IO);
-+			f2fs_sync_meta_pages(sbi, LONG_MAX, FS_CP_META_IO);
- 		else if (type == F2FS_WB_CP_DATA)
- 			f2fs_submit_merged_write(sbi, DATA);
- 
-@@ -1623,7 +1622,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	int err;
- 
- 	/* Flush all the NAT/SIT pages */
--	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
-+	f2fs_sync_meta_pages(sbi, LONG_MAX, FS_CP_META_IO);
- 
- 	stat_cp_time(cpc, CP_TIME_SYNC_META);
- 
-@@ -1722,7 +1721,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	}
- 
- 	/* Here, we have one bio having CP pack except cp pack 2 page */
--	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
-+	f2fs_sync_meta_pages(sbi, LONG_MAX, FS_CP_META_IO);
- 	stat_cp_time(cpc, CP_TIME_SYNC_CP_META);
- 
- 	/* Wait for all dirty meta pages to be submitted for IO */
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ded41b416ed7..0479e4feddb8 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4047,8 +4047,8 @@ int f2fs_ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
- 			int type, bool sync);
- void f2fs_ra_meta_pages_cond(struct f2fs_sb_info *sbi, pgoff_t index,
- 							unsigned int ra_blocks);
--long f2fs_sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
--			long nr_to_write, enum iostat_type io_type);
-+long f2fs_sync_meta_pages(struct f2fs_sb_info *sbi, long nr_to_write,
-+			enum iostat_type io_type);
- void f2fs_add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type);
- void f2fs_remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type);
- void f2fs_release_ino_entry(struct f2fs_sb_info *sbi, bool all);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index ce291f152bc3..abcf6f486dd7 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2463,7 +2463,7 @@ int f2fs_do_shutdown(struct f2fs_sb_info *sbi, unsigned int flag,
- 		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_SHUTDOWN);
- 		break;
- 	case F2FS_GOING_DOWN_METAFLUSH:
--		f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_META_IO);
-+		f2fs_sync_meta_pages(sbi, LONG_MAX, FS_META_IO);
- 		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_SHUTDOWN);
- 		break;
- 	case F2FS_GOING_DOWN_NEED_FSCK:
--- 
-2.43.2
+int ret;
+
+No need to initialize ret variable.
+
+BTW, can you please use inject.f2fs to simulate such inconsistent image,
+and use the image to test this fix? it will be better to include the
+testcase and result in commit message. What do you think?
+
+Thanks,
+
+> +
+> +					FIX_MSG("Clear dent flag: blkaddr:%#x, ino: %u\n",
+> +						blkaddr, ino_of_node(node_blk));
+> +					set_dentry_mark(node_blk, 0);
+> +					ret = update_inode(sbi, node_blk, blkaddr);
+> +					ASSERT(ret >= 0);
+> +					goto next;
+> +				}
+> +			}
+>   			entry->last_dentry = blkaddr;
+> +		}
+>   next:
+>   		blkaddr = next_blkaddr_of_node(node_blk);
+>   
+> diff --git a/fsck/node.h b/fsck/node.h
+> index 19f1e57..f3e2c46 100644
+> --- a/fsck/node.h
+> +++ b/fsck/node.h
+> @@ -173,6 +173,19 @@ static inline void set_cold_node(struct f2fs_node *rn, bool is_dir)
+>   	F2FS_NODE_FOOTER(rn)->flag = cpu_to_le32(flag);
+>   }
+>   
+> +static inline void set_mark(struct f2fs_node *rn, int mark, int type)
+> +{
+> +	unsigned int flag = le32_to_cpu(F2FS_NODE_FOOTER(rn)->flag);
+> +
+> +	if (mark)
+> +		flag |= (1 << type);
+> +	else
+> +		flag &= ~(1 << type);
+> +	F2FS_NODE_FOOTER(rn)->flag = cpu_to_le32(flag);
+> +}
+> +
+> +#define set_dentry_mark(page, mark)	set_mark(page, mark, DENT_BIT_SHIFT)
+> +
+>   #define is_fsync_dnode(node_blk)	is_node(node_blk, FSYNC_BIT_SHIFT)
+>   #define is_dent_dnode(node_blk)		is_node(node_blk, DENT_BIT_SHIFT)
+>   
 
 
 
