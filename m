@@ -4,78 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9777ED25032
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jan 2026 07:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D6029D25043
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jan 2026 08:03:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=o2Vgkku94hd+ERoKF/F3kQa88754osGrcDiU9t0AGmU=; b=KGWa0WDpZjcZiRL5HbFLwO27b3
-	a9jr8a6JdfJLKV1Zif6IwN4Ul7tYJ9CKRSpNVX4c9Qz6cxcPLxZMRH4ywhu/DYxqFnLPpJEVZYteZ
-	kamW2GpLuUmIhE75HanyBA74GJOHU8qwUUPJrZWNadxTttduA8BRIcAeXIfJDdA/Q+Lg=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=jihTMuTtqRZKr0g8RGobx31ZUuXZil93j0ch389jpOY=; b=aL8JfuGI6y+3Vm8zOh0z69by2X
+	ZQ1wFDA9ZcLlEHXnGdP7Ww5rEgsu2iTZoiuSGq6aOTvkD5aQSxb26cWF5HbLb1+20tert5dfkgCvy
+	SfgKE6EipMK/DqMqggEf76sqYAcaM1fXApopQrMte1jHaP5bXhaFf4zWJ33p+ROxwPgA=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vfCkA-0005IW-Ug;
-	Mon, 12 Jan 2026 07:53:42 +0000
+	id 1vfCtX-0004Kw-O7;
+	Mon, 12 Jan 2026 08:03:24 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vfCk8-0005IO-7D
+ (envelope-from <chao@kernel.org>) id 1vfCtV-0004Kc-2O
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jan 2026 07:53:40 +0000
+ Mon, 12 Jan 2026 08:03:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=shIorUB1tAvGTy6DISQIQcsgNkGtcnwnBpiVRL447mI=; b=i9EoSlY1uz23rHwb+qX/3i2lli
- 23twj+gFxEAdXwZEQxsPOC/Etob6zyrL/JcRNTAVL9a1LtXr4n8Kw/a8b8zY6vu7nVHsy5nRXlMnO
- lAc3jvM1Dp7Z5MfN55gTxV5OpCFI6wBYO6vszJY93KhEzLiurVGhAL2xSncztFjGls5g=;
+ bh=OLN/bSb3jaS58Awcgcjqazqt3N2G1QVYKzcwuiTodQ8=; b=l74yHbcP6RUdNrA8viSlVtObLp
+ XbaPmmKCdULLWEJztqEQytEmXfFkngpOohAVyjAoVoa0xcTYYlLYjqRvxQWg7GKNmBbfvL38x3qyl
+ eAk86JHYVIJqZKaa1Ulexjjk14G8+IsMrgJjOvQ1EfOL+gIHh5RvcQzPd3crgR/6tFjE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=shIorUB1tAvGTy6DISQIQcsgNkGtcnwnBpiVRL447mI=; b=UFFMxqQur8sleWuUCsBQuf626Q
- jFrDJ0lTzHQvforCLHoBupzO2zB0vKivXglIKg7gBv2DiDTCQkmmKd34eHU7VR/21rsrzSO8z0odK
- Di1XwRA2Vn/ndA6Dg84OdWL3Lrz1OyfJt30opr61kxh6AvcqNNs4OvvhvJCFU5MnNhzg=;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=OLN/bSb3jaS58Awcgcjqazqt3N2G1QVYKzcwuiTodQ8=; b=Y
+ D1h4DKHaWrSjiWD/6sujvsseMBO+Id2JZ6+msv5rtqzEaNMZcLg69x9W/EG6QpMBJfi5Oc7sN1K1o
+ n7hPZrdBJG+Z+/YnSAodzwCdEhwHw4utiAbaILg7KG3VzrY09Zj+CfEJ+S6wvOM5r1Phs2p3uKO/1
+ 9HudQ9tZRG1pkowA=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vfCk7-0003eN-Lm for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jan 2026 07:53:40 +0000
+ id 1vfCtV-00041K-By for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Jan 2026 08:03:21 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 02E1460159;
- Mon, 12 Jan 2026 07:53:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E78E5C116D0;
- Mon, 12 Jan 2026 07:53:26 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id BB41B6020E
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 12 Jan 2026 08:03:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62E06C19423;
+ Mon, 12 Jan 2026 08:03:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1768204408;
- bh=lw/ASAZHtx8I/KQllpsSupv/M5jMcIbDtQMmmCr3HIM=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=YWrLIZoEHo5pPhGRW/KLzIpDn0CzbBXXAGJBZT+j4sa9L67xbkIclEAWo59OpESEb
- kmCHRJ5HJBRHGsa7Ng+q/YnW0vi6BOanC3ett5W0SwiPyfippbc2lET7cyrb/ZN5jf
- h0GP0vszSEOQs5QU7IgKI9RV9TbQcW+5B8QXqcM1RsyfO0QPbmrgcCSPZISCm6hFj/
- 2v2wq1i3rvdLgAKJmj363sNwH2HGlgTyZSz4T4/Xn4S6hkKfPTGNRYHN7AneFThjF4
- VwdKb987hAIy+l7TZe2sfbhu6UY8CsqFIqSbmW5s1O1LkIHaMc/Nbo/aSLC71E4yeU
- hBM6ZmuCiuIoA==
-Message-ID: <5139492a-945c-408b-9ccf-e88800f1afb4@kernel.org>
-Date: Mon, 12 Jan 2026 15:53:28 +0800
+ s=k20201202; t=1768204995;
+ bh=btnJhDi7Y97Tem7m+oEy0y6GOKJPKQIxGoTpGV5/VlY=;
+ h=From:To:Cc:Subject:Date:From;
+ b=TIizG4/+9LJgmsS/E1R61edXKLmbsSllBnKv6JarDdu6GPf8RYwxZ88xCOoaEYE6G
+ eWrEe6biOXenfDLwtuAYNsFqnqITWIsNrXpmrDJFMws8t120/fUPqJaatRwL0EMa2f
+ qHdC90DCOc8vJDPScZZl33tmjZ0pOXS096aIH1cwF94AcYLqV+hKhDgnC3Mx8+xx+S
+ Jn/LbD528IE7mYnu8OeOCUYa4XmQQ28OIKdJHSYt/45rglnTqr8UUpV3gCgkQWIOEJ
+ 1feShjcIyRZ3IWaN0u9IrzKEIgVaKjYS82QCIpAFGNbJclgw+aqsfZdTaiGwK7ZTEP
+ 8YC0o52DSwTuw==
+To: jaegeuk@kernel.org
+Date: Mon, 12 Jan 2026 15:49:15 +0800
+Message-Id: <20260112074917.40107-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: liujinbao1 <jinbaoliu365@gmail.com>, jaegeuk@kernel.org
-References: <20260112061100.702501-1-jinbaoliu365@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20260112061100.702501-1-jinbaoliu365@gmail.com>
-X-Headers-End: 1vfCk7-0003eN-Lm
-Subject: Re: [f2fs-dev] [PATCH v2 1/1] f2fs-tools: Check and clear invalid
- dent flag flags during recovery
+X-Headers-End: 1vfCtV-00041K-By
+Subject: [f2fs-dev] [PATCH v5 1/3] f2fs: fix to do sanity check on node
+ footer in __write_node_folio()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,114 +87,42 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Yongpeng Yang <yangyongpeng@xiaomi.com>, Sheng Yong <shengyong1@xiaomi.com>,
- liujinbao1 <liujinbao1@xiaomi.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Jinbao,
+Add node footer sanity check during node folio's writeback, if sanity
+check fails, let's shutdown filesystem to avoid looping to redirty
+and writeback in .writepages.
 
-On 1/12/2026 2:11 PM, liujinbao1 wrote:
-> From: liujinbao1 <liujinbao1@xiaomi.com>
-> 
-> During SPO tests, when mounting F2FS, an -EINVAL error was returned.
-> The issue originates from the f2fs_recover_inode_page function's
-> check, where old_ni.blk_addr != NULL_ADDR under the conditions of
-> IS_INODE(folio) && is_dent_dnode(folio).
-> Add detection and repair for this scenario in fsck.
-> 
-> Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
-> Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
-> Signed-off-by: Jinbao Liu <liujinbao1@xiaomi.com>
-> ---
-> v2:
-> - Clear the node_blk dent flag, proceed with recovery
-> of this and subsequent data.
-> ---
-> v1:
-> - Clear the node_blk fsync flag, set next_blkaddr=NULL,
-> skip recovery of this and later data.
-> ---
->   fsck/mount.c | 21 ++++++++++++++++++++-
->   fsck/node.h  | 13 +++++++++++++
->   2 files changed, 33 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index 6f640a0..8254644 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -3878,6 +3878,7 @@ int f2fs_find_fsync_inode(struct f2fs_sb_info *sbi, struct list_head *head)
->   
->   	while (1) {
->   		struct fsync_inode_entry *entry;
-> +		struct f2fs_nat_entry nat_entry;
->   
->   		if (!f2fs_is_valid_blkaddr(sbi, blkaddr, META_POR))
->   			break;
-> @@ -3902,8 +3903,26 @@ int f2fs_find_fsync_inode(struct f2fs_sb_info *sbi, struct list_head *head)
->   		}
->   		entry->blkaddr = blkaddr;
->   
-> -		if (IS_INODE(node_blk) && is_dent_dnode(node_blk))
-> +		if (IS_INODE(node_blk) && is_dent_dnode(node_blk)) {
-> +			get_nat_entry(sbi, ino_of_node(node_blk), &nat_entry);
-> +			if (is_valid_data_blkaddr(nat_entry.block_addr)) {
-> +				ASSERT_MSG("Invalid dent flag: blkaddr = %#x, "
-> +					"ino: %u, is_dent:%d, nat entry blkaddr is %#X\n",
-> +					blkaddr, ino_of_node(node_blk), is_dent_dnode(node_blk),
-> +					nat_entry.block_addr);
-> +				if (c.fix_on && f2fs_dev_is_writable()) {
-> +					int ret = 0;
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v5:
+- split original [patch 1/2] to two, in this patch, just use
+sanity_check_node_footer() to do sanity check during writeback.
+ fs/f2fs/node.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-int ret;
-
-No need to initialize ret variable.
-
-BTW, can you please use inject.f2fs to simulate such inconsistent image,
-and use the image to test this fix? it will be better to include the
-testcase and result in commit message. What do you think?
-
-Thanks,
-
-> +
-> +					FIX_MSG("Clear dent flag: blkaddr:%#x, ino: %u\n",
-> +						blkaddr, ino_of_node(node_blk));
-> +					set_dentry_mark(node_blk, 0);
-> +					ret = update_inode(sbi, node_blk, blkaddr);
-> +					ASSERT(ret >= 0);
-> +					goto next;
-> +				}
-> +			}
->   			entry->last_dentry = blkaddr;
-> +		}
->   next:
->   		blkaddr = next_blkaddr_of_node(node_blk);
->   
-> diff --git a/fsck/node.h b/fsck/node.h
-> index 19f1e57..f3e2c46 100644
-> --- a/fsck/node.h
-> +++ b/fsck/node.h
-> @@ -173,6 +173,19 @@ static inline void set_cold_node(struct f2fs_node *rn, bool is_dir)
->   	F2FS_NODE_FOOTER(rn)->flag = cpu_to_le32(flag);
->   }
->   
-> +static inline void set_mark(struct f2fs_node *rn, int mark, int type)
-> +{
-> +	unsigned int flag = le32_to_cpu(F2FS_NODE_FOOTER(rn)->flag);
-> +
-> +	if (mark)
-> +		flag |= (1 << type);
-> +	else
-> +		flag &= ~(1 << type);
-> +	F2FS_NODE_FOOTER(rn)->flag = cpu_to_le32(flag);
-> +}
-> +
-> +#define set_dentry_mark(page, mark)	set_mark(page, mark, DENT_BIT_SHIFT)
-> +
->   #define is_fsync_dnode(node_blk)	is_node(node_blk, FSYNC_BIT_SHIFT)
->   #define is_dent_dnode(node_blk)		is_node(node_blk, DENT_BIT_SHIFT)
->   
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 99e425e8c00a..bd4681a8a646 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1763,7 +1763,11 @@ static bool __write_node_folio(struct folio *folio, bool atomic, bool *submitted
+ 
+ 	/* get old block addr of this node page */
+ 	nid = nid_of_node(folio);
+-	f2fs_bug_on(sbi, folio->index != nid);
++
++	if (sanity_check_node_footer(sbi, folio, nid, NODE_TYPE_REGULAR)) {
++		f2fs_handle_critical_error(sbi, STOP_CP_REASON_CORRUPTED_NID);
++		goto redirty_out;
++	}
+ 
+ 	if (f2fs_get_node_info(sbi, nid, &ni, !do_balance))
+ 		goto redirty_out;
+-- 
+2.40.1
 
 
 
