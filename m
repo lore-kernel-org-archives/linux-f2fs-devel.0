@@ -4,79 +4,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4415ED37E39
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 Jan 2026 14:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E6798D37E3E
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 Jan 2026 14:53:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=v4rsBARQBx/zklcdc2p4AEeExtS8jeykr72DUN137+c=; b=j/TZeVAQzIpLvFM05cCM3LWklU
-	42t8OVEh/Uu+9sMj0VUOvOYbDBO8PnOQrBZGtXkbxlmJF/9e/9lkCIXRRGr0AB07pVKBuBxomO+U6
-	luS/XZ37sCyoLZgcQM4H3u2RpYB2V5EQ3+xwgKkJIRB1ORf5kWTe1t6cd5XW2rwLAuO0=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:References:In-Reply-To:Message-Id:To:Date:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=sV0G3PtkbOJKXx7lRxX4r28IOInFLQcNLJ01GKK1MyE=; b=lNdg9GelEcGDAHvJkeDk4mCFpJ
+	G7H9t8g8QEmKgPcqMyWHPv7a7wn2tkutOdDXcwMQEYrajtlCstz8ylPAqC/VJDznX9TsFE4vUjx9k
+	6LvOsfieGNLl2TIbwMiZlskfaBvYTup17JVaNJfo7WujJS/1Bc4aZoVKVnrUzZExJmDc=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vg1sh-0003Ju-5a;
-	Wed, 14 Jan 2026 14:29:55 +0000
+	id 1vg2FD-00025e-GZ;
+	Wed, 14 Jan 2026 14:53:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <cel@kernel.org>) id 1vg1sb-0003Iy-QP
+ (envelope-from <cel@kernel.org>) id 1vg2FC-00025Y-C7
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 14 Jan 2026 14:29:50 +0000
+ Wed, 14 Jan 2026 14:53:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Subject:
+ References:In-Reply-To:Message-Id:Cc:To:From:Date:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6pVIDvQ98PbOlcvUn0/AnU//c3Ve1lLfc3XxO3376PE=; b=fy3Y7a5KrXZTsT/HPjS73HBg6p
- OT2CPADvGOT3AwVRKlR0fleFvckxaHePpxGoTO+XmwCbuR2qZaLgFpU8XScNgJthUET1/SH8wgP6T
- 6ahmt3t33+fEtUZY+IWDpxBlvZn15Y4dg5UJ30tds9HZN/GeCqWqUVd0/3xVCt9sAG3Q=;
+ bh=xKp2mRX639Xrl1hAH25cMUgzI8E+8kaOkrWTmDZ9gJI=; b=UnUXCwsPAT3hnhULpr8kxyUxm5
+ 4Oa1UytK9ux+3iVuNZDtbA5gGC0VD9LV6/45vJNxqlK6BsJ2jbfvdmJkvAHiA/+adTBe7LYfHW/Yn
+ Oc6ucmjIz9WeCwZlnaGunZBZCffua9Fh+v28IIhosCDoD84Mffs69Fl954yGqByWo0hg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:Subject:References:In-Reply-To:
+ Message-Id:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=6pVIDvQ98PbOlcvUn0/AnU//c3Ve1lLfc3XxO3376PE=; b=GoztFHBzhTQcUg0F2WeCJGtOti
- mTtsYsG7U5A69Xb90RbJctXLEnAvorZVdhyb826PU+cVWqOXEODDa8vT5scouWdbC0ZGMuo8jvRdQ
- gEARdI1vM7+yH8H8jx/XzgvOzO5WBDCk2xXgj+/75AexUHsjdWiqx1H1mGutiNYfFHRM=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=xKp2mRX639Xrl1hAH25cMUgzI8E+8kaOkrWTmDZ9gJI=; b=D2R+Qcw7DAdwV6jIoHPw+irOxw
+ DjQUZm0cw1qB2W9e1PyJLqT5apeXdoXZb1P79GGqJZ//zGMIZTfGQAmDJfSJmj6XdPm7VlG3hXHaV
+ NB3MePuAxrKy8gGxj2hi6OXb+6DZ8Cq57o7sqCRz3oUrNlnvC8LKjiEfaABp0eQKrpIE=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vg1sb-0001Hm-NG for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 14 Jan 2026 14:29:50 +0000
+ id 1vg2FB-0002Xx-SS for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 14 Jan 2026 14:53:10 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 2C2F060051;
- Wed, 14 Jan 2026 14:29:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADA37C16AAE;
- Wed, 14 Jan 2026 14:29:36 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 45A6E43B9A;
+ Wed, 14 Jan 2026 14:53:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 570D6C2BC86;
+ Wed, 14 Jan 2026 14:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1768400978;
- bh=AjApcZ4VYkMiShoCKJtmD6SizN9yB/T+ppsUzY4US+Y=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=KZrZSuAh1IIuShN/NGZJVSpDnmo6brLNX+8ixB3A3LxhUya23u4pFa5+8YDUHPEtq
- jcXaB0DDTR4EkxWWYm4BbKvZMhTI0kYBqM1zsef91BBPRv3BpHDlwR/0i7QrrKPaky
- b/QQf5xyU0sgJPlwgF9qte+Bkh6kF8lyoSE4T+jgz6W808/3ZCCzYOvxgYM2fixg6Z
- DwFaOAOiYod17JRrTRRItaTN8QqYapyPj41TQkmegZIIyIEbtTJRUm3ELVvCNNAZgl
- KLKmZ26b5EyHsQC3xlJ7RskS1xGy3IfuCHFKEV9ohDoNrt+7W0hPMAzq53yb4nv10T
- LkpbcauZJ46Bg==
-To: vira,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Date: Wed, 14 Jan 2026 09:28:57 -0500
-Message-ID: <20260114142900.3945054-15-cel@kernel.org>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260114142900.3945054-1-cel@kernel.org>
-References: <20260114142900.3945054-1-cel@kernel.org>
+ s=k20201202; t=1768402384;
+ bh=xKp2mRX639Xrl1hAH25cMUgzI8E+8kaOkrWTmDZ9gJI=;
+ h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+ b=DZ4y7792kI2/4eE5VVTlEy1lwDXzIzeNr2iEGyaqqLMYTsvcSbwt8Bo54fNz4FJrn
+ 0CjwDI0jj4BZuie48fZ7X8+pogo2m9xuuz5ZkTKqUIWIWMb2aIahe3YDQ1OihTAsyY
+ /kSWP/W66gnEfc8gA/3bKKHjBBbzoJWIQmXxEVECLl86oIEVeZwN3rPLewdZXpBLNQ
+ 4fSATB6J5Q9DEK8WPOow5IHJKdW2q5kckZv1zfwvc/Rackn2AgyYEGYSEHyTHq4m0k
+ xzDo6EcWHnQhpPR7xCjV8fvC1tdohxaCsjAOcYPGoYZ1/+HzD4MzDToJBxFdCh/tru
+ OSjQsEWq0CzTg==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+ by mailfauth.phl.internal (Postfix) with ESMTP id 32C9EF4006B;
+ Wed, 14 Jan 2026 09:53:02 -0500 (EST)
+Received: from phl-imap-15 ([10.202.2.104])
+ by phl-compute-10.internal (MEProxy); Wed, 14 Jan 2026 09:53:02 -0500
+X-ME-Sender: <xms:zq1naRMKLB-vQH7IFdq2onnRojQkLatu-C-zvbT0T438TRsV4tP_4A>
+ <xme:zq1naewv4HVLitXOfBmI7UE_Y2gurDnKovxNhXptVvlpsUh9pO0bvYw7t9SjEJlzT
+ sLy2LuSF83BZ36FBNWcuJt0cuqdzsP2xJUgTbLRAhgnTSmlJulk9m0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduvdefgeejucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedfvehhuhgt
+ khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+ hnpefghfeguedtieeiveeugfevtdejfedukeevgfeggfeugfetgfeltdetueelleelteen
+ ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
+ hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
+ leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
+ hilhdrtghomhdpnhgspghrtghpthhtohepfeeipdhmohguvgepshhmthhpohhuthdprhgt
+ phhtthhopehlihhnuhigqdhfvdhfshdquggvvhgvlheslhhishhtshdrshhouhhrtggvfh
+ horhhgvgdrnhgvthdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphht
+ thhopehhihhrohhfuhhmihesmhgrihhlrdhprghrkhhnvghtrdgtohdrjhhppdhrtghpth
+ htohepphgtsehmrghnghhuvggsihhtrdhorhhgpdhrtghpthhtohepsghhrghrrghthhhs
+ mhesmhhitghrohhsohhfthdrtghomhdprhgtphhtthhopehsphhrrghsrggusehmihgtrh
+ hoshhofhhtrdgtohhmpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphht
+ thhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehhuhgstggrphesohhmnh
+ hisghonhgurdgtohhm
+X-ME-Proxy: <xmx:zq1naTkRbv9ZdmB81QztDlnhdErqtX9JaPCkPbhVF7A2EF4siXWTKA>
+ <xmx:zq1naQMdIxjnxtmT6iFO3dvBra_cikPt2rs9udjIX9hM3quVc1o8wg>
+ <xmx:zq1naSyL6jo-51wpIBye7R4H1uQkRJTayNYX4HLBSWa4OjKE3tRIjg>
+ <xmx:zq1naen3U34rfR84UbpLxCNVQHHeUcJBEJes8dFgznAte5TxzT705Q>
+ <xmx:zq1nab_H0tCK8W4yIFxCou46A5ZL-g9ECWVg-JI1en9AksHOVnvPNIgI>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+ id F2C75780070; Wed, 14 Jan 2026 09:53:01 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 MIME-Version: 1.0
-X-Headers-End: 1vg1sb-0001Hm-NG
-Subject: [f2fs-dev] [PATCH v4 14/16] nfsd: Report export case-folding via
- NFSv3 PATHCONF
+X-ThreadId: ArEQL-Tet5yZ
+Date: Wed, 14 Jan 2026 09:52:34 -0500
+To: "Amir Goldstein" <amir73il@gmail.com>, "Jeff Layton" <jlayton@kernel.org>
+Message-Id: <5a1730f3-30ff-403c-a460-09a81f9616c5@app.fastmail.com>
+In-Reply-To: <CAOQ4uxhDwR7dteLaqURX+9CooGM1hA7PL6KnVmSwX11ZdKxZTA@mail.gmail.com>
+References: <8af369636c32b868f83669c49aea708ca3b894ac.camel@kernel.org>
+ <CAOQ4uxgD+Sgbbg9K2U0SF9TyUOBb==Z6auShUWc4FfPaDCQ=rg@mail.gmail.com>
+ <ec78bf021fa1f6243798945943541ba171e337e7.camel@kernel.org>
+ <cb5d2da6-2090-4639-ad96-138342bba56d@oracle.com>
+ <ce700ee20834631eceededc8cd15fc5d00fee28e.camel@kernel.org>
+ <20260113-mondlicht-raven-82fc4eb70e9d@brauner>
+ <aWZcoyQLvbJKUxDU@infradead.org>
+ <ce418800f06aa61a7f47f0d19394988f87a3da07.camel@kernel.org>
+ <aWc3mwBNs8LNFN4W@infradead.org>
+ <CAOQ4uxhMjitW_DC9WK9eku51gE1Ft+ENhD=qq3uehwrHO=RByA@mail.gmail.com>
+ <aWeUv2UUJ_NdgozS@infradead.org>
+ <c40862cd65a059ad45fa88f5473722ea5c5f70a5.camel@kernel.org>
+ <CAOQ4uxhDwR7dteLaqURX+9CooGM1hA7PL6KnVmSwX11ZdKxZTA@mail.gmail.com>
+X-Headers-End: 1vg2FB-0002Xx-SS
+Subject: Re: [f2fs-dev] [PATCH 00/24] vfs: require filesystems to explicitly
+ opt-in to lease support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,135 +135,76 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chuck Lever via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chuck Lever <cel@kernel.org>
-Cc: pc@manguebit.org, yuezhang.mo@sony.com, cem@kernel.org,
- almaz.alexandrovich@paragon-software.com, adilger.kernel@dilger.ca,
- linux-cifs@vger.kernel.org, sfrench@samba.org, slava@dubeyko.com,
- linux-ext4@vger.kernel.org, linkinjeon@kernel.org, sprasad@microsoft.com,
- frank.li@vivo.com, ronniesahlberg@gmail.com, glaubitz@physik.fu-berlin.de,
- jaegeuk@kernel.org, hirofumi@mail.parknet.co.jp, linux-nfs@vger.kernel.org,
- tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, senozhatsky@chromium.org,
- Chuck Lever <chuck.lever@oracle.com>, hansg@kernel.org, anna@kernel.org,
- linux-fsdevel@vger.kernel.org, sj1557.seo@samsung.com, trondmy@kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: Latchesar Ionkov <lucho@ionkov.net>, Dave Kleikamp <shaggy@kernel.org>,
+ Alexander Aring <alex.aring@gmail.com>, Jan Kara <jack@suse.cz>,
+ Paulo Alcantara <pc@manguebit.org>, Sandeep Dhavale <dhavale@google.com>,
+ Martin Brandenburg <martin@omnibond.com>, Yuezhang Mo <yuezhang.mo@sony.com>,
+ Anders Larsen <al@alarsen.net>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>,
+ jfs-discussion@lists.sourceforge.net, linux-unionfs@vger.kernel.org,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ Chris Mason <clm@fb.com>, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Chunhai Guo <guochunhai@vivo.com>, Ilya Dryomov <idryomov@gmail.com>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-mtd@lists.infradead.org,
+ Mike Marshall <hubcap@omnibond.com>, linux-xfs@vger.kernel.org,
+ Xiubo Li <xiubli@redhat.com>, Yue Hu <zbestahu@gmail.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Richard Weinberger <richard@nod.at>,
+ Mark Fasheh <mark@fasheh.com>, devel@lists.orangefs.org,
+ Hugh Dickins <hughd@google.com>,
+ "Matthew Wilcox \(Oracle\)" <willy@infradead.org>, ntfs3@lists.linux.dev,
+ Christoph Hellwig <hch@infradead.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
+ linux-mm@kvack.org, Viacheslav Dubeyko <slava@dubeyko.com>,
+ linux-btrfs@vger.kernel.org, Gao Xiang <xiang@kernel.org>,
+ linux-ext4@vger.kernel.org, Salah Triki <salah.triki@gmail.com>,
+ Carlos Maiolino <cem@kernel.org>, Dominique Martinet <asmadeus@codewreck.org>,
+ Shyam Prasad N <sprasad@microsoft.com>, samba-technical@lists.samba.org,
+ linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+ Tom Talpey <tom@talpey.com>, ocfs2-devel@lists.linux.dev,
+ Bharath SM <bharathsm@microsoft.com>, linux-nilfs@vger.kernel.org,
+ David Sterba <dsterba@suse.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Jeffle Xu <jefflexu@linux.alibaba.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ ceph-devel@vger.kernel.org, Eric Van Hensbergen <ericvh@kernel.org>,
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+ OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+ Andreas Gruenbacher <agruenba@redhat.com>, Hans de Goede <hansg@kernel.org>,
+ gfs2@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, Theodore Tso <tytso@mit.edu>,
+ Luis de Bethencourt <luisbg@kernel.org>, Nicolas Pitre <nico@fluxnic.net>,
+ linux-erofs@lists.ozlabs.org, v9fs@lists.linux.dev,
+ Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>,
+ Steve French <sfrench@samba.org>, Chuck Lever <chuck.lever@oracle.com>,
+ Hongbo Li <lihongbo22@huawei.com>, Anna Schumaker <anna@kernel.org>,
+ Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org,
+ Phillip Lougher <phillip@squashfs.org.uk>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sungjong Seo <sj1557.seo@samsung.com>, David Woodhouse <dwmw2@infradead.org>,
+ Trond Myklebust <trondmy@kernel.org>, Joel Becker <jlbec@evilplan.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Chuck Lever <chuck.lever@oracle.com>
-
-The hard-coded MSDOS_SUPER_MAGIC check in nfsd3_proc_pathconf()
-only recognizes FAT filesystems as case-insensitive. Modern
-filesystems like F2FS, exFAT, and CIFS support case-insensitive
-directories, but NFSv3 clients cannot discover this capability.
-
-Query the export's actual case behavior through ->fileattr_get
-instead. This allows NFSv3 clients to correctly handle case
-sensitivity for any filesystem that implements the fileattr
-interface. Filesystems without ->fileattr_get continue to report
-the default POSIX behavior (case-sensitive, case-preserving).
-
-This change assumes the ("fat: Implement fileattr_get for case
-sensitivity") has been applied, which ensures FAT filesystems
-report their case behavior correctly via the fileattr interface.
-
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
----
- fs/nfsd/nfs3proc.c | 18 ++++++++++--------
- fs/nfsd/vfs.c      | 25 +++++++++++++++++++++++++
- fs/nfsd/vfs.h      |  2 ++
- 3 files changed, 37 insertions(+), 8 deletions(-)
-
-diff --git a/fs/nfsd/nfs3proc.c b/fs/nfsd/nfs3proc.c
-index 42adc5461db0..9be0aca01de0 100644
---- a/fs/nfsd/nfs3proc.c
-+++ b/fs/nfsd/nfs3proc.c
-@@ -717,17 +717,19 @@ nfsd3_proc_pathconf(struct svc_rqst *rqstp)
- 
- 	if (resp->status == nfs_ok) {
- 		struct super_block *sb = argp->fh.fh_dentry->d_sb;
-+		bool case_insensitive, case_preserving;
- 
--		/* Note that we don't care for remote fs's here */
--		switch (sb->s_magic) {
--		case EXT2_SUPER_MAGIC:
-+		if (sb->s_magic == EXT2_SUPER_MAGIC) {
- 			resp->p_link_max = EXT2_LINK_MAX;
- 			resp->p_name_max = EXT2_NAME_LEN;
--			break;
--		case MSDOS_SUPER_MAGIC:
--			resp->p_case_insensitive = 1;
--			resp->p_case_preserving  = 0;
--			break;
-+		}
-+
-+		resp->status = nfsd_get_case_info(&argp->fh,
-+						  &case_insensitive,
-+						  &case_preserving);
-+		if (resp->status == nfs_ok) {
-+			resp->p_case_insensitive = case_insensitive;
-+			resp->p_case_preserving = case_preserving;
- 		}
- 	}
- 
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 168d3ccc8155..f077032b42c3 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -32,6 +32,7 @@
- #include <linux/writeback.h>
- #include <linux/security.h>
- #include <linux/sunrpc/xdr.h>
-+#include <linux/fileattr.h>
- 
- #include "xdr3.h"
- 
-@@ -2871,3 +2872,27 @@ nfsd_permission(struct svc_cred *cred, struct svc_export *exp,
- 
- 	return err? nfserrno(err) : 0;
- }
-+
-+/**
-+ * nfsd_get_case_info - get case sensitivity info for a file handle
-+ * @fhp: file handle that has already been verified
-+ * @case_insensitive: output, true if the filesystem is case-insensitive
-+ * @case_preserving: output, true if the filesystem preserves case
-+ *
-+ * Returns nfs_ok on success, or an nfserr on failure.
-+ */
-+__be32
-+nfsd_get_case_info(struct svc_fh *fhp, bool *case_insensitive,
-+		   bool *case_preserving)
-+{
-+	struct file_kattr fa = {};
-+	int err;
-+
-+	err = vfs_fileattr_get(fhp->fh_dentry, &fa);
-+	if (err && err != -ENOIOCTLCMD)
-+		return nfserrno(err);
-+
-+	*case_insensitive = fa.case_insensitive;
-+	*case_preserving = !fa.case_nonpreserving;
-+	return nfs_ok;
-+}
-diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
-index e192dca4a679..1ff62eecec09 100644
---- a/fs/nfsd/vfs.h
-+++ b/fs/nfsd/vfs.h
-@@ -155,6 +155,8 @@ __be32		nfsd_readdir(struct svc_rqst *, struct svc_fh *,
- 			     loff_t *, struct readdir_cd *, nfsd_filldir_t);
- __be32		nfsd_statfs(struct svc_rqst *, struct svc_fh *,
- 				struct kstatfs *, int access);
-+__be32		nfsd_get_case_info(struct svc_fh *fhp, bool *case_insensitive,
-+				   bool *case_preserving);
- 
- __be32		nfsd_permission(struct svc_cred *cred, struct svc_export *exp,
- 				struct dentry *dentry, int acc);
--- 
-2.52.0
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+CgpPbiBXZWQsIEphbiAxNCwgMjAyNiwgYXQgOToxNCBBTSwgQW1pciBHb2xkc3RlaW4gd3JvdGU6
+Cj4gT24gV2VkLCBKYW4gMTQsIDIwMjYgYXQgMjo0MeKAr1BNIEplZmYgTGF5dG9uIDxqbGF5dG9u
+QGtlcm5lbC5vcmc+IHdyb3RlOgoKPiBWZXJ5IHdlbGwgdGhlbi4KPiBIb3cgYWJvdXQgRVhQT1JU
+X09QX1BFUlNJU1RFTlRfSEFORExFUz8KPgo+IFRoaXMgdGVybWlub2xvZ3kgaXMgZnJvbSB0aGUg
+TkZTIHByb3RvY29sIHNwZWMgYW5kIGl0IGlzIGFsc28gdXNlZAo+IHRvIGRlc2NyaWJlIHRoZSBz
+YW1lIHRyYWl0IGluIFNNQiBwcm90b2NvbC4KPgo+PiBUaGUgcHJvYmxlbSB0aGVyZSBpcyB0aGF0
+IHdlIHZlcnkgbXVjaCBkbyB3YW50IHRvIGtlZXAgdG1wZnMKPj4gZXhwb3J0YWJsZSwgYnV0IGl0
+IGRvZXNuJ3QgaGF2ZSBzdGFibGUgaGFuZGxlcyAocGVyLXNlKS4KPgo+IFRoaW5raW5nIG91dCBs
+b3VkIC0KPiBJdCB3b3VsZCBiZSBtaXNndWlkZWQgdG8gZGVjbGFyZSB0bXBmcyBhcwo+IEVYUE9S
+VF9PUF9QRVJTSVNURU5UX0hBTkRMRVMKPiBhbmQgcmVncmVzc2luZyBleHBvcnRzIG9mIHRtcGZz
+IHdpbGwgc3VyZWx5IG5vdCBnbyB1bm5vdGljZWQuCj4KPiBIb3cgYWJvdXQgYWRkaW5nIGFuIGV4
+cG9ydGZzIG9wdGlvbiAicGVyc2lzdGVudF9oYW5kbGVzIiwKPiB1c2UgaXQgYXMgZGVmYXVsdCBJ
+RkYgbmVpdGhlciBvcHRpb25zIGZzaWQ9LCB1dWlkPSBhcmUgdXNlZCwKPiBzbyB0aGF0IGF0IGxl
+YXN0IHdoZW4gZXhwb3J0aW5nIHRtcGZzLCBleHBvcnRmcyAtdiB3aWxsIHNob3cKPiAibm9fcGVy
+c2lzdGVudF9oYW5kbGVzIiBleHBsaWNpdGx5PwoKSSB0aGluayB3ZSBuZWVkIHRvIGJlIGNhcmVm
+dWwuIHRtcGZzIGZpbGVoYW5kbGVzIGFsaWduIHF1aXRlCndlbGwgd2l0aCB0aGUgdHJhZGl0aW9u
+YWwgZGVmaW5pdGlvbiBvZiBwZXJzaXN0ZW50IGZpbGVoYW5kbGVzLgp0bXBmcyBmaWxlaGFuZGxl
+cyBsaXZlIGFzIGxvbmcgYXMgdG1wZnMgZmlsZXMgZG8sIGFuZCB0aGF0IGlzCmFsbCB0aGF0IGlz
+IHJlcXVpcmVkIHRvIGJlIGNvbnNpZGVyZWQgInBlcnNpc3RlbnQiLgoKCi0tIApDaHVjayBMZXZl
+cgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4
+LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9y
+Z2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4
+LWYyZnMtZGV2ZWwK
