@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B1566C982C7
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ED4A2C79FBD
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jan 2026 14:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,29 +12,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=a8qGHqYm6itsl2fgApAPGSYzbQU/WF7GoJ5r1FCGukc=; b=BjAY0PEon88fIP1MF3geVoO2sW
-	kUHWBoPxNSijNJYIPeytPCAxIwubpBNVACEMMewtmyrPDo/otkA+KI0ib7xoeG96Bg98Xwa30d5xN
-	RzSCb01bF+mcoieWOseOEvSp6ym1ShWhpH0nv05V/Xbe1GxIDahf5gSZbYxpv+r3Tvww=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=dBH1+3+5kiu49shAvR0oRQk3SRzer3rrxnYGRKoUECI=; b=XtCtRD9Ybqr2EWcOMl9ErPHI6M
+	+yj/JAAkysbGRq1FwGSAAMCXIeZmd+Yk5g4q3Ne1kBVPcY0GR81veX+Far31VOqg1yJwr5YWNX/vM
+	UucLqRhZSrtsxjwv7sne1jNogFb2XAivccrK/zh1BQGiWGE6e70sj5oSFB0s3Wq/LiLE=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vgl6e-0002rG-D4;
+	id 1vgl6e-0002aD-Iu;
 	Fri, 16 Jan 2026 14:47:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <cel@kernel.org>) id 1vgl6Q-0002pi-B0
+ (envelope-from <cel@kernel.org>) id 1vgl6S-0002ZQ-Ij
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 16 Jan 2026 14:47:06 +0000
+ Fri, 16 Jan 2026 14:47:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2bsirOFEU9FQlRD8MEscTeWIofQmX1laZE5YkJD5NyU=; b=ebUnjGDrD1Y3+xvOrQLH5duP6g
- bz4FMw3qwY96HEqO40lnHAZo5mMUhP4lGKCYRLqMx7wF8AOueQpQUmDJ+9Mh4uATXEbWgp5HRmbwD
- fvf/JDCMErbGII0r1KpQux8GJfjmi4bluz8YXgVx6qFCN9EWBqCoOwVHCMwyDvlIw6yU=;
+ bh=8pjNAZppgVgFw5dD4JRueUmN26WMcltgGjpqhZRCejQ=; b=LAfscCEaht0rNm9M4cXpbvBXwV
+ CuDQsRyZafQYI6VKS4MTwnIpkaAQKTppdz1hsD1DS89tovSFY20GyTQCLCrehPy1qTFTg8EJd31yW
+ mwOtddCz0WxN/s0S1YRRo08P50j3V7OFS4xAqkY/tU91G2fMDlhQRk2CW5GzI/l3DT/A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2bsirOFEU9FQlRD8MEscTeWIofQmX1laZE5YkJD5NyU=; b=a7TtbOShIKvuhqQ4s5ooL/iSW9
- GMHsWhdxo3l+9eP0jEfGIYL3K6NQjDq9xh0zBDy0RpHcNtef4M42L+wvvOFkJFUmYSSzCjjBRXLt8
- 8pJFQutN4IO8Ipm9plio/nLbZCwz1YQSaYaWPgdnmffJaxz/I+WqJYCqnbI63mDbYE1M=;
+ bh=8pjNAZppgVgFw5dD4JRueUmN26WMcltgGjpqhZRCejQ=; b=hWDKcQ9rc4CYV3Itf7f8RwM9FO
+ RaUeHA4Py1ke+5WrMQO6mD251XpREpJFCS/VIzotm5tsuRdmhzRRzzy9uQPYIZ/cEzcMVv5vWNuOo
+ Sq2d5+49ss2/RymDpkWB/LfSb1nv85lmk1t5XbacdMkWx8Blhzk2FhjCB9jTeweJPOPU=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vgl6K-0002FR-L5 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 16 Jan 2026 14:47:01 +0000
+ id 1vgl6R-0002Fz-Ru for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 16 Jan 2026 14:47:08 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 13D16601B9;
- Fri, 16 Jan 2026 14:46:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB5FC19423;
- Fri, 16 Jan 2026 14:46:47 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 469E160150;
+ Fri, 16 Jan 2026 14:46:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6730C19423;
+ Fri, 16 Jan 2026 14:46:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1768574809;
- bh=/x/oTYv9V9phhRwUSdhPKXxxrYVpfvyHp0vY02WSmZE=;
+ s=k20201202; t=1768574817;
+ bh=dTIl6HtOSjKpxVPEQOWVBhUGtcTm9fsYwG/kaN8wdrk=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=C7K5/0Knsrw8q9u+lee7ts7ul+nHfu67JfznLiXdGPR4ztyLMu5k7p5lcSPrebcmi
- b4UAdOBp30uJmg1TjsHI2WEYbK5lpMT3louFOdxrcxAse0YHrlVqRA71mDAXiUE3bd
- lBQvBbHpv6CbYJtaBwvStyivbO+oerKdhfLvxVKVmQHT+I1UwONwsGibzBhUylt5Ig
- fuVMeGxj2yv6OICFkbmp2sleMjiAHQNgL/Zs3AddAO2mF5h5hhk+2FHXVdwcBjB2om
- Q9toGXUsB/ICQvHop94FVKHXtNJFegspzXKxY+hqJ4DBlH1bbVi+5ALqX1lrVCpdlv
- zes1XMalDfuhw==
+ b=U2gRfJNtMb7vGvbi1mR1OmNnSlcZQNh72nqirwA+26rodszeuPkl+jqOgQe8iwZfM
+ nwgqwTr/KUz5y3NCq8XBG1cZnmM0cqyaaF8J3lXSGriQ7mLZPwb0EaA/hA3Kva7IlT
+ amODQhyX872FEDdmAvWpLa7dJDU4x6dTjQXKKGHifwHzuWltSmuKPalQLm1Nbj1hAP
+ ZAG6jARzjYPT/fZmI4hysY+vfZKzo+NgqZkashPJL3Dr5gz9C3GLfRWdXxuHWJVnh8
+ Q1Dm2SL7gxI2faPAyqddc8++3NnbfWqs5/adAqPQO1n/CCw3wzv3UFCwa1Mm+pRCq7
+ 8dU9q0+Vy5tCw==
 To: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
  Jan Kara <jack@suse.cz>
-Date: Fri, 16 Jan 2026 09:46:11 -0500
-Message-ID: <20260116144616.2098618-13-cel@kernel.org>
+Date: Fri, 16 Jan 2026 09:46:14 -0500
+Message-ID: <20260116144616.2098618-16-cel@kernel.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260116144616.2098618-1-cel@kernel.org>
 References: <20260116144616.2098618-1-cel@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1vgl6K-0002FR-L5
-Subject: [f2fs-dev] [PATCH v5 12/16] vboxsf: Implement fileattr_get for case
- sensitivity
+X-Headers-End: 1vgl6R-0002Fz-Ru
+Subject: [f2fs-dev] [PATCH v5 15/16] nfsd: Implement NFSv4
+ FATTR4_CASE_INSENSITIVE and FATTR4_CASE_PRESERVING
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -105,153 +105,90 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-Upper layers such as NFSD need a way to query whether a
-filesystem handles filenames in a case-sensitive manner. The
-file_kattr structure now provides case_insensitive and
-case_preserving fields for this purpose, but vboxsf does not
-yet report its case sensitivity behavior through this interface.
+NFSD currently provides NFSv4 clients with hard-coded responses
+indicating all exported filesystems are case-sensitive and
+case-preserving. This is incorrect for case-insensitive filesystems
+and ext4 directories with casefold enabled.
 
-Implement vboxsf_fileattr_get() to report the case handling
-behavior of VirtualBox shared folders. The case sensitivity
-property is queried from the VirtualBox host service at mount
-time and cached in struct vboxsf_sbi. The host determines case
-sensitivity based on the underlying host filesystem (for
-example, Windows NTFS is case-insensitive while Linux ext4 is
-case-sensitive).
-
-VirtualBox shared folders always preserve filename case exactly
-as provided by the guest. The host interface does not expose a
-case_preserving property, so this is hardcoded to true.
-
-The callback is registered in all three inode_operations
-structures (directory, file, and symlink) to ensure consistent
-reporting across all inode types.
+Query the underlying filesystem's actual case sensitivity via
+nfsd_get_case_info() and return accurate values to clients. This
+supports per-directory settings for filesystems that allow mixing
+case-sensitive and case-insensitive directories within an export.
 
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/vboxsf/dir.c    |  1 +
- fs/vboxsf/file.c   |  6 ++++--
- fs/vboxsf/super.c  |  4 ++++
- fs/vboxsf/utils.c  | 30 ++++++++++++++++++++++++++++++
- fs/vboxsf/vfsmod.h |  6 ++++++
- 5 files changed, 45 insertions(+), 2 deletions(-)
+ fs/nfsd/nfs4xdr.c | 30 ++++++++++++++++++++++++++----
+ 1 file changed, 26 insertions(+), 4 deletions(-)
 
-diff --git a/fs/vboxsf/dir.c b/fs/vboxsf/dir.c
-index 42bedc4ec7af..c5bd3271aa96 100644
---- a/fs/vboxsf/dir.c
-+++ b/fs/vboxsf/dir.c
-@@ -477,4 +477,5 @@ const struct inode_operations vboxsf_dir_iops = {
- 	.symlink = vboxsf_dir_symlink,
- 	.getattr = vboxsf_getattr,
- 	.setattr = vboxsf_setattr,
-+	.fileattr_get = vboxsf_fileattr_get,
- };
-diff --git a/fs/vboxsf/file.c b/fs/vboxsf/file.c
-index 4bebd947314a..06308e38a70d 100644
---- a/fs/vboxsf/file.c
-+++ b/fs/vboxsf/file.c
-@@ -223,7 +223,8 @@ const struct file_operations vboxsf_reg_fops = {
- 
- const struct inode_operations vboxsf_reg_iops = {
- 	.getattr = vboxsf_getattr,
--	.setattr = vboxsf_setattr
-+	.setattr = vboxsf_setattr,
-+	.fileattr_get = vboxsf_fileattr_get,
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index 51ef97c25456..167bede81273 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -2933,6 +2933,8 @@ struct nfsd4_fattr_args {
+ 	u32			rdattr_err;
+ 	bool			contextsupport;
+ 	bool			ignore_crossmnt;
++	bool			case_insensitive;
++	bool			case_preserving;
  };
  
- static int vboxsf_read_folio(struct file *file, struct folio *folio)
-@@ -390,5 +391,6 @@ static const char *vboxsf_get_link(struct dentry *dentry, struct inode *inode,
+ typedef __be32(*nfsd4_enc_attr)(struct xdr_stream *xdr,
+@@ -3131,6 +3133,18 @@ static __be32 nfsd4_encode_fattr4_acl(struct xdr_stream *xdr,
+ 	return nfs_ok;
  }
  
- const struct inode_operations vboxsf_lnk_iops = {
--	.get_link = vboxsf_get_link
-+	.get_link = vboxsf_get_link,
-+	.fileattr_get = vboxsf_fileattr_get,
- };
-diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-index 241647b060ee..fcabeca2a339 100644
---- a/fs/vboxsf/super.c
-+++ b/fs/vboxsf/super.c
-@@ -185,6 +185,10 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
- 	if (err)
- 		goto fail_unmap;
- 
-+	err = vboxsf_query_case_sensitive(sbi);
-+	if (err)
-+		goto fail_unmap;
-+
- 	sb->s_magic = VBOXSF_SUPER_MAGIC;
- 	sb->s_blocksize = 1024;
- 	sb->s_maxbytes = MAX_LFS_FILESIZE;
-diff --git a/fs/vboxsf/utils.c b/fs/vboxsf/utils.c
-index 9515bbf0b54c..6205fad21381 100644
---- a/fs/vboxsf/utils.c
-+++ b/fs/vboxsf/utils.c
-@@ -11,6 +11,7 @@
- #include <linux/sizes.h>
- #include <linux/pagemap.h>
- #include <linux/vfs.h>
-+#include <linux/fileattr.h>
- #include "vfsmod.h"
- 
- struct inode *vboxsf_new_inode(struct super_block *sb)
-@@ -567,3 +568,32 @@ int vboxsf_dir_read_all(struct vboxsf_sbi *sbi, struct vboxsf_dir_info *sf_d,
- 
- 	return err;
- }
-+
-+int vboxsf_query_case_sensitive(struct vboxsf_sbi *sbi)
++static __be32 nfsd4_encode_fattr4_case_insensitive(struct xdr_stream *xdr,
++					const struct nfsd4_fattr_args *args)
 +{
-+	struct shfl_volinfo volinfo;
-+	u32 buf_len;
-+	int err;
-+
-+	buf_len = sizeof(volinfo);
-+	err = vboxsf_fsinfo(sbi->root, 0, SHFL_INFO_GET | SHFL_INFO_VOLUME,
-+			    &buf_len, &volinfo);
-+	if (err)
-+		return err;
-+
-+	sbi->case_insensitive = !volinfo.properties.case_sensitive;
-+	return 0;
++	return nfsd4_encode_bool(xdr, args->case_insensitive);
 +}
 +
-+int vboxsf_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
++static __be32 nfsd4_encode_fattr4_case_preserving(struct xdr_stream *xdr,
++					const struct nfsd4_fattr_args *args)
 +{
-+	struct vboxsf_sbi *sbi = VBOXSF_SBI(dentry->d_sb);
-+
-+	/*
-+	 * VirtualBox shared folders preserve filename case exactly as
-+	 * provided by the guest (the default). The host interface does
-+	 * not expose a case-preservation property.
-+	 */
-+	fa->case_insensitive = sbi->case_insensitive;
-+	return 0;
++	return nfsd4_encode_bool(xdr, args->case_preserving);
 +}
-diff --git a/fs/vboxsf/vfsmod.h b/fs/vboxsf/vfsmod.h
-index 05973eb89d52..b61afd0ce842 100644
---- a/fs/vboxsf/vfsmod.h
-+++ b/fs/vboxsf/vfsmod.h
-@@ -47,6 +47,7 @@ struct vboxsf_sbi {
- 	u32 next_generation;
- 	u32 root;
- 	int bdi_id;
-+	bool case_insensitive;
- };
- 
- /* per-inode information */
-@@ -111,6 +112,11 @@ void vboxsf_dir_info_free(struct vboxsf_dir_info *p);
- int vboxsf_dir_read_all(struct vboxsf_sbi *sbi, struct vboxsf_dir_info *sf_d,
- 			u64 handle);
- 
-+int vboxsf_query_case_sensitive(struct vboxsf_sbi *sbi);
 +
-+struct file_kattr;
-+int vboxsf_fileattr_get(struct dentry *dentry, struct file_kattr *fa);
-+
- /* from vboxsf_wrappers.c */
- int vboxsf_connect(void);
- void vboxsf_disconnect(void);
+ static __be32 nfsd4_encode_fattr4_filehandle(struct xdr_stream *xdr,
+ 					     const struct nfsd4_fattr_args *args)
+ {
+@@ -3487,8 +3501,8 @@ static const nfsd4_enc_attr nfsd4_enc_fattr4_encode_ops[] = {
+ 	[FATTR4_ACLSUPPORT]		= nfsd4_encode_fattr4_aclsupport,
+ 	[FATTR4_ARCHIVE]		= nfsd4_encode_fattr4__noop,
+ 	[FATTR4_CANSETTIME]		= nfsd4_encode_fattr4__true,
+-	[FATTR4_CASE_INSENSITIVE]	= nfsd4_encode_fattr4__false,
+-	[FATTR4_CASE_PRESERVING]	= nfsd4_encode_fattr4__true,
++	[FATTR4_CASE_INSENSITIVE]	= nfsd4_encode_fattr4_case_insensitive,
++	[FATTR4_CASE_PRESERVING]	= nfsd4_encode_fattr4_case_preserving,
+ 	[FATTR4_CHOWN_RESTRICTED]	= nfsd4_encode_fattr4__true,
+ 	[FATTR4_FILEHANDLE]		= nfsd4_encode_fattr4_filehandle,
+ 	[FATTR4_FILEID]			= nfsd4_encode_fattr4_fileid,
+@@ -3674,8 +3688,9 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ 		if (err)
+ 			goto out_nfserr;
+ 	}
+-	if ((attrmask[0] & (FATTR4_WORD0_FILEHANDLE | FATTR4_WORD0_FSID)) &&
+-	    !fhp) {
++	if ((attrmask[0] & (FATTR4_WORD0_FILEHANDLE | FATTR4_WORD0_FSID |
++			    FATTR4_WORD0_CASE_INSENSITIVE |
++			    FATTR4_WORD0_CASE_PRESERVING)) && !fhp) {
+ 		tempfh = kmalloc(sizeof(struct svc_fh), GFP_KERNEL);
+ 		status = nfserr_jukebox;
+ 		if (!tempfh)
+@@ -3687,6 +3702,13 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+ 		args.fhp = tempfh;
+ 	} else
+ 		args.fhp = fhp;
++	if (attrmask[0] & (FATTR4_WORD0_CASE_INSENSITIVE |
++			   FATTR4_WORD0_CASE_PRESERVING)) {
++		status = nfsd_get_case_info(args.fhp, &args.case_insensitive,
++					    &args.case_preserving);
++		if (status != nfs_ok)
++			goto out;
++	}
+ 
+ 	if (attrmask[0] & FATTR4_WORD0_ACL) {
+ 		err = nfsd4_get_nfs4_acl(rqstp, dentry, &args.acl);
 -- 
 2.52.0
 
