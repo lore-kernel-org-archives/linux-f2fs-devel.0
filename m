@@ -4,80 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 27E5AD4A5F6
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jan 2026 04:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 20DA8D4A613
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jan 2026 08:52:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=sul42dMwhKyYEgEWnzO6JRRn1OpCy0MPB5wU8gpJ0+Q=; b=KvJrDY52AoWJpooUb/oSYxTa6K
-	DbPDcNDzxePxnEbvy5ghmBnAP28BUMTfckd+9jb5kYvIl5Q4d1fFcFiK3g40NsKwPSTIG+C5wmb14
-	ZASrhtij6jAv5AMQLKboReyKxzaQ+9Ar6SNLYfADlDa7kbGyTmyzAnKlnq7oVeiMLv04=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=x1xB2k2pevKfMrY2tjZBKs2uQTRS++59K49d5HN+uAg=; b=ZMENL816ADKNG6Uk3Cj5bwlkpu
+	906jT3XVZMfztenpwZ3CTN+9dHKqbo5pzChJpd6mR8Q+0uOIdApncp5dhcOy/sGj9/QQn+oLWUNNt
+	Ql79a1hDahlgEv/M6Um2BBrJ22lDS8siCJX00r93CbPNKjafeg9wge3AitLk8JVG+Q4g=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vgbeA-0006ei-JF;
-	Fri, 16 Jan 2026 04:41:18 +0000
+	id 1vgfYx-0000tG-Sy;
+	Fri, 16 Jan 2026 08:52:12 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1vgbe9-0006ec-3j
+ (envelope-from <chao@kernel.org>) id 1vgfYw-0000t3-Iy
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 16 Jan 2026 04:41:17 +0000
+ Fri, 16 Jan 2026 08:52:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=SDlH9tX7unbKRHpcn7Hphf6tOM03vv012UyJB8wboew=; b=MYcB16/+1OTk59AHNePOkTKnw7
- FyYPDxFowK7xkJciTwIHtlliCye3BJt7vMXSRe2xP6h7c77ghGuwkIG3sHLvSw7QoeUSQRnGcVPjN
- uMvt1RJcgKVDkGhGTdgWZ2LSaqNnHQi8/Eu6TNbkAN/ObsRQRkrNG0bXX+Lli4z9qdfw=;
+ bh=n+OOERGBuU/eEjCp1ha38wJ5HyY6ce/nMwEGAWhOWb0=; b=RUG8DupDJU7QkKmIwLSU+6woUH
+ 2di1jiVNqAMtxfwE2Sa43FUEqnHeBhIU3qf3gkZha+fXcBs2ma2cx18yIDE3ucwfOEL+hlDjPDs0n
+ RKFNaInr6Pq7mqrh6oJmP2+YfLdyuwaMH/sYlIsUjcHc5suLjC83qKU88N2uxZxEHttQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=SDlH9tX7unbKRHpcn7Hphf6tOM03vv012UyJB8wboew=; b=Swvv40ZYuOKev6p4P1wZpLdLDu
- 5ks1fGanoPJYbXKrKQvRS3knJW438nYzprMWlqc8hx1J90zGAYTLgOI1tmx4CDR1i73CYh7sk/l8l
- 1hqq9AwMItldO5x/eEegaGzIn4xQWwIlMxnv/MyIKKCVzCjXS1PeV5rXRipY2SeIv8mE=;
+ bh=n+OOERGBuU/eEjCp1ha38wJ5HyY6ce/nMwEGAWhOWb0=; b=CJlf6Gf0lMG0Gj5yW3LDksMmlS
+ YDl8Rk7LlBlZvHl7oLaTicUlZjvp3LfdgYBm4VPz12rl7iIafdP2IKsM63MTtlXkJVENABUbWlwlE
+ Xgz2R9HaX5rKYVE38gQasa/60icG8qSau1BubVxuXcZ4JJV5j+VwNmpraS2/fPBVr0Sw=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vgbe8-0004Ax-N0 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 16 Jan 2026 04:41:17 +0000
+ id 1vgfYw-0000xf-Nn for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 16 Jan 2026 08:52:11 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id E022A60167;
- Fri, 16 Jan 2026 04:41:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E5CDC116C6;
- Fri, 16 Jan 2026 04:41:05 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id EE65260160;
+ Fri, 16 Jan 2026 08:51:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BDA4C116C6;
+ Fri, 16 Jan 2026 08:51:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1768538465;
- bh=ZpX22eDLuTWlfJ8zNQ8HMDTydSL8IN69+Vb9901rPJI=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=kL1nLktgpPSzsoZkwKWH3GeDy7wYPC21Oo5Rfw6Lo7zSaJ/w1EP4VjBbcTkDEZO8j
- 3HdKlwpvaovQqSM81fyFkVPNczcO/kfAFaS6gV9te0MIERnOTLmyMg8DqKWywfVg/9
- rDVjaAqCwgD7vBbrt1sNDgz9JYc7qbDkpi3WBEPr8qW8l2Ho8OnNUZGc2yzwNa7NMj
- f09F3KrlLMVpPDEMeKEewJ/SfMci4K6TRiwPWUm9khhCJEXfln9mcgmg5jz8dmOBOq
- Lc1SQQbGXNX61tPpRDgQp0HMjT8PN7CVOQFKuXSab4AhlQGfAMLQH37lWR7MUw9Buz
- mamjg+1UBgElw==
-Date: Fri, 16 Jan 2026 04:41:03 +0000
-To: Matthew Wilcox <willy@infradead.org>
-Message-ID: <aWnBX07vqjKAV4De@google.com>
-References: <20251202013212.964298-1-jaegeuk@kernel.org>
- <20251202013212.964298-4-jaegeuk@kernel.org>
- <aS9uod21hG_qq7Rd@casper.infradead.org>
- <aTCJ0Js4X7qlqzDZ@google.com>
+ s=k20201202; t=1768553519;
+ bh=/zsgcs8Fw8H+LfE4CH7aLQ1FuP0loEYnkIsVJQ3YFXs=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=Zq0POuEmVGPeVnRtjlMlWshSSqVLIjvo7GDAixjP5KdefO2VKvjJjlRNilgt5qTXO
+ IhMkMbq41Xwnn88UvhLve8/IQqaIElBumKuVJws5j8QI7TVjHLgJz8OoYQEo669Lbn
+ qqhCIKI53GiOKG3mdXgPnJh9snkLpWygX4VswCMM6Z9W7BwGscMaeZ2QAkiB1cZx+N
+ 4TgMXA7alSGmmm54jMyg6svPDQtgDMWWcBirZwKD/VUrxbAUB+7EqN5+7gJHrtzAv/
+ VH1psjgTphtju+P4J7KNj2tsYOUiZsfs1EXM5t4ni2D5sLe05OM/ehG/xA9RTv2e29
+ 8DGwC2DlZWvPg==
+Message-ID: <32fa7311-0393-4e71-a927-3c502e40efd8@kernel.org>
+Date: Fri, 16 Jan 2026 16:52:02 +0800
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <aTCJ0Js4X7qlqzDZ@google.com>
-X-Headers-End: 1vgbe8-0004Ax-N0
-Subject: Re: [f2fs-dev] [PATCH 3/3] mm/readahead: try to allocate high order
- pages for FADVISE_FAV_WILLNEED
+User-Agent: Mozilla Thunderbird
+To: Nanzhe Zhao <nzzhao@126.com>
+References: <20260112013320.8028-1-chao@kernel.org>
+ <5e888451-228e-41e5-ada7-a22a61cb84dd@126.com>
+Content-Language: en-US
+In-Reply-To: <5e888451-228e-41e5-ada7-a22a61cb84dd@126.com>
+X-Headers-End: 1vgfYw-0000xf-Nn
+Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid f2fs_map_blocks() for
+ consecutive holes in readpages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,41 +88,150 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 12/03, Jaegeuk Kim wrote:
-> On 12/02, Matthew Wilcox wrote:
-> > On Tue, Dec 02, 2025 at 01:30:13AM +0000, Jaegeuk Kim wrote:
-> > > @@ -627,7 +628,7 @@ void page_cache_sync_ra(struct readahead_control *ractl,
-> > >  	ra->size = min(contig_count + req_count, max_pages);
-> > >  	ra->async_size = 1;
-> > >  readit:
-> > > -	ra->order = 0;
-> > > +	ra->order = mapping_max_folio_order(ractl->mapping);
-> > >  	ractl->_index = ra->start;
-> > >  	page_cache_ra_order(ractl, ra);
-> > >  }
-> > 
-> > I suspect this is in the wrong place, but I'm on holiday and not going
-> > to go spelunking through the readahead code looking for the right place.
-> > 
-> > Also, going directly to max folio order is wrong, we should use the same
-> > approach as the write order code, encapsulated in filemap_get_order().
-> > See 4f6617011910
+On 1/15/2026 8:48 PM, Nanzhe Zhao wrote:
+> Hi Chao:
 > 
-> It seems the key is page_cache_ra_order() which allocates pages by
-> ra_alloc_folio() given ra->order. FWIW, madvise() and fault() readahead
-> takes page_cache_async_ra(), while fadvise() takes page_cache_sync_ra().
-> And, the former one has a logic to bump up the ra->order += 2 by f838ddf8cef5.
-> I think it'd make sense to match that behavior?
+> On 2026/1/12 09:33, Chao Yu via Linux-f2fs-devel wrote:
+>> For consecutive large hole mapping across {d,id,did}nodes , we don't
+>> need to call f2fs_map_blocks() to check one hole block per one time,
+>> instead, we can use map.m_next_pgofs as a hint of next potential valid
+>> block, so that we can skip calling f2fs_map_blocks the range of
+>> [cur_pgofs + 1, .m_next_pgofs).
+>>
+>> 1) regular case
+>>
+>> touch /mnt/f2fs/file
+>> truncate -s $((1024*1024*1024)) /mnt/f2fs/file
+>> time dd if=/mnt/f2fs/file of=/dev/null bs=1M count=1024
+>>
+>> Before:
+>> real    0m0.706s
+>> user    0m0.000s
+>> sys     0m0.706s
+>>
+>> After:
+>> real    0m0.620s
+>> user    0m0.008s
+>> sys     0m0.611s
+>>
+>> 2) large folio case
+>>
+>> touch /mnt/f2fs/file
+>> truncate -s $((1024*1024*1024)) /mnt/f2fs/file
+>> f2fs_io setflags immutable /mnt/f2fs/file
+>> sync
+>> echo 3 > /proc/sys/vm/drop_caches
+>> time dd if=/mnt/f2fs/file of=/dev/null bs=1M count=1024
+>>
+>> Before:
+>> real    0m0.438s
+>> user    0m0.004s
+>> sys     0m0.433s
+>>
+>> After:
+>> real    0m0.368s
+>> user    0m0.004s
+>> sys     0m0.364s
+>>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>>    fs/f2fs/data.c | 21 +++++++++++++++------
+>>    1 file changed, 15 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>> index a2c4769d0ae1..5b0642cd27ff 100644
+>> --- a/fs/f2fs/data.c
+>> +++ b/fs/f2fs/data.c
+>> @@ -2176,10 +2176,13 @@ static int f2fs_read_single_page(struct inode *inode, struct folio *folio,
+>>    	/*
+>>    	 * Map blocks using the previous result first.
+>>    	 */
+>> -	if ((map->m_flags & F2FS_MAP_MAPPED) &&
+>> -			block_in_file > map->m_lblk &&
+>> +	if (map->m_flags & F2FS_MAP_MAPPED) {
+>> +		if (block_in_file > map->m_lblk &&
+>>    			block_in_file < (map->m_lblk + map->m_len))
+>> +			goto got_it;
+>> +	} else if (block_in_file < *map->m_next_pgofs) {
+>>    		goto got_it;
+>> +	}
+>>    
+>>    	/*
+>>    	 * Then do more f2fs_map_blocks() calls until we are
+>> @@ -2454,7 +2457,7 @@ static int f2fs_read_data_large_folio(struct inode *inode,
+>>    	struct bio *bio = NULL;
+>>    	sector_t last_block_in_bio = 0;
+>>    	struct f2fs_map_blocks map = {0, };
+>> -	pgoff_t index, offset;
+>> +	pgoff_t index, offset, next_pgofs = 0;
+>>    	unsigned max_nr_pages = rac ? readahead_count(rac) :
+>>    				folio_nr_pages(folio);
+>>    	unsigned nrpages;
+>> @@ -2487,16 +2490,21 @@ static int f2fs_read_data_large_folio(struct inode *inode,
+>>    		/*
+>>    		 * Map blocks using the previous result first.
+>>    		 */
+>> -		if ((map.m_flags & F2FS_MAP_MAPPED) &&
+>> -				index > map.m_lblk &&
+>> +		if (map.m_flags & F2FS_MAP_MAPPED) {
+>> +			if (index > map.m_lblk &&
+>>    				index < (map.m_lblk + map.m_len))
+>> +				goto got_it;
+>> +		} else if (index < next_pgofs) {
+>> +			/* hole case */
+>>    			goto got_it;
+>> +		}
+>>    
+>>    		/*
+>>    		 * Then do more f2fs_map_blocks() calls until we are
+>>    		 * done with this page.
+>>    		 */
+>>    		memset(&map, 0, sizeof(map));
+>> +		map.m_next_pgofs = &next_pgofs;
+>>    		map.m_seg_type = NO_CHECK_TYPE;
+>>    		map.m_lblk = index;
+>>    		map.m_len = max_nr_pages;
+>> @@ -2617,6 +2625,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
+>>    	pgoff_t nc_cluster_idx = NULL_CLUSTER;
+>>    	pgoff_t index;
+>>    #endif
+>> +	pgoff_t next_pgofs = 0;
+>>    	unsigned nr_pages = rac ? readahead_count(rac) : 1;
+>>    	struct address_space *mapping = rac ? rac->mapping : folio->mapping;
+>>    	unsigned max_nr_pages = nr_pages;
+>> @@ -2637,7 +2646,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
+>>    	map.m_lblk = 0;
+>>    	map.m_len = 0;
+>>    	map.m_flags = 0;
+>> -	map.m_next_pgofs = NULL;
+>> +	map.m_next_pgofs = &next_pgofs;
+>>    	map.m_next_extent = NULL;
+>>    	map.m_seg_type = NO_CHECK_TYPE;
+>>    	map.m_may_create = false;
+> 
+> Do we have plans to also support reducing f2fs_map_blocks() calls for
+> consectives holes in logical file postion with dnode have already been
+> allocated in buffered large folio read?
+> Such as consective NULL_ADDR or NEW_ADDR?
 
-Comment by any chance?
+Nanzhe,
+
+We have supported that for large folio read w/ this patch?
+
+Thanks,
+
+> 
+> Thanks,
+> 
+
 
 
 _______________________________________________
