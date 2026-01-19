@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5FB9DCA5FEF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Jan 2026 06:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B28DACA5FEF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Jan 2026 06:23:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=xOYkysd8Up0kc7Kawg6kRvvunyZqAorfD6oh11i768g=; b=TvFegfxkAFNooyBt0uMjWJvjpr
-	JYuuIV13542jSRkYhahHKv8PEpM28n6uM6DI76y/FPRStiQjUlXhx0N3QaOBouy28a4y6Iksob1FV
-	p5CuMG0v0fmLj2bS8IzC2x4aED2qQVH6QffCedjbuHBc1gpD6SoQjjIC+cHBt437vZ8M=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=5qQC8W1YNySfJodHhgGtpDPQ16xcgNZxYm3t4wtmKJs=; b=VjWiWGGH0qoq4q/Nxi7M0eT7hf
+	84ww5JpZOj26wymdeiwAiqLVL3OqdrIOI7yOuv3zKt0BAeAu+zf7bk6dxf7PZYwHM+Jt2N1akTZJr
+	aZ1ILhee/iE0ykbbAfkTPKl4cwHpPZONKsnGgv+5Ywh+4pXyih2NsSXClDhKkmpfiBVg=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vhifj-0000dP-2G;
-	Mon, 19 Jan 2026 06:23:31 +0000
+	id 1vhifr-0005Uu-Dc;
+	Mon, 19 Jan 2026 06:23:39 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+f4f5ba1b7319529cbc9c+8184+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1vhifh-0000dH-KS for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Jan 2026 06:23:29 +0000
+ id 1vhifp-0005Un-4o for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 19 Jan 2026 06:23:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=m7GlT00SLu2Nm7/9Y9dcJI7Ezxq/U09mHeb0mFUU1Nk=; b=Dr61huP89QSP7gzils8Wwn/wnf
- LNAKTCMAOX8DrfyK1qCRUEKahAXNnAmSMp5+/VwHe1c5zWIxrXLPsJAo3zgar0NWhpDe3OfhAuGS2
- izmVHgxNX6Sux1qmseTUmau8jeo/U7ur6bxoaFBjU9zKXjloj1OKJfHUMSPmCJedqoRs=;
+ bh=IlyUwc1mP9pL1SgxcpD6ik9XMxsk9b3WWjDEnoXnp6I=; b=Cbb079RFqSq/ZGOrrmKUxrdUpp
+ vMGBW7DSL017DwAOVK2ByPt4na/LXr1xCnWINM/JZ2c9GHnRLwAyd1jsfFw5erhyJ/wBr93SetaeX
+ QzNtDaYrxbCkDSky1xU2cFHNAcKqX23gvhi9ml3OYm+Ags1YkG4x2fbtB12GkFXs2D4Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,42 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=m7GlT00SLu2Nm7/9Y9dcJI7Ezxq/U09mHeb0mFUU1Nk=; b=TPHQK9beTW1jjVK6TMzTPW/sec
- UrAvNFTL03aqlHRWKeWH5tBGbL1dGDDg2S6xl8+ocd9wUL4pOpU+iG7Ry+AbXzV8wYRUzoHahDL+I
- QkCCaxgqGkCkO8eP/inF7RFHX9qp954j2HMSRftm/EcbTJhdgfu447Xzut+Y7a8rVIM8=;
+ bh=IlyUwc1mP9pL1SgxcpD6ik9XMxsk9b3WWjDEnoXnp6I=; b=AwoZ81n1UO7ButKYDDzScigRDw
+ pyqlrD6QVfbUWnUSun7rX43+e2a0wrOTc/Uw7Co+OCeTY25mcyv6ZLgAH4tNZkQmB//HfhTcdO5qq
+ gFYolPO9J1jDQNtWhIo/gFbSODkNWe5OnrMUL8ozCpMZGTzB874tSe/z2fvZZv2eI7F8=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vhifg-0006gE-Dc for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Jan 2026 06:23:29 +0000
+ id 1vhifo-0006gi-IT for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 19 Jan 2026 06:23:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=m7GlT00SLu2Nm7/9Y9dcJI7Ezxq/U09mHeb0mFUU1Nk=; b=zUknqBWIS9Rpc40DAMxqJ6Go0w
- q23jH0m6JroMnfB1Ycgm3HvXINgUnflNJHvr7lP0GH0ABx+mI8ueI9buq/YRQTW6FbnFt7SSADibv
- AhNDhUgWwpgOtOgIXh1PegJ5hIWUAU10bX0ZKL20L2FukchpIf0GjzTLLznilSg9PtLNtHpo/M8qH
- eRRYz+mB/J/SY079opfS4ahe6CQ0bhYMgQaRu6wNJQpQnMh8eHjuWV11G927xyy2HkNjzwQ8Uz7DJ
- wp5C3pLFyWLHxujHlyJwFRaMaJBCPvbqYwxCwbRbpj7+e/Uq++nBD+ZXpJz5pLJZ/tekta0ESn9et
- djokk29g==;
+ bh=IlyUwc1mP9pL1SgxcpD6ik9XMxsk9b3WWjDEnoXnp6I=; b=p5VkIJc13jggEAYsVa5jj2wAk2
+ +n43xiI1J0oFZfHw3KMz5R1mZX52YA3ootKBI04jRX//zy8JrqFsryzyto6ywspxsUUfh+iHAecRe
+ EKoy+t7v/88RqDKlEJUmcT2jhnlxjSoIRxl/QSCam8a+RvUlYtsWUY1IFg86op2puHDHRGq5398w4
+ mfohWbLNHh/zkLomiNCd03/pyWXYsnUdG36LeETmaf/QxYlgaJXOlfIomsiNNczCTlvfuSz5Opsxz
+ oSHtGpzgdr4p8/p8Bgb62GKskZyZEvH9gqTbfPQzG62WODLrohYsTc4vvNKKSTiWqPQOTE40kSdI5
+ LqWMGsDA==;
 Received: from
  2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at
  ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
- id 1vhifS-00000001OoB-2fOA; Mon, 19 Jan 2026 06:23:14 +0000
+ id 1vhifb-00000001Ool-44WS; Mon, 19 Jan 2026 06:23:24 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
-Date: Mon, 19 Jan 2026 07:22:44 +0100
-Message-ID: <20260119062250.3998674-4-hch@lst.de>
+Date: Mon, 19 Jan 2026 07:22:46 +0100
+Message-ID: <20260119062250.3998674-6-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260119062250.3998674-1-hch@lst.de>
 References: <20260119062250.3998674-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1vhifg-0006gE-Dc
-Subject: [f2fs-dev] [PATCH 3/6] fs,
- fsverity: handle fsverity in generic_file_open
+X-Headers-End: 1vhifo-0006gi-IT
+Subject: [f2fs-dev] [PATCH 5/6] fsverity: pass struct file to
+ ->write_merkle_tree_block
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,187 +99,143 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Call into fsverity_file_open from generic_file_open instead of requiring
-the file system to handle it explicitly.
+This will make an iomap implementation of the method easier.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/file.c          |  6 ------
- fs/ext4/file.c           |  4 ----
- fs/f2fs/file.c           |  4 ----
- fs/open.c                |  8 +++++++-
- fs/verity/open.c         | 10 ++++++++--
- include/linux/fsverity.h | 32 +-------------------------------
- 6 files changed, 16 insertions(+), 48 deletions(-)
+ fs/btrfs/verity.c        | 5 +++--
+ fs/ext4/verity.c         | 6 +++---
+ fs/f2fs/verity.c         | 6 +++---
+ fs/verity/enable.c       | 9 +++++----
+ include/linux/fsverity.h | 4 ++--
+ 5 files changed, 16 insertions(+), 14 deletions(-)
 
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 1abc7ed2990e..4b3a31b2b52e 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -3808,16 +3808,10 @@ static loff_t btrfs_file_llseek(struct file *file, loff_t offset, int whence)
- 
- static int btrfs_file_open(struct inode *inode, struct file *filp)
+diff --git a/fs/btrfs/verity.c b/fs/btrfs/verity.c
+index e79e67280a4b..8a4426f8b5fb 100644
+--- a/fs/btrfs/verity.c
++++ b/fs/btrfs/verity.c
+@@ -774,16 +774,17 @@ static struct page *btrfs_read_merkle_tree_page(struct inode *inode,
+ /*
+  * fsverity op that writes a Merkle tree block into the btree.
+  *
+- * @inode:	inode to write a Merkle tree block for
++ * @file:	file to write a Merkle tree block for
+  * @buf:	Merkle tree block to write
+  * @pos:	the position of the block in the Merkle tree (in bytes)
+  * @size:	the Merkle tree block size (in bytes)
+  *
+  * Returns 0 on success or negative error code on failure
+  */
+-static int btrfs_write_merkle_tree_block(struct inode *inode, const void *buf,
++static int btrfs_write_merkle_tree_block(struct file *file, const void *buf,
+ 					 u64 pos, unsigned int size)
  {
--	int ret;
--
- 	if (unlikely(btrfs_is_shutdown(inode_to_fs_info(inode))))
- 		return -EIO;
++	struct inode *inode = file_inode(file);
+ 	loff_t merkle_pos = merkle_file_pos(inode);
  
- 	filp->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
--
--	ret = fsverity_file_open(inode, filp);
--	if (ret)
--		return ret;
- 	return generic_file_open(inode, filp);
+ 	if (merkle_pos < 0)
+diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
+index 7a980a8059bd..2cd6fe2fbf64 100644
+--- a/fs/ext4/verity.c
++++ b/fs/ext4/verity.c
+@@ -380,12 +380,12 @@ static struct page *ext4_read_merkle_tree_page(struct inode *inode,
+ 	return folio_file_page(folio, index);
  }
  
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 7a8b30932189..a7dc8c10273e 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -906,10 +906,6 @@ static int ext4_file_open(struct inode *inode, struct file *filp)
- 	if (ret)
- 		return ret;
- 
--	ret = fsverity_file_open(inode, filp);
--	if (ret)
--		return ret;
--
- 	/*
- 	 * Set up the jbd2_inode if we are opening the inode for
- 	 * writing and the journal is present
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index da029fed4e5a..f1510ab657b6 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -624,10 +624,6 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
- 	if (!f2fs_is_compress_backend_ready(inode))
- 		return -EOPNOTSUPP;
- 
--	err = fsverity_file_open(inode, filp);
--	if (err)
--		return err;
--
- 	filp->f_mode |= FMODE_NOWAIT;
- 	filp->f_mode |= FMODE_CAN_ODIRECT;
- 
-diff --git a/fs/open.c b/fs/open.c
-index f328622061c5..dea93bab8795 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -10,6 +10,7 @@
- #include <linux/file.h>
- #include <linux/fdtable.h>
- #include <linux/fsnotify.h>
-+#include <linux/fsverity.h>
- #include <linux/module.h>
- #include <linux/tty.h>
- #include <linux/namei.h>
-@@ -1604,10 +1605,15 @@ SYSCALL_DEFINE0(vhangup)
-  * the caller didn't specify O_LARGEFILE.  On 64bit systems we force
-  * on this flag in sys_open.
-  */
--int generic_file_open(struct inode * inode, struct file * filp)
-+int generic_file_open(struct inode *inode, struct file *filp)
+-static int ext4_write_merkle_tree_block(struct inode *inode, const void *buf,
++static int ext4_write_merkle_tree_block(struct file *file, const void *buf,
+ 					u64 pos, unsigned int size)
  {
- 	if (!(filp->f_flags & O_LARGEFILE) && i_size_read(inode) > MAX_NON_LFS)
- 		return -EOVERFLOW;
-+	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode)) {
-+		if (filp->f_mode & FMODE_WRITE)
-+			return -EPERM;
-+		return fsverity_file_open(inode, filp);
-+	}
+-	pos += ext4_verity_metadata_pos(inode);
++	pos += ext4_verity_metadata_pos(file_inode(file));
+ 
+-	return pagecache_write(inode, buf, size, pos);
++	return pagecache_write(file_inode(file), buf, size, pos);
+ }
+ 
+ const struct fsverity_operations ext4_verityops = {
+diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
+index c30b70fbcc0d..4326fd72cc72 100644
+--- a/fs/f2fs/verity.c
++++ b/fs/f2fs/verity.c
+@@ -278,12 +278,12 @@ static struct page *f2fs_read_merkle_tree_page(struct inode *inode,
+ 	return folio_file_page(folio, index);
+ }
+ 
+-static int f2fs_write_merkle_tree_block(struct inode *inode, const void *buf,
++static int f2fs_write_merkle_tree_block(struct file *file, const void *buf,
+ 					u64 pos, unsigned int size)
+ {
+-	pos += f2fs_verity_metadata_pos(inode);
++	pos += f2fs_verity_metadata_pos(file_inode(file));
+ 
+-	return pagecache_write(inode, buf, size, pos);
++	return pagecache_write(file_inode(file), buf, size, pos);
+ }
+ 
+ const struct fsverity_operations f2fs_verityops = {
+diff --git a/fs/verity/enable.c b/fs/verity/enable.c
+index 91cada0d455c..2a285b04e8d4 100644
+--- a/fs/verity/enable.c
++++ b/fs/verity/enable.c
+@@ -41,14 +41,15 @@ static int hash_one_block(const struct merkle_tree_params *params,
  	return 0;
  }
  
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index 090cb77326ee..8ed915be9c91 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -376,13 +376,19 @@ static int ensure_verity_info(struct inode *inode)
- 	return err;
- }
- 
--int __fsverity_file_open(struct inode *inode, struct file *filp)
-+/*
-+ * When opening a verity file, deny the open if it is for writing.  Otherwise,
-+ * set up the inode's verity info if not already done.
-+ *
-+ * When combined with fscrypt, this must be called after fscrypt_file_open().
-+ * Otherwise, we won't have the key set up to decrypt the verity metadata.
-+ */
-+int fsverity_file_open(struct inode *inode, struct file *filp)
+-static int write_merkle_tree_block(struct inode *inode, const u8 *buf,
++static int write_merkle_tree_block(struct file *file, const u8 *buf,
+ 				   unsigned long index,
+ 				   const struct merkle_tree_params *params)
  {
- 	if (filp->f_mode & FMODE_WRITE)
- 		return -EPERM;
- 	return ensure_verity_info(inode);
- }
--EXPORT_SYMBOL_GPL(__fsverity_file_open);
++	struct inode *inode = file_inode(file);
+ 	u64 pos = (u64)index << params->log_blocksize;
+ 	int err;
  
- void fsverity_cleanup_inode(struct inode *inode)
- {
+-	err = inode->i_sb->s_vop->write_merkle_tree_block(inode, buf, pos,
++	err = inode->i_sb->s_vop->write_merkle_tree_block(file, buf, pos,
+ 							  params->block_size);
+ 	if (err)
+ 		fsverity_err(inode, "Error %d writing Merkle tree block %lu",
+@@ -135,7 +136,7 @@ static int build_merkle_tree(struct file *filp,
+ 			err = hash_one_block(params, &buffers[level]);
+ 			if (err)
+ 				goto out;
+-			err = write_merkle_tree_block(inode,
++			err = write_merkle_tree_block(filp,
+ 						      buffers[level].data,
+ 						      level_offset[level],
+ 						      params);
+@@ -155,7 +156,7 @@ static int build_merkle_tree(struct file *filp,
+ 			err = hash_one_block(params, &buffers[level]);
+ 			if (err)
+ 				goto out;
+-			err = write_merkle_tree_block(inode,
++			err = write_merkle_tree_block(filp,
+ 						      buffers[level].data,
+ 						      level_offset[level],
+ 						      params);
 diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index b7bf2401c574..4980ea55cdaa 100644
+index 27abf5b867bb..deb6b2303d64 100644
 --- a/include/linux/fsverity.h
 +++ b/include/linux/fsverity.h
-@@ -130,6 +130,7 @@ struct fsverity_operations {
+@@ -109,7 +109,7 @@ struct fsverity_operations {
+ 	/**
+ 	 * Write a Merkle tree block to the given inode.
+ 	 *
+-	 * @inode: the inode for which the Merkle tree is being built
++	 * @file: the file for which the Merkle tree is being built
+ 	 * @buf: the Merkle tree block to write
+ 	 * @pos: the position of the block in the Merkle tree (in bytes)
+ 	 * @size: the Merkle tree block size (in bytes)
+@@ -119,7 +119,7 @@ struct fsverity_operations {
+ 	 *
+ 	 * Return: 0 on success, -errno on failure
+ 	 */
+-	int (*write_merkle_tree_block)(struct inode *inode, const void *buf,
++	int (*write_merkle_tree_block)(struct file *file, const void *buf,
  				       u64 pos, unsigned int size);
  };
  
-+int fsverity_file_open(struct inode *inode, struct file *filp);
- void fsverity_cleanup_inode(struct inode *inode);
- 
- #ifdef CONFIG_FS_VERITY
-@@ -178,10 +179,6 @@ int fsverity_get_digest(struct inode *inode,
- 			u8 raw_digest[FS_VERITY_MAX_DIGEST_SIZE],
- 			u8 *alg, enum hash_algo *halg);
- 
--/* open.c */
--
--int __fsverity_file_open(struct inode *inode, struct file *filp);
--
- /* read_metadata.c */
- 
- int fsverity_ioctl_read_metadata(struct file *filp, const void __user *uarg);
-@@ -225,13 +222,6 @@ static inline int fsverity_get_digest(struct inode *inode,
- 	return 0;
- }
- 
--/* open.c */
--
--static inline int __fsverity_file_open(struct inode *inode, struct file *filp)
--{
--	return -EOPNOTSUPP;
--}
--
- /* read_metadata.c */
- 
- static inline int fsverity_ioctl_read_metadata(struct file *filp,
-@@ -289,24 +279,4 @@ static inline bool fsverity_active(const struct inode *inode)
- 	return fsverity_get_info(inode) != NULL;
- }
- 
--/**
-- * fsverity_file_open() - prepare to open a verity file
-- * @inode: the inode being opened
-- * @filp: the struct file being set up
-- *
-- * When opening a verity file, deny the open if it is for writing.  Otherwise,
-- * set up the inode's verity info if not already done.
-- *
-- * When combined with fscrypt, this must be called after fscrypt_file_open().
-- * Otherwise, we won't have the key set up to decrypt the verity metadata.
-- *
-- * Return: 0 on success, -errno on failure
-- */
--static inline int fsverity_file_open(struct inode *inode, struct file *filp)
--{
--	if (IS_VERITY(inode))
--		return __fsverity_file_open(inode, filp);
--	return 0;
--}
--
- #endif	/* _LINUX_FSVERITY_H */
 -- 
 2.47.3
 
