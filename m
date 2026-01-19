@@ -4,37 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CFE40CA5FF3
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Jan 2026 06:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3A862D4A5F4
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Jan 2026 07:26:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=bweT0mFmRXKBP38RZQyiTYyfAce8uiezgqZ6PXkpxuw=; b=OK78mGoHn0hKhK1x9n4hcZvt8k
-	f3Usu9A4Dp3Vrf0zjvUBQsiuvdmezYJAsnIb1TLly9tova5JdtWm1w85qbL7iYrc+CkCcbMcElE8y
-	y1ln8UauAoeLMDQz9QM83T1rcmdaTq6BMiNDGEwZPm7MselA70QVobgPOlHjNzJw4q9c=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=NQKAT+DfNdL9E9HHVt0q5Zb4o4Q1Cn7ide2NcfloQEI=; b=jUWQsYpnsPqAtZzaFjM6svPdk4
+	+VHFMKrkrHnNxPzp1LiV8dooZ/qt9T0JUPqC+r9gTkiDXIzvaVOTHKp6pjVZjp3l6Rf5Y+7JAq7hB
+	munEls7JAuhwgk57Vs/HeuZOnb48HtGRooQbddrCElv3YlxlyKMDm5QVRwJoOLqCmvuc=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vhj7g-00081I-GT;
-	Mon, 19 Jan 2026 06:52:25 +0000
+	id 1vhjeX-0001zw-EI;
+	Mon, 19 Jan 2026 07:26:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1vhj7f-000813-5p
- for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Jan 2026 06:52:23 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+f4f5ba1b7319529cbc9c+8184+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1vhjeT-0001zd-Vq; Mon, 19 Jan 2026 07:26:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tSlfgFGPfCbX6JZ0iz1hunpLIGPypEAYkYHGA8eZeXc=; b=Ug7QrfcLv93Di/QzwTehDDKb2B
- 0m2nx/HZ5bFzvLCBlZcI2sb3xyqJtQR1kjCC7JMpMLE0MrxvTQ0IjKl3uJcyBqYEif8Kta9u182kZ
- CJNZYVbiIynEoM78AKBhIMLd8pi2uwGQj8CAv+iuMwsdYxmuO6+Q8l3IFC3vI6pvlslw=;
+ bh=SdeGvwbQpxlPUYjWclzPmRx+IQVLHu58bH+XT7BFy/E=; b=M1WZKZTRkxB68s/3Sr90EfKBZt
+ tCph6fxvdmayRDKGAnUrBg2nTWJYyYYUDKCBeBDb+tIYFRQ0XXezR9BQglEeXljQMRwfgpJ41/+A5
+ FklB4lJcgWx7DzZQh7c8Fjc5yryZkkO1G6d6L9dGFUzBZYyYUje07jrWAGi9OEjBWBug=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,35 +41,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=tSlfgFGPfCbX6JZ0iz1hunpLIGPypEAYkYHGA8eZeXc=; b=QUE70+toI+Bx4oycR23wsUo+FR
- 7z39mFCdMGnTqJilRtZuTeLY04sbijlWeT4xIj4yMGh2yy5dJwiQsS9on70izh/zKSgndw5nVshsp
- 7qkci8pMPc5FQbcw03Si6sPGChQWZwd4lbEcDtZPUB7+Df5jMYHzxghRzFVoM44SM290=;
-Received: from verein.lst.de ([213.95.11.211])
+ bh=SdeGvwbQpxlPUYjWclzPmRx+IQVLHu58bH+XT7BFy/E=; b=dnRUq/MPWurzJrnkxjTDpY6CG6
+ /db6WOSYxr/v82SvFQ1Z8FvoozGGjFq5P5Ev+43Hu6pN+JRbAEP1fgdAB1uy61ZhWp2x713Uq2lcb
+ SUiprzPVY3RraehZulaFcIQlB4Ifjh9OzN8HAdvE799b6g0LlU9kHerb3xsjKM0zxb6E=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vhj7f-0007qo-6O for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Jan 2026 06:52:23 +0000
-Received: by verein.lst.de (Postfix, from userid 2407)
- id B8DD9227A88; Mon, 19 Jan 2026 07:33:49 +0100 (CET)
-Date: Mon, 19 Jan 2026 07:33:49 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Message-ID: <20260119063349.GA643@lst.de>
-References: <cover.1768229271.patch-series@thinky>
- <aWZ0nJNVTnyuFTmM@casper.infradead.org>
- <op5poqkjoachiv2qfwizunoeg7h6w5x2rxdvbs4vhryr3aywbt@cul2yevayijl>
- <aWci_1Uu5XndYNkG@casper.infradead.org>
- <20260114061536.GG15551@frogsfrogsfrogs>
- <5z5r6jizgxqz5axvzwbdmtkadehgdf7semqy2oxsfytmzzu6ik@zfvhexcp3fz2>
- <6r24wj3o3gctl3vz4n3tdrfjx5ftkybdjmmye2hejdcdl6qseh@c2yvpd5d4ocf>
+ id 1vhjeT-00011O-Fz; Mon, 19 Jan 2026 07:26:17 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+ :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=SdeGvwbQpxlPUYjWclzPmRx+IQVLHu58bH+XT7BFy/E=; b=vpeslnKs0kEtVQxLv6zNmfQJ5G
+ TvTugN4T4j8RD3Vs0BnXZN1QzZqnB4D7uOdAA11Ur0t3FPPWnxyfuuCAHPZbZ+6wIUcEefsFQ32co
+ +vCvtBifSMAf02TAMYGbQKi4iMCQo3oLC4QmJQRv4nD92QhZOq3i1XdBiPArAxd6H9i8+Z32A6WcT
+ whFYQHvPf8xiWhPRik6EgKL+Wg7G7BqYPvWQS48IfwmdgkkGq1lEXE54n/opOEWpDoa7k0Gy5BYqw
+ v/Urt+eLDpkqilIUEQG+hJ24VWsryY+AhaXCJ6FiWwFl73fxmpKewmcmsKet/MLlOupEIGvPesfBt
+ nMXlmQbw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red
+ Hat Linux)) id 1vhjdu-00000001TQi-3A8r;
+ Mon, 19 Jan 2026 07:25:42 +0000
+Date: Sun, 18 Jan 2026 23:25:42 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: NeilBrown <neil@brown.name>
+Message-ID: <aW3cdlSjcXqcV1VO@infradead.org>
+References: <20260115-exportfs-nfsd-v1-0-8e80160e3c0c@kernel.org>
+ <CAOQ4uxjOJMwv_hRVTn3tJHDLMQHbeaCGsdLupiZYcwm7M2rm3g@mail.gmail.com>
+ <9c99197dde2eafa55a1b55dce2f0d4d02c77340a.camel@kernel.org>
+ <176877859306.16766.15009835437490907207@noble.neil.brown.name>
+ <aW3SAKIr_QsnEE5Q@infradead.org>
+ <176880736225.16766.4203157325432990313@noble.neil.brown.name>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <6r24wj3o3gctl3vz4n3tdrfjx5ftkybdjmmye2hejdcdl6qseh@c2yvpd5d4ocf>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1vhj7f-0007qo-6O
-Subject: [f2fs-dev] fsverity metadata offset,
- was: Re: [PATCH v2 0/23] fs-verity support for XFS with post EOF
- merkle tree
+In-Reply-To: <176880736225.16766.4203157325432990313@noble.neil.brown.name>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1vhjeT-00011O-Fz
+Subject: Re: [f2fs-dev] [PATCH 00/29] fs: require filesystems to explicitly
+ opt-in to nfsd export support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,93 +90,75 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: fsverity@lists.linux.dev, ebiggers@kernel.org, aalbersh@kernel.org,
- "Darrick J. Wong" <djwong@kernel.org>, david@fromorbit.com,
- Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
- tytso@mit.edu, linux-ext4@vger.kernel.org, hch@lst.de
+Cc: Martin Brandenburg <martin@omnibond.com>,
+ jfs-discussion@lists.sourceforge.net, Jan Kara <jack@suse.cz>,
+ Paulo Alcantara <pc@manguebit.org>, Alex Markuze <amarkuze@redhat.com>,
+ Sandeep Dhavale <dhavale@google.com>, linux-btrfs@vger.kernel.org,
+ Carlos Maiolino <cem@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
+ linux-unionfs@vger.kernel.org,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ Chris Mason <clm@fb.com>, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Chunhai Guo <guochunhai@vivo.com>, Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ linux-mtd@lists.infradead.org, Mike Marshall <hubcap@omnibond.com>,
+ linux-xfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ Yue Hu <zbestahu@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ Richard Weinberger <richard@nod.at>, Mark Fasheh <mark@fasheh.com>,
+ Hugh Dickins <hughd@google.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+ Christoph Hellwig <hch@infradead.org>, Viacheslav Dubeyko <slava@dubeyko.com>,
+ Gao Xiang <xiang@kernel.org>, linux-ext4@vger.kernel.org,
+ Salah Triki <salah.triki@gmail.com>, linux-mm@kvack.org,
+ devel@lists.orangefs.org, Shyam Prasad N <sprasad@microsoft.com>,
+ Olga Kornievskaia <okorniev@redhat.com>, linux-cifs@vger.kernel.org,
+ Dave Kleikamp <shaggy@kernel.org>, linux-nfs@vger.kernel.org,
+ Tom Talpey <tom@talpey.com>, ocfs2-devel@lists.linux.dev,
+ Bharath SM <bharathsm@microsoft.com>, David Sterba <dsterba@suse.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Jeffle Xu <jefflexu@linux.alibaba.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ ceph-devel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+ OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+ Andreas Gruenbacher <agruenba@redhat.com>, gfs2@lists.linux.dev,
+ Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+ Luis de Bethencourt <luisbg@kernel.org>,
+ Joseph Qi <joseph.qi@linux.alibaba.com>, linux-erofs@lists.ozlabs.org,
+ Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, Steve French <sfrench@samba.org>,
+ Chuck Lever <chuck.lever@oracle.com>, Hongbo Li <lihongbo22@huawei.com>,
+ Anna Schumaker <anna@kernel.org>, Jan Kara <jack@suse.com>,
+ linux-fsdevel@vger.kernel.org, Phillip Lougher <phillip@squashfs.org.uk>,
+ Andrew Morton <akpm@linux-foundation.org>, ntfs3@lists.linux.dev,
+ David Woodhouse <dwmw2@infradead.org>, Trond Myklebust <trondmy@kernel.org>,
+ Joel Becker <jlbec@evilplan.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-While looking at fsverity I'd like to understand the choise of offset
-in ext4 and f2fs, and wonder about an issue.
+On Mon, Jan 19, 2026 at 06:22:42PM +1100, NeilBrown wrote:
+> We are calling it for it's only use.  If there was ever another use, we
+> could change the name if that made sense.  It is not a public name, it
+> is easy to change.
 
-Both ext4 and f2fs round up the inode size to the next 64k boundary
-and place the metadata there.  Both use the 65536 magic number for that
-instead of a well documented constant unfortunately.
+No, it is not the only use.  This flag needs to be propagate to
+userspace through statx or the file attrs.  As I said before there
+is plenty of code in userspace that does rely on the traditional
+file handle semantics.
 
-I assume this was picked to align up to the largest reasonable page
-size?  Unfortunately for that:
-
- a) not all architectures are reasonable.  As Darrick pointed out
-    hexagon seems to support page size up to 1MiB.  While I don't know
-    if they exist in real life, powerpc supports up to 256kiB pages,
-    and I know they are used for real in various embedded settings
- b) with large folio support in the page cache, the folios used to
-    map files can be much larger than the base page size, with all
-    the same issues as a larger page size
-
-So assuming that fsverity is trying to avoid the issue of a page/folio
-that covers both data and fsverity metadata, how does it copy with that?
-Do we need to disable fsverity on > 64k page size and disable large
-folios on fsverity files?  The latter would mean writing back all cached
-data first as well.
-
-And going forward, should we have a v2 format that fixes this?  For that
-we'd still need a maximum folio size of course.   And of course I'd like
-to get all these things right from the start in XFS, while still being as
-similar as possible to ext4/f2fs.
-
-On Wed, Jan 14, 2026 at 10:53:00AM +0100, Andrey Albershteyn wrote:
-> On 2026-01-14 09:20:34, Andrey Albershteyn wrote:
-> > On 2026-01-13 22:15:36, Darrick J. Wong wrote:
-> > > On Wed, Jan 14, 2026 at 05:00:47AM +0000, Matthew Wilcox wrote:
-> > > > On Tue, Jan 13, 2026 at 07:45:47PM +0100, Andrey Albershteyn wrote:
-> > > > > On 2026-01-13 16:36:44, Matthew Wilcox wrote:
-> > > > > > On Mon, Jan 12, 2026 at 03:49:44PM +0100, Andrey Albershteyn wrote:
-> > > > > > > The tree is read by iomap into page cache at offset 1 << 53. This is far
-> > > > > > > enough to handle any supported file size.
-> > > > > > 
-> > > > > > What happens on 32-bit systems?  (I presume you mean "offset" as
-> > > > > > "index", so this is 1 << 65 bytes on machines with a 4KiB page size)
-> > > > > > 
-> > > > > it's in bytes, yeah I missed 32-bit systems, I think I will try to
-> > > > > convert this offset to something lower on 32-bit in iomap, as
-> > > > > Darrick suggested.
-> > > > 
-> > > > Hm, we use all 32 bits of folio->index on 32-bit plaftorms.  That's
-> > > > MAX_LFS_FILESIZE.  Are you proposing reducing that?
-> > > > 
-> > > > There are some other (performance) penalties to using 1<<53 as the lowest
-> > > > index for metadata on 64-bit.  The radix tree is going to go quite high;
-> > > > we use 6 bits at each level, so if you have a folio at 0 and a folio at
-> > > > 1<<53, you'll have a tree of height 9 and use 17 nodes.
-> > > > 
-> > > > That's going to be a lot of extra cache misses when walking the XArray
-> > > > to find any given folio.  Allowing the filesystem to decide where the
-> > > > metadata starts for any given file really is an important optimisation.
-> > > > Even if it starts at index 1<<29, you'll almost halve the number of
-> > > > nodes needed.
-> > 
-> > Thanks for this overview!
-> > 
-> > > 
-> > > 1<<53 is only the location of the fsverity metadata in the ondisk
-> > > mapping.  For the incore mapping, in theory we could load the fsverity
-> > > anywhere in the post-EOF part of the pagecache to save some bits.
-> > > 
-> > > roundup(i_size_read(), 1<<folio_max_order)) would work, right?
-> > 
-> > Then, there's probably no benefits to have ondisk mapping differ,
-> > no?
+> > Remember nfs also support volatile file handles, and other applications
+> > might rely on this (I know of quite a few user space applications that
+> > do, but they are kinda hardwired to xfs anyway).
 > 
-> oh, the fixed ondisk offset will help to not break if filesystem
-> would be mounted by machine with different page size.
-> 
-> -- 
-> - Andrey
----end quoted text---
+> The NFS protocol supports volatile file handles.  knfsd does not.
+> So maybe
+>   EXPORT_OP_NOT_NFSD_COMPATIBLE
+> might be better.  or EXPORT_OP_NOT_LINUX_NFSD_COMPATIBLE.
+> (I prefer opt-out rather than opt-in because nfsd export was the
+> original purpose of export_operations, but it isn't something
+> I would fight for)
+
+Again, stop trying to name things of the initial user.  Flag needs to
+describe smenatics, not users.
+
 
 
 _______________________________________________
