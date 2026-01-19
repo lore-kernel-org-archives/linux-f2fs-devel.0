@@ -4,78 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 347D7D29C2E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Jan 2026 13:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3DB24D29C2E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Jan 2026 14:47:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=GHIXS/TvW/hHN+WbDIss20glHIPDlmZCxK5qtsrFQTs=; b=MfffZZBzlQxObqBVXHYbjC0D4a
-	E/AVep5ht1wKY4xKh/qZT0e+u52JS21M07Qn2TVPtfRYadNqHtyuc1kAgh5h5OBaHvChvSFOytA8z
-	RWhZmYtuDN92XtCjvSs+A5yLy4sHQB3ZtIeYavZKOpSeczlpqzz6Ay8YleWVLXHg/alo=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=T7NDOoUcepHwrhspvUBN8lehBZ79D3Hmky+v7TKAkIs=; b=BSYOSZ7xJxz6P28VafjuyXa+1A
+	16j16fRAYciEyHHEY9UzJtPyahmfXIx8njMDN+DJjxHkn7TL++jNYY6iMg6YEKtPiNziz4bmiagSr
+	09EjHg1sqaHnJUvZgF0kJAIBTXTWo1Qd6B5Z9NPsFUWayk/g44PR9YdR37PjWrpTmayk=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vhpiD-0001ZJ-3q;
-	Mon, 19 Jan 2026 13:54:33 +0000
+	id 1vhqWw-00045y-DZ;
+	Mon, 19 Jan 2026 14:46:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vhpiB-0001Yy-Nd
+ (envelope-from <chao@kernel.org>) id 1vhqWv-00045p-3A
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Jan 2026 13:54:32 +0000
+ Mon, 19 Jan 2026 14:46:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=z45lru4bLkLyn/z2yQCayeYuf/I6u5k0IVUVR8DrRvk=; b=jCvVafN+wav0STedQCl1VOakIE
- 8zHQTUhOzava+NcYTQr8a7IyZAYd6XYC04Fr7nnAd2OjqA+eVCY6c+g3SWfzmFPa6nEjSmhEId8MD
- 7yf1MEGpYrIn0r0WYuXedDWLauNzR+L1/aegMmG/PJIu9kxfHb9b5z8u0cLWukovy8Bw=;
+ bh=iD+hcZdggzL25y3HrNPg7R0i0js2N6/jL4sywdHPXGE=; b=b/KYKrWzen2oG31pN9JP/SDyXA
+ z1KnmnHtrTBW3tOxpQgNXiu0yXxgxP2//0TS+tJa/ncvvjCL3eDfLrxtBrRPRm2privDtzsiA/HRE
+ vY+mEY4zA7avWHWeUjBlwIbgQObxwLdKe+67KEYvizZZRX8j2xVI86e2vv3od+gKie7M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=z45lru4bLkLyn/z2yQCayeYuf/I6u5k0IVUVR8DrRvk=; b=S/aJqU2wAPrgHb8qB6YTh2Wb5V
- 99NRL+WF4anmjCId+Zh/8Diz62oJeS/AjynHljNpX8UUt4mtb4kNI3bZCEzYu3ki2YuW+2C4moyu4
- X3Mi09A6aFcdvFfn1piKnDdtosduZsFV++7eO+/qwMJbYox4aV3+nOgGnati/syzYIRU=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=iD+hcZdggzL25y3HrNPg7R0i0js2N6/jL4sywdHPXGE=; b=e
+ FFjU+nVXGDhbvky0UYXroc7rjZBB4Va9TrBVXEk1V70O0CLOdkuA9ZjIsL5kewaTf5v4Ww1MunwyL
+ Jp1cjH5FR9NdYy2/jy5KmxWiEDxZAe6wpHOiF67h7jYF0CIJ0JJrmX0JSPckbejcCgBV7gmYBLKuN
+ qqB+ZN+O9fijFq/0=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vhpiC-0005rT-1Z for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Jan 2026 13:54:32 +0000
+ id 1vhqWu-0000EM-Fz for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 19 Jan 2026 14:46:57 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 19135444FA;
- Mon, 19 Jan 2026 13:54:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBA4DC116C6;
- Mon, 19 Jan 2026 13:54:20 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id BEA3860127
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 19 Jan 2026 14:46:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82ECAC116C6;
+ Mon, 19 Jan 2026 14:46:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1768830861;
- bh=pgmLHFyZNQlKmAjQhScPRJvri3LPzgKN4WS9zj4fs1g=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=nUDaEtc2kFVPAHXZNY5tOHzSbZVNuTevoqPghmmWzFTyc511MPYtj/bFrDyn3Te3e
- 8pUkJan4WPzX8l4O2+Ms81Qj4aVUhDh8spSe0PAlLGTU5UDYBiDGiQUcnZ6Yuj6ieh
- OIeJaoSL7OvZglX+2TGrQKk16rNkWJSIbcep5wf7wdmc5EKaVYCIRrMrZRdaFSMS0s
- QNkmjlxDvHHyoLGgZuu2dvujeyDa9p+hHLGr6ylMhypE5iOeRNJEV8gJiVtiZ9wV81
- dr5i18769kfCEd0jm88tibgi6gcvrvYZuWcACg94MNG+bSgmKIU1G+uxjLEeUIX5Fb
- BG1Er0Cs6S+2Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- F306B3A54A38; Mon, 19 Jan 2026 13:50:51 +0000 (UTC)
+ s=k20201202; t=1768834010;
+ bh=ukHCNUzs9mUD12QXntDw9IBqfK1oJXVfvPn00ZnNKhs=;
+ h=From:To:Cc:Subject:Date:From;
+ b=pBhOLHsn1mw28omOgidlAevjbgs7mOmlvFsPOgJ622DsWY9UYruUaVMeF7iymbyME
+ Dxd2iOfPajMfkzV92D5OlO01biVrnGaOXLyZJ03uMYwZ9fqmoybTI4F1azlouxgdoM
+ Io8k66ZzzvHMaqDWdmHAE/pHBRy4ojLBKJ35y06Asla7MG0fyHvIpWRWXPGPnWPXbd
+ 9mquN2KLRilH5Rq61UhdaUt63GTBM8lJC8IlCRz1pXAS/V8shRgy1v4LRlyURbs2T1
+ iksL1/W78RMgq+k0mr6xhGL8qiRGeH+wS0FX38sRM+I/MrhLg9fzfEnLdLo5LSRgYx
+ B7hvKw6PkmBfw==
+To: jaegeuk@kernel.org
+Date: Mon, 19 Jan 2026 21:32:29 +0800
+Message-Id: <20260119133230.16481-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Message-Id: <176883065077.1419958.17121432983363983595.git-patchwork-notify@kernel.org>
-Date: Mon, 19 Jan 2026 13:50:50 +0000
-References: <20260109144617.3282553-2-monty_pavel@sina.com>
-In-Reply-To: <20260109144617.3282553-2-monty_pavel@sina.com>
-To: Yongpeng Yang <monty_pavel@sina.com>
-X-Headers-End: 1vhpiC-0005rT-1Z
-Subject: Re: [f2fs-dev] [PATCH 1/1] f2fs: avoid unnecessary block mapping
- lookups in f2fs_read_data_large_folio
+X-Headers-End: 1vhqWu-0000EM-Fz
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: check skipped write in
+ f2fs_enable_checkpoint()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,40 +85,148 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, yangyongpeng@xiaomi.com,
- linux-f2fs-devel@lists.sourceforge.net
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+This patch introduces sbi->nr_pages[F2FS_SKIPPED_WRITE] to record any
+skipped write during data flush in f2fs_enable_checkpoint().
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+So in the loop of data flush, if there is any skipped write in previous
+flush, let's retry sync_inode_sb(), otherwise, all dirty data written
+before f2fs_enable_checkpoint() should have been persisted, then break
+the retry loop.
 
-On Fri,  9 Jan 2026 22:46:18 +0800 you wrote:
-> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
-> 
-> In the second call to f2fs_map_blocks within f2fs_read_data_large_folio,
-> map.m_len exceeds the logical address space to be read. This patch
-> ensures map.m_len does not exceed the required address space.
-> 
-> Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
-> 
-> [...]
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+Changelog:
+- code is based on 'Revert "f2fs: add timeout in f2fs_enable_checkpoint()"'
+ fs/f2fs/data.c  | 12 ++++++++++++
+ fs/f2fs/f2fs.h  |  2 ++
+ fs/f2fs/super.c | 37 +++++++++++++++++++++++++++++++++----
+ 3 files changed, 47 insertions(+), 4 deletions(-)
 
-Here is the summary with links:
-  - [f2fs-dev,1/1] f2fs: avoid unnecessary block mapping lookups in f2fs_read_data_large_folio
-    https://git.kernel.org/jaegeuk/f2fs/c/540d34c18272
-
-You are awesome, thank you!
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 5b4832956196..00108d5881aa 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3500,6 +3500,15 @@ static inline void account_writeback(struct inode *inode, bool inc)
+ 	f2fs_up_read(&F2FS_I(inode)->i_sem);
+ }
+ 
++static inline void update_skipped_write(struct f2fs_sb_info *sbi,
++						struct writeback_control *wbc)
++{
++	long skipped = wbc->pages_skipped;
++
++	if (skipped && is_sbi_flag_set(sbi, SBI_ENABLE_CHECKPOINT))
++		atomic_add(skipped, &sbi->nr_pages[F2FS_SKIPPED_WRITE]);
++}
++
+ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 						struct writeback_control *wbc,
+ 						enum iostat_type io_type)
+@@ -3564,10 +3573,13 @@ static int __f2fs_write_data_pages(struct address_space *mapping,
+ 	 */
+ 
+ 	f2fs_remove_dirty_inode(inode);
++
++	update_skipped_write(sbi, wbc);
+ 	return ret;
+ 
+ skip_write:
+ 	wbc->pages_skipped += get_dirty_pages(inode);
++	update_skipped_write(sbi, wbc);
+ 	trace_f2fs_writepages(mapping->host, wbc, DATA);
+ 	return 0;
+ }
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 035239758e33..52cec6b3ecf0 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1238,6 +1238,7 @@ enum count_type {
+ 	F2FS_RD_META,
+ 	F2FS_DIO_WRITE,
+ 	F2FS_DIO_READ,
++	F2FS_SKIPPED_WRITE,	/* skip or fail during f2fs_enable_checkpoint() */
+ 	NR_COUNT_TYPE,
+ };
+ 
+@@ -1476,6 +1477,7 @@ enum {
+ 	SBI_IS_RESIZEFS,			/* resizefs is in process */
+ 	SBI_IS_FREEZING,			/* freezefs is in process */
+ 	SBI_IS_WRITABLE,			/* remove ro mountoption transiently */
++	SBI_ENABLE_CHECKPOINT,			/* indicate it's during f2fs_enable_checkpoint() */
+ 	MAX_SBI_FLAG,
+ };
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 97c2264ec7fe..0afe9f829058 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2690,6 +2690,7 @@ static int f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
+ 	long long start, writeback, end;
+ 	int ret;
+ 	struct f2fs_lock_context lc;
++	long long skipped_write, dirty_data;
+ 
+ 	f2fs_info(sbi, "f2fs_enable_checkpoint() starts, meta: %lld, node: %lld, data: %lld",
+ 					get_pages(sbi, F2FS_DIRTY_META),
+@@ -2698,17 +2699,45 @@ static int f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
+ 
+ 	start = ktime_get();
+ 
++	set_sbi_flag(sbi, SBI_ENABLE_CHECKPOINT);
++
+ 	/* we should flush all the data to keep data consistency */
+ 	do {
++		skipped_write = get_pages(sbi, F2FS_SKIPPED_WRITE);
++		dirty_data = get_pages(sbi, F2FS_DIRTY_DATA);
++
+ 		sync_inodes_sb(sbi->sb);
+ 		f2fs_io_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
+-	} while (get_pages(sbi, F2FS_DIRTY_DATA) && retry--);
++
++		f2fs_info(sbi, "sync_inode_sb done, dirty_data: %lld, %lld, "
++				"skipped write: %lld, %lld, retry: %d",
++				get_pages(sbi, F2FS_DIRTY_DATA),
++				dirty_data,
++				get_pages(sbi, F2FS_SKIPPED_WRITE),
++				skipped_write, retry);
++
++		/*
++		 * sync_inodes_sb() has retry logic, so let's check dirty_data
++		 * in prior to skipped_write in case there is no dirty data.
++		 */
++		if (!get_pages(sbi, F2FS_DIRTY_DATA))
++			break;
++		if (get_pages(sbi, F2FS_SKIPPED_WRITE) == skipped_write)
++			break;
++	} while (retry--);
++
++	clear_sbi_flag(sbi, SBI_ENABLE_CHECKPOINT);
+ 
+ 	writeback = ktime_get();
+ 
+-	if (unlikely(get_pages(sbi, F2FS_DIRTY_DATA)))
+-		f2fs_warn(sbi, "checkpoint=enable has some unwritten data: %lld",
+-					get_pages(sbi, F2FS_DIRTY_DATA));
++	if (unlikely(get_pages(sbi, F2FS_DIRTY_DATA) ||
++			get_pages(sbi, F2FS_SKIPPED_WRITE)))
++		f2fs_warn(sbi, "checkpoint=enable unwritten data: %lld, skipped data: %lld, retry: %d",
++				get_pages(sbi, F2FS_DIRTY_DATA),
++				get_pages(sbi, F2FS_SKIPPED_WRITE), retry);
++
++	if (get_pages(sbi, F2FS_SKIPPED_WRITE))
++		atomic_set(&sbi->nr_pages[F2FS_SKIPPED_WRITE], 0);
+ 
+ 	f2fs_down_write_trace(&sbi->gc_lock, &lc);
+ 	f2fs_dirty_to_prefree(sbi);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.40.1
 
 
 
