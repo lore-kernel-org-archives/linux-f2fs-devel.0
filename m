@@ -4,36 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 34F7BC44536
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Jan 2026 14:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5FA17C44536
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Jan 2026 15:03:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=szsfdexsbm8glzSiaYAs57TMGgc/3AAGVh0rOY6A5Cs=; b=DUMiw4T9T1AkvHofeJs3NbjLWu
-	MZycKc702O6Y1mEqDfBxTty9WOPtclNdzMzwLhDh2Vr3IExqKXCBtsHGmTWN35ZJ70jmN/HJuSHJJ
-	5pVtOJFiXJPbPb5Gl5604Ouqz4J9SAnzon68OdBNj0CdCX1mN55bxgL8Q2j4EjAEKsps=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=qugyrCl4+q/A4vL754mEXs/maN5Y/ZQYTYN2MKitHNw=; b=dy7XYG/z0TylDV0Yt78UgXuE9C
+	0RRkiopOjySqsbyNfAOo1liruNuZcLwz8dYFGwA/AFeqJxv1KoLVImAic5tJabdaexWhAMABoAukh
+	0wu9odW4QJyC5Fz/q6wMmjDhIaOjIkBbM3W9wKv8wuk32N8F4fNJK0bjW9K7YX+a96Zg=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1viZV0-0004rg-IE;
-	Wed, 21 Jan 2026 14:47:58 +0000
+	id 1viZkA-0005I3-LM;
+	Wed, 21 Jan 2026 15:03:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <BATV+bcc91a9d4ebb8e7eb2a7+8186+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1viZUw-0004rM-89; Wed, 21 Jan 2026 14:47:54 +0000
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <hch@lst.de>) id 1viZk8-0005Hx-Mg
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 21 Jan 2026 15:03:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=edtMn02AVod+IBbJIVsMu3fhJTzD4OTVoerhqOtkeWk=; b=G2KTxqHYCohsIWG2KboWMwJMZD
- 6Yw5GGAnxpzQKRwSME6LeRSj+154gexFe1h5VjOFO9rr0q4/2CJ6o7nJOlAiCPQchlrfaDeZE+mys
- Ac1NtEHOUYLJqfEXu2ogH342efv+IaYS3YTEOOJ2N6nQPUjYYlxXD6Jrfre26XCUS8P4=;
+ bh=DqHAqIOo0KRqteg6PWKdenv5VYX2rGWJWrWdPtH1CUc=; b=B9E7DHV+qIX9PbMMuzXe0xQfp5
+ 3I1YHzDkzETVm/gxiPUXR2Mm1IptmeH5BZawCkIbmovF2qwe5SFj2KJw7hKCsQoyoAQ/G9s9sq2r8
+ 1OE+LnHis/V7ADEeeUaqwdSFYBgwQm0Z5mNCoVmaq6708odz2oIky5s/Jsh5sT2qRftQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -41,48 +42,36 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=edtMn02AVod+IBbJIVsMu3fhJTzD4OTVoerhqOtkeWk=; b=Lv9fe63oGJ9FIeueCdBzXDqCR7
- 4vYy4xWzzsOurBTehksSG88jK1pCE9VCIa88s3lnaheWJ2Hfy3cEBhqAB5sXk837+QY1zixBuqKiS
- U5ZO9aLi9AjKlxvRARIarVsOSLi/xG3sdKpAjzY6OO55xDqPfqMjz2XfSfoMmUJsN2h4=;
-Received: from bombadil.infradead.org ([198.137.202.133])
+ bh=DqHAqIOo0KRqteg6PWKdenv5VYX2rGWJWrWdPtH1CUc=; b=gvgDhasWIGBwU6whdKbA9AwdRn
+ TJ7g9L/hAHLu/M8R7Gkyq/U8uaiPrCnF/LEwV+ueSnLLtaqdYWmVSQJijilm57H+ilHIjr7s7Zen+
+ yJxNwyKoO21oKbw8OhN8f4d0RDbeWTs6KXQC8sc78txYEWcQJtOuoGEagDP74wvtvNls=;
+Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1viZUu-0002nT-Ln; Wed, 21 Jan 2026 14:47:54 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
- :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=edtMn02AVod+IBbJIVsMu3fhJTzD4OTVoerhqOtkeWk=; b=lyoZtqRMQf0KSh1E6771IlhF4T
- RrLjV0QALpxuAPKkekpZyZQzp1pko+bePRoZZJZ8ieyVV9svFucFsTJJihcCgY79/+Ga4AHQJAc9s
- 0HjxA2m6YspkhDbzNJ8FksqryID1wx0o/FHYrZbeQAZmuJVCMo088yeeWEO0vm0Tt9I/3s7710GOE
- h1vZyqOcZojbUC8ClviRx150cBwXx7bgs0Stvn7e/Y74KTKUQD3jGgHsXsJfr8QvEdBTO4/qnlaWf
- rvTpv2se5FecitDGJbn+/YyKGUb7cbrew+LBJmByxqOXDXj2JzWyvd5zyQm4Qr4kt6qFg51hdkrIL
- K1f5k5Dw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red
- Hat Linux)) id 1viZUG-00000005dMj-1Wd9;
- Wed, 21 Jan 2026 14:47:12 +0000
-Date: Wed, 21 Jan 2026 06:47:12 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Jeff Layton <jlayton@kernel.org>
-Message-ID: <aXDm8FPPOHs04w9m@infradead.org>
-References: <176877859306.16766.15009835437490907207@noble.neil.brown.name>
- <aW3SAKIr_QsnEE5Q@infradead.org>
- <176880736225.16766.4203157325432990313@noble.neil.brown.name>
- <20260119-kanufahren-meerjungfrau-775048806544@brauner>
- <176885553525.16766.291581709413217562@noble.neil.brown.name>
- <aW8w2SRyFnmA2uqk@infradead.org>
- <176890126683.16766.5241619788613840985@noble.neil.brown.name>
- <aXCg-MqXH0E6IuwS@infradead.org>
- <176899164457.16766.16099772451425825775@noble.neil.brown.name>
- <364d2fd98af52a2e2c32ca286decbdc1fe1c80d3.camel@kernel.org>
+ id 1viZk8-0003nf-2a for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 21 Jan 2026 15:03:36 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id 5C378227AB0; Wed, 21 Jan 2026 16:03:21 +0100 (CET)
+Date: Wed, 21 Jan 2026 16:03:20 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Message-ID: <20260121150320.GA14702@lst.de>
+References: <op5poqkjoachiv2qfwizunoeg7h6w5x2rxdvbs4vhryr3aywbt@cul2yevayijl>
+ <aWci_1Uu5XndYNkG@casper.infradead.org>
+ <20260114061536.GG15551@frogsfrogsfrogs>
+ <5z5r6jizgxqz5axvzwbdmtkadehgdf7semqy2oxsfytmzzu6ik@zfvhexcp3fz2>
+ <6r24wj3o3gctl3vz4n3tdrfjx5ftkybdjmmye2hejdcdl6qseh@c2yvpd5d4ocf>
+ <20260119063349.GA643@lst.de> <20260119193242.GB13800@sol>
+ <20260119195816.GA15583@frogsfrogsfrogs> <20260120073218.GA6757@lst.de>
+ <5tse47xskuaofuworccgwhyftyymx5xj3mc6opwz7nfxa225u6@uvbk4gc2rktd>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <364d2fd98af52a2e2c32ca286decbdc1fe1c80d3.camel@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1viZUu-0002nT-Ln
-Subject: Re: [f2fs-dev] [PATCH 00/29] fs: require filesystems to explicitly
- opt-in to nfsd export support
+In-Reply-To: <5tse47xskuaofuworccgwhyftyymx5xj3mc6opwz7nfxa225u6@uvbk4gc2rktd>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1viZk8-0003nf-2a
+Subject: Re: [f2fs-dev] fsverity metadata offset,
+ was: Re: [PATCH v2 0/23] fs-verity support for XFS with post EOF
+ merkle tree
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,95 +83,33 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Martin Brandenburg <martin@omnibond.com>,
- jfs-discussion@lists.sourceforge.net, Jan Kara <jack@suse.cz>,
- Paulo Alcantara <pc@manguebit.org>, Alex Markuze <amarkuze@redhat.com>,
- Sandeep Dhavale <dhavale@google.com>, linux-btrfs@vger.kernel.org,
- Carlos Maiolino <cem@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
- linux-unionfs@vger.kernel.org,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
- Chris Mason <clm@fb.com>, Andreas Dilger <adilger.kernel@dilger.ca>,
- Chunhai Guo <guochunhai@vivo.com>, Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- linux-mtd@lists.infradead.org, Mike Marshall <hubcap@omnibond.com>,
- linux-xfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
- Yue Hu <zbestahu@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>,
- Richard Weinberger <richard@nod.at>, Mark Fasheh <mark@fasheh.com>,
- Hugh Dickins <hughd@google.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Ryusuke Konishi <konishi.ryusuke@gmail.com>,
- Christoph Hellwig <hch@infradead.org>, Viacheslav Dubeyko <slava@dubeyko.com>,
- NeilBrown <neil@brown.name>, Gao Xiang <xiang@kernel.org>,
- linux-ext4@vger.kernel.org, Salah Triki <salah.triki@gmail.com>,
- linux-mm@kvack.org, devel@lists.orangefs.org,
- Shyam Prasad N <sprasad@microsoft.com>,
- Olga Kornievskaia <okorniev@redhat.com>, linux-cifs@vger.kernel.org,
- Dave Kleikamp <shaggy@kernel.org>, linux-nfs@vger.kernel.org,
- Tom Talpey <tom@talpey.com>, ocfs2-devel@lists.linux.dev,
- Bharath SM <bharathsm@microsoft.com>, David Sterba <dsterba@suse.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Jeffle Xu <jefflexu@linux.alibaba.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- ceph-devel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
- OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
- Andreas Gruenbacher <agruenba@redhat.com>, gfs2@lists.linux.dev,
- Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
- Luis de Bethencourt <luisbg@kernel.org>,
- Joseph Qi <joseph.qi@linux.alibaba.com>, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- Steve French <sfrench@samba.org>, Chuck Lever <chuck.lever@oracle.com>,
- Hongbo Li <lihongbo22@huawei.com>, Anna Schumaker <anna@kernel.org>,
- Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org,
- Phillip Lougher <phillip@squashfs.org.uk>,
- Andrew Morton <akpm@linux-foundation.org>, ntfs3@lists.linux.dev,
- David Woodhouse <dwmw2@infradead.org>, Trond Myklebust <trondmy@kernel.org>,
- Joel Becker <jlbec@evilplan.org>
+Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org, aalbersh@kernel.org,
+ "Darrick J. Wong" <djwong@kernel.org>, david@fromorbit.com,
+ Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net,
+ Eric Biggers <ebiggers@kernel.org>, jaegeuk@kernel.org,
+ linux-fsdevel@vger.kernel.org, tytso@mit.edu, linux-ext4@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Jan 21, 2026 at 09:27:38AM -0500, Jeff Layton wrote:
-> Using your definitions, stability is not a problem for Linux
-> filesystems. The filehandles generally don't change after they have
-> been established.
-
-fat seems to be an exception as far as the 'real' file systems go.
-And it did sound to me like some of the synthetic ones had similar
-issues.
-
-> > We'll still need a stable handles flag, and expose it to userspace
-> > to avoid applications being tricked into using broken non-stable
-> > file handles.  We should have caught that when they were added, but
-> > didn't unfortunately.
+On Tue, Jan 20, 2026 at 12:44:19PM +0100, Andrey Albershteyn wrote:
+> > > I'd leave the ondisk offset as-is, but change the pagecache offset to
+> > > roundup(i_size_read(), mapping_max_folio_size_supported()) just to keep
+> > > file data and fsverity metadata completely separate.
 > > 
+> > Can we find a way to do that in common code and make ext4 and f2fs do
+> > the same?
 > 
-> If we assume he meant "unique handles" flag, then I think we're all
-> mostly in agreement here.  As far as this patchset goes: what if we
-> were to just rename EXPORT_OP_STABLE_HANDLES to
-> EXPORT_OP_UNIQUE_HANDLES (and clean up the documentation), since that's
-> the main issue for existing filesystems. It would be fairly simple to
-> advertise handle uniqueness using statx or something.
-
-Unique seems to also only capture part of it, but I could absolutely
-live with it, if the documentation includes all aspecs.  But maybe
-use persistent as in the nfs spec?
-
+> hmm I don't see what else we could do except providing common offset
+> and then use it to map blocks
 > 
-> Alternately, instead of denying access to these filesystems, we could
-> just fix these filesystems to create unique handles (a'la random
-> i_generation value or something similar). That should mostly prevent
-> filehandles from being reusable across a reboot on these filesystems.
+> loff_t fsverity_metadata_offset(struct inode *inode)
+> {
+> 	return roundup(i_size_read(), mapping_max_folio_size_supported());
+> }
 
-Do we even want to provide access to them?
-
-> That would leave cgroupfs and the like exportable via nfsd, but as you
-> point out, we can't deny export by userland servers. If people want to
-> do this kind of crazy stuff, maybe we shouldn't deny them after all.
-
-I think Amirs patch would take care of that.  Although userland nfs
-servers or other storage applications using the handle syscalls would
-still see them.  Then again fixing the problem that some handles
-did not fulfill the long standing (but not documented well enough)
-semantics probably is a good fix on it's own.
-
+Something like that, yes.
 
 
 _______________________________________________
