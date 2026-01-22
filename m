@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 66516D6CFAE
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 69F33D6CFAC
 	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jan 2026 23:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,70 +12,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=YUeVFZyUhKP93NBNGoQs5zBZujcLdGjHB1AEL9cotCQ=; b=S88f2HsP53P9LMq3iZjvOcyb5z
-	ZqPXT+doavDiBAmyDHM4OR4BQAj5WTGN9wajT7IBkn7a4WWfKkHMkk94fPd8+CW1joml5BKG2JKQ7
-	8z23g6KoB0AJj3DaplIqZAKcn0YIQ6tcnoka37t0CEYCam7HHk3DMv5K1F//k9CwkJbM=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=OMF8ZOknlPPm1f9Jv/mmN0nlLRIKadruF2h4VAuSCAg=; b=Q8n5MpTc7xmATYsYyww86rf3Rl
+	bpnMly2sM9iKURXDAV6wzHSzdYOzAbr7iXakWxxAxcunSfIL0ghAr7F+9LKNEuEnpUYnzkTyhM2o1
+	kcEM/LfJqz6rpPO1INotv7Yfbvd+V5outdlsjQwWiBr2i12OV+AKRv7nM9UvEAHh+aPE=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vj4RZ-0006dy-N9;
+	id 1vj4Ra-0004MY-Bz;
 	Thu, 22 Jan 2026 23:50:30 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vj4RX-0006dg-6A
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vj4RY-0004MQ-Cy
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Jan 2026 23:50:27 +0000
+ Thu, 22 Jan 2026 23:50:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8TUGt/MOmVMr3tT8gf5MUD2OgQAb4rYOSsLGgthArws=; b=NJD+SdMZv7LC9BwlmcC4Z4xDX5
- ooDHYineXEeKiuvmI7DhuKYWz2gSxcKTfxtph1spV35A2+UvdCvDljCvqN23SAmP8gNeTz4ZR4DMG
- IPY7KJ0ycs4n6ElDravFIY0jDGKyRz1Xom7NDQymn2mTpuC2PFPrQalu+BSqRB3LbpnU=;
+ bh=D1O2GT78jTw2YZM5838PUJyGMQFAG8DE0J1zP2eejVE=; b=e26j5F9IzMXzatW9dcTh8IjJoC
+ 3Oql2aBTkhqWUFpZRMArxMtW15TT72f+h3rZnobfhxMzoIAH3wUGzSbLmmocWUny6UFV04IaXgAYI
+ k5FzWbXpBIoHM41Ghf8m6NlETYguxEJVlLMcXZ8Lrrupz3pOoGT/0ZNa6Ojn6ZFgUKGU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8TUGt/MOmVMr3tT8gf5MUD2OgQAb4rYOSsLGgthArws=; b=Di7udSsbh+InL90nP7nVGclM8l
- mYBE/5GnLEZi+XPTmY4djEpErRsAPAWfqCCr0nTkITuhU0kFpZtrbZMlZldovyEXQWEMdBA9k4ch+
- gELZTHN4DFY0t7dYHGFR50a2WE/BloLgVnCUnVE1e5jSCUB1IxShmjfXS3qUj+H6AIT0=;
+ bh=D1O2GT78jTw2YZM5838PUJyGMQFAG8DE0J1zP2eejVE=; b=F39zEjELhptvy9UatvduNfdP5P
+ +EkgHmUoa1ozlL+hDvW9zPUmT5OM/9/Z062bNL/4zd7G9485Q398AO+5jpdZvN4r4v4L03/SP8E9H
+ +H+g+TaJV0+YZgZrFwl9aNsRx8jjqlQMs0tSLaAxw2K1jmIHvKZnfcLm90gZyNYpzTpA=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vj4RX-0002OT-EZ for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Jan 2026 23:50:27 +0000
+ id 1vj4RX-0002OW-UX for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Jan 2026 23:50:28 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 2E125441AC;
+ by sea.source.kernel.org (Postfix) with ESMTP id A6A67441C7
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Thu, 22 Jan 2026 23:50:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E3D1C19422;
- Thu, 22 Jan 2026 23:50:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8645AC116C6;
+ Thu, 22 Jan 2026 23:50:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1769125817;
- bh=6OE6Ww7+2UMU0iZ0CAX3nCx+uV71bBWFiDE5grYXTOk=;
+ bh=CAEx1/tU1p3QPCcLmY51oA40SXigHmEJztLwJNpE/1Q=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=P08BPOS0TbMVOS9fUIS7lvhqPW7qryhCVX5w11CHwPdF3nbu5jLkjmGSlURLn4ciy
- 2e0OEQEUqOi2Z8sz1rqLa63zIZHzv9bc7my9R67gtTfXvwqAIsVj+oxHr1QOzfaDiC
- tZJ0I6IkT+DOfioRSQhGYR2LGTpVYeEU/iN4QY3Vcb1NazqfZmeEVfLU/mPGzuWt7d
- TlTf4tOcfuXzbW034KH6cyLEDL1knKhCRV9Zvs4Rp6J6TgPcgf2icUATfaKDMbKBrC
- JOUdnCcoq7lrf5CMWufVo0LQqa6qetuc54N+FdoyyT+j4+yoEaxW1E5QWv4qnJEqA0
- K9VxsUvkBP0bw==
+ b=ZU9X2NHqQHqdZwudt2MKAgh+9qkgRbDw66PrlfJZPwzC9KqVsFSjiQbSGQ8EiS1Lq
+ hoVZhtzN7WF3glQfskZqbKGlviHCzg4hXNaxuXDGHmkgR4JH/VAxobIWTjklLlR/q2
+ 0rsa2Wgx717Rq7IDYF8H1XIjleRlURqsWVCfAdp64ZxJBXLTiB0Wau7mLj5ht4q1AS
+ K1FLDLWM5FFuguLvXe44rXjq1rbmiWH40pJNIjqTEE+IeK886BlXVCISVsU+Gu4cUZ
+ fhBK9MlfKkEuHJOCObg4Y5naIvsWfoKfLu3qidllB43FJQ7bLGcQkj/ZJqmXv0OBWi
+ OHVY08E6sVlQw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 8BC043808200; Thu, 22 Jan 2026 23:50:13 +0000 (UTC)
+ 1199F3808200; Thu, 22 Jan 2026 23:50:15 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176912581209.2327822.12820994301258979374.git-patchwork-notify@kernel.org>
-Date: Thu, 22 Jan 2026 23:50:12 +0000
-References: <20260115164749.11900-2-monty_pavel@sina.com>
-In-Reply-To: <20260115164749.11900-2-monty_pavel@sina.com>
-To: Yongpeng Yang <monty_pavel@sina.com>
-X-Headers-End: 1vj4RX-0002OT-EZ
-Subject: Re: [f2fs-dev] [PATCH] f2fs: pin files do not require
- sbi->writepages lock for ordering
+Message-Id: <176912581360.2327822.2144189384240699728.git-patchwork-notify@kernel.org>
+Date: Thu, 22 Jan 2026 23:50:13 +0000
+References: <20260120091826.63308-1-chao@kernel.org>
+In-Reply-To: <20260120091826.63308-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1vj4RX-0002OW-UX
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to show simulate_lock_timeout
+ correctly
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,7 +91,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, yangyongpeng@xiaomi.com,
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -101,20 +102,20 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Fri, 16 Jan 2026 00:47:50 +0800 you wrote:
-> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
+On Tue, 20 Jan 2026 17:18:26 +0800 you wrote:
+> Commit d36de29f4bb5 ("f2fs: sysfs: introduce inject_lock_timeout")
+> introduces a bug as below, fix it.
 > 
-> For pinned files, the file mapping is already established before
-> writing, and since the writes are in IPU, there is no need to acquire
-> the sbi->writepages lock to guarantee write ordering.
+> cat /sys/fs/f2fs/vdx/inject_lock_timeout
+> s/fs/f2fs/vdx/inject_lock_timeout: Invalid argument
 > 
-> Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: pin files do not require sbi->writepages lock for ordering
-    https://git.kernel.org/jaegeuk/f2fs/c/9612a4224830
+  - [f2fs-dev] f2fs: fix to show simulate_lock_timeout correctly
+    https://git.kernel.org/jaegeuk/f2fs/c/9af7dbef9890
 
 You are awesome, thank you!
 -- 
