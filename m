@@ -4,81 +4,128 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 20399C44500
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jan 2026 09:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D08F3C44500
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jan 2026 09:23:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=JFJmneDPGfJD9Shs2LCUX0h0YGf+/4lw+guw7fVpZ78=; b=BEHUPLKQxS+QvYHNidyMeqDjY6
-	3kmtcfEqNXAMV6YMx2bq281SAxBDQCJvCBinkHvv6oe9kBpA4j6RuU1WeNqPx1OPe1VvM7MHmJcOa
-	e6g5M1s3DmWHI0yZpZmQLPC8t0Y2gMmm/yO677QSN+Y0j3smreDMSNpfCTOhYcMzY/2E=;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=FiAYtvoWIazlpIB4HprvQalm+1m1bng1Xojc0DnnXd8=; b=jjutpvVDiHDaor4yYwOwf+6vdI
+	/mxjIwRBqk9SCZ0qEYQ7hHuyELpBuKCCsG4SoSbbuKuu+ZtyP5MwAHak1cw/qRAVNmSN1RlHXo6Pw
+	hBZppIwW9ykXi4PEXQEer5T13WYMzdDBnBRWT3Cn5Q+gcK81A4eKzp/wcnEB1+SnyZxM=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1viqmU-0007Rw-My;
-	Thu, 22 Jan 2026 09:15:10 +0000
+	id 1viquM-0007jW-Gf;
+	Thu, 22 Jan 2026 09:23:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1viqmT-0007Rk-Am
+ (envelope-from <jack@suse.cz>) id 1viquL-0007jO-7i
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Jan 2026 09:15:09 +0000
+ Thu, 22 Jan 2026 09:23:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7E1xJQFD4EYREd+a/0p9tf2ng+GJL0LIGQSO3LefWKg=; b=hUXJbu5VJxs0UM8GDzpP5rgWdR
- eAjDOlM1RbmNlfiPt+X/kqig92Q6VNSt0UVKFPlyH4Ws/Clw/lIrYTsKg2BGQEtxbrCKqmxi4R3SY
- PxNt1qm02kCAYG79a1O8PEHQoSetFv/HySti3FqxfJjUyiRdsY4vrFvvHKVPZfRhRNqg=;
+ bh=mU2Ks98F5J+AbPp8AUVSHb8mtwCciz++x0FIFFNKyxI=; b=lDwfu6YHOk/LQUTSVBdlSHAVDZ
+ 3Z9rslvtmNek1MBgVN7SqPCqiW5mqxOXpG+b3DeldO3ZDkGAC8auNdXOKd3YIxfT6GJ001idIRZqk
+ 6lGynFVFuA2hq4XqPksebJR2H+PWNXCijbHYjwR3dO0uBEspehHvZGofYzuFpfIl4GQY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=7E1xJQFD4EYREd+a/0p9tf2ng+GJL0LIGQSO3LefWKg=; b=MeQicx4qi/szlrBvajR+8z348F
- m5esa8k4D8m0rRcOBTVDE4d2A49UPn6r+V6JA28BBs52YtGOcu8+TjE5D8Tk3LnYBZeWpSbdEd27x
- /2Wj3M7ssA6gZ+lh6nR4wKXwQoelIQIS+qeiNrG7irdTzzrylLljfzAvkTCcDt2L/M9M=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=mU2Ks98F5J+AbPp8AUVSHb8mtwCciz++x0FIFFNKyxI=; b=mOcit9ymsLahmZOyXrUlgljZvr
+ 6YpulvK+N0xf+7AckHgnzfNjgm81gUFcM7o12lxRcnyyVSeyg61CUYUz6svxau+HU6SHOeVDg6GcD
+ rUPOJgRdpyU9P0lB+P088CWkJ+1anKjIa5crk8EVjZawUA07SD8+a14WORdZYyghX2MY=;
+Received: from smtp-out2.suse.de ([195.135.223.131])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1viqmS-0001gW-P7 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Jan 2026 09:15:09 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 1CEC7600C3;
- Thu, 22 Jan 2026 09:14:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F291C116C6;
- Thu, 22 Jan 2026 09:14:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769073297;
- bh=T8TOFgL9MIZVQG0T6OPEUQBPv/7tT5KWjY+sBkrwtHg=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=iq0J8pKZEIaHMJwc0I/0ugsJdup+WNFxKYPUyG8mUcYopDQW3Gjo8V6kJx0ecInpv
- VZM0cnHKbj490qC6VgncdeHnRATSzJGrU6HizEUsmaBiGyV5NivEg9KVFHRv5PJ4VE
- NMJ3sXgzAGCXU5I2mEKX9KQd6hDyoH5bklAeZ96lW/bCSShlCFlTbLaMB34uTJjrMN
- uoj5jYlUNTQk1Kua13qhCPDVJGl/p9N2FGYxT+SlZY0cFfMhJBkqxqaYyqm/8zisQo
- I4Ph+F7u4bvIZpn0FtYbKO58ffZanIKU0fns/2xA1y5me36XT1PylJYtLw2oC1NDwE
- juRv/tSEWEFhw==
-Message-ID: <8a00c027-d14d-44c8-9105-b385fabb37f2@kernel.org>
-Date: Thu, 22 Jan 2026 17:15:00 +0800
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1viquK-0002Ab-G6 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Jan 2026 09:23:17 +0000
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 2788E5BD13;
+ Thu, 22 Jan 2026 09:23:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+ t=1769073785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=mU2Ks98F5J+AbPp8AUVSHb8mtwCciz++x0FIFFNKyxI=;
+ b=xCFSu/Zpyn+/2VG1Gp9/FliKrefPraGT574m11SLEJCk2gTW92CCpasEPDaGdxCE6eUKD2
+ gWz94q7otNJHJ9lfk7lgxrUWZiyQOB521V47RJYpOaB3t0BK1qVLOsdNj1Oda81HiRhrFs
+ QoX8L+Nx65Fwj9PqeF9tvwAM8YpO/Cs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+ s=susede2_ed25519; t=1769073785;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=mU2Ks98F5J+AbPp8AUVSHb8mtwCciz++x0FIFFNKyxI=;
+ b=uAi3BOKd2uuFDcGW4kLYdDgozzz8l0JN8Hj8gGcCTdq5Pln5nu0eiERtI16C33dFYiFhe0
+ zJZQKSTMfH8UuzCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+ t=1769073785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=mU2Ks98F5J+AbPp8AUVSHb8mtwCciz++x0FIFFNKyxI=;
+ b=xCFSu/Zpyn+/2VG1Gp9/FliKrefPraGT574m11SLEJCk2gTW92CCpasEPDaGdxCE6eUKD2
+ gWz94q7otNJHJ9lfk7lgxrUWZiyQOB521V47RJYpOaB3t0BK1qVLOsdNj1Oda81HiRhrFs
+ QoX8L+Nx65Fwj9PqeF9tvwAM8YpO/Cs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+ s=susede2_ed25519; t=1769073785;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=mU2Ks98F5J+AbPp8AUVSHb8mtwCciz++x0FIFFNKyxI=;
+ b=uAi3BOKd2uuFDcGW4kLYdDgozzz8l0JN8Hj8gGcCTdq5Pln5nu0eiERtI16C33dFYiFhe0
+ zJZQKSTMfH8UuzCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8C4BF13930;
+ Thu, 22 Jan 2026 09:23:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+ by imap1.dmz-prg2.suse.org with ESMTPSA id DoA7InjscWnkEAAAD6G6ig
+ (envelope-from <jack@suse.cz>); Thu, 22 Jan 2026 09:23:04 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+ id AA13CA082E; Thu, 22 Jan 2026 10:15:12 +0100 (CET)
+Date: Thu, 22 Jan 2026 10:15:12 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@lst.de>
+Message-ID: <izxwgrpegtwftqsuhv5pdodwttqsdyvzvfom3fj75msdxhjdul@yl7z3inr6fvr>
+References: <20260122082214.452153-1-hch@lst.de>
+ <20260122082214.452153-3-hch@lst.de>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Yeongjin Gil <youngjin.gil@samsung.com>, jaegeuk@kernel.org,
- jyh429@gmail.com, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-References: <CGME20260116102347epcas1p46ed8360e1a69831f382dcf9d9ee486b0@epcas1p4.samsung.com>
- <20260116102346.992546-1-youngjin.gil@samsung.com>
-Content-Language: en-US
-In-Reply-To: <20260116102346.992546-1-youngjin.gil@samsung.com>
-X-Headers-End: 1viqmS-0001gW-P7
-Subject: Re: [f2fs-dev] [PATCH RESEND] f2fs: optimize f2fs_overwrite_io()
- for f2fs_iomap_begin
+Content-Disposition: inline
+In-Reply-To: <20260122082214.452153-3-hch@lst.de>
+X-Spamd-Result: default: False [-3.80 / 50.00]; BAYES_HAM(-3.00)[100.00%];
+ NEURAL_HAM_LONG(-1.00)[-1.000]; MID_RHS_NOT_FQDN(0.50)[];
+ NEURAL_HAM_SHORT(-0.20)[-0.999]; MIME_GOOD(-0.10)[text/plain];
+ MISSING_XM_UA(0.00)[]; FROM_HAS_DN(0.00)[];
+ MIME_TRACE(0.00)[0:+]; ARC_NA(0.00)[];
+ RCPT_COUNT_TWELVE(0.00)[16]; RCVD_VIA_SMTP_AUTH(0.00)[];
+ RCVD_COUNT_THREE(0.00)[3]; TO_DN_SOME(0.00)[];
+ FROM_EQ_ENVFROM(0.00)[]; FUZZY_RATELIMITED(0.00)[rspamd.com];
+ TO_MATCH_ENVRCPT_ALL(0.00)[];
+ DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+ RCVD_TLS_LAST(0.00)[];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email, imap1.dmz-prg2.suse.org:helo,
+ lst.de:email, suse.com:email]
+X-Headers-End: 1viquK-0002Ab-G6
+Subject: Re: [f2fs-dev] [PATCH 02/11] fs,
+ fsverity: clear out fsverity_info from common code
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,80 +137,200 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: Sungjong Seo <sj1557.seo@samsung.com>
+Cc: fsverity@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, Andrey Albershteyn <aalbersh@redhat.com>,
+ "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
+ linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, David Sterba <dsterba@suse.com>,
+ Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+ linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 1/16/2026 6:23 PM, Yeongjin Gil wrote:
-> When overwriting already allocated blocks, f2fs_iomap_begin() calls
-> f2fs_overwrite_io() to check block mappings. However,
-> f2fs_overwrite_io() iterates through all mapped blocks in the range,
-> which can be inefficient for fragmented files with large I/O requests.
+On Thu 22-01-26 09:21:58, Christoph Hellwig wrote:
+> Directly remove the fsverity_info from the hash and free it from
+> clear_inode instead of requiring file systems to handle it.
 > 
-> This patch optimizes f2fs_overwrite_io() by adding a 'check_first'
-> parameter and introducing __f2fs_overwrite_io() helper. When called from
-> f2fs_iomap_begin(), we only check the first mapping to determine if the
-> range is already allocated, which is sufficient for setting
-> map.m_may_create.
-> 
-> This optimization significantly reduces the number of f2fs_map_blocks()
-> calls in f2fs_overwrite_io() when called from f2fs_iomap_begin(),
-> especially for fragmented files with large I/O requests.
-> 
-> Fixes: 351bc761338d ("f2fs: optimize f2fs DIO overwrites")
-> Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
-> Reviewed-by: Sunmin Jeong <s_min.jeong@samsung.com>
-> Signed-off-by: Yeongjin Gil <youngjin.gil@samsung.com>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Looks good to me. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->   fs/f2fs/data.c | 10 ++++++++--
->   1 file changed, 8 insertions(+), 2 deletions(-)
+>  fs/btrfs/inode.c         | 10 +++-------
+>  fs/ext4/super.c          |  1 -
+>  fs/f2fs/inode.c          |  1 -
+>  fs/inode.c               |  9 +++++++++
+>  fs/verity/open.c         |  3 +--
+>  include/linux/fsverity.h | 26 ++------------------------
+>  6 files changed, 15 insertions(+), 35 deletions(-)
 > 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 2e133a723b99..bfbd717e628a 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1851,7 +1851,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
->   	return err;
->   }
->   
-> -bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
-> +static bool __f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len,
-> +				bool check_first)
-
-Yeongjin,
-
-You may missed to add logic related to check_first parameter?
-
-Thanks,
-
->   {
->   	struct f2fs_map_blocks map;
->   	block_t last_lblk;
-> @@ -1877,6 +1878,11 @@ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
->   	return true;
->   }
->   
-> +bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
-> +{
-> +	return __f2fs_overwrite_io(inode, pos, len, false);
-> +}
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index a2b5b440637e..67c64efc5099 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -34,7 +34,6 @@
+>  #include <linux/sched/mm.h>
+>  #include <linux/iomap.h>
+>  #include <linux/unaligned.h>
+> -#include <linux/fsverity.h>
+>  #include "misc.h"
+>  #include "ctree.h"
+>  #include "disk-io.h"
+> @@ -5571,11 +5570,8 @@ void btrfs_evict_inode(struct inode *inode)
+>  
+>  	trace_btrfs_inode_evict(inode);
+>  
+> -	if (!root) {
+> -		fsverity_cleanup_inode(inode);
+> -		clear_inode(inode);
+> -		return;
+> -	}
+> +	if (!root)
+> +		goto clear_inode;
+>  
+>  	fs_info = inode_to_fs_info(inode);
+>  	evict_inode_truncate_pages(inode);
+> @@ -5675,7 +5671,7 @@ void btrfs_evict_inode(struct inode *inode)
+>  	 * to retry these periodically in the future.
+>  	 */
+>  	btrfs_remove_delayed_node(BTRFS_I(inode));
+> -	fsverity_cleanup_inode(inode);
+> +clear_inode:
+>  	clear_inode(inode);
+>  }
+>  
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 87205660c5d0..86131f4d8718 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -1527,7 +1527,6 @@ void ext4_clear_inode(struct inode *inode)
+>  		EXT4_I(inode)->jinode = NULL;
+>  	}
+>  	fscrypt_put_encryption_info(inode);
+> -	fsverity_cleanup_inode(inode);
+>  }
+>  
+>  static struct inode *ext4_nfs_get_inode(struct super_block *sb,
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 38b8994bc1b2..ee332b994348 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -1000,7 +1000,6 @@ void f2fs_evict_inode(struct inode *inode)
+>  	}
+>  out_clear:
+>  	fscrypt_put_encryption_info(inode);
+> -	fsverity_cleanup_inode(inode);
+>  	clear_inode(inode);
+>  }
+>  
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 379f4c19845c..38dbdfbb09ba 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/cdev.h>
+>  #include <linux/memblock.h>
+>  #include <linux/fsnotify.h>
+> +#include <linux/fsverity.h>
+>  #include <linux/mount.h>
+>  #include <linux/posix_acl.h>
+>  #include <linux/buffer_head.h> /* for inode_has_buffers */
+> @@ -773,6 +774,14 @@ void dump_mapping(const struct address_space *mapping)
+>  
+>  void clear_inode(struct inode *inode)
+>  {
+> +	/*
+> +	 * Only IS_VERITY() inodes can have verity info, so start by checking
+> +	 * for IS_VERITY() (which is faster than retrieving the pointer to the
+> +	 * verity info).  This minimizes overhead for non-verity inodes.
+> +	 */
+> +	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
+> +		fsverity_cleanup_inode(inode);
 > +
->   static int f2fs_xattr_fiemap(struct inode *inode,
->   				struct fiemap_extent_info *fieinfo)
->   {
-> @@ -4443,7 +4449,7 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->   	 * f2fs_map_lock and f2fs_balance_fs are not necessary.
->   	 */
->   	if ((flags & IOMAP_WRITE) &&
-> -		!f2fs_overwrite_io(inode, offset, length))
-> +		!__f2fs_overwrite_io(inode, offset, length, true))
->   		map.m_may_create = true;
->   
->   	err = f2fs_map_blocks(inode, &map, F2FS_GET_BLOCK_DIO);
-
+>  	/*
+>  	 * We have to cycle the i_pages lock here because reclaim can be in the
+>  	 * process of removing the last page (in __filemap_remove_folio())
+> diff --git a/fs/verity/open.c b/fs/verity/open.c
+> index 2aa5eae5a540..090cb77326ee 100644
+> --- a/fs/verity/open.c
+> +++ b/fs/verity/open.c
+> @@ -384,14 +384,13 @@ int __fsverity_file_open(struct inode *inode, struct file *filp)
+>  }
+>  EXPORT_SYMBOL_GPL(__fsverity_file_open);
+>  
+> -void __fsverity_cleanup_inode(struct inode *inode)
+> +void fsverity_cleanup_inode(struct inode *inode)
+>  {
+>  	struct fsverity_info **vi_addr = fsverity_info_addr(inode);
+>  
+>  	fsverity_free_info(*vi_addr);
+>  	*vi_addr = NULL;
+>  }
+> -EXPORT_SYMBOL_GPL(__fsverity_cleanup_inode);
+>  
+>  void __init fsverity_init_info_cache(void)
+>  {
+> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+> index 86fb1708676b..ea1ed2e6c2f9 100644
+> --- a/include/linux/fsverity.h
+> +++ b/include/linux/fsverity.h
+> @@ -179,26 +179,6 @@ int fsverity_get_digest(struct inode *inode,
+>  /* open.c */
+>  
+>  int __fsverity_file_open(struct inode *inode, struct file *filp);
+> -void __fsverity_cleanup_inode(struct inode *inode);
+> -
+> -/**
+> - * fsverity_cleanup_inode() - free the inode's verity info, if present
+> - * @inode: an inode being evicted
+> - *
+> - * Filesystems must call this on inode eviction to free the inode's verity info.
+> - */
+> -static inline void fsverity_cleanup_inode(struct inode *inode)
+> -{
+> -	/*
+> -	 * Only IS_VERITY() inodes can have verity info, so start by checking
+> -	 * for IS_VERITY() (which is faster than retrieving the pointer to the
+> -	 * verity info).  This minimizes overhead for non-verity inodes.
+> -	 */
+> -	if (IS_VERITY(inode))
+> -		__fsverity_cleanup_inode(inode);
+> -	else
+> -		VFS_WARN_ON_ONCE(*fsverity_info_addr(inode) != NULL);
+> -}
+>  
+>  /* read_metadata.c */
+>  
+> @@ -250,10 +230,6 @@ static inline int __fsverity_file_open(struct inode *inode, struct file *filp)
+>  	return -EOPNOTSUPP;
+>  }
+>  
+> -static inline void fsverity_cleanup_inode(struct inode *inode)
+> -{
+> -}
+> -
+>  /* read_metadata.c */
+>  
+>  static inline int fsverity_ioctl_read_metadata(struct file *filp,
+> @@ -331,4 +307,6 @@ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
+>  	return 0;
+>  }
+>  
+> +void fsverity_cleanup_inode(struct inode *inode);
+> +
+>  #endif	/* _LINUX_FSVERITY_H */
+> -- 
+> 2.47.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
 
 _______________________________________________
