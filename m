@@ -4,79 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DD85ED6CFAB
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jan 2026 23:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 03072D6CFAB
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jan 2026 23:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=lFV366ppb2vXCSLW3zQu+rIEwyLZbua2SiiffexZ30Y=; b=hkvXk7BAtowdXhugB7ZrH7KGs8
-	eEYXkP/Ns0zhYLW3hYI4r+64mtsnJRV8NdbWlKUlyY5W0FBH+rFYGcEF7+tj0s42rAwRvKjoe7jgt
-	kqaMv5bntl1HssT+Kwz93HBmkZlHSCaoYjTS8c4mHIvLfVKeTQW6MczlX720RIcmvzlQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=bVFBJk2pt8E4pppmcUB/5Sk795BAWVAvwBuNir+7ojg=; b=ZpXaHhy+rUUn9bMcOANTm5kxX7
+	VpFyXZPTOfQOlP7N7+pr0R7gj+J/Lc0OcnXUXjssKXPYFEUbOebaodsXtEf+znCYp9H2kM1+eZ2iT
+	NrYDBqT4ls6LI6vwicF78ydW5uzamxryzlezkbvPVf56RggkhZ2BBFV8esRA6EKsvjoU=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vj4RW-0000pj-J3;
-	Thu, 22 Jan 2026 23:50:26 +0000
+	id 1vj4Rb-0002WE-KH;
+	Thu, 22 Jan 2026 23:50:31 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vj4RV-0000pb-DN
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vj4RZ-0002W0-Sm
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Jan 2026 23:50:25 +0000
+ Thu, 22 Jan 2026 23:50:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dp03hqE5Encwtvkkhb2YKz9Ir93vOW0PgABSw0xcV0s=; b=AD4faByuROq2VSoVW8sDkw4slU
- c1frHM01ZLDuTf+HAPsNCG5q7BdNUZLFvYVaO/XmP2z7pmMz7lLrVzKcuWnxOEXKpBp+lsKIdoVr8
- IJcned9iViHQE/skL6i0nRW8CdksR6O0LQzQH8hJ4a9XBNG16ap1njwjkWL6QwVq+eno=;
+ bh=SGjNyd566oiEoHLHoP0tgstxNYZz3unpR3AX6pSU4aA=; b=N9pVO/1T/rtZi0BO6mO2Kua9oX
+ fZLyoS+HmtNUZPYPzbUGfA6+oLz3k9UykSZ9hiwcjd9OvUxfrOSCfcWJrGjTsWwWWZQF+Hm/soRAt
+ tfAtkjs/13gfQBSt/itrpkIe99Ny9j7cO1AMQRC3nGRq1Ilm6VdnhN/sW/QHaMiBgJ7Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dp03hqE5Encwtvkkhb2YKz9Ir93vOW0PgABSw0xcV0s=; b=k1/W85SereO9/eG5Xg7IMMOMo1
- f84dRtL0TVIAuFbT5eq2Vcd0tKGIMGwc1VNDmtJ4LMUG/NIA15k7LBMtGYRxwE0WYOM04Eg+KIoy2
- bDq9TxudfTDmj8Y9N2KnGBZaAyRcd8LP7DEU3lVOe7iHRgrIJoebx2T0Z/XFaUklo43k=;
+ bh=SGjNyd566oiEoHLHoP0tgstxNYZz3unpR3AX6pSU4aA=; b=VXQz7j6CA1TkzQUmMxrnjPEt4l
+ qxAuVapbTlyjP2ZFt7GPJ+zn+/5CaJ5/3RqupKNsndIvBV5aGP4ngRI1N8tuPLVfovskEV3fzlKJU
+ 30SsuxJTzViiY2WV5aGifPPk0xhZ6ANri8As8mEL+WJdzAk1AkikcpqfIRvzsw21asVE=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vj4RU-0002OA-SO for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Jan 2026 23:50:25 +0000
+ id 1vj4RZ-0002OY-DI for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Jan 2026 23:50:29 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 96CB743E7E
+ by sea.source.kernel.org (Postfix) with ESMTP id 1C9334427F
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 22 Jan 2026 23:50:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B72DC19422;
- Thu, 22 Jan 2026 23:50:14 +0000 (UTC)
+ Thu, 22 Jan 2026 23:50:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0170EC116C6;
+ Thu, 22 Jan 2026 23:50:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769125814;
- bh=h3U7S415TWN9cHPNK3WhR07SWvd2IguAX23TdTNyXC8=;
+ s=k20201202; t=1769125819;
+ bh=GQP3W1o9/Z+UGDEBNYav8DimvY2v59eMPoDEFwWHb0Q=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=gYpo662v4FYEOa+bVl8UO53BDhCg64/JupIDguJl2Yn4szkTlo2dkQ2LfaMgU7ayB
- Rqrh/4BSkbI/vH6NxgKdvMx/Ajm2t/1/FY+CDPq1cVl4PBAZs0+VPQ6TUUVEPJlt+e
- T8BFHLHmFd+7ooeFdT2SZpj5TZy0gxBHEjWF2uhSH2+4sUAUnFU+8Y53763KQeqiUK
- fJZmou+52NOBfZs0TzSBt2Af/rSZ+zQRr98x4P74EFC8kDsBh06bViAnl8FXwFVYdO
- kv5+8ggi8J9r7kAZr9O2D3KBawowgOlYqWM5/aNdMJoECWpTQDjRc+gt5h4pJx6UMj
- CCsQOCsDhWWVg==
+ b=kzJf5U29LNwt8dYpIVDg/E52Zw0lKiXbGkQ6t6cAmDiQjWvuaSHbx67hwUZVhl+Lu
+ FuzfYP32l7Tv8icOp0YFgJCy1dbDdndhBOOpl9ewFvnw1kGjuQfn3YSqNOCaQSn4YH
+ Up2dVUGBxdpkVVOqG40tEKJdSQJq00eVIzdcgx/3I2jy7proQxA8bDtbykXHyGSy+O
+ Y0L2bcLKbA+bwFMSxA5obte81loJdHcvSM0ue/JVkbLaB5kxlitFo7TEZm7qbXbibb
+ qV5TtmuGmyWJBNWbAZ/c7gtfMEjflhuMDg/zTXAE7fCcdhpK6PZODItxESvpGEJHKG
+ OnOsCdKRywU7w==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 11BEF3808200; Thu, 22 Jan 2026 23:50:12 +0000 (UTC)
+ 8BAE43808200; Thu, 22 Jan 2026 23:50:16 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176912581084.2327822.4005455517064960638.git-patchwork-notify@kernel.org>
-Date: Thu, 22 Jan 2026 23:50:10 +0000
-References: <20260121051404.2056730-1-chao@kernel.org>
-In-Reply-To: <20260121051404.2056730-1-chao@kernel.org>
+Message-Id: <176912581509.2327822.8605689752451565989.git-patchwork-notify@kernel.org>
+Date: Thu, 22 Jan 2026 23:50:15 +0000
+References: <20260116063115.21938-1-chao@kernel.org>
+In-Reply-To: <20260116063115.21938-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1vj4RU-0002OA-SO
-Subject: Re: [f2fs-dev] [PATCH] f2fs: decrease maximum flush retry count in
- f2fs_enable_checkpoint()
+X-Headers-End: 1vj4RZ-0002OY-DI
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to unlock folio in
+ f2fs_read_data_large_folio()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -102,19 +102,28 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 21 Jan 2026 05:14:04 +0000 you wrote:
-> It's rare case that sync_inodes_sb() always skips to flush some drity
-> datas, so it's enough to give extra three more chances to flush data.
+On Fri, 16 Jan 2026 14:31:15 +0800 you wrote:
+> We missed to unlock folio in error path of f2fs_read_data_large_folio(),
+> fix it.
 > 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/f2fs.h  | 2 ++
->  fs/f2fs/super.c | 2 +-
->  2 files changed, 3 insertions(+), 1 deletion(-)
+> With below testcase, it can reproduce the bug.
+> 
+> touch /mnt/f2fs/file
+> truncate -s $((1024*1024*1024)) /mnt/f2fs/file
+> f2fs_io setflags immutable /mnt/f2fs/file
+> sync
+> echo 3 > /proc/sys/vm/drop_caches
+> time dd if=/mnt/f2fs/file of=/dev/null bs=1M count=1024
+> f2fs_io clearflags immutable /mnt/f2fs/file
+> echo 1 > /proc/sys/vm/drop_caches
+> time dd if=/mnt/f2fs/file of=/dev/null bs=1M count=1024
+> time dd if=/mnt/f2fs/file of=/dev/null bs=1M count=1024
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: decrease maximum flush retry count in f2fs_enable_checkpoint()
-    https://git.kernel.org/jaegeuk/f2fs/c/6ca0ae2d1e32
+  - [f2fs-dev,v2] f2fs: fix to unlock folio in f2fs_read_data_large_folio()
+    https://git.kernel.org/jaegeuk/f2fs/c/a5d8b9d94e18
 
 You are awesome, thank you!
 -- 
