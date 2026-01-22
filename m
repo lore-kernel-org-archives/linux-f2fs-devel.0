@@ -4,36 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 53BB9D3EE92
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jan 2026 17:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C36E8D6CFA4
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jan 2026 21:21:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ydekLp5YFEdJwrmLfOh/e4f3jgVZ57WMSK4m8EaXxU4=; b=DZ3iWsOkzTd1odOqDwL2xZsibP
-	frMHTN8y3YieJm/hjb2G9/cRBEk5fuUXkxZdKxI+YHTaGXILqzseCywCaXXH6tnt3Y1vYeC0hUBmu
-	56x/UevwST0yxqeKiwtNyusfdZ7iyspmwaivlkpU1xecWekkG/caE64FhlzML/xPWzCo=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=r9zWXEY0nXc9WDRKABLnGgZcHzHFn452CHhGGwLpsTs=; b=Duel3I7TON0/PBSvNd67bI4NG5
+	BwX4fSiMriLRDlHh6R7QC8ESnnEfsp+ExQ8CKnmek3n8UXbZYD5fCACIIGne8RwK/8XEYSNqB/2VD
+	XK6Yr9gKDYlI5na/8RaZvAkhH3bj2/K91sEzdVa/Cz7USLyctjxL41D/9FfNSaANg18w=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1viy6n-0004RI-Fo;
-	Thu, 22 Jan 2026 17:04:37 +0000
+	id 1vj27S-0000c3-Hx;
+	Thu, 22 Jan 2026 21:21:34 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <djwong@kernel.org>) id 1viy6l-0004R2-LE;
- Thu, 22 Jan 2026 17:04:35 +0000
+ (envelope-from <djwong@kernel.org>) id 1vj27R-0000bw-Jx
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Jan 2026 21:21:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qs+XaS+FGKy5XGjHxsh2yZR3UAuTtojhMQnjtTVwQfA=; b=DQJpdVxcLrPN39oG3XjU67yA+G
- QiPmlJLZtYrmvsabCRcomxkgyxXhoWmzR5T9KckaCMfidihlh1xwFnrFusLwXUxD0QGhYd0IvJRDi
- +SDD+6ijzm9hAxr/HdHZwNOo0p8KnVbRc5Hn+cgYrmgguOK6MVwzZP5mfCGC425gTd6w=;
+ bh=Qb8Wif7/qnatxQQlJZ465vYw8BpMNs+EBTocCO5CnSg=; b=TrBezSZq2axCgDofw8NmM7nz0H
+ e5F6ZIjVcmCfT3LLPSY/dn0Q1q0hQEKF4Hm728ZSwmBOBfq58ksgMY235EWFK0qpDDIL28ecwRt0C
+ yGJpEN2w/8azOKln5lfCzoHf8S5ThmRSD6EPKOuFjI2Sapa9omaaH4MWUrRFY7XrU3Pk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -41,47 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qs+XaS+FGKy5XGjHxsh2yZR3UAuTtojhMQnjtTVwQfA=; b=h1q9CMJ2tihlWsCDfQAryEZXlW
- stGrFrnIi7ciusukVFBG8Gf9AtL3dhh2iCfcRmrrVYkchafxBzjZ/Sej/xFAjgPkOtP4pXL6WZfRv
- pZj7Yd/Mr37NhOoZ5/yRgYooRlWPs15hvlbVjoetZx718N9BhvWhq5nGZ2xe3q69Mn7k=;
+ bh=Qb8Wif7/qnatxQQlJZ465vYw8BpMNs+EBTocCO5CnSg=; b=LtUHSFp12tFFKQKb+pX4Z9mfKA
+ U3I3J2pFQnGSWGFttj50/P+nTkLKu2L8RA4TODBuTHSrnh/FThh6jUAYYQOtVNt8623c9GLMIWYAH
+ 03rTo/yIbVS0EKGgE19ejIiUFq8iN0YRXhkMWKdKCXFEH8uA+2iGCtUCYwvlpr541Ql0=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1viy6l-0003zh-3q; Thu, 22 Jan 2026 17:04:35 +0000
+ id 1vj27R-0004Yq-1y for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Jan 2026 21:21:33 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 528AE4099B;
- Thu, 22 Jan 2026 17:04:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 156DAC116C6;
- Thu, 22 Jan 2026 17:04:24 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 983A04342D;
+ Thu, 22 Jan 2026 21:21:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38BCFC116C6;
+ Thu, 22 Jan 2026 21:21:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769101464;
- bh=xwFz5Oidq8APQpCp7THEtDpXn9O+NGssd7GC7NPkIXE=;
+ s=k20201202; t=1769116882;
+ bh=HuuV2V7oQdXHpZv2p1xtrH9rIpKzASmyg1enkricVyM=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=ueyMX6ohlT+V7E4FTnwyr+bckr2XgM0otlsgh+U8+RB7dufNou2jXtRF8/4HiLX1h
- aiyHG+xAbRXlOpSKYNl+YW1B6es8lJGWyDpCT3G89X8Bn++QSMPHsovt5BRyWj7Z84
- MiFPflUjkr2UeHtVIt004pQ2LHYESJ6jR9ib6bF3tKB5BvchCfBJcHtl2H7eGV6Hj+
- XeQh59i2mPbJ0Z07CURTocG8MzgcrhLB0YpqMQ2BX+Q2rUwcSwiRIRCTHIiyBghAen
- fRki137MnL3p5j+2P7Cc4giyKdLsB0k8xoBASjwbPFk1rE23p0Kg5qRxi8CJQxSLFn
- VC/vMBqCcUNNQ==
-Date: Thu, 22 Jan 2026 09:04:23 -0800
-To: Jeff Layton <jlayton@kernel.org>
-Message-ID: <20260122170423.GU5945@frogsfrogsfrogs>
-References: <176885553525.16766.291581709413217562@noble.neil.brown.name>
- <aW8w2SRyFnmA2uqk@infradead.org>
- <176890126683.16766.5241619788613840985@noble.neil.brown.name>
- <aXCg-MqXH0E6IuwS@infradead.org>
- <176899164457.16766.16099772451425825775@noble.neil.brown.name>
- <364d2fd98af52a2e2c32ca286decbdc1fe1c80d3.camel@kernel.org>
- <aXDm8FPPOHs04w9m@infradead.org>
- <3210d04fa2c0b1f4312d10506cac30586cb49a3c.camel@kernel.org>
- <aXHFlF1tef68i2HU@infradead.org>
- <b491335d12e976e1ea1c07b9c14164ac69d22aea.camel@kernel.org>
+ b=vH0CIJFDafluSg7UmFnP+wjTXB3u+C5rT5g6Fzh5Bi3H+8e35YmszXezwTTlhPksL
+ 8WxIH7HbfjYE2Y/mAGaDpnlM+ypNi1FUDuIOso3Tirt6B66U+S/ZS6qetMBTOtw4UL
+ 9avQGMG35wKclM34S2LK+YX86Wqw07SE1YJp95eXHsOuq75HZatUlF+9lElX5oEPzM
+ ll9Q/xIg+wx2+3Fk7N5zO03sT/D0ws0naqyXinxDVz6+IxEoM2QT+9BMd30BSdyCpD
+ Us+c3wHkr/4tHMAzzKnwV0Kt9d6uoc19ORrVXfsl0nltbSvLUvvDjTRIfzmbDMkiyR
+ PrHGcC77U9wQA==
+Date: Thu, 22 Jan 2026 13:21:21 -0800
+To: Christoph Hellwig <hch@lst.de>
+Message-ID: <20260122212121.GA5910@frogsfrogsfrogs>
+References: <20260122082214.452153-1-hch@lst.de>
+ <20260122082214.452153-2-hch@lst.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <b491335d12e976e1ea1c07b9c14164ac69d22aea.camel@kernel.org>
-X-Headers-End: 1viy6l-0003zh-3q
-Subject: Re: [f2fs-dev] [PATCH 00/29] fs: require filesystems to explicitly
- opt-in to nfsd export support
+In-Reply-To: <20260122082214.452153-2-hch@lst.de>
+X-Headers-End: 1vj27R-0004Yq-1y
+Subject: Re: [f2fs-dev] [PATCH 01/11] fs,
+ fsverity: reject size changes on fsverity files in setattr_prepare
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,114 +90,163 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: "Darrick J. Wong via Linux-f2fs-devel"
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Martin Brandenburg <martin@omnibond.com>,
- jfs-discussion@lists.sourceforge.net, Jan Kara <jack@suse.cz>,
- Paulo Alcantara <pc@manguebit.org>, Alex Markuze <amarkuze@redhat.com>,
- Sandeep Dhavale <dhavale@google.com>, linux-btrfs@vger.kernel.org,
- Carlos Maiolino <cem@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
- linux-unionfs@vger.kernel.org,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
- Chris Mason <clm@fb.com>, Andreas Dilger <adilger.kernel@dilger.ca>,
- Chunhai Guo <guochunhai@vivo.com>, Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- linux-mtd@lists.infradead.org, Mike Marshall <hubcap@omnibond.com>,
- linux-xfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
- Yue Hu <zbestahu@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>,
- Richard Weinberger <richard@nod.at>, Mark Fasheh <mark@fasheh.com>,
- Hugh Dickins <hughd@google.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Ryusuke Konishi <konishi.ryusuke@gmail.com>,
- Christoph Hellwig <hch@infradead.org>, Viacheslav Dubeyko <slava@dubeyko.com>,
- NeilBrown <neil@brown.name>, Gao Xiang <xiang@kernel.org>,
- linux-ext4@vger.kernel.org, Salah Triki <salah.triki@gmail.com>,
- linux-mm@kvack.org, devel@lists.orangefs.org,
- Shyam Prasad N <sprasad@microsoft.com>,
- Olga Kornievskaia <okorniev@redhat.com>, linux-cifs@vger.kernel.org,
- Dave Kleikamp <shaggy@kernel.org>, linux-nfs@vger.kernel.org,
- Tom Talpey <tom@talpey.com>, ocfs2-devel@lists.linux.dev,
- Bharath SM <bharathsm@microsoft.com>, David Sterba <dsterba@suse.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Jeffle Xu <jefflexu@linux.alibaba.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- ceph-devel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
- OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
- Andreas Gruenbacher <agruenba@redhat.com>, gfs2@lists.linux.dev,
- Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
- Luis de Bethencourt <luisbg@kernel.org>,
- Joseph Qi <joseph.qi@linux.alibaba.com>, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- Steve French <sfrench@samba.org>, Chuck Lever <chuck.lever@oracle.com>,
- Hongbo Li <lihongbo22@huawei.com>, Anna Schumaker <anna@kernel.org>,
- Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org,
- Phillip Lougher <phillip@squashfs.org.uk>,
- Andrew Morton <akpm@linux-foundation.org>, ntfs3@lists.linux.dev,
- David Woodhouse <dwmw2@infradead.org>, Trond Myklebust <trondmy@kernel.org>,
- Joel Becker <jlbec@evilplan.org>
+Cc: fsverity@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, Andrey Albershteyn <aalbersh@redhat.com>,
+ "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
+ linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, David Sterba <dsterba@suse.com>,
+ Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jan 22, 2026 at 07:12:36AM -0500, Jeff Layton wrote:
-> On Wed, 2026-01-21 at 22:37 -0800, Christoph Hellwig wrote:
-> > On Wed, Jan 21, 2026 at 10:18:00AM -0500, Jeff Layton wrote:
-> > > > fat seems to be an exception as far as the 'real' file systems go.
-> > > > And it did sound to me like some of the synthetic ones had similar
-> > > > issues.
-> > > > 
-> > > 
-> > > Not sure what we can do about FAT without changing the filehandle
-> > > format in some fashion. The export ops just use
-> > > generic_encode_ino32_fh, and FAT doesn't have stable inode numbers.
-> > > The "nostale" ops seem sane enough but it looks like they only work
-> > > with the fs in r/o mode.
-> > 
-> > Yeah.  I guess we need to ignore this because of <history>
-> > 
+On Thu, Jan 22, 2026 at 09:21:57AM +0100, Christoph Hellwig wrote:
+> Add the check to reject truncates of fsverity files directly to
+> setattr_prepare instead of requiring the file system to handle it.
+> Besides removing boilerplate code, this also fixes the complete lack of
+> such check in btrfs.
 > 
-> Yep. This is a case where the handles are not PERSISTENT but I don't
-> think we can get away with making FAT unexportable. We're probably
-> stuck with it.
-> 
-> > > > I think Amirs patch would take care of that.  Although userland nfs
-> > > > servers or other storage applications using the handle syscalls would
-> > > > still see them.  Then again fixing the problem that some handles
-> > > > did not fulfill the long standing (but not documented well enough)
-> > > > semantics probably is a good fix on it's own.
-> > > 
-> > > Agreed. We should try to ensure uniqueness and persistence in all
-> > > filehandles both for nfsd and userland applications.
-> > 
-> > Sounds good to me.
-> 
-> 
-> Unfortunately, there are already exceptions. Apparently pidfs and
-> cgroupfs handles (at least) can't be extended because of userspace
-> expectations:
-> 
-> https://lore.kernel.org/linux-nfs/20260120-irrelevant-zeilen-b3c40a8e6c30@brauner/
+> Fixes: 146054090b08 ("btrfs: initial fsverity support")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-systemd cracking file handles??  Yeesh, I thought userspace was supposed
-to treat a file handle as an opaque N-byte blob and nothing more, and
-only certain "special" tools (e.g. xfsprogs on XFS) could do more than
-that.
+Seems reasonable to me.
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
-> My personal take is that we should try to make handle uniqueness a goal
-> for most existing filesystems, but we're going to have some that can't
-> achieve that. For them we probably want to be able to flag them so they
-> can be id'ed by userland.
+> ---
+>  fs/attr.c                | 12 +++++++++++-
+>  fs/ext4/inode.c          |  4 ----
+>  fs/f2fs/file.c           |  4 ----
+>  fs/verity/open.c         |  8 --------
+>  include/linux/fsverity.h | 25 -------------------------
+>  5 files changed, 11 insertions(+), 42 deletions(-)
 > 
-> So, we will need an export_operations flag of some sort
-> (EXPORT_OP_UNIQUE_HANDLES?). At that point, we'll have to decide
-> whether to deny nfsd export based on that flag:
-> 
-> We could deny export of any fs that doesn't set the flag, but NFSv4
-> actually allows the server to advertise that it can't guarantee handle
-> uniqueness. There isn't much guidance for the client on how to handle
-> that though and the attribute seems to have the scope of the entire NFS
-> server.
-> 
+> diff --git a/fs/attr.c b/fs/attr.c
+> index b9ec6b47bab2..e7d7c6d19fe9 100644
+> --- a/fs/attr.c
+> +++ b/fs/attr.c
+> @@ -169,7 +169,17 @@ int setattr_prepare(struct mnt_idmap *idmap, struct dentry *dentry,
+>  	 * ATTR_FORCE.
+>  	 */
+>  	if (ia_valid & ATTR_SIZE) {
+> -		int error = inode_newsize_ok(inode, attr->ia_size);
+> +		int error;
+> +
+> +		/*
+> +		 * Verity files are immutable, so deny truncates.  This isn't
+> +		 * covered by the open-time check because sys_truncate() takes a
+> +		 * path, not an open file.
+> +		 */
+> +		if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
+> +			return -EPERM;
+> +
+> +		error = inode_newsize_ok(inode, attr->ia_size);
+>  		if (error)
+>  			return error;
+>  	}
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 0c466ccbed69..8c2ef98fa530 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5835,10 +5835,6 @@ int ext4_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>  	if (error)
+>  		return error;
+>  
+> -	error = fsverity_prepare_setattr(dentry, attr);
+> -	if (error)
+> -		return error;
+> -
+>  	if (is_quota_modification(idmap, inode, attr)) {
+>  		error = dquot_initialize(inode);
+>  		if (error)
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index d7047ca6b98d..da029fed4e5a 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -1074,10 +1074,6 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>  	if (err)
+>  		return err;
+>  
+> -	err = fsverity_prepare_setattr(dentry, attr);
+> -	if (err)
+> -		return err;
+> -
+>  	if (unlikely(IS_IMMUTABLE(inode)))
+>  		return -EPERM;
+>  
+> diff --git a/fs/verity/open.c b/fs/verity/open.c
+> index 77b1c977af02..2aa5eae5a540 100644
+> --- a/fs/verity/open.c
+> +++ b/fs/verity/open.c
+> @@ -384,14 +384,6 @@ int __fsverity_file_open(struct inode *inode, struct file *filp)
+>  }
+>  EXPORT_SYMBOL_GPL(__fsverity_file_open);
+>  
+> -int __fsverity_prepare_setattr(struct dentry *dentry, struct iattr *attr)
+> -{
+> -	if (attr->ia_valid & ATTR_SIZE)
+> -		return -EPERM;
+> -	return 0;
+> -}
+> -EXPORT_SYMBOL_GPL(__fsverity_prepare_setattr);
+> -
+>  void __fsverity_cleanup_inode(struct inode *inode)
+>  {
+>  	struct fsverity_info **vi_addr = fsverity_info_addr(inode);
+> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+> index 5bc7280425a7..86fb1708676b 100644
+> --- a/include/linux/fsverity.h
+> +++ b/include/linux/fsverity.h
+> @@ -179,7 +179,6 @@ int fsverity_get_digest(struct inode *inode,
+>  /* open.c */
+>  
+>  int __fsverity_file_open(struct inode *inode, struct file *filp);
+> -int __fsverity_prepare_setattr(struct dentry *dentry, struct iattr *attr);
+>  void __fsverity_cleanup_inode(struct inode *inode);
+>  
+>  /**
+> @@ -251,12 +250,6 @@ static inline int __fsverity_file_open(struct inode *inode, struct file *filp)
+>  	return -EOPNOTSUPP;
+>  }
+>  
+> -static inline int __fsverity_prepare_setattr(struct dentry *dentry,
+> -					     struct iattr *attr)
+> -{
+> -	return -EOPNOTSUPP;
+> -}
+> -
+>  static inline void fsverity_cleanup_inode(struct inode *inode)
+>  {
+>  }
+> @@ -338,22 +331,4 @@ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
+>  	return 0;
+>  }
+>  
+> -/**
+> - * fsverity_prepare_setattr() - prepare to change a verity inode's attributes
+> - * @dentry: dentry through which the inode is being changed
+> - * @attr: attributes to change
+> - *
+> - * Verity files are immutable, so deny truncates.  This isn't covered by the
+> - * open-time check because sys_truncate() takes a path, not a file descriptor.
+> - *
+> - * Return: 0 on success, -errno on failure
+> - */
+> -static inline int fsverity_prepare_setattr(struct dentry *dentry,
+> -					   struct iattr *attr)
+> -{
+> -	if (IS_VERITY(d_inode(dentry)))
+> -		return __fsverity_prepare_setattr(dentry, attr);
+> -	return 0;
+> -}
+> -
+>  #endif	/* _LINUX_FSVERITY_H */
 > -- 
-> Jeff Layton <jlayton@kernel.org>
+> 2.47.3
+> 
 > 
 
 
