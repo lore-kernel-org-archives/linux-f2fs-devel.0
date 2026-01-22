@@ -4,136 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2DBC1D3EE84
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jan 2026 15:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 72414D3EE89
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jan 2026 16:03:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:
-	List-Id:Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:
-	Sender:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=zlxw1ZfZog3I6CBOZCMVS+RtwYAKVMARMmSR4pTOQvA=; b=QoR/q0gqfvLfKw3fKy7C1jr8H0
-	j3gTxD3itdi+rCfgf/ig9cmzQBSQv5y7NSQoyA//WlkMe0l55x3JCS4fbQmtN8ffs+ZkakdHuhsK/
-	uC1WXpoj5iXxPZ1VIaqND71WGV081lf13lzAk4MYeOtlOd5wstAMIU4Luov5hnEVYNbs=;
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=uWNh90yGwB4ek3lOOp/u5wW9RwSsiygy6A0k2at7LUU=; b=K5w9eGFX9Sh6jf5eRDMCz9ZtDr
+	S8XXIstwuqgr9lN81Yf6IEei08pifETzN5lUCXmqKlsK9S/F4sTM1JMPKapni8tSSoxTMMI7cY5KE
+	25RPL7GpOEOO9LoJuxwq0VzFynu7UIlg38C6VOTZzdOODt/A/ErY1OW4EmtiUoVaBNPs=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1viwpK-0007F9-5m;
-	Thu, 22 Jan 2026 15:42:30 +0000
+	id 1vix9a-0000N6-Om;
+	Thu, 22 Jan 2026 16:03:26 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <dsterba@suse.cz>) id 1viwpI-0007F3-Do
+ (envelope-from <cel@kernel.org>) id 1vix9Y-0000My-W9
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Jan 2026 15:42:28 +0000
+ Thu, 22 Jan 2026 16:03:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=eXgjnBxZ8BrNqn4Sk6A4xpE60v2fmF+nX+2I0eOLLCg=; b=VMj/6HFdu1NkdpEfU9kBTeLP5Q
- HtJXG2yb4CP1pDaHpcApQkqzIWrsnV3rVcsMYKv/NtKsd28HYMtXsV/Z3R5M9Mx2xl/+FCttM84MD
- ArfmM/6/frdukAPR4/R2lXOSw8fVkN+noJOJE3gqflbURLRoACjAg+y3g82cDTcCMGjQ=;
+ bh=beQkWM9/YZbwbOPM/2lKmFBj2aAGpKVYujt9J4w94Lo=; b=e5UTPPphpO5tpuytp93jS3j9AL
+ zbDeN3VsqLGPgwxZkl09CeNHgQyWPBj0nXIC1anlWr5qWpQhDY7+UbVra1pwjWczdumDsM4RGhttY
+ LyTVydOgQFLW/hM724MSezjLldx30vDfgvpmumLgw7iR27aSTaVP5lJdSGElnchp862o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Reply-To:Message-ID:
- Subject:Cc:To:From:Date:Sender:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=eXgjnBxZ8BrNqn4Sk6A4xpE60v2fmF+nX+2I0eOLLCg=; b=OURCHeS3E73cScOsTyNnRpuFSV
- 7JhIg8oJ2REQNVGmNz6zJsvGvpU1HLnwf7JcjmaCsKSmhQDT5wJRmuqo0ST6eiFOK1OORebgzYrOX
- hZKxmA+AE7CBAWMYgS0X+P1LUl/vgOtlMUGIdPw6FvEBd6b50+IGhWOkACKea+lOQ0iw=;
-Received: from smtp-out2.suse.de ([195.135.223.131])
+ bh=beQkWM9/YZbwbOPM/2lKmFBj2aAGpKVYujt9J4w94Lo=; b=hV70ylW5gHOOfUIbkM4NZNkF/c
+ B6/yqTpRrrchfgy1Y95ZsIiN03jWz5LrjVfR7GFha/0pna7EmfwFK2FOPQ7B4vpPWHYIsewGRZ7Pc
+ 1qeokgpLbCjqp+J+pNRIImVjxkJrk7WcD32jJ+mBG7BY29iCjruDrdSqEXZlihmkNPMk=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1viwpH-0007mv-Rm for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Jan 2026 15:42:28 +0000
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
- [IPv6:2a07:de40:b281:104:10:150:64:97])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id 6FE955BCD7;
- Thu, 22 Jan 2026 15:42:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1769096536;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=eXgjnBxZ8BrNqn4Sk6A4xpE60v2fmF+nX+2I0eOLLCg=;
- b=j6JxqPzePV1v3VMwls0tzTsZjgdG9emkov+yXkAfgU/rTXQf8T3zUIk9y6kwTpmIwFH+jg
- +tGTZOAzNSt5DmyeGJlQYLKpb2hgbWczQo2u8RmaFCK8Kyk9Ad8W0Ksxyx6AoNHndiNUd3
- pgQ09os0+EUkMbgwfaOlHtEStLw+2xM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1769096536;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=eXgjnBxZ8BrNqn4Sk6A4xpE60v2fmF+nX+2I0eOLLCg=;
- b=0iqPGW1agNVaVnQmF+2mMFaHz5jf38AXI7KkERuGiInWYYKzTGrVODUWzChReQtemzPfna
- a8MSgMwRXxKctUBQ==
-Authentication-Results: smtp-out2.suse.de;
- dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=j6JxqPze;
- dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=0iqPGW1a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1769096536;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=eXgjnBxZ8BrNqn4Sk6A4xpE60v2fmF+nX+2I0eOLLCg=;
- b=j6JxqPzePV1v3VMwls0tzTsZjgdG9emkov+yXkAfgU/rTXQf8T3zUIk9y6kwTpmIwFH+jg
- +tGTZOAzNSt5DmyeGJlQYLKpb2hgbWczQo2u8RmaFCK8Kyk9Ad8W0Ksxyx6AoNHndiNUd3
- pgQ09os0+EUkMbgwfaOlHtEStLw+2xM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1769096536;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=eXgjnBxZ8BrNqn4Sk6A4xpE60v2fmF+nX+2I0eOLLCg=;
- b=0iqPGW1agNVaVnQmF+2mMFaHz5jf38AXI7KkERuGiInWYYKzTGrVODUWzChReQtemzPfna
- a8MSgMwRXxKctUBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3DF1F13533;
- Thu, 22 Jan 2026 15:42:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id 0Tn4DlhFcmlzbQAAD6G6ig
- (envelope-from <dsterba@suse.cz>); Thu, 22 Jan 2026 15:42:16 +0000
-Date: Thu, 22 Jan 2026 16:42:15 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20260122154215.GV26902@suse.cz>
-References: <20260122082214.452153-1-hch@lst.de>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1vix9Y-0000UW-Cg for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Jan 2026 16:03:24 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by tor.source.kernel.org (Postfix) with ESMTP id 7F04C600C4;
+ Thu, 22 Jan 2026 16:03:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2F66C19423;
+ Thu, 22 Jan 2026 16:03:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1769097798;
+ bh=Wo5lloV0KSGzxOB6thbFAC7r4tmGkmKAHZEdL5z/ptg=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=pfyZKRd/bSRobKFlKCkOH3T39xUOdLeowMA6HibhxrOLlvMe0GMk7aivFQUBMkkRg
+ EBxuqSTY2Si4dPw+PMAHe3nDjztcQhQfa7ETznO9JyxTUcnKTIT18fq9wi3/jj7idW
+ UhECuFBPwkPb41zTT0GfdT1H48GQIpMg6eXYVtMDw7TZ1BlvWWuppYAGcDFtCpGft3
+ WcO91qUNn/xKeYC/7GhEXYbxEJgzrRGaqfMrXCu7ZXXBvukSXjMNNiVpcJK3qD0MdY
+ ylmkGwjub15rZJVauERLFDnPHjtpPBlJIelza6XwfoguupwnnXlvQ4/7ssT4hLIcp3
+ rugwpN056uCzg==
+To: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>
+Date: Thu, 22 Jan 2026 11:02:56 -0500
+Message-ID: <20260122160311.1117669-2-cel@kernel.org>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260122160311.1117669-1-cel@kernel.org>
+References: <20260122160311.1117669-1-cel@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260122082214.452153-1-hch@lst.de>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.21 / 50.00]; BAYES_HAM(-3.00)[100.00%];
- NEURAL_HAM_LONG(-1.00)[-1.000];
- HAS_REPLYTO(0.30)[dsterba@suse.cz];
- R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
- NEURAL_HAM_SHORT(-0.20)[-1.000]; MIME_GOOD(-0.10)[text/plain];
- MX_GOOD(-0.01)[]; FUZZY_RATELIMITED(0.00)[rspamd.com];
- ARC_NA(0.00)[]; MIME_TRACE(0.00)[0:+];
- RCVD_VIA_SMTP_AUTH(0.00)[]; TO_DN_SOME(0.00)[];
- RCPT_COUNT_TWELVE(0.00)[16]; RCVD_TLS_ALL(0.00)[];
- REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
- DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
- FROM_EQ_ENVFROM(0.00)[]; FROM_HAS_DN(0.00)[];
- MID_RHS_MATCH_FROM(0.00)[]; REPLYTO_ADDR_EQ_FROM(0.00)[];
- TO_MATCH_ENVRCPT_ALL(0.00)[]; RCVD_COUNT_TWO(0.00)[2];
- DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
- DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 6FE955BCD7
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Headers-End: 1viwpH-0007mv-Rm
-Subject: Re: [f2fs-dev] fsverity cleanups,
- speedup and memory usage optimization v2
+X-Headers-End: 1vix9Y-0000UW-Cg
+Subject: [f2fs-dev] [PATCH v7 01/16] fs: Add case sensitivity flags to
+ file_kattr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -145,63 +87,155 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: dsterba@suse.cz
-Cc: fsverity@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Andrey Albershteyn <aalbersh@redhat.com>,
- "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
- linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
- Jaegeuk Kim <jaegeuk@kernel.org>, David Sterba <dsterba@suse.com>,
- Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
- linux-btrfs@vger.kernel.org
+From: Chuck Lever via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chuck Lever <cel@kernel.org>
+Cc: pc@manguebit.org, yuezhang.mo@sony.com, cem@kernel.org,
+ almaz.alexandrovich@paragon-software.com, adilger.kernel@dilger.ca,
+ linux-cifs@vger.kernel.org, sfrench@samba.org, slava@dubeyko.com,
+ linux-ext4@vger.kernel.org, linkinjeon@kernel.org, sprasad@microsoft.com,
+ frank.li@vivo.com, ronniesahlberg@gmail.com, glaubitz@physik.fu-berlin.de,
+ jaegeuk@kernel.org, hirofumi@mail.parknet.co.jp, linux-nfs@vger.kernel.org,
+ tytso@mit.edu, linux-api@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ senozhatsky@chromium.org, Chuck Lever <chuck.lever@oracle.com>,
+ hansg@kernel.org, anna@kernel.org, linux-fsdevel@vger.kernel.org,
+ sj1557.seo@samsung.com, trondmy@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jan 22, 2026 at 09:21:56AM +0100, Christoph Hellwig wrote:
-> Hi all,
-> 
-> this series has a hodge podge of fsverity enhances that I looked into as
-> part of the review of the xfs fsverity support series.
-> 
-> The first part calls fsverity code from VFS code instead of requiring
-> boilerplate in the file systems.  The first patch fixes a bug in btrfs
-> as part of that, as btrfs was missing a check.  An xfstests
-> test case for this was submitted already.
-> 
-> The middle part optimizes the fsverity read path by kicking off readahead
-> for the fsverity hashes from the data read submission context, which in my
-> simply testing showed huge benefits for sequential reads using dd.
-> I haven't been able to get fio to run on a preallocated fio file, but
-> I expect random read benefits would be significantly better than that
-> still.
-> 
-> The last part avoids the need for a pointer in every inode for fsverity
-> and instead uses a rhashtable lookup, which is once per read_folio or
-> ->readahead invocation and for for btrfs another time for each bio
-> completion.  Right now this does not increse the number of inodes in
-> each slab, but for ext4 we are getting very close to that (within
-> 16 bytes by my count).
-> 
-> Changes since v1:
->  - reorder to keep the most controversial part last
->  - drop moving the open handling to common code (for now)
->  - factor the page cache read code into common code
->  - reduce the number of hash lookups
->  - add a barrier in the fsverity_active that pairs with the cmpxchg
->    that sets the inode flag.
-> 
-> Diffstat:
->  fs/attr.c                    |   12 ++
+From: Chuck Lever <chuck.lever@oracle.com>
 
-For the btrfs changes
+Enable upper layers such as NFSD to retrieve case sensitivity
+information from file systems by adding FS_XFLAG_CASEFOLD and
+FS_XFLAG_CASENONPRESERVING flags.
 
->  fs/btrfs/btrfs_inode.h       |    4 
->  fs/btrfs/extent_io.c         |   37 +++++---
->  fs/btrfs/inode.c             |   13 ---
->  fs/btrfs/verity.c            |   11 --
+Filesystems report case-insensitive or case-nonpreserving behavior
+by setting these flags directly in fa->fsx_xflags. The default
+(flags unset) indicates POSIX semantics: case-sensitive and
+case-preserving. These flags are read-only; userspace cannot set
+them via ioctl.
 
-Acked-by: David Sterba <dsterba@suse.com>
+Remove struct file_kattr initialization from fileattr_fill_xflags()
+and fileattr_fill_flags(). Callers at ioctl/syscall entry points
+zero-initialize the struct themselves, which allows them to pass
+hints (flags_valid, fsx_valid) to the filesystem's ->fileattr_get()
+callback via the fa argument. Filesystem handlers that invoke these
+fill functions can now set flags directly in fa->fsx_xflags before
+calling them, without the fill functions zeroing those values.
+
+Case sensitivity information is exported to userspace via the
+fa_xflags field in the FS_IOC_FSGETXATTR ioctl and file_getattr()
+system call.
+
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+---
+ fs/file_attr.c           | 12 ++++--------
+ fs/xfs/xfs_ioctl.c       |  2 +-
+ include/linux/fileattr.h |  3 ++-
+ include/uapi/linux/fs.h  |  2 ++
+ 4 files changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index 13cdb31a3e94..6e37040fc5fa 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -15,12 +15,10 @@
+  * @fa:		fileattr pointer
+  * @xflags:	FS_XFLAG_* flags
+  *
+- * Set ->fsx_xflags, ->fsx_valid and ->flags (translated xflags).  All
+- * other fields are zeroed.
++ * Set ->fsx_xflags, ->fsx_valid and ->flags (translated xflags).
+  */
+ void fileattr_fill_xflags(struct file_kattr *fa, u32 xflags)
+ {
+-	memset(fa, 0, sizeof(*fa));
+ 	fa->fsx_valid = true;
+ 	fa->fsx_xflags = xflags;
+ 	if (fa->fsx_xflags & FS_XFLAG_IMMUTABLE)
+@@ -46,11 +44,9 @@ EXPORT_SYMBOL(fileattr_fill_xflags);
+  * @flags:	FS_*_FL flags
+  *
+  * Set ->flags, ->flags_valid and ->fsx_xflags (translated flags).
+- * All other fields are zeroed.
+  */
+ void fileattr_fill_flags(struct file_kattr *fa, u32 flags)
+ {
+-	memset(fa, 0, sizeof(*fa));
+ 	fa->flags_valid = true;
+ 	fa->flags = flags;
+ 	if (fa->flags & FS_SYNC_FL)
+@@ -323,7 +319,7 @@ int ioctl_setflags(struct file *file, unsigned int __user *argp)
+ {
+ 	struct mnt_idmap *idmap = file_mnt_idmap(file);
+ 	struct dentry *dentry = file->f_path.dentry;
+-	struct file_kattr fa;
++	struct file_kattr fa = {};
+ 	unsigned int flags;
+ 	int err;
+ 
+@@ -355,7 +351,7 @@ int ioctl_fssetxattr(struct file *file, void __user *argp)
+ {
+ 	struct mnt_idmap *idmap = file_mnt_idmap(file);
+ 	struct dentry *dentry = file->f_path.dentry;
+-	struct file_kattr fa;
++	struct file_kattr fa = {};
+ 	int err;
+ 
+ 	err = copy_fsxattr_from_user(&fa, argp);
+@@ -434,7 +430,7 @@ SYSCALL_DEFINE5(file_setattr, int, dfd, const char __user *, filename,
+ 	struct filename *name __free(putname) = NULL;
+ 	unsigned int lookup_flags = 0;
+ 	struct file_attr fattr;
+-	struct file_kattr fa;
++	struct file_kattr fa = {};
+ 	int error;
+ 
+ 	BUILD_BUG_ON(sizeof(struct file_attr) < FILE_ATTR_SIZE_VER0);
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 59eaad774371..f0417c4d1fca 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -496,7 +496,7 @@ xfs_ioc_fsgetxattra(
+ 	xfs_inode_t		*ip,
+ 	void			__user *arg)
+ {
+-	struct file_kattr	fa;
++	struct file_kattr	fa = {};
+ 
+ 	xfs_ilock(ip, XFS_ILOCK_SHARED);
+ 	xfs_fill_fsxattr(ip, XFS_ATTR_FORK, &fa);
+diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
+index f89dcfad3f8f..709de829659f 100644
+--- a/include/linux/fileattr.h
++++ b/include/linux/fileattr.h
+@@ -16,7 +16,8 @@
+ 
+ /* Read-only inode flags */
+ #define FS_XFLAG_RDONLY_MASK \
+-	(FS_XFLAG_PREALLOC | FS_XFLAG_HASATTR)
++	(FS_XFLAG_PREALLOC | FS_XFLAG_HASATTR | \
++	 FS_XFLAG_CASEFOLD | FS_XFLAG_CASENONPRESERVING)
+ 
+ /* Flags to indicate valid value of fsx_ fields */
+ #define FS_XFLAG_VALUES_MASK \
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 66ca526cf786..919148beaa8c 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -253,6 +253,8 @@ struct file_attr {
+ #define FS_XFLAG_FILESTREAM	0x00004000	/* use filestream allocator */
+ #define FS_XFLAG_DAX		0x00008000	/* use DAX for IO */
+ #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
++#define FS_XFLAG_CASEFOLD	0x00020000	/* case-insensitive lookups */
++#define FS_XFLAG_CASENONPRESERVING 0x00040000	/* case not preserved */
+ #define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
+ 
+ /* the read-only stuff doesn't really belong here, but any other place is
+-- 
+2.52.0
+
 
 
 _______________________________________________
