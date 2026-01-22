@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7EAB7D6CFAB
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jan 2026 23:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 86316D6CFAB
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jan 2026 23:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=7vy2HOWX2XrGa/u10G2ZYGAlZdMWMrRLKZNCorRZa9Q=; b=XAzvK007ZBKQkHqCvXK/ZBvYqJ
-	3QVjpvelhiNL/PwBH7jFkGltny7vK7F4oKlssZSNnfQ3SSck8Ekwa3ijk5GEVfiqpAODTedi1hap7
-	O9XSrixx6gbk9qeMxfUuqp7WQsgYz+Jar4CjVwbINP0J/HCsUf7ydZ2fONV5NG1WO7Ro=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=fbVanONtKe1WWIm758GEhKbFJgN8l8cFd6B0fbyapto=; b=jHw6O+aH2kJnhk2HpZJ+8gc0Fo
+	fjHvf3SoNtMDcdrCQqd9Phx9Ijh6Khp3AdY/4VMkNcqBowWhmIak/NlAKusPei1ptwbkqDF/to4mZ
+	Cl4s9OJo01QaPg3g5YwcSyZM2lC9q1Cd+V24ZOGoi69JIL+cTCIre80pahfgQs9OvEEQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vj4RM-0002Uf-JG;
-	Thu, 22 Jan 2026 23:50:16 +0000
+	id 1vj4RQ-0006cS-Bl;
+	Thu, 22 Jan 2026 23:50:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vj4RL-0002UY-Bd
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vj4RO-0006cD-Vo
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Jan 2026 23:50:15 +0000
+ Thu, 22 Jan 2026 23:50:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=io963Mgc9DRy1bg478fVydX09czxNwxzXnn1NINWTEw=; b=e3v1dFOQw2fkrcjHPxpkv9RewH
- VygtGs3DcTZ9pXIrrjfyQMk9xuL4fdoCWEibUDlKMtfj0z0Hz+10PKLXUgni+WPTKbqSRCi/LkRkW
- pu5BDF6t1s08aeqVoA5LQcT/9GJlN7HN7tb8jmt3No5OTCiAgm9KoNZHF2xyvwglpOcQ=;
+ bh=qsEyGJNA50Evhxkukr9xzyg9PauD8lV74P5/bAHGFEM=; b=gY5e4y/vV9JIV6FUijnzWHAGpc
+ Xtx6ku45HbmKXjpy5QBliMmUTPn0L4gNr0H6rjK75kAAmFKKGeFloIfJN1QPd1A3uodlTtIA8GGrQ
+ w3ONH15INxjDfoDJS5bjpSJ9SzIo81/StL83+IaGczmivlby4l5mDBNspZT2lsVNfPZo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=io963Mgc9DRy1bg478fVydX09czxNwxzXnn1NINWTEw=; b=l/B1MtU0iud2MVBZfs4YhfVOh5
- zoWeOxZf2DmxrUnJz4W4vDA1LPLcg0Vx4q4OeqPVaBVF//efxdrot+wQ29r15D8MMynJwSb/3zY/6
- qzKejrsnLMoc/Tdv5TPo+VHorfTaZNBpGZp+zrE3lJYo2oiyifKi2NbPrRjpJss8XWhw=;
+ bh=qsEyGJNA50Evhxkukr9xzyg9PauD8lV74P5/bAHGFEM=; b=V8WJgchnpC/3XKdxjGP2uNJn0W
+ 00yfVmm+tv7fDXvqoQ3ldZmiR5SD9asnP5UdOsS1bva71D0WW9UU1lTVWYuKYlba723LLITLLlDIt
+ pChvfIOEWLKeNWsvYAlIEEdf9S7Cw5H5P8PWM6QUd8DPklXEA9XZpAucQ7Xv3fRVJWkk=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vj4RK-0002Nk-Ri for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Jan 2026 23:50:15 +0000
+ id 1vj4RP-0002Np-6j for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Jan 2026 23:50:19 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 19A366001A
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 22 Jan 2026 23:50:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5558C116C6;
- Thu, 22 Jan 2026 23:50:08 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 876EF601D0;
+ Thu, 22 Jan 2026 23:50:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F662C116C6;
+ Thu, 22 Jan 2026 23:50:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769125808;
- bh=DMNFC2K4o9O+DFphTZZkXNN6q57DzJVuOy8CzSeEpZI=;
+ s=k20201202; t=1769125813;
+ bh=u7MZ2oGf8bvFQPVOp9JOEHK6BTLWSEIQoIZAXjxu95U=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=OkMpSKPnB3lGzDf8/0I+VL0RKh6/N+NCEpRt0gFyoFEqwhboPl6Qz5vl6uUASGUTm
- dty2+Pqj1Jl6dAYxyolYcXefcC1RTvWMyToOoSu7pTwOv+n3gD2RnhMMSe0Zno2jxq
- nj1K9c3+ERC3Z1lUs7IteOv1dEbSEDLUGaC56w5298vRgZIvBrHU1NRleboEinfnUa
- jwqvqXLHxWwqJHQ2v3IrvxOSqaVVEOSkRoTx6F7P06cjm5xsXsrvHmpMhvlFTqI+Dq
- e+YS85P2Ed2tsFrJko6jJhWw3H7CkpdR6TSY9sMO66WD23S8ri/PiDexloe+TATrU/
- cvxYllmhz/ybA==
+ b=kSlXCTmxTMm/HfM5Zw/uisolc9X7EpAi9Libul78Xyu8PBa9pNIIVmrfcbIhST7ZO
+ QYOjazTvxtRhkRJ4s/Hk9NGcTP5svA0kkhjaPhgt3NGwqL2Q5Abks99nL5bWkZUWul
+ X1nmxhrNZNvCe+MclpzLyyuK4vkN9e2yJJ0ehf9SHqMuGCUgoJxrhGHFPpk2rdPWmy
+ ACySgM2h/Pd8a51Y2ho0kUH9aG7lkNVKiwFWaZWpsDqjgY6/9cZPUlZ1ep1rTqNjmG
+ +qJcbDY85HEV0Hj3a9AP2sQ1L/PIJEy8xKsTHtlJPSJwbpL69EEDtB5YH96xNLIsE3
+ WXhXoA022vVAw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 4EBC53808200; Thu, 22 Jan 2026 23:50:06 +0000 (UTC)
+ C8C833808200; Thu, 22 Jan 2026 23:50:10 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176912580510.2327822.13394016907615058829.git-patchwork-notify@kernel.org>
-Date: Thu, 22 Jan 2026 23:50:05 +0000
-References: <20260120091215.62608-1-chao@kernel.org>
-In-Reply-To: <20260120091215.62608-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1vj4RK-0002Nk-Ri
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: check skipped write in
- f2fs_enable_checkpoint()
+Message-Id: <176912580934.2327822.12832175677427521259.git-patchwork-notify@kernel.org>
+Date: Thu, 22 Jan 2026 23:50:09 +0000
+References: <20260113152138.15979-2-monty_pavel@sina.com>
+In-Reply-To: <20260113152138.15979-2-monty_pavel@sina.com>
+To: Yongpeng Yang <monty_pavel@sina.com>
+X-Headers-End: 1vj4RP-0002Np-6j
+Subject: Re: [f2fs-dev] [PATCH v2 0/3] f2fs: reduce checkpoint write latency
+ under metadata-intensive workloads
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,7 +90,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+Cc: jaegeuk@kernel.org, yangyongpeng@xiaomi.com,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -102,22 +101,23 @@ Hello:
 This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 20 Jan 2026 17:12:14 +0800 you wrote:
-> This patch introduces sbi->nr_pages[F2FS_SKIPPED_WRITE] to record any
-> skipped write during data flush in f2fs_enable_checkpoint().
+On Tue, 13 Jan 2026 23:21:36 +0800 you wrote:
+> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 > 
-> So in the loop of data flush, if there is any skipped write in previous
-> flush, let's retry sync_inode_sb(), otherwise, all dirty data written
-> before f2fs_enable_checkpoint() should have been persisted, then break
-> the retry loop.
+> This patch series addresses long checkpoint write latency observed under
+> workloads with frequent metadata operations. Analysis shows that the main
+> bottleneck is high synchronous read latency of NAT blocks during checkpoint
+> processing.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2,1/2] f2fs: check skipped write in f2fs_enable_checkpoint()
-    https://git.kernel.org/jaegeuk/f2fs/c/254ef6c7e1af
-  - [f2fs-dev,v2,2/2] f2fs: introduce FAULT_SKIP_WRITE
-    https://git.kernel.org/jaegeuk/f2fs/c/a848dbd97957
+  - [f2fs-dev,v2,1/3] f2fs: add write latency stats for NAT and SIT blocks in f2fs_write_checkpoint
+    https://git.kernel.org/jaegeuk/f2fs/c/10f96e94b38d
+  - [f2fs-dev,v2,2/3] f2fs: change size parameter of __has_cursum_space() to unsigned int
+    (no matching commit)
+  - [f2fs-dev,v2,3/3] f2fs: optimize NAT block loading during checkpoint write
+    (no matching commit)
 
 You are awesome, thank you!
 -- 
