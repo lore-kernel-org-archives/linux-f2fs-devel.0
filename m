@@ -4,113 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2F33FD74EF2
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Jan 2026 15:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B8238D778B1
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Jan 2026 23:03:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:References:In-Reply-To:Message-Id:To:Date:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=6AkQZdxUDFcJ+SKLoLYtWRqlP6YUyQfN6YD2UQsvckE=; b=U03d/S87O+rBLpX+USMY8ci3xQ
-	A8R4wYqRPTdCHwElonsf010MVP7jcpSlvaP6f3GUeBmqcpL4XseJ6Y+InwlW5JhyYDD6rmGKxJqXo
-	pnJVe6cSbMTlMKhpKsBCgpcdDKPpQ7c3BeGwphBnVFhxgMUApVPY3wWO3Unlxv+/T/vg=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:To:From:Message-ID:Date:MIME-Version:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=QAt9BiStU07jkrQ80Sd8uSTqQ2z7wj/1dzfVi+YdTOk=; b=YU1FlUvjO5RUPvyKiCh/VlICWs
+	aM3oX8XKDEjemErKQXkHYPnEHclnU/ZGKxMPM1B2GDrJ2t7EvaWxK3n/Ecl2HHo/NEJmeUWE6hPtn
+	23Kn77z3yQ0Fvu/6FwHihrY/SZ2ZDURFtbOCNXwS2Or+YbW/9fj7w/x+qMAdO4zD8dUg=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vjJQL-0003TW-Ja;
-	Fri, 23 Jan 2026 15:50:14 +0000
+	id 1vjQBZ-0008Bv-Pk;
+	Fri, 23 Jan 2026 23:03:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <cel@kernel.org>) id 1vjJQJ-0003TF-Hi
- for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Jan 2026 15:50:12 +0000
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <3hvZzaQkbAJUHNO9zAA3GzEE72.5DD5A3JH3G1DCI3CI.1DB@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
+ id 1vjQBY-0008Bp-1Z for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 23 Jan 2026 23:03:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Subject:
- References:In-Reply-To:Message-Id:Cc:To:From:Date:MIME-Version:Sender:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
+ MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BzppY9XZyJmB3FJfXdpLIJg4O0Qh4h2HcU5B3a92Z0k=; b=ZwRFwknqUTG3bGgx5j2lCoNHnq
- 4/ygHqJ2cPu6AVGI+s/vm0gPASdZEtWqKxPxKzAJ5X6s1hFHeO+kDE158gwNiNBovDESMIp4Ymm7K
- zMCEeJ7MDWdezkZ3oaO5XBWsBIWXMWCuLEl2Af7bdCSsD7j/ySkzlpbFT3BnW9jble4M=;
+ bh=ytTrfe4tsGH8G4Jp2Llgrh2yIUm2a5iTgzzCncZOEcY=; b=HZGI+gW4Sb/aNHv0hR82iOZkaw
+ c+e0FFCXCUZnVfFyHRenZ6b1zUUPE2geJyIROalWURYfmJZmKEuSI1vUsBqLDcJhfkT5F1m+ExGfl
+ N6hBbEtAOF5rTgpF59b+cohhlDdAsnk9qLul0QuvAKRysh9GqNYejThHgiZ5pLGjS+TQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Subject:References:In-Reply-To:
- Message-Id:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=BzppY9XZyJmB3FJfXdpLIJg4O0Qh4h2HcU5B3a92Z0k=; b=F1tNNuEWYXxvoGuC6vf0J/O9Eu
- BEBazoz83GE3HhQ/gIms0uWG+dri4Q44h+GqD97m9kv50aUM1YakgQNtNQditN37yhor3Lo36jfMd
- MZQq8p7LR8IWKnN1Ob+RL+p4bS/2zuoXreaKbqz/2Czjo4YtvxcI/5QHLs5cYOQNmEGU=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
+ :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=ytTrfe4tsGH8G4Jp2Llgrh2yIUm2a5iTgzzCncZOEcY=; b=f
+ DgfuOd0KRX266BnmHMT+l/kzRdDXpSM0pnhH7YPt2s6ezZdQXDZWBuiU+DygpNTZj6ldql0eJtBAz
+ mu8ZpwShLDAO+gAWcBFbR3SWPw81Dy3UQxspSRE44F2O2Rkszvs4Lm9rfal2LFdEXpVjBM2hjaAq4
+ o6wMF49rkN080OpI=;
+Received: from mail-pf1-f205.google.com ([209.85.210.205])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vjJQI-0002pH-Tz for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Jan 2026 15:50:12 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 40B1F6012B;
- Fri, 23 Jan 2026 15:50:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 268FAC4CEF1;
- Fri, 23 Jan 2026 15:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769183405;
- bh=kDP9Yb3CbfggR8X+hWoqLQMPd20AumtY0Il/c8TNaKY=;
- h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
- b=Oe08t/o/2NDsUrMKUH1M6DPGJM2ZN7cDoW08+cOE4juSlAGvrXORrSwCclCZw2aDV
- ZkVTKgFOWWiO1/7UD1FizCrSF5aPkbMt0Xz4yP7v5wFhzCq1Ehfu3cawiSSiJn4aFe
- tMl2S1/Ku9JhhGFB7uQXeL5ZqG6ZVdbkqwNvLCmPFT6cK/SRjDjHv08QbhhTdsOSlg
- YMufXMi1X8phtUbamkl5WfuMZM1sjX7V2NmsZD7t/TCp+rOJJNc02MHDzBzX/GOr5L
- jR8J1YHTCxnnSmEGS1fVMkvtoFxQA5PdCm3odBjzpdLrYydUjdPpPGZlr8mqEYL1Up
- hVo8FmzWqbd9w==
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfauth.phl.internal (Postfix) with ESMTP id 0A23CF40068;
- Fri, 23 Jan 2026 10:50:03 -0500 (EST)
-Received: from phl-imap-15 ([10.202.2.104])
- by phl-compute-10.internal (MEProxy); Fri, 23 Jan 2026 10:50:03 -0500
-X-ME-Sender: <xms:qphzaYMIDusB_Xk8Iw4J_qqx-jkUaULhjU_4qBqzWqUpKgNdpST7Cg>
- <xme:qphzaZwl8v4sf68uioXcKj_hJesszvmBEUsFWRFNXVrVwnqNhC5YZvqLhTM2T-XL_
- 29Ydjf5oRad8fHsuBJog-RE6knXPauD3N-ITfWRSm2Ph-WFBMqAALk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddugeelgeehucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhuhgt
- khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
- hnpefhffekffeftdfgheeiveekudeuhfdvjedvfedvueduvdegleekgeetgfduhfefleen
- ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
- hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
- leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
- hilhdrtghomhdpnhgspghrtghpthhtohepfeefpdhmohguvgepshhmthhpohhuthdprhgt
- phhtthhopehsvghnohiihhgrthhskhihsegthhhrohhmihhumhdrohhrghdprhgtphhtth
- hopegrughilhhgvghrrdhkvghrnhgvlhesughilhhgvghrrdgtrgdprhgtphhtthhopehs
- lhgrvhgrseguuhgsvgihkhhordgtohhmpdhrtghpthhtoheprhhonhhnihgvshgrhhhlsg
- gvrhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnnhgrsehkvghrnhgvlhdrohhr
- ghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
- gtvghmsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegthhgroheskhgvrhhnvghlrdho
- rhhgpdhrtghpthhtohepughjfihonhhgsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:qphzaSbprTumlZMvqgi-fN0ySmTrpZ1Sy0mhtQX_uK9_de-fQjcsIQ>
- <xmx:qphzacPOrC9HHyrIfATDQn96t02Xea-4bAtCO00lX8l1ixs2IPp1Qg>
- <xmx:qphzaV7RqCEgahzQH87IyqIo3vInECWRwzjRgOBG54mM8UGQ7ppphw>
- <xmx:qphzaXdkpZ-ujvs4OTjQ3zL-M4ps1358Ma37t8lfmfNwKytySSzPTw>
- <xmx:q5hzaR40E4HhwCPyJxnEpYdnMVQu5gKh2EFfpqDTxHOkz4PYOS4LUXhO>
-Feedback-ID: ifa6e4810:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
- id D0B1A780075; Fri, 23 Jan 2026 10:50:02 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1vjQBX-0005x2-E5 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 23 Jan 2026 23:03:23 +0000
+Received: by mail-pf1-f205.google.com with SMTP id
+ d2e1a72fcca58-82181fdf3d5so1415809b3a.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 23 Jan 2026 15:03:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769209393; x=1769814193;
+ h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=ytTrfe4tsGH8G4Jp2Llgrh2yIUm2a5iTgzzCncZOEcY=;
+ b=WzGkv+xGHbFEBpMhoKCGDf7GMECj0eCWwfpk3N/mub7V3cgKVyNsIpdYaRJ4OnFRpS
+ Tq722Xi1lGw5jq/mmivTj0ZlZavDqwkvxI86OYBAB1k0+MvbcEGoxlrv0a2AZAXqrB3v
+ 8/rS77PDBCNp+rwNTJ8Q/QMHO3aUBqNozXzszO9rlsoqKaCIR9Nk2+Y3Z60bFka1lBAe
+ 2pxR2nn0+mE7cgyZWA84LxzJXxJpHCZxsi8++L2p9JgKI4ecH6n0pk1p/YgE8ZjH7MHk
+ kTkgSMf4dyqjDfxEM0f/XbZ4rmvrVzh7Mcy2NPh8n3646IhnbgHNWRqv/EwionjBPvz8
+ IkUg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWWezMgW6TkafM7pu15/wJhOgxA3z0pKgPsR4TcB4ATRzeUsKIk40KaIeCAfwnmaFgxgdJazq+suB9/FauC12+B@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YxIxMUs6vhKeSEY1e0+KzRQZ0HpZwQDQkt+6d5V1/Bd7TvUFDPz
+ E9hkJZ1IAyv8UquUJKwVFTErOZ9Ofc34zZgL9w++BUXBhUBxErmdOa2p5MNe+wOH8J8QCl5IvP+
+ Umy5CCnvWRqsNWadVMLlXlZcONhM0Oadi0HSETr6O1EaRpMnKWTQDgP2WEHg=
 MIME-Version: 1.0
-X-ThreadId: AX_vFn8fWldV
-Date: Fri, 23 Jan 2026 10:49:38 -0500
-To: "Darrick J. Wong" <djwong@kernel.org>
-Message-Id: <95aa2a65-e1e8-44ef-a62a-e3190a11cb32@app.fastmail.com>
-In-Reply-To: <20260123002904.GM5945@frogsfrogsfrogs>
-References: <20260122160311.1117669-1-cel@kernel.org>
- <20260122160311.1117669-8-cel@kernel.org>
- <20260123002904.GM5945@frogsfrogsfrogs>
-X-Headers-End: 1vjJQI-0002pH-Tz
-Subject: Re: [f2fs-dev] [PATCH v7 07/16] ext4: Report case sensitivity in
- fileattr_get
+X-Received: by 2002:a05:6820:22a8:b0:662:c301:a278 with SMTP id
+ 006d021491bc7-662cab5f892mr2035600eaf.45.1769207430780; Fri, 23 Jan 2026
+ 14:30:30 -0800 (PST)
+Date: Fri, 23 Jan 2026 14:30:30 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6973f686.a70a0220.35de72.0009.GAE@google.com>
+From: syzbot <syzbot+5dd7feff22865a110a30@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+ syzkaller-bugs@googlegroups.com
+X-Headers-End: 1vjQBX-0005x2-E5
+Subject: [f2fs-dev] [syzbot] [f2fs?] INFO: task hung in process_one_work (5)
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,75 +95,95 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chuck Lever via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chuck Lever <cel@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Paulo Alcantara <pc@manguebit.org>,
- Yuezhang Mo <yuezhang.mo@sony.com>, Carlos Maiolino <cem@kernel.org>,
- almaz.alexandrovich@paragon-software.com, adilger.kernel@dilger.ca,
- linux-cifs@vger.kernel.org, Steve French <sfrench@samba.org>,
- Viacheslav Dubeyko <slava@dubeyko.com>, linux-ext4@vger.kernel.org,
- Namjae Jeon <linkinjeon@kernel.org>, Shyam Prasad N <sprasad@microsoft.com>,
- frank.li@vivo.com, linux-nfs@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>, glaubitz@physik.fu-berlin.de,
- Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
- Christian Brauner <brauner@kernel.org>, Theodore Tso <tytso@mit.edu>,
- linux-api@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, senozhatsky@chromium.org,
- Chuck Lever <chuck.lever@oracle.com>, Hans de Goede <hansg@kernel.org>,
- Anna Schumaker <anna@kernel.org>, linux-fsdevel@vger.kernel.org,
- Sungjong Seo <sj1557.seo@samsung.com>, Trond Myklebust <trondmy@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    59e4d31a0470 Merge branches 'for-next/core' and 'for-next/..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=12454e3a580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8a8594efdc14f07a
+dashboard link: https://syzkaller.appspot.com/bug?extid=5dd7feff22865a110a30
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ba2b9a580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15da1852580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/746a1d5c4188/disk-59e4d31a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2eefade79f10/vmlinux-59e4d31a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/140624ef24ed/Image-59e4d31a.gz.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/d9aeb36c73e1/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=179533fa580000)
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/2795c5404b6f/mount_6.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=11856bfc580000)
+mounted in repro #3: https://storage.googleapis.com/syzbot-assets/c5955f1ccd09/mount_11.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=10ba2b9a580000)
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5dd7feff22865a110a30@syzkaller.appspotmail.com
+
+INFO: task kworker/u8:14:3572 blocked for more than 143 seconds.
+Workqueue: writeback wb_workfn (flush-7:1)
+ writeback_sb_inodes+0x73c/0x16b4 fs/fs-writeback.c:2030
+ __writeback_inodes_wb+0xec/0x228 fs/fs-writeback.c:2107
+ wb_writeback+0x3c8/0xd70 fs/fs-writeback.c:2218
+ wb_check_old_data_flush fs/fs-writeback.c:2322 [inline]
+ wb_do_writeback fs/fs-writeback.c:2375 [inline]
+ wb_workfn+0xa08/0xdc0 fs/fs-writeback.c:2403
+ process_one_work+0x7c0/0x1558 kernel/workqueue.c:3257
+      Not tainted syzkaller #0
+Call trace:
+ __down_write_common kernel/locking/rwsem.c:1317 [inline]
+ __down_write kernel/locking/rwsem.c:1326 [inline]
+ down_write+0xb4/0xc0 kernel/locking/rwsem.c:1591
+ process_one_work+0x7c0/0x1558 kernel/workqueue.c:3257
+ process_scheduled_works kernel/workqueue.c:3340 [inline]
+ worker_thread+0x958/0xed8 kernel/workqueue.c:3421
+ kthread+0x5fc/0x75c kernel/kthread.c:463
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
+1 lock held by khungtaskd/32:
+4 locks held by kworker/u8:2/41:
+4 locks held by kworker/u8:3/42:
+2 locks held by pr/ttyAMA-1/43:
+ #2: ffff0000d49500e0 (&type->s_umount_key#54){.+.+}-{4:4}, at: super_trylock_shared+0x24/0xdc fs/super.c:563
+ #2: ffff0000cb9880e0 (&type->s_umount_key#54){.+.+}-{4:4}, at: super_trylock_shared+0x24/0xdc fs/super.c:563
+4 locks held by kworker/u8:20/6003:
+ #3: ffff0000e0531510 (&sbi->gc_lock){+.+.}-{4:4}, at: f2fs_down_write fs/f2fs/f2fs.h:2313 [inline]
+ #3: ffff0000e0531510 (&sbi->gc_lock){+.+.}-{4:4}, at: f2fs_balance_fs+0x4c0/0x6d8 fs/f2fs/segment.c:464
+ #0: ffff0000d535d0a0 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_read+0x3c/0x4c drivers/tty/tty_ldsem.c:340
+ #0: ffff0000c1ff2948 ((wq_completion)writeback){+.+.}-{0:0}, at: process_one_work+0x63c/0x1558 kernel/workqueue.c:3231
+ #1: ffff80009ee57be0 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_one_work+0x6d0/0x1558 kernel/workqueue.c:3231
 
 
-On Thu, Jan 22, 2026, at 7:29 PM, Darrick J. Wong wrote:
-> On Thu, Jan 22, 2026 at 11:03:02AM -0500, Chuck Lever wrote:
->> From: Chuck Lever <chuck.lever@oracle.com>
->> 
->> Report ext4's case sensitivity behavior via the FS_XFLAG_CASEFOLD
->> flag. ext4 always preserves case at rest.
->> 
->> Case sensitivity is a per-directory setting in ext4. If the queried
->> inode is a casefolded directory, report case-insensitive; otherwise
->> report case-sensitive (standard POSIX behavior).
->> 
->> Reviewed-by: Jan Kara <jack@suse.cz>
->> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
->> ---
->>  fs/ext4/ioctl.c | 7 +++++++
->>  1 file changed, 7 insertions(+)
->> 
->> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
->> index 7ce0fc40aec2..462da7aadc80 100644
->> --- a/fs/ext4/ioctl.c
->> +++ b/fs/ext4/ioctl.c
->> @@ -996,6 +996,13 @@ int ext4_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
->>  	if (ext4_has_feature_project(inode->i_sb))
->>  		fa->fsx_projid = from_kprojid(&init_user_ns, ei->i_projid);
->>  
->> +	/*
->> +	 * Case folding is a directory attribute in ext4. Set FS_XFLAG_CASEFOLD
->> +	 * for directories with the casefold attribute; all other inodes use
->> +	 * standard case-sensitive semantics.
->> +	 */
->> +	if (IS_CASEFOLDED(inode))
->> +		fa->fsx_xflags |= FS_XFLAG_CASEFOLD;
->
-> Curious.  Shouldn't the VFS set FS_XFLAG_CASEFOLD if the VFS casefolding
-> flag is set?
->
-> OTOH, there are more filesystems that apparently support casefolding
-> (given the size of this patchset) than actually set S_CASEFOLD.  I think
-> I'm ignorant of something here...
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-I'm not clear if there's a review action needed. Help?
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--- 
-Chuck Lever
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
 
 _______________________________________________
