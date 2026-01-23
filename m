@@ -4,67 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E4ABCD6CFCD
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Jan 2026 05:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E3705D6CFDC
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Jan 2026 06:30:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Subject:Message-ID:MIME-Version:References:In-Reply-To:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=DLl6fPxbLs219ErbtG8mPRxZpkdGQbQ4aaznTSAt56Y=; b=Z7qDslBsbUVCP8DZXL/WwpF0nB
-	T0MoHddyQHy6CLr8SjhQ2xD/wVKlpdA3MmUL7kLwpPXME0R15mMsF7sOwLiKrikWpFWZVj8ClmLR5
-	Oc/HXwiszpn170w7TBbufwWsaAYcBUen0BfEDdVCi+km0LJBWVMJmO6F/sWYp4gQDjGc=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Rq1sezLNO2X2eqT/kpyM/kn47S4rGQ10RYcY8SHF7BI=; b=VwQI95yQSx/ILyozr0Oa/VFAkQ
+	e1E21CDle4S0RoEmOA/BHE1J+MfehmO68MnRlHpaG/My3wM07U12lybKjmBx9Uteis3YTorzFEVVY
+	cl3ryyJZ/AsKlw/Jx0ur+dp6x3e4XCawWIpwJy/M1aeHQIPY7dBZ559sGlSgaqL5vS2Q=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vj9hk-0001Js-An;
-	Fri, 23 Jan 2026 05:27:32 +0000
+	id 1vjAh4-0004Mm-9I;
+	Fri, 23 Jan 2026 06:30:55 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1vj9hj-0001Jm-Rp
+ (envelope-from <nzzhao@126.com>) id 1vjAh3-0004Mc-Kk
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Jan 2026 05:27:31 +0000
+ Fri, 23 Jan 2026 06:30:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UjPYkCUjpcCnAOlJdfW4X7sXxvmwUceE1HsNR3y+OyY=; b=R7rDuhmliJgCpW4Gyqjg3pfyhr
- xtFnofIVqsvZpiSbrBqhREkSFyNMvMX30YoJZIL6eWAx62d9yPXOkz3zVUSmtOyQP/vyYI9DDCH7F
- af6/0UaIks5qepmvIA28epFE/LyC+r6xlHrSHJoNazk01xoiAtIw/tZFqkrt27/6BvUA=;
+ d=sourceforge.net; s=x; h=Message-ID:MIME-Version:Content-Type:
+ Content-Transfer-Encoding:References:In-Reply-To:Subject:Cc:To:From:Date:
+ Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+ Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+ List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=X0AUgm60OdLFgZKhC/GX3rR3b1y9H+0o5ZFYifDgKPk=; b=JKch6AKE6nMOUZ7V6MaQwTvOYc
+ ryA+lykuV5EfHkCLlm1acnp24mIBPp0EUJ/mbzSEgoGYCu1vYj7ENajUMdKF60JCbQD9c/Vi1ImJM
+ N+taQNd7IYELlglP7N9dbDd0laXpCt0BT1OTEZ6j3Nzl6sGd7XR5qOb03mcw2CKsRv8c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References
+ :In-Reply-To:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=UjPYkCUjpcCnAOlJdfW4X7sXxvmwUceE1HsNR3y+OyY=; b=hq/N5l3EuBvZqlgAbjfCxgo8ND
- sGUi5ah4Xu5ZcI5QoCwB4a044ehKCKzfFLZEQd3AD+xvWQeTAV6hUVnDhtsHMFOtKXY24jRNGIp3k
- EK0dxA238M9d+vJ+xRGrTGc4bIVAUurZwmJUTXw0guIVL97yimFrVppp1Q2KD0hBLBIE=;
-Received: from verein.lst.de ([213.95.11.211])
+ bh=X0AUgm60OdLFgZKhC/GX3rR3b1y9H+0o5ZFYifDgKPk=; b=HTlvNAGG1Mev0+9WjFUN0f3dON
+ SSjIzklEqiLsVXSkO1z6OJ24s+P9cS7gZ1zZ/2PNO+L+7ubPghz/JbHiKechMp8JI/hl/UBNkdX67
+ el4v7y7xxlDx2jKPz9icN4+XMlJdJuB97EgU2mEjJMC2lW38bScK02rzIy0J0WWqdpIM=;
+Received: from m16.mail.126.com ([220.197.31.7])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vj9hj-0006it-9A for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Jan 2026 05:27:31 +0000
-Received: by verein.lst.de (Postfix, from userid 2407)
- id BF760227AAE; Fri, 23 Jan 2026 06:27:23 +0100 (CET)
-Date: Fri, 23 Jan 2026 06:27:23 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Message-ID: <20260123052723.GE24123@lst.de>
-References: <20260122082214.452153-1-hch@lst.de>
- <20260122082214.452153-12-hch@lst.de> <20260122220420.GI5910@frogsfrogsfrogs>
+ id 1vjAh3-0000cB-Iw for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 23 Jan 2026 06:30:54 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+ s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+ Message-ID; bh=X0AUgm60OdLFgZKhC/GX3rR3b1y9H+0o5ZFYifDgKPk=; b=o
+ NIksTyKYGJcUqWMfCXrQL+Cf0VW0dSlCwRxmfok3oVL1g65ahl+ym/g/uWTDPzir
+ iSQ+0TXgpd4qDBXpEIbjBrF/Zq9E9J/z5d04NZ2Ac+rkgex9PxElb9JD2X08TxLM
+ /SKxlIhiQbii/x80fsFvxItuxoMdAtqfh3ikUz9aGc=
+Received: from nzzhao$126.com ( [212.135.214.5] ) by
+ ajax-webmail-wmsvr-41-118 (Coremail) ; Fri, 23 Jan 2026 14:30:30 +0800
+ (CST)
+X-Originating-IP: [212.135.214.5]
+Date: Fri, 23 Jan 2026 14:30:30 +0800 (CST)
+From: "Nanzhe Zhao" <nzzhao@126.com>
+To: "Jaegeuk Kim" <jaegeuk@kernel.org>
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20251222(83accb85) Copyright (c) 2002-2026 www.mailtech.cn 126com
+In-Reply-To: <aXKuTRfZXE4z0j1_@google.com>
+References: <20260109024716.12047-1-chao@kernel.org>
+ <CAGsJ_4wjXMXk4YKsYebmtTa5dKVO21b91ieY=foYULWS+DyroQ@mail.gmail.com>
+ <2cdd4281-7e37-4dd0-91b1-1ab16ef772aa@kernel.org>
+ <CAGsJ_4weE5T1uBA1-JoJdbZY4E91eN_OL3hMdqixLcoKSrmuzw@mail.gmail.com>
+ <8c13ca69-a08a-41c7-bbef-0a79a5f44f93@kernel.org>
+ <83419982-77ba-4dac-880e-bf59669a006f@126.com>
+ <aXKuTRfZXE4z0j1_@google.com>
+X-NTES-SC: AL_Qu2dC/2ftkAo5iKZZukfmUgRgOw3XMSyu/oi2o9UO5FwjA/j6BI5XVxgElrb3umJJgCyoRW1cSZu+N1KY6J3eYcJMZRdQ6Y9ywNtus59zSd20A==
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260122220420.GI5910@frogsfrogsfrogs>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1vj9hj-0006it-9A
-Subject: Re: [f2fs-dev] [PATCH 11/11] fsverity: use a hashtable to find the
- fsverity_info
+Message-ID: <43f34976.480b.19be98c144d.Coremail.nzzhao@126.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: dikvCgDHf72GFXNpar1KAA--.13341W
+X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBsAadbWlzFYYLFQAA3R
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+X-Headers-End: 1vjAh3-0000cB-Iw
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to prevent clearing immutable for
+ large folio supported inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,81 +95,27 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: fsverity@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Andrey Albershteyn <aalbersh@redhat.com>,
- "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
- linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
- Jaegeuk Kim <jaegeuk@kernel.org>, David Sterba <dsterba@suse.com>,
- Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, linux-btrfs@vger.kernel.org
+Cc: Barry Song <21cnbao@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jan 22, 2026 at 02:04:20PM -0800, Darrick J. Wong wrote:
-> On Thu, Jan 22, 2026 at 09:22:07AM +0100, Christoph Hellwig wrote:
-> > Use the kernel's resizable hash table to find the fsverity_info.  This
-> 
-> Oh is that what the 'r' stands for?  I thought it was rcu.  Maybe it's
-> both. :P
+Hi Kim:
+At 2026-01-23 07:10:05, "Jaegeuk Kim" <jaegeuk@kernel.org> wrote:
 
-From the lib/rhashtable.c:
+>
+>Yes, I was hitting some issues when I convert the mapping while inode is alive.
+>So, for now, we should set it in f2fs_iget() only.
+>
 
- * Resizable, Scalable, Concurrent Hash Table
+What about using mapping_set_xxx functions in f2fs_new_inode  then?
+It maybe be a bit odd to me that we create a immutable file but we can
+only get large folios for this inode  when the inode is evicted and get
+by f2fs_iget again, not get large folios by the first place.
 
-> > Because insertation into the hash table now happens before S_VERITY is
-> > set, fsverity just becomes a barrier and a flag check and doesn't have
-> > to look up the fsverity_info at all, so there is only one two two
-> 
-> "one two two" <confused>?
-
-one or two, sorry.  The cover letter actually explains this in more
-detail, which this should be updated to.
-
-> > +static const struct rhashtable_params fsverity_info_hash_params = {
-> > +	.key_len		= sizeof(struct inode *),
-> 
-> 	.key_len		= sizeof_field(struct fsverity_info, inode),
-> 
-> Perhaps?
-
-That should work, yes.
-
-> > -	kfree(vi->tree_params.hashstate);
-> > -	kvfree(vi->hash_block_verified);
-> > -	kmem_cache_free(fsverity_info_cachep, vi);
-> > +	return rhashtable_lookup_fast(&fsverity_info_hash, &inode,
-> > +			fsverity_info_hash_params);
-> 
-> Hrm.  The rhashtable stores a pointer to the rhash_head, but now we're
-> returning that as if it were a fsverity_info pointer.  Can I be pedantic
-> and ask for a proper container_of() to avoid leaving a landmine if the
-> struct layout ever changes?
-
-rhashtable_lookup_fast returns the struct containing the rhash_head.
-The paramters store the rhead_offset for that purpose.  See rht_obj
-as used by rhashtable_lookup.
-
-> > @@ -323,9 +323,9 @@ fsverity_init_verification_context(struct fsverity_verification_context *ctx,
-> >  				   struct fsverity_info *vi)
-> >  {
-> >  	ctx->inode = inode;
-> > -	ctx->vi = vi;
-> 
-> Can this function drop its @vi argument?
-
-No..
-
-> 
-> > +	ctx->vi = fsverity_get_info(inode);
-
-... but this extra lookup should have been removed and got messed up by a
-rebase, causing a pointless extra lookup.  (Which still is completely
-in the noise in my runs).
-
-
-
+Thanks,
+Nanzhe Zhao
 _______________________________________________
 Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
