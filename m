@@ -4,80 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 329EAD72341
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Jan 2026 07:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2B057D72341
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Jan 2026 07:22:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=8s0SfpFP9nlYYo3zLD0zrINhykFTmDT0+M8al5vbHkg=; b=GB1oaqk/xyxiWzXAxVZcAayq4B
-	nr1LHuErsCJHwAbqz6+clI2seovBIRAil/00WQnbTR9xslgMiM/r4RzUkWQ8GfBQ9aSNGLUCHM/Td
-	VvEenAsDg8VQhemwHsr+9FibXeEdRLkyoOWsBghgj1/Mjzl1Im7CMbHUU+brtgCdzvB8=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=BtBgvxZUrHi9WRSE1oh3cf5mOrcoWK87Mhq0GwqtOTU=; b=iG91gpqz/9UQKTB93wvaUao6Zb
+	KXskOr1s0jxecOJ8Y0fixXgzbkpFoy7sPxZ7N3BKTWoftpsfMI+0mQDatjZDEkmIGqIv5mlCUgCi4
+	+SU65YxlFV67DYOOPQyv/njZPvxvC40iPFKFnaixSCrAnfwT5aeFZwO9JcejQ1AB5gUQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vjBU5-0001H8-3G;
-	Fri, 23 Jan 2026 07:21:33 +0000
+	id 1vjBV6-0003D3-L6;
+	Fri, 23 Jan 2026 07:22:36 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <djwong@kernel.org>) id 1vjBU4-0001Gw-2A
+ (envelope-from <djwong@kernel.org>) id 1vjBV5-0003Cs-H9
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Jan 2026 07:21:32 +0000
+ Fri, 23 Jan 2026 07:22:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
- MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JQd4k/RP+ZwxkjU60X0UaAa8dzylHGp7c0+a/n27/AE=; b=a8sCGjAe4AKeOeys6gQA7TlXrn
- HWoIPOqwW1IDbq0bfIOIcpC0dX5ziqTnRUjiTPeafw9O8JeUgrUHuqdoS2MToSkUKsu7DyXQwgntI
- fPcYJYckIaAeXCOr1N8boul+qKyL+9+RfcA+gnBRevNyYrE/FfHSX/zZxQXcCZc4awD4=;
+ bh=hYORL+ulDQU1A0yZS6mdoF/USDIkZvUZDTcV50rz5/8=; b=h719z2Nov5cEShuw1v/KA3XFPW
+ zzsiF/hRPgb0U7SeRuCWiyLjSuaI7MxKyK37HKojErAqU9scLE+HxXyd1Z8Mxwz2AR3lODlKVK4AA
+ t6uRvNdtCCH9wOxCQXMOdjCzOEMSyMz/R/cuCpsCS3Crx8ERU8LlNVkfFMG/Lz4/qWoQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=JQd4k/RP+ZwxkjU60X0UaAa8dzylHGp7c0+a/n27/AE=; b=eA4swA4le24xm3crn8Ncf3mDHJ
- gPZXCLzCTKmFTr2YkhpvX/8n17HdHLCtbB44jC1u7xPRCXp1/fNnDh8cDmUhB+uvyqdm5f0du85qT
- sKoX7cuVnjS3naylwltRFS/512X73k7p4LooDyS5rN64SQ0e1IgT/a/4XWR6q7Shi91s=;
+ bh=hYORL+ulDQU1A0yZS6mdoF/USDIkZvUZDTcV50rz5/8=; b=ho4u7WlgxKLDW60qQE8DJI37PU
+ UXeZDAaKQ7XXzPcztgey+XVEXaBje+rXyct3Ti4+jxf1B9sN/7RAgFSosPdd7cx5CvV17LDA7n2X7
+ yKwyZgiU/mItKhu5npYKk5/m49UAUFShvgMG8M8EmeXs5w+LNJCHPt1N4QsbmHfqoDh4=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vjBU4-00030i-Dl for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Jan 2026 07:21:32 +0000
+ id 1vjBUy-00032v-Si for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 23 Jan 2026 07:22:29 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 00CC644303;
- Fri, 23 Jan 2026 07:21:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4732C4CEF1;
- Fri, 23 Jan 2026 07:21:26 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 8B790419AA;
+ Fri, 23 Jan 2026 07:22:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 631EBC4CEF1;
+ Fri, 23 Jan 2026 07:22:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769152886;
- bh=DDl7zLtPOeFQjxt7Ggqx1S5g+R14kCM8cAEsVyBajUg=;
+ s=k20201202; t=1769152938;
+ bh=xv7Ciia1o4TzkfhiJeMNZ7afzQQkd0wZmCmSkOnW3D8=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=gjf32HfLTAL5btPTzgGS8ktQroaXji6bHYgaSmpcssFw3bYEFppa2b7196Vj+gtgS
- JB0yV8ItjC1KgxNyb/JKDbBP8cXLE/pw2Kuy+OtsxXLqA1XK+chfrwJBkykTwrhFK+
- 1Ka6FntfNJTrfxu4YP1rgQa3TZOMvQFSumTxGU4FoYgY9Mp639my/tPFeo7oPAa1hc
- OonltoZHFkObImhv59hVSuAb0qvhJWNUuBxfUyQ78eEiiDKAxomx7RpXtP8ADa7Goz
- oGkN27oAQ2xkdbEeSQ4tDvOB1P3S8wE4ASZXhMsZTsSzg3OnbiUHWNs9mDSIhrOi41
- 4u3ZPsn2LC7Xw==
-Date: Thu, 22 Jan 2026 23:21:26 -0800
+ b=ag+3xAAMAiEobo8tr0xQ+pzcrO/vVQSUK1Ag76ICSV8GT7q49niWT+pofKmzKsG8d
+ Jw39Di1WR6hLI1vHcojDjdN67CQ0NZ4hT6qBh6VKNpuT+NwwIGeFCoVzI/Cw7PFD8H
+ iDuF0Gf2+DPUBr/9WjkqNurr6hBOvGEbVBDUSzw/q/xGgutFraBC7WtwpfTz4uSSV3
+ 05dE5Th7Oj5wPPLqdrF+TxQtBTjE8Jpq8Hgi5LkNg9Eac+189i5VZfNF/Sxr89VkxQ
+ HkR9HEZf+DjnbaULQQHgzisWBIN1hfRryZZ7oPJMvM5Tg+TZjXUU7ROBmPVPkNk1aQ
+ DE5y1rbi3NWNg==
+Date: Thu, 22 Jan 2026 23:22:17 -0800
 To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20260123072126.GJ5910@frogsfrogsfrogs>
+Message-ID: <20260123072217.GK5910@frogsfrogsfrogs>
 References: <20260122082214.452153-1-hch@lst.de>
- <20260122082214.452153-5-hch@lst.de>
- <20260122212700.GD5910@frogsfrogsfrogs>
- <20260123051216.GA24123@lst.de>
+ <20260122082214.452153-6-hch@lst.de>
+ <20260122214227.GE5910@frogsfrogsfrogs>
+ <20260123051429.GB24123@lst.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260123051216.GA24123@lst.de>
-X-Headers-End: 1vjBU4-00030i-Dl
-Subject: Re: [f2fs-dev] [PATCH 04/11] fsverity: start consolidating
- pagecache code
+In-Reply-To: <20260123051429.GB24123@lst.de>
+X-Headers-End: 1vjBUy-00032v-Si
+Subject: Re: [f2fs-dev] [PATCH 05/11] fsverity: kick off hash readahead at
+ data I/O submission time
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,33 +94,66 @@ From: "Darrick J. Wong via Linux-f2fs-devel"
 Reply-To: "Darrick J. Wong" <djwong@kernel.org>
 Cc: fsverity@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
  Jan Kara <jack@suse.cz>, Andrey Albershteyn <aalbersh@redhat.com>,
- t@magnolia.djwong.org, "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+ "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
  linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
  linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
  Jaegeuk Kim <jaegeuk@kernel.org>, David Sterba <dsterba@suse.com>,
  Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
  linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gRnJpLCBKYW4gMjMsIDIwMjYgYXQgMDY6MTI6MTZBTSArMDEwMCwgQ2hyaXN0b3BoIEhlbGx3
-aWcgd3JvdGU6Cj4gT24gVGh1LCBKYW4gMjIsIDIwMjYgYXQgMDE6Mjc6MDBQTSAtMDgwMCwgRGFy
-cmljayBKLiBXb25nIHdyb3RlOgo+ID4gTmljZSBob2lzdCwgdGhvdWdoIEkgd29uZGVyIC0tIGFz
-IGFuIGV4cG9ydGVkIGZzIGZ1bmN0aW9uLCBzaG91bGQgd2UgYmUKPiA+IGNoZWNraW5nIHRoYXQg
-dGhlIHJldHVybmVkIGZvbGlvIGRvZXNuJ3QgY292ZXIgRU9GPyAgTm90IHRoYXQgYW55IG9mIHRo
-ZQo+ID4gdXNlcnMgYWN0dWFsbHkgY2hlY2sgdGhhdCByZXR1cm5lZCBtZXJrbGUgdHJlZSBmb2xp
-b3MgZml0IHRoYXQKPiA+IGNyaXRlcmlvbi4KPiAKPiBBcyBpbiBwYXN0IGlfc2l6ZSBiZWNhdXNl
-IHRoaXMgaXMgdmVyaXR5IG1ldGFkYXRhPyAgSSB0aGluayBwZXIgdGhlCj4gbGFzdCBkaXNjdXNz
-aW9uIHRoYXQncyBvbmx5IGd1cmFudGVlZCB0byBiZSB0cnVlLCBub3QgdGhlIGZvbGlvLiAgSXQK
-PiBtaWdodCBiZSB1c2VmdWwgdG8gYXNzZXJ0IHRoaXMsIGJ1dCBpdCBtaWdodCBiZSBiZXR0ZXIg
-Zm9yIGNvbWJpbmUKPiB0aGlzIHdpdGggdGhlIHdvcmsgdG8gdXNlIGRpZmZlcmVudCBvbi1kaXNr
-IHZzIGluLW1lbW9yeSBvZmZzZXQKPiBhbmQgdG8gY29uc29saWRhdGUgYWxsIHRoZSBvZmZzZXQg
-bWFnaWMuICBXaGljaCBpcyB3b3J0aHdoaWxlLAo+IGJ1dCDQhiBkb24ndCByZWFsbHkgd2FudCB0
-byBhZGQgdGhhdCBpbiB0aGlzIHNlcmllcy4KCjxub2Q+IFlvdSdyZSBwcm9iYWJseSByaWdodCB0
-aGF0IGFkZGluZyBzdWNoIGEgY2hlY2sgd291bGQgYmUgYmV0dGVyIG9mZgppbiB3aGF0ZXZlciBz
-ZXJpZXMgZm9ybWFsbHkgZGVmaW5lcyB0aGUgcG9zdC1lb2YgcGFnZWNhY2hlIG9mZnNldCBhbmQK
-d2hhdG5vdC4KCi0tRAoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlz
-dHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xp
-c3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+On Fri, Jan 23, 2026 at 06:14:29AM +0100, Christoph Hellwig wrote:
+> On Thu, Jan 22, 2026 at 01:42:27PM -0800, Darrick J. Wong wrote:
+> > > +		if (first_folio) {
+> > > +			if (ext4_need_verity(inode, folio->index))
+> > > +				fsverity_readahead(folio, nr_pages);
+> > 
+> > Ok, so here ext4 is trying to read a data page into memory, so we
+> > initiate readahead on the merkle tree block(s) for that data page.
+> 
+> Yes.
+> 
+> > > +	__fsverity_readahead(inode, vi, offset, last_index - index + 1);
+> > 
+> > I went "Huh??" here until I realized that this is the function that
+> > reads merkle tree content on behalf of some ioctl, so this is merely
+> > starting readahead for that.  Not sure anyone cares about throughput of
+> > FS_VERITY_METADATA_TYPE_MERKLE_TREE but sure why not. 
+> 
+> It is trivial to provide and will make the ioctl read much faster.
+> 
+> > > +	const struct merkle_tree_params *params = &vi->tree_params;
+> > > +	u64 start_hidx = data_start_pos >> params->log_blocksize;
+> > > +	u64 end_hidx = (data_start_pos + ((nr_pages - 1) << PAGE_SHIFT)) >>
+> > > +			params->log_blocksize;
+> > 
+> > I really wish these unit conversions had proper types and helpers
+> > instead of this multiline to read shifting stuff.  Oh well, you didn't
+> > write it this way, you're just slicing and dicing.
+> 
+> Agreed.  Just not feeling like turning everything totally upside down
+> right now :)
+> 
+> > So if I read this correctly, we're initiating readahead of merkle tree
+> > (leaf) data for the file data range starting at data_start_pos and
+> > running for (nr_pages<<SHIFT) bytes?  Then going another level up in the
+> > merkle tree and initiating readahead for the corresponding interior
+> > nodes until we get to the root?
+> 
+> Yes.  That's a difference to the old code that just did readahead
+> for the leaf nodes.
+
+Cool!  In that case I think I understand what's going on here well
+enough to say:
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
