@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5C087D715E8
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 24 Jan 2026 12:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1F829D715EE
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 24 Jan 2026 19:28:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=69hkcVTOSSb6is61HfuvHeEsICev0/gSbpsXUvHL7i4=; b=VuSe7set+hUxgfNWxvdYSApJ5j
-	fnDmIHxoszYRhl8uOtYSXFbS80F7+nk7q0EEeRpiZQN7IJ2HonGJzXwu1mX1aPLI+WoPphvUAF/Of
-	+MrY4WojopMnXGqS3Xbg7xRIUIym8pneN8P5n23nE1alYA3gDFwJ6gmn8zFieQ/J3wjI=;
+	bh=yh5ue2tDHgR0qZl5pup3FJ93pOkLuyzJuZavuHAzPZo=; b=KtPjITa2KSIRGWl9OJ+TgD4mdv
+	Gbzr2FIsckzvNyq4i9SarYrOui/IRinWUeUdLzL41NfgVOlofc4FQcwBm3/X6H/dXlil1JobDtUbL
+	deGyK1c1AMauHfleKoyIYdChPxFnYunbL1PzKSB6O40046Sy2NWfzAAWODVJ/lGZpHXc=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vjd86-00058y-UC;
-	Sat, 24 Jan 2026 12:52:43 +0000
+	id 1vjjIf-0006nu-RX;
+	Sat, 24 Jan 2026 19:28:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <brauner@kernel.org>) id 1vjd84-00058e-T0
+ (envelope-from <ebiggers@kernel.org>) id 1vjjIe-0006nd-Kc
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 24 Jan 2026 12:52:41 +0000
+ Sat, 24 Jan 2026 19:28:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=o7G0EqSPcYrX2qweIAuB6PdaWKot5qtSSe5mp6N66xU=; b=XRjLHUbeR+kB3o+vq9La8FPpWm
- FiWARJmWMdh+VvHkuxPwwVTjN+GIRXDygwoL5aLGHMoqhiDSMb2ZRc/NnvwLW/3UKnQowuhJQdUfn
- wzz0R0Qwaar/0aiXj8iXTZW1yDdi37eKyHV2zQIBE24sa4irzy4QtIxPZcC+fGMELcA0=;
+ bh=V70MLtdw57OZX4ZAnfi5pNyq3V0OCy2Eaqobrq/blcw=; b=Njty28jF4OchFCR6iA2V4AeanZ
+ tjvq69fb3ztHGJcy600oU0l4lNU9p0EdaQABmRtffOqTU5g/Ozv6CU1sFA9gDYYIO/PK54jqWiJDG
+ 2IClyVcLgtKYrv83X2k4atnfO8O/VwjMRu7aNmQy+K9GtojweWSyoy8CRvSaDU50lBHY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=o7G0EqSPcYrX2qweIAuB6PdaWKot5qtSSe5mp6N66xU=; b=fy0x3HjQnX4h07KicbCVlE+xEk
- iKjOBv/MHhu26umRWSVfbb9sAMPiE3jTLKZ7oFq8ulRZU0h1syHEVCZsuOp+7u3uKdwW4NoP/UuWv
- FB1aHa1cl1BftDG1IQZp0aEgFG71QTyT2GVe3qf0B5qZDidyUlKOWXEKP9iDHW6hKjRg=;
+ bh=V70MLtdw57OZX4ZAnfi5pNyq3V0OCy2Eaqobrq/blcw=; b=iLtWg+bITVv+b246Lvh8BNLdji
+ rkZq9CKqvqOb6CqvMBmSWQCcC6vyNYSgERG9dm6tijsdx8xi3+540ovG8BLNblHsEa84JvBnwlg8P
+ 8AWlukXDULYHdl1W/VMD13RYUJ/BTD27WApqApGCV5gcM9SjxagWrdrqR2tfz7nl+rVg=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vjd85-0002Hg-9c for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 24 Jan 2026 12:52:41 +0000
+ id 1vjjIf-0003AZ-0F for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 24 Jan 2026 19:28:01 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 9EF9460053;
- Sat, 24 Jan 2026 12:52:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8ABCC116D0;
- Sat, 24 Jan 2026 12:52:23 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 0C3E360018;
+ Sat, 24 Jan 2026 19:27:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C388EC116D0;
+ Sat, 24 Jan 2026 19:27:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769259150;
- bh=tF55d1hz2qgaV0ckyIKSTzXVHak1AXu30pHTv/T/mwk=;
+ s=k20201202; t=1769282869;
+ bh=RdIXVmuy0+sUc+oiYy7nGjj6fzI+3doQt0//05fe6og=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=l+lF+5cwXE+InK8NAW7SdkJD0wOGPO5SHbCCzqKnVJfHTw275VH76hYus//Td+Gqs
- Zd+ZunPF3ILfSZEZzPBQpRyDiragiKRjGpqqXrVfONayxSjMvuvNmBwXKNLh/vvLAm
- XwUAFehKHHlLHHvzMfAfFR130CJe2Bs01+Vk5H5bsLGJC5WZh0mD0cIT1FfV+0m+yU
- xl/RAjmX7pv+oCD3w2KN/Jut3RWFMHoS2K8EKWWjti2e5+RI9BTpcSdXgrTszzeL3S
- EzZ9U0OxQ1KqFq4Z/qxBkgQWUSI9JWeUEuZPVdOoQqWWjA5+XbTPA+eiY7lIvCQzH6
- oDJu3FYpngXdA==
-Date: Sat, 24 Jan 2026 13:52:21 +0100
-To: Chuck Lever <cel@kernel.org>
-Message-ID: <20260124-gezollt-vorbild-4f65079ab1f1@brauner>
-References: <20260120142439.1821554-1-cel@kernel.org>
- <20260123-zwirn-verfassen-c93175b7a1ee@brauner>
- <41b1274b-0720-451d-80db-210697cdb6ac@app.fastmail.com>
+ b=m58yS5I/FsYNDuCUdf/CVJWOCrf/ECQJKFl6+HVgPgXpfRaLo7hRsFp37W93KosZ3
+ T6Ujgb3T8kfp2+V1SblRGUPrZpo5zIJWX3pCcquT43IEjEX1hPEdaoPJCzUWMzabph
+ oPW+I+Lhj0R68TAGsuZbrq3UD3431Xfhz1vW9Di5fg0Q/7HBEJNE1wDDr5xYx1CcPt
+ fBGWoUwW7vhZ5XOc4i55DZOGwCij0vlUzuqQNj7OUrRQjfOmzawSgDvvZPQWRyDpBC
+ dGJPUqNOBZtQOAJWx5yStfK5HdNU9w06H4da2abtWDOGery5FdSafrWiI3Mnz2skss
+ Eqr6lSRfPLjBA==
+Date: Sat, 24 Jan 2026 11:27:47 -0800
+To: Christoph Hellwig <hch@lst.de>
+Message-ID: <20260124192747.GD2762@quark>
+References: <20260122082214.452153-1-hch@lst.de>
+ <20260122082214.452153-5-hch@lst.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <41b1274b-0720-451d-80db-210697cdb6ac@app.fastmail.com>
-X-Headers-End: 1vjd85-0002Hg-9c
-Subject: Re: [f2fs-dev] [PATCH v6 00/16] Exposing case folding behavior
+In-Reply-To: <20260122082214.452153-5-hch@lst.de>
+X-Headers-End: 1vjjIf-0003AZ-0F
+Subject: Re: [f2fs-dev] [PATCH 04/11] fsverity: start consolidating
+ pagecache code
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,47 +87,31 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Christian Brauner via Linux-f2fs-devel
+From: Eric Biggers via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Paulo Alcantara <pc@manguebit.org>,
- Yuezhang Mo <yuezhang.mo@sony.com>, Carlos Maiolino <cem@kernel.org>,
- almaz.alexandrovich@paragon-software.com, adilger.kernel@dilger.ca,
- linux-cifs@vger.kernel.org, Steve French <sfrench@samba.org>,
- Viacheslav Dubeyko <slava@dubeyko.com>, linux-ext4@vger.kernel.org,
- Namjae Jeon <linkinjeon@kernel.org>, Shyam Prasad N <sprasad@microsoft.com>,
- frank.li@vivo.com, Alexander Viro <viro@zeniv.linux.org.uk>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>, glaubitz@physik.fu-berlin.de,
- Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
- linux-nfs@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- senozhatsky@chromium.org, Chuck Lever <chuck.lever@oracle.com>,
- Hans de Goede <hansg@kernel.org>, Anna Schumaker <anna@kernel.org>,
- linux-fsdevel@vger.kernel.org, Sungjong Seo <sj1557.seo@samsung.com>,
- Trond Myklebust <trondmy@kernel.org>
+Reply-To: Eric Biggers <ebiggers@kernel.org>
+Cc: fsverity@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
+ Theodore Ts'o <tytso@mit.edu>, Andrey Albershteyn <aalbersh@redhat.com>,
+ "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ Al Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ David Sterba <dsterba@suse.com>, Jan Kara <jack@suse.cz>,
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jan 23, 2026 at 10:39:55AM -0500, Chuck Lever wrote:
-> 
-> 
-> On Fri, Jan 23, 2026, at 7:12 AM, Christian Brauner wrote:
-> >> Series based on v6.19-rc5.
-> >
-> > We're starting to cut it close even with the announced -rc8.
-> > So my current preference would be to wait for the 7.1 merge window.
-> 
-> Hi Christian -
-> 
-> Do you have a preference about continuing to post this series
-> during the merge window? I ask because netdev generally likes
-> a quiet period during the merge window.
+On Thu, Jan 22, 2026 at 09:22:00AM +0100, Christoph Hellwig wrote:
+>  fs/ext4/verity.c         | 17 +----------------
+>  fs/f2fs/verity.c         | 17 +----------------
+>  fs/verity/pagecache.c    | 38 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/fsverity.h |  3 +++
+>  4 files changed, 43 insertions(+), 32 deletions(-)
 
-It's usually most helpful if people resend after -rc1 is out because
-then I can just pull it without having to worry about merge conflicts.
-But fwiw, I have you series in vfs-7.1.casefolding already. Let me push
-it out so you can see it.
+This creates a bisection hazard: the new file fs/verity/pagecache.c
+isn't added to fs/verity/Makefile until the next commit.
+
+- Eric
 
 
 _______________________________________________
