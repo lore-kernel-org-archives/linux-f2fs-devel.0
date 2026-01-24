@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 877B2D715F6
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 24 Jan 2026 20:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BEBE1D715FC
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 24 Jan 2026 21:20:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=UFq66RlT4MGMoCIPmShR5HnUhnD1JaG3bGyJ0a3v11U=; b=LcpeI6hRcG1fLTFzS1JNCC0+Pn
-	WeFXRZOvF4Fjow6z2OZePrLt8ai/BwpUe/1CAGOGIid0lezTRo3BLfcEYa0Y0BCvgG2dydExBiccs
-	mpKM1tKPdC5ukKGQ79fNZPrcXwV4wB5fOrfESPj/HGbO2IRk/xOfGjKEcV4ePA3Q1BqY=;
+	bh=iAz7NFN3qMIcbJ0oECssvHHmPlQuAaAeH1+/hLXbXL0=; b=lOJSiVQsDuHk4pjqAe8Ip5a1kO
+	Qusbi7mzFh3s+habLrvqQJG/2MTbmicQgqSjv0oL7PvzlLRXUGMJCedvnOcjGmA1tvG5MdPypgIBy
+	tgWJJsr4Z1w+I7Eo+opXXiuSVSrQwDGRaQIcyIfjdePGALR4ojkQfHYz5x7E1ADedMMc=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vjkdf-0006qg-PO;
-	Sat, 24 Jan 2026 20:53:47 +0000
+	id 1vjl3F-0007NO-1S;
+	Sat, 24 Jan 2026 21:20:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1vjkde-0006qW-0b
+ (envelope-from <ebiggers@kernel.org>) id 1vjl3D-0007NI-Sh
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 24 Jan 2026 20:53:46 +0000
+ Sat, 24 Jan 2026 21:20:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Aq2/f4e74mPU1lJLpS1IkpMgZuo97fFzjhsVz1rqSlA=; b=EVSNZHlgEDzxkqct/hHFcPu6lf
- 7Xk9oQh4hZYQGJiFmCN3gEGTu26lp48C3S1iuaNfhCr5cf/+97lK4c1OEXggRmCQewHSXXo2eYLhQ
- AX+h0xk6NPcxVFE1H49N5O8Vi+m+McpGSwn7Ge1DgpXbkufk/CtZyOS66agbTKAnCSsc=;
+ bh=33od168mFhXauAgjQqwXth1skObIHMKdVKwrC1IyA80=; b=hlfl5qyXU4O3ozXywDgeAp4NDU
+ 91VKxkKKotP30FRN8/edaupqSFVB5h5M9Hb9MTyBQd8Pw99UWUlWLZmoPEyZx2Wh2MZRpDfgFiBOP
+ gVSRQGet41iiR/uVhVI8Qd2QOMxBxiPHUHooIrlwTcI/ric0PO0ezSGP1939EqdWDkwc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,40 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Aq2/f4e74mPU1lJLpS1IkpMgZuo97fFzjhsVz1rqSlA=; b=QuYC2QIFP5k3lf9yRegtzTYX8j
- CXo0bPr57yB9FrCKHRIatETNBswBiRB4MeAaP7Tlz3Ab4ieCBVEPsG2RVXPHFiX2neZsbFz95FxLw
- 4/C8i+LMPT/i0ASdFoc544FrGyDqQsCGk00tQ9vb6Zw2EYF+4YK9y8JUy645zdVPPlN0=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=33od168mFhXauAgjQqwXth1skObIHMKdVKwrC1IyA80=; b=lBiCLIhey0X5QByB5zqubXF79R
+ YLsExueWmlMtGUHYXbPnfmQSF8x2UwMmgLUS2OfoZVv8S4TJUHYuiOHBUOCJPeQfCRGayzfcC7jxb
+ QRg51/Bp/l5HQ6c4YJLhBgQkaHtdYswY6Fsy1pJo4k+CJ54SH0FKHY7Rg9+K7vUcPqXk=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vjkdd-0006h5-Eq for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 24 Jan 2026 20:53:45 +0000
+ id 1vjl3C-00086j-CT for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 24 Jan 2026 21:20:11 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 14984443CB;
- Sat, 24 Jan 2026 20:53:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75893C19421;
- Sat, 24 Jan 2026 20:53:39 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id B875960018;
+ Sat, 24 Jan 2026 21:20:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE05BC116D0;
+ Sat, 24 Jan 2026 21:20:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769288019;
- bh=+z7P8o/2AvAS2HxAhMpt7l6mG9q9YNMOg7B1XIrmpiY=;
+ s=k20201202; t=1769289604;
+ bh=oI+uA3O35prux956Vzu7Z1UUlwDa0yJcLaD0R2S8IsY=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=jrnYUkgMgLh95HZVEGLxtKpEEPIJ9i+kCGXVczoDgweCyruT+jbNyrNC0ntS8jKe/
- h8ekQd3zwR8Z4KEvr4QksVUdZcFlsWQ9nPDrmgjbA7hghI6ep4soiakTKR6jaQpXPK
- C0h504KGR/6MLiq82fhUImEg0m7xb/afNx7buBCXCrZHaw9Z4/qC68d5tYpzvWWZrO
- x7W2QAcFNv/NYmm5JQ54O/qlmWpChFUAs/IBBUvBhftkiCO8o0TDWOa5e7M+/S9zTp
- yIWglfmCgF3A6YNHzKFcoFihtN7UU1tZPF88iH9op2/GsFRkvLaHbCCFHjwa5pJ1iX
- kcddSF2E6YUNQ==
-Date: Sat, 24 Jan 2026 12:53:29 -0800
+ b=tx3PHjVFa71TMA8P2jVrrQzZkrnzrpZqil3kd3DaCVTplbq9iK6DlJ8qsql1thPAv
+ UNjuW1nfiRVWAbZf+LRjOeoUGh4XP+zmVrTNSc8g7amTOCb4vyFpcPWGiqIIenq2dB
+ vft8MwRjbFKObQYd0ghcaHYdAZbM58IwoBylA9FvOa/jgLOmx9LjHJvNd36n4Pcm2R
+ L8QHWrN4AT/1gM+82FP1MC53CTF2OW1OSsDNz1AatHjk7o4UTRUS+VrtUNfKt2GK58
+ xob/cAfD4zqAwb+w2F7IClIn40cu37XDMKbfm3FWH+cSbAYgtbkiZuLzAG63322rOw
+ Mk5sbTrl4k/7w==
+Date: Sat, 24 Jan 2026 13:19:56 -0800
 To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20260124205329.GE2762@quark>
+Message-ID: <20260124211956.GF2762@quark>
 References: <20260122082214.452153-1-hch@lst.de>
- <20260122082214.452153-6-hch@lst.de>
+ <20260122082214.452153-7-hch@lst.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260122082214.452153-6-hch@lst.de>
-X-Headers-End: 1vjkdd-0006h5-Eq
-Subject: Re: [f2fs-dev] [PATCH 05/11] fsverity: kick off hash readahead at
- data I/O submission time
+In-Reply-To: <20260122082214.452153-7-hch@lst.de>
+X-Headers-End: 1vjl3C-00086j-CT
+Subject: Re: [f2fs-dev] [PATCH 06/11] fsverity: push out fsverity_info lookup
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,125 +100,68 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jan 22, 2026 at 09:22:01AM +0100, Christoph Hellwig wrote:
-> +/**
-> + * generic_readahead_merkle_tree() - generic ->readahead_merkle_tree helper
-> + * @inode:	inode containing the Merkle tree
-> + * @index:	0-based index of the first page to read ahead in the inode
-> + * @nr_pages:	number of data pages to read ahead
-> + *
-> + * The caller needs to adjust @index from the Merkle-tree relative index passed
-> + * to ->read_merkle_tree_page to the actual index where the Merkle tree is
-> + * stored in the page cache for @inode.
-> + */
-> +void generic_readahead_merkle_tree(struct inode *inode, pgoff_t index,
-> +		unsigned long nr_pages)
+On Thu, Jan 22, 2026 at 09:22:02AM +0100, Christoph Hellwig wrote:
+> Pass a struct fsverity_info to the verification and readahead helpers,
+> and push the lookup into the callers.  Right now this is a very
+> dumb almost mechanic move that open codes a lot of fsverity_info_addr()
+> calls int the file systems.  The subsequent patches will clean this up.
+> 
+> This prepares for reducing the number of fsverity_info lookups, which
+> will allow to amortize them better when using a more expensive lookup
+> method.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/btrfs/extent_io.c     |  4 +++-
+>  fs/buffer.c              |  4 +++-
+>  fs/ext4/readpage.c       | 11 ++++++++---
+>  fs/f2fs/compress.c       |  4 +++-
+>  fs/f2fs/data.c           | 15 +++++++++++----
+>  fs/verity/verify.c       | 26 ++++++++++++++------------
+>  include/linux/fsverity.h | 24 +++++++++++++++---------
+>  7 files changed, 57 insertions(+), 31 deletions(-)
+
+This patch introduces another bisection hazard by adding calls to
+fsverity_info_addr() when CONFIG_FS_VERITY=n.  fsverity_info_addr() has
+a definition only when CONFIG_FS_VERITY=y.
+
+Maybe temporarily add a CONFIG_FS_VERITY=n stub for fsverity_info_addr()
+that returns NULL, and also ensure that it's dereferenced only when it's
+known that fsverity verification is needed.  Most of the call sites look
+okay, but the second one in ext4_mpage_readpages() needs to be fixed.
+
+> @@ -430,6 +431,7 @@ EXPORT_SYMBOL_GPL(fsverity_verify_blocks);
+>  #ifdef CONFIG_BLOCK
+>  /**
+>   * fsverity_verify_bio() - verify a 'read' bio that has just completed
+> + * @vi: fsverity_info for the inode to be read
+>   * @bio: the bio to verify
+>   *
+>   * Verify the bio's data against the file's Merkle tree.  All bio data segments
+> @@ -442,13 +444,13 @@ EXPORT_SYMBOL_GPL(fsverity_verify_blocks);
+>   * filesystems) must instead call fsverity_verify_page() directly on each page.
+>   * All filesystems must also call fsverity_verify_page() on holes.
+>   */
+> -void fsverity_verify_bio(struct bio *bio)
+> +void fsverity_verify_bio(struct fsverity_info *vi, struct bio *bio)
 >  {
->  	struct folio *folio;
+>  	struct inode *inode = bio_first_folio_all(bio)->mapping->host;
+>  	struct fsverity_verification_context ctx;
+>  	struct folio_iter fi;
 >  
->  	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
-> -	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
-> +	if (PTR_ERR(folio) == -ENOENT || !folio_test_uptodate(folio)) {
+> -	fsverity_init_verification_context(&ctx, inode);
+> +	fsverity_init_verification_context(&ctx, inode, vi);
 
-This dereferences an ERR_PTR() when __filemap_get_folio() returns an
-error other than -ENOENT.
+Note that fsverity_info has a back-pointer to the inode.  So,
+fsverity_init_verification_context() could just take the vi and set
+ctx->inode to vi->inode.
 
-> diff --git a/fs/verity/read_metadata.c b/fs/verity/read_metadata.c
-> index cba5d6af4e04..430306abc4c6 100644
-> --- a/fs/verity/read_metadata.c
-> +++ b/fs/verity/read_metadata.c
-> @@ -28,24 +28,24 @@ static int fsverity_read_merkle_tree(struct inode *inode,
->  	if (offset >= end_offset)
->  		return 0;
->  	offs_in_page = offset_in_page(offset);
-> +	index = offset >> PAGE_SHIFT;
->  	last_index = (end_offset - 1) >> PAGE_SHIFT;
->  
-> +	__fsverity_readahead(inode, vi, offset, last_index - index + 1);
+Then it wouldn't be necessary to get the inode from
+bio_first_folio_all(bio)->mapping->host (in fsverity_verify_bio()) or
+folio->mapping->host (in fsverity_verify_blocks()).
+Similarly in fsverity_readahead() too.
 
-This passes a position in the Merkle tree to a function that expects a
-position in the file data.
-
-I think the correct thing to do here would be the following:
-
-        if (inode->i_sb->s_vop->readahead_merkle_tree)
-		inode->i_sb->s_vop->readahead_merkle_tree(inode, index,
-							  last_index - index + 1);
-
-Then __fsverity_readahead() can be folded into fsverity_readahead().
-
-> +void __fsverity_readahead(struct inode *inode, const struct fsverity_info *vi,
-> +		loff_t data_start_pos, unsigned long nr_pages)
-> +{
-> +	const struct merkle_tree_params *params = &vi->tree_params;
-> +	u64 start_hidx = data_start_pos >> params->log_blocksize;
-> +	u64 end_hidx = (data_start_pos + ((nr_pages - 1) << PAGE_SHIFT)) >>
-> +			params->log_blocksize;
-
-(nr_pages - 1) << PAGE_SHIFT can overflow an 'unsigned long'.
-(nr_pages - 1) needs to be cast to u64 before doing the shift.
-
-But also it would make more sense to pass
-(pgoff_t start_index, unsigned long nr_pages) instead of
-(loff_t data_start_pos, unsigned long nr_pages),
-so that the two numbers have the same units.
-
-start_idx and end_hidx could then be computed as follows:
-
-    u64 start_hidx = (u64)start_index << params->log_blocks_per_page;
-    u64 end_hidx = (((u64)start_index + nr_pages) << params->log_blocks_per_page) - 1;
-
-Note that fsverity_readahead() derives the position from the index.  If
-it just used the index directly, that would be more direct.
-
-> +	int level;
-> +
-> +	if (!inode->i_sb->s_vop->readahead_merkle_tree)
-> +		return;
-> +	if (unlikely(data_start_pos >= inode->i_size))
-> +		return;
-
-The check against i_size shouldn't be necessary: the caller should just
-call this only for data it's actually going to read.
-
-> +	for (level = 0; level < params->num_levels; level++) {
-> +		unsigned long level_start = params->level_start[level];
-> +		unsigned long next_start_hidx = start_hidx >> params->log_arity;
-> +		unsigned long next_end_hidx = end_hidx >> params->log_arity;
-> +		unsigned long start_idx = (level_start + next_start_hidx) >>
-> +				params->log_blocks_per_page;
-> +		unsigned long end_idx = (level_start + next_end_hidx) >>
-> +				params->log_blocks_per_page;
-
-start_idx and end_idx should have type pgoff_t to make it clear that
-they're page indices.
-
-> +EXPORT_SYMBOL_GPL(fsverity_readahead);
-
-This should be below the definition of fsverity_readahead, not the
-definition of __fsverity_readahead.
-
-> +/**
-> + * fsverity_readahead() - kick off readahead on fsverity hashes
-> + * @folio:		first folio that is being read
-
-folio => file data folio
-
-Otherwise it can be confused with the Merkle tree.
-
-> + * Start readahead on fsverity hashes.  To be called from the file systems
-> + * ->read_folio and ->readahead methods to ensure that the hashes are
-> + * already cached on completion of the file data read if possible.
-
-Similarly, it would be helpful to clarify that the readahead is done on
-the hashes *that will be needed to verify the specified file data*.
-Otherwise it might sound like the caller is specifying the hashes to
-readahead directly.
-
-> +       /**
-> +        * Perform readahad of a Merkle tree for the given inode.
-
-readahad => readahead
+(It might make sense to handle this part as a separate patch.)
 
 - Eric
 
