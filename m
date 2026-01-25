@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BEBE1D715FC
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 24 Jan 2026 21:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 807CED7237B
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Jan 2026 01:31:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=iAz7NFN3qMIcbJ0oECssvHHmPlQuAaAeH1+/hLXbXL0=; b=lOJSiVQsDuHk4pjqAe8Ip5a1kO
-	Qusbi7mzFh3s+habLrvqQJG/2MTbmicQgqSjv0oL7PvzlLRXUGMJCedvnOcjGmA1tvG5MdPypgIBy
-	tgWJJsr4Z1w+I7Eo+opXXiuSVSrQwDGRaQIcyIfjdePGALR4ojkQfHYz5x7E1ADedMMc=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=GSKgbIzeTCbUSXTtNjAjpFR6U7Pdsl4Md5fQBQKH8pA=; b=R1uhL3kQBBeGutXOeGSb2HNaEV
+	A4TJ0KWyYY2jBYuRCbCZ9/vBS+Ms08iYwp/bs7QNgSUw6SQ/uiUm2evVfqwuibHtnAfydFx3cgFK/
+	usmi7naprTlYAz0DE7Fd9bQJA1YvIlBMspAPCnuXyIdPFwPpGoBCDuPHswvEvknDhXHc=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vjl3F-0007NO-1S;
-	Sat, 24 Jan 2026 21:20:13 +0000
+	id 1vjoyj-0005qe-RX;
+	Sun, 25 Jan 2026 01:31:49 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1vjl3D-0007NI-Sh
+ (envelope-from <ebiggers@kernel.org>) id 1vjoyi-0005qY-G0
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 24 Jan 2026 21:20:11 +0000
+ Sun, 25 Jan 2026 01:31:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=33od168mFhXauAgjQqwXth1skObIHMKdVKwrC1IyA80=; b=hlfl5qyXU4O3ozXywDgeAp4NDU
- 91VKxkKKotP30FRN8/edaupqSFVB5h5M9Hb9MTyBQd8Pw99UWUlWLZmoPEyZx2Wh2MZRpDfgFiBOP
- gVSRQGet41iiR/uVhVI8Qd2QOMxBxiPHUHooIrlwTcI/ric0PO0ezSGP1939EqdWDkwc=;
+ bh=XkKKLr2Is0oHBZrzX00fF2hho8QPBhz2PjM8HNA7w5c=; b=FXFHUFKrUnln4ikoF3M4+icaGV
+ JKNCAjESLALjb9pI7wNatA8jxayAcZ6hIHMN3GWxovezk8iEpFAbe1AAP10Oxe+Aq1z+dVi6Gf6ty
+ iGw1NIHRufI65YHavAoM4FkJXYK6Kv093jWKB56r79WiindgVD4b+V9tmGC9CdEnGCWw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=33od168mFhXauAgjQqwXth1skObIHMKdVKwrC1IyA80=; b=lBiCLIhey0X5QByB5zqubXF79R
- YLsExueWmlMtGUHYXbPnfmQSF8x2UwMmgLUS2OfoZVv8S4TJUHYuiOHBUOCJPeQfCRGayzfcC7jxb
- QRg51/Bp/l5HQ6c4YJLhBgQkaHtdYswY6Fsy1pJo4k+CJ54SH0FKHY7Rg9+K7vUcPqXk=;
+ bh=XkKKLr2Is0oHBZrzX00fF2hho8QPBhz2PjM8HNA7w5c=; b=CgJxt5UBFR0gk2gN/cPSljDQxW
+ FO8KebxdJDqnS4LoVm1mgTipsRDdycM74NYiULfMbmWz4SpJDe7gg+KRbp8Yy6WilYk1q/171Ue0R
+ e0feKoSKvSYAH7ayRFKcHJJ/N3jyEsSKaV24wy6QNzFSi1lpotIM+SufDlVg3yWim6K8=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vjl3C-00086j-CT for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 24 Jan 2026 21:20:11 +0000
+ id 1vjoyh-0000NC-S2 for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 25 Jan 2026 01:31:48 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id B875960018;
- Sat, 24 Jan 2026 21:20:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE05BC116D0;
- Sat, 24 Jan 2026 21:20:03 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 521D960018;
+ Sun, 25 Jan 2026 01:31:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90025C116D0;
+ Sun, 25 Jan 2026 01:31:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769289604;
- bh=oI+uA3O35prux956Vzu7Z1UUlwDa0yJcLaD0R2S8IsY=;
+ s=k20201202; t=1769304696;
+ bh=3iMKlt4ekuSyqFUkFLSPSHU1p/JvwSOUPzMPH5DNdH4=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=tx3PHjVFa71TMA8P2jVrrQzZkrnzrpZqil3kd3DaCVTplbq9iK6DlJ8qsql1thPAv
- UNjuW1nfiRVWAbZf+LRjOeoUGh4XP+zmVrTNSc8g7amTOCb4vyFpcPWGiqIIenq2dB
- vft8MwRjbFKObQYd0ghcaHYdAZbM58IwoBylA9FvOa/jgLOmx9LjHJvNd36n4Pcm2R
- L8QHWrN4AT/1gM+82FP1MC53CTF2OW1OSsDNz1AatHjk7o4UTRUS+VrtUNfKt2GK58
- xob/cAfD4zqAwb+w2F7IClIn40cu37XDMKbfm3FWH+cSbAYgtbkiZuLzAG63322rOw
- Mk5sbTrl4k/7w==
-Date: Sat, 24 Jan 2026 13:19:56 -0800
+ b=BKsh/FlR6k8/j7LqfmKgDMZe6pyDi94yewRpX63qWUZ405K9Y1iXqRMDhCmaI8JNW
+ hHjTClwIXwbDp8z4r1k1uHw6sTpY0oCeLQkgN9JucQDykp8xJ8SkgkW4aFuyzez/bF
+ pHA6UOYHAzwE30ttiS5Vl0xr8iadmRDtFaXm3KYpl9k5aL28HRSjC1cmnwx4rLC3lE
+ DDio4J9GWT7QVSVP6TFCuJKwp9PT+VdFLaqngoQE5yTZ9H3B+kq20Q9W1NCt+NIj0l
+ H6cDKFS22aVMpnT3yn0/wHjPrsRpwn1FMXp2UxJC9HOES4E3sLH87EP9i4Ywpe2Ach
+ wSECnCY11if1Q==
+Date: Sat, 24 Jan 2026 17:31:04 -0800
 To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20260124211956.GF2762@quark>
+Message-ID: <20260125013104.GA2255@sol>
 References: <20260122082214.452153-1-hch@lst.de>
- <20260122082214.452153-7-hch@lst.de>
+ <20260122082214.452153-12-hch@lst.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260122082214.452153-7-hch@lst.de>
-X-Headers-End: 1vjl3C-00086j-CT
-Subject: Re: [f2fs-dev] [PATCH 06/11] fsverity: push out fsverity_info lookup
+In-Reply-To: <20260122082214.452153-12-hch@lst.de>
+X-Headers-End: 1vjoyh-0000NC-S2
+Subject: Re: [f2fs-dev] [PATCH 11/11] fsverity: use a hashtable to find the
+ fsverity_info
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,68 +101,95 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jan 22, 2026 at 09:22:02AM +0100, Christoph Hellwig wrote:
-> Pass a struct fsverity_info to the verification and readahead helpers,
-> and push the lookup into the callers.  Right now this is a very
-> dumb almost mechanic move that open codes a lot of fsverity_info_addr()
-> calls int the file systems.  The subsequent patches will clean this up.
-> 
-> This prepares for reducing the number of fsverity_info lookups, which
-> will allow to amortize them better when using a more expensive lookup
-> method.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/btrfs/extent_io.c     |  4 +++-
->  fs/buffer.c              |  4 +++-
->  fs/ext4/readpage.c       | 11 ++++++++---
->  fs/f2fs/compress.c       |  4 +++-
->  fs/f2fs/data.c           | 15 +++++++++++----
->  fs/verity/verify.c       | 26 ++++++++++++++------------
->  include/linux/fsverity.h | 24 +++++++++++++++---------
->  7 files changed, 57 insertions(+), 31 deletions(-)
-
-This patch introduces another bisection hazard by adding calls to
-fsverity_info_addr() when CONFIG_FS_VERITY=n.  fsverity_info_addr() has
-a definition only when CONFIG_FS_VERITY=y.
-
-Maybe temporarily add a CONFIG_FS_VERITY=n stub for fsverity_info_addr()
-that returns NULL, and also ensure that it's dereferenced only when it's
-known that fsverity verification is needed.  Most of the call sites look
-okay, but the second one in ext4_mpage_readpages() needs to be fixed.
-
-> @@ -430,6 +431,7 @@ EXPORT_SYMBOL_GPL(fsverity_verify_blocks);
->  #ifdef CONFIG_BLOCK
->  /**
->   * fsverity_verify_bio() - verify a 'read' bio that has just completed
-> + * @vi: fsverity_info for the inode to be read
->   * @bio: the bio to verify
->   *
->   * Verify the bio's data against the file's Merkle tree.  All bio data segments
-> @@ -442,13 +444,13 @@ EXPORT_SYMBOL_GPL(fsverity_verify_blocks);
->   * filesystems) must instead call fsverity_verify_page() directly on each page.
->   * All filesystems must also call fsverity_verify_page() on holes.
->   */
-> -void fsverity_verify_bio(struct bio *bio)
-> +void fsverity_verify_bio(struct fsverity_info *vi, struct bio *bio)
+On Thu, Jan 22, 2026 at 09:22:07AM +0100, Christoph Hellwig wrote:
+> +int fsverity_set_info(struct fsverity_info *vi)
 >  {
->  	struct inode *inode = bio_first_folio_all(bio)->mapping->host;
->  	struct fsverity_verification_context ctx;
->  	struct folio_iter fi;
+> -	/*
+> -	 * Multiple tasks may race to set the inode's verity info pointer, so
+> -	 * use cmpxchg_release().  This pairs with the smp_load_acquire() in
+> -	 * fsverity_get_info().  I.e., publish the pointer with a RELEASE
+> -	 * barrier so that other tasks can ACQUIRE it.
+> -	 */
+> -	if (cmpxchg_release(fsverity_info_addr(inode), NULL, vi) != NULL) {
+> -		/* Lost the race, so free the verity info we allocated. */
+> -		fsverity_free_info(vi);
+> -		/*
+> -		 * Afterwards, the caller may access the inode's verity info
+> -		 * directly, so make sure to ACQUIRE the winning verity info.
+> -		 */
+> -		(void)fsverity_get_info(inode);
+> -	}
+> +	return rhashtable_lookup_insert_fast(&fsverity_info_hash,
+> +			&vi->rhash_head, fsverity_info_hash_params);
+>  }
 >  
-> -	fsverity_init_verification_context(&ctx, inode);
-> +	fsverity_init_verification_context(&ctx, inode, vi);
+> -void fsverity_free_info(struct fsverity_info *vi)
+> +struct fsverity_info *__fsverity_get_info(const struct inode *inode)
+>  {
+> -	if (!vi)
+> -		return;
+> -	kfree(vi->tree_params.hashstate);
+> -	kvfree(vi->hash_block_verified);
+> -	kmem_cache_free(fsverity_info_cachep, vi);
+> +	return rhashtable_lookup_fast(&fsverity_info_hash, &inode,
+> +			fsverity_info_hash_params);
+[...]
+> +	/*
+> +	 * Multiple tasks may race to set the inode's verity info, in which case
+> +	 * we might find an existing fsverity_info in the hash table.
+> +	 */
+> +	found = rhashtable_lookup_get_insert_fast(&fsverity_info_hash,
+> +			&vi->rhash_head, fsverity_info_hash_params);
+> +	if (found) {
+> +		fsverity_free_info(vi);
+> +		if (IS_ERR(found))
+> +			err = PTR_ERR(found);
+> +	}
 
-Note that fsverity_info has a back-pointer to the inode.  So,
-fsverity_init_verification_context() could just take the vi and set
-ctx->inode to vi->inode.
+Is there any explanation for why it's safe to use the *_fast variants of
+these functions?
 
-Then it wouldn't be necessary to get the inode from
-bio_first_folio_all(bio)->mapping->host (in fsverity_verify_bio()) or
-folio->mapping->host (in fsverity_verify_blocks()).
-Similarly in fsverity_readahead() too.
+>   * fsverity_active() - do reads from the inode need to go through fs-verity?
+>   * @inode: inode to check
+>   *
+> - * This checks whether the inode's verity info has been set.
+> - *
+> - * Filesystems call this from ->readahead() to check whether the pages need to
+> - * be verified or not.  Don't use IS_VERITY() for this purpose; it's subject to
+> - * a race condition where the file is being read concurrently with
+> - * FS_IOC_ENABLE_VERITY completing.  (S_VERITY is set before the verity info.)
+> + * This checks whether the inode's verity info has been set, and reads need
+> + * to verify the verity information.
+>   *
+>   * Return: true if reads need to go through fs-verity, otherwise false
+>   */
+>  static inline bool fsverity_active(const struct inode *inode)
+>  {
+> -	return fsverity_get_info(inode) != NULL;
+> +	/*
+> +	 * The memory barrier pairs with the try_cmpxchg in set_mask_bits used
+> +	 * to set the S_VERITY bit in i_flags.
+> +	 */
+> +	smp_mb();
+> +	return IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode);
+> +}
 
-(It might make sense to handle this part as a separate patch.)
+This looks incorrect.  The memory barrier is needed after reading the
+flag, not before.  (See how smp_load_acquire() works.)
+
+Also, it's needed only for verity inodes.
+
+Maybe do:
+
+	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode)) {
+		/*
+                 * This pairs with the try_cmpxchg in set_mask_bits()
+                 * used to set the S_VERITY bit in i_flags.
+		 */
+		smp_mb();
+		return true;
+	}
+	return false;
 
 - Eric
 
