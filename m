@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C1992D25944
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 27 Jan 2026 06:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CA955D25944
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 27 Jan 2026 06:21:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=A3duc7hbOXLpMGDxmQXzYI5OdlGW3ZG9eaGssv/svXQ=; b=Iw1hh7MY036FaYXKameP3I3C09
-	htBaGJF2HBhqnmpd05lcKY5rYF2/4EYjLfAFWwSLgmoaAIxEGvZ4lPoo5h72Xez1kLxABhsn2U3Cf
-	PRaQyqBaAXDXdxRTUrHGBhEFwmmaxXYPf62EZAj1xfnT/I+eryszyHREYx+h6ChvQoOo=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=1dxgEJnUyLfCvtT371/mRTR9hT3lqUDF58JXpHkI2oQ=; b=luagh2zQhbz3pPq28eFm9cTlBC
+	4gFbN/3NKiQ9R5pdZk2rjsRnLepm1Cm9kOXHmQm652vCjNqRXn7CkR9UiGgKHKQB2OyvineZBt6oF
+	ylvlxeK7XIyt0Dp2VlAZ82EPQ5dOlnM1VaJG2B15wtk8uaW60l6qknDH9tvvy0gmw5QA=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vkcN1-0007o2-EX;
-	Tue, 27 Jan 2026 06:16:11 +0000
+	id 1vkcSL-0007L0-A5;
+	Tue, 27 Jan 2026 06:21:41 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1vkcMw-0007ns-FQ
+ (envelope-from <ebiggers@kernel.org>) id 1vkcSJ-0007Ks-Ov
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 27 Jan 2026 06:16:06 +0000
+ Tue, 27 Jan 2026 06:21:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NJN1laCjfRD0eNeMidqh3OTLLU/QBKHms3bDZYOjD/E=; b=GCXn7W8qg45R9+9bd9NBRHw9pE
- ShyrqTt8lHNTDOKoiOu1pQDWyCrYeSXyyCKg41cMPfgrAGgOCASNyizyYa3oM00dcXMyZj0A3akLy
- arqrCT0SPtSc5dfaOIonbUwX4Trxhm2pg7OTcaYp6Hwv9SvFTlfEjE9BCh+D7oHqK3kk=;
+ bh=nGlEuJm8t8Nf819OqqlB1RN74loSnGuY3LiI4+ZKbnk=; b=gc39VF9Dk8meFvOwqTJ8Ll/Z9W
+ cmYhvuF1DUvrC8FzW+DjIpnPMKt2DzMwBnZmNSzZ4PxrYhc3RVtdA2cqEH1CYhUbK8lztncGEJnFG
+ rx5X7bAuoSbDTaqLyky0uGVfAC1bfclZFu+u6DR8nHP70YDGSHp15s+RwJIQIsZXgpXc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,29 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=NJN1laCjfRD0eNeMidqh3OTLLU/QBKHms3bDZYOjD/E=; b=GaVXFPYbMTr9xKGU2sihfLyZn2
- 1Gjfvk1hlTwhkDShkWaejRGl613RT+ThBh7A0twhnNclIUAmBlh16v/eT2HyFx7xQ0pVT+J+H1NgW
- a0CGXWX0ludyexdtOgn6Vhr+m5o15HasPZHiCGYOIBwTrmc5/sQ7LLjvuidySJBF1pBM=;
-Received: from verein.lst.de ([213.95.11.211])
+ bh=nGlEuJm8t8Nf819OqqlB1RN74loSnGuY3LiI4+ZKbnk=; b=ETnRF0+Bp3HV5UZO4QDHsT16xk
+ fjDxCRGY71VNYnJDeAtIsoMWyN1cXjyrJl3h5BB9t0V3uGExL9dUHQcPLu/697oRwC7EmkTPPt8b6
+ VYLgnozAXgVcPqqa0PRHX+5SoRb3oqVsAPRlN4x/cY+X9l1OreVtUO1E7H0m51eB60QE=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vkcMv-0001hd-Ug for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 27 Jan 2026 06:16:06 +0000
-Received: by verein.lst.de (Postfix, from userid 2407)
- id 2F41D227AAE; Tue, 27 Jan 2026 07:15:52 +0100 (CET)
-Date: Tue, 27 Jan 2026 07:15:51 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20260127061551.GA25522@lst.de>
+ id 1vkcSJ-0001y5-Az for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 27 Jan 2026 06:21:39 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by tor.source.kernel.org (Postfix) with ESMTP id ACEB560051;
+ Tue, 27 Jan 2026 06:21:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8398C116C6;
+ Tue, 27 Jan 2026 06:21:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1769494888;
+ bh=kk2V4G3auJhPjVPWGb0eJbR78yju4WWua17kbmc6Gxc=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=RTL4LvSMUGOTtLW9wXJkpR0u684upITx8xZl84Y31HC1RqoKXvCBezyDsiP3ySxUr
+ E/B+8/BXI1rjjU3BkuZaAFz8J9hKYfFnYkRFHrf18UIwfmvBfV6YHk/uwHTp2HJQvS
+ 6BKI68umDuXLIIj6tsO1PQXJlM4Jf7SQXPycRfvFXvAMNvpdSSTXwAvgN/7dcy0Df0
+ hr59kGK1M4AtByyuMO2mZWrc2ERwuVIuvR4fK3PqYyXBonryBdqnlvPZTfRfSBQmKj
+ IiOBH48fB1ojGb3ercxDF4N9AjHTAaHezrLsbjyKZzMJBJBL2DGFWg0BoYDuI3m0NO
+ 8zk5iJ28eeEOw==
+Date: Mon, 26 Jan 2026 22:20:55 -0800
+To: Christoph Hellwig <hch@lst.de>
+Message-ID: <20260127062055.GA90735@sol>
 References: <20260126045212.1381843-1-hch@lst.de>
- <20260126045212.1381843-17-hch@lst.de> <20260126204030.GC30838@quark>
+ <20260126045212.1381843-8-hch@lst.de>
+ <20260126191102.GO5910@frogsfrogsfrogs>
+ <20260126205301.GD30838@quark> <20260127060039.GA25321@lst.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260126204030.GC30838@quark>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1vkcMv-0001hd-Ug
-Subject: Re: [f2fs-dev] [PATCH 16/16] fsverity: use a hashtable to find the
- fsverity_info
+In-Reply-To: <20260127060039.GA25321@lst.de>
+X-Headers-End: 1vkcSJ-0001y5-Az
+Subject: Re: [f2fs-dev] [PATCH 07/16] fsverity: don't issue readahead for
+ non-ENOENT errors from __filemap_get_folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,46 +89,51 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: Eric Biggers via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Eric Biggers <ebiggers@kernel.org>
 Cc: fsverity@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
- Theodore Ts'o <tytso@mit.edu>, Andrey Albershteyn <aalbersh@redhat.com>,
- Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
- Jaegeuk Kim <jaegeuk@kernel.org>, David Sterba <dsterba@suse.com>,
- Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, linux-btrfs@vger.kernel.org
+ Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
+ Andrey Albershteyn <aalbersh@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ Al Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Jan 26, 2026 at 12:40:30PM -0800, Eric Biggers wrote:
-> On Mon, Jan 26, 2026 at 05:51:02AM +0100, Christoph Hellwig wrote:
-> > The file open path uses rhashtable_lookup_get_insert_fast,
-> > which can either find an existing object for the hash key or insert a
-> > new one in a single atomic operation, so that concurrent opens never
-> > allocate duplicate fsverity_info structure.
+On Tue, Jan 27, 2026 at 07:00:39AM +0100, Christoph Hellwig wrote:
+> > -	if (PTR_ERR(folio) == -ENOENT ||
+> > -	    !(IS_ERR(folio) && !folio_test_uptodate(folio))) {
+> > +	if (folio == ERR_PTR(-ENOENT) ||
+> > +	    (!IS_ERR(folio) && !folio_test_uptodate(folio))) {
+> > 
+> > (Note that PTR_ERR() shouldn't be used before it's known that the
+> > pointer is an error pointer.)
 > 
-> They still do, though.  But that's unchanged from before.
-> ensure_verity_info() frees the one it allocated if it finds that one got
-> set concurrently.
+> That's new to me, and I can't find anything in the documentation or
+> implementation suggesting that.  Your example code above also does
+> this as does plenty of code in the kernel elsewhere.
 
-You're right.  We allocate them, but never register them.  I'll fix
-that up.
+Not sure why this is controversial.  The documentation for PTR_ERR() is
+clear that it's for error pointers:
 
-> 
-> > Because insertion into the hash table now happens before S_VERITY is set,
-> > fsverity just becomes a barrier and a flag check and doesn't have to look
-> > up the fsverity_info at all, so there is only a single lookup per
-> > ->read_folio or ->readahead invocation.  For btrfs there is an additional
-> > one for each bio completion, while for ext4 and f2fs the fsverity_info
-> > is stored in the per-I/O context and reused for the completion workqueue.
-> 
-> btrfs actually still looks up the verity info once per folio.  See:
-> 
->     btrfs_readahead()
->         -> btrfs_do_readpage()
->             -> fsverity_get_info()
+/**
+ * PTR_ERR - Extract the error code from an error pointer.
+ * @ptr: An error pointer.
+ * Return: The error code within @ptr.
+ */
+static inline long __must_check PTR_ERR(__force const void *ptr)
+{
+        return (long) ptr;
+}
 
-True.  I've fixed up btrfs to avoid extra lookups.
+Yes, it's really just a cast, and 'PTR_ERR(folio) == -ENOENT' actually
+still works when folio isn't necessarily an error pointer.  But normally
+it would be written as a pointer comparison as I suggested.
+
+- Eric
 
 
 _______________________________________________
