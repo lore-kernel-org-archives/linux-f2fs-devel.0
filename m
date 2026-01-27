@@ -4,79 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 45F27D25924
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 27 Jan 2026 02:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 88C71D25946
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 27 Jan 2026 06:00:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=40T73MeHRQhhNGD3HHCpIvKXpFkzfrX+ic2QMhdYZcQ=; b=db6iBgtq+nIIRFAUUJeEXpa3xr
-	pk2jJ85NsOVYe5o4bAoHMSEptTkV7gpCH2eZkho36qi/t9VigkNIadPqup/RJhBd7f3EPuBmj+xG/
-	nLweH0e53btzmt3qCyvSpbVZ6Sa/YC2+snlRbZaSbqS/v1WPOi8fWBn424QsytSvpbok=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=qLOE11yi+RGbRNRmNnTCbdEQmADKxpdIdC9afv4Sjns=; b=N+Dh/EidDgBVJRKsaLLrQKPsTi
+	tgG0nCxPuAjWsuWeONINQ4jSzOqomhlULO77B3a9u5cZv5vTeWVwKbhhKiW6jxb04SWggbYhG7w9t
+	MS+zNymDULULK2z/r1tcizC627IdYS4bBsfDrIlAQznvW9nvVV2CMAG7zJ5nOsl7NvDk=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vkZA8-0003Kw-B9;
-	Tue, 27 Jan 2026 02:50:40 +0000
+	id 1vkc8H-0007Sb-5I;
+	Tue, 27 Jan 2026 06:00:57 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vkZ9o-0003Ke-7F
+ (envelope-from <hch@lst.de>) id 1vkc8E-0007SS-UE
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 27 Jan 2026 02:50:20 +0000
+ Tue, 27 Jan 2026 06:00:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xqNlaLQe1cDkgMgB8FEhqpyqPg//p5O2fI7xGq610vA=; b=hw/nGX7YlbfpgTV3MCZ8w7lE7T
- nDPgcm5UY/E0uDBpNXclOFFoG+pPuYntVQb4ZW4fJtwk5v1ji9qDPtXg5rzqAvbhU0fz3lnqw/AJC
- 66zRtqLL1NlLUdTGMvpjuvZAJPC0evREmXbWNhN11bRnW4MGe3FIRqap+AcXmLrQ0BSg=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=Pq2GAnj+R+VopKYNG1HcP8+Dw2iFR6lf4LD1E7BEA98=; b=ixKIaGl8eL18t6mbL1HUoAeTni
+ PK3EFN4q0WWspzfHFG88448gOUJJhKRmKRW071PSacYgERoQrVNe4JDA6QNiMGkQ4WcFwz7xUq3w7
+ xqCigHOWgK1g+E2fsCTH45hz2vnLptfIz9JPoiL0ZLlbdFCrk+7yAi5Etkl95CmpUuC0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=xqNlaLQe1cDkgMgB8FEhqpyqPg//p5O2fI7xGq610vA=; b=d
- ZTaqQzWXqZo7oN+KS7Yt/n7w70UAHJmoTgTMnYg6N4HDwugl1JY3f4h1nx4bQGeE0UvH3O4LiUpna
- VhbT8kt1M2s/sBdjXYxgshtTQrq1XVuwHNw0xso+jFHWUgH8tRGWpeVDmn8WlCIAmvfh4o9SV0NcU
- iWkbjrTiQKdv0hjA=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=Pq2GAnj+R+VopKYNG1HcP8+Dw2iFR6lf4LD1E7BEA98=; b=DKRW93TZI+r+PgD9LwMDqUHSFo
+ C9ouoqj345/SDYyCQwg8d+StCWEWSwXO6YKMYD5/QcsT6wO3ImR4GQ/a957KkpaL81EeHq2HAqLYJ
+ yvBu2LDQMnu9eJO9wwsg2W7WHZP9+VUCQvOQHRb5oJAxhEFtUpm9JQmFMtagBLskkKac=;
+Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vkZ9n-0007g8-MC for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 27 Jan 2026 02:50:20 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 4E0A441865
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 27 Jan 2026 02:50:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E25EC116C6
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 27 Jan 2026 02:50:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769482209;
- bh=bSgbEkAxEF94xW16xer8rMEwZ7HRNj8CjfcyzyZDRC0=;
- h=Subject:From:Date:To:From;
- b=Sbcp17kAyZMwosNPpnIFYdT1WiEiAXtQ5BpElS3yRBjoIZsmTTZbQme8vJg0mlmfs
- qwSUABVNEYVHlYFl4pXMlLeiO21bGG5L9D0wSaE76QQjTwJEU8umYYXubV7yZufjPz
- iAD/fYmdo6LdhB0sg5InhMGsyhBe2qNJg9aqZp0D9eMWVfxF6J7i44o8V4RpjJi5mW
- +n15yARwMdEUrjLxKmSP3JyCNSjOmfNmhHyFHJGDXWiBTjM/JporwcjnieGz4oCHod
- 894mwEHiJ0T/1oZkCclLkEBC/S2reH9BGiHk/LJeIAz/hIqn2FT3Fb41b+wDcY2p5h
- JQrJAEVskOzDg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 8E2D2380A95F for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 27 Jan 2026 02:50:04 +0000 (UTC)
+ id 1vkc8E-0000vT-9F for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 27 Jan 2026 06:00:54 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id CEE5D227AAE; Tue, 27 Jan 2026 07:00:39 +0100 (CET)
+Date: Tue, 27 Jan 2026 07:00:39 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Message-ID: <20260127060039.GA25321@lst.de>
+References: <20260126045212.1381843-1-hch@lst.de>
+ <20260126045212.1381843-8-hch@lst.de> <20260126191102.GO5910@frogsfrogsfrogs>
+ <20260126205301.GD30838@quark>
 MIME-Version: 1.0
-Message-Id: <176948220320.657910.959297017758320862.git-patchwork-summary@kernel.org>
-Date: Tue, 27 Jan 2026 02:50:03 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1vkZ9n-0007g8-MC
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+Content-Disposition: inline
+In-Reply-To: <20260126205301.GD30838@quark>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1vkc8E-0000vT-9F
+Subject: Re: [f2fs-dev] [PATCH 07/16] fsverity: don't issue readahead for
+ non-ENOENT errors from __filemap_get_folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,31 +77,52 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: fsverity@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
+ Andrey Albershteyn <aalbersh@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ Al Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+ linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+On Mon, Jan 26, 2026 at 12:53:01PM -0800, Eric Biggers wrote:
+> Then for the final version in generic_readahead_merkle_tree(), one
+> option would be:
+> 
+> 	struct folio *folio;
+> 
+> 	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
+> 	if (folio == ERR_PTR(-ENOENT) ||
+> 	    (!IS_ERR(folio) && !folio_test_uptodate(folio))) {
+> 		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
+> 
+> 		page_cache_ra_unbounded(&ractl, nr_pages, 0);
+> 	}
+> 	if (!IS_ERR(folio))
+> 		folio_put(folio);
+> 
+> Or as a diff from this series:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+I ended up doing the second version (which is what I intended to do
+anyway, but messed up the brace placement) in this patch.  It then
+automatically carries over to the readahead split.
 
-Patch: [f2fs-dev,v3,1/2] f2fs: check skipped write in f2fs_enable_checkpoint()
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1046932
-  Lore link: https://lore.kernel.org/r/20260126063203.1508295-1-chao@kernel.org
+> 
+> -	if (PTR_ERR(folio) == -ENOENT ||
+> -	    !(IS_ERR(folio) && !folio_test_uptodate(folio))) {
+> +	if (folio == ERR_PTR(-ENOENT) ||
+> +	    (!IS_ERR(folio) && !folio_test_uptodate(folio))) {
+> 
+> (Note that PTR_ERR() shouldn't be used before it's known that the
+> pointer is an error pointer.)
 
-
-Total patches: 1
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+That's new to me, and I can't find anything in the documentation or
+implementation suggesting that.  Your example code above also does
+this as does plenty of code in the kernel elsewhere.
 
 
 
