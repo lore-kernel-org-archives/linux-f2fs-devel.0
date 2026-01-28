@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3CDD0D3F07A
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Jan 2026 15:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BD41FD3F07A
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Jan 2026 15:28:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=l5MTfBhij2e8jV114m6zpAsX2C8X1MhAe5+W1rW7WQ0=; b=QobaGQhvFdrwkmGAfmrqvBxYkW
-	lSLSHDMTEcbJuJazF5XgA4UTX6iiYkc4F76+Sju4qKWq1PfPNmBis6ELyqA8r+Q5Ov3COZH9Wg548
-	xE3Ad8KaZsGsB+DPKI1M/2CIW+mMATx5zrVB/qSc1/5tNI7VZG/0rHIDu9O2ZFWatDaI=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=a3fD0Nnwl+zhMxSas26tICCQnH7WzQxYZZWg8TiFmEo=; b=FosrnFL4WC0AsYMTMSKS1KLTHp
+	nT9MhOG4Ftqb46aJfVu0tWnEfEOcKYNKvU3Qpyv3M8SepmmraD6kVoNslmL7G8YiNFo+yNCgocmzv
+	OBBXY+gidmf46o4QuhLB4XlAdAzay538KxDib0vKRqfOtYjr7xUQ95Adj+lneNASabnc=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vl7ST-0006wd-TO;
-	Wed, 28 Jan 2026 15:27:53 +0000
+	id 1vl7Sg-0005CM-Dy;
+	Wed, 28 Jan 2026 15:28:06 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+97ec6e74097c8d3e794e+8193+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1vl7SS-0006wM-8x for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 28 Jan 2026 15:27:52 +0000
+ id 1vl7Se-0005C7-7m for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 28 Jan 2026 15:28:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Mi7LhP6rFZ9ESa+DjhSAiE6zpd9hkvFYWYqDhPd4YeY=; b=Kl8PZd4Uacb1TWbkM8rrL2lBUw
- VneK5QIqWUASM/5PC8Rpq/EXwcP3Lh6W6CpPESZ9PVf0zVsqdKeCyDDF++/zIeXMNRHlC+XAQ2Yq3
- UZsnVWTTkCtbESvjHXP32/fML2A5slqfoJJ9PwRyS7eQ+o9om3SdhmZpKJlL8L+T90Lc=;
+ bh=tSPZVX9Sxv7o1Tr96dGuUXSLqIyOoHyYNr+LZJx+lOo=; b=AKivnxMOpNs1qAZfthQqcDfyBw
+ sfPKvJrtNmZ9RXlEL1f5fss9qJc2Kwv7bvWgjf1FWFoAq8ucEDlPupLzINy7rNeasLo0mrX4UhJJk
+ bK5rpyyBsVXnOuQxOMRvGPZSYhmPbhOuDFcyB/HlGE/QKxLyN/F1UX699okk8CvSf87U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,42 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Mi7LhP6rFZ9ESa+DjhSAiE6zpd9hkvFYWYqDhPd4YeY=; b=UmHCE2aTcwrcHjq6rUeiVr07Gt
- l7JgklBf1wT1SiWZ20aNfRxy1OE0gffdWrpY2QXhnnt1hqnHcGYw6rzcJOuLRWK53nLMHHP/8Ra/A
- bgeRXC+gAcfFXMCpOeuHFxSZp1TGISWJqqrlNpWVdFjgpK0QvZ3YziyrUVPtvd1bSAac=;
+ bh=tSPZVX9Sxv7o1Tr96dGuUXSLqIyOoHyYNr+LZJx+lOo=; b=kMIPrkgmuOXixcn9g7fJTgrz+o
+ gVtuwM66HDSC43pHrnxtUv/AOJs6tfKniTqPqUPs8Kw231qi6OdyYovhdX4dHAZhdfD8OLdCVgxvf
+ 0WQM6J5Nhu9Mx+ipa9vPh8ogYjccjmYE3LRBOMD/VPdC6kadHn+raywnq2Vl6EIBwPdM=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vl7SR-0002Uk-Of for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 28 Jan 2026 15:27:52 +0000
+ id 1vl7Sd-0002VJ-BL for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 28 Jan 2026 15:28:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=Mi7LhP6rFZ9ESa+DjhSAiE6zpd9hkvFYWYqDhPd4YeY=; b=ohvIUV+zi4yS4G8Shz0QHkDf67
- uCqc/Ji0Hbcv5PZ7/peP1i0gU72BR8MPT1Cm2kszHmvS9FF6FFUP3UVvk4kistxDr6y7nFF3Z3nNo
- BSeJ2MCdi6Hh8Pd+s/xvBGzvMFg8/5Sp4rFsFoLyIV/Bqo+tXIWPAFKzwhBVQvUAtWgfYHOWosBu4
- BCUd+Y4OBBHLBzfgSALW8C3RwyGiFpxIpPbQDFbIgX8DowxhG8h+Blcw+y7EcDaP1EufC4mscmJ0d
- SRsUj0iA+fy3HmMoeU1/7Fi3Qma2QsqwpN66IuM8E+VWXzPi7h2kwnXwiRMwpJCcXvtXUy0ca8tYs
- eWzzCgiQ==;
+ bh=tSPZVX9Sxv7o1Tr96dGuUXSLqIyOoHyYNr+LZJx+lOo=; b=MwD7lLIU6/rUUrEHGNpqZ9umNA
+ lpgRgL+S1vpJQufKu9GAAB2g8Ojv35OiGT+YmA4wedWHSMF2n1Y/rhyZnrbNfVl70VGZXspjiLLnV
+ +o3NfvM/RQZOEOFezwS/8nDY7uSN+TLlI+XRZzcD5ZShwKwldT3iqum9391YH12z8AQO9FbSkq1KZ
+ qmjoReg/RciG2ATTWL4JQCJTo8n11x0mUOJz88h/fqtpD2wWF9DGopUMfoXvzzp4uZgOUSipC7oiL
+ V5rY8tdKJtTunqX9WoOHwWQLIEOGG7uY84w2MtI0DONfjVOj/LlK9RjypqAyJ27xhzLZ3iP8AyDE7
+ YhquhrKA==;
 Received: from
  2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at
  ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
- id 1vl7SK-0000000GHWU-0Pd3; Wed, 28 Jan 2026 15:27:44 +0000
+ id 1vl7SV-0000000GHYC-3ulz; Wed, 28 Jan 2026 15:27:56 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
-Date: Wed, 28 Jan 2026 16:26:21 +0100
-Message-ID: <20260128152630.627409-10-hch@lst.de>
+Date: Wed, 28 Jan 2026 16:26:23 +0100
+Message-ID: <20260128152630.627409-12-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260128152630.627409-1-hch@lst.de>
 References: <20260128152630.627409-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1vl7SR-0002Uk-Of
-Subject: [f2fs-dev] [PATCH 09/15] fsverity: deconstify the inode pointer in
- struct fsverity_info
+X-Headers-End: 1vl7Sd-0002VJ-BL
+Subject: [f2fs-dev] [PATCH 11/15] fs: consolidate fsverity_info lookup in
+ buffer.c
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,78 +100,90 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-A lot of file system code expects a non-const inode pointer.  Dropping
-the const qualifier here allows using the inode pointer in
-verify_data_block and prepares for further argument reductions.
+Look up the fsverity_info once in end_buffer_async_read_io, and then
+pass it along to the I/O completion workqueue in
+struct postprocess_bh_ctx.
+
+This amortizes the lookup better once it becomes less efficient.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/verity/fsverity_private.h | 4 ++--
- fs/verity/open.c             | 2 +-
- fs/verity/verify.c           | 5 +++--
- 3 files changed, 6 insertions(+), 5 deletions(-)
+ fs/buffer.c | 27 +++++++++++----------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
 
-diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
-index dd20b138d452..f9f3936b0a89 100644
---- a/fs/verity/fsverity_private.h
-+++ b/fs/verity/fsverity_private.h
-@@ -73,7 +73,7 @@ struct fsverity_info {
- 	struct merkle_tree_params tree_params;
- 	u8 root_hash[FS_VERITY_MAX_DIGEST_SIZE];
- 	u8 file_digest[FS_VERITY_MAX_DIGEST_SIZE];
--	const struct inode *inode;
-+	struct inode *inode;
- 	unsigned long *hash_block_verified;
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 3982253b6805..f4b3297ef1b1 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -302,6 +302,7 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
+ struct postprocess_bh_ctx {
+ 	struct work_struct work;
+ 	struct buffer_head *bh;
++	struct fsverity_info *vi;
  };
  
-@@ -124,7 +124,7 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
- 				     unsigned int log_blocksize,
- 				     const u8 *salt, size_t salt_size);
+ static void verify_bh(struct work_struct *work)
+@@ -309,25 +310,14 @@ static void verify_bh(struct work_struct *work)
+ 	struct postprocess_bh_ctx *ctx =
+ 		container_of(work, struct postprocess_bh_ctx, work);
+ 	struct buffer_head *bh = ctx->bh;
+-	struct inode *inode = bh->b_folio->mapping->host;
+ 	bool valid;
  
--struct fsverity_info *fsverity_create_info(const struct inode *inode,
-+struct fsverity_info *fsverity_create_info(struct inode *inode,
- 					   struct fsverity_descriptor *desc);
+-	valid = fsverity_verify_blocks(*fsverity_info_addr(inode), bh->b_folio,
+-				       bh->b_size, bh_offset(bh));
++	valid = fsverity_verify_blocks(ctx->vi, bh->b_folio, bh->b_size,
++				       bh_offset(bh));
+ 	end_buffer_async_read(bh, valid);
+ 	kfree(ctx);
+ }
  
- void fsverity_set_info(struct inode *inode, struct fsverity_info *vi);
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index 090cb77326ee..128502cf0a23 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -175,7 +175,7 @@ static void compute_file_digest(const struct fsverity_hash_alg *hash_alg,
-  * appended builtin signature), and check the signature if present.  The
-  * fsverity_descriptor must have already undergone basic validation.
-  */
--struct fsverity_info *fsverity_create_info(const struct inode *inode,
-+struct fsverity_info *fsverity_create_info(struct inode *inode,
- 					   struct fsverity_descriptor *desc)
+-static bool need_fsverity(struct buffer_head *bh)
+-{
+-	struct folio *folio = bh->b_folio;
+-	struct inode *inode = folio->mapping->host;
+-
+-	return fsverity_active(inode) &&
+-		/* needed by ext4 */
+-		folio->index < DIV_ROUND_UP(inode->i_size, PAGE_SIZE);
+-}
+-
+ static void decrypt_bh(struct work_struct *work)
  {
- 	struct fsverity_info *vi;
-diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-index f5bea750b427..6248d25a1f89 100644
---- a/fs/verity/verify.c
-+++ b/fs/verity/verify.c
-@@ -156,9 +156,10 @@ static bool is_hash_block_verified(struct fsverity_info *vi, struct page *hpage,
-  *
-  * Return: %true if the data block is valid, else %false.
-  */
--static bool verify_data_block(struct inode *inode, struct fsverity_info *vi,
-+static bool verify_data_block(struct fsverity_info *vi,
- 			      const struct fsverity_pending_block *dblock)
- {
-+	struct inode *inode = vi->inode;
- 	const u64 data_pos = dblock->pos;
- 	const struct merkle_tree_params *params = &vi->tree_params;
- 	const unsigned int hsize = params->digest_size;
-@@ -361,7 +362,7 @@ fsverity_verify_pending_blocks(struct fsverity_verification_context *ctx)
- 	}
+ 	struct postprocess_bh_ctx *ctx =
+@@ -337,7 +327,7 @@ static void decrypt_bh(struct work_struct *work)
  
- 	for (i = 0; i < ctx->num_pending; i++) {
--		if (!verify_data_block(ctx->inode, vi, &ctx->pending_blocks[i]))
-+		if (!verify_data_block(vi, &ctx->pending_blocks[i]))
- 			return false;
- 	}
- 	fsverity_clear_pending_blocks(ctx);
+ 	err = fscrypt_decrypt_pagecache_blocks(bh->b_folio, bh->b_size,
+ 					       bh_offset(bh));
+-	if (err == 0 && need_fsverity(bh)) {
++	if (err == 0 && ctx->vi) {
+ 		/*
+ 		 * We use different work queues for decryption and for verity
+ 		 * because verity may require reading metadata pages that need
+@@ -359,15 +349,20 @@ static void end_buffer_async_read_io(struct buffer_head *bh, int uptodate)
+ {
+ 	struct inode *inode = bh->b_folio->mapping->host;
+ 	bool decrypt = fscrypt_inode_uses_fs_layer_crypto(inode);
+-	bool verify = need_fsverity(bh);
++	struct fsverity_info *vi = NULL;
++
++	/* needed by ext4 */
++	if (bh->b_folio->index < DIV_ROUND_UP(inode->i_size, PAGE_SIZE))
++		vi = fsverity_get_info(inode);
+ 
+ 	/* Decrypt (with fscrypt) and/or verify (with fsverity) if needed. */
+-	if (uptodate && (decrypt || verify)) {
++	if (uptodate && (decrypt || vi)) {
+ 		struct postprocess_bh_ctx *ctx =
+ 			kmalloc(sizeof(*ctx), GFP_ATOMIC);
+ 
+ 		if (ctx) {
+ 			ctx->bh = bh;
++			ctx->vi = vi;
+ 			if (decrypt) {
+ 				INIT_WORK(&ctx->work, decrypt_bh);
+ 				fscrypt_enqueue_decrypt_work(&ctx->work);
 -- 
 2.47.3
 
