@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0F0F2D35668
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Jan 2026 03:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 18968D35668
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Jan 2026 03:35:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=12LHkcq3CYgIb/si6i9W9N3caGvXw3U5Q5sUZrjsPPI=; b=iMsAyLcM5z+WFQD+x+hqDoK1Vf
-	nBhcpJimEpT9Hq32Zbc+WYKnGs3C1HKKsocEnbq4IclI44C8pjT53RZBBnjSyhJHZnuMYdJIx9yMx
-	PD3/wehSO3GH5/zzbHxBDUgEDKAIWV95C3hGIRQ7+ohrZ0jSYqAYl/Ujh5skDvcxK52A=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=iDEraEytxl8unwzrgH3t6hRPXrNVWOafYsNVAb4lQq0=; b=bPqBBVpailePVIT2hWL4brtERz
+	vhzP2q2QjDT1/X8WpzBmtbnijfxucHkDGWN7HiCxEPtLIHqpw1bvypIou6CDUUbm9tDoopHUOxouR
+	HM4Elj8OzIgnSLbHPNyoREmUN53By5IO+5xdPMsYbo20frbnpT/dhC0u+DOA4zeCOXFM=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vkwIV-0007cX-IL;
-	Wed, 28 Jan 2026 03:32:52 +0000
+	id 1vkwL7-0002Cx-Mn;
+	Wed, 28 Jan 2026 03:35:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1vkwIU-0007cJ-9v
+ (envelope-from <hch@lst.de>) id 1vkwL6-0002Cn-Mg
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 28 Jan 2026 03:32:51 +0000
+ Wed, 28 Jan 2026 03:35:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gkdjiW1DONcLXhHe6bY5n0jl/iHYPkluhXvekQ9QlKo=; b=gkZGyASTtvFgBONkDSUPzdj502
- 9wHizhoj2V1FPnY0y7csoLcAHYjstarJn60S1OeeRMUqV1OrFqUKaWDqABpz4YnJf7M4yP7miZ6u9
- zT7o68cC6mrjHrC3VRLQZw6enzgYAv14wOMRyZzCip9Pirdzfv3wft6eaJChcSF/zV2Y=;
+ bh=fC1UeH7rU1Ae666+sKel9bIHhJtXh2k+OWNbHHQK+Cc=; b=kW+IPOdTO57jaSVUNPLLXca3Rn
+ FefoA83tkIm30+oLNyruxYEMyicrqSL+0Vr5oHE9YzyeXPMQ79WDnYliYtBZcI/FEjOenUrLJFNbz
+ sDFoyNJVZtyIq43R5acwH5gRmuvw6n6Ufz2NwZymKXsGjOvoxd/y74ZtTRLRTFX7U8zg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,29 +42,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=gkdjiW1DONcLXhHe6bY5n0jl/iHYPkluhXvekQ9QlKo=; b=fWU/LeW6nmgaKTK+LbC2/5Bf20
- nIjlDc31rgVJIXJAIDd0asLAC1JeftmWXlZ5Ve6YKWi56aTSuDBTHmVUkHtExEBIDLJesa2SXMxK2
- FTgAh3tnbknNTZUw2vhkxs4zlpcQoI5nZWNrGRbgmiNJTBzsMmOFpWQMSIsUUDshbFpg=;
+ bh=fC1UeH7rU1Ae666+sKel9bIHhJtXh2k+OWNbHHQK+Cc=; b=nNjRZS/ukwawlG3psHgfUsU7H3
+ FIbJQLDJ/rDzjVDuBs7mp/6UfWr48SJ9L7WsxOBkUCXy5Yhh/mxmZAjMQPI9y67YlFloeNoepL2mn
+ 0+oTzziA+0hD6bhClvsVU0gA9ygUS9aATSo26TOcz3Ln9EUpIS76QNvG8vnHiUdITo8U=;
 Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vkwIU-0000e2-9o for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 28 Jan 2026 03:32:51 +0000
+ id 1vkwL6-0000k3-7F for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 28 Jan 2026 03:35:32 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id 9FFA4227A8E; Wed, 28 Jan 2026 04:32:42 +0100 (CET)
-Date: Wed, 28 Jan 2026 04:32:42 +0100
+ id 93A97227A8E; Wed, 28 Jan 2026 04:35:19 +0100 (CET)
+Date: Wed, 28 Jan 2026 04:35:19 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20260128033242.GA30830@lst.de>
+Message-ID: <20260128033519.GB30830@lst.de>
 References: <20260126045212.1381843-1-hch@lst.de>
- <20260126045212.1381843-10-hch@lst.de> <20260128032203.GA2718@sol>
+ <20260126045212.1381843-17-hch@lst.de> <20260128032817.GB2718@sol>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260128032203.GA2718@sol>
+In-Reply-To: <20260128032817.GB2718@sol>
 User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1vkwIU-0000e2-9o
-Subject: Re: [f2fs-dev] [PATCH 09/16] fsverity: constify the vi pointer in
- fsverity_verification_context
+X-Headers-End: 1vkwL6-0000k3-7F
+Subject: Re: [f2fs-dev] [PATCH 16/16] fsverity: use a hashtable to find the
+ fsverity_info
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,24 +87,42 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jan 27, 2026 at 07:22:03PM -0800, Eric Biggers wrote:
-> On Mon, Jan 26, 2026 at 05:50:55AM +0100, Christoph Hellwig wrote:
-> > struct fsverity_info contains information that is only read in the
-> > verification path.  Apply the const qualifier to match various explicitly
-> > passed arguments.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >  fs/verity/verify.c | 15 ++++++++-------
-> >  1 file changed, 8 insertions(+), 7 deletions(-)
+On Tue, Jan 27, 2026 at 07:28:17PM -0800, Eric Biggers wrote:
+> > - * a race condition where the file is being read concurrently with
+> > - * FS_IOC_ENABLE_VERITY completing.  (S_VERITY is set before the verity info.)
+> > + * This checks whether the inode's verity info has been set, and reads need
+> > + * to verify the verity information.
 > 
-> Did you consider that fsverity_info::hash_block_verified is written to?
-> It's a pointer to an array, so the 'const' doesn't apply to its
-> contents.  But logically it's still part of the fsverity information.
+> Nit: the point is to verify the file's data, not to verify "the verity
+> information".
 
-Well, it doesn't apply by the type rules.  But if you don't like the
-const here just let me know and I'll drop it.
+Ok.
 
+> > -static inline bool fsverity_active(const struct inode *inode)
+> > +static __always_inline bool fsverity_active(const struct inode *inode)
+> > +{
+> > +	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode)) {
+> > +		/*
+> > +		 * This pairs with the try_cmpxchg in set_mask_bits()
+> > +		 * used to set the S_VERITY bit in i_flags.
+> > +		 */
+> > +		smp_mb();
+> > +		return true;
+> > +	}
+> > +
+> > +	return false;
+> > +}
+> 
+> Is there a reason for this function in particular to be __always_inline?
+> fsverity_get_info() is just inline.
+
+Without the __always_inline some gcc versions on sparc fail to inline it,
+and cause a link failure due to a reference to fsverity_readahead in
+f2fs_mpage_readpages for non-verity builds.  (reported by the buildbot)
+
+> 
+> - Eric
+---end quoted text---
 
 
 _______________________________________________
