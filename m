@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AF806D3F074
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Jan 2026 15:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B9DBDD3F07A
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Jan 2026 15:27:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=oFs87Eow8ZvzLOFOmq0Rpy5gqzgkqCZHlIHM956Yxrw=; b=NavAimBUOiMXaXWcsv+51f4YvQ
-	DpZSI0MHO7smP5j5LK7uzcLChanwjsodFFew8ZlMMLxbBmMx/TNI/fNENoroxQ/sBZ8Pbzt6XKAeU
-	nNpVHDFxE1UHhKjT4ptmx2KhdJmVgO4amKY8OUfpmQpCwJmt5tPbIthRcFQ1W3RkBUyM=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=wKc7M75bZWAB504Ls4uAZOH9qLU6krXUTSTQWir971s=; b=fzwkUPjupoCOJI11ctde7VNNbz
+	lojGaudJzcfgZjHaLQbPdm/dhaRMGez9On9iCfYF2MM3cXhnmV6GphjLvSSfDwqhIZ/wpIIvShnj/
+	/icyMIffcA0r0+u0a5NpX7U7LvqnT0MFue6ZX0vb0qs4M8zBje7yArByRISkObqQ5W2w=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vl7SO-0003a2-IC;
-	Wed, 28 Jan 2026 15:27:49 +0000
+	id 1vl7SQ-0000T7-EE;
+	Wed, 28 Jan 2026 15:27:50 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+97ec6e74097c8d3e794e+8193+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1vl7SL-0003Zt-Fh for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 28 Jan 2026 15:27:46 +0000
+ id 1vl7SP-0000Sc-AG for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 28 Jan 2026 15:27:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KiTYMSHGYkk7MMbd7gnpaW71B7FA3oikZ3Bx4Py5fbQ=; b=KN/IEvtHN13r3Dv8rNziyj0/dK
- VAw3CQ3tOnS45pAwIe9DSdPMiZ+xnnAlsQ/l2VjX/v8cIA3jGEweViH3ywNDyRYhPV6yivPcsbdlQ
- LDsfrUf2G1gWxoCQ9AxnzlS0ujkAQMBBpfHkcjmQ3PeLRYnclckugJOZmCnDPCAFKMxg=;
+ bh=msMVIu9sG+zHlGxQl6P3akWEAjf+4WBK4vAVLStngPE=; b=CRrZGOeiZgF1QN/eEkyqFwzOJ7
+ n0oKtOHrQQ6KhfcFyvzzpvJstPNLh4VkoKPDFgQ8GykjjZSBvAlwDWcWC8NqRvmtu/1iDQXuh87vX
+ 0Y6y3BaVG5KLS2w9GtZ0FjQNnIrEWos84ZxsJVSR0vTmevVZc3SgyUn0c8lYcNGFKwv4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,42 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=KiTYMSHGYkk7MMbd7gnpaW71B7FA3oikZ3Bx4Py5fbQ=; b=L4cgXnKSxskcFzOYHdauErbSqW
- CDlJDb7L6pwqhindRCBD5jsWGhdP1UkZiGReVmFPbesFEXMwhJgq/tBAlzjC6072/h2wkduaPP3/7
- dvNcSfdp1+RMmTO/rFsRxJF8kTq+xtCCrakIt3b82QHs/wvyrgX78juh/qbq3/FmcgN4=;
+ bh=msMVIu9sG+zHlGxQl6P3akWEAjf+4WBK4vAVLStngPE=; b=GnB9ccezumuidgMrHTl87ZZSl0
+ m7BEbgJEXcC4vDJtVGpSxh+2ns5NXlEe2gqMlaRIpfRU1hikFESw0n+5p/ixJfmLN9vUHWICkDA4a
+ WU7E017JzYzahIIchw3+/6vqQaSl6tDidoVMoMFLdL4R6XBm8lTT8CDwpWqAGnWmhG5c=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vl7SL-0002UU-Tx for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 28 Jan 2026 15:27:46 +0000
+ id 1vl7S0-0002TL-8c for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 28 Jan 2026 15:27:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=KiTYMSHGYkk7MMbd7gnpaW71B7FA3oikZ3Bx4Py5fbQ=; b=rw94uEjygaIGVu+CZ41z2AXxtY
- 6lQSSJfdNSXgwT5eIoXsQZp/ARaCQqQupgcU2hWyaveFeNZK2uIaknumHd4DhxmL3xRAd1ziFm7pI
- lRtAqsA+hzZPA+/Nrf7fZjoGyMotLqRnDAK1Db/bTsaxMepV5D6eAceXfrtb1iJ+rI6cHBd90Z/u/
- IvD/pl9qQtVdrzb2vtSv7xXcIn/tizvYvrAcZ0DcIDN65qQEY0oSbWaPvcY3oY6gWl6Q+ITkN5rE+
- yx3YHRhAdhGiFablEF3kNZMkLiNmEcH5iSDygjDG1vBknkT0f8zR6N4/K3F+FIR1d8VSzSn/1jDwq
- TEkNXu7w==;
+ bh=msMVIu9sG+zHlGxQl6P3akWEAjf+4WBK4vAVLStngPE=; b=dVd18ExmGCZkFJamtEf4SC4uGg
+ yV7ELCrRHGaowT2XAI9d6uv85hBkyFZ6T55gL8l8xXkoeauB9hfuaMEhcWUS/v6UBaxETZUdoBqHF
+ Qun4+VI0tOGfTyxCyyMIsAPdqlAckqEHofmOBsOHKJmBk6W8llANX7HkOBYUr68xUBx0Ydx+DDQYE
+ e9LyiB2hWj17lQ/ulxSomAHsC9xUTxYjXI+LwZAL57jkA8fHvsLw56sotK0+jUGuporlyq9Z1Q3XO
+ IOI8rLuF9vkagfCUtbpIozg9FJiJsLFaOtdCVaDYsHSO+vBzAbOroU40L2D+KpCxzydoIZoPWeJCK
+ BmYkucvA==;
 Received: from
  2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at
  ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
- id 1vl7S8-0000000GHSx-28mF; Wed, 28 Jan 2026 15:27:33 +0000
+ id 1vl7Rm-0000000GHNR-2aOy; Wed, 28 Jan 2026 15:27:10 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
-Date: Wed, 28 Jan 2026 16:26:19 +0100
-Message-ID: <20260128152630.627409-8-hch@lst.de>
+Date: Wed, 28 Jan 2026 16:26:16 +0100
+Message-ID: <20260128152630.627409-5-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260128152630.627409-1-hch@lst.de>
 References: <20260128152630.627409-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1vl7SL-0002UU-Tx
-Subject: [f2fs-dev] [PATCH 07/15] fsverity: don't issue readahead for
- non-ENOENT errors from __filemap_get_folio
+X-Headers-End: 1vl7S0-0002TL-8c
+Subject: [f2fs-dev] [PATCH 04/15] f2fs: don't build the fsverity work
+ handler for !CONFIG_FS_VERITY
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,28 +100,30 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Issuing more reads on errors is not a good idea, especially when the
-most common error here is -ENOMEM.
+Use IS_ENABLED to disable this code, leading to a slight size reduction:
+
+   text	   data	    bss	    dec	    hex	filename
+  25709	   2412	     24	  28145	   6df1	fs/f2fs/compress.o.old
+  25198	   2252	     24	  27474	   6b52	fs/f2fs/compress.o
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/verity/pagecache.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/compress.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/verity/pagecache.c b/fs/verity/pagecache.c
-index f67248e9e768..eae419d8d091 100644
---- a/fs/verity/pagecache.c
-+++ b/fs/verity/pagecache.c
-@@ -22,7 +22,8 @@ struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index,
- 	struct folio *folio;
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 7b68bf22989d..40a62f1dee4d 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1833,7 +1833,7 @@ void f2fs_decompress_end_io(struct decompress_io_ctx *dic, bool failed,
+ {
+ 	int i;
  
- 	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
--	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
-+	if (folio == ERR_PTR(-ENOENT) ||
-+	    (!IS_ERR(folio) && !folio_test_uptodate(folio))) {
- 		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
- 
- 		if (!IS_ERR(folio))
+-	if (!failed && dic->need_verity) {
++	if (IS_ENABLED(CONFIG_FS_VERITY) && !failed && dic->need_verity) {
+ 		/*
+ 		 * Note that to avoid deadlocks, the verity work can't be done
+ 		 * on the decompression workqueue.  This is because verifying
 -- 
 2.47.3
 
