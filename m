@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 009A0D46C01
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Jan 2026 23:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 29845D46C0F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 29 Jan 2026 00:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ZmUa45rljUejQNNY5p4iApMXLuI84JzvyNm1SQuHtvg=; b=Y07/gmrMHEG424VXpdYC2ihTdC
-	iGNctoJZwuCMOQj4OTcd3srP19Tmeexl+I311kwjocVTh7ITywi7GiDK97RN0hqtWR9VtUSf/ksvj
-	2Ha1tW4nbcMcdmw5x+T2DC7qUyJL6sgK3gv5vQmsnQG+muvJvy84sxiD+NZrfx46R8D8=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=GryarDsAL7k8ATv1Uccmr8f4SipZYuhjeq7tW93s0M0=; b=ifTfI9tK99gyfBwmsWx74y4zGU
+	SKb/dzO9x5NFKRZu2iz/pXRAZkUi4Zh/1r5Pm36XFdv2pKIfEkaR+hkZr1D99949SNQfyYcQxwLBc
+	+3FxyYOiQRj36o9R8ddIvW9wkov806cjxJZjQuRg2799sD+JfWXlVKRFROTezfPRyAgk=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vlFGr-0008OU-3K;
-	Wed, 28 Jan 2026 23:48:25 +0000
+	id 1vlFZ8-0007HE-AT;
+	Thu, 29 Jan 2026 00:07:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1vlFGp-0008ON-53
+ (envelope-from <ebiggers@kernel.org>) id 1vlFZ7-0007H5-3g
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 28 Jan 2026 23:48:23 +0000
+ Thu, 29 Jan 2026 00:07:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wzQhRaCSPWpZR05YVUNtxbfbNqZkNgViZb6tBgjld6g=; b=ZZlV6/MwLb3ouxENuxtWOKmtcC
- /TxYfImKiIpTiFouBZM6G28HmYN1CiQpWtdptOwz4SoQhzLDqSSX4owxMMTjhVO2pInRnGIT5NFQs
- vfFtWwrL3wgA/AG8gOCzw0WeWkG/RPGDdiboC+C76AnHendCWm+elxBmnd7A8rof3e7A=;
+ bh=5uhaGGQYg9sDFitFxVU8fwHwzQRLcTpFUi/A96NRnUw=; b=AYv1Q7XfXZ7pjCO7Ok2z8/bac6
+ cVgdyRiORwWCqp5ry96H5Cm7nElCJyJ5hKg5OEIfr3DovvGUE8tfZguRFQfOiK5u7BfT0N7OXxZbg
+ Qv9ikSD2ZA3WQOwBMMPqyuqUZQKrULP+6Hhgzy32kEqnHL5gG56WfdGVAyfHdd/r2Src=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,40 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=wzQhRaCSPWpZR05YVUNtxbfbNqZkNgViZb6tBgjld6g=; b=fKKVpHL+OOgENlkyf6hX4jlyVk
- dh/hxKWcKssql9TxYaMXIZeI6uckpVW+tKXvUxBugSww03OA9ndCUZEjF4MTb4lGqiuhqVEAN7LaP
- HbRgsX39KxoDUbFUZG0t59QiBaVmeeVcgelaemvp4ezSsgGDmDOzAQ5ICFMWN/ElKz3o=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=5uhaGGQYg9sDFitFxVU8fwHwzQRLcTpFUi/A96NRnUw=; b=Bd08jqPWlTA/xpRv5gxPhXMbn+
+ 7zroO6B55/VSN8ubeaEF1tjs2ahar/J07ov80JjgOZStrcvI5JAmIG6y5sBrJ+L0cK6RCXdkGza2P
+ 5uAcv2zwF/zxw/Rd5lTp1TY9ZMRTZ9nn1VcA5TVQG3YZRDNT1PiSqbiCZamCCYRXsiCc=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vlFGo-0001j5-KR for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 28 Jan 2026 23:48:23 +0000
+ id 1vlFZ6-0002gt-JG for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 29 Jan 2026 00:07:17 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 3FD47443A6;
- Wed, 28 Jan 2026 23:48:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAEDEC4CEF7;
- Wed, 28 Jan 2026 23:48:16 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id C74E56001A;
+ Thu, 29 Jan 2026 00:07:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14440C4CEF1;
+ Thu, 29 Jan 2026 00:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769644097;
- bh=hvMXm14By+MD7GzcKQWzW8IPoc0TXledHjjG+W0sMDg=;
+ s=k20201202; t=1769645225;
+ bh=lfyZ4POXsdioqMKuqaRNweLV2tFbTPixspZnM/3+dX8=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=tkjG2NtOSWrGaDkEuNFbAXIvv42R7VcPyXsnFUJKK5dJ3zlpMIrAO+ckNPe4RUwQA
- yDsKcuXXTAcMdQJ2/I0EB2301uLi1Kn4ntgejOaES8DO2zT6cyFm9zslQAjZfqNikP
- QHQIB41Igq37rR/UtdPXtyPWRnzeEqh6t4Tw/LMPobIaSDKZOIVfoFFNJR4qFmyp/H
- Tk3fVUONExASoE6FKfzFRH7ko6qJRMzbUoU0C8dA+TMhNUnKo0KxWVVdH3DaKioRRv
- EYWgqfjh/DSxRCBH7bDVbDwCUr1GNVgCWAcgVQZ4wRaeRqejQk90xMKIT0jxRXyM4N
- ofn/OEf9n3LMQ==
-Date: Wed, 28 Jan 2026 15:48:14 -0800
+ b=bKz8kFRQJBfdfvCfeA6cBhYEmtB1jXZX00j6mhJEQDXw1lRBo20fCwU/y/V/bqbSb
+ /jDa6Vi+dDa1h2NX3tKbReT6YMIxAwbcKFeCa4XMZKZc6LzRBWNGZN2XnNjmOIcNAX
+ bkbBryG3mygwRoGxdjBG2xpw7K+RSg3eLDEaRG6rQbG3JVCo5xQYAikEY0soDafviF
+ pMCltZTWO2X32rPUaXHsQsg00jKqqvzf35SU+geNxGNUNKcs4xA3iQboEHx1U/R0cw
+ bG5tvNdATouuDeiMxQdNyHhvOfuYs3LfkFZIqbORMTNmsyQM8HQZRrlY9UanKM8dQQ
+ 4BQxOFUO2BlFw==
+Date: Wed, 28 Jan 2026 16:07:02 -0800
 To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20260128234814.GC2024@quark>
+Message-ID: <20260129000702.GD2024@quark>
 References: <20260128152630.627409-1-hch@lst.de>
- <20260128152630.627409-8-hch@lst.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260128152630.627409-8-hch@lst.de>
-X-Headers-End: 1vlFGo-0001j5-KR
-Subject: Re: [f2fs-dev] [PATCH 07/15] fsverity: don't issue readahead for
- non-ENOENT errors from __filemap_get_folio
+In-Reply-To: <20260128152630.627409-1-hch@lst.de>
+X-Headers-End: 1vlFZ6-0002gt-JG
+Subject: Re: [f2fs-dev] fsverity cleanups,
+ speedup and memory usage optimization v4
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,32 +100,30 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Jan 28, 2026 at 04:26:19PM +0100, Christoph Hellwig wrote:
-> Issuing more reads on errors is not a good idea, especially when the
-> most common error here is -ENOMEM.
+On Wed, Jan 28, 2026 at 04:26:12PM +0100, Christoph Hellwig wrote:
+> Hi all,
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/verity/pagecache.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> this series has a hodge podge of fsverity enhances that I looked into as
+> part of the review of the xfs fsverity support series.
 > 
-> diff --git a/fs/verity/pagecache.c b/fs/verity/pagecache.c
-> index f67248e9e768..eae419d8d091 100644
-> --- a/fs/verity/pagecache.c
-> +++ b/fs/verity/pagecache.c
-> @@ -22,7 +22,8 @@ struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index,
->  	struct folio *folio;
->  
->  	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
-> -	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
-> +	if (folio == ERR_PTR(-ENOENT) ||
-> +	    (!IS_ERR(folio) && !folio_test_uptodate(folio))) {
->  		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
+> The first part calls fsverity code from VFS code instead of requiring
+> boilerplate in the file systems.
+> 
+> The first patch fixes a bug in btrfs as part of that, as btrfs was missing
+> a check.  An xfstests test case for this was submitted already.
+> Can we expedite this fix?
+> 
+> The middle part optimizes the fsverity read path by kicking off readahead
+> for the fsverity hashes from the data read submission context, which in my
+> simply testing showed huge benefits for sequential reads using dd.
+> I haven't been able to get fio to run on a preallocated fio file, but
+> I expect random read benefits would be significantly better than that
+> still.
 
-This patch is still incorrect: when IS_ERR(folio) && folio !=
-ERR_PTR(-ENOENT) it falls through to folio_file_page(), which crashes.
-See https://lore.kernel.org/r/20260126205301.GD30838@quark/ for a
-correct suggestion.
+To get things going, I've applied patches 1-6 to
+https://git.kernel.org/pub/scm/fs/fsverity/linux.git/log/?h=for-next
+
+I couldn't go further, due to the bugs in patches 7 and 8.
 
 - Eric
 
