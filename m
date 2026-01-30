@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C0C80E6BF2F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Jan 2026 17:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 156A2E6BF31
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Jan 2026 17:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=q2qDwvERyDHfWe7d14jKla6Nxuu8xoY29hrnWDskeuY=; b=MRRiJbRPpasYXM8zKiarGvra5h
-	3uyoQUpfxRBLPiSRZxWa2WJmChV2hg9M7L4bQ2cJyl0Cg+05qasiaaQaByzBIHoR3qvZWoIUPiI6g
-	6klR1SfxfmZlPprq3Apt/nSjF1Km91n4k9fOYtVLr6AFjMAyMY/Nm1zq1RIuQHCnTSEI=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=lxb5QXKLFGdztzmZDVgORL8G3WsDRyiEgYTTIvzGKKo=; b=XcaxyH6+l6NYPCEZkB+/9kp+6G
+	VY0RsHkbX70W6BVqthDR2x72FygA8UsYRmoYUy4KWBcM0OW0nwD6ZTPYESxhyHTdbaB2VFFKyX7Fs
+	39eMmfPPViSqn5oDDdukll9nPRSjNKxvRGXTMAOu/3khxudnHKTObXRZoMZaQldQ/UYE=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vls0o-0003rU-Hu;
-	Fri, 30 Jan 2026 17:10:26 +0000
+	id 1vls0p-0005g6-BD;
+	Fri, 30 Jan 2026 17:10:28 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vls0n-0003rO-Ik
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vls0n-0005fq-VG
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Jan 2026 17:10:25 +0000
+ Fri, 30 Jan 2026 17:10:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=46Lg25Q1w4gLbomNEobayDxoxS+Ty6qfq3aNxxCjhS0=; b=Pd6jH9dAe8QW8NV8+vKLcR8zDA
- Azd572u2NMSkMzPjMaGwQnTtU5r2/8Y4+8g/WZtq7YOQOICrog5tA5jr+SLfg0txwRnN5cnmyfdx6
- s41Huwv+YZiYXpxs3ztD9rqNaO3Q4jQC2B9J3P0oh/af6vvK0i0oiBps4MANPTfB8aBU=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=EAl/eqFA6ukEFmOf1sOinaQRD0aMtevj9XyRftixxjM=; b=X82nrFat+TX22D0sPeJWW5LtBl
+ pO+RcDxOAyFbV5Jk9GTO3KCVzPSCactl8a9RE0fvnVb4NxZhPvktwg6ZvjT71cZNh3afVwSvx2pyn
+ jkcy1tWnsyiE8ett2SvJ/5bUFj/wQyfbStzWdNnprMjFE20qR9Uaeljzg8/LL+nb2Su0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=46Lg25Q1w4gLbomNEobayDxoxS+Ty6qfq3aNxxCjhS0=; b=F
- 0tkrJx18vq9nycokVcEAKMgRhIW48MHOd3u2UKsoWdjKKXpVwDiCsV1zTDuKSALNqdEsKZJPm//+T
- 6G4TIB8KhzUG7/VbVgH3poGHTcpm0luDFuCPdrhyJg5CfAO/BJ69wt8k8P1VEwq6khD1DATf8Un+r
- zMpoPega2/5MPisg=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=EAl/eqFA6ukEFmOf1sOinaQRD0aMtevj9XyRftixxjM=; b=NY5jkSTMyYtVPU72mUJerYL0iR
+ +odljAlH/qg77w13o4znF1UyFVs2doX7ZlYAzp3nVgG/kY6CrrpMb2GCfhVTWV+R5wcUh1C5ETHBc
+ KEJpzLWGaIpeDhehRqAYMjk8yS2PjJ2Oj6HrMxC9lyeMwE9au65+Zoz1JCBPNwlLVqCk=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vls0m-00055j-KG for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Jan 2026 17:10:25 +0000
+ id 1vls0o-00055z-2x for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 30 Jan 2026 17:10:26 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 4EC3240118
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 30 Jan 2026 17:10:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F562C4CEF7
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 30 Jan 2026 17:10:14 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id CB2C843EAA;
+ Fri, 30 Jan 2026 17:10:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAC14C4CEF7;
+ Fri, 30 Jan 2026 17:10:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769793014;
- bh=p9xocASvl+HIa4rQibvJP1Q4qtirOI4k8yby41mg8/0=;
- h=Subject:From:Date:To:From;
- b=fjWI3gMP81QzCh7wWbWkXTf4tGkqm4DrdDAQjVNmHiGczUIOKS84pZej67GdyyZzc
- 4cE+bNoHsSfkQy48vyCAm1ugEmEhjZaYxPi0WpmsqCQnSO3qiQl0VMH9p1bMFk7wrV
- ZsRIQ9lj1LkgsjE4XXAnrt9eDC830WgvqGrEjb2qfaogEkG9N0Dpkx8L/SYNCKUmyJ
- jdeKmDc0MOt175S/F6ucqeIibXy82mNIEz6tsWZeyVI1v98Kd5cG18YvirXeSA/+pK
- e8xT/Efm+LTRFEp4PMjqTH/cBbTanp89mr/+RMsX1nfCVBxKQlZkf1hQTOHSzqhPti
- OxZLRZPdYl1GQ==
+ s=k20201202; t=1769793015;
+ bh=3DxQeeBfVpm2+71zRITF2v286289Fb7iGsGy1QsWTRw=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=pVtCU4M/wv9ytbgglzs0lRyGyvQkx0HNSLHo5LJeiPzM6Y8DwDifF5abwYMQJwLaZ
+ xSlC2pjDiydq9m+QNMcggsp+vraQUM9sLECzK06nr/Ika4X0KoSJqKGw4+X4iwhIjH
+ rcl14n7yDBUVsDaz5F0qR5UqlXH7X2nW2hZllkHya9EVmFE4sEOKvWB29bJu5okTZP
+ 9qYWoMK4kbNrQYaPtEu3i730CqsYljwvNqcmVDVZc0awzaITqyp8W02cA7tz/7OXlF
+ wVh8ceRbJKh6q3jgClGAnn+Y9Ykx2UpTKozWmBEy0KdWvfb+mt7Z26Ynt1uMlZvOiH
+ M6AiGxjK9Na8A==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- C8DD7380CFD5 for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 30 Jan 2026 17:10:07 +0000 (UTC)
+ 4EC06380CFD5; Fri, 30 Jan 2026 17:10:09 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <176979300647.3449000.14961657819953361565.git-patchwork-summary@kernel.org>
-Date: Fri, 30 Jan 2026 17:10:06 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1vls0m-00055j-KG
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+Message-Id: <176979300785.3449000.3636861708580013603.git-patchwork-notify@kernel.org>
+Date: Fri, 30 Jan 2026 17:10:07 +0000
+References: <20260126222801.2229197-1-daeho43@gmail.com>
+In-Reply-To: <20260126222801.2229197-1-daeho43@gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>
+X-Headers-End: 1vls0o-00055z-2x
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix incomplete block usage in compact
+ SSA summaries
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,24 +90,34 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: clm@meta.com, daehojeong@google.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Patch: [f2fs-dev] f2fs: fix incomplete block usage in compact SSA summaries
-  Submitter: Daeho Jeong <daeho43@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1047295
-  Lore link: https://lore.kernel.org/r/20260126222801.2229197-1-daeho43@gmail.com
+On Mon, 26 Jan 2026 14:28:01 -0800 you wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> In a previous commit, a bug was introduced where compact SSA summaries
+> failed to utilize the entire block space in non-4KB block size
+> configurations, leading to inefficient space management.
+> 
+> This patch fixes the calculation logic to ensure that compact SSA
+> summaries can fully occupy the block regardless of the block size.
+> 
+> [...]
 
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix incomplete block usage in compact SSA summaries
+    https://git.kernel.org/jaegeuk/f2fs/c/91b76f1059b6
 
-Total patches: 1
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
