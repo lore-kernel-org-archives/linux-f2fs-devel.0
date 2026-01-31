@@ -4,75 +4,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 85A5AE6BF33
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 31 Jan 2026 02:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 14C22D73EB1
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 31 Jan 2026 02:50:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=4D7OqcExzFQ29j9k/rIHZal7aOaYN0tafiTIddRQYmY=; b=C9NDNru3C8ArJCFDIO3ZrjCFVu
-	6gZ8CGs/lqamzoeejSfTPysGcSz54fh/wCuTfUXVZB1xcJ1EMMlHGd3BZba6vxPi2NZdqBNbqhjTe
-	f/AtnQrnILayUaxcRJsgV/a20BazagNPaxxyVhy3IOW4EKoSOaYoJ2jvfRo5UivWPdGU=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:To:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=yr5zNLmTPR3zGTH4JhAWfHMzOLqcZ49CLMXddYB43u0=; b=gvjPFmiy9wVxp0m5rOD5tRX9Qw
+	NigZLZktd2NlrX5E9qw/F3Jg2NGC1s9vvzxhomu8QOrGkYzc1MfHGDaK1QdDouzZvz/4W2chvYtBk
+	61VHqOroE9+iBGZWoyv8b+z+0k90e+iNiQZigaU0AMprFo45b7JsnllDGf6rgwIQLL1c=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vm0h9-0000tB-MI;
-	Sat, 31 Jan 2026 02:26:43 +0000
+	id 1vm14b-0005Eg-Ci;
+	Sat, 31 Jan 2026 02:50:57 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vm0h8-0000t5-Pm
+ (envelope-from <21cnbao@gmail.com>) id 1vm14a-0005EZ-1h
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 31 Jan 2026 02:26:42 +0000
+ Sat, 31 Jan 2026 02:50:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9ldYNHHj6TlZlKG56cHBP3A2eXrXwFLfV69uuzQBp/4=; b=etKZ/p/KDBZiphWC/wfHHQCES+
- slJLVbZsbOqx7AO80vbA/oLbAejMfv3hYl89gVRbuYV5maJQF2yHiKR/GKJ973mRdVqCPLvDFMNuF
- yF2L19wo67gjappMx66qHhgCh0dye1X3XyNxJkgoEi+l7izaaS1Eusu8tYGdHRAv6aNY=;
+ bh=zGrXiWOM5o2ZONTA0HJZyowG2R0Agsy9r5ZCKQoJjAc=; b=DdOogT1szv6Z1dwTqKOF79Tm7N
+ G2B4naGijhGVa2gAviWa+dfVhvxqRi6BjY4/Dvz8Vq/5fifyRSOvrVpzuZWyRdZZJMeoNcjOQIov9
+ vKtmFH6cgyr0L/wN7Md+NHL/jHk+jG/kHznJppSJbRIkd2tIV5aqsF8ItayQ5xoc/i0E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=9ldYNHHj6TlZlKG56cHBP3A2eXrXwFLfV69uuzQBp/4=; b=K
- XBhcD30ILjuSCGPYuFL1QbFEdBBorgF5oAKlnz7wxURsvSf9vglWBs+VdL1eXgDAJXVke+rakUFqv
- UWqjWY401vYO/U4MGp9f1ty7qrDYdjFVuytAciljk5PkhrclrVlUC7GgtuwrOu9pQLc/i3zcVPIu2
- wulLrCS5Sr3FRMI8=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=zGrXiWOM5o2ZONTA0HJZyowG2R0Agsy9r5ZCKQoJjAc=; b=WZO3GyGobo+t7znU7t4TE8Z1JJ
+ ffu4RK4/tpjrB6Ttde5aeppAJbfkp8Ea4zwvzgVFGIzFj27mOA3DrkLGdOKCu/V0Ox9j4tvUYtE81
+ N+xgGszXdJ8z2dzYX11EC3eEB+6bLSsaLH4skmffCVe4+npPOUfKf0ofGNjNa3OpNrng=;
+Received: from mail-qv1-f47.google.com ([209.85.219.47])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vm0h7-0001tc-RO for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 31 Jan 2026 02:26:42 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 5C84140BD5
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1vm14Z-0002ux-Io for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 31 Jan 2026 02:50:55 +0000
+Received: by mail-qv1-f47.google.com with SMTP id
+ 6a1803df08f44-88888d80590so41774856d6.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 31 Jan 2026 02:26:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5A6C4CEF7;
- Sat, 31 Jan 2026 02:26:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769826391;
- bh=Uv+a6I66lHaFbYAf2WUikV5LwVvUapVVftUM9J/T8J0=;
- h=From:To:Cc:Subject:Date:From;
- b=m/X3dpokhcd3zlhJRqANdCcGalyAlT0LLyoASUKcAaeG2sZmWVDZLQ3ec5bCp8LKk
- JpahTpdLGzNzzHTGpWCIA6cXT0LLrq5yn+rDX0rHWdCR+jSquLc/yJHcKk1uWYcmKo
- 9kqUjX+aFrplXOKd1Km9TN6KIHgfKOyMIZycMDgBBNl88sWsi617eNJuSTFBNx4dBF
- kOfPapHTBUyOoslKkiQPhTVgihK0RmxHjRsupkBfc6FqLhdYABAJ+f/WXwzr2k4Te9
- 2vgNI+nsSxRg/E/6g7oo7vHsFwcanye27aFuoGhTqYXLGeA8tr8Agy5eh4E9xRUQN8
- 8s73/MoMh6bWA==
-To: jaegeuk@kernel.org
-Date: Fri, 30 Jan 2026 21:28:08 +0800
-Message-Id: <20260130132809.59707-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ Fri, 30 Jan 2026 18:50:55 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769827844; cv=none;
+ d=google.com; s=arc-20240605;
+ b=ZFK5+EyDYBDqfPkIgXII5j1G9zGps3oKPUyU519mBKgXFTFdP6GjXdG7v2GoAVOD9f
+ 06BhYsAbmh7vFk3fsxsfu+siS0OZatEQH/bwDRMD6iuYymumwcWrru8T872yEeqrp1XE
+ gV8RZNQVVFhPXnfd5hHlrV2595a8hAtJz6OGcuIuUKWZiodsLYMoeLh3tsFJBJpEHNYR
+ tI0DGN1O+Uk9izxxc83HcYACQ2SpPOGv/m99CHeP1TgDiFSpQSyL9n65kwYEWw3nR5Sk
+ gYnP/JTUUVhIORpvHPGIPeGkSAC5D/yXAPoIz7JZn4QcvAscmljr1xZBcwGNiBEejKe/
+ e/Kw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=zGrXiWOM5o2ZONTA0HJZyowG2R0Agsy9r5ZCKQoJjAc=;
+ fh=mTbffWfP7Btjzu5/7/mM/14LFATAwmeZVRTtSju1/Oo=;
+ b=C0wkI59UkCYO1MZKEh8pBrS8HBK4aK/Uj3g3GKzxJm8c00DLJXF37WI8HFOjaprgvB
+ 7g2BEGvmBa0qSZwZx/fAb4kkIEOvrLA0+vSDMtigAFts6DrjiHGp7AJLiWC6Sp38Zbgf
+ FU/aX/pM487/Ef4DZZr+T4X2IoTYhPb7pBA5I/N3A9N52lAOLbp0mTZ/tJo/m41wwHWm
+ 9BjXI4BLGycdqcmp6GiDypCfNk803v2USm4VHH3X5MECSayyCRi0yGUXprSbQWSeps7p
+ AqvMxDCaGbfwAb0SYsCKxZ/cUnn989gBwxuaOpt5w0L7D+LPJU0p3Tz8rliDYkxDTMyL
+ eiDw==; darn=lists.sourceforge.net
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1769827844; x=1770432644; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=zGrXiWOM5o2ZONTA0HJZyowG2R0Agsy9r5ZCKQoJjAc=;
+ b=AhbN4/xBwXKdnt2/xqFeqodBAPHdTNkQ2+TbKrdWtoIeYnI2w6O2I8nmI6S1yp1kpz
+ hRHN9XbPGVRkXm7YHP59Yte4dC6aT72fuUmBTXuPzqzfRnrDn9KhmKcIf3eKKJ/pBJ1s
+ sjll9VlV2v3Nu2wVt2M6kIho2eNTc796ficTa1O41MO2JRhHnR87nc1Uz3Qz2bQMZWCF
+ OmPd5BEQnmBcGD1gldIBCXa8MPD50myoiT2JbQjQ/XpAg8tjExSxv9+6/9f3t6aT+h+B
+ 4y4nMXiFtLq+wCXs9IibWBIuBmN2vEWKAaxeCQfNkA3Z9RDBSYKH7QoSz5wN5efVus/t
+ NaoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1769827844; x=1770432644;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=zGrXiWOM5o2ZONTA0HJZyowG2R0Agsy9r5ZCKQoJjAc=;
+ b=EONDQqD9YQVKEdOZz6cgJkm2ukbLS5BEBYGHwGGPgdXV/Dc6xBNfMfOgxfiEqM6ts3
+ /TCa28TqbASMewMQajuGQ4J+lvzrR04bGFdwcD52a1q0MhyZwGH0S8PMUe1Z68V/tAfe
+ GfRdjzrwx/qUmQREcEREYycMS+PYWdUVKTT26+zbLqJpeMdAAb+3n/HKV884HbXtSpUO
+ h8VyRvXXaWoDHE0GS6P7vAf5Yx7X7IrwmB5K+Pgycn8nBWozFqLtHI7xpNFiQZzv55Om
+ R9TBXQvjjwJa1YCeGZnbfMbyiRRHNEo8al8kjljGdDiC9gqEk2f2CXw5ZsQOjn/D4O4c
+ su3g==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUOvg/XjhodYg6g7YMABER1eOCa65M/WvZ0Xa3FXnA+y1OgzPaJXs9sJRKY6IE9LDrQ5HVqLiW93KPKrul0xU/S@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YwXcSytvQI4wtZf9NKBKX0g2nU883Ck0j7KJpod66d9Kx4Uj1cO
+ GN2k9+dpPjHhf7F52Sp31FBeg/xu3LRcYjgRIlfhKda/2FX2LM97YQi8uJhDsezw1Wj3Vp5/Xk+
+ k4/a7uWxF4OBcFLIdYFlEbNWO4ojMefJLycZRb9ZBww==
+X-Gm-Gg: AZuq6aIxvVSfGizYtogY6oTOAti3hDifIVFrWXI/2WYy0L9D2n680yjG1PZ8JRsWm4P
+ U2WwZBvRgu0weqCLE4T0rmmxG7/kfLp917v8QBnNsaiw/5bmtVKWz+MQ1meax7VNp5yrWqVtez9
+ PONhabMOcmuVSg7+t0dF86nptf9m2q1zJmz5mOhALxrPn/3+kt2R1+oyts3bDvrGkQRK8EHKGvm
+ cEiBJHXZ4qU2Rs58rUySF2PpXwPb8MzSpkgI77EliiQmyBAfJvQrD7sDakTsfJw3W8x9Ulp2ZAR
+ vm595qJj
+X-Received: by 2002:a05:6214:2aaa:b0:894:6c73:7e79 with SMTP id
+ 6a1803df08f44-894e9f85c7emr83516616d6.18.1769827844343; Fri, 30 Jan 2026
+ 18:50:44 -0800 (PST)
 MIME-Version: 1.0
-X-Headers-End: 1vm0h7-0001tc-RO
-Subject: [f2fs-dev] [PATCH 1/2] f2fs: fix lock priority inversion issue
+References: <20260130132809.59707-1-chao@kernel.org>
+In-Reply-To: <20260130132809.59707-1-chao@kernel.org>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sat, 31 Jan 2026 10:50:33 +0800
+X-Gm-Features: AZwV_Qgz_FXRSPV3ASPq3vCpEDi76HSBwkEOXp11qyhLpoC0s9G-PmiB2aoNz1U
+Message-ID: <CAGsJ_4yGBt4Rt=njP=cY++DbEDAWKSyDuuXOC2pXGoJGCvJYFw@mail.gmail.com>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1vm14Z-0002ux-Io
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix lock priority inversion issue
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,300 +133,30 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If userspace thread has held f2fs rw semaphore, due to its low priority,
-it could be runnable or preempted state for long time, during the time,
-it will block high priority thread which is trying to grab the same rw
-semaphore, e.g. cp_rwsem, io_rwsem...
-
-To fix such issue, let's detect thread's priority when it tries to grab
-f2fs_rwsem lock, if the priority is lower than a priority threshold, let's
-uplift the priority before it enters into critical region of lock, and
-restore the priority after it leaves from critical region.
-
-Meanwhile, introducing two new sysfs nodes:
-- /sys/fs/f2fs/<disk>/adjust_lock_priority, it is used to control whether
-the functionality is enable or not.
-==========     ==================
-Flag_Value     Flag_Description
-==========     ==================
-0x00000000     Disabled (default)
-0x00000001     cp_rwsem
-0x00000002     node_change
-0x00000004     node_write
-0x00000008     gc_lock
-0x00000010     cp_global
-0x00000020     io_rwsem
-==========     ==================
-- /sys/fs/f2fs/<disk>/lock_duration_priority, it is used to control
-priority threshold.
-
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- Documentation/ABI/testing/sysfs-fs-f2fs | 24 +++++++++
- fs/f2fs/checkpoint.c                    | 66 ++++++++++++++++++++++++-
- fs/f2fs/f2fs.h                          | 12 +++++
- fs/f2fs/super.c                         |  2 +
- fs/f2fs/sysfs.c                         | 18 +++++++
- 5 files changed, 120 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 9a8ec2290f68..ea6474db8a31 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -963,3 +963,27 @@ Description:	This sysfs entry can be used to change type of injected timeout:
- 		0x00000003     Simulate Non-IO type sleep time
- 		0x00000004     Simulate runnable time
- 		==========     ===============================
-+
-+What:		/sys/fs/f2fs/<disk>/adjust_lock_priority
-+Date:		January 2026
-+Contact:	"Chao Yu" <chao@kernel.org>
-+Description:	This sysfs entry can be used to enable/disable to adjust priority for task
-+		which is in critical region covered by lock.
-+		==========     ==================
-+		Flag_Value     Flag_Description
-+		==========     ==================
-+		0x00000000     Disabled (default)
-+		0x00000001     cp_rwsem
-+		0x00000002     node_change
-+		0x00000004     node_write
-+		0x00000008     gc_lock
-+		0x00000010     cp_global
-+		0x00000020     io_rwsem
-+		==========     ==================
-+
-+What:		/sys/fs/f2fs/<disk>/lock_duration_priority
-+Date:		January 2026
-+Contact:	"Chao Yu" <chao@kernel.org>
-+Description:	f2fs can tune priority of thread which has entered into critical region covered by
-+		f2fs rwsemphore lock. This sysfs entry can be used to control priority value, the
-+		range is [100,139], by default the value is 120.
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 5172396c0b01..2f5a03e29d0b 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -90,16 +90,72 @@ static inline void trace_lock_elapsed_time_end(struct f2fs_rwsem *sem,
- 			runnable_time, io_sleep_time, other_time);
- }
- 
-+static bool need_uplift_priority(struct f2fs_rwsem *sem, bool is_write)
-+{
-+	if (!(sem->sbi->adjust_lock_priority & BIT(sem->name - 1)))
-+		return false;
-+
-+	switch (sem->name) {
-+	/*
-+	 * writer is checkpoint which has high priority, let's just uplift
-+	 * priority for reader
-+	 */
-+	case LOCK_NAME_CP_RWSEM:
-+	case LOCK_NAME_NODE_CHANGE:
-+	case LOCK_NAME_NODE_WRITE:
-+		return !is_write;
-+	case LOCK_NAME_GC_LOCK:
-+	case LOCK_NAME_CP_GLOBAL:
-+	case LOCK_NAME_IO_RWSEM:
-+		return true;
-+	default:
-+		f2fs_bug_on(sem->sbi, 1);
-+	}
-+	return false;
-+}
-+
-+static void uplift_priority(struct f2fs_rwsem *sem, struct f2fs_lock_context *lc,
-+						bool is_write)
-+{
-+	lc->need_restore = false;
-+	if (!sem->sbi->adjust_lock_priority)
-+		return;
-+	if (rt_task(current))
-+		return;
-+	if (!need_uplift_priority(sem, is_write))
-+		return;
-+	lc->orig_nice = task_nice(current);
-+	lc->new_nice = PRIO_TO_NICE(sem->sbi->lock_duration_priority);
-+	if (lc->orig_nice <= lc->new_nice)
-+		return;
-+	set_user_nice(current, lc->new_nice);
-+	lc->need_restore = true;
-+}
-+
-+static void restore_priority(struct f2fs_lock_context *lc)
-+{
-+	if (!lc->need_restore)
-+		return;
-+	/* someone has updated the priority */
-+	if (task_nice(current) != lc->new_nice)
-+		return;
-+	set_user_nice(current, lc->orig_nice);
-+}
-+
- void f2fs_down_read_trace(struct f2fs_rwsem *sem, struct f2fs_lock_context *lc)
- {
-+	uplift_priority(sem, lc, false);
- 	f2fs_down_read(sem);
- 	trace_lock_elapsed_time_start(sem, lc);
- }
- 
- int f2fs_down_read_trylock_trace(struct f2fs_rwsem *sem, struct f2fs_lock_context *lc)
- {
--	if (!f2fs_down_read_trylock(sem))
-+	uplift_priority(sem, lc, false);
-+	if (!f2fs_down_read_trylock(sem)) {
-+		restore_priority(lc);
- 		return 0;
-+	}
- 	trace_lock_elapsed_time_start(sem, lc);
- 	return 1;
- }
-@@ -107,19 +163,24 @@ int f2fs_down_read_trylock_trace(struct f2fs_rwsem *sem, struct f2fs_lock_contex
- void f2fs_up_read_trace(struct f2fs_rwsem *sem, struct f2fs_lock_context *lc)
- {
- 	f2fs_up_read(sem);
-+	restore_priority(lc);
- 	trace_lock_elapsed_time_end(sem, lc, false);
- }
- 
- void f2fs_down_write_trace(struct f2fs_rwsem *sem, struct f2fs_lock_context *lc)
- {
-+	uplift_priority(sem, lc, true);
- 	f2fs_down_write(sem);
- 	trace_lock_elapsed_time_start(sem, lc);
- }
- 
- int f2fs_down_write_trylock_trace(struct f2fs_rwsem *sem, struct f2fs_lock_context *lc)
- {
--	if (!f2fs_down_write_trylock(sem))
-+	uplift_priority(sem, lc, true);
-+	if (!f2fs_down_write_trylock(sem)) {
-+		restore_priority(lc);
- 		return 0;
-+	}
- 	trace_lock_elapsed_time_start(sem, lc);
- 	return 1;
- }
-@@ -127,6 +188,7 @@ int f2fs_down_write_trylock_trace(struct f2fs_rwsem *sem, struct f2fs_lock_conte
- void f2fs_up_write_trace(struct f2fs_rwsem *sem, struct f2fs_lock_context *lc)
- {
- 	f2fs_up_write(sem);
-+	restore_priority(lc);
- 	trace_lock_elapsed_time_end(sem, lc, true);
- }
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 29f81a496b72..a6e7368fc40a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -185,6 +185,7 @@ enum f2fs_lock_name {
- 	LOCK_NAME_GC_LOCK,
- 	LOCK_NAME_CP_GLOBAL,
- 	LOCK_NAME_IO_RWSEM,
-+	LOCK_NAME_MAX,
- };
- 
- enum f2fs_timeout_type {
-@@ -1447,7 +1448,10 @@ struct f2fs_time_stat {
- 
- struct f2fs_lock_context {
- 	struct f2fs_time_stat ts;
-+	int orig_nice;
-+	int new_nice;
- 	bool lock_trace;
-+	bool need_restore;
- };
- 
- struct f2fs_gc_control {
-@@ -1588,6 +1592,8 @@ enum node_type {
- /* a threshold of maximum elapsed time in critical region to print tracepoint */
- #define MAX_LOCK_ELAPSED_TIME		500
- 
-+#define F2FS_DEFAULT_TASK_PRIORITY		(DEFAULT_PRIO)
-+
- static inline int f2fs_test_bit(unsigned int nr, char *addr);
- static inline void f2fs_set_bit(unsigned int nr, char *addr);
- static inline void f2fs_clear_bit(unsigned int nr, char *addr);
-@@ -1998,6 +2004,12 @@ struct f2fs_sb_info {
- 	/* max elapsed time threshold in critical region that lock covered */
- 	unsigned long long max_lock_elapsed_time;
- 
-+	/* enable/disable to adjust task priority in critical region covered by lock */
-+	unsigned int adjust_lock_priority;
-+
-+	/* adjust priority for task which is in critical region covered by lock */
-+	unsigned int lock_duration_priority;
-+
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	struct kmem_cache *page_array_slab;	/* page array entry */
- 	unsigned int page_array_slab_size;	/* default page array slab size */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 9d421a07d2d5..d5cf7265e5d3 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4338,6 +4338,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	spin_lock_init(&sbi->gc_remaining_trials_lock);
- 	atomic64_set(&sbi->current_atomic_write, 0);
- 	sbi->max_lock_elapsed_time = MAX_LOCK_ELAPSED_TIME;
-+	sbi->adjust_lock_priority = 0;
-+	sbi->lock_duration_priority = F2FS_DEFAULT_TASK_PRIORITY;
- 
- 	sbi->sum_blocksize = f2fs_sb_has_packed_ssa(sbi) ?
- 		4096 : sbi->blocksize;
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index d01a2664a250..3a272e7edf23 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -955,6 +955,20 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return count;
- 	}
- 
-+	if (!strcmp(a->attr.name, "adjust_lock_priority")) {
-+		if (t >= BIT(LOCK_NAME_MAX - 1))
-+			return -EINVAL;
-+		sbi->adjust_lock_priority = t;
-+		return count;
-+	}
-+
-+	if (!strcmp(a->attr.name, "lock_duration_priority")) {
-+		if (t < NICE_TO_PRIO(MIN_NICE) || t > NICE_TO_PRIO(MAX_NICE))
-+			return -EINVAL;
-+		sbi->lock_duration_priority = t;
-+		return count;
-+	}
-+
- 	__sbi_store_value(a, sbi, ptr + a->offset, t);
- 
- 	return count;
-@@ -1272,6 +1286,8 @@ F2FS_SBI_GENERAL_RW_ATTR(carve_out);
- F2FS_SBI_GENERAL_RW_ATTR(reserved_pin_section);
- F2FS_SBI_GENERAL_RW_ATTR(bggc_io_aware);
- F2FS_SBI_GENERAL_RW_ATTR(max_lock_elapsed_time);
-+F2FS_SBI_GENERAL_RW_ATTR(lock_duration_priority);
-+F2FS_SBI_GENERAL_RW_ATTR(adjust_lock_priority);
- 
- /* STAT_INFO ATTR */
- #ifdef CONFIG_F2FS_STAT_FS
-@@ -1478,6 +1494,8 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(allocate_section_hint),
- 	ATTR_LIST(allocate_section_policy),
- 	ATTR_LIST(max_lock_elapsed_time),
-+	ATTR_LIST(lock_duration_priority),
-+	ATTR_LIST(adjust_lock_priority),
- 	NULL,
- };
- ATTRIBUTE_GROUPS(f2fs);
--- 
-2.40.1
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gU2F0LCBKYW4gMzEsIDIwMjYgYXQgMTA6MjfigK9BTSBDaGFvIFl1IDxjaGFvQGtlcm5lbC5v
+cmc+IHdyb3RlOgo+Cj4gSWYgdXNlcnNwYWNlIHRocmVhZCBoYXMgaGVsZCBmMmZzIHJ3IHNlbWFw
+aG9yZSwgZHVlIHRvIGl0cyBsb3cgcHJpb3JpdHksCj4gaXQgY291bGQgYmUgcnVubmFibGUgb3Ig
+cHJlZW1wdGVkIHN0YXRlIGZvciBsb25nIHRpbWUsIGR1cmluZyB0aGUgdGltZSwKPiBpdCB3aWxs
+IGJsb2NrIGhpZ2ggcHJpb3JpdHkgdGhyZWFkIHdoaWNoIGlzIHRyeWluZyB0byBncmFiIHRoZSBz
+YW1lIHJ3Cj4gc2VtYXBob3JlLCBlLmcuIGNwX3J3c2VtLCBpb19yd3NlbS4uLgo+Cj4gVG8gZml4
+IHN1Y2ggaXNzdWUsIGxldCdzIGRldGVjdCB0aHJlYWQncyBwcmlvcml0eSB3aGVuIGl0IHRyaWVz
+IHRvIGdyYWIKPiBmMmZzX3J3c2VtIGxvY2ssIGlmIHRoZSBwcmlvcml0eSBpcyBsb3dlciB0aGFu
+IGEgcHJpb3JpdHkgdGhyZXNob2xkLCBsZXQncwo+IHVwbGlmdCB0aGUgcHJpb3JpdHkgYmVmb3Jl
+IGl0IGVudGVycyBpbnRvIGNyaXRpY2FsIHJlZ2lvbiBvZiBsb2NrLCBhbmQKPiByZXN0b3JlIHRo
+ZSBwcmlvcml0eSBhZnRlciBpdCBsZWF2ZXMgZnJvbSBjcml0aWNhbCByZWdpb24uCgpIaSBDaGFv
+LAoKSXMgdGhpcyBldmVuIHBvc3NpYmxlIGlmIGNhbl9uaWNlKCkgcmV0dXJucyBmYWxzZSwgZm9y
+IGV4YW1wbGUgZHVlIHRvCm1pc3NpbmcgQ0FQX1NZU19OSUNFPwoKUHJveHkgZXhlY3V0aW9uIFsx
+XSBpcyBjdXJyZW50bHkgdW5kZXIgZGV2ZWxvcG1lbnQgdG8gYWRkcmVzcyBnZW5lcmFsCnByaW9y
+aXR5IGludmVyc2lvbjsgaG9wZWZ1bGx5LCBpdCB3aWxsIHJlc29sdmUgdGhpcyBpc3N1ZS4KClsx
+XSBodHRwczovL2xwYy5ldmVudHMvZXZlbnQvMTgvY29udHJpYnV0aW9ucy8xODg3L2F0dGFjaG1l
+bnRzLzE0MDIvMzA3NC9MUENfJTIwUHJveHklMjBFeGVjJTIwZGVlcCUyMGRpdmUlMjBvdXRsaW5l
+LnBkZgoKVGhhbmtzCkJhcnJ5CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZl
+bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlz
+dHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
