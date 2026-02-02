@@ -4,82 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8365FD172AB
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Feb 2026 01:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D2460D172D2
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Feb 2026 06:08:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=drBegYCphGiAK91o9AXZ0G7X6UbGtOKBkTcguiKN5Ao=; b=X9U0VBrzbY8TthwjA102Vj2QMC
-	DACrTApIdFHX1kKJcXeiXpfAtaMEotWWYKWmqcBdyYrYuHlrktGTSbsnWbnJ+2zgNYnd3TIorAQ1k
-	xed7/AdLVLmeyi+6Yuu4afhE5VClJXhnQBx1ZH0jUF6AFyLC122bqCjX3uJTiu/z5GTk=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=aO62RG3SF4zWkbHBcL40bnZWd6WchRkSmgRodH0MX7g=; b=FnIbVM69JG5Bd3blBaoM/eqFCf
+	bX4E4feNsXQQnp0YRh8UepQKtmXHRcbdnzFqDT5EmLavyIs0lFd68sbCiHchXmc8DGXpjWBKuC+He
+	mP0H/10qt1z9MRcNiKDkE/fEV+64xvW+dm7OaCKrlxxH28gtPqcx1hbgOAqLxMmymzrM=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vmiaC-00068p-Rt;
-	Mon, 02 Feb 2026 01:18:29 +0000
+	id 1vmn6g-0000wD-3K;
+	Mon, 02 Feb 2026 06:08:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <dlemoal@kernel.org>) id 1vmia6-000688-UX
- for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Feb 2026 01:18:23 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+1250474bd6e1e3d30609+8198+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1vmn6e-0000w6-ED for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Feb 2026 06:08:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tHde/tB+FLUVGqOuVmcCnb4mA8AVoiT93NRVkW3HDJ8=; b=JCr5W1SySu4i8B8tGC5b3oNVhI
- gOOxvErVZFKRsTYnK5wRDSe/rvUQhKlz0rCizX33glQUvAwLuZol5UncXgGEk2w91K9cyNA3j2/C7
- seHA4FEqwppyxW6lXudQmsCtGfYxoJZQY+fhUOwrHMX2JOYYuSLpcytMa0Z1eayXBQcI=;
+ bh=YWN+VHgLHA7lSBgQ5h+w3PztFroaZ/qPS01ONtrKeFI=; b=ZcW3+G9vV2ll+DYoZjwXhl77J/
+ VTIQ0L/JqiWXy8LDuSQvBv7HrwC4yatW+JBAlFEm0ms16Hu45Z/OY5R8MRhdrZ568v9Nfnye0RtP9
+ r1mkqcJpjAp6pUsUrelqIfQ+7I78slsGWrbkpiKTOBTB/hnB/C+m+/SrrXLYPtqkcF8c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=tHde/tB+FLUVGqOuVmcCnb4mA8AVoiT93NRVkW3HDJ8=; b=L1PDtudpgRzAhZ+2NNfCozAFqz
- xLr7O/R5sV8LekQ28GMpekQN7FPiTTKKjQ9hXsx90YU5Jqt1XOPSwCxCmQ0bSVQ15oFdnaIOOlkpN
- nAyma/5/JtUt3VBtX0T0VagS/cuGC0txnIibinXk22YL51zaekonDTKcnyXZZrszU8PI=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=YWN+VHgLHA7lSBgQ5h+w3PztFroaZ/qPS01ONtrKeFI=; b=EOcoUoKzV2tH/CBV/wf7xDZdbO
+ opdOAeC07rgmffECZfMAxuNz2bG6vXcgW/nD896k7uWEkFlUVhvD97RsXLJj7RIOcBJAjrSY3FzhT
+ Q5tuuHeHPntPubqaOmrJlm6gOqWMy0J028DwSI6ta0uYypxPV84HJEiclAhOUwP/PH+0=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vmia7-0004gp-87 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Feb 2026 01:18:23 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 8588A60008;
- Mon,  2 Feb 2026 01:18:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4B29C4CEF7;
- Mon,  2 Feb 2026 01:18:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1769995097;
- bh=NQ1xMB7c3Es2ExT0TQYQoiw7U8dAchJ6SlSC4MTUEjA=;
- h=Date:Subject:To:References:From:In-Reply-To:From;
- b=Z5Sx+jI0EnMIp0jwzMFhx/96M9Jut2Mycb0OWPynFngNOQOkzTlPNtuHCyLl8Li0/
- yZrp2mGb5P59k+RmmJ8ApPo1d833H1XdcwO8wG3TrUZeTDm6gpl+zXsMcHimSzPki+
- +14Q8vzUsJ3zy82Ohv9TBnsi5b4xgX/rxTOMsNRQ+F5mv+MQKIDtesbeKteOnAGsSb
- tl1dQhY+2mQisz4ZQilNrnfyESmKe/Jwm2yHnx0r+XNzMdC1TPrbtkO1wuwyjcWfew
- xJ3f/TMeezYd3yeonuviljOUgbF5MLuB0+PiJcdh0O+ukPCpOO+dfgaFGl+eW6azqF
- tKUmHOUur8DxA==
-Message-ID: <24bf6e88-1917-4f13-92bf-449b106158a2@kernel.org>
-Date: Mon, 2 Feb 2026 10:18:15 +0900
+ id 1vmn6d-0007oW-De for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Feb 2026 06:08:16 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+ MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=YWN+VHgLHA7lSBgQ5h+w3PztFroaZ/qPS01ONtrKeFI=; b=nRVYCOsCyM39hl+6ILs2GEYLPL
+ 6DAGkvBFjf8bgItYzWTS5e407MJMyVnpzR785nmwUaGp8nN794tt8j4L6ekaD6RncEV/ztggVPxMI
+ VofnVVxG1R8OmA61M0AjIT9f3S3pCjSBVhVHjhKN5CCMwezB3Vitlz7ybCZOLvuTA1ETguAheU3AU
+ hDbVrLRPBzWQlunIRBoeuSnvorgWN5C+LEAzfGa7xlgBk2qkG9A1RRWVcq1zH4gEq/YnVb1SsTR5C
+ tgkuotIzfXdTR2IopHijKalm+GFDq/o/39GDbkQ+LueTpngp4TnK/0Pjii2K9bsB9kXCIN+KiL8uU
+ sX7+nHOw==;
+Received: from
+ 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at
+ ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
+ by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+ id 1vmn6S-00000004UjL-3XZf; Mon, 02 Feb 2026 06:08:05 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Date: Mon,  2 Feb 2026 07:06:30 +0100
+Message-ID: <20260202060754.270269-2-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260202060754.270269-1-hch@lst.de>
+References: <20260202060754.270269-1-hch@lst.de>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
- linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
- Chao Yu <chao@kernel.org>
-References: <20260201122258.3168119-1-shinichiro.kawasaki@wdc.com>
- <20260201122258.3168119-2-shinichiro.kawasaki@wdc.com>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20260201122258.3168119-2-shinichiro.kawasaki@wdc.com>
-X-Headers-End: 1vmia7-0004gp-87
-Subject: Re: [f2fs-dev] [PATCH for-next 1/1] f2fs: fix lockdep WARN of
- sbi->cp_global_sem and q->q_usage_counter
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1vmn6d-0007oW-De
+Subject: [f2fs-dev] [PATCH 01/11] fsverity: don't issue readahead for
+ non-ENOENT errors from __filemap_get_folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,59 +89,54 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Damien Le Moal via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Damien Le Moal <dlemoal@kernel.org>
+Cc: fsverity@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
+ Theodore Ts'o <tytso@mit.edu>, Andrey Albershteyn <aalbersh@redhat.com>,
+ Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, David Sterba <dsterba@suse.com>,
+ Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2/1/26 21:22, Shin'ichiro Kawasaki wrote:
-> A lockdep WARN is observed recently under the following steps:
-> 
-> 1) Create a zoned TCMU device
-> 2) Create a f2fs filesystem on the zoned TCMU device and mount it
-> 3) Fill the filesystem with files and trigger GC
-> 4) Unmout the filesystem
-> 5) Remove the zoned TCMU device
-> 
-> The lockdep WARN indicates that a circular lock depedency formed by four
-> contexts, as described below.
-> 
-> a) TCMU device removal context:
->  - call del_gendisk() to get q->q_usage_counter
->  - call start_flush_work() to get work_completion of wb->dwork
-> b) f2fs writeback context:
->  - in wb_workfn(), which holds work_completion of wb->dwork
->  - call f2fs_balance_fs() to get sbi->gc_lock
-> c) f2fs vfs_write context:
->  - call f2fs_gc() to get sbi->gc_lock
->  - call f2fs_write_checkpoint() to get sbi->cp_global_sem
-> d) f2fs mount context:
->  - call recover_fsync_data() to get sbi->cp_global_sem
->  - call f2fs_check_and_fix_write_pointer() to call blkdev_report_zones()
->    that goes down to blk_mq_alloc_request and get q->q_usage_counter
-> 
-> To suppress the WARN, cut the dependency d) between sbi->cp_global_sem
-> and q->q_usage_counter. For that purpose, move the
-> f2fs_check_and_fix_write_pointer() call outside of the critical section
-> of sbi->cp_global_sem in f2fs_recovery_fsync_data(). This change is fine
-> because the write pointer fix operation only affects the main segments
-> and does not interact with the check point metadata. Furthermore,
-> conflicts between the write pointer fix operation and data/node flush
-> operations remain protected by SBI_POR_DOING.
-> 
-> Fixes: c426d99127b1 ("f2fs: Check write pointer consistency of open zones")
-> Signed-off-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Issuing more reads on errors is not a good idea, especially when the
+most common error here is -ENOMEM.
 
-Looks OK to me.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/verity/pagecache.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-
-
+diff --git a/fs/verity/pagecache.c b/fs/verity/pagecache.c
+index 01c652bc802f..1a88decace53 100644
+--- a/fs/verity/pagecache.c
++++ b/fs/verity/pagecache.c
+@@ -22,7 +22,8 @@ struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index,
+ 	struct folio *folio;
+ 
+ 	folio = __filemap_get_folio(inode->i_mapping, index, FGP_ACCESSED, 0);
+-	if (IS_ERR(folio) || !folio_test_uptodate(folio)) {
++	if (folio == ERR_PTR(-ENOENT) ||
++	    (!IS_ERR(folio) && !folio_test_uptodate(folio))) {
+ 		DEFINE_READAHEAD(ractl, NULL, NULL, inode->i_mapping, index);
+ 
+ 		if (!IS_ERR(folio))
+@@ -30,9 +31,9 @@ struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index,
+ 		else if (num_ra_pages > 1)
+ 			page_cache_ra_unbounded(&ractl, num_ra_pages, 0);
+ 		folio = read_mapping_folio(inode->i_mapping, index, NULL);
+-		if (IS_ERR(folio))
+-			return ERR_CAST(folio);
+ 	}
++	if (IS_ERR(folio))
++		return ERR_CAST(folio);
+ 	return folio_file_page(folio, index);
+ }
+ EXPORT_SYMBOL_GPL(generic_read_merkle_tree_page);
 -- 
-Damien Le Moal
-Western Digital Research
+2.47.3
+
 
 
 _______________________________________________
