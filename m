@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E16B2E7DEF3
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Feb 2026 15:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B1497E7DEF4
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Feb 2026 15:18:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=EWSosjh0eYsPEWGoQQWSEZLnCqahXzWKANs3ZyRaI3w=; b=QYFIEGTHx2SAvd7GtMSVkgl2c/
-	L94fIKrHmOLY+iLWipodBMOa7VfEtxdDc7Q8SzyddQhKhEFaF6hrhzCnjVV+gmp1b6h0W+DLkee9H
-	0PYHMTrpMsliKd18gLXhWmyKmT+Jj4jR0rodGWE6xk83H8Zn7sslg3Ov0PDuujCE7TWQ=;
+	bh=dWVhjeW0sv24rUkquA9b5JY1RGXZU9OhYbDEy2fXt6k=; b=L27z1WHo2dEhFDW0Ca/FYq1gsJ
+	89X2KFl2s5IiKwZq/qEs1igOvI4OaVZ+h/JCKoUFg0Q045SYvpa90SmJ2p/k64VV9Ok4tOcDUKmFK
+	dSWJrIc0xeO+/km4rclk5u20e0TcYLraziGAmRh0rTGjD5kkM2UwZs4XDxEkeTGFfjdM=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vmvb0-00032C-JW;
-	Mon, 02 Feb 2026 15:12:10 +0000
+	id 1vmvgv-0003Fs-AN;
+	Mon, 02 Feb 2026 15:18:17 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1vmvao-00031c-0Y
+ (envelope-from <hch@lst.de>) id 1vmvgi-0003FW-Gw
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Feb 2026 15:11:58 +0000
+ Mon, 02 Feb 2026 15:18:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=29jy1DWONXoy2B6xjNCVE28WgCP/0GEBN/PkS8AOnVg=; b=czLa15rfiMBmg7rEeD6SfcSzfM
- IgQyCohwGeQVkzLEyeSKP90k9euDaMmeVP6YplFeri3x9qsJixaCFHvRDmtqQ4qh91touvTOJ0OtT
- uf2D3fY97nAFSFwVM1BOgBUCYtabfVI2o5pbINIZvPAM/yjMU2xOZCF8nivU+NgDv39Y=;
+ bh=+2PmaV8548U/iqnrwa5PEKWlaaw0Y0c16Jc6TNXPqGA=; b=gxGs/C1hAOzrX0jOtKmMem7aFX
+ Sh5wLCKI5DURDF9TVScrjyC9WpdaSt8YLBqpjqRwraxz1T0pXydQXK7RWFVx+yYujKucNHnwtO1qf
+ y+t/87Qg6R4S+qefPEuq+c/Y/+NPaThKKIyVBYxle8fgF939Vc+spOa/TOpohkyg1+gY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,37 +42,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=29jy1DWONXoy2B6xjNCVE28WgCP/0GEBN/PkS8AOnVg=; b=PeUxyQd8nbsPpQWUOvu9z8Q8f0
- fkQIUNl8pKU8WBMsholJxLDYxvxTTZ3LNtadUzVEOrAoj1Q9W/JsYcYH76i+yvsxhooqaOG398y1f
- uiG8HFOziuE5S0nqua8tGtAsPODX+vHtVYk71+lgVSyH3HDq+cZA0EgmBK+uF/dD6ZiM=;
-Received: from casper.infradead.org ([90.155.50.34])
+ bh=+2PmaV8548U/iqnrwa5PEKWlaaw0Y0c16Jc6TNXPqGA=; b=KWGG4ivT9kjkU928kHKUByYYO7
+ LV6xX6OCiRubrGnR5cZHsqHeT7+EfFpX/stEaqvLCVnoz9wQKNcM0tUIohItlf0dymJ3fQg9W70cl
+ 5GEwWXYeYp2pXmIJm3SI34VUucstWaSQABzG78BvMVJongsZAhPklAdS0HPKDgKYlAy8=;
+Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vmvan-0008Nv-B3 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Feb 2026 15:11:57 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=29jy1DWONXoy2B6xjNCVE28WgCP/0GEBN/PkS8AOnVg=; b=BDtlxC7H+13PZmg79XlT4cSMua
- xCmWldl386DVv7YKhloM8ay70jGq0ky18Petto6satpvMsOL7fevIgvAqiZ+m+T6dTk9OSYyjC9B1
- dgk5DWbW5WtnJ5dXJqJtbG8v1U3xFLHjpHoDe9S11x2Hx3rNbI7g0hkbr2HHCIxDzAbUzzAv6dbgP
- 6rP862nQMv4gnxs7ZGhGVAFYzSMXeOynEkfnl+8Ge3pLQoZw9MEPAuPqTtnZ33oYU7uTa/WHu11eu
- NkI4dVGUFndZcaqlAzsnvzeNwkeanApgqsDci6lZ3Cx+VX0m0V0A/2I/YzUijvV5CJd1qIVP+qJOm
- VWpZWm+Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red
- Hat Linux)) id 1vmvab-0000000Gf51-3qX6;
- Mon, 02 Feb 2026 15:11:45 +0000
-Date: Mon, 2 Feb 2026 15:11:45 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <aYC-set6OAK9F9GE@casper.infradead.org>
+ id 1vmvgh-0000Ko-Qm for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Feb 2026 15:18:04 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id B67D168B05; Mon,  2 Feb 2026 16:17:55 +0100 (CET)
+Date: Mon, 2 Feb 2026 16:17:55 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Matthew Wilcox <willy@infradead.org>
+Message-ID: <20260202151755.GA22756@lst.de>
 References: <20260202060754.270269-1-hch@lst.de>
- <20260202060754.270269-3-hch@lst.de>
+ <20260202060754.270269-3-hch@lst.de> <aYC-set6OAK9F9GE@casper.infradead.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260202060754.270269-3-hch@lst.de>
-X-Headers-End: 1vmvan-0008Nv-B3
+In-Reply-To: <aYC-set6OAK9F9GE@casper.infradead.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1vmvgh-0000Ko-Qm
 Subject: Re: [f2fs-dev] [PATCH 02/11] readahead: push invalidate_lock out of
  page_cache_ra_unbounded
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -92,46 +82,50 @@ Cc: fsverity@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
  linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
  Jaegeuk Kim <jaegeuk@kernel.org>, David Sterba <dsterba@suse.com>,
  Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
- linux-btrfs@vger.kernel.org
+ Christoph Hellwig <hch@lst.de>, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Feb 02, 2026 at 07:06:31AM +0100, Christoph Hellwig wrote:
-> +++ b/fs/f2fs/file.c
-> @@ -4418,7 +4418,9 @@ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
->  	pgoff_t redirty_idx = page_idx;
->  	int page_len = 0, ret = 0;
->  
-> +	filemap_invalidate_lock_shared(mapping);
->  	page_cache_ra_unbounded(&ractl, len, 0);
-> +	filemap_invalidate_unlock_shared(mapping);
+On Mon, Feb 02, 2026 at 03:11:45PM +0000, Matthew Wilcox wrote:
+> On Mon, Feb 02, 2026 at 07:06:31AM +0100, Christoph Hellwig wrote:
+> > +++ b/fs/f2fs/file.c
+> > @@ -4418,7 +4418,9 @@ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
+> >  	pgoff_t redirty_idx = page_idx;
+> >  	int page_len = 0, ret = 0;
+> >  
+> > +	filemap_invalidate_lock_shared(mapping);
+> >  	page_cache_ra_unbounded(&ractl, len, 0);
+> > +	filemap_invalidate_unlock_shared(mapping);
+> 
+> Why is f2fs calling page_cache_ra_unbounded() here?
 
-Why is f2fs calling page_cache_ra_unbounded() here?  The documentation
-literally says not to call it:
+From tracing the callers is seems to be able to be called from the
+garbage collector, which might have to move fsverity files.  Not sure if
+that was the reason or is incidental.
 
- * This function is for filesystems to call when they want to start
- * readahead beyond a file's stated i_size.  This is almost certainly
- * not the function you want to call.  Use page_cache_async_readahead()
- * or page_cache_sync_readahead() instead.
+(using the pagecache for GC is generally a very bad idea, and there is
+at least one academic paper showing it is a huge performance problem in
+f2fs, and my initial attempts at using the pagecache for GC in zoned XFS
+also showed horrible results)
 
-(in this case, f2fs doesn't have a folio, so page_cache_async_ra() is
-probably the right function to call).  But what's the point in writing
-documentation when people don't read it?
+> >  	unsigned int nofs = memalloc_nofs_save();
+> >  
+> > +	lockdep_assert_held_read(&mapping->invalidate_lock);
+> 
+> Hm, why are we asserting that it's not write-locked?  For the
+> purposes of this function, I'd think we want to just
+> lockdep_assert_held()?
 
-> @@ -228,9 +229,10 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  	 */
->  	unsigned int nofs = memalloc_nofs_save();
->  
-> +	lockdep_assert_held_read(&mapping->invalidate_lock);
+Fine with me.
 
-Hm, why are we asserting that it's not write-locked?  For the
-purposes of this function, I'd think we want to just
-lockdep_assert_held()?
+> In the tree I'm looking at, there are also calls to
+> page_cache_ra_unbounded() in fs/ext4/verity.c and fs/f2fs/verity.c
+> which probably need the lock taken too?
 
-In the tree I'm looking at, there are also calls to
-page_cache_ra_unbounded() in fs/ext4/verity.c and fs/f2fs/verity.c
-which probably need the lock taken too?
+I consolidated those into the single call in fs/verity/pagecache.c
+in the previous iteration of this series, and Eric merged the
+first few patches including that one into the fsverity tree.
 
 
 _______________________________________________
