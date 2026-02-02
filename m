@@ -4,77 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2DE7ED172D4
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Feb 2026 06:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4237AD172D2
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Feb 2026 06:08:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=FPmUa3VypimJ7/nTKVKi7mDMAAvhSCa4qPt7ILFPNvI=; b=VMQLa7sTVLjZXqmaV4NJ8YvJvf
-	xie5htcKj3yiMobc1i9wSls5Y55e6NulbxobFEYhfcwwKkdsxulD8HioL2TvaNP0K19OdsP5p2bGa
-	Oo/NrV9Yq0NWMa9MjDzinFbdLJ9ses8/7c2uddKvFOJYF9q/RmKp9sp6BlNE9b58KULI=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=cD7Mpb4M8sI22GlSDk5ChwhD0F74ihzBAuS3R2pNMx4=; b=Eb29jWtinLzPgYaygWuq3MPuBM
+	dT/T1fQG3N22wJDGS03V/y/r/fQOEUadu/yGjshx9OC5x6AjVyh6HP7HT3gBTUkLoT2LuFj4WbvuN
+	ErPUmM9Hkkgc11K3e5X9BqAtaswHfBJOFjqq5Txc6pSbrSCBQkn5/1UlytQlCQ+9RQTc=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vmn6i-0004qc-RT;
-	Mon, 02 Feb 2026 06:08:21 +0000
+	id 1vmn6l-0007op-Sw;
+	Mon, 02 Feb 2026 06:08:23 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+1250474bd6e1e3d30609+8198+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1vmn6g-0004qH-VQ for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Feb 2026 06:08:19 +0000
+ id 1vmn6k-0007oj-Un for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Feb 2026 06:08:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oTPY6jfHkqoUdgBhijgDg7Uy+7YMZ6k6go+QoIjkenI=; b=NZjjlfKdJzplHlq5d3rvlCeiU8
- EeMCV36JRuZRD+Ps7VS52567Cbs3tEMKxfgUqSNBIW8BQpIukGRS7Dy16s6Rn1DIILXSxAw5wz0pv
- ig05uMYxieIy+HHBGKV9X4g1wfC4FPb31MzBBKEMdA6qbPLaUZdTwP6MYKziv3fgmA+s=;
+ bh=4zvXifu7/G3LbK7p292UW2gwOyz2+BN+bEMUfIr4RF8=; b=Ix2CTFx4ZXZYOwTA4fHcAkCL/+
+ 5Z4En8OebiY9nsKfXM+jExJ+XhDZ9OF3/mYMlfv4OfiPXwyL70GDVggA5Jb/XG67LsQD4NFqYSTN3
+ yIieoNtc7W52O0wsNPHMs6fSUilozKQdx0klNIIb60kDA2MBk4hSy5SwIjYTHnWEreBA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=oTPY6jfHkqoUdgBhijgDg7Uy+7YMZ6k6go+QoIjkenI=; b=G
- Qts6gR2BEEm6WIHJZsVnTQDz4vpa9i6pwAndsEGmRutn/NLRNXoSx5nqEki8xVxbMMst7CZn1tFXa
- nqm/Uccd/7DdVN4HQRvpsYh6PtTsq27/TCD0twfaL1e0weMBx6IB89zeQOJvvdTe5ni+zeLdVF43A
- 6nixMmAEuGWK3NwA=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=4zvXifu7/G3LbK7p292UW2gwOyz2+BN+bEMUfIr4RF8=; b=XNeIN/42hK6cIC3qdupUBgnnpq
+ 8A+sLEqy9WHybPIjvtx1HFdDm8WUxub03KOA8mi7lxTD+ehsuSxfN0ouOuHC1WLwLV2+Z9+PE+x0F
+ 7CyAvnIC3F7Db+oS1nmVuhu1RQF3Kbl9mOi8QjNRQv7Q979bBcMtNwW4rpkMBY/ejIgQ=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vmn6h-0007oi-7M for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Feb 2026 06:08:19 +0000
+ id 1vmn6k-0007ov-FW for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Feb 2026 06:08:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
- MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:In-Reply-To:References;
- bh=oTPY6jfHkqoUdgBhijgDg7Uy+7YMZ6k6go+QoIjkenI=; b=Jra1hwO/RMjiIcL+dw8Uk4as9f
- Tskg/31TTNJRxn6dlkqX7TocDdZMNpfkqeMfKIbiJ6IGWI/5D7HxToyBXx2Wq5GvHn6PMPU7gcBWV
- LkevtmUSLkPC4n4Sq7hV7XciuurRs/q4NXx88JaJzpcnE1A5OlQ2c7tUN78V4HHFlx2PcOuD0tWeg
- ncMmgaw4F18ytwj4huPjyf5YBhDMkT+TKDIlRRhX5sfNWBiczZVNZ9oQzbcuqNNjsRBXFGuGRlmux
- VuTka/qlk9387FpcLAmWMWf9ze8mIimrs9YXsWNp7aSrI/clH6QduExNY7iQvaKC/CUVHKXH4McO+
- eMJJysBA==;
+ MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=4zvXifu7/G3LbK7p292UW2gwOyz2+BN+bEMUfIr4RF8=; b=sr8htu/IWaOxZ/cXXcqQYxneEE
+ BtsMmQ8K4VXfJ+ircRa+/xP64GiWucfOwnEOHRPDykYJTscyVqSfCf7bNYsySu0pgbIdRRmgwHhph
+ uXMJlv4D9VGYhgVK7n2PhEKO4v6SIe9cuHPIapw3bekMLuoJc1/nB6KuC5uofAQ9EggN2KQ2HLk3H
+ yWsifBWgyxF+SaNIyoxIybcpi9M3lhGDhhsIdBBdp2rZZNCosQgAzBDitDb2BzmoicVSJvJr3iUl1
+ 0HzhaUzm4MHnS8cN0dr5l3gPLcOtxnMsjUrhmypEWW5XVm8DzISB33m5OrLlHCBfzjDz2IXqj1Xf9
+ z2BR8hZg==;
 Received: from
  2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at
  ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
- id 1vmn6N-00000004UjI-3VFw; Mon, 02 Feb 2026 06:08:00 +0000
+ id 1vmn6c-00000004Ujr-2N4Q; Mon, 02 Feb 2026 06:08:14 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
-Date: Mon,  2 Feb 2026 07:06:29 +0100
-Message-ID: <20260202060754.270269-1-hch@lst.de>
+Date: Mon,  2 Feb 2026 07:06:32 +0100
+Message-ID: <20260202060754.270269-4-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260202060754.270269-1-hch@lst.de>
+References: <20260202060754.270269-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1vmn6h-0007oi-7M
-Subject: [f2fs-dev] fsverity speedup and memory usage optimization v5
+X-Headers-End: 1vmn6k-0007ov-FW
+Subject: [f2fs-dev] [PATCH 03/11] ext4: move ->read_folio and ->readahead to
+ readahead.c
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,102 +100,127 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi all,
+Keep all the read into pagecache code in a single file.
 
-this series has a hodge podge of fsverity enhances that I looked into as
-part of the review of the xfs fsverity support series.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/ext4/ext4.h     |  4 ++--
+ fs/ext4/inode.c    | 27 ---------------------------
+ fs/ext4/readpage.c | 31 ++++++++++++++++++++++++++++++-
+ 3 files changed, 32 insertions(+), 30 deletions(-)
 
-The first part optimizes the fsverity read path by kicking off readahead
-for the fsverity hashes from the data read submission context, which in my
-simply testing showed huge benefits for sequential reads using dd.
-I haven't been able to get fio to run on a preallocated fio file, but
-I expect random read benefits would be significantly better than that
-still.
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 56112f201cac..a8a448e20ef8 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -3735,8 +3735,8 @@ static inline void ext4_set_de_type(struct super_block *sb,
+ }
+ 
+ /* readpages.c */
+-extern int ext4_mpage_readpages(struct inode *inode,
+-		struct readahead_control *rac, struct folio *folio);
++int ext4_read_folio(struct file *file, struct folio *folio);
++void ext4_readahead(struct readahead_control *rac);
+ extern int __init ext4_init_post_read_processing(void);
+ extern void ext4_exit_post_read_processing(void);
+ 
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 8c2ef98fa530..e98954e7d0b3 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3380,33 +3380,6 @@ static sector_t ext4_bmap(struct address_space *mapping, sector_t block)
+ 	return ret;
+ }
+ 
+-static int ext4_read_folio(struct file *file, struct folio *folio)
+-{
+-	int ret = -EAGAIN;
+-	struct inode *inode = folio->mapping->host;
+-
+-	trace_ext4_read_folio(inode, folio);
+-
+-	if (ext4_has_inline_data(inode))
+-		ret = ext4_readpage_inline(inode, folio);
+-
+-	if (ret == -EAGAIN)
+-		return ext4_mpage_readpages(inode, NULL, folio);
+-
+-	return ret;
+-}
+-
+-static void ext4_readahead(struct readahead_control *rac)
+-{
+-	struct inode *inode = rac->mapping->host;
+-
+-	/* If the file has inline data, no need to do readahead. */
+-	if (ext4_has_inline_data(inode))
+-		return;
+-
+-	ext4_mpage_readpages(inode, rac, NULL);
+-}
+-
+ static void ext4_invalidate_folio(struct folio *folio, size_t offset,
+ 				size_t length)
+ {
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index 267594ef0b2c..bf84952ebf94 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -45,6 +45,7 @@
+ #include <linux/pagevec.h>
+ 
+ #include "ext4.h"
++#include <trace/events/ext4.h>
+ 
+ #define NUM_PREALLOC_POST_READ_CTXS	128
+ 
+@@ -209,7 +210,7 @@ static inline loff_t ext4_readpage_limit(struct inode *inode)
+ 	return i_size_read(inode);
+ }
+ 
+-int ext4_mpage_readpages(struct inode *inode,
++static int ext4_mpage_readpages(struct inode *inode,
+ 		struct readahead_control *rac, struct folio *folio)
+ {
+ 	struct bio *bio = NULL;
+@@ -394,6 +395,34 @@ int ext4_mpage_readpages(struct inode *inode,
+ 	return 0;
+ }
+ 
++int ext4_read_folio(struct file *file, struct folio *folio)
++{
++	int ret = -EAGAIN;
++	struct inode *inode = folio->mapping->host;
++
++	trace_ext4_read_folio(inode, folio);
++
++	if (ext4_has_inline_data(inode))
++		ret = ext4_readpage_inline(inode, folio);
++
++	if (ret == -EAGAIN)
++		return ext4_mpage_readpages(inode, NULL, folio);
++
++	return ret;
++}
++
++void ext4_readahead(struct readahead_control *rac)
++{
++	struct inode *inode = rac->mapping->host;
++
++	/* If the file has inline data, no need to do readahead. */
++	if (ext4_has_inline_data(inode))
++		return;
++
++	ext4_mpage_readpages(inode, rac, NULL);
++}
++
++
+ int __init ext4_init_post_read_processing(void)
+ {
+ 	bio_post_read_ctx_cache = KMEM_CACHE(bio_post_read_ctx, SLAB_RECLAIM_ACCOUNT);
+-- 
+2.47.3
 
-The second part avoids the need for a pointer in every inode for fsverity
-and instead uses a rhashtable lookup, which is done once per read_folio
-or ->readahead invocation plus for btrfs only for each bio completion.
-Right now this does not increse the number of inodes in
-each slab, but for ext4 we are getting very close to that (within
-16 bytes by my count).
-
-Changes since v5:
- - drop already merged patches
- - fix a bisection hazard for non-ENOENT error returns from
-   generic_read_merkle_tree_page
- - don't recurse on invalidate_lock
- - refactor page_cache_ra_unbounded locking to support the above
- - refactor ext4 and f2fs fsverity readahead to remove the need for the
-   first_folio branch in the main readpages loop
-
-Changes since v4:
- - drop the constification of ctx->vi again
- - fix __filemap_get_folio error handling again
- - don't use "pgoff_t long"
- - improve documentation of the new pagecache helpers
- - reduce the number of fsverity_info lookups in btrfs
- - improve the documentation for fsverity_active
-
-Changes since v2:
- - use sizeof_field for .key_len
- - fix a rebase error that caused an extra fsverity_get_info in
-   fsverity_init_verification_context
- - add verify.o to the build in the correct patch
- - fix handling of non-ENOENT ERR_PTR folios in
-   generic_readahead_merkle_tree
- - split fixing the __filemap_get_folio error handling into a
-   separate patch
- - fix the readahead range in fsverity_read_merkle_tree
- - remove __fsverity_readahead as a result of the above
- - simplify the start/end_hidx calculation in fsverity_readahead
- - drop the > i_size check in fsverity_readahead
- - use pgoff_t where applicable
- - constify fsverity_info pointers in the verification path
- - use IS_ENABLED to disable code not used for non-fsverity builds in
-   ext4 and f2fs
- - allow bisection for non-fsverity builds by provinding a stub
-   fsverity_info_addr prototype
- - drop the now superflous inode argument to
-   fsverity_init_verification_context
- - improve the kerneldoc for fsverity_readahead
- - improve various commit messages
- - fix the barrier placement in fsverity_active
- - mark fsverity_active to work around stupid compilers
-
-Changes since v1:
- - reorder to keep the most controversial part last
- - drop moving the open handling to common code (for now)
- - factor the page cache read code into common code
- - reduce the number of hash lookups
- - add a barrier in the fsverity_active that pairs with the cmpxchg
-   that sets the inode flag.
-
-Diffstat:
- fs/btrfs/btrfs_inode.h       |    4 -
- fs/btrfs/extent_io.c         |   53 ++++++++++------
- fs/btrfs/inode.c             |    3 
- fs/btrfs/verity.c            |    6 -
- fs/buffer.c                  |   25 +++----
- fs/ext4/ext4.h               |    8 --
- fs/ext4/inode.c              |   27 --------
- fs/ext4/readpage.c           |   62 +++++++++++++++----
- fs/ext4/super.c              |    3 
- fs/ext4/verity.c             |   15 +++-
- fs/f2fs/compress.c           |    7 +-
- fs/f2fs/data.c               |   88 +++++++++++++++++----------
- fs/f2fs/f2fs.h               |   12 ---
- fs/f2fs/file.c               |    2 
- fs/f2fs/super.c              |    3 
- fs/f2fs/verity.c             |   15 +++-
- fs/verity/enable.c           |   30 +++++----
- fs/verity/fsverity_private.h |   21 +++---
- fs/verity/open.c             |   77 +++++++++++++++---------
- fs/verity/pagecache.c        |   44 ++++++++++---
- fs/verity/read_metadata.c    |   19 ++++--
- fs/verity/verify.c           |   94 ++++++++++++++++++-----------
- include/linux/fsverity.h     |  136 ++++++++++++++++++++++---------------------
- mm/readahead.c               |   13 ++--
- 24 files changed, 440 insertions(+), 327 deletions(-)
 
 
 _______________________________________________
