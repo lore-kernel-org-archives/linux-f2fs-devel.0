@@ -4,66 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 23553E83056
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Feb 2026 05:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6C465E83057
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Feb 2026 07:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=CRfuBvNdLfukGlHn8gmvTJDyDRFUiUqT8QtUpBO9IG4=; b=JEYI56/lDYLvTozCsJ1eIjZmGn
-	HKiXzk02Z8+R5nbhS9AyCeZWEgSBtk4nK6giBE6XKAUlCbPkxSvmY2ej0MuFjK1SMLfALfj/CUwiP
-	9h1HIUhFiRQDdzjgrUa7wsbwZ9oYmiONOk8J6v5/i/fKVOfYZb6pYELJEzCxwJtCxd18=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=djPZ7lGTj9qFdlThzLxksHoh9rPzReaVcEWLGMtnvGI=; b=Rvx2jog/5Hndal6P5FZU7VNe+d
+	QWJQ3trxJytnqWtRf87tJgzvnOjbBcFwI+dcpjraQB7K2cYcr/XuTWUAX2OD/gDKv/Sbehdj8inD+
+	j+KACUCKSEH9CRzKX2jy66HDffREV72EIbs65bvE0aiFUO3/3lWMSKvIlglzyL+6yZ/c=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vn95D-0000KT-Nj;
-	Tue, 03 Feb 2026 05:36:15 +0000
+	id 1vnAOx-00088C-0y;
+	Tue, 03 Feb 2026 07:00:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1vn95B-0000KM-Vm
+ (envelope-from <chao@kernel.org>) id 1vnAOl-00087y-Vq
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Feb 2026 05:36:13 +0000
+ Tue, 03 Feb 2026 07:00:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=i3cS0RxCQXC0dY7JQebj+Ura73CZ/jIdduAvm+lk1K4=; b=Atyr5is+hqGmTPngA/ov1+/rBn
- ktLCReGaBCHQbVZTxNTpOORKntoz1wbQVL6cglW7Z47Z8m+8PcJgbhi5rYna3EpbrnC/mK6YP+fto
- 1S/ubsb8xnQhqGkQCZjNoDsWn7b6zOrugeVFgHGcKu1L27UzNXzEaLES+WaxjtU9E15o=;
+ bh=VquKc9RCIPcudh0KLo29oyeZNBYQXvLmN61pee+tYbs=; b=Z3xPczXxVkvyDsro7QAlix+hSo
+ 1nf9j95IaPjrCuL/5wPLjAjFBDlKCeSPnfYcR5zBNja8qNyz6lWYtX8/BHDEksICMt5rTDpCmwFRG
+ sZKbZL9WFvMfJF1CsRFTsrp+uvUpwCzYxsBKQ4NZKOI+AMyR0sRD2k5fBTYqx6CAWwmc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=i3cS0RxCQXC0dY7JQebj+Ura73CZ/jIdduAvm+lk1K4=; b=ZQw468FJAuK12dMCFiFx9xu9yb
- RIxRkQoSymdSLOm7hjKanGIgrl6aeIo4OEWXC0Ej3VxIIDqN0p1IlwM5Cd87qtS1jhRotMXhpBxvb
- YDlyQTttfi05ioyAGml7xrwTD+4rbjaw92STsurRy7ItwHCIMTvahDo29auRnGHUNofc=;
-Received: from verein.lst.de ([213.95.11.211])
+ bh=VquKc9RCIPcudh0KLo29oyeZNBYQXvLmN61pee+tYbs=; b=Qc+5Y2rsYJEd8JIKBy7ilFvSkA
+ purJ5X1XuAyKQbb1nB+AQ3+lkO3s74PxjWtbmQ4e7b370W1997p4odI24JEsYYhGpH+LT4WaL87QY
+ JkbIeS4hWUR5861UTf2XCkFAiGNdxxFuv5cOsL/DLJOwOwQ3tH/Ebih33dqnzkUohgUc=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vn95B-0001zo-9p for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Feb 2026 05:36:13 +0000
-Received: by verein.lst.de (Postfix, from userid 2407)
- id E866E68AFE; Tue,  3 Feb 2026 06:36:04 +0100 (CET)
-Date: Tue, 3 Feb 2026 06:36:04 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20260203053604.GC15956@lst.de>
-References: <20260202060754.270269-1-hch@lst.de> <20260202211423.GB4838@quark>
- <20260202223404.GA173552@quark>
+ id 1vnAOl-0005HE-F1 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 03 Feb 2026 07:00:31 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 204F6443B1;
+ Tue,  3 Feb 2026 07:00:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D24CCC116D0;
+ Tue,  3 Feb 2026 07:00:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1770102021;
+ bh=7FRhymRM7ABlhFQQhv2LKLQ4s+C7K++Ywzs0GQCFyEc=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=GwxmyvW1tcpbo/WXRXYO+f5eDWDRnDiSmuZ2+IS/aHGeKVRBef9d9nyCKVfb5xM2i
+ gYcch6CelIa41/9imc8QrygYyN+zexNBGAsX7sCnblHu/T/Pyr8SY7/MSm/pK1ARja
+ ZawB3xpk6XJPQbWDrwgbUEgUw3RSZdHKZKZ5gV/fyfqpgRVIsGvramFJC6Vr8TcHcz
+ PMa1AzOqxWZCg/pPGiztH8qVJ9Epubzg4/zxKfEpjEx7O3vkh+7DSXJGOTUnZGRh4t
+ SAASBnzJSv3gnUKye+FJ0LTbue5ewYcLNIzxYIOMFD+1NsbnNyeh6osTpFjxjSuY7B
+ DCuaf8pH9Umvw==
+Message-ID: <6458f1d3-e38e-4dbf-9202-511abb6a242e@kernel.org>
+Date: Tue, 3 Feb 2026 15:00:11 +0800
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260202223404.GA173552@quark>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1vn95B-0001zo-9p
-Subject: Re: [f2fs-dev] fsverity speedup and memory usage optimization v5
+User-Agent: Mozilla Thunderbird
+To: Barry Song <21cnbao@gmail.com>
+References: <20260130132809.59707-1-chao@kernel.org>
+ <CAGsJ_4yGBt4Rt=njP=cY++DbEDAWKSyDuuXOC2pXGoJGCvJYFw@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAGsJ_4yGBt4Rt=njP=cY++DbEDAWKSyDuuXOC2pXGoJGCvJYFw@mail.gmail.com>
+X-Headers-End: 1vnAOl-0005HE-F1
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix lock priority inversion issue
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -75,62 +87,41 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Theodore Ts'o <tytso@mit.edu>, fsverity@lists.linux.dev,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Andrey Albershteyn <aalbersh@redhat.com>, Matthew Wilcox <willy@infradead.org>,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- Al Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Feb 02, 2026 at 02:34:04PM -0800, Eric Biggers wrote:
-> On Mon, Feb 02, 2026 at 01:14:23PM -0800, Eric Biggers wrote:
-> > On Mon, Feb 02, 2026 at 07:06:29AM +0100, Christoph Hellwig wrote:
-> > > Hi all,
-> > > 
-> > > this series has a hodge podge of fsverity enhances that I looked into as
-> > > part of the review of the xfs fsverity support series.
-> > > 
-> > > The first part optimizes the fsverity read path by kicking off readahead
-> > > for the fsverity hashes from the data read submission context, which in my
-> > > simply testing showed huge benefits for sequential reads using dd.
-> > > I haven't been able to get fio to run on a preallocated fio file, but
-> > > I expect random read benefits would be significantly better than that
-> > > still.
-> > > 
-> > > The second part avoids the need for a pointer in every inode for fsverity
-> > > and instead uses a rhashtable lookup, which is done once per read_folio
-> > > or ->readahead invocation plus for btrfs only for each bio completion.
-> > > Right now this does not increse the number of inodes in
-> > > each slab, but for ext4 we are getting very close to that (within
-> > > 16 bytes by my count).
-> > > 
-> > > Changes since v5:
-> > >  - drop already merged patches
-> > >  - fix a bisection hazard for non-ENOENT error returns from
-> > >    generic_read_merkle_tree_page
-> > >  - don't recurse on invalidate_lock
-> > >  - refactor page_cache_ra_unbounded locking to support the above
-> > >  - refactor ext4 and f2fs fsverity readahead to remove the need for the
-> > >    first_folio branch in the main readpages loop
-> > 
-> > Applied to https://git.kernel.org/pub/scm/fs/fsverity/linux.git/log/?h=for-next
-> > 
-> > (Though it's getting late for v6.20 / v7.0.  So if there are any
-> > additional issues reported, I may have to drop it.)
-> 
-> Unfortunately this silently conflicts with changes in the f2fs tree.
-> Resolution doesn't look too bad, but we'll need to handle this.
-> Christoph, Jaegeuk, and Chao, let me know if this looks okay:
-
-I ended up with the same merge, and it looks good to me.
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gMS8zMS8yMDI2IDEwOjUwIEFNLCBCYXJyeSBTb25nIHdyb3RlOgo+IE9uIFNhdCwgSmFuIDMx
+LCAyMDI2IGF0IDEwOjI34oCvQU0gQ2hhbyBZdSA8Y2hhb0BrZXJuZWwub3JnPiB3cm90ZToKPj4K
+Pj4gSWYgdXNlcnNwYWNlIHRocmVhZCBoYXMgaGVsZCBmMmZzIHJ3IHNlbWFwaG9yZSwgZHVlIHRv
+IGl0cyBsb3cgcHJpb3JpdHksCj4+IGl0IGNvdWxkIGJlIHJ1bm5hYmxlIG9yIHByZWVtcHRlZCBz
+dGF0ZSBmb3IgbG9uZyB0aW1lLCBkdXJpbmcgdGhlIHRpbWUsCj4+IGl0IHdpbGwgYmxvY2sgaGln
+aCBwcmlvcml0eSB0aHJlYWQgd2hpY2ggaXMgdHJ5aW5nIHRvIGdyYWIgdGhlIHNhbWUgcncKPj4g
+c2VtYXBob3JlLCBlLmcuIGNwX3J3c2VtLCBpb19yd3NlbS4uLgo+Pgo+PiBUbyBmaXggc3VjaCBp
+c3N1ZSwgbGV0J3MgZGV0ZWN0IHRocmVhZCdzIHByaW9yaXR5IHdoZW4gaXQgdHJpZXMgdG8gZ3Jh
+Ygo+PiBmMmZzX3J3c2VtIGxvY2ssIGlmIHRoZSBwcmlvcml0eSBpcyBsb3dlciB0aGFuIGEgcHJp
+b3JpdHkgdGhyZXNob2xkLCBsZXQncwo+PiB1cGxpZnQgdGhlIHByaW9yaXR5IGJlZm9yZSBpdCBl
+bnRlcnMgaW50byBjcml0aWNhbCByZWdpb24gb2YgbG9jaywgYW5kCj4+IHJlc3RvcmUgdGhlIHBy
+aW9yaXR5IGFmdGVyIGl0IGxlYXZlcyBmcm9tIGNyaXRpY2FsIHJlZ2lvbi4KPiAKPiBIaSBDaGFv
+LAo+IAo+IElzIHRoaXMgZXZlbiBwb3NzaWJsZSBpZiBjYW5fbmljZSgpIHJldHVybnMgZmFsc2Us
+IGZvciBleGFtcGxlIGR1ZSB0bwo+IG1pc3NpbmcgQ0FQX1NZU19OSUNFPwoKSGkgQmFycnksCgpJ
+IHRoaW5rIHNvLCB0aGUgcHJpb3JpdHkgd2lsbCBiZSB0ZW1wb3JhcmlseSB1cGxpZnRlZCBhbmQg
+cmVzdG9yZWQgaW4gbG9jawpkdXJhdGlvbi4KCj4gCj4gUHJveHkgZXhlY3V0aW9uIFsxXSBpcyBj
+dXJyZW50bHkgdW5kZXIgZGV2ZWxvcG1lbnQgdG8gYWRkcmVzcyBnZW5lcmFsCj4gcHJpb3JpdHkg
+aW52ZXJzaW9uOyBob3BlZnVsbHksIGl0IHdpbGwgcmVzb2x2ZSB0aGlzIGlzc3VlLgoKVGhhbmtz
+IGZvciBwcm92aWRpbmcgdGhlIG1hdGVyaWFsLgoKWWVzLCB0aGVyZSBzaG91bGQgYmUgZ2VuZXJp
+YyBzb2x1dGlvbiBpbiBjcHUgc2NoZWR1bGVyIGFuZCBsb2NrIHByaW1pdGl2ZQp0byByZXNvbHZl
+IHByaW9yaXR5IGludmVyc2lvbiBpc3N1ZS4gVGhlbiBpdCB3aWxsIGJlIGJlbmVmaXQgZm9yIGFs
+bCBsb2NrCnVzZXJzLgoKTm90IHN1cmUsIGl0IHdpbGwgYmUgYSBsaXR0bGUgYml0IGhhcmQgZm9y
+IHJ3IHNlbWFwaG9yZSwgaXQgbmVlZHMgdG8gdHJhY2sKYW5kIGNoZWNrIGFsbCByZWFkZXIgdGhy
+ZWFkcycgY29udGV4dCBpbiBwcmlvcml0eSBpbnZlcnNpb24gc2NlbmFyaW8uCgpUaGFua3MsCgo+
+IAo+IFsxXSBodHRwczovL2xwYy5ldmVudHMvZXZlbnQvMTgvY29udHJpYnV0aW9ucy8xODg3L2F0
+dGFjaG1lbnRzLzE0MDIvMzA3NC9MUENfJTIwUHJveHklMjBFeGVjJTIwZGVlcCUyMGRpdmUlMjBv
+dXRsaW5lLnBkZgo+IAo+IFRoYW5rcwo+IEJhcnJ5CgoKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Ckxp
+bnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNl
+Zm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
