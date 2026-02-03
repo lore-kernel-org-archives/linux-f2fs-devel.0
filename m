@@ -4,78 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6C465E83057
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Feb 2026 07:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E250AE83065
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Feb 2026 09:13:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=djPZ7lGTj9qFdlThzLxksHoh9rPzReaVcEWLGMtnvGI=; b=Rvx2jog/5Hndal6P5FZU7VNe+d
-	QWJQ3trxJytnqWtRf87tJgzvnOjbBcFwI+dcpjraQB7K2cYcr/XuTWUAX2OD/gDKv/Sbehdj8inD+
-	j+KACUCKSEH9CRzKX2jy66HDffREV72EIbs65bvE0aiFUO3/3lWMSKvIlglzyL+6yZ/c=;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=wo9aMh69l2wwVdj4931Z61Hw7ifXkw0dQsViI03Td3M=; b=l8K310JXM0XiLjyKeWm0IbgwjA
+	0H6hxn4JYay9FZR1sgmPXyAm/tHFwtD1v9nmW1VpOzLJy9POmMUNO+A/uwiPrPN3aR8ECSvGNq/Jz
+	cUp0hBV3v6leXWqOtnENy2Fl3FRNhQ5rDJQSqhs4vKxyMNgyBrhU1upMW9cS+JshPSLs=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vnAOx-00088C-0y;
-	Tue, 03 Feb 2026 07:00:43 +0000
+	id 1vnCTW-0002QO-QT;
+	Tue, 03 Feb 2026 09:13:34 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vnAOl-00087y-Vq
+ (envelope-from <nzzhao@126.com>) id 1vnCTU-0002QH-Kj
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Feb 2026 07:00:32 +0000
+ Tue, 03 Feb 2026 09:13:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VquKc9RCIPcudh0KLo29oyeZNBYQXvLmN61pee+tYbs=; b=Z3xPczXxVkvyDsro7QAlix+hSo
- 1nf9j95IaPjrCuL/5wPLjAjFBDlKCeSPnfYcR5zBNja8qNyz6lWYtX8/BHDEksICMt5rTDpCmwFRG
- sZKbZL9WFvMfJF1CsRFTsrp+uvUpwCzYxsBKQ4NZKOI+AMyR0sRD2k5fBTYqx6CAWwmc=;
+ bh=U5IAZOiZv36aqaRxt4HG5BNNYkjGILnO18MppaP6+40=; b=eS3S7tY/HOECvKu8GJBdIgSHu2
+ 5VLgP3vFpkyGvZIqrE4g29EEJAUXQv4Cav+uoaB8lI/bIOj2/BX48XiDa01EY8/MAi4fx8eayb5D9
+ gSKM85gRRu9N/W3vwHEl/bEb+kwXwMZxCVq65gGRv+gDv+F5Yg36AyUzA5U1O6VqwYMk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VquKc9RCIPcudh0KLo29oyeZNBYQXvLmN61pee+tYbs=; b=Qc+5Y2rsYJEd8JIKBy7ilFvSkA
- purJ5X1XuAyKQbb1nB+AQ3+lkO3s74PxjWtbmQ4e7b370W1997p4odI24JEsYYhGpH+LT4WaL87QY
- JkbIeS4hWUR5861UTf2XCkFAiGNdxxFuv5cOsL/DLJOwOwQ3tH/Ebih33dqnzkUohgUc=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=U5IAZOiZv36aqaRxt4HG5BNNYkjGILnO18MppaP6+40=; b=MzjyT5hu++9SpK94b83DrA0Vkw
+ pXqxJU19XJ6Vt5o+fGkFC7KO8C48Mto/uEDAQHniuFfwgh/41Bjgb+sqQaF22nLhKH5vscqnp2kLG
+ lWjHYHSxKgBUgtqK6XrOYI4H7uE68XJcdqTVXO12jXDNJsmJF/6NPwXvAx5HKF4Zi6xY=;
+Received: from m16.mail.126.com ([220.197.31.9])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vnAOl-0005HE-F1 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Feb 2026 07:00:31 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 204F6443B1;
- Tue,  3 Feb 2026 07:00:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D24CCC116D0;
- Tue,  3 Feb 2026 07:00:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1770102021;
- bh=7FRhymRM7ABlhFQQhv2LKLQ4s+C7K++Ywzs0GQCFyEc=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=GwxmyvW1tcpbo/WXRXYO+f5eDWDRnDiSmuZ2+IS/aHGeKVRBef9d9nyCKVfb5xM2i
- gYcch6CelIa41/9imc8QrygYyN+zexNBGAsX7sCnblHu/T/Pyr8SY7/MSm/pK1ARja
- ZawB3xpk6XJPQbWDrwgbUEgUw3RSZdHKZKZ5gV/fyfqpgRVIsGvramFJC6Vr8TcHcz
- PMa1AzOqxWZCg/pPGiztH8qVJ9Epubzg4/zxKfEpjEx7O3vkh+7DSXJGOTUnZGRh4t
- SAASBnzJSv3gnUKye+FJ0LTbue5ewYcLNIzxYIOMFD+1NsbnNyeh6osTpFjxjSuY7B
- DCuaf8pH9Umvw==
-Message-ID: <6458f1d3-e38e-4dbf-9202-511abb6a242e@kernel.org>
-Date: Tue, 3 Feb 2026 15:00:11 +0800
+ id 1vnCTT-0004W2-Qk for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 03 Feb 2026 09:13:32 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+ s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=U5
+ IAZOiZv36aqaRxt4HG5BNNYkjGILnO18MppaP6+40=; b=TlFvv7PrUPeiy0w+e4
+ 5/ADLDDCL6swhMKZ364FLs4rlekHtzky8WFLT/HpXw09v4sHUyVmW8qYpDpXlGoM
+ lXVOi0d1gj2PiUzOQo0IiFZB24vc1s3zz9VDZvaB1fZDLS27DVw4gERw32EsDEBj
+ G9b2Qtuc69p4hgOsdCXuhN5Hs=
+Received: from YLLaptop.. (unknown [])
+ by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id
+ _____wD3l2kivIFpOegGAA--.25117S4; 
+ Tue, 03 Feb 2026 17:13:14 +0800 (CST)
+From: Nanzhe Zhao <nzzhao@126.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Tue,  3 Feb 2026 17:12:49 +0800
+Message-Id: <20260203091256.854842-3-nzzhao@126.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260203091256.854842-1-nzzhao@126.com>
+References: <20260203091256.854842-1-nzzhao@126.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Barry Song <21cnbao@gmail.com>
-References: <20260130132809.59707-1-chao@kernel.org>
- <CAGsJ_4yGBt4Rt=njP=cY++DbEDAWKSyDuuXOC2pXGoJGCvJYFw@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAGsJ_4yGBt4Rt=njP=cY++DbEDAWKSyDuuXOC2pXGoJGCvJYFw@mail.gmail.com>
-X-Headers-End: 1vnAOl-0005HE-F1
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix lock priority inversion issue
+X-CM-TRANSID: _____wD3l2kivIFpOegGAA--.25117S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tryfZF13ury7AF1rtFWrXwb_yoW8Ar1rpF
+ ZrG3WrGr4DuFy8Wrn7tF15Zr1Y9a4xKw4UZFZ7Xw4kJ3WDX34Syr1rK347ZF18trWrJryI
+ qF4IkFyxur15JFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRy7KsUUUUU=
+X-Originating-IP: [58.240.165.118]
+X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBsQrzw2mBvCqXRQAA3n
+X-Headers-End: 1vnCTT-0004W2-Qk
+Subject: [f2fs-dev] [RFC PATCH v1 2/5] f2fs: Introduce
+ f2fs_inode_may_use_large_folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,41 +90,67 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Cc: Nanzhe Zhao <nzzhao@126.com>, Barry Song <21cnbao@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gMS8zMS8yMDI2IDEwOjUwIEFNLCBCYXJyeSBTb25nIHdyb3RlOgo+IE9uIFNhdCwgSmFuIDMx
-LCAyMDI2IGF0IDEwOjI34oCvQU0gQ2hhbyBZdSA8Y2hhb0BrZXJuZWwub3JnPiB3cm90ZToKPj4K
-Pj4gSWYgdXNlcnNwYWNlIHRocmVhZCBoYXMgaGVsZCBmMmZzIHJ3IHNlbWFwaG9yZSwgZHVlIHRv
-IGl0cyBsb3cgcHJpb3JpdHksCj4+IGl0IGNvdWxkIGJlIHJ1bm5hYmxlIG9yIHByZWVtcHRlZCBz
-dGF0ZSBmb3IgbG9uZyB0aW1lLCBkdXJpbmcgdGhlIHRpbWUsCj4+IGl0IHdpbGwgYmxvY2sgaGln
-aCBwcmlvcml0eSB0aHJlYWQgd2hpY2ggaXMgdHJ5aW5nIHRvIGdyYWIgdGhlIHNhbWUgcncKPj4g
-c2VtYXBob3JlLCBlLmcuIGNwX3J3c2VtLCBpb19yd3NlbS4uLgo+Pgo+PiBUbyBmaXggc3VjaCBp
-c3N1ZSwgbGV0J3MgZGV0ZWN0IHRocmVhZCdzIHByaW9yaXR5IHdoZW4gaXQgdHJpZXMgdG8gZ3Jh
-Ygo+PiBmMmZzX3J3c2VtIGxvY2ssIGlmIHRoZSBwcmlvcml0eSBpcyBsb3dlciB0aGFuIGEgcHJp
-b3JpdHkgdGhyZXNob2xkLCBsZXQncwo+PiB1cGxpZnQgdGhlIHByaW9yaXR5IGJlZm9yZSBpdCBl
-bnRlcnMgaW50byBjcml0aWNhbCByZWdpb24gb2YgbG9jaywgYW5kCj4+IHJlc3RvcmUgdGhlIHBy
-aW9yaXR5IGFmdGVyIGl0IGxlYXZlcyBmcm9tIGNyaXRpY2FsIHJlZ2lvbi4KPiAKPiBIaSBDaGFv
-LAo+IAo+IElzIHRoaXMgZXZlbiBwb3NzaWJsZSBpZiBjYW5fbmljZSgpIHJldHVybnMgZmFsc2Us
-IGZvciBleGFtcGxlIGR1ZSB0bwo+IG1pc3NpbmcgQ0FQX1NZU19OSUNFPwoKSGkgQmFycnksCgpJ
-IHRoaW5rIHNvLCB0aGUgcHJpb3JpdHkgd2lsbCBiZSB0ZW1wb3JhcmlseSB1cGxpZnRlZCBhbmQg
-cmVzdG9yZWQgaW4gbG9jawpkdXJhdGlvbi4KCj4gCj4gUHJveHkgZXhlY3V0aW9uIFsxXSBpcyBj
-dXJyZW50bHkgdW5kZXIgZGV2ZWxvcG1lbnQgdG8gYWRkcmVzcyBnZW5lcmFsCj4gcHJpb3JpdHkg
-aW52ZXJzaW9uOyBob3BlZnVsbHksIGl0IHdpbGwgcmVzb2x2ZSB0aGlzIGlzc3VlLgoKVGhhbmtz
-IGZvciBwcm92aWRpbmcgdGhlIG1hdGVyaWFsLgoKWWVzLCB0aGVyZSBzaG91bGQgYmUgZ2VuZXJp
-YyBzb2x1dGlvbiBpbiBjcHUgc2NoZWR1bGVyIGFuZCBsb2NrIHByaW1pdGl2ZQp0byByZXNvbHZl
-IHByaW9yaXR5IGludmVyc2lvbiBpc3N1ZS4gVGhlbiBpdCB3aWxsIGJlIGJlbmVmaXQgZm9yIGFs
-bCBsb2NrCnVzZXJzLgoKTm90IHN1cmUsIGl0IHdpbGwgYmUgYSBsaXR0bGUgYml0IGhhcmQgZm9y
-IHJ3IHNlbWFwaG9yZSwgaXQgbmVlZHMgdG8gdHJhY2sKYW5kIGNoZWNrIGFsbCByZWFkZXIgdGhy
-ZWFkcycgY29udGV4dCBpbiBwcmlvcml0eSBpbnZlcnNpb24gc2NlbmFyaW8uCgpUaGFua3MsCgo+
-IAo+IFsxXSBodHRwczovL2xwYy5ldmVudHMvZXZlbnQvMTgvY29udHJpYnV0aW9ucy8xODg3L2F0
-dGFjaG1lbnRzLzE0MDIvMzA3NC9MUENfJTIwUHJveHklMjBFeGVjJTIwZGVlcCUyMGRpdmUlMjBv
-dXRsaW5lLnBkZgo+IAo+IFRoYW5rcwo+IEJhcnJ5CgoKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Ckxp
-bnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNl
-Zm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Introudce a helper function to check whether an inode may use
+large folio for scalability.
+
+Signed-off-by: Nanzhe Zhao <nzzhao@126.com>
+---
+ fs/f2fs/f2fs.h  | 16 ++++++++++++++++
+ fs/f2fs/inode.c |  3 +--
+ 2 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index bdcd446f6b18..e5b8f5374666 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -5035,6 +5035,22 @@ static inline bool f2fs_quota_file(struct f2fs_sb_info *sbi, nid_t ino)
+ 	return false;
+ }
+ 
++static inline bool f2fs_inode_may_use_large_folio(struct inode *inode)
++{
++	if (f2fs_has_inline_data(inode))
++		return false;
++
++	if (f2fs_compressed_file(inode))
++		return false;
++
++	if (f2fs_is_atomic_file(inode))
++		return false;
++
++	if (f2fs_quota_file(F2FS_I_SB(inode), inode->i_ino))
++		return false;
++	return true;
++}
++
+ static inline bool f2fs_block_unit_discard(struct f2fs_sb_info *sbi)
+ {
+ 	return F2FS_OPTION(sbi).discard_unit == DISCARD_UNIT_BLOCK;
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index b8cf1fab6391..e2e85ac9c44e 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -620,8 +620,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+ 		inode->i_op = &f2fs_file_inode_operations;
+ 		inode->i_fop = &f2fs_file_operations;
+ 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
+-		if (IS_IMMUTABLE(inode) && !f2fs_compressed_file(inode) &&
+-		    !f2fs_quota_file(sbi, inode->i_ino))
++		if (f2fs_inode_may_use_large_folio(inode))
+ 			mapping_set_folio_min_order(inode->i_mapping, 0);
+ 	} else if (S_ISDIR(inode->i_mode)) {
+ 		inode->i_op = &f2fs_dir_inode_operations;
+-- 
+2.34.1
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
