@@ -4,81 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E250AE83065
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AE140E83067
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Feb 2026 09:13:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=wo9aMh69l2wwVdj4931Z61Hw7ifXkw0dQsViI03Td3M=; b=l8K310JXM0XiLjyKeWm0IbgwjA
-	0H6hxn4JYay9FZR1sgmPXyAm/tHFwtD1v9nmW1VpOzLJy9POmMUNO+A/uwiPrPN3aR8ECSvGNq/Jz
-	cUp0hBV3v6leXWqOtnENy2Fl3FRNhQ5rDJQSqhs4vKxyMNgyBrhU1upMW9cS+JshPSLs=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:Message-Id:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=5JMqF11UASXfNnowKuqf8mJOXL88kAYMiachEozL3pY=; b=bRQ1KtiK7oXbqb9P+DBPttKccV
+	+junrg6nT1gC/ybI6bq64TC4msRRJtm4NfyNuT5xXRFoqHMxVjTDXuAjxqvX1/MD8vUv1S4dT3LAA
+	cYRQ++/MktoNO81O8Bbjm+YoNLJzkTOjZHFtvJY8c5EjaanXiROHo0NdWeG0QKuVfIYo=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vnCTW-0002QO-QT;
+	id 1vnCTW-0007cQ-0i;
 	Tue, 03 Feb 2026 09:13:34 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao@126.com>) id 1vnCTU-0002QH-Kj
+ (envelope-from <nzzhao@126.com>) id 1vnCTU-0007cK-G1
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 03 Feb 2026 09:13:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=U5IAZOiZv36aqaRxt4HG5BNNYkjGILnO18MppaP6+40=; b=eS3S7tY/HOECvKu8GJBdIgSHu2
- 5VLgP3vFpkyGvZIqrE4g29EEJAUXQv4Cav+uoaB8lI/bIOj2/BX48XiDa01EY8/MAi4fx8eayb5D9
- gSKM85gRRu9N/W3vwHEl/bEb+kwXwMZxCVq65gGRv+gDv+F5Yg36AyUzA5U1O6VqwYMk=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=U5IAZOiZv36aqaRxt4HG5BNNYkjGILnO18MppaP6+40=; b=MzjyT5hu++9SpK94b83DrA0Vkw
- pXqxJU19XJ6Vt5o+fGkFC7KO8C48Mto/uEDAQHniuFfwgh/41Bjgb+sqQaF22nLhKH5vscqnp2kLG
- lWjHYHSxKgBUgtqK6XrOYI4H7uE68XJcdqTVXO12jXDNJsmJF/6NPwXvAx5HKF4Zi6xY=;
-Received: from m16.mail.126.com ([220.197.31.9])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=YP+HixCNTVvtIn71grC6Aqnsi/VEiRq8uOloSMOvv2w=; b=N8DZ2RI2vJcyusU/mAbVCeVwU+
+ u68oGzwfS7BzjstIpt9J2ebQBWjTjYufo70BUS/MwERJLfEp26Jmq3dkHY9Xi7pq9EUNvGv7CnUmC
+ grqe6XXi3ncUu0Yer6sctzTq7pXnncHl0c/ERfN1gX+nT/RqXuSxOV/5EQ3oZfqFLN4Y=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=YP+HixCNTVvtIn71grC6Aqnsi/VEiRq8uOloSMOvv2w=; b=W
+ yA06vRB/iZB2XLrXqo3GujAeSRQUlEeMLvVAzjQu/ghd9aR1QRQUOhua9IBXjounR2JhtYGEq/Hw9
+ q2uxpIzNeAcmLe/JKDvhpuYwLFVhZimItPm4C9AXPuQEfZeznYSoZbRTrtMHG2m6rQlcRCFqusqBm
+ YU8ML4WGkfWFOL6M=;
+Received: from m16.mail.126.com ([220.197.31.8])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vnCTT-0004W2-Qk for linux-f2fs-devel@lists.sourceforge.net;
+ id 1vnCTT-0004W0-9P for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 03 Feb 2026 09:13:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
- s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=U5
- IAZOiZv36aqaRxt4HG5BNNYkjGILnO18MppaP6+40=; b=TlFvv7PrUPeiy0w+e4
- 5/ADLDDCL6swhMKZ364FLs4rlekHtzky8WFLT/HpXw09v4sHUyVmW8qYpDpXlGoM
- lXVOi0d1gj2PiUzOQo0IiFZB24vc1s3zz9VDZvaB1fZDLS27DVw4gERw32EsDEBj
- G9b2Qtuc69p4hgOsdCXuhN5Hs=
+ s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=YP
+ +HixCNTVvtIn71grC6Aqnsi/VEiRq8uOloSMOvv2w=; b=L4/Zi5LSqOJt/q0ime
+ v7tkmCr4lIcoUJp3Wq3ZdFOoeWpCHotJuEPLdEoxTAEBwxzYGf0OXGy7bTbT/ihp
+ 9VpeZRfzAzpbazFHC9KZyOYLkTrwoJq7vXNYMMLSzr96dePuA/QMkU2QXPr+W6Lt
+ ym980wqKRaZW4d27YKzxBE5z8=
 Received: from YLLaptop.. (unknown [])
  by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id
- _____wD3l2kivIFpOegGAA--.25117S4; 
- Tue, 03 Feb 2026 17:13:14 +0800 (CST)
+ _____wD3l2kivIFpOegGAA--.25117S2; 
+ Tue, 03 Feb 2026 17:13:07 +0800 (CST)
 From: Nanzhe Zhao <nzzhao@126.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	linux-f2fs-devel@lists.sourceforge.net
-Date: Tue,  3 Feb 2026 17:12:49 +0800
-Message-Id: <20260203091256.854842-3-nzzhao@126.com>
+Date: Tue,  3 Feb 2026 17:12:47 +0800
+Message-Id: <20260203091256.854842-1-nzzhao@126.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260203091256.854842-1-nzzhao@126.com>
-References: <20260203091256.854842-1-nzzhao@126.com>
 MIME-Version: 1.0
-X-CM-TRANSID: _____wD3l2kivIFpOegGAA--.25117S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tryfZF13ury7AF1rtFWrXwb_yoW8Ar1rpF
- ZrG3WrGr4DuFy8Wrn7tF15Zr1Y9a4xKw4UZFZ7Xw4kJ3WDX34Syr1rK347ZF18trWrJryI
- qF4IkFyxur15JFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRy7KsUUUUU=
+X-CM-TRANSID: _____wD3l2kivIFpOegGAA--.25117S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CF45GF15Wry3Zr1DJr1fZwb_yoW8KFWxpF
+ Wakr1fGrn5Jr17ZrnxAF1jqr1Fgw48Jr4UJFWxJryIq3W5Ar1rWF1kt340qry7JryfJr1f
+ Za1UAryxWF1UJaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziJPEfUUUUU=
 X-Originating-IP: [58.240.165.118]
-X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBsQrzw2mBvCqXRQAA3n
-X-Headers-End: 1vnCTT-0004W2-Qk
-Subject: [f2fs-dev] [RFC PATCH v1 2/5] f2fs: Introduce
- f2fs_inode_may_use_large_folio
+X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBowPxwWmBvCMAMgAA3V
+X-Headers-End: 1vnCTT-0004W0-9P
+Subject: [f2fs-dev] [RFC PATCH v1 0/5] Support large folios buffered write
+ for regular files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,56 +93,68 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Introudce a helper function to check whether an inode may use
-large folio for scalability.
+This RFC PATCH series adds support for large folio buffered writes
+to regular readable and writable files in f2fs with exception of 
+atomic/compressed/inlined files. 
+Since adapting page writeback to support large folios is relatively complex, 
+it is not included in this series.
 
-Signed-off-by: Nanzhe Zhao <nzzhao@126.com>
+I ran simple `dd` tests on a Pixel 6 device. 
+During the tests, dirty page writeback was temporarily disabled.
+---------------------------------------------------------------------------------
+Test:
+echo 100 > /proc/sys/vm/dirty_ratio
+echo 100 > /proc/sys/vm/dirty_background_ratio
+echo 0 > /proc/sys/vm/dirty_writeback_centisecs
+echo 8640000 > /proc/sys/vm/dirty_expire_centisecs
+
+Before large folio enable:
+oriole:/data # dd if=/dev/zero of=lf.c bs=2M count=500
+500+0 records in
+500+0 records out
+1048576000 bytes (0.9 G) copied, 0.815 s, 1.1 G/s
+
+After large folio enable:
+oriole:/data # dd if=/dev/zero of=lf.c bs=2M count=500                                               
+500+0 records in
+500+0 records out
+1048576000 bytes (0.9 G) copied, 0.330 s, 2.9 G/s
+---------------------------------------------------------------------------------
+Note: 
+- bs=2M means always allocating the largest folio order in buffered write,
+  so it represents a theoretical maximum write performance.
+- Because large folio support can only be enabled for files via f2fs_iget,
+  it may be more convenient for testing to create a large file first and then 
+  immediately reboot the device so that the inode is reloaded.
+
+**Discussion:**  
+I would like to add fault injection to `f2fs_write_end` to simulate short writes 
+(copied != len). 
+However, I am concerned that directly adding time_to_inject inside f2fs_write_end 
+and returning 0 may cause generic_perform_write to loop forever during testing. 
+Better ideas are appreciated.
+
+Thanks.
+
 ---
- fs/f2fs/f2fs.h  | 16 ++++++++++++++++
- fs/f2fs/inode.c |  3 +--
- 2 files changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index bdcd446f6b18..e5b8f5374666 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -5035,6 +5035,22 @@ static inline bool f2fs_quota_file(struct f2fs_sb_info *sbi, nid_t ino)
- 	return false;
- }
- 
-+static inline bool f2fs_inode_may_use_large_folio(struct inode *inode)
-+{
-+	if (f2fs_has_inline_data(inode))
-+		return false;
-+
-+	if (f2fs_compressed_file(inode))
-+		return false;
-+
-+	if (f2fs_is_atomic_file(inode))
-+		return false;
-+
-+	if (f2fs_quota_file(F2FS_I_SB(inode), inode->i_ino))
-+		return false;
-+	return true;
-+}
-+
- static inline bool f2fs_block_unit_discard(struct f2fs_sb_info *sbi)
- {
- 	return F2FS_OPTION(sbi).discard_unit == DISCARD_UNIT_BLOCK;
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index b8cf1fab6391..e2e85ac9c44e 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -620,8 +620,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
- 		inode->i_op = &f2fs_file_inode_operations;
- 		inode->i_fop = &f2fs_file_operations;
- 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
--		if (IS_IMMUTABLE(inode) && !f2fs_compressed_file(inode) &&
--		    !f2fs_quota_file(sbi, inode->i_ino))
-+		if (f2fs_inode_may_use_large_folio(inode))
- 			mapping_set_folio_min_order(inode->i_mapping, 0);
- 	} else if (S_ISDIR(inode->i_mode)) {
- 		inode->i_op = &f2fs_dir_inode_operations;
+
+
+Nanzhe Zhao (5):
+  f2fs: Move f2fs_folio_state to f2fs.h
+  f2fs: Introduce f2fs_inode_may_use_large_folio
+  f2fs: Preallocate partial-write blocks for large-folio write
+  f2fs: Support large folios buffered write
+  f2fs: Make folio->private flags work with folio state
+
+ fs/f2fs/data.c  | 226 ++++++++++++++++++++++++++++++++++++++++++++----
+ fs/f2fs/f2fs.h  |  58 ++++++++++---
+ fs/f2fs/file.c  |  21 +++--
+ fs/f2fs/inode.c |   3 +-
+ 4 files changed, 272 insertions(+), 36 deletions(-)
+
+
+base-commit: bc367775f60214312befa33f101b31fe74bba48a
 -- 
 2.34.1
 
