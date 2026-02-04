@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0B7EFE9D3ED
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Feb 2026 14:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D56CDEA7942
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Feb 2026 19:03:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=R0SA70nkWmrSwoOccyFjyXThPSlrJtuHgxHz7VehJFk=; b=L7xJxmAV9HDv0W9KIPNavWlNJV
-	ovrlcpi8YdZJrgk6CNIrHR6gn6SeDS8vmKtI9ECFRKqgbNNm8SDUsTE5s37QAdTLOIITnfYc1PaX+
-	q3yCwFfuB/1xFWy5SE/lTQPpnBEzvyd9+9gQfBj0W4CSHTCN+IegV96J4pfJsMebJT5o=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=2aTMO8cXWml7hXV+9YGDoPiaZGgyXAh8AK15LpoX5ws=; b=daoiAz2Zu+HtcemY6fcQ3moLCP
+	ieAKtR8gMu6WqCzfTafnenDkHdamblgEF38JtVmtgSOiizmI3gDWx56J8OZOZkQt6lIJFUF3zyu0j
+	wzUf8BJw00yQQZcRhVZ6fxB6boAHHJpwzk/8azn0cU0Mtu7PWp1ObUtL/2n6iO8mhvxM=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vneH7-00073f-Jl;
-	Wed, 04 Feb 2026 14:54:38 +0000
+	id 1vni9u-0002Zx-4L;
+	Wed, 04 Feb 2026 19:03:26 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1vneGy-00073R-SC
+ (envelope-from <ebiggers@kernel.org>) id 1vni9V-0002Z3-5F
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Feb 2026 14:54:30 +0000
+ Wed, 04 Feb 2026 19:03:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NSFwipYtJGppFo1niPpuRr+jtuErqeP9kDtjaWPeRb4=; b=bnYdGjO7rv8rMQnRHDlqIKZxju
- A7ze+TbLlzyB501I/YK7tui7UxCNUQE2zKw7jwvKjykeDzG5c6exFnlEv7ke4BmZNCeGe5hwqYh9P
- 8L+F9VUzeuR9YhmB9a0/Mg6I/zLt4dmicFDd4rBTU7mtCY3y3NUpGAcaeZ5lfNZfZ4rA=;
+ bh=gcicpRnFZqDQuNdDeucMTRuFSM7KzgHOWhDLEwTr4jg=; b=hFGLihIWXHEdY+BVx5Lv16skkx
+ YGcVWf3840BAf7vp4o/UsxjqOadJ6otnda9elYtMzAKpo0vtbymuE8LVZXXYuXRzuIYYqRApE0D7F
+ qls4DskbFRu2kokvzUMul9V9BIR9tWQ32Nce50BCH+huagS4azuJIiqptC+uDFXBtprE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,36 +42,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=NSFwipYtJGppFo1niPpuRr+jtuErqeP9kDtjaWPeRb4=; b=L6wtB1l8F8iMhSP0+0nnrnhXQT
- TJUuiNJmNgJ3mZW0g2D4Q77lpgxUDZ8LJt4KhYmVS1OD5/iNExF5GxmjwXoy2mAkLMfcTe0mWxgWY
- zc8+MWCCo9GuKZQrW+t8to1kyLmbieXNPXRbnNd8rCJY/9jIULAwopwtbenJMekaSBns=;
-Received: from casper.infradead.org ([90.155.50.34])
+ bh=gcicpRnFZqDQuNdDeucMTRuFSM7KzgHOWhDLEwTr4jg=; b=GapLIu7X6ImWqoN4vSPAP44fLX
+ AW0I1+LUBZH7TZIpUYiAEskDbXJke9caPf6zljogILsOVb4hy0s3pHMeZoO3fNrwoYDh4SMunYMpj
+ MezJoWqKUBlONWP+iR7gecWVX9MGTSJB/Kk8w+r/E+M0Kcw/h80aMUSP4jlO7d+Xfezg=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vneGy-0002pL-OG for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Feb 2026 14:54:29 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=NSFwipYtJGppFo1niPpuRr+jtuErqeP9kDtjaWPeRb4=; b=oxZnN3K5faDjoL5v5OXKHO0/5B
- ALVraMASeOdO1r04MRFOfO4rurUs6RmI865xOx4yso0ar7+P20MsCkTabs1ya5R7FJMXs0ce/Ez/q
- rbw7GcQz34Rv1Uu4uCXSYS/vjKmtDX7MWB90vI8Y6XrnLPQCQXb9VQLbaHpe2XJ1FOsYrzz4EAtTD
- 0pejcPBsHfrRajM4IfKrqCUr02C6nMxD982pRJhIo8toILLn2rYjgRPmHchK/LCdN/5qjKs6HNCj7
- f/o5jziZ7q20pft0KQB2Xb21eynAKosZ7IXbGzJcIEHSVLJzQUdCffAiCsqVd3oLW659nU25c/4ST
- czQtWaFQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red
- Hat Linux)) id 1vneGo-00000002DxS-1MWR;
- Wed, 04 Feb 2026 14:54:18 +0000
-Date: Wed, 4 Feb 2026 14:54:18 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <aYNdmk1EE5etfUYE@casper.infradead.org>
+ id 1vni9U-0000Vu-Gv for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 04 Feb 2026 19:03:01 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 265E343C37;
+ Wed,  4 Feb 2026 19:02:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CF1DC4CEF7;
+ Wed,  4 Feb 2026 19:02:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1770231775;
+ bh=fvuVHItsYXpPWArU/0i6pDSN5I363ZzcoNvZNPppv2A=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=iofq7J9ZB5Q1dLAB7Qy2uln0MXvVcL8qlvWkKB9VOYrtveQA4p5R4JTmTGe9Gx4mC
+ Ly679d9E5LOL2n1FGUeWmohBZgFgVIkdBvw+55f1to50oLS5fY9G4zPv+d8uBnGhzo
+ LmRcgveKUt7s6aE5+Pbkm904SsxtQlB04KUAu9gbIY+U0c0q7pTnP7rUIE6DY7CvT7
+ AWNUxuB028+w9gFncQbilhM43+W4aUnf0kqw0ju5I8u+DZUqUGksc3l8vdRI8X2u9n
+ YEUuj8GIaw8EwBwmU7aB8JU/OP0avF4KzqkYdpw5Kzh4D/gZTea5d4fWopgA3+BMmk
+ oE3OICQWQ9TCg==
+Date: Wed, 4 Feb 2026 11:02:18 -0800
+To: Matthew Wilcox <willy@infradead.org>
+Message-ID: <20260204190218.GA2193@sol>
 References: <20260202060754.270269-1-hch@lst.de> <20260202211423.GB4838@quark>
+ <aYNdmk1EE5etfUYE@casper.infradead.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260202211423.GB4838@quark>
-X-Headers-End: 1vneGy-0002pL-OG
+In-Reply-To: <aYNdmk1EE5etfUYE@casper.infradead.org>
+X-Headers-End: 1vni9U-0000Vu-Gv
 Subject: Re: [f2fs-dev] fsverity speedup and memory usage optimization v5
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -84,6 +86,9 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: Eric Biggers via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Eric Biggers <ebiggers@kernel.org>
 Cc: fsverity@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
  Theodore Ts'o <tytso@mit.edu>, Andrey Albershteyn <aalbersh@redhat.com>,
  linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
@@ -95,26 +100,41 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Feb 02, 2026 at 01:14:23PM -0800, Eric Biggers wrote:
-> - Used the code formatting from 'git clang-format' in the cases where it
->   looks better than the ad-hoc formatting
+On Wed, Feb 04, 2026 at 02:54:18PM +0000, Matthew Wilcox wrote:
+> On Mon, Feb 02, 2026 at 01:14:23PM -0800, Eric Biggers wrote:
+> > - Used the code formatting from 'git clang-format' in the cases where it
+> >   looks better than the ad-hoc formatting
+> 
+> clang-format makes some bad choices.
+> 
+> >  static int ext4_mpage_readpages(struct inode *inode, struct fsverity_info *vi,
+> > -		struct readahead_control *rac, struct folio *folio)
+> > +				struct readahead_control *rac,
+> > +				struct folio *folio)
+> 
+> Aligning to the opening bracket is one of them.  If anything changes
+> in a subsequent patch (eg function name, whether or not it's static,
+> adding a function attribute like __must_check, converting the return
+> type from int to bool), you have to eitheer break the formatting or
+> needlessly change the lines which have the subsequent arguments.
+> 
+> Also, you've consumed an extra line in this case.  Just leave the
+> two tab indent, it's actually easier to read.
 
-clang-format makes some bad choices.
+Aligning to the opening bracket is the usual style as agreed on by the
+kernel community.  This should also be clear if you look at the existing
+style in all the files this patchset touches.  It's not done exclusively
+but is the more common way.  clang-format just follows that.
 
->  static int ext4_mpage_readpages(struct inode *inode, struct fsverity_info *vi,
-> -		struct readahead_control *rac, struct folio *folio)
-> +				struct readahead_control *rac,
-> +				struct folio *folio)
+It's 2026.  We generally shouldn't be formatting code manually.  We have
+better things to do.
 
-Aligning to the opening bracket is one of them.  If anything changes
-in a subsequent patch (eg function name, whether or not it's static,
-adding a function attribute like __must_check, converting the return
-type from int to bool), you have to eitheer break the formatting or
-needlessly change the lines which have the subsequent arguments.
+If you're going to insist on ad-hoc formatting of argument lists, you'll
+need to be more specific about where and how you want it to be done.  It
+certainly doesn't make sense in files that are already using the normal
+style exclusively, for example.
 
-Also, you've consumed an extra line in this case.  Just leave the
-two tab indent, it's actually easier to read.
-
+- Eric
 
 
 _______________________________________________
