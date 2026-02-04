@@ -4,78 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6E7FAEA7944
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Feb 2026 19:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E55B2EA7945
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  5 Feb 2026 02:46:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=LjioA6SC7LnZKoDd+B9vzTvLqqcE2tcdUE0wo8WLVaE=; b=AnQzlJC5/surqGMu+j/ic7gx+L
-	C5pgM6VdUkX59rW+z4UZ59T5rCaQemPvmfmevVdz1oFWCxpzYBoHG4ZKgTpOv3G+SqpgRmlHj6MCy
-	3B6nrqtjaboC3JRxOqqRbUcMqRTbVujvMQJ0QH5vybyN6aFI+7ulaPodmwfB1l2pUNpk=;
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=PEy21bMzFLcumPDLwhRuWe3zU2ruvFRQQ2sRLaGOMbw=; b=OtRdE934p2B5HVDJiAwcNKPO3V
+	VzG565/M4w4h7G4BzpV1vvlWZivro+0Dir21mRp5cMWmK65aRDaEzZR78/AAyjnaqU1NvrM7Q2jH5
+	Suk4pTGRx6A38Vah5FF90791N+czXj0mRu2JwhIWmRQrryC/wmuxjrtxrUgG4F+6Kngk=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vnihS-0002gu-KD;
-	Wed, 04 Feb 2026 19:38:06 +0000
+	id 1vnpNx-0006iU-Pu;
+	Thu, 05 Feb 2026 02:46:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1vnihR-0002gm-9w
+ (envelope-from <chao@kernel.org>) id 1vnpNv-0006iM-Pr
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Feb 2026 19:38:05 +0000
+ Thu, 05 Feb 2026 02:46:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=aE31GqQyE9gDY10tUnFzR/LoZ2t5tk0wNqg3fpBT8rM=; b=cLOIC9UYRS2/0/ZFhchH3zHE/H
- d2ukVbPObLszJAr1Wj4xVxc1ltpzP4E4+FtWEuctugq8HiJ0aP0snRlPFSHjFRutBVt3KyU8A1JOS
- IW7dQitXceaBn7MmP2sYVx10NtwGaY/PltOMS37UfBx3oUaFBwrksSpzeok7cunELFy4=;
+ bh=8WYMMv6vrhuUv9KYacpgJBV9VblWOWIhMnVrzm20F8E=; b=beZ/R2J50y41OSi2F22Tbo8flh
+ KnWFnh8If+bdqqbT0z/6JSVuohS8WquOee1fT5y6HInG8viRMLJefU6wH6IN/PKNSyHLWj6+H8Atn
+ 9mbMg3FaoacwclackAi+oCNW40MVhGienDFpTyWOzFmEgwujFECNzTYsAwTc2+x//+XU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=aE31GqQyE9gDY10tUnFzR/LoZ2t5tk0wNqg3fpBT8rM=; b=ZJa5+IhmI8UJ5A0PrsMktf+fCW
- CjU1EyGdptDT6Xdv879DMM1MRD7ndV+RGqUpFuevF0hEsH85P5SYJQ8yqVRbFfIe2Qw4ofMkBq3sD
- X+OAjTO1Pir/J4qPqaZK4eZFlJIrwEn28REbsDpFW+/XmpNZi9N30NQMuTBxWOnBqVxM=;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=8WYMMv6vrhuUv9KYacpgJBV9VblWOWIhMnVrzm20F8E=; b=F
+ AS+boH7K+Rq3rbaPXa7HtvoRPLkW1Ken0ORUXn2uoU6u4/TPYuK20A4/ifCNK0VYjJE8OfLA8+0nF
+ 5LGZUJy0r1GExMdm/SP6oEURU1UxkNpDunva/tkhdtgNpq1r1JYzVJqOF1Cs4rCPQ7REkhwLMp+WN
+ FyGqvgcJU43XByaE=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vnihQ-0002rl-Uw for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Feb 2026 19:38:05 +0000
+ id 1vnpNv-0000vj-2A for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 05 Feb 2026 02:46:23 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 9570843762;
- Wed,  4 Feb 2026 19:37:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED9D3C4CEF7;
- Wed,  4 Feb 2026 19:37:58 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id AE80D43212
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu,  5 Feb 2026 02:46:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 673CBC4CEF7;
+ Thu,  5 Feb 2026 02:46:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1770233879;
- bh=kyjQMwBA5XAF2Mj6r8AAUCzZzpsC581dYFsmNNFzZZo=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=px0JRhMbubuDAlbbU9kHpvQ9OnJd8hfxJgw0/Xa8qU5Cv/wjcRzjvB5WY6FQLroWB
- RQ0W5XzwgpLf19sgMeTrrzQ9IyvDIK3VHBVM1b6z/AfencfcWXCUWyOjGIipHfLjwq
- O35AQaMtYo8vAKTJrVYuOUHxB/X03l53A3H2tfg/LI/94SUYv0KWbeYRKQlpPgc4/Y
- WD0uS87AmlXmsD82B7fe7ylDJhB3jRDI6ugyPirHCOvFWGgtq1/hsJmFHRYKan2Lf/
- U3QRUg+4783Djq+QWiIX+WIngxuXAfL4HnSfcR6i4c3XCitmW+qAzzWKa0AUFvgt3u
- lpQxZP6c6gXzw==
-Date: Wed, 4 Feb 2026 11:37:22 -0800
-To: Matthew Wilcox <willy@infradead.org>
-Message-ID: <20260204193722.GB2193@sol>
-References: <20260202060754.270269-1-hch@lst.de> <20260202211423.GB4838@quark>
- <aYNdmk1EE5etfUYE@casper.infradead.org> <20260204190218.GA2193@sol>
- <aYOZdUTrvIjq82AE@casper.infradead.org>
+ s=k20201202; t=1770259577;
+ bh=qajNYh1cYAOxjGPeTY7J0Zy6nCZS9ZMhYi30+EVTHI4=;
+ h=From:To:Cc:Subject:Date:From;
+ b=CBWxg/uS54atrWl6dyPIaTvBFg5rdO08YR+Bgr30d+yKmkEThQAozwRnEDgENtNKf
+ qSyDD93BDIThvv7z/xrDSD88HU3JEf2KWVfp2Jt5vCzmVyCEY+2Hg7KU0oBDl0u3uC
+ PnJ9t92pzAbFllmrO3Ymj779FD/O67hlqylFB8xdJU29zZaQjbZkkb5qHh2I4IT8Hx
+ XYLKByyeGpwWbRjlw2+GiUSayV3gcmAW0lDTQknqDL4oEqLMxirTCBh7tVi+ZZHom0
+ 9eYx42MpT4wgddKcTE7cJb+Vxm3qvGNA42xwCwcWjxdUvIUsWVm1foWrmgC7i09jJ2
+ B30VIRJM5gCpg==
+To: jaegeuk@kernel.org
+Date: Wed,  4 Feb 2026 11:05:01 +0800
+Message-Id: <20260204030501.85441-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <aYOZdUTrvIjq82AE@casper.infradead.org>
-X-Headers-End: 1vnihQ-0002rl-Uw
-Subject: Re: [f2fs-dev] fsverity speedup and memory usage optimization v5
+X-Headers-End: 1vnpNv-0000vj-2A
+Subject: [f2fs-dev] [PATCH] f2fs: sysfs: introduce critical_task_priority
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,43 +84,148 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: fsverity@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
- Theodore Ts'o <tytso@mit.edu>, Andrey Albershteyn <aalbersh@redhat.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- Al Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
- David Sterba <dsterba@suse.com>, Jan Kara <jack@suse.cz>,
- linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
- linux-btrfs@vger.kernel.org
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Feb 04, 2026 at 07:09:41PM +0000, Matthew Wilcox wrote:
-> On Wed, Feb 04, 2026 at 11:02:18AM -0800, Eric Biggers wrote:
-> > Aligning to the opening bracket is the usual style as agreed on by the
-> > kernel community.
-> 
-> Says who?  I've been part of the kernel community since 1997.  I've
-> never heard of such a thing.
-> 
-> > It's 2026.  We generally shouldn't be formatting code manually.  We have
-> > better things to do.
-> 
-> I agree!  Stop changing it unnecessarily.
-> 
-> > If you're going to insist on ad-hoc formatting of argument lists, you'll
-> > need to be more specific about where and how you want it to be done.  It
-> 
-> Two tabs.  That's it.
+This patch introduces /sys/fs/f2fs/<disk>/critical_task_priority, w/
+this new sysfs interface, we can tune priority of f2fs_ckpt thread and
+f2fs_gc thread.
 
-I've changed ext4_mpage_readpages() and f2fs_mpage_readpages() to use
-your requested ad-hoc formatting.  What else you want, I'm not sure.  In
-the code I maintain I just do it the standard way.
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
+ fs/f2fs/checkpoint.c                    |  2 ++
+ fs/f2fs/f2fs.h                          |  4 ++++
+ fs/f2fs/gc.c                            |  2 ++
+ fs/f2fs/super.c                         |  1 +
+ fs/f2fs/sysfs.c                         | 17 +++++++++++++++++
+ 6 files changed, 34 insertions(+)
 
-- Eric
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index ea6474db8a31..c1d2b3fd9c65 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -987,3 +987,11 @@ Contact:	"Chao Yu" <chao@kernel.org>
+ Description:	f2fs can tune priority of thread which has entered into critical region covered by
+ 		f2fs rwsemphore lock. This sysfs entry can be used to control priority value, the
+ 		range is [100,139], by default the value is 120.
++
++What:		/sys/fs/f2fs/<disk>/critical_task_priority
++Date:		February 2026
++Contact:	"Chao Yu" <chao@kernel.org>
++Description:	It can be used to tune priority of f2fs critical task, e.g. f2fs_ckpt, f2fs_gc
++		threads, limitation as below:
++		- it requires user has CAP_SYS_NICE capability.
++		- the range is [100, 139], by default the value is 100.
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 4afa5d9a19fc..6dd39b7de11a 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -2158,6 +2158,8 @@ int f2fs_start_ckpt_thread(struct f2fs_sb_info *sbi)
+ 	}
+ 
+ 	set_task_ioprio(cprc->f2fs_issue_ckpt, cprc->ckpt_thread_ioprio);
++	set_user_nice(cprc->f2fs_issue_ckpt,
++			PRIO_TO_NICE(sbi->critical_task_priority));
+ 
+ 	return 0;
+ }
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a6e7368fc40a..aa0bca9f851d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1593,6 +1593,7 @@ enum node_type {
+ #define MAX_LOCK_ELAPSED_TIME		500
+ 
+ #define F2FS_DEFAULT_TASK_PRIORITY		(DEFAULT_PRIO)
++#define F2FS_CRITICAL_TASK_PRIORITY		NICE_TO_PRIO(0)
+ 
+ static inline int f2fs_test_bit(unsigned int nr, char *addr);
+ static inline void f2fs_set_bit(unsigned int nr, char *addr);
+@@ -2010,6 +2011,9 @@ struct f2fs_sb_info {
+ 	/* adjust priority for task which is in critical region covered by lock */
+ 	unsigned int lock_duration_priority;
+ 
++	/* priority for critical task, e.g. f2fs_ckpt, f2fs_gc threads */
++	long critical_task_priority;
++
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	struct kmem_cache *page_array_slab;	/* page array entry */
+ 	unsigned int page_array_slab_size;	/* default page array slab size */
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 60378614bc54..f46b2673d31f 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -234,6 +234,8 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
+ 		return err;
+ 	}
+ 
++	set_user_nice(gc_th->f2fs_gc_task,
++			PRIO_TO_NICE(sbi->critical_task_priority));
+ 	return 0;
+ }
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index d5cf7265e5d3..1a755997aff5 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4340,6 +4340,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 	sbi->max_lock_elapsed_time = MAX_LOCK_ELAPSED_TIME;
+ 	sbi->adjust_lock_priority = 0;
+ 	sbi->lock_duration_priority = F2FS_DEFAULT_TASK_PRIORITY;
++	sbi->critical_task_priority = F2FS_CRITICAL_TASK_PRIORITY;
+ 
+ 	sbi->sum_blocksize = f2fs_sb_has_packed_ssa(sbi) ?
+ 		4096 : sbi->blocksize;
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 3a272e7edf23..5fbfdc96e502 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -969,6 +969,21 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 		return count;
+ 	}
+ 
++	if (!strcmp(a->attr.name, "critical_task_priority")) {
++		if (t < NICE_TO_PRIO(MIN_NICE) || t > NICE_TO_PRIO(MAX_NICE))
++			return -EINVAL;
++		if (!capable(CAP_SYS_NICE))
++			return -EPERM;
++		sbi->critical_task_priority = t;
++		if (sbi->cprc_info.f2fs_issue_ckpt)
++			set_user_nice(sbi->cprc_info.f2fs_issue_ckpt,
++					PRIO_TO_NICE(sbi->critical_task_priority));
++		if (sbi->gc_thread && sbi->gc_thread->f2fs_gc_task)
++			set_user_nice(sbi->gc_thread->f2fs_gc_task,
++					PRIO_TO_NICE(sbi->critical_task_priority));
++		return count;
++	}
++
+ 	__sbi_store_value(a, sbi, ptr + a->offset, t);
+ 
+ 	return count;
+@@ -1288,6 +1303,7 @@ F2FS_SBI_GENERAL_RW_ATTR(bggc_io_aware);
+ F2FS_SBI_GENERAL_RW_ATTR(max_lock_elapsed_time);
+ F2FS_SBI_GENERAL_RW_ATTR(lock_duration_priority);
+ F2FS_SBI_GENERAL_RW_ATTR(adjust_lock_priority);
++F2FS_SBI_GENERAL_RW_ATTR(critical_task_priority);
+ 
+ /* STAT_INFO ATTR */
+ #ifdef CONFIG_F2FS_STAT_FS
+@@ -1496,6 +1512,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(max_lock_elapsed_time),
+ 	ATTR_LIST(lock_duration_priority),
+ 	ATTR_LIST(adjust_lock_priority),
++	ATTR_LIST(critical_task_priority),
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(f2fs);
+-- 
+2.40.1
+
 
 
 _______________________________________________
