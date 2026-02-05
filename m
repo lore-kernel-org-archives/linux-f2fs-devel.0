@@ -4,75 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E55B2EA7945
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  5 Feb 2026 02:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0430AEC1EA5
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  5 Feb 2026 12:34:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=PEy21bMzFLcumPDLwhRuWe3zU2ruvFRQQ2sRLaGOMbw=; b=OtRdE934p2B5HVDJiAwcNKPO3V
-	VzG565/M4w4h7G4BzpV1vvlWZivro+0Dir21mRp5cMWmK65aRDaEzZR78/AAyjnaqU1NvrM7Q2jH5
-	Suk4pTGRx6A38Vah5FF90791N+czXj0mRu2JwhIWmRQrryC/wmuxjrtxrUgG4F+6Kngk=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:To:From:Message-ID:Date:MIME-Version:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=S8ExhgcAy2JDCYe8pdqmN6pFIt5OSmfmn7yoAyQom0o=; b=H49y4dvxBUvy3s5E5Dsb/1ZkIb
+	eudsoWa4KROUCwKYum2VtYMzDnAuwHVOztlI4NJPw3J/tFh7J0PBNlPVpyg4Tmv8ZcIYM3d5WjQdf
+	zsgohCjFzEf7YIGfYwv3hMH+mjEtMq8oDz4us3KKXbLKspEMAlpTZtuR1vkkTGoLfT6U=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vnpNx-0006iU-Pu;
-	Thu, 05 Feb 2026 02:46:25 +0000
+	id 1vnyZA-00071y-3L;
+	Thu, 05 Feb 2026 12:34:36 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vnpNv-0006iM-Pr
- for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 05 Feb 2026 02:46:23 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <3T46EaQkbANAEKL6w770DwBB4z.2AA270GE0DyA9F09F.yA8@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
+ id 1vnyZ8-00071s-JI for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 05 Feb 2026 12:34:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
+ MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8WYMMv6vrhuUv9KYacpgJBV9VblWOWIhMnVrzm20F8E=; b=beZ/R2J50y41OSi2F22Tbo8flh
- KnWFnh8If+bdqqbT0z/6JSVuohS8WquOee1fT5y6HInG8viRMLJefU6wH6IN/PKNSyHLWj6+H8Atn
- 9mbMg3FaoacwclackAi+oCNW40MVhGienDFpTyWOzFmEgwujFECNzTYsAwTc2+x//+XU=;
+ bh=FcfvDljY3acd7hIpi4WHccCegIthwUwLfJxJtltlxW0=; b=E6Gc0vQ2CQLLB4zVoyU+qTtZvk
+ Wv6GkkyxLkBI4DsqHo4ZX8m27P1l+d2l3kZjn8anG3XhigX4Lbsuro0Z4b8O8MDeKkNF3emby8T8w
+ 1H0ucCyKz4LORnmQt20G60y+KT8aJ5WGg/4A8VtKw19KNhD2gVKX96SrkTysz1XL8NgE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
+ :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=8WYMMv6vrhuUv9KYacpgJBV9VblWOWIhMnVrzm20F8E=; b=F
- AS+boH7K+Rq3rbaPXa7HtvoRPLkW1Ken0ORUXn2uoU6u4/TPYuK20A4/ifCNK0VYjJE8OfLA8+0nF
- 5LGZUJy0r1GExMdm/SP6oEURU1UxkNpDunva/tkhdtgNpq1r1JYzVJqOF1Cs4rCPQ7REkhwLMp+WN
- FyGqvgcJU43XByaE=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ List-Owner:List-Archive; bh=FcfvDljY3acd7hIpi4WHccCegIthwUwLfJxJtltlxW0=; b=g
+ XxdsoAEmv7xppINaODh80PhnSYO2gI+ckEWkwfNDO7WFKNWzR3a1wp7r7iYndHQSbLkD9VdfBuqqQ
+ irwjeddZqSfb2a2KUAd83T042EvVnMLy2Fd3Pfkiih7iWDJUhiMLORyMHEGnBHgxXd5EAHxgCe7bf
+ QBx8Mj+m7Qt+qjjk=;
+Received: from mail-oo1-f69.google.com ([209.85.161.69])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vnpNv-0000vj-2A for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 05 Feb 2026 02:46:23 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id AE80D43212
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1vnyZ8-0004JX-1r for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 05 Feb 2026 12:34:34 +0000
+Received: by mail-oo1-f69.google.com with SMTP id
+ 006d021491bc7-66304fd62ebso3666475eaf.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  5 Feb 2026 02:46:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 673CBC4CEF7;
- Thu,  5 Feb 2026 02:46:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1770259577;
- bh=qajNYh1cYAOxjGPeTY7J0Zy6nCZS9ZMhYi30+EVTHI4=;
- h=From:To:Cc:Subject:Date:From;
- b=CBWxg/uS54atrWl6dyPIaTvBFg5rdO08YR+Bgr30d+yKmkEThQAozwRnEDgENtNKf
- qSyDD93BDIThvv7z/xrDSD88HU3JEf2KWVfp2Jt5vCzmVyCEY+2Hg7KU0oBDl0u3uC
- PnJ9t92pzAbFllmrO3Ymj779FD/O67hlqylFB8xdJU29zZaQjbZkkb5qHh2I4IT8Hx
- XYLKByyeGpwWbRjlw2+GiUSayV3gcmAW0lDTQknqDL4oEqLMxirTCBh7tVi+ZZHom0
- 9eYx42MpT4wgddKcTE7cJb+Vxm3qvGNA42xwCwcWjxdUvIUsWVm1foWrmgC7i09jJ2
- B30VIRJM5gCpg==
-To: jaegeuk@kernel.org
-Date: Wed,  4 Feb 2026 11:05:01 +0800
-Message-Id: <20260204030501.85441-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ Thu, 05 Feb 2026 04:34:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1770294863; x=1770899663;
+ h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=FcfvDljY3acd7hIpi4WHccCegIthwUwLfJxJtltlxW0=;
+ b=UDd8XVfJiFPcaqjEtYERHJDQCP+288cJJmXlBJ0+Sv/YEIYO/fmYfqC+28LP0TTK+4
+ GA/2guPsE08uDxkO/7hf28G+t9D+o7s8wVFFypBZ6e2hVyau4KO/V/8mRmDTJXU9Ci+b
+ bIC/Bm6+mYvNK923t0GndCMOtnHAvHzddGo2Sqsb30Oe28oJ2UNuZWPqKbsgAEk89w1l
+ k66TivNIVmmeqnIow6bKZmPBCp0rj22bU4i04hsxx/7UL2k3+IWpqhiB70Dzmh8nH0Zf
+ CS+vl+CINxQldm1Zt8++UQ8PGC6m6N/mXBomSi+Hv/yp7l+Qryxe9aEuU/sZEy8BNu72
+ Eo4w==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXcQAcqkE4G35hMnG9aiBwJ1GDTsIzSyTf7p1Z7zvhmQVn4JKr1u/MggWgvongTAU4p2cB/2XSjq0p1+Eez5dlf@lists.sourceforge.net
+X-Gm-Message-State: AOJu0Yw3xR5O1ggq+b6d/x87uxvIY8ky6z/QC0eWQGSps+fcs5oOIa4d
+ PNIU/AkyNzm0BqeN/CzV01ZEftqpyjAy/dh6Uv66BAWSDTfSJXgym11LxNdUL1V9f+OgppyzyoF
+ 0pL+DH7GqSpcSm7w/o2GdXDWmQnIm/Cm8IGbjoABM9XrfI4t2aBILI8IBDko=
 MIME-Version: 1.0
-X-Headers-End: 1vnpNv-0000vj-2A
-Subject: [f2fs-dev] [PATCH] f2fs: sysfs: introduce critical_task_priority
+X-Received: by 2002:a05:6820:134c:b0:663:13ab:b80a with SMTP id
+ 006d021491bc7-66a23df1fc1mr2682134eaf.84.1770294863468; Thu, 05 Feb 2026
+ 04:34:23 -0800 (PST)
+Date: Thu, 05 Feb 2026 04:34:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69848e4f.050a0220.3b3015.0020.GAE@google.com>
+From: syzbot <syzbot+list47152ade7c935067cff8@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+ syzkaller-bugs@googlegroups.com
+X-Headers-End: 1vnyZ8-0004JX-1r
+Subject: [f2fs-dev] [syzbot] Monthly f2fs report (Feb 2026)
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,148 +95,43 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch introduces /sys/fs/f2fs/<disk>/critical_task_priority, w/
-this new sysfs interface, we can tune priority of f2fs_ckpt thread and
-f2fs_gc thread.
+Hello f2fs maintainers/developers,
 
-Signed-off-by: Chao Yu <chao@kernel.org>
+This is a 31-day syzbot report for the f2fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/f2fs
+
+During the period, 3 new issues were detected and 0 were fixed.
+In total, 9 issues are still open and 73 have already been fixed.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 1714    Yes   kernel BUG in f2fs_evict_inode (4)
+                  https://syzkaller.appspot.com/bug?extid=5c81eb8c0a380fa578b5
+<2> 1358    Yes   INFO: task hung in f2fs_balance_fs
+                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
+<3> 226     Yes   INFO: task hung in f2fs_issue_checkpoint (2)
+                  https://syzkaller.appspot.com/bug?extid=8a7eea50810efde15b0a
+<4> 2       Yes   INFO: task hung in f2fs_llseek
+                  https://syzkaller.appspot.com/bug?extid=942fb6ce3ac2843a1420
+
 ---
- Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
- fs/f2fs/checkpoint.c                    |  2 ++
- fs/f2fs/f2fs.h                          |  4 ++++
- fs/f2fs/gc.c                            |  2 ++
- fs/f2fs/super.c                         |  1 +
- fs/f2fs/sysfs.c                         | 17 +++++++++++++++++
- 6 files changed, 34 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index ea6474db8a31..c1d2b3fd9c65 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -987,3 +987,11 @@ Contact:	"Chao Yu" <chao@kernel.org>
- Description:	f2fs can tune priority of thread which has entered into critical region covered by
- 		f2fs rwsemphore lock. This sysfs entry can be used to control priority value, the
- 		range is [100,139], by default the value is 120.
-+
-+What:		/sys/fs/f2fs/<disk>/critical_task_priority
-+Date:		February 2026
-+Contact:	"Chao Yu" <chao@kernel.org>
-+Description:	It can be used to tune priority of f2fs critical task, e.g. f2fs_ckpt, f2fs_gc
-+		threads, limitation as below:
-+		- it requires user has CAP_SYS_NICE capability.
-+		- the range is [100, 139], by default the value is 100.
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 4afa5d9a19fc..6dd39b7de11a 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -2158,6 +2158,8 @@ int f2fs_start_ckpt_thread(struct f2fs_sb_info *sbi)
- 	}
- 
- 	set_task_ioprio(cprc->f2fs_issue_ckpt, cprc->ckpt_thread_ioprio);
-+	set_user_nice(cprc->f2fs_issue_ckpt,
-+			PRIO_TO_NICE(sbi->critical_task_priority));
- 
- 	return 0;
- }
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a6e7368fc40a..aa0bca9f851d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1593,6 +1593,7 @@ enum node_type {
- #define MAX_LOCK_ELAPSED_TIME		500
- 
- #define F2FS_DEFAULT_TASK_PRIORITY		(DEFAULT_PRIO)
-+#define F2FS_CRITICAL_TASK_PRIORITY		NICE_TO_PRIO(0)
- 
- static inline int f2fs_test_bit(unsigned int nr, char *addr);
- static inline void f2fs_set_bit(unsigned int nr, char *addr);
-@@ -2010,6 +2011,9 @@ struct f2fs_sb_info {
- 	/* adjust priority for task which is in critical region covered by lock */
- 	unsigned int lock_duration_priority;
- 
-+	/* priority for critical task, e.g. f2fs_ckpt, f2fs_gc threads */
-+	long critical_task_priority;
-+
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	struct kmem_cache *page_array_slab;	/* page array entry */
- 	unsigned int page_array_slab_size;	/* default page array slab size */
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 60378614bc54..f46b2673d31f 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -234,6 +234,8 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
- 		return err;
- 	}
- 
-+	set_user_nice(gc_th->f2fs_gc_task,
-+			PRIO_TO_NICE(sbi->critical_task_priority));
- 	return 0;
- }
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index d5cf7265e5d3..1a755997aff5 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4340,6 +4340,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->max_lock_elapsed_time = MAX_LOCK_ELAPSED_TIME;
- 	sbi->adjust_lock_priority = 0;
- 	sbi->lock_duration_priority = F2FS_DEFAULT_TASK_PRIORITY;
-+	sbi->critical_task_priority = F2FS_CRITICAL_TASK_PRIORITY;
- 
- 	sbi->sum_blocksize = f2fs_sb_has_packed_ssa(sbi) ?
- 		4096 : sbi->blocksize;
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 3a272e7edf23..5fbfdc96e502 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -969,6 +969,21 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return count;
- 	}
- 
-+	if (!strcmp(a->attr.name, "critical_task_priority")) {
-+		if (t < NICE_TO_PRIO(MIN_NICE) || t > NICE_TO_PRIO(MAX_NICE))
-+			return -EINVAL;
-+		if (!capable(CAP_SYS_NICE))
-+			return -EPERM;
-+		sbi->critical_task_priority = t;
-+		if (sbi->cprc_info.f2fs_issue_ckpt)
-+			set_user_nice(sbi->cprc_info.f2fs_issue_ckpt,
-+					PRIO_TO_NICE(sbi->critical_task_priority));
-+		if (sbi->gc_thread && sbi->gc_thread->f2fs_gc_task)
-+			set_user_nice(sbi->gc_thread->f2fs_gc_task,
-+					PRIO_TO_NICE(sbi->critical_task_priority));
-+		return count;
-+	}
-+
- 	__sbi_store_value(a, sbi, ptr + a->offset, t);
- 
- 	return count;
-@@ -1288,6 +1303,7 @@ F2FS_SBI_GENERAL_RW_ATTR(bggc_io_aware);
- F2FS_SBI_GENERAL_RW_ATTR(max_lock_elapsed_time);
- F2FS_SBI_GENERAL_RW_ATTR(lock_duration_priority);
- F2FS_SBI_GENERAL_RW_ATTR(adjust_lock_priority);
-+F2FS_SBI_GENERAL_RW_ATTR(critical_task_priority);
- 
- /* STAT_INFO ATTR */
- #ifdef CONFIG_F2FS_STAT_FS
-@@ -1496,6 +1512,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(max_lock_elapsed_time),
- 	ATTR_LIST(lock_duration_priority),
- 	ATTR_LIST(adjust_lock_priority),
-+	ATTR_LIST(critical_task_priority),
- 	NULL,
- };
- ATTRIBUTE_GROUPS(f2fs);
--- 
-2.40.1
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
 
 _______________________________________________
