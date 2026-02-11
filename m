@@ -4,78 +4,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E4EF1EB2718
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Feb 2026 21:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 30842EB596F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Feb 2026 07:05:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=7leFItwFXM5Thk5XXuocHkwQ948/wfVlcOA+xr/1Lbc=; b=HTBJPKeW0ncnPURsAnr04Vh55S
-	lJGsIpQwR3ISZz126+D2NMY9XiUODtRwwFVK9K/QlXZF/2ARlWhktYEMQyHNIogXEiSaqR4jOopZ8
-	rs8x2tRlw69hJFwV6jnT9ov6/liH3fkGuwjCdoikhSt68dRufb/OYtKyGwLQOVIgrpXc=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:References:MIME-Version:Message-Id:Date:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Owner;
+	bh=CueO9kXB2Zlh5prjP24ZSuXuDFBmGmoGaMVbmj4gkWE=; b=UqwoeQynDEMNoGBXlUSvp6iBAv
+	Uwp+F5E3r/QxRhTu0vvcDHF2EdlWAwC3K0JCZe8dcwZ4SeR+GCksHE/XG6LhfusN3IPoumShU+xh9
+	gk1e235wIWWI/iwNwzKC4+Me5zlMmzi/YS4eNdWRLe8J6JsdXQFyuv1AFz2hXSO3vIqU=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vpvHq-0001ee-HK;
-	Tue, 10 Feb 2026 21:28:46 +0000
+	id 1vq4IJ-0005S2-Tb;
+	Wed, 11 Feb 2026 07:05:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vpvHp-0001eX-9A
+ (envelope-from <kundan.kumar@samsung.com>) id 1vq4IH-0005Rt-FT
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Feb 2026 21:28:45 +0000
+ Wed, 11 Feb 2026 07:05:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
+ MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ObzWN8dpkPPmZM2wwyXo0Xp+ZYUiTl+iFhpffwMDDeY=; b=EU7njUd+nf5Xe7S6CAy37RHpnx
- QInSRhlJ+b02pP6YJqlcONi9WaczqPd+HBSTnP4xMSoV3TKH5wr6dEzkyJ3yXjGYBesJ9JP0g52TV
- L0vpcuqTvlFuRgcD+Uw4XnG1MK29l+JhLcqu3bXtKZCtUdeTQe/yubpn1zwnIMAO6vW8=;
+ bh=Sww2nmNF0f2l1AROtDDtiK9pmxid95q9qnlr0mGjEL8=; b=b0qHLVnxnJ1Rm/YctFnPyWREZ3
+ 21DK3/7pgU4uu+ldxS6b/xvh7LBU0y0xATRxH0QSYCoIEnGaq3XAiB6/Mv2ist2kIr4Zoc0XeQGIs
+ P2o4kEInnmDbEhmLvDmpF8RjH9h4/v3OuPXhE14HDGpV39GejNppOTvnRcq+ZS8eHSrk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ObzWN8dpkPPmZM2wwyXo0Xp+ZYUiTl+iFhpffwMDDeY=; b=UhyMsI5Et0RAGa4ppdcRQjtDLE
- FvwTmwPxAu85NQkZfyHDFZbvTxKUAMFGXnXiNoVOqHGk1uvy1ZEFaTMVIH9eu8EeuW4LU5XJpXy8C
- UQVHmLPofzIsg+TAi91Ym17U7TiGNhAtaLk/U60g0czHhT8/mcyAjvgw5rzipqWantZw=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ ;
+ h=References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id
+ :Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=Sww2nmNF0f2l1AROtDDtiK9pmxid95q9qnlr0mGjEL8=; b=E
+ ukX79WJR+PE5ctTvqUZzZECvgu7mVB9/b9OQDVgnq5josIOD4EC5OCedgZBLa0HxunoV6+EarFYOV
+ K21d3ofbaUg06i42lr3PYED8K2/70ce34Vm/zqv9jq9VzN2H/fjAD4CslRJWE8sBA+Qy/+7klT6vh
+ x3kjmGrcgaOz5pto=;
+Received: from mailout1.samsung.com ([203.254.224.24])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vpvHo-00051j-HI for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Feb 2026 21:28:45 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 3EA1444504
+ id 1vq4IG-0003Rs-Eb for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 11 Feb 2026 07:05:49 +0000
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+ by mailout1.samsung.com (KnoxPortal) with ESMTP id
+ 20260211070536epoutp012397f3f7742b82a056884011c489036e~TH1bS6GMI2070720707epoutp01q
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 10 Feb 2026 21:28:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18C52C19424;
- Tue, 10 Feb 2026 21:28:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1770758914;
- bh=wQHMv6Mf1rtk6NqvUFMPZ0OXiJzQwDvHAWYVzvrJtEQ=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=sPe1XVZm/jmZHjxj3u9FpnNrr48+ssMLMxS8n0ZKCVrdTXFT+gpMoEkonqjWLe3xy
- Vb9S8xM0j/boJx6eMCY/XLoZigZgnMJ50cerkXp2rOvH5NQf0jGvdXaFz0hhqhSltq
- 1Jw+eW6kiDy0IlHWjOGp6LmGN652SXnqw+Sro7PtAQG+eS28kONQsmlXDFjQgo/Cfn
- I20bVTnE3/XA4w9yfdnlABBwdA9Ondr3iQHPjEnu351/tqz6tnDmUWsuV2ZL5UkSs6
- W1a3duWkhLtAALJQSxH2Q3R4DMmtLEwW/oZ5sVpHm/viwshZSO/7vot5ohHdLgLfE0
- eUembh+vNO5UQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 84F9739E3B79; Tue, 10 Feb 2026 21:28:30 +0000 (UTC)
+ Wed, 11 Feb 2026 07:05:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com
+ 20260211070536epoutp012397f3f7742b82a056884011c489036e~TH1bS6GMI2070720707epoutp01q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+ s=mail20170921; t=1770793536;
+ bh=Sww2nmNF0f2l1AROtDDtiK9pmxid95q9qnlr0mGjEL8=;
+ h=From:To:Cc:Subject:Date:References:From;
+ b=Z8MWF8cFBdc+Lk5PdQvEI9KQUH4su6ltWppZLVMVlHWVpzEcNtF525FrcOkq2KLAV
+ ZnauzpyDNdgVbybNLl/eZQSsbQFOkLpOW3I+XZEdRwwVxLisQmLWX/2XhOrsIvxzBa
+ Ov3yoz01Qr5qYA9/nY4gYe+1MRS1uOT4Z9wSEiDU=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+ epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+ 20260211070535epcas5p284044f7b5912b7b17a0c0c72cdd9cbc9~TH1ai1tUF2597925979epcas5p2I;
+ Wed, 11 Feb 2026 07:05:35 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.86]) by
+ epsnrtp02.localdomain (Postfix) with ESMTP id 4f9qFp4J6Jz2SSKY; Wed, 11 Feb
+ 2026 07:05:34 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+ epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+ 20260211070533epcas5p32f50f317b20250bb61b1b5a0b3a2a5d9~TH1ZECz8e3259532595epcas5p3y;
+ Wed, 11 Feb 2026 07:05:33 +0000 (GMT)
+Received: from localhost.localdomain (unknown [107.99.41.245]) by
+ epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+ 20260211070531epsmtip27bd9061c934eb98c7caa294df028332b~TH1Wa7Jqk0204902049epsmtip2F;
+ Wed, 11 Feb 2026 07:05:30 +0000 (GMT)
+From: Kundan Kumar <kundan.kumar@samsung.com>
+To: jaegeuk@kernel.org, chao@kernel.org, agruenba@redhat.com,
+ trondmy@kernel.org, anna@kernel.org, hch@lst.de, brauner@kernel.org,
+ jack@suse.cz, viro@zeniv.linux.org.uk, djwong@kernel.org,
+ pankaj.raghav@linux.dev
+Date: Wed, 11 Feb 2026 12:30:53 +0530
+Message-Id: <20260211070057.22001-1-kundan.kumar@samsung.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Message-Id: <177075890907.3671709.18125640893352806832.git-patchwork-notify@kernel.org>
-Date: Tue, 10 Feb 2026 21:28:29 +0000
-References: <20260130132809.59707-1-chao@kernel.org>
-In-Reply-To: <20260130132809.59707-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1vpvHo-00051j-HI
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix lock priority inversion issue
+X-CMS-MailID: 20260211070533epcas5p32f50f317b20250bb61b1b5a0b3a2a5d9
+X-Msg-Generator: CA
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260211070533epcas5p32f50f317b20250bb61b1b5a0b3a2a5d9
+References: <CGME20260211070533epcas5p32f50f317b20250bb61b1b5a0b3a2a5d9@epcas5p3.samsung.com>
+X-Headers-End: 1vq4IG-0003Rs-Eb
+Subject: [f2fs-dev] [PATCH 0/4] Avoid filesystem references to writeback
+ internals
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,44 +109,41 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-nfs@vger.kernel.org, gost.dev@samsung.com, anuj20.g@samsung.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ gfs2@lists.linux.dev, mcgrof@kernel.org, vishak.g@samsung.com,
+ Kundan Kumar <kundan.kumar@samsung.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+The series introduces writeback helper APIs and converts f2fs, gfs2
+and nfs to stop accessing writeback internals directly.
 
-This series was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+As suggested by Christoph [1], filesystem code that directly accesses
+writeback internals is split out:
+[1] https://lore.kernel.org/all/20251015072912.GA11294@lst.de/
 
-On Fri, 30 Jan 2026 21:28:08 +0800 you wrote:
-> If userspace thread has held f2fs rw semaphore, due to its low priority,
-> it could be runnable or preempted state for long time, during the time,
-> it will block high priority thread which is trying to grab the same rw
-> semaphore, e.g. cp_rwsem, io_rwsem...
-> 
-> To fix such issue, let's detect thread's priority when it tries to grab
-> f2fs_rwsem lock, if the priority is lower than a priority threshold, let's
-> uplift the priority before it enters into critical region of lock, and
-> restore the priority after it leaves from critical region.
-> 
-> [...]
+No functional changes intended
 
-Here is the summary with links:
-  - [f2fs-dev,1/2] f2fs: fix lock priority inversion issue
-    https://git.kernel.org/jaegeuk/f2fs/c/07de55cbf576
-  - [f2fs-dev,2/2] f2fs: introduce trace_f2fs_priority_update
-    https://git.kernel.org/jaegeuk/f2fs/c/bc367775f602
+Kundan Kumar (4):
+  writeback: prep helpers for dirty-limit and writeback accounting
+  f2fs: stop using writeback internals for dirty_exceeded checks
+  gfs2: stop using writeback internals for dirty_exceeded check
+  nfs: stop using writeback internals for WB_WRITEBACK accounting
 
-You are awesome, thank you!
+ fs/f2fs/node.c              |  4 ++--
+ fs/f2fs/segment.h           |  2 +-
+ fs/gfs2/super.c             |  2 +-
+ fs/nfs/internal.h           |  2 +-
+ fs/nfs/write.c              |  4 ++--
+ include/linux/backing-dev.h | 11 +++++++++++
+ 6 files changed, 18 insertions(+), 7 deletions(-)
+
+
+base-commit: 05f7e89ab9731565d8a62e3b5d1ec206485eeb0b
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.25.1
 
 
 
