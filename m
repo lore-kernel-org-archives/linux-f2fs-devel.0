@@ -4,79 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id ACBA3E7BD92
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Feb 2026 11:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 81A07E7BDA4
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Feb 2026 11:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=BwYYd17rxbR12vI/VFewqc5z0cednB5TfpaOsYkixOw=; b=QN5D64OETd6ic0vY63Pb0EI3Us
-	UjP9xNbEy+wN7RDPsoodmpuS+7DrzFguOBxlCc7n89VwtBRKOIQbPs21Jzz68VLrvwecBVAoLG52U
-	2jJoNNdBY36paNNxD4ulmpH+fxHvR1ouCHDdkzB6DRX07sraqt3K53oKMkkwFZ5ymioY=;
+	bh=T3CDl8wezHBBw1KzMtqLIKY21UHi9BLPGWEUy+F0/Fw=; b=OXSjwkT4Au+Jic1t88qOHogzui
+	JXbqyh9xt5YOrNUWi1mQmzchuTNnDtsHm7lGee+WpRNS4npGqSx8PGAJRFEfAG2n5P6oSSfaCbhqd
+	mZkMRxGe3i7wt4j019oKzujahvGEm3ojc6ptkOqzXsLw+X9HCheCbRk/minGl3+bJOkI=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vrwll-0004qa-46;
-	Mon, 16 Feb 2026 11:28:01 +0000
+	id 1vrwmy-0004vW-53;
+	Mon, 16 Feb 2026 11:29:16 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <monty_pavel@sina.com>) id 1vrwlj-0004qL-7Q
+ (envelope-from <monty_pavel@sina.com>) id 1vrwmw-0004vN-9Y
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Feb 2026 11:27:59 +0000
+ Mon, 16 Feb 2026 11:29:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NucI4rUIfP0ilWQf8Mxv4+Yxofb3SiNAoBRPZ+0xg0k=; b=Gn4TnjiwmnZcQp4oH8CfKloWOA
- SJmIiL164Ll8QWA1a04KkLegOu7UZnitbXIPcZ2OmAZ9mqhvTWZDiuUNc9ZEmHpyiDSkX/ULK3NoG
- pjVG3h+Lgbg4kHK3QrVFiu7N0pLFDO50kOBYbBLI4Azk2dQI7DzEROKXsCGF+Pco4TjM=;
+ bh=CfvARkWSTO3N5ItJgj3aYFloorVfKdr+764UxnXWz4g=; b=DyF4dXavEN6APjKrD/NRMKK2E5
+ iEaO2Ok0UgUPXaPz5GcjtptBXsiqRHJlUiOhpvnYCYHrrqwfoJ6WqNdDdMahAp/9vd/tVynJOPG5V
+ lmYr5MRQcbPXBAD39pqsR2mic72Ftzf0Uvjehhl33D3j8rgaBFM2J7zLrOJQCJRircrs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=NucI4rUIfP0ilWQf8Mxv4+Yxofb3SiNAoBRPZ+0xg0k=; b=I
- uPOyCly7tplfJOTX8u9mSHljvgSEPzDeGgNEdwjXi5uzKvJXRE0Sq++Y/of/mKCvkKFzMxHNB+cFj
- TXum4JhMxKZJMK0bheIZHQZZen6EQGGaP08YQRy1SW1590pGO6sVSlSIFH19oqxHUS2tkKMSJhHkX
- 7dW/Kut0ENpBHWDk=;
-Received: from smtp153-141.sina.com.cn ([61.135.153.141])
+ List-Owner:List-Archive; bh=CfvARkWSTO3N5ItJgj3aYFloorVfKdr+764UxnXWz4g=; b=Y
+ 6hik6cdNT5ktRRks0yDK6lMaDbtAqXoSRHXvns0/mYc0B7gBSqPAxCNZguAHx8wuZ6N4z4bBvU9ic
+ vM/g3IjmBWfAM8msKg1ccLv/mqenv8RgwN/ifIcLH4tpB28T9GXaclvOloopUIi/awNypnJG7j6Cn
+ /BNHwNrfK7mCcJtk=;
+Received: from smtp153-163.sina.com.cn ([61.135.153.163])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vrwli-0005ct-1l for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 16 Feb 2026 11:27:59 +0000
+ id 1vrwmu-0005iG-Vo for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 16 Feb 2026 11:29:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208;
- t=1771241278; bh=NucI4rUIfP0ilWQf8Mxv4+Yxofb3SiNAoBRPZ+0xg0k=;
+ t=1771241353; bh=CfvARkWSTO3N5ItJgj3aYFloorVfKdr+764UxnXWz4g=;
  h=From:Subject:Date:Message-ID;
- b=ahJ6K30M2n6CGdbfIU1ADq2dnkrmWAtbJJbhELk9L/8J0RZ3Dr7XmWEzLW5yRtEN6
- KoaepOrVIxdrzmgRqS12IT8aydjcfBfqClMvZ+ltofh8UL4RXu0u6EGGjUMKfKT2hc
- kKhU/E0mO41JumLjMjUVCCHUaHonUl9w7kThCP1E=
+ b=XTc02bglUkGSx7hMYM5QXqSqYseZIzCmmBaV9Rd0Ss88xM587wIA/Xka5VP1pvBD5
+ g+5aiBgDCHcQnJwJgoZJLZzDeVuPcCiAH80FwYS/eKoIZaD4irbXpV4UIMK606hqdx
+ hRp2sk1deABOJzJbLUQihBj+18kfzw5402kfo9NY=
 X-SMAIL-HELO: localhost.localdomain
 Received: from unknown (HELO localhost.localdomain)([111.18.125.202])
- by sina.com (10.54.253.31) with ESMTP
- id 6992FF2E0000432C; Mon, 16 Feb 2026 19:27:44 +0800 (CST)
+ by sina.com (10.54.253.32) with ESMTP
+ id 6992FF7D00003C1B; Mon, 16 Feb 2026 19:29:03 +0800 (CST)
 X-Sender: monty_pavel@sina.com
 X-Auth-ID: monty_pavel@sina.com
 Authentication-Results: sina.com; spf=none smtp.mailfrom=monty_pavel@sina.com;
  dkim=none header.i=none;
  dmarc=none action=none header.from=monty_pavel@sina.com
-X-SMAIL-MID: 8961806816289
-X-SMAIL-UIID: 2355BAFADDFD42359CFB302DC35EC6ED-20260216-192744-1
+X-SMAIL-MID: 6562494456614
+X-SMAIL-UIID: 36BBCD939F794668BFB33F00E07EAFE8-20260216-192903-1
 From: Yongpeng Yang <monty_pavel@sina.com>
 To: Chao Yu <chao@kernel.org>,
 	Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Mon, 16 Feb 2026 19:27:37 +0800
-Message-ID: <20260216112737.67408-1-monty_pavel@sina.com>
+Date: Mon, 16 Feb 2026 19:28:42 +0800
+Message-ID: <20260216112841.67508-2-monty_pavel@sina.com>
 X-Mailer: git-send-email 2.52.0
 MIME-Version: 1.0
-X-Headers-End: 1vrwli-0005ct-1l
-Subject: [f2fs-dev] [PATCH] f2fs: invalidate block device page cache on
- umount
+X-Headers-End: 1vrwmu-0005iG-Vo
+Subject: [f2fs-dev] [PATCH] f2fs-tools: invalidate block device page cache
+ before reading metadata
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,48 +96,46 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 
-Neither F2FS nor VFS invalidates the block device page cache, which
-results in reading stale metadata. An example scenario is shown below:
+After the device is mounted, f2fs updates on-disk metadata without
+updating the block device page cache. As a result, f2fs-tools may read
+stale metadata from the page cache.
 
-Terminal A                  Terminal B
+For example:
 mount /dev/vdb /mnt/f2fs
 touch mx // ino = 4
 sync
-dump.f2fs -i 4 /dev/vdb// block on "[Y/N]"
-                            touch mx2 // ino = 5
-                            sync
-                            umount /mnt/f2fs
-                            dump.f2fs -i 5 /dev/vdb // block addr is 0
+dump.f2fs -i 4 /dev/vdb
+touch mx2 // ino = 5
+sync
+dump.f2fs -i 5 /dev/vdb // block addr is 0
 
-After umount, the block device page cache is not purged, causing
-`dump.f2fs -i 5 /dev/vdb` to read stale metadata and see inode 5 with
-block address 0.
+Since `dump.f2fs -i 4 /dev/vdb` has already populated the metadata area
+into the block device page cache, the cached pages remain resident in
+memory. After creating mx2, the page cache is not updated accordingly.
+Therefore, `dump.f2fs -i 5 /dev/vdb` reads stale metadata, and the
+physical block address of inode 5 is incorrectly reported as 0.
 
-This patch calls invalidate_bdev during umount to invalidate the block
-device page cache, preventing stale metadata from being read.
+This patch issues a BLKFLSBUF ioctl to the block device before reading
+metadata. The kernel then invalidates the block device page cache,
+ensuring that subsequent reads fetch uptodate metadata from disk.
 
 Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
 ---
- fs/f2fs/super.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ lib/libf2fs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1a755997aff5..39d3b52ceac1 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2091,6 +2091,12 @@ static void f2fs_put_super(struct super_block *sb)
- #if IS_ENABLED(CONFIG_UNICODE)
- 	utf8_unload(sb->s_encoding);
- #endif
-+	sync_blockdev(sb->s_bdev);
-+	invalidate_bdev(sb->s_bdev);
-+	for (i = 1; i < sbi->s_ndevs; i++) {
-+		sync_blockdev(FDEV(i).bdev);
-+		invalidate_bdev(FDEV(i).bdev);
-+	}
- }
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 1a496b7..31b5924 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -1027,6 +1027,7 @@ int get_device_info(int i)
+ 	}
  
- int f2fs_sync_fs(struct super_block *sb, int sync)
+ 	dev->fd = fd;
++	ioctl(fd, BLKFLSBUF);
+ 
+ 	if (c.sparse_mode && i == 0) {
+ 		if (f2fs_init_sparse_file()) {
 -- 
 2.52.0
 
