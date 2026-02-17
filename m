@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 40F08E9A03B
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Feb 2026 21:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E91A5E9A04A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Feb 2026 21:14:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=MwjwjgtvcuZAeaI1A8iZujCXkjrJ/XIMIF/xY1zOHyQ=; b=habIfvt0kTbdlse4b4nt1RAN5/
-	hxVe/zjgE8VrCE54xiMWEwhnMHSH8MDdbenOR10ZN8cOQ2Abh8nMpOQ99wrtD+apGHoHTRQEBE/XT
-	+wWy8YKuZdN/T3qcEADSdQHtB8AUiIEmLbX7B8n6pQ8wpeuci68Vst0pQFjEV7WAMzuQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=uRyENaG/I7rTr9YS10rGHj+J6VUuiXjwQU3c/I3gsNY=; b=Q52ja7RxOY5FBAKKxY8m9p445F
+	XHtpWEm8XbTgpVrSgdP/I3ta++4YJsIet53VNXnfBsYmJPa9NygjmHyTXHxC8ksn8dfOkSafZJT3Q
+	eJWZmAVFwdSOidS6OgagKDkpKURuQZr3WBe8dRq42wxc/cH2XnhVx4GKYiaQQMRV4glM=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vsSP8-0004IL-3g;
-	Tue, 17 Feb 2026 21:14:46 +0000
+	id 1vsSPC-0007xg-Hf;
+	Tue, 17 Feb 2026 21:14:50 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vsSP7-0004I9-Co
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1vsSPB-0007xa-6R
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 17 Feb 2026 21:14:46 +0000
+ Tue, 17 Feb 2026 21:14:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ScMEDmB076+hqZ+ps1vGqxbfDfH+movYOrW9hNYmRkI=; b=QkTMiSOzwUShbCC7PMf1i3mNED
- y0021d7w8sJJlfTh0GYzx/O4Xpjn2nxjMUe4qexID8Nl14x1a3yvn42RazYeW+T3b5uY55w0KIpSP
- 3RkxOGQTePtFejgJXSQQqOn1Oix5HFinvZPTSkPxipBp/Ao1QL1KpiKR2UE8+aa38iJ0=;
+ bh=/QAFZrzsR3b01tUvyixH463bVn8gaQeXSmMleluN4G8=; b=TWWU4bxz7isWeUhVjnYEFFWqbJ
+ d/E3HzeLDL7d1KG3JJcg+NraqKG2F+E+6dpO173HmhgfZ6qm4DVYnoFpHrpeX1Iag+aJLHtZxc9yu
+ FahXr8+kUlgfuT3H66dWftVG6KPkVGpE5iNgwOC4bwmwx1sr95HVaJjSfQGPt8tjC0vU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ScMEDmB076+hqZ+ps1vGqxbfDfH+movYOrW9hNYmRkI=; b=f3AAV1XsblCih8ApW4MmqT7+Rf
- Sec0ZunCuZdkPElWrm9nyksbg+WZddBtl0x1iCOcI4dtWmk6e5som1t3hpyoTf944SLHNJyxLUOgx
- KGj1nPwrnPO/skpyJcELEtRCwnzA4HseeTNRz7zj6NIpHURVU6aPydvbCOB8lh8h7JNk=;
+ bh=/QAFZrzsR3b01tUvyixH463bVn8gaQeXSmMleluN4G8=; b=jpR/Sw9/ej/HYoxifbnvXwUL+h
+ t6DXWNkuHwmSEDptdN/fPTBcFXjLTcvMcHotQ50l0L3XS6utuX5wZeTqe03ggnhXrck+Lynv4o6NK
+ 49PpwGPVPgYCzMIlJ9w4SHDTkIUXbPm8UiqT/mqqZexkiQ1pgZNK5haDfkfAcgaaJIjc=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vsSP7-0001TI-EM for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 17 Feb 2026 21:14:46 +0000
+ id 1vsSPA-0001TO-FE for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 17 Feb 2026 21:14:49 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 2CFE9444EF;
- Tue, 17 Feb 2026 21:14:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0374CC4CEF7;
- Tue, 17 Feb 2026 21:14:35 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 305A643B44;
+ Tue, 17 Feb 2026 21:14:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A0DCC19425;
+ Tue, 17 Feb 2026 21:14:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1771362875;
- bh=rF0onOkRJ1MrR79ZRlAH0saur24ktYQyPGIU00QVPCI=;
+ s=k20201202; t=1771362878;
+ bh=SWr3Pg6zIeu2S3Z6UDsk8BzZU6tf527GPJ41POMlghM=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=obNAHU30KeK7e4E+sJrNxIjHjieqmvasFe6OLCrFOzjIJ/x/ojJyR0JO/ZkJX3uKX
- tbWWtrc5dHY8LwitoshVEtU/1kxURSuzZIjO8r6uOdGHN18+12Urb+dFuH67HYbwhT
- DI/Yw/Kr77gPExDFVz6ed7SpTm8irFrx3L9YGbh4TpucAbeBjCbzUo8hygal10yJRL
- xBSwgaiQww96d3ZVpu08zOJmu+zi9YB6vCrQNEcrYCrJQasyYZ2peWj5ctsXwB1q7s
- 4MajCpqM0F2EM1gDpyQG2Glw6Qc+6LCZgMx4vt+uN6/sO5VpYO1WkvlgkjKbwgyU8D
- SJBJRAHiqaIeQ==
+ b=qME5lVPCgbs75GtVkYDVSedStUuy5Pu7iKCY4IKu3xqN3EcQE+Oh5yA77hoZy7VyU
+ +0wZZYMpZQVXM9oVuFBmRCNz9ULENuT2B5em0ouDg88Yb0OXaPujVB/GBPkgNNMpHr
+ EhgPO+uLpu1WI515RTCnoSYcSuoUoWHPdRcl280BUTS4HjHiimnSyoFiD+9+NmEu7s
+ 4m0WVXB/a1C6i48qotqtPrvf49sFdMixg5MNCldkNycO7JhTW+IJtnP0WEfZw+8dYi
+ 1uYBY6iDz7huxRyc2w6LATusfRgMkVW0RAKYcp9Uufer3E7jADONKO2Apo8cM0wFiU
+ pB1OIFY+N5Jzg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 0B0D13806667; Tue, 17 Feb 2026 21:14:28 +0000 (UTC)
+ 0B1123806667; Tue, 17 Feb 2026 21:14:31 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <177136286684.643511.2911265753074075940.git-patchwork-notify@kernel.org>
-Date: Tue, 17 Feb 2026 21:14:26 +0000
-References: <20251124234806.75216-1-ckulkarnilinux@gmail.com>
-In-Reply-To: <20251124234806.75216-1-ckulkarnilinux@gmail.com>
-To: Chaitanya Kulkarni <ckulkarnilinux@gmail.com>
-X-Headers-End: 1vsSP7-0001TI-EM
-Subject: Re: [f2fs-dev] [PATCH V3 0/6] block: ignore
- __blkdev_issue_discard() ret value
+Message-Id: <177136286957.643511.1991968143318289235.git-patchwork-notify@kernel.org>
+Date: Tue, 17 Feb 2026 21:14:29 +0000
+References: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
+In-Reply-To: <20260108-setlease-6-20-v1-0-ea4dec9b67fa@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+X-Headers-End: 1vsSPA-0001TO-FE
+Subject: Re: [f2fs-dev] [PATCH 00/24] vfs: require filesystems to explicitly
+ opt-in to lease support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,13 +90,34 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: axboe@kernel.dk, dm-devel@lists.linux.dev, kch@nvidia.com, sagi@grimberg.me,
- linux-xfs@vger.kernel.org, linux-block@vger.kernel.org, cem@kernel.org,
- snitzer@kernel.org, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-raid@vger.kernel.org, song@kernel.org, mpatocka@redhat.com,
- jaegeuk@kernel.org, bpf@vger.kernel.org, yukuai@fnnas.com, hch@lst.de,
- agk@redhat.com
+Cc: lucho@ionkov.net, shaggy@kernel.org, alex.aring@gmail.com, jack@suse.cz,
+ pc@manguebit.org, linux-xfs@vger.kernel.org, dhavale@google.com,
+ martin@omnibond.com, yuezhang.mo@sony.com, al@alarsen.net, amir73il@gmail.com,
+ jfs-discussion@lists.sourceforge.net, linux-unionfs@vger.kernel.org,
+ almaz.alexandrovich@paragon-software.com, clm@fb.com, adilger.kernel@dilger.ca,
+ guochunhai@vivo.com, idryomov@gmail.com, ronniesahlberg@gmail.com,
+ linux-mtd@lists.infradead.org, hubcap@omnibond.com, linux-cifs@vger.kernel.org,
+ xiubli@redhat.com, zbestahu@gmail.com, miklos@szeredi.hu, richard@nod.at,
+ mark@fasheh.com, linux-doc@vger.kernel.org, hughd@google.com,
+ willy@infradead.org, ntfs3@lists.linux.dev, hch@infradead.org,
+ joseph.qi@linux.alibaba.com, devel@lists.orangefs.org, linux-mm@kvack.org,
+ slava@dubeyko.com, linux-btrfs@vger.kernel.org, xiang@kernel.org,
+ linux-ext4@vger.kernel.org, salah.triki@gmail.com, cem@kernel.org,
+ asmadeus@codewreck.org, sprasad@microsoft.com, linux_oss@crudebyte.com,
+ linux-nfs@vger.kernel.org, tom@talpey.com, ocfs2-devel@lists.linux.dev,
+ bharathsm@microsoft.com, linux-nilfs@vger.kernel.org, dsterba@suse.com,
+ viro@zeniv.linux.org.uk, baolin.wang@linux.alibaba.com,
+ jefflexu@linux.alibaba.com, jaegeuk@kernel.org, ceph-devel@vger.kernel.org,
+ ericvh@kernel.org, konishi.ryusuke@gmail.com, hirofumi@mail.parknet.co.jp,
+ agruenba@redhat.com, hansg@kernel.org, gfs2@lists.linux.dev,
+ brauner@kernel.org, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu,
+ luisbg@kernel.org, nico@fluxnic.net, linux-erofs@lists.ozlabs.org,
+ v9fs@lists.linux.dev, corbet@lwn.net, samba-technical@lists.samba.org,
+ linux-kernel@vger.kernel.org, linkinjeon@kernel.org, sfrench@samba.org,
+ chuck.lever@oracle.com, lihongbo22@huawei.com, anna@kernel.org, jack@suse.com,
+ linux-fsdevel@vger.kernel.org, phillip@squashfs.org.uk,
+ akpm@linux-foundation.org, sj1557.seo@samsung.com, dwmw2@infradead.org,
+ trondmy@kernel.org, jlbec@evilplan.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -104,34 +125,70 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 Hello:
 
 This series was applied to jaegeuk/f2fs.git (dev)
-by Carlos Maiolino <cem@kernel.org>:
+by Christian Brauner <brauner@kernel.org>:
 
-On Mon, 24 Nov 2025 15:48:00 -0800 you wrote:
-> Hi,
+On Thu, 08 Jan 2026 12:12:55 -0500 you wrote:
+> Yesterday, I sent patches to fix how directory delegation support is
+> handled on filesystems where the should be disabled [1]. That set is
+> appropriate for v6.19. For v7.0, I want to make lease support be more
+> opt-in, rather than opt-out:
 > 
-> __blkdev_issue_discard() only returns value 0, that makes post call
-> error checking code dead. This patch series revmoes this dead code at
-> all the call sites and adjust the callers.
-> 
-> Please note that it doesn't change the return type of the function from
-> int to void in this series, it will be done once this series gets merged
-> smoothly.
+> For historical reasons, when ->setlease() file_operation is set to NULL,
+> the default is to use the kernel-internal lease implementation. This
+> means that if you want to disable them, you need to explicitly set the
+> ->setlease() file_operation to simple_nosetlease() or the equivalent.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,V3,1/6] block: ignore discard return value
-    (no matching commit)
-  - [f2fs-dev,V3,2/6] md: ignore discard return value
-    https://git.kernel.org/jaegeuk/f2fs/c/699fcfb6cb80
-  - [f2fs-dev,V3,3/6] dm: ignore discard return value
-    (no matching commit)
-  - [f2fs-dev,V3,4/6] nvmet: ignore discard return value
-    https://git.kernel.org/jaegeuk/f2fs/c/38d12f15c477
-  - [f2fs-dev,V3,5/6] f2fs: ignore discard return value
-    (no matching commit)
-  - [f2fs-dev,V3,6/6] xfs: ignore discard return value
-    https://git.kernel.org/jaegeuk/f2fs/c/2145f447b79a
+  - [f2fs-dev,01/24] fs: add setlease to generic_ro_fops and read-only filesystem directory operations
+    https://git.kernel.org/jaegeuk/f2fs/c/ca4388bf1d9e
+  - [f2fs-dev,02/24] affs: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/663cdef61a27
+  - [f2fs-dev,03/24] btrfs: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/f9688474e413
+  - [f2fs-dev,04/24] erofs: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/f8902d3df893
+  - [f2fs-dev,05/24] ext2: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/ccdc2e0569f5
+  - [f2fs-dev,06/24] ext4: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/20747a2a29c6
+  - [f2fs-dev,07/24] exfat: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/b8ca02667552
+  - [f2fs-dev,08/24] f2fs: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/9e2ac6ddb397
+  - [f2fs-dev,09/24] fat: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/a9acc8422ffb
+  - [f2fs-dev,10/24] gfs2: add a setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/3b514c333390
+  - [f2fs-dev,11/24] jffs2: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/c275e6e7c085
+  - [f2fs-dev,12/24] jfs: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/7dd596bb35e5
+  - [f2fs-dev,13/24] nilfs2: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/f46bb13dc5d9
+  - [f2fs-dev,14/24] ntfs3: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/6aaa1d6337b5
+  - [f2fs-dev,15/24] ocfs2: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/f15d3150279d
+  - [f2fs-dev,16/24] orangefs: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/136b43aa4b16
+  - [f2fs-dev,17/24] overlayfs: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/94a3f60af5dc
+  - [f2fs-dev,18/24] squashfs: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/dfd8676efe43
+  - [f2fs-dev,19/24] tmpfs: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/f5a3446be277
+  - [f2fs-dev,20/24] udf: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/dbe8d57d1483
+  - [f2fs-dev,21/24] ufs: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/545b4144d804
+  - [f2fs-dev,22/24] xfs: add setlease file operation
+    https://git.kernel.org/jaegeuk/f2fs/c/6163b5da2f5e
+  - [f2fs-dev,23/24] filelock: default to returning -EINVAL when ->setlease operation is NULL
+    https://git.kernel.org/jaegeuk/f2fs/c/2b10994be716
+  - [f2fs-dev,24/24] fs: remove simple_nosetlease()
+    https://git.kernel.org/jaegeuk/f2fs/c/51e49111c00b
 
 You are awesome, thank you!
 -- 
