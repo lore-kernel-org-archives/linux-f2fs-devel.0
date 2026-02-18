@@ -4,87 +4,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7DEB0E9A03B
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 18 Feb 2026 10:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ABD59E9A047
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 18 Feb 2026 13:08:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:From:Message-ID:Date:MIME-Version:Sender:Reply-To:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=+SpWDpgVa7X0Tb6pO7S2/EHrLi+TjY6YbceabFbDod8=; b=XFaEvaowPL9TibpRhqAqcgbll2
-	cvUHnTTHiEh/g67wS3KOy2XX+/jD4yoAyLN6eeXGpqIczetkFLmPfzuIZl2sMHwEHFyn+Ek+FxzP1
-	nn8BXS7SB3COdd+JS6rlBhNzs7kB0OyUErqj5yAsAK1ovdqecOCqJnprVuu/1/8E65hc=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=7AfYJGhvIpf0bvYiR/qqf3KklLjZs8AXSNyEkk/c9sI=; b=B3oEQ2MTcytIkusBwHe7l73hS5
+	ZxdgZsqloRg+PvzwkoWpMmwbfv4L73Tebb0WC/1GMbME+amO6pIxovq40V7vgNZ3LImVyAeyzJiXK
+	uLt5Hi99wGUlLK4fIR39q8jvKxNVhjgJiXiFfazvSEwZLdqf3Yy49U64GrA5V+j9va80=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vsenQ-0000ob-Rz;
-	Wed, 18 Feb 2026 10:28:40 +0000
+	id 1vshIR-0000vb-TE;
+	Wed, 18 Feb 2026 13:08:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <3RpSVaQkbABkHNO9zAA3GzEE72.5DD5A3JH3G1DCI3CI.1DB@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
- id 1vsenE-0000oJ-T4 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 18 Feb 2026 10:28:28 +0000
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <prvs=502ed4ed6=shinichiro.kawasaki@wdc.com>)
+ id 1vshIP-0000vT-A8 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 18 Feb 2026 13:08:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
- MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GmlLSjL++px+yEOSTzN4sl7YVs0l9bOU5hAcaYav1xc=; b=eYFKUP3XbLydT0x5dDqmF1OQbU
- HPXW74lnhbVhhAaaCCa7IPkynbn0ZsHITKPVod4MPjq/JyZXcEw0Un6Me4dBK/PqnpCHWbuleYa1D
- 5coJUWolFGAUJm8+qRg/9B/slkUs4hI3GNn9C3y1HXSIEhbEhHazEbBAZ8xzJe4ccMKE=;
+ bh=JXW9nq9v44O5MPSsQDBlwGaRp7ZiVlfa/hOP/0vkiJY=; b=a+Hhnn8oQ8b4CS2Fw+GAXe5/eq
+ R8/qYzUWXDCj6aoU9v6D6Uk+WTWlDOsJx1zAOenOQFsf2NlHbV36V5PuJa7gzTCSnxcXTdCDbEwzn
+ 8rp7a7fzJyPbXywNexOt1TgtEX5IDwS5dtiz0BcrhkDjYyOwMK3bxuMFRDTvJPX+WQ5Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
- :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=GmlLSjL++px+yEOSTzN4sl7YVs0l9bOU5hAcaYav1xc=; b=j
- rMXNnye1BWG3W14F2LYNB8mHyTnx13ZV4Q3KxK2/QbF/7eGq2RAzIQuVr2UoMbi1kZWY6Ei9H/46o
- SL7V6yyC2n5vzTjU+YFmVWsozxu3NIiEbkcCQDmA+52AHxpcZDfEpRYB6kKx/S2cQC9h2rHBnkNZV
- 3U9RPep9YEvQIKoY=;
-Received: from mail-oo1-f69.google.com ([209.85.161.69])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=JXW9nq9v44O5MPSsQDBlwGaRp7ZiVlfa/hOP/0vkiJY=; b=VTcvg3JbT7lwhXCI+9eGfpqpSX
+ 2bTki+4SyqmxJrJ2FZQjaAe8x5Kh9c0SnV8chTHRdbFdVrJFY1K2nMdo0/yTZCqKq48RCW694TCkj
+ 61TaW+5cAP+7FcoeCh+++QOnOyPIAbiiC/k+bwWZcjTU9vc/QnquZymWpzgA7m/5ZOLs=;
+Received: from esa5.hgst.iphmx.com ([216.71.153.144])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vsenE-000102-9J for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 18 Feb 2026 10:28:28 +0000
-Received: by mail-oo1-f69.google.com with SMTP id
- 006d021491bc7-6798747187eso5892547eaf.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 18 Feb 2026 02:28:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771410502; x=1772015302;
- h=to:from:subject:message-id:date:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=GmlLSjL++px+yEOSTzN4sl7YVs0l9bOU5hAcaYav1xc=;
- b=Fz8Yj9KipejD4Js6M1YTTjcrvNuPuHpFM0fZgXTbCAoQe1mhyfaSEgNGrI0kIv6Fve
- fe19BSovG5/J8S9+Jc94a/HYPDQ72cl8H2OpIRGxcCARIj9PTo/YCTKXq3ZnpSjUbEOw
- e78SRGkV0i6BsFhW54iTGwQ3bc5vgpi5xa3JGLMqZ5ROHGwnb1dMCLll85DNBMtV/BM3
- o7FT5Z9w6cCk+NHaJm5d/q0VGg9wXk2WhrmLK5jVmqenZV39CEDzgFZOUiizbW/g1cT4
- OFKVg2DhNmHv74bkfay4Ewn9pD9aKQhmgIK2OhJxFVmZBcEbTTMvxiPTAELHCfKW9AC4
- xL8w==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUm/BXTSdwRsz7UGdSOEa6qkdhO3SnLOfkk6kaUN0PQ0azsWF4OLSf1mGtLh8tVXWZbRsCHhzwAoFD8Mc4Lh88G@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YzOXwIMP94AmZ7h9DuF8BE2luSFvnsOOHbo+8Gq8hjLTjaT/S/X
- /n4EGASj2hliTd2YOuUI8uLl3CbsPr4rGrdlJr5Dgk8plNDXtVQy0xZAG9VmRUIJIIArSrmWXXd
- DENDItriGAWhwu49QHjYhc+wGlwLMe2mHkmKj1RyWDaDUtLmVahvr75PPRoQ=
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1vshIO-0001c1-M6 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 18 Feb 2026 13:08:49 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+ d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+ t=1771420128; x=1802956128;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=nD2cft06qvrOoIcvYeTj6huruJ70ktxCXRedmsa/tkc=;
+ b=KX1zVZx+lUZxXeJAl268DDW8MWLr1DC/emSx/KWM1gK8o330fPQI5/Hz
+ fi3gS03miEOrvlqohdcQggpNWWMWfDWVZJtMAI5sOg93UfIlxLwCbFerD
+ qE/sH6D72KUvUGVhjUaTpnk9E+ZAnXXPSoNcpeEP2v8h4JnTEYosceaAz
+ WnIL73Yj8isWtn2FHwcTWkXH9hkSOHlvvnKqjDSDYOA5bRTTANptD+TqR
+ 4GYQ6413o1lZ2UFoWSWk3H5BeobK7W1FTR3DOmeZXiiU5KowzrWidiLE6
+ 8eQEMsYFcZLGDjeIirzVjAb/VVRpxrF63FaAyiECmNJ/ZHeV8ve2myDhh A==;
+X-CSE-ConnectionGUID: N/t8pD4NRcq1+d2BzJROpA==
+X-CSE-MsgGUID: ZQQEytJ3QJuFgaJqn12yZw==
+X-IronPort-AV: E=Sophos;i="6.21,298,1763395200"; d="scan'208";a="140592977"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com)
+ ([199.255.45.14])
+ by ob1.hgst.iphmx.com with ESMTP; 18 Feb 2026 20:52:59 +0800
+IronPort-SDR: 6995b62b_+3R4PAE7Xr5KGCosaXpEO/pEdJYrCLuOvKPeSqJuAgIVnSG
+ lTpYB0Ubv3E1rDsJArgGVEPhJh7bc9g+nwVaE3A==
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+ by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256;
+ 18 Feb 2026 04:52:59 -0800
+WDCIronportException: Internal
+Received: from unknown (HELO shindev.ssa.fujisawa.hgst.com) ([10.149.67.30])
+ by uls-op-cesaip01.wdc.com with ESMTP; 18 Feb 2026 04:52:59 -0800
+To: linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Chao Yu <chao@kernel.org>
+Date: Wed, 18 Feb 2026 21:52:37 +0900
+Message-ID: <20260218125237.3340441-2-shinichiro.kawasaki@wdc.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20260218125237.3340441-1-shinichiro.kawasaki@wdc.com>
+References: <20260218125237.3340441-1-shinichiro.kawasaki@wdc.com>
 MIME-Version: 1.0
-X-Received: by 2002:a4a:ee1a:0:b0:676:e8d1:bb57 with SMTP id
- 006d021491bc7-679a74418e0mr641820eaf.58.1771410502648; Wed, 18 Feb 2026
- 02:28:22 -0800 (PST)
-Date: Wed, 18 Feb 2026 02:28:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69959446.050a0220.2eeac1.014d.GAE@google.com>
-From: syzbot <syzbot+6e4cb1cac5efc96ea0ca@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
- syzkaller-bugs@googlegroups.com
-X-Headers-End: 1vsenE-000102-9J
-Subject: [f2fs-dev] [syzbot] [f2fs?] general protection fault in
- f2fs_in_warm_node_list
+X-Headers-End: 1vshIO-0001c1-M6
+Subject: [f2fs-dev] [PATCH v2 1/1] f2fs: fix lockdep WARN of
+ sbi->cp_global_sem and q->q_usage_counter
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,130 +98,83 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: Shin'ichiro Kawasaki via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Cc: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ Damien Le Moal <dlemoal@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello,
+From: Shin'ichiro Kawasaki via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 
-syzbot found the following issue on:
+A lockdep WARN is observed recently under the following steps:
 
-HEAD commit:    2961f841b025 Merge tag 'turbostat-2026.02.14' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12c5db3a580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=65722f41f7edc17e
-dashboard link: https://syzkaller.appspot.com/bug?extid=6e4cb1cac5efc96ea0ca
-compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ac695a580000
+1) Create a zoned TCMU device
+2) Create a f2fs filesystem on the zoned TCMU device and mount it
+3) Fill the filesystem with files and trigger GC
+4) Unmout the filesystem
+5) Remove the zoned TCMU device
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-2961f841.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/19ffd1a88c42/vmlinux-2961f841.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/621dc0fadd96/bzImage-2961f841.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/7ce23d543372/mount_5.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=110fbeef980000)
+The lockdep WARN indicates that a circular lock depedency formed by four
+contexts, as described below.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6e4cb1cac5efc96ea0ca@syzkaller.appspotmail.com
+a) TCMU device removal context:
+ - call del_gendisk() to get q->q_usage_counter
+ - call start_flush_work() to get work_completion of wb->dwork
+b) f2fs writeback context:
+ - in wb_workfn(), which holds work_completion of wb->dwork
+ - call f2fs_balance_fs() to get sbi->gc_lock
+c) f2fs vfs_write context:
+ - call f2fs_gc() to get sbi->gc_lock
+ - call f2fs_write_checkpoint() to get sbi->cp_global_sem
+d) f2fs mount context:
+ - call recover_fsync_data() to get sbi->cp_global_sem
+ - call f2fs_check_and_fix_write_pointer() to call blkdev_report_zones()
+   that goes down to blk_mq_alloc_request and get q->q_usage_counter
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
-CPU: 0 UID: 0 PID: 1041 Comm: kworker/u4:7 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-Workqueue: loop0 loop_workfn
-RIP: 0010:NODE_MAPPING fs/f2fs/f2fs.h:2260 [inline]
-RIP: 0010:is_node_folio fs/f2fs/f2fs.h:2270 [inline]
-RIP: 0010:f2fs_in_warm_node_list+0xbd/0x290 fs/f2fs/node.c:330
-Code: 00 00 4d 03 3c 24 4c 89 f8 48 c1 e8 03 42 80 3c 28 00 74 08 4c 89 ff e8 61 3b f9 fd 4d 8b 3f 49 83 c7 30 4c 89 f8 48 c1 e8 03 <42> 80 3c 28 00 74 08 4c 89 ff e8 44 3b f9 fd 4d 3b 37 74 19 e8 7a
-RSP: 0018:ffffc90005347488 EFLAGS: 00010206
-RAX: 0000000000000006 RBX: ffffea0001521080 RCX: ffff88803683c900
-RDX: 0000000000000000 RSI: ffffea0001521080 RDI: ffff8880546fc000
-RBP: ffffea0001521098 R08: ffffffff901194b7 R09: 1ffffffff2023296
-R10: dffffc0000000000 R11: fffffbfff2023297 R12: ffff888023ebe638
-R13: dffffc0000000000 R14: ffff8880474d9490 R15: 0000000000000030
-FS:  0000000000000000(0000) GS:ffff88808ca5b000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbdbfabe000 CR3: 0000000056bbf000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- f2fs_write_end_io+0x7ab/0xff0 fs/f2fs/data.c:400
- blk_update_request+0x57e/0xe60 block/blk-mq.c:1016
- blk_mq_end_request+0x3e/0x70 block/blk-mq.c:1178
- lo_rw_aio_complete drivers/block/loop.c:337 [inline]
- lo_rw_aio+0xcde/0xf00 drivers/block/loop.c:410
- do_req_filebacked drivers/block/loop.c:434 [inline]
- loop_handle_cmd drivers/block/loop.c:1926 [inline]
- loop_process_work+0x61d/0x11a0 drivers/block/loop.c:1961
- process_one_work kernel/workqueue.c:3275 [inline]
- process_scheduled_works+0xb02/0x1830 kernel/workqueue.c:3358
- worker_thread+0xa50/0xfc0 kernel/workqueue.c:3439
- kthread+0x388/0x470 kernel/kthread.c:467
- ret_from_fork+0x51e/0xb90 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:NODE_MAPPING fs/f2fs/f2fs.h:2260 [inline]
-RIP: 0010:is_node_folio fs/f2fs/f2fs.h:2270 [inline]
-RIP: 0010:f2fs_in_warm_node_list+0xbd/0x290 fs/f2fs/node.c:330
-Code: 00 00 4d 03 3c 24 4c 89 f8 48 c1 e8 03 42 80 3c 28 00 74 08 4c 89 ff e8 61 3b f9 fd 4d 8b 3f 49 83 c7 30 4c 89 f8 48 c1 e8 03 <42> 80 3c 28 00 74 08 4c 89 ff e8 44 3b f9 fd 4d 3b 37 74 19 e8 7a
-RSP: 0018:ffffc90005347488 EFLAGS: 00010206
-RAX: 0000000000000006 RBX: ffffea0001521080 RCX: ffff88803683c900
-RDX: 0000000000000000 RSI: ffffea0001521080 RDI: ffff8880546fc000
-RBP: ffffea0001521098 R08: ffffffff901194b7 R09: 1ffffffff2023296
-R10: dffffc0000000000 R11: fffffbfff2023297 R12: ffff888023ebe638
-R13: dffffc0000000000 R14: ffff8880474d9490 R15: 0000000000000030
-FS:  0000000000000000(0000) GS:ffff88808ca5b000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbdbf9d3000 CR3: 0000000050969000 CR4: 0000000000352ef0
-----------------
-Code disassembly (best guess):
-   0:	00 00                	add    %al,(%rax)
-   2:	4d 03 3c 24          	add    (%r12),%r15
-   6:	4c 89 f8             	mov    %r15,%rax
-   9:	48 c1 e8 03          	shr    $0x3,%rax
-   d:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
-  12:	74 08                	je     0x1c
-  14:	4c 89 ff             	mov    %r15,%rdi
-  17:	e8 61 3b f9 fd       	call   0xfdf93b7d
-  1c:	4d 8b 3f             	mov    (%r15),%r15
-  1f:	49 83 c7 30          	add    $0x30,%r15
-  23:	4c 89 f8             	mov    %r15,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	4c 89 ff             	mov    %r15,%rdi
-  34:	e8 44 3b f9 fd       	call   0xfdf93b7d
-  39:	4d 3b 37             	cmp    (%r15),%r14
-  3c:	74 19                	je     0x57
-  3e:	e8                   	.byte 0xe8
-  3f:	7a                   	.byte 0x7a
+To suppress the WARN, cut the dependency d) between sbi->cp_global_sem
+and q->q_usage_counter. For that purpose, move the
+f2fs_check_and_fix_write_pointer() call outside of the critical section
+of sbi->cp_global_sem in f2fs_recovery_fsync_data(). This change is fine
+because the write pointer fix operation only affects the main segments
+and does not interact with the check point metadata. Furthermore,
+conflicts between the write pointer fix operation and data/node flush
+operations remain protected by SBI_POR_DOING.
 
-
+Fixes: c426d99127b1 ("f2fs: Check write pointer consistency of open zones")
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Signed-off-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/f2fs/recovery.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index a26071f2b0bc..87fd6cd436fe 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -922,6 +922,8 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 		truncate_inode_pages_final(META_MAPPING(sbi));
+ 	}
+ 
++	f2fs_up_write_trace(&sbi->cp_global_sem, &lc);
++
+ 	/*
+ 	 * If fsync data succeeds or there is no fsync data to recover,
+ 	 * and the f2fs is not read only, check and fix zoned block devices'
+@@ -933,8 +935,6 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	if (!err)
+ 		clear_sbi_flag(sbi, SBI_POR_DOING);
+ 
+-	f2fs_up_write_trace(&sbi->cp_global_sem, &lc);
+-
+ 	/* let's drop all the directory inodes for clean checkpoint */
+ 	destroy_fsync_dnodes(&dir_list, err);
+ 
+-- 
+2.49.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
 
 _______________________________________________
