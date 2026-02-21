@@ -4,76 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A0BFEC61DFB
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 21 Feb 2026 20:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 27B52C61DFB
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 21 Feb 2026 20:46:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=cNpb41DbsVyqQefeHm27/MvTBCEitunwAb68GzxeRUE=; b=Z9xL+F/+cIbWLEYMM1AXssab5n
-	Kk4Lx0bwvzLNFNvhnGDUW6uZwgK4y6DU6aCvfxe3mR86A+bobSTFfKTko8hqLNVsOOdz3m0dysSt1
-	Cg3DoLM6RxCNTFEuxR7IAgsjOnTJGa+WHorKSpqNoLHu1SiSMa89jt1eAyyN5GEsv5+I=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=zRV4XnpPTgqktXA+rMaVu/2kw2dl8fiVyH12Z43sjQE=; b=IjT03qhq3EJrZ35BV6XovbXdS3
+	kgEtUr648Apest5O26NqV7/l5eumG3XgbRxFwZKIBjpZovD3Ng4W5yyiU3U5n+nFxLPQH8c9xGFsn
+	69i4iNLTP9nmoIf5ugNWnKS0Pz44t4tYnqCAxB7HX73ieivw5jqGZr/iLDHMn5JtVPQg=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vttNH-0003I8-5d;
-	Sat, 21 Feb 2026 20:14:47 +0000
+	id 1vttrq-0007Ey-H4;
+	Sat, 21 Feb 2026 20:46:22 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1vttMZ-0003HH-R3
+ (envelope-from <ebiggers@kernel.org>) id 1vttrp-0007Es-G9
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 21 Feb 2026 20:14:03 +0000
+ Sat, 21 Feb 2026 20:46:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Tq7dyRnpR8DT4tW2fzYrLDvg4grSgK/BOZZTSTiYcak=; b=VP2ddybaFgVuMf/brZD5mnIR1D
- 1taMcnJkdYBaEL1vyISA9OZF/xkpoliVXf0v7SVzBG6WIVY2S+5eL7yKs2CjSDOR79KaqkWmEdAld
- qgoq+zF+JABo4Uc+YDn9J0ITxsuKeGM3hPpJsWttDNtYpGXNS2c6i5OgkxMwdQMjupvA=;
+ bh=I8dbz3Q5QhG/3u5sqpbXzYRFT8j0PpeOmlav+UTcOTk=; b=G7u8ec16xUJ7Rwk/oVny5+gzNe
+ 86rzSfoj4zoCthiN2JCCis/dMI64sKXXm9o/HsLPYOMfRNura4UJvQjIjCtpjUaaHe29VGRLWnn9X
+ 5EHW6PSVMtS14ARiboWmH+HAw2GbZ4Te62Y53oylKrP5/nmKHZ2ofJl/B3ND0mkdf4QA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Tq7dyRnpR8DT4tW2fzYrLDvg4grSgK/BOZZTSTiYcak=; b=O
- 1RnYUTranmINpSbdsY1KwX0N97sls9BueHpl11VkxuQeNYJEqwWvl3mJIB0AEKMmBX5LoFSj/s55x
- 1aE1r8N383UwKEpWb+NTj+Q4uA81PLFgZldQJZcoBi6LYFrY1Hmx4ppzulrazd3/SN91oA8fna/bp
- 3GgF6RzrZZC1HcfI=;
+ List-Owner:List-Archive; bh=I8dbz3Q5QhG/3u5sqpbXzYRFT8j0PpeOmlav+UTcOTk=; b=P
+ lbbr31LIUCYFJsMf6tzawTU5GcDoQumDrm5FJNcp4k/pfcZkKF+NAMuX1tpIGrqgLPZrUhLSo95kR
+ m/hqizUMoPjMdqXBuO5JHZt8Hjgj19kzeCcYI3SQXbIRXKohSDfzHytRezEugJK/tg08DkVi+g9Jv
+ Ug1iVXLkbC3gIK+I=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vttMZ-0003ui-3i for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 21 Feb 2026 20:14:03 +0000
+ id 1vttro-00055N-Pp for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 21 Feb 2026 20:46:21 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id C06AE41A04;
- Sat, 21 Feb 2026 20:13:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E64EC4CEF7;
- Sat, 21 Feb 2026 20:13:52 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 6D4FA4024E;
+ Sat, 21 Feb 2026 20:46:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08C82C4CEF7;
+ Sat, 21 Feb 2026 20:46:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1771704832;
- bh=XiSyrRdVNg5RaCKPxQSBaWFY6pxU+wD3GORpXVNtZPI=;
+ s=k20201202; t=1771706770;
+ bh=1X5cYAl9kNylIb5ptLXnhArizU/ge+q4nUoOS+5gYfI=;
  h=From:To:Cc:Subject:Date:From;
- b=tpKpFZJfY4gmoUoOOahFyx6ZeKQaK9Jpcx6A+86olHVTje9Iji+Dn/smneuw+IYzP
- ACgeOZViJoWuR4aceGqxDWeVajBuBVtTkDwXLVK/BIxPbmt3L089CyierAgueJJmUL
- jugtnhqFEQROcK3FpV0oxi478/9iwyy4Nm4Noxjclup2S4gzpMkaJUf0IivwKkQnEm
- 32jiiI0kp87649SSfNfUQISW73ZYRbCqe49B04xkNIQ7MP1WE8jCOQNoKGplnjPBM1
- 6NxW8PR8BtfDTKnMvmokGxAKUsPeq4ETUyIDOY9xF7iElzHCuiZ3u4IyD9NFzGTlyq
- +aUA9XyMi5TgA==
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net
-Date: Sat, 21 Feb 2026 12:13:16 -0800
-Message-ID: <20260221201316.22025-1-ebiggers@kernel.org>
+ b=mYFXhts07Y6/tToRzsac/gkp6Zir8RyBtx4TqE5IoqETTlUoSwHevQQS4bILvnwuE
+ jjAWS/bAQkPf5XCwtyCHg6YxNmhJzFK30m/s/0OWY934eZvzQItzQeTvgDXR1OQJB2
+ OnuM/ecYnnK3TRrJerpGd0UOId7RvhaXW9sSE+kLnEyDBxiFDXdvcl6i6qI7jveDzK
+ 2E8X0w8oUzaUmWEf1VOYL8C40nh+X7FaFY4bV2ZdGv/BKaDn18DwKVtqUrWiVG+50X
+ HxE7HWyd4A44W79VyRgUy3an9i/vx/d83GI/z89t1uIyV4NZR2w51zJ3/Ko2QDstSW
+ Cz4i+EICcV0HA==
+To: fsverity@lists.linux.dev
+Date: Sat, 21 Feb 2026 12:45:25 -0800
+Message-ID: <20260221204525.30426-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-X-Headers-End: 1vttMZ-0003ui-3i
-Subject: [f2fs-dev] [PATCH] f2fs: remove unreachable code in
- f2fs_encrypt_one_page()
+X-Headers-End: 1vttro-00055N-Pp
+Subject: [f2fs-dev] [PATCH] fsverity: add dependency on 64K or smaller pages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,70 +86,51 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Eric Biggers via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Eric Biggers <ebiggers@kernel.org>,
- linux-fscrypt@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
+Cc: Eric Biggers <ebiggers@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Since commit 52e7e0d88933 ("fscrypt: Switch to sync_skcipher and
-on-stack requests") eliminated the dynamic allocation of crypto
-requests, the only remaining dynamic memory allocation done by
-fscrypt_encrypt_pagecache_blocks() is the bounce page allocation.
+Currently, all filesystems that support fsverity (ext4, f2fs, and btrfs)
+cache the Merkle tree in the pagecache at a 64K aligned offset after the
+end of the file data.  This offset needs to be a multiple of the page
+size, which is guaranteed only when the page size is 64K or smaller.
 
-The bounce page is allocated from a mempool.  Mempool allocations with
-GFP_NOFS never fail.  Therefore, fscrypt_encrypt_pagecache_blocks() can
-no longer return -ENOMEM when passed GFP_NOFS.
+64K was chosen to be the "largest reasonable page size".  But it isn't
+the largest *possible* page size: the hexagon and powerpc ports of Linux
+support 256K pages, though that configuration is rarely used.
 
-Remove the now-unreachable code from f2fs_encrypt_one_page().
+For now, just disable support for FS_VERITY in these odd configurations
+to ensure it isn't used in cases where it would have incorrect behavior.
 
-Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-Link: https://lore.kernel.org/all/d9dc2ee1-283d-4467-ad36-a6a4aa557589@suse.cz/
+Fixes: 671e67b47e9f ("fs-verity: add Kconfig and the helper functions for hashing")
+Reported-by: Christoph Hellwig <hch@lst.de>
+Closes: https://lore.kernel.org/r/20260119063349.GA643@lst.de
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- fs/f2fs/data.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+ fs/verity/Kconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 338df7a2aea6..400f0400e13d 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2785,33 +2785,23 @@ static void f2fs_readahead(struct readahead_control *rac)
- int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
- {
- 	struct inode *inode = fio_inode(fio);
- 	struct folio *mfolio;
- 	struct page *page;
--	gfp_t gfp_flags = GFP_NOFS;
+diff --git a/fs/verity/Kconfig b/fs/verity/Kconfig
+index 76d1c5971b82..b20882963ffb 100644
+--- a/fs/verity/Kconfig
++++ b/fs/verity/Kconfig
+@@ -1,9 +1,12 @@
+ # SPDX-License-Identifier: GPL-2.0
  
- 	if (!f2fs_encrypted_file(inode))
- 		return 0;
- 
- 	page = fio->compressed_page ? fio->compressed_page : fio->page;
- 
- 	if (fscrypt_inode_uses_inline_crypto(inode))
- 		return 0;
- 
--retry_encrypt:
- 	fio->encrypted_page = fscrypt_encrypt_pagecache_blocks(page_folio(page),
--					PAGE_SIZE, 0, gfp_flags);
--	if (IS_ERR(fio->encrypted_page)) {
--		/* flush pending IOs and wait for a while in the ENOMEM case */
--		if (PTR_ERR(fio->encrypted_page) == -ENOMEM) {
--			f2fs_flush_merged_writes(fio->sbi);
--			memalloc_retry_wait(GFP_NOFS);
--			gfp_flags |= __GFP_NOFAIL;
--			goto retry_encrypt;
--		}
-+					PAGE_SIZE, 0, GFP_NOFS);
-+	if (IS_ERR(fio->encrypted_page))
- 		return PTR_ERR(fio->encrypted_page);
--	}
- 
- 	mfolio = filemap_lock_folio(META_MAPPING(fio->sbi), fio->old_blkaddr);
- 	if (!IS_ERR(mfolio)) {
- 		if (folio_test_uptodate(mfolio))
- 			memcpy(folio_address(mfolio),
+ config FS_VERITY
+ 	bool "FS Verity (read-only file-based authenticity protection)"
++	# Filesystems cache the Merkle tree at a 64K aligned offset in the
++	# pagecache.  That approach assumes the page size is at most 64K.
++	depends on PAGE_SHIFT <= 16
+ 	select CRYPTO_HASH_INFO
+ 	select CRYPTO_LIB_SHA256
+ 	select CRYPTO_LIB_SHA512
+ 	help
+ 	  This option enables fs-verity.  fs-verity is the dm-verity
 
 base-commit: 8934827db5403eae57d4537114a9ff88b0a8460f
 -- 
