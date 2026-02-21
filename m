@@ -4,78 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3D73BC61DFB
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 21 Feb 2026 20:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A0BFEC61DFB
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 21 Feb 2026 20:14:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ydrOZQh2fYqFy6XvCkYiIEwCMuEzfpWMP4Z3RiwcZTc=; b=Y/1cx1NsR7uLwgxBYrpczPAOEE
-	wtMTs8RR7vfD5mZVG3Amwlu/RL8Q0GlTfWGn8cZO9JaeESbFqZM8PkSOaWwCv/f8+YzCSDJPNQBFj
-	Db2c2Bc+2N8x6NgsqVELU3cqCOVmvSl4mqyVImKwNHV/J5uadYjlBxaocNnKVyen4tsk=;
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=cNpb41DbsVyqQefeHm27/MvTBCEitunwAb68GzxeRUE=; b=Z9xL+F/+cIbWLEYMM1AXssab5n
+	Kk4Lx0bwvzLNFNvhnGDUW6uZwgK4y6DU6aCvfxe3mR86A+bobSTFfKTko8hqLNVsOOdz3m0dysSt1
+	Cg3DoLM6RxCNTFEuxR7IAgsjOnTJGa+WHorKSpqNoLHu1SiSMa89jt1eAyyN5GEsv5+I=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vttEu-0002yL-T6;
-	Sat, 21 Feb 2026 20:06:08 +0000
+	id 1vttNH-0003I8-5d;
+	Sat, 21 Feb 2026 20:14:47 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1vttEH-0002wm-Gf
+ (envelope-from <ebiggers@kernel.org>) id 1vttMZ-0003HH-R3
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 21 Feb 2026 20:05:29 +0000
+ Sat, 21 Feb 2026 20:14:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=pvPas3UDgY5PKp/J22NXOJGt9f12HnY609mP3p8dH8o=; b=fjRjqXikeG1YbGyi23V1JivIYr
- BiVFykF3fJ43m6n0rWbdAKxBWvYc+EdYaWc4X1AEeuxPlJ/aGSKbBxDakz+TXE/pF/0PGrYvCQBOX
- JKYRUcPcPJ2d29Rk7o1+3olTOhou//YusPtSFzNelObrLWZgbl9+IwhmEbdqxRgdT+uI=;
+ bh=Tq7dyRnpR8DT4tW2fzYrLDvg4grSgK/BOZZTSTiYcak=; b=VP2ddybaFgVuMf/brZD5mnIR1D
+ 1taMcnJkdYBaEL1vyISA9OZF/xkpoliVXf0v7SVzBG6WIVY2S+5eL7yKs2CjSDOR79KaqkWmEdAld
+ qgoq+zF+JABo4Uc+YDn9J0ITxsuKeGM3hPpJsWttDNtYpGXNS2c6i5OgkxMwdQMjupvA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=pvPas3UDgY5PKp/J22NXOJGt9f12HnY609mP3p8dH8o=; b=PCF2F1Bg7W4hWVNLC5lJCsho3d
- mMk6gUFa2bWk4eAW9tvhxTrJZUoQtdaetD6dNZbqQQmzvTqRWVi3FNsXEtnszDHzvrfnNrQSTL5Xn
- +sIgnZidbBxUJ0GHY4xehLQ24lgGGkJOQLAnCaEcqSeYfnNHoy+034MLZieKxcL73sKA=;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=Tq7dyRnpR8DT4tW2fzYrLDvg4grSgK/BOZZTSTiYcak=; b=O
+ 1RnYUTranmINpSbdsY1KwX0N97sls9BueHpl11VkxuQeNYJEqwWvl3mJIB0AEKMmBX5LoFSj/s55x
+ 1aE1r8N383UwKEpWb+NTj+Q4uA81PLFgZldQJZcoBi6LYFrY1Hmx4ppzulrazd3/SN91oA8fna/bp
+ 3GgF6RzrZZC1HcfI=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vtsv8-0002rL-50 for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 21 Feb 2026 19:45:42 +0000
+ id 1vttMZ-0003ui-3i for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 21 Feb 2026 20:14:03 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id BAB96441E6;
- Sat, 21 Feb 2026 19:45:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F133C4CEF7;
- Sat, 21 Feb 2026 19:45:36 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id C06AE41A04;
+ Sat, 21 Feb 2026 20:13:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E64EC4CEF7;
+ Sat, 21 Feb 2026 20:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1771703136;
- bh=mFAiNSqsxsqOGhfi6yj61qlg7slrIqYxPPaW9O9Y60Q=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=WEZIXEN5w0Og2gE8E5z1Crq5s0FzNg+4ErjWqUno3rrR6oGCcIwt4lcuDLkDA8fWz
- aePZIq5glzoDCW7sKquOgRO3wXyVzqSdF9RY5GAq51Ms3BwoWLd365JqTysUvqnpro
- Brik2jrScJl13SC7NgueLJwNS/zoIpD4qE+gF/JmgcpVEfEhGdFDp8SblpEv4wiGHj
- UOPSUdg3+HqN78Ow6K4gpBWm708TRX7ZYlIHfvORn6ka71mA4Vs/eWVSh7WVMj5T6Q
- XBaHgX/w3rR6cXkvfIt7zO8bPtKtMFeosoRV5zShagB0YEHK4UlfaKYdvmVJVJcZ6H
- oMKy2BZ3PpWkQ==
-Date: Sat, 21 Feb 2026 11:45:34 -0800
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20260221194534.GC2536@quark>
-References: <20260218061531.3318130-1-hch@lst.de>
- <20260218061531.3318130-4-hch@lst.de>
+ s=k20201202; t=1771704832;
+ bh=XiSyrRdVNg5RaCKPxQSBaWFY6pxU+wD3GORpXVNtZPI=;
+ h=From:To:Cc:Subject:Date:From;
+ b=tpKpFZJfY4gmoUoOOahFyx6ZeKQaK9Jpcx6A+86olHVTje9Iji+Dn/smneuw+IYzP
+ ACgeOZViJoWuR4aceGqxDWeVajBuBVtTkDwXLVK/BIxPbmt3L089CyierAgueJJmUL
+ jugtnhqFEQROcK3FpV0oxi478/9iwyy4Nm4Noxjclup2S4gzpMkaJUf0IivwKkQnEm
+ 32jiiI0kp87649SSfNfUQISW73ZYRbCqe49B04xkNIQ7MP1WE8jCOQNoKGplnjPBM1
+ 6NxW8PR8BtfDTKnMvmokGxAKUsPeq4ETUyIDOY9xF7iElzHCuiZ3u4IyD9NFzGTlyq
+ +aUA9XyMi5TgA==
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net
+Date: Sat, 21 Feb 2026 12:13:16 -0800
+Message-ID: <20260221201316.22025-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260218061531.3318130-4-hch@lst.de>
-X-Headers-End: 1vtsv8-0002rL-50
-Subject: Re: [f2fs-dev] [PATCH 3/9] fscrypt: pass a byte offset to
- fscrypt_set_bio_crypt_ctx
+X-Headers-End: 1vttMZ-0003ui-3i
+Subject: [f2fs-dev] [PATCH] f2fs: remove unreachable code in
+ f2fs_encrypt_one_page()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,31 +88,75 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Eric Biggers via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
- "Darrick J. Wong" <djwong@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- linux-fscrypt@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
- linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-ext4@vger.kernel.org
+Cc: Christoph Hellwig <hch@infradead.org>, Eric Biggers <ebiggers@kernel.org>,
+ linux-fscrypt@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Feb 18, 2026 at 07:14:41AM +0100, Christoph Hellwig wrote:
-> diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
-[...]
-> /**
->  * fscrypt_set_bio_crypt_ctx_bh() - prepare a file contents bio for inline
->  *				    crypto
->  * @bio: a bio which will eventually be submitted to the file
->  * @first_bh: the first buffer_head for which I/O will be submitted
->  * @gfp_mask: memory allocation flags
->  *
->  * Same as fscrypt_set_bio_crypt_ctx(), except this takes a buffer_head instead
->  * of an inode and block number directly.
+Since commit 52e7e0d88933 ("fscrypt: Switch to sync_skcipher and
+on-stack requests") eliminated the dynamic allocation of crypto
+requests, the only remaining dynamic memory allocation done by
+fscrypt_encrypt_pagecache_blocks() is the bounce page allocation.
 
-Similarly, the above needs "block number" => "file position"
+The bounce page is allocated from a mempool.  Mempool allocations with
+GFP_NOFS never fail.  Therefore, fscrypt_encrypt_pagecache_blocks() can
+no longer return -ENOMEM when passed GFP_NOFS.
 
-- Eric
+Remove the now-unreachable code from f2fs_encrypt_one_page().
+
+Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+Link: https://lore.kernel.org/all/d9dc2ee1-283d-4467-ad36-a6a4aa557589@suse.cz/
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+---
+ fs/f2fs/data.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 338df7a2aea6..400f0400e13d 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2785,33 +2785,23 @@ static void f2fs_readahead(struct readahead_control *rac)
+ int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
+ {
+ 	struct inode *inode = fio_inode(fio);
+ 	struct folio *mfolio;
+ 	struct page *page;
+-	gfp_t gfp_flags = GFP_NOFS;
+ 
+ 	if (!f2fs_encrypted_file(inode))
+ 		return 0;
+ 
+ 	page = fio->compressed_page ? fio->compressed_page : fio->page;
+ 
+ 	if (fscrypt_inode_uses_inline_crypto(inode))
+ 		return 0;
+ 
+-retry_encrypt:
+ 	fio->encrypted_page = fscrypt_encrypt_pagecache_blocks(page_folio(page),
+-					PAGE_SIZE, 0, gfp_flags);
+-	if (IS_ERR(fio->encrypted_page)) {
+-		/* flush pending IOs and wait for a while in the ENOMEM case */
+-		if (PTR_ERR(fio->encrypted_page) == -ENOMEM) {
+-			f2fs_flush_merged_writes(fio->sbi);
+-			memalloc_retry_wait(GFP_NOFS);
+-			gfp_flags |= __GFP_NOFAIL;
+-			goto retry_encrypt;
+-		}
++					PAGE_SIZE, 0, GFP_NOFS);
++	if (IS_ERR(fio->encrypted_page))
+ 		return PTR_ERR(fio->encrypted_page);
+-	}
+ 
+ 	mfolio = filemap_lock_folio(META_MAPPING(fio->sbi), fio->old_blkaddr);
+ 	if (!IS_ERR(mfolio)) {
+ 		if (folio_test_uptodate(mfolio))
+ 			memcpy(folio_address(mfolio),
+
+base-commit: 8934827db5403eae57d4537114a9ff88b0a8460f
+-- 
+2.53.0
+
 
 
 _______________________________________________
