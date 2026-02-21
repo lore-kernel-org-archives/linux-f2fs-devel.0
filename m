@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2674EE9A048
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Feb 2026 13:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 88F89C61DFD
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 21 Feb 2026 20:02:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=39BKOVB5FpUv4KnCzC95sI9+vwIQWxoQJUZinuK6Bu0=; b=PpN2gEiowms1syjpvf/uy0unEv
-	yeCSmLLy+Exu7SDYv/jHRJ/PE7sIXV8zcBo58iVGtPMGv/9xLf82wgXHQeEeWlaEOpRUWmKb0KkEa
-	mEgdpLiQGKPCJXTTb9H78tWA5UfXtmsmq86KnFAkR+EkWMxx1765NgmG1eI/U9f5AFuw=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=h8LjeI4UTFINC+3aA9T9Q/k0Id2Y/C6tX14kCJVnp0o=; b=AA5OgScgH65JToyjOc+kE8jCoN
+	dWGnDrum6V+AV9K7ktoYjhgwrnhpVpwssVt/m7ms4eX6mokZVFSqzFcLBDiE/xlOr8rT2EEt6HLot
+	mnK/A9UUXZp57c+6IqYKqDdGXxgXXWcnwRxnpyLdnFYwBG0x4KVMFe4CTPDsS3/ywNic=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vt3sM-0005at-DX;
-	Thu, 19 Feb 2026 13:15:26 +0000
+	id 1vttBP-0002lS-B9;
+	Sat, 21 Feb 2026 20:02:31 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <tytso@mit.edu>) id 1vt3sL-0005al-6n
+ (envelope-from <ebiggers@kernel.org>) id 1vttB5-0002l3-Gn
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Feb 2026 13:15:25 +0000
+ Sat, 21 Feb 2026 20:02:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YvzVGXRA9tq4Mexi8H81CMjCPQQmDTjjwr0q5r4ZxjY=; b=LKqXicCPlbgolGqerH8PcbMAm+
- FBGzQ8ORsKPwDFlk+nZZVMlfS3JCogbHvx0ScXjTAwpI9jv+7bXLf+sGTe7Cs9WXqHFvvtmo9rOFZ
- sSGyQKk2TdXaxWZSm+pu84Wt9zACQzUjCsfDWD5jC5QAAQ972+u6C43bS/ezmX8VvjpU=;
+ bh=dqtqeXWmm52zK+fttbgS+sdRATacSfUr/2xBW8VqtD8=; b=lKwXKA4iWi43iK+yeaiXgdqWUT
+ O06E/BiVQr6sBBzhNIK08Kkc6+ARYx2Uxq2FpN6IXnSGb285E5KWQOeZE2Up4RLHW8PYQy6zwDYDI
+ dflgFbTqzL0mbn9w6LK7qMXV2aNyrc6ztDCnq16Zc/kX+fywECOo5hzF1Te6hOTZMzfk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,43 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=YvzVGXRA9tq4Mexi8H81CMjCPQQmDTjjwr0q5r4ZxjY=; b=TjuHl3SPFVIGsR7o9kXModvKjC
- lauuRsVu4uOMntMgPJOQB4rkOMlQNjuIndEi3fzOd1HSi++yPyvDKq1kT7v11qpDzphhF5x6MNLaK
- hyZcDIt/BhozpR7cMB7UAQgrq4bZgHb/vdg4fvqisBoK8A7rlGxn7WPrbO4+ZVqY3tRw=;
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
+ bh=dqtqeXWmm52zK+fttbgS+sdRATacSfUr/2xBW8VqtD8=; b=P/h3hyK5RRQcTeI4jjWuFfrjV8
+ cs8tqMj17A9G10uQeEwBxg7bAFC2KPW0c29YNny1rOrPrHdm+xE4g/uMRQLY/1yAGuY2loDDwJDky
+ KDwUVWJuwLGHonW4Gx5GF6mTEMlWtUOX3fYQuKvg198jYX+JRBOWutHJv3eIk2xsQG3Q=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vt3sK-0001dC-Ms for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Feb 2026 13:15:25 +0000
-Received: from macsyma.thunk.org (pool-173-48-113-47.bstnma.fios.verizon.net
- [173.48.113.47]) (authenticated bits=0)
- (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 61JDEfrH015259
- (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 19 Feb 2026 08:14:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
- t=1771506893; bh=YvzVGXRA9tq4Mexi8H81CMjCPQQmDTjjwr0q5r4ZxjY=;
- h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
- b=QMseGHyhfBaFWPX10hbUsMCruhrhgp9Y/y2cMCXsfRSODON0B5P+fIp1gbQDE498j
- 3kKA0mEvpnBkxC4fOP6ZE400XvESf8AzQ8W4hQYtEoVmenggeiuCZAsgDBp1wUb2cT
- X6xiagrW3q1RCtta1iKSfDQKms5OjV5lnfxVAv8Q2AfkIOYoMk37GhEy8mDWLba8oU
- +wzfcZxoHjbivvm4nlALGSOE0Sgx0+Y+qu96lZShmvpLYtEHFmEOzfCJdgvL6N1a6T
- adL+YMa067AgExO/2xBFBiPTBuMQzJwlEaf6kQsPMFWsEHJLIbYxEGHfhvJQevk+z6
- +8ydG6It0w42g==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
- id 51D465919577; Thu, 19 Feb 2026 08:14:41 -0500 (EST)
-Date: Thu, 19 Feb 2026 08:14:41 -0500
-From: "Theodore Tso" <tytso@mit.edu>
-To: Chuck Lever <cel@kernel.org>
-Message-ID: <20260219131441.GA69183@macsyma-wired.lan>
-References: <20260217214741.1928576-1-cel@kernel.org>
- <20260217214741.1928576-9-cel@kernel.org>
+ id 1vtt5J-0003B2-Jc for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 21 Feb 2026 19:56:14 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 24B754442D;
+ Sat, 21 Feb 2026 19:56:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A524EC4CEF7;
+ Sat, 21 Feb 2026 19:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1771703768;
+ bh=R7/z9C7qpx7IpjmeTzkpHTTwUmtvP03YWgReVTnc/oc=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=n9ki9g1iZd2fKMZu/SNx0xP47FVGH4dM64Nvb9u3kkIZ4ZaECBGItZFJE0OD3vqFc
+ kLT75lsM20kWZ1QfOXSHoMSp/UfxVBiloLPFWewMS7emZ5DcuBzNRJUNsju8gQ1zGL
+ 4MbTu8L2XlqDo6ELdq34K3bGkWdG1HwIQ+24/s8CBMwntTsSH54RMRmv3zK+96TN74
+ Ida4hmcXT7iAlaI+EiwBIO/bvJn+Y5fKmtauovnGzK8QRF5ZSKDXVQTujPP1GDC1Aj
+ Y2OkNX/EKRJsXSKfYs94nUhNOUErSp8BpzOSQ/Efde7cOrusfRkAf54gmH9kOo/Ekt
+ 58VcljSalnk4Q==
+Date: Sat, 21 Feb 2026 11:56:05 -0800
+To: Christoph Hellwig <hch@lst.de>
+Message-ID: <20260221195605.GF2536@quark>
+References: <20260218061531.3318130-1-hch@lst.de>
+ <20260218061531.3318130-9-hch@lst.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260217214741.1928576-9-cel@kernel.org>
-X-Headers-End: 1vt3sK-0001dC-Ms
-Subject: Re: [f2fs-dev] [PATCH v8 08/17] ext4: Report case sensitivity in
- fileattr_get
+In-Reply-To: <20260218061531.3318130-9-hch@lst.de>
+X-Headers-End: 1vtt5J-0003B2-Jc
+Subject: Re: [f2fs-dev] [PATCH 8/9] fscrypt: pass a byte length to
+ fscrypt_zeroout_range
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,36 +87,54 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jan Kara <jack@suse.cz>, pc@manguebit.org, yuezhang.mo@sony.com,
- cem@kernel.org, almaz.alexandrovich@paragon-software.com,
- adilger.kernel@dilger.ca, linux-cifs@vger.kernel.org, sfrench@samba.org,
- slava@dubeyko.com, linux-ext4@vger.kernel.org, linkinjeon@kernel.org,
- sprasad@microsoft.com, frank.li@vivo.com, linux-nfs@vger.kernel.org,
- Al Viro <viro@zeniv.linux.org.uk>, ronniesahlberg@gmail.com,
- glaubitz@physik.fu-berlin.de, jaegeuk@kernel.org, hirofumi@mail.parknet.co.jp,
- Christian Brauner <brauner@kernel.org>, linux-api@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- senozhatsky@chromium.org, Chuck Lever <chuck.lever@oracle.com>,
- hansg@kernel.org, anna@kernel.org, linux-fsdevel@vger.kernel.org,
- sj1557.seo@samsung.com, trondmy@kernel.org
+From: Eric Biggers via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Eric Biggers <ebiggers@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fscrypt@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
+ linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Feb 17, 2026 at 04:47:32PM -0500, Chuck Lever wrote:
-> From: Chuck Lever <chuck.lever@oracle.com>
+On Wed, Feb 18, 2026 at 07:14:46AM +0100, Christoph Hellwig wrote:
+> Range lengths are usually expressed as bytes in the VFS, switch
+> fscrypt_zeroout_range to this convention.
 > 
-> Report ext4's case sensitivity behavior via the FS_XFLAG_CASEFOLD
-> flag. ext4 always preserves case at rest.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/crypto/bio.c | 6 +++---
+>  fs/ext4/inode.c | 3 ++-
+>  fs/f2fs/file.c  | 2 +-
+>  3 files changed, 6 insertions(+), 5 deletions(-)
 > 
-> Case sensitivity is a per-directory setting in ext4. If the queried
-> inode is a casefolded directory, report case-insensitive; otherwise
-> report case-sensitive (standard POSIX behavior).
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+> diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+> index e41e605cf7e6..cea931620c04 100644
+> --- a/fs/crypto/bio.c
+> +++ b/fs/crypto/bio.c
+> @@ -115,7 +115,7 @@ static int fscrypt_zeroout_range_inline_crypt(const struct inode *inode,
+>   * @inode: the file's inode
+>   * @pos: the first file logical offset (in bytes) to zero out
+>   * @pblk: the first filesystem physical block to zero out
+> - * @len: number of blocks to zero out
+> + * @len: bytes to zero out
+>   *
+>   * Zero out filesystem blocks in an encrypted regular file on-disk, i.e. write
+>   * ciphertext blocks which decrypt to the all-zeroes block.  The blocks must be
+> @@ -136,7 +136,7 @@ int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,
 
-Acked-by: Theodore Ts'o <tytso@mit.edu>
+This should be accompanied by a change in the type of 'len' to u64 or
+loff_t, and similarly in fscrypt_zeroout_range_inline_crypt().  It's
+unclear that the callers always pass lengths <= U32_MAX bytes,
+especially the one in f2fs.
+
+Also, the comment for fscrypt_zeroout_range() should be updated to
+mention that pos and len need to be multiples of the filesystem block
+size, given that it will no longer be implied by the units.
+
+- Eric
 
 
 _______________________________________________
