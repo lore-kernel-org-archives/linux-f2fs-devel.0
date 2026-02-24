@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9B238EFB7FD
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Feb 2026 05:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AA290EFB7FD
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Feb 2026 05:55:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=xsBi6TEpw48sB4fD9RhGAlH4ZRLR5wSOs+P1injuUmw=; b=i69Ja4avFbZAb5mRNTc598O/gZ
-	5Oqe9E6wBDNBb6E11nQWHD+YqDnKQHjqRBjOyBIPLfDdiqUGlGiPMM5qYag2IzgmRAC39DaMSPFI0
-	eJ1wvFS1qaSlIN7SVcA0AMbSws+konUNCw/nxzBDoBnnltcR7dAuEK3CTsUblLpqHXrg=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Tybm9c1sW2f5C+67lYxvZzFFhcTDj6QwGt3HO6thpVE=; b=Io2vcd55WRL5UKIEz4tP8tgIW2
+	X5DIyHtPYFYcLLpBBn/Kd2DfmnX1+/M4cRvzWSZNoR0UWezZRe8HXRCRfeWbosLv+HezYjhKS/WlX
+	k9vZOtmUgD+qVUjjIo37qH6WKwuAuN9F9G9uXczqEDpoQTdYGO9faDAn6zC2Id1UH+G8=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vulJd-0007UQ-MA;
-	Tue, 24 Feb 2026 05:50:38 +0000
+	id 1vulOa-0006D4-87;
+	Tue, 24 Feb 2026 05:55:44 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1vulJc-0007UE-MD
+ (envelope-from <jaegeuk@kernel.org>) id 1vulOZ-0006Cw-5j
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Feb 2026 05:50:37 +0000
+ Tue, 24 Feb 2026 05:55:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=uHgyNFCWv6VDdJj18WLxBrvr3wvre81Tz6FYHe104QQ=; b=IWUvsKwjyzV1J7gHFKVinIS2ob
- REzh8jDOOWF3z7oAU4+O92SCdG4//YNE2wCvh6Skkj6aIaUvjPh7rvNQshC8Sn0SEKKiKNWrJ71hG
- b15V7pauByYKDu7gTDwbNpvyBr2vG14+5TkORX6ELtYTxjs3riDmRirLxMowd8YMCr/s=;
+ bh=Gsjcgg1CsmqEsymPxH/CQF/5goO3c1QXoOKHHT97j6w=; b=lMP/HGkBZN5nAjAyoHc4Rz0HAX
+ yAMY6mbLWIyhmdqU+y6wLQCmLhGHIGO7r05UjDi02FefCdAelVVH1q7OwukHBJZrfsKHLA0Otua1s
+ MV4e/gPExCbayOX0SSpFm4zIAtRMgWBvMwcSHMgMErINBzzCvtYnRYrbEN7fn7V4rqsQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,46 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=uHgyNFCWv6VDdJj18WLxBrvr3wvre81Tz6FYHe104QQ=; b=ezZTVwrQdH46Ybbm/rXqgxMt5u
- wgCPPtEQeFMZ8gVieV5jx7v7qocBjvjlpqmcIL89dEVIj/qqEPPMibFtZTL7Y8MgXxJrb8Qn9z4p8
- Qs2vSba28CoSUcRsMvxNfVBtuMcnm/etfTDX8cLPT0/AT060jVabCsCg1VohBcTG443w=;
+ bh=Gsjcgg1CsmqEsymPxH/CQF/5goO3c1QXoOKHHT97j6w=; b=XZ5/8wgw0z/NYwkyHwlV/Rvz2L
+ 3wxdDLOWqMk5VE/XAtfeaVKFnpN/De2T5Un7g1IOgblUHBLKGPIYxB/SwfJBcZTAlPkQ2xP9zaXaH
+ S95bu75Hord+GHMzUMl23XvgUMIknNaBs8XMZBZMx3KLr0zQIBW6ZhYvhExpERmC+a4Q=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vulJd-0005AF-2l for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Feb 2026 05:50:37 +0000
+ id 1vulOY-0005Mw-FP for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 24 Feb 2026 05:55:43 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 1AD2A600AE;
- Tue, 24 Feb 2026 03:55:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B299C116D0;
- Tue, 24 Feb 2026 03:55:43 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 1A19960131;
+ Tue, 24 Feb 2026 03:26:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B46BC116C6;
+ Tue, 24 Feb 2026 03:26:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1771905343;
- bh=O+MIarzvf6kjqxVQyd3WMBAO83/rjG8t85W7MzgUUDA=;
+ s=k20201202; t=1771903574;
+ bh=qSam5JFpaSCyqC9HUogDz6AuUDfmmdcPXZAhw/u1DHc=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=ikEl1rCcdZ7BbDDefOVqu2uHJiOoTzsFGVam4q+7g20QoxFgDbjLwqudI7rDf4sJ6
- bHEzFpIM+SZByrQlr6GBZOyg2AwXPDErGmypBoJuxKZr+vKbbXg1mFjS0acwCTcUPD
- LH9rbWjopDGSNBnAwluuh37WTYKqwBqp71ziJzyz5S9vvXWnnG0J4BWov1YQnJUkXV
- Qx0YeqNzyAYh7qWD3lUg16TCxxBm2q7InD5WKZSZ8a9YT5dsFXtvvPISQYmt0fwEMX
- F0gpb4dwQBlj7H0tTxeGB5Gghvtfexp7fk+y3WRIgp+BceSiPKCiPGdvLH7t5uCbPq
- FsDBeGL7c6qkg==
-Date: Tue, 24 Feb 2026 03:55:41 +0000
-To: Nanzhe Zhao <nzzhao@126.com>
-Message-ID: <aZ0hPcllsNzYn03k@google.com>
-References: <20260109024716.12047-1-chao@kernel.org>
- <CAGsJ_4wjXMXk4YKsYebmtTa5dKVO21b91ieY=foYULWS+DyroQ@mail.gmail.com>
- <2cdd4281-7e37-4dd0-91b1-1ab16ef772aa@kernel.org>
- <CAGsJ_4weE5T1uBA1-JoJdbZY4E91eN_OL3hMdqixLcoKSrmuzw@mail.gmail.com>
- <8c13ca69-a08a-41c7-bbef-0a79a5f44f93@kernel.org>
- <83419982-77ba-4dac-880e-bf59669a006f@126.com>
- <aXKuTRfZXE4z0j1_@google.com>
- <43f34976.480b.19be98c144d.Coremail.nzzhao@126.com>
+ b=kfJ0Zr9Mm4f1Y5qPXMj1C3EvkexgaKjqfTF9lAcVRFqb4yoXDPntDk/B36fEsBK9k
+ TT+lx1na3r8D7psrO8aBhQh7phiqHr0roSp/nfSATgwhcI8nJl6VvGFMGdGqSP08E+
+ f9Okug6iZF+LlVW2D4nsPZwrYaDWW5FiQargxILsqoEruFh9q5kyaKio26pPO0yowu
+ /2MU3KMyVFnsCq43Vjz+PDRBouKrEwdcQZp1ap7UXQFOUrUx3l+HcpDwVc+OULr8M5
+ nQKP/lIiS+Gd8MfQlEcA5kQU/04RwGCb9IiRYUEaj01GnTf3pF8uiZtyNI4bhyWGXA
+ nQbtTUS2hf+7Q==
+Date: Tue, 24 Feb 2026 03:26:12 +0000
+To: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Message-ID: <aZ0aVDSWpRRqFwl9@google.com>
+References: <20260218125237.3340441-1-shinichiro.kawasaki@wdc.com>
+ <20260218125237.3340441-2-shinichiro.kawasaki@wdc.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <43f34976.480b.19be98c144d.Coremail.nzzhao@126.com>
-X-Headers-End: 1vulJd-0005AF-2l
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to prevent clearing immutable for
- large folio supported inode
+In-Reply-To: <20260218125237.3340441-2-shinichiro.kawasaki@wdc.com>
+X-Headers-End: 1vulOY-0005Mw-FP
+Subject: Re: [f2fs-dev] [PATCH v2 1/1] f2fs: fix lockdep WARN of
+ sbi->cp_global_sem and q->q_usage_counter
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,31 +89,83 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Barry Song <21cnbao@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Damien Le Moal <dlemoal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 01/23, Nanzhe Zhao wrote:
-> Hi Kim:
-> At 2026-01-23 07:10:05, "Jaegeuk Kim" <jaegeuk@kernel.org> wrote:
+On 02/18, Shin'ichiro Kawasaki wrote:
+> From: Shin'ichiro Kawasaki via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 > 
-> >
-> >Yes, I was hitting some issues when I convert the mapping while inode is alive.
-> >So, for now, we should set it in f2fs_iget() only.
-> >
+> A lockdep WARN is observed recently under the following steps:
 > 
-> What about using mapping_set_xxx functions in f2fs_new_inode  then?
+> 1) Create a zoned TCMU device
+> 2) Create a f2fs filesystem on the zoned TCMU device and mount it
+> 3) Fill the filesystem with files and trigger GC
+> 4) Unmout the filesystem
+> 5) Remove the zoned TCMU device
+> 
+> The lockdep WARN indicates that a circular lock depedency formed by four
+> contexts, as described below.
+> 
+> a) TCMU device removal context:
+>  - call del_gendisk() to get q->q_usage_counter
+>  - call start_flush_work() to get work_completion of wb->dwork
+> b) f2fs writeback context:
+>  - in wb_workfn(), which holds work_completion of wb->dwork
+>  - call f2fs_balance_fs() to get sbi->gc_lock
+> c) f2fs vfs_write context:
+>  - call f2fs_gc() to get sbi->gc_lock
+>  - call f2fs_write_checkpoint() to get sbi->cp_global_sem
+> d) f2fs mount context:
+>  - call recover_fsync_data() to get sbi->cp_global_sem
+>  - call f2fs_check_and_fix_write_pointer() to call blkdev_report_zones()
+>    that goes down to blk_mq_alloc_request and get q->q_usage_counter
+> 
+> To suppress the WARN, cut the dependency d) between sbi->cp_global_sem
+> and q->q_usage_counter. For that purpose, move the
+> f2fs_check_and_fix_write_pointer() call outside of the critical section
+> of sbi->cp_global_sem in f2fs_recovery_fsync_data(). This change is fine
+> because the write pointer fix operation only affects the main segments
+> and does not interact with the check point metadata. Furthermore,
+> conflicts between the write pointer fix operation and data/node flush
+> operations remain protected by SBI_POR_DOING.
+> 
+> Fixes: c426d99127b1 ("f2fs: Check write pointer consistency of open zones")
+> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+> Signed-off-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+> ---
+>  fs/f2fs/recovery.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> index a26071f2b0bc..87fd6cd436fe 100644
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -922,6 +922,8 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+>  		truncate_inode_pages_final(META_MAPPING(sbi));
+>  	}
+>  
+> +	f2fs_up_write_trace(&sbi->cp_global_sem, &lc);
+> +
+>  	/*
+>  	 * If fsync data succeeds or there is no fsync data to recover,
+>  	 * and the f2fs is not read only, check and fix zoned block devices'
+> @@ -933,8 +935,6 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+>  	if (!err)
+>  		clear_sbi_flag(sbi, SBI_POR_DOING);
+>  
+> -	f2fs_up_write_trace(&sbi->cp_global_sem, &lc);
+> -
 
-How can we guarantee this will be a read-only file?
+This was a guard to prevent checkpoint during f2fs_check_and_fix_write_pointer()
+where it changes the checkpoint as well?
 
-> It maybe be a bit odd to me that we create a immutable file but we can
-> only get large folios for this inode  when the inode is evicted and get
-> by f2fs_iget again, not get large folios by the first place.
-> 
-> Thanks,
-> Nanzhe Zhao
+>  	/* let's drop all the directory inodes for clean checkpoint */
+>  	destroy_fsync_dnodes(&dir_list, err);
+>  
+> -- 
+> 2.49.0
 
 
 _______________________________________________
