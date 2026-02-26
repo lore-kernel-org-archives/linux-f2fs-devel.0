@@ -4,36 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A021BFD8FE0
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 17:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4DAFFFD8FDA
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 17:14:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=0dC+xLCU2bhS9QJU0DmlAkWSk2P+9zktsVjk0ZtmyCc=; b=SGFJMnXkLyUHo72fh6rFCWcMj0
-	dvSTndvQUW9areKA9YhkeVIAnLw862d0wD+rhaZLvo7660xBIQ4HZsYPl/8bxpO9cdFqulO9BVDJw
-	w04hkJ+9ZHEzaXfq6tJPBAmFW6NgIfOfZN+m43b3V3Tq3F+MWCmyFMgFMuZm2+jYlAM8=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=hIJOrxnsSoRXVY1n56Zo4npChLHMqWdsNeacDFd03zs=; b=StC/q5My85Jxb2bHZkeEh8wgH/
+	NswPb8lNm+VPTsjH8bpKNLO5jwSQ1JDJih5coyymG7+Ex7m6ycCnTUpdDgYQ9SE1BtVQbx5r2gmCT
+	lMPiBZ4W1lGB5XDg9sSpeqaAi228hVmXwxxx9L1btDelcBc9+Bo044yRDxPhXQJpXSgI=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vvetr-0004I2-9f;
-	Thu, 26 Feb 2026 17:11:43 +0000
+	id 1vvex0-0004Tn-P8;
+	Thu, 26 Feb 2026 17:14:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1vvetq-0004Hs-Jj;
- Thu, 26 Feb 2026 17:11:42 +0000
+ (envelope-from <jack@suse.cz>) id 1vvewz-0004Tf-N7
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 26 Feb 2026 17:14:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=IJAmaqMzedaiBuo3i6ffJyCeRIKf4gcmqsYhGsTyHWI=; b=S6KG0O+RO2iY3agleQE5Q+CRne
- dC9ktVqwBJxsY/9Tnfy/eLQQJGNz+qzlq9M7blUjHH5gBplkukLmclPFFpJEKYOxNHlc2n2QBIgtq
- 3rHBOG29CBsBkBhDb40jcQ0/8HTPmvSpOwhb7O9K7PbMDd7AhB5eLSnsbw7ijHN3epDc=;
+ bh=f1xGOfZqrgDNOu3pvsQmwV38AYrHNXAFa37RH8Af4g8=; b=HQ9/duKnVqITb6mDvT+N4HtUfG
+ x0aWAdIgcrxgOoJ63u8aHn/12CT0wbXP6v4VvtIeePoGER85PQF7GGEzD06YB/vY+v8Rh2NLqfjpU
+ DpjiFDzYYiPWSC+q8mILYLjDRd3WUKZw1x4xDJjI7OOUNyqSD4P2mN7CHpIaXviaFsn4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -41,39 +42,56 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=IJAmaqMzedaiBuo3i6ffJyCeRIKf4gcmqsYhGsTyHWI=; b=LsMa1khFkO7MYcNqpKKaDq/lyv
- gaFuF2mM1d5Fz/0YQg0hxyYJoMuZSXZIYgUuLI2xGRJefFF/jA+cIa7cM+Rt+2H2RiAWFU+xWJZzX
- ai5YVOombOP85w2tXVvMpXbJAxdSXcjyxb2cNeVZ/Zs676Fo37a56Fjb5UUL3iq2h/KI=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=f1xGOfZqrgDNOu3pvsQmwV38AYrHNXAFa37RH8Af4g8=; b=k5jwEcpLLsawJKdwGDjVgNm120
+ 8ETiBb9YKxeCNxkYj7zilIJ9BgN1IsANQPqGjW6tSqjCmyuuXNxsGCmCuJtTz/lXSdRTQkbAqyuye
+ CvwWSZU5duqRMxDy0ybL9S9jyMg2CHGJXmVN/FkRkCFG5VoHK56tsM7GNc9YiLjKBGW0=;
+Received: from smtp-out2.suse.de ([195.135.223.131])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vvetq-0001wE-0d; Thu, 26 Feb 2026 17:11:42 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 4F42F60130;
- Thu, 26 Feb 2026 17:11:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08ECDC116C6;
- Thu, 26 Feb 2026 17:11:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772125891;
- bh=3dAA5ZbqJT7nwllRfPjMUGsvCGPozu8oVFO1mvJ5dEc=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=E3tX7V52KB6ZIJnP5EQdhqgy5dbKcrV70/QCeZSG5YUuzRLOU+GbRZmX6xI4LhGtP
- wOXKgVOEGXCHkK++zmkeJMtBqtKCjhlPY9alH2plEcWMyc/+JruvQe/ULMst4wOymh
- nDzI/JthZUc1ArkfqTnsbTii+EsbmW01L1yt93ujYlqg1GfqmC/g2KYWO31qnMDbPk
- FxQFRrSaO/8hGA0+QF9AzNgVLnF1AwZWTfLY9FdBBu8qD4Kpl+bNqe0C8k3woJlKdL
- I1HYF27ry7vXZCPDZXr9QkUK5PXS6FJq9mSwSkTHDtPmiekIgusGiaKcrTXd2CWShL
- tQSNWq/Ti7sBA==
-Date: Thu, 26 Feb 2026 09:10:36 -0800
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1vvewy-0002Ak-V0 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 26 Feb 2026 17:14:57 +0000
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
+ [IPv6:2a07:de40:b281:104:10:150:64:97])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 9CE9A1FAA8;
+ Thu, 26 Feb 2026 17:14:50 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 784C13EA6A;
+ Thu, 26 Feb 2026 17:14:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+ by imap1.dmz-prg2.suse.org with ESMTPSA id EVZNHYp/oGkQSwAAD6G6ig
+ (envelope-from <jack@suse.cz>); Thu, 26 Feb 2026 17:14:50 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+ id 01DECA0A27; Thu, 26 Feb 2026 18:14:45 +0100 (CET)
+Date: Thu, 26 Feb 2026 18:14:45 +0100
+From: Jan Kara <jack@suse.cz>
 To: Jeff Layton <jlayton@kernel.org>
-Message-ID: <20260226171036.GB2251@sol>
+Message-ID: <hbvcdh2qnimdnbqnayykrcja6et2oyofe5h3s7n4imwbcaqht5@xq576inhcje4>
 References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
- <20260226-iino-u64-v1-57-ccceff366db9@kernel.org>
+ <20260226-iino-u64-v1-1-ccceff366db9@kernel.org>
+ <cmxf6pu3xuwvbhg3alu725hd4b3dheowoumd6drolde7pypwor@eplss6764uuf>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260226-iino-u64-v1-57-ccceff366db9@kernel.org>
-X-Headers-End: 1vvetq-0001wE-0d
-Subject: Re: [f2fs-dev] [PATCH 57/61] fscrypt: update format strings for u64
- i_ino
+In-Reply-To: <cmxf6pu3xuwvbhg3alu725hd4b3dheowoumd6drolde7pypwor@eplss6764uuf>
+X-Rspamd-Pre-Result: action=no action; module=replies;
+ Message is reply to one we originated
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00]; REPLY(-4.00)[];
+ TAGGED_RCPT(0.00)[]
+X-Rspamd-Queue-Id: 9CE9A1FAA8
+X-Rspamd-Pre-Result: action=no action; module=replies;
+ Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Headers-End: 1vvewy-0002Ak-V0
+Subject: Re: [f2fs-dev] [PATCH 01/61] vfs: widen inode hash/lookup functions
+ to u64
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,9 +103,6 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
 Cc: Latchesar Ionkov <lucho@ionkov.net>, nvdimm@lists.linux.dev,
  Paulo Alcantara <pc@manguebit.org>, "Darrick J. Wong" <djwong@kernel.org>,
  Anders Larsen <al@alarsen.net>, dri-devel@lists.freedesktop.org,
@@ -130,13 +145,13 @@ Cc: Latchesar Ionkov <lucho@ionkov.net>, nvdimm@lists.linux.dev,
  linux-mtd@lists.infradead.org, amd-gfx@lists.freedesktop.org,
  Marc Dionne <marc.dionne@auristor.com>, linux-afs@lists.infradead.org,
  Ian Kent <raven@themaw.net>, Naohiro Aota <naohiro.aota@wdc.com>,
- Miklos Szeredi <miklos@szeredi.hu>, Matthew Wilcox <willy@infradead.org>,
- coda@cs.cmu.edu, Viacheslav Dubeyko <slava@dubeyko.com>,
- NeilBrown <neil@brown.name>, Ilya Dryomov <idryomov@gmail.com>,
- Paolo Abeni <pabeni@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>,
- Amir Goldstein <amir73il@gmail.com>, James Clark <james.clark@linaro.org>,
- autofs@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
- Damien Le Moal <dlemoal@kernel.org>,
+ Eric Biggers <ebiggers@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
+ Matthew Wilcox <willy@infradead.org>, coda@cs.cmu.edu,
+ Viacheslav Dubeyko <slava@dubeyko.com>, NeilBrown <neil@brown.name>,
+ Ilya Dryomov <idryomov@gmail.com>, Paolo Abeni <pabeni@redhat.com>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Amir Goldstein <amir73il@gmail.com>,
+ James Clark <james.clark@linaro.org>, autofs@vger.kernel.org,
+ Steven Rostedt <rostedt@goodmis.org>, Damien Le Moal <dlemoal@kernel.org>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Dan Williams <dan.j.williams@intel.com>, Oscar Salvador <osalvador@suse.de>,
  Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
@@ -144,7 +159,7 @@ Cc: Latchesar Ionkov <lucho@ionkov.net>, nvdimm@lists.linux.dev,
  samba-technical@lists.samba.org, Ondrej Mosnacek <omosnace@redhat.com>,
  Steve French <sfrench@samba.org>, linux-fsdevel@vger.kernel.org,
  ntfs3@lists.linux.dev,
- Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+ Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
  Ian Rogers <irogers@google.com>, Alexander Aring <alex.aring@gmail.com>,
  Jan Kara <jack@suse.cz>, Peter Zijlstra <peterz@infradead.org>,
  Dominique Martinet <asmadeus@codewreck.org>,
@@ -172,24 +187,39 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Feb 26, 2026 at 10:55:59AM -0500, Jeff Layton wrote:
-> Update format strings from %lu to %llu for inode->i_ino now that
-> i_ino is u64 instead of unsigned long.
+On Thu 26-02-26 18:00:36, Jan Kara wrote:
+> On Thu 26-02-26 10:55:03, Jeff Layton wrote:
+> > Change the inode hash/lookup VFS API functions to accept u64 parameters
+> > instead of unsigned long for inode numbers and hash values. This is
+> > preparation for widening i_ino itself to u64, which will allow
+> > filesystems to store full 64-bit inode numbers on 32-bit architectures.
+> > 
+> > Since unsigned long implicitly widens to u64 on all architectures, this
+> > change is backward-compatible with all existing callers.
+> > 
+> > Functions updated:
+> >   - hash(), find_inode_fast(), find_inode_by_ino_rcu(), test_inode_iunique()
+> >   - __insert_inode_hash(), iget_locked(), iget5_locked(), iget5_locked_rcu()
+> >   - ilookup(), ilookup5(), ilookup5_nowait()
+> >   - find_inode_nowait(), find_inode_rcu()
+> >   - inode_insert5(), insert_inode_locked4()
+> >   - insert_inode_locked() (local variable)
+> >   - dump_mapping() (local variable and format string)
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/crypto/crypto.c   | 2 +-
->  fs/crypto/hooks.c    | 2 +-
->  fs/crypto/keysetup.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+> Looks good. Feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-check_for_busy_inodes() needs to be updated too.  It copies i_ino to a
-local variable of type 'unsigned long', then prints it with %lu.
+Thinking some more about this (and also seeing the discussion about patch
+2) - maybe instead of using explicit u64 we should typedef kino_t as u64
+and use that?
 
-Seems that there needs to be a search for other code that copies i_ino
-to a local variable, as this issue is unlikely to be unique to here.
-
-- Eric
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
 
 _______________________________________________
