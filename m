@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4D79AFD8FCE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 16:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 95A82FD8FD1
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 16:06:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Message-Id:
 	MIME-Version:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=QyccM2o5saKl2LcBiEPVorq7PnRBvl8lJuoQhgZLeps=; b=gd3FvScO6xVT9RbvFKgbzw++O/
-	XbzHXnQOaE2xHSrTUCrR30V3O6w6sPJdi/ABVfrY3oJlyFzuO5fFdMZlwEbQHkboOoE9oR0H85KMt
-	n5OEhGLFt/KQk63b21BO9YmEAyPV1uQGDE38GbIQLTh7DjWrhfnCU0hYKLhFpVgYf3oU=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=m0R9ZHWG/0l0iNCAIQ0c6lIxtujPVeakxRezM/T2Pek=; b=QQpimmCzpGMbwgo4luB1AEVVGq
+	AEofiJC67r8W8EORhg7PWfAfYyPIcSbr+l5KrEpgSFHFUFlXDwcz0SwtcjsIAhcG6aQLWwlRDRTCC
+	q/rLALJtAek3bPbW6KYHghiPAjSQmsUKyW/ioIGIu7V+setyBoe8EJjuaWETovFIL1hc=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vvdsa-0002uW-WF;
-	Thu, 26 Feb 2026 16:06:21 +0000
+	id 1vvdsp-0004e8-FV;
+	Thu, 26 Feb 2026 16:06:36 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jlayton@kernel.org>) id 1vvdsN-0002tO-F3;
- Thu, 26 Feb 2026 16:06:07 +0000
+ (envelope-from <jlayton@kernel.org>) id 1vvdsl-0004cz-Pu;
+ Thu, 26 Feb 2026 16:06:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Message-Id:
  Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=632Oc+/xQ9ATwp0eW/zLiAhkamlJnV+MujUlnjodaZI=; b=JAOC5PMBBltKk6+Z/vR9t0nP+o
- 4JSfFxNlcVkwebw5srNxYx1OtTqNZTOXHis3ScSg3wURCEx3qxsEbmtJxHS6GEUGb9M7eQZNnGjkw
- QA3GdwnfJWZXrqHDBPCrTjrIV29ibBwaV+BryjRt2LRktM8uRdmXjiPR1jMorHcyWQUc=;
+ bh=l8ZGGQY1qt6ZflVHJHdXL7pSr306z7ZFggqnVaoYryQ=; b=PMor9qjwzaFa8muWQFdwQ5o08L
+ PpkdCaGQl3tnMWMbXp85y6hf3Xdfnn0+DvpGpcfUs7hntUhCYJCw93p3GOP+SBR24tRyM7DqqlheN
+ h5V1bXrGg+LWWdzNeOI0sH63H/3Gr2nN7yAdsGhkEe0nw+pHxUsJG93BPnPF7kfvYkjw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
@@ -41,31 +41,31 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=632Oc+/xQ9ATwp0eW/zLiAhkamlJnV+MujUlnjodaZI=; b=ixleHS3ppEBvzIMfOTpNisH7rH
- G333dqoN6yzfEMUQG4xzeB3OgysbmNCOnV7J8Ib/Wv0S41srw5d+3B0UNLX+rNU4LzfEu62KdnA4X
- PbuTDF49qxmlw6gJluZ/nyw/x3bYJDUeiDC46o9vxX5f6ZTd4GDJrHAEw+EcqdqTEj7g=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=l8ZGGQY1qt6ZflVHJHdXL7pSr306z7ZFggqnVaoYryQ=; b=FhRwW/EmxokEACEz8Pr6BECMVM
+ 6baner50L/5ADWShoUUXeu0a4kURmRh5hx2kAROxtfo+0XFEPKN4qplCTc+jHoelIII3OMXt639+e
+ 6j7Ua0ROwZf0GsjhpiGv0QvvvV2PJySRVYwDfWBP+AxdFv2kGdT+wf/aG0CT0CoWZXH0=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vvdsK-0005x7-Cq; Thu, 26 Feb 2026 16:06:07 +0000
+ id 1vvdsf-0005zu-0A; Thu, 26 Feb 2026 16:06:32 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id E8E1A40284;
- Thu, 26 Feb 2026 16:05:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B825C2BCB0;
- Thu, 26 Feb 2026 16:05:41 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 0879F60103;
+ Thu, 26 Feb 2026 16:06:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79300C19424;
+ Thu, 26 Feb 2026 16:06:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772121953;
- bh=NT9GoCKrhJHxzJaFVzYs+iwgpSzcQsNFzrkjPRxmI4A=;
+ s=k20201202; t=1772121978;
+ bh=iU6e4zeAj5z40Ah35aY1Jl4/4X7n705dfCUksW8kFiQ=;
  h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
- b=TeEU7zeUNxSpMMkN46e9L3j3aOlE0vDkwCXGq1PJj/CHTmYVutZnXL5F8MKin4JrP
- A2G7qUafg3ehXB/Blk5az8FIg9TANb7MNemEsXrYya0b5Fvst66jtyIF6YUJ7v27VK
- z3EYy1wCaHSO5b901ZxcnOkCEAbffwTCLfaayIvm7hBm7inmuRzrEp8G8PGlf7TbUl
- iQJDbzU/9ZKHv9IW/GHirGk7LZ1m1u23z3/nlVfBjjNaKKqYUxY3x72+ZQPhCC4a0+
- ObSwwws+YwOg9yQP55KRghBkVnGX8DhzzxIwaxbgZGpifL5ay0WcCfXOGZzl3mHLfb
- GCRq348a4qFaQ==
-Date: Thu, 26 Feb 2026 10:55:48 -0500
+ b=Q+nkvjU5PH9beX1sDz7TCsGU59b7gNRW0L4FVkS1TxbYVf2dxcTYZJCdahq16kk8H
+ KhaF7luPDMrHsoDLihiy3XRwGzOhdOHklTnXTFqiUNpk9xbeIbuZAXIZiVyQMJUHSs
+ 0thfIptMhvoCgjCV8rtksyKLzyK8Qzl8TlINr01NDAKGOnLMWvK4vMPzhZ9cZiOZWE
+ EEYxRFbvgEkMHUz7/plm1zhg2LD/iDkTpgEDUXEFFyYjaOR485LQ5gBJhchKq9Q8II
+ 0xuI2i6blS7+c1UFIt43sTJQyGkoA4wxF3SzrVEbxy7kPXrqL0o+2XnZfs2mSyR2Ph
+ K/arfLmyIBGmA==
+Date: Thu, 26 Feb 2026 10:55:50 -0500
 MIME-Version: 1.0
-Message-Id: <20260226-iino-u64-v1-46-ccceff366db9@kernel.org>
+Message-Id: <20260226-iino-u64-v1-48-ccceff366db9@kernel.org>
 References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 In-Reply-To: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -141,24 +141,24 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
  James Clark <james.clark@linaro.org>, "Darrick J. Wong" <djwong@kernel.org>, 
  Martin Schiller <ms@dev.tdt.de>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=757; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=NT9GoCKrhJHxzJaFVzYs+iwgpSzcQsNFzrkjPRxmI4A=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0PPx4vgLzFRyqyCgx4J34+XZiyaw/sSPdij
- GSRivfac1mJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtDwAKCRAADmhBGVaC
- FbT2D/9FjLqJOuCZ/iHUB6fXfFS0PRvj7GjtXh3TEl7mBaBqwoKn2tiJVhj8uIoLDInua9zDarS
- kj49CPCKVHUju5nyjzd4AYbAyvz+bLNRXpkiv+wwBafITWWLDAUBYHd3khfRwC7Zf2/GsbtOqra
- G0PjEIwc+ggLzHWlwJkaatzkAnwHg5mOg4skMPzKOTrAesBH0B/ud00dXWV41oUIPXO/zVBKa5j
- HlgW2VN0KHdXbenXBNwgZCva8rq2Yk0gvoe4F+hxSCKC6jVrstMcij8oTQRe4XdYBLW6j93GZ1l
- Bz+pZzyG/BEAqMQlDpq02p1pUK3Iq8wVtspVp+kenzKWBcRFzQzrgTze7VnpKUlLX/zqVduXx5+
- I31MduvitvhgUpJGk5SMbjgZhl650TRGucqbdCl51NzVhjfbT2ynMIyUE9lydocd6jRa34VJ4lV
- 8HsbsnPB7bZvLUBGy9FSb03giKnQ5Af6PWhWgr/PZU63A9s3GhqIyla4lD3Bv/7vZ3poxaSpFb0
- UZOZoc19F0oKz49lInvML8oh0Zc+DLugGv49Fg2/DhdKc/ZNcLda4sZOipoNBhNkB5PhTVKOi1M
- Undibt3NU51UZyvlBAQGdE+ZbWo/s/gnPJPNhUQcUFSn86PjjdYzZ1wCSODoogl3UhmOdIQbV9R
- R0VSmXPaEkSynww==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9281; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=iU6e4zeAj5z40Ah35aY1Jl4/4X7n705dfCUksW8kFiQ=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0QDnCya8A+2cJJ9pOZSFdmxegEJ3eymi5BG
+ 766eHMtgmuJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtEAAKCRAADmhBGVaC
+ FcOYD/9P5pWzfQuRUb6+cBoUCHAhFB70OfFIZwuhgN2vnyZxuw5DlmpjeZfqLSA0uIv2wWBNue2
+ qADCpMu+cQZe7F/XaXtUplsygzoq1jIFrtkQypp0Z+/w4UVy73Ikr0a0FXrxLVb3/PMjGHNjM7I
+ HoDBWjU1befct4Gd4Cvj20PsB7hm3cY9Qwgm8aGn9ORDjyxvTDZrYxI0snho0Bb9BwNiSFTgdu+
+ IzsGRpgoRHbAGA2P9OYczBisozKER7UrMkmqSq9kEvC/zF3jQKjbu5H2xrIpXoDeIipoVF3Kq7D
+ kwztabjrqa1iR6NfOF4vMbZmIH7HWtrTr92NwUqfw1E+WTuhXl5dM3EzFR/wqmq6jtVd+O1BMBK
+ GRNphZPulnGgW8MdhkHr1WhB6IHdTR2g4Gudbk+Zv5UWwX22+MJfr8nc1/ZaABnU00y1beP4qsW
+ zT9of6iaDj4AKxUu4o7GYQ9sPeBpdmDT0ViCr5VWGhbX0u/G8p5d8Xt0xT+zUhigfodUnB/3vuU
+ zFB6gNo9T6YyGZLlImQhBNEjuv7RahinrrNVQCJGpORKjmO/Ss+Un5OBeUhaOtrQ8GgkqaZ1Fio
+ X4h0O7SeOcQbTwUOeZVbbr6i8aX6UtXfQkW/WVdQRtelo3zV0z5P/4v9ET4BRLNDCFVcmVjGz73
+ K6a3u+3nNCsAr9Q==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Headers-End: 1vvdsK-0005x7-Cq
-Subject: [f2fs-dev] [PATCH 46/61] qnx6: update format strings for u64 i_ino
+X-Headers-End: 1vvdsf-0005zu-0A
+Subject: [f2fs-dev] [PATCH 48/61] udf: update format strings for u64 i_ino
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -194,27 +194,222 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Update format strings and local variable types in qnx6 for the
+Update format strings and local variable types in udf for the
 i_ino type change from unsigned long to u64.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/qnx6/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/udf/directory.c | 18 +++++++++---------
+ fs/udf/file.c      |  2 +-
+ fs/udf/inode.c     | 12 ++++++------
+ fs/udf/namei.c     |  8 ++++----
+ fs/udf/super.c     |  2 +-
+ 5 files changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
-index c4049bb8bd60d47f9edd3d724a5d5be6b5deb5ee..73c9c456ecdfcbecee677877e9b1d5dc65071d43 100644
---- a/fs/qnx6/inode.c
-+++ b/fs/qnx6/inode.c
-@@ -75,7 +75,7 @@ static int qnx6_get_block(struct inode *inode, sector_t iblock,
- {
- 	unsigned phys;
+diff --git a/fs/udf/directory.c b/fs/udf/directory.c
+index 632453aa38934a0b58b420717ec0674c85627ce5..f5c81e13eacb17f931d2df564ec4f2a6e9a5d7ab 100644
+--- a/fs/udf/directory.c
++++ b/fs/udf/directory.c
+@@ -22,7 +22,7 @@ static int udf_verify_fi(struct udf_fileident_iter *iter)
  
--	pr_debug("qnx6_get_block inode=[%ld] iblock=[%ld]\n",
-+	pr_debug("qnx6_get_block inode=[%lld] iblock=[%ld]\n",
- 		 inode->i_ino, (unsigned long)iblock);
+ 	if (iter->fi.descTag.tagIdent != cpu_to_le16(TAG_IDENT_FID)) {
+ 		udf_err(iter->dir->i_sb,
+-			"directory (ino %lu) has entry at pos %llu with incorrect tag %x\n",
++			"directory (ino %llu) has entry at pos %llu with incorrect tag %x\n",
+ 			iter->dir->i_ino, (unsigned long long)iter->pos,
+ 			le16_to_cpu(iter->fi.descTag.tagIdent));
+ 		return -EFSCORRUPTED;
+@@ -30,7 +30,7 @@ static int udf_verify_fi(struct udf_fileident_iter *iter)
+ 	len = udf_dir_entry_len(&iter->fi);
+ 	if (le16_to_cpu(iter->fi.lengthOfImpUse) & 3) {
+ 		udf_err(iter->dir->i_sb,
+-			"directory (ino %lu) has entry at pos %llu with unaligned length of impUse field\n",
++			"directory (ino %llu) has entry at pos %llu with unaligned length of impUse field\n",
+ 			iter->dir->i_ino, (unsigned long long)iter->pos);
+ 		return -EFSCORRUPTED;
+ 	}
+@@ -41,20 +41,20 @@ static int udf_verify_fi(struct udf_fileident_iter *iter)
+ 	 */
+ 	if (len > 1 << iter->dir->i_blkbits) {
+ 		udf_err(iter->dir->i_sb,
+-			"directory (ino %lu) has too big (%u) entry at pos %llu\n",
++			"directory (ino %llu) has too big (%u) entry at pos %llu\n",
+ 			iter->dir->i_ino, len, (unsigned long long)iter->pos);
+ 		return -EFSCORRUPTED;
+ 	}
+ 	if (iter->pos + len > iter->dir->i_size) {
+ 		udf_err(iter->dir->i_sb,
+-			"directory (ino %lu) has entry past directory size at pos %llu\n",
++			"directory (ino %llu) has entry past directory size at pos %llu\n",
+ 			iter->dir->i_ino, (unsigned long long)iter->pos);
+ 		return -EFSCORRUPTED;
+ 	}
+ 	if (udf_dir_entry_len(&iter->fi) !=
+ 	    sizeof(struct tag) + le16_to_cpu(iter->fi.descTag.descCRCLength)) {
+ 		udf_err(iter->dir->i_sb,
+-			"directory (ino %lu) has entry where CRC length (%u) does not match entry length (%u)\n",
++			"directory (ino %llu) has entry where CRC length (%u) does not match entry length (%u)\n",
+ 			iter->dir->i_ino,
+ 			(unsigned)le16_to_cpu(iter->fi.descTag.descCRCLength),
+ 			(unsigned)(udf_dir_entry_len(&iter->fi) -
+@@ -78,7 +78,7 @@ static int udf_copy_fi(struct udf_fileident_iter *iter)
+ 	}
+ 	if (iter->dir->i_size < iter->pos + sizeof(struct fileIdentDesc)) {
+ 		udf_err(iter->dir->i_sb,
+-			"directory (ino %lu) has entry straddling EOF\n",
++			"directory (ino %llu) has entry straddling EOF\n",
+ 			iter->dir->i_ino);
+ 		return -EFSCORRUPTED;
+ 	}
+@@ -184,7 +184,7 @@ static int udf_fiiter_advance_blk(struct udf_fileident_iter *iter)
+ 			return 0;
+ 		}
+ 		udf_err(iter->dir->i_sb,
+-			"extent after position %llu not allocated in directory (ino %lu)\n",
++			"extent after position %llu not allocated in directory (ino %llu)\n",
+ 			(unsigned long long)iter->pos, iter->dir->i_ino);
+ 		return -EFSCORRUPTED;
+ 	}
+@@ -272,7 +272,7 @@ int udf_fiiter_init(struct udf_fileident_iter *iter, struct inode *dir,
+ 		if (pos == dir->i_size)
+ 			return 0;
+ 		udf_err(dir->i_sb,
+-			"position %llu not allocated in directory (ino %lu)\n",
++			"position %llu not allocated in directory (ino %llu)\n",
+ 			(unsigned long long)pos, dir->i_ino);
+ 		err = -EFSCORRUPTED;
+ 		goto out;
+@@ -483,7 +483,7 @@ int udf_fiiter_append_blk(struct udf_fileident_iter *iter)
+ 		   &iter->loffset, &etype);
+ 	if (err <= 0 || etype != (EXT_RECORDED_ALLOCATED >> 30)) {
+ 		udf_err(iter->dir->i_sb,
+-			"block %llu not allocated in directory (ino %lu)\n",
++			"block %llu not allocated in directory (ino %llu)\n",
+ 			(unsigned long long)block, iter->dir->i_ino);
+ 		return -EFSCORRUPTED;
+ 	}
+diff --git a/fs/udf/file.c b/fs/udf/file.c
+index 32ae7cfd72c549958b70824b449cf146f6750f44..b043fe10e5d605b62988512bbda65bd357fb649a 100644
+--- a/fs/udf/file.c
++++ b/fs/udf/file.c
+@@ -133,7 +133,7 @@ long udf_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	int result;
  
- 	phys = qnx6_block_map(inode, iblock);
+ 	if (file_permission(filp, MAY_READ) != 0) {
+-		udf_debug("no permission to access inode %lu\n", inode->i_ino);
++		udf_debug("no permission to access inode %llu\n", inode->i_ino);
+ 		return -EPERM;
+ 	}
+ 
+diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+index 7fae8002344a0e1e7e51022e97f1e0e2424185f9..902f81729bd886a534c9da644771c7c04c067cbf 100644
+--- a/fs/udf/inode.c
++++ b/fs/udf/inode.c
+@@ -147,7 +147,7 @@ void udf_evict_inode(struct inode *inode)
+ 		if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB &&
+ 		    inode->i_size != iinfo->i_lenExtents) {
+ 			udf_warn(inode->i_sb,
+-				 "Inode %lu (mode %o) has inode size %llu different from extent length %llu. Filesystem need not be standards compliant.\n",
++				 "Inode %llu (mode %o) has inode size %llu different from extent length %llu. Filesystem need not be standards compliant.\n",
+ 				 inode->i_ino, inode->i_mode,
+ 				 (unsigned long long)inode->i_size,
+ 				 (unsigned long long)iinfo->i_lenExtents);
+@@ -1386,13 +1386,13 @@ static int udf_read_inode(struct inode *inode, bool hidden_inode)
+ 	 */
+ 	bh = udf_read_ptagged(inode->i_sb, iloc, 0, &ident);
+ 	if (!bh) {
+-		udf_err(inode->i_sb, "(ino %lu) failed !bh\n", inode->i_ino);
++		udf_err(inode->i_sb, "(ino %llu) failed !bh\n", inode->i_ino);
+ 		return -EIO;
+ 	}
+ 
+ 	if (ident != TAG_IDENT_FE && ident != TAG_IDENT_EFE &&
+ 	    ident != TAG_IDENT_USE) {
+-		udf_err(inode->i_sb, "(ino %lu) failed ident=%u\n",
++		udf_err(inode->i_sb, "(ino %llu) failed ident=%u\n",
+ 			inode->i_ino, ident);
+ 		goto out;
+ 	}
+@@ -1641,7 +1641,7 @@ static int udf_read_inode(struct inode *inode, bool hidden_inode)
+ 		udf_debug("METADATA BITMAP FILE-----\n");
+ 		break;
+ 	default:
+-		udf_err(inode->i_sb, "(ino %lu) failed unknown file type=%u\n",
++		udf_err(inode->i_sb, "(ino %llu) failed unknown file type=%u\n",
+ 			inode->i_ino, fe->icbTag.fileType);
+ 		goto out;
+ 	}
+@@ -1942,7 +1942,7 @@ static int udf_update_inode(struct inode *inode, int do_sync)
+ 	if (do_sync) {
+ 		sync_dirty_buffer(bh);
+ 		if (buffer_write_io_error(bh)) {
+-			udf_warn(inode->i_sb, "IO error syncing udf inode [%08lx]\n",
++			udf_warn(inode->i_sb, "IO error syncing udf inode [%08llx]\n",
+ 				 inode->i_ino);
+ 			err = -EIO;
+ 		}
+@@ -2224,7 +2224,7 @@ int udf_next_aext(struct inode *inode, struct extent_position *epos,
+ 
+ 		if (++indirections > UDF_MAX_INDIR_EXTS) {
+ 			udf_err(inode->i_sb,
+-				"too many indirect extents in inode %lu\n",
++				"too many indirect extents in inode %llu\n",
+ 				inode->i_ino);
+ 			return -EFSCORRUPTED;
+ 		}
+diff --git a/fs/udf/namei.c b/fs/udf/namei.c
+index 5f2e9a892bffa9579143cedf71d80efa7ad6e9fb..ccafcaa9680982decaabc180833b67ace5c92973 100644
+--- a/fs/udf/namei.c
++++ b/fs/udf/namei.c
+@@ -550,7 +550,7 @@ static int udf_unlink(struct inode *dir, struct dentry *dentry)
+ 		goto end_unlink;
+ 
+ 	if (!inode->i_nlink) {
+-		udf_debug("Deleting nonexistent file (%lu), %u\n",
++		udf_debug("Deleting nonexistent file (%llu), %u\n",
+ 			  inode->i_ino, inode->i_nlink);
+ 		set_nlink(inode, 1);
+ 	}
+@@ -809,7 +809,7 @@ static int udf_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 					       &diriter);
+ 		if (retval == -ENOENT) {
+ 			udf_err(old_inode->i_sb,
+-				"directory (ino %lu) has no '..' entry\n",
++				"directory (ino %llu) has no '..' entry\n",
+ 				old_inode->i_ino);
+ 			retval = -EFSCORRUPTED;
+ 		}
+@@ -821,7 +821,7 @@ static int udf_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 				old_dir->i_ino) {
+ 			retval = -EFSCORRUPTED;
+ 			udf_err(old_inode->i_sb,
+-				"directory (ino %lu) has parent entry pointing to another inode (%lu != %u)\n",
++				"directory (ino %llu) has parent entry pointing to another inode (%llu != %u)\n",
+ 				old_inode->i_ino, old_dir->i_ino,
+ 				udf_get_lb_pblock(old_inode->i_sb, &tloc, 0));
+ 			goto out_oiter;
+@@ -869,7 +869,7 @@ static int udf_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 	retval = udf_fiiter_find_entry(old_dir, &old_dentry->d_name, &oiter);
+ 	if (retval) {
+ 		udf_err(old_dir->i_sb,
+-			"failed to find renamed entry again in directory (ino %lu)\n",
++			"failed to find renamed entry again in directory (ino %llu)\n",
+ 			old_dir->i_ino);
+ 	} else {
+ 		udf_fiiter_delete_entry(&oiter);
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index 27f463fd1d89e8ae4844cd70c291d737aee1589e..3a2d66c7e856383cc5c8a605180a9582396ba805 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -1166,7 +1166,7 @@ static int udf_fill_partdesc_info(struct super_block *sb,
+ 		}
+ 		map->s_uspace.s_table = inode;
+ 		map->s_partition_flags |= UDF_PART_FLAG_UNALLOC_TABLE;
+-		udf_debug("unallocSpaceTable (part %d) @ %lu\n",
++		udf_debug("unallocSpaceTable (part %d) @ %llu\n",
+ 			  p_index, map->s_uspace.s_table->i_ino);
+ 	}
+ 
 
 -- 
 2.53.0
