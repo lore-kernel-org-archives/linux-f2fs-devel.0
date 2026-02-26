@@ -4,158 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 50E0FFD45F9
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Feb 2026 23:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3FDC8FD45FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 01:00:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+	Subject:Mime-Version:References:In-Reply-To:Message-Id:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=OrjDZfw+xDe90wspjhS11jViN1LqS5gMHLBmYarLUck=; b=VkstBv+brFusUq3YePeAyhxn2s
-	4UYEPy2zSfqxPdsEHe2onXInD27TSmUTqymViMGYQ2dQecW+AjNDqvFxNvrNB8JEDFv1LKcpFCH6O
-	oila9k9jhZ0RaLBIT0c1Ve2mh+B9H3d7MLrd0ecmeqwnNFpIaAwgvhRX6UkJYEiTSTFQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=h9Cnw0JHCUHqqHArn+sXYOrgyoplKK3UUk/MbB5ybbs=; b=YuFMrGhWm9qXAByCmQNJHjxM7m
+	bSluynLnWK8G8oL7SKXubi05mNAO/01damFk5CMC9It1bG9lQwm0u2OhweWdjlNZBQqtzndh83+Ph
+	pu08MBlyYm742opLDS26Ea1oo82peCHZ8vZi+N5sBxOoh1mxsU5wYtp5T4D9foY+gnXI=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vvOag-00074O-BJ;
-	Wed, 25 Feb 2026 23:46:50 +0000
+	id 1vvPk8-0008Ox-H4;
+	Thu, 26 Feb 2026 01:00:40 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <tz2294@columbia.edu>) id 1vvOae-00074H-MX
+ (envelope-from <akpm@linux-foundation.org>) id 1vvPk6-0008Op-Uy
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Feb 2026 23:46:48 +0000
+ Thu, 26 Feb 2026 01:00:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
- Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Mime-Version
+ :References:In-Reply-To:Message-Id:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=alpDw3ItzbUTKzx46DBJhWkupeO49VjqF0Ov6EtA2u8=; b=UoRMCafop0PgDuRLYzvsLOBfNH
- 3P9CNOyJH+6b6nkEIbRL7CsHNRgsYl7HuG5KJeSe1pcNkaK7U/QtFGRVOnGMKQTctUoEFOSxdaeZQ
- xmKp6HRLLQKX+Z1JVgUW/cgkh/+3+pDDKhslVD5l3FHz1nL4/XE7Jcf2Q2iNhi4ynJCQ=;
+ bh=kzBboXRq2m0Xbzbb5Eqzgnd6HDbE7nrSUbmDE0s8g3A=; b=Ag1GfOh+zcwoHW9gHUB65jAXTx
+ EUVV0jqTyGG8tILmx4LUBebVXrR8Av3NQyEos5kMDvpG3+1s2Rs7Sq0dct6JL+S0NBxGW4gz4ZAK6
+ 6HaGck9KnheuDySI8cY/nP66QfmU9Fu+NG++sLu41MVHJ4yT6U6kRAFwdv14FKh+JqeM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
- :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:Mime-Version:References:
+ In-Reply-To:Message-Id:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=alpDw3ItzbUTKzx46DBJhWkupeO49VjqF0Ov6EtA2u8=; b=TG42A6RkG8Jirk32ODAhxwcjFl
- xfk5Jups44Opr7Pusx8wmqO+UdPDKkWOXRmu8XNnCcPxthpgPt2dAdvIjscIRCDZnlA+dh1CEFIQ/
- hXyymenSvAdM376udqoQkj+uogQ2BSm3NJv/RuVNvXtZ/YXAMji35w6vC86y3xlcqnCQ=;
-Received: from mx0b-00364e01.pphosted.com ([148.163.139.74])
+ bh=kzBboXRq2m0Xbzbb5Eqzgnd6HDbE7nrSUbmDE0s8g3A=; b=Y2MR5nrtgc0uZP3Eos7TamoWFi
+ f78bDZdUEsuu6Heu72fyBYydZ7bFUJ5TO/kZbUeCh4Adp/1J478ffSV36OVt2npi+bLFRbuCroLlO
+ cRz3SR1oLHzoMnLeqYRSccXdnLgeGp5CsmJT9R2AZUxaGBNWyE1uPEUnF2vPpyfK6/BA=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vvOae-0001EQ-16 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Feb 2026 23:46:48 +0000
-Received: from pps.filterd (m0167076.ppops.net [127.0.0.1])
- by mx0b-00364e01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 61PNNLLn4067870
- for <linux-f2fs-devel@lists.sourceforge.net>; Wed, 25 Feb 2026 18:46:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pps01; bh=alpD
- w3ItzbUTKzx46DBJhWkupeO49VjqF0Ov6EtA2u8=; b=IqQmO8iyq4x1wZil7iSE
- Yb5VlrEZoCcHhGcsRlLoFrYHNcJWSFZXP8Lkch4N9gYsiVWmO8YAMgNCZ+jSPuGh
- hbzp9auArHHb5yygWb5QfvydQTFv+DYtmGbLjW8Nwh0rL1RrfdpC0iT59uqajbTP
- pU7EnC4qWLZrOpedU07ruJkUXMkIs22OpRsb3adN3lN+kWmX4Sku7pQRCDKjiGjP
- JUl39ZSWtethLLBGCbiLW0+lMXwGHzzCI+8mSIkLlYsRX9eNXjchFAOFbKrlu50e
- 7CYd1xHbmUbYhJax6TCWKrVbXoPJlMGSuuNsvHzEHqnIaoyug93cm8/Lmf+gekgA
- Dg==
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200])
- by mx0b-00364e01.pphosted.com (PPS) with ESMTPS id 4chsqwy07j-1
- (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 25 Feb 2026 18:46:37 -0500 (EST)
-Received: by mail-yw1-f200.google.com with SMTP id
- 00721157ae682-798656130b0so4108387b3.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 25 Feb 2026 15:46:37 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772063197; cv=none;
- d=google.com; s=arc-20240605;
- b=VwtLpM/K0C7JVOv45SaHiUZqmBGEz2zS49GAK5vfbyXsHaKFRGUjvDFPuO+VVR73v2
- 2258cFYEwNVibku8oLFlNw8opsGeCYLEMkB52MoIW150wrMIzagB/A/oEUg+XYZl/HkR
- gTSEsidbfqUSn4SJ94IeVvDqr/0gux3iYBt6EJ8ODmThVJYLAiGEtY5Uk1NrhJ0/L0Qt
- dfFmrPzs5YUD5MDB3Rnd1T4//EYEXR1Sbg6u8RkfvOYt6eTIlSRKUaNs3zEbctXhviue
- 3Q6dxnZhJKUMRUovR/jTuZrY6fcPxGPaW5VrpTzaQysmZUK0npoVBbhh6VdYIDPeZOMm
- FCVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version;
- bh=alpDw3ItzbUTKzx46DBJhWkupeO49VjqF0Ov6EtA2u8=;
- fh=DXXl80GbewX8jRfkiOi4l5q0ZVplPg9mksesHpFOZg4=;
- b=SEu2SWFZ8smugvQprYx5pGIL8aYwhgHOYCN/1EI6ogVFVQM11PzCGJJg4LgttLImME
- XjXUIvZeRpfjFbWKtPlftLBo9WvkVF3Xm+ZI7w9mtZihkBQyc+QvQuqN6QilV6r755KH
- y3NpoTMbUCpwXOy4YGOUcFGQf5FsNbp9jkeIzQh0eqsRTw35kGyfJx80CJ5TqlCEoHUT
- SRZsQx3aW5/R4GzbRANv5KJaJw6jfdZqp3jj/f3TP7xRF549DlzF4ZPLQE1eACp9gusj
- utfzSPaZXH0aoDetKT1pJ7U470dEDSmrAMWhJGkZz5yeG9ZRLj85tiekuKTBZzzI5L+T
- RN3w==; darn=lists.sourceforge.net
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772063197; x=1772667997;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=alpDw3ItzbUTKzx46DBJhWkupeO49VjqF0Ov6EtA2u8=;
- b=vgEQ4ejLiXY8bNnzbMIYP0a9HneF42qmrDb9jrBQhBetv+sppQ4jSesTcdcafvimcj
- C0coLq1ecLwZISVFph3geLqN1DzbDQhClwGS9BrpVF1xDrWEL9WmI33AHPLF40lPNZ/G
- O0yMAgb9WQiWIYRNVOFtm8dcrfndUiptXuk4vAiQ+UsexK680JqvI1QBwDCpboEVBxf9
- ll4aE6f7OrvNF3TmzyUC042TPmnmoVX14goA9uLNicEUCeOG/F+X/3Mgd2RZCuJ2Mk1Q
- Wrq2uJlpd081AySdwk/zUU2j7YU5J0tAFfIMCFhE2ccS0Bpkw2qooAIQl1yIQx6A2ues
- uRdg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCU5wZCqlf4Qu9gaQFJ6leLu8Lc5Eieii9MoaR2Si0LJbJpLonm2y4R+BpfpW97KpuplTGumVNUiYVs4/smxFzC4@lists.sourceforge.net
-X-Gm-Message-State: AOJu0Ywuik+FwqayV9wFuIr6BMV6bBsgmNV6G2rmLByQhrxM7JmGlf6N
- OYO0BKZNaDZH7lgtxhvqFFwuDGhHTSft7n+Fqj3KU/0ZQ6htW8Y3EHLtD8gSOrHtQVk1nb8o1+h
- y0vgfU3j4NnJmoML4hj9yi6L1Sc/m1GaBu72xPOnjgAiB3cKKsgs+2wN0r5BOC3S3iFnMJKULr+
- ABctdeY56cKyVZC3yHEKYNTsZpfyZJq52gXKWz0hlgCNQInLcORQ==
-X-Gm-Gg: ATEYQzwiKnS3AZ1XiayeNIiMsPMOKfDVEDWdtjE5QtnQmRmbAqp+c47Z5o1WXZxCddQ
- oeJj7melHcC7T4qMl5Y02Y2td8cJZy1zMSF29s9ZB2a8M7fzzIzQrW2avFb2lQM2BXuJJGI386b
- zzy3BQK5RYrGvwb4U48j6Vqyy0gBubmYOzmYvoHOFL/NfosqEE6ApkT7+7pDpEj7tvGKCtzc25f
- EFOljhX
-X-Received: by 2002:a05:690c:46c3:b0:798:6f20:1c87 with SMTP id
- 00721157ae682-7986ffc3c55mr19756647b3.58.1772063196832; 
- Wed, 25 Feb 2026 15:46:36 -0800 (PST)
-X-Received: by 2002:a05:690c:46c3:b0:798:6f20:1c87 with SMTP id
- 00721157ae682-7986ffc3c55mr19756517b3.58.1772063196458; Wed, 25 Feb 2026
- 15:46:36 -0800 (PST)
-MIME-Version: 1.0
-References: <20260225-pagevec_cleanup-v1-1-38e2246363d2@columbia.edu>
- <aZ9f5_pgnr_62gCL@casper.infradead.org>
-In-Reply-To: <aZ9f5_pgnr_62gCL@casper.infradead.org>
-From: Tal Zussman <tz2294@columbia.edu>
-Date: Wed, 25 Feb 2026 18:46:25 -0500
-X-Gm-Features: AaiRm52dQnciImWHmEJDWZpvU8pRpkz10CR6JsDtukkF0Y3eoXH3DgTrzZnl7YE
-Message-ID: <CAKha_sr7W3dRSnfqmruFxvoAr8aQGrAgStxjLdchfn-d8cHt2Q@mail.gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-X-Proofpoint-GUID: HhQz-1op7H285e9mRiUJKUcMSsgsrEkl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjI1MDIyNyBTYWx0ZWRfX76d+Nj3G8ID2
- QFLsYuRUvba1L13z8h4a6RLHIQ9ARav8CXUSVSGd4Iz0m6uOLYysCmq2xGM9TRgl967iN9tj1Mx
- RHAQyfEf/YNmALh9mmcDo2K7Ock0wZr20zYWtINUkzAK5y9yXoR98uoRzUOvFTbNmAz1hbfqVgJ
- oECljWYub2rXCQHTt3/rAMAL2jw+rEL6Xp8E0b3D9olgkuuhzKMrGpb50HQ4XifskwQrt7s5mL9
- TOuF36x30hnzLYsNhzZRHux0SfZoWMUFu2TCMVrBvg+VmF0ga2yAkqv3FYBZaLsovjzBswaR1g+
- jc+l75Rf+ldryBFwjZZyrR6HtIABXqFhw0DvHyZOwMICJ8YxT/p4ZYDwEuHmeUyaW95X0/7kdy6
- EFqy09FtgkK404OHcAWzU64gDNwTfHLR1Uqs7yTK6GVMYh720DPyXBmopP3TAKPmPNEqCjIWw3h
- sZY+qMim1VroWbb3c4w==
-X-Authority-Analysis: v=2.4 cv=Y8b1cxeN c=1 sm=1 tr=0 ts=699f89dd cx=c_pps
- a=NMvoxGxYzVyQPkMeJjVPKg==:117 a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10
- a=x7bEGLp0ZPQA:10 a=VkNPw1HP01LnGYTKEx00:22 a=Da8U98TiO7q1upZEImrf:22
- a=Qm0qsxP7aFY2tkT6R2MF:22 a=JfrnYn6hAAAA:8 a=vsynCidFeb6Hwkx_kP0A:9
- a=QEXdDO2ut3YA:10 a=kLokIza1BN8a-hAJ3hfR:22 a=1CNFftbPRP8L7MoqJWF3:22
-X-Proofpoint-ORIG-GUID: HhQz-1op7H285e9mRiUJKUcMSsgsrEkl
-X-Proofpoint-Virus-Version: vendor=nai engine=6800 definitions=11712
- signatures=596818
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=10 clxscore=1015 priorityscore=1501 bulkscore=10 adultscore=0
- lowpriorityscore=10 suspectscore=0 phishscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2602250227
-X-Headers-End: 1vvOae-0001EQ-16
-Subject: Re: [f2fs-dev] [PATCH] mm: Remove stray references to struct pagevec
+ id 1vvPk6-00009v-1Y for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 26 Feb 2026 01:00:38 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by tor.source.kernel.org (Postfix) with ESMTP id 1381C60053;
+ Thu, 26 Feb 2026 00:41:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03CC4C116D0;
+ Thu, 26 Feb 2026 00:41:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+ s=korg; t=1772066507;
+ bh=a5b15Ngqo2bOOdUHSjsT/sSuPPfkZQCQF/naFXI2QkI=;
+ h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+ b=CcOiuO7NEI5etysy42JpjnremhTiWgG4lUGW8vs+Kti8TdTA3xkAw8m9bRPHQw/jW
+ UtviHmXGTs0EojsHSlFb7e+3Lc6f61/dMS61S/znrah0BD8VlKfWckTXVq5rOTTIiN
+ OwOPmCyouWxjyK/Ldx7pApiM6o9/4J5sMHRRG9vY=
+Date: Wed, 25 Feb 2026 16:41:44 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Tal Zussman <tz2294@columbia.edu>
+Message-Id: <20260225164144.76e14a362e0d7cae49f20787@linux-foundation.org>
+In-Reply-To: <20260225-pagevec_cleanup-v2-0-716868cc2d11@columbia.edu>
+References: <20260225-pagevec_cleanup-v2-0-716868cc2d11@columbia.edu>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+X-Headers-End: 1vvPk6-00009v-1Y
+Subject: Re: [f2fs-dev] [PATCH v2 0/4] mm: Remove stray references to pagevec
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -167,29 +83,76 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-mm@kvack.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: nvdimm@lists.linux.dev, Paulo Alcantara <pc@manguebit.org>,
+ "Darrick J. Wong" <djwong@kernel.org>, dri-devel@lists.freedesktop.org,
+ ceph-devel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Brendan Jackman <jackmanb@google.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ Zi Yan <ziy@nvidia.com>, Shyam Prasad N <sprasad@microsoft.com>,
+ Chris Li <chrisl@kernel.org>, John Hubbard <jhubbard@nvidia.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ David Hildenbrand <david@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org,
+ Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+ Trond Myklebust <trondmy@kernel.org>, samba-technical@lists.samba.org,
+ Simona Vetter <simona@ffwll.ch>, linux-cifs@vger.kernel.org,
+ linux-nilfs@vger.kernel.org, Vlastimil Babka <vbabka@kernel.org>,
+ Hugh Dickins <hughd@google.com>, Olga Kornievskaia <okorniev@redhat.com>,
+ Maxime Ripard <mripard@kernel.org>, ocfs2-devel@lists.linux.dev,
+ Jani Nikula <jani.nikula@linux.intel.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Barry Song <baohua@kernel.org>, Kairui Song <kasong@tencent.com>,
+ Theodore Ts'o <tytso@mit.edu>, Muchun Song <muchun.song@linux.dev>,
+ linux-f2fs-devel@lists.sourceforge.net, Anna Schumaker <anna@kernel.org>,
+ Alex Markuze <amarkuze@redhat.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Peter Xu <peterx@redhat.com>, Chris Mason <clm@fb.com>,
+ Pedro Falcato <pfalcato@suse.de>, Marc Dionne <marc.dionne@auristor.com>,
+ linux-afs@lists.infradead.org, Baoquan He <bhe@redhat.com>,
+ Matthew Wilcox <willy@infradead.org>, Viacheslav Dubeyko <slava@dubeyko.com>,
+ NeilBrown <neil@brown.name>, Ilya Dryomov <idryomov@gmail.com>,
+ linux-ext4@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, cgroups@vger.kernel.org,
+ Shakeel Butt <shakeel.butt@linux.dev>, Dan Williams <dan.j.williams@intel.com>,
+ Oscar Salvador <osalvador@suse.de>, gfs2@lists.linux.dev,
+ linux-nfs@vger.kernel.org, Nhat Pham <nphamcs@gmail.com>, linux-mm@kvack.org,
+ Jeff Layton <jlayton@kernel.org>, Steve French <sfrench@samba.org>,
+ netfs@lists.linux.dev, Mike Rapoport <rppt@kernel.org>,
+ Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Qi Zheng <zhengqi.arch@bytedance.com>, Yuanchu Xie <yuanchu@google.com>,
+ David Howells <dhowells@redhat.com>, Joseph Qi <joseph.qi@linux.alibaba.com>,
+ Andreas Dilger <adilger.kernel@dilger.ca>, David Airlie <airlied@gmail.com>,
+ Andreas Gruenbacher <agruenba@redhat.com>, Mark Fasheh <mark@fasheh.com>,
+ Dai Ngo <Dai.Ngo@oracle.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Axel Rasmussen <axelrasmussen@google.com>, Jann Horn <jannh@google.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Tom Talpey <tom@talpey.com>,
+ Bharath SM <bharathsm@microsoft.com>, David Sterba <dsterba@suse.com>,
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>, Wei Xu <weixugc@google.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Johannes Weiner <hannes@cmpxchg.org>,
+ linux-btrfs@vger.kernel.org, Joel Becker <jlbec@evilplan.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gV2VkLCBGZWIgMjUsIDIwMjYgYXQgMzo0N+KAr1BNIE1hdHRoZXcgV2lsY294IDx3aWxseUBp
-bmZyYWRlYWQub3JnPiB3cm90ZToKPiBPbiBXZWQsIEZlYiAyNSwgMjAyNiBhdCAxMjo1NzoxNlBN
-IC0wNTAwLCBUYWwgWnVzc21hbiB3cm90ZToKPiA+IHN0cnVjdCBwYWdldmVjIHdhcyByZW1vdmVk
-IGluIGNvbW1pdCAxZTA4NzdkNThiMWUgKCJtbTogcmVtb3ZlIHN0cnVjdAo+ID4gcGFnZXZlYyIp
-LiBSZW1vdmUgcmVtYWluaW5nIGZvcndhcmQgZGVjbGFyYXRpb25zIGFuZCBjaGFuZ2UKPiA+IF9f
-Zm9saW9fYmF0Y2hfcmVsZWFzZSgpJ3MgZGVjbGFyYXRpb24gdG8gbWF0Y2ggaXRzIGRlZmluaXRp
-b24uCj4gPgo+ID4gU2lnbmVkLW9mZi1ieTogVGFsIFp1c3NtYW4gPHR6MjI5NEBjb2x1bWJpYS5l
-ZHU+Cj4KPiBSZXZpZXdlZC1ieTogTWF0dGhldyBXaWxjb3ggKE9yYWNsZSkgPHdpbGx5QGluZnJh
-ZGVhZC5vcmc+Cj4KPiA+IC0tLQo+ID4gSGFwcHkgdG8gcmVuYW1lIFBBR0VWRUNfU0laRSBhbmQg
-cGFnZXZlYy5oIGlmIGRlc2lyZWQgdG9vLCBidXQgdGhhdCdkIGJlCj4gPiB+NjUgbW9yZSBsaW5l
-cyBvZiBjaHVybi4uLiBBbHRob3VnaCBpdCBsb29rcyBsaWtlIHRoZXJlIGFyZSBwbGVudHkgb2Yg
-LmMKPiA+IGZpbGVzIHRoYXQgaW5jbHVkZSBpdCBmb3Igbm8gcmVhc29uLCBzbyBjb3VsZCBiZSBh
-IGdvb2Qgb3Bwb3J0dW5pdHkgdG8KPiA+IHJlbW92ZSB0aG9zZS4KPgo+IFllcywgdGhlcmUncyBs
-b3RzIG9mIGNsZWFudXAgd29yayBoZXJlIHRoYXQgSSBkaWRuJ3QgZ2V0IGFyb3VuZCB0byEKPiBU
-aGFua3MgZm9yIHRha2luZyBvbiB0aGlzIG11Y2gsIGFuZCBhbnkgbW9yZSB3b3JrIHlvdSB3YW50
-IHRvIGRvIGluIHRoaXMKPiBhcmVhIHdpbGwgYmUgbG92ZWx5LgoKVGhhbmtzISBKdXN0IHNlbnQg
-YSB2MiB3aXRoIDMgbW9yZSBjbGVhbnVwIHBhdGNoZXMuCgoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QK
-TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+On Wed, 25 Feb 2026 18:44:24 -0500 Tal Zussman <tz2294@columbia.edu> wrote:
+
+> struct pagevec was removed in commit 1e0877d58b1e ("mm: remove struct
+> pagevec"). Remove any stray references to it and rename relevant files
+> and macros accordingly.
+> 
+> While at it, remove unnecessary #includes of pagevec.h (now
+> folio_batch.h) in .c files. There are probably more of these that could
+> be removed in .h files, but those are more complex to verify.
+
+Dang that's a lot of cc's ;)
+
+Thanks, I'll add this series to mm.git's mm-new branch.
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
