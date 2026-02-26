@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8E834FD8FCE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 16:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CCA43FD8FD0
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 16:08:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Message-Id:
 	MIME-Version:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=C2fOAu1PEONM9QTn3h+Z63KyUpalVxzoVxQZp9P32JM=; b=c6lDS1b9zgWlrtU+IM6+/rkq7J
-	J7urqmyBur21c59O4kS7h4eYFpmc4C2x8AK7lnEEgZ78dzrlvPjXVWRJy9DpL7k7DyiSjo6qPJtyP
-	FEdt1rJq/ozkrN6bAb+PWjmLuxnoGlkHtvBdY0JGddO/+5Mvgv6woGmwdGEBGT8vW5iM=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=BUFlxnxbxbXUuqn/MC/fVsyv6oxuYzyyA+bg4lNwBCM=; b=YndsXEvyRn191fJIJ0pGLOXvAd
+	PqWvgpX3s4Bj8AbOJ1AxJ9LL9jXaIaroVtW4vc5AzcZb2pbBKdD5XjXjUerjkhs0wJ5mU2/7XqHkC
+	KLvOQYK3XA7+/uAGwzcXYPinS2ObrEDuU4QSlxMJ/MoyqwE7EoJveEdOyJARXJbbW2Zw=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vvdu7-0001Iv-9L;
-	Thu, 26 Feb 2026 16:07:55 +0000
+	id 1vvduS-00035n-GR;
+	Thu, 26 Feb 2026 16:08:16 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jlayton@kernel.org>) id 1vvdu5-0001IU-7G;
- Thu, 26 Feb 2026 16:07:53 +0000
+ (envelope-from <jlayton@kernel.org>) id 1vvduQ-00035R-Mn;
+ Thu, 26 Feb 2026 16:08:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Message-Id:
  Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QEXuDubfu7DiBE0tJWHgiTQReW95Jv4vi5dFz2+AqoA=; b=TK4VMeO1x+pxyED8nFNtyja8tV
- f9j6hr7wLyOSDlYB7XgqJkZEK2FjX9tTlqka7obVIOFk/IQLtCD61sdaRaH65vzmG/WSvSklCb/AV
- zqOLlTP1wGGRSQVTSdDemUO53zM0u1zTRUews12kHRhfu83VIOPjYPObITxpL2cgU6FQ=;
+ bh=sBNw2TJpVq9dqBuZ8KYKuWHBMXom1bt4ItAxvrvlyQw=; b=lGsTpmmPNHg1lOMusSiD8sMS1E
+ hNEsI/Yt5WhIZoNqcFMlnmg9XJ6N8VA6LFx3x4MXRYf2C/HtPu+OgbxWslw9lsB4kKXHd876Df6Bj
+ y4fe/NNikbvVtjK4Dk4M6bViuE8rFmtoy+oPGpt9nnvleX9xoQeU9Dwge8vPJwnAQcno=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
@@ -41,31 +41,31 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=QEXuDubfu7DiBE0tJWHgiTQReW95Jv4vi5dFz2+AqoA=; b=fUXBEqhqKXC7B5D2GW+F0yMonu
- 7xe8/4MQYpVU1Avz/IcP0TwHDi1qhTuAx5Zc8SH5bSX25mtuNJProsi7fP2aKot6SdJyvelzTP3hX
- +x1gf7WcszYQBKZepYKKPLkp1YpizeAcPOAkxfyymPZR/UZ/L/+cIzCWPftpiHJup4FE=;
+ bh=sBNw2TJpVq9dqBuZ8KYKuWHBMXom1bt4ItAxvrvlyQw=; b=ZHnl1rp+DnovjodYy6S3Ayhd2t
+ 9ihtGQoOTZQtuQovOG+tbZhkKg+/qHHLMaAtgVLqYVdN/L7mc3T5fWDGajwmhukqRH5OqmWtauHsm
+ HlC5vDmw6jTnvEJPL3IAc92t33L24ATFlD8WLL6iG26TMg1sIWzyrO93XCZE2yfzymJ8=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vvdte-0006AK-R3; Thu, 26 Feb 2026 16:07:53 +0000
+ id 1vvdu8-0006EX-My; Thu, 26 Feb 2026 16:08:14 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 8501341902;
- Thu, 26 Feb 2026 16:07:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14A8EC2BC9E;
- Thu, 26 Feb 2026 16:07:08 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 656224404F;
+ Thu, 26 Feb 2026 16:07:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 182BFC19424;
+ Thu, 26 Feb 2026 16:07:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772122041;
- bh=guIyR8txAyswD3hV7ksTPOwKgOC5jl6K3IuEHEeuazY=;
+ s=k20201202; t=1772122066;
+ bh=87RomnifO0cL5ulL+HismKZkw+RwFQPeGoOI69KOx40=;
  h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
- b=oP0XhNxch+g3ihBD0nKGKJbH8GWy25UibaNuGneJv2vKAKAvpBXyRRyDQAh+7r/mj
- 0tj5DG3z5WZiIBo6ukSqM/xNVCclXpalBC8EnHMcepR/Id/T8kJiYvdIQoz/8BGD+Y
- 4cX1i9xUrbUhQ+qs3cT3KBOvXfScQAVx40mJkk7zu90aUJRfq+6vndvqiubk6S8UAG
- OCdrgWUILGd8iCGxzF5Tuo4w70SkeQb5LvixBFHRHfCw72oXu4u5HmxqEEHaHjD2N6
- t3+5KOuAMEvXLdKEXQyTsMsboXwEHUiapjR7XM+/H97N0pDnM4Kh22dmlU6WPmD+fB
- s0fHo8dLgp/hg==
-Date: Thu, 26 Feb 2026 10:55:55 -0500
+ b=KwAsXlRovpo0h09a4MZbAKFc9uk/4A+aQTF4aProFCmuL6hG40MvhhxJUI+VqfRud
+ O6lcHDeBshiWkZIDgRdaxnaj+C8AFUJ8rOsvkPj8ib0pFg4RybCP12WGycXssGRPxa
+ Y/xp2kWbPY1WqWMEVzYgJzKmhnM6MZrgeBQmZGeQodKg6IrAj1UkJKygD1YzzHn800
+ 2KSHklBObDd+M72oyka/zzgTKj/HvjXOsXi5hwZU4h9ENuru/sXV6fqZycHFM07/gy
+ TXu1xft5ywD39PmN4it9lfO1rB+zJedqmopTLvG6GcEsbLoqlHekI8H2PY5/Dz/XKO
+ EXxVq4IYq56zw==
+Date: Thu, 26 Feb 2026 10:55:57 -0500
 MIME-Version: 1.0
-Message-Id: <20260226-iino-u64-v1-53-ccceff366db9@kernel.org>
+Message-Id: <20260226-iino-u64-v1-55-ccceff366db9@kernel.org>
 References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 In-Reply-To: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -141,25 +141,25 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
  James Clark <james.clark@linaro.org>, "Darrick J. Wong" <djwong@kernel.org>, 
  Martin Schiller <ms@dev.tdt.de>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1455; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=guIyR8txAyswD3hV7ksTPOwKgOC5jl6K3IuEHEeuazY=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0RiY9iQ/WI9xzF8HjuSF0msd9z65XTS1K3v
- W0Jme2yHyeJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtEQAKCRAADmhBGVaC
- FUdXEACVy0RSg//ixaXELfj5UYiV+H80XbKRqlys8++/J+rh+FUyeqvaKy3D8aWpMOzazuduA4H
- N3+TGxw3ybpjbHT/F94iC/Lap37RUxYODHLoirg+hdONUnX3UiWOMmm7EGl+D9lEionRSeK59Ud
- NYqDJgfaYqg4ElQ8kkK6Sj/OCB4DF5OVQPsO7ajqz59MBYDNWIORf8StRcDgClB4jfSdtU01Lfs
- 3VMa9eqaG2AoO6jUI7XdX/CyvsbaIcrCvMvlNmpAJcd/My+rWY1ePJdybAmHaSaQHEhNbFTA74A
- dl0kZP5lWE2a+5Xjb0BjiviDEua1jaJQ/XXhjoITYssXmchunqi2XGiG8CSkelRfXV+Dj/iUeoX
- 2jWkJg4vtYV74oCqJ7EQkNuV8DckUTxePz/vgkmjiUC3Rouj09LGiXtdgz/L32fL5qm6qq/XKZn
- AZ0b47pHHvLrz5+2ZcNK97YTeScVVL1ksJrPodgioUmRwdjcxSrbQxXs4anUPhlfHCfc3AjRqFi
- LRk0kVjY2MFBuYmha4wXPXmzs9LqGEl17305Fak20VPYzOSMV8mbJeQPCi0WqrycFSf5qvjZl4n
- Qv8ymGVAGxz2vIrWx8CH0jaVxPfGKHp3HESyfW4gBjmUvw/KMOtBn1LJ1WjVsBnInM68bFVVzO2
- sa5ABNGi9XyWjug==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1424; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=87RomnifO0cL5ulL+HismKZkw+RwFQPeGoOI69KOx40=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0SgH+gJAN29PyQUVILDrGJ9juPunMjNerJ8
+ p9n6L8XweWJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtEgAKCRAADmhBGVaC
+ FbzND/0RW8OwdDIsMNP/tE/3wHlHzbrhC6zVA5x3k2XukHz7HwfDr/1AV6nP0+2rs1tmoxOCBKd
+ uB3bC8zaWu2bOdmlNB9AJp3YtiZ29kD1TqBZi1fg1uq98Y/F/YDGSspkxIMu+tzuTcHFRtSvSH+
+ IDpK337hFool4tBRuBOST6DrvXm4ihW7o/zqDFmgaHeyGIDcdBbFcKIxKOW/ed+5ntAUUpCTw6S
+ WArcCdtpB+8odYkpEtb8hvj0sWMIjlyxxNrrW4J4XRzKGcpx9s3vB00xdJzCpRnJ29X09oG9ccg
+ +h4daAbfsXU83CBHtze+Y4734lKaOKw62NnpIOhMZIMYloPgKNEFOTW632ULNN5gWWaucAc/OjE
+ VcXPJeL90s+LzWRjIxIqZNYEZzGcQLv1xUM2ji5x1ieTov8j07uiFW/SZtoylEhw2qKExhXny0Y
+ B4T8eiCR3m4FwoK0/kWQJwZ8wkZP+ZWlMtJ7B4cUavNhFHR3KpsAajcjpAd39hYsLMh0SszZaTM
+ awizdyLsgkfNtdVqMmGQgIHN4K2CS6rGe/1MWiNMu6vcdBTvw1FEWSCzJHb+ZV4mXxYAIVewcMo
+ Tm+/Akh931ithtTOjIZe3mE3UFxpvTvcptAA47mL0syU01j4yq0zP683Uhp3KJk7UeNzlCO1Nn8
+ UAMj/f2rI4uvZhQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Headers-End: 1vvdte-0006AK-R3
-Subject: [f2fs-dev] [PATCH 53/61] fsnotify: update fdinfo format strings for
- u64 i_ino
+X-Headers-End: 1vvdu8-0006EX-My
+Subject: [f2fs-dev] [PATCH 55/61] uprobes: update format strings for u64
+ i_ino
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -195,36 +195,36 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Update %lx to %llx in inotify and fanotify fdinfo output for printing
+Update %lx to %llx in uprobe warning messages for printing
 inode->i_ino, since i_ino is now u64.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/notify/fdinfo.c | 4 ++--
+ kernel/events/uprobes.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
-index 9cc7eb863643774b83da8b6228c38db16d0dbed1..0f731eddeb8be74113361f45aa4fca2943395e9d 100644
---- a/fs/notify/fdinfo.c
-+++ b/fs/notify/fdinfo.c
-@@ -84,7 +84,7 @@ static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
- 	inode_mark = container_of(mark, struct inotify_inode_mark, fsn_mark);
- 	inode = igrab(fsnotify_conn_inode(mark->connector));
- 	if (inode) {
--		seq_printf(m, "inotify wd:%x ino:%lx sdev:%x mask:%x ignored_mask:0 ",
-+		seq_printf(m, "inotify wd:%x ino:%llx sdev:%x mask:%x ignored_mask:0 ",
- 			   inode_mark->wd, inode->i_ino, inode->i_sb->s_dev,
- 			   inotify_mark_user_mask(mark));
- 		show_mark_fhandle(m, inode);
-@@ -111,7 +111,7 @@ static void fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
- 		inode = igrab(fsnotify_conn_inode(mark->connector));
- 		if (!inode)
- 			return;
--		seq_printf(m, "fanotify ino:%lx sdev:%x mflags:%x mask:%x ignored_mask:%x ",
-+		seq_printf(m, "fanotify ino:%llx sdev:%x mflags:%x mask:%x ignored_mask:%x ",
- 			   inode->i_ino, inode->i_sb->s_dev,
- 			   mflags, mark->mask, mark->ignore_mask);
- 		show_mark_fhandle(m, inode);
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 923b24b321cc0fbdecaf016645cdac0457a74463..4084e926e284487ea7e28b63721797b20f0dfefd 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -344,7 +344,7 @@ __update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
+ static void update_ref_ctr_warn(struct uprobe *uprobe,
+ 				struct mm_struct *mm, short d)
+ {
+-	pr_warn("ref_ctr %s failed for inode: 0x%lx offset: "
++	pr_warn("ref_ctr %s failed for inode: 0x%llx offset: "
+ 		"0x%llx ref_ctr_offset: 0x%llx of mm: 0x%p\n",
+ 		d > 0 ? "increment" : "decrement", uprobe->inode->i_ino,
+ 		(unsigned long long) uprobe->offset,
+@@ -982,7 +982,7 @@ static struct uprobe *insert_uprobe(struct uprobe *uprobe)
+ static void
+ ref_ctr_mismatch_warn(struct uprobe *cur_uprobe, struct uprobe *uprobe)
+ {
+-	pr_warn("ref_ctr_offset mismatch. inode: 0x%lx offset: 0x%llx "
++	pr_warn("ref_ctr_offset mismatch. inode: 0x%llx offset: 0x%llx "
+ 		"ref_ctr_offset(old): 0x%llx ref_ctr_offset(new): 0x%llx\n",
+ 		uprobe->inode->i_ino, (unsigned long long) uprobe->offset,
+ 		(unsigned long long) cur_uprobe->ref_ctr_offset,
 
 -- 
 2.53.0
