@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 175C0FD8FE1
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 17:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D6238FD8FE0
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 17:20:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Date:References:In-Reply-To:To:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=G7NPmj8ykdRf11CuahcHYu3QB/errPWLayuS9vPIhQQ=; b=XxYLssj7i63P2KhBY+DqK8YX7T
-	jw2ozeVgZzuJCsOm8R7zcCOrk7G9XAVxAIUSfIAbmQExvalUMR/3xTmpnqJpJG1JNXKK1LtvvPWu8
-	xMKus8mOwwWy6Xl34u1OLJZQjS3giKmwIk7GO7EfpNtWwiY2osogBFqKp5Tee5edpqZg=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=MMzT4Vf/ICou30UCFdgpI1wRYM9/eZYizQ8GemZoG7Y=; b=HAP9SlYIFzADVtOBWj1Lf9Uyn1
+	2mLzy6kfMGqCh8v3SArOMvR32QwQzJat/VjnrQdAMwIAHLQCDLck+Cul/qRzS1cz1UkZOXWPzOf6e
+	VPK/GSXPSBMmCQl953VNpEswOUn0OxkqOyhpqKvMAlyft465rRFJi9YmQ7/yInK6fQ0g=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vvf2N-0004zP-Mq;
-	Thu, 26 Feb 2026 17:20:31 +0000
+	id 1vvf2Z-0004cI-HZ;
+	Thu, 26 Feb 2026 17:20:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <pc@manguebit.org>) id 1vvf2M-0004zD-5z;
- Thu, 26 Feb 2026 17:20:30 +0000
+ (envelope-from <pc@manguebit.org>) id 1vvf2Y-0004c8-CV;
+ Thu, 26 Feb 2026 17:20:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Date:References:
  In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GBAAeNpvfWupATD/Mqi5LhBKxQa5mgBWtQkeTAghv8U=; b=DrcA6Y//knC/5da3xBkTenda/S
- f8DxMJQ3akdf1gnUitExe6zqxdwWUx+0cD9OVkDBXcGsdKfX3suxBo957ZsV8dGJp1RKGSpDxVKHz
- BB+Xf7FwtR0epNtEYtqDuim7yYdnfD/XuGjQOVol52SsA5zpz7uMHbiXOYf1pYO2lDEM=;
+ bh=lHNPvXjvxrRY/KHE3atTkGQgKEoBn4K5FRw/b5IfwZY=; b=O/Wq05KizsSWf2SPF+EnPdw3Tg
+ /7kBiirsidcQLLr0BR5cPwZBYi4UlWNIMxlXHwIZHnGcOn+DzXwPP7/YJDDq8UJ0Kh1n0jHSOosJ/
+ zJg5EHWCRUb/GUVvy0fwI9eEth61tzuXia0RXkCsAk0/Ix+VHMcSCzEROvM+2x3Wsh8E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:MIME-Version:Date:References:In-Reply-To:Subject:Cc:To:From:
@@ -41,26 +41,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GBAAeNpvfWupATD/Mqi5LhBKxQa5mgBWtQkeTAghv8U=; b=FR1E7B+BSA3vTIcQcAfOhZ9Fzp
- DYG/V+OQ+yHXlgT9JgvmFCTpNauqucHbp8gW+Vkjfh/fboODciN/QaOHq0kfswtLKuvsyQCavMwtt
- oJmq2MrO3liETiLqGaCaJBt5Ynas8wi6y37OvfF751gt73Ypqlzuc0U/y1ga8H7RTRRU=;
+ bh=lHNPvXjvxrRY/KHE3atTkGQgKEoBn4K5FRw/b5IfwZY=; b=VRYBBab/3z6O4LNDJAUCGTnSil
+ pePt10MVAYUI1qxdnSeZlgekCY5Zq8p7ajOaKnlgqzj7e9ZjJccf5iWIZW7QMVCkV6+476XhSA7QY
+ yaeGhMS1gxoVrpOnXCi3fnELJykQ7H3QBCixZWrD6F4zxaFLZjWExceLK590/UoFp1Ug=;
 Received: from mx1.manguebit.org ([143.255.12.172])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vvf2L-0002Xg-P9; Thu, 26 Feb 2026 17:20:30 +0000
+ id 1vvf2X-0002YE-TE; Thu, 26 Feb 2026 17:20:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
  In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=GBAAeNpvfWupATD/Mqi5LhBKxQa5mgBWtQkeTAghv8U=; b=nlx+CJv1x/UuNttwKXynH0qJFV
- GGPlyhyb56jCAmfo2Dkhao6Akb/whBUWKrLHAtLp2UnbAxsZRiEEnc/PA6a02dlJyun7VB/WjZ/4Y
- gSNeA6HN4mQbMGOcTdkRiDsoEk5l6Ssb6qUdMgoH7JYTbpZDll0K3Gc9Sl8LgYozq3/3dgHYhmDwe
- fRUIm7haKSMEmY1/NzzgcvEuyT7l/TJWKX2NJMO7AKfx12ThZPHB/q8MyHq+NyeW4NqEFdN0DjrLH
- BhCTcfbtcrlXDP67PmPWXw2HF4zz7VIOb15e9g0uBhXA6DI+uxHuKzWDbVQB6y2V+HCbHUW7dwsue
- 9tQXYUVA==;
+ bh=lHNPvXjvxrRY/KHE3atTkGQgKEoBn4K5FRw/b5IfwZY=; b=ulkKHiYzv6I+6IIa14ftoupjDe
+ J6D5Nic3w9+LTbwjPerGaRkKolwfy2KcZUzYubTFBR1C6YfViQ9IzWzOqE1PMBvOSLtWvDqYWHDkS
+ e8YKhk2RZVgK/kgJGqWlaX1VlOeT5XV51JNx7TY19yYOoCL9WPMfL7DEx3UWQDxjJXBn4KZXjEq/L
+ QYbtmeNM6AGz7YQoWObfC/Wgr1ca8Ha69hN8dnEa+b8qtPVTc9YoU/4JL/CqWgk9ghL/akGLMqNBo
+ zcPi7YHA7wTZsVYKJPKxzvhBKFb5Xcdj6osXFB4VEMUpfmqou7ST10TYaQkSCLGoa+WvRtMN6QWb5
+ s7cLVI5g==;
 Received: from pc by mx1.manguebit.org with local (Exim 4.99.1)
- id 1vvegu-00000000rdY-0Taa; Thu, 26 Feb 2026 13:58:20 -0300
-Message-ID: <8dcf2c77013a0de245c4417eb4726752@manguebit.org>
+ id 1vvegP-00000000rdH-33sy; Thu, 26 Feb 2026 13:57:49 -0300
+Message-ID: <5687bdf62ddd20660394eb0d7dabb96a@manguebit.org>
 To: Jeff Layton <jlayton@kernel.org>, Alexander Viro
  <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
  Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>, Masami
@@ -121,13 +121,14 @@ To: Jeff Layton <jlayton@kernel.org>, Alexander Viro
  <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
  <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, "Darrick
  J. Wong" <djwong@kernel.org>, Martin Schiller <ms@dev.tdt.de>
-In-Reply-To: <20260226-iino-u64-v1-14-ccceff366db9@kernel.org>
+In-Reply-To: <20260226-iino-u64-v1-13-ccceff366db9@kernel.org>
 References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
- <20260226-iino-u64-v1-14-ccceff366db9@kernel.org>
-Date: Thu, 26 Feb 2026 13:58:19 -0300
+ <20260226-iino-u64-v1-13-ccceff366db9@kernel.org>
+Date: Thu, 26 Feb 2026 13:57:49 -0300
 MIME-Version: 1.0
-X-Headers-End: 1vvf2L-0002Xg-P9
-Subject: Re: [f2fs-dev] [PATCH 14/61] smb: remove cifs_uniqueid_to_ino_t()
+X-Headers-End: 1vvf2X-0002YE-TE
+Subject: Re: [f2fs-dev] [PATCH 13/61] smb: store full 64-bit uniqueid in
+ i_ino
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -166,19 +167,19 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Jeff Layton <jlayton@kernel.org> writes:
 
-> Now that i_ino is u64, cifs_uniqueid_to_ino_t() is a trivial identity
-> function. Remove it and use fattr->cf_uniqueid directly at both call
-> sites.
+> With i_ino now u64, CIFS/SMB can store the full 64-bit uniqueid in
+> i_ino without the XOR-folding hack previously needed on 32-bit
+> architectures.
 >
-> Also remove the now-unused #include <linux/hash.h>, which was only
-> needed for the old XOR-folding logic.
+> - Simplify cifs_uniqueid_to_ino_t() to return u64 directly
+> - Update hash variable type in cifs_get_inode_info()
+> - Update format strings from %lu to %llu
 >
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  fs/smb/client/cifsfs.h  | 11 -----------
->  fs/smb/client/inode.c   |  2 +-
->  fs/smb/client/readdir.c |  2 +-
->  3 files changed, 2 insertions(+), 13 deletions(-)
+>  fs/smb/client/cifsfs.h | 12 +++---------
+>  fs/smb/client/inode.c  |  4 ++--
+>  2 files changed, 5 insertions(+), 11 deletions(-)
 
 Acked-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
 
