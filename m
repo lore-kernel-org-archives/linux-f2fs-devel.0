@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D4683FCE077
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 13:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E2B03FCE07B
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 13:21:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=CohVa61SDA6jzfWXgm1LZuVReyrlyUgWzEGX0qzZQlM=; b=SosWlMYNu2nmX36jSnR8GG9AqL
-	kA4fsJuaQha7Ruxf+2nOYr5N9o1CynDqe6QeKUm8aEGQq0JgydffYRX+7caH57BfxVja/3gg9Ijtv
-	RtA0MyEN1BFaoo9I5eshLWaXpE5qr/4FDP6KbkyRON5YKWhx3ZF6m8s0dXrL2BhcQoJM=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=ERZ8sWUSQM85jFTu/2w5gQoJg1aZla/RADc9hbNeEmc=; b=S0/dHZ77X+wTd4ZKq4QClSj0it
+	aesDMYOmskcY6RwsHQ++wiSOh4v55RXgYxUddCvEQSSaKYHqCQidVEn4MCeL4B8RGlp2JYalvd4EC
+	319ujkMOQPeGTmu6uEg87U48qdftOc746Qaf68JZdndgjIzwlkNKMUEG/jVDbIvdB+1A=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vvbH7-0006lx-HX;
-	Thu, 26 Feb 2026 13:19:29 +0000
+	id 1vvbIa-0008Ce-Hf;
+	Thu, 26 Feb 2026 13:21:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <david@kernel.org>) id 1vvbH6-0006lr-Ca
+ (envelope-from <david@kernel.org>) id 1vvbIZ-0008CY-1C
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 26 Feb 2026 13:19:28 +0000
+ Thu, 26 Feb 2026 13:20:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WD6XTRarfy5RNjSLuokAzaZext5Dun04xofWaYrk1rs=; b=Kcv8G6wkQo1tUnQsiYow7Xq0Fe
- 84H7cM7vRtxWb+a8C8FXhP5Pm9o5aTFTD6TlURD7FoMmTrqSS+n/t5W1gu0uDxJGjYSv8eSMaqHBu
- O9nCNqybYmuF058vwzfhMZaC66dl6pdCkQw9eAA9T/3Et4DdcUY44pTcwIlDc7KXT9WA=;
+ bh=2dYUHTgHZPcS8LtYadR76DcINWvPYrQDrJqg3xx3k/I=; b=Z6Djd0czasj+Tj1LFez6lRLmzb
+ XfdJVaTxvp3x0IIdIbguHZXrZUFJnp+PmqfLEOTBkXStOuzNwAfgrau+icIm2eMyPjh0YXINKK8T4
+ bppda/2orT+gH3iRAtBPWsbMO1j0onepotPkl2tHbf+klZce2r/w+KIHuWlY5WT4SXaI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -42,31 +42,31 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=WD6XTRarfy5RNjSLuokAzaZext5Dun04xofWaYrk1rs=; b=moRA1SlRDErPN4i4lYgua40RxU
- 7xjBnttrsKGGgRXOcfnGTuxlcZTYI4we9w4A2yDbBgjVVUPbgxkCfxBwXERbVVjyzI/fNU4032bts
- iLteXly0iZHCP8nexfzNbGnKlXwCxWBqtiluZXgEI13GZI+bBS5+g2ptLZY1ACFXfYQg=;
+ bh=2dYUHTgHZPcS8LtYadR76DcINWvPYrQDrJqg3xx3k/I=; b=EnKI8/qmq9fqtAMSyQ6UbslEWU
+ nkff1XJKioaar5TYusZXUpfsfe8Li+Rk3xTZxPJodU9v+3vqdfH9geQivBBOfe5XexSujIaPR3sPl
+ 4EH0Np5e19BEI1B1Js9Z1Cla/J0FvEvtG4j96GLDJlCjnnMRZOExFoo6r+jO7HQNZ8q4=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vvbH5-0001kA-Uf for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 26 Feb 2026 13:19:28 +0000
+ id 1vvbIY-0001uT-Kg for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 26 Feb 2026 13:20:58 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id E4CE74439F;
- Thu, 26 Feb 2026 13:19:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC336C116C6;
- Thu, 26 Feb 2026 13:19:00 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 2F3D040DA4;
+ Thu, 26 Feb 2026 13:20:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEDABC19422;
+ Thu, 26 Feb 2026 13:20:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772111961;
- bh=Pf04Z7iE3GM1u8EKRphHFGn52yUYGcn6vqYD0z/gPbY=;
+ s=k20201202; t=1772112048;
+ bh=kX30qZnPYCqfXb/76euKMO+o8GK+nW5VkIoRhP2qqC8=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=jMmZos5dus2Vdwkn4H474ZgHVP2copjj/B3Awars5H3ImcL7EgOM+GnMA5CvpMRm3
- uZjje4pqYf4U/nYL+xRxiEDH//aWM0rBwtjD95CAOoRC2yuXMGbL5XtrrMmgfnS2rW
- SKRnp4xNZwZG4CbEKAWHfIsR255vlBA65beKvnqEE9eQWoG97Ra/KUkEcxKju0Wfvo
- sjYcPaRs41hJ/9ffBGb+rQMm97rSXg5Yl5sDLfCmjj7fxTZulWhSZ1k9V9zsma5KQh
- vO/EnlqBQWN2nRtvXne5k66C0o9AUqoILyum0ho9cOZ5L+B4QwkKlPj3fsUzF/4C8F
- ObzEmPlSut8+g==
-Message-ID: <e2b9ef35-48af-4580-86b4-8640d353028c@kernel.org>
-Date: Thu, 26 Feb 2026 14:18:58 +0100
+ b=N4DCZVGHLhr0eBVQJieC3pRRNOvI49z81D2VdJU7sBWh4T/dHMdDAX5hzZ4PpRBNW
+ BRAq078+anBNSSCiijh5OkpiqIYJfpx4294YGpYpgaRQbbP8SGLtoBU6rh9a1FWmwg
+ SMHRRRvB40cIlPOpE5aMdYx0zO6bkUuB7JQPjuU0GcV+U39Xp9CP5szIB0aKctpq2g
+ d+u7N0JiuNZ5PHI+yjzmsfgj+ZfpuRK4a85OFXXDp51NNqss2+suPBeMMB8LBAYrbd
+ ueLNudkPWiaIkRW48GLkCxgdEUdzQySHZm0VcoWcIPqzcKgaOeXkBDt5p+PnSlggiO
+ a+Pn9fTs5JkzA==
+Message-ID: <d8d35cd9-464d-46e5-8da6-cb0e45b1e582@kernel.org>
+Date: Thu, 26 Feb 2026 14:20:25 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Tal Zussman <tz2294@columbia.edu>, David Howells <dhowells@redhat.com>,
@@ -84,7 +84,7 @@ To: Tal Zussman <tz2294@columbia.edu>, David Howells <dhowells@redhat.com>,
  Alexander Viro <viro@zeniv.linux.org.uk>,
  Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>
 References: <20260225-pagevec_cleanup-v2-0-716868cc2d11@columbia.edu>
- <20260225-pagevec_cleanup-v2-3-716868cc2d11@columbia.edu>
+ <20260225-pagevec_cleanup-v2-4-716868cc2d11@columbia.edu>
 Content-Language: en-US
 Autocrypt: addr=david@kernel.org; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -130,10 +130,10 @@ Autocrypt: addr=david@kernel.org; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20260225-pagevec_cleanup-v2-3-716868cc2d11@columbia.edu>
-X-Headers-End: 1vvbH5-0001kA-Uf
-Subject: Re: [f2fs-dev] [PATCH v2 3/4] folio_batch: Rename pagevec.h to
- folio_batch.h
+In-Reply-To: <20260225-pagevec_cleanup-v2-4-716868cc2d11@columbia.edu>
+X-Headers-End: 1vvbIY-0001uT-Kg
+Subject: Re: [f2fs-dev] [PATCH v2 4/4] folio_batch: Rename PAGEVEC_SIZE to
+ FOLIO_BATCH_SIZE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -191,11 +191,7 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 2/26/26 00:44, Tal Zussman wrote:
-> struct pagevec was removed in commit 1e0877d58b1e ("mm: remove struct
-> pagevec"). Rename include/linux/pagevec.h to reflect reality and update
-> includes tree-wide. Add the new filename to MAINTAINERS explicitly, as
-> it no longer matches the "include/linux/page[-_]*" pattern in MEMORY
-> MANAGEMENT - CORE.
+> struct pagevec no longer exists. Rename the macro appropriately.
 > 
 > Signed-off-by: Tal Zussman <tz2294@columbia.edu>
 > ---
