@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C3AD1FD8FCF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 15:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6C02EFD8FC3
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 15:57:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Message-Id:
 	MIME-Version:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=CELhhBfWGQ9Ebz06HLSNY2cejEDe4+8rKC57rROdLrI=; b=PNNmKYmyMo2ljWruQBNvt4hkPJ
-	Dqj9bGlswWBUOn9PVDUJ3eXsUgqSHLcGGD4ezu1B6USx6NGk1+1iMmCeCHg7OzB6uyj4mAeE1Frfb
-	OiL4A/0Ng/40VB11DtsqDaoXlvnvYzz/NWdXvzufVEMMOt/eug3vlkc3EB66AMl5CEZY=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=vQM2vwn1gG4BWdh0feNmj9Du85jqTrqTnJfqhvrIKho=; b=W6kVx0zKkBAmf95UuRK3uVuMZu
+	PP3gOLbkaI2XBB9NfTfqCBXtt/TYmAu+XGpBilCzmHVCzA/gX88i1F8j5/hUWrvH40kbNfExynkAy
+	EqhInu/vzemSMs6tQBH0c+bPPay/0+hz+XpmMV4GH+kAYx+4WfOoN/zD8NMXe56U9SSw=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vvdk1-0002Et-Eb;
-	Thu, 26 Feb 2026 15:57:29 +0000
+	id 1vvdkF-0001qg-1G;
+	Thu, 26 Feb 2026 15:57:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jlayton@kernel.org>) id 1vvdjx-0002Ed-WE;
- Thu, 26 Feb 2026 15:57:26 +0000
+ (envelope-from <jlayton@kernel.org>) id 1vvdkD-0001qR-IZ;
+ Thu, 26 Feb 2026 15:57:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Message-Id:
  Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AYNk+9++WdvOXXJeT+3OD1f3x/B7NVj3IRn3NLyWmHM=; b=PBb7/d8v26bHsBDWIiOpVe+6CM
- hlGnjtxXIPyEEFXk3rQDO0e/yrcLbb2rXrSSyZ+qlo05aXodqCtTZFia5uYf9OTIxWvjZjOfqiRY3
- e4EqRTzgoxEYi8tpGYPqLW6ZEeaNy9DKcr5HFgCKNPz3tNgiNXWt2zKZa2TJjMwfuObc=;
+ bh=hiyvOv00DWvBVgKknYXsl4g+x5xkLXWCy/T5svI/f+0=; b=NWKjMhTTnlxaTbvew9bYC0jcka
+ aqR9odqHmIBRidnUhwP5h+WPpDrEAi025rrkMpER8X1SMAF8o0iwrF2bc67DTiR/uKEUVtTy1uzu7
+ PCQnPZQL62Gzb6GmyH/mgMHkzQWk9hjzFMfFOP4hV/Iajj6i7M/AtlSWVpavgkWkKE70=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
@@ -41,31 +41,31 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=AYNk+9++WdvOXXJeT+3OD1f3x/B7NVj3IRn3NLyWmHM=; b=XKOC8eqkukWoH4zV16QhDc0I/Y
- FUaAfj+aKkJe3qgit8zQD5Xl1+Qc77RfcxfeXSNMm3qHM9XJJ3asXeb/3jpm/3A0E4+jFZ8anUdAK
- BUcS8jdrSGKQme9OTme53mK/7f0Ou7z+/wDskGR2lzOvNHKhFBfLHEnxtm1ZFdIpKpq4=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=hiyvOv00DWvBVgKknYXsl4g+x5xkLXWCy/T5svI/f+0=; b=RLyKO65A6VDUY8VPpEUYYLtCkA
+ Nbxn61TDdsmMOfRamyhkIrz217Vn4yJJmh310fwmjcb3AmonultHrWrmfBNyARDRszp+7rXEZRbPW
+ 3GWeti/l2QH1z6KLju2YpcO8EAC9zYUtMxJx3xbrRVawsQl9fSKH0zD9v0fH8GsTPEj0=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vvdjq-0004rZ-1x; Thu, 26 Feb 2026 15:57:20 +0000
+ id 1vvdkA-0004t9-QP; Thu, 26 Feb 2026 15:57:41 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id A53E7423E1;
- Thu, 26 Feb 2026 15:57:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF425C19423;
- Thu, 26 Feb 2026 15:56:54 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id E8A6F6013A;
+ Thu, 26 Feb 2026 15:57:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 615F9C2BCB2;
+ Thu, 26 Feb 2026 15:57:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772121427;
- bh=gSAeTjB0sMy4oLrP7TT++c9UayCR9Uz+fEkwTMmq74E=;
+ s=k20201202; t=1772121452;
+ bh=ssx2IpAMqaxniype/4uVoYfZEQDEAGD8rhxutC32X1Y=;
  h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
- b=N/t+BUDmm7Z+y+AzgqjY22SfwCTRZynuTmkLwgzta7/lxljnfINQ+zeBgmOdfHjdk
- qby3kkWReI0+sknMwuCA2XrjIJzLC2gxDs4Qckb7w3tH+BAkuv0Qv+Z4r1zjcP7F8A
- cEyfNfrjjCTvTdNeDRxfiUqbjD6SzhBbDeKblXrdyYYVo+FumFJVmwdiC0H8iIziyf
- FVb9ejqXc7iP6SI+kOB8njgYMpNcZ8OKu1JBbgV7MIgOZX4NRl8heoKW1zgMyAWnZv
- S94IVe2HeM0Mzi3aaXwm/JYLbBdVkrsEdHrspF8wUcPeccPBnABukvRxl5c4TyqgnI
- dJNweeIeIYFhg==
-Date: Thu, 26 Feb 2026 10:55:06 -0500
+ b=gnQJg5FC2TrfmGKCHtBXTKsdnxdFxJmNXnISICWPbnC3hb1wfxEgebI6iJoLTtgQy
+ 173uYgqDx5i298Xu3EperqcDskmyX9ilPHqGcQ12xD14FR0b14WtYD4k8CQU6atGUl
+ yi8BqxIys5mzQIFdPo9FTsDiy8H2gxu9FKnTpDIVWYnYnbLgsu6IxrpC4TqRfizQ/q
+ NmpTjIKf8B2L1AHXMJFFDcX2LpwmiBloBBaLJJFSfCEeHZm08y2cXksJjhlp0tfJJW
+ YeU6GQxJ1aQnbIN6oYZo5mpGP5nMYZveOM8a/KJv+TZJRvdoYDAv0MCCZ/bXo154uR
+ p7FceaY/1R8Jg==
+Date: Thu, 26 Feb 2026 10:55:08 -0500
 MIME-Version: 1.0
-Message-Id: <20260226-iino-u64-v1-4-ccceff366db9@kernel.org>
+Message-Id: <20260226-iino-u64-v1-6-ccceff366db9@kernel.org>
 References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 In-Reply-To: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -141,24 +141,24 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
  James Clark <james.clark@linaro.org>, "Darrick J. Wong" <djwong@kernel.org>, 
  Martin Schiller <ms@dev.tdt.de>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=90530; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=gSAeTjB0sMy4oLrP7TT++c9UayCR9Uz+fEkwTMmq74E=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0FiOjbITvK6QTsnUxWwGi5k7Uks7nqjCyDN
- 5jrpe/fu8uJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtBQAKCRAADmhBGVaC
- FQ8lD/42Mb662Z6NzIR9I+oPygHadffVL+0T0FwXRhbuif4cxJICYZOckdLUBSqjrMg0TFRThZG
- 6QGwTIazCZkGNtcLRARZSYWIj5LV9rXqUKWRFV4aiJJeiucrL+7nSVnFZsnJJWU0KKO7YsCeD40
- hStxd6QF3gR2McGyxn5wuqJXeLBy+hNXvh/4q5z3sGnlsIcPHKPgrK6Lh3f49jQ7ZEheLix176p
- 45u7rV1/+QKEYwOnnYjeyQuJnxb/w49avkb80Co+bBUSME+yOxRMIaHe3S3NqsmMLMvsBYFG+yd
- WkDHmmHhBI9qEZQpqE6GhT4ZAi+aJF3lJ+quEz45yA8YHNXGtzSST8DehTkCg4UVt+SW5p5ClON
- 6B9mxlS8rL9edDMkaQNfsnSu9tbrwjFtxSBmO5C7gqFDP0SZlruZgJWwS/+GmirBX9Wb8gu78XG
- pmB2DlpsfLX89cQoA5mwq8VKqvKgcj561TUfvX0QrzA9hfAgYHTTDQOhQcjcia95I8mk1itL3oW
- psbe41cgSnFIWafcG6Q3d4napw24Y15QmvJs9m+t77RbUpq0BCwPxasRfWtB1ODsMw9vRxhC7P+
- l9nkJqblqmGlbU1oHDGQIrWtOcAXTmkQe+m7I1saDH3V5OBFXtQ9Fmwwhzztby8tK9xmTjYU6AZ
- 6H6KOzmTOjt6SFA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=51378; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=ssx2IpAMqaxniype/4uVoYfZEQDEAGD8rhxutC32X1Y=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0F4KRhMIfqGLim+RK2KV8IRqMs9t86x89Cy
+ oK6lXXq0duJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtBQAKCRAADmhBGVaC
+ FWkKEACNiFZZW2m66ieWqSQLZlEtqvhGteFEAoLMS5ynfPSAQ5Vp54WLP+WIf2O7QxNZqE8aKdZ
+ yDloorLkKlv0nTZkg283rP3ENShgUFZbyqGJQVNmT5Pbvl4x/e0PHzRZG7k027Ou3YLgTpZJdfN
+ n2KR2UfwSgjxU3tm9IooaPhEiUrFHFoWgLAegJRWwUdLKE7/77+64LvVq8N08XvzZo3++9v5m5J
+ d9Uuv1YWai2HW9q5xcJ7EpmToHak6JX0BE0CM4oiOdqqSmIO1dIw4Lkscxp42dVrgpEr6soVxRE
+ 2oRAM4rEX1ynjx8codPXjueYWWxtJ3Ru7zcmCKD6IHmsTt5rQyNjqnFOCP78izFiUF5PSQFnP97
+ 9ZtjHsxDouVTxbC3Q5r9Ks5PC3IhGYGuRr9FDIiV+I7DfEHjKzgJUN+sMUbp5r8W/GBaiveLgbS
+ /gUHVAvvqpddVRKVJuXI2SOzU8oTNKa3UwJY7/fVu15Ixwg4AAaXp6zW5VVgd6eJ/jJ9EKpRgJN
+ gBMef7nsj9VQy3YnabhR+12FRUGANpAuNrRZv8areyIomw3cIxmx0j2LFWwvSCK5OA63z7SyF57
+ Hg8WeYX73NLo/muPPO/KW0qf+D9P98gRY5RhrBbfkTo+7HENaFcnbtKCuaJgT62ioAZg4YNwSeE
+ 5SjJJJezWBS/5rw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Headers-End: 1vvdjq-0004rZ-1x
-Subject: [f2fs-dev] [PATCH 04/61] ext4: update for u64 i_ino
+X-Headers-End: 1vvdkA-0004t9-QP
+Subject: [f2fs-dev] [PATCH 06/61] f2fs: update for u64 i_ino
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -194,2423 +194,1342 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Update ext4 trace events and filesystem code for u64 i_ino:
+Update f2fs trace events and filesystem code for u64 i_ino:
 
 - Change __field(ino_t, ...) to __field(u64, ...) in trace events
-- Update all %lu format strings to %llu for inode numbers
-- Cast to (unsigned long long) where needed in TP_printk
-- Update __ext4_grp_locked_error() ino parameter to u64
-- Update ext_debug() format string
+- Update show_dev_ino() macro format strings from %lu to %llu
+- Cast inode numbers to (unsigned long long) in TP_printk
+- Update format string in fs/f2fs/node.c
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ext4/dir.c               |   2 +-
- fs/ext4/ext4.h              |   4 +-
- fs/ext4/extents.c           |   8 +-
- fs/ext4/extents_status.c    |  28 +--
- fs/ext4/fast_commit.c       |   8 +-
- fs/ext4/ialloc.c            |  10 +-
- fs/ext4/indirect.c          |   2 +-
- fs/ext4/inline.c            |  14 +-
- fs/ext4/inode.c             |  22 +--
- fs/ext4/ioctl.c             |   4 +-
- fs/ext4/mballoc.c           |   6 +-
- fs/ext4/migrate.c           |   2 +-
- fs/ext4/move_extent.c       |  20 +--
- fs/ext4/namei.c             |  10 +-
- fs/ext4/orphan.c            |  16 +-
- fs/ext4/page-io.c           |  10 +-
- fs/ext4/super.c             |  22 +--
- fs/ext4/xattr.c             |  10 +-
- include/trace/events/ext4.h | 427 ++++++++++++++++++++++----------------------
- 19 files changed, 313 insertions(+), 312 deletions(-)
+ fs/f2fs/compress.c          |   4 +-
+ fs/f2fs/dir.c               |   2 +-
+ fs/f2fs/extent_cache.c      |   8 +--
+ fs/f2fs/f2fs.h              |   6 +-
+ fs/f2fs/file.c              |  12 ++--
+ fs/f2fs/gc.c                |   2 +-
+ fs/f2fs/inline.c            |   4 +-
+ fs/f2fs/inode.c             |  48 ++++++-------
+ fs/f2fs/namei.c             |   8 +--
+ fs/f2fs/node.c              |  12 ++--
+ fs/f2fs/recovery.c          |  10 +--
+ fs/f2fs/xattr.c             |  10 +--
+ include/trace/events/f2fs.h | 172 ++++++++++++++++++++++----------------------
+ 13 files changed, 149 insertions(+), 149 deletions(-)
 
-diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-index 28b2a3deb954fe275cd2f7290f2daeafa2d3dbed..17edd678fa87b8f024232081888c4054d42a7bd9 100644
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -535,7 +535,7 @@ static int call_filldir(struct file *file, struct dir_context *ctx,
- 	struct super_block *sb = inode->i_sb;
- 
- 	if (!fname) {
--		ext4_msg(sb, KERN_ERR, "%s:%d: inode #%lu: comm %s: "
-+		ext4_msg(sb, KERN_ERR, "%s:%d: inode #%llu: comm %s: "
- 			 "called with null fname?!?", __func__, __LINE__,
- 			 inode->i_ino, current->comm);
- 		return 0;
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 293f698b7042438b2757790717db22bca060797d..85e6c2b543a82e83b777c2cc2f54a6ed53b554f2 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -92,7 +92,7 @@
-  */
- #ifdef CONFIG_EXT4_DEBUG
- #define ext_debug(ino, fmt, ...)					\
--	pr_debug("[%s/%d] EXT4-fs (%s): ino %lu: (%s, %d): %s:" fmt,	\
-+	pr_debug("[%s/%d] EXT4-fs (%s): ino %llu: (%s, %d): %s:" fmt,	\
- 		 current->comm, task_pid_nr(current),			\
- 		 ino->i_sb->s_id, ino->i_ino, __FILE__, __LINE__,	\
- 		 __func__, ##__VA_ARGS__)
-@@ -3229,7 +3229,7 @@ extern void __dump_mmp_msg(struct super_block *, struct mmp_struct *mmp,
- extern __printf(7, 8)
- void __ext4_grp_locked_error(const char *, unsigned int,
- 			     struct super_block *, ext4_group_t,
--			     unsigned long, ext4_fsblk_t,
-+			     u64, ext4_fsblk_t,
- 			     const char *, ...);
- 
- #define EXT4_ERROR_INODE(inode, fmt, a...) \
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index ae3804f36535aeca4009bfae992e1f2f665aded2..042e1555a674149f8d47716f288ca175556b6b45 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4603,7 +4603,7 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 		}
- 		ret = ext4_map_blocks(handle, inode, &map, flags);
- 		if (ret <= 0) {
--			ext4_debug("inode #%lu: block %u: len %u: "
-+			ext4_debug("inode #%llu: block %u: len %u: "
- 				   "ext4_ext_map_blocks returned %d",
- 				   inode->i_ino, map.m_lblk,
- 				   map.m_len, ret);
-@@ -4955,7 +4955,7 @@ int ext4_convert_unwritten_extents_atomic(handle_t *handle, struct inode *inode,
- 		ret = ext4_map_blocks(handle, inode, &map, flags);
- 		if (ret != max_blocks)
- 			ext4_msg(inode->i_sb, KERN_INFO,
--				     "inode #%lu: block %u: len %u: "
-+				     "inode #%llu: block %u: len %u: "
- 				     "split block mapping found for atomic write, "
- 				     "ret = %d",
- 				     inode->i_ino, map.m_lblk,
-@@ -4974,7 +4974,7 @@ int ext4_convert_unwritten_extents_atomic(handle_t *handle, struct inode *inode,
- 
- 	if (ret <= 0 || ret2)
- 		ext4_warning(inode->i_sb,
--			     "inode #%lu: block %u: len %u: "
-+			     "inode #%llu: block %u: len %u: "
- 			     "returned %d or %d",
- 			     inode->i_ino, map.m_lblk,
- 			     map.m_len, ret, ret2);
-@@ -5031,7 +5031,7 @@ int ext4_convert_unwritten_extents(handle_t *handle, struct inode *inode,
- 				      EXT4_EX_NOCACHE);
- 		if (ret <= 0)
- 			ext4_warning(inode->i_sb,
--				     "inode #%lu: block %u: len %u: "
-+				     "inode #%llu: block %u: len %u: "
- 				     "ext4_ext_map_blocks returned %d",
- 				     inode->i_ino, map.m_lblk,
- 				     map.m_len, ret);
-diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index a1538bac51c61d81881be2e3fd67113f24c16df1..6e4a191e821915d2b61646f46304ffab6d531126 100644
---- a/fs/ext4/extents_status.c
-+++ b/fs/ext4/extents_status.c
-@@ -214,7 +214,7 @@ static void ext4_es_print_tree(struct inode *inode)
- 	struct ext4_es_tree *tree;
- 	struct rb_node *node;
- 
--	printk(KERN_DEBUG "status extents for inode %lu:", inode->i_ino);
-+	printk(KERN_DEBUG "status extents for inode %llu:", inode->i_ino);
- 	tree = &EXT4_I(inode)->i_es_tree;
- 	node = rb_first(&tree->root);
- 	while (node) {
-@@ -703,7 +703,7 @@ static void ext4_es_insert_extent_ext_check(struct inode *inode,
- 		if (!ext4_es_is_written(es) && !ext4_es_is_unwritten(es)) {
- 			if (in_range(es->es_lblk, ee_block, ee_len)) {
- 				pr_warn("ES insert assertion failed for "
--					"inode: %lu we can find an extent "
-+					"inode: %llu we can find an extent "
- 					"at block [%d/%d/%llu/%c], but we "
- 					"want to add a delayed/hole extent "
- 					"[%d/%d/%llu/%x]\n",
-@@ -721,7 +721,7 @@ static void ext4_es_insert_extent_ext_check(struct inode *inode,
- 		 */
- 		if (es->es_lblk < ee_block ||
- 		    ext4_es_pblock(es) != ee_start + es->es_lblk - ee_block) {
--			pr_warn("ES insert assertion failed for inode: %lu "
-+			pr_warn("ES insert assertion failed for inode: %llu "
- 				"ex_status [%d/%d/%llu/%c] != "
- 				"es_status [%d/%d/%llu/%c]\n", inode->i_ino,
- 				ee_block, ee_len, ee_start,
-@@ -731,7 +731,7 @@ static void ext4_es_insert_extent_ext_check(struct inode *inode,
- 		}
- 
- 		if (ee_status ^ es_status) {
--			pr_warn("ES insert assertion failed for inode: %lu "
-+			pr_warn("ES insert assertion failed for inode: %llu "
- 				"ex_status [%d/%d/%llu/%c] != "
- 				"es_status [%d/%d/%llu/%c]\n", inode->i_ino,
- 				ee_block, ee_len, ee_start,
-@@ -744,7 +744,7 @@ static void ext4_es_insert_extent_ext_check(struct inode *inode,
- 		 * that we don't want to add an written/unwritten extent.
- 		 */
- 		if (!ext4_es_is_delayed(es) && !ext4_es_is_hole(es)) {
--			pr_warn("ES insert assertion failed for inode: %lu "
-+			pr_warn("ES insert assertion failed for inode: %llu "
- 				"can't find an extent at block %d but we want "
- 				"to add a written/unwritten extent "
- 				"[%d/%d/%llu/%x]\n", inode->i_ino,
-@@ -779,7 +779,7 @@ static void ext4_es_insert_extent_ind_check(struct inode *inode,
- 			 * We want to add a delayed/hole extent but this
- 			 * block has been allocated.
- 			 */
--			pr_warn("ES insert assertion failed for inode: %lu "
-+			pr_warn("ES insert assertion failed for inode: %llu "
- 				"We can find blocks but we want to add a "
- 				"delayed/hole extent [%d/%d/%llu/%x]\n",
- 				inode->i_ino, es->es_lblk, es->es_len,
-@@ -788,13 +788,13 @@ static void ext4_es_insert_extent_ind_check(struct inode *inode,
- 		} else if (ext4_es_is_written(es)) {
- 			if (retval != es->es_len) {
- 				pr_warn("ES insert assertion failed for "
--					"inode: %lu retval %d != es_len %d\n",
-+					"inode: %llu retval %d != es_len %d\n",
- 					inode->i_ino, retval, es->es_len);
- 				return;
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 8c76400ba6317d9b62428a1d7b53a54d7c5d07ef..0b8be500db656f8439725cac2f6a927c2f06ca4f 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -773,7 +773,7 @@ void f2fs_decompress_cluster(struct decompress_io_ctx *dic, bool in_task)
+ 			if (!is_inode_flag_set(dic->inode, FI_COMPRESS_CORRUPT)) {
+ 				set_inode_flag(dic->inode, FI_COMPRESS_CORRUPT);
+ 				f2fs_info_ratelimited(sbi,
+-					"checksum invalid, nid = %lu, %x vs %x",
++					"checksum invalid, nid = %llu, %x vs %x",
+ 					dic->inode->i_ino,
+ 					provided, calculated);
  			}
- 			if (map.m_pblk != ext4_es_pblock(es)) {
- 				pr_warn("ES insert assertion failed for "
--					"inode: %lu m_pblk %llu != "
-+					"inode: %llu m_pblk %llu != "
- 					"es_pblk %llu\n",
- 					inode->i_ino, map.m_pblk,
- 					ext4_es_pblock(es));
-@@ -809,7 +809,7 @@ static void ext4_es_insert_extent_ind_check(struct inode *inode,
- 		}
- 	} else if (retval == 0) {
- 		if (ext4_es_is_written(es)) {
--			pr_warn("ES insert assertion failed for inode: %lu "
-+			pr_warn("ES insert assertion failed for inode: %llu "
- 				"We can't find the block but we want to add "
- 				"a written extent [%d/%d/%llu/%x]\n",
- 				inode->i_ino, es->es_lblk, es->es_len,
-@@ -919,7 +919,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
- 		return;
+@@ -932,7 +932,7 @@ bool f2fs_sanity_check_cluster(struct dnode_of_data *dn)
  
--	es_debug("add [%u/%u) %llu %x %d to extent status tree of inode %lu\n",
-+	es_debug("add [%u/%u) %llu %x %d to extent status tree of inode %llu\n",
- 		 lblk, len, pblk, status, delalloc_reserve_used, inode->i_ino);
+ 	return false;
+ out:
+-	f2fs_warn(sbi, "access invalid cluster, ino:%lu, nid:%u, ofs_in_node:%u, reason:%s",
++	f2fs_warn(sbi, "access invalid cluster, ino:%llu, nid:%u, ofs_in_node:%u, reason:%s",
+ 			dn->inode->i_ino, dn->nid, dn->ofs_in_node, reason);
+ 	set_sbi_flag(sbi, SBI_NEED_FSCK);
+ 	return true;
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index f70092e231f0f47e589d648b0c6f83ef3aa8fd6c..38802ee2e40deb4995a4e5f4118330b90b2f10e2 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -368,7 +368,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
  
- 	if (!len)
-@@ -1631,7 +1631,7 @@ void ext4_es_remove_extent(struct inode *inode, ext4_lblk_t lblk,
- 	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
- 		return;
- 
--	es_debug("remove [%u/%u) from extent status tree of inode %lu\n",
-+	es_debug("remove [%u/%u) from extent status tree of inode %llu\n",
- 		 lblk, len, inode->i_ino);
- 
- 	if (!len)
-@@ -1821,7 +1821,7 @@ int ext4_seq_es_shrinker_info_show(struct seq_file *seq, void *v)
- 	seq_printf(seq, "  %lu shrunk objects\n", es_stats->es_stats_shrunk);
- 	if (inode_cnt)
- 		seq_printf(seq,
--		    "maximum:\n  %lu inode (%u objects, %u reclaimable)\n"
-+		    "maximum:\n  %llu inode (%u objects, %u reclaimable)\n"
- 		    "  %llu us max scan time\n",
- 		    max->vfs_inode.i_ino, max->i_es_all_nr, max->i_es_shk_nr,
- 		    div_u64(es_stats->es_stats_max_scan_time, 1000));
-@@ -1998,7 +1998,7 @@ static void ext4_print_pending_tree(struct inode *inode)
- 	struct rb_node *node;
- 	struct pending_reservation *pr;
- 
--	printk(KERN_DEBUG "pending reservations for inode %lu:", inode->i_ino);
-+	printk(KERN_DEBUG "pending reservations for inode %llu:", inode->i_ino);
- 	tree = &EXT4_I(inode)->i_pending_tree;
- 	node = rb_first(&tree->root);
- 	while (node) {
-@@ -2214,7 +2214,7 @@ void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
- 	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
- 		return;
- 
--	es_debug("add [%u/%u) delayed to extent status tree of inode %lu\n",
-+	es_debug("add [%u/%u) delayed to extent status tree of inode %llu\n",
- 		 lblk, len, inode->i_ino);
- 	if (!len)
- 		return;
-diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
-index f575751f1cae430eead31afa4f7d03ade1099d4a..379fb66dedbcd1c87b960cfe8786601700f797f3 100644
---- a/fs/ext4/fast_commit.c
-+++ b/fs/ext4/fast_commit.c
-@@ -616,7 +616,7 @@ static int __track_range(handle_t *handle, struct inode *inode, void *arg,
- 		(struct __track_range_args *)arg;
- 
- 	if (inode->i_ino < EXT4_FIRST_INO(inode->i_sb)) {
--		ext4_debug("Special inode %ld being modified\n", inode->i_ino);
-+		ext4_debug("Special inode %llu being modified\n", inode->i_ino);
- 		return -ECANCELED;
- 	}
- 
-@@ -914,7 +914,7 @@ static int ext4_fc_write_inode_data(struct inode *inode, u32 *crc)
- 	spin_unlock(&ei->i_fc_lock);
- 
- 	cur_lblk_off = old_blk_size;
--	ext4_debug("will try writing %d to %d for inode %ld\n",
-+	ext4_debug("will try writing %d to %d for inode %llu\n",
- 		   cur_lblk_off, new_blk_size, inode->i_ino);
- 
- 	while (cur_lblk_off <= new_blk_size) {
-@@ -1792,7 +1792,7 @@ static int ext4_fc_replay_add_range(struct super_block *sb,
- 
- 	cur = start;
- 	remaining = len;
--	ext4_debug("ADD_RANGE, lblk %d, pblk %lld, len %d, unwritten %d, inode %ld\n",
-+	ext4_debug("ADD_RANGE, lblk %d, pblk %lld, len %d, unwritten %d, inode %llu\n",
- 		  start, start_pblk, len, ext4_ext_is_unwritten(ex),
- 		  inode->i_ino);
- 
-@@ -1903,7 +1903,7 @@ ext4_fc_replay_del_range(struct super_block *sb,
- 	if (ret)
- 		goto out;
- 
--	ext4_debug("DEL_RANGE, inode %ld, lblk %d, len %d\n",
-+	ext4_debug("DEL_RANGE, inode %llu, lblk %d, len %d\n",
- 			inode->i_ino, le32_to_cpu(lrange.fc_lblk),
- 			le32_to_cpu(lrange.fc_len));
- 	while (remaining > 0) {
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index b20a1bf866abedf3a768ee8a147f108ea09ecb01..628a74b2bbe6232eabbf2562ffd0e350ea37446e 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -253,13 +253,13 @@ void ext4_free_inode(handle_t *handle, struct inode *inode)
- 		return;
- 	}
- 	if (icount_read(inode) > 1) {
--		ext4_msg(sb, KERN_ERR, "%s:%d: inode #%lu: count=%d",
-+		ext4_msg(sb, KERN_ERR, "%s:%d: inode #%llu: count=%d",
- 			 __func__, __LINE__, inode->i_ino,
- 			 icount_read(inode));
- 		return;
- 	}
- 	if (inode->i_nlink) {
--		ext4_msg(sb, KERN_ERR, "%s:%d: inode #%lu: nlink=%d\n",
-+		ext4_msg(sb, KERN_ERR, "%s:%d: inode #%llu: nlink=%d\n",
- 			 __func__, __LINE__, inode->i_ino, inode->i_nlink);
- 		return;
- 	}
-@@ -631,7 +631,7 @@ static int find_group_other(struct super_block *sb, struct inode *parent,
- 	 *
- 	 * So add our directory's i_ino into the starting point for the hash.
- 	 */
--	*group = (*group + parent->i_ino) % ngroups;
-+	*group = (*group + (unsigned int)parent->i_ino) % ngroups;
- 
- 	/*
- 	 * Use a quadratic hash to find a group with a free inode and some free
-@@ -1275,7 +1275,7 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
- 		 * twice.
- 		 */
- 		err = -EIO;
--		ext4_error(sb, "failed to insert inode %lu: doubly allocated?",
-+		ext4_error(sb, "failed to insert inode %llu: doubly allocated?",
- 			   inode->i_ino);
- 		ext4_mark_group_bitmap_corrupted(sb, group,
- 					EXT4_GROUP_INFO_IBITMAP_CORRUPT);
-@@ -1344,7 +1344,7 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
- 		goto fail_free_drop;
- 	}
- 
--	ext4_debug("allocating inode %lu\n", inode->i_ino);
-+	ext4_debug("allocating inode %llu\n", inode->i_ino);
- 	trace_ext4_allocate_inode(inode, dir, mode);
- 	brelse(inode_bitmap_bh);
- 	return ret;
-diff --git a/fs/ext4/indirect.c b/fs/ext4/indirect.c
-index da76353b3a5750987d7b4803c388248b749a68a8..5aec759eed7055dbe954c25da0181ebd04bb0be3 100644
---- a/fs/ext4/indirect.c
-+++ b/fs/ext4/indirect.c
-@@ -102,7 +102,7 @@ static int ext4_block_to_path(struct inode *inode,
- 		offsets[n++] = i_block & (ptrs - 1);
- 		final = ptrs;
- 	} else {
--		ext4_warning(inode->i_sb, "block %lu > max in inode %lu",
-+		ext4_warning(inode->i_sb, "block %lu > max in inode %llu",
- 			     i_block + direct_blocks +
- 			     indirect_blocks + double_blocks, inode->i_ino);
- 	}
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index 1f6bc05593df165776fda3ab2c272af586d80279..f846fcb7db2442149776fa2ba45ddc5e0b71245e 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -119,7 +119,7 @@ int ext4_get_max_inline_size(struct inode *inode)
- 	error = ext4_get_inode_loc(inode, &iloc);
- 	if (error) {
- 		ext4_error_inode_err(inode, __func__, __LINE__, 0, -error,
--				     "can't get inode location %lu",
-+				     "can't get inode location %llu",
- 				     inode->i_ino);
- 		return 0;
- 	}
-@@ -512,7 +512,7 @@ static int ext4_read_inline_folio(struct inode *inode, struct folio *folio)
- 	BUG_ON(folio->index);
- 
- 	if (!EXT4_I(inode)->i_inline_off) {
--		ext4_warning(inode->i_sb, "inode %lu doesn't have inline data.",
-+		ext4_warning(inode->i_sb, "inode %llu doesn't have inline data.",
- 			     inode->i_ino);
- 		goto out;
- 	}
-@@ -934,7 +934,7 @@ void ext4_show_inline_dir(struct inode *dir, struct buffer_head *bh,
- 	struct ext4_dir_entry_2 *de = inline_start;
- 	void *dlimit = inline_start + inline_size;
- 
--	trace_printk("inode %lu\n", dir->i_ino);
-+	trace_printk("inode %llu\n", dir->i_ino);
- 	offset = 0;
- 	while ((void *)de < dlimit) {
- 		de_len = ext4_rec_len_from_disk(de->rec_len, inline_size);
-@@ -1071,7 +1071,7 @@ static void ext4_restore_inline_data(handle_t *handle, struct inode *inode,
- 	ret = ext4_create_inline_data(handle, inode, inline_size);
- 	if (ret) {
- 		ext4_msg(inode->i_sb, KERN_EMERG,
--			"error restoring inline_data for inode -- potential data loss! (inode %lu, error %d)",
-+			"error restoring inline_data for inode -- potential data loss! (inode %llu, error %d)",
- 			inode->i_ino, ret);
- 		return;
- 	}
-@@ -1740,7 +1740,7 @@ bool empty_inline_dir(struct inode *dir, int *has_inline_data)
- 	err = ext4_get_inode_loc(dir, &iloc);
- 	if (err) {
- 		EXT4_ERROR_INODE_ERR(dir, -err,
--				     "error %d getting inode %lu block",
-+				     "error %d getting inode %llu block",
- 				     err, dir->i_ino);
+ 	max_depth = F2FS_I(dir)->i_current_depth;
+ 	if (unlikely(max_depth > MAX_DIR_HASH_DEPTH)) {
+-		f2fs_warn(F2FS_I_SB(dir), "Corrupted max_depth of %lu: %u",
++		f2fs_warn(F2FS_I_SB(dir), "Corrupted max_depth of %llu: %u",
+ 			  dir->i_ino, max_depth);
+ 		max_depth = MAX_DIR_HASH_DEPTH;
+ 		f2fs_i_depth_write(dir, max_depth);
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 0ed84cc065a7eda66c50eae97d70e9ab93de31c3..d73aeef333a24766aaab9914a02b99fbf035e78d 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -34,7 +34,7 @@ bool sanity_check_extent_cache(struct inode *inode, struct folio *ifolio)
+ 	if (!f2fs_is_valid_blkaddr(sbi, ei.blk, DATA_GENERIC_ENHANCE) ||
+ 	    !f2fs_is_valid_blkaddr(sbi, ei.blk + ei.len - 1,
+ 					DATA_GENERIC_ENHANCE)) {
+-		f2fs_warn(sbi, "%s: inode (ino=%lx) extent info [%u, %u, %u] is incorrect, run fsck to fix",
++		f2fs_warn(sbi, "%s: inode (ino=%llx) extent info [%u, %u, %u] is incorrect, run fsck to fix",
+ 			  __func__, inode->i_ino,
+ 			  ei.blk, ei.fofs, ei.len);
  		return false;
- 	}
-@@ -1755,7 +1755,7 @@ bool empty_inline_dir(struct inode *dir, int *has_inline_data)
- 	de = (struct ext4_dir_entry_2 *)ext4_raw_inode(&iloc)->i_block;
- 	if (!le32_to_cpu(de->inode)) {
- 		ext4_warning(dir->i_sb,
--			     "bad inline directory (dir #%lu) - no `..'",
-+			     "bad inline directory (dir #%llu) - no `..'",
- 			     dir->i_ino);
- 		goto out;
- 	}
-@@ -1769,7 +1769,7 @@ bool empty_inline_dir(struct inode *dir, int *has_inline_data)
- 					 iloc.bh, inline_pos,
- 					 inline_size, offset)) {
- 			ext4_warning(dir->i_sb,
--				     "bad inline directory (dir #%lu) - "
-+				     "bad inline directory (dir #%llu) - "
- 				     "inode %u, rec_len %u, name_len %d"
- 				     "inline size %d",
- 				     dir->i_ino, le32_to_cpu(de->inode),
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 396dc3a5d16b4dc4d3e5c6541871a9bb896f6d7a..d50f31124a784ba6eeb916f9a2f62ec840aee52e 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -262,7 +262,7 @@ void ext4_evict_inode(struct inode *inode)
- 		err = ext4_truncate(inode);
- 		if (err) {
- 			ext4_error_err(inode->i_sb, -err,
--				       "couldn't truncate inode %lu (err %d)",
-+				       "couldn't truncate inode %llu (err %d)",
- 				       inode->i_ino, err);
- 			goto stop_handle;
+@@ -50,14 +50,14 @@ bool sanity_check_extent_cache(struct inode *inode, struct folio *ifolio)
+ 
+ 		if (devi == 0) {
+ 			f2fs_warn(sbi,
+-			    "%s: inode (ino=%lx) is an alias of meta device",
++			    "%s: inode (ino=%llx) is an alias of meta device",
+ 			    __func__, inode->i_ino);
+ 			return false;
  		}
-@@ -342,7 +342,7 @@ void ext4_da_update_reserve_space(struct inode *inode,
- 	spin_lock(&ei->i_block_reservation_lock);
- 	trace_ext4_da_update_reserve_space(inode, used, quota_claim);
- 	if (unlikely(used > ei->i_reserved_data_blocks)) {
--		ext4_warning(inode->i_sb, "%s: ino %lu, used %d "
-+		ext4_warning(inode->i_sb, "%s: ino %llu, used %d "
- 			 "with only %d reserved data blocks",
- 			 __func__, inode->i_ino, used,
- 			 ei->i_reserved_data_blocks);
-@@ -475,7 +475,7 @@ static void ext4_map_blocks_es_recheck(handle_t *handle,
- 	if (es_map->m_lblk != map->m_lblk ||
- 	    es_map->m_flags != map->m_flags ||
- 	    es_map->m_pblk != map->m_pblk) {
--		printk("ES cache assertion failed for inode: %lu "
-+		printk("ES cache assertion failed for inode: %llu "
- 		       "es_cached ex [%d/%d/%llu/%x] != "
- 		       "found ex [%d/%d/%llu/%x] retval %d flags %x\n",
- 		       inode->i_ino, es_map->m_lblk, es_map->m_len,
-@@ -515,7 +515,7 @@ static int ext4_map_query_blocks_next_in_leaf(handle_t *handle,
- 	if (unlikely(retval != map2.m_len)) {
- 		ext4_warning(inode->i_sb,
- 			     "ES len assertion failed for inode "
--			     "%lu: retval %d != map->m_len %d",
-+			     "%llu: retval %d != map->m_len %d",
- 			     inode->i_ino, retval, map2.m_len);
- 		WARN_ON(1);
+ 
+ 		if (bdev_is_zoned(FDEV(devi).bdev)) {
+ 			f2fs_warn(sbi,
+-			    "%s: device alias inode (ino=%lx)'s extent info "
++			    "%s: device alias inode (ino=%llx)'s extent info "
+ 			    "[%u, %u, %u] maps to zoned block device",
+ 			    __func__, inode->i_ino, ei.blk, ei.fofs, ei.len);
+ 			return false;
+@@ -65,7 +65,7 @@ bool sanity_check_extent_cache(struct inode *inode, struct folio *ifolio)
+ 		return true;
  	}
-@@ -563,7 +563,7 @@ int ext4_map_query_blocks(handle_t *handle, struct inode *inode,
- 	if (unlikely(retval != map->m_len)) {
- 		ext4_warning(inode->i_sb,
- 			     "ES len assertion failed for inode "
--			     "%lu: retval %d != map->m_len %d",
-+			     "%llu: retval %d != map->m_len %d",
- 			     inode->i_ino, retval, map->m_len);
- 		WARN_ON(1);
- 	}
-@@ -630,7 +630,7 @@ int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
  
- 	if (unlikely(retval != map->m_len)) {
- 		ext4_warning(inode->i_sb,
--			     "ES len assertion failed for inode %lu: "
-+			     "ES len assertion failed for inode %llu: "
- 			     "retval %d != map->m_len %d",
- 			     inode->i_ino, retval, map->m_len);
- 		WARN_ON(1);
-@@ -937,7 +937,7 @@ int ext4_get_block_unwritten(struct inode *inode, sector_t iblock,
- {
- 	int ret = 0;
+-	f2fs_warn(sbi, "%s: device alias inode (ino=%lx)'s extent info "
++	f2fs_warn(sbi, "%s: device alias inode (ino=%llx)'s extent info "
+ 			"[%u, %u, %u] is inconsistent w/ any devices",
+ 			__func__, inode->i_ino, ei.blk, ei.fofs, ei.len);
+ 	return false;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index bb34e864d0efc742c651a285c5989bd73530fbe3..760e6d80bbddd8393394c30c740ba05faded332f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2706,7 +2706,7 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
  
--	ext4_debug("ext4_get_block_unwritten: inode %lu, create flag %d\n",
-+	ext4_debug("ext4_get_block_unwritten: inode %llu, create flag %d\n",
- 		   inode->i_ino, create);
- 	ret = _ext4_get_block(inode, iblock, bh_result,
- 			       EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT);
-@@ -1659,7 +1659,7 @@ void ext4_da_release_space(struct inode *inode, int to_free)
- 		 * harmless to return without any action.
- 		 */
- 		ext4_warning(inode->i_sb, "ext4_da_release_space: "
--			 "ino %lu, to_free %d with only %d reserved "
-+			 "ino %llu, to_free %d with only %d reserved "
- 			 "data blocks", inode->i_ino, to_free,
- 			 ei->i_reserved_data_blocks);
- 		WARN_ON(1);
-@@ -2491,7 +2491,7 @@ static int mpage_map_and_submit_extent(handle_t *handle,
- 			}
- 			ext4_msg(sb, KERN_CRIT,
- 				 "Delayed block allocation failed for "
--				 "inode %lu at logical offset %llu with"
-+				 "inode %llu at logical offset %llu with"
- 				 " max blocks %u with error %d",
- 				 inode->i_ino,
- 				 (unsigned long long)map->m_lblk,
-@@ -2535,7 +2535,7 @@ static int mpage_map_and_submit_extent(handle_t *handle,
- 		err2 = ext4_mark_inode_dirty(handle, inode);
- 		if (err2) {
- 			ext4_error_err(inode->i_sb, -err2,
--				       "Failed to mark inode %lu dirty",
-+				       "Failed to mark inode %llu dirty",
- 				       inode->i_ino);
- 		}
- 		if (!err)
-@@ -2909,7 +2909,7 @@ static int ext4_do_writepages(struct mpage_da_data *mpd)
- 		if (IS_ERR(handle)) {
- 			ret = PTR_ERR(handle);
- 			ext4_msg(inode->i_sb, KERN_CRIT, "%s: jbd2_start: "
--			       "%ld pages, ino %lu; err %d", __func__,
-+			       "%ld pages, ino %llu; err %d", __func__,
- 				wbc->nr_to_write, inode->i_ino, ret);
- 			/* Release allocated io_end */
- 			ext4_put_io_end(mpd->io_submit.io_end);
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index 3ae9cb50a0c057f10f6bda8165ba45fd2c368cfb..1d0c3d4bdf472715a7070b184fdc7d9bf5885950 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -477,7 +477,7 @@ static long swap_inode_boot_loader(struct super_block *sb,
- 	if (err < 0) {
- 		/* No need to update quota information. */
- 		ext4_warning(inode->i_sb,
--			"couldn't mark inode #%lu dirty (err %d)",
-+			"couldn't mark inode #%llu dirty (err %d)",
- 			inode->i_ino, err);
- 		/* Revert all changes: */
- 		swap_inode_data(inode, inode_bl);
-@@ -493,7 +493,7 @@ static long swap_inode_boot_loader(struct super_block *sb,
- 	if (err < 0) {
- 		/* No need to update quota information. */
- 		ext4_warning(inode_bl->i_sb,
--			"couldn't mark inode #%lu dirty (err %d)",
-+			"couldn't mark inode #%llu dirty (err %d)",
- 			inode_bl->i_ino, err);
- 		goto revert;
- 	}
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index 20e9fdaf4301b61c9d54401ed95067db6b6b8173..9e8041ac56239e64326343b0adef062611189d6a 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -2266,7 +2266,7 @@ static void ext4_mb_use_best_found(struct ext4_allocation_context *ac,
- 	folio_get(ac->ac_buddy_folio);
- 	/* store last allocated for subsequent stream allocation */
- 	if (ac->ac_flags & EXT4_MB_STREAM_ALLOC) {
--		int hash = ac->ac_inode->i_ino % sbi->s_mb_nr_global_goals;
-+		int hash = (unsigned int)ac->ac_inode->i_ino % sbi->s_mb_nr_global_goals;
- 
- 		WRITE_ONCE(sbi->s_mb_last_groups[hash], ac->ac_f_ex.fe_group);
- 	}
-@@ -3032,7 +3032,7 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
- 
- 	/* if stream allocation is enabled, use global goal */
- 	if (ac->ac_flags & EXT4_MB_STREAM_ALLOC) {
--		int hash = ac->ac_inode->i_ino % sbi->s_mb_nr_global_goals;
-+		int hash = (unsigned int)ac->ac_inode->i_ino % sbi->s_mb_nr_global_goals;
- 
- 		ac->ac_g_ex.fe_group = READ_ONCE(sbi->s_mb_last_groups[hash]);
- 		ac->ac_g_ex.fe_start = -1;
-@@ -5628,7 +5628,7 @@ void ext4_discard_preallocations(struct inode *inode)
- 	if (EXT4_SB(sb)->s_mount_state & EXT4_FC_REPLAY)
- 		return;
- 
--	mb_debug(sb, "discard preallocation for inode %lu\n",
-+	mb_debug(sb, "discard preallocation for inode %llu\n",
- 		 inode->i_ino);
- 	trace_ext4_discard_preallocations(inode,
- 			atomic_read(&ei->i_prealloc_active));
-diff --git a/fs/ext4/migrate.c b/fs/ext4/migrate.c
-index 96ab95167bd6e10ba86e61a60cb0be9fbafe157f..43103816b80ef4901858bcd789acb0ffb2612317 100644
---- a/fs/ext4/migrate.c
-+++ b/fs/ext4/migrate.c
-@@ -455,7 +455,7 @@ int ext4_ext_migrate(struct inode *inode)
- 	 * log, so disable fast commits for this transaction.
+ 	spin_lock(&sbi->stat_lock);
+ 	if (unlikely(sbi->total_valid_block_count < count)) {
+-		f2fs_warn(sbi, "Inconsistent total_valid_block_count:%u, ino:%lu, count:%u",
++		f2fs_warn(sbi, "Inconsistent total_valid_block_count:%u, ino:%llu, count:%u",
+ 			  sbi->total_valid_block_count, inode->i_ino, count);
+ 		sbi->total_valid_block_count = 0;
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+@@ -2719,7 +2719,7 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
+ 					sbi->current_reserved_blocks + count);
+ 	spin_unlock(&sbi->stat_lock);
+ 	if (unlikely(inode->i_blocks < sectors)) {
+-		f2fs_warn(sbi, "Inconsistent i_blocks, ino:%lu, iblocks:%llu, sectors:%llu",
++		f2fs_warn(sbi, "Inconsistent i_blocks, ino:%llu, iblocks:%llu, sectors:%llu",
+ 			  inode->i_ino,
+ 			  (unsigned long long)inode->i_blocks,
+ 			  (unsigned long long)sectors);
+@@ -2993,7 +2993,7 @@ static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
+ 		dquot_free_inode(inode);
+ 	} else {
+ 		if (unlikely(inode->i_blocks == 0)) {
+-			f2fs_warn(sbi, "dec_valid_node_count: inconsistent i_blocks, ino:%lu, iblocks:%llu",
++			f2fs_warn(sbi, "dec_valid_node_count: inconsistent i_blocks, ino:%llu, iblocks:%llu",
+ 				  inode->i_ino,
+ 				  (unsigned long long)inode->i_blocks);
+ 			set_sbi_flag(sbi, SBI_NEED_FSCK);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index c8a2f17a8f11cfc746c6a6ec4a225199929c2ee6..a56bbcca7898282eab1fea7e1b2acee5ea00df88 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1917,7 +1917,7 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
+ 				f2fs_up_write(&sbi->pin_sem);
+ 				err = -ENOSPC;
+ 				f2fs_warn_ratelimited(sbi,
+-					"ino:%lu, start:%lu, end:%lu, need to trigger GC to "
++					"ino:%llu, start:%lu, end:%lu, need to trigger GC to"
+ 					"reclaim enough free segment when checkpoint is enabled",
+ 					inode->i_ino, pg_start, pg_end);
+ 				goto out_err;
+@@ -2307,7 +2307,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
+ 	 * f2fs_is_atomic_file.
  	 */
- 	ext4_fc_mark_ineligible(inode->i_sb, EXT4_FC_REASON_MIGRATE, handle);
--	goal = (((inode->i_ino - 1) / EXT4_INODES_PER_GROUP(inode->i_sb)) *
-+	goal = (div_u64(inode->i_ino - 1, EXT4_INODES_PER_GROUP(inode->i_sb)) *
- 		EXT4_INODES_PER_GROUP(inode->i_sb)) + 1;
- 	owner[0] = i_uid_read(inode);
- 	owner[1] = i_gid_read(inode);
-diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-index ce1f738dff938c5685ef87099df4c87702657a39..ab17c1d3a7b51198c2332e8a1dd44f7a1bff40cf 100644
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -420,21 +420,21 @@ static int mext_check_validity(struct inode *orig_inode,
- 
- 	/* origin and donor should be different inodes */
- 	if (orig_inode == donor_inode) {
--		ext4_debug("ext4 move extent: The argument files should not be same inode [ino:orig %lu, donor %lu]\n",
-+		ext4_debug("ext4 move extent: The argument files should not be same inode [ino:orig %llu, donor %llu]\n",
- 			   orig_inode->i_ino, donor_inode->i_ino);
+ 	if (get_dirty_pages(inode))
+-		f2fs_warn(sbi, "Unexpected flush for atomic writes: ino=%lu, npages=%u",
++		f2fs_warn(sbi, "Unexpected flush for atomic writes: ino=%llu, npages=%u",
+ 			  inode->i_ino, get_dirty_pages(inode));
+ 	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
+ 	if (ret)
+@@ -3494,7 +3494,7 @@ int f2fs_pin_file_control(struct inode *inode, bool inc)
  		return -EINVAL;
- 	}
  
- 	/* origin and donor should belone to the same filesystem */
- 	if (orig_inode->i_sb != donor_inode->i_sb) {
--		ext4_debug("ext4 move extent: The argument files should be in same FS [ino:orig %lu, donor %lu]\n",
-+		ext4_debug("ext4 move extent: The argument files should be in same FS [ino:orig %llu, donor %llu]\n",
- 			   orig_inode->i_ino, donor_inode->i_ino);
- 		return -EINVAL;
- 	}
+ 	if (fi->i_gc_failures >= sbi->gc_pin_file_threshold) {
+-		f2fs_warn(sbi, "%s: Enable GC = ino %lx after %x GC trials",
++		f2fs_warn(sbi, "%s: Enable GC = ino %llx after %x GC trials",
+ 			  __func__, inode->i_ino, fi->i_gc_failures);
+ 		clear_inode_flag(inode, FI_PIN_FILE);
+ 		return -EAGAIN;
+@@ -3679,7 +3679,7 @@ static int f2fs_ioc_enable_verity(struct file *filp, unsigned long arg)
  
- 	/* Regular file check */
- 	if (!S_ISREG(orig_inode->i_mode) || !S_ISREG(donor_inode->i_mode)) {
--		ext4_debug("ext4 move extent: The argument files should be regular file [ino:orig %lu, donor %lu]\n",
-+		ext4_debug("ext4 move extent: The argument files should be regular file [ino:orig %llu, donor %llu]\n",
- 			   orig_inode->i_ino, donor_inode->i_ino);
- 		return -EINVAL;
- 	}
-@@ -477,26 +477,26 @@ static int mext_check_validity(struct inode *orig_inode,
- 	}
- 
- 	if (donor_inode->i_mode & (S_ISUID|S_ISGID)) {
--		ext4_debug("ext4 move extent: suid or sgid is set to donor file [ino:orig %lu, donor %lu]\n",
-+		ext4_debug("ext4 move extent: suid or sgid is set to donor file [ino:orig %llu, donor %llu]\n",
- 			   orig_inode->i_ino, donor_inode->i_ino);
- 		return -EINVAL;
- 	}
- 
- 	if (IS_IMMUTABLE(donor_inode) || IS_APPEND(donor_inode)) {
--		ext4_debug("ext4 move extent: donor should not be immutable or append file [ino:orig %lu, donor %lu]\n",
-+		ext4_debug("ext4 move extent: donor should not be immutable or append file [ino:orig %llu, donor %llu]\n",
- 			   orig_inode->i_ino, donor_inode->i_ino);
- 		return -EPERM;
- 	}
- 
- 	/* Ext4 move extent does not support swap files */
- 	if (IS_SWAPFILE(orig_inode) || IS_SWAPFILE(donor_inode)) {
--		ext4_debug("ext4 move extent: The argument files should not be swap files [ino:orig %lu, donor %lu]\n",
-+		ext4_debug("ext4 move extent: The argument files should not be swap files [ino:orig %llu, donor %llu]\n",
- 			   orig_inode->i_ino, donor_inode->i_ino);
- 		return -ETXTBSY;
- 	}
- 
- 	if (ext4_is_quota_file(orig_inode) || ext4_is_quota_file(donor_inode)) {
--		ext4_debug("ext4 move extent: The argument files should not be quota files [ino:orig %lu, donor %lu]\n",
-+		ext4_debug("ext4 move extent: The argument files should not be quota files [ino:orig %llu, donor %llu]\n",
- 			   orig_inode->i_ino, donor_inode->i_ino);
+ 	if (!f2fs_sb_has_verity(F2FS_I_SB(inode))) {
+ 		f2fs_warn(F2FS_I_SB(inode),
+-			  "Can't enable fs-verity on inode %lu: the verity feature is not enabled on this filesystem",
++			  "Can't enable fs-verity on inode %llu: the verity feature is not enabled on this filesystem",
+ 			  inode->i_ino);
  		return -EOPNOTSUPP;
  	}
-@@ -523,7 +523,7 @@ static int mext_check_adjust_range(struct inode *orig_inode,
- 	/* Start offset should be same */
- 	if ((orig_start & ~(PAGE_MASK >> orig_inode->i_blkbits)) !=
- 	    (donor_start & ~(PAGE_MASK >> orig_inode->i_blkbits))) {
--		ext4_debug("ext4 move extent: orig and donor's start offsets are not aligned [ino:orig %lu, donor %lu]\n",
-+		ext4_debug("ext4 move extent: orig and donor's start offsets are not aligned [ino:orig %llu, donor %llu]\n",
- 			   orig_inode->i_ino, donor_inode->i_ino);
- 		return -EINVAL;
- 	}
-@@ -533,7 +533,7 @@ static int mext_check_adjust_range(struct inode *orig_inode,
- 	    (*len > EXT_MAX_BLOCKS) ||
- 	    (donor_start + *len >= EXT_MAX_BLOCKS) ||
- 	    (orig_start + *len >= EXT_MAX_BLOCKS))  {
--		ext4_debug("ext4 move extent: Can't handle over [%u] blocks [ino:orig %lu, donor %lu]\n",
-+		ext4_debug("ext4 move extent: Can't handle over [%u] blocks [ino:orig %llu, donor %llu]\n",
- 			   EXT_MAX_BLOCKS,
- 			   orig_inode->i_ino, donor_inode->i_ino);
- 		return -EINVAL;
-@@ -550,7 +550,7 @@ static int mext_check_adjust_range(struct inode *orig_inode,
- 	else if (donor_eof < donor_start + *len - 1)
- 		*len = donor_eof - donor_start;
- 	if (!*len) {
--		ext4_debug("ext4 move extent: len should not be 0 [ino:orig %lu, donor %lu]\n",
-+		ext4_debug("ext4 move extent: len should not be 0 [ino:orig %llu, donor %llu]\n",
- 			   orig_inode->i_ino, donor_inode->i_ino);
- 		return -EINVAL;
- 	}
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index c4b5e252af0efbfcbaf83688a32d445327a74a02..503dc9ffd61465686bb1a253bfeee41c0e9acd59 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -144,7 +144,7 @@ static struct buffer_head *__ext4_read_dirblock(struct inode *inode,
- 		bh = ext4_bread(NULL, inode, block, 0);
- 	if (IS_ERR(bh)) {
- 		__ext4_warning(inode->i_sb, func, line,
--			       "inode #%lu: lblock %lu: comm %s: "
-+			       "inode #%llu: lblock %lu: comm %s: "
- 			       "error %ld reading directory block",
- 			       inode->i_ino, (unsigned long)block,
- 			       current->comm, PTR_ERR(bh));
-@@ -841,7 +841,7 @@ dx_probe(struct ext4_filename *fname, struct inode *dir,
- 	indirect = root->info.indirect_levels;
- 	if (indirect >= ext4_dir_htree_level(dir->i_sb)) {
- 		ext4_warning(dir->i_sb,
--			     "Directory (ino: %lu) htree depth %#06x exceed"
-+			     "Directory (ino: %llu) htree depth %#06x exceed"
- 			     "supported value", dir->i_ino,
- 			     ext4_dir_htree_level(dir->i_sb));
- 		if (ext4_dir_htree_level(dir->i_sb) < EXT4_HTREE_LEVEL) {
-@@ -1793,7 +1793,7 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, unsi
- 		    (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)) &&
- 		    !fscrypt_has_permitted_context(dir, inode)) {
- 			ext4_warning(inode->i_sb,
--				     "Inconsistent encryption contexts: %lu/%lu",
-+				     "Inconsistent encryption contexts: %llu/%llu",
- 				     dir->i_ino, inode->i_ino);
- 			iput(inode);
- 			return ERR_PTR(-EPERM);
-@@ -2227,7 +2227,7 @@ static int make_indexed_dir(handle_t *handle, struct ext4_filename *fname,
- 		csum_size = sizeof(struct ext4_dir_entry_tail);
+@@ -3950,7 +3950,7 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
+ 	} else if (released_blocks &&
+ 			atomic_read(&fi->i_compr_blocks)) {
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		f2fs_warn(sbi, "%s: partial blocks were released i_ino=%lx "
++		f2fs_warn(sbi, "%s: partial blocks were released i_ino=%llx "
+ 			"iblocks=%llu, released=%u, compr_blocks=%u, "
+ 			"run fsck to fix.",
+ 			__func__, inode->i_ino, inode->i_blocks,
+@@ -4133,7 +4133,7 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
+ 	} else if (reserved_blocks &&
+ 			atomic_read(&fi->i_compr_blocks)) {
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		f2fs_warn(sbi, "%s: partial blocks were reserved i_ino=%lx "
++		f2fs_warn(sbi, "%s: partial blocks were reserved i_ino=%llx "
+ 			"iblocks=%llu, reserved=%u, compr_blocks=%u, "
+ 			"run fsck to fix.",
+ 			__func__, inode->i_ino, inode->i_blocks,
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index f46b2673d31f5a334bac543947e713cfe85dc68a..c0c8a1056d6b089397b4aa92b88b14cfd88c9de5 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1622,7 +1622,7 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 				iput(inode);
+ 				set_sbi_flag(sbi, SBI_NEED_FSCK);
+ 				f2fs_err_ratelimited(sbi,
+-					"inode %lx has both inline_data flag and "
++					"inode %llu has both inline_data flag and "
+ 					"data block, nid=%u, ofs_in_node=%u",
+ 					inode->i_ino, dni.nid, ofs_in_node);
+ 				continue;
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 0a1052d5ee624e68ba27200b100a567a5d216f2a..2669439b941387a96318f77fca7dfe35723e59d9 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -176,7 +176,7 @@ int f2fs_convert_inline_folio(struct dnode_of_data *dn, struct folio *folio)
+ 	if (unlikely(dn->data_blkaddr != NEW_ADDR)) {
+ 		f2fs_put_dnode(dn);
+ 		set_sbi_flag(fio.sbi, SBI_NEED_FSCK);
+-		f2fs_warn(fio.sbi, "%s: corrupted inline inode ino=%lx, i_addr[0]:0x%x, run fsck to fix.",
++		f2fs_warn(fio.sbi, "%s: corrupted inline inode ino=%llu, i_addr[0]:0x%x, run fsck to fix.",
+ 			  __func__, dn->inode->i_ino, dn->data_blkaddr);
+ 		f2fs_handle_error(fio.sbi, ERROR_INVALID_BLKADDR);
+ 		return -EFSCORRUPTED;
+@@ -431,7 +431,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct folio *ifolio,
+ 	if (unlikely(dn.data_blkaddr != NEW_ADDR)) {
+ 		f2fs_put_dnode(&dn);
+ 		set_sbi_flag(F2FS_F_SB(folio), SBI_NEED_FSCK);
+-		f2fs_warn(F2FS_F_SB(folio), "%s: corrupted inline inode ino=%lx, i_addr[0]:0x%x, run fsck to fix.",
++		f2fs_warn(F2FS_F_SB(folio), "%s: corrupted inline inode ino=%llu, i_addr[0]:0x%x, run fsck to fix.",
+ 			  __func__, dir->i_ino, dn.data_blkaddr);
+ 		f2fs_handle_error(F2FS_F_SB(folio), ERROR_INVALID_BLKADDR);
+ 		err = -EFSCORRUPTED;
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index e0f850b3f0c38797fbba726af424161a147ee4f7..f27198d6695b91d2a041318aeecd04c65d38a4ba 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -203,14 +203,14 @@ static bool sanity_check_compress_inode(struct inode *inode,
  
- 	blocksize =  dir->i_sb->s_blocksize;
--	dxtrace(printk(KERN_DEBUG "Creating index: inode %lu\n", dir->i_ino));
-+	dxtrace(printk(KERN_DEBUG "Creating index: inode %llu\n", dir->i_ino));
- 	BUFFER_TRACE(bh, "get_write_access");
- 	retval = ext4_journal_get_write_access(handle, dir->i_sb, bh,
- 					       EXT4_JTR_NONE);
-@@ -2523,7 +2523,7 @@ static int ext4_dx_add_entry(handle_t *handle, struct ext4_filename *fname,
- 			restart = 1;
+ 	if (ri->i_compress_algorithm >= COMPRESS_MAX) {
+ 		f2fs_warn(sbi,
+-			"%s: inode (ino=%lx) has unsupported compress algorithm: %u, run fsck to fix",
++			"%s: inode (ino=%llx) has unsupported compress algorithm: %u, run fsck to fix",
+ 			__func__, inode->i_ino, ri->i_compress_algorithm);
+ 		return false;
+ 	}
+ 	if (le64_to_cpu(ri->i_compr_blocks) >
+ 			SECTOR_TO_BLOCK(inode->i_blocks)) {
+ 		f2fs_warn(sbi,
+-			"%s: inode (ino=%lx) has inconsistent i_compr_blocks:%llu, i_blocks:%llu, run fsck to fix",
++			"%s: inode (ino=%llx) has inconsistent i_compr_blocks:%llu, i_blocks:%llu, run fsck to fix",
+ 			__func__, inode->i_ino, le64_to_cpu(ri->i_compr_blocks),
+ 			SECTOR_TO_BLOCK(inode->i_blocks));
+ 		return false;
+@@ -218,7 +218,7 @@ static bool sanity_check_compress_inode(struct inode *inode,
+ 	if (ri->i_log_cluster_size < MIN_COMPRESS_LOG_SIZE ||
+ 		ri->i_log_cluster_size > MAX_COMPRESS_LOG_SIZE) {
+ 		f2fs_warn(sbi,
+-			"%s: inode (ino=%lx) has unsupported log cluster size: %u, run fsck to fix",
++			"%s: inode (ino=%llx) has unsupported log cluster size: %u, run fsck to fix",
+ 			__func__, inode->i_ino, ri->i_log_cluster_size);
+ 		return false;
+ 	}
+@@ -262,7 +262,7 @@ static bool sanity_check_compress_inode(struct inode *inode,
+ 
+ 	return true;
+ err_level:
+-	f2fs_warn(sbi, "%s: inode (ino=%lx) has unsupported compress level: %u, run fsck to fix",
++	f2fs_warn(sbi, "%s: inode (ino=%llx) has unsupported compress level: %u, run fsck to fix",
+ 		  __func__, inode->i_ino, clevel);
+ 	return false;
+ }
+@@ -276,40 +276,40 @@ static bool sanity_check_inode(struct inode *inode, struct folio *node_folio)
+ 
+ 	iblocks = le64_to_cpu(F2FS_INODE(node_folio)->i_blocks);
+ 	if (!iblocks) {
+-		f2fs_warn(sbi, "%s: corrupted inode i_blocks i_ino=%lx iblocks=%llu, run fsck to fix.",
++		f2fs_warn(sbi, "%s: corrupted inode i_blocks i_ino=%llx iblocks=%llu, run fsck to fix.",
+ 			  __func__, inode->i_ino, iblocks);
+ 		return false;
+ 	}
+ 
+ 	if (ino_of_node(node_folio) != nid_of_node(node_folio)) {
+-		f2fs_warn(sbi, "%s: corrupted inode footer i_ino=%lx, ino,nid: [%u, %u] run fsck to fix.",
++		f2fs_warn(sbi, "%s: corrupted inode footer i_ino=%llx, ino,nid: [%u, %u] run fsck to fix.",
+ 			  __func__, inode->i_ino,
+ 			  ino_of_node(node_folio), nid_of_node(node_folio));
+ 		return false;
+ 	}
+ 
+ 	if (ino_of_node(node_folio) == fi->i_xattr_nid) {
+-		f2fs_warn(sbi, "%s: corrupted inode i_ino=%lx, xnid=%x, run fsck to fix.",
++		f2fs_warn(sbi, "%s: corrupted inode i_ino=%llx, xnid=%x, run fsck to fix.",
+ 			  __func__, inode->i_ino, fi->i_xattr_nid);
+ 		return false;
+ 	}
+ 
+ 	if (S_ISDIR(inode->i_mode) && unlikely(inode->i_nlink == 1)) {
+-		f2fs_warn(sbi, "%s: directory inode (ino=%lx) has a single i_nlink",
++		f2fs_warn(sbi, "%s: directory inode (ino=%llx) has a single i_nlink",
+ 			  __func__, inode->i_ino);
+ 		return false;
+ 	}
+ 
+ 	if (f2fs_has_extra_attr(inode)) {
+ 		if (!f2fs_sb_has_extra_attr(sbi)) {
+-			f2fs_warn(sbi, "%s: inode (ino=%lx) is with extra_attr, but extra_attr feature is off",
++			f2fs_warn(sbi, "%s: inode (ino=%llx) is with extra_attr, but extra_attr feature is off",
+ 				  __func__, inode->i_ino);
+ 			return false;
  		}
- 		if (add_level && levels == ext4_dir_htree_level(sb)) {
--			ext4_warning(sb, "Directory (ino: %lu) index full, "
-+			ext4_warning(sb, "Directory (ino: %llu) index full, "
- 					 "reach max htree level :%d",
- 					 dir->i_ino, levels);
- 			if (ext4_dir_htree_level(sb) < EXT4_HTREE_LEVEL) {
-diff --git a/fs/ext4/orphan.c b/fs/ext4/orphan.c
-index c0022f0bff8749badfe80d2a7628bea5ce96ab1e..64ea4762423386db79e739a2448bf70c12415ef8 100644
---- a/fs/ext4/orphan.c
-+++ b/fs/ext4/orphan.c
-@@ -179,8 +179,8 @@ int ext4_orphan_add(handle_t *handle, struct inode *inode)
- 	} else
- 		brelse(iloc.bh);
+ 		if (fi->i_extra_isize > F2FS_TOTAL_EXTRA_ATTR_SIZE ||
+ 			fi->i_extra_isize < F2FS_MIN_EXTRA_ATTR_SIZE ||
+ 			fi->i_extra_isize % sizeof(__le32)) {
+-			f2fs_warn(sbi, "%s: inode (ino=%lx) has corrupted i_extra_isize: %d, max: %zu",
++			f2fs_warn(sbi, "%s: inode (ino=%llx) has corrupted i_extra_isize: %d, max: %zu",
+ 				  __func__, inode->i_ino, fi->i_extra_isize,
+ 				  F2FS_TOTAL_EXTRA_ATTR_SIZE);
+ 			return false;
+@@ -327,7 +327,7 @@ static bool sanity_check_inode(struct inode *inode, struct folio *node_folio)
+ 		f2fs_has_inline_xattr(inode) &&
+ 		(fi->i_inline_xattr_size < MIN_INLINE_XATTR_SIZE ||
+ 		fi->i_inline_xattr_size > MAX_INLINE_XATTR_SIZE)) {
+-		f2fs_warn(sbi, "%s: inode (ino=%lx) has corrupted i_inline_xattr_size: %d, min: %zu, max: %lu",
++		f2fs_warn(sbi, "%s: inode (ino=%llx) has corrupted i_inline_xattr_size: %d, min: %zu, max: %lu",
+ 			  __func__, inode->i_ino, fi->i_inline_xattr_size,
+ 			  MIN_INLINE_XATTR_SIZE, MAX_INLINE_XATTR_SIZE);
+ 		return false;
+@@ -335,64 +335,64 @@ static bool sanity_check_inode(struct inode *inode, struct folio *node_folio)
  
--	ext4_debug("superblock will point to %lu\n", inode->i_ino);
--	ext4_debug("orphan inode %lu will point to %d\n",
-+	ext4_debug("superblock will point to %llu\n", inode->i_ino);
-+	ext4_debug("orphan inode %llu will point to %d\n",
- 			inode->i_ino, NEXT_ORPHAN(inode));
+ 	if (!f2fs_sb_has_extra_attr(sbi)) {
+ 		if (f2fs_sb_has_project_quota(sbi)) {
+-			f2fs_warn(sbi, "%s: corrupted inode ino=%lx, wrong feature flag: %u, run fsck to fix.",
++			f2fs_warn(sbi, "%s: corrupted inode ino=%llx, wrong feature flag: %u, run fsck to fix.",
+ 				  __func__, inode->i_ino, F2FS_FEATURE_PRJQUOTA);
+ 			return false;
+ 		}
+ 		if (f2fs_sb_has_inode_chksum(sbi)) {
+-			f2fs_warn(sbi, "%s: corrupted inode ino=%lx, wrong feature flag: %u, run fsck to fix.",
++			f2fs_warn(sbi, "%s: corrupted inode ino=%llx, wrong feature flag: %u, run fsck to fix.",
+ 				  __func__, inode->i_ino, F2FS_FEATURE_INODE_CHKSUM);
+ 			return false;
+ 		}
+ 		if (f2fs_sb_has_flexible_inline_xattr(sbi)) {
+-			f2fs_warn(sbi, "%s: corrupted inode ino=%lx, wrong feature flag: %u, run fsck to fix.",
++			f2fs_warn(sbi, "%s: corrupted inode ino=%llx, wrong feature flag: %u, run fsck to fix.",
+ 				  __func__, inode->i_ino, F2FS_FEATURE_FLEXIBLE_INLINE_XATTR);
+ 			return false;
+ 		}
+ 		if (f2fs_sb_has_inode_crtime(sbi)) {
+-			f2fs_warn(sbi, "%s: corrupted inode ino=%lx, wrong feature flag: %u, run fsck to fix.",
++			f2fs_warn(sbi, "%s: corrupted inode ino=%llx, wrong feature flag: %u, run fsck to fix.",
+ 				  __func__, inode->i_ino, F2FS_FEATURE_INODE_CRTIME);
+ 			return false;
+ 		}
+ 		if (f2fs_sb_has_compression(sbi)) {
+-			f2fs_warn(sbi, "%s: corrupted inode ino=%lx, wrong feature flag: %u, run fsck to fix.",
++			f2fs_warn(sbi, "%s: corrupted inode ino=%llx, wrong feature flag: %u, run fsck to fix.",
+ 				  __func__, inode->i_ino, F2FS_FEATURE_COMPRESSION);
+ 			return false;
+ 		}
+ 	}
+ 
+ 	if (f2fs_sanity_check_inline_data(inode, node_folio)) {
+-		f2fs_warn(sbi, "%s: inode (ino=%lx, mode=%u) should not have inline_data, run fsck to fix",
++		f2fs_warn(sbi, "%s: inode (ino=%llx, mode=%u) should not have inline_data, run fsck to fix",
+ 			  __func__, inode->i_ino, inode->i_mode);
+ 		return false;
+ 	}
+ 
+ 	if (f2fs_has_inline_dentry(inode) && !S_ISDIR(inode->i_mode)) {
+-		f2fs_warn(sbi, "%s: inode (ino=%lx, mode=%u) should not have inline_dentry, run fsck to fix",
++		f2fs_warn(sbi, "%s: inode (ino=%llx, mode=%u) should not have inline_dentry, run fsck to fix",
+ 			  __func__, inode->i_ino, inode->i_mode);
+ 		return false;
+ 	}
+ 
+ 	if ((fi->i_flags & F2FS_CASEFOLD_FL) && !f2fs_sb_has_casefold(sbi)) {
+-		f2fs_warn(sbi, "%s: inode (ino=%lx) has casefold flag, but casefold feature is off",
++		f2fs_warn(sbi, "%s: inode (ino=%llx) has casefold flag, but casefold feature is off",
+ 			  __func__, inode->i_ino);
+ 		return false;
+ 	}
+ 
+ 	if (fi->i_xattr_nid && f2fs_check_nid_range(sbi, fi->i_xattr_nid)) {
+-		f2fs_warn(sbi, "%s: inode (ino=%lx) has corrupted i_xattr_nid: %u, run fsck to fix.",
++		f2fs_warn(sbi, "%s: inode (ino=%llx) has corrupted i_xattr_nid: %u, run fsck to fix.",
+ 			  __func__, inode->i_ino, fi->i_xattr_nid);
+ 		return false;
+ 	}
+ 
+ 	if (IS_DEVICE_ALIASING(inode)) {
+ 		if (!f2fs_sb_has_device_alias(sbi)) {
+-			f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but the feature is off",
++			f2fs_warn(sbi, "%s: inode (ino=%llx) has device alias flag, but the feature is off",
+ 				  __func__, inode->i_ino);
+ 			return false;
+ 		}
+ 		if (!f2fs_is_pinned_file(inode)) {
+-			f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but is not pinned",
++			f2fs_warn(sbi, "%s: inode (ino=%llx) has device alias flag, but is not pinned",
+ 				  __func__, inode->i_ino);
+ 			return false;
+ 		}
+@@ -925,7 +925,7 @@ void f2fs_evict_inode(struct inode *inode)
+ 			 */
+ 			if (is_inode_flag_set(inode, FI_DIRTY_INODE)) {
+ 				f2fs_warn(F2FS_I_SB(inode),
+-					"f2fs_evict_inode: inconsistent node id, ino:%lu",
++					"f2fs_evict_inode: inconsistent node id, ino:%llu",
+ 					inode->i_ino);
+ 				f2fs_inode_synced(inode);
+ 				set_sbi_flag(sbi, SBI_NEED_FSCK);
+@@ -954,7 +954,7 @@ void f2fs_evict_inode(struct inode *inode)
+ 		 */
+ 		if (is_inode_flag_set(inode, FI_DIRTY_INODE)) {
+ 			f2fs_warn(sbi,
+-				"f2fs_evict_inode: inode is dirty, ino:%lu",
++				"f2fs_evict_inode: inode is dirty, ino:%llu",
+ 				inode->i_ino);
+ 			f2fs_inode_synced(inode);
+ 			set_sbi_flag(sbi, SBI_NEED_FSCK);
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index e360f08a9586ab5b75d6e1e1748219c3190a7580..efbb0732d4206f63b5221605a08ffa5c17e8a8b6 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -505,7 +505,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 	}
+ 
+ 	if (inode->i_nlink == 0) {
+-		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
++		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%llx) has zero i_nlink",
+ 			  __func__, inode->i_ino);
+ 		err = -EFSCORRUPTED;
+ 		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+@@ -515,7 +515,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 	if (IS_ENCRYPTED(dir) &&
+ 	    (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)) &&
+ 	    !fscrypt_has_permitted_context(dir, inode)) {
+-		f2fs_warn(F2FS_I_SB(inode), "Inconsistent encryption contexts: %lu/%lu",
++		f2fs_warn(F2FS_I_SB(inode), "Inconsistent encryption contexts: %llu/%llu",
+ 			  dir->i_ino, inode->i_ino);
+ 		err = -EPERM;
+ 		goto out_iput;
+@@ -573,11 +573,11 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 	}
+ 
+ 	if (unlikely(inode->i_nlink == 0)) {
+-		f2fs_warn(sbi, "%s: inode (ino=%lx) has zero i_nlink",
++		f2fs_warn(sbi, "%s: inode (ino=%llx) has zero i_nlink",
+ 			  __func__, inode->i_ino);
+ 		goto corrupted;
+ 	} else if (S_ISDIR(inode->i_mode) && unlikely(inode->i_nlink == 1)) {
+-		f2fs_warn(sbi, "%s: directory inode (ino=%lx) has a single i_nlink",
++		f2fs_warn(sbi, "%s: directory inode (ino=%llx) has a single i_nlink",
+ 			  __func__, inode->i_ino);
+ 		goto corrupted;
+ 	}
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 2030e943ab9b3d5e2deb20efe9a44cf5093a61fb..2856d5dbdd00a659b548ca6a0d8a973fc1341297 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -847,7 +847,7 @@ int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
+ 			err = -EFSCORRUPTED;
+ 			f2fs_err_ratelimited(sbi,
+ 				"inode mapping table is corrupted, run fsck to fix it, "
+-				"ino:%lu, nid:%u, level:%d, offset:%d",
++				"ino:%llu, nid:%u, level:%d, offset:%d",
+ 				dn->inode->i_ino, nids[i], level, offset[level]);
+ 			set_sbi_flag(sbi, SBI_NEED_FSCK);
+ 			goto release_pages;
+@@ -1013,7 +1013,7 @@ static int truncate_dnode(struct dnode_of_data *dn)
+ 		return PTR_ERR(folio);
+ 
+ 	if (IS_INODE(folio) || ino_of_node(folio) != dn->inode->i_ino) {
+-		f2fs_err(sbi, "incorrect node reference, ino: %lu, nid: %u, ino_of_node: %u",
++		f2fs_err(sbi, "incorrect node reference, ino: %llu, nid: %u, ino_of_node: %u",
+ 				dn->inode->i_ino, dn->nid, ino_of_node(folio));
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+ 		f2fs_handle_error(sbi, ERROR_INVALID_NODE_REFERENCE);
+@@ -1194,7 +1194,7 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from)
+ 	if (level <= 0) {
+ 		if (!level) {
+ 			level = -EFSCORRUPTED;
+-			f2fs_err(sbi, "%s: inode ino=%lx has corrupted node block, from:%lu addrs:%u",
++			f2fs_err(sbi, "%s: inode ino=%llx has corrupted node block, from:%lu addrs:%u",
+ 					__func__, inode->i_ino,
+ 					from, ADDRS_PER_INODE(inode));
+ 			set_sbi_flag(sbi, SBI_NEED_FSCK);
+@@ -1265,7 +1265,7 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from)
+ 			set_sbi_flag(F2FS_F_SB(folio), SBI_NEED_FSCK);
+ 			f2fs_handle_error(sbi, ERROR_INVALID_BLKADDR);
+ 			f2fs_err_ratelimited(sbi,
+-				"truncate node fail, ino:%lu, nid:%u, "
++				"truncate node fail, ino:%llu, nid:%u, "
+ 				"offset[0]:%d, offset[1]:%d, nofs:%d",
+ 				inode->i_ino, dn.nid, offset[0],
+ 				offset[1], nofs);
+@@ -1351,7 +1351,7 @@ int f2fs_remove_inode_page(struct inode *inode)
+ 
+ 	if (unlikely(inode->i_blocks != 0 && inode->i_blocks != 8)) {
+ 		f2fs_warn(F2FS_I_SB(inode),
+-			"f2fs_remove_inode_page: inconsistent i_blocks, ino:%lu, iblocks:%llu",
++			"f2fs_remove_inode_page: inconsistent i_blocks, ino:%llu, iblocks:%llu",
+ 			inode->i_ino, (unsigned long long)inode->i_blocks);
+ 		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+ 	}
+@@ -1997,7 +1997,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 	return ret;
+ }
+ 
+-static int f2fs_match_ino(struct inode *inode, unsigned long ino, void *data)
++static int f2fs_match_ino(struct inode *inode, u64 ino, void *data)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	bool clean;
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index a26071f2b0bc81fb768982841e37a63b2ca701b3..3d3dacec94825f6695d67043fd3ca42329aa5929 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -232,7 +232,7 @@ static int recover_dentry(struct inode *inode, struct folio *ifolio,
+ 		name = "<encrypted>";
+ 	else
+ 		name = raw_inode->i_name;
+-	f2fs_notice(F2FS_I_SB(inode), "%s: ino = %x, name = %s, dir = %lx, err = %d",
++	f2fs_notice(F2FS_I_SB(inode), "%s: ino = %x, name = %s, dir = %llu, err = %d",
+ 		    __func__, ino_of_node(ifolio), name,
+ 		    IS_ERR(dir) ? 0 : dir->i_ino, err);
+ 	return err;
+@@ -532,7 +532,7 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+ 
+ 	max_addrs = ADDRS_PER_PAGE(dn->node_folio, dn->inode);
+ 	if (ofs_in_node >= max_addrs) {
+-		f2fs_err(sbi, "Inconsistent ofs_in_node:%u in summary, ino:%lu, nid:%u, max:%u",
++		f2fs_err(sbi, "Inconsistent ofs_in_node:%u in summary, ino:%llu, nid:%u, max:%u",
+ 			ofs_in_node, dn->inode->i_ino, nid, max_addrs);
+ 		f2fs_handle_error(sbi, ERROR_INCONSISTENT_SUMMARY);
+ 		return -EFSCORRUPTED;
+@@ -674,7 +674,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 	f2fs_bug_on(sbi, ni.ino != ino_of_node(folio));
+ 
+ 	if (ofs_of_node(dn.node_folio) != ofs_of_node(folio)) {
+-		f2fs_warn(sbi, "Inconsistent ofs_of_node, ino:%lu, ofs:%u, %u",
++		f2fs_warn(sbi, "Inconsistent ofs_of_node, ino:%llu, ofs:%u, %u",
+ 			  inode->i_ino, ofs_of_node(dn.node_folio),
+ 			  ofs_of_node(folio));
+ 		err = -EFSCORRUPTED;
+@@ -748,7 +748,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 
+ 			if (f2fs_is_valid_blkaddr(sbi, dest,
+ 					DATA_GENERIC_ENHANCE_UPDATE)) {
+-				f2fs_err(sbi, "Inconsistent dest blkaddr:%u, ino:%lu, ofs:%u",
++				f2fs_err(sbi, "Inconsistent dest blkaddr:%u, ino:%llu, ofs:%u",
+ 					dest, inode->i_ino, dn.ofs_in_node);
+ 				err = -EFSCORRUPTED;
+ 				goto err;
+@@ -768,7 +768,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ err:
+ 	f2fs_put_dnode(&dn);
  out:
- 	ext4_std_error(sb, err);
-@@ -249,7 +249,7 @@ int ext4_orphan_del(handle_t *handle, struct inode *inode)
- 	}
+-	f2fs_notice(sbi, "recover_data: ino = %lx, nid = %x (i_size: %s), "
++	f2fs_notice(sbi, "recover_data: ino = %llx, nid = %x (i_size: %s), "
+ 		    "range (%u, %u), recovered = %d, err = %d",
+ 		    inode->i_ino, nid_of_node(folio),
+ 		    file_keep_isize(inode) ? "keep" : "recover",
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index 941dc62a6d6f7c50c1a661397ef1bbb611e6c304..610d5810074dc501d02c93a4feb308e12a21a056 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -365,7 +365,7 @@ static int lookup_all_xattrs(struct inode *inode, struct folio *ifolio,
  
- 	mutex_lock(&sbi->s_orphan_lock);
--	ext4_debug("remove inode %lu from orphan list\n", inode->i_ino);
-+	ext4_debug("remove inode %llu from orphan list\n", inode->i_ino);
+ 	*xe = __find_xattr(cur_addr, last_txattr_addr, NULL, index, len, name);
+ 	if (!*xe) {
+-		f2fs_err(F2FS_I_SB(inode), "lookup inode (%lu) has corrupted xattr",
++		f2fs_err(F2FS_I_SB(inode), "lookup inode (%llu) has corrupted xattr",
+ 								inode->i_ino);
+ 		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+ 		err = -ENODATA;
+@@ -585,7 +585,7 @@ ssize_t f2fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
  
- 	prev = ei->i_orphan.prev;
- 	list_del_init(&ei->i_orphan);
-@@ -284,7 +284,7 @@ int ext4_orphan_del(handle_t *handle, struct inode *inode)
- 		struct inode *i_prev =
- 			&list_entry(prev, struct ext4_inode_info, i_orphan)->vfs_inode;
+ 		if ((void *)(entry) + sizeof(__u32) > last_base_addr ||
+ 			(void *)XATTR_NEXT_ENTRY(entry) > last_base_addr) {
+-			f2fs_err(F2FS_I_SB(inode), "list inode (%lu) has corrupted xattr",
++			f2fs_err(F2FS_I_SB(inode), "list inode (%llu) has corrupted xattr",
+ 						inode->i_ino);
+ 			set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+ 			f2fs_handle_error(F2FS_I_SB(inode),
+@@ -664,14 +664,14 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+ 		if (!F2FS_I(inode)->i_xattr_nid) {
+ 			error = f2fs_recover_xattr_data(inode, NULL);
+ 			f2fs_notice(F2FS_I_SB(inode),
+-				"recover xattr in inode (%lu), error(%d)",
++				"recover xattr in inode (%llu), error(%d)",
+ 					inode->i_ino, error);
+ 			if (!error) {
+ 				kfree(base_addr);
+ 				goto retry;
+ 			}
+ 		}
+-		f2fs_err(F2FS_I_SB(inode), "set inode (%lu) has corrupted xattr",
++		f2fs_err(F2FS_I_SB(inode), "set inode (%llu) has corrupted xattr",
+ 								inode->i_ino);
+ 		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+ 		error = -EFSCORRUPTED;
+@@ -699,7 +699,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+ 	while (!IS_XATTR_LAST_ENTRY(last)) {
+ 		if ((void *)(last) + sizeof(__u32) > last_base_addr ||
+ 			(void *)XATTR_NEXT_ENTRY(last) > last_base_addr) {
+-			f2fs_err(F2FS_I_SB(inode), "inode (%lu) has invalid last xattr entry, entry_size: %zu",
++			f2fs_err(F2FS_I_SB(inode), "inode (%llu) has invalid last xattr entry, entry_size: %zu",
+ 					inode->i_ino, ENTRY_SIZE(last));
+ 			set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+ 			error = -EFSCORRUPTED;
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 9364e677556207ac041353a9eb2d5c2ee49b9dff..109b4f5771cbd5b019a1a9cfdc178892a19b7c54 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -9,7 +9,7 @@
+ #include <uapi/linux/f2fs.h>
  
--		ext4_debug("orphan inode %lu will point to %u\n",
-+		ext4_debug("orphan inode %llu will point to %u\n",
- 			  i_prev->i_ino, ino_next);
- 		err = ext4_reserve_inode_write(handle, i_prev, &iloc2);
- 		if (err) {
-@@ -328,9 +328,9 @@ static void ext4_process_orphan(struct inode *inode,
- 	if (inode->i_nlink) {
- 		if (test_opt(sb, DEBUG))
- 			ext4_msg(sb, KERN_DEBUG,
--				"%s: truncating inode %lu to %lld bytes",
-+				"%s: truncating inode %llu to %lld bytes",
- 				__func__, inode->i_ino, inode->i_size);
--		ext4_debug("truncating inode %lu to %lld bytes\n",
-+		ext4_debug("truncating inode %llu to %lld bytes\n",
- 			   inode->i_ino, inode->i_size);
- 		inode_lock(inode);
- 		truncate_inode_pages(inode->i_mapping, inode->i_size);
-@@ -349,9 +349,9 @@ static void ext4_process_orphan(struct inode *inode,
- 	} else {
- 		if (test_opt(sb, DEBUG))
- 			ext4_msg(sb, KERN_DEBUG,
--				"%s: deleting unreferenced inode %lu",
-+				"%s: deleting unreferenced inode %llu",
- 				__func__, inode->i_ino);
--		ext4_debug("deleting unreferenced inode %lu\n",
-+		ext4_debug("deleting unreferenced inode %llu\n",
- 			   inode->i_ino);
- 		(*nr_orphans)++;
- 	}
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index a8c95eee91b79e36ebde09fac9033be359baf8fc..86011275ad83668d591488fad90959ec04625c55 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -180,7 +180,7 @@ static int ext4_end_io_end(ext4_io_end_t *io_end)
- 	struct super_block *sb = inode->i_sb;
- 	int ret = 0;
+ #define show_dev(dev)		MAJOR(dev), MINOR(dev)
+-#define show_dev_ino(entry)	show_dev(entry->dev), (unsigned long)entry->ino
++#define show_dev_ino(entry)	show_dev(entry->dev), (unsigned long long)entry->ino
  
--	ext4_debug("ext4_end_io_nolock: io_end 0x%p from inode %lu,list->next 0x%p,"
-+	ext4_debug("ext4_end_io_nolock: io_end 0x%p from inode %llu,list->next 0x%p,"
- 		   "list->prev 0x%p\n",
- 		   io_end, inode->i_ino, io_end->list.next, io_end->list.prev);
- 
-@@ -204,7 +204,7 @@ static int ext4_end_io_end(ext4_io_end_t *io_end)
- 		ext4_msg(sb, KERN_EMERG,
- 			 "failed to convert unwritten extents to written "
- 			 "extents -- potential data loss!  "
--			 "(inode %lu, error %d)", inode->i_ino, ret);
-+			 "(inode %llu, error %d)", inode->i_ino, ret);
- 	}
- 
- 	ext4_clear_io_unwritten_flag(io_end);
-@@ -221,7 +221,7 @@ static void dump_completed_IO(struct inode *inode, struct list_head *head)
- 	if (list_empty(head))
- 		return;
- 
--	ext4_debug("Dump inode %lu completed io list\n", inode->i_ino);
-+	ext4_debug("Dump inode %llu completed io list\n", inode->i_ino);
- 	list_for_each_entry(io_end, head, list) {
- 		cur = &io_end->list;
- 		before = cur->prev;
-@@ -229,7 +229,7 @@ static void dump_completed_IO(struct inode *inode, struct list_head *head)
- 		after = cur->next;
- 		io_end1 = container_of(after, ext4_io_end_t, list);
- 
--		ext4_debug("io 0x%p from inode %lu,prev 0x%p,next 0x%p\n",
-+		ext4_debug("io 0x%p from inode %llu,prev 0x%p,next 0x%p\n",
- 			    io_end, inode->i_ino, io_end0, io_end1);
- 	}
- #endif
-@@ -366,7 +366,7 @@ static void ext4_end_bio(struct bio *bio)
- 	if (bio->bi_status) {
- 		struct inode *inode = io_end->inode;
- 
--		ext4_warning(inode->i_sb, "I/O error %d writing to inode %lu "
-+		ext4_warning(inode->i_sb, "I/O error %d writing to inode %llu "
- 			     "starting block %llu)",
- 			     bio->bi_status, inode->i_ino,
- 			     (unsigned long long)
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 43f680c750ae6b2cacb35bcaad262ba234676ef4..781c083000c2ea2232846b0827c7d4799d87bd5d 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -848,12 +848,12 @@ void __ext4_error_inode(struct inode *inode, const char *function,
- 		vaf.va = &args;
- 		if (block)
- 			printk(KERN_CRIT "EXT4-fs error (device %s): %s:%d: "
--			       "inode #%lu: block %llu: comm %s: %pV\n",
-+			       "inode #%llu: block %llu: comm %s: %pV\n",
- 			       inode->i_sb->s_id, function, line, inode->i_ino,
- 			       block, current->comm, &vaf);
- 		else
- 			printk(KERN_CRIT "EXT4-fs error (device %s): %s:%d: "
--			       "inode #%lu: comm %s: %pV\n",
-+			       "inode #%llu: comm %s: %pV\n",
- 			       inode->i_sb->s_id, function, line, inode->i_ino,
- 			       current->comm, &vaf);
- 		va_end(args);
-@@ -888,13 +888,13 @@ void __ext4_error_file(struct file *file, const char *function,
- 		vaf.va = &args;
- 		if (block)
- 			printk(KERN_CRIT
--			       "EXT4-fs error (device %s): %s:%d: inode #%lu: "
-+			       "EXT4-fs error (device %s): %s:%d: inode #%llu: "
- 			       "block %llu: comm %s: path %s: %pV\n",
- 			       inode->i_sb->s_id, function, line, inode->i_ino,
- 			       block, current->comm, path, &vaf);
- 		else
- 			printk(KERN_CRIT
--			       "EXT4-fs error (device %s): %s:%d: inode #%lu: "
-+			       "EXT4-fs error (device %s): %s:%d: inode #%llu: "
- 			       "comm %s: path %s: %pV\n",
- 			       inode->i_sb->s_id, function, line, inode->i_ino,
- 			       current->comm, path, &vaf);
-@@ -1035,14 +1035,14 @@ void __ext4_warning_inode(const struct inode *inode, const char *function,
- 	vaf.fmt = fmt;
- 	vaf.va = &args;
- 	printk(KERN_WARNING "EXT4-fs warning (device %s): %s:%d: "
--	       "inode #%lu: comm %s: %pV\n", inode->i_sb->s_id,
-+	       "inode #%llu: comm %s: %pV\n", inode->i_sb->s_id,
- 	       function, line, inode->i_ino, current->comm, &vaf);
- 	va_end(args);
- }
- 
- void __ext4_grp_locked_error(const char *function, unsigned int line,
- 			     struct super_block *sb, ext4_group_t grp,
--			     unsigned long ino, ext4_fsblk_t block,
-+			     u64 ino, ext4_fsblk_t block,
- 			     const char *fmt, ...)
- __releases(bitlock)
- __acquires(bitlock)
-@@ -1061,7 +1061,7 @@ __acquires(bitlock)
- 		printk(KERN_CRIT "EXT4-fs error (device %s): %s:%d: group %u, ",
- 		       sb->s_id, function, line, grp);
- 		if (ino)
--			printk(KERN_CONT "inode %lu: ", ino);
-+			printk(KERN_CONT "inode %llu: ", ino);
- 		if (block)
- 			printk(KERN_CONT "block %llu:",
- 			       (unsigned long long) block);
-@@ -1170,7 +1170,7 @@ static void dump_orphan_list(struct super_block *sb, struct ext4_sb_info *sbi)
- 	list_for_each(l, &sbi->s_orphan) {
- 		struct inode *inode = orphan_list_entry(l);
- 		printk(KERN_ERR "  "
--		       "inode %s:%lu at %p: mode %o, nlink %d, next %d\n",
-+		       "inode %s:%llu at %p: mode %o, nlink %d, next %d\n",
- 		       inode->i_sb->s_id, inode->i_ino, inode,
- 		       inode->i_mode, inode->i_nlink,
- 		       NEXT_ORPHAN(inode));
-@@ -1446,7 +1446,7 @@ static void ext4_free_in_core_inode(struct inode *inode)
- {
- 	fscrypt_free_inode(inode);
- 	if (!list_empty(&(EXT4_I(inode)->i_fc_list))) {
--		pr_warn("%s: inode %ld still in fc list",
-+		pr_warn("%s: inode %llu still in fc list",
- 			__func__, inode->i_ino);
- 	}
- 	kmem_cache_free(ext4_inode_cachep, EXT4_I(inode));
-@@ -1456,7 +1456,7 @@ static void ext4_destroy_inode(struct inode *inode)
- {
- 	if (ext4_inode_orphan_tracked(inode)) {
- 		ext4_msg(inode->i_sb, KERN_ERR,
--			 "Inode %lu (%p): inode tracked as orphan!",
-+			 "Inode %llu (%p): inode tracked as orphan!",
- 			 inode->i_ino, EXT4_I(inode));
- 		print_hex_dump(KERN_INFO, "", DUMP_PREFIX_ADDRESS, 16, 4,
- 				EXT4_I(inode), sizeof(struct ext4_inode_info),
-@@ -1467,7 +1467,7 @@ static void ext4_destroy_inode(struct inode *inode)
- 	if (!(EXT4_SB(inode->i_sb)->s_mount_state & EXT4_ERROR_FS) &&
- 	    WARN_ON_ONCE(EXT4_I(inode)->i_reserved_data_blocks))
- 		ext4_msg(inode->i_sb, KERN_ERR,
--			 "Inode %lu (%p): i_reserved_data_blocks (%u) not cleared!",
-+			 "Inode %llu (%p): i_reserved_data_blocks (%u) not cleared!",
- 			 inode->i_ino, EXT4_I(inode),
- 			 EXT4_I(inode)->i_reserved_data_blocks);
- }
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 7bf9ba19a89db2cd9e9536191eb904afe4c5f5d8..60aec4712f7fc52a8cc8ce31e4d5bd740a193903 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -64,7 +64,7 @@
- 
- #ifdef EXT4_XATTR_DEBUG
- # define ea_idebug(inode, fmt, ...)					\
--	printk(KERN_DEBUG "inode %s:%lu: " fmt "\n",			\
-+	printk(KERN_DEBUG "inode %s:%llu: " fmt "\n",			\
- 	       inode->i_sb->s_id, inode->i_ino, ##__VA_ARGS__)
- # define ea_bdebug(bh, fmt, ...)					\
- 	printk(KERN_DEBUG "block %pg:%lu: " fmt "\n",			\
-@@ -1035,7 +1035,7 @@ static int ext4_xattr_inode_update_ref(handle_t *handle, struct inode *ea_inode,
- 	ref_count = ext4_xattr_inode_get_ref(ea_inode);
- 	if ((ref_count == 0 && ref_change < 0) || (ref_count == U64_MAX && ref_change > 0)) {
- 		ext4_error_inode(ea_inode, __func__, __LINE__, 0,
--			"EA inode %lu ref wraparound: ref_count=%lld ref_change=%d",
-+			"EA inode %llu ref wraparound: ref_count=%lld ref_change=%d",
- 			ea_inode->i_ino, ref_count, ref_change);
- 		brelse(iloc.bh);
- 		ret = -EFSCORRUPTED;
-@@ -1046,7 +1046,7 @@ static int ext4_xattr_inode_update_ref(handle_t *handle, struct inode *ea_inode,
- 
- 	if (ref_change > 0) {
- 		if (ref_count == 1) {
--			WARN_ONCE(ea_inode->i_nlink, "EA inode %lu i_nlink=%u",
-+			WARN_ONCE(ea_inode->i_nlink, "EA inode %llu i_nlink=%u",
- 				  ea_inode->i_ino, ea_inode->i_nlink);
- 
- 			set_nlink(ea_inode, 1);
-@@ -1055,7 +1055,7 @@ static int ext4_xattr_inode_update_ref(handle_t *handle, struct inode *ea_inode,
- 	} else {
- 		if (ref_count == 0) {
- 			WARN_ONCE(ea_inode->i_nlink != 1,
--				  "EA inode %lu i_nlink=%u",
-+				  "EA inode %llu i_nlink=%u",
- 				  ea_inode->i_ino, ea_inode->i_nlink);
- 
- 			clear_nlink(ea_inode);
-@@ -2854,7 +2854,7 @@ int ext4_expand_extra_isize_ea(struct inode *inode, int new_extra_isize,
- 
- cleanup:
- 	if (error && (mnt_count != le16_to_cpu(sbi->s_es->s_mnt_count))) {
--		ext4_warning(inode->i_sb, "Unable to expand inode %lu. Delete some EAs or run e2fsck.",
-+		ext4_warning(inode->i_sb, "Unable to expand inode %llu. Delete some EAs or run e2fsck.",
- 			     inode->i_ino);
- 		mnt_count = le16_to_cpu(sbi->s_es->s_mnt_count);
- 	}
-diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-index a3e8fe414df85c53e8aa15836ab93c3ae514c815..2f8b44d16df196f1439ed7f01160779a9fc4d14c 100644
---- a/include/trace/events/ext4.h
-+++ b/include/trace/events/ext4.h
-@@ -144,8 +144,8 @@ TRACE_EVENT(ext4_other_inode_update_time,
+ TRACE_DEFINE_ENUM(NODE);
+ TRACE_DEFINE_ENUM(DATA);
+@@ -207,8 +207,8 @@ DECLARE_EVENT_CLASS(f2fs__inode,
  
  	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
--		__field(	ino_t,	orig_ino		)
-+		__field(	u64,	ino			)
-+		__field(	u64,	orig_ino		)
- 		__field(	uid_t,	uid			)
- 		__field(	gid_t,	gid			)
- 		__field(	__u16, mode			)
-@@ -160,10 +160,10 @@ TRACE_EVENT(ext4_other_inode_update_time,
- 		__entry->mode	= inode->i_mode;
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
+-		__field(ino_t,	pino)
++		__field(u64,	ino)
++		__field(u64,	pino)
+ 		__field(umode_t, mode)
+ 		__field(loff_t,	size)
+ 		__field(unsigned int, nlink)
+@@ -227,10 +227,10 @@ DECLARE_EVENT_CLASS(f2fs__inode,
+ 		__entry->advise	= F2FS_I(inode)->i_advise;
  	),
  
--	TP_printk("dev %d,%d orig_ino %lu ino %lu mode 0%o uid %u gid %u",
-+	TP_printk("dev %d,%d orig_ino %llu ino %llu mode 0%o uid %u gid %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->orig_ino,
--		  (unsigned long) __entry->ino, __entry->mode,
-+		  (unsigned long long) __entry->orig_ino,
-+		  (unsigned long long) __entry->ino, __entry->mode,
- 		  __entry->uid, __entry->gid)
- );
- 
-@@ -174,7 +174,7 @@ TRACE_EVENT(ext4_free_inode,
+-	TP_printk("dev = (%d,%d), ino = %lu, pino = %lu, i_mode = 0x%hx, "
++	TP_printk("dev = (%d,%d), ino = %llu, pino = %llu, i_mode = 0x%hx, "
+ 		"i_size = %lld, i_nlink = %u, i_blocks = %llu, i_advise = 0x%x",
+ 		show_dev_ino(__entry),
+-		(unsigned long)__entry->pino,
++		(unsigned long long)__entry->pino,
+ 		__entry->mode,
+ 		__entry->size,
+ 		(unsigned int)__entry->nlink,
+@@ -246,7 +246,7 @@ DECLARE_EVENT_CLASS(f2fs__inode_exit,
  
  	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	uid_t,	uid			)
- 		__field(	gid_t,	gid			)
- 		__field(	__u64, blocks			)
-@@ -190,9 +190,9 @@ TRACE_EVENT(ext4_free_inode,
- 		__entry->mode	= inode->i_mode;
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(umode_t, mode)
+ 		__field(int,	ret)
  	),
- 
--	TP_printk("dev %d,%d ino %lu mode 0%o uid %u gid %u blocks %llu",
-+	TP_printk("dev %d,%d ino %llu mode 0%o uid %u gid %u blocks %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->mode,
-+		  (unsigned long long) __entry->ino, __entry->mode,
- 		  __entry->uid, __entry->gid, __entry->blocks)
- );
- 
-@@ -203,7 +203,7 @@ TRACE_EVENT(ext4_request_inode,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	dir			)
-+		__field(	u64,	dir			)
- 		__field(	__u16, mode			)
- 	),
- 
-@@ -213,9 +213,9 @@ TRACE_EVENT(ext4_request_inode,
- 		__entry->mode	= mode;
- 	),
- 
--	TP_printk("dev %d,%d dir %lu mode 0%o",
-+	TP_printk("dev %d,%d dir %llu mode 0%o",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->dir, __entry->mode)
-+		  (unsigned long long) __entry->dir, __entry->mode)
- );
- 
- TRACE_EVENT(ext4_allocate_inode,
-@@ -225,8 +225,8 @@ TRACE_EVENT(ext4_allocate_inode,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
--		__field(	ino_t,	dir			)
-+		__field(	u64,	ino			)
-+		__field(	u64,	dir			)
- 		__field(	__u16,	mode			)
- 	),
- 
-@@ -237,10 +237,10 @@ TRACE_EVENT(ext4_allocate_inode,
- 		__entry->mode	= mode;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu dir %lu mode 0%o",
-+	TP_printk("dev %d,%d ino %llu dir %llu mode 0%o",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
--		  (unsigned long) __entry->dir, __entry->mode)
-+		  (unsigned long long) __entry->ino,
-+		  (unsigned long long) __entry->dir, __entry->mode)
- );
- 
- TRACE_EVENT(ext4_evict_inode,
-@@ -250,7 +250,7 @@ TRACE_EVENT(ext4_evict_inode,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	int,	nlink			)
- 	),
- 
-@@ -260,9 +260,9 @@ TRACE_EVENT(ext4_evict_inode,
- 		__entry->nlink	= inode->i_nlink;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu nlink %d",
-+	TP_printk("dev %d,%d ino %llu nlink %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->nlink)
-+		  (unsigned long long) __entry->ino, __entry->nlink)
- );
- 
- TRACE_EVENT(ext4_drop_inode,
-@@ -272,7 +272,7 @@ TRACE_EVENT(ext4_drop_inode,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	int,	drop			)
- 	),
- 
-@@ -282,9 +282,9 @@ TRACE_EVENT(ext4_drop_inode,
- 		__entry->drop	= drop;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu drop %d",
-+	TP_printk("dev %d,%d ino %llu drop %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->drop)
-+		  (unsigned long long) __entry->ino, __entry->drop)
- );
- 
- TRACE_EVENT(ext4_nfs_commit_metadata,
-@@ -294,7 +294,7 @@ TRACE_EVENT(ext4_nfs_commit_metadata,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 	),
- 
- 	TP_fast_assign(
-@@ -302,9 +302,9 @@ TRACE_EVENT(ext4_nfs_commit_metadata,
- 		__entry->ino	= inode->i_ino;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu",
-+	TP_printk("dev %d,%d ino %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino)
-+		  (unsigned long long) __entry->ino)
- );
- 
- TRACE_EVENT(ext4_mark_inode_dirty,
-@@ -314,7 +314,7 @@ TRACE_EVENT(ext4_mark_inode_dirty,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(unsigned long,	ip			)
- 	),
- 
-@@ -324,9 +324,9 @@ TRACE_EVENT(ext4_mark_inode_dirty,
- 		__entry->ip	= IP;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu caller %pS",
-+	TP_printk("dev %d,%d ino %llu caller %pS",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, (void *)__entry->ip)
-+		  (unsigned long long) __entry->ino, (void *)__entry->ip)
- );
- 
- TRACE_EVENT(ext4_begin_ordered_truncate,
-@@ -336,7 +336,7 @@ TRACE_EVENT(ext4_begin_ordered_truncate,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	loff_t,	new_size		)
- 	),
- 
-@@ -346,9 +346,9 @@ TRACE_EVENT(ext4_begin_ordered_truncate,
- 		__entry->new_size	= new_size;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu new_size %lld",
-+	TP_printk("dev %d,%d ino %llu new_size %lld",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->new_size)
- );
- 
-@@ -360,7 +360,7 @@ DECLARE_EVENT_CLASS(ext4__write_begin,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	loff_t,	pos			)
- 		__field(	unsigned int, len		)
- 	),
-@@ -372,9 +372,9 @@ DECLARE_EVENT_CLASS(ext4__write_begin,
- 		__entry->len	= len;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu pos %lld len %u",
-+	TP_printk("dev %d,%d ino %llu pos %lld len %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->pos, __entry->len)
- );
- 
-@@ -400,7 +400,7 @@ DECLARE_EVENT_CLASS(ext4__write_end,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	loff_t,	pos			)
- 		__field(	unsigned int, len		)
- 		__field(	unsigned int, copied		)
-@@ -414,9 +414,9 @@ DECLARE_EVENT_CLASS(ext4__write_end,
- 		__entry->copied	= copied;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu pos %lld len %u copied %u",
-+	TP_printk("dev %d,%d ino %llu pos %lld len %u copied %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->pos, __entry->len, __entry->copied)
- );
- 
-@@ -451,7 +451,7 @@ TRACE_EVENT(ext4_writepages,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	long,	nr_to_write		)
- 		__field(	long,	pages_skipped		)
- 		__field(	loff_t,	range_start		)
-@@ -475,11 +475,11 @@ TRACE_EVENT(ext4_writepages,
- 		__entry->range_cyclic	= wbc->range_cyclic;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu nr_to_write %ld pages_skipped %ld "
-+	TP_printk("dev %d,%d ino %llu nr_to_write %ld pages_skipped %ld "
- 		  "range_start %lld range_end %lld sync_mode %d "
- 		  "for_kupdate %d range_cyclic %d writeback_index %lu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->nr_to_write,
-+		  (unsigned long long) __entry->ino, __entry->nr_to_write,
- 		  __entry->pages_skipped, __entry->range_start,
- 		  __entry->range_end, __entry->sync_mode,
- 		  __entry->for_kupdate, __entry->range_cyclic,
-@@ -494,7 +494,7 @@ TRACE_EVENT(ext4_da_write_folios_start,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(       loff_t,	start_pos		)
- 		__field(       loff_t,	next_pos		)
- 		__field(	 long,	nr_to_write		)
-@@ -510,9 +510,9 @@ TRACE_EVENT(ext4_da_write_folios_start,
- 		__entry->sync_mode	= wbc->sync_mode;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu start_pos 0x%llx next_pos 0x%llx nr_to_write %ld sync_mode %d",
-+	TP_printk("dev %d,%d ino %llu start_pos 0x%llx next_pos 0x%llx nr_to_write %ld sync_mode %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->start_pos, __entry->next_pos,
-+		  (unsigned long long) __entry->ino, __entry->start_pos, __entry->next_pos,
- 		  __entry->nr_to_write, __entry->sync_mode)
- );
- 
-@@ -524,7 +524,7 @@ TRACE_EVENT(ext4_da_write_folios_end,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(       loff_t,	start_pos		)
- 		__field(       loff_t,	next_pos		)
- 		__field(	 long,	nr_to_write		)
-@@ -540,9 +540,9 @@ TRACE_EVENT(ext4_da_write_folios_end,
- 		__entry->ret		= ret;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu start_pos 0x%llx next_pos 0x%llx nr_to_write %ld ret %d",
-+	TP_printk("dev %d,%d ino %llu start_pos 0x%llx next_pos 0x%llx nr_to_write %ld ret %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->start_pos, __entry->next_pos,
-+		  (unsigned long long) __entry->ino, __entry->start_pos, __entry->next_pos,
- 		  __entry->nr_to_write, __entry->ret)
- );
- 
-@@ -553,7 +553,7 @@ TRACE_EVENT(ext4_da_write_pages_extent,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	__u64,	lblk			)
- 		__field(	__u32,	len			)
- 		__field(	__u32,	flags			)
-@@ -567,9 +567,9 @@ TRACE_EVENT(ext4_da_write_pages_extent,
- 		__entry->flags		= map->m_flags;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu lblk %llu len %u flags %s",
-+	TP_printk("dev %d,%d ino %llu lblk %llu len %u flags %s",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->lblk, __entry->len,
-+		  (unsigned long long) __entry->ino, __entry->lblk, __entry->len,
- 		  show_mflags(__entry->flags))
- );
- 
-@@ -581,7 +581,7 @@ TRACE_EVENT(ext4_writepages_result,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	int,	ret			)
- 		__field(	int,	pages_written		)
- 		__field(	long,	pages_skipped		)
-@@ -599,10 +599,10 @@ TRACE_EVENT(ext4_writepages_result,
- 		__entry->sync_mode	= wbc->sync_mode;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu ret %d pages_written %d pages_skipped %ld "
-+	TP_printk("dev %d,%d ino %llu ret %d pages_written %d pages_skipped %ld "
- 		  "sync_mode %d writeback_index %lu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->ret,
-+		  (unsigned long long) __entry->ino, __entry->ret,
- 		  __entry->pages_written, __entry->pages_skipped,
- 		  __entry->sync_mode,
- 		  (unsigned long) __entry->writeback_index)
-@@ -615,7 +615,7 @@ DECLARE_EVENT_CLASS(ext4__folio_op,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	pgoff_t, index			)
- 
- 	),
-@@ -626,9 +626,9 @@ DECLARE_EVENT_CLASS(ext4__folio_op,
- 		__entry->index	= folio->index;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu folio_index %lu",
-+	TP_printk("dev %d,%d ino %llu folio_index %lu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  (unsigned long) __entry->index)
- );
- 
-@@ -653,7 +653,7 @@ DECLARE_EVENT_CLASS(ext4_invalidate_folio_op,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	pgoff_t, index			)
- 		__field(	size_t, offset			)
- 		__field(	size_t, length			)
-@@ -667,9 +667,9 @@ DECLARE_EVENT_CLASS(ext4_invalidate_folio_op,
- 		__entry->length	= length;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu folio_index %lu offset %zu length %zu",
-+	TP_printk("dev %d,%d ino %llu folio_index %lu offset %zu length %zu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  (unsigned long) __entry->index,
- 		  __entry->offset, __entry->length)
- );
-@@ -718,7 +718,7 @@ DECLARE_EVENT_CLASS(ext4__mb_new_pa,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	__u64,	pa_pstart		)
- 		__field(	__u64,	pa_lstart		)
- 		__field(	__u32,	pa_len			)
-@@ -733,9 +733,9 @@ DECLARE_EVENT_CLASS(ext4__mb_new_pa,
- 		__entry->pa_len		= pa->pa_len;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu pstart %llu len %u lstart %llu",
-+	TP_printk("dev %d,%d ino %llu pstart %llu len %u lstart %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->pa_pstart, __entry->pa_len, __entry->pa_lstart)
- );
- 
-@@ -763,7 +763,7 @@ TRACE_EVENT(ext4_mb_release_inode_pa,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	__u64,	block			)
- 		__field(	__u32,	count			)
- 
-@@ -776,9 +776,9 @@ TRACE_EVENT(ext4_mb_release_inode_pa,
- 		__entry->count		= count;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu block %llu count %u",
-+	TP_printk("dev %d,%d ino %llu block %llu count %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->block, __entry->count)
- );
- 
-@@ -812,7 +812,7 @@ TRACE_EVENT(ext4_discard_preallocations,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev		)
--		__field(	ino_t,		ino		)
-+		__field(	u64,		ino		)
- 		__field(	unsigned int,	len		)
- 
- 	),
-@@ -823,9 +823,9 @@ TRACE_EVENT(ext4_discard_preallocations,
- 		__entry->len	= len;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu len: %u",
-+	TP_printk("dev %d,%d ino %llu len: %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->len)
-+		  (unsigned long long) __entry->ino, __entry->len)
- );
- 
- TRACE_EVENT(ext4_mb_discard_preallocations,
-@@ -856,7 +856,7 @@ TRACE_EVENT(ext4_request_blocks,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	unsigned int, len		)
- 		__field(	__u32,  logical			)
- 		__field(	__u32,	lleft			)
-@@ -880,10 +880,10 @@ TRACE_EVENT(ext4_request_blocks,
- 		__entry->flags	= ar->flags;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu flags %s len %u lblk %u goal %llu "
-+	TP_printk("dev %d,%d ino %llu flags %s len %u lblk %u goal %llu "
- 		  "lleft %u lright %u pleft %llu pright %llu ",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, show_mballoc_flags(__entry->flags),
-+		  (unsigned long long) __entry->ino, show_mballoc_flags(__entry->flags),
- 		  __entry->len, __entry->logical, __entry->goal,
- 		  __entry->lleft, __entry->lright, __entry->pleft,
- 		  __entry->pright)
-@@ -896,7 +896,7 @@ TRACE_EVENT(ext4_allocate_blocks,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	__u64,	block			)
- 		__field(	unsigned int, len		)
- 		__field(	__u32,  logical			)
-@@ -922,10 +922,10 @@ TRACE_EVENT(ext4_allocate_blocks,
- 		__entry->flags	= ar->flags;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu flags %s len %u block %llu lblk %u "
-+	TP_printk("dev %d,%d ino %llu flags %s len %u block %llu lblk %u "
- 		  "goal %llu lleft %u lright %u pleft %llu pright %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, show_mballoc_flags(__entry->flags),
-+		  (unsigned long long) __entry->ino, show_mballoc_flags(__entry->flags),
- 		  __entry->len, __entry->block, __entry->logical,
- 		  __entry->goal,  __entry->lleft, __entry->lright,
- 		  __entry->pleft, __entry->pright)
-@@ -939,7 +939,7 @@ TRACE_EVENT(ext4_free_blocks,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	__u64,	block			)
- 		__field(	unsigned long,	count		)
- 		__field(	int,	flags			)
-@@ -955,9 +955,9 @@ TRACE_EVENT(ext4_free_blocks,
- 		__entry->mode		= inode->i_mode;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu mode 0%o block %llu count %lu flags %s",
-+	TP_printk("dev %d,%d ino %llu mode 0%o block %llu count %lu flags %s",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->mode, __entry->block, __entry->count,
- 		  show_free_flags(__entry->flags))
- );
-@@ -969,8 +969,8 @@ TRACE_EVENT(ext4_sync_file_enter,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
--		__field(	ino_t,	parent			)
-+		__field(	u64,	ino			)
-+		__field(	u64,	parent			)
- 		__field(	int,	datasync		)
- 	),
- 
-@@ -983,10 +983,10 @@ TRACE_EVENT(ext4_sync_file_enter,
- 		__entry->parent		= d_inode(dentry->d_parent)->i_ino;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu parent %lu datasync %d ",
-+	TP_printk("dev %d,%d ino %llu parent %llu datasync %d ",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
--		  (unsigned long) __entry->parent, __entry->datasync)
-+		  (unsigned long long) __entry->ino,
-+		  (unsigned long long) __entry->parent, __entry->datasync)
- );
- 
- TRACE_EVENT(ext4_sync_file_exit,
-@@ -996,7 +996,7 @@ TRACE_EVENT(ext4_sync_file_exit,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	int,	ret			)
- 	),
- 
-@@ -1006,9 +1006,9 @@ TRACE_EVENT(ext4_sync_file_exit,
- 		__entry->ret		= ret;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu ret %d",
-+	TP_printk("dev %d,%d ino %llu ret %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->ret)
- );
- 
-@@ -1040,7 +1040,7 @@ TRACE_EVENT(ext4_alloc_da_blocks,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field( unsigned int,	data_blocks		)
- 	),
- 
-@@ -1050,9 +1050,9 @@ TRACE_EVENT(ext4_alloc_da_blocks,
- 		__entry->data_blocks = EXT4_I(inode)->i_reserved_data_blocks;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu reserved_data_blocks %u",
-+	TP_printk("dev %d,%d ino %llu reserved_data_blocks %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->data_blocks)
- );
- 
-@@ -1063,7 +1063,7 @@ TRACE_EVENT(ext4_mballoc_alloc,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	__u32, 	orig_logical		)
- 		__field(	  int,	orig_start		)
- 		__field(	__u32, 	orig_group		)
-@@ -1107,11 +1107,11 @@ TRACE_EVENT(ext4_mballoc_alloc,
- 		__entry->cr		= ac->ac_criteria;
- 	),
- 
--	TP_printk("dev %d,%d inode %lu orig %u/%d/%u@%u goal %u/%d/%u@%u "
-+	TP_printk("dev %d,%d inode %llu orig %u/%d/%u@%u goal %u/%d/%u@%u "
- 		  "result %u/%d/%u@%u blks %u grps %u cr %s flags %s "
- 		  "tail %u broken %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->orig_group, __entry->orig_start,
- 		  __entry->orig_len, __entry->orig_logical,
- 		  __entry->goal_group, __entry->goal_start,
-@@ -1130,7 +1130,7 @@ TRACE_EVENT(ext4_mballoc_prealloc,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	__u32, 	orig_logical		)
- 		__field(	  int,	orig_start		)
- 		__field(	__u32, 	orig_group		)
-@@ -1154,9 +1154,9 @@ TRACE_EVENT(ext4_mballoc_prealloc,
- 		__entry->result_len	= ac->ac_b_ex.fe_len;
- 	),
- 
--	TP_printk("dev %d,%d inode %lu orig %u/%d/%u@%u result %u/%d/%u@%u",
-+	TP_printk("dev %d,%d inode %llu orig %u/%d/%u@%u result %u/%d/%u@%u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->orig_group, __entry->orig_start,
- 		  __entry->orig_len, __entry->orig_logical,
- 		  __entry->result_group, __entry->result_start,
-@@ -1174,7 +1174,7 @@ DECLARE_EVENT_CLASS(ext4__mballoc,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	  int,	result_start		)
- 		__field(	__u32, 	result_group		)
- 		__field(	  int,	result_len		)
-@@ -1188,9 +1188,9 @@ DECLARE_EVENT_CLASS(ext4__mballoc,
- 		__entry->result_len	= len;
- 	),
- 
--	TP_printk("dev %d,%d inode %lu extent %u/%d/%d ",
-+	TP_printk("dev %d,%d inode %llu extent %u/%d/%d ",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->result_group, __entry->result_start,
- 		  __entry->result_len)
- );
-@@ -1224,7 +1224,7 @@ TRACE_EVENT(ext4_forget,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	__u64,	block			)
- 		__field(	int,	is_metadata		)
- 		__field(	__u16,	mode			)
-@@ -1238,9 +1238,9 @@ TRACE_EVENT(ext4_forget,
- 		__entry->mode	= inode->i_mode;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu mode 0%o is_metadata %d block %llu",
-+	TP_printk("dev %d,%d ino %llu mode 0%o is_metadata %d block %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->mode, __entry->is_metadata, __entry->block)
- );
- 
-@@ -1251,7 +1251,7 @@ TRACE_EVENT(ext4_da_update_reserve_space,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	__u64,	i_blocks		)
- 		__field(	int,	used_blocks		)
- 		__field(	int,	reserved_data_blocks	)
-@@ -1270,10 +1270,10 @@ TRACE_EVENT(ext4_da_update_reserve_space,
- 		__entry->mode	= inode->i_mode;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu mode 0%o i_blocks %llu used_blocks %d "
-+	TP_printk("dev %d,%d ino %llu mode 0%o i_blocks %llu used_blocks %d "
- 		  "reserved_data_blocks %d quota_claim %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->mode, __entry->i_blocks,
- 		  __entry->used_blocks, __entry->reserved_data_blocks,
- 		  __entry->quota_claim)
-@@ -1286,7 +1286,7 @@ TRACE_EVENT(ext4_da_reserve_space,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	__u64,	i_blocks		)
- 		__field(	int,	reserve_blocks		)
- 		__field(	int,	reserved_data_blocks	)
-@@ -1302,10 +1302,10 @@ TRACE_EVENT(ext4_da_reserve_space,
- 		__entry->mode	= inode->i_mode;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu mode 0%o i_blocks %llu reserve_blocks %d"
-+	TP_printk("dev %d,%d ino %llu mode 0%o i_blocks %llu reserve_blocks %d"
- 		  "reserved_data_blocks %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->mode, __entry->i_blocks,
- 		  __entry->reserve_blocks, __entry->reserved_data_blocks)
- );
-@@ -1317,7 +1317,7 @@ TRACE_EVENT(ext4_da_release_space,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	__u64,	i_blocks		)
- 		__field(	int,	freed_blocks		)
- 		__field(	int,	reserved_data_blocks	)
-@@ -1333,10 +1333,10 @@ TRACE_EVENT(ext4_da_release_space,
- 		__entry->mode	= inode->i_mode;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu mode 0%o i_blocks %llu freed_blocks %d "
-+	TP_printk("dev %d,%d ino %llu mode 0%o i_blocks %llu freed_blocks %d "
- 		  "reserved_data_blocks %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->mode, __entry->i_blocks,
- 		  __entry->freed_blocks, __entry->reserved_data_blocks)
- );
-@@ -1413,7 +1413,7 @@ DECLARE_EVENT_CLASS(ext4__fallocate_mode,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	loff_t,	offset			)
- 		__field(	loff_t, len			)
- 		__field(	int,	mode			)
-@@ -1427,9 +1427,9 @@ DECLARE_EVENT_CLASS(ext4__fallocate_mode,
- 		__entry->mode	= mode;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu offset %lld len %lld mode %s",
-+	TP_printk("dev %d,%d ino %llu offset %lld len %lld mode %s",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->offset, __entry->len,
- 		  show_falloc_mode(__entry->mode))
- );
-@@ -1463,7 +1463,7 @@ TRACE_EVENT(ext4_fallocate_exit,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	loff_t,	pos			)
- 		__field(	unsigned int,	blocks		)
- 		__field(	int, 	ret			)
-@@ -1477,9 +1477,9 @@ TRACE_EVENT(ext4_fallocate_exit,
+@@ -258,7 +258,7 @@ DECLARE_EVENT_CLASS(f2fs__inode_exit,
  		__entry->ret	= ret;
  	),
  
--	TP_printk("dev %d,%d ino %lu pos %lld blocks %u ret %d",
-+	TP_printk("dev %d,%d ino %llu pos %lld blocks %u ret %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->pos, __entry->blocks,
- 		  __entry->ret)
- );
-@@ -1491,8 +1491,8 @@ TRACE_EVENT(ext4_unlink_enter,
+-	TP_printk("dev = (%d,%d), ino = %lu, type: %s, mode = 0%o, ret = %d",
++	TP_printk("dev = (%d,%d), ino = %llu, type: %s, mode = 0%o, ret = %d",
+ 		show_dev_ino(__entry),
+ 		show_inode_type(__entry->mode & S_IFMT),
+ 		__entry->mode & S_ALL_PERM,
+@@ -280,7 +280,7 @@ TRACE_EVENT(f2fs_sync_file_exit,
  
  	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
--		__field(	ino_t,	parent			)
-+		__field(	u64,	ino			)
-+		__field(	u64,	parent			)
- 		__field(	loff_t,	size			)
- 	),
- 
-@@ -1503,10 +1503,10 @@ TRACE_EVENT(ext4_unlink_enter,
- 		__entry->size		= d_inode(dentry)->i_size;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu size %lld parent %lu",
-+	TP_printk("dev %d,%d ino %llu size %lld parent %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->size,
--		  (unsigned long) __entry->parent)
-+		  (unsigned long long) __entry->ino, __entry->size,
-+		  (unsigned long long) __entry->parent)
- );
- 
- TRACE_EVENT(ext4_unlink_exit,
-@@ -1516,7 +1516,7 @@ TRACE_EVENT(ext4_unlink_exit,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	int,	ret			)
- 	),
- 
-@@ -1526,9 +1526,9 @@ TRACE_EVENT(ext4_unlink_exit,
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(int,	cp_reason)
+ 		__field(int,	datasync)
+ 		__field(int,	ret)
+@@ -294,7 +294,7 @@ TRACE_EVENT(f2fs_sync_file_exit,
  		__entry->ret		= ret;
  	),
  
--	TP_printk("dev %d,%d ino %lu ret %d",
-+	TP_printk("dev %d,%d ino %llu ret %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->ret)
- );
- 
-@@ -1539,7 +1539,7 @@ DECLARE_EVENT_CLASS(ext4__truncate,
+-	TP_printk("dev = (%d,%d), ino = %lu, cp_reason: %s, "
++	TP_printk("dev = (%d,%d), ino = %llu, cp_reason: %s, "
+ 		"datasync = %d, ret = %d",
+ 		show_dev_ino(__entry),
+ 		show_fsync_cpreason(__entry->cp_reason),
+@@ -362,7 +362,7 @@ TRACE_EVENT(f2fs_unlink_enter,
  
  	TP_STRUCT__entry(
- 		__field(	dev_t,		dev		)
--		__field(	ino_t,		ino		)
-+		__field(	u64,		ino		)
- 		__field(	__u64,		blocks		)
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(loff_t,	size)
+ 		__field(blkcnt_t, blocks)
+ 		__string(name,  dentry->d_name.name)
+@@ -376,7 +376,7 @@ TRACE_EVENT(f2fs_unlink_enter,
+ 		__assign_str(name);
  	),
  
-@@ -1549,9 +1549,9 @@ DECLARE_EVENT_CLASS(ext4__truncate,
- 		__entry->blocks	= inode->i_blocks;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu blocks %llu",
-+	TP_printk("dev %d,%d ino %llu blocks %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->blocks)
-+		  (unsigned long long) __entry->ino, __entry->blocks)
- );
- 
- DEFINE_EVENT(ext4__truncate, ext4_truncate_enter,
-@@ -1577,7 +1577,7 @@ TRACE_EVENT(ext4_ext_convert_to_initialized_enter,
+-	TP_printk("dev = (%d,%d), dir ino = %lu, i_size = %lld, "
++	TP_printk("dev = (%d,%d), dir ino = %llu, i_size = %lld, "
+ 		"i_blocks = %llu, name = %s",
+ 		show_dev_ino(__entry),
+ 		__entry->size,
+@@ -413,7 +413,7 @@ TRACE_EVENT(f2fs_truncate_data_blocks_range,
  
  	TP_STRUCT__entry(
- 		__field(	dev_t,		dev	)
--		__field(	ino_t,		ino	)
-+		__field(	u64,		ino	)
- 		__field(	ext4_lblk_t,	m_lblk	)
- 		__field(	unsigned,	m_len	)
- 		__field(	ext4_lblk_t,	u_lblk	)
-@@ -1595,10 +1595,10 @@ TRACE_EVENT(ext4_ext_convert_to_initialized_enter,
- 		__entry->u_pblk		= ext4_ext_pblock(ux);
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(nid_t,	nid)
+ 		__field(unsigned int,	ofs)
+ 		__field(int,	free)
+@@ -427,7 +427,7 @@ TRACE_EVENT(f2fs_truncate_data_blocks_range,
+ 		__entry->free	= free;
  	),
  
--	TP_printk("dev %d,%d ino %lu m_lblk %u m_len %u u_lblk %u u_len %u "
-+	TP_printk("dev %d,%d ino %llu m_lblk %u m_len %u u_lblk %u u_len %u "
- 		  "u_pblk %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->m_lblk, __entry->m_len,
- 		  __entry->u_lblk, __entry->u_len, __entry->u_pblk)
- );
-@@ -1615,7 +1615,7 @@ TRACE_EVENT(ext4_ext_convert_to_initialized_fastpath,
+-	TP_printk("dev = (%d,%d), ino = %lu, nid = %u, offset = %u, freed = %d",
++	TP_printk("dev = (%d,%d), ino = %llu, nid = %u, offset = %u, freed = %d",
+ 		show_dev_ino(__entry),
+ 		(unsigned int)__entry->nid,
+ 		__entry->ofs,
+@@ -442,7 +442,7 @@ DECLARE_EVENT_CLASS(f2fs__truncate_op,
  
  	TP_STRUCT__entry(
- 		__field(	dev_t,		dev	)
--		__field(	ino_t,		ino	)
-+		__field(	u64,		ino	)
- 		__field(	ext4_lblk_t,	m_lblk	)
- 		__field(	unsigned,	m_len	)
- 		__field(	ext4_lblk_t,	u_lblk	)
-@@ -1639,11 +1639,11 @@ TRACE_EVENT(ext4_ext_convert_to_initialized_fastpath,
- 		__entry->i_pblk		= ext4_ext_pblock(ix);
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(loff_t,	size)
+ 		__field(blkcnt_t, blocks)
+ 		__field(u64,	from)
+@@ -456,7 +456,7 @@ DECLARE_EVENT_CLASS(f2fs__truncate_op,
+ 		__entry->from	= from;
  	),
  
--	TP_printk("dev %d,%d ino %lu m_lblk %u m_len %u "
-+	TP_printk("dev %d,%d ino %llu m_lblk %u m_len %u "
- 		  "u_lblk %u u_len %u u_pblk %llu "
- 		  "i_lblk %u i_len %u i_pblk %llu ",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->m_lblk, __entry->m_len,
- 		  __entry->u_lblk, __entry->u_len, __entry->u_pblk,
- 		  __entry->i_lblk, __entry->i_len, __entry->i_pblk)
-@@ -1657,7 +1657,7 @@ DECLARE_EVENT_CLASS(ext4__map_blocks_enter,
+-	TP_printk("dev = (%d,%d), ino = %lu, i_size = %lld, i_blocks = %llu, "
++	TP_printk("dev = (%d,%d), ino = %llu, i_size = %lld, i_blocks = %llu, "
+ 		"start file offset = %llu",
+ 		show_dev_ino(__entry),
+ 		__entry->size,
+@@ -500,7 +500,7 @@ DECLARE_EVENT_CLASS(f2fs__truncate_node,
  
  	TP_STRUCT__entry(
- 		__field(	dev_t,		dev		)
--		__field(	ino_t,		ino		)
-+		__field(	u64,		ino		)
- 		__field(	ext4_lblk_t,	lblk		)
- 		__field(	unsigned int,	len		)
- 		__field(	unsigned int,	flags		)
-@@ -1671,9 +1671,9 @@ DECLARE_EVENT_CLASS(ext4__map_blocks_enter,
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(nid_t,	nid)
+ 		__field(block_t,	blk_addr)
+ 	),
+@@ -512,7 +512,7 @@ DECLARE_EVENT_CLASS(f2fs__truncate_node,
+ 		__entry->blk_addr	= blk_addr;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, nid = %u, block_address = 0x%llx",
++	TP_printk("dev = (%d,%d), ino = %llu, nid = %u, block_address = 0x%llx",
+ 		show_dev_ino(__entry),
+ 		(unsigned int)__entry->nid,
+ 		(unsigned long long)__entry->blk_addr)
+@@ -547,7 +547,7 @@ TRACE_EVENT(f2fs_truncate_partial_nodes,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__array(nid_t,	nid, 3)
+ 		__field(int,	depth)
+ 		__field(int,	err)
+@@ -563,7 +563,7 @@ TRACE_EVENT(f2fs_truncate_partial_nodes,
+ 		__entry->err	= err;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, "
++	TP_printk("dev = (%d,%d), ino = %llu, "
+ 		"nid[0] = %u, nid[1] = %u, nid[2] = %u, depth = %d, err = %d",
+ 		show_dev_ino(__entry),
+ 		(unsigned int)__entry->nid[0],
+@@ -582,7 +582,7 @@ TRACE_EVENT(f2fs_file_write_iter,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(loff_t, offset)
+ 		__field(size_t, length)
+ 		__field(ssize_t, ret)
+@@ -596,7 +596,7 @@ TRACE_EVENT(f2fs_file_write_iter,
+ 		__entry->ret	= ret;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, "
++	TP_printk("dev = (%d,%d), ino = %llu, "
+ 		"offset = %lld, length = %zu, written(err) = %zd",
+ 		show_dev_ino(__entry),
+ 		__entry->offset,
+@@ -612,7 +612,7 @@ TRACE_EVENT(f2fs_fadvise,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(loff_t, size)
+ 		__field(loff_t,	offset)
+ 		__field(loff_t,	len)
+@@ -628,7 +628,7 @@ TRACE_EVENT(f2fs_fadvise,
+ 		__entry->advice	= advice;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, i_size = %lld offset:%llu, len:%llu, advise:%d",
++	TP_printk("dev = (%d,%d), ino = %llu, i_size = %lld offset:%llu, len:%llu, advise:%d",
+ 		show_dev_ino(__entry),
+ 		(unsigned long long)__entry->size,
+ 		__entry->offset,
+@@ -644,7 +644,7 @@ TRACE_EVENT(f2fs_map_blocks,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(block_t,	m_lblk)
+ 		__field(block_t,	m_pblk)
+ 		__field(unsigned int,	m_len)
+@@ -670,7 +670,7 @@ TRACE_EVENT(f2fs_map_blocks,
+ 		__entry->ret		= ret;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, file offset = %llu, "
++	TP_printk("dev = (%d,%d), ino = %llu, file offset = %llu, "
+ 		"start blkaddr = 0x%llx, len = 0x%llx, flags = %u, "
+ 		"seg_type = %d, may_create = %d, multidevice = %d, "
+ 		"flag = %d, err = %d",
+@@ -886,7 +886,7 @@ TRACE_EVENT(f2fs_lookup_start,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__string(name,	dentry->d_name.name)
+ 		__field(unsigned int, flags)
+ 	),
+@@ -898,7 +898,7 @@ TRACE_EVENT(f2fs_lookup_start,
  		__entry->flags	= flags;
  	),
  
--	TP_printk("dev %d,%d ino %lu lblk %u len %u flags %s",
-+	TP_printk("dev %d,%d ino %llu lblk %u len %u flags %s",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->lblk, __entry->len, show_map_flags(__entry->flags))
- );
- 
-@@ -1699,7 +1699,7 @@ DECLARE_EVENT_CLASS(ext4__map_blocks_exit,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev		)
--		__field(	ino_t,		ino		)
-+		__field(	u64,		ino		)
- 		__field(	unsigned int,	flags		)
- 		__field(	ext4_fsblk_t,	pblk		)
- 		__field(	ext4_lblk_t,	lblk		)
-@@ -1719,10 +1719,10 @@ DECLARE_EVENT_CLASS(ext4__map_blocks_exit,
- 		__entry->ret	= ret;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu flags %s lblk %u pblk %llu len %u "
-+	TP_printk("dev %d,%d ino %llu flags %s lblk %u pblk %llu len %u "
- 		  "mflags %s ret %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  show_map_flags(__entry->flags), __entry->lblk, __entry->pblk,
- 		  __entry->len, show_mflags(__entry->mflags), __entry->ret)
- );
-@@ -1748,7 +1748,7 @@ TRACE_EVENT(ext4_ext_load_extent,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev		)
--		__field(	ino_t,		ino		)
-+		__field(	u64,		ino		)
- 		__field(	ext4_fsblk_t,	pblk		)
- 		__field(	ext4_lblk_t,	lblk		)
- 	),
-@@ -1760,9 +1760,9 @@ TRACE_EVENT(ext4_ext_load_extent,
- 		__entry->lblk	= lblk;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu lblk %u pblk %llu",
-+	TP_printk("dev %d,%d ino %llu lblk %u pblk %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->lblk, __entry->pblk)
- );
- 
-@@ -1773,7 +1773,7 @@ TRACE_EVENT(ext4_load_inode,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev		)
--		__field(	ino_t,	ino		)
-+		__field(	u64,	ino		)
- 	),
- 
- 	TP_fast_assign(
-@@ -1781,9 +1781,9 @@ TRACE_EVENT(ext4_load_inode,
- 		__entry->ino		= ino;
- 	),
- 
--	TP_printk("dev %d,%d ino %ld",
-+	TP_printk("dev %d,%d ino %lld",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino)
-+		  (unsigned long long) __entry->ino)
- );
- 
- TRACE_EVENT(ext4_journal_start_sb,
-@@ -1823,7 +1823,7 @@ TRACE_EVENT(ext4_journal_start_inode,
- 	TP_ARGS(inode, blocks, rsv_blocks, revoke_creds, type, IP),
- 
- 	TP_STRUCT__entry(
--		__field(	unsigned long,	ino		)
-+		__field(	u64,		ino		)
- 		__field(	dev_t,		dev		)
- 		__field(	unsigned long,	ip		)
- 		__field(	int,		blocks		)
-@@ -1843,9 +1843,10 @@ TRACE_EVENT(ext4_journal_start_inode,
- 	),
- 
- 	TP_printk("dev %d,%d blocks %d, rsv_blocks %d, revoke_creds %d,"
--		  " type %d, ino %lu, caller %pS", MAJOR(__entry->dev),
-+		  " type %d, ino %llu, caller %pS", MAJOR(__entry->dev),
- 		  MINOR(__entry->dev), __entry->blocks, __entry->rsv_blocks,
--		  __entry->revoke_creds, __entry->type, __entry->ino,
-+		  __entry->revoke_creds, __entry->type,
-+		  (unsigned long long) __entry->ino,
- 		  (void *)__entry->ip)
- );
- 
-@@ -1928,7 +1929,7 @@ TRACE_EVENT(ext4_ext_handle_unwritten_extents,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev		)
--		__field(	ino_t,		ino		)
-+		__field(	u64,		ino		)
- 		__field(	int,		flags		)
- 		__field(	ext4_lblk_t,	lblk		)
- 		__field(	ext4_fsblk_t,	pblk		)
-@@ -1948,10 +1949,10 @@ TRACE_EVENT(ext4_ext_handle_unwritten_extents,
- 		__entry->newblk		= newblock;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu m_lblk %u m_pblk %llu m_len %u flags %s "
-+	TP_printk("dev %d,%d ino %llu m_lblk %u m_pblk %llu m_len %u flags %s "
- 		  "allocated %d newblock %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  (unsigned) __entry->lblk, (unsigned long long) __entry->pblk,
- 		  __entry->len, show_map_flags(__entry->flags),
- 		  (unsigned int) __entry->allocated,
-@@ -1995,7 +1996,7 @@ TRACE_EVENT(ext4_ext_show_extent,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev	)
--		__field(	ino_t,		ino	)
-+		__field(	u64,		ino	)
- 		__field(	ext4_fsblk_t,	pblk	)
- 		__field(	ext4_lblk_t,	lblk	)
- 		__field(	unsigned short,	len	)
-@@ -2009,9 +2010,9 @@ TRACE_EVENT(ext4_ext_show_extent,
- 		__entry->len	= len;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu lblk %u pblk %llu len %u",
-+	TP_printk("dev %d,%d ino %llu lblk %u pblk %llu len %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  (unsigned) __entry->lblk,
- 		  (unsigned long long) __entry->pblk,
- 		  (unsigned short) __entry->len)
-@@ -2026,7 +2027,7 @@ TRACE_EVENT(ext4_remove_blocks,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev	)
--		__field(	ino_t,		ino	)
-+		__field(	u64,		ino	)
- 		__field(	ext4_lblk_t,	from	)
- 		__field(	ext4_lblk_t,	to	)
- 		__field(	ext4_fsblk_t,	ee_pblk	)
-@@ -2050,10 +2051,10 @@ TRACE_EVENT(ext4_remove_blocks,
- 		__entry->pc_state	= pc->state;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu extent [%u(%llu), %u]"
-+	TP_printk("dev %d,%d ino %llu extent [%u(%llu), %u]"
- 		  "from %u to %u partial [pclu %lld lblk %u state %d]",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  (unsigned) __entry->ee_lblk,
- 		  (unsigned long long) __entry->ee_pblk,
- 		  (unsigned short) __entry->ee_len,
-@@ -2073,7 +2074,7 @@ TRACE_EVENT(ext4_ext_rm_leaf,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev	)
--		__field(	ino_t,		ino	)
-+		__field(	u64,		ino	)
- 		__field(	ext4_lblk_t,	start	)
- 		__field(	ext4_lblk_t,	ee_lblk	)
- 		__field(	ext4_fsblk_t,	ee_pblk	)
-@@ -2095,10 +2096,10 @@ TRACE_EVENT(ext4_ext_rm_leaf,
- 		__entry->pc_state	= pc->state;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu start_lblk %u last_extent [%u(%llu), %u]"
-+	TP_printk("dev %d,%d ino %llu start_lblk %u last_extent [%u(%llu), %u]"
- 		  "partial [pclu %lld lblk %u state %d]",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  (unsigned) __entry->start,
- 		  (unsigned) __entry->ee_lblk,
- 		  (unsigned long long) __entry->ee_pblk,
-@@ -2115,7 +2116,7 @@ TRACE_EVENT(ext4_ext_rm_idx,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev	)
--		__field(	ino_t,		ino	)
-+		__field(	u64,		ino	)
- 		__field(	ext4_fsblk_t,	pblk	)
- 	),
- 
-@@ -2125,9 +2126,9 @@ TRACE_EVENT(ext4_ext_rm_idx,
- 		__entry->pblk	= pblk;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu index_pblk %llu",
-+	TP_printk("dev %d,%d ino %llu index_pblk %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  (unsigned long long) __entry->pblk)
- );
- 
-@@ -2139,7 +2140,7 @@ TRACE_EVENT(ext4_ext_remove_space,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev	)
--		__field(	ino_t,		ino	)
-+		__field(	u64,		ino	)
- 		__field(	ext4_lblk_t,	start	)
- 		__field(	ext4_lblk_t,	end	)
- 		__field(	int,		depth	)
-@@ -2153,9 +2154,9 @@ TRACE_EVENT(ext4_ext_remove_space,
- 		__entry->depth	= depth;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu since %u end %u depth %d",
-+	TP_printk("dev %d,%d ino %llu since %u end %u depth %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  (unsigned) __entry->start,
- 		  (unsigned) __entry->end,
- 		  __entry->depth)
-@@ -2169,7 +2170,7 @@ TRACE_EVENT(ext4_ext_remove_space_done,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev		)
--		__field(	ino_t,		ino		)
-+		__field(	u64,		ino		)
- 		__field(	ext4_lblk_t,	start		)
- 		__field(	ext4_lblk_t,	end		)
- 		__field(	int,		depth		)
-@@ -2191,11 +2192,11 @@ TRACE_EVENT(ext4_ext_remove_space_done,
- 		__entry->eh_entries	= le16_to_cpu(eh_entries);
- 	),
- 
--	TP_printk("dev %d,%d ino %lu since %u end %u depth %d "
-+	TP_printk("dev %d,%d ino %llu since %u end %u depth %d "
- 		  "partial [pclu %lld lblk %u state %d] "
- 		  "remaining_entries %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  (unsigned) __entry->start,
- 		  (unsigned) __entry->end,
- 		  __entry->depth,
-@@ -2212,7 +2213,7 @@ DECLARE_EVENT_CLASS(ext4__es_extent,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev		)
--		__field(	ino_t,		ino		)
-+		__field(	u64,		ino		)
- 		__field(	ext4_lblk_t,	lblk		)
- 		__field(	ext4_lblk_t,	len		)
- 		__field(	ext4_fsblk_t,	pblk		)
-@@ -2230,9 +2231,9 @@ DECLARE_EVENT_CLASS(ext4__es_extent,
- 		__entry->seq	= EXT4_I(inode)->i_es_seq;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu es [%u/%u) mapped %llu status %s seq %llu",
-+	TP_printk("dev %d,%d ino %llu es [%u/%u) mapped %llu status %s seq %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->lblk, __entry->len,
- 		  __entry->pblk, show_extent_status(__entry->status),
- 		  __entry->seq)
-@@ -2257,7 +2258,7 @@ TRACE_EVENT(ext4_es_remove_extent,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,	dev			)
--		__field(	ino_t,	ino			)
-+		__field(	u64,	ino			)
- 		__field(	loff_t,	lblk			)
- 		__field(	loff_t,	len			)
- 		__field(	u64,	seq			)
-@@ -2271,9 +2272,9 @@ TRACE_EVENT(ext4_es_remove_extent,
- 		__entry->seq	= EXT4_I(inode)->i_es_seq;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu es [%lld/%lld) seq %llu",
-+	TP_printk("dev %d,%d ino %llu es [%lld/%lld) seq %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->lblk, __entry->len, __entry->seq)
- );
- 
-@@ -2284,7 +2285,7 @@ TRACE_EVENT(ext4_es_find_extent_range_enter,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev		)
--		__field(	ino_t,		ino		)
-+		__field(	u64,		ino		)
- 		__field(	ext4_lblk_t,	lblk		)
- 	),
- 
-@@ -2294,9 +2295,9 @@ TRACE_EVENT(ext4_es_find_extent_range_enter,
- 		__entry->lblk	= lblk;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu lblk %u",
-+	TP_printk("dev %d,%d ino %llu lblk %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->lblk)
-+		  (unsigned long long) __entry->ino, __entry->lblk)
- );
- 
- TRACE_EVENT(ext4_es_find_extent_range_exit,
-@@ -2306,7 +2307,7 @@ TRACE_EVENT(ext4_es_find_extent_range_exit,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev		)
--		__field(	ino_t,		ino		)
-+		__field(	u64,		ino		)
- 		__field(	ext4_lblk_t,	lblk		)
- 		__field(	ext4_lblk_t,	len		)
- 		__field(	ext4_fsblk_t,	pblk		)
-@@ -2322,9 +2323,9 @@ TRACE_EVENT(ext4_es_find_extent_range_exit,
- 		__entry->status	= ext4_es_status(es);
- 	),
- 
--	TP_printk("dev %d,%d ino %lu es [%u/%u) mapped %llu status %s",
-+	TP_printk("dev %d,%d ino %llu es [%u/%u) mapped %llu status %s",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->lblk, __entry->len,
- 		  __entry->pblk, show_extent_status(__entry->status))
- );
-@@ -2336,7 +2337,7 @@ TRACE_EVENT(ext4_es_lookup_extent_enter,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev		)
--		__field(	ino_t,		ino		)
-+		__field(	u64,		ino		)
- 		__field(	ext4_lblk_t,	lblk		)
- 	),
- 
-@@ -2346,9 +2347,9 @@ TRACE_EVENT(ext4_es_lookup_extent_enter,
- 		__entry->lblk	= lblk;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu lblk %u",
-+	TP_printk("dev %d,%d ino %llu lblk %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->lblk)
-+		  (unsigned long long) __entry->ino, __entry->lblk)
- );
- 
- TRACE_EVENT(ext4_es_lookup_extent_exit,
-@@ -2359,7 +2360,7 @@ TRACE_EVENT(ext4_es_lookup_extent_exit,
- 
- 	TP_STRUCT__entry(
- 		__field(	dev_t,		dev		)
--		__field(	ino_t,		ino		)
-+		__field(	u64,		ino		)
- 		__field(	ext4_lblk_t,	lblk		)
- 		__field(	ext4_lblk_t,	len		)
- 		__field(	ext4_fsblk_t,	pblk		)
-@@ -2377,9 +2378,9 @@ TRACE_EVENT(ext4_es_lookup_extent_exit,
- 		__entry->found	= found;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu found %d [%u/%u) %llu %s",
-+	TP_printk("dev %d,%d ino %llu found %d [%u/%u) %llu %s",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino, __entry->found,
-+		  (unsigned long long) __entry->ino, __entry->found,
- 		  __entry->lblk, __entry->len,
- 		  __entry->found ? __entry->pblk : 0,
- 		  show_extent_status(__entry->found ? __entry->status : 0))
-@@ -2448,7 +2449,7 @@ TRACE_EVENT(ext4_collapse_range,
+-	TP_printk("dev = (%d,%d), pino = %lu, name:%s, flags:%u",
++	TP_printk("dev = (%d,%d), pino = %llu, name:%s, flags:%u",
+ 		show_dev_ino(__entry),
+ 		__get_str(name),
+ 		__entry->flags)
+@@ -913,7 +913,7 @@ TRACE_EVENT(f2fs_lookup_end,
  
  	TP_STRUCT__entry(
  		__field(dev_t,	dev)
 -		__field(ino_t,	ino)
 +		__field(u64,	ino)
- 		__field(loff_t,	offset)
- 		__field(loff_t, len)
- 	),
-@@ -2460,9 +2461,9 @@ TRACE_EVENT(ext4_collapse_range,
- 		__entry->len	= len;
+ 		__string(name,	dentry->d_name.name)
+ 		__field(nid_t,	cino)
+ 		__field(int,	err)
+@@ -927,7 +927,7 @@ TRACE_EVENT(f2fs_lookup_end,
+ 		__entry->err	= err;
  	),
  
--	TP_printk("dev %d,%d ino %lu offset %lld len %lld",
-+	TP_printk("dev %d,%d ino %llu offset %lld len %lld",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->offset, __entry->len)
- );
- 
-@@ -2473,7 +2474,7 @@ TRACE_EVENT(ext4_insert_range,
+-	TP_printk("dev = (%d,%d), pino = %lu, name:%s, ino:%u, err:%d",
++	TP_printk("dev = (%d,%d), pino = %llu, name:%s, ino:%u, err:%d",
+ 		show_dev_ino(__entry),
+ 		__get_str(name),
+ 		__entry->cino,
+@@ -944,9 +944,9 @@ TRACE_EVENT(f2fs_rename_start,
  
  	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
--		__field(ino_t,	ino)
-+		__field(u64,	ino)
- 		__field(loff_t,	offset)
- 		__field(loff_t, len)
+ 		__field(dev_t,		dev)
+-		__field(ino_t,		ino)
++		__field(u64,		ino)
+ 		__string(old_name,	old_dentry->d_name.name)
+-		__field(ino_t,		new_pino)
++		__field(u64,		new_pino)
+ 		__string(new_name,	new_dentry->d_name.name)
+ 		__field(unsigned int,	flags)
  	),
-@@ -2485,9 +2486,9 @@ TRACE_EVENT(ext4_insert_range,
- 		__entry->len	= len;
+@@ -960,8 +960,8 @@ TRACE_EVENT(f2fs_rename_start,
+ 		__entry->flags		= flags;
  	),
  
--	TP_printk("dev %d,%d ino %lu offset %lld len %lld",
-+	TP_printk("dev %d,%d ino %llu offset %lld len %lld",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->offset, __entry->len)
- );
- 
-@@ -2527,7 +2528,7 @@ TRACE_EVENT(ext4_es_insert_delayed_extent,
+-	TP_printk("dev = (%d,%d), old_dir = %lu, old_name: %s, "
+-		"new_dir = %lu, new_name: %s, flags = %u",
++	TP_printk("dev = (%d,%d), old_dir = %llu, old_name: %s, "
++		"new_dir = %llu, new_name: %s, flags = %u",
+ 		show_dev_ino(__entry),
+ 		__get_str(old_name),
+ 		__entry->new_pino,
+@@ -978,7 +978,7 @@ TRACE_EVENT(f2fs_rename_end,
  
  	TP_STRUCT__entry(
- 		__field(	dev_t,		dev		)
--		__field(	ino_t,		ino		)
-+		__field(	u64,		ino		)
- 		__field(	ext4_lblk_t,	lblk		)
- 		__field(	ext4_lblk_t,	len		)
- 		__field(	ext4_fsblk_t,	pblk		)
-@@ -2549,9 +2550,9 @@ TRACE_EVENT(ext4_es_insert_delayed_extent,
- 		__entry->seq		= EXT4_I(inode)->i_es_seq;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu es [%u/%u) mapped %llu status %s allocated %d %d seq %llu",
-+	TP_printk("dev %d,%d ino %llu es [%u/%u) mapped %llu status %s allocated %d %d seq %llu",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->ino,
-+		  (unsigned long long) __entry->ino,
- 		  __entry->lblk, __entry->len,
- 		  __entry->pblk, show_extent_status(__entry->status),
- 		  __entry->lclu_allocated, __entry->end_allocated,
-@@ -2877,7 +2878,7 @@ DECLARE_EVENT_CLASS(ext4_fc_track_dentry,
- 	TP_STRUCT__entry(
- 		__field(dev_t, dev)
- 		__field(tid_t, t_tid)
--		__field(ino_t, i_ino)
-+		__field(u64, i_ino)
- 		__field(tid_t, i_sync_tid)
- 		__field(int, error)
- 	),
-@@ -2892,9 +2893,9 @@ DECLARE_EVENT_CLASS(ext4_fc_track_dentry,
- 		__entry->error = ret;
- 	),
- 
--	TP_printk("dev %d,%d, t_tid %u, ino %lu, i_sync_tid %u, error %d",
-+	TP_printk("dev %d,%d, t_tid %u, ino %llu, i_sync_tid %u, error %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  __entry->t_tid, __entry->i_ino, __entry->i_sync_tid,
-+		  __entry->t_tid, (unsigned long long) __entry->i_ino, __entry->i_sync_tid,
- 		  __entry->error
- 	)
- );
-@@ -2918,7 +2919,7 @@ TRACE_EVENT(ext4_fc_track_inode,
- 	TP_STRUCT__entry(
- 		__field(dev_t, dev)
- 		__field(tid_t, t_tid)
--		__field(ino_t, i_ino)
-+		__field(u64, i_ino)
- 		__field(tid_t, i_sync_tid)
- 		__field(int, error)
- 	),
-@@ -2933,9 +2934,9 @@ TRACE_EVENT(ext4_fc_track_inode,
- 		__entry->error = ret;
- 	),
- 
--	TP_printk("dev %d:%d, t_tid %u, inode %lu, i_sync_tid %u, error %d",
-+	TP_printk("dev %d:%d, t_tid %u, inode %llu, i_sync_tid %u, error %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  __entry->t_tid, __entry->i_ino, __entry->i_sync_tid,
-+		  __entry->t_tid, (unsigned long long) __entry->i_ino, __entry->i_sync_tid,
- 		  __entry->error)
- 	);
- 
-@@ -2948,7 +2949,7 @@ TRACE_EVENT(ext4_fc_track_range,
- 	TP_STRUCT__entry(
- 		__field(dev_t, dev)
- 		__field(tid_t, t_tid)
--		__field(ino_t, i_ino)
-+		__field(u64, i_ino)
- 		__field(tid_t, i_sync_tid)
- 		__field(long, start)
- 		__field(long, end)
-@@ -2967,9 +2968,9 @@ TRACE_EVENT(ext4_fc_track_range,
- 		__entry->error = ret;
- 	),
- 
--	TP_printk("dev %d:%d, t_tid %u, inode %lu, i_sync_tid %u, error %d, start %ld, end %ld",
-+	TP_printk("dev %d:%d, t_tid %u, inode %llu, i_sync_tid %u, error %d, start %ld, end %ld",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  __entry->t_tid, __entry->i_ino, __entry->i_sync_tid,
-+		  __entry->t_tid, (unsigned long long) __entry->i_ino, __entry->i_sync_tid,
- 		  __entry->error, __entry->start, __entry->end)
- 	);
- 
-@@ -3030,10 +3031,10 @@ TRACE_EVENT(ext4_move_extent_enter,
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t, dev)
--		__field(ino_t, orig_ino)
-+		__field(u64, orig_ino)
- 		__field(ext4_lblk_t, orig_lblk)
- 		__field(unsigned int, orig_flags)
--		__field(ino_t, donor_ino)
-+		__field(u64, donor_ino)
- 		__field(ext4_lblk_t, donor_lblk)
- 		__field(unsigned int, len)
- 	),
-@@ -3048,11 +3049,11 @@ TRACE_EVENT(ext4_move_extent_enter,
- 		__entry->len		= orig_map->m_len;
- 	),
- 
--	TP_printk("dev %d,%d origin ino %lu lblk %u flags %s donor ino %lu lblk %u len %u",
-+	TP_printk("dev %d,%d origin ino %llu lblk %u flags %s donor ino %llu lblk %u len %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->orig_ino,  __entry->orig_lblk,
-+		  (unsigned long long) __entry->orig_ino,  __entry->orig_lblk,
- 		  show_mflags(__entry->orig_flags),
--		  (unsigned long) __entry->donor_ino,  __entry->donor_lblk,
-+		  (unsigned long long) __entry->donor_ino,  __entry->donor_lblk,
- 		  __entry->len)
- );
- 
-@@ -3066,9 +3067,9 @@ TRACE_EVENT(ext4_move_extent_exit,
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t, dev)
--		__field(ino_t, orig_ino)
-+		__field(u64, orig_ino)
- 		__field(ext4_lblk_t, orig_lblk)
--		__field(ino_t, donor_ino)
-+		__field(u64, donor_ino)
- 		__field(ext4_lblk_t, donor_lblk)
- 		__field(unsigned int, m_len)
- 		__field(u64, move_len)
-@@ -3088,10 +3089,10 @@ TRACE_EVENT(ext4_move_extent_exit,
+ 		__field(dev_t,		dev)
+-		__field(ino_t,		ino)
++		__field(u64,		ino)
+ 		__string(old_name,	old_dentry->d_name.name)
+ 		__string(new_name,	new_dentry->d_name.name)
+ 		__field(unsigned int,	flags)
+@@ -994,7 +994,7 @@ TRACE_EVENT(f2fs_rename_end,
  		__entry->ret		= ret;
  	),
  
--	TP_printk("dev %d,%d origin ino %lu lblk %u donor ino %lu lblk %u m_len %u, move_len %llu type %d ret %d",
-+	TP_printk("dev %d,%d origin ino %llu lblk %u donor ino %llu lblk %u m_len %u, move_len %llu type %d ret %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  (unsigned long) __entry->orig_ino,  __entry->orig_lblk,
--		  (unsigned long) __entry->donor_ino,  __entry->donor_lblk,
-+		  (unsigned long long) __entry->orig_ino,  __entry->orig_lblk,
-+		  (unsigned long long) __entry->donor_ino,  __entry->donor_lblk,
- 		  __entry->m_len, __entry->move_len, __entry->move_type,
- 		  __entry->ret)
+-	TP_printk("dev = (%d,%d), ino = %lu, old_name: %s, "
++	TP_printk("dev = (%d,%d), ino = %llu, old_name: %s, "
+ 		"new_name: %s, flags = %u, ret = %d",
+ 		show_dev_ino(__entry),
+ 		__get_str(old_name),
+@@ -1011,7 +1011,7 @@ TRACE_EVENT(f2fs_readdir,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(loff_t,	start)
+ 		__field(loff_t,	end)
+ 		__field(int,	err)
+@@ -1025,7 +1025,7 @@ TRACE_EVENT(f2fs_readdir,
+ 		__entry->err	= err;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, start_pos:%llu, end_pos:%llu, err:%d",
++	TP_printk("dev = (%d,%d), ino = %llu, start_pos:%llu, end_pos:%llu, err:%d",
+ 		show_dev_ino(__entry),
+ 		__entry->start,
+ 		__entry->end,
+@@ -1041,7 +1041,7 @@ TRACE_EVENT(f2fs_fallocate,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(int,	mode)
+ 		__field(loff_t,	offset)
+ 		__field(loff_t,	len)
+@@ -1061,7 +1061,7 @@ TRACE_EVENT(f2fs_fallocate,
+ 		__entry->ret	= ret;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, mode = %x, offset = %lld, "
++	TP_printk("dev = (%d,%d), ino = %llu, mode = %x, offset = %lld, "
+ 		"len = %lld,  i_size = %lld, i_blocks = %llu, ret = %d",
+ 		show_dev_ino(__entry),
+ 		__entry->mode,
+@@ -1080,7 +1080,7 @@ TRACE_EVENT(f2fs_direct_IO_enter,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(loff_t,	ki_pos)
+ 		__field(int,	ki_flags)
+ 		__field(u16,	ki_ioprio)
+@@ -1098,7 +1098,7 @@ TRACE_EVENT(f2fs_direct_IO_enter,
+ 		__entry->rw		= rw;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu pos = %lld len = %lu ki_flags = %x ki_ioprio = %x rw = %d",
++	TP_printk("dev = (%d,%d), ino = %llu pos = %lld len = %lu ki_flags = %x ki_ioprio = %x rw = %d",
+ 		show_dev_ino(__entry),
+ 		__entry->ki_pos,
+ 		__entry->len,
+@@ -1116,7 +1116,7 @@ TRACE_EVENT(f2fs_direct_IO_exit,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(loff_t,	pos)
+ 		__field(unsigned long,	len)
+ 		__field(int,	rw)
+@@ -1132,7 +1132,7 @@ TRACE_EVENT(f2fs_direct_IO_exit,
+ 		__entry->ret	= ret;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu pos = %lld len = %lu "
++	TP_printk("dev = (%d,%d), ino = %llu pos = %lld len = %lu "
+ 		"rw = %d ret = %d",
+ 		show_dev_ino(__entry),
+ 		__entry->pos,
+@@ -1177,7 +1177,7 @@ DECLARE_EVENT_CLASS(f2fs__submit_folio_bio,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t, dev)
+-		__field(ino_t, ino)
++		__field(u64, ino)
+ 		__field(pgoff_t, index)
+ 		__field(block_t, old_blkaddr)
+ 		__field(block_t, new_blkaddr)
+@@ -1199,7 +1199,7 @@ DECLARE_EVENT_CLASS(f2fs__submit_folio_bio,
+ 		__entry->type		= fio->type;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, folio_index = 0x%lx, "
++	TP_printk("dev = (%d,%d), ino = %llu, folio_index = 0x%lx, "
+ 		"oldaddr = 0x%llx, newaddr = 0x%llx, rw = %s(%s), type = %s_%s",
+ 		show_dev_ino(__entry),
+ 		(unsigned long)__entry->index,
+@@ -1307,7 +1307,7 @@ TRACE_EVENT(f2fs_write_begin,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(loff_t,	pos)
+ 		__field(unsigned int, len)
+ 	),
+@@ -1319,7 +1319,7 @@ TRACE_EVENT(f2fs_write_begin,
+ 		__entry->len	= len;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, pos = %llu, len = %u",
++	TP_printk("dev = (%d,%d), ino = %llu, pos = %llu, len = %u",
+ 		show_dev_ino(__entry),
+ 		(unsigned long long)__entry->pos,
+ 		__entry->len)
+@@ -1334,7 +1334,7 @@ TRACE_EVENT(f2fs_write_end,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(loff_t,	pos)
+ 		__field(unsigned int, len)
+ 		__field(unsigned int, copied)
+@@ -1348,7 +1348,7 @@ TRACE_EVENT(f2fs_write_end,
+ 		__entry->copied	= copied;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, pos = %llu, len = %u, copied = %u",
++	TP_printk("dev = (%d,%d), ino = %llu, pos = %llu, len = %u, copied = %u",
+ 		show_dev_ino(__entry),
+ 		(unsigned long long)__entry->pos,
+ 		__entry->len,
+@@ -1363,7 +1363,7 @@ DECLARE_EVENT_CLASS(f2fs__folio,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(int, type)
+ 		__field(int, dir)
+ 		__field(pgoff_t, index)
+@@ -1383,7 +1383,7 @@ DECLARE_EVENT_CLASS(f2fs__folio,
+ 		__entry->uptodate = folio_test_uptodate(folio);
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, %s, %s, index = %lu, nr_pages = %lu, "
++	TP_printk("dev = (%d,%d), ino = %llu, %s, %s, index = %lu, nr_pages = %lu, "
+ 		"dirty = %d, uptodate = %d",
+ 		show_dev_ino(__entry),
+ 		show_block_type(__entry->type),
+@@ -1438,8 +1438,8 @@ TRACE_EVENT(f2fs_replace_atomic_write_block,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
+-		__field(ino_t,	cow_ino)
++		__field(u64,	ino)
++		__field(u64,	cow_ino)
+ 		__field(pgoff_t, index)
+ 		__field(block_t, old_addr)
+ 		__field(block_t, new_addr)
+@@ -1456,7 +1456,7 @@ TRACE_EVENT(f2fs_replace_atomic_write_block,
+ 		__entry->recovery	= recovery;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, cow_ino = %lu, index = %lu, "
++	TP_printk("dev = (%d,%d), ino = %llu, cow_ino = %llu, index = %lu, "
+ 			"old_addr = 0x%llx, new_addr = 0x%llx, recovery = %d",
+ 		show_dev_ino(__entry),
+ 		__entry->cow_ino,
+@@ -1475,7 +1475,7 @@ DECLARE_EVENT_CLASS(f2fs_mmap,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(pgoff_t, index)
+ 		__field(vm_flags_t, flags)
+ 		__field(vm_fault_t, ret)
+@@ -1489,7 +1489,7 @@ DECLARE_EVENT_CLASS(f2fs_mmap,
+ 		__entry->ret	= ret;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, index = %lu, flags: %s, ret: %s",
++	TP_printk("dev = (%d,%d), ino = %llu, index = %lu, flags: %s, ret: %s",
+ 		show_dev_ino(__entry),
+ 		(unsigned long)__entry->index,
+ 		__print_flags(__entry->flags, "|", FAULT_FLAG_TRACE),
+@@ -1520,7 +1520,7 @@ TRACE_EVENT(f2fs_writepages,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(int,	type)
+ 		__field(int,	dir)
+ 		__field(long,	nr_to_write)
+@@ -1554,7 +1554,7 @@ TRACE_EVENT(f2fs_writepages,
+ 		__entry->for_sync	= wbc->for_sync;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, %s, %s, nr_to_write %ld, "
++	TP_printk("dev = (%d,%d), ino = %llu, %s, %s, nr_to_write %ld, "
+ 		"skipped %ld, start %lld, end %lld, wb_idx %lu, sync_mode %d, "
+ 		"kupdate %u background %u tagged %u cyclic %u sync %u",
+ 		show_dev_ino(__entry),
+@@ -1581,7 +1581,7 @@ TRACE_EVENT(f2fs_readpages,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(pgoff_t,	start)
+ 		__field(unsigned int,	nrpage)
+ 	),
+@@ -1593,7 +1593,7 @@ TRACE_EVENT(f2fs_readpages,
+ 		__entry->nrpage	= nrpage;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, start = %lu nrpage = %u",
++	TP_printk("dev = (%d,%d), ino = %llu, start = %lu nrpage = %u",
+ 		show_dev_ino(__entry),
+ 		(unsigned long)__entry->start,
+ 		__entry->nrpage)
+@@ -1739,7 +1739,7 @@ TRACE_EVENT(f2fs_lookup_extent_tree_start,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(unsigned int, pgofs)
+ 		__field(enum extent_type, type)
+ 	),
+@@ -1751,7 +1751,7 @@ TRACE_EVENT(f2fs_lookup_extent_tree_start,
+ 		__entry->type = type;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, pgofs = %u, type = %s",
++	TP_printk("dev = (%d,%d), ino = %llu, pgofs = %u, type = %s",
+ 		show_dev_ino(__entry),
+ 		__entry->pgofs,
+ 		show_extent_type(__entry->type))
+@@ -1768,7 +1768,7 @@ TRACE_EVENT_CONDITION(f2fs_lookup_read_extent_tree_end,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(unsigned int, pgofs)
+ 		__field(unsigned int, fofs)
+ 		__field(unsigned int, len)
+@@ -1784,7 +1784,7 @@ TRACE_EVENT_CONDITION(f2fs_lookup_read_extent_tree_end,
+ 		__entry->blk = ei->blk;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, pgofs = %u, "
++	TP_printk("dev = (%d,%d), ino = %llu, pgofs = %u, "
+ 		"read_ext_info(fofs: %u, len: %u, blk: %u)",
+ 		show_dev_ino(__entry),
+ 		__entry->pgofs,
+@@ -1804,7 +1804,7 @@ TRACE_EVENT_CONDITION(f2fs_lookup_age_extent_tree_end,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(unsigned int, pgofs)
+ 		__field(unsigned int, fofs)
+ 		__field(unsigned int, len)
+@@ -1822,7 +1822,7 @@ TRACE_EVENT_CONDITION(f2fs_lookup_age_extent_tree_end,
+ 		__entry->blocks = ei->last_blocks;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, pgofs = %u, "
++	TP_printk("dev = (%d,%d), ino = %llu, pgofs = %u, "
+ 		"age_ext_info(fofs: %u, len: %u, age: %llu, blocks: %llu)",
+ 		show_dev_ino(__entry),
+ 		__entry->pgofs,
+@@ -1842,7 +1842,7 @@ TRACE_EVENT(f2fs_update_read_extent_tree_range,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(unsigned int, pgofs)
+ 		__field(u32, blk)
+ 		__field(unsigned int, len)
+@@ -1858,7 +1858,7 @@ TRACE_EVENT(f2fs_update_read_extent_tree_range,
+ 		__entry->c_len = c_len;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, pgofs = %u, "
++	TP_printk("dev = (%d,%d), ino = %llu, pgofs = %u, "
+ 				"len = %u, blkaddr = %u, c_len = %u",
+ 		show_dev_ino(__entry),
+ 		__entry->pgofs,
+@@ -1877,7 +1877,7 @@ TRACE_EVENT(f2fs_update_age_extent_tree_range,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(unsigned int, pgofs)
+ 		__field(unsigned int, len)
+ 		__field(unsigned long long, age)
+@@ -1893,7 +1893,7 @@ TRACE_EVENT(f2fs_update_age_extent_tree_range,
+ 		__entry->blocks = last_blks;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, pgofs = %u, "
++	TP_printk("dev = (%d,%d), ino = %llu, pgofs = %u, "
+ 				"len = %u, age = %llu, blocks = %llu",
+ 		show_dev_ino(__entry),
+ 		__entry->pgofs,
+@@ -1939,7 +1939,7 @@ TRACE_EVENT(f2fs_destroy_extent_tree,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(unsigned int, node_cnt)
+ 		__field(enum extent_type, type)
+ 	),
+@@ -1951,7 +1951,7 @@ TRACE_EVENT(f2fs_destroy_extent_tree,
+ 		__entry->type = type;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, destroyed: node_cnt = %u, type = %s",
++	TP_printk("dev = (%d,%d), ino = %llu, destroyed: node_cnt = %u, type = %s",
+ 		show_dev_ino(__entry),
+ 		__entry->node_cnt,
+ 		show_extent_type(__entry->type))
+@@ -2028,7 +2028,7 @@ DECLARE_EVENT_CLASS(f2fs_zip_start,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(pgoff_t, idx)
+ 		__field(unsigned int, size)
+ 		__field(unsigned int, algtype)
+@@ -2042,7 +2042,7 @@ DECLARE_EVENT_CLASS(f2fs_zip_start,
+ 		__entry->algtype = algtype;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, cluster_idx:%lu, "
++	TP_printk("dev = (%d,%d), ino = %llu, cluster_idx:%lu, "
+ 		"cluster_size = %u, algorithm = %s",
+ 		show_dev_ino(__entry),
+ 		__entry->idx,
+@@ -2059,7 +2059,7 @@ DECLARE_EVENT_CLASS(f2fs_zip_end,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(pgoff_t, idx)
+ 		__field(unsigned int, size)
+ 		__field(unsigned int, ret)
+@@ -2073,7 +2073,7 @@ DECLARE_EVENT_CLASS(f2fs_zip_end,
+ 		__entry->ret = ret;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, cluster_idx:%lu, "
++	TP_printk("dev = (%d,%d), ino = %llu, cluster_idx:%lu, "
+ 		"compressed_size = %u, ret = %d",
+ 		show_dev_ino(__entry),
+ 		__entry->idx,
+@@ -2312,7 +2312,7 @@ TRACE_EVENT(f2fs_bmap,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t, dev)
+-		__field(ino_t, ino)
++		__field(u64, ino)
+ 		__field(sector_t, lblock)
+ 		__field(sector_t, pblock)
+ 	),
+@@ -2324,7 +2324,7 @@ TRACE_EVENT(f2fs_bmap,
+ 		__entry->pblock		= pblock;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, lblock:%lld, pblock:%lld",
++	TP_printk("dev = (%d,%d), ino = %llu, lblock:%lld, pblock:%lld",
+ 		show_dev_ino(__entry),
+ 		(unsigned long long)__entry->lblock,
+ 		(unsigned long long)__entry->pblock)
+@@ -2339,7 +2339,7 @@ TRACE_EVENT(f2fs_fiemap,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t, dev)
+-		__field(ino_t, ino)
++		__field(u64, ino)
+ 		__field(sector_t, lblock)
+ 		__field(sector_t, pblock)
+ 		__field(unsigned long long, len)
+@@ -2357,7 +2357,7 @@ TRACE_EVENT(f2fs_fiemap,
+ 		__entry->ret		= ret;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, lblock:%lld, pblock:%lld, "
++	TP_printk("dev = (%d,%d), ino = %llu, lblock:%lld, pblock:%lld, "
+ 		"len:%llu, flags:%u, ret:%d",
+ 		show_dev_ino(__entry),
+ 		(unsigned long long)__entry->lblock,
+@@ -2381,7 +2381,7 @@ DECLARE_EVENT_CLASS(f2fs__rw_start,
+ 		__field(loff_t, i_size)
+ 		__string(cmdline, command)
+ 		__field(pid_t, pid)
+-		__field(ino_t, ino)
++		__field(u64, ino)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -2402,10 +2402,10 @@ DECLARE_EVENT_CLASS(f2fs__rw_start,
+ 	),
+ 
+ 	TP_printk("entry_name %s, offset %llu, bytes %d, cmdline %s,"
+-		" pid %d, i_size %llu, ino %lu",
++		" pid %d, i_size %llu, ino %llu",
+ 		__get_str(pathbuf), __entry->offset, __entry->bytes,
+ 		__get_str(cmdline), __entry->pid, __entry->i_size,
+-		(unsigned long) __entry->ino)
++		(unsigned long long) __entry->ino)
  );
+ 
+ DECLARE_EVENT_CLASS(f2fs__rw_end,
+@@ -2415,7 +2415,7 @@ DECLARE_EVENT_CLASS(f2fs__rw_end,
+ 	TP_ARGS(inode, offset, bytes),
+ 
+ 	TP_STRUCT__entry(
+-		__field(ino_t,	ino)
++		__field(u64,	ino)
+ 		__field(loff_t,	offset)
+ 		__field(int,	bytes)
+ 	),
+@@ -2426,8 +2426,8 @@ DECLARE_EVENT_CLASS(f2fs__rw_end,
+ 		__entry->bytes		= bytes;
+ 	),
+ 
+-	TP_printk("ino %lu, offset %llu, bytes %d",
+-		(unsigned long) __entry->ino,
++	TP_printk("ino %llu, offset %llu, bytes %d",
++		(unsigned long long) __entry->ino,
+ 		__entry->offset, __entry->bytes)
+ );
+ 
 
 -- 
 2.53.0
