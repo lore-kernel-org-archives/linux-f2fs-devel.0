@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 086F6FD8FCE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 16:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E8D78FD8FD4
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Feb 2026 16:08:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Message-Id:
 	MIME-Version:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=GqB4VOpzDhzYa8uKpmTsU6N/NLJtZkzZFZA8yal85qs=; b=VY+hnuzOFdUkSNZiONUt10SqMl
-	jaiFtuRuzoEnXnIp12O11c62Z/xLX7lDpdjn7TXABmuqGN9gH+1Oaq32rpuiwZTONYDGr6kZOxSH3
-	kGTwnTATKhNP/2c53vWzIA3zMAeOF3/c4zhjF1yMqOCi4w9V6TupVhwWNHA4e3lhbRPQ=;
+	bh=Brjh+lZRxIhy/JKTY9wvT9WLPIWCCJpTqVwlm4fE5PA=; b=f/HOoqnPzOolSGjyDhnOtBaXbx
+	MidCdnyfrDc8kPLH2UT2dXqyxT2WhC2g6FGYZLcNJJxq+fSAWKiJu2ck7nBk8IffoHO3lO9sr/Lj4
+	TXQVM+3qgCwxQ1HHR+VNnrlcya0AZ3EqXVFlqBrAcfajljI4qqkSZTTpzwLYxtdLUmzc=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vvduk-00038O-NM;
-	Thu, 26 Feb 2026 16:08:34 +0000
+	id 1vvdv1-0003Ak-D5;
+	Thu, 26 Feb 2026 16:08:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jlayton@kernel.org>) id 1vvduj-00037x-Cu;
- Thu, 26 Feb 2026 16:08:33 +0000
+ (envelope-from <jlayton@kernel.org>) id 1vvduz-0003AS-N8;
+ Thu, 26 Feb 2026 16:08:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Message-Id:
  Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/HFDDRFOTrlf1nPQBCWL4HAaSGnISpgl2kr2t4LoLgI=; b=M0qtVgjW50e7EtHbyCAk2HpCmM
- 9SbkOrS+CDojZwu+xqk3Uck+gQcVymooTy4TNSQuAfHmMeoSujOxfaHME85/wYk9SzyAE3YF/IkFs
- 0xFUdGYsOdQaJSmcR38eW16skls9jRV3Q+A15CMoBeZuxGpHgX4R4cMMcPhUszdJK7Pc=;
+ bh=iaw7Yzoe+sn/wR22JLcBiF1LrSzLSZpM6YnZvP/2HbU=; b=VY3sf47vcFILbnNA4jVcoZF5Jh
+ ZlNh0pZkaAcHI6gJJ3uTs1MW+2u8/r1PE05X5WyhM+0ZRQ6DdtsGoSPZwbwk7YM+4kDand+xu0lya
+ 1jemXk1ZbwTe9BJ4mwEx1QpatyqrwbKWT7a4wxYUTvicvcrdnMa1qbJ0pU7hjulbiW9s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
@@ -41,31 +41,31 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=/HFDDRFOTrlf1nPQBCWL4HAaSGnISpgl2kr2t4LoLgI=; b=cG1xhkN+Cq0dKx6FdG8wHGy/A0
- IJPQ1zUimUGFBnwCUDt6WKMVIgdwcCxhivNI5689xInWA2pJjioJwFnibIboTAFAPRlkGQ2+WfHG5
- nYYWDjM/Dj/q5/2TmCTyN/UJzhHf7/qHlSMj7zd1zMajeYjJPrtTMD3sBfwFlNjzL110=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=iaw7Yzoe+sn/wR22JLcBiF1LrSzLSZpM6YnZvP/2HbU=; b=DTHdcZ/HV+ehQQCNF8beV2on9s
+ +aJu/MuJdYGKGrescaSL+/QULkIc+67NPfXDchCuqyxt5gWKPxmmww+HM5ClXAXmViusLJ9j6QCu5
+ 3wstP5AnVkTtfgC13Tej7LEQxO0bnCDgaHGG5dlX/wfoktOnCmIUAUWHlHm/hiq+/GwM=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vvduL-0006Gw-6g; Thu, 26 Feb 2026 16:08:33 +0000
+ id 1vvdux-0006Ml-4Z; Thu, 26 Feb 2026 16:08:49 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id D2F3841B33;
- Thu, 26 Feb 2026 16:07:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F8EBC2BCB3;
- Thu, 26 Feb 2026 16:07:46 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 526A46013E;
+ Thu, 26 Feb 2026 16:08:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D02FEC19423;
+ Thu, 26 Feb 2026 16:08:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772122078;
- bh=fTlsE7xIWGKtPxu9A4dIX/2EfFegpqcLPW063s/2aCU=;
+ s=k20201202; t=1772122116;
+ bh=mJz0eEHEaRbf0z67WFaaYbKMrUAzDbjOomm21BzaG1w=;
  h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
- b=P5Qat2eaWeMJWSNbtbPb7TpssYG2R9fYa73uH36IJRKkrjh/Bv+fUfpwN6cP9WDq9
- UT4+i5Gplk4UtP6zP3QUJ95kSeNbpg1idRA3kc/O68WXwQ3VtlA/HFA6zMAAwobJ88
- MhMK5aZ9YYDr+dTtfzliJkxCykXqTGOn2lyIJzveFELASHMhX8mb3bNd9QYi8cYmeV
- avQAyurn9qwP+hebKlrqi6PAtiUo9AZqYQNfMY4powCPRWIebRYpLD43nSebNYj1Hw
- BdzPaR1JP0OGe1R2ueyC7P/JMDMQsO2oQpV72QpsrDqjDNFAvatfTaCDrYaVhhTtk/
- UJ2zcdhYUN0mw==
-Date: Thu, 26 Feb 2026 10:55:58 -0500
+ b=t0Vv/8r7hvTEyyrgpQEos+lyQHw8VuPB+RKx+RgG1btJBNaNAxEkO+60lW6HbyPby
+ lHSflQP1RDVfk8I83JhIewxB80P6D7EcglTFUB/NZenAdVCdLaEuesq/G3oHdy4Ase
+ QfDdy4jDvQ29V9tOsfw8Nu4t8CIhI0KsVuJVltcrjRL/2YMFWZQ4LrLBsZy5i7ta+w
+ gwyT7GdMLiGYkFsO8ihc5ehJvozLKUp+Hv3sU3WCp+lsij1NBAqgspLMxoEqqFwPqR
+ JZHdXQQN18uOq1UCy5pC3jx+yHPhdfRzmomqq/fjlBEW6XdhnADZZ673SDFrJPxa0p
+ 45Mc6++8Tu9jw==
+Date: Thu, 26 Feb 2026 10:56:01 -0500
 MIME-Version: 1.0
-Message-Id: <20260226-iino-u64-v1-56-ccceff366db9@kernel.org>
+Message-Id: <20260226-iino-u64-v1-59-ccceff366db9@kernel.org>
 References: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 In-Reply-To: <20260226-iino-u64-v1-0-ccceff366db9@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -141,24 +141,24 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
  James Clark <james.clark@linaro.org>, "Darrick J. Wong" <djwong@kernel.org>, 
  Martin Schiller <ms@dev.tdt.de>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=837; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=fTlsE7xIWGKtPxu9A4dIX/2EfFegpqcLPW063s/2aCU=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0SMsGdpHT/6AyJ46OU8MjGpSyFuqiOdnoRG
- f97y3cZtQ+JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtEgAKCRAADmhBGVaC
- FV5GD/0frD8N2TX7MN9ww3xhGZMnd4dWX9d+yK6vEV5xACRIttjaQ2/Ik8mZ3s6QPAhMBo9E2/Q
- t8hsDnDufvG0W+XVW1sHNUwxNxVSgFNW5CSyRnV8G6AmGYVP1RCNqp3xYFXm6XW+t9FEmmCil1Q
- cc4UDYvzQskcL3uWsEFbYgkBRZO7VHcmjJIzmGULLv7LHeYGjldonwahUsaUPOidLRuLMN5sDWS
- XNtG/abqnOGQXl+g4W2wGBgADJ4VNDp/mmZI+Taw2+hyoiE5Pwvj+PfTOuBoEZVt3blA6zTfmcg
- bU08yjsWyKFleE1X7lIrRCA+dPzSDfdtnJMQKfQSSTm2hLhz4HVku/YYqKILPPd3xwGOEtvB1ZY
- JDaHMmHUGAFoZ4zSz9yQi5PKTFkSpHKjS7ddZ9SPAAF5PEnBPpCv5BApbrq8+7kBbFH3Vmh+GIx
- W+G1+Nhr1IR0jIQY4q1x8bZUOtbtiAlU0zQwv+scQGLf891dde//IjznORtfE6g0QclGRHS3UJ6
- YTm1cYrCjF14aSUiT5QGghXtgzer6uOrdXyKjuGOFOc5Py4660JUMayozrKUTgjPdRLimGMNO1M
- eVe9CVDJIN5mKJzi2B0ZO8jK2PXzJE3gH129N/iSj10aWI8Ut4JNlXdM2kTn5CUKiWDOAW6PP9B
- 5THgnVzAVl5CBVQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=872; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=mJz0eEHEaRbf0z67WFaaYbKMrUAzDbjOomm21BzaG1w=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpoG0TpQY7eovVW3Aydx7V0aRSrqmhzKyz82kFg
+ yDGXy932HWJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaBtEwAKCRAADmhBGVaC
+ FcA4D/44LMTaI1yNGSRMRxeUlEYsH2ArWGWr0IQXM4Qdw1OnUTPSbH/n3gZo+wcSet5Gzug02cO
+ jcXlMnvYWM3OVTF6i18cUaqSFTbugS4UAO9Mk+Lke+sy9yUakMTo7FNfkQ+f/sk398/6/5szQVZ
+ MUy4ewI2nXzMwq5afGcOoIDLVZixL+oLOl6QLfvgpnWK3/gNoES2uh72pEVkjSgdQZnY+UKaqd4
+ 7n0ARSW3OCvonRlusw3OlE79ed7NBP4olnKzZba6tqeYjtcCyWaVmxYVBa6j0M57j7pvxZ96OJc
+ 7a2Fq44zHEF9dtwJewVlFtThajHSJrr92jbICM7uR/B7Hz7EyYD0LhmcdLaepe4FdL25GRmPCOe
+ XSX9mfjHvfnq1Y3wE+Pb0DVhA2WocfUKncSNil3vb8yI55n2CEtXvfPsoyJ9pqpS5rCTgqukoqt
+ sZQBQhXYqPb1/AxxjHtM8qeoVyjkFaZRJPDW3Hw1TtxR0fq/K7+zgUPffxE9ni16UTo4q/ZqxRi
+ rDVEotes7qKCDtvl4VFlr7CLGXtrsZVu/xWV1Uod99oci9bsUb+js1G5WQByBvq8VuRRCwdGhG0
+ YRSpXvriSFf8pG8NEGkkkH+DddjxU9ZbrxdudoSGdU+UaRLNBLKM1dRSqJOjxl5oAYK15lrk5NB
+ wtLloV9zJaVgRTg==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Headers-End: 1vvduL-0006Gw-6g
-Subject: [f2fs-dev] [PATCH 56/61] dma-buf: update format string for u64 i_ino
+X-Headers-End: 1vvdux-0006Ml-4Z
+Subject: [f2fs-dev] [PATCH 59/61] iomap: update format string for u64 i_ino
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -194,27 +194,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Update %lu to %llu in debugfs seq_printf for printing i_ino, since
-i_ino is now u64.
+Update format string from %lu to %llu for inode->i_ino now that
+i_ino is u64 instead of unsigned long.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- drivers/dma-buf/dma-buf.c | 2 +-
+ fs/iomap/ioend.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index 11711874a325b954940fb289f09936de0152e683..8c16c8c425cc84cf379d7f790d054e140471c8ac 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -1708,7 +1708,7 @@ static int dma_buf_debug_show(struct seq_file *s, void *unused)
- 
- 
- 		spin_lock(&buf_obj->name_lock);
--		seq_printf(s, "%08zu\t%08x\t%08x\t%08ld\t%s\t%08lu\t%s\n",
-+		seq_printf(s, "%08zu\t%08x\t%08x\t%08ld\t%s\t%08llu\t%s\n",
- 				buf_obj->size,
- 				buf_obj->file->f_flags, buf_obj->file->f_mode,
- 				file_count(buf_obj->file),
+diff --git a/fs/iomap/ioend.c b/fs/iomap/ioend.c
+index 4d1ef8a2cee90b91591d387f8e1c3f75350c1da0..94d9a3c77bd68581d752fef4c16b88e1cb5f88da 100644
+--- a/fs/iomap/ioend.c
++++ b/fs/iomap/ioend.c
+@@ -48,7 +48,7 @@ static u32 iomap_finish_ioend_buffered(struct iomap_ioend *ioend)
+ 		mapping_set_error(inode->i_mapping, ioend->io_error);
+ 		if (!bio_flagged(bio, BIO_QUIET)) {
+ 			pr_err_ratelimited(
+-"%s: writeback error on inode %lu, offset %lld, sector %llu",
++"%s: writeback error on inode %llu, offset %lld, sector %llu",
+ 				inode->i_sb->s_id, inode->i_ino,
+ 				ioend->io_offset, ioend->io_sector);
+ 		}
 
 -- 
 2.53.0
