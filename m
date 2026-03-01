@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 59180FD0049
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  1 Mar 2026 01:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 36143FD0045
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  1 Mar 2026 01:33:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=xKRGed6t8TvVHQ834/e0qCGbmN0EcRReKlfD0KrCUjI=; b=Fv1OnaY0bL1QistG3nUQC0Zw47
-	BCF8cd2Cd8a6lMz0+PMcFnZtc6QnaXHD4jdmIw169agOyVlMeo1DoMutgRs/MVREVVO8aRGWB0geY
-	GN8GYLPFOXAt1cTPcYNR6Cao6pw/rjR8aHekPSO/ENdCnTdBDY218icexupJ3xkGhza0=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=2Cbdb1l4GCJlVMwdtpNz+SDRtV+NUp+R6j0+Fe7pgHs=; b=OwLQhjlsXyiPX4MyOpZdEuDRNs
+	zRsoSU9V+6okII2j1pLXV/BvHcnjL4vKyunb6EyrURkYIkSR2dd5jSKY67y4Yh3dQ/Q0xBCOBkYOq
+	CDeTEosB7Uy41NfQtdaAfubpcCYDFnLCCWNhB0qkRofoW2xu1QPmgV7fUFMVGSN7cQoM=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vwVVC-0001pb-0O;
-	Sun, 01 Mar 2026 01:21:46 +0000
+	id 1vwVg4-0007WZ-Gk;
+	Sun, 01 Mar 2026 01:33:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1vwVVA-0001pT-Jr
+ (envelope-from <sashal@kernel.org>) id 1vwVg3-0007WT-3a
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 01 Mar 2026 01:21:44 +0000
+ Sun, 01 Mar 2026 01:32:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GaoiCh4w9o22QH/sGLTITHwWT2OwJAdhas0MkRhF7ik=; b=lewp1xvTQATCGDlT+jC9Qccdi2
- g/b+vG4vRC3FIdds+Ov9Tv6bP+idEVWgZEx+TqV5D9Uogr7ImBLbNhxwx1VVHdzO/1i/qU8fTVssT
- WleqIrzO8F9aa5CuNESajrIWmTUG5oCEX3JJpNc5FBIpdI0l0EURfsL/XAifR3sgpjlE=;
+ bh=Jqaqubhx9oB7QPlpYftasi4UU5dWHCbNIthXpOn9QyE=; b=X6B10SzOMwAEvGAYGEGe5cNbwr
+ vyYG/XxlwuWlLi1zBdQxKMoCdZ6g4+2g/aVSSDcAjXgGCSTnwCrv1cfMhdBLZqO1ic8cYZIH7tWkF
+ xKP2+2dr103aghavBj12IAqVnq9QveQ+3sabIaDGPEbkMyinMon9KbK4TG8FJ3XgUqAQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=GaoiCh4w9o22QH/sGLTITHwWT2OwJAdhas0MkRhF7ik=; b=T
- h2KYxVy+bzmyau5G3y9cTE4lAVffZF1lbABt+mJW/aooSxBFIb4C7JKrFUuRvfI54u1nJSDX1Y6Ut
- dA/LGBBb+FnSdPAmXsCc8ERinm3GKQBpG36w5wz11VU5af37YEurJRE881Q59YsKlpJO4uihmt/FY
- CfkStlfCa5c3fM54=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ List-Owner:List-Archive; bh=Jqaqubhx9oB7QPlpYftasi4UU5dWHCbNIthXpOn9QyE=; b=V
+ DrIH3kJloE0SqSw+fBW3Pn4pKKUQLZAug1dwS+/bQduKIhjoH8965deSQ3BZcCzQUVyC9xY9MYiMU
+ Y8VmTbBIxu4D/kYWKATLSbPGB3a0zP9q+V9P3n8+FCMbdf7i0s4Rn+qAa3ZKQK/4CEKVMjjmMz8gV
+ 8bI7HGe1uJ+KRXc4=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vwVV9-0001hs-V2 for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 01 Mar 2026 01:21:44 +0000
+ id 1vwVg2-0001wV-FW for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 01 Mar 2026 01:32:59 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 4842960008;
- Sun,  1 Mar 2026 01:21:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55F91C19421;
- Sun,  1 Mar 2026 01:21:32 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 1CFE2404BE;
+ Sun,  1 Mar 2026 01:32:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C17AC19421;
+ Sun,  1 Mar 2026 01:32:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772328093;
- bh=/kWwGlvAlFnNgImeHHbjaJdS230hrWl+PHTq8OrMSzE=;
+ s=k20201202; t=1772328773;
+ bh=881nQElLHTL4BmI/W1rly7+OnNSbKmVc7U1Fb6sAlxQ=;
  h=From:To:Cc:Subject:Date:From;
- b=t/GFTHEmlbcSAjDm74h/gwMwA/r29Ed43WEZwbhf7CiuD/ZTLi/NvKXHH2PuGiZNz
- bIPKcjGIelc1DCpqDgtSEJGDfglHQyDzZod9gkoiowhrTGb31j4+OVF507m6OEWIbK
- l1/3I1CDesXGa9zUI5uUewjSbE3rRQssacEkSC6gTVl5a9zh79rneg88SYdaBsexAn
- B/9fIZMFpsvpccnSTkatf05I6RmXH94cbBjMxzG2P7AuECzMPA2GmitDCuTKtANptz
- jvQyxTZdEwWIk9xWJ+Ghnn3h9Ilxj/gu3S+ABpZLotVDqKiIZnm5pIeu7bX8/ZQYBo
- ES5RfgqWe3dQQ==
+ b=XfsCLvhs0AHLNXKg8ZWR4pqs5UwyiAMEJO8PM9yI7AFSg4KSEqd98pPcioUzhIcsN
+ WXWOn5r+6Z8eQOxDGSfYrA6rAstMhxsRrze+pa8HKTOTemY+ClLbHHcD0MW9/rkLaw
+ 2mWMjLXc635vXWtK2Ug+PVcDL1+F3o3q1fwGOa4kZVZO+5Ug76J3e2zj4zhK9n2Yvg
+ CBZCf5NDLUG5GHQgF9JzujcxdhhSbGzB+JqIGCp2bZcy4v11qgvpnm6zqyQt6ot/Xz
+ +CoERdZZ2EAnY7/g1QUPA9K2uQRjwAMsgnOypf/dOhAkGJZ2WOahKU8yBbHqUkMNsH
+ fuLIpbe03Qg6w==
 To: stable@vger.kernel.org,
 	chao@kernel.org
-Date: Sat, 28 Feb 2026 20:21:30 -0500
-Message-ID: <20260301012131.1677456-1-sashal@kernel.org>
+Date: Sat, 28 Feb 2026 20:32:50 -0500
+Message-ID: <20260301013251.1691964-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
 X-Patchwork-Hint: ignore
 X-stable: review
-X-Headers-End: 1vwVV9-0001hs-V2
+X-Headers-End: 1vwVg2-0001wV-FW
 Subject: [f2fs-dev] FAILED: Patch "f2fs: fix to do sanity check on node
- footer in {read, write}_end_io" failed to apply to 6.12-stable tree
+ footer in {read, write}_end_io" failed to apply to 6.6-stable tree
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,7 +96,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The patch below does not apply to the 6.12-stable tree.
+The patch below does not apply to the 6.6-stable tree.
 If someone wants it applied there, or to any other stable or longterm
 tree, then please email the backport, including the original git commit
 id to <stable@vger.kernel.org>.
