@@ -4,80 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D07D9D58E7D
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Mar 2026 08:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DCE28EA4E0B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Mar 2026 14:19:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=YxzEakkPrY8bp2OjsBYrnI46GtMU4c3Eo3oHd1x99SE=; b=ZARrh2CU72o6JWIkGBjDLVew6c
-	l2CXQMHzokPG7PCbBpVyCdgzWAqbxUOSKYhQvy9LaETueAtC2yC+QAjTZ2ezcA7SvCEq7BB/j1S/M
-	khs4MYnPPB7YZo9KCa/T22CxXoNyohAgwsNVNFmHcng1Ze+O24Z62fj2zN0ejZ4nLqYE=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=48JvVwxSZEgEmi1YZ96Fk94nigqyAqK6h2IxllBigIc=; b=dFylA1lcOmLb0Hf/Nqhb0ry43r
+	sW6D9QJcTu9s4Dqlg12EtzTy9qG5sDhxlaRKbjoNx/sNzWdgTlsuFAdf9q09uW3WbKd9zNmQNDm6r
+	I5o26HJXRRY3M0jHVFyvOZfJQwG7nkLaWRF7zve+nSgAgzETmSUwC4PRkC0Hgs0hlClU=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vwyox-000678-3y;
-	Mon, 02 Mar 2026 08:40:07 +0000
+	id 1vx47T-0002Ow-9e;
+	Mon, 02 Mar 2026 14:19:35 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <vbabka@kernel.org>) id 1vwyov-00066P-AT
- for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Mar 2026 08:40:05 +0000
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+ce5019daea4c3780914a+8226+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1vx47R-0002Oo-0N for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Mar 2026 14:19:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=e6veCh/SKJpVIoMBxewv4OAAHnUrDVHhYJ0IaoIRGlA=; b=JT5Ik6s9yEjJ+zJG8GvZ5vZ1jR
- ul5ncox0l42jVgaAGdGfcRP0HtzCAfXqtLafjqX30qBDHx7M4W4B8w8t4F3Vvx4PP3MPozoyUXwaQ
- Gt0LHY1ZyMWIwuKoTcka4KRS6WZ/fnJzvRzlhcBNTaNeXgeur4EP6PD7KMxfX6fQ4vRw=;
+ bh=olHs/EBkSlbRjwcneX6lFlR0i6BJlKrjnJjRCQNIpEw=; b=kkwxs7tvUgaKEgezM+tOxkr6Zw
+ OFwdKmRiLj28H99rPsoRjDirKFSCwR7beqOzFXN+C5vitPXq9Abl5ZqoZpcbk386vJZZLhbFQd+Pz
+ JK6p3gsTu1plbl7dWTkY7hf9O6ypjIZRSQ06MzG6XmqCGOw2Ui8EL2pWXsvAhk2h/cAc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=e6veCh/SKJpVIoMBxewv4OAAHnUrDVHhYJ0IaoIRGlA=; b=ZvA6jt+Cm3mOXcZy56V9CuweFn
- pOWRBCbSPKMHcYOXVWZvt6R9EtZUBjJTbU85aL007ymqxV5iIw8rte6tkDLAWYTXn4EBRxKimFSMi
- vTI3mgXJn3WvPUxKtHJHnX52qyycJKAg9cj/nPJA3pyRfmcHlMkOsnjM59yXqq2azxZA=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=olHs/EBkSlbRjwcneX6lFlR0i6BJlKrjnJjRCQNIpEw=; b=KtnIYB00BcjunR2wnjx9OX2PSD
+ HhaCfVKqMYgNSbajj5yb4ghrSlWW8swtKKHtm5HOZ8/kYDsD3r9zEFXB515xecA08N+b0jb9o9zgz
+ yJHih6THf+aQa4vrp27mvU9lycRq/8H2I3wIafDKiBl/EBg6x0ecOb8X61rCTliJ6CPw=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vwyou-0007MS-UI for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Mar 2026 08:40:05 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 8244840360;
- Mon,  2 Mar 2026 08:39:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE99C19423;
- Mon,  2 Mar 2026 08:39:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772440794;
- bh=IK6yz5KkVHkPj52iCRrJqonMHigRB4kCqBYdPevwYOQ=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=rR6hqX6k7Jy2Fsq/qNTQTzsicRzKK5XKCMn38lSUnx79QM1kS0YTg+FZdrPkMHhAM
- xRPvlxsCD6cQ7hnoBGUd8fKi6lPHVSYnu198wRmEaOO7qtN1DTs/uXwmUi3YCIDUCs
- HvW95YTyPNv5VrWq0kLVxiuE+I2fMO7oWMOuu/Z8PHG5PLDCFmzza5g4Mq6FdMwfwk
- 5pLAmKlWAb3GNqbbp7VGzgnzcjHDwEoI65qHQk4nXNMC4EzvWhOKLaQEKojCQX++Fo
- Nmwq8cQ95fgGX+Bpr/QA7y3zMbx0y7W8w9wHiIFn0XBXFaFsSr6yHrEcGQ7Vrx/Iul
- d2CRZOgiHQyCQ==
-Message-ID: <20df8dd1-a32c-489d-8345-085d424a2f12@kernel.org>
-Date: Mon, 2 Mar 2026 09:39:48 +0100
+ id 1vx47Q-0001TJ-Cw for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Mar 2026 14:19:32 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+ MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=olHs/EBkSlbRjwcneX6lFlR0i6BJlKrjnJjRCQNIpEw=; b=TApuq1k9pvOvmvL+kNfV9T5QgJ
+ XYl/mRKaDOQ0/oBdffoZ4OpZIWuQ+nEvqlnRH4OU1DY6j74mQ3fOgRX3eQHSjgBulhh16geGrsUBR
+ mS2ttvc3VCOIlAcuGddtd/G7E1t9UlUzzEuNyW3XZb26e8HxTZgU7F6O/A7uK4RtQU5GplPwQHcsa
+ QMAcN7P2fPWVbacmYFcF8Vg4noi94rCBBCmtjZUhdRcZvgPtostYb8n8iDsCDOVEv3Rlo1VTM9enn
+ CWp4kQBVZiazWIuRlqRut3PTyB0vPWrX+fyD2623ZKbtBC3YfmeAiFcsZ05Q37wQDwdF4W5DQZypk
+ ly+tJ/qQ==;
+Received: from [2604:3d08:797f:2840::9d5f] (helo=localhost)
+ by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+ id 1vx47J-0000000DDRg-2Ws4; Mon, 02 Mar 2026 14:19:25 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Date: Mon,  2 Mar 2026 06:18:06 -0800
+Message-ID: <20260302141922.370070-2-hch@lst.de>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260302141922.370070-1-hch@lst.de>
+References: <20260302141922.370070-1-hch@lst.de>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Qing Wang <wangqing7171@gmail.com>,
- syzbot+cae7809e9dc1459e4e63@syzkaller.appspotmail.com
-References: <698a26d3.050a0220.3b3015.007e.GAE@google.com>
- <20260302034102.3145719-1-wangqing7171@gmail.com>
-In-Reply-To: <20260302034102.3145719-1-wangqing7171@gmail.com>
-X-Headers-End: 1vwyou-0007MS-UI
-Subject: Re: [f2fs-dev] [syzbot] [mm?] [f2fs?] [exfat?] memory leak in
- __kfree_rcu_sheaf
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1vx47Q-0001TJ-Cw
+Subject: [f2fs-dev] [PATCH 01/14] ext4: initialize the write hint in
+ io_submit_init_bio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,58 +87,58 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: "Vlastimil Babka \(SUSE\) via Linux-f2fs-devel"
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: "Vlastimil Babka \(SUSE\)" <vbabka@kernel.org>
-Cc: lorenzo.stoakes@oracle.com, jannh@google.com,
- syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
- Liam.Howlett@oracle.com, linux-f2fs-devel@lists.sourceforge.net,
- linux-mm@kvack.org, Harry Yoo <harry.yoo@oracle.com>,
- Hao Li <hao.li@linux.dev>, pfalcato@suse.de, linux-fsdevel@vger.kernel.org,
- jaegeuk@kernel.org, akpm@linux-foundation.org, sj1557.seo@samsung.com,
- linkinjeon@kernel.org, vbabka@suse.cz
+Cc: Christian Brauner <brauner@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fscrypt@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
+ linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 3/2/26 04:41, Qing Wang wrote:
-> #syz test
-> 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index cdc1e652ec52..387979b89120 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -6307,15 +6307,21 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
->  			goto fail;
->  
->  		if (!local_trylock(&s->cpu_sheaves->lock)) {
-> -			barn_put_empty_sheaf(barn, empty);
-> +			if (barn && data_race(barn->nr_empty) < MAX_EMPTY_SHEAVES)
-> +				barn_put_empty_sheaf(barn, empty);
-> +			else
-> +				free_empty_sheaf(s, empty);
->  			goto fail;
->  		}
->  
->  		pcs = this_cpu_ptr(s->cpu_sheaves);
->  
-> -		if (unlikely(pcs->rcu_free))
-> -			barn_put_empty_sheaf(barn, empty);
-> -		else
-> +		if (unlikely(pcs->rcu_free)) {
-> +			if (barn && data_race(barn->nr_empty) < MAX_EMPTY_SHEAVES)
-> +				barn_put_empty_sheaf(barn, empty);
-> +			else
-> +				free_empty_sheaf(s, empty);
-> +		} else
->  			pcs->rcu_free = empty;
->  	}
+Make io_submit_init_bio complete by also initializing the write hint.
 
-I don't think this would fix any leak, and syzbot agrees. It would limit the
-empty sheaves in barn more strictly, but they are not leaked.
-Hm I don't see any leak in __kfree_rcu_sheaf() or rcu_free_sheaf(). Wonder
-if kmemleak lacks visibility into barns or pcs's as roots for searching what
-objects are considered referenced, or something?
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/ext4/page-io.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+index a8c95eee91b7..b8cf9f6f9e0b 100644
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -416,6 +416,7 @@ void ext4_io_submit_init(struct ext4_io_submit *io,
+ }
+ 
+ static void io_submit_init_bio(struct ext4_io_submit *io,
++			       struct inode *inode,
+ 			       struct buffer_head *bh)
+ {
+ 	struct bio *bio;
+@@ -429,6 +430,7 @@ static void io_submit_init_bio(struct ext4_io_submit *io,
+ 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+ 	bio->bi_end_io = ext4_end_bio;
+ 	bio->bi_private = ext4_get_io_end(io->io_end);
++	bio->bi_write_hint = inode->i_write_hint;
+ 	io->io_bio = bio;
+ 	io->io_next_block = bh->b_blocknr;
+ 	wbc_init_bio(io->io_wbc, bio);
+@@ -445,10 +447,8 @@ static void io_submit_add_bh(struct ext4_io_submit *io,
+ submit_and_retry:
+ 		ext4_io_submit(io);
+ 	}
+-	if (io->io_bio == NULL) {
+-		io_submit_init_bio(io, bh);
+-		io->io_bio->bi_write_hint = inode->i_write_hint;
+-	}
++	if (io->io_bio == NULL)
++		io_submit_init_bio(io, inode, bh);
+ 	if (!bio_add_folio(io->io_bio, io_folio, bh->b_size, bh_offset(bh)))
+ 		goto submit_and_retry;
+ 	wbc_account_cgroup_owner(io->io_wbc, folio, bh->b_size);
+-- 
+2.47.3
+
 
 
 _______________________________________________
