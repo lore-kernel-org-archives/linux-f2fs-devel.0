@@ -4,108 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D3809D58E46
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Mar 2026 01:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 08F6ED58E49
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Mar 2026 03:41:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=NPcXDHjKBaYce1jix+rqZQRaiIQaZ1/slE1Hy+EeiM8=; b=j48wjncRbNCV7s+PoNcYVIBA4y
-	iM4kZRbJLD/S3raw3v7lH4U0mfkZdOv1ajzYwaz6KXCGYl7ploxAqAQYmADB0vhzU4Gwf7TPwqCx3
-	N//Ozl0Fl0gttxyJAGA0twmsmlKW8yLjXsdI1/IjIAaMzbayvxRBjv1Hpg3abfO6lZZA=;
+	bh=xTY3DCQq/I4hpO+br1wUeqnUI7EZBaFhSrQCLe1RpXA=; b=RkbNK2+r1ktbT/0Nqgj1obJuf5
+	91tA1n0cdRPYLbWmngiCG9LQPMAFbAcZai+vXqIIMB3UDrBS3LABFDvpRaoj38zvzaXi5n6wQiOx2
+	G5xc9uv+vVVb3r0ztAK9z19/YcxKjvXCaaMcxiXZJIKsic6NffXWyAKu8rJUmz+voqTA=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vws8Z-0003Z7-Is;
-	Mon, 02 Mar 2026 01:31:55 +0000
+	id 1vwu9o-0006FS-0g;
+	Mon, 02 Mar 2026 03:41:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <groeck7@gmail.com>) id 1vws8Y-0003Yy-2d
+ (envelope-from <wangqing7171@gmail.com>) id 1vwu9m-0006FK-GY
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Mar 2026 01:31:54 +0000
+ Mon, 02 Mar 2026 03:41:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JhT7v1knXpowQqINe8+iC2+D+BfLyaTKev86LOr75FU=; b=D41/NRbtvg/N/dM38SYlQK7QdV
- ayfTqKmRrV3kHpj3poqsIwHvBnBLrLGrkg16awJxyjudvkzoMgRSAj6AZObrIdEBEDaJNkgbcEzqY
- z6B1AsXGM1ZnR49oSoN/Z8BGMLVrTkcW0p/K32KYXjphIYKc+K3clIgY0emAm4oZHOEU=;
+ bh=VnRkT2AhttnAXKxBGtLqNZYa9ovtnVLLt5dqgljoP2A=; b=Z3MXEuYaLjOgoZ0IawuzdcZcTL
+ X3umS9pDlR0JNbKLRI019wLwvDuoDS2JbLpcvxmvO5t6uzL9ioIx3QB9y7Y3tW7iLsG6K75DFSHRJ
+ azxq6k8ZtBYOPoehGulVlFi18WnAq1IHZIUS6v/KiwTQiYs0fqxerAdA5y52BAsxHkaI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=JhT7v1knXpowQqINe8+iC2+D+BfLyaTKev86LOr75FU=; b=DU4KNK5QFk9phGHSq0dtVWPg/z
- RiWb0mdvHoDYiHMVWC5Tu5gz6as9IzMCj2H+QrH4w5wmOPksrRyXgjd/Q+fKc9HVYIdPWWhrVdidq
- PwW1s20Zb/OZiJ50PvHOOdhU5HhMNAv5nNHwx2sqeX7xAoSxTu4/0SHEPY8OgCvFnYTc=;
-Received: from mail-dl1-f41.google.com ([74.125.82.41])
+ bh=VnRkT2AhttnAXKxBGtLqNZYa9ovtnVLLt5dqgljoP2A=; b=QDqFUgKlmhQFLY9VfKkHxd/0fD
+ 73WH0OCcF4jbcKzY+GoaKmhRVEfrcHLtX0NFzXFDF4fgTWtCowkn6ozWbjq7Kor1TpLAp3L1CaZDJ
+ vZNU/BQSougfQoQ4iBYfBsbAK49q1GrwpvlW/Dx4Ksi0ah9paeP8EXFJqZE96vJ4Po3Y=;
+Received: from mail-pf1-f194.google.com ([209.85.210.194])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vws8X-0007dI-I4 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Mar 2026 01:31:54 +0000
-Received: by mail-dl1-f41.google.com with SMTP id
- a92af1059eb24-1274204434bso3306916c88.1
+ id 1vwu9m-0003SR-6u for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Mar 2026 03:41:18 +0000
+Received: by mail-pf1-f194.google.com with SMTP id
+ d2e1a72fcca58-82742aa5a3eso1738262b3a.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 01 Mar 2026 17:31:53 -0800 (PST)
+ Sun, 01 Mar 2026 19:41:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1772415103; x=1773019903; darn=lists.sourceforge.net;
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
- :reply-to; bh=JhT7v1knXpowQqINe8+iC2+D+BfLyaTKev86LOr75FU=;
- b=CZhMkAOAXcD2H4a52vt+L7QtfJyefgqJf2fdEIp+oQvFn6UpZlUovNhsZJRigLLGi+
- If9fFctJOSLgxSEV6Nuk2Kfk/JgbrWaKaTxWz3DXNNG6QHWPth7ANKpOpYc0SZfRwNyz
- Kt9l1TVUUWShDesvQlUcpXdceJstfkNebSquRDsg0vDIQ/970n8YVJXe5b2a5ikkXQ43
- ZK2kBsCwMLUPSYqtipQ1m1Em7/J4HVQGUnq9ojIVPVK6H/IHr+MT0jRPYbhDqiN2LC/1
- AEXv7hNDlKyuKn8iNTiBrp8d2m2LNwdxSyVkFGx1l6UdDsf6DExtbcqEWUkQu/QRR0Tm
- XtJA==
+ d=gmail.com; s=20230601; t=1772422872; x=1773027672; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=VnRkT2AhttnAXKxBGtLqNZYa9ovtnVLLt5dqgljoP2A=;
+ b=U2nYyF2im6D+Q7aN1fmV4K8pYityshhUTHzXBs88xVC8uZuSt+MCiB9oiWMdYTpGqP
+ yL0Xh7WWHjjiyTxVrOW0Z5PJVUrQDi/LdbozECIEkXopeWMYgLDHgCSSy41SIvB7Qc9g
+ rItyFhBa6WlwNIGAmFc2YX8oTlHW24w4CzuF+hdpoirKPAqrUZtkTIxeW3DcjZWMSlKT
+ j/yGyjbpII2uBQO4OJ8gXOl11c8uv5vkiyFCnodgI6jFCfYmmPEv1woDW4tv5uuhTtfF
+ cxoBFMgip6iChMaWw+eX/S1TrJrTU6SzclwOXZxsfGhqvgnHv2avZlmVpYoPLtIDm745
+ 7pHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772415103; x=1773019903;
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:sender:x-gm-gg:x-gm-message-state:from:to
- :cc:subject:date:message-id:reply-to;
- bh=JhT7v1knXpowQqINe8+iC2+D+BfLyaTKev86LOr75FU=;
- b=F13hWnY2z+Ur58HNn/p25dXNhfubrdCJbTSPmMsaWQBvMsWGoeW8e+zYGKjpfj41C0
- uk0JFoglrIJHH4tBfAMsLee5TkB01ZqoebNxSYeKPbPLfbohPlRMTgTcVedAgoUdrLS9
- xd0Nkfxw5h5DzSuxyQOeEpo0MjedKX+R+UX2JKYT6LL8b4Iq1yc4dywsO1SD00FnjGq4
- IdXrjWp40RP9VyRCAxvORpOFfrPGhJQA4xuoQC0mMAjqRazd7b5/SeNxaCi5N3DxZFAU
- DmCYQDiPl5RAgFvv0Bs8YWAkpxaOPmIDUJYjd+ZUjNfz12axJDWHFiWHVZ3X/qG+nH0f
- 3Nuw==
+ d=1e100.net; s=20230601; t=1772422872; x=1773027672;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=VnRkT2AhttnAXKxBGtLqNZYa9ovtnVLLt5dqgljoP2A=;
+ b=cuRzqzGqDufWa2i7oREzhgE+CZHyezks2fezsx//YRuX+eWxtPuIO0CvNhf+tnAlcM
+ 7tL6/hnNGTUFZEa9ivDdvSECZ4iPq+mTiBjJ+Behak/LaUYswOpkQYrfT8nKWqPPdgIJ
+ 3vbrbQRhJvtCEdp+lKt0Ju9QoZFZ3TVjeAgFakCrPAy/OkLw0pVl2T5HjHMPZEM2Sz6/
+ YM5uBjZHq8Fseo+FgElcOvpvb4m11Nh6D8VwLHE5Ja4BbNhlMcOCLRjrWzZwhT+EMKpN
+ 6JIj6IOiWD1EsOSm3CASPnrn3/nylHWl1mWSGl48JytUA7hgOcdbrND/vCbVgcdQgfGx
+ xMfA==
 X-Forwarded-Encrypted: i=1;
- AJvYcCX8WyNOjHKSMLaZjCnU4ZgYq2ay7bnvRWt8KX+7r2PlTo6A15gVJZ4nTT/v7WO+0kWXwieeGO/o8mFN2RIUJtKA@lists.sourceforge.net
-X-Gm-Message-State: AOJu0Yw0d4xo/1wKDn4930gZD5GaH9lnU20xcrFbGu5wgG5k5EmvH1Xi
- rhgtOZ4ILD/3wRfAv/8WjwGoDMx0ec4Xg+JmeWK41hytQl7/CBU9vzCbAaRc1O+9
-X-Gm-Gg: ATEYQzzXCwNYqnSk0Cz07i0Tt0habL0pJjVIxsw45ZEAH/hdZAd253N+811SF9A1dJH
- 63leLuig3sDgZ+eR2p+A0qWdlEmxRogcnAssVrPOLgV5664VwTJnnc3W0hP3fsVp1yJZ9fa0nCf
- XywEjaqBJGFlEbqhZKVl+a32CsTUURbkfQBUmvjuIc0wL6yDFT7fSDnZTIOfZ7t7jeYn76NI1MG
- wXksM1psoj8Ndg6M60iJavOWXj1ou21uGuU3yGsi9o4GlP9wurwM1qYO/E0rgRYmhrbmvrJUn9y
- N65vti++8pT6kIcCc6NfKDcDOjCzVjXae/Zm3ofpZONMLPtVkBeoqAhCnPXENoz0qqSj/AYlOYo
- Ahlpp0L+chlqgqMCYBEz/28/mUUA4qlNUT0EfY1EG5ZI1zSO6Isr6ryiwXBO7spTEdGOnxHyRHR
- KHR7O4xrma9lLyP2JcPC2b8CmY3Bowio+HlyXY
-X-Received: by 2002:a05:7022:a86:b0:11d:fd41:62c8 with SMTP id
- a92af1059eb24-1278f82a1b4mr3731573c88.13.1772415102716; 
- Sun, 01 Mar 2026 17:31:42 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+ AJvYcCW0jpa9GX0UrnjxGyGnZr/mQQIXcLjJsw6ClEl9ZUm1CtIq7uRnwrjEND9rIjD8EjjNl2jZsbzMkMcF4kYk216g@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YxCvTjA5/0Q2WjUScds+DZFuckH7wqzFkIBXaHY9Nx1TXYINfmZ
+ WPMutLr/tRfDQqI6QNY7+IcNHayuXsfwQIOP2gcqPj4tCIYNw3y4a3b8
+X-Gm-Gg: ATEYQzzHQZL1GCx2n5D98eJJ8UI4jTyf68DGMZhewzI7aZgrwNe3KKrMH2VQqYDcPo1
+ /z2fHeH5lbzCcrSgRj/oIkx2CdXTKyyS98fxX7OLGvx+/tUvfhWQEN5NBh/N8bEexvfO74BkAoL
+ HZEyO4xYXU/KC/DV2moeIn8+v52zt7S8gIfCeIe/hd898lCwXDi8uGdi5qRVTw7woEsC5AZAPBX
+ 6bsbobo+cO0Gskrx5YMBiLYQYfK4tj9iwWb8a7bjZytX4VS9tnC/CY4ZY9RquXHoNoNUgKZtEsj
+ oQOUN/W6OO577RDa4ubQmHH7M9iS99Hgajli4TOn3HmME5qTkIv0OUvy1+yp13ZfwQIFvSgGD53
+ qIalUm00Upx/2wd6ey2ON5z13yskoNF5IilRusfo/Qo+V7S1HNbO29NG+1npNWiGmgeob+CbbpR
+ h9+y9dH702JbL99JcVNnVl6Zo4TC2TVx9WlmAt4/Az4H8zkwVoQQ==
+X-Received: by 2002:a05:6a00:f85:b0:81f:852b:a936 with SMTP id
+ d2e1a72fcca58-8274d9530b8mr11492201b3a.15.1772422872419; 
+ Sun, 01 Mar 2026 19:41:12 -0800 (PST)
+Received: from lima-ubuntu.hz.ali.com ([47.246.98.208])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12789a32dabsm13960926c88.11.2026.03.01.17.31.41
+ d2e1a72fcca58-82739ff34fesm10838369b3a.42.2026.03.01.19.41.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 01 Mar 2026 17:31:42 -0800 (PST)
-Date: Sun, 1 Mar 2026 17:31:40 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Chao Yu <chao@kernel.org>
-Message-ID: <f64db726-4c1d-445f-b9ca-4b1a569b6fe7@roeck-us.net>
-References: <20260107112218.1789-1-chao@kernel.org>
+ Sun, 01 Mar 2026 19:41:11 -0800 (PST)
+From: Qing Wang <wangqing7171@gmail.com>
+To: syzbot+cae7809e9dc1459e4e63@syzkaller.appspotmail.com
+Date: Mon,  2 Mar 2026 11:41:02 +0800
+Message-Id: <20260302034102.3145719-1-wangqing7171@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <698a26d3.050a0220.3b3015.007e.GAE@google.com>
+References: <698a26d3.050a0220.3b3015.007e.GAE@google.com>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260107112218.1789-1-chao@kernel.org>
-X-Headers-End: 1vws8X-0007dI-I4
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid UAF in f2fs_write_end_io()
+X-Headers-End: 1vwu9m-0003SR-6u
+Subject: Re: [f2fs-dev] [syzbot] [mm?] [f2fs?] [exfat?] memory leak in
+ __kfree_rcu_sheaf
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,105 +119,48 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: syzbot+b4444e3c972a7a124187@syzkaller.appspotmail.com, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, stable@kernel.org,
- linux-kernel@vger.kernel.org
+Cc: lorenzo.stoakes@oracle.com, jannh@google.com,
+ syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
+ Liam.Howlett@oracle.com, linux-f2fs-devel@lists.sourceforge.net,
+ linux-mm@kvack.org, pfalcato@suse.de, linux-fsdevel@vger.kernel.org,
+ jaegeuk@kernel.org, akpm@linux-foundation.org, sj1557.seo@samsung.com,
+ linkinjeon@kernel.org, vbabka@suse.cz
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi,
+#syz test
 
-On Wed, Jan 07, 2026 at 07:22:18PM +0800, Chao Yu wrote:
-> As syzbot reported an use-after-free issue in f2fs_write_end_io().
-> 
-> It is caused by below race condition:
-> 
-> loop device				umount
-> - worker_thread
->  - loop_process_work
->   - do_req_filebacked
->    - lo_rw_aio
->     - lo_rw_aio_complete
->      - blk_mq_end_request
->       - blk_update_request
->        - f2fs_write_end_io
->         - dec_page_count
->         - folio_end_writeback
-> 					- kill_f2fs_super
-> 					 - kill_block_super
-> 					  - f2fs_put_super
-> 					 : free(sbi)
->        : get_pages(, F2FS_WB_CP_DATA)
->          accessed sbi which is freed
-> 
-> In kill_f2fs_super(), we will drop all page caches of f2fs inodes before
-> call free(sbi), it guarantee that all folios should end its writeback, so
-> it should be safe to access sbi before last folio_end_writeback().
-> 
-> Let's relocate ckpt thread wakeup flow before folio_end_writeback() to
-> resolve this issue.
-> 
-> Cc: stable@kernel.org
-> Fixes: e234088758fc ("f2fs: avoid wait if IO end up when do_checkpoint for better performance")
-> Reported-by: syzbot+b4444e3c972a7a124187@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=b4444e3c972a7a124187
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/data.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index c30e69392a62..8550c964b71c 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -356,14 +356,20 @@ static void f2fs_write_end_io(struct bio *bio)
->  				folio->index != nid_of_node(folio));
->  
-
-From the code:
-
-#ifdef CONFIG_F2FS_FS_COMPRESSION
-                if (f2fs_is_compressed_page(folio)) {
-                        f2fs_compress_write_end_io(bio, folio);
-                        continue;
-                }
-#endif
-
-...
-
->  		dec_page_count(sbi, type);
-> +
-> +		/*
-> +		 * we should access sbi before folio_end_writeback() to
-> +		 * avoid racing w/ kill_f2fs_super()
-> +		 */
-> +		if (type == F2FS_WB_CP_DATA && !get_pages(sbi, type) &&
-> +				wq_has_sleeper(&sbi->cp_wait))
-> +			wake_up(&sbi->cp_wait);
-> +
-
-As the above snippet shows, the wakeup logic is now skipped for compressed
-pages, and may be skipped entirely if the last page is a compressed page.
-
-Also, givven that f2fs_compress_write_end_io() is kind of similar to the
-code below for compressed pages, does that mean that there is a similar
-potential UAF vulnerability for compressed pages in that function ?
-
-Thanks,
-Guenter
-
->  		if (f2fs_in_warm_node_list(sbi, folio))
->  			f2fs_del_fsync_node_entry(sbi, folio);
->  		folio_clear_f2fs_gcing(folio);
->  		folio_end_writeback(folio);
->  	}
-> -	if (!get_pages(sbi, F2FS_WB_CP_DATA) &&
-> -				wq_has_sleeper(&sbi->cp_wait))
-> -		wake_up(&sbi->cp_wait);
->  
->  	bio_put(bio);
->  }
+diff --git a/mm/slub.c b/mm/slub.c
+index cdc1e652ec52..387979b89120 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -6307,15 +6307,21 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
+ 			goto fail;
+ 
+ 		if (!local_trylock(&s->cpu_sheaves->lock)) {
+-			barn_put_empty_sheaf(barn, empty);
++			if (barn && data_race(barn->nr_empty) < MAX_EMPTY_SHEAVES)
++				barn_put_empty_sheaf(barn, empty);
++			else
++				free_empty_sheaf(s, empty);
+ 			goto fail;
+ 		}
+ 
+ 		pcs = this_cpu_ptr(s->cpu_sheaves);
+ 
+-		if (unlikely(pcs->rcu_free))
+-			barn_put_empty_sheaf(barn, empty);
+-		else
++		if (unlikely(pcs->rcu_free)) {
++			if (barn && data_race(barn->nr_empty) < MAX_EMPTY_SHEAVES)
++				barn_put_empty_sheaf(barn, empty);
++			else
++				free_empty_sheaf(s, empty);
++		} else
+ 			pcs->rcu_free = empty;
+ 	}
+ 
 
 
 _______________________________________________
