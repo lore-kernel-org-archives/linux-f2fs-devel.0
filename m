@@ -4,89 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C7C6FD58E4B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Mar 2026 03:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D07D9D58E7D
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Mar 2026 08:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:From:Message-ID:In-Reply-To:Date:MIME-Version:Sender:Reply-To:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:References:List-Owner;
-	bh=Uh6c6eyG4EZJHXH6FRdXk7vPEzPQOazzoHPwuuR+Jr0=; b=JDY1fI/5yZPPnZT+eQKPGnUpT0
-	SHMilZ4Swb5nK1lrid1Gi9gGA15IqX8CpSdcMEg4lNIVflOIOldIib8uFik/h3Y6lzFggEZ5m4td1
-	Pr/Pxu1QWREoTlLpD95CTaXDJ3UJtKsinFCnhx3xXDiHbQxuYyE+iluNp8X+c8iAfiY8=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=YxzEakkPrY8bp2OjsBYrnI46GtMU4c3Eo3oHd1x99SE=; b=ZARrh2CU72o6JWIkGBjDLVew6c
+	l2CXQMHzokPG7PCbBpVyCdgzWAqbxUOSKYhQvy9LaETueAtC2yC+QAjTZ2ezcA7SvCEq7BB/j1S/M
+	khs4MYnPPB7YZo9KCa/T22CxXoNyohAgwsNVNFmHcng1Ze+O24Z62fj2zN0ejZ4nLqYE=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vwuPC-0006WZ-6f;
-	Mon, 02 Mar 2026 03:57:14 +0000
+	id 1vwyox-000678-3y;
+	Mon, 02 Mar 2026 08:40:07 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <3jQqlaQkbAIo6CDyozzs5o33wr.u22uzs86s5q217s17.q20@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
- id 1vwuPB-0006WQ-1Y for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Mar 2026 03:57:13 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <vbabka@kernel.org>) id 1vwyov-00066P-AT
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Mar 2026 08:40:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:In-Reply-To
- :Date:MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JmWvfmtgAcDRz4bFImh8rJEfEmq6Cak2/bFtX09VN9Q=; b=f8zUhkulADlPrwp7tpEXalsDDU
- IbHTEyfbHjqh6gch7zMcoLYgjYJ2L7pf9sTuuY5EGJ8puulLkjUezMrA3TF/blF74sdwMX2Y8bCJV
- qxLUCC7UPUmfIXLTJ+tyx3QrUYe8RxRh5SClC9gjAQTLadwoW8vjfq0NDdFmD8pVyJ8w=;
+ bh=e6veCh/SKJpVIoMBxewv4OAAHnUrDVHhYJ0IaoIRGlA=; b=JT5Ik6s9yEjJ+zJG8GvZ5vZ1jR
+ ul5ncox0l42jVgaAGdGfcRP0HtzCAfXqtLafjqX30qBDHx7M4W4B8w8t4F3Vvx4PP3MPozoyUXwaQ
+ Gt0LHY1ZyMWIwuKoTcka4KRS6WZ/fnJzvRzlhcBNTaNeXgeur4EP6PD7KMxfX6fQ4vRw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:To:From:Subject:Message-ID:In-Reply-To:Date:MIME-Version:
- Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=JmWvfmtgAcDRz4bFImh8rJEfEmq6Cak2/bFtX09VN9Q=; b=j
- j4SYDmttuFGehz7fXWDqm18OuQnVqu53RbOZJ1V6YeNCuYE5+Cf5WRshaZ0ZWd2r9CjbItne41Qv7
- DEWKcWBsJnQvb1v+AcnUslsnlTSCKwqrDmwpkkbsgXlAd15nTmjc+/q5oPnhqxiSD76Hb8c2E16hB
- iW/YhBRyDZHD/LQw=;
-Received: from mail-oo1-f72.google.com ([209.85.161.72])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=e6veCh/SKJpVIoMBxewv4OAAHnUrDVHhYJ0IaoIRGlA=; b=ZvA6jt+Cm3mOXcZy56V9CuweFn
+ pOWRBCbSPKMHcYOXVWZvt6R9EtZUBjJTbU85aL007ymqxV5iIw8rte6tkDLAWYTXn4EBRxKimFSMi
+ vTI3mgXJn3WvPUxKtHJHnX52qyycJKAg9cj/nPJA3pyRfmcHlMkOsnjM59yXqq2azxZA=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vwuPA-00043E-C6 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Mar 2026 03:57:12 +0000
-Received: by mail-oo1-f72.google.com with SMTP id
- 006d021491bc7-679ca40278bso80368588eaf.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 01 Mar 2026 19:57:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772423822; x=1773028622;
- h=to:from:subject:message-id:in-reply-to:date:mime-version
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=JmWvfmtgAcDRz4bFImh8rJEfEmq6Cak2/bFtX09VN9Q=;
- b=GvozigjjDpLxTegjVDx+kCFvPiyxwk7pzw3WVbWN0oh1KAfY4P7CJR+P0dh+qi7RvC
- KMbZdgJsc5ruMj3F4jwCW4e3N9tK3662PHtSgwy+KasYhIlHk7jRvJi/+4sIdTgMAAAt
- IuMWvItbi7ezGal8dfIkKNvav67Rt9XKQkfGhbfYZbxJpYb2UEw6k/fdtASrP+R83F57
- KbghFOxMjsBoq0ebc4ZwyoM7Hz96MXPc4vuy4GRa4H5U6pqdIr+n8RSfXxXnCSL0Mk5x
- LB0CNWAqAsfBhdLNltQVWn5u9aXNw7+hPDlFVysYIRdRBBsvYmGNKUxo77lrJBvBDdIg
- vhbw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXUue3ZcEYVZ3OSdf3HMwbYGQsRhUnbsDpF1LS3OZiioN+MukQ5CLKS4+MaPQZIYp6dg85Z+3zTKkhvCsg0lKvM@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YyTwUfRkB0nCFyHJzAcuoHjk9lG1Y1sgdj6aTEe82EsTrm4vPov
- /k0gDmD6UOBeHUHw2INJ/pnysZZMKyALFLWjeBLF30x2cwm+vGBuI8VLlNRkjRBzdIzyk25iinA
- s/1x6opc0botMuyVV8yyJOLB18QFBJeum1/O8aLzAprf47yFSdO/35QrX4vA=
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1vwyou-0007MS-UI for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Mar 2026 08:40:05 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 8244840360;
+ Mon,  2 Mar 2026 08:39:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE99C19423;
+ Mon,  2 Mar 2026 08:39:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1772440794;
+ bh=IK6yz5KkVHkPj52iCRrJqonMHigRB4kCqBYdPevwYOQ=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=rR6hqX6k7Jy2Fsq/qNTQTzsicRzKK5XKCMn38lSUnx79QM1kS0YTg+FZdrPkMHhAM
+ xRPvlxsCD6cQ7hnoBGUd8fKi6lPHVSYnu198wRmEaOO7qtN1DTs/uXwmUi3YCIDUCs
+ HvW95YTyPNv5VrWq0kLVxiuE+I2fMO7oWMOuu/Z8PHG5PLDCFmzza5g4Mq6FdMwfwk
+ 5pLAmKlWAb3GNqbbp7VGzgnzcjHDwEoI65qHQk4nXNMC4EzvWhOKLaQEKojCQX++Fo
+ Nmwq8cQ95fgGX+Bpr/QA7y3zMbx0y7W8w9wHiIFn0XBXFaFsSr6yHrEcGQ7Vrx/Iul
+ d2CRZOgiHQyCQ==
+Message-ID: <20df8dd1-a32c-489d-8345-085d424a2f12@kernel.org>
+Date: Mon, 2 Mar 2026 09:39:48 +0100
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:418e:b0:67a:61f:646b with SMTP id
- 006d021491bc7-67a061f67bfmr3305124eaf.74.1772423821722; Sun, 01 Mar 2026
- 19:57:01 -0800 (PST)
-Date: Sun, 01 Mar 2026 19:57:01 -0800
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Qing Wang <wangqing7171@gmail.com>,
+ syzbot+cae7809e9dc1459e4e63@syzkaller.appspotmail.com
+References: <698a26d3.050a0220.3b3015.007e.GAE@google.com>
+ <20260302034102.3145719-1-wangqing7171@gmail.com>
 In-Reply-To: <20260302034102.3145719-1-wangqing7171@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69a50a8d.050a0220.3a55be.006f.GAE@google.com>
-From: syzbot <syzbot+cae7809e9dc1459e4e63@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, chao@kernel.org, jaegeuk@kernel.org, 
- jannh@google.com, liam.howlett@oracle.com, linkinjeon@kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
- pfalcato@suse.de, sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
- vbabka@suse.cz, wangqing7171@gmail.com
-X-Headers-End: 1vwuPA-00043E-C6
+X-Headers-End: 1vwyou-0007MS-UI
 Subject: Re: [f2fs-dev] [syzbot] [mm?] [f2fs?] [exfat?] memory leak in
  __kfree_rcu_sheaf
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -100,219 +89,58 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: "Vlastimil Babka \(SUSE\) via Linux-f2fs-devel"
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: "Vlastimil Babka \(SUSE\)" <vbabka@kernel.org>
+Cc: lorenzo.stoakes@oracle.com, jannh@google.com,
+ syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
+ Liam.Howlett@oracle.com, linux-f2fs-devel@lists.sourceforge.net,
+ linux-mm@kvack.org, Harry Yoo <harry.yoo@oracle.com>,
+ Hao Li <hao.li@linux.dev>, pfalcato@suse.de, linux-fsdevel@vger.kernel.org,
+ jaegeuk@kernel.org, akpm@linux-foundation.org, sj1557.seo@samsung.com,
+ linkinjeon@kernel.org, vbabka@suse.cz
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello,
+On 3/2/26 04:41, Qing Wang wrote:
+> #syz test
+> 
+> diff --git a/mm/slub.c b/mm/slub.c
+> index cdc1e652ec52..387979b89120 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -6307,15 +6307,21 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
+>  			goto fail;
+>  
+>  		if (!local_trylock(&s->cpu_sheaves->lock)) {
+> -			barn_put_empty_sheaf(barn, empty);
+> +			if (barn && data_race(barn->nr_empty) < MAX_EMPTY_SHEAVES)
+> +				barn_put_empty_sheaf(barn, empty);
+> +			else
+> +				free_empty_sheaf(s, empty);
+>  			goto fail;
+>  		}
+>  
+>  		pcs = this_cpu_ptr(s->cpu_sheaves);
+>  
+> -		if (unlikely(pcs->rcu_free))
+> -			barn_put_empty_sheaf(barn, empty);
+> -		else
+> +		if (unlikely(pcs->rcu_free)) {
+> +			if (barn && data_race(barn->nr_empty) < MAX_EMPTY_SHEAVES)
+> +				barn_put_empty_sheaf(barn, empty);
+> +			else
+> +				free_empty_sheaf(s, empty);
+> +		} else
+>  			pcs->rcu_free = empty;
+>  	}
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-memory leak in __pcs_replace_empty_main
-
-BUG: memory leak
-unreferenced object 0xffff88810005fa00 (size 512):
-  comm "swapper/0", pid 0, jiffies 4294937296
-  hex dump (first 32 bytes):
-    00 2e c5 05 81 88 ff ff 00 a2 96 0a 81 88 ff ff  ................
-    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
-  backtrace (crc ee49fed0):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4520 [inline]
-    slab_alloc_node mm/slub.c:4844 [inline]
-    __do_kmalloc_node mm/slub.c:5237 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5250
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    alloc_full_sheaf mm/slub.c:2834 [inline]
-    __pcs_replace_empty_main+0x1e4/0x260 mm/slub.c:4602
-    alloc_from_pcs mm/slub.c:4695 [inline]
-    slab_alloc_node mm/slub.c:4829 [inline]
-    __kmalloc_cache_noprof+0x3ac/0x480 mm/slub.c:5353
-    kmalloc_noprof include/linux/slab.h:950 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __irq_domain_alloc_fwnode+0x37/0x140 kernel/irq/irqdomain.c:95
-    irq_domain_alloc_named_fwnode include/linux/irqdomain.h:271 [inline]
-    arch_early_irq_init+0x1c/0x70 arch/x86/kernel/apic/vector.c:803
-    start_kernel+0x931/0xb80 init/main.c:1114
-    x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:310
-    x86_64_start_kernel+0xce/0xd0 arch/x86/kernel/head64.c:291
-    common_startup_64+0x13e/0x148
-
-BUG: memory leak
-unreferenced object 0xffff8881008f8c00 (size 512):
-  comm "kthreadd", pid 2, jiffies 4294937339
-  hex dump (first 32 bytes):
-    00 d6 04 00 81 88 ff ff 00 92 96 0a 81 88 ff ff  ................
-    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
-  backtrace (crc f2ef5290):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4520 [inline]
-    slab_alloc_node mm/slub.c:4844 [inline]
-    __do_kmalloc_node mm/slub.c:5237 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5250
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    alloc_full_sheaf mm/slub.c:2834 [inline]
-    __pcs_replace_empty_main+0x1e4/0x260 mm/slub.c:4602
-    alloc_from_pcs mm/slub.c:4695 [inline]
-    slab_alloc_node mm/slub.c:4829 [inline]
-    __kmalloc_cache_node_noprof+0x3ef/0x4e0 mm/slub.c:5366
-    kmalloc_node_noprof include/linux/slab.h:1077 [inline]
-    __get_vm_area_node+0xc6/0x1d0 mm/vmalloc.c:3221
-    __vmalloc_node_range_noprof+0x1d3/0xe50 mm/vmalloc.c:4024
-    __vmalloc_node_noprof+0x71/0x90 mm/vmalloc.c:4124
-    alloc_thread_stack_node kernel/fork.c:355 [inline]
-    dup_task_struct kernel/fork.c:924 [inline]
-    copy_process+0x3e5/0x28c0 kernel/fork.c:2050
-    kernel_clone+0xac/0x6e0 kernel/fork.c:2654
-    kernel_thread+0x80/0xb0 kernel/fork.c:2715
-    create_kthread kernel/kthread.c:490 [inline]
-    kthreadd+0x186/0x250 kernel/kthread.c:848
-    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-BUG: memory leak
-unreferenced object 0xffff888105c53200 (size 512):
-  comm "kworker/1:0", pid 23, jiffies 4294937917
-  hex dump (first 32 bytes):
-    00 a2 96 0a 81 88 ff ff 00 d4 04 00 81 88 ff ff  ................
-    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
-  backtrace (crc d24dd055):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4520 [inline]
-    slab_alloc_node mm/slub.c:4844 [inline]
-    __do_kmalloc_node mm/slub.c:5237 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5250
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    __pcs_replace_full_main+0xe9/0x2c0 mm/slub.c:5700
-    free_to_pcs mm/slub.c:5753 [inline]
-    slab_free mm/slub.c:6154 [inline]
-    kfree+0x352/0x390 mm/slub.c:6467
-    vfree.part.0+0x1d5/0x4d0 mm/vmalloc.c:3485
-    vfree mm/vmalloc.c:3456 [inline]
-    delayed_vfree_work+0x5b/0x90 mm/vmalloc.c:3398
-    process_one_work+0x26c/0x5d0 kernel/workqueue.c:3275
-    process_scheduled_works kernel/workqueue.c:3358 [inline]
-    worker_thread+0x243/0x490 kernel/workqueue.c:3439
-    kthread+0x14e/0x1a0 kernel/kthread.c:467
-    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-BUG: memory leak
-unreferenced object 0xffff888105c52e00 (size 512):
-  comm "kworker/u8:5", pid 4440, jiffies 4294937918
-  hex dump (first 32 bytes):
-    c8 2c 04 00 81 88 ff ff 00 fa 05 00 81 88 ff ff  .,..............
-    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
-  backtrace (crc a68b63de):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4520 [inline]
-    slab_alloc_node mm/slub.c:4844 [inline]
-    __do_kmalloc_node mm/slub.c:5237 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5250
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    __pcs_replace_full_main+0xe9/0x2c0 mm/slub.c:5700
-    free_to_pcs mm/slub.c:5753 [inline]
-    slab_free mm/slub.c:6154 [inline]
-    kfree+0x352/0x390 mm/slub.c:6467
-    call_usermodehelper_freeinfo kernel/umh.c:43 [inline]
-    umh_complete kernel/umh.c:57 [inline]
-    call_usermodehelper_exec_async+0x1c7/0x1f0 kernel/umh.c:119
-    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-BUG: memory leak
-unreferenced object 0xffff88810a96a200 (size 512):
-  comm "udevadm", pid 5177, jiffies 4294938175
-  hex dump (first 32 bytes):
-    00 fa 05 00 81 88 ff ff 00 32 c5 05 81 88 ff ff  .........2......
-    00 12 04 00 81 88 ff ff 3c 00 00 00 00 00 00 00  ........<.......
-  backtrace (crc 94107438):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4520 [inline]
-    slab_alloc_node mm/slub.c:4844 [inline]
-    __do_kmalloc_node mm/slub.c:5237 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5250
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    alloc_full_sheaf mm/slub.c:2834 [inline]
-    __pcs_replace_empty_main+0x1e4/0x260 mm/slub.c:4602
-    alloc_from_pcs mm/slub.c:4695 [inline]
-    slab_alloc_node mm/slub.c:4829 [inline]
-    __kmalloc_cache_noprof+0x3ac/0x480 mm/slub.c:5353
-    kmalloc_noprof include/linux/slab.h:950 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    kernfs_get_open_node fs/kernfs/file.c:543 [inline]
-    kernfs_fop_open+0x4f3/0x580 fs/kernfs/file.c:718
-    do_dentry_open+0x202/0x8d0 fs/open.c:949
-    vfs_open+0x3d/0x1b0 fs/open.c:1081
-    do_open fs/namei.c:4671 [inline]
-    path_openat+0x154d/0x1e20 fs/namei.c:4830
-    do_file_open+0x121/0x200 fs/namei.c:4859
-    do_sys_openat2+0xa5/0x140 fs/open.c:1366
-    do_sys_open fs/open.c:1372 [inline]
-    __do_sys_openat fs/open.c:1388 [inline]
-    __se_sys_openat fs/open.c:1383 [inline]
-    __x64_sys_openat+0x82/0xf0 fs/open.c:1383
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xe2/0xf80 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-BUG: memory leak
-unreferenced object 0xffff888109d58400 (size 512):
-  comm "udevd", pid 5176, jiffies 4294938222
-  hex dump (first 32 bytes):
-    00 12 47 2a 81 88 ff ff 00 ee 46 2a 81 88 ff ff  ..G*......F*....
-    00 12 04 00 81 88 ff ff 00 00 00 00 00 00 00 00  ................
-  backtrace (crc af8b5cec):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4520 [inline]
-    slab_alloc_node mm/slub.c:4844 [inline]
-    __do_kmalloc_node mm/slub.c:5237 [inline]
-    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5250
-    kmalloc_noprof include/linux/slab.h:954 [inline]
-    kzalloc_noprof include/linux/slab.h:1188 [inline]
-    __alloc_empty_sheaf+0x35/0x50 mm/slub.c:2771
-    alloc_empty_sheaf mm/slub.c:2786 [inline]
-    __kfree_rcu_sheaf+0x164/0x240 mm/slub.c:5887
-    kfree_rcu_sheaf mm/slab_common.c:1608 [inline]
-    kvfree_call_rcu+0x1f6/0x3c0 mm/slab_common.c:1957
-    kernfs_unlink_open_file+0x194/0x1b0 fs/kernfs/file.c:604
-    kernfs_fop_release+0x55/0x110 fs/kernfs/file.c:783
-    __fput+0x1b5/0x4f0 fs/file_table.c:469
-    fput_close_sync+0x67/0x120 fs/file_table.c:574
-    __do_sys_close fs/open.c:1509 [inline]
-    __se_sys_close fs/open.c:1494 [inline]
-    __x64_sys_close+0x4a/0xc0 fs/open.c:1494
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xe2/0xf80 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
-
-
-Tested on:
-
-commit:         11439c46 Linux 7.0-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1277a202580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2c6ad6fefffa76b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=cae7809e9dc1459e4e63
-compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13801006580000
-
+I don't think this would fix any leak, and syzbot agrees. It would limit the
+empty sheaves in barn more strictly, but they are not leaked.
+Hm I don't see any leak in __kfree_rcu_sheaf() or rcu_free_sheaf(). Wonder
+if kmemleak lacks visibility into barns or pcs's as roots for searching what
+objects are considered referenced, or something?
 
 
 _______________________________________________
