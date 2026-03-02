@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 19CB6EA4E0D
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Mar 2026 14:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2D3A8EA4E0B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Mar 2026 14:19:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=6hXny1585FwmpVqKj0UmQ582Anr2/yxhxZWFKKutcQc=; b=dpqjT9SplKUzgwuyeYZbB14Qyq
-	LLRpX+PGyf2B5XhRj9+Ucn1eIn5Z2KhMHF1U+plUYZFDyLT9urlRsgRMVohh1Fx0cROjj4HCohy70
-	3EvdoeUNmbPeoA9ZjjtBM30arLes/NCX+pzPMsopefdzXU3JKQxGB1QVzDXO/Jrc7OUs=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=DHDtaYe4C18lAb7qKnhkFGUzSu3R4x1JKBN9KlGlypM=; b=SOWgn6v3A5mcHs5+QdCV3I/E4d
+	XF9K+CNxtTzqc00GPPDgfOGKmDVpNDZdrM4FJBpD95/uGA7sbnLA9Lyg8yrOzkA5HEsqy47o81Adq
+	osuyw6fimRg/Taiplr9jIXCPjIR8tidkqVjdQ++L4kAPxnl1hVbTU2KJKIqc03zuuifY=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vx47V-0005ux-VX;
-	Mon, 02 Mar 2026 14:19:38 +0000
+	id 1vx47Y-0002Fl-RC;
+	Mon, 02 Mar 2026 14:19:40 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+ce5019daea4c3780914a+8226+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1vx47U-0005uh-Bv for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Mar 2026 14:19:37 +0000
+ id 1vx47X-0002Ff-2D for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Mar 2026 14:19:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=prullTp9LHQrqh8Xt6O1yFS0g5pZcBygbWXiKMvvhew=; b=KTjActa1mM+z0mv5fcizV6dA2a
- Qh1IqI93XchKUURBZ1Ng2rzsriUxPUWxJr1Y3yYTLqAS2dt4JlEJMUzN7JW0zFTSZTdg/iyf2EIrX
- 7NqpIun6ePQe98/veNbr5xX96evuUmM19ZFa74b+k3028ibiTf1jRVVeCg10u9/Wbljc=;
+ bh=dyk1509rfcvr1/bUzEnCUHnbGvw79uAFdkbY5OpbSbc=; b=O198JM5jK3HC3iA9jGBQ4SGm84
+ 4ZKbf+A2wcjuEe7z8T2mcX4ts0pn9Yl139GGr+kjfWYb+knL2kRIeKCBVELP3nr2/kGV4Hk7AN4ZL
+ EoP9EFWqjjyAqt5xc61N9kaRoEyYXVj0M6WPzbkO2mzEbnUqMlAkF+JXrepJgzOykgdk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=prullTp9LHQrqh8Xt6O1yFS0g5pZcBygbWXiKMvvhew=; b=T1/k+sL/6FB4QdT4jbVDqXh7mg
- QMIlpvq7pPMuV1Ly7hwa2o2YRCLFJBwSI/TcpwldfJHqf9opMU+qmjTsgro8LU2VbLV2b1viZj0QZ
- 7lc5g5aIEwH5r4wjajlrs4X4ip90UGvtVJhD3Kf/TePUI2Y47Dz6vEGdHRp5skauylIk=;
+ bh=dyk1509rfcvr1/bUzEnCUHnbGvw79uAFdkbY5OpbSbc=; b=AsXqHnwDDXtM555NQhPjwb/3We
+ Uvxp4jjWu83XVUrrP8XB9QnlrqjjmjJNVb0upwl8kqzXjStXj4TXmGzKwugUfHZuzO0LH5Jd0XOkS
+ sWkkYRr+luHhTzLsggmfCtbulCpkShmi6fVnbZguLD49/AdXodgXunjKaArabeij07b8=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vx47U-0001TR-N1 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 02 Mar 2026 14:19:37 +0000
+ id 1vx47W-0001Tc-L4 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 02 Mar 2026 14:19:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=prullTp9LHQrqh8Xt6O1yFS0g5pZcBygbWXiKMvvhew=; b=FMlOqcPqVjecSD8em2VRwNK20W
- n/teCXxTJdwJtTvATkIzt2dsoGG2TdG+x72oBViP/oQ7qw829p+YaTBj67io4mICxgllIZFO9tLx4
- 9DmW83YkAN+FQOGIy71pUUe2K4hF11U/PpvfeQdJMn0/gsOcvxWKHQb0hMtXiEpfLz6FZHf4YMBPX
- NhxfNAS/zGR8O6E7P8dSwhEkIr/wx3DmGICjP/OTVtRPl6c4D6mYmwGRmapu3uD7aEDgch3Zrb1rJ
- Clht9D6ZQrWrAOpykmwUFEyZOiVJbOC62PzocZHTFp+CDnxqnA03D69jvm09Xfpf8m3z/qCzedudy
- D5n6VcRA==;
+ bh=dyk1509rfcvr1/bUzEnCUHnbGvw79uAFdkbY5OpbSbc=; b=TWuabgNQod72mWav+2HeM7yr6b
+ CcOnMnWbgXwPCiQ20aPDsL46Z+u5obJZ1kIMxJcrRpUY/VFtyj3WkJcngxlFYn66cHbqY6MdvNHnh
+ Ty5rAiD9jZmMr7gsh7biJUDFKHZuUTeIN6+tRKSwY8act3tsPU/9kTWfCSBGWuX9vnhWW14UrayJx
+ hjXTDqLORZvwD2TVe9FzerBcjeA9mwNVbkZ70GY5ZtJc/fJrmj7ZOCysD10ykjFSXxkXfe/eE/3Q6
+ QfMhvT11RegxHWOzUmkx6wuYapTsMjtaf1QYlORVRZwLCCFsd5/GS52IdzqCP/1LdkVCM/CKVx5Oj
+ 7kPpnEZg==;
 Received: from [2604:3d08:797f:2840::9d5f] (helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
- id 1vx47O-0000000DDSc-2lI3; Mon, 02 Mar 2026 14:19:30 +0000
+ id 1vx47L-0000000DDRy-2fEm; Mon, 02 Mar 2026 14:19:27 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
-Date: Mon,  2 Mar 2026 06:18:11 -0800
-Message-ID: <20260302141922.370070-7-hch@lst.de>
+Date: Mon,  2 Mar 2026 06:18:08 -0800
+Message-ID: <20260302141922.370070-4-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260302141922.370070-1-hch@lst.de>
 References: <20260302141922.370070-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1vx47U-0001TR-N1
-Subject: [f2fs-dev] [PATCH 06/14] fscrypt: pass a byte offset to
- fscrypt_generate_dun
+X-Headers-End: 1vx47W-0001Tc-L4
+Subject: [f2fs-dev] [PATCH 03/14] ext4: factor out a io_submit_need_new_bio
+ helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,85 +96,44 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Logical offsets into an inode are usually expressed as bytes in the VFS.
-Switch fscrypt_generate_dun to that convention and remove the
-ci_data_units_per_block_bits member in struct fscrypt_inode_info that
-was only used to cache the DUN shift based on the logical block size
-granularity.
+Factor out a helper to prepare for making this logic a bit more
+complex in the next commit.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/crypto/fscrypt_private.h |  3 ---
- fs/crypto/inline_crypt.c    | 10 ++++------
- fs/crypto/keysetup.c        |  2 --
- 3 files changed, 4 insertions(+), 11 deletions(-)
+ fs/ext4/page-io.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index 4e8e82a9ccf9..8d3c278a7591 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -278,9 +278,6 @@ struct fscrypt_inode_info {
- 	 */
- 	u8 ci_data_unit_bits;
+diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+index c5ca99b33c26..58cdbd836fd6 100644
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -439,14 +439,23 @@ static void io_submit_init_bio(struct ext4_io_submit *io,
+ 	wbc_init_bio(io->io_wbc, bio);
+ }
  
--	/* Cached value: log2 of number of data units per FS block */
--	u8 ci_data_units_per_block_bits;
--
- 	/* Hashed inode number.  Only set for IV_INO_LBLK_32 */
- 	u32 ci_hashed_ino;
- 
-diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
-index 702d13d138aa..5279565e9846 100644
---- a/fs/crypto/inline_crypt.c
-+++ b/fs/crypto/inline_crypt.c
-@@ -268,14 +268,12 @@ bool __fscrypt_inode_uses_inline_crypto(const struct inode *inode)
- EXPORT_SYMBOL_GPL(__fscrypt_inode_uses_inline_crypto);
- 
- static void fscrypt_generate_dun(const struct fscrypt_inode_info *ci,
--				 u64 lblk_num,
--				 u64 dun[BLK_CRYPTO_DUN_ARRAY_SIZE])
-+				 loff_t pos, u64 dun[BLK_CRYPTO_DUN_ARRAY_SIZE])
++static bool io_submit_need_new_bio(struct ext4_io_submit *io,
++				   struct buffer_head *bh)
++{
++	if (bh->b_blocknr != io->io_next_block)
++		return true;
++	if (!fscrypt_mergeable_bio_bh(io->io_bio, bh))
++		return true;
++	return false;
++}
++
+ static void io_submit_add_bh(struct ext4_io_submit *io,
+ 			     struct inode *inode,
+ 			     struct folio *folio,
+ 			     struct folio *io_folio,
+ 			     struct buffer_head *bh)
  {
--	u64 index = lblk_num << ci->ci_data_units_per_block_bits;
- 	union fscrypt_iv iv;
- 	int i;
- 
--	fscrypt_generate_iv(&iv, index, ci);
-+	fscrypt_generate_iv(&iv, pos >> ci->ci_data_unit_bits, ci);
- 
- 	BUILD_BUG_ON(FSCRYPT_MAX_IV_SIZE > BLK_CRYPTO_MAX_IV_SIZE);
- 	memset(dun, 0, BLK_CRYPTO_MAX_IV_SIZE);
-@@ -309,7 +307,7 @@ void fscrypt_set_bio_crypt_ctx(struct bio *bio, const struct inode *inode,
- 		return;
- 	ci = fscrypt_get_inode_info_raw(inode);
- 
--	fscrypt_generate_dun(ci, first_lblk, dun);
-+	fscrypt_generate_dun(ci, first_lblk << inode->i_blkbits, dun);
- 	bio_crypt_set_ctx(bio, ci->ci_enc_key.blk_key, dun, gfp_mask);
- }
- EXPORT_SYMBOL_GPL(fscrypt_set_bio_crypt_ctx);
-@@ -356,7 +354,7 @@ bool fscrypt_mergeable_bio(struct bio *bio, const struct inode *inode,
- 	if (bc->bc_key != ci->ci_enc_key.blk_key)
- 		return false;
- 
--	fscrypt_generate_dun(ci, next_lblk, next_dun);
-+	fscrypt_generate_dun(ci, next_lblk << inode->i_blkbits, next_dun);
- 	return bio_crypt_dun_is_contiguous(bc, bio->bi_iter.bi_size, next_dun);
- }
- EXPORT_SYMBOL_GPL(fscrypt_mergeable_bio);
-diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-index 40fa05688d3a..d83257e9945e 100644
---- a/fs/crypto/keysetup.c
-+++ b/fs/crypto/keysetup.c
-@@ -609,8 +609,6 @@ fscrypt_setup_encryption_info(struct inode *inode,
- 
- 	crypt_info->ci_data_unit_bits =
- 		fscrypt_policy_du_bits(&crypt_info->ci_policy, inode);
--	crypt_info->ci_data_units_per_block_bits =
--		inode->i_blkbits - crypt_info->ci_data_unit_bits;
- 
- 	res = setup_file_encryption_key(crypt_info, need_dirhash_key, &mk);
- 	if (res)
+-	if (io->io_bio && (bh->b_blocknr != io->io_next_block ||
+-			   !fscrypt_mergeable_bio_bh(io->io_bio, bh))) {
++	if (io->io_bio && io_submit_need_new_bio(io, bh)) {
+ submit_and_retry:
+ 		ext4_io_submit(io);
+ 	}
 -- 
 2.47.3
 
