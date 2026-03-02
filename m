@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DA39DEB3633
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Mar 2026 20:51:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ED1A4EB362C
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  2 Mar 2026 20:55:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Message-Id:
 	MIME-Version:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=EpkFAfco6BA59MZAeCTzgi2Knjf6eH0YK9vm6Hwl03M=; b=WPQ5TWuNHO62eIPn3UtFloF6Ht
-	J4XydOPn2Id0+6VbB6Q45GLKUyZJZhnbI3M6RAmzns4wDJKx10opuJXnHj/u/SkXJooWcnvgYfF1X
-	eognHNQ0byXopFylX6V/MDiygdACH87am0oHp6BFKKwSNNnsQi54wEyb0swsGNZi0Gb4=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=K0GKPTfG7p69lgDX2f+z1jVLyCZV3rLA2M7sMOT8V8I=; b=XN2Y2tcHEeCp+EbcI2Kt4P2t3O
+	7hdd10EMiiZjkWVXHtJmbGEpjJSne+a1J97TSwKfrxcpyitB51f0JgU9Ki1pz7OsO+RWinqp3h/wq
+	dz5HuEYojWUWgahWiuZ2ZyFqJse1UIVq+S6rWiv4SMof4rTKSZYn03V3BNlXUmIFe0AA=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxAEv-0004Gp-HO;
-	Mon, 02 Mar 2026 20:51:41 +0000
+	id 1vxAIs-0004BD-JA;
+	Mon, 02 Mar 2026 20:55:46 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jlayton@kernel.org>) id 1vxAEt-0004GO-Ks;
- Mon, 02 Mar 2026 20:51:39 +0000
+ (envelope-from <jlayton@kernel.org>) id 1vxAIr-0004Au-2U;
+ Mon, 02 Mar 2026 20:55:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Message-Id:
  Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9JquwjMd7atCc+mVCKtunlkwPlGoSrLg7WB1xfco2yI=; b=PyRMf6hHssfUCdyGhZSpPibiSl
- nX6QlV4nfm0T+J8iS0HrPdoa/zEneP0avkYdkjJ243gwxBlma3/CnF+edbCIxXCyn16WPp6MMdiU3
- pPM8vFFB0k9RI+2ZlkiBwBX9bNIjTJSHv/5cKBEmY5F+5Kv0OIfxv5/+pGqeDmdp7MYs=;
+ bh=4x8Ajv+557L1GX0Efh1pGl/bCZw/7YI5SnocHg7l4MM=; b=atuPNf3GGbh4LizKlE6CD1F70Z
+ MQuZJmsrd35Z9guN27azk2t895FfPXp9heD+Tbyabe2gLmx5Tu6SMhN+37cq4krf+kCPly83s2RyQ
+ F08MNsbNW6iJSFl8iKl7ku22moo5M7DCMexWPfMK6sa5pASWDVZdOq4alS7F9G09zPRA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
@@ -41,31 +41,31 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9JquwjMd7atCc+mVCKtunlkwPlGoSrLg7WB1xfco2yI=; b=F9FHoJYGBiuHJEJoOOR785/Uzy
- Ss6nfoEgLdUHcMFsKxWdK+M8BWc7b+kYHz/cCNh82AdNvyJsroSAGdlrlOUmR33J3rCtJ1uPpNMZt
- 0VsqaiXtIuTdSVKMbO4wuAARxPGsmQ4YtbchHnms3hrjm58ZWuL9cCXT9QsB2cBUQ87I=;
+ bh=4x8Ajv+557L1GX0Efh1pGl/bCZw/7YI5SnocHg7l4MM=; b=CYxYsmW4rWpus+4SywirjpYltD
+ I1xfuaZKKdeZ3pjN/ycQ8anchu1xoZRt53xP6kWkQJM4tIfi42K7CtkoSGZc0QJCRbOp4DKIBxR5a
+ Y5rC8Sy4HOnGaI3WLc98DgXH5gAaiMuqAslDfKuG2vvWyJT2rV8c1rm5f0zD8JIB9XxE=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vxAEo-0007N6-1r; Mon, 02 Mar 2026 20:51:39 +0000
+ id 1vxAIq-0007eW-HV; Mon, 02 Mar 2026 20:55:45 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 2836160180;
- Mon,  2 Mar 2026 20:51:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC98CC2BCAF;
- Mon,  2 Mar 2026 20:51:08 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id A720F60127;
+ Mon,  2 Mar 2026 20:46:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB20C19423;
+ Mon,  2 Mar 2026 20:46:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772484682;
- bh=/sz7TWb/8/hX0LciA1x/Z08Sx95qZ79eor/fKNv831c=;
+ s=k20201202; t=1772484393;
+ bh=pNyc/GMO6ov372VncJrjkwuufp4u2AdNw50PlPHSxFI=;
  h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
- b=T7M2jA0E+nOiFu6g0V2eB4Fpg250FkkborXQ68QoO89fQRYaKtke1mCmqo5Vuf7+r
- wiGdNgQVLprPk5IB7mkheRRMyC+FRKyQz6ka9nPwO+kJgHBHZ43Md2Dkd9VD0/Of83
- ZUNAObaZI0EzCRK+rvOI+NopDu28S8zgq5QgcDyiMewHIqmRZf306wVK3dRX1tBBlm
- VErLvddEWB8MSYgMw/Tz8REN4YQ1FxmYNeki4O77thoNIvmMcSZ/Thb9ssZkIaaIfz
- KZV2FrOeEqwnH4Do1nBzSwg2vKuYdXhsUVCS3pZV7L6ke8IgQelYklF9NzLOeqoxtq
- 8b/TRYKwQNuoQ==
-Date: Mon, 02 Mar 2026 15:25:34 -0500
+ b=ClazEEobUze8svAWXQKJkjXIHd9psmPfuoY2+5Gdn2uCiW5u/+gqZI9cL6nR5Jaha
+ xWkEp933aEve3u1I9tRXCBSCX7X6Rn1p+zjg7K9FcV6iZnpv3XaCGcL3MOiIUYHGcw
+ lbJZcVau4YO7NXSfixiJrLiuyz5O3D/o6r9kfUsd/mvvfgo7OTJ9VTBzjzQdYNa8s2
+ fxnINjMGit30HNhY7XrjNiTGRy5bC+ZOYJr2/wdOeFYu9bxPgvK7+aBvL/El48DzWL
+ l7kV0dsx5qct2gflgUQ9N7+UHoUjSEsnQGU8KpcYOpocYclnt+4dpTuGDVvFotruK0
+ LxVaO4ZP9T7dQ==
+Date: Mon, 02 Mar 2026 15:25:14 -0500
 MIME-Version: 1.0
-Message-Id: <20260302-iino-u64-v2-110-e5388800dae0@kernel.org>
+Message-Id: <20260302-iino-u64-v2-90-e5388800dae0@kernel.org>
 References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 In-Reply-To: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -158,25 +158,25 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
  Jesper Dangaard Brouer <hawk@kernel.org>, 
  John Fastabend <john.fastabend@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7864; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=/sz7TWb/8/hX0LciA1x/Z08Sx95qZ79eor/fKNv831c=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfIOWw4VpZ1f0esD0l2eblcdOGEvFuzW5qecf
- cTPMYYfwB+JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXyDgAKCRAADmhBGVaC
- FSiGEADKoZsC6JwFSXz5Q8tPMZ6t8//Y5SGA/vaBUiD5D0C+kZUFc/J5USU5TJAKaXk0BTDmAT/
- 2kbSCQNocpoPv3+wT1fnN67/FnoxtqnhKqtCXlvPPR9RqXVCoIxxjy81hmMGvj5OueJeojBhBrE
- EPeNMIFty+gCEGi2dWknNkaFTtNxVknqICbKKlus5egvNmB/P/wcCwA75eyzT9Cqf8HgCQ2UWH6
- E+1UZg/P3Utcs5RWUN4LdyqwfM+nEl51pMv3R4lNJeMv6VLFYo0VBxIBSMwMwLYGA8ONx6GabD8
- h7hmuJLNcF4apD7rmibApIK+IR8kjVt7xg3Z1R/kF7WyEW+ipWCA+d5pPv4ATJrviTJ5swUDr+e
- 0fR52ir06HftVbBViJXC+/+JeBB5ygEQwwixuJf+EHIPh8Nw+eAOeSMTJT6/5J9boBSM4t53R2U
- 1uE4EroXow0SM75te/gScXwcjFowrQz/+gRU3pxfj31chpErmp6yk2ql36oF4XCRuFtyNVG3v2y
- fwmpsbHx68WQUTJbKUJrw9HuC4vvVoFx2K26sNk8Mvnxfxb/Menyn7MMrfXHs4wZ/DdlCIHP9J6
- K4FPkJfGrBW5QSCsdyluxgAY1+ed66E9Oz4M67wxOod8vTaTchUlxDXS5wJQNAd38COtoq/jHe9
- EYgFPWN/4XZNcUQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2386; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=pNyc/GMO6ov372VncJrjkwuufp4u2AdNw50PlPHSxFI=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBppfIIfaujhjMLqAn1ppJL9LQQ5PrWgczSPGGCx
+ ALMZxMQc82JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaaXyCAAKCRAADmhBGVaC
+ FbZTEACM3CL7hm+JRd+2fosamM2aW7VAlbzyjEFyJq6zk08OOdJkR2La4m7wUSfF0yX5t0HYnXl
+ W+OtF5PPZmJVhsdgGX0YChExon1Jz4DcSRkVRlUvoENaed4tdKvD4fJvwN1JhjXkldlRKPxFVBV
+ AFtTnPISVBNXhLkw541aR70iUfrLYjBeg+/Q9a1KyfpUcEt31WShsjE75aSweu7035wqdnhgOu2
+ YY04gPPgRHLfDOORnG1Wq/S+y7HBNxB9CGYJADUlBvAH3JwnWLG6e/09L0LxzHwpCIwCM47B8a4
+ mBvMs3FEgIljH80PN+IeKRAS3gqGN9WMzXI+NAgFV8BPUeXc4eOc+iq8pMx0gMgKjvSLW63PgmQ
+ FeO/LW6LWldDcH9RsCOLnvcxEua4O4fOSd3sRq+5D0E1SMZQGEFi1BVtnyTnpnFDY/r0cBxaSlY
+ j9NqyLwOo90mMdzog5q7s5Hf74PzjtJgQBvBd0MvpfPEBQQ0JSBEX6c2b9GQNtuLWXWNDJ36ign
+ N8BefPDRqtqZDlgyVZQjFDS76p6laor3HeFzNS1MTt38TYDD7KRYxVPrHuxMVgQ6wG7lS8Smgi9
+ sR+FMuF2Y6LZUvS2QzaADXdJ68Fkz1sSry904JnBW1rQ/W4dkYE7xV3OH+xqIWjALwQsFZyPz4h
+ AV0xdrKEro9Ko9w==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Headers-End: 1vxAEo-0007N6-1r
-Subject: [f2fs-dev] [PATCH v2 110/110] vfs: remove kino_t typedef and PRIino
- format macro
+X-Headers-End: 1vxAIq-0007eW-HV
+Subject: [f2fs-dev] [PATCH v2 090/110] minix: replace PRIino with %llu/%llx
+ format strings
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -214,206 +214,63 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Now that i_ino has been widened to u64, replace the kino_t typedef with
-u64 and the PRIino format macro with the concrete format strings.
-
-Replace the remaining PRIino uses throughout the tree, and remove the
-typedef and #define from include/linux/fs.h. Change the i_ino field in
-struct inode from kino_t to u64.
+Now that i_ino is u64 and the PRIino format macro has been removed,
+replace all uses in minix with the concrete format strings.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/dcache.c        |  4 ++--
- fs/eventpoll.c     |  2 +-
- fs/fserror.c       |  2 +-
- fs/inode.c         | 10 +++++-----
- fs/locks.c         |  6 +++---
- fs/nsfs.c          |  4 ++--
- fs/pipe.c          |  2 +-
- include/linux/fs.h |  5 +----
- 8 files changed, 16 insertions(+), 19 deletions(-)
+ fs/minix/inode.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 13fb3e89cba7442c9bed74c41ca18be5e43e28c9..9ceab142896f6631017067890fd1079240448e13 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1637,11 +1637,11 @@ static enum d_walk_ret umount_check(void *_data, struct dentry *dentry)
- 	if (dentry == _data && dentry->d_lockref.count == 1)
- 		return D_WALK_CONTINUE;
- 
--	WARN(1, "BUG: Dentry %p{i=%" PRIino "x,n=%pd} "
-+	WARN(1, "BUG: Dentry %p{i=%llx,n=%pd} "
- 			" still in use (%d) [unmount of %s %s]\n",
- 		       dentry,
- 		       dentry->d_inode ?
--		       dentry->d_inode->i_ino : (kino_t)0,
-+		       dentry->d_inode->i_ino : (u64)0,
- 		       dentry,
- 		       dentry->d_lockref.count,
- 		       dentry->d_sb->s_type->name,
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 90fd92425492221d13bd0cf067d47579bb407a01..4ccd4d2e31adf571f939d2e777123e40302e565f 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1080,7 +1080,7 @@ static void ep_show_fdinfo(struct seq_file *m, struct file *f)
- 		struct inode *inode = file_inode(epi->ffd.file);
- 
- 		seq_printf(m, "tfd: %8d events: %8x data: %16llx "
--			   " pos:%lli ino:%" PRIino "x sdev:%x\n",
-+			   " pos:%lli ino:%llx sdev:%x\n",
- 			   epi->ffd.fd, epi->event.events,
- 			   (long long)epi->event.data,
- 			   (long long)epi->ffd.file->f_pos,
-diff --git a/fs/fserror.c b/fs/fserror.c
-index b685b329b5956a639c41b25c42cfff16e6e5ab6e..1e4d11fd9562fd158a23b64ca60e9b7e01719cb8 100644
---- a/fs/fserror.c
-+++ b/fs/fserror.c
-@@ -176,7 +176,7 @@ void fserror_report(struct super_block *sb, struct inode *inode,
- lost:
- 	if (inode)
- 		pr_err_ratelimited(
-- "%s: lost file I/O error report for ino %" PRIino "u type %u pos 0x%llx len 0x%llx error %d",
-+ "%s: lost file I/O error report for ino %llu type %u pos 0x%llx len 0x%llx error %d",
- 		       sb->s_id, inode->i_ino, type, pos, len, error);
- 	else
- 		pr_err_ratelimited(
-diff --git a/fs/inode.c b/fs/inode.c
-index 24ab9fa10baf7c885244f23bfccd731efe4a14cc..5ad169d51728c260aeaabb810e59eb3ec1d1ce52 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -726,7 +726,7 @@ void dump_mapping(const struct address_space *mapping)
- 	struct dentry *dentry_ptr;
- 	struct dentry dentry;
- 	char fname[64] = {};
--	kino_t ino;
-+	u64 ino;
- 
- 	/*
- 	 * If mapping is an invalid pointer, we don't want to crash
-@@ -750,14 +750,14 @@ void dump_mapping(const struct address_space *mapping)
- 	}
- 
- 	if (!dentry_first) {
--		pr_warn("aops:%ps ino:%" PRIino "x\n", a_ops, ino);
-+		pr_warn("aops:%ps ino:%llx\n", a_ops, ino);
- 		return;
- 	}
- 
- 	dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
- 	if (get_kernel_nofault(dentry, dentry_ptr) ||
- 	    !dentry.d_parent || !dentry.d_name.name) {
--		pr_warn("aops:%ps ino:%" PRIino "x invalid dentry:%px\n",
-+		pr_warn("aops:%ps ino:%llx invalid dentry:%px\n",
- 				a_ops, ino, dentry_ptr);
- 		return;
- 	}
-@@ -768,7 +768,7 @@ void dump_mapping(const struct address_space *mapping)
- 	 * Even if strncpy_from_kernel_nofault() succeeded,
- 	 * the fname could be unreliable
- 	 */
--	pr_warn("aops:%ps ino:%" PRIino "x dentry name(?):\"%s\"\n",
-+	pr_warn("aops:%ps ino:%llx dentry name(?):\"%s\"\n",
- 		a_ops, ino, fname);
- }
- 
-@@ -2641,7 +2641,7 @@ void init_special_inode(struct inode *inode, umode_t mode, dev_t rdev)
- 		/* leave it no_open_fops */
- 		break;
- 	default:
--		pr_debug("init_special_inode: bogus i_mode (%o) for inode %s:%" PRIino "u\n",
-+		pr_debug("init_special_inode: bogus i_mode (%o) for inode %s:%llu\n",
- 			 mode, inode->i_sb->s_id, inode->i_ino);
- 		break;
- 	}
-diff --git a/fs/locks.c b/fs/locks.c
-index 9c5aa23f09b6e061dc94c81cd802bb65dd0053c1..d8b066fb42108971f6b3c7449dbc9b5f8df16b13 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -234,7 +234,7 @@ locks_check_ctx_lists(struct inode *inode)
- 	if (unlikely(!list_empty(&ctx->flc_flock) ||
- 		     !list_empty(&ctx->flc_posix) ||
- 		     !list_empty(&ctx->flc_lease))) {
--		pr_warn("Leaked locks on dev=0x%x:0x%x ino=0x%" PRIino "x:\n",
-+		pr_warn("Leaked locks on dev=0x%x:0x%x ino=0x%llx:\n",
- 			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
- 			inode->i_ino);
- 		locks_dump_ctx_list(&ctx->flc_flock, "FLOCK");
-@@ -251,7 +251,7 @@ locks_check_ctx_file_list(struct file *filp, struct list_head *list, char *list_
- 
- 	list_for_each_entry(flc, list, flc_list)
- 		if (flc->flc_file == filp)
--			pr_warn("Leaked %s lock on dev=0x%x:0x%x ino=0x%" PRIino "x "
-+			pr_warn("Leaked %s lock on dev=0x%x:0x%x ino=0x%llx "
- 				" fl_owner=%p fl_flags=0x%x fl_type=0x%x fl_pid=%u\n",
- 				list_type, MAJOR(inode->i_sb->s_dev),
- 				MINOR(inode->i_sb->s_dev), inode->i_ino,
-@@ -2896,7 +2896,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock_core *flc,
- 			     (type == F_RDLCK) ? "READ" : "UNLCK");
- 	if (inode) {
- 		/* userspace relies on this representation of dev_t */
--		seq_printf(f, "%d %02x:%02x:%" PRIino "u ", pid,
-+		seq_printf(f, "%d %02x:%02x:%llu ", pid,
- 				MAJOR(inode->i_sb->s_dev),
- 				MINOR(inode->i_sb->s_dev), inode->i_ino);
+diff --git a/fs/minix/inode.c b/fs/minix/inode.c
+index d92059227d273564c86f100dea3366be4509090b..838b072b6cf0b54c955320916ac996e72f994a14 100644
+--- a/fs/minix/inode.c
++++ b/fs/minix/inode.c
+@@ -36,7 +36,7 @@ void __minix_error_inode(struct inode *inode, const char *function,
+ 	vaf.fmt = fmt;
+ 	vaf.va = &args;
+ 	printk(KERN_CRIT "minix-fs error (device %s): %s:%d: "
+-	       "inode #%" PRIino "u: comm %s: %pV\n",
++	       "inode #%llu: comm %s: %pV\n",
+ 	       inode->i_sb->s_id, function, line, inode->i_ino,
+ 	       current->comm, &vaf);
+ 	va_end(args);
+@@ -520,7 +520,7 @@ void minix_set_inode(struct inode *inode, dev_t rdev)
+ 		   S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
+ 		init_special_inode(inode, inode->i_mode, rdev);
  	} else {
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index 0e099ee2121f8831645c3a25d759793ef2ff9ce6..eac326b85314ac8080248347154d599c953969c7 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -46,7 +46,7 @@ static char *ns_dname(struct dentry *dentry, char *buffer, int buflen)
- 	struct ns_common *ns = inode->i_private;
- 	const struct proc_ns_operations *ns_ops = ns->ops;
- 
--	return dynamic_dname(buffer, buflen, "%s:[%" PRIino "u]",
-+	return dynamic_dname(buffer, buflen, "%s:[%llu]",
- 		ns_ops->name, inode->i_ino);
- }
- 
-@@ -394,7 +394,7 @@ static int nsfs_show_path(struct seq_file *seq, struct dentry *dentry)
- 	const struct ns_common *ns = inode->i_private;
- 	const struct proc_ns_operations *ns_ops = ns->ops;
- 
--	seq_printf(seq, "%s:[%" PRIino "u]", ns_ops->name, inode->i_ino);
-+	seq_printf(seq, "%s:[%llu]", ns_ops->name, inode->i_ino);
- 	return 0;
- }
- 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 311928e8713989747605fd79f653e36d27ce8c0e..9841648c9cf3e8e569cf6ba5c792624fe92396f5 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -873,7 +873,7 @@ static struct vfsmount *pipe_mnt __ro_after_init;
-  */
- static char *pipefs_dname(struct dentry *dentry, char *buffer, int buflen)
- {
--	return dynamic_dname(buffer, buflen, "pipe:[%" PRIino "u]",
-+	return dynamic_dname(buffer, buflen, "pipe:[%llu]",
- 				d_inode(dentry)->i_ino);
- }
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 4193817e02e8bf94f29514ca43379af21f37ac61..097443bf12e289c347651e5f3da5b67eb6b53121 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -758,9 +758,6 @@ struct inode_state_flags {
- 	enum inode_state_flags_enum __state;
- };
- 
--typedef u64		kino_t;
--#define PRIino		"ll"
--
- /*
-  * Keep mostly read-only and often accessed (especially for
-  * the RCU path lookup and 'stat' data) fields at the beginning
-@@ -786,7 +783,7 @@ struct inode {
- #endif
- 
- 	/* Stat data, not accessed from path walking */
--	kino_t			i_ino;
-+	u64			i_ino;
- 	/*
- 	 * Filesystems may only read i_nlink directly.  They shall use the
- 	 * following functions for modification:
+-		printk(KERN_DEBUG "MINIX-fs: Invalid file type 0%04o for inode %" PRIino "u.\n",
++		printk(KERN_DEBUG "MINIX-fs: Invalid file type 0%04o for inode %llu.\n",
+ 		       inode->i_mode, inode->i_ino);
+ 		make_bad_inode(inode);
+ 	}
+@@ -542,7 +542,7 @@ static struct inode *V1_minix_iget(struct inode *inode)
+ 		return ERR_PTR(-EIO);
+ 	}
+ 	if (raw_inode->i_nlinks == 0) {
+-		printk("MINIX-fs: deleted inode referenced: %" PRIino "u\n",
++		printk("MINIX-fs: deleted inode referenced: %llu\n",
+ 		       inode->i_ino);
+ 		brelse(bh);
+ 		iget_failed(inode);
+@@ -580,7 +580,7 @@ static struct inode *V2_minix_iget(struct inode *inode)
+ 		return ERR_PTR(-EIO);
+ 	}
+ 	if (raw_inode->i_nlinks == 0) {
+-		printk("MINIX-fs: deleted inode referenced: %" PRIino "u\n",
++		printk("MINIX-fs: deleted inode referenced: %llu\n",
+ 		       inode->i_ino);
+ 		brelse(bh);
+ 		iget_failed(inode);
+@@ -692,7 +692,7 @@ static int minix_write_inode(struct inode *inode, struct writeback_control *wbc)
+ 	if (wbc->sync_mode == WB_SYNC_ALL && buffer_dirty(bh)) {
+ 		sync_dirty_buffer(bh);
+ 		if (buffer_req(bh) && !buffer_uptodate(bh)) {
+-			printk("IO error syncing minix inode [%s:%08" PRIino "x]\n",
++			printk("IO error syncing minix inode [%s:%08llx]\n",
+ 				inode->i_sb->s_id, inode->i_ino);
+ 			err = -EIO;
+ 		}
 
 -- 
 2.53.0
