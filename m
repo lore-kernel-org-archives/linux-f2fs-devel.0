@@ -4,150 +4,184 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E9187EC142A
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Mar 2026 10:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7BB88EC142C
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Mar 2026 10:59:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:Date:To:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=FaiiAeX9ppGvw49l8y/UgsSPqTaVvpUSW1Fz7PTDRrs=; b=UaS6mCP8uUjNWWhLYd5UMalmxE
-	0R3O34iDq7GapMuu3ye9/lsjWT//EYMx28PhGB0CdyMgrL+FZ9YOqLK/GOxiEOMPK2NXwszeCmHxG
-	7ecHvQKaryQnKoWC+6wg8S5xfT9T1qk/OxNhwhf80gZRXHhtOdrhbOniDiPz+UCEOtu4=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=kLSXcbMTa4J4UOXOZz5DWpzst8jk7nX73GAyavY2ydM=; b=jyOBNmgrzh3sn6B5E3DQ45Bf+m
+	J7grqW4sLOSEEI/L9KQ5YpFzOVz0WfJgREOZnGDLkXpmOutz5z0xfM/eiRZWM80BZ0dOE+oL/5Gps
+	EJfadw9FbRafMwoZsH5ffDpJL7o8TR96geIFe9wzhDDR/h9/SKu+Qb0Ylw062i7ZMk2A=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxNSk-0004l7-KH;
-	Tue, 03 Mar 2026 10:58:50 +0000
+	id 1vxNTU-0007ae-JX;
+	Tue, 03 Mar 2026 10:59:37 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jlayton@kernel.org>) id 1vxNSi-0004kn-UL;
- Tue, 03 Mar 2026 10:58:49 +0000
+ (envelope-from <jack@suse.cz>) id 1vxNTS-0007aN-GL
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 03 Mar 2026 10:59:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xJBIwyenvhF1oE92YPonh4V7tqP6SY6ckXOcKiQA2pM=; b=P1todF2PQXNiiqkZ81qH1tSnZq
- TB3cRgxReh07S3jX/3/ynC2Oe98GuhuFF/w2JEMcSkW/Ykp/O9pWg8v7ZAVClT3oPPt5Ebt6ti96c
- zxSq9/HsA8Drb3p+lLGGRUCY7qO1Arb+dGMXWreUtUKD8cDOkqSpQCaZNWlzSWzboBKU=;
+ bh=1Ax2U3KSgQjtDsUZU4K+0IOeH3oN3CBmHmXatVIwbT4=; b=G/UxlxDZpYAKaiAuq5gfba5y4b
+ GpAF/kDW8YWdzH7tySWjcUx+cgK37W1xjEBPHLWFEd3XNDQ/NV/AWTxx4tJsti/B/hwVdgEBKtNhj
+ dVkKKSghJbfVD9iwOZF3RtMoExEXZfFWoaoaSFMdsbScerc3YR4xMXpFpD0ArXoACffE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=xJBIwyenvhF1oE92YPonh4V7tqP6SY6ckXOcKiQA2pM=; b=fLuqt2wyTTi1a6cYBjNsQzfrSI
- 9GmfP7ENHKyHzc50NDbrqhWjyx+E8KgIbiq6492LIGdaCXhoi4ARgJEnY3+uUh9EshRky/vgDVbTB
- AQyQYPUVZqcIlDuCAeGo8rj6D5KSCe7LwgnSehh5E06rT+Wzf/ooft7tt/ijyE7Wimss=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=1Ax2U3KSgQjtDsUZU4K+0IOeH3oN3CBmHmXatVIwbT4=; b=ICTp/SSSgk5W57Cs0nVWQlAD0Y
+ rzOO8wuGwh1CZWcMD9t/v/3ow8XPXhbWBou+L+52N5ScunuinKPg0Yqe+eROUplPRkLTe1FEWwxVJ
+ aiuVb8R25Kh+yw2bvqwGVw8TlngHLFgdFvMT5g2i+qrdjcw09YqgXnJJG3a5dtnyveF8=;
+Received: from smtp-out2.suse.de ([195.135.223.131])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vxNSi-0001wQ-En; Tue, 03 Mar 2026 10:58:48 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id DF550600AE;
- Tue,  3 Mar 2026 10:58:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D470C116C6;
- Tue,  3 Mar 2026 10:58:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772535516;
- bh=LTGZ5EPnzGkcTqKhItlUmFCtGUuR5ztGdIWTTSykpcw=;
- h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
- b=U6O5maGdSAxWIHhPIoDEGzoxTEy5qgEId5DY1DAFqSI31LGsO4sBizxtyvv6Y7UHy
- TTpm2QlfXC1NqdbowSQlo8CNX3qzQzuQNo64t100MYliHYDoFNKTtAaoaZe22C08wf
- 5lk+981yWSBxTZatezDRR/6hdGx3qpaI7V/jLy7InoGkMFl2BMfbZm+upp/ubCXCnB
- 2EK1qjQr+2Zk9oyeRQA0VTK98DcSOvY1JFfr8dgk1COufDxUe8Ib7tmF705ulPbQli
- yoy4lD6qxjIFSp0IZtDBxhsRYoy8GYv7UxdxKDOyub6gyzmgqBuT48feWTn+QuCj3u
- po1tHyEJHrgQA==
-Message-ID: <1c28e34c7167acf4e20c3e201476504135aa44e8.camel@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Date: Tue, 03 Mar 2026 05:58:20 -0500
-In-Reply-To: <1787281.1772535332@warthog.procyon.org.uk>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1vxNTS-000205-DI for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 03 Mar 2026 10:59:35 +0000
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
+ [IPv6:2a07:de40:b281:104:10:150:64:97])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id A559E5BD15;
+ Tue,  3 Mar 2026 10:59:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+ t=1772535567; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=1Ax2U3KSgQjtDsUZU4K+0IOeH3oN3CBmHmXatVIwbT4=;
+ b=jlrTi3dGzi6tF685duuqaLJ6WZU3anD5qv56Ez+rz+JN3YyW16+umpZndND/z+6evwwU+v
+ iV25kK98omMc+huAfdqvXof0fqmeprAS4F1QpWbWNPJjG/yoLSz9Il+psHcNJjmdULsl6v
+ xxuKQyO7oM/GXdvEiCwSQ6AIQOt+gqs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+ s=susede2_ed25519; t=1772535567;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=1Ax2U3KSgQjtDsUZU4K+0IOeH3oN3CBmHmXatVIwbT4=;
+ b=buw/z/imK6nKUxnqweYn7ZS+SUxT409/8UUPNuUvWQ8Mi6gHe2zTcjBSW2AlIHTW0Q2xsS
+ nV0AecnyWGTC1JDQ==
+Authentication-Results: smtp-out2.suse.de;
+ dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=jlrTi3dG;
+ dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="buw/z/im"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+ t=1772535567; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=1Ax2U3KSgQjtDsUZU4K+0IOeH3oN3CBmHmXatVIwbT4=;
+ b=jlrTi3dGzi6tF685duuqaLJ6WZU3anD5qv56Ez+rz+JN3YyW16+umpZndND/z+6evwwU+v
+ iV25kK98omMc+huAfdqvXof0fqmeprAS4F1QpWbWNPJjG/yoLSz9Il+psHcNJjmdULsl6v
+ xxuKQyO7oM/GXdvEiCwSQ6AIQOt+gqs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+ s=susede2_ed25519; t=1772535567;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=1Ax2U3KSgQjtDsUZU4K+0IOeH3oN3CBmHmXatVIwbT4=;
+ b=buw/z/imK6nKUxnqweYn7ZS+SUxT409/8UUPNuUvWQ8Mi6gHe2zTcjBSW2AlIHTW0Q2xsS
+ nV0AecnyWGTC1JDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 89D273EA6C;
+ Tue,  3 Mar 2026 10:59:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+ by imap1.dmz-prg2.suse.org with ESMTPSA id 6pGgIQ+/pmltLwAAD6G6ig
+ (envelope-from <jack@suse.cz>); Tue, 03 Mar 2026 10:59:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+ id 3AE3FA0A1B; Tue,  3 Mar 2026 11:59:27 +0100 (CET)
+Date: Tue, 3 Mar 2026 11:59:27 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Message-ID: <o5ksne7mgzpbnevfepfgugnmniimpalg2z67qjnnfhhu5kd7fz@zeif2ihe6jws>
 References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
- <1787281.1772535332@warthog.procyon.org.uk>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+ <20260302-iino-u64-v2-2-e5388800dae0@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1vxNSi-0001wQ-En
-Subject: Re: [f2fs-dev] [PATCH v2 000/110] vfs: change inode->i_ino from
- unsigned long to u64
+Content-Disposition: inline
+In-Reply-To: <20260302-iino-u64-v2-2-e5388800dae0@kernel.org>
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: A559E5BD15
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.51 / 50.00]; BAYES_HAM(-3.00)[99.99%];
+ FORGED_RECIPIENTS(2.00)[m:jlayton@kernel.org, m:viro@zeniv.linux.org.uk,
+ m:brauner@kernel.org, m:rostedt@goodmis.org, m:mhiramat@kernel.org,
+ m:mathieu.desnoyers@efficios.com, m:dan.j.williams@intel.com,
+ m:willy@infradead.org, m:ebiggers@kernel.org, m:muchun.song@linux.dev,
+ m:david@kernel.org, m:adilger.kernel@dilger.ca, m:jaegeuk@kernel.org,
+ m:chao@kernel.org, m:trondmy@kernel.org, m:anna@kernel.org, m:neil@brown.name,
+ m:ronniesahlberg@gmail.com, m:alex.aring@gmail.com,
+ m:konishi.ryusuke@gmail.com, m:slava@dubeyko.com, m:ericvh@kernel.org,
+ m:lucho@ionkov.net, m:asmadeus@codewreck.org, m:linux_oss@crudebyte.com,
+ m:marc.dionne@auristor.com, m:luisbg@kernel.org, m:salah.triki@gmail.com,
+ m:aivazian.tigran@gmail.com, m:idryomov@gmail.com, m:jaharkes@cs.cmu.edu,
+ m:coda@cs.cmu.edu, m:nico@fluxnic.net, m:amir73il@gmail.com,
+ m:hch@infradead.org, m:frank.li@vivo.com, m:mikulas@artax.karlin.mff.cuni.cz,
+ m:dwmw2@infradead.org, m:shaggy@kernel.org, m:mark@fasheh.com,
+ m:jlbec@evilplan.org, m:joseph.qi@linux.alibaba.com, m:al@alarsen.net, 
+ m:chengzhihao1@huawei.com, m:dlemoal@kernel.org, m:naohiro.aota@wdc.com,
+ m:jth@kernel.org, m:john.johansen@canonical.com, m:serge@hallyn.com,
+ m:zohar@linux.ibm.com, m:roberto.sassu@huawei.com, m:dmitry.kasatkin@gmail.com,
+ m:wufan@kernel.org, m:stephen.smalley.work@gmail.com,
+ m:alexander.deucher@amd.com, m:christian.koenig@amd.com, m:airlied@gmail.com,
+ m:simona@ffwll.ch, m:sumit.semwal@linaro.org, m:edumazet@google.com,
+ m:kuniyu@google.com, m:willemb@google.com, m:davem@davemloft.net,
+ m:kuba@kernel.org, m:horms@kernel.org, m:peterz@infradead.org,
+ m:acme@kernel.org, m:namhyung@kernel.org, s:nvdimm@lists.linux.dev,
+ s:ocfs2-devel@lists.linux.dev, s:v9fs@lists.linux.dev,
+ s:devel@lists.orangefs.org, s:samba-technical@lists.samba.org,
+ s:jfs-discussion@lists.sourceforge.net,
+ s:linux-f2fs-devel@lists.sourceforge.net, s:apparmor@lists.ubuntu.com,
+ s:mkl@pengutronix.de, s:eparis@redhat.com, s:steffen.klassert@secunet.com,
+ s:audit@vger.kernel.org, s:autofs@vger.kernel.org, s:bpf@vger.kernel.org,
+ s:ceph-devel@vger.kernel.org, s:ecryptf
+ s@vger.kernel.org,s:linux-bluetooth@vger.kernel.org,s:linux-can@vger.kernel.org,s:linux-cifs@vger.kernel.org];
+ SUSPICIOUS_RECIPS(1.50)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
+ MID_RHS_NOT_FQDN(0.50)[]; NEURAL_HAM_SHORT(-0.20)[-1.000];
+ R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+ MIME_GOOD(-0.10)[text/plain]; MX_GOOD(-0.01)[];
+ RCVD_TLS_LAST(0.00)[]; ARC_NA(0.00)[];
+ DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+ FUZZY_RATELIMITED(0.00)[rspamd.com]; MIME_TRACE(0.00)[0:+];
+ RCVD_COUNT_THREE(0.00)[3]; FROM_HAS_DN(0.00)[];
+ FREEMAIL_CC(0.00)[zeniv.linux.org.uk, kernel.org, suse.cz, goodmis.org,
+ efficios.com, intel.com, infradead.org, mit.edu, linux.dev, suse.de,
+ redhat.com, manguebit.org, dilger.ca, suse.com, oracle.com, brown.name,
+ talpey.com, samba.org, gmail.com, microsoft.com, dubeyko.com, ionkov.net,
+ codewreck.org, crudebyte.com, auristor.com, themaw.net, cs.cmu.edu,
+ fluxnic.net, tyhicks.com, physik.fu-berlin.de, vivo.com,
+ artax.karlin.mff.cuni.cz, nod.at, paragon-software.com, fasheh.com,
+ evilplan.org, linux.alibaba.com, omnibond.com, szeredi.hu, alarsen.net,
+ huawei.com, wdc.com, canonical.com, paul-moore.com, namei.org, hallyn.com,
+ linux.ibm.com, schaufler-ca.com, amd.com, ffwll.ch, linaro.org, google.com,
+ davemloft.net, arm.com, linux.intel.com, dev.tdt.de, yaina.de, holtmann.org,
+ hartkopp.net, pengutronix.de, secunet.com, gondor.apana.org.au, fomichev.me,
+ iogearbox.net, vger.kernel.org, lists.linux.dev, kvack.org,
+ lists.sourceforge.net, lists.samba.org, lists.infradead.org, coda.cs.cmu.edu,
+ lists.orangefs.org, lists.ubuntu.com, lists.freedesktop.org, lists.linaro.or
+ g]; RCPT_COUNT_GT_50(0.00)[172]; TO_MATCH_ENVRCPT_SOME(0.00)[];
+ FROM_EQ_ENVFROM(0.00)[]; TO_DN_SOME(0.00)[];
+ TAGGED_RCPT(0.00)[]; MISSING_XM_UA(0.00)[];
+ RCVD_VIA_SMTP_AUTH(0.00)[]; DKIM_TRACE(0.00)[suse.cz:+];
+ R_RATELIMIT(0.00)[to_ip_from(RL3ntoum3i61xr6zaswawwyp9j)];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim, suse.cz:email, suse.com:email,
+ imap1.dmz-prg2.suse.org:helo, imap1.dmz-prg2.suse.org:rdns]
+X-Headers-End: 1vxNTS-000205-DI
+Subject: Re: [f2fs-dev] [PATCH v2 002/110] vfs: widen inode hash/lookup
+ functions to u64
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -159,19 +193,17 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Jeff Layton via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Jeff Layton <jlayton@kernel.org>
 Cc: Latchesar Ionkov <lucho@ionkov.net>, nvdimm@lists.linux.dev,
- Paulo Alcantara <pc@manguebit.org>, "Darrick
- J. Wong" <djwong@kernel.org>, Anders Larsen <al@alarsen.net>,
- dri-devel@lists.freedesktop.org, linux-sctp@vger.kernel.org,
- linux-hams@vger.kernel.org, Sumit Semwal <sumit.semwal@linaro.org>,
- Mike Marshall <hubcap@omnibond.com>, linux-xfs@vger.kernel.org,
- Fan Wu <wufan@kernel.org>, Xin Long <lucien.xin@gmail.com>,
- ceph-devel@vger.kernel.org, James Morris <jmorris@namei.org>,
- Tyler Hicks <code@tyhicks.com>, Christoph Hellwig <hch@infradead.org>,
- devel@lists.orangefs.org, Shyam Prasad N <sprasad@microsoft.com>,
- Martin Schiller <ms@dev.tdt.de>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Paulo Alcantara <pc@manguebit.org>, "Darrick J. Wong" <djwong@kernel.org>,
+ Anders Larsen <al@alarsen.net>, dri-devel@lists.freedesktop.org,
+ linux-sctp@vger.kernel.org, linux-hams@vger.kernel.org,
+ Sumit Semwal <sumit.semwal@linaro.org>, Mike Marshall <hubcap@omnibond.com>,
+ linux-xfs@vger.kernel.org, Fan Wu <wufan@kernel.org>,
+ Xin Long <lucien.xin@gmail.com>, ceph-devel@vger.kernel.org,
+ James Morris <jmorris@namei.org>, Tyler Hicks <code@tyhicks.com>,
+ Christoph Hellwig <hch@infradead.org>, devel@lists.orangefs.org,
+ Shyam Prasad N <sprasad@microsoft.com>, Martin Schiller <ms@dev.tdt.de>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, Jan Harkes <jaharkes@cs.cmu.edu>,
  Willem de Bruijn <willemb@google.com>,
  Arnaldo Carvalho de Melo <acme@kernel.org>, linux-fscrypt@vger.kernel.org,
  Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -217,24 +249,23 @@ Cc: Latchesar Ionkov <lucho@ionkov.net>, nvdimm@lists.linux.dev,
  Matthew Wilcox <willy@infradead.org>, coda@cs.cmu.edu,
  Stanislav Fomichev <sdf@fomichev.me>, Viacheslav Dubeyko <slava@dubeyko.com>,
  NeilBrown <neil@brown.name>, Ilya Dryomov <idryomov@gmail.com>,
- Paolo Abeni <pabeni@redhat.com>, jfs-discussion@lists.sourceforge.net, "Serge
- E. Hallyn" <serge@hallyn.com>, Amir Goldstein <amir73il@gmail.com>,
+ Paolo Abeni <pabeni@redhat.com>, jfs-discussion@lists.sourceforge.net,
+ "Serge E. Hallyn" <serge@hallyn.com>, Amir Goldstein <amir73il@gmail.com>,
  James Clark <james.clark@linaro.org>, autofs@vger.kernel.org,
  Steven Rostedt <rostedt@goodmis.org>, Damien Le Moal <dlemoal@kernel.org>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Dan Williams <dan.j.williams@intel.com>, Oscar Salvador <osalvador@suse.de>,
- Jan Harkes <jaharkes@cs.cmu.edu>, linux-nfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-mm@kvack.org,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ linux-nfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-mm@kvack.org,
  samba-technical@lists.samba.org, Ondrej Mosnacek <omosnace@redhat.com>,
  Steve French <sfrench@samba.org>, netdev@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, ntfs3@lists.linux.dev,
- Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+ Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
  Ian Rogers <irogers@google.com>, Alexander Aring <alex.aring@gmail.com>,
  Jan Kara <jack@suse.cz>, Peter Zijlstra <peterz@infradead.org>,
  Dominique Martinet <asmadeus@codewreck.org>,
  Christian Schoenebeck <linux_oss@crudebyte.com>, ecryptfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ linux-unionfs@vger.kernel.org, David Howells <dhowells@redhat.com>,
  Joseph Qi <joseph.qi@linux.alibaba.com>,
  Andreas Dilger <adilger.kernel@dilger.ca>,
  Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
@@ -262,21 +293,29 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, 2026-03-03 at 10:55 +0000, David Howells wrote:
-> Jeff Layton <jlayton@kernel.org> wrote:
+On Mon 02-03-26 15:23:46, Jeff Layton wrote:
+> Change the inode hash/lookup VFS API functions to accept u64 parameters
+> instead of unsigned long for inode numbers and hash values. This is
+> preparation for widening i_ino itself to u64, which will allow
+> filesystems to store full 64-bit inode numbers on 32-bit architectures.
 > 
-> > This version splits the change up to be more bisectable. It first adds a
-> > new kino_t typedef and a new "PRIino" macro to hold the width specifier
-> > for format strings. The conversion is done, and then everything is
-> > changed to remove the new macro and typedef.
+> Since unsigned long implicitly widens to u64 on all architectures, this
+> change is backward-compatible with all existing callers.
 > 
-> Why remove the typedef?  It might be better to keep it.
+> In dump_mapping(), change the local ino variable to kino_t and use the
+> PRIino format macro, since this variable holds an i_ino value. In
+> init_special_inode(), also switch to PRIino.
 > 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Why? After this change, internel kernel inodes will be u64's -- full
-stop. I don't see what the macro or typedef will buy us at that point.
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
 -- 
-Jeff Layton <jlayton@kernel.org>
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
 
 _______________________________________________
