@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A810FEC1431
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Mar 2026 11:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9BFF2EC1431
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Mar 2026 11:33:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=rmr35O1dVKgyK4h2EqEaAMxIbeDLH34YjV8Ci63iX7w=; b=dozklCQ5ePBfA+EJ/hBr7GIb5Z
-	oSIgIQ0/Qj7XM0dZSRCHEa2515t5HOxRrl6TGsySHG31VL52/AvdkaDGLHEYqLP5QztcjRrLD93qQ
-	ETbapLpymxhy8IQOG6Wx1wqFSCT0jVe+KJzO2oVd0JsVChVlANFw4oiWpgoCXN0BewmY=;
+	bh=0srT+fpYFqKM7HdnRNjilRMqqyN7bU2O+khAHKWZIbQ=; b=mwW8SqbdLVH+DNon6yZhBWr0EL
+	mHml69FDKSGXgJqXB5o1KvtlPjCiBkTpAVxQx8yuNRjTQX3fIBV3nFFbGB/3PkeZRmq58L8rarq5m
+	gPA3M07ZGOHQcB+Ajf+nCEClfNtLXCwCLLLz0nsGrbSFJOUZ2HcbyyVgWeuOrPZ72wVY=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxNzh-0005dK-C8;
-	Tue, 03 Mar 2026 11:32:53 +0000
+	id 1vxO0U-0005fn-2o;
+	Tue, 03 Mar 2026 11:33:42 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jack@suse.cz>) id 1vxNzf-0005dD-RO
+ (envelope-from <jack@suse.cz>) id 1vxO0S-0005fd-22
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Mar 2026 11:32:51 +0000
+ Tue, 03 Mar 2026 11:33:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=iXP9gapkvJkQwmzCnRQCpwpSx1/qOrmg7rRUhHTzz+E=; b=I9fwqYcLNwV/NPIzV97HT453LJ
- OH3+MwPYOKxtPOUZ45eM7vIJytSYihc4NohEs8A3EKHkYwuU4wbopa8dgulsMIrrldyLlXxO+RFqI
- t08MDYIg8UAYs6A5OyVdWq0RfyHH0PFO6PfWyVv2wxPeGC/lRPyCLR+Rm8ONd0gndRmw=;
+ bh=p4DdREtNiJiOQrLwoyUgGYussCYHVyIxoDajXjekPXE=; b=IX+P1kVbGfBySD0PElyCPqlhXY
+ QWE5Id+6FN8bIrfJ+Bj3LKJVrv4JbQbieRHfzhKtzaGVo1ikyTSyCy2so5aGYiYgvSyeUBwJilzYC
+ 4sUZa9VbdSslfMbMxiebjUdd3yAbuebBLOfnqT3bR2AtRubNPx/zRR3NSenENchfwqo0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,75 +42,81 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=iXP9gapkvJkQwmzCnRQCpwpSx1/qOrmg7rRUhHTzz+E=; b=WdvDImnpWa3FF1C6g/+zkv0KIf
- OwuJG4OVVLUpKrvfDFvCkbcxkKlCHUM2jiFdF7D1DpyH85Kb4y3ino2uMBD0ROKse/h3qdbacZ970
- 5o199VKvFnoBl7CIiZ7jpezgqlKsrSEhQ6R3Xlw5QUNxsJGgqnFI9yuLe+1QZRgCrnps=;
+ bh=p4DdREtNiJiOQrLwoyUgGYussCYHVyIxoDajXjekPXE=; b=X771xDYIXLpqxroiP5Cr9IXuwt
+ hyJyGYMWJmec/zgoi9JQAw2AeKbZagiZBRCO+p+z/BXcetB4/Cu3a77GO8r2aUAafPxNEiHDKVbBj
+ fOK4imtr9ip4/Avodx1x6qxySmv1zp0IjP1s0qoyqIC//pdvagQPQ1VtDfXZNTjneWnE=;
 Received: from smtp-out2.suse.de ([195.135.223.131])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vxNzf-0004PD-3s for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Mar 2026 11:32:51 +0000
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+ id 1vxO0Q-0004SB-HA for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 03 Mar 2026 11:33:40 +0000
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
+ [IPv6:2a07:de40:b281:104:10:150:64:97])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id B33B25BDF1;
- Tue,  3 Mar 2026 11:32:44 +0000 (UTC)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 0EFC05BDF1;
+ Tue,  3 Mar 2026 11:33:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1772537564; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1772537612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=iXP9gapkvJkQwmzCnRQCpwpSx1/qOrmg7rRUhHTzz+E=;
- b=HfJjB9z1513Kp7eff2XsY+fgu5N3lYrgW5QmS+gRImeA3LnL+qnr6dE+Mth73FU+8XMCW4
- Fj46WBAPxTvohb3FCq5NTFT3S6oJjdA8jy3hzHCnrJHtHwc0wu3cPeFqx8z30qEcJO52If
- kjnx8zsxDQoxya+au9IePYorlhmHeFQ=
+ bh=p4DdREtNiJiOQrLwoyUgGYussCYHVyIxoDajXjekPXE=;
+ b=kpuEv/raO0eFZTfGUyM+Zp0J3N8d/BUc56ofJM3npHqMnUodITGE00WQXx2aJzIh8OmGRi
+ djUl98VPvFOmJaF3RG8TbY14u/wNVNsNbpO2KCdHXd2JhDtNcahijqb6GinSQeIx2YF7dS
+ RGFXs8NFjCMxKc9DFVPaDzIwBAIpxzU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1772537564;
+ s=susede2_ed25519; t=1772537612;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=iXP9gapkvJkQwmzCnRQCpwpSx1/qOrmg7rRUhHTzz+E=;
- b=AElBCnhIP5Bu0X3IX90FwwyrLkyZJjJcGtGikQEIRtRytW9GR/hFpndKZOiJIbxDGhEVfz
- KCmgoQOSvLYJ3BBQ==
+ bh=p4DdREtNiJiOQrLwoyUgGYussCYHVyIxoDajXjekPXE=;
+ b=giQRaJtY2xPj1wOFq6Fa2xMiBEgSBCEyj1CDFiY1PGUtyx5b36SikfpUlOrmAycGcKKEg1
+ gOFGyXQ4XTv9MECg==
 Authentication-Results: smtp-out2.suse.de;
-	none
+ dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="kpuEv/ra";
+ dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=giQRaJtY
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1772537564; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1772537612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=iXP9gapkvJkQwmzCnRQCpwpSx1/qOrmg7rRUhHTzz+E=;
- b=HfJjB9z1513Kp7eff2XsY+fgu5N3lYrgW5QmS+gRImeA3LnL+qnr6dE+Mth73FU+8XMCW4
- Fj46WBAPxTvohb3FCq5NTFT3S6oJjdA8jy3hzHCnrJHtHwc0wu3cPeFqx8z30qEcJO52If
- kjnx8zsxDQoxya+au9IePYorlhmHeFQ=
+ bh=p4DdREtNiJiOQrLwoyUgGYussCYHVyIxoDajXjekPXE=;
+ b=kpuEv/raO0eFZTfGUyM+Zp0J3N8d/BUc56ofJM3npHqMnUodITGE00WQXx2aJzIh8OmGRi
+ djUl98VPvFOmJaF3RG8TbY14u/wNVNsNbpO2KCdHXd2JhDtNcahijqb6GinSQeIx2YF7dS
+ RGFXs8NFjCMxKc9DFVPaDzIwBAIpxzU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1772537564;
+ s=susede2_ed25519; t=1772537612;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=iXP9gapkvJkQwmzCnRQCpwpSx1/qOrmg7rRUhHTzz+E=;
- b=AElBCnhIP5Bu0X3IX90FwwyrLkyZJjJcGtGikQEIRtRytW9GR/hFpndKZOiJIbxDGhEVfz
- KCmgoQOSvLYJ3BBQ==
+ bh=p4DdREtNiJiOQrLwoyUgGYussCYHVyIxoDajXjekPXE=;
+ b=giQRaJtY2xPj1wOFq6Fa2xMiBEgSBCEyj1CDFiY1PGUtyx5b36SikfpUlOrmAycGcKKEg1
+ gOFGyXQ4XTv9MECg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A19D53EA6C;
- Tue,  3 Mar 2026 11:32:44 +0000 (UTC)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ED0CC3EA6C;
+ Tue,  3 Mar 2026 11:33:31 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id vOFyJ9zGpml8UwAAD6G6ig
- (envelope-from <jack@suse.cz>); Tue, 03 Mar 2026 11:32:44 +0000
+ by imap1.dmz-prg2.suse.org with ESMTPSA id O9HWOQvHpmneUwAAD6G6ig
+ (envelope-from <jack@suse.cz>); Tue, 03 Mar 2026 11:33:31 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
- id 64588A0A1B; Tue,  3 Mar 2026 12:32:44 +0100 (CET)
-Date: Tue, 3 Mar 2026 12:32:44 +0100
+ id ADD8FA0A1B; Tue,  3 Mar 2026 12:33:27 +0100 (CET)
+Date: Tue, 3 Mar 2026 12:33:27 +0100
 From: Jan Kara <jack@suse.cz>
 To: Jeff Layton <jlayton@kernel.org>
-Message-ID: <6myy5axw5zn3e3gtmxrfw2iynowkont7dc7mm74j24cvecrewb@7qitmwzmad2k>
+Message-ID: <632zh5igh5dlniw2aboh23enl34csbfb5oizz4udz2mca55rxc@ncjzx2adt5za>
 References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
- <20260302-iino-u64-v2-67-e5388800dae0@kernel.org>
+ <20260302-iino-u64-v2-82-e5388800dae0@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260302-iino-u64-v2-67-e5388800dae0@kernel.org>
-X-Spamd-Result: default: False [-0.30 / 50.00]; BAYES_HAM(-3.00)[100.00%];
+In-Reply-To: <20260302-iino-u64-v2-82-e5388800dae0@kernel.org>
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: 0EFC05BDF1
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.51 / 50.00]; BAYES_HAM(-3.00)[100.00%];
  FORGED_RECIPIENTS(2.00)[m:jlayton@kernel.org, m:viro@zeniv.linux.org.uk,
  m:brauner@kernel.org, m:rostedt@goodmis.org, m:mhiramat@kernel.org,
  m:mathieu.desnoyers@efficios.com, m:dan.j.williams@intel.com,
@@ -145,10 +151,14 @@ X-Spamd-Result: default: False [-0.30 / 50.00]; BAYES_HAM(-3.00)[100.00%];
  s@vger.kernel.org,s:linux-bluetooth@vger.kernel.org,s:linux-can@vger.kernel.org,s:linux-cifs@vger.kernel.org];
  SUSPICIOUS_RECIPS(1.50)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
  MID_RHS_NOT_FQDN(0.50)[]; NEURAL_HAM_SHORT(-0.20)[-1.000];
- MIME_GOOD(-0.10)[text/plain]; RCVD_VIA_SMTP_AUTH(0.00)[];
- FUZZY_RATELIMITED(0.00)[rspamd.com]; MIME_TRACE(0.00)[0:+];
- TO_DN_SOME(0.00)[]; MISSING_XM_UA(0.00)[]; ARC_NA(0.00)[];
- TAGGED_RCPT(0.00)[];
+ R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+ MIME_GOOD(-0.10)[text/plain]; MX_GOOD(-0.01)[];
+ RCVD_TLS_LAST(0.00)[]; ARC_NA(0.00)[];
+ DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+ MIME_TRACE(0.00)[0:+];
+ SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+ FUZZY_RATELIMITED(0.00)[rspamd.com]; RCVD_COUNT_THREE(0.00)[3];
+ FROM_HAS_DN(0.00)[];
  FREEMAIL_CC(0.00)[zeniv.linux.org.uk, kernel.org, suse.cz, goodmis.org,
  efficios.com, intel.com, infradead.org, mit.edu, linux.dev, suse.de,
  redhat.com, manguebit.org, dilger.ca, suse.com, oracle.com, brown.name,
@@ -164,16 +174,17 @@ X-Spamd-Result: default: False [-0.30 / 50.00]; BAYES_HAM(-3.00)[100.00%];
  iogearbox.net, vger.kernel.org, lists.linux.dev, kvack.org,
  lists.sourceforge.net, lists.samba.org, lists.infradead.org, coda.cs.cmu.edu,
  lists.orangefs.org, lists.ubuntu.com, lists.freedesktop.org, lists.linaro.or
- g]; RCVD_COUNT_THREE(0.00)[3]; FROM_EQ_ENVFROM(0.00)[];
- FROM_HAS_DN(0.00)[];
- R_RATELIMIT(0.00)[to_ip_from(RLswtmdueuza7a4srcp7atxnzq)];
- TO_MATCH_ENVRCPT_SOME(0.00)[]; RCPT_COUNT_GT_50(0.00)[172];
- RCVD_TLS_LAST(0.00)[];
- DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
- DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email, suse.com:email,
- imap1.dmz-prg2.suse.org:helo]
-X-Headers-End: 1vxNzf-0004PD-3s
-Subject: Re: [f2fs-dev] [PATCH v2 067/110] proc: replace PRIino with
+ g];
+ DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+ RCPT_COUNT_GT_50(0.00)[172]; TO_MATCH_ENVRCPT_SOME(0.00)[];
+ FROM_EQ_ENVFROM(0.00)[]; TO_DN_SOME(0.00)[];
+ TAGGED_RCPT(0.00)[]; MISSING_XM_UA(0.00)[];
+ RCVD_VIA_SMTP_AUTH(0.00)[]; DKIM_TRACE(0.00)[suse.cz:+];
+ R_RATELIMIT(0.00)[to_ip_from(RL3ntoum3i61xr6zaswawwyp9j)];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email, suse.cz:dkim, suse.cz:email,
+ imap1.dmz-prg2.suse.org:helo, imap1.dmz-prg2.suse.org:rdns]
+X-Headers-End: 1vxO0Q-0004SB-HA
+Subject: Re: [f2fs-dev] [PATCH v2 082/110] ext2: replace PRIino with
  %llu/%llx format strings
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -286,9 +297,9 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon 02-03-26 15:24:51, Jeff Layton wrote:
+On Mon 02-03-26 15:25:06, Jeff Layton wrote:
 > Now that i_ino is u64 and the PRIino format macro has been removed,
-> replace all uses in proc with the concrete format strings.
+> replace all uses in ext2 with the concrete format strings.
 > 
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
@@ -299,45 +310,153 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  fs/proc/fd.c       | 2 +-
->  fs/proc/task_mmu.c | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
+>  fs/ext2/dir.c    | 10 +++++-----
+>  fs/ext2/ialloc.c |  2 +-
+>  fs/ext2/inode.c  |  2 +-
+>  fs/ext2/xattr.c  | 14 +++++++-------
+>  4 files changed, 14 insertions(+), 14 deletions(-)
 > 
-> diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-> index 936d0258d688be5fdc384ee5c4dfbb8fa0d19dff..aae1a83e884686471758703634f0d3479e77c9a7 100644
-> --- a/fs/proc/fd.c
-> +++ b/fs/proc/fd.c
-> @@ -54,7 +54,7 @@ static int seq_show(struct seq_file *m, void *v)
->  	if (ret)
->  		return ret;
+> diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
+> index f87106907da31bb7c1ca65c0ec2dcc0d47d27c62..278d4be8ecbe7790204b5ba985a7ce088fadb181 100644
+> --- a/fs/ext2/dir.c
+> +++ b/fs/ext2/dir.c
+> @@ -141,7 +141,7 @@ static bool ext2_check_folio(struct folio *folio, int quiet, char *kaddr)
+>  Ebadsize:
+>  	if (!quiet)
+>  		ext2_error(sb, __func__,
+> -			"size of directory #%" PRIino "u is not a multiple "
+> +			"size of directory #%llu is not a multiple "
+>  			"of chunk size", dir->i_ino);
+>  	goto fail;
+>  Eshort:
+> @@ -160,7 +160,7 @@ static bool ext2_check_folio(struct folio *folio, int quiet, char *kaddr)
+>  	error = "inode out of bounds";
+>  bad_entry:
+>  	if (!quiet)
+> -		ext2_error(sb, __func__, "bad entry in directory #%" PRIino "u: : %s - "
+> +		ext2_error(sb, __func__, "bad entry in directory #%llu: : %s - "
+>  			"offset=%llu, inode=%lu, rec_len=%d, name_len=%d",
+>  			dir->i_ino, error, folio_pos(folio) + offs,
+>  			(unsigned long) le32_to_cpu(p->inode),
+> @@ -170,7 +170,7 @@ static bool ext2_check_folio(struct folio *folio, int quiet, char *kaddr)
+>  	if (!quiet) {
+>  		p = (ext2_dirent *)(kaddr + offs);
+>  		ext2_error(sb, "ext2_check_folio",
+> -			"entry in directory #%" PRIino "u spans the page boundary"
+> +			"entry in directory #%llu spans the page boundary"
+>  			"offset=%llu, inode=%lu",
+>  			dir->i_ino, folio_pos(folio) + offs,
+>  			(unsigned long) le32_to_cpu(p->inode));
+> @@ -281,7 +281,7 @@ ext2_readdir(struct file *file, struct dir_context *ctx)
 >  
-> -	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\nino:\t%" PRIino "u\n",
-> +	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\nino:\t%llu\n",
->  		   (long long)file->f_pos, f_flags,
->  		   real_mount(file->f_path.mnt)->mnt_id,
->  		   file_inode(file)->i_ino);
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 702b0f0433f91077cd0d0af4a07e9d67d9fa9a45..751b9ba160fbf15499555875871d727644b0df44 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -442,7 +442,7 @@ static void get_vma_name(struct vm_area_struct *vma,
->  static void show_vma_header_prefix(struct seq_file *m,
->  				   unsigned long start, unsigned long end,
->  				   vm_flags_t flags, unsigned long long pgoff,
-> -				   dev_t dev, kino_t ino)
-> +				   dev_t dev, u64 ino)
->  {
->  	seq_setwidth(m, 25 + sizeof(void *) * 6 - 1);
->  	seq_put_hex_ll(m, NULL, start, 8);
-> @@ -465,7 +465,7 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
->  	const struct path *path;
->  	const char *name_fmt, *name;
->  	vm_flags_t flags = vma->vm_flags;
-> -	kino_t ino = 0;
-> +	u64 ino = 0;
->  	unsigned long long pgoff = 0;
->  	unsigned long start, end;
->  	dev_t dev = 0;
+>  		if (IS_ERR(kaddr)) {
+>  			ext2_error(sb, __func__,
+> -				   "bad page in #%" PRIino "u",
+> +				   "bad page in #%llu",
+>  				   inode->i_ino);
+>  			ctx->pos += PAGE_SIZE - offset;
+>  			return PTR_ERR(kaddr);
+> @@ -383,7 +383,7 @@ struct ext2_dir_entry_2 *ext2_find_entry (struct inode *dir,
+>  		/* next folio is past the blocks we've got */
+>  		if (unlikely(n > (dir->i_blocks >> (PAGE_SHIFT - 9)))) {
+>  			ext2_error(dir->i_sb, __func__,
+> -				"dir %" PRIino "u size %lld exceeds block count %llu",
+> +				"dir %llu size %lld exceeds block count %llu",
+>  				dir->i_ino, dir->i_size,
+>  				(unsigned long long)dir->i_blocks);
+>  			goto out;
+> diff --git a/fs/ext2/ialloc.c b/fs/ext2/ialloc.c
+> index 6a317411e54191578343308b5a3990aea9c36436..bf21b57cf98cd5f90e1177454a8fd5cca482c2f8 100644
+> --- a/fs/ext2/ialloc.c
+> +++ b/fs/ext2/ialloc.c
+> @@ -590,7 +590,7 @@ struct inode *ext2_new_inode(struct inode *dir, umode_t mode,
+>  		goto fail_free_drop;
+>  
+>  	mark_inode_dirty(inode);
+> -	ext2_debug("allocating inode %" PRIino "u\n", inode->i_ino);
+> +	ext2_debug("allocating inode %llu\n", inode->i_ino);
+>  	ext2_preread_inode(inode);
+>  	return inode;
+>  
+> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+> index 0ca9148583646812b478f01fd35bcad11498f951..45286c0c3b6b8f86a1ecec0e2f545c5a678dd6ac 100644
+> --- a/fs/ext2/inode.c
+> +++ b/fs/ext2/inode.c
+> @@ -1152,7 +1152,7 @@ static void ext2_free_branches(struct inode *inode, __le32 *p, __le32 *q, int de
+>  			 */ 
+>  			if (!bh) {
+>  				ext2_error(inode->i_sb, "ext2_free_branches",
+> -					"Read failure, inode=%" PRIino "u, block=%ld",
+> +					"Read failure, inode=%llu, block=%ld",
+>  					inode->i_ino, nr);
+>  				continue;
+>  			}
+> diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
+> index 4b3dadc0a2a47c85682d9c74edb900cf0f20996f..14ada70db36a76d1436944a3622e5caf0b373b9e 100644
+> --- a/fs/ext2/xattr.c
+> +++ b/fs/ext2/xattr.c
+> @@ -227,7 +227,7 @@ ext2_xattr_get(struct inode *inode, int name_index, const char *name,
+>  	if (!ext2_xattr_header_valid(HDR(bh))) {
+>  bad_block:
+>  		ext2_error(inode->i_sb, "ext2_xattr_get",
+> -			"inode %" PRIino "u: bad block %d", inode->i_ino,
+> +			"inode %llu: bad block %d", inode->i_ino,
+>  			EXT2_I(inode)->i_file_acl);
+>  		error = -EIO;
+>  		goto cleanup;
+> @@ -313,7 +313,7 @@ ext2_xattr_list(struct dentry *dentry, char *buffer, size_t buffer_size)
+>  	if (!ext2_xattr_header_valid(HDR(bh))) {
+>  bad_block:
+>  		ext2_error(inode->i_sb, "ext2_xattr_list",
+> -			"inode %" PRIino "u: bad block %d", inode->i_ino,
+> +			"inode %llu: bad block %d", inode->i_ino,
+>  			EXT2_I(inode)->i_file_acl);
+>  		error = -EIO;
+>  		goto cleanup;
+> @@ -454,7 +454,7 @@ ext2_xattr_set(struct inode *inode, int name_index, const char *name,
+>  		if (!ext2_xattr_header_valid(header)) {
+>  bad_block:
+>  			ext2_error(sb, "ext2_xattr_set",
+> -				"inode %" PRIino "u: bad block %d", inode->i_ino,
+> +				"inode %llu: bad block %d", inode->i_ino,
+>  				   EXT2_I(inode)->i_file_acl);
+>  			error = -EIO;
+>  			goto cleanup;
+> @@ -833,7 +833,7 @@ ext2_xattr_delete_inode(struct inode *inode)
+>  
+>  	if (!ext2_data_block_valid(sbi, EXT2_I(inode)->i_file_acl, 1)) {
+>  		ext2_error(inode->i_sb, "ext2_xattr_delete_inode",
+> -			"inode %" PRIino "u: xattr block %d is out of data blocks range",
+> +			"inode %llu: xattr block %d is out of data blocks range",
+>  			inode->i_ino, EXT2_I(inode)->i_file_acl);
+>  		goto cleanup;
+>  	}
+> @@ -841,14 +841,14 @@ ext2_xattr_delete_inode(struct inode *inode)
+>  	bh = sb_bread(inode->i_sb, EXT2_I(inode)->i_file_acl);
+>  	if (!bh) {
+>  		ext2_error(inode->i_sb, "ext2_xattr_delete_inode",
+> -			"inode %" PRIino "u: block %d read error", inode->i_ino,
+> +			"inode %llu: block %d read error", inode->i_ino,
+>  			EXT2_I(inode)->i_file_acl);
+>  		goto cleanup;
+>  	}
+>  	ea_bdebug(bh, "b_count=%d", atomic_read(&(bh->b_count)));
+>  	if (!ext2_xattr_header_valid(HDR(bh))) {
+>  		ext2_error(inode->i_sb, "ext2_xattr_delete_inode",
+> -			"inode %" PRIino "u: bad block %d", inode->i_ino,
+> +			"inode %llu: bad block %d", inode->i_ino,
+>  			EXT2_I(inode)->i_file_acl);
+>  		goto cleanup;
+>  	}
+> @@ -952,7 +952,7 @@ ext2_xattr_cache_find(struct inode *inode, struct ext2_xattr_header *header)
+>  		bh = sb_bread(inode->i_sb, ce->e_value);
+>  		if (!bh) {
+>  			ext2_error(inode->i_sb, "ext2_xattr_cache_find",
+> -				"inode %" PRIino "u: block %ld read error",
+> +				"inode %llu: block %ld read error",
+>  				inode->i_ino, (unsigned long) ce->e_value);
+>  		} else {
+>  			lock_buffer(bh);
 > 
 > -- 
 > 2.53.0
