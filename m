@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 64C2CEDA687
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Mar 2026 15:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B0EDFEDA68D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Mar 2026 16:12:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:Date:To:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=puQUa32SR/ITT6JfaQKdUOYaJYXfOmALKL/aGh2ODvw=; b=E1rpA1S/xIPS1yo8l+phoT3UxZ
-	JaZMD/x86W7oMTMVD6nHHUJnUPSM1jNgoqFEyF00CCHE8Z5qMC3uJfHnHUV6qGf5Dk9JDJPbJatmq
-	5E3DwwHIJzscwt8Itx4ynIF4yi9Xbe4uocFGIjkFOIAmmidwowizX+tkTIYO9p5+jaq0=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=FfS/aQ61oYicIQwRahPMKN9c9QcXHSeX3YXj1faYJRE=; b=RTv8stLa1EEewWE3A5TnrGvOj6
+	Saf8kGQIqBmgPxbvdvA0V37LVobFvLU0o6/7KdzdAPYfCDuFvzfXlxHn5Y3ZsVbEvhy6CR0pITBt3
+	K1pe27t40sybxjHuKgq14MDvMUkmev65SH3ZM1s+Gm2TdBzn50/DMSsF9CpsHLlNZEdA=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxRdY-0002ox-2i;
-	Tue, 03 Mar 2026 15:26:16 +0000
+	id 1vxSMO-0004tL-OB;
+	Tue, 03 Mar 2026 16:12:36 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jlayton@kernel.org>) id 1vxRdV-0002oW-Sy;
- Tue, 03 Mar 2026 15:26:13 +0000
+ (envelope-from <jlayton@kernel.org>) id 1vxSMM-0004sz-O0;
+ Tue, 03 Mar 2026 16:12:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
  :References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Vq1l3VBMBEIjbra+1t3tpm4BF3TQVIgbh4HW/OqV+AU=; b=mmhlkUwvrTBG2aJ3pKmOQ8yF6C
- p/+nWtqaLezalLx5juy4T/7wUhHMBHtrboE0uWEiIAg59YlTVuNzHVR8iSBtZE6UTFlLX93OagYgd
- UfzUSZiu8XWuc356wiTJr321p3sP14QHmfB3pT4e6s0BGzIRlz5Fm2Oy9hmDAORiFC+g=;
+ bh=lJd9+th8f1Lqv15eEDK01l3sYU9guhQCrXIbv/gIiSo=; b=aSk3Cs2+jjJUFGVEgE7Kw7vNz5
+ v6KSA9h5hseAX5jOj9P0eZnIz5rFhm0phIfO40F36qqGR6HDO/aDz70H0+V6PEviesGNDdcD5r5tc
+ 4/hieBE3veokyp52OmvTXqNBH7B7ZDViA/eNlEHpaYJS1vGAeIyJwsGL+Z/freUvvz7I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
@@ -41,38 +41,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Vq1l3VBMBEIjbra+1t3tpm4BF3TQVIgbh4HW/OqV+AU=; b=mq0TGsbGoDTKtgyv1ZC3JbBOwC
- zOP00Op/I9TFu5mgjMJMyowWcBPoXCLw07h4i1Oaw2Xz0WHb8yLhqBGskeXyh34gxDPhfir3FLFBD
- CS6fiWJa0gFNvCoq/JZR1FY0f/gvSn6k/lUaxS5hakCOHElTODgPGOBwL0MFIbsFVIS0=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=lJd9+th8f1Lqv15eEDK01l3sYU9guhQCrXIbv/gIiSo=; b=W7YbhVh5RGAlyFVZGYRQvrUpMR
+ XPYXIrUjQRNuayndzgSsM7armNFbjpx4t3V1+PnF+d2VY2EVD6rWtbMgs4LI4Iboo6RUc7U+UPQsH
+ bqCYjPWNWLheSHpiHKPvspDVLKp8tKEOgA6uiyKeAihGJBXh04XbgNDT07GI4BbFA0us=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vxRdV-0007Z3-3d; Tue, 03 Mar 2026 15:26:13 +0000
+ id 1vxSMM-0001bX-73; Tue, 03 Mar 2026 16:12:34 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id D268260127;
- Tue,  3 Mar 2026 15:26:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19832C116C6;
- Tue,  3 Mar 2026 15:25:52 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id B3C5643E45;
+ Tue,  3 Mar 2026 16:12:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C998C2BCAF;
+ Tue,  3 Mar 2026 16:12:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772551566;
- bh=GR5xxAO3SaQW9wgM7VGtxRPOkk2oeXbLrLD7cLv6Vfo=;
+ s=k20201202; t=1772554348;
+ bh=DHwb1w4rbyjffvv/2dbDWAHJ7e/mef+KxqtMj51rARA=;
  h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
- b=FuSlGmeiPRKGLoVXeyoAW/4o0okRbURy9ms1hiH2PDqHC8YS5UGUv9pjnJURfC1N3
- wEHpswFKJ9D7LuZA6II7jxIclJzmZ5mTaaPW4MAHz1ft4MhLW1HZrLr0Juj9NIJ8+5
- CYHQJkN8Mlno7UC+a35h2JBvFZEkwIKYFfjenBa8ci++7tWv3SBJpPkEUhCg7EA8/C
- T2oD0g2pCazrgxokqgkGYkIajww+MhJ1/Z0LjEDZPy8xCtNF381iB35sgllJ8wNyOg
- qAL/lm8ZnxNCumPp1kFjCkJBZmxGM1T9KXd47dCgWe+GFM6EaCUfBAl9jXPgSERD/R
- MVuefm1rcs/Xg==
-Message-ID: <78abbfef9b7ac8cdde4de9f2cf3fbb50317d6dd3.camel@kernel.org>
-To: Theodore Tso <tytso@mit.edu>
-Date: Tue, 03 Mar 2026 10:25:50 -0500
-In-Reply-To: <20260303151617.GD6520@macsyma-wired.lan>
+ b=DAmilg92EMM5p+oBAiJod0pyfJNnnEgeo/FHI7Mt2tLqRb5btdUmLaBqveM9jVjLi
+ Rs1bZ9VXqnLLBPtsKjZiGU65p9YwK2O90hnrBBB5IbBGxbV5fsqsFCL5BPjNoFktRM
+ 9pbG4QDyP022c1s8Z36onUYV0x0hfc5XlTzhqulI2XOKQGvhykIef5J78h7gEF8HAr
+ vrL1Kdx04gNh7dqXDuFHHcf6i6Nln3Le9QC/xXvIfu2MMc08R/9VQf0UWHcDryW4zP
+ wt4aUnI0TUpn7Jgy6RntsLOuNDb3tu0L/3jw/oOf46o04Iv9Xc1ksw8iqkEfgP4p7Y
+ l/HlE10Zw24ow==
+Message-ID: <add39953250a4a1b2fe2b09deb3373c2a7482b88.camel@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Date: Tue, 03 Mar 2026 11:12:12 -0500
+In-Reply-To: <CAHC9VhTyhnG7-ojnTnVdh_m1x=rKxw9YEH9g7Xp9m4F78aA5cA@mail.gmail.com>
 References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
- <20260302-iino-u64-v2-1-e5388800dae0@kernel.org>
- <20260303012556.GA6520@macsyma-wired.lan>
- <20260303042546.GF13868@frogsfrogsfrogs>
- <33228005140684201de2ca0c157441d3b6a06413.camel@kernel.org>
- <20260303151617.GD6520@macsyma-wired.lan>
+ <20260302-iino-u64-v2-3-e5388800dae0@kernel.org>
+ <CAHC9VhRnmBuXEKkUPQhJ_LDzcksjoAJL-ne6mFoJdR1hnDdzsg@mail.gmail.com>
+ <7a0165fe39e82a1effd8cce5c2c4e82d6a42cb3a.camel@kernel.org>
+ <CAHC9VhTyhnG7-ojnTnVdh_m1x=rKxw9YEH9g7Xp9m4F78aA5cA@mail.gmail.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -149,9 +148,8 @@ Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
 User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 MIME-Version: 1.0
-X-Headers-End: 1vxRdV-0007Z3-3d
-Subject: Re: [f2fs-dev] [PATCH v2 001/110] vfs: introduce kino_t typedef and
- PRIino format macro
+X-Headers-End: 1vxSMM-0001bX-73
+Subject: Re: [f2fs-dev] [PATCH v2 003/110] audit: widen ino fields to u64
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -195,17 +193,16 @@ Cc: Latchesar Ionkov <lucho@ionkov.net>, nvdimm@lists.linux.dev,
  Oleg Nesterov <oleg@redhat.com>, Eric Dumazet <edumazet@google.com>,
  Johan Hedberg <johan.hedberg@gmail.com>, Simona Vetter <simona@ffwll.ch>,
  linux-cifs@vger.kernel.org, Kuniyuki Iwashima <kuniyu@google.com>,
- linux-nilfs@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
- John Fastabend <john.fastabend@gmail.com>,
- Remi Denis-Courmont <courmisch@gmail.com>, linux-trace-kernel@vger.kernel.org,
- Olga Kornievskaia <okorniev@redhat.com>,
+ linux-nilfs@vger.kernel.org, John Fastabend <john.fastabend@gmail.com>,
+ codalist@coda.cs.cmu.edu, Remi Denis-Courmont <courmisch@gmail.com>,
+ linux-trace-kernel@vger.kernel.org, Olga Kornievskaia <okorniev@redhat.com>,
  Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
  Yangtao Li <frank.li@vivo.com>, selinux@vger.kernel.org, v9fs@lists.linux.dev,
  linux-can@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
  Casey Schaufler <casey@schaufler-ca.com>, netfs@lists.linux.dev,
  Jaegeuk Kim <jaegeuk@kernel.org>, fsverity@lists.linux.dev,
- Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
- Roberto Sassu <roberto.sassu@huawei.com>,
+ "Theodore Y. Ts'o" <tytso@mit.edu>, Nicolas Pitre <nico@fluxnic.net>,
+ Muchun Song <muchun.song@linux.dev>, Roberto Sassu <roberto.sassu@huawei.com>,
  "David S. Miller" <davem@davemloft.net>, Anna Schumaker <anna@kernel.org>,
  linux-integrity@vger.kernel.org,
  Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
@@ -221,8 +218,8 @@ Cc: Latchesar Ionkov <lucho@ionkov.net>, nvdimm@lists.linux.dev,
  Matthew Wilcox <willy@infradead.org>, coda@cs.cmu.edu,
  Stanislav Fomichev <sdf@fomichev.me>, Viacheslav Dubeyko <slava@dubeyko.com>,
  NeilBrown <neil@brown.name>, Ilya Dryomov <idryomov@gmail.com>,
- Paolo Abeni <pabeni@redhat.com>, jfs-discussion@lists.sourceforge.net, "Serge
- E. Hallyn" <serge@hallyn.com>, Amir Goldstein <amir73il@gmail.com>,
+ Paolo Abeni <pabeni@redhat.com>, jfs-discussion@lists.sourceforge.net,
+ "Serge E. Hallyn" <serge@hallyn.com>, Amir Goldstein <amir73il@gmail.com>,
  James Clark <james.clark@linaro.org>, autofs@vger.kernel.org,
  Steven Rostedt <rostedt@goodmis.org>, Damien Le Moal <dlemoal@kernel.org>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
@@ -249,10 +246,9 @@ Cc: Latchesar Ionkov <lucho@ionkov.net>, nvdimm@lists.linux.dev,
  Mark Fasheh <mark@fasheh.com>, Dai Ngo <Dai.Ngo@oracle.com>,
  Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
  Salah Triki <salah.triki@gmail.com>, Marcel Holtmann <marcel@holtmann.org>,
- Joerg Reuter <jreuter@yaina.de>, codalist@telemann.coda.cs.cmu.edu,
- Simon Horman <horms@kernel.org>, apparmor@lists.ubuntu.com,
- Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>,
- Marc Kleine-Budde <mkl@pengutronix.de>,
+ Joerg Reuter <jreuter@yaina.de>, Simon Horman <horms@kernel.org>,
+ apparmor@lists.ubuntu.com, Tom Talpey <tom@talpey.com>,
+ Bharath SM <bharathsm@microsoft.com>, Marc Kleine-Budde <mkl@pengutronix.de>,
  "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
  David Sterba <dsterba@suse.com>, Namhyung Kim <namhyung@kernel.org>,
  Ryusuke Konishi <konishi.ryusuke@gmail.com>,
@@ -262,48 +258,50 @@ Cc: Latchesar Ionkov <lucho@ionkov.net>, nvdimm@lists.linux.dev,
  Adrian Hunter <adrian.hunter@intel.com>, audit@vger.kernel.org,
  linux-security-module@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>,
  David Woodhouse <dwmw2@infradead.org>, Joel Becker <jlbec@evilplan.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, 2026-03-03 at 10:16 -0500, Theodore Tso wrote:
-> On Tue, Mar 03, 2026 at 05:53:39AM -0500, Jeff Layton wrote:
-> > 
-> > Like I said to Ted, this is just temporary scaffolding for the change.
-> > The PRIino macro is removed in the end. Given that, perhaps you can
-> > overlook the bikeshed's color in this instance?
-> 
-> I didn't realize that this was going to disappear in the end.  That
-> makes me feel much better about the change.  I'd suggest changing the
-> commit description where it claims that we're using something that
-> follows the inttypes.h convention and making it clear that this is
-> temporary and only to preserve bisectability.
-> 
-> One question though --- are there *really* places that are using
-> signed inode numbers and trying to print them?  If people are trying
-> to use negative inodes to signal an error or some such, the it implies
-> that at least for some file systems, an inode number larger than 2**63
-> might be problematic.  If there is core VFS code that uses a negative
-> inode number then this could be a real potential trap.
-> 
-> So are there really code which is doing a printf of 'PRIino "d"'?  Or
-> was this to allow the use of of 'PRiino "x"'?
-> 
-
-Mostly it's to allow 'PRIino "x"'. There are a number of places that
-(for whatever reason) print the inode number in hex. I don't want to
-change those.
-
-There are also some places that print it as a signed value (PRIino
-"d"). I suspect most of those are bugs, or just holdovers from a
-simpler time when we didn't worry so much about the signedness of inode
-numbers. I fixed a few of those in the context of this series, fwiw.
-
--- 
-Jeff Layton <jlayton@kernel.org>
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gVHVlLCAyMDI2LTAzLTAzIGF0IDExOjAzIC0wNTAwLCBQYXVsIE1vb3JlIHdyb3RlOgo+IE9u
+IFR1ZSwgTWFyIDMsIDIwMjYgYXQgNjowNeKAr0FNIEplZmYgTGF5dG9uIDxqbGF5dG9uQGtlcm5l
+bC5vcmc+IHdyb3RlOgo+ID4gT24gTW9uLCAyMDI2LTAzLTAyIGF0IDE4OjQ0IC0wNTAwLCBQYXVs
+IE1vb3JlIHdyb3RlOgo+ID4gPiBPbiBNb24sIE1hciAyLCAyMDI2IGF0IDM6MjXigK9QTSBKZWZm
+IExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPiB3cm90ZToKPiA+ID4gPiAKPiA+ID4gPiBpbm9k
+ZS0+aV9pbm8gaXMgYmVpbmcgd2lkZW5lZCBmcm9tIHVuc2lnbmVkIGxvbmcgdG8gdTY0LiBUaGUg
+YXVkaXQKPiA+ID4gPiBzdWJzeXN0ZW0gdXNlcyB1bnNpZ25lZCBsb25nIGlubyBpbiBzdHJ1Y3Qg
+ZmllbGRzLCBmdW5jdGlvbiBwYXJhbWV0ZXJzLAo+ID4gPiA+IGFuZCBsb2NhbCB2YXJpYWJsZXMg
+dGhhdCBzdG9yZSBpbm9kZSBudW1iZXJzIGZyb20gYXJiaXRyYXJ5IGZpbGVzeXN0ZW1zLgo+ID4g
+PiA+IE9uIDMyLWJpdCBwbGF0Zm9ybXMgdGhpcyB0cnVuY2F0ZXMgaW5vZGUgbnVtYmVycyB0aGF0
+IGV4Y2VlZCAzMiBiaXRzLAo+ID4gPiA+IHdoaWNoIHdpbGwgY2F1c2UgaW5jb3JyZWN0IGF1ZGl0
+IGxvZyBlbnRyaWVzIGFuZCBicm9rZW4gd2F0Y2gvbWFyawo+ID4gPiA+IGNvbXBhcmlzb25zLgo+
+ID4gPiA+IAo+ID4gPiA+IFdpZGVuIGFsbCBhdWRpdCBpbm8gZmllbGRzLCBwYXJhbWV0ZXJzLCBh
+bmQgbG9jYWxzIHRvIHU2NCwgYW5kIHVwZGF0ZQo+ID4gPiA+IHRoZSBpbm9kZSBmb3JtYXQgc3Ry
+aW5nIGZyb20gJWx1IHRvICVsbHUgdG8gbWF0Y2guCj4gPiA+ID4gCj4gPiA+ID4gU2lnbmVkLW9m
+Zi1ieTogSmVmZiBMYXl0b24gPGpsYXl0b25Aa2VybmVsLm9yZz4KPiA+ID4gPiAtLS0KPiA+ID4g
+PiAgaW5jbHVkZS9saW51eC9hdWRpdC5oICAgfCAyICstCj4gPiA+ID4gIGtlcm5lbC9hdWRpdC5o
+ICAgICAgICAgIHwgOSArKysrLS0tLS0KPiA+ID4gPiAga2VybmVsL2F1ZGl0X2Zzbm90aWZ5LmMg
+fCA0ICsrLS0KPiA+ID4gPiAga2VybmVsL2F1ZGl0X3dhdGNoLmMgICAgfCA4ICsrKystLS0tCj4g
+PiA+ID4gIGtlcm5lbC9hdWRpdHNjLmMgICAgICAgIHwgMiArLQo+ID4gPiA+ICA1IGZpbGVzIGNo
+YW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDEzIGRlbGV0aW9ucygtKQo+ID4gPiAKPiA+ID4gV2Ug
+c2hvdWxkIGFsc28gdXBkYXRlIGF1ZGl0X2hhc2hfaW5vKCkgaW4ga2VybmVsL2F1ZGl0LmguICBJ
+dCBpcyBhCj4gPiA+ICp2ZXJ5KiBiYXNpYyBoYXNoIGZ1bmN0aW9uLCBzbyBJIHRoaW5rIGxlYXZp
+bmcgdGhlIGZ1bmN0aW9uIGFzLWlzIGFuZAo+ID4gPiBqdXN0IGNoYW5naW5nIHRoZSBpbm9kZSBw
+YXJhbWV0ZXIgZnJvbSB1MzIgdG8gdTY0IHNob3VsZCBiZSBmaW5lLgo+IAo+IC4uLgo+IAo+ID4g
+SXQgZG9lc24ndCBsb29rIGxpa2UgY2hhbmdpbmcgdGhlIGFyZ3VtZW50IHR5cGUgd2lsbCBtYWtl
+IGFueSBtYXRlcmlhbAo+ID4gZGlmZmVyZW5jZS4gR2l2ZW4gdGhhdCBpdCBzaG91bGQgc3RpbGwg
+d29yayB3aXRob3V0IHRoYXQgY2hhbmdlLCBjYW4gd2UKPiA+IGxlYXZlIHRoaXMgY2xlYW51cCBm
+b3IgeW91IHRvIGRvIGluIGEgZm9sbG93LW9uIHBhdGNoc2V0Pwo+IAo+IEkgd291bGQgcHJlZmVy
+IGlmIHlvdSBtYWRlIHRoZSBjaGFuZ2UgYXMgcGFydCBvZiB0aGUgcGF0Y2gsIG1haW5seSB0bwo+
+IGtlZXAgYSBwYXRjaCByZWNvcmQgb2YgdGhpcyBiZWluZyByZWxhdGVkLgo+IAoKT2ssIEknbGwg
+c2VlIGFib3V0IGZhY3RvcmluZyB0aGF0IGluLgoKPiBJZGVhbGx5IEknZCByZWFsbHkgbGlrZSB0
+byBzZWUga2lub190IHVzZWQgaW4gdGhlIGF1ZGl0IGNvZGUgaW5zdGVhZAo+IG9mIHU2NCwgYnV0
+IHBlcmhhcHMgdGhhdCBpcyBkb25lIGluIGEgbGF0ZXIgcGF0Y2ggdGhhdCBJIGRpZG4ndCBzZWUu
+CgpJIHRoaW5rIEkgZGlkbid0IG1ha2UgdGhpcyBjbGVhciBlbm91Z2ggaW4gdGhlIGNvdmVyIGxl
+dHRlciwgYnV0IGtpbm9fdAppcyByZW1vdmVkIGF0IHRoZSBlbmQgb2YgdGhlIHNlcmllcy4gSXQn
+cyBqdXN0IHRoZXJlIHRvIHN1cHBvcnQgdGhlCmNoYW5nZSBkdXJpbmcgdGhlIGludGVyaW0uCgpJ
+ZiBIQ0ggZ2V0cyBoaXMgd2F5IHRvIGRvIHRoZSBjaGFuZ2VzIGFzIG9uZSBiaWcgcGF0Y2gsIGl0
+J2xsIGdvIGF3YXkKZW50aXJlbHkuCi0tIApKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3Jn
+PgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4
+LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9y
+Z2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4
+LWYyZnMtZGV2ZWwK
