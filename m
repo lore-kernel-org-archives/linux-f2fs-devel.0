@@ -4,37 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 142BDEDA682
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Mar 2026 15:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 70EDEEDA68A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Mar 2026 15:25:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=7Bm27eeA+tPVA1vEWY2zNRez0a6sjVDInOS9K47dfUc=; b=iVYTZegkkR2GLV/XU9+ObVO6vO
-	9kVzgRXI1aXUuzLxTWvQv5s92Upe2D6jLqsumKxwwNEuJggqbkO+9Vog8912aJvInkwrS8PeF/bJl
-	hf8D/dpPCjA4+Juo1spRR6KwSj3DLntjYVndneH7rgcCououpW1lXg2i9UZnrs4Y335I=;
+	bh=uZM29m8pF9tCO1a5dliKwR3x7MR9SVBVUOGg3249Rp4=; b=VF/vW6flKFnD4BmC5pi3Tv+mEO
+	zy36Bvjjei9mpgkSj9Khxbls9ftNHrU0J2wzlFjQUyMA7/ac97i/IgPgUfQvYvIWtuk5YYjgiBMWb
+	ibkSpVGnmQxinqpBjbWRxaOI3C4iAy3Itcq0Zk2+C9zCGZV//MaU1yNxDYqDumpSu/yM=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxRUg-00031C-Ru;
-	Tue, 03 Mar 2026 15:17:07 +0000
+	id 1vxRcM-0003kU-0X;
+	Tue, 03 Mar 2026 15:25:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <tytso@mit.edu>) id 1vxRUd-00030t-JW
- for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Mar 2026 15:17:04 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+880759e8e7db559b7569+8227+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1vxRcB-0003iw-LY; Tue, 03 Mar 2026 15:24:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=r6x2klXXgoU+8nt+Cp4vS5BDkY5WkDUr+eoNgGYMPDk=; b=JF0DVi5sTC+yhaNVmEklpuwDL3
- M69L4QtX0wtmBfj3afg6Uai87qJW5YALcgUlqzzDf4+YzsSiNA2sCoP68GbN+q4ZG7OTCGbFQzsQu
- GvIBGwtaCytrSNj45+ylXRpUEYeEp5tXYnpSktG+KVnSHscrYxg409ZVPXlXu2AhOA/0=;
+ bh=FVOKKYXrgrNLIFNC3VguacredGR7s2JIN9XLcH6po4k=; b=XiWMVLIVG0r6WysLbF3Gb2SbHW
+ /ENkYiHUeff/sPXP6YVEUnCE8RovUUqf8XT7UOyxWMCLHfGYL6akwZyRibsFr0+dTeTmsYEPy1yL1
+ lWfu99VTd+CmhxpARspjg2xVscZNBZxP5T5ZEfqjkXU15lggcaSwl89nZy1s7ca2i64I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,44 +41,46 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=r6x2klXXgoU+8nt+Cp4vS5BDkY5WkDUr+eoNgGYMPDk=; b=hCLDSYDJtWbaQh28Ne9SP2RIEj
- R0xjzE0+7vWjWkq8+oRyDn8C1USF3L1k6H3ql3I0ZZDtgBecHw7B1fe8Df6gCcAtjr9zkmceNQX4L
- 2CJcLsrkjnXulJJ+vD46IMPnTvbj1yedImDx61HMWERnwNQBN72CtVcLQGO5kjB/MsWE=;
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
+ bh=FVOKKYXrgrNLIFNC3VguacredGR7s2JIN9XLcH6po4k=; b=T3IIi2dxJnqltOMRepy++iv/3k
+ UeQTlPkWitNoTIbyEANHo5a3bykj2exaN9W8Re+2VXZVYhrUomDZKhM91PK1W1bs3PMvcOJnjzMxp
+ rBGAYktEnjuQxje5XixZ+5O1q9XMqa7WQ2GhaK4UhiflqENuW3ztiUQCr2yFvE5dFXMA=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vxRUb-00072Q-72 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Mar 2026 15:17:02 +0000
-Received: from macsyma.thunk.org (pool-173-48-119-12.bstnma.fios.verizon.net
- [173.48.119.12]) (authenticated bits=0)
- (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 623FGHAc030962
- (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 3 Mar 2026 10:16:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
- t=1772550987; bh=r6x2klXXgoU+8nt+Cp4vS5BDkY5WkDUr+eoNgGYMPDk=;
- h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
- b=KzTSOHRwT3LMbTHR0llsbZ8Elqs5CaJRZjxmNxQUFMAswuStpC31fs0yIcl+nwIjJ
- S3umgVQVGgNt1Oz1RTpJYxeDOSLWGS1lQWG0OF06WsyJthAOHPTEk63HFB378Gc+Z1
- 7AClTaSOQ+KtiOBjb8/C0ZU9vmqyHEnX8NnBL8RHxXhXKgJeC3i83ujxFmi6vH0p2g
- D27eKVQpmNlyvbKzOT3QHfYP30GkVsl3F2eGSBkR3cTjNKb8X0Ca5cSjf7eotj62mj
- 8tAKE8+0/pvSZn9wBTBUATHjwH/dtOFEvj1uXh0ceQlfb2thD+EORwMqde/Ys1tqiQ
- fLxLTxyRvRmmw==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
- id 99AD45ADBA78; Tue,  3 Mar 2026 10:16:17 -0500 (EST)
-Date: Tue, 3 Mar 2026 10:16:17 -0500
-From: "Theodore Tso" <tytso@mit.edu>
+ id 1vxRc9-0007V4-Kj; Tue, 03 Mar 2026 15:24:50 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+ :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=FVOKKYXrgrNLIFNC3VguacredGR7s2JIN9XLcH6po4k=; b=qxYMrhdokZ5HXfsJyeZZ+fltiy
+ 1XEerkGQnRdFJFtxn82KxLYF5xmIBDbLKs4V5zGrkkAKdseaLA2m9lZs4IGEqH3A6LWUpxG3Ek+0v
+ CsFSDoyxjNUXK6JzWA2t741hlnnhb/IO6SKTq1jFtxCMKdi84yA3hG1047qxz6D3ckz2IMKUPrrZ+
+ IsefqNYtlHN3yxW5z7UoF5CjHCs3ZSN48O0RyskoLNNqzqmRayaRrfbdVH28j1Gcw0oa+snoJHb4N
+ qozTUybJXPeznhh0k0t81pNRkw9cK+17tfXfV/o+1HTdZPJiQ61RdyrlxyCx2e/u2tRFDLzeS3ydy
+ Ipijolfw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red
+ Hat Linux)) id 1vxRb8-0000000FQIt-0QKR;
+ Tue, 03 Mar 2026 15:23:46 +0000
+Date: Tue, 3 Mar 2026 07:23:46 -0800
+From: Christoph Hellwig <hch@infradead.org>
 To: Jeff Layton <jlayton@kernel.org>
-Message-ID: <20260303151617.GD6520@macsyma-wired.lan>
-References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
- <20260302-iino-u64-v2-1-e5388800dae0@kernel.org>
+Message-ID: <aab9AlhqA5u4p5FY@infradead.org>
+References: <20260302-iino-u64-v2-1-e5388800dae0@kernel.org>
  <20260303012556.GA6520@macsyma-wired.lan>
  <20260303042546.GF13868@frogsfrogsfrogs>
  <33228005140684201de2ca0c157441d3b6a06413.camel@kernel.org>
+ <aabkBadGzo7IZpSU@infradead.org>
+ <19e4e79a59dcfc4c61c8cf263af345d0d7026fc8.camel@kernel.org>
+ <aabpPQxCTweoTp8Z@infradead.org>
+ <1310fc5c09cce52ec00344b936275fe584c88dea.camel@kernel.org>
+ <aabwflLfe2HcGv7X@infradead.org>
+ <4d3b9b92da613ad329b822f3f6043fa08f534451.camel@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <33228005140684201de2ca0c157441d3b6a06413.camel@kernel.org>
-X-Headers-End: 1vxRUb-00072Q-72
+In-Reply-To: <4d3b9b92da613ad329b822f3f6043fa08f534451.camel@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1vxRc9-0007V4-Kj
 Subject: Re: [f2fs-dev] [PATCH v2 001/110] vfs: introduce kino_t typedef and
  PRIino format macro
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -132,8 +133,8 @@ Cc: Latchesar Ionkov <lucho@ionkov.net>, nvdimm@lists.linux.dev,
  linux-can@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
  Casey Schaufler <casey@schaufler-ca.com>, netfs@lists.linux.dev,
  Jaegeuk Kim <jaegeuk@kernel.org>, fsverity@lists.linux.dev,
- Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
- Roberto Sassu <roberto.sassu@huawei.com>,
+ Theodore Tso <tytso@mit.edu>, Nicolas Pitre <nico@fluxnic.net>,
+ Muchun Song <muchun.song@linux.dev>, Roberto Sassu <roberto.sassu@huawei.com>,
  "David S. Miller" <davem@davemloft.net>, Anna Schumaker <anna@kernel.org>,
  linux-integrity@vger.kernel.org,
  Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
@@ -194,29 +195,18 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Mar 03, 2026 at 05:53:39AM -0500, Jeff Layton wrote:
+On Tue, Mar 03, 2026 at 10:14:27AM -0500, Jeff Layton wrote:
+> I think we'll be looking at close to a 1000 line patch that touches
+> nearly 200 files if go that route. Roughly:
 > 
-> Like I said to Ted, this is just temporary scaffolding for the change.
-> The PRIino macro is removed in the end. Given that, perhaps you can
-> overlook the bikeshed's color in this instance?
+>  182 files changed, 910 insertions(+), 912 deletions(-)
 
-I didn't realize that this was going to disappear in the end.  That
-makes me feel much better about the change.  I'd suggest changing the
-commit description where it claims that we're using something that
-follows the inttypes.h convention and making it clear that this is
-temporary and only to preserve bisectability.
+That's not actually a lot, especially for a patch that should be
+scriped and mechnanical.
 
-One question though --- are there *really* places that are using
-signed inode numbers and trying to print them?  If people are trying
-to use negative inodes to signal an error or some such, the it implies
-that at least for some file systems, an inode number larger than 2**63
-might be problematic.  If there is core VFS code that uses a negative
-inode number then this could be a real potential trap.
+I also really don't understand the backport argument.  It's not like
+you could backport any of the split out patches individually anyway.
 
-So are there really code which is doing a printf of 'PRIino "d"'?  Or
-was this to allow the use of of 'PRiino "x"'?
-
-	    	    	      	     	- Ted
 
 
 _______________________________________________
