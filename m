@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AB083EC142E
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Mar 2026 11:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7E565EC1431
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Mar 2026 11:24:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=7QR2ehH3T6/AkxdNa6Br70fwoykQDrXdKnkgcSpmuZ8=; b=YdL5b4sUDjN6HVCYDpyuxQutvY
-	hQCm0sgtjtVs22KI1mytL+Cd4bFG3GsGTEQHmYxDzqLK0d9GjkiGbyOllcjMiqCFHX6sENysMHyus
-	/P+oWuddfftibz/NSr2QdV+MDsFqlDX/a9wsMeu+ZwXrr4DZU6jZ+LUiE5VohZGd3dHg=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=ctYGx4pibLrFB06cWGNUu8U/3Q4PwFF0IkpUV8cC5fg=; b=AYYLdqKMIsFS3mE9E3HTw2+6Wv
+	LXjMBPVQ8f6nuFqqebKUFK+b0ZHsnBwL9kd08T9WXkvI5kbI9RpkJz34zZuYkBB0i0+bLu9dj470C
+	x6Bkc20L4cfD4bwl2NzDJ4xylL1X8uAxV0DaCO8Fko4HjaodNyOWNRzVd1gYJf4m90Qc=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxNpa-0001MO-Hu;
-	Tue, 03 Mar 2026 11:22:27 +0000
+	id 1vxNrG-0005Ll-6k;
+	Tue, 03 Mar 2026 11:24:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jack@suse.cz>) id 1vxNpZ-0001MB-EH
+ (envelope-from <jack@suse.cz>) id 1vxNrF-0005Lc-DI
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Mar 2026 11:22:26 +0000
+ Tue, 03 Mar 2026 11:24:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KeUIkqizRv13GXqCMqsXZmgZff1w7sG5Qjbx6Jj7J7Q=; b=B2xiJ/MDVmM7BCFdKQ/q1v7a5I
- 46jENzQmUYqTrZI+IL1mqF13JOkGYHxq576Mpyf2cHwxw8p9M7v37UD/aXcqR13G7LaxQx8lJlpIR
- NVbMguNJBpaHtKH8zNFsig9h1E6k5+uW4VxjKa3stJtHpJ+Ufz/aVhq0D+9nSn8niaMw=;
+ bh=K7Yl9Dt7jVlcVQjEf63B1tQYNVt8eYC4EdfdZsuIVJM=; b=UFLcMfr6S8jGPJdptWLioIV9KK
+ KKkPzgiSaOO42rURiwDo3zEbJ7ZotbWuz2nV34PjBbwC0oKD/dFTZ+jBPC+pf+i8Dp6u33ZkF2Onq
+ g4Uxr571N3m31YJDvh3vCbE2zjRSljQMksF8L4HCc8a84yxCYA2j2mCKBnFSeUCS7irI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,75 +42,78 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=KeUIkqizRv13GXqCMqsXZmgZff1w7sG5Qjbx6Jj7J7Q=; b=WMkWu7IGL2JpGpGhLvhbse7Yb+
- JG0OKj0eipMF+163lmmz9T6PQco3F65AorE1xjBefHJZkHeaGUqCUL2e+6Oz2hRSyKg8EIfc/iHIS
- VZ8kIe088ETAbQb+ti5xmNQlTqW5G9GNPJbi6tHBTc20LIpihySxI7G4ndxMp1JBqaAQ=;
-Received: from smtp-out1.suse.de ([195.135.223.130])
+ bh=K7Yl9Dt7jVlcVQjEf63B1tQYNVt8eYC4EdfdZsuIVJM=; b=d3aljvOm6YZiV7Aqj8Nva74pYS
+ xvScvpQmMXOhO1ryj2BJc4eXJb9v9S8udnaTqzGMikI/wSESBD5FYseUKx/3QUsCj1kUQU37Uv0Hn
+ x7zKaLc3Lpt+SxOiBNhnbxDEz+UqEYobyphUwMCCb93Z9goi6NEiXV2/dby3wAT6vyCQ=;
+Received: from smtp-out2.suse.de ([195.135.223.131])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vxNpZ-0003bk-Fu for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Mar 2026 11:22:26 +0000
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+ id 1vxNrE-0003iD-N7 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 03 Mar 2026 11:24:09 +0000
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
+ [IPv6:2a07:de40:b281:104:10:150:64:97])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id 060B83F778;
- Tue,  3 Mar 2026 11:22:14 +0000 (UTC)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 4EC1A5BDF3;
+ Tue,  3 Mar 2026 11:24:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1772536934; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1772537042; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=KeUIkqizRv13GXqCMqsXZmgZff1w7sG5Qjbx6Jj7J7Q=;
- b=MMje5RHtAq0iyN2Ci5NB3siR+5uKf4OabgxeLPpbapGQwdYTZLHIG9WbEhBZtfZH4K6FJj
- K6dLcOOiweD5MCv526aROGLBnxAitX0xVEFukIg5VKf81+ODBL8aapNjjd2HAUQ3YbMqn7
- qxFG09Zg+uhBneAwqCoeimjK9RUv3zM=
+ bh=K7Yl9Dt7jVlcVQjEf63B1tQYNVt8eYC4EdfdZsuIVJM=;
+ b=oy8pWoHqrMEHlN4brCXg2tPFAhfnj7hNnLiWr7QZqvLnhUUVRLml6dG2v7DgEPSLDnZovj
+ KAXy3PwMSytjm6CRgomx/IgEopJ3owCZp+3PaBD8ZCWWFIlSZ6TreqR/OCjywszkRFPjhM
+ RZ129a6nRDsR1gOHwRCIua5AvBIGjGg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1772536934;
+ s=susede2_ed25519; t=1772537042;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=KeUIkqizRv13GXqCMqsXZmgZff1w7sG5Qjbx6Jj7J7Q=;
- b=mBJ7uKd5M1QzjfrDgXpF0iEdCEhfwIvS8TCLCSzoZDho+dSibf/db1v1ycUm9i74WcZRv4
- dGapPbtCt8Qt4hAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
+ bh=K7Yl9Dt7jVlcVQjEf63B1tQYNVt8eYC4EdfdZsuIVJM=;
+ b=jJuhp4wn8vYJLdotyAquo63x/02x111qPRtzSjYNdGjAowRt5gzgynAxTUYw+Ln14/yoSt
+ LKDZZhnGQ3WO8cCw==
+Authentication-Results: smtp-out2.suse.de;
+ dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=oy8pWoHq;
+ dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=jJuhp4wn
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1772536934; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1772537042; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=KeUIkqizRv13GXqCMqsXZmgZff1w7sG5Qjbx6Jj7J7Q=;
- b=MMje5RHtAq0iyN2Ci5NB3siR+5uKf4OabgxeLPpbapGQwdYTZLHIG9WbEhBZtfZH4K6FJj
- K6dLcOOiweD5MCv526aROGLBnxAitX0xVEFukIg5VKf81+ODBL8aapNjjd2HAUQ3YbMqn7
- qxFG09Zg+uhBneAwqCoeimjK9RUv3zM=
+ bh=K7Yl9Dt7jVlcVQjEf63B1tQYNVt8eYC4EdfdZsuIVJM=;
+ b=oy8pWoHqrMEHlN4brCXg2tPFAhfnj7hNnLiWr7QZqvLnhUUVRLml6dG2v7DgEPSLDnZovj
+ KAXy3PwMSytjm6CRgomx/IgEopJ3owCZp+3PaBD8ZCWWFIlSZ6TreqR/OCjywszkRFPjhM
+ RZ129a6nRDsR1gOHwRCIua5AvBIGjGg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1772536934;
+ s=susede2_ed25519; t=1772537042;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=KeUIkqizRv13GXqCMqsXZmgZff1w7sG5Qjbx6Jj7J7Q=;
- b=mBJ7uKd5M1QzjfrDgXpF0iEdCEhfwIvS8TCLCSzoZDho+dSibf/db1v1ycUm9i74WcZRv4
- dGapPbtCt8Qt4hAA==
+ bh=K7Yl9Dt7jVlcVQjEf63B1tQYNVt8eYC4EdfdZsuIVJM=;
+ b=jJuhp4wn8vYJLdotyAquo63x/02x111qPRtzSjYNdGjAowRt5gzgynAxTUYw+Ln14/yoSt
+ LKDZZhnGQ3WO8cCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DFE453EA6C;
- Tue,  3 Mar 2026 11:22:13 +0000 (UTC)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3A1123EA6E;
+ Tue,  3 Mar 2026 11:24:02 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id QZqiNmXEpmnxRwAAD6G6ig
- (envelope-from <jack@suse.cz>); Tue, 03 Mar 2026 11:22:13 +0000
+ by imap1.dmz-prg2.suse.org with ESMTPSA id S/8nDtLEpmm3SQAAD6G6ig
+ (envelope-from <jack@suse.cz>); Tue, 03 Mar 2026 11:24:02 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
- id 9E82BA0A1B; Tue,  3 Mar 2026 12:22:13 +0100 (CET)
-Date: Tue, 3 Mar 2026 12:22:13 +0100
+ id D1FB8A0A1B; Tue,  3 Mar 2026 12:24:01 +0100 (CET)
+Date: Tue, 3 Mar 2026 12:24:01 +0100
 From: Jan Kara <jack@suse.cz>
 To: Jeff Layton <jlayton@kernel.org>
-Message-ID: <ylcfz3i2lduxgi5sywsxolkk3yc6u5satyzrf2mymj2vcirtiy@bfgr5natl6gf>
+Message-ID: <ru6heof6ndlg2doksb3mhaz2gnfdt32pqkiwv3trx6ppbmtu3l@466clvjonlps>
 References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
- <20260302-iino-u64-v2-14-e5388800dae0@kernel.org>
+ <20260302-iino-u64-v2-29-e5388800dae0@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260302-iino-u64-v2-14-e5388800dae0@kernel.org>
-X-Spamd-Result: default: False [-0.30 / 50.00]; BAYES_HAM(-3.00)[100.00%];
+In-Reply-To: <20260302-iino-u64-v2-29-e5388800dae0@kernel.org>
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.51 / 50.00]; BAYES_HAM(-3.00)[100.00%];
  FORGED_RECIPIENTS(2.00)[m:jlayton@kernel.org, m:viro@zeniv.linux.org.uk,
  m:brauner@kernel.org, m:rostedt@goodmis.org, m:mhiramat@kernel.org,
  m:mathieu.desnoyers@efficios.com, m:dan.j.williams@intel.com,
@@ -145,10 +148,14 @@ X-Spamd-Result: default: False [-0.30 / 50.00]; BAYES_HAM(-3.00)[100.00%];
  s@vger.kernel.org,s:linux-bluetooth@vger.kernel.org,s:linux-can@vger.kernel.org,s:linux-cifs@vger.kernel.org];
  SUSPICIOUS_RECIPS(1.50)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
  MID_RHS_NOT_FQDN(0.50)[]; NEURAL_HAM_SHORT(-0.20)[-1.000];
- MIME_GOOD(-0.10)[text/plain]; RCVD_VIA_SMTP_AUTH(0.00)[];
- FUZZY_RATELIMITED(0.00)[rspamd.com]; MIME_TRACE(0.00)[0:+];
- TO_DN_SOME(0.00)[]; MISSING_XM_UA(0.00)[]; ARC_NA(0.00)[];
- TAGGED_RCPT(0.00)[];
+ R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+ MIME_GOOD(-0.10)[text/plain]; MX_GOOD(-0.01)[];
+ RCVD_TLS_LAST(0.00)[]; ARC_NA(0.00)[];
+ DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+ MIME_TRACE(0.00)[0:+];
+ SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+ FUZZY_RATELIMITED(0.00)[rspamd.com]; RCVD_COUNT_THREE(0.00)[3];
+ FROM_HAS_DN(0.00)[];
  FREEMAIL_CC(0.00)[zeniv.linux.org.uk, kernel.org, suse.cz, goodmis.org,
  efficios.com, intel.com, infradead.org, mit.edu, linux.dev, suse.de,
  redhat.com, manguebit.org, dilger.ca, suse.com, oracle.com, brown.name,
@@ -164,16 +171,19 @@ X-Spamd-Result: default: False [-0.30 / 50.00]; BAYES_HAM(-3.00)[100.00%];
  iogearbox.net, vger.kernel.org, lists.linux.dev, kvack.org,
  lists.sourceforge.net, lists.samba.org, lists.infradead.org, coda.cs.cmu.edu,
  lists.orangefs.org, lists.ubuntu.com, lists.freedesktop.org, lists.linaro.or
- g]; RCVD_COUNT_THREE(0.00)[3]; FROM_EQ_ENVFROM(0.00)[];
- FROM_HAS_DN(0.00)[];
- R_RATELIMIT(0.00)[to_ip_from(RLswtmdueuza7a4srcp7atxnzq)];
- TO_MATCH_ENVRCPT_SOME(0.00)[]; RCPT_COUNT_GT_50(0.00)[172];
- RCVD_TLS_LAST(0.00)[];
- DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
- DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo, suse.com:email,
- suse.cz:email]
-X-Headers-End: 1vxNpZ-0003bk-Fu
-Subject: Re: [f2fs-dev] [PATCH v2 014/110] proc: use PRIino format for i_ino
+ g];
+ DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+ RCPT_COUNT_GT_50(0.00)[172]; TO_MATCH_ENVRCPT_SOME(0.00)[];
+ FROM_EQ_ENVFROM(0.00)[]; TO_DN_SOME(0.00)[];
+ TAGGED_RCPT(0.00)[]; MISSING_XM_UA(0.00)[];
+ RCVD_VIA_SMTP_AUTH(0.00)[]; DKIM_TRACE(0.00)[suse.cz:+];
+ R_RATELIMIT(0.00)[to_ip_from(RL3ntoum3i61xr6zaswawwyp9j)];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email]
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: 4EC1A5BDF3
+X-Rspamd-Action: no action
+X-Headers-End: 1vxNrE-0003iD-N7
+Subject: Re: [f2fs-dev] [PATCH v2 029/110] ext2: use PRIino format for i_ino
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -285,12 +295,12 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon 02-03-26 15:23:58, Jeff Layton wrote:
-> Convert proc i_ino format strings to use the PRIino format
+On Mon 02-03-26 15:24:13, Jeff Layton wrote:
+> Convert ext2 i_ino format strings to use the PRIino format
 > macro in preparation for the widening of i_ino via kino_t.
 > 
-> Update local variables and function parameters that hold i_ino
-> values from unsigned long to kino_t.
+> Also correct signed format specifiers to unsigned, since inode
+> numbers are unsigned values.
 > 
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
@@ -299,51 +309,6 @@ Looks good. Feel free to add:
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
-
-> ---
->  fs/proc/fd.c       | 2 +-
->  fs/proc/task_mmu.c | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-> index 9eeccff49b2abf57d766ce17fe47070c379ed2c8..936d0258d688be5fdc384ee5c4dfbb8fa0d19dff 100644
-> --- a/fs/proc/fd.c
-> +++ b/fs/proc/fd.c
-> @@ -54,7 +54,7 @@ static int seq_show(struct seq_file *m, void *v)
->  	if (ret)
->  		return ret;
->  
-> -	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\nino:\t%lu\n",
-> +	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\nino:\t%" PRIino "u\n",
->  		   (long long)file->f_pos, f_flags,
->  		   real_mount(file->f_path.mnt)->mnt_id,
->  		   file_inode(file)->i_ino);
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index e091931d7ca19d71f31699913d177eec0821ca7b..702b0f0433f91077cd0d0af4a07e9d67d9fa9a45 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -442,7 +442,7 @@ static void get_vma_name(struct vm_area_struct *vma,
->  static void show_vma_header_prefix(struct seq_file *m,
->  				   unsigned long start, unsigned long end,
->  				   vm_flags_t flags, unsigned long long pgoff,
-> -				   dev_t dev, unsigned long ino)
-> +				   dev_t dev, kino_t ino)
->  {
->  	seq_setwidth(m, 25 + sizeof(void *) * 6 - 1);
->  	seq_put_hex_ll(m, NULL, start, 8);
-> @@ -465,7 +465,7 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
->  	const struct path *path;
->  	const char *name_fmt, *name;
->  	vm_flags_t flags = vma->vm_flags;
-> -	unsigned long ino = 0;
-> +	kino_t ino = 0;
->  	unsigned long long pgoff = 0;
->  	unsigned long start, end;
->  	dev_t dev = 0;
-> 
-> -- 
-> 2.53.0
-> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
