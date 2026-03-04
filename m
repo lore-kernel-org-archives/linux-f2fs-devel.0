@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 27F71EDEC03
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 01:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2443BEDEC02
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 01:27:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=AmPX6zeXc3RccMhmRLwiMkw9CJLIaQTns5hlf+3eywc=; b=mopMZwpPY/O8uPlJhil3g52QNe
-	Ql/s6ycgcjzZjiVtaH9A2OE9eDChgW87mTU5eiIARHjh92nDpp6TgTd865YX2Vmqkjk027+p2+Dxc
-	5EioJBqxH+zAhXDKb0b2yfjmHrzvXkxLua6S+zBJRlDxB9OSX0UX4rGlgVFgrvFImz/Y=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=RlOI9Fud/AaJsSIdU009lrYzuQM7Hq9K5thaP5KIvVI=; b=L+pLyF+5g/wPUM2EfrPZhjC1qo
+	Zf3PxIm0RrI6vzkt+SHSegcACZBLnKVA/CyL5PGM8YwaobbXeFgmH7CZP2SqAfp6z3kxDfvuV01up
+	m5kY8MXPwFvjEJaFMueWCcbYZ3IY3mduYbFsk6MdNKXWaX6BfStEwQByj8V5hAnq4WW0=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxb1m-0002RY-Nb;
-	Wed, 04 Mar 2026 01:27:54 +0000
+	id 1vxb1k-0002D4-NA;
+	Wed, 04 Mar 2026 01:27:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ynorov@nvidia.com>) id 1vxb1l-0002RP-IS
+ (envelope-from <ynorov@nvidia.com>) id 1vxb1i-0002Ck-PM
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 01:27:53 +0000
+ Wed, 04 Mar 2026 01:27:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
  :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gWX3eT6p4fXBUeVs633dJyml1vlPH261gl8a3ZsnfQE=; b=HXTS5/4TtVlVJ0wn1uMknqiOOp
- ZR1/3vNixKw+bvPXzfI9saf7r8AN57tVMC+joKAlGA6EJgOwMrcu2JNGycwZJ3zkh61O6ZzkNPHKp
- lhy87DxMCJo4ftq1+DOn5j2f+75IxdmyKMVfMrImMoC7xKeQcL/426E6yl7c1obgbiiI=;
+ bh=NsJTnERJRzZhLCX7+/1+Xs6KkE2zo4OgvkEqpZE8A8M=; b=VoAvrMm0l5m0voSDc/vqQ5Q0HI
+ svItdZT8V4rYRTEXAAWUj+pJwBycApwk8NpFnxOYawuZBMm0zOuE3rG6IBPaC+R5iV9/TrvDdHAK/
+ wTVwh0wn4T0r8Sp2dtwMkb2AWwY/mGEqJWF4lydBROJMGQf+lvISYNzoTY+A2UpLC/6A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Content-Type:Content-Transfer-Encoding:References:
@@ -42,41 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=gWX3eT6p4fXBUeVs633dJyml1vlPH261gl8a3ZsnfQE=; b=JOF9UJ8dBvf17ogPgAboJFmYnz
- dsn3cM9lQEb0n7eHHDiv5TiB8dAcI6BtO1QldZyD+ShJuxaNtYFf1wWPPppZUy3Jb6RCfzx7qXShU
- 9rg5fcIjOT9G/vD/ayU3yeftEF1PT1esD4cP93S1U3CvDa+svLMrIjZakEvnumoccVk4=;
+ bh=NsJTnERJRzZhLCX7+/1+Xs6KkE2zo4OgvkEqpZE8A8M=; b=AjWNkpcCnC/IxNbaihTwh4Mrsq
+ HNhjWZuJQdgBEfuEdoNPJSvKwUuEXTyKhbAftsZcHUPSIYUZwwUd9rLYrsMEMXmEFDkEEsoBL+G3Q
+ 357yl0du0J62wjR8eenQExymsOmoLVb1K/z1NSDe39A+xU+Of2MYVipYEvXJzJrTVqcw=;
 Received: from mail-northcentralusazon11013028.outbound.protection.outlook.com
  ([40.107.201.28] helo=CH4PR04CU002.outbound.protection.outlook.com)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vxb1l-0007YB-1q for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 01:27:53 +0000
+ id 1vxb1h-0007YB-9m for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 04 Mar 2026 01:27:51 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N0iVu0oRaYnBStX5V8zWh+or4vWzHPgcub3oSl70gVTAku0eXa+wS7ZaokJV0JOpd3b6vVz0dN2qddQSukYjzihAj7ddsBCPuQ3m+nVA3zAqSFqPy2ODUTRALkPhmo5h9yqj/mUOYJgBUMDN0q2Rkk8cU6CfF3ESsQ6KEq4DhGrlgwDb8W7kPPtRd3nldKuqgofcw9tsrZ/wFOY9Xm9fHf9sRmXc6DlA3y4/twcROxQHZ5pWD4QG6IErGfN9YRqDHTZoqS1azy2ZEr6cgRm2n5riH4hwGF0LpNKHMHTtRPD4ZfIxl2sLtNQgHLVu8B4Ud5h0W1zgR4kwkMQ1GSgkrg==
+ b=rtYbkjF6j/cckPMLctsjtszaImOU9ZmtO+EqP+j2ORwzMKxXJe3bI77aOmn2S/XcGc1WJD2/1Jn+jmpN2k7HdWtI98cFoxh6U1LnISGNxLoUTERSg8ZkCq7nbcM3s1SWZUc3LZ0uicurVNrqfwRWy/sFigwX3ooAJwgUh6ojU1LZQGSbkTgwJX9pnTpUe/Q06mwAoJUqNjxA45WoLouWNLJTKyoSiOESCs30dFHFo6NUpFzkun5u+H4UbcGLHekzkCKS8t+SC2Sa2VuJIhTv7gMa2Q6IThiQn7bO2xdA6huicZ4aN92nYkiRwF/3DHOfGOzoBLWitMyJ/SeQEH7ghg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gWX3eT6p4fXBUeVs633dJyml1vlPH261gl8a3ZsnfQE=;
- b=Iq0i1J7WAdCIRWFUWB/18M1c9IdovuuO8vG2ZPlYNN+gbxRF+8lgDeZieQP1SUQfAq5ntar37mIwgfn5Oz3BbbLcjtFIl21Dosv+zqrk0EWcXDVCTvBc/IqdtxbHIsNXGKUxlc+S2r9WHvVYyCptLPICYZfIhz4aR9gE0zEpKwGDUo0rBKDdRu52mnsyyGzwh/MhO9A3FMw1V8ILClnhl0TtdRrRoyAhgr5ajA72BYWTg3oKLOium7FuSxKh/nw0cyBKtzQ2SDfVyd5ttpFYPOVIik6TMJOChPJTp3qF3yeDF6uI8TXWUm8boIyA9uygiGHY/oif6cD8ohjD6LY6Ng==
+ bh=NsJTnERJRzZhLCX7+/1+Xs6KkE2zo4OgvkEqpZE8A8M=;
+ b=E18v9nkNSsHVeMIWL/LoI9pyKcyxfSMSgSTN/6w5RsgqPazWaDQO/pkYiIsYhPo9Vjx5NXD0KDMoweSQXgOVCYD5hcK5Z5xiyG5WDbpPWitzh3lK2o6gN1zvsfTiMpTemEVKJCjLhaniS+5peAzqo/sDCyjdPmBD/jzrS4k9tuXDEUPe+KKS0clVpUXhaQpREupcCVej9NQAzBGB+cvcuVqm4aY4kK3nx0bH+YqA5yqvwrI2SljsqAYyfjsuvyKEgj5zrHXXtZYVrV5BrKHtK77Inv1WPylNoqrBQLdVQlEUeUa5KDhfAL4YQO30v3bWPrrIuHu40iArdIVTXXuB4g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gWX3eT6p4fXBUeVs633dJyml1vlPH261gl8a3ZsnfQE=;
- b=BcLaauwkyLA4YizK5LZX6K5uYlMqOdSo/X1bo/atutQ/ejAjm06+LnIEG3WjB6/SIwAoUs7UXj89LYzVct1TDD5CdvI9VX87crwkk9xwoXGqmMoKIctGoIYhbP4qAvux2O8BH3ZC5qxZ18mutsyM9uN29N5bTj3NNW3NPmCmKk5joDXpRmFlIOB7tCPWk1aOuWoe3wRsAbNhWiiA/AvqzkS72+DhvV60Wx7KBGzrXNI1oIYd49N8ScgyaWPzSOUDn/dsEYmPZe9uvs9Z4takJtSXXGwil0U2ScZczN1r1zN9/Q8I6rEOKXGq6plfJp+nXxB6wJGF6uWXY6plp2BpdA==
+ bh=NsJTnERJRzZhLCX7+/1+Xs6KkE2zo4OgvkEqpZE8A8M=;
+ b=PbJxEn7G+bS4KSMUxBgg46xddct10ZkhjQScemEdN/gpDMagU91bawODu8Pdm5K18m52HIkUFZEJ1dEnBPuYjO114YrqnYyyJzoVl9XYneOhjptOiiBjLx69K7wokffoYf3xOrC6yyJzOzWWZA/r3e7X87i4jMdt76OuovlA8miRsFdS/ScO7tNNoh6pntyVsZEOLdg5JnnTlm3HPtBmqI+CsMb/KInoW5//v50YE+PlKH0cyo6iq0xtaN9m4s0Yu3h+dMmtFcgyWvud+zJJZ0yOtWKaeZrt1iDVBGCNtkEVqXvtVFetko+1VAu4W+2Y3bB3+mScPxYZLuL8xmi+dg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from PH0PR12MB8800.namprd12.prod.outlook.com (2603:10b6:510:26f::12)
  by IA1PR12MB6651.namprd12.prod.outlook.com (2603:10b6:208:3a0::22)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.22; Wed, 4 Mar
- 2026 01:27:37 +0000
+ 2026 01:27:29 +0000
 Received: from PH0PR12MB8800.namprd12.prod.outlook.com
  ([fe80::f79d:ddc5:2ad7:762d]) by PH0PR12MB8800.namprd12.prod.outlook.com
  ([fe80::f79d:ddc5:2ad7:762d%4]) with mapi id 15.20.9654.022; Wed, 4 Mar 2026
- 01:27:37 +0000
+ 01:27:29 +0000
 To: Andrew Morton <akpm@linux-foundation.org>,
  "David S. Miller" <davem@davemloft.net>,
  "Michael S. Tsirkin" <mst@redhat.com>, "Theodore Ts'o" <tytso@mit.edu>,
@@ -120,71 +120,71 @@ To: Andrew Morton <akpm@linux-foundation.org>,
  Tvrtko Ursulin <tursulin@ursulin.net>, Vasily Gorbik <gor@linux.ibm.com>,
  Will Deacon <will@kernel.org>, Yury Norov <yury.norov@gmail.com>,
  Zheng Gu <cengku@gmail.com>
-Date: Tue,  3 Mar 2026 20:27:15 -0500
-Message-ID: <20260304012717.201797-8-ynorov@nvidia.com>
+Date: Tue,  3 Mar 2026 20:27:12 -0500
+Message-ID: <20260304012717.201797-5-ynorov@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260304012717.201797-1-ynorov@nvidia.com>
 References: <20260304012717.201797-1-ynorov@nvidia.com>
-X-ClientProxiedBy: BN0PR04CA0093.namprd04.prod.outlook.com
- (2603:10b6:408:ec::8) To PH0PR12MB8800.namprd12.prod.outlook.com
+X-ClientProxiedBy: BN0PR07CA0030.namprd07.prod.outlook.com
+ (2603:10b6:408:141::13) To PH0PR12MB8800.namprd12.prod.outlook.com
  (2603:10b6:510:26f::12)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PH0PR12MB8800:EE_|IA1PR12MB6651:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5e9eaa48-d77e-4968-6465-08de798d3708
+X-MS-Office365-Filtering-Correlation-Id: fc3321f5-58f2-453f-5285-08de798d3366
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|366016|1800799024|10070799003|376014|7416014|921020; 
-X-Microsoft-Antispam-Message-Info: DVvXGtpxfjOKO3JcfP/1ZiRzhs9ZKXlzfZMNW1FYLjT6r9fA83fociKxHtkhHPPXH1Laowy6Er5gdxeImIg/VU1+8k/e9vZp+y8pxUrybsO/KhnSq9ppK9VtQenR6kteXnB2+9tPq4ETxUqGumgdQ3o+WzTDj9B9YiV7ID4PtuUfzYdXriE4h/nvEUFzEdAVe4oDv/fJXOJ0r+KlDUFRvvOtwvZjDAVb9NEkWfpdREqLD1ChwA3XChMPDazqlLDI8l5AfExkCwVw8LHHAVxdPhF4vytGe6yzh0HJkLW3SjhT98h8S2wEBdUhOwASPxYJiTFAvkoxNnO/eXvRiwmMvYjrWJKnN4d0ROUmrWLBSKfwrmDWrgD0mIDjVyC2NnwzN5ciKvdC9OVnHbHE9UGxRxALxlI16U8aN6aRHWnUBVKtjRLWxWzQpEqj/KyIz58lrP+ME9oXzSHSlmxJfMJVYNJ/iXZB2Id/2RTx3E0yOdagTGmOpndWEar9vVOjThDYQBIVWf4LlKiH+ntnxUrqIHivoQbusk2832vEtwUfnb216T3w5Rad2DBkXcIIZiRqLpC7UAXr+sgKdJWD/JKnvsZ58m4zTqMNLR/7vpfUE22gLni8cCQpTGMbNshIDpwyMdgRb0wHfTn+ujt/pHYNkb5ynHReoHEIVBd7Pqau9KTiZuUoEVCJJRViRUxKR2BSG2FcdNIwAFTMRC4E7NQbXrWV4K/bm07CECCQj9tZbwVDAckHkv3+KpD3re+YhN2RSxqztfvvHcGlPDbixNe3vA==
+X-Microsoft-Antispam-Message-Info: 2bU1Zgdgg8fizy0j7DF+Bij0LR23XaHZoLO1x5kNaZZTZ8wNpGFJ/vX/G4h7UWom/z0NhDFAN7b4Q7P3g/JAwgLAPzuc3HwJOWg+ys3klcS2jI2YrgS5XTHNd1ReeWfZJthPb65KL2xVO6MR2ugndghKxMxGl+Turbo52l/QpFs4e3wat6zf5Bbm0ByxO8sm36toVsRPXChQcQ4HGaGobAdh6r/wXr3HNtWz/vWiafQd0dP0rAQX4cFOCWp9bPulnvAYbD43PMoMV04xgsOPod/VcXPBH2irxM+VH4ZuPseotVhF64Q1ym2fanC+A+7c4cYY7cINPwMTmrzUDiPs4ePPwpXcFoH01bWPMReos3tWfecXgZrAkSLTz4xVkSYhYLkgU2PGz+/fX2uxHeiJMcpGE5Se+M6iptqHPNVbrV/jE/NeYseeooOZicU317qfbBW7Msyjxqq4fw5Sj9MdObdriBRfiH7qWNTGA/bEDUqjrN9tF8pxt7mALPAP+Sx3Z+EvhPoO0KzviGRQguPYE50/MIHJ4Xjacew9zBQO+f81G2lZBqeg21PBYTy/ITcrhBonEvsbRspS+gObiM1XiYjxP/XVjVQfqYQY93+/AeNHW1TH96VM8kUwdfFtYfa4m1yDta7tL2/7Z1TBNa9tXgxZrxMj7uXyLkUMSvZCPV8XH/j/xfucUaI/XkNvtSmqLP2Dh9xZTiqYljgDNp/htcurwFA7PeEG6M+iExtsQH40j7aE7tFAbtJVl1PmQC733dtLxI+wPXZoSMlISASWZA==
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:PH0PR12MB8800.namprd12.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(366016)(1800799024)(10070799003)(376014)(7416014)(921020);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?CuB//gjPgcLROadOGKRtUXfVSHyEdOq3e93TKy5P7oo+d/6f3bYBrO1hJjbd?=
- =?us-ascii?Q?54AlyTbtDnwuXkoqw36xJUmBCQ09uz1nN589lRtiiy/PlvqEP485wGwWFbyH?=
- =?us-ascii?Q?yGVa9JToxHfpdyC3ugD+uXBbA/TQc/4a/MzMMm6uw+oJd4tnVhOWBOmNOOEy?=
- =?us-ascii?Q?Vk9GMZJfwFCyykQxAipF8O81Wu4ra5FiLijq69qf1Kxs70v89rzKfLtP6tVB?=
- =?us-ascii?Q?Pe1e0Rg9N5aH6A2/Sm6bZdb5G3XYXa6Y4LAKyLJBG3ZlddeCPBlq/NPOGzuV?=
- =?us-ascii?Q?5qdTgFwMICAs+JsJbm1uJaCQA2RVTEhqNsFX54xWMM1ljH/CPN2trFPF1ef5?=
- =?us-ascii?Q?tquk7oG1NEpazaMAgPzpnHJ7kZpfpo+iDP0J+2Ux98laovbRNqfSXUKl+bgN?=
- =?us-ascii?Q?NXrQgAqSpwTfW7OMeZqnFWDFz5XkaoCw7yuI/VKrBXoZNPa/NTB0cfhY11Hw?=
- =?us-ascii?Q?WUXi3Yg+dZvJ0qc/4hsYbX/RmRRT+OBMvLNlR9xk54MqTLREuDtasryeMafP?=
- =?us-ascii?Q?TStpUn2Vd0DeG6oVjdWH5PXUVpd9cusIPdK/UN0UhmCtIlLYF/wnTSvtfdyG?=
- =?us-ascii?Q?2BC5ct7sn8jwVt1imnmKJJ9Bq5cbtL3ahaybm63z+gUD4Gr6RzSUXgJWneg4?=
- =?us-ascii?Q?kNhe7/SlNbsefYQ5R9GfmYZ8QzOG3MVw4FapejeFtzm6pMUoqKMNlpcL8GBH?=
- =?us-ascii?Q?FLcyvI+9NP07888LOyEmouSV/a9I3BzE+YvU+9FMX1yY7nRveGNuHHSX07DQ?=
- =?us-ascii?Q?HrMJBq9URvjN+BhVZj7diiBuo5NPZEcAQXqlzqBcVWjT/B6l6h538sqlmIqf?=
- =?us-ascii?Q?5UJL7jEBGp04qNUOOoFQV9c1iBFGeJpJWnmVp2Y02eijs6wn/I5jJOo6/YTz?=
- =?us-ascii?Q?6wA9uzJ/b+uROHELdgveEM7Hs0u+Jl6YQSEbRWoyUmS3GmBNQtBxnOa1TVuH?=
- =?us-ascii?Q?nP6uJbhYo1aztNCT9N1xDhd9OdLmUD3a117YZVrq2mB2prNYKpoFcu+I1dN1?=
- =?us-ascii?Q?2mPMthvMjTrFLq9Ql/vi+o+uLRStForK1tQBDWwodzU7ALv1PlEqfrTKuNe9?=
- =?us-ascii?Q?1Y4widhDe2Z4eH/U/qwuzFF8/AfGB6gv8copnksFADEDbpYEBEuh5iHcrefH?=
- =?us-ascii?Q?CY0K+K2BkowA9e3Y1AEW57jS4yUUuFGj47n+vwCZa0AoofK9nt07Ii8A6xOW?=
- =?us-ascii?Q?3esRVmKgpE+CTX0ZDxgBiy2LhTRP8X3S0DoCB9aatK+eCriX71wWxFb8TN0Z?=
- =?us-ascii?Q?eh4Av017KJHX6+M0JF0mG9pqsYay3cQNDs8KvtqHprMx/H+6p44UiE8Uqxkk?=
- =?us-ascii?Q?U3MXMId8cDQ35XWh4sjsNzOO0UfcHHcMR41/M5O8X3YOFL3LhQDQYTzg1e6O?=
- =?us-ascii?Q?vWJIm/q+j0oOwE0vtAzaNe/YcgHZQeNpdJIh9m7cix8ScH2XsgMwY95UvviV?=
- =?us-ascii?Q?BrDsqdYQXAB7WzNC9GG7irTJGj7OLmK/rj8efEB65JVQvZRNkQxoTTat/B2i?=
- =?us-ascii?Q?EQaAMeaaBcjW6sx/BvsI9mYv5zDqKawWHlyYul+JllfHECrqUEWPRaYPHh8h?=
- =?us-ascii?Q?g1ZABhiHDDmuzHSQo9AkFtg2iV17xtm1IOCHhmc19qWSzBINaZJbnwwTuEqz?=
- =?us-ascii?Q?CYY0NU676LNxu5RHwcZOguS54jscNsBWVSVlZ6K4JNFlTZAcq8Nod1tgoZgJ?=
- =?us-ascii?Q?pvS0QTW6aACzFprvsawc6QzKixCpaxA4XVVF4rpQkmo4IhxKuQZzcU3L64vZ?=
- =?us-ascii?Q?Ml/LLzxHIB2aS2hJDL5CE0lLtrTQGapFMTQViuXPiEODk2SSYHSb?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hLSUKEpnuUW544SwxGwrhhMNk8qp8Sr4uH7HRvp89Br0GFhxPRZlF4nVLAuf?=
+ =?us-ascii?Q?9cbxAnUU4Yr9Qodq/neTvvZJoZU27/0qEqHDxlDg1GMv3B67nf8h+2pBE1B4?=
+ =?us-ascii?Q?AVg0nLDTMLyi0X4VkU+2jGRcjllIYrz+oBaW6UyTN6f19asc0m2ggf6rfjHH?=
+ =?us-ascii?Q?bArwZ8s5GnYSKj0VV1XTS7MkQxHb3IFxT9RGLfSho8p6MsaC90jg4eUv32ER?=
+ =?us-ascii?Q?vdmeTv5FjGzt2M8fQEpjcRglbWMQ7SjnEKRPq2IOl1CRghfTyTEZP8MntlUD?=
+ =?us-ascii?Q?mX9+1+Iq8XGMLVevmT65dxoVKiq/wC2hLYpMgCLUtJnlAb9tG/ZEiiBxI2d0?=
+ =?us-ascii?Q?ZGoZqE5StbiZ6PhQOI8CBeTiUVq/KLulLFJ8H4M6750WEnmcFS6fGiM2cub/?=
+ =?us-ascii?Q?oTY9sH6rr/Pef3BgOjVIU2i1YUgu5+ab8bInl48INoy3pyZDcSeJGe/ZadA/?=
+ =?us-ascii?Q?17tK8Pg2LuXWScGSf7Ty5vy9wODwj58v3GeJF/pqnXtDqUx4mzDwzWxboc0D?=
+ =?us-ascii?Q?iAdvEzxa2DU1HkaFqE+35CCCEd+ITB7SiEd8jEweFvlU9O3wG9Wq1xpOAdrM?=
+ =?us-ascii?Q?0YKghEn+M+MpR/A+isdjW1APAbhysW2JPN4sbyu1b3y0co1BfU8vk1UPmukh?=
+ =?us-ascii?Q?LgBSFCHWwfgUaQbVbxpqfomjIeIB/lbBS0M/KXlh5wgP71WQ0rIHqt5CwvNn?=
+ =?us-ascii?Q?79gzEPYEQNyq8qeqAsua9C1/Dmr0so/BhIqfEQCIdjDjDwjDj9o/BfSelVSk?=
+ =?us-ascii?Q?u0kRek/gBRysGF6M6icv34XWivsleUhsL9CuFikZUtUGYNI+vvLZG+orY176?=
+ =?us-ascii?Q?WUu9n2LEuNrOCUw+2iC3rFnvQ7rebARLkVpAsauXky34GyaKp4b3dkhLxfFk?=
+ =?us-ascii?Q?eC9f8knwrC6hSYM6BMfT37rgWxOhXsOtIXya3yF507Q2jozncX3+iqtwQNU5?=
+ =?us-ascii?Q?kydHjcIT9HIShwe2CpFAt1MOGSineOPJKvJmGTdsalPpuBDN4Fzo2QuMROyW?=
+ =?us-ascii?Q?LHXeeKN6o2mYGyuQGZbiKW4r2RwkjJGF/Tee7xiT1D1CEuIcGDdAx2RIcDZN?=
+ =?us-ascii?Q?5q3PaUkKalvgIURESxDPLUcFQPxUzSu4ZR3II7bqVW1x+BcytJhBCqksmusK?=
+ =?us-ascii?Q?zx8uRU2zu1FKBXw+zOdKewNd9NZWlWEo8ieIAgJxjTrBibZBg+aZShu6/sjV?=
+ =?us-ascii?Q?TOY8GB8lbWDvslKF4AuUxDqTwDIyQuDJIMNUm8/Du8CJfrwOsYwdtQdC7ZmO?=
+ =?us-ascii?Q?Tcoumo0Ox/5bjuEHfEEQwPvxYMmHSADbCq4nNU5WCBK0J9HH0IXtXb3gLyEm?=
+ =?us-ascii?Q?1f/RrFgjqQMEypJTgAEjTSXjB5kQWZX4sQYfEFdsidbrO3H/lDjPCyUfZBel?=
+ =?us-ascii?Q?mAMUIM90cvomiBWcbEDQsfaSzFCXGlDOpRYh2jChzWVpXxrGWHx40Nz43Gif?=
+ =?us-ascii?Q?yvTl1YSbMdCUiJLm7W6ZtKTyWQ+ZjT0LYo6CPblgros3Oe3oUYEURGCf9Xjn?=
+ =?us-ascii?Q?HVpeHe+o0iCb7xXKf/dKY+HyA20ENFPjnaVPXLsmcMNxr4qk/31/qL1kCZJw?=
+ =?us-ascii?Q?6AJt7lF09XAfZStNj7dKOvwZEivg58ojkdH4TAeZc9p41hKYkfG0iI/3FXIZ?=
+ =?us-ascii?Q?yDqQMhQoEKuwdWMTmWHQs+dODra4vyZptQLUcqbkEU+Y74+KdgTAmqTE0MG2?=
+ =?us-ascii?Q?k7/h/p492MZ1Y+NBbU4T/0o6az8K1cAZaf+I64jVY37d6kvham8GL28W5sn+?=
+ =?us-ascii?Q?oapzuIVKp4/3Vax/KXq+5E5gtaSDI6Z4jY+Rw1kUo+/BY5Oz1gSw?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e9eaa48-d77e-4968-6465-08de798d3708
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc3321f5-58f2-453f-5285-08de798d3366
 X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB8800.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2026 01:27:35.5482 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2026 01:27:29.4321 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 68bWaQ0b1wdGjpLS7Z+T5PtKeLUxcw+8APaV+plAbdN09V3AhKcwleD8x1xus9zTUd9zSYRS6/cp9gGSTmrIPg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: QKugQiQpNaSieM+KubWVyA3r/4X8bz0eN0Y+a21LkKjVOAfxFj76HJG2XRHAse1XkLqFszUAxZx6OyCgFMahgw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6651
-X-Headers-End: 1vxb1l-0007YB-1q
-Subject: [f2fs-dev] [PATCH 7/8] drivers: ALSA: use rest_of_page() macro
- where appropriate
+X-Headers-End: 1vxb1h-0007YB-9m
+Subject: [f2fs-dev] [PATCH 4/8] core: use rest_of_page() macro where
+ appropriate
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -213,98 +213,165 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Switch drivers to using the macro. No functional changes intended.
+Switch core and library code to using the macro. No functional
+changes intended.
 
 Signed-off-by: Yury Norov <ynorov@nvidia.com>
 ---
- drivers/block/null_blk/main.c         | 6 ++----
- drivers/gpu/drm/i915/gt/shmem_utils.c | 5 ++---
- drivers/md/dm-pcache/backing_dev.h    | 2 +-
- sound/virtio/virtio_pcm_msg.c         | 4 ++--
- 4 files changed, 7 insertions(+), 10 deletions(-)
+ include/crypto/scatterwalk.h |  2 +-
+ include/linux/highmem.h      | 24 ++++++++++--------------
+ include/linux/iomap.h        |  2 +-
+ include/linux/iov_iter.h     |  3 +--
+ kernel/events/ring_buffer.c  |  2 +-
+ lib/bitmap-str.c             |  2 +-
+ lib/iov_iter.c               |  5 ++---
+ 7 files changed, 17 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-index f8c0fd57e041..89e9651b09a9 100644
---- a/drivers/block/null_blk/main.c
-+++ b/drivers/block/null_blk/main.c
-@@ -1147,8 +1147,7 @@ static blk_status_t copy_to_nullb(struct nullb *nullb, void *source,
- 	sector_t sector;
+diff --git a/include/crypto/scatterwalk.h b/include/crypto/scatterwalk.h
+index 624fab589c2c..c671d5383c12 100644
+--- a/include/crypto/scatterwalk.h
++++ b/include/crypto/scatterwalk.h
+@@ -73,7 +73,7 @@ static inline unsigned int scatterwalk_clamp(struct scatter_walk *walk,
+ 	 * page due to the data not being aligned to the algorithm's alignmask.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_HIGHMEM))
+-		limit = PAGE_SIZE - offset_in_page(walk->offset);
++		limit = rest_of_page(walk->offset);
+ 	else
+ 		limit = PAGE_SIZE;
  
- 	while (count < n) {
--		temp = min3(nullb->dev->blocksize, n - count,
--			    PAGE_SIZE - offset_in_page(pos));
-+		temp = min3(nullb->dev->blocksize, n - count, rest_of_page(pos));
- 		sector = pos >> SECTOR_SHIFT;
+diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+index af03db851a1d..05528ba886fb 100644
+--- a/include/linux/highmem.h
++++ b/include/linux/highmem.h
+@@ -507,12 +507,10 @@ static inline void memcpy_folio(struct folio *dst_folio, size_t dst_off,
+ 		const char *src = kmap_local_folio(src_folio, src_off);
+ 		size_t chunk = len;
  
- 		if (null_cache_active(nullb) && !is_fua)
-@@ -1181,8 +1180,7 @@ static void copy_from_nullb(struct nullb *nullb, void *dest, loff_t pos,
- 	sector_t sector;
+-		if (folio_test_highmem(dst_folio) &&
+-		    chunk > PAGE_SIZE - offset_in_page(dst_off))
+-			chunk = PAGE_SIZE - offset_in_page(dst_off);
+-		if (folio_test_highmem(src_folio) &&
+-		    chunk > PAGE_SIZE - offset_in_page(src_off))
+-			chunk = PAGE_SIZE - offset_in_page(src_off);
++		if (folio_test_highmem(dst_folio) && chunk > rest_of_page(dst_off))
++			chunk = rest_of_page(dst_off);
++		if (folio_test_highmem(src_folio) && chunk > rest_of_page(src_off))
++			chunk = rest_of_page(src_off);
+ 		memcpy(dst, src, chunk);
+ 		kunmap_local(src);
+ 		kunmap_local(dst);
+@@ -580,9 +578,8 @@ static inline void memcpy_from_folio(char *to, struct folio *folio,
+ 		const char *from = kmap_local_folio(folio, offset);
+ 		size_t chunk = len;
  
- 	while (count < n) {
--		temp = min3(nullb->dev->blocksize, n - count,
--			    PAGE_SIZE - offset_in_page(pos));
-+		temp = min3(nullb->dev->blocksize, n - count, rest_of_page(pos));
- 		sector = pos >> SECTOR_SHIFT;
+-		if (folio_test_partial_kmap(folio) &&
+-		    chunk > PAGE_SIZE - offset_in_page(offset))
+-			chunk = PAGE_SIZE - offset_in_page(offset);
++		if (folio_test_partial_kmap(folio) && chunk > rest_of_page(offset))
++			chunk = rest_of_page(offset);
+ 		memcpy(to, from, chunk);
+ 		kunmap_local(from);
  
- 		t_page = null_lookup_page(nullb, sector, false,
-diff --git a/drivers/gpu/drm/i915/gt/shmem_utils.c b/drivers/gpu/drm/i915/gt/shmem_utils.c
-index 5850adaebf82..9a0a6f67fef0 100644
---- a/drivers/gpu/drm/i915/gt/shmem_utils.c
-+++ b/drivers/gpu/drm/i915/gt/shmem_utils.c
-@@ -99,8 +99,7 @@ static int __shmem_rw(struct file *file, loff_t off,
- 	unsigned long pfn;
+@@ -608,9 +605,8 @@ static inline void memcpy_to_folio(struct folio *folio, size_t offset,
+ 		char *to = kmap_local_folio(folio, offset);
+ 		size_t chunk = len;
  
- 	for (pfn = off >> PAGE_SHIFT; len; pfn++) {
--		unsigned int this =
--			min_t(size_t, PAGE_SIZE - offset_in_page(off), len);
-+		unsigned int this = min_t(size_t, rest_of_page(off), len);
- 		struct page *page;
- 		void *vaddr;
+-		if (folio_test_partial_kmap(folio) &&
+-		    chunk > PAGE_SIZE - offset_in_page(offset))
+-			chunk = PAGE_SIZE - offset_in_page(offset);
++		if (folio_test_partial_kmap(folio) && chunk > rest_of_page(offset))
++			chunk = rest_of_page(offset);
+ 		memcpy(to, from, chunk);
+ 		kunmap_local(to);
  
-@@ -135,7 +134,7 @@ int shmem_read_to_iosys_map(struct file *file, loff_t off,
+@@ -642,7 +638,7 @@ static inline __must_check void *folio_zero_tail(struct folio *folio,
+ 	size_t len = folio_size(folio) - offset;
  
- 	for (pfn = off >> PAGE_SHIFT; len; pfn++) {
- 		unsigned int this =
--			min_t(size_t, PAGE_SIZE - offset_in_page(off), len);
-+			min_t(size_t, rest_of_page(off), len);
- 		struct page *page;
- 		void *vaddr;
+ 	if (folio_test_partial_kmap(folio)) {
+-		size_t max = PAGE_SIZE - offset_in_page(offset);
++		size_t max = rest_of_page(offset);
  
-diff --git a/drivers/md/dm-pcache/backing_dev.h b/drivers/md/dm-pcache/backing_dev.h
-index b371cba483b9..17e83b38b845 100644
---- a/drivers/md/dm-pcache/backing_dev.h
-+++ b/drivers/md/dm-pcache/backing_dev.h
-@@ -96,7 +96,7 @@ static inline u32 backing_dev_req_coalesced_max_len(const void *data, u32 len)
+ 		while (len > max) {
+ 			memset(kaddr, 0, max);
+@@ -680,7 +676,7 @@ static inline void folio_fill_tail(struct folio *folio, size_t offset,
+ 	VM_BUG_ON(offset + len > folio_size(folio));
  
- 	first_page = vmalloc_to_page(p);
- advance:
--	in_page = PAGE_SIZE - offset_in_page(p);
-+	in_page = rest_of_page(p);
- 	to_advance = min_t(u32, in_page, len - done);
+ 	if (folio_test_partial_kmap(folio)) {
+-		size_t max = PAGE_SIZE - offset_in_page(offset);
++		size_t max = rest_of_page(offset);
  
- 	done += to_advance;
-diff --git a/sound/virtio/virtio_pcm_msg.c b/sound/virtio/virtio_pcm_msg.c
-index a5c4e7027717..5d1b0dc08234 100644
---- a/sound/virtio/virtio_pcm_msg.c
-+++ b/sound/virtio/virtio_pcm_msg.c
-@@ -56,7 +56,7 @@ static int virtsnd_pcm_sg_num(u8 *data, unsigned int length)
- 		phys_addr_t pg_address = page_to_phys(pg);
- 		size_t pg_length;
+ 		while (len > max) {
+ 			memcpy(to, from, max);
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 99b7209dabd7..6ae549192adb 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -142,7 +142,7 @@ static inline void *iomap_inline_data(const struct iomap *iomap, loff_t pos)
+  */
+ static inline bool iomap_inline_data_valid(const struct iomap *iomap)
+ {
+-	return iomap->length <= PAGE_SIZE - offset_in_page(iomap->inline_data);
++	return iomap->length <= rest_of_page(iomap->inline_data);
+ }
  
--		pg_length = PAGE_SIZE - offset_in_page(data);
-+		pg_length = rest_of_page(data);
- 		if (pg_length > length)
- 			pg_length = length;
+ /*
+diff --git a/include/linux/iov_iter.h b/include/linux/iov_iter.h
+index f9a17fbbd398..13a9ee653ef8 100644
+--- a/include/linux/iov_iter.h
++++ b/include/linux/iov_iter.h
+@@ -227,8 +227,7 @@ size_t iterate_xarray(struct iov_iter *iter, size_t len, void *priv, void *priv2
+ 		while (flen) {
+ 			void *base = kmap_local_folio(folio, offset);
  
-@@ -96,7 +96,7 @@ static void virtsnd_pcm_sg_from(struct scatterlist *sgs, int nsgs, u8 *data,
- 		struct page *pg = vmalloc_to_page(data);
- 		size_t pg_length;
+-			part = min_t(size_t, flen,
+-				     PAGE_SIZE - offset_in_page(offset));
++			part = min_t(size_t, flen, rest_of_page(offset));
+ 			remain = step(base, progress, part, priv, priv2);
+ 			kunmap_local(base);
  
--		pg_length = PAGE_SIZE - offset_in_page(data);
-+		pg_length = rest_of_page(data);
- 		if (pg_length > length)
- 			pg_length = length;
+diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+index 3e7de2661417..1db2868b90c9 100644
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -590,7 +590,7 @@ long perf_output_copy_aux(struct perf_output_handle *aux_handle,
+ 	to &= (rb->aux_nr_pages << PAGE_SHIFT) - 1;
  
+ 	do {
+-		tocopy = PAGE_SIZE - offset_in_page(from);
++		tocopy = rest_of_page(from);
+ 		if (to > from)
+ 			tocopy = min(tocopy, to - from);
+ 		if (!tocopy)
+diff --git a/lib/bitmap-str.c b/lib/bitmap-str.c
+index be745209507a..a357342d5d6c 100644
+--- a/lib/bitmap-str.c
++++ b/lib/bitmap-str.c
+@@ -58,7 +58,7 @@ EXPORT_SYMBOL(bitmap_parse_user);
+ int bitmap_print_to_pagebuf(bool list, char *buf, const unsigned long *maskp,
+ 			    int nmaskbits)
+ {
+-	ptrdiff_t len = PAGE_SIZE - offset_in_page(buf);
++	ptrdiff_t len = rest_of_page(buf);
+ 
+ 	return list ? scnprintf(buf, len, "%*pbl\n", nmaskbits, maskp) :
+ 		      scnprintf(buf, len, "%*pb\n", nmaskbits, maskp);
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 0a63c7fba313..c7e812349ca2 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -483,9 +483,8 @@ size_t copy_folio_from_iter_atomic(struct folio *folio, size_t offset,
+ 		char *to = kmap_local_folio(folio, offset);
+ 
+ 		n = bytes - copied;
+-		if (folio_test_partial_kmap(folio) &&
+-		    n > PAGE_SIZE - offset_in_page(offset))
+-			n = PAGE_SIZE - offset_in_page(offset);
++		if (folio_test_partial_kmap(folio) && n > rest_of_page(offset))
++			n = rest_of_page(offset);
+ 
+ 		pagefault_disable();
+ 		n = __copy_from_iter(to, n, i);
 -- 
 2.43.0
 
