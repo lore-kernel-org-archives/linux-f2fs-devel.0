@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6699EEFCE3B
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BE38FEFCE3C
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 19:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,29 +12,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=RoE8vXIf9ZwfoLmKjypbYQoFqjoTr1GWl1qSoNcqHsg=; b=MTaqjCjqfqo7fEGdGeErRQZ6j4
-	uGELRCfFPlgdDCqybGedWY5kOM7g/cBfS8/QKwtO6OiGxAi0Sn5fwFpTIpIzIsFUrvP5SsNhay6hG
-	l6eOfLOQnPWY0nXmuuyiS3xlC2Y2J9fAgnfTlLfbL2d21BbYQJDBWyGeWsFQgGtTx2WI=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=e1KRrwZZbpeYLWzkK/9dLCzfg7cco9kDboYa/BIDKJ4=; b=AlZXRRUIj3D12ouMJJWTpRR2nb
+	duskLsIYFnznvBgv13+z+YIEGOVVXKiYqDHLeQ9xrFqyEXhRU1GWrEllwvmr+z+VnCtNIcFyFeEH4
+	oUuCVeWoYWPEzczHxOlWa5g62JNwHeiUILV5qw5uSYHGhJxKBG2lfKwVPEtQpEndZ5u0=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxrWc-0004jt-1U;
-	Wed, 04 Mar 2026 19:04:50 +0000
+	id 1vxrWd-00012q-AH;
+	Wed, 04 Mar 2026 19:04:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <agruenba@redhat.com>) id 1vxrWZ-0004jl-Jz
+ (envelope-from <agruenba@redhat.com>) id 1vxrWc-00012k-F1
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 19:04:47 +0000
+ Wed, 04 Mar 2026 19:04:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=content-type:Content-Transfer-Encoding:MIME-Version
  :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BaLtYgei9IWIO1DSr3vx23YgMlhkxC2wxvdO5uumCI4=; b=hldEudZOFZX6/+iYdY/QP4sk22
- vNQLhJoHYOfavV2V0AcM/5ZsSbtmPZIdvoKJyeZr/et8QQl84Z8qo9WzlET/N1usBBOHgnnmjCELy
- a2B5FDCvpWOf1Iq731R8eCe2maQRVlYbhNGhZofv7dcJOiMsw+e/GBnjQ+eah/GgNpLs=;
+ bh=cjLvbwBfqfXiZnaMfS45T56EHtgzdALqjSiM9T5ouBw=; b=HYvyyOgp5gCeKUlLRiQvg8O35I
+ 2nd706h0SrXaMLv0aS37urKAwC0Crd65LbqS4F8Qh3yqt5EhBanXp1bITJuOaTco0kIyZMhpLayxg
+ 5ZbFrvxJZdQb/CIcmI7CHniSVMgVG/ozY4BhgLKxL4XCaWauGAlGnJr1IA1tase+TRwY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=content-type:Content-Transfer-Encoding:MIME-Version:References:
@@ -42,52 +42,52 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=BaLtYgei9IWIO1DSr3vx23YgMlhkxC2wxvdO5uumCI4=; b=nKHOW8SXSvxjN8QQKR2VHv0id6
- RvaNq0yyua9DLurzppPxQyrfXPBXgRIcOkvcpJVzIG0HFBf2fllGqPkHCOILHqVRehjRj/dmU0fyv
- S6y9Vn7jNbpaoj51bXY/edo9Db4jkvgcnR96E0jcKPKSUH0l+ZaKAcCJfIhE/pyI4k+s=;
+ bh=cjLvbwBfqfXiZnaMfS45T56EHtgzdALqjSiM9T5ouBw=; b=D0AM/RKqwHnIdvL19ely9+otOP
+ yN23jwBcshnkuClVI8a1eNfk/SphVvHjAcqS0+oGmcoWURyFFlBPmOeXrYqdtPmlySVxl89WXO74D
+ iGK9sLYBlljPq3rrkHV+uPKu9SqSW1dmPK4dgug5AU5e0pGzHDct1zWrNgI+RUKzMDxU=;
 Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vxrWZ-0001WA-6n for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 19:04:47 +0000
+ id 1vxrWb-0001WH-TW for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 04 Mar 2026 19:04:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772651076;
+ s=mimecast20190719; t=1772651084;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=BaLtYgei9IWIO1DSr3vx23YgMlhkxC2wxvdO5uumCI4=;
- b=AYxMxvBt4zh3hS0vM5bjE0HvOtIYEmvp+qq6jF/5yaZMuR5/6U5y1NkK1ALFYeIIiLAFuJ
- mQP6T+ryuBaZiiRBPQAS2+YODjFYe7xgFSiA7j2O0A9rN8AIglQir/0h96XdcsWEGaRm1C
- rY9Ix4VNPKi9hSARW0bcZVNuKjWb4Uk=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=cjLvbwBfqfXiZnaMfS45T56EHtgzdALqjSiM9T5ouBw=;
+ b=FzYsDoFHRHE5Sw4d2jeBFMpimHttxKa7wJ5zZzznSzshkXf2ufTNZ1ptq+xKZuzo5WLent
+ vQVgXFpjhO2Ur6ved0lfGns5Ac2xf4Mw4ZkHdOXsgW/2WoJLLQTEKP1hW7/y6IDV9dWgeU
+ yLlVmBU0a15e5KvWN1vYbNf4Fq7OYXA=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-605-RvUA3WaMPNqHxqOGAKktYw-1; Wed,
- 04 Mar 2026 14:04:32 -0500
-X-MC-Unique: RvUA3WaMPNqHxqOGAKktYw-1
-X-Mimecast-MFC-AGG-ID: RvUA3WaMPNqHxqOGAKktYw_1772651071
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-321--lemc0VmNrClkT2m_r8aQg-1; Wed,
+ 04 Mar 2026 14:04:42 -0500
+X-MC-Unique: -lemc0VmNrClkT2m_r8aQg-1
+X-Mimecast-MFC-AGG-ID: -lemc0VmNrClkT2m_r8aQg_1772651081
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 7551C1800464; Wed,  4 Mar 2026 19:04:31 +0000 (UTC)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id A3448195605C; Wed,  4 Mar 2026 19:04:40 +0000 (UTC)
 Received: from pasta.fast.eng.rdu2.dc.redhat.com (unknown [10.44.32.29])
  by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 0E76418002A6; Wed,  4 Mar 2026 19:04:28 +0000 (UTC)
+ id D8CD81800576; Wed,  4 Mar 2026 19:04:37 +0000 (UTC)
 To: Jens Axboe <axboe@kernel.dk>
-Date: Wed,  4 Mar 2026 20:04:06 +0100
-Message-ID: <20260304190424.291743-2-agruenba@redhat.com>
+Date: Wed,  4 Mar 2026 20:04:09 +0100
+Message-ID: <20260304190424.291743-5-agruenba@redhat.com>
 In-Reply-To: <20260304190424.291743-1-agruenba@redhat.com>
 References: <20260304190424.291743-1-agruenba@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-MFC-PROC-ID: CIlWMOXH8rP5sAk9eDtuxp-PYSNp08GEFUsIXyTlVbA_1772651071
+X-Mimecast-MFC-PROC-ID: 3gBn3qK86F6uIN0MBqKAkjOtW2iHUWheaxCq17UsbhE_1772651081
 X-Mimecast-Originator: redhat.com
-X-Headers-End: 1vxrWZ-0001WA-6n
-Subject: [f2fs-dev] [PATCH 1/4] block: consecutive blk_status_t error codes
+X-Headers-End: 1vxrWb-0001WH-TW
+Subject: [f2fs-dev] [PATCH 4/4] bio: use bio_io_error more often
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -105,36 +105,143 @@ Reply-To: Andreas Gruenbacher <agruenba@redhat.com>
 Cc: dm-devel@lists.linux.dev, Andreas Gruenbacher <agruenba@redhat.com>,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
- drbd-dev@lists.linbit.com
+ Christoph Hellwig <hch@lst.de>, drbd-dev@lists.linbit.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Since commit 9da3d1e912f3 ("block: Add core atomic write support"),
-there is a gap in the blk_status_t codes and block status code 18 is
-unused.  This causes blk_status_to_errno() and blk_status_to_str() to
-return incorrect values for that code.  Make the blk_status_t codes
-consecutive again to avoid that.
+Instead of setting bio->bi_status to BLK_STS_IOERR and calling
+bio_endio(bio), use the shorthand bio_io_error(bio).
 
-Fixes: 9da3d1e912f3 ("block: Add core atomic write support")
+Created with Coccinelle using the following semantic patch:
+
+@@
+struct bio *bio;
+@@
+- bio->bi_status = BLK_STS_IOERR;
+- bio_endio(bio);
++ bio_io_error(bio);
+
 Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/blk_types.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/fops.c                  | 3 +--
+ drivers/block/drbd/drbd_int.h | 3 +--
+ drivers/md/bcache/bcache.h    | 3 +--
+ drivers/md/bcache/request.c   | 6 ++----
+ drivers/md/dm-mpath.c         | 3 +--
+ drivers/md/dm-writecache.c    | 3 +--
+ fs/f2fs/segment.c             | 3 +--
+ 7 files changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 8808ee76e73c..89a722d76c28 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -168,7 +168,7 @@ typedef u16 blk_short_t;
- /*
-  * Invalid size or alignment.
-  */
--#define BLK_STS_INVAL	((__force blk_status_t)19)
-+#define BLK_STS_INVAL	((__force blk_status_t)18)
+diff --git a/block/fops.c b/block/fops.c
+index bb6642b45937..9547f656904d 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -218,8 +218,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
  
- /**
-  * blk_path_error - returns true if error may be path related
+ 		ret = blkdev_iov_iter_get_pages(bio, iter, bdev);
+ 		if (unlikely(ret)) {
+-			bio->bi_status = BLK_STS_IOERR;
+-			bio_endio(bio);
++			bio_io_error(bio);
+ 			break;
+ 		}
+ 		if (iocb->ki_flags & IOCB_NOWAIT) {
+diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
+index f6d6276974ee..32639e8ea72a 100644
+--- a/drivers/block/drbd/drbd_int.h
++++ b/drivers/block/drbd/drbd_int.h
+@@ -1491,8 +1491,7 @@ static inline void drbd_submit_bio_noacct(struct drbd_device *device,
+ 	__release(local);
+ 	if (!bio->bi_bdev) {
+ 		drbd_err(device, "drbd_submit_bio_noacct: bio->bi_bdev == NULL\n");
+-		bio->bi_status = BLK_STS_IOERR;
+-		bio_endio(bio);
++		bio_io_error(bio);
+ 		return;
+ 	}
+ 
+diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+index ec9ff9715081..e0c9d9eef0a0 100644
+--- a/drivers/md/bcache/bcache.h
++++ b/drivers/md/bcache/bcache.h
+@@ -947,8 +947,7 @@ static inline void closure_bio_submit(struct cache_set *c,
+ {
+ 	closure_get(cl);
+ 	if (unlikely(test_bit(CACHE_SET_IO_DISABLE, &c->flags))) {
+-		bio->bi_status = BLK_STS_IOERR;
+-		bio_endio(bio);
++		bio_io_error(bio);
+ 		return;
+ 	}
+ 	submit_bio_noacct(bio);
+diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+index 3fa3b13a410f..0f6fa0a2920b 100644
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -1178,8 +1178,7 @@ void cached_dev_submit_bio(struct bio *bio)
+ 
+ 	if (unlikely((d->c && test_bit(CACHE_SET_IO_DISABLE, &d->c->flags)) ||
+ 		     dc->io_disable)) {
+-		bio->bi_status = BLK_STS_IOERR;
+-		bio_endio(bio);
++		bio_io_error(bio);
+ 		return;
+ 	}
+ 
+@@ -1283,8 +1282,7 @@ void flash_dev_submit_bio(struct bio *bio)
+ 	struct bcache_device *d = bio->bi_bdev->bd_disk->private_data;
+ 
+ 	if (unlikely(d->c && test_bit(CACHE_SET_IO_DISABLE, &d->c->flags))) {
+-		bio->bi_status = BLK_STS_IOERR;
+-		bio_endio(bio);
++		bio_io_error(bio);
+ 		return;
+ 	}
+ 
+diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
+index 7cb7bb6233b6..bf4927f58d7f 100644
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -712,8 +712,7 @@ static void process_queued_bios(struct work_struct *work)
+ 		r = __multipath_map_bio(m, bio, mpio);
+ 		switch (r) {
+ 		case DM_MAPIO_KILL:
+-			bio->bi_status = BLK_STS_IOERR;
+-			bio_endio(bio);
++			bio_io_error(bio);
+ 			break;
+ 		case DM_MAPIO_REQUEUE:
+ 			bio->bi_status = BLK_STS_DM_REQUEUE;
+diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+index 98bd945f6da7..78a730a9b1ef 100644
+--- a/drivers/md/dm-writecache.c
++++ b/drivers/md/dm-writecache.c
+@@ -1876,8 +1876,7 @@ static void __writecache_writeback_pmem(struct dm_writecache *wc, struct writeba
+ 		if (WC_MODE_FUA(wc))
+ 			bio->bi_opf |= REQ_FUA;
+ 		if (writecache_has_error(wc)) {
+-			bio->bi_status = BLK_STS_IOERR;
+-			bio_endio(bio);
++			bio_io_error(bio);
+ 		} else if (unlikely(!bio_sectors(bio))) {
+ 			bio->bi_status = BLK_STS_OK;
+ 			bio_endio(bio);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 6a97fe76712b..2dac0cbb5540 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4101,8 +4101,7 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+ 	if (fio->bio && *(fio->bio)) {
+ 		struct bio *bio = *(fio->bio);
+ 
+-		bio->bi_status = BLK_STS_IOERR;
+-		bio_endio(bio);
++		bio_io_error(bio);
+ 		*(fio->bio) = NULL;
+ 	}
+ 	return err;
 -- 
 2.52.0
 
