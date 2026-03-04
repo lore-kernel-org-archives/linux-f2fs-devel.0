@@ -4,90 +4,162 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 787D8EFCE3B
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 19:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B170BEFCE4C
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 21:42:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=9xchg9L2DuKmz9bJTeu3vOTSQpj1UTcCnKG+xb2iJvc=; b=ALpNdOem5SK7lAb33M+4YFG2FB
-	ePhUMqs9EqZ30iTHmkgH5W8L+9XIC3hXT3sXnUAZoYD1kqOevcbXbYyECdVj71ggJlXdMxO9CY2i6
-	8tcELmXfQI/+d8W6hDpjeP3lCCMGo3dDlAnP+sW6/U9A64qr/D5cysdKfCUoOnOVMGi0=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=Cx5MAh1e88HM4CkoAcFdkxH/T2oDWb4iO1PGHAri8Lw=; b=bAwWtBeQiQMMhejDSWnvuc4mLT
+	WPdIsN9pg5BT59DvKyUZBNKqvUM9r95RuA9Ty9R9ysaW+w/r6DIJK/Au39oonFo1O7Hqs4JkGlMdu
+	mqE7SgAq3Z6MXX4kjc4q+St/Ut20srfYiZl5wJCiCYdN9TIV4DRSByBLKSbd1g+J8JKw=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxrWg-0005d3-A2;
-	Wed, 04 Mar 2026 19:04:55 +0000
+	id 1vxtyj-00084s-SS;
+	Wed, 04 Mar 2026 21:42:01 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <agruenba@redhat.com>) id 1vxrWe-0005cp-SZ
- for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 19:04:53 +0000
+ (envelope-from <dlemoal@kernel.org>) id 1vxtyh-00084T-SC;
+ Wed, 04 Mar 2026 21:41:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=content-type:Content-Transfer-Encoding:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=c4/gvWAc7jMA8PiPw4OjdtXDR+vFdse+XnqHD39G+E8=; b=VK9Ik40JddfBDGqUuPdtglV0+Z
- ttO2KpejYj3yM3jkTE8T9NS+b73uJmUQjjgLd1DtziNehQC7rh8r3xFJWCXBwGDGyoXAOL/9qANNh
- jmRRbUhVFWzgpIGR1/mT4lytbGnuyosWD8GOF0R3xbtAO6HGFiK0vNsPGnE+9mfXRA2A=;
+ bh=TLTH+Ki/JacgTwtIUmmUFQbLVRipNqt8GAWnhOqX5uU=; b=ExOAdXFnX/L6H0RR+AOxeQ3l4g
+ T9wlGc4XoEDn5TLIHniZWd0iWBkce4s6wfKztng6AeoqxU4VmtSk5ifCSxYuHYN4Vi6/DORsxsH3N
+ NouocBprT0aMHQvIP+w3qJnIDoqrchZbRI+2+Tz2mH8PP3U7cmv82kW1HLyY9W08MVs0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=content-type:Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=c4/gvWAc7jMA8PiPw4OjdtXDR+vFdse+XnqHD39G+E8=; b=NaJ+k8piATX8gpXWwS/w2LZL7c
- e5TBizJjsASYDHPgarIwtPk2L9L2etM+K/ANAgNSdDkMg/eWyqhZGuqr3f+VpZqPEKMiPopVJIwXT
- rZTt9Kkjs0lEjfFTkQNSvU7KHyNkzKXX4rCLwtInqhqJbZ6Blbj6cOALnFmMZ7iOqn0k=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124])
+ bh=TLTH+Ki/JacgTwtIUmmUFQbLVRipNqt8GAWnhOqX5uU=; b=jj/x1/6NvuLvnk03hTRM16z8IL
+ AODquXGZIufwzVhhfS6TGSJxykklEG36ucMj8pxeRspZ1l88FtXnGf4B5dhbwY9QdYrb9Fjggb8s+
+ /WFprxXpMawJ+izvzb1p81OiiyQAqNIvyPyU98fu+1GI2nuyPKFcCwmZfHMiRw1gfMNw=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vxrWf-0001WQ-5l for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 19:04:53 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772651082;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=c4/gvWAc7jMA8PiPw4OjdtXDR+vFdse+XnqHD39G+E8=;
- b=BWC/RD1p5kPNHbZO+MbJoUWjQco8JqK9WYC8SHzdKrW01MbVuDZhG4VRKR2Dhe0BJ9soFQ
- oJSDuPzGyAaRaE1EPkDqIGnGUbO4XRHgTrSZ5aq7MJq/Inozqy/Kqvm6SiUYf9NFWJg4Uh
- 4T6iVeDGzalS024hzrQKo1zRImgJi/A=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-2-RnlrEz9nMkejANd1DJV44g-1; Wed,
- 04 Mar 2026 14:04:39 -0500
-X-MC-Unique: RnlrEz9nMkejANd1DJV44g-1
-X-Mimecast-MFC-AGG-ID: RnlrEz9nMkejANd1DJV44g_1772651077
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 6C4491956088; Wed,  4 Mar 2026 19:04:37 +0000 (UTC)
-Received: from pasta.fast.eng.rdu2.dc.redhat.com (unknown [10.44.32.29])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id D82EB1800576; Wed,  4 Mar 2026 19:04:34 +0000 (UTC)
-To: Jens Axboe <axboe@kernel.dk>
-Date: Wed,  4 Mar 2026 20:04:08 +0100
-Message-ID: <20260304190424.291743-4-agruenba@redhat.com>
-In-Reply-To: <20260304190424.291743-1-agruenba@redhat.com>
-References: <20260304190424.291743-1-agruenba@redhat.com>
+ id 1vxtyh-0008PT-Ap; Wed, 04 Mar 2026 21:41:59 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id D16CC432D4;
+ Wed,  4 Mar 2026 21:41:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDDDC4CEF7;
+ Wed,  4 Mar 2026 21:41:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1772660507;
+ bh=PV67OS/91fsa6EbIf+u5pJQmbMnqcMaw7mOqQaMZtc4=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=WOy+ahU5UARQ0yTbDyVVAn1fSlv8RpYZwjPT+Gigf4F6vtlQM47BUEAaHpPl28jTi
+ zijTiFmnsokrQhTEwusFFZyPjXjLpzptmexKVrqiO7zalnrs6jCk/4Dtvo7p2Wi1b1
+ deFntjfjHaMPD1GtY9aIYLocTQHgNd9upu9na/Ju2G9Ir6nNYqwGJRWtco86cB0/5r
+ uO2UQtHfq4CG7HDfigIocItuDJOTEaZae9H5bHTqKAx9IDkUJuakGJN2s0X8q9pydZ
+ YUjxavtU51Dm29ViV1Ch1zVWrQIQ2z11hjkuPtHX/LzHUzaMqMA8RcsW3Ko5J8lxOB
+ JCi7YwgNkSxnQ==
+Message-ID: <d5ef252a-02db-42d1-8ffa-1769189ae60a@kernel.org>
+Date: Thu, 5 Mar 2026 06:41:21 +0900
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-MFC-PROC-ID: aoFhbEVxSua7bQmxFtfZNCwandICpm36UswhV9g-cKw_1772651077
-X-Mimecast-Originator: redhat.com
-X-Headers-End: 1vxrWf-0001WQ-5l
-Subject: [f2fs-dev] [PATCH 3/4] bio: rename bio_chain arguments
+User-Agent: Mozilla Thunderbird
+To: Jeff Layton <jlayton@kernel.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Dan Williams <dan.j.williams@intel.com>, Eric Biggers <ebiggers@kernel.org>,
+ "Theodore Y. Ts'o" <tytso@mit.edu>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@kernel.org>,
+ David Howells <dhowells@redhat.com>, Paulo Alcantara <pc@manguebit.org>,
+ Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Tom Talpey <tom@talpey.com>, Steve French <sfrench@samba.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Bharath SM
+ <bharathsm@microsoft.com>, Alexander Aring <alex.aring@gmail.com>,
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+ Viacheslav Dubeyko <slava@dubeyko.com>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
+ <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>,
+ David Sterba <dsterba@suse.com>, Marc Dionne <marc.dionne@auristor.com>,
+ Ian Kent <raven@themaw.net>, Luis de Bethencourt <luisbg@kernel.org>,
+ Salah Triki <salah.triki@gmail.com>,
+ "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+ Ilya Dryomov <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>,
+ Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+ Nicolas Pitre <nico@fluxnic.net>, Tyler Hicks <code@tyhicks.com>,
+ Amir Goldstein <amir73il@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Yangtao Li <frank.li@vivo.com>,
+ Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+ David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>,
+ Dave Kleikamp <shaggy@kernel.org>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+ Joseph Qi <joseph.qi@linux.alibaba.com>, Mike Marshall
+ <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Anders Larsen <al@alarsen.net>,
+ Zhihao Cheng <chengzhihao1@huawei.com>, Naohiro Aota <naohiro.aota@wdc.com>,
+ Johannes Thumshirn <jth@kernel.org>,
+ John Johansen <john.johansen@canonical.com>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Eric Dumazet <edumazet@google.com>,
+ Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Willem de Bruijn <willemb@google.com>, "David S. Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Simon Horman <horms@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, James Clark
+ <james.clark@linaro.org>, "Darrick J. Wong" <djwong@kernel.org>,
+ Martin Schiller <ms@dev.tdt.de>, Eric Paris <eparis@redhat.com>,
+ Joerg Reuter <jreuter@yaina.de>, Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Oliver Hartkopp <socketcan@hartkopp.net>,
+ Marc Kleine-Budde <mkl@pengutronix.de>, David Ahern <dsahern@kernel.org>,
+ Neal Cardwell <ncardwell@google.com>,
+ Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Remi Denis-Courmont <courmisch@gmail.com>,
+ Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+ Xin Long <lucien.xin@gmail.com>, Magnus Karlsson
+ <magnus.karlsson@intel.com>,
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>
+References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
+ <20260304-iino-u64-v3-12-2257ad83d372@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20260304-iino-u64-v3-12-2257ad83d372@kernel.org>
+X-Headers-End: 1vxtyh-0008PT-Ap
+Subject: Re: [f2fs-dev] [PATCH v3 12/12] treewide: change inode->i_ino from
+ unsigned long to u64
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,67 +171,58 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Andreas Gruenbacher via Linux-f2fs-devel
+From: Damien Le Moal via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: dm-devel@lists.linux.dev, Andreas Gruenbacher <agruenba@redhat.com>,
+Reply-To: Damien Le Moal <dlemoal@kernel.org>
+Cc: nvdimm@lists.linux.dev, jfs-discussion@lists.sourceforge.net,
+ dri-devel@lists.freedesktop.org, linux-unionfs@vger.kernel.org,
+ linux-mm@kvack.org, linux-sctp@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+ linux-nilfs@vger.kernel.org, linux-x25@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ codalist@coda.cs.cmu.edu, linux-ext4@vger.kernel.org, bpf@vger.kernel.org,
+ devel@lists.orangefs.org, linux-trace-kernel@vger.kernel.org,
+ ecryptfs@vger.kernel.org, selinux@vger.kernel.org, autofs@vger.kernel.org,
+ apparmor@lists.ubuntu.com, linux-media@vger.kernel.org,
+ linux-can@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+ ocfs2-devel@lists.linux.dev, linux-fscrypt@vger.kernel.org,
+ linux-hams@vger.kernel.org, ceph-devel@vger.kernel.org,
+ linux-xfs@vger.kernel.org, fsverity@lists.linux.dev, linux-nfs@vger.kernel.org,
+ netdev@vger.kernel.org, v9fs@lists.linux.dev, samba-technical@lists.samba.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, drbd-dev@lists.linbit.com
+ linux-perf-users@vger.kernel.org, audit@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ netfs@lists.linux.dev, linux-integrity@vger.kernel.org, ntfs3@lists.linux.dev
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use the same argument names in bio_chain() as in bio_chain_and_submit()
-to be consistent.  Slightly improve the function description.
+On 3/5/26 00:32, Jeff Layton wrote:
+> On 32-bit architectures, unsigned long is only 32 bits wide, which
+> causes 64-bit inode numbers to be silently truncated. Several
+> filesystems (NFS, XFS, BTRFS, etc.) can generate inode numbers that
+> exceed 32 bits, and this truncation can lead to inode number collisions
+> and other subtle bugs on 32-bit systems.
+> 
+> Change the type of inode->i_ino from unsigned long to u64 to ensure that
+> inode numbers are always represented as 64-bit values regardless of
+> architecture. Update all format specifiers treewide from %lu/%lx to
+> %llu/%llx to match the new type, along with corresponding local variable
+> types.
+> 
+> This is the bulk treewide conversion. Earlier patches in this series
+> handled trace events separately to allow trace field reordering for
+> better struct packing on 32-bit.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- block/bio.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+For the zonefs bits:
 
-diff --git a/block/bio.c b/block/bio.c
-index eadf4c1e9994..5e60bf3730af 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -369,22 +369,22 @@ static void bio_chain_endio(struct bio *bio)
- 
- /**
-  * bio_chain - chain bio completions
-- * @bio: the target bio
-- * @parent: the parent bio of @bio
-+ * @prev: the bio to chain
-+ * @new: the bio to chain to
-  *
-- * The caller won't have a bi_end_io called when @bio completes - instead,
-- * @parent's bi_end_io won't be called until both @parent and @bio have
-- * completed; the chained bio will also be freed when it completes.
-+ * The caller won't have a bi_end_io called when @prev completes.  Instead,
-+ * @new's bi_end_io will be called once both @new and @prev have completed.
-+ * Like an unchained bio, @prev will be put when it completes.
-  *
-- * The caller must not set bi_private or bi_end_io in @bio.
-+ * The caller must not set bi_private or bi_end_io in @prev.
-  */
--void bio_chain(struct bio *bio, struct bio *parent)
-+void bio_chain(struct bio *prev, struct bio *new)
- {
--	BUG_ON(bio->bi_private || bio->bi_end_io);
-+	BUG_ON(prev->bi_private || prev->bi_end_io);
- 
--	bio->bi_private = parent;
--	bio->bi_end_io	= bio_chain_endio;
--	bio_inc_remaining(parent);
-+	prev->bi_private = new;
-+	prev->bi_end_io	= bio_chain_endio;
-+	bio_inc_remaining(new);
- }
- EXPORT_SYMBOL(bio_chain);
- 
+Acked-by: Damien Le Moal <dlemoal@kernel.org>
+
 -- 
-2.52.0
-
+Damien Le Moal
+Western Digital Research
 
 
 _______________________________________________
