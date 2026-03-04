@@ -4,115 +4,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F262BEDEC01
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 03:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DD4C8EDEC08
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 03:58:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:From:References:To:MIME-Version:Date:Message-ID:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=PkOesxzGtHoRAVb0ERV0LWe0EQ+9ulpTH9y42O7E+GU=; b=QWxHslN0GBveXF8LYfP5RqksCH
-	opIqNWj3jfEVCyS3aRkZKNz+ALYXc7KFrjTx8ZPwImA61ZxotlkKwWEnsa9wywXL3dQpiHAYrAvPq
-	pAPTSa0wO114xqDxB9ujkWIgmqQ2Ovmi8/XJjPSmnJIkqcNNvvW5yqIoSiPcoBhEqzyE=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:To:Message-ID:References:Mime-Version:
+	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=H31bDBDUMOspBi7qqPUQlV1voaHAS/J+fXM+AIYtL4w=; b=bwsDBT0NXKWY/saXclPjUaPbqS
+	GWRDlnHd5WVUkrZhV6iimDY92QfHaHOMDFBFYS6wrjy/QGNloD8zr8its4cUkInto0f5Xkkd23vJi
+	C9TVz4Y3Enph+JeisbLzek6j9o6kyZmeFrMCSrYr3IYm032bd8m3g3poei2LUoDZTK0w=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxd1N-0001wG-JZ;
-	Wed, 04 Mar 2026 03:35:37 +0000
+	id 1vxdNI-0001q2-Cv;
+	Wed, 04 Mar 2026 03:58:16 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <axboe@kernel.dk>) id 1vxd14-0001vo-A4
- for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 03:35:18 +0000
+ (envelope-from <3wZ2naQYKAO4iUQdZSWeeWbU.Sec@flex--seanjc.bounces.google.com>)
+ id 1vxdNG-0001pv-Le for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 04 Mar 2026 03:58:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NrE0zI+7ilR1NedBJHHio8t27882PDymrHrpls6UPoo=; b=Sm5bk4E8jTCcbFw5Ah4qlTopeX
- QFHk97zUWIq6yLr4R0QtcfgyNDpr28mpjeKxEW5K2KFGyHLMxmgZaVxmOPHYhgTIwyEgQILsFyOHG
- cLl37xjHjopCf0Zl0BsMwwocwB1vR3Ca2rj6e9IRxOArXxIjubXubLzjxZ5Yl1ZmqTPs=;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
+ References:Mime-Version:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=wlfxAiLCYE9X+ss6Nds/jzCWOjzdQvgrRAY6r5Hx7j0=; b=MP1bAP3Kbp0Dkqgb+EG8xtQNfl
+ eNcwKOJDAR6kxHO3uFra2B7O7GFKMkapR0z/IEKA7Ft83UrQVsE5o91471uWbw5oPyhkP9oxpoZER
+ yNBCDSik5wgBOZCo8b+u95etG/L8Z6GxucEa5/h6MFEXehzCNvI0V+7LZQa0BBW5kW8I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Type:Cc:To:From:Subject:Message-ID:References:Mime-Version:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=NrE0zI+7ilR1NedBJHHio8t27882PDymrHrpls6UPoo=; b=QFCwNqAw+b3PtD4pDVrYQWD2D0
- wcnKOuAGe9bY8JVLwm5aN7NpUarVukfwAmZYREwvkS33oH3zZmX0BmNVb2x41KYshZy/HV2goUIbg
- w9lmPSXH45IiszPHKbshS1eEY1s3KYOf5d4DPXWJ1ZcNeoL54ajY/v2Mosp56IkSf6g4=;
-Received: from mail-ot1-f54.google.com ([209.85.210.54])
+ bh=wlfxAiLCYE9X+ss6Nds/jzCWOjzdQvgrRAY6r5Hx7j0=; b=Moe0Xv/dHkgD0bjduDbGn+0aPS
+ gLvk7jf3jAtONOzvfixu8Lu/doTALCqV8/HtxXbNkd6BBizmhiSdfWDnLhcL9fVgusXuY6V06/vDC
+ IrnInQdi8F+BG0tlR5TLhBLJai1miUJQlNrO3bwT7srJLhlW6nifW9I1Lk4BiFV62ggc=;
+Received: from mail-qt1-f201.google.com ([209.85.160.201])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vxd13-0005hI-Oh for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 03:35:18 +0000
-Received: by mail-ot1-f54.google.com with SMTP id
- 46e09a7af769-7d4be7c4ebeso3198659a34.1
+ id 1vxdNG-0006ru-6F for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 04 Mar 2026 03:58:14 +0000
+Received: by mail-qt1-f201.google.com with SMTP id
+ d75a77b69052e-503342386a8so487255381cf.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 03 Mar 2026 19:35:17 -0800 (PST)
+ Tue, 03 Mar 2026 19:58:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1772595307; x=1773200107;
+ d=google.com; s=20230601; t=1772596683; x=1773201483;
  darn=lists.sourceforge.net; 
- h=content-transfer-encoding:in-reply-to:from:content-language
- :references:cc:to:subject:user-agent:mime-version:date:message-id
- :from:to:cc:subject:date:message-id:reply-to;
- bh=NrE0zI+7ilR1NedBJHHio8t27882PDymrHrpls6UPoo=;
- b=iU7v0aVbIHmHuzGdUHH8JeF+JtmKG2biV8Wi3kqAH0PY/JWTNDHozxX/iFm6KZ3e0E
- pXRfHy0m72iFpmYZxxgtP6L5lokNWkzakqfaNjX2KkHkLJFbDuVW2x1vQcJe1Dl1LJE7
- 2ZbbJyTtKphqATMoSru5joefEWAiJBFWFzCKnXSPSNz+ZDsVCxLwpGUcw8iPYc48/UKD
- oZPEhD/oL0XjHuVbuhGO8RT23LnoKDE2mz+3MkxBtw4FHSZFfuw7ViQ8Fb/RgEeU+9rP
- XMZOa27nf4M9gnWh0TrCbImHlr6yxx9RAdIS0orndmbjODcg2/zR8PPnieEgqOx19w9j
- hPNQ==
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=wlfxAiLCYE9X+ss6Nds/jzCWOjzdQvgrRAY6r5Hx7j0=;
+ b=bORBcLmXu2tRTtT1ZiCkAKYb6+QMXSsinCPZWDJlrYv7sCHOKL8drLNk22LK4J8Z/t
+ 86GioinEkKBUbAl0a1jrdCjrTmA6diCe/Ah6UhcY006Olm+5vtAfbS6Fo500hIfBoCVX
+ P1ew2Ds73xp/fP5OMMYk1TZ6Hb+cfT7i5Yh4FO9JJbHNfTln/uS9EUCq6fMIqPoyk45R
+ nXxT29M3/Hh23LcoEhFq+kVn7A3vwNBcUnLvOMyCgp348B975GRc/SaNRpS7sH/5V1d3
+ Atw89ykU0Y6RuHNUMnxiCmRfY9FMB2mbPY+Y1tOb3kau7gP3WQzMyjRKMtSMau1b8Bxv
+ vVGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772595307; x=1773200107;
- h=content-transfer-encoding:in-reply-to:from:content-language
- :references:cc:to:subject:user-agent:mime-version:date:message-id
- :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=NrE0zI+7ilR1NedBJHHio8t27882PDymrHrpls6UPoo=;
- b=GRkOYt/4ubfwrz52mxhcr9asis4atUz4LHQ/rGBuzl/9ScFZnqBGcYeayEF5XNdDg0
- qKz2WEkdRkT/+kkEtQU0QPVk/Vw4/FJHNGD93eutlp0Vx3bZd63pLiYUO2sJmjJ0O9oY
- vTGU1unJIQQbRd5qN/PNfBpo8JoIn87hKTBjGhZ9qiFKzD/8NJbZBoThk67WXZQFfQfw
- AOOC0qFe0GePUxo2dcz2eTDyE7ybHiXGtKu1QOG+lokMFGKXRKQZ8QNwUM0vp/Kbc/+F
- FWS9e5NinLkMxSRjbT+lHcuF+6waljTSQvAcjMVybBImUfXoKRCCEZIc4qyzeIOuvVlB
- Jkbw==
+ d=1e100.net; s=20230601; t=1772596683; x=1773201483;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=wlfxAiLCYE9X+ss6Nds/jzCWOjzdQvgrRAY6r5Hx7j0=;
+ b=bgr3j71lI1V7FMvnuXb0cZlLaMRMjikR5HpV6DvBMtrc7ClKTSlB/voEeNUyZUXg3O
+ uPDMZoQrNdrkg0gIgjqzZhJKq1rI1Fsu6xvQiRjK8ZWVejgp8jwUW9AZgTMzpXmlKHC2
+ eLbfWqrvSdPNIq/j9bz8Qis4bQ84RqlUF2Ej91BUoJv5WwPs4THoEs+FBeX2Pger3e6G
+ b7r8+fyt/39A28oh9zxolZqcTwMVgmILOuj7mJV0PUeWu7HAJ7vNSrOOpArTTuDBh0Qa
+ OTnk85swto7dyd7onRIWVlpWwbSoC0zniQzt23jJq/s5xF6wC7+jtMzNZNmnxtOGEU8c
+ 1SfQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCV+A2fi6UevspnnjOUIB2dIJ56N1IGqx0Y+aY+Uha8gNwcgdDehgFzsKwJ7z8bpaNvD1oWKe0zvKnfxDZuyuTrD@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YyfFQOxoLL6SXp81XAAjkS1va+qJPsvErV77TIOGTNNoStfiPgF
- jVDTEGU+U+rK9EYj+wkM+x2wb6JmMFXwqt67RViDbncXcGb6cnPbwoAEJ+wn4WbnRJA=
-X-Gm-Gg: ATEYQzyHu389jOfjn5utPm8g8xfk+OPA8tj/7rKXUlffYzZOyn+2P2Ef+rv0mY7Z+7s
- sIOzRlpaF8S8+Rv+5xzvrZCNH/D3rzAbZAy1XAzVk0qaiMekAvB3piRCjYZ2a8iJO52aVWGQ1U+
- h3PwGNchVx6aHGrnQj87wrEK0+x/WFhV67mwZUmYIVDpbkGRu39i95i2Hrxz6+0qwCH8HCCvN1n
- lHxNrZHJGPfMtZ2rTXiyHPMy5DJAC94uA0bvW4plOfD+Lx/8YARTu3DDbchU4A1kq0Gy4isUGER
- Q7TbGOVR3PkuDzztA1GxfHlkhpfBJKxs1ukXteTaY0rcOllXEilA1uojOlcNzI++q8XLNDfq8Hw
- swoQzdctACcpmJRA+qwo+AS94DYXjvTwAZuwi5O6tjsVLRFFqK9kgWtaSwfuh9BNBG2Q1nv382q
- mqnRZUbsO0OX/64zIsy3d3uoU+E6oWlzP9w5ap3KCCwYs7OcqMxeXE3ReKPFtTyv2dvmLmxgLHu
- ctyOEAnmg==
-X-Received: by 2002:a05:6830:6185:b0:7c7:6977:17cb with SMTP id
- 46e09a7af769-7d6d139f788mr450044a34.21.1772595307034; 
- Tue, 03 Mar 2026 19:35:07 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
- by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7d586653f6asm15202012a34.19.2026.03.03.19.35.02
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 03 Mar 2026 19:35:06 -0800 (PST)
-Message-ID: <e96e851a-9050-4d8c-b1e5-bc3b5d91a84c@kernel.dk>
-Date: Tue, 3 Mar 2026 20:35:01 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Yury Norov <ynorov@nvidia.com>, Sean Christopherson <seanjc@google.com>
+ AJvYcCVAinHTpzXVBldI5iwF3I8Jpk/GMOSRkeQDgDRPWMSnZQe+BJk9kwas3QqsSmMGXErDX5OCczf8qY17t8RZ14+h@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YywuXoK8CdUjx8y4u2wfeBxhtde7UFb+vHoQigmy9fZWgjEegdq
+ 0ZiZnhBBdILc2LQUQBNkaX2JVNIGTUxCLumUHVSf4W6tiYMMFPTUM1xGK/GjX2IWViy7vI+NVY0
+ WqPzZCQ==
+X-Received: from plzv9.prod.google.com ([2002:a17:902:b7c9:b0:2ae:6338:73ca])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:2446:b0:2ae:483f:b239
+ with SMTP id d9443c01a7336-2ae6aaf9469mr6114485ad.30.1772592577810; Tue, 03
+ Mar 2026 18:49:37 -0800 (PST)
+Date: Tue, 3 Mar 2026 18:49:36 -0800
+In-Reply-To: <f8d86743-6231-414d-a5e8-65e867123fea@kernel.dk>
+Mime-Version: 1.0
 References: <20260304012717.201797-1-ynorov@nvidia.com>
  <20260303182845.250bb2de@kernel.org>
  <f8d86743-6231-414d-a5e8-65e867123fea@kernel.dk>
- <aaedwFwXh9QXS3Ju@google.com> <aaen2pGs0UeiJqz1@yury>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <aaen2pGs0UeiJqz1@yury>
-X-Headers-End: 1vxd13-0005hI-Oh
+Message-ID: <aaedwFwXh9QXS3Ju@google.com>
+To: Jens Axboe <axboe@kernel.dk>
+X-Headers-End: 1vxdNG-0006ru-6F
 Subject: Re: [f2fs-dev] [PATCH 0/8] mm: globalize rest_of_page() macro
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -125,6 +108,9 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: Sean Christopherson via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Sean Christopherson <seanjc@google.com>
 Cc: Latchesar Ionkov <lucho@ionkov.net>, Zheng Gu <cengku@gmail.com>,
  kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
  Peter Zijlstra <peterz@infradead.org>,
@@ -143,10 +129,10 @@ Cc: Latchesar Ionkov <lucho@ionkov.net>, Zheng Gu <cengku@gmail.com>,
  Yury Norov <yury.norov@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>,
  Alexandra Winter <wintera@linux.ibm.com>, Miklos Szeredi <miklos@szeredi.hu>,
  Michael Ellerman <mpe@ellerman.id.au>, linux-ext4@vger.kernel.org,
- x86@kernel.org, Tvrtko Ursulin <tursulin@ursulin.net>,
- linux-spi@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
- Aswin Karuvally <aswin@linux.ibm.com>, intel-gfx@lists.freedesktop.org,
- Jakub Kicinski <kuba@kernel.org>,
+ x86@kernel.org, Yury Norov <ynorov@nvidia.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, linux-spi@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, Aswin Karuvally <aswin@linux.ibm.com>,
+ intel-gfx@lists.freedesktop.org, Jakub Kicinski <kuba@kernel.org>,
  Christian Borntraeger <borntraeger@linux.ibm.com>,
  Carlos Maiolino <cem@kernel.org>, Dominique Martinet <asmadeus@codewreck.org>,
  Thomas Gleixner <tglx@kernel.org>, dm-devel@lists.linux.dev,
@@ -176,39 +162,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 3/3/26 8:32 PM, Yury Norov wrote:
-> My motivation is that it helps to simplify constructions like this:
+On Tue, Mar 03, 2026, Jens Axboe wrote:
+> On 3/3/26 7:28 PM, Jakub Kicinski wrote:
+> > On Tue,  3 Mar 2026 20:27:08 -0500 Yury Norov wrote:
+> >> The net/9p networking driver has a handy macro to calculate the
+> >> amount of bytes from a given pointer to the end of page. Move it
+> >> to core/mm, and apply tree-wide. No functional changes intended.
+> >>
+> >> This series was originally introduced as a single patch #07/12 in:
+> >>
+> >> https://lore.kernel.org/all/20260219181407.290201-1-ynorov@nvidia.com/
+> >>
+> >> Split it for better granularity and submit separately.
+> > 
+> > I don't get what the motivation is here. Another helper developers
+> > and readers of the code will need to know about just to replace 
+> > obvious and easy to comprehend math.
 > 
-> -               loff_t cmp_len = min(PAGE_SIZE - offset_in_page(srcoff),
-> -                                    PAGE_SIZE - offset_in_page(dstoff));
-> +               loff_t cmp_len = min(rest_of_page(srcoff), rest_of_page(dstoff));
-> 
-> Or this:
-> 
-> -               if (folio_test_highmem(dst_folio) &&
-> -                   chunk > PAGE_SIZE - offset_in_page(dst_off))
-> -                       chunk = PAGE_SIZE - offset_in_page(dst_off);
-> -               if (folio_test_highmem(src_folio) &&
-> -                   chunk > PAGE_SIZE - offset_in_page(src_off))
-> -                       chunk = PAGE_SIZE - offset_in_page(src_off);
-> +               if (folio_test_highmem(dst_folio) && chunk > rest_of_page(dst_off))
-> +                       chunk = rest_of_page(dst_off);
-> +               if (folio_test_highmem(src_folio) && chunk > rest_of_page(src_off))
-> +                       chunk = rest_of_page(src_off);
-> 
-> To a point where I don't have to use my brains to decode them. I agree
-> it's an easy math. It's just too bulky to my (and 9p guys too) taste.
+> I fully agree, I had the same thought reading this.
 
-The thing is, now I have to go lookup what on earth rest_of_page() does,
-whereas PAGE_SIZE - offset_in_page(page) is immediately obvious. It's a
-classic case of "oh let's add this helper to simplify things" which
-really just makes it worse, because now you have to jump to the
-definition of rest_of_page().
-
-IOW, just no.
-
--- 
-Jens Axboe
++1 from KVM-land.
 
 
 _______________________________________________
