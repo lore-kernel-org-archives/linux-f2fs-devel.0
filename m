@@ -4,74 +4,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DC868EDEBFF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 02:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 87F15EDEC02
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 02:48:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=8Lck9VxvV9OWDnjQyvtoY9A79dDVvAuhfXuS3wTCu20=; b=DtkZn/mS4m6xc36N+ckllzNred
-	BXyIS5Ed6oWDd10V0Pd7pvCFBw6ukuj5YojP8moIMjeU3ccsEeJUck1uI508G5mepvu0mzUw5nNp3
-	9G41e7zZaBOXDQ5DhtBmWkztk/57K2lPOey92a2A0mXyp66QChFN33FYr4AETJngvUHo=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:From:References:To:MIME-Version:Date:Message-ID:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=SClQgoWfpBTG3o4i/3+3oqTAfwOp2Iq+dT/fRiDB+m8=; b=CNg4nRGP8N7x+5VeO37vigCqUd
+	bi8yz/sySAlM8W6GUtbUxLmOztY6ePk/FI6uHnb/DTQvCEPvfHf/fhKuDoq7i2kyOK9EvhOBFYmj8
+	PeerUaihri3kNzQwovWo1flF+9JYBdPSaoPT8gBpMquKHIPwER5mqwZ4TaV6HUSrzUnc=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxbz5-0005lu-S0;
-	Wed, 04 Mar 2026 02:29:11 +0000
+	id 1vxcHs-000874-Ac;
+	Wed, 04 Mar 2026 02:48:36 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <kuba@kernel.org>) id 1vxbyu-0005lO-Q2
+ (envelope-from <axboe@kernel.dk>) id 1vxcHh-00086q-MH
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 02:29:00 +0000
+ Wed, 04 Mar 2026 02:48:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wKj0ybLQ7OTEX7VYO4UYrqVGHCViOoCZ3KGzAf4cs5s=; b=Yx4ZXY8Qj3cDsh7WowvONIDcSp
- WVrOUqCUXuCKyLmVwhUXeXCrA4xSn5aYa9ZRhAWVb+0DdiV8Ly7aNu1ubD8qV7CO7TxyfrG4Hcz0Q
- PEYr9rHsqpvnyWSgTzit6QEScct10lGkDD7mDlnUkdCYclRbXGQ9prJI1Z7nHAbCg6ao=;
+ bh=W7dycZCW1i0wVXbu5i6p68JSQ3h2ubeTDMrk86ISU5M=; b=bpvFXWISLwbvip6/M5IcouEWua
+ ZgS+Xy0MbmgDVZOFBHUzCjc2veLfAXPpyIecTTaQBL8igcszV5YRO5VPo3cQhzHhaQtmdW4+hzRvP
+ 9x7x25jruvF5+S3ErAmgx3Ot904zYrtZcQ/X2a0m6JLeTHR6ITnQvYEFWyVoS6MzbVeU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
- In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=wKj0ybLQ7OTEX7VYO4UYrqVGHCViOoCZ3KGzAf4cs5s=; b=ZMgd013XqNAsYThrosgAMqoVj4
- dhhb6bNG+MGbZ27J5WjDRV7nY8DTHmqR1OkuPPuz4LRLpc6bBzNz/MqWPCNvrJGjstS1oIf+1ZroH
- 6IqCqwGlsKN6ig1ylxyWsVHB3m8lZPKc3v3Cd2E5Hgk8DMDles6a+r4o4CO0tZV1+FAA=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=W7dycZCW1i0wVXbu5i6p68JSQ3h2ubeTDMrk86ISU5M=; b=PFVYBAXFde+onw0AvN3MNynYDD
+ 8qgVrLBNXfwWloJSZA63eonHaYUECIDr/oFBzEQAAh7un/wE1fRsPGMgv+SnLIokHxAtPX28GGhx+
+ +He53uLZhdbu2I3g51dHzjildcDrld3qEzuRy/d/w5l3M/OZfiCI5vAz1fSDdcCFE9F0=;
+Received: from mail-dy1-f173.google.com ([74.125.82.173])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vxbyu-0002Je-7u for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 02:29:00 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 41CFF43A1B;
- Wed,  4 Mar 2026 02:28:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB983C116C6;
- Wed,  4 Mar 2026 02:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772591329;
- bh=w0enNDJ6vj/GjKs1g6Qapybf69Y+ysKOpkctiG5RrpQ=;
- h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
- b=spjB+qe83UoElqhhSNfGwtYNBZK6rgflA8nN48IzNFPIWPeUr3QRcXVdCtF1NJKnf
- z5EksqVKhftC9MLC9j/7nGeIaaTR87yGm5Rwd8MxIRtsUMKdsilMMJ3Cd9iakxj8Bd
- EH9ATACpJVqsf4PLZG7kLZaviIgPJnXRNiYRro7z9N/ZFYixQx9IlT7mTSxw717b7C
- FtZrlDgcd81FIPR+0JhvBn0boDgv6oQAtRyqPocimgjFVPbqTR/7W2RrWO0jyc8Sw9
- QZEusDhvc5/gFZA6KC6+NigNLVm6yl1rbhBl2iBivGRlsjsn6q5oZHNnRRI6Qq4pAT
- NJF9zxNmgNh2w==
-Date: Tue, 3 Mar 2026 18:28:45 -0800
-To: Yury Norov <ynorov@nvidia.com>
-Message-ID: <20260303182845.250bb2de@kernel.org>
-In-Reply-To: <20260304012717.201797-1-ynorov@nvidia.com>
-References: <20260304012717.201797-1-ynorov@nvidia.com>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1vxcHf-0003Do-P4 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 04 Mar 2026 02:48:25 +0000
+Received: by mail-dy1-f173.google.com with SMTP id
+ 5a478bee46e88-2be19f05d7dso4440752eec.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 03 Mar 2026 18:48:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1772592493; x=1773197293;
+ darn=lists.sourceforge.net; 
+ h=content-transfer-encoding:in-reply-to:from:content-language
+ :references:cc:to:subject:user-agent:mime-version:date:message-id
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=W7dycZCW1i0wVXbu5i6p68JSQ3h2ubeTDMrk86ISU5M=;
+ b=A5avo6jst4tiiH+GbXks7WESidzpXyXTi9jXiYi9DRhOadmEKTp/mhCZwucUzPk9YO
+ X2AkJZYMiKfKGyLJ+vGPeUnD20HYXGkQQ4CCOiiFj8vnQJoMBV/LFE+QY6rAwp8b/VB0
+ o1uRELeA19rrpQB6wig2yg5v1UAfVjave0hkw+N6U2sBqgfthUjX09lTNBIHyknzyd3q
+ Lda7UnVsuKcTWtY6jzOMewKjljqaSy5TGI6xg8VaH6GBZkRrGJUlCy5NnE/1RSSTUs7b
+ 41sMt8cbT7Qn9tGb5DxZYl/RpmfzVMWvVwRbhC4UnaBjVfUr1LRtPjXA9sQ0uc2FW+L8
+ Bb9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1772592493; x=1773197293;
+ h=content-transfer-encoding:in-reply-to:from:content-language
+ :references:cc:to:subject:user-agent:mime-version:date:message-id
+ :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=W7dycZCW1i0wVXbu5i6p68JSQ3h2ubeTDMrk86ISU5M=;
+ b=pN4XVbnwIhlFAHGt/frszB5sATaxIa/YTlOtTYr6ztnmLSwQz31Up592am5XrOjX3b
+ Xj29p7ppjCj3TBvZ5JpgQWAEdgZaC0XN2EYeSpyT7QM8/ySyhcNZxiXPVnNwGbmaQ0dF
+ /Uhey/AtuJe2H0af2Hjk2Uc34qFKszWpn39z+//UHoQF8Ak9RGON8yvlxO8sK7NOtXpy
+ ASrbdNDbt9r/QMVEGAeJXtgRIKOa8QFToX83pLHlNvBLZ85FrIEJvBBRmd2dNnKb4nI4
+ x8RXnG7UxImU/DnEAPa2sMYbfzVEehTrJMvljRRll8YQejRxHN2jYOkRVyf+4uWOPaun
+ boUQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUJgjDkVRTmFLpgkA0kdlaRfCfipKWjcSERFHkYo0jrMloyNUuDDk2reKGhTh2WUDfCrFZ0d2qKz52YAqn567lO@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YwLnPegY4Od/0+y6BYH6f6ErlEOqsjWsQy76TOpLYlhjUZzTyGg
+ J/fhFw/TA7ggxwoZtUfNVHoavXdQiyTQJ0P8vCazbLYqvDGKrrQJv2M3KS+z/810fUx4nzICMxb
+ 5BFFhrSj5Qw==
+X-Gm-Gg: ATEYQzzV6aASm62UORTR9FLUktbkeWehN+wRhq7zOLSMaCr0hebv1OnPcowTeRW5OYf
+ txMsSlXZUtUAuld6n6SpLw3hfZpjeAfwr3ZpVdoMZY9VAn7zpe3hCPVLTEbYpBpAaSoWjKU1dDi
+ 72Xm+qHbm4bgyHfjCvrlDhxQiYj9pdJG0cGuyFMu8BgLwOHJrv6D3R0IW7P8Q9xu0T0Xeq10geJ
+ PwnmcBTy7ZcxiY+2mAAQrz3EkY6umZlu0xs3U1T1A7UE9sDe1c5BiG0E7Tn/0FvGxvBEx9UVR9Z
+ Bpzydruvbfdx5a933Fdh1IPt2kLJqPhnYKkClU38mPGvLf/QaeuNI2NepApUfDzkEHxWEZVqCzh
+ Vo4VHyaA0jJx3YJRONfLZRXD4yjldvPanBrFzzwAnSJRod0Fry+y11ltzr3xR0xz8PEiIllkxBh
+ Cpmo2jBsClSXLGvJlyTD6E2VeLI1aLAydpIyDIPqu89ZAVYBIw4fE8p/AfOrgd/sIjq/MYCHPwc
+ /TB61vkew==
+X-Received: by 2002:a05:6820:4a8e:b0:66a:1886:e4bf with SMTP id
+ 006d021491bc7-67b17703546mr346906eaf.22.1772592166871; 
+ Tue, 03 Mar 2026 18:42:46 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+ by smtp.gmail.com with ESMTPSA id
+ 006d021491bc7-679f2bfee3csm12574800eaf.7.2026.03.03.18.42.41
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Tue, 03 Mar 2026 18:42:45 -0800 (PST)
+Message-ID: <f8d86743-6231-414d-a5e8-65e867123fea@kernel.dk>
+Date: Tue, 3 Mar 2026 19:42:40 -0700
 MIME-Version: 1.0
-X-Headers-End: 1vxbyu-0002Je-7u
+User-Agent: Mozilla Thunderbird
+To: Jakub Kicinski <kuba@kernel.org>, Yury Norov <ynorov@nvidia.com>
+References: <20260304012717.201797-1-ynorov@nvidia.com>
+ <20260303182845.250bb2de@kernel.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20260303182845.250bb2de@kernel.org>
+X-Headers-End: 1vxcHf-0003Do-P4
 Subject: Re: [f2fs-dev] [PATCH 0/8] mm: globalize rest_of_page() macro
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -84,9 +124,6 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Jakub Kicinski via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Jakub Kicinski <kuba@kernel.org>
 Cc: Latchesar Ionkov <lucho@ionkov.net>, Zheng Gu <cengku@gmail.com>,
  kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
  Peter Zijlstra <peterz@infradead.org>,
@@ -111,9 +148,9 @@ Cc: Latchesar Ionkov <lucho@ionkov.net>, Zheng Gu <cengku@gmail.com>,
  Christian Borntraeger <borntraeger@linux.ibm.com>,
  Carlos Maiolino <cem@kernel.org>, Dominique Martinet <asmadeus@codewreck.org>,
  Thomas Gleixner <tglx@kernel.org>, dm-devel@lists.linux.dev,
- Jens Axboe <axboe@kernel.dk>, Albert Ou <aou@eecs.berkeley.edu>,
- Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- Will Deacon <will@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ Albert Ou <aou@eecs.berkeley.edu>, Vasily Gorbik <gor@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Will Deacon <will@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net,
  Arnaldo Carvalho de Melo <acme@kernel.org>, linux-crypto@vger.kernel.org,
  linux-block@vger.kernel.org, Mark Brown <broonie@kernel.org>,
  Borislav Petkov <bp@alien8.de>, Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -138,20 +175,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue,  3 Mar 2026 20:27:08 -0500 Yury Norov wrote:
-> The net/9p networking driver has a handy macro to calculate the
-> amount of bytes from a given pointer to the end of page. Move it
-> to core/mm, and apply tree-wide. No functional changes intended.
+On 3/3/26 7:28 PM, Jakub Kicinski wrote:
+> On Tue,  3 Mar 2026 20:27:08 -0500 Yury Norov wrote:
+>> The net/9p networking driver has a handy macro to calculate the
+>> amount of bytes from a given pointer to the end of page. Move it
+>> to core/mm, and apply tree-wide. No functional changes intended.
+>>
+>> This series was originally introduced as a single patch #07/12 in:
+>>
+>> https://lore.kernel.org/all/20260219181407.290201-1-ynorov@nvidia.com/
+>>
+>> Split it for better granularity and submit separately.
 > 
-> This series was originally introduced as a single patch #07/12 in:
-> 
-> https://lore.kernel.org/all/20260219181407.290201-1-ynorov@nvidia.com/
-> 
-> Split it for better granularity and submit separately.
+> I don't get what the motivation is here. Another helper developers
+> and readers of the code will need to know about just to replace 
+> obvious and easy to comprehend math.
 
-I don't get what the motivation is here. Another helper developers
-and readers of the code will need to know about just to replace 
-obvious and easy to comprehend math.
+I fully agree, I had the same thought reading this.
+
+-- 
+Jens Axboe
 
 
 _______________________________________________
