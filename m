@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0612DEB7ED7
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 12:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 397EAEB7ED7
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 12:19:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=i1TvxiCgC8UjQJB8s+0AaM2cZh9wZ/d15EFzOqpFDMU=; b=ee023M5NiAO3R9G+D6NMV/NaPL
-	pmzHnuQwKUASg/dSXBQMsmucBQBnu8IKPTBepznCDOIlr7ceuB9Dpv1czlnIl4Tm3nPkmADg+I7Gc
-	oOjO0jF8ERGhF2rLd8zw7rIFQXr8PZgXyTP5BpdWOqQqWYXJ0d+BTE0lVC9nG6npSig0=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=tqNmxVRplTTIoUsq6vHMDeCfyogZabBLgeJz1w2ZqY8=; b=mZvLbrv+M3Ze2GEqGUz5ifzR/Q
+	v9RY7pUocBYFID4nQTtcNVFunrY6sQwPOd3jN77EypTSn6GWIO3L6bDtjcLJfb5BISTpcwHLzTnDx
+	rOdicJVjgOc/dw5Xh08Xk5OfYon+4kI/oM0mb75VNndPVJYbMbnDhun5+GfEaGqc8FrI=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxl3L-0003ur-BW;
-	Wed, 04 Mar 2026 12:10:11 +0000
+	id 1vxlCj-0004tp-14;
+	Wed, 04 Mar 2026 12:19:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vxl3J-0003uj-Ts
+ (envelope-from <chao@kernel.org>) id 1vxlCi-0004tj-CS
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 12:10:10 +0000
+ Wed, 04 Mar 2026 12:19:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VhWANrC3JMCCNzRs5ZYbqYTMhJ4vWUo0Bouo6HZYfic=; b=HTU5arlvk1u3GKQ8+wkLHidvSI
- umCaVcXobbvsDWAmUg6lpN+4mj7f2j9EYXFiGWtiT47RaCzuZ/okvdaUQhqb87reJKpuYg8JGQQOX
- TdjfIWC5YWMF30iCaBhUKx0czbbsM/6vr8EtO5O13o02dQ2yKRFF2bQ1RGSfc2BrUvlA=;
+ bh=9+ftQpr3vRQTrveG7sm82VIVUMYAqGSuuwnKL1+sPFU=; b=Bu3/dXfpOa8smpKTuuWa8BNGHx
+ Sfd6zFqGlQs+8ZtptZWZUzuyFucY7uT96qq0fRH1Fk3v+SqQx2vdBgrhxvhQMlIMs7vhqkHpODE47
+ H6m6zSHGJ7EHv9YGsUMw9a35YBh7yD8EaDO3M0ya5jYYIz30TRo+Rj4XBXmkQbdFScCc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,41 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VhWANrC3JMCCNzRs5ZYbqYTMhJ4vWUo0Bouo6HZYfic=; b=YCmY6SQme8CNVj+3NpjSvu2wpl
- Bgz5ih4YzdqvvTXrh1BsU+/n0i189uOHgzaVfnyDOwqG+YVDQpe8MmJeVwRckx8/JmksdgdRy6he1
- D0Z5Q50H2nUXJ+HlT8QPHoTuZVVGnoveNodVFfQ/A0XssKYbXSfELRCUw8LionfDTLn8=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=9+ftQpr3vRQTrveG7sm82VIVUMYAqGSuuwnKL1+sPFU=; b=MsUdA4/Spq04JFl3gvE3593v/z
+ 5iQQFSwdjk7LZbMJ9WpTJBYILDsA/H+6bUOsoLOJ7db1Idra5mpa2/WuRw7W89mF3498kngpLTozZ
+ NCGtQ0E3AjnOZlAYUcm9PKyt+dU+mWoqwYa50aQImd0Hvbr40+xcQaKC4CT+FnmOORGs=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vxl3H-0007ii-Cs for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 12:10:08 +0000
+ id 1vxlCh-0008AT-Mp for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 04 Mar 2026 12:19:52 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id AF9AA600AD;
- Wed,  4 Mar 2026 12:09:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB46BC2BCAF;
- Wed,  4 Mar 2026 12:09:51 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id DCE6A43FE2;
+ Wed,  4 Mar 2026 12:19:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4A1EC19423;
+ Wed,  4 Mar 2026 12:19:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772626196;
- bh=EQ35PvaRx03UzYS9X1Bzs1qb1ocHzp0vdwuVUpuNBfE=;
+ s=k20201202; t=1772626779;
+ bh=7+rim9mXL8Dyk9+Cr3jOOIcSMpiBYJMWXStbt+SptaA=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=uLl+8+NtnsbWfboyTgH5efkt923GNSSCiAmj6EQWIT4ufjbVw7kmqGX2xJC4l1RoM
- yy0WRk0tboWeu4yOx+ltbfmfldUAh7GZ21zHlnXPQEuuSkVkc/f2gsGpN8Nlt/4kEx
- jaBUSIqnhITM0Ux5TjFAVbZiwVo06TIDLbuSI9gsiyWb/PbxjQhRDlDS+M9vEJhuUt
- LVy4Z7AyA56rrURbc7leoNe0pSL03NL2xYtuxFz3szTRTYltocBaPtmDTmPO52iNwr
- GxcC0oXCscQ4iEWXETlA39MdG6qW+SOw35h41+j4kemqHQJczLHMxXgW1KJj61QURM
- JNjhY+j7Iyw4g==
-Message-ID: <36d15a4f-d2ca-4294-aa87-4f52dbf84574@kernel.org>
-Date: Wed, 4 Mar 2026 20:09:43 +0800
+ b=lyhIHuOTxeuRCEjA1fwwXAuYg2RRD7LvDpn9zeKFGGkFhIu0+gQ5VlK2UiGuduh/6
+ IAwaZScDG+at3irnzQyRRiDuzApnxMKFpoZqoKlMzSGKuoYwjAt9GzoVkSxuiCQX1F
+ z7jtb8QHyQdjddWfIKNlUdouuhmIhsU+9g8BMzUBTUXlZyDLxQQ7VujEJv6pL9SWCk
+ VRLv8cpuWJq11BO1K3mam761NNiQxh7LOe2q4VWitaLpAbbDejMgRocwkJVWnX9Hu2
+ fWD5VJJ/HN4Bcn153z0xWeOWa5pNNscpWD8lSvicso/fhhA90QLewFCtaVGIOu+528
+ v465cJEbAxE6w==
+Message-ID: <7e585f95-2a62-4154-9973-f88dae10e25f@kernel.org>
+Date: Wed, 4 Mar 2026 20:19:34 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Jianan Huang <huangjianan@xiaomi.com>,
- linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
-References: <20260209063121.117451-1-huangjianan@xiaomi.com>
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
+References: <1772613316-19952-1-git-send-email-zhiguo.niu@unisoc.com>
 Content-Language: en-US
-In-Reply-To: <20260209063121.117451-1-huangjianan@xiaomi.com>
-X-Headers-End: 1vxl3H-0007ii-Cs
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid reading already updated pages
- during GC
+In-Reply-To: <1772613316-19952-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Headers-End: 1vxlCh-0008AT-Mp
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to preserve previous
+ reserve_{blocks, node} value when remount
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,109 +89,77 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Sheng Yong <shengyong1@xiaomi.com>, wanghui33@xiaomi.com
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, Hao_hao.Wang@unisoc.com
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2026/2/9 14:31, Jianan Huang wrote:
-> We found the following issue during fuzz testing:
-> 
-> page: refcount:3 mapcount:0 mapping:00000000b6e89c65 index:0x18b2dc pfn:0x161ba9
-> memcg:f8ffff800e269c00
-> aops:f2fs_meta_aops ino:2
-> flags: 0x52880000000080a9(locked|waiters|uptodate|lru|private|zone=1|kasantag=0x4a)
-> raw: 52880000000080a9 fffffffec6e17588 fffffffec0ccc088 a7ffff8067063618
-> raw: 000000000018b2dc 0000000000000009 00000003ffffffff f8ffff800e269c00
-> page dumped because: VM_BUG_ON_FOLIO(folio_test_uptodate(folio))
-> page_owner tracks the page as allocated
->   post_alloc_hook+0x58c/0x5ec
->   prep_new_page+0x34/0x284
->   get_page_from_freelist+0x2dcc/0x2e8c
->   __alloc_pages_noprof+0x280/0x76c
->   __folio_alloc_noprof+0x18/0xac
->   __filemap_get_folio+0x6bc/0xdc4
->   pagecache_get_page+0x3c/0x104
->   do_garbage_collect+0x5c78/0x77a4
->   f2fs_gc+0xd74/0x25f0
->   gc_thread_func+0xb28/0x2930
->   kthread+0x464/0x5d8
->   ret_from_fork+0x10/0x20
-> ------------[ cut here ]------------
-> kernel BUG at mm/filemap.c:1563!
->   folio_end_read+0x140/0x168
->   f2fs_finish_read_bio+0x5c4/0xb80
->   f2fs_read_end_io+0x64c/0x708
->   bio_endio+0x85c/0x8c0
->   blk_update_request+0x690/0x127c
->   scsi_end_request+0x9c/0xb8c
->   scsi_io_completion+0xf0/0x250
->   scsi_finish_command+0x430/0x45c
->   scsi_complete+0x178/0x6d4
->   blk_mq_complete_request+0xcc/0x104
->   scsi_done_internal+0x214/0x454
->   scsi_done+0x24/0x34
-> 
-> which is similar to the problem reported by syzbot:
-> https://syzkaller.appspot.com/bug?extid=3686758660f980b402dc
-> 
-> This case is consistent with the description in commit 9bf1a3f
-> ("f2fs: avoid GC causing encrypted file corrupted"):
-> Page 1 is moved from blkaddr A to blkaddr B by move_data_block, and after
-> being written it is marked as uptodate. Then, Page 1 is moved from blkaddr
-> B to blkaddr C, VM_BUG_ON_FOLIO was triggered in the endio initiated by
-> ra_data_block.
-> 
-> There is no need to read Page 1 again from blkaddr B, since it has already
-> been updated. Therefore, avoid initiating I/O in this case.
-> 
-> Fixes: 6aa58d8ad20a ("f2fs: readahead encrypted block during GC")
-> Signed-off-by: Jianan Huang <huangjianan@xiaomi.com>
-> Signed-off-by: Sheng Yong <shengyong1@xiaomi.com>
-> ---
->   fs/f2fs/gc.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 60378614bc54..c184ae6a616e 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -1228,7 +1228,7 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
->   		.encrypted_page = NULL,
->   		.in_list = 0,
->   	};
-> -	int err;
-> +	int err = 0;
->   
->   	folio = f2fs_grab_cache_folio(mapping, index, true);
->   	if (IS_ERR(folio))
-> @@ -1279,6 +1279,9 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
->   		goto put_folio;
->   	}
->   
-> +	if (folio_test_uptodate(efolio))
-> +		goto put_encrypted_page;
-> +
->   	fio.encrypted_page = &efolio->page;
-
-Should relocate changes here, otherwise, fio.encrypted_page will be used before
-initialization.
-
-1299         return 0;
-1300 put_encrypted_page:
-1301         f2fs_put_page(fio.encrypted_page, true);
-1302 put_folio:
-1303         f2fs_folio_put(folio, true);
-1304         return err;
-
-Thanks,
-
->   
->   	err = f2fs_submit_page_bio(&fio);
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+WmhpZ3VvLAoKT24gMjAyNi8zLzQgMTY6MzUsIFpoaWd1byBOaXUgd3JvdGU6Cj4gVGhlIGZvbGxv
+d2luZyBzdGVwcyB3aWxsIGNoYW5nZSBwcmV2aW91cyB2YWx1ZSBvZiByZXNlcnZlX3tibG9ja3Ms
+bm9kZX0sCj4gdGhpcyBkb25lcyBub3QgbWF0Y2ggdGhlIG9yaWdpbmFsIGludGVudGlvbi4KPiAK
+PiAxLm1vdW50IC10IGYyZnMgLW8gcmVzZXJ2ZV9yb290PTgxOTIgaW1nZmlsZSB0ZXN0X21vdW50
+Lwo+IEYyRlMtZnMgKGxvb3A1Nik6IE1vdW50ZWQgd2l0aCBjaGVja3BvaW50IHZlcnNpb24gPSAx
+YjY5ZjhjNwo+IG1vdW50IGluZm86Cj4gL2Rldi9ibG9jay9sb29wNTYgb24gL2RhdGEvdGVzdF9t
+b3VudCB0eXBlIGYyZnMgKHh4eCxyZXNlcnZlX3Jvb3Q9ODE5MixyZXNlcnZlX25vZGU9MCxyZXN1
+aWQ9MCxyZXNnaWQ9MCx4eHgpCj4gCj4gMi5tb3VudCAtdCBmMmZzIC1vIHJlbW91bnQscmVzZXJ2
+ZV9yb290PTQwOTYgL2RhdGEvdGVzdF9tb3VudAo+IEYyRlMtZnMgKGxvb3A1Nik6IFByZXNlcnZl
+IHByZXZpb3VzIHJlc2VydmVfcm9vdD04MTkyCj4gY2hlY2sgbW91bnQgaW5mbzogcmVzZXJ2ZV9y
+b290IGNoYW5nZSB0byA0MDk2Cj4gL2Rldi9ibG9jay9sb29wNTYgb24gL2RhdGEvdGVzdF9tb3Vu
+dCB0eXBlIGYyZnMgKHh4eCxyZXNlcnZlX3Jvb3Q9NDA5NixyZXNlcnZlX25vZGU9MCxyZXN1aWQ9
+MCxyZXNnaWQ9MCx4eHgpCgpDYW4geW91IHBsZWFzZSBleHBsYWluIG1vcmUgZGV0YWlscyBhYm91
+dCB3aGF0J3MgdGhlIGJlaGF2aW9yIGJlZm9yZSBjb21taXQKZDE4NTM1MTMyNTIzICgiZjJmczog
+c2VwYXJhdGUgdGhlIG9wdGlvbnMgcGFyc2luZyBhbmQgb3B0aW9ucyBjaGVja2luZyIpLAphbmQg
+YWZ0ZXIgdGhlIGNvbW1pdCwgd2hhdCBjaGFuZ2VzPwoKVGhhbmtzLAoKPiAKPiBGaXhlczogZDE4
+NTM1MTMyNTIzICgiZjJmczogc2VwYXJhdGUgdGhlIG9wdGlvbnMgcGFyc2luZyBhbmQgb3B0aW9u
+cyBjaGVja2luZyIpCj4gU2lnbmVkLW9mZi1ieTogWmhpZ3VvIE5pdSA8emhpZ3VvLm5pdUB1bmlz
+b2MuY29tPgo+IC0tLQo+ICAgZnMvZjJmcy9zdXBlci5jIHwgMiArKwo+ICAgMSBmaWxlIGNoYW5n
+ZWQsIDIgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL3N1cGVyLmMgYi9m
+cy9mMmZzL3N1cGVyLmMKPiBpbmRleCA4Nzc0YzYwLi4zOWY4ZTg4IDEwMDY0NAo+IC0tLSBhL2Zz
+L2YyZnMvc3VwZXIuYwo+ICsrKyBiL2ZzL2YyZnMvc3VwZXIuYwo+IEBAIC0xNTE1LDYgKzE1MTUs
+NyBAQCBzdGF0aWMgaW50IGYyZnNfY2hlY2tfb3B0X2NvbnNpc3RlbmN5KHN0cnVjdCBmc19jb250
+ZXh0ICpmYywKPiAgICAgICAgICAgICAgICAgICAgICAgICAgRjJGU19PUFRJT04oc2JpKS5yb290
+X3Jlc2VydmVkX2Jsb2Nrcyk7Cj4gICAgICAgICAgICAgICAgICBjdHhfY2xlYXJfb3B0KGN0eCwg
+RjJGU19NT1VOVF9SRVNFUlZFX1JPT1QpOwo+ICAgICAgICAgICAgICAgICAgY3R4LT5vcHRfbWFz
+ayAmPSB+QklUKEYyRlNfTU9VTlRfUkVTRVJWRV9ST09UKTsKPiArICAgICAgICAgICAgICAgY3R4
+LT5zcGVjX21hc2sgJj0gfkYyRlNfU1BFQ19yZXNlcnZlX3Jvb3Q7Cj4gICAgICAgICAgfQo+ICAg
+ICAgICAgIGlmICh0ZXN0X29wdChzYmksIFJFU0VSVkVfTk9ERSkgJiYKPiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgKGN0eC0+b3B0X21hc2sgJiBCSVQoRjJGU19NT1VOVF9SRVNFUlZFX05PREUp
+KSAmJgo+IEBAIC0xNTIzLDYgKzE1MjQsNyBAQCBzdGF0aWMgaW50IGYyZnNfY2hlY2tfb3B0X2Nv
+bnNpc3RlbmN5KHN0cnVjdCBmc19jb250ZXh0ICpmYywKPiAgICAgICAgICAgICAgICAgICAgICAg
+ICAgRjJGU19PUFRJT04oc2JpKS5yb290X3Jlc2VydmVkX25vZGVzKTsKPiAgICAgICAgICAgICAg
+ICAgIGN0eF9jbGVhcl9vcHQoY3R4LCBGMkZTX01PVU5UX1JFU0VSVkVfTk9ERSk7Cj4gICAgICAg
+ICAgICAgICAgICBjdHgtPm9wdF9tYXNrICY9IH5CSVQoRjJGU19NT1VOVF9SRVNFUlZFX05PREUp
+Owo+ICsgICAgICAgICAgICAgICBjdHgtPnNwZWNfbWFzayAmPSB+RjJGU19TUEVDX3Jlc2VydmVf
+bm9kZTsKPiAgICAgICAgICB9Cj4gCj4gICAgICAgICAgZXJyID0gZjJmc19jaGVja190ZXN0X2R1
+bW15X2VuY3J5cHRpb24oZmMsIHNiKTsKPiAtLQo+IDEuOS4xCj4gCj4gX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KPiAgIFRoaXMgZW1haWwgKGluY2x1ZGluZyBpdHMgYXR0YWNobWVu
+dHMpIGlzIGludGVuZGVkIG9ubHkgZm9yIHRoZSBwZXJzb24gb3IgZW50aXR5IHRvIHdoaWNoIGl0
+IGlzIGFkZHJlc3NlZCBhbmQgbWF5IGNvbnRhaW4gaW5mb3JtYXRpb24gdGhhdCBpcyBwcml2aWxl
+Z2VkLCBjb25maWRlbnRpYWwgb3Igb3RoZXJ3aXNlIHByb3RlY3RlZCBmcm9tIGRpc2Nsb3N1cmUu
+IFVuYXV0aG9yaXplZCB1c2UsIGRpc3NlbWluYXRpb24sIGRpc3RyaWJ1dGlvbiBvciBjb3B5aW5n
+IG9mIHRoaXMgZW1haWwgb3IgdGhlIGluZm9ybWF0aW9uIGhlcmVpbiBvciB0YWtpbmcgYW55IGFj
+dGlvbiBpbiByZWxpYW5jZSBvbiB0aGUgY29udGVudHMgb2YgdGhpcyBlbWFpbCBvciB0aGUgaW5m
+b3JtYXRpb24gaGVyZWluLCBieSBhbnlvbmUgb3RoZXIgdGhhbiB0aGUgaW50ZW5kZWQgcmVjaXBp
+ZW50LCBvciBhbiBlbXBsb3llZSBvciBhZ2VudCByZXNwb25zaWJsZSBmb3IgZGVsaXZlcmluZyB0
+aGUgbWVzc2FnZSB0byB0aGUgaW50ZW5kZWQgcmVjaXBpZW50LCBpcyBzdHJpY3RseSBwcm9oaWJp
+dGVkLiBJZiB5b3UgYXJlIG5vdCB0aGUgaW50ZW5kZWQgcmVjaXBpZW50LCBwbGVhc2UgZG8gbm90
+IHJlYWQsIGNvcHksIHVzZSBvciBkaXNjbG9zZSBhbnkgcGFydCBvZiB0aGlzIGUtbWFpbCB0byBv
+dGhlcnMuIFBsZWFzZSBub3RpZnkgdGhlIHNlbmRlciBpbW1lZGlhdGVseSBhbmQgcGVybWFuZW50
+bHkgZGVsZXRlIHRoaXMgZS1tYWlsIGFuZCBhbnkgYXR0YWNobWVudHMgaWYgeW91IHJlY2VpdmVk
+IGl0IGluIGVycm9yLiBJbnRlcm5ldCBjb21tdW5pY2F0aW9ucyBjYW5ub3QgYmUgZ3VhcmFudGVl
+ZCB0byBiZSB0aW1lbHksIHNlY3VyZSwgZXJyb3ItZnJlZSBvciB2aXJ1cy1mcmVlLiBUaGUgc2Vu
+ZGVyIGRvZXMgbm90IGFjY2VwdCBsaWFiaWxpdHkgZm9yIGFueSBlcnJvcnMgb3Igb21pc3Npb25z
+Lgo+IOacrOmCruS7tuWPiuWFtumZhOS7tuWFt+acieS/neWvhuaAp+i0qO+8jOWPl+azleW+i+S/
+neaKpOS4jeW+l+azhOmcsu+8jOS7heWPkemAgee7meacrOmCruS7tuaJgOaMh+eJueWumuaUtuS7
+tuS6uuOAguS4peemgemdnue7j+aOiOadg+S9v+eUqOOAgeWuo+S8oOOAgeWPkeW4g+aIluWkjeWI
+tuacrOmCruS7tuaIluWFtuWGheWuueOAguiLpemdnuivpeeJueWumuaUtuS7tuS6uu+8jOivt+WL
+v+mYheivu+OAgeWkjeWItuOAgSDkvb/nlKjmiJbmiqvpnLLmnKzpgq7ku7bnmoTku7vkvZXlhoXl
+rrnjgILoi6Xor6/mlLbmnKzpgq7ku7bvvIzor7fku47ns7vnu5/kuK3msLjkuYXmgKfliKDpmaTm
+nKzpgq7ku7blj4rmiYDmnInpmYTku7bvvIzlubbku6Xlm57lpI3pgq7ku7bnmoTmlrnlvI/ljbPl
+iLvlkYrnn6Xlj5Hku7bkurrjgILml6Dms5Xkv53or4HkupLogZTnvZHpgJrkv6Hlj4rml7bjgIHl
+ronlhajjgIHml6Dor6/miJbpmLLmr5LjgILlj5Hku7bkurrlr7nku7vkvZXplJnmvI/lnYfkuI3m
+ib/mi4XotKPku7vjgIIKCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBs
+aXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMv
+bGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
