@@ -4,80 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 63CF8EDEBFC
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 01:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 19D12EDEC01
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 01:13:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=1tNDHnwtweFv7Z//H42xCQ7O26Y0O974ixCLzYJSKf4=; b=c5jm7lA7QpxiZ1+QIIvNX1CyXW
-	TPXpJavGbD79J/9D+CbRgibu4m9gswX/MBKvRmb38BXGsGrU6fGTMcblvdIJWN8Dbqx6YljBZyAE7
-	eQtJLSkNzhfLbl3SemcFjbpLuIMSIFglMeyE5O2i0QQAFrXFmYRNaNqoXxOSqwtAVCJc=;
+	List-Unsubscribe:List-Id:Subject:Mime-Version:References:In-Reply-To:
+	Message-Id:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=tkVWSFYHZeoBtvNDPSDly5/4Oq8n8jbQJ93FAfW1Bcg=; b=X8q08GpU2fAFASW8Y7LyDar5gf
+	6Xh6rdzcZi4f6Vt+LrqMgYh6F/+ZMejBhygvGmg9m+w65s2UMmAgZjVac5qW2wEcGSRNfClqgnflx
+	ZvUYQs+UDFBwd8V3rMiBUqhCAEjw2KWKriPSUb7hOXuFopbsT8YbcpIWA1GsC5Bm6yms=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxahl-0006bC-8x;
-	Wed, 04 Mar 2026 01:07:13 +0000
+	id 1vxanM-0006j5-1G;
+	Wed, 04 Mar 2026 01:13:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vxahj-0006b4-6D
- for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 01:07:11 +0000
+ (envelope-from <mhiramat@kernel.org>) id 1vxanK-0006it-4m;
+ Wed, 04 Mar 2026 01:12:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Mime-Version
+ :References:In-Reply-To:Message-Id:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Xwblp2r8GlKOSMxV8aepURgNI1Hd15KROA43/VwWcsM=; b=QKMNnEvA8+U2TsVEy5SMh9aoNX
- tht8kEtESvUPzJ92zRENDTVOjGXg91kzrj0nFJ+fzJTLw7cbAEMgbzPo38H2y73fjbb2hPQ1uENlk
- 8SUTxrRFRdIRMmktSv57+upIFW3C4bLwkKrmDC3VNIp2JBbmocyojSUsKsCCEgKM8W8w=;
+ bh=GnSZjh2WNTulGYRVG9NKG5lKH6rypFLXh77lgmoqCuU=; b=bbHeSEekqkGToVuz5gst0/lrjJ
+ Mz3r5eQID6n6XV2JdbYwO9Jn1FBIGp//+iaecCD9ncx76YwXQ7OYbvBne+fPPoozfzXUrIokz45oz
+ ABXu+TEqi+3KaLDc3zi8aWxHHHv0A4qhIQ4l3QhDNRN/R7pQK5txZlnSFAoDcMgjtLWQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:Mime-Version:References:
+ In-Reply-To:Message-Id:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Xwblp2r8GlKOSMxV8aepURgNI1Hd15KROA43/VwWcsM=; b=ZoJR8iPXlhUQana3feM/kNrdE6
- fWm5Uq7hXXM5ns1To/z8dSs1hyfacB698bGel6KuM1Luk1IuNlMljSvc0/b1WTYvBa95rjRyjuLO8
- u0FmykYgDAY6W849jw7SauTUZDG7g3Ggc5jMupk07uM4l6mQus0mbrP1HPYgBCW5T8Oc=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=GnSZjh2WNTulGYRVG9NKG5lKH6rypFLXh77lgmoqCuU=; b=SsR0nuZHPugFnfS9J14x/Ryw6f
+ r+nSG2xKfL/9vtSmCkv1d/tV8GKSfXKLxshyKp9mvOC0TJN1rEpexwUFtywfphr6yoYddKaVeGr/l
+ uS27HKCU8EilJ+9clBNnNdRdCYX3xzvFe/gkctBVF3TwnUiL9RaN4P8Mny1JjRwT16OI=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vxahi-0006Tv-Mz for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Mar 2026 01:07:11 +0000
+ id 1vxanJ-0006m0-7z; Wed, 04 Mar 2026 01:12:58 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 5D2A4446F7;
- Wed,  4 Mar 2026 01:07:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66941C116C6;
- Wed,  4 Mar 2026 01:07:03 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 0802860097;
+ Wed,  4 Mar 2026 01:12:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC630C116C6;
+ Wed,  4 Mar 2026 01:12:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772586425;
- bh=ELrq2BQCywlvcGrbaKftMUplevHelhmFZ+Jko/AEX6E=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=N7YeMaT4nRxQOIu6IBYPyPmvVJ2lzkfFJFrH0my+04SnPhr/uC1veAOQtY534KOHc
- OY5SrMiJqzSd83NmYEAKuxxnD1KGLXyUVXyGHDPPMz4xTvk38md/SXgVZLHlgJ3lDF
- xCXDHLEWa7th12Zeodp/RG2BeANVh42wgheZodRB6uTNSTJgXEINZknpOxWRdTImI5
- QMWSQyAl4+ulcp5FgyFzriON3BXsaYy9Vs+T7OWFT6c3GCusNeWdnJARJbzwx0UOFe
- 4y/T3wsv6ylGM2hpDjywhR1fko/EC98Ot39CV7GML+zZ/mvHAPful7rF5ZZL9EZMAS
- g6DdhJu+4jVWw==
-Message-ID: <3f2fa6be-5000-4d36-998e-cfbe500cdb01@kernel.org>
-Date: Wed, 4 Mar 2026 09:06:59 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Eric Biggers <ebiggers@kernel.org>,
- syzbot <syzbot+cf7946ab25b21abc4b66@syzkaller.appspotmail.com>
-References: <69a75fe1.a70a0220.b118c.0014.GAE@google.com>
- <20260304003551.GC57956@quark>
-Content-Language: en-US
-In-Reply-To: <20260304003551.GC57956@quark>
-X-Headers-End: 1vxahi-0006Tv-Mz
-Subject: Re: [f2fs-dev] [syzbot] [fscrypt?] [f2fs?] memory leak in
- fscrypt_setup_filename
+ s=k20201202; t=1772586770;
+ bh=GFMrZQJwS7/We+LO7SGzzxn2lFIugPuzG0DMG56Js2Y=;
+ h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+ b=WgCKlAsk3bXb+r/1s8b+OdlG4mX+icJAS45Uq+KKMNYvC49iKTzsvQ1tAfDcKjOHO
+ pKVaQRChw5HLqCsmNleVgIcsLZe/mxOdeaALYcjfevERMGUkXjesPWWweCyhou7fQl
+ VQ4Mb37EKNYYDJ4P3igTTUB/rwlUKWDzyHL6MaEPUYg4GKRNARAdOpQi37TER+bijy
+ ujXwk/T7EtjhMi3TyZMPQ0jsSUIHCkGDCCDxAdqRqWs1EQh9//lrZ/RlcnBRfnGFFQ
+ Jo6qgWMK/+GUePLR79A6WJNPJzwq2R2bZgMbaePiL9CPpPo5lJ+0GFE54ESH67v3gD
+ aYrfgbEpOhAMQ==
+Date: Wed, 4 Mar 2026 10:12:29 +0900
+To: Jeff Layton <jlayton@kernel.org>
+Message-Id: <20260304101229.bc9fba5fcb816b7325fdf57d@kernel.org>
+In-Reply-To: <20260302-iino-u64-v2-53-e5388800dae0@kernel.org>
+References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
+ <20260302-iino-u64-v2-53-e5388800dae0@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+X-Headers-End: 1vxanJ-0006m0-7z
+Subject: Re: [f2fs-dev] [PATCH v2 053/110] uprobes: use PRIino format for
+ i_ino
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,54 +85,156 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: tytso@mit.edu, syzkaller-bugs@googlegroups.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fscrypt@vger.kernel.org, jaegeuk@kernel.org
+From: "Masami Hiramatsu \(Google\) via Linux-f2fs-devel"
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: "Masami Hiramatsu \(Google\)" <mhiramat@kernel.org>
+Cc: Latchesar Ionkov <lucho@ionkov.net>, nvdimm@lists.linux.dev,
+ Paulo Alcantara <pc@manguebit.org>, "Darrick J. Wong" <djwong@kernel.org>,
+ Anders Larsen <al@alarsen.net>, dri-devel@lists.freedesktop.org,
+ linux-sctp@vger.kernel.org, linux-hams@vger.kernel.org,
+ Sumit Semwal <sumit.semwal@linaro.org>, Mike Marshall <hubcap@omnibond.com>,
+ linux-xfs@vger.kernel.org, Fan Wu <wufan@kernel.org>,
+ Xin Long <lucien.xin@gmail.com>, ceph-devel@vger.kernel.org,
+ James Morris <jmorris@namei.org>, Tyler Hicks <code@tyhicks.com>,
+ Christoph Hellwig <hch@infradead.org>, devel@lists.orangefs.org,
+ Shyam Prasad N <sprasad@microsoft.com>, Martin Schiller <ms@dev.tdt.de>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, Jan Harkes <jaharkes@cs.cmu.edu>,
+ Willem de Bruijn <willemb@google.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, linux-fscrypt@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ David Hildenbrand <david@kernel.org>, Eric Van Hensbergen <ericvh@kernel.org>,
+ Magnus Karlsson <magnus.karlsson@intel.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>, linux-kernel@vger.kernel.org,
+ Eric Paris <eparis@redhat.com>, linux-perf-users@vger.kernel.org,
+ Chuck Lever <chuck.lever@oracle.com>, Jiri Olsa <jolsa@kernel.org>,
+ Jan Kara <jack@suse.com>, Alex Deucher <alexander.deucher@amd.com>,
+ linux-media@vger.kernel.org, Trond Myklebust <trondmy@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Dave Kleikamp <shaggy@kernel.org>,
+ Mimi Zohar <zohar@linux.ibm.com>, Oleg Nesterov <oleg@redhat.com>,
+ Eric Dumazet <edumazet@google.com>, Johan Hedberg <johan.hedberg@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, linux-cifs@vger.kernel.org,
+ Kuniyuki Iwashima <kuniyu@google.com>, linux-nilfs@vger.kernel.org,
+ Paul Moore <paul@paul-moore.com>, John Fastabend <john.fastabend@gmail.com>,
+ codalist@coda.cs.cmu.edu, Remi Denis-Courmont <courmisch@gmail.com>,
+ linux-trace-kernel@vger.kernel.org, Olga Kornievskaia <okorniev@redhat.com>,
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+ Yangtao Li <frank.li@vivo.com>, selinux@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-can@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+ Casey Schaufler <casey@schaufler-ca.com>, netfs@lists.linux.dev,
+ Jaegeuk Kim <jaegeuk@kernel.org>, fsverity@lists.linux.dev,
+ "Theodore Y. Ts'o" <tytso@mit.edu>, Nicolas Pitre <nico@fluxnic.net>,
+ Muchun Song <muchun.song@linux.dev>, Roberto Sassu <roberto.sassu@huawei.com>,
+ "David S. Miller" <davem@davemloft.net>, Anna Schumaker <anna@kernel.org>,
+ linux-integrity@vger.kernel.org,
+ Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Alex Markuze <amarkuze@redhat.com>, Martin Brandenburg <martin@omnibond.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ ocfs2-devel@lists.linux.dev, Alexei Starovoitov <ast@kernel.org>,
+ linux-mtd@lists.infradead.org, amd-gfx@lists.freedesktop.org,
+ Marc Dionne <marc.dionne@auristor.com>, Neal Cardwell <ncardwell@google.com>,
+ linux-afs@lists.infradead.org, Ian Kent <raven@themaw.net>,
+ Naohiro Aota <naohiro.aota@wdc.com>, Eric Biggers <ebiggers@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Miklos Szeredi <miklos@szeredi.hu>,
+ Matthew Wilcox <willy@infradead.org>, coda@cs.cmu.edu,
+ Stanislav Fomichev <sdf@fomichev.me>, Viacheslav Dubeyko <slava@dubeyko.com>,
+ NeilBrown <neil@brown.name>, Ilya Dryomov <idryomov@gmail.com>,
+ Paolo Abeni <pabeni@redhat.com>, jfs-discussion@lists.sourceforge.net,
+ "Serge E. Hallyn" <serge@hallyn.com>, Amir Goldstein <amir73il@gmail.com>,
+ James Clark <james.clark@linaro.org>, autofs@vger.kernel.org,
+ Steven Rostedt <rostedt@goodmis.org>, Damien Le Moal <dlemoal@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Dan Williams <dan.j.williams@intel.com>, Oscar Salvador <osalvador@suse.de>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ linux-nfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-mm@kvack.org,
+ samba-technical@lists.samba.org, Ondrej Mosnacek <omosnace@redhat.com>,
+ Steve French <sfrench@samba.org>, netdev@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, ntfs3@lists.linux.dev,
+ Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+ Ian Rogers <irogers@google.com>, Alexander Aring <alex.aring@gmail.com>,
+ Jan Kara <jack@suse.cz>, Peter Zijlstra <peterz@infradead.org>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>, ecryptfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, David Howells <dhowells@redhat.com>,
+ Joseph Qi <joseph.qi@linux.alibaba.com>,
+ Andreas Dilger <adilger.kernel@dilger.ca>,
+ Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+ linux-f2fs-devel@lists.sourceforge.net, David Airlie <airlied@gmail.com>,
+ Steffen Klassert <steffen.klassert@secunet.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, linux-x25@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+ Mark Fasheh <mark@fasheh.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ Salah Triki <salah.triki@gmail.com>, Marcel Holtmann <marcel@holtmann.org>,
+ Joerg Reuter <jreuter@yaina.de>, Simon Horman <horms@kernel.org>,
+ apparmor@lists.ubuntu.com, Tom Talpey <tom@talpey.com>,
+ Bharath SM <bharathsm@microsoft.com>, Marc Kleine-Budde <mkl@pengutronix.de>,
+ "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
+ David Sterba <dsterba@suse.com>, Namhyung Kim <namhyung@kernel.org>,
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+ John Johansen <john.johansen@canonical.com>,
+ Luis de Bethencourt <luisbg@kernel.org>,
+ Oliver Hartkopp <socketcan@hartkopp.net>, David Ahern <dsahern@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>, audit@vger.kernel.org,
+ linux-security-module@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>,
+ David Woodhouse <dwmw2@infradead.org>, Joel Becker <jlbec@evilplan.org>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2026/3/4 08:35, Eric Biggers wrote:
-> On Tue, Mar 03, 2026 at 02:25:37PM -0800, syzbot wrote:
->> BUG: memory leak
->> unreferenced object 0xffff888127f70830 (size 16):
->>    comm "syz.0.23", pid 6144, jiffies 4294943712
->>    hex dump (first 16 bytes):
->>      3c af 57 72 5b e6 8f ad 6e 8e fd 33 42 39 03 ff  <.Wr[...n..3B9..
->>    backtrace (crc 925f8a80):
->>      kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
->>      slab_post_alloc_hook mm/slub.c:4520 [inline]
->>      slab_alloc_node mm/slub.c:4844 [inline]
->>      __do_kmalloc_node mm/slub.c:5237 [inline]
->>      __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5250
->>      kmalloc_noprof include/linux/slab.h:954 [inline]
->>      fscrypt_setup_filename+0x15e/0x3b0 fs/crypto/fname.c:364
->>      f2fs_setup_filename+0x52/0xb0 fs/f2fs/dir.c:143
->>      f2fs_rename+0x159/0xca0 fs/f2fs/namei.c:961
->>      f2fs_rename2+0xd5/0xf20 fs/f2fs/namei.c:1308
-> 
-> The following commit added a call to f2fs_setup_filename() without a
-> matching call to f2fs_free_filename():
-> 
->      commit 40b2d55e045222dd6de2a54a299f682e0f954b03
->      Author: Chao Yu <chao@kernel.org>
->      Date:   Wed Feb 7 15:05:48 2024 +0800
-> 
->          f2fs: fix to create selinux label during whiteout initialization
-> 
-> Chao, do you want to handle fixing this?
+On Mon, 02 Mar 2026 15:24:37 -0500
+Jeff Layton <jlayton@kernel.org> wrote:
 
-Oh, my bad, let me fix this ASAP.
+> Convert uprobes i_ino format strings to use the PRIino format
+> macro in preparation for the widening of i_ino via kino_t.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Thanks Eric for the reminder.
+Looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
 Thanks,
 
+> ---
+>  kernel/events/uprobes.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> - Eric
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 923b24b321cc0fbdecaf016645cdac0457a74463..d5bf51565851223730c63b50436c493c0c05eafd 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -344,7 +344,7 @@ __update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
+>  static void update_ref_ctr_warn(struct uprobe *uprobe,
+>  				struct mm_struct *mm, short d)
+>  {
+> -	pr_warn("ref_ctr %s failed for inode: 0x%lx offset: "
+> +	pr_warn("ref_ctr %s failed for inode: 0x%" PRIino "x offset: "
+>  		"0x%llx ref_ctr_offset: 0x%llx of mm: 0x%p\n",
+>  		d > 0 ? "increment" : "decrement", uprobe->inode->i_ino,
+>  		(unsigned long long) uprobe->offset,
+> @@ -982,7 +982,7 @@ static struct uprobe *insert_uprobe(struct uprobe *uprobe)
+>  static void
+>  ref_ctr_mismatch_warn(struct uprobe *cur_uprobe, struct uprobe *uprobe)
+>  {
+> -	pr_warn("ref_ctr_offset mismatch. inode: 0x%lx offset: 0x%llx "
+> +	pr_warn("ref_ctr_offset mismatch. inode: 0x%" PRIino "x offset: 0x%llx "
+>  		"ref_ctr_offset(old): 0x%llx ref_ctr_offset(new): 0x%llx\n",
+>  		uprobe->inode->i_ino, (unsigned long long) uprobe->offset,
+>  		(unsigned long long) cur_uprobe->ref_ctr_offset,
+> 
+> -- 
+> 2.53.0
+> 
 
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
 
 _______________________________________________
