@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 11B2BEF8FF7
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 15:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C6ED4EF8FFA
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Mar 2026 15:35:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Message-Id:
 	MIME-Version:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=E5guemLfsGtoHV41AIFOk3WWikd/b1i4yo5cQrQEAks=; b=eKp7acFL00nwR/SO60RSZkqO87
-	4FGxK5kQlFY56P/Fi0Lfv4tlboYydvVgl+RbJp5ao5s/tKD1sCKg+nVoGYo/Ghzq75ZiljbdjHxo5
-	NbvElAjUfXVuJ2KKqGsF4uOGCPVuHiyiUlOw4H61QJKhiFOUDeKkQkvPVFrtwf21BSx4=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=D3i8KywsIFNdnKlAlrEaEHdntgqpZ+V6SCzBXwYS9q4=; b=lRfIY7L7npSAj32dTc8MnMbr+x
+	nvTAwIMLJYb8txWHHHp4T3XR3dCxtMU5HsMyfT5vusZr+xQ8EdmuvIbk889qZtq7XxyTIOqa1gjNJ
+	dwrxAWKulv+oBHE62figoubWjddnWk88VDwa2UDVPwgL8Phr3WnSZv9lAMANY4UOlaBM=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vxoFR-00039Z-UJ;
-	Wed, 04 Mar 2026 15:34:54 +0000
+	id 1vxoG5-0008Ro-Cq;
+	Wed, 04 Mar 2026 15:35:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jlayton@kernel.org>) id 1vxoFP-00038x-Rk;
- Wed, 04 Mar 2026 15:34:52 +0000
+ (envelope-from <jlayton@kernel.org>) id 1vxoG0-0008R7-Lv;
+ Wed, 04 Mar 2026 15:35:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Message-Id:
  Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hNExWO5p+86UiuTtWE8uYsmY89NdRKCx85BcTgCOIFc=; b=GTCAp2gmIvl7KFwuyU4ge+ee8I
- 3VSiv8ATtLxICZadApyhY3rFpKnKkaPwr+YcKCzERMzeJ++60cQxRo6rBfBkRWp+DDbQ1YF2wvpxq
- NB+TDCblwJcI7u4KWb7d3vgwVFjOHtMES/D/kclVmDRkJX2I8NO4oWDzfw9eFqMNvtSQ=;
+ bh=ba0WjkbVl+u70nJy1pVaDIDtGgCQxi73wA0Sd0wSBhc=; b=h9Ie4pH/ZSE6jOcU8OhYI4iapD
+ lTNXyrOznoENwAm6nVCHYgWYGjVWz4P1XRmWGYbWNuQL3qTQFwhOYr9wYTcu5gcVDb/AlbCcMOgmO
+ Lakt3cXn5dP+HYzF9mk7EE+PoYW70J/dqByJMH7DLKsW1cOyXt2eVTUlQadgkEeh2R/E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
@@ -41,31 +41,31 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hNExWO5p+86UiuTtWE8uYsmY89NdRKCx85BcTgCOIFc=; b=NEaZxyDzzYZeR20F1kt6Bp8dAM
- Olic6YHK6aK+xsKFztIo5Dh/X8u7zIW9vQKGtK52CNcS8UpkKvLupsV84oOvzFBW/TYdM8v06z2R6
- /fwK8ECRiHLYoBcWfZfpM/Z8leO60+Wbf8t3incejLVmNSs34W6+0B36az9FDilp0xRY=;
+ bh=ba0WjkbVl+u70nJy1pVaDIDtGgCQxi73wA0Sd0wSBhc=; b=E8rEbBfKD+z4JbhRQqxA8OTYAt
+ 0U0tOfnoiISgw4E7+EtNS013OmljzK5BUgxyVb8+uyRxUoAwJIlkGHX2SN7lGnHIIwHlUp9hHGq5K
+ DxksUmgc+XBFD+nQ/BRRI7/2jPuW/oMrapfEpgCxkbbTTGc53y+O4zUjGZTKHPb6E8aU=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vxoFP-00080N-So; Wed, 04 Mar 2026 15:34:52 +0000
+ id 1vxoFn-00081s-T8; Wed, 04 Mar 2026 15:35:16 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id E86E961118;
- Wed,  4 Mar 2026 15:34:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B36EC2BCB9;
- Wed,  4 Mar 2026 15:34:26 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 3F42D6013C;
+ Wed,  4 Mar 2026 15:35:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FD8FC2BC87;
+ Wed,  4 Mar 2026 15:34:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772638480;
- bh=gH1WXaX89lbCa6LoLK51lVOTaxfcobnfP6+M1HuLkEE=;
+ s=k20201202; t=1772638509;
+ bh=7d5s8zYlgF/lxn2hSCCS8u0A6JkMvE6BfZrHhmcvv5o=;
  h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
- b=mc46mw/B1jY+pQp8R0Rj+usepAe1eI9mDsy+9qt1QZF9gBQdGVzgBqhKHDkzyJsp4
- vdAtvZOzlpUfC/IKv6uirJtq+T+RHk7uxblWDiwt8oB6irxOvau6lTOB8kovME+Y1j
- SGNsxCfq5U/2sl4h+Rxyh9lZfqO6qLf0UZYOWqZVbOC3fSS9NZkcHPL9yr7SXTYv34
- QoWUW45Rj2A1nPr1bFWk3JApK6dAHyrli4qgX797CQYrmqL3EAW7ZmkPD/Bsg5RzH7
- Br+2826TQVrL/PJgameHZgozwjRL7zAbvGTMKPx63Sai28t8pJy7kVsFFInWpZ1Ciw
- BdJs6NLNCgfzg==
-Date: Wed, 04 Mar 2026 10:32:36 -0500
+ b=GLqXtRWRoNGJMHyWHLnOCXoLNoJzQHRY0AoEFBcmoW64rpUj7ZyZCM9KJ/B0DgxVD
+ 17JeaFzCkGPtsvUioGWmvuvjxzTvJMvyTguwsoQp1FaVb1MDrPhUO5AFxuvqSGz5c5
+ QHbGiBoVjK26AW83s0nID9TgWfVPUUDfXG28sDAga2gA8/g9qWAExQ8umMkKSzMDPl
+ B6SGChdWm6qLXlzZcr8sbu7f/at+eCVg/ihmE6/JQuSgpde8xyfR91+lTqFLv/qypJ
+ BTVxAR0eysCb+ZW/m1tD2fOaD1AMOqY9HrXP2GfSEylCczJOTgSx+VwDI42FOofYat
+ gMae4pALY03zw==
+Date: Wed, 04 Mar 2026 10:32:38 -0500
 MIME-Version: 1.0
-Message-Id: <20260304-iino-u64-v3-6-2257ad83d372@kernel.org>
+Message-Id: <20260304-iino-u64-v3-8-2257ad83d372@kernel.org>
 References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
 In-Reply-To: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -157,25 +157,25 @@ To: Alexander Viro <viro@zeniv.linux.org.uk>,
  Jesper Dangaard Brouer <hawk@kernel.org>, 
  John Fastabend <john.fastabend@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1754; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=gH1WXaX89lbCa6LoLK51lVOTaxfcobnfP6+M1HuLkEE=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpqFCoU42QY7BFmYavQKhvSkNYQt1wEjITKT64C
- vKB17ftoaeJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaahQqAAKCRAADmhBGVaC
- FUPAEACTHjEAS9zyh033TfOK19JlWfr2235vgLgjJ5IoSdSezHfCrBB4xIdLYMguCJGg4c5oB+U
- dWXegN72pS8i22ysFFfeZzdnglQ2trkZ5JoZZGMg7905hYV4W3JzSwdraU6uDUEEBJST/1SwH/y
- NZd4KvEZ23wirDvPD3eD++pmXDJpRH4Hje5+lVTIWkFO5f8MX9VknyXx23QQ1RMWktVxrPlwvYS
- uoCZtuMRnvoSTz1Urcg5ENrHv8o3mY0o6HhMoN9DwEU6oVxheH/wG+AAwBwngMxgtw+isUaAfaq
- H0wBDztT+6KXA4a/QsAItc81hr7N2NuNMkEDtPuhvDMWoKhoTJmVRaPzWt20gZqzxJ/ypDiNScv
- b6t0liqFv7yho/63zBjTpQWx4tzpiu9Urw4O8omJxJw8tbr5dAzARhThNjvFMmEP13ktfdd9OwJ
- Ci+35m63KwuFZ143EY7aiTkF1QIXcz4qrX7K7IS9ErJu8dKXRlyFX8tYcInAk5cJkCkwOcuL/n8
- XibyFbd94h778radvAyhptGYKr9BqaJ2VNyqmYNeU3XN5qbkMtjJzRq2kaBmbaqWoFEd5f1UpMf
- thoXSS5Sa0iSYG1BmF9evBWMlSp9W7mV/zFFzduc/Nc9/j4Tg+HBSe/Gh8nNjK14te032BQ5XRj
- xJe3TwL1RMFqxsg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2889; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=7d5s8zYlgF/lxn2hSCCS8u0A6JkMvE6BfZrHhmcvv5o=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpqFCottPu4Q2RkcxpmSAyx9ymCIr5X9BEkN4+F
+ 0P0g0I3eSCJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaahQqAAKCRAADmhBGVaC
+ FewYEADXed5E+znEwLtt1AWpw+ToLxRLATu62cx3IoQgoCJuiJjq76Cp6823onBDOze65FZSF+d
+ AkG7fRU1gEZ/5nIIocoPB9UjM+vzFjXjkkb5YTkavZ3HQGbqqkjO9bCYO+dObg26lGea1Atp5EV
+ 2lszMCSj6/EPPuOqxuRnWhrnheM9mnCkVjL1wIS3SJkxeHK2vUe4jfSoZxLc1mBrJxLmbwzjN8y
+ W+YWFyC29h3awuxhGKFipNUK+GTfhfeLjymfG/Pbw7egYbaVFh4ngD8s5jXaWsD0XRquSCiMl6N
+ woeRRbNNPZAk6PSe9JRQIXWGYlZDXjQDPSHAuqw3vLzpVllfAHF/Za5tDLU2AMP31Q9w4OoJQuX
+ Zpl0FDPSRnGmCOPqkq+yDVb7noBJizXqhgmIEOIEaFiey6L5r0gFw40LzK6lIujysO/Fe7vDeqi
+ E8m2QvN/Ud197wFfqq6NupfCSaRFYIn5CVL/A5VfV5temGtwePGoRNBtBSHUVlCDWMAAoQpCao+
+ Qeoy/PNxAI808YAgv9W4XlxBnrVuF2dZOfhmuqO6je9IZ5WKFHsHb6eZ8Jl++JaYTTxdhsf5ELp
+ yRB4lZFxQy+YmE8jzG7vBq2z4+YmDmOqn38M5n/QE7MkXsrfx8+9arTsaLhEFf1q9CIeODA7rjQ
+ JoJg9VvMd1uBfXQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Headers-End: 1vxoFP-00080N-So
-Subject: [f2fs-dev] [PATCH v3 06/12] ext2: widen trace event i_ino fields to
- u64
+X-Headers-End: 1vxoFn-00081s-T8
+Subject: [f2fs-dev] [PATCH v3 08/12] zonefs: widen trace event i_ino fields
+ to u64
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -213,54 +213,78 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Update ext2 trace event definitions to use u64 instead of
+Update zonefs trace event definitions to use u64 instead of
 ino_t/unsigned long for inode number fields.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ext2/trace.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/zonefs/trace.h | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ext2/trace.h b/fs/ext2/trace.h
-index 7d230e13576e78713846248eeb21fa0770130540..0922c0e6aab8531c9f5646d86758e6e3595754db 100644
---- a/fs/ext2/trace.h
-+++ b/fs/ext2/trace.h
-@@ -13,7 +13,7 @@ DECLARE_EVENT_CLASS(ext2_dio_class,
- 	TP_ARGS(iocb, iter, ret),
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
--		__field(ino_t,	ino)
-+		__field(u64,	ino)
- 		__field(loff_t, isize)
- 		__field(loff_t, pos)
- 		__field(size_t,	count)
-@@ -31,7 +31,7 @@ DECLARE_EVENT_CLASS(ext2_dio_class,
- 		__entry->aio = !is_sync_kiocb(iocb);
- 		__entry->ret = ret;
- 	),
--	TP_printk("dev %d:%d ino 0x%lx isize 0x%llx pos 0x%llx len %zu flags %s aio %d ret %zd",
-+	TP_printk("dev %d:%d ino 0x%llx isize 0x%llx pos 0x%llx len %zu flags %s aio %d ret %zd",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
- 		  __entry->ino,
- 		  __entry->isize,
-@@ -57,7 +57,7 @@ TRACE_EVENT(ext2_dio_write_endio,
- 	TP_ARGS(iocb, size, ret),
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
--		__field(ino_t,	ino)
-+		__field(u64,	ino)
- 		__field(loff_t, isize)
- 		__field(loff_t, pos)
- 		__field(ssize_t, size)
-@@ -75,7 +75,7 @@ TRACE_EVENT(ext2_dio_write_endio,
- 		__entry->aio = !is_sync_kiocb(iocb);
- 		__entry->ret = ret;
- 	),
--	TP_printk("dev %d:%d ino 0x%lx isize 0x%llx pos 0x%llx len %zd flags %s aio %d ret %d",
-+	TP_printk("dev %d:%d ino 0x%llx isize 0x%llx pos 0x%llx len %zd flags %s aio %d ret %d",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
- 		  __entry->ino,
- 		  __entry->isize,
+diff --git a/fs/zonefs/trace.h b/fs/zonefs/trace.h
+index 9969db3a9c7dc9e212ed04a7c256e02fbe73880e..7315a72ca2f6fb8ac34f7aaa9f7f24224bb5e801 100644
+--- a/fs/zonefs/trace.h
++++ b/fs/zonefs/trace.h
+@@ -25,7 +25,7 @@ TRACE_EVENT(zonefs_zone_mgmt,
+ 	    TP_ARGS(sb, z, op),
+ 	    TP_STRUCT__entry(
+ 			     __field(dev_t, dev)
+-			     __field(ino_t, ino)
++			     __field(u64, ino)
+ 			     __field(enum req_op, op)
+ 			     __field(sector_t, sector)
+ 			     __field(sector_t, nr_sectors)
+@@ -38,8 +38,8 @@ TRACE_EVENT(zonefs_zone_mgmt,
+ 			   __entry->sector = z->z_sector;
+ 			   __entry->nr_sectors = z->z_size >> SECTOR_SHIFT;
+ 	    ),
+-	    TP_printk("bdev=(%d,%d), ino=%lu op=%s, sector=%llu, nr_sectors=%llu",
+-		      show_dev(__entry->dev), (unsigned long)__entry->ino,
++	    TP_printk("bdev=(%d,%d), ino=%llu op=%s, sector=%llu, nr_sectors=%llu",
++		      show_dev(__entry->dev), __entry->ino,
+ 		      blk_op_str(__entry->op), __entry->sector,
+ 		      __entry->nr_sectors
+ 	    )
+@@ -50,7 +50,7 @@ TRACE_EVENT(zonefs_file_dio_append,
+ 	    TP_ARGS(inode, size, ret),
+ 	    TP_STRUCT__entry(
+ 			     __field(dev_t, dev)
+-			     __field(ino_t, ino)
++			     __field(u64, ino)
+ 			     __field(sector_t, sector)
+ 			     __field(ssize_t, size)
+ 			     __field(loff_t, wpoffset)
+@@ -65,8 +65,8 @@ TRACE_EVENT(zonefs_file_dio_append,
+ 				zonefs_inode_zone(inode)->z_wpoffset;
+ 			   __entry->ret = ret;
+ 	    ),
+-	    TP_printk("bdev=(%d, %d), ino=%lu, sector=%llu, size=%zu, wpoffset=%llu, ret=%zu",
+-		      show_dev(__entry->dev), (unsigned long)__entry->ino,
++	    TP_printk("bdev=(%d, %d), ino=%llu, sector=%llu, size=%zu, wpoffset=%llu, ret=%zu",
++		      show_dev(__entry->dev), __entry->ino,
+ 		      __entry->sector, __entry->size, __entry->wpoffset,
+ 		      __entry->ret
+ 	    )
+@@ -77,7 +77,7 @@ TRACE_EVENT(zonefs_iomap_begin,
+ 	    TP_ARGS(inode, iomap),
+ 	    TP_STRUCT__entry(
+ 			     __field(dev_t, dev)
+-			     __field(ino_t, ino)
++			     __field(u64, ino)
+ 			     __field(u64, addr)
+ 			     __field(loff_t, offset)
+ 			     __field(u64, length)
+@@ -89,8 +89,8 @@ TRACE_EVENT(zonefs_iomap_begin,
+ 			   __entry->offset = iomap->offset;
+ 			   __entry->length = iomap->length;
+ 	    ),
+-	    TP_printk("bdev=(%d,%d), ino=%lu, addr=%llu, offset=%llu, length=%llu",
+-		      show_dev(__entry->dev), (unsigned long)__entry->ino,
++	    TP_printk("bdev=(%d,%d), ino=%llu, addr=%llu, offset=%llu, length=%llu",
++		      show_dev(__entry->dev), __entry->ino,
+ 		      __entry->addr, __entry->offset, __entry->length
+ 	    )
+ );
 
 -- 
 2.53.0
