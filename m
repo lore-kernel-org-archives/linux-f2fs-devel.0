@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4D451F33A6B
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  5 Mar 2026 14:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B7DD6F33A6B
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  5 Mar 2026 14:15:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ofrahNIYevUqU0nqXcODtr7/vnfmrSMMUQcPIXF18wQ=; b=cUCvvgW6ny06WndqadhStrNVOg
-	LEJhBTNYkHL3osMIQbaE469Dvh6AJZTJiv2bqmGzhIATt+IgE/YOgtG3bIlB7VHZybzPrSr07hb6l
-	db7W/KwEwGJmMe3WDSHC2a5Gy7jZzaZm5y0MgJPuojiCnBuwK2R93AgGBc6S7LOUW1TI=;
+	bh=iMZcJoEReAOPMEdo8QUHfMm+kKr1m/beJP4HspbBcjo=; b=QyHGeYRdnQVqcCXYxIyPluY5iN
+	MQuW/tDNFut/PamJlVOX+Ofd/2t5j4nfpfpnLIOxeATcijy2DCbveC9SnXU2V94KtLv3mXTRVVxlk
+	Pg39uTqWnO80WkL/qOxX9tTaOTEmBt5TBTMVpHb1AH+/INBpDqgicd9BI7XGZIjw0jlE=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vy9SP-00029J-Ud;
-	Thu, 05 Mar 2026 14:13:41 +0000
+	id 1vy9Tj-0002D6-C1;
+	Thu, 05 Mar 2026 14:15:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+2e11e6930e970eb8572e+8229+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1vy9SN-00029D-NQ for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 05 Mar 2026 14:13:39 +0000
+ id 1vy9Ti-0002Cz-NM for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 05 Mar 2026 14:15:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TJHqUqNeTMnXyeDzlG2Ut7/dGbTr+YA33QxUyT5WrQw=; b=MjFOKtFEr2t7f2Wq1Z5lgJdjRs
- UalHXTabSCBlU5j16IztP9/ehKapwHRtobpBGgXUNmaKMOkFNpRRrT4/eCBrNoXLco1clqX9gBUQ2
- W8QscHeryrfUYZ3h1FDrvHu+LRdC3taFzJO1AoNWzuT6Ajr3Vx2CztvbY8gLAOYixKw4=;
+ bh=VyACtQ8FtLAF8W79RsrWoCkj/Khk2u/PvVKY+BBKGME=; b=lqiqvnX8ELothuDFHv2/cbCKCA
+ fFblV0POornvjfg7Zxqy9ZgEbuyfoAnW0opk7mKBl28UdaVF8uuGWayhc46LiHj7FtgtNxmus4qvP
+ T1XE3TTlocvlSwh7VCqrv/Py30xAoFfdlz1hXoizalZ5628YlkdkyaTBAdH87tIP/VOU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,41 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TJHqUqNeTMnXyeDzlG2Ut7/dGbTr+YA33QxUyT5WrQw=; b=d3p/vDQMLVpdfdIq7I3nzXqdZL
- UMp9I4QJJMNgNw/yHGbnDZxhCXs5253UaDNjGcj1XYNUAf+eiNSHC+gjxqv32GxTCubUivUwC4fFI
- 9FQqZ1vhNFmjHPRJtwehf8x2pl351bEDEfXWn09i9ESv/K/wgLpBOKdyq/Yp6x+pD4Vo=;
+ bh=VyACtQ8FtLAF8W79RsrWoCkj/Khk2u/PvVKY+BBKGME=; b=aXwomb3B7wi5FtELXV9VFWGeyB
+ RLHLE1k5LNTInpPyu3RbIvQFmwGbWZI0GaZNeZrXUtI4Op8tvwXcpp2Hn2lNBwirEwYnMVm6H3UnS
+ R9RrAQ+QORPsPZ7iwQkFgT4fs/N7XobuINF1Ix9UvUdSP246qkkqr1HUlYAVMCVenpqE=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vy9SN-0003aF-Dh for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 05 Mar 2026 14:13:39 +0000
+ id 1vy9Ti-0003dy-60 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 05 Mar 2026 14:15:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
  :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=TJHqUqNeTMnXyeDzlG2Ut7/dGbTr+YA33QxUyT5WrQw=; b=JZFHlKMrZ1roVh1G0oP4L2vexm
- FrZLBd0jy6czxnRKQ/Lp3Npu1Qkrd7nbareKkkH2li+1DxXvSs8mlSnt2tdCuiE4YnjL/3vgEJ6CJ
- m9GkA7a20axqbOCR/1dnVqK9zB5Z3dhfQkuoOK3kNxyT6XDzbneSodjsnP1MlYd/5Z2L9eUpBHMQJ
- pzhwzOFNoBtT+4onbzGRsbncLY5EMgD8EEesXVvOH3CyEFYYFOfMKFZKt4m86vEcMuEuh+INhV23+
- H/NL9mqTOZOo53eCjEvvM5LdzVOUt2x4shKhcQqbcqy4upmn6LNgg8Exm0P0vds/XCM8XadKBu7QI
- +e3ZJO5w==;
+ bh=VyACtQ8FtLAF8W79RsrWoCkj/Khk2u/PvVKY+BBKGME=; b=U2aAmqo60Ca2/4JMxoWYSz2OVF
+ 8QLmkiTeD4u5i+7Gd0GWJoGUQndeSnQacyao3D9qsQBZeRoOOVpM8JMUAmJxvyQwmheNYR+hSMJ7Z
+ cWMb0FsOXd7+ooYDZmyz+u5PanFqzy3OnVz8D7RdoaUDxNCbse76mdMg76J9SDdj0yXMX8JQfDSd4
+ iS2zckLHXZTKDFIJOSjCMzNUge0cry9LRaDjszhjh9063HVjUBzB7amJykGVzfJ6Gt1xNMRdUClrm
+ hdzknJxq7H1R1g5INpLcftONLawlD22PRX+CoSl4YLlm8k40BUuFebC2Ys96u4Z/NZ7VaelX9mQ9L
+ 9qZn6wwA==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red
- Hat Linux)) id 1vy9SH-00000001vXu-2o3v;
- Thu, 05 Mar 2026 14:13:33 +0000
-Date: Thu, 5 Mar 2026 06:13:33 -0800
+ Hat Linux)) id 1vy9TW-00000001van-3rd0;
+ Thu, 05 Mar 2026 14:14:50 +0000
+Date: Thu, 5 Mar 2026 06:14:50 -0800
 From: Christoph Hellwig <hch@infradead.org>
 To: Andreas Gruenbacher <agruenba@redhat.com>
-Message-ID: <aamPjXeF0qHlhJZu@infradead.org>
+Message-ID: <aamP2qNKEmiyXQQH@infradead.org>
 References: <20260304190424.291743-1-agruenba@redhat.com>
- <20260304190424.291743-3-agruenba@redhat.com>
+ <20260304190424.291743-5-agruenba@redhat.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260304190424.291743-3-agruenba@redhat.com>
+In-Reply-To: <20260304190424.291743-5-agruenba@redhat.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1vy9SN-0003aF-Dh
-Subject: Re: [f2fs-dev] [PATCH 2/4] block: get rid of blk_status_to_{errno,
- str} inconsistency
+X-Headers-End: 1vy9Ti-0003dy-60
+Subject: Re: [f2fs-dev] [PATCH 4/4] bio: use bio_io_error more often
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,24 +90,23 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Cc: Jens Axboe <axboe@kernel.dk>, dm-devel@lists.linux.dev,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
- drbd-dev@lists.linbit.com
+ Christoph Hellwig <hch@lst.de>, drbd-dev@lists.linbit.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Mar 04, 2026 at 08:04:07PM +0100, Andreas Gruenbacher wrote:
-> Change blk_status_to_str() to be consistent with blk_status_to_errno()
-> and return "I/O" for undefined status codes.
-> 
-> With that, the fallback case in the blk_errors array can be removed with
-> no change in behavior.
+On Wed, Mar 04, 2026 at 08:04:09PM +0100, Andreas Gruenbacher wrote:
+> Instead of setting bio->bi_status to BLK_STS_IOERR and calling
+> bio_endio(bio), use the shorthand bio_io_error(bio).
 
-Looks good:
+I'm a little torn how good these helpers actually are, as
+hard coding one specific type of error seems to create weird
+code and lead to bugs like the xfs one you fixed yesterday.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Maybe we just need a bio_endio_status() that allows passing the
+satatus?
 
-While you're at it: blk_status_to_str is exported, but as no modular
-users, can you also drop the export?
+Also you really need to send one patch per subsystem.
 
 
 
