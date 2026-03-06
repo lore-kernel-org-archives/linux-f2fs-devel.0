@@ -4,83 +4,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A812EF01814
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  6 Mar 2026 09:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 68747F01814
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  6 Mar 2026 09:21:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=bH/kXuFbcldMeucygBuJ+4ckqixhgNP2QpFVU76lozM=; b=Pv8+BA1H9g5RHL8H/Cgov7RYoC
-	zsv5dO2d94rHx9xwbql5ohKNkYnX9SG2Na/qP+gHz206Qi6P18BRyB4yzy9VpU4HsU6+EVIitKIGS
-	e0t7WwcIQkkWApoSdoNCDqhH6jRAvE63jLux/Re6JKU88e2igJ3Ndu0mG5Slwn3b3lP4=;
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:From:References:To:MIME-Version:Date:Message-ID:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=7ObwyLV5tUX5xvepoaqVhJHmhhI4jraaC5TS/TK4fcE=; b=AZUzhEPDppRJ/rguCN04oQvsAH
+	y0Oc7LraD9OLWtbQ4CX+j5PAX+DH3BSb7cBUx6OQotVHurmAFPoKYLXYLDM56A60AF2wRafZUYLRG
+	zCz9RnPe8RyVGCsmun8PFbegwNPTBV8TalXUO8ILCOV/o6dBefhha1mSlI8uQF8s8s1g=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vyRHA-0001iq-3B;
-	Fri, 06 Mar 2026 09:15:16 +0000
+	id 1vyRMu-0002Jn-2V;
+	Fri, 06 Mar 2026 09:21:12 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <brauner@kernel.org>) id 1vyRH8-0001iO-2k;
- Fri, 06 Mar 2026 09:15:15 +0000
+ (envelope-from <monty_pavel@sina.com>) id 1vyRMs-0002JZ-Hv
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 06 Mar 2026 09:21:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Khay5Di4gN/G+A9UrPoC+jc9Xk/9Lb4+jkpc4uytkJA=; b=Oir6OwQaVgu2JG5a5SZswsGbmH
- boDUUB2stnmG7W2wp9sI0V+rQDyUgImQNiVPaR4G46ga2UXDr6nfu61KKcp4aD0+Kb6Qsv6Zf3+2l
- J/yNRQiUjSi57PxZir5X8Nf6nomYW3/NQ+iQ+8AoqO1YCe6LlqX+QrS+RLqoFXULRRmU=;
+ bh=4dAFX0ra+7G5rZ0u8wElvIsaRH35+WAg3oxzAtHlSIw=; b=KdoLjdqISzFIgegegP8qQewRNu
+ byx8B3KZGBmDJ4YY3WST0XkUOLSfcoAkd1nLSkaLy2RKf23bwUbvd7R/HfGRB8kQUsRxPr5HX/EQS
+ TWZ6aE2XQh2Wj1Kexdn/Sq4ypcN3OfslThpjwX39I0rp09Gphe6Az2kjnTDDY0cHGkBA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Khay5Di4gN/G+A9UrPoC+jc9Xk/9Lb4+jkpc4uytkJA=; b=WvMqKJ+O68shThi+sTCRGZFwCr
- ssC4nS71aYQwJBgxS09opFn2nvx2NA/IywFKI+8eEvJryreuhrmg0tlcPMqf91/7YPGsIF+8FuNP+
- T2ci2+tn2IID3xrl1yIxAZYMBgGRF7mKnKTyAT2q6c9xevohVgbj9JITX1stYNXSffpY=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=4dAFX0ra+7G5rZ0u8wElvIsaRH35+WAg3oxzAtHlSIw=; b=ZQRJ6OsoNYRLSomhkK0IxMOkf8
+ RUEp41o18pIML4cgb1c/xGHJlGMkHLKWzfcwZmTG/24tR6aB/UQsPBZriu7KyfZLQuQzjy/T3YzGz
+ g7d7aFsDgReVT99R3iZ3rsu1g5T5a86KYeaXIXCvN57mEXiUh68WVCe9dbmyIgrg7B3E=;
+Received: from mail115-171.sinamail.sina.com.cn ([218.30.115.171])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vyRH8-0003tq-7o; Fri, 06 Mar 2026 09:15:14 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id DAE616012A;
- Fri,  6 Mar 2026 09:15:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C425BC4CEF7;
- Fri,  6 Mar 2026 09:14:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1772788507;
- bh=7RvOdnrFs/iEe9G84pPe+q4PLv+gFd3Sa58Nl0eTC8M=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=TyR366hpH5SBgvb3stJOO+3+JgB4eyp8Ub6SIcEY5Wv5+DIXq3qwQ1akUuyGzm4GI
- oVWqv0SYGKFQk/aIJcLbDc3SkZdh03GwnjPJPfc8DHBxnnTk3pTwokbH2aquirHejB
- nz1gJxpKMhkWSd0cvlbIm12Yo0dUUSzlaMGnA70lo5LCfYmGHYkoB3BEoaWxEw9skO
- 0XSBCv8+kTn/Gf5HrA+24udlPqxoLhC1731SEC00PUdG+t6hKArOjAPEtT/hHxR1LY
- s+VuE2scXcViJMBvNGcnMzw7bfK0RAeQxP1RLAMHfxMD+S62KQ5DOUo/0QF6h57vkJ
- rf8R3FiiVNktg==
-To: Jeff Layton <jlayton@kernel.org>
-Date: Fri,  6 Mar 2026 10:09:33 +0100
-Message-ID: <20260306-kennen-zubrot-2605fcfd6950@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
-References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
+ id 1vyRMr-0004Cl-4y for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 06 Mar 2026 09:21:11 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208;
+ t=1772788869; bh=4dAFX0ra+7G5rZ0u8wElvIsaRH35+WAg3oxzAtHlSIw=;
+ h=Message-ID:Date:Subject:From;
+ b=M92Fb8i5G4dSbokwoDHuGntuwchhE6fdrQP3xaS2CMtUVez6rlUJFb+n/Z5Khy7Y3
+ l6FQm8naKxac9lmaf6dnG7/SVDz+Frxq9/ux9ytQACf660oKZcqukcqCVfZ0PecNPj
+ A4N6i6h6lPbOShnsehrZ0d9RNrnjgIWGiunKlz4M=
+X-SMAIL-HELO: [10.220.28.86]
+Received: from unknown (HELO [10.220.28.86])([1.202.162.55])
+ by sina.com (10.185.250.24) with ESMTP
+ id 69AA9BE600001F6F; Fri, 6 Mar 2026 17:18:32 +0800 (CST)
+X-Sender: monty_pavel@sina.com
+X-Auth-ID: monty_pavel@sina.com
+Authentication-Results: sina.com; spf=none smtp.mailfrom=monty_pavel@sina.com;
+ dkim=none header.i=none;
+ dmarc=none action=none header.from=monty_pavel@sina.com
+X-SMAIL-MID: 56681510748079
+X-SMAIL-UIID: 82E0A109A2584254A9FE0F9F71FC0CD7-20260306-171832-1
+Message-ID: <b8421f4e-ffd4-40a7-9ce9-4a496db08825@sina.com>
+Date: Fri, 6 Mar 2026 17:18:30 +0800
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2708; i=brauner@kernel.org;
- h=from:subject:message-id; bh=7RvOdnrFs/iEe9G84pPe+q4PLv+gFd3Sa58Nl0eTC8M=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSumvWu2uNxbBFXikaZQKrMtl0PLj1c+kZGWOrvZiHz/
- W/CTGOed5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzk4A5GhimT869vPnNH4Vqj
- t6Tr0fqPLXs3v0g/qbXpwf6o52L5D7YyMnxU+idovG+O5JQe0WVOK45/sI9bw9AjJfah78/izrQ
- aXg4A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-X-Headers-End: 1vyRH8-0003tq-7o
-Subject: Re: [f2fs-dev] [PATCH v3 00/12] vfs: change inode->i_ino from
- unsigned long to u64
+User-Agent: Mozilla Thunderbird
+To: Chao Yu <chao@kernel.org>, Yongpeng Yang <monty_pavel@sina.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20260203133635.3942502-2-monty_pavel@sina.com>
+ <df7554b5-b69d-42d7-aabc-148c882de82d@kernel.org>
+From: Yongpeng Yang <monty_pavel@sina.com>
+In-Reply-To: <df7554b5-b69d-42d7-aabc-148c882de82d@kernel.org>
+X-Headers-End: 1vyRMr-0004Cl-4y
+Subject: Re: [f2fs-dev] [PATCH 1/4] f2fs: fix incorrect extent flag when
+ physical addr is NEW_ADDR in f2fs_fiemap
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,172 +91,45 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Christian Brauner via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Christian Brauner <brauner@kernel.org>
-Cc: Latchesar Ionkov <lucho@ionkov.net>, nvdimm@lists.linux.dev,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
- Paulo Alcantara <pc@manguebit.org>, "Darrick J. Wong" <djwong@kernel.org>,
- Anders Larsen <al@alarsen.net>, dri-devel@lists.freedesktop.org,
- linux-sctp@vger.kernel.org, linux-hams@vger.kernel.org,
- ceph-devel@vger.kernel.org, Mike Marshall <hubcap@omnibond.com>,
- linux-xfs@vger.kernel.org, Fan Wu <wufan@kernel.org>,
- Xin Long <lucien.xin@gmail.com>, James Morris <jmorris@namei.org>,
- Tyler Hicks <code@tyhicks.com>, Eric Biggers <ebiggers@kernel.org>,
- devel@lists.orangefs.org, Shyam Prasad N <sprasad@microsoft.com>,
- Martin Schiller <ms@dev.tdt.de>, Jesper Dangaard Brouer <hawk@kernel.org>,
- Willem de Bruijn <willemb@google.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, linux-fscrypt@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- David Hildenbrand <david@kernel.org>, Eric Van Hensbergen <ericvh@kernel.org>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- Christian Brauner <brauner@kernel.org>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>, linux-kernel@vger.kernel.org,
- Eric Paris <eparis@redhat.com>, linux-perf-users@vger.kernel.org,
- David Ahern <dsahern@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org,
- linux-media@vger.kernel.org, Trond Myklebust <trondmy@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Dave Kleikamp <shaggy@kernel.org>,
- Mimi Zohar <zohar@linux.ibm.com>, Oleg Nesterov <oleg@redhat.com>,
- Eric Dumazet <edumazet@google.com>, Alex Deucher <alexander.deucher@amd.com>,
- Johan Hedberg <johan.hedberg@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-cifs@vger.kernel.org, Kuniyuki Iwashima <kuniyu@google.com>,
- linux-nilfs@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
- "David S. Miller" <davem@davemloft.net>,
- John Fastabend <john.fastabend@gmail.com>, Joerg Reuter <jreuter@yaina.de>,
- codalist@coda.cs.cmu.edu, Remi Denis-Courmont <courmisch@gmail.com>,
- linux-trace-kernel@vger.kernel.org, Olga Kornievskaia <okorniev@redhat.com>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Yangtao Li <frank.li@vivo.com>, selinux@vger.kernel.org,
- linux-can@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
- ocfs2-devel@lists.linux.dev, Jaegeuk Kim <jaegeuk@kernel.org>,
- fsverity@lists.linux.dev, "Theodore Y. Ts'o" <tytso@mit.edu>,
- Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- linux-f2fs-devel@lists.sourceforge.net, Anna Schumaker <anna@kernel.org>,
- linux-integrity@vger.kernel.org,
- Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Alex Markuze <amarkuze@redhat.com>, Martin Brandenburg <martin@omnibond.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Alexander Aring <alex.aring@gmail.com>, linux-mtd@lists.infradead.org,
- Marc Dionne <marc.dionne@auristor.com>, Neal Cardwell <ncardwell@google.com>,
- linux-afs@lists.infradead.org, Ian Kent <raven@themaw.net>,
- Naohiro Aota <naohiro.aota@wdc.com>, Christoph Hellwig <hch@infradead.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Miklos Szeredi <miklos@szeredi.hu>,
- amd-gfx@lists.freedesktop.org, coda@cs.cmu.edu,
- Stanislav Fomichev <sdf@fomichev.me>, Viacheslav Dubeyko <slava@dubeyko.com>,
- NeilBrown <neil@brown.name>, Ilya Dryomov <idryomov@gmail.com>,
- linux-ext4@vger.kernel.org, "Serge E. Hallyn" <serge@hallyn.com>,
- Amir Goldstein <amir73il@gmail.com>, James Clark <james.clark@linaro.org>,
- autofs@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
- Damien Le Moal <dlemoal@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Dan Williams <dan.j.williams@intel.com>, Oscar Salvador <osalvador@suse.de>,
- Jan Harkes <jaharkes@cs.cmu.edu>, linux-nfs@vger.kernel.org,
- Paolo Abeni <pabeni@redhat.com>, Joseph Qi <joseph.qi@linux.alibaba.com>,
- Casey Schaufler <casey@schaufler-ca.com>, samba-technical@lists.samba.org,
- Ondrej Mosnacek <omosnace@redhat.com>, Steve French <sfrench@samba.org>,
- Oliver Hartkopp <socketcan@hartkopp.net>, netfs@lists.linux.dev,
- bpf@vger.kernel.org, ntfs3@lists.linux.dev,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
- Ian Rogers <irogers@google.com>, jfs-discussion@lists.sourceforge.net,
- Jan Kara <jack@suse.cz>, Peter Zijlstra <peterz@infradead.org>,
- Dominique Martinet <asmadeus@codewreck.org>,
- Christian Schoenebeck <linux_oss@crudebyte.com>,
- Adrian Hunter <adrian.hunter@intel.com>, David Howells <dhowells@redhat.com>,
- linux-mm@kvack.org, Andreas Dilger <adilger.kernel@dilger.ca>,
- Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
- David Airlie <airlied@gmail.com>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Eric Snowberg <eric.snowberg@oracle.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, linux-x25@vger.kernel.org,
- audit@vger.kernel.org, Richard Weinberger <richard@nod.at>,
- Mark Fasheh <mark@fasheh.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Salah Triki <salah.triki@gmail.com>, Marcel Holtmann <marcel@holtmann.org>,
- Simon Horman <horms@kernel.org>, ecryptfs@vger.kernel.org,
- apparmor@lists.ubuntu.com, Tom Talpey <tom@talpey.com>,
- Bharath SM <bharathsm@microsoft.com>, Marc Kleine-Budde <mkl@pengutronix.de>,
- "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
- David Sterba <dsterba@suse.com>, Namhyung Kim <namhyung@kernel.org>,
- Ryusuke Konishi <konishi.ryusuke@gmail.com>,
- John Johansen <john.johansen@canonical.com>,
- Luis de Bethencourt <luisbg@kernel.org>, netdev@vger.kernel.org,
- v9fs@lists.linux.dev, linux-unionfs@vger.kernel.org,
- linux-bluetooth@vger.kernel.org, linux-security-module@vger.kernel.org,
- Johannes Thumshirn <jth@kernel.org>, David Woodhouse <dwmw2@infradead.org>,
- Joel Becker <jlbec@evilplan.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: Yongpeng Yang <yangyongpeng@xiaomi.com>,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, 04 Mar 2026 10:32:30 -0500, Jeff Layton wrote:
-> Christian said [1] to "just do it" when I proposed this, so here we are!
-> 
-> For historical reasons, the inode->i_ino field is an unsigned long,
-> which means that it's 32 bits on 32 bit architectures. This has caused a
-> number of filesystems to implement hacks to hash a 64-bit identifier
-> into a 32-bit field, and deprives us of a universal identifier field for
-> an inode.
-> 
-> [...]
-
-This series makes me happy. We've been talking about this conversion for
-a while and I'm thankful that you did this work. Without the automation
-available this probably wouldn't have happened as quickly as it did now.
-Let's see what bits and pieces it missed.
-
----
-
-Applied to the vfs-7.1.kino branch of the vfs/vfs.git tree.
-Patches in the vfs-7.1.kino branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-7.1.kino
-
-[01/12] vfs: widen inode hash/lookup functions to u64
-        https://git.kernel.org/vfs/vfs/c/2412a9fa518a
-[02/12] audit: widen ino fields to u64
-        https://git.kernel.org/vfs/vfs/c/a5e863be4d02
-[03/12] net: change sock.sk_ino and sock_i_ino() to u64
-        https://git.kernel.org/vfs/vfs/c/c21144a0a33f
-[04/12] vfs: widen trace event i_ino fields to u64
-        https://git.kernel.org/vfs/vfs/c/5e5c380870b2
-[05/12] cachefiles: widen trace event i_ino fields to u64
-        https://git.kernel.org/vfs/vfs/c/25291f67aad7
-[06/12] ext2: widen trace event i_ino fields to u64
-        https://git.kernel.org/vfs/vfs/c/797d04a355e3
-[07/12] hugetlbfs: widen trace event i_ino fields to u64
-        https://git.kernel.org/vfs/vfs/c/3c976fb36a9a
-[08/12] zonefs: widen trace event i_ino fields to u64
-        https://git.kernel.org/vfs/vfs/c/988f68c01b3a
-[09/12] ext4: widen trace event i_ino fields to u64
-        https://git.kernel.org/vfs/vfs/c/1c1427c79bc2
-[10/12] f2fs: widen trace event i_ino fields to u64
-        https://git.kernel.org/vfs/vfs/c/6e62bf74bd8a
-[11/12] nilfs2: widen trace event i_ino fields to u64
-        https://git.kernel.org/vfs/vfs/c/6ce73711525a
-[12/12] treewide: change inode->i_ino from unsigned long to u64
-        https://git.kernel.org/vfs/vfs/c/af82d143e869
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gMy80LzIwMjYgNToxMyBQTSwgQ2hhbyBZdSB2aWEgTGludXgtZjJmcy1kZXZlbCB3cm90ZToK
+PiBGWUksIHRoZXJlIGlzIGEgc2ltaWxhciBwcm9wb3NhbCBwcmV2aW91c2x5Ogo+IAo+IGh0dHBz
+Oi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LWYyZnMtZGV2ZWwvMjAyMzA0MTAwMjA3MjQuMTgxNzE1
+MC0xLSAKPiBjaGFvQGtlcm5lbC5vcmcKCkxvb2tzIGJldHRlciB0aGFuIG15IHBhdGNoLCBhbmQg
+dGhlIGNvbW1pdCBtZXNzYWdlIGlzIG1vcmUgZGV0YWlsZWQuCgpUaGFua3MKWW9uZ3BlbmcsCgo+
+IAo+IE9uIDIwMjYvMi8zIDIxOjM2LCBZb25ncGVuZyBZYW5nIHdyb3RlOgo+PiBGcm9tOiBZb25n
+cGVuZyBZYW5nIDx5YW5neW9uZ3BlbmdAeGlhb21pLmNvbT4KPj4KPj4gV2hlbiB0aGUgZmlsZSBi
+bG9jaydzIGFkZHJlc3MgaXMgbWFwcGVkIHRvIE5FV19BRERSLCB0aGUgZXh0ZW50IGlzCj4+IGN1
+cnJlbnRseSBtYXJrZWQgd2l0aCB0aGUgRklFTUFQX0VYVEVOVF9VTldSSVRURU4gZmxhZyBpbiBm
+MmZzX2ZpZW1hcCgpLgo+PiBUaGlzIGZsYWcgaW5kaWNhdGVzIHRoYXQgdGhlIGJsb2NrIGhhcyBi
+ZWVuIGFsbG9jYXRlZCBidXQgbm90IHlldAo+PiB3cml0dGVuIHRvLiBIb3dldmVyLCBORVdfQURE
+UiBpbmRpY2F0ZXMgZGVsYXllZCB3cml0aW5nLCBtZWFuaW5nIHRoZQo+PiBibG9jayBoYXMgbm90
+IGJlZW4gYWxsb2NhdGVkIHlldC4gVGhlcmVmb3JlLCB0aGlzIHNob3VsZCBiZSBtb2RpZmllZAo+
+PiBzdWNoIHRoYXQgd2hlbiBhIGZpbGUgYmxvY2sncyBhZGRyZXNzIGlzIG1hcHBlZCB0byBORVdf
+QUREUiwgdGhlIGV4dGVudAo+PiBpcyBtYXJrZWQgd2l0aCB0aGUgRklFTUFQX0VYVEVOVF9ERUxB
+TExPQyBmbGFncyBpbnN0ZWFkLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBZb25ncGVuZyBZYW5nIDx5
+YW5neW9uZ3BlbmdAeGlhb21pLmNvbT4KPj4gLS0tCj4+IMKgIGZzL2YyZnMvZGF0YS5jIHwgMiAr
+LQo+PiDCoCAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKPj4K
+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZGF0YS5jIGIvZnMvZjJmcy9kYXRhLmMKPj4gaW5kZXgg
+ODQ3NDZhMDZjZDU4Li40MmYxNWZkOWM2OGUgMTAwNjQ0Cj4+IC0tLSBhL2ZzL2YyZnMvZGF0YS5j
+Cj4+ICsrKyBiL2ZzL2YyZnMvZGF0YS5jCj4+IEBAIC0yMTAyLDcgKzIxMDIsNyBAQCBpbnQgZjJm
+c19maWVtYXAoc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IAo+PiBmaWVtYXBfZXh0ZW50X2lu
+Zm8gKmZpZWluZm8sCj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc2l6ZSAr
+PSBGMkZTX0JMS1NJWkU7Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH0KPj4gwqDCoMKg
+wqDCoMKgwqDCoMKgIH0gZWxzZSBpZiAobWFwLm1fZmxhZ3MgJiBGMkZTX01BUF9ERUxBTExPQykg
+ewo+PiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmbGFncyA9IEZJRU1BUF9FWFRFTlRfVU5XUklU
+VEVOOwo+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmbGFncyA9IEZJRU1BUF9FWFRFTlRfREVM
+QUxMT0M7Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoCB9Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBzdGFy
+dF9ibGsgKz0gRjJGU19CWVRFU19UT19CTEsoc2l6ZSk7Cj4gCj4gCj4gCj4gX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBMaW51eC1mMmZzLWRldmVsIG1h
+aWxpbmcgbGlzdAo+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gaHR0
+cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZl
+bAoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51
+eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
+cmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51
+eC1mMmZzLWRldmVsCg==
