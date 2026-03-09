@@ -4,113 +4,150 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2BC8FF3C269
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Mar 2026 14:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2CE5AFCA16A
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Mar 2026 18:00:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=5JK735EV3qc6up6mDCrX7Dq48spnc6jGmYZWXC3exmg=; b=WPsSfIoIE2lbbwLrG4KFRVbUoO
-	eMEci1hDzo6ST8IKfe31I+959Gw5AHUanfKdpmmi4KhAn1fxxSCNUQFjGGu1FCqdtRb8lT6zNQiuf
-	OE/QHR24pVutCo3NUBQ+cfeZNUnxbJbjnG0jUC7Qjw8fIMY3G/9ZdEk2AIU4ADUhFCxo=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:Date:To:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=Jwt3fYoeici3qpnxps1KO3gF1Ky90tazSVU46UvU0c0=; b=ROoZ1+XLWYX2LDAQfMxWvwl9wS
+	w+PJptDsKJwVSJRNinJaIAIBeLo7O/SZctoxbFT431Z1LZ3WW9nMN2K//7nwrZKcfCCIUXxsokb3H
+	ZaX4Jy76PdF5NWei7eDREz6Ulo4h0LHcMoEsVwu1q9vSOLt7bisSR3B1wcdaryiNMge4=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vzbXy-0006Bp-DK;
-	Mon, 09 Mar 2026 14:25:27 +0000
+	id 1vzetc-0001br-1i;
+	Mon, 09 Mar 2026 18:00:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <kth5965@gmail.com>) id 1vzbXw-0006Bb-Qs
- for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Mar 2026 14:25:25 +0000
+ (envelope-from <jlayton@kernel.org>) id 1vzetZ-0001bb-U7;
+ Mon, 09 Mar 2026 17:59:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=c7aG9u42wmFmQg8NexFKsDrO72+eXJWZ5zwfM9O0k3U=; b=IiD0F9HVpESGNgCqsI4mmBEj9N
- MEPzpoQ/HqI4DzG1gt/b4/9NhJ+5JI3jwkaK3KuHzZFYdVAezWZjv0jh5qunSJTjhMv0M6gU1940/
- hc+Y54qNPCn5d10UQkd9avuRiqo8zwoIHh09VS08YXIv4Ll3xj4hlnZjqJ7YATjayToI=;
+ bh=Xv3oHIACYXATdIksIdHpsVmpQmqLfCgwYlyNLj2YQTU=; b=TrvnD3FQepeR7Q+EWJN/27xQNe
+ 73U76WhdSHijd4FP7vJUqgaSnEgDjDRyl4R+TW37fLWY5WAwYyAmuIYpmcTwLLq9O1JktyeIuGYAb
+ nXZ524v1UqXdvW/pRlU3l04LYwmLVYWe5RAzIe3tWXJGGFUZXFWH3SZaQOt9h07ofPeE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=c7aG9u42wmFmQg8NexFKsDrO72+eXJWZ5zwfM9O0k3U=; b=Tp61XFq2jqG+YNKe/XKmyPzm1p
- wxpS7E3hqc1x8uZsYX/eWeN2Q0riXiqk0vqmHpqV/KkGnpRww62Gf7PquvVH97WUtZ+Er1cVuqCWG
- am0mOMo1BYg9NOLy7jJGM8cdIQblj91tdQ0NIV5s3ggHJtekcXb+XQoPX/gfSW2ZI0nA=;
-Received: from mail-pf1-f170.google.com ([209.85.210.170])
+ bh=Xv3oHIACYXATdIksIdHpsVmpQmqLfCgwYlyNLj2YQTU=; b=HybunkHhpq4ihfoL+Fy7JObeqc
+ v1nEO4mkThKsI9c5qG7pZYoLACEoCaDFNtfVYI45qnz56hsKjqfFBmKafWmHRuCtkSV9bU2N0GLWH
+ Q0m2JlDLslpH6AkLYlvwVt5D+v216kdHxn68bme6zkJVlAJX+BjArtmul0jLHrsZQhEk=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1vzbXx-00030v-5j for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Mar 2026 14:25:25 +0000
-Received: by mail-pf1-f170.google.com with SMTP id
- d2e1a72fcca58-826dab01bbdso593258b3a.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 09 Mar 2026 07:25:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1773066314; x=1773671114; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=c7aG9u42wmFmQg8NexFKsDrO72+eXJWZ5zwfM9O0k3U=;
- b=fDKgS3UGCMlJJsGN52xROYgvX2N2WcnuspshKr7PwIONvhX+HEKqkJJPQhQ82mhwCQ
- nJJ4xO9UOH0o46XMtFvydsFIa4Qt8977Kxo2jp9OVy22Pmbw63trUMG/F27pJv09YX/j
- Y6N1UIpDW5ePO36D3F3UjE94T6tqjn3V2G9+bFJiRATpnJuFON2+98UHxkOrbWVi1Kz/
- 4eXtv56JbHfUWu/APRoRUdgrzQhmExcjD55Iv6t/F0Au3t3o1lf1QFs8OTVZ3IN0fz0v
- N4XqlJFWzPd4GgmjVzCTt8phBqDQDc69XlcnQwVPUihVQUgbwr9UII99dS2glciYpMHj
- 6N2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773066314; x=1773671114;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=c7aG9u42wmFmQg8NexFKsDrO72+eXJWZ5zwfM9O0k3U=;
- b=tefhbli1mU//DgryEmEii6w+j+XSsRjhZMfKBR/ep1Wc/XBQzSXuKm5DvlYA9E0uRE
- emrry1fntczGxP4SEitUcFw/mz5ptgwkXxDDbKpIYQNRv5p1hGdJBgpQY/VWo6JX36JN
- crrIQung7Cyzov7kAd2Ki/w7w6r2fAA0NzNAZJmpYzigpmrRM4bALm0Fs219K8XJAG4x
- uXX1Vb6Gx6U/5vMoVwo++t6TXfyliHVpb4PVbOk6q5XH27aYxL/6MBHMm4oyO7ywlzZy
- fJ1OzebM2udtqRcpoepaVAZGywj7C1bp7jkxo5M1OZIA90oO78MD7q00N1cCFbJUTfnw
- 7TOA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXRtbZFdOqg+o6VSHLuYzIm3nSKa2DogMDo7r7PyB8YlUq4f3zSNTdnbuqdk4Wx5D7rRflTR0TdLLukNLp5Sdiw@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YxsV+ALXmo8QdbOVxwpAC1O8UPTsKSO45EZnpVUUIxjEzTVEz8K
- BOV2BZ+r06xwWQl9tfrbUQJ1Uplfg9Itsg/TMGqM2zlyDEllIIKmw9bt
-X-Gm-Gg: ATEYQzwURb65M+tRk4Bup7tZW2m0ZtVywaZ1k1yYUfo6bcEK3PRZqHxiz6OvfDc0qxn
- 2wsjtHUJlqlDBhdtK7HkdpUc1ttImyTwz4KwVeishredaTaNI8mnTA0YLtW6kJamA02wC6u0m3B
- JHcUUV4adZMtNug5RdZ1h7Kmn+TNPGGRnWXNZ08BbZIJbhGr9P9y+s/PYY8MBvvb0J9FZVr0O83
- Qxqnq81VaHIkChfmZMujlIGlRU3digZut+iUZaeQtHTKSaDfQbNV1I3ON9/6Por9PEU/KX2h+Bz
- 3rHAF4vGEZXMScwopXzVSdSC21eUk9Jxz0i72AIDoplf8W+/9s5RtvxT2/FhLsJ53//bgkg0zAP
- UyStH4xN+cf8lNvabpyJxvGjix6RKND7eJkQ1dHfcBc3W8EKjeAP3B/A+rYA4Q6TCr4465H6VPE
- SmRAyFsWbS9htrHgQfP1ZC03wwVAT1vA==
-X-Received: by 2002:a05:6a00:7087:b0:81f:e791:ea3d with SMTP id
- d2e1a72fcca58-829a2bc7669mr5220002b3a.0.1773066314438; 
- Mon, 09 Mar 2026 07:25:14 -0700 (PDT)
-Received: from kt5965-NUC8i3BEH.. ([182.217.14.201])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-829a4636a9dsm10482027b3a.4.2026.03.09.07.25.12
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Mar 2026 07:25:13 -0700 (PDT)
-From: kth5965@gmail.com
-To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Date: Mon,  9 Mar 2026 23:25:09 +0900
-Message-ID: <20260309142509.75703-1-kth5965@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <9df7bc57-f0e1-4c7b-9ce1-0017eab62c2a@kernel.org>
-References: <20260224160654.448538-1-kth5965@gmail.com>
- <20260224165408.450957-1-kth5965@gmail.com>
- <9df7bc57-f0e1-4c7b-9ce1-0017eab62c2a@kernel.org>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1vzetY-0005Qb-Ce; Mon, 09 Mar 2026 17:59:56 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by tor.source.kernel.org (Postfix) with ESMTP id 8895D600AE;
+ Mon,  9 Mar 2026 17:59:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FF2DC4CEF7;
+ Mon,  9 Mar 2026 17:59:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1773079190;
+ bh=BYb8Q4I+dU4OWfDEfeeu912CnLq4YsMBTwSGhXV88iA=;
+ h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+ b=sytoAyoqRuqb7DYALeMfgGmFwJ/Gnq7PhmSsmZjb3Idg/HwBvfuZsGOsKOoEb4ATD
+ sNL1JTeDn0KBItNMUfMM8sl7+3QgkkVzNRPdXfiIX/FM78037uWHmKKhSbAmHrf4IH
+ e0otFYm4RNTeOtcwv5wvbMawAoPEO2T2ZX8k03N8US8APKwS4rDGcQnOHCnZoEi5y6
+ ihMnUzX+sa1TX2VQBqP2HLPfdCKhgqmyvLVdRj16S2R523CjWeM26qn1e3tCMxmywz
+ N6hxIDEPk1JA4enrgUR14S2JtF4kfmOi+o5dVSvCCBOgDlz4fDmen/eikhSqweb7f7
+ kinrKOOfx9+zw==
+Message-ID: <f22758116dabd3c135a833bcb5cfcd2ea4f6ecf4.camel@kernel.org>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Date: Mon, 09 Mar 2026 13:59:43 -0400
+In-Reply-To: <05b5d55c49b5a1bbc43a5315e3c84872e7e634b3.camel@linux.ibm.com>
+References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
+ <05b5d55c49b5a1bbc43a5315e3c84872e7e634b3.camel@linux.ibm.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 MIME-Version: 1.0
-X-Headers-End: 1vzbXx-00030v-5j
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: evict: truncate page cache before
- clear_inode
+X-Headers-End: 1vzetY-0005Qb-Ce
+Subject: Re: [f2fs-dev] [PATCH v3 00/12] vfs: change inode->i_ino from
+ unsigned long to u64
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,71 +159,116 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: kth5965@gmail.com, linux-kernel@vger.kernel.org,
- syzbot+fc026e87558558f75c00@syzkaller.appspotmail.com
+From: Jeff Layton via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jeff Layton <jlayton@kernel.org>
+Cc: nvdimm@lists.linux.dev, jfs-discussion@lists.sourceforge.net,
+ dri-devel@lists.freedesktop.org, linux-unionfs@vger.kernel.org,
+ linux-mm@kvack.org, linux-sctp@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+ linux-nilfs@vger.kernel.org, linux-x25@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ codalist@coda.cs.cmu.edu, linux-ext4@vger.kernel.org, bpf@vger.kernel.org,
+ devel@lists.orangefs.org, linux-trace-kernel@vger.kernel.org,
+ ecryptfs@vger.kernel.org, selinux@vger.kernel.org, autofs@vger.kernel.org,
+ apparmor@lists.ubuntu.com, linux-media@vger.kernel.org,
+ linux-can@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+ ocfs2-devel@lists.linux.dev, linux-fscrypt@vger.kernel.org,
+ linux-hams@vger.kernel.org, ceph-devel@vger.kernel.org,
+ linux-xfs@vger.kernel.org, fsverity@lists.linux.dev, linux-nfs@vger.kernel.org,
+ netdev@vger.kernel.org, v9fs@lists.linux.dev, samba-technical@lists.samba.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-perf-users@vger.kernel.org, audit@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ netfs@lists.linux.dev, linux-integrity@vger.kernel.org, ntfs3@lists.linux.dev
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Chao,
+On Mon, 2026-03-09 at 13:47 -0400, Mimi Zohar wrote:
+> [ I/O socket time out.  Trimming the To list.]
+> 
+> On Wed, 2026-03-04 at 10:32 -0500, Jeff Layton wrote:
+> > This version squashes all of the format-string changes and the i_ino
+> > type change into the same patch. This results in a giant 600+ line patch
+> > at the end of the series, but it does remain bisectable.  Because the
+> > patchset was reorganized (again) some of the R-b's and A-b's have been
+> > dropped.
+> > 
+> > The entire pile is in the "iino-u64" branch of my tree, if anyone is
+> > interested in testing this.
+> > 
+> >     https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/
+> > 
+> > Original cover letter follows:
+> > 
+> > ----------------------8<-----------------------
+> > 
+> > Christian said [1] to "just do it" when I proposed this, so here we are!
+> > 
+> > For historical reasons, the inode->i_ino field is an unsigned long,
+> > which means that it's 32 bits on 32 bit architectures. This has caused a
+> > number of filesystems to implement hacks to hash a 64-bit identifier
+> > into a 32-bit field, and deprives us of a universal identifier field for
+> > an inode.
+> > 
+> > This patchset changes the inode->i_ino field from an unsigned long to a
+> > u64. This shouldn't make any material difference on 64-bit hosts, but
+> > 32-bit hosts will see struct inode grow by at least 4 bytes. This could
+> > have effects on slabcache sizes and field alignment.
+> > 
+> > The bulk of the changes are to format strings and tracepoints, since the
+> > kernel itself doesn't care that much about the i_ino field. The first
+> > patch changes some vfs function arguments, so check that one out
+> > carefully.
+> > 
+> > With this change, we may be able to shrink some inode structures. For
+> > instance, struct nfs_inode has a fileid field that holds the 64-bit
+> > inode number. With this set of changes, that field could be eliminated.
+> > I'd rather leave that sort of cleanups for later just to keep this
+> > simple.
+> > 
+> > Much of this set was generated by LLM, but I attributed it to myself
+> > since I consider this to be in the "menial tasks" category of LLM usage.
+> > 
+> > [1]: https://lore.kernel.org/linux-fsdevel/20260219-portrait-winkt-959070cee42f@brauner/
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> 
+> Jeff, missing from this patch set is EVM.  In hmac_add_misc() EVM copies the
+> i_ino and calculates either an HMAC or file meta-data hash, which is then
+> signed. 
+> 
+> 
 
-Thanks for the comment.
+Thanks Mimi, good catch.
 
-I took another look at the path, and I think you are right that my
-current fix is too broad and may hide the real problem.
+It looks like we should just be able to change the ino field to a u64
+alongside everything else. Something like this:
 
-It looks like this happens in a more specific case, where an inode
-still has FI_INLINE_DATA set, but FI_DATA_EXIST is not set.
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index c0ca4eedb0fe..77b6c2fa345e 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -144,7 +144,7 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+                          char type, char *digest)
+ {
+        struct h_misc {
+-               unsigned long ino;
++               u64 ino;
+                __u32 generation;
+                uid_t uid;
+                gid_t gid;
 
-In that case, f2fs_truncate() goes into the inline conversion path,
-and f2fs_convert_inline_inode() grabs folio 0 before it checks
-whether there is real inline data to move.
 
-Then f2fs_convert_inline_folio() does this:
 
-	if (!f2fs_exist_data(dn->inode))
-		goto clear_out;
-
-So for the empty-inline case, it returns success, but folio 0 seems to
-have already been added to the page cache by then.
-
-From what I can see, f2fs_grab_cache_folio() may create folio 0 and add
-it to inode->i_mapping when there is no folio at that index, so
-inode->i_data.nrpages becomes 1 there.
-
-After that, f2fs_folio_put() only drops the ref, and the folio stays
-there. Because of that, clear_inode() later sees nrpages != 0 and
-hits the BUG.
-
-This is the flow I am seeing:
-
-f2fs_evict_inode()
-  -> truncate_inode_pages_final(&inode->i_data)
-     // nrpages = 0
-
-  -> i_size_write(inode, 0)
-  -> f2fs_truncate(inode)
-     -> !f2fs_may_inline_data(inode)
-     -> f2fs_convert_inline_inode(inode)
-        -> f2fs_grab_cache_folio(inode->i_mapping, 0, false)
-           // folio 0 is inserted into page cache
-           // nrpages = 1
-        -> f2fs_convert_inline_folio(&dn, folio)
-           -> !f2fs_exist_data(inode)
-           -> clear_out
-        -> f2fs_folio_put(folio, true)
-           // only drops the ref
-           // folio stays in page cache
-
-  -> clear_inode()
-     -> BUG_ON(inode->i_data.nrpages)
-
-So it seems better to fix this in the inline conversion path,
-instead of truncating all page cache again at the end of eviction.
-
-If you agree, I can send a new patch in that direction.
+That should make no material difference on 64-bit hosts. What's the
+effect on 32-bit? Will they just need to remeasure everything or would
+the consequences be more dire? Do we have any clue whether anyone is
+using EVM in 32-bit environments?
 
 Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
 
 _______________________________________________
