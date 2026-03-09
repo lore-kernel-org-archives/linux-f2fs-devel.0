@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1D2DCFCA17D
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0DF63FCA178
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Mar 2026 19:25:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,29 +12,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=JnZfYgegjfETvfRL5Krmdl0Qhw0mr0JwVrI8k+X/EDo=; b=PF0gkevy4536aRF2VLAVKu1Yoi
-	EEVMXzEAsW1G8RbGQHcSUEFUi4xRFjUn4ZeuyT815b12UiSZxoK4GJhhfi5rZBulhGZLi8FMZEhcY
-	BvMwXJRJ65olBQxL2Yz4FYW6DVCEd1ZknSv2blbT6HuIvRLcYaSBAa16IXA80AsBs3D4=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=/63KwrQlVfuDv4G0IKrLoXcYvjCra5NBJhr4KvmNEwc=; b=XiE0tliVKJJ2etddgd9bM4iyT4
+	Wlvp/l3SKXNBqfOk2jcwGXgBZiMCD6/+oqvyyoy6sCbUlnD+nsX5OmdYZtutMJfoDuF+xOpWJhhCo
+	7RHtGH3YzWVJQSQcc8sP7rbErhGFFIoeTdgwz3ieLde20d+LkaT4XIJO9Xiwnw+HGSbk=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vzgER-00075U-Sn;
-	Mon, 09 Mar 2026 19:25:36 +0000
+	id 1vzgER-0001d3-39;
+	Mon, 09 Mar 2026 19:25:35 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1vzgEL-00073f-U5
+ (envelope-from <aalbersh@kernel.org>) id 1vzgE6-0001aE-Ia
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Mar 2026 19:25:30 +0000
+ Mon, 09 Mar 2026 19:25:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hMSBQDgfgXbj+COEnY8UJEvTMamUS7nx7dNCu5FsppM=; b=P8asR6UPO7quFh3BH40Hw+S1/S
- tkjFrREFRvBURf2V3ROdxbtsejD+VROksVR7qc62fb7i2m4is+AP55ZAZQ4L2MHcv53pvbG686KEv
- g7INMlna2vDK0s3JzSDcssb1Sj+WpcQuuG8O5cH7StvPlZH1ICHW0TF/ZlmBwlpsI+80=;
+ bh=SclqgwiTZB4Yd8Olgjp4tLXkM2pUcvJ4vj0668Dj7qk=; b=jFGJwXwnaEq01T3wKByDsrdomW
+ zvSW1ZCWewbYrmq4iVNLyeIxTS2Dm936rg1uRRfxym1AZ+Lg/NKowY/UHrCV2qishgUsWgW3SFjID
+ Tp0F9eaRl6uEn0s/ZqUlwRUnFuYRCnlr9VKukKdexULX0vfRhyeNq5326HyLthzGhZ1c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hMSBQDgfgXbj+COEnY8UJEvTMamUS7nx7dNCu5FsppM=; b=GrXLQDlzTPhGH3E4udep1BJmPr
- nL8tPG8eeGXfeqFoybdC691MLWh2ymu/BHE6S5+mnmKoPWSJIB7gZ41gIE2YbEftO7qxiLaO5zGos
- 5XSItJ8L+ZgeUF7V6aDSFtAj31uwNN6eic/5NDEkZbJgUlmU9uyeX1yPNp38X6sGqwl8=;
+ bh=SclqgwiTZB4Yd8Olgjp4tLXkM2pUcvJ4vj0668Dj7qk=; b=FR+I0FAcvXLrhDaQMcoZv4eSIK
+ cBUP3VRZwigozFVALQyC7NzDBN+mr4Fukwsm1CRV4++t2wJfNkUuVMDUfCW2KO6BuxYV7mcO1Ttj8
+ JGP0cXQHAELvlQQQcYNO3g2Wao80zyeF0DKo/rERjSejXutAdYVixjTsh1NzU5dTjAkQ=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vzgEJ-0001IZ-Sg for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Mar 2026 19:25:30 +0000
+ id 1vzgDx-0001Gf-Hz for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 09 Mar 2026 19:25:06 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id A9AFB445D3;
- Mon,  9 Mar 2026 19:25:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1F10C2BC87;
- Mon,  9 Mar 2026 19:25:24 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 6FA0440850;
+ Mon,  9 Mar 2026 19:25:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 193FDC2BC87;
+ Mon,  9 Mar 2026 19:25:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1773084326;
- bh=xU2KCI35YrXRPX4STuuSkp2XrYakE+gfhJ6nDK7xPhI=;
+ s=k20201202; t=1773084305;
+ bh=DQEndQAoCf4m7MpL7bFjS6WxNU6FZTJxhh7cr9rbp4w=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=HcvFft2JdogA4EBQdg+1vhE3HB97YjBZocD6LL0EBVIG2qRBPsLUbgE77iNsf6xFL
- cwNhWItmdap9hVh28rr0tVrXKeHkoVMxpU8paaDxb5QUnIbsAMewpxRz0oC8QRo0Ic
- zQzowARQNiv1hx8bFz85T2IrS0NWWq3zH8hQpsTVWuwasaGRkXUZcoD577nDjDSfjn
- wW1UlEW+BC4KOwiiymOPWscTPcaMivzr9HB5H/HdMyQUS8RfLB6c03ZhErHLnOkkqH
- w+EOoURk9rnLyrds9EPXpv4Qu9VjHCHJlx/ejV6IOaZFk+QPvApZn6kU+2y8tEB5nk
- 10iJW17e+R5tQ==
+ b=UZ8loh5yiEln8MnOXzxFPXsyLzdOqdAPPxDPvqQfBPM0kaGIA4plWk/5Nl9gUrusg
+ f807JKb6uY2uWuqNFjCkgOyXd+8XC5pLOL9F9+HiF6UI8X0JyB/Jk+2QCXGCzc+ebC
+ 2amzox4KAXV7s1ONFIBZ4auZ8/S2eqo+RTByF8MZG7Ib/uR70OI69jGUwOGwYonlXI
+ FUdHjwt1HkYoLotMTcLXzmuF3yY1u/DKbZpEonqU8ROElijcR/8N32A9Qp6lDuF4MP
+ T0fC9KpP+wAH5yY6UMpiHBCv6/5UJxmqj5H4ngoGc4OZxy6/KS/xWzS79XzV1fWuxU
+ wXZTpjzjS0F0A==
 To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
  linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
-Date: Mon,  9 Mar 2026 20:23:40 +0100
-Message-ID: <20260309192355.176980-26-aalbersh@kernel.org>
+Date: Mon,  9 Mar 2026 20:23:32 +0100
+Message-ID: <20260309192355.176980-18-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20260309192355.176980-1-aalbersh@kernel.org>
 References: <20260309192355.176980-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1vzgEJ-0001IZ-Sg
-Subject: [f2fs-dev] [PATCH v4 25/25] xfs: enable ro-compat fs-verity flag
+X-Headers-End: 1vzgDx-0001Gf-Hz
+Subject: [f2fs-dev] [PATCH v4 17/25] xfs: use read ioend for fsverity data
+ verification
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,33 +97,161 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Finalize fs-verity integration in XFS by making kernel fs-verity
-aware with ro-compat flag.
+Use read ioends for fsverity verification. Do not issues fsverity
+metadata I/O through the same workqueue due to risk of a deadlock by a
+filled workqueue.
+
+Pass fsverity_info from iomap context down to the ioend as hashtable
+lookups are expensive.
+
+Add a simple helper to check that this is not fsverity metadata but file
+data that needs verification.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-[djwong: add spaces]
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/libxfs/xfs_format.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/xfs/xfs_aops.c     | 32 ++++++++++++++++++++++++--------
+ fs/xfs/xfs_fsverity.c | 11 +++++++++++
+ fs/xfs/xfs_fsverity.h |  6 ++++++
+ 3 files changed, 41 insertions(+), 8 deletions(-)
 
-diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-index d67b404964fc..f5e43909f054 100644
---- a/fs/xfs/libxfs/xfs_format.h
-+++ b/fs/xfs/libxfs/xfs_format.h
-@@ -378,8 +378,9 @@ xfs_sb_has_compat_feature(
- #define XFS_SB_FEAT_RO_COMPAT_ALL \
- 		(XFS_SB_FEAT_RO_COMPAT_FINOBT | \
- 		 XFS_SB_FEAT_RO_COMPAT_RMAPBT | \
--		 XFS_SB_FEAT_RO_COMPAT_REFLINK| \
--		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT)
-+		 XFS_SB_FEAT_RO_COMPAT_REFLINK | \
-+		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT | \
-+		 XFS_SB_FEAT_RO_COMPAT_VERITY)
- #define XFS_SB_FEAT_RO_COMPAT_UNKNOWN	~XFS_SB_FEAT_RO_COMPAT_ALL
- static inline bool
- xfs_sb_has_ro_compat_feature(
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 9503252a0fa4..4e3dcc4a321d 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -24,6 +24,7 @@
+ #include "xfs_rtgroup.h"
+ #include "xfs_fsverity.h"
+ #include <linux/bio-integrity.h>
++#include <linux/fsverity.h>
+ 
+ struct xfs_writepage_ctx {
+ 	struct iomap_writepage_ctx ctx;
+@@ -204,11 +205,15 @@ xfs_end_io(
+ 			io_list))) {
+ 		list_del_init(&ioend->io_list);
+ 		iomap_ioend_try_merge(ioend, &tmp);
+-		if (bio_op(&ioend->io_bio) == REQ_OP_READ)
++		if (bio_op(&ioend->io_bio) == REQ_OP_READ) {
++			if (xfs_fsverity_is_file_data(ip, ioend->io_offset))
++				fsverity_verify_bio(ioend->io_vi,
++						    &ioend->io_bio);
+ 			iomap_finish_ioends(ioend,
+ 				blk_status_to_errno(ioend->io_bio.bi_status));
+-		else
++		} else {
+ 			xfs_end_ioend_write(ioend);
++		}
+ 		cond_resched();
+ 	}
+ }
+@@ -232,9 +237,14 @@ xfs_end_bio(
+ 	}
+ 
+ 	spin_lock_irqsave(&ip->i_ioend_lock, flags);
+-	if (list_empty(&ip->i_ioend_list))
+-		WARN_ON_ONCE(!queue_work(mp->m_unwritten_workqueue,
++	if (list_empty(&ip->i_ioend_list)) {
++		if (IS_ENABLED(CONFIG_FS_VERITY) && ioend->io_vi &&
++		    ioend->io_offset < xfs_fsverity_metadata_offset(ip))
++			fsverity_enqueue_verify_work(&ip->i_ioend_work);
++		else
++			WARN_ON_ONCE(!queue_work(mp->m_unwritten_workqueue,
+ 					 &ip->i_ioend_work));
++	}
+ 	list_add_tail(&ioend->io_list, &ip->i_ioend_list);
+ 	spin_unlock_irqrestore(&ip->i_ioend_lock, flags);
+ }
+@@ -764,9 +774,12 @@ xfs_bio_submit_read(
+ 	struct iomap_read_folio_ctx	*ctx)
+ {
+ 	struct bio			*bio = ctx->read_ctx;
++	struct iomap_ioend		*ioend;
+ 
+ 	/* defer read completions to the ioend workqueue */
+-	iomap_init_ioend(iter->inode, bio, ctx->read_ctx_file_offset, 0);
++	ioend = iomap_init_ioend(iter->inode, bio, ctx->read_ctx_file_offset, 0);
++	ioend->io_vi = ctx->vi;
++
+ 	bio->bi_end_io = xfs_end_bio;
+ 	submit_bio(bio);
+ }
+@@ -779,12 +792,15 @@ static const struct iomap_read_ops xfs_iomap_read_ops = {
+ 
+ static inline const struct iomap_read_ops *
+ xfs_get_iomap_read_ops(
+-	const struct address_space	*mapping)
++	const struct address_space	*mapping,
++	loff_t				position)
+ {
+ 	struct xfs_inode		*ip = XFS_I(mapping->host);
+ 
+ 	if (bdev_has_integrity_csum(xfs_inode_buftarg(ip)->bt_bdev))
+ 		return &xfs_iomap_read_ops;
++	if (xfs_fsverity_is_file_data(ip, position))
++		return &xfs_iomap_read_ops;
+ 	return &iomap_bio_read_ops;
+ }
+ 
+@@ -795,7 +811,7 @@ xfs_vm_read_folio(
+ {
+ 	struct iomap_read_folio_ctx	ctx = { .cur_folio = folio };
+ 
+-	ctx.ops = xfs_get_iomap_read_ops(folio->mapping);
++	ctx.ops = xfs_get_iomap_read_ops(folio->mapping, folio_pos(folio));
+ 	iomap_read_folio(&xfs_read_iomap_ops, &ctx, NULL);
+ 	return 0;
+ }
+@@ -806,7 +822,7 @@ xfs_vm_readahead(
+ {
+ 	struct iomap_read_folio_ctx	ctx = { .rac = rac };
+ 
+-	ctx.ops = xfs_get_iomap_read_ops(rac->mapping),
++	ctx.ops = xfs_get_iomap_read_ops(rac->mapping, readahead_pos(rac));
+ 	iomap_readahead(&xfs_read_iomap_ops, &ctx, NULL);
+ }
+ 
+diff --git a/fs/xfs/xfs_fsverity.c b/fs/xfs/xfs_fsverity.c
+index bc6020cc6e41..dc66ffb7d132 100644
+--- a/fs/xfs/xfs_fsverity.c
++++ b/fs/xfs/xfs_fsverity.c
+@@ -32,3 +32,14 @@ xfs_fsverity_metadata_offset(
+ {
+ 	return round_up(i_size_read(VFS_IC(ip)), 65536);
+ }
++
++bool
++xfs_fsverity_is_file_data(
++	const struct xfs_inode	*ip,
++	loff_t			offset)
++{
++	const struct inode	*inode = VFS_IC(ip);
++
++	return fsverity_active(inode) &&
++	       offset < xfs_fsverity_metadata_offset(ip);
++}
+diff --git a/fs/xfs/xfs_fsverity.h b/fs/xfs/xfs_fsverity.h
+index 5771db2cd797..ec77ba571106 100644
+--- a/fs/xfs/xfs_fsverity.h
++++ b/fs/xfs/xfs_fsverity.h
+@@ -9,12 +9,18 @@
+ 
+ #ifdef CONFIG_FS_VERITY
+ loff_t xfs_fsverity_metadata_offset(const struct xfs_inode *ip);
++bool xfs_fsverity_is_file_data(const struct xfs_inode *ip, loff_t offset);
+ #else
+ static inline loff_t xfs_fsverity_metadata_offset(const struct xfs_inode *ip)
+ {
+ 	WARN_ON_ONCE(1);
+ 	return ULLONG_MAX;
+ }
++static inline bool xfs_fsverity_is_file_data(const struct xfs_inode *ip,
++					    loff_t offset)
++{
++	return false;
++}
+ #endif	/* CONFIG_FS_VERITY */
+ 
+ #endif	/* __XFS_FSVERITY_H__ */
 -- 
 2.51.2
 
