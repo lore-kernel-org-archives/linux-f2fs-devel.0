@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BB892EA854A
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Mar 2026 02:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9B363EA854A
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Mar 2026 03:00:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=+FwQMtbXKfLrJjE1ljY/7vXvv+Ljuyh9Gbh7Ec3+fUU=; b=WEW+/+yh2ufNttUhlJrqhHxGOj
-	Zrmkc/nZ/T5ezuiC7U43XQrDvFOpBJRhj+CV6LWk3vpoL8+yZhbgXlpKFm2sfs9xYW7bSx2D661pL
-	M0efNH65oPv/Uz+BLrsVQSPVmHEVZF4rdAyj6z0PUJ/MFc4qQ9KIwNFufY13DWs++mDo=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=NwIScSf/FLMPxeBN1Ne5l4zUhMoR2xEPgtPWnP9FOgk=; b=F0AS1F7kkp54vWgHhaqdfyX8kW
+	/yrM5e/d0lmyUWHGGYkgqRaYC64tSJ1yZ3CtpFv1iSyy+ro5/NtyX3uzGEoNoPKihQx5JXGMyaBka
+	Pk4QahpZkPBbOkVp0sI+2AVEo57QxEngo1o9x5Tg2pnQ3NgJsNSxdgu0Eioe12rhLDyY=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vzQgw-0001mq-Ie;
-	Mon, 09 Mar 2026 02:49:58 +0000
+	id 1vzQrY-0006wn-NO;
+	Mon, 09 Mar 2026 03:00:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vzQgv-0001mj-Kg
+ (envelope-from <chao@kernel.org>) id 1vzQrE-0006wS-Dr
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Mar 2026 02:49:57 +0000
+ Mon, 09 Mar 2026 03:00:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TnQrH7sshRyqlR3AQMUELFfVPugvJu6ghT/fsFtCI8M=; b=BIam2D4hkohGbdFGbHzl0Xso8r
- sNoPGlEu6U5KLBTlln2Fb7jlenXVqIMOVRBnoH37FlW9GhImmR+EqgajIS5sdf4MHPbaJOyr+rK2U
- tP1SmRa5NawQmxtvX7AK8YBAZ2ukRm5h/0TdsS3TYGtaFdqGM8UjHjaA1FoifgLi0fIQ=;
+ bh=vmETg8TaEx3KDR0d5XulFIgGhvXX4XrvA45HZfaVB3Q=; b=Jy5rGqBaCsv2iOVnnyvC2T56A5
+ 0iBwAFsbW4Qr+sz34BxnjXm18GRptg+TFVRmIUhpxbfbMfK40ZNLgKy2NPNCs4VuFReHtGQVE0wsG
+ A+hj375e3CrGVs+w7kcP8ZWFEbAeuGFp5dQPVce9loYmban8+xI2rwsFG/3juEo7VpoU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TnQrH7sshRyqlR3AQMUELFfVPugvJu6ghT/fsFtCI8M=; b=hbk3/r9A7nSPTowQqVdHsJHBsg
- DnDin5fgVgfMUUTKQq+DORlDTe5LgUpY1ivKy2MldBDBdfgP4KX9KAgWXGUmS43PCPqFTw7GsPxkU
- DCKCjPaKFWOZ5cg4WPzeK71C2rRrtRM3hhlOCp8/Rf0AiGW5syItIUoUT/ntTFjrphCQ=;
+ bh=vmETg8TaEx3KDR0d5XulFIgGhvXX4XrvA45HZfaVB3Q=; b=fAo/s1sgrAnCvB+ziTse3+4PSO
+ t3szAesy6hbKxuAh2zJP/MOTWDUao/WkZ2BcAHmkVpl9+zCOwYtAv15lqsX5wby+cfnWqm3EjAxRV
+ qUzD2MEGWnnEidrOeOca+9zovARpFDz5oYXsusMjSY47zeP54rSEx9eNvd94b44Cin4w=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vzQgv-0004MV-5h for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Mar 2026 02:49:57 +0000
+ id 1vzQrC-0004nf-Dc for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 09 Mar 2026 03:00:35 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 86FE2600AD;
- Mon,  9 Mar 2026 02:49:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ADCEC116C6;
- Mon,  9 Mar 2026 02:49:49 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id DCDFD600AD;
+ Mon,  9 Mar 2026 03:00:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67BF5C116C6;
+ Mon,  9 Mar 2026 03:00:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1773024591;
- bh=KunRiZRpKiAcU8qeAYLyCv5F+lGXNF0SOMxOLWjWRMs=;
+ s=k20201202; t=1773025226;
+ bh=3Z7q6Em/3WGKz8bEXx6MSRiPKv/Hys/VXwlREbFDbDI=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=aM6eCcNs+WcEUo6AYvxn+68+BRWLqAmQuaCLPkzxuKmzJE1e5qYjjEVpYc+HUK4ZO
- jek7+9PiSILKxmX9RzRVmlxsuElvOvTDw2k67s3M/n3hbpzfb4vOtTNqFGUAvkjjom
- ABxAj10evXVLNuOrWVCWru0E8DkUvlAEJij6TEYo0lAda6/WFnLegNCNSN+UdrBFkn
- 8RA8xMJMDDBaPUJNssNrYuxIRSonpEPElVaovoa8pOsf5+SEjAGDI/i/no9wCpfhdG
- BanC04JGHj3maq7GCbYroBnjrAthnObQSTg6cy6pAUyqfskc1AnJPj6aSX4G8vtMLv
- AFgVFccVeMK7Q==
-Message-ID: <0c0baadd-06f5-4b2a-bae8-2bd93077025d@kernel.org>
-Date: Mon, 9 Mar 2026 10:49:47 +0800
+ b=fcVbfNEWLkjq/Gfa8e4sy8gj8yT6ZgIy6/BB4I+7e3S4qTM/T7rPcyTfis9ng0Kjn
+ OCrqRVkD1xIJkhFkAZ6zfnt0ByUYQ9emKbpxFT9k5uUJcAHf+Lp5FHkB2ozRY3KEmZ
+ sdbIUZl0M0a/Q1CvoU/gAZvrlwqPVq9tSryqRytQFQ52PC+yoS8B64ruI+WVkxLBFv
+ MGnq8QtBlxLxP7YR17/RJWI4B1bz42p7exizI+hXObkgGioDDS/EeaQ/TC3R2Alxo7
+ 946vx7Ux2oOr5WVx6Q/vM7KI7gix6ioV1QMJTNMA1lcrLofjNC0cHz3jcfRDWD/+AN
+ /4Uz8DHNcVVyw==
+Message-ID: <8accb7ba-4e97-4484-8e7d-98ce126c0369@kernel.org>
+Date: Mon, 9 Mar 2026 11:00:23 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
-References: <1772680966-29939-1-git-send-email-zhiguo.niu@unisoc.com>
+To: Yongpeng Yang <monty_pavel@sina.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20260305125015.1717396-2-monty_pavel@sina.com>
 Content-Language: en-US
-In-Reply-To: <1772680966-29939-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Headers-End: 1vzQgv-0004MV-5h
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to preserve previous
- reserve_{blocks, node} value when remount
+In-Reply-To: <20260305125015.1717396-2-monty_pavel@sina.com>
+X-Headers-End: 1vzQrC-0004nf-Dc
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs_io: add flags parameter to fiemap
+ subcommand
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,58 +89,100 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: ke.wang@unisoc.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Hao_hao.Wang@unisoc.com
+Cc: Yongpeng Yang <yangyongpeng@xiaomi.com>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 3/5/26 11:22, Zhiguo Niu wrote:
-> The following steps will change previous value of reserve_{blocks,node},
-> this dones not match the original intention.
+On 3/5/26 20:50, Yongpeng Yang wrote:
+> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 > 
-> 1.mount -t f2fs -o reserve_root=8192 imgfile test_mount/
-> F2FS-fs (loop56): Mounted with checkpoint version = 1b69f8c7
-> mount info:
-> /dev/block/loop56 on /data/test_mount type f2fs (xxx,reserve_root=8192,reserve_node=0,resuid=0,resgid=0,xxx)
+> Add a flags parameter to the fiemap subcommand, allowing the
+> specification of whether to retrieve file mappings after writing to the
+> file.
 > 
-> 2.mount -t f2fs -o remount,reserve_root=4096 /data/test_mount
-> F2FS-fs (loop56): Preserve previous reserve_root=8192
-> check mount info: reserve_root change to 4096
-> /dev/block/loop56 on /data/test_mount type f2fs (xxx,reserve_root=4096,reserve_node=0,resuid=0,resgid=0,xxx)
-> 
-> Prior to commit d18535132523 ("f2fs: separate the options parsing and options checking"),
-> the value of reserve_{blocks,node} was only set during the first mount, along with
-> the corresponding mount option F2FS_MOUNT_RESERVE_{ROOT,NODE} . If the mount option
-> F2FS_MOUNT_RESERVE_{ROOT,NODE} was found to have been set during the mount/remount,
-> the previously value of reserve_{blocks,node} would also be preserved, as shown in
-> the code below.
->              if (test_opt(sbi, RESERVE_ROOT)) {
->                    f2fs_info(sbi, "Preserve previous reserve_root=%u",
->                           F2FS_OPTION(sbi).root_reserved_blocks);
->              } else {
->                    F2FS_OPTION(sbi).root_reserved_blocks = arg;
->                    set_opt(sbi, RESERVE_ROOT);
->              }
-> But commit d18535132523 ("f2fs: separate the options parsing and options checking")
-> only preserved the previous mount option; it did not preserve the previous value of
-> reserve_{blocks,node}. Since value of reserve_{blocks,node} value is assigned
-> or not depends on ctx->spec_mask, ctx->spec_mask should be alos handled in
-> f2fs_check_opt_consistency.
-> 
-> This patch will clear the corresponding ctx->spec_mask bits in f2fs_check_opt_consistency
-> to preserve the previously values of reserve_{blocks,node} if it already have a value.
-> 
-> Fixes: d18535132523 ("f2fs: separate the options parsing and options checking")
-> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
 > ---
-> v2: add more detail info in commit msg suggested by Chao
+>  man/f2fs_io.8           |  2 +-
+>  tools/f2fs_io/f2fs_io.c | 15 +++++++++++----
+>  2 files changed, 12 insertions(+), 5 deletions(-)
+> 
+> diff --git a/man/f2fs_io.8 b/man/f2fs_io.8
+> index 5c3d204..51ccfaf 100644
+> --- a/man/f2fs_io.8
+> +++ b/man/f2fs_io.8
+> @@ -138,7 +138,7 @@ mmap(MAP_POPULATE)
+>  mmap() + mlock()
+>  .RE
+>  .TP
+> -\fBfiemap\fR \fI[offset in 4kb] [count] [file_path]\fR
+> +\fBfiemap\fR \fI[offset in 4kb] [count] [file_path] {flags}\fR
+>  get block address in file
+>  .TP
+>  \fBgc_urgent\fR \fIdev [start|end|run] [time in sec]\fR
+> diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+> index c977f4d..9bca498 100644
+> --- a/tools/f2fs_io/f2fs_io.c
+> +++ b/tools/f2fs_io/f2fs_io.c
+> @@ -1357,8 +1357,11 @@ static void do_randread(int argc, char **argv, const struct cmd_desc *cmd)
+>  }
+>  
+>  #define fiemap_desc "get block address in file"
+> -#define fiemap_help					\
+> -"f2fs_io fiemap [offset in 4kb] [count in 4kb] [file_path]\n\n"\
+> +#define fiemap_help							\
+> +"f2fs_io fiemap [offset in 4kb] [count in 4kb] [file_path] {flags}\n\n"	\
+> +"flags can be the following values:\n"					\
+> +"0: No extra actions, by default\n"					\
+> +"1: Sync file data before map\n"					\
 
-Thanks Zhiguo, the commit message makes sense to me, and it looks good now.
+What about supporting all flags below? although we didn't limit supporting
+all bits in code part.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+/* flags used in fm_flags: */
+#define FIEMAP_FLAG_SYNC	0x00000001 /* sync file data before map */
+#define FIEMAP_FLAG_XATTR	0x00000002 /* map extended attribute tree */
+#define FIEMAP_FLAG_CACHE	0x00000004 /* request caching of the extents */
 
 Thanks,
+
+>  
+>  #if defined(HAVE_LINUX_FIEMAP_H) && defined(HAVE_LINUX_FS_H)
+>  static void do_fiemap(int argc, char **argv, const struct cmd_desc *cmd)
+> @@ -1366,10 +1369,10 @@ static void do_fiemap(int argc, char **argv, const struct cmd_desc *cmd)
+>  	unsigned int i;
+>  	int fd, extents_mem_size;
+>  	u64 start, length;
+> -	u32 mapped_extents;
+> +	u32 mapped_extents, flags = 0;
+>  	struct fiemap *fm = xmalloc(sizeof(struct fiemap));
+>  
+> -	if (argc != 4) {
+> +	if (argc < 4 || argc > 5) {
+>  		fputs("Excess arguments\n\n", stderr);
+>  		fputs(cmd->cmd_help, stderr);
+>  		exit(1);
+> @@ -1378,8 +1381,11 @@ static void do_fiemap(int argc, char **argv, const struct cmd_desc *cmd)
+>  	memset(fm, 0, sizeof(struct fiemap));
+>  	start = (u64)atoi(argv[1]) * F2FS_DEFAULT_BLKSIZE;
+>  	length = (u64)atoi(argv[2]) * F2FS_DEFAULT_BLKSIZE;
+> +	if (argc == 5)
+> +		flags = (u32)atoi(argv[4]);
+>  	fm->fm_start = start;
+>  	fm->fm_length = length;
+> +	fm->fm_flags = flags;
+>  
+>  	fd = xopen(argv[3], O_RDONLY | O_LARGEFILE, 0);
+>  
+> @@ -1397,6 +1403,7 @@ static void do_fiemap(int argc, char **argv, const struct cmd_desc *cmd)
+>  	memset(fm, 0, sizeof(struct fiemap) + extents_mem_size);
+>  	fm->fm_start = start;
+>  	fm->fm_length = length;
+> +	fm->fm_flags = flags;
+>  	fm->fm_extent_count = mapped_extents;
+>  
+>  	if (ioctl(fd, FS_IOC_FIEMAP, fm) < 0)
 
 
 
