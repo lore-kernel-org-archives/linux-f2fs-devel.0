@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4E55AFCA17E
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 90D7BFCA178
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Mar 2026 19:25:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,29 +12,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=xmaRVdUMilkvFqDl5GdNqb37ux1k6oGw4Xl9j8M70Hs=; b=RUIUR5xa0aOGNz7WZWQ6RZ+dv5
-	YGrma6HAaz9c9PtjR5LmsPmOOENyJw7JB8IpEwob10xSb9wos2nIOhtIqiwLOpdLf1B5sHMNy2qCe
-	4GEwO0RZk2roUkl+apDDhWTzyn+uzMR6v7tgYLl5yXBaPXwG8cdwE35RYREJvPiqTgcs=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=p9qpt/1sLw+aWlcrQoVH/q/tSa9SySdAo2x4KqeJy6c=; b=KS3S8tMD0xwKrdT4YAInlcuAMX
+	mVtak9qsKKSGJuOmi2kkLtt2kzkCGg/IOWmn5y3ItTqjHLa5lS55MvcJQdnX6iwMDtI0YUFlWpdeH
+	7U+HYH5SHGpq4uQd8L+ozYpmNqGO1+6d7b/f04oOAM4UZSsz8DmXrHaauVVYRuMk2aEk=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vzgEU-0006Zw-83;
-	Mon, 09 Mar 2026 19:25:38 +0000
+	id 1vzgEW-0008FR-7W;
+	Mon, 09 Mar 2026 19:25:40 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1vzgED-0006Yb-PS
+ (envelope-from <aalbersh@kernel.org>) id 1vzgES-0008DJ-7G
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Mar 2026 19:25:21 +0000
+ Mon, 09 Mar 2026 19:25:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=78JjXY8VUbs0HXe9I3i0d/Dzn79xgqsTtoUqUeBTkVs=; b=nDZsV1Luqh7WWDbY5sikEMcxu8
- fEleciN72IBndjQUjmYaO/NZW6ba5AQVdUgF4KJWAdkY4DnHFUO2xYHVkYpULqVKmg5Dde052Le+1
- Y0dpvCMf/4GdiX+v63YTUp26RmJQ+2//TYerks47GBQUW6VOcBtIwGFl6uVTTRmwrsUg=;
+ bh=XKza56RDUbpSu6DpXsc9O30ewcy/QrABqzdGYWUSJfU=; b=gt4JbjGZ+cGUeSMa4/+2btvj8t
+ xPoF0N8hHD7+ERpAVigobqxmpsbc8vZ1jn6UFSn/qyKyA4jJgD5HfLNKY+7AtSMcxlEMi+NKOXgyo
+ 485TzZj14LYThWNZW/kjTXBnDDPL7SShLJqhQScZRTVitVik3PUicECar2N8T0kZo7Cw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=78JjXY8VUbs0HXe9I3i0d/Dzn79xgqsTtoUqUeBTkVs=; b=IYtV94UweO+COz9fXMa6TWYn8J
- G+tveKtuGwTKJ2HTZM/kyN4GO8qJCP2Zbhkm7DtUoail4sAqtaD3HccjIUF9Pr9AoTUJK8VX7Qr6j
- YT4yNkcsR+rmyh4pqipZqQHqqmifyk4Ca/Tbrhbtffuvv8i+wNDXpiupHVIVyE0ugWd8=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=XKza56RDUbpSu6DpXsc9O30ewcy/QrABqzdGYWUSJfU=; b=Eo3ARmYQXqjqsXkxFHSn9Iso3f
+ hE2A4pTozBTu6XlnXbOmr4JR0y6rMW7pmgOb1bMvi/kQXEVxNov3CtPq0A+FkVUdENISxIRU53cad
+ 5PdZmm7B3GpnIA6YjXumWmmHZJ0MjY9hPeY9XZm8AzpYjbYyVHTCUyykYW14FVk/Bfdc=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vzgED-0001IA-9l for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Mar 2026 19:25:21 +0000
+ id 1vzgEO-0001Ji-Bi for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 09 Mar 2026 19:25:36 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id D73D143639;
- Mon,  9 Mar 2026 19:25:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75947C2BC87;
- Mon,  9 Mar 2026 19:25:08 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id C6E1B60103;
+ Mon,  9 Mar 2026 19:25:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44F5EC2BC9E;
+ Mon,  9 Mar 2026 19:25:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1773084310;
- bh=w3fjf18ZoDlPXKJ28b6MR0iStdNztPG0sro78fgsISM=;
+ s=k20201202; t=1773084321;
+ bh=yMnEK6AxJtjDqdBedC51f5E00TG7FWRBCbUNxKYwYD0=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=EI3JFxZaqCOYDI0BG5k5wGiM77hQlk5N5np3QrFpqNjIdM4dmRjoroAQf6Pdz+bh0
- oHgxVeZwHXsE3Dq6GT6LKruSn3C/7vPSvbBPfUjylEz/EORP5FXmzsaXIm4ricH+sK
- V2ioBZFBSj7JGEP+Y9s9uA9JkDqtRWtH+FSdDSF2/ZsMIX31KVi/v3aCuFWkdQ/K0H
- TbTcRtkxCk10WsuhP2yG4pQ94GMGLGa3raeAAyed1mhWdpF1Ihb015bVPqvUaKhJOd
- +YpcDDpW1VUeIKgvUQ4FLk56SbYp3Bb6GlabWSTaGDzzoo2OtDX9Rc2YRystY1K4tL
- pgYhUPCf+AXhA==
+ b=I3qplzQxeoM2aGq37V4SrYZgSIk4QpK5jrIfh53Kox9Rv/04OHstdakK8TCjefxaJ
+ jJkqsEfd1YEMJHM3IawCL8DkNupaQs8rfgi7lMUxV3g3R/jwWqqyaZNCq0JERWx5Jx
+ 4axIiHjvXqsRWCqhVeFmv+mR9jypNP83Mjod9UnygLb7cVcLehJQPqPfnxVpdLsjH7
+ 4B0VQyIDW3DvCMQWUnaXYP34JSDNPK4X1bzD+LKIenfbC4jwJL0Ag6dM5TR9GWul7Z
+ PnHv2s0un7WBn2dX6oq40+X8SMR7xfzLllW4vMhivYcEXgNlavRTimX3cafnBLdnxx
+ QHal2BWbVIROA==
 To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
  linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
-Date: Mon,  9 Mar 2026 20:23:34 +0100
-Message-ID: <20260309192355.176980-20-aalbersh@kernel.org>
+Date: Mon,  9 Mar 2026 20:23:38 +0100
+Message-ID: <20260309192355.176980-24-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20260309192355.176980-1-aalbersh@kernel.org>
 References: <20260309192355.176980-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1vzgED-0001IA-9l
-Subject: [f2fs-dev] [PATCH v4 19/25] xfs: remove unwritten extents after
- preallocations in fsverity metadata
+X-Headers-End: 1vzgEO-0001Ji-Bi
+Subject: [f2fs-dev] [PATCH v4 23/25] xfs: introduce health state for
+ corrupted fsverity metadata
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,106 +97,94 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-XFS preallocates spaces during writes. In normal I/O this space, if
-unused, is removed by truncate. For files with fsverity, XFS does not
-use truncate as fsverity metadata is stored past EOF.
-
-After we're done with writing fsverity metadata iterate over extents in
-that region and remove any unwritten ones. These would be preallocation
-leftovers in the merkle tree holes and past fsverity descriptor.
+Report corrupted fsverity descriptor through health system.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/xfs/xfs_fsverity.c | 62 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+ fs/xfs/libxfs/xfs_fs.h     |  1 +
+ fs/xfs/libxfs/xfs_health.h |  4 +++-
+ fs/xfs/xfs_fsverity.c      | 13 ++++++++++---
+ fs/xfs/xfs_health.c        |  1 +
+ 4 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/fs/xfs/xfs_fsverity.c b/fs/xfs/xfs_fsverity.c
-index e5cd17ec15b6..f78e5f0c2fd0 100644
---- a/fs/xfs/xfs_fsverity.c
-+++ b/fs/xfs/xfs_fsverity.c
-@@ -21,6 +21,8 @@
- #include "xfs_iomap.h"
- #include "xfs_error.h"
- #include "xfs_health.h"
-+#include "xfs_bmap.h"
-+#include "xfs_bmap_util.h"
- #include <linux/fsverity.h>
- #include <linux/iomap.h>
- #include <linux/pagemap.h>
-@@ -189,6 +191,58 @@ xfs_fsverity_delete_metadata(
- 	return error;
- }
- 
-+static int
-+xfs_fsverity_cancel_unwritten(
-+	struct xfs_inode	*ip,
-+	xfs_fileoff_t		start,
-+	xfs_fileoff_t		end)
-+{
-+	struct xfs_mount	*mp = ip->i_mount;
-+	struct xfs_trans	*tp;
-+	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSB(mp, start);
-+	xfs_fileoff_t		end_fsb = XFS_B_TO_FSB(mp, end);
-+	struct xfs_bmbt_irec	imap;
-+	int			nimaps;
-+	int			error = 0;
-+	int			done;
-+
-+	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_write, 0, 0, 0, &tp);
-+	if (error)
-+		return error;
-+
-+	xfs_ilock(ip, XFS_ILOCK_EXCL);
-+	xfs_trans_ijoin(tp, ip, 0);
-+
-+	while (offset_fsb < end_fsb) {
-+		nimaps = 1;
-+
-+		error = xfs_bmapi_read(ip, offset_fsb, end_fsb - offset_fsb,
-+							  &imap, &nimaps, 0);
-+		if (error)
-+			goto out_cancel;
-+
-+		if (nimaps == 0)
-+			break;
-+
-+		if (imap.br_state == XFS_EXT_UNWRITTEN) {
-+			error = xfs_bunmapi(tp, ip, imap.br_startoff,
-+					    imap.br_blockcount, 0, 1, &done);
-+			if (error)
-+				goto out_cancel;
-+		}
-+
-+		offset_fsb = imap.br_startoff + imap.br_blockcount;
-+	}
-+
-+	error = xfs_trans_commit(tp);
-+	xfs_iunlock(ip, XFS_ILOCK_EXCL);
-+	return error;
-+out_cancel:
-+	xfs_trans_cancel(tp);
-+	xfs_iunlock(ip, XFS_ILOCK_EXCL);
-+	return error;
-+}
-+
+diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
+index ebf17a0b0722..cece31ecee81 100644
+--- a/fs/xfs/libxfs/xfs_fs.h
++++ b/fs/xfs/libxfs/xfs_fs.h
+@@ -422,6 +422,7 @@ struct xfs_bulkstat {
+ #define XFS_BS_SICK_SYMLINK	(1 << 6)  /* symbolic link remote target */
+ #define XFS_BS_SICK_PARENT	(1 << 7)  /* parent pointers */
+ #define XFS_BS_SICK_DIRTREE	(1 << 8)  /* directory tree structure */
++#define XFS_BS_SICK_FSVERITY	(1 << 9)  /* fsverity metadata */
  
  /*
-  * Prepare to enable fsverity by clearing old metadata.
-@@ -264,6 +318,14 @@ xfs_fsverity_end_enable(
- 	if (error)
- 		goto out;
+  * Project quota id helpers (previously projid was 16bit only
+diff --git a/fs/xfs/libxfs/xfs_health.h b/fs/xfs/libxfs/xfs_health.h
+index 1d45cf5789e8..932b447190da 100644
+--- a/fs/xfs/libxfs/xfs_health.h
++++ b/fs/xfs/libxfs/xfs_health.h
+@@ -104,6 +104,7 @@ struct xfs_rtgroup;
+ /* Don't propagate sick status to ag health summary during inactivation */
+ #define XFS_SICK_INO_FORGET	(1 << 12)
+ #define XFS_SICK_INO_DIRTREE	(1 << 13)  /* directory tree structure */
++#define XFS_SICK_INO_FSVERITY	(1 << 14)  /* fsverity metadata */
  
-+	/*
-+	 * Remove unwritten extents left by preallocations in the merkle tree
-+	 * holes and past descriptor
-+	 */
-+	error = xfs_fsverity_cancel_unwritten(ip, range_start, LLONG_MAX);
-+	if (error)
-+		goto out;
+ /* Primary evidence of health problems in a given group. */
+ #define XFS_SICK_FS_PRIMARY	(XFS_SICK_FS_COUNTERS | \
+@@ -140,7 +141,8 @@ struct xfs_rtgroup;
+ 				 XFS_SICK_INO_XATTR | \
+ 				 XFS_SICK_INO_SYMLINK | \
+ 				 XFS_SICK_INO_PARENT | \
+-				 XFS_SICK_INO_DIRTREE)
++				 XFS_SICK_INO_DIRTREE | \
++				 XFS_SICK_INO_FSVERITY)
+ 
+ #define XFS_SICK_INO_ZAPPED	(XFS_SICK_INO_BMBTD_ZAPPED | \
+ 				 XFS_SICK_INO_BMBTA_ZAPPED | \
+diff --git a/fs/xfs/xfs_fsverity.c b/fs/xfs/xfs_fsverity.c
+index f78e5f0c2fd0..adc53dad174b 100644
+--- a/fs/xfs/xfs_fsverity.c
++++ b/fs/xfs/xfs_fsverity.c
+@@ -99,16 +99,23 @@ xfs_fsverity_get_descriptor(
+ 		return error;
+ 
+ 	desc_size = be32_to_cpu(d_desc_size);
+-	if (XFS_IS_CORRUPT(mp, desc_size > FS_VERITY_MAX_DESCRIPTOR_SIZE))
++	if (XFS_IS_CORRUPT(mp, desc_size > FS_VERITY_MAX_DESCRIPTOR_SIZE)) {
++		xfs_inode_mark_sick(XFS_I(inode), XFS_SICK_INO_FSVERITY);
+ 		return -ERANGE;
+-	if (XFS_IS_CORRUPT(mp, desc_size > desc_size_pos))
++	}
 +
- 	/*
- 	 * Set fsverity inode flag
- 	 */
++	if (XFS_IS_CORRUPT(mp, desc_size > desc_size_pos)) {
++		xfs_inode_mark_sick(XFS_I(inode), XFS_SICK_INO_FSVERITY);
+ 		return -ERANGE;
++	}
+ 
+ 	if (!buf_size)
+ 		return desc_size;
+ 
+-	if (XFS_IS_CORRUPT(mp, desc_size > buf_size))
++	if (XFS_IS_CORRUPT(mp, desc_size > buf_size)) {
++		xfs_inode_mark_sick(XFS_I(inode), XFS_SICK_INO_FSVERITY);
+ 		return -ERANGE;
++	}
+ 
+ 	desc_pos = round_down(desc_size_pos - desc_size, blocksize);
+ 	error = fsverity_pagecache_read(inode, buf, desc_size, desc_pos);
+diff --git a/fs/xfs/xfs_health.c b/fs/xfs/xfs_health.c
+index 169123772cb3..4e6273ae9b10 100644
+--- a/fs/xfs/xfs_health.c
++++ b/fs/xfs/xfs_health.c
+@@ -609,6 +609,7 @@ static const struct ioctl_sick_map ino_map[] = {
+ 	{ XFS_SICK_INO_DIR_ZAPPED,	XFS_BS_SICK_DIR },
+ 	{ XFS_SICK_INO_SYMLINK_ZAPPED,	XFS_BS_SICK_SYMLINK },
+ 	{ XFS_SICK_INO_DIRTREE,	XFS_BS_SICK_DIRTREE },
++	{ XFS_SICK_INO_FSVERITY,	XFS_BS_SICK_FSVERITY },
+ };
+ 
+ /* Fill out bulkstat health info. */
 -- 
 2.51.2
 
