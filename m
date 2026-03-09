@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7F953FCA16D
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Mar 2026 18:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 07825FCA177
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Mar 2026 19:01:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Date:References:In-Reply-To:To:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=UT8xBFuaKZcY3rWDije9U/PRhPNl7TR0MuOJNW+JKHg=; b=DQ3o8mT1VQ0Frzst8aJvCheLXr
-	NM/P2Qgn8vKCwkdCwW2gwzLPRUrD/BHWkBmBDTN0u869ABa+8xqx40o31so28dQN+tMIqPYgwC7y2
-	gsGox2ook2cb/dZ381+fUx2iXu0KV4IaibRemJPRQ6Opzuf7yH+3SqxEnqr7KHKVM9OQ=;
+	bh=+NdHrOad29vYvq22G73V6wgtr607Vr63DQdx6FQffoU=; b=XyXJTQMfb6NwtvZT/vAMXECge+
+	A/djJb0HOHF6Nvan/spGE2aFXhxMKWYJl/214PSY+QtOlOJd7DUSR8jB76ocYwIot57ICbxrK2ACE
+	k6P6RaHPelUlDtB9ybjlm0YhObZpCEIPUUI4b/xc3XTQMxzK+9bLrqeocj1T6ylTzR4M=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vzf5v-0008OW-88;
-	Mon, 09 Mar 2026 18:12:43 +0000
+	id 1vzfqp-00011Z-0Y;
+	Mon, 09 Mar 2026 19:01:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zohar@linux.ibm.com>) id 1vzf5u-0008OL-7y;
- Mon, 09 Mar 2026 18:12:42 +0000
+ (envelope-from <zohar@linux.ibm.com>) id 1vzfqn-00011P-FO;
+ Mon, 09 Mar 2026 19:01:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Date:Content-Transfer-Encoding:
  Content-Type:References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=k/HLlQfqfXVQs+Pamcq/LePEaOpgjPTSxe75E2LQHmw=; b=hChV8j+8T4jFc9H8NPDpEczrOp
- 5hoS5I9K3LVOon6YlLjafiZ5WQEG7oCeglsO46c2BDvTo5bdBYVCdq+j6FUUjZFDuVoUSh0agC8Xm
- L+1Y2JJbi2m6RLQjnuQwgzAa3f0yOEqaBJSdQAVODeKM5lsCM2DxE1l+xL/lbNx2cdA8=;
+ bh=5swsN0rUxxavDq9zMYnPJS2Jv47BUk07HnZRz0pbh40=; b=l/kjJfg+3j9hHxbGP1UzzC+vAy
+ QTR3JnSTTz26C0MgvhU3V03l2MkpMJlwrsGW2JDWP/tMpfXuGHzJHUjiLlK3842vBWPjw5nnTqx/1
+ 98uWxESBwHez8cvNIUVCtlsNadsg8tl8YtZzhsrtc4v30R3ILbwGtcPs/ZFTUMYHq9hU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Date:Content-Transfer-Encoding:Content-Type:References:
@@ -41,86 +41,87 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=k/HLlQfqfXVQs+Pamcq/LePEaOpgjPTSxe75E2LQHmw=; b=R9l+BrqByg6bS3BXyRFiXGqEm8
- tjOTk6/ZkBU5A8uTl1ZzuQGqukrlw5VAYlY0TtIM10lVpEATu9za1YZJBxAF2ZiRuLHlI1qGcsWHr
- JIXkZZRaJNW9GsqKk/83Zzib8gAwdi1RLW3N9nR23D0LLpad4LHdDqEin9BF8mK1xC0U=;
+ bh=5swsN0rUxxavDq9zMYnPJS2Jv47BUk07HnZRz0pbh40=; b=VPt99ILhFRHJEElB2NzCEG1k2j
+ FeY7ju/Vw6vxsYmzaNGPlxWY7tRsBUGOF/wbrWgHf6GSsnK3x/iFeBJDiokpLjHjkQXdUl4hoNf06
+ N2KTsJm+qPe0HKcOYseLWqBgVZXyYbOUR8glr7AoVMOEOzQmjZiMUL56GgU9eUBW+s9c=;
 Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vzf5t-00068X-MW; Mon, 09 Mar 2026 18:12:42 +0000
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+ id 1vzfqm-0008Te-R4; Mon, 09 Mar 2026 19:01:09 +0000
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
  by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 629F7to91275175; Mon, 9 Mar 2026 17:47:15 GMT
+ 629BiYp9402979; Mon, 9 Mar 2026 19:00:10 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
  :content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pp1; bh=k/HLlQ
- fqfXVQs+Pamcq/LePEaOpgjPTSxe75E2LQHmw=; b=O46FAzGvsE2YmZ6439UqTH
- f//oqGS2NuJoB8xY2lcg12hMD2aNtQ4ID9XxubauhUUNB5XWruUCNbrIED9U/sy2
- gQV+VyjgSVjVmAG4Kam45dqeg/cEF7wexHdqP7q6amhZ86wA+YW4+a7JvMwqNGHX
- K+CR1szr/+ThnSfgYQtyXM8JHrNaKlVVJxj2UpO9B9nfw7GY0lpUaQgYj3FXUBhW
- hCYFfYxjosdklAtClo/CAOyDK0Kz8Ak4d419uQhCeU81c/npAiEGpAq1IaGDP95R
- 6czGdohxtpKDTNPNp0U2JdVL6ApX0w6YBruEMYsSerjEZYuw8x9syT1jr4FLueng
+ :message-id:mime-version:references:subject:to; s=pp1; bh=5swsN0
+ rUxxavDq9zMYnPJS2Jv47BUk07HnZRz0pbh40=; b=d2IgH4d2cI76xjXosS08+5
+ z7p4cmRM3+vsUQToHiG2nB8DP/joMF596z7727f61cqMRXeNJJpaPHxOajT8sUoA
+ 4hdB+fd4u1HsuNVMFr3OsadtAG1CKvM35tVtsMpgaqqCM2ZBMMXJkpG++BlAdorh
+ a25OzV7jJWb6oFmtakhiLNn+qzaAmqYeRhvuloIidiB6X0BgKDL71O4yfuzN3RUh
+ AoqpvZ653XjMWMMwrSPrZbVK8uRNsl6RplSUCc6nWvYsnXyDf2A2VF2Up7qZowSZ
+ aJlNA2A77/MP8caSRZkmC6D9PsUx9bOXT5BvUfyuxzfxj3qWmymQF0ir3jH77L1w
  ==
 Received: from ppma11.dal12v.mail.ibm.com
  (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
- by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4crcvr7huu-1
+ by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4crcun7rdb-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 09 Mar 2026 17:47:15 +0000 (GMT)
+ Mon, 09 Mar 2026 19:00:09 +0000 (GMT)
 Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
- by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 629FqYI5015725;
- Mon, 9 Mar 2026 17:47:14 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
- by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4cs121wp59-1
+ by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 629FvaW1015771;
+ Mon, 9 Mar 2026 19:00:08 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+ by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4cs121ww0t-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 09 Mar 2026 17:47:14 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com
- [10.39.53.230])
- by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id
- 629HlDVJ60162522
+ Mon, 09 Mar 2026 19:00:08 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com
+ [10.241.53.102])
+ by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id
+ 629J079s4915810
  (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Mon, 9 Mar 2026 17:47:13 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
- by IMSVA (Postfix) with ESMTP id 5E5775805A;
- Mon,  9 Mar 2026 17:47:13 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
- by IMSVA (Postfix) with ESMTP id 4442758054;
- Mon,  9 Mar 2026 17:47:09 +0000 (GMT)
+ Mon, 9 Mar 2026 19:00:08 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+ by IMSVA (Postfix) with ESMTP id B444C58064;
+ Mon,  9 Mar 2026 19:00:07 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+ by IMSVA (Postfix) with ESMTP id E09F35805A;
+ Mon,  9 Mar 2026 19:00:04 +0000 (GMT)
 Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown
- [9.61.72.80]) by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
- Mon,  9 Mar 2026 17:47:09 +0000 (GMT)
-Message-ID: <05b5d55c49b5a1bbc43a5315e3c84872e7e634b3.camel@linux.ibm.com>
+ [9.61.72.80]) by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+ Mon,  9 Mar 2026 19:00:04 +0000 (GMT)
+Message-ID: <c9500adc562665d44feaca9206f23a5ba07432c1.camel@linux.ibm.com>
 To: Jeff Layton <jlayton@kernel.org>
-In-Reply-To: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
+In-Reply-To: <f22758116dabd3c135a833bcb5cfcd2ea4f6ecf4.camel@kernel.org>
 References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
-Date: Mon, 09 Mar 2026 13:47:08 -0400
+ <05b5d55c49b5a1bbc43a5315e3c84872e7e634b3.camel@linux.ibm.com>
+ <f22758116dabd3c135a833bcb5cfcd2ea4f6ecf4.camel@kernel.org>
+Date: Mon, 09 Mar 2026 15:00:04 -0400
 MIME-Version: 1.0
 User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA5MDE1OCBTYWx0ZWRfX4MWriKER56jj
- FHMwPduc6Ya80ytljBjcJCflJZJQpLHypO90MyIljV3F+YGnUEWqD2zkjjI4tBlT1Isyk88nQqD
- Bxsi6y6lZ0wNsui73O82C4s92lOeLYZxoPRW/EZDUOjQSMymQTWQJKaIWTXxL4ETx9VAdofRsxH
- 1pntH+n6NhQwxXW3M12fPcKiL5ADcuXldDKiDw4m+7ix+qwvBlo3nspOLghaJ2LE6mxrOiKA5Lh
- GMTERNprgwZauxVcqC/p8dLI9p6C/LOkJmscaf6mdPih3AOPO2LV5vS62FSOrim10LguG5ezUsF
- rdAkmDzMNpwcB3l0gkLlsufFyGUR7bS4yrPNzNHAbiSDJiUdpsUzX7AZ0qjMDEeQhvmbO0coQJz
- 4Dc1QnM6RvCUkwZGaB0uRcWv6crLl/+68sTOTDKRYLJY7AFXUTAN+lczmFotg9pSQAz65D+NPWn
- mWAaXfwB8yIBs0IZagQ==
-X-Proofpoint-GUID: k-5kS7gQwSwb7EbHSrKEnUBgm0EngagK
-X-Proofpoint-ORIG-GUID: k-5kS7gQwSwb7EbHSrKEnUBgm0EngagK
-X-Authority-Analysis: v=2.4 cv=QoFTHFyd c=1 sm=1 tr=0 ts=69af07a3 cx=c_pps
+X-Proofpoint-GUID: IXXixi4WEaMt5ZLipHNyYmLY2v6HWLsd
+X-Authority-Analysis: v=2.4 cv=Hp172kTS c=1 sm=1 tr=0 ts=69af18ba cx=c_pps
  a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
  a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=VwQbUJbxAAAA:8
- a=x61hcHDQ_TxU8J0rBBAA:9 a=QEXdDO2ut3YA:10
+ a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8
+ a=o9bg_TheAfZNAX0b3qsA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA5MDE2NSBTYWx0ZWRfX6z/xa1oiKPHE
+ y5EqU++9e+D9gbPsThEA40KAIQaMNONuQFv6rphXC4UXK9hbuizpabscJIBcCstT+gR2HtuKysP
+ juuUkxGaMl7wxMTZHQleqdpaj1BApzfJEmhJlxbY5TY+zaAhKCE7FmRzIMEIOEQTi0cM+UreNNn
+ frwDdmfnFwh4sJREHHlQDdGWVECyjZbYar7Sfrv1WmeMPxeeCh8/LcWzrRHQxRnw2tvA2a4D8NR
+ c7ma8KolSpfVjNgJ0OleioMQBwEZGtoJr7jBKqVpvCDiflI9IHYr2EnI/OMDVmsDQcjOAtzHE2E
+ Cqs2ZZL0dk00OuX7g/sw5bXFEAXaWjWvfls2vJrY4HNOaz6u97184uDaehJuW5B2dmjBv87lTJU
+ mdY20MyhE/Ql/CExB+A/Xcl6KkN3u1kmsdTu44KKD0LP1RVDdsR5dGWPIvWKEchoHvJnuy6WqMG
+ FGu2ZyF+vBxNE+HNtfg==
+X-Proofpoint-ORIG-GUID: IXXixi4WEaMt5ZLipHNyYmLY2v6HWLsd
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-09_04,2026-03-09_02,2025-10-01_01
+ definitions=2026-03-09_05,2026-03-09_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 priorityscore=1501 phishscore=0
- lowpriorityscore=0 adultscore=0 clxscore=1011 malwarescore=0 suspectscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2602130000
- definitions=main-2603090158
-X-Headers-End: 1vzf5t-00068X-MW
+ bulkscore=0 adultscore=0 malwarescore=0 impostorscore=0 suspectscore=0
+ spamscore=0 phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603090165
+X-Headers-End: 1vzfqm-0008Te-R4
 Subject: Re: [f2fs-dev] [PATCH v3 00/12] vfs: change inode->i_ino from
  unsigned long to u64
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -159,60 +160,102 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-[ I/O socket time out.  Trimming the To list.]
+On Mon, 2026-03-09 at 13:59 -0400, Jeff Layton wrote:
+> On Mon, 2026-03-09 at 13:47 -0400, Mimi Zohar wrote:
+> > [ I/O socket time out.  Trimming the To list.]
+> > 
+> > On Wed, 2026-03-04 at 10:32 -0500, Jeff Layton wrote:
+> > > This version squashes all of the format-string changes and the i_ino
+> > > type change into the same patch. This results in a giant 600+ line patch
+> > > at the end of the series, but it does remain bisectable.  Because the
+> > > patchset was reorganized (again) some of the R-b's and A-b's have been
+> > > dropped.
+> > > 
+> > > The entire pile is in the "iino-u64" branch of my tree, if anyone is
+> > > interested in testing this.
+> > > 
+> > >     https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/
+> > > 
+> > > Original cover letter follows:
+> > > 
+> > > ----------------------8<-----------------------
+> > > 
+> > > Christian said [1] to "just do it" when I proposed this, so here we are!
+> > > 
+> > > For historical reasons, the inode->i_ino field is an unsigned long,
+> > > which means that it's 32 bits on 32 bit architectures. This has caused a
+> > > number of filesystems to implement hacks to hash a 64-bit identifier
+> > > into a 32-bit field, and deprives us of a universal identifier field for
+> > > an inode.
+> > > 
+> > > This patchset changes the inode->i_ino field from an unsigned long to a
+> > > u64. This shouldn't make any material difference on 64-bit hosts, but
+> > > 32-bit hosts will see struct inode grow by at least 4 bytes. This could
+> > > have effects on slabcache sizes and field alignment.
+> > > 
+> > > The bulk of the changes are to format strings and tracepoints, since the
+> > > kernel itself doesn't care that much about the i_ino field. The first
+> > > patch changes some vfs function arguments, so check that one out
+> > > carefully.
+> > > 
+> > > With this change, we may be able to shrink some inode structures. For
+> > > instance, struct nfs_inode has a fileid field that holds the 64-bit
+> > > inode number. With this set of changes, that field could be eliminated.
+> > > I'd rather leave that sort of cleanups for later just to keep this
+> > > simple.
+> > > 
+> > > Much of this set was generated by LLM, but I attributed it to myself
+> > > since I consider this to be in the "menial tasks" category of LLM usage.
+> > > 
+> > > [1]: https://lore.kernel.org/linux-fsdevel/20260219-portrait-winkt-959070cee42f@brauner/
+> > > 
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > 
+> > Jeff, missing from this patch set is EVM.  In hmac_add_misc() EVM copies the
+> > i_ino and calculates either an HMAC or file meta-data hash, which is then
+> > signed. 
+> > 
+> > 
+> 
+> Thanks Mimi, good catch.
+> 
+> It looks like we should just be able to change the ino field to a u64
+> alongside everything else. Something like this:
+> 
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index c0ca4eedb0fe..77b6c2fa345e 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -144,7 +144,7 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+>                           char type, char *digest)
+>  {
+>         struct h_misc {
+> -               unsigned long ino;
+> +               u64 ino;
+>                 __u32 generation;
+>                 uid_t uid;
+>                 gid_t gid;
+> 
 
-On Wed, 2026-03-04 at 10:32 -0500, Jeff Layton wrote:
-> This version squashes all of the format-string changes and the i_ino
-> type change into the same patch. This results in a giant 600+ line patch
-> at the end of the series, but it does remain bisectable.  Because the
-> patchset was reorganized (again) some of the R-b's and A-b's have been
-> dropped.
-> 
-> The entire pile is in the "iino-u64" branch of my tree, if anyone is
-> interested in testing this.
-> 
->     https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/
-> 
-> Original cover letter follows:
-> 
-> ----------------------8<-----------------------
-> 
-> Christian said [1] to "just do it" when I proposed this, so here we are!
-> 
-> For historical reasons, the inode->i_ino field is an unsigned long,
-> which means that it's 32 bits on 32 bit architectures. This has caused a
-> number of filesystems to implement hacks to hash a 64-bit identifier
-> into a 32-bit field, and deprives us of a universal identifier field for
-> an inode.
-> 
-> This patchset changes the inode->i_ino field from an unsigned long to a
-> u64. This shouldn't make any material difference on 64-bit hosts, but
-> 32-bit hosts will see struct inode grow by at least 4 bytes. This could
-> have effects on slabcache sizes and field alignment.
-> 
-> The bulk of the changes are to format strings and tracepoints, since the
-> kernel itself doesn't care that much about the i_ino field. The first
-> patch changes some vfs function arguments, so check that one out
-> carefully.
-> 
-> With this change, we may be able to shrink some inode structures. For
-> instance, struct nfs_inode has a fileid field that holds the 64-bit
-> inode number. With this set of changes, that field could be eliminated.
-> I'd rather leave that sort of cleanups for later just to keep this
-> simple.
-> 
-> Much of this set was generated by LLM, but I attributed it to myself
-> since I consider this to be in the "menial tasks" category of LLM usage.
-> 
-> [1]: https://lore.kernel.org/linux-fsdevel/20260219-portrait-winkt-959070cee42f@brauner/
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Agreed.
 
-Jeff, missing from this patch set is EVM.  In hmac_add_misc() EVM copies the
-i_ino and calculates either an HMAC or file meta-data hash, which is then
-signed. 
+> 
+> That should make no material difference on 64-bit hosts. What's the
+> effect on 32-bit? Will they just need to remeasure everything or would
+> the consequences be more dire? Do we have any clue whether anyone is
+> using EVM in 32-bit environments?
+
+All good questions. Unfortunately I don't know the answer to most of them. What
+we do know: changing the size of the i_ino field would affect EVM file metadata
+verification and would require relabeling the filesystem.  Even packages
+containing EVM portable signatures, which don't include or verify the i_ino
+number, would be affected.
 
 Mimi
+
+
+
+
 
 
 _______________________________________________
