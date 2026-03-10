@@ -4,82 +4,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0B513EFCD9F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2026 09:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8596BEFCD9F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2026 09:40:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:From:References:To:MIME-Version:Date:Message-ID:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=71kjDQX5qzbj0c66nxNu33SIkMxp3NlCxucyMRvZLMQ=; b=ECiUSTGeR1uR7h29HnFHgX3wRS
-	TpNNjzGr4hbDm92YYLhbhMVELiDV+fNfOAwjmVy00hRXvBYD3Y/YK37TFf+N0WA8BMIcYlV2IJrsO
-	BX8K2pUDdUla/bqbauHXvLPXoAX0Fh7OtXOwok98tFvgwF4YT52GBAWBupkqZMcjc1TE=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:To:From:Message-ID:In-Reply-To:Date:MIME-Version:Sender:Reply-To:Cc:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:References:List-Owner;
+	bh=Asohf4u3hCMhsmGYTqQoFu6PSiQ2WJc0DvkGaIM0kqk=; b=MzeETSTabrPg/YMwEUYAKC7Say
+	aWVFh/BG9e3aGX++vnqCYvoDV7Fd7iNuEpg9obhsBAABqMNwXy7V4JOkURzW2CZyw4fKkF7o++zBn
+	+40dPaYIABXD9MSYS6kujrstG3sPt9dBJ9OVtMX+28YJrpuivbq+VNKuVCSZVYuhcamo=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vztYo-0006pj-Pt;
-	Tue, 10 Mar 2026 09:39:31 +0000
+	id 1vztZX-0005lc-DI;
+	Tue, 10 Mar 2026 09:40:16 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <monty_pavel@sina.com>) id 1vztYn-0006pU-6g
- for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Mar 2026 09:39:29 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <38-avaQkbANQIOPA0BB4H0FF83.6EE6B4KI4H2EDJ4DJ.2EC@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
+ id 1vztZW-0005lQ-Gk for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Mar 2026 09:40:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:In-Reply-To
+ :Date:MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MFo18v8wTczxcBf0vzuXmViSLHFGHwYGHsVDxa1YbWU=; b=gR4+tDhroZdMgQyvhLR5S5PuJU
- o8PCBpFyyLEJAeWSSWiJhjMwgQDGA/yvGYX7jLZGOSxIXYROiHMyBCwiV234ZVQspWN9G9PhE5Fkb
- Aht3WSD5P2ACB3qPTd445xCSiZuPAl7gloqImDO4BAEFJY8C4VyPtiRnLdKHnGeFhKuI=;
+ bh=i8Z0gVF0uPQ8qNSugfsMNVMLQ4iv7U/CKd+gpIjRAX8=; b=Dv4B277nnzeLD4HampBqshtyOb
+ V7Zqmt/LdVv+r2lFMKCOjxAifWs/i/P2h7i24cGI0A2tMPM1ttCWWMaJBCQ0f8DsDTA6QilTW4Vuy
+ Hs8J2iY+M5UYaaqBrZJ0sliLQ3jSGC9W/HcQY1be7bOwB63P9ceJ3uQ0lvJvD0DRRi6Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=MFo18v8wTczxcBf0vzuXmViSLHFGHwYGHsVDxa1YbWU=; b=IASGg90sIP+H9WFapTxBfpTcc0
- aoyo7l3ka63xNR7tWZg6XQGufvgiC6typqyHmtuxd6r0fZNR+um6j9GLPEd5YnuYecRQ72bvHuRK0
- aIh9K7nwUzNJhuGbSNfw/C9KkmgoDT9pHYkxcZUbBhB+1J/j+/m10himQ6cS/4BQrssE=;
-Received: from smtp153-162.sina.com.cn ([61.135.153.162])
+ h=Content-Type:To:From:Subject:Message-ID:In-Reply-To:Date:MIME-Version:
+ Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=i8Z0gVF0uPQ8qNSugfsMNVMLQ4iv7U/CKd+gpIjRAX8=; b=B
+ NkvOeoIC1PlaYWEuOvcK0RyYnX/bDhsE25fx+3nk4qCDCnHbaDzhebJZ3PwwKiUSgKLiajUay8E/9
+ W5CXCJKgbMGUz3sQO4cNKVJA/Xo20Y5NqlkoW1SBWidxPVSb7cEne4aJWP2BZ+Hv8JC5cElAzd59f
+ gB6tKdV0xSbFY56Y=;
+Received: from mail-ot1-f71.google.com ([209.85.210.71])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vztYm-0002ra-54 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Mar 2026 09:39:29 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208;
- t=1773135568; bh=MFo18v8wTczxcBf0vzuXmViSLHFGHwYGHsVDxa1YbWU=;
- h=Message-ID:Date:Subject:From;
- b=H/yQqWUskowRkjWMziDJ/cM0Z3iyETPWtounPVLBs5Zn/OICnAnYWaUGT2ZgNvLw3
- thOH6zZolEDpFGUkGdXmKnbNsp1OniKrvugtEaunbgRbCjOWc/EolxjiDbl3WV4mYW
- TpTQ8csyHy9AASHfuEYQa7uxdcS436YdRSjvuQEY=
-X-SMAIL-HELO: [10.189.138.37]
-Received: from unknown (HELO [10.189.138.37])([114.247.175.249])
- by sina.com (10.54.253.31) with ESMTP
- id 69AFE6C000000DCD; Tue, 10 Mar 2026 17:39:14 +0800 (CST)
-X-Sender: monty_pavel@sina.com
-X-Auth-ID: monty_pavel@sina.com
-Authentication-Results: sina.com; spf=none smtp.mailfrom=monty_pavel@sina.com;
- dkim=none header.i=none;
- dmarc=none action=none header.from=monty_pavel@sina.com
-X-SMAIL-MID: 3486916816112
-X-SMAIL-UIID: 77690C375FB04434897338805C96275A-20260310-173914-1
-Message-ID: <3f71d134-b6d6-4989-8a70-1dd78cc95c8c@sina.com>
-Date: Tue, 10 Mar 2026 17:39:12 +0800
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1vztZW-0002uA-Jz for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Mar 2026 09:40:15 +0000
+Received: by mail-ot1-f71.google.com with SMTP id
+ 46e09a7af769-7d753cb3174so10387781a34.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 10 Mar 2026 02:40:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1773135604; x=1773740404;
+ h=to:from:subject:message-id:in-reply-to:date:mime-version
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=i8Z0gVF0uPQ8qNSugfsMNVMLQ4iv7U/CKd+gpIjRAX8=;
+ b=HAzpgvzxEaAm7SqmUdITmW5GD3HFYnjkG4/DdKh+kSJkxvZd5/G/a+diIFN+EOuaqb
+ rCAzcwnqgEsp7Zln1znbwkyKEzuIpoRJanVjQBwW64NA4VBoOQfx+pzWiPNuu0GDO3qb
+ qlLEeRiTeklo7VeI3H6RzbO8E7aqvy9d7noYzbSpqwutvHD7Nde/5CtwFUeHvZwkJj7s
+ /vIMLkiP/JhRdD90ai6hICMk7zQUP0JrIWE5+738dkoWf+2oWmW+gaJ1VGxHsp9Kol00
+ M6hIpAOYIZbmx3Q/lzT7MF0bhHYOgfO3IJeIIkjgPQ/1nlNzknYDP6Whx0mf2cQJ8vD7
+ wo3g==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXhBGP6uyBMmGoBZcca1P5WaFW54hA9FlrdmNHoKSznBtr5GIV7pVrE+Xyzt/ni3no6awSr9z7IOv1nWW50B/nU@lists.sourceforge.net
+X-Gm-Message-State: AOJu0Yw9iN7z9H9lxQ1eg6XvRDtDbY89OOmYeqJ0CehCvhqJ0Yv6VwIW
+ 8TNzPY2qpxamftUUHx6s3m4b9mMLtUrS5kgTnLCY/izUKfgbRSvrT6cuVqS0cKUfEpI6DF82mDx
+ 5jw/fmjC08Prtt3cdebk0GY3yC8xp84tRlyzo9b78KHkZvU6SLVShGqXLLQQ=
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20260306121759.1935322-2-monty_pavel@sina.com>
- <a3b294ae-1012-4e87-a2a8-1ef91754c9b1@kernel.org>
-Content-Language: en-US
-From: Yongpeng Yang <monty_pavel@sina.com>
-In-Reply-To: <a3b294ae-1012-4e87-a2a8-1ef91754c9b1@kernel.org>
-X-Headers-End: 1vztYm-0002ra-54
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix data loss caused by fsync not
- writing any node folio
+X-Received: by 2002:a05:6820:3102:b0:66f:c72c:7c7 with SMTP id
+ 006d021491bc7-67b9bca8899mr9412099eaf.18.1773135603949; Tue, 10 Mar 2026
+ 02:40:03 -0700 (PDT)
+Date: Tue, 10 Mar 2026 02:40:03 -0700
+In-Reply-To: <aa_R-6SdHYBBkQX-@hyeyoo>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69afe6f3.050a0220.310d8.0038.GAE@google.com>
+From: syzbot <syzbot+cae7809e9dc1459e4e63@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, catalin.marinas@arm.com, chao@kernel.org, 
+ hao.li@linux.dev, harry.yoo@oracle.com, jaegeuk@kernel.org, jannh@google.com, 
+ liam.howlett@oracle.com, linkinjeon@kernel.org, 
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+ pfalcato@suse.de, sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
+ vbabka@kernel.org, vbabka@suse.cz, wangqing7171@gmail.com
+X-Headers-End: 1vztZW-0002uA-Jz
+Subject: Re: [f2fs-dev] [syzbot] [mm?] [f2fs?] [exfat?] memory leak in
+ __kfree_rcu_sheaf
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,105 +101,194 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Yongpeng Yang <yangyongpeng@xiaomi.com>,
- linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 3/9/26 11:45, Chao Yu via Linux-f2fs-devel wrote:
-> On 3/6/26 20:18, Yongpeng Yang wrote:
->> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
->>
->> During fsync, the flow reaches f2fs_fsync_node_pages(), which scans all
->> dirty node folios of the node mapping. If there are no dirty node
->> folios, fsync will not write any node folio. The scenario is as follows:
->>
->> create & write & fsync 'file A'                 writeback node folio
->> - f2fs_do_sync_file // inline inode
->>  - f2fs_write_inode // inode folio is dirty
->>
->>                                                 - f2fs_write_node_pages
->>                                                  - f2fs_sync_node_pages
->>  - f2fs_fsync_node_pages // no dirty node folios
->>  sudden poweroff and lost 'file A'
->>
->> The root cause of the data loss is that although the inode folio is
->> written successfully, the corresponding node folio is not written with
->> the FSYNC_BIT_SHIFT mark. As a result, the recovery procedure ignores
->> this file.
->>
->> This patch ensures that fsync writes at least one node folio with the
->> FSYNC_BIT_SHIFT mark for the inode, so that the recovery procedure can
->> properly detect and process it.
-> 
-> I'm not sure, but I suspect that the problem should has been resolved by
-> commit 88bd02c9472a ("f2fs: fix conditions to remain recovery information
-> in f2fs_sync_file") has fixed this problem?
+Hello,
 
-f2fs_do_sync_file() checks whether the inode needs to be marked dirty
-again and written back, but there is an issue with how
-f2fs_need_inode_block_update() accesses the nat_entry flag. My previous
-root cause analysis was incorrect, the fix should instead address the
-problem in f2fs_need_inode_block_update(). The updated change is
-included in this patchset:
-https://lore.kernel.org/all/20260310093611.2865092-2-monty_pavel@sina.com/
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+memory leak in __kthread_create_on_node
 
-if (f2fs_need_inode_block_update(sbi, ino)) {
-	f2fs_mark_inode_dirty_sync(inode, true);
-	f2fs_write_inode(inode, NULL);
-	goto sync_nodes;
-}
+BUG: memory leak
+unreferenced object 0xffff88811351d1b0 (size 16):
+  comm "syz.0.38", pid 7021, jiffies 4294948268
+  hex dump (first 16 bytes):
+    66 32 66 73 5f 66 6c 75 73 68 2d 37 3a 30 00 00  f2fs_flush-7:0..
+  backtrace (crc 73f9c04e):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4548 [inline]
+    slab_alloc_node mm/slub.c:4870 [inline]
+    __do_kmalloc_node mm/slub.c:5263 [inline]
+    __kmalloc_node_track_caller_noprof+0x3e0/0x5d0 mm/slub.c:5372
+    kvasprintf+0x6e/0xf0 lib/kasprintf.c:25
+    __kthread_create_on_node+0x9e/0x1c0 kernel/kthread.c:491
+    kthread_create_on_node+0x73/0xa0 kernel/kthread.c:559
+    f2fs_create_flush_cmd_control+0x178/0x200 fs/f2fs/segment.c:707
+    f2fs_build_segment_manager+0x212/0x3630 fs/f2fs/segment.c:5734
+    f2fs_fill_super+0x14b1/0x3c20 fs/f2fs/super.c:5140
+    get_tree_bdev_flags+0x1c0/0x290 fs/super.c:1694
+    vfs_get_tree+0x30/0x120 fs/super.c:1754
+    fc_mount fs/namespace.c:1193 [inline]
+    do_new_mount_fc fs/namespace.c:3763 [inline]
+    do_new_mount fs/namespace.c:3839 [inline]
+    path_mount+0x5a9/0x1360 fs/namespace.c:4159
+    do_mount fs/namespace.c:4172 [inline]
+    __do_sys_mount fs/namespace.c:4361 [inline]
+    __se_sys_mount fs/namespace.c:4338 [inline]
+    __x64_sys_mount+0x1a3/0x1e0 fs/namespace.c:4338
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xe2/0xf80 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Thanks
-Yongpeng,
+BUG: memory leak
+unreferenced object 0xffff88810b6a4700 (size 4544):
+  comm "kthreadd", pid 2, jiffies 4294948268
+  hex dump (first 32 bytes):
+    04 00 08 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 01 00 00 00 80 00 00 00 00 00 00 00  ................
+  backtrace (crc 71339aaa):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4548 [inline]
+    slab_alloc_node mm/slub.c:4870 [inline]
+    kmem_cache_alloc_node_noprof+0x373/0x4d0 mm/slub.c:4922
+    alloc_task_struct_node kernel/fork.c:185 [inline]
+    dup_task_struct kernel/fork.c:916 [inline]
+    copy_process+0x286/0x28c0 kernel/fork.c:2050
+    kernel_clone+0xac/0x6e0 kernel/fork.c:2654
+    kernel_thread+0x80/0xb0 kernel/fork.c:2715
+    create_kthread kernel/kthread.c:459 [inline]
+    kthreadd+0x186/0x250 kernel/kthread.c:817
+    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
+    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
 
-> 
-> Thanks,
-> 
->>
->> Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
->> ---
->> v2:
->> - Use f2fs_folio_put instead of folio_put to dec folio ref count.
->> ---
->>  fs/f2fs/node.c | 16 ++++++++++++++++
->>  1 file changed, 16 insertions(+)
->>
->> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->> index 2fbfecaf3f7b..e14e5db1e8e6 100644
->> --- a/fs/f2fs/node.c
->> +++ b/fs/f2fs/node.c
->> @@ -1982,6 +1982,22 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
->>  		folio_batch_release(&fbatch);
->>  		cond_resched();
->>  	}
->> +	/*
->> +	 * All dirty node folios may be written by other thread, but CP hasn't
->> +	 * been written yet. So, we need to flush one of inode's dnode to
->> +	 * recovery this inode when encounter sudden power off.
->> +	 */
->> +	if (!atomic && nwritten == 0) {
->> +		struct folio *ifolio;
->> +
->> +		ifolio = f2fs_get_inode_folio(sbi, inode->i_ino);
->> +		if (IS_ERR(ifolio))
->> +			return PTR_ERR(ifolio);
->> +		f2fs_folio_wait_writeback(ifolio, NODE, true, true);
->> +		folio_mark_dirty(ifolio);
->> +		f2fs_folio_put(ifolio, true);
->> +		goto retry;
->> +	}
->>  	if (atomic && !marked) {
->>  		f2fs_debug(sbi, "Retry to write fsync mark: ino=%u, idx=%lx",
->>  			   ino, last_folio->index);
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+BUG: memory leak
+unreferenced object 0xffff888109f45f00 (size 184):
+  comm "kthreadd", pid 2, jiffies 4294948268
+  hex dump (first 32 bytes):
+    02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc 5ee6cb00):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4548 [inline]
+    slab_alloc_node mm/slub.c:4870 [inline]
+    kmem_cache_alloc_noprof+0x372/0x480 mm/slub.c:4877
+    prepare_creds+0x22/0x600 kernel/cred.c:185
+    copy_creds+0x44/0x290 kernel/cred.c:286
+    copy_process+0x7a7/0x28c0 kernel/fork.c:2084
+    kernel_clone+0xac/0x6e0 kernel/fork.c:2654
+    kernel_thread+0x80/0xb0 kernel/fork.c:2715
+    create_kthread kernel/kthread.c:459 [inline]
+    kthreadd+0x186/0x250 kernel/kthread.c:817
+    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
+    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+BUG: memory leak
+unreferenced object 0xffff8881096f8240 (size 32):
+  comm "kthreadd", pid 2, jiffies 4294948268
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    f8 6e 0a 00 81 88 ff ff 00 00 00 00 00 00 00 00  .n..............
+  backtrace (crc 13ba6aa5):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4548 [inline]
+    slab_alloc_node mm/slub.c:4870 [inline]
+    __do_kmalloc_node mm/slub.c:5263 [inline]
+    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5276
+    kmalloc_noprof include/linux/slab.h:954 [inline]
+    kzalloc_noprof include/linux/slab.h:1188 [inline]
+    lsm_blob_alloc+0x4d/0x80 security/security.c:192
+    lsm_cred_alloc security/security.c:209 [inline]
+    security_prepare_creds+0x2d/0x290 security/security.c:2763
+    prepare_creds+0x395/0x600 kernel/cred.c:215
+    copy_creds+0x44/0x290 kernel/cred.c:286
+    copy_process+0x7a7/0x28c0 kernel/fork.c:2084
+    kernel_clone+0xac/0x6e0 kernel/fork.c:2654
+    kernel_thread+0x80/0xb0 kernel/fork.c:2715
+    create_kthread kernel/kthread.c:459 [inline]
+    kthreadd+0x186/0x250 kernel/kthread.c:817
+    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
+    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+BUG: memory leak
+unreferenced object 0xffff888125626e40 (size 192):
+  comm "kthreadd", pid 2, jiffies 4294948268
+  hex dump (first 32 bytes):
+    02 00 00 00 00 00 00 00 00 00 00 00 ff ff ff ff  ................
+    01 00 00 00 00 00 00 00 60 4a 8a 82 ff ff ff ff  ........`J......
+  backtrace (crc 3a1ec858):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4548 [inline]
+    slab_alloc_node mm/slub.c:4870 [inline]
+    __kmalloc_cache_noprof+0x377/0x480 mm/slub.c:5379
+    kmalloc_noprof include/linux/slab.h:950 [inline]
+    kzalloc_noprof include/linux/slab.h:1188 [inline]
+    set_kthread_struct+0x58/0x150 kernel/kthread.c:107
+    copy_process+0x15b8/0x28c0 kernel/fork.c:2152
+    kernel_clone+0xac/0x6e0 kernel/fork.c:2654
+    kernel_thread+0x80/0xb0 kernel/fork.c:2715
+    create_kthread kernel/kthread.c:459 [inline]
+    kthreadd+0x186/0x250 kernel/kthread.c:817
+    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
+    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+BUG: memory leak
+unreferenced object 0xffff88812cb53700 (size 64):
+  comm "kthreadd", pid 2, jiffies 4294948268
+  hex dump (first 32 bytes):
+    20 09 d5 89 ff ff ff ff 00 00 00 00 00 00 00 00   ...............
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc e7a33bad):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4548 [inline]
+    slab_alloc_node mm/slub.c:4870 [inline]
+    __do_kmalloc_node mm/slub.c:5263 [inline]
+    __kmalloc_noprof+0x3bd/0x560 mm/slub.c:5276
+    kmalloc_noprof include/linux/slab.h:954 [inline]
+    kzalloc_noprof include/linux/slab.h:1188 [inline]
+    lsm_blob_alloc+0x4d/0x80 security/security.c:192
+    lsm_task_alloc security/security.c:244 [inline]
+    security_task_alloc+0x2a/0x260 security/security.c:2682
+    copy_process+0xedf/0x28c0 kernel/fork.c:2205
+    kernel_clone+0xac/0x6e0 kernel/fork.c:2654
+    kernel_thread+0x80/0xb0 kernel/fork.c:2715
+    create_kthread kernel/kthread.c:459 [inline]
+    kthreadd+0x186/0x250 kernel/kthread.c:817
+    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
+    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+BUG: memory leak
+unreferenced object 0xffff88810b507180 (size 1152):
+  comm "kthreadd", pid 2, jiffies 4294948268
+  hex dump (first 32 bytes):
+    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    90 71 50 0b 81 88 ff ff 90 71 50 0b 81 88 ff ff  .qP......qP.....
+  backtrace (crc ef1916d7):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4548 [inline]
+    slab_alloc_node mm/slub.c:4870 [inline]
+    kmem_cache_alloc_noprof+0x372/0x480 mm/slub.c:4877
+    copy_signal kernel/fork.c:1700 [inline]
+    copy_process+0x10da/0x28c0 kernel/fork.c:2220
+    kernel_clone+0xac/0x6e0 kernel/fork.c:2654
+    kernel_thread+0x80/0xb0 kernel/fork.c:2715
+    create_kthread kernel/kthread.c:459 [inline]
+    kthreadd+0x186/0x250 kernel/kthread.c:817
+    ret_from_fork+0x23c/0x4b0 arch/x86/kernel/process.c:158
+    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
+
+
+Tested on:
+
+commit:         1f318b96 Linux 7.0-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1751f8d6580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2c6ad6fefffa76b1
+dashboard link: https://syzkaller.appspot.com/bug?extid=cae7809e9dc1459e4e63
+compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10def8d6580000
 
 
 
