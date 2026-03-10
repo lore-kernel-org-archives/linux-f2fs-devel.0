@@ -4,75 +4,120 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 30F2AFD2D64
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2026 12:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6A9E9EB1054
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2026 14:43:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=X+5BTfPU5zq5rzGqwt13NO2SDNO7uwirmawblG6lekM=; b=KhNAaA7Gdc380JQaY9M9kR69tH
-	nPoFdAABigN6FCxZUMBXqbXUfIhKn662N9h72KPZNeX1DWdvFUzVFFZH3juTfd2U3/SFKBUxKKVFi
-	YWchAFFWJdlYfYMGbtdPJWmhKI3SAppB6uaZD/38W4OpfSux/+GRhusf02x4zN/cgULM=;
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=zCgjUTY7vT1S63Jq4plNBBOrDBd+vZ8vvktIFkLKlGM=; b=Z5DZ0EaXs4T84SYrR0Q0vwR6Ew
+	QO+oOqUMTStGs+hFBl5VZqgN2tYWfu1ZWDpQoW6uiCclAN7G7OM7MnorfKNjovgHXxEjLoaURKFSX
+	fSHT/cYy42t0/WAnj7UPTjJBV8Ha63KkpZk146/Is8AbPM/f/OVl9AanAY93d0paIF/M=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vzvrq-0003WG-Aj;
-	Tue, 10 Mar 2026 12:07:18 +0000
+	id 1vzyIh-0003M6-Ky;
+	Tue, 10 Mar 2026 14:43:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1vzvro-0003WA-Jg
+ (envelope-from <aalbersh@redhat.com>) id 1vzyIg-0003Ly-EH
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Mar 2026 12:07:16 +0000
+ Tue, 10 Mar 2026 14:43:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:In-Reply-To:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=e+Gjk+qeipwXi1P2nL+D1QzCPAmCNaD8NFucf+YqUjk=; b=fUC8nmAv6b9+R4I1FKvupyxh8g
- sJb7iTnHCoMwxwayanmnh2mvBvj+SsXAUnIB8uLWF6XtfDli7oNFZISR1H1imW3w4LIuwXiQRbubO
- QpaKUlQKscjfBdhvuB4i8Lgz14nyuMnKT7g95rIcMkNad45GbwIPLj4qZ9ipGP8rh74k=;
+ bh=BMpkjIBAlArWoSNA1cagHtqrYddD4BAtLIKx0zMiI/c=; b=U6Rumld78x67+R9s3eT8aEWtex
+ SJLe+gqAKE6TUqAJ/drrCa6qdu5KEtYoogvPtE3x0BgYrEZDBxYhbECtDxYJXISUj9Yhg0j3uD8tz
+ QVN294I7UUGzMHVP3H1RKEC4LBN2eburvbbFNDKd0Ks9q0OLYO1B4pvHOdlMpML/ejrM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=e+Gjk+qeipwXi1P2nL+D1QzCPAmCNaD8NFucf+YqUjk=; b=R
- Baeoo0bvRD2Kk2hVC023qOGlYwNsYKaGArzCN26j6Je6QJUkdnD57wRl/vx2AE0seIyw44ad0wt79
- Z6jKexjGC75IUC4ObjBmBNRN6CT8l6sD7nnW4n5fbG57ik3vsP24abpWJKm60wtfnPyw6T9RBj79W
- tBxpobOfFUifzsCk=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ h=Content-Type:In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=BMpkjIBAlArWoSNA1cagHtqrYddD4BAtLIKx0zMiI/c=; b=IrV6qehnUawGSX81mmhHDEoZTr
+ AMT1JhqV3Or6fRfIrqIugKYb2vgL1P+9cGFE7Td7AM+DqQA9irApD1arSGl7LRrYuoY5YcG0DEm7l
+ X3uPEG7hqH9MESy4gyOeYvge0YzOhyXeh5ncWgWMLfHw1GbGcXR3UO+oijiJiDa9CJyU=;
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vzvro-00033B-7f for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Mar 2026 12:07:16 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id D5C9A43C8F;
- Tue, 10 Mar 2026 12:07:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8866EC2BC86;
- Tue, 10 Mar 2026 12:07:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1773144425;
- bh=MgyeJ+AampgP908d04ymRaV+WbMCJaGwhWRDM/yKQbY=;
- h=From:To:Cc:Subject:Date:From;
- b=Rtqso3dXroGYgkUZzyki7I2+6CPjbhz7uvIyY28QtvMzC6MARZsGpFjpFSDdTiZ7n
- xiq8zGe8/UDnXctrLg2JcmLz3dU9HOItUOcrCrS0oB0CZUu4fxD9LRUnvteiBjgprA
- U0El7o0p/fCo7x5YZghmRgABIzZ5PE1EJa97RThToF0e+0EEQZZ2dxzejxzadGep/W
- ig0fZqFKwhydO2E/aaBZgm77BSnQnr9psX1JEWRjJ8tyvzi+mUcLUEkZhFJ0y/svU8
- RQd9+SXnY0g1QPwiJGbnSgBNF0/KLFKr++e4z2cYgfRy0UtLLN1Wglbu1hrWDeI1Ru
- ZnU5m7AydtohA==
-To: jaegeuk@kernel.org
-Date: Tue, 10 Mar 2026 20:06:55 +0800
-Message-ID: <20260310120656.604210-1-chao@kernel.org>
-X-Mailer: git-send-email 2.53.0.473.g4a7958ca14-goog
+ id 1vzyIf-0001vH-VH for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Mar 2026 14:43:10 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1773153778;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=BMpkjIBAlArWoSNA1cagHtqrYddD4BAtLIKx0zMiI/c=;
+ b=Wu6auwHR35+CvewBNjz4Y2soT3YOiRe29xV2QAAMRWj9PiGDJlsxAAZaH5fGBHFNdl1IKR
+ q9KQc53P0Rc8iySp3DxwSVVP9xiXv30K+31Z1DLJM2lUkC+6hjpO2ixSBua24aGGPWQ4ro
+ qR2NWFS6iW3AxnmukJ3sK6SFcZqC1SE=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-440-qbDJevreNdKnJ4033UYUiw-1; Tue, 10 Mar 2026 10:42:57 -0400
+X-MC-Unique: qbDJevreNdKnJ4033UYUiw-1
+X-Mimecast-MFC-AGG-ID: qbDJevreNdKnJ4033UYUiw_1773153776
+Received: by mail-ej1-f72.google.com with SMTP id
+ a640c23a62f3a-b8f5bce308dso1148922066b.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 10 Mar 2026 07:42:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1773153776; x=1773758576;
+ h=in-reply-to:content-disposition:mime-version:references:message-id
+ :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=BMpkjIBAlArWoSNA1cagHtqrYddD4BAtLIKx0zMiI/c=;
+ b=gCtvNObGwQK8AfVMTUQk2fFKG7CR5JICQh7YRke7U2gR80Vd0CIGOun09DA19b/anf
+ UYwQRd57c4ZNcBmuZvyrCR3SrkYem2gGzgKZ21yUI801mnfqBb3/+Q4cwFhMSH+SPRVa
+ azw2JxJP1DybI61e+1hiSM7i+MMNkRA3LBK8UFCtlntEZBR2pLAPFuv8TWfR+vJhxMcp
+ dfF+tuxaKx/Jbupaz7Oa9hUwx6ah5noGgItZb4UcbKSBnTRVwuKZn72lSKRBJpulLQOr
+ Fb9kCUVfuui2y5TB8OTUkpPzCOjfGdj7fuv7eEZ976Ij/vQw2+xu5IQrT5SpMDf7AWLs
+ NHpQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXQ0nOuu9Cverc+i6nSyfban+9qhQfm+PHgiz0zPHCfl6Notffl3MAEi6jQjP6/4K0K3AXrAtuh0Y/00FpbeTvS@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YwYxAZgHZQznJv7T/4qVxJRRgZr5lmiIWo8iv33HcNNeuTgD6Sn
+ cp4KiyyHRBSfH1HwONsH2Qb6X1qfNm+nvlX3xRhJDMA/7aYjNkyWLDui9WC2K4kNlV3NnBGM2Sk
+ KBZ9QSuQi3gcpQiKA7j0b6GgNxL46jEtP1A63Fiuw22DeGqFrS/gk7+Zi4FxfskW5F/ex063raq
+ 6ZZw==
+X-Gm-Gg: ATEYQzwBGz7N3w+/Brr+qQWAGFtH60MHDcNEDSW/EmmqGlVSPiStv2itQ8CVERzJJdF
+ mdwmn5yM7QB1bOzt1clC4mk7Iobei5HZzWvVZoqwLoGAWqSP5mJCOZk/S0xD0ZXX8xQ80UzrkDQ
+ pp8P3wkvuJ1KE10JiCkWHAHPJpDy3OV33IjspagrcVBDpUA27MBYvf+u2E0v0fiF9HgSsqdxeYR
+ r/2+MNdJtnAA9Tx6FtR2NAuwUeYE6dberpQQlXHl27M/aiqFOggi7iz045z74W/rawJuAXnmMOC
+ ABHGN1BDF5weakEceGBUYpxLzsxDU2+h8/nS34AGbxzNNf0yK9q/j7VmrpLucl6guvyAfj6B2BR
+ qp+7qAFPiHrE=
+X-Received: by 2002:a17:907:98d:b0:b93:edc0:e2e8 with SMTP id
+ a640c23a62f3a-b942e02c34cmr869671266b.48.1773153776095; 
+ Tue, 10 Mar 2026 07:42:56 -0700 (PDT)
+X-Received: by 2002:a17:907:98d:b0:b93:edc0:e2e8 with SMTP id
+ a640c23a62f3a-b942e02c34cmr869668766b.48.1773153775426; 
+ Tue, 10 Mar 2026 07:42:55 -0700 (PDT)
+Received: from thinky ([217.30.74.39]) by smtp.gmail.com with ESMTPSA id
+ a640c23a62f3a-b94dad4271esm420956866b.32.2026.03.10.07.42.54
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 10 Mar 2026 07:42:55 -0700 (PDT)
+Date: Tue, 10 Mar 2026 15:42:54 +0100
+To: "Darrick J. Wong" <djwong@kernel.org>
+Message-ID: <usl6wrms76zioxpq7xqzo26plpvw642pqrb2zxe4nysnmipm2o@ntl5ml3okjyq>
+References: <20260309192355.176980-1-aalbersh@kernel.org>
+ <20260309192355.176980-11-aalbersh@kernel.org>
+ <20260310010502.GB1105363@frogsfrogsfrogs>
 MIME-Version: 1.0
-X-Headers-End: 1vzvro-00033B-7f
-Subject: [f2fs-dev] [PATCH 1/2] f2fs-tools: fix to use HDIO_GETGEO instead
- of HDIO_GETGIO
+In-Reply-To: <20260310010502.GB1105363@frogsfrogsfrogs>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Ayoc7XVLg8PdwfvWa3l4dE8X9E68xFaK9e90lHFa9rg_1773153776
+X-Mimecast-Originator: redhat.com
+Content-Disposition: inline
+X-Headers-End: 1vzyIf-0001vH-VH
+Subject: Re: [f2fs-dev] [PATCH v4 10/25] iomap: teach iomap to handle
+ fsverity holes and verify data holes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,70 +129,68 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: Chenghao Fan <23b903068@stu.hit.edu.cn>,
- linux-f2fs-devel@lists.sourceforge.net
+From: Andrey Albershteyn via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: fsverity@lists.linux.dev, ebiggers@kernel.org,
+ Andrey Albershteyn <aalbersh@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, hch@lst.de,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-There is no definition of HDIO_GETGIO, it should be a typo, let's use
-HDIO_GETGEO instead.
+On 2026-03-09 18:05:02, Darrick J. Wong wrote:
+> > +		/*
+> > +		 * Handling of fsverity "holes". We hit this for two case:
+> > +		 *   1. No need to go further, the hole after fsverity
+> > +		 *	descriptor is the end of the fsverity metadata.
+> > +		 *
+> > +		 *   2. This folio contains merkle tree blocks which need to be
+> > +		 *	synthesized. If we already have fsverity info (ctx->vi)
+> > +		 *	synthesize these blocks.
+> > +		 */
+> > +		if ((iomap->flags & IOMAP_F_FSVERITY) &&
+> > +		    iomap->type == IOMAP_HOLE) {
+> > +			/*
+> > +			 * Don't cause lookup if we already have fsverity
+> > +			 * context from the previous tree hole
+> > +			 */
+> > +			if (!ctx->vi)
+> > +				ctx->vi = fsverity_get_info(iter->inode);
+> > +			if (ctx->vi)
+> 
+> Is it an error if ctx->vi isn't set here? 
 
-Reported-by: Chenghao Fan <23b903068@stu.hit.edu.cn>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- lib/libf2fs.c  | 4 ++--
- tools/fibmap.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+no
 
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index 13e4d0d..843494e 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -953,7 +953,7 @@ int get_device_info(int i)
- 	uint32_t total_sectors;
- #endif
- 	struct stat *stat_buf;
--#ifdef HDIO_GETGIO
-+#ifdef HDIO_GETGEO
- 	struct hd_geometry geom;
- #endif
- #if !defined(WITH_ANDROID) && defined(__linux__)
-@@ -1062,7 +1062,7 @@ int get_device_info(int i)
- 		dev->total_sectors /= dev->sector_size;
- 
- 		if (i == 0) {
--#ifdef HDIO_GETGIO
-+#ifdef HDIO_GETGEO
- 			if (ioctl(fd, HDIO_GETGEO, &geom) < 0)
- 				c.start_sector = 0;
- 			else
-diff --git a/tools/fibmap.c b/tools/fibmap.c
-index 3acc77b..0a92551 100644
---- a/tools/fibmap.c
-+++ b/tools/fibmap.c
-@@ -88,7 +88,7 @@ static void stat_bdev(struct stat *st, unsigned int *start_lba)
- #endif
- {
- 	struct stat bdev_stat;
--#ifdef HDIO_GETGIO
-+#ifdef HDIO_GETGEO
- 	struct hd_geometry geom;
- #endif
- 	char devname[32] = { 0, };
-@@ -105,7 +105,7 @@ static void stat_bdev(struct stat *st, unsigned int *start_lba)
- 		goto out;
- 
- 	if (S_ISBLK(bdev_stat.st_mode)) {
--#ifdef HDIO_GETGIO
-+#ifdef HDIO_GETGEO
- 		if (ioctl(fd, HDIO_GETGEO, &geom) < 0)
- 			*start_lba = 0;
- 		else
+> We won't fill the folio
+> with the zerohash, but we'll set uptodate anyway...
+> 
+> > +				fsverity_folio_zero_hash(folio, poff, plen,
+> > +							 ctx->vi);
+> > +			iomap_set_range_uptodate(folio, poff, plen);
+> 
+> ...though I suppose it's the case that the uninitialized folio contents
+> will most likely cause fsverity to report data corruption so at least
+> it's obvious.
+> 
+> OTOH it does seem a little strange to set uptodate having not
+> initialized the folio contents.
+
+This the first case described in the comment above:
+
++		 * Handling of fsverity "holes". We hit this for two case:
++		 *   1. No need to go further, the hole after fsverity
++		 *	descriptor is the end of the fsverity metadata.
+
+fsverity will not read this part of the folio. I think this can be
+zeroed, but I don't really see the point to do so as no one will
+read it and we use this folio once, for reading the descriptor.
+
 -- 
-2.49.0
+- Andrey
 
 
 
