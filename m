@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 67DEFFCC9DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2026 08:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E7666F3C27D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2026 09:12:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=YumJijyFFyFS/AXXyBfx63kTkSBs51bV8am++fIiKEs=; b=YDkoicLTq4gH+oFecptccDeKss
-	AiE7jF+Bbc2DAcR7Hb8LiVfMlz3i/m15M7EMjAc6UFL2Ovw8UQOYTKY4lQfZtwgEGaUxCmR8gk87n
-	CtlmWdHXr3TqcD6PHbQ2d+k07JICDNsZ4hKlF5P0aPhac2uiILXbgO2q1ADsJffqECd0=;
+	bh=5ENVAfmWvzn1b70OMAgmhNVwamV4fXVKXsxtoofbr/o=; b=kAazelGRnuWzkzSQZ4r6VMIIB2
+	2CSRQqonO/EAwOo+M+UxhViu7PrtNywS6A8LJhq8eGq2mLu8U7jz6fm541O6bkIRQaneN+i0YLZ/F
+	KDKvBxMHYczg2SdFre4ucyQZoKo5y6jsStavxPl6n1JtYRpgC+1ogHbziJdcCovnbQt4=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vzsix-00024s-9M;
-	Tue, 10 Mar 2026 08:45:56 +0000
+	id 1vzt8I-0003IX-HM;
+	Tue, 10 Mar 2026 09:12:07 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1vzsiw-00024m-MJ
+ (envelope-from <hch@lst.de>) id 1vzt7z-0003H0-Et
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Mar 2026 08:45:55 +0000
+ Tue, 10 Mar 2026 09:11:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2GTo/UKEXmNc6/moESIzVvtsJWPxVqrpeu18Y9/uTE0=; b=VUBemvd8Clfa3zsPirhosHDn9n
- HN9WBzsZIf1Xt5LxhaMw6Ax+1DHt/yFRcV+V2o8w1uwrhZeg8LtzO6vQ9PawHPRqwdPqr1uCsjG+m
- v+6l2K6MBUVhqEgApW6MwELcoJXxf8P3bplIZxuxXIxb4vIW3uBJQM+f68oB+z5YSQMw=;
+ bh=LE2RxnyN/jDRTJaRtTBPD/kfuAhDiKppFDljYTHjPJU=; b=bdK4l7EmvenH2Ep0HhkIBjS5Mq
+ yZHOkdPhYMJelH7wvD13S1X6jPfbRG6mRiIDzLumzbh58IZuGFTfXZRx8qOIO6LrKgoSahcBbG/Ad
+ g/0N+6yzLlLcrTkxOoQ7eu8CRkNsYifi3HoIyHj2xepvNEwPrbmgj0iDz9dr2rqx9qvI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,29 +42,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2GTo/UKEXmNc6/moESIzVvtsJWPxVqrpeu18Y9/uTE0=; b=fZQDK1tIsuGYW7NOGurlJK3sVA
- P8LoRPpOvZmsFAkG28P6oCFr4glOw8AA8M74+qvajdeMYuLe7l7Mqe74YeXnAmMDQfovh1zynMZ7a
- /2L62vs3kziZqfQpqcUz9FDyENp8O0UHIu/B9RM1R12ijuULs/k4PRhn5i4Oe+dQyKvA=;
+ bh=LE2RxnyN/jDRTJaRtTBPD/kfuAhDiKppFDljYTHjPJU=; b=Dr3/iwxXrcgdjnct0+/2tBF79Z
+ vSBA9e4KYG6qfpnLmHHmN2NzaOy6pAoUdy7pZGhskxr4MFxo6hueMGKcT9hBkq7E2kFD5wPVSpB/t
+ mLO0aX66OpAbxeTEixzwwNUvCjmFUaXESYvhOsMiOIgwduDfMa2Nrdm70bqHiZp7J0nk=;
 Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vzsiw-0008OT-WF for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Mar 2026 08:45:55 +0000
+ id 1vzt7z-0001c0-OA for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Mar 2026 09:11:48 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id CA0EC68D07; Tue, 10 Mar 2026 09:45:42 +0100 (CET)
-Date: Tue, 10 Mar 2026 09:45:42 +0100
+ id AB17168C4E; Tue, 10 Mar 2026 10:11:38 +0100 (CET)
+Date: Tue, 10 Mar 2026 10:11:37 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20260310084542.GC17112@lst.de>
+Message-ID: <20260310091136.GA18959@lst.de>
 References: <20260309192355.176980-1-aalbersh@kernel.org>
- <20260309192355.176980-10-aalbersh@kernel.org>
+ <20260309192355.176980-18-aalbersh@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260309192355.176980-10-aalbersh@kernel.org>
+In-Reply-To: <20260309192355.176980-18-aalbersh@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1vzsiw-0008OT-WF
-Subject: Re: [f2fs-dev] [PATCH v4 09/25] iomap: issue readahead for fsverity
- merkle tree
+X-Headers-End: 1vzt7z-0001c0-OA
+Subject: Re: [f2fs-dev] [PATCH v4 17/25] xfs: use read ioend for fsverity
+ data verification
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,12 +84,52 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Mar 09, 2026 at 08:23:24PM +0100, Andrey Albershteyn wrote:
-> Issue reading of fsverity merkle tree on the fsverity inodes. This way
-> metadata will be available at I/O completion time.
+On Mon, Mar 09, 2026 at 08:23:32PM +0100, Andrey Albershteyn wrote:
+> -		if (bio_op(&ioend->io_bio) == REQ_OP_READ)
+> +		if (bio_op(&ioend->io_bio) == REQ_OP_READ) {
+> +			if (xfs_fsverity_is_file_data(ip, ioend->io_offset))
+> +				fsverity_verify_bio(ioend->io_vi,
+> +						    &ioend->io_bio);
+>  			iomap_finish_ioends(ioend,
+>  				blk_status_to_errno(ioend->io_bio.bi_status));
 
-The change itself looks good, but we'll also need this for
-iomap_readahead and not just iomap_read_folio.
+If bi_status is non-zero, there is no point in doing the verification.
+
+> -		else
+> +		} else {
+>  			xfs_end_ioend_write(ioend);
+> +		}
+
+Also now that the code is non-trivial I'd add a xfs_end_ioend_read
+mirroring xfs_end_ioend_write.
+
+> @@ -764,9 +774,12 @@ xfs_bio_submit_read(
+>  	struct iomap_read_folio_ctx	*ctx)
+>  {
+>  	struct bio			*bio = ctx->read_ctx;
+> +	struct iomap_ioend		*ioend;
+>  
+>  	/* defer read completions to the ioend workqueue */
+> -	iomap_init_ioend(iter->inode, bio, ctx->read_ctx_file_offset, 0);
+> +	ioend = iomap_init_ioend(iter->inode, bio, ctx->read_ctx_file_offset, 0);
+
+Overly long line.
+
+>  	if (bdev_has_integrity_csum(xfs_inode_buftarg(ip)->bt_bdev))
+>  		return &xfs_iomap_read_ops;
+> +	if (xfs_fsverity_is_file_data(ip, position))
+> +		return &xfs_iomap_read_ops;
+
+use || here instead of two checks?
+
+> +{
+> +	const struct inode	*inode = VFS_IC(ip);
+> +
+> +	return fsverity_active(inode) &&
+> +	       offset < xfs_fsverity_metadata_offset(ip);
+
+Just open code the XFS_IC instead of a single use local variable?
+
 
 
 _______________________________________________
