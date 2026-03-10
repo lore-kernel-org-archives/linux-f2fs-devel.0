@@ -4,67 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6EFF8EA8550
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2026 09:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E8807EA8550
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2026 09:36:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=SyZ9Q3iMeBfPdvNncEJVEPRRbNLFTEwO1tBJzED259Y=; b=IW6GBglTQ77r4vwi+VXZ+qSEI5
-	X0bH+FzETIasZgOrNQsyjGR9hcl4Zxapw6lTrx0uRFf2Bo7WT/Hz1WrwODzQH71vWLwkQfNC64+DV
-	MdAWuRHzTRZobYJQ+Xc4nd/PJaVvsfSIFWV9X19iic/syrC0L1DY1C3jPE7GXieDZVsU=;
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=OPMM9imOdRjz/ltcyvbxZYt1+lOo4WKGO1r10U25xPI=; b=Q4hXtfGzuQuuL49sk20Y/z44K0
+	z4u2mgxKYKLV+9CIoFJILViobC6kXJm+B3lI676O0ROWBtFwfHMbGVa1MJQDuXKEbIY0EJvyKGfzu
+	Vmt6Te7JMG7lSVdDFFwu30wx9+5uinYsyo6pnlYQrqAu8cUSBRwRE2DOor2ScQkA6uEA=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1vztBA-0005tI-HX;
-	Tue, 10 Mar 2026 09:15:04 +0000
+	id 1vztVx-0006fK-8I;
+	Tue, 10 Mar 2026 09:36:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1vztAu-0005s2-LE
+ (envelope-from <monty_pavel@sina.com>) id 1vztVw-0006fE-6k
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Mar 2026 09:14:48 +0000
+ Tue, 10 Mar 2026 09:36:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=R+AVJERpy5tyNjrplbe2NQHHtBiw+nzAaWc5Dc4vCbs=; b=css7sCIerDRwz3JDzmXoIgQWL2
- IJdn8AVCAId2e+9cF7L/8iOhv0Iznf/WPVgZq0EXSqSv2L1wMkVxyqPnZs4viDrLNjQLtU2NcZaYN
- ZjR4VA8hfdFaYHC5/+p52Cl9qJVr/NaZQddxMz1L29XuXHATLlL9tr8cAzRKZP626DCM=;
+ bh=HnobEGT+yE5xs3GYZMsSARPMwoF1A9DCmGMdH6GPkho=; b=F13KF4J9T7xSdZs5MsIuNw0gtY
+ B8TIHnubtzMj2MZkdWTWXgp/ujuWy3b63fK7/wZkCVnM5FHJvMANhKrQJu2IJP8Yk4PsWr7PKCdIB
+ H1u3DwKS8SQIjSaEvMsUIgHPytHracaYDAXxKcYc3niSUra9+cvMZfx5/BJaQoKjR0Fs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=R+AVJERpy5tyNjrplbe2NQHHtBiw+nzAaWc5Dc4vCbs=; b=bLUNd4qTCdOp4thtDADE+GNVEH
- DAsarj11FIAtSAG+jxQhGGEW8gnBeAQU7pKcZXmFTjkQ2GEk1p9ixRlXMnhdQxTU1ZSKglD2bmK8C
- 1+Uif2Fv0rvvUGzq8wItbUt7XEUDaDGbfCvSquZsDEBqzQbSx1v+mRH74Dc9b56w0Xb4=;
-Received: from verein.lst.de ([213.95.11.211])
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=HnobEGT+yE5xs3GYZMsSARPMwoF1A9DCmGMdH6GPkho=; b=b
+ bVGQBKRdrq3WXw/gMMKD/6nJXL05+V+CaNdAhVFt8HqcL/uFd06pAsa4Smup3UdqFuGrG1wr7DWh4
+ K145A2++EKRYcBZ/pB2aQFQ9tvB4w+wEyLxj3N6fPyOjbDy0GF5PkjYoY33XSbuDquv7J8Y2ko6r1
+ E6SkIrtOhq36SqIk=;
+Received: from r3-21.sinamail.sina.com.cn ([202.108.3.21])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1vztAt-0001kN-P8 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 10 Mar 2026 09:14:48 +0000
-Received: by verein.lst.de (Postfix, from userid 2407)
- id 9CFF868C4E; Tue, 10 Mar 2026 10:14:34 +0100 (CET)
-Date: Tue, 10 Mar 2026 10:14:33 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20260310091433.GB18959@lst.de>
-References: <20260309192355.176980-1-aalbersh@kernel.org>
- <20260309192355.176980-11-aalbersh@kernel.org>
+ id 1vztVv-0002fu-6Z for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Mar 2026 09:36:32 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208;
+ t=1773135391; bh=HnobEGT+yE5xs3GYZMsSARPMwoF1A9DCmGMdH6GPkho=;
+ h=From:Subject:Date:Message-ID;
+ b=hbiqSuHS/ISHn5eGkh0AdDyQMOp2H3RFtSqsQ3TLaZJNlIOukJU5A8rTWn9YAo6P7
+ xmLJ99aQwNIZJ7OsnY5y7176NzVdU7V0GKyHGh6E+2U9AtqyrgCPaVjD6cOpA1v2Ox
+ NZHpjl+uHS1HU2trpLhVi2W1NhK8sqyeryskFvA8=
+X-SMAIL-HELO: xiaomi-ThinkCentre-M760t.mioffice.cn
+Received: from unknown (HELO
+ xiaomi-ThinkCentre-M760t.mioffice.cn)([114.247.175.249])
+ by sina.com (10.54.253.33) with ESMTP
+ id 69AFE614000071F2; Tue, 10 Mar 2026 17:36:22 +0800 (CST)
+X-Sender: monty_pavel@sina.com
+X-Auth-ID: monty_pavel@sina.com
+Authentication-Results: sina.com; spf=none smtp.mailfrom=monty_pavel@sina.com;
+ dkim=none header.i=none;
+ dmarc=none action=none header.from=monty_pavel@sina.com
+X-SMAIL-MID: 2880056685145
+X-SMAIL-UIID: 0A19579D396947BFB83E2A21393C90DF-20260310-173622-1
+From: Yongpeng Yang <monty_pavel@sina.com>
+To: Chao Yu <chao@kernel.org>,
+	Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Tue, 10 Mar 2026 17:36:10 +0800
+Message-ID: <20260310093611.2865092-2-monty_pavel@sina.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260309192355.176980-11-aalbersh@kernel.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1vztAt-0001kN-P8
-Subject: Re: [f2fs-dev] [PATCH v4 10/25] iomap: teach iomap to handle
- fsverity holes and verify data holes
+X-Headers-End: 1vztVv-0002fu-6Z
+Subject: [f2fs-dev] [PATCH 0/2] f2fs: fix data consistency issue caused by
+ nat_entry flag
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,38 +89,50 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: fsverity@lists.linux.dev, ebiggers@kernel.org, djwong@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, hch@lst.de,
- linux-btrfs@vger.kernel.org
+Cc: Yongpeng Yang <yangyongpeng@xiaomi.com>,
+ Yongpeng Yang <monty_pavel@sina.com>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Mar 09, 2026 at 08:23:25PM +0100, Andrey Albershteyn wrote:
-> +		/*
-> +		 * Handling of fsverity "holes". We hit this for two case:
-> +		 *   1. No need to go further, the hole after fsverity
-> +		 *	descriptor is the end of the fsverity metadata.
-> +		 *
-> +		 *   2. This folio contains merkle tree blocks which need to be
-> +		 *	synthesized. If we already have fsverity info (ctx->vi)
-> +		 *	synthesize these blocks.
-> +		 */
-> +		if ((iomap->flags & IOMAP_F_FSVERITY) &&
-> +		    iomap->type == IOMAP_HOLE) {
-> +			/*
-> +			 * Don't cause lookup if we already have fsverity
-> +			 * context from the previous tree hole
-> +			 */
-> +			if (!ctx->vi)
-> +				ctx->vi = fsverity_get_info(iter->inode);
+From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 
-This makes the ctx->vi rules really weird, as it;s only set for
-the file data initially, but can later get set here for reading the
-fsverity data.  I think it might be better to just always set it in
-the higher level code if fsveirty is active, and then document how
-our rules subtly differ from ext4/f2fs.
+This patchset addresses a data consistency issue caused by the lack of
+mutual exclusion between checks of the HAS_FSYNCED_INODE,
+IS_CHECKPOINTED, and HAS_LAST_FSYNC flags and the checkpoint write path.
+
+In f2fs_flush_nat_entries(), after writing back the NAT block, the code
+sets HAS_LAST_FSYNC and IS_CHECKPOINTED, and clears HAS_FSYNCED_INODE.
+Although accesses and updates to these flags are protected by
+nm_i->nat_tree_lock, observing this state in the fsync context does not
+guarantee that the corresponding nat_entry state has already been
+persisted to the device.
+
+The root cause is that the semantics of these three flags are only
+guaranteed after the checkpoint write completes, while the fsync path
+does not follow this constraint.
+
+This patchset ensures that accesses and updates to nat_entry flags in
+the fsync path are protected by sbi->node_write.
+
+There are still call paths not protected by sbi->node_write:
+need_do_checkpoint()->f2fs_is_checkpointed_node() and
+need_do_checkpoint()->f2fs_need_dentry_mark().
+
+The flags obtained in these paths may be imprecise, but they only affect
+whether a checkpoint is triggered and do not impact consistency. Adding
+lock protection here would increase lock contention, so these paths are
+left unchanged.
+
+Yongpeng Yang (2):
+  f2fs: fix fsck inconsistency caused by incorrect nat_entry flag usage
+  f2fs: fix data loss caused by incorrect use of nat_entry flags
+
+ fs/f2fs/node.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+-- 
+2.43.0
 
 
 
