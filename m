@@ -4,126 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D621F112584E
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Mar 2026 16:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D5B6A112584F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Mar 2026 16:05:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=QgyTUpVZ3rG0Kg5JG5o1LRkIHrsL6FuaiRs/ZKj3YaU=; b=ddzUs1MO0NGtZgoOwxWObRALjx
-	wZmcPY7bPNw8Sy3m0M9zh2JLfkFNp7WBLli1xCcDBWPVaM371qIIEUpEywStTWXq1plp2kF9hjaX8
-	NgUHpe7VeKSYBDUfMIe+2KU8/AYD6Dur+jwW0QikRJZgl2ZGPCDR1qR8KJNGqbTLrsdU=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=uBEZrWrqdh2JEoDdox1qeoWKzpqtDIqHFyj0vvzwqfo=; b=dhxS2oQBe8lktb5EIQh/tq5UvU
+	pIgHIAOwOLlWnBwPjiuezQo5Vj/C44scObaiHTQjstLSzTBfXC8LvuBBbP9yDZDpheZTbaAYJ78FG
+	vnQl/ABN7xKyIj7r4mZV8FFZo+uSOf6rYyDFSOFDyZfdWzmTYHoVKvB/E0VEZY921Fnc=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w0M4B-0005xB-LU;
-	Wed, 11 Mar 2026 16:05:47 +0000
+	id 1w0M4C-0005IW-KH;
+	Wed, 11 Mar 2026 16:05:48 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1w0M3u-0005wl-Pd
+ (envelope-from <chao@kernel.org>) id 1w0M42-0005IJ-Em
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Mar 2026 16:05:30 +0000
+ Wed, 11 Mar 2026 16:05:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
- Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DjnkUEzn2InaeK7nwdLbScYbD64IewsiNV+cPaFHKeM=; b=lmFOQVb/tJu4V8H6zp9BJ6UYDg
- tW1HpuduK36hjfniG+72toe4/pYMTinqAQkSrMsgY5YSRgr13xkRZx77Xid20KOwDquyA4Uc4rSvG
- JZSAhP52weicT6ADkh2ZtwyL4gsn0FHKl5XoXBo/O4wv5fjWKZ/v8fK+DBCgnIj8qMDI=;
+ bh=vuSJvCiJomcAXtJRslOIVuiHeyyCY5fUmdOYe7vNo7w=; b=Z6j4GrzDgQjgJQZ0E1Y2fmhPay
+ 8uo8uvJYs9aUdnE1pUzEVa2djdxAMR2OUjkQlDyuBJoOvcZKH9lMdqsNo7q1nUngxN7nMGFlc6dm3
+ 5XG9u8LvtyrPEZbp2Yno7GI4lqgkKTKiRuQpabXYqrucXMIt6YE+PBfqngnx/3oLOXwc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
- :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=DjnkUEzn2InaeK7nwdLbScYbD64IewsiNV+cPaFHKeM=; b=bp1vSSK0zRzPY/a6e0RuiOwWGO
- bN57/5TnKbwgkabS8BIXZUUjTdzOcmhoTu8PS41FcY1IfgArZRDWzVj/AZ3/xfaFOAtj9kdTVC/lu
- T6a37P7wH/mtj/XZ/V2LNGN4MHP2IxXUzmCUOzfPUTzeDd74qo3BP1Ighx0OAven4xrc=;
-Received: from mail-vs1-f44.google.com ([209.85.217.44])
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=vuSJvCiJomcAXtJRslOIVuiHeyyCY5fUmdOYe7vNo7w=; b=F
+ t3Y6hFZMjaepUsdZ7KT9Q/+2pd+xIhnJl54xOOhBGQYRUYBoxI2BaZdH1fAd3mdYyjLg09cWw8072
+ 9NOUbLWRBxdYI5s5bGKUOUNxq1SuiTwZrN+7Hh6rgI58f/WyMC6gg2BSJ+17tAAqgLmLQ4cT/mPIi
+ 5/QvQr2QDc+ZLOVw=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1w0M3u-0007O3-DT for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Mar 2026 16:05:30 +0000
-Received: by mail-vs1-f44.google.com with SMTP id
- ada2fe7eead31-5ffc6a96665so17513137.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 11 Mar 2026 09:05:30 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773245119; cv=none;
- d=google.com; s=arc-20240605;
- b=axMB5Eyj7Yg8Iwze0fng94meGoEdSsm7w0jYPQU+haMqprUvG+yeArSVpCNmVZTABG
- cfjahZMKdG37PuEm/Onmwdza2bVS1PHCjZMdcy1e0MWCCJSOWEPt4KIm9B/C/td0Us5e
- klluDxRXliNOkflqS1zAUwJlB/ToZPuRnZsKK8ICbWWFeVeWIgfMLdKl9equliT9daf4
- 98syEg9zhP8CCssEaCU6EJpamqP6t+NfrusfZpv5aHThbJLPkZVTHMqbV8k3Ca7nYrch
- CPrf3UfZ38KsjpBtN2vmxV5zszdRQqR1+u6hqVUDXYgbOGOFO3+netQtjUmgM+f3lA9E
- Cu8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=DjnkUEzn2InaeK7nwdLbScYbD64IewsiNV+cPaFHKeM=;
- fh=zI+eB9QHhz8VYwq85RRKYLXUi+eGjo/peT1f/jbviho=;
- b=a0oWu/0GW/69Zh0Vuw+e4MhDh4pWqWNF6amstQrdCqpfzki6dwDka1jKxmjVA/ugzD
- WNdbbhYVO+dQ6cVsRYoA3KL/sNZfOF4imVz8z3UcU92ntiGHUuxOPr7pkYQF1+HmLZL3
- 4lTvOE9delKiqRTlbGXSeFSjv6cKViExkft1pJ8VHCUU358AvZTShWsFZOviwH4tt8vQ
- 6gJBobmB038KTe7BpALjdsNB18NI3aoOLHLEvZGadUYlsw4m/anCoy21zlY5Ds2yeLfY
- KgVvsCXjngPTYjGpO391qyI+k+ZVK0fts38oXHSVHlJXVbLdM3v3TydKkujWJBzPYkbz
- QDxQ==; darn=lists.sourceforge.net
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1773245119; x=1773849919; darn=lists.sourceforge.net;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=DjnkUEzn2InaeK7nwdLbScYbD64IewsiNV+cPaFHKeM=;
- b=WhTDPLUjJbWaUjcMySMlnOqUMiWO5xVaB2UjQVeMOOMntnT6SmpHcfISQ5VUMy3sTF
- 0sCGduXJ2fpdXs14Qk8+66/nXQwIlLyXSQIwlxLVFZxGECTcGFm/1MbG8yKGle0wH6ge
- CwZPWr4afbbjFpowk+B2JipmXxjfQD81tyfxUEIPnw02ZL4txDq5V7QLLU/gANvnYngx
- eG9e7zva0od8jubcEmpYOVpwxhEjH4TQM2GYNEdhwpRph6fOis3TDxW9XxMZHEeoH8lt
- NNqp4l4puual4o8XqenWq+wrHnl/2KGNNB2N/YDsyP+jL7gQ5mZW36ddDfUjxZ2Ckw+F
- 27Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773245119; x=1773849919;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=DjnkUEzn2InaeK7nwdLbScYbD64IewsiNV+cPaFHKeM=;
- b=Vga2tVPxiFVjLU1X/UgAc5EEsIbRXgxkv8bf67WVtDCd4spgoVVJs370xvJ90+014+
- wubWeaVQ6ovGRe2YqHZ759Rz9kU6ghUfntqL/CQb0l2mfBDY3Lnv5OV1Pi26MdprNUzX
- lompViazoRWKMziruG/J8HAfqoZnLl7dJYyxhO2/KWxhhs5RhqgxKk7S4S91djarpodX
- 9o43c5Q9rfWbNDei9pOcb+loii+0jH7KRThSv+6eJ6GQK17SJadCwT5ybOqgy86rjmx1
- /4oXungQN7SP5K57a9/DskANIaCxi/6SYnK65molSVbxds3gbXsp0hBJDOSy4CmMFHDD
- e8Hg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCX3XhoNXN3ygfnhUCTUh4lJQpDB2BdIs/dtjHuNVEfYaudwCGvJH2jGFwaabR05+H5+XWEfiLazfyYKfvewcvw5@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YysU+DsPUJ7cayczMx2Pyd2PKNm19FROg+w6Db2GQ4ZgeqxCVqY
- uW+KDp8GOd+k2AmMCuA4/Tzuh1QJqhvYUcEYjwwxgum10IVLIwiTy+6DrZA8j2mTskkd57atLw6
- mE/duD+umj9Lfh1qmsDGu9LrtMZishhRrBRTZ
-X-Gm-Gg: ATEYQzzYzvbfDNgXjbRXiYa6aUFEICieYSeAefVZe8H7xdDR8PgA7fh1NkPM9AN5+dZ
- eukiZm3MMc3YpqPZPlEDJo2S7sbAixrrA95DvYsUAqkh90vSTilmxYSmmj1Je/+jkXUVPhYQw67
- zQq94CAHnADOOEYYx7HzSVL94KWYLGJ91l75y2J0Q/epG9y3D1ntUgrRQ06yUsXC5sNmvGbakrm
- Wav/PKwLEHQjNxOmH0SxUNeK6H9Pea2G2EMLlDltFUsBceUegUlV9A/c2Vy4AiwHQY+gTxsPQIm
- yU7stjEnKzHotXxjZlLKJ7O1oW44tfzKCwXQKhtYOiTGomRIvNkf9/IsUZce+dwOtNWwMTEG
-X-Received: by 2002:a05:6102:3f48:b0:5ef:aeff:8304 with SMTP id
- ada2fe7eead31-601df022230mr1217314137.33.1773245119057; Wed, 11 Mar 2026
- 09:05:19 -0700 (PDT)
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1w0M41-0007Om-IQ for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 11 Mar 2026 16:05:38 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 171474329D;
+ Wed, 11 Mar 2026 13:35:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8038AC4CEF7;
+ Wed, 11 Mar 2026 13:35:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1773236151;
+ bh=B6w+pOLI4c0yj7mh9s6SnyB9dKoUajWjVyf4YAQI7mM=;
+ h=From:To:Cc:Subject:Date:From;
+ b=RpX76wfEcwMcsDM9OR8OP5WRDyQq5f7tccBuDKTvueWQYIrUxum9028wa7FDMBEBW
+ QmqeXX8J+bFmgBNiJA/hxhwKV8fYCc7WemjwYjee35RsU9EWxwP2ohCWUic2dr2+Xl
+ yq/vVNxFhV77nPM0xFmK+PIpsCFrOabtOHHEDdJLfq7AYwbT7lTQ7Qx8+EN7M5q0bT
+ EOlGnAstsNopI/2F85M7+gyo04ZNjJ4jGSLMK5x67Mf2eUS5j0waJmUMx4a3K53WjD
+ Uq6uSmAgePWpjN8IhQjrx9DkH55X19F1nyu9thzjWiXjPDOL5zaVwXUPeZgPBF+O7z
+ My26tIu8KQtDA==
+To: jaegeuk@kernel.org
+Date: Wed, 11 Mar 2026 21:35:42 +0800
+Message-ID: <20260311133542.1074617-1-chao@kernel.org>
+X-Mailer: git-send-email 2.53.0.473.g4a7958ca14-goog
 MIME-Version: 1.0
-References: <20260310175428.1156719-1-daeho43@gmail.com>
- <fbaaef01-5a66-407e-b447-b5741b42d309@kernel.org>
-In-Reply-To: <fbaaef01-5a66-407e-b447-b5741b42d309@kernel.org>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Wed, 11 Mar 2026 09:05:06 -0700
-X-Gm-Features: AaiRm51pEcHapSLZS-Jj5dRAJjMbas39Xzk48ATiE8TbLHMDgwHRGKUsK-iHRZs
-Message-ID: <CACOAw_yXPoSBox4o5pMv_0Jv0B8yHA6TFakcKNOpGZWKBSZYKw@mail.gmail.com>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1w0M3u-0007O3-DT
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to skip empty sections in
- f2fs_get_victim
+X-Headers-End: 1w0M41-0007Om-IQ
+Subject: [f2fs-dev] [PATCH] f2fs: fix to do sanity check on
+ dcc->discard_cmd_cnt conditionally
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -135,59 +84,169 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: stable@kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+62538b67389ee582837a@syzkaller.appspotmail.com,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gV2VkLCBNYXIgMTEsIDIwMjYgYXQgNjo0NOKAr0FNIENoYW8gWXUgPGNoYW9Aa2VybmVsLm9y
-Zz4gd3JvdGU6Cj4KPiBPbiAyMDI2LzMvMTEgMDE6NTQsIERhZWhvIEplb25nIHdyb3RlOgo+ID4g
-RnJvbTogRGFlaG8gSmVvbmcgPGRhZWhvamVvbmdAZ29vZ2xlLmNvbT4KPiA+Cj4gPiBJbiBhZ2Ut
-YmFzZWQgdmljdGltIHNlbGVjdGlvbiAoQVRHQywgQVRfU1NSLCBvciBHQ19DQiksIGYyZnNfZ2V0
-X3ZpY3RpbQo+ID4gY2FuIGVuY291bnRlciBzZWN0aW9ucyB3aXRoIHplcm8gdmFsaWQgYmxvY2tz
-LiBUaGlzIHNpdHVhdGlvbiBvZnRlbgo+ID4gYXJpc2VzIHdoZW4gY2hlY2twb2ludCBpcyBkaXNh
-YmxlZCBvciBkdWUgdG8gcmFjZSBjb25kaXRpb25zIGJldHdlZW4KPiA+IFNJVCB1cGRhdGVzIGFu
-ZCBkaXJ0eSBsaXN0IG1hbmFnZW1lbnQuCj4gPgo+ID4gSW4gc3VjaCBjYXNlcywgZjJmc19nZXRf
-c2VjdGlvbl9tdGltZSgpIHJldHVybnMgSU5WQUxJRF9NVElNRSwgd2hpY2gKPiA+IHN1YnNlcXVl
-bnRseSB0cmlnZ2VycyBhIGZhdGFsIGYyZnNfYnVnX29uKHNiaSwgbXRpbWUgPT0gSU5WQUxJRF9N
-VElNRSkKPiA+IGluIGFkZF92aWN0aW1fZW50cnkoKSBvciBnZXRfY2JfY29zdCgpLgo+ID4KPiA+
-IFRoaXMgcGF0Y2ggYWRkcyBhIGNoZWNrIGluIGYyZnNfZ2V0X3ZpY3RpbSdzIHNlbGVjdGlvbiBs
-b29wIHRvIHNraXAKPiA+IHNlY3Rpb25zIHdpdGggbm8gdmFsaWQgYmxvY2tzLiBUaGlzIHByZXZl
-bnRzIHVubmVjZXNzYXJ5IGFnZQo+ID4gY2FsY3VsYXRpb25zIGZvciBlbXB0eSBzZWN0aW9ucyBh
-bmQgYXZvaWRzIHRoZSBhc3NvY2lhdGVkIGtlcm5lbCBwYW5pYy4KPiA+IFRoaXMgY2hhbmdlIGFs
-c28gYWxsb3dzIHJlbW92aW5nIHJlZHVuZGFudCBjaGVja3MgaW4gYWRkX3ZpY3RpbV9lbnRyeSgp
-Lgo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6IERhZWhvIEplb25nIDxkYWVob2plb25nQGdvb2dsZS5j
-b20+Cj4gPiAtLS0KPiA+ICAgZnMvZjJmcy9nYy5jIHwgOSArKystLS0tLS0KPiA+ICAgMSBmaWxl
-IGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKPiA+Cj4gPiBkaWZmIC0t
-Z2l0IGEvZnMvZjJmcy9nYy5jIGIvZnMvZjJmcy9nYy5jCj4gPiBpbmRleCAyZTBmNjc5NDY5MTQu
-Ljk4MWVhYzYyOWZlOSAxMDA2NDQKPiA+IC0tLSBhL2ZzL2YyZnMvZ2MuYwo+ID4gKysrIGIvZnMv
-ZjJmcy9nYy5jCj4gPiBAQCAtNTIxLDEyICs1MjEsNiBAQCBzdGF0aWMgdm9pZCBhZGRfdmljdGlt
-X2VudHJ5KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPiA+ICAgICAgIHN0cnVjdCBzaXRfaW5m
-byAqc2l0X2kgPSBTSVRfSShzYmkpOwo+ID4gICAgICAgdW5zaWduZWQgbG9uZyBsb25nIG10aW1l
-ID0gMDsKPiA+Cj4gPiAtICAgICBpZiAodW5saWtlbHkoaXNfc2JpX2ZsYWdfc2V0KHNiaSwgU0JJ
-X0NQX0RJU0FCTEVEKSkpIHsKPiA+IC0gICAgICAgICAgICAgaWYgKHAtPmdjX21vZGUgPT0gR0Nf
-QVQgJiYKPiA+IC0gICAgICAgICAgICAgICAgICAgICBnZXRfdmFsaWRfYmxvY2tzKHNiaSwgc2Vn
-bm8sIHRydWUpID09IDApCj4gPiAtICAgICAgICAgICAgICAgICAgICAgcmV0dXJuOwo+ID4gLSAg
-ICAgfQo+ID4gLQo+ID4gICAgICAgbXRpbWUgPSBmMmZzX2dldF9zZWN0aW9uX210aW1lKHNiaSwg
-c2Vnbm8pOwo+ID4gICAgICAgZjJmc19idWdfb24oc2JpLCBtdGltZSA9PSBJTlZBTElEX01USU1F
-KTsKPiA+Cj4gPiBAQCAtODg5LDYgKzg4Myw5IEBAIGludCBmMmZzX2dldF92aWN0aW0oc3RydWN0
-IGYyZnNfc2JfaW5mbyAqc2JpLCB1bnNpZ25lZCBpbnQgKnJlc3VsdCwKPiA+ICAgICAgICAgICAg
-ICAgaWYgKHNlY191c2FnZV9jaGVjayhzYmksIHNlY25vKSkKPiA+ICAgICAgICAgICAgICAgICAg
-ICAgICBnb3RvIG5leHQ7Cj4gPgo+ID4gKyAgICAgICAgICAgICBpZiAoIWdldF92YWxpZF9ibG9j
-a3Moc2JpLCBzZWdubywgdHJ1ZSkpCj4gPiArICAgICAgICAgICAgICAgICAgICAgZ290byBuZXh0
-Owo+Cj4gV2VsbCwgZm9yIGYyZnNfZ2V0X3ZpY3RpbSgsIEFUX1NTUiksIG9uY2UgdGhlcmUgYXJl
-IG5vIGRpcnR5IHNlZ21lbnQsIGlmIHdlCj4gZG9uJ3QgY291bnQgZnJlZSBzZWdtZW50IGFzIGNh
-bmRpZGF0ZXMsIHRoZW4sIHdlIGNhbiBub3QgZmluZCBhbnkgdmFsaWQgdmljdGltPwoKT2gsIEFU
-X1NTUiBuZWVkcyB0byBzZWxlY3QgdGhlIGZyZWUgc2VjdGlvbiBpbiB0aGlzIGNhc2U/CkkgYW0g
-Y29uZnVzZWQuIFdoeSBkbyB3ZSBuZWVkIHRoZSBiZWxvdyBsb2dpYz8KTG9va3MgbGlrZSBXQSBm
-b3IgdGhlIEFUX1NTUiBjYXNlPwoKSW4gZjJmc19nZXRfc2VjdGlvbl9tdGltZSgpCm91dDoKICAg
-ICAgICBpZiAodW5saWtlbHkobXRpbWUgPT0gSU5WQUxJRF9NVElNRSkpCiAgICAgICAgICAgICAg
-ICBtdGltZSAtPSAxOwogICAgICAgIHJldHVybiBtdGltZTsKCgo+Cj4gVGhhbmtzLAo+Cj4gPiAr
-Cj4gPiAgICAgICAgICAgICAgIC8qIERvbid0IHRvdWNoIGNoZWNrcG9pbnRlZCBkYXRhICovCj4g
-PiAgICAgICAgICAgICAgIGlmICh1bmxpa2VseShpc19zYmlfZmxhZ19zZXQoc2JpLCBTQklfQ1Bf
-RElTQUJMRUQpKSkgewo+ID4gICAgICAgICAgICAgICAgICAgICAgIGlmIChwLmFsbG9jX21vZGUg
-PT0gTEZTKSB7Cj4KCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3Rz
-LnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0
-aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Syzbot reported a f2fs bug as below:
+
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/segment.c:1900!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 1 UID: 0 PID: 6527 Comm: syz.5.110 Not tainted syzkaller #0 PREEMPT_{RT,(full)}
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
+RIP: 0010:f2fs_issue_discard_timeout+0x59b/0x5a0 fs/f2fs/segment.c:1900
+Code: d9 80 e1 07 80 c1 03 38 c1 0f 8c d6 fe ff ff 48 89 df e8 a8 5e fa fd e9 c9 fe ff ff e8 4e 46 94 fd 90 0f 0b e8 46 46 94 fd 90 <0f> 0b 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3
+RSP: 0018:ffffc9000494f940 EFLAGS: 00010283
+RAX: ffffffff843009ca RBX: 0000000000000001 RCX: 0000000000080000
+RDX: ffffc9001ca78000 RSI: 00000000000029f3 RDI: 00000000000029f4
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed100893a431 R12: 1ffff1100893a430
+R13: 1ffff1100c2b702c R14: dffffc0000000000 R15: ffff8880449d2160
+FS:  00007ffa35fed6c0(0000) GS:ffff88812643d000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2b68634000 CR3: 0000000039f62000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __f2fs_remount fs/f2fs/super.c:2960 [inline]
+ f2fs_reconfigure+0x108a/0x1710 fs/f2fs/super.c:5443
+ reconfigure_super+0x227/0x8a0 fs/super.c:1080
+ do_remount fs/namespace.c:3391 [inline]
+ path_mount+0xdc5/0x10e0 fs/namespace.c:4151
+ do_mount fs/namespace.c:4172 [inline]
+ __do_sys_mount fs/namespace.c:4361 [inline]
+ __se_sys_mount+0x31d/0x420 fs/namespace.c:4338
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ffa37dbda0a
+
+The root cause is there will be race condition in between f2fs_ioc_fitrim()
+and f2fs_remount():
+
+- f2fs_remount			- f2fs_ioc_fitrim
+ - f2fs_issue_discard_timeout
+  - __issue_discard_cmd
+  - __drop_discard_cmd
+  - __wait_all_discard_cmd
+				 - f2fs_trim_fs
+				  - f2fs_write_checkpoint
+				   - f2fs_clear_prefree_segments
+				    - f2fs_issue_discard
+				     - __issue_discard_async
+				      - __queue_discard_cmd
+				       - __update_discard_tree_range
+				        - __insert_discard_cmd
+				         - __create_discard_cmd
+				         : atomic_inc(&dcc->discard_cmd_cnt);
+  - sanity check on dcc->discard_cmd_cnt (expect discard_cmd_cnt to be zero)
+
+This will only happen when fitrim races w/ remount rw, if we remount to
+readonly filesystem, remount will wait until mnt_pcp.mnt_writers to zero,
+that means fitrim is not in process at that time.
+
+Cc: stable@kernel.org
+Fixes: 2482c4325dfe ("f2fs: detect bug_on in f2fs_wait_discard_bios")
+Reported-by: syzbot+62538b67389ee582837a@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-f2fs-devel/69b07d7c.050a0220.8df7.09a1.GAE@google.com
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/f2fs.h    |  2 +-
+ fs/f2fs/segment.c |  6 +++---
+ fs/f2fs/super.c   | 11 ++++++++---
+ 3 files changed, 12 insertions(+), 7 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 8942b2a63cfd..e1c2d82ea64e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3989,7 +3989,7 @@ bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
+ int f2fs_start_discard_thread(struct f2fs_sb_info *sbi);
+ void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
+ void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi);
+-bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi);
++bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi, bool need_check);
+ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+ 					struct cp_control *cpc);
+ void f2fs_dirty_to_prefree(struct f2fs_sb_info *sbi);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 23faf6725632..0bf25786667f 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1880,7 +1880,7 @@ void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi)
+  *
+  * Return true if issued all discard cmd or no discard cmd need issue, otherwise return false.
+  */
+-bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi)
++bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi, bool need_check)
+ {
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+ 	struct discard_policy dpolicy;
+@@ -1897,7 +1897,7 @@ bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi)
+ 	/* just to make sure there is no pending discard commands */
+ 	__wait_all_discard_cmd(sbi, NULL);
+ 
+-	f2fs_bug_on(sbi, atomic_read(&dcc->discard_cmd_cnt));
++	f2fs_bug_on(sbi, need_check && atomic_read(&dcc->discard_cmd_cnt));
+ 	return !dropped;
+ }
+ 
+@@ -2367,7 +2367,7 @@ static void destroy_discard_cmd_control(struct f2fs_sb_info *sbi)
+ 	 * Recovery can cache discard commands, so in error path of
+ 	 * fill_super(), it needs to give a chance to handle them.
+ 	 */
+-	f2fs_issue_discard_timeout(sbi);
++	f2fs_issue_discard_timeout(sbi, true);
+ 
+ 	kfree(dcc);
+ 	SM_I(sbi)->dcc_info = NULL;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 8774c60b4be4..40079fd7886b 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2009,7 +2009,7 @@ static void f2fs_put_super(struct super_block *sb)
+ 	}
+ 
+ 	/* be sure to wait for any on-going discard commands */
+-	done = f2fs_issue_discard_timeout(sbi);
++	done = f2fs_issue_discard_timeout(sbi, true);
+ 	if (f2fs_realtime_discard_enable(sbi) && !sbi->discard_blks && done) {
+ 		struct cp_control cpc = {
+ 			.reason = CP_UMOUNT | CP_TRIMMED,
+@@ -2152,7 +2152,7 @@ static int f2fs_unfreeze(struct super_block *sb)
+ 	 * will recover after removal of snapshot.
+ 	 */
+ 	if (test_opt(sbi, DISCARD) && !f2fs_hw_support_discard(sbi))
+-		f2fs_issue_discard_timeout(sbi);
++		f2fs_issue_discard_timeout(sbi, true);
+ 
+ 	clear_sbi_flag(F2FS_SB(sb), SBI_IS_FREEZING);
+ 	return 0;
+@@ -2957,7 +2957,12 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 			need_stop_discard = true;
+ 		} else {
+ 			f2fs_stop_discard_thread(sbi);
+-			f2fs_issue_discard_timeout(sbi);
++			/*
++			 * f2fs_ioc_fitrim() won't race w/ "remount ro"
++			 * so it's safe to check discard_cmd_cnt in
++			 * f2fs_issue_discard_timeout().
++			 */
++			f2fs_issue_discard_timeout(sbi, flags & SB_RDONLY);
+ 			need_restart_discard = true;
+ 		}
+ 	}
+-- 
+2.49.0
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
