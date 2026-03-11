@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1E94B112584E
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Mar 2026 16:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D49551125864
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Mar 2026 18:17:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Lsqo7GVKW0vCOfF0MH/DU9Cd6PGWdvrZyxYm1+/656A=; b=e3H7TTjkwQs+lY9Wl7RCiOHkQh
-	kHczXXRzuo3l6hl9zjcgu5mCfWwFRJVUrSe6dI+Y3rickjdIg768jXu4OBC0kuGkzE4CqjMbQ7Cu8
-	3L2/MV/ApkQ1gKHWNH/57WBKCaPXLkmn6WR3rh8n9ZX3v+vkjte7CRCIyvwsgyn69q9k=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=zary7BXws6nEDRWJYrWDQ97rIkvoLJRsDguifhNOA/8=; b=e37gc0rZ1GXOy4Ptsz63AHGWuD
+	IdRIgEIzoiHvw2NigFcw42gAJxqJ14v1BkWjAHaRha9GkFFFpEVZv5af6lQpN0Z+oeCbE6fbDNfTG
+	FNcNbDn7C6yui3u7liO2qPVoezfJ/46sG8jWsQ4zDfmRn8WwngCVJjFNSiTkYXlxL5I0=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w0M96-00066t-JZ;
-	Wed, 11 Mar 2026 16:10:52 +0000
+	id 1w0O7L-0003WQ-Ow;
+	Wed, 11 Mar 2026 18:17:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1w0M8s-00066d-Nn
+ (envelope-from <jaegeuk@kernel.org>) id 1w0O7K-0003WJ-KM
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Mar 2026 16:10:38 +0000
+ Wed, 11 Mar 2026 18:17:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jTSsaSwH0SyhBDIOLJIgrBIaHkvNX+GUh3ijmW54UjY=; b=JZfDZXgIk87WX+NfVAnwWBKPmQ
- 2n5jkj7k6m+PzE2rGrqhnJ7rEAiFiDIVPeUgUrXqRVDngybEaY7118GpRF97My/C6X/7cscm1fEep
- cHC7hR0vfVDa/b0tbgULk9Xpu5ujyVz9ALtfUZQK9fNbti3VulnwegnG3/7dbPaof4uU=;
+ bh=F53ieGkcypAHNLr5ut+KV6FeluLBJgUePoI5ScGYQHU=; b=SQOB39CALGJg314OR70yiQViAE
+ nnKs0WsFVV1qNu8fYAnt1lmga3POooEvuw06St8RB4vomeyKkT3YltHCv+ev2RNID/CjyD/pFXmrI
+ NfwK2iYQxoggF7HvzyUtL+Uj+bVle0DAYO37kejpZcsi2y9HCB3/pI3jhujAR1VJyaHY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=jTSsaSwH0SyhBDIOLJIgrBIaHkvNX+GUh3ijmW54UjY=; b=ORpmCntft5PFh8epL/jDUVLdVg
- q8e3F50qNZcC4I3jM+w8PL277HHcP8MP8vEMjNG1wvaXSa5HdzFFnbD9O2p57K2CQsENCg88nunT6
- Ly/DSjQjfm5MSKo3eCQgo4DkN95byHlT0/+7I/p2C+iFzGKYfq05DRF4OqJOOr2mEIaA=;
+ bh=F53ieGkcypAHNLr5ut+KV6FeluLBJgUePoI5ScGYQHU=; b=h2AiesOr48TVUEyQqkXX4178if
+ ZYR2BURSpiYXWsKuQ85YVtrYwdMMeJlwgmpGCpmlzRIfsbx87Sf8G/EmYnWOq2/57TwnrB3BJ/mbY
+ AcgIn7FceVwjubaxn2yqwgnxthyl57c5IQjvxAn90aiNtHC2Jmq5PuV0bK6iLV/EgPXs=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w0M8r-0007i9-V3 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Mar 2026 16:10:38 +0000
+ id 1w0O7K-0006zb-5W for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 11 Mar 2026 18:17:10 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 22F1E44460;
- Wed, 11 Mar 2026 13:44:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38BEAC4CEF7;
- Wed, 11 Mar 2026 13:44:07 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id D5F2B40866;
+ Wed, 11 Mar 2026 18:16:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800BDC4CEF7;
+ Wed, 11 Mar 2026 18:16:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1773236649;
- bh=OD21PrssA79FIcWIFDQaYFQnABNyQry8BnIpPYlAW5k=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=dso26tImuBnrdem09GdQ3Ix/mRG/Fa9tr1n3i89YtRRhgtw2QyzekfboosrH1WMmB
- nHeyXHVfzpWi3kVNcjUbvVG6xjQimSB2/bWbuzWz77CcDsJaBZgvMozqjp0s5i21m7
- RclE4EwcliBAEqN5f1cAUlMSnGgyFeQYZSJiDKZ7asgUgcVaSWsRkXN9I15QczBxmy
- ofkAQfvQb8zABOdisx2+GRb1lVEcw1bhSz3M0ckiOyLrLH51o9GwU/Ec2/EGk/aC4h
- I+6FbLxTW+RuMmqvJ2TU8jq5wiRHs7iVxl/FPdBFVwOtoUbTF+WNsU76p7qc/D3OyG
- +thI2B3+88KsQ==
-Message-ID: <fbaaef01-5a66-407e-b447-b5741b42d309@kernel.org>
-Date: Wed, 11 Mar 2026 21:44:04 +0800
+ s=k20201202; t=1773253019;
+ bh=qFDybt2y5QsbCsGdlncQsn+Q1JrNnLiOjkZ+fCDHSco=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=MkUqfaWD/4ZuhbIAbJNM6U9MbRfvGEXWQLu89rC5107BSKcEx2G5FR7upfCDqHPhz
+ fZSIzXBmYbSJAOjy/LXoHATVK340JsZ6c3HPYxlJarNHzWThnLd8q/Y4maoTKPjfgz
+ faDqFkXHmhjIduQpsGwhLb95wQhpQ0ExdSiNtEuRlM7oV1ca4UF7APcYDXJFCpR8oi
+ KiGqQmXv/S3qNpsyQmoLZJ5o3xgVTGDYpAMQjNA2dLvMf1RIUpuZexfk/bfCuPVZ0E
+ aKFkUt6zzjRir5p1zyVcTz38GN7k00rab1gzrbSdT8Gv/ji46zjm6WnzH+Bhb8ANKJ
+ k1pC27q1MyAgA==
+Date: Wed, 11 Mar 2026 18:16:57 +0000
+To: Yongpeng Yang <monty_pavel@sina.com>
+Message-ID: <abGxmcBNlSgEwh5z@google.com>
+References: <20260310093611.2865092-2-monty_pavel@sina.com>
+ <20260310093611.2865092-4-monty_pavel@sina.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20260310175428.1156719-1-daeho43@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20260310175428.1156719-1-daeho43@gmail.com>
-X-Headers-End: 1w0M8r-0007i9-V3
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to skip empty sections in
- f2fs_get_victim
+Content-Disposition: inline
+In-Reply-To: <20260310093611.2865092-4-monty_pavel@sina.com>
+X-Headers-End: 1w0O7K-0006zb-5W
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix fsck inconsistency caused by
+ incorrect nat_entry flag usage
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,69 +87,96 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: Daeho Jeong <daehojeong@google.com>
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Yongpeng Yang <yangyongpeng@xiaomi.com>,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2026/3/11 01:54, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
+On 03/10, Yongpeng Yang wrote:
+> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 > 
-> In age-based victim selection (ATGC, AT_SSR, or GC_CB), f2fs_get_victim
-> can encounter sections with zero valid blocks. This situation often
-> arises when checkpoint is disabled or due to race conditions between
-> SIT updates and dirty list management.
+> f2fs_need_dentry_mark() reads nat_entry flags without mutual exclusion
+> with the checkpoint path, which can result in an incorrect inode block
+> marking state. The scenario is as follows:
 > 
-> In such cases, f2fs_get_section_mtime() returns INVALID_MTIME, which
-> subsequently triggers a fatal f2fs_bug_on(sbi, mtime == INVALID_MTIME)
-> in add_victim_entry() or get_cb_cost().
+> create & write & fsync 'file A'                 write checkpoint
+> - f2fs_do_sync_file // inline inode
+>  - f2fs_write_inode // inode folio is dirty
+>                                                 - f2fs_write_checkpoint
+>                                                  - f2fs_flush_merged_writes
+>                                                  - f2fs_sync_node_pages
+>  - f2fs_fsync_node_pages // no dirty node
+>  - f2fs_need_inode_block_update // return true
+>  - f2fs_fsync_node_pages // inode dirtied
+>   - f2fs_need_dentry_mark //return true
+>                                                  - f2fs_flush_nat_entries
+>                                                 - f2fs_write_checkpoint end
+>   - __write_node_folio // inode with DENT_BIT_SHIFT set
+>   SPO, "fsck --dry-run" find inode has already checkpointed but still
+>   with DENT_BIT_SHIFT set
 > 
-> This patch adds a check in f2fs_get_victim's selection loop to skip
-> sections with no valid blocks. This prevents unnecessary age
-> calculations for empty sections and avoids the associated kernel panic.
-> This change also allows removing redundant checks in add_victim_entry().
+> The state observed by f2fs_need_dentry_mark() can differ from the state
+> observed in __write_node_folio() after acquiring sbi->node_write. The
+> root cause is that the semantics of IS_CHECKPOINTED and
+> HAS_FSYNCED_INODE are only guaranteed after the checkpoint write has
+> fully completed.
 > 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> This patch moves set_dentry_mark() into __write_node_folio() and
+> protects it with the sbi->node_write lock.
+> 
+> Fixes: 88bd02c9472a ("f2fs: fix conditions to remain recovery information in f2fs_sync_file")
+> Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
 > ---
->   fs/f2fs/gc.c | 9 +++------
->   1 file changed, 3 insertions(+), 6 deletions(-)
+>  fs/f2fs/node.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 2e0f67946914..981eac629fe9 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -521,12 +521,6 @@ static void add_victim_entry(struct f2fs_sb_info *sbi,
->   	struct sit_info *sit_i = SIT_I(sbi);
->   	unsigned long long mtime = 0;
->   
-> -	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
-> -		if (p->gc_mode == GC_AT &&
-> -			get_valid_blocks(sbi, segno, true) == 0)
-> -			return;
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 2fbfecaf3f7b..7d3b377cbc17 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1807,7 +1807,9 @@ static bool __write_node_folio(struct folio *folio, bool atomic, bool *submitted
+>  		if (IS_INODE(folio))
+>  			set_dentry_mark(folio,
+>  				f2fs_need_dentry_mark(sbi, ino_of_node(folio)));
 > -	}
-> -
->   	mtime = f2fs_get_section_mtime(sbi, segno);
->   	f2fs_bug_on(sbi, mtime == INVALID_MTIME);
->   
-> @@ -889,6 +883,9 @@ int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
->   		if (sec_usage_check(sbi, secno))
->   			goto next;
->   
-> +		if (!get_valid_blocks(sbi, segno, true))
-> +			goto next;
+> +	} else if (IS_INODE(folio) && is_fsync_dnode(folio))
+> +		set_dentry_mark(folio,
+> +				f2fs_need_dentry_mark(sbi, ino_of_node(folio)));
 
-Well, for f2fs_get_victim(, AT_SSR), once there are no dirty segment, if we
-don't count free segment as candidates, then, we can not find any valid victim?
+Thanks, I applied with some clean-up as below. Could you please review this?
 
-Thanks,
+-       if (atomic) {
+-               if (!test_opt(sbi, NOBARRIER))
+-                       fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
+-               if (IS_INODE(folio))
+-                       set_dentry_mark(folio,
++       if (atomic && !test_opt(sbi, NOBARRIER))
++               fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
++
++       if (IS_INODE(folio) && (atomic || is_fsync_dnode(folio)))
++               set_dentry_mark(folio,
+                                f2fs_need_dentry_mark(sbi, ino_of_node(folio)));
+-       }
 
-> +
->   		/* Don't touch checkpointed data */
->   		if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
->   			if (p.alloc_mode == LFS) {
 
+>  
+>  	/* should add to global list before clearing PAGECACHE status */
+>  	if (f2fs_in_warm_node_list(folio)) {
+> @@ -1948,9 +1950,6 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>  					if (is_inode_flag_set(inode,
+>  								FI_DIRTY_INODE))
+>  						f2fs_update_inode(inode, folio);
+> -					if (!atomic)
+> -						set_dentry_mark(folio,
+> -							f2fs_need_dentry_mark(sbi, ino));
+>  				}
+>  				/* may be written by other thread */
+>  				if (!folio_test_dirty(folio))
+> -- 
+> 2.43.0
 
 
 _______________________________________________
