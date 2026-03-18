@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D20A1FCD0DA
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 18 Mar 2026 08:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 75D4F10854BE
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 18 Mar 2026 08:47:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=1Dve81eAqUgFSFbRnHLPmYlrGZC5+EsPmRWXC9sKr10=; b=Gb+yny7y+uf1cn10+EfvJj1UuY
-	4TITtHFGcvSXA0BpLj0IaUC21+xJzSwxfP45ExZgnqzc2TszHWyDwYiuo58Vub0ll2CEay3Gauw8U
-	fIaYWGsizjX2ZqwprUzgDa96egAPiJ7YCH1MXJK8Id9hx7+PGZjb2LjzAGgGSnXmIqAI=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=aRFFWjWWCSoEysfLpATWzNpPoKbJZEYhX2YeU4QbTOY=; b=KY7gil3dfw1zWjw9wXfowibAju
+	iEECpQG9voyduUdxvtHDGfglfLaZq+lZr/Gu00SMtV+Z/iF7hALVHtO8Hy73PuZ2a+yRvcXLSXe1F
+	V7sUqNwbsGd7gbXKXHcMnp/qA0yyLGxbh0Z1yI5PYTUfs94/klh3MJPNVIxq853HqxQA=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w2mY6-0002Db-FV;
-	Wed, 18 Mar 2026 08:46:42 +0000
+	id 1w2mYX-0006g0-Ab;
+	Wed, 18 Mar 2026 08:47:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <monty_pavel@sina.com>) id 1w2mXq-00026u-Rs
+ (envelope-from <monty_pavel@sina.com>) id 1w2mYW-0006ft-D8
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 18 Mar 2026 08:46:26 +0000
+ Wed, 18 Mar 2026 08:47:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VmbMatdnnxmUzCCUpyay8mcKM2bln+ZHoLsAlTm7Elo=; b=bpkJvNEjgd2f+p6FPVPdbwf97o
- IBOODfBaFkmawmu1hwvk8Nq9+l3GlMKthh4TCB5frp7zCgvg8i9HS5vKg07Zvs4nWfDdSGoN0kA5i
- PRlGgtrydNBDgPsmM2QDnn4LHCjThLr6Y1kNBE3r6CA/p4QNQ7+EvzzVHT2xOtIBUSzQ=;
+ bh=egKhg2ZlDcNHyOk4JOYiEsfNNPA5j3o23bxaDDi0hQQ=; b=gEA6oBxzpdbQ/KRkNwoo/TtTCa
+ FfJ4YRs/d/1JgTp6d2mAawOKB+2E7VBMHYwz0OZsHdiSnHLbFSTzW4nhh87ebg0NmY0jJyyaeoptZ
+ A6ItwU/6R2Yqn7f5kncg9O0FlagHDgq4rAUosoEUQ4nhTqhyO/hJsLiue3FPUK6u0o+8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,44 +42,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VmbMatdnnxmUzCCUpyay8mcKM2bln+ZHoLsAlTm7Elo=; b=LDOMJsVe62G/PrIqVXynrojkvh
- OTGiTzqdMtghrjkjxYW7jXp5B6Ajtc7ciVPVGH80RiBZ0Zz44WVIkTvVq7ij0hNjCnTc0x18ED1M5
- zrffW1+OjJ/U2n2rUALiQuyGzUVT4Ile+IptzH+6m2MNa3IcaP47hHAp1oIdHgPm0W5Y=;
-Received: from mail3-166.sinamail.sina.com.cn ([202.108.3.166])
+ bh=egKhg2ZlDcNHyOk4JOYiEsfNNPA5j3o23bxaDDi0hQQ=; b=ZNt3R8GiIOoXIdQxHz+0K/++lM
+ /ErV+ZjjNAntmxrkPgYfA4OyahQGeSrj9u25pECt9jPQ9AmGOMBOxIDzoN4Dnc84DCtr+yFLAwZ6V
+ Q0y+qmXaFAglt1hOjf8WI1+4/76WD0x30y/9wEE7xpgG/SbcpvlamVnemZ+Ea0Ix/WFQ=;
+Received: from mail3-163.sinamail.sina.com.cn ([202.108.3.163])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w2mXq-0002td-0w for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 18 Mar 2026 08:46:26 +0000
+ id 1w2mYW-0002yv-AW for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 18 Mar 2026 08:47:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208;
- t=1773823586; bh=VmbMatdnnxmUzCCUpyay8mcKM2bln+ZHoLsAlTm7Elo=;
+ t=1773823628; bh=egKhg2ZlDcNHyOk4JOYiEsfNNPA5j3o23bxaDDi0hQQ=;
  h=From:Subject:Date:Message-ID;
- b=hC/HPpT3/tIiH5RdBVIFie++VFNDzHYhLEotM1i3Owhjz82wR/kGmub+xS8cLnfLJ
- Ttiy1y/dbT9wPq6Rd2Ih90V6W6cUIwhhGj50mMbWHq+Gv4d/H3XJIVJ8tPGxKsdYI8
- 7hRs+vYVp2BsIWlDv+12IRSaNbBZRTkbvjcHBQOo=
+ b=dUjBIGlTsLomhVXjIWZM8cwCdISl6bSXDc2Dt9BMlijTcX+xkaksec6qXlDiOPveq
+ tRhqiLnXoQFiKZhh1D21zAfWLCxCLcGC4zmiFGFrSFBSEjTZyzf4AqdQ08+p+hxXLb
+ lnRhyI5sTf5+M3fdFdSWBBh9LHtS3vSBJ9FHeSCg=
 X-SMAIL-HELO: xiaomi-ThinkCentre-M760t.mioffice.cn
 Received: from unknown (HELO
  xiaomi-ThinkCentre-M760t.mioffice.cn)([114.247.175.249])
- by sina.com (10.54.253.31) with ESMTP
- id 69BA664D00002AB2; Wed, 18 Mar 2026 16:46:13 +0800 (CST)
+ by sina.com (10.54.253.34) with ESMTP
+ id 69BA667A000055B4; Wed, 18 Mar 2026 16:46:54 +0800 (CST)
 X-Sender: monty_pavel@sina.com
 X-Auth-ID: monty_pavel@sina.com
 Authentication-Results: sina.com; spf=none smtp.mailfrom=monty_pavel@sina.com;
  dkim=none header.i=none;
  dmarc=none action=none header.from=monty_pavel@sina.com
-X-SMAIL-MID: 3377106816134
-X-SMAIL-UIID: 9BD18F791618425A8F3D67EA55370CB2-20260318-164613-1
+X-SMAIL-MID: 3660926291997
+X-SMAIL-UIID: A57CB7E2723849CD82A2A17857AF4867-20260318-164654-1
 From: Yongpeng Yang <monty_pavel@sina.com>
 To: Chao Yu <chao@kernel.org>,
 	Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Wed, 18 Mar 2026 16:45:33 +0800
-Message-ID: <20260318084534.373516-3-monty_pavel@sina.com>
+Date: Wed, 18 Mar 2026 16:46:35 +0800
+Message-ID: <20260318084534.373516-5-monty_pavel@sina.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260318084534.373516-2-monty_pavel@sina.com>
 References: <20260318084534.373516-2-monty_pavel@sina.com>
 MIME-Version: 1.0
-X-Headers-End: 1w2mXq-0002td-0w
-Subject: [f2fs-dev] [PATCH v5 2/4] f2fs: refactor node footer flag setting
- related code
+X-Mailer: git-send-email 2.43.0
+X-Headers-End: 1w2mYW-0002yv-AW
+Subject: [f2fs-dev] [PATCH v5 4/4] f2fs: fix inline data not being written
+ to disk in writeback path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,87 +100,96 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 
-This patch refactors the node footer flag setting code to simplify
-redundant logic and adjust function parameters and return types. No
-logical changes.
+When f2fs_fiemap() is called with `fileinfo->fi_flags` containing the
+FIEMAP_FLAG_SYNC flag, it attempts to write data to disk before
+retrieving file mappings via filemap_write_and_wait(). However, there is
+an issue where the file does not get mapped as expected. The following
+scenario can occur:
 
+root@vm:/mnt/f2fs# dd if=/dev/zero of=data.3k bs=3k count=1
+root@vm:/mnt/f2fs# xfs_io data.3k -c "fiemap -v 0 4096"
+data.3k:
+ EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+   0: [0..5]:          0..5                 6 0x307
+
+The root cause of this issue is that f2fs_write_single_data_page() only
+calls f2fs_write_inline_data() to copy data from the data folio to the
+inode folio, and it clears the dirty flag on the data folio. However, it
+does not mark the data folio as writeback. When
+__filemap_fdatawait_range() checks for folios with the writeback flag,
+it returns early, causing f2fs_fiemap() to report that the file has no
+mapping.
+
+To fix this issue, the solution is to call
+f2fs_write_single_node_folio() in f2fs_inline_data_fiemap() when
+getting fiemap with FIEMAP_FLAG_SYNC flags. This patch ensures that the
+inode folio is written back and the writeback process completes before
+proceeding.
+
+Fixes: 9ffe0fb5f3bb ("f2fs: handle inline data operations")
 Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
-Reviewed-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/f2fs.h |  2 +-
- fs/f2fs/node.c |  2 +-
- fs/f2fs/node.h | 23 +++++++++++------------
- 3 files changed, 13 insertions(+), 14 deletions(-)
+v5:
+- Declare f2fs_write_single_node_folio() in fs/f2fs/f2fs.h.
+v4:
+- Fix the missing return value check for f2fs_get_inode_folio().
+v3:
+- Call f2fs_write_single_node_folio() instead of f2fs_sync_node_pages()
+v2:
+- Call f2fs_sync_node_pages() in getting fiemap path rather than
+writeback path.
+---
+ fs/f2fs/f2fs.h   | 2 ++
+ fs/f2fs/inline.c | 9 +++++++++
+ fs/f2fs/node.c   | 2 +-
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 660bf88a376f..2de1764e693f 100644
+index 2de1764e693f..3b1fdaac1ef6 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -3928,7 +3928,7 @@ bool f2fs_in_warm_node_list(struct folio *folio);
- void f2fs_init_fsync_node_info(struct f2fs_sb_info *sbi);
- void f2fs_del_fsync_node_entry(struct f2fs_sb_info *sbi, struct folio *folio);
- void f2fs_reset_fsync_node_info(struct f2fs_sb_info *sbi);
--int f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid);
-+bool f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid);
- bool f2fs_is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid);
- bool f2fs_need_inode_block_update(struct f2fs_sb_info *sbi, nid_t ino);
- int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
+@@ -3950,6 +3950,8 @@ int f2fs_sanity_check_node_footer(struct f2fs_sb_info *sbi,
+ 					enum node_type ntype, bool in_irq);
+ struct folio *f2fs_get_inode_folio(struct f2fs_sb_info *sbi, pgoff_t ino);
+ struct folio *f2fs_get_xnode_folio(struct f2fs_sb_info *sbi, pgoff_t xnid);
++int f2fs_write_single_node_folio(struct folio *node_folio, int sync_mode,
++			bool mark_dirty, enum iostat_type io_type);
+ int f2fs_move_node_folio(struct folio *node_folio, int gc_type);
+ void f2fs_flush_inline_data(struct f2fs_sb_info *sbi);
+ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 86d2abbb40ff..62a8a1192a41 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -814,6 +814,15 @@ int f2fs_inline_data_fiemap(struct inode *inode,
+ 		goto out;
+ 	}
+ 
++	if (fieinfo->fi_flags & FIEMAP_FLAG_SYNC) {
++		err = f2fs_write_single_node_folio(ifolio, true, false, FS_NODE_IO);
++		if (err)
++			return err;
++		ifolio = f2fs_get_inode_folio(F2FS_I_SB(inode), inode->i_ino);
++		if (IS_ERR(ifolio))
++			return PTR_ERR(ifolio);
++		f2fs_folio_wait_writeback(ifolio, NODE, true, true);
++	}
+ 	ilen = min_t(size_t, MAX_INLINE_DATA(inode), i_size_read(inode));
+ 	if (start >= ilen)
+ 		goto out;
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index e0b6344bac02..dee60d940219 100644
+index 3e4847c6e3a3..6bb810d0f4c3 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -391,7 +391,7 @@ void f2fs_reset_fsync_node_info(struct f2fs_sb_info *sbi)
- 	spin_unlock_irqrestore(&sbi->fsync_node_lock, flags);
+@@ -1848,7 +1848,7 @@ static bool __write_node_folio(struct folio *folio, bool atomic, bool do_fsync,
+ 	return false;
  }
  
--int f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid)
-+bool f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid)
+-static int f2fs_write_single_node_folio(struct folio *node_folio, int sync_mode,
++int f2fs_write_single_node_folio(struct folio *node_folio, int sync_mode,
+ 			bool mark_dirty, enum iostat_type io_type)
  {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct nat_entry *e;
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 824ac9f0e6e4..219be30e6a68 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -400,27 +400,26 @@ static inline int is_node(const struct folio *folio, int type)
- #define is_fsync_dnode(folio)	is_node(folio, FSYNC_BIT_SHIFT)
- #define is_dent_dnode(folio)	is_node(folio, DENT_BIT_SHIFT)
- 
--static inline void set_cold_node(const struct folio *folio, bool is_dir)
-+static inline void __set_mark(const struct folio *folio, bool mark, int type)
- {
- 	struct f2fs_node *rn = F2FS_NODE(folio);
- 	unsigned int flag = le32_to_cpu(rn->footer.flag);
- 
--	if (is_dir)
--		flag &= ~BIT(COLD_BIT_SHIFT);
--	else
--		flag |= BIT(COLD_BIT_SHIFT);
--	rn->footer.flag = cpu_to_le32(flag);
--}
--
--static inline void set_mark(struct folio *folio, int mark, int type)
--{
--	struct f2fs_node *rn = F2FS_NODE(folio);
--	unsigned int flag = le32_to_cpu(rn->footer.flag);
- 	if (mark)
- 		flag |= BIT(type);
- 	else
- 		flag &= ~BIT(type);
- 	rn->footer.flag = cpu_to_le32(flag);
-+}
-+
-+static inline void set_cold_node(const struct folio *folio, bool is_dir)
-+{
-+	__set_mark(folio, !is_dir, COLD_BIT_SHIFT);
-+}
-+
-+static inline void set_mark(const struct folio *folio, bool mark, int type)
-+{
-+	__set_mark(folio, mark, type);
- 
- #ifdef CONFIG_F2FS_CHECK_FS
- 	f2fs_inode_chksum_set(F2FS_F_SB(folio), folio);
+ 	int err = 0;
 -- 
 2.43.0
 
