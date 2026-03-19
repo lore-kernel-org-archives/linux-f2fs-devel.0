@@ -4,76 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DA6F71090257
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Mar 2026 17:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2ACA61090257
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Mar 2026 17:03:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=CTUdA488sI9JAyC690YzGoKwMssXLjrf5ncX8CxZfGw=; b=GSj5n+IbnowDwjqnFBGi34rq/i
-	2K1qnucPF4Vk9ZTG8H8sP3vCAQZ/LT/arRdTEc8Wl0JSi5VI0n9HzfnhcFuJroYRW7I5RZgZY7i8h
-	yTCPK2Yvg6pEWGhhtxOi4cRTEGPJWwFJbRRNKrujIUwj6THfKjHIJ1fgDE9WPWyblq/0=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=hfa7B7VpSUEvfuM8JYSubiDIhpssOSOWFNoLf8xFpk0=; b=fCO6mhLNjSPcQsqtFIxioLT3Xu
+	72XKCSvrY6eN8xwi//XuK8kPTyIBQC5e8wc0r5S1a4hw4NADZpUf0whweLJS/LItjKeHBW8csHvYN
+	42AGFdEkceMQaJIHqcEl+wHNI8Bbu9goezRTZs4Ia8DRfQfmZopvSlBDeDXBYgdcLmb4=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w3Glk-0002CB-1q;
-	Thu, 19 Mar 2026 17:02:48 +0000
+	id 1w3Glu-00029Y-4J;
+	Thu, 19 Mar 2026 17:02:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1w3Gli-0002C4-Pm
+ (envelope-from <aalbersh@kernel.org>) id 1w3Gls-00029Q-F7
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Mar 2026 17:02:46 +0000
+ Thu, 19 Mar 2026 17:02:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qXU9xBZdaGNMM0vWrOvKIHN7OfW9+pYvVAW0zXBQpLc=; b=VAn46Fh3acKWW8xca38tf0z8ZE
- 3Kd91b4C7bZAKdUPha9NW20mB0HAAJKDH3FWMLqPcoOv+qV+nSvnRJi+Zw0bGYcG6tuGVI9PIBRih
- gL5t3IrMyO06q75svATdnEBO3DTaf5l4h1vpIrUIkmPYMrGIOc0fhxnzus+DJEuRzsFY=;
+ bh=p0+hq9/DRDl/lw3PvjhaPOtKUxSn95L5cZAgltFzHQE=; b=gh19a1UVw2mFpuwQtqAI4FLyGi
+ QEm9O4v0y/m5bsvGg1e/9Wq+9g6PzjbCxivh9mNVxwuTQdmqxsAYX13CjDpkPStOkMQfBqzDPLtcn
+ miVNn2tCaRZeroz3LTF7CrHOfBhbhGwaFVRJtTCKAQd/ubIPOGn+YSSW/EJx+w17fsOY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=qXU9xBZdaGNMM0vWrOvKIHN7OfW9+pYvVAW0zXBQpLc=; b=K
- ZffPeSm5n3LSV7OKhdfhaSCPQriAfuES2LPcFpMbjxozdbivOpXHGQ9xCbLaXbGBEjJfOs9bVnU4h
- CzGn4vaawvebbuFYWZnULPONREGLyUYlBm1SNlhxk/58svbnF8M0Rjf7EyQo/GVZPCFOvcaU9fgoi
- C59gQ3uEc1/sRWGk=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=p0+hq9/DRDl/lw3PvjhaPOtKUxSn95L5cZAgltFzHQE=; b=DoDzLvraUkm62VHKRVmL2ATmXo
+ JEO5U9KfsMGGeoMtOBGnJ9sMzrpJkhctlQ1PDMZ10iwdAQxCz2Ebe42cwEM2O837OQ/qCNX1XQNKm
+ VgD/XcDiTmXsR82DcRvvoEL8ONRlycTf5BkRsM9IRuokzG9ANqmadG+MEggWILO2Rmp4=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w3Gli-0005c6-3v for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Mar 2026 17:02:46 +0000
+ id 1w3Glr-0005d9-Ti for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 19 Mar 2026 17:02:56 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 6C777600AD;
- Thu, 19 Mar 2026 17:02:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2148C19424;
- Thu, 19 Mar 2026 17:02:37 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 7B0E143F08;
+ Thu, 19 Mar 2026 17:02:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F013C19424;
+ Thu, 19 Mar 2026 17:02:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1773939760;
- bh=1joVFanxDh8PwgMXEWccLkn6Kcw2pxcU3MySKiM4AmA=;
- h=From:To:Cc:Subject:Date:From;
- b=fRKc/RQdcmF8WuT8iYok51UB0OX4N96zZrvJTOrnqk0grGzC7rNAA1tco0sSQdhrm
- aUruzC2WAYo2pMcUeT1Ak91yJCzqnLW0Eq+zQ0SnM/3vEh/xjuUVSr4cGNW8s5gkF8
- +sKchm7xrKq4fsS1T4ZdjoyhSGkdCEJe+3uahXPM2rNXCnje1CYVHe/2czSFKJS3SZ
- uUdk/oSG1LOvPVGUFSn/KJWfyVcB9YF1FQnnRq7r/TZLV2HYX8nL7RxwkP4VYqfHBW
- dFW1SqxWHb/l4PAw/T4AuHkvI4vAtzTzn6MmqgJtg+fx0r1gIkCDgIvJpKm+MhDS5J
- Zy+WbVYmn/3aQ==
+ s=k20201202; t=1773939765;
+ bh=pNHdBOW55LkBe0BiZ2NtLLPmFVSJ8bnWMqD9JSLDKkM=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=TTGMdocaxYVdU887hPWohvm8XvDKK5I8zw/kgpWC68XkQF+b8Rkp26/HLwkdwlHrx
+ M8OhTk2/2B6D0cOfQ5L0wUTp8Jbb/UEq99UI8Z2ebRamofksVOLD1TCpdsJRZl0f1/
+ O5Wsy3+hRPwJdlgCuY2sDadahY60z2RkTZ0L4YFYBpciT6UAO2wTBmRuSmW4Q4wq8f
+ mPWFYc91B7Znx0cf1x+3g8XuEg7lxbX4wjlYX8XNmRA9LVFbW0lvq7pBoVECRTcDOj
+ vd+O422CMh9dw6sOUsT3b2wigqVzFwrZr9/J+J0v0rsg4hjBzqvYyevs08LlnI0vfk
+ mcJBeMkpznLiA==
 To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
  linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
-Date: Thu, 19 Mar 2026 18:01:47 +0100
-Message-ID: <20260319170231.1455553-1-aalbersh@kernel.org>
+Date: Thu, 19 Mar 2026 18:01:49 +0100
+Message-ID: <20260319170231.1455553-3-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20260319170231.1455553-1-aalbersh@kernel.org>
+References: <20260319170231.1455553-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1w3Gli-0005c6-3v
-Subject: [f2fs-dev] [PATCH v5 00/25] fs-verity support for XFS with post EOF
- merkle tree
+X-Headers-End: 1w3Glr-0005d9-Ti
+Subject: [f2fs-dev] [PATCH v5 02/25] fsverity: expose ensure_fsverity_info()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,176 +90,75 @@ From: Andrey Albershteyn via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
 Cc: Andrey Albershteyn <aalbersh@kernel.org>, djwong@kernel.org,
- david@fromorbit.com, linux-f2fs-devel@lists.sourceforge.net,
- linux-ext4@vger.kernel.org, hch@lst.de, linux-btrfs@vger.kernel.org
+ linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, hch@lst.de,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi all,
+This function will be used by XFS's scrub to force fsverity activation,
+therefore, to read fsverity context.
 
-This patch series adds fs-verity support for XFS. This version stores
-merkle tree beyond end of the file, the same way as ext4 does it. The
-difference is that verity descriptor is stored at the next aligned 64k
-block after the merkle tree last block. This is done due to sparse
-merkle tree which doesn't store hashes of zero data blocks.
-
-The patchset starts with a few fs-verity preparation patches. Then, a
-few patches to allow iomap to work in post EOF region. The XFS fs-verity
-implementation follows.
-
-The tree is read by iomap into page cache at offset of next largest
-folio past end of file. The same offset is used for on-disk.
-
-This patchsets also synthesizes merkle tree block full of hashes of
-zeroed data blocks. This merkle blocks are not stored on disk, they are
-holes in the tree.
-
-Testing. The -g verity is passing for 1k, 8k and 4k with/without quota
-on 4k and 64k page size systems. Tested -g auto for enabled/disabled
-fsverity.
-
-This series based on latest fsverity/for-next with patchset fs generated
-integrity information [1].
-
-kernel:
-https://git.kernel.org/pub/scm/linux/kernel/git/aalbersh/xfs-linux.git/log/?h=b4/fsverity
-
-xfsprogs:
-https://github.com/alberand/xfsprogs/tree/b4/fsverity
-
-xfstests:
-https://github.com/alberand/xfstests/tree/b4/fsverity
-
-Cc: fsverity@lists.linux.dev
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org
-
-Cc: david@fromorbit.com
-Cc: djwong@kernel.org
-Cc: ebiggers@kernel.org
-Cc: hch@lst.de
-
-[1]: https://lore.kernel.org/linux-xfs/20260223132021.292832-1-hch@lst.de/
-
+Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
-Changes in v5:
-- Add fserror_report_data_lost() for data blocks in page spanning EOF
-- Issue fsverity metadata readahead in data readahead
-- iomap_fsverity_write() return type fix
-- Use of S_ISREG(mode)
-- Make 65536 #define instead of open-coded
-- Use transaction per unwritten extent removal
-- Fetch fsverity_info for all fsverity metadata
-- Revert fsverity_folio_zero_hash() stub as used in iomap
-- Extend cancel_unwritten to whole file range to remove cow leftovers
-- Drop delayed allocation on the COW fork on fsverity completion
-Changes in v4:
-- Use fserror interface in fsverity instead of fs callback
-- Hoist pagecache_read from f2fs/ext4 to fsverity
-- Refactor iomap code
-- Fetch fsverity_info only for file data and merkle tree holes
-- Do not disable preallocation, remove unwritten extents instead
-- Offload fsverity hash I/O to fsverity workqueue in read path
-- Store merkle tree at round_up(i_size, 64k)
-- Add a spacing between merkle tree and fsverity descriptor as next 64k
-  aligned block
-- Squash helpers into first user commits
-- Squash on-disk format changes into single commit
-- Drop different offset for pagecache/on-disk
-- Don't zero out pages in higher order folios in write path
-- Link to v3: https://lore.kernel.org/fsverity/20260217231937.1183679-1-aalbersh@kernel.org/T/#t
-Changes in v3:
-- Different on-disk and pagecache offset
-- Use read path ioends
-- Switch to hashtable fsverity info
-- Synthesize merkle tree blocks full of zeroes
-- Other minor refactors
-- Link to v2: https://lore.kernel.org/fsverity/20260114164210.GO15583@frogsfrogsfrogs/T/#t
-Changes in v2:
-- Move to VFS interface for merkle tree block reading
-- Drop patchset for per filesystem workqueues
-- Change how offsets of the descriptor and tree metadata is calculated
-- Store fs-verity descriptor in data fork side by side with merkle tree
-- Simplify iomap changes, remove interface for post eof read/write
-- Get rid of extended attribute implementation
-- Link to v1: https://lore.kernel.org/r/20250728-fsverity-v1-0-9e5443af0e34@kernel.org
+ fs/verity/open.c         | 5 +++--
+ include/linux/fsverity.h | 7 +++++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-Andrey Albershteyn (23):
-  fsverity: report validation errors through fserror to fsnotify
-  fsverity: expose ensure_fsverity_info()
-  fsverity: generate and store zero-block hash
-  fsverity: introduce fsverity_folio_zero_hash()
-  fsverity: pass digest size and hash of the empty block to ->write
-  fsverity: hoist pagecache_read from f2fs/ext4 to fsverity
-  iomap: introduce IOMAP_F_FSVERITY and teach writeback to handle
-    fsverity
-  iomap: obtain fsverity info for read path
-  iomap: issue readahead for fsverity merkle tree
-  iomap: teach iomap to handle fsverity holes and verify data holes
-  iomap: introduce iomap_fsverity_write() for writing fsverity metadata
-  xfs: introduce fsverity on-disk changes
-  xfs: initialize fs-verity on file open
-  xfs: don't allow to enable DAX on fs-verity sealed inode
-  xfs: disable direct read path for fs-verity files
-  xfs: handle fsverity I/O in write/read path
-  xfs: use read ioend for fsverity data verification
-  xfs: add fs-verity support
-  xfs: remove unwritten extents after preallocations in fsverity
-    metadata
-  xfs: add fs-verity ioctls
-  xfs: introduce health state for corrupted fsverity metadata
-  xfs: add fsverity traces
-  xfs: enable ro-compat fs-verity flag
-
-Darrick J. Wong (2):
-  xfs: advertise fs-verity being available on filesystem
-  xfs: check and repair the verity inode flag state
-
- fs/btrfs/verity.c              |   6 +-
- fs/ext4/verity.c               |  36 +--
- fs/f2fs/verity.c               |  34 +--
- fs/iomap/buffered-io.c         |  99 ++++++-
- fs/iomap/trace.h               |   3 +-
- fs/verity/enable.c             |   4 +-
- fs/verity/fsverity_private.h   |   3 +
- fs/verity/open.c               |   8 +-
- fs/verity/pagecache.c          |  55 ++++
- fs/verity/verify.c             |   4 +
- fs/xfs/Makefile                |   1 +
- fs/xfs/libxfs/xfs_bmap.c       |   7 +
- fs/xfs/libxfs/xfs_format.h     |  35 ++-
- fs/xfs/libxfs/xfs_fs.h         |   2 +
- fs/xfs/libxfs/xfs_health.h     |   4 +-
- fs/xfs/libxfs/xfs_inode_buf.c  |   8 +
- fs/xfs/libxfs/xfs_inode_util.c |   2 +
- fs/xfs/libxfs/xfs_sb.c         |   4 +
- fs/xfs/scrub/attr.c            |   7 +
- fs/xfs/scrub/common.c          |  53 ++++
- fs/xfs/scrub/common.h          |   2 +
- fs/xfs/scrub/inode.c           |   7 +
- fs/xfs/scrub/inode_repair.c    |  36 +++
- fs/xfs/xfs_aops.c              |  62 ++++-
- fs/xfs/xfs_bmap_util.c         |   8 +
- fs/xfs/xfs_file.c              |  19 +-
- fs/xfs/xfs_fsverity.c          | 457 +++++++++++++++++++++++++++++++++
- fs/xfs/xfs_fsverity.h          |  28 ++
- fs/xfs/xfs_health.c            |   1 +
- fs/xfs/xfs_inode.h             |   6 +
- fs/xfs/xfs_ioctl.c             |  14 +
- fs/xfs/xfs_iomap.c             |  15 +-
- fs/xfs/xfs_iops.c              |   4 +
- fs/xfs/xfs_message.c           |   4 +
- fs/xfs/xfs_message.h           |   1 +
- fs/xfs/xfs_mount.h             |   4 +
- fs/xfs/xfs_super.c             |   7 +
- fs/xfs/xfs_trace.h             |  46 ++++
- include/linux/fsverity.h       |  23 +-
- include/linux/iomap.h          |  10 +
- 40 files changed, 1035 insertions(+), 94 deletions(-)
- create mode 100644 fs/xfs/xfs_fsverity.c
- create mode 100644 fs/xfs/xfs_fsverity.h
-
+diff --git a/fs/verity/open.c b/fs/verity/open.c
+index dfa0d1afe0fe..0483db672526 100644
+--- a/fs/verity/open.c
++++ b/fs/verity/open.c
+@@ -344,7 +344,7 @@ int fsverity_get_descriptor(struct inode *inode,
+ 	return 0;
+ }
+ 
+-static int ensure_verity_info(struct inode *inode)
++int fsverity_ensure_verity_info(struct inode *inode)
+ {
+ 	struct fsverity_info *vi = fsverity_get_info(inode), *found;
+ 	struct fsverity_descriptor *desc;
+@@ -380,12 +380,13 @@ static int ensure_verity_info(struct inode *inode)
+ 	kfree(desc);
+ 	return err;
+ }
++EXPORT_SYMBOL_GPL(fsverity_ensure_verity_info);
+ 
+ int __fsverity_file_open(struct inode *inode, struct file *filp)
+ {
+ 	if (filp->f_mode & FMODE_WRITE)
+ 		return -EPERM;
+-	return ensure_verity_info(inode);
++	return fsverity_ensure_verity_info(inode);
+ }
+ EXPORT_SYMBOL_GPL(__fsverity_file_open);
+ 
+diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+index a8f9aa75b792..8ba7806b225e 100644
+--- a/include/linux/fsverity.h
++++ b/include/linux/fsverity.h
+@@ -188,6 +188,7 @@ int fsverity_get_digest(struct inode *inode,
+ /* open.c */
+ 
+ int __fsverity_file_open(struct inode *inode, struct file *filp);
++int fsverity_ensure_verity_info(struct inode *inode);
+ 
+ /* read_metadata.c */
+ 
+@@ -281,6 +282,12 @@ static inline void fsverity_enqueue_verify_work(struct work_struct *work)
+ 	WARN_ON_ONCE(1);
+ }
+ 
++static inline int fsverity_ensure_verity_info(struct inode *inode)
++{
++	WARN_ON_ONCE(1);
++	return -EOPNOTSUPP;
++}
++
+ #endif	/* !CONFIG_FS_VERITY */
+ 
+ static inline bool fsverity_verify_folio(struct fsverity_info *vi,
 -- 
 2.51.2
 
