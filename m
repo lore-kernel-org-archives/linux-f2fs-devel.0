@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 17CEE109023A
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Mar 2026 15:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0E1EF109025B
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Mar 2026 17:02:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=51+0ad057a33K4n4HAZEGR/KmTLr5h8qrdAwsdN+80E=; b=i0iZU0CpRwzWA8jdcABTxdvnKx
-	I9Wui2jc23MFgmzK61pqM8/flvzTF517LXIE/B817ZLir+lk8S9Jo6r9cZtvjakokAQWlBzRWPEpE
-	wt4PncPqAgjZmYLZ9OtU4cecrB4DlM31870fqad8LdXSRbYrInzyPaB5Prq37kzXvqT0=;
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=io/SVpx52l7h0ckfR0sHvxDTPe/jsNt6OAeH8D+mnOI=; b=daN8R/o8Wm3Mncj8DLcg8Fv1Rg
+	J/0Ge5+lNo6WvIebzwz0ak8t5xpdY254jyaJKAqYL6UKNmvbDnY4zgZonY2Lbbq/9Gw2njSf7JqDT
+	94qMOJaHLNBa1dRTcoMQRIBGtFc2VTDJmbJvCvYn+UberQPpnlMMZa7ltsVhX3ME2Oa8=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w3F2J-0006sV-7n;
-	Thu, 19 Mar 2026 15:11:48 +0000
+	id 1w3Gll-0008Od-Ic;
+	Thu, 19 Mar 2026 17:02:50 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <kth5965@gmail.com>) id 1w3F2I-0006sL-2P
+ (envelope-from <aalbersh@kernel.org>) id 1w3Glk-0008OP-DC
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Mar 2026 15:11:46 +0000
+ Thu, 19 Mar 2026 17:02:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rE4TP5G0/Z2glX2Ff42zJUqrHwF5wIaTpC4CWB4qsxU=; b=ccYNWQOJPjWzHpfeciBYcE4uOB
- wBtl8Vikm0fZo2Jb8FYS56XD5CC5a9YA2GS0ob8vkyOMClky2iqi5pKlQx4pgFjt/vEj3XZNhVLeP
- A+oESVi6t8HZFDCxbBiAIWtIk5EVtAAk45Q4sF2RNQg0Mle5TvlDB5QuNCGFoI3msI9Q=;
+ bh=lQrIWl0g1/KDWy9mUSFEuW/Sll+WgIHMJzyFLk/oGj8=; b=esZbba4eZx1QZNXtQLOuG/7XlJ
+ a22rneh89ZhzJzsz10pzfXYg2yin+lHZzBNkIx8bUHj6S8+dh2hU9pQztmtZwB/e67ErS4w+GS1/2
+ hFWuLwUPWaSL8LQJAI0ns6Eh4wAoIDE0fUDPdEhe1AtUUM6TAIm3vF4DfCqeZjmPh5IY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,72 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=rE4TP5G0/Z2glX2Ff42zJUqrHwF5wIaTpC4CWB4qsxU=; b=HsuOkylZ7YLHMyYp/7tddQHelc
- agP8kaos8WPqryW7nV2yt3GNXTEECC03Y9rfe/rgd+NkCzasbn1cIjvm4ZbSC5cJWlQz1vJfmAhrF
- 84+EJ0Iz8t37ds1EZswbnuffYvCgobVabRdCJhzqsw7wFXSfFMPIzeaLyenDqIJk6FR4=;
-Received: from mail-pl1-f173.google.com ([209.85.214.173])
+ bh=lQrIWl0g1/KDWy9mUSFEuW/Sll+WgIHMJzyFLk/oGj8=; b=MEd+gQD1L4C0a11pzLZO1D6b/o
+ mRCIZqdxA8ogYSuIa/B8VS2MKgpMrHPVoPliDl96sWpeDyiP7NoickM8Ep1p3BuvdhnfRtUC8DLbz
+ MYtWs6s8JKVxJxsJjnEFkNlx89zOi2i1i/nQCplEIJn0l9Fqp4TYlt2JkFhDWUdcyb0w=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1w3F2I-0008JA-AR for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Mar 2026 15:11:46 +0000
-Received: by mail-pl1-f173.google.com with SMTP id
- d9443c01a7336-2aae4d2d215so3683755ad.2
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 19 Mar 2026 08:11:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1773933101; x=1774537901; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=rE4TP5G0/Z2glX2Ff42zJUqrHwF5wIaTpC4CWB4qsxU=;
- b=L6V9u+b5KQ+uUHzpkHtpKiek+zhEF+iIgLaRgJ5Hlfb/sNH7bCcbdP/cUIYKafoesZ
- gSg1JZ9Y49P1d1862bWmMP3kWyAeb6gEQ37PoFd0PiVfpfUVEAH+4QaS0SCEf5BFzS1Z
- NTSPGt/+V6+by/9Y25I+p2hmeuTIxtUSL7P+LZb0xSFWs8TdA0kpXfzzDXMkIbCMc3Ox
- ruWorAYMKVJkSFpN6YbbTK4eo4wcPRbwoeonO3EwOV+602dEhs2w5yyEV75ph1mySZmw
- ceREMCs50Dn3tABfgmEjAFOFSKTUuIRfZtpJnseHA2xkv7gQvbI7SKVVRBJn9fFvTAf5
- Pp8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1773933101; x=1774537901;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=rE4TP5G0/Z2glX2Ff42zJUqrHwF5wIaTpC4CWB4qsxU=;
- b=aLyOvJ7rj4flJjRDPFl5LAA42s9wwfoZtAYElsXUHxXsFEjoGtU8SIz/j0sBpFutjk
- h+LLYkLMIUZwitDY3H5BbOBsXOOls4FMnWCg0bMK3rtAMuKWfeivFgNcLNTiaEK3uAAs
- 5ADW/PAXbYXOEm1tZOc6y8MEFIwpRb2TbOsZAx7d/Ks4WBICdiAWyRt0RPrN45cmxnIa
- Xx50+xTwQ8Nq9cSBGfP200Md0bOcECuVcwWg7ZwWCeeJyQu5wOAwYTxkS7Ztld2lU7ex
- cYm6fLWj74xIe2vRugTmQnxCrEWK2zwFUSxtZrNqnBowKK3whSV2ve6fhtQFFvlvd1LR
- 8h2Q==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWgBMSSGkoLM1/ZiU7N0YeU1w+4neYLVG4dU9utcH0IyUbk/E73Ix/fP0GMaf5vXdxxgd6a9F82bGMKLSaO7TTE@lists.sourceforge.net
-X-Gm-Message-State: AOJu0Yw476SB10+9rwB0yu+wMwHQhLjyyvHeM1uMCzm+Bia/h5dY0lu/
- 0FUo4VpvS5i7Le9LeDDy8Vj1kBmg206jT6Hm1ncno26L8ACp0RLVUKDq
-X-Gm-Gg: ATEYQzz1Orr27XOUFLJX2p78S0CUHsTHO+9VebOVLBhdcmFqnIPwExClVrFTG73mLmm
- H1+ar7ttBBHolWL0jAIfXdx9/+t2QkS/Xyz0Ens2fcmXgZbmLkVGsp5Rty/OVGFEs8viLwz4Qxt
- G+uep6BJYpjOwlRUozH+hk+y3iQmoo/Jj7wo235fPie4IZG8dgrU2Pt/Fbmev0e6OKAl5ho52g+
- D0kvsn3uBt9DlIliu+g22DLKQ7XR3q4pcj4757y4JUBtLM0EJic9Ospm4SmfhdotBYK0elceL76
- PNX320SPqYvZWJUltxjN1N1kJN5Hi74wvU7knc4t3B3ERLYhs/Zn8IZUIAlxc7CTzowGxppgIuA
- 5dnKo8EMHwUAjoxaj9/UVeLiwvBLfPyyudPS9XZ19XTSEdt/Z/fdoe7g4o4Zcn4LFofDN1/Mvwo
- K2jOo1IB/HqiNBrPIHsLZmN2a1QrZikg==
-X-Received: by 2002:a17:902:f54a:b0:2b0:4d92:b8c7 with SMTP id
- d9443c01a7336-2b06e3381f6mr50540845ad.1.1773933100495; 
- Thu, 19 Mar 2026 08:11:40 -0700 (PDT)
-Received: from kt5965-NUC8i3BEH.. ([182.217.14.201])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2b06e5ef58asm60221695ad.47.2026.03.19.08.11.38
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 19 Mar 2026 08:11:40 -0700 (PDT)
-From: kth5965@gmail.com
-To: chao@kernel.org, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 20 Mar 2026 00:11:21 +0900
-Message-ID: <20260319151121.39737-1-kth5965@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <b044d785-cf71-4186-b208-c375c605893b@kernel.org>
-References: <b044d785-cf71-4186-b208-c375c605893b@kernel.org>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1w3Glk-0005cP-Jd for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 19 Mar 2026 17:02:49 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by tor.source.kernel.org (Postfix) with ESMTP id 0C57F600AE;
+ Thu, 19 Mar 2026 17:02:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94D15C2BCB0;
+ Thu, 19 Mar 2026 17:02:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1773939762;
+ bh=1+F7FUyyPtQv6AnDaCaQYOUoe9C0/OM2XaO+4qMrhCg=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=aMnivIH57WViMWKRuyFrPz8MkHi3nNIuQwGIkU2qPhrthXhRW81M5TTIaBWkEuTVV
+ ITYXnULmAP5IA/gtTn1RisgKrsh1OvXEssQ11slT39a7LoAFM55TFVyFY3MzPgXvTX
+ QeeySVLHtQwA7aphzl+ueqim1wNBqHNvvatl7xwY69QhT6Usk1jepl1MpAGb42weP6
+ 3sKEwPOPmbukO97p+EHwQ2M1iKUQlvYSS86tATNoqLI25QrXZshDjl62LBIZuC4V+S
+ MjtdlHO4qjiwBKEoDF/Dg1gUUaxDXnoOKul/dUU7zpLr7OxwTmMRPi/old6RENDuWC
+ Bf8jSaN12rf7Q==
+To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
+Date: Thu, 19 Mar 2026 18:01:48 +0100
+Message-ID: <20260319170231.1455553-2-aalbersh@kernel.org>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20260319170231.1455553-1-aalbersh@kernel.org>
+References: <20260319170231.1455553-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1w3F2I-0008JA-AR
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: evict: truncate page cache before
- clear_inode
+X-Headers-End: 1w3Glk-0005cP-Jd
+Subject: [f2fs-dev] [PATCH v5 01/25] fsverity: report validation errors
+ through fserror to fsnotify
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -119,32 +87,56 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org
+From: Andrey Albershteyn via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
+Cc: Andrey Albershteyn <aalbersh@kernel.org>, djwong@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, hch@lst.de,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Chao,
+Reported verification errors to fsnotify through recently added fserror
+interface.
 
-Yes, I agree with your point.
+Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+---
+ fs/verity/verify.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-I also think 2) is useful to detect the corrupted inode earlier and to
-make the issue visible through log and returned error.
+diff --git a/fs/verity/verify.c b/fs/verity/verify.c
+index 4004a1d42875..4ea494da694f 100644
+--- a/fs/verity/verify.c
++++ b/fs/verity/verify.c
+@@ -9,6 +9,7 @@
+ 
+ #include <linux/bio.h>
+ #include <linux/export.h>
++#include <linux/fserror.h>
+ 
+ #define FS_VERITY_MAX_PENDING_BLOCKS 2
+ 
+@@ -203,6 +204,8 @@ static bool verify_data_block(struct fsverity_info *vi,
+ 		 * to verify that any data blocks fully past EOF are all zeroes.
+ 		 */
+ 		if (memchr_inv(dblock->data, 0, params->block_size)) {
++			fserror_report_data_lost(inode, data_pos,
++						 params->block_size, GFP_NOFS);
+ 			fsverity_err(inode,
+ 				     "FILE CORRUPTED!  Data past EOF is not zeroed");
+ 			return false;
+@@ -312,6 +315,7 @@ static bool verify_data_block(struct fsverity_info *vi,
+ 		data_pos, level - 1, params->hash_alg->name, hsize, want_hash,
+ 		params->hash_alg->name, hsize,
+ 		level == 0 ? dblock->real_hash : real_hash);
++	fserror_report_data_lost(inode, data_pos, params->block_size, GFP_NOFS);
+ error:
+ 	for (; level > 0; level--) {
+ 		kunmap_local(hblocks[level - 1].addr);
+-- 
+2.51.2
 
-But 2) alone does not seem sufficient, because we can still reach inode
-cleanup later, and then `f2fs_evict_inode()` can still go through the
-inline conversion path.
-
-So it makes sense to me that we need both:
-
-1. earlier detection / guarding in sanity check
-2. fixing the empty inline conversion path so page #0 cache is not left
-   behind
-
-If this understanding is correct, I will prepare the fix in that
-direction.
-
-Thanks.
 
 
 _______________________________________________
