@@ -4,76 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5443F108E1E2
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Mar 2026 11:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4D692108E1E9
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Mar 2026 11:06:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:In-Reply-To:Date:From:To:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:References:List-Owner;
-	bh=H7703i4ZUqEUHTsfY4qqlsgmpIMfvotcpez5QjjMaN4=; b=MmZ8aoTu6FwhzNOZj8lR1TJf2P
-	5U1XNrUeghBLgBPAGGwiI59njzmHAxWpHxJfPQ/+PFCC1UjiRz2qNvXvG3FKl8NM15P/Rfvg9g7Kn
-	01DaZHmdhZyUUkN5rdG43XeCKbDcprBXBTY5j7vQ2vNZI8ciglQv0hL/LYFaOumhE38A=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=2RVRJ609ZPMP1aeo7mCaBe45ItCg2k25OrLt+ry4WRM=; b=K0qjDcKwt5iPYc3FIqqJI31pw8
+	PHlr8UUTzuBZDUL9n7PNKvgLoFaVvzmWYuBRfVoGro/RUMYow5UyukXpnZvK9TAYnmNJvmIxqHzSE
+	u3Os6fb2r0tTV0baffGDC/qb/JmLA/OiGKam+gtMWCsnjNTCMCbTB/0rzp3717GbeknQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w3BAJ-00004r-WA;
-	Thu, 19 Mar 2026 11:03:48 +0000
+	id 1w3BCz-0002Jf-Ug;
+	Thu, 19 Mar 2026 11:06:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <gregkh@linuxfoundation.org>) id 1w3BAJ-0008WR-2Q
+ (envelope-from <chao@kernel.org>) id 1w3BCz-0002JZ-Gt
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Mar 2026 11:03:47 +0000
+ Thu, 19 Mar 2026 11:06:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Message-ID:In-Reply-To:Date:From:Cc:To:Subject:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jXhtwVrhwK3OaMJCdxVTxxv5i7pyUMecW6y3bmjo99o=; b=a2N9fygGo4nkLia68GUR50bc2X
- Z9Isln2HKB/FAL08zHTiBUrPEckjG+L+IrzQ+sNrcpInCLH1EYI4ptZEO8VSaxZaZM6svtGedL6De
- Z9SawcHW95axxGKkpghopjmq7v3iy8xlyxyxBHMZrGOg2JeKwZ6d0Hj2RIhHGwlVVIgM=;
+ bh=PrHMHVEMGt4OPqxBLzRjKKJrjQdzrGTGcGLqSxrWSZ0=; b=LRF2kazigdf5FTFvhx9ATZOBuW
+ tNOwqU1ibAe+cjrcRC9OFiu2V3VAy+p4I9/kPq0WzKNZ9uVqHRmGylMshaRA205RwsRzYVsmaKSsn
+ kIYWEMmWNU/p5e0aefUE6xxTIPEbC0cP9iLTQxpC7V0XbxFfjWGG4dI17pEnl0dTx1m0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
- In-Reply-To:Date:From:Cc:To:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jXhtwVrhwK3OaMJCdxVTxxv5i7pyUMecW6y3bmjo99o=; b=bwxi1qik84p2pLaN2/F05q2RLa
- 9m17l9ghO+RCj7RybFbPtosaHtmCKVrdB4juau7yfW4t0j/QmuA4WkUBo7F3Rfbaf9xkMVd4wetQt
- UXnW8s8U7DfzuKuVWMfIvaZlukM3vzjQBHux8Ex6LxvZrrfruWtBCR6kny1jMdVmhDu4=;
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=PrHMHVEMGt4OPqxBLzRjKKJrjQdzrGTGcGLqSxrWSZ0=; b=H/77Ul2emucT1G9TLYvzlORSIY
+ zvOxi+j+OYDWkYyYwIpOSBJJ3PvYqGSTyMkgpsjEjr5i7NoOE8Qma6oN3kmosaCZ3qdJvroRjOTrM
+ ASscySQkZVAzPe2rwx59ATN8iqpHy/jX5Tanmy3XFx8A+ULR0RIXXjBrza33pQgui+KM=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w3BAH-0008Qj-Jo for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Mar 2026 11:03:47 +0000
+ id 1w3BCy-0000Ei-TY for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 19 Mar 2026 11:06:33 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 01ED260126;
- Thu, 19 Mar 2026 11:03:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 546ECC19424;
- Thu, 19 Mar 2026 11:03:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
- s=korg; t=1773918219;
- bh=3FaEF5Wh6mZC9u+AJiS3R5E5e3skvUNN8wqBf2/U81c=;
- h=Subject:To:Cc:From:Date:In-Reply-To:From;
- b=e52M1ba2OohjxtNTrmYp3C4I2IUMojf/9H2O+lHmc05HXrl6Dlp9znnhIIafpWbcc
- ijhtWn8jlYSW2VuJmZwNbndwOFqKMtVWs19lgQws1AwXGMuUommd+od3IhM7zYRYEx
- kgBV/15WjHeIyqS8oVefW4inc7oWnoeXbSK1yY+c=
-To: chao@kernel.org, daehojeong@google.com, gregkh@linuxfoundation.org,
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, rob_garcia@163.com
-From: <gregkh@linuxfoundation.org>
-Date: Thu, 19 Mar 2026 12:03:20 +0100
-In-Reply-To: <20260309083227.3241109-1-rob_garcia@163.com>
-Message-ID: <2026031920-each-willing-55f1@gregkh>
+ by tor.source.kernel.org (Postfix) with ESMTP id 3EEEB60128;
+ Thu, 19 Mar 2026 11:06:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5919FC19424;
+ Thu, 19 Mar 2026 11:06:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1773918381;
+ bh=Pww8kQHCDA6sYtqqIg6Wkfij8rmjVHrwUNX0ewRQZK4=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=Cj70oHVLMjLoA/PwYGH1rt8D1cRc44O9e2CSaOX/yLV6vZ7cLOz2RN0d8wpMe1Zxx
+ e9MLBY/um5kJlAa6nsPHhoxSUUQ3KqzKAkDBrMDvJj9P7r840F90/9QjGXwWzHHADS
+ C66mx9UzJIprc4IXZ4jRecTTeLw5DcJ5RiUu9kYaw/3BP1afW9y1Rd5IoVBoXRZUzi
+ 4pWIu3VezzK100/Fps+FFiziIWoXKXqw14ZIdJIYX4pUWnVsZeaTaeQrfR3Sj0ZLZS
+ 1cZyreVSYyCj+s5e492YhJQCYHOG7bNFWpXH6vgli9ZuPALcdPM28+Oe6Aplgta7Kz
+ 52msxg+5Ezg0w==
+Message-ID: <db3014c0-2e56-4c3f-8a63-2c335aafbebb@kernel.org>
+Date: Thu, 19 Mar 2026 19:06:16 +0800
 MIME-Version: 1.0
-X-stable: commit
-X-Patchwork-Hint: ignore 
-X-Headers-End: 1w3BAH-0008Qj-Jo
-Subject: [f2fs-dev] Patch "f2fs: fix to avoid migrating empty section" has
- been added to the 6.6-stable tree
+User-Agent: Mozilla Thunderbird
+To: Yongpeng Yang <monty_pavel@sina.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20260319083417.603605-2-monty_pavel@sina.com>
+Content-Language: en-US
+In-Reply-To: <20260319083417.603605-2-monty_pavel@sina.com>
+X-Headers-End: 1w3BCy-0000Ei-TY
+Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: fix incorrect multidevice info
+ in trace_f2fs_map_blocks()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,127 +87,29 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: stable-commits@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: Yongpeng Yang <yangyongpeng@xiaomi.com>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+On 2026/3/19 16:34, Yongpeng Yang wrote:
+> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
+> 
+> When f2fs_map_blocks()->f2fs_map_blocks_cached() hits the read extent
+> cache, map->m_multidev_dio is not updated, which leads to incorrect
+> multidevice information being reported by trace_f2fs_map_blocks().
+> 
+> This patch updates map->m_multidev_dio in f2fs_map_blocks_cached() when
+> the read extent cache is hit.
+> 
+> Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
 
-This is a note to let you know that I've just added the patch titled
+Needs a Fixes line and CC stalbe tag?
 
-    f2fs: fix to avoid migrating empty section
-
-to the 6.6-stable tree which can be found at:
-    http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
-
-The filename of the patch is:
-     f2fs-fix-to-avoid-migrating-empty-section.patch
-and it can be found in the queue-6.6 subdirectory.
-
-If you, or anyone else, feels it should not be added to the stable tree,
-please let <stable@vger.kernel.org> know about it.
-
-
-From stable+bounces-223511-greg=kroah.com@vger.kernel.org Mon Mar  9 09:33:17 2026
-From: Robert Garcia <rob_garcia@163.com>
-Date: Mon,  9 Mar 2026 16:32:27 +0800
-Subject: f2fs: fix to avoid migrating empty section
-To: stable@vger.kernel.org, Chao Yu <chao@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Daeho Jeong <daehojeong@google.com>, Robert Garcia <rob_garcia@163.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Message-ID: <20260309083227.3241109-1-rob_garcia@163.com>
-
-From: Chao Yu <chao@kernel.org>
-
-[ Upstream commit d625a2b08c089397d3a03bff13fa8645e4ec7a01 ]
-
-It reports a bug from device w/ zufs:
-
-F2FS-fs (dm-64): Inconsistent segment (173822) type [1, 0] in SSA and SIT
-F2FS-fs (dm-64): Stopped filesystem due to reason: 4
-
-Thread A				Thread B
-- f2fs_expand_inode_data
- - f2fs_allocate_pinning_section
-  - f2fs_gc_range
-   - do_garbage_collect w/ segno #x
-					- writepage
-					 - f2fs_allocate_data_block
-					  - new_curseg
-					   - allocate segno #x
-
-The root cause is: fallocate on pinning file may race w/ block allocation
-as above, result in do_garbage_collect() from fallocate() may migrate
-segment which is just allocated by a log, the log will update segment type
-in its in-memory structure, however GC will get segment type from on-disk
-SSA block, once segment type changes by log, we can detect such
-inconsistency, then shutdown filesystem.
-
-In this case, on-disk SSA shows type of segno #173822 is 1 (SUM_TYPE_NODE),
-however segno #173822 was just allocated as data type segment, so in-memory
-SIT shows type of segno #173822 is 0 (SUM_TYPE_DATA).
-
-Change as below to fix this issue:
-- check whether current section is empty before gc
-- add sanity checks on do_garbage_collect() to avoid any race case, result
-in migrating segment used by log.
-- btw, it fixes misc issue in printed logs: "SSA and SIT" -> "SIT and SSA".
-
-Fixes: 9703d69d9d15 ("f2fs: support file pinning for zoned devices")
-Cc: Daeho Jeong <daehojeong@google.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-[ Use IS_CURSEC instead of is_cursec according to
-commit c1cfc87e49525 ("f2fs: introduce is_cur{seg,sec}()"). ]
-Signed-off-by: Robert Garcia <rob_garcia@163.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/f2fs/gc.c |   16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
-
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1742,6 +1742,13 @@ static int do_garbage_collect(struct f2f
- 					GET_SUM_BLOCK(sbi, segno));
- 		f2fs_put_page(sum_page, 0);
- 
-+		if (IS_CURSEC(sbi, GET_SEC_FROM_SEG(sbi, segno))) {
-+			f2fs_err(sbi, "%s: segment %u is used by log",
-+							__func__, segno);
-+			f2fs_bug_on(sbi, 1);
-+			goto skip;
-+		}
-+
- 		if (get_valid_blocks(sbi, segno, false) == 0)
- 			goto freed;
- 		if (gc_type == BG_GC && __is_large_section(sbi) &&
-@@ -1752,7 +1759,7 @@ static int do_garbage_collect(struct f2f
- 
- 		sum = page_address(sum_page);
- 		if (type != GET_SUM_TYPE((&sum->footer))) {
--			f2fs_err(sbi, "Inconsistent segment (%u) type [%d, %d] in SSA and SIT",
-+			f2fs_err(sbi, "Inconsistent segment (%u) type [%d, %d] in SIT and SSA",
- 				 segno, type, GET_SUM_TYPE((&sum->footer)));
- 			set_sbi_flag(sbi, SBI_NEED_FSCK);
- 			f2fs_stop_checkpoint(sbi, false,
-@@ -2005,6 +2012,13 @@ int f2fs_gc_range(struct f2fs_sb_info *s
- 			.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
- 		};
- 
-+		/*
-+		 * avoid migrating empty section, as it can be allocated by
-+		 * log in parallel.
-+		 */
-+		if (!get_valid_blocks(sbi, segno, true))
-+			continue;
-+
- 		do_garbage_collect(sbi, segno, &gc_list, FG_GC,
- 						dry_run_sections == 0);
- 		put_gc_inode(&gc_list);
-
-
-Patches currently in stable-queue which might be from rob_garcia@163.com are
-
-queue-6.6/f2fs-fix-to-avoid-migrating-empty-section.patch
+Thanks,
 
 
 _______________________________________________
