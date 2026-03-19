@@ -4,104 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3F79B1088E65
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Mar 2026 02:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EC43C1088E67
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Mar 2026 02:58:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-Id:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=DKG3+l7e5Jierc9u4gp2vw2PF4Y3prjNZ2W4KD/Bhrg=; b=N8dLXjyuGfZixhKIMDsyP71fMz
-	n4VoWXNH/YS4YMCskQPreyuvB8sPpD7/LcYxZvJHa3fNQG2b9MAvd4zWenIfo+PFqf3iJKBMcrN8b
-	uV5juW6SBYz0qpZfnVhZJKteqg+5rizLp4g/X2D1YC20JOVEZCtihPzsn+GH5RRAZSDo=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=eZrK7ytmS0RZ5aj5JMxXcY4ApRdwGnv6jYMIZxmnTEM=; b=BmL2xJx9W8cyNHiXtNTodwct/d
+	YMJA/k1ulw+H33wP6zv7/S1igpN8plA/GWg5OOjlNMRyIP79kRbZ3d9jQx6jWXgejX28k7MtGA3wJ
+	8YdFP5/9V8AYUvVkPfaz7bbNJ2wQPRIPkL+fs/bH4hTy/bxHcWbbbMZqNT2ebAeTvgDs=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w33JG-0006Ku-0q;
-	Thu, 19 Mar 2026 02:40:30 +0000
+	id 1w33aa-0006c2-GY;
+	Thu, 19 Mar 2026 02:58:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zzzccc427@gmail.com>) id 1w33JE-0006Kn-A9
+ (envelope-from <ebiggers@kernel.org>) id 1w33aZ-0006bX-4D
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Mar 2026 02:40:28 +0000
+ Thu, 19 Mar 2026 02:58:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HF3dhpPX3brhaCSBxcgIx0vD92ueHkK4Zsm76LgK6Dk=; b=Qknnbx30xsbavR8N1SYb7oXWam
- z6b26cdRCcmq21UcftIenGrmlor3H+WYXHpg1l6dPGxCbhwwD2OGjkD8HolJTkbd4hu/gZhteM/SF
- nbqh6TvOn23urwSgJ+NnQWsS9ju8Z8/66OKYh1xYekhOJtvx2TzVBB+11aNMSysE9cZY=;
+ bh=OrIcqKv691Sb492rnWQe4KOY615xGNniNK4GOfoXc7s=; b=GIZgnrm6oJkH7Bia/PUXDK9ECc
+ T00jejJR+MEaK+67CE1dUJMuMST1G7FvDLwyp1jwzXuUaY9COR45mDyK6P5GWOfjHbt3OaGe/VdrT
+ UEcK+bVxaoAFvuYMxZzsqr8YgvgMWcb/TyEGsyesLKcmNlsCuL3/nL4pZR9gHq5rjUt0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=HF3dhpPX3brhaCSBxcgIx0vD92ueHkK4Zsm76LgK6Dk=; b=M
- Wgs8IGRAtJWE7loyrLDyrrXfuaK6/r1ikYlsw4UfXPadY63TmrZBZEF4tKnidbzVetxlF8NYXCds0
- cVVb8wgVvnXbC4/rtG2jRJqeSBjj7PzgvYN9ymEO2y0oI7NS8DWxwkgNghTK0vknt8jaTz1QzqNyT
- QcjBA/2mnz9UL0Iw=;
-Received: from mail-pg1-f169.google.com ([209.85.215.169])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=OrIcqKv691Sb492rnWQe4KOY615xGNniNK4GOfoXc7s=; b=Xiqek27zc9zEY1We4FWZDqjY4h
+ zpEpQBCYloNzftwd3eUyPk+ZJNk7TQjU7MLaV0SmcAK1tQE0/JXz2gcbmEdLWwk8sxST1fU8MtQqp
+ 4/CSdtdDCgmo6/RUYP+mnx6y7PXxf9Qva/trUA7AxPV0So1hpW6Y81pcHvJ4t1aaWDNU=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1w33JD-0007ga-TN for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Mar 2026 02:40:28 +0000
-Received: by mail-pg1-f169.google.com with SMTP id
- 41be03b00d2f7-c74280e3468so233486a12.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 18 Mar 2026 19:40:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1773888017; x=1774492817; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=HF3dhpPX3brhaCSBxcgIx0vD92ueHkK4Zsm76LgK6Dk=;
- b=GQOQBJ7r8KYu0nI+9HUto1J8BaCymNXSW213aBuSLOvFpni7CIpDlT+dx2+XSl+8MI
- 3zhjLLNjI1By9ZtzGtPaLp1u+QvdVhrfSqCtQvbMTbau4Lf4I3cXkfarS0uWjgDvMS7G
- 5BmlPJImAYW1nmpUTGRAlDy1YEjguQNLpJUcikFDnE1F+svbvZmifyCo0w+Bob+06D/c
- GG1j7BzCjPg/IkNLou7k80b051cGbNw+6F2luFmB+QvqBsI02n1ob+UJ8N9fMuF0TtQK
- uSMMhcywQecLKQROz6fx3H2NyRcYxsim0jL9bJk2XoatM0An7egyq55KNIm+ByNZrdTP
- I6DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1773888017; x=1774492817;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=HF3dhpPX3brhaCSBxcgIx0vD92ueHkK4Zsm76LgK6Dk=;
- b=lM4zMepiMHR5FNXMGx9jx3gUJVX36GKF+++QLpDvmQYxSmTJV/NZ12VDYotPXCszVV
- 2S/dQkt/aaF6WgUwcNDi4XpXJs9CaHZl7MAyeB3FRgDmlPc+8BO0bFJpgfvkxB+Y8VGJ
- t5S4KHWUTEw44pHt2SHijoRkSdMnuovZyMsLapTB1pxKtgOZNwO+Sm74Qc/Uv7zx+AmE
- HriMIej0NfVLwkGeeRVdP9YyEPzbrobkvsBr17mvARHekStJjSK9LdsiiCcTzfhYud3h
- 9n/hR74ITiZ2vsmxuQk294eIn2EdhAOlO7VNmsRMGsHJ34tebfJKACLN0rC40CLrdiC1
- OoJg==
-X-Gm-Message-State: AOJu0Yw0Q0xrlEknlc+tdvlVf7fB4KV9V5GQ0y0PwBXr0Hq+HJ774l58
- UdEovw7ke8wOK3yZCwi0dNwbXhjpLBFpz7ycRHo6KBvVcnt1cL9Z0Lsq
-X-Gm-Gg: ATEYQzwMEeV9ReuAHYLcWJbybSVmAkZf1/KB3FbOVtcQS9bbqRXufg0oOSdvIyZgZWf
- crU+VVlea23YaTtNXotKF9YUUvmlr8YBPQT3krzWLVK5Z+KaO+BTeChAvmh7HBe29ZoRC6Fs+c4
- yvHhvDKJHk6432kwWNfs83OrxGPB4Uk4K0HyEn3VtkfWJC2wzg+9jsR8TDdbjV+LD++3fOFwiqp
- OjMZyAlMUvQIlxozz3UB2VxQ+icL+HytyxkxkJa7KG627eT13qImiAmlbQZc9F9Oj974jgV0PPs
- e/qyNyTv38i1kDcMjrtSjOa5WAusuGuqM1iY9Q8BMt+2iMpgZNuxN4fBFlf7wfUtrXhpopRrN5v
- yTw4lACptLIaucMr5ARx+bRbf3OOUkE1owhu7Mkc2MOJmX4kKp+fL12EG65hDfFVBbtthGl312Y
- 9cn6Q+GFALbrkeFPFSPA==
-X-Received: by 2002:a05:6a21:690:b0:398:9c27:2479 with SMTP id
- adf61e73a8af0-39b99c8d2d6mr5321541637.5.1773888017010; 
- Wed, 18 Mar 2026 19:40:17 -0700 (PDT)
-Received: from localhost ([111.228.63.84]) by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-c742bc99cf4sm528427a12.0.2026.03.18.19.40.13
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 18 Mar 2026 19:40:16 -0700 (PDT)
-From: Cen Zhang <zzzccc427@gmail.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Thu, 19 Mar 2026 10:23:35 +0800
-Message-Id: <20260319022335.3213311-1-zzzccc427@gmail.com>
-X-Mailer: git-send-email 2.34.1
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1w33aZ-0008RG-Ik for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 19 Mar 2026 02:58:23 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 35A2943F18;
+ Thu, 19 Mar 2026 02:58:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3C89C2BCAF;
+ Thu, 19 Mar 2026 02:58:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1773889093;
+ bh=DD776qvrhptS/c7ZpCzpmp7GE9bv7ai0gPDAUetaFGE=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=BC6VFDqlL6b7/0amaL5oGAFRPP3oJLpv4GENFaEB4Fyt9jcOPVyQSd9vJnktoL+te
+ 7B4Z6SOT/JhqE8pozRwZ4Plcly1bmCHCqooT8OD1i/JR9fhmABcGM3RPJhz+PQu+PC
+ 5tBJLxSZq1bmh9nnsoOJSh5TVtXrW7voZOrzIupQrdOg7cS8XHBB/0ki00VEDsNdGE
+ Raka3+PRDqSW3y7a12eCtvXF5K95u9aftfcJzrGl+rB1XlnKcdVsRizAucftp3grb4
+ DlQbXBjsre11VvKAJE0+Us02MsTz4NkumfCUt7WKNwldhkAyhwuHI9e+6oJlsV5E5G
+ wF9VKxOoP/Mnw==
+Date: Wed, 18 Mar 2026 19:57:10 -0700
+To: Cen Zhang <zzzccc427@gmail.com>
+Message-ID: <20260319025710.GA357817@sol>
+References: <20260319022335.3213311-1-zzzccc427@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1w33JD-0007ga-TN
-Subject: [f2fs-dev] [PATCH] f2fs: annotate data races around fi->i_flags
+Content-Disposition: inline
+In-Reply-To: <20260319022335.3213311-1-zzzccc427@gmail.com>
+X-Headers-End: 1w33aZ-0008RG-Ik
+Subject: Re: [f2fs-dev] [PATCH] f2fs: annotate data races around fi->i_flags
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -113,101 +85,35 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: baijiaju1990@gmail.com, Cen Zhang <zzzccc427@gmail.com>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+From: Eric Biggers via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, baijiaju1990@gmail.com,
+ jaegeuk@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-fi->i_flags can be read by f2fs_update_inode() in the writeback path,
-f2fs_getattr(), and f2fs_fileattr_get() without holding inode_lock or
-fi->i_sem, while it can be concurrently written by
-f2fs_setflags_common(), set_compress_context(), and
-f2fs_disable_compressed_file() under inode_lock and/or fi->i_sem.
+On Thu, Mar 19, 2026 at 10:23:35AM +0800, Cen Zhang wrote:
+> fi->i_flags can be read by f2fs_update_inode() in the writeback path,
+> f2fs_getattr(), and f2fs_fileattr_get() without holding inode_lock or
+> fi->i_sem, while it can be concurrently written by
+> f2fs_setflags_common(), set_compress_context(), and
+> f2fs_disable_compressed_file() under inode_lock and/or fi->i_sem.
+> 
+> This is a data race as defined by the LKMM.  Use READ_ONCE() on the
+> read side and WRITE_ONCE() on the write side to ensure proper marking
+> of the concurrent accesses.
+> 
+> Fixes: 360985573b55 ("f2fs: separate f2fs i_flags from fs_flags and ext4 i_flags")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
 
-This is a data race as defined by the LKMM.  Use READ_ONCE() on the
-read side and WRITE_ONCE() on the write side to ensure proper marking
-of the concurrent accesses.
+Is that really the correct Fixes commit?  I don't see what it has to do
+with this issue.
 
-Fixes: 360985573b55 ("f2fs: separate f2fs i_flags from fs_flags and ext4 i_flags")
-Cc: stable@vger.kernel.org
-Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
----
- fs/f2fs/f2fs.h  | 4 ++--
- fs/f2fs/file.c  | 6 +++---
- fs/f2fs/inode.c | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index c66472e409a3..28161df79e4f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4764,7 +4764,7 @@ static inline int set_compress_context(struct inode *inode)
- 		fi->i_compress_algorithm == COMPRESS_ZSTD) &&
- 			F2FS_OPTION(sbi).compress_level)
- 		fi->i_compress_level = F2FS_OPTION(sbi).compress_level;
--	fi->i_flags |= F2FS_COMPR_FL;
-+	WRITE_ONCE(fi->i_flags, READ_ONCE(fi->i_flags) | F2FS_COMPR_FL);
- 	set_inode_flag(inode, FI_COMPRESSED_FILE);
- 	stat_inc_compr_inode(inode);
- 	inc_compr_inode_stat(inode);
-@@ -4791,7 +4791,7 @@ static inline bool f2fs_disable_compressed_file(struct inode *inode)
- 		return false;
- 	}
- 
--	fi->i_flags &= ~F2FS_COMPR_FL;
-+	WRITE_ONCE(fi->i_flags, READ_ONCE(fi->i_flags) & ~F2FS_COMPR_FL);
- 	stat_dec_compr_inode(inode);
- 	clear_inode_flag(inode, FI_COMPRESSED_FILE);
- 	f2fs_mark_inode_dirty_sync(inode, true);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index c8a2f17a8f11..abff927a8699 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1005,7 +1005,7 @@ int f2fs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 		}
- 	}
- 
--	flags = fi->i_flags;
-+	flags = READ_ONCE(fi->i_flags);
- 	if (flags & F2FS_COMPR_FL)
- 		stat->attributes |= STATX_ATTR_COMPRESSED;
- 	if (flags & F2FS_APPEND_FL)
-@@ -2153,7 +2153,7 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
- 		}
- 	}
- 
--	fi->i_flags = iflags | (fi->i_flags & ~mask);
-+	WRITE_ONCE(fi->i_flags, iflags | (READ_ONCE(fi->i_flags) & ~mask));
- 	f2fs_bug_on(F2FS_I_SB(inode), (fi->i_flags & F2FS_COMPR_FL) &&
- 					(fi->i_flags & F2FS_NOCOMP_FL));
- 
-@@ -3437,7 +3437,7 @@ int f2fs_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
- {
- 	struct inode *inode = d_inode(dentry);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
--	u32 fsflags = f2fs_iflags_to_fsflags(fi->i_flags);
-+	u32 fsflags = f2fs_iflags_to_fsflags(READ_ONCE(fi->i_flags));
- 
- 	if (IS_ENCRYPTED(inode))
- 		fsflags |= FS_ENCRYPT_FL;
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 078874db918c..17c8aff690fb 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -720,7 +720,7 @@ void f2fs_update_inode(struct inode *inode, struct folio *node_folio)
- 	else if (S_ISREG(inode->i_mode))
- 		ri->i_gc_failures = cpu_to_le16(fi->i_gc_failures);
- 	ri->i_xattr_nid = cpu_to_le32(fi->i_xattr_nid);
--	ri->i_flags = cpu_to_le32(fi->i_flags);
-+	ri->i_flags = cpu_to_le32(READ_ONCE(fi->i_flags));
- 	ri->i_pino = cpu_to_le32(fi->i_pino);
- 	ri->i_generation = cpu_to_le32(inode->i_generation);
- 	ri->i_dir_level = fi->i_dir_level;
--- 
-2.34.1
-
+- Eric
 
 
 _______________________________________________
