@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E5F51109025E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Mar 2026 17:03:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A9D61109025C
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Mar 2026 17:03:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=xwpCTF+Po3DwPOtYprxJaLjYhTo7JqJiFTS1GUszOts=; b=T2dX9VncxeZRKO/K20pyEMYSW8
-	KNxPkdSBL3BS5Fp0KAHkkYdU9rZeBFgcE9ikrV4ZPnmt7K8M6OHINkWSa5zFZ3n+rZiZEMKdqVnxG
-	sAjgKEDE7ZKkyuSiUwZCN+PcgUGdv8jKQ9iRuzJLCvII2jzPbBsY2iSLCMzjuBM4qdQI=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=P879LpPEsbUTdQmE/g9EkplfIGEWbcCrFyeZS6sf6cQ=; b=ZG/Zqb8QBu9YFvu18pla45YDqx
+	Bbzsw6rSh12mR3TO+S4rGpeivSnRjMN/X1j5APZxnW29X2eCnRRFgVYnGqGIFjlbnKuFFfPTD2fde
+	oZI0SdcYnBHZ6DB/nztlgPCyaQpvIWaiJXbIog/+ObaiUmLYr7khS2AA4FyOw6yI26fg=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w3Gmc-00007i-RK;
+	id 1w3Gmd-0002Tm-2y;
 	Thu, 19 Mar 2026 17:03:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1w3Gma-00007L-UO
+ (envelope-from <aalbersh@kernel.org>) id 1w3Gmb-0002TR-5O
  for linux-f2fs-devel@lists.sourceforge.net;
  Thu, 19 Mar 2026 17:03:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=f4lNGWor8otbInMSCqTIHcEYsWR85QFxakjAQYx2FMo=; b=WNvvp3j/Ca2yIvYFKu5OubXlZw
- 9YKhSqxRmWJluKRWy0HVqp+RR1US8ms6X8wVf/getCbEGKrgvnZ7NP4IVtvluE6FN77nQ/Y03H34Z
- jXxU7pOeVggz5/OljUEmnV5DA/04NwAfxskxedRIdw5b3ymBxq0xKluT213cWQ0cAGEA=;
+ bh=R0ySwt76YHhdXliAnNG9UYfpvBIWhAiLfHetsU2ntFw=; b=MnztxziY9P3YC/ZtOqkFjDXQwg
+ FNbJzNOg++cH8Vt2Tc2317BtioELlOlWeLUePV4LK2O0L4zAS42J5rEHzEfBygvbC9Naa4EhOkNCa
+ jIWlvoZc4wUzVO3dDS7sw5OqaxPjMUhKBzI0sS5I/OYfS0BUc6XrVgoEJdcJ67ClPbD8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=f4lNGWor8otbInMSCqTIHcEYsWR85QFxakjAQYx2FMo=; b=eyIiYPqj/pwy1ch9uEl6AQB85d
- rggXBH5GmKgJOP1LV39zR5fJJqF1UDEijNLYYewDiUwRBxg9JwDbMGoLqxTJXLR2qmHHxgqfNQVv4
- Py3EZoFgv6385wWbSB7Dm3psReXbxuK5lyl+HF3ZTk5/WMcghQck+Xj0ZkFoVmEj8cHY=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=R0ySwt76YHhdXliAnNG9UYfpvBIWhAiLfHetsU2ntFw=; b=GI5WxxTkeZfaaxnHzl9K7x9aY2
+ +qJCka8CP/XVvXx5eYAQis8sKJtFXnEwgUcn8jDu+zRcZ2SsgRf+g/KeT1xcQfKsAzNasVp6NRO63
+ B7GL0JzomLge3mgwmaZ49AJttYa4+QQYgGMSYjWPD1YMDGJU8WmezXlZhknP1KhGzlM8=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w3Gmb-0005i4-AU for linux-f2fs-devel@lists.sourceforge.net;
+ id 1w3Gma-0005i2-EN for linux-f2fs-devel@lists.sourceforge.net;
  Thu, 19 Mar 2026 17:03:41 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id BCC326057A;
- Thu, 19 Mar 2026 17:03:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 267ADC19425;
- Thu, 19 Mar 2026 17:03:32 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 2AA5C404B3;
+ Thu, 19 Mar 2026 17:03:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEC69C2BCB2;
+ Thu, 19 Mar 2026 17:03:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1773939815;
- bh=PTaJI0Gbjq9+G0KZ4tkbjCUIjBA+rKVjiDT0yYApVJ0=;
+ s=k20201202; t=1773939810;
+ bh=I/8+DzAvLh2pfUeBWtzNeQb78331oAV1YMqkgQUmods=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=K0HleRTBn7rC+rjRl70KFrFM721Fm8x/DIMOJz44iVWo3ifNKXN8T/RkAQcrDCNJ/
- OaKvOg4k8Jw35ejiexlYImuRDkckQ2XhLUroOgE3xoXwxGuEBmFpvKKtBI5Ruac8gE
- HBfKDLb7RmrIfzmcsyQqrLknIprzam4az4SWMH+IpDCGjWnZAIVVmV2xNZGNbQAZy4
- RcGN6srybJfDgTYwQMs6eYZfoMzVfIEnyeEKcXSzDDwyy8XaEW0pNerHaEMNLHVlN/
- NJElNTqcmnwJ5xLsOO8SPeTgHoom/C5QPIjuDXYSrXeR+xTT7OoA+UTZJ1N9R2beak
- x8qhzsaT46j3A==
+ b=d7RppmZ6Wpew7VasSGeBhcGpfcDE804EKYVPhFqsHKe5Tp2TUav+7gnPsuda/9GX2
+ xhEznC8FyPQE5bjwyXGqX+2tEaCBgsOMPijYd5CSoMml9KZe+6LFOLDcevPNDTHf4T
+ nFnRSN8PaBrFejIHndX8peXt7Ox1Qb6YCBmM/VVJ+idkc7l+c8ltNAerRzTfH99eRM
+ M8ZhhJ2k2XuiELeoHLG2YcB4xadXUJHCrD3faVw/nL1ab+z5nCPIhKtKc+AuJ4sQw5
+ OASel6pWlll7WzEUtkonkZmmFWefToUp05uATq13ljl7jTj6mVVtltGUempuXtXyhm
+ +aLNb2tZeAOdw==
 To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
  linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
-Date: Thu, 19 Mar 2026 18:02:08 +0100
-Message-ID: <20260319170231.1455553-22-aalbersh@kernel.org>
+Date: Thu, 19 Mar 2026 18:02:06 +0100
+Message-ID: <20260319170231.1455553-20-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20260319170231.1455553-1-aalbersh@kernel.org>
 References: <20260319170231.1455553-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1w3Gmb-0005i4-AU
-Subject: [f2fs-dev] [PATCH v5 21/25] xfs: advertise fs-verity being
- available on filesystem
+X-Headers-End: 1w3Gma-0005i2-EN
+Subject: [f2fs-dev] [PATCH v5 19/25] xfs: remove unwritten extents after
+ preallocations in fsverity metadata
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,52 +90,118 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Andrey Albershteyn via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@kernel.org>,
- "Darrick J. Wong" <djwong@kernel.org>,
- Andrey Albershteyn <aalbersh@redhat.com>,
+Cc: Andrey Albershteyn <aalbersh@kernel.org>, djwong@kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, hch@lst.de,
  linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: "Darrick J. Wong" <djwong@kernel.org>
+XFS preallocates spaces during writes. In normal I/O this space, if
+unused, is removed by truncate. For files with fsverity XFS does not use
+truncate as fsverity metadata is stored past EOF.
 
-Advertise that this filesystem supports fsverity.
+After we're done with writing fsverity metadata iterate over extents in
+that region and remove any unwritten ones. These would be left overs in
+the holes in the merkle tree and past fsverity descriptor.
 
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 ---
- fs/xfs/libxfs/xfs_fs.h | 1 +
- fs/xfs/libxfs/xfs_sb.c | 2 ++
- 2 files changed, 3 insertions(+)
+ fs/xfs/xfs_fsverity.c | 67 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
-diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
-index d165de607d17..ebf17a0b0722 100644
---- a/fs/xfs/libxfs/xfs_fs.h
-+++ b/fs/xfs/libxfs/xfs_fs.h
-@@ -250,6 +250,7 @@ typedef struct xfs_fsop_resblks {
- #define XFS_FSOP_GEOM_FLAGS_PARENT	(1 << 25) /* linux parent pointers */
- #define XFS_FSOP_GEOM_FLAGS_METADIR	(1 << 26) /* metadata directories */
- #define XFS_FSOP_GEOM_FLAGS_ZONED	(1 << 27) /* zoned rt device */
-+#define XFS_FSOP_GEOM_FLAGS_VERITY	(1 << 28) /* fs-verity */
+diff --git a/fs/xfs/xfs_fsverity.c b/fs/xfs/xfs_fsverity.c
+index 5a6a48fcf843..b193009a1bdb 100644
+--- a/fs/xfs/xfs_fsverity.c
++++ b/fs/xfs/xfs_fsverity.c
+@@ -21,6 +21,8 @@
+ #include "xfs_iomap.h"
+ #include "xfs_error.h"
+ #include "xfs_health.h"
++#include "xfs_bmap.h"
++#include "xfs_bmap_util.h"
+ #include <linux/fsverity.h>
+ #include <linux/iomap.h>
+ #include <linux/pagemap.h>
+@@ -173,6 +175,63 @@ xfs_fsverity_delete_metadata(
+ 	return error;
+ }
+ 
++static int
++xfs_fsverity_cancel_unwritten(
++	struct xfs_inode	*ip,
++	xfs_fileoff_t		start,
++	xfs_fileoff_t		end)
++{
++	struct xfs_mount	*mp = ip->i_mount;
++	struct xfs_trans	*tp;
++	xfs_fileoff_t		offset_fsb = XFS_B_TO_FSB(mp, start);
++	xfs_fileoff_t		end_fsb = XFS_B_TO_FSB(mp, end);
++	struct xfs_bmbt_irec	imap;
++	int			nimaps;
++	int			error = 0;
++	int			done;
++
++
++	while (offset_fsb < end_fsb) {
++		nimaps = 1;
++
++		error = xfs_trans_alloc(mp, &M_RES(mp)->tr_write, 0, 0,
++				0, &tp);
++		if (error)
++			return error;
++
++		xfs_ilock(ip, XFS_ILOCK_EXCL);
++		error = xfs_bmapi_read(ip, offset_fsb, end_fsb - offset_fsb,
++				&imap, &nimaps, 0);
++		if (error)
++			goto out_cancel;
++
++		if (nimaps == 0)
++			goto out_cancel;
++
++		if (imap.br_state == XFS_EXT_UNWRITTEN) {
++			xfs_trans_ijoin(tp, ip, 0);
++
++			error = xfs_bunmapi(tp, ip, imap.br_startoff,
++					imap.br_blockcount, 0, 1, &done);
++			if (error)
++				goto out_cancel;
++
++			error = xfs_trans_commit(tp);
++		} else {
++			xfs_trans_cancel(tp);
++		}
++		xfs_iunlock(ip, XFS_ILOCK_EXCL);
++
++		offset_fsb = imap.br_startoff + imap.br_blockcount;
++	}
++
++	return error;
++out_cancel:
++	xfs_trans_cancel(tp);
++	xfs_iunlock(ip, XFS_ILOCK_EXCL);
++	return error;
++}
++
  
  /*
-  * Minimum and maximum sizes need for growth checks.
-diff --git a/fs/xfs/libxfs/xfs_sb.c b/fs/xfs/libxfs/xfs_sb.c
-index a15510ebd2f1..222bbe5559df 100644
---- a/fs/xfs/libxfs/xfs_sb.c
-+++ b/fs/xfs/libxfs/xfs_sb.c
-@@ -1590,6 +1590,8 @@ xfs_fs_geometry(
- 		geo->flags |= XFS_FSOP_GEOM_FLAGS_METADIR;
- 	if (xfs_has_zoned(mp))
- 		geo->flags |= XFS_FSOP_GEOM_FLAGS_ZONED;
-+	if (xfs_has_verity(mp))
-+		geo->flags |= XFS_FSOP_GEOM_FLAGS_VERITY;
- 	geo->rtsectsize = sbp->sb_blocksize;
- 	geo->dirblocksize = xfs_dir2_dirblock_bytes(sbp);
+  * Prepare to enable fsverity by clearing old metadata.
+@@ -248,6 +307,14 @@ xfs_fsverity_end_enable(
+ 	if (error)
+ 		goto out;
  
++	/*
++	 * Remove unwritten extents left by COW preallocations and write
++	 * preallocation in the merkle tree holes and past descriptor
++	 */
++	error = xfs_fsverity_cancel_unwritten(ip, range_start, LLONG_MAX);
++	if (error)
++		goto out;
++
+ 	/*
+ 	 * Proactively drop any delayed allocations in COW fork, the fsverity
+ 	 * files are read-only
 -- 
 2.51.2
 
