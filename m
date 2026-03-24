@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B84D0FEC0E1
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D5EC1FEC0EB
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 17:32:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,71 +12,70 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Dow6HtXs9HzZu/fK2A6v1MWsfp740yJ8ju/NjjIlAUE=; b=VKnFgfhWgns/z4Yz0NGmwLw8I7
-	+p2F6pqlbFeUx0RaVnlF7BbeEFpARNsRhdutf6khFqquFFRjbqyjZPNK50Ke0KpY9NqOqTUp6iAyy
-	WMSfU7PKUftIFBavab0dyEm1hefRKqj3YEYCWKScyEUNbPAyNlOUFkmNlZVZbyzqLKyc=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=u+CgoDaqpA4+wZMagwYldoplkL3YH5j9Z+oNc3iEfcM=; b=GYhC5rMJoLhAH/nua8WO9qRi6u
+	RWpAJ+yeEYjg3eZgzjNFmLfGVXiJ3c/LnE2hXAS2XW2g9bo6wGPSAOJuaFmHHrG43THJpDQBcAw9Z
+	Hh4IeOa+fbFhVzfWaZCMtMOSgv8KageB/rnF62+zbVOgoMtG7y8ulXzoo31YacWExId0=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w55cE-0001ua-VZ;
-	Tue, 24 Mar 2026 17:32:30 +0000
+	id 1w55cH-0003kI-8X;
+	Tue, 24 Mar 2026 17:32:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cD-0001uU-MO
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cG-0003kB-Aa
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:29 +0000
+ Tue, 24 Mar 2026 17:32:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WyIsIaZb95pj2DQBdr+MTW/GQzYCt7gfAF7gxmdydVY=; b=EjsY2+1ReLQpMc+4a5SYuYDPWZ
- 0pANw+1qgsFlh/l3i+DZN3N/8zd+MkdDSgxY95PgNS81NvmqEwSdiv2x74xr4IPgV3wwE95smOive
- KDmvEMrq1i5PBlt0NkK6i74zdHi7I6re2yITgXqWD0Jdz9cCaVbfOInQdTtFFzEYNUOI=;
+ bh=NJwqzbuHXOTbFTvTCmS8xXwajzpvjyE17S+f1mlTs9g=; b=Z4GxNE8L+fk4NKpHTR2IykOqZt
+ 5RbAlcttG6VLEXS/YvIN4kdUnjPKeQxkfaFzFLhsxNZR79UJrEFw4D1t1Nt+F4Q0zM8hKb+sqrdro
+ 1mG4GzQe+yxgj0O7SOokGBYBisEJik1mA0m138OSu8CV0lerCqdcAUyF+Rq0Kligyick=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WyIsIaZb95pj2DQBdr+MTW/GQzYCt7gfAF7gxmdydVY=; b=X6VJqBkYUdmAz8dKTwGP1s6eRS
- ZIJkSotoORARl/0Wtx8AF1LDz7Ox6Nuv15wyX36mDeMZ00Jn5Nn3z2aww7mtE4y77/wqPfIgayjOc
- ybXTVQ0e01ZjeSedtqQQGfkl/WFWvak8QseG9E9ZNSmENKdzjK1cKwl5W+y577EzhXzM=;
+ bh=NJwqzbuHXOTbFTvTCmS8xXwajzpvjyE17S+f1mlTs9g=; b=k/W7folPs19teLVPdxc2C5ll4q
+ 6jkp2BZPWvZ/DMMd3WSGoXZL+kAUIJaXYbi0DEqEkd1+R3ab6E5pobQ63CqjHKMiI6g+4UCyOssAa
+ J/uLZt6ezTINDF0S6sck9l+4e0gEXGnX+H1+lXsF+efPOnoYVA0S9U/O3Y5GsJ0EL4sI=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w55cC-0007pr-Tz for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:29 +0000
+ id 1w55cF-0007q2-Kv for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 24 Mar 2026 17:32:32 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 9BFC6443C7
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 24 Mar 2026 17:32:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B958C19424;
- Tue, 24 Mar 2026 17:32:23 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 59AEF4446A;
+ Tue, 24 Mar 2026 17:32:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32D5BC2BC87;
+ Tue, 24 Mar 2026 17:32:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1774373543;
- bh=H10zgJWacjix9t0rWOWwAHj3KVClFGNzPr8DVOaDYjE=;
+ s=k20201202; t=1774373546;
+ bh=nVE/fCIGf5wa4kduz8KQXpOSEKCj++KXJVgr1sn/yCc=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=nvxwR1V+9vbEJZBDfTa2diIuW2PHn6mRXd1buIVvmxMfJw5BKAE+XTJeo9uoMxBjL
- 0pybdVBJwcxBXYTHV8Jgto9efijJh4nruYqpyy/4zgZJCH92cHIUPM7zgf3Z8JcAmw
- SyMQg7U7K1E1aKb9xcUSopNGG6G5RuTjZ/47bc1KbbU/4QG4VQcVSbijELcqQKS5DD
- t50m8RoYmUYugOf5zsosqQplab6byjLsPq3L4m+PQ/h1hd/2zktBrKM3DTUj/nRSBT
- G0RcVm3yRflIJrv+DxKnpGOognTs0D/kWvwDDkGdBtAOMh+ZJZFFcPn0FJ3Hu8TNfF
- 5Jpe/cVRnF1Mw==
+ b=U7o23xDFZgF7aqC8zhRde1X0daJzsPBfEtikPt8R8BNTQryux3b/u0yPozBawaRcA
+ RVtKBACR/7Uu00aVbxFxuuF5EYe2WP1sPh6iS6oU1MsdOmbzFZIJRD8IohgSkXJK+N
+ iLEwjWlWzmELJz2OeucoLnqPZ+PfaqE5B/MtplFiLj5RFJRMAvZWXM+IWgyq9rfQST
+ elajWlMSN8iGRmM0M+g/9q3q2hoi8PrjCR2BxCFu2OLwlvx1cEDMzzWV1tn7PgIlYQ
+ od8ZvOsCxcrkfLGyK6YwivRBVv1CFlHstzuOipAcH3yB8gkh//YtqlllbTbk095+al
+ jBePXzDEgbKjg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 7CCDB3808203; Tue, 24 Mar 2026 17:32:12 +0000 (UTC)
+ 3FDE73808203; Tue, 24 Mar 2026 17:32:15 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <177437353128.1223048.4639198904019180546.git-patchwork-notify@kernel.org>
-Date: Tue, 24 Mar 2026 17:32:11 +0000
-References: <20260323083834.156393-1-chao@kernel.org>
-In-Reply-To: <20260323083834.156393-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1w55cC-0007pr-Tz
-Subject: Re: [f2fs-dev] [PATCH v3 1/2] f2fs: call
- f2fs_handle_critical_error() to set cp_error flag
+Message-Id: <177437353403.1223048.17520829968628791815.git-patchwork-notify@kernel.org>
+Date: Tue, 24 Mar 2026 17:32:14 +0000
+References: <20260323112123.786090-1-geoo115@gmail.com>
+In-Reply-To: <20260323112123.786090-1-geoo115@gmail.com>
+To: George Saad <geoo115@gmail.com>
+X-Headers-End: 1w55cF-0007q2-Kv
+Subject: Re: [f2fs-dev] [PATCH v4] f2fs: fix use-after-free of sbi in
+ f2fs_compress_write_end_io()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,42 +90,31 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: gregkh@linuxfoundation.org, linux-f2fs-devel@lists.sourceforge.net,
+ stable@vger.kernel.org, jaegeuk@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
-
-This series was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Mon, 23 Mar 2026 16:38:32 +0800 you wrote:
-> f2fs_handle_page_eio() is the only left place we set CP_ERROR_FLAG
-> directly, it missed to update superblock.s_stop_reason, let's
-> call f2fs_handle_critical_error() instead to fix that.
-> 
-> Introduce STOP_CP_REASON_READ_{META,NODE,DATA} stop_cp_reason enum
-> variable to indicate which kind of data we failed to read.
-> 
-> [...]
-
-Here is the summary with links:
-  - [f2fs-dev,v3,1/2] f2fs: call f2fs_handle_critical_error() to set cp_error flag
-    https://git.kernel.org/jaegeuk/f2fs/c/bd882ffdd48a
-  - [f2fs-dev,v3,2/2] f2fs: use more generic f2fs_stop_checkpoint()
-    https://git.kernel.org/jaegeuk/f2fs/c/be09d78b6d54
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+SGVsbG86CgpUaGlzIHBhdGNoIHdhcyBhcHBsaWVkIHRvIGphZWdldWsvZjJmcy5naXQgKGRldikK
+YnkgSmFlZ2V1ayBLaW0gPGphZWdldWtAa2VybmVsLm9yZz46CgpPbiBNb24sIDIzIE1hciAyMDI2
+IDExOjIxOjIzICswMDAwIHlvdSB3cm90ZToKPiBJbiBmMmZzX2NvbXByZXNzX3dyaXRlX2VuZF9p
+bygpLCBkZWNfcGFnZV9jb3VudChzYmksIHR5cGUpIGNhbiBicmluZwo+IHRoZSBGMkZTX1dCX0NQ
+X0RBVEEgY291bnRlciB0byB6ZXJvLCB1bmJsb2NraW5nCj4gZjJmc193YWl0X29uX2FsbF9wYWdl
+cygpIGluIGYyZnNfcHV0X3N1cGVyKCkgb24gYSBjb25jdXJyZW50IHVubW91bnQKPiBDUFUuIFRo
+ZSB1bm1vdW50IHBhdGggdGhlbiBwcm9jZWVkcyB0byBjYWxsCj4gZjJmc19kZXN0cm95X3BhZ2Vf
+YXJyYXlfY2FjaGUoc2JpKSwgd2hpY2ggZGVzdHJveXMKPiBzYmktPnBhZ2VfYXJyYXlfc2xhYiB2
+aWEga21lbV9jYWNoZV9kZXN0cm95KCksIGFuZCBldmVudHVhbGx5Cj4ga2ZyZWUoc2JpKS4gTWVh
+bndoaWxlLCB0aGUgYmlvIGNvbXBsZXRpb24gY2FsbGJhY2sgaXMgc3RpbGwgZXhlY3V0aW5nOgo+
+IHdoZW4gaXQgcmVhY2hlcyBwYWdlX2FycmF5X2ZyZWUoc2JpLCAuLi4pLCBpdCBkZXJlZmVyZW5j
+ZXMKPiBzYmktPnBhZ2VfYXJyYXlfc2xhYiDigJQgYSBkZXN0cm95ZWQgc2xhYiBjYWNoZSDigJQg
+dG8gY2FsbAo+IGttZW1fY2FjaGVfZnJlZSgpLCBjYXVzaW5nIGEgdXNlLWFmdGVyLWZyZWUuCj4g
+Cj4gWy4uLl0KCkhlcmUgaXMgdGhlIHN1bW1hcnkgd2l0aCBsaW5rczoKICAtIFtmMmZzLWRldix2
+NF0gZjJmczogZml4IHVzZS1hZnRlci1mcmVlIG9mIHNiaSBpbiBmMmZzX2NvbXByZXNzX3dyaXRl
+X2VuZF9pbygpCiAgICBodHRwczovL2dpdC5rZXJuZWwub3JnL2phZWdldWsvZjJmcy9jLzM5ZDRl
+ZTE5YzFlNwoKWW91IGFyZSBhd2Vzb21lLCB0aGFuayB5b3UhCi0tIApEZWV0LWRvb3QtZG90LCBJ
+IGFtIGEgYm90LgpodHRwczovL2tvcmcuZG9jcy5rZXJuZWwub3JnL3BhdGNod29yay9wd2JvdC5o
+dG1sCgoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpM
+aW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJj
+ZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9s
+aW51eC1mMmZzLWRldmVsCg==
