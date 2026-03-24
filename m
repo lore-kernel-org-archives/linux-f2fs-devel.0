@@ -4,78 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B1CF9E9A762
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 11:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B84D0FEC0E1
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 17:32:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=OEg7jViCpbstDIAYws9VKfXn8mFZBzwkEB/vXAHazF0=; b=IciWpAvYnKw3tV0GDbsGlBV1zK
-	wMcCreF/Xr9AGB5vpIcNzBVQD+SwqmP2ulUSQS5+efcpKz9N0tW+6XEg144b6+74vo24nilu/oRin
-	kAxGE005U1ZlVp0hMRcXiAVDo9rCYoNdGMcj60e4zbEfEYL/Cxo6+gJZ11JXQhqfMTU0=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Dow6HtXs9HzZu/fK2A6v1MWsfp740yJ8ju/NjjIlAUE=; b=VKnFgfhWgns/z4Yz0NGmwLw8I7
+	+p2F6pqlbFeUx0RaVnlF7BbeEFpARNsRhdutf6khFqquFFRjbqyjZPNK50Ke0KpY9NqOqTUp6iAyy
+	WMSfU7PKUftIFBavab0dyEm1hefRKqj3YEYCWKScyEUNbPAyNlOUFkmNlZVZbyzqLKyc=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w4zZU-0006Ef-Q0;
-	Tue, 24 Mar 2026 11:05:16 +0000
+	id 1w55cE-0001ua-VZ;
+	Tue, 24 Mar 2026 17:32:30 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1w4zZT-0006EO-4J
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cD-0001uU-MO
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 11:05:15 +0000
+ Tue, 24 Mar 2026 17:32:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=g0UN/prV9YzKJSDlBaEmx/wjiLLkXAyZ41mNnSrZGzc=; b=mcQCE2lquCS3Ua/0046NP1xpzT
- YILsEJ+COv8hUwfDNJHJ8BuYtGibYIgGuAmyEzuBu6MFSm8Pu0lS09H0zmtDreo6IfqJjfFJ/uJvx
- hv1B433wyrCi6GFgwlK5Ee+RjM7XVXG+FtiH/p6wnm+067OsWKqiEahdyb1dW4x5Y1zM=;
+ bh=WyIsIaZb95pj2DQBdr+MTW/GQzYCt7gfAF7gxmdydVY=; b=EjsY2+1ReLQpMc+4a5SYuYDPWZ
+ 0pANw+1qgsFlh/l3i+DZN3N/8zd+MkdDSgxY95PgNS81NvmqEwSdiv2x74xr4IPgV3wwE95smOive
+ KDmvEMrq1i5PBlt0NkK6i74zdHi7I6re2yITgXqWD0Jdz9cCaVbfOInQdTtFFzEYNUOI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=g0UN/prV9YzKJSDlBaEmx/wjiLLkXAyZ41mNnSrZGzc=; b=lAnzD+ynzZ3rYO05ApN3ccFcvJ
- d8V9ROf+UtkC5+1JD/7uB8sPpPTOsR3f2ix1hLXZ4DJImEUHV9ZOzjTsNGwVfQ9BG28dMFYQ6cso2
- Zmhh2RYAf3NmHu1trr5LsELidzRjSEMUm2IGYMg9Gl8SAMKD/rlUsR0+PbU+rcCbrR+Q=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=WyIsIaZb95pj2DQBdr+MTW/GQzYCt7gfAF7gxmdydVY=; b=X6VJqBkYUdmAz8dKTwGP1s6eRS
+ ZIJkSotoORARl/0Wtx8AF1LDz7Ox6Nuv15wyX36mDeMZ00Jn5Nn3z2aww7mtE4y77/wqPfIgayjOc
+ ybXTVQ0e01ZjeSedtqQQGfkl/WFWvak8QseG9E9ZNSmENKdzjK1cKwl5W+y577EzhXzM=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w4zZS-00032x-HB for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 11:05:15 +0000
+ id 1w55cC-0007pr-Tz for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 24 Mar 2026 17:32:29 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 38A7D43F96;
- Tue, 24 Mar 2026 11:05:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADCEEC19424;
- Tue, 24 Mar 2026 11:05:07 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 9BFC6443C7
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 24 Mar 2026 17:32:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B958C19424;
+ Tue, 24 Mar 2026 17:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1774350309;
- bh=oFb+8yszMhN5W0y9sy81VMtEO1CbdN3Cr91HykJhTiU=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=PN96hl/2z5jpe7vRMgCJiBl1DZMErzBgWed9Jb4xg2OEe0iC/dg/tKn2Sa3dKYp4K
- 6dFDlYmtFR1oFS6a8gu5Tb1AGxX8Sy/rukWeIisFtvMF5yPOqYA54m4TZfQ5PogxQP
- yCMCVUXzCeuKBzttqSlI8qrgMddUgltpWaoGDinDvEf9nqAYPK/KMfB0LDPZ+1pVDt
- Wl1KEh6TzJeaVbHezcpJgHFm6sIsO5iHfoNPZl7RIG/qPVajgtI8NiIMuPC8K4bwUI
- +gHTqe9mBqSawOgF7okpmPbpnlhNH7GQqLb0LordXhI+n4xZBXXriltefNvx8B4xYa
- UYiiBLELG5goA==
-Message-ID: <7813a041-13e7-4e4b-9b5e-16f4e83252d4@kernel.org>
-Date: Tue, 24 Mar 2026 19:05:05 +0800
+ s=k20201202; t=1774373543;
+ bh=H10zgJWacjix9t0rWOWwAHj3KVClFGNzPr8DVOaDYjE=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=nvxwR1V+9vbEJZBDfTa2diIuW2PHn6mRXd1buIVvmxMfJw5BKAE+XTJeo9uoMxBjL
+ 0pybdVBJwcxBXYTHV8Jgto9efijJh4nruYqpyy/4zgZJCH92cHIUPM7zgf3Z8JcAmw
+ SyMQg7U7K1E1aKb9xcUSopNGG6G5RuTjZ/47bc1KbbU/4QG4VQcVSbijELcqQKS5DD
+ t50m8RoYmUYugOf5zsosqQplab6byjLsPq3L4m+PQ/h1hd/2zktBrKM3DTUj/nRSBT
+ G0RcVm3yRflIJrv+DxKnpGOognTs0D/kWvwDDkGdBtAOMh+ZJZFFcPn0FJ3Hu8TNfF
+ 5Jpe/cVRnF1Mw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+ by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
+ 7CCDB3808203; Tue, 24 Mar 2026 17:32:12 +0000 (UTC)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Yongpeng Yang <monty_pavel@sina.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20260324094707.3959420-2-monty_pavel@sina.com>
-Content-Language: en-US
-In-Reply-To: <20260324094707.3959420-2-monty_pavel@sina.com>
-X-Headers-End: 1w4zZS-00032x-HB
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: invalidate block device page cache
- on umount
+Message-Id: <177437353128.1223048.4639198904019180546.git-patchwork-notify@kernel.org>
+Date: Tue, 24 Mar 2026 17:32:11 +0000
+References: <20260323083834.156393-1-chao@kernel.org>
+In-Reply-To: <20260323083834.156393-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1w55cC-0007pr-Tz
+Subject: Re: [f2fs-dev] [PATCH v3 1/2] f2fs: call
+ f2fs_handle_critical_error() to set cp_error flag
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,59 +88,42 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: Yongpeng Yang <yangyongpeng@xiaomi.com>,
+From: patchwork-bot+f2fs--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 3/24/26 17:47, Yongpeng Yang wrote:
-> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
-> 
-> Neither F2FS nor VFS invalidates the block device page cache, which
-> results in reading stale metadata. An example scenario is shown below:
-> 
-> Terminal A                  Terminal B
-> mount /dev/vdb /mnt/f2fs
-> touch mx // ino = 4
-> sync
-> dump.f2fs -i 4 /dev/vdb// block on "[Y/N]"
->                             touch mx2 // ino = 5
->                             sync
->                             umount /mnt/f2fs
->                             dump.f2fs -i 5 /dev/vdb // block addr is 0
-> 
-> After umount, the block device page cache is not purged, causing
-> `dump.f2fs -i 5 /dev/vdb` to read stale metadata and see inode 5 with
-> block address 0.
-> 
-> Btrfs has encountered a similar issue before, the solution there was to
-> call sync_blockdev() and invalidate_bdev() when the device is closed:
-> 
-> mail-archive.com/linux-btrfs@vger.kernel.org/msg54188.html
-> 
-> For the root user, the f2fs kernel calls sync_blockdev() on umount to
-> flush all cached data to disk, and f2fs-tools can release the page cache
-> by issuing ioctl(fd, BLKFLSBUF) when accessing the device. However,
-> non-root users are not permitted to drop the page cache, and may still
-> observe stale data.
-> 
-> This patch calls sync_blockdev() and invalidate_bdev() during umount to
-> invalidate the block device page cache, thereby preventing stale
-> metadata from being read.
-> 
-> Note that this may result in an extra sync_blockdev() call on the first
-> device, in both f2fs_put_super() and kill_block_super(). The second call
-> do nothing, as there are no dirty pages left to flush. It ensures that
-> non-root users do not observe stale data.
-> 
-> Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
+Hello:
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Thanks,
+On Mon, 23 Mar 2026 16:38:32 +0800 you wrote:
+> f2fs_handle_page_eio() is the only left place we set CP_ERROR_FLAG
+> directly, it missed to update superblock.s_stop_reason, let's
+> call f2fs_handle_critical_error() instead to fix that.
+> 
+> Introduce STOP_CP_REASON_READ_{META,NODE,DATA} stop_cp_reason enum
+> variable to indicate which kind of data we failed to read.
+> 
+> [...]
+
+Here is the summary with links:
+  - [f2fs-dev,v3,1/2] f2fs: call f2fs_handle_critical_error() to set cp_error flag
+    https://git.kernel.org/jaegeuk/f2fs/c/bd882ffdd48a
+  - [f2fs-dev,v3,2/2] f2fs: use more generic f2fs_stop_checkpoint()
+    https://git.kernel.org/jaegeuk/f2fs/c/be09d78b6d54
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
 
 _______________________________________________
