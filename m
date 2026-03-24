@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 534D8FEC0EB
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 17:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4AD00FEC0EA
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 17:32:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=seT4MpH0hrBIWqc+P8yz6zgqeoV3wYu5dy4KBMsVDZw=; b=kL6CD9Y9/Fnhv8UlAb0mhygp1A
-	ZdzackDTw4bA9xDZjld7KneUwXUGCbGZf/apMVrEZWPcp2RdQwBuMWqQcdp335PwwDroHS0C695Gf
-	RovhdLjQPLzY7NI2jSChmOQJrM2vfDw4B4jDYHKVJrstSAE9YNl6rZXz/lam8m930s9w=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=PV845mIZNLS2pv/nHW5S0nOG2oKy4Fh8JvkdopUKN2w=; b=dAW4JtvNv0aUZkGqXpxiGeOpzj
+	0GPqPaAekZ4grKCj8x3iNddIGH2bpf69VU11k+Swml2ULcNysUAvlzYYbCpo5UoY2cWb9hiw8xYg3
+	uoI4DS18PHccIV4eMq4j4ceyt7ooJvoKLXzRKiGvelXIoSOtnSwKZ5eZKhqQNe/mWzSg=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w55cO-0000nU-5I;
-	Tue, 24 Mar 2026 17:32:40 +0000
+	id 1w55cP-0003lO-US;
+	Tue, 24 Mar 2026 17:32:41 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cM-0000nC-Jz
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cO-0003l8-SS
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:39 +0000
+ Tue, 24 Mar 2026 17:32:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0DOv6DDzGcAbhT9QXFfNrlJRIlOF/pGyOsskgaqbb24=; b=EfgqUq5QeUx3MoNAjLLlIeruP/
- aN9O69WcCtdObL4PdzeAgebdSsDROg4m8UBHP3u3sFyPyAYoR2rjTu66C4kv44yyONwKMw6SqGdy4
- H5/0GXqdMHi5tpGQ7jWv57Mqgn0MHdn2ZiaBLex3H7tB0EiRgL4527teUk1hPghCWy5E=;
+ bh=MMLDkHM2YvI3hRTBQViY42aAIPIfEPW0isN1hvwaZWQ=; b=W0YMCuTDYm92LM/riBOjNdfFPM
+ xKGfMgqbY2Pszb0OHasfih6Nu19vpJa8XlCWy4orL+cbgdx274IhNtPyBNMjJ3vvIvi+8aizEtIUJ
+ ALhC2JipPzfgJM9Kg40fPmCJECoDBx10hwsBKuAxG+G57P8lUNLSqsbkAKsVYQuBetr8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0DOv6DDzGcAbhT9QXFfNrlJRIlOF/pGyOsskgaqbb24=; b=EnAa4iXtQt/Kwlg0xvGZ35JI9p
- 8cIUgxIMKkbThu9oyQX/pxMDhFmAIMb9iI8fEKLJQRQtVeCzT/76aKowyCv5+WSJIBe6q/M+7vYG0
- qY72SNFTa7rp/tp/ElXLKYRoM+PEoC/og3NKFPVtjcM9a1zA00BnYhOIFn0VW1aHr6zQ=;
+ bh=MMLDkHM2YvI3hRTBQViY42aAIPIfEPW0isN1hvwaZWQ=; b=PFjKGC+KqDnPF1xjxct2i6sG+c
+ uENFpve7msQ9Vt4hyMQwAWdTR70IpPPX3judJJLgN1ML8+Gcz1R2pGDtVIfkhqpX/cPqNbfhEhp+r
+ SXwFDl77xYZki9F7AeToD382huCSVJoxCEOuUlI43iGhbzmM2t6E6WKLfZiw3wIWg12o=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w55cM-0007qR-MN for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:39 +0000
+ id 1w55cO-0007qh-4E for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 24 Mar 2026 17:32:40 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 97FB6405E2;
- Tue, 24 Mar 2026 17:32:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75903C2BC87;
- Tue, 24 Mar 2026 17:32:38 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id D9DE7444BD;
+ Tue, 24 Mar 2026 17:32:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8E9EC2BC9E;
+ Tue, 24 Mar 2026 17:32:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1774373558;
- bh=XjDWPFaC3BEJKzMiAmgWBIj7cF6+CCRqYnco2WSFGnc=;
+ s=k20201202; t=1774373548;
+ bh=v4w+4EnNwUXaI9Ys0bdzpbXa6cm5U/fz9tStEHf8Gnw=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=PhpT2JA0ObNIkBuHNxAA79hk6JzykVfGhWBDVI5O2y9jkV9B/VbeFEkTOKv2OKm7Z
- 3ePkQpp+l/LWjDgZ+fZ9Qmvy2c2aPDhTvAgenGYJYq7tLXrSOkg5L1Z8hxG7JntcXY
- eV7e5cKh2BUXjx9Z7sUkNexVUusnCYESj0UX2StSwDWLHb8dO3LLZ9mgXmvi6hgjo2
- ONLc1g4xzIPiE0aGgUHuBDmDoW0Vveahkb5QwJs6iRG0L2yoe2oKkEHDhSwuQt1F+4
- oGOEb+Hebax/ZMGCF8II4o8LJz/KIlh0c4n9y4kqGvU8k9F9F6/ZK+MLAwSSOBTBrq
- L17w5m+k/jHYg==
+ b=B1mLvBo+2z9CyzlsDDB0Nv6V6c3nX15Ubi0UUazAwZXEFKejuDIhlhu+K1EI9QYWT
+ KJkmxKqHM0oo8nu7nHzk5+ZkEWAygYoAhpEBnbVJ9JY5B3XRMMWnWmjgm+klZzIbgB
+ 6/YIYTCEakfawzAl7F74r6PCR3hXlpS1Qp9VR9qPth3zvv1ZVKlnAEXlq+n3N7lMdg
+ YdkZZZqBNOGcMHnhkAyhCBQgOhWdYBE3SfNOMR4ORhJbaSdIN8AKj1wvI2wmfkanWu
+ UOe+Xh3E0kt49R9FTxz3RfZ9Iqzpr/DeaWFot1YSBNHsDRXvc/TFm5tM3AJpr1JNZU
+ 7rnDuGb0MmLKg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 7D07A3808203; Tue, 24 Mar 2026 17:32:27 +0000 (UTC)
+ B9E163808203; Tue, 24 Mar 2026 17:32:17 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <177437354603.1223048.5695507886774694517.git-patchwork-notify@kernel.org>
-Date: Tue, 24 Mar 2026 17:32:26 +0000
-References: <20260318073253.3108313-1-zzzccc427@gmail.com>
-In-Reply-To: <20260318073253.3108313-1-zzzccc427@gmail.com>
-To: Cen Zhang <zzzccc427@gmail.com>
-X-Headers-End: 1w55cM-0007qR-MN
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add READ_ONCE() for i_blocks in
- f2fs_update_inode()
+Message-Id: <177437353653.1223048.5601127809713877788.git-patchwork-notify@kernel.org>
+Date: Tue, 24 Mar 2026 17:32:16 +0000
+References: <20260323120622.3351920-2-monty_pavel@sina.com>
+In-Reply-To: <20260323120622.3351920-2-monty_pavel@sina.com>
+To: Yongpeng Yang <monty_pavel@sina.com>
+X-Headers-End: 1w55cO-0007qh-4E
+Subject: Re: [f2fs-dev] [PATCH v4 1/2] f2fs: fix incorrect multidevice info
+ in trace_f2fs_map_blocks()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,32 +90,34 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, baijiaju1990@gmail.com,
- jaegeuk@kernel.org
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ yangyongpeng@xiaomi.com, stable@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 18 Mar 2026 15:32:53 +0800 you wrote:
-> f2fs_update_inode() reads inode->i_blocks without holding i_lock to
-> serialize it to the on-disk inode, while concurrent truncate or
-> allocation paths may modify i_blocks under i_lock.  Since blkcnt_t is
-> u64, this risks torn reads on 32-bit architectures.
+On Mon, 23 Mar 2026 20:06:22 +0800 you wrote:
+> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 > 
-> Following the approach in ext4_inode_blocks_set(), add READ_ONCE() to prevent
-> potential compiler-induced tearing.
+> When f2fs_map_blocks()->f2fs_map_blocks_cached() hits the read extent
+> cache, map->m_multidev_dio is not updated, which leads to incorrect
+> multidevice information being reported by trace_f2fs_map_blocks().
+> 
+> This patch updates map->m_multidev_dio in f2fs_map_blocks_cached() when
+> the read extent cache is hit.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: add READ_ONCE() for i_blocks in f2fs_update_inode()
-    https://git.kernel.org/jaegeuk/f2fs/c/5471834a96fb
+  - [f2fs-dev,v4,1/2] f2fs: fix incorrect multidevice info in trace_f2fs_map_blocks()
+    https://git.kernel.org/jaegeuk/f2fs/c/eb2ca3ca9835
+  - [f2fs-dev,v4,2/2] f2fs: fix fiemap boundary handling when read extent cache is incomplete
+    https://git.kernel.org/jaegeuk/f2fs/c/95e159ad3e52
 
 You are awesome, thank you!
 -- 
