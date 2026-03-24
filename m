@@ -4,77 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9F055FEC0EE
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 17:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EFDAAFEC0E1
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 17:32:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=DB5FHx+J2Nr+T88p9Trx1tbB3akl/LVp6EvUsS+94GI=; b=E+96VewS2Y38p5F4/MmKYem8tS
-	djyFK28NPrDi257owDhDT/Xgu8yLE/Y9Bkma1i+jd9nBhAGWUA703BxeM4o5fs0upXeaZu769/BzT
-	4kz4Z+w6QQn26FwC0HIyG0UqDI42vyKz27Qu4EhF+BV46mw9890R2aM2cFfO1X7XLApQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=rPVFHjchAyIO8//ZjhdnAL8ktcRjJbvUbsRqIPgmqbI=; b=Dz8WIJWSBaRvldNOUG8AA/1XnT
+	EydnmLvjRPPOD6Yf8obhZ+MrOU7bgAaWEgVy25VPwNMlHT0Eja/SUpQFJJAGJT4sXvWWWmqRAA17F
+	JnrnEQqebebdJL1f5/s6APYJm4XGHYF6+yimIErfMCAJhoeuSQ6QsbCuYry7HK768Eb0=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w55cL-0001v7-AG;
-	Tue, 24 Mar 2026 17:32:37 +0000
+	id 1w55cM-00052U-Ke;
+	Tue, 24 Mar 2026 17:32:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cJ-0001uz-TO
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cK-00052M-3o
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:35 +0000
+ Tue, 24 Mar 2026 17:32:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qFVQfxm2ZSWUNsIxQJkJ42GvTC/hOCVTuU5poPTAu8E=; b=CZBeGqzUpETgAvoH8BhUkmqLL/
- s7NspWX3Vm1GbMCtQAN68V5Au1ddvMmrqzC+4H+2jq+Vz0ML5/gcIIHBbPAWd8UlSVP8+lnu1O8Zd
- OwAz/6BXma3c80/D2uVus1e5cKqfWAG7uwRgA/gcY46OCkLBSnJUqpK7NuLj0Mv2EWjA=;
+ bh=glZAgsTOfsRVYzKBZpXDSBt68mvbr5hae29vhXnDM9s=; b=ihHkn6iM1ReGQensbsKXJYECdR
+ SygMD0ExgCIMiDBKOp+SSznLACbOLcqUjvE8Yo49tkykKkYlr51R+W7JWDU0pHxxgBGosScBAdXtY
+ mYb2pmlYppop8CIohzttBDT0otSUDMBjNuZUTSt9cpkshL5l9WlRzABF+oADNfk+iwXc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qFVQfxm2ZSWUNsIxQJkJ42GvTC/hOCVTuU5poPTAu8E=; b=XZF+CpybeKCCRrfr7j9+9fBPQo
- xFvpCNdPC8U2tqCQVsZQvK6sewSXEK3cMvjkkbQ5kzStB/nVKKaDQCPVkbr9eJJfipL513VWSpuMv
- zZ4AV+kYlmuOFGDDdtIx8CjLGrXW8NlK9rCya5mD5XzQvBfNwPaUo9dAoijKNsInel0w=;
+ bh=glZAgsTOfsRVYzKBZpXDSBt68mvbr5hae29vhXnDM9s=; b=GGb0mEuNcYcsnoZJBTpFOMsl52
+ 7fAW3qGY2uhj7rdRagc0olND59TxIzAfn/zBWsQs79ZdWw//UOWjV52spyiCV73Mzdi0cO3owI9Yn
+ DCo5bvcsLE7cEFu4PexxY9pTGFHt9ZMlO9NIlnCywN1Dwn3aEEvuX478VH2NHOf+CqoA=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w55cJ-0007qE-4O for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:35 +0000
+ id 1w55cJ-0007qG-Bq for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 24 Mar 2026 17:32:36 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id C22E143F59;
- Tue, 24 Mar 2026 17:32:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1C9DC2BC87;
- Tue, 24 Mar 2026 17:32:27 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 18C9F408C1;
+ Tue, 24 Mar 2026 17:32:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC31AC2BC87;
+ Tue, 24 Mar 2026 17:32:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1774373547;
- bh=6PvabfWqgV6Mk2o8Mrspk5xNPAhygV5RC4LIJoudYN8=;
+ s=k20201202; t=1774373545;
+ bh=4KEG2mXKSt4DOHTbhIg7Yk2lcuYoLiu6H9zILZxm96s=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=Zo8h9UkR3EFZ5X+t7pfglF358HIzZfkYCEPXbzgvSpn1932RytFLUmxbaM7vvtb+8
- jOc+954Byl6hn4EPrsHfGfcxTsXE+uJ/91AD9cpiFU6fQFUnqTIZOUCz3jiKp9Lt/y
- fP9agQ5q5IpglKVONQ2rdOMbIopiphjj96iDiDCdLhsIg4j6oOgV7iv4UPtrAChvwo
- Lf11yj5JD7NSZtLROFPsdSkSE5aVMD/liTgqh0NDhuTdaGleJaQf9azubnWFNzP4Uo
- AztXkDjv+clCATZJstRL/ReX0kcwsokdxAQqf0P4yOrlBxTSfcE3G2EgYulRsJROWY
- I9c7LivQUYhng==
+ b=O+H7izK/6vBfqsc+xiT+xc9aERWq01L5FK6YVL4IH7tg6lLTyezgyZPBwNn78g3Fk
+ TPNQgwU85pLy5XAPNeulEiG8n5EfQPWFpyCMXpstzZYFzhGgdLpa3X64xcQZ+2YOiO
+ 3umiq9lXokqG7ElbpXTt+O14g8GwVncfnJmtJ7WbEWvxUI0EM1W7moQ3ihjcUQROiQ
+ aEh4ip+lFwZ8AHLyUu3aA7W4OCMnDhPYt1mANFabqzDik8tMhGpQsPHGzssxDppGz8
+ f60D6Esenhy72To51q45eRbjcnfT+DGeJQqXXKLMSwfM32GLB96ZKehRYa6cyFS6Pc
+ 4L+BviB3xGzZA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 7D0D83808203; Tue, 24 Mar 2026 17:32:16 +0000 (UTC)
+ 02C703808203; Tue, 24 Mar 2026 17:32:14 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <177437353528.1223048.9746825008977248948.git-patchwork-notify@kernel.org>
-Date: Tue, 24 Mar 2026 17:32:15 +0000
-References: <Y/KLHT3zaA0QFhVJ@sol.localdomain>
-In-Reply-To: <Y/KLHT3zaA0QFhVJ@sol.localdomain>
-To: Eric Biggers <ebiggers@kernel.org>
-X-Headers-End: 1w55cJ-0007qE-4O
-Subject: Re: [f2fs-dev] [GIT PULL] fsverity updates for 6.3
+Message-Id: <177437353253.1223048.6770609846094260738.git-patchwork-notify@kernel.org>
+Date: Tue, 24 Mar 2026 17:32:12 +0000
+References: <20260316185922.2184759-1-daeho43@gmail.com>
+In-Reply-To: <20260316185922.2184759-1-daeho43@gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>
+X-Headers-End: 1w55cJ-0007qG-Bq
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to skip empty sections in
+ f2fs_get_victim
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,33 +90,30 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: fsverity@lists.linux.dev, tytso@mit.edu, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- torvalds@linux-foundation.org, linux-btrfs@vger.kernel.org
+Cc: daehojeong@google.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This pull request was applied to jaegeuk/f2fs.git (dev)
-by Linus Torvalds <torvalds@linux-foundation.org>:
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Sun, 19 Feb 2023 12:48:29 -0800 you wrote:
-> The following changes since commit 88603b6dc419445847923fcb7fe5080067a30f98:
+On Mon, 16 Mar 2026 11:59:21 -0700 you wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
->   Linux 6.2-rc2 (2023-01-01 13:53:16 -0800)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/fs/fsverity/linux.git tags/fsverity-for-linus
+> In age-based victim selection (ATGC, AT_SSR, or GC_CB), f2fs_get_victim
+> can encounter sections with zero valid blocks. This situation often
+> arises when checkpoint is disabled or due to race conditions between
+> SIT updates and dirty list management.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,GIT,PULL] fsverity updates for 6.3
-    https://git.kernel.org/jaegeuk/f2fs/c/5ee8dbf54602
+  - [f2fs-dev,v2] f2fs: fix to skip empty sections in f2fs_get_victim
+    https://git.kernel.org/jaegeuk/f2fs/c/3dd8312599c4
 
 You are awesome, thank you!
 -- 
