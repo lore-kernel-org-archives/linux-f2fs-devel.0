@@ -4,79 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AA46DFEC0EA
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 17:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9F055FEC0EE
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 17:32:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=mxnqM7rA7DCcIwFSuy1X68FJexih37UuejMX5senb/g=; b=eO+WS6n7yJa56mvQl3j3lL5WX3
-	bhfVxZvNxv22mhXtB0/mbkFAyMa+mnNCIbvIBGRWDujlc44fX5mN91RyYAxEmYu53DDbCWKVRRZRG
-	Dg86nLHdL9Ao+3lIEXsPtzD+CQkHnYO23UVmvg91/0g/aiReBbawPX9Qx59tJa/M9kHw=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=DB5FHx+J2Nr+T88p9Trx1tbB3akl/LVp6EvUsS+94GI=; b=E+96VewS2Y38p5F4/MmKYem8tS
+	djyFK28NPrDi257owDhDT/Xgu8yLE/Y9Bkma1i+jd9nBhAGWUA703BxeM4o5fs0upXeaZu769/BzT
+	4kz4Z+w6QQn26FwC0HIyG0UqDI42vyKz27Qu4EhF+BV46mw9890R2aM2cFfO1X7XLApQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w55cI-00051z-9G;
-	Tue, 24 Mar 2026 17:32:34 +0000
+	id 1w55cL-0001v7-AG;
+	Tue, 24 Mar 2026 17:32:37 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cG-00051t-Aa
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cJ-0001uz-TO
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:32 +0000
+ Tue, 24 Mar 2026 17:32:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nxisdUsRHEcO8avAF8mL0faQjQoYVH5z6b5tmvUEVuE=; b=Nmx80fnC4aL6EHUV7HZ8rCQpVs
- sWl8/1Zroc8PO/DLFslaBiKEuM2tySIlyuIRv5vu/bYdsk1AZdnwuXnPwQVR+aWXVr1n8ntxk4rQ9
- QHL1tAkwm9McbxLyrT0K6UqReyH8i/8izch5QO36Tg9Jldm58OzkNYalwUZJvgXw6RCs=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=qFVQfxm2ZSWUNsIxQJkJ42GvTC/hOCVTuU5poPTAu8E=; b=CZBeGqzUpETgAvoH8BhUkmqLL/
+ s7NspWX3Vm1GbMCtQAN68V5Au1ddvMmrqzC+4H+2jq+Vz0ML5/gcIIHBbPAWd8UlSVP8+lnu1O8Zd
+ OwAz/6BXma3c80/D2uVus1e5cKqfWAG7uwRgA/gcY46OCkLBSnJUqpK7NuLj0Mv2EWjA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=nxisdUsRHEcO8avAF8mL0faQjQoYVH5z6b5tmvUEVuE=; b=g
- DL1aFh03gcGJkIa/quPlPx8p7GyAGbLryRlpMFvgGfvPM9QnGbxIwwsNzwBzbKf/qZmpPRQTDWMQi
- 6F299bgo0lMZ7veiepL74diKLjGlBNY1u1s3oPcctcucUVUIp4+cv9S337QUYR8DiaLatDAHiZzFB
- uBO4TNquhsut9u9o=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=qFVQfxm2ZSWUNsIxQJkJ42GvTC/hOCVTuU5poPTAu8E=; b=XZF+CpybeKCCRrfr7j9+9fBPQo
+ xFvpCNdPC8U2tqCQVsZQvK6sewSXEK3cMvjkkbQ5kzStB/nVKKaDQCPVkbr9eJJfipL513VWSpuMv
+ zZ4AV+kYlmuOFGDDdtIx8CjLGrXW8NlK9rCya5mD5XzQvBfNwPaUo9dAoijKNsInel0w=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w55cF-0007q1-Hv for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:32 +0000
+ id 1w55cJ-0007qE-4O for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 24 Mar 2026 17:32:35 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 27FEC44575
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 24 Mar 2026 17:32:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C921C19424
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 24 Mar 2026 17:32:21 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id C22E143F59;
+ Tue, 24 Mar 2026 17:32:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1C9DC2BC87;
+ Tue, 24 Mar 2026 17:32:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1774373541;
- bh=Q/84m+2h4ztH9M7F5q/MaGPcIJl0xoaCF8/bXba8okA=;
- h=Subject:From:Date:To:From;
- b=YWwYsoKFl+wDC/dSpEwQY9FClpyscomA24T06j5i46qQBPkMMI6vpupJgKD5KD6qO
- ptzFq9fUHY3zbyRd+/3FU0nyEsLlti//J+ihU+2gmzLrsjGTBoqtwKSF8O/sqdOf6V
- CJDsd9QcJLHAyW8PB8GMMyzLUIXZDyeJqHEvSgmM140AhT+htr4jUr8rF9EBk4EDUa
- BQaf4HZD1TrVRRrxmxGI5Eh4t+L8W4w2+odbXxlOSl296jmi3nCRnvWQAgbeNMXE6X
- DKSndQDnvbNu5W33Sao0ean2DUXgBeCd5v212CB2xH9HhnMwbXfdNpgwapypz8ngVE
- gkJN8uIyhn68Q==
+ s=k20201202; t=1774373547;
+ bh=6PvabfWqgV6Mk2o8Mrspk5xNPAhygV5RC4LIJoudYN8=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=Zo8h9UkR3EFZ5X+t7pfglF358HIzZfkYCEPXbzgvSpn1932RytFLUmxbaM7vvtb+8
+ jOc+954Byl6hn4EPrsHfGfcxTsXE+uJ/91AD9cpiFU6fQFUnqTIZOUCz3jiKp9Lt/y
+ fP9agQ5q5IpglKVONQ2rdOMbIopiphjj96iDiDCdLhsIg4j6oOgV7iv4UPtrAChvwo
+ Lf11yj5JD7NSZtLROFPsdSkSE5aVMD/liTgqh0NDhuTdaGleJaQf9azubnWFNzP4Uo
+ AztXkDjv+clCATZJstRL/ReX0kcwsokdxAQqf0P4yOrlBxTSfcE3G2EgYulRsJROWY
+ I9c7LivQUYhng==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 05A653808203 for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 24 Mar 2026 17:32:10 +0000 (UTC)
+ 7D0D83808203; Tue, 24 Mar 2026 17:32:16 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <177437352862.1223048.3815455394287346647.git-patchwork-summary@kernel.org>
-Date: Tue, 24 Mar 2026 17:32:08 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1w55cF-0007q1-Hv
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+Message-Id: <177437353528.1223048.9746825008977248948.git-patchwork-notify@kernel.org>
+Date: Tue, 24 Mar 2026 17:32:15 +0000
+References: <Y/KLHT3zaA0QFhVJ@sol.localdomain>
+In-Reply-To: <Y/KLHT3zaA0QFhVJ@sol.localdomain>
+To: Eric Biggers <ebiggers@kernel.org>
+X-Headers-End: 1w55cJ-0007qE-4O
+Subject: Re: [f2fs-dev] [GIT PULL] fsverity updates for 6.3
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,110 +89,35 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: fsverity@lists.linux.dev, tytso@mit.edu, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ torvalds@linux-foundation.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This pull request was applied to jaegeuk/f2fs.git (dev)
+by Linus Torvalds <torvalds@linux-foundation.org>:
 
-Patch: [f2fs-dev] f2fs: drop unused ri parameter from truncate_partial_nodes()
-  Submitter: Yongpeng Yang <monty_pavel@sina.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1069119
-  Lore link: https://lore.kernel.org/r/20260319083525.603728-3-monty_pavel@sina.com
+On Sun, 19 Feb 2023 12:48:29 -0800 you wrote:
+> The following changes since commit 88603b6dc419445847923fcb7fe5080067a30f98:
+> 
+>   Linux 6.2-rc2 (2023-01-01 13:53:16 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/fs/fsverity/linux.git tags/fsverity-for-linus
+> 
+> [...]
 
-Series: [f2fs-dev,v3,1/2] f2fs: call f2fs_handle_critical_error() to set cp_error flag
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1070733
-  Lore link: https://lore.kernel.org/r/20260323083834.156393-1-chao@kernel.org
-    Patches: [f2fs-dev,v3,1/2] f2fs: call f2fs_handle_critical_error() to set cp_error flag
-             [f2fs-dev,v3,2/2] f2fs: use more generic f2fs_stop_checkpoint()
+Here is the summary with links:
+  - [f2fs-dev,GIT,PULL] fsverity updates for 6.3
+    https://git.kernel.org/jaegeuk/f2fs/c/5ee8dbf54602
 
-Patch: [f2fs-dev,v2] f2fs: fix to skip empty sections in f2fs_get_victim
-  Submitter: Daeho Jeong <daeho43@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1067522
-  Lore link: https://lore.kernel.org/r/20260316185922.2184759-1-daeho43@gmail.com
-
-Patch: [f2fs-dev,v4] f2fs: fix use-after-free of sbi in f2fs_compress_write_end_io()
-  Submitter: George Saad <geoo115@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1070857
-  Lore link: https://lore.kernel.org/r/20260323112123.786090-1-geoo115@gmail.com
-
-Patch: [f2fs-dev,GIT,PULL] fsverity updates for 6.3
-  Submitter: Eric Biggers <ebiggers@kernel.org>
-  Committer: Linus Torvalds <torvalds@linux-foundation.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=723317
-  Lore link: https://lore.kernel.org/r/Y/KLHT3zaA0QFhVJ@sol.localdomain
-
-Series: [f2fs-dev,v4,1/2] f2fs: fix incorrect multidevice info in trace_f2fs_map_blocks()
-  Submitter: Yongpeng Yang <monty_pavel@sina.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1070877
-  Lore link: https://lore.kernel.org/r/20260323120622.3351920-2-monty_pavel@sina.com
-    Patches: [f2fs-dev,v4,1/2] f2fs: fix incorrect multidevice info in trace_f2fs_map_blocks()
-             [f2fs-dev,v4,2/2] f2fs: fix fiemap boundary handling when read extent cache is incomplete
-
-Patch: [f2fs-dev] f2fs: fix to do sanity check on dcc->discard_cmd_cnt conditionally
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1065133
-  Lore link: https://lore.kernel.org/r/20260311133542.1074617-1-chao@kernel.org
-
-Patch: [f2fs-dev] f2fs: support to report fserror
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1070750
-  Lore link: https://lore.kernel.org/r/20260323090344.219267-1-chao@kernel.org
-
-Patch: [f2fs-dev] f2fs: fix to avoid uninit-value access in f2fs_sanity_check_node_footer
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1063374
-  Lore link: https://lore.kernel.org/r/20260309022237.1680736-1-chao@kernel.org
-
-Series: [f2fs-dev,v5,1/4] f2fs: refactor f2fs_move_node_folio function
-  Submitter: Yongpeng Yang <monty_pavel@sina.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1068505
-  Lore link: https://lore.kernel.org/r/20260318084534.373516-2-monty_pavel@sina.com
-    Patches: [f2fs-dev,v5,1/4] f2fs: refactor f2fs_move_node_folio function
-             [f2fs-dev,v5,3/4] f2fs: fix fsck inconsistency caused by FGGC of node block
-             [f2fs-dev,v5,4/4] f2fs: fix inline data not being written to disk in writeback path
-
-Patch: [f2fs-dev] f2fs: fix false alarm of lockdep on cp_global_sem lock
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1062550
-  Lore link: https://lore.kernel.org/r/20260306122421.209903-1-chao@kernel.org
-
-Patch: [f2fs-dev,v3] f2fs: fix to freeze GC and discard threads quickly
-  Submitter: Daeho Jeong <daeho43@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1067523
-  Lore link: https://lore.kernel.org/r/20260316185954.2185806-1-daeho43@gmail.com
-
-Patch: [f2fs-dev,v2] f2fs: add READ_ONCE() for i_blocks in f2fs_update_inode()
-  Submitter: Cen Zhang <zzzccc427@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1068459
-  Lore link: https://lore.kernel.org/r/20260318073253.3108313-1-zzzccc427@gmail.com
-
-Series: f2fs: fix data consistency issue caused by nat_entry flag
-  Submitter: Yongpeng Yang <monty_pavel@sina.com>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1064219
-  Lore link: https://lore.kernel.org/r/20260310093611.2865092-2-monty_pavel@sina.com
-    Patches: [f2fs-dev,1/2] f2fs: fix fsck inconsistency caused by incorrect nat_entry flag usage
-             [f2fs-dev,2/2] f2fs: fix data loss caused by incorrect use of nat_entry flag
-
-
-Total patches: 19
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
