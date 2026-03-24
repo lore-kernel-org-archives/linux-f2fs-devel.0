@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A4A3CFEC0EB
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 17:32:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 03761FEC0EA
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 17:32:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=joV4IpbFYBK/4lKE2HsaycBP/+REhYXSfEQ4upzzw0k=; b=TTyUzkgd2p/wWd1mjo7h/l8Y6k
-	3foOGhYoqOiG4PH7kNK8F3zW6UE10UXWUfyi4eUMZBORS/MwrhrQijQt4uUHABqxOKsMN16KJnaPV
-	vcWRzHpXhMqr9S1JYC9ipYxX4tp8+QQvYi90NKW4VHTHxGA5pQFa+vS3qhwc8vrYLjpc=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=sdQTIsZYdbEn76jBJ20gW4uZ6i1wz2NFKRlfGWyarv0=; b=a+i3jf/cRw17bemW4PapfCWCPF
+	JARZQ2AXbekNo5ILf+SB84OHKseRJ/zj+j9Jn/PFAj9hrnnKAMnxGmP716Wro1s2QKjUYKYcNfXm1
+	gE82rq7s67OWCUznfUME59sZE79AL+FuHot0MLwgQ5HX5VPjs1Khp+eA1k/6MLQlJnc0=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w55cS-0000oi-Gt;
-	Tue, 24 Mar 2026 17:32:45 +0000
+	id 1w55cU-0001ww-Ii;
+	Tue, 24 Mar 2026 17:32:46 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cQ-0000oI-O0
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cT-0001wf-8x
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:43 +0000
+ Tue, 24 Mar 2026 17:32:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MbSSfB+AsAevQYIcnugLbIbR4yxuU4aWisvWvh14Dc0=; b=iT7hIKwSb4NmD6/yDIKWBXhOUq
- pAYxQ63GF56CIuwP0IPCzIVvhmApT7BY8VtNhVTeXPK5cg7uUj/b3ILuuWS7sq+frspgUUN576A7p
- QXYGwAKBXFLYert5vJr5ss0JcWYe6hxA3N6+mUqVqb7RPCBV90rcA4oQ2152w05ogVA4=;
+ bh=T//iRLZZwZT2qbs/xeQAq6ZwEUPDv/B8LwI1FQknLBw=; b=IkpHjUGffNRmUpcR+cN59AOZim
+ bdAk7zpsgTmY1StBEvaetKIIcDr8942P+gPVApmdUrswipeb57fgWN80BjC8KecQkyV/6DCFZJHcm
+ knId7tQtdmLOci1f2sRjHUrhrNnxl2WlBqwn4LZYvzcYs6PD4oMw1EshdZjuUOoNVRrI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MbSSfB+AsAevQYIcnugLbIbR4yxuU4aWisvWvh14Dc0=; b=DrnljUUECT1H/mZbPnci/sUXdW
- BdZ+ZTiS2EsWOBqAvs2tEf1HoJod+DsHLsQSLfLrJlU69iukDZ0rmuvn6pv2nGp05SOjPUhgKFfZc
- Js9ReE5E/gHn74Txx206XOBAWZdHVTgqeA9ugNJKKJUjb9uLtvFHoiD3X1Pi2zvBJNmY=;
+ bh=T//iRLZZwZT2qbs/xeQAq6ZwEUPDv/B8LwI1FQknLBw=; b=EBuK8cx8cI8bveBPRcIG1RIUnQ
+ f2lc+XjZ16xB0Y0Sngk6txSy7M5U1ae7VnQ2Wpl8BKL3qmXK1CUnLvc2z15s4lY4474aB5kCElZVz
+ naBszD9FgrLTPZaMq1CNTSNEw2ma+1cViEXpnAf/6LAXhtvrVUcR4phA+Qv0/ZSh1FF8=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w55cQ-0007qu-OY for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:43 +0000
+ id 1w55cS-0007rA-Ip for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 24 Mar 2026 17:32:45 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 5597444521
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 24 Mar 2026 17:32:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E9FC19424;
- Tue, 24 Mar 2026 17:32:31 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 4D41744578;
+ Tue, 24 Mar 2026 17:32:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D5FFC19424;
+ Tue, 24 Mar 2026 17:32:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1774373551;
- bh=o2FJD1O4qqTFOxfJENKY1YVwA05kckc9pLhmgC2zQgQ=;
+ s=k20201202; t=1774373554;
+ bh=NoLCcZZIiJ+8QMrv8egjqxotZXLEwMSFkaME6hODzEQ=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=e11F8vd5y89hLhEaWb16TW16JMyovXKZLmahJfm12N/qyv7lM+idZMNf2gUvV3hH/
- FiRfg9LTc2c50nROZ6lKq3QAXFRHVwSqh8A/hVP614AdnknVAbNjdl5oNTH6KXHUjs
- XBYZivmLnOm2GFb7p4iwUgBrysCeoInlp4912GI06PGtgH1r3Ua6HznDTDMJo9MScB
- HB2M5dXeWwGrnFDSKZNqFpcyxa46PWy7CreYyulxu79UN3XAIpxNYU4a5mAsGDowXl
- 2OVznQkaaE23UqSEPE4n8na1gql7N8RYf+86F14L3At7ak2IuYTKwzW6JVcFFSJkNn
- U/JxO5LabJ0xg==
+ b=a2zCYvcthnBztL2sGX8LJpL2pzhuWaSsknOWSn8inhJZkt6OzTLFH8nzohpqER6DN
+ LGnSp764muolC0Vao0HAZYa7bVOMjE6KZqU7h+AiBIVLis0evHTcvQjlT7oKZUEbiE
+ jTsiikbQOmXxoczph+9Qxy3C4Hlirh8GKwzm5eCdNKjxgv3j6HsLH3dVylk8fTuO96
+ aBzKttUU1EnZnbo4m1A1Mbn+05Qp6ssOloqw17CDYj+GEhM2KZhf/gvGopFiEteqPo
+ XOqkFelcYKNXlbvzILzyrh7RLyynQprI5AoRKoHfVZ+IAyKenS7lddN0+Ig1zkvVOY
+ 7UXr6DEvQyJ6g==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 3FD253808203; Tue, 24 Mar 2026 17:32:20 +0000 (UTC)
+ 3FDE33808203; Tue, 24 Mar 2026 17:32:23 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <177437353903.1223048.4538659871266511993.git-patchwork-notify@kernel.org>
-Date: Tue, 24 Mar 2026 17:32:19 +0000
-References: <20260323090344.219267-1-chao@kernel.org>
-In-Reply-To: <20260323090344.219267-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1w55cQ-0007qu-OY
-Subject: Re: [f2fs-dev] [PATCH] f2fs: support to report fserror
+Message-Id: <177437354178.1223048.15426957232674451465.git-patchwork-notify@kernel.org>
+Date: Tue, 24 Mar 2026 17:32:21 +0000
+References: <20260318084534.373516-2-monty_pavel@sina.com>
+In-Reply-To: <20260318084534.373516-2-monty_pavel@sina.com>
+To: Yongpeng Yang <monty_pavel@sina.com>
+X-Headers-End: 1w55cS-0007rA-Ip
+Subject: Re: [f2fs-dev] [PATCH v5 1/4] f2fs: refactor f2fs_move_node_folio
+ function
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,7 +90,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+Cc: jaegeuk@kernel.org, yangyongpeng@xiaomi.com,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -98,23 +98,28 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon, 23 Mar 2026 17:03:44 +0800 you wrote:
-> This patch supports to report fserror, it provides another way to let
-> userspace to monitor filesystem level error. In addition, it exports
-> /sys/fs/f2fs/features/fserror once f2fs kernel module start to support
-> the new feature, then generic/791 of fstests can notice the feature,
-> and verify validation of fserror report.
+On Wed, 18 Mar 2026 16:45:32 +0800 you wrote:
+> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 > 
-> Signed-off-by: Chao Yu <chao@kernel.org>
+> This patch refactor the f2fs_move_node_folio() function. No logical
+> changes.
+> 
+> Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: support to report fserror
-    https://git.kernel.org/jaegeuk/f2fs/c/d82869456217
+  - [f2fs-dev,v5,1/4] f2fs: refactor f2fs_move_node_folio function
+    https://git.kernel.org/jaegeuk/f2fs/c/04215c401fb9
+  - [f2fs-dev,v5,2/4] f2fs: refactor node footer flag setting related code
+    (no matching commit)
+  - [f2fs-dev,v5,3/4] f2fs: fix fsck inconsistency caused by FGGC of node block
+    https://git.kernel.org/jaegeuk/f2fs/c/e952f14159fc
+  - [f2fs-dev,v5,4/4] f2fs: fix inline data not being written to disk in writeback path
+    https://git.kernel.org/jaegeuk/f2fs/c/5eef0d5a9c99
 
 You are awesome, thank you!
 -- 
