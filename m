@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4A0B5FEC0E1
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 17:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A4A3CFEC0EB
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 17:32:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=XiFvh6VqWFKTPJSkiHYWN0auHszNTk7kHhQXu6rVrJ4=; b=EnENu406Tzm+oaPQEgiVAq1Ft3
-	hZ+PWNYFUReh0AwPFZQjq/rnC18s0cfvMRND31fD8gy5fjYlJnfgr/wQlJ9TFLSWca7msEJokBRgZ
-	q/wwJss0zZLDFGoFQ2vgGqoA07XEgILRxPBoEZzCEkAP117oSJoQgAcZsEv6f94k60Vg=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=joV4IpbFYBK/4lKE2HsaycBP/+REhYXSfEQ4upzzw0k=; b=TTyUzkgd2p/wWd1mjo7h/l8Y6k
+	3foOGhYoqOiG4PH7kNK8F3zW6UE10UXWUfyi4eUMZBORS/MwrhrQijQt4uUHABqxOKsMN16KJnaPV
+	vcWRzHpXhMqr9S1JYC9ipYxX4tp8+QQvYi90NKW4VHTHxGA5pQFa+vS3qhwc8vrYLjpc=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w55cQ-00053B-Vy;
-	Tue, 24 Mar 2026 17:32:42 +0000
+	id 1w55cS-0000oi-Gt;
+	Tue, 24 Mar 2026 17:32:45 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cO-00052r-IV
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cQ-0000oI-O0
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:40 +0000
+ Tue, 24 Mar 2026 17:32:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bbTV5SZGiZwYCqkNLa4MzhMvvnymyPYu4/ABbt0k+DQ=; b=NhhWvU08U6rIWThXSG8TyDH6fD
- xVL8lru+Pv7CQsWJwA3RtBjv5IehGK50r5kfpo+5HeUCrVMSdeceplKDNoUsJEOjgwwC6EpDWbV5v
- ww8fCE2oNq4oNd9eavCh5amsmn/aoSZb/TykhlvS8CYmg388sjeEGRBh6dw0WFdGxvkQ=;
+ bh=MbSSfB+AsAevQYIcnugLbIbR4yxuU4aWisvWvh14Dc0=; b=iT7hIKwSb4NmD6/yDIKWBXhOUq
+ pAYxQ63GF56CIuwP0IPCzIVvhmApT7BY8VtNhVTeXPK5cg7uUj/b3ILuuWS7sq+frspgUUN576A7p
+ QXYGwAKBXFLYert5vJr5ss0JcWYe6hxA3N6+mUqVqb7RPCBV90rcA4oQ2152w05ogVA4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bbTV5SZGiZwYCqkNLa4MzhMvvnymyPYu4/ABbt0k+DQ=; b=OX+mxwqEd9nvke5Q9bj+Ds0fyt
- pVEyvROww9fM9Va6dg+VXokGccNGZlnlHOet6NuXKGZbRNDvxNnTslLy5KjeAUgDeZthOuJv83YJH
- qDzzxl45vdcbq+xBOimNJT8GXwGI82nG/WMTynDamp3eI/naPFYojGoAVSRYvB4WVVzY=;
+ bh=MbSSfB+AsAevQYIcnugLbIbR4yxuU4aWisvWvh14Dc0=; b=DrnljUUECT1H/mZbPnci/sUXdW
+ BdZ+ZTiS2EsWOBqAvs2tEf1HoJod+DsHLsQSLfLrJlU69iukDZ0rmuvn6pv2nGp05SOjPUhgKFfZc
+ Js9ReE5E/gHn74Txx206XOBAWZdHVTgqeA9ugNJKKJUjb9uLtvFHoiD3X1Pi2zvBJNmY=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w55cN-0007qR-Sh for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:40 +0000
+ id 1w55cQ-0007qu-OY for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 24 Mar 2026 17:32:43 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id C66BE43E09;
- Tue, 24 Mar 2026 17:32:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA934C2BC9E;
- Tue, 24 Mar 2026 17:32:39 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 5597444521
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 24 Mar 2026 17:32:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E9FC19424;
+ Tue, 24 Mar 2026 17:32:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1774373559;
- bh=kRWI/KijUS+BhDaAF3ZSZLA5iwXg4T1CxkO3AnqCnO4=;
+ s=k20201202; t=1774373551;
+ bh=o2FJD1O4qqTFOxfJENKY1YVwA05kckc9pLhmgC2zQgQ=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=WvnImmmGgAHlDpJ6/fv6GI+F7JBpCLhEEuorJ+a2UicPRHyCrG5J06FC7jzotKcbo
- voDUSpol5+jM2UHTxRJFKmgVZJuBfpBhi9MBzI0S53jklk4h6MRvzR/sgcyxX4UsY/
- OHayym6gl2GuSFKhoar0gzQBSL+2u0hIoAH2zrANSfZ3VAPCQPMcEBzQpcg3AEcabw
- 6M6O/eyONLjG/Bv9opKdipjkRFVba6bhlES+Lm3+B59k2nACmKLl5vfRs7rUOGmn/e
- zA0XylHKFa7erhTe0NjPj4gq0u6d2z8C7nBbvBAkMEpgCvNIRc9yIJkFXPNhmAZ1w0
- bRbt/CDVWlwaw==
+ b=e11F8vd5y89hLhEaWb16TW16JMyovXKZLmahJfm12N/qyv7lM+idZMNf2gUvV3hH/
+ FiRfg9LTc2c50nROZ6lKq3QAXFRHVwSqh8A/hVP614AdnknVAbNjdl5oNTH6KXHUjs
+ XBYZivmLnOm2GFb7p4iwUgBrysCeoInlp4912GI06PGtgH1r3Ua6HznDTDMJo9MScB
+ HB2M5dXeWwGrnFDSKZNqFpcyxa46PWy7CreYyulxu79UN3XAIpxNYU4a5mAsGDowXl
+ 2OVznQkaaE23UqSEPE4n8na1gql7N8RYf+86F14L3At7ak2IuYTKwzW6JVcFFSJkNn
+ U/JxO5LabJ0xg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- B3D5A3808203; Tue, 24 Mar 2026 17:32:28 +0000 (UTC)
+ 3FD253808203; Tue, 24 Mar 2026 17:32:20 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <177437354753.1223048.633752985554179871.git-patchwork-notify@kernel.org>
-Date: Tue, 24 Mar 2026 17:32:27 +0000
-References: <20260310093611.2865092-2-monty_pavel@sina.com>
-In-Reply-To: <20260310093611.2865092-2-monty_pavel@sina.com>
-To: Yongpeng Yang <monty_pavel@sina.com>
-X-Headers-End: 1w55cN-0007qR-Sh
-Subject: Re: [f2fs-dev] [PATCH 0/2] f2fs: fix data consistency issue caused
- by nat_entry flag
+Message-Id: <177437353903.1223048.4538659871266511993.git-patchwork-notify@kernel.org>
+Date: Tue, 24 Mar 2026 17:32:19 +0000
+References: <20260323090344.219267-1-chao@kernel.org>
+In-Reply-To: <20260323090344.219267-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1w55cQ-0007qu-OY
+Subject: Re: [f2fs-dev] [PATCH] f2fs: support to report fserror
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,7 +90,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, yangyongpeng@xiaomi.com,
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -98,30 +98,23 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 10 Mar 2026 17:36:10 +0800 you wrote:
-> From: Yongpeng Yang <yangyongpeng@xiaomi.com>
+On Mon, 23 Mar 2026 17:03:44 +0800 you wrote:
+> This patch supports to report fserror, it provides another way to let
+> userspace to monitor filesystem level error. In addition, it exports
+> /sys/fs/f2fs/features/fserror once f2fs kernel module start to support
+> the new feature, then generic/791 of fstests can notice the feature,
+> and verify validation of fserror report.
 > 
-> This patchset addresses a data consistency issue caused by the lack of
-> mutual exclusion between checks of the HAS_FSYNCED_INODE,
-> IS_CHECKPOINTED, and HAS_LAST_FSYNC flags and the checkpoint write path.
-> 
-> In f2fs_flush_nat_entries(), after writing back the NAT block, the code
-> sets HAS_LAST_FSYNC and IS_CHECKPOINTED, and clears HAS_FSYNCED_INODE.
-> Although accesses and updates to these flags are protected by
-> nm_i->nat_tree_lock, observing this state in the fsync context does not
-> guarantee that the corresponding nat_entry state has already been
-> persisted to the device.
+> Signed-off-by: Chao Yu <chao@kernel.org>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,1/2] f2fs: fix fsck inconsistency caused by incorrect nat_entry flag usage
-    (no matching commit)
-  - [f2fs-dev,2/2] f2fs: fix data loss caused by incorrect use of nat_entry flag
-    https://git.kernel.org/jaegeuk/f2fs/c/06d5ce7683fe
+  - [f2fs-dev] f2fs: support to report fserror
+    https://git.kernel.org/jaegeuk/f2fs/c/d82869456217
 
 You are awesome, thank you!
 -- 
