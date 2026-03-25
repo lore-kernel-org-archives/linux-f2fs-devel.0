@@ -4,76 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 77E04FEA80C
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 05:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 31EB4FEA80C
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 06:30:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=x592jE8e+xyFmtzFA4MujbPu9XkQCFHxr3jJS7zP8cM=; b=BI8MD4YNKnpfVE7v+V+V1aFoo2
-	fgXbGtnOJe6taEOP0zRIXVLUsBbpe4/656V9Pop7r+/Rnnw2NdyEwM01in+wE7sSfchGlUBxDGugI
-	qZAC+5nkVtGMBqxm8K5YPKH4MwUBvyDFXICftFeWCL/33dQTL2eKalBapLTqNxqd9wTc=;
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=bPNttcehIW+PdSJ2IcKFAD4M4IJJGf8B9zgsb0qgAD4=; b=Y2JKoHFE5am4BjalK1XzJ4FQvo
+	n+ofqujabTzOQXahqivxioNE3m4VlS+kAYhhgUj9PR463Y54BPKIV29YVV+bzV7iQ9ryocyyhqzt8
+	Nee3ssMqS86Gzfqef82N88ahjYAddUWUTqEOsxZMxAGWzMnQlG++fmQm9ZsH98VZnvDY=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w5HB6-0002BB-3B;
-	Wed, 25 Mar 2026 05:53:16 +0000
+	id 1w5Hl1-0003MZ-5c;
+	Wed, 25 Mar 2026 06:30:23 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <BATV+3b37efca848b3caba94d+8249+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1w5HB3-0002B3-DQ for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 05:53:13 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <chao@kernel.org>) id 1w5Hkz-0003MT-Ek
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 25 Mar 2026 06:30:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=SHDXUeS5jnR7y0znBQ+/KFl+xqNiEw10GPaQ+zVa7q0=; b=ShglfpI0usI6myCM1oTk+3kJKx
- 37sYUo+tJ/KdyGatPBSrziMESwrsUyonr6PUYOicFDQ6bgCdgxVjAs/K1APQfEOABbxHg+7KBzcwb
- qB7GUSS0WXCf9Ngj5OVLq1kSrKOzjWDps3hiF/IfV/nDCGABDN0+3vD1YCT5wxMt0spM=;
+ bh=SHzbgvVXRhkBw3a61QihbzN/MTB/vp/jm4iOfE0lKns=; b=Mcnhh25KNaqJsfzovIoZ792W6y
+ cqyRXoN4RYjTBUsiAH8E8XJNcHW/KrSQiblmZYq9FB4UCpxhiYxEXM4DwdarXaJP37gEJkX/oY1gS
+ Ls40DdFVKlQGUNbVsZUJsrQDWjZoz+oslERjTmdHcQS0C/4q7YXrrWwXv0+JO+YSR/kI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=SHDXUeS5jnR7y0znBQ+/KFl+xqNiEw10GPaQ+zVa7q0=; b=grGWdkSJ4a7JZAW6HzNFcT/mjC
- 7ki+C5b6i2Uyn/PWIqRosC4+aCdYdvbnJ0lmduIxSXuNUn1+MXCF61YDDS+lQlrj9Y5VyyrkWEOD4
- wghaxYoFOiyIrLGgs6yoJGSdaiok9pXgPQw2YkIkVZuBTpIV7qxxIZqypcplXXuMnkkY=;
-Received: from bombadil.infradead.org ([198.137.202.133])
+ bh=SHzbgvVXRhkBw3a61QihbzN/MTB/vp/jm4iOfE0lKns=; b=NVFIUhLqJa0cF+a2fyHlGB9ytp
+ JPYbZ7EHoTG/SgXnNRJ38PDRUbwHO8YETnjuBj2RGFRefYkzBHFY0AyT+hDw41gGMKKpEY4B4iKdN
+ NSiIAXkKcdH8OVkI+nBtsxaQ2AsBVZhILaYHv13ZYMrj+nh4saV7XHxyS7QbvN6OwOao=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w5HB1-0001Fe-V7 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 05:53:13 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
- :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=SHDXUeS5jnR7y0znBQ+/KFl+xqNiEw10GPaQ+zVa7q0=; b=4oEgKq+Z9wK0/UfLZYwjfIQJae
- QX0Ib6GUJWXRdxWpiZjrnwawzI2WP/kg3FX+sWKJNVm05/u+uHElk0YBR5/GyzYLop8GtNqbdu4VV
- vZ6NxzKIsZWte3mqlLXNnoEvHSisA3lvqQUH3xcH+S2vbLy0GTLDQ4UOqGPyRpdhMBX37Q1WVm2q2
- x+RKePvh+V3C0f+bBuLqK8Orn7IbdoIf3vOr50M6a2XD/Azc6x1fHyCkWp75Ryz3cHXlMyab3TIbK
- +sA+eiytnPpTWT4U4aH0Sd9v6ILU1GN92ML8pPd1OSEFKUK79rGzXowJ/7HA0dprQlfeevZErKiMr
- irUEVJgw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red
- Hat Linux)) id 1w5HAr-00000002koM-2gNL;
- Wed, 25 Mar 2026 05:53:01 +0000
-Date: Tue, 24 Mar 2026 22:53:01 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Chao Yu <chao@kernel.org>
-Message-ID: <acN4PWKHvk_33VB7@infradead.org>
-References: <20260324025656.493776-1-chao@kernel.org>
+ id 1w5Hky-0002cU-KI for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 25 Mar 2026 06:30:21 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by tor.source.kernel.org (Postfix) with ESMTP id B5898600AC;
+ Wed, 25 Mar 2026 06:30:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E803FC4CEF7;
+ Wed, 25 Mar 2026 06:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1774420213;
+ bh=GJkdHJL8jbzI0cvYfVjlcOX4u1soS5SlVk5upSvOhck=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=N+e9jmL54g+k15rZtjbqbRiqeaeGSF3BAvReSeKWmVSVDiCjM835SEaAodWvVY81u
+ tQPSOq0k5+DsRnAdNR9oxdk2VZF6mXLoPMASvrlmVMDDxMrtKVh6g43NRUtQuPPRj6
+ vwYGjXJ9Mrt35YtS0fMleE+v1J9VyHzr93eDzczBJs+5kx9Y//iS8Hzp+KAFcjUVP5
+ jyyl8kTBcGQHvDONGspVpXJbGZF3cUjvc/xg6xK2IHxTyZFk4pI65TruorE1KYtoj8
+ jpCUxWnGLkyyKdznBOdfvBH/8tW2OiV1Fds5oy+yF5rOFt3yV9Kl2aac4NRxwk1GGa
+ vxWZpqYor0xTQ==
+Message-ID: <db814739-7fae-40ad-87aa-53ed159dee31@kernel.org>
+Date: Wed, 25 Mar 2026 14:30:09 +0800
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260324025656.493776-1-chao@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1w5HB1-0001Fe-V7
+User-Agent: Mozilla Thunderbird
+To: Christoph Hellwig <hch@infradead.org>
+References: <20260324025656.493776-1-chao@kernel.org>
+ <acN4PWKHvk_33VB7@infradead.org>
+Content-Language: en-US
+In-Reply-To: <acN4PWKHvk_33VB7@infradead.org>
+X-Headers-End: 1w5Hky-0002cU-KI
 Subject: Re: [f2fs-dev] [PATCH] common/rc: support f2fs in
  _require_fanotify_ioerrors()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -87,18 +88,25 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
 Cc: jaegeuk@kernel.org, Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Mar 24, 2026 at 10:56:55AM +0800, Chao Yu wrote:
-> This patch allows to run generic/791 on f2fs.
+On 3/25/26 13:53, Christoph Hellwig wrote:
+> On Tue, Mar 24, 2026 at 10:56:55AM +0800, Chao Yu wrote:
+>> This patch allows to run generic/791 on f2fs.
+> 
+> When was this introduced?  This doesn't currently exist in mainline,
+> and it would probably help to run your fserror implementation past
+> Darrick and fsdevel for review.
 
-When was this introduced?  This doesn't currently exist in mainline,
-and it would probably help to run your fserror implementation past
-Darrick and fsdevel for review.
+Oh, let me Cc Darrick and fsdevel for review.
+
+Thanks,
 
 
 
