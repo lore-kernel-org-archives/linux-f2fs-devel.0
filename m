@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CA9D3109C02F
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D5EE3109C033
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 15:03:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,29 +12,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=cUlJMpkROWUKia+fRvb66lAx7skTrYDhXzIC73GQmHY=; b=LekkRC6a1X2BxIsHTsx0fg4zFL
-	maR4EPYb/NLG/ruc4yKB16MdG+sADb6PZer1W89kd3V5IUGxSFHM7JtLwIBla0Rap8dVEDQU0X+MV
-	PBwzQ+N6GjV4j5bGXiPnCmFyWFPTlsYrMJyx9BmP/kgOILAF4G3+QUmXa837W8n+LYOo=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=e8qfyoSPyPfjE0jCCqLhRQvm/sqiAGHIjfAWqfboNlU=; b=dpiOFFo8iZHHRIn0Ez13IxdO35
+	V2eNLqwEYk4aD8S5ArbRbxLN+GvjJ0SQ2PA+zetbqqIUsmTXdCNMXUffR3HmliNKDu0fbUNFsmxzJ
+	XQlEm7aUjjA8SmeAbS2Nv7fksa4scY524PQXpheOUdX78BIeGZrXaiFFJPiuVzltPy1c=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w5Plo-000745-QI;
+	id 1w5Plp-0002TT-PJ;
 	Wed, 25 Mar 2026 15:03:45 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1w5Plm-00073o-H3
+ (envelope-from <hch@lst.de>) id 1w5Plo-0002TL-2z
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 15:03:43 +0000
+ Wed, 25 Mar 2026 15:03:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0q8BLJk/ygKuLzqid/uDpe6daMEqtyc+fcO/geTlCUc=; b=VWJQBTKiS6LYwE2baaF8pVu5g7
- +TvOYL3kySjHTl2pxIEBunnwm+yOnrNAGX8P6fLAR7fS/o1y1vxyh3gL/rqLHZ/eHg2E/F3TrGREW
- 7Ad4hS6AjcIZgOIJQ5ksIIyth1YQDvKHvfm5n1UIsTkmq5iTqzx1B2x43rssLiqXb/g4=;
+ bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=PIklGSlTyeqwb3qBc5OthUeywV
+ rbH9rBNm9yerl+tsRgzDM27HOlXFfs46GfeU4c7O7uS9HkrpN4Ad77rPb10T/yAxFBVB/UaXG6Pnd
+ teLxPUTNeG7rXdNkskXS+5SXJvYHxXZ+Nr4fTZEOCeOcF6ytPPWDnignFGPGu2SPAC5M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,29 +42,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=0q8BLJk/ygKuLzqid/uDpe6daMEqtyc+fcO/geTlCUc=; b=aA4H8UzXGJoVVwr2KbdDAB2Yd8
- hcYIYYb1NgGiHRXIuhgLqkOqXPbE79evwEz3yWI2nQN/240P7zZop/204+VufqCKZEeGc0YtLCkv/
- sSw7/RTLAQeiJaZMqm7v43hOsclWMjrCMsA69/jcFnHzBqlICx0SR3Y9Bzu8QBhLVrkQ=;
+ bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=GDvF1jjs1DyWoSUPcvJLcS1tIe
+ IF1l4vPSS/0vGCazf130/PKSIt9dqMWxcBKqvtJUPGMJbFjLV6YKGNQAxYAWLSS9jRSoDrNGhXgfJ
+ qs4k7wV2p53tzGQ8KQN2ZQAyQVL0lf71wl/etneSeX3HEJKbWX1Qes2uui7WGgR+9JKQ=;
 Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w5Plm-0006T6-KM for linux-f2fs-devel@lists.sourceforge.net;
+ id 1w5Pln-0006TA-AW for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 25 Mar 2026 15:03:43 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id 9146B68C7B; Wed, 25 Mar 2026 08:57:00 +0100 (CET)
-Date: Wed, 25 Mar 2026 08:57:00 +0100
+ id 7EF1968D05; Wed, 25 Mar 2026 08:58:09 +0100 (CET)
+Date: Wed, 25 Mar 2026 08:58:09 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20260325075700.GC952@lst.de>
+Message-ID: <20260325075809.GE952@lst.de>
 References: <20260319170231.1455553-1-aalbersh@kernel.org>
- <20260319170231.1455553-4-aalbersh@kernel.org>
+ <20260319170231.1455553-7-aalbersh@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260319170231.1455553-4-aalbersh@kernel.org>
+In-Reply-To: <20260319170231.1455553-7-aalbersh@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1w5Plm-0006T6-KM
-Subject: Re: [f2fs-dev] [PATCH v5 03/25] fsverity: generate and store
- zero-block hash
+X-Headers-End: 1w5Pln-0006TA-AW
+Subject: Re: [f2fs-dev] [PATCH v5 06/25] fsverity: hoist pagecache_read from
+ f2fs/ext4 to fsverity
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,7 +84,9 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Shouldn't we still try to get this out of the fsverity_info first?
+Looks good:
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
 
 
