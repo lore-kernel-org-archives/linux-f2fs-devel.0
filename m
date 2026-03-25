@@ -4,120 +4,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D7A04109C027
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 14:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D853E109C029
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 14:46:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=dg2bp3POC8zn4w44KXOz8xs8f+q+bllZfig6zI6er7I=; b=PdnUmU0l4H6AGEsHWBJvDBFCvD
-	RTpQQWwE1W0lOsMMYeEDDp/cl4ZB7QMGFVnJ5sl2s92sUIU55b6yPxtOWRTEMXdupCKr+K/yUzHwD
-	yp4QOlntphRr9LqY3XHPcy2g55PepDBuS2AIlC6R+VzTdZRQ2A7wLjhRvi0OuszDCuKs=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-Id:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=8MapugTXozyyPkz+WY0VH3l5jEARHHfNECpA8YtiHXU=; b=ZkUZX7G0AyRZDC4ysan8qmAS+m
+	nbO3DW7P6BdKyJXxT4tQ0zcBqd64qktG8CFQew7kdgQimD0lwsRkSyyiS1xiOQ314D9TuhsTNt5jq
+	IYmElO1jStlqj14XixUaXUf0zDq0pcbga/nkBt7OF+EzkLXL2Bs4rr2mCTOCR6nltXcs=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w5PTu-0003d7-T0;
-	Wed, 25 Mar 2026 14:45:14 +0000
+	id 1w5PUm-0005FB-He;
+	Wed, 25 Mar 2026 14:46:08 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@redhat.com>) id 1w5PTt-0003cu-90
+ (envelope-from <ruipengqi3@gmail.com>) id 1w5PUl-0005F5-Ds
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 14:45:13 +0000
+ Wed, 25 Mar 2026 14:46:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:In-Reply-To:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1xEylKt1sFxQZZ3xBGKJ8RdOSFC0up8CAh1cSzczQVQ=; b=kyq86BCFZfeGrWgVsk40qhLEVW
- Tlilj65IBiWO2Wh0l40hvIHEfop4N7FZ0/4EoYydJY4dmDa5pVnLYugG1S1TOLavrCJ4D4HgdSN5J
- iu37/TWAJl/p1AaPgg7NfQe20YWN/o2LcO998hhWpqpUT0of3IafK8nd/7WHlz3zPwa0=;
+ bh=tvyKhPZ3nzUkw+9X1/EbZaf8jGZ4iym5IrAaHhVdOec=; b=ZxqBbThJ+8Fqwc8HWlxcmS13C5
+ Jei+RaFP7NL+/6TIUgunBPjH822u2V/K1pKGjUpsR6i+xsyBEkYsgl/Hx5da+wnJSirLevCL1CDOR
+ TxeKvVQ0XcVurYJ0HK9SQ+/3HlkKHodLcsDR7dNDIk4IGTb5a8ApUdL7T/Hc+ZhYDa5U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=1xEylKt1sFxQZZ3xBGKJ8RdOSFC0up8CAh1cSzczQVQ=; b=It2XXcjE5UT/xGQsK+2wtCz6Zf
- 57Np7jYJ2POvJEWsetsGwvG4wE+dJ/w4gLBdK24Dul3QLS90nNwt34LPVy6xnz75Q51UAl1ua3yZj
- ic1TGHEXQjlnop+r2Qs4oIxegLt10/iuozTnVeML8scfXuoHLkCxgBDUMC8A7Iqsbr3E=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=tvyKhPZ3nzUkw+9X1/EbZaf8jGZ4iym5IrAaHhVdOec=; b=T
+ Qz42q0vXt7k4WXRW0bcCS00gvfVMVymSvZZYE8VmLFAQe+BQnhOymxFjelgI7hksk19XxQCbQYk8M
+ rbwLinyIz+HKtJegs+vy+NJcsn/DyGaUwsOuyaqD39Yz9gtoJHgXOy2kTKV1aOHskDy+rkf14en0A
+ hgehmvfVaXMBgAas=;
+Received: from mail-qv1-f44.google.com ([209.85.219.44])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w5PTs-0003sS-BW for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 14:45:12 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1774449901;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=1xEylKt1sFxQZZ3xBGKJ8RdOSFC0up8CAh1cSzczQVQ=;
- b=fA8x1U+aRnGIS7wYk7Bvg78V88ldY4CeMmFj7r13+XBJfou5HcR2tuCX+aAfXLm4Qj21zJ
- mfoloKbZklfGxu/z+xvhJMNEswNskDZ7ZG1YBS35ghxdjbOpmKH3L83TBz/C7QfhP5ZBTW
- Dd+iw97mWCDJYKRkurf4PxoOplgES/w=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-126-Sf8SaanKMtiEuK1nlwg5jw-1; Wed, 25 Mar 2026 07:41:26 -0400
-X-MC-Unique: Sf8SaanKMtiEuK1nlwg5jw-1
-X-Mimecast-MFC-AGG-ID: Sf8SaanKMtiEuK1nlwg5jw_1774438885
-Received: by mail-wr1-f69.google.com with SMTP id
- ffacd0b85a97d-43b42cd4becso604424f8f.1
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1w5PUk-00040M-Rp for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 25 Mar 2026 14:46:07 +0000
+Received: by mail-qv1-f44.google.com with SMTP id
+ 6a1803df08f44-89a06bc2f1bso76034316d6.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 25 Mar 2026 04:41:26 -0700 (PDT)
+ Wed, 25 Mar 2026 07:46:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1774449956; x=1775054756; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=tvyKhPZ3nzUkw+9X1/EbZaf8jGZ4iym5IrAaHhVdOec=;
+ b=sow+BwOMj9TlPZKcnT2lJ1FuWAIv9Y57a+xYG6g5vtBOaUl4LhYvGZc4NItSwRu1sH
+ 05JyTe2UD03TXB1jTt4B5/zu/2qsiQ71lcTuQhmqZ922VTl5iEpj/TAZwdtnIbRFCraK
+ +Xvwue1gkap1X+swwrdIEPlUipOce0LIt0OiKTLqo+IhayHgA5XMxi2jV2CWsATrMUvV
+ QwfPC4ufBZ3orqs4wi5i8BcYk3EAATwp+UkD2NRTmmoMflhj6viHTuUcU8QI66KLLtc3
+ PObdYr4MZVuDO/eHT8wOzZk6y+Ek2yzv5Git9UWgkws6FQJB3Jo0Ob/QBJOQsnu+N1cN
+ V6rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774438885; x=1775043685;
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=1xEylKt1sFxQZZ3xBGKJ8RdOSFC0up8CAh1cSzczQVQ=;
- b=nhelhgVwOLiBgyNHr/aHR6yEH2nCX1elWJ+rXooW+p0o25VSmjMbkrt0wD4RMLNeI8
- rm7kapcevzUCEbXUJn22BjqCt6V088OaLeDeocU3TEZuDEJwx7EKkL9W5nXgUJCGYJB1
- zWB9edTpjThMSMLVvl3bII1eHGAja36Q/s7T+bjHvf9CuxN7TEPiWrI0QA8w3RGI2v66
- 3vtGXYv8BGhQ7QM3io/orXBj57UKlFWZSsaW3VrI+UoiayzGy4kO1eNInDpCFOYjCfBt
- V4YcgEGPFUE03GDLYlGIlUX6eZCJADMTS/iY7aSLrFRX8JKjtp8H8UyuIMoasigwXN0u
- yYNQ==
+ d=1e100.net; s=20251104; t=1774449956; x=1775054756;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=tvyKhPZ3nzUkw+9X1/EbZaf8jGZ4iym5IrAaHhVdOec=;
+ b=bPR89HpHeKp+B5fAwKS/Zn7Nqrtn83JDZVbyUXtt0JB2oy3uqoLQMy+Lk09T9/uy3f
+ pGIBotexmCopkWt2nJtEwS5d9cPSUi1G3rABVqF+UUrCEW0fC7y+ogwidxsNYkTJO/vP
+ iVgFMMbHbDogwOK4h6N919egjyRahwhUHZsUSdBnSsziwlh9UN8osvbmEb4+PtDsC/xa
+ ZYQWPypjx5sJOKgcFKc3MyQhF4DR5PFkrr+x/mOJ3JKlkpam2F1MVxHqPSTksfBE4Bts
+ O70JnKJXkONtEsRH3Cnixj9sZEadARbYkQepFuiMaX84hvtEHlEjm8GjlcEJmX2LG6dD
+ L0Hg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCXK98P8jYAxj78kYPHapldY4Y2kOqz97zQhz7pwhf80QjrnNBVySAjBCaOOy3zU52/VDjaL/JcT4dAfnzi8RtxS@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YxQp9w69rU6T31WQ1jkWH48xELjIwDGewGF6RwMwSNh8lnvIzvV
- 9JNoqlKVhGcT1oj7/BCJyMk6JBBhmFMUANdPG5AnXx5uc31pBo6LuBxsvAYxCkL81Y/yIHKIAn0
- 58xzmFvvx9BhdAV0quNAILmVT6ZJmilUEjQ2wSFwLlxhTCmBAT48fgQB0M2B7QH3vYxp/bqCfef
- 3Apw==
-X-Gm-Gg: ATEYQzz3fDJcbvngb3mKkSZDAmIsUbdO9RKaeOXDEQKIm/xEQl0a0tTuer/QV72Xnrp
- BQasQ84nBON3SNOfmWnqZAh/M7w6LLHnM5nc358ZxtOfBaatsbudGhZ2A8CdB3MZO+OA+lKQe32
- Tkw03R2Ec2vFBj/WAp/Q4Vx9QkWVj4LUbzFIeX8rdBHLQvlwIc89nkq5vKvJZgLc4PijaPmgOnD
- 64zm4iELvRFRfOhjUuRO/Da7RF8SZ1mBfygY1Alor2MSFCMP/LwVfSlvtE6GqRQXw2UmYUDn14g
- 1nS8TaijvlvF/6upyI+UK/UlAsUn6alUBN23DLD6v4s7cwFBbZYFtTF59JSkgEvUqcL8Ib9PbQv
- ByhBo6hwymnDCpQ==
-X-Received: by 2002:a05:6000:2a09:b0:43b:425b:ec3f with SMTP id
- ffacd0b85a97d-43b80526465mr7202972f8f.4.1774438885301; 
- Wed, 25 Mar 2026 04:41:25 -0700 (PDT)
-X-Received: by 2002:a05:6000:2a09:b0:43b:425b:ec3f with SMTP id
- ffacd0b85a97d-43b80526465mr7202929f8f.4.1774438884770; 
- Wed, 25 Mar 2026 04:41:24 -0700 (PDT)
-Received: from thinky ([91.245.205.131]) by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43b6470c239sm46289550f8f.27.2026.03.25.04.41.23
+ AJvYcCUGtg3zEZacVY0C34PvhSUBLQmC6pvmnL7PGi3ibO+PFzDx5e/Q6Q0yoT+vMAymDWEIC8yroVmhEa0SRaoJDlhC@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YyNxvkZ4zWVnhBZYBSQ6jR/yKONaW2vFAURsEwIivUlfpQq4oHg
+ tohajA1xMF/zRV2MwgTJhSV4WFaib8ZBrVinZe4Esd6+MKhiA+zTIZQHOGeFJkEZ
+X-Gm-Gg: ATEYQzxTRFiXT/pGMuH/9hhLJ+Fv537hbv4rKKvXhdmo9p2W1GTW8qIskyE2isfBldZ
+ 1fOxYfR8nWzpP6aZ3QcbcZCgYCROB83Z02kctyC5EJKnnbP7MK8un/NtlBAX0ZMrfywF4Ygu5gx
+ cjzNRQ3sKv4t1vhU/N9htJHZlZGW5oBwssrt+AHTaxzfuAj0TTWcNeOQkwerN538QrxgWNGYfip
+ M6hIUjqAQwepDvbqm4ZBrG4YyC5XhmOm5zGbcJNy6UC029Ydx5e2UASiKgvZSssHhk4FSyRNjw4
+ zP4avFoWzsvn47EbSFv2cY5ZaFMYrAHR3lDIlLpeeyeGrHA5o5WUb9Kf4438O341nWzOcRUsp6B
+ x/hzr2OfJdXMabBn00UM9E9G52pMJ1g2tjR2XOlcBCEm66Pj57l7Ntc4pTCDIzLiYCis9rIJGZf
+ BP9gzaTgXPYF6/4PFpCt7WRqiyvDLIcMPkMvaGTFnoBdO2iyLDH+T4d+pjyJR2rCtRmec=
+X-Received: by 2002:a17:90a:dfc8:b0:35c:936:d4cc with SMTP id
+ 98e67ed59e1d1-35c0dca8e19mr3369159a91.14.1774445877607; 
+ Wed, 25 Mar 2026 06:37:57 -0700 (PDT)
+Received: from lixiang-ThinkCentre-M755e-N000.company.local ([210.184.73.204])
+ by smtp.gmail.com with ESMTPSA id
+ 41be03b00d2f7-c743a7ff961sm11644178a12.5.2026.03.25.06.37.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 25 Mar 2026 04:41:24 -0700 (PDT)
-Date: Wed, 25 Mar 2026 12:41:23 +0100
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <3lllvimldwcgi7crh3kgwy3a5z2ng2ugcka52ab47o5mwx4dnu@xyzbelhykn7n>
-References: <20260319170231.1455553-1-aalbersh@kernel.org>
- <20260319170231.1455553-2-aalbersh@kernel.org>
- <20260325075402.GA952@lst.de>
+ Wed, 25 Mar 2026 06:37:57 -0700 (PDT)
+From: ruipengqi <ruipengqi3@gmail.com>
+To: jaegeuk@kernel.org
+Date: Wed, 25 Mar 2026 21:37:49 +0800
+Message-Id: <20260325133749.1053541-1-ruipengqi3@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20260325075402.GA952@lst.de>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: F3lqSip8Gw1cSmcxwQlwAaHTgPUCQge02N51EvCAS5I_1774438885
-X-Mimecast-Originator: redhat.com
-Content-Disposition: inline
-X-Headers-End: 1w5PTs-0003sS-BW
-Subject: Re: [f2fs-dev] [PATCH v5 01/25] fsverity: report validation errors
- through fserror to fsnotify
+X-Headers-End: 1w5PUk-00040M-Rp
+Subject: [f2fs-dev] [PATCH] f2fs: fix potential deadlock in f2fs_balance_fs()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -129,39 +115,208 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Andrey Albershteyn via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: fsverity@lists.linux.dev, ebiggers@kernel.org,
- Andrey Albershteyn <aalbersh@kernel.org>, djwong@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-btrfs@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Ruipeng Qi <ruipengqi3@gmail.com>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2026-03-25 08:54:02, Christoph Hellwig wrote:
-> On Thu, Mar 19, 2026 at 06:01:48PM +0100, Andrey Albershteyn wrote:
-> > Reported verification errors to fsnotify through recently added fserror
-> > interface.
-> 
-> Looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-Thanks!
+From: Ruipeng Qi <ruipengqi3@gmail.com>
 
-> 
-> Btw, would it make sense to enhance the interface to tell why the
-> data vs considered lost?  i.e. checksum failure vs
+When the f2fs filesystem space is nearly exhausted, we encounter deadlock
+issues as below:
 
-> (part of) device disappeared?
+INFO: task A:1890 blocked for more than 120 seconds.
+      Tainted: G           O       6.12.41-g3fe07ddf05ab #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:A    state:D stack:0     pid:1890  tgid:1626  ppid:1153   flags:0x00000204
+Call trace:
+ __switch_to+0xf4/0x158
+ __schedule+0x27c/0x908
+ schedule+0x3c/0x118
+ io_schedule+0x44/0x68
+ folio_wait_bit_common+0x174/0x370
+ folio_wait_bit+0x20/0x38
+ folio_wait_writeback+0x54/0xc8
+ truncate_inode_partial_folio+0x70/0x1e0
+ truncate_inode_pages_range+0x1b0/0x450
+ truncate_pagecache+0x54/0x88
+ f2fs_file_write_iter+0x3e8/0xb80
+ do_iter_readv_writev+0xf0/0x1e0
+ vfs_writev+0x138/0x2c8
+ do_writev+0x88/0x130
+ __arm64_sys_writev+0x28/0x40
+ invoke_syscall+0x50/0x120
+ el0_svc_common.constprop.0+0xc8/0xf0
+ do_el0_svc+0x24/0x38
+ el0_svc+0x30/0xf8
+ el0t_64_sync_handler+0x120/0x130
+ el0t_64_sync+0x190/0x198
 
-isn't it something filesystem should report even before fsverity
-gets the page?
+INFO: task kworker/u8:11:2680853 blocked for more than 120 seconds.
+      Tainted: G           O       6.12.41-g3fe07ddf05ab #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u8:11   state:D stack:0     pid:2680853 tgid:2680853 ppid:2      flags:0x00000208
+Workqueue: writeback wb_workfn (flush-254:0)
+Call trace:
+ __switch_to+0xf4/0x158
+ __schedule+0x27c/0x908
+ schedule+0x3c/0x118
+ io_schedule+0x44/0x68
+ folio_wait_bit_common+0x174/0x370
+ __filemap_get_folio+0x214/0x348
+ pagecache_get_page+0x20/0x70
+ f2fs_get_read_data_page+0x150/0x3e8
+ f2fs_get_lock_data_page+0x2c/0x160
+ move_data_page+0x50/0x478
+ do_garbage_collect+0xd38/0x1528
+ f2fs_gc+0x240/0x7e0
+ f2fs_balance_fs+0x1a0/0x208
+ f2fs_write_single_data_page+0x6e4/0x730  //0xfffffe0d6ca08300
+ f2fs_write_cache_pages+0x378/0x9b0
+ f2fs_write_data_pages+0x2e4/0x388
+ do_writepages+0x8c/0x2c8
+ __writeback_single_inode+0x4c/0x498
+ writeback_sb_inodes+0x234/0x4a8
+ __writeback_inodes_wb+0x58/0x118
+ wb_writeback+0x2f8/0x3c0
+ wb_workfn+0x2c4/0x508
+ process_one_work+0x180/0x408
+ worker_thread+0x258/0x368
+ kthread+0x118/0x128
+ ret_from_fork+0x10/0x200
 
+INFO: task kworker/u8:8:2641297 blocked for more than 120 seconds.
+      Tainted: G           O       6.12.41-g3fe07ddf05ab #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u8:8    state:D stack:0     pid:2641297 tgid:2641297 ppid:2      flags:0x00000208
+Workqueue: writeback wb_workfn (flush-254:0)
+Call trace:
+ __switch_to+0xf4/0x158
+ __schedule+0x27c/0x908
+ rt_mutex_schedule+0x30/0x60
+ __rt_mutex_slowlock_locked.constprop.0+0x460/0x8a8
+ rwbase_write_lock+0x24c/0x378
+ down_write+0x1c/0x30
+ f2fs_balance_fs+0x184/0x208
+ f2fs_write_inode+0xf4/0x328
+ __writeback_single_inode+0x370/0x498
+ writeback_sb_inodes+0x234/0x4a8
+ __writeback_inodes_wb+0x58/0x118
+ wb_writeback+0x2f8/0x3c0
+ wb_workfn+0x2c4/0x508
+ process_one_work+0x180/0x408
+ worker_thread+0x258/0x368
+ kthread+0x118/0x128
+ ret_from_fork+0x10/0x20
+
+INFO: task B:1902 blocked for more than 120 seconds.
+      Tainted: G           O       6.12.41-g3fe07ddf05ab #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:B     state:D stack:0     pid:1902  tgid:1626  ppid:1153   flags:0x0000020c
+Call trace:
+ __switch_to+0xf4/0x158
+ __schedule+0x27c/0x908
+ rt_mutex_schedule+0x30/0x60
+ __rt_mutex_slowlock_locked.constprop.0+0x460/0x8a8
+ rwbase_write_lock+0x24c/0x378
+ down_write+0x1c/0x30
+ f2fs_balance_fs+0x184/0x208
+ f2fs_map_blocks+0x94c/0x1110
+ f2fs_file_write_iter+0x228/0xb80
+ do_iter_readv_writev+0xf0/0x1e0
+ vfs_writev+0x138/0x2c8
+ do_writev+0x88/0x130
+ __arm64_sys_writev+0x28/0x40
+ invoke_syscall+0x50/0x120
+ el0_svc_common.constprop.0+0xc8/0xf0
+ do_el0_svc+0x24/0x38
+ el0_svc+0x30/0xf8
+ el0t_64_sync_handler+0x120/0x130
+ el0t_64_sync+0x190/0x198
+
+INFO: task sync:2769849 blocked for more than 120 seconds.
+      Tainted: G           O       6.12.41-g3fe07ddf05ab #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:sync            state:D stack:0     pid:2769849 tgid:2769849 ppid:736    flags:0x0000020c
+Call trace:
+ __switch_to+0xf4/0x158
+ __schedule+0x27c/0x908
+ schedule+0x3c/0x118
+ wb_wait_for_completion+0xb0/0xe8
+ sync_inodes_sb+0xc8/0x2b0
+ sync_inodes_one_sb+0x24/0x38
+ iterate_supers+0xa8/0x138
+ ksys_sync+0x54/0xc8
+ __arm64_sys_sync+0x18/0x30
+ invoke_syscall+0x50/0x120
+ el0_svc_common.constprop.0+0xc8/0xf0
+ do_el0_svc+0x24/0x38
+ el0_svc+0x30/0xf8
+ el0t_64_sync_handler+0x120/0x130
+ el0t_64_sync+0x190/0x198
+
+The root cause is a potential deadlock between the following tasks:
+
+kworker/u8:11				Thread A
+- f2fs_write_single_data_page
+ - f2fs_do_write_data_page
+  - folio_start_writeback(X)
+  - f2fs_outplace_write_data
+   - bio_add_folio(X)
+ - folio_unlock(X)
+					- truncate_inode_pages_range
+					 - __filemap_get_folio(X, FGP_LOCK)
+					 - truncate_inode_partial_folio(X)
+					  - folio_wait_writeback(X)
+ - f2fs_balance_fs
+  - f2fs_gc
+   - do_garbage_collect
+    - move_data_page
+     - f2fs_get_lock_data_page
+      - __filemap_get_folio(X, FGP_LOCK)
+
+Both threads try to access folio X. Thread A holds the lock but waits
+for writeback, while kworker waits for the lock. This causes a deadlock.
+
+Other threads also enter D state, waiting for locks such as gc_lock and
+writepages.
+
+To avoid this potential deadlock, always call f2fs_submit_merged_write
+before triggering f2fs_gc in f2fs_balance_fs.
+
+Signed-off-by: Ruipeng Qi <ruipengqi3@gmail.com>
+---
+ fs/f2fs/segment.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 6a97fe76712b..b58299e49c23 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -454,6 +454,20 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
+ 		io_schedule();
+ 		finish_wait(&sbi->gc_thread->fggc_wq, &wait);
+ 	} else {
++
++		/*
++		 * Before triggering foreground GC, submit all cached DATA
++		 * write bios. During writeback, pages may be added to
++		 * write_io[DATA].bio with PG_writeback set but the bio not
++		 * yet submitted. If GC's move_data_page() blocks on
++		 * __folio_lock() for such a folio, and the lock holder waits
++		 * for PG_writeback to clear via VFS folio_wait_writeback()
++		 * neither thread can make progress. Flushing here ensures
++		 * the bio completion callback can clear PG_writeback.
++		 */
++
++		f2fs_submit_merged_write(sbi, DATA);
++
+ 		struct f2fs_gc_control gc_control = {
+ 			.victim_segno = NULL_SEGNO,
+ 			.init_gc_type = f2fs_sb_has_blkzoned(sbi) ?
 -- 
-- Andrey
+2.25.1
 
 
 
