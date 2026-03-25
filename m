@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1E998FEC0EB
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Mar 2026 17:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 77E04FEA80C
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 05:53:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=GYKVr0pdPkqxy269OIvdtZleOk39X9nvp9SjQFKQEG0=; b=Q4vSvkgtMlrsswMkSPrTYbu7aE
-	wM1JLf4URBrqU0erfjnd0N09Y9elYIYiKFw69v7jxKdQ4oi5NPDCeFVG06HVzEkkiF0ztMOOk+B6b
-	9HjkcUzPbDx2FnPQwyXTxoMJeUw1oGXAPP2NHVGmoSF5UALVrASCApDcYN1PLOoNBPB4=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=x592jE8e+xyFmtzFA4MujbPu9XkQCFHxr3jJS7zP8cM=; b=BI8MD4YNKnpfVE7v+V+V1aFoo2
+	fgXbGtnOJe6taEOP0zRIXVLUsBbpe4/656V9Pop7r+/Rnnw2NdyEwM01in+wE7sSfchGlUBxDGugI
+	qZAC+5nkVtGMBqxm8K5YPKH4MwUBvyDFXICftFeWCL/33dQTL2eKalBapLTqNxqd9wTc=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w55cX-0003mc-Bs;
-	Tue, 24 Mar 2026 17:32:49 +0000
+	id 1w5HB6-0002BB-3B;
+	Wed, 25 Mar 2026 05:53:16 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1w55cW-0003mR-60
- for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:48 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+3b37efca848b3caba94d+8249+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1w5HB3-0002B3-DQ for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 25 Mar 2026 05:53:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MJAdE6f5uO9tTWBDAYuHACCgS0+i0q1ZmEhKXrWDmQs=; b=jScXaM7L02qmh/msoiM45NxvVh
- olgEA3WiXF2gYQrRfSQh1bURXsYKekZwcapRzta/idNSIBcoP1Jns/lkFNFckj4Ox/06A1t7WcGs3
- 4/76S2cPyNyC1UENAMFOQ0hmvLvBqvQr6Ut15vOaBdHeX+7jtyvJ+dsPZAz2oGo6wMG8=;
+ bh=SHDXUeS5jnR7y0znBQ+/KFl+xqNiEw10GPaQ+zVa7q0=; b=ShglfpI0usI6myCM1oTk+3kJKx
+ 37sYUo+tJ/KdyGatPBSrziMESwrsUyonr6PUYOicFDQ6bgCdgxVjAs/K1APQfEOABbxHg+7KBzcwb
+ qB7GUSS0WXCf9Ngj5OVLq1kSrKOzjWDps3hiF/IfV/nDCGABDN0+3vD1YCT5wxMt0spM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MJAdE6f5uO9tTWBDAYuHACCgS0+i0q1ZmEhKXrWDmQs=; b=AjTfOc2okC9quz64a2kEudyZ81
- 39zP7OZEb1sT6K+ctkwWn3glDDPT0Bk54CyzWVYLmOoVmV7nTa3BwUJTrZ2WMxUha08c7EaoKkwO0
- EY9x7E7KkNPxtOoUgb7FTbuEZ8lnVlTtA/HEyF2QKIswf//KajMJjct2e/tQfPqVxLrs=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ ;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=SHDXUeS5jnR7y0znBQ+/KFl+xqNiEw10GPaQ+zVa7q0=; b=grGWdkSJ4a7JZAW6HzNFcT/mjC
+ 7ki+C5b6i2Uyn/PWIqRosC4+aCdYdvbnJ0lmduIxSXuNUn1+MXCF61YDDS+lQlrj9Y5VyyrkWEOD4
+ wghaxYoFOiyIrLGgs6yoJGSdaiok9pXgPQw2YkIkVZuBTpIV7qxxIZqypcplXXuMnkkY=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w55cV-0007rO-BW for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 24 Mar 2026 17:32:48 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 150FE40844;
- Tue, 24 Mar 2026 17:32:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9439C2BC87;
- Tue, 24 Mar 2026 17:32:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1774373556;
- bh=QmNVbraynBUW332sKPQ+4xqHBDHU2i6gACtMSK8CGOY=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=l2gAbuYaP2a+svdebJRM1c8Rb9vBdT9l6P7NbBNt5E18Ppmda6WiM6oYnDWk2lWJz
- 3ZBVffY2rzbrjk6N4QlhTevEG8w52xYzrWcOvqlfkCG5RaciADCthdML8ODY8V5Lqe
- ks702qXumEnpKrWjb4IGwHuXXKZnqAPxUp7rS7UxclUF8SR1/bt09XTx0hFxDcf+fk
- VI+VjrqqIWyaoJUTRy+9vAgY5Hua4I00VtYXRvnAhSvCAjlILJ0CxfbAAZVqMzkgy9
- z67P5MuO1Tb9GQlkiUtV2m6EgCYgXI73QtZxIBWCkmAVzRZUCCB49D12yOSjzYbY+/
- F/aOJOKDoLWgg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 02B9E3808203; Tue, 24 Mar 2026 17:32:26 +0000 (UTC)
+ id 1w5HB1-0001Fe-V7 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 25 Mar 2026 05:53:13 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+ :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=SHDXUeS5jnR7y0znBQ+/KFl+xqNiEw10GPaQ+zVa7q0=; b=4oEgKq+Z9wK0/UfLZYwjfIQJae
+ QX0Ib6GUJWXRdxWpiZjrnwawzI2WP/kg3FX+sWKJNVm05/u+uHElk0YBR5/GyzYLop8GtNqbdu4VV
+ vZ6NxzKIsZWte3mqlLXNnoEvHSisA3lvqQUH3xcH+S2vbLy0GTLDQ4UOqGPyRpdhMBX37Q1WVm2q2
+ x+RKePvh+V3C0f+bBuLqK8Orn7IbdoIf3vOr50M6a2XD/Azc6x1fHyCkWp75Ryz3cHXlMyab3TIbK
+ +sA+eiytnPpTWT4U4aH0Sd9v6ILU1GN92ML8pPd1OSEFKUK79rGzXowJ/7HA0dprQlfeevZErKiMr
+ irUEVJgw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red
+ Hat Linux)) id 1w5HAr-00000002koM-2gNL;
+ Wed, 25 Mar 2026 05:53:01 +0000
+Date: Tue, 24 Mar 2026 22:53:01 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Chao Yu <chao@kernel.org>
+Message-ID: <acN4PWKHvk_33VB7@infradead.org>
+References: <20260324025656.493776-1-chao@kernel.org>
 MIME-Version: 1.0
-Message-Id: <177437354479.1223048.17658150740894474730.git-patchwork-notify@kernel.org>
-Date: Tue, 24 Mar 2026 17:32:24 +0000
-References: <20260316185954.2185806-1-daeho43@gmail.com>
-In-Reply-To: <20260316185954.2185806-1-daeho43@gmail.com>
-To: Daeho Jeong <daeho43@gmail.com>
-X-Headers-End: 1w55cV-0007rO-BW
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix to freeze GC and discard
- threads quickly
+Content-Disposition: inline
+In-Reply-To: <20260324025656.493776-1-chao@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1w5HB1-0001Fe-V7
+Subject: Re: [f2fs-dev] [PATCH] common/rc: support f2fs in
+ _require_fanotify_ioerrors()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,47 +87,18 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: daehojeong@google.com, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+On Tue, Mar 24, 2026 at 10:56:55AM +0800, Chao Yu wrote:
+> This patch allows to run generic/791 on f2fs.
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Mon, 16 Mar 2026 11:59:54 -0700 you wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> Suspend can fail if kernel threads do not freeze for a while.
-> f2fs_gc and f2fs_discard threads can perform long-running operations
-> that prevent them from reaching a freeze point in a timely manner.
-> 
-> This patch adds explicit freezing checks in the following locations:
-> 1. f2fs_gc: Added a check at the 'retry' label to exit the loop quickly
->    if freezing is requested, especially during heavy GC rounds.
-> 2. __issue_discard_cmd: Added a 'suspended' flag to break both inner and
->    outer loops during discard command issuance if freezing is detected
->    after at least one command has been issued.
-> 3. __issue_discard_cmd_orderly: Added a similar check for orderly discard
->    to ensure responsiveness.
-> 
-> [...]
-
-Here is the summary with links:
-  - [f2fs-dev,v3] f2fs: fix to freeze GC and discard threads quickly
-    https://git.kernel.org/jaegeuk/f2fs/c/62b45b0ad4cd
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+When was this introduced?  This doesn't currently exist in mainline,
+and it would probably help to run your fserror implementation past
+Darrick and fsdevel for review.
 
 
 
