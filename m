@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BF8A4109C033
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 15:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6009D109C028
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 15:13:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=e8qfyoSPyPfjE0jCCqLhRQvm/sqiAGHIjfAWqfboNlU=; b=I6m9A2Gf6yoNhGBlvx08UQ6es8
-	6K+d4mzxyeOSjP5nBUBzp4t8g6IA1CT2jP1PxSbxb4OGPf/q5hvkeY0KzxnuiTi6kbCxZjrdXzucU
-	P0/w1gTqJf4O1md2HRg4OmG4mydtEPVCzArwg3sSklIJ8SqL2Y2OA5q5MCGDBcRO4zAI=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=V28TaasjJoxKY0YPNWnAOecmZO58tuZutV+nXy1Y178=; b=lSTiSHXNkAFnz03uN2DQ5zjoCf
+	HdtvePEoUFm6V92fIlZz12m12NWbUQAbawHmV+JYwbNEr0shGK29qcYiuvsx64rA1Hfwwc6CY06pE
+	zr8+1MypjqMH/gPrmMRgNpomy3V5nMZRHB3tmUW+9Gf+Oj3gQZGSVQI62YNZhSyQomLw=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w5PvX-0002ws-4P;
-	Wed, 25 Mar 2026 15:13:47 +0000
+	id 1w5Pvc-00085L-9Z;
+	Wed, 25 Mar 2026 15:13:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1w5PvT-0002wM-69
+ (envelope-from <hch@lst.de>) id 1w5Pva-00084k-HC
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 15:13:43 +0000
+ Wed, 25 Mar 2026 15:13:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=bAgL25JdfKokluZ6bF3RvGS8FB
- rIpfFArRD9XzAu+v4iZo11t8hmMfTpJNXGdHvbE/SGufb4g72xIOIKXm5GvmHSAk4nROji4Md8+lt
- wQMOFe2uGugab/r57cp4+HylK9FiyS+G0v66U2OgSM6Y47xlq5XeAUkG/u/C6V7vRZ1w=;
+ bh=9gYu71sLxjiGAY00IcnKK3oZDRFOWTj7hdRiBFoiQRQ=; b=nWhmSiWrv15x0hldL6tA91AVNY
+ hIuNwFotT46u16OwHDK1AheoWkPh4/SU431tm58CBGesXhh35VhqhB04NLiywmk/mWRpUhuAjp5P4
+ jwpy62v1LMwNTnWLi6Atz/X6GaD0htvgktZeqhIB7ADwwZ7fOgvuAJA+jemyAHIL64+0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,29 +42,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=OJA5eAuj1AZDETd3InQG0WUno+
- Dprsl3Fygp/fZtxw+wt4zShrjM5y3tsk+WEuzNPRXVyopsvxUEoG5F2iZnWtCaIxnws0kAydxo6Mw
- V0by34ln4y0riDEgYCxt0MLHgUMI8YMWS9SPypyXrqOBhUHwNj2jj+XsZoa8UiGtUaXY=;
+ bh=9gYu71sLxjiGAY00IcnKK3oZDRFOWTj7hdRiBFoiQRQ=; b=I7PorN7e70wHgXl8ue6Ht21WXo
+ FjEhPgUTnn9f25C05GVr34MyLwuXxM/GpcpSx163eAg2xHU7s7d/mPlP+tmHZhfGIDSfeQkK7KkHU
+ 7lXx46EARJWLXwo8K3AOq4S3R/j9mkXZ7j08gi+Ln3owYIlUo4zYMeGutmA4qRKuGydI=;
 Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w5PvS-0007lJ-Hm for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 15:13:43 +0000
+ id 1w5Pva-0007mH-JK for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 25 Mar 2026 15:13:51 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id 4731968D13; Wed, 25 Mar 2026 09:07:16 +0100 (CET)
-Date: Wed, 25 Mar 2026 09:07:15 +0100
+ id 85D3968D09; Wed, 25 Mar 2026 09:04:07 +0100 (CET)
+Date: Wed, 25 Mar 2026 09:04:07 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20260325080715.GM952@lst.de>
+Message-ID: <20260325080407.GG952@lst.de>
 References: <20260319170231.1455553-1-aalbersh@kernel.org>
- <20260319170231.1455553-17-aalbersh@kernel.org>
+ <20260319170231.1455553-10-aalbersh@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260319170231.1455553-17-aalbersh@kernel.org>
+In-Reply-To: <20260319170231.1455553-10-aalbersh@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1w5PvS-0007lJ-Hm
-Subject: Re: [f2fs-dev] [PATCH v5 16/25] xfs: handle fsverity I/O in
- write/read path
+X-Headers-End: 1w5Pva-0007mH-JK
+Subject: Re: [f2fs-dev] [PATCH v5 09/25] iomap: issue readahead for fsverity
+ merkle tree
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,9 +84,14 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Looks good:
+On Thu, Mar 19, 2026 at 06:01:56PM +0100, Andrey Albershteyn wrote:
+> Issue reading of fsverity merkle tree on the fsverity inodes. This way
+> metadata will be available at I/O completion time.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Patches 8 to 10 really look like they should be merged to me.  They
+all add the actual fsverity support to the iomap buffered read path,
+and merging them and having a single explanation of the side seems
+helpful both for review and future archeology
 
 
 
