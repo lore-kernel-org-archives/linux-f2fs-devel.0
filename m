@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 38D1E109C035
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 16:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 15E63109C034
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 16:07:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=aW/tBRVW3Cct8Pdkw7oxeB7meRVbsWNw4ae53VReF2U=; b=ZE3EhcXV9IjAcYKa3F1/lRJB92
-	sTUNGyL0QoTsfJmQieIXHUi+8cquqev8WOsANkPvCw3uINUMHzPugzBY7CieGWUIC+/6T+m76pTax
-	gH6XNTh/vktlIssd1otTnU1TlcyUrI3R+2FMyCMPAnsKEkcfxs/DouH2pNRFX8Vdl5VI=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=2TX0ck9143CzyfRHganzshn/bydcreG4tiGEY2knAvw=; b=PaUo8liNlhRs/Lky237FcbRjx9
+	An7RB2tphiblSLKLYCnc88a/QEaM3aBmn3rCt97bsBQ7iYD8gUhsEdxVXHFevMncMUd/CXS/QkP7e
+	DcM95D2g+9Hn3825eYJ6stb2Ws0dZoqMz1jbyGG/aItF5639H7QNM2Rfqq7gWFkYppDc=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w5Qgm-0003hz-Hv;
-	Wed, 25 Mar 2026 16:02:37 +0000
+	id 1w5QlY-0000n7-Pw;
+	Wed, 25 Mar 2026 16:07:32 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <djwong@kernel.org>) id 1w5Qgl-0003hl-5r
+ (envelope-from <djwong@kernel.org>) id 1w5QlW-0000mz-Dc
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 16:02:35 +0000
+ Wed, 25 Mar 2026 16:07:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dDzkXf7UHrCfT2cHafkqgA7zukocE/8dExusRMzytQI=; b=Fhum1YaJAL7vI33TmXrj/dK0me
- FBTthV9TtY9Oa+LINol1s+7f14zoE7Oy1KqMR2FytlSlFMiy8QxXKn6Bno/kjWLYB1FXTOMMzJ0pZ
- wcs9YBgIuQAs6tF8QeQgzURx5ppU0w0pGpVyjEpmlqm2WrUiQctkz1ZN2z/qxLwfWr+A=;
+ bh=RzT8Skk8c/ogUzzG7VszBOgV2NIsmZj/7VrDsGFaz3I=; b=fC7TFj4MX1+LQrfMyWvGYWumH1
+ mRHtT+BmOAjToSpMGLTC5/2yigSBadFmX06thxBvPktVBfcFNPnVsqOUk4iHCv35jVzEqUVAyEkZx
+ rO0hpOKivyevA8ySBQ+/dR5BTMstWkRLnKQAjGGN6FInMSFPWWchwI+AMr94wf3pEc7U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,42 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=dDzkXf7UHrCfT2cHafkqgA7zukocE/8dExusRMzytQI=; b=KZu7JwzLv2Wtop0LLWJV0n08w8
- 4dPBGFXkPtKC64upmWxlQnzkSxAF5vAnLmJzRysPd5sBFfTy+OWvC+9K47Z3q3/hbAmG/e7mu+tS4
- m48OUW+LxJnL5/59H4orNK2kk39Ha6oVyk+IhkDM0iVWx0n+tNGg44BKCWtpfkaDcAI4=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=RzT8Skk8c/ogUzzG7VszBOgV2NIsmZj/7VrDsGFaz3I=; b=SADOb4eckTeHql2AhsrPfeY/JA
+ I496ytdxWebwjlEHjL78pbZVw2CZ25fEfyM4YAwrqJxNEpoHIgiqtUpd9zvdsvejYJuvbRvautsAK
+ J77pzMzKwwVpW4jLS8lB9IeDYCrB1apFq2pX2gg9DBIQQyLfAWJ7bL1V3WcmiRj5gfDw=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w5Qgl-0004Ds-CM for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 16:02:35 +0000
+ id 1w5QlV-0004Zv-M2 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 25 Mar 2026 16:07:30 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id EA37D43418;
- Wed, 25 Mar 2026 16:02:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4ACCC2BCB3;
- Wed, 25 Mar 2026 16:02:24 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id CDD5C60127;
+ Wed, 25 Mar 2026 16:07:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D9C9C2BCB2;
+ Wed, 25 Mar 2026 16:07:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1774454544;
- bh=vJ5xGASjMp/TlxhmM7CCfj7w6GupzT6n+xYGWNCGtRs=;
+ s=k20201202; t=1774454843;
+ bh=15WFwQraSsREHmH5UCN+BSez5z7m4WAaAN6c1R3i/6c=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=B+2FchYbbkhWOofwvjIv9Q9SCnlXi2yRnZCJyFCjE/4lIXvKo7/3kCKeDOLwQg/34
- ZiDtgzoi/papPZGLWU9JlD52PxCDTJ980jG5ZuhDQGf/bgZzvD5effQuMJ6p16xp/F
- VBK9/3dNU7Vc1H6G6Fg5kZq9BP22TEMnWs/dKZiaQTlPnPT1yT7hcAB5v1MXGP0q4j
- SXTJ1/xW7qVVP9awRDMj5dxDxCTO34dPiQfePoIKCM9W280FQ7CfsnbJDhMI0ONFZ+
- za9Vojisydqn+4vOQVw8wIxrFjFDVNSpFv4rltLNOSvB8dTcoLnW0gxg6J2rBsbpe+
- KlR96DzdoON3g==
-Date: Wed, 25 Mar 2026 09:02:24 -0700
+ b=IGVGIIPY5KeAwDwktN1B3h1FTo6Ifrj2LJwH0YKT2ruyQCJjVeln1tlq7NXRR7MOx
+ u3v0Gf/rOmZOc3JV8v8kfyIYxl+G9XD8bZDt3AMkCaXxHxojyIdRzfw3xFi3F4UooT
+ b5GhFFNj51kDjfwGGRGaMy5DF15Jp8NWmK+TE69PoYWuxkuXQKi1hvjjdlRh2W47Ue
+ 5K/FvwMlFBYntnlhQ2Gl0kcYnyncLPRierVSguNx7Cbi2CuW3lWXGzIsMTJOt5gkpt
+ ZwyWyu+Whjcfzi0QNMzKuiN+KrD6wsWAJx3JJ+g3mZ0bT+KIVUp/gbKHan/BTjaO1s
+ K64jfIPSLC+cA==
+Date: Wed, 25 Mar 2026 09:07:23 -0700
 To: Andrey Albershteyn <aalbersh@redhat.com>
-Message-ID: <20260325160224.GT6223@frogsfrogsfrogs>
+Message-ID: <20260325160723.GU6223@frogsfrogsfrogs>
 References: <20260319170231.1455553-1-aalbersh@kernel.org>
- <20260319170231.1455553-2-aalbersh@kernel.org>
- <20260325075402.GA952@lst.de>
- <3lllvimldwcgi7crh3kgwy3a5z2ng2ugcka52ab47o5mwx4dnu@xyzbelhykn7n>
+ <20260319170231.1455553-4-aalbersh@kernel.org>
+ <20260325075700.GC952@lst.de>
+ <vatqzcvepp7z6iotzayuyh7fajwdqs76pn4o3sdn3f5thiwsjc@dt46ylrbjnkp>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <3lllvimldwcgi7crh3kgwy3a5z2ng2ugcka52ab47o5mwx4dnu@xyzbelhykn7n>
-X-Headers-End: 1w5Qgl-0004Ds-CM
-Subject: Re: [f2fs-dev] [PATCH v5 01/25] fsverity: report validation errors
- through fserror to fsnotify
+In-Reply-To: <vatqzcvepp7z6iotzayuyh7fajwdqs76pn4o3sdn3f5thiwsjc@dt46ylrbjnkp>
+X-Headers-End: 1w5QlV-0004Zv-M2
+Subject: Re: [f2fs-dev] [PATCH v5 03/25] fsverity: generate and store
+ zero-block hash
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,29 +101,18 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Mar 25, 2026 at 12:41:23PM +0100, Andrey Albershteyn wrote:
-> On 2026-03-25 08:54:02, Christoph Hellwig wrote:
-> > On Thu, Mar 19, 2026 at 06:01:48PM +0100, Andrey Albershteyn wrote:
-> > > Reported verification errors to fsnotify through recently added fserror
-> > > interface.
-> > 
-> > Looks good:
-> > 
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Thanks!
+On Wed, Mar 25, 2026 at 01:03:40PM +0100, Andrey Albershteyn wrote:
+> On 2026-03-25 08:57:00, Christoph Hellwig wrote:
+> > Shouldn't we still try to get this out of the fsverity_info first?
 > 
-> > 
-> > Btw, would it make sense to enhance the interface to tell why the
-> > data vs considered lost?  i.e. checksum failure vs
-> 
-> > (part of) device disappeared?
-> 
-> isn't it something filesystem should report even before fsverity
-> gets the page?
+> I don't really understand why, this hash depends on salt (inode
+> specific) and merkle tree block size (also inode specific).
 
-Since the verification code is mostly called from read(ahead)
-completion, doesn't a merkle tree verification failure result in the
-folio remaining !uptodate?  And all that gets compressed to EIO...
+Agreed, the merkle tree geometry and salt inputs are per-file.
+
+I sorta wonder if the file ought to get an autogenerated salt if
+userspace doesn't provide one, but not enough to go digging any deeper
+into "does that make sense?"
 
 --D
 
