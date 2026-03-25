@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 29E41109C027
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 14:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D7A04109C027
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 14:45:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=CHU4PmDn12ZMQu2LIABIHqBVp6aj6R5D2ybPdaMJOIg=; b=GeA96Ksea5MSPvzVBSWdeey8hN
-	8uGnE2iDVH90Pz2XdUIbOT6scWUqklmeiGgsh/84nWS87iowmrIPPQ61wu53LNghJxC8/eWzI2HU1
-	O3i2Nf5eLst8SPYgaiFybIrE+VRfxdbv+8RD/UbZekUPCl2C0uLmTLO1IyEO8DwA/nw8=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=dg2bp3POC8zn4w44KXOz8xs8f+q+bllZfig6zI6er7I=; b=PdnUmU0l4H6AGEsHWBJvDBFCvD
+	RTpQQWwE1W0lOsMMYeEDDp/cl4ZB7QMGFVnJ5sl2s92sUIU55b6yPxtOWRTEMXdupCKr+K/yUzHwD
+	yp4QOlntphRr9LqY3XHPcy2g55PepDBuS2AIlC6R+VzTdZRQ2A7wLjhRvi0OuszDCuKs=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w5PQa-000545-IU;
-	Wed, 25 Mar 2026 14:41:48 +0000
+	id 1w5PTu-0003d7-T0;
+	Wed, 25 Mar 2026 14:45:14 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@redhat.com>) id 1w5PQH-00053S-L4
+ (envelope-from <aalbersh@redhat.com>) id 1w5PTt-0003cu-90
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 14:41:29 +0000
+ Wed, 25 Mar 2026 14:45:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:In-Reply-To:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zq66uLldOzJDWwFuTQSicat9HZ9onClHiQ97FMgB8gk=; b=fU6coyJlZuIC0B1eO3kq2d12br
- sEx9iDcTWKrv2ndiWJHS9NdADSRcVeyU/Jc/cjf4RThR3PR/vTRiPpJeNnEzqKITnRVaLABPc9/+A
- 3Fl3uYEuR0jrE6dnCUdc52TW8uiHD3GlIQ7SsIAuLi4cPF7HlTtcOzjglvYi5AaL241c=;
+ bh=1xEylKt1sFxQZZ3xBGKJ8RdOSFC0up8CAh1cSzczQVQ=; b=kyq86BCFZfeGrWgVsk40qhLEVW
+ Tlilj65IBiWO2Wh0l40hvIHEfop4N7FZ0/4EoYydJY4dmDa5pVnLYugG1S1TOLavrCJ4D4HgdSN5J
+ iu37/TWAJl/p1AaPgg7NfQe20YWN/o2LcO998hhWpqpUT0of3IafK8nd/7WHlz3zPwa0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,82 +42,82 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=zq66uLldOzJDWwFuTQSicat9HZ9onClHiQ97FMgB8gk=; b=OB4+k8Fxksfyb8V4e0rUQc8mPt
- q9A2aJSB0u1Mi38CBxVlsMTacNOaUc/YgLb1guHjQFX7QeYCyV6uiUGhx+QUriR2ZNC2PflBIt0cP
- 0+twGdbDam35TSzm/bw+a8IwpUfjGW2TjZTCfbFXzQw9H2LlWbH3nNyzV4DRlP+Sm86c=;
+ bh=1xEylKt1sFxQZZ3xBGKJ8RdOSFC0up8CAh1cSzczQVQ=; b=It2XXcjE5UT/xGQsK+2wtCz6Zf
+ 57Np7jYJ2POvJEWsetsGwvG4wE+dJ/w4gLBdK24Dul3QLS90nNwt34LPVy6xnz75Q51UAl1ua3yZj
+ ic1TGHEXQjlnop+r2Qs4oIxegLt10/iuozTnVeML8scfXuoHLkCxgBDUMC8A7Iqsbr3E=;
 Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w5PQ4-00037l-Id for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 14:41:29 +0000
+ id 1w5PTs-0003sS-BW for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 25 Mar 2026 14:45:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1774449670;
+ s=mimecast20190719; t=1774449901;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=zq66uLldOzJDWwFuTQSicat9HZ9onClHiQ97FMgB8gk=;
- b=BLUxvSCFKQCFlHCyVWzeQNNRL1Wjjb7iM9BqcC731R37N3ETvJ3O1AZCnl4WFdLxiixBwB
- 8njFUDfmxMebV5a7t1JGZ9N7wLV/d1Y+eFFaXg4VSh/J5+r3MqS3HTqfcpd2fByqWvgddr
- IYHFCedt4ngXuVV/hAP1mUtEv5m4ONs=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=1xEylKt1sFxQZZ3xBGKJ8RdOSFC0up8CAh1cSzczQVQ=;
+ b=fA8x1U+aRnGIS7wYk7Bvg78V88ldY4CeMmFj7r13+XBJfou5HcR2tuCX+aAfXLm4Qj21zJ
+ mfoloKbZklfGxu/z+xvhJMNEswNskDZ7ZG1YBS35ghxdjbOpmKH3L83TBz/C7QfhP5ZBTW
+ Dd+iw97mWCDJYKRkurf4PxoOplgES/w=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-104-87-1NGCXMEuXv2zGvxZAfg-1; Wed, 25 Mar 2026 08:38:11 -0400
-X-MC-Unique: 87-1NGCXMEuXv2zGvxZAfg-1
-X-Mimecast-MFC-AGG-ID: 87-1NGCXMEuXv2zGvxZAfg_1774442290
-Received: by mail-wr1-f70.google.com with SMTP id
- ffacd0b85a97d-439af7ba802so4791888f8f.2
+ us-mta-126-Sf8SaanKMtiEuK1nlwg5jw-1; Wed, 25 Mar 2026 07:41:26 -0400
+X-MC-Unique: Sf8SaanKMtiEuK1nlwg5jw-1
+X-Mimecast-MFC-AGG-ID: Sf8SaanKMtiEuK1nlwg5jw_1774438885
+Received: by mail-wr1-f69.google.com with SMTP id
+ ffacd0b85a97d-43b42cd4becso604424f8f.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 25 Mar 2026 05:38:10 -0700 (PDT)
+ Wed, 25 Mar 2026 04:41:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774442290; x=1775047090;
+ d=1e100.net; s=20251104; t=1774438885; x=1775043685;
  h=in-reply-to:content-disposition:mime-version:references:message-id
  :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=zq66uLldOzJDWwFuTQSicat9HZ9onClHiQ97FMgB8gk=;
- b=WtpGLkr9YP6T91CSxIMXdRli7C3v3N9tVWlvXvuOFUgvW4HVJW8WIuOCrewdN0zVM3
- fwhSD39bOLl6y9rZg2zvtt+w4HhI1UuYMG78LP4qGudhBLz0R3kzceUsQClY9NO1tpcC
- Im5rQwL4TrulUf4TnQae82KCNJa47Ys19Hcxi3/f6hDxKCRTnI7Oh8mBV2DMxa6Xytrl
- xVWIGsOVjQP0XE6Vw54nrkgb+s+/1bZ8/vuXT7M4uO/8Z4n7RxYm0Lg1xyyAimzP3bi6
- PYI+KRCcB7hKzB79mi/c6UFdRWRTPAXsX/wOsL8czWJOGoZa4265PsZbWycB896SLzKt
- s3BQ==
+ bh=1xEylKt1sFxQZZ3xBGKJ8RdOSFC0up8CAh1cSzczQVQ=;
+ b=nhelhgVwOLiBgyNHr/aHR6yEH2nCX1elWJ+rXooW+p0o25VSmjMbkrt0wD4RMLNeI8
+ rm7kapcevzUCEbXUJn22BjqCt6V088OaLeDeocU3TEZuDEJwx7EKkL9W5nXgUJCGYJB1
+ zWB9edTpjThMSMLVvl3bII1eHGAja36Q/s7T+bjHvf9CuxN7TEPiWrI0QA8w3RGI2v66
+ 3vtGXYv8BGhQ7QM3io/orXBj57UKlFWZSsaW3VrI+UoiayzGy4kO1eNInDpCFOYjCfBt
+ V4YcgEGPFUE03GDLYlGIlUX6eZCJADMTS/iY7aSLrFRX8JKjtp8H8UyuIMoasigwXN0u
+ yYNQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUdA7Yqq3saVcTndD7kj+Z3prG+xwByojWNN/xgeBIWxRTqfHsvcoHqrgg1HbuqArolwNkOHPJCUrsmst0BO3zS@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YzYxmusisWMB6+lc+Dro+tgvADjhPFf3BuC/wcKKDc+r1KQYTv1
- eOYzgy7kuS0AYW+gi0GthBjaVjlF0ko2sQgWC6K6RMQ0EAbmREQrifQoXBDXG08zSa6Yq4YpCqF
- iuRFLZV/SrMXKpLr7hQM0Z/Aa7IjJWLLBcYZ/LU3wEEVgSM0EFXMz0GM5qIx/xI684KWyp70KFV
- A64Q==
-X-Gm-Gg: ATEYQzwWhUBLiPVCDuabhl6MFDoQwhrOU+IRe/14Suv9h6a67kWnp1Dfaf0WJy1n60P
- 4ZgiyJnybhnhQ2iyRI557rfG9U8lUlTnJEJ/ozkyTwufihFHbaQy7SOJetPbwexQZZd1d0BEF6p
- NiBJEQzTaNB45bi3ZLKHTfBSgUSaAbXlc/4Wk5P4UZoNk7udR5vz3NjhZu6QLNWfU0/mO5mPXkb
- SuX7TmmoFMD/mdl6vs8LCsqGM5up3ALBdLln4iGRorgwF5nbAjn6GChehki2Fayy2dsj4L/9vNy
- OcVKumH3FT7SIr34KQFpn+H9rPkUJZxJhc1zP2Y/xFcXJBz9vDDKPldUWYeuv8FsQ6czw3FmQnn
- ovw6U0wuPvc1q4Q==
-X-Received: by 2002:a05:600c:3f16:b0:483:6d42:25c6 with SMTP id
- 5b1f17b1804b1-4871606db4amr51426145e9.23.1774442289647; 
- Wed, 25 Mar 2026 05:38:09 -0700 (PDT)
-X-Received: by 2002:a05:600c:3f16:b0:483:6d42:25c6 with SMTP id
- 5b1f17b1804b1-4871606db4amr51425715e9.23.1774442289131; 
- Wed, 25 Mar 2026 05:38:09 -0700 (PDT)
+ AJvYcCXK98P8jYAxj78kYPHapldY4Y2kOqz97zQhz7pwhf80QjrnNBVySAjBCaOOy3zU52/VDjaL/JcT4dAfnzi8RtxS@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YxQp9w69rU6T31WQ1jkWH48xELjIwDGewGF6RwMwSNh8lnvIzvV
+ 9JNoqlKVhGcT1oj7/BCJyMk6JBBhmFMUANdPG5AnXx5uc31pBo6LuBxsvAYxCkL81Y/yIHKIAn0
+ 58xzmFvvx9BhdAV0quNAILmVT6ZJmilUEjQ2wSFwLlxhTCmBAT48fgQB0M2B7QH3vYxp/bqCfef
+ 3Apw==
+X-Gm-Gg: ATEYQzz3fDJcbvngb3mKkSZDAmIsUbdO9RKaeOXDEQKIm/xEQl0a0tTuer/QV72Xnrp
+ BQasQ84nBON3SNOfmWnqZAh/M7w6LLHnM5nc358ZxtOfBaatsbudGhZ2A8CdB3MZO+OA+lKQe32
+ Tkw03R2Ec2vFBj/WAp/Q4Vx9QkWVj4LUbzFIeX8rdBHLQvlwIc89nkq5vKvJZgLc4PijaPmgOnD
+ 64zm4iELvRFRfOhjUuRO/Da7RF8SZ1mBfygY1Alor2MSFCMP/LwVfSlvtE6GqRQXw2UmYUDn14g
+ 1nS8TaijvlvF/6upyI+UK/UlAsUn6alUBN23DLD6v4s7cwFBbZYFtTF59JSkgEvUqcL8Ib9PbQv
+ ByhBo6hwymnDCpQ==
+X-Received: by 2002:a05:6000:2a09:b0:43b:425b:ec3f with SMTP id
+ ffacd0b85a97d-43b80526465mr7202972f8f.4.1774438885301; 
+ Wed, 25 Mar 2026 04:41:25 -0700 (PDT)
+X-Received: by 2002:a05:6000:2a09:b0:43b:425b:ec3f with SMTP id
+ ffacd0b85a97d-43b80526465mr7202929f8f.4.1774438884770; 
+ Wed, 25 Mar 2026 04:41:24 -0700 (PDT)
 Received: from thinky ([91.245.205.131]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-487116ee57esm120806865e9.14.2026.03.25.05.38.08
+ ffacd0b85a97d-43b6470c239sm46289550f8f.27.2026.03.25.04.41.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 25 Mar 2026 05:38:08 -0700 (PDT)
-Date: Wed, 25 Mar 2026 13:38:07 +0100
+ Wed, 25 Mar 2026 04:41:24 -0700 (PDT)
+Date: Wed, 25 Mar 2026 12:41:23 +0100
 To: Christoph Hellwig <hch@lst.de>
-Message-ID: <std5dib2mf5nfd2gf3jbrhujvqr2tytczplopwfy4zrxrrmrgj@py7g4alrifbi>
+Message-ID: <3lllvimldwcgi7crh3kgwy3a5z2ng2ugcka52ab47o5mwx4dnu@xyzbelhykn7n>
 References: <20260319170231.1455553-1-aalbersh@kernel.org>
- <20260319170231.1455553-8-aalbersh@kernel.org>
- <20260325080021.GF952@lst.de>
+ <20260319170231.1455553-2-aalbersh@kernel.org>
+ <20260325075402.GA952@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20260325080021.GF952@lst.de>
+In-Reply-To: <20260325075402.GA952@lst.de>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Rs1v4AOYp_K1wHkehZuYZmh8OGOePRQYYNtum2qaQ88_1774442290
+X-Mimecast-MFC-PROC-ID: F3lqSip8Gw1cSmcxwQlwAaHTgPUCQge02N51EvCAS5I_1774438885
 X-Mimecast-Originator: redhat.com
 Content-Disposition: inline
-X-Headers-End: 1w5PQ4-00037l-Id
-Subject: Re: [f2fs-dev] [PATCH v5 07/25] iomap: introduce IOMAP_F_FSVERITY
- and teach writeback to handle fsverity
+X-Headers-End: 1w5PTs-0003sS-BW
+Subject: Re: [f2fs-dev] [PATCH v5 01/25] fsverity: report validation errors
+ through fserror to fsnotify
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -141,79 +141,24 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2026-03-25 09:00:21, Christoph Hellwig wrote:
-> > @@ -353,9 +353,16 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
-> >  {
-> >  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
-> >  
-> > -	return srcmap->type != IOMAP_MAPPED ||
-> > -		(srcmap->flags & IOMAP_F_NEW) ||
-> > -		pos >= i_size_read(iter->inode);
-> > +	if (srcmap->type != IOMAP_MAPPED)
-> > +		return true;
-> > +
-> > +	if (srcmap->flags & IOMAP_F_NEW)
-> > +		return true;
-> > +
-> > +	if (srcmap->flags & IOMAP_F_FSVERITY)
-> > +		return false;
-> > +
-> > +	return pos >= i_size_read(iter->inode);
+On 2026-03-25 08:54:02, Christoph Hellwig wrote:
+> On Thu, Mar 19, 2026 at 06:01:48PM +0100, Andrey Albershteyn wrote:
+> > Reported verification errors to fsnotify through recently added fserror
+> > interface.
 > 
-> This might be a good time to document the various reasons for needing
-> zeroing.
-
-something like this?
-
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -344,9 +344,27 @@ static inline bool iomap_block_needs_zeroing(const struct iomap_iter *iter,
- {
-        const struct iomap *srcmap = iomap_iter_srcmap(iter);
- 
--       return srcmap->type != IOMAP_MAPPED ||
--               (srcmap->flags & IOMAP_F_NEW) ||
--               pos >= i_size_read(iter->inode);
-+       /*
-+        * If this block is not mapped, we don't have any backing blocks to read
-+        * yet
-+        */
-+       if (srcmap->type != IOMAP_MAPPED)
-+               return true;
-+
-+       /*
-+        * This block just got allocated and does not contain any meaningful data
-+        */
-+       if (srcmap->flags & IOMAP_F_NEW)
-+               return true;
-+
-+       /*
-+        * fsverity metadata is stored past i_size, we need to read it instead of
-+        * zeroing
-+        */
-+       if (srcmap->flags & IOMAP_F_FSVERITY)
-+               return false;
-+
-+       return pos >= i_size_read(iter->inode);
- }
+> Looks good:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+Thanks!
 
 > 
-> > +/*
-> > + * IO happens beyond inode EOF, fsverity metadata is stored there
-> > + */
-> > +#define IOMAP_F_FSVERITY	(1U << 10)
-> 
-> This comment feels a bit too sparse.  Here is my interpretation of what
-> this flag does:
-> 
-> /*
->  * Indicates reads and writes of fsverity metadata.
->  *
->  * Fsverity metadata is stored after the regular file data and thus beyond
->  * i_size.
->  */
+> Btw, would it make sense to enhance the interface to tell why the
+> data vs considered lost?  i.e. checksum failure vs
 
-Thanks! I will update it
+> (part of) device disappeared?
+
+isn't it something filesystem should report even before fsverity
+gets the page?
 
 -- 
 - Andrey
