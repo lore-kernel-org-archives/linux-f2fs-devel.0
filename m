@@ -4,78 +4,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0B7A1FEA80D
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 06:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 87482109C021
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 14:29:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=39pzp9E4rrboube4gJms2IZRdaJbLRG+k13VZlWpIXI=; b=QasiO6hllnn/yFk/TNild21U4y
-	1uugyewYFTLvykkcAFvoXkH4Pu9jO2TSwoFyaKOuyNN7n4yvT4Ocv0IzRbOQVxXf+WBRXx8r3qfGp
-	B1mM4fUppzsNL5Cn15Ke3YC5OyTTIbxF94fh0NFcDkF5Tta9Ntz2iZqfUiVUikcFad4k=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-Id:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=FPoe6W8jH7sjAjLCl1h6c6dkKzN0ZD0jm21CTpQHloE=; b=KBEXdIFVvoAVkPVxfL7qDkjZD6
+	/1+lA+CcLxLG9rCgQl6cvSf9xUxaP5SEy9dCmUtn7I9paP44V0E0DzxSubgYf4cH2PMIwM1Nohuzv
+	Qp8AyLcYzXqzzac7rxCiBtmFh0diVGFLLyFnABn1RphW5saPhklS+7VxBH4PEEpNS7Ys=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w5Hni-00054G-U0;
-	Wed, 25 Mar 2026 06:33:11 +0000
+	id 1w5PEM-00042O-UE;
+	Wed, 25 Mar 2026 14:29:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1w5HnM-00052L-9D
+ (envelope-from <ruipengqi3@gmail.com>) id 1w5PEL-000429-Mv
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 06:32:49 +0000
+ Wed, 25 Mar 2026 14:29:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZfnOMEAvxUE+H0hoO/alJSIwaHdW6JpreJ7vxtGO6Co=; b=Asl7IPDaVOJGBZdx+GqaqXQHF0
- g6X32FtE20/kce3nVtdQnNzK0NrObLOQQ4p6nr5PG0Tr3UgEdCCFtv4XdcRryWj/3mF0hc+NPYcQP
- mpyhnE6QYUU9OemMfMHcA7FqPyHM3SJroOELKT4SMr3zI3pcQzk1bS/6sQohjfYq1M4M=;
+ bh=quuphkWaGWdwrJTlaMXOLCqKrD2sqqcG1Ts3xWVLG0U=; b=KAVuoxrb1Ahj49p9LCu5GAwNxr
+ 8nLqBvS2sur2vvZD18jm2qKPuCo+jv3YoFJQhAwFUKZvv1e3mTQsw2XA5fCAZC9Ke4ED5DdMDzO3S
+ Y9FCAlRAn+ROuJjRXLyToGDAAQek8Dvo8H1N5RjLmsI38W2MzSMdj+eVDl/NzUW/zU38=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=ZfnOMEAvxUE+H0hoO/alJSIwaHdW6JpreJ7vxtGO6Co=; b=aYvD1/EwBDbVT1PRmBT2++JwKX
- bo198SJGVxZbOeKaL+bSl+TKLGZKjguHu2tmRDT55Y4v3bbAjr5qKnAEHEHQh8OhmvvqSwjY4b3DL
- oEICSZI0URMnr4rSUEBkkaNo4ih8mag2TTjyeYwq9YA4iNPqD8i/irO4BHKX0YsBgNg8=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=quuphkWaGWdwrJTlaMXOLCqKrD2sqqcG1Ts3xWVLG0U=; b=F
+ MF5i/iyZUx8FNqcoUhn0tqmJc6GerMTW2CFS951atdZFNLUBvSNLGGgv4kr48OYT3rJsKD7pLa9/z
+ dCh7EHjJWu8iY/SZQyaiiP4dFLIZD9rQwpoF9ItAhidRQzAVQpUP5YCVnRqoJLDOUSiY9mPfp8Wml
+ +MqNrMotN5CZcEAw=;
+Received: from mail-pg1-f175.google.com ([209.85.215.175])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w5HnM-0002jy-19 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 06:32:49 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 4EF9D600AC
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1w5PEL-0000pz-LE for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 25 Mar 2026 14:29:10 +0000
+Received: by mail-pg1-f175.google.com with SMTP id
+ 41be03b00d2f7-c766cf593daso453770a12.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 25 Mar 2026 06:32:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9562C4CEF7;
- Wed, 25 Mar 2026 06:32:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1774420357;
- bh=7+C93hGZIdztASJgSnn8OBd9xtGDT0vJrI/VXJNt/3Q=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=ubbgH83wkZ4XwXWK71BjS44zvnb9+/Qrm7ELpkcAJFx/zc+4B8/Ka5JIpiBtT4gz1
- k0cQv3dBPZJrxalFLgiCB/dR8oOfQzMl6f6EglIZZ4HIt9IYxmrlv8R+6RqmCnCRAD
- x7nXrCAsLHjOu17IOj0ziIoP7yJ9QGBuSQwQMSRESEtDKq7hnBiUjCX9zPIJJsof1Q
- tM+pTYL56tm9lHBiA7CI/8o3ODBfoE1RBm9Kg7/Htt6lPMATnwg3PwZSFhe1iTUtu/
- 1mleYts+PZNk4xX9oUaeTrL0h2102eUklpfKKZ3DSivtCIsdqILFsoZAOvtgOYK8UJ
- ss+NprU+2hEOQ==
-Message-ID: <7ae25eae-19ce-4290-9156-7fff7c379705@kernel.org>
-Date: Wed, 25 Mar 2026 14:32:31 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+ Wed, 25 Mar 2026 07:29:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1774448944; x=1775053744; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=quuphkWaGWdwrJTlaMXOLCqKrD2sqqcG1Ts3xWVLG0U=;
+ b=P7ebSxCIfo86o4Ko+mPoLLPTmWPEj4YllqDqfxFlkFU7qMGuw9Ja7nWqsQh3/Uy7Y0
+ /MuaM6j4EKyZ6FQx5Eu/VZnZQqvyp2Z06DI96+rHsN6grMkHSewBrBkK+XXwmwzpZy/P
+ KOujHog+/KrRDVIzOHLaI+TI2s8aNgu+F+8ZKgA0gY8x4NvDCQbxaXjE+QgeyZko50V5
+ rE/L2cVSOZ6D2xnI6sLGmhxS8d8vYPPshEOUnksR1BM/Jf90Qf2ZW3ZRFPmR0NphGuqE
+ FAhpDmvARnvtuZrTVBntfltKYyuF8UIUNvsjKnXXVJyWOjxPwJBLHqLeeKhP5YOxdXOF
+ ykJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1774448944; x=1775053744;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=quuphkWaGWdwrJTlaMXOLCqKrD2sqqcG1Ts3xWVLG0U=;
+ b=CEApKW7SxIAGfYhSw7eqdZt2eMmTn3Qn7m9PiYsW91oe6XnnsXeZlS83zFgsCZQAOY
+ Lkq8wvHIx5+4zzN64XE+5bxKzV8/Dwd/eMFO6wgcf0KPR8SlmRo+pqYClZy+R+3nSuCr
+ ca42TXyaZZQKKvQqHSCeJbdDQcXok0E6zFMN8ubpNoNui2ye7qkHnZM7xHe2cvGhy58A
+ Zr4ze9EdCaAO1qAlhPD8NTZStsQG5NnKVydS2C3P9CQ6Zc45gCloAjmhkgI4UkWVxbg0
+ KgJrUaNQIFzs8t/p7w6LH4DB94k6ciNFQ/sjG7kOMBAYeN7acircWzAqvdrm+2kyIA4g
+ u4wA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCV7jjVFTpXuAzJBIPnymST5aXsIeHKN8lpG7pHvw3rTTXi1LUx1jtU7ELXSd8Sq4Dl/yZ2xpHOPPHusTl1U5bmp@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YwcgiapghJXYCOMqA3quHOMRz2uo353njFO/YmcpXYSQyBt2k3t
+ 6B2YTnTsEWJtix89DX5o/+C4cY6qRyILVIIXD11aYWB8eUVtV9gRjzrYwZOkHa2/FU8=
+X-Gm-Gg: ATEYQzyWTDb6z/jFThnVMvjl4ZR4yCMwAHpqM0yGX6ht4hRltt8iBQYAgELi2QBwbyI
+ f50RP93DSpGyjRC2LshDHQUFtb6qgDHA5LhoswSmcE3/0NKN78nm+pwwkJJjaD2p7c3ztJKEvqO
+ BsUzPyLNPjGDQttegdwjJVRMbf6Au8wgHEXxxShsIEuGtr4vGIKEdbkoWl1yhZSsdCPs/p8M1Sf
+ Nv8KqN9E8MMyRZ7Kcq7Q2cYq17IIdYbuEWhijcp4nbdd3WEaJhOQi3zcu6eomY9n5C19EF39kdQ
+ A1pbUu9ayRPVT7ZjPuVB3t71aVsqcZjNqVmLuRuuAatjE268mbi0PDbN53Kf722alO367ZAZbXY
+ 3BpdWFXO18ivbw0TXFCuLk+tCq608hb+4a8udNQhkyQTTDcDN78svDHF9oQDrpra+d8FBdP62pl
+ LdUyu6kgrgebAL9S6Ew2aDp2olXYvJK0vAu8CssZN0YtnsAMNadyKfKhdPbG1lp8FCAzw=
+X-Received: by 2002:a17:903:2f50:b0:2ae:593c:48fe with SMTP id
+ d9443c01a7336-2b0b09e6752mr37736355ad.13.1774445617515; 
+ Wed, 25 Mar 2026 06:33:37 -0700 (PDT)
+Received: from lixiang-ThinkCentre-M755e-N000.company.local ([210.184.73.204])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2b08355f994sm182631555ad.36.2026.03.25.06.33.29
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 25 Mar 2026 06:33:36 -0700 (PDT)
+From: ruipengqi <ruipengqi3@gmail.com>
 To: jaegeuk@kernel.org
-References: <20260323090344.219267-1-chao@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20260323090344.219267-1-chao@kernel.org>
-X-Headers-End: 1w5HnM-0002jy-19
-Subject: Re: [f2fs-dev] [PATCH] f2fs: support to report fserror
+Date: Wed, 25 Mar 2026 21:33:22 +0800
+Message-Id: <20260325133322.1050573-1-ruipengqi3@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+X-Headers-End: 1w5PEL-0000pz-LE
+Subject: [f2fs-dev] [PATCH 1/2] hung_task: replace blocker_mutex with
+ encoded blocker
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,444 +116,336 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Anna Schumaker <anna.schumaker@oracle.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ Yongliang Gao <leonylgao@tencent.com>, Peter Zijlstra <peterz@infradead.org>,
+ Lance Yang <ioworker0@gmail.com>, linux-kernel@vger.kernel.org,
+ Joel Granados <joel.granados@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net,
+ Sergey Senozhatsky <senozhatsky@chromium.org>, Ingo Molnar <mingo@redhat.com>,
+ John Stultz <jstultz@google.com>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Waiman Long <longman@redhat.com>, Zi Li <amaindex@outlook.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Tomasz Figa <tfiga@chromium.org>,
+ Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Mingzhe Yang <mingzhe.yang@ly.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-+Cc Darrick and fsdevel
+From: Lance Yang <ioworker0@gmail.com>
 
-On 3/23/26 17:03, Chao Yu wrote:
-> This patch supports to report fserror, it provides another way to let
-> userspace to monitor filesystem level error. In addition, it exports
-> /sys/fs/f2fs/features/fserror once f2fs kernel module start to support
-> the new feature, then generic/791 of fstests can notice the feature,
-> and verify validation of fserror report.
-> 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  Documentation/ABI/testing/sysfs-fs-f2fs |  3 ++-
->  fs/f2fs/compress.c                      |  2 ++
->  fs/f2fs/data.c                          | 13 ++++++++++++-
->  fs/f2fs/dir.c                           |  2 ++
->  fs/f2fs/inline.c                        |  3 +++
->  fs/f2fs/inode.c                         |  5 +++++
->  fs/f2fs/node.c                          |  8 ++++++++
->  fs/f2fs/recovery.c                      |  2 ++
->  fs/f2fs/segment.c                       |  2 ++
->  fs/f2fs/super.c                         | 26 +++++++++++++++++++++++++
->  fs/f2fs/sysfs.c                         |  2 ++
->  fs/f2fs/verity.c                        |  2 ++
->  fs/f2fs/xattr.c                         |  6 ++++++
->  13 files changed, 74 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-> index 423ec40e2e4e..27d5e88facbe 100644
-> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> @@ -270,7 +270,8 @@ Description:	Shows all enabled kernel features.
->  		inode_checksum, flexible_inline_xattr, quota_ino,
->  		inode_crtime, lost_found, verity, sb_checksum,
->  		casefold, readonly, compression, test_dummy_encryption_v2,
-> -		atomic_write, pin_file, encrypted_casefold, linear_lookup.
-> +		atomic_write, pin_file, encrypted_casefold, linear_lookup,
-> +		fserror.
->  
->  What:		/sys/fs/f2fs/<disk>/inject_rate
->  Date:		May 2016
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index 8c76400ba631..d1650b763e1f 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -14,6 +14,7 @@
->  #include <linux/lz4.h>
->  #include <linux/zstd.h>
->  #include <linux/pagevec.h>
-> +#include <linux/fserror.h>
->  
->  #include "f2fs.h"
->  #include "node.h"
-> @@ -760,6 +761,7 @@ void f2fs_decompress_cluster(struct decompress_io_ctx *dic, bool in_task)
->  
->  		/* Avoid f2fs_commit_super in irq context */
->  		f2fs_handle_error(sbi, ERROR_FAIL_DECOMPRESSION);
-> +		fserror_report_file_metadata(dic->inode, ret, GFP_NOFS);
->  		goto out_release;
->  	}
->  
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 9ade0669d615..6d8bcb0d15bc 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -20,6 +20,7 @@
->  #include <linux/sched/signal.h>
->  #include <linux/fiemap.h>
->  #include <linux/iomap.h>
-> +#include <linux/fserror.h>
->  
->  #include "f2fs.h"
->  #include "node.h"
-> @@ -179,6 +180,11 @@ static void f2fs_finish_read_bio(struct bio *bio, bool in_task)
->  				folio, folio->index, NODE_TYPE_REGULAR, true))
->  			bio->bi_status = BLK_STS_IOERR;
->  
-> +		if (bio->bi_status == BLK_STS_IOERR)
-> +			fserror_report_io(folio->mapping->host,
-> +				FSERR_BUFFERED_READ, folio_pos(folio),
-> +				folio_size(folio), -EIO, GFP_NOWAIT);
-> +
->  		if (finished)
->  			folio_end_read(folio, bio->bi_status == BLK_STS_OK);
->  	}
-> @@ -377,9 +383,13 @@ static void f2fs_write_end_io(struct bio *bio)
->  
->  		if (unlikely(bio->bi_status != BLK_STS_OK)) {
->  			mapping_set_error(folio->mapping, -EIO);
-> -			if (type == F2FS_WB_CP_DATA)
-> +			fserror_report_io(folio->mapping->host,
-> +				FSERR_BUFFERED_WRITE, folio_pos(folio),
-> +				folio_size(folio), -EIO, GFP_NOWAIT);
-> +			if (type == F2FS_WB_CP_DATA) {
->  				f2fs_stop_checkpoint(sbi, true,
->  						STOP_CP_REASON_WRITE_FAIL);
-> +			}
->  		}
->  
->  		if (is_node_folio(folio)) {
-> @@ -1725,6 +1735,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
->  			err = -EFSCORRUPTED;
->  			f2fs_handle_error(sbi,
->  					ERROR_CORRUPTED_CLUSTER);
-> +			fserror_report_file_metadata(inode, err, GFP_NOFS);
->  			goto sync_out;
->  		}
->  
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index f70092e231f0..e8d2e27e8cec 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -11,6 +11,7 @@
->  #include <linux/filelock.h>
->  #include <linux/sched/signal.h>
->  #include <linux/unicode.h>
-> +#include <linux/fserror.h>
->  #include "f2fs.h"
->  #include "node.h"
->  #include "acl.h"
-> @@ -1020,6 +1021,7 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->  			set_sbi_flag(sbi, SBI_NEED_FSCK);
->  			err = -EFSCORRUPTED;
->  			f2fs_handle_error(sbi, ERROR_CORRUPTED_DIRENT);
-> +			fserror_report_file_metadata(d->inode, err, GFP_NOFS);
->  			goto out;
->  		}
->  
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index 86d2abbb40ff..cfeb50d46d8d 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -9,6 +9,7 @@
->  #include <linux/fs.h>
->  #include <linux/f2fs_fs.h>
->  #include <linux/fiemap.h>
-> +#include <linux/fserror.h>
->  
->  #include "f2fs.h"
->  #include "node.h"
-> @@ -179,6 +180,7 @@ int f2fs_convert_inline_folio(struct dnode_of_data *dn, struct folio *folio)
->  		f2fs_warn(fio.sbi, "%s: corrupted inline inode ino=%lx, i_addr[0]:0x%x, run fsck to fix.",
->  			  __func__, dn->inode->i_ino, dn->data_blkaddr);
->  		f2fs_handle_error(fio.sbi, ERROR_INVALID_BLKADDR);
-> +		fserror_report_file_metadata(dn->inode, -EFSCORRUPTED, GFP_NOFS);
->  		return -EFSCORRUPTED;
->  	}
->  
-> @@ -435,6 +437,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct folio *ifolio,
->  			  __func__, dir->i_ino, dn.data_blkaddr);
->  		f2fs_handle_error(F2FS_F_SB(folio), ERROR_INVALID_BLKADDR);
->  		err = -EFSCORRUPTED;
-> +		fserror_report_file_metadata(dn.inode, err, GFP_NOFS);
->  		goto out;
->  	}
->  
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index e7942e6e312c..43cb4d9fc039 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -11,6 +11,7 @@
->  #include <linux/sched/mm.h>
->  #include <linux/lz4.h>
->  #include <linux/zstd.h>
-> +#include <linux/fserror.h>
->  
->  #include "f2fs.h"
->  #include "node.h"
-> @@ -480,6 +481,7 @@ static int do_read_inode(struct inode *inode)
->  		f2fs_folio_put(node_folio, true);
->  		set_sbi_flag(sbi, SBI_NEED_FSCK);
->  		f2fs_handle_error(sbi, ERROR_CORRUPTED_INODE);
-> +		fserror_report_file_metadata(inode, -EFSCORRUPTED, GFP_NOFS);
->  		return -EFSCORRUPTED;
->  	}
->  
-> @@ -541,6 +543,7 @@ static int do_read_inode(struct inode *inode)
->  	if (!sanity_check_extent_cache(inode, node_folio)) {
->  		f2fs_folio_put(node_folio, true);
->  		f2fs_handle_error(sbi, ERROR_CORRUPTED_INODE);
-> +		fserror_report_file_metadata(inode, -EFSCORRUPTED, GFP_NOFS);
->  		return -EFSCORRUPTED;
->  	}
->  
-> @@ -583,6 +586,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
->  			trace_f2fs_iget_exit(inode, ret);
->  			iput(inode);
->  			f2fs_handle_error(sbi, ERROR_CORRUPTED_INODE);
-> +			fserror_report_file_metadata(inode, ret, GFP_NOFS);
->  			return ERR_PTR(ret);
->  		}
->  
-> @@ -787,6 +791,7 @@ void f2fs_update_inode_page(struct inode *inode)
->  		if (err == -ENOMEM || ++count <= DEFAULT_RETRY_IO_COUNT)
->  			goto retry;
->  stop_checkpoint:
-> +		fserror_report_file_metadata(inode, -EFSCORRUPTED, GFP_NOFS);
->  		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_UPDATE_INODE);
->  		return;
->  	}
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 0de41526f28a..bb302fae75c2 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -12,6 +12,7 @@
->  #include <linux/blkdev.h>
->  #include <linux/pagevec.h>
->  #include <linux/swap.h>
-> +#include <linux/fserror.h>
->  
->  #include "f2fs.h"
->  #include "node.h"
-> @@ -1267,6 +1268,8 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from)
->  		if (err == -ENOENT) {
->  			set_sbi_flag(F2FS_F_SB(folio), SBI_NEED_FSCK);
->  			f2fs_handle_error(sbi, ERROR_INVALID_BLKADDR);
-> +			fserror_report_file_metadata(dn.inode, -EFSCORRUPTED,
-> +								GFP_NOFS);
->  			f2fs_err_ratelimited(sbi,
->  				"truncate node fail, ino:%lu, nid:%u, "
->  				"offset[0]:%d, offset[1]:%d, nofs:%d",
-> @@ -1558,6 +1561,8 @@ int f2fs_sanity_check_node_footer(struct f2fs_sb_info *sbi,
->  		next_blkaddr_of_node(folio));
->  
->  	f2fs_handle_error(sbi, ERROR_INCONSISTENT_FOOTER);
-> +	fserror_report_file_metadata(folio->mapping->host,
-> +			-EFSCORRUPTED, in_irq ? GFP_NOWAIT : GFP_NOFS);
->  	return -EFSCORRUPTED;
->  }
->  
-> @@ -1779,6 +1784,7 @@ static bool __write_node_folio(struct folio *folio, bool atomic, bool *submitted
->  
->  	if (f2fs_sanity_check_node_footer(sbi, folio, nid,
->  					NODE_TYPE_REGULAR, false)) {
-> +		fserror_report_metadata(sbi->sb, -EFSCORRUPTED, GFP_NOFS);
->  		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_CORRUPTED_NID);
->  		goto redirty_out;
->  	}
-> @@ -2696,6 +2702,8 @@ bool f2fs_alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
->  			spin_unlock(&nm_i->nid_list_lock);
->  			f2fs_err(sbi, "Corrupted nid %u in free_nid_list",
->  								i->nid);
-> +			fserror_report_metadata(sbi->sb, -EFSCORRUPTED,
-> +								GFP_NOFS);
->  			f2fs_stop_checkpoint(sbi, false,
->  					STOP_CP_REASON_CORRUPTED_NID);
->  			return false;
-> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> index a26071f2b0bc..b127dfc91338 100644
-> --- a/fs/f2fs/recovery.c
-> +++ b/fs/f2fs/recovery.c
-> @@ -9,6 +9,7 @@
->  #include <linux/fs.h>
->  #include <linux/f2fs_fs.h>
->  #include <linux/sched/mm.h>
-> +#include <linux/fserror.h>
->  #include "f2fs.h"
->  #include "node.h"
->  #include "segment.h"
-> @@ -679,6 +680,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
->  			  ofs_of_node(folio));
->  		err = -EFSCORRUPTED;
->  		f2fs_handle_error(sbi, ERROR_INCONSISTENT_FOOTER);
-> +		fserror_report_file_metadata(dn.inode, err, GFP_NOFS);
->  		goto err;
->  	}
->  
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 0bf25786667f..ee5c35ce5a0f 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -17,6 +17,7 @@
->  #include <linux/freezer.h>
->  #include <linux/sched/signal.h>
->  #include <linux/random.h>
-> +#include <linux/fserror.h>
->  
->  #include "f2fs.h"
->  #include "segment.h"
-> @@ -2886,6 +2887,7 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
->  	/* set it as dirty segment in free segmap */
->  	if (test_bit(segno, free_i->free_segmap)) {
->  		ret = -EFSCORRUPTED;
-> +		fserror_report_metadata(sbi->sb, -EFSCORRUPTED, GFP_NOFS);
->  		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_CORRUPTED_FREE_BITMAP);
->  		goto out_unlock;
->  	}
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 5b552f08fe7b..5330ef981340 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -29,6 +29,7 @@
->  #include <linux/lz4.h>
->  #include <linux/ctype.h>
->  #include <linux/fs_parser.h>
-> +#include <linux/fserror.h>
->  
->  #include "f2fs.h"
->  #include "node.h"
-> @@ -4632,6 +4633,8 @@ static void f2fs_record_stop_reason(struct f2fs_sb_info *sbi)
->  		f2fs_err_ratelimited(sbi,
->  			"f2fs_commit_super fails to record stop_reason, err:%d",
->  			err);
-> +
-> +	fserror_report_shutdown(sbi->sb, GFP_NOFS);
->  }
->  
->  void f2fs_save_errors(struct f2fs_sb_info *sbi, unsigned char flag)
-> @@ -4646,6 +4649,27 @@ void f2fs_save_errors(struct f2fs_sb_info *sbi, unsigned char flag)
->  	spin_unlock_irqrestore(&sbi->error_lock, flags);
->  }
->  
-> +static void f2fs_report_fserror(struct f2fs_sb_info *sbi, unsigned char error)
-> +{
-> +	switch (error) {
-> +	case ERROR_INVALID_BLKADDR:
-> +	case ERROR_CORRUPTED_INODE:
-> +	case ERROR_INCONSISTENT_SUMMARY:
-> +	case ERROR_INCONSISTENT_SUM_TYPE:
-> +	case ERROR_CORRUPTED_JOURNAL:
-> +	case ERROR_INCONSISTENT_NODE_COUNT:
-> +	case ERROR_INCONSISTENT_BLOCK_COUNT:
-> +	case ERROR_INVALID_CURSEG:
-> +	case ERROR_INCONSISTENT_SIT:
-> +	case ERROR_INVALID_NODE_REFERENCE:
-> +	case ERROR_INCONSISTENT_NAT:
-> +		fserror_report_metadata(sbi->sb, -EFSCORRUPTED, GFP_NOFS);
-> +		break;
-> +	default:
-> +		return;
-> +	}
-> +}
-> +
->  void f2fs_handle_error(struct f2fs_sb_info *sbi, unsigned char error)
->  {
->  	f2fs_save_errors(sbi, error);
-> @@ -4655,6 +4679,8 @@ void f2fs_handle_error(struct f2fs_sb_info *sbi, unsigned char error)
->  	if (!test_bit(error, (unsigned long *)sbi->errors))
->  		return;
->  	schedule_work(&sbi->s_error_work);
-> +
-> +	f2fs_report_fserror(sbi, error);
->  }
->  
->  static bool system_going_down(void)
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index 969e06b65b04..5c1358e48206 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -1396,6 +1396,7 @@ F2FS_FEATURE_RO_ATTR(pin_file);
->  F2FS_FEATURE_RO_ATTR(linear_lookup);
->  #endif
->  F2FS_FEATURE_RO_ATTR(packed_ssa);
-> +F2FS_FEATURE_RO_ATTR(fserror);
->  
->  #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
->  static struct attribute *f2fs_attrs[] = {
-> @@ -1563,6 +1564,7 @@ static struct attribute *f2fs_feat_attrs[] = {
->  	BASE_ATTR_LIST(linear_lookup),
->  #endif
->  	BASE_ATTR_LIST(packed_ssa),
-> +	BASE_ATTR_LIST(fserror),
->  	NULL,
->  };
->  ATTRIBUTE_GROUPS(f2fs_feat);
-> diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-> index 92ebcc19cab0..39f482515445 100644
-> --- a/fs/f2fs/verity.c
-> +++ b/fs/f2fs/verity.c
-> @@ -25,6 +25,7 @@
->   */
->  
->  #include <linux/f2fs_fs.h>
-> +#include <linux/fserror.h>
->  
->  #include "f2fs.h"
->  #include "xattr.h"
-> @@ -243,6 +244,7 @@ static int f2fs_get_verity_descriptor(struct inode *inode, void *buf,
->  		f2fs_warn(F2FS_I_SB(inode), "invalid verity xattr");
->  		f2fs_handle_error(F2FS_I_SB(inode),
->  				ERROR_CORRUPTED_VERITY_XATTR);
-> +		fserror_report_file_metadata(inode, -EFSCORRUPTED, GFP_NOFS);
->  		return -EFSCORRUPTED;
->  	}
->  	if (buf_size) {
-> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> index 941dc62a6d6f..3ef1e5df0036 100644
-> --- a/fs/f2fs/xattr.c
-> +++ b/fs/f2fs/xattr.c
-> @@ -19,6 +19,7 @@
->  #include <linux/f2fs_fs.h>
->  #include <linux/security.h>
->  #include <linux/posix_acl_xattr.h>
-> +#include <linux/fserror.h>
->  #include "f2fs.h"
->  #include "xattr.h"
->  #include "segment.h"
-> @@ -371,6 +372,7 @@ static int lookup_all_xattrs(struct inode *inode, struct folio *ifolio,
->  		err = -ENODATA;
->  		f2fs_handle_error(F2FS_I_SB(inode),
->  					ERROR_CORRUPTED_XATTR);
-> +		fserror_report_file_metadata(inode, err, GFP_NOFS);
->  		goto out;
->  	}
->  check:
-> @@ -590,6 +592,8 @@ ssize_t f2fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
->  			set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
->  			f2fs_handle_error(F2FS_I_SB(inode),
->  						ERROR_CORRUPTED_XATTR);
-> +			fserror_report_file_metadata(inode,
-> +						-EFSCORRUPTED, GFP_NOFS);
->  			break;
->  		}
->  
-> @@ -677,6 +681,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
->  		error = -EFSCORRUPTED;
->  		f2fs_handle_error(F2FS_I_SB(inode),
->  					ERROR_CORRUPTED_XATTR);
-> +		fserror_report_file_metadata(inode, error, GFP_NOFS);
->  		goto exit;
->  	}
->  
-> @@ -705,6 +710,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
->  			error = -EFSCORRUPTED;
->  			f2fs_handle_error(F2FS_I_SB(inode),
->  						ERROR_CORRUPTED_XATTR);
-> +			fserror_report_file_metadata(inode, error, GFP_NOFS);
->  			goto exit;
->  		}
->  		last = XATTR_NEXT_ENTRY(last);
+Patch series "hung_task: extend blocking task stacktrace dump to
+semaphore", v5.
+
+Inspired by mutex blocker tracking[1], this patch series extend the
+feature to not only dump the blocker task holding a mutex but also to
+support semaphores.  Unlike mutexes, semaphores lack explicit ownership
+tracking, making it challenging to identify the root cause of hangs.  To
+address this, we introduce a last_holder field to the semaphore structure,
+which is updated when a task successfully calls down() and cleared during
+up().
+
+The assumption is that if a task is blocked on a semaphore, the holders
+must not have released it.  While this does not guarantee that the last
+holder is one of the current blockers, it likely provides a practical hint
+for diagnosing semaphore-related stalls.
+
+With this change, the hung task detector can now show blocker task's info
+like below:
+
+[Tue Apr  8 12:19:07 2025] INFO: task cat:945 blocked for more than 120 seconds.
+[Tue Apr  8 12:19:07 2025]       Tainted: G            E      6.14.0-rc6+ #1
+[Tue Apr  8 12:19:07 2025] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[Tue Apr  8 12:19:07 2025] task:cat             state:D stack:0     pid:945   tgid:945   ppid:828    task_flags:0x400000 flags:0x00000000
+[Tue Apr  8 12:19:07 2025] Call Trace:
+[Tue Apr  8 12:19:07 2025]  <TASK>
+[Tue Apr  8 12:19:07 2025]  __schedule+0x491/0xbd0
+[Tue Apr  8 12:19:07 2025]  schedule+0x27/0xf0
+[Tue Apr  8 12:19:07 2025]  schedule_timeout+0xe3/0xf0
+[Tue Apr  8 12:19:07 2025]  ? __folio_mod_stat+0x2a/0x80
+[Tue Apr  8 12:19:07 2025]  ? set_ptes.constprop.0+0x27/0x90
+[Tue Apr  8 12:19:07 2025]  __down_common+0x155/0x280
+[Tue Apr  8 12:19:07 2025]  down+0x53/0x70
+[Tue Apr  8 12:19:07 2025]  read_dummy_semaphore+0x23/0x60
+[Tue Apr  8 12:19:07 2025]  full_proxy_read+0x5f/0xa0
+[Tue Apr  8 12:19:07 2025]  vfs_read+0xbc/0x350
+[Tue Apr  8 12:19:07 2025]  ? __count_memcg_events+0xa5/0x140
+[Tue Apr  8 12:19:07 2025]  ? count_memcg_events.constprop.0+0x1a/0x30
+[Tue Apr  8 12:19:07 2025]  ? handle_mm_fault+0x180/0x260
+[Tue Apr  8 12:19:07 2025]  ksys_read+0x66/0xe0
+[Tue Apr  8 12:19:07 2025]  do_syscall_64+0x51/0x120
+[Tue Apr  8 12:19:07 2025]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[Tue Apr  8 12:19:07 2025] RIP: 0033:0x7f419478f46e
+[Tue Apr  8 12:19:07 2025] RSP: 002b:00007fff1c4d2668 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[Tue Apr  8 12:19:07 2025] RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007f419478f46e
+[Tue Apr  8 12:19:07 2025] RDX: 0000000000020000 RSI: 00007f4194683000 RDI: 0000000000000003
+[Tue Apr  8 12:19:07 2025] RBP: 00007f4194683000 R08: 00007f4194682010 R09: 0000000000000000
+[Tue Apr  8 12:19:07 2025] R10: fffffffffffffbc5 R11: 0000000000000246 R12: 0000000000000000
+[Tue Apr  8 12:19:07 2025] R13: 0000000000000003 R14: 0000000000020000 R15: 0000000000020000
+[Tue Apr  8 12:19:07 2025]  </TASK>
+[Tue Apr  8 12:19:07 2025] INFO: task cat:945 blocked on a semaphore likely last held by task cat:938
+[Tue Apr  8 12:19:07 2025] task:cat             state:S stack:0     pid:938   tgid:938   ppid:584    task_flags:0x400000 flags:0x00000000
+[Tue Apr  8 12:19:07 2025] Call Trace:
+[Tue Apr  8 12:19:07 2025]  <TASK>
+[Tue Apr  8 12:19:07 2025]  __schedule+0x491/0xbd0
+[Tue Apr  8 12:19:07 2025]  ? _raw_spin_unlock_irqrestore+0xe/0x40
+[Tue Apr  8 12:19:07 2025]  schedule+0x27/0xf0
+[Tue Apr  8 12:19:07 2025]  schedule_timeout+0x77/0xf0
+[Tue Apr  8 12:19:07 2025]  ? __pfx_process_timeout+0x10/0x10
+[Tue Apr  8 12:19:07 2025]  msleep_interruptible+0x49/0x60
+[Tue Apr  8 12:19:07 2025]  read_dummy_semaphore+0x2d/0x60
+[Tue Apr  8 12:19:07 2025]  full_proxy_read+0x5f/0xa0
+[Tue Apr  8 12:19:07 2025]  vfs_read+0xbc/0x350
+[Tue Apr  8 12:19:07 2025]  ? __count_memcg_events+0xa5/0x140
+[Tue Apr  8 12:19:07 2025]  ? count_memcg_events.constprop.0+0x1a/0x30
+[Tue Apr  8 12:19:07 2025]  ? handle_mm_fault+0x180/0x260
+[Tue Apr  8 12:19:07 2025]  ksys_read+0x66/0xe0
+[Tue Apr  8 12:19:07 2025]  do_syscall_64+0x51/0x120
+[Tue Apr  8 12:19:07 2025]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[Tue Apr  8 12:19:07 2025] RIP: 0033:0x7f7c584a646e
+[Tue Apr  8 12:19:07 2025] RSP: 002b:00007ffdba8ce158 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[Tue Apr  8 12:19:07 2025] RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007f7c584a646e
+[Tue Apr  8 12:19:07 2025] RDX: 0000000000020000 RSI: 00007f7c5839a000 RDI: 0000000000000003
+[Tue Apr  8 12:19:07 2025] RBP: 00007f7c5839a000 R08: 00007f7c58399010 R09: 0000000000000000
+[Tue Apr  8 12:19:07 2025] R10: fffffffffffffbc5 R11: 0000000000000246 R12: 0000000000000000
+[Tue Apr  8 12:19:07 2025] R13: 0000000000000003 R14: 0000000000020000 R15: 0000000000020000
+[Tue Apr  8 12:19:07 2025]  </TASK>
+
+
+This patch (of 3):
+
+This patch replaces 'struct mutex *blocker_mutex' with 'unsigned long
+blocker', as only one blocker is active at a time.
+
+The blocker filed can store both the lock addrees and the lock type, with
+LSB used to encode the type as Masami suggested, making it easier to
+extend the feature to cover other types of locks.
+
+Also, once the lock type is determined, we can directly extract the
+address and cast it to a lock pointer ;)
+
+Link: https://lkml.kernel.org/r/20250414145945.84916-1-ioworker0@gmail.com
+Link: https://lore.kernel.org/all/174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com [1]
+Link: https://lkml.kernel.org/r/20250414145945.84916-2-ioworker0@gmail.com
+Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
+Signed-off-by: Lance Yang <ioworker0@gmail.com>
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Anna Schumaker <anna.schumaker@oracle.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Joel Granados <joel.granados@kernel.org>
+Cc: John Stultz <jstultz@google.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Tomasz Figa <tfiga@chromium.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Yongliang Gao <leonylgao@tencent.com>
+Cc: Zi Li <amaindex@outlook.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+ include/linux/hung_task.h | 99 +++++++++++++++++++++++++++++++++++++++
+ include/linux/sched.h     |  6 ++-
+ kernel/hung_task.c        | 13 +++--
+ kernel/locking/mutex.c    |  5 +-
+ 4 files changed, 115 insertions(+), 8 deletions(-)
+ create mode 100644 include/linux/hung_task.h
+
+diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
+new file mode 100644
+index 000000000000..1bc2b3244613
+--- /dev/null
++++ b/include/linux/hung_task.h
+@@ -0,0 +1,99 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Detect Hung Task: detecting tasks stuck in D state
++ *
++ * Copyright (C) 2025 Tongcheng Travel (www.ly.com)
++ * Author: Lance Yang <mingzhe.yang@ly.com>
++ */
++#ifndef __LINUX_HUNG_TASK_H
++#define __LINUX_HUNG_TASK_H
++
++#include <linux/bug.h>
++#include <linux/sched.h>
++#include <linux/compiler.h>
++
++/*
++ * @blocker: Combines lock address and blocking type.
++ *
++ * Since lock pointers are at least 4-byte aligned(32-bit) or 8-byte
++ * aligned(64-bit). This leaves the 2 least bits (LSBs) of the pointer
++ * always zero. So we can use these bits to encode the specific blocking
++ * type.
++ *
++ * Type encoding:
++ * 00 - Blocked on mutex        (BLOCKER_TYPE_MUTEX)
++ * 01 - Blocked on semaphore    (BLOCKER_TYPE_SEM)
++ * 10 - Blocked on rt-mutex     (BLOCKER_TYPE_RTMUTEX)
++ * 11 - Blocked on rw-semaphore (BLOCKER_TYPE_RWSEM)
++ */
++#define BLOCKER_TYPE_MUTEX      0x00UL
++#define BLOCKER_TYPE_SEM        0x01UL
++#define BLOCKER_TYPE_RTMUTEX    0x02UL
++#define BLOCKER_TYPE_RWSEM      0x03UL
++
++#define BLOCKER_TYPE_MASK       0x03UL
++
++#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
++static inline void hung_task_set_blocker(void *lock, unsigned long type)
++{
++	unsigned long lock_ptr = (unsigned long)lock;
++
++	WARN_ON_ONCE(!lock_ptr);
++	WARN_ON_ONCE(READ_ONCE(current->blocker));
++
++	/*
++	 * If the lock pointer matches the BLOCKER_TYPE_MASK, return
++	 * without writing anything.
++	 */
++	if (WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK))
++		return;
++
++	WRITE_ONCE(current->blocker, lock_ptr | type);
++}
++
++static inline void hung_task_clear_blocker(void)
++{
++	WARN_ON_ONCE(!READ_ONCE(current->blocker));
++
++	WRITE_ONCE(current->blocker, 0UL);
++}
++
++/*
++ * hung_task_get_blocker_type - Extracts blocker type from encoded blocker
++ * address.
++ *
++ * @blocker: Blocker pointer with encoded type (via LSB bits)
++ *
++ * Returns: BLOCKER_TYPE_MUTEX, BLOCKER_TYPE_SEM, etc.
++ */
++static inline unsigned long hung_task_get_blocker_type(unsigned long blocker)
++{
++	WARN_ON_ONCE(!blocker);
++
++	return blocker & BLOCKER_TYPE_MASK;
++}
++
++static inline void *hung_task_blocker_to_lock(unsigned long blocker)
++{
++	WARN_ON_ONCE(!blocker);
++
++	return (void *)(blocker & ~BLOCKER_TYPE_MASK);
++}
++#else
++static inline void hung_task_set_blocker(void *lock, unsigned long type)
++{
++}
++static inline void hung_task_clear_blocker(void)
++{
++}
++static inline unsigned long hung_task_get_blocker_type(unsigned long blocker)
++{
++	return 0UL;
++}
++static inline void *hung_task_blocker_to_lock(unsigned long blocker)
++{
++	return NULL;
++}
++#endif
++
++#endif /* __LINUX_HUNG_TASK_H */
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f96ac1982893..393d81978f40 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1240,7 +1240,11 @@ struct task_struct {
+ #endif
+ 
+ #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+-	struct mutex			*blocker_mutex;
++	/*
++	 * Encoded lock address causing task block (lower 2 bits = type from
++	 * <linux/hung_task.h>). Accessed via hung_task_*() helpers.
++	 */
++	unsigned long			blocker;
+ #endif
+ 
+ #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index dc898ec93463..79558d76ef06 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -22,6 +22,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/sched/debug.h>
+ #include <linux/sched/sysctl.h>
++#include <linux/hung_task.h>
+ 
+ #include <trace/events/sched.h>
+ 
+@@ -98,16 +99,18 @@ static struct notifier_block panic_block = {
+ static void debug_show_blocker(struct task_struct *task)
+ {
+ 	struct task_struct *g, *t;
+-	unsigned long owner;
+-	struct mutex *lock;
++	unsigned long owner, blocker;
+ 
+ 	RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "No rcu lock held");
+ 
+-	lock = READ_ONCE(task->blocker_mutex);
+-	if (!lock)
++	blocker = READ_ONCE(task->blocker);
++	if (!blocker ||
++	    hung_task_get_blocker_type(blocker) != BLOCKER_TYPE_MUTEX)
+ 		return;
+ 
+-	owner = mutex_get_owner(lock);
++	owner = mutex_get_owner(
++		(struct mutex *)hung_task_blocker_to_lock(blocker));
++
+ 	if (unlikely(!owner)) {
+ 		pr_err("INFO: task %s:%d is blocked on a mutex, but the owner is not found.\n",
+ 			task->comm, task->pid);
+diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+index 555e2b3a665a..61fa97da7989 100644
+--- a/kernel/locking/mutex.c
++++ b/kernel/locking/mutex.c
+@@ -29,6 +29,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/debug_locks.h>
+ #include <linux/osq_lock.h>
++#include <linux/hung_task.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/lock.h>
+@@ -191,7 +192,7 @@ __mutex_add_waiter(struct mutex *lock, struct mutex_waiter *waiter,
+ 		   struct list_head *list)
+ {
+ #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+-	WRITE_ONCE(current->blocker_mutex, lock);
++	hung_task_set_blocker(lock, BLOCKER_TYPE_MUTEX);
+ #endif
+ 	debug_mutex_add_waiter(lock, waiter, current);
+ 
+@@ -209,7 +210,7 @@ __mutex_remove_waiter(struct mutex *lock, struct mutex_waiter *waiter)
+ 
+ 	debug_mutex_remove_waiter(lock, waiter, current);
+ #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+-	WRITE_ONCE(current->blocker_mutex, NULL);
++	hung_task_clear_blocker();
+ #endif
+ }
+ 
+-- 
+2.25.1
 
 
 
