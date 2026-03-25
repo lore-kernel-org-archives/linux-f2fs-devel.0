@@ -4,120 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3DB1F109C02F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 15:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 75E30109C028
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Mar 2026 15:13:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=uprUeuDwUjTtvtAt2ykVfapi78FqV5E2bNCSe59t9dY=; b=M2U+r06kp6mZbWgWMLrNCfD32p
-	SU8F120EMvqzOyfxxB3IruNypoNSla7bLCXnAEHKTE1cPrVrt8Zk1tpOxGFjsaDS2ntO1Ghnq+4xc
-	1G6omUCLB37d43KG0JZN3PBOEIWDlZ8eU4EOm/AE8siAr1c/eO6MdgxAEWfWF2In5/0U=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=LQHLJPilqZPVY5kTi9bLTKofWxUXdKoPbrFIB5K8qFU=; b=Gip1VtTGmbodizWVafkxw9m7tr
+	7bguClxAumY+RTJ5Vm3P56y1if/TFfPyk5RNmbVXSA+AT0nUbU1VXFenyC1Oh0VgDLgvwM9mY/wqv
+	CFkDXswgxYqh7XMJ7RdojtOX4TS+LE1VWlHuAlUqh+zsy8ZONdrnxL2LC4riHFMHTpzw=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w5Pv3-0002uV-A6;
-	Wed, 25 Mar 2026 15:13:17 +0000
+	id 1w5PvP-0002vh-NU;
+	Wed, 25 Mar 2026 15:13:39 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@redhat.com>) id 1w5Pug-0002tq-58
+ (envelope-from <hch@lst.de>) id 1w5PvO-0002vb-IJ
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 15:12:54 +0000
+ Wed, 25 Mar 2026 15:13:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:In-Reply-To:MIME-Version:References:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xgQzcNVTgAYMtY/AG+BgYI0+wd9pZeBrIlwhVeuWoe0=; b=DPuAs3TK6qjM1lWvwq/JrgTOdK
- J/y08PuBPje4vNJX7BXDBKz7kA6627deKJZaJ1EDennaqV0Ug18IR+pz6zrMSVatsg8SQPPuJNym3
- Tta/ib+lZoZFNjzwsIs2eTAK1M0v/ZvufgDafcJ7VvEDQDbTO/nLpZMqe3ArpdDEG9ho=;
+ bh=+19C0e82RyTBkkeFT9u8iv2756DNPQteV+mA0Dh+pEs=; b=B1w6kbs5uZ1u0Ae27HUns1GaFR
+ gBJykcPK8PZqDogreP7r12NsiGG6J5lSrHBip9aivLeA/KlzNQZcias5imtpWClwUE6JsOEsHCcT/
+ ue3TYg4oat77XbUjDoc4Lu/NNLgAXhUljVbO21PPOGV7oPj5e5PNrGd6u6NM8k5I9ocQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
  :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=xgQzcNVTgAYMtY/AG+BgYI0+wd9pZeBrIlwhVeuWoe0=; b=FnssGFRY2h4WAb5T8ZKO4t/vSI
- sg1RZkvI4N2N4Fi0B2BJzqsSze9g44rVt97Ff5UOxCqMl4GSrtBSyMspec76oEviXRnMf5eu8b2Kd
- VSYBcq2i+79Z4UksVrnH2UT/WiHjtMyC1ta7yM2CKPFwwQ4HHt6VV+jrrvBDODHjKDXo=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124])
+ bh=+19C0e82RyTBkkeFT9u8iv2756DNPQteV+mA0Dh+pEs=; b=P0Nc1QFsq1AcO6sBpA1iYpdwC+
+ xL4nXKtGc1OiKeOok3wPWXI8QMoWydMw+y+5bPfVBE0FJJtYdh/zuiHVJyDdP+JYk0PntKINHIpPq
+ uHLCyhRJjUdfhqzGVy9NIwZQshh7gRYJMqlBYFoQnauJEC4LKmcTILJmKz9N3gMLthPM=;
+Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w5Puf-0007h6-HV for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 25 Mar 2026 15:12:54 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1774451562;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=xgQzcNVTgAYMtY/AG+BgYI0+wd9pZeBrIlwhVeuWoe0=;
- b=ejlqr86JSBzoNCSa6gf3P9uBJL7ZI4KmVwch/tp2KBgQqQGy8/50ORDh7c+UyJ7b7DNz67
- qHhJQPhzp0lSVnO6zTte0NsFZTosKlNXZw4UEq+OHy580+RgjjKAof4Kd3Yb5JRTowk2Sp
- 5jtOrnx2gEai7oBkKluo91ezbt7wY0s=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-446-0dToZ97vOI-oGDQapVX3ug-1; Wed, 25 Mar 2026 08:08:45 -0400
-X-MC-Unique: 0dToZ97vOI-oGDQapVX3ug-1
-X-Mimecast-MFC-AGG-ID: 0dToZ97vOI-oGDQapVX3ug_1774440524
-Received: by mail-wr1-f72.google.com with SMTP id
- ffacd0b85a97d-4362197d1easo1995025f8f.2
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 25 Mar 2026 05:08:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774440524; x=1775045324;
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=xgQzcNVTgAYMtY/AG+BgYI0+wd9pZeBrIlwhVeuWoe0=;
- b=Pnn5UZK8RnSXB96a7DrI93EjuSOWs06dlDjPeY8RK+Gxuoux+mW1h8812nqHRffgjM
- O5PsV8Jga1AZS4+T1lOGYJcrb3uoX9/VkthqG7KrE16a3mOBdTcUWEgBOt8AUH2Xwfst
- gKrcM6i+xwqSOQB9CD7u342JwkSGHSWoX5YcvOo0ZWNA1ltB2b0/oAtbJiqyXliIZbD4
- DPoXOesSV1181fL5GzNi38S+bwj+rSb/u937iVsza6YHoI2Sy9LNoMT8W1Q2TJg4E4Ew
- neMJKsBa1sXevDnMml1TgCVidVsu+dgfBV8Q5TqQQSJ2MClLwvz0mCwZDHnFOXIg8ahh
- 0gsA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCX7RFaRjTxv6XS3VAXbuDsNX6GO4DdTt0zjNfD7xovEoiOMNHx17yCM3di/WwNlpGBoGcOUwE+znFETsTXd1tpj@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YzLjt2aA3uCAonygogHSBlt3HT4clzDQLuVSe7j4fDY6iV3EYyg
- Hs80jO+d6oefudEwNpEYg94ImG/JfyMenzaMHesZOTa24YkI6VmXrqzaBIURqFmd27/NyCc3MRd
- 4SlLP7bPvLKWOKHrOw3vrJC0RR/hQuRqjbOcBjNpddxiT9G6Qfi7k58rBFyXGw3QnaxJLXchTBR
- vEuQ==
-X-Gm-Gg: ATEYQzwwCftHLIikaTGvrSdojvBl9EtzFfKymR0CZMsMlvONISP3D4JqZ9YDWwmLlMg
- FizNNQzKzpiv3+TjULBkPSowBvzPxL2McTbdOkJkqDKF5MFFiRY0ivx6F0fkQyqSbMtTxC9xuN3
- 510pVLUMJNP1k005DjBjXy2nHVQ/Z4aomQueEj6QNaarBQH9CKsOaLV4KNcexxPq6T8kzQzsLTG
- fjHZ8yGWB339kWH9nvdy0ghDWj/ocwQOYAVB6bORhfZ6s5npjey8LIYKjC4vZfaubWqwELlwVWN
- n8/RoWrtu57uvN5cOS4X9qzD5mk3bl+mVTSlo72hnuGDuQKFrichA7egUDN9xs4MZ1LaEzMw+YF
- oMFjdnYWIpV2Ngw==
-X-Received: by 2002:a05:6000:2c0c:b0:43b:436d:782a with SMTP id
- ffacd0b85a97d-43b88a2168cmr4549291f8f.5.1774440523998; 
- Wed, 25 Mar 2026 05:08:43 -0700 (PDT)
-X-Received: by 2002:a05:6000:2c0c:b0:43b:436d:782a with SMTP id
- ffacd0b85a97d-43b88a2168cmr4549233f8f.5.1774440523459; 
- Wed, 25 Mar 2026 05:08:43 -0700 (PDT)
-Received: from thinky ([91.245.205.131]) by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43b90f17158sm216982f8f.8.2026.03.25.05.08.42
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 25 Mar 2026 05:08:42 -0700 (PDT)
-Date: Wed, 25 Mar 2026 13:08:41 +0100
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <nune2zskdoz2buxwj73z652azx4pwwkpsjjluq55mk3odybhym@2lolknvk7ddf>
+ id 1w5PvN-0007l5-Sv for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 25 Mar 2026 15:13:38 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id A106768D07; Wed, 25 Mar 2026 09:05:25 +0100 (CET)
+Date: Wed, 25 Mar 2026 09:05:25 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Andrey Albershteyn <aalbersh@kernel.org>
+Message-ID: <20260325080525.GH952@lst.de>
 References: <20260319170231.1455553-1-aalbersh@kernel.org>
- <20260319170231.1455553-10-aalbersh@kernel.org>
- <20260325080407.GG952@lst.de>
+ <20260319170231.1455553-12-aalbersh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20260325080407.GG952@lst.de>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: K-ayrRk63iDnBtn8nwNknYxFevnsRSVaUDBcSG4x0cg_1774440524
-X-Mimecast-Originator: redhat.com
 Content-Disposition: inline
-X-Headers-End: 1w5Puf-0007h6-HV
-Subject: Re: [f2fs-dev] [PATCH v5 09/25] iomap: issue readahead for fsverity
- merkle tree
+In-Reply-To: <20260319170231.1455553-12-aalbersh@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1w5PvN-0007l5-Sv
+Subject: Re: [f2fs-dev] [PATCH v5 11/25] iomap: introduce
+ iomap_fsverity_write() for writing fsverity metadata
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -129,32 +76,21 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Andrey Albershteyn via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: fsverity@lists.linux.dev, ebiggers@kernel.org,
- Andrey Albershteyn <aalbersh@kernel.org>, djwong@kernel.org,
+Cc: fsverity@lists.linux.dev, ebiggers@kernel.org, djwong@kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, hch@lst.de,
  linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2026-03-25 09:04:07, Christoph Hellwig wrote:
-> On Thu, Mar 19, 2026 at 06:01:56PM +0100, Andrey Albershteyn wrote:
-> > Issue reading of fsverity merkle tree on the fsverity inodes. This way
-> > metadata will be available at I/O completion time.
-> 
-> Patches 8 to 10 really look like they should be merged to me.  They
-> all add the actual fsverity support to the iomap buffered read path,
-> and merging them and having a single explanation of the side seems
-> helpful both for review and future archeology
+On Thu, Mar 19, 2026 at 06:01:58PM +0100, Andrey Albershteyn wrote:
+> This is just a wrapper around iomap_file_buffered_write() to create
+> necessary iterator over metadata.
 
-I see, thanks, I will merge them.
+Looks good:
 
--- 
-- Andrey
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
 
 
