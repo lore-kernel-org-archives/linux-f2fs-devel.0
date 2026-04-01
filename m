@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AC1F110FCAE6
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  1 Apr 2026 21:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 76B4710FCAEA
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  1 Apr 2026 22:02:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=aJLVSIHw/KpTUKn7dHYolEJXhQp2RxxpMiq2pcbGY6U=; b=TGfDbe2NKUg8BoFeA/0vdGddMk
-	j2lo7avKD85JVNg+bvr3O1cRKs+ShXWIjIujA6LVaFBDYxJrYFRL+DKyIDh2Qr8AtYggoB1G0lyjw
-	4OuQiwH3smk+zKuhw2tDKTCdzZF2lQV0FEpEW/V468624ZaIdOez2LP8bKE0qG9SdJFA=;
+	bh=gHcddAB1fDXUrkVeMZzE+amF1VuTTFWFEEgLEnmsP1c=; b=QNM/vDvm4VJ6Tte9lIIK8GkIVX
+	EInCoIwToXZMnzYi9/WHe2n+enZC0q+trQbj1XPtMUEjUmFZ79TgkbGQ4QXwhuHZ4RlyQpzKyNx6H
+	AcRCjBVSwBR6+DauNamVqruWeRUrl7x1xfvbhzE7E1viOF/TJddZUhTDwIOfjpmzh974=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w82y4-0005iA-N1;
-	Wed, 01 Apr 2026 21:19:16 +0000
+	id 1w83eK-0001VP-5Q;
+	Wed, 01 Apr 2026 22:02:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1w82y3-0005i2-Hg
+ (envelope-from <ebiggers@kernel.org>) id 1w83eJ-0001VJ-3x
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 01 Apr 2026 21:19:15 +0000
+ Wed, 01 Apr 2026 22:02:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DV65+fK+aTlygf1u1TAw1mumFxNjza5Cu2q1OKV9vVY=; b=WBOOFHOCvXnafSIRvs2/3/s0m6
- tlvGvuUEzHjMUXe6lnuZQWGOMLTMp9ne+lrdZh22d1w0ckc1frsb8+NxuVJ+YUQpAVBRoVgEjIFXR
- FXlnT+lYx1YVcll221o96++L48SkpRjX5RjkYLzonKlhatGdv/avnwGkoiJAmQc0Y7sg=;
+ bh=6Nk+nzEvE8Lbp47gBX8ekto2tSuUHH2Zg7bpzr2JaZY=; b=lBrQRxewPfDtLP1X98u3c9FY+G
+ Hg7xgeJ22jRoLZmHNDYFVXUpNT8oKJ/CaHUjQ/ZZw7ZGhuv0W7K2R6Hlg7yBI8BLPD7oWHp1lvVBd
+ mXhATnWUHy1tis0EAsOMmBuhYP3QrMCyl28LiABIFBU/55sk9m53SjkLVqFAPAby8aio=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=DV65+fK+aTlygf1u1TAw1mumFxNjza5Cu2q1OKV9vVY=; b=K4+p6ljwQVBuBMGQUfg0nejoK2
- JEGiE97VzrPCUrUh8Px345P0xSVoVJwsvhbhPSAOhiHaCEWBwmsBOFM/KPQfzT8RM0eh4rTXX+F7W
- f8DyncO/oNZemYvHgXMxrZ8cwNuOxfWy5JurYtAvwXTgCL9K7VsqUjWVZEp1UPcu9lOI=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=6Nk+nzEvE8Lbp47gBX8ekto2tSuUHH2Zg7bpzr2JaZY=; b=MnvzbMPwSKLmU8PwNNYNw++LVV
+ ujkXYYzyxuk87GoR9E7+MGtq7x/Icz5Imrr7/pr7FGtUSj6LOoqL2G3l2faxxj9jGgRkB1nQpDGpD
+ cYXQ+Pa8IqPkqYeAJMsGPP++SMVT1fzjgqhUAXdY11fYgiK0GVcmADHgElKxKgDefU74=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w82y3-0000PL-3l for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 01 Apr 2026 21:19:15 +0000
+ id 1w83eI-0002AT-LH for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 01 Apr 2026 22:02:55 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 37583600CB;
- Wed,  1 Apr 2026 21:19:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92E56C4CEF7;
- Wed,  1 Apr 2026 21:19:03 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 145AE4070E;
+ Wed,  1 Apr 2026 22:02:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C417C4CEF7;
+ Wed,  1 Apr 2026 22:02:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1775078343;
- bh=ZUftJy/Eg2vooutQH6w/+XirdMYySx6JVlXp754Vgdk=;
+ s=k20201202; t=1775080963;
+ bh=XLe7iwOJXHsWYPpv5bKbhLQ02plXgKrNwG0uXVLyzcU=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=jD3Jb1tyAXHJ7rlEQVgRfpLV2q36bVM+ZajV5KTZtkYLuqlKdfLGdjCpcy0YnRnbi
- LoLgBIqHi+42FatuccDnBFDivdoaKpF07bf+PUeofoud0KB0kILvHTwfnNr+wV1Aa6
- ojA8OH7ghnBr07KKD5W+MJmxN0ig7il2HpVBOqc3Si1yz5HvBAiqiaYP7rfDfiQXz5
- gvCbKx8DnrxuEsyb7EO6QrlJeDeTqifD0tfUem+skhvVcglnV+FvF/Xw4hsMFllqjZ
- y+d3meadPcE1/VqbKbjkdKbo9sj1+GwnPXFD2uG1NnYG5a8cUTLgXieYD+hkSeKO8n
- ECkQRhTDfjUOA==
-Date: Wed, 1 Apr 2026 14:19:01 -0700
+ b=lv3WUjD5WCLSg7eVifiAgrFgfAdm8yUbb47Bzb+d3FXc476Hp55Aj+/MrhYGuemzn
+ 2TwtfnzU+nBNNHzir/JRbRqq7b/473/tN1dk1rNc4tzw1HVIXTbBVlZzdhYD/kOs/R
+ ndAtx8tw4TcCo23N75bwh9ynZ2Wdr8QtHA5o5AxbWmSpLW4WoiCGOXioDlgEm01gCS
+ MEl7SXfy8+qib4he4f01aW68NkUSQGUxgDUNGcJ9NBrPlBaZluupNrfzLHn0K66Y8r
+ rOl6E4oFzqGegIkTEPvnicsld4HcK02IV+pLKXoK1Wn6B0BUANnot3sU50dbNmtRPK
+ 0RPQ3EJ2+Caeg==
+Date: Wed, 1 Apr 2026 15:02:41 -0700
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20260401211901.GF2466@quark>
+Message-ID: <20260401220241.GG2466@quark>
 References: <20260331212827.2631020-1-aalbersh@kernel.org>
- <20260331212827.2631020-2-aalbersh@kernel.org>
+ <20260331212827.2631020-3-aalbersh@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260331212827.2631020-2-aalbersh@kernel.org>
-X-Headers-End: 1w82y3-0000PL-3l
-Subject: Re: [f2fs-dev] [PATCH v6 01/22] fsverity: report validation errors
- through fserror to fsnotify
+In-Reply-To: <20260331212827.2631020-3-aalbersh@kernel.org>
+X-Headers-End: 1w83eI-0002AT-LH
+Subject: Re: [f2fs-dev] [PATCH v6 02/22] fsverity: expose
+ ensure_fsverity_info()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,34 +98,64 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Mar 31, 2026 at 11:28:02PM +0200, Andrey Albershteyn wrote:
-> Reported verification errors to fsnotify through recently added fserror
-> interface.
+On Tue, Mar 31, 2026 at 11:28:03PM +0200, Andrey Albershteyn wrote:
+> This function will be used by XFS's scrub to force fsverity activation,
+> therefore, to read fsverity context.
 > 
 > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 > Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > ---
->  fs/verity/verify.c | 4 ++++
->  1 file changed, 4 insertions(+)
 
 Acked-by: Eric Biggers <ebiggers@kernel.org>
 
->  		if (memchr_inv(dblock->data, 0, params->block_size)) {
-> +			fserror_report_data_lost(inode, data_pos,
-> +						 params->block_size, GFP_NOFS);
->  			fsverity_err(inode,
->  				     "FILE CORRUPTED!  Data past EOF is not zeroed");
->  			return false;
-> @@ -312,6 +315,7 @@ static bool verify_data_block(struct fsverity_info *vi,
->  		data_pos, level - 1, params->hash_alg->name, hsize, want_hash,
->  		params->hash_alg->name, hsize,
->  		level == 0 ? dblock->real_hash : real_hash);
-> +	fserror_report_data_lost(inode, data_pos, params->block_size, GFP_NOFS);
+> +/**
+> + * fsverity_ensure_verity_info() - create verity info if it's not in memory yet
+> + * @inode: the inode for which verity info should be created
+> + *
+> + * Ensure this inode has verity info attached to it. Read fsverity descriptor
+> + * and creates verity based on that. Inodes opened outside of
+> + * file_operations->open will not have any verity info attached. This
+> + * info is required for any fsverity related operations.
+> + *
+> + * Return: 0 on success, -errno on failure
+> + */
+> +int fsverity_ensure_verity_info(struct inode *inode);
 
-The first case does the fserror call first and the log message second,
-and the second case does them in the opposite order.  I don't think it
-matters what the order is, but they should be consistent.
+As Christoph mentioned, fs/verity/ uses the convention of the kerneldoc
+for functions being above the function definition.
+
+I think the comment could also be clearer:
+
+> create verity info if it's not in memory yet
+
+Maybe "cache verity info if it's not already cached", to avoid potential
+confusion with enabling fsverity on the file.
+
+> Ensure this inode has verity info attached to it.
+
+Maybe add: "It's assumed the inode already has fsverity enabled."
+
+> Inodes opened outside of file_operations->open will not have any
+> verity info attached. This info is required for any fsverity
+> related operations.
+
+The first sentence could be misinterpreted as saying that this function
+won't do anything in that case.  The second sentence isn't clear what
+counts as "any fsverity related operation".  Also "opened" doesn't seem
+like the right word to use when talking about a filesystem-internal read
+that occurs without a file descriptor having been opened.
+
+Maybe replace with:
+
+* This needs to be called at least once before any of the inode's data
+* can be verified (and thus read at all) or the inode's fsverity digest
+* retrieved.  fsverity_file_open() calls this already, which handles
+* normal file accesses.  If a filesystem does any internal (i.e. not
+* associated with a file descriptor) reads of the file's data or
+* fsverity digest, it must call this explicitly before doing so.
+
+By the way, should there be a patch that converts
+ovl_ensure_verity_loaded() to use this?
 
 - Eric
 
