@@ -4,77 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 585EDD6AB10
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  2 Apr 2026 21:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A0A57E8536F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Apr 2026 14:43:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:Message-ID:
-	In-Reply-To:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ScbF1cEJLrssyX5ie8QJsoQuO2lLV2b7XpZLawUfngQ=; b=OIC0tFo41vNuAFLqsAV88sLRjj
-	s49Rua9EHO07fK5rszh+vxv+k8qtHA6FtBB/pVyb2K7sCH8uPCOBqMFOCoRK7AbjBm+r/eh4EKt67
-	1zoH4HGoJIC9BRbeNMyoRISdU05nHXuCxPwoCo5Cv0YzKBz4dfdZHlwyaELt3B7IA+V4=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=35YIKZ7A4vglAQP26q22bFNlg5pSwcFJtq5iEDZj3CE=; b=ISXV7VV+JFR/AtYW6IMQSGpuVV
+	7DgE6imO0mJG1+YgqNNk0dpFlxjLpkfz94WNAlYCr9tUOyi53tS7D7Afjo+lJba/77goh40uGENUI
+	//eS99SeMz6ldket4Jd8FMTFWWOnZOr+SMa3UMJZYsZtfqFsTrajcB3GOT4iErate07s=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1w8Q3j-0004jw-VY;
-	Thu, 02 Apr 2026 21:58:39 +0000
+	id 1w8fkT-0007jW-If;
+	Fri, 03 Apr 2026 14:43:49 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <pjw@kernel.org>) id 1w8Q3h-0004jo-Rz
+ (envelope-from <monty_pavel@sina.com>) id 1w8fkQ-0007jO-Bm
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 02 Apr 2026 21:58:37 +0000
+ Fri, 03 Apr 2026 14:43:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:Message-ID:
- In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XuToGNZ0fDyV9ckReF7x/iBdAj/35w5vB4q5GhoKJJE=; b=chppzhsBulAylYTgW+my7gInC8
- gbMe3Z5q61Rotw/g22Ixghd/gFpPWAjufagpf3aynIQpYG7tVT7h48Z/8Q1LMsS9AjcWD6FIcoq/i
- ZuZQpcunngNEPDP0qKgmivn7rP8iKPLWmy+StKepMAKuSowWTDEO7I594HAV1H/qKE/M=;
+ bh=AF4nYcla3VpIRuqQdqNpWrxZwQFtoeEwcSNMCzgIhlc=; b=CgK7Yh0Pms6/q7oVHB8D4Q/sMq
+ 12PRtW9MGsi4hXVtaw1xcDbPQoCPP6VtslTSrPaSujd3Jy8gaSt6mhJWufV3pnh6H6PTQi6zW4zW9
+ MtdT/+EO0Yq7eBOgUguEBj9vxVnMik8y6+93woBokncc592Pa3NkcwhDZxYO0nltTBiM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:References:Message-ID:In-Reply-To:Subject:cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=XuToGNZ0fDyV9ckReF7x/iBdAj/35w5vB4q5GhoKJJE=; b=MFIJVsSWue2jUPAWl7arkJmXLr
- LR0vRLXW10SNwLIDHTqqV6ovgHuT1qRevA4u8pMCv/yG64k/h2fVEfKVDGFPGERTySC7mjXZ/Cv+x
- F99CCKTBMv5YnpZkAHzevu9VVwuPI516JAyaCx4Wbg2v9HuOX3gAruYosm0BdqTHchfQ=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=AF4nYcla3VpIRuqQdqNpWrxZwQFtoeEwcSNMCzgIhlc=; b=Y
+ 6WuES8jhfaecxtdyfuflYNzpdb0KkfDORw/eOXeOrzjw+yelbrBFi3L87n1664ib/8T1gFzmqSWwF
+ f55LVpStJQ7CLC2ndkaypC44WPUL7SDS3LVUehcGeAzlF4EsMOWBsEaVWAF40xo0zisF6T6TQokmq
+ IZBcWMqJ6xrz1Fks=;
+Received: from r3-18.sinamail.sina.com.cn ([202.108.3.18])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1w8Q3h-00008F-7x for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 02 Apr 2026 21:58:37 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id B9BAC403EA;
- Thu,  2 Apr 2026 21:58:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76D96C116C6;
- Thu,  2 Apr 2026 21:58:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1775167106;
- bh=QvUc9vANqYsb1luDp8UYk1f8BqkeVaTMVXLV75eutnQ=;
- h=Date:From:To:cc:Subject:In-Reply-To:References:From;
- b=KBJzCsq7TNcgHpU+TWPAd3W8YuuJXdgpviR9Ow38UzYp/E+eDMYCQdUq5+04/Mnru
- vF8yruBgH9Kqoxj3RdUA00tDQnEgnr1qE7AXbmqG7qka9IVu/f1eZKTg86JWT+ETrn
- TjxI1jdECoYVYFvAydaPvhTr0DLyOkSNS0rHhfEWArmmkmeciwTpFwX+5aQHpstoUl
- foXfbAlUvknuR2UINHvJ3kK1f5ozCCWUSVy6PFFL3eEN4gpoDz+keSHvFP6Ep2zvPe
- Ej2doeiB7lotVTyVy6ov80wS5IsFWdnGSH4WR6z1XJ7lBV9TObDwXGWdYhpggyK3MT
- 1b1VbHt8uneOw==
-Date: Thu, 2 Apr 2026 15:58:18 -0600 (MDT)
-To: Yury Norov <ynorov@nvidia.com>
-In-Reply-To: <20260304012717.201797-9-ynorov@nvidia.com>
-Message-ID: <ee15482d-22a8-9686-ba64-d216b25d8e68@kernel.org>
-References: <20260304012717.201797-1-ynorov@nvidia.com>
- <20260304012717.201797-9-ynorov@nvidia.com>
+ id 1w8fkO-0001UY-A5 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 03 Apr 2026 14:43:46 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208;
+ t=1775227424; bh=AF4nYcla3VpIRuqQdqNpWrxZwQFtoeEwcSNMCzgIhlc=;
+ h=From:Subject:Date:Message-ID;
+ b=HIkqxWw+SCBYKGZT0A2ypa/tqziNwjz1Y8JLacBQ4mAdOsaa9WokbJuTlmvQRsD+q
+ ANWhwp6AXlrfLkkiSej/xn0gCkUHPVXZVPccSPGlBAU5gOV/b52I58dTbpDE07wNE3
+ 02ncnbqXat/6IaoLyXQeezABL0s8XyoB8oiYprrg=
+X-SMAIL-HELO: xiaomi-ThinkCentre-M760t.mioffice.cn
+Received: from unknown (HELO
+ xiaomi-ThinkCentre-M760t.mioffice.cn)([114.247.175.249])
+ by sina.com (10.54.253.32) with ESMTP
+ id 69CFD21400004103; Fri, 3 Apr 2026 22:43:34 +0800 (CST)
+X-Sender: monty_pavel@sina.com
+X-Auth-ID: monty_pavel@sina.com
+Authentication-Results: sina.com; spf=none smtp.mailfrom=monty_pavel@sina.com;
+ dkim=none header.i=none;
+ dmarc=none action=none header.from=monty_pavel@sina.com
+X-SMAIL-MID: 3632074456635
+X-SMAIL-UIID: 1A2EBCEA659143209B1AED43C96B5EFB-20260403-224334-1
+From: Yongpeng Yang <monty_pavel@sina.com>
+To: Chao Yu <chao@kernel.org>,
+	Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Fri,  3 Apr 2026 22:40:17 +0800
+Message-ID: <20260403144015.221811-3-monty_pavel@sina.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-X-Headers-End: 1w8Q3h-00008F-7x
-Subject: Re: [f2fs-dev] [PATCH 8/8] arch: use rest_of_page() macro where
- appropriate
+X-Headers-End: 1w8fkO-0001UY-A5
+Subject: [f2fs-dev] [PATCH] f2fs: fix node_cnt race between extent node
+ destroy and writeback
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,71 +89,100 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Paul Walmsley via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Paul Walmsley <pjw@kernel.org>
-Cc: Latchesar Ionkov <lucho@ionkov.net>, Zheng Gu <cengku@gmail.com>,
- kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Alexander Duyck <alexanderduyck@fb.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, dri-devel@lists.freedesktop.org,
- Jaroslav Kysela <perex@perex.cz>, linux-perf-users@vger.kernel.org,
- linux-mm@kvack.org, Eric Dumazet <edumazet@google.com>,
- Andreas Dilger <adilger.kernel@dilger.ca>, linux-nfs@vger.kernel.org,
- Dongsheng Yang <dongsheng.yang@linux.dev>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>, David Airlie <airlied@gmail.com>,
- linux-riscv@lists.infradead.org, Simona Vetter <simona@ffwll.ch>,
- linux-s390@vger.kernel.org, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Yury Norov <yury.norov@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- Alexandra Winter <wintera@linux.ibm.com>, Miklos Szeredi <miklos@szeredi.hu>,
- Michael Ellerman <mpe@ellerman.id.au>, linux-ext4@vger.kernel.org,
- x86@kernel.org, Tvrtko Ursulin <tursulin@ursulin.net>,
- linux-spi@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
- Aswin Karuvally <aswin@linux.ibm.com>, intel-gfx@lists.freedesktop.org,
- Jakub Kicinski <kuba@kernel.org>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Carlos Maiolino <cem@kernel.org>, Dominique Martinet <asmadeus@codewreck.org>,
- Thomas Gleixner <tglx@kernel.org>, dm-devel@lists.linux.dev,
- Jens Axboe <axboe@kernel.dk>, Albert Ou <aou@eecs.berkeley.edu>,
- Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- Will Deacon <will@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- Arnaldo Carvalho de Melo <acme@kernel.org>, linux-crypto@vger.kernel.org,
- linux-block@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- Borislav Petkov <bp@alien8.de>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- virtualization@lists.linux.dev, Eric Van Hensbergen <ericvh@kernel.org>,
- Paul Walmsley <pjw@kernel.org>, linux-arm-kernel@lists.infradead.org,
- Janosch Frank <frankja@linux.ibm.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Christian Brauner <brauner@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Theodore Ts'o <tytso@mit.edu>, v9fs@lists.linux.dev,
- Sean Christopherson <seanjc@google.com>, Linus Walleij <linusw@kernel.org>,
- linux-sound@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
- linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
- Andrew Lunn <andrew+netdev@lunn.ch>, Palmer Dabbelt <palmer@dabbelt.com>,
- Anton Yakovlev <anton.yakovlev@opensynergy.com>,
- Anna Schumaker <anna@kernel.org>, netdev@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Namhyung Kim <namhyung@kernel.org>,
- linuxppc-dev@lists.ozlabs.org, "David S. Miller" <davem@davemloft.net>,
- Trond Myklebust <trondmy@kernel.org>
+Cc: Yongpeng Yang <yangyongpeng@xiaomi.com>, stable@vger.kernel.org,
+ Yongpeng Yang <monty_pavel@sina.com>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, 3 Mar 2026, Yury Norov wrote:
+From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 
-> Switch arch code to using the macro. No functional changes intended.
-> 
-> Signed-off-by: Yury Norov <ynorov@nvidia.com>
+f2fs_destroy_extent_node() does not set FI_NO_EXTENT before clearing
+extent nodes. When called from f2fs_drop_inode() with I_SYNC set,
+concurrent kworker writeback can insert new extent nodes into the same
+extent tree, racing with the destroy and triggering f2fs_bug_on() in
+__destroy_extent_node(). The scenario is as follows:
 
-Acked-by: Paul Walmsley <pjw@kernel.org> # arch/riscv
+drop inode                            writeback
+ - iput
+  - f2fs_drop_inode  // I_SYNC set
+   - f2fs_destroy_extent_node
+    - __destroy_extent_node
+     - while (node_cnt) {
+        write_lock(&et->lock)
+        __free_extent_tree
+        write_unlock(&et->lock)
+                                       - __writeback_single_inode
+                                        - f2fs_outplace_write_data
+                                         - f2fs_update_read_extent_cache
+                                          - __update_extent_tree_range
+                                           // FI_NO_EXTENT not set,
+                                           // insert new extent node
+       } // node_cnt == 0, exit while
+     - f2fs_bug_on(node_cnt)  // node_cnt > 0
 
+Additionally, __update_extent_tree_range() only checks FI_NO_EXTENT for
+EX_READ type, leaving EX_BLOCK_AGE updates completely unprotected.
 
-- Paul
+This patch set FI_NO_EXTENT under et->lock in __destroy_extent_node(),
+consistent with other callers (__update_extent_tree_range and
+__drop_extent_tree) and check FI_NO_EXTENT for both EX_READ and
+EX_BLOCK_AGE tree.
+
+Fixes: 3fc5d5a182f6 ("f2fs: fix to shrink read extent node in batches")
+Cc: stable@vger.kernel.org
+Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
+---
+ fs/f2fs/extent_cache.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 0ed84cc065a7..87169fd29d89 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -119,9 +119,10 @@ static bool __may_extent_tree(struct inode *inode, enum extent_type type)
+ 	if (!__init_may_extent_tree(inode, type))
+ 		return false;
+ 
++	if (is_inode_flag_set(inode, FI_NO_EXTENT))
++		return false;
++
+ 	if (type == EX_READ) {
+-		if (is_inode_flag_set(inode, FI_NO_EXTENT))
+-			return false;
+ 		if (is_inode_flag_set(inode, FI_COMPRESSED_FILE) &&
+ 				 !f2fs_sb_has_readonly(F2FS_I_SB(inode)))
+ 			return false;
+@@ -644,6 +645,8 @@ static unsigned int __destroy_extent_node(struct inode *inode,
+ 
+ 	while (atomic_read(&et->node_cnt)) {
+ 		write_lock(&et->lock);
++		if (!is_inode_flag_set(inode, FI_NO_EXTENT))
++			set_inode_flag(inode, FI_NO_EXTENT);
+ 		node_cnt += __free_extent_tree(sbi, et, nr_shrink);
+ 		write_unlock(&et->lock);
+ 	}
+@@ -688,12 +691,12 @@ static void __update_extent_tree_range(struct inode *inode,
+ 
+ 	write_lock(&et->lock);
+ 
+-	if (type == EX_READ) {
+-		if (is_inode_flag_set(inode, FI_NO_EXTENT)) {
+-			write_unlock(&et->lock);
+-			return;
+-		}
++	if (is_inode_flag_set(inode, FI_NO_EXTENT)) {
++		write_unlock(&et->lock);
++		return;
++	}
+ 
++	if (type == EX_READ) {
+ 		prev = et->largest;
+ 		dei.len = 0;
+ 
+-- 
+2.43.0
+
 
 
 _______________________________________________
