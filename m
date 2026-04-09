@@ -4,75 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 48FC6EA3C5E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  9 Apr 2026 13:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 75A2BEA3C5E
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  9 Apr 2026 13:47:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=PKvfAKkCTSpkdm087AvpUtix75s3g1QkUzSd8/pdJEc=; b=KBwB/ytucTy3dfgUwzlmk1IAug
-	W6cx4S+8V3vaemKLfO/SGcZmoqJRebZ2mcHfp5V7yncKtiGBQpWr6nFcbqdrXraF787GLzG2dsGxo
-	gsLjaI6NuQusPHraZB3pMMfDwObvz0jghH8i1K0XkHEWaZgyVlHg0IsqwJB8vcQWYnmc=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=All95XjDn0ZVTcrQTzQTXtVlPF1FG3IB9j9uH2UI5TM=; b=lM+e9rNuEx6wKrxw9D+avSHVxw
+	3nB2ulXrvQcPu8yCfJrGlYH50XblznaBtcQUmXKjRqB/VI5HQZHRYGJ2M1AeN0/bp+9a8AnFCsoSv
+	k8H/GWt2MT6jXWCH0o3IN4kXuqCByM8KmoMGgGJFNKTL3ba8LCXODaRY9r4WqC/xMV2Y=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wApif-0004FO-Ku;
-	Thu, 09 Apr 2026 13:46:54 +0000
+	id 1wApil-0007pr-Ph;
+	Thu, 09 Apr 2026 13:46:59 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1wApic-0004FA-Jo
+ (envelope-from <jaegeuk@kernel.org>) id 1wApil-0007pl-2R
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 09 Apr 2026 13:46:51 +0000
+ Thu, 09 Apr 2026 13:46:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=C0BoW/26DjBVbbAy4qqMxf16Xqr59+yEK17ayhxkE20=; b=bUv2KUVkZ5lZQNhQhUSI/mAW+L
- c5ioEVO77tbzAMSBcf0SwOmWkinEcNGGT6yUEWSN04MBdlIUtu6+GiYXPoTQD1wDFmxl2NqHmlgfL
- ymn2Mu7HHHL9EUgtlOtzklg0czvhtRQhoIEF5M3DXJkUXdtCO3WusI9Epljh44P3JqZc=;
+ bh=qspiTaTNVCoVLqTJkeH+WvY3URWeJr5uCJ2WqXqMyAw=; b=WYRuwOG+xM9LpVprQ7zaCQ6FJN
+ buYUkJQ9kwEw5lisZ+gupBdWl+3Og7Lc07c86RVb7/joeb1FUuF4BquvjAyMlzMuXybvIgkOVdQN0
+ YkLpN0DqpCVBe05q1lJ3Cpw6VhoOxgQFqu0kJF2p2nHtLxvFJka2o5jnpjgg0zDMuCLU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=C0BoW/26DjBVbbAy4qqMxf16Xqr59+yEK17ayhxkE20=; b=b
- jwYt0FlfBHtbiBR29LnWeRNAoAs2hln6Zzd+Xj6uFK5gUtsuWgO0w4+I705mxhiEJYDzZ5uhmuMBb
- OruJC1UIyFWNIgp6yKKLD5WKqxEZPHeGGBYGWDO8Y9G1nIQCBDJqAAGHzfZLq6PFzmne0dxvxpgsP
- FXl5/BLHU/N/oZnY=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ List-Owner:List-Archive; bh=qspiTaTNVCoVLqTJkeH+WvY3URWeJr5uCJ2WqXqMyAw=; b=T
+ 31aaoap+xwaTOZ6OoenjDqsH2k+NxN0LcTeapcoMUhXGLtFgUee5vaU0NQFn6kHHxWKCnt6CNnAES
+ l+W6qxSkqDjqDyY0xJdtN6V/2bMp903L2V8tqArRtuveQQhPRmh3XY2/Cu8mfE2wj+b3QzUjl4VzP
+ BHRKv/m9oQJaKZlo=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wApiW-0004wN-HM for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 09 Apr 2026 13:46:45 +0000
+ id 1wApik-0004y1-MY for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 09 Apr 2026 13:46:59 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id D200760120
+ by sea.source.kernel.org (Postfix) with ESMTP id 6A63141834
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  9 Apr 2026 13:46:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DFF4C4CEF7;
- Thu,  9 Apr 2026 13:46:33 +0000 (UTC)
+ Thu,  9 Apr 2026 13:46:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C1A1C4CEF7;
+ Thu,  9 Apr 2026 13:46:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1775742393;
- bh=RvxA4laON9W1FR3Xd1xF3nVWeCQ5r3aXfwOl914BDiw=;
+ s=k20201202; t=1775742413;
+ bh=PpmMwSW+/A3af15jJQ6bPRLPPjBYeKMEVB/gZI0R/Js=;
  h=From:To:Cc:Subject:Date:From;
- b=uMEzNo044FLz26hw8Ky11K+AE9yj1n851Pd9BA1tSHfNXbUKQEz+udS2GdNzL5+uE
- gDc77Vx8VcJ3KBdX8CVGHRZm4T5VyI0sD74TZUZgaOOhtINwBnsBoAW8c8JAEkCeIS
- 6W7uQmlbGfdz6D4damYA/4q04KxDw1IMxUIhEEauzi4D/0L+e/p+Qxlcxc5AGl4vTf
- 1O1LoXgwedp56aHq/Cc3dUFbRp4XGPwk1AbSAL6jUDuOn9woDpqjcH1E6JGxaNqzMU
- Jjg11Vsl3fWmc4Tb8NW3FVBzDZ5cSUBqkplyQmHNcF6UsdI+ApMumwOyrVlTimmSF/
- FmQmIBERrC2+A==
+ b=Q0XGVpmYGJT1JuC+OlnCcmZDzlb4zpq9AD4p2l8QnzceAhAhEUiob+oGu8EUafKUX
+ GogIEVj593A76yN1jvmBZS5IyC/8mNcs+z0rnIyZ49lLKeCc1mTwcxd3VXUhkLrl3r
+ 2ekYHInpimibMTPOOfsGemHsEPCqbq40IklR9rWtBRPjjqkSNAJPza6pvW0RhuFVT9
+ oWfBkRxRMrIRtFOEp/i35lFXhho1xUzsCjZBke4L8Et5OcZ9DewD3XgVcFTwqOT4Sw
+ Hu4UQaw1ceB0Vi2wZvZ95L0KxCyANWRPNvTfEwogRMt49DZLo8a04H4AkQlGtfsxql
+ o+lthW25l4XSw==
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Thu,  9 Apr 2026 13:46:29 +0000
-Message-ID: <20260409134630.3693274-1-jaegeuk@kernel.org>
+Date: Thu,  9 Apr 2026 13:46:49 +0000
+Message-ID: <20260409134649.3693469-1-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.53.0.1213.gd9a14994de-goog
 MIME-Version: 1.0
-X-Headers-End: 1wApiW-0004wN-HM
-Subject: [f2fs-dev] [PATCH 1/2] f2fs_io: support xattr(large_folio)
+X-Headers-End: 1wApik-0004y1-MY
+Subject: [f2fs-dev] [PATCH] f2fs_io: fix length for setxattr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,118 +91,44 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-[Script]
-dd if=/dev/zero of=/mnt/test/test bs=1M count=1024
-f2fs_io setxattr user.fadvise 1 /mnt/test/test
-chmod 0400 /mnt/test/test
-sync -f /mnt/test/test
-echo 3 > /proc/sys/vm/drop_caches
-f2fs_io read 1 0 100000 mmap 0 1 /mnt/test/test
-f2fs_io get_fadvise /mnt/test/test
-
-[Output]
-1024+0 records in
-1024+0 records out
-1073741824 bytes (1.1 GB, 1.0 GiB) copied, 0.520712 s, 2.1 GB/s
-setxattr /mnt/test/test CREATE: name: user.fadvise, value: 1: ret=0
-Read 409600000 bytes total_time = 106757 us, BW = 4286 MB/s, IO time = 95577 us, mlock time = 11173 us, print 1 bytes:
-00000000 : 00
-fadvise=0x1, advise_type: largefolio
-
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- tools/f2fs_io/f2fs_io.c | 32 ++++++++++++++++++++++++++++++++
- tools/f2fs_io/f2fs_io.h |  6 ++++++
- 2 files changed, 38 insertions(+)
+ tools/f2fs_io/f2fs_io.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index 680c06218394..8b9f9ef22eef 100644
+index c5f1da3e6313..680c06218394 100644
 --- a/tools/f2fs_io/f2fs_io.c
 +++ b/tools/f2fs_io/f2fs_io.c
-@@ -2084,6 +2084,7 @@ static void do_setxattr(int argc, char **argv, const struct cmd_desc *cmd)
- 	int ret, len;
+@@ -2081,7 +2081,7 @@ static void do_listxattr(int argc, char **argv, const struct cmd_desc *cmd)
+ 
+ static void do_setxattr(int argc, char **argv, const struct cmd_desc *cmd)
+ {
+-	int ret;
++	int ret, len;
  	char *value;
  	unsigned char tmp;
-+	unsigned int tmp_u;
  
- 	if (argc != 4) {
- 		fputs("Excess arguments\n\n", stderr);
-@@ -2095,6 +2096,10 @@ static void do_setxattr(int argc, char **argv, const struct cmd_desc *cmd)
+@@ -2094,15 +2094,17 @@ static void do_setxattr(int argc, char **argv, const struct cmd_desc *cmd)
+ 	if (!strcmp(argv[1], F2FS_SYSTEM_ADVISE_NAME)) {
  		tmp = strtoul(argv[2], NULL, 0);
  		value = (char *)&tmp;
- 		len = 1;
-+	} else if (!strcmp(argv[1], F2FS_USER_FADVISE_NAME)) {
-+		tmp_u = strtoul(argv[2], NULL, 0);
-+		value = (char *)&tmp_u;
-+		len = sizeof(unsigned int);
++		len = 1;
  	} else {
  		value = argv[2];
- 		len = strlen(value);
-@@ -2217,6 +2222,32 @@ static void do_get_advise(int argc, char **argv, const struct cmd_desc *cmd)
- 	printf("\n");
- }
++		len = strlen(value);
+ 	}
  
-+#define get_fadvise_desc "get_fadvise"
-+#define get_fadvise_help "f2fs_io get_fadvise [file_path]\n\n"
-+
-+static void do_get_fadvise(int argc, char **argv, const struct cmd_desc *cmd)
-+{
-+	int ret;
-+	unsigned int value;
-+
-+	if (argc != 2) {
-+		fputs("Excess arguments\n\n", stderr);
-+		fputs(cmd->cmd_help, stderr);
-+		exit(1);
-+	}
-+
-+	ret = getxattr(argv[1], F2FS_USER_FADVISE_NAME, &value, sizeof(value));
-+	if (ret != sizeof(value)) {
-+		perror("getxattr");
-+		exit(1);
-+	}
-+
-+	printf("fadvise=0x%x, advise_type: ", value);
-+	if (value & (1 << F2FS_XATTR_FADV_LARGEFOLIO))
-+		printf("largefolio");
-+	printf("\n");
-+}
-+
- #define ftruncate_desc "ftruncate a file"
- #define ftruncate_help					\
- "f2fs_io ftruncate [length] [file_path]\n\n"	\
-@@ -2626,6 +2657,7 @@ const struct cmd_desc cmd_list[] = {
- 	CMD(removexattr),
- 	CMD(lseek),
- 	CMD(get_advise),
-+	CMD(get_fadvise),
- 	CMD(ioprio),
- 	CMD(ftruncate),
- 	CMD(test_create_perf),
-diff --git a/tools/f2fs_io/f2fs_io.h b/tools/f2fs_io/f2fs_io.h
-index b0d40996f302..539964fc27d3 100644
---- a/tools/f2fs_io/f2fs_io.h
-+++ b/tools/f2fs_io/f2fs_io.h
-@@ -186,6 +186,7 @@ struct fsverity_enable_arg {
- #define F2FS_IOC_FSSETXATTR		FS_IOC_FSSETXATTR
- 
- #define F2FS_SYSTEM_ADVISE_NAME	"system.advise"
-+#define F2FS_USER_FADVISE_NAME "user.fadvise"
- #define FADVISE_COLD_BIT	0x01
- #define FADVISE_LOST_PINO_BIT	0x02
- #define FADVISE_ENCRYPT_BIT	0x04
-@@ -195,6 +196,11 @@ struct fsverity_enable_arg {
- #define FADVISE_VERITY_BIT	0x40
- #define FADVISE_TRUNC_BIT	0x80
- 
-+/* used for F2FS_USER_FADVISE_NAME */
-+enum {
-+	F2FS_XATTR_FADV_LARGEFOLIO,
-+};
-+
- /* used for F2FS_IOC_IO_PRIO */
- enum {
- 	F2FS_IOPRIO_WRITE = 1,  /* high write priority */
+-	ret = setxattr(argv[3], argv[1], value, strlen(argv[2]), XATTR_CREATE);
++	ret = setxattr(argv[3], argv[1], value, len, XATTR_CREATE);
+ 	printf("setxattr %s CREATE: name: %s, value: %s: ret=%d\n",
+ 			argv[3], argv[1], argv[2], ret);
+ 	if (ret < 0 && errno == EEXIST) {
+-		ret = setxattr(argv[3], argv[1], value, strlen(argv[2]), XATTR_REPLACE);
++		ret = setxattr(argv[3], argv[1], value, len, XATTR_REPLACE);
+ 		printf("setxattr %s REPLACE: name: %s, value: %s: ret=%d\n",
+ 				argv[3], argv[1], argv[2], ret);
+ 	}
 -- 
 2.53.0.1213.gd9a14994de-goog
 
