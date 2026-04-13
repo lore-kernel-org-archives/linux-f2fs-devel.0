@@ -4,78 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AB465F531DC
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Apr 2026 22:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E3E69F531DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Apr 2026 22:47:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Cc:Content-ID:Content-Description:Resent-Date:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=0oqhDRVp7HlicEcD8RdfDpC+imq1vVdOse9OYEUQZSE=; b=J+C4tHDKvBTCDqQnb+d2UhGJ4L
-	Gf09v0in5Wl+dC94oIfc0f6mcymzRTR66MpLkYQyMGYoEhKTsJKwiK0AIOeltOcS7UVRXsUJNUXx8
-	sGeMKVwlJIvPBSB6OW352alzw+GjxBx3vgbDvzbqKkihIwE9KJ2WZIZzNyKy7LChQXFk=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=IoeMHwz2CXgqD9foruQXJuHMY/t/Z9eFyxy9RAhw1q0=; b=l+mpjvxv68JCSB18qaDHx+6N0B
+	FipQI2PXHEgMUbOOx9qra06mO4Hm6F5RMO2q0i2FkItgWNr2KvkfMlJ4evVxJZPSxtrtRLSZwBhdC
+	GRi6A1rvinY9Uu3FA704B3ii/rXa/W4APhSMgkhSs6iQf/KEe5PX6Kyuvr7lm9X5sLDk=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wCQ3H-0000CH-2l;
-	Mon, 13 Apr 2026 22:46:43 +0000
+	id 1wCQ41-0005VQ-Qo;
+	Mon, 13 Apr 2026 22:47:29 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1wCQ3F-0000CA-VG
+ (envelope-from <jaegeuk@kernel.org>) id 1wCQ40-0005VK-VW
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 13 Apr 2026 22:46:41 +0000
+ Mon, 13 Apr 2026 22:47:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ed6NjF8u4DKfs50ZairXzX8oJdI9IJ6y8PSMQ8MJQK0=; b=R5tChF/K1ysZSV/gHGTir5cMfr
- R7MZgwJ9829MgeitC/+HRUAF9mLVF255TsmvmNMy7LJXKfmZTW4QMJbpNRmbBnWsr9LFVumj0QAy/
- 63jpi0I5uPu620NeWGbN7GOG5wAXepIug/AspjkZHACD0Mi3F8CX2dd4gPMDrjAFl8j8=;
+ bh=72Ck8//wWhXz9s8uAFJctt5DmDg9/B70EJAbFuH3/lA=; b=m48CPy1PH+2Utn0JmO+/YI2k+p
+ vh66UAPArV+AMAoERujs7o3UGFe2IKCRQoZFeBEUo8r9UY6wjkgCKOvF30OZQHhspx16rfzds5Or8
+ bt1ps2x4lYSa4a5tNIkiGHjAMlBjbE3nUHjjsTC90mKmHZaR8WqEELGj8qgf+C4oKsmQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:To:
- From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ed6NjF8u4DKfs50ZairXzX8oJdI9IJ6y8PSMQ8MJQK0=; b=eFOwxYXAPDAtpieMdiHurSd/Oa
- jFsxGWHD2SD2RgxjOnyw9sL+S04pT3CqR+2cdIil2qI44shbRVcv1+tVIkPqMwL8FmsRhdnbx1MUf
- STHjW3bELMM8uGu27xXIzmZP57XuqapYfqguyufyJxidsbVTcwB2tjCRnNl0COY6Q2aA=;
+ bh=72Ck8//wWhXz9s8uAFJctt5DmDg9/B70EJAbFuH3/lA=; b=m8QTvOGt90eGvXCuFvSZpPirvK
+ J9eThZbyw76gEakpefSdQoh3v3Jh48Qwbndln7dUjhj/RZrUJjnosimP55lYFXU+RDbY6HzZ2mN/8
+ jGoGlpPnp//N/MdcbqpYP36F4n63MY19oWIa8ufhr11IZ659cDlSTCXmZ52B6Ujbflj8=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wCQ3F-000564-J6 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 13 Apr 2026 22:46:41 +0000
+ id 1wCQ40-00058n-Id for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 13 Apr 2026 22:47:28 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 36FBC43674
+ by sea.source.kernel.org (Postfix) with ESMTP id 4AE35418D5
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 13 Apr 2026 22:46:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01058C2BCAF;
- Mon, 13 Apr 2026 22:46:30 +0000 (UTC)
+ Mon, 13 Apr 2026 22:47:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E15EC2BCAF;
+ Mon, 13 Apr 2026 22:47:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1776120391;
- bh=uSNfWH9CexRDvlTXr+w3luyUgQKOD+ai2y34931n82Q=;
- h=Date:From:To:Subject:References:In-Reply-To:From;
- b=PKV7TAIiy0JVDpUk0FS2caf9bsF9AEoLbaJyJjQtklB2KRXDhgJsbs2dIrU4GZBlF
- Ypavspx0BewVfd4k5XDktLvw9lmz4NQaOt0cyhJBqteNmNe38cpI5IaHBlRDITH98e
- Z7uCoEYpc/hQLi16WTtZntL37yaVsX7Qg4HoZDtmEWJRnM+b3cY5k1L0C1fytNkg6o
- nk6pZkZP5Z7BsSlhh0OWUosZZmuwHsxFsV5dcfdEZkj7e40Ue17HjvvBTSbSfx7k4/
- HI3UOV6OPTMn80g+w4AEj/9a6DXO4dsB7RYbxjDkDJSkW9P9HDWla3v2wAxuLjqBj8
- l9x18ewim58/A==
-Date: Mon, 13 Apr 2026 22:46:29 +0000
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Message-ID: <ad1yRX54HIx-PAf3@google.com>
+ s=k20201202; t=1776120443;
+ bh=PBJPML5TBMWM87+bWX2GivtKR9lgNeG0jmnaOaw+fo8=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=ggm2pcEb6HtsWCEHl7guOnOOpQ1lwohuMHDhEePL1ne2uAOd0yd0+WK7S72A55Aft
+ gCWgS8awDkko0oae0YULL7cZ7GKxaFwgS46JaR148irtVTCnHe0eY0fEbh6HzmAD3j
+ 9GUeJmekC/V6E5y2bU6q5SAZ6gDfYgzq3eYvK3acnRjWE4EkMIyati+v1Q/b4M7on8
+ hW6Z79Kb79OBYW8WAnc++BmjbK2Vf+1vFqK3d1eJ/6myw6iPHws46Jy+lULW3u1C0C
+ YvN3309+UQHfQ5Q/SqaQFxEfZrvTYgUtTux7Ja1fHseAtydwa2XsXntidglpacwXIy
+ J7QMQcKG1ERww==
+Date: Mon, 13 Apr 2026 22:47:21 +0000
+To: Chao Yu <chao@kernel.org>
+Message-ID: <ad1yedxHjn_IhgKV@google.com>
 References: <20260406154940.2407853-1-jaegeuk@kernel.org>
  <adaasm42rLxRY2GN@google.com>
+ <116344cd-c591-42c9-9593-2e999c2029d8@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <adaasm42rLxRY2GN@google.com>
-X-Headers-End: 1wCQ3F-000564-J6
-Subject: Re: [f2fs-dev] [PATCH v4] f2fs: do not support mmap write for large
+In-Reply-To: <116344cd-c591-42c9-9593-2e999c2029d8@kernel.org>
+X-Headers-End: 1wCQ40-00058n-Id
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: do not support mmap write for large
  folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -90,48 +91,52 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Let's check mmap writes onto the large folio, since we don't support writing
-large folios.
+On 04/13, Chao Yu wrote:
+> On 4/9/2026 2:13 AM, Jaegeuk Kim via Linux-f2fs-devel wrote:
+> > Let's check mmap writes onto the large folio, since we don't support writing
+> > large folios.
+> > 
+> > Reviewed-by: Daeho Jeong <daehojeong@google.com>
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> > 
+> >   - log v2:
+> >    : add comments
+> > 
+> >   fs/f2fs/file.c | 7 ++++++-
+> >   1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index 2c4880f24b54..c0220cd7b332 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -82,7 +82,12 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+> >   	int err = 0;
+> >   	vm_fault_t ret;
+> > -	if (unlikely(IS_IMMUTABLE(inode)))
+> > +	/*
+> > +	 * We only support large folio on the read case.
+> > +	 * Don't make any dirty pages.
+> > +	 */
+> > +	if (unlikely(IS_IMMUTABLE(inode)) ||
+> > +	    mapping_large_folio_support(inode->i_mapping))
+> >   		return VM_FAULT_SIGBUS;
+> 
+> The code itself looks good, since it's an impossible case, should we
+> use f2fs_bug_on(, mapping_large_folio_support()) to catch any bug case
+> rather than just returning error here w/o log?
 
-Reviewed-by: Daeho Jeong <daehojeong@google.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
+Instead of kernel panicing for the production, I'd leave a kernel message first.
 
- - add f2fs_err to catch any issue
-
- fs/f2fs/file.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 2c4880f24b54..e917342cb828 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -82,8 +82,17 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 	int err = 0;
- 	vm_fault_t ret;
- 
--	if (unlikely(IS_IMMUTABLE(inode)))
-+	/*
-+	 * We only support large folio on the read case.
-+	 * Don't make any dirty pages.
-+	 */
-+	if (unlikely(IS_IMMUTABLE(inode)) ||
-+	    mapping_large_folio_support(inode->i_mapping)) {
-+		f2fs_err(sbi, "Not expected: immutable: %d large_folio: %d",
-+				IS_IMMUTABLE(inode),
-+				mapping_large_folio_support(inode->i_mapping));
- 		return VM_FAULT_SIGBUS;
-+	}
- 
- 	if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED)) {
- 		err = -EIO;
--- 
-2.54.0.rc0.605.g598a273b03-goog
-
+> 
+> Thanks,
+> 
+> >   	if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED)) {
 
 
 _______________________________________________
