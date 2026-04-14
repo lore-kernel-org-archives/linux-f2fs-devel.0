@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A0CF0ED7B87
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Apr 2026 08:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AD4D5ED7B87
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Apr 2026 08:13:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=e8qfyoSPyPfjE0jCCqLhRQvm/sqiAGHIjfAWqfboNlU=; b=LJHGvE4hUvEh4dy7UfLU7a7jt6
-	sXCz93yOP0TGlna5TUYFz/mmgb0GtfG+sFWs2PrQI//4z86IThASW0G3yAfZb0e6WZR1QHEYpbMNP
-	WWqLNgFfIw+ZTCd+KPcth2g8M5H4Ruq+k+/J2p6vcZvixYrWnmmNa1I0Zr5xyx37PEUk=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=cnGjsFsg8EPT+0l+uWk/PFOGXjGS4k7CSMPenqAKGz8=; b=XOneDxDvZsVI4n6OyP1F/WJ4tq
+	4yzwCvplkVu5/90I/YkiserBc+wdLmqh6+JWZWx+8AeRPveoQ0BYTxnH4dUBcjcNN9Gz7OeuKUqCK
+	c82wU7Y+T0gRYDzadySheUZKLFxMRZKpJtROEqA0yLLOyQXSS9X3u+6qxFMQ/46sTWvU=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wCYsM-0004H9-Ga;
-	Tue, 14 Apr 2026 08:12:03 +0000
+	id 1wCYta-0003xa-Hm;
+	Tue, 14 Apr 2026 08:13:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1wCYsL-0004Gt-35
+ (envelope-from <hch@lst.de>) id 1wCYtW-0003uz-II
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 14 Apr 2026 08:12:01 +0000
+ Tue, 14 Apr 2026 08:13:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=HEStJqbTo3yv+ZdS4FgnJQ1Tvb
- T7vBPxXKpgGSj5A7oN5wjimiW9c00i7j/XmH4jlYAbkCHuzL6gPQbNmVXgyCR5+/y7/YSmxI38mJP
- Oq0cuRg6QJwbY6qXvDEWvqzDMOz8MsLdtV+YU68wxRheC1SkHn8Juz7H+Txi/LMI3BGU=;
+ bh=sZX6Fhebw706ATb2AKtA4h357tHEeyJwaMnpgengSjc=; b=L6Kr7vOMSXrFI7iWDPbbdcEXxH
+ TtRgg5BSH6Ew36yIxzLtQ8HpDE91r7nEc1Pzlp5t5mzvLxRPUfuD/6v/zlaBtOyatrLcLsllhj+4g
+ AcMZzB4waXTklBiUDtMYQ+JmTtZd1Dt99FMAEIWNbvdVSvtVr7mnvnh+c+qnXJ3jilY4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,29 +42,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=FcLBAL6DXCMZKsHyQmNsNJDG5q
- DyetS2D+U/pmsDhSx35obbHW/F/diFLRTFoyRHYk2lC9/Hc/ldMWnhWWMeTLq0Ewb1EX8aLYnv/gz
- q6VfLnTGjSGw96meZYq7+Jkzkr1EJJS3fASrHokm93f+kFS2fSN+6KEs0pPvC7NGQfVw=;
+ bh=sZX6Fhebw706ATb2AKtA4h357tHEeyJwaMnpgengSjc=; b=D63BjAoSpBp9TyU2reHgXYC424
+ sBvRznSboP/g4LfoVgTo8SoaV6xA6+hJSwv++HHeI1MTKRQdwElMCP2bSx04yBnMxGXoa9cfmS8kn
+ 0AWZYNX9tAv74hbxJPgQiMRBlKtQmuk1LvYgVxeZTUmqIzbuB+5F3hDrGjkq0GOSGOm0=;
 Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wCYsK-0003n8-DF for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 14 Apr 2026 08:12:01 +0000
+ id 1wCYtW-0003xQ-0a for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 14 Apr 2026 08:13:14 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id E6CE468CFE; Tue, 14 Apr 2026 10:11:46 +0200 (CEST)
-Date: Tue, 14 Apr 2026 10:11:46 +0200
+ id BD21E68CFE; Tue, 14 Apr 2026 10:13:01 +0200 (CEST)
+Date: Tue, 14 Apr 2026 10:13:01 +0200
 From: Christoph Hellwig <hch@lst.de>
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20260414081146.GA11138@lst.de>
+Message-ID: <20260414081301.GB11138@lst.de>
 References: <20260409131404.1545834-1-aalbersh@kernel.org>
- <20260409131404.1545834-3-aalbersh@kernel.org>
+ <20260409131404.1545834-4-aalbersh@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260409131404.1545834-3-aalbersh@kernel.org>
+In-Reply-To: <20260409131404.1545834-4-aalbersh@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1wCYsK-0003n8-DF
-Subject: Re: [f2fs-dev] [PATCH v7 02/22] fsverity: expose
- ensure_fsverity_info()
+X-Headers-End: 1wCYtW-0003xQ-0a
+Subject: Re: [f2fs-dev] [PATCH v7 03/22] ovl: use core fsverity ensure info
+ interface
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,9 +84,23 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Looks good:
+On Thu, Apr 09, 2026 at 03:13:35PM +0200, Andrey Albershteyn wrote:
+> -	if (!fsverity_active(inode) && IS_VERITY(inode)) {
+> -		/*
+> -		 * If this inode was not yet opened, the verity info hasn't been
+> -		 * loaded yet, so we need to do that here to force it into memory.
+> -		 */
+> -		filp = kernel_file_open(datapath, O_RDONLY, current_cred());
+> -		if (IS_ERR(filp))
+> -			return PTR_ERR(filp);
+> -		fput(filp);
+> -	}
+> +	if (fsverity_active(inode))
+> +		fsverity_ensure_verity_info(inode);
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+fsverity_ensure_verity_info already is a no-op for !fsverity_active,
+so the check could be remove.  Also we should probably propagate the
+error return from fsverity_ensure_verity_info here.
 
 
 
