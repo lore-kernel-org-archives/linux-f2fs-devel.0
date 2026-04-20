@@ -4,78 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1513CF36C2E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Apr 2026 07:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 37367F5581E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Apr 2026 11:47:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=PWgWcS+zVc96h4D2+AjjKTu1UMJjArahzXEXQbJi0/c=; b=isX813dlP3m6su1Wn80YilKh3m
-	Jwq0OfVQ+uD7wE0ORT5DWSVBZsta3/6niPBtA1HHGmEzeYbYJnmXUBcCIKsieTIR6lT1+dh86wMk+
-	JX+1HRVg2WvM8FXK7IfUbPpI7fu6l+8r7KEN8281kXcpLq+YTJ+Q9GUGGB3VJVce7cwE=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=6oKzHo/HhkX64uJx1NTb0QMzJAhvWzKepmvF2uvRpWM=; b=eQuESAeR99Yek+GZAbyG9zfLbj
+	sfL6fj/IPD8iZQxYYZIl1TFnSrCsMrQz2gmqpWoYqstTzURpvnOHMu3gfMCRK4HAfYvYw8l/206W+
+	KE6r5TmmaSXJ94DpVBE3m5HgLwEAA0O8tUA85RmjEBHhDYRcQZJKvrENFMlAKm1SBai0=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wEjAV-0000gp-1r;
-	Mon, 20 Apr 2026 07:35:43 +0000
+	id 1wEn6V-0007sx-FQ;
+	Mon, 20 Apr 2026 11:47:49 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wEjAT-0000gg-Qg
+ (envelope-from <aalbersh@kernel.org>) id 1wEn6T-0007sX-GV
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 20 Apr 2026 07:35:41 +0000
+ Mon, 20 Apr 2026 11:47:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AQ6nR96MlJ9E70p3Pjy4XTh/JX7e0wc34rlhcCrGKg4=; b=fA7ulqXI+yQ5bvoBfXCu9Wmmgy
- rhr9H8lHzDutJqc3nrZXqmpITrebmlfWOWxiadOdNVg6pgIxjhgPuK/G/iStKA6iLGi0DjsMZxIXc
- qut+coicpiF5jP+QPUPgR73LtYCKep5Bf57pmZ8+wU6FJJigPskXM4WTTPLZOQf4dIto=;
+ bh=kGSHNzvV/o/P72ND2o5H/dakJtS7WFmsSHhfgDBvWsI=; b=A1+12/QEWzBSk0Gm6l4xlTsZQ9
+ edxMAbLp3YCAwRaGJGrBFyeBImHyjmf0T6/rpTMRkr5lIHa/RMvdEVy3lIgzm/hvpz6A6pYAWpIcW
+ /+C862u45puOzSGSgL6yZD8AEFMZihxwD+U2usnEYUVkCX1cLQF/ceT1qJpYQW2iGdGc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=AQ6nR96MlJ9E70p3Pjy4XTh/JX7e0wc34rlhcCrGKg4=; b=XVDVPH0W/wS4OC7k/bKgSNqWC/
- EopJVTq8pNKrASLKDHG6bjr5BMT2cX+7aH7UMbpO/WSeHaj0xIEfTMYtqH0gvjSab31rzbm8tSsV5
- fvp4+QUN9eiFclE2e9x655UexLUVnFYcRRFwI+BrKF0YeQEHxDDDtSRcUUuJhD7uevNg=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=kGSHNzvV/o/P72ND2o5H/dakJtS7WFmsSHhfgDBvWsI=; b=VT1spioE5nPw/cm9tQYvUF7kp2
+ rQBoid/tmjy4VYaqM3+kpyjeA+hKhHpc8aQGPq5A5qHlOfr504xxdrSEVYI+vUXy0VDN8reG3jJF7
+ M43b01IiaXH2EVCemMmNycMCgYaOejNFiVsiQg06tmxkDHJ+gtzpCp/5bWR+5aRCyrtU=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wEjAT-00017O-2q for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 20 Apr 2026 07:35:41 +0000
+ id 1wEn6Q-0007Cu-GM for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 20 Apr 2026 11:47:46 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 68CD260103;
- Mon, 20 Apr 2026 07:35:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB894C19425;
- Mon, 20 Apr 2026 07:35:28 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 3AAF7400E1;
+ Mon, 20 Apr 2026 11:47:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C19AC19425;
+ Mon, 20 Apr 2026 11:47:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1776670530;
- bh=wWspKhQXTOFZHp5pCXuza2DronRfDj4EXc/yRmaytgg=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=Q0Uj3Y923EnAuoCMYufBwwL9gvkS61xySjzUDSnXkFGxwtiRFCsLhrjfbXMa1fuuw
- OAf7ZYDtX+PH4IhuiJhGvfZy6zgV7p28pkZrySfn73/xMSK76nywAnr2AmHjQ0W8hd
- Tig87zby8ZqaRaePb6XJGpTHAJ6vXQF8GZ6srl4rh0ggv8HS28BjAzuFt3S2MkZBXM
- bopQczJgyvE+5vUfqJTj7ulara1eNR482FK95uQk8W9yl+UASDK3yXRLUKbEuziA4M
- ZJMXfHJgbnkv30MuHVSH0TvbNz/pDLw6us2bUvYp7nGBYAehZz9P54qhSkcFbaFdRh
- 0nfeKKc3VEFRQ==
-Message-ID: <607d2d34-9d58-42d1-8436-e85d9c73eb7a@kernel.org>
-Date: Mon, 20 Apr 2026 15:35:29 +0800
+ s=k20201202; t=1776685661;
+ bh=5N+dWqoeOYxeisPRy5znoys7rfHJB7cC5xNXENMMBQQ=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=ZQtu/+/AejGtcgdvO/yXm4thjRzxIAMK5jj4bgfLpzaKWlIpornw7FVenkndYmW1Y
+ 97VxGxP7iGb5rEgZ3BbTjwYt5hYGD+j/N7QDI761pQ6M+imDwg1zlePqskEwIVS39c
+ fp4xiuazyfyffCQvzswV0yq7KRg9BDWOvwBemqcCOr5WmHDDwQQqaqvC41qdH3/nuo
+ pWs3ciDwyNuxLuY5S7kuy6fTlD3EQ+ezUYNYSmPIhNHIl3cZxxVf98GOgiQcVJIi13
+ EojNzPxew0uE6WZSdX6b5/n6/ge/3+GVerH6gPDN+MG0xLQkssFG+ijzjxOjyXQA/U
+ 4T4eFYQfvNvtQ==
+To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
+Date: Mon, 20 Apr 2026 13:46:49 +0200
+Message-ID: <20260420114714.1621982-3-aalbersh@kernel.org>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20260420114714.1621982-1-aalbersh@kernel.org>
+References: <20260420114714.1621982-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: ruipengqi <ruipengqi3@gmail.com>, jaegeuk@kernel.org
-References: <20260325133749.1053541-1-ruipengqi3@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20260325133749.1053541-1-ruipengqi3@gmail.com>
-X-Headers-End: 1wEjAT-00017O-2q
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix potential deadlock in
- f2fs_balance_fs()
+X-Headers-End: 1wEn6Q-0007Cu-GM
+Subject: [f2fs-dev] [PATCH v8 02/22] fsverity: expose ensure_fsverity_info()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,220 +86,87 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Andrey Albershteyn via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
+Cc: Andrey Albershteyn <aalbersh@kernel.org>, djwong@kernel.org,
+ linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-ext4@vger.kernel.org, hch@lst.de, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Ruipeng,
+This function will be used by XFS's scrub to force fsverity activation,
+therefore, to read fsverity context.
 
-Sorry, I missed your patch.
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Acked-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+---
+ fs/verity/open.c         | 22 ++++++++++++++++++++--
+ include/linux/fsverity.h |  2 ++
+ 2 files changed, 22 insertions(+), 2 deletions(-)
 
-On 3/25/2026 9:37 PM, ruipengqi wrote:
-> From: Ruipeng Qi <ruipengqi3@gmail.com>
-> 
-> When the f2fs filesystem space is nearly exhausted, we encounter deadlock
-> issues as below:
-> 
-> INFO: task A:1890 blocked for more than 120 seconds.
->        Tainted: G           O       6.12.41-g3fe07ddf05ab #1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:A    state:D stack:0     pid:1890  tgid:1626  ppid:1153   flags:0x00000204
-> Call trace:
->   __switch_to+0xf4/0x158
->   __schedule+0x27c/0x908
->   schedule+0x3c/0x118
->   io_schedule+0x44/0x68
->   folio_wait_bit_common+0x174/0x370
->   folio_wait_bit+0x20/0x38
->   folio_wait_writeback+0x54/0xc8
->   truncate_inode_partial_folio+0x70/0x1e0
->   truncate_inode_pages_range+0x1b0/0x450
->   truncate_pagecache+0x54/0x88
->   f2fs_file_write_iter+0x3e8/0xb80
->   do_iter_readv_writev+0xf0/0x1e0
->   vfs_writev+0x138/0x2c8
->   do_writev+0x88/0x130
->   __arm64_sys_writev+0x28/0x40
->   invoke_syscall+0x50/0x120
->   el0_svc_common.constprop.0+0xc8/0xf0
->   do_el0_svc+0x24/0x38
->   el0_svc+0x30/0xf8
->   el0t_64_sync_handler+0x120/0x130
->   el0t_64_sync+0x190/0x198
-> 
-> INFO: task kworker/u8:11:2680853 blocked for more than 120 seconds.
->        Tainted: G           O       6.12.41-g3fe07ddf05ab #1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:kworker/u8:11   state:D stack:0     pid:2680853 tgid:2680853 ppid:2      flags:0x00000208
-> Workqueue: writeback wb_workfn (flush-254:0)
-> Call trace:
->   __switch_to+0xf4/0x158
->   __schedule+0x27c/0x908
->   schedule+0x3c/0x118
->   io_schedule+0x44/0x68
->   folio_wait_bit_common+0x174/0x370
->   __filemap_get_folio+0x214/0x348
->   pagecache_get_page+0x20/0x70
->   f2fs_get_read_data_page+0x150/0x3e8
->   f2fs_get_lock_data_page+0x2c/0x160
->   move_data_page+0x50/0x478
->   do_garbage_collect+0xd38/0x1528
->   f2fs_gc+0x240/0x7e0
->   f2fs_balance_fs+0x1a0/0x208
->   f2fs_write_single_data_page+0x6e4/0x730  //0xfffffe0d6ca08300
->   f2fs_write_cache_pages+0x378/0x9b0
->   f2fs_write_data_pages+0x2e4/0x388
->   do_writepages+0x8c/0x2c8
->   __writeback_single_inode+0x4c/0x498
->   writeback_sb_inodes+0x234/0x4a8
->   __writeback_inodes_wb+0x58/0x118
->   wb_writeback+0x2f8/0x3c0
->   wb_workfn+0x2c4/0x508
->   process_one_work+0x180/0x408
->   worker_thread+0x258/0x368
->   kthread+0x118/0x128
->   ret_from_fork+0x10/0x200
-> 
-> INFO: task kworker/u8:8:2641297 blocked for more than 120 seconds.
->        Tainted: G           O       6.12.41-g3fe07ddf05ab #1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:kworker/u8:8    state:D stack:0     pid:2641297 tgid:2641297 ppid:2      flags:0x00000208
-> Workqueue: writeback wb_workfn (flush-254:0)
-> Call trace:
->   __switch_to+0xf4/0x158
->   __schedule+0x27c/0x908
->   rt_mutex_schedule+0x30/0x60
->   __rt_mutex_slowlock_locked.constprop.0+0x460/0x8a8
->   rwbase_write_lock+0x24c/0x378
->   down_write+0x1c/0x30
->   f2fs_balance_fs+0x184/0x208
->   f2fs_write_inode+0xf4/0x328
->   __writeback_single_inode+0x370/0x498
->   writeback_sb_inodes+0x234/0x4a8
->   __writeback_inodes_wb+0x58/0x118
->   wb_writeback+0x2f8/0x3c0
->   wb_workfn+0x2c4/0x508
->   process_one_work+0x180/0x408
->   worker_thread+0x258/0x368
->   kthread+0x118/0x128
->   ret_from_fork+0x10/0x20
-> 
-> INFO: task B:1902 blocked for more than 120 seconds.
->        Tainted: G           O       6.12.41-g3fe07ddf05ab #1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:B     state:D stack:0     pid:1902  tgid:1626  ppid:1153   flags:0x0000020c
-> Call trace:
->   __switch_to+0xf4/0x158
->   __schedule+0x27c/0x908
->   rt_mutex_schedule+0x30/0x60
->   __rt_mutex_slowlock_locked.constprop.0+0x460/0x8a8
->   rwbase_write_lock+0x24c/0x378
->   down_write+0x1c/0x30
->   f2fs_balance_fs+0x184/0x208
->   f2fs_map_blocks+0x94c/0x1110
->   f2fs_file_write_iter+0x228/0xb80
->   do_iter_readv_writev+0xf0/0x1e0
->   vfs_writev+0x138/0x2c8
->   do_writev+0x88/0x130
->   __arm64_sys_writev+0x28/0x40
->   invoke_syscall+0x50/0x120
->   el0_svc_common.constprop.0+0xc8/0xf0
->   do_el0_svc+0x24/0x38
->   el0_svc+0x30/0xf8
->   el0t_64_sync_handler+0x120/0x130
->   el0t_64_sync+0x190/0x198
-> 
-> INFO: task sync:2769849 blocked for more than 120 seconds.
->        Tainted: G           O       6.12.41-g3fe07ddf05ab #1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:sync            state:D stack:0     pid:2769849 tgid:2769849 ppid:736    flags:0x0000020c
-> Call trace:
->   __switch_to+0xf4/0x158
->   __schedule+0x27c/0x908
->   schedule+0x3c/0x118
->   wb_wait_for_completion+0xb0/0xe8
->   sync_inodes_sb+0xc8/0x2b0
->   sync_inodes_one_sb+0x24/0x38
->   iterate_supers+0xa8/0x138
->   ksys_sync+0x54/0xc8
->   __arm64_sys_sync+0x18/0x30
->   invoke_syscall+0x50/0x120
->   el0_svc_common.constprop.0+0xc8/0xf0
->   do_el0_svc+0x24/0x38
->   el0_svc+0x30/0xf8
->   el0t_64_sync_handler+0x120/0x130
->   el0t_64_sync+0x190/0x198
-> 
-> The root cause is a potential deadlock between the following tasks:
-> 
-> kworker/u8:11				Thread A
-> - f2fs_write_single_data_page
->   - f2fs_do_write_data_page
->    - folio_start_writeback(X)
->    - f2fs_outplace_write_data
->     - bio_add_folio(X)
->   - folio_unlock(X)
-> 					- truncate_inode_pages_range
-> 					 - __filemap_get_folio(X, FGP_LOCK)
-> 					 - truncate_inode_partial_folio(X)
-> 					  - folio_wait_writeback(X)
->   - f2fs_balance_fs
->    - f2fs_gc
->     - do_garbage_collect
->      - move_data_page
->       - f2fs_get_lock_data_page
->        - __filemap_get_folio(X, FGP_LOCK)
-> 
-> Both threads try to access folio X. Thread A holds the lock but waits
-> for writeback, while kworker waits for the lock. This causes a deadlock.
-> 
-> Other threads also enter D state, waiting for locks such as gc_lock and
-> writepages.
-> 
-> To avoid this potential deadlock, always call f2fs_submit_merged_write
-> before triggering f2fs_gc in f2fs_balance_fs.
-> 
-> Signed-off-by: Ruipeng Qi <ruipengqi3@gmail.com>
-> ---
->   fs/f2fs/segment.c | 14 ++++++++++++++
->   1 file changed, 14 insertions(+)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 6a97fe76712b..b58299e49c23 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -454,6 +454,20 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
->   		io_schedule();
->   		finish_wait(&sbi->gc_thread->fggc_wq, &wait);
->   	} else {
-> +
-> +		/*
-> +		 * Before triggering foreground GC, submit all cached DATA
-> +		 * write bios. During writeback, pages may be added to
-> +		 * write_io[DATA].bio with PG_writeback set but the bio not
-> +		 * yet submitted. If GC's move_data_page() blocks on
-> +		 * __folio_lock() for such a folio, and the lock holder waits
-> +		 * for PG_writeback to clear via VFS folio_wait_writeback()
-> +		 * neither thread can make progress. Flushing here ensures
-> +		 * the bio completion callback can clear PG_writeback.
-> +		 */
-> +
-> +		f2fs_submit_merged_write(sbi, DATA);
-
-Do we need to call f2fs_submit_merged_ipu_write(sbi, bio, NULL) to commit
-cached IPU folios as well?
-
-Not sure, this race condition will happen for node folio.
-
-Thanks,
-
-> +
->   		struct f2fs_gc_control gc_control = {
->   			.victim_segno = NULL_SEGNO,
->   			.init_gc_type = f2fs_sb_has_blkzoned(sbi) ?
+diff --git a/fs/verity/open.c b/fs/verity/open.c
+index dfa0d1afe0fe..d32d0899df25 100644
+--- a/fs/verity/open.c
++++ b/fs/verity/open.c
+@@ -344,7 +344,24 @@ int fsverity_get_descriptor(struct inode *inode,
+ 	return 0;
+ }
+ 
+-static int ensure_verity_info(struct inode *inode)
++/**
++ * fsverity_ensure_verity_info() - cache verity info if it's not already cached
++ * @inode: the inode for which verity info should be cached
++ *
++ * Ensure this inode has verity info attached to it, it's assumed the inode
++ * already has fsverity enabled. Read fsverity descriptor and creates verity
++ * based on that.
++ *
++ * This needs to be called at least once before any of the inode's data
++ * can be verified (and thus read at all) or the inode's fsverity digest
++ * retrieved.  fsverity_file_open() calls this already, which handles
++ * normal file accesses.  If a filesystem does any internal (i.e. not
++ * associated with a file descriptor) reads of the file's data or
++ * fsverity digest, it must call this explicitly before doing so.
++ *
++ * Return: 0 on success, -errno on failure
++ */
++int fsverity_ensure_verity_info(struct inode *inode)
+ {
+ 	struct fsverity_info *vi = fsverity_get_info(inode), *found;
+ 	struct fsverity_descriptor *desc;
+@@ -380,12 +397,13 @@ static int ensure_verity_info(struct inode *inode)
+ 	kfree(desc);
+ 	return err;
+ }
++EXPORT_SYMBOL_GPL(fsverity_ensure_verity_info);
+ 
+ int __fsverity_file_open(struct inode *inode, struct file *filp)
+ {
+ 	if (filp->f_mode & FMODE_WRITE)
+ 		return -EPERM;
+-	return ensure_verity_info(inode);
++	return fsverity_ensure_verity_info(inode);
+ }
+ EXPORT_SYMBOL_GPL(__fsverity_file_open);
+ 
+diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+index a8f9aa75b792..5562271bd628 100644
+--- a/include/linux/fsverity.h
++++ b/include/linux/fsverity.h
+@@ -309,6 +309,8 @@ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
+ 	return 0;
+ }
+ 
++int fsverity_ensure_verity_info(struct inode *inode);
++
+ void fsverity_cleanup_inode(struct inode *inode);
+ 
+ struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index);
+-- 
+2.51.2
 
 
 
