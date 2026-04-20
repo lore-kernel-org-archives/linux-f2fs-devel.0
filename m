@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 144DEF36C5D
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 018E8F5581D
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Apr 2026 11:47:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,29 +12,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=OSPDeUzN+piD85IwWp7HIv9mS7vhKpIEaHnbpJEBEYk=; b=PRgLH4NcDbAJBe/70x8lsgiPz/
-	Se89lNQUnzdIJSXr8+itnWVf5kKw+1dq7DB9L6PE4tuwd2LOd/Wa7SrUymIlqgCr+nf2n40sjk3VP
-	iwPeywIPpbJGPrJ49xYDKbCGQzPZQ9gN8TeAabwCzpc+jVkiLo1qSd+WQQwpHtNqWxWU=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=CdOg/MHAs7F8PQ1L0NnsbpfSMETwEVK9vMWkHRcWof4=; b=Zup2R+ZMhDTp3jrGGiLfEE3D2L
+	GCQ0cfrH2MF4U64hIp5T1uv8azIXNkX4yHNBqMEj8t18mu5tKK9UfyFsfueE4LBvlpOIb+0pQvLsO
+	L7AB2oL610eB/h1KJrCllwRIQKUAWdSEkGU8PBAvGI+VPOvyLsu/FzwlHSI6sl/MHECU=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wEn6U-0003nE-K6;
-	Mon, 20 Apr 2026 11:47:51 +0000
+	id 1wEn6W-000138-Ec;
+	Mon, 20 Apr 2026 11:47:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1wEn6S-0003my-Fc
+ (envelope-from <aalbersh@kernel.org>) id 1wEn6U-000130-RT
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 20 Apr 2026 11:47:49 +0000
+ Mon, 20 Apr 2026 11:47:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Q24umAnIhjJWMMv84GCWO2VASOQlpvqwGDh+ApTBnaM=; b=nFaAdCJYpJT8YCy2bmmMjUNIIG
- t0VN2jGnnhf7s5uMgwpVLTKvYGXYBm+TVn9jn1OsKH3EmpuvGsEV1qaVvqG7KYI7MXhZvE0o8rRCZ
- 6uUS3aodduSi+ACh04ngbpCGZevPOuENGH3aOJ9zevPKMxFwYiGjIVYYlDewf+060k/g=;
+ bh=gLN6w7Js5RLu5drJwAcDxLuRy7aLXqdarmwXm2uOIRk=; b=cRB6meAqRaFqVStzJuoyQYtKU8
+ okSZFP5/rRKg8tnVvtb+bIMhVgI6nBw4EMxl01S97HaVHRv8cX921mQ7N9aJb5iAsM0dRwix4Nbiq
+ 2bHk8VSKKCeYNu8hPcEApiiDoGE2Vmu+RGR9cYVa6O8Q/8rilJuEZVngkQ2HLBTFfgzg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Q24umAnIhjJWMMv84GCWO2VASOQlpvqwGDh+ApTBnaM=; b=LGW64skDQXJJD7K2zB5Iq8MkqG
- Nc/bDjLKdHWitvhL5n9+SmOsSyQeNamAxYiCzwgEptiBsVtGORukLtlglJjdD5tJ+z0eAuPoZ2E4e
- YHn1b3S394f/rTLnNB2hf6hT3EMarUkRfLJ3Ed40BNY287lWWM45Lsy3pco13uzFR/ig=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=gLN6w7Js5RLu5drJwAcDxLuRy7aLXqdarmwXm2uOIRk=; b=FlncsnMXWHaLm2t7Vgji49vL9T
+ IPqms6Bl26sKMot2m+utoX/2/NXKxEWaz7Fot0DXDdoYhEvfYhmnl/i6MXU2UzQGnOoG0DJBxyfbl
+ +WuES/AwqX9i00FJSoeiusdn471w6l1hhEvB8ehXIk4HzZu+beG/3pBLDZw0YcTzOXG4=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wEn6S-0007D0-Rm for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 20 Apr 2026 11:47:49 +0000
+ id 1wEn6U-0007D6-6p for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 20 Apr 2026 11:47:50 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 476E540A70;
- Mon, 20 Apr 2026 11:47:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA527C2BCB4;
- Mon, 20 Apr 2026 11:47:35 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 8E4F560142;
+ Mon, 20 Apr 2026 11:47:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92866C2BCB4;
+ Mon, 20 Apr 2026 11:47:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1776685658;
- bh=xdJuXteL2kuBB7E/JnTWxaOughFhLnHqfW8AFjBOmQ0=;
+ s=k20201202; t=1776685664;
+ bh=079Sd9B0THqZauyTaA39ffFEl5GJG+gEUoXDQzKrZpo=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=DBF//XywCr8BGCIuJa3b76GrPWC/8+zEONRFrtGV1d1TBbYA6kscx5jC7NRw/wF7b
- Vru688576PvEEAG8YKzIkBIcClu2teEGqwQeLZTQB+eYiMt891X9czT7FNjelIyThM
- Gy9PGHHhEHMYXYYwyg9Uggl1KrhuN7Xw2301dA4IZcvQSGC5b251/JDaB7RzvbQrkr
- cdQ01kwTHwF+Am+GaY0DeMZ7yH3f8terH+fgDqTktnnOrzmweY4ZkRV853n1Z7G5AI
- b8Dw978Zfl5EX7e91JjRWsapdjYJuJ07w+9mNd3yOv9Bw9c+t2kiYkf+DKBJYvPXVG
- 4O5AI07vjX9eQ==
+ b=hs2fKTwUNjLyzcf4Gg/boqTc52L2ObmmkOldSQy6U3VerH5A3zs1R7oYoF7W7OQI5
+ CGWPWVZKNDeDrIAdzSLRnTAniNcutZx4TRNeeWvDXNdGDuXkOvzaSfJm0HFAswmbmd
+ spVyBpWzHtGJMCaLhJxn8Y0QYQ2Fv928gX4eUv7vbrBzP/KmaSQFNGSh9wcIDnWIPH
+ DOWJ1YUKXgpgpvM36lK6SfTFggdsRPTONF67YD3NuxX5tVnKZrRDtR2rSsWpOVxUga
+ r29QpZ7aPWnbwTOwHexYMdGtCUF7xabwKdxKehFTFoZjjH/dh4fkyaFjx8TqogKoOp
+ POIUQ50kLWyLw==
 To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
  linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
-Date: Mon, 20 Apr 2026 13:46:48 +0200
-Message-ID: <20260420114714.1621982-2-aalbersh@kernel.org>
+Date: Mon, 20 Apr 2026 13:46:50 +0200
+Message-ID: <20260420114714.1621982-4-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20260420114714.1621982-1-aalbersh@kernel.org>
 References: <20260420114714.1621982-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wEn6S-0007D0-Rm
-Subject: [f2fs-dev] [PATCH v8 01/22] fsverity: report validation errors
- through fserror to fsnotify
+X-Headers-End: 1wEn6U-0007D6-6p
+Subject: [f2fs-dev] [PATCH v8 03/22] ovl: use core fsverity ensure info
+ interface
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,52 +91,56 @@ From: Andrey Albershteyn via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
 Cc: Andrey Albershteyn <aalbersh@kernel.org>, djwong@kernel.org,
- linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-ext4@vger.kernel.org, hch@lst.de, linux-btrfs@vger.kernel.org
+ Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, hch@lst.de,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Reported verification errors to fsnotify through recently added fserror
-interface.
+fsverity now exposes fsverity_ensure_verity_info() which could be used
+instead of opening file to ensure that fsverity info is loaded and
+attached to inode.
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Eric Biggers <ebiggers@kernel.org>
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+Acked-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/verity/verify.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/overlayfs/util.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-index 4004a1d42875..db8c350234bb 100644
---- a/fs/verity/verify.c
-+++ b/fs/verity/verify.c
-@@ -9,6 +9,7 @@
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index 2ea769f311c3..dd2e81022e4f 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -16,6 +16,7 @@
+ #include <linux/namei.h>
+ #include <linux/ratelimit.h>
+ #include <linux/overflow.h>
++#include <linux/fsverity.h>
+ #include "overlayfs.h"
  
- #include <linux/bio.h>
- #include <linux/export.h>
-+#include <linux/fserror.h>
+ /* Get write access to upper mnt - may fail if upper sb was remounted ro */
+@@ -1377,18 +1378,9 @@ char *ovl_get_redirect_xattr(struct ovl_fs *ofs, const struct path *path, int pa
+ int ovl_ensure_verity_loaded(const struct path *datapath)
+ {
+ 	struct inode *inode = d_inode(datapath->dentry);
+-	struct file *filp;
  
- #define FS_VERITY_MAX_PENDING_BLOCKS 2
+-	if (!fsverity_active(inode) && IS_VERITY(inode)) {
+-		/*
+-		 * If this inode was not yet opened, the verity info hasn't been
+-		 * loaded yet, so we need to do that here to force it into memory.
+-		 */
+-		filp = kernel_file_open(datapath, O_RDONLY, current_cred());
+-		if (IS_ERR(filp))
+-			return PTR_ERR(filp);
+-		fput(filp);
+-	}
++	if (fsverity_active(inode))
++		return fsverity_ensure_verity_info(inode);
  
-@@ -205,6 +206,8 @@ static bool verify_data_block(struct fsverity_info *vi,
- 		if (memchr_inv(dblock->data, 0, params->block_size)) {
- 			fsverity_err(inode,
- 				     "FILE CORRUPTED!  Data past EOF is not zeroed");
-+			fserror_report_data_lost(inode, data_pos,
-+						 params->block_size, GFP_NOFS);
- 			return false;
- 		}
- 		return true;
-@@ -312,6 +315,7 @@ static bool verify_data_block(struct fsverity_info *vi,
- 		data_pos, level - 1, params->hash_alg->name, hsize, want_hash,
- 		params->hash_alg->name, hsize,
- 		level == 0 ? dblock->real_hash : real_hash);
-+	fserror_report_data_lost(inode, data_pos, params->block_size, GFP_NOFS);
- error:
- 	for (; level > 0; level--) {
- 		kunmap_local(hblocks[level - 1].addr);
+ 	return 0;
+ }
 -- 
 2.51.2
 
