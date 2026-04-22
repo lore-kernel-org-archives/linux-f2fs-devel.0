@@ -4,120 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id ADA58F9B602
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Apr 2026 09:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5800FF9EDC5
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Apr 2026 12:33:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=QBzqtszDNSV9hVEzw3ByduaMj2HdY1u0BgxIeBLkFa4=; b=XRXUvQ5j8/YjhhKjkEXuNhFoLn
-	//Vd5rr9Fa7zxUA9xgmtHvPK6CR6dD9UzA9SGgCjTUGmVU2fkHJfBaI3er1pjmEgoiCmdp/zGiEhM
-	UsBWk/HaDFdejYmVw7qD0YhJe4psnQGolpACn4R/8ZGQ4fY/ps+ngVoAbFDLsSZEpdPM=;
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=KN7xx8SL9o4ZzOZAiGrLvVMOPWGDoOghJS+7ZOxPi80=; b=JKbpRX8j8+dVhtTMcXi4GZrgRi
+	yQA3zXJVDUkancSfw2Q9WN7AJJWMDWh7A/8WyXyqCZrrtcH9bshl7ESnztvkoZzFC2db49cf40Qsb
+	cqc/MsjH93hJysVSH/7OFMrq/PWj63ohrekqV4lctt1j5VxOzw3q+DvclLjcGp4iIrDM=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wFUMk-0002yo-AS;
-	Wed, 22 Apr 2026 09:59:30 +0000
+	id 1wFWly-0006Rk-Qa;
+	Wed, 22 Apr 2026 12:33:42 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@redhat.com>) id 1wFUMh-0002yg-TD
+ (envelope-from <chao@kernel.org>) id 1wFWlk-0006RU-FG
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 22 Apr 2026 09:59:27 +0000
+ Wed, 22 Apr 2026 12:33:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:In-Reply-To:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QVpt6cL/XFUpoSbUgEFsp9E/b8gj4ghVTxVOycpPEPQ=; b=IeEbuSi984mjPONS/vjhpN2r6g
- jBST23MWzHUl0C36dP2IWPCdCO79gY4HWeiqgSZ7d8vSJW3yzlVxAMiLCq5gDA7T6AOIt/mrsj3wk
- jBY7nks2cDLcQGJ4d+++S4ZiZyvI3CqC8/qIeDzy2W9ghh8KL7NX2CohuMTMH/owMLng=;
+ bh=8j5PmRafhsJeMBpFjdqml6Gs+reY5z9sK2uCvKakcvI=; b=bjGla61eLwLkLzXhxeeLGl4TgZ
+ Izhnc2zwHViSp3IU9mLWQg1lRmAuSk+F2bGJ76VwBjiTjuTOhRCGHJ6WqZNmtCYROQSDuTTdvUKqt
+ W6X7UwHk9EHf2OcVn0UxshX2DwvGJ27AgE/2AH7uSQk2745azIYWvMUp/a8q/sO/xk/Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=QVpt6cL/XFUpoSbUgEFsp9E/b8gj4ghVTxVOycpPEPQ=; b=YslRkiBc4l4Mew70wfCqfl+6wd
- hZqaedjmeGizks/81qdFYSIcdx48HftRwDwW7I3O1h/B1OoUJjY8nY8KiXCHRdAQPQcYqoQd5pmYD
- atJhIfm8E7K/MIY033QQTih6+Ya0g+RpTkI3YwpkXxqcpjK5muL2WsaADV++j38DyUmc=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
+ bh=8j5PmRafhsJeMBpFjdqml6Gs+reY5z9sK2uCvKakcvI=; b=biUCZNigBJSWBrOvjPdBiN9Khl
+ 4OJLsG0tkGlRK6t+RBe0J3VF8S0IZvosxwRHgWDJEXGTVLEOluOputjx93ZoS6LVXMrLrSruCFnuq
+ XvF7I4KNyUpbkFagVL/9/m3YN1d6FZO8tXsvOZR7xKxlyGmhx0T/ZlSIsqd2SVwfOdRs=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wFUMh-0004Rg-EV for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 22 Apr 2026 09:59:27 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1776851956;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=QVpt6cL/XFUpoSbUgEFsp9E/b8gj4ghVTxVOycpPEPQ=;
- b=QOu1lDi6VUFBgOsXhgnJG+Df4lJek8huCUy/k3Qh9pCXS+3ZUh/+cwNQ3X5qJRWw6TJYHn
- uWi9XX6eTozNyQFR8VshXHDw90Oc9b611BG/TKQqMECUGC+An/bshBFsC6M/NtoAvr505j
- bsUpA1Hk0uUiuUpv7YBycMCbfRvswbg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-231-iuBVugmdOKylQmthttU0sg-1; Wed, 22 Apr 2026 05:59:14 -0400
-X-MC-Unique: iuBVugmdOKylQmthttU0sg-1
-X-Mimecast-MFC-AGG-ID: iuBVugmdOKylQmthttU0sg_1776851954
-Received: by mail-wm1-f71.google.com with SMTP id
- 5b1f17b1804b1-48a55d82e0eso11243005e9.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 22 Apr 2026 02:59:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776851954; x=1777456754;
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=QVpt6cL/XFUpoSbUgEFsp9E/b8gj4ghVTxVOycpPEPQ=;
- b=GYPLSGnV8QO4lkKb+VNlA3o7uw8eANTu9LyMxyvYFjjYq+0m81UjYLsFYJA38RJmxg
- UIAXdtyoeHgXLG1kRVUz/W99NLcTSIa5K1FbB1GyFsqV95dhmNOQ+I7RuNrukiPbO1p1
- VBi7T1PhTkz9UrfsRX2T9G2WdZBQgfm7tc+wa+2mW9iYSmo6Soy092AL71f21ANRDOBR
- pPJbC6L20smYePoskaGohVxqWIZkXZg6b/PRzdoLxCqrcUN2cssaSAv0WXjDOv0ehZY4
- iY1C9WA5HdBle9Cy+UXo5V2cLkLfFQqzraDONWQAOJHxqCyq39Jgb2+7hAuv8uVRQkN5
- COaw==
-X-Forwarded-Encrypted: i=1;
- AFNElJ/2LYxW/M7L8DA7lKbTdsQ3zg9zlilsV6chX86kY9IhQtx3EDeECnrNuQXsWFeSkZmxZDKaib4nfzQmqIU4A5Wi@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YxY2dzzrO/UK2E3ClUjHFGBzgoiU5GXUdzbeS9ehbhxG1xAfD/a
- TalTc1XiuPYU/KeRGfqXt244Sp5VFsFnhBxJS/nYWo6aTUh6z7jju+HqpWbFsQi7TbQWkfQwJw1
- Sh1DwbCvF5DSZGw1m1zSGyCX81r9sD0zmYpmfnM1HWDm6WhiPFAMWCA4wSLxMe9wWtqrF+gugYq
- sTUw==
-X-Gm-Gg: AeBDievjz7BImuONIxuj2qtK+ZUGMC7lZc5Snt3+5WZcfM6V1hjExzMVtt9z9CC3MwP
- oHrl2WvCYWAMQkIcx1BvVvAbfanP0hNKX3Rl/CexZeeSirqPtuFik3+lnMZRO+nRzFU1ZVNle4g
- XOsl1TCNpZ94JPMhjDHVBF3xr5C8L9XqXoLJDDIc3GR/xBMKNVI9A7PSS4lk+OXYeEUKNGpnq/q
- du6ZhJif3XINoZapADntJ1FwR8hPOAuWRiMQNYxnfGQCB8GRAJPlyWhPdaW+fLP16xc8kH4gOIV
- xp2hKCqrmEkhl8ennTeRSRN5e8TFqkaWWmOdg78M7d5QvQABUnQjAsVXI9vAnckrhOyp9AdvlM7
- EszqUN2aOlMY8pMurDuXhKA==
-X-Received: by 2002:a05:600c:8b8a:b0:489:149a:f9e7 with SMTP id
- 5b1f17b1804b1-489149afa2bmr214250945e9.27.1776851953570; 
- Wed, 22 Apr 2026 02:59:13 -0700 (PDT)
-X-Received: by 2002:a05:600c:8b8a:b0:489:149a:f9e7 with SMTP id
- 5b1f17b1804b1-489149afa2bmr214250425e9.27.1776851953134; 
- Wed, 22 Apr 2026 02:59:13 -0700 (PDT)
-Received: from thinky ([217.30.74.39]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-488ffc5e3f4sm222129625e9.2.2026.04.22.02.59.12
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 22 Apr 2026 02:59:12 -0700 (PDT)
-Date: Wed, 22 Apr 2026 11:59:11 +0200
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <gpmgtg2wkoo4vozzaaouhdp2df6zlifwi6gy4jvq7xc22zo7om@t3f2bl374nlr>
-References: <20260420114714.1621982-1-aalbersh@kernel.org>
- <20260420114714.1621982-4-aalbersh@kernel.org>
- <20260421214457.GC37143@quark>
+ id 1wFWlh-0005T8-T6 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 22 Apr 2026 12:33:28 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 7E9894420F;
+ Wed, 22 Apr 2026 12:33:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9532FC19425;
+ Wed, 22 Apr 2026 12:33:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1776861195;
+ bh=nAmz0+PBMwNgKBUFmaghqo3euw/h0X0sfmkZygrD+i4=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+ b=P9/2LPbZbfT/8L6QzXNbzeExQRTL679uwLhCbBBq+yogiVXzXnJD0b0hrzsFsYLWk
+ DSM9FOkF0JvSRY8OzPB414+vIGUTe921c2VjZJgRvBMyjjTUuSc6LAdvI4+vNlhnFW
+ WCuK/9YFg5pO/q5CP+Nqil7SOhITePR+pbynBfzuR8czs0zHUtzOtLxR2SFPOthizr
+ OVU8kbA3B/MUEHEJCxB09Km7ojvVcop0yFXJ+IQTPDX84HX9PNaeoFpSX8teaPJHvz
+ 3ovKpjFXjMnayPee7aaKYZKLacT4133+kHHilMUHl3aPIhJHjyQU+f4iu/9TWeGGQI
+ jbx1RLuCUcl6A==
+Message-ID: <206a897a-2860-40b5-bbb8-829954d7e568@kernel.org>
+Date: Wed, 22 Apr 2026 20:33:09 +0800
 MIME-Version: 1.0
-In-Reply-To: <20260421214457.GC37143@quark>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: f07yq0_UxsDwtyL3_aSL5gZLYT4RRDetuisfPc4ErFc_1776851954
-X-Mimecast-Originator: redhat.com
-Content-Disposition: inline
-X-Headers-End: 1wFUMh-0004Rg-EV
-Subject: Re: [f2fs-dev] [PATCH v8 03/22] ovl: use core fsverity ensure info
- interface
+User-Agent: Mozilla Thunderbird
+To: Yongpeng Yang <monty_pavel@sina.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20260422073525.2063784-2-monty_pavel@sina.com>
+Content-Language: en-US
+In-Reply-To: <20260422073525.2063784-2-monty_pavel@sina.com>
+X-Headers-End: 1wFWlh-0005T8-T6
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix incorrect FI_NO_EXTENT handling in
+ __destroy_extent_node()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -129,59 +87,66 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Andrey Albershteyn via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: fsverity@lists.linux.dev, Andrey Albershteyn <aalbersh@kernel.org>,
- djwong@kernel.org, Amir Goldstein <amir73il@gmail.com>,
- linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, hch@lst.de, linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: Yongpeng Yang <yangyongpeng@xiaomi.com>, stable@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2026-04-21 14:44:57, Eric Biggers wrote:
-> On Mon, Apr 20, 2026 at 01:46:50PM +0200, Andrey Albershteyn wrote:
-> >  int ovl_ensure_verity_loaded(const struct path *datapath)
-> >  {
-> >  	struct inode *inode = d_inode(datapath->dentry);
-> > -	struct file *filp;
-> >  
-> > -	if (!fsverity_active(inode) && IS_VERITY(inode)) {
-> > -		/*
-> > -		 * If this inode was not yet opened, the verity info hasn't been
-> > -		 * loaded yet, so we need to do that here to force it into memory.
-> > -		 */
-> > -		filp = kernel_file_open(datapath, O_RDONLY, current_cred());
-> > -		if (IS_ERR(filp))
-> > -			return PTR_ERR(filp);
-> > -		fput(filp);
-> > -	}
-> > +	if (fsverity_active(inode))
-> > +		return fsverity_ensure_verity_info(inode);
+On 4/22/2026 3:35 PM, Yongpeng Yang wrote:
+> From: yangyongpeng <yangyongpeng@xiaomi.com>
 > 
-> Not sure whether I should review this version or the version in git, but
-> both seem wrong.  
+> When __destroy_extent_node() sets the inode flag FI_NO_EXTENT, it does
+> not reset the length of the largest extent to 0 and update the inode
+> folio. Since modifications to the extent tree are disallowed afterward,
+> the cached largest extent may become stale. This can trigger the
+> following error in xfstests generic/388:
+> 
+> F2FS-fs (dm-0): sanity_check_extent_cache: inode (ino=1761) extent info [220057, 57, 6] is incorrect, run fsck to fix
+> 
+> In the f2fs_drop_inode path, __destroy_extent_node() does not need to
+> guarantee that et->node_cnt is 0, because concurrency with writeback
+> is expected in this path, and writeback may update the extent cache.
+> 
+> This patch updates __destroy_extent_node() to avoid setting the inode
+> flag FI_NO_EXTENT, and to remove the check zero of et->node_cnt.
+> 
+> Fixes: ed78aeebef05 ("f2fs: fix node_cnt race between extent node destroy and writeback")
+> Cc: stable@vger.kernel.org
+> Reported-by: Chao Yu <chao@kernel.org>
+> Suggested-by: Chao Yu <chao@kernel.org>
+> Signed-off-by: yangyongpeng <yangyongpeng@xiaomi.com>
+> ---
+>   fs/f2fs/extent_cache.c | 4 ----
+>   1 file changed, 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+> index 87169fd29d89..3adbead27953 100644
+> --- a/fs/f2fs/extent_cache.c
+> +++ b/fs/f2fs/extent_cache.c
+> @@ -645,14 +645,10 @@ static unsigned int __destroy_extent_node(struct inode *inode,
+>   
+>   	while (atomic_read(&et->node_cnt)) {
+>   		write_lock(&et->lock);
+> -		if (!is_inode_flag_set(inode, FI_NO_EXTENT))
+> -			set_inode_flag(inode, FI_NO_EXTENT);
 
-Sorry, I forgot to push, this one is the latest, the one on git is
-v7. I will push v8 now.
+We'd better revert all change lines in "f2fs: fix node_cnt race between
+extent node destroy and writeback"?
 
-> The 'if (!fsverity_active(inode) && IS_VERITY(inode)) {' condition
-> should stay
+Thanks,
 
-Why? With recent changes, the fsverity_active() now checks for
-IS_VERITY() instead of verity_descriptor.
-
-> , but fsverity_ensure_verity_info() will need to
-> gain a !CONFIG_FS_VERITY stub to fix the build error.
-
-With "if (fsverity_active(inode))" I think this is not necessary as
-this fsverity_active() will be always false, and this if-case is
-optimized.
-
--- 
-- Andrey
+>   		node_cnt += __free_extent_tree(sbi, et, nr_shrink);
+>   		write_unlock(&et->lock);
+>   	}
+>   
+> -	f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
+> -
+>   	return node_cnt;
+>   }
+>   
 
 
 
