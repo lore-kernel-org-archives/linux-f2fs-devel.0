@@ -4,76 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 614CAF9EDC6
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Apr 2026 12:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D6487F9B5F3
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Apr 2026 22:47:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=EvNXwrg8fYD0n82qUxleqJG7IghLnVfIrjbibCOzW+M=; b=LkXDk57VMSQaeW14KVmOJ/lhB2
-	koYXkQBxNM+czTyKi6iISUrweTESsVyxHF7949cmq2dok4+GmCtZGcCD8L9LqFjn8JxGUIi2x7SjE
-	v62rFBdrQ3vDzs5Z0JDjMiFDYf6FAPePV5zBVdlUgtomBc+mFugOg2QOqtpvrN/2rUoU=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=BxqltEJs0gm1wtxcpkG/fh52CONCtZaKb55/ZD2LmY4=; b=OsMpoF6vZSKZ2dHKTe+P3z51nT
+	WfcHsngiYLNacnDjxHMNrfHjXumKH14eLxaB2r3g8lp54xjOG1vg8P+1JKXsgIYRRawAEAUDpY/Vs
+	+dmmRbWVE0aFPqyMevLLBDqOxEY6ShQ5eGMApWcA/SOwhqQ2e8zGa5W7R8a//YwPwgYk=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wFWt0-0006dy-Tj;
-	Wed, 22 Apr 2026 12:40:58 +0000
+	id 1wFgMO-000088-E9;
+	Wed, 22 Apr 2026 22:47:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wFWsz-0006ds-FT
+ (envelope-from <ebiggers@kernel.org>) id 1wFgLz-00007h-UE
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 22 Apr 2026 12:40:57 +0000
+ Wed, 22 Apr 2026 22:47:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8fsjCmetEZmz0qqYVXrFd4J1zzadDeQalQIxEPQVgY4=; b=dtKPDRQQUm5ZMbZLUOoYl0U+MP
- vFui9w92hKj27mBTh/dxDwgxkZ5Psg/MlK1doSo2yN7JeX5P0TynpJ7Tk7u/LXD7Y7sMqjB9JH++f
- D3FX0oFeBk+45CDP0odLeYQcr4gUcm6nzTmALLO4oZV+q/dcymPN5bdsvAszAx8Z2W4E=;
+ bh=KdFdsfzsmu4HYAp9ILDq8/RKpitpPX4p/71EoAyr4C0=; b=fZZU2cIEwQU2t1oqtb3KcUnrWc
+ TX642xTOsH4hR1M+WJqP2Ds9fJK0umoC+25kKTJ+C9SYsFA9807Ff1PwjXRSojHHvh1ZoScxNZ9EX
+ 1pyV5lsyWw94Kwn6N9AwRJ06uP/rO859/0swZ5PngmTJByV+w4SWnSSiaxVV+aDibpa4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=8fsjCmetEZmz0qqYVXrFd4J1zzadDeQalQIxEPQVgY4=; b=h
- FEnHlYMQU9uoI59YPbI4ryEm7sgciucXqN2bcOGqwzgfvLHgECP/T7n7dDooVwbG97lbcltKLoB4Y
- /rYRUmBHMVHyWyf6gFitwuKKByK8y/axXw6cGIlQjKCOQAO4zm5VupgMBEdQZWKKx/CfswWBsdNUE
- j7evoymHewB/kG/M=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=KdFdsfzsmu4HYAp9ILDq8/RKpitpPX4p/71EoAyr4C0=; b=KHie1SsKFB1LssO5EBEABtKUy3
+ wwYGz3LhPse2YM21LQjkk7kN+A5OEwaTaXTbP3lMhlUHGmOKokoqXOuNeNY21lE4tYJohPrMnglK/
+ wfSfj9GczrFHxYs1MbwBxMLaBoJNPcoDb8i3QHnERPrSX9mIkRjgpK0uvIEbEqocby9w=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wFWsz-0005s1-4u for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 22 Apr 2026 12:40:57 +0000
+ id 1wFgLz-00049k-IL for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 22 Apr 2026 22:47:31 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id BFC1E437CA
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 22 Apr 2026 12:40:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A320DC2BCB4;
- Wed, 22 Apr 2026 12:40:45 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id D83D161334;
+ Wed, 22 Apr 2026 22:47:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37BCAC2BCB3;
+ Wed, 22 Apr 2026 22:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1776861646;
- bh=jjp+IM2CvF+/Cq3DgQxWN9nCOub38O1J9ctC7sRjejY=;
- h=From:To:Cc:Subject:Date:From;
- b=Vcow1XCwk9GoVrMS/v4W7kYWERVBplW0xMkZhAJTAr+ixbRtzgSszojHhTRMAvMKN
- CR+4s1MTj6Zl5bidxOXyNmnGld8INzrQdpHp5VU94JWtRJJVaCdtwKJgX37Mvmd/Ig
- 3Et+LrrCHm9RZdQSp9eGYYpsNWlI/o4eTTtxZ+PEYRfEmjsxA6FY78UNJsrWJlsUek
- pZ4jP0ecNBcHBGPJIXGuhNl8njbTK9/zhO718muH0y8+bLnJUPnIyAfnbuNParNYsd
- vyXK8WJKiGIcHF2LyoOnjQPizi9+YYMIM9QarR9HJEID5CGVIT/zvi9ONmx+8GjV0I
- aYytfbQjVIQWw==
-To: jaegeuk@kernel.org
-Date: Wed, 22 Apr 2026 18:48:47 +0800
-Message-Id: <20260422104847.11243-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ s=k20201202; t=1776898040;
+ bh=xywk3FuWWC6fImVY9XXhdwDp4KDD7unC169c5GRX1tI=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=taLQSnF3g6HjJbm8te8XI4HVGp9e1gYWYDyyEz4BDMSY9RcVw0NXVW7XxNrL52qCk
+ XPKErDIJA4sab4tLjf0mKkrAvi/TtZ3wBs3wdurJAhtObSlzCASr1OLS6myyQJTU1m
+ 7klnFauuVwF7QP/L63MRpWBDs69K6V4heEuT0ERt8G6EQ8ttNsdGztrZJly83cpNYu
+ LYk/WSAJXazmI45BAAZnCCGTQ7h9+ITYX2SKoPiujjo0/H5GJcvptdWUTVFCrvYEBW
+ m9I8VcfQRYVtcp1nirJ+jBJUduExqrJUPrsdhuZz3a4BeSBwXE/BUyb8VWEywliUcI
+ 9SG/FhHW9jycg==
+Date: Wed, 22 Apr 2026 15:46:04 -0700
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Message-ID: <20260422224604.GA2226@sol>
+References: <20260420114714.1621982-1-aalbersh@kernel.org>
+ <20260420114714.1621982-4-aalbersh@kernel.org>
+ <20260421214457.GC37143@quark>
+ <gpmgtg2wkoo4vozzaaouhdp2df6zlifwi6gy4jvq7xc22zo7om@t3f2bl374nlr>
 MIME-Version: 1.0
-X-Headers-End: 1wFWsz-0005s1-4u
-Subject: [f2fs-dev] [PATCH] f2fs: doc: fix the wrong description for
- critical_task_priority
+Content-Disposition: inline
+In-Reply-To: <gpmgtg2wkoo4vozzaaouhdp2df6zlifwi6gy4jvq7xc22zo7om@t3f2bl374nlr>
+X-Headers-End: 1wFgLz-00049k-IL
+Subject: Re: [f2fs-dev] [PATCH v8 03/22] ovl: use core fsverity ensure info
+ interface
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,33 +89,31 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Eric Biggers via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Eric Biggers <ebiggers@kernel.org>
+Cc: fsverity@lists.linux.dev, Andrey Albershteyn <aalbersh@kernel.org>,
+ djwong@kernel.org, Amir Goldstein <amir73il@gmail.com>,
+ linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, hch@lst.de, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The default value should be 120 rather than 100, fix it.
+On Wed, Apr 22, 2026 at 11:59:11AM +0200, Andrey Albershteyn wrote:
+> > The 'if (!fsverity_active(inode) && IS_VERITY(inode)) {' condition
+> > should stay
+> 
+> Why? With recent changes, the fsverity_active() now checks for
+> IS_VERITY() instead of verity_descriptor.
+> 
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- Documentation/ABI/testing/sysfs-fs-f2fs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Okay, I forgot that that had changed.  Looks like the kerneldoc never
+got updated, though.  It still says "This checks whether the inode's
+verity info has been set."
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 27d5e88facbe..1b58c029abd0 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -1001,4 +1001,4 @@ Contact:	"Chao Yu" <chao@kernel.org>
- Description:	It can be used to tune priority of f2fs critical task, e.g. f2fs_ckpt, f2fs_gc
- 		threads, limitation as below:
- 		- it requires user has CAP_SYS_NICE capability.
--		- the range is [100, 139], by default the value is 100.
-+		- the range is [100, 139], by default the value is 120.
--- 
-2.40.1
-
+- Eric
 
 
 _______________________________________________
