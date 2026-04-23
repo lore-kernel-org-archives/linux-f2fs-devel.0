@@ -4,118 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DC16BFAD417
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Apr 2026 05:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E0BFFF9937D
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Apr 2026 11:51:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:Message-ID:Date:From:MIME-Version:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=C4EHeOtwv24AvZXWUnkrN1qe2Vdlw3ilvnlhhDFpA7g=; b=DIUoe5Dwk4PTYZ3Aqw1y1U1zfm
-	5NToJEstyhwp/FW+R0NYAJ/qkxjmj/1IYaPfBTrT7myRpppHzkl4tNXLHTvvSKXwanbIiE7BEuTYE
-	ZJwteYGGiLs8sLUVL1sjBVknrcaGBMJlHtpPmGGrwGd/9teNP8hYxznDh9DfN1wmwuZY=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:Message-ID:In-Reply-To:Date:From:To:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:References:List-Owner;
+	bh=jO7uiehPsFpYWhRIfAfWShdwrgmiUf2Q5fS4tTH9o0Y=; b=Bhj4JNsRJ8D8tp21wRf12b95Br
+	eFMrZSIwKJzI5XEFu1rzzc9bkYFn/7wTcmkuFt4c19gNpz08y+qU9dmzpOuc8PAV6wL8wrRnXJHFO
+	lqCkpt5VJTPg4gu0ObQZCi6JmNYJNDy+Gk0TX1jbNe50BNhoGwEMazjyq+EROGatjJfM=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wFmvF-000143-NB;
-	Thu, 23 Apr 2026 05:48:21 +0000
+	id 1wFsae-0005Qy-KK;
+	Thu, 23 Apr 2026 11:51:29 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ginger.jzllee@gmail.com>) id 1wFmvE-00013v-BW
+ (envelope-from <gregkh@linuxfoundation.org>) id 1wFsad-0005Qp-Vc
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 Apr 2026 05:48:20 +0000
+ Thu, 23 Apr 2026 11:51:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
- MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :Message-ID:In-Reply-To:Date:From:Cc:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5XIJJ+HB9/6ZH3TWKGdyh5Nzg4TBnye3t4cf8uEtxRc=; b=CtQT+OKEtTl4Ziwgr2QOCURcGa
- KFs5z2YXrBieK1YmPOoPWBs/U2uitxogTMt6gbjIX6hWrhCdLA8BXJ/ZnGgKtgCC7O2/Yr+q5mGNe
- mYLe4qNHGHekjcjEdFg5TNrmtKtO7/5xBy41tMIE/U6p1YJ36gYgjBHC62+HirkCnlic=;
+ bh=t/SEj8adaLigsLhjIR7BpyKNDaIOFtUH8CzFiRdI8Zo=; b=lxtOSAZ66oHlyT5O1BtKBiD473
+ X+893KMcfuJLjkG3JNiGqKHLOe9jDI6tKlo+UlLJgFCjwBCcT6pKr4a1JTzYaTjPU1g/kiiwHGKL5
+ Rlx7Nckynz0Gf8/+JvwxcV3cbgA0tB98z1DMq4Dz6bwwSbEupy4R+JOEju7X6cuxamb4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:From:MIME-Version:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=5XIJJ+HB9/6ZH3TWKGdyh5Nzg4TBnye3t4cf8uEtxRc=; b=h
- N2ixnZyqsE2zEPAGNOLHR2l6mdkZPTEh6zuJYTHr9OUfFpJCHHGSSMDdNTp/fN28RNvWmJrETJ8P1
- WOb/kLOnvpsJE7pOI5WuIP/ggYDOU50YLz22zYUIUfvAM+hdsiJuVvMSM/Y1f4POXR4Tm6ZuvWifY
- qumdYbK2k5Dmv97Q=;
-Received: from mail-yw1-f177.google.com ([209.85.128.177])
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+ In-Reply-To:Date:From:Cc:To:Subject:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=t/SEj8adaLigsLhjIR7BpyKNDaIOFtUH8CzFiRdI8Zo=; b=aS+7XSH7pP0tysQ70r54oTxiTc
+ sMgb8NKzNQTmzX3RiRgqFaZnlnFGQbcFxJOezjkUtFABsoEsLGQqu3ndYbKeabBj2EQqyq4wxv1In
+ jBsS/gwy5fWNqC6z22zbEhV8xYSwzoh9YCBsgfSiZj3Hki5XG1/sIATXyOkjwZ0gdVCM=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wFmvE-00070A-1j for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 Apr 2026 05:48:20 +0000
-Received: by mail-yw1-f177.google.com with SMTP id
- 00721157ae682-79a46260385so64466857b3.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 22 Apr 2026 22:48:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1776923294; cv=none;
- d=google.com; s=arc-20240605;
- b=MRT+RalQmyFD5LRoKP9oXWXiJns7FfUTCy8JiMLxdDuP2LDDTZtJN+rcwxLfX88xEy
- srnDvWIvr11kLkogWdgHsIX35vQSNiSgiW7ZDfYRWuXnOcw76ZE6PAoeDXq6NVUclFBr
- Vzki4jC3dfzif/DQK8NO9UuabVkSthEAeVECzFTeCOm60pwemI3038C8+4tzCJr4uitn
- 9vo+VV2BOCAfwJjr1JWtheXapdq2SAa2wQO5aXnYiL0i9mM65p9Z/Puakm+HJH5Rb3ag
- U1UCbI2fWSO1VUu8uurBDJhUK8YfsEU+GTkF0bZFEBYiFbbhOS7JIb7y0hBkCsvOTIya
- XFRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;
- bh=5XIJJ+HB9/6ZH3TWKGdyh5Nzg4TBnye3t4cf8uEtxRc=;
- fh=Niin9j0E8Ll3UdqP2bvvWkPTrY5N0ubFRP8/l3a1kXA=;
- b=Kz2B3LhMoA8mPHrgJeeW8vzULtOa9rwUmiIZXUuwGiyvxeK9+8ZvfMX1mT6SOUpyGH
- Jm91fVjNWAsTNxRsFYyQ+75AIu0TB4sV/1zAb4Xf7BdrK8QyWKpAdLcvCqGMXqFE7gDq
- 6TlrMkBBYHff0AEnvBZJlF5aXnCOlrzgskSnIcpQOK35Pk6HwhSCXdSfwXG2DySKXr2H
- cDBDyEIucJC0dsZ2fiQcF/ERRaSKtV7QlOYMr85buftQHTH97t4THz1W5sBoNx+9cPTp
- AYbKEME2itmTLyHch5T7iS3xCtyU3r+NsYtx95FZLthe6DWNeoRcMvfsYj/EOCylpX9q
- HnCw==; darn=lists.sourceforge.net
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1776923294; x=1777528094; darn=lists.sourceforge.net;
- h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=5XIJJ+HB9/6ZH3TWKGdyh5Nzg4TBnye3t4cf8uEtxRc=;
- b=IZcgb1vE9TL3fmgxB61HVLe4XHN7qBlTH8Njj9QN+xjtxX+03LhgGj+KTo8Pn+8eaj
- ZncTjYRZ1BSFz3et7YBbW8C3h9KJgQQ6uMgfvU9TD4pNmGr3z8Oto1UO+SWqNFRx7Upv
- DblzgYfovQs34CeC/1K1t1ekNXIU9gJYQrJgR+UlNdKxst7qtp33KCABgHWGGi/keWDS
- o0jK1m/4C/Ay/mceb09VpjfKdP6jGOS2GE1rHydlSDUpnvz6TOF5lCQ5dBHCI6mEOV3m
- WMGTt/kygieQJ5zd/RauILXCtRiiubXmYRvKnUSSAUkITuq5nBNuXNKOOpSdGoUmZMm2
- l/PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776923294; x=1777528094;
- h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=5XIJJ+HB9/6ZH3TWKGdyh5Nzg4TBnye3t4cf8uEtxRc=;
- b=k/VbdExZBlTry3bingX3ZywXnK9eTShyDDmkiDt5URCOnmoK49smwnHBg2PGrelSix
- VCkBTxHPY08Nq4V+mJ29l/r8xLn90hNHb7IrXwWfCqr3SEk3bzIbK0F2XzGXNzbhuTp8
- ReNbFo5xeRI/dMeGrSENLbEJOfwRmiA1OgayuWfLJOqa8sVvG/Olv/Pq9pIVTicqgu5o
- lSsyBymV0cpnCFWLckiq6yo7ywS2obXKKn2ySvtnNMoqEtgEDfQoo6FT26FXJzp63kFF
- VINXy9wlcm5id4Xzy2H5EDbqvPKiynIxJh52l6alucKkKaXA3s9kJzi7HfhaFfIXD16T
- lHig==
-X-Gm-Message-State: AOJu0Yzm6OB6AS+8+UUBzOPvL0e95pg5ZS+PQe7+HAkej+y/m/h2HfcT
- 9k2a2nDDJ9k5Ky1Zb90BQpl0rOz7p8geHJuuzDIg43v4Hc8+jE+svcdKmb3K8yEn4R12rcJKSCg
- cD0tlLQI1wQ36xmwUW4HS6WWTtyvS2Zc=
-X-Gm-Gg: AeBDiet6pG3UnDOrBZMyxJAO6ws186OS/7gMhslmigv7UBRuwu40vm/AVDmwQXtKELd
- +xobTRweFd0SXis7g1mLjL8tw9AwpDfpV6ee+sIvjz/TzUuf9UvGU1ouzrTShhRHQ+BBO1gFmCD
- no5CSzgt529iqCvjg7fqpizOINMZcXfB/tpA4SMAu+af7jU7TBhgfUNd5dGYQ5EmSoT3mVGtSaF
- KSNxCNGxu3xApymMSBi3DhdvlcpvV0LZFwipCc9AQREl31GibGi1jqj/ai9gVd+P5G2ogYNQmbc
- opQtQSMOaFFSwMKTejvb
-X-Received: by 2002:a05:690c:1d:b0:7b4:3d82:bf0 with SMTP id
- 00721157ae682-7b9eceb3a6dmr256373367b3.11.1776923294296; Wed, 22 Apr 2026
- 22:48:14 -0700 (PDT)
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1wFsae-0001v9-1o for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 Apr 2026 11:51:28 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id A4F7343A53;
+ Thu, 23 Apr 2026 11:51:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39ED6C2BCB3;
+ Thu, 23 Apr 2026 11:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+ s=korg; t=1776945082;
+ bh=IOWknTxYHvsittigFwjgop2S8p/X2WOmd0RKuLL+O88=;
+ h=Subject:To:Cc:From:Date:In-Reply-To:From;
+ b=Px1Li/S3P++WGQx2PoQC4kfsix8ouZa6IvPTTM8TXnXjFFhpAZrk4wj0TNxa5Wsc4
+ O6xYh6XmpPiyO7F3Koa0loPgo4t/O2uQ6rqo19GKUEQmBmaj7fb2ZyTwrA31Wl71sR
+ 9hrQoU9lY464pYp2BW0K3trhhMGdMNMBMKn7h6oA=
+To: chao@kernel.org, gregkh@linuxfoundation.org, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, rob_garcia@163.com
+From: <gregkh@linuxfoundation.org>
+Date: Thu, 23 Apr 2026 13:50:43 +0200
+In-Reply-To: <20260317023933.1654240-1-rob_garcia@163.com>
+Message-ID: <2026042343-depth-ozone-4a52@gregkh>
 MIME-Version: 1.0
-From: Ginger <ginger.jzllee@gmail.com>
-Date: Thu, 23 Apr 2026 13:48:04 +0800
-X-Gm-Features: AQROBzA2VUGijThs0lAAL0QuK8VpG3tdbcueedjLuZhGwq4V3WK5UKX7uUCBBwk
-Message-ID: <CAGp+u1ZpFon+1Cw8WxEv+kr4wRE_ibPACY+kGsoUeeB-aVa78A@mail.gmail.com>
-To: jaegeuk@kernel.org, chao@kernel.org
-X-Headers-End: 1wFmvE-00070A-1j
-Subject: [f2fs-dev] [bug report] potential order violation bug in
- 'fs/f2fs/segment.c', in '__create_discard_cmd'
+X-stable: commit
+X-Patchwork-Hint: ignore 
+X-Headers-End: 1wFsae-0001v9-1o
+Subject: [f2fs-dev] Patch "f2fs: fix to wait on block writeback for
+ post_read case" has been added to the 5.15-stable tree
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -127,42 +85,109 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: stable-commits@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Dear Linux kernel maintainers,
 
-My research-based static analyzer found a potential atomicity bug
-within the 'fs/f2fs' subsystem, more specifically, in
-'fs/f2fs/segment.c'.
+This is a note to let you know that I've just added the patch titled
 
-Kernel version: long-term kernel v6.18.9
+    f2fs: fix to wait on block writeback for post_read case
 
-Potential concurrent triggering executions:
-T0:
-__create_discard_cmd
-     --> dc = f2fs_kmem_cache_alloc(discard_cmd_slab, GFP_NOFS, true, NULL);
-     --> list_add_tail(&dc->list, pend_list);
-     --> spin_lock_init(&dc->lock);
-     --> dc->bio_ref = 0;
+to the 5.15-stable tree which can be found at:
+    http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
 
-In T0, the freshly allocated 'struct discard_cmd *dc' is first added
-to the globally visible list 'pend_list' (i.e., from
-dcc->pend_list[plist_idx(len)]'.
-However, its fields like 'dc->lock' and 'dc->bio_ref' are set up after
-being globally visible.
-This violated the expected order of setting up private local heap
-variables before exposing them to the global state, causing potential
-concurrency bugs with '__issue_discard_cmd()' or
-'__submit_discard_cmd()' within 'fs/f2fs/segment.c'.
+The filename of the patch is:
+     f2fs-fix-to-wait-on-block-writeback-for-post_read-case.patch
+and it can be found in the queue-5.15 subdirectory.
 
-Please kindly check at your convenience. Thank you for your time and
-consideration.
+If you, or anyone else, feels it should not be added to the stable tree,
+please let <stable@vger.kernel.org> know about it.
 
-Best regards,
-Ginger
+
+From stable+bounces-225733-greg=kroah.com@vger.kernel.org Tue Mar 17 03:41:01 2026
+From: Robert Garcia <rob_garcia@163.com>
+Date: Tue, 17 Mar 2026 10:39:33 +0800
+Subject: f2fs: fix to wait on block writeback for post_read case
+To: stable@vger.kernel.org, Chao Yu <chao@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, Robert Garcia <rob_garcia@163.com>, linux-kernel@vger.kernel.org
+Message-ID: <20260317023933.1654240-1-rob_garcia@163.com>
+
+From: Chao Yu <chao@kernel.org>
+
+[ Upstream commit 55fdc1c24a1d6229fe0ecf31335fb9a2eceaaa00 ]
+
+If inode is compressed, but not encrypted, it missed to call
+f2fs_wait_on_block_writeback() to wait for GCed page writeback
+in IPU write path.
+
+Thread A				GC-Thread
+					- f2fs_gc
+					 - do_garbage_collect
+					  - gc_data_segment
+					   - move_data_block
+					    - f2fs_submit_page_write
+					     migrate normal cluster's block via
+					     meta_inode's page cache
+- f2fs_write_single_data_page
+ - f2fs_do_write_data_page
+  - f2fs_inplace_write_data
+   - f2fs_submit_page_bio
+
+IRQ
+- f2fs_read_end_io
+					IRQ
+					old data overrides new data due to
+					out-of-order GC and common IO.
+					- f2fs_read_end_io
+
+Fixes: 4c8ff7095bef ("f2fs: support data compression")
+Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+[ Minor context change fixed. ]
+Signed-off-by: Robert Garcia <rob_garcia@163.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/f2fs/data.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2537,9 +2537,6 @@ int f2fs_encrypt_one_page(struct f2fs_io
+ 
+ 	page = fio->compressed_page ? fio->compressed_page : fio->page;
+ 
+-	/* wait for GCed page writeback via META_MAPPING */
+-	f2fs_wait_on_block_writeback(inode, fio->old_blkaddr);
+-
+ 	if (fscrypt_inode_uses_inline_crypto(inode))
+ 		return 0;
+ 
+@@ -2718,6 +2715,11 @@ got_it:
+ 		err = -EFSCORRUPTED;
+ 		goto out_writepage;
+ 	}
++
++	/* wait for GCed page writeback via META_MAPPING */
++	if (fio->post_read)
++		f2fs_wait_on_block_writeback(inode, fio->old_blkaddr);
++
+ 	/*
+ 	 * If current allocation needs SSR,
+ 	 * it had better in-place writes for updated data.
+
+
+Patches currently in stable-queue which might be from rob_garcia@163.com are
+
+queue-5.15/sunrpc-lock-against-sock-changing-during-sysfs-read.patch
+queue-5.15/smb-client-fix-potential-uaf-in-smb2_is_valid_oplock.patch
+queue-5.15/pstore-inode-only-d_invalidate-is-needed.patch
+queue-5.15/wifi-iwlwifi-read-txq-read_ptr-under-lock.patch
+queue-5.15/alsa-control-avoid-warn-for-symlink-errors.patch
+queue-5.15/binfmt_misc-restore-write-access-before-closing-files-opened-by-open_exec.patch
+queue-5.15/spi-cadence-quadspi-implement-refcount-to-handle-unbind-during-busy.patch
+queue-5.15/f2fs-fix-to-wait-on-block-writeback-for-post_read-case.patch
 
 
 _______________________________________________
