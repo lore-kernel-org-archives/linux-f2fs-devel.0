@@ -4,155 +4,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5909DF589AD
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Apr 2026 12:14:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ED913F589CF
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Apr 2026 13:12:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:In-Reply-To:References:To:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=wS4E7uxV19ykrVnWdGoQvbAkrkHGQcMgkYUr+1liobA=; b=fbpYmVkBk8U3AwvQwhQegtz9jq
-	GhVr1Imy547mvvzNddG9eMtdU/5p7+UCLk72NPCwzXeomBW5GIoa9+OVyopAevhxsSsPfple3Vg7F
-	Y9b7yoUF2KprBAQhLdabiA+n558O+Xz9VDlPeQ96xXGI9yhfA3/L/pogNG8PEF5PEcp4=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Message-Id:
+	MIME-Version:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=zp8bmVqtjKNvhzs9Kp/pRkSrvXHjyz5tecgIx9klPPc=; b=jsVX4JKA8c3+iT2bDWjzkqw+xN
+	nkEXy4ptTl+3bsKbT1uEWbItMQXdtVCKHe9pAR9dunxU5hS9btrZiVoCEE/WRn/YWZ8E8YRUWSP0k
+	f8hINDe+exIugPvn54mJ9EkvqQ8D4MmEvaZhknzdUA5ivCaJQTbqWLnyTM0BgOZhdar8=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wFswh-0003zS-U7;
-	Thu, 23 Apr 2026 12:14:15 +0000
+	id 1wFtr9-0003Ot-Rb;
+	Thu, 23 Apr 2026 13:12:36 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <liaoyuanhong@vivo.com>) id 1wFswd-0003zH-RY
+ (envelope-from <cel@kernel.org>) id 1wFtr8-0003Of-Da
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 Apr 2026 12:14:13 +0000
+ Thu, 23 Apr 2026 13:12:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :In-Reply-To:References:Cc:To:Subject:From:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Message-Id:
+ Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qvUJziKXe46hrXodHw02nFmofqALE1KGXS7isNkhv+I=; b=gMkktZ5ktTqaTPHqVntpsjbN6H
- QsEUjx4NPjdqCoZHzeT9Ngbbi7RrciHyY2TZTwMnR2aiyhwqSxtpQGjalQWG49VFZplmrMePIXlYF
- 0/yam8NpAFGHUsWlgxq5N53ACADyqeL/02x2icpmiI17YhZx3fjE9QrkqWfkQPKjQm8E=;
+ bh=KME06VXxZEDCxiuHOzN0Id0I7W6GQoO3+MJbI5byik4=; b=Jyo441LAY7TEtuAX4+GBn3n3Jy
+ Js1E/mfQjN7HTkofxfD6V00O5Hp/dEC44h9IkJQhLbPvD4x82u3S263cq5l1fbCQzQb0n1UGeJaqQ
+ r5Fc/jrU3bKaeFVJQZRJ2kkIa+ucX6ThLUKMJx85lRWvmcGuTetJKekfQG8Ila6AP0NY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:In-Reply-To:
- References:Cc:To:Subject:From:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
+ Content-Type:MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qvUJziKXe46hrXodHw02nFmofqALE1KGXS7isNkhv+I=; b=nEVlwCYeNPHs133mLcBRG4Jsf8
- lp2eCfIVuOmX7/QW8H/QrFasIt4wQePItJwl/TqFnKYFiHyb7zeOyXhuo7eSL1iW/4ty5g/R6fc5S
- T7qwutq1je668fsHgfx8wCnug1wztqJce5Y+Oy/yxMZz/Gleoj2yCoj8gHHXiz5lGNWY=;
-Received: from mail-japaneastazon11012007.outbound.protection.outlook.com
- ([52.101.126.7] helo=TYPPR03CU001.outbound.protection.outlook.com)
+ bh=KME06VXxZEDCxiuHOzN0Id0I7W6GQoO3+MJbI5byik4=; b=jadMJx1YGQVEZvowJa2TYxSu/+
+ Pxt2XJdCqL7sGyZHCdEsz/N4SirO+ZzFpAVArVjo5TFaxtqel83mkDFDCjxZDd7NSNUbPjOmDegLc
+ rpkx1ks4Wz1SePXKi5uI3/sWcPBWWOvyt5I3Dig69Zb/flLenRUvmdZS/o5AhvuR04x8=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wFswb-0003PE-1j for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 Apr 2026 12:14:11 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vBrp+6YWkPv/RAApl9J3YZM5h4zneEEx7ZWLPuQ24xZOfBeEtmdoL6X5S12nvRDL0vSOZqpIhTBnZLCoLYhnOtX80x7i9P69OasiNw2ue3kHPFqDyLTzQXYGMmre+fnPCN2fHGd+ApzAzyooIThwFxyjUduGlinu7JVviIDOFAcymdI8N1cWMUWGiFK9cK9viNFoflbC8wGkJsszAdLLIwu7kP0UY3+6083HucwlbSGbyOhVVd+RG2JJOCBMe57IrVFT36oQaQk5hIvhcsS2ENDdeFtePA8R++5NtEfWxw3uRwP1YDNVQYGyXlk6j6V0TUNoq4cOPOMK5kP2yfEiFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qvUJziKXe46hrXodHw02nFmofqALE1KGXS7isNkhv+I=;
- b=CdckE/VZHNsSpCa+kCJd4H+eFATaNIdLi34pMST6+GMFNmT+SeWDoPhbHGCRCGAe/5fW43dWQI48Q1700L4JNhed1a0xlvKzl74WmM6Y0K8Js+JoBJR4STgX3P9kqNQCzWa4asAAxCaU9D2wSiXZbJmXhCcHyMR0GCdsVPmWHXa8LD69zEIyYVbOq3uUjZFc5M8K9In3837L8qooZtL7b/J9OGKtpfy3ZeLF5VlK16YQd3V1DxI3MgTZCTPEVmYcpBA+lmO8TUXZKwRCc1NT2cQrBhcfIE7IMvmAJqkENLs5IGutRuhIqfqfamwzDLC48rzphjjftd07eePhzWz1Cg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qvUJziKXe46hrXodHw02nFmofqALE1KGXS7isNkhv+I=;
- b=EW3y9uoXDrg9YOR8p94WFfcwCZ/jZsPTTQJRMwlcILNC1bj8nZSVHBKEt7kay5NZzA4kiKbSj5cIimg/ng9thqaDiQDBfAMLcXRjGWSQcaouBqC1y481w5Wr9jO/lv6IWen0hhwuuctbeAzm4QVqfcOCiLH1a8wXJu3x00TuSPvaVmbB7TnDWmdj9b8yhqD/EJlQXF/C1l15kfmmRL1BrC7f0HVVjToi+S9uybUzWrHiAlqxkJC7OMvVTZ4cZ73kwLlsOxxNMVklYFvE3OnbEGveSDdYedmMOzjTOxpmuZkMEkDMRW3DD6kPZuYNNdRWbybGdUrluuPQc4+Ms7DLjw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TY0PR06MB5579.apcprd06.prod.outlook.com (2603:1096:400:32f::14)
- by PUZPR06MB6053.apcprd06.prod.outlook.com (2603:1096:301:11a::10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.17; Thu, 23 Apr
- 2026 10:41:35 +0000
-Received: from TY0PR06MB5579.apcprd06.prod.outlook.com
- ([fe80::fd5b:d112:ac3:bba4]) by TY0PR06MB5579.apcprd06.prod.outlook.com
- ([fe80::fd5b:d112:ac3:bba4%6]) with mapi id 15.20.9846.016; Thu, 23 Apr 2026
- 10:41:35 +0000
-Message-ID: <05eca173-168a-47df-982f-ccc3e06c0d0c@vivo.com>
-Date: Thu, 23 Apr 2026 18:41:30 +0800
-User-Agent: Mozilla Thunderbird
-To: Eric Biggers <ebiggers@kernel.org>
-References: <20260421075717.170840-1-liaoyuanhong@vivo.com>
- <20260422232747.GD2226@sol>
-Content-Language: en-US
-In-Reply-To: <20260422232747.GD2226@sol>
-X-ClientProxiedBy: SG2P153CA0049.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::18)
- To TY0PR06MB5579.apcprd06.prod.outlook.com
- (2603:1096:400:32f::14)
+ id 1wFtr7-0006nd-IY for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 Apr 2026 13:12:35 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 416D844314;
+ Thu, 23 Apr 2026 13:12:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8622C2BCB6;
+ Thu, 23 Apr 2026 13:12:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1776949948;
+ bh=7UJbZffIRnlSy1BsD5KTY53QnosRcT5XUdA8rzeY0m0=;
+ h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+ b=q+8CNK6Ty1dPCj32YKi12DJgeuILKAnyBRpIlf61cLnK+RTqGqCnujyiqkeOrrFXz
+ jDJaAVYPzupJ+M1eAimqvkTh1Uy0GVdjZEgu6V3rfHDTtnPANI356Rq3gpJOGGlaIC
+ E0u10VS6jFOzMiom2mPikCIFd3TmIYnl8LyN9ypBQK1ekAGuAy3zfPL7aFMAICKYiK
+ 1bB9gbxlFshmLeVglyRw/tGHFmcpryFso/LsH1EM3QF3XzfwkBoHtEEMimYZcEfsjg
+ ve1hOkdmg5ymqaE//AwwPVzvWAJ3qA+aE5KG89uv4GT/o3wtAsT24mcDO4HAsvekWU
+ eSBZzk/RyUuWA==
+Date: Thu, 23 Apr 2026 09:12:05 -0400
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY0PR06MB5579:EE_|PUZPR06MB6053:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a0a83d2-2ef4-4af1-8c48-08dea124e393
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|56012099003|22082099003|18002099003|11006099003;
-X-Microsoft-Antispam-Message-Info: RwaugEp6MNizDbm9vAEHtr1+ymou7zW1R8HecPjr8bVYVN3f3NeNgUSQ4lYOhTs3E/BGtzmiVOqTKgUjLRjlXWzILrr/Va/peae3OeG0plDR6j3TkwdKxww2l0N74Yi/V9SHKSx5F4LDjEE40jGVCX9l6R+Gw4e5SIv2kWWGPQl9NjLOcQRkPIFp6+q7z5+vf5Rh1iR6UhOhf1v25ffyczKCQebUvIXejnKiGprglEjvvJDXTdGzB4uJgpivbHnXFzgUEOWLnx/mzOyLUM71tWr+MUT7ewi7LxoSpCtjjSZU4ppX6TtrXfsUWjs5dAyWCKj2CyJMqvjOgFOH6da+2DFzQrXruUSspFzZVb08/UUUbpmtWMH2XVdyVQzI3MhyxLQox5E9L8zj6ei8NyOKIAgX1ckizG5r66SfSDB/CZv1zdM2lU4SaNjsYpJ+gy02TQmKF8hTXFG/N4ZTcsLIyU8ob+biJKMkxoVIsUHa2NMctNvKtSzWYjFpxBUtCUCwH5l/kaRc2JmyAhvlmAuhhWs7aLGdSLCtpSY93+OzpCsLytdz0SIGqvxju/1nD1j0KS5xQ+w94puwEYyKe9wHHXLWpO494V2Rp7YuEzSbzEGpmM0p6lrSyXV0MT6I4VoZsnWFHWE6vJUlFSYBKqUC/Wtel5qkvznXqrx/oz4kdcNB2B7OoLy3pVA4GAfl7J9/2EAIOOIOqwRJavTH2FO4Tlb9D/MZzvaDt+0prya8Mpw=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:TY0PR06MB5579.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(56012099003)(22082099003)(18002099003)(11006099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Z1k2aU9lTjc3RHBlVXM5VU9KSWJXVlh5MlFSVzhxRW82TGdDM1ZWN3ZQODV0?=
- =?utf-8?B?ckRXUFFXKytSekFzZW5OVERxc3puWHZoSWJTbExSRFNZeS9hOGRvOHV2MU5F?=
- =?utf-8?B?YlVmTldsclo2VXgyTE1xYkhqbWV0dEFrSmdVRHFaSEdZeHhRNzk1N01NT2ZE?=
- =?utf-8?B?WEdXYjBPcndScFJaUlliVjhKSDBZaXJMSzZ2V3NuRkNIMENxK3V1cFZJZDlC?=
- =?utf-8?B?VFhpK2NtWjRSNzI1RWdZVlBLTUt4WllzNG02Y1hvN3plRldaYW9VbHJvdWJJ?=
- =?utf-8?B?UFovRFkyU1BSMm5lZDVFS2Q4SER0MVMzVTk0dWp2ZGlXbmJ0Q0tLSmFrdVJR?=
- =?utf-8?B?TEpKM3QvOVNIczVoREFQY2tJL29aRGZVK294UCswNHVxS2tGNENBNkFiUzFq?=
- =?utf-8?B?RHRjOFM4TlRoRG9pS2d4RnVNdmFQVlBOZytZdlRFbElEZDBBWmsyaiszMDFr?=
- =?utf-8?B?cDd6Tmt5R3Y4Z0FkTWFlSkM4SEtmMmkwa0ZUUkZGZ3ZHVGo0QjI5eThacHM0?=
- =?utf-8?B?RmtBMkI3WFdnL0treDBSWGhNMm9pVFFlWW1MaVF5ZkM5Nng5dFhvc0lydVZl?=
- =?utf-8?B?OTdDUFlhbjloc3RhV0tHWkJGc1U1djlSY0NjUzF5VTRqYzRHZ3ZnRlA5M0pv?=
- =?utf-8?B?b1VkeFlOUzlIV2Z3ZU5IU3hVT0tTUkJzNFR5M1JGS0ZFcFU1bmhRREJqRHlX?=
- =?utf-8?B?cW5sMCthM1hBUy9BYUR4WDRGVFlQSVMvdU9Eb3BMZnNVWFZXb1VzM2ZSQmpo?=
- =?utf-8?B?TnJDdHFCdGY2VzN6VEgzSS9yOVJPTGVTaUtsdW51bFVWaTY3akErcmtIZnUw?=
- =?utf-8?B?dWZZakU5TTN5UitBYVFLOHp6RGVKbjEyL2REVjZMSkxxRXM3SXRXMHJKR3Fk?=
- =?utf-8?B?K2x2MkdzellYWTJoN3BEK0ZNUms3ZDdrTVZCdE9KZVlseHphS3hGLzIydUtt?=
- =?utf-8?B?MDNoOEFwZnRyc0RseW41MXM0Vm8xZFVIZFRCcFJiZm1hcldEUDVyRXFBWGZV?=
- =?utf-8?B?cnNGVjZoekM0Y3FIRzMwd3BFb3NLWmtZMjlya2VpTDRiWlVzNU5aOWQ2U1ZW?=
- =?utf-8?B?RHJ4QkFiK2E1MVl3anN2b3UrSVJVOHR1NER0cjRZcTJ6YmJ0RTdzQ21RaHJm?=
- =?utf-8?B?dlM0RzhLWlpZZlYreTlCUWIySmxsdXY4THNWbjgya2VSU1VJamFzbmhLNnF5?=
- =?utf-8?B?TTBqMUdET01QQTRZbUpkNDB2WXkyR3U3a2ZjYlVyWmdUL2ZJTUpwa3pIcFFN?=
- =?utf-8?B?N05lVFZsT3J1Vm1XaXRDZk5XOGxhdk1BRXlPdE1PL2tUU1cvTHBmbThQbnlv?=
- =?utf-8?B?OE1kS3BSQ3ZUUkxXZ3NlM3FCK05IZld3RFcwakx5UjhHR3V2VitGMHMySmJC?=
- =?utf-8?B?Z3kvMUh1SmdyVTcyU3F4NS9RTFBSZGxoK2Y3US84alBINzhpQWgvUDBQWGFz?=
- =?utf-8?B?bDBGN3NuT1hjL2Z4Ujd2YWxOMWpZTTFaQ0dQS2pGWExBaGx1L29aR05naUNx?=
- =?utf-8?B?dzUvT1BqM3hoS2krOFU5ZEY1cTJFbTJZQUVldm03aUJOU2dNMHJnQkp0bU9X?=
- =?utf-8?B?RTVrN3U0c0JMbUFNSmZKM0c2TU9Gc0ZMTGZUQk4vQ2RQSWU1aVltWEt0aVg3?=
- =?utf-8?B?RWVpSzk5QytJSXFaVWpCaHdaY2FWZE0yNzZNVlArVStlNG12SEdBQ251S1Ny?=
- =?utf-8?B?dlIwTkF5Y0R0L08xdXBxVXVYNzAxLysvbDVFQ1VwVUxEa0lXSk5JbnpQUFQ5?=
- =?utf-8?B?R1JMeWM0dm82VHZXVllzMHAzalphUUV3UXV3MmE1SitydWVXQlh4b0pySHAw?=
- =?utf-8?B?dmpsa0I5eVVPa2dNbjd1Um1tZXEvZ2lGcUlHTjZSUGJ4Wi8xVnl3YkJhRitN?=
- =?utf-8?B?Um9iV09WTlU5VnVsbEhydFFkYytaN3dsaUMyNzVidzVpc2hhdSt5cmpkWWw3?=
- =?utf-8?B?MVRpUzlrRUxqRHdPT2dTVkh4OURrbnVkTjUrUUFwNHoxWkMvdzNua2pFRjh1?=
- =?utf-8?B?UFVWem1nSklYK1JVT1ZiZE94WWp2dnlPd24vN0tqbTF6YzNkdVZwcFZ1bitj?=
- =?utf-8?B?OTNCc29manI3cFkyWERBRThQR1FEMFBQQlhuQW5YaDZ3MGtMVFI1VDAyOVZj?=
- =?utf-8?B?SEF3Z2wrS1JiZXAyRVBtTWhjR1hWaWFXbEFydEt0bEFDY3JZQ3lCTjl6enR0?=
- =?utf-8?B?bXExTy9FMmJWQjBYZVhHYXQxY3VsVFFnak5Nb2VBV1Y5V2h0NU1PMGo4UWVF?=
- =?utf-8?B?TWRNazJweFV5Q2NhL3l1VHVZMWduNitiQ1g3ZlAzTHQrOHowZFp4ZVIzdWNH?=
- =?utf-8?B?L29uaGVCaVNOWEpUdmpwSThEQXdjSHErQ2dBWk1QVWVwUjRsODRqUT09?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a0a83d2-2ef4-4af1-8c48-08dea124e393
-X-MS-Exchange-CrossTenant-AuthSource: TY0PR06MB5579.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2026 10:41:34.7801 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BvHIioZ5eps5iW3gRDE0xU6+dIsgxLgkPJAEWSybx9pv4c7j0oF5wPdd75DuNL5KZphQ+7tMENJgPEpo3eMLnw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB6053
-X-Headers-End: 1wFswb-0003PE-1j
-Subject: Re: [f2fs-dev] [PATCH] fscrypt: add software key support for
- filesystem-managed data
+Message-Id: <20260423-case-sensitivity-v10-2-c385d674a6cf@oracle.com>
+References: <20260423-case-sensitivity-v10-0-c385d674a6cf@oracle.com>
+In-Reply-To: <20260423-case-sensitivity-v10-0-c385d674a6cf@oracle.com>
+To: Al Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3340;
+ i=chuck.lever@oracle.com; h=from:subject:message-id;
+ bh=+pPurO/+pD2WfwcHWQv0N9xleXhBqxhdJ6hocARUJZ4=;
+ b=owEBbQKS/ZANAwAKATNqszNvZn+XAcsmYgBp6hqzV4rncvMnfwromfgLGjORebeuYGgqBGxix
+ MODx4f0YwiJAjMEAAEKAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCaeoaswAKCRAzarMzb2Z/
+ lzuJD/9oett156EXicv6rkJiFAEDCXWQPISxbLgBsKNereRLdeoxArncX+k2TCH+NNCNpGYhmsF
+ 5rPmzbKsSI4Z8YDHcVcOWFN+uc2KC75iTOUgDQnRLF0dX4wUOCBmozE2jn6XI8McHNRY7B1illr
+ z5PX3hGmxY/cfyb5aW9G8383RS1L7a0Z2aymfxPFQVQfM24ugoZ9D4VzTNLiwTQqSGHnuIuvyzD
+ eK91r1zb1mYmsRfCOkpEL+3DyA5riUUsJF1x9c9Z/9L4ZVbrEMvTt0s+GIfDUYGTgEBBztfl+PC
+ AC3nxLcV8c13VwPMY43FHJyku2am/FL9snNRum6RYgrLQfPnitU/Hj8ZOIOOdVCNO6Y9/uZyh1y
+ 3n3Sixh3N06mfvsFwVTqT2XG9KC2e8oEB/Ptlw+Lbu84Zv2z4Zp9uTrk4aN37W4gJ9ZQ6Idu74O
+ DM+RdPFyt46ik79+6nMzg5M0ODNO5TsygyN5jXHPfM4Lw7scpGMAvCvJ46rP25FA4cGL2jli7zw
+ uEKwAlEc6Qe6NPfUjIAbQPad8gGz84jgGgbVLaQmQJcbW8onIwSIOjA3ECF9YyX14wxV29TJCS4
+ mLeQMaVYq43CvDhrjWyaSeyo0eWci5orp7Xw0z3rXLUbHJGRYYvVYjqKlJtbuUAjlAZHPFF9VgC
+ 5whXS5Ywg643qhQ==
+X-Developer-Key: i=chuck.lever@oracle.com; a=openpgp;
+ fpr=28B2E5B01286DF243CF23EFE336AB3336F667F97
+X-Headers-End: 1wFtr7-0006nd-IY
+Subject: [f2fs-dev] [PATCH v10 02/17] fs: Add case sensitivity flags to
+ file_kattr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -164,74 +104,110 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Liao Yuanhong via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-Cc: tytso@mit.edu, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org,
- jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+From: Chuck Lever via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chuck Lever <cel@kernel.org>
+Cc: pc@manguebit.org, yuezhang.mo@sony.com, cem@kernel.org,
+ almaz.alexandrovich@paragon-software.com, adilger.kernel@dilger.ca,
+ linux-cifs@vger.kernel.org, sfrench@samba.org, slava@dubeyko.com,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-ext4@vger.kernel.org,
+ linkinjeon@kernel.org, sprasad@microsoft.com, frank.li@vivo.com,
+ ronniesahlberg@gmail.com, glaubitz@physik.fu-berlin.de, jaegeuk@kernel.org,
+ hirofumi@mail.parknet.co.jp, linux-nfs@vger.kernel.org, tytso@mit.edu,
+ linux-api@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, senozhatsky@chromium.org,
+ Chuck Lever <chuck.lever@oracle.com>, hansg@kernel.org, anna@kernel.org,
+ linux-fsdevel@vger.kernel.org, sj1557.seo@samsung.com, trondmy@kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 4/23/2026 7:27 AM, Eric Biggers wrote:
+From: Chuck Lever <chuck.lever@oracle.com>
 
-> I don't have time for a super detailed review at the moment, but here
-> are my initial thoughts:
->
-> - This needs to be sent along with the code that actually uses it in
->    ext4 and f2fs.  Please also Cc the mailing lists for those
->    filesystems.
->
-> - This is going to require an "incompat" filesystem feature flag.  After
->    all, once a filesystem contains files that use this scheme, older
->    kernels won't understand it.
->
-> - UBIFS and CephFS already use fs/crypto/ but don't support blk-crypto
->    (inline encryption).  This new code feels duplicative of that.  It
->    should be possible to reuse the existing code instead.  That would
->    include, for example, reusing the existing en/decryption functions and
->    the existing struct ci_enc_key field.  This would keep the changes
->    limited mainly to how the key is being set up.
->
-> - Supporting all the different IV generation methods doesn't make sense
->    when a per-file key is always used.
->
-> - The fact that this is incompatible with hardware-wrapped keys greatly
->    limits the usefulness of this.  (Note that technically, it could be
->    supported in combination with them anyway.  But the security models
->    would be inconsistent, which I assume is what you have in mind.)
->
-> Hope this is helpful,
->
-> - Eric
+Enable upper layers such as NFSD to retrieve case sensitivity
+information from file systems by adding FS_XFLAG_CASEFOLD and
+FS_XFLAG_CASENONPRESERVING flags.
 
-Thanks for the comments. They are very helpful.
+Filesystems report case-insensitive or case-nonpreserving behavior
+by setting these flags directly in fa->fsx_xflags. The default
+(flags unset) indicates POSIX semantics: case-sensitive and
+case-preserving. Both flags are added to FS_XFLAG_RDONLY_MASK so
+FS_IOC_FSSETXATTR silently strips them, keeping the new xflags
+strictly a reporting interface. Callers that want to toggle
+casefolding continue to use FS_IOC_SETFLAGS with FS_CASEFOLD_FL,
+the established UAPI on filesystems that support the operation
+(ext4 and f2fs on empty directories).
 
-I agree that the fscrypt changes should stay much closer to the
-existing filesystem-layer encryption code.  I will rework this so
-that the fscrypt side is mainly limited to key setup: when
-blk-crypto is used for normal file contents, fscrypt can also
-prepare the existing software contents crypto state for
-filesystem-managed regions that cannot go through bio/blk-crypto.
+Case sensitivity information is exported to userspace via the
+fa_xflags field in the FS_IOC_FSGETXATTR ioctl and file_getattr()
+system call.
 
-I will also drop the separate key object / key-selection path, and
-try to reuse the existing contents key and software encryption
-functions as much as possible.
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+---
+ fs/file_attr.c           | 4 ++++
+ include/linux/fileattr.h | 3 ++-
+ include/uapi/linux/fs.h  | 7 +++++++
+ 3 files changed, 13 insertions(+), 1 deletion(-)
 
-I agree that supporting all IV generation methods is unnecessary
-here.  For the first version, I plan to limit this to the normal v2
-per-file-key case.
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index f429da66a317..bfb00d256dd5 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -37,6 +37,8 @@ void fileattr_fill_xflags(struct file_kattr *fa, u32 xflags)
+ 		fa->flags |= FS_PROJINHERIT_FL;
+ 	if (fa->fsx_xflags & FS_XFLAG_VERITY)
+ 		fa->flags |= FS_VERITY_FL;
++	if (fa->fsx_xflags & FS_XFLAG_CASEFOLD)
++		fa->flags |= FS_CASEFOLD_FL;
+ }
+ EXPORT_SYMBOL(fileattr_fill_xflags);
+ 
+@@ -67,6 +69,8 @@ void fileattr_fill_flags(struct file_kattr *fa, u32 flags)
+ 		fa->fsx_xflags |= FS_XFLAG_PROJINHERIT;
+ 	if (fa->flags & FS_VERITY_FL)
+ 		fa->fsx_xflags |= FS_XFLAG_VERITY;
++	if (fa->flags & FS_CASEFOLD_FL)
++		fa->fsx_xflags |= FS_XFLAG_CASEFOLD;
+ }
+ EXPORT_SYMBOL(fileattr_fill_flags);
+ 
+diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
+index 3780904a63a6..58044b598016 100644
+--- a/include/linux/fileattr.h
++++ b/include/linux/fileattr.h
+@@ -16,7 +16,8 @@
+ 
+ /* Read-only inode flags */
+ #define FS_XFLAG_RDONLY_MASK \
+-	(FS_XFLAG_PREALLOC | FS_XFLAG_HASATTR | FS_XFLAG_VERITY)
++	(FS_XFLAG_PREALLOC | FS_XFLAG_HASATTR | FS_XFLAG_VERITY | \
++	 FS_XFLAG_CASEFOLD | FS_XFLAG_CASENONPRESERVING)
+ 
+ /* Flags to indicate valid value of fsx_ fields */
+ #define FS_XFLAG_VALUES_MASK \
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 13f71202845e..2ea4c81df08f 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -254,6 +254,13 @@ struct file_attr {
+ #define FS_XFLAG_DAX		0x00008000	/* use DAX for IO */
+ #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
+ #define FS_XFLAG_VERITY		0x00020000	/* fs-verity enabled */
++/*
++ * Case handling flags (read-only, cannot be set via ioctl).
++ * Default (neither set) indicates POSIX semantics: case-sensitive
++ * lookups and case-preserving storage.
++ */
++#define FS_XFLAG_CASEFOLD	0x00040000	/* case-insensitive lookups */
++#define FS_XFLAG_CASENONPRESERVING 0x00080000	/* case not preserved */
+ #define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
+ 
+ /* the read-only stuff doesn't really belong here, but any other place is
 
-Regarding hardware-wrapped keys: it may be technically possible to
-make this work in some cases, but using a software crypto key for
-these regions seems to conflict with the expected hardware-wrapped
-key security model.  What would you prefer for the initial version:
-should this combination be disallowed, or is there another approach
-you would recommend?
+-- 
+2.53.0
 
-Thanks,
-Liao Yuanhong
 
 
 _______________________________________________
