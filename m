@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7FBF7FF8850
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 25 Apr 2026 01:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 78FFFFF8850
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 25 Apr 2026 01:54:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Message-Id:
 	MIME-Version:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ATKv+Qsa3sRmjiJuLSpaw6mNL3fgGwsq24QefiVbuWs=; b=nNs5XEAXPoqgBa9f26+F6AJdee
-	D4PEKqbA1ylyKTA4eX741PDOCSY5E7hNMqybE/Blu2x1YJp9uMrseWMw+RxZt95WdAKviA1nTLCDA
-	2CJ+miZSJ20BJfgfZhQuUX2Tvl15ebodsZhW/LFzH+rv5dDAM3vkSPOeK+Aw4HtrK2/E=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=3flpWy/72OUU7j7Tz6Tyt+JkAsZjrnUHB4ERjohg4cc=; b=edLg7Il+jirFoS7IufPOesa0CK
+	Z/j6pX8pui/zmrmrOkf+YocvEl5KnEv8C+hwrHEug2giSopE2V8abZBEDItxAu+iKY5nG5JTNyroJ
+	tdIQ+pBuWYhnQC3ozW1ZmxjasJ6rdRxQsZQnVLYt01AOtCy0JxPUa/0v0WfVl1AGUels=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wGSDX-0003Wp-6z;
-	Sat, 25 Apr 2026 01:53:59 +0000
+	id 1wGSDa-0001Aa-5W;
+	Sat, 25 Apr 2026 01:54:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <cel@kernel.org>) id 1wGSDV-0003Wa-Dx
+ (envelope-from <cel@kernel.org>) id 1wGSDY-0001AG-Mq
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 25 Apr 2026 01:53:57 +0000
+ Sat, 25 Apr 2026 01:54:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Message-Id:
  Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+e+oL99BCH0UyQrcxRPmI6j08pSstO5lvlvD5hIz5Ao=; b=fVtRmjf6w/IM2Zloxk9NVdBFuF
- qheqQVHrGODw0EM4jz4ioUBGPPo4iP8QTXG+iZovTranO2r2Hx+L7aHyJjJLEA7AV49F2xHwiC80y
- nvQhFToqqdCDkWUdF9iV2sGlTqrQ5dCqS884FK86DZaknxFC0Z7Ln2MXA0xPoyYTRUdA=;
+ bh=JpCJQN+ihVjOxT//AYjpGclWAQ4rqb4iN9evtVQOcwM=; b=HeY9PESdlWheMINszBo8TdhjRU
+ U316E5E5FzP2VK6TIQVPOm3zJxvHIBd9Hxya0C1Mtg4tE5/gknacZKxoKqDo4hXmJ4IoCuq8CbRGr
+ RwUeVwpuw80XxUw/6PzUyZx3/lIDQ5okOY/YdpU9FFz3IEDXngzM9xrmJdO2UDYsU4BA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
@@ -42,57 +42,57 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+e+oL99BCH0UyQrcxRPmI6j08pSstO5lvlvD5hIz5Ao=; b=hDMEdpx3FzAScb+qEKQTIx269n
- u6hLU+EMv04j0NZ9CjktSlHB2jFmEEI2286CgI5WSdbpillvDI1pZxuae4fZlNuu672WZ1eeXuFtu
- 8TtLRppG1mJtTkEnlKkEHA/O/yYtY8m+eTCx452zyrcLSXMace7+RnYyFu3BMHgr/dL0=;
+ bh=JpCJQN+ihVjOxT//AYjpGclWAQ4rqb4iN9evtVQOcwM=; b=NG3rrwRv+zaxI0jEx79TiyaQzp
+ m7aVaMA8O3uz5z6406AxFVng7Quz1bap1Kfng2zuCp3sPfc65KDN7y9EVVQaKCTJwaeYJuRH452Ai
+ 9/3iYEEaSAYGcmfRkLkjU+gpmzHQgczV5l6XAf8viE+34ZOvKX4NEUumsODRKXFDgxbc=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wGSDU-00031E-OK for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 25 Apr 2026 01:53:57 +0000
+ id 1wGSDX-00032F-Qv for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 25 Apr 2026 01:54:00 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 8DBAD600AE;
- Sat, 25 Apr 2026 01:53:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10ED3C19425;
- Sat, 25 Apr 2026 01:53:54 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 3309B60052;
+ Sat, 25 Apr 2026 01:53:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A68B5C2BCB6;
+ Sat, 25 Apr 2026 01:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1777082036;
- bh=OyLhtXrNpz8D2WvRJaUa8omBuZCmPi2gdz7MuhZWO2U=;
+ s=k20201202; t=1777082028;
+ bh=QZehk7hgpP2WY10BVAiXNiQemi89Ng/OyF16c1lCHtQ=;
  h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
- b=u5ls4ajCrDxaabG/eUULQCayzzn0FxGdJ0h2eF/6yiu1+VEVbpvL3VoFwMiT41uFO
- 45sB5xlpJHd+bD+Blck8AXyyr7y21+0/HL1LZn4Sbb1wjjMsrFbekWY67rP+jZiKay
- uL+zcojc7UfJR+m01g0rPsZQ2cJIzN1ny90H6yd8WdHpV7EH4GwxWIhcieAlSO42YV
- Q1kdGrOGtmSKz1IAGXtPVhdwaOAkVBoRbgsYwVyvlKcbwJtrtKdsXpFzp5rnIZBs5g
- X38GgUl7e0xKM+pyVDn22d86CciPKZ4jQ+xMp0hDvyOw3vHuW7OqaQpNK2++q2pi/w
- u5xycbXZ8HapA==
-Date: Fri, 24 Apr 2026 21:53:15 -0400
+ b=uj48QbHcwL7k1FsJFEF53cmfogqLyr7S7uZS49ZDp4MKVBLkfjrfcW9W3zVu6+0S6
+ RDfgy0cBRjsAx9Ex2fkOo6XcOwPhKvPA1L1OEZ+v5V/OcdyGvy0rOUMkdcEAeIDNvb
+ li0IMKNh4HY7/+cZv/Q5kDCZ4LpB/+pjlyzeR9EQxAfgI09wU0/1DrVRiRrRF0mQlg
+ +JrSeTR+j5VRF07eusmhb063zYR1Lrk4UEoH/GtoX24RDFlvXUabWtlLR2AzCWQyet
+ bLUWoTmfbi0Ulisq2wTwu5REGz6z7OqYmW1j0k/Upk694a3kLqqR1BB6eW0sSOjgyD
+ TQuEBTCR4VhUg==
+Date: Fri, 24 Apr 2026 21:53:12 -0400
 MIME-Version: 1.0
-Message-Id: <20260424-case-sensitivity-v11-13-de5619beddaf@oracle.com>
+Message-Id: <20260424-case-sensitivity-v11-10-de5619beddaf@oracle.com>
 References: <20260424-case-sensitivity-v11-0-de5619beddaf@oracle.com>
 In-Reply-To: <20260424-case-sensitivity-v11-0-de5619beddaf@oracle.com>
 To: Al Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
 X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4215;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10613;
  i=chuck.lever@oracle.com; h=from:subject:message-id;
- bh=YpboDqA/tDvRzcdcF8b8ZwECQrfPFzdzvA+uLgueOwI=;
- b=owEBbQKS/ZANAwAKATNqszNvZn+XAcsmYgBp7B6RVAwGk4HxMo5K1jJ5BigRqDIrVb1SGoayj
- BXjhQVoJ2qJAjMEAAEKAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCaewekQAKCRAzarMzb2Z/
- l+npD/918vXvKFGss9WIcMGCwoxVEeUj7IKF6YmyR8/POJsszj3LZO2KLLSMMuH8dfwR0HQ5hzz
- zOdB6ehv+nZ5JMtg5HMXZx4kjXRjhipq8WZOrbxpvTsvcqFAUOO4hCkaVjEVSbNt+lEmM6GyT3L
- RJy4JqkUvDTnIFdUgL2mZQ9AP4SeZQnhUq+N5yB0LVltPB9q7YolmuNYjJp8VT2D2Znw3XBJw8a
- G8MR0h2x5mskZ4u+PzHFNtB4bQNpOGOKX3R2AVclVp+sQ6QkBjn+kaW42/yayH9hRsXt1MGws2+
- ybnGk66QcZhVlc2zJNsAjCkvQomr5IGSft8jDMGJ2SbgsrgpLKqSwWlTvXmsH8ROPvzBpAkFS+M
- 9Eafbt8Rn3JrUz342Zv5hcio0q0owOFYBDZZfVUz5Y4G2pTXB1Yo/txdVUO01dGpq1JgtHjuDDW
- 3LuqteJkf2fLyrlsCuPrwxU+JvhwIOmHCMefTPKBHANcJVVdgcdvjnqctZVBxgtFBNovGRNI7tk
- VTDn1ycm/0EAb3cUMSXwcRJNNnsK0GvnZMTx3GyZpZmiWhMRBmrfX/YvuRbl3Q3i0y8++F5Bum3
- 2XODwbWBqsVLBc//Zt9MSwWreXXM/pL5Hw0cXCVw7A5xcKx/Yhz/srW4iOaH/tOb9ivdqMQWf4A
- uYVoRzy0j0ES++Q==
+ bh=BOmjSAGcyrzSRx0hHpBKVOO+kXklILNBJobYIqPVz+8=;
+ b=kA0DAAoBM2qzM29mf5cByyZiAGnsHpCim7JsR5mb1IlAJFJToK85oWXxgewN+r3OBEsPvesBD
+ IkCMwQAAQoAHRYhBCiy5bASht8kPPI+/jNqszNvZn+XBQJp7B6QAAoJEDNqszNvZn+XePwP/3i3
+ +o6fNvcqHmUEvvIXwUTbZ5uUzspAY46wg33xIUcYcWK85qQ88YPDDGN0w4+hgidHv8VbKtQ1C0P
+ 8TMSMCqwxRPHSo7QpXTRZFZcT5UPgLL2O4s2PkRhSvip0y0XNxIuZ3+HuuvJhuBFtNK423dOgJQ
+ SVxXWVj+ejqN0Nsgc5sxUrE7wxEV2p7RbeeyzvoJ167+R6qiaPTnKcMcuvnMpq2h8IleLvkMVyQ
+ qghTcC5mkyGK+NkeUV23lENGaxqxYrIszYSn5rGrUJV25jlvEfXhakLtZj2hEGGQcJ1LWk2fDla
+ d9wGWNRpiJV4Ek7G2NC5H/+qbMBOZmGk+Bc4hWN9JZAOKVh9DOfVmrqi6PrJ7alUdA2XkA3BTj3
+ OKjoDIvJlo5Py5R6ISOZ6x14zBRx7rrmjngNhvfQR8eHJklcrcB0OdeiDPU8lCeVHIRZ5HEqLMg
+ 5EADVoBokVRimT+zk31o/4Iq/WZHafqmx99Cm7uPqVY+jl0u1Indjy2tNzQ73zV7nPNxdr7qlSt
+ 4jr8Q8+CE5LPHVKQWaIqbmNs/wg+egMpGbsdIrcZpAnrVT4GhLSFoChJKcdG+VJhbjmgia3YDc7
+ 2+2sCNbqSAayG/8AFBBYTYge5/f+AZp6MZVFU6IJsA9uVQyERWw3mbZfOsnThEiVpElmSia7OFp
+ uz/YG
 X-Developer-Key: i=chuck.lever@oracle.com; a=openpgp;
  fpr=28B2E5B01286DF243CF23EFE336AB3336F667F97
-X-Headers-End: 1wGSDU-00031E-OK
-Subject: [f2fs-dev] [PATCH v11 13/15] nfsd: Report export case-folding via
- NFSv3 PATHCONF
+X-Headers-End: 1wGSDX-00032F-Qv
+Subject: [f2fs-dev] [PATCH v11 10/15] nfs: Implement fileattr_get for case
+ sensitivity
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -124,133 +124,290 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-The hard-coded MSDOS_SUPER_MAGIC check in nfsd3_proc_pathconf()
-only recognizes FAT filesystems as case-insensitive. Modern
-filesystems like F2FS, exFAT, and CIFS support case-insensitive
-directories, but NFSv3 clients cannot discover this capability.
+An NFS server re-exporting an NFS mount point needs to report
+the case sensitivity behavior of the underlying filesystem to
+its clients. NFSD's attribute encoder obtains that information
+by calling vfs_fileattr_get() on the lower filesystem, so the
+NFS client must implement fileattr_get to surface what it
+learned from its own server.
 
-Query the export's actual case behavior through ->fileattr_get
-instead. This allows NFSv3 clients to correctly handle case
-sensitivity for any filesystem that implements the fileattr
-interface. Filesystems without ->fileattr_get continue to report
-the default POSIX behavior (case-sensitive, case-preserving).
+The NFS client already retrieves case sensitivity information
+from servers during mount via PATHCONF (NFSv3) or the
+FATTR4_CASE_INSENSITIVE/FATTR4_CASE_PRESERVING attributes
+(NFSv4). Expose this information through fileattr_get by
+reporting the FS_XFLAG_CASEFOLD and FS_XFLAG_CASENONPRESERVING
+flags. NFSv2 lacks PATHCONF support, so mounts using that protocol
+version default to standard POSIX behavior: case-sensitive and
+case-preserving.
 
-This change depends on commit ("fat: Implement fileattr_get for
-case sensitivity"), which ensures FAT filesystems report their
-case behavior correctly via the fileattr interface.
+PATHCONF is now invoked unconditionally for NFSv2 and NFSv3 mounts
+so the case-sensitivity capabilities are established even when
+the user pins server->namelen with the namlen= mount option. That
+option is orthogonal to case handling, and skipping PATHCONF
+because namelen was already known would leave the caps unset.
+
+The two capability bits carry opposite polarity
+because their POSIX defaults differ. Most servers are
+case-sensitive and case-preserving, matching "neither
+xflag set." NFS_CAP_CASE_INSENSITIVE is set only when the
+server affirms case insensitivity, so "server said no" and
+"server did not answer" both collapse to the case-sensitive
+default. NFS_CAP_CASE_NONPRESERVING follows the same pattern in
+the opposite direction: set only when the server affirms that it
+does not preserve case, so that silence or a missing attribute
+lands on the case-preserving default. The NFSv4 probe checks
+res.attr_bitmask[0] to distinguish "server said false" from "server
+omitted the attribute" before setting the bit.
 
 Reviewed-by: Roland Mainz <roland.mainz@nrubsig.org>
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/nfsd/nfs3proc.c | 18 ++++++++++--------
- fs/nfsd/vfs.c      | 43 +++++++++++++++++++++++++++++++++++++++++++
- fs/nfsd/vfs.h      |  3 +++
- 3 files changed, 56 insertions(+), 8 deletions(-)
+ fs/nfs/client.c           | 22 +++++++++++++++++-----
+ fs/nfs/inode.c            | 23 +++++++++++++++++++++++
+ fs/nfs/internal.h         |  3 +++
+ fs/nfs/nfs3proc.c         |  2 ++
+ fs/nfs/nfs3xdr.c          |  7 +++++--
+ fs/nfs/nfs4proc.c         |  7 +++++--
+ fs/nfs/proc.c             |  3 +++
+ fs/nfs/symlink.c          |  3 +++
+ include/linux/nfs_fs_sb.h |  2 +-
+ include/linux/nfs_xdr.h   |  2 ++
+ 10 files changed, 64 insertions(+), 10 deletions(-)
 
-diff --git a/fs/nfsd/nfs3proc.c b/fs/nfsd/nfs3proc.c
-index 42adc5461db0..7b094c5908f1 100644
---- a/fs/nfsd/nfs3proc.c
-+++ b/fs/nfsd/nfs3proc.c
-@@ -717,17 +717,19 @@ nfsd3_proc_pathconf(struct svc_rqst *rqstp)
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index be02bb227741..2f4d41ecfa71 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -933,15 +933,27 @@ static int nfs_probe_fsinfo(struct nfs_server *server, struct nfs_fh *mntfh, str
  
- 	if (resp->status == nfs_ok) {
- 		struct super_block *sb = argp->fh.fh_dentry->d_sb;
-+		bool case_insensitive, case_preserving;
+ 	nfs_server_set_fsinfo(server, &fsinfo);
  
--		/* Note that we don't care for remote fs's here */
--		switch (sb->s_magic) {
--		case EXT2_SUPER_MAGIC:
-+		if (sb->s_magic == EXT2_SUPER_MAGIC) {
- 			resp->p_link_max = EXT2_LINK_MAX;
- 			resp->p_name_max = EXT2_NAME_LEN;
--			break;
--		case MSDOS_SUPER_MAGIC:
--			resp->p_case_insensitive = 1;
--			resp->p_case_preserving  = 0;
--			break;
+-	/* Get some general file system info */
+-	if (server->namelen == 0) {
+-		struct nfs_pathconf pathinfo;
++	{
++		struct nfs_pathconf pathinfo = { };
+ 
+ 		pathinfo.fattr = fattr;
+ 		nfs_fattr_init(fattr);
+ 
+-		if (clp->rpc_ops->pathconf(server, mntfh, &pathinfo) >= 0)
+-			server->namelen = pathinfo.max_namelen;
++		if (clp->rpc_ops->pathconf(server, mntfh, &pathinfo) >= 0) {
++			if (server->namelen == 0)
++				server->namelen = pathinfo.max_namelen;
++			/*
++			 * NFSv4 PATHCONF does not carry the case-sensitivity
++			 * fields; those caps are set from FATTR4_CASE_*
++			 * attributes during the set_capabilities probe.
++			 */
++			if (clp->rpc_ops->version < 4) {
++				if (pathinfo.case_insensitive)
++					server->caps |= NFS_CAP_CASE_INSENSITIVE;
++				if (!pathinfo.case_preserving)
++					server->caps |= NFS_CAP_CASE_NONPRESERVING;
++			}
 +		}
-+
-+		resp->status = nfsd_get_case_info(argp->fh.fh_dentry,
-+						  &case_insensitive,
-+						  &case_preserving);
-+		if (resp->status == nfs_ok) {
-+			resp->p_case_insensitive = case_insensitive;
-+			resp->p_case_preserving = case_preserving;
- 		}
  	}
  
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index eafdf7b7890f..9214f1f1f83d 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -32,6 +32,7 @@
- #include <linux/writeback.h>
- #include <linux/security.h>
- #include <linux/sunrpc/xdr.h>
+ 	if (clp->rpc_ops->discover_trunking != NULL &&
+diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+index 98a8f0de1199..bce2466552c4 100644
+--- a/fs/nfs/inode.c
++++ b/fs/nfs/inode.c
+@@ -41,6 +41,7 @@
+ #include <linux/freezer.h>
+ #include <linux/uaccess.h>
+ #include <linux/iversion.h>
 +#include <linux/fileattr.h>
  
- #include "xdr3.h"
- 
-@@ -2891,3 +2892,45 @@ nfsd_permission(struct svc_cred *cred, struct svc_export *exp,
- 
- 	return err? nfserrno(err) : 0;
+ #include "nfs4_fs.h"
+ #include "callback.h"
+@@ -1101,6 +1102,28 @@ int nfs_getattr(struct mnt_idmap *idmap, const struct path *path,
  }
-+
-+/**
-+ * nfsd_get_case_info - get case sensitivity info for a dentry
-+ * @dentry: dentry to query
-+ * @case_insensitive: output, true if the filesystem is case-insensitive
-+ * @case_preserving: output, true if the filesystem preserves case
-+ *
-+ * Filesystems without ->fileattr_get report POSIX defaults
-+ * (case-sensitive, case-preserving). Outputs are unmodified on
-+ * failure.
-+ *
-+ * Return: nfs_ok on success, or an nfserr on failure.
-+ */
-+__be32
-+nfsd_get_case_info(struct dentry *dentry, bool *case_insensitive,
-+		   bool *case_preserving)
-+{
-+	struct file_kattr fa = {};
-+	int err;
-+
-+	err = vfs_fileattr_get(dentry, &fa);
-+	switch (err) {
-+	case 0:
-+		/* Success. */
-+		break;
-+	case -EINVAL:
-+	case -ENOTTY:
-+	case -ENOIOCTLCMD:
-+		/* Query not supported: Report POSIX defaults. */
-+		break;
-+	default:
-+		/*
-+		 * Query failed: Propagate that error since
-+		 * support for case-folding is unknown.
-+		 */
-+		return nfserrno(err);
-+	}
-+
-+	*case_insensitive = fa.fsx_xflags & FS_XFLAG_CASEFOLD;
-+	*case_preserving = !(fa.fsx_xflags & FS_XFLAG_CASENONPRESERVING);
-+	return nfs_ok;
-+}
-diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
-index 702a844f2106..abf33389ee81 100644
---- a/fs/nfsd/vfs.h
-+++ b/fs/nfsd/vfs.h
-@@ -156,6 +156,9 @@ __be32		nfsd_readdir(struct svc_rqst *, struct svc_fh *,
- 			     loff_t *, struct readdir_cd *, nfsd_filldir_t);
- __be32		nfsd_statfs(struct svc_rqst *, struct svc_fh *,
- 				struct kstatfs *, int access);
-+__be32		nfsd_get_case_info(struct dentry *dentry,
-+				   bool *case_insensitive,
-+				   bool *case_preserving);
+ EXPORT_SYMBOL_GPL(nfs_getattr);
  
- __be32		nfsd_permission(struct svc_cred *cred, struct svc_export *exp,
- 				struct dentry *dentry, int acc);
++int nfs_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
++{
++	struct inode *inode = d_inode(dentry);
++
++	/*
++	 * Case handling is a property of the exported filesystem on the
++	 * NFS server, reported to the client at mount via PATHCONF
++	 * (NFSv3) or FATTR4_CASE_INSENSITIVE / FATTR4_CASE_PRESERVING
++	 * (NFSv4). Unlike filesystems that always preserve case, an NFS
++	 * mount may front a backend that does not, so both flags can
++	 * appear.
++	 */
++	if (nfs_server_capable(inode, NFS_CAP_CASE_INSENSITIVE)) {
++		fa->fsx_xflags |= FS_XFLAG_CASEFOLD;
++		fa->flags |= FS_CASEFOLD_FL;
++	}
++	if (nfs_server_capable(inode, NFS_CAP_CASE_NONPRESERVING))
++		fa->fsx_xflags |= FS_XFLAG_CASENONPRESERVING;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(nfs_fileattr_get);
++
+ static void nfs_init_lock_context(struct nfs_lock_context *l_ctx)
+ {
+ 	refcount_set(&l_ctx->count, 1);
+diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+index fc5456377160..309d3f679bb3 100644
+--- a/fs/nfs/internal.h
++++ b/fs/nfs/internal.h
+@@ -449,6 +449,9 @@ extern void nfs_set_cache_invalid(struct inode *inode, unsigned long flags);
+ extern bool nfs_check_cache_invalid(struct inode *, unsigned long);
+ extern int nfs_wait_bit_killable(struct wait_bit_key *key, int mode);
+ 
++struct file_kattr;
++int nfs_fileattr_get(struct dentry *dentry, struct file_kattr *fa);
++
+ #if IS_ENABLED(CONFIG_NFS_LOCALIO)
+ /* localio.c */
+ struct nfs_local_dio {
+diff --git a/fs/nfs/nfs3proc.c b/fs/nfs/nfs3proc.c
+index 95d7cd564b74..b80d0c5efc27 100644
+--- a/fs/nfs/nfs3proc.c
++++ b/fs/nfs/nfs3proc.c
+@@ -1053,6 +1053,7 @@ static const struct inode_operations nfs3_dir_inode_operations = {
+ 	.permission	= nfs_permission,
+ 	.getattr	= nfs_getattr,
+ 	.setattr	= nfs_setattr,
++	.fileattr_get	= nfs_fileattr_get,
+ #ifdef CONFIG_NFS_V3_ACL
+ 	.listxattr	= nfs3_listxattr,
+ 	.get_inode_acl	= nfs3_get_acl,
+@@ -1064,6 +1065,7 @@ static const struct inode_operations nfs3_file_inode_operations = {
+ 	.permission	= nfs_permission,
+ 	.getattr	= nfs_getattr,
+ 	.setattr	= nfs_setattr,
++	.fileattr_get	= nfs_fileattr_get,
+ #ifdef CONFIG_NFS_V3_ACL
+ 	.listxattr	= nfs3_listxattr,
+ 	.get_inode_acl	= nfs3_get_acl,
+diff --git a/fs/nfs/nfs3xdr.c b/fs/nfs/nfs3xdr.c
+index e17d72908412..e745e78faab0 100644
+--- a/fs/nfs/nfs3xdr.c
++++ b/fs/nfs/nfs3xdr.c
+@@ -2276,8 +2276,11 @@ static int decode_pathconf3resok(struct xdr_stream *xdr,
+ 	if (unlikely(!p))
+ 		return -EIO;
+ 	result->max_link = be32_to_cpup(p++);
+-	result->max_namelen = be32_to_cpup(p);
+-	/* ignore remaining fields */
++	result->max_namelen = be32_to_cpup(p++);
++	p++;	/* ignore no_trunc */
++	p++;	/* ignore chown_restricted */
++	result->case_insensitive = be32_to_cpup(p++) != 0;
++	result->case_preserving = be32_to_cpup(p) != 0;
+ 	return 0;
+ }
+ 
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index d839a97df822..034e3e87e863 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -3944,8 +3944,9 @@ static int _nfs4_server_capabilities(struct nfs_server *server, struct nfs_fh *f
+ 			server->caps |= NFS_CAP_SYMLINKS;
+ 		if (res.case_insensitive)
+ 			server->caps |= NFS_CAP_CASE_INSENSITIVE;
+-		if (res.case_preserving)
+-			server->caps |= NFS_CAP_CASE_PRESERVING;
++		if ((res.attr_bitmask[0] & FATTR4_WORD0_CASE_PRESERVING) &&
++		    !res.case_preserving)
++			server->caps |= NFS_CAP_CASE_NONPRESERVING;
+ #ifdef CONFIG_NFS_V4_SECURITY_LABEL
+ 		if (res.attr_bitmask[2] & FATTR4_WORD2_SECURITY_LABEL)
+ 			server->caps |= NFS_CAP_SECURITY_LABEL;
+@@ -10598,6 +10599,7 @@ static const struct inode_operations nfs4_dir_inode_operations = {
+ 	.getattr	= nfs_getattr,
+ 	.setattr	= nfs_setattr,
+ 	.listxattr	= nfs4_listxattr,
++	.fileattr_get	= nfs_fileattr_get,
+ };
+ 
+ static const struct inode_operations nfs4_file_inode_operations = {
+@@ -10605,6 +10607,7 @@ static const struct inode_operations nfs4_file_inode_operations = {
+ 	.getattr	= nfs_getattr,
+ 	.setattr	= nfs_setattr,
+ 	.listxattr	= nfs4_listxattr,
++	.fileattr_get	= nfs_fileattr_get,
+ };
+ 
+ static struct nfs_server *nfs4_clone_server(struct nfs_server *source,
+diff --git a/fs/nfs/proc.c b/fs/nfs/proc.c
+index 70795684b8e8..03c2c1f31be9 100644
+--- a/fs/nfs/proc.c
++++ b/fs/nfs/proc.c
+@@ -598,6 +598,7 @@ nfs_proc_pathconf(struct nfs_server *server, struct nfs_fh *fhandle,
+ {
+ 	info->max_link = 0;
+ 	info->max_namelen = NFS2_MAXNAMLEN;
++	info->case_preserving = true;
+ 	return 0;
+ }
+ 
+@@ -718,12 +719,14 @@ static const struct inode_operations nfs_dir_inode_operations = {
+ 	.permission	= nfs_permission,
+ 	.getattr	= nfs_getattr,
+ 	.setattr	= nfs_setattr,
++	.fileattr_get	= nfs_fileattr_get,
+ };
+ 
+ static const struct inode_operations nfs_file_inode_operations = {
+ 	.permission	= nfs_permission,
+ 	.getattr	= nfs_getattr,
+ 	.setattr	= nfs_setattr,
++	.fileattr_get	= nfs_fileattr_get,
+ };
+ 
+ const struct nfs_rpc_ops nfs_v2_clientops = {
+diff --git a/fs/nfs/symlink.c b/fs/nfs/symlink.c
+index 58146e935402..74a072896f8d 100644
+--- a/fs/nfs/symlink.c
++++ b/fs/nfs/symlink.c
+@@ -22,6 +22,8 @@
+ #include <linux/mm.h>
+ #include <linux/string.h>
+ 
++#include "internal.h"
++
+ /* Symlink caching in the page cache is even more simplistic
+  * and straight-forward than readdir caching.
+  */
+@@ -74,4 +76,5 @@ const struct inode_operations nfs_symlink_inode_operations = {
+ 	.get_link	= nfs_get_link,
+ 	.getattr	= nfs_getattr,
+ 	.setattr	= nfs_setattr,
++	.fileattr_get	= nfs_fileattr_get,
+ };
+diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
+index 4daee27fa5eb..34d294774f8c 100644
+--- a/include/linux/nfs_fs_sb.h
++++ b/include/linux/nfs_fs_sb.h
+@@ -306,7 +306,7 @@ struct nfs_server {
+ #define NFS_CAP_ATOMIC_OPEN	(1U << 4)
+ #define NFS_CAP_LGOPEN		(1U << 5)
+ #define NFS_CAP_CASE_INSENSITIVE	(1U << 6)
+-#define NFS_CAP_CASE_PRESERVING	(1U << 7)
++#define NFS_CAP_CASE_NONPRESERVING	(1U << 7)
+ #define NFS_CAP_REBOOT_LAYOUTRETURN	(1U << 8)
+ #define NFS_CAP_OFFLOAD_STATUS	(1U << 9)
+ #define NFS_CAP_ZERO_RANGE	(1U << 10)
+diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
+index ff1f12aa73d2..7c2057e40f99 100644
+--- a/include/linux/nfs_xdr.h
++++ b/include/linux/nfs_xdr.h
+@@ -182,6 +182,8 @@ struct nfs_pathconf {
+ 	struct nfs_fattr	*fattr; /* Post-op attributes */
+ 	__u32			max_link; /* max # of hard links */
+ 	__u32			max_namelen; /* max name length */
++	bool			case_insensitive;
++	bool			case_preserving;
+ };
+ 
+ struct nfs4_change_info {
 
 -- 
 2.53.0
