@@ -4,78 +4,139 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B18FCFF885E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 27 Apr 2026 08:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 22686FF8862
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 27 Apr 2026 10:44:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=2e5EXGH/5u/WOsRO0XSUCO+atjo08galJ6vleFc208A=; b=AS4ubEkIXdI58tzicUlCv/m7QG
-	K2dV4fVJ9eqzorjz/WP0EKyJlnqAyYQRIIeYZYc2acnEtsBZPt5ZqUGpngge5Abx32ek4kAlISW8+
-	zbaDtmUQW4DnIjB84Lv/5vZrwVPIpfi5TSmPtEPno3pDc7omSReaoEcSQlHOkPBsuPNU=;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=Tf4qtAyF+/zS+jN8weSPxKqx73v35JpmEkxOo3DS1dU=; b=CvxQ6JnMp9Y7NmfufxJqeNG7EK
+	ZVvYxquIJL9L4aLV7ITGk5PG50Jqwb2V2uDw7kInKLCLA6PmVjiMGe6nXp+X8Fjas5m/j8qpLLh8b
+	BBLwd+oy0jfBcyj2zhUopsFNjJwY1M3CMZ9865LayIGDPaieK6BekesPSfAvjdRKuiMc=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wHHUY-0003NA-Iu;
-	Mon, 27 Apr 2026 08:38:58 +0000
+	id 1wHJS5-0006GD-UV;
+	Mon, 27 Apr 2026 10:44:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wHHUX-0003N2-IL
+ (envelope-from <jack@suse.cz>) id 1wHJS3-0006G3-Ci
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 27 Apr 2026 08:38:57 +0000
+ Mon, 27 Apr 2026 10:44:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=chPETR7+kABGlweLco9NDpos6Zs0+ILMn5JiNVXZEBw=; b=UV+heugK47FXRG0T0cCn0DtScq
- xT+gvWa8iVuUgGR+czBaVHyNJUnkUgb6JK2fWFPcF0pQqivJP6AN8EwhSssOGizFFIAIhVZZjqjwC
- pSba/k6jxUa2HdRF3ZTo1UTsojyZefoIMH3l4R3KH5hkQX5X1tRrsSLTavYhzHD+1PiI=;
+ bh=7es2t5zILoUe2Xa+VUEaztNlgXB3uJkU01uqH8OQu+0=; b=Gs/Vbz2bYPi2El0x+Lw7kuUoFA
+ H2clfKac0X9u4/dO6LZbCB/GwMIcP2Z6p63Qn22dVLQPFLgFtasDrIjq2x3eBs026r2eSh4e5+mKT
+ +pBQSvCLQ3KqyosR+TUrTjAHw5egwmzXRI3n5WUfP0kW1ud9NPNertNzaIgXveR6GYfQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=chPETR7+kABGlweLco9NDpos6Zs0+ILMn5JiNVXZEBw=; b=L964O6R3m2RNMLB4HCqkMG917i
- PKwI1Vawc/t7WLCCKmI/8EAHQ0csMZlJjcHzWL6GFGTl8j5oeHoq0Nq0BY/IDZF1ENR5YZMx2KR1o
- bSuMqWBPQPfyirWgbm6+P/skIHG2f4ELs8cYJcVjP+oJJQwdnbfsrCxuKY3zv4VsgIvY=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=7es2t5zILoUe2Xa+VUEaztNlgXB3uJkU01uqH8OQu+0=; b=CAY1QV8HhKPTQUSZ86B5gbkwAG
+ xADoEPEnep79VFZKS02W6Z1TDsASmAOVyrBY0uADqKlYUtlXQKRjwRJD9T0JEP6bY7sMvp7wHsfdz
+ M31GPyDuT4yvND4VyVrEQf4X+RThZI8rmyLqaurpv9cWxvxTjM/T8REgtR9YRH8FDW1I=;
+Received: from smtp-out2.suse.de ([195.135.223.131])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wHHUW-0007uO-BP for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 27 Apr 2026 08:38:57 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 23DC360138;
- Mon, 27 Apr 2026 08:38:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD13C19425;
- Mon, 27 Apr 2026 08:38:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1777279124;
- bh=eCjFOfi6bWy4o5vcmh8YRjRtWrWHUOl5G3ZuBpJsrrU=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=qrFiz3h/cVnm/21lORzFvglBxk1XBoCbsJ6TAt5FhsmOPKrZyxI402d84mnwZ+M6Z
- +3D543u5zKjQr67Twa2mV1apL1MNuDa+knl98mmPsiECM17VWgQR5l45Em7ci+zsZb
- YFPdxh9YB/FjLhqwfB08Osc0SRXWMU9wwWRlt+KyGEGND8bDNXZaGl17zSMqvxqWz9
- Zik29EjEB0vtF2OMQt4IBlAPh43KmqUriC3wa664SNjVAJ0ZqFhu06wzEfDnpUntKy
- j+IzN5zgR+K+EAN/gAbZxogX77MvCIgm+fX/AopHZNYG7M3G2ENdBm+kBVlwLJ7sdy
- nNYXi49t2PTVQ==
-Message-ID: <d799ebe3-cbdb-4abf-8667-8ef8b112b48a@kernel.org>
-Date: Mon, 27 Apr 2026 16:38:41 +0800
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1wHJS2-0007Xe-84 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 27 Apr 2026 10:44:31 +0000
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
+ [IPv6:2a07:de40:b281:104:10:150:64:97])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 7BE1B5BCD1;
+ Mon, 27 Apr 2026 10:44:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+ t=1777286656; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=7es2t5zILoUe2Xa+VUEaztNlgXB3uJkU01uqH8OQu+0=;
+ b=jGyfSB+007IZh5ANgTITYbICaCZ/mmpkLRGaHzvNZs2WLF2cSHpbAveyKv84KFB4G1Vv9Z
+ 1fuxiAoFtF+nO5YTy4KQDpY+nPGU3KmlpuIls7Qy9okLIf6OGxNp9zufvgHJkBfUD2UN1X
+ SkJWXYLX6VoGcjm7j+cYrWQ67Radq/s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+ s=susede2_ed25519; t=1777286656;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=7es2t5zILoUe2Xa+VUEaztNlgXB3uJkU01uqH8OQu+0=;
+ b=tsHzfwMgBRnW3DDcT662TObJG38GJs/vt/oMtwoSB6TP7VYJGSPodTxt0fZHmhVwyJHAyf
+ 8PLfeIxCQiQTuiCw==
+Authentication-Results: smtp-out2.suse.de;
+ dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=jGyfSB+0;
+ dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=tsHzfwMg
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+ t=1777286656; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=7es2t5zILoUe2Xa+VUEaztNlgXB3uJkU01uqH8OQu+0=;
+ b=jGyfSB+007IZh5ANgTITYbICaCZ/mmpkLRGaHzvNZs2WLF2cSHpbAveyKv84KFB4G1Vv9Z
+ 1fuxiAoFtF+nO5YTy4KQDpY+nPGU3KmlpuIls7Qy9okLIf6OGxNp9zufvgHJkBfUD2UN1X
+ SkJWXYLX6VoGcjm7j+cYrWQ67Radq/s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+ s=susede2_ed25519; t=1777286656;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=7es2t5zILoUe2Xa+VUEaztNlgXB3uJkU01uqH8OQu+0=;
+ b=tsHzfwMgBRnW3DDcT662TObJG38GJs/vt/oMtwoSB6TP7VYJGSPodTxt0fZHmhVwyJHAyf
+ 8PLfeIxCQiQTuiCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6EE4B593B0;
+ Mon, 27 Apr 2026 10:44:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+ by imap1.dmz-prg2.suse.org with ESMTPSA id 8N0NGwA+72mCKQAAD6G6ig
+ (envelope-from <jack@suse.cz>); Mon, 27 Apr 2026 10:44:16 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+ id 29DBCA0AFF; Mon, 27 Apr 2026 12:44:08 +0200 (CEST)
+Date: Mon, 27 Apr 2026 12:44:08 +0200
+From: Jan Kara <jack@suse.cz>
+To: Chuck Lever <cel@kernel.org>
+Message-ID: <isfgwmd5hxjfn7dj7p54yzlhumx2hrkt3zw7fscs2ywm57g3hu@co27drpx24lq>
+References: <20260424-case-sensitivity-v11-0-de5619beddaf@oracle.com>
+ <20260424-case-sensitivity-v11-12-de5619beddaf@oracle.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: ruipengqi <ruipengqi3@gmail.com>, jaegeuk@kernel.org
-References: <20260426093239.165767-1-ruipengqi3@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20260426093239.165767-1-ruipengqi3@gmail.com>
-X-Headers-End: 1wHHUW-0007uO-BP
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix potential deadlock in
- f2fs_balance_fs()
+Content-Disposition: inline
+In-Reply-To: <20260424-case-sensitivity-v11-12-de5619beddaf@oracle.com>
+X-Spamd-Result: default: False [-4.01 / 50.00]; BAYES_HAM(-3.00)[100.00%];
+ NEURAL_HAM_LONG(-1.00)[-1.000]; MID_RHS_NOT_FQDN(0.50)[];
+ R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+ NEURAL_HAM_SHORT(-0.20)[-1.000]; MIME_GOOD(-0.10)[text/plain];
+ MX_GOOD(-0.01)[]; RCVD_COUNT_THREE(0.00)[3];
+ DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+ RCPT_COUNT_TWELVE(0.00)[34];
+ SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+ MIME_TRACE(0.00)[0:+]; FUZZY_RATELIMITED(0.00)[rspamd.com];
+ ARC_NA(0.00)[]; FREEMAIL_ENVRCPT(0.00)[gmail.com];
+ TO_MATCH_ENVRCPT_ALL(0.00)[]; TO_DN_SOME(0.00)[];
+ RCVD_VIA_SMTP_AUTH(0.00)[]; FROM_EQ_ENVFROM(0.00)[];
+ FROM_HAS_DN(0.00)[]; RCVD_TLS_LAST(0.00)[];
+ MISSING_XM_UA(0.00)[]; DKIM_TRACE(0.00)[suse.cz:+];
+ R_RATELIMIT(0.00)[to_ip_from(RLa77mm4gi8mw7uppieotozii3)];
+ FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,lists.sourceforge.net,mail.parknet.co.jp,samsung.com,sony.com,paragon-software.com,dubeyko.com,physik.fu-berlin.de,vivo.com,mit.edu,dilger.ca,samba.org,manguebit.org,gmail.com,microsoft.com,chromium.org,oracle.com,nrubsig.org];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[nrubsig.org:email, suse.cz:dkim, suse.cz:email,
+ suse.com:email, imap1.dmz-prg2.suse.org:helo, imap1.dmz-prg2.suse.org:rdns,
+ oracle.com:email]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 7BE1B5BCD1
+X-Headers-End: 1wHJS2-0007Xe-84
+Subject: Re: [f2fs-dev] [PATCH v11 12/15] isofs: Implement fileattr_get for
+ case sensitivity
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,268 +148,84 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jan Kara <jack@suse.cz>, pc@manguebit.org, yuezhang.mo@sony.com,
+ cem@kernel.org, Roland Mainz <roland.mainz@nrubsig.org>,
+ almaz.alexandrovich@paragon-software.com, adilger.kernel@dilger.ca,
+ linux-cifs@vger.kernel.org, sfrench@samba.org, slava@dubeyko.com,
+ linux-ext4@vger.kernel.org, linkinjeon@kernel.org, sprasad@microsoft.com,
+ frank.li@vivo.com, linux-nfs@vger.kernel.org,
+ Al Viro <viro@zeniv.linux.org.uk>, ronniesahlberg@gmail.com,
+ glaubitz@physik.fu-berlin.de, jaegeuk@kernel.org, hirofumi@mail.parknet.co.jp,
+ Christian Brauner <brauner@kernel.org>, tytso@mit.edu,
+ linux-api@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, senozhatsky@chromium.org,
+ Chuck Lever <chuck.lever@oracle.com>, hansg@kernel.org, anna@kernel.org,
+ linux-fsdevel@vger.kernel.org, sj1557.seo@samsung.com, trondmy@kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 4/26/26 17:32, ruipengqi wrote:
-> From: Ruipeng Qi <ruipengqi3@gmail.com>
+On Fri 24-04-26 21:53:14, Chuck Lever wrote:
+> From: Chuck Lever <chuck.lever@oracle.com>
 > 
-> When the f2fs filesystem space is nearly exhausted, we encounter deadlock
-> issues as below:
+> Upper layers such as NFSD need a way to query whether a
+> filesystem handles filenames in a case-sensitive manner so
+> they can provide correct semantics to remote clients. Without
+> this information, NFS exports of ISO 9660 filesystems cannot
+> advertise their filename case behavior.
 > 
-> INFO: task A:1890 blocked for more than 120 seconds.
->        Tainted: G           O       6.12.41-g3fe07ddf05ab #1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:A    state:D stack:0     pid:1890  tgid:1626  ppid:1153   flags:0x00000204
-> Call trace:
->   __switch_to+0xf4/0x158
->   __schedule+0x27c/0x908
->   schedule+0x3c/0x118
->   io_schedule+0x44/0x68
->   folio_wait_bit_common+0x174/0x370
->   folio_wait_bit+0x20/0x38
->   folio_wait_writeback+0x54/0xc8
->   truncate_inode_partial_folio+0x70/0x1e0
->   truncate_inode_pages_range+0x1b0/0x450
->   truncate_pagecache+0x54/0x88
->   f2fs_file_write_iter+0x3e8/0xb80
->   do_iter_readv_writev+0xf0/0x1e0
->   vfs_writev+0x138/0x2c8
->   do_writev+0x88/0x130
->   __arm64_sys_writev+0x28/0x40
->   invoke_syscall+0x50/0x120
->   el0_svc_common.constprop.0+0xc8/0xf0
->   do_el0_svc+0x24/0x38
->   el0_svc+0x30/0xf8
->   el0t_64_sync_handler+0x120/0x130
->   el0t_64_sync+0x190/0x198
+> Implement isofs_fileattr_get() to report ISO 9660 case handling
+> behavior via the FS_XFLAG_CASEFOLD flag. The 'check=r' (relaxed)
+> mount option enables case-insensitive lookups, and this setting
+> determines the value reported. By default, Joliet extensions
+> operate in relaxed mode while plain ISO 9660 uses strict
+> (case-sensitive) mode. All ISO 9660 variants are case-preserving,
+> meaning filenames are stored exactly as they appear on the disc.
 > 
-> INFO: task kworker/u8:11:2680853 blocked for more than 120 seconds.
->        Tainted: G           O       6.12.41-g3fe07ddf05ab #1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:kworker/u8:11   state:D stack:0     pid:2680853 tgid:2680853 ppid:2      flags:0x00000208
-> Workqueue: writeback wb_workfn (flush-254:0)
-> Call trace:
->   __switch_to+0xf4/0x158
->   __schedule+0x27c/0x908
->   schedule+0x3c/0x118
->   io_schedule+0x44/0x68
->   folio_wait_bit_common+0x174/0x370
->   __filemap_get_folio+0x214/0x348
->   pagecache_get_page+0x20/0x70
->   f2fs_get_read_data_page+0x150/0x3e8
->   f2fs_get_lock_data_page+0x2c/0x160
->   move_data_page+0x50/0x478
->   do_garbage_collect+0xd38/0x1528
->   f2fs_gc+0x240/0x7e0
->   f2fs_balance_fs+0x1a0/0x208
->   f2fs_write_single_data_page+0x6e4/0x730  //0xfffffe0d6ca08300
->   f2fs_write_cache_pages+0x378/0x9b0
->   f2fs_write_data_pages+0x2e4/0x388
->   do_writepages+0x8c/0x2c8
->   __writeback_single_inode+0x4c/0x498
->   writeback_sb_inodes+0x234/0x4a8
->   __writeback_inodes_wb+0x58/0x118
->   wb_writeback+0x2f8/0x3c0
->   wb_workfn+0x2c4/0x508
->   process_one_work+0x180/0x408
->   worker_thread+0x258/0x368
->   kthread+0x118/0x128
->   ret_from_fork+0x10/0x200
+> Case handling is a superblock-wide property, so the callback
+> must report the same value for every inode type. Regular files
+> previously had no inode_operations; introduce
+> isofs_file_inode_operations to carry the callback. Symlinks
+> previously shared page_symlink_inode_operations; introduce
+> isofs_symlink_inode_operations, which wires page_get_link
+> alongside the callback, so that fileattr queries on a symlink
+> reach the isofs implementation instead of returning
+> -ENOIOCTLCMD. The flag is set in both fa->fsx_xflags and
+> fa->flags so FS_IOC_FSGETXATTR and FS_IOC_GETFLAGS agree.
 > 
-> INFO: task kworker/u8:8:2641297 blocked for more than 120 seconds.
->        Tainted: G           O       6.12.41-g3fe07ddf05ab #1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:kworker/u8:8    state:D stack:0     pid:2641297 tgid:2641297 ppid:2      flags:0x00000208
-> Workqueue: writeback wb_workfn (flush-254:0)
-> Call trace:
->   __switch_to+0xf4/0x158
->   __schedule+0x27c/0x908
->   rt_mutex_schedule+0x30/0x60
->   __rt_mutex_slowlock_locked.constprop.0+0x460/0x8a8
->   rwbase_write_lock+0x24c/0x378
->   down_write+0x1c/0x30
->   f2fs_balance_fs+0x184/0x208
->   f2fs_write_inode+0xf4/0x328
->   __writeback_single_inode+0x370/0x498
->   writeback_sb_inodes+0x234/0x4a8
->   __writeback_inodes_wb+0x58/0x118
->   wb_writeback+0x2f8/0x3c0
->   wb_workfn+0x2c4/0x508
->   process_one_work+0x180/0x408
->   worker_thread+0x258/0x368
->   kthread+0x118/0x128
->   ret_from_fork+0x10/0x20
-> 
-> INFO: task B:1902 blocked for more than 120 seconds.
->        Tainted: G           O       6.12.41-g3fe07ddf05ab #1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:B     state:D stack:0     pid:1902  tgid:1626  ppid:1153   flags:0x0000020c
-> Call trace:
->   __switch_to+0xf4/0x158
->   __schedule+0x27c/0x908
->   rt_mutex_schedule+0x30/0x60
->   __rt_mutex_slowlock_locked.constprop.0+0x460/0x8a8
->   rwbase_write_lock+0x24c/0x378
->   down_write+0x1c/0x30
->   f2fs_balance_fs+0x184/0x208
->   f2fs_map_blocks+0x94c/0x1110
->   f2fs_file_write_iter+0x228/0xb80
->   do_iter_readv_writev+0xf0/0x1e0
->   vfs_writev+0x138/0x2c8
->   do_writev+0x88/0x130
->   __arm64_sys_writev+0x28/0x40
->   invoke_syscall+0x50/0x120
->   el0_svc_common.constprop.0+0xc8/0xf0
->   do_el0_svc+0x24/0x38
->   el0_svc+0x30/0xf8
->   el0t_64_sync_handler+0x120/0x130
->   el0t_64_sync+0x190/0x198
-> 
-> INFO: task sync:2769849 blocked for more than 120 seconds.
->        Tainted: G           O       6.12.41-g3fe07ddf05ab #1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:sync            state:D stack:0     pid:2769849 tgid:2769849 ppid:736    flags:0x0000020c
-> Call trace:
->   __switch_to+0xf4/0x158
->   __schedule+0x27c/0x908
->   schedule+0x3c/0x118
->   wb_wait_for_completion+0xb0/0xe8
->   sync_inodes_sb+0xc8/0x2b0
->   sync_inodes_one_sb+0x24/0x38
->   iterate_supers+0xa8/0x138
->   ksys_sync+0x54/0xc8
->   __arm64_sys_sync+0x18/0x30
->   invoke_syscall+0x50/0x120
->   el0_svc_common.constprop.0+0xc8/0xf0
->   do_el0_svc+0x24/0x38
->   el0_svc+0x30/0xf8
->   el0t_64_sync_handler+0x120/0x130
->   el0t_64_sync+0x190/0x198
-> 
-> The root cause is a potential deadlock between the following tasks:
-> 
-> kworker/u8:11				Thread A
-> - f2fs_write_single_data_page
->   - f2fs_do_write_data_page
->    - folio_start_writeback(X)
->    - f2fs_outplace_write_data
->     - bio_add_folio(X)
->   - folio_unlock(X)
-> 					- truncate_inode_pages_range
-> 					 - __filemap_get_folio(X, FGP_LOCK)
-> 					 - truncate_inode_partial_folio(X)
-> 					  - folio_wait_writeback(X)
->   - f2fs_balance_fs
->    - f2fs_gc
->     - do_garbage_collect
->      - move_data_page
->       - f2fs_get_lock_data_page
->        - __filemap_get_folio(X, FGP_LOCK)
-> 
-> Both threads try to access folio X. Thread A holds the lock but waits
-> for writeback, while kworker waits for the lock. This causes a deadlock.
-> 
-> Other threads also enter D state, waiting for locks such as gc_lock and
-> writepages.
-> 
-> OPU/IPU DATA folio are all affected by this issue. To avoid such
-> potential deadlocks, always commit these cached folios before
-> triggering f2fs_gc() in f2fs_balance_fs().
-> 
-> v2:
-> - Commit cached OPU/IPU folios, not just OPU folios as in v1.
-> 
-> Suggested-by: Chao <chao@kernel.org>
-> Signed-off-by: Ruipeng Qi <ruipengqi3@gmail.com>
-> ---
->   fs/f2fs/data.c    | 26 ++++++++++++++++++++++++++
->   fs/f2fs/f2fs.h    |  1 +
->   fs/f2fs/segment.c |  9 +++++++++
->   3 files changed, 36 insertions(+)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 338df7a2aea6..fd03366b3228 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -939,6 +939,32 @@ void f2fs_submit_merged_ipu_write(struct f2fs_sb_info *sbi,
->   	}
->   }
->   
-> +void f2fs_submit_all_merged_ipu_writes(struct f2fs_sb_info *sbi)
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Reviewed-by: Roland Mainz <roland.mainz@nrubsig.org>
+> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+
+...
+
+> @@ -281,6 +293,18 @@ const struct file_operations isofs_dir_operations =
+>  const struct inode_operations isofs_dir_inode_operations =
+>  {
+>  	.lookup = isofs_lookup,
+> +	.fileattr_get = isofs_fileattr_get,
+> +};
+> +
+> +const struct inode_operations isofs_file_inode_operations =
 > +{
-> +	struct bio_entry *be, *tmp;
-> +	struct f2fs_bio_info *io;
-> +	enum temp_type temp;
-> +	LIST_HEAD(list);
+> +	.fileattr_get = isofs_fileattr_get,
+> +};
 > +
-> +	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
-> +		io = sbi->write_io[DATA] + temp;
-> +
-> +		if (list_empty(&io->bio_list))
-> +			continue;
+> +const struct inode_operations isofs_symlink_inode_operations =
+> +{
+> +	.get_link = page_get_link,
+> +	.fileattr_get = isofs_fileattr_get,
+>  };
 
-Needs to be covered w/ bio_list_lock to avoid race condition.
+Hum, I thought casefolding is a directory attribute. At least I don't see
+a big point in reporting it for regular files or symlinks (and then why not
+report it for device nodes or named pipes?). So why did you decide for this
+change?
 
-> +
-> +		f2fs_down_write(&io->bio_list_lock);
-> +		list_splice_init(&io->bio_list, &list);
-> +		f2fs_up_write(&io->bio_list_lock);
-> +
-> +		list_for_each_entry_safe(be, tmp, &list, list) {
-> +			f2fs_submit_write_bio(sbi, be->bio, DATA);
-> +			del_bio_entry(be);
-> +		}
-> +
-
-Unnecessary blank line.
-
-Thanks,
-
-> +	}
-> +
-> +}
-> +
->   int f2fs_merge_page_bio(struct f2fs_io_info *fio)
->   {
->   	struct bio *bio = *fio->bio;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index bb34e864d0ef..e9038ab1b2bd 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -4148,6 +4148,7 @@ void f2fs_submit_merged_write_folio(struct f2fs_sb_info *sbi,
->   				struct folio *folio, enum page_type type);
->   void f2fs_submit_merged_ipu_write(struct f2fs_sb_info *sbi,
->   					struct bio **bio, struct folio *folio);
-> +void f2fs_submit_all_merged_ipu_writes(struct f2fs_sb_info *sbi);
->   void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
->   int f2fs_submit_page_bio(struct f2fs_io_info *fio);
->   int f2fs_merge_page_bio(struct f2fs_io_info *fio);
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 6a97fe76712b..856ffe91b94f 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -454,6 +454,15 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
->   		io_schedule();
->   		finish_wait(&sbi->gc_thread->fggc_wq, &wait);
->   	} else {
-> +
-> +		/*
-> +		 * Submit all cached OPU/IPU DATA bios before triggering
-> +		 * foreground GC to avoid potential deadlocks.
-> +		 */
-> +
-> +		f2fs_submit_merged_write(sbi, DATA);
-> +		f2fs_submit_all_merged_ipu_writes(sbi);
-> +
->   		struct f2fs_gc_control gc_control = {
->   			.victim_segno = NULL_SEGNO,
->   			.init_gc_type = f2fs_sb_has_blkzoned(sbi) ?
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
 
 _______________________________________________
