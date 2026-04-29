@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A2743CD13D2
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Apr 2026 18:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 98B92CCFA13
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Apr 2026 18:07:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Message-Id:
 	MIME-Version:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=yclifmXY706Qx4Stwj/3IIkdrYnLTOi8ZhCf/0zrp6k=; b=EUaxcDcCuGwF4kJ5DGxghwlCBn
-	ACLF+hhQA1R61UU7A4DAOB7MavafR3199DdKTLaEoSXgdx8NVs7d+PD87V5YtwEU3LTGqFh0+0Sl4
-	91eHI9hMmxByo8X3j2dfSaGPchRHVHWqFGGXHppsqMxKXijCacq8Q1Ca2ewNgsGFID7U=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=jQsNpPU8Iu7sdO2XCcZ3ekEfi7q5XH7eVSAA3BIbEKo=; b=N2kLgUihVw2se3WIrJv+uufX1a
+	s/2mZkC31Qj3YksP1DelFMBmw0uLwJydvgHUZvgpUFu1yF0w/Clwym3VLN4wYUUgpn43mklYOodID
+	mvFPxyO+KJQKNDeCx9j5Vtp9ohtOs+IrqwF6DY7T/mWwLjLwQ8MMEi4LJqrgGywD7Ang=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wI9KE-0005Gh-IZ;
-	Wed, 29 Apr 2026 18:07:55 +0000
+	id 1wI9KG-0004RB-LT;
+	Wed, 29 Apr 2026 18:07:56 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <cel@kernel.org>) id 1wI9KB-0005GB-Bh
+ (envelope-from <cel@kernel.org>) id 1wI9KE-0004Qx-Pm
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Apr 2026 18:07:52 +0000
+ Wed, 29 Apr 2026 18:07:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Message-Id:
  Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=o7B07YThhHDxQz4drpl34fJtmaybeyrEwYR5oHjcvoQ=; b=lITY88dX1VFX1gHBvGEruCUbgh
- JuiYAlRO6EVI5ckEi1AivOnaRTGTcRHfjQ+1VjNVgL0tdODsEHcFdHD4jkj5XF25a+vhgOyqlyg6D
- P0PsHHVGuIBLg2hp1FyOoaPnCFX7opj9fTnZPEPiRE1CsMIoQvI1j5OsIeNvTQtxoIOA=;
+ bh=KQ6v8/XE00gOuJZ2DMrbUuMMEc2T2hPgO5EDoJ7YR40=; b=Y3g8ihZFHaitiReN8LFKi4xOEt
+ 2tX9F3bZxyI0tvNVU09QfcdoVO4MW8LFu9Ba/AM4nHOxUZiaHH7W3uM+DxgdfmTXmVAlvRnDAND7i
+ wSGrG5eTPMOKoNUGDwPYtTfbYUV8UTA7SX4L150WVA70cm6iv/ffRTWh54EPtQtBOZQA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
@@ -42,56 +42,56 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=o7B07YThhHDxQz4drpl34fJtmaybeyrEwYR5oHjcvoQ=; b=JmkLOvAfS0IQbiDGHdkNJitksp
- mwyAUOUKmlbiq1QkAWe6SiHYD2lG0AAURTNz5hDH0u+d3zkBhp9Q6O67bt0e6fpF07AT1xPMepEUq
- iMLv6zhkEdis5jNi63IO4M4W5f3WlE5k9G3lQqqtn/VoE5BezSY6GmGUPwxQz4K3Lqms=;
+ bh=KQ6v8/XE00gOuJZ2DMrbUuMMEc2T2hPgO5EDoJ7YR40=; b=Bwg+5sQsxEcaSiNK1QpcWLovZN
+ bW0LFLNmFX1v0ru3VGKOPEy76w1w6br7PMnkTFwWFk6npt40MdGp5/exGMa/CVRtgKJUQThBwzssP
+ wHuZSpjv8rXxwoA5610y24GPqwmEy0gtyFYpqKrO9LSxgIEviCQI39AsV3jxNTtt1Dy8=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wI9KB-000148-8N for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Apr 2026 18:07:52 +0000
+ id 1wI9KE-00014m-2G for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 29 Apr 2026 18:07:54 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 0FD636057A;
- Wed, 29 Apr 2026 18:07:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73670C2BCC9;
- Wed, 29 Apr 2026 18:07:48 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 78C0B61143;
+ Wed, 29 Apr 2026 18:07:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13A24C19425;
+ Wed, 29 Apr 2026 18:07:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1777486070;
- bh=bjnsM/1LrSZrTO9ZBZW3Xrmg7KU8lzL236VyXdB5T94=;
+ s=k20201202; t=1777486063;
+ bh=+3MOBq8tIY5WA12oHUqvFyZTiNAU0Ok39mLnTTLF1eI=;
  h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
- b=jX2n2cKqNxs9/eBtE0K3ldmdw7VPwqaUDQtK3v70Im3HnV+zpP1tHOmaUV0Bqr0TA
- 5hIIUQ0UksGiM9KfhJeNldcDQtxqAJIe9u8/1gPx+iFCIVKfl8xLm7GmBh8XNvXqxZ
- zQLTWys7n9GSw4kUsjudYrtgoJb13QRUEo1ICRdSC1ybTlPhATNByb7DVY90KYrVO7
- BL+oJDipHNQSwTxJIv5Nl4zxTT/XvFp6ofNzP12nRivs60qcaaPlE6QkyXonIITC8w
- fbnXKYOT0lH2CMu3LuWw+xJ5FP2syor0bsLOjxsxXNAiunarNsfMxtIu61np4Lp+Zm
- E5/la67NDTavQ==
-Date: Wed, 29 Apr 2026 14:07:20 -0400
+ b=sn5WNYcwOS5XkPUDifxALSSvjDsQAw+ctspndg7a+7yGJf66U5P/pwLtU37qZgdMl
+ LIKkqy62iDfd5R6bLLajEXvtUAepv4Qzue7IPilxoZgCg1lGP05qvpG2DS33iWExBD
+ 6TjR9HPXAEFvLzL/FKMQR/q2Kdpb2dXYT+v6J4EjhVSTGFAq76Ce3yGRQCH6WqYlR3
+ Yand7R2gFHFpRIM9CeDi1VGnHS2Dltv3UyfJvZh//bW6cZa4+vzZzkgXqNiV8aDjXu
+ /1MUlShgFOIPwiMYGDqwi+ECUr/tDxKCY5mfIRqvbxkoeHazrCHDp+G7lB9yrEPiE8
+ +/l5Gi/iOpYDw==
+Date: Wed, 29 Apr 2026 14:07:17 -0400
 MIME-Version: 1.0
-Message-Id: <20260429-case-sensitivity-v12-9-8057123bebe0@oracle.com>
+Message-Id: <20260429-case-sensitivity-v12-6-8057123bebe0@oracle.com>
 References: <20260429-case-sensitivity-v12-0-8057123bebe0@oracle.com>
 In-Reply-To: <20260429-case-sensitivity-v12-0-8057123bebe0@oracle.com>
 To: Al Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
 X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6029;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2557;
  i=chuck.lever@oracle.com; h=from:subject:message-id;
- bh=lkiMsfMNZqz1N8jxrYrsxKA6VL8UHLCrzuPBYO2nVe0=;
- b=owEBbQKS/ZANAwAKATNqszNvZn+XAcsmYgBp8kjd4XcTscVuxvYljUn7dPNwuyadxg5cFsmUr
- ruHn5u3U7SJAjMEAAEKAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCafJI3QAKCRAzarMzb2Z/
- lyEFD/4kq8AI7aycO2xscVJpEKWg1hyy0MaZi5CKj2pgM33Qr1b5Ls4lKBxKPMSzYLugw5IymsU
- HjYEWRvxr/qr5KbeGBlhx4wKwa0/s48PUiUVTBc44l46qDiBVWw25Vm/CPl16GxYQtHJuegopLS
- 7XAlKjxNezMpG7hHmz/jB247VQ9QlHXb8/BiWTHlgPG/F13CTTdO+/msnyUQVLE2X3UxbabNo0S
- gj2nOgVIBeufyQ9toJZWadtpnBPz1cB5mvPTyEdAzE7C1mBSMfIG5NU5kpUvDScpXftixA+xlXb
- Z5xpEEyNWasnwIWhrbvK0TkdJ8sl0K0lcMzZKnwqayqYnFEeZd0sn6mqCD/DvE1rA1DqRnJecGY
- O4xjIMrOqHEsIK5/FCJejoRnm+L9prYU1TesFlQiYNfW4HeVkFQ0GXBwzHALNOle2VTsa+GAdYI
- 5jj6bWG9oQSl8tUyrKvf/CZ7DYsNJXurbcJHMOXqB49iGWlWNUjv4g9pfl+ou0nbeBK6C/eq43Q
- DVt75zCoAuMUXyi1TSVkboP3nkq0RfA/gSIE/kX4upupWm2Lbi7Fnk6qMhRooPp9+Ibj1b4sIDn
- CSqsaXssx1MtCSg780uNutodqh9qt/HX+n8gsVvowqusiPrFgXqfGQlcb3d+ZNLzBB4wHu8r6V+
- APgzp36F07zDsLQ==
+ bh=2Xqe+DnVGNfulHUCzpURt2jTiqbh233GQupN+nsg0Mc=;
+ b=owEBbQKS/ZANAwAKATNqszNvZn+XAcsmYgBp8kjcMbu8J3ZZsnJNx5OSfXNR0ib9yCFwb/FWx
+ f6j5ru9r0OJAjMEAAEKAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCafJI3AAKCRAzarMzb2Z/
+ l0ElD/9CG/JBuZOsRDy5u0rsIVVp85xaf9Pwdb9wPm1EMWgEdP/MtQqJT+aF418t1ODxydLtMbc
+ URaCw4swffGw8Y9Ye6yA58Rkqc7e3fnaboPeS8N4szbZKUjx31UN4UTJ1w2EtNmSsjJtewLfetr
+ OAxzPaqmIwv4QgVmC0Ds66xv6/aICpiNRrkjn6OWG+qngSobPfJ8OGwPVTY3kJ2Wi6XSVaGgxzg
+ FS09eFYuvC+OPL3xmuMIy+fBg5PXd1X64C5Xg1QJQQGV+KOEREy9WK6sywnWl4HPWmv10GgbART
+ 4w11eU0QBjohFy2eW8cW3EXzdRKo+odZPIruAWWjXhVHLpEIis9vXChLWL4QiLqIPP9QySWzkPX
+ Z0gxKe2VuAHjwMp4+FDkWU16A6H5+OOz2bBOrPABYoJpopDyMTvU8YfeJ0XroDBvTWv/Gvuvch2
+ skDD1L0DvmgD8s89IBfqWRHsjdphECH/yAOdJtm44UNqIyaWA9VKbZb3N2KUHkIyMWEf7noSinH
+ Gr2WAV6ebteMNaqeWqfeUzVR6N83mRgI32XBHGpui0ZP6iqgrx9S1tepz2qjQmTu65Y+s4pgKiY
+ P05zJTQuM1wDP6Jnzc03kVW9sL9G+15YpY9OkzbPgzrfORIqiEfZnfDijD53dLzj3EGx7LHm/ju
+ NctRkRdmw4g3Sow==
 X-Developer-Key: i=chuck.lever@oracle.com; a=openpgp;
  fpr=28B2E5B01286DF243CF23EFE336AB3336F667F97
-X-Headers-End: 1wI9KB-000148-8N
-Subject: [f2fs-dev] [PATCH v12 09/15] cifs: Implement fileattr_get for case
+X-Headers-End: 1wI9KE-00014m-2G
+Subject: [f2fs-dev] [PATCH v12 06/15] hfs: Implement fileattr_get for case
  sensitivity
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -110,8 +110,7 @@ Cc: pc@manguebit.org, yuezhang.mo@sony.com, cem@kernel.org,
  Roland Mainz <roland.mainz@nrubsig.org>,
  almaz.alexandrovich@paragon-software.com, adilger.kernel@dilger.ca,
  linux-cifs@vger.kernel.org, sfrench@samba.org, slava@dubeyko.com,
- linux-ext4@vger.kernel.org, linkinjeon@kernel.org,
- Steve French <stfrench@microsoft.com>, sprasad@microsoft.com,
+ linux-ext4@vger.kernel.org, linkinjeon@kernel.org, sprasad@microsoft.com,
  frank.li@vivo.com, ronniesahlberg@gmail.com, glaubitz@physik.fu-berlin.de,
  jaegeuk@kernel.org, hirofumi@mail.parknet.co.jp, linux-nfs@vger.kernel.org,
  tytso@mit.edu, linux-api@vger.kernel.org,
@@ -125,152 +124,78 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-Upper layers such as NFSD need a way to query whether a filesystem
-handles filenames in a case-sensitive manner. Report CIFS/SMB case
-handling behavior via FS_XFLAG_CASEFOLD and
-FS_XFLAG_CASENONPRESERVING.
+Report HFS case sensitivity behavior via the FS_XFLAG_CASEFOLD
+flag. HFS is always case-insensitive (using Mac OS Roman case
+folding) and always preserves case at rest.
 
-The authoritative source is the server itself: at mount time CIFS
-issues QueryFSInfo(FS_ATTRIBUTE_INFORMATION) and caches the reply
-on the tcon. That reply carries FILE_CASE_SENSITIVE_SEARCH and
-FILE_CASE_PRESERVED_NAMES, which reflect whatever case handling
-the share actually implements after SMB3.1.1 POSIX extensions
-negotiation. Translating those two bits into the VFS flags lets
-cifs_fileattr_get report what the server advertises rather than
-what the client was asked to pretend.
-
-QueryFSInfo is best-effort; the mount completes even if the server
-does not answer. MaxPathNameComponentLength is zero in that case
-and is used as the "no reply received" sentinel. When no reply is
-available, fall back to the nocase mount option so that the reported
-behavior agrees with the dentry comparison operations installed on
-the superblock.
-
-The callback is registered on cifs_dir_inode_ops so that NFSD,
-ksmbd, and other consumers querying case handling against a
-directory get a definitive answer, and on cifs_file_inode_ops to
-preserve FS_COMPR_FL reporting on regular files. cifs_set_ops()
-also installs cifs_namespace_inode_operations on DFS referral
-directories that carry IS_AUTOMOUNT; register the same callback
-there so the answer does not depend on whether the directory is
-a referral point.
-
-Registering fileattr_get routes FS_IOC_GETFLAGS through
-vfs_fileattr_get() and short-circuits the syscall's fallback to
-cifs_ioctl(). That fallback invoked CIFSGetExtAttr() under
-CONFIG_CIFS_POSIX and CONFIG_CIFS_ALLOW_INSECURE_LEGACY on servers
-advertising CIFS_UNIX_EXTATTR_CAP, surfacing the SMB1 Unix-extension
-immutable, append, and nodump bits. cifs_fileattr_get carries over
-only FS_COMPR_FL from cached cifsAttrs; the SMB1 extattr fetch is
-not reproduced. SMB1 is deprecated, and acquiring a netfid from
-within a dentry-only callback is not worth preserving a path tied
-to an insecure legacy dialect.
-
-Acked-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
 Reviewed-by: Roland Mainz <roland.mainz@nrubsig.org>
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/smb/client/cifsfs.c    | 41 +++++++++++++++++++++++++++++++++++++++++
- fs/smb/client/cifsfs.h    |  3 +++
- fs/smb/client/namespace.c |  1 +
- 3 files changed, 45 insertions(+)
+ fs/hfs/dir.c    |  1 +
+ fs/hfs/hfs_fs.h |  2 ++
+ fs/hfs/inode.c  | 14 ++++++++++++++
+ 3 files changed, 17 insertions(+)
 
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index 2025739f070a..0912d74e32de 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -30,6 +30,7 @@
- #include <linux/xattr.h>
- #include <linux/mm.h>
- #include <linux/key-type.h>
-+#include <linux/fileattr.h>
- #include <uapi/linux/magic.h>
- #include <net/ipv6.h>
- #include "cifsfs.h"
-@@ -1199,6 +1200,44 @@ struct file_system_type smb3_fs_type = {
- MODULE_ALIAS_FS("smb3");
- MODULE_ALIAS("smb3");
+diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
+index f5e7efe924e7..c4c6e1623f55 100644
+--- a/fs/hfs/dir.c
++++ b/fs/hfs/dir.c
+@@ -328,4 +328,5 @@ const struct inode_operations hfs_dir_inode_operations = {
+ 	.rmdir		= hfs_remove,
+ 	.rename		= hfs_rename,
+ 	.setattr	= hfs_inode_setattr,
++	.fileattr_get	= hfs_fileattr_get,
+ };
+diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
+index ac0e83f77a0f..1b23448c9a48 100644
+--- a/fs/hfs/hfs_fs.h
++++ b/fs/hfs/hfs_fs.h
+@@ -177,6 +177,8 @@ extern int hfs_get_block(struct inode *inode, sector_t block,
+ extern const struct address_space_operations hfs_aops;
+ extern const struct address_space_operations hfs_btree_aops;
  
-+int cifs_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
++struct file_kattr;
++int hfs_fileattr_get(struct dentry *dentry, struct file_kattr *fa);
+ int hfs_write_begin(const struct kiocb *iocb, struct address_space *mapping,
+ 		    loff_t pos, unsigned int len, struct folio **foliop,
+ 		    void **fsdata);
+diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+index 89b33a9d46d5..f41cc261684d 100644
+--- a/fs/hfs/inode.c
++++ b/fs/hfs/inode.c
+@@ -18,6 +18,7 @@
+ #include <linux/uio.h>
+ #include <linux/xattr.h>
+ #include <linux/blkdev.h>
++#include <linux/fileattr.h>
+ 
+ #include "hfs_fs.h"
+ #include "btree.h"
+@@ -699,6 +700,18 @@ static int hfs_file_fsync(struct file *filp, loff_t start, loff_t end,
+ 	return ret;
+ }
+ 
++int hfs_fileattr_get(struct dentry *dentry, struct file_kattr *fa)
 +{
-+	struct cifs_sb_info *cifs_sb = CIFS_SB(dentry->d_sb);
-+	struct cifs_tcon *tcon = cifs_sb_master_tcon(cifs_sb);
-+	u32 attrs = le32_to_cpu(tcon->fsAttrInfo.Attributes);
-+
-+	/* Preserve FS_COMPR_FL previously reported by cifs_ioctl(). */
-+	if (CIFS_I(d_inode(dentry))->cifsAttrs & ATTR_COMPRESSED)
-+		fa->flags |= FS_COMPR_FL;
-+
 +	/*
-+	 * The server's FS_ATTRIBUTE_INFORMATION response, cached on
-+	 * the tcon at mount, reflects the share's case-handling
-+	 * semantics after any POSIX extensions negotiation. Prefer
-+	 * it over the client-local nocase mount option, which only
-+	 * governs dentry comparison on this superblock.
-+	 *
-+	 * QueryFSInfo is best-effort at mount; when it did not
-+	 * populate fsAttrInfo, MaxPathNameComponentLength remains
-+	 * zero. In that case fall back to nocase so the reporting
-+	 * matches the comparison behavior installed on the sb.
++	 * HFS compares filenames using Mac OS Roman case folding, so
++	 * lookup is always case-insensitive. Names are stored on disk
++	 * with case intact; CASENONPRESERVING stays clear.
 +	 */
-+	if (le32_to_cpu(tcon->fsAttrInfo.MaxPathNameComponentLength) == 0) {
-+		if (tcon->nocase) {
-+			fa->fsx_xflags |= FS_XFLAG_CASEFOLD;
-+			fa->flags |= FS_CASEFOLD_FL;
-+		}
-+		return 0;
-+	}
-+	if (!(attrs & FILE_CASE_SENSITIVE_SEARCH)) {
-+		fa->fsx_xflags |= FS_XFLAG_CASEFOLD;
-+		fa->flags |= FS_CASEFOLD_FL;
-+	}
-+	if (!(attrs & FILE_CASE_PRESERVED_NAMES))
-+		fa->fsx_xflags |= FS_XFLAG_CASENONPRESERVING;
++	fa->fsx_xflags |= FS_XFLAG_CASEFOLD;
++	fa->flags |= FS_CASEFOLD_FL;
 +	return 0;
 +}
 +
- const struct inode_operations cifs_dir_inode_ops = {
- 	.create = cifs_create,
- 	.atomic_open = cifs_atomic_open,
-@@ -1217,6 +1256,7 @@ const struct inode_operations cifs_dir_inode_ops = {
- 	.listxattr = cifs_listxattr,
- 	.get_acl = cifs_get_acl,
- 	.set_acl = cifs_set_acl,
-+	.fileattr_get = cifs_fileattr_get,
- };
- 
- const struct inode_operations cifs_file_inode_ops = {
-@@ -1227,6 +1267,7 @@ const struct inode_operations cifs_file_inode_ops = {
- 	.fiemap = cifs_fiemap,
- 	.get_acl = cifs_get_acl,
- 	.set_acl = cifs_set_acl,
-+	.fileattr_get = cifs_fileattr_get,
- };
- 
- const char *cifs_get_link(struct dentry *dentry, struct inode *inode,
-diff --git a/fs/smb/client/cifsfs.h b/fs/smb/client/cifsfs.h
-index 7370b38da938..5f0d459d1a89 100644
---- a/fs/smb/client/cifsfs.h
-+++ b/fs/smb/client/cifsfs.h
-@@ -89,6 +89,9 @@ extern const struct inode_operations cifs_file_inode_ops;
- extern const struct inode_operations cifs_symlink_inode_ops;
- extern const struct inode_operations cifs_namespace_inode_operations;
- 
-+struct file_kattr;
-+int cifs_fileattr_get(struct dentry *dentry, struct file_kattr *fa);
-+
- 
- /* Functions related to files and directories */
- extern const struct netfs_request_ops cifs_req_ops;
-diff --git a/fs/smb/client/namespace.c b/fs/smb/client/namespace.c
-index 52a520349cb7..52a51b032fae 100644
---- a/fs/smb/client/namespace.c
-+++ b/fs/smb/client/namespace.c
-@@ -294,4 +294,5 @@ struct vfsmount *cifs_d_automount(struct path *path)
- }
- 
- const struct inode_operations cifs_namespace_inode_operations = {
-+	.fileattr_get	= cifs_fileattr_get,
+ static const struct file_operations hfs_file_operations = {
+ 	.llseek		= generic_file_llseek,
+ 	.read_iter	= generic_file_read_iter,
+@@ -715,4 +728,5 @@ static const struct inode_operations hfs_file_inode_operations = {
+ 	.lookup		= hfs_file_lookup,
+ 	.setattr	= hfs_inode_setattr,
+ 	.listxattr	= generic_listxattr,
++	.fileattr_get	= hfs_fileattr_get,
  };
 
 -- 
