@@ -4,98 +4,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 32EA2CD13D2
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Apr 2026 18:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D2A9CCCFA13
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Apr 2026 18:07:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:MIME-Version:Message-Id:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=lsQg+K1CamsXsm+tn5xiYQ3OlkCyG4tHjG0+5lLPJQY=; b=R4dYwvzd5oiSdneB90GbKupBBt
-	0d7ZGxYwa+2Y/ySt0boM4NLP9t7fLwjevrOmRhD9AgTAJQAmnY7wXS1/5tt/jCXvXToq7BRBUs9Ad
-	1ufx+6Hc7MeKk1tqZJcfgshGNJ/WG9JrzZb819+ZKyRDqIFq71afcQAN7CKEEgBStbeY=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Message-Id:
+	MIME-Version:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=/0eI7NGNixyPS6zSn/+Ks4hjmSRlHEb87e81a1vdEm4=; b=XquS3mQ8kFOy9iLQYrFTkOQNft
+	oyNnQey6qdCeq/SZIR1079SIwBTRckSbteuToBu8fZ2pUCmsFYu+dDrNl2r9+MwQT5EpL7StVfAAQ
+	3kkncPo2MgQs5PglIOiRcYhjflr4H91j8FLF7hPcPJScWFpzuXZGzDsIjmEWtvj1Ag6c=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wI9K0-0005Er-U9;
-	Wed, 29 Apr 2026 18:07:41 +0000
+	id 1wI9K6-00082S-GT;
+	Wed, 29 Apr 2026 18:07:46 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <cel@kernel.org>) id 1wI9Jz-0005Ee-MT
+ (envelope-from <cel@kernel.org>) id 1wI9K4-00082L-VI
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Apr 2026 18:07:40 +0000
+ Wed, 29 Apr 2026 18:07:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:Content-Transfer-Encoding:Content-Type:
- MIME-Version:Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Message-Id:
+ Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NWKuf9Hq61FpbLAPAiPAnz8KOyMCnSTyJimhRPX2brg=; b=Eza5rmfvIi9yUAFs3rOFNpe9+q
- 6+QGLFlI887R6hkhNkhfHDSOliMhPS6G3ZEO5LsxjfiLQuauwdH4+C4sec63m/OmzeOP9fmYXTDLw
- 5ANvMQfxZMOXrnVIp4152Pg7pJW9biJOxuEUbpE6UOVs/Zh6hg4djY3J1rq/idBpjx5s=;
+ bh=M76L0VIZ7k/ZCZVS7EN5BXOb5R2OAPfqgXzdJQ55+yI=; b=UEL+7mnQQD/OtbK+3TQ/S+zv+C
+ C4IendfTVHouZ3oq5A110SHUeewwXatiZ9zBjrilo2o17yIrkxcMkcxq9EN4xZafnwvj0EVvQss/0
+ i6Oz5AcohUOurcLJqsS2k3eavxJGN2T651OttAfK10TcP3Wz/q+ZSOvHX4498uN2LVAw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:Message-Id:Date
- :Subject:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=NWKuf9Hq61FpbLAPAiPAnz8KOyMCnSTyJimhRPX2brg=; b=B
- ZLR2xFFN84Fd8rY9i/ytOdNJ/j2gauLDMo5iTFPTXpp1L4hEsoGsJ5PN4hi55NXpq/oscmpVHhtWT
- RMlcO7JTbBUwo9O36zyc8g9VtI4wgxxN5QRH2VDY+GQiqrCWHEoPmQaBc4eRygqk2rZKM/hukURtL
- qJ8uyw54ziEjHtKc=;
+ h=Cc:To:In-Reply-To:References:Message-Id:Content-Transfer-Encoding:
+ Content-Type:MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=M76L0VIZ7k/ZCZVS7EN5BXOb5R2OAPfqgXzdJQ55+yI=; b=ezJ0YSwseHTWsXnXSHXD7jqJla
+ m2N6/QwQ20ujmo/cIuNFNnHHVrk+bc3c7utb7f7awYLLx5LpnGVTzOn/EwdTLgnzGBX8ZWxUS7zNC
+ 676xp4AZ/s/v64bdEGbDoBNVOcW+8nr3eYVAq9yC3frGG26biU/P3uirmNDXqAVRfRS0=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wI9Jz-00013W-EJ for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Apr 2026 18:07:40 +0000
+ id 1wI9K4-00013t-AT for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 29 Apr 2026 18:07:44 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id AEF656024D;
- Wed, 29 Apr 2026 18:07:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFD87C19425;
- Wed, 29 Apr 2026 18:07:25 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id BBAA56057A;
+ Wed, 29 Apr 2026 18:07:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27097C2BCC9;
+ Wed, 29 Apr 2026 18:07:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1777486048;
- bh=nGIAvTon0zs9b1xP0r8i5cYHOhAA/ZjGGgXeoFYtSA0=;
- h=From:Subject:Date:To:Cc:From;
- b=rbpvfHDMiWhiox01PdHgWiDajLy46O57SvBnNBUKJF5rY7CeK0XMvUpeyCnSZtD+M
- czBdnUPUXQOZ8uTgetzcOdw5qA0Jyqmrqvmm69zYx8CO/MWX4988jXwneseeqF8bjn
- XCMhT4tBKBbrBzBZdyo1qKAxI99stL20jhATDEAmstQIXnBprsZkztF8pyvQBib75J
- zIyZ/hBX6tDWqbnzD17epgB7MmmPW/apvdI7qTiqpwWXQIYur6AeEImgwRMtkhXTEc
- 9CJLuov5syAnb6Sgzi0tx+YofaHT22pMRWsrlgDwL79ATA0hdKElKNIdYNYhU8HQra
- d6ImeZTBwVbkg==
-Date: Wed, 29 Apr 2026 14:07:11 -0400
-Message-Id: <20260429-case-sensitivity-v12-0-8057123bebe0@oracle.com>
+ s=k20201202; t=1777486053;
+ bh=TFF/jZiZrtLjdmF8xjSA6CfyQJOvsGBZ0ycggreXc9A=;
+ h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+ b=gtlk0sWZirOJEmjPERIWRgbfl0qD6tHXGeh7oOuX45UeQ9NEADoZsAqLKMkWio9Xq
+ Jbx4ewCqaKOcIi+bPySlCfugoDe+j4lQe4n08eU0rhIcox86+BXeqv389KXKpkplsa
+ GmVKzkyFRs7XRpXCalme6e/IEsfmq9uxL/SebIY2cSNFrZSK3UxdMunp++huPzDKpW
+ /r5vXd8iXUZV1PbgOqu7zbw98atwmnDvciEUVx1wybD8Zel8RPeO2+6ZWOgVFAdH6x
+ 9G6UFXORNpqr22QtxI2ojpNDL35hEu/Q6yxbRqP6chlcEvMPK7O+QdfoTd5iFmoyrq
+ Ztb8YAdQlm+hA==
+Date: Wed, 29 Apr 2026 14:07:13 -0400
 MIME-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAM9I8mkC/33OTW7DIBAF4KtErIsL2Pgnq96j6gKGoZ4qMRG4q
- FHkuxeSTaJGXcxiRm8+vQtLGAkT2+8uLGKmRGEpi1QvOwazWT6RkysHpoTqRacUB5OQJ1wSrZR
- pPXMN1nsYvdR6ZOXtFNHTz9V8/7jt6dt+IazVqQlbCRvNAnM9ZZ9ey/ChUU3VfTi4GpsprSGer
- 93yVLl/WuSJC25RqBZADALVW4gGDthAOLJaI0txT7RPCCmKAe2oXT90pgf/15D3RvfMkMVwqHs
- 5WXTOPBrbtv0CS7SfZ3MBAAA=
-X-Change-ID: 20260422-case-sensitivity-5cbffc8f1558
+Message-Id: <20260429-case-sensitivity-v12-2-8057123bebe0@oracle.com>
+References: <20260429-case-sensitivity-v12-0-8057123bebe0@oracle.com>
+In-Reply-To: <20260429-case-sensitivity-v12-0-8057123bebe0@oracle.com>
 To: Al Viro <viro@zeniv.linux.org.uk>, 
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
 X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10117;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3394;
  i=chuck.lever@oracle.com; h=from:subject:message-id;
- bh=nGIAvTon0zs9b1xP0r8i5cYHOhAA/ZjGGgXeoFYtSA0=;
- b=owEBbQKS/ZANAwAKATNqszNvZn+XAcsmYgBp8kjUruCj6HSCo8h/ROV63cWR/oVu16zwqghlT
- mPK1ER4ZuWJAjMEAAEKAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCafJI1AAKCRAzarMzb2Z/
- l60jD/wOFP5Liv/4++jhg7MCr4gC8zrGZH6SLe53mUycIA01Yl4fSZlymrf+2x/ZbrtzvPJsQMz
- tdRHlxlJVf7t8N03MaxrwXGis+ciyJyJhjg1WTVKRHhNdGC+eOEpX1ptetE0rU8axoVTge0c+1a
- 4qjf9lDvy70V8AStRqezRJn51vNjMt14XBRWo+R6HmKVpnM0GPzEj5oPWs+Vu74/d0hNN9cV5if
- U/e/a9AnV8vm40EmwIHtrgf3DwEdM8kdPu/3seRyspTFDMLuyixZ+4YZaMyF/ruCDI0F/e9g6Rn
- GO+bAmOEvn4VLXQfEgcAO1lfzIyShSsB7uqAUhDkLaUiGNeRLZE3/oVUzcS3+AuC8ov0rEHAAhZ
- uEmvXxjJsHL1ESfV6YkxDRWu/a+WmwTwPy0xQ8LwghSSFL80RuuLk1kfW06IxH5jJYnzYMpny4g
- SX3mKds5MKYu2sO4xjkIKJA9mY9KDBBV3tRZiMZch2buj60MPlW0f7Fe4KxwSS3WN8HxSEC5OIB
- 5nOiMO2L87RiuMda0PTn7Yb9iH8mEOzsX6omLFnC8m4Zm40B5xG3PlEfNsqOAM7O/nVlKUFShNZ
- kHL6rF/gMEfTqQmJIXDy/ARe6JSajQpZmtQtQrPJSaG8UnV4pgb354onxVVMYdBXi+i+eZerZL1
- DfDyZzX3FJpTM7Q==
+ bh=42BtA/ECrX4U52i4InslT9hET7DZ27jCO0bDUKFKJW4=;
+ b=owEBbQKS/ZANAwAKATNqszNvZn+XAcsmYgBp8kjch3cGQIgHJck6KG7+aESHyo+miQFfRTg/6
+ rhWGI1J6HCJAjMEAAEKAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCafJI3AAKCRAzarMzb2Z/
+ l1TND/9A1OSEiUzD6eNUWvBKNgUALci173PIU7VQxL07GtB434XDJvQiYqCSRfzB8tUTF1xYA0W
+ W+M/MXICHT5BxJyYwYJRHP9Fxs8Xb3iM06fCbk/6x1vB/Io/AzWNbyQIi+Xlgjl6reDPDeYKVxU
+ 68SLdJon9yLFnOP+KH/HQOpxtOaMvr+YzRldHotL7myqsh+GU0UD+PulUSlviyp+LvepFo4JUAU
+ bEEsGmj7OP98FwOnU1cQjqXjhGDD62ebgKb8qtKrpNXcYPu4IvlPXf3ZBDaELEIMBmNPP+/ciju
+ AehTGGBDUIX6fm/Uc/skxU6BqPdGhpwydP0cHfPAiRDCnNQs3g+K67Y6DCkC5KNc3cnh73RWTra
+ U+Nxve9ZBgUKM9DxgTUmqvX8z/XQ6L7iGHN7w/RbC3dTWo/9SMJHcKOs9wme7sm41K7gSTQ8FdV
+ vJ2rBdGM+EIrz4oJLBFbh2EXnEvwMPVNt1umnF9znjoOVhItsoqF1sww/87Ghz7mIS6bM21cGSd
+ ncBQLK+PF929LE5BqMBXjwA7KO9VNPFxs+ZOvR1eDbp+IewrniUGzttR9Kjc8uHEj7XMN2FcAZG
+ BryriSkS5CD9eFfH8QK2LcG0S7UdMJTVB82JTUwFZ6EtPioOrhQXyDqjIRkBFbpy87MHALMHESq
+ AuoDWVm4JlOQGzQ==
 X-Developer-Key: i=chuck.lever@oracle.com; a=openpgp;
  fpr=28B2E5B01286DF243CF23EFE336AB3336F667F97
-X-Headers-End: 1wI9Jz-00013W-EJ
-Subject: [f2fs-dev] [PATCH v12 00/15] Exposing case folding behavior
+X-Headers-End: 1wI9K4-00013t-AT
+Subject: [f2fs-dev] [PATCH v12 02/15] fs: Add case sensitivity flags to
+ file_kattr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -114,244 +111,104 @@ Cc: pc@manguebit.org, yuezhang.mo@sony.com, cem@kernel.org,
  almaz.alexandrovich@paragon-software.com, adilger.kernel@dilger.ca,
  linux-cifs@vger.kernel.org, sfrench@samba.org, slava@dubeyko.com,
  "Darrick J. Wong" <djwong@kernel.org>, linux-ext4@vger.kernel.org,
- linkinjeon@kernel.org, Steve French <stfrench@microsoft.com>,
- sprasad@microsoft.com, frank.li@vivo.com, ronniesahlberg@gmail.com,
- glaubitz@physik.fu-berlin.de, jaegeuk@kernel.org, hirofumi@mail.parknet.co.jp,
- linux-nfs@vger.kernel.org, tytso@mit.edu, linux-api@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- senozhatsky@chromium.org, Chuck Lever <chuck.lever@oracle.com>,
- hansg@kernel.org, anna@kernel.org, linux-fsdevel@vger.kernel.org,
- sj1557.seo@samsung.com, trondmy@kernel.org
+ linkinjeon@kernel.org, sprasad@microsoft.com, frank.li@vivo.com,
+ ronniesahlberg@gmail.com, glaubitz@physik.fu-berlin.de, jaegeuk@kernel.org,
+ hirofumi@mail.parknet.co.jp, linux-nfs@vger.kernel.org, tytso@mit.edu,
+ linux-api@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, senozhatsky@chromium.org,
+ Chuck Lever <chuck.lever@oracle.com>, hansg@kernel.org, anna@kernel.org,
+ linux-fsdevel@vger.kernel.org, sj1557.seo@samsung.com, trondmy@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Following on from:
+From: Chuck Lever <chuck.lever@oracle.com>
 
-https://lore.kernel.org/linux-nfs/20251021-zypressen-bazillus-545a44af57fd@brauner/T/#m0ba197d75b7921d994cf284f3cef3a62abb11aaa
+Enable upper layers such as NFSD to retrieve case sensitivity
+information from file systems by adding FS_XFLAG_CASEFOLD and
+FS_XFLAG_CASENONPRESERVING flags.
 
-I'm attempting to implement enough support in the Linux VFS to
-enable file services like NFSD and ksmbd (and user space
-equivalents) to provide the actual status of case folding support
-in local file systems. The default behavior for local file systems
-not explicitly supported in this series is to reflect the usual
-POSIX behaviors:
+Filesystems report case-insensitive or case-nonpreserving behavior
+by setting these flags directly in fa->fsx_xflags. The default
+(flags unset) indicates POSIX semantics: case-sensitive and
+case-preserving. Both flags are added to FS_XFLAG_RDONLY_MASK so
+FS_IOC_FSSETXATTR silently strips them, keeping the new xflags
+strictly a reporting interface. Callers that want to toggle
+casefolding continue to use FS_IOC_SETFLAGS with FS_CASEFOLD_FL,
+the established UAPI on filesystems that support the operation
+(ext4 and f2fs on empty directories).
 
-  case-insensitive = false
-  case-nonpreserving = false
+Case sensitivity information is exported to userspace via the
+fa_xflags field in the FS_IOC_FSGETXATTR ioctl and file_getattr()
+system call.
 
-The case-insensitivity and case-nonpreserving booleans can be
-consumed immediately by NFSD. These two attributes have been part of
-the NFSv3 and NFSv4 protocols for decades, in order to support NFS
-client implementations on non-POSIX systems.
-
-Support for user space file servers is why this series exposes case
-folding information via a user-space API. I don't know of any other
-category of user-space application that requires access to case
-folding info.
-
-The Linux NFS community has a growing interest in supporting NFS
-clients on Windows and MacOS platforms, where file name behavior does
-not align with traditional POSIX semantics.
-
-One example of a Windows-based NFS client is [1]. This client
-implementation explicitly requires servers to report
-FATTR4_WORD0_CASE_INSENSITIVE = TRUE for proper operation, a hard
-requirement for Windows client interoperability because Windows
-applications expect case-insensitive behavior. When an NFS client
-knows the server is case-insensitive, it can avoid issuing multiple
-LOOKUP/READDIR requests to search for case variants, and applications
-like Win32 programs work correctly without manual workarounds or
-code changes.
-
-Even the Linux client can take advantage of this information. Trond
-merged patches 4 years ago [2] that introduce support for case
-insensitivity, in support of the Hammerspace NFS server. In
-particular, when a client detects a case-insensitive NFS share,
-negative dentry caching must be disabled (a lookup for "FILE.TXT"
-failing shouldn't cache a negative entry when "file.txt" exists)
-and directory change invalidation must clear all cached case-folded
-file name variants.
-
-Hammerspace servers and several other NFS server implementations
-operate in multi-protocol environments, where a single file service
-instance caters to both NFS and SMB clients. In those cases, things
-work more smoothly for everyone when the NFS client can see and adapt
-to the case folding behavior that SMB users rely on and expect. NFSD
-needs to support the case-insensitivity and case-nonpreserving
-booleans properly in order to participate as a first-class citizen
-in such environments.
-
-[1] https://github.com/kofemann/ms-nfs41-client
-
-[2] https://patchwork.kernel.org/project/linux-nfs/cover/20211217203658.439352-1-trondmy@kernel.org/
-
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Roland Mainz <roland.mainz@nrubsig.org>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
-Changes since v11:
-- isofs: Wire .fileattr_get only on directory inodes, since
-  NFSD and ksmbd query casefolding on directories (Jan Kara)
-- xfs, hfsplus: Drop the FS_CASEFOLD_FL fileattr_get mask;
-  admit the bit through fileattr_set's allowlist instead
-- Address findings from sashiko(gemini-3) and gpt-5.5:
-  - cifs: Wire .fileattr_get on cifs_namespace_inode_operations
-    so DFS referral / automount directories report case handling
-  - fat, ntfs3: Fill FS_IMMUTABLE_FL in fileattr_get
-  - hfsplus: Hide FS_CASEFOLD_FL from the legacy flags view so
-    chattr round-trips do not hit the setflags whitelist
-  - nfs: Clear NFS_CAP_CASE_INSENSITIVE and
-    NFS_CAP_CASE_NONPRESERVING before re-OR'ing in the v3 and
-    v4 probe paths so re-probe / TSM does not retain stale caps
-  - nfsd: Switch nfsd_get_case_info() to errno return so
-    v3 PATHCONF and v4 GETATTR can apply version-appropriate
-    policy on failure
-  - nfsd: Use dget_parent() in v4 case-attr probe to keep
-    the parent dentry referenced across the query
-  - isofs: Report FS_XFLAG_CASENONPRESERVING for map=n/map=a
+ fs/file_attr.c           | 4 ++++
+ include/linux/fileattr.h | 3 ++-
+ include/uapi/linux/fs.h  | 7 +++++++
+ 3 files changed, 13 insertions(+), 1 deletion(-)
 
-Changes since v10:
-- cifs: Source case-handling flags from the server's cached
-  FS_ATTRIBUTE_INFORMATION reply instead of the nocase mount
-  option, with a nocase fallback when the reply is absent
-- Address findings from sashiko(gemini-3) and gpt-5.5:
-  - nfs: Skip pathconf case bits on NFSv4 (set via FATTR4_CASE_*
-    instead)
-  - xfs: Hide FS_CASEFOLD_FL from the legacy flags view so
-    chattr round-trips do not hit the setflags whitelist
-  - ext4, f2fs: Drop redundant fileattr_get patches; the
-    FS_CASEFOLD_FL translation in fileattr_fill_flags() already
-    reports FS_XFLAG_CASEFOLD for casefolded directories
-  - nfsd: Report FATTR4_HOMOGENEOUS = FALSE when the exported
-    filesystem has a Unicode encoding, since per-directory
-    casefold makes the fs-scoped case attributes inhomogeneous
-  - nfsd: Document in nfsd_get_case_info() why -ENOIOCTLCMD and
-    -ENOTTY are swallowed while other errors propagate
-  - fat: Honor vfat 'check=strict' when reporting FS_XFLAG_CASEFOLD
-  - Set FS_CASEFOLD_FL so FS_IOC_GETFLAGS reflects case-insensitive
-    mount
-  - isofs: Register fileattr_get on regular file and symlink inodes,
-    not just directories
-  - nfsd: Query NFSv4 FATTR4_CASE_* from the parent directory for
-    non-directory objects, since casefold lives on the directory
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index f429da66a317..bfb00d256dd5 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -37,6 +37,8 @@ void fileattr_fill_xflags(struct file_kattr *fa, u32 xflags)
+ 		fa->flags |= FS_PROJINHERIT_FL;
+ 	if (fa->fsx_xflags & FS_XFLAG_VERITY)
+ 		fa->flags |= FS_VERITY_FL;
++	if (fa->fsx_xflags & FS_XFLAG_CASEFOLD)
++		fa->flags |= FS_CASEFOLD_FL;
+ }
+ EXPORT_SYMBOL(fileattr_fill_xflags);
+ 
+@@ -67,6 +69,8 @@ void fileattr_fill_flags(struct file_kattr *fa, u32 flags)
+ 		fa->fsx_xflags |= FS_XFLAG_PROJINHERIT;
+ 	if (fa->flags & FS_VERITY_FL)
+ 		fa->fsx_xflags |= FS_XFLAG_VERITY;
++	if (fa->flags & FS_CASEFOLD_FL)
++		fa->fsx_xflags |= FS_XFLAG_CASEFOLD;
+ }
+ EXPORT_SYMBOL(fileattr_fill_flags);
+ 
+diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
+index 3780904a63a6..58044b598016 100644
+--- a/include/linux/fileattr.h
++++ b/include/linux/fileattr.h
+@@ -16,7 +16,8 @@
+ 
+ /* Read-only inode flags */
+ #define FS_XFLAG_RDONLY_MASK \
+-	(FS_XFLAG_PREALLOC | FS_XFLAG_HASATTR | FS_XFLAG_VERITY)
++	(FS_XFLAG_PREALLOC | FS_XFLAG_HASATTR | FS_XFLAG_VERITY | \
++	 FS_XFLAG_CASEFOLD | FS_XFLAG_CASENONPRESERVING)
+ 
+ /* Flags to indicate valid value of fsx_ fields */
+ #define FS_XFLAG_VALUES_MASK \
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 13f71202845e..2ea4c81df08f 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -254,6 +254,13 @@ struct file_attr {
+ #define FS_XFLAG_DAX		0x00008000	/* use DAX for IO */
+ #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
+ #define FS_XFLAG_VERITY		0x00020000	/* fs-verity enabled */
++/*
++ * Case handling flags (read-only, cannot be set via ioctl).
++ * Default (neither set) indicates POSIX semantics: case-sensitive
++ * lookups and case-preserving storage.
++ */
++#define FS_XFLAG_CASEFOLD	0x00040000	/* case-insensitive lookups */
++#define FS_XFLAG_CASENONPRESERVING 0x00080000	/* case not preserved */
+ #define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
+ 
+ /* the read-only stuff doesn't really belong here, but any other place is
 
-Changes since v9:
-- nfs: always probe PATHCONF for case caps. Default to case-
-  preserving when the server does not report case_preserving
-- nfsd, ksmbd: tolerate -ENOTTY from vfs_fileattr_get() so
-  overlayfs exports on backing filesystems without fileattr_get
-  do not fail the RPC
-- xfs: map FS_XFLAG_CASEFOLD inside xfs_ip2xflags() so BULKSTAT
-  and FS_IOC_FSGETXATTR report the flag consistently
-- vboxsf: reject a short host reply to SHFL_INFO_VOLUME before
-  trusting volinfo.properties.case_sensitive
-
-Changes since v8:
-- Rebase on v7.0-rc1
-
-Changes since v7:
-- Split file_attr initialization changes into a separate patch
-
-Changes since v6:
-- Remove the memset from vfs_fileattr_get
-
-Changes since v5:
-- Finish the conversion to FS_XFLAGs
-- NFSv4 GETATTR now clears the attr mask bit if nfsd_get_case_info()
-  fails
-
-Changes since v4:
-- Observe the MSDOS "nocase" mount option
-- Define new FS_XFLAGs for the user API
-
-Changes since v3:
-- Change fa->case_preserving to fa_case_nonpreserving
-- VFAT is case preserving
-- Make new fields available to user space
-
-Changes since v2:
-- Remove unicode labels
-- Replace vfs_get_case_info
-- Add support for several more local file system implementations
-- Add support for in-kernel SMB server
-
-Changes since RFC:
-- Use file_getattr instead of statx
-- Postpone exposing Unicode version until later
-- Support NTFS and ext4 in addition to FAT
-- Support NFSv4 fattr4 in addition to NFSv3 PATHCONF
-
----
-Chuck Lever (15):
-      fs: Move file_kattr initialization to callers
-      fs: Add case sensitivity flags to file_kattr
-      fat: Implement fileattr_get for case sensitivity
-      exfat: Implement fileattr_get for case sensitivity
-      ntfs3: Implement fileattr_get for case sensitivity
-      hfs: Implement fileattr_get for case sensitivity
-      hfsplus: Report case sensitivity in fileattr_get
-      xfs: Report case sensitivity in fileattr_get
-      cifs: Implement fileattr_get for case sensitivity
-      nfs: Implement fileattr_get for case sensitivity
-      vboxsf: Implement fileattr_get for case sensitivity
-      isofs: Implement fileattr_get for case sensitivity
-      nfsd: Report export case-folding via NFSv3 PATHCONF
-      nfsd: Implement NFSv4 FATTR4_CASE_INSENSITIVE and FATTR4_CASE_PRESERVING
-      ksmbd: Report filesystem case sensitivity via FS_ATTRIBUTE_INFORMATION
-
- fs/exfat/exfat_fs.h            |  2 ++
- fs/exfat/file.c                | 18 +++++++++--
- fs/exfat/namei.c               |  1 +
- fs/fat/fat.h                   |  3 ++
- fs/fat/file.c                  | 36 +++++++++++++++++++++
- fs/fat/namei_msdos.c           |  1 +
- fs/fat/namei_vfat.c            |  1 +
- fs/file_attr.c                 | 16 +++++-----
- fs/hfs/dir.c                   |  1 +
- fs/hfs/hfs_fs.h                |  2 ++
- fs/hfs/inode.c                 | 14 ++++++++
- fs/hfsplus/inode.c             | 16 +++++++++-
- fs/isofs/dir.c                 | 16 ++++++++++
- fs/isofs/isofs.h               |  3 ++
- fs/nfs/client.c                | 25 +++++++++++----
- fs/nfs/inode.c                 | 15 +++++++++
- fs/nfs/internal.h              |  3 ++
- fs/nfs/namespace.c             |  2 ++
- fs/nfs/nfs3proc.c              |  2 ++
- fs/nfs/nfs3xdr.c               |  7 ++--
- fs/nfs/nfs4proc.c              | 10 ++++--
- fs/nfs/proc.c                  |  3 ++
- fs/nfs/symlink.c               |  3 ++
- fs/nfsd/nfs3proc.c             | 36 ++++++++++++++++-----
- fs/nfsd/nfs4xdr.c              | 52 ++++++++++++++++++++++++++++--
- fs/nfsd/vfs.c                  | 72 ++++++++++++++++++++++++++++++++++++++++++
- fs/nfsd/vfs.h                  |  3 ++
- fs/nfsd/xdr3.h                 |  4 +--
- fs/ntfs3/file.c                | 29 +++++++++++++++++
- fs/ntfs3/inode.c               |  1 +
- fs/ntfs3/namei.c               |  2 ++
- fs/ntfs3/ntfs_fs.h             |  1 +
- fs/smb/client/cifsfs.c         | 41 ++++++++++++++++++++++++
- fs/smb/client/cifsfs.h         |  3 ++
- fs/smb/client/namespace.c      |  1 +
- fs/smb/server/smb2pdu.c        | 30 ++++++++++++++----
- fs/vboxsf/dir.c                |  1 +
- fs/vboxsf/file.c               |  6 ++--
- fs/vboxsf/super.c              |  7 ++++
- fs/vboxsf/utils.c              | 30 ++++++++++++++++++
- fs/vboxsf/vfsmod.h             |  6 ++++
- fs/xfs/libxfs/xfs_inode_util.c |  2 ++
- fs/xfs/xfs_ioctl.c             | 22 ++++++++++---
- include/linux/fileattr.h       |  3 +-
- include/linux/nfs_fs_sb.h      |  2 +-
- include/linux/nfs_xdr.h        |  2 ++
- include/uapi/linux/fs.h        |  7 ++++
- 47 files changed, 513 insertions(+), 50 deletions(-)
----
-base-commit: 6596a02b207886e9e00bb0161c7fd59fea53c081
-change-id: 20260422-case-sensitivity-5cbffc8f1558
-
-Best regards,
---  
-Chuck Lever
+-- 
+2.53.0
 
 
 
