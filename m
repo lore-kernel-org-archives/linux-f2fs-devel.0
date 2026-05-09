@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 520C8CD37AF
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  9 May 2026 13:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0823ECD343F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  9 May 2026 13:17:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=OG05m4xPdFr6v5XuVdv5QXhMBk2HC6jRAOKzxlvKcYg=; b=VD9G3yn2AH2pkLX2E4SNX3gMK9
-	eEPaNIa2mmyTXAoYNhkNeeaMR1BxO0p0mqSsGP5tmjf9o3AynGNRKVYYbJ00STvAAL4EmaxT58SFR
-	41RF9mlbDOCQWjE8A96gAp6XYh9yvT3eVff53nvaadh0OSQ21CGQ5moUSz3Wq9BUw7Aw=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=59nonRYzIlK1AkaHCI3WJUW4XqcBsT1A2dy06Ftv8Zg=; b=b7M9hHGLZo1QxQTVyneMNIn2nS
+	MXDquDdVtG98aWtD9uMIttR4mQK0Odiz3qs7JHsMOvTUS8SEAe0AGjShscgF2M8Wj/UH3FItfGfVE
+	mjUPEtvErvsZz+Wxybdwga4SbihPbPFragPLZaIagjIAkJ/gQNmvohHtpO61Rz6T1Wm4=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wLhYh-0000w1-LZ;
-	Sat, 09 May 2026 13:17:31 +0000
+	id 1wLhYz-0002HJ-3B;
+	Sat, 09 May 2026 13:17:46 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wLhYf-0000vv-Sz
+ (envelope-from <chao@kernel.org>) id 1wLhYy-0002HD-2r
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 09 May 2026 13:17:29 +0000
+ Sat, 09 May 2026 13:17:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mQpN33HDeGpYdD7x0SAJ0UeC10h6VsVzDXidtlg05wo=; b=GGnw6y+NNVr5RbsHhWlyIW+/FQ
- g7DtnLVBsuNgAemvz6GHKhqgstMsVvZus7rDk056zg6H7HXUJkxxAplVdUAmHRHFH7G8PIyBSpz2n
- ofQdiMjQ5cFRlIBkQ2Kq3+XRZ6OtU4gQ7TY48dL9UacZPbKwpy9wcpzz8ReGFty62hOk=;
+ bh=YZakEAs5W9zoQT08n3gHRfN2GIQ9SbKs6VNcJIZkhsM=; b=dd/DrPJd4lr1WQ1QKGo4fwPRfC
+ 7ayVhgiX8B6wGsQ/T5UYnNNMmLznjRkT3ACeqZV/Z9V0sVoxzGQJun8XvHfG7G7cFuGhdBYgL+wVn
+ 5Z2fNA4J1DTItqioxLqCZffmet1zhqjq6eiPBmSER+mDF8fCGR/k0dASGJCfnwkhDfjo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,39 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=mQpN33HDeGpYdD7x0SAJ0UeC10h6VsVzDXidtlg05wo=; b=NmlNZGEjwjkAwh4AGEBYzlSyNE
- Qzrythf3qs92XFKkLDJi9O3t6qUZYbBfrQEeV1NEDoiLE7KzcxDzLEzWrKrI0DccCaLewGuOtbybP
- wQOkJYL+NUhc4v8JfWyZ7wuDK79uSf9eElxdLdYDZareYhxVn4cvIhGQneWVPVzkTF3E=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=YZakEAs5W9zoQT08n3gHRfN2GIQ9SbKs6VNcJIZkhsM=; b=biCKX6HmjZqfd3Rb8GP/YEBt3T
+ NVhxhH3YehlGPLPBI6PN6lq74BeBcmb8h8Ut+jhIKXyfexWfArGdpudct70p+140gN67b/E7w9Nhm
+ /QiWwdbvkOiR3s+0AP/DMhjs6BiJql0U2VdM7e9J/8MqsAyXgwD2Q4BXEg7j66wkxiEw=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wLhYf-0007sH-GO for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 09 May 2026 13:17:29 +0000
+ id 1wLhYu-0007tB-4V for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 09 May 2026 13:17:45 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 1C9EA41A34;
- Sat,  9 May 2026 13:17:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E09BCC2BCB2;
- Sat,  9 May 2026 13:17:16 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 734CF60120;
+ Sat,  9 May 2026 13:17:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26C42C2BCB2;
+ Sat,  9 May 2026 13:17:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1778332638;
- bh=GovmqvW+H8iHnBrgX5Bhn8ssZFtFngl8cW/75itPgxc=;
+ s=k20201202; t=1778332653;
+ bh=DFE6Rl5lepS1KiM7U/4LCoiGspIzgn2J1rhPK8AcZh4=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
- b=JM2jyvsjgrW/sEbfot3VXAFO/w/ZmXzf/UlQRSCyR5t8tFkZr9u9UOWx1DhYy6tC+
- oP/YbApXTMkPBScJ3BieIvjZuh1Xi8VR5mym1D9UO2Tcx2EHpOoreMsx9kZC0uFcIG
- 7GPnkdru5mtNvYVHl7gqtPsaGr4wXUiAe1pLRD+ONFh68NqAnQFamOLvnfdswq9CQW
- Bjoon6RGUQZK7q22Tj9lPhgw7Gq35Xie+16K5S0dkx8V58Ft/tZrcS5FGbkiFAzPCw
- pbu3H/dg4jDjeeC/Uepf6bxYWCpvp255F5q4n2cJ+mIyoMYi0J+cyBYBOWARBrtY18
- 27/AB+9nyc42g==
-Message-ID: <04ab5f17-2f63-49e4-8d4b-af781f5ff704@kernel.org>
-Date: Sat, 9 May 2026 21:17:14 +0800
+ b=M/AlLZ8y/gNZQ3Y5YQwGaMHBsL9Ft02h96ok3Mh5uf3xP8U9EIcyg1PHyzp/N1D/U
+ 13PlTS4GKkkAcp4FTue9iy9GLYFEt2Hv5vNp2RKhn9Zw7j+2ekrdblccitBoxFmTDv
+ hrK7nZuqY4m+At0wgW0ihV4HPCzxZaEnS3A8X/A4OuEK+ipvmG4WC6HqeqDikBOVGM
+ tUNjt+SO3vozfNnovp+V+bzWayXjsRRZd9QGOms7DNGdnAl3wZe0Fc4ZaBNU9EYiLD
+ z5Zu66JaAyQNyCvvmGma5crTdCfQHVHvEsP6i03n//ybhhoJ2WmWckNPawd+qPfcjY
+ 0vLQsQ3iBoFpQ==
+Message-ID: <13da11c4-c6a5-46c3-b2c4-3a3dcb92cb5d@kernel.org>
+Date: Sat, 9 May 2026 21:17:27 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Cen Zhang <zzzccc427@gmail.com>, jaegeuk@kernel.org
-References: <20260505125510.1369132-1-zzzccc427@gmail.com>
+References: <20260506010709.3287111-1-zzzccc427@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20260505125510.1369132-1-zzzccc427@gmail.com>
-X-Headers-End: 1wLhYf-0007sH-GO
-Subject: Re: [f2fs-dev] [PATCH] f2fs: annotate lockless NAT counter reads
+In-Reply-To: <20260506010709.3287111-1-zzzccc427@gmail.com>
+X-Headers-End: 1wLhYu-0007tB-4V
+Subject: Re: [f2fs-dev] [PATCH] f2fs: annotate lockless last_time[] accesses
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,15 +94,20 @@ Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 5/5/26 20:55, Cen Zhang wrote:
-> nat_cnt[] is updated while callers hold nat_tree_lock, but F2FS samples
-> the counters locklessly in f2fs_available_free_memory(),
-> excess_dirty_nats(), and excess_cached_nats(). Those helpers only steer
-> cache reclaim and background sync heuristics; they do not control NAT
-> entry lifetime or checkpoint correctness.
+On 5/6/26 09:07, Cen Zhang wrote:
+> f2fs stores mount-wide activity timestamps in sbi->last_time[] and
+> samples them from background discard, GC, and balance paths without a
+> dedicated lock. The timestamps are used as best-effort heuristics to
+> decide whether background work should run now or sleep a bit longer.
 > 
-> Document the intent with data_race(READ_ONCE()) and a short comment
-> instead of adding locking to the balance path.
+> The current helpers use plain loads and stores, so KCSAN can report races
+> between frequent foreground updates and background readers. Exact
+> freshness is not required here, but the intentional lockless accesses
+> should be marked explicitly.
+> 
+> Use WRITE_ONCE() in f2fs_update_time() and READ_ONCE() in
+> f2fs_time_over() and f2fs_time_to_wait(). This preserves the existing
+> heuristic behavior and avoids adding locking to hot paths.
 > 
 > Signed-off-by: Cen Zhang <zzzccc427@gmail.com>
 
