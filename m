@@ -4,119 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3DFCACD37B5
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 May 2026 11:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7362ACD37AC
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 May 2026 12:35:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ctAmTzjLEWej3Ug5zXhNuU/dsiGYHuh6r4FpZeMUg5g=; b=AcGY8MYIELsOpmzWDIGGSLKAdx
-	sIMiMHnGYH6xq9t+Tp9aqvsKin1PMvrlNOmji2OxaxZcUYytn5QcLZTCi/yCuGXVsx5+Fpb4LouJO
-	McO3NjX1YzTd/eauU2EgVY44U2CEdDNFOo1djsj4ugcOGXw4lKuzlugDjidOI4lQJpJQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=FsLnM5T6JrQL8kTOZfdymJJ8GqwEdjSm7RJTfqR6Yz4=; b=Opeal7MUjnZ+R8+oRcYCOO8Pzi
+	R/YMJI7kPvSCmtLWB0TCVAuAU+62gFEbzqjj2fANADceaAAnSsfdJVBzO78Hax423UG2PlYmOajZG
+	FwovsdaSamyLXJ7r3CZiEd6xFGoKEmwXmyUCmvx6v0tO0AF6xormh8Y3pyh0bZ9rJ+G0=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wMOcD-0003Oj-HG;
-	Mon, 11 May 2026 11:15:59 +0000
+	id 1wMPrO-0001Ij-NE;
+	Mon, 11 May 2026 12:35:47 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@redhat.com>) id 1wMOcC-0003O5-4e
+ (envelope-from <chao@kernel.org>) id 1wMPrN-0001IZ-BR
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 May 2026 11:15:57 +0000
+ Mon, 11 May 2026 12:35:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:In-Reply-To:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yQi40JXMVWHDZRjke+rHrQlcRrLFkKa2WRv/wpGjnDg=; b=MMcU/Gn6cq2jZxnXaTDsdFVMeJ
- 8JXLajxLR9lwVkBLoKnJpMYK3yFBjKNT4HOx3pV8Gn9bIE1whkW7BH549yFYX51b1HUYAq+LBHg+N
- HIhfB0WmB5qBtktm5bOVuiAwPML4Ws7wNK8HqtM1mQcvkeupq4NtoxCJkXKJYDvoitxY=;
+ bh=xYjNZjPF6a17izc+RHjOhh8yUZscwUXPxdYkZ5eulAw=; b=PeNzjKHBrGzQfMb7qhxheVYXxD
+ HCvgUlkNQfY1C8PIy831rCTqbiQvUsUIT13mPRe9bmWYvN/SKBTxkZ7Qpr5TkOXX7FQZkG6dh+q8f
+ qO732zZAhTOLi+PZl70Wk5CEa8epOBveENlDLYod6hjA8x+d+xHOjMHd07HugDsPIBcw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=yQi40JXMVWHDZRjke+rHrQlcRrLFkKa2WRv/wpGjnDg=; b=JekECoCOmt2Ev3v49CGT3ts1pZ
- ZCPaYKH6ZRP5j1EELpVB2PKTdYKDZLaqbXLjVgJye37BwiJJodFgdmr3pwqrchWWYxqzeDSkuNAa8
- uat4LGMzyo4FWCzeO5CYdtUrjMtQkrbxk2xht1LNZDzMpDcCxK/HUX225A1L2xuCqT5s=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=xYjNZjPF6a17izc+RHjOhh8yUZscwUXPxdYkZ5eulAw=; b=I
+ Puh8jFCsl52UsnjQElaVzAFaINhApJeq6C9hXsQFd6l1/I8+Y8DcWIyBaftM2qWdNUy4/ZrkYvw2K
+ LVhWqqoYgPaNHbjF/C4AvxzGTwxioFtFcNL1nBWa+c4EVcFhRbYiy7jaAm1k7UYgbCDXZQPn1oXYW
+ +m+v7TMITwfhHgBw=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wMOc8-0003gr-8T for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 May 2026 11:15:57 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1778498144;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=yQi40JXMVWHDZRjke+rHrQlcRrLFkKa2WRv/wpGjnDg=;
- b=eiOXnVzB/pI21G1epMBuoDXb6oNlBBDexTMU4Pa0JCBceD31HbvlXiXC/IZQa1Fj8l9LKV
- pw5PgOlAYz+3TPAX39WKLM4LkRWOgM1cChU19NATJtSHTy8eIWrTpo/2dvzXU9R2NFykm3
- lwEojr5JQKwtDDdhTXGyrl+BoIaiuCg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-65-J3wdKejwPJGrVzaIQyqkSg-1; Mon, 11 May 2026 07:15:43 -0400
-X-MC-Unique: J3wdKejwPJGrVzaIQyqkSg-1
-X-Mimecast-MFC-AGG-ID: J3wdKejwPJGrVzaIQyqkSg_1778498143
-Received: by mail-wm1-f71.google.com with SMTP id
- 5b1f17b1804b1-48d0889c1ecso26355575e9.0
+ id 1wMPrL-0000S5-J8 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 11 May 2026 12:35:46 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 0899443719
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 11 May 2026 04:15:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778498142; x=1779102942;
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=yQi40JXMVWHDZRjke+rHrQlcRrLFkKa2WRv/wpGjnDg=;
- b=APjcmrnJrkm9anYg3bjJW8OwpolBG8S7YJb8Tr33NQkHYxb83kirk+BwMrhfrc/gS/
- DsnVbxRo1Fl5c13eqwGriCm4gCxSKTvKmDFE+vBdoqh6t/ypHTYeFBcCGo0hUuDSFzcS
- 8wKdWIFV+nn29A9kUkCJRHQzAKvAhUh6VqHGA8BCdw0U16F+bIPhqyGgbR1jOblFHcdn
- 0INVjSAmMBDl97sLtAqrtDUxTpaYz85E17NAHPU1fSBqyfG0PY0o1rtowDXxgIt/QQ16
- Q3tU/Uk++c+hkEykYOU8hcob9SIuUBQc5O5cdDkuQRLuP8DUUtGOlxP80g3m+IlPAvIW
- dVsQ==
-X-Forwarded-Encrypted: i=1;
- AFNElJ+fLrYhnhWOJKocC0hwEmUi6GSJfHTvutOWFlfjLCZCtGX88hWac+IJvwDBllSMCoklqhSdrxay8FirPV0L7SK9@lists.sourceforge.net
-X-Gm-Message-State: AOJu0Yya4GunhHSctJSRSoWYGXFWCnl0Uxb4kn6qIgqyEJxS5QRmvAgd
- 4mkRL7GA0de+LmhVM1tKewJI5ptOVYMwiFPh0AZlAY/TdW5UH5W34gdAf0caNK6P3Qo0sYZ3kpc
- 4E8n/2UnktbEpHNSlo6jIWj60eQuRRbl/zDasbC7HdN9lGF1CsSwD7c06LXe4Vw4In/pj4rKyJt
- ysQg==
-X-Gm-Gg: Acq92OEc7E28ezZwaQhSi68P6mb+SL0eH0HHIPAV8byd2SViffOwhaMj9/G/d3rEBnS
- 0nBbcy2/1vb60OQWsk0DGMLcxASeLUzYKxWKfBAr69plcMP1gaTl+6jJJ5hM9/dxGPJ5BvlnTBT
- ZxyJpFBNUr2/uG1d9aYXba6HSrdPPNuICbH9WF0XpccBl7GbJrSUlJOgTf2fGv1l9wBUKKGXuWu
- dk7jLq5icHjwG1hg8kueAOFjHNzEQOjVbnnxeXaRf5jia9fsT5af0ttxe+nmTPnSg4BcaVXgiu5
- St3HTnZXDPx3NGi8Vrf/I4cJvgxEZKcqkZB0JWNgNx8qqLotbTk1C7UXOTgc12xrz+yRQuc449w
- PDx0zpZ4zWQI=
-X-Received: by 2002:a05:600c:1f89:b0:48e:8741:fd4c with SMTP id
- 5b1f17b1804b1-48e8741ff98mr21083625e9.18.1778498141653; 
- Mon, 11 May 2026 04:15:41 -0700 (PDT)
-X-Received: by 2002:a05:600c:1f89:b0:48e:8741:fd4c with SMTP id
- 5b1f17b1804b1-48e8741ff98mr21082605e9.18.1778498140980; 
- Mon, 11 May 2026 04:15:40 -0700 (PDT)
-Received: from thinky ([217.30.74.39]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48e7040a9a9sm309872515e9.9.2026.05.11.04.15.40
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 11 May 2026 04:15:40 -0700 (PDT)
-Date: Mon, 11 May 2026 13:15:39 +0200
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <hnsxzymuydf5evoxw4chao7rkixm4eafolebxfjtsqschgfazh@nll3fdfnsigx>
-References: <20260428083332.768693-1-aalbersh@kernel.org>
- <20260507055217.GA19888@lst.de>
+ Mon, 11 May 2026 12:35:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CDE9C2BCB0;
+ Mon, 11 May 2026 12:35:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1778502937;
+ bh=6QQ8kukKTniNrv8iEXjF2oJj+F2CfiOmyUs5yoiLiuY=;
+ h=From:To:Cc:Subject:Date:From;
+ b=hcssOW9mtodYvCuhRk1oOi05aTqumSbfc6gtsGJUECBkpNzue2gCCO03Wm+shJ6mh
+ nlX3n0Bm6EUcxUfvOgcHXa7RHC/4IWT5e6YgrlcYxYdYoXRZ8qFGueAjx34F8WUa1g
+ inWKqPZc+ZJwSNz++/z8wwNLKQ/7X8vntDcK/i8rjmmmy0ONeE+OQ3EQiUtUbbAE60
+ +aaz3SQZxXY9B30dOLjIKsJnj640fvbmSPLMuBcCucCt7B+f5kctEJXiUdKgglXoqB
+ YtApZZquDYCOAyXrOnPuDDz7ayprUfOlGV8EZCsEMNVRYbmhAlyRWV25v9EjitJuMC
+ 0vSUtFVOgrrvA==
+To: jaegeuk@kernel.org
+Date: Mon, 11 May 2026 00:30:33 +0800
+Message-Id: <20260510163033.12148-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-In-Reply-To: <20260507055217.GA19888@lst.de>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: i71rrZXnVj_9oya5TQfBAAzlJMpmqdYIodDSX7suRHc_1778498143
-X-Mimecast-Originator: redhat.com
-Content-Disposition: inline
-X-Headers-End: 1wMOc8-0003gr-8T
-Subject: Re: [f2fs-dev] [PATCH v9 00/22] fs-verity support for XFS with post
- EOF merkle tree
+X-Headers-End: 1wMPrL-0000S5-J8
+Subject: [f2fs-dev] [PATCH] f2fs: add logs in f2fs_disable_checkpoint()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -128,38 +84,81 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Andrey Albershteyn via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: fsverity@lists.linux.dev, ebiggers@kernel.org,
- Andrey Albershteyn <aalbersh@kernel.org>, djwong@kernel.org,
- david@fromorbit.com, linux-unionfs@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-btrfs@vger.kernel.org
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2026-05-07 07:52:17, Christoph Hellwig wrote:
-> On Tue, Apr 28, 2026 at 10:33:06AM +0200, Andrey Albershteyn wrote:
-> > This series based on v7.0 with Christoph's read ioends patchset [1].
-> 
-> That's not a good baseline.  We'll need it on the -rc that has everything
-> from the current merge window at least.  It might also interact with
-> the fsverity fix that just went in.
+In order to troubleshoot in which step we may block on during
+mount w/ checkpoint_disable mount option.
 
-Sure, I will sent v10 with a latest master and that fix soon.
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/super.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-> 
-> This might also be time to come up with a merge plan to figure out through
-> what tree(s) to merge it as there don't seem to be any maintainer
-> objections.
-> 
-> 
-
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c6afdbd6e1cd..ebd93047ebe9 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2640,6 +2640,9 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+ 
+ 	/* check if we need more GC first */
+ 	unusable = f2fs_get_unusable_blocks(sbi);
++
++	f2fs_info(sbi, "%s starts, unusable: %u", __func__, unusable);
++
+ 	if (!f2fs_disable_cp_again(sbi, unusable))
+ 		goto skip_gc;
+ 
+@@ -2647,6 +2650,8 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+ 
+ 	sbi->gc_mode = GC_URGENT_HIGH;
+ 
++	f2fs_info(sbi, "%s: run f2fs_gc() to migrate blocks", __func__);
++
+ 	while (!f2fs_time_over(sbi, DISABLE_TIME)) {
+ 		struct f2fs_gc_control gc_control = {
+ 			.victim_segno = NULL_SEGNO,
+@@ -2667,6 +2672,12 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+ 			break;
+ 	}
+ 
++	f2fs_info(sbi, "%s: call sync_filesystem() to persist meta: %lld, node: %lld, data: %lld",
++			__func__,
++			get_pages(sbi, F2FS_DIRTY_META),
++			get_pages(sbi, F2FS_DIRTY_NODES),
++			get_pages(sbi, F2FS_DIRTY_DATA));
++
+ 	ret = sync_filesystem(sbi->sb);
+ 	if (ret || err) {
+ 		err = ret ? ret : err;
+@@ -2680,6 +2691,12 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+ 	}
+ 
+ skip_gc:
++	f2fs_info(sbi, "%s: call f2fs_write_checkpoint(), meta: %lld, node: %lld, data: %lld",
++			__func__,
++			get_pages(sbi, F2FS_DIRTY_META),
++			get_pages(sbi, F2FS_DIRTY_NODES),
++			get_pages(sbi, F2FS_DIRTY_DATA));
++
+ 	f2fs_down_write_trace(&sbi->gc_lock, &lc);
+ 	cpc.reason = CP_PAUSE;
+ 	set_sbi_flag(sbi, SBI_CP_DISABLED);
+@@ -2697,7 +2714,7 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+ restore_flag:
+ 	sbi->gc_mode = gc_mode;
+ 	sbi->sb->s_flags = s_flags;	/* Restore SB_RDONLY status */
+-	f2fs_info(sbi, "f2fs_disable_checkpoint() finish, err:%d", err);
++	f2fs_info(sbi, "%s finishes, err:%d", __func__, err);
+ 	return err;
+ }
+ 
 -- 
-- Andrey
+2.40.1
 
 
 
