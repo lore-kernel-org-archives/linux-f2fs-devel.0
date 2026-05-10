@@ -4,86 +4,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9B8EBCD3427
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 10 May 2026 04:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9E52ACD3427
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 10 May 2026 08:47:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:To:From:Message-ID:Date:MIME-Version:Sender:Reply-To:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=4ButP75AGfhSGbbnvNJaMwcjRrBN6soef0w7zwogNvg=; b=F68cz2jJDZxYOx21iFzbmDgS5j
-	3LU/BcqS8cq8Q7DAOMo31hGoYxLnbo3TC+oY4uTSbvk/4+cHx72h2DNKWr4OlrQMVvlLvi+VkvtHu
-	HCkUuiMihvGfvUsokiwGjQxG3MKNThin880qZx934owKOEmhgPKbmT4Yp7xSfPVooCXg=;
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Cc:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=vBhWAeqd3tenjFQretmfptKav+umVk6JewgDh4M7ge4=; b=en1y9AFGigSqON36JFR+vasVTz
+	YKHu2sfw9ENAjYByLbh7wo9sYE1GPD2tCBjvSHvr5xrAmg1xRB2KYMlFxr7wAsbNZtZuhZEn4RGm2
+	cAk7wTBU9Tw6E8p400jxTdnd6yy6R/NKyQph/xcGD4O0GOlDqXy5axQtRoP+OZa/YEas=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wLvqA-0000ru-4k;
-	Sun, 10 May 2026 04:32:30 +0000
+	id 1wLzoz-00056d-JT;
+	Sun, 10 May 2026 08:47:34 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <3UQoAagkbALwu01mcnngtcrrkf.iqqingwugteqpvgpv.eqo@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
- id 1wLvq8-0000rd-FA for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 10 May 2026 04:32:29 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <bugzilla-daemon@kernel.org>) id 1wLzoy-00056S-Nx
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 10 May 2026 08:47:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
- MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LaRtowDwSKPVDBEhJMYs9n9Cs3P7tMNwUux1cyPkaXc=; b=i5VepHhfWveDwvgEBKzFldQA/Z
- dFUqeqZsEE/q0s95yopc/BuFYR6YdqUVCyMrQLGsF7s1adGp+iXHA4GIWWQeWhL8rMmWoDBqKTQ8r
- EsQWM7DXn/Rjw5ANDcDo+Fqv/YY957nc5cZIp4uIXqRbtN1e3Kfcta80/s+0bY+ye8P4=;
+ bh=43ABVU6RKDVcbCi9cv9os0oxGkhaeFpLnkEw/GixItg=; b=e3PWWbmy022naX+QJ6JBISDW7U
+ Uu8kIOP0haWYfj4ZIxjrwl4dXN/D/hfRlTQ62K5DBR/KBxDTWjEexp0mAIHf7i5d5ld7rsDuQpG5y
+ c63dO2twvyIM6dB4uSmIRcO2U0zBiH336NqS/hM74RxgbjFWL/qsEPhQ7ZEND1MJ4NUk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
- :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=LaRtowDwSKPVDBEhJMYs9n9Cs3P7tMNwUux1cyPkaXc=; b=R
- dGcFOKj8Q9BUKOlhjFXAnFANmu71Skc4tRKQa/OxyMTcPexWyRl5WZcA1Kb99mOkvRO+F9sD4NUQI
- mrP6S9c9KQW8481e19938TSiUvJFdUewLx/8MPXYpz0a451YeU8dUDvCWCRtWaDAooxyjL0FGzSbA
- uMgeBJB4tATziOIs=;
-Received: from mail-oo1-f72.google.com ([209.85.161.72])
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=43ABVU6RKDVcbCi9cv9os0oxGkhaeFpLnkEw/GixItg=; b=M9D/LKdme5OxcAgFtY0YYRbXrg
+ oc7dOJznR+fxF6O46FF/D7VbH5GqwMdqzbG6jhTxFYoCdCIsLqCS+FaYsk6bmXiK00Xam45kEDApN
+ kqFKpiqhsuXc5GXzNnLkNz4ylhPpN93rNwRNUFRYgBDpkndzpc1Tp32LQovih5zbD7GU=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wLvq8-0002AW-GI for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 10 May 2026 04:32:29 +0000
-Received: by mail-oo1-f72.google.com with SMTP id
- 006d021491bc7-69b3a3c798dso499483eaf.1
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1wLzoy-0004Ge-QK for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 10 May 2026 08:47:33 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 707BE40C15
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 09 May 2026 21:32:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778387538; x=1778992338;
- h=to:from:subject:message-id:date:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=LaRtowDwSKPVDBEhJMYs9n9Cs3P7tMNwUux1cyPkaXc=;
- b=fpopYfFSurxStViCJyu1WA06K8NYh/ScdUAwzBUyOR8JUJP/alDOBNAAcojNhcfyqy
- fRczO3u05Bxzvj1kpMzO7i1DO+sdfVhZ6zkslkPI6vlWmWTMOC3rthJW8E7rh2IhJJyI
- Kwoed3kWcX5w/1DuT4z9WybbrDwxpZBOnLXS3Eroj1Rg/+FpX8zUmzPHtdyxQs6VZHWF
- qHe4mWqjTW8NLlHWdxuNdfz7gUUVSZMxe09xZrZBb8f3/s3j4pIWtZjXYY1GkAyZgu52
- Gjb7hFL75fJgKfD/eLsc5PpEEh930YdIYxEfz5dSMDJWpQpUM0cGCJtnynYyjLcKo1b/
- ijUg==
-X-Forwarded-Encrypted: i=1;
- AFNElJ8eTzi6hv68ablsqb6D0cDeHE0KtQg+KxZWn11U6LWH3vyOw6lzPUzljn/c+sqfmjkVC2b5qOP03/Flciot5RId@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YxmydW/Sa2C4SxVIHKPwU0p+lH401I6WXLunBACEOB8KoJ9SpOV
- TtIWQoZGIcirXKHv4ZDC4d/DsxTBlHMp5nWgvchlwklKbhmBg1t1SqYuQK1tOeAm2H0L3bndcYN
- e0Awan6AUaun9uEjnvKPocLDoxFu9S/saMW0dcMvhWJb2hzunwfDrDRmlk/M=
+ Sun, 10 May 2026 08:47:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 520FFC2BCB8
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 10 May 2026 08:47:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1778402847;
+ bh=AFzgLVFkVr+pbZ16P+nwtOBIBH2AZtm6H1nQK6zqZv4=;
+ h=From:To:Subject:Date:In-Reply-To:References:From;
+ b=qNYxj45nXb9Cc/o0WFxiHypObPCI24C7YetafcLS4SrR+8B4D18Zj1Dxnx+1e7MH8
+ 174TlI+yC9hzl1L6XnBcuZHlGL6OJMm6ZMmIi1CdZd3+PMOcz+0nhQ7i/9aj1SdQSQ
+ +mMoZbSw7VnOJ7PTrvdZIr90RiuGeBODFAfcxAlKB8h8dPDXJ4LrsU8Rc2ksjdJRR/
+ q+ebJ85XrkVrokwxrUxtu3+FkfaM8CqARjl2VxQVacOgJe5Ij8PXPZmF9+Fl+w3/dg
+ /v2FuUpZxnRNrQzLJnZKxXXXrCYEbyhf9+9Z9eFi67zT5uEuuH4A5ciznHB1edIHl5
+ bVXOq1IF/0mVA==
+Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
+ from userid 48) id 3EA5AC433E1; Sun, 10 May 2026 08:47:27 +0000 (UTC)
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Sun, 10 May 2026 08:47:27 +0000
+X-Bugzilla-Reason: None
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Product: File System
+X-Bugzilla-Component: f2fs
+X-Bugzilla-Version: 2.5
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: cs.attila@zerodaybugs.com
+X-Bugzilla-Status: RESOLVED
+X-Bugzilla-Resolution: CODE_FIX
+X-Bugzilla-Priority: P1
+X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: cc
+Message-ID: <bug-203861-202145-CFUJ3Ank6N@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-203861-202145@https.bugzilla.kernel.org/>
+References: <bug-203861-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:3008:b0:69b:3a3c:23d0 with SMTP id
- 006d021491bc7-69b3a3c32cdmr1648976eaf.34.1778387537958; Sat, 09 May 2026
- 21:32:17 -0700 (PDT)
-Date: Sat, 09 May 2026 21:32:17 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6a000a51.050a0220.1036b8.000c.GAE@google.com>
-From: syzbot <syzbot+list002e6a12d7700b00b821@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
- syzkaller-bugs@googlegroups.com
-X-Headers-End: 1wLvq8-0002AW-GI
-Subject: [f2fs-dev] [syzbot] Monthly f2fs report (May 2026)
+X-Headers-End: 1wLzoy-0004Ge-QK
+Subject: [f2fs-dev] [Bug 203861] Division by zero error in fsck.f2fs when
+ fixing a corrupted image
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,44 +106,32 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: bugzilla-daemon--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: bugzilla-daemon@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello f2fs maintainers/developers,
+https://bugzilla.kernel.org/show_bug.cgi?id=203861
 
-This is a 31-day syzbot report for the f2fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/f2fs
+Attila (cs.attila@zerodaybugs.com) changed:
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 12 issues are still open and 80 have already been fixed.
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+                 CC|                            |cs.attila@zerodaybugs.com
 
-Some of the still happening issues:
+--- Comment #4 from Attila (cs.attila@zerodaybugs.com) ---
+Current-master fsck.f2fs reproducer package for Bug 203861: ASAN/UBSAN log,
+evidence card, concept fix, mount.c context, and minimized crash artifacts
+showing SIGFPE in sanity_check_raw_super() with secs_per_zone=0 / derived
+segs_per_zone=0.
 
-Ref Crashes Repro Title
-<1> 1       No    kernel BUG in f2fs_do_truncate_blocks (2)
-                  https://syzkaller.appspot.com/bug?extid=2488d8d751b27f7ce268
-<2> 2094    Yes   kernel BUG in f2fs_evict_inode (4)
-                  https://syzkaller.appspot.com/bug?extid=5c81eb8c0a380fa578b5
-<3> 1363    Yes   INFO: task hung in f2fs_balance_fs
-                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
-<4> 258     Yes   INFO: task hung in f2fs_issue_checkpoint (2)
-                  https://syzkaller.appspot.com/bug?extid=8a7eea50810efde15b0a
+-- 
+You may reply to this email to add a comment.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
-
+You are receiving this mail because:
+You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
