@@ -4,75 +4,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7362ACD37AC
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 May 2026 12:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D2232CD37AC
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 May 2026 14:09:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=FsLnM5T6JrQL8kTOZfdymJJ8GqwEdjSm7RJTfqR6Yz4=; b=Opeal7MUjnZ+R8+oRcYCOO8Pzi
-	R/YMJI7kPvSCmtLWB0TCVAuAU+62gFEbzqjj2fANADceaAAnSsfdJVBzO78Hax423UG2PlYmOajZG
-	FwovsdaSamyLXJ7r3CZiEd6xFGoKEmwXmyUCmvx6v0tO0AF6xormh8Y3pyh0bZ9rJ+G0=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=zLlAFJukto5l/9kiS+ph4TMJMeMrb6Xpzty4mjV2bbI=; b=Owpnr/2sN2NxWBoG4b+7e6gocA
+	z8/NmAhtpzgj7UtSQ/1QTou3FdB3FMIwu/NOhwDTT7kOPmEblbJAnqEubscKhzltk0YcHXuLA9SYx
+	ycDYSyAZWeP5lwrk0jVk8B8uLIZJJKMeF+0zxrrhhTYuJbKqL/NAtrQW3qu0ayQ+LJNs=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wMPrO-0001Ij-NE;
-	Mon, 11 May 2026 12:35:47 +0000
+	id 1wMRK0-0004Ut-JK;
+	Mon, 11 May 2026 14:09:24 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wMPrN-0001IZ-BR
+ (envelope-from <brauner@kernel.org>) id 1wMRJz-0004Uk-9Q
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 May 2026 12:35:46 +0000
+ Mon, 11 May 2026 14:09:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xYjNZjPF6a17izc+RHjOhh8yUZscwUXPxdYkZ5eulAw=; b=PeNzjKHBrGzQfMb7qhxheVYXxD
- HCvgUlkNQfY1C8PIy831rCTqbiQvUsUIT13mPRe9bmWYvN/SKBTxkZ7Qpr5TkOXX7FQZkG6dh+q8f
- qO732zZAhTOLi+PZl70Wk5CEa8epOBveENlDLYod6hjA8x+d+xHOjMHd07HugDsPIBcw=;
+ bh=MybDLA0M88E7IeJ4Rz0ySX2LotuSJweshEDKSMCN3Yc=; b=JquGWwZu2+k2pv1s5FC+p6bxa+
+ Nn83q2QLgvETDWCPWGPdryWXC5G56szUREVLMHh4C61t4P6iZY/L4Py6NLu/hTcIy1kwqTh+EShRY
+ Pgp06PY+3FtHdGen9KF7Bq8s5seE2a9rX5sRaEU7zomFRBmygIKaJKiHsQ91/jZ3+CkQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=xYjNZjPF6a17izc+RHjOhh8yUZscwUXPxdYkZ5eulAw=; b=I
- Puh8jFCsl52UsnjQElaVzAFaINhApJeq6C9hXsQFd6l1/I8+Y8DcWIyBaftM2qWdNUy4/ZrkYvw2K
- LVhWqqoYgPaNHbjF/C4AvxzGTwxioFtFcNL1nBWa+c4EVcFhRbYiy7jaAm1k7UYgbCDXZQPn1oXYW
- +m+v7TMITwfhHgBw=;
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=MybDLA0M88E7IeJ4Rz0ySX2LotuSJweshEDKSMCN3Yc=; b=SRlA8Jp7JGz/osbOBF1Rc0Y+Pr
+ d8r46pkWYuUbFj0JEgextzTnWrranns+WfdBCNVsH39xEdvuXG5IFTioQGhJNiOaRKJB9XL+3Yz81
+ VIH3WrV6m3eCU8MjUd7yk1LtMxrGmr6mmjzAexso3N002qUxZS1GPr6hiDxSW0fq1eQg=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wMPrL-0000S5-J8 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 May 2026 12:35:46 +0000
+ id 1wMRJy-00030m-1S for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 11 May 2026 14:09:22 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 0899443719
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 11 May 2026 12:35:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CDE9C2BCB0;
- Mon, 11 May 2026 12:35:36 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id AA31943715;
+ Mon, 11 May 2026 14:02:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A9CC2BCB0;
+ Mon, 11 May 2026 14:02:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1778502937;
- bh=6QQ8kukKTniNrv8iEXjF2oJj+F2CfiOmyUs5yoiLiuY=;
- h=From:To:Cc:Subject:Date:From;
- b=hcssOW9mtodYvCuhRk1oOi05aTqumSbfc6gtsGJUECBkpNzue2gCCO03Wm+shJ6mh
- nlX3n0Bm6EUcxUfvOgcHXa7RHC/4IWT5e6YgrlcYxYdYoXRZ8qFGueAjx34F8WUa1g
- inWKqPZc+ZJwSNz++/z8wwNLKQ/7X8vntDcK/i8rjmmmy0ONeE+OQ3EQiUtUbbAE60
- +aaz3SQZxXY9B30dOLjIKsJnj640fvbmSPLMuBcCucCt7B+f5kctEJXiUdKgglXoqB
- YtApZZquDYCOAyXrOnPuDDz7ayprUfOlGV8EZCsEMNVRYbmhAlyRWV25v9EjitJuMC
- 0vSUtFVOgrrvA==
-To: jaegeuk@kernel.org
-Date: Mon, 11 May 2026 00:30:33 +0800
-Message-Id: <20260510163033.12148-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ s=k20201202; t=1778508171;
+ bh=0UpJUGzPjFdRF+kzA5dFbDzrBSNpqPmuECOqes5zOLs=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=foKLY5sKZ8pQXRuGHvimXnKVPDHujO7i9DUihew18ywt0UUkKvpcWEQ+GENjB0qNO
+ NgxndUmM3WbrU08K5mm4wnFTJzeITiV9PHxDxNnq613Oo6dgzvUTfJ4/75GXQsn15r
+ NJlH33gFSvNWgiZUBBYLjmXsJCL/6Obf0osLgh9dqAWq2pC9UmW+zvU5SZ3p1gFd4H
+ 9NTj/zHhF5SO3FGYLW42EKJjAe385+WS/DGrVUPgWh3nDkDhNJFaBUjjA4e2Hgsvor
+ uPWR9IEwYD3MjdS9lV9YT2EinL9WsEwAuTWPBfysgN3ObitBAk5eEIS1jm4hwLXEn6
+ xgJjFWUK5GBCA==
+To: Chuck Lever <chuck.lever@oracle.com>
+Date: Mon, 11 May 2026 16:02:31 +0200
+Message-ID: <20260511-wertverlust-vorbringen-070f016f3bd4@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260507-case-sensitivity-v14-0-e62cc8200435@oracle.com>
+References: <20260507-case-sensitivity-v14-0-e62cc8200435@oracle.com>
+C: Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
 MIME-Version: 1.0
-X-Headers-End: 1wMPrL-0000S5-J8
-Subject: [f2fs-dev] [PATCH] f2fs: add logs in f2fs_disable_checkpoint()
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2738; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=0UpJUGzPjFdRF+kzA5dFbDzrBSNpqPmuECOqes5zOLs=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQxPmzoE7cS0pi4htne4BtrZubeg2uf/OBf+WBFQOp93
+ w71crk5HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMp2cbIMEfiXshT9YRVMeHy
+ 0dt39r6+sDHh9aLmwo1tk7ifh+3OYWNk+HUvYr/S77VKu596N6437xR9oNG88+uX37/zSzhErP7
+ +YAYA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-Headers-End: 1wMRJy-00030m-1S
+Subject: Re: [f2fs-dev] [PATCH v14 00/15] Exposing case folding behavior
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,82 +94,81 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Christian Brauner via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Christian Brauner <brauner@kernel.org>
+Cc: pc@manguebit.org, yuezhang.mo@sony.com, cem@kernel.org,
+ Roland Mainz <roland.mainz@nrubsig.org>,
+ almaz.alexandrovich@paragon-software.com, adilger.kernel@dilger.ca,
+ linux-cifs@vger.kernel.org, sfrench@samba.org, slava@dubeyko.com,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-ext4@vger.kernel.org,
+ linkinjeon@kernel.org, Steve French <stfrench@microsoft.com>,
+ sprasad@microsoft.com, frank.li@vivo.com, linux-nfs@vger.kernel.org,
+ ronniesahlberg@gmail.com, glaubitz@physik.fu-berlin.de, jaegeuk@kernel.org,
+ hirofumi@mail.parknet.co.jp, Christian Brauner <brauner@kernel.org>,
+ tytso@mit.edu, linux-api@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ senozhatsky@chromium.org, hansg@kernel.org, anna@kernel.org,
+ linux-fsdevel@vger.kernel.org, sj1557.seo@samsung.com, trondmy@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In order to troubleshoot in which step we may block on during
-mount w/ checkpoint_disable mount option.
+On Thu, 07 May 2026 04:52:53 -0400, Chuck Lever wrote:
+> Christian, let's lock this one in. I will post subsequent changes
+> as delta patches.
+> 
+> Following on from:
+> 
+> https://lore.kernel.org/linux-nfs/20251021-zypressen-bazillus-545a44af57fd@brauner/T/#m0ba197d75b7921d994cf284f3cef3a62abb11aaa
+> 
+> [...]
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/super.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+Applied to the vfs-7.2.exportfs branch of the vfs/vfs.git tree.
+Patches in the vfs-7.2.exportfs branch should appear in linux-next soon.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c6afdbd6e1cd..ebd93047ebe9 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2640,6 +2640,9 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 
- 	/* check if we need more GC first */
- 	unusable = f2fs_get_unusable_blocks(sbi);
-+
-+	f2fs_info(sbi, "%s starts, unusable: %u", __func__, unusable);
-+
- 	if (!f2fs_disable_cp_again(sbi, unusable))
- 		goto skip_gc;
- 
-@@ -2647,6 +2650,8 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 
- 	sbi->gc_mode = GC_URGENT_HIGH;
- 
-+	f2fs_info(sbi, "%s: run f2fs_gc() to migrate blocks", __func__);
-+
- 	while (!f2fs_time_over(sbi, DISABLE_TIME)) {
- 		struct f2fs_gc_control gc_control = {
- 			.victim_segno = NULL_SEGNO,
-@@ -2667,6 +2672,12 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 			break;
- 	}
- 
-+	f2fs_info(sbi, "%s: call sync_filesystem() to persist meta: %lld, node: %lld, data: %lld",
-+			__func__,
-+			get_pages(sbi, F2FS_DIRTY_META),
-+			get_pages(sbi, F2FS_DIRTY_NODES),
-+			get_pages(sbi, F2FS_DIRTY_DATA));
-+
- 	ret = sync_filesystem(sbi->sb);
- 	if (ret || err) {
- 		err = ret ? ret : err;
-@@ -2680,6 +2691,12 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 	}
- 
- skip_gc:
-+	f2fs_info(sbi, "%s: call f2fs_write_checkpoint(), meta: %lld, node: %lld, data: %lld",
-+			__func__,
-+			get_pages(sbi, F2FS_DIRTY_META),
-+			get_pages(sbi, F2FS_DIRTY_NODES),
-+			get_pages(sbi, F2FS_DIRTY_DATA));
-+
- 	f2fs_down_write_trace(&sbi->gc_lock, &lc);
- 	cpc.reason = CP_PAUSE;
- 	set_sbi_flag(sbi, SBI_CP_DISABLED);
-@@ -2697,7 +2714,7 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- restore_flag:
- 	sbi->gc_mode = gc_mode;
- 	sbi->sb->s_flags = s_flags;	/* Restore SB_RDONLY status */
--	f2fs_info(sbi, "f2fs_disable_checkpoint() finish, err:%d", err);
-+	f2fs_info(sbi, "%s finishes, err:%d", __func__, err);
- 	return err;
- }
- 
--- 
-2.40.1
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-7.2.exportfs
+
+[01/15] fs: Move file_kattr initialization to callers
+        https://git.kernel.org/vfs/vfs/c/9d3942fa6a55
+[02/15] fs: Add case sensitivity flags to file_kattr
+        https://git.kernel.org/vfs/vfs/c/72504a889e52
+[03/15] fat: Implement fileattr_get for case sensitivity
+        https://git.kernel.org/vfs/vfs/c/d0d06cfce960
+[04/15] exfat: Implement fileattr_get for case sensitivity
+        https://git.kernel.org/vfs/vfs/c/64a4f2090cb2
+[05/15] ntfs3: Implement fileattr_get for case sensitivity
+        https://git.kernel.org/vfs/vfs/c/5fff53318cbf
+[06/15] hfs: Implement fileattr_get for case sensitivity
+        https://git.kernel.org/vfs/vfs/c/1b25c01375e0
+[07/15] hfsplus: Report case sensitivity in fileattr_get
+        https://git.kernel.org/vfs/vfs/c/b9e976dd58ff
+[08/15] xfs: Report case sensitivity in fileattr_get
+        https://git.kernel.org/vfs/vfs/c/30617d630d2f
+[09/15] cifs: Implement fileattr_get for case sensitivity
+        https://git.kernel.org/vfs/vfs/c/0f372b05c80c
+[10/15] nfs: Implement fileattr_get for case sensitivity
+        https://git.kernel.org/vfs/vfs/c/3ca9954cdc04
+[11/15] vboxsf: Implement fileattr_get for case sensitivity
+        https://git.kernel.org/vfs/vfs/c/0f5f23d411ac
+[12/15] isofs: Implement fileattr_get for case sensitivity
+        https://git.kernel.org/vfs/vfs/c/d56f6094035c
+[13/15] nfsd: Report export case-folding via NFSv3 PATHCONF
+        https://git.kernel.org/vfs/vfs/c/5ca2c8f14428
+[14/15] nfsd: Implement NFSv4 FATTR4_CASE_INSENSITIVE and FATTR4_CASE_PRESERVING
+        https://git.kernel.org/vfs/vfs/c/62c9555937ca
+[15/15] ksmbd: Report filesystem case sensitivity via FS_ATTRIBUTE_INFORMATION
+        https://git.kernel.org/vfs/vfs/c/35188379f010
 
 
 _______________________________________________
