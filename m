@@ -4,78 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B9772CD37B2
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 May 2026 01:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 01871CD37B7
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 May 2026 01:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=7+0ReFXLUtQOiY3nnHsfLksAZjKIh5k2WU7B44i4jPo=; b=Vi0A1fTYafq2zCnV1GEcgo2v+H
-	o0qPXjGitAQRNS5crSHVZ4FRDxJ3RtCoqDtgajRYxRKe/IKprR/2RkQxojaSV/2HZKqikiJExUjTs
-	tD8ZwBsKXD5kOh0Nh6JX59Fhq3yTnzdmuyG1BqF/2JiL8PGb19h8o4FON6B+4z/HiUXU=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=8mzznsFavQX365gVrEK1R8p7ahvHHSsJtZolTAvap6U=; b=mZxxCBSx39f9qIjF+etXo81IJ4
+	BPxjXWYqIeafbQpE2Rcoi9mv8Bna+3m6V408OvS27+TwFCNJ5d9x8iK6TWwHDr8AxCH+S40IlXB8o
+	2LeUR8S8QQab6oqIJB4lfPuf9naddaAWMve90KBzh9QyBABWt9vCPGyCaCdaep/Mx+Rw=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wMFf1-0000BE-Os;
-	Mon, 11 May 2026 01:42:20 +0000
+	id 1wMFf3-0007eh-Dx;
+	Mon, 11 May 2026 01:42:22 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wMFf0-0000B4-9U
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wMFf2-0007eR-6u
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 May 2026 01:42:19 +0000
+ Mon, 11 May 2026 01:42:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=P5PqXEKm+NKbEFGsuorbr29nWkDwKPdcJWQHdBcJfLA=; b=QvqKp4Z6zozMkMgLLp2wrQMgg6
- jdmAWrOm0r2OAnyf4MSEYzNSdsWwIYWS0/B+Szl+BEHo8wiXsxiFtwG4Cj2d3rk7Jq52YpCwnSCaO
- A4LSPlPSopewHLVeyjXwVdaws9a/OL4VpZOO+r9vebnoJueIWfXcQhfXnUuPR+NsXMq4=;
+ bh=k85OPsfKWF2RC4sbbNVtl36yYVyC1B8DNxa3qCj21dc=; b=HmKoO9bVI6wxbU8Sa6yKWbZwnm
+ DM5D+oadoY469UAWOM6Mnl4Ho5wdeoSUqhlwC9NP11mUvwujyfn+guXxPCDHWvD2Ggd56vZmOroeb
+ A3B3oPXkQjqljUtzXJzEhQsNdLBWOaXWuMcL8DUmzg5EGkhiltiUzoqkcABcfk+w+iLo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=P5PqXEKm+NKbEFGsuorbr29nWkDwKPdcJWQHdBcJfLA=; b=TIbAumt6BVkUZE7nDQB4zqtq/6
- tjVGIzkwFgk81hMmI2QxYGk3r7phNqoGCvS4/f28AADgBWXkGV7rKoxwFSJKBHY+TaRqPe+edcOYr
- HAqiRuJDqbZO2kVt2apug39cVDV9l7oVoYgMGpMkLn/TGz+UBMw6KoWGb7qh+8zBepxQ=;
+ bh=k85OPsfKWF2RC4sbbNVtl36yYVyC1B8DNxa3qCj21dc=; b=XlSK0JHhdve7PT9/Jji1gRY0HP
+ 8rhbc1KooXhuCLYjD21bQnM0FtzDCAL0u+rfixPgsUXHXYbx5TBFNNDz8qsZhY/FwPVXdjzf5JBA9
+ yTtWFA9YRso0ErH3ya1wCS8L3TjcRLKQjC0m06pmrntlG2wsBVgYV2ZZpJ5ioi7R+H6E=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wMFez-0007Bi-JX for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 May 2026 01:42:18 +0000
+ id 1wMFf2-0007Bs-Dh for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 11 May 2026 01:42:20 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id D4D9C61146;
- Mon, 11 May 2026 01:42:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8DADC2BCC9;
- Mon, 11 May 2026 01:42:06 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id D3D8060154
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 11 May 2026 01:42:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7B74C2BCC9;
+ Mon, 11 May 2026 01:42:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1778463726;
- bh=mn71lkbbPT+j8beWbOqtrmwPLoADdcpQd1cKks8hE68=;
+ s=k20201202; t=1778463729;
+ bh=NmVfKOaFjJgKYO/j5WdidI+H2mSSkRW+ppiPHA3/BAM=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=ZX2nYsFbgvO5yNSpBTKqWXdYp7QPTAiVctGimUsJRu4WB4gOfv+r7QL9wqMXMb+r/
- H7du6ah79m0ZgUPwb5P71eutTF/7+ra4aPEXT8aUB2FzwKi05fGf7Q7Vd1bGNv+PPz
- qOWuB0zYzF1KYhyG9oqR4bEU55kKC2yLb1bfJn+ThGF2Shgep9WVHHS7/DNrF0OHKT
- 2ox4bxOspUK7XzYM74RqBLQodDIadJeSsRKfgyl5WN2f8ukbsXxf/stqdHj9mR488G
- 9N4Jk3/5D5nlKLx9ZGx7RHqbtD0Y/a3Pn/U+LRGxV449uSN0cEsEy1xQAeVkJ96dtK
- F+hjlMGRzMsWg==
+ b=AE+u+HkvCiKXIR5j1713mTMkO74oDVUTr7B9v2dJr0+miqwYWUg9Ua+hwlqQNLh6H
+ 5dBlpns7cqfYQPLPmxAKQPffTE2CRu6XMqLpOCwdO0CX0e2faZjBHEuL/0f04FEtbH
+ iQ+mBUFzHQqh3YCGArBlczC901KKjomavw87Gdw6tlqf5Bd2+WUFU2QCa2kblqRB06
+ aHFw7HBU4muct/DpXLszOZ0AIyZk/0iMPrdpEZdlzym/I06g94A12DZfvylZr9Xk3J
+ 5GyaCUmelRvWbL7lwCWpKYo7S4Gis5mJQyF3wK8TaCZin54uY8rsIDtNMP88wX56b5
+ NJeHTjde5ToRA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 02CA93930039; Mon, 11 May 2026 01:41:15 +0000 (UTC)
+ 02BE63930039; Mon, 11 May 2026 01:41:18 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <177846367379.1975880.11629604282967011707.git-patchwork-notify@kernel.org>
-Date: Mon, 11 May 2026 01:41:13 +0000
-References: <20260502124157.3406780-1-ruipengqi3@gmail.com>
-In-Reply-To: <20260502124157.3406780-1-ruipengqi3@gmail.com>
-To: Ruipeng Qi <ruipengqi3@gmail.com>
-X-Headers-End: 1wMFez-0007Bi-JX
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix potential deadlock in
- f2fs_balance_fs()
+Message-Id: <177846367654.1975880.13400565434269421291.git-patchwork-notify@kernel.org>
+Date: Mon, 11 May 2026 01:41:16 +0000
+References: <20260422104847.11243-1-chao@kernel.org>
+In-Reply-To: <20260422104847.11243-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1wMFf2-0007Bs-Dh
+Subject: Re: [f2fs-dev] [PATCH] f2fs: doc: fix the wrong description for
+ critical_task_priority
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,44 +102,17 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Sat,  2 May 2026 20:41:57 +0800 you wrote:
-> From: Ruipeng Qi <ruipengqi3@gmail.com>
+On Wed, 22 Apr 2026 18:48:47 +0800 you wrote:
+> The default value should be 120 rather than 100, fix it.
 > 
-> When the f2fs filesystem space is nearly exhausted, we encounter deadlock
-> issues as below:
-> 
-> INFO: task A:1890 blocked for more than 120 seconds.
->       Tainted: G           O       6.12.41-g3fe07ddf05ab #1
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:A    state:D stack:0     pid:1890  tgid:1626  ppid:1153   flags:0x00000204
-> Call trace:
->  __switch_to+0xf4/0x158
->  __schedule+0x27c/0x908
->  schedule+0x3c/0x118
->  io_schedule+0x44/0x68
->  folio_wait_bit_common+0x174/0x370
->  folio_wait_bit+0x20/0x38
->  folio_wait_writeback+0x54/0xc8
->  truncate_inode_partial_folio+0x70/0x1e0
->  truncate_inode_pages_range+0x1b0/0x450
->  truncate_pagecache+0x54/0x88
->  f2fs_file_write_iter+0x3e8/0xb80
->  do_iter_readv_writev+0xf0/0x1e0
->  vfs_writev+0x138/0x2c8
->  do_writev+0x88/0x130
->  __arm64_sys_writev+0x28/0x40
->  invoke_syscall+0x50/0x120
->  el0_svc_common.constprop.0+0xc8/0xf0
->  do_el0_svc+0x24/0x38
->  el0_svc+0x30/0xf8
->  el0t_64_sync_handler+0x120/0x130
->  el0t_64_sync+0x190/0x198
-> 
-> [...]
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  Documentation/ABI/testing/sysfs-fs-f2fs | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Here is the summary with links:
-  - [f2fs-dev,v3] f2fs: fix potential deadlock in f2fs_balance_fs()
-    https://git.kernel.org/jaegeuk/f2fs/c/65ab67d250f6
+  - [f2fs-dev] f2fs: doc: fix the wrong description for critical_task_priority
+    https://git.kernel.org/jaegeuk/f2fs/c/ff9e72dbcfad
 
 You are awesome, thank you!
 -- 
