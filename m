@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 664C4CD37BE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 May 2026 14:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0F183CD37AC
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 May 2026 14:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=BuwNx/PyuX1E8njWCubtUhQAikx+EDBwKrqvf2O2EHM=; b=A/xY2NcCkVEiF2rJvwi4AYH/cd
-	UYNrBBDDVBR/xVg/fCZtN7sVcumPQtmr37oxfjxCdyf1HAtPt2BJCMNl5HpgA9X2IoQQ2c61VIWRD
-	M45Tgo2GOZ0vfyOdZilG+X90Oza3Y+2fv6Cns2+rmZhFwgnWCp2qzw96QG1V5kBhGxKU=;
+	bh=ucSu0OJPve8Q6RA6rL+OzmtlDHf1i6jARkhlIEDH2k8=; b=hwdedCY1+jd2ZYYiR1RCUdp395
+	OtsNOj9Hz0mDy+qrp23194BGX2uAFrYKgDfp9adpTw+AlpD+cq0gnL/HWt7fDZAlYlzVT9b0Qd+sY
+	nbvv2Py3OjB1kr9PmYCGUITVgE2l4f8M+SwopJY5rhPPIgyApRe1iFUxK1ZB52ORd3gc=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wMRK8-0008At-PO;
-	Mon, 11 May 2026 14:09:33 +0000
+	id 1wMS2a-0000tX-7n;
+	Mon, 11 May 2026 14:55:28 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <brauner@kernel.org>) id 1wMRK6-0008Al-Qu
+ (envelope-from <brauner@kernel.org>) id 1wMS2Y-0000tQ-G7
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 May 2026 14:09:31 +0000
+ Mon, 11 May 2026 14:55:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RgTi2HyJCaLeMiU8Fz6KzxgFZeGWAYkpKt4i7qk5j/Y=; b=JLzYhttpDg4j+61weOkCacoJxx
- zQDHXgmpZu3IthPO8yi1srAXl6AtFAarsMDcJ+5HVCOfX/LGxenmICUWWzTJIXlEDU/8K3u0krgM3
- ZWystlcu+zOOWWJhAGZti77ARJ3YoJ8ZK2RH3beXBEkQ1CzVOVuf1N13sas/TVmLAJa8=;
+ bh=GOhMyS6A9nPdB3/toMwfPjn5CJq3xbB8bGaM/jrgc34=; b=h5f9YDgoSMslV0FRdMmORLbHQ2
+ NkRrcKJY2y3pieatQLakrFtZGT1WUh5FxezGAZOB0TCEnbcLoFrBQ3bDbw99DfPqtQlibFPVLVvg/
+ Qv3K3iw02zmvabIA2al4rYdcwQX9BwBp+s4W+bciDZ1/1ko0cy0mUHZTm1npp3OjxWTY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,37 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=RgTi2HyJCaLeMiU8Fz6KzxgFZeGWAYkpKt4i7qk5j/Y=; b=HcdU8cU2siY7IeyGzIFduHn/yF
- w4hfp/ukQnpYi27Rw+yag0qlqdWRlfvE82kM2+bE1RTZ+UoBzQzpF7Z8tW1HMQwxj/ky9+pc11Sqe
- iZWfheHkU4m/RTKoDHgimjoVFd0l4lFlQxZCZLJGDfzHSUEsOsdkxjaUHfHb5lvm00+k=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=GOhMyS6A9nPdB3/toMwfPjn5CJq3xbB8bGaM/jrgc34=; b=PiRIz4XeORBVQm6UhGmFGkC0VD
+ /4XSHvPIivPFIK7PXcWVnj9/z/OqPMJJNEctXokSNM6ii2bFXPQwZzShAxWcMJTetz+bzPMfst6Q7
+ qBjfqrSil5xiC/LlUqjDNxYtOZZH543EoncG8Mk56WWP/bUFcg+thnZudVvyQcB+50mU=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wMRK2-00031T-Rt for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 11 May 2026 14:09:30 +0000
+ id 1wMS2W-0005zf-PM for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 11 May 2026 14:55:27 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id B81E043E8F;
- Mon, 11 May 2026 14:03:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D2C9C2BCC9;
- Mon, 11 May 2026 14:02:52 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 87D796001A;
+ Mon, 11 May 2026 14:55:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B62EC2BCB0;
+ Mon, 11 May 2026 14:55:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1778508181;
- bh=RgTi2HyJCaLeMiU8Fz6KzxgFZeGWAYkpKt4i7qk5j/Y=;
+ s=k20201202; t=1778511314;
+ bh=6bkUFk7agXrVGw01n0hkhQsMUbSxdQH7PYPRMmWMUcw=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=qHh6BeNVXR5vm2TUiXQsksN3VWXztHJjQkFUZMOC+Qda/fWEMcns/JjxLR3zxNEF8
- RW0LUH87ebCxHlpBnjBEVZ4eYSBHU4SYUwgBJCjBf8Oy9rdsZ6jiuKrkH4PhwjeWk+
- pe416YP5BjHKZ6H49uqVf0DOF3Oe+9zXQF0ovomTWTQ1O058SCn8LVYT9gf3zbHgNW
- 1tItZO73KnbZttQj67r7+SUNkYvwl10aiIUwOq17sqCObXi6e5mT3HSiViqfG4oHS3
- I3+ifllP0AIc51Xw+F4Pn3DQNxAwmqb99mPNsRgVCLfqrI/k4HWqH+BGQHyUBSJQFn
- RPDIjjlkL5JEw==
-Date: Mon, 11 May 2026 16:02:50 +0200
-To: Chuck Lever <cel@kernel.org>
-Message-ID: <20260511-verhielt-osten-3fbfde3e491f@brauner>
+ b=B36cI4lxkeKOrJg/YdwbrT9QFnN+7rE9cz0Kky2/Q0526+AEGWwQPoTE9qjPqMDeb
+ GsQxQEwqcwpoPR7xJfJt4ke0fGSHgnXDTs74QCH3PcCySzkUYUhWn1OEyMSvK8dVBi
+ meiLygIryKP1+8dQlZftGCG/2SdCNzQg/RmCG9UG5BuNgquK013JCqHIB105LciE9o
+ oxNc+MysamaiqgVPh0Pwr+VONqKb+fjTLpnpqtMqjPHS3KqFQZQ7UVyJUuDQs7kPpJ
+ Ii51EEwjYFanIdUoSukGU5nIUGrXy39uwG4I4Lb4+s2I3P+YvZao+5xnMVLvz7TF8D
+ tck0/JxcJZ6+Q==
+Date: Mon, 11 May 2026 16:55:04 +0200
+To: Chuck Lever <chuck.lever@oracle.com>
+Message-ID: <20260511-kaffee-therapieren-1335259c65ee@brauner>
 References: <20260507-case-sensitivity-v14-0-e62cc8200435@oracle.com>
+ <20260511-wertverlust-vorbringen-070f016f3bd4@brauner>
+ <705e1769-6a5e-440d-bf50-5e5feec2b88d@oracle.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260507-case-sensitivity-v14-0-e62cc8200435@oracle.com>
-X-Headers-End: 1wMRK2-00031T-Rt
+In-Reply-To: <705e1769-6a5e-440d-bf50-5e5feec2b88d@oracle.com>
+X-Headers-End: 1wMS2W-0005zf-PM
 Subject: Re: [f2fs-dev] [PATCH v14 00/15] Exposing case folding behavior
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -88,28 +90,58 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Christian Brauner via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, pc@manguebit.org, yuezhang.mo@sony.com,
- cem@kernel.org, Roland Mainz <roland.mainz@nrubsig.org>,
+Cc: pc@manguebit.org, yuezhang.mo@sony.com, cem@kernel.org,
+ Roland Mainz <roland.mainz@nrubsig.org>,
  almaz.alexandrovich@paragon-software.com, adilger.kernel@dilger.ca,
  linux-cifs@vger.kernel.org, sfrench@samba.org, slava@dubeyko.com,
  "Darrick J. Wong" <djwong@kernel.org>, linux-ext4@vger.kernel.org,
  linkinjeon@kernel.org, Steve French <stfrench@microsoft.com>,
- sprasad@microsoft.com, frank.li@vivo.com, Al Viro <viro@zeniv.linux.org.uk>,
- ronniesahlberg@gmail.com, glaubitz@physik.fu-berlin.de, jaegeuk@kernel.org,
- hirofumi@mail.parknet.co.jp, linux-nfs@vger.kernel.org, tytso@mit.edu,
- linux-api@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, senozhatsky@chromium.org,
- Chuck Lever <chuck.lever@oracle.com>, hansg@kernel.org, anna@kernel.org,
+ sprasad@microsoft.com, frank.li@vivo.com, ronniesahlberg@gmail.com,
+ glaubitz@physik.fu-berlin.de, jaegeuk@kernel.org, hirofumi@mail.parknet.co.jp,
+ linux-nfs@vger.kernel.org, tytso@mit.edu, linux-api@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ senozhatsky@chromium.org, hansg@kernel.org, anna@kernel.org,
  linux-fsdevel@vger.kernel.org, sj1557.seo@samsung.com, trondmy@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, May 07, 2026 at 04:52:53AM -0400, Chuck Lever wrote:
-> Christian, let's lock this one in. I will post subsequent changes
-> as delta patches.
+On Mon, May 11, 2026 at 10:07:44AM -0400, Chuck Lever wrote:
+> On 5/11/26 10:02 AM, Christian Brauner wrote:
+> > On Thu, 07 May 2026 04:52:53 -0400, Chuck Lever wrote:
+> >> Christian, let's lock this one in. I will post subsequent changes
+> >> as delta patches.
+> >>
+> >> Following on from:
+> >>
+> >> https://lore.kernel.org/linux-nfs/20251021-zypressen-bazillus-545a44af57fd@brauner/T/#m0ba197d75b7921d994cf284f3cef3a62abb11aaa
+> >>
+> >> [...]
+> > 
+> > Applied to the vfs-7.2.exportfs branch of the vfs/vfs.git tree.
+> > Patches in the vfs-7.2.exportfs branch should appear in linux-next soon.
+> 
+> Not vfs-7.2-casefold ?
+> 
+> Fwiw, I was intending to rebase nfsd-next on the vfs integration branch,
+> which should have both vfs-7.2-casefold and vfs-7.2.exportfs merged in,
+> along with Jeff's series that implements the infrastructure to support
+> directory delegation properly. LMK if that's crazy talk.
 
-Perfect!
+I think you should just merge:
+
+vfs-7.2.exportfs
+vfs-7.2.casefold
+
+as the order doesn't matter and they don't depend on each other. I have
+marked both branches as shared so they won't get touched again. If more
+ends on either of these branches it doesn't matter to you. IOW, I think
+you should just pick the minimum you need and then you don't need to
+hear from again and by the time you send your pull request all the
+prerequisites will already be in Linus' tree.
+
+If you merge in vfs.all you're subject to problems from rebases. So I'd
+not recommend that.
 
 
 _______________________________________________
