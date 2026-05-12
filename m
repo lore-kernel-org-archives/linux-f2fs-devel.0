@@ -4,80 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6BF29CD4855
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 May 2026 07:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C67B0CD4F26
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 May 2026 07:23:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=gJQzM5XiZifJD9nRqglSpJ0Nv6JvxXELK30TSjF+A6Q=; b=i2xCT4zfgleZ2qOgMsGFCq7Q2E
-	szE7JEpYq4UaJ9QvKJvhRrcazUG/tT5jk2+Zzy8fOhbHcwuHZBjiNxhORmxMydnk0m3F/N1bt047P
-	iTMePRm4cBpKP1OHhjaMPzdAASR+4nmVAkb6mYh6VkIciQRkmaOkcIsoPRMKLQR9XexE=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=6j+o7oD+ZAwr8l4OsqpVRM4gpnlae4bJs51q9DBSqNg=; b=HI2zj7YkKKegIBSPrQ6glEuEp/
+	UIjGgUbsAAyvfZux8ISwxsPOQG2WxDZkpzjeJSUayzom41FxH+CSftq6xPVk9k3i3VONPmpRql2EI
+	i9aAU/3g896MVroFqrZTwNCnRt6bQE1aXh5ScLg0/SSw6XGLUaxGOiD5I3Q1/BowAXjA=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wMhRX-0005Nh-SE;
-	Tue, 12 May 2026 07:22:16 +0000
+	id 1wMhTB-0003ot-3h;
+	Tue, 12 May 2026 07:23:57 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <dlemoal@kernel.org>) id 1wMhRJ-0005NN-Tk
+ (envelope-from <hch@lst.de>) id 1wMhTA-0003on-I6
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 12 May 2026 07:22:02 +0000
+ Tue, 12 May 2026 07:23:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CbVlwsx6CEYMg77PXGLk2/geTVRI/zNjmS6aGPk9n0g=; b=YbHOTGVttG8W1n0EultPRjMkux
- SiQ8M5MV90UU+skbV52VPcgZuRVh42BtfyXhEcVq1nFgq6ApOuaRuQZIz/z2dwZBCwq2SqDJG1SOi
- zQhSjRka8Mbjz+SNw02okWKVv2+bY1qdX5WnXMM6T9QXSH9OlficmciZpPgQqtQXitTk=;
+ bh=BU2y59SqFukqO7Luqv9lSeOSHObUdXJCRb74gvCvzQ8=; b=migCcJP8aebhXSm4PKvFFmxQDm
+ nTFImzdQE+7vn9uxa+MfpQ+4xgpe3Wo+qGKABKB0gxsNpsCicb2lJeozsHXv/Aj7mJLlTjrYxqEkW
+ eQgUKoOCtQXLkizeisZBWFPSWJ70XlNsEULlIBmxGUIjfVa7t8uXtvvAGztDpaZ5LkG4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=CbVlwsx6CEYMg77PXGLk2/geTVRI/zNjmS6aGPk9n0g=; b=jlkr1SqbNfq4/KJMs/wuvkDsrQ
- MfCi/H43VU38L7HjMvEHTH4VjVNLvLi0c4drpJON2Mr6Fs5MAEL17f22/VOIcnZ5LZUockugy/TSL
- c/Kt/G1sBjdQuQe3j5zCUPH9B0kJMB8C4gI+1YGqRYY5u38CKZT7aHA6b7PeLQryzeRU=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=BU2y59SqFukqO7Luqv9lSeOSHObUdXJCRb74gvCvzQ8=; b=C2acur5PgRKER2kDk0XOxlQm0n
+ vlG9tnRv4VF/EExFxAlmNruwa8eysvf9daPpO2CHHw3Sm1yP7Gjvm2MedQHz4VbbL7WR6Gg654EW+
+ R0zAesaEJPYYcyRDpotHLGkBR+AiaMftBnDCTF8A+ctRpBlYyK/S8XdeonQFTq+2N4KQ=;
+Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wMhRH-0001kG-Hh for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 12 May 2026 07:22:02 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by tor.source.kernel.org (Postfix) with ESMTP id 46A4C60055;
- Tue, 12 May 2026 07:21:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F004C2BCB8;
- Tue, 12 May 2026 07:21:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1778570514;
- bh=Xq9+eEnZyp37k7qXEaOdw0f0Snu5QZQtlvjD1+MYRu4=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=HpnCdujuSs0wcUGzR0lQTqIJ531e+c+TnGuoVAcjOUCcPqOGeNyWvcWsmYWSE3jxq
- mF9lVHlk8lkWBf0HidM6p3rU5VPTfQGMU6Po421XDufDTQigS16W5xwg2srgvuTKs/
- KXvnNJ/6OzLv9KM2ZGR1T2oxhsd+sSbbrbqvxmSKTihw1tl6w2uJS9X1KEKKjpadNN
- 4nuq5EdnivRdW3Qm2oZhiQCb3YBa3DVhaw2PQmZBwhcU/a2lCEilJYilNG/IlNeDSI
- ro2YyO3EhmNbLo3hYTXPpvz/utb7tHvG+kyLD+U0Yk9qQMEGGIMuLHEz7RaJRZq/gj
- LeQ/tiiv2eo8A==
-Message-ID: <217f91d9-4d5f-47a6-ad20-0404968b8e08@kernel.org>
-Date: Tue, 12 May 2026 16:21:47 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Christoph Hellwig <hch@lst.de>, Andrew Morton
- <akpm@linux-foundation.org>, Chris Li <chrisl@kernel.org>,
- Kairui Song <kasong@tencent.com>
+ id 1wMhTA-0001wT-7u for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 12 May 2026 07:23:57 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id E305568BFE; Tue, 12 May 2026 09:23:47 +0200 (CEST)
+Date: Tue, 12 May 2026 09:23:47 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Damien Le Moal <dlemoal@kernel.org>
+Message-ID: <20260512072347.GA32756@lst.de>
 References: <20260512053625.2950900-1-hch@lst.de>
  <20260512053625.2950900-8-hch@lst.de>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20260512053625.2950900-8-hch@lst.de>
-X-Headers-End: 1wMhRH-0001kG-Hh
+ <217f91d9-4d5f-47a6-ad20-0404968b8e08@kernel.org>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <217f91d9-4d5f-47a6-ad20-0404968b8e08@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1wMhTA-0001wT-7u
 Subject: Re: [f2fs-dev] [PATCH 07/12] swap,
  block: limit swap file size to device size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -91,40 +77,38 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Damien Le Moal via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Damien Le Moal <dlemoal@kernel.org>
 Cc: Paulo Alcantara <pc@manguebit.org>, linux-doc@vger.kernel.org,
  "Darrick J . Wong" <djwong@kernel.org>, Carlos Maiolino <cem@kernel.org>,
  Hyunchul Lee <hyc.lee@gmail.com>, linux-mm@kvack.org,
- Naohiro Aota <naohiro.aota@wdc.com>, linux-xfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>,
- linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-block@vger.kernel.org, David Sterba <dsterba@suse.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
- linux-f2fs-devel@lists.sourceforge.net, Steve French <sfrench@samba.org>,
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
+ Christoph Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>,
+ linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Namjae Jeon <linkinjeon@kernel.org>, Chris Li <chrisl@kernel.org>,
+ linux-nfs@vger.kernel.org, linux-block@vger.kernel.org,
+ David Sterba <dsterba@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+ Kairui Song <kasong@tencent.com>, Theodore Ts'o <tytso@mit.edu>,
+ linux-cifs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ Steve French <sfrench@samba.org>, linux-btrfs@vger.kernel.org,
+ Anna Schumaker <anna@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Trond Myklebust <trondmy@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 5/12/26 14:35, Christoph Hellwig wrote:
-> Don't blindly pass the value from the swap header to swap_add_extent,
-> but instead the device size rounded down to page granularity.  This
-> activated the sanity checking in the core code that catches a too large
-> value in the swap header.
+On Tue, May 12, 2026 at 04:21:47PM +0900, Damien Le Moal wrote:
+> On 5/12/26 14:35, Christoph Hellwig wrote:
+> > Don't blindly pass the value from the swap header to swap_add_extent,
+> > but instead the device size rounded down to page granularity.  This
+> > activated the sanity checking in the core code that catches a too large
+> > value in the swap header.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Looks OK to me, though this maybe could be folded in the previous patch ?
 
-Looks OK to me, though this maybe could be folded in the previous patch ?
+I prefer to keep behavior changes as isolated as possible.
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-
--- 
-Damien Le Moal
-Western Digital Research
 
 
 _______________________________________________
