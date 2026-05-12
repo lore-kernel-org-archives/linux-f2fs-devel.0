@@ -4,82 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 31AD5CD4855
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 May 2026 07:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 08B32CD4F26
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 May 2026 07:21:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=MhyIGnlS2bqG6ZCo+4w2xIFZEl36sycLm5Hq1jIlSIM=; b=XKl/nqlavUzR7MGM3Q9HtZwr/y
-	d+pAtAIabYHjpnw+Rm58Q9PaT5vZbnQmDdVeeMuqP/VErhkOBIV1lyX6ZEZ4nhoeXBuNJPYGdLlaO
-	13K8XU4veOJ32D4694NGbmYRfHRIOOzoc587Oe6ERcOi4oSwbkSLqE2FFudgSyQItqmE=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=5utzbNgJUqhbovmaswsebED5OCIejuoJ2dbHpCZR/zQ=; b=gK4msfsaBT/NRJk2Jf/SndV2rT
+	Bs7Hc/RAma7SZl11pnqzO0UYu2S4RFIWQdkAjWkgbpbfybnrpLrS+1hBfIrenZW29jBdhhzcgpfh+
+	igVo8T6exscxaQW1cjDaytw9EmVNp5vVNRFFUSMX9RG7iQf9ytS40YqUaCprX99WVeDM=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wMhPr-0006sD-Ay;
-	Tue, 12 May 2026 07:20:28 +0000
+	id 1wMhQO-0005KR-6T;
+	Tue, 12 May 2026 07:21:04 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <dlemoal@kernel.org>) id 1wMhPp-0006s5-9I
+ (envelope-from <hch@lst.de>) id 1wMhQL-0005Jm-3X
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 12 May 2026 07:20:26 +0000
+ Tue, 12 May 2026 07:21:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hOK7f6ec2LsMgcWQRwIq/1n3zq7AV3Tu58DuoNcWJL8=; b=lNbtP0VtZuTkXIQV9CN+HXLhB9
- 7Fxlz5zWIuPvodVESDxa5O+4xS9TdHX1qLTQJSiEg21cTF4fHbn5HJG20xgiLsj30MAUkLac/luFG
- EakmWYgA0GyD7j++E5B8k9uXRz/PHXh9+iDNe5pm87P2MeDcsrvYeAqlwOKwaSZAelWI=;
+ bh=pMTiTFWiENQamzxHXmbPJRlT0qzqpOu+k05ZoAu8TSw=; b=R/c1vnYRbWYJcPBcD6b40afskb
+ 8r6/yw6WeacZDMnVcmpR4ujbMBubIxnBL7x6tmMyeMUl98Z8G1x+ako1XQua3qWNvyBOGpknmdPod
+ xl5uuKJdHfy/PglMpQGb0dVZN43orqmG+OFvqX8KK6tJ3iTXdAQtQNqWq+jCqmydU7aA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hOK7f6ec2LsMgcWQRwIq/1n3zq7AV3Tu58DuoNcWJL8=; b=JkQFj83hP8+QMDFYRLt+Ndtxir
- B25ywRRytLGTLhrhWJZSu6jANPRATQMONzBpPYlWXWRTb2fSril3Ownma61RGPx8UetOh13hQq4x1
- a+6FoKuC2aWapW3e4kbdfuz1/mwGP7bTvkVSfcPcP2y8PROEwBwq0MWRnyKRdlZ0PFCA=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=pMTiTFWiENQamzxHXmbPJRlT0qzqpOu+k05ZoAu8TSw=; b=k/XFcbqIP39y+gjMh7afDGmQPj
+ dXg3H1qpWIhGGaIbZcTtdjBWg6CwZSVKDCF1DoNeYQgEK0XUNNLIj8dbteC9Okqm7jl7BjrUX/6FA
+ +pZRG7GvuYH6EdCXtQwM8GHAVTS7zsVmmgflXE3RNoziDQDZkNk2GH7N5sGDLFRl7zIg=;
+Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wMhPi-0001bT-3e for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 12 May 2026 07:20:26 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 33E7A43F30;
- Tue, 12 May 2026 07:20:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06282C2BCB0;
- Tue, 12 May 2026 07:20:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1778570412;
- bh=gFxSwQ2vwNGN7Wy+a57I0BqMT4+uCuIw9JWDuf1wsoY=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=soJoZRoMxJtn9BFF3dpQwvk0xi820TNJfptJMtJX/cP/qNW+teYamRrcMVyhtuIf2
- iR30YL5xnlEO3jTCx2tpM77XOC5OsxBpMB1POJFpEuFKTdBQGIEvxGGPmqeJ32yTYY
- UA2xlPqKw+9LfjJN4MQdMcexmE51BlA+EqPHlH5f+sN6l+N2Pb4HNurNsKuKugTIio
- ole6921MHwRdIF7HBTc7tpfjCL6KBtD6BTBQ1Q6GwaBCiWuHWUGJB5v8Me5Q8cQ3NI
- Tq43OhBP9tdm5zD08MqoxYDF0J0eeB07AIqRJJSRbCGW+bEl8POIDqcxOUAfOS/yGy
- b9paE8zlD9+yw==
-Message-ID: <f157c318-790d-4931-bcc2-7b3c95c8c2b0@kernel.org>
-Date: Tue, 12 May 2026 16:20:05 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Christoph Hellwig <hch@lst.de>, Andrew Morton
- <akpm@linux-foundation.org>, Chris Li <chrisl@kernel.org>,
- Kairui Song <kasong@tencent.com>
+ id 1wMhPv-0001dA-Qf for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 12 May 2026 07:20:38 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id EB1E668B05; Tue, 12 May 2026 09:20:22 +0200 (CEST)
+Date: Tue, 12 May 2026 09:20:22 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Damien Le Moal <dlemoal@kernel.org>
+Message-ID: <20260512072022.GA32622@lst.de>
 References: <20260512053625.2950900-1-hch@lst.de>
- <20260512053625.2950900-7-hch@lst.de>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20260512053625.2950900-7-hch@lst.de>
-X-Headers-End: 1wMhPi-0001bT-3e
-Subject: Re: [f2fs-dev] [PATCH 06/12] swap,
- block: move the block device swapon code into block/fops.c
+ <20260512053625.2950900-2-hch@lst.de>
+ <03dddf72-8755-4ebf-ba79-456377f0f25d@kernel.org>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <03dddf72-8755-4ebf-ba79-456377f0f25d@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1wMhPv-0001dA-Qf
+Subject: Re: [f2fs-dev] [PATCH 01/12] swap: remove the maxpages variable in
+ sys_swapon
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,38 +77,38 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Damien Le Moal via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Damien Le Moal <dlemoal@kernel.org>
 Cc: Paulo Alcantara <pc@manguebit.org>, linux-doc@vger.kernel.org,
  "Darrick J . Wong" <djwong@kernel.org>, Carlos Maiolino <cem@kernel.org>,
  Hyunchul Lee <hyc.lee@gmail.com>, linux-mm@kvack.org,
- Naohiro Aota <naohiro.aota@wdc.com>, linux-xfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>,
- linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-block@vger.kernel.org, David Sterba <dsterba@suse.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
- linux-f2fs-devel@lists.sourceforge.net, Steve French <sfrench@samba.org>,
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
+ Christoph Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>,
+ linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Namjae Jeon <linkinjeon@kernel.org>, Chris Li <chrisl@kernel.org>,
+ linux-nfs@vger.kernel.org, linux-block@vger.kernel.org,
+ David Sterba <dsterba@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+ Kairui Song <kasong@tencent.com>, Theodore Ts'o <tytso@mit.edu>,
+ linux-cifs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ Steve French <sfrench@samba.org>, linux-btrfs@vger.kernel.org,
+ Anna Schumaker <anna@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Trond Myklebust <trondmy@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 5/12/26 14:35, Christoph Hellwig wrote:
-> Make use of the abstractions we have.  This is a preparation for
-> moving more special casing down into block/.
+On Tue, May 12, 2026 at 04:08:35PM +0900, Damien Le Moal wrote:
+> On 5/12/26 14:35, Christoph Hellwig wrote:
+> > Always use si->max which is updated setup_swap_extents instead of copying
+> > into and out of maxpages.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Checking mm/swapfile.c, I see s->max being set only in swapon(). Is this a typo
+> or am I misunderstanding this sentence ?
 
-Looks OK to me.
+It is updated by the file system methods or the generic implementation
+called by setup_swap_extents currently.  So the above is a bit imprecise.
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+The next patch then removes this confusing update.
 
--- 
-Damien Le Moal
-Western Digital Research
 
 
 _______________________________________________
