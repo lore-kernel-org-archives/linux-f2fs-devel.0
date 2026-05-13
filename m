@@ -4,67 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 441C8CD4851
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 May 2026 06:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 197E7CD4851
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 May 2026 07:45:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=6J5CEiLuv/iZKKVt2IbKXbLm1ihNbRIZ8nV3HM0ftV8=; b=T9dHdSMBwcQs2fsx59NshOfpug
-	/TT130oO4ahoIKj5lwu3Lhp33mGhLVxcASUSQ2HJXF6M4hszb+8cCEhqysHWJvHVF3w4bKniZ+IIM
-	ftvI8R1AZD6oOOX4n+j3U4A7G44j9hvgpttJ/B1yl2yFLW5EblCvGpba36LS7Z/y7ppY=;
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=lCNW9f7Jtv34dhRcCiWXo0VDsasYRscuy9qAz7jIxAA=; b=ioEBSuKUezbBDn06Yq7J2kjxn6
+	eEXLpscsi1Xm8fSzqr+b/liG0VpeI7O/WdiuAMwYmQsfT7J8nH1XrKHQkvLEMB6k+Wi3ZajBnG3Cg
+	picUKFHjR/tbFk2XMjIhU9D4acQN9HtfmAImaw6mesMeZ9PmKWD7DIpR+Q+160s5skD0=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wN3W8-0000BX-ON;
-	Wed, 13 May 2026 06:56:26 +0000
+	id 1wN4HT-0003H8-Gk;
+	Wed, 13 May 2026 07:45:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1wN3W7-0000BR-RN
+ (envelope-from <dlemoal@kernel.org>) id 1wN4HK-0003Gu-HR
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 May 2026 06:56:25 +0000
+ Wed, 13 May 2026 07:45:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Dbax/n2PuXSr1L7VYwyXeeuH0mEbfBGTLmPkem6T8y0=; b=bNbWcgP79awLn1scQjma4x+BVP
- DBi5EIO31GplzWDzkwtiJvuwgyic0SGyd5nhINsBchdVd8I4JhSy2dNl8eblWrUQSH+Xz+lfypPnG
- 43LB70nsmuI+GRjGc2q5cJwnGHSGbVK0KuaYQXAu45mFW6j+sKUWJXyXlXnBlH/aq6Cc=;
+ bh=Jfc9VamWO5q0xBx3b2s9XvXr4HRth56IxXIXv/8jUV8=; b=aB8Z1MYu9mMfefFBzzBijdo8rZ
+ 1L2AQYteYHp0TPn6N1WoLFqnnwQ6pvhRf8sd0IMVYl75K6A78l95a6EExBepUFyEfCPoaDEzVsfB6
+ lpLU2dFdWj8tVpjjdxW+C/YB9eRRNLrE1jcg3ItMb0qFqmmdHit4kJdfDDuOpGrr1mCE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Dbax/n2PuXSr1L7VYwyXeeuH0mEbfBGTLmPkem6T8y0=; b=IUe4CtrLdQj70oRdHSs7MHG40h
- u3q5VaVh696rR2us6OrLI8I7Dx/sgN9M7weOk1ypS3xInAtc/7sHHvTSOZHLhDr1Gucon6RH3KFsz
- AW1WEUHzg7EU7uEA1FjQk3Flk61PS58YmE/TDveaep6+hnUpxQjYuR8AlcO4ADYRbV2k=;
-Received: from verein.lst.de ([213.95.11.211])
+ bh=Jfc9VamWO5q0xBx3b2s9XvXr4HRth56IxXIXv/8jUV8=; b=gJhILEQ3hPVXMk5Ujq0jBjncAb
+ R3KJbmApSZaCX0/L6nWbOLdt6fkItDc1AaTdPHCmFuhXESRL2d13314rs1Og+RX44h54/y8AYaKOW
+ 1AH99EjCJB5rSRP640trkLdPYHzTXR5+MckPKhOq79UY+ySm8lyk9Q59q4dkN2fDAW/c=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wN3W3-0008F1-D0 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 May 2026 06:56:25 +0000
-Received: by verein.lst.de (Postfix, from userid 2407)
- id 82B0768B05; Wed, 13 May 2026 08:56:08 +0200 (CEST)
-Date: Wed, 13 May 2026 08:56:08 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Message-ID: <20260513065608.GA2250@lst.de>
-References: <20260512053625.2950900-1-hch@lst.de>
- <20260512053625.2950900-9-hch@lst.de> <20260512170204.GI9555@frogsfrogsfrogs>
+ id 1wN4HG-0002mu-6u for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 13 May 2026 07:45:12 +0000
+Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
+ by sea.source.kernel.org (Postfix) with ESMTP id 21E5F43DB5;
+ Wed, 13 May 2026 07:45:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3B4FC2BCB7;
+ Wed, 13 May 2026 07:44:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1778658300;
+ bh=Dg2nW1p160NOCn5umFdjytzvydm/ZD4Y8VIlSf+k0CM=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=W88QhGV5fNBgG29b6A8+2aMpfRcsRHQN/DvQSObUW7md2OERCUFlHgf1cKsHqoq2S
+ 8ykZnWkud0SccegE0umMkD4j5jJ7KgzhBrzoBcb9I/I9zNm6SNrd0Urp9aI7aA2mFH
+ Ls43dph0TYLcQ7SHMgIKKiqIjYNGHdG0bRvkSKaUSVLbUqXi1S0+3eREdcpqS6vbou
+ pjHmEbKTKNOrbnUGt7tcluhtcMyTN3bE6oKaewls6oT44KMpU3eYtzejZxITRlsKNU
+ MrtDtAfOwb3/X7OZISUgYCyAwxQnZAGj2NCGbnTCksT5zjWWNFVhk+szDVycr1iBRH
+ EXReRb+kSdmJg==
+Message-ID: <acd6428b-a352-4f7b-a349-b2c9e341fd87@kernel.org>
+Date: Wed, 13 May 2026 16:44:53 +0900
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260512170204.GI9555@frogsfrogsfrogs>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1wN3W3-0008F1-D0
-Subject: Re: [f2fs-dev] [PATCH 08/12] swap,
- iomap: simplify iomap_swapfile_iter
+User-Agent: Mozilla Thunderbird
+To: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>
+References: <20260512053625.2950900-1-hch@lst.de>
+ <20260512053625.2950900-10-hch@lst.de>
+ <20260512170846.GJ9555@frogsfrogsfrogs> <20260513055806.GC1236@lst.de>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20260513055806.GC1236@lst.de>
+X-Headers-End: 1wN4HG-0002mu-6u
+Subject: Re: [f2fs-dev] [PATCH 09/12] swap: push down setting sis->bdev into
+ ->swap_activate
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,13 +90,15 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: Damien Le Moal via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Damien Le Moal <dlemoal@kernel.org>
 Cc: Paulo Alcantara <pc@manguebit.org>, linux-doc@vger.kernel.org,
  Carlos Maiolino <cem@kernel.org>, Hyunchul Lee <hyc.lee@gmail.com>,
- linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>,
- Naohiro Aota <naohiro.aota@wdc.com>, linux-xfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>,
- Chris Li <chrisl@kernel.org>, linux-nfs@vger.kernel.org,
- linux-block@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
+ linux-mm@kvack.org, Naohiro Aota <naohiro.aota@wdc.com>,
+ linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Namjae Jeon <linkinjeon@kernel.org>, Chris Li <chrisl@kernel.org>,
+ linux-nfs@vger.kernel.org, linux-block@vger.kernel.org,
  David Sterba <dsterba@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
  Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
  Kairui Song <kasong@tencent.com>, Theodore Ts'o <tytso@mit.edu>,
@@ -91,43 +107,23 @@ Cc: Paulo Alcantara <pc@manguebit.org>, linux-doc@vger.kernel.org,
  Anna Schumaker <anna@kernel.org>, linux-fsdevel@vger.kernel.org,
  Andrew Morton <akpm@linux-foundation.org>,
  Trond Myklebust <trondmy@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, May 12, 2026 at 10:02:04AM -0700, Darrick J. Wong wrote:
-> OH.  Now I remember why -- it's to handle contiguous mixed mappings
-> better.
-> 
-> Let's say that you have a 1k fsblock filesystem and 4k base pages.  You
-> fallocate an 8G swap file and then mkswap it.  The first mapping is a 1k
-> written mapping at offset 0 for the swap header, followed by an 8388607k
-> unwritten mapping at offset 3k.
-> 
-> The PAGE_SIZE rounding code in iomap_swapfile_add_extent will round the
-> end of that first mapping down to zero and ignore it.  The second
-> mapping will be treated as if it were a 8388604k mapping starting at
-> offset 4096.  Now the page counts are wrong and the swapon fails.
-
-Do we care about this use case?  I guess you did as you implemented
-his, but still?
-
-> 
-> A more generic solution to this would be to change add_swap_extent to
-> take sector_t addr and length values and use them to construct a bitmap
-> representing contiguous physical space on the bdev, accounting of course
-> for PAGE_SIZE alignment.  Except for the swap header page, every other
-> contiguously set page-aligned region in the bitmap gets added to the
-> swap extent map.
-
-You don't even need a bitmap, just do basically the same checks as
-the iomap code when moving to a new swap extent after moving to use
-the sector_t.  And it really should anyway, as the current abuse of
-sector_t to store a disk offset in PAGE_SIZE units is pretty gross.
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gNS8xMy8yNiAxNDo1OCwgQ2hyaXN0b3BoIEhlbGx3aWcgd3JvdGU6Cj4gT24gVHVlLCBNYXkg
+MTIsIDIwMjYgYXQgMTA6MDg6NDZBTSAtMDcwMCwgRGFycmljayBKLiBXb25nIHdyb3RlOgo+Pj4g
+KwkvKiBPbmx5IG9uZSBiZGV2IHBlciBzd2FwIGZpbGUgZm9yIG5vdy4gKi8KPj4+ICsJaWYgKCFz
+aXMtPmJkZXYpCj4+PiArCQlzaXMtPmJkZXYgPSBiZGV2Owo+Pj4gKwllbHNlIGlmIChiZGV2ICE9
+IHNpcy0+YmRldikKPj4+ICsJCXJldHVybiAtRUlOVkFMOwo+Pgo+PiBTaG91bGQgdGhpcyByZXR1
+cm4gZXJyb3IgaWYgdGhlIGJkZXYgaXMgem9uZWQ/ICBBRkFJQ1QgWEZTIGFuZCB6b25lZnMKPj4g
+YWxyZWFkeSBndWFyZCBhZ2FpbnN0IHRoaXMsIGJ1dCBvdGhlciBmc2VzIG1pZ2h0IGJlIG1vcmUg
+bmHDr3ZlLgo+IAo+IFllcywgbm93IHRoYXQgdGhlIGJkZXYgaXMgcGFzc2VkIGRvd24gdG8gYWRk
+X3N3YXBfZXh0ZW50IHdlIGNvdWxkCj4gY29uc29saWRhdGUgdGhlIGNoZWNrIGhlcmUuCgpIbW1t
+Li4uIFdpdGggem9uZWZzLCBzd2FwIGZpbGVzIGNhbiBiZSBjcmVhdGVkIG9uIHRvcCBvZiBjb252
+ZW50aW9uYWwgem9uZQpmaWxlcy4gU28gZW5mb3JjaW5nICJubyBzd2FwIG9uIHpvbmVkIGRldmlj
+ZSIgaGVyZSB3b3VsZCBicmVhayB0aGF0LgoKCi0tIApEYW1pZW4gTGUgTW9hbApXZXN0ZXJuIERp
+Z2l0YWwgUmVzZWFyY2gKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxp
+c3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9s
+aXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
