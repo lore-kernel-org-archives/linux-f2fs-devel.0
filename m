@@ -4,97 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 374C7CD37B6
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 May 2026 04:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0E766CD4851
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 May 2026 05:56:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Message-ID:Mime-Version:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=fEvHKP0PF12KN/Cw6U+kjubnrDZf95vzsddNq1LrbUc=; b=l1HS7Fkj9AUAnHm31b1THcSi8j
-	eALQSoaN3A+TkFXk2iUCq6kSRFif6pCiBfc9U+wu53O3Bv3QY5Q4kMuo4ZJj3A/MvFft3MT7Fn6cn
-	4/W+2DT4M+4ztDnOLc6bFqK2Wf1eIqVE3wP3x+80ZPLyxWvBVapzmcwrcEMoT7CSo9mg=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=o+u8ejSMsTBYehhA0NfXB0k6zwz29Xak5Yy1nvO5plQ=; b=WUxLQfoeTt5pCQ6J037gmyo9X1
+	EFQCf3I5pqNuNM4AuIMJjfkoNGTxDlCii7+Q/GbkjBsiHpUYA8PwdKsDIwhpKVucyBPhLSAGO0AoP
+	D6dfm9xwx6TjQrWgrhxq0PEBsk+0HLJso7aH0Qe6ZiZGRtKM7Tl8JC5SjhOO6ImjehDc=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wN18E-0004kJ-9d;
-	Wed, 13 May 2026 04:23:38 +0000
+	id 1wN2aB-0004Tj-Oy;
+	Wed, 13 May 2026 05:56:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <3--0DagsKAD4otfssjhmnjslttlqj.htr@flex--joannechien.bounces.google.com>)
- id 1wN17r-0004iW-UG for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 May 2026 04:23:15 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <hch@lst.de>) id 1wN2aA-0004Tb-PM
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 13 May 2026 05:56:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Gl+fbFhlYRHV9uFZaKjbbT4X1sSGcksiAkjCTrWM3D0=; b=kBCgbGVrBjO8Kn6f52s+5XVG22
- J+HOtI5S8nwot5RMrSM5h8+oG+DBqB3FoxgpYDSZciVgzztfnGc2SpLwIkuVcnxOFb2HLmzdEDBeI
- CILrOdph5mx1ajTBd322lneRnLtD71tRGKuYoqD6CVWtEA1+PykDVqiZiWdNsmcFNWgI=;
+ bh=v5TCj2cJ/ZZjo4hdIuBCz/5ReUhnh72x/ISsIQifvmo=; b=VgxSGK//VPPY8+KDhBnRxaNr4k
+ Yow8M3gaOVNUDARybZGKhMVxjX4hZsTOLUDYH3bUCHZCEOSdsB5LIEmNX8ZOH340bl3cKcrt+Wmxx
+ sMN6yGlEb8sHEDO+/KhBHtjfyDpe7cf6ut9MOVK6baFgf4hX9aW1oixrArbaZa8meQkY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Gl+fbFhlYRHV9uFZaKjbbT4X1sSGcksiAkjCTrWM3D0=; b=N
- meiiBh7aVMkHu64APYT5rrue0kiS3O2u3OzJtpCC+Q5Q9BnO4gpmm8efjPKjta5QO6lNaXPU0ZmxL
- bhQ7AfkJLq82mUr8OAFXUM0xzXUz5k91ymPFCN7A6zSzTHzdwNEx/u906YRlHx9PtGqgZu+AAM/hg
- nyk22VkUdOLcokVU=;
-Received: from mail-qt1-f201.google.com ([209.85.160.201])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=v5TCj2cJ/ZZjo4hdIuBCz/5ReUhnh72x/ISsIQifvmo=; b=HajIh7bPnzNgZJuposLOXd3Tk0
+ b6M3AalutTOEfuiLkNrWyGhlzfqtuP3RnR4d0ha8Us4FkziA3kF6EA6wtPzl/qNy7fNHS5eHOr4aO
+ IK2hfR9x8vIl1L6eMypWqw7aYZJl7iwYJRL9MQ4wqfzYQf+T78WcObrk8iSpS835zVTQ=;
+Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wN17o-0001Rm-TL for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 13 May 2026 04:23:15 +0000
-Received: by mail-qt1-f201.google.com with SMTP id
- d75a77b69052e-50e136aff17so108908941cf.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 12 May 2026 21:23:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1778646182; x=1779250982;
- darn=lists.sourceforge.net; 
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=Gl+fbFhlYRHV9uFZaKjbbT4X1sSGcksiAkjCTrWM3D0=;
- b=PSmkeTfGsUtRc3/plOu92WyhVWgYdkSWjvIVvynlWcQi2SuBsHQyMej2o0MMXFApBx
- C4uFL47qejQK/Ujkub4N6AOKQaBBNTS0cOgveC54vPwVZtqsgqYx1H7ujby2/ZCDudeA
- +yBOb0EwwbHenWYTgIj4wL4Xxc9dfFKB33Ld8Ad4+hXjPAn9rixR0WOgTu7zvSOkOsF3
- P2/v9EiIQexqEzvIrxK/VZzBJtRwtWjj3hJxgvQtytAu+QicK9IQ80AgTfJ9qBPimP97
- 4GMdC20fLZxWBDDhq44/qQTANDByMOqhPm6qqFXoC9qg7m08XSsdmdaaHzD5LWAAcMj5
- qekg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778646182; x=1779250982;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=Gl+fbFhlYRHV9uFZaKjbbT4X1sSGcksiAkjCTrWM3D0=;
- b=sOPoBW3yb5gGGsU3VVZ8lYKSEt04irBByqzfgqT3ZJgJblVOsZIK+UcZSlTlZ4hN6/
- jX1DpB0JJ4kvQSf6STQrLmeZQYJbmmt9idXqa0iXNjD9XU4anezctvQ6h4dvgs7oBZAL
- aepSJ+H3P+SjNeBpk0XkBXNOheVGZiP/FfOuXP+7TIVx+Ygr+D4c3eEu1cJqnvEStqwT
- G6Y1c6RrdIMg9YvionqY//ZyPEz2aTFHMBCVPWyi/CwP7Yx7B7HYJTjdow4XEtpSLKuc
- ZmFNayR4bEGOlJYhlJuIh0R3Sq3OTSJhLAGAvrwKmAnmzT7wHTz6xcGPW1WMYA5/nuZ7
- //Tw==
-X-Forwarded-Encrypted: i=1;
- AFNElJ/CBG4tCfTlovVALTo7/p03nJh18T4d95/bBJ4wU7moHgIuilN9Pr32sAcMZW0CDFdtEKFgxdzMSrxhKrGkY3Jj@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YwbTessbgKABQFhZtiltolmNfFfjRjaSR6PgShe3pKHUsZivMXY
- MK1oir8R9BiVTqDmozLMtyi/jyGjToVZ1Txt5OL4ircDSqtxJAOcqOCWnQMv8BkXeBQ6Ifv4QjD
- R651mmtW4sOmEX2QWEWKaNGY6HQ==
-X-Received: from pfbkq4.prod.google.com ([2002:a05:6a00:4b04:b0:839:4a33:c35d])
- (user=joannechien job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:b41:b0:835:351c:f22b with SMTP id
- d2e1a72fcca58-83f05c34d23mr1065175b3a.35.1778642427849; 
- Tue, 12 May 2026 20:20:27 -0700 (PDT)
-Date: Wed, 13 May 2026 03:20:08 +0000
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.54.0.563.g4f69b47b94-goog
-Message-ID: <20260513032009.2300435-1-joannechien@google.com>
-To: Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org
-X-Headers-End: 1wN17o-0001Rm-TL
-Subject: [f2fs-dev] [PATCH v1 1/2] f2fs/015: Fix mount syntax for disabling
- jquota
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1wN2a6-0005Ed-Ab for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 13 May 2026 05:56:32 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id 693FC68BEB; Wed, 13 May 2026 07:56:22 +0200 (CEST)
+Date: Wed, 13 May 2026 07:56:22 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Message-ID: <20260513055622.GA1236@lst.de>
+References: <20260512053625.2950900-1-hch@lst.de>
+ <20260512053625.2950900-6-hch@lst.de> <20260512164308.GF9555@frogsfrogsfrogs>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20260512164308.GF9555@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1wN2a6-0005Ed-Ab
+Subject: Re: [f2fs-dev] [PATCH 05/12] swap: cleanup setup_swap_extents
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -106,78 +75,43 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Joanne Chang via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Joanne Chang <joannechien@google.com>
-Cc: Joanne Chang <joannechien@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Paulo Alcantara <pc@manguebit.org>, linux-doc@vger.kernel.org,
+ Carlos Maiolino <cem@kernel.org>, Hyunchul Lee <hyc.lee@gmail.com>,
+ linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>,
+ Naohiro Aota <naohiro.aota@wdc.com>, linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>,
+ Chris Li <chrisl@kernel.org>, linux-nfs@vger.kernel.org,
+ linux-block@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
+ David Sterba <dsterba@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+ Kairui Song <kasong@tencent.com>, Theodore Ts'o <tytso@mit.edu>,
+ linux-cifs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ Steve French <sfrench@samba.org>, linux-btrfs@vger.kernel.org,
+ Anna Schumaker <anna@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Trond Myklebust <trondmy@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-F2FS has removed the trailing "=" in the mount options for disabling
-user, group, and project journaled quotas. To maintain compatibility,
-update the test cases in f2fs/015 to try the new syntax first, and fall
-back to the legacy syntax if the initial mount attempt fails.
+On Tue, May 12, 2026 at 09:43:08AM -0700, Darrick J. Wong wrote:
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index 651c1b59ff9f..1b7fc03612f4 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -2783,25 +2783,24 @@ static int setup_swap_extents(struct swap_info_struct *sis,
+> >  {
+> >  	struct address_space *mapping = swap_file->f_mapping;
+> >  	struct inode *inode = mapping->host;
+> > -	int ret;
+> > +	int ret, error = 0;
+> 
+> /me wonders why not reuse ret instead of declaring a new variable?
 
-Signed-off-by: Joanne Chang <joannechien@google.com>
----
- tests/f2fs/015     | 13 +++++++++----
- tests/f2fs/015.out |  6 +++---
- 2 files changed, 12 insertions(+), 7 deletions(-)
-
-diff --git a/tests/f2fs/015 b/tests/f2fs/015
-index 81ea9818..54cada4a 100755
---- a/tests/f2fs/015
-+++ b/tests/f2fs/015
-@@ -66,9 +66,9 @@ options=(
- 	"usrjquota=ausrquota"		""			\
- 	"grpjquota=agrpquota"		""			\
- 	"prjjquota=aprjquota"		""			\
--	"usrjquota="			""			\
--	"grpjquota="			""			\
--	"prjjquota="			""			\
-+	"usrjquota"			""			\
-+	"grpjquota"			""			\
-+	"prjjquota"			""			\
- 	"usrjquota=ausrquota"		"extra_attr,quota,project_quota"	\
- 	"grpjquota=agrpquota"		"extra_attr,quota,project_quota"	\
- 	"prjjquota=aprjquota"		"extra_attr,quota,project_quota"	\
-@@ -119,7 +119,12 @@ do
- 	else
- 		_scratch_mkfs >> $seqres.full || _fail "mkfs failed"
- 	fi
--	_try_scratch_mount "-o ${options[$i]}" >> $seqres.full 2>&1
-+	if [[ "${options[$i]}" == *jquota ]]; then
-+		_try_scratch_mount "-o ${options[$i]}" >> $seqres.full 2>&1 || \
-+			_try_scratch_mount "-o ${options[$i]}=" >> $seqres.full 2>&1
-+	else
-+		_try_scratch_mount "-o ${options[$i]}" >> $seqres.full 2>&1
-+	fi
- 	echo $?
- 	_scratch_unmount >> $seqres.full 2>&1
- done
-diff --git a/tests/f2fs/015.out b/tests/f2fs/015.out
-index cd273550..45ef9ea8 100644
---- a/tests/f2fs/015.out
-+++ b/tests/f2fs/015.out
-@@ -101,11 +101,11 @@ Option#98: grpjquota=agrpquota :
- 32
- Option#100: prjjquota=aprjquota : 
- 32
--Option#102: usrjquota= : 
-+Option#102: usrjquota : 
- 0
--Option#104: grpjquota= : 
-+Option#104: grpjquota : 
- 0
--Option#106: prjjquota= : 
-+Option#106: prjjquota : 
- 0
- Option#108: usrjquota=ausrquota : extra_attr,quota,project_quota
- 0
--- 
-2.54.0.563.g4f69b47b94-goog
+Because when I wrote this, the setup methods could still return a
+positive number of extents value that must not be clobbered.  Since
+then I added patches before this that removed that, so we can use
+the same ret variable.
 
 
 
