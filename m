@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A8A95CD343F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 May 2026 22:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6F6FDCD343F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 May 2026 22:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:Message-ID:Date:In-Reply-To:References:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=pt/FgRRMygFbKF9ZxoUINtl85wrfIy4efJSAaeWMumU=; b=TY2sySXJ1l853r+yM8Z7NaBsnc
-	YzUwztuXXJfnYfAZK0ei9/63CCVAF9mAtIcTLkxw5yytM3uDEovrU2xTvUxMXewY89oXLfGcPECr6
-	JZ3uOkzPIKjbG5knIPz9/rStaFMcXes8dbHTOnyCwCCb3wxnTpKpxu8JAhVOMUtLKCf0=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=QakKVDjnRw+kfaiGWmaDwMX75Dvbgy8uJjcdtHUMerU=; b=SEf0l/+OZSJneC9Xwve4WHqu1T
+	WH9oHKnAxXZkWvVqUYOdAOa474dGWDlDq1EE38lLekFJ8w65SxzIG6b5pFr+HYBzndBfUbmDg64/J
+	kBENgJLtch0hkmd00ULT6cQlhIrCjN3Q/iVWQNCPnAjGPvuiw9whxXIxNWpowKOVo+5o=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wO0m4-0004qF-P5;
-	Fri, 15 May 2026 22:12:53 +0000
+	id 1wO0oQ-00016g-Q9;
+	Fri, 15 May 2026 22:15:16 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chrisl@kernel.org>) id 1wO0m1-0004q7-5E
+ (envelope-from <chrisl@kernel.org>) id 1wO0oP-00016Z-8T
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 15 May 2026 22:12:49 +0000
+ Fri, 15 May 2026 22:15:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
  Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mb2Px+VFI1la/B1T8HdQLAoDo+pi65QwRBrBz9J8j3A=; b=KhEfyzY9DbbZJ9ppJ40Cjx/Y0/
- WRzNJXTsxlSUOXjyW8W19b0RkTS/C/jm93rCYWvk9j9iF/jVRBYhWmKT3v+hdtw19K9kgwIzmVB5t
- hf7caEadXeUuRtD+7r36Xog7EiKPBCu1gQ8HX7i/bNc+1n//qyaOMnYgDXYn8woG5uUg=;
+ bh=jBov2HinV/dwF9IJ2Ido+SSIYnzOEQz6Xz/xjaqgFls=; b=QcWzyC7w6/Uw9xMhzGZUtRPgl1
+ 0jRHbL0CLhxDss24AkLEJxTjyhbw069/TKigFXM1gyf4HZWXeAL2l5YfGMwEHi5KgcO6S4ayxwTUp
+ G9LXj9otCF/kSuxWKIobTNpikWU4UhVfRFqm/tqNrDsvyoYxU7COBo1/FtiuY1dGVWrE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
@@ -42,55 +42,55 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=mb2Px+VFI1la/B1T8HdQLAoDo+pi65QwRBrBz9J8j3A=; b=RTWe6t3s0j5vYLP1XbF2Sb+P2Y
- nNdy99DvkPb43JhrT6nZSPh75v4bZwMX/VTUDDhxKCOplC6fZts1SAxqa/fz5kfTVEBfPQlKQS5DA
- T5lPKu8xTh88/GZ9JmdQ+i22oIUbIelWW8La0AvXKtaKCPo3mC1nGZ9ckoKs09tGDWUs=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=jBov2HinV/dwF9IJ2Ido+SSIYnzOEQz6Xz/xjaqgFls=; b=mtqzz2A3p63jQg24KqEsZDbvXA
+ kj54eLMgQh3JlAVkj/2E8ZmiDzFZ/2w5KqZLlJk39hwmDjM67/va1QRRlT5+kce2JWN7CGLJ3rLnl
+ SEMZtOAeqDFqDm0u5PmoowXvC7WBMegulhoaRiggo7zR91ZBSSzJC0Y8ybew0b29uvBk=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wO0lz-0002tO-WF for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 15 May 2026 22:12:49 +0000
+ id 1wO0oK-00033B-Qa for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 15 May 2026 22:15:14 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 2B06743E7E
+ by tor.source.kernel.org (Postfix) with ESMTP id 58DC3601E2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 15 May 2026 22:12:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD572C2BCFA
+ Fri, 15 May 2026 22:15:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27ED5C2BCF7
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 15 May 2026 22:12:42 +0000 (UTC)
+ Fri, 15 May 2026 22:15:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1778883162;
- bh=Xo9RN/YaHlAbWe60yDn3HcJADUDb6frVOkoaJStZf5s=;
+ s=k20201202; t=1778883302;
+ bh=HEI3NInBIsei/EoRNgiy0qpwrOV6JThvbMsnk7Bz8SQ=;
  h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
- b=tv+IRzby0Wc1y1AfRAfBW3nKPJfKGSdDUKMAC83W6JZ/dYSjgCeuFvnvRb+k2fDWh
- xbo5tF45ctQN2+lUP3uiBUSdgPOAi+Wx+0tkvg+4pJup5eskAOQTJlwp6phqJcshLI
- zwma6B6kmV2AJ2QU39YgSPGY+7u3MZcxTeE3mLdPCH/vhNyTGPwjMe4zxLH36reM8B
- Aer/b8HC7tlHs6JLUSTc8CC6m60eU8oVJuXGFC3sjcHNI2tTjQrIJ4E+efJOd+l39W
- 8dpKuDtdYrLdKdfWZ3TWstbmXaMPftJx2DJhHT9Ud2qtgOsF/sPz15MPQ/jP7lSeCE
- kkkwEGkOg5Eqg==
-Received: by mail-yx1-f50.google.com with SMTP id
- 956f58d0204a3-65c2cd216c9so622262d50.3
+ b=Jxh1uappRE+fFuV27sWkHNzCj5+d2aVT1j65RMydPiA3+qfe9fqYBuFzc0ZIj/Fpu
+ cFQRaQJoY/iHrKXBJdS2wsRk5rq1xzOyNcs7yejiWh8W6RgAaWEhBqEdZJpxTPy77M
+ JRYi4PNnn2wtzhR/wyqz4rMdmJR+bxiI2vRMwsQLdaCDEgehFvJoO/bHVv0iHuTfP4
+ wfuarXy7ruNKoiYul90mjrrYps4vYn1HEB9yDrtHODVNDLOu+Ppdbyoz4u0hRfUsC2
+ 37C28MIvN0l8wESpsUfo9irFJWsoyatkAK0iZULeakWTs0Pc88eJ2PNYyU/VJuXeeM
+ L/xniqqnaAmhQ==
+Received: by mail-yx1-f45.google.com with SMTP id
+ 956f58d0204a3-651b4d09141so544456d50.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 15 May 2026 15:12:42 -0700 (PDT)
+ Fri, 15 May 2026 15:15:02 -0700 (PDT)
 X-Forwarded-Encrypted: i=1;
- AFNElJ+AQ4PxKbgl1kQLZU2KGho5WRs22GMV+d4Q0lDceVXUb0132YTmeH9+dymZrHwVRDVnyckPH5gKS1T4e7Tl2qbJ@lists.sourceforge.net
-X-Gm-Message-State: AOJu0Yy+/a3YSR8xAIm7pZbW4PF1AgfX9SuuOGmXtGWPr9P7XDMBvSc4
- aUOyX8ymow738bC2zwBPqYBlDxLXm9nkNOMP97Sr07TuiSxsjJZx6Q1Uv5BEo6qIOoqnOcNrF4o
- 5PLMVv0WBKtH/+F8yV2zR1pFyVTU0byId/coZvDbOpg==
-X-Received: by 2002:a05:690e:14c4:b0:64e:f106:60ea with SMTP id
- 956f58d0204a3-65e22807f82mr6158139d50.44.1778883162092; Fri, 15 May 2026
- 15:12:42 -0700 (PDT)
+ AFNElJ+NuBD1JrS4g1drpzQeFU2RSBz1GWb+/KdNhx4mur9ISwSrxF7HisA5ER7wpVx+jI2uFxjvRY+IPOTz6kOO/UCX@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YyyUi7aB6fCRuxMfztDMo9LlA4iEd40DhJEW2PLxTb0bGB273r9
+ oK1+2ovh6DbrdvpeF/7XZUiyTrMID5qEK/pU58HDSfPn4XwZNnDw/Ds24lwNQhs0aFO1EkGewJp
+ znLPX/VnaTd1Z1i4ovEyfNOjgtfBbKotcLGnN1DlrBw==
+X-Received: by 2002:a05:690e:b46:b0:654:3fca:3515 with SMTP id
+ 956f58d0204a3-65e0b21fe50mr8034402d50.30.1778883300972; Fri, 15 May 2026
+ 15:15:00 -0700 (PDT)
 MIME-Version: 1.0
 References: <20260512053625.2950900-1-hch@lst.de>
- <20260512053625.2950900-10-hch@lst.de>
-In-Reply-To: <20260512053625.2950900-10-hch@lst.de>
-Date: Fri, 15 May 2026 15:12:31 -0700
-X-Gmail-Original-Message-ID: <CACePvbVPV55SgPmivqMX+bP8H7FKcSAbWCwAe5icgZjZV9vUNA@mail.gmail.com>
-X-Gm-Features: AVHnY4LtC3KSyPNEsLh1ud1t2IOob9XfSBaYZO4ouG71LQM8qOS5lvZuuzrl4N0
-Message-ID: <CACePvbVPV55SgPmivqMX+bP8H7FKcSAbWCwAe5icgZjZV9vUNA@mail.gmail.com>
+ <20260512053625.2950900-7-hch@lst.de>
+In-Reply-To: <20260512053625.2950900-7-hch@lst.de>
+Date: Fri, 15 May 2026 15:14:50 -0700
+X-Gmail-Original-Message-ID: <CACePvbVAWsNZ22gzuDEfLiCK3zxb18svrJ+ksuzHnR2eQOyZyA@mail.gmail.com>
+X-Gm-Features: AVHnY4JHBmh6X5lXS1qOF4QpMHKR8b6gUc4PeaeujUpSr4VXuziU4ZJkvW_XRo8
+Message-ID: <CACePvbVAWsNZ22gzuDEfLiCK3zxb18svrJ+ksuzHnR2eQOyZyA@mail.gmail.com>
 To: Christoph Hellwig <hch@lst.de>
-X-Headers-End: 1wO0lz-0002tO-WF
-Subject: Re: [f2fs-dev] [PATCH 09/12] swap: push down setting sis->bdev into
- ->swap_activate
+X-Headers-End: 1wO0oK-00033B-Qa
+Subject: Re: [f2fs-dev] [PATCH 06/12] swap,
+ block: move the block device swapon code into block/fops.c
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -123,13 +123,11 @@ Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 T24gTW9uLCBNYXkgMTEsIDIwMjYgYXQgMTA6MzfigK9QTSBDaHJpc3RvcGggSGVsbHdpZyA8aGNo
-QGxzdC5kZT4gd3JvdGU6Cj4KPiBPbmx5IHRoZSBmaWxlIG9wZXJhdGlvbiBtZXRob2Qga25vd3Mg
-d2hhdCBibG9jayBkZXZpY2Ugd2UnbGwgc3dhcAo+IHRvLiAgU28gbW92ZSBkb3duIHNldHRpbmcg
-c2lzLT5iZGV2IGFuZCB0aGUgc3BlY2lhbCBibG9ja2RldiBmbGFnCj4gaW50byAtPnN3YXBfYWN0
-aXZhdGUuCj4KPiBTaWduZWQtb2ZmLWJ5OiBDaHJpc3RvcGggSGVsbHdpZyA8aGNoQGxzdC5kZT4K
-CgpUaGUgY29yZSBzd2FwIHBhcnQgb2YgdGhlIGNvZGUgbG9va3MgZmluZSB0byBtZSwgSSBkaWQg
-bm90IGxvb2sgbXVjaApkZWVwZXIgaW50byB0aGUgZnMgc2lkZS4KCkFjay1ieTogQ2hyaXMgTGkg
-PGNocmlzbEBrZXJuZWwub3JnPgoKQ2hyaXMKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1m
-MmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdl
-Lm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+QGxzdC5kZT4gd3JvdGU6Cj4KPiBNYWtlIHVzZSBvZiB0aGUgYWJzdHJhY3Rpb25zIHdlIGhhdmUu
+ICBUaGlzIGlzIGEgcHJlcGFyYXRpb24gZm9yCj4gbW92aW5nIG1vcmUgc3BlY2lhbCBjYXNpbmcg
+ZG93biBpbnRvIGJsb2NrLy4KPgo+IFNpZ25lZC1vZmYtYnk6IENocmlzdG9waCBIZWxsd2lnIDxo
+Y2hAbHN0LmRlPgoKQWNrZWQtYnk6IENocmlzIExpIDxjaHJpc2xAa2VybmVsLm9yZz4KCkNocmlz
+CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgt
+ZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3Jn
+ZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgt
+ZjJmcy1kZXZlbAo=
