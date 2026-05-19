@@ -4,76 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 82569CD4F3C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 18 May 2026 10:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A8B9CCD343F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 19 May 2026 01:15:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=lxElgcOjXIYmg4VGWSQAWjydv9FBZ60CBc019otPZQ0=; b=XU5ULVbd8w4LOd/a8HjQ5ZjbfL
-	icAQtEsThVksRPwS1gXBJFNZ6cEG97jJC1PO3YG3dEpFYdPD7232h3B/zXAq5PgGN0TG377Pm7tHM
-	XzvUX+usNufwD35UIOaE05eJZr8UUXOpcR4JgVGeeQcoVcPhaljFFL6kD6WqsspxjDFY=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=ZJrvyO0J9iHLOv5+bKVQZkpTC6+FScCDrM4J4X9z2d0=; b=lKOf6nDImdd8M+xrybgejOzbiu
+	DSgKR/e4sRpRRhEvLk2gkpfCnOzSkp8lwwxUnAdH9xIYv8MNBlbb4CO08CxH5Jn6zrl+bR4hDAusr
+	edmbgCBhTeig8t2VITzOddOgnhi8wYIRGIX2TEyZYWBRPYwwm3ypwUdXasAzCk9zcUwQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wOuyP-00081h-MF;
-	Mon, 18 May 2026 10:13:22 +0000
+	id 1wP92z-0005Vk-KB;
+	Tue, 19 May 2026 01:15:01 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wOuyO-00081Q-3i
+ (envelope-from <chao@kernel.org>) id 1wP92x-0005Uz-EB
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 18 May 2026 10:13:21 +0000
+ Tue, 19 May 2026 01:14:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lXI37cs1cl+OZkg+XjxUWn6ae+f43phBCI2sLbjJeyI=; b=lWeNuepIJ+CBLhaORlPUaf8SZC
- GAWaRzCHp+RAvZ6slsVTgvK6wJxEp+QMRLo13/AakSI+xfX9z8jIIgzeh23WZvFhKL4/7VX5p2bKF
- bDlp1/5X6sN6OtNUoJm1kIyYgWp5sLO0gUhrIthn+p041JvN25QKeRGOS4E4VoUfIyOo=;
+ bh=lAx82VNn7O9ljMWFwkoKmsjhosjEzk9ds6FQKBDD0Us=; b=WgZyPS2FxCuhQpIat6QZtJRNxI
+ to2wOkfCTTKYRJfa9a5l23ya29pfe1Z00nAyrNU5kfqjr5tJ5k3z+LmABhMeZFjLCeYcoKPDswbyf
+ kwSO1eo94O+4Q32uq/A1Up9GJUYNuPwyLTyQTxrrGEw7XeQ0LY6SD0F1Lo7xtj9+Ys24=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=lXI37cs1cl+OZkg+XjxUWn6ae+f43phBCI2sLbjJeyI=; b=S
- PNpPvEtQ7cbgMk/ToEJTOragpquDDYqexoMhhF+vbnAa0i038OQxdjpTck6AK/2Urdn0zYNlRkEP+
- CVgOFrCQujABtzNMKHXhMTS2cFkigCMofBfBGgvBJTDeGDAHe2dFyXLFdBq4JOfqnctE7ZDyoaD12
- KWGzjK0FWnkLpt98=;
+ List-Owner:List-Archive; bh=lAx82VNn7O9ljMWFwkoKmsjhosjEzk9ds6FQKBDD0Us=; b=g
+ pSdV4hcpThOLXvZB4qqRicJh7+5pbUs8M0TARL/jrOs771LTsXq0YBsCeYNb7FRbDsGDAd3wV4Uga
+ 6fofG0Q5MmmEkqpWnmPQRtW21HStSbWMikiAdxcyPtYmUOP9G6IpqEbB+OEheD5GP2YwafgYwVaij
+ PksSM6il2zMaYWKc=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wOuyN-0006CJ-Kv for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 18 May 2026 10:13:20 +0000
+ id 1wP92v-0001CQ-A7 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 19 May 2026 01:14:59 +0000
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 9BB5243D54;
- Mon, 18 May 2026 10:13:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD28FC2BCF5;
- Mon, 18 May 2026 10:13:12 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 6808344581;
+ Tue, 19 May 2026 01:14:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE3FC2BCF5;
+ Tue, 19 May 2026 01:14:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1779099194;
- bh=4X1McEd5eVxfLzKIoES+zNc8qiIg/c8YVdL/tToqksQ=;
+ s=k20201202; t=1779153287;
+ bh=NlDIn6FBCtFi7BuO96dUHpwwKydu65DhhbDzgT81XKE=;
  h=From:To:Cc:Subject:Date:From;
- b=lK6oGDezHjX3WJBBMTcITOmeiR39nGhQxrP8y6+Vxx88LUetKTYQYb36M5wY1P/LX
- sQCOQtDv7lbcMBuvHOn0cBrietvJYMXjVPnoU62Eg88OqbL24pFYqC5tvm0BkIJ1HO
- xyqx4ERqBHWFzTyVmuxY6y+XfXQSmuBx6wvZkmOjWwSiQq16k5AMK9vAF+e3fZalR5
- Jza8ZnslqISlF9sxEujRrIYvtiZOxyixnvjLvRhoO+fC8LPzyy12p723/yyvNVo2lo
- zZwba6KAmmVCSFvKhyfnIg4Cg0N6lwyoP9R/LvAnintv7Mzaly70l0LIT9dx011Ffz
- cHUEn1cEYKZlw==
-To: Zorro Lang <zlang@kernel.org>,
-	fstests@vger.kernel.org
-Date: Mon, 18 May 2026 18:12:52 +0800
-Message-ID: <20260518101252.445214-1-chao@kernel.org>
+ b=DNmAbJKTjBQj4epS6/R0WV3Nc13wc7Mp+V5lUOoXwmFkFDsDMr3xFZmrJhN64q2PA
+ WV0wpbzv55DfFYq7D+6N/G9dlYf4p8v45PIN1hIu7GIADQ05WAiGvqzRlTOIhOwWT/
+ YaaqU+jToTqbCFZY7kei2qqCeOlHuDxOTDpvpImfYTLxgyNE7OXlqv6KkUn4ULGnRu
+ 2pzhNORfPP0B0POg3F3ZNzpDe8HBgPtjXlFvFSL0VLOjXEdFWiBcB7QSpFxp4gYzex
+ gh2sA1O/8laFEtslzjUCwA4NlGxSGyYiycptGJMVU7d6h5/HWc2Vp/dOIPeZQTO6G5
+ iv6F+fVc13MSA==
+To: jaegeuk@kernel.org
+Date: Tue, 19 May 2026 01:14:38 +0000
+Message-ID: <20260519011438.1168155-1-chao@kernel.org>
 X-Mailer: git-send-email 2.54.0.563.g4f69b47b94-goog
 MIME-Version: 1.0
-X-Headers-End: 1wOuyN-0006CJ-Kv
-Subject: [f2fs-dev] [PATCH] f2fs/025: test to do sanity check section type
- correctly in f2fs GC
+X-Headers-End: 1wP92v-0001CQ-A7
+Subject: [f2fs-dev] [PATCH] f2fs: fix potential deadlock in gc_merge path of
+ f2fs_balance_fs()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,138 +86,85 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: joannechien@google.com, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Chao Yu <chaseyu@google.com>, Ruipeng Qi <ruipengqi3@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ stable@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Without commit 520760b9f915 ("f2fs: optimize representative type determination
-in GC"), f2fs GC will report inconsistent segment type in large section issue,
-and then it will force to shutdown filesystem.
+When we mount device w/ gc_merge mount option, we may suffer below
+potential deadlock:
 
-[  768.190903] F2FS-fs (loop51): Inconsistent segment (3) type [1, 0] in SIT and SSA
+Kworker					GC trehad			Truncator
+- f2fs_write_cache_pages
+ - f2fs_write_single_data_page
+  - f2fs_do_write_data_page
+   - folio_start_writeback  --- set writeback flag on folio
+   - f2fs_outplace_write_data
+   : cached folio in internal bio cache
+  - f2fs_balance_fs
+   - wake_up(gc_thread)
+   : wake up gc thread to run foreground GC
+   - finish_wait(fggc_wq)
+   : wait on the waitqueue --- wait on GC thread to finish the work
+									- truncate_inode_pages_range
+									 - __filemap_get_folio(, FGP_LOCK)  --- lock folio
+									 - truncate_inode_partial_folio
+									  - folio_wait_writeback            --- wait on writeback being cleared
+					- do_garbage_collect
+					 - move_data_page
+					  - f2fs_get_lock_data_folio
+					   - lock on folio  --- blocked on folio's lock
 
-The reason is f2fs kernel will assume all segment type inside large section is
-the same, during GC it loads type from one segment and compare it to other
-segments' type, however due to recovery flow, the chosen segment may has zero
-valid blocks w/ different segment type, since the segment is invalid(free) one,
-it will never be migrated, so that we should not treat such state as abnormal
-condition.
+In order to avoid such deadlock, let's call below functions to commit
+cached bios in GC_MERGE path of f2fs_balance_fs() as the same as we did
+in NOGC_MERGE path.
+- f2fs_submit_merged_write(sbi, DATA);
+- f2fs_submit_all_merged_ipu_writes(sbi);
 
-This testcase is created to simulate above condition to see whether f2fs kernel
-module can handle it correctly
-
+Cc: stable@kernel.org
+Fixes: 351df4b20115 ("f2fs: add segment operations")
+Cc: Ruipeng Qi <ruipengqi3@gmail.com>
+Reported: Sandeep Dhavale <dhavale@google.com>
 Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Chao Yu <chaseyu@google.com>
 ---
- tests/f2fs/025     | 88 ++++++++++++++++++++++++++++++++++++++++++++++
- tests/f2fs/025.out |  2 ++
- 2 files changed, 90 insertions(+)
- create mode 100644 tests/f2fs/025
- create mode 100644 tests/f2fs/025.out
+ fs/f2fs/segment.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/tests/f2fs/025 b/tests/f2fs/025
-new file mode 100644
-index 00000000..1eba7158
---- /dev/null
-+++ b/tests/f2fs/025
-@@ -0,0 +1,88 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2026 Chao Yu <chao@kernel.org>
-+#
-+# FS QA Test No. f2fs/025
-+#
-+# Check whether f2fs will encounter cp_error (Inconsistent segment type)
-+# when doing sanity check on type of segments inside large section during
-+# garbage collection.
-+#
-+. ./common/preamble
-+_begin_fstest auto quick
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 7c8ac62b1b0d..1ef4edb77078 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -445,6 +445,13 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
+ 	if (has_enough_free_secs(sbi, 0, 0))
+ 		return;
+ 
++	/*
++	 * Submit all cached OPU/IPU DATA bios before triggering
++	 * foreground GC to avoid potential deadlocks.
++	 */
++	f2fs_submit_merged_write(sbi, DATA);
++	f2fs_submit_all_merged_ipu_writes(sbi);
 +
-+_fixed_by_kernel_commit 520760b9f915 \
-+	"f2fs: optimize representative type determination in GC"
-+
-+. ./common/filter
-+
-+_cleanup()
-+{
-+	cd /
-+	rm -r -f $tmp.*
-+}
-+
-+_require_scratch
-+_require_xfs_io_command "pwrite"
-+_require_xfs_io_command "truncate"
-+_require_command "$F2FS_IO_PROG" f2fs_io
-+_require_check_dmesg
-+
-+# Format with 96MB size and 2 segments per section
-+_scratch_mkfs_sized $((96 * 1024 * 1024)) "" "-s 2" >> $seqres.full 2>&1
-+
-+# Mount with mode=lfs
-+_scratch_mount -o mode=lfs >> $seqres.full 2>&1
-+
-+# Create files to fill whole filesystem, then segment type will be changed to node type
-+for ((i=0;i<5120;i++)) do
-+	touch $SCRATCH_MNT/$i >> $seqres.full 2>&1
-+done
-+sync
-+
-+# Remove all files to create free(empty) node segments
-+rm -f $SCRATCH_MNT/*
-+sync
-+
-+# Allocate free space so that we have chance to reuse free(empty) node segments
-+$XFS_IO_PROG -f -c "pwrite -b 4k 0 1928k" $SCRATCH_MNT/file >> $seqres.full 2>&1
-+sync
-+
-+$XFS_IO_PROG -c "truncate 0" $SCRATCH_MNT/file >> $seqres.full 2>&1
-+$XFS_IO_PROG -d -c "pwrite -b 4k 0 16M" $SCRATCH_MNT/file >> $seqres.full 2>&1
-+$XFS_IO_PROG -c "truncate 0" $SCRATCH_MNT/file >> $seqres.full 2>&1
-+$XFS_IO_PROG -d -c "pwrite -b 4k 0 16M" $SCRATCH_MNT/file >> $seqres.full 2>&1
-+$XFS_IO_PROG -c "truncate 0" $SCRATCH_MNT/file >> $seqres.full 2>&1
-+sync
-+
-+$XFS_IO_PROG -d -c "pwrite -b 4k 0 8M" $SCRATCH_MNT/file >> $seqres.full 2>&1
-+$XFS_IO_PROG -c "truncate 0" $SCRATCH_MNT/file >> $seqres.full 2>&1
-+$XFS_IO_PROG -d -c "pwrite -b 4k 0 32K" $SCRATCH_MNT/file >> $seqres.full 2>&1
-+$XFS_IO_PROG -c "truncate 0" $SCRATCH_MNT/file >> $seqres.full 2>&1
-+$XFS_IO_PROG -d -c "pwrite -b 4k 0 2M" -c "fsync" $SCRATCH_MNT/file >> $seqres.full 2>&1
-+
-+# Shutdown the filesystem without checkpoint
-+$F2FS_IO_PROG shutdown 2 $SCRATCH_MNT >> $seqres.full 2>&1
-+
-+_scratch_unmount >> $seqres.full 2>&1
-+
-+_scratch_mount -o mode=lfs >> $seqres.full 2>&1
-+
-+# Run urgent_gc mode to trigger garbage collection
-+dev_name=$(_short_dev $SCRATCH_DEV)
-+if [ -f /sys/fs/f2fs/$dev_name/gc_urgent ]; then
-+	echo 1 > /sys/fs/f2fs/$dev_name/gc_urgent
-+fi
-+
-+# Wait background GC thread to wake up to run and potentially encounter the inconsistency
-+sleep 5
-+
-+_scratch_unmount >> $seqres.full 2>&1
-+
-+# Check whether the dmesg has the warning indicating the bug
-+_check_dmesg_for "F2FS-fs \($dev_name\): Inconsistent segment" && \
-+	_fail "F2FS-fs ($dev_name): Inconsistent segment type detected in dmesg!"
-+
-+echo "Silence is golden"
-+status=0
-+exit
-diff --git a/tests/f2fs/025.out b/tests/f2fs/025.out
-new file mode 100644
-index 00000000..3d70951e
---- /dev/null
-+++ b/tests/f2fs/025.out
-@@ -0,0 +1,2 @@
-+QA output created by 025
-+Silence is golden
+ 	if (test_opt(sbi, GC_MERGE) && sbi->gc_thread &&
+ 				sbi->gc_thread->f2fs_gc_task) {
+ 		DEFINE_WAIT(wait);
+@@ -464,13 +471,6 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
+ 			.err_gc_skipped = false,
+ 			.nr_free_secs = 1 };
+ 
+-		/*
+-		 * Submit all cached OPU/IPU DATA bios before triggering
+-		 * foreground GC to avoid potential deadlocks.
+-		 */
+-		f2fs_submit_merged_write(sbi, DATA);
+-		f2fs_submit_all_merged_ipu_writes(sbi);
+-
+ 		f2fs_down_write_trace(&sbi->gc_lock, &gc_control.lc);
+ 		stat_inc_gc_call_count(sbi, FOREGROUND);
+ 		f2fs_gc(sbi, &gc_control);
 -- 
 2.49.0
 
