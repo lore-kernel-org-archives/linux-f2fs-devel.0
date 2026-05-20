@@ -4,76 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 903C8CD5BAC
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B50ACCD5BAF
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 May 2026 12:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=F9UZatAt8ANRR5gIjBOAW8/pJzXOWE8zxw1l6bvMZSw=; b=HAzRQJVwNRqLtSAPVvm+imk5YR
-	fKXjgRVToLQuYhiwK7CFI5vr5RyxP9zTH3XHwpJvsLbHmhxKemoXnAfGYLQWNnbBVa+DNFcMMJ9M2
-	sEsqHiUSXgewR650EC59yGoYWNEpNzJCXXlNC34xTO94MV2ZkNjSZ63WuORDpNOyT0gI=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=qRUZalc1dv/fZ6Fz5WE/0KUMgIs30pI20PgTIFyn0QI=; b=XMbUxbPqDjE2WT4bKkDCqsVZLE
+	Ve3ouR/z16o8eymNGfVzRxtYocGLmbNbo0QbkB1XeCDfdGZy3KZCkibkUUMImxmjFuDVMNsLi0gNl
+	QuU8WpdsfeZ5YlX0p7tVNjENNLvhzEhEpmx0uqvVhSMWc+oMKfqu+S0A9gpwQFdXjCYE=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wPgBb-0001Nw-2b;
-	Wed, 20 May 2026 12:38:07 +0000
+	id 1wPgBf-00070E-2K;
+	Wed, 20 May 2026 12:38:08 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1wPgB9-0001My-JC
+ (envelope-from <aalbersh@kernel.org>) id 1wPgBc-0006zj-0H
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 May 2026 12:37:40 +0000
+ Wed, 20 May 2026 12:38:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3GEIHKF35JluvQOpy9exSQmpcaZLR5m4pwZg7r97tXw=; b=ZRY0QhyKJnIzG5rm+f1NxDKTFw
- E8USpSuuLHZn1K9Qb2W1CWrAmPFW1/RsnsiKpSwN/F0abURxIE4CSveKmzuHc73pN3+4D4fYnqb8l
- +sO+h8AvraN/zM10e25t6Gh4XeWHA52wNImg/eDoJXObdhZpuhi0NFmOsPaXWSFQwVGw=;
+ bh=gg4rCyFYhv5l6Q+vqxuwS2I+3QnGOKPEeHuiVn6kbnY=; b=R8YhlPUbIFOZUxXm69fSYp0eyZ
+ UvS+EGLc4Gfq2nym/wHZr6Fxkqu+iPIRS+ASmG6VF+FOKFaWqjWL/yNygnIKYHRUp7T3r6FT966ik
+ 22Np8JEH3oBvB95S7ya/Q6ZBOY/8lL2JOEdF4ScUwMyoWy403Lsj5RSuXzpsaWuYTEO0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=3GEIHKF35JluvQOpy9exSQmpcaZLR5m4pwZg7r97tXw=; b=i
- nodUMwldplbbr+8/T1YLFP+8Ffhf3i+fEQomi+fpJ/qQrmiPlim9jrIuGMy8chG5ca84uX36tn8Oq
- C+GDyUGk2OOKrKVGwHl+Yl6lIADPUPPq8aN2zraQVVeFa6MQEYQDQu8tncylwotQz0r6wovbjuYUI
- udMusfm0ph13BPwk=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=gg4rCyFYhv5l6Q+vqxuwS2I+3QnGOKPEeHuiVn6kbnY=; b=eU3ADKgSW6U7Hnzh+ra4nLMmw9
+ 9xQoHjKwcCHIIyz7t/lHmGtS2llkU1P7etXpi6ft9A9iYvk45AhVawsBiEW9QNxxTczzin4kE+5UY
+ JU87DRqbO14nKRg+XHDoy+2uSXPLuPYa697q2Zhpn3GGA0VNLpKAh9on6Mbt1ppgDsxQ=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wPgB8-0006Xt-FQ for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 May 2026 12:37:40 +0000
+ id 1wPgBX-0006ZY-Ci for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 20 May 2026 12:38:05 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 8E733406FC;
- Wed, 20 May 2026 12:37:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46A7D1F00893;
- Wed, 20 May 2026 12:37:26 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 4CB4C6014B;
+ Wed, 20 May 2026 12:37:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3B021F00896;
+ Wed, 20 May 2026 12:37:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1779280648;
- bh=3GEIHKF35JluvQOpy9exSQmpcaZLR5m4pwZg7r97tXw=;
- h=From:To:Cc:Subject:Date;
- b=IAxExD7+7FxSjfV/43Ze9wsfKzGC2J00jnfaPFNhvksvf60HxSPEvBVZy7v4z8F4D
- hyjZ/MxSj1r3/NEL0C9ZIQHyZqTheRKcDeeFcyrMQNq6+07Rwc+c64j0rFRkQHPXn7
- MI1ECaQyjx942yP2MJyN2qiKMtQvhplsyzkbbTAK69DLyId1Fej2zj7aE6TcHofPv1
- JdMulII63ee6if39G4Od/cSdmB/BxJ7xIHmL7yN+k2fGV/Al85Y4atLmHofN073zt1
- BRfBgCWpmdyRiFAqPxpbOJYLb64EKe+7zgu+s7XpSiXnrXNqg1NwXq7YvNZF8ZLxkY
- 4I7D+hCwRb5Aw==
+ s=k20260515; t=1779280673;
+ bh=gg4rCyFYhv5l6Q+vqxuwS2I+3QnGOKPEeHuiVn6kbnY=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=SM2CLHjla0ZOYmC7wAXU33ttnandNjccSaeryM2ZkTpztoQtvSL1HpBSvD8Vt9Lpg
+ r3vVfW/7gaMRxvbX7T0RBpfItX0QGD+QoDR2TCVBdmaCj2uSfYKFBHwgDSKonhHWuc
+ k+xcnuesU/28qglhxpGXEJdRS/lI4I+hw1L3x8DXwD1ikJh+vBqP9MmX0Ko0H/wDxu
+ 2Yje+1CSfTNCb07p4BwBMTEHKqhfuy99EiGO6la4M7KRHqFx897wyRA8hXRJzHSQrP
+ xYO5eh9YGEcF0YJngj4sm5+Igd4ov1s7/j7OR9O1w9nUY9B3kuH1ORhn6lbDUBGCmi
+ s0oNe5alCDWjQ==
 To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
  linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
-Date: Wed, 20 May 2026 14:36:58 +0200
-Message-ID: <20260520123722.405752-1-aalbersh@kernel.org>
+Date: Wed, 20 May 2026 14:37:08 +0200
+Message-ID: <20260520123722.405752-11-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20260520123722.405752-1-aalbersh@kernel.org>
+References: <20260520123722.405752-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wPgB8-0006Xt-FQ
-Subject: [f2fs-dev] [PATCH v10 00/22] fs-verity support for XFS with post
- EOF merkle tree
+X-Headers-End: 1wPgBX-0006ZY-Ci
+Subject: [f2fs-dev] [PATCH v10 10/22] xfs: introduce fsverity on-disk changes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,266 +90,125 @@ From: Andrey Albershteyn via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
 Cc: Andrey Albershteyn <aalbersh@kernel.org>, djwong@kernel.org,
- david@fromorbit.com, linux-unionfs@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, hch@lst.de,
- linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+ linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-ext4@vger.kernel.org, hch@lst.de, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi all,
-
-This patch series adds fs-verity support for XFS. This version stores
-merkle tree beyond end of the file, the same way as ext4 does it. The
-difference is that verity descriptor is stored at the next aligned 64k
-block after the merkle tree last block. This is done due to sparse
-merkle tree which doesn't store hashes of zero data blocks.
-
-The patchset starts with a few fs-verity preparation patches. Then, a
-few patches to allow iomap to work in post EOF region. The XFS fs-verity
-implementation follows.
-
-The tree is read by iomap into page cache at offset of next largest
-folio past end of file. The same offset is used for on-disk.
-
-This patchsets also synthesizes merkle tree block full of hashes of
-zeroed data blocks. This merkle blocks are not stored on disk, they are
-holes in the tree.
-
-Testing. The -g verity is passing for 1k, 8k and 4k with/without quota
-on 4k and 64k page size systems. Tested -g quick for enabled/disabled
-fsverity. Also, overlay/080 overlay/089 with XFS as base. Compile test
-for FSVERITY=no/yes.
-
-This series based on v7.1-rc4.
-
-kernel:
-https://git.kernel.org/pub/scm/linux/kernel/git/aalbersh/xfs-linux.git/log/?h=b4/fsverity
-
-xfsprogs:
-https://github.com/alberand/xfsprogs/tree/b4/fsverity
-
-xfstests:
-https://github.com/alberand/xfstests/tree/b4/fsverity
-
-Cc: fsverity@lists.linux.dev
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-xfs@vger.kernel.org
-Cc: linux-unionfs@vger.kernel.org
-
-Cc: david@fromorbit.com
-Cc: djwong@kernel.org
-Cc: ebiggers@kernel.org
-Cc: hch@lst.de
-
-1: https://lore.kernel.org/linux-xfs/20260223132021.292832-1-hch@lst.de/
-
----
-Changes in v10:
-- Rebase to v7.1-rc3 with relevant adjustments
-- Initialize ioend->io_vi to NULL to not get write work onto verity wq
-- Range diff below
-Changes in v9:
-- Fix fsverity_fill_zerohash() parameter names
-- A few fixes found by sashiko.dev:
-	- Replace ip->i_mount->m_attr_geo->blksize with m_sb.sb_blocksize
-	- Don't call xfs_trans_cancel() after xfs_trans_commit() in
-	  xfs_fsverity_end_enable()
-	- Call xfs_fsverity_delete_metadata() if verity enable failed
-	- Change start/end type from xfs_fileoff_t to loff_t
-	- Return xfs_trans_commit() error from
-	  xfs_fsverity_cancel_unwritten()
-Changes in v8:
-- Return fsverity_ensure_verity_info() errors from
-  ovl_ensure_verity_loaded()
-Changes in v7:
-- Move kerneldoc to fsverity_ensure_verity_info() definition
-- Drop patch adding XFS traces
-- Fix overly long line in the comment
-- Make order of fserror and fsverity_error consistent
-- Add overlay patch converting to fsverity_ensure_verity_info()
-Changes in v6:
-- Removed stub for fsverity_ensure_verity_info() as it's optimized out
-- Rename fsverity_folio_zero_hash() to fsverify_fill_zerohash()
-- Merge patches 8 to 10 into one
-- Merge patch gerating zero_hash and fsverity_fill_zerohash() into one
-- Add kerneldoc to fsverity_ensure_verity_info()
-- Add comments to iomap_block_needs_zeroing()
-Changes in v5:
-- Add fserror_report_data_lost() for data blocks in page spanning EOF
-- Issue fsverity metadata readahead in data readahead
-- iomap_fsverity_write() return type fix
-- Use of S_ISREG(mode)
-- Make 65536 #define instead of open-coded
-- Use transaction per unwritten extent removal
-- Fetch fsverity_info for all fsverity metadata
-- Revert fsverity_folio_zero_hash() stub as used in iomap
-- Extend cancel_unwritten to whole file range to remove cow leftovers
-- Drop delayed allocation on the COW fork on fsverity completion
-Changes in v4:
-- Use fserror interface in fsverity instead of fs callback
-- Hoist pagecache_read from f2fs/ext4 to fsverity
-- Refactor iomap code
-- Fetch fsverity_info only for file data and merkle tree holes
-- Do not disable preallocation, remove unwritten extents instead
-- Offload fsverity hash I/O to fsverity workqueue in read path
-- Store merkle tree at round_up(i_size, 64k)
-- Add a spacing between merkle tree and fsverity descriptor as next 64k
-  aligned block
-- Squash helpers into first user commits
-- Squash on-disk format changes into single commit
-- Drop different offset for pagecache/on-disk
-- Don't zero out pages in higher order folios in write path
-- Link to v3: https://lore.kernel.org/fsverity/20260217231937.1183679-1-aalbersh@kernel.org/T/#t
-Changes in v3:
-- Different on-disk and pagecache offset
-- Use read path ioends
-- Switch to hashtable fsverity info
-- Synthesize merkle tree blocks full of zeroes
-- Other minor refactors
-- Link to v2: https://lore.kernel.org/fsverity/20260114164210.GO15583@frogsfrogsfrogs/T/#t
-Changes in v2:
-- Move to VFS interface for merkle tree block reading
-- Drop patchset for per filesystem workqueues
-- Change how offsets of the descriptor and tree metadata is calculated
-- Store fs-verity descriptor in data fork side by side with merkle tree
-- Simplify iomap changes, remove interface for post eof read/write
-- Get rid of extended attribute implementation
-- Link to v1: https://lore.kernel.org/r/20250728-fsverity-v1-0-9e5443af0e34@kernel.org
-
--- >8 --
-
- 1:  aabd8b112385 <  -:  ------------ fs-verity support for XFS with post EOF merkle tree
- -:  ------------ >  1:  ec15fda2f683 fs-verity support for XFS with post EOF merkle tree
- 2:  f3a3cc5b6ab2 =  2:  97d22944e17f fsverity: report validation errors through fserror to fsnotify
- 3:  c8155669bdff =  3:  f717e55c313c fsverity: expose ensure_fsverity_info()
- 4:  83262640936a !  4:  38381b5ec63e ovl: use core fsverity ensure info interface
-    @@ fs/overlayfs/util.c: char *ovl_get_redirect_xattr(struct ovl_fs *ofs, const stru
-        struct inode *inode = d_inode(datapath->dentry);
-     -  struct file *filp;
-
-    --  if (IS_VERITY(inode) && fsverity_get_info(inode) == NULL) {
-    +-  if (!fsverity_active(inode) && IS_VERITY(inode)) {
-     -          /*
-     -           * If this inode was not yet opened, the verity info hasn't been
-     -           * loaded yet, so we need to do that here to force it into memory.
- 5:  6d63f3ee7604 =  5:  b4b86f757eaa fsverity: generate and store zero-block hash
- 6:  800753879b5c =  6:  f9d2eaf0fdcd fsverity: pass digest size and hash of the all-zeroes block to ->write
- 7:  c4e06f9d9c08 =  7:  87d8f4495aa5 fsverity: hoist pagecache_read from f2fs/ext4 to fsverity
- 8:  34be1a25ffd2 =  8:  2da572c7a3bf iomap: introduce IOMAP_F_FSVERITY and teach writeback to handle fsverity
- 9:  728df1f13e31 !  9:  3669ecfb610e iomap: teach iomap to read files with fsverity
-    @@ fs/iomap/buffered-io.c: void iomap_readahead(const struct iomap_ops *ops,
-                iter.status = iomap_readahead_iter(&iter, ctx,
-                                        &cur_bytes_submitted);
-
-    - ## fs/iomap/ioend.c ##
-    -@@ fs/iomap/ioend.c: struct iomap_ioend *iomap_init_ioend(struct inode *inode,
-    -   ioend->io_offset = file_offset;
-    -   ioend->io_size = bio->bi_iter.bi_size;
-    -   ioend->io_sector = bio->bi_iter.bi_sector;
-    -+  ioend->io_vi = NULL;
-    -   ioend->io_private = NULL;
-    -   return ioend;
-    - }
-    -
-      ## include/linux/iomap.h ##
-     @@ include/linux/iomap.h: struct iomap_ioend {
-        loff_t                  io_offset;      /* offset in the file */
-10:  9eb9dd92b762 = 10:  a8989fbd29f1 iomap: introduce iomap_fsverity_write() for writing fsverity metadata
-11:  27602df28674 = 11:  04b23426b5cf xfs: introduce fsverity on-disk changes
-12:  544c81d26e7c = 12:  ba69a8817d13 xfs: initialize fs-verity on file open
-13:  6158f03b2ad4 = 13:  e2b59e6cd4da xfs: don't allow to enable DAX on fs-verity sealed inode
-14:  03b1f44c53b2 = 14:  9e2628f17346 xfs: disable direct read path for fs-verity files
-15:  96c9f90ade98 = 15:  3dea5f7e5481 xfs: handle fsverity I/O in write/read path
-16:  e864ce49e5b3 = 16:  ff837a33e8f5 xfs: use read ioend for fsverity data verification
-17:  b06bb3eefa38 = 17:  5c79a1e5f6ff xfs: add fs-verity support
-18:  567d5190bfd9 = 18:  af3c36498d1c xfs: remove unwritten extents after preallocations in fsverity metadata
-19:  b952307f139d = 19:  744cf7ec0842 xfs: add fs-verity ioctls
-20:  3f5382888801 = 20:  d47aac1643a7 xfs: advertise fs-verity being available on filesystem
-21:  b87668403694 = 21:  48e83ac7e6c2 xfs: check and repair the verity inode flag state
-22:  eec854161680 = 22:  2a9f58d29909 xfs: introduce health state for corrupted fsverity metadata
-23:  9ddc2cf10f52 = 23:  b5bf49f2e750 xfs: enable ro-compat fs-verity flag
-
-Andrey Albershteyn (20):
-  fsverity: report validation errors through fserror to fsnotify
-  fsverity: expose ensure_fsverity_info()
-  ovl: use core fsverity ensure info interface
-  fsverity: generate and store zero-block hash
-  fsverity: pass digest size and hash of the all-zeroes block to ->write
-  fsverity: hoist pagecache_read from f2fs/ext4 to fsverity
-  iomap: introduce IOMAP_F_FSVERITY and teach writeback to handle
-    fsverity
-  iomap: teach iomap to read files with fsverity
-  iomap: introduce iomap_fsverity_write() for writing fsverity metadata
-  xfs: introduce fsverity on-disk changes
-  xfs: initialize fs-verity on file open
-  xfs: don't allow to enable DAX on fs-verity sealed inode
-  xfs: disable direct read path for fs-verity files
-  xfs: handle fsverity I/O in write/read path
-  xfs: use read ioend for fsverity data verification
-  xfs: add fs-verity support
-  xfs: remove unwritten extents after preallocations in fsverity
-    metadata
-  xfs: add fs-verity ioctls
-  xfs: introduce health state for corrupted fsverity metadata
-  xfs: enable ro-compat fs-verity flag
-
-Darrick J. Wong (2):
-  xfs: advertise fs-verity being available on filesystem
-  xfs: check and repair the verity inode flag state
-
- fs/btrfs/verity.c              |   6 +-
- fs/ext4/verity.c               |  36 +--
- fs/f2fs/verity.c               |  34 +--
- fs/iomap/buffered-io.c         | 109 +++++++-
- fs/iomap/ioend.c               |   1 +
- fs/iomap/trace.h               |   3 +-
- fs/overlayfs/util.c            |  14 +-
- fs/verity/enable.c             |   4 +-
- fs/verity/fsverity_private.h   |   3 +
- fs/verity/measure.c            |   4 +-
- fs/verity/open.c               |  25 +-
- fs/verity/pagecache.c          |  55 ++++
- fs/verity/verify.c             |   4 +
- fs/xfs/Makefile                |   1 +
- fs/xfs/libxfs/xfs_bmap.c       |   7 +
- fs/xfs/libxfs/xfs_format.h     |  35 ++-
- fs/xfs/libxfs/xfs_fs.h         |   2 +
- fs/xfs/libxfs/xfs_health.h     |   4 +-
- fs/xfs/libxfs/xfs_inode_buf.c  |   8 +
- fs/xfs/libxfs/xfs_inode_util.c |   2 +
- fs/xfs/libxfs/xfs_sb.c         |   4 +
- fs/xfs/scrub/attr.c            |   7 +
- fs/xfs/scrub/common.c          |  53 ++++
- fs/xfs/scrub/common.h          |   2 +
- fs/xfs/scrub/inode.c           |   7 +
- fs/xfs/scrub/inode_repair.c    |  36 +++
- fs/xfs/xfs_aops.c              |  62 ++++-
- fs/xfs/xfs_bmap_util.c         |   8 +
- fs/xfs/xfs_file.c              |  19 +-
- fs/xfs/xfs_fsverity.c          | 457 +++++++++++++++++++++++++++++++++
- fs/xfs/xfs_fsverity.h          |  28 ++
- fs/xfs/xfs_health.c            |   1 +
- fs/xfs/xfs_inode.h             |   6 +
- fs/xfs/xfs_ioctl.c             |  14 +
- fs/xfs/xfs_iomap.c             |  15 +-
- fs/xfs/xfs_iops.c              |   4 +
- fs/xfs/xfs_message.c           |   4 +
- fs/xfs/xfs_message.h           |   1 +
- fs/xfs/xfs_mount.h             |   4 +
- fs/xfs/xfs_super.c             |   7 +
- include/linux/fsverity.h       |  18 +-
- include/linux/iomap.h          |  13 +
- 42 files changed, 1020 insertions(+), 107 deletions(-)
- create mode 100644 fs/xfs/xfs_fsverity.c
- create mode 100644 fs/xfs/xfs_fsverity.h
-
--- 
-2.51.2
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+SW50cm9kdWNlIFhGU19ESUZMQUcyX1ZFUklUWSBmb3IgaW5vZGVzIHdpdGggZnN2ZXJpdHkuIFRo
+aXMgZmxhZwppbmRpY2F0ZXMgdGhhdCBpbm9kZSBoYXMgZnMtdmVyaXR5IGVuYWJsZWQgKGkuZS4g
+ZGVzY3JpcHRvciBleGlzdCwKdHJlZSBpcyBidWlsdCBhbmQgZmlsZSBpcyByZWFkLW9ubHkpLgoK
+SW50cm9kdWNlIFhGU19TQl9GRUFUX1JPX0NPTVBBVF9WRVJJVFkgZm9yIGZpbGVzeXN0ZW1zIGhh
+dmluZwpmc3Zlcml0eSBpbm9kZXMuIEFzIG9uLWRpc2sgY2hhbmdlcyBhcHBsaWVzIHRvIGZzdmVy
+aXR5IGlub2RlcyBvbmx5LCBsZXQKb2xkZXIga2VybmVscyByZWFkLW9ubHkgYWNjZXNzLiBUaGlz
+IHdpbGwgYmUgZW5hYmxlZCBpbiB0aGUgZnVydGhlcgpwYXRjaCBhZnRlciBmdWxsIGZzdmVyaXR5
+IHN1cHBvcnQuCgpSZXZpZXdlZC1ieTogRGFycmljayBKLiBXb25nIDxkandvbmdAa2VybmVsLm9y
+Zz4KUmV2aWV3ZWQtYnk6IENocmlzdG9waCBIZWxsd2lnIDxoY2hAbHN0LmRlPgpTaWduZWQtb2Zm
+LWJ5OiBBbmRyZXkgQWxiZXJzaHRleW4gPGFhbGJlcnNoQGtlcm5lbC5vcmc+Ci0tLQogZnMveGZz
+L2xpYnhmcy94ZnNfZm9ybWF0LmggICAgIHwgMzAgKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KystCiBmcy94ZnMvbGlieGZzL3hmc19pbm9kZV9idWYuYyAgfCAgOCArKysrKysrKwogZnMveGZz
+L2xpYnhmcy94ZnNfaW5vZGVfdXRpbC5jIHwgIDIgKysKIGZzL3hmcy9saWJ4ZnMveGZzX3NiLmMg
+ICAgICAgICB8ICAyICsrCiBmcy94ZnMveGZzX2lvcHMuYyAgICAgICAgICAgICAgfCAgMiArKwog
+ZnMveGZzL3hmc19tb3VudC5oICAgICAgICAgICAgIHwgIDIgKysKIDYgZmlsZXMgY2hhbmdlZCwg
+NDUgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2ZzL3hmcy9saWJ4
+ZnMveGZzX2Zvcm1hdC5oIGIvZnMveGZzL2xpYnhmcy94ZnNfZm9ybWF0LmgKaW5kZXggNzc5ZGFj
+NTliMWYzLi40ZGZmMjk2NTllNDAgMTAwNjQ0Ci0tLSBhL2ZzL3hmcy9saWJ4ZnMveGZzX2Zvcm1h
+dC5oCisrKyBiL2ZzL3hmcy9saWJ4ZnMveGZzX2Zvcm1hdC5oCkBAIC0zNzQsNiArMzc0LDcgQEAg
+eGZzX3NiX2hhc19jb21wYXRfZmVhdHVyZSgKICNkZWZpbmUgWEZTX1NCX0ZFQVRfUk9fQ09NUEFU
+X1JNQVBCVCAgICgxIDw8IDEpCQkvKiByZXZlcnNlIG1hcCBidHJlZSAqLwogI2RlZmluZSBYRlNf
+U0JfRkVBVF9ST19DT01QQVRfUkVGTElOSyAgKDEgPDwgMikJCS8qIHJlZmxpbmtlZCBmaWxlcyAq
+LwogI2RlZmluZSBYRlNfU0JfRkVBVF9ST19DT01QQVRfSU5PQlRDTlQgKDEgPDwgMykJCS8qIGlu
+b2J0IGJsb2NrIGNvdW50cyAqLworI2RlZmluZSBYRlNfU0JfRkVBVF9ST19DT01QQVRfVkVSSVRZ
+ICAgKDEgPDwgNCkJCS8qIGZzLXZlcml0eSAqLwogI2RlZmluZSBYRlNfU0JfRkVBVF9ST19DT01Q
+QVRfQUxMIFwKIAkJKFhGU19TQl9GRUFUX1JPX0NPTVBBVF9GSU5PQlQgfCBcCiAJCSBYRlNfU0Jf
+RkVBVF9ST19DT01QQVRfUk1BUEJUIHwgXApAQCAtMTIzMCwxNiArMTIzMSwyMSBAQCBzdGF0aWMg
+aW5saW5lIHZvaWQgeGZzX2Rpbm9kZV9wdXRfcmRldihzdHJ1Y3QgeGZzX2Rpbm9kZSAqZGlwLCB4
+ZnNfZGV2X3QgcmRldikKICAqLwogI2RlZmluZSBYRlNfRElGTEFHMl9NRVRBREFUQV9CSVQJNQog
+CisvKiBpbm9kZXMgc2VhbGVkIHdpdGggZnMtdmVyaXR5ICovCisjZGVmaW5lIFhGU19ESUZMQUcy
+X1ZFUklUWV9CSVQJCTYKKwogI2RlZmluZSBYRlNfRElGTEFHMl9EQVgJCSgxVUxMIDw8IFhGU19E
+SUZMQUcyX0RBWF9CSVQpCiAjZGVmaW5lIFhGU19ESUZMQUcyX1JFRkxJTksJKDFVTEwgPDwgWEZT
+X0RJRkxBRzJfUkVGTElOS19CSVQpCiAjZGVmaW5lIFhGU19ESUZMQUcyX0NPV0VYVFNJWkUJKDFV
+TEwgPDwgWEZTX0RJRkxBRzJfQ09XRVhUU0laRV9CSVQpCiAjZGVmaW5lIFhGU19ESUZMQUcyX0JJ
+R1RJTUUJKDFVTEwgPDwgWEZTX0RJRkxBRzJfQklHVElNRV9CSVQpCiAjZGVmaW5lIFhGU19ESUZM
+QUcyX05SRVhUNjQJKDFVTEwgPDwgWEZTX0RJRkxBRzJfTlJFWFQ2NF9CSVQpCiAjZGVmaW5lIFhG
+U19ESUZMQUcyX01FVEFEQVRBCSgxVUxMIDw8IFhGU19ESUZMQUcyX01FVEFEQVRBX0JJVCkKKyNk
+ZWZpbmUgWEZTX0RJRkxBRzJfVkVSSVRZCSgxVUxMIDw8IFhGU19ESUZMQUcyX1ZFUklUWV9CSVQp
+CiAKICNkZWZpbmUgWEZTX0RJRkxBRzJfQU5ZIFwKIAkoWEZTX0RJRkxBRzJfREFYIHwgWEZTX0RJ
+RkxBRzJfUkVGTElOSyB8IFhGU19ESUZMQUcyX0NPV0VYVFNJWkUgfCBcCi0JIFhGU19ESUZMQUcy
+X0JJR1RJTUUgfCBYRlNfRElGTEFHMl9OUkVYVDY0IHwgWEZTX0RJRkxBRzJfTUVUQURBVEEpCisJ
+IFhGU19ESUZMQUcyX0JJR1RJTUUgfCBYRlNfRElGTEFHMl9OUkVYVDY0IHwgWEZTX0RJRkxBRzJf
+TUVUQURBVEEgfCBcCisJIFhGU19ESUZMQUcyX1ZFUklUWSkKIAogc3RhdGljIGlubGluZSBib29s
+IHhmc19kaW5vZGVfaGFzX2JpZ3RpbWUoY29uc3Qgc3RydWN0IHhmc19kaW5vZGUgKmRpcCkKIHsK
+QEAgLTIwMjEsNCArMjAyNywyNiBAQCBzdHJ1Y3QgeGZzX2FjbCB7CiAjZGVmaW5lIFNHSV9BQ0xf
+RklMRV9TSVpFCShzaXplb2YoU0dJX0FDTF9GSUxFKS0xKQogI2RlZmluZSBTR0lfQUNMX0RFRkFV
+TFRfU0laRQkoc2l6ZW9mKFNHSV9BQ0xfREVGQVVMVCktMSkKIAorLyoKKyAqIEF0IG1heGltdW0g
+b2YgOCBsZXZlbHMgd2l0aCAxMjggaGFzaGVzIHBlciBibG9jayAoMzIgYnl0ZXMgU0hBLTI1Nikg
+bWF4aW11bQorICogdHJlZSBzaXplIGlzICgoMTI4Xjgg4oiSIDEpLygxMjgg4oiSIDEpKSA9IDU2
+NyoxMF4xMiBibG9ja3MuIFRoaXMgc2hvdWxkIGZpdCBpbgorICogNTMgYml0cyBhZGRyZXNzIHNw
+YWNlLgorICoKKyAqIEF0IHRoaXMgTWVya2xlIHRyZWUgc2l6ZSB3ZSBjYW4gY292ZXIgMjk1RUIg
+bGFyZ2UgZmlsZS4gVGhpcyBpcyBtdWNoIGxhcmdlcgorICogdGhhbiB0aGUgY3VycmVudGx5IHN1
+cHBvcnRlZCBmaWxlIHNpemUuCisgKgorICogRm9yIHNoYTUxMiB0aGUgbGFyZ2VzdCBmaWxlIHdl
+IGNhbiBjb3ZlciBlbmRzIGF0IDEgPDwgNTAgb2Zmc2V0LCB0aGlzIGlzIGFsc28KKyAqIGdvb2Qu
+CisgKi8KKyNkZWZpbmUgWEZTX0ZTVkVSSVRZX0xBUkdFU1RfRklMRQkoKGxvZmZfdCkxVUxMIDw8
+IDUzKQorCisvKgorICogQWxpZ25tZW50IG9mIHRoZSBmc3Zlcml0eSBtZXRhZGF0YSBwbGFjZW1l
+bnQuIFRoaXMgaXMgbGFyZ2VzdCBzdXBwb3J0ZWQgUEFHRQorICogU0laRSBmb3IgZnN2ZXJpdHku
+IFRoaXMgaXMgdXNlZCB0byBzcGFjZSBvdXQgZGF0YSBhbmQgbWV0YWRhdGEgaW4gcGFnZSBjYWNo
+ZS4KKyAqIFRoZSBzcGFjaW5nIGlzIG5lY2Vzc2FyeSBmb3Igbm9uLWV4cG9zdXJlIG9mIG1ldGFk
+YXRhIHRvIHVzZXJzcGFjZSBhbmQKKyAqIGNvcnJlY3QgbWVya2xlIHRyZWUgc3luZXRoZXNpcyBp
+biB0aGUgaW9tYXAuCisgKi8KKyNkZWZpbmUgWEZTX0ZTVkVSSVRZX1NUQVJUX0FMSUdOCSg2NTUz
+NikKKworCiAjZW5kaWYgLyogX19YRlNfRk9STUFUX0hfXyAqLwpkaWZmIC0tZ2l0IGEvZnMveGZz
+L2xpYnhmcy94ZnNfaW5vZGVfYnVmLmMgYi9mcy94ZnMvbGlieGZzL3hmc19pbm9kZV9idWYuYwpp
+bmRleCAzNzk0ZTU0MTJlYmEuLmYyMTgxYzFiZWQ1NCAxMDA2NDQKLS0tIGEvZnMveGZzL2xpYnhm
+cy94ZnNfaW5vZGVfYnVmLmMKKysrIGIvZnMveGZzL2xpYnhmcy94ZnNfaW5vZGVfYnVmLmMKQEAg
+LTc2MCw2ICs3NjAsMTQgQEAgeGZzX2Rpbm9kZV92ZXJpZnkoCiAJICAgICF4ZnNfaGFzX3J0cmVm
+bGluayhtcCkpCiAJCXJldHVybiBfX3RoaXNfYWRkcmVzczsKIAorCS8qIG9ubHkgcmVndWxhciBm
+aWxlcyBjYW4gaGF2ZSBmc3Zlcml0eSAqLworCWlmIChmbGFnczIgJiBYRlNfRElGTEFHMl9WRVJJ
+VFkpIHsKKwkJaWYgKCF4ZnNfaGFzX3Zlcml0eShtcCkpCisJCQlyZXR1cm4gX190aGlzX2FkZHJl
+c3M7CisJCWlmICghU19JU1JFRyhtb2RlKSkKKwkJCXJldHVybiBfX3RoaXNfYWRkcmVzczsKKwl9
+CisKIAlpZiAoeGZzX2hhc196b25lZChtcCkgJiYKIAkgICAgZGlwLT5kaV9tZXRhdHlwZSA9PSBj
+cHVfdG9fYmUxNihYRlNfTUVUQUZJTEVfUlRSTUFQKSkgewogCQlpZiAoYmUzMl90b19jcHUoZGlw
+LT5kaV91c2VkX2Jsb2NrcykgPiBtcC0+bV9zYi5zYl9yZ2V4dGVudHMpCmRpZmYgLS1naXQgYS9m
+cy94ZnMvbGlieGZzL3hmc19pbm9kZV91dGlsLmMgYi9mcy94ZnMvbGlieGZzL3hmc19pbm9kZV91
+dGlsLmMKaW5kZXggNTUxZmE1MWJlZmI2Li42YjFlMjBhNGJiOWIgMTAwNjQ0Ci0tLSBhL2ZzL3hm
+cy9saWJ4ZnMveGZzX2lub2RlX3V0aWwuYworKysgYi9mcy94ZnMvbGlieGZzL3hmc19pbm9kZV91
+dGlsLmMKQEAgLTEyNiw2ICsxMjYsOCBAQCB4ZnNfaXAyeGZsYWdzKAogCQkJZmxhZ3MgfD0gRlNf
+WEZMQUdfREFYOwogCQlpZiAoaXAtPmlfZGlmbGFnczIgJiBYRlNfRElGTEFHMl9DT1dFWFRTSVpF
+KQogCQkJZmxhZ3MgfD0gRlNfWEZMQUdfQ09XRVhUU0laRTsKKwkJaWYgKGlwLT5pX2RpZmxhZ3My
+ICYgWEZTX0RJRkxBRzJfVkVSSVRZKQorCQkJZmxhZ3MgfD0gRlNfWEZMQUdfVkVSSVRZOwogCX0K
+IAogCWlmICh4ZnNfaW5vZGVfaGFzX2F0dHJfZm9yayhpcCkpCmRpZmYgLS1naXQgYS9mcy94ZnMv
+bGlieGZzL3hmc19zYi5jIGIvZnMveGZzL2xpYnhmcy94ZnNfc2IuYwppbmRleCA0NzMyMmFkYjc2
+OTAuLmExNTUxMGViZDJmMSAxMDA2NDQKLS0tIGEvZnMveGZzL2xpYnhmcy94ZnNfc2IuYworKysg
+Yi9mcy94ZnMvbGlieGZzL3hmc19zYi5jCkBAIC0xNjUsNiArMTY1LDggQEAgeGZzX3NiX3ZlcnNp
+b25fdG9fZmVhdHVyZXMoCiAJCWZlYXR1cmVzIHw9IFhGU19GRUFUX1JFRkxJTks7CiAJaWYgKHNi
+cC0+c2JfZmVhdHVyZXNfcm9fY29tcGF0ICYgWEZTX1NCX0ZFQVRfUk9fQ09NUEFUX0lOT0JUQ05U
+KQogCQlmZWF0dXJlcyB8PSBYRlNfRkVBVF9JTk9CVENOVDsKKwlpZiAoc2JwLT5zYl9mZWF0dXJl
+c19yb19jb21wYXQgJiBYRlNfU0JfRkVBVF9ST19DT01QQVRfVkVSSVRZKQorCQlmZWF0dXJlcyB8
+PSBYRlNfRkVBVF9WRVJJVFk7CiAJaWYgKHNicC0+c2JfZmVhdHVyZXNfaW5jb21wYXQgJiBYRlNf
+U0JfRkVBVF9JTkNPTVBBVF9GVFlQRSkKIAkJZmVhdHVyZXMgfD0gWEZTX0ZFQVRfRlRZUEU7CiAJ
+aWYgKHNicC0+c2JfZmVhdHVyZXNfaW5jb21wYXQgJiBYRlNfU0JfRkVBVF9JTkNPTVBBVF9TUElO
+T0RFUykKZGlmZiAtLWdpdCBhL2ZzL3hmcy94ZnNfaW9wcy5jIGIvZnMveGZzL3hmc19pb3BzLmMK
+aW5kZXggMzI1YzIyMDBjNTAxLi4yNWM2ZTFkMDhjZGMgMTAwNjQ0Ci0tLSBhL2ZzL3hmcy94ZnNf
+aW9wcy5jCisrKyBiL2ZzL3hmcy94ZnNfaW9wcy5jCkBAIC0xMzk4LDYgKzEzOTgsOCBAQCB4ZnNf
+ZGlmbGFnc190b19pZmxhZ3MoCiAJCWZsYWdzIHw9IFNfTk9BVElNRTsKIAlpZiAoaW5pdCAmJiB4
+ZnNfaW5vZGVfc2hvdWxkX2VuYWJsZV9kYXgoaXApKQogCQlmbGFncyB8PSBTX0RBWDsKKwlpZiAo
+eGZsYWdzICYgRlNfWEZMQUdfVkVSSVRZKQorCQlmbGFncyB8PSBTX1ZFUklUWTsKIAogCS8qCiAJ
+ICogU19EQVggY2FuIG9ubHkgYmUgc2V0IGR1cmluZyBpbm9kZSBpbml0aWFsaXphdGlvbiBhbmQg
+aXMgbmV2ZXIgc2V0IGJ5CmRpZmYgLS1naXQgYS9mcy94ZnMveGZzX21vdW50LmggYi9mcy94ZnMv
+eGZzX21vdW50LmgKaW5kZXggZDk2NGJhZTA5NmVmLi4yYzA2Nzc4YTQwNGEgMTAwNjQ0Ci0tLSBh
+L2ZzL3hmcy94ZnNfbW91bnQuaAorKysgYi9mcy94ZnMveGZzX21vdW50LmgKQEAgLTM4OCw2ICsz
+ODgsNyBAQCB0eXBlZGVmIHN0cnVjdCB4ZnNfbW91bnQgewogI2RlZmluZSBYRlNfRkVBVF9FWENI
+QU5HRV9SQU5HRQkoMVVMTCA8PCAyNykJLyogZXhjaGFuZ2UgcmFuZ2UgKi8KICNkZWZpbmUgWEZT
+X0ZFQVRfTUVUQURJUgkoMVVMTCA8PCAyOCkJLyogbWV0YWRhdGEgZGlyZWN0b3J5IHRyZWUgKi8K
+ICNkZWZpbmUgWEZTX0ZFQVRfWk9ORUQJCSgxVUxMIDw8IDI5KQkvKiB6b25lZCBSVCBkZXZpY2Ug
+Ki8KKyNkZWZpbmUgWEZTX0ZFQVRfVkVSSVRZCQkoMVVMTCA8PCAzMCkJLyogZnMtdmVyaXR5ICov
+CiAKIC8qIE1vdW50IGZlYXR1cmVzICovCiAjZGVmaW5lIFhGU19GRUFUX05PTElGRVRJTUUJKDFV
+TEwgPDwgNDcpCS8qIGRpc2FibGUgbGlmZXRpbWUgaGludHMgKi8KQEAgLTQ0NSw2ICs0NDYsNyBA
+QCBfX1hGU19IQVNfRkVBVChleGNoYW5nZV9yYW5nZSwgRVhDSEFOR0VfUkFOR0UpCiBfX1hGU19I
+QVNfRkVBVChtZXRhZGlyLCBNRVRBRElSKQogX19YRlNfSEFTX0ZFQVQoem9uZWQsIFpPTkVEKQog
+X19YRlNfSEFTX0ZFQVQobm9saWZldGltZSwgTk9MSUZFVElNRSkKK19fWEZTX0hBU19GRUFUKHZl
+cml0eSwgVkVSSVRZKQogCiBzdGF0aWMgaW5saW5lIGJvb2wgeGZzX2hhc19ydGdyb3Vwcyhjb25z
+dCBzdHJ1Y3QgeGZzX21vdW50ICptcCkKIHsKLS0gCjIuNTEuMgoKCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcg
+bGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3Rz
+LnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
