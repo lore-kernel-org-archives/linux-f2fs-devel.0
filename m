@@ -4,106 +4,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 637AECD4F3D
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 May 2026 14:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0035ACD4F3C
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 May 2026 14:39:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=ASdaGurS13Mam4/daF2S0VT6/g8nz0rLqLg30A4XBD8=; b=Bop6WZSzXd+nKjeKqwDjyjVdJF
-	i36S+WQuJXpea7riq1fNRdyWDW3BZ+TAiwyWFzw8zBJf4s9Obl2wgMKl8gJnou75GbeY2MFBnnrX+
-	8p2uNKcRugUKU2p6hhup06eHn0OYgxWcvOFgW5QoqYd0LXQNAWDDaRHHPRo9u+azkQt4=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:References:In-Reply-To:Message-Id:To:Date:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=6IXEewiuV7ASwWwtQd0xycc9ebQlVW9GaqYRcZISt4k=; b=iblE6v+7Lc74vXZC+g9aSNS53Y
+	7pACOhHc+pRVYetqF++/CM8EObeg9p/i1jgRU20ZdAdnMmJk4wtd0unJHx5wNLYF5mkJyhduFweXd
+	qKjI04KdtL3E6TeAgqyy30eyTqrlRT/Dx3vhDw8DQA//7CbO4j0l9d478QGyJQXc7X/8=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wPhm9-0006LX-JD;
-	Wed, 20 May 2026 14:19:55 +0000
+	id 1wPi5P-0008BU-1D;
+	Wed, 20 May 2026 14:39:51 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1wPhm7-0006LO-S5
+ (envelope-from <cel@kernel.org>) id 1wPi5N-0008BJ-TL
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 May 2026 14:19:53 +0000
+ Wed, 20 May 2026 14:39:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Subject:
+ References:In-Reply-To:Message-Id:Cc:To:From:Date:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=N/optvoqfk3MFiaoqRCWHtWPUy3J4YhFqwK2eGRiasM=; b=ECOjnHE8qXHxy6vB99Au1odyPt
- efOMhzt5e9UfpCzNxC4Db45lxuvzmopmrwaxNmPfAPqvSA7FSp93RPcwTvozdfcfgSqjswbUjUoWr
- hvD3432VkfG3EHGwCOU70YREYkzwJInvsghTNKRn7/k0o+ZqvHxoNQ1UMtydFIfVuhcs=;
+ bh=TXjZnzwaYeGtjoLVSOSADuZFQffREJdAvzXtNbRNtCU=; b=UV30Usg5/vnKrhZ33Co+cH/bGX
+ ID0t5LA9YCm4rRQHTaqrseqbRjp2oN3o4SLN82aZowKMP090+k+MGlgmbFPoeyPvpskAhak2HZuM0
+ 0sa+M03JZ9VMzZq08b2KkxayDnBOSEDN4HiqS4URO3EyV5r7ImyhCfskYqGFMLbr6UiA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=N/optvoqfk3MFiaoqRCWHtWPUy3J4YhFqwK2eGRiasM=; b=T
- 0VE217VcBmjY7+fPpxoAbHV/Pr3E1ssqm3ONh0FXutdSURu+ad1hQCeKyrrNj/38s0aFosDzO/GOJ
- Eu3AFm7gmUJnaE0KV1U6d6Kx0b0Lu4Fr5gFifzWz89/mVaqZjYID1ws1MceRR1EYzJbdCSeyMCbXU
- O79RbYWSZ/J0vG9k=;
-Received: from mail-pl1-f177.google.com ([209.85.214.177])
+ h=Content-Transfer-Encoding:Content-Type:Subject:References:In-Reply-To:
+ Message-Id:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=TXjZnzwaYeGtjoLVSOSADuZFQffREJdAvzXtNbRNtCU=; b=HlaS6GhdCmATvgx5RXF7D/8UJU
+ FxCBTB7IlKIZK1h6m/GkNaIwjfALVVmaiS3NM1ikcGmu+MZB+ZX/9TVLzxV1AFLTELYPca0Un+r3Y
+ kV43EPO9aG8UN86fSv6Gb3lWSJMEa4b9hn6hsu99r6qWNhkGJqlxfYbyoWpPLvzEJuVI=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wPhm3-0004KQ-VQ for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 May 2026 14:19:53 +0000
-Received: by mail-pl1-f177.google.com with SMTP id
- d9443c01a7336-2bc85eda6b6so23463385ad.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 20 May 2026 07:19:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1779286782; x=1779891582; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=N/optvoqfk3MFiaoqRCWHtWPUy3J4YhFqwK2eGRiasM=;
- b=jnKyOMcTbFtdamezg40g3PVkGSFAqotsXo6VOfgqlrsAcYwicC/fGD/9SBJCJYUyRi
- q5eZVgqz1j9W43vFZMSZC07fHwK6RUTpg7QqF5FgskFIFf+KY5jWrhPS2yo589cqe4Fm
- ywl9OtewOkOYA8TANLwXqjyu/gah7jEyfLI4Js5m4TFj78QEbGk7g2NrCH9AL0oHQUwv
- d6EdJJ/ISX+4cNeJjWixzqIBrCjR67OFcrG7Z5whEizrLYsU7xoBkTDdb4WX9/wsYdPW
- Qq3TVXCj/4sf7RcIsuSq+NjqFlyn6NEYHH0yn0yxlStjkwyqr6xrobIPMduXIB5nCKHM
- ICzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779286782; x=1779891582;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=N/optvoqfk3MFiaoqRCWHtWPUy3J4YhFqwK2eGRiasM=;
- b=eltaGEb/DVBex3dJtjwbZCTrh0NBQ4fbe9N0sDhgMlsqoEekN6zD0mm/r2BT3W3aPL
- xOANPBHoVxiN4LmGIGzG4I6ZP7IoOgAkaLCTKGZ3p8xqm7yMAyemL5qouXlFELuD8HF/
- vMDkP1dFRy8fISNEQu2rC6xOxezG7TWuQ3zBCZRgOMUrXfAO32+2xnErNJVS60kn2+d+
- jaA/M+VMJahV/WRI2wvUBBY617mcs34pzDCyTtmmBTYznIcqY5zXwb3Y4cxOf0QP4m8m
- sK3dekqJbEXzisPAeezer6zQ57N2XNbrKVoIj9lmSJ23f1m5K30B7UR22MVnDh0yNJoq
- Lh7g==
-X-Gm-Message-State: AOJu0YyNywmaGzLx3j9hjGoB8hH4jSpR48oEhBWWsjSAltETC+E4OGNA
- sC0UK6UNmWNexR8T3TUt7USfCycHBsMuyX/K/IELxAJ1wMyd7LgStxOz
-X-Gm-Gg: Acq92OFK3tWJa4VuizNqHvwM1rxu8lIjdV5lKibM4LMjH/fotdONFcwdE9TX4c9jwVB
- oQuD+MW+SGd5l8z0yGY68eNbJjvnUcxQpKOpHM62gWaaZGCkHxCykhP6Mbd978PV/d7DCbHxnb7
- +ezG4GBePVt75MwC5Ibxmxw2FHsIki0Dw/oxIpf8gZH+Muobgo21nDyNGqLgdtNWFaEY8Yfg1vr
- X7gD0Tz97cJQdrO/O7w1Hj7aW8q8vUx7QtNwptIV847NPWJAmQGETHL7E6Baf8dFVTt1wBMyQpN
- gGagq+DZVZIibVOVkWKWWEn5og1xHhriwcd9bw0XM4dQ39S5kyUH3SM7H6cVx7lCq6BlPYOkfuT
- 3/STr0jxL32PjYwvhvQe2tJmenPlV+F/t+NSppPSx6EBTOJbaGb1C38azJSXiaDodqaJlrNJyNQ
- w6D8NRPjRGszNkHaRL9Y9RS20RUVaArB16cegfDzBY6VKbbHB6IskC+wN2Xm82hOmTGCTdig==
-X-Received: by 2002:a17:902:d591:b0:2bc:78ec:54cf with SMTP id
- d9443c01a7336-2bd7e831f01mr270433185ad.9.1779286781647; 
- Wed, 20 May 2026 07:19:41 -0700 (PDT)
-Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2bd5c05f287sm298281985ad.24.2026.05.20.07.19.39
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 20 May 2026 07:19:41 -0700 (PDT)
-From: Wenjie Qi <qwjhust@gmail.com>
-X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Wed, 20 May 2026 22:19:35 +0800
-Message-ID: <20260520141935.1363513-1-qiwenjie@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1wPi5M-0005h5-Ob for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 20 May 2026 14:39:50 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id E0EF74455D;
+ Wed, 20 May 2026 14:39:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD8E1F00893;
+ Wed, 20 May 2026 14:39:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1779287978;
+ bh=TXjZnzwaYeGtjoLVSOSADuZFQffREJdAvzXtNbRNtCU=;
+ h=Date:From:To:Cc:In-Reply-To:References:Subject;
+ b=Gc8IQnkIS0QsfNN8I9QQV4668E6Yrcn7A5c0Ze7xv7pWSKCNJ7O/IIrQCyv8mKTXs
+ 7cL78768ubta20tn5iF0dBEGOM/97c62B1P+mvx12S6hk3jqITMPgZ7YwlXneCzEag
+ joE6MRB/8l9oesaj8O510flNfc+v7DLefHxbXeAiAkC6rR2guegYNTTT0fuUGBGVmY
+ 8QOV2CDWMmHYzbHUUs1TGraZEPoIjFtW17+md10KdsWnxy0XVCbMQafVPQ8dcJDhTh
+ 1zq/XkwpPOGAZB1evIjhyZcLmDqiY3/3RKIy6Bjr/eoQYn4JuqwP0bDX+NyC369/jU
+ /Z2II/rVHDkJA==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+ by mailfauth.phl.internal (Postfix) with ESMTP id 2B1DBF40073;
+ Wed, 20 May 2026 10:39:37 -0400 (EDT)
+Received: from phl-imap-15 ([10.202.2.104])
+ by phl-compute-10.internal (MEProxy); Wed, 20 May 2026 10:39:37 -0400
+X-ME-Sender: <xms:qccNakvcQXgZIcvMtKY7LNrR6_H9xD4YEmkakspRNQYlkVuzv5oKOw>
+ <xme:qccNasQBqVoKWRbR9fA_LUWqNI3XdP5nIVgjYbGTPr8Lb5F14ETHZCT5ze-98Vk4E
+ vAyEWB9DCk9pd2guEjOMDSBh42Us4w30zs2fFon0fbFWqMhcA2e>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugeegkeelucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhuhgt
+ khcunfgvvhgvrhdfuceotggvlheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+ hnpefhffekffeftdfgheeiveekudeuhfdvjedvfedvueduvdegleekgeetgfduhfefleen
+ ucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhutg
+ hklhgvvhgvrhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeifeegleel
+ leehledqfedvleekgeegvdefqdgtvghlpeepkhgvrhhnvghlrdhorhhgsehfrghsthhmrg
+ hilhdrtghomhdpnhgspghrtghpthhtohepfeegpdhmohguvgepshhmthhpohhuthdprhgt
+ phhtthhopehsvghnohiihhgrthhskhihsegthhhrohhmihhumhdrohhrghdprhgtphhtth
+ hopegrughilhhgvghrrdhkvghrnhgvlhesughilhhgvghrrdgtrgdprhgtphhtthhopehs
+ lhgrvhgrseguuhgsvgihkhhordgtohhmpdhrtghpthhtoheprhhonhhnihgvshgrhhhlsg
+ gvrhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnnhgrsehkvghrnhgvlhdrohhr
+ ghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+ gsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtvghmsehkvghrnhgv
+ lhdrohhrghdprhgtphhtthhopegthhgroheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:qccNallEHzPaD0ty8qD3Fpe5euKj7nYbRGpbvvks6WvsmcFayjWKhw>
+ <xmx:qccNanJYLZ_Wpp4l8AtXdwRbGPZjKgUeTJ0JS2th62x1FS8WHuiBog>
+ <xmx:qccNahqKadoieDjV1hC8AMi0a6AxsKrt9rvdoN8H2LvhFFJwnwXZhA>
+ <xmx:qccNai7K9wsk-JNFffu3VlpYtN6KGHY29e_BoHVRjVI9DCsKS1R5eQ>
+ <xmx:qccNaqb-7jwLcmPxlYPRZx4BqVON_3fE1Nwmo4g6A10z63svVDwqz--L>
+Feedback-ID: ifa6e4810:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+ id F0751780075; Wed, 20 May 2026 10:39:36 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 MIME-Version: 1.0
-X-Headers-End: 1wPhm3-0004KQ-VQ
-Subject: [f2fs-dev] [PATCH] f2fs: fix user.fadvise xattr input validation
+X-ThreadId: AuvJ25pICu_N
+Date: Wed, 20 May 2026 10:39:16 -0400
+To: "Mark Brown" <broonie@kernel.org>
+Message-Id: <04302551-3628-4036-9a3f-596cb782f5b7@app.fastmail.com>
+In-Reply-To: <dc69224d-9926-4414-8c6e-4c15ae98705b@sirena.org.uk>
+References: <20260507-case-sensitivity-v14-0-e62cc8200435@oracle.com>
+ <20260507-case-sensitivity-v14-3-e62cc8200435@oracle.com>
+ <dc69224d-9926-4414-8c6e-4c15ae98705b@sirena.org.uk>
+X-Headers-End: 1wPi5M-0005h5-Ob
+Subject: Re: [f2fs-dev] [PATCH v14 03/15] fat: Implement fileattr_get for
+ case sensitivity
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -115,68 +122,77 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: qwjhust@gmail.com, qiwenjie@xiaomi.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+From: Chuck Lever via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chuck Lever <cel@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Paulo Alcantara <pc@manguebit.org>,
+ Yuezhang Mo <yuezhang.mo@sony.com>, Carlos Maiolino <cem@kernel.org>,
+ Roland Mainz <roland.mainz@nrubsig.org>,
+ almaz.alexandrovich@paragon-software.com, adilger.kernel@dilger.ca,
+ linux-cifs@vger.kernel.org, Steve French <sfrench@samba.org>,
+ Viacheslav Dubeyko <slava@dubeyko.com>, linux-ext4@vger.kernel.org,
+ Namjae Jeon <linkinjeon@kernel.org>, Shyam Prasad N <sprasad@microsoft.com>,
+ frank.li@vivo.com, linux-nfs@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+ Christian Brauner <brauner@kernel.org>, Theodore Tso <tytso@mit.edu>,
+ linux-api@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, senozhatsky@chromium.org,
+ Chuck Lever <chuck.lever@oracle.com>, Hans de Goede <hansg@kernel.org>,
+ Anna Schumaker <anna@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Sungjong Seo <sj1557.seo@samsung.com>, Trond Myklebust <trondmy@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The user.fadvise xattr handler reads an unsigned int directly from value,
-but it is also reached by xattr removal and does not validate the supplied
-value length.
 
-removexattr("user.fadvise") calls the xattr set callback with value == NULL
-and size == 0, which can dereference NULL.  A normal setxattr() call with a
-short value, including size == 0, can also make the handler read past the
-provided value buffer.
 
-Treat a NULL value as clearing the large-folio inode registration.  Reject
-non-NULL user.fadvise values whose length is not exactly
-sizeof(unsigned int) before reading the value.
+On Wed, May 20, 2026, at 10:31 AM, Mark Brown wrote:
+> On Thu, May 07, 2026 at 04:52:56AM -0400, Chuck Lever wrote:
+>> From: Chuck Lever <chuck.lever@oracle.com>
+>> 
+>> Report FAT's case sensitivity behavior via the FS_XFLAG_CASEFOLD
+>> and FS_XFLAG_CASENONPRESERVING flags. FAT filesystems are
+>> case-insensitive by default.
+>> 
+>> MSDOS supports a 'nocase' mount option that enables case-sensitive
+>> behavior; check this option when reporting case sensitivity.
+>> 
+>> VFAT long filename entries preserve case; without VFAT, only
+>> uppercased 8.3 short names are stored. MSDOS with 'nocase' also
+>> preserves case since the name-formatting code skips upcasing when
+>> 'nocase' is set. Check both options when reporting case preservation.
+>
+> I'm seeing a regression in -next with the LTP statx04 test which bisects
+> to this commit:
+>
+> tst_tmpdir.c:316: TINFO: Using /tmp/LTP_sta8hUyB4 as tmpdir (tmpfs 
+> filesystem)
+> tst_device.c:98: TINFO: Found free device 0 '/dev/loop0'
+> tst_test.c:2047: TINFO: LTP version: 20260130
+> tst_test.c:2050: TINFO: Tested kernel: 7.1.0-rc4-next-20260520 #1 SMP 
+> PREEMPT @1779279361 aarch64
+>
+> ...
+>
+> tst_test.c:1985: TINFO: === Testing on vfat ===
+> tst_test.c:1290: TINFO: Formatting /dev/loop0 with vfat opts='' extra 
+> opts=''
+> tst_test.c:1302: TINFO: Mounting /dev/loop0 to 
+> /tmp/LTP_sta8hUyB4/mntpoint fstyp=vfat flags=0
+> statx04.c:121: TFAIL: STATX_ATTR_COMPRESSED not supported
+> statx04.c:121: TFAIL: STATX_ATTR_APPEND not supported
+> statx04.c:121: TFAIL: STATX_ATTR_IMMUTABLE not supported
+> statx04.c:121: TFAIL: STATX_ATTR_NODUMP not supported
 
-Fixes: 39774f27deaf ("f2fs: another way to set large folio by remembering inode number")
-Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
----
- fs/f2fs/xattr.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+At first blush, that does not seem like a plausible bisect
+result. This commit shouldn't affect the behavior of tmpfs
+in any way.
 
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index 84273936f2a..4e11d774a2c 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -80,10 +80,19 @@ static int f2fs_xattr_generic_get(const struct xattr_handler *handler,
- 			     buffer, size, NULL);
- }
- 
--static int f2fs_xattr_fadvise_set(struct inode *inode, const void *value)
-+static int f2fs_xattr_fadvise_set(struct inode *inode, const void *value,
-+				  size_t size)
- {
- 	unsigned int new_fadvise;
- 
-+	if (!value) {
-+		f2fs_remove_ino_entry(F2FS_I_SB(inode),
-+				      inode->i_ino, LARGE_FOLIO_INO);
-+		return 0;
-+	}
-+	if (size != sizeof(new_fadvise))
-+		return -EINVAL;
-+
- 	new_fadvise = *(unsigned int *)value;
- 
- 	if (new_fadvise & BIT(F2FS_XATTR_FADV_LARGEFOLIO))
-@@ -116,7 +125,7 @@ static int f2fs_xattr_generic_set(const struct xattr_handler *handler,
- 	}
- 	if (handler->flags == F2FS_XATTR_INDEX_USER &&
- 	    !strcmp(name, "fadvise"))
--		return f2fs_xattr_fadvise_set(inode, value);
-+		return f2fs_xattr_fadvise_set(inode, value, size);
- 
- 	return f2fs_setxattr(inode, handler->flags, name,
- 					value, size, NULL, flags);
+
 -- 
-2.43.0
-
+Chuck Lever
 
 
 _______________________________________________
