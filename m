@@ -4,80 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EB09ECD4F3C
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 May 2026 12:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C2D1BCD4F54
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 May 2026 12:38:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=29N+otIVv2oj1GWDx7G/haicF7v0AL07iPlbZfevtoo=; b=F4UNz375NoEFJkWuCG40pjRlRz
-	ULX0m1h004ZEzTLmKxjlXH5GbsS/ldXxrZkfSDnBp5swCIwfD1D4XgFw/cIdi7O5balzaJesMc4oQ
-	FlFmk6fu0L/OTOJ7SRpgdrX01yRrprOkXF5iChjXWU4nTMzb1l+MUvR521vWAUo6cvyw=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=ycovlxEof+yzO2pdnHH8iNnW1yb7z0z4a0UUtXGxS2M=; b=acFCNk2Gqo1NK9ZRSu2sA17M1q
+	Te9OTvApXD0zIjeF2deiytdOdd6rupoOeMKrVV8d0WTbDgBFK+ULKzg/nXd15W0o2g+9vOd20QT8S
+	EZ7CZKjqtVY6Yu6vhBYEVqE9Yq14Uyvc5glJe/quWodFtTW2IewdqhRCnzAFDllBM2Jo=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wPg2Z-0001KE-D3;
-	Wed, 20 May 2026 12:28:47 +0000
+	id 1wPgBZ-0007Nq-2A;
+	Wed, 20 May 2026 12:38:05 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zlang@kernel.org>) id 1wPg2X-0001K7-1B
+ (envelope-from <aalbersh@kernel.org>) id 1wPgBF-0007N9-R2
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 May 2026 12:28:45 +0000
+ Wed, 20 May 2026 12:37:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/w3xRDdSB1Oue9DDBq9k8Rn4urhWgVsSGxIhJfb9Q7g=; b=i2FQR7LmgIN0ppKlYVydnl+w8a
- +Y1Eww9SVK/p/uRazaAGKO3V6efHQK3R83+APzI1ibSJ0GOWq+rxY4lCuuiORDW8MPhDQM8nogL4G
- VRmVUJ4YEFHOQt98ar+jsuh73BHXIkG9eG0bgNDuI6pqG8gJo2Fz4aa5TfINSTtxkAVw=;
+ bh=aPukUD+NtePBNeO+9pQXROMWpzJAwBfMA+GAmXDsmOw=; b=KNnhokAN4d73iY1yMDWqT+LkhX
+ kJfOVaO9wr0wpOrKw9iE1dpzi2izfu+0BWZHoxkX/tHwteGCnSxsCcKrvI4+ABYmi7fA1DldHy6Gs
+ X6QX5EIafDda3EsGF4z5q0pauYoJ9TSXNygOKmXuAN1TRD05gCoHGQy3OAAnnrMFtryY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=/w3xRDdSB1Oue9DDBq9k8Rn4urhWgVsSGxIhJfb9Q7g=; b=WMadoN9nzPKLt9VEP9/Z3L16Q2
- uPVvGTNKPpT7Ame+cC/+a4nHwoogisaNXCofrk/ymzaWXICGiLObI1XH0k6p4W9vKsCSI3nvrnvoX
- bVVQl2zFe4oebzgb29ToyA2w19C11TvYR1yL7qiLVBQ5mYJCUC7FYTsNn/9Dab+mptlk=;
+ bh=aPukUD+NtePBNeO+9pQXROMWpzJAwBfMA+GAmXDsmOw=; b=GCcequsswuO1Q92BkMN/Ii5ePV
+ y6YAlrqyMZfCaBk/LUOXLGmkoyJGnoRvJrkMPzoKUyZoBWDQbk8+OKvXUCwnk1h07hvXEX3Zvdx1m
+ wrvqmjjRdCXeDzcd3JQDK5s0refIUgfXgDE7hORA8F3pNg/ORmh5aYCCnh65FDdive1E=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wPg2V-0006FW-3g for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 May 2026 12:28:44 +0000
+ id 1wPgBD-0006Xz-9G for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 20 May 2026 12:37:46 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 34EFF436B0;
- Wed, 20 May 2026 12:28:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 694541F000E9;
- Wed, 20 May 2026 12:28:35 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 70C594398F;
+ Wed, 20 May 2026 12:37:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 509381F000E9;
+ Wed, 20 May 2026 12:37:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1779280118;
- bh=/w3xRDdSB1Oue9DDBq9k8Rn4urhWgVsSGxIhJfb9Q7g=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=U7AzNmR4ufuz8RzeqbLm4M+bR3KDu12MqbzJ4QvdnaQyABBdPqIMEM2XGOUvPnyOj
- uGT8FCdzduuKSjnYv9cu8F2uN3jl0j4uyBHMW6pYUSdeia17qcbFQ6YK+WHkI/OiXk
- q/4Nn1gEwIdsEVf9vLYPK6d8PtZ/zJqsniXGCztnbUvnS4amcytafs0f0osDD4+0ho
- XwlAfgQY4t3YsBI/ipQN3ZgDUd+yFfLcd+Nb7BRzldgqH70YjZMginVD+PwG6IaYFm
- PVsGaGrdvkNeveC8LjttzVjDCjc/+xs/6HeecDUZA4XLrVwBB2ji2EG1oXC0Z4Yni5
- rgpWNOO8CmgPg==
-Date: Wed, 20 May 2026 20:28:29 +0800
-To: Chao Yu <chao@kernel.org>
-Message-ID: <ag2Rh-4_Tp082XXx@zlang-mailbox>
-Mail-Followup-To: Chao Yu <chao@kernel.org>, fstests@vger.kernel.org, 
- jaegeuk@kernel.org, jprusakowski@google.com, joannechien@google.com, 
- linux-f2fs-devel@lists.sourceforge.net
-References: <20260518101252.445214-1-chao@kernel.org>
+ s=k20260515; t=1779280653;
+ bh=aPukUD+NtePBNeO+9pQXROMWpzJAwBfMA+GAmXDsmOw=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=VuTLUh8sfDD/phf8ZbFnKsnOI/dDSd7+fjq92/uCsC+kcCtyPN4tZLc2/9BVY6Kaz
+ qho6eKhVZExcvQd5I3/fDLEg1v6h0YWxj5s0h4MZVIlECyFcKesvfFC1wFRb2po3PQ
+ lvKDBu6xD84QDVS6kIpMVD3jt7NBB+/DrmXBq8V+7rmc5SV7pWP8rEVcZL1ISL/rxn
+ WPgn9JPu3e6a3lmHtpMPdKIkv1XPKJksf6wrEc0XqJXuianYWq3ukTr7qFZzmt2PQF
+ FWipOqDD1Ji/xxnqeBwbXFUaQuvPCgpmP8JOq8ppUR0ZcJIlBWEcvSVaibaip2NXlf
+ l1JCroTm2qvOg==
+To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
+Date: Wed, 20 May 2026 14:37:00 +0200
+Message-ID: <20260520123722.405752-3-aalbersh@kernel.org>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20260520123722.405752-1-aalbersh@kernel.org>
+References: <20260520123722.405752-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260518101252.445214-1-chao@kernel.org>
-X-Headers-End: 1wPg2V-0006FW-3g
-Subject: Re: [f2fs-dev] [PATCH] f2fs/025: test to do sanity check section
- type correctly in f2fs GC
+X-Headers-End: 1wPgBD-0006Xz-9G
+Subject: [f2fs-dev] [PATCH v10 02/22] fsverity: expose ensure_fsverity_info()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,161 +86,89 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Zorro Lang via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Zorro Lang <zlang@kernel.org>
-Cc: joannechien@google.com, jaegeuk@kernel.org, fstests@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+From: Andrey Albershteyn via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
+Cc: Andrey Albershteyn <aalbersh@kernel.org>, djwong@kernel.org,
+ linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-ext4@vger.kernel.org, hch@lst.de, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, May 18, 2026 at 06:12:52PM +0800, Chao Yu wrote:
-> Without commit 520760b9f915 ("f2fs: optimize representative type determination
-> in GC"), f2fs GC will report inconsistent segment type in large section issue,
-> and then it will force to shutdown filesystem.
-> 
-> [  768.190903] F2FS-fs (loop51): Inconsistent segment (3) type [1, 0] in SIT and SSA
-> 
-> The reason is f2fs kernel will assume all segment type inside large section is
-> the same, during GC it loads type from one segment and compare it to other
-> segments' type, however due to recovery flow, the chosen segment may has zero
-> valid blocks w/ different segment type, since the segment is invalid(free) one,
-> it will never be migrated, so that we should not treat such state as abnormal
-> condition.
-> 
-> This testcase is created to simulate above condition to see whether f2fs kernel
-> module can handle it correctly
-> 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  tests/f2fs/025     | 88 ++++++++++++++++++++++++++++++++++++++++++++++
->  tests/f2fs/025.out |  2 ++
->  2 files changed, 90 insertions(+)
->  create mode 100644 tests/f2fs/025
->  create mode 100644 tests/f2fs/025.out
-> 
-> diff --git a/tests/f2fs/025 b/tests/f2fs/025
-> new file mode 100644
-> index 00000000..1eba7158
-> --- /dev/null
-> +++ b/tests/f2fs/025
-> @@ -0,0 +1,88 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2026 Chao Yu <chao@kernel.org>
-> +#
-> +# FS QA Test No. f2fs/025
-> +#
-> +# Check whether f2fs will encounter cp_error (Inconsistent segment type)
-> +# when doing sanity check on type of segments inside large section during
-> +# garbage collection.
-> +#
-> +. ./common/preamble
-> +_begin_fstest auto quick
-> +
-> +_fixed_by_kernel_commit 520760b9f915 \
-> +	"f2fs: optimize representative type determination in GC"
-> +
-> +. ./common/filter
-> +
-> +_cleanup()
-> +{
-> +	cd /
-> +	rm -r -f $tmp.*
-> +}
-> +
-> +_require_scratch
-> +_require_xfs_io_command "pwrite"
-> +_require_xfs_io_command "truncate"
-> +_require_command "$F2FS_IO_PROG" f2fs_io
-> +_require_check_dmesg
-> +
-> +# Format with 96MB size and 2 segments per section
-> +_scratch_mkfs_sized $((96 * 1024 * 1024)) "" "-s 2" >> $seqres.full 2>&1
-> +
-> +# Mount with mode=lfs
-> +_scratch_mount -o mode=lfs >> $seqres.full 2>&1
-> +
-> +# Create files to fill whole filesystem, then segment type will be changed to node type
-> +for ((i=0;i<5120;i++)) do
-> +	touch $SCRATCH_MNT/$i >> $seqres.full 2>&1
+This function will be used by XFS's scrub to force fsverity activation,
+therefore, to read fsverity context.
 
-5120 * 4k = 20MB
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Acked-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/verity/open.c         | 22 ++++++++++++++++++++--
+ include/linux/fsverity.h |  2 ++
+ 2 files changed, 22 insertions(+), 2 deletions(-)
 
-> +done
-> +sync
-> +
-> +# Remove all files to create free(empty) node segments
-> +rm -f $SCRATCH_MNT/*
-> +sync
-> +
-> +# Allocate free space so that we have chance to reuse free(empty) node segments
-> +$XFS_IO_PROG -f -c "pwrite -b 4k 0 1928k" $SCRATCH_MNT/file >> $seqres.full 2>&1
-> +sync
-> +
-> +$XFS_IO_PROG -c "truncate 0" $SCRATCH_MNT/file >> $seqres.full 2>&1
-> +$XFS_IO_PROG -d -c "pwrite -b 4k 0 16M" $SCRATCH_MNT/file >> $seqres.full 2>&1
-> +$XFS_IO_PROG -c "truncate 0" $SCRATCH_MNT/file >> $seqres.full 2>&1
-> +$XFS_IO_PROG -d -c "pwrite -b 4k 0 16M" $SCRATCH_MNT/file >> $seqres.full 2>&1
-> +$XFS_IO_PROG -c "truncate 0" $SCRATCH_MNT/file >> $seqres.full 2>&1
-> +sync
-> +
-> +$XFS_IO_PROG -d -c "pwrite -b 4k 0 8M" $SCRATCH_MNT/file >> $seqres.full 2>&1
-> +$XFS_IO_PROG -c "truncate 0" $SCRATCH_MNT/file >> $seqres.full 2>&1
-> +$XFS_IO_PROG -d -c "pwrite -b 4k 0 32K" $SCRATCH_MNT/file >> $seqres.full 2>&1
-> +$XFS_IO_PROG -c "truncate 0" $SCRATCH_MNT/file >> $seqres.full 2>&1
+diff --git a/fs/verity/open.c b/fs/verity/open.c
+index dfa0d1afe0fe..d32d0899df25 100644
+--- a/fs/verity/open.c
++++ b/fs/verity/open.c
+@@ -344,7 +344,24 @@ int fsverity_get_descriptor(struct inode *inode,
+ 	return 0;
+ }
+ 
+-static int ensure_verity_info(struct inode *inode)
++/**
++ * fsverity_ensure_verity_info() - cache verity info if it's not already cached
++ * @inode: the inode for which verity info should be cached
++ *
++ * Ensure this inode has verity info attached to it, it's assumed the inode
++ * already has fsverity enabled. Read fsverity descriptor and creates verity
++ * based on that.
++ *
++ * This needs to be called at least once before any of the inode's data
++ * can be verified (and thus read at all) or the inode's fsverity digest
++ * retrieved.  fsverity_file_open() calls this already, which handles
++ * normal file accesses.  If a filesystem does any internal (i.e. not
++ * associated with a file descriptor) reads of the file's data or
++ * fsverity digest, it must call this explicitly before doing so.
++ *
++ * Return: 0 on success, -errno on failure
++ */
++int fsverity_ensure_verity_info(struct inode *inode)
+ {
+ 	struct fsverity_info *vi = fsverity_get_info(inode), *found;
+ 	struct fsverity_descriptor *desc;
+@@ -380,12 +397,13 @@ static int ensure_verity_info(struct inode *inode)
+ 	kfree(desc);
+ 	return err;
+ }
++EXPORT_SYMBOL_GPL(fsverity_ensure_verity_info);
+ 
+ int __fsverity_file_open(struct inode *inode, struct file *filp)
+ {
+ 	if (filp->f_mode & FMODE_WRITE)
+ 		return -EPERM;
+-	return ensure_verity_info(inode);
++	return fsverity_ensure_verity_info(inode);
+ }
+ EXPORT_SYMBOL_GPL(__fsverity_file_open);
+ 
+diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+index a8f9aa75b792..5562271bd628 100644
+--- a/include/linux/fsverity.h
++++ b/include/linux/fsverity.h
+@@ -309,6 +309,8 @@ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
+ 	return 0;
+ }
+ 
++int fsverity_ensure_verity_info(struct inode *inode);
++
+ void fsverity_cleanup_inode(struct inode *inode);
+ 
+ struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index);
+-- 
+2.51.2
 
-1928k + 16M + 16M + 8M + 32K ~= 40M
-
-> +$XFS_IO_PROG -d -c "pwrite -b 4k 0 2M" -c "fsync" $SCRATCH_MNT/file >> $seqres.full 2>&1
-
-96M - 40M - 20M = 36M
-
-I'm not a f2fs expert, I think you hope to (almost) fill the fs before this 2M
-pwrite step. If so, I'm wondering can we ensure that other metadata takes ~36 MB
-of space, thereby guaranteeing that this 2 MB write triggers the reuse of that
-1928 KB segment (no matter with any MKFS_OPTIONS)?
-
-Thanks,
-Zorro
-
-> +
-> +# Shutdown the filesystem without checkpoint
-> +$F2FS_IO_PROG shutdown 2 $SCRATCH_MNT >> $seqres.full 2>&1
-> +
-> +_scratch_unmount >> $seqres.full 2>&1
-> +
-> +_scratch_mount -o mode=lfs >> $seqres.full 2>&1
-> +
-> +# Run urgent_gc mode to trigger garbage collection
-> +dev_name=$(_short_dev $SCRATCH_DEV)
-> +if [ -f /sys/fs/f2fs/$dev_name/gc_urgent ]; then
-> +	echo 1 > /sys/fs/f2fs/$dev_name/gc_urgent
-> +fi
-> +
-> +# Wait background GC thread to wake up to run and potentially encounter the inconsistency
-> +sleep 5
-> +
-> +_scratch_unmount >> $seqres.full 2>&1
-> +
-> +# Check whether the dmesg has the warning indicating the bug
-> +_check_dmesg_for "F2FS-fs \($dev_name\): Inconsistent segment" && \
-> +	_fail "F2FS-fs ($dev_name): Inconsistent segment type detected in dmesg!"
-> +
-> +echo "Silence is golden"
-> +status=0
-> +exit
-> diff --git a/tests/f2fs/025.out b/tests/f2fs/025.out
-> new file mode 100644
-> index 00000000..3d70951e
-> --- /dev/null
-> +++ b/tests/f2fs/025.out
-> @@ -0,0 +1,2 @@
-> +QA output created by 025
-> +Silence is golden
-> -- 
-> 2.49.0
-> 
 
 
 _______________________________________________
