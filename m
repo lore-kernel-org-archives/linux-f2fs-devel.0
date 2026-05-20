@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8EE6DCD5BA4
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 May 2026 16:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BDE45CD4F3D
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 May 2026 17:30:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:References:In-Reply-To:Message-Id:To:Date:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=OH1y0WDSHxDYT3Hfr5rZZoPnstwJ2QdBHAph97Z5hAs=; b=c972zvv22PjEMF7UJxmXc2ZDRK
-	yJkmuQZp1h+uP08zUnYWxgFAmpW4e/rrFZsaU5IsFo4ue9Kzqk017VBDW2mwhCipHfwx5UJ/qjZ8M
-	k2NW/aMmOzxe8s1ej8Ci5vSvzkrLpt8gzshizXnplaV11J3McPkh1S2740+sNHV+ostQ=;
+	bh=zVVxvy2UaoIxZ9TUfTQ39geKAf+N6qe5zFRgP0ooufU=; b=IpbP5Fxgb3F1ZZnTm1bpfL6/Cw
+	tsg+SmRtof8REiqoiy+eQhDqV94mfi6L56n2yY9SW2EKn7VMfozhbo1XKNi5bPwDbB5vkDTUYiNMZ
+	8YwRCRhROIuGR3cmpldk0SrfxSm/rheA0V7ilPpPhWzl7hb5AdqfbohmyE1+QyChcflI=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wPkFy-0008Q3-PC;
-	Wed, 20 May 2026 16:58:52 +0000
+	id 1wPkkg-0001l6-4I;
+	Wed, 20 May 2026 17:30:35 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <cel@kernel.org>) id 1wPkFx-0008Px-FD
+ (envelope-from <cel@kernel.org>) id 1wPkke-0001kz-Vi
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 May 2026 16:58:51 +0000
+ Wed, 20 May 2026 17:30:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Subject:
  References:In-Reply-To:Message-Id:Cc:To:From:Date:MIME-Version:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3HYCTjUKnMgOBwx9QLeP6Mvnf90VdQqX6Kq1eV2MzLM=; b=O7652ypcU+qCDGJMEX8CP4S1TV
- 5R7ItuZ6HPrDRkl+/W/Q7Yhjm25f8/DsxjyDNAxcDulfGeYhtQmoybfMqA2PL0S1K7JKoaU6Iq817
- b06rPvBG79DkJD0n+l2myscbL3OLOxgj39txCc1EOSnsIJTd4ot+9e+zHb0fo8R6OeKA=;
+ bh=hp/LsSdQ0ID+IBacKCrtn1LiJIpuZ/a/08Y8EBXFu0E=; b=mS10a0LwKhhCZD3jxLOgpY4ecc
+ 7mcHN/qCytw0rm7u16CKQVNTEV0Hgn+dwBHLCYdB81PK6ko4S9uOlURfT+cuWAHSUfBa1m33fs3lS
+ JA4oMcByn0zH/yJF4fqX7P2ur1Gt2eAM2xfnEggT+BHfgqVjbj2q+N9Z/ytiH7QDCwnA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:Subject:References:In-Reply-To:
@@ -42,38 +42,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=3HYCTjUKnMgOBwx9QLeP6Mvnf90VdQqX6Kq1eV2MzLM=; b=f8xVJRi7k1hv12GiVhyOKkzKbc
- hGzRgrdyfkLKvms9b8OY+n6KSk1fr142aVMG1XbBvoibWh8+bwcJzyRsmAgHj32zXlYfy78NIfj6q
- BNP+lxAS5hqNttVWXSsmo2XP40hxinlDw4v6l3GjM8QNc9+NLoFLxciHtYu7shIBLzMA=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=hp/LsSdQ0ID+IBacKCrtn1LiJIpuZ/a/08Y8EBXFu0E=; b=Ma5yJOYuAe5pdHgrBCuvvF6kas
+ VTu4pHO4fmP0eGs38Xgvi1KQvyYSzie9t2yk2Mxk9HYhqk8jLwN9EFtiOdD4uAunoFUijHpkGsdWl
+ K1jxKFifba5yZALSS4/77eJHd163JmyWqVu733soOVjT3e8tq6wTtkVq5x4vFc8CE3xU=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wPkFt-00029U-RB for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 May 2026 16:58:50 +0000
+ id 1wPkkb-000417-5i for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 20 May 2026 17:30:34 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 9EBA560139;
- Wed, 20 May 2026 16:58:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E0611F00893;
- Wed, 20 May 2026 16:58:43 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 2F619401D8;
+ Wed, 20 May 2026 17:30:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EDD91F000E9;
+ Wed, 20 May 2026 17:30:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1779296324;
- bh=3HYCTjUKnMgOBwx9QLeP6Mvnf90VdQqX6Kq1eV2MzLM=;
+ s=k20260515; t=1779298228;
+ bh=hp/LsSdQ0ID+IBacKCrtn1LiJIpuZ/a/08Y8EBXFu0E=;
  h=Date:From:To:Cc:In-Reply-To:References:Subject;
- b=UwbdSUFfiPD5nEs75u3836d9xkPyk26dXYEF4j6ngljmJB9byL9nvxBvogPMZEwS4
- HlmwR0Rq34lWaUCSaxX+qP0G3jQY+n5dNstgtVC1XjtFLnN6eag316xOeo21Oo3l8g
- nI/CHm5zH75HQblS72L7CFw3OiTnVKVi2i56AqGT074yhwFoulv9ggS7h9og71NL8s
- CUImdcg29FH5HSElh25NizNdrsqsSlyqKLhIH/aZ9mRzSL8VNxnMhU9kQHBMXoWC96
- wXpf0wB09Xs4FpEjOOUxXPlqI+hwRYphh5mtId442ujsKT5lIzZRLejcS2h5i3exxx
- +yDZS5cE5w3vg==
+ b=H94sNRNEqRKSUACk8LYK84RxEbL6+b/Vw+285XGry0XSmBqa5aB3J5f6LSMMrm+IP
+ 58PpB/I1hKpUJgIbjr9vv7xJKdQD6SfZ+05NrAWeoxrrpiru/cRXtAkDA+Asivbbrt
+ CJiUjbLwYn0xpzQHMPAQRBk9Cq4jrZymBPkcNm2gAxFE6PY/6uiD+mYwVOLlnwSHgy
+ LuPTMQPxf3gp4RhFtO1OdVDrEqQPyP642G9u3yLXTxC1Fx7F4nF6XXYB1fdQDI/R0c
+ o70WFXZyDIrzI2cy6AhKtUujqzkLD3wVVcSnEyqvm6g+YsNP6gLyxWUc+UUiYdF9tJ
+ q2oR3Fhk9+bMA==
 Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfauth.phl.internal (Postfix) with ESMTP id 653BFF4007D;
- Wed, 20 May 2026 12:58:42 -0400 (EDT)
+ by mailfauth.phl.internal (Postfix) with ESMTP id 6B958F40075;
+ Wed, 20 May 2026 13:30:26 -0400 (EDT)
 Received: from phl-imap-15 ([10.202.2.104])
- by phl-compute-10.internal (MEProxy); Wed, 20 May 2026 12:58:42 -0400
-X-ME-Sender: <xms:QugNavyinx7bKrqL4HPeQunpcXbIaluZN7wF9StWTZXgR2qve6JZ-g>
- <xme:QugNaiGhRRos_yOLWfm-5tiI1PIm-uXq5yDDMT3oiNGBSfN1wx_UeyhKOJHGIa_bo
- cQ9rqE22bExtjIDyUHyrxhoLANTG9qDp37GvGe2tAPk0XVFu3TxC64>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugeehudejucetufdoteggodetrf
+ by phl-compute-10.internal (MEProxy); Wed, 20 May 2026 13:30:26 -0400
+X-ME-Sender: <xms:su8NavFR3K0V9EcvFJfXc3Wsci7E6tZzPh7akBvB6u99zTx8rze7Gw>
+ <xme:su8NanI9KFxJAd23rFo4BZcQSSRqZ4IOxvvOi8Hq6e2addjaUtdGgzeW0Snx6bfFV
+ F6HZJz8k0LU_FpzJrJko6dN1pLJljMzh_b5Ll8sc0YwUhoSP8OzpA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugeehvdefucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhuhgt
@@ -90,21 +90,21 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugeehudejucetufdote
  ghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
  gsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtvghmsehkvghrnhgv
  lhdrohhrghdprhgtphhtthhopegthhgroheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:QugNamfaq2UpdXiWnPnay5nQ_rQckvm_41kR8NgaI4_lDDqQ4Yiy8A>
- <xmx:QugNamv95ErjE6pb8okHjc44uM5BHK6ky05NPxz2-vrTiBeWgMpiJw>
- <xmx:QugNaqupzmbSbdKQTrJcjN0dK0NknGvcRa4HhfzOtsthEH7eWtONFQ>
- <xmx:QugNat90cmRSntFhphxoUhXn78eiEA_yq5VNO1np6BiZmUQI6kUYVw>
- <xmx:QugNar9VQVV9Crz_mdTjuEL665Y3HC3jfH6afIH-rv2ZfQMjW6d6XLfr>
+X-ME-Proxy: <xmx:su8Nas-hLOkDseW56q88vVoEsCdEJofZpbwE6rWAXeInKKpHr_MW5Q>
+ <xmx:su8NarAnnqHmefxc4iTmrF4_T-hy_-xQ19oXQWlTGvvmgtwo5lPF1Q>
+ <xmx:su8NaoB7yw-Fw6OLeA4_bYVbPfkMLH9YKuPnbxL7dMEJvDRxnu_9gg>
+ <xmx:su8Napw2lcPRdf9cLIVzimsPOiNvDq1t578i-dfKLown4ig7XNkDfw>
+ <xmx:su8Nanz9yDOkUucI8YkgQgyBNftzdGRtrCi-D4JRFcnETfqVOinIWWHT>
 Feedback-ID: ifa6e4810:Fastmail
 Received: by mailuser.phl.internal (Postfix, from userid 501)
- id 33FD9780076; Wed, 20 May 2026 12:58:42 -0400 (EDT)
+ id 39DFF780076; Wed, 20 May 2026 13:30:26 -0400 (EDT)
 X-Mailer: MessagingEngine.com Webmail Interface
 MIME-Version: 1.0
 X-ThreadId: AuvJ25pICu_N
-Date: Wed, 20 May 2026 12:58:22 -0400
+Date: Wed, 20 May 2026 13:30:06 -0400
 To: "Mark Brown" <broonie@kernel.org>
-Message-Id: <858d7233-1d9c-48f4-aa4f-c5a9f6e1f5dc@app.fastmail.com>
-In-Reply-To: <3a347b64-f91b-450f-b27d-26ea6810b960@sirena.org.uk>
+Message-Id: <d2425b45-a37a-4cc9-8984-bed55ee54a32@app.fastmail.com>
+In-Reply-To: <cdeaab82-06bf-47c1-8f6c-4e40dbec2344@sirena.org.uk>
 References: <20260507-case-sensitivity-v14-0-e62cc8200435@oracle.com>
  <20260507-case-sensitivity-v14-3-e62cc8200435@oracle.com>
  <dc69224d-9926-4414-8c6e-4c15ae98705b@sirena.org.uk>
@@ -112,7 +112,9 @@ References: <20260507-case-sensitivity-v14-0-e62cc8200435@oracle.com>
  <a366645c-364d-4588-8a15-4cd446f64366@sirena.org.uk>
  <8b750b3f-4d73-41f3-84fb-6e387fd24168@app.fastmail.com>
  <3a347b64-f91b-450f-b27d-26ea6810b960@sirena.org.uk>
-X-Headers-End: 1wPkFt-00029U-RB
+ <858d7233-1d9c-48f4-aa4f-c5a9f6e1f5dc@app.fastmail.com>
+ <cdeaab82-06bf-47c1-8f6c-4e40dbec2344@sirena.org.uk>
+X-Headers-End: 1wPkkb-000417-5i
 Subject: Re: [f2fs-dev] [PATCH v14 03/15] fat: Implement fileattr_get for
  case sensitivity
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -151,53 +153,16 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 
-On Wed, May 20, 2026, at 11:19 AM, Mark Brown wrote:
-> On Wed, May 20, 2026 at 11:12:51AM -0400, Chuck Lever wrote:
->> On Wed, May 20, 2026, at 10:54 AM, Mark Brown wrote:
+On Wed, May 20, 2026, at 1:11 PM, Mark Brown wrote:
+> On Wed, May 20, 2026 at 12:58:22PM -0400, Chuck Lever wrote:
+>> The first option is the narrowest kernel-side change, and
+>> matches what other minimal-fileattr filesystems do.
 >
->> > It's not testing tmpfs (well, it does but that passed), as the log above
->> > shows it is making a vfat filesystem on a loop device backed by a file
->> > that happens to be in a tmpfs and then testing that.  There's a bunch of
->> > filesystems covered in this manner:
->
->> OK. Is vfat the only failure in LTP statx04 ?
->
-> Yes, it's the only one showing as failing - there are four failures
-> correspoding to the four tests done for vfat.
+> That sounds like a good idea regardless of what we do with the test?
 
-03/15 adds .fileattr_get = fat_fileattr_get for both
-fat_file_inode_operations and vfat_dir_inode_operations. LTP
-opens a directory (SAFE_OPEN(TESTDIR, O_RDONLY|O_DIRECTORY)),
-so FS_IOC_GETFLAGS on the dir now succeeds, and statx04
-proceeds where it was previously skipped.
-
-AFAICS, 03/15 did not change pre-existing kernel behavior of
-stx_attributes_mask on vfat. It merely converted a "skipped"
-LTP outcome into an "executed but failed" outcome.
-
-Fix options:
-
-* fat_getattr() could call generic_fill_statx_attr(inode, stat),
-  which advertises KSTAT_ATTR_VFS_FLAGS (IMMUTABLE + APPEND).
-  That clears 2 of 4 TFAILs but not COMPRESSED/NODUMP, which
-  FAT genuinely does not back.
-
-* Set stat->attributes_mask |= KSTAT_ATTR_FS_IOC_FLAGS in
-  fat_getattr(). Honest only to the extent that FAT now exposes
-  some FS_*_FL bits via fileattr. This would silence the test
-  failures, but advertises capabilities (COMPRESSED, NODUMP)
-  FAT doesn't track.
-
-* Admit the LTP statx04 test needs to be updated.
-  FS_IOC_GETFLAGS succeeding does not logically imply all four
-  FS_IOC_FLAGS-mapped STATX_ATTR_* bits are supported. The
-  test's gate is too coarse for filesystems that gained a
-  narrowly-scoped fileattr_get (just casefold/immutable). The
-  test's tag list pins it to filesystems that do support the
-  full set, but vfat was tacitly excluded by the prior ENOTTY.
-
-The first option is the narrowest kernel-side change, and
-matches what other minimal-fileattr filesystems do.
+Yes, I have no objection to this approach, but it would be great to
+hear from the vfat maintainers/contributors on this one before I
+dig in.
 
 
 -- 
