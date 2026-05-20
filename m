@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A14C0CD4F3C
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 May 2026 15:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8EE6DCD5BA4
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 20 May 2026 16:58:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:References:In-Reply-To:Message-Id:To:Date:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=CHlSZRcbUrctGrmUtHl6iH4k2bC0Ee4xxx4QVQz2H+0=; b=a8eFTTDi8IIR9C3elX8SsJnUAJ
-	mIiW46YbK3NG/6qi/4D/fj6ShKmt5bnjeUsGtGeWmKd+UwuHnRkqZdL9fs6CR42C4S8tBkq1Oxa6h
-	PZt1dFALMaInQP2+2ghsWDDFnC19eKH//bWq6PrMA4RkouI29VCBTXJEQsQSAC/0lbtg=;
+	bh=OH1y0WDSHxDYT3Hfr5rZZoPnstwJ2QdBHAph97Z5hAs=; b=c972zvv22PjEMF7UJxmXc2ZDRK
+	yJkmuQZp1h+uP08zUnYWxgFAmpW4e/rrFZsaU5IsFo4ue9Kzqk017VBDW2mwhCipHfwx5UJ/qjZ8M
+	k2NW/aMmOzxe8s1ej8Ci5vSvzkrLpt8gzshizXnplaV11J3McPkh1S2740+sNHV+ostQ=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wPibs-0000uo-9K;
-	Wed, 20 May 2026 15:13:21 +0000
+	id 1wPkFy-0008Q3-PC;
+	Wed, 20 May 2026 16:58:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <cel@kernel.org>) id 1wPibr-0000ui-Hh
+ (envelope-from <cel@kernel.org>) id 1wPkFx-0008Px-FD
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 May 2026 15:13:21 +0000
+ Wed, 20 May 2026 16:58:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Subject:
  References:In-Reply-To:Message-Id:Cc:To:From:Date:MIME-Version:Sender:
  Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
  :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8dqhKrp9QxPmbHdOhtinaRS5mItxrPIhA1DLRkJPMuw=; b=Qx4g/MK5lmK2vhLcA21iokGy29
- +pdFx6QI0N6F2n34ibbcu9DPRk+4HqArJ08kcGmMpciBBDrbW5IsZhC4LOv4ZYrrrvZ4Zi6hJKw30
- wnX8QE40fI8d2tmQ+/BXWYnTNmxLEBRXRfz7+TVtPgcu8wyqc2EdtunAfDfdyDLnv38Y=;
+ bh=3HYCTjUKnMgOBwx9QLeP6Mvnf90VdQqX6Kq1eV2MzLM=; b=O7652ypcU+qCDGJMEX8CP4S1TV
+ 5R7ItuZ6HPrDRkl+/W/Q7Yhjm25f8/DsxjyDNAxcDulfGeYhtQmoybfMqA2PL0S1K7JKoaU6Iq817
+ b06rPvBG79DkJD0n+l2myscbL3OLOxgj39txCc1EOSnsIJTd4ot+9e+zHb0fo8R6OeKA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:Subject:References:In-Reply-To:
@@ -42,38 +42,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=8dqhKrp9QxPmbHdOhtinaRS5mItxrPIhA1DLRkJPMuw=; b=JXro8cAOd9I4frNEbXO5dE+HPi
- APKfuJELDTFRXBH+3j1loM5aH6K01/vd+G1uToBbxAMeKEdpZeEpmuaf0X/Pso2CboHRYQs4jSRp9
- 6AryzQFAEGUjzYRqYgQGHNwbN3W02vlfY6oudjRtrxPM+80xCt0PgEF19Pgnow2zEUeA=;
+ bh=3HYCTjUKnMgOBwx9QLeP6Mvnf90VdQqX6Kq1eV2MzLM=; b=f8xVJRi7k1hv12GiVhyOKkzKbc
+ hGzRgrdyfkLKvms9b8OY+n6KSk1fr142aVMG1XbBvoibWh8+bwcJzyRsmAgHj32zXlYfy78NIfj6q
+ BNP+lxAS5hqNttVWXSsmo2XP40hxinlDw4v6l3GjM8QNc9+NLoFLxciHtYu7shIBLzMA=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wPibn-0003Sl-2o for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 20 May 2026 15:13:21 +0000
+ id 1wPkFt-00029U-RB for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 20 May 2026 16:58:50 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id CC47960126;
- Wed, 20 May 2026 15:13:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 867931F000E9;
- Wed, 20 May 2026 15:13:12 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 9EBA560139;
+ Wed, 20 May 2026 16:58:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E0611F00893;
+ Wed, 20 May 2026 16:58:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1779289993;
- bh=8dqhKrp9QxPmbHdOhtinaRS5mItxrPIhA1DLRkJPMuw=;
+ s=k20260515; t=1779296324;
+ bh=3HYCTjUKnMgOBwx9QLeP6Mvnf90VdQqX6Kq1eV2MzLM=;
  h=Date:From:To:Cc:In-Reply-To:References:Subject;
- b=bDcrDxgLBXqFd7oQ0wZU622SnF/gVCHQtBI0GrLMzkntsFVzv52Agrt4HYg93JO7A
- ZRtgunV6IZDaK3zNaRtWQAfTHpld/8PkX2dKFnPtNP0fto38nrZzC3OBRp2yoyX4lt
- pdxubsyu3DFOIEl6f6uUAYV+5pMxBJXxw1b9PCHnBREQtbZQjDysNanhWnNIT3v0W6
- LBY0asiOPMnAaC3I5Bm5u2q7q1ZaBbA3QHBUiQGm47FzbfQrzdd8khWWPigXOoPxdW
- kwNjXUqUVfGG+L0Wz+G9dz3/LSru4bFBxQBQjPEEdB4cTbPpoo5ZkXNPDVQAn3YdSH
- LDkDpyrlXc0jQ==
+ b=UwbdSUFfiPD5nEs75u3836d9xkPyk26dXYEF4j6ngljmJB9byL9nvxBvogPMZEwS4
+ HlmwR0Rq34lWaUCSaxX+qP0G3jQY+n5dNstgtVC1XjtFLnN6eag316xOeo21Oo3l8g
+ nI/CHm5zH75HQblS72L7CFw3OiTnVKVi2i56AqGT074yhwFoulv9ggS7h9og71NL8s
+ CUImdcg29FH5HSElh25NizNdrsqsSlyqKLhIH/aZ9mRzSL8VNxnMhU9kQHBMXoWC96
+ wXpf0wB09Xs4FpEjOOUxXPlqI+hwRYphh5mtId442ujsKT5lIzZRLejcS2h5i3exxx
+ +yDZS5cE5w3vg==
 Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfauth.phl.internal (Postfix) with ESMTP id B4FCDF4007F;
- Wed, 20 May 2026 11:13:11 -0400 (EDT)
+ by mailfauth.phl.internal (Postfix) with ESMTP id 653BFF4007D;
+ Wed, 20 May 2026 12:58:42 -0400 (EDT)
 Received: from phl-imap-15 ([10.202.2.104])
- by phl-compute-10.internal (MEProxy); Wed, 20 May 2026 11:13:11 -0400
-X-ME-Sender: <xms:h88NanPZoAh6fJjERdRUPNJd7ginhDUpVvORLEtlIC_A8ozAhyCpFQ>
- <xme:h88Nasy7bDtAU5vDFUlrjierZTX9I8ObWJN3rLJrTM7gqlgzW5xwL2g0JP9qabEKX
- t7dDK5dS8m65gV5RY5e9uQhs3cCsXLyvhlu7YbrM_qObXjl8lEY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugeegleeiucetufdoteggodetrf
+ by phl-compute-10.internal (MEProxy); Wed, 20 May 2026 12:58:42 -0400
+X-ME-Sender: <xms:QugNavyinx7bKrqL4HPeQunpcXbIaluZN7wF9StWTZXgR2qve6JZ-g>
+ <xme:QugNaiGhRRos_yOLWfm-5tiI1PIm-uXq5yDDMT3oiNGBSfN1wx_UeyhKOJHGIa_bo
+ cQ9rqE22bExtjIDyUHyrxhoLANTG9qDp37GvGe2tAPk0XVFu3TxC64>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugeehudejucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhuhgt
@@ -90,27 +90,29 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugeegleeiucetufdote
  ghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
  gsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtvghmsehkvghrnhgv
  lhdrohhrghdprhgtphhtthhopegthhgroheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:h88NakEks2rfD9OalS8ngqxS5q8fCYyxdhjAoTCi9Vc61b5QWwMZQA>
- <xmx:h88NajoeLr4Pi6ussVLVJN2t71CEoSYKC8sec503wHX9CcpLAx8DVQ>
- <xmx:h88NakJwz4NpVTdqRErBae-kslldix6kZFVhiV6VR5i8YzddCZZ-cA>
- <xmx:h88Naja5ApYgknkBh5zV-M4CtPMIi2SvPkUorF9SPDyxLjrWu5ne_A>
- <xmx:h88Nag71tyG97Kc5muYomSB72JP-pdJnkr01SeEceG5QQqDJlzWdPW56>
+X-ME-Proxy: <xmx:QugNamfaq2UpdXiWnPnay5nQ_rQckvm_41kR8NgaI4_lDDqQ4Yiy8A>
+ <xmx:QugNamv95ErjE6pb8okHjc44uM5BHK6ky05NPxz2-vrTiBeWgMpiJw>
+ <xmx:QugNaqupzmbSbdKQTrJcjN0dK0NknGvcRa4HhfzOtsthEH7eWtONFQ>
+ <xmx:QugNat90cmRSntFhphxoUhXn78eiEA_yq5VNO1np6BiZmUQI6kUYVw>
+ <xmx:QugNar9VQVV9Crz_mdTjuEL665Y3HC3jfH6afIH-rv2ZfQMjW6d6XLfr>
 Feedback-ID: ifa6e4810:Fastmail
 Received: by mailuser.phl.internal (Postfix, from userid 501)
- id 83D25780070; Wed, 20 May 2026 11:13:11 -0400 (EDT)
+ id 33FD9780076; Wed, 20 May 2026 12:58:42 -0400 (EDT)
 X-Mailer: MessagingEngine.com Webmail Interface
 MIME-Version: 1.0
 X-ThreadId: AuvJ25pICu_N
-Date: Wed, 20 May 2026 11:12:51 -0400
+Date: Wed, 20 May 2026 12:58:22 -0400
 To: "Mark Brown" <broonie@kernel.org>
-Message-Id: <8b750b3f-4d73-41f3-84fb-6e387fd24168@app.fastmail.com>
-In-Reply-To: <a366645c-364d-4588-8a15-4cd446f64366@sirena.org.uk>
+Message-Id: <858d7233-1d9c-48f4-aa4f-c5a9f6e1f5dc@app.fastmail.com>
+In-Reply-To: <3a347b64-f91b-450f-b27d-26ea6810b960@sirena.org.uk>
 References: <20260507-case-sensitivity-v14-0-e62cc8200435@oracle.com>
  <20260507-case-sensitivity-v14-3-e62cc8200435@oracle.com>
  <dc69224d-9926-4414-8c6e-4c15ae98705b@sirena.org.uk>
  <04302551-3628-4036-9a3f-596cb782f5b7@app.fastmail.com>
  <a366645c-364d-4588-8a15-4cd446f64366@sirena.org.uk>
-X-Headers-End: 1wPibn-0003Sl-2o
+ <8b750b3f-4d73-41f3-84fb-6e387fd24168@app.fastmail.com>
+ <3a347b64-f91b-450f-b27d-26ea6810b960@sirena.org.uk>
+X-Headers-End: 1wPkFt-00029U-RB
 Subject: Re: [f2fs-dev] [PATCH v14 03/15] fat: Implement fileattr_get for
  case sensitivity
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -149,51 +151,54 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 
+On Wed, May 20, 2026, at 11:19 AM, Mark Brown wrote:
+> On Wed, May 20, 2026 at 11:12:51AM -0400, Chuck Lever wrote:
+>> On Wed, May 20, 2026, at 10:54 AM, Mark Brown wrote:
+>
+>> > It's not testing tmpfs (well, it does but that passed), as the log above
+>> > shows it is making a vfat filesystem on a loop device backed by a file
+>> > that happens to be in a tmpfs and then testing that.  There's a bunch of
+>> > filesystems covered in this manner:
+>
+>> OK. Is vfat the only failure in LTP statx04 ?
+>
+> Yes, it's the only one showing as failing - there are four failures
+> correspoding to the four tests done for vfat.
 
-On Wed, May 20, 2026, at 10:54 AM, Mark Brown wrote:
-> On Wed, May 20, 2026 at 10:39:16AM -0400, Chuck Lever wrote:
->> On Wed, May 20, 2026, at 10:31 AM, Mark Brown wrote:
->> > On Thu, May 07, 2026 at 04:52:56AM -0400, Chuck Lever wrote:
->
->> > I'm seeing a regression in -next with the LTP statx04 test which bisects
->> > to this commit:
->
->> > tst_tmpdir.c:316: TINFO: Using /tmp/LTP_sta8hUyB4 as tmpdir (tmpfs 
->> > filesystem)
->> > tst_device.c:98: TINFO: Found free device 0 '/dev/loop0'
->> > tst_test.c:2047: TINFO: LTP version: 20260130
->> > tst_test.c:2050: TINFO: Tested kernel: 7.1.0-rc4-next-20260520 #1 SMP 
->> > PREEMPT @1779279361 aarch64
->
->> > ...
->
->> > tst_test.c:1985: TINFO: === Testing on vfat ===
->> > tst_test.c:1290: TINFO: Formatting /dev/loop0 with vfat opts='' extra 
->> > opts=''
->> > tst_test.c:1302: TINFO: Mounting /dev/loop0 to 
->> > /tmp/LTP_sta8hUyB4/mntpoint fstyp=vfat flags=0
->> > statx04.c:121: TFAIL: STATX_ATTR_COMPRESSED not supported
->> > statx04.c:121: TFAIL: STATX_ATTR_APPEND not supported
->> > statx04.c:121: TFAIL: STATX_ATTR_IMMUTABLE not supported
->> > statx04.c:121: TFAIL: STATX_ATTR_NODUMP not supported
->
->> At first blush, that does not seem like a plausible bisect
->> result. This commit shouldn't affect the behavior of tmpfs
->> in any way.
->
-> It's not testing tmpfs (well, it does but that passed), as the log above
-> shows it is making a vfat filesystem on a loop device backed by a file
-> that happens to be in a tmpfs and then testing that.  There's a bunch of
-> filesystems covered in this manner:
->
-> tst_test.c:1985: TINFO: === Testing on ext2 ===
-> tst_test.c:1985: TINFO: === Testing on ext3 ===
-> tst_test.c:1985: TINFO: === Testing on ext4 ===
-> tst_test.c:1985: TINFO: === Testing on btrfs ===
-> tst_test.c:1985: TINFO: === Testing on vfat ===
-> tst_test.c:1985: TINFO: === Testing on tmpfs ===
+03/15 adds .fileattr_get = fat_fileattr_get for both
+fat_file_inode_operations and vfat_dir_inode_operations. LTP
+opens a directory (SAFE_OPEN(TESTDIR, O_RDONLY|O_DIRECTORY)),
+so FS_IOC_GETFLAGS on the dir now succeeds, and statx04
+proceeds where it was previously skipped.
 
-OK. Is vfat the only failure in LTP statx04 ?
+AFAICS, 03/15 did not change pre-existing kernel behavior of
+stx_attributes_mask on vfat. It merely converted a "skipped"
+LTP outcome into an "executed but failed" outcome.
+
+Fix options:
+
+* fat_getattr() could call generic_fill_statx_attr(inode, stat),
+  which advertises KSTAT_ATTR_VFS_FLAGS (IMMUTABLE + APPEND).
+  That clears 2 of 4 TFAILs but not COMPRESSED/NODUMP, which
+  FAT genuinely does not back.
+
+* Set stat->attributes_mask |= KSTAT_ATTR_FS_IOC_FLAGS in
+  fat_getattr(). Honest only to the extent that FAT now exposes
+  some FS_*_FL bits via fileattr. This would silence the test
+  failures, but advertises capabilities (COMPRESSED, NODUMP)
+  FAT doesn't track.
+
+* Admit the LTP statx04 test needs to be updated.
+  FS_IOC_GETFLAGS succeeding does not logically imply all four
+  FS_IOC_FLAGS-mapped STATX_ATTR_* bits are supported. The
+  test's gate is too coarse for filesystems that gained a
+  narrowly-scoped fileattr_get (just casefold/immutable). The
+  test's tag list pins it to filesystems that do support the
+  full set, but vfat was tacitly excluded by the prior ENOTTY.
+
+The first option is the narrowest kernel-side change, and
+matches what other minimal-fileattr filesystems do.
+
 
 -- 
 Chuck Lever
