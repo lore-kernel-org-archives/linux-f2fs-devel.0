@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9BAF9CD4F5E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 May 2026 11:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BBC29CD4F5E
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 May 2026 11:43:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=vyXuyf65Vols4z2iq18c7NhwaBycSRIEI327qVjHYbA=; b=LSI5Id94cjS/FNu8o3HDFOO3Ql
-	gbRhgNGEjBNw+e8kxndtVUuLNRcj7NFh888BWHdttcQuKeO6cwymI9K2AXgzY/6NVRFxdN7FsS444
-	JRiA+Jy3Fsjpea3KcOymvA49Xj7HSu51ZP+Gi1+98PE8xUTNqAJrj2GwVH9und6Bwtpw=;
+	bh=SsIKh8GSSbRYjA1v/2zoyyEXJASoteuJ/3MHK+hPcz8=; b=XzZ2d1q6F/He1Xjop2XRfDemSG
+	yusia4sCJu1wBMH06IywQo87yIBmSHEbVTYxpjv0XaDDtpAgnAEaw61ttoah8oS2JSV7vUz8iCW0Y
+	sh5UBiXupR5kzg1d+7qJDEX2xIVX8Bd9U9xZskeGApMKn9PJNo+17SQOJYLL9wYqNTm0=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wQ1js-0007NO-6P;
-	Thu, 21 May 2026 11:38:56 +0000
+	id 1wQ1np-0007VR-4j;
+	Thu, 21 May 2026 11:43:01 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <cem@kernel.org>) id 1wQ1jr-0007NI-5M
+ (envelope-from <cem@kernel.org>) id 1wQ1no-0007VJ-5f
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 21 May 2026 11:38:55 +0000
+ Thu, 21 May 2026 11:43:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rTwZ36g4KGNrjmP2zhYmYAfW/FKKRnhts60EBcPJrhA=; b=Rx+WsUlkQm4EJUMr++nPvoog3f
- IyK+XHiv85m80OVfKuhFnSLf26KSSR5MUAWyOAao0ngZmSkJGNWv7Uq6oIVqmkicli3rR31MOBG/j
- yO7VAba2Uvcgz3LuaV4JHYPcuOi2g/DAmpdo2SB8DWS3meT38p9hS7GI67f3ItU14dr4=;
+ bh=iK6mSPxFy0vjCsfCJjKbkldG7pEzGcI6Ck24cYLrRvY=; b=U351v2PHCuBQeZ9SRJJ9zN5y+9
+ BKWS4gn4e+DO54ln2zNK5za/Vsipv9ZoXD2On7pCL9fHrtl7QzZv7jaYfpdritEy+ZMJM0hZZSqRl
+ cOrQ26IYt3hmdNB08kLFQSu1r9FxChNxmIekn6JNggPQml7t3e4aCPu4a0xaSjpUSaFQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=rTwZ36g4KGNrjmP2zhYmYAfW/FKKRnhts60EBcPJrhA=; b=N9UkaMPUwH8WYzHcHup9tXPHxK
- D5BdkwVyO166OiXWFT9BUPa6sAeJtvledECdS+XVSLxvjeeoONHXS1CSLjFlxRvHRlhpw7ywGUWUt
- WOQd98JuLt8w+wuWS4Z/M14rW1He2gp2UAO27k3rwl7k6hp/rsYEG60Et2VGVYCngbV4=;
+ bh=iK6mSPxFy0vjCsfCJjKbkldG7pEzGcI6Ck24cYLrRvY=; b=eV2L2VamJuFxzbuJ2JQXPTlnSt
+ Z6CGJFQCjoePiHuQ4aac9zEl+uxun72dAVZovm1uDLL/hy65k6zmV1rYf42ayULeo0KjUWZ7m8yDU
+ zOagHWVG+AjeTiIs62YWt1MBEe4kXjhKiOZs7tiLuPdVfmWIZWPfkRjZv2YwOLB/+QNs=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wQ1jm-0004ES-EW for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 21 May 2026 11:38:55 +0000
+ id 1wQ1nn-0004dd-8A for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 21 May 2026 11:43:00 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 43D94601F3;
- Thu, 21 May 2026 11:38:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D41BA1F000E9;
- Thu, 21 May 2026 11:38:41 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 1F2EB60210;
+ Thu, 21 May 2026 11:42:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62DCE1F000E9;
+ Thu, 21 May 2026 11:42:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1779363525;
- bh=rTwZ36g4KGNrjmP2zhYmYAfW/FKKRnhts60EBcPJrhA=;
+ s=k20260515; t=1779363768;
+ bh=iK6mSPxFy0vjCsfCJjKbkldG7pEzGcI6Ck24cYLrRvY=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=DBV8PG4VrYTDqdN9t/cCQWnjSSYEiRIyWE6hcxudD8ZlgGK+7cSwHRHQLbCS9ZvNX
- 249JW+NoKSWCXJ5+lO7HxMUDojyhtM8K+Ed5gC9qS4Y82fH/JwrYkDHfy9v04Yh23K
- 3Q9M9ZnQHSiVs3u/g6gQ/EmahcO92BEQWC/BpNj7m7GPdu8V2Iz6s7eyZetIm06DdU
- AEPie4YNg7zKA0tizxBtdO3xTjCyt1ZPqapck9FBsTvnbgIs6jSyxArjshxxmOjkVr
- 3Y3BIbRQxuFR0Vb7Yi2i/vYJCOjJFWEDFhWiZk8VHhE5smjMDKxishmH5E1PAQ6sIE
- QyjsJwtDSAIeQ==
-Date: Thu, 21 May 2026 13:38:38 +0200
+ b=G+LbjXw3KMFPy0dZ12ugOG3OxxUcZkxosWmAiv+a8VO/2LYci1ZkxRc5cNowYRJJj
+ cTdINxJrieb28GABNIJpefYFhMcgjKcsabqZjefLHtue6AJOU1Nt4UoGe2OQRQ+nmt
+ ooJFboYCCrhPHK0tVqkquc2R+F8JZDIMMBMAzyf5/aGm3N7DV8fH/dn/sck/U/S9nI
+ 1uLV/Dwle42LLC46V2Sy5AnYvFn6PidVJ71ndkKYrcL8kHB3T4/sCzDRpWBhy5Qbu7
+ KDQP2T1aZgTxpBepvsHkOeT1jlHTzsWAsBujAZp2PkS3XBN00eeR+veVlIbVP46zxU
+ fXLp2YMtOaAmw==
+Date: Thu, 21 May 2026 13:42:42 +0200
 To: Andrey Albershteyn <aalbersh@redhat.com>
-Message-ID: <ag7uW7KQ5mVyCGEv@nidhogg.toxiclabs.cc>
+Message-ID: <ag7vc9gaHo3XtsBJ@nidhogg.toxiclabs.cc>
 References: <20260520123722.405752-1-aalbersh@kernel.org>
  <20260521090705.GA14254@lst.de>
  <gcw7zcg6p4s2egpufwizfig72g6ren7jfmuz5mqskkpb7xepww@e3v35j7bk7dc>
+ <ag7uW7KQ5mVyCGEv@nidhogg.toxiclabs.cc>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <gcw7zcg6p4s2egpufwizfig72g6ren7jfmuz5mqskkpb7xepww@e3v35j7bk7dc>
-X-Headers-End: 1wQ1jm-0004ES-EW
+In-Reply-To: <ag7uW7KQ5mVyCGEv@nidhogg.toxiclabs.cc>
+X-Headers-End: 1wQ1nn-0004dd-8A
 Subject: Re: [f2fs-dev] [PATCH v10 00/22] fs-verity support for XFS with
  post EOF merkle tree
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -92,8 +93,8 @@ From: Carlos Maiolino via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Carlos Maiolino <cem@kernel.org>
 Cc: fsverity@lists.linux.dev, ebiggers@kernel.org, brauner@kernel.org,
- Andrey Albershteyn <aalbersh@kernel.org>, djwong@kernel.org,
- david@fromorbit.com, linux-unionfs@vger.kernel.org,
+ Andrey Albershteyn <aalbersh@kernel.org>, miklos@szeredi.hu, djwong@kernel.org,
+ amir73il@gmail.com, david@fromorbit.com, linux-unionfs@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
  Christoph Hellwig <hch@lst.de>, linux-btrfs@vger.kernel.org
@@ -101,28 +102,32 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, May 21, 2026 at 11:42:13AM +0200, Andrey Albershteyn wrote:
-> On 2026-05-21 11:07:05, Christoph Hellwig wrote:
-> > On Wed, May 20, 2026 at 02:36:58PM +0200, Andrey Albershteyn wrote:
-> > > This series based on v7.1-rc4.
+On Thu, May 21, 2026 at 01:38:45PM +0200, Carlos Maiolino wrote:
+> On Thu, May 21, 2026 at 11:42:13AM +0200, Andrey Albershteyn wrote:
+> > On 2026-05-21 11:07:05, Christoph Hellwig wrote:
+> > > On Wed, May 20, 2026 at 02:36:58PM +0200, Andrey Albershteyn wrote:
+> > > > This series based on v7.1-rc4.
+> > > 
+> > > How are we going to merge this?  It touches at three subsystem trees
+> > > (fsverity, vfs/iomap, xfs) so some coordination will be needed.
 > > 
-> > How are we going to merge this?  It touches at three subsystem trees
-> > (fsverity, vfs/iomap, xfs) so some coordination will be needed.
+> > As most of the patches are xfs, it's probably make sense to go
+> > through xfs tree
+> > 
+> > Carlos, what do you think?
 > 
-> As most of the patches are xfs, it's probably make sense to go
-> through xfs tree
-> 
-> Carlos, what do you think?
+> I was expecting this to come through xfs tree too if Eric and Christian
+> agree.
+> FWIW I'm adding Christian to the Cc
 
-I was expecting this to come through xfs tree too if Eric and Christian
-agree.
-FWIW I'm adding Christian to the Cc
-
+Woops... Also Adding Amir and Miklos to the Cc list due the overlayfs
+patch:
 > 
-> -- 
-> - Andrey
-> 
-> 
+> > 
+> > -- 
+> > - Andrey
+> > 
+> > 
 
 
 _______________________________________________
