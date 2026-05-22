@@ -4,107 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 791A0CD4F5B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 May 2026 06:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EE4EDCD4F5B
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 May 2026 07:00:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=aBfv1b+nWO5sTbGa9BwGLXgT5BGx/WITcOlm+e49b6g=; b=CkVli54laQ3u3uc1z31gn8Rfoe
-	tpWaFsMCp2NAQQXxinxlSUjIJchNyta/06kcM1MRCr6sSNH7d9LtLGSTRivG8U7UAWN8gE/27GUA/
-	EOVymBrO9it9bOyf/Ss4pbYwYQtHSxbf78IN0/Bz2A46GUjDbLYfbDL+p80JhIVKwQG0=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=jYS2vVpvRD7Cor8yapJVtmr0BzEqAwavtYes3wv2r+w=; b=kyJHBLv4sfUYLWZtiiCc6hr4vW
+	g7wbJ62PUB0WbUjT4eWAJeLkaSVItrz0spUY0aQHsnd3RhqA3dhayh690+E2pl7zz0pEbVySvmFTP
+	ifXTVN0+eSLuc2M5b7V5XhBXfPnb181PNK/SW9jjwz5YNzmLu8lOQIe2Q2rHugVidLBM=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wQJ7P-0004Kj-M4;
-	Fri, 22 May 2026 06:12:24 +0000
+	id 1wQJra-0001QB-7p;
+	Fri, 22 May 2026 07:00:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1wQJ7O-0004Kc-VO
+ (envelope-from <chao@kernel.org>) id 1wQJrD-0001Ok-Ph
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 22 May 2026 06:12:23 +0000
+ Fri, 22 May 2026 06:59:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6CYsnbQpwdBss8UJyhFzNCVV7Ck7wGnXEx/PkWGq2/s=; b=I2J1d+w5FohP6O/7U1W//Rke4X
- 8WRNQZEDc+nF5vCV1CRKsdhVrk9XWXFzBtR/367rno6x6MdEPFh20Os/jnx8IHxgFUkwMRwuhht1z
- WGOMnbBBty51YpZCPfNomsd24ECtkWOoxFiM+cAtRx53VAM2rKiH4WWQxFevizPGUr14=;
+ bh=LXpfIPCwR9J7BljOwsx1xfeavd9YBYzAsniQAQt/y8k=; b=ZvHWJFIhyqqRd2iUq39zfJnNMB
+ r2LCMQXauqgyv47rdLzn7sjTIutOFEyiyvRwb001WQHVQUmGIMLwt8nlCuN0xY5XCLHTsyodokxDe
+ yZjbbn8ppMIqqO7MFIn/wBB0TIyJzRFGdqv+3fWl5yjCyZAMJ8dtNFZNlhcAK7MosNp0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=6CYsnbQpwdBss8UJyhFzNCVV7Ck7wGnXEx/PkWGq2/s=; b=E
- veVSBoNmQhteEhKgC6Ip+I0p8mY70ggqxPYGdh3XGh3IEb7Jt8GX1rd1nVqu0acSKuiG914NM9Op9
- LyMycsMBBnkuCBhzr2m8QfqMhElKRVzQDEKRjrQbC4MEshmo4KSjdFwYPrl4VrfRe2+5HPvnsnZyA
- QYiokIeTfsib9dlY=;
-Received: from mail-pj1-f41.google.com ([209.85.216.41])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=LXpfIPCwR9J7BljOwsx1xfeavd9YBYzAsniQAQt/y8k=; b=OsKfjCO+vB94IU587Ap9Qv3nM5
+ HYYHzS7MHtYA58ij9fVSK9ZiByLlKx2bu4CrH5EIJTqtULkzjKwwWpDNu+lSnAj0MCKk5btbFqJQX
+ yOaFFCPUiba6vSByc/v9lAv9jdipRvof3/FQ6IXaiBy3m8yMZqJFBSz7e7jkN5Dmh6UA=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wQJ7O-0005r0-Mq for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 22 May 2026 06:12:23 +0000
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-36900945df5so3532818a91.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 21 May 2026 23:12:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1779430332; x=1780035132; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=6CYsnbQpwdBss8UJyhFzNCVV7Ck7wGnXEx/PkWGq2/s=;
- b=JQ1cDCxMt+wgfnqxOuUDPZpWD28yHrc9xVRX4jAuI7GkxUzJ2ZGrY3glPiHLHayaQR
- dXGzW39mWK3/I1WyVRMsEBe1pvorgDdeE+i+vCVF7dGwhEXIPq9j56q33QoiAhwwkM6k
- of52mfj5VI2vLlbaqiHx3ciBCmRY9vGrbqBthYmUH0jB5lXRx2C0RUpti4B0fcIaYMP5
- Kh3bQ6J6QcQt7isYl4i8S4ye0V+EgutcD1eGZchRoXu432F9Oodn/wH+cHPz5QEu0fyk
- YV8VMIhd7Mf6VJxoh6x2rME1B+rWBG1Hd+12ZNE+iN3I3p0GFB8oe/hwYuNnMN7DfkkS
- O0zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779430332; x=1780035132;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=6CYsnbQpwdBss8UJyhFzNCVV7Ck7wGnXEx/PkWGq2/s=;
- b=oFZxM4KYLs4YPmJt7/9kMOZC+gr6AVJNbAU7KxTHpqrR28uyIDIhhazUgi36LFBEpB
- m0LbZDV4aoy+J5ewdUxT60LPbJ1Xn4gl+vdtKpY9dMbY8/VSlc669RLJp93ccRH0K0v4
- 6V5i9gpVgw8lFIuaZxHx17X3vq27lCNeFUF8iSuL2keoHh5iCvnyJpdcgO1nDLt34dMR
- /tvSxUmg2AYByGQdobRvK1uvrg3fixNBYMXEthV9cR876U7Hwnfm3p0Fp2ZQ75czdE/3
- TSVF0HkdJGtHj9B4p5t70egx+qDtvujnFN7+LH5Yb0rtXi+uWXJMh5AwnpXrGw/L99Fq
- H5PA==
-X-Gm-Message-State: AOJu0YzWFbVKCMiIvsNy9k+bneUyY8quWEkrzLNE3He0zj07jEz8HUHE
- J77aYWfX9bbpBQm8Wx8V7LJT0D2Ios1j/KnWvCe8FIhe/NruRdMGLLAJTh8Tb7Yz
-X-Gm-Gg: Acq92OHcyCLITjxt5BtM2xwjylZ1AwLpL3c+0L37j5x5c4bCsBR87lBKvPEKWCnGxfs
- UiJBKTEV63rmytT/jHpsh4dVgisy5h2yM2djyXcIWqWElazYRYmeCBd0ndyThzN2kpO7ancaKwI
- NezsuUqxAsDxLvaaPrJ1D2kW0poW7lg9vl5SiyYWpuXaJNTXLD+5dFd3bJQBEJx88Yid/5XVqjc
- ua90VlA8SigWjbtUH1sfsSxWh2Z+sxCokozsdXGWY9b6upXfs18s3OOJoTws9PaT7gauV6R6Fog
- W/05IGSLUi1FSyRVsMjIMmMfImndAZCkg+v6/xJapz2BcDv29j5G6xe3FwBGDiT6DbTZcGSNr7a
- MTjl7I9nfKy9hK8aEtrBJjsB/DI/9z1jeTbAziH/c9Rlsg7RFJsdBaCXXb0cjcs9y+ENBVaRtzF
- J529DrtevfUezwjXboQBolVWPxdWRkasUd4Q+V6S9EgUEK+cu/VncNa6hs5Nwyket4lfW7ZQ==
-X-Received: by 2002:a17:90b:2812:b0:369:b1d3:fa48 with SMTP id
- 98e67ed59e1d1-36a6761ead9mr2052200a91.18.1779430332431; 
- Thu, 21 May 2026 23:12:12 -0700 (PDT)
-Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-36a71dc0f5csm827473a91.7.2026.05.21.23.12.10
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 21 May 2026 23:12:12 -0700 (PDT)
-From: Wenjie Qi <qwjhust@gmail.com>
-X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Fri, 22 May 2026 14:12:06 +0800
-Message-ID: <20260522061206.2405336-1-qiwenjie@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1wQJrA-0000ZJ-7U for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 22 May 2026 06:59:41 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by tor.source.kernel.org (Postfix) with ESMTP id E1EB1601FE;
+ Fri, 22 May 2026 06:59:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BB621F000E9;
+ Fri, 22 May 2026 06:59:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1779433169;
+ bh=LXpfIPCwR9J7BljOwsx1xfeavd9YBYzAsniQAQt/y8k=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=AOnv0N5nweVg5QC5b5VyS1GdSxJytzWnQ8XYj6tnqz8kHRj2FCU97cCD9vHaj/+p5
+ 6MlwCbe5PxDQYeQVjO3+uLMJ1Yscul89MXn32qDE3+da7W1hNLuteq6UkoPIpzi9Gm
+ 4zUUCSM5S3TwBe2+1rqeJwUmHkL234Oi8bE5IHLKdl9OXNuYdgOyY3ePpjiIUHkyHJ
+ k1T6jdZMlEZZNs4/nt3XbAPcOxfjAmy43BdhOrFtbT4WWt55EAioJl23yNhw39GuNy
+ Bj7EHXSQ+rjiVNeYOYkKtcJvzRF4VUnsfwO+IQ0RCkmWAnapV/HaKVqVwOs/LIQG8X
+ AEq2M8O+KhVOA==
+To: jaegeuk@kernel.org
+Date: Fri, 22 May 2026 14:59:12 +0800
+Message-ID: <20260522065912.1756240-2-chao@kernel.org>
+X-Mailer: git-send-email 2.54.0.746.g67dd491aae-goog
+In-Reply-To: <20260522065912.1756240-1-chao@kernel.org>
+References: <20260522065912.1756240-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wQJ7O-0005r0-Mq
-Subject: [f2fs-dev] [PATCH] f2fs: honor per-I/O write streams for direct
- writes
+X-Headers-End: 1wQJrA-0000ZJ-7U
+Subject: [f2fs-dev] [PATCH 2/2] Revert: "f2fs: check in-memory sit version
+ bitmap"
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -116,100 +86,102 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: qwjhust@gmail.com, qiwenjie@xiaomi.com, linux-kernel@vger.kernel.org,
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, wallentx <william.allentx@gmail.com>,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-io_uring can pass a per-I/O write stream through kiocb->ki_write_stream,
-and block direct I/O propagates that value to bio->bi_write_stream.
+Commit ae27d62e6bef ("f2fs: check in-memory sit version bitmap") added
+a mirror for sit version bitmap, it expects to detect in-memory
+corruption, however we never got any reports from the check points
+for almost decade, let's remove the code, it can help to save
+memories.
 
-F2FS added FDP stream mapping for DATA writes, but its direct write
-submit hook always rewrites bio->bi_write_stream from the inode write
-hint and F2FS temperature. As a result, a direct write with an explicit
-io_uring write_stream is submitted to the F2FS-selected stream instead
-of the user-requested stream.
-
-Validate an explicit write stream before starting F2FS direct I/O, pass
-the kiocb through the iomap private pointer, and preserve the per-I/O
-stream in the direct write bio. When no per-I/O stream is supplied, keep
-using the existing F2FS temperature-to-stream mapping.
-
-Fixes: 42f7a7a50a33 ("f2fs: map data writes to FDP streams")
-Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
+Cc: wallentx <william.allentx@gmail.com>
+Suggested-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/file.c | 30 +++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+ fs/f2fs/segment.c |  6 ------
+ fs/f2fs/segment.h | 16 ----------------
+ 2 files changed, 22 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 71385ca4163d..20d6e7ab7416 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -5074,17 +5074,36 @@ static int f2fs_dio_write_end_io(struct kiocb *iocb, ssize_t size, int error,
- 	return 0;
- }
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 9926ba9d77ba..993555042876 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4882,11 +4882,6 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
+ 		return -ENOMEM;
  
-+static bool f2fs_valid_write_stream(struct f2fs_sb_info *sbi, u8 write_stream)
-+{
-+	int i;
-+
-+	if (!write_stream)
-+		return true;
-+	if (!f2fs_is_multi_device(sbi))
-+		return write_stream <= bdev_max_write_streams(sbi->sb->s_bdev);
-+
-+	for (i = 0; i < sbi->s_ndevs; i++)
-+		if (write_stream > bdev_max_write_streams(FDEV(i).bdev))
-+			return false;
-+	return true;
-+}
-+
- static void f2fs_dio_write_submit_io(const struct iomap_iter *iter,
- 					struct bio *bio, loff_t file_offset)
+ #ifdef CONFIG_F2FS_CHECK_FS
+-	sit_i->sit_bitmap_mir = kmemdup(src_bitmap,
+-					sit_bitmap_size, GFP_KERNEL);
+-	if (!sit_i->sit_bitmap_mir)
+-		return -ENOMEM;
+-
+ 	sit_i->invalid_segmap = f2fs_kvzalloc(sbi,
+ 					main_bitmap_size, GFP_KERNEL);
+ 	if (!sit_i->invalid_segmap)
+@@ -5849,7 +5844,6 @@ static void destroy_sit_info(struct f2fs_sb_info *sbi)
+ 	SM_I(sbi)->sit_info = NULL;
+ 	kfree(sit_i->sit_bitmap);
+ #ifdef CONFIG_F2FS_CHECK_FS
+-	kfree(sit_i->sit_bitmap_mir);
+ 	kvfree(sit_i->invalid_segmap);
+ #endif
+ 	kfree(sit_i);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 38a56b8ab2cc..b0c06b3580b4 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -206,8 +206,6 @@ struct sit_info {
+ 	char *bitmap;			/* all bitmaps pointer */
+ 	char *sit_bitmap;		/* SIT bitmap pointer */
+ #ifdef CONFIG_F2FS_CHECK_FS
+-	char *sit_bitmap_mir;		/* SIT bitmap mirror */
+-
+ 	/* bitmap of segments to be ignored by GC in case of errors */
+ 	unsigned long *invalid_segmap;
+ #endif
+@@ -549,11 +547,6 @@ static inline void get_sit_bitmap(struct f2fs_sb_info *sbi,
  {
- 	struct inode *inode = iter->inode;
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct kiocb *iocb = iter->private;
- 	enum log_type type = f2fs_rw_hint_to_seg_type(sbi, inode->i_write_hint);
- 	enum temp_type temp = f2fs_get_segment_temp(sbi, type);
+ 	struct sit_info *sit_i = SIT_I(sbi);
  
- 	bio->bi_write_hint = f2fs_io_type_to_rw_hint(sbi, DATA, temp);
--	bio->bi_write_stream =
--		f2fs_io_type_to_write_stream(bio->bi_bdev, DATA, temp);
-+	if (iocb->ki_write_stream)
-+		bio->bi_write_stream = iocb->ki_write_stream;
-+	else
-+		bio->bi_write_stream =
-+			f2fs_io_type_to_write_stream(bio->bi_bdev, DATA, temp);
- 	blk_crypto_submit_bio(bio);
+-#ifdef CONFIG_F2FS_CHECK_FS
+-	if (memcmp(sit_i->sit_bitmap, sit_i->sit_bitmap_mir,
+-						sit_i->bitmap_size))
+-		f2fs_bug_on(sbi, 1);
+-#endif
+ 	memcpy(dst_addr, sit_i->sit_bitmap, sit_i->bitmap_size);
  }
  
-@@ -5122,6 +5141,11 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
+@@ -894,12 +887,6 @@ static inline pgoff_t current_sit_addr(struct f2fs_sb_info *sbi,
  
- 	trace_f2fs_direct_IO_enter(inode, iocb, count, WRITE);
+ 	f2fs_bug_on(sbi, !valid_main_segno(sbi, start));
  
-+	if (!f2fs_valid_write_stream(sbi, iocb->ki_write_stream)) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
- 	if (iocb->ki_flags & IOCB_NOWAIT) {
- 		/* f2fs_convert_inline_inode() and block allocation can block */
- 		if (f2fs_has_inline_data(inode) ||
-@@ -5159,7 +5183,7 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
- 	if (pos + count > inode->i_size)
- 		dio_flags |= IOMAP_DIO_FORCE_WAIT;
- 	dio = __iomap_dio_rw(iocb, from, &f2fs_iomap_ops,
--			     &f2fs_iomap_dio_write_ops, dio_flags, NULL, 0);
-+			     &f2fs_iomap_dio_write_ops, dio_flags, iocb, 0);
- 	if (IS_ERR_OR_NULL(dio)) {
- 		ret = PTR_ERR_OR_ZERO(dio);
- 		if (ret == -ENOTBLK)
-
-base-commit: 520760b9f9156bf9698de38dc44c614fad68a1f9
+-#ifdef CONFIG_F2FS_CHECK_FS
+-	if (f2fs_test_bit(offset, sit_i->sit_bitmap) !=
+-			f2fs_test_bit(offset, sit_i->sit_bitmap_mir))
+-		f2fs_bug_on(sbi, 1);
+-#endif
+-
+ 	/* calculate sit block address */
+ 	if (f2fs_test_bit(offset, sit_i->sit_bitmap))
+ 		blk_addr += sit_i->sit_blocks;
+@@ -925,9 +912,6 @@ static inline void set_to_next_sit(struct sit_info *sit_i, unsigned int start)
+ 	unsigned int block_off = SIT_BLOCK_OFFSET(start);
+ 
+ 	f2fs_change_bit(block_off, sit_i->sit_bitmap);
+-#ifdef CONFIG_F2FS_CHECK_FS
+-	f2fs_change_bit(block_off, sit_i->sit_bitmap_mir);
+-#endif
+ }
+ 
+ static inline unsigned long long get_mtime(struct f2fs_sb_info *sbi,
 -- 
-2.43.0
+2.49.0
 
 
 
