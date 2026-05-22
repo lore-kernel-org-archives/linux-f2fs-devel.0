@@ -4,74 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F12D5CD5BB3
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 May 2026 07:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 20C05CD5BB1
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 May 2026 07:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=TWYNMDLCDKUfYqKjDyI2tVONjBQztSNpdSBPxFReYVU=; b=MIFEvjFPI/pgEUhldbC2UQK0RU
-	RW/C/s/cUstojhIVneVTK3jbSn2IpxGiSVFzF1/DfnvGOX7hOI8QrQLWt1XMCaNGLQm3jqbPVhy/b
-	PpH649mlgUOutz17WWGhqS1ebF77QzT+dvFyYkIV2jwXXsl4pmp1GYH1Nzw/7cKtgCYs=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=VLaoG8EQz/zDmBSKMIIY6LL8oBE0C+Fk7oGAaqHXTFo=; b=TqRUEFs95T8trYfIQSn32L2o5k
+	0Za1SkOntkIxjaDusQ90jwjWRH7zOXtkbdXYoBuL/LnqWuqonKjpo4RKtQ9inrCHVYcjAe5YK4oCB
+	lLt9feNnHKmb8hjOpgfDPWPnUWqp9Tg9tMLRYZ8f7Mb592dJ1qlieZFDjZHfQaqExIqg=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wQJrV-0005RS-Pd;
-	Fri, 22 May 2026 07:00:02 +0000
+	id 1wQKhS-0000UK-Ft;
+	Fri, 22 May 2026 07:53:43 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wQJr9-0005QI-2z
+ (envelope-from <chao@kernel.org>) id 1wQKhQ-0000U5-VA
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 22 May 2026 06:59:39 +0000
+ Fri, 22 May 2026 07:53:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gmAkAlH6+SDoE0ZbfwLgNcAPs5kMifXSgNxPxnrx7XU=; b=eoGxdX2i/jzdaY4KDzAsa78+3I
- cFYO4WwL0d59RVGs/2k5ULX3NCy/v7c7EbIJ++pRhNdIhD2YkhHcY4MdYvTR8Y1xGI7hKDJKDgCuP
- 2Cx45kgfdTp/QNgtOoIsgcMPOoEHzljBLXNn/v5Qq1qGoN9xKLeLi4zSCVXhDrtlyd9I=;
+ bh=eSR5TM5dP8VMBQSWB1mR4M0bSsygysctU8QEmKMojsk=; b=OsqHCdzC+s9Hx7DbQMhqiYwbaG
+ NCNWdrYZYYgTfoI8HCy3jqKgAntqPSYjUy6IVyAg/qBKe+RJt7znT5GZOoWJjt626yRyBsh3qb0Es
+ ApkMKKt/oDpXnYCZSEf9APDYAPuzAEOinWLM7HgDsFx/o4tmlrjF4VuX6tEBPfiyQrZQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=gmAkAlH6+SDoE0ZbfwLgNcAPs5kMifXSgNxPxnrx7XU=; b=f
- nSyrR3lgCQClwMJChxOBfAG79MKo7XtwOekJsiO0GmPGyXXMDoJo5kAzogFAR44xUSr/TNDClqWJ6
- aLVAGyB0REMDh0XIej3BoXFzPwPTKK9P5KDsrBCVogEgtuFABIZdgoUXm9pPpjHi2PS59mN0+fOHw
- niBZharh5VPMatLQ=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ List-Owner:List-Archive; bh=eSR5TM5dP8VMBQSWB1mR4M0bSsygysctU8QEmKMojsk=; b=X
+ CWsx5uK+Ai5ZYik7MAAw6+N8+n8uKZVOH9bjKjoXFm7rbgOpt1RfeXn3lxoB+oxuErSzZB4HRrn+q
+ 7hX57AROCaYx8YBkuWJSovJrGzo4ERP3uKG6withgTNPAGnV2nHxVpcgw1s62frYLLNdtRIZzT6nt
+ HscheWe2Dq50zVtI=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wQJr7-0000ZF-MY for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 22 May 2026 06:59:39 +0000
+ id 1wQKhP-0004Bi-Mc for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 22 May 2026 07:53:41 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id C239840126;
- Fri, 22 May 2026 06:59:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2829D1F00A3E;
- Fri, 22 May 2026 06:59:24 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 898F860172;
+ Fri, 22 May 2026 07:53:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDA111F000E9;
+ Fri, 22 May 2026 07:53:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1779433167;
- bh=gmAkAlH6+SDoE0ZbfwLgNcAPs5kMifXSgNxPxnrx7XU=;
+ s=k20260515; t=1779436409;
+ bh=eSR5TM5dP8VMBQSWB1mR4M0bSsygysctU8QEmKMojsk=;
  h=From:To:Cc:Subject:Date;
- b=CytKu+sPWWGSP3hsJa2huHgYlP+1EcQY8PSWT2Jfo7J1roLUA9Wp53zE6DohtpPKB
- IN8shqhTtYYjkl1XsStZ2DVqFnzRgexidY2p1W2plC1+kwjx59IsefCpGrASdQt82n
- VfVq+JlxsWiIDMbfhLxxLIEyU7ssICznrvUAXK7ktU7UIjutmZq0mEOCoF1Ec9YhzU
- FpBjF1D0SDQwIzazcrIlYcgP48sD1E37augi91S9WpEzMiWgx7ubROFPySXD2nVIOf
- XKfFYcGfT57D1vzrYA3togWSPaneRsEtU8IQtEhnFUpnRFs6pvaPnYezS1k3Oz2BQ9
- X7VAcpyS0cZSg==
+ b=ipftsE9N14knQvSVxA+Iuv/pFBuMw1ffj2fDpKJWeTjDY66S9GZ9Ilt67rVy+1syD
+ tz8lede4M86TKsbnKp5BdICp+B+hYtuVYKfkOXzfD47W8mIVvQKDQp6oSkbKMzaB3J
+ fC++8SIi8r3YbH3AuHsWKxqV3/mKnZkUrMXfF6/y5wkLLcd40FRSxTetumjvnUrT+o
+ jcbrkg2xE323FyA3yiPYREp85WuFg6yc+wiEk4yYFnncRRiZ9FuMQWprzzDosKpI4Y
+ d5MDZtpjXS53fVVF4ozsFupdVOPcmjKLYvuQMG/vyAXBHR5h+guzWD5CqacrzbPdfP
+ frfvdxuO1zMRA==
 To: jaegeuk@kernel.org
-Date: Fri, 22 May 2026 14:59:11 +0800
-Message-ID: <20260522065912.1756240-1-chao@kernel.org>
-X-Mailer: git-send-email 2.54.0.746.g67dd491aae-goog
+Date: Fri, 22 May 2026 15:53:29 +0800
+Message-Id: <20260522075329.12079-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-X-Headers-End: 1wQJr7-0000ZF-MY
-Subject: [f2fs-dev] [PATCH 1/2] Revert: "f2fs: check in-memory block bitmap"
+X-Headers-End: 1wQKhP-0004Bi-Mc
+Subject: [f2fs-dev] [PATCH] f2fs: fix to do sanity check on
+ f2fs_get_node_folio_ra()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,139 +86,118 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, wallentx <william.allentx@gmail.com>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: syzbot+2488d8d751b27f7ce268@syzkaller.appspotmail.com, stable@kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Commit 355e78913c0d ("f2fs: check in-memory block bitmap") added
-a mirror for valid block bitmap, it expects to detect in-memory
-corruption, however we never got any reports from the check points
-for almost decade, let's remove the code, it can help to save
-memories.
+kernel BUG at fs/f2fs/file.c:845!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5336 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full)
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+RIP: 0010:f2fs_do_truncate_blocks+0x1115/0x1140 fs/f2fs/file.c:845
+Code: fc fc 90 0f 0b e8 8b 9d 9a fd 90 0f 0b e8 83 9d 9a fd 48 89 df 48 c7 c6 60 d1 1a 8c e8 54 f1 fc fc 90 0f 0b e8 6c 9d 9a fd 90 <0f> 0b e8 64 9d 9a fd 90 0f 0b 90 e9 93 fd ff ff e8 56 9d 9a fd 90
+RSP: 0018:ffffc9000e4474c0 EFLAGS: 00010283
+RAX: ffffffff842b1d34 RBX: 0000000000000003 RCX: 0000000000100000
+RDX: ffffc9000f03a000 RSI: 0000000000035503 RDI: 0000000000035504
+RBP: ffffc9000e447608 R08: ffff8880123b0000 R09: 0000000000000002
+R10: 00000000fffffffe R11: 0000000000000002 R12: 0000000000000001
+R13: 0000000000000000 R14: 1ffff92001c88ea0 R15: 00000000ffff039c
+FS:  00007f7e02ee36c0(0000) GS:ffff88808c887000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff0305c4000 CR3: 0000000012d4c000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ f2fs_truncate_blocks+0x10a/0x300 fs/f2fs/file.c:882
+ f2fs_truncate+0x471/0x7c0 fs/f2fs/file.c:940
+ f2fs_evict_inode+0xa3f/0x1ac0 fs/f2fs/inode.c:907
+ evict+0x61e/0xb10 fs/inode.c:841
+ f2fs_fill_super+0x5f43/0x78f0 fs/f2fs/super.c:5224
+ get_tree_bdev_flags+0x431/0x4f0 fs/super.c:1694
+ vfs_get_tree+0x92/0x2a0 fs/super.c:1754
+ fc_mount fs/namespace.c:1193 [inline]
+ do_new_mount_fc fs/namespace.c:3758 [inline]
+ do_new_mount+0x341/0xd30 fs/namespace.c:3834
+ do_mount fs/namespace.c:4167 [inline]
+ __do_sys_mount fs/namespace.c:4383 [inline]
+ __se_sys_mount+0x31d/0x420 fs/namespace.c:4360
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x15f/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Cc: wallentx <william.allentx@gmail.com>
-Suggested-by: Jaegeuk Kim <jaegeuk@kernel.org>
+	count = ADDRS_PER_PAGE(dn.node_folio, inode);
+
+	count -= dn.ofs_in_node;
+	f2fs_bug_on(sbi, count < 0);
+
+The fuzz test will trigger above bug_on in f2fs.
+
+The root cause should be: in the corrupted inode, there is a direct node
+which has the same ino and nid in its footer, so in f2fs_do_truncate_blocks(),
+after f2fs_get_dnode_of_data() finds such dnode:
+1) ADDRS_PER_PAGE(dn.node_folio, inode) will return 923
+2) once dn.ofs_in_node points to addr[923, 1017]
+Then it will trigger the system panic.
+
+Let's introduce NODE_TYPE_NON_IXNODE to indicate current node should
+not be an inode or xattr node, and then use it in below path to detect
+inconsistent node chain in inode mapping table:
+
+- f2fs_do_truncate_blocks
+ - f2fs_get_dnode_of_data
+  - f2fs_get_node_folio_ra
+   -  __get_node_folio
+    - f2fs_sanity_check_node_footer
+     - case NODE_TYPE_NON_IXNODE -> check whether it is inode|xnode
+
+Cc: stable@kernel.org
+Reported-by: syzbot+2488d8d751b27f7ce268@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/69fa3697.170a0220.59368.0018.GAE@google.com
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/segment.c | 38 --------------------------------------
- fs/f2fs/segment.h |  6 ------
- 2 files changed, 44 deletions(-)
+ fs/f2fs/f2fs.h | 1 +
+ fs/f2fs/node.c | 6 +++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 1ef4edb77078..9926ba9d77ba 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2455,9 +2455,6 @@ static int update_sit_entry_for_release(struct f2fs_sb_info *sbi, struct seg_ent
- 				unsigned int segno, block_t blkaddr, unsigned int offset, int del)
- {
- 	bool exist;
--#ifdef CONFIG_F2FS_CHECK_FS
--	bool mir_exist;
--#endif
- 	int i;
- 	int del_count = -del;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index fffb516b78f4..f528f9954764 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1593,6 +1593,7 @@ enum node_type {
+ 	NODE_TYPE_INODE,
+ 	NODE_TYPE_XATTR,
+ 	NODE_TYPE_NON_INODE,
++	NODE_TYPE_NON_IXNODE,	/* non inode and xnode */
+ };
  
-@@ -2465,15 +2462,6 @@ static int update_sit_entry_for_release(struct f2fs_sb_info *sbi, struct seg_ent
+ /* a threshold of maximum elapsed time in critical region to print tracepoint */
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index cd5a394f6111..38917e4a7319 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1548,6 +1548,10 @@ int f2fs_sanity_check_node_footer(struct f2fs_sb_info *sbi,
+ 		if (is_inode)
+ 			goto out_err;
+ 		break;
++	case NODE_TYPE_NON_IXNODE:
++		if (is_inode || is_xnode)
++			goto out_err;
++		break;
+ 	default:
+ 		break;
+ 	}
+@@ -1643,7 +1647,7 @@ static struct folio *f2fs_get_node_folio_ra(struct folio *parent, int start)
+ 	struct f2fs_sb_info *sbi = F2FS_F_SB(parent);
+ 	nid_t nid = get_nid(parent, start, false);
  
- 	for (i = 0; i < del_count; i++) {
- 		exist = f2fs_test_and_clear_bit(offset + i, se->cur_valid_map);
--#ifdef CONFIG_F2FS_CHECK_FS
--		mir_exist = f2fs_test_and_clear_bit(offset + i,
--						se->cur_valid_map_mir);
--		if (unlikely(exist != mir_exist)) {
--			f2fs_err(sbi, "Inconsistent error when clearing bitmap, blk:%u, old bit:%d",
--				blkaddr + i, exist);
--			f2fs_bug_on(sbi, 1);
--		}
--#endif
- 		if (unlikely(!exist)) {
- 			f2fs_err(sbi, "Bitmap was wrongly cleared, blk:%u", blkaddr + i);
- 			f2fs_bug_on(sbi, 1);
-@@ -2514,20 +2502,8 @@ static int update_sit_entry_for_alloc(struct f2fs_sb_info *sbi, struct seg_entry
- 				unsigned int segno, block_t blkaddr, unsigned int offset, int del)
- {
- 	bool exist;
--#ifdef CONFIG_F2FS_CHECK_FS
--	bool mir_exist;
--#endif
- 
- 	exist = f2fs_test_and_set_bit(offset, se->cur_valid_map);
--#ifdef CONFIG_F2FS_CHECK_FS
--	mir_exist = f2fs_test_and_set_bit(offset,
--					se->cur_valid_map_mir);
--	if (unlikely(exist != mir_exist)) {
--		f2fs_err(sbi, "Inconsistent error when setting bitmap, blk:%u, old bit:%d",
--			blkaddr, exist);
--		f2fs_bug_on(sbi, 1);
--	}
--#endif
- 	if (unlikely(exist)) {
- 		f2fs_err(sbi, "Bitmap was wrongly set, blk:%u", blkaddr);
- 		f2fs_bug_on(sbi, 1);
-@@ -4771,11 +4747,6 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 			int offset, sit_offset;
- 
- 			se = get_seg_entry(sbi, segno);
--#ifdef CONFIG_F2FS_CHECK_FS
--			if (memcmp(se->cur_valid_map, se->cur_valid_map_mir,
--						SIT_VBLOCK_MAP_SIZE))
--				f2fs_bug_on(sbi, 1);
--#endif
- 
- 			/* add discard candidates */
- 			if (!(cpc->reason & CP_DISCARD)) {
-@@ -4866,11 +4837,7 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
- 	if (!sit_i->dirty_sentries_bitmap)
- 		return -ENOMEM;
- 
--#ifdef CONFIG_F2FS_CHECK_FS
--	bitmap_size = MAIN_SEGS(sbi) * SIT_VBLOCK_MAP_SIZE * (3 + discard_map);
--#else
- 	bitmap_size = MAIN_SEGS(sbi) * SIT_VBLOCK_MAP_SIZE * (2 + discard_map);
--#endif
- 	sit_i->bitmap = f2fs_kvzalloc(sbi, bitmap_size, GFP_KERNEL);
- 	if (!sit_i->bitmap)
- 		return -ENOMEM;
-@@ -4884,11 +4851,6 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
- 		sit_i->sentries[start].ckpt_valid_map = bitmap;
- 		bitmap += SIT_VBLOCK_MAP_SIZE;
- 
--#ifdef CONFIG_F2FS_CHECK_FS
--		sit_i->sentries[start].cur_valid_map_mir = bitmap;
--		bitmap += SIT_VBLOCK_MAP_SIZE;
--#endif
--
- 		if (discard_map) {
- 			sit_i->sentries[start].discard_map = bitmap;
- 			bitmap += SIT_VBLOCK_MAP_SIZE;
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 08735a165433..38a56b8ab2cc 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -177,9 +177,6 @@ struct seg_entry {
- 	unsigned int ckpt_valid_blocks:10;	/* # of valid blocks last cp */
- 	unsigned int padding:6;		/* padding */
- 	unsigned char *cur_valid_map;	/* validity bitmap of blocks */
--#ifdef CONFIG_F2FS_CHECK_FS
--	unsigned char *cur_valid_map_mir;	/* mirror of current valid bitmap */
--#endif
- 	/*
- 	 * # of valid blocks and the validity bitmap stored in the last
- 	 * checkpoint pack. This information is used by the SSR mode.
-@@ -408,9 +405,6 @@ static inline void seg_info_from_raw_sit(struct seg_entry *se,
- 	se->ckpt_valid_blocks = GET_SIT_VBLOCKS(rs);
- 	memcpy(se->cur_valid_map, rs->valid_map, SIT_VBLOCK_MAP_SIZE);
- 	memcpy(se->ckpt_valid_map, rs->valid_map, SIT_VBLOCK_MAP_SIZE);
--#ifdef CONFIG_F2FS_CHECK_FS
--	memcpy(se->cur_valid_map_mir, rs->valid_map, SIT_VBLOCK_MAP_SIZE);
--#endif
- 	se->type = GET_SIT_TYPE(rs);
- 	se->mtime = le64_to_cpu(rs->mtime);
+-	return __get_node_folio(sbi, nid, parent, start, NODE_TYPE_REGULAR);
++	return __get_node_folio(sbi, nid, parent, start, NODE_TYPE_NON_IXNODE);
  }
+ 
+ static void flush_inline_data(struct f2fs_sb_info *sbi, nid_t ino)
 -- 
-2.49.0
+2.40.1
 
 
 
