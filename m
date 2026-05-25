@@ -4,84 +4,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 26DFBCD5BC0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 25 May 2026 05:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 11B7ECD5BC0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 25 May 2026 05:37:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=QrhDnWRhQXTOd5mNImTlszmpoysLCFhkO7qkw9T1xTY=; b=MQAGBhhweiSHJstP4penuo8PlU
-	BEwyflmQkBvOXeIfOJr7pS1Q75by0LfCWR4HDZY9HeCbKec+uUKW9kkMCc0WOfyCOFLlPR5cTFzd7
-	yckzQq/w30uiyIG5AQs1IX9uMJZSmea2HEz1MQSTV3zWVWY7Sz2nOsKyZPf/6zTXWZd0=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=7GUB4pNxlZPr60KeUQTnbjVV4zrqhmBo2yKBG6VolNE=; b=JcxGWPelcJUINl1RLwuTzfWx2v
+	NuYjfr4qrasXhlKnwP4JhQrH/teqy2nWktWAMbf5+BZ5ZOm8I83KrmkX8fKeViQD7pVWQeNzyyLYg
+	Me3mDG0Apc/C+V1O9MVfVxtLgVyfyYx0ET9mbtsJM2dr4gqlyQ6qp8kCfv6r6RlcAcpk=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wRNy1-0002hx-9H;
-	Mon, 25 May 2026 05:35:10 +0000
+	id 1wRO08-0001KL-Ea;
+	Mon, 25 May 2026 05:37:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+728b97dfb722ff21c2bb+8310+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1wRNy0-0002hf-Cx for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 25 May 2026 05:35:09 +0000
+ id 1wRO07-0001KE-Ch for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 25 May 2026 05:37:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+ MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=SjOlFOCBBZ2U5TlW9/X+d8/c+UE/9CSqg4DdbFuTHrA=; b=BN1yq+unHQT+nA9OjVMu/zqrLr
- 3u6KnlMQE+DIp40RZQGkq6PYz44RWG8+t9zRDaqZqlv2kD9swmpXnxPsQxo+oiW0lnuF3Bl/V46fL
- XW4u3TxdJevbel37xYTKBHHjZNDZKx7dWCcrlDHUJ0MoGTOycgFK1uSAMJbA77L4m5/4=;
+ bh=bPlnrUAngQhntq0icVQxK0A5R6EP/y6CGfxUmuJ8Roc=; b=LADsmVuyZ26O7+1eE4XZjHWdlH
+ AN07ZFu1+nkc/aexH2mh64+Ir3horQS2PxqgIuxt5xDjKM3TS0hV2txSOL7YlVIQrSMoYbpYXZ7HP
+ YdT8D/fN3mIMQlEYB2aUbUtcf+Q8ko980FC7uhJCNY7IfmpQCJ3h6K6g/qIZF5p6Wu4g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=SjOlFOCBBZ2U5TlW9/X+d8/c+UE/9CSqg4DdbFuTHrA=; b=WqbSzaWZi3gC1PRLM7SM1ZHs/J
- lNvzUVAeESeI2ChNcoRS1NFBNmgJaeocenpWfOY1El+wJA88LVUeuqq+qdnyFWmcrVyj6RCPnmmD8
- l/nfO5nmal6jLA+M3+hoitT8/9HBJUfWgxYQ8d1FF3dFt+tjC7iCGYkEIGK6DFh6EnG8=;
+ bh=bPlnrUAngQhntq0icVQxK0A5R6EP/y6CGfxUmuJ8Roc=; b=SRnihHdPbcvPpT2pvsYQtR0vMp
+ zfLd+7L4W9nhc0aBl6mgfiKeoRCWs6KXCL6EjH9xPJ2ozyZkdd5tcZDJHrrXaUvTnZEEV/uQqu29K
+ x6jIUcqIwqQe6axyouaZICF4mDkHKcerHSnE/8N/SnSs9dVgrfYzKRPZdC5y2ce7i1b8=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wRNxx-0000nM-3R for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 25 May 2026 05:35:06 +0000
+ id 1wRO05-0000zH-Cl for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 25 May 2026 05:37:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
- :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=SjOlFOCBBZ2U5TlW9/X+d8/c+UE/9CSqg4DdbFuTHrA=; b=PoRi9mLv+pykgcHYmVN+LtRYwG
- o84cO0GmTfh7sTw5dKv4OPvIhTi4W1vIUduN4gLw3pMAOJl+0eBfGzQOdC8FL55Bc297/BjTtk8Ud
- LI6mJV81v6Rjcnf6Zn0gIuovjWt/YscFFyxZRC1x8zzsXTzUN/VEHmfPFaV3YlKVzL2+hi99YOOQm
- CvD8I9B83nWnR/LHHeuCkU5k4qu8bq0/EbcDn8wddjuk6dxsIDDegfy+OIUOZ1gxosuGGFfXGBDKW
- HHj1G/KwbB3CTTeke2TqJG3zO7g5P3tGR9zSruJKvZTKBnmlzYu4LtTtGsnvzdgOhgU91M7/R92hi
- VyvvcuaQ==;
+ d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+ :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+ Sender:Reply-To:Content-ID:Content-Description;
+ bh=bPlnrUAngQhntq0icVQxK0A5R6EP/y6CGfxUmuJ8Roc=; b=mI7+58UNZvQ1rHO+UR+G3zOxD7
+ /8Q4dyZKxJcdSNb/R47cH8reyDTtiHoTo+ZY1PEHKP1sCy7wV2KEhwd8MNm/M9D7VXNwHZoztfouo
+ ellPDj7sZaVnwIcwtuRKY+kRVN9tGtX3CfEZ+71st7D3jw6OwcdGneEEFEF9XNvEvTxVz0XU8F5v6
+ aKLKYaDQcv0dpz+Vxwj0TvKoeLyqOXxQt3Fs7io8F6fnGJKSnqnfrBDTuM9Bjn1mwkQsNTWDDnfhD
+ qxzwqs5H2TVfEJQkzZA/O6FF3yMLeD+t3A5pcA1FIZEHbDav7HM47fbADf9+YeeWA6EZTFKtS8mej
+ OhB0Hp4w==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.99.1 #2 (Red
- Hat Linux)) id 1wRNxm-0000000GKdP-08i4;
- Mon, 25 May 2026 05:34:54 +0000
-Date: Sun, 24 May 2026 22:34:54 -0700
+ Hat Linux)) id 1wRNzu-0000000GKn6-0I3f;
+ Mon, 25 May 2026 05:37:06 +0000
+Date: Sun, 24 May 2026 22:37:06 -0700
 From: Christoph Hellwig <hch@infradead.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Message-ID: <ahPffhaOi2CBtWof@infradead.org>
-References: <adhPZxtbZxgU-37v@google.com> <ad30g9xMs9wNJhFb@infradead.org>
+Message-ID: <ahPgAog1c6SltcQS@infradead.org>
+References: <20260409134538.3692605-1-jaegeuk@kernel.org>
+ <adhPZxtbZxgU-37v@google.com> <ad30g9xMs9wNJhFb@infradead.org>
  <ad_AVHe7RMnGrGTb@google.com>
  <ad_HwhzlNPUEKQi6@casper.infradead.org>
  <ag7HfNryTmQ-bVIS@infradead.org>
  <20260521155748.GA79343@macsyma-wired.lan>
- <ag9D6_7dttbDGHZ6@casper.infradead.org>
- <ag_UsW_OrlXD9dWX@google.com>
- <ahBSXyOi9b1jxNkX@casper.infradead.org>
- <ahBii6bk0KbK_NHV@google.com>
+ <ag_OVwPF49LSZ7rz@google.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <ahBii6bk0KbK_NHV@google.com>
+In-Reply-To: <ag_OVwPF49LSZ7rz@google.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1wRNxx-0000nM-3R
+X-Headers-End: 1wRO05-0000zH-Cl
 Subject: Re: [f2fs-dev] [PATCH v2] f2fs: another way to set large folio by
  remembering inode number
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -101,24 +99,26 @@ Cc: Theodore Tso <tytso@mit.edu>, linux-api@vger.kernel.org,
  linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
  Akilesh Kailash <akailash@google.com>,
  Christian Brauner <christian@brauner.io>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, May 22, 2026 at 02:04:59PM +0000, Jaegeuk Kim wrote:
-> This was a quick buddyinfo right after booting the device.
-> 
-> Before:
-> Node 0, zone   Normal  22684  42284  28704  16901   9515   4566   1854    673    181     36    758
-> 
-> After disabling EROFS large folio:
-> Node 0, zone   Normal   8486   4732   2175   1161    697    272     82     19      3      1    856
-
-And what are you trying to say us with that?
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gRnJpLCBNYXkgMjIsIDIwMjYgYXQgMDM6MzI6MzlBTSArMDAwMCwgSmFlZ2V1ayBLaW0gd3Jv
+dGU6Cj4gSSB3ZW50IHRoaXMgcm91dGUgYmVjYXVzZSBBbmRyb2lkIGhlYXZpbHkgcmVzdHJpY3Rz
+IGlvY3RsKCkgcGVybWlzc2lvbnMKPiBhbmQgd2UgbmVlZGVkIGJyb2FkZXIgYWNjZXNzIGZvciB0
+aGlzIHRvIHdvcmsgd2l0aGluIHRoZSBmcmFtZXdvcmsuIEl04oCZcwo+IGRlZmluaXRlbHkgYSBw
+cmFnbWF0aWMgY2hvaWNlIGp1c3QgdG8gZ2V0IGl0IHJ1bm5pbmcgaW4gcHJvZHVjdGlvbi4KClRo
+YXQgaXMgbm90IGEgZ29vZCByZWFzb24uCgo+IElmIGlvY3RsKCkgaXMgYSByaWdodCB3YXkgZm9y
+IHVwc3RyZWFtLCBJJ20gaGFwcHkgdG8gY2hhbmdlIHRoaXMgcGF0Y2guIEJ5Cj4gdGhlIHdheSwg
+SSByZWFsbHkgZG9uJ3QgdW5kZXJzdGFuZCB3aHkgYWxsIHRoZSBtZXNzYWdlcyBhcmUgc28gb2Zm
+ZW5zaXZlLAo+IGV2ZW4gd2l0aG91dCB0cnlpbmcgdG8gdW5kZXJzdGFuZCB0aGUgcHJvYmxlbSBv
+ciBndWlkaW5nIHJpZ2h0IGRpcmVjdGlvbnMuCgpUaGUgcmlnaHQgd2F5IGlzIHRvOgoKIDEpIFRh
+bGsgdG8gdGhlIHJlbGV2YW50IHN1YnN5c3RlbXMgKE1NIGFuZCBmc2RldmVsKSwgYW5kIGlmIGl0
+IGFmZmVjdHMKICAgIHVzZXJzcGFjZSB0aGF0IGxpbnV4LWFwaSBsaXN0IGFuZCBhY3R1YWxseSBl
+eHBsYWluIHlvdXIgdXNlIGNhc2UuCiAyKSBBbmQgdGhlbiBhY3R1YWxseSBsaXN0ZW4gdG8gZmVl
+ZGJhY2suICBmMmZzIGp1c3Qga2VlcHMgcGlsaW5nIHRoZXNlCiAgICBBQkkgaGFja3Mgb24gd2l0
+aG91dCBhbnkgcmV2aWV3LCBhbmQgaXQgaXMgY2F1c2luZyByZWFsIHByb2JsZW1zLgoKCgpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRl
+dmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApo
+dHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRl
+dmVsCg==
