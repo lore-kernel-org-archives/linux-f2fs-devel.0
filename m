@@ -4,79 +4,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D0875CD5BB1
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 26 May 2026 11:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1160DCD5BB1
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 26 May 2026 11:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Lt3tYTIU6iG401IbaI6q5khMz4vfwbkHOZ4hVrq3Q9U=; b=dzI6yKZHy3TkHYE63HNesTdIRx
-	S7+cWe6MxzlRGeEuF4HogxO0TPjTj6ENnG/R+5Q40b8kXngSSRrOAV9Dph/JagW4QGTSf5Ebgnd9J
-	R36BdontHwyEj+irfwHOa1MXpkDxNHGGyQMbtyaiH3+rHs2U4uv+bGtqq8dDsbrtd++k=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=Y8cryIigeWy2UnKY3BGRxwEcg4M3kbcdJyWP4zEel6I=; b=PMXVhMrLHKj6ShLV3o/cJL90HB
+	00g41D/fCxuhElz+YP8ILD9OWlohCkX28rP6FbqCXOD6FwxZsCXFEfKAf5yZkj8y/HOVS5yiKsUl5
+	2zk4ssh4QinortYnpLgoGi2cJMLGA+yFLypTB7pLWOAFXN7qeD2y/tCkmJfaxSv4kJlU=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wRpa0-0005K0-79;
-	Tue, 26 May 2026 11:04:12 +0000
+	id 1wRq5W-00062z-Ia;
+	Tue, 26 May 2026 11:36:47 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wRpZy-0005Jt-FZ
+ (envelope-from <qwjhust@gmail.com>) id 1wRq5L-00062l-Nm
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 26 May 2026 11:04:11 +0000
+ Tue, 26 May 2026 11:36:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vAxUtDoM7RbTHTVpsx+YtE9nb7EE2N1eSnXuvU6KUtU=; b=XEwhHIKDADdNiTszgTS8Ofw5hu
- St3NQA1Z3wv6aPCgGz1ibEsfb46XTfkbI5y8H5UTdoOJQZJmLwFBNRRm0cv8NfT2KfY2CjDmRX370
- HJyK0A2C2tNTPYKbluF9huF1L/3dzdFrVRAZ8wM/0KtF+XNcb4oK785AgQBAMknE0z1Y=;
+ bh=WAYdTgU2Q2WoKOLRPhvRxyrb9oYui7kZ0ExHIp0XfQU=; b=k4uzAebT7XmGCLdUqvALkA+0g1
+ b4mAau+Xv+rnzm5URtJrKLdusz0prnCUyTMYqBvWYUkDu2znGxzh83rpnNGL/CxUS0+Ti+ABPag+G
+ niklyoOriolh7+j5N4elo2bwfZg4CBc7dvXxIvjsVCT/9bsjcJp643Z+bCWLvF5WN79o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=vAxUtDoM7RbTHTVpsx+YtE9nb7EE2N1eSnXuvU6KUtU=; b=EefDzOZ/th2IgSNItu468SQFJa
- lVgRh7JF3cP3kcMVsBLlilTnTXlAWeWh1arCpdvcq9zoTtOewzy61y3uJrXQ7lLbxCsrfq8tr9WyV
- WWAy4h33E95sHgtVZtIrZ3xvhLKgaFhrXhDMMxfwOSSy3Nr5DLENUR3EQVvoyEVkkBOA=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=WAYdTgU2Q2WoKOLRPhvRxyrb9oYui7kZ0ExHIp0XfQU=; b=I
+ Xa4uXYLr7ox49HdLHW4fajQk++qrhNpAc9rvUxsm6xmG6j1zrITvqYqGEnDMj7ITIfIjG3IqkPpEL
+ m8X1W/E6fpg6IcIF3Ah7HWv3AGHiBFfWPEaaSGD47RLABJUB+vgkwzIAc6azzt6Ja4weljNMpQPf+
+ 5gxtiXUWjku4EmZ8=;
+Received: from mail-pj1-f53.google.com ([209.85.216.53])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wRpZv-0002No-Q6 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 26 May 2026 11:04:11 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id CF3D7436FF;
- Tue, 26 May 2026 11:03:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 349C91F000E9;
- Tue, 26 May 2026 11:03:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1779793437;
- bh=vAxUtDoM7RbTHTVpsx+YtE9nb7EE2N1eSnXuvU6KUtU=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=oFt3gYc+pgLyzuSVtuQC+HQHbHlseaOtrKBvHh4yTcTgsL9smYx+vxh9Z8Tz7C1ca
- xzHwNJfxF3MU2trQZP6+rYwufLaibYRi2eUvW02LF+d7S9Muj0m6wvvk758CWI0Kq2
- HskH5WYILp2gXoq0NNHLU74vSeT19zqgnZh1AiS5Nst7DK9q7s/xLuhUDF/T91Ek2i
- cLSYmreZZmfoPK4Yf2Irj2f5MxQzGkDZE2Z2MP5croqYAudQ0HP84GggSpBoBh2FWR
- C3lI2zIP1Q9FrfMMW7TdHmTBjh6m+Zog3AGJKWK6k+0pa6xb2KVyO3e4lMjB3Nfaqm
- cBTmnddpuRNjQ==
-Message-ID: <534bc0fc-bb0f-4741-9156-11a66d47f1c3@kernel.org>
-Date: Tue, 26 May 2026 19:03:54 +0800
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1wRq5L-0003tS-8b for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 26 May 2026 11:36:36 +0000
+Received: by mail-pj1-f53.google.com with SMTP id
+ 98e67ed59e1d1-36af4b7840aso1056056a91.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 26 May 2026 04:36:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1779795385; x=1780400185; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=WAYdTgU2Q2WoKOLRPhvRxyrb9oYui7kZ0ExHIp0XfQU=;
+ b=QMTQVF7n413CXoNZdeym99/yZ6RDQ+ex2YKCB/XspTc0WKBzcoUNaqyXVhu5h0GTkb
+ yrignGDeHuMJJIwD9IHWVSR5jrrd5Tb35RzV4uOR70HI6uFKbtzDVRfNAe2spoD3vHr+
+ Ho0JfigYYFsBGwwgb9M4L+VwaQGjf0IjMshwrfri/+S/Cczc093UnDEL2JMSsZ5LxYff
+ 97rO+lz4ZrXB9zpMST9iOhyEPNTfnJ0ZrLU5MMiWLrOEZrJp4AGjV8+PNzGY8wBhzl2i
+ XY+fqRNMMu6nCXSjiJdXZz9EBVTjr6outboE1JND7E4b14ltCtVPfwNV/W4CY+uKH5ve
+ +V8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1779795385; x=1780400185;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=WAYdTgU2Q2WoKOLRPhvRxyrb9oYui7kZ0ExHIp0XfQU=;
+ b=aMhDVQG+5CPrAEHA8Lp9jsU2onr4GRDVPEjXNAUvYWLLelhB9T2W1CQewDaxioHjcC
+ GwmMYon+waT1OACZNx6Vy5ZWiUG+hVl/1DoiI1f4JXlbdgtuaNi6p3d199vNN4vFO9qi
+ Ymsox9kGUm9S36JGMOvVDHpP1I5u/y9KFeXnaUo63YLvDFq0HpRKXjTMzgD2EXpTh7oK
+ aAyqVKVpPhV0dUiJpgxp3cL+tt5Vy6t0MXwoaLib7pQ0ezk3mifeC48ut6krdTgz9y/E
+ x5P2BbSyVkuJHwUpgTvv+Ext/8yTBTahEes3peQzZHDyxZeUUnozS3Aa54EGx95NXyYX
+ 8K5Q==
+X-Gm-Message-State: AOJu0Yx9p5LX3vRdieNU4mJbBPBGJrR+ZmTJNHxjW7doWLLqLaRV4Esz
+ z/tmaWHXIg/vtJVfqQPnCaGjW3UuYhZs3vAYXEaEdC67sRceZp74bOeLKg+fwA==
+X-Gm-Gg: Acq92OFNRC5CAJSir0ohGBJn1FkwGJXLri/1NsmEtxsdxws3o+BXWHaN9M9JvQanslh
+ HO6YIbeDAjB4Y3FOUXOZ6zrY6SDEJQJ+EQnA82kbp1fd78MdLNvxf/v6+cmD+4uhaxQZTrDmLxW
+ oE8U6nzZzlVL9Em6Xg0fH4YulMKl02vzTbpe9YD8G3hWeoFrvzweYVz3TLQMEiOxFajAk4Cuje9
+ It1Y/1F5CYMlg63+572xNfzrmdgUEs4h1IcF4AufyfgyRttkHF+GMPZ6cn8oXKl2GXay89txe7E
+ FEsU5fceZZK6vWNiLA2NflJkhcl23HBGaR4OboK4cSiGvOcxDA3Yf+XzMAKeActanLRi5zboAAx
+ /M+SelHrN7jOri3kakM25wZt+ljeKrjLof9MYJtZW6U8Kuf/j1sbecOV48+rY99vulWM+WmhhgY
+ lDhD5l0LXryzBLxdASD8Tmhfv3TLPEm/H3gLuDHFpi66bYfXlHzps+egiVDN/2Fkma42x9IQ==
+X-Received: by 2002:a17:90b:2d44:b0:369:a74b:28cc with SMTP id
+ 98e67ed59e1d1-36a674f3475mr16808060a91.18.1779795384965; 
+ Tue, 26 May 2026 04:36:24 -0700 (PDT)
+Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-36a72c913a1sm11656272a91.15.2026.05.26.04.36.23
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 26 May 2026 04:36:24 -0700 (PDT)
+From: Wenjie Qi <qwjhust@gmail.com>
+X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Tue, 26 May 2026 19:35:05 +0800
+Message-ID: <20260526113505.1312431-1-qiwenjie@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Wenjie Qi <qwjhust@gmail.com>
-References: <20260525114621.571845-1-qiwenjie@xiaomi.com>
- <86c2f79d-ee26-4009-8051-82d25abf6d7b@kernel.org>
- <CAGFpFsQimHFADZGKA2ezyz7eXRG1mMNFOFiJHbsQban_vjb5qQ@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAGFpFsQimHFADZGKA2ezyz7eXRG1mMNFOFiJHbsQban_vjb5qQ@mail.gmail.com>
-X-Headers-End: 1wRpZv-0002No-Q6
-Subject: Re: [f2fs-dev] [PATCH] f2fs: validate orphan inode entry count
+X-Headers-End: 1wRq5L-0003tS-8b
+Subject: [f2fs-dev] [PATCH f2fs-tools] fsck.f2fs: recognize inconsistent
+ orphan error
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,69 +116,54 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- qiwenjie@xiaomi.com, jaegeuk@kernel.org, stable@kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: qwjhust@gmail.com, qiwenjie@xiaomi.com,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gNS8yNi8yNiAxMzozOCwgV2VuamllIFFpIHdyb3RlOgo+IEFncmVlZCwgU0JJX05FRURfRlND
-SyBtYXkgbm90IGJlIHBlcnNpc3RlZCBhdCB0aGlzIHN0YWdlLgo+IAo+ICAgSSBzZW50IHYyIHRv
-IGFkZCBFUlJPUl9JTkNPTlNJU1RFTlRfT1JQSEFOIGFuZCBjYWxsIGYyZnNfaGFuZGxlX2Vycm9y
-KCkgb24KPiAgIGludmFsaWQgb3JwaGFuIGVudHJ5X2NvdW50LCBzbyB0aGUgY29ycnVwdGlvbiBy
-ZWFzb24gY2FuIGJlIHJlY29yZGVkIGluCj4gICBzX2Vycm9yc1tdIGFzIGEgcGVyc2lzdGVudCBo
-aW50IGZvciBmc2NrLgoKU28sIGl0IG5lZWRzIGFub3RoZXIgcGF0Y2ggdG8gbGV0IGZzY2sgcmVj
-b2duaXplIHRoZSBuZXcgZmxhZz8KClRoYW5rcywKCj4gCj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5v
-cmcvbGludXgtZjJmcy1kZXZlbC8yMDI2MDUyNjA1MzU1Ny4xMDk2MjI5LTEtcWl3ZW5qaWVAeGlh
-b21pLmNvbS9ULyN1Cj4gCj4gT24gVHVlLCBNYXkgMjYsIDIwMjYgYXQgMTA6MTnigK9BTSBDaGFv
-IFl1IDxjaGFvQGtlcm5lbC5vcmc+IHdyb3RlOgo+Pgo+PiBPbiA1LzI1LzI2IDE5OjQ2LCBXZW5q
-aWUgUWkgd3JvdGU6Cj4+PiBmMmZzX3JlY292ZXJfb3JwaGFuX2lub2RlcygpIHRydXN0cyB0aGUg
-b3JwaGFuIGJsb2NrIGVudHJ5X2NvdW50IHdoZW4KPj4+IHJlcGxheWluZyBvcnBoYW4gaW5vZGVz
-IGZyb20gdGhlIGNoZWNrcG9pbnQgcGFjay4gIEEgY29ycnVwdGVkCj4+PiBlbnRyeV9jb3VudCBs
-YXJnZXIgdGhhbiBGMkZTX09SUEhBTlNfUEVSX0JMT0NLIG1ha2VzIHRoZSByZWNvdmVyeSBsb29w
-Cj4+PiByZWFkIHBhc3QgdGhlIGlub1tdIGFycmF5IGFuZCBpbnRlcnByZXQgZm9vdGVyIG9yIGZv
-bGxvd2luZyBkYXRhIGFzCj4+PiBpbm9kZSBudW1iZXJzLgo+Pj4KPj4+IE9uIGEgY3JhZnRlZCBp
-bWFnZSwgbW91bnRpbmcgYW4gdW5wYXRjaGVkIGtlcm5lbCBjYW4gZHJpdmUgb3JwaGFuCj4+PiBy
-ZWNvdmVyeSBpbnRvIGYyZnNfYnVnX29uKCkgYW5kIHBhbmljIHRoZSBrZXJuZWwuICBWYWxpZGF0
-ZSBlbnRyeV9jb3VudAo+Pj4gYmVmb3JlIGNvbnN1bWluZyBlbnRyaWVzIHNvIGNvcnJ1cHRlZCBj
-aGVja3BvaW50IGRhdGEgZmFpbHMgdGhlIG1vdW50Cj4+PiB3aXRoIC1FRlNDT1JSVVBURUQgYW5k
-IHJlcXVlc3RzIGZzY2sgaW5zdGVhZC4KPj4+Cj4+PiBGaXhlczogMTI3ZTY3MGFiZmE3ICgiZjJm
-czogYWRkIGNoZWNrcG9pbnQgb3BlcmF0aW9ucyIpCj4+PiBDYzogc3RhYmxlQGtlcm5lbC5vcmcK
-Pj4+IFNpZ25lZC1vZmYtYnk6IFdlbmppZSBRaSA8cWl3ZW5qaWVAeGlhb21pLmNvbT4KPj4+IC0t
-LQo+Pj4gIGZzL2YyZnMvY2hlY2twb2ludC5jIHwgMTMgKysrKysrKysrKysrLQo+Pj4gIDEgZmls
-ZSBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4+Pgo+Pj4gZGlmZiAt
-LWdpdCBhL2ZzL2YyZnMvY2hlY2twb2ludC5jIGIvZnMvZjJmcy9jaGVja3BvaW50LmMKPj4+IGlu
-ZGV4IGMwMGE2YjZlYmNiZC4uZmM3MmI2OWZmNzY5IDEwMDY0NAo+Pj4gLS0tIGEvZnMvZjJmcy9j
-aGVja3BvaW50LmMKPj4+ICsrKyBiL2ZzL2YyZnMvY2hlY2twb2ludC5jCj4+PiBAQCAtOTQzLDYg
-Kzk0Myw3IEBAIGludCBmMmZzX3JlY292ZXJfb3JwaGFuX2lub2RlcyhzdHJ1Y3QgZjJmc19zYl9p
-bmZvICpzYmkpCj4+PiAgICAgICBmb3IgKGkgPSAwOyBpIDwgb3JwaGFuX2Jsb2NrczsgaSsrKSB7
-Cj4+PiAgICAgICAgICAgICAgIHN0cnVjdCBmb2xpbyAqZm9saW87Cj4+PiAgICAgICAgICAgICAg
-IHN0cnVjdCBmMmZzX29ycGhhbl9ibG9jayAqb3JwaGFuX2JsazsKPj4+ICsgICAgICAgICAgICAg
-dW5zaWduZWQgaW50IGVudHJ5X2NvdW50Owo+Pj4KPj4+ICAgICAgICAgICAgICAgZm9saW8gPSBm
-MmZzX2dldF9tZXRhX2ZvbGlvKHNiaSwgc3RhcnRfYmxrICsgaSk7Cj4+PiAgICAgICAgICAgICAg
-IGlmIChJU19FUlIoZm9saW8pKSB7Cj4+PiBAQCAtOTUxLDcgKzk1MiwxNyBAQCBpbnQgZjJmc19y
-ZWNvdmVyX29ycGhhbl9pbm9kZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQo+Pj4gICAgICAg
-ICAgICAgICB9Cj4+Pgo+Pj4gICAgICAgICAgICAgICBvcnBoYW5fYmxrID0gZm9saW9fYWRkcmVz
-cyhmb2xpbyk7Cj4+PiAtICAgICAgICAgICAgIGZvciAoaiA9IDA7IGogPCBsZTMyX3RvX2NwdShv
-cnBoYW5fYmxrLT5lbnRyeV9jb3VudCk7IGorKykgewo+Pj4gKyAgICAgICAgICAgICBlbnRyeV9j
-b3VudCA9IGxlMzJfdG9fY3B1KG9ycGhhbl9ibGstPmVudHJ5X2NvdW50KTsKPj4+ICsgICAgICAg
-ICAgICAgaWYgKGVudHJ5X2NvdW50ID4gRjJGU19PUlBIQU5TX1BFUl9CTE9DSykgewo+Pj4gKyAg
-ICAgICAgICAgICAgICAgICAgIGYyZnNfZXJyKHNiaSwgImludmFsaWQgb3JwaGFuIGlub2RlIGVu
-dHJ5IGNvdW50ICV1IiwKPj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbnRyeV9j
-b3VudCk7Cj4+PiArICAgICAgICAgICAgICAgICAgICAgc2V0X3NiaV9mbGFnKHNiaSwgU0JJX05F
-RURfRlNDSyk7Cj4+Cj4+IFdlbGwsIGF0IHRoaXMgc3RhZ2UsIEkgZ3Vlc3MgdGhlcmUgaXMgbm8g
-Y2hhbmNlIHRvIHBlcnNpc3QgU0JJX05FRURfRlNDSyBmbGFnLAo+PiB3aGF0IGFib3V0IGludHJv
-ZHVjZSBFUlJPUl9JTkNPTlNJU1RFTlRfT1JQSEFOIGluIGVudW0gZjJmc19lcnJvciwgc28gdGhh
-dAo+PiB3ZSBjYW4gcGVyc2lzdCB0aGUgbmV3IGJpdCB0byBwcm92aWRlIGhpbnQgdG8gZnNjaz8K
-Pj4KPj4gVGhhbmtzLAo+Pgo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIGVyciA9IC1FRlNDT1JS
-VVBURUQ7Cj4+PiArICAgICAgICAgICAgICAgICAgICAgZjJmc19mb2xpb19wdXQoZm9saW8sIHRy
-dWUpOwo+Pj4gKyAgICAgICAgICAgICAgICAgICAgIGdvdG8gb3V0Owo+Pj4gKyAgICAgICAgICAg
-ICB9Cj4+PiArCj4+PiArICAgICAgICAgICAgIGZvciAoaiA9IDA7IGogPCBlbnRyeV9jb3VudDsg
-aisrKSB7Cj4+PiAgICAgICAgICAgICAgICAgICAgICAgbmlkX3QgaW5vID0gbGUzMl90b19jcHUo
-b3JwaGFuX2Jsay0+aW5vW2pdKTsKPj4+Cj4+PiAgICAgICAgICAgICAgICAgICAgICAgZXJyID0g
-cmVjb3Zlcl9vcnBoYW5faW5vZGUoc2JpLCBpbm8pOwo+PgoKCgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlz
-dApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNv
-dXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+The kernel can record ERROR_INCONSISTENT_ORPHAN in the superblock
+s_errors[] field when orphan inode metadata is inconsistent.
+
+Add the matching f2fs_error entry and fsck error string so fsck.f2fs
+can recognize and print this persistent corruption hint.
+
+Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
+---
+ fsck/mount.c      | 1 +
+ include/f2fs_fs.h | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 2f4e6c9..f7985dc 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -774,6 +774,7 @@ static char *errors_str[] = {
+ 	[ERROR_CORRUPTED_XATTR]			= "corrupted_xattr",
+ 	[ERROR_INVALID_NODE_REFERENCE]		= "invalid_node_reference",
+ 	[ERROR_INCONSISTENT_NAT]		= "inconsistent_nat",
++	[ERROR_INCONSISTENT_ORPHAN]		= "inconsistent_orphan",
+ };
+ 
+ void print_sb_errors(struct f2fs_super_block *sb)
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 21310fa..1b24a3c 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -772,6 +772,7 @@ enum f2fs_error {
+ 	ERROR_CORRUPTED_XATTR,
+ 	ERROR_INVALID_NODE_REFERENCE,
+ 	ERROR_INCONSISTENT_NAT,
++	ERROR_INCONSISTENT_ORPHAN,
+ 	ERROR_MAX,
+ };
+ 
+-- 
+2.43.0
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
