@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D1EEBCD5BD1
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 May 2026 04:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 29600CD6E45
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 May 2026 04:06:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=bktVp4bXZS+/U9kuYj1XPewbK2Bwl9RmlBUs9xd1mw8=; b=dLKe4YHnjSaskWwM27snqzI8Oz
-	N/GH/I5Y5KLdbRu6UGuuFSuH1NcIaMfazT6r9AELbZLO8zN+V4V/1a2cZvVUj2XayOFY2GYhRG4ld
-	ITGwnxwqYGJl2wB9VWB02BzGq1z2S8IpCQqR5RrNa8c3kMJukoGrYvgORrqN0B7tpQDQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=dEsAytxq6ImRIYD7vFz3DWgbKqnTrNDLkhx5G/ezvno=; b=hKTRSE8C3a7XqTNzcEU8zLya17
+	ppKhuaS6jsK9g5ngpjb6gM29+eoM9nq3GIG9br4yz1ui+xTJ3pfKTpsai4EcCYkC3k31oRJS6Dlhn
+	Nk9VeDwBzYoZPpLr52pjcBHR32nOegEnWVotZIFHLdxsuWSz3egHpypbk0bh7o0vL7vU=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wSS0o-0000kB-QB;
-	Thu, 28 May 2026 04:06:27 +0000
+	id 1wSS0v-000266-JP;
+	Thu, 28 May 2026 04:06:31 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <asj@kernel.org>) id 1wSS0n-0000k4-CY
+ (envelope-from <asj@kernel.org>) id 1wSS0u-00025y-8G
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 May 2026 04:06:26 +0000
+ Thu, 28 May 2026 04:06:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WUek036XA17MzAJUJBvXynOAe7o9o+IXSarD48Lhz1M=; b=eLfKld7xDQZ7lfYmwkPYaff+8U
- hpVQd9bClW1+oHCFcFjm/VupD5qsejyriWtweQnWTQHIk946zDKNd4M+KIDDRU++NOkyjmDMymYjo
- 6eFxzlt3htTOWAb/3Z2wgNYW3++CeE9sQSjri3C3fQWE3l5iUvuW8Rm6dFqwDnPEbfJk=;
+ bh=7yTvj2+iPY9bgL3Stb79PLfhmJb2V6kYoeFhUhcOQBo=; b=abIL4RiNgjgB/hUaWdfEs9jkVN
+ XJTxkujal+NCIqGa4AFbk+WUDAQNlzEitlk5CeduNDcvF182qWLQI4n3sUe47h5HPEeoHrAdmYCTe
+ MpJHgE0wKHZB3ItqSfntW9YeERUv+GHwE06FLelj6i4Zgx6n/m8KYeQuBYNRucRqO4oE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=WUek036XA17MzAJUJBvXynOAe7o9o+IXSarD48Lhz1M=; b=m8iVHMHPxy5Qv8+dotb2ZsZBBp
- OazmAMAFp10chM7tl5QNUJENjTi9yxHyczteN2vbpzaEb6ojca5NMRYTJ6YROKPMColKxmF1ZNdJ+
- 7p8Kwjkg3U8+Kb3RF9MiawkdENROPBykiX2Fx74TKnH5TyYbb5eQN6mk0HYf+0EBbhfU=;
+ bh=7yTvj2+iPY9bgL3Stb79PLfhmJb2V6kYoeFhUhcOQBo=; b=kXYSBwD9Uzgw9Lq9+KczRqZfQ9
+ feVDFzjwtsw7xTRY/11ybKf+7EqfruBG6kQSMsWBZusc5BJBpq4nz7oSBrS8qTCnzoAD8SBoLyFpK
+ 2u4WIn1h0WMbv13g1/9yw2S9vhvsaYbDRCvaQ6UNgfl9IKws2lJnrT2VLU8r53GTKZ/M=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wSS0n-00024I-2i for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 May 2026 04:06:26 +0000
+ id 1wSS0p-00025P-Th for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 28 May 2026 04:06:29 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 0476260572;
- Thu, 28 May 2026 04:06:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BEC1F000E9;
+ by tor.source.kernel.org (Postfix) with ESMTP id D2EA3605C4;
  Thu, 28 May 2026 04:06:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C66DD1F00A3A;
+ Thu, 28 May 2026 04:06:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1779941179;
- bh=WUek036XA17MzAJUJBvXynOAe7o9o+IXSarD48Lhz1M=;
+ s=k20260515; t=1779941177;
+ bh=7yTvj2+iPY9bgL3Stb79PLfhmJb2V6kYoeFhUhcOQBo=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=XDdasQZFOr8hwcjR+uRFk51a5ubDI9ea8xd24FtF38hBGRuYkraIAWXTPg7lax1Z/
- OdhilfsaRQlAj3boghBoAzWStddfr2bp4MjvPNur5jKik7/WU8ucxDSj5EDv45aQqy
- UVQFEh+Mm/6QjB6pzp/CrZ2WnndAYbUzWM+2nXxaa8Q+gx4LnbZLnhFgIFXk8IpOLH
- zm+Q/sJUC70YTV6oslYc4z518MVy7YVIvPKnB4h8OA3qbzObkuv2NYkkkzqocuqYsB
- kCMaMugkACBMoQuGBtRaQR30Zb56NyipU35AviDaB9zPkSkDXYWDjG7PQqpbn6SQWJ
- Zo8RLK0NOfiGQ==
+ b=kJAsLqmVLMooIrhh/1vq1kc8PVAnOCsjVRIlmKT1UVoKB94KJ05Wu01IGMx21d9hx
+ i767/nPAzXBTQBwYUfDsFPhFE5qPDcejnRq70BEnWAcZZ42gZVkCrdajAGs8yKXbC8
+ M4FxIYjgIQGkktOFi3oX1RYMQia5zCYzrWGa2LmFSemih4PutaFvqklJhpYfuV73Vk
+ xvpKmiOfjK+8UJXSbq2iXOmn9Fo+j724iQ1gc9Gx177rQeUhuqD6/Rs3oSosYy8swn
+ 2SVPXH+lJ5FxSsTUI59urvuQfzQlfhjS+4NOvwxvCHwRpA/fzlkjnxenDEZ5Y8Wpaz
+ MdwWH+jyg7wcw==
 To: fstests@vger.kernel.org
-Date: Thu, 28 May 2026 12:05:35 +0800
-Message-ID: <983ed0f63318c930379ee74220f23aa558c16d51.1779939330.git.asj@kernel.org>
+Date: Thu, 28 May 2026 12:05:34 +0800
+Message-ID: <f4dc9d5af00133834acf97e1c72232d2a9b34ac6.1779939330.git.asj@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1779939330.git.asj@kernel.org>
 References: <cover.1779939330.git.asj@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wSS0n-00024I-2i
-Subject: [f2fs-dev] [PATCH v6 04/11] fstests: add _require_unique_f_fsid()
- helper
+X-Headers-End: 1wSS0p-00025P-Th
+Subject: [f2fs-dev] [PATCH v6 03/11] fstests: add FSNOTIFYWAIT_PROG
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,54 +94,25 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Add a helper to check if the target filesystem supports unique f_fsid
-tracking across cloned or snapshot instances.
-
-Certain filesystems like XFS, Btrfs, and F2FS ensure unique f_fsid
-identifiers per filesystem instance. However, Ext4 derives its f_fsid
-directly from its superblock UUID, which leads to identical f_fsid
-values on cloned images until the UUID is manually modified by userspace.
-
-Introduce _require_unique_f_fsid() to allow test cases requiring strict
-f_fsid uniqueness to skip gracefully on unsupported filesystems.
+Define `FSNOTIFYWAIT_PROG` for an upcoming test case that uses `fsnotifywait`.
 
 Signed-off-by: Anand Jain <asj@kernel.org>
 ---
- common/rc | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ common/config | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/common/rc b/common/rc
-index 937f478963b4..5446552aed92 100644
---- a/common/rc
-+++ b/common/rc
-@@ -6314,6 +6314,27 @@ _require_fanotify_ioerrors()
- 	_notrun "$FSTYP does not support fanotify ioerrors"
- }
+diff --git a/common/config b/common/config
+index d5299d5b926f..5661fa0ec310 100644
+--- a/common/config
++++ b/common/config
+@@ -242,6 +242,7 @@ export BTRFS_MAP_LOGICAL_PROG=$(type -P btrfs-map-logical)
+ export PARTED_PROG="$(type -P parted)"
+ export XFS_PROPERTY_PROG="$(type -P xfs_property)"
+ export FSCRYPTCTL_PROG="$(type -P fscryptctl)"
++export FSNOTIFYWAIT_PROG="$(type -P fsnotifywait)"
  
-+# Ext4 derives f_fsid from the superblock UUID, meaning clones share the
-+# same f_fsid until their UUIDs diverge. Conversely, XFS, Btrfs,
-+# and F2FS ensure f_fsid remains unique per filesystem instance (often by
-+# deriving it from the UUID and underlying block device.)
-+#
-+# Across all filesystems, a UUID collision causes libblkid tools to return
-+# non-deterministic device mappings. It is ultimately the responsibility
-+# of the userspace utility or use-case to enforce uniqueness when a clone
-+# diverges. For details, see mailing list thread discussions titled:
-+#      "ext4: derive f_fsid from block device to avoid collisions".
-+_require_unique_f_fsid()
-+{
-+	# Skip the test if the filesystem does not enforce unique f_fsids
-+	# natively. Checking this dynamically requires recreating a clone
-+	# layout, so we use a static lookup based on FSTYP.
-+	if [ "$FSTYP" == "ext4" ]; then
-+		_notrun "Target filesystem ($FSTYP) does not guarantee unique f_fsid on clones."
-+	fi
-+}
-+
-+
- # Computes a percentage of the available space in a filesystem and
- # returns that quantity in MB. The percentage must not contain a percent
- # sign ("%").
+ # udev wait functions.
+ #
 -- 
 2.43.0
 
