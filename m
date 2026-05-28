@@ -4,75 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A4242CD6E45
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 May 2026 04:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ABF7ACD6E45
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 May 2026 04:06:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=PjklcypNvWjOy6dvRqzb+Y0Wd5DaT6TxEPU2jxK15UY=; b=SnP39XY6yV/aNd4t8fd/JMIkcH
-	65B7MCYDUpLC3BdwjSZKPIdIs3CEgMBD/nZFZki7h9D5hcEr1t507mgZwHCFpSzsC3/eygE8wm/ah
-	uaDD+nny/2sd2TTBS7+3xeQIU/54v4svnP5PdMRUgTwV4Il9SAso3uyP5z8ovZfyH/eI=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=gcogz5Rr6sSXR0I97L1J5OhvGm1MpGyL9sT242oM8aQ=; b=BF7FCCS9JgXS79POQ3rAXQMEmr
+	d0/yn/YlnCPHIgjgV+6tQo0u8dYtssDE9EPyD7iFrwywkeXEyGMi3CiPAZ+dkf4JOV7TyNqdBkH28
+	AQEcLdUrFW7JNz1M5ZGjWST3jHWVxBI98rkOORu4sy06gz67nWcqvlTQCI4JxVAwlGKA=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wSS0j-00025R-8Q;
-	Thu, 28 May 2026 04:06:18 +0000
+	id 1wSS0k-00020p-Ok;
+	Thu, 28 May 2026 04:06:23 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <asj@kernel.org>) id 1wSS0i-00025L-Al
+ (envelope-from <asj@kernel.org>) id 1wSS0j-00020g-7D
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 May 2026 04:06:17 +0000
+ Thu, 28 May 2026 04:06:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CLUkiSIdhVjbGrdOUK5E/DEBmrwO/TzftuAwtmRq+Yk=; b=Lwbv5wMUyjwPZJ7ZTvkY5AlMIn
- WHdHr05DYeU2RBMAl52zuaR2nnkJm0OyzmJiaYctx+jsWnizoT1WWiPnw3VC/zla6M3EjUm+zrNmt
- wJrcdxbIZKED23ShvL/4maCuj6Fasj1ca0mWbk7BsFg5aEYmGmvalvDSTCNhDUjTpe+c=;
+ bh=PAvTWkROU+u+H9crk+JD4pEa+DKYrUN/J2Uia9F6hVI=; b=LzGretvjDhftjBR1LPw6sRhtyY
+ DUI3gpebLNuIvXisO1sBOPqRe8QwC/GQgVXF4mSRuwsZgBmgdqhUH/1nxR5wzbOHhw87RhBmkUuyG
+ IxMZnlwGds8hS2RJGOmCSrhk5X1rwQQeZg9OD/pjvJbEN1KjAcgTLMqEA/Qztv6M5pRw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=CLUkiSIdhVjbGrdOUK5E/DEBmrwO/TzftuAwtmRq+Yk=; b=V
- rg3kfpZ75duEZy96Q1MvVxxh1p3ONPo2Yri+nr6Ob1SbGi5CvAM2JTYczq+gKnLJi8zMHtkFZD0zN
- 4+rtqYvZJOJUQWjuwrkiDZ1uxqDka8sSQi/SDulHEnjfd5VbpB6rEKTL0mETYk3ud3sGkrkbzwZyR
- pExFz1s0/uPatq+s=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=PAvTWkROU+u+H9crk+JD4pEa+DKYrUN/J2Uia9F6hVI=; b=I4/SGTYXippQ0NhTpBoCCpem43
+ bFR8+bBu7cCczairJ4SYG9WDqij8cn5KKCZsazqGUQYo5drl9Ptg8L7xH3Di9A6zG1o/17i4T6vn6
+ ELPvT3N1tI1jHTGO3Wlqf8jWZMyFXlfkUv94Y2AIZdYSNOOYhIf1sot+FZeyNgY3wAEU=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wSS0d-00020w-Ne for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 May 2026 04:06:17 +0000
+ id 1wSS0i-00022U-5D for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 28 May 2026 04:06:21 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id D7F8E4385B;
- Thu, 28 May 2026 04:06:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 013811F000E9;
- Thu, 28 May 2026 04:06:08 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 569E740C07;
+ Thu, 28 May 2026 04:06:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CF271F000E9;
+ Thu, 28 May 2026 04:06:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1779941170;
- bh=CLUkiSIdhVjbGrdOUK5E/DEBmrwO/TzftuAwtmRq+Yk=;
- h=From:To:Cc:Subject:Date;
- b=ia9YxbI7iMZjO5I5NO8FW6Lsli1Unc6TEnlzXazf2uvMqs+5p1shgniqqT0eRkRik
- 4TErZyek9i+fQUsZJB7PSttB2rNHF6+j86YSp/U6yu6rL1LT9m5MAZzwtqubGl2kkH
- L/CqVfQvpyR1LW7dmxK4CEad/ES1s0Syg7AwFmmpuUcgGQtKGNYlJX4U6SlfJLncFH
- Eow44MPvrNbVEJSMFuaLm7jDXJEIamwiwgv/KWzSlpf3/mjrqACYZ81bezdT3zRgbs
- 0l19cnlwnf/qRC/4XKJXG05qW63gLMDN8mQq7dIIcd228CDGigcdAk8fEBVFmP+NGA
- Cfw7v/wpgJypw==
+ s=k20260515; t=1779941175;
+ bh=PAvTWkROU+u+H9crk+JD4pEa+DKYrUN/J2Uia9F6hVI=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=mKSGv1DqAx5vGEyfWkTpShtLnnMd3c1/YnTVRVLcfFBR7uTFBpnffhcQV6TGueuSW
+ F6rV+JDf0wCqd5xNhuQcHhA1lK5jTysPKwB97Z7IS3/sK5dKjgHwyAX8USKXY+ZUCN
+ qbiJ9hP+GLuNAy6qEm+nidudllY/NmYYY8lZVabLN2bQ4CPXT399CgaeHs2TYRWAA2
+ Z4THj/lFwApmZFy/PRG8E2fNszVsXcqKTpeq/OvLRGdvGHsGc3MHRfmXoIZUYlN/bX
+ pxKK3HHf6ZArr3r/c5gVe4tDRhFmDCIQQv52YBo0R/1Sm+QjJ6Hp/zHj0/VWW+VAvo
+ OcDgFZHFS/bbw==
 To: fstests@vger.kernel.org
-Date: Thu, 28 May 2026 12:05:31 +0800
-Message-ID: <cover.1779939330.git.asj@kernel.org>
+Date: Thu, 28 May 2026 12:05:33 +0800
+Message-ID: <4346c80089c61c8f0d62ea696f9d73f2a9669297.1779939330.git.asj@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1779939330.git.asj@kernel.org>
+References: <cover.1779939330.git.asj@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wSS0d-00020w-Ne
-Subject: [f2fs-dev] [PATCH v6 0/11] fstests: add test coverage for cloned
- filesystem ids
+X-Headers-End: 1wSS0i-00022U-5D
+Subject: [f2fs-dev] [PATCH v6 02/11] fstests: add _clone_mount_option()
+ helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,90 +95,43 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-v6:
-. Renamed `pre_clone_tune_uuid()` to `_change_metadata_uuid()`.
-. Created the `_require_unique_f_fsid()` helper instead of handling it inside the test case (patch 5/11).
-. Separated `FSNOTIFYWAIT_PROG` into its own patch.
-. Dropped the `inotify` test case in favor of `fsnotify`.
-. Added comments throughout, especially for helper functions.
+Adds _clone_mount_option() helper function to handle filesystem-specific
+requirements for mounting cloned devices. Abstract the need for -o nouuid
+on XFS.
 
-v5:
-  https://lore.kernel.org/fstests/cover.1779367627.git.asj@kernel.org
+Signed-off-by: Anand Jain <asj@kernel.org>
+---
+ common/rc | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-v4:
-  https://lore.kernel.org/fstests/cover.1777357320.git.asj@kernel.org
-
-v3:
-  https://lore.kernel.org/fstests/cover.1777281778.git.asj@kernel.org
-
-v2:
-  https://lore.kernel.org/fstests/cover.1774090817.git.asj@kernel.org
-
-v1:
-  https://lore.kernel.org/fstests/cover.1772095513.git.asj@kernel.org
-
-This series adds fstests infrastructure and test cases to verify correct
-filesystem identity when a filesystem is cloned (block-level copy).
-Test covers inotify, fanotify, f_fsid, libblkid, IMA, exportfs file handles
-and libblkid tools verify with metadata_uuid.
-  New helpers:
-   _loop_image_create_clone() and _loop_image_destroy() to help create fs and clone
-   _clone_mount_option() helper to apply per-filesystem clone mount options
-   _change_metadata_uuid() changes the UUID before the clone
-
-  New tests:
-  - fanotify events are isolated between cloned filesystems
-  - f_fsid is unique across cloned filesystem instances
-  - libblkid correctly resolves duplicate UUIDs to distinct devices
-    with and without metadata_uuid
-  - IMA distinct identity for each cloned filesystem
-  - exportfs file handles resolve correctly on cloned filesystems
-
-Kernel Patches:
-  Requires Btrfs kernel patches for all tests to pass.
-   [1] https://lore.kernel.org/linux-btrfs/cover.1777281686.git.asj@kernel.org
-
-Anand Jain (11):
-  fstests: add _loop_image_create_clone() helper
-  fstests: add _clone_mount_option() helper
-  fstests: add FSNOTIFYWAIT_PROG
-  fstests: add _require_unique_f_fsid() helper
-  fstests: verify fanotify isolation on cloned filesystems
-  fstests: verify f_fsid for cloned filesystems
-  fstests: verify libblkid resolution of duplicate UUIDs
-  fstests: verify IMA isolation on cloned filesystems
-  fstests: verify exportfs file handles on cloned filesystems
-  fstests: add _change_metadata_uuid helper
-  fstests: test UUID consistency for clones with metadata_uuid
-
- common/config         |   1 +
- common/rc             | 124 ++++++++++++++++++++++++++++++++++++++
- tests/generic/801     | 135 ++++++++++++++++++++++++++++++++++++++++++
- tests/generic/801.out |   7 +++
- tests/generic/802     |  67 +++++++++++++++++++++
- tests/generic/802.out |   7 +++
- tests/generic/803     |  84 ++++++++++++++++++++++++++
- tests/generic/803.out |  19 ++++++
- tests/generic/804     | 108 +++++++++++++++++++++++++++++++++
- tests/generic/804.out |  10 ++++
- tests/generic/805     |  80 +++++++++++++++++++++++++
- tests/generic/805.out |   2 +
- tests/generic/806     |  84 ++++++++++++++++++++++++++
- tests/generic/806.out |  19 ++++++
- 14 files changed, 747 insertions(+)
- create mode 100644 tests/generic/801
- create mode 100644 tests/generic/801.out
- create mode 100644 tests/generic/802
- create mode 100644 tests/generic/802.out
- create mode 100644 tests/generic/803
- create mode 100644 tests/generic/803.out
- create mode 100644 tests/generic/804
- create mode 100644 tests/generic/804.out
- create mode 100644 tests/generic/805
- create mode 100644 tests/generic/805.out
- create mode 100644 tests/generic/806
- create mode 100644 tests/generic/806.out
-
+diff --git a/common/rc b/common/rc
+index d7e3e0bdfb1e..937f478963b4 100644
+--- a/common/rc
++++ b/common/rc
+@@ -414,6 +414,23 @@ _scratch_mount_options()
+ 					$SCRATCH_DEV $SCRATCH_MNT
+ }
+ 
++# Return filesystem-specific mount options required for mounting clone/snapshot
++# devices.
++_clone_mount_option()
++{
++	local mount_opts=""
++
++	case "$FSTYP" in
++	xfs)
++		# Allow mounting a duplicate filesystem on the same host
++		mount_opts="-o nouuid"
++		;;
++	*)
++	esac
++
++	echo $mount_opts
++}
++
+ _supports_filetype()
+ {
+ 	local dir=$1
 -- 
 2.43.0
 
