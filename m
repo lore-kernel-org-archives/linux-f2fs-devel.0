@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 29600CD6E45
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 May 2026 04:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BE5C8CD5BD1
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 May 2026 04:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=dEsAytxq6ImRIYD7vFz3DWgbKqnTrNDLkhx5G/ezvno=; b=hKTRSE8C3a7XqTNzcEU8zLya17
-	ppKhuaS6jsK9g5ngpjb6gM29+eoM9nq3GIG9br4yz1ui+xTJ3pfKTpsai4EcCYkC3k31oRJS6Dlhn
-	Nk9VeDwBzYoZPpLr52pjcBHR32nOegEnWVotZIFHLdxsuWSz3egHpypbk0bh7o0vL7vU=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=qB9CwpKIaTdCZ1RzqXsH3WuDnbf9jrLT9Me7C02r61Q=; b=JeiGVZdPoVn45gFeGbAmLR6dPX
+	HAVnNZXBbR4jG4Haj+vVM00Oclbq5E8nrd+wcRUdxsgJsk/FPPAs/x+3tpNf4/i8fQmN8UUfXz3VW
+	anRm37GL+6q5WmSb9Txx10hE2p2pmB4xbRG1u+6NH3koMSaf7Rj+shXATCMWcwu049Go=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wSS0v-000266-JP;
-	Thu, 28 May 2026 04:06:31 +0000
+	id 1wSS0w-00022P-4W;
+	Thu, 28 May 2026 04:06:34 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <asj@kernel.org>) id 1wSS0u-00025y-8G
+ (envelope-from <asj@kernel.org>) id 1wSS0u-000228-Mb
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 May 2026 04:06:29 +0000
+ Thu, 28 May 2026 04:06:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7yTvj2+iPY9bgL3Stb79PLfhmJb2V6kYoeFhUhcOQBo=; b=abIL4RiNgjgB/hUaWdfEs9jkVN
- XJTxkujal+NCIqGa4AFbk+WUDAQNlzEitlk5CeduNDcvF182qWLQI4n3sUe47h5HPEeoHrAdmYCTe
- MpJHgE0wKHZB3ItqSfntW9YeERUv+GHwE06FLelj6i4Zgx6n/m8KYeQuBYNRucRqO4oE=;
+ bh=H7gLHSQrBmdzDhCPqc1cwZxKG/ga7a4oLr1rXb9+FRY=; b=iEDuYYB4YmtFjs/SUAyVaEeAUK
+ H6LQXd1lN/f1rzagCC+oRgfZ/m6OX1WuByABMtDHXkJQiP1HDO2jj3YbfI1KkX4eH5CTm2oxic2xx
+ gKmre9RhNhJRynEK2xndD+mdrn5H6pwpg8VVq+FOdIAoPBx7fyt9OVxtNGyNcfDTlRNw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,38 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=7yTvj2+iPY9bgL3Stb79PLfhmJb2V6kYoeFhUhcOQBo=; b=kXYSBwD9Uzgw9Lq9+KczRqZfQ9
- feVDFzjwtsw7xTRY/11ybKf+7EqfruBG6kQSMsWBZusc5BJBpq4nz7oSBrS8qTCnzoAD8SBoLyFpK
- 2u4WIn1h0WMbv13g1/9yw2S9vhvsaYbDRCvaQ6UNgfl9IKws2lJnrT2VLU8r53GTKZ/M=;
+ bh=H7gLHSQrBmdzDhCPqc1cwZxKG/ga7a4oLr1rXb9+FRY=; b=iqYzBZQmbpybya5E++ts85VJf4
+ UXK4ZozCHPw4T7rSK+/lfTO7wF7t2aU6urQWjuULDV5Ys5WA3/FOBwIuKwLf9OWsXWjLfSVzzOvU9
+ Xxpw8LMl917/KmxaV/+7oBf7pESrFMvIInWhAhZG7/HzosI7cFg+RjiawefEJlQ28BnQ=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wSS0p-00025P-Th for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 28 May 2026 04:06:29 +0000
+ id 1wSS0u-00027S-8t for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 28 May 2026 04:06:33 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id D2EA3605C4;
- Thu, 28 May 2026 04:06:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C66DD1F00A3A;
- Thu, 28 May 2026 04:06:15 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 29F11605DD;
+ Thu, 28 May 2026 04:06:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 304981F00A3A;
+ Thu, 28 May 2026 04:06:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1779941177;
- bh=7yTvj2+iPY9bgL3Stb79PLfhmJb2V6kYoeFhUhcOQBo=;
+ s=k20260515; t=1779941181;
+ bh=H7gLHSQrBmdzDhCPqc1cwZxKG/ga7a4oLr1rXb9+FRY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=kJAsLqmVLMooIrhh/1vq1kc8PVAnOCsjVRIlmKT1UVoKB94KJ05Wu01IGMx21d9hx
- i767/nPAzXBTQBwYUfDsFPhFE5qPDcejnRq70BEnWAcZZ42gZVkCrdajAGs8yKXbC8
- M4FxIYjgIQGkktOFi3oX1RYMQia5zCYzrWGa2LmFSemih4PutaFvqklJhpYfuV73Vk
- xvpKmiOfjK+8UJXSbq2iXOmn9Fo+j724iQ1gc9Gx177rQeUhuqD6/Rs3oSosYy8swn
- 2SVPXH+lJ5FxSsTUI59urvuQfzQlfhjS+4NOvwxvCHwRpA/fzlkjnxenDEZ5Y8Wpaz
- MdwWH+jyg7wcw==
+ b=KbH57ygITUnMv8xzJUjjTMdvmoASUQbLlOZ83Ht+cAj6gODPKdsc4zfhTX1L9cBAq
+ lHESSW6r2vTa9zAwTx+UXC6e+RVXrsjPY3M6Q/0a0mQydJo3Tv/5fYbg7duAfCS5UE
+ vW2ba8+0SqhmJIEEh8X4CPSH2FTCrMnO3am9a6l2/o8iy/UMQ841yADHn3UJlIgazO
+ Eilkg750wgx+N917GWJXBls4Io4olrYzRxheuvmLeW+/ynUbHh6qDgvZ1juISOxl61
+ P6nB/xrRccWev9czoEeuRkXJYcZHIUEXn28Q68l/ofX5kLC2+aH97jMMed9YPOJOHH
+ WmFMUrD4kADVQ==
 To: fstests@vger.kernel.org
-Date: Thu, 28 May 2026 12:05:34 +0800
-Message-ID: <f4dc9d5af00133834acf97e1c72232d2a9b34ac6.1779939330.git.asj@kernel.org>
+Date: Thu, 28 May 2026 12:05:36 +0800
+Message-ID: <ef076b330a047d2f19ed48f5b7166f419433bb73.1779939330.git.asj@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1779939330.git.asj@kernel.org>
 References: <cover.1779939330.git.asj@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wSS0p-00025P-Th
-Subject: [f2fs-dev] [PATCH v6 03/11] fstests: add FSNOTIFYWAIT_PROG
+X-Headers-End: 1wSS0u-00027S-8t
+Subject: [f2fs-dev] [PATCH v6 05/11] fstests: verify fanotify isolation on
+ cloned filesystems
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,25 +95,173 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Define `FSNOTIFYWAIT_PROG` for an upcoming test case that uses `fsnotifywait`.
+Verify that fanotify events are correctly routed to the appropriate
+watcher when cloned filesystems are mounted.
+Helps verify kernel's event notification distinguishes between devices
+sharing the same FSID/UUID.
 
 Signed-off-by: Anand Jain <asj@kernel.org>
 ---
- common/config | 1 +
- 1 file changed, 1 insertion(+)
+ tests/generic/801     | 135 ++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/801.out |   7 +++
+ 2 files changed, 142 insertions(+)
+ create mode 100644 tests/generic/801
+ create mode 100644 tests/generic/801.out
 
-diff --git a/common/config b/common/config
-index d5299d5b926f..5661fa0ec310 100644
---- a/common/config
-+++ b/common/config
-@@ -242,6 +242,7 @@ export BTRFS_MAP_LOGICAL_PROG=$(type -P btrfs-map-logical)
- export PARTED_PROG="$(type -P parted)"
- export XFS_PROPERTY_PROG="$(type -P xfs_property)"
- export FSCRYPTCTL_PROG="$(type -P fscryptctl)"
-+export FSNOTIFYWAIT_PROG="$(type -P fsnotifywait)"
- 
- # udev wait functions.
- #
+diff --git a/tests/generic/801 b/tests/generic/801
+new file mode 100644
+index 000000000000..3bfb87d41922
+--- /dev/null
++++ b/tests/generic/801
+@@ -0,0 +1,135 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (c) 2026 Anand Jain <asj@kernel.org>.  All Rights Reserved.
++#
++# FS QA Test 801
++# Verify fanotify FID functionality on cloned filesystems by setting up
++# watchers and making sure notifications are in the correct logs files.
++
++. ./common/preamble
++
++_begin_fstest auto quick mount clone
++
++_require_test
++_require_block_device $TEST_DEV
++_require_loop
++_require_command "$FSNOTIFYWAIT_PROG" fsnotifywait
++_require_unique_f_fsid
++
++_cleanup()
++{
++	cd /
++	[[ -n $pid1 ]] && { kill -TERM "$pid1" 2> /dev/null; wait $pid1; }
++	[[ -n $pid2 ]] && { kill -TERM "$pid2" 2> /dev/null; wait $pid2; }
++
++	if [ "$semanage_added" = "yes" ]; then
++		semanage permissive -d unconfined_t >/dev/null 2>&1 || true
++	fi
++
++	umount $mnt1 $mnt2 2>/dev/null
++	_loop_image_destroy "${devs[@]}" 2> /dev/null
++	rm -r -f $tmp.*
++}
++
++# Run fsnotifywait in unbuffered mode to watch filesystem-wide create events
++monitor_fanotify()
++{
++	local mmnt=$1
++	exec stdbuf -oL $FSNOTIFYWAIT_PROG -m -F -S -e create "$mmnt" 2>&1
++}
++
++# Transform f_fsid into the hi.lo format used in fanotify FID logs
++fsid_to_fid_parts()
++{
++	local fsid=$1
++	# Pad to 16 hex chars (64-bit), then split into two 32-bit halves
++	local padded=$(printf '%016x' "0x${fsid}")
++	local hi=$(printf '%x' "0x${padded:0:8}")   # strips leading zeros
++	local lo=$(printf '%x' "0x${padded:8:8}")   # strips leading zeros
++	echo "${hi}.${lo}"
++}
++
++# Create base loop device and its clone
++devs=()
++_loop_image_create_clone devs
++mkdir -p $TEST_DIR/$seq
++mnt1=$TEST_DIR/$seq/mnt1
++mnt2=$TEST_DIR/$seq/mnt2
++mkdir -p $mnt1
++mkdir -p $mnt2
++
++# Mount both base and clone filesystems using required clone mount options
++_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[0]} $mnt1 || \
++						_fail "Failed to mount dev1"
++_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[1]} $mnt2 || \
++						_fail "Failed to mount dev2"
++
++# Fetch filesystem IDs to verify the kernel can differentiate between them
++fsid1=$(stat -f -c "%i" $mnt1)
++fsid2=$(stat -f -c "%i" $mnt2)
++
++log1=$tmp.fanotify1
++log2=$tmp.fanotify2
++
++pid1=""
++pid2=""
++echo "Setup FID fanotify watchers on both mnt1 and mnt2"
++
++# Permit unconfined_t domains when SELinux is enforcing to prevent fanotify
++# blockages
++semanage_added="no"
++if [ "$(getenforce 2>/dev/null)" = "Enforcing" ]; then
++    if ! semanage permissive -l | grep -q "unconfined_t"; then
++        semanage permissive -a unconfined_t >/dev/null 2>&1 && semanage_added="yes"
++    fi
++fi
++
++# Start asynchronous fanotify monitors
++( monitor_fanotify "$mnt1" > "$log1" ) &
++pid1=$!
++( monitor_fanotify "$mnt2" > "$log2" ) &
++pid2=$!
++sleep 2
++
++echo "Trigger file creation on mnt1"
++touch $mnt1/file_on_mnt1
++sync
++sleep 1
++
++echo "Trigger file creation on mnt2"
++touch $mnt2/file_on_mnt2
++sync
++sleep 1
++
++echo "Verify fsid in the fanotify"
++kill $pid1 $pid2
++wait $pid1 $pid2 2>/dev/null
++pid1=""
++pid2=""
++
++e_fsid1=$(fsid_to_fid_parts "$fsid1")
++e_fsid2=$(fsid_to_fid_parts "$fsid2")
++
++# Dump debug details to the full log
++echo $fsid1 $e_fsid1 $fsid2 $e_fsid2 >> $seqres.full
++cat $log1 >> $seqres.full
++cat $log2 >> $seqres.full
++
++# Ensure monitor 1 only captured events belonging to mnt 1 and fsid 1
++if grep -qF "$e_fsid1" "$log1" && ! grep -qF "$e_fsid2" "$log1"; then
++	echo "SUCCESS: mnt1 events found"
++else
++	[ ! -s "$log1" ] && echo "  - mnt1 received no events."
++	grep -qF "$e_fsid2" "$log1" && echo "  - mnt1 received event from mnt2."
++fi
++
++# Ensure monitor 2 only captured events belonging to mnt 2 and fsid 2
++if grep -qF "$e_fsid2" "$log2" && ! grep -qF "$e_fsid1" "$log2"; then
++	echo "SUCCESS: mnt2 events found"
++else
++	[ ! -s "$log2" ] && echo "  - mnt2 received no events."
++	grep -qF "$e_fsid1" "$log2" && echo "  - mnt2 received event from mnt1."
++fi
++
++status=0
++exit
+diff --git a/tests/generic/801.out b/tests/generic/801.out
+new file mode 100644
+index 000000000000..d7b318d9f27c
+--- /dev/null
++++ b/tests/generic/801.out
+@@ -0,0 +1,7 @@
++QA output created by 801
++Setup FID fanotify watchers on both mnt1 and mnt2
++Trigger file creation on mnt1
++Trigger file creation on mnt2
++Verify fsid in the fanotify
++SUCCESS: mnt1 events found
++SUCCESS: mnt2 events found
 -- 
 2.43.0
 
