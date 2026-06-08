@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1BB2BCD8C9F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  8 Jun 2026 14:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9B372CD8C9D
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  8 Jun 2026 14:41:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=32CSjq4VVJ8guNJiCu7Ksmwv6gdEGH1rnslgHRC/7Y4=; b=O2AzmsnjsaRT78uoPrhXyGkC36
-	p/5PJs0k8Z5jQ0W3JNfnGIr8U0nKR5u1zjGWgbMF2aWIiCCNHNvDfNYuTfGzS4CVjRskoNHAsFBSs
-	aPaAvy1CYitkJaxIzZMFgcjmjF6uXkF1fNkChv65ynDNqdT0+cRU/MqaxYD+yUCMkcKE=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=0Pco43Mskxm0R41ULbijQNt41xBObPYufAi/sO3dcsc=; b=BRhwH7ooztZswbUEYYb9QxyvGO
+	2jYlvmnRjQtBNuyo7TFfl6x3BeRcQMur4DI8H2xzqE8aVCmMFafFDAYuBNYdYSz5zWT+4dHvfP7iU
+	AOdHJ0+2V2skM7DXFdMdon6CDFTVufiOs326PfRMbMGt8BTCKgGdO4SB4JwGhNKjFTxE=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wWb8N-0006xo-BO;
-	Mon, 08 Jun 2026 14:39:20 +0000
+	id 1wWbAO-0002nv-O3;
+	Mon, 08 Jun 2026 14:41:29 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <asj@kernel.org>) id 1wWb8M-0006xi-Ph
+ (envelope-from <asj@kernel.org>) id 1wWbAN-0002np-KV
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 08 Jun 2026 14:39:20 +0000
+ Mon, 08 Jun 2026 14:41:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=b2IFtj8GrIFcfIZoR8REKv1zaTaDXNqjayO7wEM71no=; b=VWcI1YONK+3EAQCcFeTL5DArag
- gb/986oeJUpgAMdrBpIODiw7KTuEm0MNsY8uX3/bhhe7ID/WTXeIlubF0A6JsDcZbWFlD4bO/cVnH
- 4cneFL8ZIQ9O1U5TUddMsGMgjpqZwVKfcHoURSOOWVGt1wKf7P42rUuhxfS3YmimnasA=;
+ bh=rnSeC72k3jfwAJFo9DXNXEkyjXtYEwqhDK65JbAiMEg=; b=AvVrnc4jtwLJzG3UYczDyOIjXm
+ AZmZJzVsm6gP+7fRi5aRYWJHymOQaJgwQlnofT29MkX055uLgGTWPHXbinH7eG8H+boUzrk7dN1l1
+ JRP+VCkDVJJYiRPOgcf1GOClvCY6szPdKaiyEQwnyr+F25A1HiLo8O844kvKxEwJGajY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:
@@ -42,42 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=b2IFtj8GrIFcfIZoR8REKv1zaTaDXNqjayO7wEM71no=; b=VCv9r0YE9x5XXPaVPkGYTVdiVv
- FTVJOpm5C4kP2NukpTMcSMudwxn2L/oXEDKrXf7D78feQzq2Y40O4CbZNtQsjvg7CK1M0Gsnzhxz7
- cytJEK2C5zHbP3CQ12drvtILWVVvY9ckj11ApmUyG6B+WMFbxZNJ6SK4apRSWX6wsY78=;
+ bh=rnSeC72k3jfwAJFo9DXNXEkyjXtYEwqhDK65JbAiMEg=; b=YCV+wj4Bpan0townoLajECgsGZ
+ 6gcoeJUr02BbrRGgIJknE5sfTe5Xr8OeqRXlZ0aHOb7BE5CPIJaDc1Sks2ZzHU+19uqZjvhrs6iiH
+ tYetzma7C5X2Nvw1JEQvzvaUImVG9NDaEl4Za+ZdAhuOs8SH3EGZjfSSC2qMC4nO6LEQ=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wWb8J-0003fG-2D for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 08 Jun 2026 14:39:20 +0000
+ id 1wWbAL-0003uK-2Q for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 08 Jun 2026 14:41:28 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 2F6D74332C;
- Mon,  8 Jun 2026 14:39:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6183B1F00898;
- Mon,  8 Jun 2026 14:39:07 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 3586543CB2;
+ Mon,  8 Jun 2026 14:41:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BCCD1F00898;
+ Mon,  8 Jun 2026 14:41:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1780929549;
- bh=b2IFtj8GrIFcfIZoR8REKv1zaTaDXNqjayO7wEM71no=;
+ s=k20260515; t=1780929675;
+ bh=rnSeC72k3jfwAJFo9DXNXEkyjXtYEwqhDK65JbAiMEg=;
  h=Date:From:Subject:To:Cc:References:In-Reply-To;
- b=BzxHlb01ARgm2lzi8SbGzOcsX4mGRQ8MAu9rvu3N3vgFzzZ2CKZK1x7BOruElyHt+
- FuxTReh67hbF0e0jJgoi+YaBTXy+8WjhQ1bcr1snZd6xZcozL41RMCH+tcci5WBpi4
- h/NaOarVTQ6hrihI3l3N54LD+SIG57NMPTfYkKoV9BorGrdQ+qv3RJLizbYwav60Rw
- dI8ubnz6eOS4cHH+AyUG9Npemc0M2uLTHFdRUomBcLsU44ER2v4zXV1PiuMUO4CBfu
- epEXt1IS6qUmNotNBXIWs7uA7UVBJH8jQwBJrpw58gxfg2bwyyLCV1yEsdlyQd8e6Q
- auHB1SIm6tXZg==
-Message-ID: <9c0989d8-202f-42ab-9347-df082c25aa72@kernel.org>
-Date: Mon, 8 Jun 2026 22:39:04 +0800
+ b=A4mtJ1L37lSvxT4FuxMY+NOf+tpa23K7Wec+UwtgEdf+7emCOq7qYQhBNSYDjjE4t
+ tCv5nJ64IuZg71ns2H3kGLDtEo0+uWXQZ7wZ5fAY6DumHnA72XDAISYf8oww8xzWJw
+ n6tMBlwDb774v18NsHF+xyx1jRgVLbM3uYaNutx6wIgAIJYN1pcwSAmti5rum+ZsiN
+ i0ALTI/4Wjpbzcx/LEnIvEhoa2KE/kcXesYlvhVWWrBcQQcB21eA2RxQKIfiefgsin
+ cdTz2ifN2XjWZcZfv5lPPom9cdaRBPFhz9T6zGfDIsk+GX2fAKDIK4fKis2VXr9S5z
+ cuuZnQrqpvSCw==
+Message-ID: <81df0458-5cd0-4d02-8382-36c583e5ca26@kernel.org>
+Date: Mon, 8 Jun 2026 22:41:11 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: "Darrick J. Wong" <djwong@kernel.org>
 References: <cover.1779939330.git.asj@kernel.org>
- <421c7cdd5aae27b99d04dddf08c5d9df79c2f790.1779939330.git.asj@kernel.org>
- <20260529042743.GB6070@frogsfrogsfrogs>
+ <4346c80089c61c8f0d62ea696f9d73f2a9669297.1779939330.git.asj@kernel.org>
+ <20260529042834.GC6070@frogsfrogsfrogs>
 Content-Language: en-US
-In-Reply-To: <20260529042743.GB6070@frogsfrogsfrogs>
-X-Headers-End: 1wWb8J-0003fG-2D
-Subject: Re: [f2fs-dev] [PATCH v6 01/11] fstests: add
- _loop_image_create_clone() helper
+In-Reply-To: <20260529042834.GC6070@frogsfrogsfrogs>
+X-Headers-End: 1wWbAL-0003uK-2Q
+Subject: Re: [f2fs-dev] [PATCH v6 02/11] fstests: add _clone_mount_option()
+ helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,120 +99,86 @@ Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 29/5/26 12:27, Darrick J. Wong wrote:
-> On Thu, May 28, 2026 at 12:05:32PM +0800, Anand Jain wrote:
->> Introduce _loop_image_create_clone() and _loop_image_destroy() to mkfs an
->> image file and clone it to another image file, and attach a loop device to
->> them. And its destroy part.
+On 29/5/26 12:28, Darrick J. Wong wrote:
+> On Thu, May 28, 2026 at 12:05:33PM +0800, Anand Jain wrote:
+>> Adds _clone_mount_option() helper function to handle filesystem-specific
+>> requirements for mounting cloned devices. Abstract the need for -o nouuid
+>> on XFS.
 >>
 >> Signed-off-by: Anand Jain <asj@kernel.org>
 >> ---
->>  common/rc | 63 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 63 insertions(+)
+>>  common/rc | 17 +++++++++++++++++
+>>  1 file changed, 17 insertions(+)
 >>
 >> diff --git a/common/rc b/common/rc
->> index 79189e7e6e94..d7e3e0bdfb1e 100644
+>> index d7e3e0bdfb1e..937f478963b4 100644
 >> --- a/common/rc
 >> +++ b/common/rc
->> @@ -1520,6 +1520,69 @@ _scratch_resvblks()
->>  	esac
+>> @@ -414,6 +414,23 @@ _scratch_mount_options()
+>>  					$SCRATCH_DEV $SCRATCH_MNT
 >>  }
 >>  
->> +# Create a small loop image, run an optional tuning function ($2) on it,
->> +# clone it, and attach both to loop devices, returned in ($1).
->> +# Args:
->> +#   $1: Nameref to return the array of allocated loop devices [base, clone].
->> +#   $2: Optional callback function to tune the base filesystem before cloning.
->> +_loop_image_create_clone()
+>> +# Return filesystem-specific mount options required for mounting clone/snapshot
+>> +# devices.
+>> +_clone_mount_option()
 >> +{
->> +	local -n _ret=$1
-> 
-> That switch   ^^ is very clever.  I always wondered how one did indirect
-> variables in bash.
-> 
->> +	local pre_clone_tune_func="$2"
->> +	local img_file=$TEST_DIR/${seq}.img
->> +	local img_file_clone=$TEST_DIR/${seq}_clone.img
->> +	local size=$(_small_fs_size_mb 128) # Smallest possible
->> +	local loop_devs
+>> +	local mount_opts=""
 >> +
->> +	# Since we copy the block device image, we keep its size small.
->> +	_require_fs_space $TEST_DIR $((size * 1024))
->> +
->> +	_create_file_sized $((size * 1024 * 1024)) $img_file ||
->> +				_fail "Failed: Create $img_file $size"
->> +
->> +	loop_devs=$(_create_loop_device $img_file)
->> +	_ret=($loop_devs)
-> 
-> Should this check that a loopdev actually got created?
-> 
-
-Hmm, in the function _create_loop_device(), we are
-calling _fail if create fails, so no need to duplicate, right?
-
->> +	case $FSTYP in
+>> +	case "$FSTYP" in
 >> +	xfs)
->> +		_mkfs_dev "-s size=4096" ${loop_devs[0]}
->> +		;;
->> +	btrfs)
->> +		_mkfs_dev ${loop_devs[0]}
+>> +		# Allow mounting a duplicate filesystem on the same host
+>> +		mount_opts="-o nouuid"
 >> +		;;
 >> +	*)
->> +		_mkfs_dev ${loop_devs[0]}
->> +		;;
 >> +	esac
 >> +
->> +	# Only execute if the function argument is not empty
->> +	if [ -n "$pre_clone_tune_func" ]; then
->> +		$pre_clone_tune_func ${loop_devs[0]}
->> +	fi
->> +
->> +	sync ${loop_devs[0]}
->> +	cp $img_file $img_file_clone
->> +
-
-
->> +	loop_devs="$loop_devs $(_create_loop_device $img_file_clone)"
+>> +	echo $mount_opts
 > 
-> 	local lodev="$(_create_loop_device ...)"
+> I probably would've just echo'd straight from inside the case statement,
+
+Nice. Let's see if there is v7, I will change this to as below.
+
+> but this otherwise looks ok,
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 > 
-> 	test -z "$lodev" && _fail "second loopdev not created"
-> 	_ret+=("$lodev")
+> --D
 > 
-> ?
-
-If the second `_create_loop_device()` happens to fail, it will
-already have called `_fail`, so "second loopdev..." won't be
-used at all.
-
-
-Thanks, Anand
 
 
 
->> +
->> +	_ret=($loop_devs)
+diff --git a/common/rc b/common/rc
+index 79be51e4da31..18d4f73cead9 100644
+--- a/common/rc
++++ b/common/rc
+@@ -418,17 +418,13 @@ _scratch_mount_options()
+  # devices.
+  _clone_mount_option()
+  {
+-       local mount_opts=""
+-
+         case "$FSTYP" in
+         xfs)
+                 # Allow mounting a duplicate filesystem on the same host
+-               mount_opts="-o nouuid"
++               echo "-o nouuid"
+                 ;;
+         *)
+         esac
+-
+-       echo $mount_opts
+  }
+
+  _supports_filetype()
+
+
+
+
+
 >> +}
 >> +
->> +# Teardown loop devices and delete their underlying backing image files.
->> +# Accepts a list of loop device paths (e.g., /dev/loop0 /dev/loop1).
->> +_loop_image_destroy()
->> +{
->> +	for d in "$@"; do
->> +		# Retrieve the path of the backing file
->> +		local f=$(losetup --noheadings --output BACK-FILE $d)
->> +
->> +		# Detach the loop device from the backing file
->> +		_destroy_loop_device "$d"
->> +
->> +		# Clean up the backing disk image file
->> +		[ -n "$f" ] && rm -f "$f"
->> +	done
->> +}
->>  
->>  # Repair scratch filesystem.  Returns 0 if the FS is good to go (either no
->>  # errors found or errors were fixed) and nonzero otherwise; also spits out
+>>  _supports_filetype()
+>>  {
+>>  	local dir=$1
 >> -- 
 >> 2.43.0
 >>
