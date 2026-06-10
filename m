@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5D8F2CD98C7
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 10 Jun 2026 19:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7ABB3CD98C7
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 10 Jun 2026 19:35:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=qyHeQ8IzuqYXm/SWOnOOUz2Or4Xm5HjfVKq14be9o5g=; b=fWC+0BLeHV8IJ5/xwvGQAGkIHw
-	4ZetaVsmn1LNzVIu8azIVmdtyOpeNM+wT6FKMjf1ZrDJHG9bjLwsEwidSQctJulce1xnu4XPpS1+y
-	BKIYyA9OfblIHtcVDEiPvHHZyxn2dEDKzQ25hz4FPv9+XHue7vpdULqxYlIeHiRxFRs4=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Grz5fY5sCFAJVf+vQBC9z6vpHCgkrPCUnbYJ0013XFw=; b=Gymx9o9iueSxuAd/R9IJy7keiJ
+	uSzsebqnzaHd6PKo0Rf/zCfYpVm7erhAzk0FOfr2pAtWHQ700M5RK8yZZyD0YmPGkWcWnJhKm/TGQ
+	b7Gxi6molBP08rF54L13HA/Q4ZAmbrOBxRguZP8bJ712/HeHhZquZokUztzRzYV3kUi0=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wXOhg-0001pP-5X;
-	Wed, 10 Jun 2026 19:35:08 +0000
+	id 1wXOhr-0006zV-K8;
+	Wed, 10 Jun 2026 19:35:17 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <bvanassche@acm.org>) id 1wXOhe-0001pE-CJ
+ (envelope-from <bvanassche@acm.org>) id 1wXOhq-0006zO-De
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 10 Jun 2026 19:35:07 +0000
+ Wed, 10 Jun 2026 19:35:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WnZa1xMVsraCioX1bWQhAMr3s/2Vza1UN9c9Mg5Uw3k=; b=DlwpQHb1X9mXcZHo/1JjZd/PWP
- MGCZbyUU/8iB1liSF1NEYR5ziAd/CvYE66vy9k/SqZj6JhFDRy/gDCREWO8yoXeFNfQzIaew/I7Mk
- 0TTFCsBIgUbIlIJuw5i2Gp4xFFzji+53G4qhOZvC5tI6ChsulRfaUM9rMlDmfqEZeKSA=;
+ bh=a4NBIj0htepxafBqdt8tJqrMvcXyUE+TJbysBrK1pP8=; b=X7KYc1K8wjc6AU28djr5baEUnn
+ O402MS+H9kxSbNqh5kpOiu7qiJ+PU2G1pbdLx5+fV6W2i3GxraimRjXByJbSvTg/YC6XMj1g66UWO
+ siRKleZBayxY7/WAPnmAgeEQHJMD2GnT7YVmrOU5xbvVn4MPVCS1aj+5FzUW5ZDCnQDs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,48 +42,49 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=WnZa1xMVsraCioX1bWQhAMr3s/2Vza1UN9c9Mg5Uw3k=; b=WBsR36enTPL1HYhuAkeceIZDdz
- pfWcOxq6ODH2wFAJ1wEIFhYA9zLSSJ7WURa7WxMKjP4AB/C9ytI7KHkcQW/VNmwRbsmthBSOImTKK
- /p7MyJxuKxEORcLvOZMdU7LE6dAWQnqshp4nrQZF0MJ9+gZ7bUC/eWZ6Lhr2D98hTelc=;
+ bh=a4NBIj0htepxafBqdt8tJqrMvcXyUE+TJbysBrK1pP8=; b=Fw5ztEEnwpfnDMUgqhYdflRWTM
+ tftAguMyuIqznkB5OQCOBRvIdgYk4PqB81D1WW0v2GCbeUBLQdeJjx+Uh6NE9oenUMyk8/N3TBnwk
+ s+O86aV8ime4QIrZK6xvtgWEWY095iQ89wcjRqhQOmYYp+P1fgCWp2ziyDCKsFzaFfco=;
 Received: from 013.lax.mailroute.net ([199.89.1.16])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wXOhd-0001XY-BH for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 10 Jun 2026 19:35:07 +0000
+ id 1wXOhm-0001Y3-P1 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 10 Jun 2026 19:35:15 +0000
 Received: from localhost (localhost [127.0.0.1])
- by 013.lax.mailroute.net (Postfix) with ESMTP id 4gbGFM37DdzlgqwC;
- Wed, 10 Jun 2026 19:34:47 +0000 (UTC)
+ by 013.lax.mailroute.net (Postfix) with ESMTP id 4gbGFQ5MPDzlfdvj;
+ Wed, 10 Jun 2026 19:34:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
  content-transfer-encoding:mime-version:references:in-reply-to
  :x-mailer:message-id:date:date:subject:subject:from:from
- :received:received; s=mr01; t=1781120085; x=1783712086; bh=WnZa1
- xMVsraCioX1bWQhAMr3s/2Vza1UN9c9Mg5Uw3k=; b=o+GUne8J6Ky4CFv67CESt
- zbUuYtfMNN7SOXCRDRTeEWBT7+++KDp3vMdAQCCYpXhVLQLAlh9VnTopvMjZKkCY
- e4d5Lcm6Ccakabm9bZV4QeBU+e+quNkDB4Dh1fknL5d2Hg5LEo1zvFMLR9KZOWcu
- MRhNlyh1ElX8Fd4CKOF5++udlWot/v7dhLZMWtwqb2z/k1wOYIfqFB0q502KiYDa
- 1JUXSaE4ueWoLVPZv/aqlPGs0qB4Honn6WHcqgG29UEXmh82Ls4kB5rhRuu5Nuj7
- lfJQpY4sj7CH6XM/lMTMgsNhZ97XnDFZf061f6/8OnzKLe0dFlqy2W7DfM21nJOb
- A==
+ :received:received; s=mr01; t=1781120086; x=1783712087; bh=a4NBI
+ j0htepxafBqdt8tJqrMvcXyUE+TJbysBrK1pP8=; b=EcWZki0B7ilT4bCoIDjHp
+ ohJdENpUCcpEhukh76wK0bOXQ5FtE5qwRaeQenpawk+4lcCscOUgomClNw11b5RI
+ mzcXrUZURP/fOsnTj8xjHBWhsyqHHs8K74bBQL/GyW4k4VUtUkVw8Uqxi5MAhktj
+ eKkMmGMvPDqyk42ICQ9C8184I+s1zvhC7A8atLfJDW1+M39LOO4l8rfzHPQnfZpG
+ nsjKf5InLd7BeQYFADjB694uMKN7y/V0Ckw5ft5PMlpAmtGosQPLsVbBOZds7KnR
+ 8IvmjlpB4vZe2KNTe45GWmHVbP1aeN44VOQZ6XzrO8yJ/zYf4vMcz9C72KcTdYoE
+ w==
 X-Virus-Scanned: by MailRoute
 Received: from 013.lax.mailroute.net ([127.0.0.1])
  by localhost (013.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 51QnAAir0Ekv; Wed, 10 Jun 2026 19:34:45 +0000 (UTC)
+ id xx7w70CcTTam; Wed, 10 Jun 2026 19:34:46 +0000 (UTC)
 Received: from bvanassche.mtv.corp.google.com (unknown [104.135.180.219])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  (Authenticated sender: bvanassche@acm.org)
- by 013.lax.mailroute.net (Postfix) with ESMTPSA id 4gbGFJ0bqyzlfdfW;
- Wed, 10 Jun 2026 19:34:43 +0000 (UTC)
+ by 013.lax.mailroute.net (Postfix) with ESMTPSA id 4gbGFK5rnYzlfl5n;
+ Wed, 10 Jun 2026 19:34:45 +0000 (UTC)
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Wed, 10 Jun 2026 12:34:19 -0700
-Message-ID: <d54744deb09adbdd290b19c2236cfd235df77c55.1781119949.git.bvanassche@acm.org>
+Date: Wed, 10 Jun 2026 12:34:20 -0700
+Message-ID: <2a18d06a0d810c922792703437f5775deee4483c.1781119949.git.bvanassche@acm.org>
 X-Mailer: git-send-email 2.54.0.1099.g489fc7bff1-goog
 In-Reply-To: <cover.1781119949.git.bvanassche@acm.org>
 References: <cover.1781119949.git.bvanassche@acm.org>
 MIME-Version: 1.0
-X-Headers-End: 1wXOhd-0001XY-BH
-Subject: [f2fs-dev] [PATCH v2 3/4] f2fs: Split f2fs_write_end_io()
+X-Headers-End: 1wXOhm-0001Y3-P1
+Subject: [f2fs-dev] [PATCH v2 4/4] f2fs: Run f2fs_write_end_io()
+ asynchronously
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -104,49 +105,124 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Prepare for running most of the write completion work asynchronously.
+The bio_for_each_segment_all() loop can take more than 10 ms for a large
+bio on an ARM little core. This is too much for interrupt context. Hence
+perform the write bio completion work asynchronously if a bio is large and
+if f2fs_write_end_io() is called from atomic context. This patch reduces
+the time spent in f2fs_write_end_io() from about 10 ms to about 150
+microseconds on an Arm Cortex-A520 core.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- fs/f2fs/data.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ Documentation/ABI/testing/sysfs-fs-f2fs |  9 +++++++++
+ fs/f2fs/data.c                          | 21 ++++++++++++++++++++-
+ fs/f2fs/f2fs.h                          |  2 ++
+ fs/f2fs/super.c                         |  5 +++++
+ fs/f2fs/sysfs.c                         |  2 ++
+ 5 files changed, 38 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 423ec40e2e4e..7c6fe1e7e9bc 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -1001,3 +1001,12 @@ Description:	It can be used to tune priority of f2fs critical task, e.g. f2fs_ck
+ 		threads, limitation as below:
+ 		- it requires user has CAP_SYS_NICE capability.
+ 		- the range is [100, 139], by default the value is 100.
++
++What:		/sys/fs/f2fs/<disk>/max_atc_write_bio_size
++Date:		June 2026
++Contact:	Bart Van Assche <bvanassche@acm.org>
++Description:	Every time a write operation completes f2fs_write_end_io() is
++		called. This function may be called from an atomic context,
++		e.g. from inside an interrupt handler. This attribute controls
++		the maximum size of a write bio that is completed in atomic
++		(atc) context.
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 080d69fa8cd1..48c004976c4e 100644
+index 48c004976c4e..6e169490c4cf 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -349,14 +349,11 @@ static void f2fs_read_end_io(struct bio *bio)
- 	f2fs_verify_and_finish_bio(bio, intask);
- }
- 
--static void f2fs_write_end_io(struct bio *bio)
-+static void f2fs_write_end_bio(struct bio *bio)
- {
--	struct f2fs_sb_info *sbi;
-+	struct f2fs_sb_info *sbi = bio->bi_private;
- 	struct folio_iter fi;
- 
--	iostat_update_and_unbind_ctx(bio);
--	sbi = bio->bi_private;
--
- 	if (time_to_inject(sbi, FAULT_WRITE_IO))
- 		bio->bi_status = BLK_STS_IOERR;
- 
-@@ -412,6 +409,13 @@ static void f2fs_write_end_io(struct bio *bio)
+@@ -409,11 +409,30 @@ static void f2fs_write_end_bio(struct bio *bio)
  	bio_put(bio);
  }
  
-+static void f2fs_write_end_io(struct bio *bio)
++static void f2fs_write_end_io_work(struct work_struct *work)
 +{
-+	iostat_update_and_unbind_ctx(bio);
++	struct bio *bio = &container_of(work, struct f2fs_bio, work)->bio;
 +
 +	f2fs_write_end_bio(bio);
 +}
 +
- #ifdef CONFIG_BLK_DEV_ZONED
- static void f2fs_zone_write_end_io(struct bio *bio)
+ static void f2fs_write_end_io(struct bio *bio)
  {
++	struct f2fs_sb_info *sbi;
++
+ 	iostat_update_and_unbind_ctx(bio);
+ 
+-	f2fs_write_end_bio(bio);
++	sbi = bio->bi_private;
++
++	if (in_atomic() && bio->bi_iter.bi_size > sbi->max_atc_write_bio_size) {
++		struct work_struct *w;
++
++		w = &container_of(bio, struct f2fs_bio, bio)->work;
++		INIT_WORK(w, f2fs_write_end_io_work);
++		queue_work(sbi->wq, w);
++	} else {
++		f2fs_write_end_bio(bio);
++	}
+ }
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 30353c439d3c..a6a3e01122e1 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1763,6 +1763,8 @@ struct f2fs_sb_info {
+ 	struct f2fs_sm_info *sm_info;		/* segment manager */
+ 
+ 	/* for bio operations */
++	/* Largest write bio size completed in atomic context (atc). */
++	u32 max_atc_write_bio_size;
+ 	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
+ 	/* keep migration IO order for LFS mode */
+ 	struct f2fs_rwsem io_order_lock;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 5a100f740b3f..1e822380edb3 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -5007,6 +5007,11 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 
+ 	sb->s_fs_info = sbi;
+ 	sbi->raw_super = raw_super;
++	/*
++	 * SZ_16K restricts the time spent on completing writes to about 150
++	 * microseconds on an Arm Cortex-A520 core.
++	 */
++	sbi->max_atc_write_bio_size = SZ_16K;
+ 
+ 	INIT_WORK(&sbi->s_error_work, f2fs_record_error_work);
+ 	memcpy(sbi->errors, raw_super->s_errors, MAX_F2FS_ERRORS);
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 352e96ad5c3a..70b2e9be8f8b 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -1266,6 +1266,7 @@ F2FS_SBI_RW_ATTR(gc_idle_interval, interval_time[GC_TIME]);
+ F2FS_SBI_RW_ATTR(umount_discard_timeout, interval_time[UMOUNT_DISCARD_TIMEOUT]);
+ F2FS_SBI_RW_ATTR(gc_pin_file_thresh, gc_pin_file_threshold);
+ F2FS_SBI_RW_ATTR(gc_reclaimed_segments, gc_reclaimed_segs);
++F2FS_SBI_RW_ATTR(max_atc_write_bio_size, max_atc_write_bio_size);
+ F2FS_SBI_GENERAL_RW_ATTR(max_victim_search);
+ F2FS_SBI_GENERAL_RW_ATTR(migration_granularity);
+ F2FS_SBI_GENERAL_RW_ATTR(migration_window_granularity);
+@@ -1508,6 +1509,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(seq_file_ra_mul),
+ 	ATTR_LIST(gc_segment_mode),
+ 	ATTR_LIST(gc_reclaimed_segments),
++	ATTR_LIST(max_atc_write_bio_size),
+ 	ATTR_LIST(max_fragment_chunk),
+ 	ATTR_LIST(max_fragment_hole),
+ 	ATTR_LIST(current_atomic_write),
 
 
 _______________________________________________
