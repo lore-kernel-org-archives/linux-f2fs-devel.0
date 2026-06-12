@@ -4,93 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 92DCACD98D2
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 12 Jun 2026 04:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 58FCFCD4F2C
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 12 Jun 2026 08:04:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Message-Id:MIME-Version:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=DwGt8jPGbu+SHzFUXS/gb85jj0RAjPX9rzn7YeRpUTY=; b=dV6BGoi5LubNJ/rgJoW8fVP0bs
-	v3MLESB/+JM9ZfDsyDC9DY6LM765eXW/Lm/XFDhhHkWEoRsjHPeXuQir6P7V5HZGv6Z9uW4IRf9XK
-	nQOExz4G514DrZZN2kzdwv+hRSupfH8KT5f5zzN8TG5sJyjne9xCbkGVuzeRRpQ7RkXw=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-Id:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=0pifQpljqSXXQqLAgDv36qVfTVICyvwjV2EBG2UQdZw=; b=hOX3tExqspuqqS0EJ1F5VoHcIk
+	qN/t9mJyOl8Ggo6xQ9RD1XsN8JLyurIyp31sI8bv7Nx/TY//l9lEZBZ2zqarjzXbwktM3Kx0Awoh2
+	celbf/g88Htq+J6az8raldatWp+0WNSv1G8iyetJuIOPPHmTW3gmlZwVvVtGBz3j83Lg=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wXt4a-0008O5-Az;
-	Fri, 12 Jun 2026 04:00:45 +0000
+	id 1wXwsL-0007v4-9g;
+	Fri, 12 Jun 2026 08:04:26 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <devnull+hexlabsecurity.proton.me@kernel.org>)
- id 1wXt4Y-0008NZ-B0 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 12 Jun 2026 04:00:43 +0000
+ (envelope-from <nzzhao@126.com>) id 1wXwsD-0007uo-1U
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 12 Jun 2026 08:04:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Reply-To:Cc:To:Message-Id:Content-Transfer-Encoding
- :Content-Type:MIME-Version:Subject:Date:From:Sender:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=na9yEThGRRWlKRyQJxOXzIeISMFGGhRh+bIq3ZN63bk=; b=DxfdLvDLh5URRp/lhqkOsvcZXq
- BhWIo26T+BmBdfuxtJVrC/W6Wm/AeC8Wx0Bxpymrc94cg4+kP9W5nbBs6Z7k7OGUlWKge+v61SmwP
- hg+JDJHqSKWkMQ+Q62FRGzAC23XVirmm5AOkYFXXRTaXLbdON0PtXgraTMO0sCsPHX7k=;
+ d=sourceforge.net; s=x; h=Sender:Content-Transfer-Encoding:MIME-Version:
+ References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Reply-To:
+ Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+ Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+ List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=QwokwhK7V5/uTVBy7p15UTto/ZM7an3qPE1otHkWh2U=; b=VBpKNwwrFBQ3CDgKveBw0ChmyR
+ YCyX+pd6bUITslai2WWoMgZEqEt27xS6m0SNF91uqqFWM8UfbyAFDlud7y4zjxxs3EXFqDsp2Z0wo
+ gSZ/geNHL/rOlcBEN27B0EtQlJyKKDYNFg8A1IUaRrsCgsf+a3wQIcWBVwbjxokFioB8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Reply-To:Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
- MIME-Version:Subject:Date:From:Sender:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ h=Sender:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+ Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=na9yEThGRRWlKRyQJxOXzIeISMFGGhRh+bIq3ZN63bk=; b=Jei8PuWqQOSWXMRrjDAKIfvqR5
- 03Y9TStfFLWbCzA81h81wZMoDJdz526AQrHV17Oxx7eM70aE8p7aCv2no/3Lzlz6c2iz+jhNX9Ugc
- P/iVuZH97/5UN7pc/szX2Fm68i2UjcFD3+0GIprUJxXFDbem93tcGI7IbWYaTFad9X7Y=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=QwokwhK7V5/uTVBy7p15UTto/ZM7an3qPE1otHkWh2U=; b=I1zX4NOPgYKUwXQr3j+sLlQk5o
+ FBtDBa6YPIUssf8+6BS7Z6a6xI5reBP45BcFylaf2kNjYPGEc6EgMNeb2hAikueKNMoYX5AYHs0o4
+ c8MQXBIRpU0tFA96SuAp+c47w0XNtdp1Gl4zadLhNG1a0XpZPrrzEpmSVgYq3trnJNGc=;
+Received: from m16.mail.126.com ([117.135.210.7])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wXt4T-0005ZL-UA for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 12 Jun 2026 04:00:43 +0000
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
- by sea.source.kernel.org (Postfix) with ESMTP id 10E5F400B9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 12 Jun 2026 04:00:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E6987C2BCB8;
- Fri, 12 Jun 2026 04:00:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1781236836;
- bh=FwfEOUgAHBZMfatizE9f9B80qU6HLIAxsn8slx2AxgY=;
- h=From:Date:Subject:To:Cc:Reply-To:From;
- b=o1WlayRI161gkoOthtinRgriSe5at9fYGrXf7q8eJCE3gisn0rEo7gqpyuJlUvUgo
- p3sjTsygUIEkPL36OdLmw99eKLzSUYkaQFAmxxoJBXNq2ogGlhcgHocOh1VXJgORD0
- u7oNZpmktvu7PNX/f7CHQtNGH2wFqz60QK5aVSib9iT9+OVBtjXj+qqkw6nq9AKAAi
- lhb276Ph9ja0oMdnZcCaYNMAudzZoTjR1mJyqU9XAVwLZn2KJnxC+cl3os/rQLKYAy
- U734CLj6L+W3qjl0LQYJEIgwPcDYZAEJEAZJaEl9ljOAZwQkIhbU3lS1TEunC7/aEa
- 6MY1BstZOjVEw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by smtp.lore.kernel.org (Postfix) with ESMTP id C9606CD98CC;
- Fri, 12 Jun 2026 04:00:36 +0000 (UTC)
-Date: Thu, 11 Jun 2026 23:00:36 -0500
+ id 1wXwsA-0004Iv-Sn for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 12 Jun 2026 08:04:17 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+ s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Qw
+ okwhK7V5/uTVBy7p15UTto/ZM7an3qPE1otHkWh2U=; b=nGGcCpWgk30PHcd8dp
+ usCXXTEYqKGtx4MKiJHYrDDt2eJ/MvMra8qaf7Eaaq+9O2PXyiSLtxoDlYlOasSD
+ B0+ysKEHBHessQxWXsS1sRvIwjE59f8e52RcQJ9ChJoMCW2wVgsun+Dkljf5bTUT
+ Afk0rBdYkN9To2CWSF9yJqakg=
+Received: from YLLaptop.. (unknown [])
+ by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id
+ _____wDX_ytWvStqyXqrBQ--.43664S6; 
+ Fri, 12 Jun 2026 16:03:41 +0800 (CST)
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 12 Jun 2026 16:03:29 +0800
+Message-Id: <20260612080334.70657-5-zhaonanzhe@xiaomi.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260612080334.70657-1-zhaonanzhe@xiaomi.com>
+References: <20260612080334.70657-1-zhaonanzhe@xiaomi.com>
 MIME-Version: 1.0
-Message-Id: <20260611-b4-disp-155e8807-v1-1-5d14dcc72b15@proton.me>
-X-B4-Tracking: v=1; b=H4sIAGSEK2oC/x3MMQqAMAxA0auUzAaSom3xKuJQbdQsKi2IIN7d4
- viG/x8oklUK9OaBLJcWPfYKbgzMW9xXQU3VYMk6csw4tZi0nMhdJyGQx8BL8tImojhDzc4si97
- /chjf9wPlp/xSYgAAAA==
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1781236836; l=3068;
- i=hexlabsecurity@proton.me; s=proton; h=from:subject:message-id;
- bh=oHjiLW/l5fStezkSvQ/f/so+Q/tgh5KxCxwhyhFZA4o=;
- b=Vhtm7MJlSvpvEZj2JWx/nVSZTDQ4kzGlPiEnzn3C8JgIckF4J+TEZlTl+RJQiiZOFfqM2EvCL
- 3L8DpdkQvyaCNa/SOqOPuplVAYkfVGWdNVfAaSlR/meuxnfGfgUMNo7
-X-Developer-Key: i=hexlabsecurity@proton.me; a=ed25519;
- pk=dmppBMZNLLoPzxHi9l8tZDzEZUunPbgsYqIZYXeUrL0=
-X-Endpoint-Received: by B4 Relay for hexlabsecurity@proton.me/proton with
- auth_id=814
-X-Original-From: Bryam Vargas <hexlabsecurity@proton.me>
-X-Headers-End: 1wXt4T-0005ZL-UA
-Subject: [f2fs-dev] [PATCH] f2fs: bound i_inline_xattr_size for
- non-inline-xattr inodes
+X-CM-TRANSID: _____wDX_ytWvStqyXqrBQ--.43664S6
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKF1fuFyDJFW8uFy3uF4Uurg_yoW7tw1xpF
+ WUK3s8KrWrJayfurn3XF1DZr1F934Iqa1UGayfGw1fZ3W5X3sxK3Wvyr1YkF1YqrZ7AF18
+ Xa17tFyrWa18JrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbnYwUUUUU=
+X-Originating-IP: [223.104.43.40]
+X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBsR3ru2orvV2wqgAA3H
+X-Headers-End: 1wXwsA-0004Iv-Sn
+Subject: [f2fs-dev] [RFC PATCH 4/9] f2fs: support atomic file large folios
+ buffered write
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -102,88 +88,214 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Bryam Vargas via B4 Relay via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: hexlabsecurity@proton.me
-Cc: Bryam Vargas via B4 Relay <devnull+hexlabsecurity.proton.me@kernel.org>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Nanzhe Zhao via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+Cc: Barry Song <baohua@kernel.org>, Ryan Roberts <Ryan.Roberts@arm.com>,
+ Juan Yescas <jyescas@google.com>, Dev Jain <Dev.Jain@arm.com>,
+ David Hildenbrand <David.Hildenbrand@arm.com>,
+ Pengfei Li <lipengfei28@xiaomi.com>, Bo Zhang <zhangbo56@xiaomi.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Nanzhe Zhao <zhaonanzhe@xiaomi.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Bryam Vargas <hexlabsecurity@proton.me>
+From: Nanzhe <zhaonanzhe@xiaomi.com>
 
-When the flexible_inline_xattr feature is enabled, do_read_inode() loads
-the on-disk i_inline_xattr_size unconditionally:
+ioctl can convert an inode with large folio support into an atomic
+file. Support large folio buffered writes for atomic files as well.
 
-	if (f2fs_sb_has_flexible_inline_xattr(sbi))
-		fi->i_inline_xattr_size = le16_to_cpu(ri->i_inline_xattr_size);
+Add a large folio atomic write_begin helper that reserves COW mappings
+for the write range. For partial head and tail subpages, read the
+existing data from either the COW inode or the original inode before
+marking the subpage uptodate.
 
-but sanity_check_inode() only range-checks it when the inode also has the
-FI_INLINE_XATTR flag set.  An inode that carries an inline dentry or inline
-data but not FI_INLINE_XATTR -- the normal layout for an inline
-directory -- therefore keeps a fully attacker-controlled
-i_inline_xattr_size from a crafted image.
-
-get_inline_xattr_addrs() returns that value with no flag gating, so it
-feeds the inode geometry:
-
-	MAX_INLINE_DATA()  = 4 * (CUR_ADDRS_PER_INODE - i_inline_xattr_size - 1)
-	NR_INLINE_DENTRY() = MAX_INLINE_DATA() * BITS_PER_BYTE / (...)
-	addrs_per_page()   = CUR_ADDRS_PER_INODE - i_inline_xattr_size
-
-A large i_inline_xattr_size drives MAX_INLINE_DATA() and NR_INLINE_DENTRY()
-negative, so make_dentry_ptr_inline() sets d->max (int) to a negative
-value.  The inline directory walk then compares an unsigned long bit_pos
-against that negative d->max, which is promoted to a huge unsigned bound,
-and reads far past the inline area:
-
-	while (bit_pos < d->max)		/* fs/f2fs/dir.c */
-		... test_bit_le(bit_pos, d->bitmap) / d->dentry[bit_pos] ...
-
-Mounting a crafted image and reading such a directory triggers an
-out-of-bounds read in f2fs_fill_dentries(); the same underflow also
-corrupts ADDRS_PER_INODE for regular files.
-
-Validate i_inline_xattr_size against MAX_INLINE_XATTR_SIZE whenever the
-flexible_inline_xattr feature is enabled -- i.e. whenever the value is
-loaded from disk and consumed -- and keep the lower MIN_INLINE_XATTR_SIZE
-bound gated on inodes that actually carry an inline xattr, so legitimate
-inodes with i_inline_xattr_size == 0 are still accepted.
-
-Fixes: 6afc662e68b5 ("f2fs: support flexible inline xattr size")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bryam Vargas <hexlabsecurity@proton.me>
+Signed-off-by: Nanzhe <zhaonanzhe@xiaomi.com>
 ---
- fs/f2fs/inode.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/f2fs/data.c | 152 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 149 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index c6dcda447882..5c0f62190875 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -324,9 +324,9 @@ static bool sanity_check_inode(struct inode *inode, struct folio *node_folio)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index f5b4974e6b3c..390b50eff260 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2635,6 +2635,144 @@ static bool f2fs_find_next_need_read_block(const struct folio *folio,
+ 	return false;
+ }
+ 
++static int __find_data_block(struct inode *inode, pgoff_t index,
++				block_t *blk_addr);
++static int __reserve_data_block(struct inode *inode, pgoff_t index,
++				block_t *blk_addr, bool *node_changed);
++
++static int prepare_large_folio_atomic_write_begin(struct inode *inode,
++		struct address_space *mapping, struct folio *folio, loff_t pos,
++		unsigned int len)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct inode *cow_inode = F2FS_I(inode)->cow_inode;
++	size_t ori_off = offset_in_folio(folio, pos);
++	size_t need_off = ori_off;
++	pgoff_t index;
++	int err = 0;
++	sector_t sector;
++	struct block_device *bdev;
++	struct bio *bio;
++	unsigned int orig_order;
++	bool need_balance = false;
++
++	len = min_t(unsigned int, len, folio_size(folio) - ori_off);
++
++	ffs_find_or_alloc(folio);
++
++	/* Inline data must have been converted before reaching here. */
++	if (WARN_ON_ONCE(f2fs_has_inline_data(inode)))
++		return -EINVAL;
++
++	/* 1) Reserve COW blocks for all covered 4K subpages first. */
++	{
++		pgoff_t start_index = folio->index + (ori_off >> PAGE_SHIFT);
++		pgoff_t end_index = folio->index +
++			((ori_off + len - 1) >> PAGE_SHIFT);
++
++		for (index = start_index; index <= end_index; index++) {
++			block_t cow_blkaddr = NULL_ADDR;
++			bool node_changed = false;
++			int ret;
++
++			ret = __find_data_block(cow_inode, index, &cow_blkaddr);
++			if (ret)
++				return ret;
++			if (cow_blkaddr != NULL_ADDR)
++				continue;
++
++			ret = __reserve_data_block(cow_inode, index, &cow_blkaddr,
++						   &node_changed);
++			if (ret)
++				return ret;
++
++			inc_atomic_write_cnt(inode);
++			need_balance |= node_changed;
++		}
++	}
++
++	if (need_balance && !IS_NOQUOTA(inode) &&
++			has_not_enough_free_secs(sbi, 0, 0)) {
++		orig_order = folio_order(folio);
++		folio_unlock(folio);
++		f2fs_balance_fs(sbi, true);
++		folio_lock(folio);
++		if (unlikely(folio->mapping != mapping ||
++			     folio_order(folio) != orig_order))
++			return -EAGAIN;
++	}
++
++	if (folio_test_uptodate(folio) || len == folio_size(folio))
++		return 0;
++
++	/* Then read partial 4K subpages. */
++	while (f2fs_find_next_need_read_block(folio, ori_off, &need_off, len)) {
++		size_t off;
++		block_t cow_blkaddr = NULL_ADDR;
++		block_t ori_blkaddr = NULL_ADDR;
++		struct inode *read_inode = NULL;
++		block_t read_blkaddr = NULL_ADDR;
++
++		index = folio->index + (need_off >> PAGE_SHIFT);
++		off = offset_in_folio(folio, index << PAGE_SHIFT);
++
++		err = __find_data_block(cow_inode, index, &cow_blkaddr);
++		if (err)
++			return err;
++
++		if (__is_valid_data_blkaddr(cow_blkaddr)) {
++			if (!f2fs_is_valid_blkaddr(sbi, cow_blkaddr,
++					DATA_GENERIC_ENHANCE_READ))
++				return -EFSCORRUPTED;
++			read_inode = cow_inode;
++			read_blkaddr = cow_blkaddr;
++		} else if (is_inode_flag_set(inode, FI_ATOMIC_REPLACE)) {
++			folio_zero_segment(folio, off, off + PAGE_SIZE);
++			ffs_mark_subrange_uptodate(folio, off, PAGE_SIZE);
++			continue;
++		} else {
++			err = __find_data_block(inode, index, &ori_blkaddr);
++			if (err)
++				return err;
++
++			if (!__is_valid_data_blkaddr(ori_blkaddr)) {
++				folio_zero_segment(folio, off, off + PAGE_SIZE);
++				ffs_mark_subrange_uptodate(folio, off, PAGE_SIZE);
++				continue;
++			}
++
++			if (!f2fs_is_valid_blkaddr(sbi, ori_blkaddr,
++					DATA_GENERIC_ENHANCE_READ))
++				return -EFSCORRUPTED;
++			read_inode = inode;
++			read_blkaddr = ori_blkaddr;
++		}
++
++		/* Submit a synchronous read for this 4K subpage. */
++		f2fs_wait_on_block_writeback(read_inode, read_blkaddr);
++		bdev = f2fs_target_device(sbi, read_blkaddr, &sector);
++
++		bio = bio_alloc_bioset(bdev, 1, REQ_OP_READ | REQ_SYNC,
++				       GFP_NOIO, &f2fs_bioset);
++		bio->bi_iter.bi_sector = sector;
++		f2fs_set_bio_crypt_ctx(bio, read_inode, index, NULL, GFP_NOFS);
++
++		if (!bio_add_folio(bio, folio, PAGE_SIZE, off)) {
++			bio_put(bio);
++			return -EIO;
++		}
++
++		err = submit_bio_wait(bio);
++		bio_put(bio);
++		if (err)
++			return err;
++
++		ffs_mark_subrange_uptodate(folio, off, PAGE_SIZE);
++	}
++
++	return 0;
++}
++
+ static int prepare_large_folio_write_begin(struct inode *inode,
+ 					  struct address_space *mapping,
+ 					  struct folio *folio, loff_t pos,
+@@ -4181,7 +4319,7 @@ static int f2fs_write_begin(const struct kiocb *iocb,
+ 
+ 	*foliop = folio;
+ 
+-	if (f2fs_is_atomic_file(inode))
++	if (f2fs_is_atomic_file(inode) && !folio_test_large(folio))
+ 		err = prepare_atomic_write_begin(sbi, folio, pos, len,
+ 					&blkaddr, &need_balance, &use_cow);
+ 	else if (!folio_test_large(folio))
+@@ -4206,10 +4344,18 @@ static int f2fs_write_begin(const struct kiocb *iocb,
+ 	f2fs_folio_wait_writeback(folio, DATA, false, true);
+ 
+ 	if (folio_test_large(folio)) {
+-		err = prepare_large_folio_write_begin(inode, mapping, folio,
+-					pos, len);
++		if (f2fs_is_atomic_file(inode))
++			err = prepare_large_folio_atomic_write_begin(inode,
++					mapping, folio, pos, len);
++		else
++			err = prepare_large_folio_write_begin(inode, mapping,
++					folio, pos, len);
+ 		if (!err)
+ 			return 0;
++		if (err == -EAGAIN) {
++			f2fs_folio_put(folio, true);
++			goto repeat;
++		}
+ 		goto put_folio;
  	}
  
- 	if (f2fs_sb_has_flexible_inline_xattr(sbi) &&
--		f2fs_has_inline_xattr(inode) &&
--		(fi->i_inline_xattr_size < MIN_INLINE_XATTR_SIZE ||
--		fi->i_inline_xattr_size > MAX_INLINE_XATTR_SIZE)) {
-+		(fi->i_inline_xattr_size > MAX_INLINE_XATTR_SIZE ||
-+		(f2fs_has_inline_xattr(inode) &&
-+		fi->i_inline_xattr_size < MIN_INLINE_XATTR_SIZE))) {
- 		f2fs_warn(sbi, "%s: inode (ino=%llx) has corrupted i_inline_xattr_size: %d, min: %zu, max: %lu",
- 			  __func__, inode->i_ino, fi->i_inline_xattr_size,
- 			  MIN_INLINE_XATTR_SIZE, MAX_INLINE_XATTR_SIZE);
-
----
-base-commit: 8e65320d91cdc3b241d4b94855c88459b91abf66
-change-id: 20260611-b4-disp-155e8807-81fd7e4d00ac
-
-Best regards,
 -- 
-Bryam Vargas <hexlabsecurity@proton.me>
-
+2.34.1
 
 
 
