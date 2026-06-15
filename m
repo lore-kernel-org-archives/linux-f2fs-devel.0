@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 54FA6CD98C5
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 15 Jun 2026 15:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C30E3CD98E2
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 15 Jun 2026 15:30:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=oFIcc2ICHImQ/TkMMyap7mRley6/LYI4N1Bw32fXtWo=; b=bxYzzzVi2GvQ3C46ZOIwdBQZxt
-	qCneJU1+0hMRoO+0yZeRhmoCxKO1jN6ToVVEGpbnuDzWcYssQLPscTzkIxBzCzU9nT9UfBf3fNAhf
-	cET16KcyW/a2ENZoZpCWXTMI70khJTU/vb2bY2a4LyZwRhl0/KL48QKsbsX3dxJSLF/k=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=pExVCIvwspvKzjd5NdI1EXcnPcRDT2OHX29XngSr8Mw=; b=iWe7NgB9EbpNu2cxGNGtuhsTtF
+	3xpfETRhqO6MVOf1SWZylY53CabKAcdeGY+QKD+iqfSr/SK+W2KA9af4lPRsQtzn/ljU3Z58xth2v
+	DKglewXsu0WJYaHov7Hdw4/c1mtUccNWOkCARSJ+z7wV+DmMQHLEdu+eUqbyQWkdm7TE=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wZ9Gd-0004MF-IL;
-	Mon, 15 Jun 2026 15:30:28 +0000
+	id 1wZ9Gg-0000UZ-9x;
+	Mon, 15 Jun 2026 15:30:30 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wZ9GW-0004LZ-Oq
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wZ9GZ-0000UP-Pp
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 15 Jun 2026 15:30:21 +0000
+ Mon, 15 Jun 2026 15:30:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vHhA7MKdQh8rAtcegREfrfOuoxjtLSfqv3iYhxyv/Oo=; b=bYDson9pHmZRYxEjUDfKlBWPRk
- HmjbzYpWtZlA1SvISAhnE/38ZYaEZ6F/JbVV5h6T96kOPM5Axf5si903+tG343793rXmXADfS2GyV
- zJWZ18wFrS7ow1rPA3/uOESVRXU4pl25krTa9Qt/77mwYh9TtNIYFwvfd0GxyGZWBxfA=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=sly67JVIDACKK9mO4yFHlEGb1Iz+P71O/3WvM+c64AU=; b=gPqSiLGFagWcgaaU06/VSXb7V/
+ 2euX5d1o9lyVaAiw+25AOiihry3RPDOGJn5JG0K+KjrX1wGHg1T/99qEH3TqdwgXc4MCsufJ5Xu0+
+ 6YXwztV2lWRiEV1RPkHsTqf3UTvFIL3weLd1hnw0oozjnvsxqBKV0l35Kt+AfIWwg70c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=vHhA7MKdQh8rAtcegREfrfOuoxjtLSfqv3iYhxyv/Oo=; b=g
- ViIsRKbNLMsEkH2MXFcxFAAz16XeXZIDr3ocKy8dEq4QP8ObTszV8uFec9fqlLt/Rl3O/Y+ICWevV
- 7kkEVM6cCYEOYGbzBrygSkDJ+m1/cFb/h97Y0FBWc4gswO4ohJPvSrGEzrEGXaLYQROupAn3WK0gJ
- DnvT2U6mAp8NmdH4=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=sly67JVIDACKK9mO4yFHlEGb1Iz+P71O/3WvM+c64AU=; b=WtfMpLAtamSkuO82LQZyDM3UbQ
+ rdmthcNspFYiZpaVbsqStMCUdN52IILW7uxrIBZ/ENE9maLvNlcmgCNn1+b0canIQe9bm+rAZUuwt
+ dn3xrQTH5QK6rDuE4rD8LO3Y+oiOtnwW5KdV/h04IXF6G55J4C0qFv53MZT9geXMlcM0=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wZ9GV-0002uF-TI for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 15 Jun 2026 15:30:21 +0000
+ id 1wZ9GX-0002us-Tk for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 15 Jun 2026 15:30:23 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 8324D601E4
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 15 Jun 2026 15:30:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39DD71F000E9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 15 Jun 2026 15:30:09 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 0FCA343A68;
+ Mon, 15 Jun 2026 15:30:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5C011F000E9;
+ Mon, 15 Jun 2026 15:30:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1781537409;
- bh=vHhA7MKdQh8rAtcegREfrfOuoxjtLSfqv3iYhxyv/Oo=;
- h=Subject:From:Date:To;
- b=YH6AUJV5cKLc624BZoFB5Ty9zVjGjLaRgM6q9pJxGgRzeIvn4gslVpj3KZBux7Nsf
- NZFpwn68TWh+W+APA7mMSOUq84JWnA2YryizE9kTDYqfuj7hL5CIyWtDWos4GeTtHQ
- eK7unAX80IjHO4oBTeO6FioDspwU52TPzoAprsM6KeXf91Kcutxhd9Nk7ydHaEJRD7
- cwjjsdbHu8FTW525d2OAj72LL0dOI1svQUK+tG86v52KJgpE/jBY1C0Y/3lW2eRq1v
- d0wEQymMZdIpXgdAocIUSDcXJf7BqtxayzEXhlL8b9pB7T89wDJk9sEwrgtI7eRwxO
- /ykikmlH8kLWg==
+ s=k20260515; t=1781537411;
+ bh=sly67JVIDACKK9mO4yFHlEGb1Iz+P71O/3WvM+c64AU=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc;
+ b=hUIbyyvZOeaFNwZsOnrK9vsov7WVM5ygEn6gZ96faQ2g4HZnLDErg1cXyCE0t1bQY
+ Zyp7BtXX0BsHhGZNFoHf8vi6aTkk6TAvUtJI2LxCriD+I/ndJZ26sytuRkl4zJWnhr
+ xSmSsfac1QYEP0L8/hPpy/Pto6zO96wduaE9Jt4V9GUdBEXPnsvjvj6EktVSPILr5I
+ RzFEs6lyG9N55YLnPg2t8bODaREIMEFIeJ0nQSRDHNBV0+fGLoml6UNbOaQ//Fd9k2
+ yQ49rZ8RMxaRROML+Dr7fNKcM39kVxfnxeWuSSz7YBCdrezPpezE+dp9sPtYdBoF0f
+ Br0KGADx9GrYA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 963093811A64 for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 15 Jun 2026 15:30:05 +0000 (UTC)
+ 567CF3811A64; Mon, 15 Jun 2026 15:30:08 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <178153740421.3946007.14916118422158982423.git-patchwork-summary@kernel.org>
-Date: Mon, 15 Jun 2026 15:30:04 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1wZ9GV-0002uF-TI
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+Message-Id: <178153740688.3946007.6158881733258476113.git-patchwork-notify@kernel.org>
+Date: Mon, 15 Jun 2026 15:30:06 +0000
+References: <20260522065912.1756240-1-chao@kernel.org>
+In-Reply-To: <20260522065912.1756240-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1wZ9GX-0002us-Tk
+Subject: Re: [f2fs-dev] [PATCH 1/2] Revert: "f2fs: check in-memory block
+ bitmap"
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,56 +90,37 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, william.allentx@gmail.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Patch: [f2fs-dev,v2] f2fs: validate orphan inode entry count
-  Submitter: Wenjie Qi <qwjhust@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1100717
-  Lore link: https://lore.kernel.org/r/20260526053557.1096229-1-qiwenjie@xiaomi.com
+On Fri, 22 May 2026 14:59:11 +0800 you wrote:
+> Commit 355e78913c0d ("f2fs: check in-memory block bitmap") added
+> a mirror for valid block bitmap, it expects to detect in-memory
+> corruption, however we never got any reports from the check points
+> for almost decade, let's remove the code, it can help to save
+> memories.
+> 
+> Cc: wallentx <william.allentx@gmail.com>
+> Suggested-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> 
+> [...]
 
-Series: [f2fs-dev,1/2] Revert: "f2fs: check in-memory block bitmap"
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1099170
-  Lore link: https://lore.kernel.org/r/20260522065912.1756240-1-chao@kernel.org
-    Patches: [f2fs-dev,1/2] Revert: "f2fs: check in-memory block bitmap"
-             [f2fs-dev,2/2] Revert: "f2fs: check in-memory sit version bitmap"
+Here is the summary with links:
+  - [f2fs-dev,1/2] Revert: "f2fs: check in-memory block bitmap"
+    https://git.kernel.org/jaegeuk/f2fs/c/b7e85aafc96b
+  - [f2fs-dev,2/2] Revert: "f2fs: check in-memory sit version bitmap"
+    https://git.kernel.org/jaegeuk/f2fs/c/902d57fc5b84
 
-Patch: [f2fs-dev] f2fs: skip inode folio lookup for cached overwrite
-  Submitter: Wenjie Qi <qwjhust@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1102575
-  Lore link: https://lore.kernel.org/r/20260529022924.3655519-1-qiwenjie@xiaomi.com
-
-Patch: [f2fs-dev] f2fs: keep atomic write retry from zeroing original data
-  Submitter: Wenjie Qi <qwjhust@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1101617
-  Lore link: https://lore.kernel.org/r/20260527120628.2255597-1-qiwenjie@xiaomi.com
-
-Patch: [f2fs-dev] f2fs: stop checkpoint on compressed write IO error
-  Submitter: Wenjie Qi <qwjhust@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1100206
-  Lore link: https://lore.kernel.org/r/20260525061456.231710-1-qiwenjie@xiaomi.com
-
-Patch: [f2fs-dev] f2fs: fix to do sanity check on f2fs_get_node_folio_ra()
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1099196
-  Lore link: https://lore.kernel.org/r/20260522075329.12079-1-chao@kernel.org
-
-
-Total patches: 7
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
