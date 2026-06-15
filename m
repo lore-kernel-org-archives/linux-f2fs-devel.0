@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B8F51CD98CF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 15 Jun 2026 13:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BEE0ECD98DE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 15 Jun 2026 13:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=XkqckMSdzDV+3lMDDvurayuFFYi6guf7t/7ba3yIqvY=; b=hy8bBd/mRfSguNcDLTiOmCOOcb
-	krCtBU1gLB3l9YoTpGoMYniqwgquaUf870VY59yezLrziMywcgK5UKC6nFFPSm/+KNczgg8FOtuPi
-	ow0CFlRY7P4vPr8hRjG3qG3n9VfKCvjgCQmTVyDz9/6hNZqy6KD5IFSEF6MrywEBgb5Y=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=ziQQKkC7JB6pq841jtBOa5IxnPkRjosL1kkfmEQ3k/o=; b=YzDgi8tshePqk+uZd6IFAhQFeU
+	fAFOA2OvIJbuHnvg1qWj85x68BoEym3A7ehEknDhpJHussu2su94NA7IQMpFdIaOmt8Xcy7RVQSbR
+	e3rsaz7rXFeS3SOCMQYT5MD7hoSgWgdT5n7NYUSo+3fViHO1g8p0RdiUvxW8efMBCEcc=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wZ73b-0004OK-U3;
-	Mon, 15 Jun 2026 13:08:52 +0000
+	id 1wZ73c-00020P-UV;
+	Mon, 15 Jun 2026 13:08:50 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wZ73Z-0004Nw-Vi
+ (envelope-from <chao@kernel.org>) id 1wZ73b-00020D-Vi
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 15 Jun 2026 13:08:50 +0000
+ Mon, 15 Jun 2026 13:08:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=M6uLn6HKNb/6qJKD+yHjmrb8H0jz7uHTJGfjPCDkAmk=; b=e2AZUrFHI90cpbDEmY9HhDue/t
- 8q5rldOmXl5WLI1ztFlMMZLGN9vruo93lzZbzxQTaUymMmIOsTrtQ67drVYyb8CT0Co6qviqmvT0s
- HdvqXUQZFViFGhgrNPPXGkKtySd3qaQLq420mlSEFoJLXq3jgLaNLkOzsEfH59gTx+uo=;
+ bh=Sd2sRE3z3LhcOaIIZd0sNUtU3cvVBqFxkoSjXGoSdBk=; b=e9EN4Sk/ncRjawO0oPwk7Y84zw
+ uu52iIPcS68hYRHG/rKJ0FukNfDm23ktya2+jWfNNTvXsJiSBMw3vrZgAj62Bzlbw3oJrIU2IsICi
+ ag6ks7Lf0Gyvm1OvNraV7W0b9Ee+WqM/6L5PCg1dgX4N8B3ild/2FBHJ15Gx6h9YgEqs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=M6uLn6HKNb/6qJKD+yHjmrb8H0jz7uHTJGfjPCDkAmk=; b=EWeEDbTpJyhL5nE1VlycQvN9Kt
- 6S4Eky4yNJWig5Q0Nj3JZeAcjfr8fUQKFxK65LJg91a4xsuxf/cXLuuf23pg/Xjm7GQqvGIU1OJJK
- MFwkCGOIFAKF0s9NnBetlDzja3nD7ZURpofvpu4aAT/2utEFWESRNAWSmFJnFTxWFqxs=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=Sd2sRE3z3LhcOaIIZd0sNUtU3cvVBqFxkoSjXGoSdBk=; b=hICiQU8oIlZSV0YfcvMPIcM6mo
+ TPireVagT7w+PF2TF58T9g24Lef4cAEMyQWdNGKaPK5gRMHOfTmNNplEkGbdXbfczy1Cr9hsE/L72
+ Jmi0TfJ3ENm4GB/hlFiNB/NGiz1QkqYKQJfZGsKkf9FR0AKURyAHyVU31s3+gY7dSpBU=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wZ73Z-0005xn-Be for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 15 Jun 2026 13:08:50 +0000
+ id 1wZ73W-0005xJ-JG for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 15 Jun 2026 13:08:49 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 9390A40168
+ by tor.source.kernel.org (Postfix) with ESMTP id 842F3600AB
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 15 Jun 2026 13:08:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 700E11F000E9;
- Mon, 15 Jun 2026 13:08:38 +0000 (UTC)
+ Mon, 15 Jun 2026 13:08:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC621F00A3E;
+ Mon, 15 Jun 2026 13:08:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1781528919;
- bh=M6uLn6HKNb/6qJKD+yHjmrb8H0jz7uHTJGfjPCDkAmk=;
+ s=k20260515; t=1781528916;
+ bh=Sd2sRE3z3LhcOaIIZd0sNUtU3cvVBqFxkoSjXGoSdBk=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=DIlYjuIJeEO23aC3SkqKcE0mLUAIeQoGJ/A495H/sekIuPNjMvyVycXbiWsV1HhBQ
- 2CgAr1v2+vd7v4JcioveJ+YxU1C/fihnH36FR9kQI3esR+J9LsOrCh+oRSpiKwMOQn
- AtfwO8P8llV6qgAhaIqcch1aqjK2MtwsVvNqHu2PA9uq7/JKU/eSkjTXoLKn1v1KTF
- 5HA+rKRMNHvmv1IxuH7r35lpqTvM8ox/3/3UT3f/KYNexqn3uWvXhx071I1XN12tTV
- ictDaVe1b1OjIkv2ZW/HtL29NrBHdJZM3+0TKv0e/PVW1GZZsZm1zDlCzRwqtrbQ/g
- xFiV5IKsy1BNw==
+ b=OLMQrsLjPEKLZrOnPyG1RXqCZnFPb8Q0BKuKiV7fG35BkEiTbJ7aAARte0l4joLYG
+ h0ivHCa5UvzUOWjHWUfBxi3FF4r3SVGCZbZ2xbS8QFPy1c+O51FsqwUJrg7fbEOmg3
+ oxG7+sEHT0VoHHX/dpqwt6gx+I4J5WpqdqOM5Pkv5i0ZqhvMfRBBVzlgTyH9z/ZRAZ
+ wXNsMaYD7IQv1xKxj5+CKEU/5taeRYcDrRs17fybyWuAtAvThT+6FyRJ/rgniqejIf
+ NQgFF/zWoMwYPtHFaS8dcGj0GI8qm/ZlY7w/kmbIRPpkdplcO/DfhRPvnrlcM4GBbL
+ 7qAT8TmUlrNww==
 To: jaegeuk@kernel.org
-Date: Mon, 15 Jun 2026 21:08:22 +0800
-Message-ID: <20260615130822.2576088-6-chao@kernel.org>
+Date: Mon, 15 Jun 2026 21:08:20 +0800
+Message-ID: <20260615130822.2576088-4-chao@kernel.org>
 X-Mailer: git-send-email 2.54.0.1136.gdb2ca164c4-goog
 In-Reply-To: <20260615130822.2576088-1-chao@kernel.org>
 References: <20260615130822.2576088-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wZ73Z-0005xn-Be
-Subject: [f2fs-dev] [PATCH 6/6] f2fs: remove unneeded
- f2fs_is_compressed_page()
+X-Headers-End: 1wZ73W-0005xJ-JG
+Subject: [f2fs-dev] [PATCH 4/6] f2fs: avoid unnecessary
+ fscrypt_finalize_bounce_page()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,28 +94,41 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-We have checked f2fs_is_compressed_page() before f2fs_compress_write_end_io(),
-so we don't need to check the status again, remove it.
+fscrypt_finalize_bounce_page() should be called only if we use fs layer
+crypto, let's avoid unnecessary fscrypt_finalize_bounce_page() in error
+path of f2fs_write_compressed_pages().
+
+BTW, fscrypt_finalize_bounce_page() will check mapping of bounced page
+before retrieving original page, so, previously it won't cause any issue
+w/ fscrypt_finalize_bounce_page(), but still we'd better avoid coupling
+w/ any logic inside fscrypt_finalize_bounce_page().
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/compress.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/f2fs/compress.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index aaa0813eabcd..b1209619bb64 100644
+index caf522d667d6..aaa0813eabcd 100644
 --- a/fs/f2fs/compress.c
 +++ b/fs/f2fs/compress.c
-@@ -1486,8 +1486,7 @@ void f2fs_compress_write_end_io(struct bio *bio, struct folio *folio)
- 	struct page *page = &folio->page;
- 	struct f2fs_sb_info *sbi = bio->bi_private;
- 	struct compress_io_ctx *cic = folio->private;
--	enum count_type type = WB_DATA_TYPE(folio,
--				f2fs_is_compressed_page(folio));
-+	enum count_type type = WB_DATA_TYPE(folio, true);
- 	int i;
+@@ -1455,10 +1455,12 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
+ out_destroy_crypt:
+ 	page_array_free(sbi, cic->rpages, cc->cluster_size);
  
- 	if (unlikely(bio->bi_status != BLK_STS_OK))
+-	for (--i; i >= 0; i--) {
+-		if (!cc->cpages[i])
+-			continue;
+-		fscrypt_finalize_bounce_page(&cc->cpages[i]);
++	if (fio.encrypted) {
++		for (--i; i >= 0; i--) {
++			if (!cc->cpages[i])
++				continue;
++			fscrypt_finalize_bounce_page(&cc->cpages[i]);
++		}
+ 	}
+ out_put_cic:
+ 	kmem_cache_free(cic_entry_slab, cic);
 -- 
 2.49.0
 
