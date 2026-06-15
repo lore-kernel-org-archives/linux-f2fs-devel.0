@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1A7CACD98C5
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 15 Jun 2026 03:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3D453CD98C5
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 15 Jun 2026 03:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=U7vnMpH9B3fPz+YM6jffH5zXQnPjaDH1yZaioFTqhFs=; b=a0ZuO2ntT9Gt+s0kyCjRfIMkqs
-	PnZQdPJtZYMCm02LqQ4fI5qdx2UfQAiLOzCIUbAknuZuD8LMHoMm0WWOBxb1pfLs1FIojNnR2P+IL
-	74Kqp3pP6ClY68s7ctYgKUdskp3jqWyKKqIMAUqORA5LBcC3+uPV5MRwjXPlIkLbXpWg=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=q1i7DBDhgmk+fDb0Y3iDUiFPH8lggU3tMWjEh5dxzcA=; b=gy24ny027M6vRgKwh4SzSVIFla
+	9FKWvGxi49Jk3YGXMHs5ZLwF7WDGy080Nzw6AttKTkyu3znCpXDAQ+J0sfbAu24Y6tVQKzbqeksHQ
+	ZFw8Fm+35y6DD1BLiwGBRCiIPPSuXwkhoT9dfBEpbJhZmN9S6ow0Ztu1Yb3oJ7S4ZMBc=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wYxmL-0002XV-84;
-	Mon, 15 Jun 2026 03:14:22 +0000
+	id 1wYxov-00038f-IZ;
+	Mon, 15 Jun 2026 03:17:05 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wYxmJ-0002XN-6U
+ (envelope-from <chao@kernel.org>) id 1wYxoh-00038G-CR
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 15 Jun 2026 03:14:20 +0000
+ Mon, 15 Jun 2026 03:16:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=m8p1sEGL+W1L0l6iKEoOSB+rXixXbnsVyCjzmpVoam0=; b=I3fG3NkzrkhaLKCyOOlmohaPF2
- +359aDVY5Co7pBaSl2yjTNo5gi2S4ORe2p7BU0/lE5JaSYegmz07Vwtb1BSQr3QCX+dMXlStWN30f
- Z5gfLVBAt/EJsKKB9msRFpdeltfyBHBsqaPfUiaZyUdAltswYew4CUSZODxgG8f7q2Zs=;
+ bh=raNVzxlxf+6Am20y+qpqw6MoOelLs8xABCqoCLiKUQs=; b=FrcCYkYa+ZqRmskaK1+EhS2xBN
+ WpleMghTp4GxfMbTKKhF15Q9ExEyFnDMlxBHBM2EoJ3XGYJ2eE+Zp2rA9HvXdKEoJ9B7zTEM7WHay
+ rOysJ5Wt/ofB23sIO90wpPFgBybLuwPrQdfnHRcvvKK6v0xDdnOzPy8KY2DvrC3QGYRA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,41 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=m8p1sEGL+W1L0l6iKEoOSB+rXixXbnsVyCjzmpVoam0=; b=Qn286Ls51aOYKwvz2ZwXGejbeh
- G+BQfK2yZehj8HZ2hlKqzKC83GEaaQMQ0ukhxqiqQGorY8b3MOcyBT+2gbQAskM/lk59lS2Dn00Ek
- 640qzgAS0P/I6bsLChy2OP+9GEQpRu/oGLNlw2pKkH2Yc5C5o0+zKkMtEUSdbyurwRJc=;
+ bh=raNVzxlxf+6Am20y+qpqw6MoOelLs8xABCqoCLiKUQs=; b=hBCUXrLpxaxiFcyaihYY53x5RI
+ xa8DvngqCs7y2QXQ7DVXi3EUgIjh/Ef3QO/jPPlkZlYUFT8KBeCFyisCTOQKuxv7utAQXovK5IrGk
+ ZGzxNV8+WiHRgoqGCuH1lnlPQhR8L3aer6Wp1th1YuXOAKenQ7w6APdn5VzUgt5Hg6/I=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wYxmE-00089Z-Pv for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 15 Jun 2026 03:14:20 +0000
+ id 1wYxog-0008HS-FD for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 15 Jun 2026 03:16:51 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 4B6B16008A;
- Mon, 15 Jun 2026 03:14:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A96821F000E9;
- Mon, 15 Jun 2026 03:14:06 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 513486008A;
+ Mon, 15 Jun 2026 03:16:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F3D1F000E9;
+ Mon, 15 Jun 2026 03:16:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1781493247;
- bh=m8p1sEGL+W1L0l6iKEoOSB+rXixXbnsVyCjzmpVoam0=;
+ s=k20260515; t=1781493405;
+ bh=raNVzxlxf+6Am20y+qpqw6MoOelLs8xABCqoCLiKUQs=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=eIMhx9Urd+AE8bQq+bKCn3TPJa96gOWFy+mTz1lQMyRxlCQSsr3EQXOZKIfNr+CwR
- TaJp7tedSsX1j6ZztZc5NfFzpo0LDUrBPkBgPpmbcQdRykaQsNXYTHRvGzOQz4kKb0
- I0GBvfpMiekFj+E30As051xhyYAgMLVObAu2wshcWoSa8MXQForsit9Sina9DwPbHn
- 3VrM1q/g9m9dOAkOGBhTYa23hAJnRgHJRhrlRcwQvCdg49owHXgkhyalAOJnOOJQDK
- EAmB+Ac2jhgWM4l+jo1lhxX/PEj83daWv9K88PV1CyEkEQha8KTuJjQIg7pKCXuksH
- 1krdrhJHpNf/g==
-Message-ID: <e7ff2e57-b81f-4195-8e33-062e77b080fe@kernel.org>
-Date: Mon, 15 Jun 2026 11:14:04 +0800
+ b=k81ZqCRo2LEmGR2RM9BXDSybYeiUXLc8/l6HhtcQsjpQwCF9Zs9ZetDwhzos6rtd7
+ 4X7jLUxhEgcxO474INjc1pWZGMskqjG8cpFIQGguk2FVjTJoH/FSMgTflB1Sk3OtuE
+ jYJL3sErYqp52zZeEch39ZnEzD/lUpOsHjT81UH+B5gcaqlDkmP+tSzfaux0/juf8E
+ 9LMqd/mQPSLsVO95J0Pg2NkjNMWZeqcKP7YVRg43JPN2r59lrVkN8Umj+WYVOQZoge
+ rytv/IR38nIYYLW3PgrOiDm/jmOCdP5By8QylyVHPCOdxWrTWP8lA9ehI+YCrjJgUR
+ fM2tBnAE+yvIw==
+Message-ID: <069c7bab-42aa-4e0d-b113-5919ec346fb5@kernel.org>
+Date: Mon, 15 Jun 2026 11:16:41 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Samuel Moelius <sam.moelius@trailofbits.com>,
  Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20260603154933.16368-1-sam.moelius@trailofbits.com>
+References: <20260603161127.17464-1-sam.moelius@trailofbits.com>
 Content-Language: en-US
-In-Reply-To: <20260603154933.16368-1-sam.moelius@trailofbits.com>
-X-Headers-End: 1wYxmE-00089Z-Pv
-Subject: Re: [f2fs-dev] [PATCH] f2fs: validate inline dentry name lengths
- before conversion
+In-Reply-To: <20260603161127.17464-1-sam.moelius@trailofbits.com>
+X-Headers-End: 1wYxog-0008HS-FD
+Subject: Re: [f2fs-dev] [PATCH] f2fs: validate dentry name length before
+ lookup compares it
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,45 +96,30 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 6/3/26 23:49, Samuel Moelius wrote:
-> Inline dentry conversion copies names out of the inline dentry area
-> before checking that each recorded name length fits in the available
-> filename slots.
+On 6/4/26 00:11, Samuel Moelius wrote:
+> The f2fs dentry lookup path can use the on-disk name length before
+> checking that the name fits in the dentry filename area.  A corrupted
+> dentry can then make lookup read beyond the filename slots.
 > 
-> A corrupted image can therefore make the conversion path read past
-> the inline filename storage while building the regular dentry block.
+> The bounds check needs to happen before any comparison that consumes
+> the name length from disk.
 > 
-> Validate each inline dentry name length against the inline filename
-> area before copying it.
+> Reject dentries with invalid name lengths before comparing their names.
+
+Will be better to merge two patch into one:
+
+f2fs: validate inline dentry name lengths before conversion
+f2fs: validate dentry name length before lookup compares it
+
 > 
 > Assisted-by: Codex:gpt-5.5-cyber-preview
 > Signed-off-by: Samuel Moelius <sam.moelius@trailofbits.com>
-> ---
->  fs/f2fs/inline.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index 7aabfc9b43cb..4584dfbe3fb8 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -507,6 +507,10 @@ static int f2fs_add_inline_entries(struct inode *dir, void *inline_dentry)
->  			bit_pos++;
->  			continue;
->  		}
-> +		if (unlikely(le16_to_cpu(de->name_len) > F2FS_NAME_LEN ||
-> +			     bit_pos + GET_DENTRY_SLOTS(le16_to_cpu(de->name_len)) >
-> +			     d.max))
-> +			return -EFSCORRUPTED;
 
-	err = -EFSCORRUPTED;
-	goto punch_dentry_pages;
+Anyway, this patch looks good to me.
+
+Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
-
->  
->  		/*
->  		 * We only need the disk_name and hash to move the dentry.
-
 
 
 _______________________________________________
