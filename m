@@ -4,76 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 76C2ECD98E2
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Jun 2026 07:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 12083CD98E2
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Jun 2026 07:44:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=dNYG3KK8qLqdoYBw+746FTPTEXFWiVG/XMAtBZ1sGJQ=; b=OacDASIHjTYeAmvl7MxoFStAAd
-	SH52udbPtOk+Q77xsBLM+TBXmJST/QhGm9G411nVzriW98iGadjVT0ga65TLnq5YSg9AHgUgpWwCi
-	ahk1K9ViUwdqjF2XZg1FU5GBUvKo6CRotN2HsjzwM3Z9/UynZpbG/zB4BSPtWU4PEEnw=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=VVsWVlIxm6JQC68OUn6nkh/M4EsfD7nRGbVcWUDcMa0=; b=d71+st/2Bh9aR2ytOsV9xytxlY
+	2Ie4Oe9XF1Xd76rX1ZHPthRHXdYUNGgvBIDILLJHJzzQFs4Xg+Z0WUEdxUPM8w5dtrjh6n66UCWdj
+	yFTbm5FpT8dm4xsCcq3B3HfQbbnOYgWTpJnLPVnhqSMv9ObhowX3Me/19l5h4xalFOwo=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wZkmu-0003l6-Vw;
-	Wed, 17 Jun 2026 07:34:16 +0000
+	id 1wZkwN-0003eF-8s;
+	Wed, 17 Jun 2026 07:44:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wZkmu-0003l0-3G
+ (envelope-from <chao@kernel.org>) id 1wZkwM-0003e8-BQ
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 17 Jun 2026 07:34:16 +0000
+ Wed, 17 Jun 2026 07:44:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/rnUG+9phvqSWTbG1RUV6ldfu1gWqqD6rk/CGwNLgAI=; b=ktupjqDpyjTffLOi1GsLDqBzA/
- g4obXZE6ZZKwC+9G+ph98PM+y9qfVblBH48Pox19tZgxCtwQVQTqKUFtxVrrl+7JatSKJkIZrGzm6
- BmIPda541L+0YCjav8tsRrARC3YLezJC34KG2sdYsYl6n0K9hDa1gl+FkSWGv5f8tmWY=;
+ bh=MN6iMgjWTt+fzPWv3mvp50bOE+tz3W24wU6jiAdRIsg=; b=cOvdMN2aCRWyaaIWPJgDuGU2a0
+ VKm0s//J4ZKQ9ldpQ/UyYGF235Sjk/CM7i14k9x1N1oEH2X5PVknLkmVKqoHdrP9gokfHrLpHlhfl
+ Xbo9Hyy6rXth3kBev5HOuxXjgHJ1lxQqeSpsRm9uYdU8i777aWAhV6IaGNPrm39nBPeY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=/rnUG+9phvqSWTbG1RUV6ldfu1gWqqD6rk/CGwNLgAI=; b=I
- dZTqGeMUaXEDSA45aXwDB+mq/nTGgAOrn8ANAUt2uF8aDJ9sveY78QO+FZHOAkIzt4qEe+T/4oH+D
- +oCnZdrNSnKjqOQLLq5SwL5YJsCs1SPlhsvZoin2pveLXxmB5G0XOgZoloCG1941lMzZF2KI9UWG3
- 7DE/6lin0s2t/Vwo=;
+ List-Owner:List-Archive; bh=MN6iMgjWTt+fzPWv3mvp50bOE+tz3W24wU6jiAdRIsg=; b=e
+ I6JrVMGdLHJ10PUSnHrwFK3kKpxA43AvlnmgwrWPXIwaReTdUSly71mTyzdGRITtdClbrosiGxxOr
+ P+H1ZMDHZYr3PNCLyrC6lw55+uOuMAyHQQI+ORUUMZSs64Q2jgmpntkiKVgPvHoirb91NOscfJ8YW
+ tSHy0JfHAbHv2Aa0=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wZkmr-0005We-13 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 17 Jun 2026 07:34:16 +0000
+ id 1wZkwL-00067O-Vy for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 17 Jun 2026 07:44:03 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 21D6643AEF
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 17 Jun 2026 07:34:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64D601F000E9;
- Wed, 17 Jun 2026 07:34:07 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 264A5402A6;
+ Wed, 17 Jun 2026 07:43:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25C8F1F000E9;
+ Wed, 17 Jun 2026 07:43:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1781681648;
- bh=/rnUG+9phvqSWTbG1RUV6ldfu1gWqqD6rk/CGwNLgAI=;
+ s=k20260515; t=1781682232;
+ bh=MN6iMgjWTt+fzPWv3mvp50bOE+tz3W24wU6jiAdRIsg=;
  h=From:To:Cc:Subject:Date;
- b=OA2cvJtj5k2zTe0TnAHN23OInYvQAgAjeEoF//1vSmxuJvcoifL/SnDO3i3jxJruL
- xy2acEk9ir0FVaSDynvCYx11W32d9O67iXmNQ6h51shar/JJ/ra7fA3YgLoLq+XyOw
- LiKZwUXnwemMMyciARzxLw2aTuEjl87YVUDbncYSS/pZ0adDl92xTM50JxI4IhoMtI
- 49LEWm4dK03jIWbMr3HqT8O13YI52+7Z52merpvnn2Da5UQZGBH5c61qT/w536PVhO
- 2JBevV5N9lZNeNL8aLemswHW2ne7syVfLyVIXvZ+wMWL3y+SzAjaUboUKHqMgURG1s
- JzqyQoSe4Q0sQ==
+ b=jC1mWMtlRoiyFvu1xg2SMRnVokFr/HWGu36A2VKp1S/9/SuDn6eAWyzjrDN5T0voO
+ tejuVulkKmDLzZGOqiseK7nmCuafR1FWu8V2Hfsh3Q4UFBoG90v6AzgthEdnz5UOJi
+ uRKz3TEA79AuLuq4RT2UZj6Q9vZV5gS94Bow4XGEzsHqqCEf+km4a6hNapagBSEymi
+ Skwq3+66f1xaNFq6+DPwWP4DLqiPRCoY9l50W+9Tv+aiLrtTiir/McWYSn0ANS2VAM
+ HqB82yXANiapXiNDIvDt9ftgWweuUqmIIcxbWteZgD6NmiJHNMl1rrkclrtbCDBaNM
+ yE+DvW2CoSS2Q==
 To: jaegeuk@kernel.org
-Date: Wed, 17 Jun 2026 07:33:57 +0000
-Message-ID: <20260617073357.93682-1-chao@kernel.org>
+Date: Wed, 17 Jun 2026 07:43:39 +0000
+Message-ID: <20260617074339.103640-1-chao@kernel.org>
 X-Mailer: git-send-email 2.54.0.1136.gdb2ca164c4-goog
 MIME-Version: 1.0
-X-Headers-End: 1wZkmr-0005We-13
-Subject: [f2fs-dev] [PATCH v2] f2fs_io: adapt w/ page_size in
- aligned_xalloc()
+X-Headers-End: 1wZkwL-00067O-Vy
+Subject: [f2fs-dev] [PATCH v3] fsck.f2fs: support to fix inconsistent
+ sit->type of segments in large section
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,71 +86,177 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: Daeho Jeong <daehojeong@google.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-When allocating memory in aligned_xalloc(), if the requested alignment
-(e.g., F2FS_DEFAULT_BLKSIZE) is smaller than the system's page size,
-aligned_alloc() will allocate memory that is not page-aligned on systems
-with 16KB or 64KB page sizes.
+fsck.f2fs -d1 <device>
 
-As a result, subsequent calls to madvise(..., MADV_HUGEPAGE) will fail
-because madvise() requires the memory address and length to be page-aligned.
+[fix_section_type:3036] wrong sit->type (4) in DATA secno:1 segno:2
+[fix_section_type:3036] wrong sit->type (4) in DATA secno:5 segno:11
 
-Fix this by dynamically adjusting the alignment and rounding up the requested
-allocation size (via roundup()) to the system's page size, ensuring that
-memory is correctly page-aligned for madvise().
+fsck.f2fs -f <device>
 
+[FIX] (fix_section_type:3040)  --> Fix wrong sit->type (4 -> 2) in DATA secno (1), segno (2)
+[FIX] (fix_section_type:3050)  --> Fix wrong sit->type in DATA secno (1), totally 1 empty segment(s)
+[FIX] (fix_section_type:3040)  --> Fix wrong sit->type (4 -> 2) in DATA secno (5), segno (11)
+[FIX] (fix_section_type:3050)  --> Fix wrong sit->type in DATA secno (5), totally 1 empty segment(s)
+
+Now it can only fix wrong sit->type of segment from NODE to DATA in a DATA
+section, such inconsistent image can be generated by recovery.
+
+For fuzzed image which contains below inconsistent sit->type, we can support
+to detect and repair later:
+1) empty NODE segment in DATA section (FIXED w/ current patch)
+2) empty DATA segment in NODE section
+3) valid segments w/ different temperature in DATA section
+4) valid segments w/ different temperature in NODE section
+5) valid segments w/ different sit->type in section
+
+Cc: Daeho Jeong <daehojeong@google.com>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- tools/f2fs_io/f2fs_io.c | 17 +++++++++++++++++
- tools/f2fs_io/f2fs_io.h |  3 +++
- 2 files changed, 20 insertions(+)
+v3:
+- remove unused empty_data_seg to avoid compile warning
+ fsck/f2fs.h | 13 ++++++++
+ fsck/fsck.c | 91 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 104 insertions(+)
 
-diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index 94e61b8..9a866cc 100644
---- a/tools/f2fs_io/f2fs_io.c
-+++ b/tools/f2fs_io/f2fs_io.c
-@@ -97,6 +97,23 @@ static void *xmalloc(size_t size)
+diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+index 5e7eb63..e4e5d0c 100644
+--- a/fsck/f2fs.h
++++ b/fsck/f2fs.h
+@@ -572,6 +572,19 @@ static inline int IS_CUR_SEGNO(struct f2fs_sb_info *sbi, u32 segno)
+ 	return 0;
+ }
  
- static void *aligned_xalloc(size_t alignment, size_t size)
++static inline int IS_CUR_SECNO(struct f2fs_sb_info *sbi, u32 secno)
++{
++	int i;
++
++	for (i = 0; i < NO_CHECK_TYPE; i++) {
++		struct curseg_info *curseg = CURSEG_I(sbi, i);
++
++		if (secno == GET_SEC_FROM_SEG(sbi, curseg->segno))
++			return 1;
++	}
++	return 0;
++}
++
+ static inline u64 BLKOFF_FROM_MAIN(struct f2fs_sb_info *sbi, u64 blk_addr)
  {
-+	long page_size = F2FS_DEFAULT_BLKSIZE;
+ 	ASSERT(blk_addr >= SM_I(sbi)->main_blkaddr);
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 1230d7b..4ad7e33 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -3012,6 +3012,94 @@ int check_sit_types(struct f2fs_sb_info *sbi)
+ 	}
+ 	return err;
+ }
++enum type_fix   {
++	TYPE_DATA,		/* fix sit->type of empty node segment to data */
++	TYPE_NODE,		/* fix sit->type of empty data segment to node */
++	TYPE_DATA_TEMP,		/* fix inconsistent sit->type temperature of data segment */
++	TYPE_NODE_TEMP,		/* fix inconsistent sit->type temperature of node segment */
++	TYPE_MIGRATE,		/* migrate node segments in mixed section */
++};
++static bool fix_section_type(struct f2fs_sb_info *sbi, unsigned int secno,
++				unsigned char type, enum type_fix type_fix)
++{
++	unsigned int segno = secno * sbi->segs_per_sec;
++	unsigned int end_segno = segno + sbi->segs_per_sec;
++	unsigned int empty = 0;
++	bool fixed = false;
 +
-+#ifdef _SC_PAGESIZE
-+	page_size = sysconf(_SC_PAGESIZE);
-+	if (page_size < 0)
-+		page_size = F2FS_DEFAULT_BLKSIZE;
-+#endif
++	for (; segno < end_segno; segno++) {
++		struct seg_entry *se = get_seg_entry(sbi, segno);
 +
-+	/*
-+	 * On systems with large page sizes (e.g., 16KB/64KB), alignment and
-+	 * allocation size must be page-aligned to satisfy madvise().
-+	 */
-+	if (alignment < (size_t)page_size)
-+		alignment = page_size;
++		if (type_fix == TYPE_DATA) {
++			if (se->valid_blocks)
++				continue;
++			DBG(1, "wrong sit->type (%d) in DATA secno:%d segno:%d\n",
++				se->type, secno, segno);
++			if (!c.fix_on)
++				continue;
++			FIX_MSG("Fix wrong sit->type (%d -> %d) in DATA secno (%u), segno (%d)",
++				se->type, type, secno, segno);
++			se->type = type;
++			empty++;
++			fixed = true;
++			continue;
++		}
++	}
 +
-+	size = roundup(size, alignment);
++	if (fixed && type_fix == TYPE_DATA)
++		FIX_MSG("Fix wrong sit->type in DATA secno (%u), totally %d empty segment(s)",
++			secno, empty);
 +
- 	void *p = aligned_alloc(alignment, size);
++	return fixed;
++}
++
++static bool check_large_section_types(struct f2fs_sb_info *sbi)
++{
++	unsigned int secno;
++	bool fixed = false;
++
++	if (sbi->segs_per_sec <= 1)
++		return 0;
++
++	for (secno = 0; secno < sbi->total_sections; secno++) {
++		struct seg_entry *se;
++		unsigned int segno = secno * sbi->segs_per_sec;
++		unsigned int end_segno = segno + sbi->segs_per_sec;
++		unsigned short data_seg = 0;
++		unsigned short node_seg = 0;
++		unsigned short empty_node_seg = 0;
++		unsigned char data_type = NO_CHECK_TYPE;
++
++		if (IS_CUR_SECNO(sbi, secno))
++			continue;
++
++		for (; segno < end_segno; segno++) {
++			se = get_seg_entry(sbi, segno);
++			if (IS_DATASEG(se->type)) {
++				if (se->valid_blocks) {
++					data_seg++;
++					data_type = se->type;
++				}
++			} else {
++				if (se->valid_blocks)
++					node_seg++;
++				else
++					empty_node_seg++;
++			}
++		}
++
++		/* skip free section */
++		if (!data_seg && !node_seg)
++			continue;
++
++		/* data section, fix sit->type of empty node segment to data */
++		if (data_seg && !node_seg && empty_node_seg) {
++			if (fix_section_type(sbi, secno, data_type, TYPE_DATA))
++				fixed = true;
++		}
++	}
++	return fixed;
++}
  
- 	if (!p)
-diff --git a/tools/f2fs_io/f2fs_io.h b/tools/f2fs_io/f2fs_io.h
-index 539964f..cf1c334 100644
---- a/tools/f2fs_io/f2fs_io.h
-+++ b/tools/f2fs_io/f2fs_io.h
-@@ -49,6 +49,9 @@ typedef u32	__be32;
- #endif
+ static struct f2fs_node *fsck_get_lpf(struct f2fs_sb_info *sbi)
+ {
+@@ -3834,6 +3922,9 @@ int fsck_verify(struct f2fs_sb_info *sbi)
+ 	if (check_sit_types(sbi) != 0)
+ 		force = 1;
  
- #define F2FS_DEFAULT_BLKSIZE	4096
-+#ifndef roundup
-+#define roundup(x, y)		((((x) + ((y) - 1)) / (y)) * (y))
-+#endif
- #define NEW_ADDR	0xFFFFFFFF
- 
- #ifndef FS_IOC_GETFLAGS
++	if (check_large_section_types(sbi))
++		force = 1;
++
+ 	printf("[FSCK] other corrupted bugs                          ");
+ 	if (c.bug_on == 0) {
+ 		printf(" [Ok..]\n");
 -- 
 2.49.0
 
