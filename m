@@ -4,75 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DCBA1CD98F1
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Jun 2026 11:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2CF72CD98E4
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Jun 2026 11:21:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=3y5LNmkRTg9Htvbu4xx1DddThdk+njnVyYZB5F+w4nE=; b=b6COMNpgrPjFoIQ3aYMVitBoOm
-	g2FzVijlVB/ao0uRzm+sF7scBxz6isXpnHDtENxR/O3ApPrrcgYNpvx4BwwSxIYP0H28jip31btYM
-	m2dCTyYhfg/1NQL1Ch4oEJ3yhn2HkB7V+yaKu2zFgXXv32J7RwfSqxCm7B0fY7TDZl7E=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=19RTRE05Lv3DKKLo4o2b4EkGEDeE8r8q+B4pv7bLkMs=; b=m8nVPgtk4ABnTKUZ+PLFxlS6ad
+	7LCz87rXVF77qVHfF41daOAY1IGSUIS3MLXLLQwIXEApl167VrOEO1MHpZNK0lGBAHna0RcCOuPP1
+	L1TX+lBxhXMvSmc5PYnN1J4lXWhLgaqdTdJ0aPxj7wlHbURYyTKa7psJUpGv82reKRBc=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wZoKP-0004eB-2z;
-	Wed, 17 Jun 2026 11:21:02 +0000
+	id 1wZoKP-0002fE-50;
+	Wed, 17 Jun 2026 11:21:05 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <asj@kernel.org>) id 1wZoKO-0004e5-5b
+ (envelope-from <asj@kernel.org>) id 1wZoKN-0002ey-8p
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 17 Jun 2026 11:21:01 +0000
+ Wed, 17 Jun 2026 11:21:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7Zb3aYz8lZNlAUYkdsGBkMuML/PvX4Qn94h9tk/ibUs=; b=K3J+zUEbynBe4CWZ6aQijVFSfx
- QcgzP0KI5Al7Hy6exwHyyNY/hMevPqzBi484BGctoA+sFKtLvQh9pKoQ3clIvdBC0Zt5kDFEDrI34
- MJXI1xcFhGp9oiVHXvYcEE0yPNjRLKfSiMJ5QtYVhsfPl9C4XYWDVvPwi6swZn+6SeAY=;
+ bh=H/ifHRev1KZt7zJcATaDa76vriuxBeCWHVdvTL8hqTg=; b=at7tZyDoPsMgZ+f3XrHntR7JZu
+ mZ6Be4Yz/9h38jPVCoJP0GvlcDGzDuP1lqTzK8yJn1tLWxXslVY+O4t1BpevX9IEx8YHyr9/jI35I
+ LZ3mIABMx1o86MIvoW0VGW66TYciKBOGPZmBcCrq5rQpjFFn2t9TbTxQ+gKiLT4a6qz8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=7Zb3aYz8lZNlAUYkdsGBkMuML/PvX4Qn94h9tk/ibUs=; b=b
- AQjUyvyLHXfB+1YriZzmMQFoOgWIaTc7KgpwjKCZFVbj03uu7trFJga9y1M1UhR+Zha9mGGRhirdb
- YCklLQG6LIa6wo/K4Yl3OPAH6z/Oez0GYGJpVv/TUrFSk9VefHjVA5XYp4xY4y7hE2DdpZWkqv4+E
- xc3AmCREI2f9g2HA=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=H/ifHRev1KZt7zJcATaDa76vriuxBeCWHVdvTL8hqTg=; b=GhyAHY8SpQpagyvEu5j5eKe4DD
+ yb0v6Ds7zcl8eq6JSu/6Oy33XL1YxBMWrJiPYUtTs2zGKiTvZVdLHQTMaKX91sG9enuqWHM6LUmne
+ D5VNMR7kssH9yRLpHc+fZygvSt1Q/Ha0Xh8KlOx4Kq2lqsjFc2B1VJdDGESyjm35X4RQ=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wZoKJ-0002ND-MS for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 17 Jun 2026 11:21:01 +0000
+ id 1wZoKL-0002NG-V8 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 17 Jun 2026 11:21:03 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 792D360103;
- Wed, 17 Jun 2026 11:20:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3237B1F000E9;
- Wed, 17 Jun 2026 11:20:46 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id DBAD760121;
+ Wed, 17 Jun 2026 11:20:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90BE01F000E9;
+ Wed, 17 Jun 2026 11:20:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1781695249;
- bh=7Zb3aYz8lZNlAUYkdsGBkMuML/PvX4Qn94h9tk/ibUs=;
- h=From:To:Cc:Subject:Date;
- b=TUel3iRgpz+g6/pSUIKEmsCkC1dorn7sHn/tFQuj8/LbJULYUa/982I3kp3ptdhgY
- /JXJ3ky35/7RNB85s8VcbF7h+sdybpOfW5FfHWJGMhKrk/15KnQ0ioaN5m6t4Kc4P+
- kPavcJu4lJYoth+zzDDuMXbgZeYw2LglQnuB4rJL9V0QN3YibzPbiOzH6wGaryNZpl
- yvJnhcVIScWAAh0blg7YWToySUvBdc9H3Si0o1lt0y7QgF83743MuTO4VLA8fOW4V8
- 8djm9FRw6KDFpwC+WabcPpkvT439Ppy3pD2CN2Mm/OhdMPApfgG5oLMKip+CZ4LYTg
- HjR7LpfIXWmAg==
+ s=k20260515; t=1781695256;
+ bh=H/ifHRev1KZt7zJcATaDa76vriuxBeCWHVdvTL8hqTg=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=Lv26D56moyfzDjRSXP1h969cV8AgvYZ9N6st5AgvVoCbI7grJ+nuu2E96cZpLkujJ
+ fCfjAoeLGwcg2Up76V7nMIxDz8uXtv1f+uvfbgEFI4NiZBJRpKSCXB+691y1wO+/he
+ IlpoZKSO7qQSouDyMJev/ycppfktDcR34RxiPRQ/sahCYrYZIs2gYs6aao44sMmeFR
+ D3MaO1JSIGWwZ2/0wiSf0M2PUx7tpXGw2a7r7bGmA+bxRiexde2llQri+ukVrmGiks
+ /CMxwH+duzWuwQ4e2YqAJh32OFRp1KYM3egdns98DgBG84DsIChKcmPKSGsyTJgIaZ
+ 6pYRzqZ7vt8mg==
 To: fstests@vger.kernel.org
-Date: Wed, 17 Jun 2026 19:20:27 +0800
-Message-ID: <cover.1781694879.git.asj@kernel.org>
+Date: Wed, 17 Jun 2026 19:20:30 +0800
+Message-ID: <4cfac83869d90a41ab6a1c01ad2b13ad95430f4c.1781694879.git.asj@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1781694879.git.asj@kernel.org>
+References: <cover.1781694879.git.asj@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wZoKJ-0002ND-MS
-Subject: [f2fs-dev] [PATCH v7 0/11] fstests: add test coverage for cloned
- filesystem ids
+X-Headers-End: 1wZoKL-0002NG-V8
+Subject: [f2fs-dev] [PATCH v7 03/11] fstests: add FSNOTIFYWAIT_PROG
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,95 +94,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-v7:
-. 803, 806: Trimmed down the UUID checks to only what is required, mountinfo
-   and libblkid.
-. 802: Dropped the unnecessary echo statements previously used for logical
-   flow in the golden output. On second thought, it looks fine without them.
-. Swapped _fixed_by_kernel_commit for _fixed_by_fs_commit.
-. _clone_mount_option(): Now echoes directly from the case block itself.
-. _require_unique_f_fsid(): add the link to the ref. discussions.
+Define `FSNOTIFYWAIT_PROG` for an upcoming test case that uses `fsnotifywait`.
 
-v6:
-  https://lore.kernel.org/fstests/cover.1779939330.git.asj@kernel.org
+Signed-off-by: Anand Jain <asj@kernel.org>
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+---
+ common/config | 1 +
+ 1 file changed, 1 insertion(+)
 
-v5:
-  https://lore.kernel.org/fstests/cover.1779367627.git.asj@kernel.org
-
-v4:
-  https://lore.kernel.org/fstests/cover.1777357320.git.asj@kernel.org
-
-v3:
-  https://lore.kernel.org/fstests/cover.1777281778.git.asj@kernel.org
-
-v2:
-  https://lore.kernel.org/fstests/cover.1774090817.git.asj@kernel.org
-
-v1:
-  https://lore.kernel.org/fstests/cover.1772095513.git.asj@kernel.org
-
-This series adds fstests infrastructure and test cases to verify correct
-filesystem identity when a filesystem is cloned (block-level copy).
-Test covers inotify, fanotify, f_fsid, libblkid, IMA, exportfs file handles
-and libblkid tools verify with metadata_uuid.
-  New helpers:
-   _loop_image_create_clone() and _loop_image_destroy() to help create fs and clone
-   _clone_mount_option() helper to apply per-filesystem clone mount options
-   _change_metadata_uuid() changes the UUID before the clone
-
-  New tests:
-  - fanotify events are isolated between cloned filesystems
-  - f_fsid is unique across cloned filesystem instances
-  - libblkid correctly resolves duplicate UUIDs to distinct devices
-    with and without metadata_uuid
-  - IMA distinct identity for each cloned filesystem
-  - exportfs file handles resolve correctly on cloned filesystems
-
-Kernel Patches:
-  Requires Btrfs kernel patches for all tests to pass.
-   [1] https://lore.kernel.org/linux-btrfs/cover.1777281686.git.asj@kernel.org
-
-Anand Jain (11):
-  fstests: add _loop_image_create_clone() helper
-  fstests: add _clone_mount_option() helper
-  fstests: add FSNOTIFYWAIT_PROG
-  fstests: add _require_unique_f_fsid() helper
-  fstests: verify fanotify isolation on cloned filesystems
-  fstests: verify f_fsid for cloned filesystems
-  fstests: verify libblkid resolution of duplicate UUIDs
-  fstests: verify IMA isolation on cloned filesystems
-  fstests: verify exportfs file handles on cloned filesystems
-  fstests: add _change_metadata_uuid helper
-  fstests: test UUID consistency for clones with metadata_uuid
-
- common/config         |   1 +
- common/rc             | 120 +++++++++++++++++++++++++++++++++++++
- tests/generic/801     | 135 ++++++++++++++++++++++++++++++++++++++++++
- tests/generic/801.out |   7 +++
- tests/generic/802     |  64 ++++++++++++++++++++
- tests/generic/802.out |   4 ++
- tests/generic/803     |  72 ++++++++++++++++++++++
- tests/generic/803.out |   6 ++
- tests/generic/804     | 108 +++++++++++++++++++++++++++++++++
- tests/generic/804.out |  10 ++++
- tests/generic/805     |  80 +++++++++++++++++++++++++
- tests/generic/805.out |   2 +
- tests/generic/806     |  74 +++++++++++++++++++++++
- tests/generic/806.out |   6 ++
- 14 files changed, 689 insertions(+)
- create mode 100644 tests/generic/801
- create mode 100644 tests/generic/801.out
- create mode 100644 tests/generic/802
- create mode 100644 tests/generic/802.out
- create mode 100644 tests/generic/803
- create mode 100644 tests/generic/803.out
- create mode 100644 tests/generic/804
- create mode 100644 tests/generic/804.out
- create mode 100644 tests/generic/805
- create mode 100644 tests/generic/805.out
- create mode 100644 tests/generic/806
- create mode 100644 tests/generic/806.out
-
+diff --git a/common/config b/common/config
+index d5299d5b926f..5661fa0ec310 100644
+--- a/common/config
++++ b/common/config
+@@ -242,6 +242,7 @@ export BTRFS_MAP_LOGICAL_PROG=$(type -P btrfs-map-logical)
+ export PARTED_PROG="$(type -P parted)"
+ export XFS_PROPERTY_PROG="$(type -P xfs_property)"
+ export FSCRYPTCTL_PROG="$(type -P fscryptctl)"
++export FSNOTIFYWAIT_PROG="$(type -P fsnotifywait)"
+ 
+ # udev wait functions.
+ #
 -- 
 2.43.0
 
