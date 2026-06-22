@@ -4,78 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C66E6CDB466
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jun 2026 20:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8E74ECDB466
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jun 2026 20:00:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=HR9NVoMQR+ANidxfOA7XX+77mZxLEZGin+8z2La6Al4=; b=cldg0qm4NUtB/lzs4Btyl0B4jK
-	IKARnTI/kQ5O1yMVhw5M0BeqKTc9vCmYyJ/cpBTKMJ9Z57JF3o5GuhspmmAd4YXCDnPUbRubON992
-	wtKfpfDRYTwX4Zf5dKAxhthrb6M79/Zpz4G4cfgDRoIVVrokdlbW755RaCrMjgD1zNQM=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=EftU6hJlrU7qTjy7TTM8h7xKDbDS5S6K7ObfqT390rQ=; b=RsEpZpapt/NxUijEBTOFIuizFF
+	Ff7e+nA+09/Ctlw0Q9ILJfcwVIO0qBZuNVxBXm1AxygHlUVyolHw7szkyo2tyRjY7N0oQsAOCMTBF
+	goMqicT6u6/DkvXQ0iYl12ME9ZrEKVRG0Iy2k9sPDQPkK5YsUrSI9kCYja9zxk6rBd7I=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wbkp1-0005l7-P0;
-	Mon, 22 Jun 2026 20:00:44 +0000
+	id 1wbkp6-00053M-G4;
+	Mon, 22 Jun 2026 20:00:49 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wbkoz-0005kq-Ov
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wbkp4-00053E-RA
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jun 2026 20:00:42 +0000
+ Mon, 22 Jun 2026 20:00:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KfLlXYdrlVbzJTmUN+eGVpPezTEpeOIqk0/nC6FBssU=; b=Su02lEcza8yLpL0qDy7VD2Dsfo
- ZJewbcjgGEoyEzbD2SQqjOvFLHUK1NjtlqHwGn0Ha6Cvcr25s2pKOEDuNR/ZBnBUj2ow/y+Ss3LQh
- DDULVhYRA2wXR6GNoDqFnmbhD6ATL6sN36ze9urYIDSaEoltSRrNlpNvS7vHawJXtSUM=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=qEjW2ja5zsHriXbhJAmzEId+JHa0NC2ygo5J6xWZCq4=; b=C7Vpnj/mxlTwGu0GBKp6GbcXbJ
+ NIhhgCV6syMcsLo7ZKuqAWFpFAa34ZS58RsUkneSrT5f+RMeynoIHSGoLu6mZCxbs4BYQZkKeaQak
+ CrfU8Ymi3UXfTzAyEvuqta0HRKonqIhlpJ7a7a5UwY+/ZcD4UjtckcO1xw7Z94Txic5o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KfLlXYdrlVbzJTmUN+eGVpPezTEpeOIqk0/nC6FBssU=; b=Yuw1HYDeHfCT9o9LpvTXloELry
- MDts8WkW3EO9Kf77VUotZqJQkmutVcKs/v9Ei8Ijm28AI3GDbgi6lJwytrFisEhtAQVmOFUcDu8DB
- tGm4uZ+5zQfFjMHzMHj0OcNCodDt/tgRPNzYWcSX49NeAHUj7WFpqTzuGZ4mP4fAeZdE=;
+ ;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=qEjW2ja5zsHriXbhJAmzEId+JHa0NC2ygo5J6xWZCq4=; b=C
+ /I93vJN54JQzXiBCjYVHEZumNcrSX0SBvL1HPzBA0nrzwpupDgxLeJt/m3RE1cdGfDVqk0BGomr2u
+ jMRevo5hgYawI6lyrZEcW1UGZ0bYdzEdHWBajY25jn3nnNoa9uT+cRJYSKYqn7O/1dyGxy9Bmm0WI
+ NBKTbT/3U9Iog9Hs=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wbkoz-0004N9-9X for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jun 2026 20:00:42 +0000
+ id 1wbkp2-0004Nc-Ku for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 22 Jun 2026 20:00:46 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 3913E601F6;
- Mon, 22 Jun 2026 20:00:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5F781F000E9;
- Mon, 22 Jun 2026 20:00:35 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 7253C601F3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 22 Jun 2026 20:00:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C0851F000E9
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 22 Jun 2026 20:00:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1782158435;
- bh=KfLlXYdrlVbzJTmUN+eGVpPezTEpeOIqk0/nC6FBssU=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=QdM8tScxtpEgLUU1RtI6PVUI6C9kKd99gsZiCn+jH52lYx9YehTuIJyJHwzA1kRN3
- gmI9QaJZP2FQNKbwxHY3R4ZykwtRTWAQJ9h3YHZ0M/oc1Hy8Q/98REYHKd+GxZ2Wx0
- vgJG9podwCZU2wDQy9Kp25wLkPy7G24LjSM/fbMAiNIbLdgzap+6E7NOXAOhpAGL8t
- OcNPXvbbc/X0SWur1u+HB0RgrBL2Zjzh3BDmZzuPfxT3qb1AIgWhVMNgwdxzeOyyUU
- uiT7Q5c37GPk/RY00HUchwtxpjzf+IxHzuVev0/N9Dq73hU+I2kr+ADYEA0nS7WDdn
- b+YzUburBk1pA==
+ s=k20260515; t=1782158434;
+ bh=qEjW2ja5zsHriXbhJAmzEId+JHa0NC2ygo5J6xWZCq4=;
+ h=Subject:From:Date:To;
+ b=NfPgYdg2GrsVtNuglRmo3q54QNuHutEWiVqVvZnqsXnjCulv97kdE4WXBTKdzDTvc
+ S/A0QW5mQHM0ng3t9jGNO8bWqwOlir7xa0Qf/ONjjop/2QMRPBG4Rd8LseZE256nRQ
+ PN4GQ2TBJn6lH+K9P2/jTHpw7VTvdfOTyL5g1873B6ZgKwYHDVjjzrSNYq5dz+KgMB
+ Ze9SYXvVv7AHjgv8/0RUJE07IapWrHmn2xE0paAApjz9CwCIXr1TpV2+82fSjgPsw0
+ zBYRKoSxKLwVvMTwT0//zNI1gnpuRFhDxzlG7h5C9RlEl482ehToNm1IjNdiKTkWdW
+ wNEEUG21xcdRA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 93E123930922; Mon, 22 Jun 2026 20:00:27 +0000 (UTC)
+ D11B73930922 for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 22 Jun 2026 20:00:25 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <178215842604.1396481.3503226882368736427.git-patchwork-notify@kernel.org>
-Date: Mon, 22 Jun 2026 20:00:26 +0000
-References: <20260622052817.3972188-1-s_min.jeong@samsung.com>
-In-Reply-To: <20260622052817.3972188-1-s_min.jeong@samsung.com>
-To: Sunmin Jeong <s_min.jeong@samsung.com>
-X-Headers-End: 1wbkoz-0004N9-9X
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to round down start offset of
- fallocate for pin file
+Message-Id: <178215842444.1396481.2249149402288597739.git-patchwork-summary@kernel.org>
+Date: Mon, 22 Jun 2026 20:00:24 +0000
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1wbkp2-0004Nc-Ku
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,35 +91,24 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
- sj1557.seo@samsung.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-On Mon, 22 Jun 2026 14:28:17 +0900 you wrote:
-> Currently, the length of fallocate for pin file is section-aligned to
-> keep allocated sections from being selected as victims of GC. However,
-> for the case that the start offset of fallocate is not aligned in
-> section, the allocated sections can't be fully utilized. It's because a
-> new section is allocated by f2fs_allocate_pinning_section() after using
-> blks_per_sec blocks regardless of the start offset. As a result, several
-> unexpected dirty segments may be created, including blocks assigned to
-> the pinned file.
-> 
-> [...]
+Patch: [f2fs-dev,v2] f2fs: fix to round down start offset of fallocate for pin file
+  Submitter: Sunmin Jeong <s_min.jeong@samsung.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1114514
+  Lore link: https://lore.kernel.org/r/20260622052817.3972188-1-s_min.jeong@samsung.com
 
-Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: fix to round down start offset of fallocate for pin file
-    https://git.kernel.org/jaegeuk/f2fs/c/d2134b45eede
 
-You are awesome, thank you!
+Total patches: 1
+
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
