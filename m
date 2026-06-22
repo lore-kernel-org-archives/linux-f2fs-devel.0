@@ -4,77 +4,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8D3F8CDB466
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jun 2026 02:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1ABFFCDB466
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jun 2026 02:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:References:MIME-Version:Message-Id:Date:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=YEn/Kzdxt0oSOlC592L3CbcIEW1vBII5yVYwWCiWCY0=; b=JI3Sznz10bUbKegNoK+3ZAUZzr
-	GehJ4bMr3MjKaZ0gpNT1xRk59cEe/sgqgzO3bdBtvaWf9kyyWqDouPH1D29A5GV8bkkAfO5wDLq17
-	XerWDySm8Wlc0PfhcAFOrM6R6VVkN0W1Gd8MYhVbf7nS77RL/ujPdjRXWhjlbJFTOT5s=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Owner;
+	bh=dcTbi6y8JCIVF+Nq0GZmUM9UwjdlF5UmmkcCuWTq1CE=; b=gfSGETXdHFZAr8X0+Ij69Qu5LJ
+	Vl5oUe2qbl398pXG46G/LNLX9tJEfWN/1WcETwrM5jlpMzbVkoopSjH+dWCxMEU1KeK7BoUBl7S7l
+	sN79HdSx9JFMB/g4IsW9PcNy/g3q4SKk0bMqq5NlJipTACIdIf+geFeJICHGiAPvUMNI=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wbU2h-0003Uq-Dt;
-	Mon, 22 Jun 2026 02:05:44 +0000
+	id 1wbUYz-0000ww-Go;
+	Mon, 22 Jun 2026 02:39:06 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wbU2Z-0003S1-2n
+ (envelope-from <s_min.jeong@samsung.com>) id 1wbUYx-0000wo-DX
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jun 2026 02:05:35 +0000
+ Mon, 22 Jun 2026 02:39:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
+ MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Lu5iU7fBtv4Chc3ojEDmb6o6SqWI3VKMJzPc8hK6LqQ=; b=LKw2o7f73aXjbGuH1wweas/tv9
- 3fSt6Gja3eetpuB0KEZNYFiV1FS6yyGEYyoPVVDWRrLr3KOgKd48xOt4H1C+xnqZ4txB5UzznPgwG
- kShRqwJAqht9/1dhCYWYrzcpTf8h5ow3Hjw1KT+Ygugwp5V0PzyxOB9UKWHFb67LDE5k=;
+ bh=xRBYtPt4GacALwQvCYdpFOdgqKfhmzTawnXTgPBaL6o=; b=Ed0jG22QkqVnUnjgIi1RWYN57U
+ PAIf0PvdqsUgmQsKaMgOxnUtD/XsTp8jxdWPXxLq1Thb6xhDh1kcssb7QXl5osTfVfBkFaKwg434w
+ T4Ta64hgsuyhS2T+Ez+jaZv2RkFUamwspiAkHO5yZH0ttBlJ/xCvExv6UJXAMVUrR0Mk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Lu5iU7fBtv4Chc3ojEDmb6o6SqWI3VKMJzPc8hK6LqQ=; b=f
- Bq45Ral4bl/vFVM6kfwdoLL5Pm3FU1p41QsE5Kk+gnfOnqx87gIOzxRzYmEH//i+OiTA2WAsnofNW
- +jfOcVkElYYMQ6u1eP03+zOMpIICZOi2roAyN7ezI38j9V1kjSqu/fXTj23KhRLniSEMh+yLdjRMh
- yRe+o+7ZB9YfAw0A=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ h=References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id
+ :Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=xRBYtPt4GacALwQvCYdpFOdgqKfhmzTawnXTgPBaL6o=; b=E
+ 358uAdNhLHlIDrQnXaZ21g6e0aD3WdNu6NrTQBvzyJffJKwSZfOzkDcBMpZy2cNa1pm9qVrSn5p+7
+ Y75rC8CTiF/c/1oD/+72rV2Wwfj4Q6VmBLHRY6SQvVnGCihg/YBbhzM+7ZSBV5NB6ZJtOGuAz6tzL
+ YZ2R/185kmvAa5Ms=;
+Received: from mailout2.samsung.com ([203.254.224.25])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wbU2Y-0004bZ-M5 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jun 2026 02:05:35 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id CFBC64172E
+ id 1wbUYw-0006Zl-BI for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 22 Jun 2026 02:39:04 +0000
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+ by mailout2.samsung.com (KnoxPortal) with ESMTP id
+ 20260622023855epoutp021b2078f4167a9885197ef5a55deefb25~7Rs-Cv1On1673516735epoutp02m
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 22 Jun 2026 02:05:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEE8A1F000E9;
- Mon, 22 Jun 2026 02:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1782093924;
- bh=Lu5iU7fBtv4Chc3ojEDmb6o6SqWI3VKMJzPc8hK6LqQ=;
- h=From:To:Cc:Subject:Date;
- b=LR8Y8W7zFK6TydC2zO+xSIFnWFpzqSY3NZMRh4jT2TxVMn7+CeeSBijiFkjomLgsU
- jfD2Y5smk22rkUClGwQ1fNlj2J+oe+e58WhFP7hcwZLkFX04SjyCUG+Tdom7GlKSYB
- +octpONMW4v4NQy6flDiL4tFGgMQDhKY8LwlHWfKsgLPJYldim5zkf5pvZl3tn1Bel
- KdqpqBL21dxGXQHidvkercGf4uYT6SkX2dJqa+ExIxh0E0nuaOhaCDPxweLHFGBY9H
- hq2iQMizIg8fykZaJptiikBVegwJQ6ivopLs6Kv1lzE2+3qsUC2NS+CE6HX75xXt4T
- VIw0u1eB182yg==
-To: Zorro Lang <zlang@kernel.org>,
-	fstests@vger.kernel.org
-Date: Mon, 22 Jun 2026 02:05:16 +0000
-Message-ID: <20260622020516.2372277-1-chao@kernel.org>
-X-Mailer: git-send-email 2.55.0.rc0.738.g0c8ab3ebcc-goog
+ Mon, 22 Jun 2026 02:38:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com
+ 20260622023855epoutp021b2078f4167a9885197ef5a55deefb25~7Rs-Cv1On1673516735epoutp02m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+ s=mail20170921; t=1782095935;
+ bh=xRBYtPt4GacALwQvCYdpFOdgqKfhmzTawnXTgPBaL6o=;
+ h=From:To:Cc:Subject:Date:References:From;
+ b=KmMZDl/Sy31BNNi7st7VD7cVEk0Qj/xYaVnZUyQLHNS2QBnrrHnHmLsNsRMr7uNJj
+ XLhbAOCRaZYoGOI5t2b0E7QymfxfCJlORdrcalvFJhFk3jXcqbSHJPbQ3zt7R9cmsi
+ gNzVHRyUyGiiqF2DQsGPUIz9f8KPltRNEK6NvMsU=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+ epcas1p2.samsung.com (KnoxPortal) with ESMTPS id
+ 20260622023854epcas1p295295fe069023eb259f5f2a5e751ac29~7Rs98li4K1320613206epcas1p2I;
+ Mon, 22 Jun 2026 02:38:54 +0000 (GMT)
+Received: from epcas1p1.samsung.com (unknown [182.195.38.115]) by
+ epsnrtp02.localdomain (Postfix) with ESMTP id 4gkC7f23Y5z2SSKX; Mon, 22 Jun
+ 2026 02:38:54 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+ epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+ 20260622023853epcas1p3d15698d1e456cc549da18ac2674e1f5f~7Rs9Mt_O52963129631epcas1p3c;
+ Mon, 22 Jun 2026 02:38:53 +0000 (GMT)
+Received: from localhost.localdomain (unknown [10.253.98.34]) by
+ epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+ 20260622023853epsmtip29a3630d09b4f18b07c2f040058adfd5e~7Rs9KF_W70692606926epsmtip2M;
+ Mon, 22 Jun 2026 02:38:53 +0000 (GMT)
+From: Sunmin Jeong <s_min.jeong@samsung.com>
+To: jaegeuk@kernel.org, chao@kernel.org
+Date: Mon, 22 Jun 2026 11:38:05 +0900
+Message-Id: <20260622023805.3620189-1-s_min.jeong@samsung.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-Headers-End: 1wbU2Y-0004bZ-M5
-Subject: [f2fs-dev] [PATCH v2] common/f2fs: introduce
- _require_f2fs_io_command
+X-CMS-MailID: 20260622023853epcas1p3d15698d1e456cc549da18ac2674e1f5f
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+cpgsPolicy: CPGSC10-711,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260622023853epcas1p3d15698d1e456cc549da18ac2674e1f5f
+References: <CGME20260622023853epcas1p3d15698d1e456cc549da18ac2674e1f5f@epcas1p3.samsung.com>
+X-Headers-End: 1wbUYw-0006Zl-BI
+Subject: [f2fs-dev] [PATCH] f2fs: fix to round down start offset of
+ fallocate for pin file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,172 +106,71 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ Sungjong Seo <sj1557.seo@samsung.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Update existing f2fs testcases to utilize the new
-_require_f2fs_io_command() helper for verifying required f2fs_io
-subcommands instead of basic executable checks or open coding.
+Currently, the length of fallocate for pin file is section-aligned to
+keep allocated sections from being selected as victims of GC. However,
+for the case that the start offset of fallocate is not aligned in
+section, the allocated sections can't be fully utilized. It's because a
+new section is allocated by f2fs_allocate_pinning_section() after using
+blks_per_sec blocks regardless of the start offset. As a result, several
+unexpected dirty segments may be created, including blocks assigned to
+the pinned file.
 
-Suggested-by: Zorro Lang <zlang@kernel.org>
-Signed-off-by: Chao Yu <chao@kernel.org>
+To address this issue, let's round down the start offset of fallocate
+to the length of section.
+
+The reproducing scenario is as below
+
+chunk=$(((2<<20)+4096)) # 2MB + 4KB
+touch test
+f2fs_io pinfile set test
+f2fs_io fallocate 0 0 $chunk test
+f2fs_io fallocate 0 $chunk $chunk test
+f2fs_io fallocate 0 $((chunk*2)) $chunk test
+f2fs_io fiemap 0 $((chunk*3)) test
+
+Fiemap: offset = 0 len = 12288
+    logical addr.    physical addr.   length           flags
+0   0000000000000000 000000068c600000 0000000000400000 00001088
+1   0000000000400000 000000003d400000 0000000000001000 00001088
+2   0000000000401000 00000003eb200000 0000000000200000 00001088
+3   0000000000601000 00000005e4200000 0000000000001000 00001088
+4   0000000000602000 0000000605400000 0000000000200000 00001089
+
+Reviewed-by: Yunji Kang <yunji0.kang@samsung.com>
+Reviewed-by: Yeongjin Gil <youngjin.gil@samsung.com>
+Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+Signed-off-by: Sunmin Jeong <s_min.jeong@samsung.com>
 ---
-v2: add Suggested-by tag of Zorro
- common/f2fs    | 16 ++++++++++++++++
- tests/f2fs/003 |  1 +
- tests/f2fs/004 |  1 +
- tests/f2fs/007 |  1 +
- tests/f2fs/009 |  1 +
- tests/f2fs/010 |  2 +-
- tests/f2fs/011 |  2 +-
- tests/f2fs/012 |  2 +-
- tests/f2fs/013 |  2 +-
- tests/f2fs/025 |  2 +-
- 10 files changed, 25 insertions(+), 5 deletions(-)
+ fs/f2fs/file.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/common/f2fs b/common/f2fs
-index 82d3102ea..025d29a76 100644
---- a/common/f2fs
-+++ b/common/f2fs
-@@ -96,3 +96,19 @@ _require_inject_f2fs_command()
- 	$F2FS_INJECT_PROG "--$metaarea" "$val" "-h" | grep "$member:" > /dev/null || \
- 		_notrun "--$metaarea --mb $member support is missing"
- }
-+
-+# Check that f2fs_io supports specific subcommand(s)
-+_require_f2fs_io_command()
-+{
-+	_require_command "$F2FS_IO_PROG" f2fs_io
-+
-+	if [ -z "$1" ]; then
-+		echo "Usage: _require_f2fs_io_command command..." 1>&2
-+		_exit 1
-+	fi
-+
-+	for command in "$@"; do
-+		$F2FS_IO_PROG help | awk '{print $1}' | grep -qw "$command" || \
-+			_notrun "f2fs_io $command support is missing"
-+	done
-+}
-diff --git a/tests/f2fs/003 b/tests/f2fs/003
-index fbb08a3e9..94885904c 100755
---- a/tests/f2fs/003
-+++ b/tests/f2fs/003
-@@ -30,6 +30,7 @@ _fixed_by_kernel_commit b40a2b003709 \
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 2c4880f24b54..3954aea43bd9 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1906,8 +1906,13 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
  
- _require_scratch
- _require_xfs_io_command "fpunch"
-+_require_f2fs_io_command "write" "gc"
+ 	if (f2fs_is_pinned_file(inode)) {
+ 		block_t sec_blks = CAP_BLKS_PER_SEC(sbi);
+-		block_t sec_len = roundup(map.m_len, sec_blks);
++		block_t sec_len;
  
- _scratch_mkfs >> $seqres.full
- _scratch_mount >> $seqres.full
-diff --git a/tests/f2fs/004 b/tests/f2fs/004
-index ac824c437..0592e23c4 100755
---- a/tests/f2fs/004
-+++ b/tests/f2fs/004
-@@ -30,6 +30,7 @@ _fixed_by_kernel_commit b2c160f4f3cf \
- 
- _require_scratch
- _require_odirect
-+_require_f2fs_io_command "write"
- _scratch_mkfs >> $seqres.full
- _scratch_mount >> $seqres.full
- 
-diff --git a/tests/f2fs/007 b/tests/f2fs/007
-index 37388433e..e45b6cea9 100755
---- a/tests/f2fs/007
-+++ b/tests/f2fs/007
-@@ -15,6 +15,7 @@ _fixed_by_kernel_commit 26413ce18e85 \
-         "f2fs: compress: fix inconsistent update of i_blocks in release_compress_blocks and reserve_compress_blocks"
- 
- _require_scratch
-+_require_f2fs_io_command "compress" "get_cblocks" "release_cblocks" "reserve_cblocks" "decompress"
- testfile_prefix=$SCRATCH_MNT/testfile
- fio_config=$tmp.fio
- 
-diff --git a/tests/f2fs/009 b/tests/f2fs/009
-index 39a4bad3d..afb3bc98f 100755
---- a/tests/f2fs/009
-+++ b/tests/f2fs/009
-@@ -15,6 +15,7 @@ _require_scratch
- _require_scratch_shutdown
- _require_inject_f2fs_command node i_links
- _require_command "$(type -P socket)" socket
-+_require_f2fs_io_command "write"
- 
- _fixed_by_git_commit f2fs-tools 958cd6e \
- 	"fsck.f2fs: support to repair corrupted i_links"
-diff --git a/tests/f2fs/010 b/tests/f2fs/010
-index 50e378177..b8899dedc 100755
---- a/tests/f2fs/010
-+++ b/tests/f2fs/010
-@@ -30,7 +30,7 @@ _fixed_by_kernel_commit 03511e936916 \
- 	"f2fs: fix inconsistent dirty state of atomic file"
- 
- _require_scratch
--_require_command "$F2FS_IO_PROG" f2fs_io
-+_require_f2fs_io_command "write"
- 
- _scratch_mkfs >> $seqres.full
- _scratch_mount >> $seqres.full
-diff --git a/tests/f2fs/011 b/tests/f2fs/011
-index 07c94d8c9..aa939c9e7 100755
---- a/tests/f2fs/011
-+++ b/tests/f2fs/011
-@@ -27,7 +27,7 @@ _fixed_by_kernel_commit f7f8932ca6bb \
- 	"f2fs: fix to avoid running out of free segments"
- 
- _require_scratch
--_require_command "$F2FS_IO_PROG" f2fs_io
-+_require_f2fs_io_command "pinfile"
- 
- _scratch_mkfs_sized $((1*1024*1024*1024)) >> $seqres.full
- _scratch_mount -o checkpoint=disable:10%
-diff --git a/tests/f2fs/012 b/tests/f2fs/012
-index 53d54bf6b..15b0e5055 100755
---- a/tests/f2fs/012
-+++ b/tests/f2fs/012
-@@ -19,7 +19,7 @@ _fixed_by_kernel_commit 91b587ba79e1 \
- 
- export LC_ALL=C.UTF-8
- _require_scratch_nocheck
--_require_command "$F2FS_IO_PROG" f2fs_io
-+_require_f2fs_io_command "setflags"
- _require_inject_f2fs_command dent d_hash
- 
- #check whether f2fs supports "lookup_mode=x" mount option
-diff --git a/tests/f2fs/013 b/tests/f2fs/013
-index 80ed2702b..086a5b4bb 100755
---- a/tests/f2fs/013
-+++ b/tests/f2fs/013
-@@ -19,7 +19,7 @@
- . ./common/preamble
- _begin_fstest auto quick
- _require_kernel_config CONFIG_F2FS_FAULT_INJECTION
--_require_command "$F2FS_IO_PROG" f2fs_io
-+_require_f2fs_io_command "write" "fsync"
- 
- _cleanup()
- {
-diff --git a/tests/f2fs/025 b/tests/f2fs/025
-index 807f18f23..6fc18d989 100755
---- a/tests/f2fs/025
-+++ b/tests/f2fs/025
-@@ -20,7 +20,7 @@ _require_scratch
- _require_scratch_shutdown
- _require_xfs_io_command "pwrite"
- _require_xfs_io_command "truncate"
--_require_command "$F2FS_IO_PROG" f2fs_io
-+_require_f2fs_io_command gc_urgent
- _require_fs_sysfs_attr $TEST_DEV gc_urgent
- _require_check_dmesg
- 
++		if (map.m_lblk % sec_blks) {
++			map.m_lblk = rounddown(map.m_lblk, sec_blks);
++			map.m_len = pg_end - map.m_lblk;
++		}
++		sec_len = roundup(map.m_len, sec_blks);
+ 		map.m_len = sec_blks;
+ next_alloc:
+ 		f2fs_down_write(&sbi->pin_sem);
 -- 
-2.49.0
+2.25.1
 
 
 
