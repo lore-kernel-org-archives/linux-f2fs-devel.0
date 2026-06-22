@@ -4,78 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6FE7CCD98F0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jun 2026 01:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 91AD8CD98F0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jun 2026 01:59:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=7WNuvuHc4BOzYoqj2AFIDZmdTTHsTBkQFIrKWV1IZ9A=; b=AUdB3383iCSu2iIb2nRgkxL+8w
-	6uIDGpzCRXU2hbennmJ+HKnnumKiw22l+jdZu3Etl0AHQ6p+2Rm3GSVwXPhWge1JX0BWbBllIWe8A
-	jXKaj8WtqWpaKPWwgQDWSqToEytQzdgh+0FHfaG2M43/533QabddzVWHZ5z4CC5COu8E=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=dOlQj6Dcumq1zJcBsyq1s+JFR2Faon/y2AiwgPjvpjU=; b=l5NN5MHxf+Sl+7xaktd5HgVInQ
+	gzs6L7yxaq3HkUxzwyDAkExGxOwGK8/ahrHe/m24RsCP59xqdC9EkqQGgxJ4ogdP8+DN/T003m0U5
+	c6I6Ki91ZrZbzjrt4vJvoaBvPO7ah83MX0kps8FHcqqnBlW0Dv2P8JX8ATys6eWh8K0U=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wbTkJ-0006sL-8P;
-	Mon, 22 Jun 2026 01:46:43 +0000
+	id 1wbTwL-00006k-Ok;
+	Mon, 22 Jun 2026 01:59:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wbTkH-0006sF-Fj
+ (envelope-from <chao@kernel.org>) id 1wbTvw-00006F-PK
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jun 2026 01:46:41 +0000
+ Mon, 22 Jun 2026 01:58:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=s8d0wK3H8YgUvjSOLhu94Vxjd6l1lGx3XFz9Z10AdaE=; b=ahRaZKk20SUF0VAtn6O14l2Jmu
- hz8nFP7sLhxEetTF9cv52rAfXGwK/Q+f/EjTzRCyW/oOWZToul18RAqKefYykPb8CaNOPf3JQAVj2
- 5DsSnuquWk0KAdEN3RdS3zB3mPjZe0LGCYdoEuBYhdTudhWZN4DTmlUsHA5XGjo7VYJM=;
+ bh=Dtf5/pJLwpCVA1mBxYREJNiC2NC0806gE2r8IszMhpw=; b=iVBNyxdPDr+3Zf1UkmApzi+QR3
+ tL1JkDNYC0DoX+NpEzXHW+nIiwZ6DvkTPypglwCKaMcqTDizw9IXINeOg7b58Vj/NmM9zk7Iq4dt0
+ Gde3DAk6RFXVU3JOCP7n+7+a6OWeV6WT1nVwJtcbqUmEWTlm1cA84OKZXzUpYAZHVYNY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=s8d0wK3H8YgUvjSOLhu94Vxjd6l1lGx3XFz9Z10AdaE=; b=ZT5M/4oQRgue9xO2asJT13Q1c2
- GLgT+Zqsw+3wQJvadVqeUa0TBJI5PQ8HPdeZanFUAZYO7xFmvSod+kgcL7XmVvIK7VDheCaVniS/0
- sR5aD9wzV4/c0rpGhSHSVMynGhDItlm7OQbI4eZrBDvfJz9JZxCIJhlOOplnQCETco3Y=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=Dtf5/pJLwpCVA1mBxYREJNiC2NC0806gE2r8IszMhpw=; b=X
+ aU/Q8jQY+f6/iIioSxog8HIdIu16VF9K3a2t/wcVNfQxzENX96YtVOsBy4a+/CAGH2vvsFdhzzKdL
+ LDmbvlp9Slld6as2xCwhWIQruNcpE9ZOtT5vD5Iyp9szvqiRUTyJVcwnqn1p6vQV56juRqQ/qq/ks
+ 3AYNd3BMejWj1/OY=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wbTkF-0002zR-IL for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 Jun 2026 01:46:41 +0000
+ id 1wbTvw-0003xl-Cy for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 22 Jun 2026 01:58:45 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id E63B460051;
- Mon, 22 Jun 2026 01:46:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D59AE1F000E9;
- Mon, 22 Jun 2026 01:46:26 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 8BE64408FC
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 22 Jun 2026 01:58:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F911F000E9;
+ Mon, 22 Jun 2026 01:58:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1782092788;
- bh=s8d0wK3H8YgUvjSOLhu94Vxjd6l1lGx3XFz9Z10AdaE=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=W77ZZOHBS8gCVXnJijAIx3wZiwldPoeL5bBzb/7jLyGCbzSWX1pbRC5DN0uGwuesA
- tDconFwAHlWioK9KHJOcj+7ty7PBSHo5Mo8Lq/BU7ISWMAbjgV+eXFuBOCCP4JJNj0
- EdtwCGOh2DN4oNpcwtqBjzrA24N/HA8frrBsBbSzQqbk0tVtB3BT5IsxB8zVvwlhhF
- 9VnNL/1gAxTSO/fMKRGNxKfoC4Xt7v88W+lBkwQVlfad/5eVcNgUH05aasdMI+HJb1
- a/tpeUFXVBThcokXb1gCukv4Q+ESqcLzjOp4xnM6xLOomyBFlYr8pcsDQERoPsD+6j
- dyEXnOAr1NSug==
-Message-ID: <dffacd73-ebc2-4f35-9433-d569b48014be@kernel.org>
-Date: Mon, 22 Jun 2026 09:46:24 +0800
+ s=k20260515; t=1782093514;
+ bh=Dtf5/pJLwpCVA1mBxYREJNiC2NC0806gE2r8IszMhpw=;
+ h=From:To:Cc:Subject:Date;
+ b=c2gjm5hIWPXYwq8yzjQBnE1OF/jcg2/YR1rbsrPtaHmHDjbJc5scjBnOL0d2MzOG+
+ cuBs4k5av9eDULrRA2QsH4MRqfOuTSMmLiXuSQEUIFf8D4VpTNe7BZ0b5A48bvDjYp
+ E8mXRsjLdKv5YjTLoJiHLVRZ4j1/8k8dbvFJVJFc9I4SBultXgqSpgQg/0vkxHqUKK
+ p7iHsbvj1IZYnDHuJtJQjkYBuy4jechs1xC2wqrhL9IWVEE63GYbbKmQsCYyYaiv2i
+ xQW/aBWynuMWqwxQpemJJVlidajuBhBgQTQwOYI8kCCsqgGE/D8Pqr07B701FCFVxX
+ 8k7sqrNtZ8QcA==
+To: Zorro Lang <zlang@kernel.org>,
+	fstests@vger.kernel.org
+Date: Mon, 22 Jun 2026 01:58:23 +0000
+Message-ID: <20260622015823.2361449-1-chao@kernel.org>
+X-Mailer: git-send-email 2.55.0.rc0.738.g0c8ab3ebcc-goog
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: jiucheng.xu@amlogic.com, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20260620-origin-dev-v1-1-3b2e639e794c@amlogic.com>
-Content-Language: en-US
-In-Reply-To: <20260620-origin-dev-v1-1-3b2e639e794c@amlogic.com>
-X-Headers-End: 1wbTkF-0002zR-IL
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix FG GC failure when file in victim
- is pinned
+X-Headers-End: 1wbTvw-0003xl-Cy
+Subject: [f2fs-dev] [PATCH] common/f2fs: introduce _require_f2fs_io_command
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,71 +87,168 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: tuan.zhang@amlogic.com, linux-kernel@vger.kernel.org,
- jianxin.pan@amlogic.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 6/20/26 17:34, Jiucheng Xu via B4 Relay wrote:
-> From: Jiucheng Xu <jiucheng.xu@amlogic.com>
-> 
-> When continuous write operations occur in the system, BG GC fails to
-> work. This leads to large dirty_segments and small free_segments. If
-> fallocate() is performed on a pinned file with the allocated space
-> exceeding the free_segment, FG_GC reclamation fails.
-> 
-> The reason is that the file corresponding to the block in the victim is
-> pinned, causing gc_data_segment() to fail. Since the condition sec_freed
+Update existing f2fs testcases to utilize the new
+_require_f2fs_io_command() helper for verifying required f2fs_io
+subcommands instead of basic executable checks or open coding.
 
-Jiucheng,
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ common/f2fs    | 16 ++++++++++++++++
+ tests/f2fs/003 |  1 +
+ tests/f2fs/004 |  1 +
+ tests/f2fs/007 |  1 +
+ tests/f2fs/009 |  1 +
+ tests/f2fs/010 |  2 +-
+ tests/f2fs/011 |  2 +-
+ tests/f2fs/012 |  2 +-
+ tests/f2fs/013 |  2 +-
+ tests/f2fs/025 |  2 +-
+ 10 files changed, 25 insertions(+), 5 deletions(-)
 
-pinned file should be aligned to section size, why there is fragmented blocks
-of pinfile locates in dirty sections?
-
-> < gc_control->nr_free_secs isn't satisfied, GC stops, resulting in the
-> failure of f2fs_fallocate() allocation.
-> 
-> Setting gc_control->nr_free_secs = 1 make FG GC continue searching
-> for new victim.
-
-Maybe we can try this instead of changing f2fs_expand_inode_data() logic:
-1. call fggc via ioctl or trigger urgent gc via sysfs
-2. fallocate on pinfile, goto 1) if it failed
-
-But, anyway, I suspect it's risk, if there is no normal dirty section,
-FGGC will try to call f2fs_unpin_all_sections(), then migrate dirty section
-which has pinned blocks, that will cause more damage.
-
-Can you please figure out why pinfile is fragmented first...
-
-Thanks,
-
-> 
-> Signed-off-by: Jiucheng Xu <jiucheng.xu@amlogic.com>
-> ---
->   fs/f2fs/file.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 8acdd94272a0ced448e0ba21635d702cfec10682..3e49a73bbf3a184a314e97bff9509a66c27eac00 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1883,7 +1883,7 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
->   			.init_gc_type = FG_GC,
->   			.should_migrate_blocks = false,
->   			.err_gc_skipped = true,
-> -			.nr_free_secs = 0 };
-> +			.nr_free_secs = 1 };
->   	pgoff_t pg_start, pg_end;
->   	loff_t new_size;
->   	loff_t off_end;
-> 
-> ---
-> base-commit: b51f606aa323d553d786ed681a213f134dc688d6
-> change-id: 20260620-origin-dev-99cdccc83800
-> 
-> Best regards,
+diff --git a/common/f2fs b/common/f2fs
+index 82d3102ea..025d29a76 100644
+--- a/common/f2fs
++++ b/common/f2fs
+@@ -96,3 +96,19 @@ _require_inject_f2fs_command()
+ 	$F2FS_INJECT_PROG "--$metaarea" "$val" "-h" | grep "$member:" > /dev/null || \
+ 		_notrun "--$metaarea --mb $member support is missing"
+ }
++
++# Check that f2fs_io supports specific subcommand(s)
++_require_f2fs_io_command()
++{
++	_require_command "$F2FS_IO_PROG" f2fs_io
++
++	if [ -z "$1" ]; then
++		echo "Usage: _require_f2fs_io_command command..." 1>&2
++		_exit 1
++	fi
++
++	for command in "$@"; do
++		$F2FS_IO_PROG help | awk '{print $1}' | grep -qw "$command" || \
++			_notrun "f2fs_io $command support is missing"
++	done
++}
+diff --git a/tests/f2fs/003 b/tests/f2fs/003
+index fbb08a3e9..94885904c 100755
+--- a/tests/f2fs/003
++++ b/tests/f2fs/003
+@@ -30,6 +30,7 @@ _fixed_by_kernel_commit b40a2b003709 \
+ 
+ _require_scratch
+ _require_xfs_io_command "fpunch"
++_require_f2fs_io_command "write" "gc"
+ 
+ _scratch_mkfs >> $seqres.full
+ _scratch_mount >> $seqres.full
+diff --git a/tests/f2fs/004 b/tests/f2fs/004
+index ac824c437..0592e23c4 100755
+--- a/tests/f2fs/004
++++ b/tests/f2fs/004
+@@ -30,6 +30,7 @@ _fixed_by_kernel_commit b2c160f4f3cf \
+ 
+ _require_scratch
+ _require_odirect
++_require_f2fs_io_command "write"
+ _scratch_mkfs >> $seqres.full
+ _scratch_mount >> $seqres.full
+ 
+diff --git a/tests/f2fs/007 b/tests/f2fs/007
+index 37388433e..e45b6cea9 100755
+--- a/tests/f2fs/007
++++ b/tests/f2fs/007
+@@ -15,6 +15,7 @@ _fixed_by_kernel_commit 26413ce18e85 \
+         "f2fs: compress: fix inconsistent update of i_blocks in release_compress_blocks and reserve_compress_blocks"
+ 
+ _require_scratch
++_require_f2fs_io_command "compress" "get_cblocks" "release_cblocks" "reserve_cblocks" "decompress"
+ testfile_prefix=$SCRATCH_MNT/testfile
+ fio_config=$tmp.fio
+ 
+diff --git a/tests/f2fs/009 b/tests/f2fs/009
+index 39a4bad3d..afb3bc98f 100755
+--- a/tests/f2fs/009
++++ b/tests/f2fs/009
+@@ -15,6 +15,7 @@ _require_scratch
+ _require_scratch_shutdown
+ _require_inject_f2fs_command node i_links
+ _require_command "$(type -P socket)" socket
++_require_f2fs_io_command "write"
+ 
+ _fixed_by_git_commit f2fs-tools 958cd6e \
+ 	"fsck.f2fs: support to repair corrupted i_links"
+diff --git a/tests/f2fs/010 b/tests/f2fs/010
+index 50e378177..b8899dedc 100755
+--- a/tests/f2fs/010
++++ b/tests/f2fs/010
+@@ -30,7 +30,7 @@ _fixed_by_kernel_commit 03511e936916 \
+ 	"f2fs: fix inconsistent dirty state of atomic file"
+ 
+ _require_scratch
+-_require_command "$F2FS_IO_PROG" f2fs_io
++_require_f2fs_io_command "write"
+ 
+ _scratch_mkfs >> $seqres.full
+ _scratch_mount >> $seqres.full
+diff --git a/tests/f2fs/011 b/tests/f2fs/011
+index 07c94d8c9..aa939c9e7 100755
+--- a/tests/f2fs/011
++++ b/tests/f2fs/011
+@@ -27,7 +27,7 @@ _fixed_by_kernel_commit f7f8932ca6bb \
+ 	"f2fs: fix to avoid running out of free segments"
+ 
+ _require_scratch
+-_require_command "$F2FS_IO_PROG" f2fs_io
++_require_f2fs_io_command "pinfile"
+ 
+ _scratch_mkfs_sized $((1*1024*1024*1024)) >> $seqres.full
+ _scratch_mount -o checkpoint=disable:10%
+diff --git a/tests/f2fs/012 b/tests/f2fs/012
+index 53d54bf6b..15b0e5055 100755
+--- a/tests/f2fs/012
++++ b/tests/f2fs/012
+@@ -19,7 +19,7 @@ _fixed_by_kernel_commit 91b587ba79e1 \
+ 
+ export LC_ALL=C.UTF-8
+ _require_scratch_nocheck
+-_require_command "$F2FS_IO_PROG" f2fs_io
++_require_f2fs_io_command "setflags"
+ _require_inject_f2fs_command dent d_hash
+ 
+ #check whether f2fs supports "lookup_mode=x" mount option
+diff --git a/tests/f2fs/013 b/tests/f2fs/013
+index 80ed2702b..086a5b4bb 100755
+--- a/tests/f2fs/013
++++ b/tests/f2fs/013
+@@ -19,7 +19,7 @@
+ . ./common/preamble
+ _begin_fstest auto quick
+ _require_kernel_config CONFIG_F2FS_FAULT_INJECTION
+-_require_command "$F2FS_IO_PROG" f2fs_io
++_require_f2fs_io_command "write" "fsync"
+ 
+ _cleanup()
+ {
+diff --git a/tests/f2fs/025 b/tests/f2fs/025
+index 807f18f23..6fc18d989 100755
+--- a/tests/f2fs/025
++++ b/tests/f2fs/025
+@@ -20,7 +20,7 @@ _require_scratch
+ _require_scratch_shutdown
+ _require_xfs_io_command "pwrite"
+ _require_xfs_io_command "truncate"
+-_require_command "$F2FS_IO_PROG" f2fs_io
++_require_f2fs_io_command gc_urgent
+ _require_fs_sysfs_attr $TEST_DEV gc_urgent
+ _require_check_dmesg
+ 
+-- 
+2.49.0
 
 
 
