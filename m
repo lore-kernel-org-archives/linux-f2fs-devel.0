@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id ED694CDB47F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jun 2026 08:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 359D3CDB47F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jun 2026 09:00:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ZPpYlkOtrFZ4JCnL+AW5Qsn0G0g6CGZVkfpKzrdUl1M=; b=QrwznR3aagyC1I4bz+H76nP2w6
-	E2P2RWl1M/XEkhil6bwbiobyCHfw/EPKG5BAfpDUOsmX4Mrg5YUnnMKn+QySwf22bfjS9k/5x3x2k
-	1FotZqQHLz0LKXVDrpQbLJZ7vD9w3UOC66wWVDen1VWT4lXuaEJ1NK35bbHsnr0sJpfY=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=UIuhvolWLceyEMEgwmDCFRE2/8FYwxcn+h10tb51Fxw=; b=Iy4l6s8zWCJWV2v7zCe2WW3/gi
+	nBSy8X06+dJaBLmcxs49XXY8Pp4bgbFKBOjhfSftAe5O2whSHYamUujb8k7itztKnk6TqLQQZ6jFW
+	QdnpCx66El1CdVJX2VDdGGuyyj3L9RmwPQ7/jd13nupb75SNV+GVZtMh7k5yITq55ZPI=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wcIyZ-0007pi-KO;
-	Wed, 24 Jun 2026 08:28:49 +0000
+	id 1wcJTK-0003A8-DZ;
+	Wed, 24 Jun 2026 09:00:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wcIyT-0007n9-2s
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wcJT2-00039j-Ah
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 08:28:42 +0000
+ Wed, 24 Jun 2026 09:00:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Wfh/P99IwchT4VHP5S2uoDUD6OJUbSYALHpjt96hxt8=; b=fhN6Iy2wI7munOajXvvuM+/cLK
- LbdiCgJ/of2+m59RWs3d8Hh0GeYSmm1pYKJoQwhnVmvWdDSZSHCcUwDZMm84RDqORH3KsD9uKiDzC
- 3tbIZfeRS0yXZuhYHZRd6Lwn7FZVPlT5lXB8x3vqninu76kJKeUM0ymEaHjx0NtBZhQU=;
+ bh=Kfog2XYgdAz2tICEuYPMWdkUUmomPmspfGK5Ice4Jqo=; b=bF1EkwbQyXl0KUh7g0Vc7+8Sqc
+ nKf0+nr82EUzorML2fsKig8UuWbDlh5wxTfOwnzda6eISSij9+qtB1yoOMuwEeQgIeVVd57cycN2g
+ HoMk+0Nnh8ZB6CBTjY8A0s0GbfITAVhgDApae+l3pAV2sz4Yc42yU2JPU6l9uUi7S1iI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Wfh/P99IwchT4VHP5S2uoDUD6OJUbSYALHpjt96hxt8=; b=BrwVxBkUBBu6xe+nnyj10fBq9f
- HnR2h45i5uh7zXja1d/dfzWmwaNoZKfceV8aBFbu+ltDU3uCQSPF4Suib7gPxs1fjT2Dj9J2/CJs8
- sHM5kCgk4jLSoC8CLg3SIT0ha9MKW2nq8On0I0qLpV4DQcau7eGMycRYjrB8nmXEINZQ=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=Kfog2XYgdAz2tICEuYPMWdkUUmomPmspfGK5Ice4Jqo=; b=m1s6Uo7kZQFgTb5D+3C8x/+mk6
+ 0wdWVVZxVDbVzG3Pb7cESe3wKjzuD+HJBTphmvGtQvQwmvd5WwXMBMXdX6t02s/UyvaS/F+b3GhWt
+ hV0utBumTH3HthcxzkTGAyNpcCIhDmWPwJvf/dkrhWPYj5iKOqhlT6gywVxAWxJoR4kc=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wcIyO-0005r4-1I for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 08:28:42 +0000
+ id 1wcJSa-0000rN-Q8 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Jun 2026 09:00:20 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 24730402F9;
- Wed, 24 Jun 2026 08:28:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF6E71F000E9;
- Wed, 24 Jun 2026 08:28:28 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id B510B601F6;
+ Wed, 24 Jun 2026 08:59:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B7FB1F00A3A;
+ Wed, 24 Jun 2026 08:59:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1782289710;
- bh=Wfh/P99IwchT4VHP5S2uoDUD6OJUbSYALHpjt96hxt8=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=nbjVXSoh8lGDMcEIFETBOWr5/TbVI4Pz/S7rlr+ncCl83wfEgJHEb7rLLiajGp/E3
- +yHKC/8QmnNc2OAVgoUzViGGC0hCoFKu6+4k/WTGpAhZqiobITU5USuzX1Q9+9DpsU
- 85I+VhDlDkE+l4R+pU1fRN+oDhLs1y3Bb+Nb5uHFxzVRq+AR7qPv6qKr0Fk5zl/mJt
- OP30YI7TfSb3Zk6aKMKKeXMfsRYynv8QyFwclKvvtS2CnByblgsuB5o+pFzppXrZTZ
- pA7UydHKJrEdOqukbouVQwh0FPC/iiNRMejeDZKRJxS7TbZ5AZs3ga7zRGhV6pSRJc
- RLeut/SZoFwxA==
-Message-ID: <d25d1fb2-de6d-4a92-a798-fd304e8e5654@kernel.org>
-Date: Wed, 24 Jun 2026 16:28:26 +0800
+ s=k20260515; t=1782291582;
+ bh=Kfog2XYgdAz2tICEuYPMWdkUUmomPmspfGK5Ice4Jqo=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc;
+ b=V0v3ckCZreTLHBWI2DQ0Ao25Y2i7ybcWseLm5EmwZbWIMxXez49bh7wb4hoL0MemX
+ DDnYyi/vw5GJfHrQ/nea3efur8GwSo6hHb3jkbxFbOqy/okRn5cN/85xQjJ6mjDG3E
+ rh6X9Vbxc6QDIGD/QQsi37GlKZIbP897GIkoIzpA71qLlbXaqjlGTnepv2FJL+zW3f
+ cRxLhJk9v9PQ4c9o/3tHGft0Siobxcj7RlwAiGe5Rd4u0L+GdE27NO8nSq7Ejypayi
+ OIT4ZDLC7ChIudE/UAu7X5xDl1AIhiVS7qTcYBgu4jce5ylVUtFOy5H5kQOperMV7o
+ XYe4Gn18KEkZw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+ by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
+ 93A1D39EF964; Wed, 24 Jun 2026 08:59:32 +0000 (UTC)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Eric Biggers <ebiggers@kernel.org>
-References: <20260622011539.2292553-1-chao@kernel.org>
- <20260623232926.GA7864@quark>
-Content-Language: en-US
-In-Reply-To: <20260623232926.GA7864@quark>
-X-Headers-End: 1wcIyO-0005r4-1I
-Subject: Re: [f2fs-dev] [PATCH] fscrypt,
- f2fs: introduce fscrypt_finalize_bounce_folio() for cleanup
+Message-Id: <178229157126.2577930.6775564706271606889.git-patchwork-notify@kernel.org>
+Date: Wed, 24 Jun 2026 08:59:31 +0000
+References: <20260520123722.405752-1-aalbersh@kernel.org>
+In-Reply-To: <20260520123722.405752-1-aalbersh@kernel.org>
+To: Andrey Albershteyn <aalbersh@kernel.org>
+X-Headers-End: 1wcJSa-0000rN-Q8
+Subject: Re: [f2fs-dev] [PATCH v10 00/22] fs-verity support for XFS with
+ post EOF merkle tree
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,44 +87,85 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
- linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org,
- jaegeuk@kernel.org
+From: patchwork-bot+f2fs--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: fsverity@lists.linux.dev, ebiggers@kernel.org, djwong@kernel.org,
+ david@fromorbit.com, linux-unionfs@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, hch@lst.de,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 6/24/26 07:29, Eric Biggers wrote:
-> On Mon, Jun 22, 2026 at 01:15:39AM +0000, Chao Yu wrote:
->> As part of the linux kernel's migration to folio-based APIs, introduce
->> fscrypt_finalize_bounce_folio() as the folio equivalent of
->> fscrypt_finalize_bounce_page(), and clean up f2fs codes with this new
->> helper.
->>
->> Suggested-by: Matthew Wilcox <willy@infradead.org>
->> Cc: Eric Biggers <ebiggers@kernel.org>
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->>
->> Is it worth to introduce fscrypt_finalize_bounce_folio(), then try to
->> do clean in f2fs_write_end_bio() first, and then replace
->> fscrypt_finalize_bounce_page() later?
+Hello:
+
+This series was applied to jaegeuk/f2fs.git (dev)
+by Christian Brauner <brauner@kernel.org>:
+
+On Wed, 20 May 2026 14:36:58 +0200 you wrote:
+> Hi all,
 > 
-> I'm working on making ext4 and f2fs always do file contents
-> en/decryption using fscrypt_set_bio_crypt_ctx(), which already supports
-> large folios and doesn't require the filesystem to manage bounce
-> buffers.  I don't think these minor tweaks to the other implementation
-> (which don't actually make it support large folios) accomplish anything
-> useful, and we should focus on removing it instead.
-
-Good, I see your patchset removing those codes, let's ignore current patch.
-
-Thanks,
-
+> This patch series adds fs-verity support for XFS. This version stores
+> merkle tree beyond end of the file, the same way as ext4 does it. The
+> difference is that verity descriptor is stored at the next aligned 64k
+> block after the merkle tree last block. This is done due to sparse
+> merkle tree which doesn't store hashes of zero data blocks.
 > 
-> - Eric
+> [...]
+
+Here is the summary with links:
+  - [f2fs-dev,v10,01/22] fsverity: report validation errors through fserror to fsnotify
+    (no matching commit)
+  - [f2fs-dev,v10,02/22] fsverity: expose ensure_fsverity_info()
+    (no matching commit)
+  - [f2fs-dev,v10,03/22] ovl: use core fsverity ensure info interface
+    (no matching commit)
+  - [f2fs-dev,v10,04/22] fsverity: generate and store zero-block hash
+    https://git.kernel.org/jaegeuk/f2fs/c/07d09774e2bf
+  - [f2fs-dev,v10,05/22] fsverity: pass digest size and hash of the all-zeroes block to ->write
+    (no matching commit)
+  - [f2fs-dev,v10,06/22] fsverity: hoist pagecache_read from f2fs/ext4 to fsverity
+    (no matching commit)
+  - [f2fs-dev,v10,07/22] iomap: introduce IOMAP_F_FSVERITY and teach writeback to handle fsverity
+    https://git.kernel.org/jaegeuk/f2fs/c/63e242afa466
+  - [f2fs-dev,v10,08/22] iomap: teach iomap to read files with fsverity
+    https://git.kernel.org/jaegeuk/f2fs/c/1d140731753a
+  - [f2fs-dev,v10,09/22] iomap: introduce iomap_fsverity_write() for writing fsverity metadata
+    https://git.kernel.org/jaegeuk/f2fs/c/36a36c4cac91
+  - [f2fs-dev,v10,10/22] xfs: introduce fsverity on-disk changes
+    (no matching commit)
+  - [f2fs-dev,v10,11/22] xfs: initialize fs-verity on file open
+    (no matching commit)
+  - [f2fs-dev,v10,12/22] xfs: don't allow to enable DAX on fs-verity sealed inode
+    (no matching commit)
+  - [f2fs-dev,v10,13/22] xfs: disable direct read path for fs-verity files
+    (no matching commit)
+  - [f2fs-dev,v10,14/22] xfs: handle fsverity I/O in write/read path
+    (no matching commit)
+  - [f2fs-dev,v10,15/22] xfs: use read ioend for fsverity data verification
+    (no matching commit)
+  - [f2fs-dev,v10,16/22] xfs: add fs-verity support
+    (no matching commit)
+  - [f2fs-dev,v10,17/22] xfs: remove unwritten extents after preallocations in fsverity metadata
+    (no matching commit)
+  - [f2fs-dev,v10,18/22] xfs: add fs-verity ioctls
+    (no matching commit)
+  - [f2fs-dev,v10,19/22] xfs: advertise fs-verity being available on filesystem
+    (no matching commit)
+  - [f2fs-dev,v10,20/22] xfs: check and repair the verity inode flag state
+    (no matching commit)
+  - [f2fs-dev,v10,21/22] xfs: introduce health state for corrupted fsverity metadata
+    (no matching commit)
+  - [f2fs-dev,v10,22/22] xfs: enable ro-compat fs-verity flag
+    (no matching commit)
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
 
