@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D3AEACDE001
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jun 2026 09:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 76850CDE002
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jun 2026 09:00:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=YveQiC8PxGn2whiwFaSYR5jXOQMqKrrauCO8qjsoyu0=; b=TAxCSsJJrPVxsK/tvNIyTKphpk
-	gqlHyychhj2j6aUpqZO+7LTun6jwnsjKzf2W/BSwF10T9y7I8KVWAZm2ZdGmTIGMGshqJnyI9eO2E
-	BnzDAkdjMWMs5YQS+whQrd/OBcMtWEF2eQjJkKEs+KzFanQpoe7JvEs+PUegW4F47blI=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=8mcwC8lXYEMJ2Z/DJPeCqNb/HDP9X5aIuaJEuzYbk6U=; b=FEGK7YFMAyk3HkK2nDIlLzU49H
+	iqGLX3DmwxS8WVnt36yrUv8dslbaNMiC0lw+RDfMwAZ7zUmLoSw/N7I3QFscYHV9XeETe54X3U430
+	98oNpRO/w3jzHFnGZgnZNmF76k/iaCECj7IEqKFaRWKQ8jgRdq9LWE5hTPMLTY1W53I8=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wcJTQ-0005jJ-5c;
-	Wed, 24 Jun 2026 09:00:44 +0000
+	id 1wcJTT-00078J-8R;
+	Wed, 24 Jun 2026 09:00:48 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wcJT1-0005ig-U9
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wcJTO-00077V-Qx
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 09:00:20 +0000
+ Wed, 24 Jun 2026 09:00:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=H7dnvEvzEKYGFsUTzy9ti4ZW1NJZkg7pmn7MPJihWl4=; b=KQnxZWuBUSeM+FvoXKeLeYb+E8
- eYbRwYF6wQkBRPwvEnnxsRQxKpFPKHwjgHXLnu2FQW2jBLCFGtxycsO0Lxkb8fk/SfyS52K9758DG
- ob7Oz+ZPOFbnHPhdGPBdojXv7w2oPD6iIi0tE4pRMi1Q2E+XlvX/goyeIW4rMetz9464=;
+ bh=DCKt4O2HlnFxHy8Mhm2C2zuPcXHOFrNOinuxD1UUcRc=; b=BOBHMsL0cFyOjFhfxKink/DjCI
+ bS/T2Q2GQ/Z3Q0AF58uOzrFGRWN0C2egKhu+DMhy0IT7aDzUZqWNBolJ06yodPNqCHlBfGYXf3IRQ
+ 1DX6zvpOr1dY628U+uJzZbKapvbgCTlL0qGzdVw93GjGLwVn0KzkKznbCDGxC2ZCnntc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=H7dnvEvzEKYGFsUTzy9ti4ZW1NJZkg7pmn7MPJihWl4=; b=Tmv5Ri4Vm3SvYqLlhw2aq6ghDS
- MynZ39gGDF7yLSb1Wjewi9F0gIcuGNNpGAHBezev1u5SJk4KBmYafbXSUPBDWShfoy0SZ+JKcaR8V
- AliRLiATLQGGSEHKqWFPsWTlF4ozy5ISsg67QaMsHL/4iZCTIfuGx9kzizq5ydthn1SM=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=DCKt4O2HlnFxHy8Mhm2C2zuPcXHOFrNOinuxD1UUcRc=; b=LY8+Zb7AK76vRRzyChU/JpCUw+
+ el5cDcSpvaOH8KOsBEhonso5TNR9hmMBCtkfYly7rMiOnEnMjt1tyJo6dhK0lfqVC+GYL+agh2gZ/
+ Kp8u2R18A6p12wZ/uJI7VPqUlN2rnaVlDgkrUQ0k9wfi96Czq0AZXStbKM8QQswUjf7o=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wcJSc-0000rc-9V for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 09:00:20 +0000
+ id 1wcJSZ-0000rD-Ty for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Jun 2026 09:00:30 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 39936601FF;
- Wed, 24 Jun 2026 08:59:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E54151F000E9;
- Wed, 24 Jun 2026 08:59:43 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 1646A42B72;
+ Wed, 24 Jun 2026 08:59:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E931F00A3D;
+ Wed, 24 Jun 2026 08:59:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1782291583;
- bh=H7dnvEvzEKYGFsUTzy9ti4ZW1NJZkg7pmn7MPJihWl4=;
+ s=k20260515; t=1782291587;
+ bh=DCKt4O2HlnFxHy8Mhm2C2zuPcXHOFrNOinuxD1UUcRc=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=ahzIbRZIetUQgFo/22vOgZ+uJ+97WPRTt/pD3GlCEztRscpy02/0ux3ViqsxEjkwO
- easG6XV6XLRJJVyWE9Z9050kasspIvARRFZ+l6aqhTOBnE1iiYMWKHWeJ+rVNV9mfJ
- xI+jJfGnaFu71F5uEdtDR6kUbrg2DaN18xdzdDOmCGP4fORzHuSNP16EfO9WJAjZwJ
- zOiIG4gJkvSO6uM5Z8Kyiu1r10iziRQCVv4wj5mgXjIxk2KAFL19/uqEkRlXia6V/1
- p+iVRA8Y3rG9f/KUr9NezdPkNUNKX4KZKRf7iTlHbxXfa5t5CMQKTcD5pm+yjhkN0N
- dYZZAtdBS9Ghg==
+ b=Cmfji3PW0AVDGKQ4BufZEBDJWiQm1o8/rQsb7n4IPtwL2Bri4DpGeykggivNXbeKl
+ bstR8Aj141x+SXVVytHk70wMVpKQ2bDQeC4RGdfuf925UT+hEoMCDYVxscMlqcrn3d
+ 6xnEmkWJdCUcpVMSWDpNGerH9VyGcglmIk/mUCMD0BiEP0cv0fwfWo3JgHR5YPVrnL
+ Jte9tPT/yzkvqV00w5paETjF56VjF6ALEXGUBYhw0wOJsEeEWA+2CMVQPU75HFlWVo
+ MQXB30pU37MXc/fscX12cEexVJBV1ND0Xny4mZBk5+ARKMHfjuwtW9baGkR7d+IuXL
+ XUjSsQ4FUeCjg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 19A2E39EF964; Wed, 24 Jun 2026 08:59:34 +0000 (UTC)
+ 196D839EF964; Wed, 24 Jun 2026 08:59:37 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <178229157279.2577930.17428386350924230713.git-patchwork-notify@kernel.org>
-Date: Wed, 24 Jun 2026 08:59:32 +0000
-References: <20260428083332.768693-2-aalbersh@kernel.org>
-In-Reply-To: <20260428083332.768693-2-aalbersh@kernel.org>
-To: Andrey Albershteyn <aalbersh@kernel.org>
-X-Headers-End: 1wcJSc-0000rc-9V
-Subject: Re: [f2fs-dev] [PATCH v9 01/22] fsverity: report validation errors
- through fserror to fsnotify
+Message-Id: <178229157577.2577930.354083176752004996.git-patchwork-notify@kernel.org>
+Date: Wed, 24 Jun 2026 08:59:35 +0000
+References: <20260217214741.1928576-1-cel@kernel.org>
+In-Reply-To: <20260217214741.1928576-1-cel@kernel.org>
+To: Chuck Lever <cel@kernel.org>
+X-Headers-End: 1wcJSZ-0000rD-Ty
+Subject: Re: [f2fs-dev] [PATCH v8 00/17] Subject: Exposing case folding
+ behavior
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,10 +90,17 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: fsverity@lists.linux.dev, ebiggers@kernel.org, djwong@kernel.org,
- linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, hch@lst.de, linux-btrfs@vger.kernel.org
+Cc: jack@suse.cz, pc@manguebit.org, yuezhang.mo@sony.com, cem@kernel.org,
+ almaz.alexandrovich@paragon-software.com, adilger.kernel@dilger.ca,
+ linux-cifs@vger.kernel.org, slava@dubeyko.com, linux-ext4@vger.kernel.org,
+ linkinjeon@kernel.org, sprasad@microsoft.com, frank.li@vivo.com,
+ linux-nfs@vger.kernel.org, viro@zeniv.linux.org.uk, ronniesahlberg@gmail.com,
+ glaubitz@physik.fu-berlin.de, jaegeuk@kernel.org, linux-xfs@vger.kernel.org,
+ hirofumi@mail.parknet.co.jp, brauner@kernel.org, tytso@mit.edu,
+ linux-api@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ sfrench@samba.org, senozhatsky@chromium.org, chuck.lever@oracle.com,
+ trondmy@kernel.org, anna@kernel.org, linux-fsdevel@vger.kernel.org,
+ sj1557.seo@samsung.com, hansg@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -103,61 +110,56 @@ Hello:
 This series was applied to jaegeuk/f2fs.git (dev)
 by Christian Brauner <brauner@kernel.org>:
 
-On Tue, 28 Apr 2026 10:33:07 +0200 you wrote:
-> Reported verification errors to fsnotify through recently added fserror
-> interface.
+On Tue, 17 Feb 2026 16:47:24 -0500 you wrote:
+> From: Chuck Lever <chuck.lever@oracle.com>
 > 
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Eric Biggers <ebiggers@kernel.org>
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> Following on from
+> 
+> https://lore.kernel.org/linux-nfs/20251021-zypressen-bazillus-545a44af57fd@brauner/T/#m0ba197d75b7921d994cf284f3cef3a62abb11aaa
+> 
+> I'm attempting to implement enough support in the Linux VFS to
+> enable file services like NFSD and ksmbd (and user space
+> equivalents) to provide the actual status of case folding support
+> in local file systems. The default behavior for local file systems
+> not explicitly supported in this series is to reflect the usual
+> POSIX behaviors:
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v9,01/22] fsverity: report validation errors through fserror to fsnotify
+  - [f2fs-dev,v8,01/17] fs: Move file_kattr initialization to callers
     (no matching commit)
-  - [f2fs-dev,v9,02/22] fsverity: expose ensure_fsverity_info()
+  - [f2fs-dev,v8,02/17] fs: Add case sensitivity flags to file_kattr
+    https://git.kernel.org/jaegeuk/f2fs/c/3035e4454142
+  - [f2fs-dev,v8,03/17] fat: Implement fileattr_get for case sensitivity
     (no matching commit)
-  - [f2fs-dev,v9,03/22] ovl: use core fsverity ensure info interface
+  - [f2fs-dev,v8,04/17] exfat: Implement fileattr_get for case sensitivity
     (no matching commit)
-  - [f2fs-dev,v9,04/22] fsverity: generate and store zero-block hash
-    https://git.kernel.org/jaegeuk/f2fs/c/07d09774e2bf
-  - [f2fs-dev,v9,05/22] fsverity: pass digest size and hash of the all-zeroes block to ->write
+  - [f2fs-dev,v8,05/17] ntfs3: Implement fileattr_get for case sensitivity
     (no matching commit)
-  - [f2fs-dev,v9,06/22] fsverity: hoist pagecache_read from f2fs/ext4 to fsverity
+  - [f2fs-dev,v8,06/17] hfs: Implement fileattr_get for case sensitivity
     (no matching commit)
-  - [f2fs-dev,v9,07/22] iomap: introduce IOMAP_F_FSVERITY and teach writeback to handle fsverity
+  - [f2fs-dev,v8,07/17] hfsplus: Report case sensitivity in fileattr_get
     (no matching commit)
-  - [f2fs-dev,v9,08/22] iomap: teach iomap to read files with fsverity
+  - [f2fs-dev,v8,08/17] ext4: Report case sensitivity in fileattr_get
     (no matching commit)
-  - [f2fs-dev,v9,09/22] iomap: introduce iomap_fsverity_write() for writing fsverity metadata
-    https://git.kernel.org/jaegeuk/f2fs/c/36a36c4cac91
-  - [f2fs-dev,v9,10/22] xfs: introduce fsverity on-disk changes
+  - [f2fs-dev,v8,09/17] xfs: Report case sensitivity in fileattr_get
     (no matching commit)
-  - [f2fs-dev,v9,11/22] xfs: initialize fs-verity on file open
+  - [f2fs-dev,v8,10/17] cifs: Implement fileattr_get for case sensitivity
     (no matching commit)
-  - [f2fs-dev,v9,12/22] xfs: don't allow to enable DAX on fs-verity sealed inode
+  - [f2fs-dev,v8,11/17] nfs: Implement fileattr_get for case sensitivity
     (no matching commit)
-  - [f2fs-dev,v9,13/22] xfs: disable direct read path for fs-verity files
+  - [f2fs-dev,v8,12/17] f2fs: Add case sensitivity reporting to fileattr_get
     (no matching commit)
-  - [f2fs-dev,v9,14/22] xfs: handle fsverity I/O in write/read path
+  - [f2fs-dev,v8,13/17] vboxsf: Implement fileattr_get for case sensitivity
     (no matching commit)
-  - [f2fs-dev,v9,15/22] xfs: use read ioend for fsverity data verification
+  - [f2fs-dev,v8,14/17] isofs: Implement fileattr_get for case sensitivity
     (no matching commit)
-  - [f2fs-dev,v9,16/22] xfs: add fs-verity support
+  - [f2fs-dev,v8,15/17] nfsd: Report export case-folding via NFSv3 PATHCONF
     (no matching commit)
-  - [f2fs-dev,v9,17/22] xfs: remove unwritten extents after preallocations in fsverity metadata
+  - [f2fs-dev,v8,16/17] nfsd: Implement NFSv4 FATTR4_CASE_INSENSITIVE and FATTR4_CASE_PRESERVING
     (no matching commit)
-  - [f2fs-dev,v9,18/22] xfs: add fs-verity ioctls
-    (no matching commit)
-  - [f2fs-dev,v9,19/22] xfs: advertise fs-verity being available on filesystem
-    (no matching commit)
-  - [f2fs-dev,v9,20/22] xfs: check and repair the verity inode flag state
-    (no matching commit)
-  - [f2fs-dev,v9,21/22] xfs: introduce health state for corrupted fsverity metadata
-    (no matching commit)
-  - [f2fs-dev,v9,22/22] xfs: enable ro-compat fs-verity flag
+  - [f2fs-dev,v8,17/17] ksmbd: Report filesystem case sensitivity via FS_ATTRIBUTE_INFORMATION
     (no matching commit)
 
 You are awesome, thank you!
