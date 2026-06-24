@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7B0D1CDE006
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jun 2026 05:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BB90BCDB470
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jun 2026 05:06:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=PKGhhXVi95EQokVFZr7nXsUvGbA5n5hDBOo+kFzYFmo=; b=Mi2ELidGOSvdqE3eAtFvpayoFR
-	vGcZtrkaMUAp7BWgn/5Omh3wKs9c8PbAoUrPJHEgBT+0X9Wkx57dHgYonmuCwMCrD9IW7xR3wuB7m
-	XQ2yeMFY15CvPqNZwWj11zuVeyxRsCz7gg2znRO2J/DFwqiXt/ZQDz4kKa476jvyO88o=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=syk5sqOEyuLcbxs87TRkL7nSpaz3eZnEnjcJKriH5iQ=; b=h7cmJTzpPcSXfAyJNgPb0iJysx
+	0AZ2vQJ1c6YJ50pYINe5j6RwSUidCrtSkNfnY9laHufOwpJ/cL7sKUEX8mGv/twa4CRDy2XdBhMh6
+	LaBFsVorz64XilVLDlwPSE7rWQg5lFoA2e7He2fOyf41GfDpx5EI+f9ghFj6RMef7BhU=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wcFoc-00066W-Px;
-	Wed, 24 Jun 2026 05:06:20 +0000
+	id 1wcFoc-0000wk-NE;
+	Wed, 24 Jun 2026 05:06:23 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wcFoY-000667-Q4
+ (envelope-from <ebiggers@kernel.org>) id 1wcFoX-0000w0-Cs
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 05:06:16 +0000
+ Wed, 24 Jun 2026 05:06:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FNBrhRvT1L2j4HNG5pR/0zJOfHASrRKcphBr80CPr8U=; b=HJH5Fgt6rNPNrym1TDHRC1pVbp
- 42z3YwOIIgCnQTQPHongq1OakpbKvQ5pCKUUBgIQPcB+VbHSz9PnPMN2UcjR7Y7D8uIiQG0JnRlJm
- uMQdnayl1nQaNai8djLlAzQ8YNwV3bX4YqXGSD4B8EbwBLXMIeJ7/TOHyrX9awlmlHBU=;
+ bh=IFP11NYXgmlrWphHBvNAvyfYE4d+s/tUyAJE1tBe8dI=; b=fbfNCn3SjSQM9kdt4TscM86ocM
+ XIlqQipJTzTVm/nO12YZ6KVtfS73l38S5cp1Fuw8MAda166MzijKkgzhf9JOOPS1mFG3f8Wk2xoB0
+ DPGgMSFTDPCq0g6oW9cUrV1xtTKptE+ULKH1pH3l0k4nHWi8FF8/B1/Yn9NRuiA76niU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=FNBrhRvT1L2j4HNG5pR/0zJOfHASrRKcphBr80CPr8U=; b=TaCC9Wk1IEakCirkOVEHxwMlPz
- Qck/uslUwm5lEe5BtoiyorZV4O7WTzXJpNiVK4ro8bbrz7UDCiEi+QxbA1AShaZpfCDMPuRSKBAe4
- 789JREJshP/lM7RjOOAquIw279nR5E9Zvf6jSH/mzvMwL0b1AGmCyNl9XZ3gBqHrZRCA=;
+ bh=IFP11NYXgmlrWphHBvNAvyfYE4d+s/tUyAJE1tBe8dI=; b=i1PSKEonwykrrVRpqvbyRcbUg4
+ F7hdJvg4eSMOzQHufy0fo+1k9LLIOSuVk5mM5421QZPCXo8Hwdi3Bkwc4G6N5uub64enwX8nQnizu
+ uOiPTs12TuGVUgGBbPaKKS/H7ydbJP7Ikdn8cgmynbTPb5kSDL1859IDoC8ovZ2wzOCQ=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wcFoU-0004mk-8z for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 05:06:16 +0000
+ id 1wcFoW-0004n2-Ru for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Jun 2026 05:06:18 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 112B4601F3;
- Wed, 24 Jun 2026 05:06:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C98A1F000E9;
- Wed, 24 Jun 2026 05:06:03 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 6C503601F6;
+ Wed, 24 Jun 2026 05:06:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7BE91F00A3F;
+ Wed, 24 Jun 2026 05:06:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1782277563;
- bh=FNBrhRvT1L2j4HNG5pR/0zJOfHASrRKcphBr80CPr8U=;
+ s=k20260515; t=1782277566;
+ bh=IFP11NYXgmlrWphHBvNAvyfYE4d+s/tUyAJE1tBe8dI=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=drFp7/0fY+I//RnSgKo3cKJAMnfjydlqUi+gx9+qYcHeSg+l1b2kUTLXH00vhA1Ws
- dvOMM9TigPK6cID3nmALvSFGsTJVwul9ash65CxugwT3niW8pXqcUBUsQm3P7FvqdQ
- gGf1U+ZbA+bDbTvNUxmUu/tMhoh17gk9htga6wK07sKce/tz9eq8G1ahsOcmslTcWL
- c4mUjwfNpJMgB53RvPThBgz5OB0hHUOBWPdszvprsHF6c6h39pj7cugmPU8EKdR6/8
- KyvYWSkhF8mRJ5Lh2vfropwECRFZ5151AouoL+ZhfnzuGnT3N6v5o0gOYT/eb8XmNj
- 9nIBYt884xgWw==
+ b=SWkacxRRt70//Lub46ZvIgySBsaG5i3QX+Nvn8zFdMH5/7HA+5ATdIR8+tZsNjmdl
+ tG1WfD4BAKYSNromdGvDtJy5LFuzmZUe+JgS3GiwDe/7JcjWNRwqGgx1mDjbYSwfsG
+ 99lHVmP80aDbesZ16urpnuhBHHg/sxbT/Y1lcNyVHLSsM2jm4vHwiZ7sXOu5uT6Sj2
+ 9iEPX3BuJSJ8zazA7diay48tpAzcLP9TmWNd8yqdTM1CzXkH6J9Ev+h4YMEsQ7pKjj
+ DAjwp/abDis88JHyUvHTSkQX/JG5PNoY8EnATdgYjRF2VJF/QJ4LKYz9tkvaMOp9wN
+ p7TzAjsAl0UvQ==
 To: linux-fscrypt@vger.kernel.org
-Date: Tue, 23 Jun 2026 22:03:26 -0700
-Message-ID: <20260624050334.124606-9-ebiggers@kernel.org>
+Date: Tue, 23 Jun 2026 22:03:30 -0700
+Message-ID: <20260624050334.124606-13-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260624050334.124606-1-ebiggers@kernel.org>
 References: <20260624050334.124606-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wcFoU-0004mk-8z
-Subject: [f2fs-dev] [PATCH 08/16] ext4: Further de-generalize the bio
- postprocessing code
+X-Headers-End: 1wcFoW-0004n2-Ru
+Subject: [f2fs-dev] [PATCH 12/16] fscrypt: Remove fscrypt_dio_supported()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,243 +99,154 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Since the bio postprocessing code in fs/ext4/readpage.c is now used only
-for fsverity, rename things accordingly.  Also don't create the caches
-at all when !CONFIG_FS_VERITY.
+On block-based filesystems, fscrypt file contents encryption is now
+always implemented using blk-crypto.  This implementation supports
+direct I/O.
+
+Therefore, fscrypt_dio_supported() now always returns true, except in
+the edge case where statx(STATX_DIOALIGN) is called on an encrypted
+regular file that hasn't had its key set up.  But that was really a
+workaround rather than the desired behavior, so we can disregard it.
+
+Thus, fscrypt_dio_supported() is no longer needed.  Remove it.
 
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- fs/ext4/ext4.h     |  4 +--
- fs/ext4/readpage.c | 66 ++++++++++++++++++++++------------------------
- fs/ext4/super.c    |  6 ++---
- 3 files changed, 37 insertions(+), 39 deletions(-)
+ fs/crypto/inline_crypt.c | 43 ----------------------------------------
+ fs/ext4/inode.c          |  5 +----
+ fs/f2fs/file.c           |  2 --
+ include/linux/fscrypt.h  |  7 -------
+ 4 files changed, 1 insertion(+), 56 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 920a8ec1b948..af6cf0bbc5e2 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -3827,12 +3827,12 @@ static inline void ext4_set_de_type(struct super_block *sb,
+diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
+index 111ea45732f0..3c3a46c5af42 100644
+--- a/fs/crypto/inline_crypt.c
++++ b/fs/crypto/inline_crypt.c
+@@ -295,53 +295,10 @@ bool fscrypt_mergeable_bio(struct bio *bio, const struct inode *inode,
+ 	fscrypt_generate_dun(ci, pos, next_dun);
+ 	return bio_crypt_dun_is_contiguous(bc, bio->bi_iter.bi_size, next_dun);
  }
+ EXPORT_SYMBOL_GPL(fscrypt_mergeable_bio);
  
- /* readpages.c */
- int ext4_read_folio(struct file *file, struct folio *folio);
- void ext4_readahead(struct readahead_control *rac);
--extern int __init ext4_init_post_read_processing(void);
--extern void ext4_exit_post_read_processing(void);
-+extern int __init ext4_init_verity_caches(void);
-+extern void ext4_exit_verity_caches(void);
- 
- /* symlink.c */
- extern const struct inode_operations ext4_encrypted_symlink_inode_operations;
- extern const struct inode_operations ext4_symlink_inode_operations;
- extern const struct inode_operations ext4_fast_symlink_inode_operations;
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index 8af183798a33..322226290e65 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -45,16 +45,16 @@
- #include <linux/backing-dev.h>
- 
- #include "ext4.h"
- #include <trace/events/ext4.h>
- 
--#define NUM_PREALLOC_POST_READ_CTXS	128
-+#define NUM_VERITY_WORKS 128
- 
--static struct kmem_cache *bio_post_read_ctx_cache;
--static mempool_t *bio_post_read_ctx_pool;
-+static struct kmem_cache *ext4_verity_work_cache;
-+static mempool_t *ext4_verity_work_pool;
- 
--struct bio_post_read_ctx {
-+struct ext4_verity_work {
- 	struct bio *bio;
- 	struct fsverity_info *vi;
- 	struct work_struct work;
- };
- 
-@@ -63,39 +63,33 @@ static void __read_end_io(struct bio *bio)
- 	struct folio_iter fi;
- 
- 	bio_for_each_folio_all(fi, bio)
- 		folio_end_read(fi.folio, bio->bi_status == 0);
- 	if (bio->bi_private)
--		mempool_free(bio->bi_private, bio_post_read_ctx_pool);
-+		mempool_free(bio->bi_private, ext4_verity_work_pool);
- 	bio_put(bio);
- }
- 
- static void verity_work(struct work_struct *work)
- {
--	struct bio_post_read_ctx *ctx =
--		container_of(work, struct bio_post_read_ctx, work);
-+	struct ext4_verity_work *ctx =
-+		container_of(work, struct ext4_verity_work, work);
- 	struct bio *bio = ctx->bio;
- 	struct fsverity_info *vi = ctx->vi;
- 
- 	/*
--	 * Free the bio_post_read_ctx right away, since it's no longer needed.
-+	 * Free the ext4_verity_work right away, since it's no longer needed.
- 	 * This relieves the pressure on the mempool as much as possible.
- 	 */
--	mempool_free(ctx, bio_post_read_ctx_pool);
-+	mempool_free(ctx, ext4_verity_work_pool);
- 	bio->bi_private = NULL;
- 
- 	fsverity_verify_bio(vi, bio);
- 
- 	__read_end_io(bio);
- }
- 
--static bool bio_post_read_required(struct bio *bio)
+-/**
+- * fscrypt_dio_supported() - check whether DIO (direct I/O) is supported on an
+- *			     inode, as far as encryption is concerned
+- * @inode: the inode in question
+- *
+- * Return: %true if there are no encryption constraints that prevent DIO from
+- *	   being supported; %false if DIO is unsupported.  (Note that in the
+- *	   %true case, the filesystem might have other, non-encryption-related
+- *	   constraints that prevent DIO from actually being supported.  Also, on
+- *	   encrypted files the filesystem is still responsible for only allowing
+- *	   DIO when requests are filesystem-block-aligned.)
+- */
+-bool fscrypt_dio_supported(struct inode *inode)
 -{
--	return IS_ENABLED(CONFIG_FS_VERITY) && bio->bi_private &&
--	       !bio->bi_status;
+-	int err;
+-
+-	/* If the file is unencrypted, no veto from us. */
+-	if (!fscrypt_needs_contents_encryption(inode))
+-		return true;
+-
+-	/*
+-	 * We only support DIO with inline crypto, not fs-layer crypto.
+-	 *
+-	 * To determine whether the inode is using inline crypto, we have to set
+-	 * up the key if it wasn't already done.  This is because in the current
+-	 * design of fscrypt, the decision of whether to use inline crypto or
+-	 * not isn't made until the inode's encryption key is being set up.  In
+-	 * the DIO read/write case, the key will always be set up already, since
+-	 * the file will be open.  But in the case of statx(), the key might not
+-	 * be set up yet, as the file might not have been opened yet.
+-	 */
+-	err = fscrypt_require_key(inode);
+-	if (err) {
+-		/*
+-		 * Key unavailable or couldn't be set up.  This edge case isn't
+-		 * worth worrying about; just report that DIO is unsupported.
+-		 */
+-		return false;
+-	}
+-	return true;
+-}
+-EXPORT_SYMBOL_GPL(fscrypt_dio_supported);
+-
+ /**
+  * fscrypt_limit_io_blocks() - limit I/O blocks to avoid discontiguous DUNs
+  * @inode: the file on which I/O is being done
+  * @lblk: the block at which the I/O is being started from
+  * @nr_blocks: the number of blocks we want to submit starting at @lblk
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index c6faa7c751ca..dd321aaa8779 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -6144,15 +6144,12 @@ u32 ext4_dio_alignment(struct inode *inode)
+ 		return 0;
+ 	if (ext4_should_journal_data(inode))
+ 		return 0;
+ 	if (ext4_has_inline_data(inode))
+ 		return 0;
+-	if (IS_ENCRYPTED(inode)) {
+-		if (!fscrypt_dio_supported(inode))
+-			return 0;
++	if (IS_ENCRYPTED(inode))
+ 		return i_blocksize(inode);
+-	}
+ 	return 1; /* use the iomap defaults */
+ }
+ 
+ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 		 struct kstat *stat, u32 request_mask, unsigned int query_flags)
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index fb12c5c9affd..a726bc2ab66c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -948,12 +948,10 @@ int f2fs_truncate(struct inode *inode)
+ 
+ static bool f2fs_force_buffered_io(struct inode *inode, int rw)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 
+-	if (!fscrypt_dio_supported(inode))
+-		return true;
+ 	if (fsverity_active(inode))
+ 		return true;
+ 	if (f2fs_compressed_file(inode))
+ 		return true;
+ 	/*
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 8d19b95150f1..43bafdd67dd7 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -868,12 +868,10 @@ void fscrypt_set_bio_crypt_ctx(struct bio *bio, const struct inode *inode,
+ 			       loff_t pos, gfp_t gfp_mask);
+ 
+ bool fscrypt_mergeable_bio(struct bio *bio, const struct inode *inode,
+ 			   loff_t pos);
+ 
+-bool fscrypt_dio_supported(struct inode *inode);
+-
+ u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk, u64 nr_blocks);
+ 
+ #else /* CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
+ 
+ static inline void fscrypt_set_bio_crypt_ctx(struct bio *bio,
+@@ -885,15 +883,10 @@ static inline bool fscrypt_mergeable_bio(struct bio *bio,
+ 					 loff_t pos)
+ {
+ 	return true;
+ }
+ 
+-static inline bool fscrypt_dio_supported(struct inode *inode)
+-{
+-	return !fscrypt_needs_contents_encryption(inode);
 -}
 -
- /*
-  * I/O completion handler for multipage BIOs.
-  *
-  * The mpage code never puts partial pages into a BIO (except for end-of-file).
-  * If a page does not map to a contiguous run of blocks then it simply falls
-@@ -106,28 +100,28 @@ static bool bio_post_read_required(struct bio *bio)
-  * status of that page is hard.  See end_buffer_async_read() for the details.
-  * There is no point in duplicating all that complexity.
-  */
- static void mpage_end_io(struct bio *bio)
+ static inline u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk,
+ 					  u64 nr_blocks)
  {
--	if (bio_post_read_required(bio)) {
--		struct bio_post_read_ctx *ctx = bio->bi_private;
-+	if (IS_ENABLED(CONFIG_FS_VERITY) && bio->bi_private &&
-+	    !bio->bi_status) {
-+		struct ext4_verity_work *ctx = bio->bi_private;
- 
- 		INIT_WORK(&ctx->work, verity_work);
- 		fsverity_enqueue_verify_work(&ctx->work);
- 		return;
- 	}
- 	__read_end_io(bio);
+ 	return nr_blocks;
  }
- 
--static void ext4_set_bio_post_read_ctx(struct bio *bio,
--				       const struct inode *inode,
--				       struct fsverity_info *vi)
-+static void ext4_set_verity_work(struct bio *bio, const struct inode *inode,
-+				 struct fsverity_info *vi)
- {
- 	if (vi) {
- 		/* Due to the mempool, this never fails. */
--		struct bio_post_read_ctx *ctx =
--			mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
-+		struct ext4_verity_work *ctx =
-+			mempool_alloc(ext4_verity_work_pool, GFP_NOFS);
- 
- 		ctx->bio = bio;
- 		ctx->vi = vi;
- 		bio->bi_private = ctx;
- 	}
-@@ -287,11 +281,11 @@ static int ext4_mpage_readpages(struct inode *inode, struct fsverity_info *vi,
- 			 * __GFP_DIRECT_RECLAIM is set, see bio_alloc_bioset().
- 			 */
- 			bio = bio_alloc(bdev, bio_max_segs(nr_pages),
- 					REQ_OP_READ, GFP_KERNEL);
- 			fscrypt_set_bio_crypt_ctx(bio, inode, pos, GFP_KERNEL);
--			ext4_set_bio_post_read_ctx(bio, inode, vi);
-+			ext4_set_verity_work(bio, inode, vi);
- 			bio->bi_iter.bi_sector = first_block << (blkbits - 9);
- 			bio->bi_end_io = mpage_end_io;
- 			if (rac)
- 				bio->bi_opf |= REQ_RAHEAD;
- 		}
-@@ -361,29 +355,33 @@ void ext4_readahead(struct readahead_control *rac)
- 		fsverity_readahead(vi, readahead_index(rac),
- 				   readahead_count(rac));
- 	ext4_mpage_readpages(inode, vi, rac, NULL);
- }
- 
--int __init ext4_init_post_read_processing(void)
-+int __init ext4_init_verity_caches(void)
- {
--	bio_post_read_ctx_cache = KMEM_CACHE(bio_post_read_ctx, SLAB_RECLAIM_ACCOUNT);
-+	if (!IS_ENABLED(CONFIG_FS_VERITY))
-+		return 0;
-+	ext4_verity_work_cache =
-+		KMEM_CACHE(ext4_verity_work, SLAB_RECLAIM_ACCOUNT);
- 
--	if (!bio_post_read_ctx_cache)
-+	if (!ext4_verity_work_cache)
- 		goto fail;
--	bio_post_read_ctx_pool =
--		mempool_create_slab_pool(NUM_PREALLOC_POST_READ_CTXS,
--					 bio_post_read_ctx_cache);
--	if (!bio_post_read_ctx_pool)
-+	ext4_verity_work_pool = mempool_create_slab_pool(
-+		NUM_VERITY_WORKS, ext4_verity_work_cache);
-+	if (!ext4_verity_work_pool)
- 		goto fail_free_cache;
- 	return 0;
- 
- fail_free_cache:
--	kmem_cache_destroy(bio_post_read_ctx_cache);
-+	kmem_cache_destroy(ext4_verity_work_cache);
- fail:
- 	return -ENOMEM;
- }
- 
--void ext4_exit_post_read_processing(void)
-+void ext4_exit_verity_caches(void)
- {
--	mempool_destroy(bio_post_read_ctx_pool);
--	kmem_cache_destroy(bio_post_read_ctx_cache);
-+	if (!IS_ENABLED(CONFIG_FS_VERITY))
-+		return;
-+	mempool_destroy(ext4_verity_work_pool);
-+	kmem_cache_destroy(ext4_verity_work_cache);
- }
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 245f67d10ded..cb9ca0dc4664 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -7529,11 +7529,11 @@ static int __init ext4_init_fs(void)
- 
- 	err = ext4_init_pending();
- 	if (err)
- 		goto out7;
- 
--	err = ext4_init_post_read_processing();
-+	err = ext4_init_verity_caches();
- 	if (err)
- 		goto out6;
- 
- 	err = ext4_init_pageio();
- 	if (err)
-@@ -7578,11 +7578,11 @@ static int __init ext4_init_fs(void)
- out3:
- 	ext4_exit_system_zone();
- out4:
- 	ext4_exit_pageio();
- out5:
--	ext4_exit_post_read_processing();
-+	ext4_exit_verity_caches();
- out6:
- 	ext4_exit_pending();
- out7:
- 	ext4_exit_es();
- 
-@@ -7599,11 +7599,11 @@ static void __exit ext4_exit_fs(void)
- 	destroy_inodecache();
- 	ext4_exit_mballoc();
- 	ext4_exit_sysfs();
- 	ext4_exit_system_zone();
- 	ext4_exit_pageio();
--	ext4_exit_post_read_processing();
-+	ext4_exit_verity_caches();
- 	ext4_exit_es();
- 	ext4_exit_pending();
- }
- 
- MODULE_AUTHOR("Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others");
 -- 
 2.54.0
 
