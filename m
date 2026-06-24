@@ -4,130 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0653FCDB471
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jun 2026 11:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B53B7CDB479
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jun 2026 19:17:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=vbbUtXkUvP6MobUuJn04TGl7kSMKxRJ/Hd7sYXNA/4o=; b=AU8F2j5Zb0swk6zWFQb/zm+UV3
-	oPH0XY7vX44F8PD1fNxOWwta0oBQadE2dts94+NvzPstU0cOgKRTmwbSd5nxvGC/wti5M0FYHXpDn
-	WGj4AS3Uesy85x9O++YDaPFvy7T+X/Cm4rd+IKEUkEttQVdxIoQ7CrACslVaiEyfEztY=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:Message-ID:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=QHVInfWpr7IxX/6jTdeooZMH31wCMaucKxRD8MUzUTc=; b=HSiFBwbzHje5yk5DN8hQDkf1U8
+	EmhqJZHxO58K2kxDj2edrWeiXSaU7Yi06zlQRXKWWLXdVyIr5NvPWpQAFFnL+9hXETcCDhxmqbikg
+	c57/e+5qs9Qb+IcFNrKWZFN7LwfcTQo8AW09j/2bqxiV7xSl2ZXf7SolTed+3Wwh2TQ8=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wcLyd-0000Ub-4f;
-	Wed, 24 Jun 2026 11:41:07 +0000
+	id 1wcT6L-0006NY-7v;
+	Wed, 24 Jun 2026 19:17:33 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jack@suse.cz>) id 1wcLya-0000UU-GQ
+ (envelope-from <willy@infradead.org>) id 1wcT6J-0006NQ-1g
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 11:41:05 +0000
+ Wed, 24 Jun 2026 19:17:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+ From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1FWZgxDjSUCom9Re05WOOJuJNeJjEZN52wMGosALaUs=; b=ZlTYPolchWWjXJpryfsZ/DpCd9
- 7LRKb8vJVHCY9P7+530u9aYDrEXS+HY3iFSljq9Az4c6wPad9g4zz+RsR64hopqGMsqQ8UZ1oo1P6
- ppctHYEVOLsQq+3Lo2seOlRiFbRWsIwItxdahOoBveNY0s8FneXBBUjbJUdqMwRoxOeE=;
+ bh=bqBc39xoDehUWuVu6AI6mn/gD7zXjqbqDQU6DrDbctI=; b=gchsjRF057wH5GYsWIE3uCKK7z
+ uCtZfU6mbtZqx5mPtyrrK76CZW0IegtTNQknHBacdAloABlqifxzUVLwFXIQWbPHqZit4tQUwlIp6
+ N9Bi1k75SVNy4Rid9x4i0ouV4kIrh+QGvZUBcloTLz4RYYy3jmQwcCXQNmKwpT+aLkm8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=1FWZgxDjSUCom9Re05WOOJuJNeJjEZN52wMGosALaUs=; b=inyod8uccavAMYd1uklYhIPEn2
- XnjV38Jyio7kRs6wxVli+yXrayG3GCBv8LDlGczKlNfUeEQof9R58WLzTabh4eCvTuI+SZEHUK9LM
- qMSdUutR/4xewDEVVzfQ1adopmuybs96+cVrD+tlnDgq86ucur4JJyDhzR28/yUN8vGE=;
-Received: from smtp-out1.suse.de ([195.135.223.130])
+ h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=bqBc39xoDehUWuVu6AI6mn/gD7zXjqbqDQU6DrDbctI=; b=i
+ VEW0HkHfFSefaDza4jkZdfMRWcNZk6uMuEq3v3PaJ+asQaK+UEjDS2gIj23+SlGAlRcxX7yPW+Nib
+ TJlmHi9Q0MhGDWJv6U439+T/ldZFaPnV2JtbMCBBVYqmXVJzADek4d7A8agFTxU6YDnbyynhcnFTS
+ gT9Twi4EhOqWhOsE=;
+Received: from [90.155.50.34] (helo=casper.infradead.org)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wcLyZ-0000c9-Qx for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 11:41:05 +0000
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id 684BF71314;
- Wed, 24 Jun 2026 11:40:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1782301257; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=1FWZgxDjSUCom9Re05WOOJuJNeJjEZN52wMGosALaUs=;
- b=hF6NfODFPkCXvzr0SSHA/NliEy6UInLzHmobMqkJkWJfYWzdB1aaFCcQ3SiNrr4QQigZ61
- IOck3SKBclnNectWeI+wu8MiofOCvj0ZXWfpy+xmlOOYlUfZExVRabhPdzvAJwfpomETeR
- 45DUjs7WXol1xxnSafaemMVirLgl+FA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1782301257;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=1FWZgxDjSUCom9Re05WOOJuJNeJjEZN52wMGosALaUs=;
- b=GY8PcayCGoSTcAmLpIduGlP87R01qakK2tGhInNlAk5tsyVp1pmYg7EgUSRtXuSA9+T442
- xJqVt0prij7hymBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1782301257; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=1FWZgxDjSUCom9Re05WOOJuJNeJjEZN52wMGosALaUs=;
- b=hF6NfODFPkCXvzr0SSHA/NliEy6UInLzHmobMqkJkWJfYWzdB1aaFCcQ3SiNrr4QQigZ61
- IOck3SKBclnNectWeI+wu8MiofOCvj0ZXWfpy+xmlOOYlUfZExVRabhPdzvAJwfpomETeR
- 45DUjs7WXol1xxnSafaemMVirLgl+FA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1782301257;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=1FWZgxDjSUCom9Re05WOOJuJNeJjEZN52wMGosALaUs=;
- b=GY8PcayCGoSTcAmLpIduGlP87R01qakK2tGhInNlAk5tsyVp1pmYg7EgUSRtXuSA9+T442
- xJqVt0prij7hymBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C833779A8;
- Wed, 24 Jun 2026 11:40:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id PNKTFknCO2p9HgAAD6G6ig
- (envelope-from <jack@suse.cz>); Wed, 24 Jun 2026 11:40:57 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
- id EADF4A093E; Wed, 24 Jun 2026 13:40:56 +0200 (CEST)
-Date: Wed, 24 Jun 2026 13:40:56 +0200
-From: Jan Kara <jack@suse.cz>
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <hu7h6ga2ndrsedjvjbemdevjzrhvtz7jx2hbc2rtmkskufckmi@yf3a6t4hhike>
-References: <20260624050334.124606-1-ebiggers@kernel.org>
- <20260624050334.124606-11-ebiggers@kernel.org>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1wcT6H-0006Wn-L7 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Jun 2026 19:17:30 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+ Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:In-Reply-To:References;
+ bh=bqBc39xoDehUWuVu6AI6mn/gD7zXjqbqDQU6DrDbctI=; b=P3Blr/FQoLsDznHwZjUUmuCF4A
+ sZb56+wF7UCTV/Y/5WVd1/j4fTMY21gJkKubCLELbgnA7qjvYu5AnU5KUlaftQ7Tdp5QRFpkBnf1Q
+ xsPtZtPJYHPsuYRowtANcexfKkz4HXgiI+rsilTZahhtJKw5IsgWQ/HyRe3bY5+u9hflDjOTiSAe6
+ T+zWrOLGCrgsEhfzjLDbMJWzPpeZwOvXpUUPE6yCI/NMORylPALoZBEkHbI80ZmduQ3RAKlA6Etqe
+ BKY70iGiBmTGe/HkgV2UV2+AlSd/cil7U/0+LnURnH6yypLT0JKTEKkNc1yesAjt5+nvfQ+pCsiSZ
+ LWiKhpjw==;
+Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red
+ Hat Linux)) id 1wcT69-00000008Zuo-2VOT;
+ Wed, 24 Jun 2026 19:17:22 +0000
+Date: Wed, 24 Jun 2026 20:17:21 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Jiucheng Xu <jiucheng.xu@amlogic.com>
+Message-ID: <ajwtQRawMxcQkyo8@casper.infradead.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260624050334.124606-11-ebiggers@kernel.org>
-X-Spamd-Result: default: False [-2.30 / 50.00]; BAYES_HAM(-3.00)[100.00%];
- SUSPICIOUS_RECIPS(1.50)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
- MID_RHS_NOT_FQDN(0.50)[]; NEURAL_HAM_SHORT(-0.20)[-1.000];
- MIME_GOOD(-0.10)[text/plain]; RCVD_VIA_SMTP_AUTH(0.00)[];
- ARC_NA(0.00)[]; MISSING_XM_UA(0.00)[]; MIME_TRACE(0.00)[0:+];
- FUZZY_RATELIMITED(0.00)[rspamd.com];
- RCPT_COUNT_TWELVE(0.00)[16]; TAGGED_RCPT(0.00)[];
- FREEMAIL_ENVRCPT(0.00)[gmail.com]; TO_DN_SOME(0.00)[];
- FROM_HAS_DN(0.00)[];
- FREEMAIL_CC(0.00)[vger.kernel.org,lists.sourceforge.net,lst.de,mit.edu,dilger.ca,linux.alibaba.com,suse.cz,linux.ibm.com,gmail.com,huawei.com,kernel.org];
- RCVD_COUNT_THREE(0.00)[3]; FROM_EQ_ENVFROM(0.00)[];
- RCVD_TLS_LAST(0.00)[]; TO_MATCH_ENVRCPT_ALL(0.00)[];
- DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
- DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email, suse.cz:email,
- imap1.dmz-prg2.suse.org:helo]
-X-Headers-End: 1wcLyZ-0000c9-Qx
-Subject: Re: [f2fs-dev] [PATCH 10/16] fs/buffer: Remove fs-layer decryption
- code
+X-Headers-End: 1wcT6H-0006Wn-L7
+Subject: [f2fs-dev] Use of FGP_NOFS in f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -139,136 +82,24 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, Theodore Ts'o <tytso@mit.edu>,
- Zhang Yi <yi.zhang@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
- linux-block@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- Andreas Dilger <adilger.kernel@dilger.ca>,
- Ojaswin Mujoo <ojaswin@linux.ibm.com>, Baokun Li <libaokun@linux.alibaba.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org,
- Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue 23-06-26 22:03:28, Eric Biggers wrote:
-> Now that fscrypt's file contents en/decryption is always implemented
-> using blk-crypto when the filesystem is block-based, the fs-layer
-> decryption code in fs/buffer.c is unused code.  Remove it.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+Hi Jiucheng,
 
-Fine by me. Feel free to add:
+I am trying to remove FGP_NOFS from the kernel and the last remaining
+user was added by you last year in commit 2308de27c03d.  I'm trying to
+understand why.  Did you see an actual problem if you do not use it,
+or was it theoretical?  The commit message says "to avoid potential
+deadlock issues", but it's not clear to me whether you know they are
+there, or only think they are there.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/buffer.c | 45 ++++++++-------------------------------------
->  1 file changed, 8 insertions(+), 37 deletions(-)
-> 
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index 9af5f061a1f8..21dd9596a941 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -334,82 +334,53 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
->  
->  still_busy:
->  	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
->  }
->  
-> -struct postprocess_bh_ctx {
-> +struct verify_bh_ctx {
->  	struct work_struct work;
->  	struct buffer_head *bh;
->  	struct fsverity_info *vi;
->  };
->  
->  static void verify_bh(struct work_struct *work)
->  {
-> -	struct postprocess_bh_ctx *ctx =
-> -		container_of(work, struct postprocess_bh_ctx, work);
-> +	struct verify_bh_ctx *ctx =
-> +		container_of(work, struct verify_bh_ctx, work);
->  	struct buffer_head *bh = ctx->bh;
->  	bool valid;
->  
->  	valid = fsverity_verify_blocks(ctx->vi, bh->b_folio, bh->b_size,
->  				       bh_offset(bh));
->  	end_buffer_async_read(bh, valid);
->  	kfree(ctx);
->  }
->  
-> -static void decrypt_bh(struct work_struct *work)
-> -{
-> -	struct postprocess_bh_ctx *ctx =
-> -		container_of(work, struct postprocess_bh_ctx, work);
-> -	struct buffer_head *bh = ctx->bh;
-> -	int err;
-> -
-> -	err = fscrypt_decrypt_pagecache_blocks(bh->b_folio, bh->b_size,
-> -					       bh_offset(bh));
-> -	if (err == 0 && ctx->vi) {
-> -		/*
-> -		 * We use different work queues for decryption and for verity
-> -		 * because verity may require reading metadata pages that need
-> -		 * decryption, and we shouldn't recurse to the same workqueue.
-> -		 */
-> -		INIT_WORK(&ctx->work, verify_bh);
-> -		fsverity_enqueue_verify_work(&ctx->work);
-> -		return;
-> -	}
-> -	end_buffer_async_read(bh, err == 0);
-> -	kfree(ctx);
-> -}
-> -
->  /*
->   * I/O completion handler for block_read_full_folio() - folios
->   * which come unlocked at the end of I/O.
->   */
->  static void bh_end_async_read(struct bio *bio)
->  {
->  	struct buffer_head *bh;
->  	bool uptodate = bio_endio_bh(bio, &bh);
->  	struct inode *inode = bh->b_folio->mapping->host;
-> -	bool decrypt = fscrypt_inode_uses_fs_layer_crypto(inode);
->  	struct fsverity_info *vi = NULL;
->  
->  	/* needed by ext4 */
->  	if (bh->b_folio->index < DIV_ROUND_UP(inode->i_size, PAGE_SIZE))
->  		vi = fsverity_get_info(inode);
->  
-> -	/* Decrypt (with fscrypt) and/or verify (with fsverity) if needed. */
-> -	if (uptodate && (decrypt || vi)) {
-> -		struct postprocess_bh_ctx *ctx = kmalloc_obj(*ctx, GFP_ATOMIC);
-> +	/* Verify (with fsverity) if needed. */
-> +	if (vi && uptodate) {
-> +		struct verify_bh_ctx *ctx = kmalloc_obj(*ctx, GFP_ATOMIC);
->  
->  		if (ctx) {
->  			ctx->bh = bh;
->  			ctx->vi = vi;
-> -			if (decrypt) {
-> -				INIT_WORK(&ctx->work, decrypt_bh);
-> -				fscrypt_enqueue_decrypt_work(&ctx->work);
-> -			} else {
-> -				INIT_WORK(&ctx->work, verify_bh);
-> -				fsverity_enqueue_verify_work(&ctx->work);
-> -			}
-> +			INIT_WORK(&ctx->work, verify_bh);
-> +			fsverity_enqueue_verify_work(&ctx->work);
->  			return;
->  		}
->  		uptodate = false;
->  	}
->  	end_buffer_async_read(bh, uptodate);
-> -- 
-> 2.54.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I'd really like to understand what the issues are as the normal issues
+which make calling into the filesystem (holding another folio locked,
+holding a mutex relied upon by reclaim) don't seem to be present.
+So if there is something, I'm not sure what it is.
 
 
 _______________________________________________
