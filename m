@@ -4,85 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BD35DCD4F26
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jun 2026 01:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C1141CDB479
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jun 2026 05:06:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Cc:Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive
-	:List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:References:In-Reply-To:
-	Sender:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=2qeIhqcgZvQnSF3Oig3kW0z6i0gQYtG3A4CAcQNkziY=; b=fTlUMPuLDOZiXnOt+nArO2PHEq
-	g+PyRfU7QEVIKY6wsDkQJeWlF2b3/pcz4ftqtWzabJDLeu+e5VdI8LTN3g+lObSihEp7HvEWtBW7s
-	4wN4wO/MkoEv537OaRIkIjhmtQ3Bh+JFkrX3hoX3ATN4I3RkT9KnUbLLglkEPm1o5moI=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=nVLQAAycgJpzS5/pIIW0nWQE4YYViAkoF2XdU7IsLXM=; b=HwuyPvDDP/6JFm66ZtBNPcF1J8
+	wfS8HRPZMSE9U9fhA2FsST15To6z2r5xdVH78yiyDKEKCY9Zrmp+rxXxVdyHKmmD3ehLCrrfUaNqu
+	PKoWzSv2tavg3e/s7rwEBfp0tex2dDXejwgdpfydQZIKzxtx+2vu3ZA4zUh4AuM282HQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wcCmN-00007C-Mc;
-	Wed, 24 Jun 2026 01:51:52 +0000
+	id 1wcFoN-0006qv-28;
+	Wed, 24 Jun 2026 05:06:07 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <pr-tracker-bot@kernel.org>) id 1wcCmM-00006y-8S
+ (envelope-from <ebiggers@kernel.org>) id 1wcFoL-0006qo-OU
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 01:51:51 +0000
+ Wed, 24 Jun 2026 05:06:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:Date:Message-Id:References:In-Reply-To:From:
- Subject:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=fAO2JeiSojqrbF34Es/gkv0pM3UixrmG8s10gKD+H2g=; b=XyWqTd8I265FygZf2jfJDwRr69
- QiWMJSBlZPN2uKIc/dx6ouM3S1tdk54gTsMoJDKjkL81dY2ZFRilV0qh1OJLZTIZM+w6vcNPmmHh7
- +hb0Q0U/mLKJZSqRgPJFLw480IxUwyEEZrsZUXuZNyakCCWzeiDlL/E6DUm1O67wbH0g=;
+ bh=tnb0tfseVuJy6ztSSzQ0+AU1yHkyqxTSNK4Dw8VuZEw=; b=M/uc//Wd7vOul7OLyNq1fiRfQA
+ mLKAbIScRw57LinBJGnUIWkPkbGZcrjbycR3baG5WgagnmelXr9ms2qNBGGIMqKN+7mNFkJ13wjKc
+ iy9NR+0H+2TlmKlKeyWo7CZlqDPOB33wrTW9Hivzwt1JmnWIz321q8iEnPqo54U/pbb0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Cc:To:Date:Message-Id:References:In-Reply-To:From:Subject:Sender:Reply-To
- :MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=fAO2JeiSojqrbF34Es/gkv0pM3UixrmG8s10gKD+H2g=; b=bJH1L7XcXgBe7ngiNlgp2gMZ8Q
- SAQM981xDbXVB7WT44wePD60Q8D4hbHY2j5BtbFGQXlRhDN57Us+qrrH6cPav432pMLC/kf+sURyL
- R7+Qjj/mCf1fZIirAkDK/SVHoddUJHrj+Gyj33pAWlGh5iUvdZ5s0QxOIqhim+b0q1S0=;
+ bh=tnb0tfseVuJy6ztSSzQ0+AU1yHkyqxTSNK4Dw8VuZEw=; b=eK2pU+wFQgnni3+yts+wquDbeJ
+ b49QiMIZiXWGhfU7Jn7+VWG/A2N9ShFRpoNXXHfTe5sML2tLssV+oq/Y3EGzIoWzymkNnuhDkfxxy
+ vGsOU4BBvZkviLRgmUO8SSAr6qbTBiWkx7ZCnKXHsGTQ08FQjBJaGn2kBw3CtmWN7qBw=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wcCmL-0005Lg-Rp for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 01:51:50 +0000
+ id 1wcFoK-0004mG-Pz for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Jun 2026 05:06:05 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 09436601D8;
- Wed, 24 Jun 2026 01:51:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B58E21F000E9;
- Wed, 24 Jun 2026 01:51:43 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 5532B60138;
+ Wed, 24 Jun 2026 05:05:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F1B41F00A3A;
+ Wed, 24 Jun 2026 05:05:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1782265903;
- bh=fAO2JeiSojqrbF34Es/gkv0pM3UixrmG8s10gKD+H2g=;
- h=Subject:From:In-Reply-To:References:Date:To:Cc;
- b=JFWqzxATFsTL2dPk5swpmZdkzxeJtontNAVtZoIhO02cUpn1lv8s4zoFOFG0gJr56
- u0gbiN2I13Upjsjm6fB77e9QQv/EXqAX9MFNe8qXyZQibtf21TOhX2icrEDFsTBblv
- t1eW7fHQDYMGcZIVt5fGml4TTUtf64ZErpB7x7rxPl3XMYBvN6607UDcCrdejraou/
- jjm+NTLPTzPcZaOcQY3U/3BijvCWrizF5u+GUjqSWcucaOpaiQjWRPcuXLLqR/zDYY
- otkulc+oKKz40PPvNLroU/sp0LyNtpNI/oNOsicHVMYcj69b0vFVtGNlRfQr+KMA1B
- ch0RSAme11HNg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 1C806393102A; Wed, 24 Jun 2026 01:51:34 +0000 (UTC)
-In-Reply-To: <ajrLmn16uMPcc4Lv@google.com>
-References: <ajrLmn16uMPcc4Lv@google.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ajrLmn16uMPcc4Lv@google.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
- tags/f2fs-for-7.2-rc1
-X-PR-Tracked-Commit-Id: 4275b59673eb60b02eec3997816c83f1f4b909c4
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 09ca8dc7d634f69d0b43f82c244add44cf7885b4
-Message-Id: <178226589373.2503468.6602733890959222251.pr-tracker-bot@kernel.org>
-Date: Wed, 24 Jun 2026 01:51:33 +0000
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1wcCmL-0005Lg-Rp
-Subject: Re: [f2fs-dev] [GIT PULL] f2fs update for 7.2-rc1
+ s=k20260515; t=1782277559;
+ bh=tnb0tfseVuJy6ztSSzQ0+AU1yHkyqxTSNK4Dw8VuZEw=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=lVePk+nxDYyyFQ3wSnWoDkOkUFBrt6ijaZFhOX3Rj+jDahxShF94zAsOaf+wBkwjp
+ F7AVuZSrGIKf0xcdx80rMqsafrmPXZ3OyFdCzmk2HXUz5ijAUnv4fah0iI6LLzoH/Q
+ s3K//h9bR8lzc490fuK+I85OA5e0d1b8LofOzXPBegYr0B67rYYFOM50rjY2HFIumX
+ CWaV+8s9UiV8j6JHl6nVYz+ukjExnsp9Ievqe828Zn8UZFdq3DlYjVFHfA7lBJ/HBV
+ 2RTcQN+FMIFBdJgpKIJFm3wy3+uO1roUGQvbwP75FuVeQa9Wk6YrLpcGqoBfx0dUJp
+ 1AgRT9CiV/I6w==
+To: linux-fscrypt@vger.kernel.org
+Date: Tue, 23 Jun 2026 22:03:19 -0700
+Message-ID: <20260624050334.124606-2-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260624050334.124606-1-ebiggers@kernel.org>
+References: <20260624050334.124606-1-ebiggers@kernel.org>
+MIME-Version: 1.0
+X-Headers-End: 1wcFoK-0004mG-Pz
+Subject: [f2fs-dev] [PATCH 01/16] blk-crypto: Simplify check for fallback
+ support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,29 +86,51 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: pr-tracker-bot--- via Linux-f2fs-devel
+From: Eric Biggers via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: pr-tracker-bot@kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
-MIME-Version: 1.0
+Reply-To: Eric Biggers <ebiggers@kernel.org>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, Theodore Ts'o <tytso@mit.edu>,
+ Zhang Yi <yi.zhang@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-block@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Ojaswin Mujoo <ojaswin@linux.ibm.com>, Baokun Li <libaokun@linux.alibaba.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>, Eric Biggers <ebiggers@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The pull request you sent on Tue, 23 Jun 2026 18:08:26 +0000:
+Since blk-crypto-fallback supports all blk_crypto_keys except wrapped
+keys, just check for that condition directly instead of using
+__blk_crypto_cfg_supported().  With this done,
+__blk_crypto_cfg_supported() is now used only for the hardware support.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-7.2-rc1
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+---
+ block/blk-crypto-fallback.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/09ca8dc7d634f69d0b43f82c244add44cf7885b4
-
-Thank you!
-
+diff --git a/block/blk-crypto-fallback.c b/block/blk-crypto-fallback.c
+index 2a5c52ab74b4..2a8f40a65158 100644
+--- a/block/blk-crypto-fallback.c
++++ b/block/blk-crypto-fallback.c
+@@ -494,12 +494,11 @@ bool blk_crypto_fallback_bio_prep(struct bio *bio)
+ 		/* User didn't call blk_crypto_start_using_key() first */
+ 		bio_io_error(bio);
+ 		return false;
+ 	}
+ 
+-	if (!__blk_crypto_cfg_supported(blk_crypto_fallback_profile,
+-					&bc->bc_key->crypto_cfg)) {
++	if (bc->bc_key->crypto_cfg.key_type != BLK_CRYPTO_KEY_TYPE_RAW) {
+ 		bio_endio_status(bio, BLK_STS_NOTSUPP);
+ 		return false;
+ 	}
+ 
+ 	if (bio_data_dir(bio) == WRITE) {
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.54.0
+
 
 
 _______________________________________________
