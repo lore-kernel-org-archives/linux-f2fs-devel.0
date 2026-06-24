@@ -4,79 +4,130 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DAB76CDB47F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jun 2026 09:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0653FCDB471
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jun 2026 11:41:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=u/MAHphSuSudm1UKkDSrRzZ6AKWrJJtGt1eDxiY3Ry0=; b=XgXylW1AIOkq5hJJQ1pjU/a2GE
-	6olBx3AUUUmlsr8acnu+8Z+PQstXWNiAxWk8uK3A2KirWRclzW1mfYwqW+KgpKiZ+5RQwfG5ajv+R
-	DRgdRFBK7UCJKOiiDWW5Vpc7cztRCXpXUZ21VJRu3jE7eHH30Nrz0MmR/ePuaj7FrO1Y=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=vbbUtXkUvP6MobUuJn04TGl7kSMKxRJ/Hd7sYXNA/4o=; b=AU8F2j5Zb0swk6zWFQb/zm+UV3
+	oPH0XY7vX44F8PD1fNxOWwta0oBQadE2dts94+NvzPstU0cOgKRTmwbSd5nxvGC/wti5M0FYHXpDn
+	WGj4AS3Uesy85x9O++YDaPFvy7T+X/Cm4rd+IKEUkEttQVdxIoQ7CrACslVaiEyfEztY=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wcJTa-0008GP-0W;
-	Wed, 24 Jun 2026 09:00:51 +0000
+	id 1wcLyd-0000Ub-4f;
+	Wed, 24 Jun 2026 11:41:07 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wcJTS-0008DJ-30
+ (envelope-from <jack@suse.cz>) id 1wcLya-0000UU-GQ
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 09:00:43 +0000
+ Wed, 24 Jun 2026 11:41:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JjL6dhBnyDtQ1V+CFFTtu1ugVZc8avKE+2MHRbCx/4s=; b=P6DiXxuj24BZDUPiqQiAmsPZs8
- zPNYl437oLajEmhAtz5CwIN3gTjTgP3H1nzDLtHU+dyDLx6Rvc6s1SJ87U6E/A9xvhe7LlnlFY15e
- VtwvDCz0ua5HrkEn4EDGCv8ENf+EDbdXXDuqNVATUZN0JxFpIcVPbZRapXqqmbuv9D3Q=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=1FWZgxDjSUCom9Re05WOOJuJNeJjEZN52wMGosALaUs=; b=ZlTYPolchWWjXJpryfsZ/DpCd9
+ 7LRKb8vJVHCY9P7+530u9aYDrEXS+HY3iFSljq9Az4c6wPad9g4zz+RsR64hopqGMsqQ8UZ1oo1P6
+ ppctHYEVOLsQq+3Lo2seOlRiFbRWsIwItxdahOoBveNY0s8FneXBBUjbJUdqMwRoxOeE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=JjL6dhBnyDtQ1V+CFFTtu1ugVZc8avKE+2MHRbCx/4s=; b=G
- uHX1GguYKW2pcrpKpf5yK9P4/cxu6N9TjF07osRAefIUT72kmVZ0BG9cc/dmkTBu27tatbNt5Y4XQ
- vAGwnktiDYIyWo6taA1pG4OKFrY49bKVIhEIPjYDPDK1/brIbM3MvMDAeJXrvotQcJ1pXib2pfLIm
- gRcEPYj5o7CfEyMQ=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=1FWZgxDjSUCom9Re05WOOJuJNeJjEZN52wMGosALaUs=; b=inyod8uccavAMYd1uklYhIPEn2
+ XnjV38Jyio7kRs6wxVli+yXrayG3GCBv8LDlGczKlNfUeEQof9R58WLzTabh4eCvTuI+SZEHUK9LM
+ qMSdUutR/4xewDEVVzfQ1adopmuybs96+cVrD+tlnDgq86ucur4JJyDhzR28/yUN8vGE=;
+Received: from smtp-out1.suse.de ([195.135.223.130])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wcJSX-0000qy-9n for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 09:00:30 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 4FCBA418E4
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 24 Jun 2026 08:59:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 344F41F000E9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 24 Jun 2026 08:59:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1782291579;
- bh=JjL6dhBnyDtQ1V+CFFTtu1ugVZc8avKE+2MHRbCx/4s=;
- h=Subject:From:Date:To;
- b=juM42ubMkgh3lzYl5GHzibttRt1ArWV5tVlSVRZ5/L+x/5oeSFfQQDzs7BEZWUrdD
- 3D/WKGBLLGXyyxWiemGBlzwQTeC2qCckE7hPfRdz4OCa/LOvzsGTnJ4WwrBaIlcvfn
- hTFsLK+YegCZrgL6UUEfypAPJO/qg/bb5roRbqP+zeLLHJ0smXKtNUw2CAhR9AFsAC
- oBejqovkG1LquaXk8PADfJiBKUj1qHim5bMZEqaV4MCaHMDnvGDF0eiSF7fUtfwH5p
- sYooKEMIqYegIJRHrgVw7fJlYDBnr9s2kEjzf/LbqR0vo8ZXhEsXYTXsm6nt2EIGfs
- q7hQn65UaO+4A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 5932839EF964 for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 24 Jun 2026 08:59:29 +0000 (UTC)
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1wcLyZ-0000c9-Qx for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 24 Jun 2026 11:41:05 +0000
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 684BF71314;
+ Wed, 24 Jun 2026 11:40:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+ t=1782301257; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=1FWZgxDjSUCom9Re05WOOJuJNeJjEZN52wMGosALaUs=;
+ b=hF6NfODFPkCXvzr0SSHA/NliEy6UInLzHmobMqkJkWJfYWzdB1aaFCcQ3SiNrr4QQigZ61
+ IOck3SKBclnNectWeI+wu8MiofOCvj0ZXWfpy+xmlOOYlUfZExVRabhPdzvAJwfpomETeR
+ 45DUjs7WXol1xxnSafaemMVirLgl+FA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+ s=susede2_ed25519; t=1782301257;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=1FWZgxDjSUCom9Re05WOOJuJNeJjEZN52wMGosALaUs=;
+ b=GY8PcayCGoSTcAmLpIduGlP87R01qakK2tGhInNlAk5tsyVp1pmYg7EgUSRtXuSA9+T442
+ xJqVt0prij7hymBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+ t=1782301257; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=1FWZgxDjSUCom9Re05WOOJuJNeJjEZN52wMGosALaUs=;
+ b=hF6NfODFPkCXvzr0SSHA/NliEy6UInLzHmobMqkJkWJfYWzdB1aaFCcQ3SiNrr4QQigZ61
+ IOck3SKBclnNectWeI+wu8MiofOCvj0ZXWfpy+xmlOOYlUfZExVRabhPdzvAJwfpomETeR
+ 45DUjs7WXol1xxnSafaemMVirLgl+FA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+ s=susede2_ed25519; t=1782301257;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=1FWZgxDjSUCom9Re05WOOJuJNeJjEZN52wMGosALaUs=;
+ b=GY8PcayCGoSTcAmLpIduGlP87R01qakK2tGhInNlAk5tsyVp1pmYg7EgUSRtXuSA9+T442
+ xJqVt0prij7hymBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C833779A8;
+ Wed, 24 Jun 2026 11:40:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+ by imap1.dmz-prg2.suse.org with ESMTPSA id PNKTFknCO2p9HgAAD6G6ig
+ (envelope-from <jack@suse.cz>); Wed, 24 Jun 2026 11:40:57 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+ id EADF4A093E; Wed, 24 Jun 2026 13:40:56 +0200 (CEST)
+Date: Wed, 24 Jun 2026 13:40:56 +0200
+From: Jan Kara <jack@suse.cz>
+To: Eric Biggers <ebiggers@kernel.org>
+Message-ID: <hu7h6ga2ndrsedjvjbemdevjzrhvtz7jx2hbc2rtmkskufckmi@yf3a6t4hhike>
+References: <20260624050334.124606-1-ebiggers@kernel.org>
+ <20260624050334.124606-11-ebiggers@kernel.org>
 MIME-Version: 1.0
-Message-Id: <178229156799.2577930.16585179862992494459.git-patchwork-summary@kernel.org>
-Date: Wed, 24 Jun 2026 08:59:27 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1wcJSX-0000qy-9n
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+Content-Disposition: inline
+In-Reply-To: <20260624050334.124606-11-ebiggers@kernel.org>
+X-Spamd-Result: default: False [-2.30 / 50.00]; BAYES_HAM(-3.00)[100.00%];
+ SUSPICIOUS_RECIPS(1.50)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
+ MID_RHS_NOT_FQDN(0.50)[]; NEURAL_HAM_SHORT(-0.20)[-1.000];
+ MIME_GOOD(-0.10)[text/plain]; RCVD_VIA_SMTP_AUTH(0.00)[];
+ ARC_NA(0.00)[]; MISSING_XM_UA(0.00)[]; MIME_TRACE(0.00)[0:+];
+ FUZZY_RATELIMITED(0.00)[rspamd.com];
+ RCPT_COUNT_TWELVE(0.00)[16]; TAGGED_RCPT(0.00)[];
+ FREEMAIL_ENVRCPT(0.00)[gmail.com]; TO_DN_SOME(0.00)[];
+ FROM_HAS_DN(0.00)[];
+ FREEMAIL_CC(0.00)[vger.kernel.org,lists.sourceforge.net,lst.de,mit.edu,dilger.ca,linux.alibaba.com,suse.cz,linux.ibm.com,gmail.com,huawei.com,kernel.org];
+ RCVD_COUNT_THREE(0.00)[3]; FROM_EQ_ENVFROM(0.00)[];
+ RCVD_TLS_LAST(0.00)[]; TO_MATCH_ENVRCPT_ALL(0.00)[];
+ DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email, suse.cz:email,
+ imap1.dmz-prg2.suse.org:helo]
+X-Headers-End: 1wcLyZ-0000c9-Qx
+Subject: Re: [f2fs-dev] [PATCH 10/16] fs/buffer: Remove fs-layer decryption
+ code
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,78 +139,136 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, Theodore Ts'o <tytso@mit.edu>,
+ Zhang Yi <yi.zhang@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-block@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ Andreas Dilger <adilger.kernel@dilger.ca>,
+ Ojaswin Mujoo <ojaswin@linux.ibm.com>, Baokun Li <libaokun@linux.alibaba.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+On Tue 23-06-26 22:03:28, Eric Biggers wrote:
+> Now that fscrypt's file contents en/decryption is always implemented
+> using blk-crypto when the filesystem is block-based, the fs-layer
+> decryption code in fs/buffer.c is unused code.  Remove it.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+Fine by me. Feel free to add:
 
-Series: Exposing case folding behavior
-  Submitter: Chuck Lever <cel@kernel.org>
-  Committer: Christian Brauner <brauner@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1090897
-  Lore link: https://lore.kernel.org/r/20260507-case-sensitivity-v14-0-e62cc8200435@oracle.com
-    Patches: [f2fs-dev,v14,01/15] fs: Move file_kattr initialization to callers
-             [f2fs-dev,v14,02/15] fs: Add case sensitivity flags to file_kattr
-             [f2fs-dev,v14,03/15] fat: Implement fileattr_get for case sensitivity
-             [f2fs-dev,v14,04/15] exfat: Implement fileattr_get for case sensitivity
-             [f2fs-dev,v14,05/15] ntfs3: Implement fileattr_get for case sensitivity
-             [f2fs-dev,v14,06/15] hfs: Implement fileattr_get for case sensitivity
-             [f2fs-dev,v14,07/15] hfsplus: Report case sensitivity in fileattr_get
-             [f2fs-dev,v14,08/15] xfs: Report case sensitivity in fileattr_get
-             [f2fs-dev,v14,09/15] cifs: Implement fileattr_get for case sensitivity
-             [f2fs-dev,v14,10/15] nfs: Implement fileattr_get for case sensitivity
-             [f2fs-dev,v14,11/15] vboxsf: Implement fileattr_get for case sensitivity
-             [f2fs-dev,v14,12/15] isofs: Implement fileattr_get for case sensitivity
-             [f2fs-dev,v14,13/15] nfsd: Report export case-folding via NFSv3 PATHCONF
-             [f2fs-dev,v14,14/15] nfsd: Implement NFSv4 FATTR4_CASE_INSENSITIVE and FATTR4_CASE_PRESERVING
-             [f2fs-dev,v14,15/15] ksmbd: Report filesystem case sensitivity via FS_ATTRIBUTE_INFORMATION
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Series: fs-verity support for XFS with post EOF merkle tree
-  Submitter: Andrey Albershteyn <aalbersh@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1098004
-  Lore link: https://lore.kernel.org/r/20260520123722.405752-1-aalbersh@kernel.org
-    Patches: [f2fs-dev,v10,01/22] fsverity: report validation errors through fserror to fsnotify
-             [f2fs-dev,v10,04/22] fsverity: generate and store zero-block hash
-             [f2fs-dev,v10,07/22] iomap: introduce IOMAP_F_FSVERITY and teach writeback to handle fsverity
-             [f2fs-dev,v10,08/22] iomap: teach iomap to read files with fsverity
-             [f2fs-dev,v10,09/22] iomap: introduce iomap_fsverity_write() for writing fsverity metadata
+								Honza
 
-Series: [f2fs-dev,v9,01/22] fsverity: report validation errors through fserror to fsnotify
-  Submitter: Andrey Albershteyn <aalbersh@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1086679
-  Lore link: https://lore.kernel.org/r/20260428083332.768693-2-aalbersh@kernel.org
-    Patches: [f2fs-dev,v9,01/22] fsverity: report validation errors through fserror to fsnotify
-             [f2fs-dev,v9,04/22] fsverity: generate and store zero-block hash
-             [f2fs-dev,v9,09/22] iomap: introduce iomap_fsverity_write() for writing fsverity metadata
-
-Patch: [f2fs-dev,GIT,PULL] f2fs update for 7.2-rc1
-  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
-  Committer: Linus Torvalds <torvalds@linux-foundation.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1115531
-  Lore link: https://lore.kernel.org/r/ajrLmn16uMPcc4Lv@google.com
-
-Series: Subject: Exposing case folding behavior
-  Submitter: Chuck Lever <cel@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1055004
-  Lore link: https://lore.kernel.org/r/20260217214741.1928576-1-cel@kernel.org
-    Patches: [f2fs-dev,v8,01/17] fs: Move file_kattr initialization to callers
-             [f2fs-dev,v8,02/17] fs: Add case sensitivity flags to file_kattr
-
-
-Total patches: 26
-
+> ---
+>  fs/buffer.c | 45 ++++++++-------------------------------------
+>  1 file changed, 8 insertions(+), 37 deletions(-)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 9af5f061a1f8..21dd9596a941 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -334,82 +334,53 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
+>  
+>  still_busy:
+>  	spin_unlock_irqrestore(&first->b_uptodate_lock, flags);
+>  }
+>  
+> -struct postprocess_bh_ctx {
+> +struct verify_bh_ctx {
+>  	struct work_struct work;
+>  	struct buffer_head *bh;
+>  	struct fsverity_info *vi;
+>  };
+>  
+>  static void verify_bh(struct work_struct *work)
+>  {
+> -	struct postprocess_bh_ctx *ctx =
+> -		container_of(work, struct postprocess_bh_ctx, work);
+> +	struct verify_bh_ctx *ctx =
+> +		container_of(work, struct verify_bh_ctx, work);
+>  	struct buffer_head *bh = ctx->bh;
+>  	bool valid;
+>  
+>  	valid = fsverity_verify_blocks(ctx->vi, bh->b_folio, bh->b_size,
+>  				       bh_offset(bh));
+>  	end_buffer_async_read(bh, valid);
+>  	kfree(ctx);
+>  }
+>  
+> -static void decrypt_bh(struct work_struct *work)
+> -{
+> -	struct postprocess_bh_ctx *ctx =
+> -		container_of(work, struct postprocess_bh_ctx, work);
+> -	struct buffer_head *bh = ctx->bh;
+> -	int err;
+> -
+> -	err = fscrypt_decrypt_pagecache_blocks(bh->b_folio, bh->b_size,
+> -					       bh_offset(bh));
+> -	if (err == 0 && ctx->vi) {
+> -		/*
+> -		 * We use different work queues for decryption and for verity
+> -		 * because verity may require reading metadata pages that need
+> -		 * decryption, and we shouldn't recurse to the same workqueue.
+> -		 */
+> -		INIT_WORK(&ctx->work, verify_bh);
+> -		fsverity_enqueue_verify_work(&ctx->work);
+> -		return;
+> -	}
+> -	end_buffer_async_read(bh, err == 0);
+> -	kfree(ctx);
+> -}
+> -
+>  /*
+>   * I/O completion handler for block_read_full_folio() - folios
+>   * which come unlocked at the end of I/O.
+>   */
+>  static void bh_end_async_read(struct bio *bio)
+>  {
+>  	struct buffer_head *bh;
+>  	bool uptodate = bio_endio_bh(bio, &bh);
+>  	struct inode *inode = bh->b_folio->mapping->host;
+> -	bool decrypt = fscrypt_inode_uses_fs_layer_crypto(inode);
+>  	struct fsverity_info *vi = NULL;
+>  
+>  	/* needed by ext4 */
+>  	if (bh->b_folio->index < DIV_ROUND_UP(inode->i_size, PAGE_SIZE))
+>  		vi = fsverity_get_info(inode);
+>  
+> -	/* Decrypt (with fscrypt) and/or verify (with fsverity) if needed. */
+> -	if (uptodate && (decrypt || vi)) {
+> -		struct postprocess_bh_ctx *ctx = kmalloc_obj(*ctx, GFP_ATOMIC);
+> +	/* Verify (with fsverity) if needed. */
+> +	if (vi && uptodate) {
+> +		struct verify_bh_ctx *ctx = kmalloc_obj(*ctx, GFP_ATOMIC);
+>  
+>  		if (ctx) {
+>  			ctx->bh = bh;
+>  			ctx->vi = vi;
+> -			if (decrypt) {
+> -				INIT_WORK(&ctx->work, decrypt_bh);
+> -				fscrypt_enqueue_decrypt_work(&ctx->work);
+> -			} else {
+> -				INIT_WORK(&ctx->work, verify_bh);
+> -				fsverity_enqueue_verify_work(&ctx->work);
+> -			}
+> +			INIT_WORK(&ctx->work, verify_bh);
+> +			fsverity_enqueue_verify_work(&ctx->work);
+>  			return;
+>  		}
+>  		uptodate = false;
+>  	}
+>  	end_buffer_async_read(bh, uptodate);
+> -- 
+> 2.54.0
+> 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
 
 _______________________________________________
