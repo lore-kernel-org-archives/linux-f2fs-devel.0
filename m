@@ -4,73 +4,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B53B7CDB479
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 24 Jun 2026 19:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 96D99CDB47F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Jun 2026 07:01:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=QHVInfWpr7IxX/6jTdeooZMH31wCMaucKxRD8MUzUTc=; b=HSiFBwbzHje5yk5DN8hQDkf1U8
-	EmhqJZHxO58K2kxDj2edrWeiXSaU7Yi06zlQRXKWWLXdVyIr5NvPWpQAFFnL+9hXETcCDhxmqbikg
-	c57/e+5qs9Qb+IcFNrKWZFN7LwfcTQo8AW09j/2bqxiV7xSl2ZXf7SolTed+3Wwh2TQ8=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:Message-Id:Date:References:In-Reply-To:To:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=lF6LhTBn37EwVKkt937tWBln/2oUbfFtCC2cGxHZ+nQ=; b=bTSV+q7SwXXK93vu0OYPSZCpvq
+	PJ6lFDt+oDxjaIUg70VxyVVQkSovZje+kZTtnUKV+9HfpSTq3WeTvaTvJPsf7npFVQThgDUZFwXH4
+	4NcLfsgRMsyin5IZztJ5FOXh7NNzTIaOcO1qP0TtPCb6cl3fPGjzFmOi78vMVritPCtU=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wcT6L-0006NY-7v;
-	Wed, 24 Jun 2026 19:17:33 +0000
+	id 1wce60-0006gd-Az;
+	Thu, 25 Jun 2026 07:01:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1wcT6J-0006NQ-1g
+ (envelope-from <brauner@kernel.org>) id 1wce5z-0006gW-G0
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 19:17:31 +0000
+ Thu, 25 Jun 2026 07:01:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
- From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Message-Id:Date:References:In-Reply-To:Cc:To:From:
+ Subject:Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bqBc39xoDehUWuVu6AI6mn/gD7zXjqbqDQU6DrDbctI=; b=gchsjRF057wH5GYsWIE3uCKK7z
- uCtZfU6mbtZqx5mPtyrrK76CZW0IegtTNQknHBacdAloABlqifxzUVLwFXIQWbPHqZit4tQUwlIp6
- N9Bi1k75SVNy4Rid9x4i0ouV4kIrh+QGvZUBcloTLz4RYYy3jmQwcCXQNmKwpT+aLkm8=;
+ bh=+vv8SM8eUAW3MCRiYBMwLSNBJkmkWiJDn52oy/sEKaQ=; b=FvcinvP6rrvsfa8bCgPt7xP+/d
+ G1bcY/1MMfx8rNHJS32h5sZCLuoBRI8SkCRVS1NlMsQ0ClBqlIyVwARbpkEXQK0QVoBbZOikNv3lm
+ Kt3/6TonMzdkgmpPkah6IZcBEOsh2IMdidW+SqVHJWkXSAo0d1SrCgQuLJgPrcKgu4eg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=bqBc39xoDehUWuVu6AI6mn/gD7zXjqbqDQU6DrDbctI=; b=i
- VEW0HkHfFSefaDza4jkZdfMRWcNZk6uMuEq3v3PaJ+asQaK+UEjDS2gIj23+SlGAlRcxX7yPW+Nib
- TJlmHi9Q0MhGDWJv6U439+T/ldZFaPnV2JtbMCBBVYqmXVJzADek4d7A8agFTxU6YDnbyynhcnFTS
- gT9Twi4EhOqWhOsE=;
-Received: from [90.155.50.34] (helo=casper.infradead.org)
+ ; h=Message-Id:Date:References:In-Reply-To:Cc:To:From:Subject:
+ Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=+vv8SM8eUAW3MCRiYBMwLSNBJkmkWiJDn52oy/sEKaQ=; b=TG2/MXWJf64a2NcRHtd7+Mbdtk
+ T7wv7n3aIVwcG42SYAewaUojb982XdaqeK/7Rhq733Gm9rklF6OB8aY3Wlf8ji+gHDLroQROkFo78
+ MC/BtuDtp4PeGFvmZKAIP2CcbGT8uhr82rM9JU1ddO7y8FeAUVP8dwHstHRLV/21DjM0=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wcT6H-0006Wn-L7 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 24 Jun 2026 19:17:30 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
- Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:In-Reply-To:References;
- bh=bqBc39xoDehUWuVu6AI6mn/gD7zXjqbqDQU6DrDbctI=; b=P3Blr/FQoLsDznHwZjUUmuCF4A
- sZb56+wF7UCTV/Y/5WVd1/j4fTMY21gJkKubCLELbgnA7qjvYu5AnU5KUlaftQ7Tdp5QRFpkBnf1Q
- xsPtZtPJYHPsuYRowtANcexfKkz4HXgiI+rsilTZahhtJKw5IsgWQ/HyRe3bY5+u9hflDjOTiSAe6
- T+zWrOLGCrgsEhfzjLDbMJWzPpeZwOvXpUUPE6yCI/NMORylPALoZBEkHbI80ZmduQ3RAKlA6Etqe
- BKY70iGiBmTGe/HkgV2UV2+AlSd/cil7U/0+LnURnH6yypLT0JKTEKkNc1yesAjt5+nvfQ+pCsiSZ
- LWiKhpjw==;
-Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red
- Hat Linux)) id 1wcT69-00000008Zuo-2VOT;
- Wed, 24 Jun 2026 19:17:22 +0000
-Date: Wed, 24 Jun 2026 20:17:21 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Jiucheng Xu <jiucheng.xu@amlogic.com>
-Message-ID: <ajwtQRawMxcQkyo8@casper.infradead.org>
+ id 1wce5u-0003Hg-TD for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 25 Jun 2026 07:01:52 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by tor.source.kernel.org (Postfix) with ESMTP id A90A460217;
+ Thu, 25 Jun 2026 07:01:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15D3B1F000E9;
+ Thu, 25 Jun 2026 07:01:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1782370900;
+ bh=+vv8SM8eUAW3MCRiYBMwLSNBJkmkWiJDn52oy/sEKaQ=;
+ h=Subject:From:To:Cc:In-Reply-To:References:Date;
+ b=dyUeAerzru3xhnFxtZ+CbG65FbUdOu0DgT1EdRs+Fh5nbuoTM0kZGTsrCHmZQSZ4E
+ Mf5hx1nT9BoSHOfwF5eNt2DzQ3l9GYvzQ+EKyJCGerpBchHmAvSWAa2xGHkpYwr4b/
+ 3hGROIWH8dacrQ6f1LjyWDrVJ282Abav4LvIsn2rE0M9dHbgE0+UL+0uZBiX9FwjKB
+ oMdDPuJmhgHW6m8NbHBaRyBePCbnPFCqeepO/XS4wAsPQmL0T63OcZE6Q5ZaWn/S+X
+ uTBN9FKvdAcDTNbMASr+WpgrqFu6Da33TiS0cOOmJRUc9GfArmLx4HXm/ui2R3RWwp
+ yzJYU8tTtQNnA==
 MIME-Version: 1.0
-Content-Disposition: inline
-X-Headers-End: 1wcT6H-0006Wn-L7
-Subject: [f2fs-dev] Use of FGP_NOFS in f2fs
+To: Eric Biggers <ebiggers@kernel.org>
+In-Reply-To: <20260624050334.124606-11-ebiggers@kernel.org>
+References: <20260624050334.124606-1-ebiggers@kernel.org>
+ <20260624050334.124606-11-ebiggers@kernel.org>
+Date: Thu, 25 Jun 2026 09:01:34 +0200
+Message-Id: <20260625-kniefall-gemauert-strategisch-f4ad784de60d@brauner>
+X-Mailer: b4 0.16-dev-d9d01
+X-Developer-Signature: v=1; a=openpgp-sha256; l=381; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=o7y3zrWWLolQ8rjHQUEvtkfJrU1SIgeSJi1z7iC+nrk=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTZXArIvNXXXfhZxvBow6k26TVNu3SOVMs/nWLSIni5J
+ mSRaMXajlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIn8CGT4ZzTD+2Fi1YtLfesm
+ c3BFrgviP92eJvfK9aaOhcbLOkl3Fob/rhOf+5125WLY2tO6Q+q5pbTe9sLkpgtL/h5U6f9/paC
+ OBQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-Headers-End: 1wce5u-0003Hg-TD
+Subject: Re: [f2fs-dev] [PATCH 10/16] fs/buffer: Remove fs-layer decryption
+ code
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,24 +94,31 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+From: Christian Brauner via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Christian Brauner <brauner@kernel.org>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, Theodore Ts'o <tytso@mit.edu>,
+ Zhang Yi <yi.zhang@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-block@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ Andreas Dilger <adilger.kernel@dilger.ca>,
+ Ojaswin Mujoo <ojaswin@linux.ibm.com>, Baokun Li <libaokun@linux.alibaba.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jiucheng,
+On 2026-06-23 22:03 -0700, Eric Biggers wrote:
+> Now that fscrypt's file contents en/decryption is always implemented
+> using blk-crypto when the filesystem is block-based, the fs-layer
+> decryption code in fs/buffer.c is unused code.  Remove it.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> ---
 
-I am trying to remove FGP_NOFS from the kernel and the last remaining
-user was added by you last year in commit 2308de27c03d.  I'm trying to
-understand why.  Did you see an actual problem if you do not use it,
-or was it theoretical?  The commit message says "to avoid potential
-deadlock issues", but it's not clear to me whether you know they are
-there, or only think they are there.
+Reviewed-by: Christian Brauner (Amutable) <brauner@kernel.org>
 
-I'd really like to understand what the issues are as the normal issues
-which make calling into the filesystem (holding another folio locked,
-holding a mutex relied upon by reclaim) don't seem to be present.
-So if there is something, I'm not sure what it is.
 
 
 _______________________________________________
