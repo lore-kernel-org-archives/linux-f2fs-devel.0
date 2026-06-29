@@ -4,140 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 934E1C43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Jun 2026 08:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E16E8C43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Jun 2026 11:11:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=sVkv8iRPqsLuYvcolzoznU7jMc8u2Rqz8iDmF0UROc4=; b=f5mFBuVKinheP6ujMycBFdkH/c
-	rfcnxQIuYHCoP4KgKLB0cqZF66LxXWeqqD3TKH+NfhUTyul4ut5NjpIgjGYAIDbkMKb/sB32ei0SQ
-	2/VNctIFGffVYW6j9x/sypJBzif/PlsO9iX5fHo3SKuaGailOy0qnVRinuhcNoNedzns=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=kZwuQDaDqAjYebEkLDIT9cR+gmtUOanM534zMbeyM44=; b=mVqVkCFbvdUlRGobhB0SZtWhvV
+	CcwmJ/C9yQHDwJIY1TQPZ78jGJI8HxUXPJ5yWbDKKoNUaC8qhba2DsmRzGCBAgsreKAFirBLcwJsu
+	hy2q8R/cBA3Q3S7Y6Fsi9Gl8QnG8y/poV01uCkSCBaKLDEzuawdwrwwgLpkfr7SADl7I=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1we7pJ-0008EX-GH;
-	Mon, 29 Jun 2026 08:58:50 +0000
+	id 1we9tT-000602-Vo;
+	Mon, 29 Jun 2026 11:11:15 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jack@suse.cz>) id 1we7pI-0008EL-Fk
+ (envelope-from <chao@kernel.org>) id 1we9tS-0005zw-NU
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 29 Jun 2026 08:58:49 +0000
+ Mon, 29 Jun 2026 11:11:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
- MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=75eCaF7DdWHwN8Yy+9PPiahvMMfwHETFR7MEHAeWwvc=; b=UZ/6+jX50ciu1C2Bfr8z+T20ip
- wxtQ6RDffKcULMQ2jr3FMjeA66EkhJEBrGv3i03900jIUFUqMeM/AprkuYm2w+VjLzoHwE9WG+MLi
- IxGWjrAvpt1A/yoq+Iz2GH9U7/HLfSVHqrvmn292MW/NsFwV1Z2qkBgaf7OtmeabFO5s=;
+ bh=vdT1ft6eQ8lfPJtlPgw/cSQ0Bl8AGtQ9WC6HLK0l1lc=; b=Q90ADPczn66SyNu8V89jquFSPR
+ uP3YPWJs92osdYIJlZrXwzF+DIhcTem7/W6VI376UzgcQ/7MPLM3S+MykGzqe2swEtuNiTE0kYC8M
+ Lpc0P0jwSmD58Vg7+YZROCsAq/8+aFtckycbNJXJr5NGVpB7aVd4NmHGwLyFTat+lCxk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:
+ Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=75eCaF7DdWHwN8Yy+9PPiahvMMfwHETFR7MEHAeWwvc=; b=AuBpBjHGtYpogxCB7IRHFiiwZP
- wUnErw9gB/67mZ2JcymeMtm7Tdhvwfuw/Np8RxtBoH/kId1qexGrkKjf4/9nAu0z2CXXyq8fmOTGN
- F1AlSa3CkEU0RL2NP+0cKhXjxg6lCcNo3dVH8V5Uhsiye6j/4dT5VZGbM92bE60XbRXo=;
-Received: from smtp-out2.suse.de ([195.135.223.131])
+ bh=vdT1ft6eQ8lfPJtlPgw/cSQ0Bl8AGtQ9WC6HLK0l1lc=; b=hK7jQytkfMu7PAhPXafzqKtrAQ
+ aieD+m55flF5ucn8AEIi7RiubUEOK3NkpZOzlO5VFLiUm8008gyUWnJ3AF03QYNL4dZuUe4HDtCKi
+ k5eC2Z1xlTjbt6L8s20sG5blmB4DVG+0McYnC6Yl2V1g93tjDPVKTpzManxWxqxvxjV4=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1we7pG-0006la-ST for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 29 Jun 2026 08:58:49 +0000
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org
- [IPv6:2a07:de40:b281:104:10:150:64:97])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id C86A975987;
- Mon, 29 Jun 2026 08:58:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1782723520; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=75eCaF7DdWHwN8Yy+9PPiahvMMfwHETFR7MEHAeWwvc=;
- b=vOlVzJbne3sQZCfpWThXJxsghUldA6Iz0T+tLvaxx2OGdnSmsZlqZWwjMOYTc1N2UQn8r4
- Wt53PEudnxXZkekAaEiY9aLqWmaY5BnxUM+gU2IvbXY7+1PIzROUsAc+CMZ5uQ+oYavOfk
- i0pM96JjxK8hXGAEyOkdQQ7dZKBTA8w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1782723520;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=75eCaF7DdWHwN8Yy+9PPiahvMMfwHETFR7MEHAeWwvc=;
- b=8y01M4RU+eIs11JID7XntBk2hsVX+zRTiTpEfy5QH+k5XKGfVeV/Z3SWxcE9B/gRfC7Uxn
- gZriM7ccPPOpXfAA==
-Authentication-Results: smtp-out2.suse.de;
- dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vOlVzJbn;
- dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8y01M4RU
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1782723520; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=75eCaF7DdWHwN8Yy+9PPiahvMMfwHETFR7MEHAeWwvc=;
- b=vOlVzJbne3sQZCfpWThXJxsghUldA6Iz0T+tLvaxx2OGdnSmsZlqZWwjMOYTc1N2UQn8r4
- Wt53PEudnxXZkekAaEiY9aLqWmaY5BnxUM+gU2IvbXY7+1PIzROUsAc+CMZ5uQ+oYavOfk
- i0pM96JjxK8hXGAEyOkdQQ7dZKBTA8w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1782723520;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=75eCaF7DdWHwN8Yy+9PPiahvMMfwHETFR7MEHAeWwvc=;
- b=8y01M4RU+eIs11JID7XntBk2hsVX+zRTiTpEfy5QH+k5XKGfVeV/Z3SWxcE9B/gRfC7Uxn
- gZriM7ccPPOpXfAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BDB79779A8;
- Mon, 29 Jun 2026 08:58:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id P2JMLsAzQmoVPQAAD6G6ig
- (envelope-from <jack@suse.cz>); Mon, 29 Jun 2026 08:58:40 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
- id 54BAFA10B5; Mon, 29 Jun 2026 10:58:40 +0200 (CEST)
-Date: Mon, 29 Jun 2026 10:58:40 +0200
-From: Jan Kara <jack@suse.cz>
-To: Matthew Wilcox <willy@infradead.org>
-Message-ID: <kuag63fjw2cvzqc2gahefcxnlp3jwqtapr6gwkgvhse6aez6hr@spvbvpprpwgb>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1we9tQ-0006cf-Tq for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 29 Jun 2026 11:11:14 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by tor.source.kernel.org (Postfix) with ESMTP id BC46260008;
+ Mon, 29 Jun 2026 11:11:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C8211F000E9;
+ Mon, 29 Jun 2026 11:11:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1782731462;
+ bh=vdT1ft6eQ8lfPJtlPgw/cSQ0Bl8AGtQ9WC6HLK0l1lc=;
+ h=Date:From:Subject:To:Cc:References:In-Reply-To;
+ b=bdIf8F099Xrm9aGQmo8VOu9szJ2JEo7Bt8OlWbwCfsWGUVE7gonLBmNZKka/8lRiJ
+ pmLI1fJ54c8aUuHagY02Q0+p3j2uhlDyPdPqoHicMhnK8EizdzifmwQjLqXOCMUuq2
+ egqi2LBNHIHcfZBFDd/7JJwxhqZqiQ2l82WKGmSrFhtuMZh3uiKh3uKhQRcVgO0ylY
+ oDrtmeJWkO8dqwwW9Vjxyef13KHFg8Tc9kVsuybs25hj13IkRcyIm7ljk586NS9x/P
+ 3g+OmX0GLYlQNEOsgXobbLEcjcqduPaVkN0e64g6Cea9WCA7guOW1snM8mfQjFTWeM
+ 2dCVaPyPjz7iw==
+Message-ID: <b38096d4-20e6-40f9-8c89-c0219542a63d@kernel.org>
+Date: Mon, 29 Jun 2026 19:10:59 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>
 References: <ajwtQRawMxcQkyo8@casper.infradead.org>
  <ca56ceb7-b0a7-41f2-9b26-085e81456794@amlogic.com>
  <324cc5b6-ebfd-4696-b2f4-33710b771249@kernel.org>
  <akHsfps-sQ1INJfS@casper.infradead.org>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <akHsfps-sQ1INJfS@casper.infradead.org>
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: C86A975987
-X-Spamd-Result: default: False [-4.01 / 50.00]; BAYES_HAM(-3.00)[100.00%];
- NEURAL_HAM_LONG(-1.00)[-1.000]; MID_RHS_NOT_FQDN(0.50)[];
- R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
- NEURAL_HAM_SHORT(-0.20)[-1.000]; MIME_GOOD(-0.10)[text/plain];
- MX_GOOD(-0.01)[]; RCVD_VIA_SMTP_AUTH(0.00)[];
- FUZZY_RATELIMITED(0.00)[rspamd.com]; ARC_NA(0.00)[];
- MIME_TRACE(0.00)[0:+]; MISSING_XM_UA(0.00)[];
- TO_DN_SOME(0.00)[];
- RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
- DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
- RCPT_COUNT_FIVE(0.00)[6]; FROM_EQ_ENVFROM(0.00)[];
- FROM_HAS_DN(0.00)[]; RCVD_COUNT_THREE(0.00)[3];
- RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from]; 
- RCVD_TLS_LAST(0.00)[]; TO_MATCH_ENVRCPT_ALL(0.00)[];
- DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
- DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Headers-End: 1we7pG-0006la-ST
+ <kuag63fjw2cvzqc2gahefcxnlp3jwqtapr6gwkgvhse6aez6hr@spvbvpprpwgb>
+Content-Language: en-US
+In-Reply-To: <kuag63fjw2cvzqc2gahefcxnlp3jwqtapr6gwkgvhse6aez6hr@spvbvpprpwgb>
+X-Headers-End: 1we9tQ-0006cf-Tq
 Subject: Re: [f2fs-dev] Use of FGP_NOFS in f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -150,129 +90,79 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.com>,
  linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon 29-06-26 04:54:38, Matthew Wilcox wrote:
-> [Adding Jan Kara; retaining whole message for context]
-
-Thanks!
-
-> On Mon, Jun 29, 2026 at 09:39:25AM +0800, Chao Yu wrote:
-> > On 6/26/26 17:30, Jiucheng Xu wrote:
-> > > On 6/25/2026 3:17 AM, Matthew Wilcox wrote:
-> > > > [ EXTERNAL EMAIL ]
-> > > > I am trying to remove FGP_NOFS from the kernel and the last remaini=
-ng
-> > > > user was added by you last year in commit 2308de27c03d.=A0 I'm tryi=
-ng to
-> > > > understand why.=A0 Did you see an actual problem if you do not use =
-it,
-> > > > or was it theoretical?=A0 The commit message says "to avoid potenti=
-al
-> > > > deadlock issues", but it's not clear to me whether you know they are
-> > > > there, or only think they are there.
-> > > > =
-
-> > > > I'd really like to understand what the issues are as the normal iss=
-ues
-> > > > which make calling into the filesystem (holding another folio locke=
-d,
-> > > > holding a mutex relied upon by reclaim) don't seem to be present.
-> > > > So if there is something, I'm not sure what it is.
-> > > Hi Matthew,
-> > > =
-
-> > > The FGP_NOFS flag was suggested by Chao and not adding it might lead =
-to deadlock issues.
-> > > =
-
-> > > @Chao could you explain this for Matthew?
-> > =
-
-> > Hi Matthew, Jiucheng,
-> > =
-
-> > IIRC, for normal path from write -> write_begin, it seems fine since th=
-ere is
-> > no f2fs-specified mutex or other folio lock in the path, but I was worr=
-ied about
-> > quota path when I suggested to keep GFP_NOFS flag, as the lock race con=
-dition
-> > is quite complicated there: f2fs internal lock vs quota system lock vs =
-folio lock...
-> > =
-
-> > I searched the commits and found this:
-> > =
-
-> > Commit 02117b8ae9c0 ("f2fs: Set GF_NOFS in read_cache_page_gfp while do=
-ing
-> > f2fs_quota_read")
-> > =
-
-> > In this case, f2fs_quota_read() was calling read_mapping_page(), which =
-allowed
-> > GFP_FS allocations. This triggered the following deadlock:
-> > =
-
-> >     Thread 1 (User Open/Write)
-> >     - do_sys_open
-> >      - vfs_open
-> >       - dquot_file_open
-> >        - dquot_initialize
-> >         - dqget
-> >          - dquot_acquire
-> >           : locks &dqopt->dqio_mutex (VFS Quota Mutex)
-> >           - qtree_read_dquot
-> >            - f2fs_quota_read
-> >             - read_mapping_page (GFP_KERNEL / allows GFP_FS)
-> >              - __alloc_pages_nodemask
-> >               - try_to_free_pages (Direct Reclaim)
-> >                - prune_icache_sb
-> >                 - evict
-> >                  - f2fs_evict_inode
-> >                   - dquot_drop
-> >                    - dqput
-> >                     - dquot_commit
-> >                      : tries to lock &dqopt->dqio_mutex again
-> >                      =3D=3D> DEADLOCK (waiting for itself)
-> > =
-
-> > It may trigger deadlock in f2fs_quota_write() as the same way in f2fs_q=
-uota_read()
-> > path? let me know if I'm missing anything.
-> > =
-
-> > Are memalloc_nofs_save() and memalloc_nofs_restore() recommended for su=
-ch case?
-> > any suggestions?
-> =
-
-> In general, yes, memalloc_nofs_save() after locking dqio_mutex sounds like
-> the right idea to me.  I'd want to familiarise myself more thoroughly
-> with the code before making a firm recommendation, and it's probably
-> quicker to just ask Jan ;-)
-
-So the above stacktrace shouldn't be possible since you've added
-memalloc_nofs_save() / restore() pairs into quota code in:
-
-537e11cdc7a6 ("quota: Prevent memory allocation recursion while holding dq_=
-lock")
-
-Chao, are you sure the GFP_NOFS mask isn't just a relic from the past?
-
-								Honza
--- =
-
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gNi8yOS8yNiAxNjo1OCwgSmFuIEthcmEgd3JvdGU6Cj4gT24gTW9uIDI5LTA2LTI2IDA0OjU0
+OjM4LCBNYXR0aGV3IFdpbGNveCB3cm90ZToKPj4gW0FkZGluZyBKYW4gS2FyYTsgcmV0YWluaW5n
+IHdob2xlIG1lc3NhZ2UgZm9yIGNvbnRleHRdCj4gCj4gVGhhbmtzIQo+IAo+PiBPbiBNb24sIEp1
+biAyOSwgMjAyNiBhdCAwOTozOToyNUFNICswODAwLCBDaGFvIFl1IHdyb3RlOgo+Pj4gT24gNi8y
+Ni8yNiAxNzozMCwgSml1Y2hlbmcgWHUgd3JvdGU6Cj4+Pj4gT24gNi8yNS8yMDI2IDM6MTcgQU0s
+IE1hdHRoZXcgV2lsY294IHdyb3RlOgo+Pj4+PiBbIEVYVEVSTkFMIEVNQUlMIF0KPj4+Pj4gSSBh
+bSB0cnlpbmcgdG8gcmVtb3ZlIEZHUF9OT0ZTIGZyb20gdGhlIGtlcm5lbCBhbmQgdGhlIGxhc3Qg
+cmVtYWluaW5nCj4+Pj4+IHVzZXIgd2FzIGFkZGVkIGJ5IHlvdSBsYXN0IHllYXIgaW4gY29tbWl0
+IDIzMDhkZTI3YzAzZC7CoCBJJ20gdHJ5aW5nIHRvCj4+Pj4+IHVuZGVyc3RhbmQgd2h5LsKgIERp
+ZCB5b3Ugc2VlIGFuIGFjdHVhbCBwcm9ibGVtIGlmIHlvdSBkbyBub3QgdXNlIGl0LAo+Pj4+PiBv
+ciB3YXMgaXQgdGhlb3JldGljYWw/wqAgVGhlIGNvbW1pdCBtZXNzYWdlIHNheXMgInRvIGF2b2lk
+IHBvdGVudGlhbAo+Pj4+PiBkZWFkbG9jayBpc3N1ZXMiLCBidXQgaXQncyBub3QgY2xlYXIgdG8g
+bWUgd2hldGhlciB5b3Uga25vdyB0aGV5IGFyZQo+Pj4+PiB0aGVyZSwgb3Igb25seSB0aGluayB0
+aGV5IGFyZSB0aGVyZS4KPj4+Pj4KPj4+Pj4gSSdkIHJlYWxseSBsaWtlIHRvIHVuZGVyc3RhbmQg
+d2hhdCB0aGUgaXNzdWVzIGFyZSBhcyB0aGUgbm9ybWFsIGlzc3Vlcwo+Pj4+PiB3aGljaCBtYWtl
+IGNhbGxpbmcgaW50byB0aGUgZmlsZXN5c3RlbSAoaG9sZGluZyBhbm90aGVyIGZvbGlvIGxvY2tl
+ZCwKPj4+Pj4gaG9sZGluZyBhIG11dGV4IHJlbGllZCB1cG9uIGJ5IHJlY2xhaW0pIGRvbid0IHNl
+ZW0gdG8gYmUgcHJlc2VudC4KPj4+Pj4gU28gaWYgdGhlcmUgaXMgc29tZXRoaW5nLCBJJ20gbm90
+IHN1cmUgd2hhdCBpdCBpcy4KPj4+PiBIaSBNYXR0aGV3LAo+Pj4+Cj4+Pj4gVGhlIEZHUF9OT0ZT
+IGZsYWcgd2FzIHN1Z2dlc3RlZCBieSBDaGFvIGFuZCBub3QgYWRkaW5nIGl0IG1pZ2h0IGxlYWQg
+dG8gZGVhZGxvY2sgaXNzdWVzLgo+Pj4+Cj4+Pj4gQENoYW8gY291bGQgeW91IGV4cGxhaW4gdGhp
+cyBmb3IgTWF0dGhldz8KPj4+Cj4+PiBIaSBNYXR0aGV3LCBKaXVjaGVuZywKPj4+Cj4+PiBJSVJD
+LCBmb3Igbm9ybWFsIHBhdGggZnJvbSB3cml0ZSAtPiB3cml0ZV9iZWdpbiwgaXQgc2VlbXMgZmlu
+ZSBzaW5jZSB0aGVyZSBpcwo+Pj4gbm8gZjJmcy1zcGVjaWZpZWQgbXV0ZXggb3Igb3RoZXIgZm9s
+aW8gbG9jayBpbiB0aGUgcGF0aCwgYnV0IEkgd2FzIHdvcnJpZWQgYWJvdXQKPj4+IHF1b3RhIHBh
+dGggd2hlbiBJIHN1Z2dlc3RlZCB0byBrZWVwIEdGUF9OT0ZTIGZsYWcsIGFzIHRoZSBsb2NrIHJh
+Y2UgY29uZGl0aW9uCj4+PiBpcyBxdWl0ZSBjb21wbGljYXRlZCB0aGVyZTogZjJmcyBpbnRlcm5h
+bCBsb2NrIHZzIHF1b3RhIHN5c3RlbSBsb2NrIHZzIGZvbGlvIGxvY2suLi4KPj4+Cj4+PiBJIHNl
+YXJjaGVkIHRoZSBjb21taXRzIGFuZCBmb3VuZCB0aGlzOgo+Pj4KPj4+IENvbW1pdCAwMjExN2I4
+YWU5YzAgKCJmMmZzOiBTZXQgR0ZfTk9GUyBpbiByZWFkX2NhY2hlX3BhZ2VfZ2ZwIHdoaWxlIGRv
+aW5nCj4+PiBmMmZzX3F1b3RhX3JlYWQiKQo+Pj4KPj4+IEluIHRoaXMgY2FzZSwgZjJmc19xdW90
+YV9yZWFkKCkgd2FzIGNhbGxpbmcgcmVhZF9tYXBwaW5nX3BhZ2UoKSwgd2hpY2ggYWxsb3dlZAo+
+Pj4gR0ZQX0ZTIGFsbG9jYXRpb25zLiBUaGlzIHRyaWdnZXJlZCB0aGUgZm9sbG93aW5nIGRlYWRs
+b2NrOgo+Pj4KPj4+ICAgICBUaHJlYWQgMSAoVXNlciBPcGVuL1dyaXRlKQo+Pj4gICAgIC0gZG9f
+c3lzX29wZW4KPj4+ICAgICAgLSB2ZnNfb3Blbgo+Pj4gICAgICAgLSBkcXVvdF9maWxlX29wZW4K
+Pj4+ICAgICAgICAtIGRxdW90X2luaXRpYWxpemUKPj4+ICAgICAgICAgLSBkcWdldAo+Pj4gICAg
+ICAgICAgLSBkcXVvdF9hY3F1aXJlCj4+PiAgICAgICAgICAgOiBsb2NrcyAmZHFvcHQtPmRxaW9f
+bXV0ZXggKFZGUyBRdW90YSBNdXRleCkKPj4+ICAgICAgICAgICAtIHF0cmVlX3JlYWRfZHF1b3QK
+Pj4+ICAgICAgICAgICAgLSBmMmZzX3F1b3RhX3JlYWQKPj4+ICAgICAgICAgICAgIC0gcmVhZF9t
+YXBwaW5nX3BhZ2UgKEdGUF9LRVJORUwgLyBhbGxvd3MgR0ZQX0ZTKQo+Pj4gICAgICAgICAgICAg
+IC0gX19hbGxvY19wYWdlc19ub2RlbWFzawo+Pj4gICAgICAgICAgICAgICAtIHRyeV90b19mcmVl
+X3BhZ2VzIChEaXJlY3QgUmVjbGFpbSkKPj4+ICAgICAgICAgICAgICAgIC0gcHJ1bmVfaWNhY2hl
+X3NiCj4+PiAgICAgICAgICAgICAgICAgLSBldmljdAo+Pj4gICAgICAgICAgICAgICAgICAtIGYy
+ZnNfZXZpY3RfaW5vZGUKPj4+ICAgICAgICAgICAgICAgICAgIC0gZHF1b3RfZHJvcAo+Pj4gICAg
+ICAgICAgICAgICAgICAgIC0gZHFwdXQKPj4+ICAgICAgICAgICAgICAgICAgICAgLSBkcXVvdF9j
+b21taXQKPj4+ICAgICAgICAgICAgICAgICAgICAgIDogdHJpZXMgdG8gbG9jayAmZHFvcHQtPmRx
+aW9fbXV0ZXggYWdhaW4KPj4+ICAgICAgICAgICAgICAgICAgICAgID09PiBERUFETE9DSyAod2Fp
+dGluZyBmb3IgaXRzZWxmKQo+Pj4KPj4+IEl0IG1heSB0cmlnZ2VyIGRlYWRsb2NrIGluIGYyZnNf
+cXVvdGFfd3JpdGUoKSBhcyB0aGUgc2FtZSB3YXkgaW4gZjJmc19xdW90YV9yZWFkKCkKPj4+IHBh
+dGg/IGxldCBtZSBrbm93IGlmIEknbSBtaXNzaW5nIGFueXRoaW5nLgo+Pj4KPj4+IEFyZSBtZW1h
+bGxvY19ub2ZzX3NhdmUoKSBhbmQgbWVtYWxsb2Nfbm9mc19yZXN0b3JlKCkgcmVjb21tZW5kZWQg
+Zm9yIHN1Y2ggY2FzZT8KPj4+IGFueSBzdWdnZXN0aW9ucz8KPj4KPj4gSW4gZ2VuZXJhbCwgeWVz
+LCBtZW1hbGxvY19ub2ZzX3NhdmUoKSBhZnRlciBsb2NraW5nIGRxaW9fbXV0ZXggc291bmRzIGxp
+a2UKPj4gdGhlIHJpZ2h0IGlkZWEgdG8gbWUuICBJJ2Qgd2FudCB0byBmYW1pbGlhcmlzZSBteXNl
+bGYgbW9yZSB0aG9yb3VnaGx5Cj4+IHdpdGggdGhlIGNvZGUgYmVmb3JlIG1ha2luZyBhIGZpcm0g
+cmVjb21tZW5kYXRpb24sIGFuZCBpdCdzIHByb2JhYmx5Cj4+IHF1aWNrZXIgdG8ganVzdCBhc2sg
+SmFuIDstKQo+IAo+IFNvIHRoZSBhYm92ZSBzdGFja3RyYWNlIHNob3VsZG4ndCBiZSBwb3NzaWJs
+ZSBzaW5jZSB5b3UndmUgYWRkZWQKPiBtZW1hbGxvY19ub2ZzX3NhdmUoKSAvIHJlc3RvcmUoKSBw
+YWlycyBpbnRvIHF1b3RhIGNvZGUgaW46Cj4gCj4gNTM3ZTExY2RjN2E2ICgicXVvdGE6IFByZXZl
+bnQgbWVtb3J5IGFsbG9jYXRpb24gcmVjdXJzaW9uIHdoaWxlIGhvbGRpbmcgZHFfbG9jayIpCgpB
+aCwgSSBzZWUsIGl0IGhhcyBiZWVuIGZpeGVkIGluIHF1b3RhIHN5c3RlbS4KCj4gCj4gQ2hhbywg
+YXJlIHlvdSBzdXJlIHRoZSBHRlBfTk9GUyBtYXNrIGlzbid0IGp1c3QgYSByZWxpYyBmcm9tIHRo
+ZSBwYXN0PwoKU28sIEkgYWdyZWUgaXQncyBhIHJlbGljIGltcGxlbWVudGF0aW9uLCB0aGFua3Mg
+SmFuIGZvciByZW1pbmRlci4KClRoYW5rcywKCj4gCj4gCQkJCQkJCQlIb256YQoKCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVs
+IG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRw
+czovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVs
+Cg==
