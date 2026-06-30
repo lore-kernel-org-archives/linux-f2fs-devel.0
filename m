@@ -4,80 +4,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3A184C43602
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Jun 2026 12:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ADD5BC43602
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Jun 2026 14:12:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=lkncxQ7Bu+RfJwC1ybf+GK6HZurw4RBoIvtJhscIpAg=; b=kKI3Lb12WDlE8vp5y7EXgK5e7/
-	txKfFuVYr5oCgHbepCS+HZKIPQRlvPP/5JmVSr9pJMKlNCYshp6GxVRnaIK99dOGUCr3e3mOgxHtL
-	yZ61mJM5Q/G1OkOG2FNv+8Y1tSPpFXRGZQo0jRUx6jnsE2FklpzZtJcoKbNGFIeO6zFE=;
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:To:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=3t+TaGNxEuYsvz1MTYw7vqd/eMzWnGJ0b+6Z2AynoJo=; b=a21C7/FpssqJVjfht9wZjs283o
+	V/UJWYqbTCxf4re8WfkgSTugEPJY2/Oz1FnmsIjmxIpOGUPEgf65JGKJM/SlgWFO3GqjJJUJ99yu2
+	C0RJhzy+LS982q261UF/S5qbzL1pK5fy2uS7+35hz8vUr1GFjp5Ve7j6v0rykgpNh+tw=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1weXHV-0005dj-O3;
-	Tue, 30 Jun 2026 12:09:38 +0000
+	id 1weZBz-00070f-KD;
+	Tue, 30 Jun 2026 14:12:04 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1weXHU-0005dZ-PP
+ (envelope-from <rollkingzzc@gmail.com>) id 1weZBy-00070S-Re
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 Jun 2026 12:09:37 +0000
+ Tue, 30 Jun 2026 14:12:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DvHcNk1NdP2Vtsc0m0nKrmohuP/D6QozrKLzgnXVJjM=; b=dWZbIZXvMafSsh5u5aBmQReAXV
- Yxw4k/7o9DLIL4jAmUsFYXpuXywNm1PmeWDIpiYgGUGBgemfkTzs0Ifru9Sr/Qiv3RL0i1EB9z/wP
- cHU+hPl0gcyvqCnkalisLJdPzBFSE+WHj0fvcyuoEdikVe1s8LjDNak7pLbEiBDFI3p0=;
+ bh=YD5CEwIQopM2kgC6zkE0XMqqb0eBnpAwZfHsuJQVL5w=; b=j62LwA3M8CApcGvt9PeDLBOZ8T
+ 8Oibsll7DkfC858dAKyp+WWUquAImgyJi2+h94Z069MLOZdv6yrLo+xEpQRx9YsejjifsBzR1i9jl
+ RTHcApZO6VhlPgXbh8pJ+gQFwHRM8+wqe0/3oTNURIjSUPmfpyt8q/qdudLikUx18E94=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=DvHcNk1NdP2Vtsc0m0nKrmohuP/D6QozrKLzgnXVJjM=; b=FmGp53jBWHx2rqRI9Uk90F24cD
- 6wMypeqSmGdKeMtv93KlkPs4mxZTfm0WJbbS0Blmc3AFJLQuPU5IIrw6jdMOUTU3jp9EuWoFNnkAJ
- lDUf3bTWMX6OMqNShrPIHTbm6OLRKjuQfGWY8OZq5DlbEthUs7C3wMJ+Nkf8fyxah4zw=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=YD5CEwIQopM2kgC6zkE0XMqqb0eBnpAwZfHsuJQVL5w=; b=lTTSFSDPKpCDdKYJh022Qa9li9
+ z6lp+qB8R5GBmj65tmtRqrSTbue+DrlBXvlNg7zG6Bux/Yt30p4g1moU00ZobRAGk175ND9QxGXl5
+ 5xWDgErB2OjjmB4Sl6okHKazJ7o5gbU49jjBS7LOU3abPsmHvtHZY4tg6BPRrfp2nL8w=;
+Received: from mail-lr2-f3.google.com ([74.125.230.67])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1weXHQ-0004pO-Pt for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 Jun 2026 12:09:37 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id A9FD6600BB;
- Tue, 30 Jun 2026 12:09:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E2BC1F000E9;
- Tue, 30 Jun 2026 12:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1782821362;
- bh=DvHcNk1NdP2Vtsc0m0nKrmohuP/D6QozrKLzgnXVJjM=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=SnVEi9ne4/qQxPRz9gcf2UXRrkNQO5dBIr6cufy1g98cDljoGdpwDebmpWCRHPP9c
- ph9bEXTsQooGZ/MyNNu8dW3W58Mt7/pn7mwHAnNeUrouxwrCdbvX7EwhxeGH4vKeuB
- kMCHOKh0Q80USqf/1ybeAaL8EhQXKbiMq6i9533ZFr+93KYuc37Yfk10b3lV5YOiZ+
- 8NVCk9TVcgec9H5eqzVfK4RStXfCY+1+Q9oOE4wfgJk3IHBxDP1w0WIgWC6hrcmMID
- gZSzgRdN7gnuM8qvdyfrU+RuaUg4gY5cxLhsBFem9UMwJbEKLD0bNZlODxkmofH7z8
- NAPNOWJXdJNQQ==
-Message-ID: <e7a57c5e-62de-401d-8e39-f7409f398a84@kernel.org>
-Date: Tue, 30 Jun 2026 20:09:19 +0800
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1weZBx-0003qd-Ix for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 30 Jun 2026 14:12:03 +0000
+Received: by mail-lr2-f3.google.com with SMTP id
+ 38308e7fff4ca-39af167f87eso14117061fa.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 30 Jun 2026 07:12:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782828715; cv=none;
+ d=google.com; s=arc-20260327;
+ b=qZs9xt1P48HKeqfI2WnApfFAw4a3kFVjD+ciV9jA3eTyx8WKhXqoxCM5jK8ltIqEq/
+ D0PYFensC403OTAZmvUrUUlUN6PTgguQyuQhfkhlGz5WrYmMNkzrQHQ4Rls7gWNBNwDX
+ IErESb4RLI5AYv8myaD1WDQ+svZJvKa6OZdRZkinqX50es9k+mUBRZqlzCkZUqkaQ5VM
+ P+Et6eCcBuhkfOVgWfJvTbdYaRHH/pKL3Pd+5Sw8/VyOGu7xVa1Kz5Ra4WVfgDwSzBDq
+ 0b6Tdob1iao0OU5UjJIK7je2P/3Dis36MNA36FQ81ReTNsAdz4H/gtn9EgqKT13CXFs+
+ j98Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=YD5CEwIQopM2kgC6zkE0XMqqb0eBnpAwZfHsuJQVL5w=;
+ fh=7J+iNAb82Y+e2hNcw9M+ALj5MMQorYGSyNEjjjL7nJI=;
+ b=pPgZLVT7z/rlNWhPqFgGxuyKosP0UIDZhbWxdShrFpWhCUE2jlSXO4P8mnqBq2IsQ6
+ Nazwz3Zfo1hrk20jALM1ykI6riLfT5YgSPBF2zmvkmL7ZmiixyUZZ7uUfbEsTdyBCtz8
+ qiK/umZJ/7B+f0GSuAkhy/gWWGMWjZ+Qrbe3EO1PmoskRZPGUE2dCDxHk69XKvHUcLQh
+ B2BrmpLStGZGNELggGePWdqtCECukowU99EJ5iS0MG7RCqga2TAU+Qm/NPS5ZZ2ANlDt
+ YGL6u1k5dDHhiIsZAH4AiCiHo7gWyQqjCfeE1nn4MrI66b6MxpAu2fa6JubpqZGTaq0b
+ UA1A==; darn=lists.sourceforge.net
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1782828715; x=1783433515; darn=lists.sourceforge.net;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=YD5CEwIQopM2kgC6zkE0XMqqb0eBnpAwZfHsuJQVL5w=;
+ b=bl6DaQk8kl6y3sx5sG3FAJ26zh6+nEBTNVVlvfr0QxcDuPP9dcw2aM0+DasXSgCM/7
+ j3iye+QVyVhPFqLa4EZ34YnEmniF1ztAlkq32YEDBPEBfCoAU0TWMWw9S+RzPCCpErbw
+ JvS8gmRAvew+PxojlXvpJozJMzd7cXaVkBNRCVgPS97eSCq2vZjXKPyBDvD2+pbWDFnX
+ 8jQws7y9mqzqqw/8OSltUiSejuxtq8C/l8hOuEDYAtzkw7DRs0h/EPOq2pldPVc8pQqD
+ IHEHGuO1awafuDPilNhkyNHZCC2DY8j0MUtOzeCPSVxcCRuLM/2uE0pRfA5sRFYipxjH
+ Hepg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1782828715; x=1783433515;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=YD5CEwIQopM2kgC6zkE0XMqqb0eBnpAwZfHsuJQVL5w=;
+ b=k0wqbPky3Q7S3pd7F3Dv7y4nEZ1E86B0z+hZGFl4zltYynRNL7tHL1guBbashkkYDh
+ o4nQgU6qlZb4ASB6lBNIkzc/dq2SXZfgtpPQhduwE77Gjl+jfRUQOFDHeb006lA+eczM
+ taumuGv+A2GG/qaPu/OlND3jCYR2gBIyP+gFml2aAQIJfXf9iPzCNMD90hs8cvxpi9rJ
+ o49D8i7oDqyWnnwp3fJeeypmeoahedQf+rXThIq7bxROVC5dprULXTyitNZV2q4vucds
+ eo703zGTit0n/zJSr619xnXrriub8ImmQdzKnRzvsvdmfgi4Wnjf7+uvue5Y1kDeKtS7
+ POjQ==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RovbIQNX4MuijG+CVTaIgdiIFvLfsxP7p00j/k/AFJxG4wOMKPuqtPta1X94aGtn3INuwiekpeZNT+940FEmi/3@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YxwodsGP7FB+97M4NZjJQHiwn5dV/DFsgW9IVEOoNmDsHjIvVqA
+ zCKrLhDEIBC0dMuxL08qywv0g+u3ZT2dATCNzNGcPsv2cPnygIcTIVQn6EUxZqCbPPF9eyyW/zF
+ sF8WMOCFz5x2C29eoFRqsN3tiPuT9KGc=
+X-Gm-Gg: AfdE7cnk7thEPzDerhE91AR7YV6en9nzqwNCnouJvbsKmVCrtD3J05U7gY9BKOAoXUy
+ FJ3VxJYkAep+j2N1tqkcEt78sJyLkoWK+adKpbRMc8qZ8meMmK7GsvRd+YaAR3T5CluvZRnlxea
+ juK4z7MS/qHsDH7WwHMjJepbDh1U9gx9xVQR3Hvg72U7ay++ZHksnRifNG/LBlR/17hsNX77Bqx
+ qDGrm/7Zo2OYwdy5rnIhQtdu+VAf1GDZITroGN+77Cv7a1v05MaYlaCBjgkdCbna4/NsmugzEMc
+ ENRXFev9CHU7/9h7tAfEprZzrBcqcb0Kd37R8VZDA5mydXySGc+o0Xgy
+X-Received: by 2002:a05:651c:b28:b0:394:1192:5e1f with SMTP id
+ 38308e7fff4ca-39b1ddfa095mr7964081fa.22.1782828714939; Tue, 30 Jun 2026
+ 07:11:54 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Christoph Hellwig <hch@infradead.org>, Zorro Lang <zlang@kernel.org>,
- Jan Prusakowski <jprusakowski@google.com>
-References: <20260622070438.1542638-1-jprusakowski@google.com>
- <ajuLORVplOvEXvnI@infradead.org> <akKd2IImO7bRjVV2@zlang-mailbox>
-Content-Language: en-US
-In-Reply-To: <akKd2IImO7bRjVV2@zlang-mailbox>
-X-Headers-End: 1weXHQ-0004pO-Pt
-Subject: Re: [f2fs-dev] [PATCH] generic/064: allow 50 extents on F2FS after
- fcollapse
+References: <20260630045919.1671833-1-rollkingzzc@gmail.com>
+ <07babbcd-a1d4-4b03-987e-bdd7ed933c33@kernel.org>
+In-Reply-To: <07babbcd-a1d4-4b03-987e-bdd7ed933c33@kernel.org>
+From: Cen Zhang <rollkingzzc@gmail.com>
+Date: Tue, 30 Jun 2026 22:11:42 +0800
+X-Gm-Features: AVVi8CfIW1mpLF_KerOc72XZ4LWPT8dc7gOaK_XWGg4-iFdNlKbnuaGIIYLJF5Q
+Message-ID: <CAB7XQsETc1290AVo95JFzV6NEMr_Fyb5VrNWzH-5sF1Ldk+MvQ@mail.gmail.com>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1weZBx-0003qd-Ix
+Subject: Re: [f2fs-dev] [PATCH v6] f2fs: protect gc task pointer during
+ teardown
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,37 +134,62 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, fstests@vger.kernel.org,
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 6/30/26 00:37, Zorro Lang via Linux-f2fs-devel wrote:
-> On Wed, Jun 24, 2026 at 12:46:01AM -0700, Christoph Hellwig wrote:
->> This sounds odd.  The test allocates a contigous range and then just does
->> insert/collapse on it, which should not lead to any new data block
->> allocations.  Given that the test works fine on zoned XFS and btrfs
->> with strict out of place write policies we know it does not require
->> overwriting blocks to work as well.
->>
->> So I think something is fishy in f2fs if needs to allocate data blocks
->> here.
-> 
-> I have the same question with Christoph. Shouldn't fcollapse in F2FS just
-> remap the metadata instead of allocating new data blocks?
+Hi, Chao
 
-Hi Christoph, Zorro,
+Thanks a lot for your patient review and detailed suggestions.
 
-Let me explain it briefly, this is because f2fs has only one copy of reverse
-mapping table (aka SSA), for any checkpointed data, we can not modify SSA info
-directly during remap, otherwise, after sudden power-cut, we will suffer
-inconsistent issue in between reverse mapping table and mapping table. So, f2fs
-choose to rewrite for any checkpointed data.
+> How about introduce f2fs_update_gc_task()?
+>
+> attach w/ f2fs_update_gc_task(, task), deattch w/ f2fs_update_gc_task(, NULL)?
 
-Thanks,
+I will introduce f2fs_update_gc_task(gc_th, task). The start path uses
+f2fs_update_gc_task(gc_th, task), and the stop path uses
+f2fs_update_gc_task(gc_th, NULL).
+
+> +     if (READ_ONCE(gc_th->f2fs_gc_task))
+> +             return 0;
+>
+> Why we need to check this?
+
+Thanks, this check is unnecessary. I removed it.
+
+> -     task = xchg(&gc_th->f2fs_gc_task, NULL);
+>
+> I don't see this line in anywhere.
+
+Sorry, this came from my local prerequisite tree, I will rebase the
+change onto right commit.
+
+> +             if (!f2fs_cp_error(sbi) && READ_ONCE(gc_th->f2fs_gc_task)) {
+>
+> It's a corner case, I guess we can skip to check cp_error.
+
+Agreed. I removed the added f2fs_cp_error() check and kept only the
+f2fs_gc_task recheck after prepare_to_wait().
+
+> Can we do like this?
+>
+> __sbi_store()
+>
+> spin_lock
+> check f2fs_gc_task
+> set_user_nice
+> spin_unlock
+
+Yes, will updated it this way.
+
+I'll send v7 soon.
+
+Thanks again.
+
+Best regards,
+Zhang Cen
 
 
 _______________________________________________
