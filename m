@@ -4,79 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C1E7BC43327
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  2 Jul 2026 07:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9E282C43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  2 Jul 2026 14:07:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=LY/CqpKomoBCnO5CP+kywIPG7EDEf/EnI9zqdgrxN3g=; b=O8BB+qCTTjcpuU6eEenw6A6hU5
-	o0gqbxVtLT1jCw8nQ8t5v7Vzs7NcOzP8VDd7W3DTFMJmjWA9Srgz2G3jrEyQmuJKz5Hpn1hsoeGmD
-	gdLDr2A9hu1V2FrK+DroA/nkXBYmlqZGfX8FBbMs2d+mtE8DFCye5qTOuMlDKjsxvwjQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=ysLyTLr+qO3BM1Dqr4nbQKiU1AUDzRftTPPY6oIxtLw=; b=U/9L+vWzZXpTBcBe0T22W/GTw2
+	lfG3gIfwBvyYWcJcFPMXlYXoevYUmu0KW0gcxYgKy/Q3wG+mSeIT49H875eHWaXkw1p50mnNy6jtl
+	i3nWGWQf7LL/po99iI1BJLR9m3NaIRTxpdKA78MpJIPre0JqS+qs3q3EeFoyCBdbfuQg=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wfBu6-0008OW-L1;
-	Thu, 02 Jul 2026 07:32:10 +0000
+	id 1wfI4a-00010C-Ba;
+	Thu, 02 Jul 2026 14:07:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wfBtm-0008NH-5I
+ (envelope-from <hch@lst.de>) id 1wfI4Z-000101-4f
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 02 Jul 2026 07:31:50 +0000
+ Thu, 02 Jul 2026 14:07:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=q6gqemwJOuOxefkEr4riKiSbxU01eIA48quPWO2igp4=; b=ZJxsizsyLIzpxSOfS1hiRbfjbr
- +03g/lLTa9PYt3Ez1w+RAijwNvGvR+ge4yCR2VZ6i+yzKUlvtro511b2zHpDMEHjNGXxKCJSCpOM4
- ZVY4xWXoQKHfjbHptEt4GkwFW02QRgfE/wdsB+dYfGwGbdBrQFecfoNt657ACmvbLnYU=;
+ bh=+nEHDZS1++8Q/bmxLvAJQa/55le8Uz9H1iW8kDWU5TA=; b=kmoVowejTAK6mDNlo8nA6t7qTe
+ 7U4TdYFw8G+AKHZKMuTkoRm0/RljK6cFE037xFW1s5KaA2FiAH82SOKoIZV++Rl2GEEto/Fguz9or
+ +krhjixW/XwUrKBUpzasGYBn2Tc31FNA/28TBV8+iYxNl3hZ6nsU6dLqojn5FCoUmM1Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=q6gqemwJOuOxefkEr4riKiSbxU01eIA48quPWO2igp4=; b=MsSlDi52g7s1aB0osyGhrhMP4Z
- Mp/Uagabt32nbPJa+yyeJ6Jdd+GNjDYYbhlv9bFIfkUBKdWjzWVWhvlugxlGMbjqdBBbKRxRfBLOb
- eI+lNKYu/7Guxll4GaQgB3BgNtnFcilKF8BJx1cr6tSsyVlUEtW7u1QGURcPWVrXKnYo=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=+nEHDZS1++8Q/bmxLvAJQa/55le8Uz9H1iW8kDWU5TA=; b=UjuN26Gs3uwPWaRTGxAXqPFdBG
+ icWQs/Mf30Q2eyROFyOVngXeFZyK1S0BbQvICTowbLtLyp3UiXNfz5BmxgbhLWKK/qbn4x5KlTag7
+ tj3NLoYsprHj5HEZC3Sj4oBz7eCi2Y8X10E16hAGhrOCccOXO0XgTVKliKh0JganjrHU=;
+Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wfBtd-0004GH-Cy for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 02 Jul 2026 07:31:43 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 9C1B34146D
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  2 Jul 2026 07:31:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99A661F000E9;
- Thu,  2 Jul 2026 07:31:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1782977496;
- bh=q6gqemwJOuOxefkEr4riKiSbxU01eIA48quPWO2igp4=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=QaZrY3+80eem/2ppGFGhBgtkH4rNfkdoD/bwXjbTXfZd21psxWD0zhpDVS6KIXWoK
- i5i6/oJ+LrCl9t6OxJoEZINfR3Y1xK2ma2fLOZ48HLVPhSwnxK7kzfbru+orw0IVAm
- TpuNPbFEpMnPzV47siIE2dp1kmPYx2BqFwCQ9gqCD7iU6BexW6biSpjEteaPPmyOjF
- K8SGW/gAxo8wLhC8DbVm5Hic/mvj/lUoYuEIKMLAnY/paYvUm57KzB7moQ7v5Php7k
- hWOBlrBldLSZpmlrvz32XhwI79h3P+QmIYGy8Rs0RRpjUXet9mgfw8+gRVE674Ygb3
- tQG58ByJkFMww==
-Message-ID: <d3830391-6bc5-4d35-a6b7-a77024971774@kernel.org>
-Date: Thu, 2 Jul 2026 15:31:33 +0800
+ id 1wfI4W-0003CG-Sp for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 02 Jul 2026 14:07:23 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id 90D9968BEB; Thu,  2 Jul 2026 16:07:05 +0200 (CEST)
+Date: Thu, 2 Jul 2026 16:07:05 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Joanne Koong <joannelkoong@gmail.com>
+Message-ID: <20260702140705.GE21339@lst.de>
+References: <20260701000949.1666714-1-joannelkoong@gmail.com>
+ <20260701000949.1666714-18-joannelkoong@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-References: <20260702065602.4120914-1-jaegeuk@kernel.org>
- <20260702065602.4120914-3-jaegeuk@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20260702065602.4120914-3-jaegeuk@kernel.org>
-X-Headers-End: 1wfBtd-0004GH-Cy
-Subject: Re: [f2fs-dev] [PATCH 3/3] f2fs-tools: fix build failure on mac
+Content-Disposition: inline
+In-Reply-To: <20260701000949.1666714-18-joannelkoong@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1wfI4W-0003CG-Sp
+Subject: Re: [f2fs-dev] [PATCH v2 17/18] iomap: pass iomap_next_fn directly
+ instead of struct iomap_ops
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,23 +76,50 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
+Cc: "Ritesh Harjani \(IBM\)" <ritesh.list@gmail.com>, Jan Kara <jack@suse.cz>,
+ Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, djwong@kernel.org,
+ Carlos Maiolino <cem@kernel.org>, Hyunchul Lee <hyc.lee@gmail.com>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ Chris Mason <clm@fb.com>, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Ojaswin Mujoo <ojaswin@linux.ibm.com>, Baokun Li <libaokun@linux.alibaba.com>,
+ Chunhai Guo <guochunhai@vivo.com>, Dan Williams <djbw@kernel.org>,
+ Naohiro Aota <naohiro.aota@wdc.com>, Yue Hu <zbestahu@gmail.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Zhang Yi <yi.zhang@huawei.com>,
+ willy@infradead.org, hch@lst.de, Yuezhang Mo <yuezhang.mo@sony.com>,
+ hsiangkao@linux.alibaba.com, Gao Xiang <xiang@kernel.org>,
+ "open list:EXT2 FILE SYSTEM" <linux-ext4@vger.kernel.org>,
+ Namjae Jeon <linkinjeon@kernel.org>,
+ "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+ Damien Le Moal <dlemoal@kernel.org>, David Sterba <dsterba@suse.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Jeffle Xu <jefflexu@linux.alibaba.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Andreas Gruenbacher <agruenba@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+ "open list:FUSE FILESYSTEM \[CORE\]" <fuse-devel@lists.linux.dev>,
+ brauner@kernel.org, Johannes Thumshirn <jth@kernel.org>,
+ Theodore Ts'o <tytso@mit.edu>,
+ "open list:NTFS3 FILESYSTEM" <ntfs3@lists.linux.dev>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
+ linux-xfs@vger.kernel.org, "open list:GFS2 FILE SYSTEM" <gfs2@lists.linux.dev>,
+ "open list:FILESYSTEM DIRECT ACCESS \(DAX\)" <nvdimm@lists.linux.dev>,
+ Hongbo Li <lihongbo22@huawei.com>, linux-fsdevel@vger.kernel.org,
+ Sungjong Seo <sj1557.seo@samsung.com>,
+ "open list:EROFS FILE SYSTEM" <linux-erofs@lists.ozlabs.org>,
+ "open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 7/2/26 14:56, Jaegeuk Kim via Linux-f2fs-devel wrote:
-> external/f2fs-tools/lib/libf2fs.c:1019:12: error: use of undeclared identifier 'BLKFLSBUF'
->   1019 |         ioctl(fd, BLKFLSBUF);
->        |                   ^~~~~~~~~
-> 
-> Fixes: c188a3e303d9 ("f2fs-tools: invalidate block device page cache before reading metadata")
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Looks good:
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Thanks,
+In terms of merge logistics, I wonder if we should delay this and
+the previous patch to the next merge window so that we can minimize the
+cross-subsystem merge pain with more file system iomap conversion.
+If none of them actually happen until rc6 or so, orif  the merges aren't
+painful we could still pick them up late in the merge window.
+
 
 
 _______________________________________________
