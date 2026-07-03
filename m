@@ -4,79 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 79B53C43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Jul 2026 00:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 51815C43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Jul 2026 01:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=BjuoesouQ/KNwJZBXHYX6qzySbyYy4zFLGsmMgnNBCc=; b=Wh0NYaWS2Mse/BwoJAWK+mndK8
-	SbDY6aO0+vGAbpYpgdvggbKgLCNtYCvc7g4J9xaNdEdVVLSIAXZQzM2DWxxIoP7vfuS3xj2pUpwXE
-	64LcW5vY8oug0cBK+atNHA/7xmDzbGsZNYzq+x3BsjiEIMDTUAFl7S3UKqwKo7Xn297o=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=Wjxjh8FCTlJyg1HpxFybD1x/0jMWI/ZD8yO3TPStMGE=; b=h7xJSMOCo0SkUJp0/bVyRF1GOI
+	AZna6Aonws5ffN91DCEzkNPDu41E8F4XCTzQbnhjRKDCH+oxtv8ePZejWuYCO1l/GP3kYXkbpNw5e
+	eC7jKVHBRuaKQvJxJIybyNOGNduFLNq1dLKa6awnhBA7E2x0Tk8KCl35UrRaRIHVQFAE=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wfRb5-0002qI-30;
-	Fri, 03 Jul 2026 00:17:35 +0000
+	id 1wfSvu-00048L-EI;
+	Fri, 03 Jul 2026 01:43:07 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wfRb3-0002qB-8V
+ (envelope-from <djwong@kernel.org>) id 1wfSvt-00048F-Kz
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 03 Jul 2026 00:17:33 +0000
+ Fri, 03 Jul 2026 01:43:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+ MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lEJr4PdzfS4BNp+gMvKovO0r2bUllJAAVk5U8aS8WEw=; b=Sg3WcMbBOcFy3Tc/2aFjBWHkyj
- 8zdX5WeMTdEx6msmf+PbYPi/spNKNZKVYaH4M2AtBrPfiQBHPdDrssVFfvlwAkFdctamOSWULc5By
- h/EasfdwucsI8Gv/cnizMZFR4IFNsStbd8ub2LhqdLPMZUua3goHoCu3f3XivwAQ4oEQ=;
+ bh=AX4qRITMVBxo2syOiuIn5nihRYToP/HhChwFyF/gFaQ=; b=Z/OYfVxFRHSGvA6NMgWFcr/Uqr
+ 0AIy425rWSRJdZsb8+/mu24L+//BhB16nhpxGk/yxg81pYXHFG4HTUCjPKIUiaVQuwnY2afsTvw/0
+ +AH6JLAFPOMACBm+z6Z2KVyjqwJXL8ras+Adxh+doGYiYGTTjSUbSeiyC7eLkmAa+OsE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=lEJr4PdzfS4BNp+gMvKovO0r2bUllJAAVk5U8aS8WEw=; b=aovXlNKgm6ETGyuVZtbxQKkbXf
- RNTAK3q+9QjykHg0DU/kIqRqP9kduRBUpQL5sgBKlzlhtLc2jHDcERbyB77ZJopjsjLNozW9QoR6W
- QYHmYDH63oomGnx0vF55cctUrSmD9oTw2rdJte8Mfhb0uzY3bwFFcV037ZTNn4ZUrEVs=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=AX4qRITMVBxo2syOiuIn5nihRYToP/HhChwFyF/gFaQ=; b=HuH5TWmymXEmeoTGtu2YP9b9Zw
+ hd+hC7i6LWEbLKinMaDv3VD/5WRszeVS1raioIqJHHamhrlfZi8VaVs66ze2ebjrcUKiLsvFu8ZxP
+ uz8g6xjSCrUCflTT87fuNKc2/pG+BbtjkXlqBpL9CoeJdKm8hfKya97KQ2mrdGm0gdDs=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wfRb1-0004EP-8O for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 03 Jul 2026 00:17:33 +0000
+ id 1wfSvq-00088v-3s for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 03 Jul 2026 01:43:07 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id E88C160051;
- Fri,  3 Jul 2026 00:17:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FBA61F000E9;
- Fri,  3 Jul 2026 00:17:18 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with UTF8SMTP id 31877417C3;
+ Fri,  3 Jul 2026 01:42:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id EFEF41F00A3A;
+ Fri,  3 Jul 2026 01:42:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783037840;
- bh=lEJr4PdzfS4BNp+gMvKovO0r2bUllJAAVk5U8aS8WEw=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=PMG4b5Uj3XeKoi/WUxa746e2MoxA0xs0I1BBv5MJ4JpGd8xYzValdSFk1KRmazN0+
- DctQrjZtgNURjrCdI8sbMK2kKCT1ji2qTofhgErMUBB5z1CuNq4dZO6Lqh1L2mwQk0
- ignw+Utnmwr8VgC9F3jcML67OhqL9zCbkgboh0sgKw/QpcU5ZxrAERc6xKh1bQHxvA
- V3yzkQGnHl8d++lGyn363r9xUo2UHbJ74ZV9Sflg4LfqvKSY4oxRA6axMhC3kJK3Lr
- VTt/8mTmZnFRRUxDPiF8NK7+XbyX+HsddMFCyi898RRTyariZqG3xVmp/q20WApnHX
- NPRoTRLevkemA==
-Message-ID: <703b2fea-5a20-4b48-be9d-f0787d2f22b5@kernel.org>
-Date: Fri, 3 Jul 2026 08:17:16 +0800
+ s=k20260515; t=1783042976;
+ bh=AX4qRITMVBxo2syOiuIn5nihRYToP/HhChwFyF/gFaQ=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To;
+ b=dJtuR/82aT9h1ImO0a7pYJQJ+soh57RpaSsmH5o5j8IK42iv/kQcFlPB7G3vFH4zD
+ 1cI/SGmmNm3EEL6hcAAYkT4Cd9gRd1KbwZAx1RrmLI0EXdSf/I7vlhkKUPloFFQFee
+ mo7Sy4AoM5ffBWElmdGzSCFl7tzmoFL2T8PkfPcgWfWsmksc77beqcX/v8FPel49/a
+ WL/a6F6omLU837kQyj/YQ2Bnb8p5c5Jge2S29NN/YRr4I65yaPrg3fle9EEwK5trBb
+ rNXtXGBsg5Zx8ICE/FevfeOhXvdgaCFoi43mChEiMQwqoq9IOuC8mhW4d404Wyok50
+ oL2V6nXFK4a4g==
+Date: Thu, 2 Jul 2026 18:42:55 -0700
+To: Joanne Koong <joannelkoong@gmail.com>
+Message-ID: <20260703014255.GR9392@frogsfrogsfrogs>
+References: <20260701000949.1666714-1-joannelkoong@gmail.com>
+ <20260701000949.1666714-18-joannelkoong@gmail.com>
+ <20260702165841.GM9392@frogsfrogsfrogs>
+ <CAJnrk1YW0gKRVvHRC+WeKoV2vrquzaC6UkipZkQ34Z0RAQDjtg@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20260629114918.224537-1-chao@kernel.org>
- <akZ1H45tI_Cqm2vR@google.com>
-Content-Language: en-US
-In-Reply-To: <akZ1H45tI_Cqm2vR@google.com>
-X-Headers-End: 1wfRb1-0004EP-8O
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid potential
- section-unaligned pinfile
+Content-Disposition: inline
+In-Reply-To: <CAJnrk1YW0gKRVvHRC+WeKoV2vrquzaC6UkipZkQ34Z0RAQDjtg@mail.gmail.com>
+X-Headers-End: 1wfSvq-00088v-3s
+Subject: Re: [f2fs-dev] [PATCH v2 17/18] iomap: pass iomap_next_fn directly
+ instead of struct iomap_ops
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,281 +89,100 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- stable@kernel.org, Daeho Jeong <daehojeong@google.com>
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+From: "Darrick J. Wong via Linux-f2fs-devel"
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: "Ritesh Harjani \(IBM\)" <ritesh.list@gmail.com>, Jan Kara <jack@suse.cz>,
+ Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+ Yuezhang Mo <yuezhang.mo@sony.com>, Carlos Maiolino <cem@kernel.org>,
+ Hyunchul Lee <hyc.lee@gmail.com>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ Chris Mason <clm@fb.com>, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Ojaswin Mujoo <ojaswin@linux.ibm.com>, Baokun Li <libaokun@linux.alibaba.com>,
+ Chunhai Guo <guochunhai@vivo.com>, Dan Williams <djbw@kernel.org>,
+ Naohiro Aota <naohiro.aota@wdc.com>, Yue Hu <zbestahu@gmail.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Zhang Yi <yi.zhang@huawei.com>,
+ willy@infradead.org, hch@lst.de, hsiangkao@linux.alibaba.com,
+ Gao Xiang <xiang@kernel.org>,
+ "open list:EXT2 FILE SYSTEM" <linux-ext4@vger.kernel.org>,
+ Namjae Jeon <linkinjeon@kernel.org>,
+ "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+ Damien Le Moal <dlemoal@kernel.org>, David Sterba <dsterba@suse.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Jeffle Xu <jefflexu@linux.alibaba.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Andreas Gruenbacher <agruenba@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+ "open list:FUSE FILESYSTEM \[CORE\]" <fuse-devel@lists.linux.dev>,
+ brauner@kernel.org, Johannes Thumshirn <jth@kernel.org>,
+ Theodore Ts'o <tytso@mit.edu>,
+ "open list:NTFS3 FILESYSTEM" <ntfs3@lists.linux.dev>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
+ linux-xfs@vger.kernel.org, "open list:GFS2 FILE SYSTEM" <gfs2@lists.linux.dev>,
+ "open list:FILESYSTEM DIRECT ACCESS \(DAX\)" <nvdimm@lists.linux.dev>,
+ Hongbo Li <lihongbo22@huawei.com>, linux-fsdevel@vger.kernel.org,
+ Sungjong Seo <sj1557.seo@samsung.com>,
+ "open list:EROFS FILE SYSTEM" <linux-erofs@lists.ozlabs.org>,
+ "open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 7/2/26 22:26, Jaegeuk Kim wrote:
-> Hi Chao,
-> 
-> On 06/29, Chao Yu via Linux-f2fs-devel wrote:
->> Blocks of pinfile may not aligned to section size due to wrong use
->> on pinfile, result in heavy overhead of GC, let avoid this by
->> adding additional check condition in f2fs_setattr().
->>
->> - truncate -s 8mb pinfile
->> : random checkpoint may persist filesize w/ inode
->> - fallocate -o 0 -l 8mb pinfile
->>   - f2fs_fallocate
->>    - f2fs_expand_inode_data
->>     - f2fs_allocate_pinning_section
->>     - f2fs_map_blocks
->>      - f2fs_map_lock
->>      - __allocate_data_block
->>      - file_need_truncate
->>      : w/ FADVISE_TRUNC_BIT, we can expect unaligned mapping can be
->>        truncated while open() if f2fs is not umount abnormally
->>      - f2fs_map_unlock
->>      : following f2fs checkpoint and sudden power-cut
->>
->> - mount
->> - open pinfile
->>   - f2fs_file_open
->>    - finish_preallocate_blocks
->>     - truncate_setsize
->>     : filesize is 8mb
->>     - f2fs_truncate
->>     : can only truncate block outside filesize, rather than truncating
->>       unaligned blocks inside filesize
-> 
-> Have we reproduced this?
-
-Jaegeuk, I reproduced w/ below script:
-
-#!/bin/bash
-
-set -euo pipefail
-
-DEV="/dev/vdb"
-MNT="/mnt/f2fs"
-PINFILE="${MNT}/pinfile"
-CHUNK_SIZE=$((2 * 1024 * 1024)) # 2MB
-
-# Ensure running as root
-if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
-     echo "Error: This script must be run as root." >&2
-     exit 1
-fi
-
-# 0. Format f2fs image w/ /dev/vdb, and mount /dev/vdb to /mnt/f2fs/
-echo "[+] Unmounting ${MNT} if currently mounted..."
-umount "${MNT}" 2>/dev/null || true
-
-echo "[+] Formatting ${DEV} with f2fs..."
-mkfs.f2fs -f "${DEV}"
-
-echo "[+] Creating mount point ${MNT} and mounting..."
-mkdir -p "${MNT}"
-mount "${DEV}" "${MNT}"
-
-# 1. Create a pinfile in f2fs image
-echo "[+] Creating pinfile at ${PINFILE}..."
-touch "${PINFILE}"
-f2fs_io pinfile set "${PINFILE}" 2>/dev/null || f2fs_io pinfile 1 "${PINFILE}"
-truncate -s 8G "${PINFILE}"
-sync
-
-# Task 1: Call appendly fallocate on pinfile inside the range of [0, filesize]
-task1_fallocate_append() {
-     local file="$1"
-     local chunk="$2"
-     local max_size
-     max_size=$(stat -c %s "$file" 2>/dev/null || echo 0)
-     if [ "$max_size" -eq 0 ]; then
-         max_size=$((8 * 1024 * 1024 * 1024))
-     fi
-     local offset=0
-     while true; do
-         # Try standard fallocate, fallback to f2fs_io fallocate
-         fallocate -o "$offset" -l "$chunk" "$file" 2>/dev/null || \
-         f2fs_io fallocate 0 "$offset" "$chunk" "$file" 2>/dev/null || break
-
-         offset=$((offset + chunk))
-         if [ "$offset" -ge "$max_size" ]; then
-             offset=0
-         fi
-     done
-}
-
-# Task 2: Call f2fs checkpoint ioctl and then call shutdown 2 ioctl
-task2_checkpoint_shutdown() {
-     local target="$1"
-     # Small delay to allow Task 1 to begin appending
-     sleep 2
-
-     # Call F2FS shutdown ioctl level 2
-     f2fs_io shutdown 1 "$target"
-}
-
-# Check mapping alignment using f2fs_io fiemap
-check_mapping_alignment() {
-     local file="$1"
-     local align_2mb=$((2 * 1024 * 1024)) # 2MB in bytes
-     local align_blocks=512               # 2MB in 4KB blocks
-
-     local fiemap_out
-     fiemap_out=$(f2fs_io fiemap 0 4294967295 "$file" 2>/dev/null || f2fs_io fiemap "$file" 2>/dev/null || true)
-     if [[ -z "$fiemap_out" ]]; then
-         echo "Error: Failed to run f2fs_io fiemap on $file" >&2
-         return 1
-     fi
-
-     echo "$fiemap_out"
-
-     local aligned=true
-     while IFS= read -r line; do
-         [[ -z "$line" || "$line" =~ [Ff]iemap|[Ll]ogical|[Pp]hysical|[Ll]ength|[Ff]lags ]] && continue
-
-         local -a cols
-         read -r -a cols <<< "$line"
-         local phy_str len_str
-         if [[ ${#cols[@]} -ge 5 ]]; then
-             phy_str="${cols[2]}"
-             len_str="${cols[3]}"
-         elif [[ ${#cols[@]} -ge 3 ]]; then
-             phy_str="${cols[1]}"
-             len_str="${cols[2]}"
-         else
-             continue
-         fi
-
-         local phy_val len_val
-         if [[ "$phy_str" =~ ^0x || "$phy_str" =~ [a-fA-F] || "${#phy_str}" -gt 10 ]]; then
-             phy_val=$((16#${phy_str#0x}))
-         else
-             phy_val=$((phy_str))
-         fi
-
-         if [[ "$len_str" =~ ^0x || "$len_str" =~ [a-fA-F] || "${#len_str}" -gt 10 ]]; then
-             len_val=$((16#${len_str#0x}))
-         else
-             len_val=$((len_str))
-         fi
-
-         local unit_align=$align_blocks
-         [[ "$len_val" -ge 4096 ]] && unit_align=$align_2mb
-
-         if [[ $((phy_val % unit_align)) -ne 0 || $((len_val % unit_align)) -ne 0 ]]; then
-             echo "[!] Unaligned extent mapping detected: $line" >&2
-             aligned=false
-         fi
-     done <<< "$fiemap_out"
-
-     $aligned
-}
-
-# 2. Test loop running the two tasks
-iteration=0
-while true; do
-     iteration=$((iteration + 1))
-     echo "[*] --- Iteration ${iteration} ---"
-
-     # Task 1: call appendly fallocate on pinfile inside [0, filesize]
-     task1_fallocate_append "${PINFILE}" "${CHUNK_SIZE}" &
-     task1_pid=$!
-
-     # Task 2: call f2fs checkpoint ioctl and then call shutdown 2 ioctl
-     task2_checkpoint_shutdown "${PINFILE}" &
-     task2_pid=$!
-
-     # Wait for Task 2 to complete shutdown
-     wait "${task2_pid}" 2>/dev/null || true
-
-     # Terminate Task 1 and any child fallocate processes
-     pkill -9 -P "${task1_pid}" 2>/dev/null || true
-     kill -9 "${task1_pid}" 2>/dev/null || true
-     wait "${task1_pid}" 2>/dev/null || true
-
-     # Umount the image -> mount the image
-     umount "${MNT}"
-     mount "${DEV}" "${MNT}"
-
-     # Use f2fs_io fiemap to check mapping
-     if ! check_mapping_alignment "${PINFILE}"; then
-         echo "[-] Mapping is not 2MB aligned. Print and break out."
-         break
-     fi
-
-     echo "[+] Mapping is 2MB aligned."
-
-     # Check space after test; if space exceed 80%, remove the file and call sync
-     used_pct=$(df --output=pcent "${MNT}" | tail -n 1 | tr -dc '0-9')
-     if [[ "${used_pct:-0}" -ge 80 ]]; then
-         echo "[!] Space (${used_pct}%) exceeded 80%. Removing file and calling sync..."
-         rm -f "${PINFILE}"
-         sync
-         touch "${PINFILE}"
-         f2fs_io pinfile set "${PINFILE}" 2>/dev/null || f2fs_io pinfile 1 "${PINFILE}"
-         truncate -s 8G "${PINFILE}"
-     fi
-done
-
-> 
->>
->> Fixes: f5a53edcf01e ("f2fs: support aligned pinned file")
->> Cc: stable@kernel.org
->> Cc: Daeho Jeong <daehojeong@google.com>
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->>   fs/f2fs/file.c | 28 +++++++++++++++++-----------
->>   1 file changed, 17 insertions(+), 11 deletions(-)
->>
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index f4facd409d9b..11cc8d79c235 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -1107,17 +1107,23 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
->>   			!IS_ALIGNED(attr->ia_size,
->>   			F2FS_BLK_TO_BYTES(fi->i_cluster_size)))
->>   			return -EINVAL;
->> -		/*
->> -		 * To prevent scattered pin block generation, we don't allow
->> -		 * smaller/equal size unaligned truncation for pinned file.
->> -		 * We only support overwrite IO to pinned file, so don't
->> -		 * care about larger size truncation.
->> -		 */
->> -		if (f2fs_is_pinned_file(inode) &&
->> -			attr->ia_size <= i_size_read(inode) &&
->> -			!IS_ALIGNED(attr->ia_size,
->> -			F2FS_BLK_TO_BYTES(CAP_BLKS_PER_SEC(sbi))))
->> -			return -EINVAL;
->> +
->> +		if (f2fs_is_pinned_file(inode)) {
->> +			/*
->> +			 * It may break section-aligned fallocate recovery
->> +			 * mechanism, so do not allow larger size truncation.
->> +			 */
->> +			if (attr->ia_size > i_size_read(inode))
->> +				return -EINVAL;
->> +			/*
->> +			 * To prevent scattered pin block generation, we don't
->> +			 * allow smaller/equal size unaligned truncation for
->> +			 * pinned file.
->> +			 */
->> +			else if (!IS_ALIGNED(attr->ia_size,
->> +				F2FS_BLK_TO_BYTES(CAP_BLKS_PER_SEC(sbi))))
->> +				return -EINVAL;
->> +		}
->>   	}
->>   
->>   	if (is_quota_modification(idmap, inode, attr)) {
->> -- 
->> 2.49.0
->>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gVGh1LCBKdWwgMDIsIDIwMjYgYXQgMDU6MTc6MDJQTSAtMDcwMCwgSm9hbm5lIEtvb25nIHdy
+b3RlOgo+IE9uIFRodSwgSnVsIDIsIDIwMjYgYXQgOTo1OOKAr0FNIERhcnJpY2sgSi4gV29uZyA8
+ZGp3b25nQGtlcm5lbC5vcmc+IHdyb3RlOgo+ID4KPiA+ID4gZGlmZiAtLWdpdCBhL2ZzL2lvbWFw
+L2J1ZmZlcmVkLWlvLmMgYi9mcy9pb21hcC9idWZmZXJlZC1pby5jCj4gPiA+IGluZGV4IDNmMDkz
+MmU0NmZkNi4uMGFhOGFiYzQzOGMxIDEwMDY0NAo+ID4gPiAtLS0gYS9mcy9pb21hcC9idWZmZXJl
+ZC1pby5jCj4gPiA+ICsrKyBiL2ZzL2lvbWFwL2J1ZmZlcmVkLWlvLmMKPiA+ID4gQEAgLTYyNiw3
+ICs2MjYsNyBAQCBzdGF0aWMgaW50IGlvbWFwX3JlYWRfZm9saW9faXRlcihzdHJ1Y3QgaW9tYXBf
+aXRlciAqaXRlciwKPiA+ID4gICAgICAgcmV0dXJuIDA7Cj4gPiA+ICB9Cj4gPiA+Cj4gPiA+IC12
+b2lkIGlvbWFwX3JlYWRfZm9saW8oY29uc3Qgc3RydWN0IGlvbWFwX29wcyAqb3BzLAo+ID4gPiAr
+dm9pZCBpb21hcF9yZWFkX2ZvbGlvKGlvbWFwX25leHRfZm4gaW9tYXBfbmV4dCwKPiA+Cj4gPiBJ
+ZiB5b3UgdG9vayBteSBlYXJsaWVyIHN1Z2dlc3Rpb24gdG8gcmVuYW1lIHRoZSB0eXBlZGVmIHRv
+Cj4gPiBpb21hcF9pdGVyX2ZuLCB0aGVuIHRoaXMgcGFyYW1ldGVyIG91Z2h0IHRvIGJlIG5hbWVk
+IGl0ZXJfZm4uCj4gCj4gSG1tLi4uIG1heWJlIGF0IHRoYXQgcG9pbnQsIGl0J3Mgc2VsZi1leHBs
+YW5hdG9yeSBlbm91Z2ggdGhhdCB0aGUgYXJnCj4gY291bGQganVzdCBiZSBjYWxsZWQgIml0ZXIi
+IGluc3RlYWQgb2YgIml0ZXJfZm4iPwoKRHVubm8uICBTZWVpbmcgYXMgd2UgYWxyZWFkeSBoYXZl
+IHZhcmlhYmxlcyBuYW1lZCAiaXRlciIgdGhhdCBhcmUgdGhlCmFjdHVhbCBpdGVyYXRpb24gc3Rh
+dGUgb2JqZWN0LCBJIHRoaW5rIGl0J3MgY2xlYXJlciB0byBsZWF2ZSB0aGUKaXRlcmF0aW9uIGZ1
+bmN0aW9uIGFzICJpdGVyX2ZuIi4KCj4gPgo+ID4gPiAgICAgICAgICAgICAgIHN0cnVjdCBpb21h
+cF9yZWFkX2ZvbGlvX2N0eCAqY3R4LCB2b2lkICpwcml2YXRlKQo+ID4gPiAgewo+ID4gPiAgICAg
+ICBzdHJ1Y3QgZm9saW8gKmZvbGlvID0gY3R4LT5jdXJfZm9saW87Cj4gPiA+IEBAIC02NTAsNyAr
+NjUwLDcgQEAgdm9pZCBpb21hcF9yZWFkX2ZvbGlvKGNvbnN0IHN0cnVjdCBpb21hcF9vcHMgKm9w
+cywKPiA+ID4gICAgICAgICAgICAgICBmc3Zlcml0eV9yZWFkYWhlYWQoY3R4LT52aSwgZm9saW8t
+PmluZGV4LAo+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBmb2xpb19ucl9w
+YWdlcyhmb2xpbykpOwo+ID4gPgo+ID4gPiAtICAgICB3aGlsZSAoKHJldCA9IGlvbWFwX2l0ZXIo
+Jml0ZXIsIG9wcykpID4gMCkgewo+ID4gPiArICAgICB3aGlsZSAoKHJldCA9IGlvbWFwX2l0ZXIo
+Jml0ZXIsIGlvbWFwX25leHQpKSA+IDApIHsKPiA+ID4gICAgICAgICAgICAgICBpdGVyLnN0YXR1
+cyA9IGlvbWFwX3JlYWRfZm9saW9faXRlcigmaXRlciwgY3R4LAo+ID4gPiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAmYnl0ZXNfc3VibWl0dGVkKTsKPiA+ID4gICAgICAgICAgICAgICBp
+b21hcF9yZWFkX3N1Ym1pdCgmaXRlciwgY3R4KTsKPiA+ID4gQEAgLTY4OCwyMiArNjg4LDIyIEBA
+IHN0YXRpYyBpbnQgaW9tYXBfcmVhZGFoZWFkX2l0ZXIoc3RydWN0IGlvbWFwX2l0ZXIgKml0ZXIs
+Cj4gPiA+Cj4gPiA+ICAvKioKPiA+ID4gICAqIGlvbWFwX3JlYWRhaGVhZCAtIEF0dGVtcHQgdG8g
+cmVhZCBwYWdlcyBmcm9tIGEgZmlsZS4KPiA+ID4gLSAqIEBvcHM6IFRoZSBvcGVyYXRpb25zIHZl
+Y3RvciBmb3IgdGhlIGZpbGVzeXN0ZW0uCj4gPiA+ICsgKiBAaW9tYXBfbmV4dDogVGhlIGlvbWFw
+X25leHQgY2FsbGJhY2sgZm9yIHRoZSBmaWxlc3lzdGVtLgo+ID4KPiA+ICJUaGUgaW9tYXAgaXRl
+cmF0aW9uIGZ1bmN0aW9uIGZvciB0aGUgZmlsZXN5c3RlbSIgPwo+ID4KPiA+IFVzaW5nIHRoZSB0
+ZXJtICJpb21hcF9uZXh0IiBpbiB0aGUgZGVmaW5pdGlvbiBmb3IgaW9tYXBfbmV4dCBpc24ndCB0
+aGF0Cj4gPiBoZWxwZnVsLgo+IAo+IEFncmVlZCwgSSdsbCByZXBsYWNlIHRoaXMgd2l0aCB5b3Vy
+IHN1Z2dlc3Rpb24uCgo8bm9kPgoKPiA+Cj4gPiA+ICAgICAgIHJldHVybiByZXQ7Cj4gPiA+IEBA
+IC04MjQsMTYgKzgyNCwxNiBAQCB4ZnNfZmlsZV9kaW9fd3JpdGVfYXRvbWljKAo+ID4gPiAgICAg
+ICB1bnNpZ25lZCBpbnQgICAgICAgICAgICBpb2xvY2sgPSBYRlNfSU9MT0NLX1NIQVJFRDsKPiA+
+ID4gICAgICAgc3NpemVfdCAgICAgICAgICAgICAgICAgcmV0LCBvY291bnQgPSBpb3ZfaXRlcl9j
+b3VudChmcm9tKTsKPiA+ID4gICAgICAgdW5zaWduZWQgaW50ICAgICAgICAgICAgZGlvX2ZsYWdz
+ID0gMDsKPiA+ID4gLSAgICAgY29uc3Qgc3RydWN0IGlvbWFwX29wcyAgKmRvcHM7Cj4gPiA+ICsg
+ICAgIGlvbWFwX25leHRfZm4gICAgICAgICAgIGRvcHM7Cj4gPiA+Cj4gPiA+ICAgICAgIC8qCj4g
+PiA+ICAgICAgICAqIEhXIG9mZmxvYWQgc2hvdWxkIGJlIGZhc3Rlciwgc28gdHJ5IHRoYXQgZmly
+c3QgaWYgaXQgaXMgYWxyZWFkeQo+ID4gPiAgICAgICAgKiBrbm93biB0aGF0IHRoZSB3cml0ZSBs
+ZW5ndGggaXMgbm90IHRvbyBsYXJnZS4KPiA+ID4gICAgICAgICovCj4gPiA+ICAgICAgIGlmIChv
+Y291bnQgPiB4ZnNfaW5vZGVfYnVmdGFyZyhpcCktPmJ0X2F3dV9tYXgpCj4gPiA+IC0gICAgICAg
+ICAgICAgZG9wcyA9ICZ4ZnNfYXRvbWljX3dyaXRlX2Nvd19pb21hcF9vcHM7Cj4gPiA+ICsgICAg
+ICAgICAgICAgZG9wcyA9IHhmc19hdG9taWNfd3JpdGVfY293X2lvbWFwX25leHQ7Cj4gPiA+ICAg
+ICAgIGVsc2UKPiA+ID4gLSAgICAgICAgICAgICBkb3BzID0gJnhmc19kaXJlY3Rfd3JpdGVfaW9t
+YXBfb3BzOwo+ID4gPiArICAgICAgICAgICAgIGRvcHMgPSB4ZnNfZGlyZWN0X3dyaXRlX2lvbWFw
+X25leHQ7Cj4gPgo+ID4gUHJvYmFibHkgb3VnaHQgdG8gYmUgY2FsbGVkIGl0ZXJfZm4sIG9yIGF0
+IGxlYXN0IHNvbWV0aGluZyB0aGF0IGlzbid0Cj4gPiAiZG9wcyIuCj4gCj4gTmljZSBzcG90dGlu
+ZywgSSdsbCByZW5hbWUgdGhpcyBpbiB0aGUgbmV4dCB2ZXJzaW9uLgoKPG5vZD4KCi0tRAoKPiBU
+aGFua3MsCj4gSm9hbm5lCj4gCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZl
+bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlz
+dHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
