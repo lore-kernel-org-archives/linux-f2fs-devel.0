@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 53FD4C44509
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 43C6DC44508
 	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jul 2026 19:48:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,18 +12,18 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=UihAjYBtHVSxWPOWb/uEYSzALajhzZvoYfxSVdxX9E4=; b=HcTunqoXDy4alYkqZrkFt1qp7H
-	VX/LwhH7+uL8tRYI4zD1K3TaEJEn2qif7Hb0zeblGFmOFDF+h491S0f9eeeBp/Yj6uSvX+98bxk0J
-	0RfDuJ/Usf1Wce1MmCnCq1oxNze9IuGMC7UAxGx1nw4dRVDGOnXNVZ+0TX8wX09FifKE=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=cxXZQYSagAaDHdnjjtICZO/jIi0winO92YcbTZuqhss=; b=Dre8l3o8njCpeBzQLMZ9mrcg62
+	CJLUOh8XhJRjYI3d0xSFZf2ZZHzCoDpEDqmYG0uuQXgyzrQjn3iy3xpriNKcIB8BK2HJv1e+VtXCs
+	nPP1Pao3s1cBpkjBr0rXp2gYB8JtQM1+hbIiSa8hoiCR5wt+CBfzFfLqHuHsd+F0NUIY=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wgSoz-0003vO-BP;
+	id 1wgSp0-0002P5-1s;
 	Sun, 05 Jul 2026 19:48:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wgSow-0003uU-FM
+ (envelope-from <ebiggers@kernel.org>) id 1wgSox-0002Od-Qp
  for linux-f2fs-devel@lists.sourceforge.net;
  Sun, 05 Jul 2026 19:48:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0GgHhPTKYJ8Yn2rSYbQYuL4pWTLt6yCuvPM4NNDv1+8=; b=MOPa1mk5mh6HLgLz8nUhVHNedt
- 5VPRN0V/NHtkUIowD1ZeZZqN69z0c/w4No+K4uMT6OdQ7+db5bCZtjxxMb2RQGWfiOujqJ/mWoQiK
- 2ClAOryJ7nJs15dtrSjAFoS/SSepB1O0Sx/4VEF/70SKAQm92aTQVGf2ucIeEKbdRcwA=;
+ bh=wWudyb7yAyg/xFRgTR3OCCHUQ/2sHz9VK5cdUhXrtV0=; b=B/s3BCSqNL848Z8q+VC70hYFFG
+ 5yUQB+geJuJUBgV4Wqx3pXBORfn3WsJCySb5lF8cd2ryXkI0E1m5CNYtQSjUWsMHG8uSObWiEadue
+ NpE70rV0Hv/WzEbK4pHRmtpSiaGhzGCiu63SOE8epnecKHnncEuZqdnyYWxDbbyVcyZI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=0GgHhPTKYJ8Yn2rSYbQYuL4pWTLt6yCuvPM4NNDv1+8=; b=dQwRgnQXksSqHf24eo1fjzsVx2
- 5/TyzPIWB0m27zRYgIu+/+eDmYdstT7QgioSJ3UG0xe/g48pWZ+yq/Ma6NL/xJAI+szh/XBvDbZ8p
- 20cKpkFt/WT/hdyKjH6j7HMZOn7avSE/MdkLoHi2xQ85ZTSHrSzPHfYo4KGMc9tW32Ng=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=wWudyb7yAyg/xFRgTR3OCCHUQ/2sHz9VK5cdUhXrtV0=; b=RfsZXFGc0jpoRhKM/xYaDMKbjX
+ PImtV4jBLPMwSffyP09rO55YK4GMkEhB1wusCbFzCvQvbQpM78afjErmGD41C3yEDY6+rCX48MQIK
+ TZh6/ND1e9ZvSkeooRfhRWzWEjKekdBtEJMIldWfZtpMuTK52BOV8iVp/QZIJdIkfIrY=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wgSou-0001ES-5f for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 05 Jul 2026 19:48:05 +0000
+ id 1wgSop-0001Db-LW for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 05 Jul 2026 19:48:00 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 63F0142DA7;
- Sun,  5 Jul 2026 19:47:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 323B11F00A3D;
- Sun,  5 Jul 2026 19:47:51 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 8BA6960018;
+ Sun,  5 Jul 2026 19:47:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CF081F00A3E;
+ Sun,  5 Jul 2026 19:47:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783280874;
- bh=0GgHhPTKYJ8Yn2rSYbQYuL4pWTLt6yCuvPM4NNDv1+8=;
+ s=k20260515; t=1783280869;
+ bh=wWudyb7yAyg/xFRgTR3OCCHUQ/2sHz9VK5cdUhXrtV0=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=EO2QHNjDvu+ulBGImBtUs+3k+YXgxGcD1GV7KIw1JiJa+LwE0y/x2+vqwmQ/1QNMU
- Yd3XON5FJYLYddZIw+AHTpVcUr+ZsRPq61oCOG0slUnzYTQUog1Wl7nRSAbF9nluyr
- lUFoiqaFjDYCJeDcnchAQxFmjb7K2AuGBroqTa8VQn36ToZLxCVhLJbXdkAz9PNgWp
- jdxwvpVF2/+79A1KhOq6gPij34AHYGVI5xyeJNIgTMlLq3VmaBx4rIjGKpajmipXgl
- 2ywnzBU7v6nJxAQo6tOwRexVB/ZRAE2hMVi72mH4qgeVA3P8PpWMKRuli+I+8vSKMS
- fl5xkZ0POtsKg==
+ b=QULkJKEz3nDFL2EYQs7OdBbEGe7wlQ6nGJQUvS6bd2NE3OEwJzKSfWW2jXn6+xu1w
+ 5Zo2w6fEwjYichv92zRs+ZkfFqH+AcbvRJ1oXQ2bErGiGoIzETicUp+bhDqGO9z4/7
+ NDN8jLIUtaz4k7IjQxk+o9BV/y1DYPWo8kXFcC7dOgnMDd/By2Js7YY+YcniJSTW4h
+ ndXBP1f4eqWE418Oetdu2J1i7US49nQHZWKHrSAToNSBJT8zlLtL2slbY6AnbfqKDI
+ 2nNi5jZTbJu50q/HxarW0p8jochBAQx5B4gIzy1xNF+CqcFewB+c99UsuSsF7QtFAL
+ hoWjy7eZ1fAxg==
 To: linux-fscrypt@vger.kernel.org
-Date: Sun,  5 Jul 2026 12:45:45 -0700
-Message-ID: <20260705194555.75030-9-ebiggers@kernel.org>
+Date: Sun,  5 Jul 2026 12:45:43 -0700
+Message-ID: <20260705194555.75030-7-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260705194555.75030-1-ebiggers@kernel.org>
 References: <20260705194555.75030-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wgSou-0001ES-5f
-Subject: [f2fs-dev] [PATCH v2 08/17] ext4: Make ext4_bio_write_folio()
- return void
+X-Headers-End: 1wgSop-0001Db-LW
+Subject: [f2fs-dev] [PATCH v2 06/17] Documentation: fscrypt: Update docs for
+ inlinecrypt
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,170 +100,110 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Since the fs-layer file contents encryption implementation was removed,
-ext4_bio_write_folio() now always returns 0.  Change it to return void,
-and likewise for its caller mpage_submit_folio().
+Update the documentation for the inlinecrypt mount option to reflect
+that it's now just about the choice of whether to use inline encryption
+hardware, not whether the blk-crypto framework is used.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Also remove an outdated statement about the data unit size, and make the
+ext4 and f2fs docs reference the fscrypt docs rather than the block
+layer docs directly.
+
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- fs/ext4/ext4.h    |  2 +-
- fs/ext4/inode.c   | 31 ++++++++-----------------------
- fs/ext4/page-io.c |  6 ++----
- 3 files changed, 11 insertions(+), 28 deletions(-)
+ Documentation/admin-guide/ext4.rst    |  8 +++---
+ Documentation/filesystems/f2fs.rst    | 10 +++-----
+ Documentation/filesystems/fscrypt.rst | 36 +++++++++------------------
+ 3 files changed, 19 insertions(+), 35 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index b37c136ea3ab..920a8ec1b948 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -3945,7 +3945,7 @@ extern void ext4_io_submit_init(struct ext4_io_submit *io,
- 				struct writeback_control *wbc);
- extern void ext4_end_io_rsv_work(struct work_struct *work);
- extern void ext4_io_submit(struct ext4_io_submit *io);
--int ext4_bio_write_folio(struct ext4_io_submit *io, struct folio *page,
-+void ext4_bio_write_folio(struct ext4_io_submit *io, struct folio *page,
- 		size_t len);
- extern struct ext4_io_end_vec *ext4_alloc_io_end_vec(ext4_io_end_t *io_end);
- extern struct ext4_io_end_vec *ext4_last_io_end_vec(ext4_io_end_t *io_end);
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 8eb2af481129..c6faa7c751ca 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -2064,11 +2064,10 @@ static void mpage_folio_done(struct mpage_da_data *mpd, struct folio *folio)
- 	folio_unlock(folio);
- }
+diff --git a/Documentation/admin-guide/ext4.rst b/Documentation/admin-guide/ext4.rst
+index ac0c709ea9e7..742a48e6fc0c 100644
+--- a/Documentation/admin-guide/ext4.rst
++++ b/Documentation/admin-guide/ext4.rst
+@@ -385,11 +385,9 @@ When mounting an ext4 filesystem, the following option are accepted:
+         incompatible with data=journal.
  
--static int mpage_submit_folio(struct mpage_da_data *mpd, struct folio *folio)
-+static void mpage_submit_folio(struct mpage_da_data *mpd, struct folio *folio)
- {
- 	size_t len;
- 	loff_t size;
--	int err;
+   inlinecrypt
+-        When possible, encrypt/decrypt the contents of encrypted files using the
+-        blk-crypto framework rather than filesystem-layer encryption. This
+-        allows the use of inline encryption hardware. The on-disk format is
+-        unaffected. For more details, see
+-        Documentation/block/inline-encryption.rst.
++        When possible, encrypt/decrypt the contents of encrypted files using
++        inline encryption hardware rather than the CPU. For more details, see
++        Documentation/filesystems/fscrypt.rst.
  
- 	WARN_ON_ONCE(folio_pos(folio) != mpd->start_pos);
- 	folio_clear_dirty_for_io(folio);
-@@ -2090,9 +2089,7 @@ static int mpage_submit_folio(struct mpage_da_data *mpd, struct folio *folio)
- 	if (folio_pos(folio) + len > size &&
- 	    !ext4_verity_in_progress(mpd->inode))
- 		len = size & (len - 1);
--	err = ext4_bio_write_folio(&mpd->io_submit, folio, len);
+ Data Mode
+ =========
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 8c4a14ae444f..b45d7a687625 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -351,12 +351,10 @@ compress_mode=%s	 Control file compression mode. This supports "fs" and "user"
+ compress_cache		 Support to use address space of a filesystem managed inode to
+ 			 cache compressed block, in order to improve cache hit ratio of
+ 			 random read.
+-inlinecrypt		 When possible, encrypt/decrypt the contents of encrypted
+-			 files using the blk-crypto framework rather than
+-			 filesystem-layer encryption. This allows the use of
+-			 inline encryption hardware. The on-disk format is
+-			 unaffected. For more details, see
+-			 Documentation/block/inline-encryption.rst.
++inlinecrypt		 When possible, encrypt/decrypt the contents of
++			 encrypted files using inline encryption hardware rather
++			 than the CPU. For more details, see
++			 Documentation/filesystems/fscrypt.rst.
+ atgc			 Enable age-threshold garbage collection, it provides high
+ 			 effectiveness and efficiency on background GC.
+ discard_unit=%s		 Control discard unit, the argument can be "block", "segment"
+diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+index 92b8f311e211..370a5ef73ef2 100644
+--- a/Documentation/filesystems/fscrypt.rst
++++ b/Documentation/filesystems/fscrypt.rst
+@@ -1318,32 +1318,20 @@ Inline encryption support
+ 
+ Many newer systems (especially mobile SoCs) have *inline encryption
+ hardware* that can encrypt/decrypt data while it is on its way to/from
+-the storage device.  Linux supports inline encryption through a set of
+-extensions to the block layer called *blk-crypto*.  blk-crypto allows
+-filesystems to attach encryption contexts to bios (I/O requests) to
+-specify how the data will be encrypted or decrypted in-line.  For more
+-information about blk-crypto, see
+-:ref:`Documentation/block/inline-encryption.rst <inline_encryption>`.
++the storage device.
+ 
+ On supported filesystems (currently ext4 and f2fs), fscrypt can use
+-blk-crypto instead of the kernel crypto API to encrypt/decrypt file
+-contents.  To enable this, set CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y in
+-the kernel configuration, and specify the "inlinecrypt" mount option
+-when mounting the filesystem.
 -
--	return err;
-+	ext4_bio_write_folio(&mpd->io_submit, folio, len);
- }
- 
- #define BH_FLAGS (BIT(BH_Unwritten) | BIT(BH_Delay))
-@@ -2169,8 +2166,7 @@ static bool mpage_add_bh_to_extent(struct mpage_da_data *mpd, ext4_lblk_t lblk,
-  * accumulated extent of buffers to map or add buffers in the page to the
-  * extent of buffers to map. The function returns 1 if the caller can continue
-  * by processing the next page, 0 if it should stop adding buffers to the
-- * extent to map because we cannot extend it anymore. It can also return value
-- * < 0 in case of error during IO submission.
-+ * extent to map because we cannot extend it anymore.
-  */
- static int mpage_process_page_bufs(struct mpage_da_data *mpd,
- 				   struct buffer_head *head,
-@@ -2178,7 +2174,6 @@ static int mpage_process_page_bufs(struct mpage_da_data *mpd,
- 				   ext4_lblk_t lblk)
- {
- 	struct inode *inode = mpd->inode;
--	int err;
- 	ext4_lblk_t blocks = (i_size_read(inode) + i_blocksize(inode) - 1)
- 							>> inode->i_blkbits;
- 
-@@ -2201,9 +2196,7 @@ static int mpage_process_page_bufs(struct mpage_da_data *mpd,
- 	} while (lblk++, (bh = bh->b_this_page) != head);
- 	/* So far everything mapped? Submit the page for IO. */
- 	if (mpd->map.m_len == 0) {
--		err = mpage_submit_folio(mpd, head->b_folio);
--		if (err < 0)
--			return err;
-+		mpage_submit_folio(mpd, head->b_folio);
- 		mpage_folio_done(mpd, head->b_folio);
- 	}
- 	if (lblk >= blocks) {
-@@ -2333,9 +2326,7 @@ static int mpage_map_and_submit_buffers(struct mpage_da_data *mpd)
- 			if (err < 0 || map_bh)
- 				goto out;
- 			/* Page fully mapped - let IO run! */
--			err = mpage_submit_folio(mpd, folio);
--			if (err < 0)
--				goto out;
-+			mpage_submit_folio(mpd, folio);
- 			mpage_folio_done(mpd, folio);
- 		}
- 		folio_batch_release(&fbatch);
-@@ -2408,7 +2399,6 @@ static int mpage_submit_partial_folio(struct mpage_da_data *mpd)
- 	struct inode *inode = mpd->inode;
- 	struct folio *folio;
- 	loff_t pos;
--	int ret;
- 
- 	folio = filemap_get_folio(inode->i_mapping,
- 				  mpd->start_pos >> PAGE_SHIFT);
-@@ -2423,9 +2413,7 @@ static int mpage_submit_partial_folio(struct mpage_da_data *mpd)
- 			 !folio_contains(folio, pos >> PAGE_SHIFT)))
- 		return -EINVAL;
- 
--	ret = mpage_submit_folio(mpd, folio);
--	if (ret)
--		goto out;
-+	mpage_submit_folio(mpd, folio);
- 	/*
- 	 * Update start_pos to prevent this folio from being released in
- 	 * mpage_release_unused_pages(), it will be reset to the aligned folio
-@@ -2434,10 +2422,9 @@ static int mpage_submit_partial_folio(struct mpage_da_data *mpd)
- 	 * entire folio has finished processing.
- 	 */
- 	mpd->start_pos = pos;
--out:
- 	folio_unlock(folio);
- 	folio_put(folio);
--	return ret;
-+	return 0;
- }
- 
- /*
-@@ -2724,9 +2711,7 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
- 			 * through a pin.
- 			 */
- 			if (!mpd->can_map) {
--				err = mpage_submit_folio(mpd, folio);
--				if (err < 0)
--					goto out;
-+				mpage_submit_folio(mpd, folio);
- 				/* Pending dirtying of journalled data? */
- 				if (folio_test_checked(folio)) {
- 					err = mpage_journal_page_buffers(handle,
-diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-index 557f44178d87..0236b6b9785a 100644
---- a/fs/ext4/page-io.c
-+++ b/fs/ext4/page-io.c
-@@ -459,7 +459,7 @@ static void io_submit_add_bh(struct ext4_io_submit *io,
- 	io->io_next_block++;
- }
- 
--int ext4_bio_write_folio(struct ext4_io_submit *io, struct folio *folio,
-+void ext4_bio_write_folio(struct ext4_io_submit *io, struct folio *folio,
- 		size_t len)
- {
- 	struct inode *inode = folio->mapping->host;
-@@ -533,7 +533,7 @@ int ext4_bio_write_folio(struct ext4_io_submit *io, struct folio *folio,
- 		 */
- 		__folio_start_writeback(folio, keep_towrite);
- 		folio_end_writeback(folio);
--		return 0;
-+		return;
- 	}
- 
- 	bh = head = folio_buffers(folio);
-@@ -546,6 +546,4 @@ int ext4_bio_write_folio(struct ext4_io_submit *io, struct folio *folio,
- 			continue;
- 		io_submit_add_bh(io, inode, folio, bh);
- 	} while ((bh = bh->b_this_page) != head);
+-Note that the "inlinecrypt" mount option just specifies to use inline
+-encryption when possible; it doesn't force its use.  fscrypt will
+-still fall back to using the kernel crypto API on files where the
+-inline encryption hardware doesn't have the needed crypto capabilities
+-(e.g. support for the needed encryption algorithm and data unit size)
+-and where blk-crypto-fallback is unusable.  (For blk-crypto-fallback
+-to be usable, it must be enabled in the kernel configuration with
+-CONFIG_BLK_INLINE_ENCRYPTION_FALLBACK=y, and the file must be
+-protected by a raw key rather than a hardware-wrapped key.)
 -
--	return 0;
- }
+-Currently fscrypt always uses the filesystem block size (which is
+-usually 4096 bytes) as the data unit size.  Therefore, it can only use
+-inline encryption hardware that supports that data unit size.
++inline encryption hardware instead of the CPU to encrypt/decrypt file
++contents.  To enable this, specify the "inlinecrypt" mount option when
++mounting the filesystem.
++
++This causes the filesystem to use inline encryption hardware whenever
++possible, falling back to the CPU only if such hardware is absent or
++doesn't provide the needed crypto capabilities.
++
++For more information about the kernel's support for inline encryption
++hardware, see :ref:`Documentation/block/inline-encryption.rst
++<inline_encryption>`.
+ 
+ Inline encryption doesn't affect the ciphertext or other aspects of
+ the on-disk format, so users may freely switch back and forth between
 -- 
 2.54.0
 
