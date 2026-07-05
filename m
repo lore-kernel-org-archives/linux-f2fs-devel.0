@@ -4,87 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6DB8EC43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Jul 2026 10:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6A6A1C43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jul 2026 19:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:Message-Id:Date:References:In-Reply-To:To:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=SuProDsuDqD1iCUJJZfCYi9kecQLAo0G79oNzNqlVpY=; b=aMc65JeESrVsuWpRda8WjdA//9
-	9wPZuD19/NNFh+Joplb2Khaa+Vm8jNhVFulDd9zSNX3aCByxc5ow6HqX+jjN9d9jfQrJyYyaDtf+7
-	ohmh5Uz+wX6WhVW69l31n1RaYvkCdmVFMOpFpkSQ3MffzZCslxwipB/gPPyna+7dQsgY=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=gHH7vGSdUbChnoUqDQc69UuB4DWA5GF3W8tpUgX5FQU=; b=Pv4dlWoSdeoT5c8wTY8ErAxRKi
+	NDU+g7gTSYw/mzjabm9OiEgO5n2ZlnsgXG+F1rcMuO8kGb2DE/gowmfOsgte67jFfzihmnvo9Iia2
+	bOKAAFMh2ElmMH8Q7ru/uZXCS/3/jXbSjm4wJ5EhcflX2M3/yBMMkOym9S2mvdAvCxns=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wfbHC-0008D2-HP;
-	Fri, 03 Jul 2026 10:37:40 +0000
+	id 1wgSoz-00062Y-AG;
+	Sun, 05 Jul 2026 19:48:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <brauner@kernel.org>) id 1wfbHB-0008Cw-KK
+ (envelope-from <ebiggers@kernel.org>) id 1wgSod-00061z-7T
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 03 Jul 2026 10:37:39 +0000
+ Sun, 05 Jul 2026 19:47:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Message-Id:Date:References:In-Reply-To:Cc:To:From:
- Subject:Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ibq5yGoOYYUKiAiXchC0WA0gL3l+/26cw0R84LkFjaY=; b=kXzTodc+JbCE4mzJhyCztjvh3L
- E0NQYaNw0iPSxQ459c1LDmhGYFKceQ0FsxLgxtLL92UFqoqqtTVr9HpfIc0wsD25vOhGIj7goa3c/
- 9CM7BmjUQJZF9rj7TlgyrRvJ1Mng23LPFXNgRLWfDSRhUUnEL+VCApRXqLwpc7/qbiNE=;
+ bh=qcRkO0YeM29chatD/XAiCFByzOxWthm1N/Hu3jDnoeA=; b=GldDLofgC/wTj6PUwnrd5+Eb5W
+ lUQ/uX5mMkK9nQjbGET4Hew7G9P9puY59AmkYOcOg5RkADHIv19t6Hh+Z+8Ms9cA8EGm19zqKv00D
+ RCJzKgqfvXBDSnmKLd3L0HUVpzzKSLNA7B6vakwRIZe9pBvSAPzIbclzytgB0GpN2RUk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Message-Id:Date:References:In-Reply-To:Cc:To:From:Subject:
- Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ibq5yGoOYYUKiAiXchC0WA0gL3l+/26cw0R84LkFjaY=; b=b0h+lHIA7mDtecT4V8jHu/3/QA
- gXloxv8XX/DTWR9nd1I+fYRgxSHTDgRXKh05Tbor8z4CLQCrOkdkAbk+Ah3bmL7lGj99Ahe3raafA
- wt4ah1qSOEp4a4khy0rJNNlxq3XrIIbaRj9E8BdAzbV/4sqDWFrwyNyc5toXmsimP1ek=;
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=qcRkO0YeM29chatD/XAiCFByzOxWthm1N/Hu3jDnoeA=; b=X
+ 0seDYwswLJlaK6WDhGSK4lB2aPwFQcoUwU5hk88TLn+iVPBrzJmIasDDoEKSeEUd2hiEzhTR2I9Do
+ ZsjL/64jKgXjnegxyFI87ZBu7cJj4TWCCTcCntMbuKJ56mgbnnra9z4XJ8k/A1p0GMznHegai7v3b
+ GhjVOf8zTfAFJgc8=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wfbH7-0002xz-Vo for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 03 Jul 2026 10:37:39 +0000
+ id 1wgSoc-0001BN-PA for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 05 Jul 2026 19:47:47 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 9B4B7601C2;
- Fri,  3 Jul 2026 10:37:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6CFA1F000E9;
- Fri,  3 Jul 2026 10:37:16 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 76B9D60018;
+ Sun,  5 Jul 2026 19:47:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9454F1F000E9;
+ Sun,  5 Jul 2026 19:47:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783075047;
- bh=ibq5yGoOYYUKiAiXchC0WA0gL3l+/26cw0R84LkFjaY=;
- h=Subject:From:To:Cc:In-Reply-To:References:Date;
- b=W8LzFtRDEJ+LA4ga+f6QzIP5wIjhPrvbgSkeN5H9fdUp8ldRpYac+VP2pbFWqLIaZ
- VOZRYcIErzh7ZZVI1opgKNPyPdXZNYzLlXZRZvIfpIEGsP8CRSvmh6dp1f1DUAQ8eT
- REmssNKn6FgP95Nylwk1jyDskOejoq/ZtxJV6+SZMcueW6AmnmkTRlSc0afIY2ZaY4
- 0j6EQgUmekHKxLsbkP1RtsOiATrm0qsMc/rLKl6p2+xyg60HQXm8THGcRmHmGEbsA5
- +KIVTrOUxI8EdD77tZ08aAlBNDaVgctnhdPNMu6u++MTrLUeeidjuDh4Pwu7QdGwKu
- L34A4eoQ9xeiA==
+ s=k20260515; t=1783280856;
+ bh=qcRkO0YeM29chatD/XAiCFByzOxWthm1N/Hu3jDnoeA=;
+ h=From:To:Cc:Subject:Date;
+ b=e0XOG7yNL/Rqj+p+NKjWV/AXtgtIHh3XHecNxTP5SSIsFWPEsFHEHvYDHZcXB9uP3
+ 3qaSSZ4njfdXc7fkks8KTQqkSwG0zzFYDjJnUte4YFXbD/3RSqMNupM+ZvStSNKzdx
+ tg6zaAwKPDxIsgNdWsJVuFJsmH1fCWpN5FUExhqXr0QE8SCwloiVT1ND8n0yzIF0yA
+ i3qPB401mnQunNtg+zsdHEIdXnLTETGdRFjRyBXUrNhhXBnwMNEv0r40xvU0PWhuPN
+ G3EUDw+6JO73Mtk8itYDkvx7Zo3pqDg2TpS/XpT52OjS7DfVdgwAssz5Uc8/mxOu/e
+ 5eG0Npy2nx7Dg==
+To: linux-fscrypt@vger.kernel.org
+Date: Sun,  5 Jul 2026 12:45:37 -0700
+Message-ID: <20260705194555.75030-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.54.0
 MIME-Version: 1.0
-To: Joanne Koong <joannelkoong@gmail.com>
-In-Reply-To: <CAJnrk1b8j5WHtbHOWNXc4=QBFOxde1f2QxTOeui7Ta8O-xWcTA@mail.gmail.com>
-References: <20260701000949.1666714-1-joannelkoong@gmail.com>
- <20260701000949.1666714-18-joannelkoong@gmail.com>
- <20260702140705.GE21339@lst.de> <20260702165117.GK9392@frogsfrogsfrogs>
- <CAJnrk1b8j5WHtbHOWNXc4=QBFOxde1f2QxTOeui7Ta8O-xWcTA@mail.gmail.com>
-Date: Fri, 03 Jul 2026 12:37:14 +0200
-Message-Id: <20260703-nachrangig-gegeben-befestigen-8219a53648c7@brauner>
-X-Mailer: b4 0.16-dev-4217c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1636; i=brauner@kernel.org;
- h=from:subject:message-id; bh=d4s4dMLniDIuK4LTsTNvbrHzQ5sC7wrFJBhb2lMg/u0=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWS5T7iz7fS6t1kzwm8fcparv3KDyXRbpMKKF15fNPbwT
- dVe5OMk1lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRtgxGhmMbHf76zT147eA7
- nZiMnzu9Q+v+PNtl5pjYUP6f6/XP/z8YGe7siubVVw14xJBz7G+cn2VOrNK0S08/rfgQ3Ddj8wq
- eCi4A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-X-Headers-End: 1wfbH7-0002xz-Vo
-Subject: Re: [f2fs-dev] [PATCH v2 17/18] iomap: pass iomap_next_fn directly
- instead of struct iomap_ops
+X-Headers-End: 1wgSoc-0001BN-PA
+Subject: [f2fs-dev] [PATCH v2 00/17] fscrypt: Standardize on blk-crypto
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,74 +83,135 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Christian Brauner via Linux-f2fs-devel
+From: Eric Biggers via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Christian Brauner <brauner@kernel.org>
-Cc: "Ritesh Harjani \(IBM\)" <ritesh.list@gmail.com>, Jan Kara <jack@suse.cz>,
- Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
- "Darrick J. Wong" <djwong@kernel.org>, Carlos Maiolino <cem@kernel.org>,
- Hyunchul Lee <hyc.lee@gmail.com>,
- Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
- Chris Mason <clm@fb.com>, Andreas Dilger <adilger.kernel@dilger.ca>,
+Reply-To: Eric Biggers <ebiggers@kernel.org>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, Theodore Ts'o <tytso@mit.edu>,
+ Zhang Yi <yi.zhang@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-block@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
  Ojaswin Mujoo <ojaswin@linux.ibm.com>, Baokun Li <libaokun@linux.alibaba.com>,
- Chunhai Guo <guochunhai@vivo.com>, Dan Williams <djbw@kernel.org>,
- Naohiro Aota <naohiro.aota@wdc.com>, Yue Hu <zbestahu@gmail.com>,
- Miklos Szeredi <miklos@szeredi.hu>, Zhang Yi <yi.zhang@huawei.com>,
- willy@infradead.org, Christoph Hellwig <hch@lst.de>,
- Yuezhang Mo <yuezhang.mo@sony.com>, hsiangkao@linux.alibaba.com,
- Gao Xiang <xiang@kernel.org>,
- "open list:EXT2 FILE SYSTEM" <linux-ext4@vger.kernel.org>,
- Namjae Jeon <linkinjeon@kernel.org>,
- "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
- Damien Le Moal <dlemoal@kernel.org>, David Sterba <dsterba@suse.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Jeffle Xu <jefflexu@linux.alibaba.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Andreas Gruenbacher <agruenba@redhat.com>, Jens Axboe <axboe@kernel.dk>,
- "open list:FUSE FILESYSTEM \[CORE\]" <fuse-devel@lists.linux.dev>,
- brauner@kernel.org, Johannes Thumshirn <jth@kernel.org>,
- Theodore Ts'o <tytso@mit.edu>,
- "open list:NTFS3 FILESYSTEM" <ntfs3@lists.linux.dev>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
- linux-xfs@vger.kernel.org, "open list:GFS2 FILE SYSTEM" <gfs2@lists.linux.dev>,
- "open list:FILESYSTEM DIRECT ACCESS \(DAX\)" <nvdimm@lists.linux.dev>,
- Hongbo Li <lihongbo22@huawei.com>, linux-fsdevel@vger.kernel.org,
- Sungjong Seo <sj1557.seo@samsung.com>,
- "open list:EROFS FILE SYSTEM" <linux-erofs@lists.ozlabs.org>,
- "open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>, Eric Biggers <ebiggers@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gMjAyNi0wNy0wMiAxODo0NyAtMDcwMCwgSm9hbm5lIEtvb25nIHdyb3RlOgo+IE9uIFRodSwg
-SnVsIDIsIDIwMjYgYXQgOTo1MeKAr0FNIERhcnJpY2sgSi4gV29uZyA8ZGp3b25nQGtlcm5lbC5v
-cmc+IHdyb3RlOgo+ID4KPiA+IE9uIFRodSwgSnVsIDAyLCAyMDI2IGF0IDA0OjA3OjA1UE0gKzAy
-MDAsIENocmlzdG9waCBIZWxsd2lnIHdyb3RlOgo+ID4gPiBMb29rcyBnb29kOgo+ID4gPgo+ID4g
-PiBSZXZpZXdlZC1ieTogQ2hyaXN0b3BoIEhlbGx3aWcgPGhjaEBsc3QuZGU+Cj4gPiA+Cj4gPiA+
-IEluIHRlcm1zIG9mIG1lcmdlIGxvZ2lzdGljcywgSSB3b25kZXIgaWYgd2Ugc2hvdWxkIGRlbGF5
-IHRoaXMgYW5kCj4gPiA+IHRoZSBwcmV2aW91cyBwYXRjaCB0byB0aGUgbmV4dCBtZXJnZSB3aW5k
-b3cgc28gdGhhdCB3ZSBjYW4gbWluaW1pemUgdGhlCj4gPiA+IGNyb3NzLXN1YnN5c3RlbSBtZXJn
-ZSBwYWluIHdpdGggbW9yZSBmaWxlIHN5c3RlbSBpb21hcCBjb252ZXJzaW9uLgo+ID4gPiBJZiBu
-b25lIG9mIHRoZW0gYWN0dWFsbHkgaGFwcGVuIHVudGlsIHJjNiBvciBzbywgb3JpZiAgdGhlIG1l
-cmdlcyBhcmVuJ3QKPiA+ID4gcGFpbmZ1bCB3ZSBjb3VsZCBzdGlsbCBwaWNrIHRoZW0gdXAgbGF0
-ZSBpbiB0aGUgbWVyZ2Ugd2luZG93Lgo+ID4KPiA+IEknZCBzYXkgZXZlcnl0aGluZyBidXQgdGhp
-cyBwYXRjaCBzaG91bGQgZ28gaW4gZHVyaW5nIHRoZSBtZXJnZSB3aW5kb3cKPiA+IGZvciA3LjMs
-IGFsb25nIHdpdGggY2xlYXIgaW5zdHJ1Y3Rpb25zIHRvIGJyYXVuZXIvdG9ydmFsZHMgdG8gZXhw
-ZWN0Cj4gPiB0aGlzIHBhdGNoIHRvIGFwcGVhciByaWdodCBiZWZvcmUgNy4zLXJjMSBnZXRzIHRh
-Z2dlZCwgdG8gY2xlYW4gdXAgYWxsCj4gPiB0aGUgb3RoZXIgY2hhbmdlcyB0aGF0IGNvbWUgaW4u
-Cj4gCj4gSnVzdCB0byBjbGFyaWZ5LCBkaWQgeW91IG1lYW4gdGhpcyBwYXRjaCBhbmQgdGhlIHBy
-ZXZpb3VzIG9uZT8gSWYgaSdtCj4gaW50ZXJwcmV0aW5nIENocmlzdG9waCdzIGNvbmNlcm4gY29y
-cmVjdGx5LCBJIHRoaW5rIGhlJ3Mgd29ycmllZCBhYm91dAo+IG90aGVyIGZpbGVzeXN0ZW1zIGNv
-bnZlcnRpbmcgdG8gaW9tYXAgdXNpbmcgdGhlIC0+aW9tYXBfYmVnaW4oKSAvCj4gLT5pb21hcF9l
-bmQoKSBmdW5jdGlvbnMgc3RpbGw/IFRoYXQgc291bmRzIGxpa2UgYSBnb29kIHBsYW4gdG8gbWUs
-IGZvcgo+IHYzIEknbGwgc3VibWl0IGV2ZXJ5dGhpbmcgYnV0IHRoaXMgcGF0Y2ggYW5kIHRoZSBs
-YXN0IG9uZSBhbmQgdGhlbgoKT2ssIHNvIHdlJ2xsIGRvIHRoZSBwcmVwIGZvciB2ZnMtNy4zLmlv
-bWFwIChha2EgdG8gYmUgbWVyZ2VkIGluIHRoZQp2Ny4zLXJjMSBjeWNsZSkuLi4KCj4gc3VibWl0
-IHRoZXNlIHBhdGNoZXMgKGFuZCBhbnkgY2xlYW51cCBvbmVzIHRoYXQgYmVjb21lIG5lY2Vzc2Fy
-eSkgdG8KPiBDaHJpc3RpYW4gcmlnaHQgYmVmb3JlIDcuMy1yYzEgZ2V0cyB0YWdnZWQgKHdoaWNo
-IGFzIEkgdW5kZXJzdGFuZCBpdCwKPiBpcyB3aGVuIHRoZSBtZXJnZSB3aW5kb3cgaXMgYWJvdXQg
-dG8gY2xvc2UpLgoKYW5kIG1lcmdlIHRoZXNlIF9hZnRlcl8gdjcuMy1yYzEgaGFzIGJlZW4gdGFn
-Z2VkLi4uCgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291
-cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZv
-L2xpbnV4LWYyZnMtZGV2ZWwK
+This series applies to commit 2d0afaac9137e9 of
+https://git.kernel.org/pub/scm/fs/fscrypt/linux.git/log/?h=for-next
+It can also be retrieved from:
+
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/ fscrypt-blk-crypto-v2
+
+Currently, ext4 and f2fs (i.e., the block-based filesystems with fscrypt
+support) have two file contents encryption implementations:
+
+ - Filesystem-layer, where code in fs/crypto/ directly invokes
+   crypto_skcipher to en/decrypt data using the CPU.  This
+   implementation requires the management of bounce pages at the
+   filesystem level.  It doesn't support direct I/O or large folios.
+
+ - blk-crypto (also known as inline encryption), where the filesystem
+   assigns bio_crypt_ctxs to bios, which are then processed either by
+   the CPU using blk-crypto-fallback.c or by inline encryption hardware.
+   This supports direct I/O and is compatible with large folios.
+
+Currently, the latter implementation is enabled only when the
+"inlinecrypt" mount option is given.
+
+The persistence of the fs-layer implementation is mainly for historical
+reasons, as it came first.  It's becoming increasingly hard to maintain,
+especially as the filesystems get refactored to use iomap, large folios,
+etc.  It's time to remove it and just rely on the similar code in
+blk-crypto-fallback.  This series does that.
+
+Some fs-layer encryption support remains in fs/crypto/ for non-block
+based filesystems (UBIFS and CephFS), as well as directories and
+symlinks.  So it's not entirely gone, but it's reduced.
+
+To be clear, this just changes an internal implementation detail.  ext4
+and f2fs continue to fully support encryption (fscrypt), regardless of
+the presence of inline encryption hardware on the system.
+
+Changed in v2:
+
+  - Replaced the allow_hw bool with a flags argument.
+
+  - Added patch "Documentation: fscrypt: Update docs for inlinecrypt"
+    which updates the documentation more completely by updating not just
+    fscrypt.rst (which was previously part of another patch), but also
+    the documentation for inlinecrypt in ext4.rst and f2fs.rst.  
+
+  - Removed extern from declarations of ext4_init_verity_caches() and
+    ext4_exit_verity_caches()
+ 
+  - Remove unused 'inode' argument from ext4_set_verity_work()
+
+  - Added Reviewed-by tags
+
+Eric Biggers (17):
+  blk-crypto: Simplify check for fallback support
+  blk-crypto: Fold __blk_crypto_cfg_supported() into its caller
+  blk-crypto: Allow control over whether hardware is used
+  fscrypt: Fully disallow IV_INO_LBLK_32 with s_blocksize != PAGE_SIZE
+  fscrypt: Always use blk-crypto for contents on block-based filesystems
+  Documentation: fscrypt: Update docs for inlinecrypt
+  ext4: Remove fs-layer file contents en/decryption code
+  ext4: Make ext4_bio_write_folio() return void
+  ext4: Further de-generalize the bio postprocessing code
+  f2fs: Remove fs-layer file contents en/decryption code
+  fs/buffer: Remove fs-layer decryption code
+  fscrypt: Replace calls to fscrypt_inode_uses_inline_crypto()
+  fscrypt: Remove fscrypt_dio_supported()
+  fscrypt: Remove fs-layer zeroout code
+  fscrypt: Remove unused functions and workqueue
+  fscrypt: Merge bio.c and inline_crypt.c into block.c
+  fscrypt: Add safety checks to non-block-based en/decryption
+
+ Documentation/admin-guide/ext4.rst          |   8 +-
+ Documentation/filesystems/f2fs.rst          |  10 +-
+ Documentation/filesystems/fscrypt.rst       |  39 ++-
+ arch/loongarch/configs/loongson32_defconfig |   1 -
+ arch/loongarch/configs/loongson64_defconfig |   1 -
+ block/blk-crypto-fallback.c                 |   3 +-
+ block/blk-crypto-profile.c                  |  22 --
+ block/blk-crypto.c                          |  34 ++-
+ drivers/md/dm-inlinecrypt.c                 |   3 +-
+ fs/buffer.c                                 |  45 +---
+ fs/crypto/Kconfig                           |   8 +-
+ fs/crypto/Makefile                          |   3 +-
+ fs/crypto/bio.c                             | 216 ---------------
+ fs/crypto/{inline_crypt.c => block.c}       | 284 ++++++++++----------
+ fs/crypto/crypto.c                          | 140 ++++------
+ fs/crypto/fscrypt_private.h                 |  28 +-
+ fs/crypto/keysetup.c                        |  31 +--
+ fs/crypto/policy.c                          |  17 ++
+ fs/ext4/crypto.c                            |   2 +-
+ fs/ext4/ext4.h                              |   6 +-
+ fs/ext4/inode.c                             |  64 +----
+ fs/ext4/page-io.c                           |  74 +----
+ fs/ext4/readpage.c                          | 139 +++-------
+ fs/ext4/super.c                             |   6 +-
+ fs/f2fs/compress.c                          |  31 +--
+ fs/f2fs/data.c                              |  93 +------
+ fs/f2fs/f2fs.h                              |   2 -
+ fs/f2fs/file.c                              |   2 -
+ fs/f2fs/segment.c                           |   2 -
+ fs/f2fs/super.c                             |   2 +-
+ include/linux/blk-crypto.h                  |  14 +-
+ include/linux/fscrypt.h                     |  96 ++-----
+ 32 files changed, 375 insertions(+), 1051 deletions(-)
+ delete mode 100644 fs/crypto/bio.c
+ rename fs/crypto/{inline_crypt.c => block.c} (61%)
+
+
+base-commit: 2d0afaac9137e95e504bd3ad3512a9044745536b
+-- 
+2.54.0
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
