@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DC5AEC44506
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C22ABC44500
 	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jul 2026 19:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,18 +12,18 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=+tWcKB+dLzToOZqejhxg5pGKabJ8uxsseJt/L6H5AqU=; b=HOKazPTb8EQgO8xHnvNUOQvVZe
-	46tVZf4+EVrHVrua0LC4U8EXchiKJPwgBxnYIpd4D+R/svkXbUUsUCqksSQo+5JC6UmLTk+3Vt/V6
-	OByB0ZVgovpwayzkLp1szp7eNYworNkoLlsv0oCPYgFUYPu81jx6yriWNGcfsFPKyw1E=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=2XTpn7j3ohwXmL4QLYBm7Kqgx28/uMwyUjmUynP8J04=; b=IAHA8B5KjoVawM6TlLPDkV34W4
+	k6+4WpjxMzVy0IJoXuRsmoegDR5m4JQ8YkaFN7TR2D9dELUQ/smoWce3YuuAt9zO2RdLMd2H/8aDI
+	T1Mlky2BeUi2Yyw65fiAmrTz2DTXfDoI8FQHoySPeExFlRwhD6b2vU3Dacur++ELS4PQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wgSoz-0003ve-PO;
+	id 1wgSoz-00062n-M9;
 	Sun, 05 Jul 2026 19:48:10 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wgSow-0003sx-FI
+ (envelope-from <ebiggers@kernel.org>) id 1wgSox-00062D-3f
  for linux-f2fs-devel@lists.sourceforge.net;
  Sun, 05 Jul 2026 19:48:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tKdpjr5i/RImosIY+eiFhMqxSz+elKzS2xT7ckJAoUE=; b=Qilc1C56ftFyezdmD/K2UnEwPP
- KwLuMUkdIt4O90NOigF9TbX47K4LF5uLqTnzIE1VCppLa8Y13b363LPGgwtCZFAeJyeEtAEfaZRcp
- E041xpgHGWyojKJwHlhcd0XUgGiPABDprS667bHrtol5NmJ7P/tLGlMWqm/7IELIVpXc=;
+ bh=GRHRganLCf+R1JHMWL4IXmDRM+0hzVS8FLYqdpjwVe8=; b=a4r4sEhX1JOGt4wlzzqCB84p7U
+ vw0qqkiNefzoSAaAN+oU6yDdzumkMJhrcb9//hlCtwmI2MZwj36uiFkIS9BZhEgOB+4zeo3LSOX/Z
+ +a8+rQrLD6I6NT1o3BuyiPSx+LUzllQ6L1rsudXeTDN1I+nzJdiM2fgDz/jC7nLyO5Oo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=tKdpjr5i/RImosIY+eiFhMqxSz+elKzS2xT7ckJAoUE=; b=nMSKpeBzmYdb9u3K2V05b0C0fm
- p8vNcD+Dtvuio6ZgD2NzGT+4WPDRUqTE4zt4vxq024Na8mZfp0g/PA3VL/RPtCuHPxMjJS8baThzf
- hga1KTq/jmDRMk2b2E1yvHDACs7cb6ALfZOLYGNiRBJqflZ1cSNxT3Ihb4FoweuMtEx0=;
+ bh=GRHRganLCf+R1JHMWL4IXmDRM+0hzVS8FLYqdpjwVe8=; b=c5/h9Mqc65qSspKh12WSq8Ek8Q
+ nJTw95hO71eqHk8Y13rBfxfeLI0CPQ0tKNkzM5LDRDkn4W/rnIk7u7c/NivYhsI2vhip2KZ1nuTKi
+ d+PRo26OyH/g7QUgwQ61yeoSQZ5Q8XYMm5OVmIrfs6vyPDzokSRDESAtBZQiNfaruRq4=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wgSof-0001Br-Qn for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 05 Jul 2026 19:47:50 +0000
+ id 1wgSol-0001Cy-9H for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 05 Jul 2026 19:47:56 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id E9A714145C;
- Sun,  5 Jul 2026 19:47:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFBB1F00A3A;
- Sun,  5 Jul 2026 19:47:37 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 7D11843AD7;
+ Sun,  5 Jul 2026 19:47:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE331F000E9;
+ Sun,  5 Jul 2026 19:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783280859;
- bh=tKdpjr5i/RImosIY+eiFhMqxSz+elKzS2xT7ckJAoUE=;
+ s=k20260515; t=1783280865;
+ bh=GRHRganLCf+R1JHMWL4IXmDRM+0hzVS8FLYqdpjwVe8=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=bkwvRjw1u1rp8gSn/ECS1DhIstnM96dOMOctkXi9ZJoEBiZ5NatqO9gm0NIepGdiF
- 2BZBCLA4sqWoMpbfy2xPqmS2J1Jvr5VOxgZ4kjC5DbrNnozQYD4NWByhJYtG1Rlb24
- MyVgEn8TT7ne0TSKx3p3TEACoM6GTUbJbY6s+HCWz/YTIJ9Ug9/fmFLn5jaCvD52fi
- dB9ldBpoTliTHkLctHksCnEnl2+Y9fTS82BEOo+ZqzAXY+/AsYmYguB3mFatir/iok
- JJBDioWjALQGx9y8dQ2MVCPGdJfyQ2rSFDscJL0maGVf54UJlvNlR1Z9jxHfdNbPJd
- O8xRMHslucJtg==
+ b=OtMiipfUpVEqpmYpLa7wCTsZUlPNIVCS5dRFqOLCyVnu7Eyxrpf5605X9SxERcr3Z
+ xTzDcniUGmk/K5FPR1UzAleUe0G1qj1AdyC6zvwFC0KWvhgqrds2y7crpNnRuULdUy
+ fUDEfxHvr/CBe5i8hmA5hO8OJagBkuv6D/qh8SOP9kWGXCs6dyM4afnkHx/tnyyx1a
+ PNpcJLgUF1EunAtUiTr5TQz7jnLN1Y8TzvJwK8D3Acu6VuWNvKHeRoMmUiaW2PGyiD
+ T5bcFsEMChClJldEhOn9pVdZiFoapwqL8Iqks7sctovBP9DnEOJuWwbq2eoaoGPUA4
+ x/IDFxrdnd2XQ==
 To: linux-fscrypt@vger.kernel.org
-Date: Sun,  5 Jul 2026 12:45:39 -0700
-Message-ID: <20260705194555.75030-3-ebiggers@kernel.org>
+Date: Sun,  5 Jul 2026 12:45:42 -0700
+Message-ID: <20260705194555.75030-6-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260705194555.75030-1-ebiggers@kernel.org>
 References: <20260705194555.75030-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wgSof-0001Br-Qn
-Subject: [f2fs-dev] [PATCH v2 02/17] blk-crypto: Fold
- __blk_crypto_cfg_supported() into its caller
+X-Headers-End: 1wgSol-0001Cy-9H
+Subject: [f2fs-dev] [PATCH v2 05/17] fscrypt: Always use blk-crypto for
+ contents on block-based filesystems
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,86 +100,472 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-__blk_crypto_cfg_supported() is called only by
-blk_crypto_config_supported_natively(), so fold it in.
+For encrypting and decrypting file contents on block-based filesystems
+(i.e., ext4 and f2fs, but not ceph and ubifs), always use blk-crypto
+instead of fs-layer crypto (direct use of crypto_skcipher).
+
+Since the blk-crypto API provides a fallback to CPU-based encryption,
+it's all that's needed on block-based filesystems.  The support for two
+alternative block-based file contents encryption implementations,
+fs-layer and blk-crypto, existed mainly for historical reasons, as the
+fs-layer path came first.  Some of it is also still needed for the
+non-block-based filesystems, but a lot of it isn't.
+
+Removing the duplicate fs-layer code paths greatly simplifies the code,
+most of which is done in later commits.
+
+Specific implementation details:
+
+- SB_INLINECRYPT now controls whether blk_crypto_config::allow_hw is set
+  to true, instead of whether blk-crypto is used at all.  The effect is
+  that the semantics are preserved: the inlinecrypt mount option selects
+  the use of inline encryption hardware instead of the CPU.
+
+- Set up a blk_crypto_key iff the file is a regular file on a
+  block-based filesystem.  To determine whether the filesystem is
+  block-based, add a bit fscrypt_operations::is_block_based.
+
+- Remove fscrypt_select_encryption_impl().  Move the logging logic that
+  was previously there into fscrypt_prepare_inline_crypt_key().  Note
+  that blk_crypto_config_supported() is no longer needed.
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- block/blk-crypto-profile.c | 22 ----------------------
- block/blk-crypto.c         | 23 +++++++++++++++++++++--
- 2 files changed, 21 insertions(+), 24 deletions(-)
+ arch/loongarch/configs/loongson32_defconfig |   1 -
+ arch/loongarch/configs/loongson64_defconfig |   1 -
+ fs/crypto/Kconfig                           |   8 +-
+ fs/crypto/fscrypt_private.h                 |  21 +---
+ fs/crypto/inline_crypt.c                    | 110 ++++++--------------
+ fs/crypto/keysetup.c                        |  31 +-----
+ fs/ext4/crypto.c                            |   1 +
+ fs/f2fs/super.c                             |   1 +
+ include/linux/fscrypt.h                     |  28 ++---
+ 9 files changed, 57 insertions(+), 145 deletions(-)
 
-diff --git a/block/blk-crypto-profile.c b/block/blk-crypto-profile.c
-index cf447ba4a66e..53126c091b0b 100644
---- a/block/blk-crypto-profile.c
-+++ b/block/blk-crypto-profile.c
-@@ -335,28 +335,6 @@ void blk_crypto_put_keyslot(struct blk_crypto_keyslot *slot)
+diff --git a/arch/loongarch/configs/loongson32_defconfig b/arch/loongarch/configs/loongson32_defconfig
+index 7c8f01513ed2..6bf2867dbdc6 100644
+--- a/arch/loongarch/configs/loongson32_defconfig
++++ b/arch/loongarch/configs/loongson32_defconfig
+@@ -969,7 +969,6 @@ CONFIG_F2FS_FS_SECURITY=y
+ CONFIG_F2FS_CHECK_FS=y
+ CONFIG_F2FS_FS_COMPRESSION=y
+ CONFIG_FS_ENCRYPTION=y
+-CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y
+ CONFIG_FS_VERITY=y
+ CONFIG_FANOTIFY=y
+ CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
+diff --git a/arch/loongarch/configs/loongson64_defconfig b/arch/loongarch/configs/loongson64_defconfig
+index 8e3906d3bd70..def104c9d405 100644
+--- a/arch/loongarch/configs/loongson64_defconfig
++++ b/arch/loongarch/configs/loongson64_defconfig
+@@ -1000,7 +1000,6 @@ CONFIG_F2FS_FS_SECURITY=y
+ CONFIG_F2FS_CHECK_FS=y
+ CONFIG_F2FS_FS_COMPRESSION=y
+ CONFIG_FS_ENCRYPTION=y
+-CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y
+ CONFIG_FS_VERITY=y
+ CONFIG_FANOTIFY=y
+ CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
+diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
+index 983d8ad1f417..cd934e31dec4 100644
+--- a/fs/crypto/Kconfig
++++ b/fs/crypto/Kconfig
+@@ -1,6 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config FS_ENCRYPTION
+ 	bool "FS Encryption (Per-file encryption)"
++	select BLK_INLINE_ENCRYPTION if BLOCK
++	select BLK_INLINE_ENCRYPTION_FALLBACK if BLOCK
+ 	select CRYPTO
+ 	select CRYPTO_SKCIPHER
+ 	select CRYPTO_LIB_AES
+@@ -34,7 +36,5 @@ config FS_ENCRYPTION_ALGS
+ 	select CRYPTO_XTS
+ 
+ config FS_ENCRYPTION_INLINE_CRYPT
+-	bool "Enable fscrypt to use inline crypto"
+-	depends on FS_ENCRYPTION && BLK_INLINE_ENCRYPTION
+-	help
+-	  Enable fscrypt to use inline encryption hardware if available.
++	bool
++	default y if FS_ENCRYPTION && BLOCK
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index 8234ee542476..57b7ae2cfafc 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -266,14 +266,6 @@ struct fscrypt_inode_info {
+ 	/* True if ci_enc_key should be freed when this struct is freed */
+ 	u8 ci_owns_key : 1;
+ 
+-#ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
+-	/*
+-	 * True if this inode will use inline encryption (blk-crypto) instead of
+-	 * the traditional filesystem-layer encryption.
+-	 */
+-	u8 ci_inlinecrypt : 1;
+-#endif
+-
+ 	/* True if ci_dirhash_key is initialized */
+ 	u8 ci_dirhash_key_initialized : 1;
+ 
+@@ -410,13 +402,12 @@ void fscrypt_hkdf_expand(const struct hmac_sha512_key *hkdf, u8 context,
+ 
+ /* inline_crypt.c */
+ #ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
+-int fscrypt_select_encryption_impl(struct fscrypt_inode_info *ci,
+-				   bool is_hw_wrapped_key);
+-
+ static inline bool
+ fscrypt_using_inline_encryption(const struct fscrypt_inode_info *ci)
+ {
+-	return ci->ci_inlinecrypt;
++	const struct inode *inode = ci->ci_inode;
++
++	return S_ISREG(inode->i_mode) && inode->i_sb->s_cop->is_block_based;
+ }
+ 
+ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
+@@ -446,12 +437,6 @@ fscrypt_is_key_prepared(const struct fscrypt_prepared_key *prep_key,
+ 
+ #else /* CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
+ 
+-static inline int fscrypt_select_encryption_impl(struct fscrypt_inode_info *ci,
+-						 bool is_hw_wrapped_key)
+-{
+-	return 0;
+-}
+-
+ static inline bool
+ fscrypt_using_inline_encryption(const struct fscrypt_inode_info *ci)
+ {
+diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
+index 83dea8bc2c8c..3a92bd57e3eb 100644
+--- a/fs/crypto/inline_crypt.c
++++ b/fs/crypto/inline_crypt.c
+@@ -70,77 +70,19 @@ static unsigned int fscrypt_get_dun_bytes(const struct fscrypt_inode_info *ci)
+  * helpful for debugging problems where the "wrong" implementation is used.
+  */
+ static void fscrypt_log_blk_crypto_impl(struct fscrypt_mode *mode,
+-					struct block_device **devs,
+-					unsigned int num_devs,
+-					const struct blk_crypto_config *cfg)
++					struct block_device *dev,
++					const struct blk_crypto_key *blk_key)
+ {
+-	unsigned int i;
+-
+-	for (i = 0; i < num_devs; i++) {
+-		if (!IS_ENABLED(CONFIG_BLK_INLINE_ENCRYPTION_FALLBACK) ||
+-		    blk_crypto_config_supported_natively(devs[i], cfg)) {
+-			if (!xchg(&mode->logged_blk_crypto_native, 1))
+-				pr_info("fscrypt: %s using blk-crypto (native)\n",
+-					mode->friendly_name);
+-		} else if (!xchg(&mode->logged_blk_crypto_fallback, 1)) {
+-			pr_info("fscrypt: %s using blk-crypto-fallback\n",
++	if (blk_crypto_config_supported_natively(dev, &blk_key->crypto_cfg)) {
++		if (!xchg(&mode->logged_blk_crypto_native, 1))
++			pr_info("fscrypt: %s using blk-crypto (native)\n",
+ 				mode->friendly_name);
+-		}
++	} else if (!xchg(&mode->logged_blk_crypto_fallback, 1)) {
++		pr_info("fscrypt: %s using blk-crypto-fallback\n",
++			mode->friendly_name);
  	}
  }
  
--/**
-- * __blk_crypto_cfg_supported() - Check whether the given crypto profile
-- *				  supports the given crypto configuration.
-- * @profile: the crypto profile to check
-- * @cfg: the crypto configuration to check for
-- *
-- * Return: %true if @profile supports the given @cfg.
-- */
--bool __blk_crypto_cfg_supported(struct blk_crypto_profile *profile,
--				const struct blk_crypto_config *cfg)
+-/* Enable inline encryption for this file if supported. */
+-int fscrypt_select_encryption_impl(struct fscrypt_inode_info *ci,
+-				   bool is_hw_wrapped_key)
 -{
--	if (!profile)
--		return false;
--	if (!(profile->modes_supported[cfg->crypto_mode] & cfg->data_unit_size))
--		return false;
--	if (profile->max_dun_bytes_supported < cfg->dun_bytes)
--		return false;
--	if (!(profile->key_types_supported & cfg->key_type))
--		return false;
--	return true;
+-	const struct inode *inode = ci->ci_inode;
+-	struct super_block *sb = inode->i_sb;
+-	struct blk_crypto_config crypto_cfg;
+-	struct block_device **devs;
+-	unsigned int num_devs;
+-	unsigned int i;
+-
+-	/* The file must need contents encryption, not filenames encryption */
+-	if (!S_ISREG(inode->i_mode))
+-		return 0;
+-
+-	/* The crypto mode must have a blk-crypto counterpart */
+-	if (ci->ci_mode->blk_crypto_mode == BLK_ENCRYPTION_MODE_INVALID)
+-		return 0;
+-
+-	/* The filesystem must be mounted with -o inlinecrypt */
+-	if (!(sb->s_flags & SB_INLINECRYPT))
+-		return 0;
+-
+-	/*
+-	 * On all the filesystem's block devices, blk-crypto must support the
+-	 * crypto configuration that the file would use.
+-	 */
+-	crypto_cfg.crypto_mode = ci->ci_mode->blk_crypto_mode;
+-	crypto_cfg.data_unit_size = 1U << ci->ci_data_unit_bits;
+-	crypto_cfg.dun_bytes = fscrypt_get_dun_bytes(ci);
+-	crypto_cfg.key_type = is_hw_wrapped_key ?
+-		BLK_CRYPTO_KEY_TYPE_HW_WRAPPED : BLK_CRYPTO_KEY_TYPE_RAW;
+-	crypto_cfg.flags = BLK_CRYPTO_CFG_ALLOW_HW;
+-
+-	devs = fscrypt_get_devices(sb, &num_devs);
+-	if (IS_ERR(devs))
+-		return PTR_ERR(devs);
+-
+-	for (i = 0; i < num_devs; i++) {
+-		if (!blk_crypto_config_supported(devs[i], &crypto_cfg))
+-			goto out_free_devs;
+-	}
+-
+-	fscrypt_log_blk_crypto_impl(ci->ci_mode, devs, num_devs, &crypto_cfg);
+-
+-	ci->ci_inlinecrypt = true;
+-out_free_devs:
+-	kfree(devs);
+-
+-	return 0;
 -}
 -
- /*
-  * This is an internal function that evicts a key from an inline encryption
-  * device that can be either a real device or the blk-crypto-fallback "device".
-diff --git a/block/blk-crypto.c b/block/blk-crypto.c
-index 15e25e41b166..de60f03b4d4b 100644
---- a/block/blk-crypto.c
-+++ b/block/blk-crypto.c
-@@ -351,11 +351,30 @@ int blk_crypto_init_key(struct blk_crypto_key *blk_key,
- }
- EXPORT_SYMBOL_GPL(blk_crypto_init_key);
- 
-+/**
-+ * blk_crypto_config_supported_natively() - Check whether a block device
-+ *					    supports hardware inline encryption
-+ *					    with the given configuration.
-+ * @bdev: the block device
-+ * @cfg: the crypto configuration to check for
-+ *
-+ * Return: %true if @bdev supports hardware inline encryption with @cfg.
-+ */
- bool blk_crypto_config_supported_natively(struct block_device *bdev,
- 					  const struct blk_crypto_config *cfg)
+ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
+ 				     const u8 *key_bytes, size_t key_size,
+ 				     bool is_hw_wrapped,
+@@ -148,7 +90,8 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
  {
--	return __blk_crypto_cfg_supported(bdev_get_queue(bdev)->crypto_profile,
--					  cfg);
-+	struct blk_crypto_profile *profile =
-+		bdev_get_queue(bdev)->crypto_profile;
+ 	const struct inode *inode = ci->ci_inode;
+ 	struct super_block *sb = inode->i_sb;
+-	enum blk_crypto_mode_num crypto_mode = ci->ci_mode->blk_crypto_mode;
++	bool inlinecrypt = sb->s_flags & SB_INLINECRYPT;
++	struct fscrypt_mode *mode = ci->ci_mode;
+ 	enum blk_crypto_key_type key_type = is_hw_wrapped ?
+ 		BLK_CRYPTO_KEY_TYPE_HW_WRAPPED : BLK_CRYPTO_KEY_TYPE_RAW;
+ 	struct blk_crypto_key *blk_key;
+@@ -157,16 +100,28 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
+ 	unsigned int i;
+ 	int err;
+ 
++	if (is_hw_wrapped && !inlinecrypt) {
++		/*
++		 * blk_crypto_init_key() would catch this anyway, but this
++		 * provides a clearer error message.
++		 */
++		fscrypt_err(
++			inode,
++			"Hardware-wrapped keys require inline encryption (-o inlinecrypt)");
++		return -EINVAL;
++	}
 +
-+	if (!profile)
-+		return false;
-+	if (!(profile->modes_supported[cfg->crypto_mode] & cfg->data_unit_size))
-+		return false;
-+	if (profile->max_dun_bytes_supported < cfg->dun_bytes)
-+		return false;
-+	if (!(profile->key_types_supported & cfg->key_type))
-+		return false;
-+	return true;
+ 	blk_key = kmalloc_obj(*blk_key);
+ 	if (!blk_key)
+ 		return -ENOMEM;
+ 
+ 	err = blk_crypto_init_key(blk_key, key_bytes, key_size, key_type,
+-				  crypto_mode, fscrypt_get_dun_bytes(ci),
++				  mode->blk_crypto_mode,
++				  fscrypt_get_dun_bytes(ci),
+ 				  1U << ci->ci_data_unit_bits,
+-				  BLK_CRYPTO_CFG_ALLOW_HW);
++				  inlinecrypt ? BLK_CRYPTO_CFG_ALLOW_HW : 0);
+ 	if (err) {
+-		fscrypt_err(inode, "error %d initializing blk-crypto key", err);
++		fscrypt_err(inode, "Error %d initializing blk-crypto key", err);
+ 		goto fail;
+ 	}
+ 
+@@ -180,10 +135,17 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
+ 		err = blk_crypto_start_using_key(devs[i], blk_key);
+ 		if (err)
+ 			break;
++		fscrypt_log_blk_crypto_impl(mode, devs[i], blk_key);
+ 	}
+ 	kfree(devs);
+ 	if (err) {
+-		fscrypt_err(inode, "error %d starting to use blk-crypto", err);
++		if (err == -EOPNOTSUPP && is_hw_wrapped)
++			fscrypt_err(
++				inode,
++				"Hardware-wrapped key required, but no suitable inline encryption capabilities are available");
++		else
++			fscrypt_err(inode,
++				    "Error %d starting to use blk-crypto", err);
+ 		goto fail;
+ 	}
+ 
+@@ -244,12 +206,6 @@ int fscrypt_derive_sw_secret(struct super_block *sb,
+ 	return err;
  }
  
+-bool __fscrypt_inode_uses_inline_crypto(const struct inode *inode)
+-{
+-	return fscrypt_get_inode_info_raw(inode)->ci_inlinecrypt;
+-}
+-EXPORT_SYMBOL_GPL(__fscrypt_inode_uses_inline_crypto);
+-
+ static void fscrypt_generate_dun(const struct fscrypt_inode_info *ci,
+ 				 loff_t pos, u64 dun[BLK_CRYPTO_DUN_ARRAY_SIZE])
+ {
+diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
+index cfd348e2252e..c9041f245246 100644
+--- a/fs/crypto/keysetup.c
++++ b/fs/crypto/keysetup.c
+@@ -144,9 +144,9 @@ fscrypt_allocate_skcipher(struct fscrypt_mode *mode, const u8 *raw_key,
+ 
  /*
+  * Prepare the crypto transform object or blk-crypto key in @prep_key, given the
+- * raw key, encryption mode (@ci->ci_mode), flag indicating which encryption
+- * implementation (fs-layer or blk-crypto) will be used (@ci->ci_inlinecrypt),
+- * and IV generation method (@ci->ci_policy.flags).
++ * raw key, encryption mode (@ci->ci_mode), predicate indicating which style of
++ * key is needed (fscrypt_using_inline_encryption(ci)), IV generation method
++ * (@ci->ci_policy.flags), and data unit size (@ci->ci_data_unit_bits).
+  */
+ int fscrypt_prepare_key(struct fscrypt_prepared_key *prep_key,
+ 			const u8 *raw_key, const struct fscrypt_inode_info *ci)
+@@ -224,23 +224,8 @@ static int setup_per_mode_enc_key(struct fscrypt_inode_info *ci,
+ 	u8 raw_mode_key[FSCRYPT_MAX_RAW_KEY_SIZE];
+ 	u8 hkdf_info[sizeof(mode_num) + sizeof(sb->s_uuid)];
+ 	unsigned int hkdf_infolen = 0;
+-	bool use_hw_wrapped_key = false;
+ 	int err;
+ 
+-	if (mk->mk_secret.is_hw_wrapped && S_ISREG(inode->i_mode)) {
+-		/* Using a hardware-wrapped key for file contents encryption */
+-		if (!fscrypt_using_inline_encryption(ci)) {
+-			if (sb->s_flags & SB_INLINECRYPT)
+-				fscrypt_warn(ci->ci_inode,
+-					     "Hardware-wrapped key required, but no suitable inline encryption capabilities are available");
+-			else
+-				fscrypt_warn(ci->ci_inode,
+-					     "Hardware-wrapped keys require inline encryption (-o inlinecrypt)");
+-			return -EINVAL;
+-		}
+-		use_hw_wrapped_key = true;
+-	}
+-
+ 	prep_key = fscrypt_find_mode_key(mk, hkdf_context, mode_num, ci);
+ 	if (prep_key) {
+ 		ci->ci_enc_key = *prep_key;
+@@ -263,7 +248,7 @@ static int setup_per_mode_enc_key(struct fscrypt_inode_info *ci,
+ 	new_node->data_unit_bits = ci->ci_data_unit_bits;
+ 	prep_key = &new_node->key;
+ 
+-	if (use_hw_wrapped_key) {
++	if (mk->mk_secret.is_hw_wrapped && S_ISREG(inode->i_mode)) {
+ 		err = fscrypt_prepare_inline_crypt_key(prep_key,
+ 						       mk->mk_secret.bytes,
+ 						       mk->mk_secret.size, true,
+@@ -509,10 +494,6 @@ static int setup_file_encryption_key(struct fscrypt_inode_info *ci,
+ 		if (ci->ci_policy.version != FSCRYPT_POLICY_V1)
+ 			return -ENOKEY;
+ 
+-		err = fscrypt_select_encryption_impl(ci, false);
+-		if (err)
+-			return err;
+-
+ 		/*
+ 		 * As a legacy fallback for v1 policies, search for the key in
+ 		 * the current task's subscribed keyrings too.  Don't move this
+@@ -534,10 +515,6 @@ static int setup_file_encryption_key(struct fscrypt_inode_info *ci,
+ 		goto out_release_key;
+ 	}
+ 
+-	err = fscrypt_select_encryption_impl(ci, mk->mk_secret.is_hw_wrapped);
+-	if (err)
+-		goto out_release_key;
+-
+ 	switch (ci->ci_policy.version) {
+ 	case FSCRYPT_POLICY_V1:
+ 		if (WARN_ON_ONCE(mk->mk_secret.is_hw_wrapped)) {
+diff --git a/fs/ext4/crypto.c b/fs/ext4/crypto.c
+index f41f320f4437..6b809ac80ef7 100644
+--- a/fs/ext4/crypto.c
++++ b/fs/ext4/crypto.c
+@@ -236,6 +236,7 @@ static bool ext4_has_stable_inodes(struct super_block *sb)
+ const struct fscrypt_operations ext4_cryptops = {
+ 	.inode_info_offs	= (int)offsetof(struct ext4_inode_info, i_crypt_info) -
+ 				  (int)offsetof(struct ext4_inode_info, vfs_inode),
++	.is_block_based		= 1,
+ 	.needs_bounce_pages	= 1,
+ 	.has_32bit_inodes	= 1,
+ 	.supports_subblock_data_units = 1,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 2b8d96411156..c04d5d7c9820 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3772,6 +3772,7 @@ static struct block_device **f2fs_get_devices(struct super_block *sb,
+ static const struct fscrypt_operations f2fs_cryptops = {
+ 	.inode_info_offs	= (int)offsetof(struct f2fs_inode_info, i_crypt_info) -
+ 				  (int)offsetof(struct f2fs_inode_info, vfs_inode),
++	.is_block_based		= 1,
+ 	.needs_bounce_pages	= 1,
+ 	.has_32bit_inodes	= 1,
+ 	.supports_subblock_data_units = 1,
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 54712ec61ffb..8d19b95150f1 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -69,14 +69,15 @@ struct fscrypt_operations {
+ 	ptrdiff_t inode_info_offs;
+ 
+ 	/*
+-	 * If set, then fs/crypto/ will allocate a global bounce page pool the
+-	 * first time an encryption key is set up for a file.  The bounce page
+-	 * pool is required by the following functions:
+-	 *
+-	 * - fscrypt_encrypt_pagecache_blocks()
+-	 * - fscrypt_zeroout_range() for files not using inline crypto
+-	 *
+-	 * If the filesystem doesn't use those, it doesn't need to set this.
++	 * Set to 1 if the filesystem is block-based.  This causes fs/crypto/ to
++	 * set up the key for regular files as a blk_crypto_key.  The filesystem
++	 * then uses fscrypt_set_bio_crypt_ctx() and similar functions.
++	 */
++	unsigned int is_block_based : 1;
++
++	/*
++	 * Set to 1 if the filesystem uses fscrypt_encrypt_pagecache_blocks().
++	 * This enables the allocation of the bounce page pool it requires.
+ 	 */
+ 	unsigned int needs_bounce_pages : 1;
+ 
+@@ -863,8 +864,6 @@ static inline void fscrypt_set_ops(struct super_block *sb,
+ /* inline_crypt.c */
+ #ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
+ 
+-bool __fscrypt_inode_uses_inline_crypto(const struct inode *inode);
+-
+ void fscrypt_set_bio_crypt_ctx(struct bio *bio, const struct inode *inode,
+ 			       loff_t pos, gfp_t gfp_mask);
+ 
+@@ -877,11 +876,6 @@ u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk, u64 nr_blocks);
+ 
+ #else /* CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
+ 
+-static inline bool __fscrypt_inode_uses_inline_crypto(const struct inode *inode)
+-{
+-	return false;
+-}
+-
+ static inline void fscrypt_set_bio_crypt_ctx(struct bio *bio,
+ 					     const struct inode *inode,
+ 					     loff_t pos, gfp_t gfp_mask) { }
+@@ -917,7 +911,7 @@ static inline u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk,
+ static inline bool fscrypt_inode_uses_inline_crypto(const struct inode *inode)
+ {
+ 	return fscrypt_needs_contents_encryption(inode) &&
+-	       __fscrypt_inode_uses_inline_crypto(inode);
++	       inode->i_sb->s_cop->is_block_based;
+ }
+ 
+ /**
+@@ -932,7 +926,7 @@ static inline bool fscrypt_inode_uses_inline_crypto(const struct inode *inode)
+ static inline bool fscrypt_inode_uses_fs_layer_crypto(const struct inode *inode)
+ {
+ 	return fscrypt_needs_contents_encryption(inode) &&
+-	       !__fscrypt_inode_uses_inline_crypto(inode);
++	       !inode->i_sb->s_cop->is_block_based;
+ }
+ 
+ /**
 -- 
 2.54.0
 
