@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C724AC43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jul 2026 20:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B12DFC43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jul 2026 20:27:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=5PXSDzWEi379cfx2HjMYoktnqopj/ClJtaMlU7mdAaw=; b=S3JqTYCt0DhwMJdxvSEcLx9K26
-	sfrCzxnYvHvYMQw5P1EGbqq03zqb+SjW/7XeLI1V5Ffh3nzQYa2HyOkb1KQQvm1z2sxzCv0FePNDH
-	rKsn1B+riiFSR8adHnRlUAQlMsMUeKpKyK07E8Jd1gRUkAjWgDnnQMlNOja7/9untqYo=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=pdS9in6WaEM+oSScX9RIfRh+z9+sBODuTgMCuyhUVPk=; b=P/jR73Wjn+nwRry6oa1HhwEPfc
+	4bt1rhL6j3Er/PBNgkLtFOVsgLbBdFCfzntkkdoYvGdMrRtyiaZlPAuhpP0sgyqJJWBLnM2YNt99C
+	m+i+9+2L3gGscJ+Qg+YnAr+rN5NfPw3Go9ptY0sOHqMH3X5snSZQyc0tK5e8fABEdN9Q=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wgTJd-0006iz-BE;
-	Sun, 05 Jul 2026 20:19:46 +0000
+	id 1wgTR9-00074O-Ou;
+	Sun, 05 Jul 2026 20:27:36 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wgTJc-0006it-Ki
+ (envelope-from <ebiggers@kernel.org>) id 1wgTR9-00074H-3G
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 05 Jul 2026 20:19:46 +0000
+ Sun, 05 Jul 2026 20:27:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ut7iHQF/AbxXgauDKV+8ArFS+YsvVMBn1LLgz1WNd1w=; b=jYjGzMuEfAKHYBmS6H8teKszAu
- PmO8HB/LcEUSkUG931gqFm6WSQs94iS0pEhyGFzd9nC6Thhm8RVg1tFDmHf/n0tQ666xEqFMU1eOw
- fw5895UmJtMzLWPEUrU+2K65/+/3IPG+Ej0owjz5Lv12UyzUaiP2dHBeNF7UIR4nTKXo=;
+ bh=aJn2MZML+MCpXCm1e6eEUa6PDLxWsVXQhSkdQWF+JNA=; b=BgZJ/dB4n7cgEK4DoJoHsl+QIA
+ 8Lp64dllHLLVcpT5SbH/kjdb212nKRF9RRg244dqE04AldeH7lwzZm6YI4uzw/y8JnjZptW2URjh4
+ ljDEMAGyHvEB0sg5/mns+Tik18lPT4dsZwOd890nrylI5D195lM1JfbOiGbAW67GeKnI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ut7iHQF/AbxXgauDKV+8ArFS+YsvVMBn1LLgz1WNd1w=; b=HPv8+i+LsOsv5R0nui/jJ1/ctb
- 2gXZB+999ZHrEjWbJTc31pVsgNZyFU09/zVCz3xtl4GdLG8Yniqp5BJy/4WlPElya6Qq2JIWnzcjW
- UjTwDQOG37AiISe1gfddY/WAl32kflacLrGaDtmXj02RzL+Waium+c/ghRCO6fnrSb5U=;
+ bh=aJn2MZML+MCpXCm1e6eEUa6PDLxWsVXQhSkdQWF+JNA=; b=JR6uK1hjxVmU13U9SP92e/2e9K
+ AkEK1MaZ02apH07gE1T0YAYb/OXep03MV2dp0se1RIdwg8OOTAEpbxvDzn2Oe/odwi3GI049ZXFXc
+ QlxgDWgGb3hscFqNQtTq2tjRu6/fBebJlA6RA/XtyiWNNsENnYyMPBeWfXjGumYpgeF4=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wgTJZ-0007Os-1i for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 05 Jul 2026 20:19:46 +0000
+ id 1wgTR8-0000rB-U9 for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 05 Jul 2026 20:27:35 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id DF5CE60018;
- Sun,  5 Jul 2026 20:19:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B011F000E9;
- Sun,  5 Jul 2026 20:19:39 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id C2F3B60018;
+ Sun,  5 Jul 2026 20:27:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBB921F000E9;
+ Sun,  5 Jul 2026 20:27:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783282779;
- bh=ut7iHQF/AbxXgauDKV+8ArFS+YsvVMBn1LLgz1WNd1w=;
+ s=k20260515; t=1783283249;
+ bh=aJn2MZML+MCpXCm1e6eEUa6PDLxWsVXQhSkdQWF+JNA=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=ZIga6IiUpJDUov9sJrPSs0xrW+7w/Lo594hWKveoTRiueAcCmhDHGWuoNhKW9m4s7
- KEgUnSAZ12+Ucc+thyl9NcQvL08y8NNwmOh7id67QWB8dePRqmD7kN7kcwq+niA2vn
- dPYO6X+jHzrdGsiugS9gXZ4RHea27n/AGJxRUdsmKgKF6CcgiGb4/m3+N7/Bk8CcDG
- F7yt2a/iTpdVSBl099lqGKINf5Iqg7enT+AZGz9UR3Du9wPVx+6MWV26Du56BgqXxB
- GuY4szfcpBZ3nW8mM9G9a5Q7V7CeHJEypgl31f5Gvdypblqk+0aANDO6HwishVmZFJ
- T9RwWKuveNRWA==
-Date: Sun, 5 Jul 2026 13:19:37 -0700
+ b=ONkvNfO7vIPU2gSxzCAj2/U9qxr7COrOU3XVQNuoO3cyO4Gb2EB2KBrhR/KthBiDL
+ lIxVNbcyenO7dxge1RD+HatAJg84Rq3H+it1iXBGk1WTDVNIXVr3CC+TIhHlmrrHrV
+ mnP89jhTtAH09EIjmBbOUynb+MhUtYRbyVhkrrOzOHX/zNC8VeVVjPjDF7SdCcu17/
+ rAowTxvRBxDL9piPQHKRlG9+iuM2LAtakBYEiQ7CdfzyZLLC4hHX3U0hSLAK4GiEow
+ MEBZ7LheP/9kIL0fq3lroWPvTxZDICd0FUWpupJsIMcgBEu3U54C3066mKVgf97Q6O
+ P3I8XwjHeCHkg==
+Date: Sun, 5 Jul 2026 13:27:27 -0700
 To: linux-fscrypt@vger.kernel.org
-Message-ID: <20260705201937.GI41916@quark>
+Message-ID: <20260705202727.GJ41916@quark>
 References: <20260705194555.75030-1-ebiggers@kernel.org>
- <20260705194555.75030-14-ebiggers@kernel.org>
+ <20260705194555.75030-9-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260705194555.75030-14-ebiggers@kernel.org>
-X-Headers-End: 1wgTJZ-0007Os-1i
-Subject: Re: [f2fs-dev] [PATCH v2 13/17] fscrypt: Remove
- fscrypt_dio_supported()
+In-Reply-To: <20260705194555.75030-9-ebiggers@kernel.org>
+X-Headers-End: 1wgTR8-0000rB-U9
+Subject: Re: [f2fs-dev] [PATCH v2 08/17] ext4: Make ext4_bio_write_folio()
+ return void
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,29 +101,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Sun, Jul 05, 2026 at 12:45:50PM -0700, Eric Biggers wrote:
-> On block-based filesystems, fscrypt file contents encryption is now
-> always implemented using blk-crypto.  This implementation supports
-> direct I/O.
-> 
-> Therefore, fscrypt_dio_supported() now always returns true, except in
-> the edge case where statx(STATX_DIOALIGN) is called on an encrypted
-> regular file that hasn't had its key set up.  But that was really a
-> workaround rather than the desired behavior, so we can disregard it.
-> 
-> Thus, fscrypt_dio_supported() is no longer needed.  Remove it.
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+On Sun, Jul 05, 2026 at 12:45:45PM -0700, Eric Biggers wrote:
+> @@ -2724,9 +2711,7 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
+>  			 * through a pin.
+>  			 */
+>  			if (!mpd->can_map) {
+> -				err = mpage_submit_folio(mpd, folio);
+> -				if (err < 0)
+> -					goto out;
+> +				mpage_submit_folio(mpd, folio);
+>  				/* Pending dirtying of journalled data? */
+>  				if (folio_test_checked(folio)) {
+>  					err = mpage_journal_page_buffers(handle,
 
-Sashiko pointed out that the following comment in ext4_getattr() (and
-also in f2fs_getattr()) becomes outdated and should be updated too:
+Sashiko found a subtle bug here, where removing this assignment to 'err'
+can leak a positive 'err' value of 1 from ext4_journal_ensure_credits()
+into the caller of mpage_prepare_extent_to_map() in certain cases.
 
-/*
- * Return the DIO alignment restrictions if requested.  We only return   
- * this information when requested, since on encrypted files it might    
- * take a fair bit of work to get if the file wasn't opened recently.    
- */
+I'll fix that by leaving an assignment of 0 to 'err' here.
+
+Really, positive values shouldn't be stored in a variable named 'err' in
+the first place though.
 
 - Eric
 
