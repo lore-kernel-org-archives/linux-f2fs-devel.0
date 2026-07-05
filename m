@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4AC9EC43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jul 2026 20:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AFA8BC43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jul 2026 20:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=/0djBAz6K5Y1JS7XkL0klddXCws9KLqps/H8uxtoQSs=; b=JFM3Boy3zfZU6jVL9IRX8V1RV1
-	goSmX7Tkj8gyzkHvXXBkMLmYfNNulOhu3DQONq8IxBpPjatNgqPWNuIPksiSda7p5P9xp64T1gTBY
-	YohKXuMu+6gPUVZdfnvG9ucxBwyLl83bJVhGy9IZC6w/r2Z9BJqSIgihRVIvH/xgaCX8=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=jPs8sKXzii2tdvL5BnCkIliTlaB2ac45xc6ZNYKSGEc=; b=AS0eAV3scnuVLk5wPuYp43rqHX
+	GFcypl/QK3JWTAwLsJ8CWamBrYyFXJqXngl4jloHcHkA/pwv6LZJu+5MNxvXsTWav5kBH6dEzKWYv
+	CegG1pX5bMr707ye2+qRTfRO6tqM90bYtbTzv+9QTtkYupLh1bK5C5aqdKChOzcQ4m/4=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wgT9n-0006ZA-DL;
-	Sun, 05 Jul 2026 20:09:40 +0000
+	id 1wgTFd-000325-DU;
+	Sun, 05 Jul 2026 20:15:41 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wgT9m-0006Z4-7k
+ (envelope-from <ebiggers@kernel.org>) id 1wgTFb-00031z-RR
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 05 Jul 2026 20:09:38 +0000
+ Sun, 05 Jul 2026 20:15:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gadYmpHWMY+QGts0VFp3QV5k1w9S9s1LXnjC9dd9XPk=; b=IndW8jp8KLnXQZ3OVPIvBm8VmQ
- ZPWE1Jg5x5Pn6pU2vGynfMOZ/H+ulcWbdEAOjJTQ26Dz0zeUOrE5gYsSn/YosNUmb9NCU10WnGNew
- bE9/ZECw8641DUlY7qTvSfFQP05N4IDWbrUpNQhjoEtdQ+biHS9UavSyg3pBnwj3e+ug=;
+ bh=Jlw6RKgO5cyFNzF+9MdF+LGV8eC96x7LPuun++dRWdk=; b=EamtOkCsn3mJ6GFFxNzyXsNtq9
+ lZ9/n6p5y70AdxWwXnyPo0y3ArFhh1GWny5l85oDwEEWGC+E16wW1oyJEK/GFNDADROurGL1nWKRJ
+ m11xl6QLtXu7jFAcMaO8QHXlY8v5jyxciJpIEoiVAjNACtMJfBFmdysVEAmFtbnDdUuE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=gadYmpHWMY+QGts0VFp3QV5k1w9S9s1LXnjC9dd9XPk=; b=lv8SV2+lPCLXz+BOMxvunPtddH
- 16N8TbljvL/ExxTBiCP0RwVn/GDz4C0ghiqKm6mEl58D7jxym9xf+wXF2snKfcVY9Sd1D7+hVsP57
- oewEDFTQMpcP1phHZ658gUOkwpRzEynyR3Fm0BwT4Rjr1cFDaNDBo45Y6fJrwuzf93Mk=;
+ bh=Jlw6RKgO5cyFNzF+9MdF+LGV8eC96x7LPuun++dRWdk=; b=UcDDhpJf3SGnBEdYANo127EjPm
+ hP1pLP432+7r7sDLijOO77GfagdhLORvD/iNz5Lv3Ek/J3i+W+tr4j6bI8jSb0kehSYM+rNmbcVUZ
+ 4NPTUiqWXVbBL164XyZxCl/BRUaMo93zMppYcjxlQmS4kNQ2WPcBjAm4uqPOFeyRWxLo=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wgT9m-0005H0-24 for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 05 Jul 2026 20:09:38 +0000
+ id 1wgTFa-0006Vw-V4 for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 05 Jul 2026 20:15:39 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 33AF941369;
- Sun,  5 Jul 2026 20:09:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B67E1F000E9;
- Sun,  5 Jul 2026 20:09:27 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id BEE92439BA;
+ Sun,  5 Jul 2026 20:15:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D97D1F000E9;
+ Sun,  5 Jul 2026 20:15:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783282168;
- bh=gadYmpHWMY+QGts0VFp3QV5k1w9S9s1LXnjC9dd9XPk=;
+ s=k20260515; t=1783282533;
+ bh=Jlw6RKgO5cyFNzF+9MdF+LGV8eC96x7LPuun++dRWdk=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=Mm/3bpFDGGDAGn3pagwlLTUG35H5lJ4MXl3YOHWMDBAJxy9n/uOUvNMI2FFfPBVwA
- JWqBpp/jC0w0M65gRN5Dro4yiKAaYTh0HQPp8k4zROzc/krdtQXymwOiPtaZFGDJ1Q
- Qqvk8RUSrWENgFXhy138Ulv8okFBVX1TCvIQWusjSrarWvhwrRRlP4i3TEi+44Xrqd
- BOKfYdZi6sSs8pLZqIBANG9DZetNes4FEWsFLGxNxNxNjBf7DSVApyDntS7c33mfpd
- gx/jqHR65l01YM7u/E/+nTKU4w+/yfTwF6+9K7/Jbslmb+wb/yYpbXoBmCI4W5EMQA
- OhW4w/1qwMquw==
-Date: Sun, 5 Jul 2026 13:09:26 -0700
+ b=FrPSMO9AwY3lL0nuFdbSh3HSNChkX4F+SJ49Vg+msdirBdIz7T8pHZa4LlF60iS/T
+ rk9cQ55SOdy8FZUOkt/CJR6FdKEgTHp7vPUgchC5dy0vAA8uRad0Wz+U6cvv79pycI
+ h8pTbey/lpMxSwDUazOiA0hH/8nPc5RiJuIJ+BDC6jYMCubJhgZCoEge8cajx27R6k
+ s4hzPkpaMYFLXpVOzS16i/RQacoh9L7tQk2qXY7gAtoh11luqRNvRVAGfGwisVerqT
+ sxspH0U+dgY6R8ZJVJWTnt3TP/2YiB0Jc29iDKSr85odkmnfUwqexp2T0M7ILxIboL
+ kPVIUNplZHHNg==
+Date: Sun, 5 Jul 2026 13:15:27 -0700
 To: linux-fscrypt@vger.kernel.org
-Message-ID: <20260705200926.GG41916@quark>
+Message-ID: <20260705201527.GH41916@quark>
 References: <20260705194555.75030-1-ebiggers@kernel.org>
- <20260705194555.75030-4-ebiggers@kernel.org>
+ <20260705194555.75030-5-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260705194555.75030-4-ebiggers@kernel.org>
-X-Headers-End: 1wgT9m-0005H0-24
-Subject: Re: [f2fs-dev] [PATCH v2 03/17] blk-crypto: Allow control over
- whether hardware is used
+In-Reply-To: <20260705194555.75030-5-ebiggers@kernel.org>
+X-Headers-End: 1wgTFa-0006Vw-V4
+Subject: Re: [f2fs-dev] [PATCH v2 04/17] fscrypt: Fully disallow
+ IV_INO_LBLK_32 with s_blocksize != PAGE_SIZE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,20 +101,25 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Sun, Jul 05, 2026 at 12:45:40PM -0700, Eric Biggers wrote:
->  /**
->   * struct blk_crypto_config - an inline encryption key's crypto configuration
->   * @crypto_mode: encryption algorithm this key is for
-> @@ -76,13 +85,14 @@ enum blk_crypto_key_type {
->   *	ciphertext.  This is always a power of 2.  It might be e.g. the
->   *	filesystem block size or the disk sector size.
->   * @dun_bytes: the maximum number of bytes of DUN used when using this key
-> - * @key_type: the type of this key -- either raw or hardware-wrapped
-> + * @flags: BLK_CRYPTO_CFG_* flags
->   */
+On Sun, Jul 05, 2026 at 12:45:41PM -0700, Eric Biggers wrote:
+> FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32 with s_blocksize != PAGE_SIZE works
+> only with the fs-layer implementation of file contents encryption, not
+> blk-crypto.  This is a problem for standardizing on blk-crypto.
+> 
+> Fortunately, no one should be using this combination anyway.  It doesn't
+> make sense because the entire point of IV_INO_LBLK_32 is to support
+> inline encryption hardware that is limited to 32-bit DUNs.
+> 
+> Thus, fully disallow IV_INO_LBLK_32 with s_blocksize != PAGE_SIZE.
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 
-Sashiko pointed out that I accidentally deleted the @key_type line here.
-I'll fix that in the next version.
+Sashiko doesn't like that this would break compatibility of existing
+directories using FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32 if someone updates
+their kernel to use a different page size.  I think we'll just have to
+take the risk here.  I'm pretty confident this scenario isn't being
+relied on in practice, for various reasons including the one mentioned.
 
 - Eric
 
