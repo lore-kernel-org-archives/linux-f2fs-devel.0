@@ -4,80 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5AA1FC43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Jul 2026 07:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6E29AC43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Jul 2026 10:00:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=CpWLz6fHNbW3rctDIfOrwOoU6EURPfk7l80ypOfzBAo=; b=FTVQYyhbgp6U6XXgO/pZuoAGnb
-	oi786JBwHXwirdYGo5lBY5ErgHUyJMkNP2SqYKHiXateLFYEkDsbhqnTHNLEcUT0U+4ga0wZnSLGC
-	YlnSDFdYv6t0GP1pdkwnTXXl6FlbevZIyZCasOVCODwzO21XpvWevKqon+NuCDOdWYv0=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=dCAfCcFtKibQnZLF7D7kIcYD4DzLbj/BYYDHj6+umuM=; b=lNXvAM1zSfGu68HwLwum8Y1V3J
+	zM4IWmfSP8xBZBRI2DKJhGcmliRisKtraNKIdlz7zCvDxv1armnBBhpM9dsJgHXUL1k+WbMqRGv48
+	g7DXkOCfPaZu/L+/xhAOHlhJaGqwKcXjMYIljbQn9brN2gxA9KMahjEY8QCAwn4MvZlU=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wgeA0-00023f-JL;
-	Mon, 06 Jul 2026 07:54:37 +0000
+	id 1wgg7R-0001TO-Rl;
+	Mon, 06 Jul 2026 10:00:05 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao@126.com>) id 1wge9z-00023S-Ja
+ (envelope-from <chao@kernel.org>) id 1wgg7Q-0001TG-BJ
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 Jul 2026 07:54:36 +0000
+ Mon, 06 Jul 2026 10:00:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Sender:Content-Transfer-Encoding:Content-Type:
- MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8hON5yCgaiYb1CKpt7dBpqsK+NiKr//lBV5LWiXi6HY=; b=MvLa6OnBafO3Q90WUgTAf59/sM
- Y5B6GnpkafIJ7unCLl6GE5qobJG+SwoVdwzsIgPhrnYj99jVhf5yPaEno972N+tUmn7b6Tr+0vsDL
- VBo90SLuxo4zWCj9nucTwV18AJzMe7o8vu82CczmggLHViDCOTFvOBvnY4Q5rWPeJvKQ=;
+ bh=chjPuNCFQtUiE7OqGIJnm2ZFSRal0XTYbXylExYq4fo=; b=i0YXbZX/xiaPSfQhCpCiU+gYL0
+ +wLD2IEvnd6q0stvtDLGBn9zb59xcPqaza5hp5LNrxmeevEhQSfyRSEdjWSyGYQcBMShePNJXryEg
+ VPrEoj0J5i2JlrHm46nX180ZVYvYPp4GXMlj4cIYKd4aWtYVJSC5ikJfP3uY8IYjLBxI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Sender:Content-Transfer-Encoding:Content-Type:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=8hON5yCgaiYb1CKpt7dBpqsK+NiKr//lBV5LWiXi6HY=; b=RK86XxUeWQx7DH4pqq5RS8xq32
- FBrADY9Oox86r+D9jokkuzPDX6b/YCXPHUQdFX4o++4tojwVCWuMeSnNoXB5tknYI7Z7IJX2JRj+l
- eollu0IxN2KT+EBQrY1EtkEfybrWqC5TAYQAS3KH1GSAolDRV5NV5t/keHT1aMn+dPQY=;
-Received: from m16.mail.126.com ([220.197.31.8])
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=chjPuNCFQtUiE7OqGIJnm2ZFSRal0XTYbXylExYq4fo=; b=M
+ sxTaeN+bfGY69cO1DH5s1wL5f2Dcar0b15eOOlpZrQpIGVd8tIDDHh+JF0XyBRq21lJJkAVIjuk6R
+ 9lyzdC2RDtBpcnswTBrX/yty2iYTRYvrsqWuOhy8C0r+xntHW73JhWPIp+hpLzBdgVnWgAx350DUL
+ 0jupsX0LRf6Hsp9k=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wge9v-0007wa-69 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 Jul 2026 07:54:36 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
- s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version:
- Content-Type; bh=8hON5yCgaiYb1CKpt7dBpqsK+NiKr//lBV5LWiXi6HY=;
- b=YsvjthXgeTV2X12Fk2v7gtylIubzf+OE/xWWDh/4hYXDC3mpt/NRnOL4CzJ+jJ
- gLlnPJFRN725izKjZQjl+qY3RpDWazAsYCRQuNC6srUOUMOFtiaPJTaMe3bPmapt
- 0kydnv0ers9k/34F9xzLSG0iNcnw9CWuHWMqrrRsstfT4=
-Received: from nzzhao-ThinkCentre-M760t.mioffice.cn (unknown [])
- by gzsmtp4 (Coremail) with SMTP id PykvCgD3Z_cKX0tq3G3bCQ--.9436S2;
- Mon, 06 Jul 2026 15:53:47 +0800 (CST)
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon,  6 Jul 2026 15:53:45 +0800
-Message-ID: <20260706075346.2810512-1-zhaonanzhe@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260706074333.2805230-1-zhaonanzhe@xiaomi.com>
-References: <20260706074333.2805230-1-zhaonanzhe@xiaomi.com>
- <a9b257fd-68ce-45a6-b4df-be5faf583e2d@kernel.org>
- <20260622160830.324455-2-zhaonanzhe@xiaomi.com>
+ id 1wgg7O-0005cc-1g for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 06 Jul 2026 10:00:04 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id 38D0040A39;
+ Mon,  6 Jul 2026 09:59:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF5E51F00A3D;
+ Mon,  6 Jul 2026 09:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1783331992;
+ bh=chjPuNCFQtUiE7OqGIJnm2ZFSRal0XTYbXylExYq4fo=;
+ h=From:To:Cc:Subject:Date;
+ b=o0672R1m+PN640PWaZ3WGV0QHFpLyyiLlYFGvglbB6O+fpJ0TBx+LXrXhsM/uW+zw
+ o3ddwvf+OBYwG9cS00B9UThKtVN/gVxJTyimFG8+c4IIu3K+hwkEt4CsiLZiI3MxRJ
+ uo15vLe0ZJ10Kk89PjEtPlPbAfWs9fxH6r+wWIjKQMyzd1t8JBuZmYPrYV2yY6AAcc
+ HwSPTCKW0S9g71Um9H9lVX3GupRgZupQzRGdPGrCVWb61sU6N1vyxDpFTVPOdDCkV6
+ RlzN6CtUb4uEdkW2Zp5XMXjjYh5VSircD2ZYrTBkYZZuztptyfuXkBPoO1HLbqouj6
+ +4i/YdyHNbp0w==
+To: jaegeuk@kernel.org
+Date: Mon,  6 Jul 2026 17:59:42 +0800
+Message-ID: <20260706095943.2560208-1-chao@kernel.org>
+X-Mailer: git-send-email 2.55.0.rc2.803.g1fd1e6609c-goog
 MIME-Version: 1.0
-X-CM-TRANSID: PykvCgD3Z_cKX0tq3G3bCQ--.9436S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XFyUCr4kJr13ZrWfuFyfZwb_yoWfWwb_W3
- ykuw4Du3yxJFsxJF13GFZrAa4jga1rXr1I9a1xXF17Ar9xJ395Ca10gw1kuFy8Xa1ayrZ0
- 9rs7Zw1Fvry7ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
- 9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRRuc_PUUUUU==
-X-Originating-IP: [114.247.175.250]
-X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBowtHF2pLXwsybAAA3T
-X-Headers-End: 1wge9v-0007wa-69
-Subject: Re: [f2fs-dev] [RFC PATCH v2 01/10] f2fs: extend folio state for
- large folio write path
+X-Headers-End: 1wgg7O-0005cc-1g
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: quota: do not use GFP_NOFS in
+ f2fs_quota_read()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,41 +84,65 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Nanzhe Zhao via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
-Cc: baohua@kernel.org, zhaonanzhe@xiaomi.com, Ryan.Roberts@arm.com,
- jyescas@google.com, Dev.Jain@arm.com, David.Hildenbrand@arm.com,
- linux-kernel@vger.kernel.org, zhangbo56@xiaomi.com, kaleshsingh@google.com,
- jaegeuk@kernel.org, lipengfei28@xiaomi.com
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+ Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Chao,
+Commit 02117b8ae9c0 ("f2fs: Set GF_NOFS in read_cache_page_gfp while doing
+f2fs_quota_read") adds GFP_NOFS in f2fs_quota_read() to avoid below deadlock:
 
-> Yes, this can happen. By design, prepare_large_folio_write_begin() skips
-> f2fs_folio_state allocation when the write fully covers the entire large
-> folio (i.e., the folio is already uptodate or len == folio_size(folio)).
-> This is an optimization for normal buffered writes; I somehow didn't apply
-> the same optimization to atomic buffered writes since they are relatively
-> rare.
->
-> In that case, f2fs_update_dirty_folio() may call folio_set_f2fs_reference()
-> on a large folio that does not yet have an ffs, so the flag is stored
-> directly in folio->private.
->
-> But I agree this is a bit subtle and worth discussing.
+- do_sys_open
+ - vfs_open
+  - dquot_file_open
+   - dquot_initialize
+    - dqget
+     - dquot_acquire
+      : locks &dqopt->dqio_mutex (VFS Quota Mutex)
+      - qtree_read_dquot
+       - f2fs_quota_read
+        - read_mapping_page (GFP_KERNEL / allows GFP_FS)
+         - __alloc_pages_nodemask
+          - try_to_free_pages (Direct Reclaim)
+           - prune_icache_sb
+            - evict
+             - f2fs_evict_inode
+              - dquot_drop
+               - dqput
+                - dquot_commit
+                 : tries to lock &dqopt->dqio_mutex again
+                 ==> DEADLOCK (waiting for itself)
 
-This is regarding to
+As Jan Kara mentioned, quota system has fixed this issue w/ commit
+537e11cdc7a6 ("quota: Prevent memory allocation recursion while holding
+dq_lock"), so this GFP_NOFS flag should be relic, let's drop it.
 
-> Why this can happen? allocating large folio from other paths?
->
-> referring to:
-> if (folio_test_private(folio) && folio_test_f2fs_nonpointer(folio))
->     private_flags = (unsigned long)folio->private;
+Cc: Jan Kara <jack@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/super.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks,
-Nanzhe
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index da468df058eb..fdfd6a7203dd 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3167,8 +3167,7 @@ static ssize_t f2fs_quota_read(struct super_block *sb, int type, char *data,
+ 		size_t offset;
+ 
+ repeat:
+-		folio = mapping_read_folio_gfp(mapping, off >> PAGE_SHIFT,
+-				GFP_NOFS);
++		folio = mapping_read_folio_gfp(mapping, off >> PAGE_SHIFT, 0);
+ 		if (IS_ERR(folio)) {
+ 			if (PTR_ERR(folio) == -ENOMEM) {
+ 				memalloc_retry_wait(GFP_NOFS);
+-- 
+2.49.0
 
 
 
