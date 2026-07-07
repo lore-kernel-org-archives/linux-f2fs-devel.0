@@ -4,81 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5A10EC43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2026 09:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 70436C43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2026 10:14:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ujjK4vKQGfCaeC2w1I2VUZ6OLN/T1+uuacRWyoz/8l4=; b=EcA1fXI9hYLrf3uKiZJLiL5AUl
-	fg7jiU/itKkXzmW8Z+tfeT2EjBHt7ibymDzp7G8YA15wI2y21cXiKD8aY2SjTdYkHss8OETdr1UfE
-	TTBNa8b0DyaeTtfJqpoGHM/NNh43ejSvb6hPpyFR6fIQtNKvlhjh0wWp62KgGekioiRc=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=vCEGxJwHdF4dG02OQculfkmmL7xw6XFBx1bn89WBEfE=; b=fC45xhl2uMtLuEBWBrTso6iwgl
+	3LdeYghvCsoykQmOc+CVB2mWiMx3ertQN5tMG+Led4NGFSBsuc7yJQs9nEFBNO86SdINhVKovlYAu
+	SU+XOXqzGOAMzGSVfwiVvLrzVda2wufNWNQkSFoHphQXRDBjjUAdWHI0TuP/8D4i0hWs=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wh2Uo-0005AU-Vv;
-	Tue, 07 Jul 2026 09:53:43 +0000
+	id 1wh2ou-0003EZ-C4;
+	Tue, 07 Jul 2026 10:14:28 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wh2Un-0005AM-Jt
+ (envelope-from <asj@kernel.org>) id 1wh2oa-0003EI-U5
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 07 Jul 2026 09:53:42 +0000
+ Tue, 07 Jul 2026 10:14:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=heO7BCatoIHW6vgfHyqZvrqbsWWERDnfXAzWaFZqjPM=; b=R4qmp3FlmS8/CzNhxDjdWi4VbX
- eJ36tk9xZk1Y1gV1tQCRyJdMqTHmeZfIBn1yo9IDsvY3cJnDxzWRHxuSzbLsWRFj8JZ+zgxgUrupp
- eLKT2vKhHsrkUh3+eoT+FontO90qxv59X+Gek1gWxA2dEyLdQlM+MUKgwzi9o5ModxiY=;
+ bh=mpXcOEu0WUkg9IXLiaEAgCjFTTJb7gqngOKpzTnr42c=; b=XuVHzC9rcJmoviyUO1eTXfci8b
+ jckcnhzgt5SQAwUaiXuzyyzbOs0rSypEbdlBF7DHVsTmGVfMCr/UMbyKeTKQxI+l4oiST985Zv3Za
+ 9wvW87TLchtf8oniAuZ11Jshe73KdVNE4JokWuOlxnjQlHgjHYIBUGFV5zdWu4/wuqEc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=heO7BCatoIHW6vgfHyqZvrqbsWWERDnfXAzWaFZqjPM=; b=YMeu+HCdC0MWF0nuaktiQKn4+M
- E6OwntLP+SEJ4SctpdNMxPw4dBZETb8oP/79BTDYzStNgH5ghkGX3/qReiXQFHlIladmvQZhrFSyO
- g7zzsjwcw9kJB9A4D0Qz5h9IeLqJNCDY8DYoH+vMmo5EAXlDJkxPpzM2T3xKZ491MpN4=;
+ bh=mpXcOEu0WUkg9IXLiaEAgCjFTTJb7gqngOKpzTnr42c=; b=hKfL4GuNqFCZyH/5KxIlGcnVJZ
+ 5PZjXkL2/F49ld/Ib03TPa7DjlnlQHZKIGRfqXopEX3HbZn/BCG+RQRjupPoMouZGbZxmoqjWStGT
+ vm70Dik4aLqMZaeLcZv4oqiJvyP6FjsmB/Wq/L1fXp9fpfoYL9GSeFBWe5acB1YGXCgo=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wh2Um-0006Wc-G2 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 07 Jul 2026 09:53:42 +0000
+ id 1wh2oX-0007bh-LE for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 07 Jul 2026 10:14:08 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id A2C6F41794;
- Tue,  7 Jul 2026 09:53:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E01A1F000E9;
- Tue,  7 Jul 2026 09:53:34 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id B9F6643617
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue,  7 Jul 2026 10:13:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 585171F00A3A;
+ Tue,  7 Jul 2026 10:13:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783418015;
- bh=heO7BCatoIHW6vgfHyqZvrqbsWWERDnfXAzWaFZqjPM=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=agA2/Igz9nEg7NQodp9V04Ggr7vSozVqNWzY+JQtZKPeEZGNmzk7hYyKno+zHIX/m
- axejXpnzRvoCWPADGb8dWA1Kk1VpwyzYH06SkuYYWnLT7tOKGmbjR++e5BHNo+dNg2
- N8cbHl53XDtuijXO3Jq6kSFkG7WrJiEY7QpE7GlAEK7kqE7n9cG3o19JC7lWfq6651
- rTmWFB6FUhvz5BQ9m3cg1oZFL2og7AZSmzi92kvqxgoS/i1X8enm/e6bGTQ0eB/bhu
- Ce5TIVtbt5FueY0E1dWcdU9O/V8m9Bdl59MBS+IZAarUjPGL9lEn9a+dMwsjQxvtoT
- 1sEqO14UnOLsA==
-Message-ID: <f050c87c-5b36-4f20-b0df-ff87810078c1@kernel.org>
-Date: Tue, 7 Jul 2026 17:53:32 +0800
+ s=k20260515; t=1783419235;
+ bh=mpXcOEu0WUkg9IXLiaEAgCjFTTJb7gqngOKpzTnr42c=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To;
+ b=FlYM7d/NlZZPzpXaOuTpqg3nnsYG5665sRx8nXJtjRsfvVYYQPhUQgTR8JOCqindS
+ /Cqvog2SCJAH9eBgBJCCp7e14RdANaxyesmbUDkq1a5NMuX/inK5NU/GxQ5VA6COA8
+ 0uhQ0fHGSVtPGk30fKnjYQzJ0iL6cAlB0MCZ6zxRThkRI03/lUlyvqtwMPgmSWf/2R
+ ivqat/gqVZItO7fapEV0AeHLExXCXK2v+CuB7yUphwkJgBQtoBCHrqEkt1nztUmcco
+ v9TZBy/XNOGB/gN7kzj2npxiXi7DKkPpgBUFcoooh+tW0Y6d0AfQ6RS60HD3Zjl0Z3
+ o2jZc6uZ1pIDA==
+Message-ID: <af5f0eb1-0197-4952-a37b-0602799929ec@kernel.org>
+Date: Tue, 7 Jul 2026 18:13:52 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Matthew Wilcox <willy@infradead.org>, jaegeuk@kernel.org
-References: <20260706095943.2560208-1-chao@kernel.org>
- <20260706095943.2560208-2-chao@kernel.org>
- <aku5T3TYNMDlJMns@casper.infradead.org>
- <bdea067e-6159-405b-8eab-ef7eacd623e0@kernel.org>
+To: Chao Yu <chao@kernel.org>, Zorro Lang <zlang@kernel.org>,
+ fstests@vger.kernel.org
+References: <20260706064326.3657995-1-chao@kernel.org>
 Content-Language: en-US
-In-Reply-To: <bdea067e-6159-405b-8eab-ef7eacd623e0@kernel.org>
-X-Headers-End: 1wh2Um-0006Wc-G2
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: quota: use memalloc_nofs_{save,
- restore} instead of FGP_NOFS
+In-Reply-To: <20260706064326.3657995-1-chao@kernel.org>
+X-Headers-End: 1wh2oX-0007bh-LE
+Subject: Re: [f2fs-dev] [PATCH v2] common/rc: support f2fs in
+ _require_fanotify_ioerrors()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,98 +89,48 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Anand Suveer Jain via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Anand Suveer Jain <asj@kernel.org>
+Cc: jaegeuk@kernel.org, "Darrick J. Wong" <djwong@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 7/7/26 17:44, Chao Yu wrote:
-> On 7/6/26 22:18, Matthew Wilcox wrote:
->> On Mon, Jul 06, 2026 at 05:59:43PM +0800, Chao Yu wrote:
->>> FGP_NOFS could be removed later, let's use memalloc_nofs_{save,restore}
->>> instead, which is recommended to be used to avoid potential deadlock
->>> when memory allocation in f2fs_quota_write() will call into filesystem
->>> interface again, e.g. .writepages, evict_inode, shrinker due to
->>> complicated lock race condition.
->>
->> I think we need to be clear on why we need the memalloc_nofs_save()
->> call here.  What problem would it cause if we did call into the
->> filesystem to reclaim memory?
+On 6/7/26 14:43, Chao Yu wrote:
+> f2fs has supported to report fserror, this patch adds support for f2fs
+> in _require_fanotify_ioerrors(), so that we can run generic/791 on f2fs.
 > 
-> Hmm, after taking another look at the code, I suspect below deadlock may
-> occur w/o NOFS flag?
+> Cc: Darrick J. Wong <djwong@kernel.org>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  common/rc | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> User Sync (Thread 1)
-> - f2fs_do_quota_sync
->  - f2fs_lock_op
->   : down_read(cp_rwsem) [HELD] (1st Read Lock)
->  - f2fs_quota_sync_file
->   - dquot_writeback_dquots
->    - ...
+> diff --git a/common/rc b/common/rc
+> index 494725547..f51ad59f3 100644
+> --- a/common/rc
+> +++ b/common/rc
+> @@ -6257,6 +6257,9 @@ _require_fanotify_ioerrors()
+>  		x="$(_get_fs_sysfs_attr $TEST_DEV err_report_sec)"
+>  		test -n "$x" && return 0
+>  		;;
 
-Oh, seems commit 537e11cdc7a6 ("quota: Prevent memory allocation recursion while
-holding dq_lock") covers write path (f2fs_quota_write) as well, please ignore this.
 
-Thanks,
+> +	f2fs)
+> +		x="$(cat /sys/fs/f2fs/features/fserror)"
+> +		test -n "$x" && return 0
 
->     - f2fs_quota_write
->      - f2fs_write_begin
->       - f2fs_filemap_get_folio
->        - __filemap_get_folio
->         - ... (GFP_FS allocation triggers reclaim)
->          - try_to_free_pages()
->           - shrink_node()
->            - shrink_lruvec()
->             - shrink_page_list()
->              - pageout()  <-- Reclaim decides to write back a dirty F2FS data page
->               - f2fs_writepages()
->                - f2fs_write_cache_pages()
->                 - f2fs_write_single_data_page(allow_balance = true)
->                  - f2fs_balance_fs(need = true)
->                   - f2fs_gc()
->                    - f2fs_write_checkpoint()
->                     - block_operations()
->                      - f2fs_lock_all()
->                       : down_write(cp_rwsem) [BLOCKED] (Self-deadlock)
-> 
-> To Jaegeuk, please help to double check this. :)
-> 
->>
->> I suspect this is the wrong place to insert this call and it should be
->> near the lock that causes the problem.  I've attempted a rewrite of the
->> memalloc_nofs_save documentation; let me know what you think:
->>
->> /**
->>  * memalloc_nofs_save - Prevent recursion into the filesystem.
->>  *
->>  * All memory allocations between calling this function and calling
->>  * memalloc_nofs_restore() will be prevented from calling into filesystems
->>  * to reclaim memory.  Clean page cache memory can still be reclaimed,
->>  * but (for example) inodes will not be.
->>  *
->>  * The primary reason to do this is that the caller has taken a lock
->>  * which would be needed by FS reclaim.  While we could theoretically
->>  * call into a different filesystem in this case, it can be a deep call
->>  * stack so it is better to avoid all filesystems.
->>  *
->>  * Filesystems often choose to incorporate a call to this function as part
->>  * of starting a journal transaction.  While not a lock in the normal
->>  * sense, it has much the same effect as nested journal transactions
->>  * are either prohibited or expensive.
->>  *
->>  * Also call this function if you need to allocate memory while holding
->>  * a file folio locked.  High order allocations (such as those requested
->>  * by slab) can trigger compaction which will attempt to lock the folio.
->>  *
->>  * Context: This function is safe to be used from any context.
->>  * Return: The saved flags to be passed to memalloc_nofs_restore.
->>  */
-> 
-> It makes sense to me, thanks for updating.
-> 
-> Thanks,
+Don't we need to check if /sys/fs/f2fs/features/fserror
+is present in the running kernel (there are helpers)
+before reading it?
+
+
+
+>  	esac
+>  
+>  	_notrun "$FSTYP does not support fanotify ioerrors"
 
 
 
