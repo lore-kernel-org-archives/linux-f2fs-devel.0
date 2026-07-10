@@ -4,77 +4,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 274FBC43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Jul 2026 21:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 16C76C43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Jul 2026 21:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=6yavVtZDOiNy4fj56I7IhSGe0rCcd0V/4tJW0pdliDk=; b=eFp4OT7ySqtgz68G4+Nq9HDE3l
-	ZY70h5OcaKQGrvoEfhQV3TaGkL9ZXldXq0Ovnk7Nh/cwfARCUwxSqBV9AI4E3a8b1TPHC5RlkrJPJ
-	sYPOyoX2cwcQY5jxSzS60pciy7OS+q0NUYNO6UGtwiDUa2sBlMxB58Aaf5DyGvTz4XHg=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=crzezkxyU/Q2mcgOKx+Rs3DIecsGQvGzoTznmNbPacc=; b=eRvQ1zfsOKW9NFtM9GiRRWh+CW
+	0m1bwuhQeJ6Kwq8mUJQf6qcKRvkz9W9pGdHeNmnp3mG1jKTMlHSw2/c2tmC7l+u+epXc5aA+guAmG
+	J7jSp8WRIIRkL9aEX9l5r2dHhGjLfyFbnZvTrjfdjiG6cDAtMcsRx0TMz9M+ZIXLSASM=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wiIj3-0007RD-2r;
-	Fri, 10 Jul 2026 21:25:37 +0000
+	id 1wiIlp-00040q-Ui;
+	Fri, 10 Jul 2026 21:28:30 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wiIj2-0007R6-Ja
+ (envelope-from <prvs=5651d212ed=kbusch@meta.com>) id 1wiIln-00040U-M1
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 10 Jul 2026 21:25:37 +0000
+ Fri, 10 Jul 2026 21:28:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nCRZEwnwc3DCYrAKyBomPnUOyKlwf74P8ZoQ5QDerbM=; b=hdQAFl+a3tzXGt4Tss4me6J1aP
- bJGm9t+UH/rnomm9xc47Y4BbHt8i6TxL627jKeITGahiC46zvQL5LNf6jQZmSSPTTFgKyEcH5ZuaN
- rAoWV6Dv6BmS797AG+KA3y+73Kuq1nqJUDJhlJ/HxWBzNGkWuyVlmgwr8zpB+unuDH/s=;
+ bh=VAsEQB+ej52ISVSeW0QY/kgNMdTWYAu3CU+oqE/r7E8=; b=T3nnYbQYOwq3uJa/q2a18ReBJG
+ nAMNotU8xMBugu91CXSZBmFqudp2xS9UAt3h5KyEHzinwfr93s77qhkUDlxkKwj9MvuLwCYp7w1IM
+ 6UdqEU8bLx05lbsHcBqoqg5lJQoZt6k30kQHwIKSfWwOsCC2ZW/jDDEErhrt/Up2rSzc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=nCRZEwnwc3DCYrAKyBomPnUOyKlwf74P8ZoQ5QDerbM=; b=ixGGago9iGbQwQ613/99fWK/92
- z7YrYhuw5W9EdkfKG1l4foRV5nsilW0udiy2t1CXIMD+s9kDBVZHSpFN3huaxR04O7jMQMerG+LNu
- ETE6FsxhE3zn04HHEu8bRRGrQLxoob4ZGR5b6VggQVfXRla3XETvXtti9dVSKXyPhUPw=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=VAsEQB+ej52ISVSeW0QY/kgNMdTWYAu3CU+oqE/r7E8=; b=S
+ oZcduP68Hn8hGsscjokEHFGQQO46l86tGf/hBkXqW886+bLCA+QOB7shuK0ZDP3Y49F3AEyMAu22B
+ lg/F3PgSypKDRU3STYD7lS6ABE+qNbTVYxZbyIiR0j6my7kcZNebHF8vnQEoyHlyrrA22cb0skjO4
+ 5BYsAc1kZPocgjAA=;
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wiIj1-0007J3-TS for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 10 Jul 2026 21:25:37 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 4B9A160052;
- Fri, 10 Jul 2026 21:25:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B7A41F000E9;
- Fri, 10 Jul 2026 21:25:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783718730;
- bh=nCRZEwnwc3DCYrAKyBomPnUOyKlwf74P8ZoQ5QDerbM=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=QdZNgYnLuX3WmPcbk86j+RBX44eJhGMVjnWYdZ5cAoVk6WD7e8+wPrg7wEgt1JTvf
- iiexRDAXT14IurobE+Cr5WSgDwEpknDyr98j59zha0vbrIRSXN+FdHMYSdjztn/K+t
- xoa2gst+efnITZbHQ+u0elFsOy4XBiX97Aof01wuFSB3PPp3m+y6v5sUSTYFw/uHfk
- fjHvGeNYG5LFgN1ob8iKcoDu8S6lDmzgMwTBkY7zeEo+6i6yMq+aSwRcltYfyY142Z
- 6xYcevonlaN/nI27bKg2vZvjDVIl5q9VTFZ18beZjWmGLBSDK7lBFLeAz4KaY09S5x
- TqScozRHKbCeA==
-Date: Fri, 10 Jul 2026 17:25:27 -0400
-To: Keith Busch <kbusch@meta.com>
-Message-ID: <20260710212527.GB1911@quark>
-References: <20260708011843.1036846-1-kbusch@meta.com>
+ id 1wiIln-0007RG-Q7 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 10 Jul 2026 21:28:28 +0000
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+ by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 66AK3TEO2399823
+ for <linux-f2fs-devel@lists.sourceforge.net>; Fri, 10 Jul 2026 14:28:22 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+ :content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=s2048-2025-q2; bh=VAsEQB+ej52ISVSeW0
+ QY/kgNMdTWYAu3CU+oqE/r7E8=; b=mFgiNiGDQoEhc4WqcH+Oj0O9r3VIaRJzUm
+ tnOxDamaVTL5W3YD3aloSGAGkctXg8tL4MZxGUGEJC1gxEIdVx1oXMavdKoQhi4P
+ oNql1IfHd+0nCdeN0h0JK2Dt6cji80ishzkA8Fi4thg/7ySexa2eNpWE6kIyc1j5
+ 5bRT3iAdf1RKrPU4Vi/jX62Z0E6RACSanDWXeqaQxYucY/p9rSqMkKaQ9J4zRZl7
+ q/sy7EJnU0/o2CgTyb9Fp/fOgdkYfKhOxKXv7rrgHac6VAMmBsTEuQuL3/m6KaGH
+ ChfFf4weqDMEWzDxn//8ph/y23/UOtc0MP1c0ivyPhCemnKHgZbw==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+ by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4fajrdfa0n-2
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 10 Jul 2026 14:28:22 -0700 (PDT)
+Received: from twshared20290.04.snb2.facebook.com (2620:10d:c0a8:fe::f072) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP
+ Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.41; Fri, 10 Jul 2026 21:28:20 +0000
+Received: by devbig197.nha3.facebook.com (Postfix, from userid 544533)
+ id 46C7024F006F3; Fri, 10 Jul 2026 14:06:47 -0700 (PDT)
+To: <linux-block@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
+ <linux-f2fs-devel@lists.sourceforge.net>,
+ <linux-fsdevel@vger.kernel.org>, <linux-xfs@vger.kernel.org>
+Date: Fri, 10 Jul 2026 14:06:41 -0700
+Message-ID: <20260710210646.3576365-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.52.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260708011843.1036846-1-kbusch@meta.com>
-X-Headers-End: 1wiIj1-0007J3-TS
-Subject: Re: [f2fs-dev] [PATCH] fs: report direct io constraints through
- file_getattr
+X-FB-Internal: Safe
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzEwMDIxNSBTYWx0ZWRfXwaWAvFaLVJpB
+ 4DKWLoaGr8Fc9yRYMsTuEi/GMrn+KFVfky7NM/5Y+lJ7mJDXCfYa9meeVC+ad6AAbChiBVYNk5h
+ g6KHvMBsw2JJav+0OFAC18QJfMH9KMn3kJ6wGe+8f5/KoCFEvCwqniVBG7p2P5O3qPOJqnKlpVt
+ suOb2nhO+dAzb2BMiFMOp9U3A0JNaUg8nN9v5mHxnVExXk+ENaNlUcBTFU4J+u8+WcqvZQ6x2Xm
+ OBZDigVnludV4+q/EaIVXcGfhN4zKX1M4WP6cHNBfPW1ZEj8223Ce1+OkYjLlus+DDJrTFZ/Zga
+ dffkrXOE6QwaFzPi1hhIzMboJlbXg1VL2jBH4SbMDGLtVkRbHUnzqH0wgIbXjZyfDM58BSWPA2n
+ egucGFFSH1Xjk/1UyVHCxmCNT2WgWmcJvPQv3QJkZfLxqrf9q2pW/4vs6ZM3akyyOHU4vOy50ZV
+ UMD2VJYvwPMwnLqAEKA==
+X-Proofpoint-ORIG-GUID: xpBJSHsoq3wK4tO3k4eI2wuwHT2I6674
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzEwMDIxNSBTYWx0ZWRfX6eCJpujZiLij
+ S6wmT0INR2ETgkFqhasBY9g9eeOuZ62265SOpbK1cyDVpcqITCDfxGoc2/ZOlGptyhhnQFPUmsP
+ V/yfdLDm+/8m+pPtTzcyzhsAhbDVQm8=
+X-Proofpoint-GUID: xpBJSHsoq3wK4tO3k4eI2wuwHT2I6674
+X-Authority-Analysis: v=2.4 cv=faydDUQF c=1 sm=1 tr=0 ts=6a5163f6 cx=c_pps
+ a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
+ a=RAioF0-LDSMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=7x6HtfJdh03M6CCDgxCd:22
+ a=tpM8CJlwf7uhpglF1g9U:22 a=VwQbUJbxAAAA:8 a=vYknhWM2Pyct8yg2-RQA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-10_06,2026-07-10_01,2025-10-01_01
+X-Headers-End: 1wiIln-0007RG-Q7
+Subject: [f2fs-dev] [PATCHv2 0/5] direct-io file extended attributes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,33 +116,49 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: axboe@kernel.dk, linux-xfs@vger.kernel.org, brauner@kernel.org,
- aalbersh@kernel.org, cem@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-block@vger.kernel.org, Keith Busch <kbusch@kernel.org>, tytso@mit.edu,
- jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
- linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+From: Keith Busch via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Keith Busch <kbusch@meta.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, aalbersh@kernel.org, jack@suse.cz,
+ tytso@mit.edu, Keith Busch <kbusch@kernel.org>, jaegeuk@kernel.org,
+ cem@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jul 07, 2026 at 06:18:43PM -0700, Keith Busch via Linux-f2fs-devel wrote:
-> From: Keith Busch <kbusch@kernel.org>
-> 
-> Memory alignment constraints for direct io can vary depending on the
-> backing storage hardware. Provide support through file_getattr to report
-> the attributes necessary for applications to know how to construct valid
-> read and write requests.
-> 
-> Suggested-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
+From: Keith Busch <kbusch@kernel.org>
 
-This seems to be reinventing STATX_DIOALIGN and STATX_DIO_READ_ALIGN.
-Any reason for this?
+The attributes reported through statx are incomplete for applications to
+fully know exactly how IO construction is valid or not. The statx call
+can report minimum memory alignment and total granularity, but it
+doesn't show the underlying gap boundary requirements or max segments
+per granule.
 
-- Eric
+This series adds the minimum to the extended file attributes through
+file_getattr. I hear this is the preferred interface for reporting such
+things over adding more fields to statx. In order to get everything
+under a single syscall, some of the attributes are duplicated from
+statx.
+
+Keith Busch (5):
+  fs: add direct io attributes to file_getattr
+  block: report direct io attributes through file_getattr
+  xfs: report direct io attributes through file_getattr
+  ext4: report direct io attributes through file_getattr
+  f2fs: report direct io attributes through file_getattr
+
+ block/bdev.c             | 37 +++++++++++++++++++++++++++++++++++++
+ fs/ext4/ioctl.c          | 23 +++++++++++++++++++++++
+ fs/f2fs/file.c           | 20 ++++++++++++++++++++
+ fs/file_attr.c           | 13 ++++++++++++-
+ fs/xfs/xfs_ioctl.c       | 26 ++++++++++++++++++++++++++
+ include/linux/blkdev.h   | 14 ++++++++++++++
+ include/linux/fileattr.h | 10 ++++++++--
+ include/uapi/linux/fs.h  | 10 +++++++++-
+ 8 files changed, 149 insertions(+), 4 deletions(-)
+
+-- 
+2.53.0-Meta
+
 
 
 _______________________________________________
