@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 22B15C43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Jul 2026 21:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A1767C44506
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Jul 2026 21:38:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=MRtd4+Vz4/rrqPCOdkTH57mJy+BFuk8o02GJ14QJ0B4=; b=e1vT2wzDWl8E5ZjbL39m0pROBK
-	lMEppoCBuy6JiH4MfT5zmmyxyhVyCYiizst6BQ/RCX0OBH6wQyB3fpUT2XWLWFHpMlyswUAOQyc66
-	VuJcdUBCTQ1PEWiEKWdyq+5cAWI1l+C0fiFuATeaNXVoz1OFrQV5EiOQ0n4ODCFALQgc=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=JzkXeeBNzHXFA2TX9bEswPZJs/rG2DVqVHTDtjIucmQ=; b=LswfaRK+WRBcwVZIVFRYjsVBIl
+	wPQC578HkmdJH3zy3wdnV4m00favYwz+7bn99wb1IbGO2EBeuNouRY9XptJ0hgfHOnQaZJuqLsfNR
+	NGybDzPw7bfRq6xfYvZwyd8LPltKfMHzTOdHyvYMaX6lTvmL5ygqeM1Ebe1jcun7CxDE=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wiIvL-00056h-Ou;
-	Fri, 10 Jul 2026 21:38:19 +0000
+	id 1wiIvP-0004u8-IR;
+	Fri, 10 Jul 2026 21:38:24 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <prvs=5651d212ed=kbusch@meta.com>) id 1wiIvK-00056a-2K
+ (envelope-from <prvs=5651d212ed=kbusch@meta.com>) id 1wiIvO-0004u2-Fq
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 10 Jul 2026 21:38:18 +0000
+ Fri, 10 Jul 2026 21:38:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
  :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=x8TxgEgZ50NKSAxdVZCc/M4ZywYRdPGr0pKf7nc2CgQ=; b=CT+n4c4rIQD80dWbgJI1qDgrnz
- bjVDCgpQLZE3+Ezqb1j2h4maE+M6T8o8ScDDGP212cynNGrU5t6YuY4oIzVVTkbDSRicVOMefnLrL
- YzsKg69zItqKYy5YPPDwTulljPxHZbwdbEJeIcqNA36L+uHvU3piJ7cPt9Y9SqgEol28=;
+ bh=xbr3xRrdEjq5YpoLpex95WcD7awZQdQFrPVkkLo6Th0=; b=EGogUuKZIMw93ZN9qCJX+Ssu8H
+ 3zokkop4y3jqdAbqDbBCZ8E8Ljh9VD/Unnres3xNtWLm2niBN6Xt0DjWCkcK9H2hT2rYBl/xsGo8A
+ UJotnBHuzuVZazKCDBmFT97B218y45HcB/Qa4VYc9/qr/K18e8lXOFkwDGZTey7GQNO8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -42,72 +42,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=x8TxgEgZ50NKSAxdVZCc/M4ZywYRdPGr0pKf7nc2CgQ=; b=eoXaUN/eTpopkQe3tBQTXcqTS6
- SspjWwraueShof48YZDsUsH+h9OwgAYawroNOEDSbCY9czLUFHvmRasHrWDjiPl5RbdMQyAbFQQMK
- tJpMol97NheaJDiWOUdxM+6A3QMqLvqBiZD/bpFHdObRZYbxBPmWqCtOsFnseI6vR+T0=;
+ bh=xbr3xRrdEjq5YpoLpex95WcD7awZQdQFrPVkkLo6Th0=; b=h3ZlTPI4la/TZbuD3WsvThSudz
+ cz5KAxa7XDYBewUXdckWRKvFn1ClGvAqD6HdhkL7Mn7Tz7NPR/JIfNuuBOKK4Eq3t0yb5y+D1Px3F
+ V2/ca0kCyVusuYGSrXPds/DcxZve7ZL3gWpwmA7rms4EFoTR0Y4SwO4ZA/RBAYikE/ok=;
 Received: from mx0b-00082601.pphosted.com ([67.231.153.30])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wiIvJ-0007sH-7Q for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 10 Jul 2026 21:38:18 +0000
+ id 1wiIvO-0007sT-FE for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 10 Jul 2026 21:38:23 +0000
 Received: from pps.filterd (m0528005.ppops.net [127.0.0.1])
  by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 66AK4AOp2308718
- for <linux-f2fs-devel@lists.sourceforge.net>; Fri, 10 Jul 2026 14:17:24 -0700
+ 66AK48Cp2308652
+ for <linux-f2fs-devel@lists.sourceforge.net>; Fri, 10 Jul 2026 14:28:13 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
  :content-transfer-encoding:content-type:date:from:in-reply-to
  :message-id:mime-version:references:subject:to; s=s2048-2025-q2;
- bh=x8TxgEgZ50NKSAxdVZCc/M4ZywYRdPGr0pKf7nc2CgQ=; b=An0itSPr6HdN
- alBofYUTXgczOokCggBb2PmGRmCGZA0qsCcHyeVw+8b8A+QOsfY3wS93SAHonBLN
- BgHMePcimBGKvs9BTsYBtE5E2z2snDkfyNBsL/q8VNYmVz571EgcWnrnuHQBraTX
- oQAK5blH2R/vx54MsJGv5TRAYGp0lncBdEGI48a6by9TivoX+T8jTgTp0BQ/8iND
- FsfMrc4Fp9jfSUhRQUIpq2zYnvRw3JiOBQFbPMJnFoDgegaiBBns+jHNuZNUmwQG
- yZzT4PAs0v5ns4Luu0M2VEr7Cd7kXy7EacO50N4v0HKH0+DeOME71KAv6wDqC6qK
- bMSUz5MwTA==
+ bh=xbr3xRrdEjq5YpoLpex95WcD7awZQdQFrPVkkLo6Th0=; b=bjlBOBXaxPmZ
+ taMTueFN/916+1wq+fhjXOM7KAsyPxo2qAlaQG9HBsDCq4qbJACRHn/PD9RQtdsM
+ wpj7PdKHQBvhWOVroeblT8MbKHLej5qc2OiI//a6pwYU55F5OK53qXoaMYv4fuz5
+ SjRwXALhB4ta8Atiz7nVtCD5bHDxNsUgq0XQeiUF+LmziSSjOcaxku8rVIsxcMrf
+ 8HjMcjQsNNqiRuX9EseS8iEqmUtA7LZSEm5I/imHbDNvAm+z/iXi06cNAFtGENb5
+ e60lsKLhW91vc2BCX/VF84iyjUIfm2LpDQbiUknZ1T1s/KlWX6WsZShrW/lkkZpP
+ qJdubp5w5Q==
 Received: from mail.thefacebook.com ([163.114.134.16])
- by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4fa9djk4mv-2
+ by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4fa9djk6cv-5
  (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 10 Jul 2026 14:17:23 -0700 (PDT)
-Received: from twshared20290.04.snb2.facebook.com (2620:10d:c085:108::150d) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP
- Server
+ Fri, 10 Jul 2026 14:28:12 -0700 (PDT)
+Received: from twshared21331.34.frc3.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.41; Fri, 10 Jul 2026 21:17:22 +0000
+ 15.2.2562.41; Fri, 10 Jul 2026 21:28:09 +0000
 Received: by devbig197.nha3.facebook.com (Postfix, from userid 544533)
- id 5CDF324F006FB; Fri, 10 Jul 2026 14:06:47 -0700 (PDT)
+ id 4F6D924F006F5; Fri, 10 Jul 2026 14:06:47 -0700 (PDT)
 To: <linux-block@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
  <linux-f2fs-devel@lists.sourceforge.net>,
  <linux-fsdevel@vger.kernel.org>, <linux-xfs@vger.kernel.org>
-Date: Fri, 10 Jul 2026 14:06:44 -0700
-Message-ID: <20260710210646.3576365-4-kbusch@meta.com>
+Date: Fri, 10 Jul 2026 14:06:42 -0700
+Message-ID: <20260710210646.3576365-2-kbusch@meta.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260710210646.3576365-1-kbusch@meta.com>
 References: <20260710210646.3576365-1-kbusch@meta.com>
 MIME-Version: 1.0
 X-FB-Internal: Safe
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzEwMDIxNCBTYWx0ZWRfX4aJE/MmmHDqU
- +gxEnrys0uaKxVRuEgxxMhPWUU609CyR3KfNDD3JDbZTopCqO+rM2WMOOnCuzLvxx2cfVEXhHSI
- lxAqWP72/rP9fCl69v8LF7bHTMVOJTA=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzEwMDIxNCBTYWx0ZWRfX9N2tmNhsdhBX
- Lo4uxsrOu01TDfJanJej98sZoQjklVTn+sAlMaiyzNF+D7iMOL5nWZH6lzG6C3MLAtSEith8oEZ
- emyFgUNVY2sZDSantGc0iYFoauzlGziYzzUjE5XBhfNkhP52SnR3UhC6EX6y8H/QZmMgWKRx6Jw
- ycJ0hlOrM3D3sFe3wkbhPZg31fpu2FiSuk6CyylWHjQLa3V6NJ4turRP2TUS9n32bgLa2huheos
- 4RvlY2bGzpbqTTHgFfxgwnEtFIP+vjV7GCa30Zb6HeXeF7qwfmXNPPGpPReb1EZLIVIKXf5C03/
- 4Bx+n7g3VIA9Fj2/78zcvZcSzcMHmhPqzqbCIvNWet5wsLYnXLIdUVpkO4S72WEy4hr7UdbGgCN
- 8PjML1z9avBV9SAJlfeG5xh8c6cGFVwd9cEYbwZFjGAXanVAvDgUsbElB8pp0UYQe7oBR87haFO
- 77/aYIgy8Esin8qsx2w==
-X-Authority-Analysis: v=2.4 cv=ToHWQjXh c=1 sm=1 tr=0 ts=6a516163 cx=c_pps
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzEwMDIxNSBTYWx0ZWRfXy/BLJIRnsa93
+ 5H3xRGE/sdSMOEznjgYaS904pOBgeVyg4H4fu07MlVKNXqluLb7LfkOvnfIRxhDUntkttX2gYp3
+ BXORSy/P4cscKXONO6jA/w2gD5uGz+E=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzEwMDIxNSBTYWx0ZWRfX8HedhNF8Q/Af
+ 7gkwNwmg1Bh1Z1KfcK/NHA29S2XJ2UejMbfxAfHe4DPopFcjzPuTTR9FlwCK9qIz3uB42x84H4O
+ ZWCrCU1gkTqAXnyV2ZDLgv6lbRdyp1NUe6vmsiO4OwSbHk6DZROhhSLHVFauoP6yB1FZVEnw49F
+ KKG22Zrmcdqq/8+aWNn3x0qOPrWu9CwW9W32TCCanTqgSaZitJc/33/WV5YN7D0BT1pXBhOIGeE
+ 8EZkn8ckn+53AAxwhNLVDhSP0K662QVb5O5QqBVPIuMFKMk93/wq6F9t1RrFjcetcWcegfGHscz
+ 1ikyqA0VRc8tt8xOoYL9/wdLS260avIRih8j5KHHJgU59pjep8wXqD+NjmnR4vLpCdOxJ7WZykv
+ oeJA04twFS6M6CmVu3oXgyxFI1SSUHsnt+83M0Qvff0skgGzMhezky1XXT7uvZyjuwU6xeUhhCw
+ rOa3l7hQuXqlViNTUWg==
+X-Authority-Analysis: v=2.4 cv=ToHWQjXh c=1 sm=1 tr=0 ts=6a5163ec cx=c_pps
  a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
  a=RAioF0-LDSMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=7x6HtfJdh03M6CCDgxCd:22
- a=jCddH8ec0KUNCymVuxII:22 a=VwQbUJbxAAAA:8 a=aFTrS7NZ_-S66cRtsDsA:9
-X-Proofpoint-ORIG-GUID: swD0IksBHfG0rHlYtR3mJWbKkxvuY2cE
-X-Proofpoint-GUID: swD0IksBHfG0rHlYtR3mJWbKkxvuY2cE
+ a=jCddH8ec0KUNCymVuxII:22 a=VwQbUJbxAAAA:8 a=q1EBQPuWEeZjY2uRj4sA:9
+X-Proofpoint-ORIG-GUID: ymSoiOi9vCcuIeNRfkl1EUTlc5IKTulX
+X-Proofpoint-GUID: ymSoiOi9vCcuIeNRfkl1EUTlc5IKTulX
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-07-10_06,2026-07-10_01,2025-10-01_01
-X-Headers-End: 1wiIvJ-0007sH-7Q
-Subject: [f2fs-dev] [PATCHv2 3/5] xfs: report direct io attributes through
+X-Headers-End: 1wiIvO-0007sT-FE
+Subject: [f2fs-dev] [PATCHv2 1/5] fs: add direct io attributes to
  file_getattr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -131,65 +130,145 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Keith Busch <kbusch@kernel.org>
 
-Fill in the direct io alignment attributes for regular files, reporting
-the larger write alignment for CoW inodes.
+Direct I/O imposes alignment and layout constraints that come from both
+the filesystem and its backing storage. statx() reports some of these,
+but not all, and it can no longer be extended. Report the complete set
+through file_getattr() in new struct file_attr fields so applications
+can know the constraints they have to work with.
+
+The fields are valid only when FS_XFLAG_DIO is set in fa_xflags. When it
+is clear the file does not report direct I/O geometry, for example,
+because the filesystem configuration does not allow direct I/O, does not
+support file_getatter, or is using the legacy block sized alignment
+constraints.
+
+The new fields are defined as follows:
+
+  - fa_dio_mem_align: byte alignment required for each I/O memory
+    buffer. The starting address and length of each buffer vector must
+    be a multiple of this value.
+
+  - fa_dio_offset_align: alignment required for the file offset and
+    total length of a write.
+
+  - fa_dio_read_offset_align: the same, but for reads. It may be
+    smaller than the write alignment allowing reads at a finer
+    granularity, but will be at most the same as writes.
+
+  - fa_dio_virt_boundary_align: alignment required at the boundary
+    between adjacent memory segments of a multi-segment transfer. The
+    previous segment must end on that boundary and the next must start
+    on it; otherwise, the kernel will split the command at that vector
+    if possible, or return an error if not (the accumulated length
+    is shorter than "offset_align"). A value of 1 means there is no such
+    constraint.
+
+  - fa_dio_offset_align_max_vecs: the maximum number of io vectors that
+    may compose a single fa_dio_offset_align unit. Buffers too small to
+    reach that unit within this many vectors can not form a valid I/O
+    and will be rejected by the kernel.
+
+The fields are read only; file_setattr() ignores them.
+
+The fa_pad field is introduced as a reserved field to account for an
+implicit padding on 64-bit architectures and to make the struct the same
+size for 32-bit. It must be zero to keep the space available for future
+use.
 
 Signed-off-by: Keith Busch <kbusch@kernel.org>
 ---
- fs/xfs/xfs_ioctl.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ fs/file_attr.c           |  7 +++++++
+ include/linux/fileattr.h | 10 ++++++++--
+ include/uapi/linux/fs.h  | 10 +++++++++-
+ 3 files changed, 24 insertions(+), 3 deletions(-)
 
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index 1b53701bebea1..d585242a8fe9f 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -49,6 +49,7 @@
- 
- #include <linux/mount.h>
- #include <linux/fileattr.h>
-+#include <linux/blkdev.h>
- 
- /* Return 0 on success or positive error */
- int
-@@ -468,6 +469,29 @@ xfs_ioc_rtgroup_geometry(
-  * Linux extended inode flags interface.
-  */
- 
-+static void
-+xfs_fill_fsxattr_dio(
-+	struct xfs_inode	*ip,
-+	int			whichfork,
-+	struct file_kattr	*fa)
-+{
-+	struct xfs_buftarg *target;
-+
-+	if (whichfork != XFS_DATA_FORK || !S_ISREG(VFS_I(ip)->i_mode))
-+		return;
-+
-+	target = xfs_inode_buftarg(ip);
-+	bdev_fill_dio_attr(target->bt_bdev, fa);
-+	/*
-+	 * CoW inodes must write whole allocation units out of place, so report
-+	 * the larger write alignment while leaving the smaller read alignment
-+	 * from the queue limits in place.
-+	 */
-+	if (xfs_is_cow_inode(ip))
-+		fa->fsx_dio_offset_align = xfs_inode_alloc_unitsize(ip);
-+	fa->fsx_xflags |= FS_XFLAG_DIO;
-+}
-+
- static void
- xfs_fill_fsxattr(
- 	struct xfs_inode	*ip,
-@@ -517,6 +541,8 @@ xfs_fill_fsxattr(
- 		fa->fsx_nextents = xfs_iext_count(ifp);
- 	else
- 		fa->fsx_nextents = xfs_ifork_nextents(ifp);
-+
-+	xfs_fill_fsxattr_dio(ip, whichfork, fa);
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index bfb00d256dd56..b37a55f54a449 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -110,6 +110,11 @@ static void fileattr_to_file_attr(const struct file_kattr *fa,
+ 	fattr->fa_nextents = fa->fsx_nextents;
+ 	fattr->fa_projid = fa->fsx_projid;
+ 	fattr->fa_cowextsize = fa->fsx_cowextsize;
++	fattr->fa_dio_mem_align = fa->fsx_dio_mem_align;
++	fattr->fa_dio_offset_align = fa->fsx_dio_offset_align;
++	fattr->fa_dio_read_offset_align = fa->fsx_dio_read_offset_align;
++	fattr->fa_dio_virt_boundary_align = fa->fsx_dio_virt_boundary_align;
++	fattr->fa_dio_offset_align_max_vecs = fa->fsx_dio_offset_align_max_vecs;
  }
  
- STATIC int
+ /**
+@@ -145,6 +150,8 @@ static int file_attr_to_fileattr(const struct file_attr *fattr,
+ 
+ 	if (fattr->fa_xflags & ~mask)
+ 		return -EINVAL;
++	if (fattr->fa_pad)
++		return -EINVAL;
+ 
+ 	fileattr_fill_xflags(fa, fattr->fa_xflags & ~FS_XFLAG_RDONLY_MASK);
+ 	fa->fsx_extsize = fattr->fa_extsize;
+diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
+index 58044b5980162..3d5384c79398e 100644
+--- a/include/linux/fileattr.h
++++ b/include/linux/fileattr.h
+@@ -17,11 +17,11 @@
+ /* Read-only inode flags */
+ #define FS_XFLAG_RDONLY_MASK \
+ 	(FS_XFLAG_PREALLOC | FS_XFLAG_HASATTR | FS_XFLAG_VERITY | \
+-	 FS_XFLAG_CASEFOLD | FS_XFLAG_CASENONPRESERVING)
++	 FS_XFLAG_CASEFOLD | FS_XFLAG_CASENONPRESERVING | FS_XFLAG_DIO)
+ 
+ /* Flags to indicate valid value of fsx_ fields */
+ #define FS_XFLAG_VALUES_MASK \
+-	(FS_XFLAG_EXTSIZE | FS_XFLAG_COWEXTSIZE)
++	(FS_XFLAG_EXTSIZE | FS_XFLAG_COWEXTSIZE | FS_XFLAG_DIO)
+ 
+ /* Flags for directories */
+ #define FS_XFLAG_DIRONLY_MASK \
+@@ -49,6 +49,12 @@ struct file_kattr {
+ 	u32	fsx_nextents;	/* nextents field value (get)	*/
+ 	u32	fsx_projid;	/* project identifier (get/set) */
+ 	u32	fsx_cowextsize;	/* CoW extsize field value (get/set)*/
++	/* struct file_attr dio alignment: */
++	u32	fsx_dio_mem_align;
++	u32	fsx_dio_offset_align;
++	u32	fsx_dio_read_offset_align;
++	u32	fsx_dio_virt_boundary_align;
++	u32	fsx_dio_offset_align_max_vecs;
+ 	/* selectors: */
+ 	bool	flags_valid:1;
+ 	bool	fsx_valid:1;
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index bd87262f2e349..a49572fab3726 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -229,10 +229,17 @@ struct file_attr {
+ 	__u32 fa_nextents;	/* nextents field value (get)   */
+ 	__u32 fa_projid;	/* project identifier (get/set) */
+ 	__u32 fa_cowextsize;	/* CoW extsize field value (get/set) */
++	__u32 fa_dio_mem_align;	/* DIO memory buffer align (get) */
++	__u32 fa_dio_offset_align;	/* DIO file offset align (get) */
++	__u32 fa_dio_read_offset_align;	/* DIO read offset align (get) */
++	__u32 fa_dio_virt_boundary_align;	/* DIO virt boundary (get) */
++	__u32 fa_dio_offset_align_max_vecs;	/* DIO vecs per unit (get) */
++	__u32 fa_pad;		/* alignment padding, reserved for future use */
+ };
+ 
+ #define FILE_ATTR_SIZE_VER0 24
+-#define FILE_ATTR_SIZE_LATEST FILE_ATTR_SIZE_VER0
++#define FILE_ATTR_SIZE_VER1 48
++#define FILE_ATTR_SIZE_LATEST FILE_ATTR_SIZE_VER1
+ 
+ /*
+  * Flags for the fsx_xflags field
+@@ -261,6 +268,7 @@ struct file_attr {
+  */
+ #define FS_XFLAG_CASEFOLD	0x00040000	/* case-insensitive lookups */
+ #define FS_XFLAG_CASENONPRESERVING 0x00080000	/* case not preserved */
++#define FS_XFLAG_DIO		0x00100000	/* DIO alignment info valid */
+ #define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
+ 
+ /* the read-only stuff doesn't really belong here, but any other place is
 -- 
 2.53.0-Meta
 
