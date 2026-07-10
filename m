@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 171D5C43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Jul 2026 08:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1B95EC43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Jul 2026 08:54:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=esyDwPjxKGd754MkMjmiU6yCfP6mCcv+eEip/pSTeKk=; b=Fdg4LGYaBvdAO45VmlRHtYQgMd
-	g9oh4gw7N1+75CnBOIgbbS1MTOedyW0FUX9ogOPz5nwO2xqDcW3CFD/QE7pkS/KIGjljYr94ZeguZ
-	QGNFARDfQo4aO4BJ1+Kbx5FcFpgb8cJsm9jVEvQ6jhuZaVx6kZgbxLWK2Wavu8N+CE38=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=peiF+ZCve6au7MOusZ3JGQr6+IRBAJffmJNJ0x2V1W0=; b=HJENWZr7X+GLztdy5H5+u2YLJA
+	XG0ypFX7UIvrRr5o4d+/jfdsxTt2BQVfN15Ae38XdsM5wvdLrAhTpf47MUWwTSZn4FMwU/gopum5j
+	0UDr4f7Hr3r1l6w1W2pQ900Hv5dSJld9IwPaW1/K5ai+cgqbPBVZaD6UJQVJ9WA777xs=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wi6ze-0003Vw-Dp;
-	Fri, 10 Jul 2026 08:53:55 +0000
+	id 1wi6zg-0001dd-2r;
+	Fri, 10 Jul 2026 08:54:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1wi6zU-0003Sb-Me
+ (envelope-from <aalbersh@kernel.org>) id 1wi6zc-0001dQ-VF
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 10 Jul 2026 08:53:46 +0000
+ Fri, 10 Jul 2026 08:53:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=i0Rsh4cPeB/WILyk3ZVofd79y/gOW8f0+5qtEc82UTk=; b=aYoUabY1WWk2CGvWfYvwEDxlES
- 12qZAI1IJffOKfMIi4VnC3lNWijbagk5aMKKP46b37J6OdwxO2JkeBBkgYI9nui+wxSRQFGAplYeY
- BLJGtK7GqtTOFO6/LUVwshFpODNip2YvxIKbQz/gwNFNeWSdek/OrzStCj8MYPsBbPAk=;
+ bh=AufMkm+nEeCieeEcnf+ZJSfHdxMb9GSGIeKul87lEHs=; b=QWlCDWlnLJ1uBR+N0v+HeH/+Zc
+ 9qqKvrELzSxAoYBRIEcVj5YdJTLfhPx0dKSuRPtDvx4X2I0CzSobJTp9qHn8iQGX3CgY8HDZl38I3
+ BZInW3pYMp6Yj5V2yioMmmMYUDM10+Vf88qsw1jLweD5kf8G6/vboTNgCjINFAxOkJyw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=i0Rsh4cPeB/WILyk3ZVofd79y/gOW8f0+5qtEc82UTk=; b=jmrUVKbOjnjCAapqEHywZCHmQY
- naEH3higOik96nLZbRHxdfRSx5BzJDe4Q9zd6MUzurtzOmYy8LhmrEuQ6JoGCL0VeDhajhTcFDkgG
- vKNydj+OHyT2rkmRx8VobYz0lUL0SkeG/KQytedaPDaXdL26x2TiTVjuUDqZSYetFgHg=;
+ bh=AufMkm+nEeCieeEcnf+ZJSfHdxMb9GSGIeKul87lEHs=; b=gzwlD8WmhjssjP0Blv+ZFhU2pp
+ lMCiouMRhCItcE7rkFBMsdWP9uDBaQ+Ps/USlfAvMM4jq4vgZMe1T7yjSaGEy1pSiwTQnIcVgCIzV
+ GfH0joiQ9GDVEIqIrTNrBJ7r/OU3lTQ4XrvKnxsKxMqZduAO/knGkmpn2hWutdrw7hXM=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wi6zQ-0007Ti-IY for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 10 Jul 2026 08:53:46 +0000
+ id 1wi6zd-0007Ue-9H for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 10 Jul 2026 08:53:57 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 06A2960051;
- Fri, 10 Jul 2026 08:53:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 566E01F000E9;
- Fri, 10 Jul 2026 08:53:31 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id B5C2E60051;
+ Fri, 10 Jul 2026 08:53:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A7001F000E9;
+ Fri, 10 Jul 2026 08:53:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783673613;
- bh=i0Rsh4cPeB/WILyk3ZVofd79y/gOW8f0+5qtEc82UTk=;
+ s=k20260515; t=1783673631;
+ bh=AufMkm+nEeCieeEcnf+ZJSfHdxMb9GSGIeKul87lEHs=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=a5YR2yXm/5RdQGcb4HriaonTtFe8f/XAGOjh7oyksYL8E3mj/s2tX5c1balxcGn1q
- 2iqag8RwGw8YR179ktaTo9gqE1h1nUqw7UHez7WrxoP0MHbaeGhRmxWN3W27kG7f/x
- /MPWSKH6e6Okip85hRlEdIm2zuz9IFBB3ZI26FMPjRNmSP0z11h28h+m2Z8yce+5DE
- u4eBwqk0PL/3uIYDharmjps6BElhiGrUGs3z4V8X5Ydu4PStzV2PPRs0Kb7BtWy5Po
- ZG/Dr7V7bDSZL8jQvJu2d/rcN2FCsdIE1o82p/Q5XiLBpuWawJjNPpzckJWJ8AbCqV
- E3GSBDi60FNyg==
+ b=JpHW8/4hhlbrsOcO6ZafXnA0IDkVXTol2jQ+7eP1XhicYKgQ4BBeBoPDTrWRPpV+z
+ eljExR63J378GwzWaRjDyM/2IFg8M9htrY7Jy9LSRYn/bL+6wBls7zlJd1ILn0tb9z
+ pAR8zGRiHnf/C03iQUvczhznYye1P6MUfvuesYlsJ0GaMcaKTkgjlEE/CDh7gNZBKh
+ jSj/ZHIXtN550HH+qoCZAkld8wrv+5/WowazTHsQ+7ZT5uRZ2u4i9Hzhg+rUMPQvth
+ 8ar40ri19VQKYIrP53v00eKCTJzAh0oYO3vPksc2wwaZJ3EiDGWm0sfkxePJEQER2+
+ sVjS+S1Y38Mjw==
 To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
  linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
-Date: Fri, 10 Jul 2026 10:52:31 +0200
-Message-ID: <20260710085256.3464201-4-aalbersh@kernel.org>
+Date: Fri, 10 Jul 2026 10:52:37 +0200
+Message-ID: <20260710085256.3464201-10-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260710085256.3464201-1-aalbersh@kernel.org>
 References: <20260710085256.3464201-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wi6zQ-0007Ti-IY
-Subject: [f2fs-dev] [PATCH v11 03/20] fsverity: pass digest size and hash of
- the all-zeroes block to ->write
+X-Headers-End: 1wi6zd-0007Ue-9H
+Subject: [f2fs-dev] [PATCH v11 09/20] xfs: don't allow to enable DAX on
+ fs-verity sealed inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,111 +97,30 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Let filesystem iterate over hashes in the block and check if these are
-hashes of zeroed data blocks. XFS will use this to decide if it want to
-store tree block full of these hashes.
+fs-verity doesn't support DAX. Forbid filesystem to enable DAX on
+inodes which already have fs-verity enabled. The opposite is checked
+when fs-verity is enabled, it won't be enabled if DAX is.
 
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-Acked-by: Eric Biggers <ebiggers@kernel.org>
 ---
- fs/btrfs/verity.c        | 6 +++++-
- fs/ext4/verity.c         | 4 +++-
- fs/f2fs/verity.c         | 4 +++-
- fs/verity/enable.c       | 4 +++-
- include/linux/fsverity.h | 6 +++++-
- 5 files changed, 19 insertions(+), 5 deletions(-)
+ fs/xfs/xfs_iops.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/btrfs/verity.c b/fs/btrfs/verity.c
-index 983365a73541..bd79e343ae23 100644
---- a/fs/btrfs/verity.c
-+++ b/fs/btrfs/verity.c
-@@ -773,11 +773,15 @@ static struct page *btrfs_read_merkle_tree_page(struct inode *inode,
-  * @buf:	Merkle tree block to write
-  * @pos:	the position of the block in the Merkle tree (in bytes)
-  * @size:	the Merkle tree block size (in bytes)
-+ * @zero_digest:	the hash of the all-zeroes block
-+ * @digest_size:	size of zero_digest, in bytes
-  *
-  * Returns 0 on success or negative error code on failure
-  */
- static int btrfs_write_merkle_tree_block(struct file *file, const void *buf,
--					 u64 pos, unsigned int size)
-+					 u64 pos, unsigned int size,
-+					 const u8 *zero_digest,
-+					 unsigned int digest_size)
- {
- 	struct inode *inode = file_inode(file);
- 	loff_t merkle_pos = merkle_file_pos(inode);
-diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-index ca61da53f313..347945ac23a4 100644
---- a/fs/ext4/verity.c
-+++ b/fs/ext4/verity.c
-@@ -374,7 +374,9 @@ static void ext4_readahead_merkle_tree(struct inode *inode, pgoff_t index,
- }
- 
- static int ext4_write_merkle_tree_block(struct file *file, const void *buf,
--					u64 pos, unsigned int size)
-+					u64 pos, unsigned int size,
-+					const u8 *zero_digest,
-+					unsigned int digest_size)
- {
- 	pos += ext4_verity_metadata_pos(file_inode(file));
- 
-diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-index 39f482515445..cc4158fc841d 100644
---- a/fs/f2fs/verity.c
-+++ b/fs/f2fs/verity.c
-@@ -272,7 +272,9 @@ static void f2fs_readahead_merkle_tree(struct inode *inode, pgoff_t index,
- }
- 
- static int f2fs_write_merkle_tree_block(struct file *file, const void *buf,
--					u64 pos, unsigned int size)
-+					u64 pos, unsigned int size,
-+					const u8 *zero_digest,
-+					unsigned int digest_size)
- {
- 	pos += f2fs_verity_metadata_pos(file_inode(file));
- 
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index 42dfed1ce0ce..ad4ff71d7dd9 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -50,7 +50,9 @@ static int write_merkle_tree_block(struct file *file, const u8 *buf,
- 	int err;
- 
- 	err = inode->i_sb->s_vop->write_merkle_tree_block(file, buf, pos,
--							  params->block_size);
-+							  params->block_size,
-+							  params->zero_digest,
-+							  params->digest_size);
- 	if (err)
- 		fsverity_err(inode, "Error %d writing Merkle tree block %lu",
- 			     err, index);
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 3c3250f6f272..9e7d946676b9 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -124,6 +124,8 @@ struct fsverity_operations {
- 	 * @buf: the Merkle tree block to write
- 	 * @pos: the position of the block in the Merkle tree (in bytes)
- 	 * @size: the Merkle tree block size (in bytes)
-+	 * @zero_digest: the hash of the all-zeroes block
-+	 * @digest_size: size of zero_digest, in bytes
- 	 *
- 	 * This is only called between ->begin_enable_verity() and
- 	 * ->end_enable_verity().
-@@ -131,7 +133,9 @@ struct fsverity_operations {
- 	 * Return: 0 on success, -errno on failure
- 	 */
- 	int (*write_merkle_tree_block)(struct file *file, const void *buf,
--				       u64 pos, unsigned int size);
-+				       u64 pos, unsigned int size,
-+				       const u8 *zero_digest,
-+				       unsigned int digest_size);
- };
- 
- #ifdef CONFIG_FS_VERITY
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 11dc1a485ca7..55667cc762f8 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1370,6 +1370,8 @@ xfs_inode_should_enable_dax(
+ 		return false;
+ 	if (!xfs_inode_supports_dax(ip))
+ 		return false;
++	if (ip->i_diflags2 & XFS_DIFLAG2_VERITY)
++		return false;
+ 	if (xfs_has_dax_always(ip->i_mount))
+ 		return true;
+ 	if (ip->i_diflags2 & XFS_DIFLAG2_DAX)
 -- 
 2.54.0
 
