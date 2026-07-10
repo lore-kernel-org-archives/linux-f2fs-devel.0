@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AA23DC44501
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Jul 2026 08:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F0F97C44506
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Jul 2026 08:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=QKYx6cIL2ukJX3WZMeNAc7O5JPJgqorB0+m1nb4D9B4=; b=LLs+hLiTD2Ur/8+ekRfVDUjNyo
-	Jch5KLs1kBXtm9vYFLxtGZqjjxOkdobLVyhH+gLF/PTDVC8mzEiMRn2YNrj9tWRh5Gjqpb3AxekcC
-	vjQmojPXBsoo+9tzKyadT8WUoX51sGjr1+XY7/0HhmFBJIPIgVY10XtbAKxIlm/MSN6s=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=eBatrioos2NNhuN86FzAWnd2XUGGIpe9YQd5qsL6mRo=; b=CrKTZq9+LTh0aVSTWnIDza1HZz
+	yIeforcnq568U9lSJ5GuO0E7vXasWludTfT1w9eMiVODSpFO0iuZp8FNN54sKFrMyOQwNpm2i+oaC
+	vIpLPZ8+/ErWMpwKSKaeWQZ6D8nMtDJvPi5Hfvvhgv98/ozjk2qFBDBBDFeJwp4Y25AM=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wi6zO-0003N8-2q;
-	Fri, 10 Jul 2026 08:53:42 +0000
+	id 1wi6zQ-0007KR-QZ;
+	Fri, 10 Jul 2026 08:53:44 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1wi6zJ-0003Md-0f
+ (envelope-from <aalbersh@kernel.org>) id 1wi6zO-0007KI-VG
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 10 Jul 2026 08:53:37 +0000
+ Fri, 10 Jul 2026 08:53:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=IA66KD2Om75bu0eBgUIzf65HS6s2gELQcRJU2+ySoSU=; b=WJhmcFrqgdtsIeqgT3MpdfMxTE
- vNAfnDYx51/WHNYSCjpthqZIyFykQSH49ZAD/Uaz8QfVBbx10CGXjkqlt3+jqrLwo/DdCMkRseXfk
- UVrH1Zf0ChZc7QZipz7YlczhRF5lN7pazcF2NmjXWrnTkb10woWqFgUlssFmc+IuKVxw=;
+ bh=DLKRiRyzKQ3SHGS6qPdEtB2Y8TKgDvD/nkziuhY4NXk=; b=I7voZ8WWIUsGYUyFVpAMAoeXjq
+ rQESC6OqFnU0rGkGZLipvOIiSBCCpv4P4IIfn1XJnckwMepMYfyWgGHeZMsfHtmqmzimJ/eXK1puc
+ uLXvmltHVbpREL7aNqVrF7kBfETZAvDSLhJ11zcJaW8EatRXGOBUyN3+Ume17qS25ob4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=IA66KD2Om75bu0eBgUIzf65HS6s2gELQcRJU2+ySoSU=; b=WGNEj4uN9ErTpm0rBfRI02ox1T
- NQP3FJ1QQ2jU2zFjMtbNfx5ySqeg2DKgLH8MfC4V4mzFtMjwS+f27ZEH23X4QOYMQ9ZPMAG6Lug9/
- hiRlYQOpKWq21uZqnhccUxvElOk50SmQgaO2QOgzfU4EXPGp/PXHrHRCDz6GEaH+9yV4=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=DLKRiRyzKQ3SHGS6qPdEtB2Y8TKgDvD/nkziuhY4NXk=; b=CiaIP6aor4Fzp7QZUlTnenib3q
+ 8fq1yFshcUhw+v4H2nE2GfhINC620Nqgb9xvIajUQSqzJmQZJQ8ln+PA4GGH1pKeqMIpgXRrVOQCQ
+ pcZ4H1M2FEninEFGQriygtAxC9nrH5SItEtGa8PMyF2GjZtYG8s8G1x7e3C8GXNQXF/Q=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wi6zI-0007TF-UE for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 10 Jul 2026 08:53:37 +0000
+ id 1wi6zK-0007TK-5g for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 10 Jul 2026 08:53:39 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 286DF600C3;
- Fri, 10 Jul 2026 08:53:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 553911F00A3E;
- Fri, 10 Jul 2026 08:53:28 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id DF9FF43A0C;
+ Fri, 10 Jul 2026 08:53:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E8951F00A3A;
+ Fri, 10 Jul 2026 08:53:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783673610;
- bh=IA66KD2Om75bu0eBgUIzf65HS6s2gELQcRJU2+ySoSU=;
+ s=k20260515; t=1783673607;
+ bh=DLKRiRyzKQ3SHGS6qPdEtB2Y8TKgDvD/nkziuhY4NXk=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=RNC3rkF8UG7ABgkdWzv8/LtMKC4JTUExVsuNpNG/Hbfltr8EnUovjtc5gBXr0ReRU
- Y8S4VAZcv+fS4FD2COYtTrMuWsR7CdB73+RYBUBhp3VDzl059aq4cqHf7ME4kIbwFx
- b0EvVZzm1pr+nzQvqQAoryl8HVL806xHrvacypKFXQfvUt5kcgXcC6GrYvZ2ovIhEm
- BMmCffnXUYVu+cUFrH9dLdadlKSixDa5ca1q9T/qSgIK94CLXAyuQPKKo4s/9Rc9pJ
- zop8z29sQ9Ii3L5ESbfz825gP+oARsEy/tLn/KlH8EJQqHLGcMq90uwCyMRUkSAvWC
- zgy9Ba1BpfiLA==
+ b=fnyQROum70ijbU5Z49G0hvrG8+doOE7gAQL/4D/D5cMRHq3l0iQco3fB0xdABkGm/
+ J/OC9ihBFbPmQiGwfR/1uLFuNrjF4R4QJ5H1E1s63oTjdTa7c8n9OuNWkS4h/KPTys
+ IaUU9CRck6mAC7dxxEZB+PPtQsEO6ullrsYQAJpYm2+L6vfgbX9OJqRo5a6Ex1HBCT
+ /OBGtIxVW7mE6T+5PfF4JJ4UVJtMpCyv8bQPE1ofwK1ma4f0Ai1La1qWHlYd3wS3Pl
+ InsRCTK3coXlAyVvfzUvTITKqSyN7+YiPTGp5C/CHLo9NjP/z++Iao+3UtY5iLW3BK
+ FJRrWADQhjzpQ==
 To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
  linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
-Date: Fri, 10 Jul 2026 10:52:30 +0200
-Message-ID: <20260710085256.3464201-3-aalbersh@kernel.org>
+Date: Fri, 10 Jul 2026 10:52:29 +0200
+Message-ID: <20260710085256.3464201-2-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260710085256.3464201-1-aalbersh@kernel.org>
 References: <20260710085256.3464201-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wi6zI-0007TF-UE
-Subject: [f2fs-dev] [PATCH v11 02/20] fsverity: expose ensure_fsverity_info()
+X-Headers-End: 1wi6zK-0007TK-5g
+Subject: [f2fs-dev] [PATCH v11 01/20] fsverity: report validation errors
+ through fserror to fsnotify
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,76 +97,46 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This function will be used by XFS's scrub to force fsverity activation,
-therefore, to read fsverity context.
+Reported verification errors to fsnotify through recently added fserror
+interface.
 
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Acked-by: Eric Biggers <ebiggers@kernel.org>
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/verity/open.c         | 22 ++++++++++++++++++++--
- include/linux/fsverity.h |  2 ++
- 2 files changed, 22 insertions(+), 2 deletions(-)
+ fs/verity/verify.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index d0c56a7faa3b..875e8850ccba 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -347,7 +347,24 @@ int fsverity_get_descriptor(struct inode *inode,
- 	return 0;
- }
+diff --git a/fs/verity/verify.c b/fs/verity/verify.c
+index 4004a1d42875..db8c350234bb 100644
+--- a/fs/verity/verify.c
++++ b/fs/verity/verify.c
+@@ -9,6 +9,7 @@
  
--static int ensure_verity_info(struct inode *inode)
-+/**
-+ * fsverity_ensure_verity_info() - cache verity info if it's not already cached
-+ * @inode: the inode for which verity info should be cached
-+ *
-+ * Ensure this inode has verity info attached to it, it's assumed the inode
-+ * already has fsverity enabled. Read fsverity descriptor and creates verity
-+ * based on that.
-+ *
-+ * This needs to be called at least once before any of the inode's data
-+ * can be verified (and thus read at all) or the inode's fsverity digest
-+ * retrieved.  fsverity_file_open() calls this already, which handles
-+ * normal file accesses.  If a filesystem does any internal (i.e. not
-+ * associated with a file descriptor) reads of the file's data or
-+ * fsverity digest, it must call this explicitly before doing so.
-+ *
-+ * Return: 0 on success, -errno on failure
-+ */
-+int fsverity_ensure_verity_info(struct inode *inode)
- {
- 	struct fsverity_info *vi = fsverity_get_info(inode), *found;
- 	struct fsverity_descriptor *desc;
-@@ -383,12 +400,13 @@ static int ensure_verity_info(struct inode *inode)
- 	kfree(desc);
- 	return err;
- }
-+EXPORT_SYMBOL_GPL(fsverity_ensure_verity_info);
+ #include <linux/bio.h>
+ #include <linux/export.h>
++#include <linux/fserror.h>
  
- int __fsverity_file_open(struct inode *inode, struct file *filp)
- {
- 	if (filp->f_mode & FMODE_WRITE)
- 		return -EPERM;
--	return ensure_verity_info(inode);
-+	return fsverity_ensure_verity_info(inode);
- }
- EXPORT_SYMBOL_GPL(__fsverity_file_open);
+ #define FS_VERITY_MAX_PENDING_BLOCKS 2
  
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 6c467ded9751..3c3250f6f272 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -317,6 +317,8 @@ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
- 	return 0;
- }
- 
-+int fsverity_ensure_verity_info(struct inode *inode);
-+
- void fsverity_cleanup_inode(struct inode *inode);
- 
- struct page *generic_read_merkle_tree_page(struct inode *inode, pgoff_t index);
+@@ -205,6 +206,8 @@ static bool verify_data_block(struct fsverity_info *vi,
+ 		if (memchr_inv(dblock->data, 0, params->block_size)) {
+ 			fsverity_err(inode,
+ 				     "FILE CORRUPTED!  Data past EOF is not zeroed");
++			fserror_report_data_lost(inode, data_pos,
++						 params->block_size, GFP_NOFS);
+ 			return false;
+ 		}
+ 		return true;
+@@ -312,6 +315,7 @@ static bool verify_data_block(struct fsverity_info *vi,
+ 		data_pos, level - 1, params->hash_alg->name, hsize, want_hash,
+ 		params->hash_alg->name, hsize,
+ 		level == 0 ? dblock->real_hash : real_hash);
++	fserror_report_data_lost(inode, data_pos, params->block_size, GFP_NOFS);
+ error:
+ 	for (; level > 0; level--) {
+ 		kunmap_local(hblocks[level - 1].addr);
 -- 
 2.54.0
 
