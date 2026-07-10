@@ -4,78 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D95A5C43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  9 Jul 2026 15:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B846FC43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Jul 2026 01:16:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-Id:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=OQrjQ7LlUOc9fhDG/m1fFkjlFqrv84t7nu/D1FN/fvY=; b=Vq+IQkUEmsod5aeR+oCC26Msjk
-	2FHMlRL0LeL04NMPQJGSQIUzJJcqE7lTMOtIGoUUmAyOgh4Yms4xnwY6hS/2t5XR47YoTlHq7cCde
-	fflfJQZ0Rtmk/69uRzMzDGddg3swSWtVCSKqCloO8I7cYK5c/z4Mt86j2csq5N3Ftx00=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=sweA8YehiWNLU3+s+KoPsxLfAmqwN1Pvm04aeP3oKEU=; b=Wbeg6t0K6LNfs85ytdt6T/U/Gl
+	yaSiX/SWq5qMYfEYtiL6ISyZwoG+3IPr/DosPcH56RAfXPbdHcCGOe1OJgwmEvlsNBwt6Go22gOQ5
+	MqbTmGbv+fukYxGxGvY6DHfShjC2ghAQutFhxXYLjqtbTSlIF4MbrBDlyM42BswZCeZQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1whqKd-00061c-I4;
-	Thu, 09 Jul 2026 15:06:29 +0000
+	id 1whzr3-00070l-1u;
+	Fri, 10 Jul 2026 01:16:37 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <kbusch@kernel.org>) id 1whqKc-00061W-Dr
+ (envelope-from <nzzhao@126.com>) id 1whzr1-00070V-G5
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 09 Jul 2026 15:06:27 +0000
+ Fri, 10 Jul 2026 01:16:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UL3vDynmWxUSqCx3PVJTM78NQC5YacFiGvq0zDihpIw=; b=ZIi9Y6RYToHgpOzyOImAGDK1jk
- qf082tIXU/TiN8foxu9VkWSMFCyNAPzbXAQM094M5Ra7AG7cao56AQXf4c+w/nLx8CzVfCix7NU24
- 1RdTzCUrr9nsC8IilUwxATBs66VuBgzI/f4qhEhpEBlLdqz+CKwS2UbYaG86nyB8ofK8=;
+ d=sourceforge.net; s=x; h=Sender:Content-Transfer-Encoding:MIME-Version:
+ References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Reply-To:
+ Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+ Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+ List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=fd77g/1Dv7GUJ2Dhsfh03kzpzB9dP0nPJJlYkyA97w8=; b=Y+/PylesFnfMOUDWsNDBTpOQ2U
+ AFvYt0zc2NYqZRDZ3sqfs2qfLE6Akc6SFevUF3i5rbVzo11zwzL8aCJb2roz9OXNHp0djKNLuX0JJ
+ cvVeW7+xUwLXQXeDwvaOU6FJCMFFZ+SIZLZVHvrjSs/4x75K0LMlP9kFNmhn3dHOw1Js=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Sender:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+ Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=UL3vDynmWxUSqCx3PVJTM78NQC5YacFiGvq0zDihpIw=; b=jQX+S7JKqYkBfC6sumyUxuX+Hb
- ByRUdLLQ+A6GC/Ggnsvtj0TV3ih3ClRWBspeRrbG1xWVswopZVih7DsD4My1de5lo+dhgndfI87AX
- tEZUWq/l+6Wbuo2RVk1ZNhbWPNQfiJ4FW4lejuUQS8uhIEPCbJuBJ3arqSgxHUBbWNrs=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=fd77g/1Dv7GUJ2Dhsfh03kzpzB9dP0nPJJlYkyA97w8=; b=H8Rq5waSqmz/S03yKqgpJ5T3Qb
+ iDQ//43qFHfxExYOXrB2RLNiMjZH7o5oTpXmT7JSzpzIK0vnqmgeonlRPIIqM20XHLBdv4cpqba0B
+ jutJ5utGuZqJNflY1nDr8LzKCIs942Fwbg/1MOnCySRkGYHz2+dUa/f6HUS3VC3pH2ZE=;
+Received: from m16.mail.126.com ([220.197.31.9])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1whqKX-0006Mv-BH for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 09 Jul 2026 15:06:27 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 190AF61379;
- Thu,  9 Jul 2026 13:46:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AB7B1F000E9;
- Thu,  9 Jul 2026 13:46:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783604804;
- bh=UL3vDynmWxUSqCx3PVJTM78NQC5YacFiGvq0zDihpIw=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=AhWODjiQt1SnQ1SczulwHGvJwXHy7PVENMAKy+TzSz7vzgLfJjgSCsxduqvfLmY6j
- fkTkgcVVAY2WhwPjbeFDAZgztT6s6c0U8h9ziC2ecZOqAsiQowinbvZHNCGeLyCxNJ
- oxkZvA09GDG/1hZ+FmXjUyyP5Xs4LStvFOJKHRKgd26RzlwGMjPx/LxpwTXsKaDnK8
- FNM2TuK3ybChiQpEX539cbzp/Atz+0ql6uRvfORnBlWSqeqPwgRi0FFqlPAsK2x5vY
- QZTVSjGqBkrhsbumaQTgMDrDO3AATKN8hwA9m7H398iKuYdmI0PL9FbfrT2skUUHLc
- gwqFmLT6AH4rg==
-Date: Thu, 9 Jul 2026 07:46:42 -0600
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <ak-mQqt-a-jy6ZoV@kbusch-mbp>
-References: <20260708011843.1036846-1-kbusch@meta.com>
- <20260709071352.GA20180@lst.de>
+ id 1whzqi-0004wJ-N8 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 10 Jul 2026 01:16:17 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+ s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=fd
+ 77g/1Dv7GUJ2Dhsfh03kzpzB9dP0nPJJlYkyA97w8=; b=D7+ZVqKnMyhB+ZiWR5
+ QOdDwHHG2cWrZXmib8b8/b+6mqkAmSmjjkrS6p1s0m8sP8Wwz39AR4YveO9qUw1D
+ mqG9H4xMPZZxRjn7LdJdwm20y5w2+tCEzp5/DZDAmTrGV039R5Py791pCiGk7T9c
+ ukWj40Wck0eEsuGH0oJqf1mVE=
+Received: from YLLaptop.. (unknown [])
+ by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id
+ _____wD3p+G2R1Bq0M_wDA--.7522S4; 
+ Fri, 10 Jul 2026 09:15:38 +0800 (CST)
+To: Chao Yu <chao@kernel.org>
+Date: Fri, 10 Jul 2026 09:15:34 +0800
+Message-Id: <20260710011534.2307696-3-zhaonanzhe@xiaomi.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <64ce7a28-992d-4d20-bbb1-b76943911ab4@kernel.org>
+References: <64ce7a28-992d-4d20-bbb1-b76943911ab4@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260709071352.GA20180@lst.de>
-X-Headers-End: 1whqKX-0006Mv-BH
-Subject: Re: [f2fs-dev] [PATCH] fs: report direct io constraints through
- file_getattr
+X-CM-TRANSID: _____wD3p+G2R1Bq0M_wDA--.7522S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ArWrWryDXF4kCFW5AF1kXwb_yoW8try7pF
+ yjk3s8KF17GayF93Z2qa17Zr1Sg395AFW5JFZ5GFy2k3Z8Xrn3CFWvy3yYva4rCryUZ340
+ qa1UC3s5W3WDAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uio7NUUUUU=
+X-Originating-IP: [39.144.78.103]
+X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBohqufmpQR7re+wAA3K
+X-Headers-End: 1whzqi-0004wJ-N8
+Subject: Re: [f2fs-dev] [RFC PATCH 3/9] f2fs: support regular file buffered
+ writes on large folios
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,50 +88,75 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Keith Busch via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Keith Busch <kbusch@kernel.org>
-Cc: axboe@kernel.dk, linux-xfs@vger.kernel.org, brauner@kernel.org,
- jack@suse.cz, Keith Busch <kbusch@meta.com>, cem@kernel.org,
- aalbersh@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-block@vger.kernel.org, tytso@mit.edu, linux-fsdevel@vger.kernel.org,
- jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+From: Nanzhe Zhao via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+Cc: Barry Song <baohua@kernel.org>, Juan Yescas <jyescas@google.com>,
+ Dev Jain <Dev.Jain@arm.com>, David Hildenbrand <David.Hildenbrand@arm.com>,
+ linux-f2fs-devel@lists.sourceforge.net, Bo Zhang <zhangbo56@xiaomi.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Ryan Roberts <Ryan.Roberts@arm.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Pengfei Li <lipengfei28@xiaomi.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jul 09, 2026 at 09:13:52AM +0200, Christoph Hellwig wrote:
-> On Tue, Jul 07, 2026 at 06:18:43PM -0700, Keith Busch wrote:
-> 
-> > +	fa->fsx_dio_mem_align = bdev_dma_alignment(bdev) + 1;
-> > +	fa->fsx_dio_offset_align = bdev_logical_block_size(bdev);
-> > +	fa->fsx_dio_read_offset_align = bdev_logical_block_size(bdev);
-> > +	fa->fsx_dio_virt_boundary_align = bdev_virt_boundary_alignment(bdev);
-> > +	fa->fsx_max_segments = bdev_max_segments(bdev);
-> 
-> How is the max_segments value defined in a way that is meaningful to
-> userspace?
+> If the function is global, it needs to add f2fs_ prefix, otherwise it will
+> pollute global namespace.
 
-It tells you how many sub-sector vectors you can submit in your
-readv/writev before it needs to add up to a logical block size.
+Got it. Then folio_has_ffs() should also have a f2fs_ prefix, right?
+Hmmmm, then should all previous ffs_* helper functions be called
+f2fs_ffs*, or f2fs_fs*? (f2fs_fs means the abbreviation of
+f2fs_folio_state.) Or do you have a better naming idea?
 
-Ex: 4k logical block size, 4 byte DMA, 256 max segments. You can define
-4-byte iov's in your command, but you'll hit the max segment count
-before you have a valid IO if they're all that small.
- 
-> > @@ -145,6 +155,8 @@ static int file_attr_to_fileattr(const struct file_attr *fattr,
-> >  
-> >  	if (fattr->fa_xflags & ~mask)
-> >  		return -EINVAL;
-> > +	if (fattr->fa_pad)
-> > +		return -EINVAL;
-> 
-> How is this related?
+> > +static bool f2fs_find_next_need_read_block(const struct folio *folio,
+>
+> Since it's static, we can get rid of f2fs_ prefix,
+>
+> find_next_invalid_block() will be better? not sure.
 
-I had to add a padding field to the struct to account for the implicit
-hole in 64-bit and to ensure the struct is the same size for 32-bit.
-It's a reserved field, so we have to ensure the current kernel doesn't
-support any value here in case we define this field for something else
-in the future.
+I think just calling it find_next_need_read_block() or
+folio_find_next_need_read_block() is better?
+
+Because this function is actually implemented to only read the first
+subpage or the last subpage in the folio which is written by partial
+write and is still not uptodate. The subpages in the middle that are fully
+covered by block-size writes are skipped from read.
+
+I know prepare_write_begin skips read for fully covered order-0 folio.
+I want to avoid potential performance regression where large folio write_begin
+would read fully-covered middle subpages while the old order-0 folio path would
+skip such reads.
+
+
+> > +		if (!f2fs_lookup_read_extent_cache_block(inode, index,
+> > +						 &dn.data_blkaddr)) {
+> > +			if (IS_DEVICE_ALIASING(inode))
+> > +				return -ENODATA;
+> > +
+> > +			set_new_dnode(&dn, inode, NULL, NULL, 0);
+> > +			err = f2fs_get_dnode_of_data(&dn, index, LOOKUP_NODE);
+> > +			get_dn = true;
+> > +			if (err)
+> > +				goto out;
+>
+> Missed to call f2fs_put_dnode(&dn) in the loop?
+
+Both the error path and the normal path will eventually reach the out label path,
+and out will call f2fs_put_dnode(&dn) if get_dn is true.
+Or am I missing something?
+
+> > +		err = submit_bio_wait(bio);
+>
+> If we didn't call f2fs_submit_read_bio(), we may miss to handle tracepoint,
+> iostat and blk_crypto stuff?
+
+Yes, But for large folio I think we need a sync read helper here, instead of 
+directly switching to f2fs_submit_read_bio(). The helper should keep the synchronous
+write_begin semantics, while still going through f2fs trace/iostat and
+blk-crypto submission handling. I know iomap use submit_bio_wait for large folio
+buffered write.
+
+Thanks,
+
 
 
 _______________________________________________
