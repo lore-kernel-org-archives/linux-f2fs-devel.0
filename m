@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B846FC43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Jul 2026 01:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1C24EC44501
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Jul 2026 01:16:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-Id:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=sweA8YehiWNLU3+s+KoPsxLfAmqwN1Pvm04aeP3oKEU=; b=Wbeg6t0K6LNfs85ytdt6T/U/Gl
-	yaSiX/SWq5qMYfEYtiL6ISyZwoG+3IPr/DosPcH56RAfXPbdHcCGOe1OJgwmEvlsNBwt6Go22gOQ5
-	MqbTmGbv+fukYxGxGvY6DHfShjC2ghAQutFhxXYLjqtbTSlIF4MbrBDlyM42BswZCeZQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=DETmMnPJFuNL9iA66eA+zP7d2CQzBg/y5624LhQ9egU=; b=K/R33TUuTd8bdhN9VOVjIjsEwG
+	S9JSm7nSBlc4w4fgeaONKmTSQYvkLq+o9i3/l7tNIG7E5dAKmO2uexb7JQNRWpP4mvqkyzk6XPRF5
+	qBpOp15buny0iAP2tK+c6I3SApBa04JeWUQA9I9DFuDCk9/VeL2hdIlcLVKVo2l4IL3M=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1whzr3-00070l-1u;
-	Fri, 10 Jul 2026 01:16:37 +0000
+	id 1whzr0-0001gq-Pi;
+	Fri, 10 Jul 2026 01:16:35 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <nzzhao@126.com>) id 1whzr1-00070V-G5
+ (envelope-from <nzzhao@126.com>) id 1whzqd-0001fH-J0
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 10 Jul 2026 01:16:35 +0000
+ Fri, 10 Jul 2026 01:16:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Sender:Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Reply-To:
  Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
  Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
  List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=fd77g/1Dv7GUJ2Dhsfh03kzpzB9dP0nPJJlYkyA97w8=; b=Y+/PylesFnfMOUDWsNDBTpOQ2U
- AFvYt0zc2NYqZRDZ3sqfs2qfLE6Akc6SFevUF3i5rbVzo11zwzL8aCJb2roz9OXNHp0djKNLuX0JJ
- cvVeW7+xUwLXQXeDwvaOU6FJCMFFZ+SIZLZVHvrjSs/4x75K0LMlP9kFNmhn3dHOw1Js=;
+ bh=JKv40+Rzw+MoVgpFHomEnuLuSrw5OPIiQZ1nay2qfrI=; b=ErIFGVYNvN47MLx85YlJ6u1MsL
+ 8lfR2JAx1ZpuAWMQkzmSBlNRg3zM10SqVIU8+wTmTQzlLkFV6iP/dqAKn/rwHVMlF5kTz12oWUWOA
+ 9CKOx58YE0qh3LTQ2/sxygZ28K6y6h81LzIRzTAx88RCw2m4dPtsOKjSdAEaPbEDA+P0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Sender:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
@@ -42,41 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=fd77g/1Dv7GUJ2Dhsfh03kzpzB9dP0nPJJlYkyA97w8=; b=H8Rq5waSqmz/S03yKqgpJ5T3Qb
- iDQ//43qFHfxExYOXrB2RLNiMjZH7o5oTpXmT7JSzpzIK0vnqmgeonlRPIIqM20XHLBdv4cpqba0B
- jutJ5utGuZqJNflY1nDr8LzKCIs942Fwbg/1MOnCySRkGYHz2+dUa/f6HUS3VC3pH2ZE=;
-Received: from m16.mail.126.com ([220.197.31.9])
+ bh=JKv40+Rzw+MoVgpFHomEnuLuSrw5OPIiQZ1nay2qfrI=; b=O92Lh9E53U3s+FR0xj4Muhbt+J
+ reK9a/xibG19QYMKWJ8tGcRzXICwZzshSMx1i+HhLwi7yPb7GjhqwH18gLUG6pe/CV3FJL/eKTtov
+ EmaNJp/aiNGO3aAp6kuEStT8MMrA6xB3yqtZIczf/J6YSHc7JZpU8zRSYEBrOdAXxWtE=;
+Received: from m16.mail.126.com ([220.197.31.6])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1whzqi-0004wJ-N8 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 10 Jul 2026 01:16:17 +0000
+ id 1whzqc-0004w0-DI for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 10 Jul 2026 01:16:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
- s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=fd
- 77g/1Dv7GUJ2Dhsfh03kzpzB9dP0nPJJlYkyA97w8=; b=D7+ZVqKnMyhB+ZiWR5
- QOdDwHHG2cWrZXmib8b8/b+6mqkAmSmjjkrS6p1s0m8sP8Wwz39AR4YveO9qUw1D
- mqG9H4xMPZZxRjn7LdJdwm20y5w2+tCEzp5/DZDAmTrGV039R5Py791pCiGk7T9c
- ukWj40Wck0eEsuGH0oJqf1mVE=
+ s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=JK
+ v40+Rzw+MoVgpFHomEnuLuSrw5OPIiQZ1nay2qfrI=; b=crtjClSM7mkpJ8BrJV
+ 0a2qd77WzCoTglY7tsfuJkCUAeeO+qQx175rjSQaioi0OvDZ21CoDFXGASV7Fy+r
+ GYiB4MRZorq841kztjvnYkOrV37OGXj9y172md8i0gMUwuk8Lzl8okXiK1CCoQcI
+ dc5v4lM3CrCag7iPzcJk86Iy8=
 Received: from YLLaptop.. (unknown [])
  by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id
- _____wD3p+G2R1Bq0M_wDA--.7522S4; 
- Fri, 10 Jul 2026 09:15:38 +0800 (CST)
+ _____wD3p+G2R1Bq0M_wDA--.7522S3; 
+ Fri, 10 Jul 2026 09:15:37 +0800 (CST)
 To: Chao Yu <chao@kernel.org>
-Date: Fri, 10 Jul 2026 09:15:34 +0800
-Message-Id: <20260710011534.2307696-3-zhaonanzhe@xiaomi.com>
+Date: Fri, 10 Jul 2026 09:15:33 +0800
+Message-Id: <20260710011534.2307696-2-zhaonanzhe@xiaomi.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <64ce7a28-992d-4d20-bbb1-b76943911ab4@kernel.org>
-References: <64ce7a28-992d-4d20-bbb1-b76943911ab4@kernel.org>
+In-Reply-To: <a9b257fd-68ce-45a6-b4df-be5faf583e2d@kernel.org>
+References: <a9b257fd-68ce-45a6-b4df-be5faf583e2d@kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID: _____wD3p+G2R1Bq0M_wDA--.7522S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ArWrWryDXF4kCFW5AF1kXwb_yoW8try7pF
- yjk3s8KF17GayF93Z2qa17Zr1Sg395AFW5JFZ5GFy2k3Z8Xrn3CFWvy3yYva4rCryUZ340
- qa1UC3s5W3WDAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uio7NUUUUU=
+X-CM-TRANSID: _____wD3p+G2R1Bq0M_wDA--.7522S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCw4xKryrXFWrurW3JrWUurg_yoW5Wryxpr
+ Z5GF1vyr4fGFy5W3WUJr1Svry7Ar9xXF4DZay3Cw4fJ3W2qw1ruFn7J34j9F4fJry8ZFn3
+ tay5CFn3WF4YyF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UNiSLUUUUU=
 X-Originating-IP: [39.144.78.103]
-X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBohqufmpQR7re+wAA3K
-X-Headers-End: 1whzqi-0004wJ-N8
-Subject: Re: [f2fs-dev] [RFC PATCH 3/9] f2fs: support regular file buffered
- writes on large folios
+X-CM-SenderInfo: xq22xtbr6rjloofrz/xtbBsBmufmpQR7nqmgAA3N
+X-Headers-End: 1whzqc-0004w0-DI
+Subject: Re: [f2fs-dev] [RFC PATCH v2 01/10] f2fs: extend folio state for
+ large folio write path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,71 +91,109 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Nanzhe Zhao via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
 Cc: Barry Song <baohua@kernel.org>, Juan Yescas <jyescas@google.com>,
- Dev Jain <Dev.Jain@arm.com>, David Hildenbrand <David.Hildenbrand@arm.com>,
- linux-f2fs-devel@lists.sourceforge.net, Bo Zhang <zhangbo56@xiaomi.com>,
- Kalesh Singh <kaleshsingh@google.com>, Ryan Roberts <Ryan.Roberts@arm.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Pengfei Li <lipengfei28@xiaomi.com>
+ Pengfei Li <lipengfei28@xiaomi.com>, Dev Jain <Dev.Jain@arm.com>,
+ linux-kernel@vger.kernel.org, David Hildenbrand <David.Hildenbrand@arm.com>,
+ Bo Zhang <zhangbo56@xiaomi.com>, Kalesh Singh <kaleshsingh@google.com>,
+ Ryan Roberts <Ryan.Roberts@arm.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-> If the function is global, it needs to add f2fs_ prefix, otherwise it will
-> pollute global namespace.
+> Seems there are redundant codes below, let's have a try to wrap them w/ a macro for cleanup?
 
-Got it. Then folio_has_ffs() should also have a f2fs_ prefix, right?
-Hmmmm, then should all previous ffs_* helper functions be called
-f2fs_ffs*, or f2fs_fs*? (f2fs_fs means the abbreviation of
-f2fs_folio_state.) Or do you have a better naming idea?
+Got it, thanks!
+How about the following example implementation?
 
-> > +static bool f2fs_find_next_need_read_block(const struct folio *folio,
->
-> Since it's static, we can get rid of f2fs_ prefix,
->
-> find_next_invalid_block() will be better? not sure.
+static inline unsigned long f2fs_folio_get_private_flags(const struct folio *folio)
+{
+	if (f2fs_folio_has_state(folio)) {
+		struct f2fs_folio_state *ffs = folio->private;
 
-I think just calling it find_next_need_read_block() or
-folio_find_next_need_read_block() is better?
+		return ffs->private_flags;
+	}
 
-Because this function is actually implemented to only read the first
-subpage or the last subpage in the folio which is written by partial
-write and is still not uptodate. The subpages in the middle that are fully
-covered by block-size writes are skipped from read.
+	return (unsigned long)folio->private;
+}
 
-I know prepare_write_begin skips read for fully covered order-0 folio.
-I want to avoid potential performance regression where large folio write_begin
-would read fully-covered middle subpages while the old order-0 folio path would
-skip such reads.
+static inline void f2fs_folio_set_private_flags(struct folio *folio,
+						unsigned long flags)
+{
+	if (f2fs_folio_has_state(folio)) {
+		struct f2fs_folio_state *ffs = folio->private;
 
+		ffs->private_flags |= flags;
+		return;
+	}
 
-> > +		if (!f2fs_lookup_read_extent_cache_block(inode, index,
-> > +						 &dn.data_blkaddr)) {
-> > +			if (IS_DEVICE_ALIASING(inode))
-> > +				return -ENODATA;
-> > +
-> > +			set_new_dnode(&dn, inode, NULL, NULL, 0);
-> > +			err = f2fs_get_dnode_of_data(&dn, index, LOOKUP_NODE);
-> > +			get_dn = true;
-> > +			if (err)
-> > +				goto out;
->
-> Missed to call f2fs_put_dnode(&dn) in the loop?
+	if (!folio_test_private(folio))
+		folio_attach_private(folio, (void *)flags);
+	else
+		folio->private = (void *)((unsigned long)folio->private | flags);
+}
 
-Both the error path and the normal path will eventually reach the out label path,
-and out will call f2fs_put_dnode(&dn) if get_dn is true.
-Or am I missing something?
+static inline void f2fs_folio_clear_private_flags(struct folio *folio,
+						 unsigned long flags)
+{
+	unsigned long private;
 
-> > +		err = submit_bio_wait(bio);
->
-> If we didn't call f2fs_submit_read_bio(), we may miss to handle tracepoint,
-> iostat and blk_crypto stuff?
+	if (f2fs_folio_has_state(folio)) {
+		struct f2fs_folio_state *ffs = folio->private;
 
-Yes, But for large folio I think we need a sync read helper here, instead of 
-directly switching to f2fs_submit_read_bio(). The helper should keep the synchronous
-write_begin semantics, while still going through f2fs trace/iostat and
-blk-crypto submission handling. I know iomap use submit_bio_wait for large folio
-buffered write.
+		ffs->private_flags &= ~flags;
+		return;
+	}
 
-Thanks,
+	private = (unsigned long)folio->private;
+	private &= ~flags;
+	if (private == BIT(PAGE_PRIVATE_NOT_POINTER))
+		folio_detach_private(folio);
+	else
+		folio->private = (void *)private;
+}
+
+#define PAGE_PRIVATE_GET_FUNC(name, flagname) \
+static inline bool folio_test_f2fs_##name(const struct folio *folio)\
+{\
+	unsigned long priv = f2fs_folio_get_private_flags(folio);\
+	unsigned long v = (1UL << PAGE_PRIVATE_NOT_POINTER) |\
+			     (1UL << PAGE_PRIVATE_##flagname);\
+	return (priv & v) == v;\
+}\
+static inline bool page_private_##name(struct page *page)\
+{\
+	return PagePrivate(page) &&\
+		test_bit(PAGE_PRIVATE_NOT_POINTER, &page_private(page)) &&\
+		test_bit(PAGE_PRIVATE_##flagname, &page_private(page));\
+}
+
+#define PAGE_PRIVATE_SET_FUNC(name, flagname) \
+static inline void folio_set_f2fs_##name(struct folio *folio)\
+{\
+	unsigned long v = (1UL << PAGE_PRIVATE_NOT_POINTER) |\
+			     (1UL << PAGE_PRIVATE_##flagname);\
+	f2fs_folio_set_private_flags(folio, v);\
+}\
+static inline void set_page_private_##name(struct page *page)\
+{\
+	if (!PagePrivate(page))\
+		attach_page_private(page, (void *)0);\
+	set_bit(PAGE_PRIVATE_NOT_POINTER, &page_private(page));\
+	set_bit(PAGE_PRIVATE_##flagname, &page_private(page));\
+}
+
+#define PAGE_PRIVATE_CLEAR_FUNC(name, flagname) \
+static inline void folio_clear_f2fs_##name(struct folio *folio)\
+{\
+	f2fs_folio_clear_private_flags(folio,\
+			1UL << PAGE_PRIVATE_##flagname);\
+}\
+static inline void clear_page_private_##name(struct page *page)\
+{\
+	clear_bit(PAGE_PRIVATE_##flagname, &page_private(page));\
+	if (page_private(page) == BIT(PAGE_PRIVATE_NOT_POINTER))\
+		detach_page_private(page);\
+}
 
 
 
