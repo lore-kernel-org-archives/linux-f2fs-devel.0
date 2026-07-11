@@ -4,78 +4,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4B02CC43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 11 Jul 2026 01:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BD476C43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 11 Jul 2026 12:32:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=JF0ENnA424znq0FS2kHESpx4irtS+o6sJgHt+ecFBUQ=; b=cyIoZjvXNQBQ0wJRwXN5hjIAdp
-	zNwl+QoA6R16GDoqqsaaUvkFMpj2+RNhCzjjv1eTGy7usxY3KpbPmUgj0IRwYqpNOjpSvO9D+o97X
-	SA4v/7qL1tRQimAvZheYz2oL2uROG2lr7IWjnm9rgIkrVzTwgtko3+U06/N+dxYoLzQE=;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:To:From:Message-ID:Date:MIME-Version:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=HyQGtGgVROWZjdg7wh4CaKMjt6kG9ECPiizbKkHLTVA=; b=CQ+LNht1viV60jYatbfnhC/Au0
+	d2TrSInTUMezQMT3UEwBWs3+34HsXcTq4bsRPky6jTT5f6GHc4dPvC7V/Y0P6n4FzG9AIXwIpjtko
+	YbPczkkqCba0nK/BloOPOeGxGwb+bVujvfPSLhZJNcMacYOnBdgXx1XW6IoXiFfoHviE=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wiMAd-0003xH-C6;
-	Sat, 11 Jul 2026 01:06:20 +0000
+	id 1wiWsw-0005vz-VM;
+	Sat, 11 Jul 2026 12:32:47 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <kbusch@kernel.org>) id 1wiMAb-0003x0-KX
- for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 11 Jul 2026 01:06:18 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <34jdSagkbAPMntufVggZmVkkdY.bjjbgZpnZmXjioZio.Xjh@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
+ id 1wiWsu-0005vi-SE for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 11 Jul 2026 12:32:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
+ MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Z1JsX9peK+DaHBSGxqPCV8pzR9YubUyAgMDuHcT34Uw=; b=DU6qmJkvpeDQKlM5F8nRv8d7cD
- N4NM+zIL7rN7uSZB4B/DE9rkNspQ+P87nbGwLUbl9PlOpmemAOkn4tkRdPqhoBOEhCuoDL5G0qdFg
- NQXk+Ho1yJJRVTrpfwynyQG+hUvJwIw6JOlufns2r2+8TQbZqBnDwpbMgyMZBMztcCY4=;
+ bh=SkSMtDXDKcM9TBgQNHoKTs9whDWqOwpKoo+SrhI+VZ8=; b=TgkyScBVMKOFanj15Bo+lOz5H/
+ rpb0BK6YNI+wYmVuiMs0maUkCrUroVkGrX1qy7dQlGY18Oux2VhtdIWXf7VfHJpZRao/hAskBObv7
+ RJaKr7SETahFUgD7570geuwEAh7ZM5uK85dMX2sDbKZfBJvgv8thU7QBaCoICZImm9cs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Z1JsX9peK+DaHBSGxqPCV8pzR9YubUyAgMDuHcT34Uw=; b=U1TALf+5SgJwbsYaEA0ZfGYdOR
- dnjbFXQ3h5XbcU5Ee1wdS7GrGAPDfp18EgTt34JXyVm2CIqvQIMCX+Uw3YgTsCCS2c+N8yjtjlNIc
- WDzJ+pDFckc7f3c6zCaduMs2rVLcICmKrlN/Mwns5PL5lWbYYPtt6+tN5UE6/qmLqkk0=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
+ :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=SkSMtDXDKcM9TBgQNHoKTs9whDWqOwpKoo+SrhI+VZ8=; b=i
+ b2vfJJCMEQBlK3srpeP9/IUG9YaoEUp8vY7j8qFspHOiMquB2wazcmRvA5ks7yXNFiBAgIm73aY4b
+ rKUShlcOkqvcaq5z61POA5ykDbCF5XwhOqLJ/TCwoYHtL0lvZtBc9Ff4LOvBkYvBaegybU7X5Bsur
+ NdzPExG/8V/MUi/U=;
+Received: from mail-oi1-f198.google.com ([209.85.167.198])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wiMAb-0006lb-4F for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 11 Jul 2026 01:06:17 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 9430A42EAF;
- Sat, 11 Jul 2026 01:06:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E78EB1F000E9;
- Sat, 11 Jul 2026 01:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783731971;
- bh=Z1JsX9peK+DaHBSGxqPCV8pzR9YubUyAgMDuHcT34Uw=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=mMcBEoZti/qlk5q85oCFNhg5hB8rgjzcrSp/g4Xr2T00+GghMjSubevYIYhM1p2wQ
- BwzqSGg0PLLZqtHYZbiWJyu5RyWKnki0m33X3fEv3MaevCjrwxQ7sVQvQq1EYzolz1
- M444jLc6MVu8hc/ctEXaimlk2Ifs/vpZPDlQmMAQxPxWvn3MdGToQCueC4DCdUfuAM
- yX3NrZfLS7JjMtvb7JXLpgbary8SVf7CON43//x9HZYY0xusUWHToLk7gGxSMXQxfX
- bzV9k7CIq7zZUx+3tzO2djkQJ5emGczx8/WnRDFLJdL8o+4b2Rx1KLg5uTxmEvQpmC
- Fxyb0jrmT9Ysw==
-Date: Fri, 10 Jul 2026 19:06:09 -0600
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <alGXAan8P6mnbvvz@kbusch-mbp>
-References: <20260710210646.3576365-1-kbusch@meta.com>
- <20260710215328.GE1911@quark> <alF5BHEZ5czyJWaY@kbusch-mbp>
- <20260711002412.GG1911@quark>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1wiWsv-000426-1m for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 11 Jul 2026 12:32:45 +0000
+Received: by mail-oi1-f198.google.com with SMTP id
+ 5614622812f47-49aa4525b82so2034565b6e.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 11 Jul 2026 05:32:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1783773154; x=1784377954;
+ h=content-type:to:from:subject:message-id:date:mime-version
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=SkSMtDXDKcM9TBgQNHoKTs9whDWqOwpKoo+SrhI+VZ8=;
+ b=fDBCc3OVUzv4AhjP7HWU/HMNSEH7AIZ2EmQM1VbZ+azijZkxiKOUX5dP/juwLzerrz
+ +VUVNHNrc3dHbUF70N6c9rS8E9XqDqYdhdD8pxGksbC5kXZIFZbjRAXPLHzwIw2S/QLu
+ HmBDjEIF8F/A89tgw7Aj0qeQEqL/XMDqm13cR7U5Nr2F5DNpisFSNAnDOzbe9hLDcSj8
+ 5pyBtn01SPSagWaHT3fn2IlbqOIzX/UDMEH4Bz1FWfExoFaarEnzaQMY0BwjmNu55jDB
+ QNLgHsaeFljFQt9E+BymSWAyP8LRf07GmQfKk73vkDso1QETXTtXanvbIHU3iR/s2RRJ
+ lCrg==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ/8xhRKgB1efnZ0pytJRM0fy5aph7HRQfqwDMetDVmRjhC47N6VYIQUFF9d6yrBKUOHntDVOBiEetsFwMj1N/dt@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YzgHW44AnR5oMQEytKoBO4AQzScdbbJmmDmheHmQLu5F6AQb2Zw
+ 633d2AK17ugJlmS6/UP80wJpvDOTsYHOacW6Ucneo3rrblDTZei6ErZJ+GLK/e0v7BLHk+rwsrB
+ NUxLHdclkVegjNbUOqADzCXaKNNOCzywDd+tCjgRBUCIvDX13pM+c+ha8XDU=
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260711002412.GG1911@quark>
-X-Headers-End: 1wiMAb-0006lb-4F
-Subject: Re: [f2fs-dev] [PATCHv2 0/5] direct-io file extended attributes
+X-Received: by 2002:a05:6808:1521:b0:489:b7d1:db7b with SMTP id
+ 5614622812f47-4a42ae84656mr1646317b6e.22.1783773154478; Sat, 11 Jul 2026
+ 05:32:34 -0700 (PDT)
+Date: Sat, 11 Jul 2026 05:32:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6a5237e2.278cdcd2.e885.0013.GAE@google.com>
+From: syzbot <syzbot+listed17a4d940ffa203906a@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+ syzkaller-bugs@googlegroups.com
+X-Headers-End: 1wiWsv-000426-1m
+Subject: [f2fs-dev] [syzbot] Monthly f2fs report (Jul 2026)
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,87 +96,46 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Keith Busch via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Keith Busch <kbusch@kernel.org>
-Cc: axboe@kernel.dk, linux-xfs@vger.kernel.org, brauner@kernel.org,
- aalbersh@kernel.org, Keith Busch <kbusch@meta.com>, cem@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- tytso@mit.edu, jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org, jack@suse.cz,
- linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jul 10, 2026 at 08:24:12PM -0400, Eric Biggers wrote:
-> On Fri, Jul 10, 2026 at 04:58:12PM -0600, Keith Busch wrote:
-> > dio offset alignment of 4k, and a virtual boundary of 4k.
-> 
-> So each segment's length has to be a multiple of 4k, *and* it has to end
-> on a 4k aligned memory address?  That implies the segment begins at a 4k
-> aligned memory address as well, which is just stx_dio_mem_align=4k.
-> 
-> What am I missing?
+Hello f2fs maintainers/developers,
 
-I'm apparently poorly explaining PRPs, but I hear this is a common
-experience.
+This is a 31-day syzbot report for the f2fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/f2fs
 
-Simply put, any virtually contiguous buffer that starts at a dword
-aligned address is a valid io vector, no matter how many pages it spans.
-It doesn't matter where it starts or where it ends, but every page in
-the middle obviously starts and ends on their page boundary.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 10 issues are still open and 81 have already been fixed.
+There is also 1 low-priority issue.
 
-Simple case: pread/pwrite. You can consult statx to know you can provide
-any dword aligned buffer with an aligned length, and that's a valid
-direct IO.
+Some of the still happening issues:
 
-What I'm trying to enable here is the vectored preadv/pwritev type paths
-for hardware that don't need to subscribe to PRP constraints.
- 
-> What is a specific example of an I/O request that you'd like to be able
-> to submit that the existing UAPI can't declare support for?
+Ref Crashes Repro Title
+<1> 2252    Yes   kernel BUG in f2fs_evict_inode (4)
+                  https://syzkaller.appspot.com/bug?extid=5c81eb8c0a380fa578b5
+<2> 1367    Yes   INFO: task hung in f2fs_balance_fs
+                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
+<3> 298     Yes   INFO: task hung in f2fs_issue_checkpoint (2)
+                  https://syzkaller.appspot.com/bug?extid=8a7eea50810efde15b0a
+<4> 53      Yes   kernel BUG in f2fs_write_end_io (2)
+                  https://syzkaller.appspot.com/bug?extid=4af46ee83100e99bce09
+<5> 6       Yes   kernel BUG in clear_inode (5)
+                  https://syzkaller.appspot.com/bug?extid=fc026e87558558f75c00
 
-I want to support NVMe SGL. This allows virtually *discontiguous*
-segments that we currently can't distinguish with what statx reports.
-I'm trying to report limits that let applications know what constraints
-they're dealing with.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> > If SGL were supported, there would be no virtual boundary gap, and max
-> > segments is 256.
-> 
-> Can you elaborate on why DIO users need to know max_segments?
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
- * Logical block is 4k.
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
- * DMA granule is 4 bytes.
-
- * Max segments is 256.
-
-That's very typical NVMe device contraints under SGL capabilities with
-the linux driver.
-
-You can provide 4 byte vectors as needed, but you'll hit the max
-segments limit before you have a valid IO if they're all that small.
-The average size needs to be larger, so we need to communicate that
-somehow.
-
-To be clear, I'm not interested in trying to enable applications
-dispatching thousands of 4-byte vectors to do an IO. That's a stupid
-application. The applications I'm trying to enable have unpredictable
-offsets such that a tiny fraction of vectors are indeed that small, but
-that's not a typical vector for the payload. But I can't enable just
-some without generically enabling all.
-
-> I'm worried about the UAPI duplication, as well as it going to be very
-> difficult for userspace to correctly use this information.  With just
-> the two alignments there's at least a chance of them getting it right.
-> If we throw virt_boundary_mask and max_segments into the mix, I don't
-> think there's much chance.
-
-The blktests framework test case "block/043" does this with great
-success with these exact parameters, but it takes these paramters from
-the sysfs attributes. The same test works with filesystems too, but I
-haven't gotten around to porting it to fstests because it's gating on
-having this series.
+You may send multiple commands in a single email message.
 
 
 _______________________________________________
