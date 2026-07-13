@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C17E6C43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Jul 2026 02:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1D150C44501
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Jul 2026 02:40:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=cIl3kRvsLuVI5xC0o7ALxS7zvBoFK1IDs/iKYcyGVJM=; b=kj5PJ2CdBbkInLJBXnZvycyVM4
-	7oh5ix0GqJNd6Ljag6JHhVvqWyHunSznHsNoxC//KKIP3A+968vTLkhUjwWi1+pybtKbwFf6mgQU8
-	9O2J+BwBEVT3CXSI6UpuwQ5z6fPQohigEa8r0MVdqWUq1c30cnxtWwXsDfhIdjc5ki+0=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=9BkoDEkuUoHUUeR0JWwdmOPfqo97U3vcJOmqIxUwzCs=; b=JthMOInSupS9yEMpjJrD8PSRCb
+	a/oA0PsFAn3i72Mz+zMalZWOZnksbQIVljmfTZSqYIAlVkIQg8caFJKjkxTc+XCRma4YfvanDAnEb
+	c5pwkibOQ5Xaf8dMvv3IkX4TucB1r57Y5X7SpHEV3UyS70XWufF28APZ4Pso9rOKFkpk=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wj6aN-0003wc-Fo;
-	Mon, 13 Jul 2026 02:39:59 +0000
+	id 1wj6aO-000669-10;
+	Mon, 13 Jul 2026 02:40:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wj6aJ-0003vz-51
+ (envelope-from <ebiggers@kernel.org>) id 1wj6aM-00065U-1a
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 13 Jul 2026 02:39:55 +0000
+ Mon, 13 Jul 2026 02:39:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BMAIOIoPLRG3X17cKZ1TRIpYWgnIKVg8nbkYwoXEk4M=; b=mmU2KC7b9QbmqNSPAc+zmbKtRX
- sE7yHEfSrf+Vy1YWfVQtkuyBtS0JVeezT9N4sSj7hQ88Awo2Xp/IrvZxy3877Ayg5698tMyYxXTDP
- vrgVcCXAAQcazg2gc7F4V+WwRKgNaKnzf1+slxxm17Y37OjziD/qBe1cyCdl7/EJSuJo=;
+ bh=J5lMqtVI9y4q28CYeXopPGl3o5JEbpZ2Hmblb9x1Xmc=; b=FWMnItg395RsvdZPeV+VeE6vkv
+ bf3RczKEOIcqGN+jdxuVfB9IaF5XvfqcJVz8wnsVo6BBiMP3i7B0uafTqu+ZVDgTanwRRXK98j/fX
+ a9SE3TcZgyaBxXxY9+uLVhvYzdTRezD3IewRkVB6WhHhKB6k3J7i+3yZVJxIYTudKm2U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=BMAIOIoPLRG3X17cKZ1TRIpYWgnIKVg8nbkYwoXEk4M=; b=CYIkZq68zZI7Fucn+DhyN2OfPl
- 5IZBEhWP5ijuAcGq8x5E8RqnMk+X771aSSpIfapFHcCO6RZXegTOhi8gtgzx6ZbXZsidEASKD26WL
- zBf1vIBAwitpcQDjgO/ECPHkaLrZtn47/ChFObBQ/EpqNvJP7EYcn31jROIMfWI8+P0s=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=J5lMqtVI9y4q28CYeXopPGl3o5JEbpZ2Hmblb9x1Xmc=; b=UI+lrL5eQAK9Ay7BzMxUc6ROrU
+ ulfpkoeHTZ8CUzUCYbEX4oih/50RXeJ7JgneOS2e8Vn9BF2g+v9cAbOEXbXU3X1hbZVhenJRjv0CX
+ uaJebwqmwNWs49mwYlScTnfWgcAp7cidPUU2zuSMKr8gPnQM335irkqKGf9eF4dwDcqQ=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wj6aI-0003Bm-Bg for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 13 Jul 2026 02:39:55 +0000
+ id 1wj6aL-0003CD-Ek for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 13 Jul 2026 02:39:58 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 4767A4363A;
- Mon, 13 Jul 2026 02:39:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 177391F00A3D;
- Mon, 13 Jul 2026 02:39:53 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 95AAC60018;
+ Mon, 13 Jul 2026 02:39:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A4A81F00A3E;
+ Mon, 13 Jul 2026 02:39:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783910394;
- bh=BMAIOIoPLRG3X17cKZ1TRIpYWgnIKVg8nbkYwoXEk4M=;
+ s=k20260515; t=1783910386;
+ bh=J5lMqtVI9y4q28CYeXopPGl3o5JEbpZ2Hmblb9x1Xmc=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=deORRl5jOuxzi5FNTOJyFeSMft4mkPBl655PGc905s4Y0NaqrB6MgqPaZTjz+ytIq
- ThmP27RpJb2dUMqZ5kI0X1deSLsyS2ndmU1IcMooTxxO/02Tf2pK+0+K5R5Yl7/ewG
- f/LxTtjJ6tkM7GobLsGWnbxJphrMHEC+s530rx6Q1XYnDFWtuhmhU8RJlu632LMMC0
- KYGYB+Wu/PfRqLO75Uxrxz/Iiduc3J2HKDAjS02DMASksrhwIdQat1fZYnZrny9cNY
- iFLqmHbwuoCaxODta0nzkHApFn2DnjUPATMlKLGpDBAebRMqNcQ1r+WjXXBMwV9fCB
- 9YokIkM5X8zIA==
+ b=Y5W71pCc2oPPvWxaduUd81NIPKGVuhBATznBLJccaYVG4ngMLTA+0C/44XcPrr4hr
+ KlVQLBeqhFmMvV92ely+j/FeA3HcOz0HBKyNVCSJQZcNJF+o1wkSx2m3Ig+0X/2qvT
+ li5WOEkC6AVrtkCRnskVO4drvbPsUY1YJ/gIiNAfevNLL4mYxPIiFoya9EWCkZ43kZ
+ 6oUEAWerOcpu2zzWDLuaKmMXrByVPRugfk6uqf4dLtoeCGaEErn1CITInfPj9kqS5W
+ kgrpGonS0ZfIsY3d4ttPWuhy1/ypQmX9lWRLGlG0IWkPJe9uy4Z58vkT7XIwDLN7zE
+ rmdc4znCnniSw==
 To: linux-fscrypt@vger.kernel.org
-Date: Sun, 12 Jul 2026 22:37:06 -0400
-Message-ID: <20260713023708.9245-16-ebiggers@kernel.org>
+Date: Sun, 12 Jul 2026 22:37:00 -0400
+Message-ID: <20260713023708.9245-10-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260713023708.9245-1-ebiggers@kernel.org>
 References: <20260713023708.9245-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wj6aI-0003Bm-Bg
-Subject: [f2fs-dev] [PATCH v3 15/17] fscrypt: Remove unused functions and
- workqueue
+X-Headers-End: 1wj6aL-0003CD-Ek
+Subject: [f2fs-dev] [PATCH v3 09/17] ext4: Further de-generalize the bio
+ postprocessing code
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,261 +100,211 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Remove functions that are no longer used:
+Since the bio postprocessing code in fs/ext4/readpage.c is now used only
+for fsverity, rename things accordingly.
 
-- fscrypt_decrypt_bio()
-- fscrypt_decrypt_pagecache_blocks()
-- fscrypt_inode_uses_fs_layer_crypto()
-- fscrypt_inode_uses_inline_crypto()
-- fscrypt_enqueue_decrypt_work()
+Also:
 
-This makes the decryption workqueue unused, so remove it too.
+- Don't create the caches at all when !CONFIG_FS_VERITY.
+- Remove the unused inode argument from ext4_set_verity_work().
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- fs/crypto/bio.c         | 32 --------------------
- fs/crypto/crypto.c      | 65 -----------------------------------------
- include/linux/fscrypt.h | 47 -----------------------------
- 3 files changed, 144 deletions(-)
+ fs/ext4/ext4.h     |  4 +--
+ fs/ext4/readpage.c | 65 ++++++++++++++++++++++------------------------
+ fs/ext4/super.c    |  6 ++---
+ 3 files changed, 36 insertions(+), 39 deletions(-)
 
-diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-index 58b6b13eeedd..db095258cfca 100644
---- a/fs/crypto/bio.c
-+++ b/fs/crypto/bio.c
-@@ -15,38 +15,6 @@
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 920a8ec1b948..489ed6dcee52 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -3829,8 +3829,8 @@ static inline void ext4_set_de_type(struct super_block *sb,
+ /* readpages.c */
+ int ext4_read_folio(struct file *file, struct folio *folio);
+ void ext4_readahead(struct readahead_control *rac);
+-extern int __init ext4_init_post_read_processing(void);
+-extern void ext4_exit_post_read_processing(void);
++int __init ext4_init_verity_caches(void);
++void ext4_exit_verity_caches(void);
  
- #include "fscrypt_private.h"
+ /* symlink.c */
+ extern const struct inode_operations ext4_encrypted_symlink_inode_operations;
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index 8af183798a33..c7b6cdb2e124 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -47,12 +47,12 @@
+ #include "ext4.h"
+ #include <trace/events/ext4.h>
  
--/**
-- * fscrypt_decrypt_bio() - decrypt the contents of a bio
-- * @bio: the bio to decrypt
-- *
-- * Decrypt the contents of a "read" bio following successful completion of the
-- * underlying disk read.  The bio must be reading a whole number of blocks of an
-- * encrypted file directly into the page cache.  If the bio is reading the
-- * ciphertext into bounce pages instead of the page cache (for example, because
-- * the file is also compressed, so decompression is required after decryption),
-- * then this function isn't applicable.  This function may sleep, so it must be
-- * called from a workqueue rather than from the bio's bi_end_io callback.
-- *
-- * Return: %true on success; %false on failure.  On failure, bio->bi_status is
-- *	   also set to an error status.
-- */
--bool fscrypt_decrypt_bio(struct bio *bio)
--{
--	struct folio_iter fi;
--
--	bio_for_each_folio_all(fi, bio) {
--		int err = fscrypt_decrypt_pagecache_blocks(fi.folio, fi.length,
--							   fi.offset);
--
--		if (err) {
--			bio->bi_status = errno_to_blk_status(err);
--			return false;
--		}
--	}
--	return true;
--}
--EXPORT_SYMBOL(fscrypt_decrypt_bio);
--
- struct fscrypt_zero_done {
- 	atomic_t		pending;
- 	blk_status_t		status;
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index 8c4660429418..27663f4d8705 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -38,17 +38,10 @@ MODULE_PARM_DESC(num_prealloc_crypto_pages,
+-#define NUM_PREALLOC_POST_READ_CTXS	128
++#define NUM_VERITY_WORKS 128
  
- static mempool_t *fscrypt_bounce_page_pool = NULL;
+-static struct kmem_cache *bio_post_read_ctx_cache;
+-static mempool_t *bio_post_read_ctx_pool;
++static struct kmem_cache *ext4_verity_work_cache;
++static mempool_t *ext4_verity_work_pool;
  
--static struct workqueue_struct *fscrypt_read_workqueue;
- static DEFINE_MUTEX(fscrypt_init_mutex);
+-struct bio_post_read_ctx {
++struct ext4_verity_work {
+ 	struct bio *bio;
+ 	struct fsverity_info *vi;
+ 	struct work_struct work;
+@@ -65,22 +65,22 @@ static void __read_end_io(struct bio *bio)
+ 	bio_for_each_folio_all(fi, bio)
+ 		folio_end_read(fi.folio, bio->bi_status == 0);
+ 	if (bio->bi_private)
+-		mempool_free(bio->bi_private, bio_post_read_ctx_pool);
++		mempool_free(bio->bi_private, ext4_verity_work_pool);
+ 	bio_put(bio);
+ }
  
- struct kmem_cache *fscrypt_inode_info_cachep;
- 
--void fscrypt_enqueue_decrypt_work(struct work_struct *work)
--{
--	queue_work(fscrypt_read_workqueue, work);
--}
--EXPORT_SYMBOL(fscrypt_enqueue_decrypt_work);
--
- static struct page *fscrypt_alloc_bounce_page(gfp_t gfp_flags)
+ static void verity_work(struct work_struct *work)
  {
- 	if (WARN_ON_ONCE(!fscrypt_bounce_page_pool)) {
-@@ -238,50 +231,6 @@ int fscrypt_encrypt_block_inplace(const struct inode *inode, struct page *page,
+-	struct bio_post_read_ctx *ctx =
+-		container_of(work, struct bio_post_read_ctx, work);
++	struct ext4_verity_work *ctx =
++		container_of(work, struct ext4_verity_work, work);
+ 	struct bio *bio = ctx->bio;
+ 	struct fsverity_info *vi = ctx->vi;
+ 
+ 	/*
+-	 * Free the bio_post_read_ctx right away, since it's no longer needed.
++	 * Free the ext4_verity_work right away, since it's no longer needed.
+ 	 * This relieves the pressure on the mempool as much as possible.
+ 	 */
+-	mempool_free(ctx, bio_post_read_ctx_pool);
++	mempool_free(ctx, ext4_verity_work_pool);
+ 	bio->bi_private = NULL;
+ 
+ 	fsverity_verify_bio(vi, bio);
+@@ -88,12 +88,6 @@ static void verity_work(struct work_struct *work)
+ 	__read_end_io(bio);
  }
- EXPORT_SYMBOL(fscrypt_encrypt_block_inplace);
  
--/**
-- * fscrypt_decrypt_pagecache_blocks() - Decrypt data from a pagecache folio
-- * @folio: the pagecache folio containing the data to decrypt
-- * @len: size of the data to decrypt, in bytes
-- * @offs: offset within @folio of the data to decrypt, in bytes
-- *
-- * Decrypt data that has just been read from an encrypted file.  The data must
-- * be located in a pagecache folio that is still locked and not yet uptodate.
-- * The length and offset of the data must be aligned to the file's crypto data
-- * unit size.  Alignment to the filesystem block size fulfills this requirement,
-- * as the filesystem block size is always a multiple of the data unit size.
-- *
-- * Return: 0 on success; -errno on failure
-- */
--int fscrypt_decrypt_pagecache_blocks(struct folio *folio, size_t len,
--				     size_t offs)
+-static bool bio_post_read_required(struct bio *bio)
 -{
--	const struct inode *inode = folio->mapping->host;
--	const struct fscrypt_inode_info *ci = fscrypt_get_inode_info_raw(inode);
--	const unsigned int du_bits = ci->ci_data_unit_bits;
--	const unsigned int du_size = 1U << du_bits;
--	u64 index = ((u64)folio->index << (PAGE_SHIFT - du_bits)) +
--		    (offs >> du_bits);
--	size_t i;
--	int err;
--
--	if (WARN_ON_ONCE(!folio_test_locked(folio)))
--		return -EINVAL;
--
--	if (WARN_ON_ONCE(len <= 0 || !IS_ALIGNED(len | offs, du_size)))
--		return -EINVAL;
--
--	for (i = offs; i < offs + len; i += du_size, index++) {
--		struct page *page = folio_page(folio, i >> PAGE_SHIFT);
--
--		err = fscrypt_crypt_data_unit(ci, FS_DECRYPT, index, page,
--					      page, du_size, i & ~PAGE_MASK);
--		if (err)
--			return err;
--	}
--	return 0;
+-	return IS_ENABLED(CONFIG_FS_VERITY) && bio->bi_private &&
+-	       !bio->bi_status;
 -}
--EXPORT_SYMBOL(fscrypt_decrypt_pagecache_blocks);
 -
- /**
-  * fscrypt_decrypt_block_inplace() - Decrypt a filesystem block in-place
-  * @inode:     The inode to which this block belongs
-@@ -371,20 +320,6 @@ void fscrypt_msg(const struct inode *inode, const char *level,
- 
- static int __init fscrypt_init(void)
+ /*
+  * I/O completion handler for multipage BIOs.
+  *
+@@ -108,8 +102,9 @@ static bool bio_post_read_required(struct bio *bio)
+  */
+ static void mpage_end_io(struct bio *bio)
  {
--	/*
--	 * Use an unbound workqueue to allow bios to be decrypted in parallel
--	 * even when they happen to complete on the same CPU.  This sacrifices
--	 * locality, but it's worthwhile since decryption is CPU-intensive.
--	 *
--	 * Also use a high-priority workqueue to prioritize decryption work,
--	 * which blocks reads from completing, over regular application tasks.
--	 */
--	fscrypt_read_workqueue = alloc_workqueue("fscrypt_read_queue",
--						 WQ_UNBOUND | WQ_HIGHPRI,
--						 num_online_cpus());
--	if (!fscrypt_read_workqueue)
--		panic("failed to allocate fscrypt_read_queue");
--
- 	fscrypt_inode_info_cachep = KMEM_CACHE(fscrypt_inode_info,
- 					       SLAB_RECLAIM_ACCOUNT |
- 					       SLAB_PANIC);
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 43bafdd67dd7..acf5b28eb9d7 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -343,7 +343,6 @@ static inline void fscrypt_prepare_dentry(struct dentry *dentry,
+-	if (bio_post_read_required(bio)) {
+-		struct bio_post_read_ctx *ctx = bio->bi_private;
++	if (IS_ENABLED(CONFIG_FS_VERITY) && bio->bi_private &&
++	    !bio->bi_status) {
++		struct ext4_verity_work *ctx = bio->bi_private;
+ 
+ 		INIT_WORK(&ctx->work, verity_work);
+ 		fsverity_enqueue_verify_work(&ctx->work);
+@@ -118,14 +113,12 @@ static void mpage_end_io(struct bio *bio)
+ 	__read_end_io(bio);
  }
  
- /* crypto.c */
--void fscrypt_enqueue_decrypt_work(struct work_struct *);
+-static void ext4_set_bio_post_read_ctx(struct bio *bio,
+-				       const struct inode *inode,
+-				       struct fsverity_info *vi)
++static void ext4_set_verity_work(struct bio *bio, struct fsverity_info *vi)
+ {
+ 	if (vi) {
+ 		/* Due to the mempool, this never fails. */
+-		struct bio_post_read_ctx *ctx =
+-			mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
++		struct ext4_verity_work *ctx =
++			mempool_alloc(ext4_verity_work_pool, GFP_NOFS);
  
- struct page *fscrypt_encrypt_pagecache_blocks(struct folio *folio,
- 		size_t len, size_t offs, gfp_t gfp_flags);
-@@ -351,8 +350,6 @@ int fscrypt_encrypt_block_inplace(const struct inode *inode, struct page *page,
- 				  unsigned int len, unsigned int offs,
- 				  u64 lblk_num);
- 
--int fscrypt_decrypt_pagecache_blocks(struct folio *folio, size_t len,
--				     size_t offs);
- int fscrypt_decrypt_block_inplace(const struct inode *inode, struct page *page,
- 				  unsigned int len, unsigned int offs,
- 				  u64 lblk_num);
-@@ -450,7 +447,6 @@ bool fscrypt_match_name(const struct fscrypt_name *fname,
- u64 fscrypt_fname_siphash(const struct inode *dir, const struct qstr *name);
- 
- /* bio.c */
--bool fscrypt_decrypt_bio(struct bio *bio);
- int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,
- 			  sector_t sector, u64 len);
- 
-@@ -510,9 +506,6 @@ static inline void fscrypt_prepare_dentry(struct dentry *dentry,
+ 		ctx->bio = bio;
+ 		ctx->vi = vi;
+@@ -289,7 +282,7 @@ static int ext4_mpage_readpages(struct inode *inode, struct fsverity_info *vi,
+ 			bio = bio_alloc(bdev, bio_max_segs(nr_pages),
+ 					REQ_OP_READ, GFP_KERNEL);
+ 			fscrypt_set_bio_crypt_ctx(bio, inode, pos, GFP_KERNEL);
+-			ext4_set_bio_post_read_ctx(bio, inode, vi);
++			ext4_set_verity_work(bio, vi);
+ 			bio->bi_iter.bi_sector = first_block << (blkbits - 9);
+ 			bio->bi_end_io = mpage_end_io;
+ 			if (rac)
+@@ -363,27 +356,31 @@ void ext4_readahead(struct readahead_control *rac)
+ 	ext4_mpage_readpages(inode, vi, rac, NULL);
  }
  
- /* crypto.c */
--static inline void fscrypt_enqueue_decrypt_work(struct work_struct *work)
--{
--}
+-int __init ext4_init_post_read_processing(void)
++int __init ext4_init_verity_caches(void)
+ {
+-	bio_post_read_ctx_cache = KMEM_CACHE(bio_post_read_ctx, SLAB_RECLAIM_ACCOUNT);
++	if (!IS_ENABLED(CONFIG_FS_VERITY))
++		return 0;
++	ext4_verity_work_cache =
++		KMEM_CACHE(ext4_verity_work, SLAB_RECLAIM_ACCOUNT);
  
- static inline struct page *fscrypt_encrypt_pagecache_blocks(struct folio *folio,
- 		size_t len, size_t offs, gfp_t gfp_flags)
-@@ -528,12 +521,6 @@ static inline int fscrypt_encrypt_block_inplace(const struct inode *inode,
- 	return -EOPNOTSUPP;
+-	if (!bio_post_read_ctx_cache)
++	if (!ext4_verity_work_cache)
+ 		goto fail;
+-	bio_post_read_ctx_pool =
+-		mempool_create_slab_pool(NUM_PREALLOC_POST_READ_CTXS,
+-					 bio_post_read_ctx_cache);
+-	if (!bio_post_read_ctx_pool)
++	ext4_verity_work_pool = mempool_create_slab_pool(
++		NUM_VERITY_WORKS, ext4_verity_work_cache);
++	if (!ext4_verity_work_pool)
+ 		goto fail_free_cache;
+ 	return 0;
+ 
+ fail_free_cache:
+-	kmem_cache_destroy(bio_post_read_ctx_cache);
++	kmem_cache_destroy(ext4_verity_work_cache);
+ fail:
+ 	return -ENOMEM;
  }
  
--static inline int fscrypt_decrypt_pagecache_blocks(struct folio *folio,
--						   size_t len, size_t offs)
--{
--	return -EOPNOTSUPP;
--}
--
- static inline int fscrypt_decrypt_block_inplace(const struct inode *inode,
- 						struct page *page,
- 						unsigned int len,
-@@ -751,10 +738,6 @@ static inline int fscrypt_d_revalidate(struct inode *dir, const struct qstr *nam
+-void ext4_exit_post_read_processing(void)
++void ext4_exit_verity_caches(void)
+ {
+-	mempool_destroy(bio_post_read_ctx_pool);
+-	kmem_cache_destroy(bio_post_read_ctx_cache);
++	if (!IS_ENABLED(CONFIG_FS_VERITY))
++		return;
++	mempool_destroy(ext4_verity_work_pool);
++	kmem_cache_destroy(ext4_verity_work_cache);
  }
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 245f67d10ded..cb9ca0dc4664 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -7531,7 +7531,7 @@ static int __init ext4_init_fs(void)
+ 	if (err)
+ 		goto out7;
  
- /* bio.c */
--static inline bool fscrypt_decrypt_bio(struct bio *bio)
--{
--	return true;
--}
+-	err = ext4_init_post_read_processing();
++	err = ext4_init_verity_caches();
+ 	if (err)
+ 		goto out6;
  
- static inline int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,
- 					sector_t sector, u64 len)
-@@ -892,36 +875,6 @@ static inline u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk,
+@@ -7580,7 +7580,7 @@ static int __init ext4_init_fs(void)
+ out4:
+ 	ext4_exit_pageio();
+ out5:
+-	ext4_exit_post_read_processing();
++	ext4_exit_verity_caches();
+ out6:
+ 	ext4_exit_pending();
+ out7:
+@@ -7601,7 +7601,7 @@ static void __exit ext4_exit_fs(void)
+ 	ext4_exit_sysfs();
+ 	ext4_exit_system_zone();
+ 	ext4_exit_pageio();
+-	ext4_exit_post_read_processing();
++	ext4_exit_verity_caches();
+ 	ext4_exit_es();
+ 	ext4_exit_pending();
  }
- #endif /* !CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
- 
--/**
-- * fscrypt_inode_uses_inline_crypto() - test whether an inode uses inline
-- *					encryption
-- * @inode: an inode. If encrypted, its key must be set up.
-- *
-- * Return: true if the inode requires file contents encryption and if the
-- *	   encryption should be done in the block layer via blk-crypto rather
-- *	   than in the filesystem layer.
-- */
--static inline bool fscrypt_inode_uses_inline_crypto(const struct inode *inode)
--{
--	return fscrypt_needs_contents_encryption(inode) &&
--	       inode->i_sb->s_cop->is_block_based;
--}
--
--/**
-- * fscrypt_inode_uses_fs_layer_crypto() - test whether an inode uses fs-layer
-- *					  encryption
-- * @inode: an inode. If encrypted, its key must be set up.
-- *
-- * Return: true if the inode requires file contents encryption and if the
-- *	   encryption should be done in the filesystem layer rather than in the
-- *	   block layer via blk-crypto.
-- */
--static inline bool fscrypt_inode_uses_fs_layer_crypto(const struct inode *inode)
--{
--	return fscrypt_needs_contents_encryption(inode) &&
--	       !inode->i_sb->s_cop->is_block_based;
--}
--
- /**
-  * fscrypt_has_encryption_key() - check whether an inode has had its key set up
-  * @inode: the inode to check
 -- 
 2.55.0
 
