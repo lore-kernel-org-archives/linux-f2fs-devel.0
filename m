@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 04A1BC44506
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Jul 2026 02:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C27F7C44507
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Jul 2026 02:39:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=EUrN+epuidoW1NB0qDL4gMy4P25Nz/7ThHlk9CghBsI=; b=kPZ1MD4m3j2w4WWmEu1hA4N0l5
-	GyvyHpIO83DZuL+cLOSBoKHc4l4IDccMjXH/l+qF+0b3zxv07sY4cGmQY2nkDnwXxfaAqAJHEtHuT
-	L/gF4gnm4f00BtyXzMA/OH7sjeVXBRLrq7AVantCXhi425xIQQU1MPnCpmCk2vcONo6k=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=E0StuYfpESKVJQeRXFtoLrY0UKbPsJhrYzczddEWsiI=; b=J7oLI689labajJQlA18gvEvuVK
+	eLaKywquIGIDW8YWKkO6UfCHssORpa9SwEmCr/syemW4tK/SBkUdXp6klj2Xrwwjpm3XO1Osbp5UX
+	Vjrq0/sdaCcfoZ28ykjIUTOJwbCAflnBo48PeHDdm0yTG5v0G62hKs769DL4xMww+xNw=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wj6a5-0003ui-PI;
-	Mon, 13 Jul 2026 02:39:41 +0000
+	id 1wj6a8-00062Z-Mh;
+	Mon, 13 Jul 2026 02:39:45 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wj6a4-0003ub-5Z
+ (envelope-from <ebiggers@kernel.org>) id 1wj6a7-00062K-6N
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 13 Jul 2026 02:39:40 +0000
+ Mon, 13 Jul 2026 02:39:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qHUq8H2gRat8UEbbTCOj349IaUIr6uNiumAUkOuvUW4=; b=BznX7TpmNQvNIZbl6PLzmlS87O
- 6+1QnX/SgsXv029cphvPf28Iga5ULUGTaxX7PnNfA8SEWpcEq8wG9LJoi7HAb53NocWIA2Qvv7qji
- mFpwBeU5D5MRebvZHy6TsMDmxBm7SJ/TiZ3Aa11FoXq4RYLKcAs9jNsIzBazMVmgsZYQ=;
+ bh=heJf2lUsfHWx2MluoNOLNNCT5X8VE5KT5lfDTj6MDb4=; b=IL9Xgt0YqtqPQIHMmBBLODZgmx
+ f+R1/wZjpxq22nama4/DwDZd60S4NZUkpE0WAw0Uh0g9f/I5xV+IDSpQ+tQ8IqaSMv6Tod1TDWGje
+ gipHq8Vpk/dYJSebXSlFy8CDOgz3/NIlSz/aZ/W+mkRTl3Gpjb5MXB0rzssI+A07DcMU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qHUq8H2gRat8UEbbTCOj349IaUIr6uNiumAUkOuvUW4=; b=Varcrp+54c3Yr7rFVL94ysJReF
- dWq5Al3V1eJrixijgi1VygkbHmouiD5/mkl2LVWQDinLQ4TbF5QsKibwfqN90sAxNz1VBsbxtELIR
- WImEgkw+EAILwXAIXiw7PcmZiYhwi8ukdCRs4gMRuN9OZ5seFlPilKIus3SbDoOZQ1wU=;
+ bh=heJf2lUsfHWx2MluoNOLNNCT5X8VE5KT5lfDTj6MDb4=; b=hPWnZR0j4RKlR+GDNDmS9q0+V3
+ kGpV2znrqpx3YxzAYjwNik2xzrLLrCercjsBHFa9B3fN+sLDVvNvIz/+6KZ7hNHIaiaXlpAVqlLdy
+ 1xLkmVtLlzntYz1bg0YJXyB5LSObZg/+7xg8hSttMG7Nh8jmIl/1XIK/OhiVYZbA9fic=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wj6a2-0003AR-LB for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 13 Jul 2026 02:39:40 +0000
+ id 1wj6a7-0003Ap-G4 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 13 Jul 2026 02:39:43 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id AC36E429E4;
- Mon, 13 Jul 2026 02:39:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B2961F00A3A;
- Mon, 13 Jul 2026 02:39:31 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 10CB943626;
+ Mon, 13 Jul 2026 02:39:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE6671F00A3D;
+ Mon, 13 Jul 2026 02:39:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783910372;
- bh=qHUq8H2gRat8UEbbTCOj349IaUIr6uNiumAUkOuvUW4=;
+ s=k20260515; t=1783910377;
+ bh=heJf2lUsfHWx2MluoNOLNNCT5X8VE5KT5lfDTj6MDb4=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=jrW/JYM3ACUG+nhVVkCsyXJIFV5lZoq4QSBhj7fBWsGJSoRCWJYLRmhzHkAJGqMVe
- 8GZ5fICsJYPHOGTlUM5gr8uGyFKiOAe1vf3DYrG2UtDStan2eFVA870cmpg/X0PaKx
- ccev9HVIMioftE4tyM/MJODhjjuyBCOiwQ3s+pogXjAn4Rxx/F1gKG2TcU1xNyOO4A
- W5Y26dhNgqIR7Amh9UJgzoFB9y/DQA6EHwk4/o8cHbjtF9kdlffr9IB1mZ88xeOjb8
- OIbzkJzROp8E4DhAFrHBB14HnhBZ7pa/85bX5Za/6UkCddKiwmyAGBRdQv7OfIg0GV
- 1DR9mnRxmQsxA==
+ b=aPGIZQ3b9j+h6Z0MyThuY/ZUQCSxgActPOPVfiyM8xdeZu8TstqIdUTmaMnprF4mr
+ OqcBPDoE41PPE0bZe11h5ABtIn1j/8fdPmz4grktn1zusegI/Kwj/ni4vBbnhyfNn6
+ pmPGtTaoSpL85dQ/O4DiG+MX6fHofacLEIL6KiVc2Zewi3nucU1OxKcyGEi2Ca7Gl7
+ BJc6UfJ/+lhqGGPjbB5pq0Dx1ncUJgzhJRRzLhh2G98uk6bhenV+UpuShpgd5XJIeN
+ LfkeI2T9jUISjTYa5vUj5CHw2T4opMTVJjL5RdGS5OTPPH/kVlYm38JMo/A7ubm3+X
+ eZBcUNyGC4ygA==
 To: linux-fscrypt@vger.kernel.org
-Date: Sun, 12 Jul 2026 22:36:52 -0400
-Message-ID: <20260713023708.9245-2-ebiggers@kernel.org>
+Date: Sun, 12 Jul 2026 22:36:55 -0400
+Message-ID: <20260713023708.9245-5-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260713023708.9245-1-ebiggers@kernel.org>
 References: <20260713023708.9245-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wj6a2-0003AR-LB
-Subject: [f2fs-dev] [PATCH v3 01/17] blk-crypto: Simplify check for fallback
- support
+X-Headers-End: 1wj6a7-0003Ap-G4
+Subject: [f2fs-dev] [PATCH v3 04/17] fscrypt: Fully disallow IV_INO_LBLK_32
+ with s_blocksize != PAGE_SIZE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,31 +100,90 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Since blk-crypto-fallback supports all blk_crypto_keys except wrapped
-keys, just check for that condition directly instead of using
-__blk_crypto_cfg_supported().  With this done,
-__blk_crypto_cfg_supported() is now used only for the hardware support.
+FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32 with s_blocksize != PAGE_SIZE works
+only with the fs-layer implementation of file contents encryption, not
+blk-crypto.  This is a problem for standardizing on blk-crypto.
+
+Fortunately, no one should be using this combination anyway.  It doesn't
+make sense because the entire point of IV_INO_LBLK_32 is to support
+inline encryption hardware that is limited to 32-bit DUNs.
+
+Thus, fully disallow IV_INO_LBLK_32 with s_blocksize != PAGE_SIZE.
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- block/blk-crypto-fallback.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ Documentation/filesystems/fscrypt.rst |  3 +++
+ fs/crypto/inline_crypt.c              | 13 -------------
+ fs/crypto/policy.c                    | 17 +++++++++++++++++
+ 3 files changed, 20 insertions(+), 13 deletions(-)
 
-diff --git a/block/blk-crypto-fallback.c b/block/blk-crypto-fallback.c
-index 2a5c52ab74b4..2a8f40a65158 100644
---- a/block/blk-crypto-fallback.c
-+++ b/block/blk-crypto-fallback.c
-@@ -496,8 +496,7 @@ bool blk_crypto_fallback_bio_prep(struct bio *bio)
- 		return false;
- 	}
+diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+index c0dd35f1af12..92b8f311e211 100644
+--- a/Documentation/filesystems/fscrypt.rst
++++ b/Documentation/filesystems/fscrypt.rst
+@@ -336,6 +336,9 @@ per I/O request and may have only a small number of keyslots.  This
+ format results in some level of IV reuse, so it should only be used
+ when necessary due to hardware limitations.
  
--	if (!__blk_crypto_cfg_supported(blk_crypto_fallback_profile,
--					&bc->bc_key->crypto_cfg)) {
-+	if (bc->bc_key->crypto_cfg.key_type != BLK_CRYPTO_KEY_TYPE_RAW) {
- 		bio_endio_status(bio, BLK_STS_NOTSUPP);
++IV_INO_LBLK_32 is supported only when the filesystem block size is
++equal to the page size.
++
+ Key identifiers
+ ---------------
+ 
+diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
+index aaf71f6068b0..83dea8bc2c8c 100644
+--- a/fs/crypto/inline_crypt.c
++++ b/fs/crypto/inline_crypt.c
+@@ -112,19 +112,6 @@ int fscrypt_select_encryption_impl(struct fscrypt_inode_info *ci,
+ 	if (!(sb->s_flags & SB_INLINECRYPT))
+ 		return 0;
+ 
+-	/*
+-	 * When a page contains multiple logically contiguous filesystem blocks,
+-	 * some filesystem code only calls fscrypt_mergeable_bio() for the first
+-	 * block in the page. This is fine for most of fscrypt's IV generation
+-	 * strategies, where contiguous blocks imply contiguous IVs. But it
+-	 * doesn't work with IV_INO_LBLK_32. For now, simply exclude
+-	 * IV_INO_LBLK_32 with blocksize != PAGE_SIZE from inline encryption.
+-	 */
+-	if ((fscrypt_policy_flags(&ci->ci_policy) &
+-	     FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32) &&
+-	    sb->s_blocksize != PAGE_SIZE)
+-		return 0;
+-
+ 	/*
+ 	 * On all the filesystem's block devices, blk-crypto must support the
+ 	 * crypto configuration that the file would use.
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index f40fb5924e75..a7322dba7557 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -177,6 +177,23 @@ static bool supported_iv_ino_lblk_policy(const struct fscrypt_policy_v2 *policy,
+ 			     type, sb->s_id);
  		return false;
  	}
++
++	/*
++	 * IV_INO_LBLK_32 isn't compatible with inline encryption when
++	 * s_blocksize != PAGE_SIZE.  In that case the DUN can wrap around in
++	 * the middle of a page, but sometimes fscrypt_mergeable_bio() is called
++	 * only for the first block per page.  Since IV_INO_LBLK_32 exists only
++	 * to support inline encryption hardware that is limited to 32-bit DUNs,
++	 * just disallow IV_INO_LBLK_32 with s_blocksize != PAGE_SIZE entirely.
++	 */
++	if ((policy->flags & FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32) &&
++	    sb->s_blocksize != PAGE_SIZE) {
++		fscrypt_warn(inode,
++			     "Can't use %s policy on filesystem '%s' with block size != PAGE_SIZE",
++			     type, sb->s_id);
++		return false;
++	}
++
+ 	return true;
+ }
+ 
 -- 
 2.55.0
 
