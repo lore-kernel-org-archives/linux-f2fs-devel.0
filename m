@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CE588C43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Jul 2026 02:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 43FD2C43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Jul 2026 02:39:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=STJ2FOCdmGLZh275oqoBXKVrL/0vmwI5Gg/Gm9Poqa0=; b=Wy4iVB3nbpjJ3SOEhGDXroeV6c
-	upaARMOQfnEEiMeDrzMgr+fE9YH5qSrJ96f2oHG4+XNx27nHkxVOzgm8hsZNcVm5+P8Xm0z/QI+p7
-	LUOkFb+RL/HBL14N12A+3Ft8rEHCTUuNWmEfeSNfcms0y2SFMw3MJxhbivbWZj/RAvjs=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=g9qIKjp+NQQVWlE8uSn+uFJcFx+mmMwX529HUc4YoDk=; b=giG6AhDgK3Zo4EdQ5okRVKu7kL
+	qkAUCAew4O9thWABNWgxZlWYvvsoeneB/q+wwBGPj3J01IfzX9XIW5bQ/9OK7HIhtCaY2HI2CtOHJ
+	7K5MjS87vyVNgLm2MhVmzrADqZrXFHHtORnrBn6H8DUIsKt2qPQ5C/9jaSuypay2g8rE=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wj6aA-0006bz-0e;
-	Mon, 13 Jul 2026 02:39:46 +0000
+	id 1wj6aG-0003vS-4g;
+	Mon, 13 Jul 2026 02:39:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wj6a8-0006bq-MN
+ (envelope-from <ebiggers@kernel.org>) id 1wj6aE-0003vK-GC
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 13 Jul 2026 02:39:45 +0000
+ Mon, 13 Jul 2026 02:39:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mCDh6At6XczSpYrISVO/VKcS3b+jIo/GUafinMXlPuI=; b=crAy1byz8TWbaYtScuU9XdId/4
- 3Eh9ZSpU2rQEqnDLt4SxrnSieu3nUJ3XyBjoq6nAO1E0GF64TLaYU2QRUoyL8guALtvFRyxM5vO3g
- KdjKLIDgYaIAGDaqX15VfUb3WbNxedfir2dvg0sidGpt0KSZDsA4QXMN7npM+Me4/SPc=;
+ bh=vPlgEL+uDNg1eQ+5+x98EAlAhGO/4A1VGEm0Ti0TVI4=; b=Qy6dblRUuAMpU3GpsihbqzriHw
+ IgmuhtvCix8RYMpue4C5uBiw7qLcphYJKTZrWcoOOE3z/MvJoSOLHXN58chZ/1KDkkdpoARsX3hRa
+ qY9PPtVDjV0ZJnXrjtPum+jsooZbB55WE0pxy0QD3KTK19e57yj5cuh/HTwCMCTv/v7Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=mCDh6At6XczSpYrISVO/VKcS3b+jIo/GUafinMXlPuI=; b=gJkqAXjZE+uQUZRM6Z1yCOqs0f
- yrGxt9B9k65BtpQ8PMI+mG0+S05NL8Aj1RA1hP7jIdAk1ZwniWcGWOAuxbWngIEgxmb3eOjeMsW7+
- 7wXbzQkJSO/ejbzEACL+IIiD09ZKxYO3++dBKwmx+vyDZgRqEiDZ2d0B0P6MRCD4DTi4=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=vPlgEL+uDNg1eQ+5+x98EAlAhGO/4A1VGEm0Ti0TVI4=; b=f/ZHhVMtMHoWafmKR7hwxrr4o4
+ NfmEqx/CUmdSVxwALuisgMTG7u1t9arWr8HUhQ9IEGuQADaUGWr3d22gF/3dEc3GmYm1qFlMgG0UR
+ WL55aZOb1Isk/nI+DUjAMRIaqBtSv2MqhoAzIm8cCAeGg6hZetsZVKWdGZtNTR3w9qR8=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wj6a8-0003Au-Ov for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 13 Jul 2026 02:39:45 +0000
+ id 1wj6aD-0003BR-3p for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 13 Jul 2026 02:39:50 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 30136600AE;
- Mon, 13 Jul 2026 02:39:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4E8D1F00A3D;
- Mon, 13 Jul 2026 02:39:32 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id CDBA94362C;
+ Mon, 13 Jul 2026 02:39:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C64C1F000E9;
+ Mon, 13 Jul 2026 02:39:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783910373;
- bh=mCDh6At6XczSpYrISVO/VKcS3b+jIo/GUafinMXlPuI=;
+ s=k20260515; t=1783910383;
+ bh=vPlgEL+uDNg1eQ+5+x98EAlAhGO/4A1VGEm0Ti0TVI4=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=XrK6UkLDZDLNmmnjna+IBH3/d71rOYjFG12jwFkpZqw+/+J2uwQRf+Znc1H4EZLzU
- FWyB7gEkju3bMe6D1CH/3RGP/e357bZltZJWW1dguAlJCZweybNPYYlwWqq2V3HIGX
- 1fT5pzuiKJk1LWP16o+duzCdJyKaGH+iyC/UH7sM+yBtg1UjoTgYx64/S3PAGnyMHf
- KeD5J7h7rjFJBk2opZ2zlx6kRx47QWhNKKvFHJGsgKMb/ZoY3NMuYWqVdtwyEcAhh0
- TfGsGJEhn/ynH/7DFYjvBfvhMkJR8aEoVwrCGmOI4k37kffKkjYFHGWMnRv/F8UOQG
- CwTM6m4/v8KBQ==
+ b=cKafiTwT1TEF5FNYrukrS0qlT0TJ/IOijJqeWWaG1C1E/crSdkP6JIvq52GV1DnVi
+ 4CEww82cVFczJifXB1enZ22xrwfSrSiMK9UxX6qxJjEGvXh9mYKw7f78wGTbhxph6d
+ 4hiv9L5FFWsMUPEH2l9zmwxpAXzCnlUi3y08kbCua+G6mHTXf9F9ARN8Wy6r4HZ9aK
+ xVVzAGUYOOowEJjTQAlhEdCFb8r+z0EsP9yr2iDqtMHtGMbsGY3zBxyEjFx6C7I7ZW
+ tM60Z1OO+0j/nilcYVpwz4SiZOsclA/0kOF3yb5HsdYeNe2WvugMSaswGWl6tZoQqg
+ 9601hC5cSFt3g==
 To: linux-fscrypt@vger.kernel.org
-Date: Sun, 12 Jul 2026 22:36:53 -0400
-Message-ID: <20260713023708.9245-3-ebiggers@kernel.org>
+Date: Sun, 12 Jul 2026 22:36:58 -0400
+Message-ID: <20260713023708.9245-8-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260713023708.9245-1-ebiggers@kernel.org>
 References: <20260713023708.9245-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wj6a8-0003Au-Ov
-Subject: [f2fs-dev] [PATCH v3 02/17] blk-crypto: Fold
- __blk_crypto_cfg_supported() into its caller
+X-Headers-End: 1wj6aD-0003BR-3p
+Subject: [f2fs-dev] [PATCH v3 07/17] ext4: Remove fs-layer file contents
+ en/decryption code
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,101 +100,360 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-__blk_crypto_cfg_supported() is called only by
-blk_crypto_config_supported_natively(), so fold it in.
+Now that fscrypt's file contents en/decryption is always implemented
+using blk-crypto when the filesystem is block-based, the fs-layer
+en/decryption code in ext4 is unused code.  Remove it.
+
+Note that this makes possible some additional cleanups, but they're left
+to later commits:
+
+  - Making ext4_bio_write_folio() return void
+  - Renaming bio_post_read_ctx to fsverity_ctx or similar, and
+    allocating the pool only when fsverity support is needed
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- block/blk-crypto-internal.h |  3 ---
- block/blk-crypto-profile.c  | 22 ----------------------
- block/blk-crypto.c          | 23 +++++++++++++++++++++--
- 3 files changed, 21 insertions(+), 27 deletions(-)
+ fs/ext4/crypto.c   |  1 -
+ fs/ext4/inode.c    | 28 ++--------------
+ fs/ext4/page-io.c  | 68 ++-------------------------------------
+ fs/ext4/readpage.c | 80 ++++------------------------------------------
+ 4 files changed, 13 insertions(+), 164 deletions(-)
 
-diff --git a/block/blk-crypto-internal.h b/block/blk-crypto-internal.h
-index 742694213529..2c7a0446572a 100644
---- a/block/blk-crypto-internal.h
-+++ b/block/blk-crypto-internal.h
-@@ -80,9 +80,6 @@ void blk_crypto_put_keyslot(struct blk_crypto_keyslot *slot);
- int __blk_crypto_evict_key(struct blk_crypto_profile *profile,
- 			   const struct blk_crypto_key *key);
- 
--bool __blk_crypto_cfg_supported(struct blk_crypto_profile *profile,
--				const struct blk_crypto_config *cfg);
+diff --git a/fs/ext4/crypto.c b/fs/ext4/crypto.c
+index 6b809ac80ef7..9265cfe62c83 100644
+--- a/fs/ext4/crypto.c
++++ b/fs/ext4/crypto.c
+@@ -237,7 +237,6 @@ const struct fscrypt_operations ext4_cryptops = {
+ 	.inode_info_offs	= (int)offsetof(struct ext4_inode_info, i_crypt_info) -
+ 				  (int)offsetof(struct ext4_inode_info, vfs_inode),
+ 	.is_block_based		= 1,
+-	.needs_bounce_pages	= 1,
+ 	.has_32bit_inodes	= 1,
+ 	.supports_subblock_data_units = 1,
+ 	.legacy_key_prefix	= "ext4:",
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index ce99807c5f5b..8eb2af481129 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -1262,17 +1262,6 @@ int ext4_block_write_begin(handle_t *handle, struct folio *folio,
+ 							 from, to);
+ 		else
+ 			folio_zero_new_buffers(folio, from, to);
+-	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+-		for (i = 0; i < nr_wait; i++) {
+-			int err2;
 -
- int blk_crypto_ioctl(struct block_device *bdev, unsigned int cmd,
- 		     void __user *argp);
+-			err2 = fscrypt_decrypt_pagecache_blocks(folio,
+-						blocksize, bh_offset(wait[i]));
+-			if (err2) {
+-				clear_buffer_uptodate(wait[i]);
+-				err = err2;
+-			}
+-		}
+ 	}
  
-diff --git a/block/blk-crypto-profile.c b/block/blk-crypto-profile.c
-index cf447ba4a66e..53126c091b0b 100644
---- a/block/blk-crypto-profile.c
-+++ b/block/blk-crypto-profile.c
-@@ -335,28 +335,6 @@ void blk_crypto_put_keyslot(struct blk_crypto_keyslot *slot)
+ 	return err;
+@@ -3829,9 +3818,9 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 		return ret;
+ out:
+ 	/*
+-	 * When inline encryption is enabled, sometimes I/O to an encrypted file
+-	 * has to be broken up to guarantee DUN contiguity.  Handle this by
+-	 * limiting the length of the mapping returned.
++	 * Sometimes I/O to an encrypted file has to be broken up to guarantee
++	 * DUN contiguity.  Handle this by limiting the length of the mapping
++	 * returned.
+ 	 */
+ 	map.m_len = fscrypt_limit_io_blocks(inode, map.m_lblk, map.m_len);
+ 
+@@ -4081,17 +4070,6 @@ static struct buffer_head *ext4_load_tail_bh(struct inode *inode, loff_t from)
+ 		err = ext4_read_bh_lock(bh, 0, true);
+ 		if (err)
+ 			goto unlock;
+-		if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+-			/* We expect the key to be set. */
+-			BUG_ON(!fscrypt_has_encryption_key(inode));
+-			err = fscrypt_decrypt_pagecache_blocks(folio,
+-							       blocksize,
+-							       bh_offset(bh));
+-			if (err) {
+-				clear_buffer_uptodate(bh);
+-				goto unlock;
+-			}
+-		}
+ 	}
+ 	return bh;
+ 
+diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+index bc674aa4a656..557f44178d87 100644
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -103,18 +103,12 @@ static void ext4_finish_bio(struct bio *bio)
+ 
+ 	bio_for_each_folio_all(fi, bio) {
+ 		struct folio *folio = fi.folio;
+-		struct folio *io_folio = NULL;
+ 		struct buffer_head *bh, *head;
+ 		size_t bio_start = fi.offset;
+ 		size_t bio_end = bio_start + fi.length;
+ 		unsigned under_io = 0;
+ 		unsigned long flags;
+ 
+-		if (fscrypt_is_bounce_folio(folio)) {
+-			io_folio = folio;
+-			folio = fscrypt_pagecache_folio(folio);
+-		}
+-
+ 		if (bio->bi_status) {
+ 			int err = blk_status_to_errno(bio->bi_status);
+ 			mapping_set_error(folio->mapping, err);
+@@ -139,10 +133,8 @@ static void ext4_finish_bio(struct bio *bio)
+ 			}
+ 		} while ((bh = bh->b_this_page) != head);
+ 		spin_unlock_irqrestore(&head->b_uptodate_lock, flags);
+-		if (!under_io) {
+-			fscrypt_free_bounce_page(&io_folio->page);
++		if (!under_io)
+ 			folio_end_writeback(folio);
+-		}
  	}
  }
  
--/**
-- * __blk_crypto_cfg_supported() - Check whether the given crypto profile
-- *				  supports the given crypto configuration.
-- * @profile: the crypto profile to check
-- * @cfg: the crypto configuration to check for
-- *
-- * Return: %true if @profile supports the given @cfg.
-- */
--bool __blk_crypto_cfg_supported(struct blk_crypto_profile *profile,
--				const struct blk_crypto_config *cfg)
+@@ -453,7 +445,6 @@ static bool io_submit_need_new_bio(struct ext4_io_submit *io,
+ static void io_submit_add_bh(struct ext4_io_submit *io,
+ 			     struct inode *inode,
+ 			     struct folio *folio,
+-			     struct folio *io_folio,
+ 			     struct buffer_head *bh)
+ {
+ 	if (io->io_bio && io_submit_need_new_bio(io, inode, folio, bh)) {
+@@ -462,7 +453,7 @@ static void io_submit_add_bh(struct ext4_io_submit *io,
+ 	}
+ 	if (io->io_bio == NULL)
+ 		io_submit_init_bio(io, inode, folio, bh);
+-	if (!bio_add_folio(io->io_bio, io_folio, bh->b_size, bh_offset(bh)))
++	if (!bio_add_folio(io->io_bio, folio, bh->b_size, bh_offset(bh)))
+ 		goto submit_and_retry;
+ 	wbc_account_cgroup_owner(io->io_wbc, folio, bh->b_size);
+ 	io->io_next_block++;
+@@ -471,11 +462,9 @@ static void io_submit_add_bh(struct ext4_io_submit *io,
+ int ext4_bio_write_folio(struct ext4_io_submit *io, struct folio *folio,
+ 		size_t len)
+ {
+-	struct folio *io_folio = folio;
+ 	struct inode *inode = folio->mapping->host;
+ 	unsigned block_start;
+ 	struct buffer_head *bh, *head;
+-	int ret = 0;
+ 	int nr_to_submit = 0;
+ 	struct writeback_control *wbc = io->io_wbc;
+ 	bool keep_towrite = false;
+@@ -549,64 +538,13 @@ int ext4_bio_write_folio(struct ext4_io_submit *io, struct folio *folio,
+ 
+ 	bh = head = folio_buffers(folio);
+ 
+-	/*
+-	 * If any blocks are being written to an encrypted file, encrypt them
+-	 * into a bounce page.  For simplicity, just encrypt until the last
+-	 * block which might be needed.  This may cause some unneeded blocks
+-	 * (e.g. holes) to be unnecessarily encrypted, but this is rare and
+-	 * can't happen in the common case of blocksize == PAGE_SIZE.
+-	 */
+-	if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+-		gfp_t gfp_flags = GFP_NOFS;
+-		unsigned int enc_bytes = round_up(len, i_blocksize(inode));
+-		struct page *bounce_page;
+-
+-		/*
+-		 * Since bounce page allocation uses a mempool, we can only use
+-		 * a waiting mask (i.e. request guaranteed allocation) on the
+-		 * first page of the bio.  Otherwise it can deadlock.
+-		 */
+-		if (io->io_bio)
+-			gfp_flags = GFP_NOWAIT;
+-	retry_encrypt:
+-		bounce_page = fscrypt_encrypt_pagecache_blocks(folio,
+-					enc_bytes, 0, gfp_flags);
+-		if (IS_ERR(bounce_page)) {
+-			ret = PTR_ERR(bounce_page);
+-			if (ret == -ENOMEM &&
+-			    (io->io_bio || wbc->sync_mode == WB_SYNC_ALL)) {
+-				gfp_t new_gfp_flags = GFP_NOFS;
+-				if (io->io_bio)
+-					ext4_io_submit(io);
+-				else
+-					new_gfp_flags |= __GFP_NOFAIL;
+-				memalloc_retry_wait(gfp_flags);
+-				gfp_flags = new_gfp_flags;
+-				goto retry_encrypt;
+-			}
+-
+-			printk_ratelimited(KERN_ERR "%s: ret = %d\n", __func__, ret);
+-			folio_redirty_for_writepage(wbc, folio);
+-			do {
+-				if (buffer_async_write(bh)) {
+-					clear_buffer_async_write(bh);
+-					set_buffer_dirty(bh);
+-				}
+-				bh = bh->b_this_page;
+-			} while (bh != head);
+-
+-			return ret;
+-		}
+-		io_folio = page_folio(bounce_page);
+-	}
+-
+ 	__folio_start_writeback(folio, keep_towrite);
+ 
+ 	/* Now submit buffers to write */
+ 	do {
+ 		if (!buffer_async_write(bh))
+ 			continue;
+-		io_submit_add_bh(io, inode, folio, io_folio, bh);
++		io_submit_add_bh(io, inode, folio, bh);
+ 	} while ((bh = bh->b_this_page) != head);
+ 
+ 	return 0;
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index dd3627c71732..8af183798a33 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -52,20 +52,10 @@
+ static struct kmem_cache *bio_post_read_ctx_cache;
+ static mempool_t *bio_post_read_ctx_pool;
+ 
+-/* postprocessing steps for read bios */
+-enum bio_post_read_step {
+-	STEP_INITIAL = 0,
+-	STEP_DECRYPT,
+-	STEP_VERITY,
+-	STEP_MAX,
+-};
+-
+ struct bio_post_read_ctx {
+ 	struct bio *bio;
+ 	struct fsverity_info *vi;
+ 	struct work_struct work;
+-	unsigned int cur_step;
+-	unsigned int enabled_steps;
+ };
+ 
+ static void __read_end_io(struct bio *bio)
+@@ -79,20 +69,6 @@ static void __read_end_io(struct bio *bio)
+ 	bio_put(bio);
+ }
+ 
+-static void bio_post_read_processing(struct bio_post_read_ctx *ctx);
+-
+-static void decrypt_work(struct work_struct *work)
 -{
--	if (!profile)
--		return false;
--	if (!(profile->modes_supported[cfg->crypto_mode] & cfg->data_unit_size))
--		return false;
--	if (profile->max_dun_bytes_supported < cfg->dun_bytes)
--		return false;
--	if (!(profile->key_types_supported & cfg->key_type))
--		return false;
--	return true;
+-	struct bio_post_read_ctx *ctx =
+-		container_of(work, struct bio_post_read_ctx, work);
+-	struct bio *bio = ctx->bio;
+-
+-	if (fscrypt_decrypt_bio(bio))
+-		bio_post_read_processing(ctx);
+-	else
+-		__read_end_io(bio);
 -}
 -
- /*
-  * This is an internal function that evicts a key from an inline encryption
-  * device that can be either a real device or the blk-crypto-fallback "device".
-diff --git a/block/blk-crypto.c b/block/blk-crypto.c
-index 15e25e41b166..de60f03b4d4b 100644
---- a/block/blk-crypto.c
-+++ b/block/blk-crypto.c
-@@ -351,11 +351,30 @@ int blk_crypto_init_key(struct blk_crypto_key *blk_key,
- }
- EXPORT_SYMBOL_GPL(blk_crypto_init_key);
- 
-+/**
-+ * blk_crypto_config_supported_natively() - Check whether a block device
-+ *					    supports hardware inline encryption
-+ *					    with the given configuration.
-+ * @bdev: the block device
-+ * @cfg: the crypto configuration to check for
-+ *
-+ * Return: %true if @bdev supports hardware inline encryption with @cfg.
-+ */
- bool blk_crypto_config_supported_natively(struct block_device *bdev,
- 					  const struct blk_crypto_config *cfg)
+ static void verity_work(struct work_struct *work)
  {
--	return __blk_crypto_cfg_supported(bdev_get_queue(bdev)->crypto_profile,
--					  cfg);
-+	struct blk_crypto_profile *profile =
-+		bdev_get_queue(bdev)->crypto_profile;
-+
-+	if (!profile)
-+		return false;
-+	if (!(profile->modes_supported[cfg->crypto_mode] & cfg->data_unit_size))
-+		return false;
-+	if (profile->max_dun_bytes_supported < cfg->dun_bytes)
-+		return false;
-+	if (!(profile->key_types_supported & cfg->key_type))
-+		return false;
-+	return true;
+ 	struct bio_post_read_ctx *ctx =
+@@ -101,13 +77,9 @@ static void verity_work(struct work_struct *work)
+ 	struct fsverity_info *vi = ctx->vi;
+ 
+ 	/*
+-	 * fsverity_verify_bio() may call readahead() again, and although verity
+-	 * will be disabled for that, decryption may still be needed, causing
+-	 * another bio_post_read_ctx to be allocated.  So to guarantee that
+-	 * mempool_alloc() never deadlocks we must free the current ctx first.
+-	 * This is safe because verity is the last post-read step.
++	 * Free the bio_post_read_ctx right away, since it's no longer needed.
++	 * This relieves the pressure on the mempool as much as possible.
+ 	 */
+-	BUILD_BUG_ON(STEP_VERITY + 1 != STEP_MAX);
+ 	mempool_free(ctx, bio_post_read_ctx_pool);
+ 	bio->bi_private = NULL;
+ 
+@@ -116,39 +88,10 @@ static void verity_work(struct work_struct *work)
+ 	__read_end_io(bio);
+ }
+ 
+-static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
+-{
+-	/*
+-	 * We use different work queues for decryption and for verity because
+-	 * verity may require reading metadata pages that need decryption, and
+-	 * we shouldn't recurse to the same workqueue.
+-	 */
+-	switch (++ctx->cur_step) {
+-	case STEP_DECRYPT:
+-		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
+-			INIT_WORK(&ctx->work, decrypt_work);
+-			fscrypt_enqueue_decrypt_work(&ctx->work);
+-			return;
+-		}
+-		ctx->cur_step++;
+-		fallthrough;
+-	case STEP_VERITY:
+-		if (IS_ENABLED(CONFIG_FS_VERITY) &&
+-		    ctx->enabled_steps & (1 << STEP_VERITY)) {
+-			INIT_WORK(&ctx->work, verity_work);
+-			fsverity_enqueue_verify_work(&ctx->work);
+-			return;
+-		}
+-		ctx->cur_step++;
+-		fallthrough;
+-	default:
+-		__read_end_io(ctx->bio);
+-	}
+-}
+-
+ static bool bio_post_read_required(struct bio *bio)
+ {
+-	return bio->bi_private && !bio->bi_status;
++	return IS_ENABLED(CONFIG_FS_VERITY) && bio->bi_private &&
++	       !bio->bi_status;
  }
  
  /*
+@@ -168,8 +111,8 @@ static void mpage_end_io(struct bio *bio)
+ 	if (bio_post_read_required(bio)) {
+ 		struct bio_post_read_ctx *ctx = bio->bi_private;
+ 
+-		ctx->cur_step = STEP_INITIAL;
+-		bio_post_read_processing(ctx);
++		INIT_WORK(&ctx->work, verity_work);
++		fsverity_enqueue_verify_work(&ctx->work);
+ 		return;
+ 	}
+ 	__read_end_io(bio);
+@@ -179,22 +122,13 @@ static void ext4_set_bio_post_read_ctx(struct bio *bio,
+ 				       const struct inode *inode,
+ 				       struct fsverity_info *vi)
+ {
+-	unsigned int post_read_steps = 0;
+-
+-	if (fscrypt_inode_uses_fs_layer_crypto(inode))
+-		post_read_steps |= 1 << STEP_DECRYPT;
+-
+-	if (vi)
+-		post_read_steps |= 1 << STEP_VERITY;
+-
+-	if (post_read_steps) {
++	if (vi) {
+ 		/* Due to the mempool, this never fails. */
+ 		struct bio_post_read_ctx *ctx =
+ 			mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
+ 
+ 		ctx->bio = bio;
+ 		ctx->vi = vi;
+-		ctx->enabled_steps = post_read_steps;
+ 		bio->bi_private = ctx;
+ 	}
+ }
 -- 
 2.55.0
 
