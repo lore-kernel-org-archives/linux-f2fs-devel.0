@@ -4,77 +4,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CE8F2C43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Jul 2026 02:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 74DC1C43458
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Jul 2026 05:57:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=WL67gTnY56CwVlfIftOHm0tXKymQ222kTNDNa5lRbRA=; b=fqnx87T1D9e+bqdSmpkmw6Jb5E
-	rBLgQYIJwnZgPjA52vVcLq9Hy37r9NG3SLO5kylsA76JsxODsNN+kvrkMh6ya/39Atfqdy4pkYpX7
-	SJu9ICxVf2AzkvvAjXVfU8w9D5Ccwx9J1x5orxCuDkIx9AR5mPJTZN483zVuawj5S3HY=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:
+	List-Id:Subject:References:Date:Message-ID:To:From:Mime-Version:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Owner;
+	bh=OepbJCh7GobwfzRRLRqnDO0G0YI4yJUODkSlxmBgSNo=; b=G9PwUkk5AfKBqVqn+H74KbShfy
+	sWeWcAdbV3WYygsgX7TdDbgNu0PE3LMhIWOqgVeX/w3ZGbTRHfTrHQXP335n3jkUUYFJQKYVPozlH
+	rZOYbjASdrnh+ebbUbfYxpn92ug/YeVWJYhcHnW3jln0SiozDONLwvSsehZXjYPJ+2mM=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wj6ay-00043B-CK;
-	Mon, 13 Jul 2026 02:40:36 +0000
+	id 1wj9fW-0004X7-ER;
+	Mon, 13 Jul 2026 05:57:31 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wj6ag-0003ze-I8
+ (envelope-from <yonggil.song@samsung.com>) id 1wj9fR-0004We-Pb
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 13 Jul 2026 02:40:18 +0000
+ Mon, 13 Jul 2026 05:57:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
+ Date:Message-ID:CC:To:From:Sender:Reply-To:Subject:Mime-Version:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=pE7bbyCIfEGQNNQjWamewFFH78jPMNhR5rgr+ViUAxo=; b=BLSVABSMxtRxp4h8rOA+exRdWy
- 9Fz99a7+wuSJomD+mab6l5Rd9Jzp7cYE8Xobc2izo7pj6y/6glgNme7zJZyJN6XPqpb8tfuPft5tS
- UEF9ize/XC9GxqJLCITUKXgeZnGyKibXHbp/mcIEg4NW97PbPaSUKLPM06X7pauL0j/8=;
+ bh=weRZOxR+KQTuAh8kZhURaaciCfLqo4AauSDjmWHo/iM=; b=DsngSSdjj1XUVghocyGO7m7+Xn
+ d7a6jPdvZxaYIcH3J4T5K5dtgnDpp8S7WJAI8FXDCq9y2oYRYJOyMc6KzYbCd9dDephCSo5S04VOZ
+ FkL1CMAghj8VnvIddQlp6RtK1JuDOsfEzyTdwVGeKn85IJMYVAiwoDl8+N/ZsjlXe9EI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=pE7bbyCIfEGQNNQjWamewFFH78jPMNhR5rgr+ViUAxo=; b=SaDkE17zKr7BJ1jHsgh83fr15V
- QPqxJCdzrZReXZEoPCrp1t6rTrD2Y6NvCkOojIjBM/j7nDUJ0eV/Yukoc5oKixwPtFpffBlGvcHnW
- sqlZhXRmpDrnJ2t0VQ6APbDn/qkVIafL4V6yqIWk7xPD5Y5Pwcq6eLbVnq3M/AstuG34=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=References:Content-Type:Content-Transfer-Encoding:Date:Message-ID:CC:To:
+ From:Sender:Reply-To:Subject:Mime-Version:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=weRZOxR+KQTuAh8kZhURaaciCfLqo4AauSDjmWHo/iM=; b=f
+ xE1fHbg+HYTgZ4mhnzNKxZWMXcwcGMnhr/x9E0e7wsY38gnv59VIBxzIXu4XRYA64e3P8EUnmxzSU
+ yYjmKvwxmQInjxBXtrcq421wyMsLMGM/d+fzHw6Y3QJG7NwLruM7fDJ9l7BOV77azGy2QAcDATi+n
+ qURpkq2Yp2Z5Ppxg=;
+Received: from mailout2.samsung.com ([203.254.224.25])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wj6aU-0003DZ-Cu for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 13 Jul 2026 02:40:09 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id BDA84600FC;
- Mon, 13 Jul 2026 02:39:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FC381F00ACA;
- Mon, 13 Jul 2026 02:39:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783910395;
- bh=pE7bbyCIfEGQNNQjWamewFFH78jPMNhR5rgr+ViUAxo=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=ANkDROT4zMUquKbNg79DiTBRB2KaONx4VL4tRsPrOnL1S89gwLaDleVkkic/mTBEf
- 0LMsEOvaCRf/xAE9PvC0SrmuU06RsX0kr2LuFfEj67FCsC4UdqKpuCD2TxqARRl+bW
- /L/VZmOJ1phODXlH6KKN49NUV9KCfe7Tu4ZzTVzosCWZD3qHozbpU+L4ZU6gYvJBI4
- eFvPPhW/miGQB453uD69mQqi3Z4YhYbR3QSeT0yiqZBv2DE+3K54I6ESqKbWwlLIWq
- UeT9iOkNTfmEPI496CcAm0r6aw2RpbILrrElltAkZ5xb7Kj5VS3wWvh1zylhg3/uA7
- QmCofVXcg0DsA==
-To: linux-fscrypt@vger.kernel.org
-Date: Sun, 12 Jul 2026 22:37:07 -0400
-Message-ID: <20260713023708.9245-17-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260713023708.9245-1-ebiggers@kernel.org>
-References: <20260713023708.9245-1-ebiggers@kernel.org>
-MIME-Version: 1.0
-X-Headers-End: 1wj6aU-0003DZ-Cu
-Subject: [f2fs-dev] [PATCH v3 16/17] fscrypt: Merge bio.c and inline_crypt.c
- into block.c
+ id 1wj9fQ-000143-V5 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 13 Jul 2026 05:57:26 +0000
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+ by mailout2.samsung.com (KnoxPortal) with ESMTP id
+ 20260713055712epoutp0237ed9d3148b005f280b4522db65202a8~Bw9GnzJeF2677726777epoutp02K
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 13 Jul 2026 05:57:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com
+ 20260713055712epoutp0237ed9d3148b005f280b4522db65202a8~Bw9GnzJeF2677726777epoutp02K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+ s=mail20170921; t=1783922232;
+ bh=weRZOxR+KQTuAh8kZhURaaciCfLqo4AauSDjmWHo/iM=;
+ h=Subject:Reply-To:From:To:CC:Date:References:From;
+ b=hGG0sqd+wnETTyms84gJTf+Wp1Vmr1wIQ+pymRjLBDIa7lXhdl5KVutNPOH5dRgut
+ CsJYjXAnZHeH7uPHy8+6HJAcUNQadZMQhr0/WkaKm3XFfGvkIu3wfymOkYYbCqv0WF
+ u9TxyCTzsKy2WIDz5H5Vo73aaU+6rCNTxp40tmss=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+ epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
+ 20260713055712epcas2p4f229b0be13f9e4f6b777c650cced947f~Bw9GVyMSU1460414604epcas2p4E;
+ Mon, 13 Jul 2026 05:57:12 +0000 (GMT)
+Received: from epcas2p1.samsung.com (unknown [182.195.38.205]) by
+ epsnrtp04.localdomain (Postfix) with ESMTP id 4gzBXm0mSbz6B9mL; Mon, 13 Jul
+ 2026 05:57:12 +0000 (GMT)
+Mime-Version: 1.0
+From: Yonggil Song <yonggil.song@samsung.com>
+To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org"
+ <chao@kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20260713055711epcms2p712e7add62211e42e995c54a92fd4ff0c@epcms2p7>
+Date: Mon, 13 Jul 2026 14:57:11 +0900
+X-CMS-MailID: 20260713055711epcms2p712e7add62211e42e995c54a92fd4ff0c
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-223,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260713055711epcms2p712e7add62211e42e995c54a92fd4ff0c
+References: <CGME20260713055711epcms2p712e7add62211e42e995c54a92fd4ff0c@epcms2p7>
+X-Headers-End: 1wj9fQ-000143-V5
+Subject: [f2fs-dev] [PATCH] f2fs: issue multi-device flushes in parallel
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,355 +104,146 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
+Reply-To: yonggil.song@samsung.com
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dongjin Kim <dongjin_.kim@samsung.com>,
+ "linux-f2fs-devel@lists.sourceforge.net"
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, Theodore Ts'o <tytso@mit.edu>,
- Zhang Yi <yi.zhang@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
- linux-block@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
- Ojaswin Mujoo <ojaswin@linux.ibm.com>, Baokun Li <libaokun@linux.alibaba.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org,
- Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, Eric Biggers <ebiggers@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Now that fscrypt always uses blk-crypto on block-based filesystems,
-there's no meaningful difference between bio.c and inline_crypt.c.
-Therefore merge the two files into one named block.c.
+On a multi-device setup, submit_flush_wait() walked the dirty devices
+in order and aborted the whole loop on the first device whose flush
+failed, leaving the remaining dirty devices un-flushed. Each device
+still needs its own data made durable, so a failure on one device must
+not skip the others. It also waited for one device's flush to complete
+before issuing the next, even though the devices have independent
+flush queues and could be flushed concurrently.
 
-Note: I didn't carry over bio.c's "Copyright (C) 2015, Motorola
-Mobility", as none of the code that applied to remained.
+Flush every dirty device best-effort and in parallel instead: build
+one PREFLUSH bio per dirty device, submit them all, then wait for
+every completion, returning the first error seen (0 if all succeed).
+This bounds the flush window by the slowest device rather than the sum
+of all of them. No caller depends on the previous early-abort
+behaviour -- fsync only checks whether the return value is zero
+(fs/f2fs/file.c). The checkpoint path (f2fs_flush_device_cache) is
+unaffected; this only touches the fsync flush path.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Yonggil Song <yonggil.song@samsung.com>
 ---
- fs/crypto/Makefile                    |   3 +-
- fs/crypto/bio.c                       | 100 --------------------------
- fs/crypto/{inline_crypt.c => block.c} |  96 +++++++++++++++++++++++--
- fs/crypto/fscrypt_private.h           |   2 +-
- include/linux/fscrypt.h               |  22 +++---
- 5 files changed, 101 insertions(+), 122 deletions(-)
- delete mode 100644 fs/crypto/bio.c
- rename fs/crypto/{inline_crypt.c => block.c} (79%)
+ fs/f2fs/segment.c | 84 +++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 78 insertions(+), 6 deletions(-)
 
-diff --git a/fs/crypto/Makefile b/fs/crypto/Makefile
-index 652c7180ec6d..b03e02f0f09d 100644
---- a/fs/crypto/Makefile
-+++ b/fs/crypto/Makefile
-@@ -10,5 +10,4 @@ fscrypto-y := crypto.o \
- 	      keysetup_v1.o \
- 	      policy.o
- 
--fscrypto-$(CONFIG_BLOCK) += bio.o
--fscrypto-$(CONFIG_FS_ENCRYPTION_INLINE_CRYPT) += inline_crypt.o
-+fscrypto-$(CONFIG_BLOCK) += block.o
-diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-deleted file mode 100644
-index db095258cfca..000000000000
---- a/fs/crypto/bio.c
-+++ /dev/null
-@@ -1,100 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Utility functions for file contents encryption/decryption on
-- * block device-based filesystems.
-- *
-- * Copyright (C) 2015, Google, Inc.
-- * Copyright (C) 2015, Motorola Mobility
-- */
--
--#include <linux/bio.h>
--#include <linux/export.h>
--#include <linux/module.h>
--#include <linux/namei.h>
--#include <linux/pagemap.h>
--
--#include "fscrypt_private.h"
--
--struct fscrypt_zero_done {
--	atomic_t		pending;
--	blk_status_t		status;
--	struct completion	done;
--};
--
--static void fscrypt_zeroout_range_done(struct fscrypt_zero_done *done)
--{
--	if (atomic_dec_and_test(&done->pending))
--		complete(&done->done);
--}
--
--static void fscrypt_zeroout_range_end_io(struct bio *bio)
--{
--	struct fscrypt_zero_done *done = bio->bi_private;
--
--	if (bio->bi_status)
--		cmpxchg(&done->status, 0, bio->bi_status);
--	fscrypt_zeroout_range_done(done);
--	bio_put(bio);
--}
--
--/**
-- * fscrypt_zeroout_range() - zero out a range of blocks in an encrypted file
-- * @inode: the file's inode
-- * @pos: the first file position (in bytes) to zero out
-- * @sector: the first sector to zero out
-- * @len: bytes to zero out
-- *
-- * Zero out filesystem blocks in an encrypted regular file on-disk, i.e. write
-- * ciphertext blocks which decrypt to the all-zeroes block.  The blocks must be
-- * both logically and physically contiguous.  It's also assumed that the
-- * filesystem only uses a single block device, ->s_bdev.  @len must be a
-- * multiple of the file system logical block size.
-- *
-- * Note that since each block uses a different IV, this involves writing a
-- * different ciphertext to each block; we can't simply reuse the same one.
-- *
-- * Return: 0 on success; -errno on failure.
-- */
--int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,
--			  sector_t sector, u64 len)
--{
--	struct fscrypt_zero_done done = {
--		.pending	= ATOMIC_INIT(1),
--		.done		= COMPLETION_INITIALIZER_ONSTACK(done.done),
--	};
--
--	if (len == 0)
--		return 0;
--
--	do {
--		struct bio *bio;
--		unsigned int n;
--
--		bio = bio_alloc(inode->i_sb->s_bdev, BIO_MAX_VECS, REQ_OP_WRITE,
--				GFP_NOFS);
--		bio->bi_iter.bi_sector = sector;
--		bio->bi_private = &done;
--		bio->bi_end_io = fscrypt_zeroout_range_end_io;
--		fscrypt_set_bio_crypt_ctx(bio, inode, pos, GFP_NOFS);
--
--		for (n = 0; n < BIO_MAX_VECS; n++) {
--			unsigned int bytes_this_page = min(len, PAGE_SIZE);
--
--			__bio_add_page(bio, ZERO_PAGE(0), bytes_this_page, 0);
--			len -= bytes_this_page;
--			pos += bytes_this_page;
--			sector += (bytes_this_page >> SECTOR_SHIFT);
--			if (!len || !fscrypt_mergeable_bio(bio, inode, pos))
--				break;
--		}
--
--		atomic_inc(&done.pending);
--		blk_crypto_submit_bio(bio);
--	} while (len);
--
--	fscrypt_zeroout_range_done(&done);
--
--	wait_for_completion(&done.done);
--	return blk_status_to_errno(done.status);
--}
--EXPORT_SYMBOL(fscrypt_zeroout_range);
-diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/block.c
-similarity index 79%
-rename from fs/crypto/inline_crypt.c
-rename to fs/crypto/block.c
-index 14c8af322c2f..059b7ecc70ea 100644
---- a/fs/crypto/inline_crypt.c
-+++ b/fs/crypto/block.c
-@@ -1,20 +1,20 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Inline encryption support for fscrypt
-+ * File contents en/decryption on block-based filesystems
-  *
-  * Copyright 2019 Google LLC
-  */
- 
- /*
-- * With "inline encryption", the block layer handles the decryption/encryption
-- * as part of the bio, instead of the filesystem doing the crypto itself via
-- * crypto API.  See Documentation/block/inline-encryption.rst.  fscrypt still
-- * provides the key and IV to use.
-+ * This file implements fscrypt's file contents en/decryption using blk-crypto
-+ * (Documentation/block/inline-encryption.rst).  fscrypt assigns a bio_crypt_ctx
-+ * with a key and IV to each bio, and the block layer does the en/decryption.
-+ *
-+ * This file's exported functions are called only by block-based filesystems.
-  */
- 
- #include <linux/blk-crypto.h>
- #include <linux/blkdev.h>
--#include <linux/buffer_head.h>
- #include <linux/export.h>
- #include <linux/sched/mm.h>
- #include <linux/slab.h>
-@@ -341,3 +341,87 @@ u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk, u64 nr_blocks)
- 	return min_t(u64, nr_blocks, (u64)U32_MAX + 1 - dun);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index d71ddb3ee918..51d7f76e3d1d 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -566,24 +566,96 @@ static int __submit_flush_wait(struct f2fs_sb_info *sbi,
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(fscrypt_limit_io_blocks);
+ 
+-static int submit_flush_wait(struct f2fs_sb_info *sbi, nid_t ino)
++static void f2fs_flush_end_io(struct bio *bio)
++{
++	complete(bio->bi_private);
++}
 +
-+struct fscrypt_zero_done {
-+	atomic_t		pending;
-+	blk_status_t		status;
-+	struct completion	done;
++struct f2fs_flush_bio {
++	struct bio bio;
++	struct completion wait;
 +};
 +
-+static void fscrypt_zeroout_range_done(struct fscrypt_zero_done *done)
-+{
-+	if (atomic_dec_and_test(&done->pending))
-+		complete(&done->done);
-+}
-+
-+static void fscrypt_zeroout_range_end_io(struct bio *bio)
-+{
-+	struct fscrypt_zero_done *done = bio->bi_private;
-+
-+	if (bio->bi_status)
-+		cmpxchg(&done->status, 0, bio->bi_status);
-+	fscrypt_zeroout_range_done(done);
-+	bio_put(bio);
-+}
-+
-+/**
-+ * fscrypt_zeroout_range() - zero out a range of blocks in an encrypted file
-+ * @inode: the file's inode
-+ * @pos: the first file position (in bytes) to zero out
-+ * @sector: the first sector to zero out
-+ * @len: bytes to zero out
-+ *
-+ * Zero out filesystem blocks in an encrypted regular file on-disk, i.e. write
-+ * ciphertext blocks which decrypt to the all-zeroes block.  The blocks must be
-+ * both logically and physically contiguous.  It's also assumed that the
-+ * filesystem only uses a single block device, ->s_bdev.  @len must be a
-+ * multiple of the file system logical block size.
-+ *
-+ * Note that since each block uses a different IV, this involves writing a
-+ * different ciphertext to each block; we can't simply reuse the same one.
-+ *
-+ * Return: 0 on success; -errno on failure.
++/*
++ * Flush every dirty device best-effort: a failure on one device must not
++ * skip the flush on the remaining dirty devices, since each device still
++ * needs its own data made durable. Report the first error.
 + */
-+int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,
-+			  sector_t sector, u64 len)
-+{
-+	struct fscrypt_zero_done done = {
-+		.pending	= ATOMIC_INIT(1),
-+		.done		= COMPLETION_INITIALIZER_ONSTACK(done.done),
-+	};
-+
-+	if (len == 0)
-+		return 0;
-+
-+	do {
-+		struct bio *bio;
-+		unsigned int n;
-+
-+		bio = bio_alloc(inode->i_sb->s_bdev, BIO_MAX_VECS, REQ_OP_WRITE,
-+				GFP_NOFS);
-+		bio->bi_iter.bi_sector = sector;
-+		bio->bi_private = &done;
-+		bio->bi_end_io = fscrypt_zeroout_range_end_io;
-+		fscrypt_set_bio_crypt_ctx(bio, inode, pos, GFP_NOFS);
-+
-+		for (n = 0; n < BIO_MAX_VECS; n++) {
-+			unsigned int bytes_this_page = min(len, PAGE_SIZE);
-+
-+			__bio_add_page(bio, ZERO_PAGE(0), bytes_this_page, 0);
-+			len -= bytes_this_page;
-+			pos += bytes_this_page;
-+			sector += (bytes_this_page >> SECTOR_SHIFT);
-+			if (!len || !fscrypt_mergeable_bio(bio, inode, pos))
-+				break;
-+		}
-+
-+		atomic_inc(&done.pending);
-+		blk_crypto_submit_bio(bio);
-+	} while (len);
-+
-+	fscrypt_zeroout_range_done(&done);
-+
-+	wait_for_completion(&done.done);
-+	return blk_status_to_errno(done.status);
-+}
-+EXPORT_SYMBOL(fscrypt_zeroout_range);
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index da9040407d4a..74329e0953d1 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -395,7 +395,7 @@ void fscrypt_hkdf_expand(const struct hmac_sha512_key *hkdf, u8 context,
- 			 const u8 *info, unsigned int infolen,
- 			 u8 *okm, unsigned int okmlen);
- 
--/* inline_crypt.c */
-+/* block.c */
- #ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
- static inline bool
- fscrypt_using_inline_encryption(const struct fscrypt_inode_info *ci)
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index acf5b28eb9d7..52ff014aeae6 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -446,10 +446,6 @@ bool fscrypt_match_name(const struct fscrypt_name *fname,
- 			const u8 *de_name, u32 de_name_len);
- u64 fscrypt_fname_siphash(const struct inode *dir, const struct qstr *name);
- 
--/* bio.c */
--int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,
--			  sector_t sector, u64 len);
--
- /* hooks.c */
- int fscrypt_file_open(struct inode *inode, struct file *filp);
- int __fscrypt_prepare_link(struct inode *inode, struct inode *dir,
-@@ -737,14 +733,6 @@ static inline int fscrypt_d_revalidate(struct inode *dir, const struct qstr *nam
- 	return 1;
- }
- 
--/* bio.c */
--
--static inline int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,
--					sector_t sector, u64 len)
--{
--	return -EOPNOTSUPP;
--}
--
- /* hooks.c */
- 
- static inline int fscrypt_file_open(struct inode *inode, struct file *filp)
-@@ -844,7 +832,7 @@ static inline void fscrypt_set_ops(struct super_block *sb,
- 
- #endif	/* !CONFIG_FS_ENCRYPTION */
- 
--/* inline_crypt.c */
-+/* block.c */
- #ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
- 
- void fscrypt_set_bio_crypt_ctx(struct bio *bio, const struct inode *inode,
-@@ -854,6 +842,8 @@ bool fscrypt_mergeable_bio(struct bio *bio, const struct inode *inode,
- 			   loff_t pos);
- 
- u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk, u64 nr_blocks);
-+int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,
-+			  sector_t sector, u64 len);
- 
- #else /* CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
- 
-@@ -873,6 +863,12 @@ static inline u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk,
++static int submit_flush_wait_serial(struct f2fs_sb_info *sbi, nid_t ino)
  {
- 	return nr_blocks;
- }
-+
-+static inline int fscrypt_zeroout_range(const struct inode *inode, loff_t pos,
-+					sector_t sector, u64 len)
-+{
-+	return -EOPNOTSUPP;
-+}
- #endif /* !CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
+ 	int ret = 0;
+ 	int i;
  
- /**
+-	if (!f2fs_is_multi_device(sbi))
+-		return __submit_flush_wait(sbi, sbi->sb->s_bdev);
++	for (i = 0; i < sbi->s_ndevs; i++) {
++		int err;
++
++		if (!f2fs_is_dirty_device(sbi, ino, i, FLUSH_INO))
++			continue;
++		err = __submit_flush_wait(sbi, FDEV(i).bdev);
++		if (err && !ret)
++			ret = err;
++	}
++	return ret;
++}
++
++/*
++ * Same best-effort/first-error contract as submit_flush_wait_serial(), but
++ * issue every dirty device's flush before waiting for any of them, so the
++ * per-device flush latencies overlap instead of adding up in series. Fall
++ * back to the serial path if the bio array cannot be allocated.
++ */
++static int submit_flush_wait_parallel(struct f2fs_sb_info *sbi, nid_t ino)
++{
++	struct f2fs_flush_bio *flush_bio;
++	unsigned long devices = 0;
++	int ret = 0;
++	int i;
++
++	flush_bio = kcalloc(sbi->s_ndevs, sizeof(*flush_bio), GFP_NOFS);
++	if (!flush_bio)
++		return submit_flush_wait_serial(sbi, ino);
+ 
+ 	for (i = 0; i < sbi->s_ndevs; i++) {
+ 		if (!f2fs_is_dirty_device(sbi, ino, i, FLUSH_INO))
+ 			continue;
+-		ret = __submit_flush_wait(sbi, FDEV(i).bdev);
+-		if (ret)
+-			break;
++
++		bio_init(&flush_bio[i].bio, FDEV(i).bdev, NULL, 0,
++			 REQ_OP_WRITE | REQ_PREFLUSH);
++		init_completion(&flush_bio[i].wait);
++		flush_bio[i].bio.bi_private = &flush_bio[i].wait;
++		flush_bio[i].bio.bi_end_io = f2fs_flush_end_io;
++		submit_bio(&flush_bio[i].bio);
++		devices |= BIT(i);
++	}
++
++	for (i = 0; i < sbi->s_ndevs; i++) {
++		int err;
++
++		if (!(devices & BIT(i)))
++			continue;
++
++		wait_for_completion(&flush_bio[i].wait);
++		err = blk_status_to_errno(flush_bio[i].bio.bi_status);
++		trace_f2fs_issue_flush(FDEV(i).bdev, test_opt(sbi, NOBARRIER),
++				       test_opt(sbi, FLUSH_MERGE), err);
++		if (!err)
++			f2fs_update_iostat(sbi, NULL, FS_FLUSH_IO, 0);
++		else if (!ret)
++			ret = err;
++		bio_uninit(&flush_bio[i].bio);
+ 	}
++	kfree(flush_bio);
+ 	return ret;
+ }
+ 
++static int submit_flush_wait(struct f2fs_sb_info *sbi, nid_t ino)
++{
++	if (!f2fs_is_multi_device(sbi))
++		return __submit_flush_wait(sbi, sbi->sb->s_bdev);
++
++	return submit_flush_wait_parallel(sbi, ino);
++}
++
+ static int issue_flush_thread(void *data)
+ {
+ 	struct f2fs_sb_info *sbi = data;
 -- 
-2.55.0
-
+2.43.0
 
 
 _______________________________________________
