@@ -4,78 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A9191C44509
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Jul 2026 03:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 09BE9C4450A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Jul 2026 03:00:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=mn1TTQtBzaGB6tZn2vuQv3P4Elb2nBoQ58thuo0Me6Q=; b=DeBiLxjvoeSTWQbKT3Y9/VAWDY
-	RPX+JMWP/4HzqSCLEXCNULRpaTsJ0vl0T5UVarR8rg2m9t2so87pQ50G8u2YaAaA/KpUAMm2KJpPr
-	SQ9uogJk8ywPc8G/QHIlSRAmt/Ef/+wLEnjAT/Xz3GhMD3ZgSZZj38PdhzOtHQS1K1vs=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=EubFl9x98t8CeGUAOEz6b181/p8ndBQrq6zh2/iBszA=; b=XH+1TTyZa0iV2MnOD+W6vu2DdU
+	LX/yi5pzXEqH85DpmF0kHd2PNdZx5vE28QgBPfHegtimj4QisKCMRYRnF/+DgZVyWuTw/tagK3qAR
+	tfKNntVlGZ6gG2XU4B04mt535Uk3YaY7VFn4LSBAXmmnrpkmLxvHVSMD19LTUerSTMqY=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wjTOA-00063r-C1;
-	Tue, 14 Jul 2026 03:00:54 +0000
+	id 1wjTO8-0006y6-Sz;
+	Tue, 14 Jul 2026 03:00:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wjTO1-00063f-2J
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wjTO4-0006xZ-5Y
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 14 Jul 2026 03:00:45 +0000
+ Tue, 14 Jul 2026 03:00:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zChAImWOrlDN51gcoddbdazwdae3tP6/MAG5aFHKXeI=; b=ev6R6AsDjNxNzKsH1OsvwOxMnk
- nB1Y1NVFVxguP1kFaZQ6cziNJz34VdmXplCKB501v8unKLMCKGacWxrFRMtFUOymfuQFSBujE5v5i
- zrjTqVt5oNRw58IHLruN0lA5n2UpYhb2h/OPLVbnn/y7uEWmckpuYUjzrMYWxJ9aqIgg=;
+ bh=cJfr09HfW+vVROQ0irOyEMo1PMk8FVcLJ1dq0f25jco=; b=Tc2Vt1YEPcpp5nBeaJt/FC64Ww
+ 6kAdJHCQGpnyzitXXeJcX7aqZjaP+uvli6tUH/4cAcb/Ghod4jdMeQDNIW4BNTgsHlb2Vp8m4WKZV
+ ixujBgmkgm9ZUbS3u+6AHliM4mIsk+eGQuheoe6jByYQFWkAysslbq7dso9hsmQH4jJA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zChAImWOrlDN51gcoddbdazwdae3tP6/MAG5aFHKXeI=; b=dahGgYntzpKNwECUxC6IgnsRgr
- rZdby+V7JR6N8Ts7lyFC4iyVPLLu/4OjqnATavpu0Ku8s9naslgXAhc6miUtEGQuwcY+lqf/5HiqW
- w9JF/+6NR/4w8GmpqGvn8JeMynt+qaDhB0I1z0RhbjyE9nzkPYDKkX+boR6K3CPvx6oQ=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=cJfr09HfW+vVROQ0irOyEMo1PMk8FVcLJ1dq0f25jco=; b=DkLG//h4E3bRgETc6BUhXNG1Oq
+ +WkjlO5cVEJtI7JCC8MIYgWgKT7SflsDgFqUqvMMZNSMXBVG7L2Ak2xIZvKcOVdzoA0kA54exSLh6
+ pqo3rEu3pXnKoR0Opahgw8Hcj18gOM+wNC5CpFl4rjLTXKUkQMox4Xx0U5g9IoHBb+Xs=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wjTNz-0000ke-Gg for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 14 Jul 2026 03:00:44 +0000
+ id 1wjTO3-0000ko-J0 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 14 Jul 2026 03:00:48 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id E4BB3601DE;
- Tue, 14 Jul 2026 03:00:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 997BC1F000E9;
- Tue, 14 Jul 2026 03:00:32 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 3C39F43C57
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 14 Jul 2026 03:00:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F7B91F00A3A;
+ Tue, 14 Jul 2026 03:00:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783998032;
- bh=zChAImWOrlDN51gcoddbdazwdae3tP6/MAG5aFHKXeI=;
+ s=k20260515; t=1783998037;
+ bh=cJfr09HfW+vVROQ0irOyEMo1PMk8FVcLJ1dq0f25jco=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=G4v6PmXJCDJwnX6/hwmigLLg1xAapqTTBAu80i0vuAAlJbODU398uwrDQrgK6/h66
- ZdNlh/R+NZivJuqcKj27NVluxBTmSogc5SLArhv/cBWi0xbeQEA7d9zstgljrVq3c6
- NNYglqlTqHay6hxtJtmWkqtxDTuaBmt9Ucy3YUvZqTzwRW3hs3oluaVbgnTyYEUNDd
- JyLjlrEzgHgpLCz7I6c9BpQchpRtOrz+A35uMNFE94QqsEds5vq86qZo0UIYGb4Mq6
- 1Nr9uIS89Ffvnp1ksXXdTKswKPEkw/XXHTmGlKJTGm+ApIcprb3RWzeN8aBQv3MItn
- nYhBHRl0AvlgA==
+ b=msYO7tv1CAwQ6+UGegDf/eYq057+WiMTxfUijLZ8RMaIhMpgYkv/gG29SNgT94947
+ c6s5a9gpZOlaTW0jYz/XjN5gBvQOpIXhWQiy+4qKJto3o9wTQJV4piu3dEW9+vazA3
+ PHE3WzFqTiIKFKEdblcTqgu1TvIRWFHd6cgajg/xEGBgDsH0ISPEugAGh7oLa1RbZB
+ a2K3gJKM7h4dx5bDHGxf7LJ/Q4LvIclqvqqyKgLbxGUVL5WPkbTsCeppZKsalfKjUi
+ 7rQ71QtQJiqqghJxYyiaOkjjeC5Cj/amcxD/Nu+Akz+J2C3pZE9CqBaN5TFp4Y0hNC
+ 9q/cJOBzJjPTQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- D0A213924FB7; Tue, 14 Jul 2026 03:00:08 +0000 (UTC)
+ 5689A3924FB7; Tue, 14 Jul 2026 03:00:13 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <178399800738.2939750.5347430287438781500.git-patchwork-notify@kernel.org>
-Date: Tue, 14 Jul 2026 03:00:07 +0000
-References: <20260629114918.224537-1-chao@kernel.org>
-In-Reply-To: <20260629114918.224537-1-chao@kernel.org>
+Message-Id: <178399801188.2939750.4882347111407604068.git-patchwork-notify@kernel.org>
+Date: Tue, 14 Jul 2026 03:00:11 +0000
+References: <20260706072606.3709384-1-chao@kernel.org>
+In-Reply-To: <20260706072606.3709384-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1wjTNz-0000ke-Gg
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid potential
- section-unaligned pinfile
+X-Headers-End: 1wjTO3-0000ko-J0
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to zero post-EOF data when
+ extending file size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,7 +92,7 @@ From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
 Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- stable@kernel.org, linux-kernel@vger.kernel.org, daehojeong@google.com
+ stable@kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -101,31 +102,29 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon, 29 Jun 2026 11:49:18 +0000 you wrote:
-> Blocks of pinfile may not aligned to section size due to wrong use
-> on pinfile, result in heavy overhead of GC, let avoid this by
-> adding additional check condition in f2fs_setattr().
-> 
-> - truncate -s 8mb pinfile
-> : random checkpoint may persist filesize w/ inode
-> - fallocate -o 0 -l 8mb pinfile
->  - f2fs_fallocate
->   - f2fs_expand_inode_data
->    - f2fs_allocate_pinning_section
->    - f2fs_map_blocks
->     - f2fs_map_lock
->     - __allocate_data_block
->     - file_need_truncate
->     : w/ FADVISE_TRUNC_BIT, we can expect unaligned mapping can be
->       truncated while open() if f2fs is not umount abnormally
->     - f2fs_map_unlock
->     : following f2fs checkpoint and sudden power-cut
+On Mon,  6 Jul 2026 07:26:06 +0000 you wrote:
+> generic/794  4s ... - output mismatch (see /share/git/fstests/results//generic/794.out.bad)
+>     --- tests/generic/794.out   2026-06-12 08:46:32.766426241 +0800
+>     +++ /share/git/fstests/results//generic/794.out.bad 2026-07-05 18:32:55.000000000 +0800
+>     @@ -1,4 +1,16 @@
+>      QA output created by 794
+>      append_write
+>     +FAIL: non-zero data in gap [4080,4096) after shutdown+remount
+>     +000000 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  >ZZZZZZZZZZZZZZZZ<
+>     +*
+>     +001000
+>      truncate_up
+>     ...
+>     (Run 'diff -u /share/git/fstests/tests/generic/794.out /share/git/fstests/results//generic/794.out.bad'  to see the entire diff)
+> Ran: generic/794
+> Failures: generic/794
+> Failed 1 of 1 tests
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to avoid potential section-unaligned pinfile
-    https://git.kernel.org/jaegeuk/f2fs/c/bf4272cef5ec
+  - [f2fs-dev] f2fs: fix to zero post-EOF data when extending file size
+    https://git.kernel.org/jaegeuk/f2fs/c/7e097cad3ac1
 
 You are awesome, thank you!
 -- 
