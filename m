@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B4415C43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Jul 2026 03:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9EB84C44507
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Jul 2026 03:00:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Yn5lxMdn5X4MArm1kxHgk+apJYEAE1P10yWaTqqKGW0=; b=IUdyltTPNa5vqdZUvyuq1CYfE/
-	N/Qhzz67sfsvAuxChFhIX/DVLkoemDH45y8kmBz9gCKjvMNYC6PRR9wOg2uGEICGyk2WgsuXnRKOZ
-	yTfwwoFFza2bnuriQ65p31FKOWlKKWwU56EQ+dspEvXp1JbLsXaWBHbLoeRr09/adZRw=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=89wW76nICHja3t46dEJKHHNmd2M0Wq5IL/gNsvzv+9Y=; b=bkyxVWSLH+LJ+MO6qe4EwfpVre
+	Lm9Rp5G8kShMIjex/zyD+R3neNurYVN6LIZ1yRDGV+m5UJAS/UrTXW1K8iCpucOWjdAOp6PUQx2O7
+	srsGW4J4jyHPM5Nq0GJ/eUONJM4HnpEgl4YmuZj/W8mhUEgpUscsE+u+eteQXMUGj9NE=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wjTO9-0002e1-Gk;
-	Tue, 14 Jul 2026 03:00:51 +0000
+	id 1wjTO8-0006xu-Ef;
+	Tue, 14 Jul 2026 03:00:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wjTO2-0002dk-AA
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wjTNz-0006xM-Jz
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 14 Jul 2026 03:00:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,50 +32,50 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YaG5Ta1xKsPadz96+IcwgZxoy7jf/OIJasluRQ5kZZM=; b=QYxK+Vw2Y//2zUTcQl2Dz/rSE9
- RKISdYI8MY7NvwUx3yMj7DgkuaKCD/f7ZJADdf7jTRcfll0vw1ElLzwCDvxM0b92D2GMcVmmg9RtQ
- xC1sazPLkvqxy2A4+iJeQM1c2wezl9hQoseuuarVK8J+0b1NnT3pzHca1wDAc/xGDcN4=;
+ bh=IjExG8SLdFmswT+7SNT2VlWPxv/Kx5sx61AUKIoe19k=; b=ktjdjO8ynUORKEqSHFPpYm/iyP
+ lmpl/+p9yyVk4E3wc70aaz9j+EvPh3MAqbTRp7DuVHiIYXyYQpzQOL2hW3GI4LoL+KpLT0YpL5rl7
+ TvJzsFs7mC90XJ7QdLgk2O1rj8nybBczx7SqsAd9+FyWjbn+Fcc18NA69YaUDuyq0n68=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YaG5Ta1xKsPadz96+IcwgZxoy7jf/OIJasluRQ5kZZM=; b=Qn3ezU3Mya101gmNAvg503EyHN
- ksvyx+4zDChhWNzT2zP3yd+8CqmWOP3R3n8hOhKLUCmN6XRxlBHGtlr8U6KwU7RPx1QkjLEIG9zyT
- sgOFkty+vyzNUMICLIXwsaB1woDDAHX7zuKpeScJLwBNNgzrTgXd7GDko0x4b1I5FvXQ=;
+ bh=IjExG8SLdFmswT+7SNT2VlWPxv/Kx5sx61AUKIoe19k=; b=fucOcfIR9VaX3PodPqlj4XiCDM
+ dDdVu4o5LR0lm8qN9Bm298b+Q3GsVN9e9BJWTOWCratNRN994HgSkUyIcrr1fFWHDZGgxyQXfzeKN
+ lzmlZTFTR4Px2Ba4hb9uVVEsSr6vZCybBLJ5JZ8xNlHA76btVwn4y3wU5kwZdUt7ExRE=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wjTNw-0000kR-UE for linux-f2fs-devel@lists.sourceforge.net;
+ id 1wjTNx-0000kV-62 for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 14 Jul 2026 03:00:42 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 3BF5F43B32;
- Tue, 14 Jul 2026 03:00:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D9D61F00A3D;
- Tue, 14 Jul 2026 03:00:31 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 3BC0343C60;
+ Tue, 14 Jul 2026 03:00:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EBD71F00A3A;
+ Tue, 14 Jul 2026 03:00:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1783998031;
- bh=YaG5Ta1xKsPadz96+IcwgZxoy7jf/OIJasluRQ5kZZM=;
+ s=k20260515; t=1783998034;
+ bh=IjExG8SLdFmswT+7SNT2VlWPxv/Kx5sx61AUKIoe19k=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=WtZwht4TTYxfy0oh89NS2wlto/4csHAOvJb466UFIPGkuWuxRouWGovq99SNztYWj
- X6lXIH6/8MUriOd21RQQQ6If8vbmcsAMAHPUbFaCtyL2bmkKY9pc2l8rUuImgn7iCh
- rOumpKEmUh1KXzusI0EEWzlblEHbQK4MAasMOYDbi10+eeMlBgrpjsIvRqJ+j9OoqW
- d5sv1GgrInLXm85ycKOKhdQGHisD+CfIydJY9TwU9O0znbuk3HMNvAOprNwN0MicxI
- TzISDzTLSuf/RE5LxK1dAZo0cJXSc4lqVxuB7RFbqCoVep7XkIls4mD1b8a8hy8C1S
- qBHcPd5lHon6g==
+ b=kYF+UtVR/Z+tP0BDgQMNjRPnXw/M1HHg6GG8xmZiCLxUHcREwRJ9Dq/s9SNan6N4O
+ cjm+O/x6W31Uh9sWN+fcjRdaD1SYFJ3EU1IkDR6JX5iYquZcCFF3f4B+V0PZxgpoNn
+ WPtCqoX3HP7DMihqIGnfMZKamifF1wAKGJZsrl9dZgq1yW0n6ZI58LSPmKVlb9zWsN
+ UfVQtWoj7a7321ZQiOwTblibHG7n0z75SpVD4oASjSsR3wAgOFN2R76vdmI6ND2hOp
+ XVCQhLM4MtCyaJd+v4JQbVWS9xli5UYj7gm0fdnpmRANegx/9giENWGoW+9+owwwRt
+ ZpaNhIZpSzLTQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 569463924FB7; Tue, 14 Jul 2026 03:00:07 +0000 (UTC)
+ 569EF3924FB7; Tue, 14 Jul 2026 03:00:10 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <178399800589.2939750.3339446022508241105.git-patchwork-notify@kernel.org>
-Date: Tue, 14 Jul 2026 03:00:05 +0000
-References: <20260707113934.3003158-1-chao@kernel.org>
-In-Reply-To: <20260707113934.3003158-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1wjTNw-0000kR-UE
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: quota: do not use GFP_NOFS in
- f2fs_quota_read()
+Message-Id: <178399800888.2939750.13968624423667195416.git-patchwork-notify@kernel.org>
+Date: Tue, 14 Jul 2026 03:00:08 +0000
+References: <20260713111944.924883-1-zhaoyang.huang@unisoc.com>
+In-Reply-To: <20260713111944.924883-1-zhaoyang.huang@unisoc.com>
+To: zhaoyang.huang <zhaoyang.huang@unisoc.com>
+X-Headers-End: 1wjTNx-0000kV-62
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix folio_nr_pages() race after put in
+ large folio invalidate
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,49 +90,31 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
- willy@infradead.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: huangzhaoyang@gmail.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ jaegeuk@kernel.org, steve.kang@unisoc.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue,  7 Jul 2026 19:39:33 +0800 you wrote:
-> Commit 02117b8ae9c0 ("f2fs: Set GF_NOFS in read_cache_page_gfp while doing
-> f2fs_quota_read") adds GFP_NOFS in f2fs_quota_read() to avoid below deadlock:
+On Mon, 13 Jul 2026 19:19:44 +0800 you wrote:
+> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 > 
-> - do_sys_open
->  - vfs_open
->   - dquot_file_open
->    - dquot_initialize
->     - dqget
->      - dquot_acquire
->       : locks &dqopt->dqio_mutex (VFS Quota Mutex)
->       - qtree_read_dquot
->        - f2fs_quota_read
->         - read_mapping_page (GFP_KERNEL / allows GFP_FS)
->          - __alloc_pages_nodemask
->           - try_to_free_pages (Direct Reclaim)
->            - prune_icache_sb
->             - evict
->              - f2fs_evict_inode
->               - dquot_drop
->                - dqput
->                 - dquot_commit
->                  : tries to lock &dqopt->dqio_mutex again
->                  ==> DEADLOCK (waiting for itself)
+> Our v6.18 based Android system is continuely suffering livelock and bad
+> page stat as shown in[1] which related to broken xarray slot status. By
+> investigating big folio operations within f2fs, we find below races and
+> fix it by get the nr_pages before drop the refcount and folio_lock.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2,1/2] f2fs: quota: do not use GFP_NOFS in f2fs_quota_read()
-    https://git.kernel.org/jaegeuk/f2fs/c/9f3a37815818
-  - [f2fs-dev,v2,2/2] f2fs: drop FGP_NOFS in f2fs_write_begin()
-    https://git.kernel.org/jaegeuk/f2fs/c/6e7205a702e2
+  - [f2fs-dev] f2fs: fix folio_nr_pages() race after put in large folio invalidate
+    https://git.kernel.org/jaegeuk/f2fs/c/aebfda7985f6
 
 You are awesome, thank you!
 -- 
