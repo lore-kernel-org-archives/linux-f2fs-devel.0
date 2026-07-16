@@ -4,73 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1A600C44501
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Jul 2026 06:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 01014C44511
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Jul 2026 06:48:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	Reply-To:List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:
-	List-Id:Subject:References:Date:Message-ID:To:From:Mime-Version:Sender:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Owner;
-	bh=qIYB7S9l2p3x5C0thCRcsRTYKzKaHBh3hx41iBhD08k=; b=aQs1VkcdmONkVU+6c6fpK6wwKz
-	adhwHKDoV7razjTKZBVXpsUKI9wDlxf+U2r1mr3lh9sTZqfV1fuv5qSUn1keb/F99LEECtr05Da39
-	4DyRqgN3RTx3sAEkpLf0MRu4pNGMQ/unVmwsYA1/GGJOXvqJcWIf/sXM1Vgr5PxSnOlE=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Id:Subject:References:Date:Message-ID:In-Reply-To:To:From:Mime-Version:
+	Sender:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=vRGj/yhneJkYn7hLeGBV048VMyc7i+tA13/7JJpYYbk=; b=erIpd+8VfNXT063EiP3ZVWUDHk
+	Jrm6nCSsvLWzwXdO/i++6Mxo3ph4JRuKTCNxjmwqX+1AiYujZjTUTfa7G0arvdED2ZsXsZaOOzS6C
+	nYj1doHxxniisn70Stti2ny/8w+2lAjDEuYHlKtOyD4cSsqCUaSC13sI6Zj7gHeHopvQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wkFsw-0006tr-RQ;
-	Thu, 16 Jul 2026 06:47:54 +0000
+	id 1wkFts-0000eq-SV;
+	Thu, 16 Jul 2026 06:48:53 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daejun7.park@samsung.com>) id 1wkFsv-0006tk-NO
+ (envelope-from <daejun7.park@samsung.com>) id 1wkFtr-0000ec-Pd
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 16 Jul 2026 06:47:53 +0000
+ Thu, 16 Jul 2026 06:48:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
- Date:Message-ID:CC:To:From:Sender:Reply-To:Subject:Mime-Version:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
+ Date:Message-ID:In-Reply-To:CC:To:From:Sender:Reply-To:Subject:Mime-Version:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DjQjYrEhMi4j0G8BsFvT1jyF4YJdoHlPTe39zu9+lEU=; b=CoJIlTG7Yrb2rbbOJ4qImOyj1o
- m9QDI/ncskkXS8SzdKZ0f90wL8QN0yRkq9WD5NGL/KUIcIGV+0774n4DtYoyxTur6ZXcTJSbCtr1v
- zqPBEJ8rxOuniZ9V0VcM4w+Jw2c6muQroQRYYhYS4tNyHp3frscguRPZfil+tiT0osaE=;
+ bh=Fe42pLdmMy5+mOuERansbegajriisb5GlYGnbwikbKg=; b=Sd3maI9xZQ4CfiykX4qDtXWdUX
+ RmD4mJFe4MWHdUuTFWDyqkcE4uoJpg2mJ3WNk/D77imXtcaehTjRZ9p4YVlGIovEAodghIwxQrrr2
+ XVxxNy+Z/byRqEU69s0KifLGuXTqOD7SwJTuUHKNNtQvclCcjq8KK4NdbufP/6nCnH04=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=References:Content-Type:Content-Transfer-Encoding:Date:Message-ID:CC:To:
- From:Sender:Reply-To:Subject:Mime-Version:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=DjQjYrEhMi4j0G8BsFvT1jyF4YJdoHlPTe39zu9+lEU=; b=S
- lfJz6SePT6yfN61DbeHQhyuoVqRCl94FsVb/EjQgRv8ormFa+X+MPkhM6uCAdVjCl9Cdu4El/kclz
- A3910mT8CzEuisJj+Nc2PPmFxxtKI6CDKT6MEKsJq15lnj+MENYC/oXi2J7DbsesjqAqJXx3nTlIS
- C4ZubUmHz0jveEJw=;
-Received: from mailout4.samsung.com ([203.254.224.34])
+ h=References:Content-Type:Content-Transfer-Encoding:Date:Message-ID:
+ In-Reply-To:CC:To:From:Sender:Reply-To:Subject:Mime-Version:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=Fe42pLdmMy5+mOuERansbegajriisb5GlYGnbwikbKg=; b=gtqXSrbYU6SLatvrxtX761nUbD
+ 2+OKj/Eo2wTUG0UJj7EFgDYbdQAMQVyCw1yqvCGgV5DzWcMA7jnZCCfo3oyeguqrYn/SwAlVEWD30
+ T631zLLXEuG8lSj6WaOvOtpfYxNIpV/1ofESSihXOiPR1XWtqSC/IG4tBnnjxMeYPIBA=;
+Received: from mailout3.samsung.com ([203.254.224.33])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wkFst-0001iS-U5 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 16 Jul 2026 06:47:53 +0000
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
- by mailout4.samsung.com (KnoxPortal) with ESMTP id
- 20260716064739epoutp0470188c1da15081909615aaa023aa5229~CslA1NvyB3044630446epoutp04M
+ id 1wkFtq-0001kZ-Ss for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 16 Jul 2026 06:48:52 +0000
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+ by mailout3.samsung.com (KnoxPortal) with ESMTP id
+ 20260716064839epoutp0348cbdebc4398ff63ff17f6497d5de29a~Csl32LJrZ3194731947epoutp03b
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 16 Jul 2026 06:47:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com
- 20260716064739epoutp0470188c1da15081909615aaa023aa5229~CslA1NvyB3044630446epoutp04M
+ Thu, 16 Jul 2026 06:48:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com
+ 20260716064839epoutp0348cbdebc4398ff63ff17f6497d5de29a~Csl32LJrZ3194731947epoutp03b
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
- s=mail20170921; t=1784184459;
- bh=DjQjYrEhMi4j0G8BsFvT1jyF4YJdoHlPTe39zu9+lEU=;
- h=Subject:Reply-To:From:To:CC:Date:References:From;
- b=tD36nJQxqhUeNWGUMTaWIYEfvIvmS6vn4aDwbfr92CjobFlyg3Aj0412JlHJcPbJ5
- ZrsAm7W/WWL9ETWzrTTwjDEpyhvF26tEHAFk/40o1KthwxtJjmP/WKZNrxnu/yxyoP
- ZK+nZmgduSnycEJNIgNWKk1lNQMY/DMvKiYkzyZ0=
+ s=mail20170921; t=1784184519;
+ bh=Fe42pLdmMy5+mOuERansbegajriisb5GlYGnbwikbKg=;
+ h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+ b=XSbthboPaqDNc3uEK9iqDKsUqe89TtUfFIaaAmU65jPT0a5dVX/9hRfdIKMsF8gLb
+ rFXAr0ZwR1iWzt4Ab73u1qSsxCHhf+379sPYR0IbJe/dxcC2JMHzf3Is9tpHJkUVU0
+ XORurKF+ZXZNJO1ynQNTgwG8zgpayFeEG112Vqes=
 Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
- epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
- 20260716064739epcas2p16b30ab4073bcb24b7cd34724daef1343~CslAa_Bxl0290902909epcas2p1q;
- Thu, 16 Jul 2026 06:47:39 +0000 (GMT)
-Received: from epcas2p4.samsung.com (unknown [182.195.38.208]) by
- epsnrtp01.localdomain (Postfix) with ESMTP id 4h13Wb1Kn1z6B9mF; Thu, 16 Jul
- 2026 06:47:39 +0000 (GMT)
+ epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
+ 20260716064838epcas2p45604c418e33f824846f9127debc6344e~Csl3ifpfe1508015080epcas2p4D;
+ Thu, 16 Jul 2026 06:48:38 +0000 (GMT)
+Received: from epcas2p3.samsung.com (unknown [182.195.38.200]) by
+ epsnrtp01.localdomain (Postfix) with ESMTP id 4h13Xk2f3Hz6B9mG; Thu, 16 Jul
+ 2026 06:48:38 +0000 (GMT)
 Mime-Version: 1.0
 From: Daejun Park <daejun7.park@samsung.com>
 To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org"
@@ -79,14 +79,15 @@ To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org"
  <linux-f2fs-devel@lists.sourceforge.net>
 X-Priority: 3
 X-Content-Kind-Code: NORMAL
+In-Reply-To: <20260716064738epcms2p36dbf1cf10ea90605610d93cc1401142f@epcms2p3>
 X-CPGS-Detection: blocking_info_exchange
 X-Drm-Type: N,general
 X-Msg-Generator: Mail
 X-Msg-Type: PERSONAL
 X-Reply-Demand: N
-Message-ID: <20260716064738epcms2p36dbf1cf10ea90605610d93cc1401142f@epcms2p3>
-Date: Thu, 16 Jul 2026 15:47:38 +0900
-X-CMS-MailID: 20260716064738epcms2p36dbf1cf10ea90605610d93cc1401142f
+Message-ID: <20260716064837epcms2p163a4c4d7be63454c4746261155734d5f@epcms2p1>
+Date: Thu, 16 Jul 2026 15:48:37 +0900
+X-CMS-MailID: 20260716064837epcms2p163a4c4d7be63454c4746261155734d5f
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 X-CPGSPASS: Y
@@ -94,10 +95,11 @@ X-CPGSPASS: Y
 cpgsPolicy: CPGSC10-223,Y
 X-CFilter-Loop: Reflected
 X-CMS-RootMailID: 20260716064738epcms2p36dbf1cf10ea90605610d93cc1401142f
-References: <CGME20260716064738epcms2p36dbf1cf10ea90605610d93cc1401142f@epcms2p3>
-X-Headers-End: 1wkFst-0001iS-U5
-Subject: [f2fs-dev] [PATCH v3 0/2] f2fs: pack same-inode blocks by inode
- during FG_GC
+References: <20260716064738epcms2p36dbf1cf10ea90605610d93cc1401142f@epcms2p3>
+ <CGME20260716064738epcms2p36dbf1cf10ea90605610d93cc1401142f@epcms2p1>
+X-Headers-End: 1wkFtq-0001kZ-Ss
+Subject: [f2fs-dev] [PATCH v3 1/2] f2fs: extract do_migrate_one_data_block()
+ helper for GC migration
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -114,95 +116,169 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi,
+Pull gc_data_segment()'s per-block migration body out into a static
+helper.  The lock acquisition, move_data_{page,block}() dispatch,
+i_gc_rwsem release and stat_inc_data_blk_count() call are now shared
+through a single point so future migration paths (e.g. inode-local
+packing) can reuse them instead of duplicating the sequence.
 
-FG_GC migrates a victim section's valid blocks in source segment-offset
-order, so blocks from several inodes stay interleaved in the destination
-curseg and post-GC files stay fragmented.  This series migrates them in
-inode order instead, producing inode-contiguous runs across the section.
+While here, change add_gc_inode() to return the inserted (or already
+present) inode_entry pointer.  The caller still discards it for now;
+upcoming work needs the pointer to attach per-inode state to the
+entry without an extra radix-tree lookup.
 
-Patch 1 is a pure refactor (extract do_migrate_one_data_block()).
-Patch 2 records each valid block on a per-inode list in phase 3 and
-drains it in inode order via pack_gc_section() once the section has been
-scanned.  It is gated on a sysfs knob (gc_inode_local_packing) and FG_GC
-only; on slab alloc failure a block falls back to immediate migration.
+No behavioral change.
 
-Changes since v2 (all in patch 2; the first three address Chao Yu's
-review):
-  - default gc_inode_local_packing to 0: the feature is now opt-in
-    rather than enabled on large sections, since a new GC behaviour
-    should not be on by default.
-  - drop the section's queued gc_blocks on the freezing 'goto stop' path
-    (new drop_gc_blocks() helper).  f2fs_gc() reuses one gc_list across
-    the sections it collects in a single call, so leftover records could
-    otherwise leak into the next section's pack pass.
-  - expose the packing-queue drain threshold as a sysfs knob
-    gc_pack_max_blocks (default 4096, minimum 64) instead of a fixed
-    constant.  The ABI doc describes it as a drain threshold checked at
-    segment boundaries, since the queue can transiently overshoot the
-    value by up to one segment's blocks.
-  - pack_gc_section() skips a queued block invalidated since phase 3
-    (check_valid_map), matching the legacy phase-4 skip, so a stale block
-    is neither migrated nor stat-counted.
-  - queued records are freed in one place: pack_gc_section() and
-    put_gc_inode() release them via drop_gc_blocks() instead of three
-    copies of the same walk, and the normal-completion pack_gc_section()
-    call is guarded by nr_gc_blocks so a queue already emptied by an
-    early drain does not trigger a useless walk of the inode list.
-  - gc_inode_local_packing's sysfs store assigns the bool directly
-    (!!t), like iostat_enable/readdir_ra, instead of falling through to
-    the generic unsigned-int write over a bool field.
-  - drop the '+45 %' hot-rewrite iteration figure from patch 2's
-    measurements: it is a wall-clock number and QEMU virtio
-    bandwidth/latency is not reliable; the structural counters stand.
-  - patch 1: unchanged.
+Signed-off-by: Daejun Park <daejun7.park@samsung.com>
+---
+ fs/f2fs/gc.c | 109 ++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 64 insertions(+), 45 deletions(-)
 
-Rebased onto current f2fs/dev (now includes "f2fs: embed f2fs_gc_kthread
-in f2fs_sb_info"); no code change, the diff is identical to the c0b65f612
-base it was developed on.
-
-The seg_freed recompute Chao asked about is unchanged from v2: it runs
-after the pack pass on all exit paths and counts already-empty segments
-exactly as the legacy 'goto freed' path does (required so a fully
-reclaimed section reaches seg_freed == f2fs_usable_segs_in_sec();
-excluding them would re-introduce the -EAGAIN this series fixes).  Any
-already-empty segment it counts feeds only the total_freed tracepoint,
-not the sec_freed/-EAGAIN decision.
-
-Changes since v1:
-  - patch 2: fix seg_freed accounting (recompute after the deferred pack
-    pass); without it a sync F2FS_IOC_GC returned -EAGAIN despite freeing
-    space.  Clear next_victim_seg on the freezing path; bound the packing
-    queue and drain in batches.  Rebased onto f2fs/dev.
-
-Results (QEMU guest):
-  - large section (-s 32, 64 x 4 MiB): post-GC extents 65536 -> 49170
-    (-24 %).
-  - natural FG_GC, 90 % full, 300 s hot/cold rewrite: cold-file extents
-    -63 %, move_blks -18 %, skipped_gc_rwsem -59 %.
-  - seg_freed regression test: packing matches the legacy path
-    (seg_freed 152, sec_freed 38, 24/24 sync ioctls succeed).
-  - gc_pack_max_blocks partial-drain test (cap=64, large section): the
-    drain fires ~1.5k times in one section yet seg_freed still matches
-    the legacy path (384 == 384), integrity preserved.
-  - regression suite on this tree: clean dmesg, sha256 preserved;
-    gc_pack_max_blocks validates its bounds and gc_inode_local_packing
-    defaults to 0.
-
-Daejun Park (2):
-  f2fs: extract do_migrate_one_data_block() helper for GC migration
-  f2fs: pack same-inode blocks by inode during FG_GC
-
- Documentation/ABI/testing/sysfs-fs-f2fs |  20 ++
- fs/f2fs/f2fs.h                          |   9 +-
- fs/f2fs/gc.c                            | 302 +++++++++++++++++++-----
- fs/f2fs/gc.h                            |   5 +
- fs/f2fs/super.c                         |   2 +
- fs/f2fs/sysfs.c                         |  16 ++
- 6 files changed, 297 insertions(+), 57 deletions(-)
-
-
-base-commit: 6429f3bf6dc33cba42055260f905559c43976eeb
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index d04633f872e..936d4cfa0a9 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -985,13 +985,15 @@ static struct inode *find_gc_inode(struct gc_inode_list *gc_list, nid_t ino)
+ 	return NULL;
+ }
+ 
+-static void add_gc_inode(struct gc_inode_list *gc_list, struct inode *inode)
++static struct inode_entry *add_gc_inode(struct gc_inode_list *gc_list,
++					struct inode *inode)
+ {
+ 	struct inode_entry *new_ie;
+ 
+-	if (inode == find_gc_inode(gc_list, inode->i_ino)) {
++	new_ie = radix_tree_lookup(&gc_list->iroot, inode->i_ino);
++	if (new_ie && new_ie->inode == inode) {
+ 		iput(inode);
+-		return;
++		return new_ie;
+ 	}
+ 	new_ie = f2fs_kmem_cache_alloc(f2fs_inode_entry_slab,
+ 					GFP_NOFS, true, NULL);
+@@ -999,6 +1001,7 @@ static void add_gc_inode(struct gc_inode_list *gc_list, struct inode *inode)
+ 
+ 	f2fs_radix_tree_insert(&gc_list->iroot, inode->i_ino, new_ie);
+ 	list_add_tail(&new_ie->list, &gc_list->ilist);
++	return new_ie;
+ }
+ 
+ static void put_gc_inode(struct gc_inode_list *gc_list)
+@@ -1569,6 +1572,61 @@ static int move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 	return err;
+ }
+ 
++/*
++ * do_migrate_one_data_block - migrate one valid data block at @segno+@off,
++ * identified by (@nofs, @ofs_in_node) on @inode, into the destination
++ * curseg via move_data_{page,block}().
++ *
++ * Takes i_gc_rwsem for regular files; on rwsem contention the block is
++ * skipped and sbi->skipped_gc_rwsem is incremented.  Returns the number
++ * of blocks submitted for write (0 or 1).
++ */
++static int do_migrate_one_data_block(struct f2fs_sb_info *sbi,
++				     struct inode *inode,
++				     unsigned int segno, int off,
++				     unsigned int nofs,
++				     unsigned int ofs_in_node, int gc_type)
++{
++	struct f2fs_inode_info *fi = F2FS_I(inode);
++	bool locked = false;
++	block_t start_bidx;
++	int err;
++	int submitted = 0;
++
++	if (S_ISREG(inode->i_mode)) {
++		if (!f2fs_down_write_trylock(&fi->i_gc_rwsem[WRITE])) {
++			sbi->skipped_gc_rwsem++;
++			return 0;
++		}
++		if (!f2fs_down_write_trylock(&fi->i_gc_rwsem[READ])) {
++			sbi->skipped_gc_rwsem++;
++			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
++			return 0;
++		}
++		locked = true;
++
++		/* wait for all inflight aio data */
++		inode_dio_wait(inode);
++	}
++
++	start_bidx = f2fs_start_bidx_of_node(nofs, inode) + ofs_in_node;
++	if (f2fs_meta_inode_gc_required(inode))
++		err = move_data_block(inode, start_bidx, gc_type, segno, off);
++	else
++		err = move_data_page(inode, start_bidx, gc_type, segno, off);
++
++	if (!err && (gc_type == FG_GC || f2fs_meta_inode_gc_required(inode)))
++		submitted = 1;
++
++	if (locked) {
++		f2fs_up_write(&fi->i_gc_rwsem[READ]);
++		f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
++	}
++
++	stat_inc_data_blk_count(sbi, 1, gc_type);
++	return submitted;
++}
++
+ /*
+  * This function tries to get parent node of victim data block, and identifies
+  * data block validity. If the block is valid, copy that with cold status and
+@@ -1702,48 +1760,9 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 
+ 		/* phase 4 */
+ 		inode = find_gc_inode(gc_list, dni.ino);
+-		if (inode) {
+-			struct f2fs_inode_info *fi = F2FS_I(inode);
+-			bool locked = false;
+-			int err;
+-
+-			if (S_ISREG(inode->i_mode)) {
+-				if (!f2fs_down_write_trylock(&fi->i_gc_rwsem[WRITE])) {
+-					sbi->skipped_gc_rwsem++;
+-					continue;
+-				}
+-				if (!f2fs_down_write_trylock(
+-						&fi->i_gc_rwsem[READ])) {
+-					sbi->skipped_gc_rwsem++;
+-					f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
+-					continue;
+-				}
+-				locked = true;
+-
+-				/* wait for all inflight aio data */
+-				inode_dio_wait(inode);
+-			}
+-
+-			start_bidx = f2fs_start_bidx_of_node(nofs, inode)
+-								+ ofs_in_node;
+-			if (f2fs_meta_inode_gc_required(inode))
+-				err = move_data_block(inode, start_bidx,
+-							gc_type, segno, off);
+-			else
+-				err = move_data_page(inode, start_bidx, gc_type,
+-								segno, off);
+-
+-			if (!err && (gc_type == FG_GC ||
+-					f2fs_meta_inode_gc_required(inode)))
+-				submitted++;
+-
+-			if (locked) {
+-				f2fs_up_write(&fi->i_gc_rwsem[READ]);
+-				f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
+-			}
+-
+-			stat_inc_data_blk_count(sbi, 1, gc_type);
+-		}
++		if (inode)
++			submitted += do_migrate_one_data_block(sbi, inode,
++					segno, off, nofs, ofs_in_node, gc_type);
+ 	}
+ 
+ 	if (++phase < 5) {
 -- 
 2.43.0
 
