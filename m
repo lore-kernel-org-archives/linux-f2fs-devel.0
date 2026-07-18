@@ -4,76 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 91CF5C4450A
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 18 Jul 2026 21:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CAA7AC4451B
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 18 Jul 2026 21:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=9gYqCufj3v1ZV2UIgwYHO/23Gp+ATRmrBxBE+OaRXgU=; b=cGPZAZ6y7BkxtNCZhe5zBuH5vr
-	Lk9YQ5P5uWsdVHPQ2y7wzg3IRobsLlc+lVhQ4jKSGNfygsUxySRrxo6yXLhK3gpYhP6MfhlzriY4T
-	qzcfiL34uaVpKZ1tRwBfIHhhx81GgOJoOvv8CMD2sOg9T7hvcg42RBI3+3sJ2twBVLLs=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=gat/ISr1odmWgt7Vkg2CJ22vzZCtCK3hbkdzeFQyRkk=; b=ZMyhXf7qYAyPryL8C54FSAYt9s
+	N4OycrMAgY2LhWk34kgDoIbpQM23lDAvd2OzUr4YZGEjaEmoargWr3PtaCy2y0RXRjC0Iv5/8iUjt
+	SkBxJz+UQlIypw2w3sPvu9Ei/uuMrOMQHT7K+oo+n1ZTSi1i3nKf/eYnLmw9PDzeeB0Y=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wlCuC-00040q-N8;
-	Sat, 18 Jul 2026 21:49:09 +0000
+	id 1wlCuH-00081P-N9;
+	Sat, 18 Jul 2026 21:49:14 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wlCuB-00040e-Gk
+ (envelope-from <ebiggers@kernel.org>) id 1wlCuF-00081H-Ql
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 18 Jul 2026 21:49:08 +0000
+ Sat, 18 Jul 2026 21:49:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=utFnArNBvhXi0tskwzedkcauorut7DvNltLjRLrRl94=; b=f2JFPh2TkBMvJgsXlBCBTQliIt
- /5biSrAWJOm0YW+TFR/Bd1mv4vRm3jsLxbh9hoB3Lc3oF50DFFt8y3kY0sWczcFtoiWJ9HsMZ52qx
- qZ17SJoOz9oFheBi3u8MtXBNXnOr+aizRVZOr+96K3UdNdOg9a8yiOkeA27nP7IYdHuk=;
+ bh=51BZI0czokw254bwWkQ+Q7dU3NsJmPHSH27DSUDwsvQ=; b=NtUon43TeYMVr8XeqCuMNrlWoM
+ u8PbRQH1B+pKmJhq92TYQJnkJukbrPmMkhozX+3oBH1wyq1dzFi9sC4vpFUI9X7T3WVG3tEzmuA0O
+ y5JARkvBAPexA0lNLpdksrwN5v5L6EDEIhDtmw7pEmhlBKMw0uX1TCWOHeOXNVzVHmic=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=utFnArNBvhXi0tskwzedkcauorut7DvNltLjRLrRl94=; b=V
- gFd6eD4jdbjylN9VyJvQyTEuubnZAZOSlSfuWhkD2b7jWw6XCNuNURp19NI9Qou25rBrDvlgs5fmt
- kC1zse6D8bEuwegWrn1OApNCyW5M8WLM4Z4wv6HazbF06tuoxteQtygZQk6RrFrz2Ku3WELE5vDhJ
- PfevJnamTWHFulhQ=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=51BZI0czokw254bwWkQ+Q7dU3NsJmPHSH27DSUDwsvQ=; b=eqcXP2MIC/kjQQQ8lS+SguxreP
+ sW3864AitoWFvXLWbGiUGRG7anQKzCf5q7AHcYOY3nyYu/GlPBBLGr83TkSa3/b+nEmr7IgSPIcCQ
+ ILepRkSDRqidB6DYONrbmVSJAHr1WrNZTrLds22bBpbnu/1ReavMgNOmmF4sL0jYXjXE=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wlCuB-0003Vn-Ly for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 18 Jul 2026 21:49:08 +0000
+ id 1wlCuF-0003Vr-LB for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 18 Jul 2026 21:49:12 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 5BC7D41748
+ by tor.source.kernel.org (Postfix) with ESMTP id 02C3C60008
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 18 Jul 2026 21:49:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 587D91F000E9;
- Sat, 18 Jul 2026 21:49:01 +0000 (UTC)
+ Sat, 18 Jul 2026 21:49:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E91671F000E9;
+ Sat, 18 Jul 2026 21:49:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784411342;
- bh=utFnArNBvhXi0tskwzedkcauorut7DvNltLjRLrRl94=;
- h=From:To:Cc:Subject:Date;
- b=gJM7OV9vS8RkGvdy8FXmYDuRyrrLXbUpYRKNNmTCWCICjXQ4nSIxlZoFiwYQzmMjN
- Sgrws86276SHJPSsZh4ISyc0Z8hsdM0H4ZxC/6BySsYXivC5JBUk48zn6Zzt+ikGpl
- 9j3caqkmZviOWQRRMhB6g6Ie6/YV5VZX4Kl2GbQnIkBc6KqM+6GopvwKu1ys0S3HLG
- zqo45K7feLUp5ceURQW83ryUd60pYvKMbY+WloS2r6j0tpvvA68IwIF+nqTM15OdM2
- Rnmk8aGIU6xNeM06O+IH8QGOgteHHLJIHbpBcLkSuwmCQqQ9OW9ru64UxMGURbD+RT
- VmYQayDmeJ3kw==
+ s=k20260515; t=1784411345;
+ bh=51BZI0czokw254bwWkQ+Q7dU3NsJmPHSH27DSUDwsvQ=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=k5+0M4B1y7CJshMruk8auUvrezpIIGRwRHFUoaRPzCxWdOsoaktzhBM2fkqkvY7p4
+ CPMlD4KZZjJYDjso3fQ1BXPMb0PLfzqbNKqd26ung8QygO5ZgwJqMJE+eIlb5c8ycP
+ oy9XfDo5PX6jFfw4IenDm/uYmxZG1qW/ofrl9vw1ss297L1QrKh/Eg0Jh6R/3oXIuo
+ qkWVu5tLxAb4q8mzmHbrtQT+9ovcOKCbbxdF3m6Bdx3gUtZaD8KuL2wNQ5K46HYg0f
+ uRGSHGxwClG5xAyK7ktJbo1/MMqeMdDBAuN3JaAkSTzUhUZIwcAXlh5xIARPvtokdg
+ JoyONc5c0jo9w==
 To: linux-fscrypt@vger.kernel.org
-Date: Sat, 18 Jul 2026 14:46:49 -0700
-Message-ID: <20260718214655.63186-1-ebiggers@kernel.org>
+Date: Sat, 18 Jul 2026 14:46:52 -0700
+Message-ID: <20260718214655.63186-4-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260718214655.63186-1-ebiggers@kernel.org>
+References: <20260718214655.63186-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wlCuB-0003Vn-Ly
-Subject: [f2fs-dev] [PATCH 0/6] More fscrypt and blk-crypto doc updates and
- code removals
+X-Headers-End: 1wlCuF-0003Vr-LB
+Subject: [f2fs-dev] [PATCH 3/6] fscrypt: Remove unused function
+ fscrypt_finalize_bounce_page()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,32 +97,33 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This series applies on top of
-"[PATCH v3 00/17] fscrypt: Standardize on blk-crypto"
-(https://lore.kernel.org/linux-fscrypt/20260713023708.9245-1-ebiggers@kernel.org/).
-It gets more documentation up to date, and it
-removes a couple more functions that are no longer used.
-I'm planning to take both series via the fscrypt tree.
+fscrypt_finalize_bounce_page() is no longer called, so remove it.
 
-Eric Biggers (6):
-  fs: Update outdated comment for SB_INLINECRYPT
-  f2fs: Update outdated comment in f2fs_write_begin()
-  fscrypt: Remove unused function fscrypt_finalize_bounce_page()
-  fscrypt: Update docs for data path
-  blk-crypto: Remove unused function blk_crypto_config_supported()
-  blk-crypto: Update docs for blk-crypto-fallback motivation
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+---
+ include/linux/fscrypt.h | 11 -----------
+ 1 file changed, 11 deletions(-)
 
- Documentation/block/inline-encryption.rst | 43 +++++++----------
- Documentation/filesystems/fscrypt.rst     | 56 +++++++++++++++--------
- block/blk-crypto.c                        | 14 ------
- fs/f2fs/data.c                            |  2 +-
- include/linux/blk-crypto.h                |  2 -
- include/linux/fs/super_types.h            |  2 +-
- include/linux/fscrypt.h                   | 11 -----
- 7 files changed, 56 insertions(+), 74 deletions(-)
-
-
-base-commit: 185a45827da9459c4484ea60cfe1797c3e9966b3
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 52ff014aeae6..42ffd66a2491 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -1057,15 +1057,4 @@ static inline int fscrypt_encrypt_symlink(struct inode *inode,
+ 	return 0;
+ }
+ 
+-/* If *pagep is a bounce page, free it and set *pagep to the pagecache page */
+-static inline void fscrypt_finalize_bounce_page(struct page **pagep)
+-{
+-	struct page *page = *pagep;
+-
+-	if (fscrypt_is_bounce_page(page)) {
+-		*pagep = fscrypt_pagecache_page(page);
+-		fscrypt_free_bounce_page(page);
+-	}
+-}
+-
+ #endif	/* _LINUX_FSCRYPT_H */
 -- 
 2.55.0
 
