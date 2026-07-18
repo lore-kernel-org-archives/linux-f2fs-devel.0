@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 078FDC44523
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 18 Jul 2026 21:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1C358C44524
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 18 Jul 2026 21:49:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=uFF49SRTxU1iHvOmgPmnXiTf6OPa/s5wbjB+11EZo0o=; b=alvuscbAyhRozDWQtSrKGlem5h
-	p5mZah0U1qN94G6vxnXMmndJepj5IDJSBEcaOBH3WwdQ/1rpuIaIGyiEgZs+qKbtJfZweU37S/jKM
-	44YiTxepEkVZVbUm3H6JiBbMPsLY/I+N1pgTAD9TQrsg2bbZVfHT1FJKdhuazp+u4M9Y=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=04Br0rxuCKyL/5S0oTHRuTIBqlLF4eknG1V+zSxO9Wk=; b=fq/FVDdWenYlDeCIiEbKvAlSJn
+	Y47NbWohnObDCsji9G+oXbsb4a7fYUWz2PrwQxPE2NTClVf/DlOtpEk4rjQSPHHehrYGBYEFQElyb
+	ZtRcv++zh90Ba7Efnr3XaNLFynbXV58jkbHOZs56pGgLgbsDk0X9Rw52Cr3bPpPAt51U=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wlCuO-000822-2S;
-	Sat, 18 Jul 2026 21:49:20 +0000
+	id 1wlCuP-0005sG-Lk;
+	Sat, 18 Jul 2026 21:49:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wlCuM-00081u-Un
+ (envelope-from <ebiggers@kernel.org>) id 1wlCuO-0005s8-NM
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 18 Jul 2026 21:49:19 +0000
+ Sat, 18 Jul 2026 21:49:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=uW5iv+RSEE3wkKPr35Uyq8ZKU+zS5v45Ej8aa0FV85o=; b=ftQLsGqnpETSNUWZG+9UTeTyTw
- YxoakCN73C/Jt222c1ai8nInZU6eBTbl9i597d1hAeE73+6hUazrjGFkMfVfPlb/e9zSd3opzARVp
- OofXkkIW7krIcXDOc59IOIpMYad25NjlXT3Foel9oVPsaID9wd78XECRKeE9xBNSHffI=;
+ bh=0gESiSJCAMF2nF6DvOYmrqypPXEEEvUEZD60a26iDS0=; b=RwKzly9zB4HqQE5ho4qMyLqtqs
+ MUTVUh/BAZXIVkNWoKtFvcmTgsoelQngub4xSgWXkLZCDIX4h7UAB+ShYA/Dc/6+x3INwMOJwmnHQ
+ Vt2ixCIYEIugAY23tq8h7v3GOhsWTFgSdX9k4+gxXxtrYVgptW99tB6Bff9PsruRbcIs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=uW5iv+RSEE3wkKPr35Uyq8ZKU+zS5v45Ej8aa0FV85o=; b=N6WZejGxphR+b5qzNKYsDy21b5
- gMY5NdMOSKJm4o1YxAD+GFe9nFqY17jbDiQB0LNJT/V3akx/6Qyw0hv4M5n++kfCEmNAm8NHjcF1l
- ZxpRdt7eXgMD1Y+RcOcJKy8SJXtCopHvNnI5jk/IeyEljI5nDoYFpGWIt/Qh3Y++V5x0=;
+ bh=0gESiSJCAMF2nF6DvOYmrqypPXEEEvUEZD60a26iDS0=; b=TSDpXDth2f5KvuenScwkCGBQqm
+ BDn7YECeNgtNdVJll5BNkNqhe3Xf7dXC8X+5Ji51HaZAQ6YF89wxp8rFKWrwwznzPciSUmqUBmsUj
+ U5aVTN5Wrh4TkjAHKv0RIybQDhBw3bWNu7kOchDZwp1LW8GddeRt5WZTnTYySWMRiFA8=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wlCuM-0003WC-VS for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 18 Jul 2026 21:49:19 +0000
+ id 1wlCuO-0003WJ-7B for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 18 Jul 2026 21:49:20 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 6472B6001A
+ by tor.source.kernel.org (Postfix) with ESMTP id A2D4760018
  for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 18 Jul 2026 21:49:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A2561F00A3E;
  Sat, 18 Jul 2026 21:49:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BFF31F00A3A;
- Sat, 18 Jul 2026 21:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784411348;
- bh=uW5iv+RSEE3wkKPr35Uyq8ZKU+zS5v45Ej8aa0FV85o=;
+ s=k20260515; t=1784411349;
+ bh=0gESiSJCAMF2nF6DvOYmrqypPXEEEvUEZD60a26iDS0=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=iGBAPnIDkeUCGJ4C6s2rAeTwuIIqBg7BGPGO/NkGiv5XaKIOietmFCfV72kQjcIlH
- +fxOHyhPvu3BESJ+0bCAK9aq/Bi6XzMsgUc+QLQJjtl3QxxzVqvG6pCT7FUwLc84SE
- Sy7V333TtkhLFsiX0tz7lzWPyKGwYtFB3Ig8AvRbEee4hFnA/LvkjHimQfpA7sXai2
- ofi4gd60KS0yuIRMNchjjQFuRxI79UMs0X00F2Y9aTCD6j07lHajdEIQ+IGX0ONHJE
- fua23sD4qPDkVoNBO3TvuRwsXOlUD7TivFNJtj/XkJqID8KBmDsTPCuxvxelgsrxXH
- y6ce2XzYB1CaA==
+ b=BVtd71J2kLUxAd0N5bHGPILTOS3c1+n6T1M5mOBwIW6SdWiPcRncWpFHIx0b436s+
+ pSQNwCQrgd9ZG0ciFXM4utybbl07BJ4GLQjeOOSS1eBd74D45gp0axnzoAfb3wAKPc
+ zDNIc79Tlk7IyLdWa5bWxx7zuMVYpJxA3Rk3D1z/hlULVJo9zAMqhnk8uZyw0yy4/X
+ uXp134DHz9C/K4J0nOX8y0K9ibwBK6ZhKtJmpe4b3IXpwumfKo/+hWj8E67c0Ocx4l
+ xGbFXbJC4y9rV6M5r3EBnOsa/nzikQqdQFT2258BX5ZX4KwTLnk1fps4lV/Chj9wB3
+ QH86kpdwUOFMQ==
 To: linux-fscrypt@vger.kernel.org
-Date: Sat, 18 Jul 2026 14:46:54 -0700
-Message-ID: <20260718214655.63186-6-ebiggers@kernel.org>
+Date: Sat, 18 Jul 2026 14:46:55 -0700
+Message-ID: <20260718214655.63186-7-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260718214655.63186-1-ebiggers@kernel.org>
 References: <20260718214655.63186-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wlCuM-0003WC-VS
-Subject: [f2fs-dev] [PATCH 5/6] blk-crypto: Remove unused function
- blk_crypto_config_supported()
+X-Headers-End: 1wlCuO-0003WJ-7B
+Subject: [f2fs-dev] [PATCH 6/6] blk-crypto: Update docs for
+ blk-crypto-fallback motivation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,105 +97,47 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-blk_crypto_config_supported() is no longer called, so remove it.
+The "Objective" section of inline-encryption.rst suggests that
+blk-crypto-fallback is just for testing.  That's no longer accurate, so
+update it accordingly.  Also fix a typo later in the document.
 
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- Documentation/block/inline-encryption.rst | 29 ++++++++---------------
- block/blk-crypto.c                        | 14 -----------
- include/linux/blk-crypto.h                |  2 --
- 3 files changed, 10 insertions(+), 35 deletions(-)
+ Documentation/block/inline-encryption.rst | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/Documentation/block/inline-encryption.rst b/Documentation/block/inline-encryption.rst
-index cae23949a626..0052c7011b48 100644
+index 0052c7011b48..0df964507f76 100644
 --- a/Documentation/block/inline-encryption.rst
 +++ b/Documentation/block/inline-encryption.rst
-@@ -185,20 +185,12 @@ blk-crypto-fallback is optional and is controlled by the
- API presented to users of the block layer
- =========================================
+@@ -37,12 +37,12 @@ initialization vector for each sector, and can be tested for correctness.
+ Objective
+ =========
  
--``blk_crypto_config_supported()`` allows users to check ahead of time whether
--inline encryption with particular crypto settings will work on a particular
--block_device -- either via hardware or via blk-crypto-fallback.  This function
--takes in a ``struct blk_crypto_config`` which is like blk_crypto_key, but omits
--the actual bytes of the key and instead just contains the algorithm, data unit
--size, etc.  This function can be useful if blk-crypto-fallback is disabled.
--
- ``blk_crypto_init_key()`` allows users to initialize a blk_crypto_key.
+-We want to support inline encryption in the kernel.  To make testing easier, we
+-also want support for falling back to the kernel crypto API when actual inline
+-encryption hardware is absent.  We also want inline encryption to work with
+-layered devices like device-mapper and loopback (i.e. we want to be able to use
+-the inline encryption hardware of the underlying devices if present, or else
+-fall back to crypto API en/decryption).
++We want to support inline encryption hardware in the kernel.  The API for using
++such hardware should also support a fallback to the CPU, so that users only need
++to use a single API and more of the code can be tested without actual hardware.
++We also want inline encryption to work with layered devices like device-mapper
++and loopback (i.e. we want to be able to use the inline encryption hardware of
++the underlying devices if present, or else fall back to the CPU).
  
- Users must call ``blk_crypto_start_using_key()`` before actually starting to use
--a blk_crypto_key on a block_device (even if ``blk_crypto_config_supported()``
--was called earlier).  This is needed to initialize blk-crypto-fallback if it
--will be needed.  This must not be called from the data path, as this may have to
--allocate resources, which may deadlock in that case.
-+a blk_crypto_key on a block_device.  This is needed to initialize
-+blk-crypto-fallback if it will be needed.  This must not be called from the data
-+path, as this may have to allocate resources, which may deadlock in that case.
+ Constraints and notes
+ =====================
+@@ -295,7 +295,7 @@ hardware implementations might not implement both features together correctly,
+ and disallow the combination for now. Whenever a device supports integrity, the
+ kernel will pretend that the device does not support hardware inline encryption
+ (by setting the blk_crypto_profile in the request_queue of the device to NULL).
+-When the crypto API fallback is enabled, this means that all bios with and
++When the crypto API fallback is enabled, this means that all bios with an
+ encryption context will use the fallback, and IO will complete as usual.  When
+ the fallback is disabled, a bio with an encryption context will be failed.
  
- Next, to attach an encryption context to a bio, users should call
- ``bio_crypt_set_ctx()``.  This function allocates a bio_crypt_ctx and attaches
-@@ -220,16 +212,15 @@ any kernel data structures it may be linked into.
- In summary, for users of the block layer, the lifecycle of a blk_crypto_key is
- as follows:
- 
--1. ``blk_crypto_config_supported()`` (optional)
--2. ``blk_crypto_init_key()``
--3. ``blk_crypto_start_using_key()``
--4. ``bio_crypt_set_ctx()`` (potentially many times)
--5. ``blk_crypto_evict_key()`` (after all I/O has completed)
--6. Zeroize the blk_crypto_key (this has no dedicated function)
-+1. ``blk_crypto_init_key()``
-+2. ``blk_crypto_start_using_key()``
-+3. ``bio_crypt_set_ctx()`` (potentially many times)
-+4. ``blk_crypto_evict_key()`` (after all I/O has completed)
-+5. Zeroize the blk_crypto_key (this has no dedicated function)
- 
- If a blk_crypto_key is being used on multiple block_devices, then
--``blk_crypto_config_supported()`` (if used), ``blk_crypto_start_using_key()``,
--and ``blk_crypto_evict_key()`` must be called on each block_device.
-+``blk_crypto_start_using_key()`` and ``blk_crypto_evict_key()`` must be called
-+on each block_device.
- 
- API presented to device drivers
- ===============================
-diff --git a/block/blk-crypto.c b/block/blk-crypto.c
-index 0fe6ef0eea1d..bc3a9f59574b 100644
---- a/block/blk-crypto.c
-+++ b/block/blk-crypto.c
-@@ -386,20 +386,6 @@ bool blk_crypto_config_supported_natively(struct block_device *bdev,
- 	return true;
- }
- 
--/*
-- * Check if bios with @cfg can be en/decrypted by blk-crypto (i.e. either the
-- * block_device it's submitted to supports inline crypto, or the
-- * blk-crypto-fallback is enabled and supports the cfg).
-- */
--bool blk_crypto_config_supported(struct block_device *bdev,
--				 const struct blk_crypto_config *cfg)
--{
--	if (IS_ENABLED(CONFIG_BLK_INLINE_ENCRYPTION_FALLBACK) &&
--	    cfg->key_type == BLK_CRYPTO_KEY_TYPE_RAW)
--		return true;
--	return blk_crypto_config_supported_natively(bdev, cfg);
--}
--
- /**
-  * blk_crypto_start_using_key() - Start using a blk_crypto_key on a device
-  * @bdev: block device to operate on
-diff --git a/include/linux/blk-crypto.h b/include/linux/blk-crypto.h
-index 5f40821f99cd..938ff536838c 100644
---- a/include/linux/blk-crypto.h
-+++ b/include/linux/blk-crypto.h
-@@ -171,8 +171,6 @@ void blk_crypto_evict_key(struct block_device *bdev,
- 
- bool blk_crypto_config_supported_natively(struct block_device *bdev,
- 					  const struct blk_crypto_config *cfg);
--bool blk_crypto_config_supported(struct block_device *bdev,
--				 const struct blk_crypto_config *cfg);
- 
- int blk_crypto_derive_sw_secret(struct block_device *bdev,
- 				const u8 *eph_key, size_t eph_key_size,
 -- 
 2.55.0
 
