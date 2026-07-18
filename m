@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CAA7AC4451B
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 18 Jul 2026 21:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ACDE9C4450A
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 18 Jul 2026 21:49:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=gat/ISr1odmWgt7Vkg2CJ22vzZCtCK3hbkdzeFQyRkk=; b=ZMyhXf7qYAyPryL8C54FSAYt9s
-	N4OycrMAgY2LhWk34kgDoIbpQM23lDAvd2OzUr4YZGEjaEmoargWr3PtaCy2y0RXRjC0Iv5/8iUjt
-	SkBxJz+UQlIypw2w3sPvu9Ei/uuMrOMQHT7K+oo+n1ZTSi1i3nKf/eYnLmw9PDzeeB0Y=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=sVvLX7TGH4yBE+HmkIGCFX8g/5Q3JpnyO4ffWHCWMHA=; b=FVsLDciITTthCgw++Ag+UpjrxK
+	idhlpIQLioFd01HnT4oU8nzFQ7LPAet8L8ubySnnqw8V5PtqYUH2Fb+/wdx+dfDuiONvDEuPIcYh6
+	N8BbTbHD4FMVCLMeK2WQe0aCKP8s8KbSRsqRr03+UKL7diMsWo0WN5AfzmevF+Igzwjg=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wlCuH-00081P-N9;
-	Sat, 18 Jul 2026 21:49:14 +0000
+	id 1wlCuK-0005re-9m;
+	Sat, 18 Jul 2026 21:49:16 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wlCuF-00081H-Ql
+ (envelope-from <ebiggers@kernel.org>) id 1wlCuI-0005rX-A5
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 18 Jul 2026 21:49:12 +0000
+ Sat, 18 Jul 2026 21:49:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=51BZI0czokw254bwWkQ+Q7dU3NsJmPHSH27DSUDwsvQ=; b=NtUon43TeYMVr8XeqCuMNrlWoM
- u8PbRQH1B+pKmJhq92TYQJnkJukbrPmMkhozX+3oBH1wyq1dzFi9sC4vpFUI9X7T3WVG3tEzmuA0O
- y5JARkvBAPexA0lNLpdksrwN5v5L6EDEIhDtmw7pEmhlBKMw0uX1TCWOHeOXNVzVHmic=;
+ bh=2xDXV67Vek3YVUUcSTKyTdZEU/LcZVKunALSMqoxvdE=; b=XLYn09rJmjLxLl++D8TKpnOE6q
+ tjJrwaR6LCNGhvgdjGbsBKiNB0apTMNMgNusX48s2ddA2+R8SySG7Ho3/fHmdhchaP7cAZkS6BHnS
+ 3f8sja3+l6rd44qwEDZTjbcD+BdeekZT/+7rA4CrigMoJ9Bn/0z4zPhzeHxoYfrA7r1s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=51BZI0czokw254bwWkQ+Q7dU3NsJmPHSH27DSUDwsvQ=; b=eqcXP2MIC/kjQQQ8lS+SguxreP
- sW3864AitoWFvXLWbGiUGRG7anQKzCf5q7AHcYOY3nyYu/GlPBBLGr83TkSa3/b+nEmr7IgSPIcCQ
- ILepRkSDRqidB6DYONrbmVSJAHr1WrNZTrLds22bBpbnu/1ReavMgNOmmF4sL0jYXjXE=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=2xDXV67Vek3YVUUcSTKyTdZEU/LcZVKunALSMqoxvdE=; b=OtxPLbvD42mFC3ZMnL+Qq24DVf
+ 35B6lN5qx8okFE/hUHr3ZqN0YDiHX3zLv6GlDdtT7+g+ssVKWcrTDnie8CJ/ACtt4KA2alrXSi3uU
+ VUxWJ991IJsSK6J92bN8tZnJMq7iXMECmwcEFFni1VKze/OwUjlcktbmCcXS7CaLMktk=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wlCuF-0003Vr-LB for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 18 Jul 2026 21:49:12 +0000
+ id 1wlCuH-0003Vx-So for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 18 Jul 2026 21:49:14 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 02C3C60008
+ by sea.source.kernel.org (Postfix) with ESMTP id 9B831418A1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 18 Jul 2026 21:49:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E91671F000E9;
- Sat, 18 Jul 2026 21:49:04 +0000 (UTC)
+ Sat, 18 Jul 2026 21:49:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DAC61F00A3D;
+ Sat, 18 Jul 2026 21:49:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784411345;
- bh=51BZI0czokw254bwWkQ+Q7dU3NsJmPHSH27DSUDwsvQ=;
+ s=k20260515; t=1784411343;
+ bh=2xDXV67Vek3YVUUcSTKyTdZEU/LcZVKunALSMqoxvdE=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=k5+0M4B1y7CJshMruk8auUvrezpIIGRwRHFUoaRPzCxWdOsoaktzhBM2fkqkvY7p4
- CPMlD4KZZjJYDjso3fQ1BXPMb0PLfzqbNKqd26ung8QygO5ZgwJqMJE+eIlb5c8ycP
- oy9XfDo5PX6jFfw4IenDm/uYmxZG1qW/ofrl9vw1ss297L1QrKh/Eg0Jh6R/3oXIuo
- qkWVu5tLxAb4q8mzmHbrtQT+9ovcOKCbbxdF3m6Bdx3gUtZaD8KuL2wNQ5K46HYg0f
- uRGSHGxwClG5xAyK7ktJbo1/MMqeMdDBAuN3JaAkSTzUhUZIwcAXlh5xIARPvtokdg
- JoyONc5c0jo9w==
+ b=nOz1PA5te72VepSoLCsCgOIbaXHv1S9jkM7enCiZVtrGkDI06SxwPF+NRIlMz+zXf
+ XqcdOuzdr6TkQqPoSyR8WAST99xtoszV1NU0Us4Rh80Zh+KKRl4G7bg5E6h/EO4Frk
+ cH1dzwGgWOBCrJlIdO5IzOWJP+THsDFVSIvpYsMR/xEhfXtPg/O64nzmsxKnF43ZjQ
+ Sf7novlrXnT70NJtgFNufVftrSH0iRW3lkTCGd8Ek+nlL6iYm44Eqf4KoVPDt1qiIO
+ 9RgbkY6OmnPHAZq708SrxtDVdE/me/C/LDyL47ij2ekw11bMowTAVWTgUD8rJpYGKE
+ h5gXHIkI6QevA==
 To: linux-fscrypt@vger.kernel.org
-Date: Sat, 18 Jul 2026 14:46:52 -0700
-Message-ID: <20260718214655.63186-4-ebiggers@kernel.org>
+Date: Sat, 18 Jul 2026 14:46:50 -0700
+Message-ID: <20260718214655.63186-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260718214655.63186-1-ebiggers@kernel.org>
 References: <20260718214655.63186-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wlCuF-0003Vr-LB
-Subject: [f2fs-dev] [PATCH 3/6] fscrypt: Remove unused function
- fscrypt_finalize_bounce_page()
+X-Headers-End: 1wlCuH-0003Vx-So
+Subject: [f2fs-dev] [PATCH 1/6] fs: Update outdated comment for
+ SB_INLINECRYPT
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,33 +97,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-fscrypt_finalize_bounce_page() is no longer called, so remove it.
+Update the comment for SB_INLINECRYPT to match the latest code, where
+SB_INLINECRYPT now controls whether blk-crypto uses inline encryption
+hardware rather than whether blk-crypto is used.
 
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- include/linux/fscrypt.h | 11 -----------
- 1 file changed, 11 deletions(-)
+ include/linux/fs/super_types.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 52ff014aeae6..42ffd66a2491 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -1057,15 +1057,4 @@ static inline int fscrypt_encrypt_symlink(struct inode *inode,
- 	return 0;
- }
- 
--/* If *pagep is a bounce page, free it and set *pagep to the pagecache page */
--static inline void fscrypt_finalize_bounce_page(struct page **pagep)
--{
--	struct page *page = *pagep;
--
--	if (fscrypt_is_bounce_page(page)) {
--		*pagep = fscrypt_pagecache_page(page);
--		fscrypt_free_bounce_page(page);
--	}
--}
--
- #endif	/* _LINUX_FSCRYPT_H */
+diff --git a/include/linux/fs/super_types.h b/include/linux/fs/super_types.h
+index ef7941e9dc79..3bdd7f7fb9e5 100644
+--- a/include/linux/fs/super_types.h
++++ b/include/linux/fs/super_types.h
+@@ -300,7 +300,7 @@ struct super_block {
+ #define SB_NODIRATIME   BIT(11)	/* Do not update directory access times */
+ #define SB_SILENT       BIT(15)
+ #define SB_POSIXACL     BIT(16)	/* Supports POSIX ACLs */
+-#define SB_INLINECRYPT  BIT(17)	/* Use blk-crypto for encrypted files */
++#define SB_INLINECRYPT  BIT(17)	/* Use inline crypto hardware if available */
+ #define SB_KERNMOUNT    BIT(22)	/* this is a kern_mount call */
+ #define SB_I_VERSION    BIT(23)	/* Update inode I_version field */
+ #define SB_LAZYTIME     BIT(25)	/* Update the on-disk [acm]times lazily */
 -- 
 2.55.0
 
