@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 51F53C4450A
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 19 Jul 2026 07:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7FA09C4450A
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 19 Jul 2026 07:21:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Jdi+1UGOMdKGP7ntm6VLM5l6s72Xyx2wW5SeKFfDzAU=; b=d88SI/vPa4m1/6Gbo0tKn8Bi/r
-	rjArgwTYxzr0frId3evGQWyWLTMUhdiLBv5wjt9kHlvt2HKnEAD99fSUPfCGBpF5OooWD5xgnLsWm
-	r2ZYgqSrv/vCAVVj36PgwEBZHi/tgZtVyutEa0IAwkKMjB2GO/U1mNGlV04R/Ek4NxFc=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=o8fR2rlp+iqKIjjzR8ZxHeET0T1C2l8Td+WcwweUHn0=; b=WlIC1vqI7dkl5sIstnjg3PR189
+	wG4TU+/kmXpUgRsBCwYWJYyOWs9fYabvmT7QXLeGv/s2pnVa/gg52WtMljEHkaXiSVpcPxH9TdtMM
+	XQWJn6+1QnycK8ZXfRo93zrvEZQsoS7L+23gcNVdDDTZnq+7SSPN0AelfgvAM1y+SRDk=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wlLme-0001lM-9q;
-	Sun, 19 Jul 2026 07:17:57 +0000
+	id 1wlLqH-0007pR-E2;
+	Sun, 19 Jul 2026 07:21:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wlLmc-0001lC-MJ
+ (envelope-from <chao@kernel.org>) id 1wlLqF-0007pK-Cz
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 19 Jul 2026 07:17:55 +0000
+ Sun, 19 Jul 2026 07:21:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ov08yvGtWw3dxwliGz6MHO4uj0XtDIs8Kop7RqOjyE0=; b=PHmec3rNnJATGftwRiihsISlUC
- BLpiA5TlJSPm4wDphA/5ESXq5qa+Iuo6EkIyzLvUEv9dM1qKgCWZLYnMRTYIN7PTOLx/qoOK5rF26
- 24jWc0RsebNRNWiE/DyDWLL+7oUvSA7FGUg39s1psKa6EKabSmBMkKmwtPGh75Nae29g=;
+ bh=9jIKAlXv/4RICULVFLnh1Fr9bNKFdUEweKxXxJ3WsFE=; b=dUfu374acD4wDY2/g0gly4o0x2
+ jsfmCuP/kaAYke9OtpNuxPuob9wsb6mwK7GitheIfuog1RSn3T7uMTfz9NRDfFRClmq6GlyJcstnN
+ U529kxWi4cwWOMta30Q5e5IuvPf5OlQrcdRMLCOyvIM+/fpWIW3L+ru6Vd11vQH+Tkbo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ov08yvGtWw3dxwliGz6MHO4uj0XtDIs8Kop7RqOjyE0=; b=gRBPDnuBJpM/BrESvnHAa2YhAy
- l1+C+chXgM0l2jC/EbZ+afDUKAFHx9V57wYlFGLGQfKBqPUA5lbxfeHwwnea78RgZJIqRjOddgbH6
- 7fD1WGyTVtdEc562bvTQVwUBcI/tgnV/40IyPhkQ5S2iy3tWmqihlPUrYZUWt0MDmcrA=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=9jIKAlXv/4RICULVFLnh1Fr9bNKFdUEweKxXxJ3WsFE=; b=BMdV7bHsqA8/W6RMuJs5PVZzEj
+ rVgD9tZUK7gT0EC6ACyaXpHAS1KFBHfViiE+IGSjYWe6jSEDw8UovbTGaTUNhNxkWlbUjCwEFzNao
+ B4XgwHQdXXR4IIThmcNq1XHXlO/rCP1+kdhioUxQ4IcjdIgXKa1TYuMYLWxSZg8TjbDw=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wlLmd-0005c7-05 for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 19 Jul 2026 07:17:55 +0000
+ id 1wlLqC-0005l6-HC for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 19 Jul 2026 07:21:36 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 5BFCB6001A;
- Sun, 19 Jul 2026 07:17:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B9AC1F00A3A;
- Sun, 19 Jul 2026 07:17:47 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 3443740AC0;
+ Sun, 19 Jul 2026 07:21:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3E9B1F000E9;
+ Sun, 19 Jul 2026 07:21:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784445468;
- bh=ov08yvGtWw3dxwliGz6MHO4uj0XtDIs8Kop7RqOjyE0=;
+ s=k20260515; t=1784445691;
+ bh=9jIKAlXv/4RICULVFLnh1Fr9bNKFdUEweKxXxJ3WsFE=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=P7KfFtFEi1mBVAs5V7fYN5lMRn1Csg1W4ByemGDsGQ3b8p4uEvKIrXuH2+ZI0BJQ1
- zlxspdjz0X8m2tGf/n8o7ve1IYfleKpNiPMNmqX5s71CjpwN0WjT5DJ2vY4qa+6ngu
- 5NSCdywkB5ltGZDzJSEGLD6WEFEekINO3+v5/QBsOIezag/Y44IJMWWTAE0w1XkR32
- 0tG9maf1mqKvzc+H7XV5tpnGqFFIO+wvokQc/vyUkzPd908vn22K7oWE3Veu+3+cWm
- k+XlwALBn5ySAGfG3w+9r62YWsRNfgrWt4eHdQT///8l4tj5fp3tMSL3u2WCtWYRlN
- 1G2oXbHg9LoRg==
-Message-ID: <8f354c53-18d9-4cf2-8ca6-e7476210c171@kernel.org>
-Date: Sun, 19 Jul 2026 15:17:45 +0800
+ b=R5ssUMUUeI78sn/WvsFCuyiMnBhNrYWTCD5rlCpQmUHYvES3jAhxZIjcHMyhGGLL8
+ KwtlTHyTbv44xXM2zMqBoe6mEI0//1Ec14F7RpQEn9RYRRfIkgcSOeKBK4dEBkKXbF
+ hYn19owUNnG3vB/6HzK2q2M++Xd9BA5PamtNVnZb/40S+GCo0tK+D3Kv78nYaW6PNj
+ bgjSiIZf6C3VZvJ1Lg8O3yJp12vosf1uU3buJ9Il044XnvmHK1wF4k1TRT5vgX875v
+ h8UhGrqATz+slqv4bVwc2zsgxc5xcrFOmKCCwBqwFsN+5STXE+5HxrlfU0arMmgyQu
+ XdBj/N26CoSzg==
+Message-ID: <c9081653-4295-4605-b543-ee84000b1ba4@kernel.org>
+Date: Sun, 19 Jul 2026 15:21:27 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Guanghui Yang <3497809730@qq.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <tencent_E3A22766836A9AE740D1CEF328C4DB8D0805@qq.com>
+References: <tencent_FA4515CFD8902EB74708A91807AA001E3507@qq.com>
 Content-Language: en-US
-In-Reply-To: <tencent_E3A22766836A9AE740D1CEF328C4DB8D0805@qq.com>
-X-Headers-End: 1wlLmd-0005c7-05
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix dentry folio leak in find_in_level
+In-Reply-To: <tencent_FA4515CFD8902EB74708A91807AA001E3507@qq.com>
+X-Headers-End: 1wlLqC-0005l6-HC
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix ifolio leak in
+ f2fs_move_inline_dirents
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,23 +94,47 @@ Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 7/13/26 14:36, Guanghui Yang wrote:
-> find_in_level() gets a dentry folio with f2fs_find_data_folio() before
-> calling find_in_block().  If find_in_block() returns an error, the
-> function stores the error in res_folio and breaks out of the loop without
-> dropping the dentry folio.
+On 7/13/26 14:40, Guanghui Yang wrote:
+> f2fs_move_inline_dirents() documents that the caller grabs ifolio, and
+> that the function should release it on any error.
 > 
-> This leaks the folio reference on the find_in_block() error path.  Drop
-> the dentry folio before returning the error to the caller.
+> The f2fs_grab_cache_folio() failure path already drops ifolio, but the
+> f2fs_reserve_block() failure path only drops the newly grabbed folio at
+> the shared out label.  If f2fs_reserve_block() fails before clearing
+> dn.inode_folio, the caller's ifolio reference is left behind.
 > 
-
-Need fixes and Cc stable lines.
-
+> Release ifolio on this error path when dn.inode_folio is still set.
+> 
 > Signed-off-by: Guanghui Yang <3497809730@qq.com>
+> ---
+>   fs/f2fs/inline.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> index e2f7bedf1552..dea4ab957de8 100644
+> --- a/fs/f2fs/inline.c
+> +++ b/fs/f2fs/inline.c
+> @@ -427,8 +427,11 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct folio *ifolio,
+>   
+>   	set_new_dnode(&dn, dir, ifolio, NULL, 0);
+>   	err = f2fs_reserve_block(&dn, 0);
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+f2fs_reserve_block() can handle the error case in itself?
 
 Thanks,
+
+> -	if (err)
+> +	if (err) {
+> +		if (dn.inode_folio)
+> +			f2fs_folio_put(ifolio, true);
+>   		goto out;
+> +	}
+>   
+>   	if (unlikely(dn.data_blkaddr != NEW_ADDR)) {
+>   		f2fs_put_dnode(&dn);
+> 
+> base-commit: a13c140cc289c0b7b3770bce5b3ad42ab35074aa
+
 
 
 _______________________________________________
