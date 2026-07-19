@@ -4,78 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1C358C44524
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 18 Jul 2026 21:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 48220C4450A
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 19 Jul 2026 05:59:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=04Br0rxuCKyL/5S0oTHRuTIBqlLF4eknG1V+zSxO9Wk=; b=fq/FVDdWenYlDeCIiEbKvAlSJn
-	Y47NbWohnObDCsji9G+oXbsb4a7fYUWz2PrwQxPE2NTClVf/DlOtpEk4rjQSPHHehrYGBYEFQElyb
-	ZtRcv++zh90Ba7Efnr3XaNLFynbXV58jkbHOZs56pGgLgbsDk0X9Rw52Cr3bPpPAt51U=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=lbUMgH5RQCgpK6qkha7QtYJMtgsPfKqAWUyJ66W34Pk=; b=a34SN21e7VjX22QSBkr2RjSYmj
+	NEa20qotXxynPwiPemHLcp/f1HtYTinC34QHDvojDfW4I7fQVyJV5xaps8+S77ZzH6ggkDIejBNAE
+	N2QZOKmXwyK9eF7Z9yjKIYWPf36+lhiI828KGgINwVdBDqChtMeByqVIjFW3c9xFVOFc=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wlCuP-0005sG-Lk;
-	Sat, 18 Jul 2026 21:49:21 +0000
+	id 1wlKYK-0000LK-K0;
+	Sun, 19 Jul 2026 05:59:05 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wlCuO-0005s8-NM
+ (envelope-from <ebiggers@kernel.org>) id 1wlKYJ-0000LE-6p
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 18 Jul 2026 21:49:20 +0000
+ Sun, 19 Jul 2026 05:59:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0gESiSJCAMF2nF6DvOYmrqypPXEEEvUEZD60a26iDS0=; b=RwKzly9zB4HqQE5ho4qMyLqtqs
- MUTVUh/BAZXIVkNWoKtFvcmTgsoelQngub4xSgWXkLZCDIX4h7UAB+ShYA/Dc/6+x3INwMOJwmnHQ
- Vt2ixCIYEIugAY23tq8h7v3GOhsWTFgSdX9k4+gxXxtrYVgptW99tB6Bff9PsruRbcIs=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=0gESiSJCAMF2nF6DvOYmrqypPXEEEvUEZD60a26iDS0=; b=TSDpXDth2f5KvuenScwkCGBQqm
- BDn7YECeNgtNdVJll5BNkNqhe3Xf7dXC8X+5Ji51HaZAQ6YF89wxp8rFKWrwwznzPciSUmqUBmsUj
- U5aVTN5Wrh4TkjAHKv0RIybQDhBw3bWNu7kOchDZwp1LW8GddeRt5WZTnTYySWMRiFA8=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=iAXVXzJpig6dahM628o/vwK/IOv+3gB72WFYl2PMQQQ=; b=YNxYilJiv9cDInjBud0111sDQy
+ WK+jQLMD2rZW79AruZOKOw+oW5yry+5cYkUCnRsdrsmhP8XtDgqtGrSgthPFcArCr7buQBmiavRoQ
+ yCzd4VaAE4ZD+K7gYcWVjmLGecQftmonJqd8QOw4CsNuoe/tomhvdDu8lINMzwL3xb5I=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=iAXVXzJpig6dahM628o/vwK/IOv+3gB72WFYl2PMQQQ=; b=U
+ vpYcpNN8immTuFhPHsP8HZSvH8TaiXzRNuj4zF7FBsj22XZ7ryZAw6MfLubGwZwOOlzQ3q0qU99wf
+ PFiUCwaN+W143VUh4DHb58PQWyUinwOoXUOPKrZC8HALWlW9rVaKs0nAnuorAT18rVN2KLX6QxOIG
+ zE/FyP7c6HMXJjro=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wlCuO-0003WJ-7B for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 18 Jul 2026 21:49:20 +0000
+ id 1wlKYJ-0003nf-4N for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 19 Jul 2026 05:59:03 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id A2D4760018
+ by sea.source.kernel.org (Postfix) with ESMTP id B9A56418BA
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 18 Jul 2026 21:49:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A2561F00A3E;
- Sat, 18 Jul 2026 21:49:08 +0000 (UTC)
+ Sun, 19 Jul 2026 05:58:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7119E1F000E9;
+ Sun, 19 Jul 2026 05:58:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784411349;
- bh=0gESiSJCAMF2nF6DvOYmrqypPXEEEvUEZD60a26iDS0=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=BVtd71J2kLUxAd0N5bHGPILTOS3c1+n6T1M5mOBwIW6SdWiPcRncWpFHIx0b436s+
- pSQNwCQrgd9ZG0ciFXM4utybbl07BJ4GLQjeOOSS1eBd74D45gp0axnzoAfb3wAKPc
- zDNIc79Tlk7IyLdWa5bWxx7zuMVYpJxA3Rk3D1z/hlULVJo9zAMqhnk8uZyw0yy4/X
- uXp134DHz9C/K4J0nOX8y0K9ibwBK6ZhKtJmpe4b3IXpwumfKo/+hWj8E67c0Ocx4l
- xGbFXbJC4y9rV6M5r3EBnOsa/nzikQqdQFT2258BX5ZX4KwTLnk1fps4lV/Chj9wB3
- QH86kpdwUOFMQ==
+ s=k20260515; t=1784440732;
+ bh=iAXVXzJpig6dahM628o/vwK/IOv+3gB72WFYl2PMQQQ=;
+ h=From:To:Cc:Subject:Date;
+ b=Estb7Vk/3rxdlw0raTwIxe4PkBHn47CIaxwDRnJgNNhsmsn+3dcVDhjdrRddZEfeI
+ gpAMWL87rUNmwsBVoaJMAiPkmQjJLbWsWg2kk2GIaMtIHAXb8UBUDypf/TqnrPL3rg
+ UWJgK9pue0LUpLQKsmeeOQzQRr1LM2XZZJCkVP6TRq6v0qiOP021J3aJt8PsXuKXGL
+ UZbsKcaKZxrWKx/b5NRssFtx9lXjL5vkn1bQbcw6lRoJYbyfZd32iiQb5HCQTvRV/w
+ nBlaZEEQoGuxjPAduLThYxoUOFkrLNiEou1DooulSeq1EyYz1J2x2GapdYgAy7aRwY
+ 2Wio8behur0Kg==
 To: linux-fscrypt@vger.kernel.org
-Date: Sat, 18 Jul 2026 14:46:55 -0700
-Message-ID: <20260718214655.63186-7-ebiggers@kernel.org>
+Date: Sat, 18 Jul 2026 22:56:02 -0700
+Message-ID: <20260719055602.78828-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260718214655.63186-1-ebiggers@kernel.org>
-References: <20260718214655.63186-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wlCuO-0003WJ-7B
-Subject: [f2fs-dev] [PATCH 6/6] blk-crypto: Update docs for
- blk-crypto-fallback motivation
+X-Headers-End: 1wlKYJ-0003nf-4N
+Subject: [f2fs-dev] [PATCH] fscrypt: Avoid dynamic allocation in
+ fscrypt_get_devices()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,54 +88,259 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Eric Biggers via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-doc@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The "Objective" section of inline-encryption.rst suggests that
-blk-crypto-fallback is just for testing.  That's no longer accurate, so
-update it accordingly.  Also fix a typo later in the document.
+When a blk_crypto_key starts being used or is evicted, fs/crypto/ calls
+fscrypt_get_devices() to get the filesystem's list of block devices,
+then iterates over them and calls blk_crypto_config_supported(),
+blk_crypto_start_using_key(), or blk_crypto_evict_key() on each one.
 
+Currently, the block device pointers are placed in a dynamically
+allocated array.  This dynamic allocation is problematic because:
+
+- It can fail, especially at the fscrypt_destroy_inline_crypt_key() call
+  site when it's invoked for inode eviction under direct reclaim.
+
+- fscrypt_destroy_inline_crypt_key() doesn't handle the failure.  It
+  just zeroizes and frees the blk_crypto_key without calling
+  blk_crypto_evict_key().  That causes a use-after-free.
+
+For now, let's fix this in the straightforward and easily-backportable
+way by switching to an on-stack array.  Currently the fscrypt
+multi-device functionality is used only by f2fs, which has a hardcoded
+limit of 8 block devices.  An on-stack array works fine for that.
+
+(Of course, this solution won't scale up to large number of block
+devices.  For that we'd need a different solution, like moving the block
+device iteration into the filesystem.  Or in the case of btrfs, which
+will only support blk-crypto-fallback, we should make it just call
+blk-crypto-fallback directly, so the block devices won't be needed.)
+
+Fixes: 22e9947a4b2b ("fscrypt: stop holding extra request_queue references")
+Cc: stable@vger.kernel.org
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- Documentation/block/inline-encryption.rst | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ fs/crypto/inline_crypt.c | 57 ++++++++++++++--------------------------
+ fs/f2fs/super.c          | 25 ++++++++++--------
+ include/linux/fscrypt.h  | 18 +++++++------
+ 3 files changed, 44 insertions(+), 56 deletions(-)
 
-diff --git a/Documentation/block/inline-encryption.rst b/Documentation/block/inline-encryption.rst
-index 0052c7011b48..0df964507f76 100644
---- a/Documentation/block/inline-encryption.rst
-+++ b/Documentation/block/inline-encryption.rst
-@@ -37,12 +37,12 @@ initialization vector for each sector, and can be tested for correctness.
- Objective
- =========
+diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
+index 47324062fee51..66b9c9150fed6 100644
+--- a/fs/crypto/inline_crypt.c
++++ b/fs/crypto/inline_crypt.c
+@@ -22,22 +22,14 @@
  
--We want to support inline encryption in the kernel.  To make testing easier, we
--also want support for falling back to the kernel crypto API when actual inline
--encryption hardware is absent.  We also want inline encryption to work with
--layered devices like device-mapper and loopback (i.e. we want to be able to use
--the inline encryption hardware of the underlying devices if present, or else
--fall back to crypto API en/decryption).
-+We want to support inline encryption hardware in the kernel.  The API for using
-+such hardware should also support a fallback to the CPU, so that users only need
-+to use a single API and more of the code can be tested without actual hardware.
-+We also want inline encryption to work with layered devices like device-mapper
-+and loopback (i.e. we want to be able to use the inline encryption hardware of
-+the underlying devices if present, or else fall back to the CPU).
+ #include "fscrypt_private.h"
  
- Constraints and notes
- =====================
-@@ -295,7 +295,7 @@ hardware implementations might not implement both features together correctly,
- and disallow the combination for now. Whenever a device supports integrity, the
- kernel will pretend that the device does not support hardware inline encryption
- (by setting the blk_crypto_profile in the request_queue of the device to NULL).
--When the crypto API fallback is enabled, this means that all bios with and
-+When the crypto API fallback is enabled, this means that all bios with an
- encryption context will use the fallback, and IO will complete as usual.  When
- the fallback is disabled, a bio with an encryption context will be failed.
+-static struct block_device **fscrypt_get_devices(struct super_block *sb,
+-						 unsigned int *num_devs)
++static unsigned int
++fscrypt_get_devices(struct super_block *sb,
++		    struct block_device *devs[FSCRYPT_MAX_DEVICES])
+ {
+-	struct block_device **devs;
+-
+-	if (sb->s_cop->get_devices) {
+-		devs = sb->s_cop->get_devices(sb, num_devs);
+-		if (devs)
+-			return devs;
+-	}
+-	devs = kmalloc_obj(*devs);
+-	if (!devs)
+-		return ERR_PTR(-ENOMEM);
++	if (sb->s_cop->get_devices)
++		return sb->s_cop->get_devices(sb, devs);
+ 	devs[0] = sb->s_bdev;
+-	*num_devs = 1;
+-	return devs;
++	return 1;
+ }
  
+ static unsigned int fscrypt_get_dun_bytes(const struct fscrypt_inode_info *ci)
+@@ -96,7 +88,7 @@ int fscrypt_select_encryption_impl(struct fscrypt_inode_info *ci,
+ 	const struct inode *inode = ci->ci_inode;
+ 	struct super_block *sb = inode->i_sb;
+ 	struct blk_crypto_config crypto_cfg;
+-	struct block_device **devs;
++	struct block_device *devs[FSCRYPT_MAX_DEVICES];
+ 	unsigned int num_devs;
+ 	unsigned int i;
+ 
+@@ -135,20 +127,15 @@ int fscrypt_select_encryption_impl(struct fscrypt_inode_info *ci,
+ 	crypto_cfg.key_type = is_hw_wrapped_key ?
+ 		BLK_CRYPTO_KEY_TYPE_HW_WRAPPED : BLK_CRYPTO_KEY_TYPE_RAW;
+ 
+-	devs = fscrypt_get_devices(sb, &num_devs);
+-	if (IS_ERR(devs))
+-		return PTR_ERR(devs);
+-
++	num_devs = fscrypt_get_devices(sb, devs);
+ 	for (i = 0; i < num_devs; i++) {
+ 		if (!blk_crypto_config_supported(devs[i], &crypto_cfg))
+-			goto out_free_devs;
++			return 0;
+ 	}
+ 
+ 	fscrypt_log_blk_crypto_impl(ci->ci_mode, devs, num_devs, &crypto_cfg);
+ 
+ 	ci->ci_inlinecrypt = true;
+-out_free_devs:
+-	kfree(devs);
+ 
+ 	return 0;
+ }
+@@ -164,7 +151,7 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
+ 	enum blk_crypto_key_type key_type = is_hw_wrapped ?
+ 		BLK_CRYPTO_KEY_TYPE_HW_WRAPPED : BLK_CRYPTO_KEY_TYPE_RAW;
+ 	struct blk_crypto_key *blk_key;
+-	struct block_device **devs;
++	struct block_device *devs[FSCRYPT_MAX_DEVICES];
+ 	unsigned int num_devs;
+ 	unsigned int i;
+ 	int err;
+@@ -182,17 +169,12 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
+ 	}
+ 
+ 	/* Start using blk-crypto on all the filesystem's block devices. */
+-	devs = fscrypt_get_devices(sb, &num_devs);
+-	if (IS_ERR(devs)) {
+-		err = PTR_ERR(devs);
+-		goto fail;
+-	}
++	num_devs = fscrypt_get_devices(sb, devs);
+ 	for (i = 0; i < num_devs; i++) {
+ 		err = blk_crypto_start_using_key(devs[i], blk_key);
+ 		if (err)
+ 			break;
+ 	}
+-	kfree(devs);
+ 	if (err) {
+ 		fscrypt_err(inode, "error %d starting to use blk-crypto", err);
+ 		goto fail;
+@@ -210,20 +192,21 @@ void fscrypt_destroy_inline_crypt_key(struct super_block *sb,
+ 				      struct fscrypt_prepared_key *prep_key)
+ {
+ 	struct blk_crypto_key *blk_key = prep_key->blk_key;
+-	struct block_device **devs;
++	struct block_device *devs[FSCRYPT_MAX_DEVICES];
+ 	unsigned int num_devs;
+ 	unsigned int i;
+ 
+ 	if (!blk_key)
+ 		return;
+ 
+-	/* Evict the key from all the filesystem's block devices. */
+-	devs = fscrypt_get_devices(sb, &num_devs);
+-	if (!IS_ERR(devs)) {
+-		for (i = 0; i < num_devs; i++)
+-			blk_crypto_evict_key(devs[i], blk_key);
+-		kfree(devs);
+-	}
++	/*
++	 * Evict the key from all the filesystem's block devices.
++	 * This *must* be done before the key is freed.
++	 */
++	num_devs = fscrypt_get_devices(sb, devs);
++	for (i = 0; i < num_devs; i++)
++		blk_crypto_evict_key(devs[i], blk_key);
++
+ 	kfree_sensitive(blk_key);
+ }
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 2b8d964111562..9760e4efeffec 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3749,24 +3749,27 @@ static bool f2fs_has_stable_inodes(struct super_block *sb)
+ 	return true;
+ }
+ 
+-static struct block_device **f2fs_get_devices(struct super_block *sb,
+-					      unsigned int *num_devs)
++static unsigned int
++f2fs_get_devices(struct super_block *sb,
++		 struct block_device *devs[FSCRYPT_MAX_DEVICES])
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+-	struct block_device **devs;
++	int ndevs;
+ 	int i;
+ 
+-	if (!f2fs_is_multi_device(sbi))
+-		return NULL;
++	static_assert(MAX_DEVICES <= FSCRYPT_MAX_DEVICES);
+ 
+-	devs = kmalloc_objs(*devs, sbi->s_ndevs);
+-	if (!devs)
+-		return ERR_PTR(-ENOMEM);
++	if (!f2fs_is_multi_device(sbi)) {
++		devs[0] = sb->s_bdev;
++		return 1;
++	}
++	ndevs = sbi->s_ndevs;
++	if (WARN_ON_ONCE(ndevs > FSCRYPT_MAX_DEVICES))
++		ndevs = FSCRYPT_MAX_DEVICES;
+ 
+-	for (i = 0; i < sbi->s_ndevs; i++)
++	for (i = 0; i < ndevs; i++)
+ 		devs[i] = FDEV(i).bdev;
+-	*num_devs = sbi->s_ndevs;
+-	return devs;
++	return ndevs;
+ }
+ 
+ static const struct fscrypt_operations f2fs_cryptops = {
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 54712ec61ffb7..f6b235cd72b45 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -57,6 +57,9 @@ struct fscrypt_name {
+ /* Maximum value for the third parameter of fscrypt_operations.set_context(). */
+ #define FSCRYPT_SET_CONTEXT_MAX_SIZE	40
+ 
++/* Maximum supported number of block devices per filesystem */
++#define FSCRYPT_MAX_DEVICES	8
++
+ #ifdef CONFIG_FS_ENCRYPTION
+ 
+ /* Crypto operations for filesystems */
+@@ -181,21 +184,20 @@ struct fscrypt_operations {
+ 	bool (*has_stable_inodes)(struct super_block *sb);
+ 
+ 	/*
+-	 * Return an array of pointers to the block devices to which the
+-	 * filesystem may write encrypted file contents, NULL if the filesystem
+-	 * only has a single such block device, or an ERR_PTR() on error.
++	 * Retrieve the list of block devices to which the filesystem may write
++	 * encrypted file contents.
+ 	 *
+-	 * On successful non-NULL return, *num_devs is set to the number of
+-	 * devices in the returned array.  The caller must free the returned
+-	 * array using kfree().
++	 * This writes the block_device pointers to @devs and returns the count
++	 * (between 1 and FSCRYPT_MAX_DEVICES inclusively).
+ 	 *
+ 	 * If the filesystem can use multiple block devices (other than block
+ 	 * devices that aren't used for encrypted file contents, such as
+ 	 * external journal devices), and wants to support inline encryption,
+ 	 * then it must implement this function.  Otherwise it's not needed.
+ 	 */
+-	struct block_device **(*get_devices)(struct super_block *sb,
+-					     unsigned int *num_devs);
++	unsigned int (*get_devices)(
++		struct super_block *sb,
++		struct block_device *devs[FSCRYPT_MAX_DEVICES]);
+ };
+ 
+ int fscrypt_d_revalidate(struct inode *dir, const struct qstr *name,
+
+base-commit: f2ec6312bf711369561bdcb22f8a63c0b118c479
 -- 
 2.55.0
 
