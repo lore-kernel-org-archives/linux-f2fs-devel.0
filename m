@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 487F8C44528
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jul 2026 09:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1B3AEC44525
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jul 2026 09:05:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=S4RnHRJr4JtXHMq1c6SKWvWOwngl+nYG1i2sFcboZHk=; b=kbmbH5cwq+l9ye8uPaU/J5p1C+
-	X2RJJYhxqEkE8OZmv18lUYGNe62SzC2vaznaT8268mmxLsSr1G6x78yJ9CarIdg2UIlTchTLL1BBc
-	dicMlojIDxvg5y5hf9RCzAnJBB7Tcmtajaka0LttBkp7o/9kTqkV1fzV/LNL198gUZrw=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=SNpuYk7aNDetsFAWr3j6Er60iDY41aE4liJmMvO7r0M=; b=IE0Eu7SKnuzdpY8mmEmY4m8P61
+	WTMKLReRID+6NDma3p0WJpVFcAB0ZaWB1MEF++srf5ZGKR1wH/OgQpZ5GtcJML2lKzsZdK9PiNG+1
+	Rn2GblQnVGip56+sFzeXAZoOYMe29Fc8TTErYw8RQx+brYksZhzu8k4nZIE8Q1R87IMg=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wljwD-0006go-9X;
-	Mon, 20 Jul 2026 09:05:26 +0000
+	id 1wljwC-0000Hx-2G;
+	Mon, 20 Jul 2026 09:05:24 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1wljwA-0006gU-Ip
+ (envelope-from <aalbersh@kernel.org>) id 1wljw9-0000HP-Gf
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 20 Jul 2026 09:05:23 +0000
+ Mon, 20 Jul 2026 09:05:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VICvrkHJ76P3bbcz027VoiEo6h6DpXS/23ki+zkvasE=; b=Ke94pikMgi5ph4xTWVyYLS6x42
- Vi85mvkdcbuKnD2RXWxekMqQWqiPXN3UduKWwLuE6gF8Dq7fvgjuHKW1PVrrgxT10v9K98auTMur6
- gOz8D7E7cDsJcI3bcXTheWtSKdT/19lYIgyQnp6qqHdX/yxSQvZhbx/emDWgbgVlUW0A=;
+ bh=fmzb25jhZDNq4cfG2tBZE1WMkvl/GQ14vrzOhert9WY=; b=czoUAfkWBNR8g1uwX72nc0Fcvp
+ RexDDlY+TiPQtUxjcMhBfJ/fDl7cGQRSiq2vy7Q/SNVhOpuGoid7a5PfBBEbcm+2qF3GtIL6XLyZQ
+ nK9wF0nKJntoj1JFJCDC/WyatVdt2n9pHP0XrN5YKo5qiD3OhJtZeKQ81pIZaZVvDVuY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VICvrkHJ76P3bbcz027VoiEo6h6DpXS/23ki+zkvasE=; b=EUqXDTzVUnpLeO3OZlarGo1CXG
- i3rP1ieZgoa2S7wvAUd1Vuv+NAYygRsReRFye3xE3jJJFdhZY7T7WMpDqQSqIlYjkY5wPlEtG3K+B
- NBPn31C8xxbUuj9sZg4LKIRbuHe5T0xa8a4UOZ4ItOKe2L8hbe9H4kdNZTh3Fj4RFy3w=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=fmzb25jhZDNq4cfG2tBZE1WMkvl/GQ14vrzOhert9WY=; b=Mup6btCvRTOGZqNeQvp4BF/W3D
+ 0d6XwOnWAuVA1+RyvsaqPOFRoALYfR3WL8J4wiC5Y/EdPApIA0lbGhZC2EWm+qnH8qRh3xilbgNZo
+ qb041HZb/SH9C0Z9rfJEKYsbFxqf0eTPw2S5TGXreYtpEnAs4kU0d1RRz0y9GPq0sAeA=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wljwA-000873-Qi for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 20 Jul 2026 09:05:23 +0000
+ id 1wljw9-00086z-8y for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 20 Jul 2026 09:05:22 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 89C0A43A64;
+ by tor.source.kernel.org (Postfix) with ESMTP id AFD92601D9;
+ Mon, 20 Jul 2026 09:05:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01DDD1F00A3A;
  Mon, 20 Jul 2026 09:05:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D19731F000E9;
- Mon, 20 Jul 2026 09:05:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784538312;
- bh=VICvrkHJ76P3bbcz027VoiEo6h6DpXS/23ki+zkvasE=;
+ s=k20260515; t=1784538315;
+ bh=fmzb25jhZDNq4cfG2tBZE1WMkvl/GQ14vrzOhert9WY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=AVW1dtxShDB7yvxNE2U1Xk8Tx8XDX8xkJi7Wvpt5y8Dstpsy50aKDpEI4+xRAReaj
- Z+fXJqPvkfF25zDXimvrFQK8mVX8oyxQEHnFa8JPyHRpdgMh57TlaMkSL3rAhNdh12
- XZHDp/EHkoDmWkE6dBcAZH9JRGX3sVJIfUbYCbZzwbkG4PR93JgCqWNWepe5piKDcm
- SG7nmtLxPdTHhOs0+D+KMdE66mu3BeLZgq59ast5siiF6P1zBwy/DRlsnCUExNeo/q
- kY/AM9aFxxVxAtdCBy3H6jea5mbvVgCmpVOScQxO+y8ZBIRFnl7kzFKsT4HSkwEqg/
- TlKuCh+znfTfw==
+ b=bZ1pRiVXQH7m0lMtKeVjtWUFhiy9gQ+id7Lk9deUWD1HT1fu/16I094RgyNr38bzu
+ qGhNLnU590aRYgMIkuO9MJ9Pp2rrRPkUP4ama2ohr9yNN/WAaVZzNx2O1R1+PbagW4
+ mtYD9H9/nrDil+NvmJ5wvyN25P1USZB+1mLfoHNw/ayfIxBbUP3Azn4l3P9+xr4ePU
+ tLZ+FpxMpcr5YqI53eZIctWTtAZIZ6hkO+Q1vizUEVuEc1mHCui9oglvCXVJS1bM8w
+ +Ha+JO2Jd9bSTSEAid/29IyhGGdwRR+m2NkJqGWD01nRJFMGLI+I5DP647ddwra87A
+ 0Dw82M05aDVqg==
 To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
  linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
-Date: Mon, 20 Jul 2026 11:03:34 +0200
-Message-ID: <20260720090410.3487990-7-aalbersh@kernel.org>
+Date: Mon, 20 Jul 2026 11:03:35 +0200
+Message-ID: <20260720090410.3487990-8-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260720090410.3487990-1-aalbersh@kernel.org>
 References: <20260720090410.3487990-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wljwA-000873-Qi
-Subject: [f2fs-dev] [PATCH v12 06/21] fsverity: don't allow setting DAX file
- attribute on fsverity files
+X-Headers-End: 1wljw9-00086z-8y
+Subject: [f2fs-dev] [PATCH v12 07/21] fs,
+ fsverity: remove check for fsverity being enabled in
+ setattr_prepare()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,31 +98,31 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-When fsverity is enabled on the file, with FS_IOC_ENABLE_VERITY ioctl(),
-it checks if file has DAX enabled and fails if that's true. However, the
-opposite case is not checked.
+The check that fs-verity is available in the kernel is not necessary
+here. Filesystems could have fsverity files even without fs-verity
+module, then truncate will succeed. Previously, this would return
+EOPNOTSUPP if verity is missing, but if it's not EPERM was returned
+anyway.
 
+Fixes: e9734653c523 ("fs,fsverity: reject size changes on fsverity files in setattr_prepare")
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 ---
- fs/file_attr.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/attr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/file_attr.c b/fs/file_attr.c
-index bfb00d256dd5..5424ec4e3949 100644
---- a/fs/file_attr.c
-+++ b/fs/file_attr.c
-@@ -246,6 +246,11 @@ static int fileattr_set_prepare(struct inode *inode,
- 	if (fa->fsx_cowextsize == 0)
- 		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
+diff --git a/fs/attr.c b/fs/attr.c
+index 4f437fabb7f0..71888ac903c2 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -176,7 +176,7 @@ int setattr_prepare(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		 * covered by the open-time check because sys_truncate() takes a
+ 		 * path, not an open file.
+ 		 */
+-		if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
++		if (IS_VERITY(inode))
+ 			return -EPERM;
  
-+	/* Can not enable DAX on fsverity file */
-+	if ((old_ma->fsx_xflags & FS_XFLAG_VERITY) &&
-+			fa->fsx_xflags & FS_XFLAG_DAX)
-+		return -EINVAL;
-+
- 	return 0;
- }
- 
+ 		error = inode_newsize_ok(inode, attr->ia_size);
 -- 
 2.54.0
 
