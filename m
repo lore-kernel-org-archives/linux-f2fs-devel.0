@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4D1B2C4451B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jul 2026 09:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CB03BC4451B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jul 2026 09:28:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Gtrazpx4cjFNnBN8ZO3d7/+4ziGxuIz0oJq/J85keHY=; b=Ib43/Y3q4Es6VUIsiTv2W7IlnY
-	YAdgAyOr5jlp++WhSPrc9g7vs2buGHGBhphfHjIjuB3DxfIKV6g++q4KrkiPvspAAZ4MmgBFmO4F2
-	Y/o271br2zRE3T7e50UZhHSK4WRmU5wodQor0p0A0a2h+R0HAbYtQI7ggE7OavjwD9LQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=e8qfyoSPyPfjE0jCCqLhRQvm/sqiAGHIjfAWqfboNlU=; b=jHMeK51DtVRA86/Ij7acRnR1ZT
+	hJ1GWx4kbWEtMuKRzHGIi9fRlzpXXKDcc4Q/3iezrqhG4ZXfBoZ0XCuZBAL99vrXQYdXllAOOwjW0
+	MFr6oce+IV84MRSfGiw1dX4TvaYXeGFZ1YhzI0BcKM2MJIv79NHIPaN1lA9pw3V4RBa4=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wlkGY-0002La-Q3;
-	Mon, 20 Jul 2026 09:26:27 +0000
+	id 1wlkIO-00014L-40;
+	Mon, 20 Jul 2026 09:28:17 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+e0905d82d93001400e43+8366+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1wlkGX-0002LK-6v for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 20 Jul 2026 09:26:26 +0000
+ id 1wlkIM-00014D-Dg for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 20 Jul 2026 09:28:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tiCx66AlGna+xBmrBs7eIX/6/nKY42n38/7bfdUQq3k=; b=jM/gLfhnucYa2CoL/XF+D9YjZF
- aC4saVoGGutpYcio3qiTn3V6QpxmHqz3eS3lTHuqUtCp4P84kaKw9ZZ1k3RkI2+0/6TpL5FaISyt+
- D/w03Bkc1yI0q9XxsFlWxmGN4Hm7qTjvKWZS+++dQBJF5pLMJExI1Fj6T4FmcizOLqRE=;
+ bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=eQMQcIXIHd3URJZ1YpU1Xc4Wub
+ AvcvTF+n+phbCRsd1Tq8Ysozc4mKYF+OF/sGdIVoOSxy6LI5UBhr8awVd1rbANmOrsh+c3p06dNVV
+ FLBqI9r12gx5Ob1VZub2sH5xquYP9v5J4N0xqtlZpnIE3USq9Rik1UcUU3RdKQQNoFOY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,41 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=tiCx66AlGna+xBmrBs7eIX/6/nKY42n38/7bfdUQq3k=; b=G8udu+nDAEEKKOiorPZRV47mI2
- cKqo0/Bi/4vFHUIqesPUD/JPfw93VE7a3Fyo4EaareAXaxu18IBLYuMmttYn2Y2zp6aHkZIFjHaJp
- T21UrGmVGeZ2NopR8+HtuK6B5dputaRQjB0mlDJQ3bGwcNslJ0ceXE1WufedI/9DgqcI=;
+ bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=fFsFKSUUlz8Yg1zg2wjOrkbpip
+ A2NvI3yTViYK/gebf0D8kjSUzG4S4NvUQYxIraT2PJOb5D2ZISsH94wxO+GD0lWIMesEWB5Sd2ukZ
+ l9hiLkXSwt2kPSH/NZIxYSLHVDw0QGCD8OvteEdtP/iAgLbABBF4gKBUvo+oIws1BMB0=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wlkGV-0000rF-9z for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 20 Jul 2026 09:26:25 +0000
+ id 1wlkIG-0000xY-0v for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 20 Jul 2026 09:28:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
  :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=tiCx66AlGna+xBmrBs7eIX/6/nKY42n38/7bfdUQq3k=; b=nxqhBiTGZK4biDel3/DKz1yQ7M
- b3hgqbOtQSwSED8adwzBwgMT1x4AXauQ7C6bipD8at2zj2eFKlGa0br3EaQWy4h5yGiudeWBUoX1/
- tu42xkd1LEd23DYg444Zw0dA8hQGc7eVe8Pe1L88l8j7PLibWXIwBwjOE+pDiYZvaUU6gbyasf5h6
- 31dTHduQIlu+K5R0nQemjDB1kidUhgxX1feQBVjjKKJAhcTtzvFMt1jRBDPcQx1lm55YEooFCzLHm
- WQlVnfrMHpT6kwdUokaA1tx1Moj4sAzoMwKrAPJiRbI+5GU8lowqGugHmKz4tBA98QlI5OPzUuYo6
- oZJepCYQ==;
+ bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=jRCHmPR4OkH/9bKuKrO+WuxEZc
+ g4USR9sRCQItSSArZ7S5UR5A2/NwP/iU1OQwgkDJCmXkt+d16x+8kzaUtmDXQquxqFtULp4SzGmMP
+ 1ieKiDKuA0Ssr/owKQJiQDxlRtH8EIz/r25xhANC19AMpuY5OcN7+jpOl06G7N5eXux7DpDEXmreI
+ Lgle4s7iG+45l6zm5B5kCtOWpyfnWEFkyzqCOgYxEL3KsGNv3ZV4K0OBsEyzO/YLqo4mxTvEkZgBN
+ qJEcAoW72p7CkhJj0v9PicqJjHwIx3WL2xWKFSFypb6IpRXjlufQCjFFMSr6dARUxu+7tFuThMwZx
+ jQwCAZJw==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.99.1 #2 (Red
- Hat Linux)) id 1wlkGL-00000006J6X-0XAL;
- Mon, 20 Jul 2026 09:26:13 +0000
-Date: Mon, 20 Jul 2026 02:26:13 -0700
+ Hat Linux)) id 1wlkIA-00000006Jfh-3TrC;
+ Mon, 20 Jul 2026 09:28:06 +0000
+Date: Mon, 20 Jul 2026 02:28:06 -0700
 From: Christoph Hellwig <hch@infradead.org>
 To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <al3ptX9UJDgCfj7j@infradead.org>
+Message-ID: <al3qJtv65Wjuuyp-@infradead.org>
 References: <20260718214655.63186-1-ebiggers@kernel.org>
- <20260718214655.63186-4-ebiggers@kernel.org>
+ <20260718214655.63186-5-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260718214655.63186-4-ebiggers@kernel.org>
+In-Reply-To: <20260718214655.63186-5-ebiggers@kernel.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1wlkGV-0000rF-9z
-Subject: Re: [f2fs-dev] [PATCH 3/6] fscrypt: Remove unused function
- fscrypt_finalize_bounce_page()
+X-Headers-End: 1wlkIG-0000xY-0v
+Subject: Re: [f2fs-dev] [PATCH 4/6] fscrypt: Update docs for data path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,9 +93,6 @@ Cc: linux-doc@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-
-On Sat, Jul 18, 2026 at 02:46:52PM -0700, Eric Biggers wrote:
-> fscrypt_finalize_bounce_page() is no longer called, so remove it.
 
 Looks good:
 
