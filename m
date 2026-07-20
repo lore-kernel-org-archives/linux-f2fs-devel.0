@@ -4,80 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8CBB3C44515
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jul 2026 08:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 89835C4451B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jul 2026 09:05:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=+h7B5dC5yxEItbQfelUfi9pfVkJDzln+7evaUakSp6Q=; b=guwfoCXJn/9t1M6bzY6tdChF1q
-	ts2I0u1+xf4G+OjR35VkxshgZLR3G0RrGHrxNBmAaVUanFH0gXhjYaP+TttPBUWCRgJcrFE1vTP9a
-	hnDzrnv624QVKiq5T4rLEmeDW6Hjvbp4kDXOuoAGQgesBIKwGlPcD2kbc6klsWEJ8Zo8=;
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=eBatrioos2NNhuN86FzAWnd2XUGGIpe9YQd5qsL6mRo=; b=J7/c+bS9+lg/CHcVM6rvI6ladm
+	AavftWXVHw/EVJzn4qtVj0Sydi+wHeurYRrGE3+jzj2yZNmocN3tUwPC9vEZ3zv1O5FoyFSe1Ay/q
+	no+fJykgizawnDzaAkCRSnXTr5DxSP2PwoQ248pHTBWHHwjw1zbI+Z9zmyI/5AWQp+PY=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wlizB-0005xr-Pa;
-	Mon, 20 Jul 2026 08:04:23 +0000
+	id 1wljwC-0008Or-OA;
+	Mon, 20 Jul 2026 09:05:22 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <BATV+e0905d82d93001400e43+8366+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1wliz3-0005tw-9W for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 20 Jul 2026 08:04:15 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <aalbersh@kernel.org>) id 1wljvu-0008Md-JJ
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 20 Jul 2026 09:05:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+k/S57ilndGjoJss1cqjmQ22UwAd2c+Gg+Fclh9PZOU=; b=O54GgtZeNUFc2+tQy3FHfEw//X
- wVDD8csAhq6K1DTdj7CA6q/BCnOc3Iayxea9P6XRPpgaHi9GiwvsDfUmc4B9XKKl9SQISmTLnP9rb
- E875UcDPSEi8L1IoOKrg0ee7okeKp9gE6A1g0u9QJHiF+3MLwK/RkJQXt7sFTMMFSkP4=;
+ bh=DLKRiRyzKQ3SHGS6qPdEtB2Y8TKgDvD/nkziuhY4NXk=; b=cQTY9lKbdbhHswWl5K/9MXSCsL
+ AaSyvTfYUsJk4Ydh00Y06MfqrELEzuPBc3bS6zVbh9w1tmKGy9K/0vGX9kPEftx9Kv5JoJ78KQZL+
+ vXuGtbp/S1ZpkieWx0YbP3BXvSJudneTDDunaKluhXzOj6onp6OLzxiEYRKKHr3Yxpf8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+k/S57ilndGjoJss1cqjmQ22UwAd2c+Gg+Fclh9PZOU=; b=QysoKRJyfaBuIQifH51S7gyqrp
- Sc2g3zxwcVrlg+LVCq8xYIkjfPi81LPIoxboZpg9iWG3FiAafAXWOIbWWx+CAwUvHzmblU+Qm6p2R
- jnaOfooDowY6pyEfqHIZ7EiEkAW/b86CV0BbVH3PyXkRmY9Bo7NA9fU0ptDmsIqU/q6Q=;
-Received: from bombadil.infradead.org ([198.137.202.133])
+ bh=DLKRiRyzKQ3SHGS6qPdEtB2Y8TKgDvD/nkziuhY4NXk=; b=g287m791dqbn1G4wgveoUKWG14
+ QBq9UVGNcrVqn5vEsyv8IDLQiV/buXOAhY7KvqsoglEdjPUsyKswzITbwomvimvAiGd+RcSGziJrf
+ BiSMXz4TafY0aAGUxYS75lgM39cUxR0JYNk8j5bxt5OU5ClNrv4t3UCWfGPs5Lggdr94=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wliyz-0001X0-UW for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 20 Jul 2026 08:04:14 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
- :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=+k/S57ilndGjoJss1cqjmQ22UwAd2c+Gg+Fclh9PZOU=; b=pjBU6g1bY/5CCKbkWnRO68c+lZ
- hN+mOASOwbENw9K3BviGH93pyvJIgn8pjfVKR5gDS2Sw8kVKSAw15MWDzUM1UsYVFOXB8lQOeKMT2
- QeMk9wl83lEG/h3aKcExIlga32UzGiy+8fqX9cWEpht1MfzZokqHdm0ZVpeknqkkpiPSe19/Fg/GY
- GMueV8iBvh8MA8z2N8be60rj5R1yInaoG81s2GIzNDzBZ+R/LcccReOLXP2yKXacrzZmYGTCH5+zM
- GYz00WY02oSpeSDqGHwN5YpBDq7pJunwUxTxDH4muBcZgPtfsWUNv74RNayKJIAKZR4ZeaBGykASu
- AQ3YyU8g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.99.1 #2 (Red
- Hat Linux)) id 1wliyp-000000069mR-0zhX;
- Mon, 20 Jul 2026 08:04:03 +0000
-Date: Mon, 20 Jul 2026 01:04:03 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Chao Yu <chao@kernel.org>
-Message-ID: <al3Wcz5pIujPdTrL@infradead.org>
-References: <20260622070438.1542638-1-jprusakowski@google.com>
- <ajuLORVplOvEXvnI@infradead.org> <akKd2IImO7bRjVV2@zlang-mailbox>
- <e7a57c5e-62de-401d-8e39-f7409f398a84@kernel.org>
+ id 1wljvq-00085g-Ot for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 20 Jul 2026 09:05:04 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id 7CBF843CDD;
+ Mon, 20 Jul 2026 09:04:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F04351F00A3A;
+ Mon, 20 Jul 2026 09:04:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1784538297;
+ bh=DLKRiRyzKQ3SHGS6qPdEtB2Y8TKgDvD/nkziuhY4NXk=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=dFDAmq/O751nHlfU/ysdhZmnBEWGVNmgKL/GJ0Hsmsgp6bGK0JW8eyw6HE4D71qt+
+ KX6NFjlIn4w7Z/kbfcrk8a+97KBN0dDhVXBrF0c0jH5AYgqn+yRtP9iomFIB1AiLFi
+ XDsLi5FRHMh/JGHyKUoUQ/DQzREaC047TUlHNQXJRqmIRiJ6hr7X/7pmJs56gf8ffJ
+ F9KSkf5dE0ni1nbEYf4oA0uKO/ZgWDyM5tkqqwXS2iV/T0R3OhUJJbueRwhr7GZ3hE
+ ZKg1fdUn+EjoVCQadALnHZ6K5hE8FbpZlneVpK8LG7TIAS6FTJMy7FWPdGyTEYRw5G
+ k36r96HzKlXgQ==
+To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
+Date: Mon, 20 Jul 2026 11:03:29 +0200
+Message-ID: <20260720090410.3487990-2-aalbersh@kernel.org>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260720090410.3487990-1-aalbersh@kernel.org>
+References: <20260720090410.3487990-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <e7a57c5e-62de-401d-8e39-f7409f398a84@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1wliyz-0001X0-UW
-Subject: Re: [f2fs-dev] [PATCH] generic/064: allow 50 extents on F2FS after
- fcollapse
+X-Headers-End: 1wljvq-00085g-Ot
+Subject: [f2fs-dev] [PATCH v12 01/21] fsverity: report validation errors
+ through fserror to fsnotify
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,26 +87,58 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>,
- jaegeuk@kernel.org
+From: Andrey Albershteyn via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
+Cc: Andrey Albershteyn <aalbersh@kernel.org>, djwong@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, hch@lst.de,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jun 30, 2026 at 08:09:19PM +0800, Chao Yu wrote:
-> 
-> Let me explain it briefly, this is because f2fs has only one copy of reverse
-> mapping table (aka SSA), for any checkpointed data, we can not modify SSA info
-> directly during remap, otherwise, after sudden power-cut, we will suffer
-> inconsistent issue in between reverse mapping table and mapping table. So, f2fs
-> choose to rewrite for any checkpointed data.
+Reported verification errors to fsnotify through recently added fserror
+interface.
 
-So looking at this explanation and the code, f2fs does not actually
-support COLLAPSE_RANGE at all, but emulates by doing a full data
-copy.  What is the point of this and lying to the user that it supports
-and operation that isn't actually supported as the intended metadata
-only swizzle?
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+---
+ fs/verity/verify.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/verity/verify.c b/fs/verity/verify.c
+index 4004a1d42875..db8c350234bb 100644
+--- a/fs/verity/verify.c
++++ b/fs/verity/verify.c
+@@ -9,6 +9,7 @@
+ 
+ #include <linux/bio.h>
+ #include <linux/export.h>
++#include <linux/fserror.h>
+ 
+ #define FS_VERITY_MAX_PENDING_BLOCKS 2
+ 
+@@ -205,6 +206,8 @@ static bool verify_data_block(struct fsverity_info *vi,
+ 		if (memchr_inv(dblock->data, 0, params->block_size)) {
+ 			fsverity_err(inode,
+ 				     "FILE CORRUPTED!  Data past EOF is not zeroed");
++			fserror_report_data_lost(inode, data_pos,
++						 params->block_size, GFP_NOFS);
+ 			return false;
+ 		}
+ 		return true;
+@@ -312,6 +315,7 @@ static bool verify_data_block(struct fsverity_info *vi,
+ 		data_pos, level - 1, params->hash_alg->name, hsize, want_hash,
+ 		params->hash_alg->name, hsize,
+ 		level == 0 ? dblock->real_hash : real_hash);
++	fserror_report_data_lost(inode, data_pos, params->block_size, GFP_NOFS);
+ error:
+ 	for (; level > 0; level--) {
+ 		kunmap_local(hblocks[level - 1].addr);
+-- 
+2.54.0
 
 
 
