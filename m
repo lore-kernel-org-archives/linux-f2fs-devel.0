@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 64BBFC4452D
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2026 22:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 58CEEC4452B
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2026 22:37:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=5qkHNqYn4fNZS/d1jG3Lt9U/EYqWNZN0b1RTC86LSGQ=; b=MkET2hlQlLJ+GmQOfL431K4cr+
-	5sq/6GxqbXpKQvsD2BZHZ983ya2+xGdw+3v8XcAlN0IS/02uOfYJm93rzf9Hz+RGsLEn4nrTqY7Vl
-	yqkkizDtW5l53lMmFRnkqD0UubyvXP0fKWBBBTeazmwwIEtPt4Uvpq3DK/aZPdbgkdKE=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=CRO0tG/XcFHZnWpX7tBhPfc21j7fCHMrdI+MgUH8ZUk=; b=Ou3wByLfhHs6DZXwRN/bGYTuud
+	+8Xen0qzC0cWEsFbGDBbfD2DFo+vhUqbq958LciYQp+V1IRBen/SBmdOkFMNnILi7YUU1117Z37Tq
+	xmxiqUDmUcpJnGgEitmC9eG/ulFMmuUsQkVhob/Z5fWkczL7hgdIo47lcJ8UCv3541TM=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wmJ5C-0001xO-Gv;
-	Tue, 21 Jul 2026 22:37:03 +0000
+	id 1wmJ62-0000v1-HH;
+	Tue, 21 Jul 2026 22:37:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <asj@kernel.org>) id 1wmJ5A-0001x8-Td
+ (envelope-from <asj@kernel.org>) id 1wmJ5d-0000ub-Gl
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 21 Jul 2026 22:37:01 +0000
+ Tue, 21 Jul 2026 22:37:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NlNXfl9pPHGUuipgj86pe3+c/OOyL/s0HmQJZn9uCa8=; b=ENahHvrKlHep5VfYtpJjK+qe7+
- I5uEoziLEB8mYjqX62JUzU4AcVEFaUFUljWeKy45lho6vvm8GLE4+BAVmkmd68HkQg32OC4seKAdh
- gbskAT5qvCOSE6j98WeoFF9SXsw0CweNn8t+ZIbBIQ4mbpQFZhwXGux7+7rB8kNTe0jc=;
+ bh=JQPOE4KI8wVROAG2s7qaeds5Wqqg4NjMeGk/K5p65kk=; b=eT6ajnlCnH6xzR9Ol0TlDlcVoY
+ q6m+/xl+uHHYisz/AWshBTO8OrH7mNYqe+/U5HSsEIUg4ZXB+1Rjb/L1RVfe7vn1aHaHQn1aTXRSV
+ 8GmClYb8q4r3HidR2uIAw8BBN8PV4QJ3iScb0WiFrrmzpAIEg88O1ZoKgdDZ5Uz6fLWI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:
@@ -42,42 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=NlNXfl9pPHGUuipgj86pe3+c/OOyL/s0HmQJZn9uCa8=; b=lXhHu7J3HYhXhO3xUZs1wD/Hlw
- j2FbFoCTsF8QQC/G16yqhUHD0ONy1eRCwWhRCI08gltN6oa3SBVINN0GLCuSLsq/F9eWFn51ERzO8
- BLVhhuWeYB6ymUQhvjYjfYtmLhuVexfDc4sytg1lFFTsgx9aJKIpGLomvUaUrCU76ook=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=JQPOE4KI8wVROAG2s7qaeds5Wqqg4NjMeGk/K5p65kk=; b=QKTc8+akJjWq7Ttu7a7uPDD4Yb
+ Nbv13FO5Y3bb9Hm2GN84LMaE3WtAzXjDpqsKBGjuabas8FOiOZARHNkHGMsRoD3QoHuDkIpt/s9Ev
+ tyS8C+6pYl+Ny8IqmKy/bxM5aD7iINU6q82h5+16AqOyHnWOI0/YLbvcosRTi2anF98E=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wmJ5B-0003js-4Y for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 21 Jul 2026 22:37:01 +0000
+ id 1wmJ5a-0003kj-L4 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 21 Jul 2026 22:37:26 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 3CCA460A77;
- Tue, 21 Jul 2026 22:36:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 368901F00A3D;
- Tue, 21 Jul 2026 22:36:48 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 4149E436C0;
+ Tue, 21 Jul 2026 22:37:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 539871F00A3A;
+ Tue, 21 Jul 2026 22:37:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784673409;
- bh=NlNXfl9pPHGUuipgj86pe3+c/OOyL/s0HmQJZn9uCa8=;
+ s=k20260515; t=1784673436;
+ bh=JQPOE4KI8wVROAG2s7qaeds5Wqqg4NjMeGk/K5p65kk=;
  h=Date:From:Subject:To:Cc:References:In-Reply-To;
- b=HlMjBZdd0CFMwr3Juf0LblZKfANuFFKKmyJSbr99NSr1UKj7Dm1WBsfTava8rJo1B
- s30G4phlGrnbyD1USMggWxtinuCqZEmD7S13kTHqhT4M9JJBSZzmwqudWR74ZAUzzy
- NoX8NIVWzxorgtjuygClmL5lv5OzPDikN66Fucg6v+b7uSx8ToREc33AKjZwoKRZ3I
- /D1ORajl00iGPQHsgoMPjmJQP4P1646KgOFB3VfgFO1Ik995F6S1pCzqh3hmk3ERZ2
- NFzaR8/4RKESlpKJauAzuxXgmo2a3+UEQW5cYDd0JXdusP6PfDx27Kdu+AUpEIsyUB
- r9SBXlKAzMo2g==
-Message-ID: <1fb99189-bd69-4618-bd20-f64205159b1b@kernel.org>
-Date: Wed, 22 Jul 2026 06:36:47 +0800
+ b=TinKzZCFRr9NTrvjDhe1+NnsJ01Q9ajgZbV1ni8udnG2s3CCgVqlWizI+9H6XvuaE
+ sgio1F6KVFUN+nWHV2D3fxosfQ6S13eMyD84/A/flsXxgjCjrtzcDqu/5j6ntlzoym
+ 6wf16ahuV/3FUNr0L0XeM2s6OJDk7opflBItl3oSLAf41rkmcSIu/vN0s2khHDtdyD
+ d/4YHGsFaCl0Qu+ITNYK/+FtWyNSL7r+/Q0n+V4qSlAQHEi0iJ/yFN1+kDIzzoecaF
+ SdkoEFs9Bwy6cHwctSsKh8spsO7uTfldEeG+/fDcXxkn7PeohkFmDFwI9hrAg4VY9C
+ LP+N6/GVuFYTw==
+Message-ID: <48637a77-b2ec-47e8-ac77-d397660c482b@kernel.org>
+Date: Wed, 22 Jul 2026 06:37:12 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: "Darrick J. Wong" <djwong@kernel.org>, Anand Jain <asj@kernel.org>
 References: <cover.1781694879.git.asj@kernel.org>
- <65f6e4b778e85bd16f16e7745eb985e2a70f44f7.1781694879.git.asj@kernel.org>
- <20260701171259.GG6517@frogsfrogsfrogs>
+ <f556db45f1ffc93508a69ce9f9e567b74384210f.1781694879.git.asj@kernel.org>
+ <20260701171122.GF6517@frogsfrogsfrogs>
 Content-Language: en-US
-In-Reply-To: <20260701171259.GG6517@frogsfrogsfrogs>
-X-Headers-End: 1wmJ5B-0003js-4Y
-Subject: Re: [f2fs-dev] [PATCH v7 05/11] fstests: verify fanotify isolation
- on cloned filesystems
+In-Reply-To: <20260701171122.GF6517@frogsfrogsfrogs>
+X-Headers-End: 1wmJ5a-0003kj-L4
+Subject: Re: [f2fs-dev] [PATCH v7 04/11] fstests: add
+ _require_unique_f_fsid() helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,43 +100,32 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 
->> +. ./common/preamble
->> +
->> +_begin_fstest auto quick mount clone
->> +
->> +_require_test
->> +_require_block_device $TEST_DEV
->> +_require_loop
->> +_require_command "$FSNOTIFYWAIT_PROG" fsnotifywait
->> +_require_unique_f_fsid
->> +
->> +_cleanup()
->> +{
->> +	cd /
->> +	[[ -n $pid1 ]] && { kill -TERM "$pid1" 2> /dev/null; wait $pid1; }
->> +	[[ -n $pid2 ]] && { kill -TERM "$pid2" 2> /dev/null; wait $pid2; }
->> +
->> +	if [ "$semanage_added" = "yes" ]; then
->> +		semanage permissive -d unconfined_t >/dev/null 2>&1 || true
+> _require_unique_fsid(
+> {
+> 	case "$FSTYP" in
+> 	ext*)
+> 		# Ext4 derives f_fsid from the superblock UUID, meaning
+> 		# clones share the same f_fsid until their UUIDs
+> 		# diverge.
+> 		_notrun "Target filesystem ($FSTYP) does not guarantee unique f_fsid on clones."
+> 		;;
+> 	*)
+> 		# Conversely, XFS, Btrfs, and F2FS ensure f_fsid remains
+> 		# unique per filesystem instance (often by deriving it
+> 		# from the UUID and underlying block device.)
+> 		;;
+
+> 	fi
+esac
+
+> }
 > 
-> Needs to _require_command semanage, because it's not otherwise required
-> by fstests.  Otherwise looks ok to me.
+> --D
 > 
 
-Oh right. Added
+Yeah sure, suggestions applied.
 
-In the new patch:
-diff --git a/common/config b/common/config
-::
-+export SEMANAGE_PROG="$(type -P semanage)"
-
-
-In this patch:
-diff --git a/tests/generic/801 b/tests/generic/801
-::
-+_require_command "$SEMANAGE_PROG" semanage
-
-
+Thanks, Anand
 
 
 
