@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2AFDDC4452D
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2026 22:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 64BBFC4452D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2026 22:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=3KqqtJYvW6BNF37l2kRIDaeTKQNQnWxQckAJzb0t8GM=; b=C4BE69IynXUTBMdEVAt2FfSvxo
-	WmMxwp9o+39DV8FkP0QO4tp/wPc96FF3J4RiKbt/l5aIm5N8kZGvYaBXOkSh5U0lqAlHOfGS571R6
-	qwJC00bmFpmh9phJ4dGB7Y6GOWlwCK510aFi2OZ6xGyhlx9QXyFnjcg3Sqmh2YCFpCqw=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=5qkHNqYn4fNZS/d1jG3Lt9U/EYqWNZN0b1RTC86LSGQ=; b=MkET2hlQlLJ+GmQOfL431K4cr+
+	5sq/6GxqbXpKQvsD2BZHZ983ya2+xGdw+3v8XcAlN0IS/02uOfYJm93rzf9Hz+RGsLEn4nrTqY7Vl
+	yqkkizDtW5l53lMmFRnkqD0UubyvXP0fKWBBBTeazmwwIEtPt4Uvpq3DK/aZPdbgkdKE=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wmJ4s-00077y-DQ;
-	Tue, 21 Jul 2026 22:36:42 +0000
+	id 1wmJ5C-0001xO-Gv;
+	Tue, 21 Jul 2026 22:37:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <asj@kernel.org>) id 1wmJ4e-00077k-Eu
+ (envelope-from <asj@kernel.org>) id 1wmJ5A-0001x8-Td
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 21 Jul 2026 22:36:28 +0000
+ Tue, 21 Jul 2026 22:37:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9xR7aJnjzbB0cYi+HaNX5c/+Q8nLrvfNR2N4MpRwZ98=; b=jJtoqgU+5XSkAR03PALTrVy6b+
- sJMiZu8wRPcqKFJv/ButgtodnOY4e/VGymNTmqI/X1Ztp+6Y08TBuekuQTssWG6oXtYq8D6Q/Gbvp
- /i/3IZkUBS9aHqIZkMC2rP22dc1ec6AccMEDE+TYcqsU6rtQLaevjRtO8idxYHHmVFZU=;
+ bh=NlNXfl9pPHGUuipgj86pe3+c/OOyL/s0HmQJZn9uCa8=; b=ENahHvrKlHep5VfYtpJjK+qe7+
+ I5uEoziLEB8mYjqX62JUzU4AcVEFaUFUljWeKy45lho6vvm8GLE4+BAVmkmd68HkQg32OC4seKAdh
+ gbskAT5qvCOSE6j98WeoFF9SXsw0CweNn8t+ZIbBIQ4mbpQFZhwXGux7+7rB8kNTe0jc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:
@@ -42,42 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9xR7aJnjzbB0cYi+HaNX5c/+Q8nLrvfNR2N4MpRwZ98=; b=JklJzFHC32layiW/pwJiuE3lCs
- CcImIo3l/zYGWqhu1MlbCF0LP1yzI085a7iRK3wXI27/gBDaNewA/sm8ZHznhhTpmvLqo/+LTMx5E
- TO9NF7oXMNkDFH9gsRS5WFMmEQj/kURX3iScipI/F2B5MXSc/MfbCDWc/7s3JIeoGnqY=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=NlNXfl9pPHGUuipgj86pe3+c/OOyL/s0HmQJZn9uCa8=; b=lXhHu7J3HYhXhO3xUZs1wD/Hlw
+ j2FbFoCTsF8QQC/G16yqhUHD0ONy1eRCwWhRCI08gltN6oa3SBVINN0GLCuSLsq/F9eWFn51ERzO8
+ BLVhhuWeYB6ymUQhvjYjfYtmLhuVexfDc4sytg1lFFTsgx9aJKIpGLomvUaUrCU76ook=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wmJ4e-0003is-1F for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 21 Jul 2026 22:36:28 +0000
+ id 1wmJ5B-0003js-4Y for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 21 Jul 2026 22:37:01 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 7D70343B71;
- Tue, 21 Jul 2026 22:36:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A87681F00A3A;
- Tue, 21 Jul 2026 22:36:15 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 3CCA460A77;
+ Tue, 21 Jul 2026 22:36:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 368901F00A3D;
+ Tue, 21 Jul 2026 22:36:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784673377;
- bh=9xR7aJnjzbB0cYi+HaNX5c/+Q8nLrvfNR2N4MpRwZ98=;
+ s=k20260515; t=1784673409;
+ bh=NlNXfl9pPHGUuipgj86pe3+c/OOyL/s0HmQJZn9uCa8=;
  h=Date:From:Subject:To:Cc:References:In-Reply-To;
- b=FeUEUmhbdNSPNuGvEeQbCU3d9I3vpKGzmnK+ikTxAY4qi/sTc+8fe97jlDEgL26fD
- Msl1Jsk0SufN02KXKiDCFkzYbxAy1TMhwangB6K7CKYi6oFnumjIrclNOix7AZREmW
- qxKT48odeELUJ6vlc7Z7Hh2TQWQVYT5PSyBHzghrYpE3qvjeQtt8pkbxkl916sFs6X
- vpcLMTLhnKfsY0DMdVfm8DiBIZqHvmnrdDBoGO+KdD6P0F5NG/mAZhD185LYJIDvxe
- uoLaPb741UAkxpblp3pqQgza9D0SJE6wdXB99GVsXeJ73hFtHbHWtWQ++Re+kmPvbj
- xt/YxciBvWE/w==
-Message-ID: <328de723-6f9c-4f09-a68a-da24d49300d5@kernel.org>
-Date: Wed, 22 Jul 2026 06:36:13 +0800
+ b=HlMjBZdd0CFMwr3Juf0LblZKfANuFFKKmyJSbr99NSr1UKj7Dm1WBsfTava8rJo1B
+ s30G4phlGrnbyD1USMggWxtinuCqZEmD7S13kTHqhT4M9JJBSZzmwqudWR74ZAUzzy
+ NoX8NIVWzxorgtjuygClmL5lv5OzPDikN66Fucg6v+b7uSx8ToREc33AKjZwoKRZ3I
+ /D1ORajl00iGPQHsgoMPjmJQP4P1646KgOFB3VfgFO1Ik995F6S1pCzqh3hmk3ERZ2
+ NFzaR8/4RKESlpKJauAzuxXgmo2a3+UEQW5cYDd0JXdusP6PfDx27Kdu+AUpEIsyUB
+ r9SBXlKAzMo2g==
+Message-ID: <1fb99189-bd69-4618-bd20-f64205159b1b@kernel.org>
+Date: Wed, 22 Jul 2026 06:36:47 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: "Darrick J. Wong" <djwong@kernel.org>, Anand Jain <asj@kernel.org>
 References: <cover.1781694879.git.asj@kernel.org>
- <2ac5fb22fd6b51973d11082a1ee8fe354926c63c.1781694879.git.asj@kernel.org>
- <20260701173314.GH6517@frogsfrogsfrogs>
+ <65f6e4b778e85bd16f16e7745eb985e2a70f44f7.1781694879.git.asj@kernel.org>
+ <20260701171259.GG6517@frogsfrogsfrogs>
 Content-Language: en-US
-In-Reply-To: <20260701173314.GH6517@frogsfrogsfrogs>
-X-Headers-End: 1wmJ4e-0003is-1F
-Subject: Re: [f2fs-dev] [PATCH v7 06/11] fstests: verify f_fsid for cloned
- filesystems
+In-Reply-To: <20260701171259.GG6517@frogsfrogsfrogs>
+X-Headers-End: 1wmJ5B-0003js-4Y
+Subject: Re: [f2fs-dev] [PATCH v7 05/11] fstests: verify fanotify isolation
+ on cloned filesystems
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,46 +100,42 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 
-
-> This is where I continue getting stuck on this patchset -- fsid is so
-> poorly defined that I don't think the rest of these fsid tests make
-> sense at all.  Nobody mandates that fsid is persistent or stable across
-> remounts.  Nobody even mandates that two cloned filesystems don't have
-> the same fsid value.
+>> +. ./common/preamble
+>> +
+>> +_begin_fstest auto quick mount clone
+>> +
+>> +_require_test
+>> +_require_block_device $TEST_DEV
+>> +_require_loop
+>> +_require_command "$FSNOTIFYWAIT_PROG" fsnotifywait
+>> +_require_unique_f_fsid
+>> +
+>> +_cleanup()
+>> +{
+>> +	cd /
+>> +	[[ -n $pid1 ]] && { kill -TERM "$pid1" 2> /dev/null; wait $pid1; }
+>> +	[[ -n $pid2 ]] && { kill -TERM "$pid2" 2> /dev/null; wait $pid2; }
+>> +
+>> +	if [ "$semanage_added" = "yes" ]; then
+>> +		semanage permissive -d unconfined_t >/dev/null 2>&1 || true
 > 
-> The statfs manpage says:
+> Needs to _require_command semanage, because it's not otherwise required
+> by fstests.  Otherwise looks ok to me.
 > 
-> "Nobody knows what f_fsid is supposed to contain (but see below)"
-> 
-> and then:
-> 
-> "The general idea is that f_fsid contains some random stuff such that
-> the pair (f_fsid,ino) uniquely determines a file."
 
-Which is exactly why we need fstests guardrails.
-Keeps filesystem's implementation consistent across kernel versions.
-Embarrassingly, I introduced a bug around this that is now fixed.
-The commit IDs are in the test cases.
-Thus motivation for this fstests patch.
+Oh right. Added
 
-> Based on that very weak statement, at most it might make sense to check
-> that two separate and simultaneously mounted filesystems don't end up
-> with the same fsid 
+In the new patch:
+diff --git a/common/config b/common/config
+::
++export SEMANAGE_PROG="$(type -P semanage)"
 
-Yes, for xfs, btrfs and f2fs. However for ext4 cloned filesystems can
-share the same fsid and ino because the images are identical.
-It is then up to the usecase to change the UUID for either filesystem if
-it gets modified.
-Commit ("fstests: add _require_unique_f_fsid() helper") captures this,
-and the link in that commit includes the discussion.
 
-> just in case there *are* programs foolish enough to
-> use (fsid,ino) as a uniqueness check.
+In this patch:
+diff --git a/tests/generic/801 b/tests/generic/801
+::
++_require_command "$SEMANAGE_PROG" semanage
 
-On the other hand, if a program needs a unique ID, do we currently have
-any way to get one?
-
-Thanks, Anand
 
 
 
