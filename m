@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 58CEEC4452B
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2026 22:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7FAAFC4452B
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2026 22:38:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=CRO0tG/XcFHZnWpX7tBhPfc21j7fCHMrdI+MgUH8ZUk=; b=Ou3wByLfhHs6DZXwRN/bGYTuud
-	+8Xen0qzC0cWEsFbGDBbfD2DFo+vhUqbq958LciYQp+V1IRBen/SBmdOkFMNnILi7YUU1117Z37Tq
-	xmxiqUDmUcpJnGgEitmC9eG/ulFMmuUsQkVhob/Z5fWkczL7hgdIo47lcJ8UCv3541TM=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=czlcdAPPckCv4yhFN7d/DzZq3/91pPeBAmmgwOB93Qg=; b=bn5x/UXj0zg/tHdi/f28n/knHt
+	j0UwhCy9fjBh+mgPslsXEyXpd140QHUQn4sb5GRiuPwQ2idpSILHOUPYy8bHLpnWtKOZSbC29H2bk
+	bB9WH1ABMHV+OJg9o4I72Ti05K1C4ST5ruizPhxUg7DvHXozCeRHkVLIweVkwCXkdpMY=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wmJ62-0000v1-HH;
-	Tue, 21 Jul 2026 22:37:52 +0000
+	id 1wmJ6b-00036Q-Vq;
+	Tue, 21 Jul 2026 22:38:30 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <asj@kernel.org>) id 1wmJ5d-0000ub-Gl
+ (envelope-from <asj@kernel.org>) id 1wmJ6b-00036G-37
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 21 Jul 2026 22:37:27 +0000
+ Tue, 21 Jul 2026 22:38:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JQPOE4KI8wVROAG2s7qaeds5Wqqg4NjMeGk/K5p65kk=; b=eT6ajnlCnH6xzR9Ol0TlDlcVoY
- q6m+/xl+uHHYisz/AWshBTO8OrH7mNYqe+/U5HSsEIUg4ZXB+1Rjb/L1RVfe7vn1aHaHQn1aTXRSV
- 8GmClYb8q4r3HidR2uIAw8BBN8PV4QJ3iScb0WiFrrmzpAIEg88O1ZoKgdDZ5Uz6fLWI=;
+ bh=WDmDZTIDZNcAFuhGz8dTh3etu6wdnO4DjLK0ii8Wyzk=; b=UwS155NGn0iZ7QPtCjf33SyWCQ
+ p09Fe3FYjfNXY3Etdvy2UBtFfkEZFAt81P/fBQW44D5HEcv3TJIJpAfg35EUlqCd57fYDb1kPhpd0
+ Ev7OFSoz3mewbihF/Yw5vqdg1RQimZeoTiAgfwKrYFByQZn0dB2Mz57GaCxWqj54MxaE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:
@@ -42,42 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=JQPOE4KI8wVROAG2s7qaeds5Wqqg4NjMeGk/K5p65kk=; b=QKTc8+akJjWq7Ttu7a7uPDD4Yb
- Nbv13FO5Y3bb9Hm2GN84LMaE3WtAzXjDpqsKBGjuabas8FOiOZARHNkHGMsRoD3QoHuDkIpt/s9Ev
- tyS8C+6pYl+Ny8IqmKy/bxM5aD7iINU6q82h5+16AqOyHnWOI0/YLbvcosRTi2anF98E=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=WDmDZTIDZNcAFuhGz8dTh3etu6wdnO4DjLK0ii8Wyzk=; b=e7r/I322oTsH9/u2V6hzkLZzt3
+ 9AYZeMawb9EyTudzbDPGZrkztC4qcaOHFHsWmw5yw9JtPj4coEFL3F9XJGFMfKU3iRkjbK7VSEZuC
+ EdgfCbyTHNjftnrUlLpZg5lOjLxr+mLPKYlxzE6Bl9di0JNeiE0jHXpsCwkJ0BGsOE4w=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wmJ5a-0003kj-L4 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 21 Jul 2026 22:37:26 +0000
+ id 1wmJ6b-0003oN-AD for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 21 Jul 2026 22:38:29 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 4149E436C0;
- Tue, 21 Jul 2026 22:37:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 539871F00A3A;
- Tue, 21 Jul 2026 22:37:14 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 97A1660A6E;
+ Tue, 21 Jul 2026 22:38:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F3901F00A3F;
+ Tue, 21 Jul 2026 22:38:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784673436;
- bh=JQPOE4KI8wVROAG2s7qaeds5Wqqg4NjMeGk/K5p65kk=;
+ s=k20260515; t=1784673498;
+ bh=WDmDZTIDZNcAFuhGz8dTh3etu6wdnO4DjLK0ii8Wyzk=;
  h=Date:From:Subject:To:Cc:References:In-Reply-To;
- b=TinKzZCFRr9NTrvjDhe1+NnsJ01Q9ajgZbV1ni8udnG2s3CCgVqlWizI+9H6XvuaE
- sgio1F6KVFUN+nWHV2D3fxosfQ6S13eMyD84/A/flsXxgjCjrtzcDqu/5j6ntlzoym
- 6wf16ahuV/3FUNr0L0XeM2s6OJDk7opflBItl3oSLAf41rkmcSIu/vN0s2khHDtdyD
- d/4YHGsFaCl0Qu+ITNYK/+FtWyNSL7r+/Q0n+V4qSlAQHEi0iJ/yFN1+kDIzzoecaF
- SdkoEFs9Bwy6cHwctSsKh8spsO7uTfldEeG+/fDcXxkn7PeohkFmDFwI9hrAg4VY9C
- LP+N6/GVuFYTw==
-Message-ID: <48637a77-b2ec-47e8-ac77-d397660c482b@kernel.org>
-Date: Wed, 22 Jul 2026 06:37:12 +0800
+ b=ARtcLoJzABGhjsRsl43Z8c5OfbhrPDdPrGHmNzke9lhWPAi769ClK25YbAUsSPM46
+ G68nyYdRIURws4B22ZoP0ftvrwtCLv0Nr0u0ktF07WWJAoZJ19gDfGo3Aq9g6Qkuyp
+ 6rm0XRu3Uz0j1XrFVqGmYCXluJ6rc9RoSX8cUZmNLQ4ZdofPeM11yD3BW4I/99lde3
+ U+eANkIjik5L4lDFo6QF9pWBHXqcOETMLerNDP3pqLMN+ZVhekwVlYuHbgfsOTfrM6
+ yUW+a5us7kufuQxLLcrjn2DCFKpHpuoVM0z7HXQE8X4G7ZD8ocT7oFG2whgGepucM9
+ 1oIO9UA681Zvg==
+Message-ID: <10f50eff-3d65-4e58-af4c-977e786617b8@kernel.org>
+Date: Wed, 22 Jul 2026 06:38:15 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: "Darrick J. Wong" <djwong@kernel.org>, Anand Jain <asj@kernel.org>
 References: <cover.1781694879.git.asj@kernel.org>
- <f556db45f1ffc93508a69ce9f9e567b74384210f.1781694879.git.asj@kernel.org>
- <20260701171122.GF6517@frogsfrogsfrogs>
+ <421c7cdd5aae27b99d04dddf08c5d9df79c2f790.1781694879.git.asj@kernel.org>
+ <20260701170713.GE6517@frogsfrogsfrogs>
 Content-Language: en-US
-In-Reply-To: <20260701171122.GF6517@frogsfrogsfrogs>
-X-Headers-End: 1wmJ5a-0003kj-L4
-Subject: Re: [f2fs-dev] [PATCH v7 04/11] fstests: add
- _require_unique_f_fsid() helper
+In-Reply-To: <20260701170713.GE6517@frogsfrogsfrogs>
+X-Headers-End: 1wmJ6b-0003oN-AD
+Subject: Re: [f2fs-dev] [PATCH v7 01/11] fstests: add
+ _loop_image_create_clone() helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,32 +100,71 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 
-> _require_unique_fsid(
-> {
-> 	case "$FSTYP" in
-> 	ext*)
-> 		# Ext4 derives f_fsid from the superblock UUID, meaning
-> 		# clones share the same f_fsid until their UUIDs
-> 		# diverge.
-> 		_notrun "Target filesystem ($FSTYP) does not guarantee unique f_fsid on clones."
-> 		;;
-> 	*)
-> 		# Conversely, XFS, Btrfs, and F2FS ensure f_fsid remains
-> 		# unique per filesystem instance (often by deriving it
-> 		# from the UUID and underlying block device.)
-> 		;;
-
-> 	fi
-esac
-
-> }
+>> +		_mkfs_dev "-s size=4096" ${loop_devs[0]}
 > 
+> Not sure why you pass two separate cli arguments as a quoted string, but
+> my guess is it "doesn't matter" because _try_mkfs_dev uses $* unquoted,
+> which separates them again.
+> 
+> I HATE BASH.
+>> +		;;
+>> +	btrfs)
+>> +		_mkfs_dev ${loop_devs[0]}
+> 
+> And while I'm whining:    ^^^^^^^^^^^^^^^ actually should be quoted.
+> Not that fstests is at all good at getting this right.
+> 
+
+Damn! Fixed the two issues above.
+
+>> +		;;
+>> +	*)
+>> +		_mkfs_dev ${loop_devs[0]}
+>> +		;;
+>> +	esac
+>> +
+>> +	# Only execute if the function argument is not empty
+>> +	if [ -n "$pre_clone_tune_func" ]; then
+>> +		$pre_clone_tune_func ${loop_devs[0]}
+>> +	fi
+>> +
+>> +	sync ${loop_devs[0]}
+>> +	cp $img_file $img_file_clone
+> 
+> What if cp doesn't create a reflink copy?  Can we fill up the $TEST_DIR
+> despite having checked it for sufficient free space?  Especially on
+> filesystems that don't support sparse holes?
+> 
+
+We have _require_fs_space a few lines above (yes, I have doubled the
+size requirement). If we reach this point, cp is unlikely to fail, but
+if it does, it will be messy.
+
+        _require_fs_space $TEST_DIR $((size * 1024 * 2))
+
+Added a call to _fail to be more direct.
+
+        cp $img_file $img_file_clone || _fail "Failed to copy cloned image"
+
+
+
+>> +
+>> +	loop_devs="$loop_devs $(_create_loop_device $img_file_clone)"
+>> +
+>> +	_ret=($loop_devs)
+> 
+> Hmm.  Should this function return nonzero if any part of the clone
+> creation fails?  Or are callers expected to notice that _ret only has
+> one element?
+> 
+
+If we are here, both images have been created successfully; otherwise,
+we would have called _fail.
+
 > --D
-> 
 
-Yeah sure, suggestions applied.
-
-Thanks, Anand
+Thanks for the reviews Darrick.
+-Anand
 
 
 
