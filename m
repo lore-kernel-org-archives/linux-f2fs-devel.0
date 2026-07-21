@@ -4,78 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9CAAEC4451C
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2026 18:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2AFDDC4452D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2026 22:36:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=o16lUQIYzNYFJV8DSUuepxYLk2nfAtehC5jlyo/52gc=; b=BDN6vVYpAYCp+2rs8U4VRnXZF1
-	kGwTTcav06JWR+vUJPI+6xpN5fiVn3gmwDy+JFzEb9oli916PyU897IcPLXDc5NT8LBH72SmnioGa
-	dyYcqFsutXj47Rumpb0JleOMHySI8wfd7+UJgUkzh0WgOLO9Z4YKwh2gtgkbVyCzuL2o=;
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=3KqqtJYvW6BNF37l2kRIDaeTKQNQnWxQckAJzb0t8GM=; b=C4BE69IynXUTBMdEVAt2FfSvxo
+	WmMxwp9o+39DV8FkP0QO4tp/wPc96FF3J4RiKbt/l5aIm5N8kZGvYaBXOkSh5U0lqAlHOfGS571R6
+	qwJC00bmFpmh9phJ4dGB7Y6GOWlwCK510aFi2OZ6xGyhlx9QXyFnjcg3Sqmh2YCFpCqw=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wmFSx-0002TQ-C6;
-	Tue, 21 Jul 2026 18:45:19 +0000
+	id 1wmJ4s-00077y-DQ;
+	Tue, 21 Jul 2026 22:36:42 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1wmFSv-0002Sq-A3
+ (envelope-from <asj@kernel.org>) id 1wmJ4e-00077k-Eu
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 21 Jul 2026 18:45:17 +0000
+ Tue, 21 Jul 2026 22:36:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2fy9lyAPSyzabZgn3wz5y53AmgIjQPkXDafGH94hdJI=; b=HTKkBy0fXtu5DvgRKXy69mY5wQ
- 0oorOAb+3kFb+n4VTjRvck5/1tj0avrk+4N1ec7BsMrp5+zmXtJE7f1jL+dh6F4YzU90swypNDUi5
- s7ddR8LQXA3KlPS+VoBoyekUrcfYXlsy37X15EKN8gQkWY3uiU9CPZaMTXDaFRMv5xqw=;
+ bh=9xR7aJnjzbB0cYi+HaNX5c/+Q8nLrvfNR2N4MpRwZ98=; b=jJtoqgU+5XSkAR03PALTrVy6b+
+ sJMiZu8wRPcqKFJv/ButgtodnOY4e/VGymNTmqI/X1Ztp+6Y08TBuekuQTssWG6oXtYq8D6Q/Gbvp
+ /i/3IZkUBS9aHqIZkMC2rP22dc1ec6AccMEDE+TYcqsU6rtQLaevjRtO8idxYHHmVFZU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:
+ Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2fy9lyAPSyzabZgn3wz5y53AmgIjQPkXDafGH94hdJI=; b=FanaWBvDeQxcW5fXE0cz8Ua5zl
- DU2hhS0KVpC6FVh7uzIu5fRZzUZC1seOuGpHT9XyJCUwqfqnHXsSbwtxlBw279smuMVJaPMOZcZn7
- ij5FIoGdjxWe1nlMkxpBsuQipeMTksWmOLbmzgoNF7+8wT3awND3o0o3U67uzvIrTs7o=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=9xR7aJnjzbB0cYi+HaNX5c/+Q8nLrvfNR2N4MpRwZ98=; b=JklJzFHC32layiW/pwJiuE3lCs
+ CcImIo3l/zYGWqhu1MlbCF0LP1yzI085a7iRK3wXI27/gBDaNewA/sm8ZHznhhTpmvLqo/+LTMx5E
+ TO9NF7oXMNkDFH9gsRS5WFMmEQj/kURX3iScipI/F2B5MXSc/MfbCDWc/7s3JIeoGnqY=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wmFSp-000353-E2 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 21 Jul 2026 18:45:17 +0000
+ id 1wmJ4e-0003is-1F for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 21 Jul 2026 22:36:28 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id A729C60A5A;
- Tue, 21 Jul 2026 18:45:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8FF31F00A3D;
- Tue, 21 Jul 2026 18:44:57 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 7D70343B71;
+ Tue, 21 Jul 2026 22:36:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A87681F00A3A;
+ Tue, 21 Jul 2026 22:36:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784659500;
- bh=2fy9lyAPSyzabZgn3wz5y53AmgIjQPkXDafGH94hdJI=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=MNxiuV1XOMSLF8iPHdLmV5bWgsNfTEwEkxj/2XUJ4E03KzTHdWL4TAdyHJ/Q77A0e
- ZgZg7jRScM05J4TwbpVZ6blD0SDybWmZ+QHtVNPzTycZXFCCX9ezWDqU+/2nmkX/Ij
- QIapTKmUH/LW9exhCNjaf3c0+GyYPpUW1cOijL5IHF+LQn8V1Rvf1KZSH55o3hZfNK
- hbUCOD26DnFPrU2AGA6vuYCdu5pFQajTm8y/N+6RC6/zIkVUqhPIsWRTulFwITXlYF
- 2I01NJQQSPzrFZT9SevwVsdpraLzXD8lNFGBg/++017r2TXdZ8n6nqWJtHnYQ9gVi8
- RV2IEkchWnw7w==
-To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
-Date: Tue, 21 Jul 2026 20:40:59 +0200
-Message-ID: <20260721184346.416657-23-aalbersh@kernel.org>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260721184346.416657-1-aalbersh@kernel.org>
-References: <20260721184346.416657-1-aalbersh@kernel.org>
+ s=k20260515; t=1784673377;
+ bh=9xR7aJnjzbB0cYi+HaNX5c/+Q8nLrvfNR2N4MpRwZ98=;
+ h=Date:From:Subject:To:Cc:References:In-Reply-To;
+ b=FeUEUmhbdNSPNuGvEeQbCU3d9I3vpKGzmnK+ikTxAY4qi/sTc+8fe97jlDEgL26fD
+ Msl1Jsk0SufN02KXKiDCFkzYbxAy1TMhwangB6K7CKYi6oFnumjIrclNOix7AZREmW
+ qxKT48odeELUJ6vlc7Z7Hh2TQWQVYT5PSyBHzghrYpE3qvjeQtt8pkbxkl916sFs6X
+ vpcLMTLhnKfsY0DMdVfm8DiBIZqHvmnrdDBoGO+KdD6P0F5NG/mAZhD185LYJIDvxe
+ uoLaPb741UAkxpblp3pqQgza9D0SJE6wdXB99GVsXeJ73hFtHbHWtWQ++Re+kmPvbj
+ xt/YxciBvWE/w==
+Message-ID: <328de723-6f9c-4f09-a68a-da24d49300d5@kernel.org>
+Date: Wed, 22 Jul 2026 06:36:13 +0800
 MIME-Version: 1.0
-X-Headers-End: 1wmFSp-000353-E2
-Subject: [f2fs-dev] [PATCH v13 22/23] xfs: introduce health state for
- corrupted fsverity metadata
+User-Agent: Mozilla Thunderbird
+To: "Darrick J. Wong" <djwong@kernel.org>, Anand Jain <asj@kernel.org>
+References: <cover.1781694879.git.asj@kernel.org>
+ <2ac5fb22fd6b51973d11082a1ee8fe354926c63c.1781694879.git.asj@kernel.org>
+ <20260701173314.GH6517@frogsfrogsfrogs>
+Content-Language: en-US
+In-Reply-To: <20260701173314.GH6517@frogsfrogsfrogs>
+X-Headers-End: 1wmJ4e-0003is-1F
+Subject: Re: [f2fs-dev] [PATCH v7 06/11] fstests: verify f_fsid for cloned
+ filesystems
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,107 +89,58 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Andrey Albershteyn via Linux-f2fs-devel
+From: Anand Suveer Jain via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@kernel.org>, djwong@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, hch@lst.de,
- linux-btrfs@vger.kernel.org
+Reply-To: Anand Suveer Jain <asj@kernel.org>
+Cc: hch@infradead.org, zlang@redhat.com, fstests@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Report corrupted fsverity descriptor through health system.
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
----
- fs/xfs/libxfs/xfs_fs.h     |  1 +
- fs/xfs/libxfs/xfs_health.h |  4 +++-
- fs/xfs/xfs_fsverity.c      | 13 ++++++++++---
- fs/xfs/xfs_health.c        |  1 +
- 4 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
-index c80133784419..84d62b7506a9 100644
---- a/fs/xfs/libxfs/xfs_fs.h
-+++ b/fs/xfs/libxfs/xfs_fs.h
-@@ -422,6 +422,7 @@ struct xfs_bulkstat {
- #define XFS_BS_SICK_SYMLINK	(1 << 6)  /* symbolic link remote target */
- #define XFS_BS_SICK_PARENT	(1 << 7)  /* parent pointers */
- #define XFS_BS_SICK_DIRTREE	(1 << 8)  /* directory tree structure */
-+#define XFS_BS_SICK_FSVERITY	(1 << 9)  /* fsverity metadata */
- 
- /*
-  * Project quota id helpers (previously projid was 16bit only
-diff --git a/fs/xfs/libxfs/xfs_health.h b/fs/xfs/libxfs/xfs_health.h
-index 1d45cf5789e8..932b447190da 100644
---- a/fs/xfs/libxfs/xfs_health.h
-+++ b/fs/xfs/libxfs/xfs_health.h
-@@ -104,6 +104,7 @@ struct xfs_rtgroup;
- /* Don't propagate sick status to ag health summary during inactivation */
- #define XFS_SICK_INO_FORGET	(1 << 12)
- #define XFS_SICK_INO_DIRTREE	(1 << 13)  /* directory tree structure */
-+#define XFS_SICK_INO_FSVERITY	(1 << 14)  /* fsverity metadata */
- 
- /* Primary evidence of health problems in a given group. */
- #define XFS_SICK_FS_PRIMARY	(XFS_SICK_FS_COUNTERS | \
-@@ -140,7 +141,8 @@ struct xfs_rtgroup;
- 				 XFS_SICK_INO_XATTR | \
- 				 XFS_SICK_INO_SYMLINK | \
- 				 XFS_SICK_INO_PARENT | \
--				 XFS_SICK_INO_DIRTREE)
-+				 XFS_SICK_INO_DIRTREE | \
-+				 XFS_SICK_INO_FSVERITY)
- 
- #define XFS_SICK_INO_ZAPPED	(XFS_SICK_INO_BMBTD_ZAPPED | \
- 				 XFS_SICK_INO_BMBTA_ZAPPED | \
-diff --git a/fs/xfs/xfs_fsverity.c b/fs/xfs/xfs_fsverity.c
-index 5dcbdf20e474..462223b4619b 100644
---- a/fs/xfs/xfs_fsverity.c
-+++ b/fs/xfs/xfs_fsverity.c
-@@ -84,16 +84,23 @@ xfs_fsverity_get_descriptor(
- 		return error;
- 
- 	desc_size = be32_to_cpu(d_desc_size);
--	if (XFS_IS_CORRUPT(mp, desc_size > FS_VERITY_MAX_DESCRIPTOR_SIZE))
-+	if (XFS_IS_CORRUPT(mp, desc_size > FS_VERITY_MAX_DESCRIPTOR_SIZE)) {
-+		xfs_inode_mark_sick(XFS_I(inode), XFS_SICK_INO_FSVERITY);
- 		return -ERANGE;
--	if (XFS_IS_CORRUPT(mp, desc_size > desc_size_pos))
-+	}
-+
-+	if (XFS_IS_CORRUPT(mp, desc_size > desc_size_pos)) {
-+		xfs_inode_mark_sick(XFS_I(inode), XFS_SICK_INO_FSVERITY);
- 		return -ERANGE;
-+	}
- 
- 	if (!buf_size)
- 		return desc_size;
- 
--	if (XFS_IS_CORRUPT(mp, desc_size > buf_size))
-+	if (XFS_IS_CORRUPT(mp, desc_size > buf_size)) {
-+		xfs_inode_mark_sick(XFS_I(inode), XFS_SICK_INO_FSVERITY);
- 		return -ERANGE;
-+	}
- 
- 	desc_pos = round_down(desc_size_pos - desc_size, blocksize);
- 	if (desc_pos < xfs_fsverity_metadata_offset(ip)) {
-diff --git a/fs/xfs/xfs_health.c b/fs/xfs/xfs_health.c
-index 239b843e83d4..be66760fb120 100644
---- a/fs/xfs/xfs_health.c
-+++ b/fs/xfs/xfs_health.c
-@@ -625,6 +625,7 @@ static const struct ioctl_sick_map ino_map[] = {
- 	{ XFS_SICK_INO_DIR_ZAPPED,	XFS_BS_SICK_DIR },
- 	{ XFS_SICK_INO_SYMLINK_ZAPPED,	XFS_BS_SICK_SYMLINK },
- 	{ XFS_SICK_INO_DIRTREE,	XFS_BS_SICK_DIRTREE },
-+	{ XFS_SICK_INO_FSVERITY,	XFS_BS_SICK_FSVERITY },
- };
- 
- /* Fill out bulkstat health info. */
--- 
-2.54.0
+> This is where I continue getting stuck on this patchset -- fsid is so
+> poorly defined that I don't think the rest of these fsid tests make
+> sense at all.  Nobody mandates that fsid is persistent or stable across
+> remounts.  Nobody even mandates that two cloned filesystems don't have
+> the same fsid value.
+> 
+> The statfs manpage says:
+> 
+> "Nobody knows what f_fsid is supposed to contain (but see below)"
+> 
+> and then:
+> 
+> "The general idea is that f_fsid contains some random stuff such that
+> the pair (f_fsid,ino) uniquely determines a file."
+
+Which is exactly why we need fstests guardrails.
+Keeps filesystem's implementation consistent across kernel versions.
+Embarrassingly, I introduced a bug around this that is now fixed.
+The commit IDs are in the test cases.
+Thus motivation for this fstests patch.
+
+> Based on that very weak statement, at most it might make sense to check
+> that two separate and simultaneously mounted filesystems don't end up
+> with the same fsid 
+
+Yes, for xfs, btrfs and f2fs. However for ext4 cloned filesystems can
+share the same fsid and ino because the images are identical.
+It is then up to the usecase to change the UUID for either filesystem if
+it gets modified.
+Commit ("fstests: add _require_unique_f_fsid() helper") captures this,
+and the link in that commit includes the discussion.
+
+> just in case there *are* programs foolish enough to
+> use (fsid,ino) as a uniqueness check.
+
+On the other hand, if a program needs a unique ID, do we currently have
+any way to get one?
+
+Thanks, Anand
+
 
 
 
