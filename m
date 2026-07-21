@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1F603C4451C
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2026 18:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AAC5CC4452D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2026 18:44:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=2+JK9DpORubPjZJOtSVORn8ItFccgbvKEdXOQEk7pT8=; b=JAd5wFDhigaua5N3kONHJM4DN+
-	m5u8fAP7gDCQEn4ykacjfwNMaqs75QltX4wJudodyrXtoaTSxzrFWyPmrnfvWG7sfpwVyCj0jKAPl
-	Z8gsXPDSGWnkvppt5veoqKs8tVDXTJ79VCQd1IL/v14+kuPoR5vn/RwJXgwH9/CPVq5I=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=SNpuYk7aNDetsFAWr3j6Er60iDY41aE4liJmMvO7r0M=; b=QFNVqKS1n2vfwrpjvGs8RiObCP
+	C2VoLefBEvEVa67+rrcOxdO92eu4IY+i5X2gFGvtXyC/eS/xCijBzznGgYPHXXjZHwbIn40iMl2pv
+	KKbOSdUkHOVw+/ukElMF6sKtl+cztv9RRtAmuKaV3wbrovxPc/D/s4hUmjuLYgm9/SFE=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wmFS6-0001cs-0j;
-	Tue, 21 Jul 2026 18:44:26 +0000
+	id 1wmFS8-0003Jc-Ci;
+	Tue, 21 Jul 2026 18:44:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1wmFS3-0001cR-LD
+ (envelope-from <aalbersh@kernel.org>) id 1wmFS6-0003JQ-H2
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 21 Jul 2026 18:44:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=o9yINbcuiiybi8O3LP5dR8y/qvFNadlQFmrpMBfoyMQ=; b=G/l0sWyafuuKnpI7ZuN6CoKBsy
- KrAq/FjWgHuas47Ao49rvFBiazCXH8oyN4xaz1U0oJBKeLoAsBb39bE4WrGirnSu4VolajQ/kVx3g
- 8yTZRnAzYw/ZNPfrH6n5qPt8WC5L40sYMZdxrKQ9A1WlWOQ3+rR/Xf1jheneUN8BbG50=;
+ bh=fmzb25jhZDNq4cfG2tBZE1WMkvl/GQ14vrzOhert9WY=; b=DoLptF+XmvG/T2hiLBn1bmwcuk
+ YvDDruiV6ZfUI718hCiynVTdlzzj3qTvaVPFLZ4p3TZU+z5xz4hDoFD1X/szJocu+jGFr2jJlvEU1
+ JGY37m5GBth8laxs0El9g74vQ3HenvPgHHib6VQjj4TBuLzUJ1TbdB/7NeucAj2+KxCY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=o9yINbcuiiybi8O3LP5dR8y/qvFNadlQFmrpMBfoyMQ=; b=BdTtYxkOMeAIr8wqiWw+MkfY+3
- wNxHl5zlWJOAg73Vpz+y2okxdWKrjrR1kHCqkb8TLSPvgKDKL2+nbk6AjRRekdvzm/8p5g67PoRil
- kV2hWkHS5SYr1yQMpuHgAEbZnbRR9vm0BARJiwtJn8JRk8LaLnAs5WyAKrd2c4924Ccs=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=fmzb25jhZDNq4cfG2tBZE1WMkvl/GQ14vrzOhert9WY=; b=fPw8Nz/WitIQeDpo4fP34o3g+3
+ ZKwxaXHqCVp6ATqMzt9ErhCuCrVn0yTVaWNJeUkpUq8nd70KAbuzv4ncVNjfps6up5kEHdvIQ8jco
+ XTraFKdxFDg8z3VtIyem2gVorG/6rEgwBMQZFboTSkEjJbmYHgvkJzxKjPXcaraVOAIA=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wmFS0-00030a-Ks for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 21 Jul 2026 18:44:24 +0000
+ id 1wmFS1-00030b-9S for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 21 Jul 2026 18:44:23 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 1722960A67;
- Tue, 21 Jul 2026 18:44:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DCC41F00A3E;
- Tue, 21 Jul 2026 18:44:07 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id E85EE43B02;
+ Tue, 21 Jul 2026 18:44:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A68A1F00A3D;
+ Tue, 21 Jul 2026 18:44:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784659449;
- bh=o9yINbcuiiybi8O3LP5dR8y/qvFNadlQFmrpMBfoyMQ=;
+ s=k20260515; t=1784659455;
+ bh=fmzb25jhZDNq4cfG2tBZE1WMkvl/GQ14vrzOhert9WY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=fSj+A8thaY94a8iuY+JDh+LoPKx340k86jg2tC+sJdB9HB9863X+QFL5nXUfXml2Z
- p3JIakyKGoM3haTusZHHQr90T+wyK1MR7X2gbsHGCyMESLR84Ut+qxSS1sNoK2UXTp
- I+HWQQXNgWit/unYoPC8QULB6r5U6JSTvcQaZ3vrUj0GjXQthZibLIwiPo2Vqe4yzR
- CyssNBI3NXux+D+YuoyqTlD4gwRwT+dCErBJgjUSTT4FVkgn8YTKn+4wUtS3xknJAK
- A7RSwviYa+KEMa1e3InWJ6oyUavFQnNwq6aaxqpT4QPzUP91QUUyoYyzh5tj6ZVl4+
- JhDXlFF3J07zw==
+ b=MLQlBmiPCAKL5xe2t/n7HpcDOcLcgJwlpHxf4sTI6VxBgIvHsR70OO8uHlSHQUGYy
+ mEsy+hk4m92M0PDm89kHugj+4Ao1Hxgd5DKDYcelZ1KBac9k6GegVm0eTaKlbwCvII
+ svVjfJB7Mc/+QmhS/4vroeRbGnnoBgaDsXckoeIOrJ8KgXQt0/ChPQvmhEIaQvWdvX
+ sRUImd4hme+VN8+QP8xQ9iqcvHQYpBz9vHrtoldSURXDXBml6DRzPo4nKXQprF14PT
+ 7GLRdsbpNB6h9oi/vGPZIZ1RpM7c5FJ/UEAyIp9pGji/B4Gbnkghc1batSR9eQf9X2
+ 22UWt867AzNbQ==
 To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
  linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
-Date: Tue, 21 Jul 2026 20:40:42 +0200
-Message-ID: <20260721184346.416657-6-aalbersh@kernel.org>
+Date: Tue, 21 Jul 2026 20:40:44 +0200
+Message-ID: <20260721184346.416657-8-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260721184346.416657-1-aalbersh@kernel.org>
 References: <20260721184346.416657-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wmFS0-00030a-Ks
-Subject: [f2fs-dev] [PATCH v13 05/23] fsverity: improve flushing performance
- of fsverity_fill_zerohash
+X-Headers-End: 1wmFS1-00030b-9S
+Subject: [f2fs-dev] [PATCH v13 07/23] fs,
+ fsverity: remove check for fsverity being enabled in
+ setattr_prepare()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,57 +98,31 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The current version calls flush_dcache_folio(), in memcpy_to_folio(), to
-flush whole folio on every digest (which is 128 for 4k). Open code folio
-mapping and flushing to copy all digests at once.
+The check that fs-verity is available in the kernel is not necessary
+here. Filesystems could have fsverity files even without fs-verity
+module, then truncate will succeed. Previously, this would return
+EOPNOTSUPP if verity is missing, but if it's not EPERM was returned
+anyway.
 
-Reported-by: Eric Biggers <ebiggers@kernel.org>
-Link: https://lore.kernel.org/linux-fsdevel/20260401222717.GH2466@quark/
+Fixes: e9734653c523 ("fs,fsverity: reject size changes on fsverity files in setattr_prepare")
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 ---
- fs/verity/pagecache.c | 24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+ fs/attr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/verity/pagecache.c b/fs/verity/pagecache.c
-index 9d82e6b74ba1..270abd652e48 100644
---- a/fs/verity/pagecache.c
-+++ b/fs/verity/pagecache.c
-@@ -68,14 +68,32 @@ EXPORT_SYMBOL_GPL(generic_readahead_merkle_tree);
- void fsverity_fill_zerohash(struct folio *folio, size_t offset, size_t len,
- 			      struct fsverity_info *vi)
- {
--	size_t off = offset;
-+	void *vaddr;
-+	void *to;
-+	size_t chunk;
+diff --git a/fs/attr.c b/fs/attr.c
+index 4f437fabb7f0..71888ac903c2 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -176,7 +176,7 @@ int setattr_prepare(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		 * covered by the open-time check because sys_truncate() takes a
+ 		 * path, not an open file.
+ 		 */
+-		if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
++		if (IS_VERITY(inode))
+ 			return -EPERM;
  
- 	WARN_ON_ONCE(!IS_ALIGNED(offset, vi->tree_params.digest_size));
- 	WARN_ON_ONCE(!IS_ALIGNED(len, vi->tree_params.digest_size));
-+	WARN_ON_ONCE(offset + len > folio_size(folio));
- 
--	for (; off < (offset + len); off += vi->tree_params.digest_size)
--		memcpy_to_folio(folio, off, vi->tree_params.zero_digest,
-+	do {
-+		vaddr = kmap_local_folio(folio, offset);
-+		chunk = len;
-+		to = vaddr;
-+
-+		if (folio_test_partial_kmap(folio) &&
-+		    chunk > PAGE_SIZE - offset_in_page(offset))
-+			chunk = PAGE_SIZE - offset_in_page(offset);
-+		for (; to < (vaddr + chunk); to += vi->tree_params.digest_size)
-+			memcpy(to, vi->tree_params.zero_digest,
- 				vi->tree_params.digest_size);
-+		kunmap_local(vaddr);
-+
-+		offset += chunk;
-+		len -= chunk;
-+	} while (len > 0);
-+
-+	flush_dcache_folio(folio);
- }
- EXPORT_SYMBOL_GPL(fsverity_fill_zerohash);
- 
+ 		error = inode_newsize_ok(inode, attr->ia_size);
 -- 
 2.54.0
 
