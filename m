@@ -4,107 +4,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 52814C531FA
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 15:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EA1F7C531C9
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 15:40:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=MWwYAlhizty0Mxb8lvw7WYUKoczHbchv9crruNBuVUk=; b=l8XBR4o7gdtdLFYij38UH+7IHP
-	hvSpXXLo/Ac2PjHTN3KssVjlRMokHkGTspSdeP53CKBcYOCN9zPmZwQIb3M6QSv/koYIWYm1/JxKu
-	fg4Vvz/omEfF6Djmyim5sVQWNrORBd06WYusMS2tS/Mz2JdkwSRLdl5NJbBZO86pZj6E=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=DQKYSuXow30MTCpwhOZDVS2X4EQIUup0XFaQ2h79AF0=; b=iUzycUMpO8Vgs/bc2RkoQJg9j0
+	5HHOU/HBlysVlj5WwDnVZiSwmIso5lwdl26DyE0YKprPL7Ino66r+g7wu0xW9+Fwwfcq9+SBs552U
+	Su/d7W+m6jk7Z37M112nC2fSeW3ia2ScRms8hsB+Xd751QZw1fmqXjGDr2Udak+rJvuU=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wnHzt-0002lW-TP;
-	Fri, 24 Jul 2026 15:39:35 +0000
+	id 1wnI0I-0001e3-Qo;
+	Fri, 24 Jul 2026 15:40:03 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <neelx@suse.com>) id 1wnHzt-0002j1-74
+ (envelope-from <yangyongpeng.storage@gmail.com>) id 1wnI0H-0001do-GZ
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 15:39:34 +0000
+ Fri, 24 Jul 2026 15:40:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZVwAI1hSkCaUpLf6ewphBAqD/y8icd57r1c7QrNLrio=; b=Vt8k1Zaz11LJU6djKyxhr1y/76
- yZZOh81X9bEbvvwkpDIV0jIB5JmKji599Y9C1Fn6dwFcqMXVjaZtGTUrLZs4Zm9Yl74yjpdReZls9
- HFRpCIu8Rmr6OKSL0AAXRe+kVsNtuQXq00NlA86x4JBEJM81mUhKYxSMQyOWCjgescf4=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=ZVwAI1hSkCaUpLf6ewphBAqD/y8icd57r1c7QrNLrio=; b=Xs4DLHM3YTYWy54GQPeIv2mURe
- de6kCuxWWpe5ayMiZQ1AI3/oCZ1S+WFKuYbwTxN7i2uBlWZkl/OWg09SJpWOyG1Fcl/fYiUMhSeUG
- 4IYHevW5aLUcTceD8Y/03QOmzZ8RdqtdJVeoTJwPnzXdm+HJUeTf0KAZjwPL7FNKe+qQ=;
-Received: from smtp-out1.suse.de ([195.135.223.130])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=GoG776FOxAzFpdqlvSBLgqWaGQf+lsnQD4Zewx3Fwo0=; b=XXqw/G3g+h6i+nvxEYUK39fN4Q
+ iCCAQ5QuYvWLMJC2dZw/vTnWVfo/vGwcZ503zp2ZkwpkRjnjr+2b2Di3aj9X28bsY1+2hUiYJvrlA
+ CSaiIhwxLtPXH/YeFY57kPs19vNPyh/90z06AJlsjIGsw5DmaUT/05YtyhbwfnToCDAo=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=GoG776FOxAzFpdqlvSBLgqWaGQf+lsnQD4Zewx3Fwo0=; b=g
+ xwjdVI8VvTeNIJ8VqrVRA8poqetheXtYZIf8cbUK/eIfkQXfYWAcqSOD8Hp9qgFlCmmjzu0HYE08w
+ vcMolCSlCqrSBG/24I59XPglxYYNHfs3nLzuYFAdv88sEJxnAhq6j99e0hVAUWwFAHox+18V26uNa
+ HQN7bBbgNK6Q/mDw=;
+Received: from mail-qt1-f180.google.com ([209.85.160.180])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wnHzp-0007tX-7x for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 15:39:34 +0000
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id E69957B854;
- Fri, 24 Jul 2026 13:33:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
- t=1784900023; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=ZVwAI1hSkCaUpLf6ewphBAqD/y8icd57r1c7QrNLrio=;
- b=pFockn/JE1rMxCwIc8CsG2PVy4MzcOv/GNP5+eA7sMxjSWot88p0tBlRzC8scyJBlzXZTL
- +J10VByxpmn2QL+WxAB0S48a1X6keyPzu0FwTXe+P9uPnQfaPyJ9jYfCIfE0ZjuACSftyJ
- H+vzRNO5h6u/K5Cq1/DXEGwJos+UuUs=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
- t=1784900022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=ZVwAI1hSkCaUpLf6ewphBAqD/y8icd57r1c7QrNLrio=;
- b=lUdjYZKfW0xSceH0I10RGjE9R5CVpGBjpZLKntbuwway5jEjevayT5G+8Q+KL120cphCpb
- qCGdRQAy0+RVI1bDc5ExsXUHkeU50WtH02ods4kPUhcuEPYRPWlZc65NwMZpsLC0RhfERE
- ZUAtutiOJSCXwtbOoIkkPrm6NImlaqM=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 92B81779BA;
- Fri, 24 Jul 2026 13:33:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id 6GnKGrVpY2pIJgAAD6G6ig
- (envelope-from <neelx@suse.com>); Fri, 24 Jul 2026 13:33:41 +0000
-To: fstests@vger.kernel.org
-Date: Fri, 24 Jul 2026 15:33:17 +0200
-Message-ID: <20260724133328.1837318-2-neelx@suse.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260724133328.1837318-1-neelx@suse.com>
-References: <20260724133328.1837318-1-neelx@suse.com>
+ id 1wnI0K-0004hB-5i for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 24 Jul 2026 15:40:02 +0000
+Received: by mail-qt1-f180.google.com with SMTP id
+ d75a77b69052e-51c2a76536bso6554571cf.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 24 Jul 2026 08:40:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1784907594; x=1785512394; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=GoG776FOxAzFpdqlvSBLgqWaGQf+lsnQD4Zewx3Fwo0=;
+ b=fDl4q7bCvH0DlPKWdt5jwFXkompeY8EGp7gAtr6RbOAEZBevncwj/QZEtL2YA6WbvR
+ SYndYjEqJvrYXLWCy5TS/juyX9e65ZGojWFXR/qsLwoW16G3ZMcUK/Bllx0kELqE+JMz
+ IBHO59Hv0jVQwtK2O30ar6RcfYsw/hJgy+QLHBNkyws1LjDWyidKjNAikxlZd4OxypAg
+ x0N+MQduTjzQ0ffDxtO7jKlEkYEgNI1AF3xN5rdHbGxuRBZHcRjjsnTB9Xo66p2joryl
+ tO2y1A76oetNVWbw2RiglWKYdSbGhm4PWZLsg7URQeNd3HOWoXHnai1eTQ8QAt4lRczE
+ C6yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1784907594; x=1785512394;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=GoG776FOxAzFpdqlvSBLgqWaGQf+lsnQD4Zewx3Fwo0=;
+ b=buHFyekLOsgV3Ehgooq6Uv8jgMvshVturyyCX/OGxhuaQlk6T78lPJlSGJvNyjXA8l
+ sgJiTjebRyRuvbBh1Mb7Z/D9yVP+Mvqihw2DEqM95mOvbdmlsbEOzs9JKcytymudwbOh
+ IWM6C8QiisdBPxY/ehKPpIHlyZG4SxnSwEr+ZFhrxNDzBnouLpvK/57dnVTwyV/EAjSG
+ pkFPozc2sD0QM39dBRZSZYRXn9/ZQX0u37Mhuac06ImfImU7vFgzIj8qUFZ5oW6o16SO
+ YKajrjmH3o45wduc/w3wQsMGlOQLM98OK7DV/NdCjYDXnQJknr5XpftFkaHgWcONc2He
+ 1nzA==
+X-Gm-Message-State: AOJu0YwhmjhcOnJ5KnF/Qy4Lu2B9bAjQzFWFPUvMiecWk04b+/98mTUV
+ lPs+2O22lY6RCYVuwHiMySXA4HgrXfVon/2n3LuXy4Hq3B00G3GJllh7DAEFLA==
+X-Gm-Gg: AR+sD12/GVnBx3B9Ugk3krl5JplT7fq4anyyxY0ZbL4vzLvKxYbTwREaxW5AAcfwwRV
+ t9xZRCwVjkZkEbkwbZLzooA64d7WgGnzyz+vuFceSbYDRrXCp/l+Gd5uBVXkU+Qkna1KEeLe8eo
+ 4YWOEQsN4hQBzeHnhZFifyrr0laU1RcZQ4JP8EKr7+ldJ9kwdszmLTZggGmR/+QFUn1mP+5GZCQ
+ hYrngYMwfv//eIlzk3+PsC5porkoEnxJRIcucL4YzjFtMltY66cvS9DcZyRbMz/ERbIUM1E3oqt
+ o26unjNR+QBoRY5ifFGzY8wpDl77JYoI1euiXaZJgbQA0TgqMIIDm5ThpKR0Z+IDuZ0QCuOnrIL
+ 0ewgTr53nOATCE3xo3jmTlPPMlvt91+cS75GrEK29NuWblbcJzVs8ssIihAADb3t3GxBQcMrg1x
+ bySYyKwnmq158D0b2BoLjSB6V30wtKBwQz0OGN7YhZlA69qFX+
+X-Received: by 2002:a05:6830:6106:b0:7e9:ea18:d1e3 with SMTP id
+ 46e09a7af769-7ee43fd863bmr4337622a34.29.1784898011642; 
+ Fri, 24 Jul 2026 06:00:11 -0700 (PDT)
+Received: from xiaomi-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
+ by smtp.gmail.com with ESMTPSA id
+ 46e09a7af769-7ee2a0ad03asm6069433a34.22.2026.07.24.06.00.09
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 24 Jul 2026 06:00:11 -0700 (PDT)
+From: Yongpeng Yang <yangyongpeng.storage@gmail.com>
+To: Chao Yu <chao@kernel.org>,
+	Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Fri, 24 Jul 2026 20:59:57 +0800
+Message-ID: <20260724125958.3929130-2-yangyongpeng.storage@gmail.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-X-Spamd-Result: default: False [-2.80 / 50.00]; BAYES_HAM(-3.00)[100.00%];
- MID_CONTAINS_FROM(1.00)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
- R_MISSING_CHARSET(0.50)[]; NEURAL_HAM_SHORT(-0.20)[-0.997];
- MIME_GOOD(-0.10)[text/plain]; RCVD_VIA_SMTP_AUTH(0.00)[];
- MIME_TRACE(0.00)[0:+]; RCPT_COUNT_TWELVE(0.00)[12];
- ARC_NA(0.00)[]; FUZZY_RATELIMITED(0.00)[rspamd.com];
- DKIM_SIGNED(0.00)[suse.com:s=susede1];
- TO_MATCH_ENVRCPT_ALL(0.00)[]; FROM_HAS_DN(0.00)[];
- TO_DN_SOME(0.00)[]; FROM_EQ_ENVFROM(0.00)[];
- RCVD_COUNT_TWO(0.00)[2]; RCVD_TLS_ALL(0.00)[]
-X-Headers-End: 1wnHzp-0007tX-7x
-Subject: [f2fs-dev] [PATCH 01/12] common/encrypt: separate data and inode
- nonces
+X-Headers-End: 1wnI0K-0004hB-5i
+Subject: [f2fs-dev] [RFC PATCH v3 0/2] f2fs-tools: adapt to inline extent
+ format
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -116,142 +115,57 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Vacek via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Vacek <neelx@suse.com>
-Cc: hch@infradead.org, Daniel Vacek <neelx@suse.com>, djwong@kernel.org,
- zlang@redhat.com, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, Sweet Tea Dorminy <sweettea-kernel@dorminy.me>,
- linux-fscrypt@vger.kernel.org, David Sterba <dsterba@suse.com>,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+Cc: Yongpeng Yang <yangyongpeng@xiaomi.com>,
+ Yongpeng Yang <monty_pavel@sina.com>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 
-btrfs will have different inode and data nonces, so we need to be
-specific about which nonce each use needs. For now, there is no
-difference in the two functions.
+This is the f2fs-tools companion series for the kernel patchset
+"f2fs: introduce inline extent mapping for inode data blocks" (v3).
 
-Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-Signed-off-by: Daniel Vacek <neelx@suse.com>
----
- common/encrypt    | 33 ++++++++++++++++++++++++++-------
- tests/f2fs/002    |  2 +-
- tests/generic/613 |  4 ++--
- 3 files changed, 29 insertions(+), 10 deletions(-)
+Changes since v2:
+- The kernel inline extent feature has been redesigned. The inline
+  extent area is now placed after struct f2fs_inode->i_extra_end,
+  inside the i_extra_isize region, instead of repurposing the direct
+  block address area (i_addr[]) with dual magic numbers.
+- As a consequence, f2fs-tools no longer needs to understand or convert
+  the inline extent on-disk format. The bulk of v2 (the 787-line
+  fsck/iextent.c core with lookup/insert/merge/split/convert logic, the
+  datablock_addr()/set_data_blkaddr() rework, and the build plumbing)
+  is dropped entirely.
+- Dropped [RFC PATCH v2 2/3] "build: add inline extent build support":
+  no new source files are added, so no build changes are needed.
+- Dropped [RFC PATCH v2 3/3] "f2fs_io: add support to clear/set extent
+  flags": the per-file ioctl flag no longer exists in the kernel side.
 
-diff --git a/common/encrypt b/common/encrypt
-index c9e0853d..8f664518 100644
---- a/common/encrypt
-+++ b/common/encrypt
-@@ -548,7 +548,7 @@ _add_fscrypt_provisioning_key()
- # Retrieve the encryption nonce of the given inode as a hex string.  The nonce
- # was randomly generated by the filesystem and isn't exposed directly to
- # userspace.  But it can be read using the filesystem's debugging tools.
--_get_encryption_nonce()
-+_get_encryption_file_nonce()
- {
- 	local device=$1
- 	local inode=$2
-@@ -592,15 +592,34 @@ _get_encryption_nonce()
- 			}'
- 		;;
- 	*)
--		_fail "_get_encryption_nonce() isn't implemented on $FSTYP"
-+		_fail "_get_encryption_file_nonce() isn't implemented on $FSTYP"
- 		;;
- 	esac
- }
- 
--# Require support for _get_encryption_nonce()
-+# Retrieve the encryption nonce used to encrypt the data of the given inode as
-+# a hex string.  The nonce was randomly generated by the filesystem and isn't
-+# exposed directly to userspace.  But it can be read using the filesystem's
-+# debugging tools.
-+_get_encryption_data_nonce()
-+{
-+	local device=$1
-+	local inode=$2
-+
-+	case $FSTYP in
-+	ext4|f2fs)
-+		_get_encryption_file_nonce $device $inode
-+		;;
-+	*)
-+		_fail "_get_encryption_data_nonce() isn't implemented on $FSTYP"
-+		;;
-+	esac
-+}
-+
-+# Require support for _get_encryption_*nonce()
- _require_get_encryption_nonce_support()
- {
--	echo "Checking for _get_encryption_nonce() support for $FSTYP" >> $seqres.full
-+	echo "Checking for _get_encryption_*nonce() support for $FSTYP" >> $seqres.full
- 	case $FSTYP in
- 	ext4)
- 		_require_command "$DEBUGFS_PROG" debugfs
-@@ -614,7 +633,7 @@ _require_get_encryption_nonce_support()
- 		# the test fail in that case, as it was an f2fs-tools bug...
- 		;;
- 	*)
--		_notrun "_get_encryption_nonce() isn't implemented on $FSTYP"
-+		_notrun "_get_encryption_*nonce() isn't implemented on $FSTYP"
- 		;;
- 	esac
- }
-@@ -827,7 +846,7 @@ _do_verify_ciphertext_for_encryption_policy()
- 	echo "Verifying encrypted file contents" >> $seqres.full
- 	for f in "${test_contents_files[@]}"; do
- 		read -r src inode blocklist <<< "$f"
--		nonce=$(_get_encryption_nonce $SCRATCH_DEV $inode)
-+		nonce=$(_get_encryption_data_nonce $SCRATCH_DEV $inode)
- 		_dump_ciphertext_blocks $SCRATCH_DEV $blocklist > $tmp.actual_contents
- 		$crypt_contents_cmd $contents_encryption_mode $raw_key_hex \
- 			--file-nonce=$nonce --inode-number=$inode \
-@@ -846,7 +865,7 @@ _do_verify_ciphertext_for_encryption_policy()
- 	echo "Verifying encrypted file names" >> $seqres.full
- 	for f in "${test_filenames_files[@]}"; do
- 		read -r name inode dir_inode padding <<< "$f"
--		nonce=$(_get_encryption_nonce $SCRATCH_DEV $dir_inode)
-+		nonce=$(_get_encryption_file_nonce $SCRATCH_DEV $dir_inode)
- 		_get_ciphertext_filename $SCRATCH_DEV $inode $dir_inode \
- 			> $tmp.actual_name
- 		echo -n "$name" | \
-diff --git a/tests/f2fs/002 b/tests/f2fs/002
-index d2f6e413..ec83c81b 100755
---- a/tests/f2fs/002
-+++ b/tests/f2fs/002
-@@ -126,7 +126,7 @@ blocklist=$(_get_ciphertext_block_list $file)
- _scratch_unmount
- 
- echo -e "\n# Getting file's encryption nonce"
--nonce=$(_get_encryption_nonce $SCRATCH_DEV $inode)
-+nonce=$(_get_encryption_data_nonce $SCRATCH_DEV $inode)
- 
- echo -e "\n# Dumping the file's raw data"
- _dump_ciphertext_blocks $SCRATCH_DEV $blocklist > $tmp.raw
-diff --git a/tests/generic/613 b/tests/generic/613
-index 499af18e..6a120c13 100755
---- a/tests/generic/613
-+++ b/tests/generic/613
-@@ -66,10 +66,10 @@ echo -e "\n# Getting encryption nonces from inodes"
- echo -n > $tmp.nonces_hex
- echo -n > $tmp.nonces_bin
- for inode in "${inodes[@]}"; do
--	nonce=$(_get_encryption_nonce $SCRATCH_DEV $inode)
-+	nonce=$(_get_encryption_data_nonce $SCRATCH_DEV $inode)
- 	if (( ${#nonce} != 32 )) || [ -n "$(echo "$nonce" | tr -d 0-9a-fA-F)" ]
- 	then
--		_fail "Expected nonce to be 16 bytes (32 hex characters), but got \"$nonce\""
-+		_fail "Expected nonce for inode $inode to be 16 bytes (32 hex characters), but got \"$nonce\""
- 	fi
- 	echo $nonce >> $tmp.nonces_hex
- 	echo -ne "$(echo $nonce | sed 's/[0-9a-fA-F]\{2\}/\\x\0/g')" \
+v2: https://lore.kernel.org/all/20260529085745.2664678-1-yangyongpeng.storage@gmail.com/
+
+What remains is a small adaptation to the new on-disk inode layout:
+
+Patch 1: Adapt to the inode layout change -- split i_compr_blocks into
+         __le32 i_compr_blocks + __le32 i_inline_ext_capacity, add the
+         struct f2fs_iext_header definition, and keep the inline extent
+         consistent with the largest extent cache by invalidating it
+         whenever i_ext is dropped or truncated in fsck.
+Patch 2: dump.f2fs -- print the inline extent capacity and all extent
+         entries for inodes that reserve an inline extent area.
+
+Yongpeng Yang (2):
+  fsck.f2fs: adapt to inline extent inode layout
+  dump.f2fs: dump inline extent mapping information
+
+ fsck/fsck.c       |  9 ++++++---
+ fsck/inject.c     |  6 +++---
+ fsck/mount.c      | 20 +++++++++++++++++++-
+ fsck/segment.c    |  2 +-
+ include/f2fs_fs.h | 22 +++++++++++++++++++++-
+ 5 files changed, 50 insertions(+), 9 deletions(-)
+
 -- 
-2.53.0
+2.43.0
 
 
 
