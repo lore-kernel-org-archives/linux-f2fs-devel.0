@@ -4,108 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 30720C531FA
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 15:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6C242C531C9
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 15:46:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=LkIbw7dtU2EchyarY3ZRC8qYDLD/Lpa2rJGfuu/JsJs=; b=XtkDN1xFq+Z3YDRQNY8MxR+Iqi
-	mjbMF2D5oh6DtllaCsHxFk7E3GuhRmJVqb06YQGafVShz2j0As9EuxFw4Y9UGhnwIyUeH+5P9cBXq
-	NrprucZovm88rilYX8fJ40QLT0tlv5Qd/rUnY55onV+Mmi5QD2GNuM5+qXNYfQC552Hk=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=e8qfyoSPyPfjE0jCCqLhRQvm/sqiAGHIjfAWqfboNlU=; b=ddrN02soP+Nd3vLdS1vxEkjNSR
+	48qGvQnosH/bfAwMCp4sjqI+X+/p9gG7aGO+QUoTMfhMZPAFdZ7JHvVCf+ATadR1h+nQcC63BKOeu
+	1sQxlvKsg6bl01UNEylGA4vGG9J3GLGoRwLjAXMtGipPJPY3JYX33/ILkuNzNLrs6eAE=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wnI1o-0006ge-DE;
-	Fri, 24 Jul 2026 15:41:37 +0000
+	id 1wnI6S-0002Cp-Cd;
+	Fri, 24 Jul 2026 15:46:25 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <neelx@suse.com>) id 1wnI1m-0006gT-S5
+ (envelope-from <hch@lst.de>) id 1wnI6Q-0002CZ-Ax
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 15:41:35 +0000
+ Fri, 24 Jul 2026 15:46:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0lLyCImeZqbnvg81x+S/4Hhuk20p+6e9u3KWDoA+Lz4=; b=ALbC+8hG4DuKIrBr/nBAsjtRtD
- SefAK9cT3O0ITF+wVgE1Sf0JmE4OibLFDfp0sz7HCBCbJpdGX5buyrtv4GEESD48lOkjij35LNmn1
- ad9QVkXDvu0ZprZp5/BpXuiyKjXHPQRTDbaAJsoMbcgnTYSefDO5LFxCV80IL8u32cQs=;
+ bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=Bt6jtLL8LYMno9zHDCKDEHmW7e
+ BfyvOamTEfEJCsKi1kXhsM45TuVp6RsrMWQU/QFzU3u32zhVOIPBUwLzJVu7ocjEVPa7Q88jN3k8c
+ LVPtG1rJD1buzjWc3deteh/9qYuEhZAbs+WGX1Whesi+QFM5dmV7ubwjIKUTbArkeW78=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=0lLyCImeZqbnvg81x+S/4Hhuk20p+6e9u3KWDoA+Lz4=; b=mYfOLcycRSFolyC8yzAvRhVWox
- mEBUiUhy714BvxiXZe2nKD7gsewK40mBwIfoGVWgsdIaLTx9HbSAY6AkZHqDZ/EaArI5v8G88ZV7b
- EPcb9hoIdp7sM8f2e+ZHjeMtuIhRsmMGWXdE03SJ/m9hHe6Z6EBDMpcl3sMQP0pKdY5o=;
-Received: from smtp-out1.suse.de ([195.135.223.130])
+ bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=es0lksM+pTv4jmFaFb/qQMyD0l
+ dJkX+TbcGfMFanwwok9V9jogG1Ct6WIHSCtlP3ReazxTNJ1pjwIsZLyDfbm6BWqDeSI7bWjqsAN/u
+ Rbrjzd9p5OecBlXbQ7Ks93lwgS9hgexEC8H+VSTxlHUqxRNwWD6z21/1f9r0qqAlfcXQ=;
+Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wnI1l-00082P-Ms for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 15:41:35 +0000
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id 169FB7B87D;
- Fri, 24 Jul 2026 13:33:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
- t=1784900032; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=0lLyCImeZqbnvg81x+S/4Hhuk20p+6e9u3KWDoA+Lz4=;
- b=gXXi/BDSOQttnhCzpJcx8/4/5jSxDpDlfQuj+dtaB/NKSzWtlTQtlfXhO/bKPuNa8FYaVV
- m0zLUNeFg3y7Kd6rcaORD+XkCExQ9/b6oxeUayzrt4i83CSNNcsk02CDBDOTtOs/kpPacM
- 70g7aweqpB7hiqbuEATVvrL6/LDweNc=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
- t=1784900032; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=0lLyCImeZqbnvg81x+S/4Hhuk20p+6e9u3KWDoA+Lz4=;
- b=gXXi/BDSOQttnhCzpJcx8/4/5jSxDpDlfQuj+dtaB/NKSzWtlTQtlfXhO/bKPuNa8FYaVV
- m0zLUNeFg3y7Kd6rcaORD+XkCExQ9/b6oxeUayzrt4i83CSNNcsk02CDBDOTtOs/kpPacM
- 70g7aweqpB7hiqbuEATVvrL6/LDweNc=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
- (No client certificate requested)
- by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7649D779BA;
- Fri, 24 Jul 2026 13:33:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
- by imap1.dmz-prg2.suse.org with ESMTPSA id ENwlG79pY2pIJgAAD6G6ig
- (envelope-from <neelx@suse.com>); Fri, 24 Jul 2026 13:33:51 +0000
-To: fstests@vger.kernel.org
-Date: Fri, 24 Jul 2026 15:33:27 +0200
-Message-ID: <20260724133328.1837318-12-neelx@suse.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260724133328.1837318-1-neelx@suse.com>
-References: <20260724133328.1837318-1-neelx@suse.com>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1wnI6P-0008MV-9F for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 24 Jul 2026 15:46:23 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id 088E268D05; Fri, 24 Jul 2026 15:17:08 +0200 (CEST)
+Date: Fri, 24 Jul 2026 15:17:07 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Andrey Albershteyn <aalbersh@kernel.org>
+Message-ID: <20260724131707.GE27878@lst.de>
+References: <20260721184346.416657-1-aalbersh@kernel.org>
+ <20260721184346.416657-17-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Spamd-Result: default: False [-2.80 / 50.00]; BAYES_HAM(-3.00)[100.00%];
- MID_CONTAINS_FROM(1.00)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
- R_MISSING_CHARSET(0.50)[]; NEURAL_HAM_SHORT(-0.20)[-0.997];
- MIME_GOOD(-0.10)[text/plain]; TO_MATCH_ENVRCPT_ALL(0.00)[];
- FROM_HAS_DN(0.00)[]; ARC_NA(0.00)[]; MIME_TRACE(0.00)[0:+];
- TO_DN_SOME(0.00)[]; RCPT_COUNT_TWELVE(0.00)[12];
- DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid,imap1.dmz-prg2.suse.org:helo];
- RCVD_VIA_SMTP_AUTH(0.00)[]; FROM_EQ_ENVFROM(0.00)[];
- RCVD_COUNT_TWO(0.00)[2]; FUZZY_RATELIMITED(0.00)[rspamd.com];
- DKIM_SIGNED(0.00)[suse.com:s=susede1];
- R_RATELIMIT(0.00)[to_ip_from(RLpqbuhkiw7hwm7jg9wcx4pbon)];
- RCVD_TLS_ALL(0.00)[]
-X-Headers-End: 1wnI1l-00082P-Ms
-Subject: [f2fs-dev] [PATCH 11/12] fstests: split generic/613 into two tests
+Content-Disposition: inline
+In-Reply-To: <20260721184346.416657-17-aalbersh@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1wnI6P-0008MV-9F
+Subject: Re: [f2fs-dev] [PATCH v13 16/23] xfs: add fs-verity support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,254 +75,17 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Vacek via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Vacek <neelx@suse.com>
-Cc: hch@infradead.org, Daniel Vacek <neelx@suse.com>, djwong@kernel.org,
- zlang@redhat.com, Josef Bacik <josef@toxicpanda.com>,
+Cc: fsverity@lists.linux.dev, ebiggers@kernel.org, djwong@kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, David Sterba <dsterba@suse.com>,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, hch@lst.de,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Josef Bacik <josef@toxicpanda.com>
+Looks good:
 
-generic/613 tests v1 and v2 policies, but btrfs can only support v2
-policies.  Split this into two different tests, 613 which will only test
-v1 policies, and then 800 which will test v2 policies.
-
-The 800 test will also add checks for the per-extent nonces to validate
-they're all sufficiently random.
-
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Daniel Vacek <neelx@suse.com>
----
- tests/generic/613     |  20 ++------
- tests/generic/613.out |   5 +-
- tests/generic/800     | 115 ++++++++++++++++++++++++++++++++++++++++++
- tests/generic/800.out |  14 +++++
- 4 files changed, 136 insertions(+), 18 deletions(-)
- create mode 100755 tests/generic/800
- create mode 100644 tests/generic/800.out
-
-diff --git a/tests/generic/613 b/tests/generic/613
-index 6a120c13..aee9f4db 100755
---- a/tests/generic/613
-+++ b/tests/generic/613
-@@ -20,22 +20,21 @@ _begin_fstest auto quick encrypt
- . ./common/filter
- . ./common/encrypt
- 
--_require_scratch_encryption -v 2
-+_require_scratch_encryption
- _require_get_encryption_nonce_support
- _require_command "$XZ_PROG" xz
- 
- _scratch_mkfs_encrypted &>> $seqres.full
- _scratch_mount
- 
--echo -e "\n# Adding encryption keys"
--_add_enckey $SCRATCH_MNT "$TEST_RAW_KEY"
-+echo -e "\n# Adding encryption key"
- _add_enckey $SCRATCH_MNT "$TEST_RAW_KEY" -d $TEST_KEY_DESCRIPTOR
- 
- # Create a bunch of encrypted files and directories -- enough for the uniqueness
- # and randomness tests to be meaningful, but not so many that this test takes a
--# long time.  Test using both v1 and v2 encryption policies, and for each of
--# those test the case of an encryption policy that is assigned to an empty
--# directory as well as the case of a file created in an encrypted directory.
-+# long time.  Test using the v1 encryption policy, test the case of an
-+# encryption policy that is assigned to an empty directory as well as the case
-+# of a file created in an encrypted directory.
- echo -e "\n# Creating encrypted files and directories"
- inodes=()
- for i in {1..50}; do
-@@ -43,20 +42,11 @@ for i in {1..50}; do
- 	mkdir $dir
- 	inodes+=("$(stat -c %i $dir)")
- 	_set_encpolicy $dir $TEST_KEY_DESCRIPTOR
--
--	dir=$SCRATCH_MNT/v2_policy_dir_$i
--	mkdir $dir
--	inodes+=("$(stat -c %i $dir)")
--	_set_encpolicy $dir $TEST_KEY_IDENTIFIER
- done
- for i in {1..50}; do
- 	file=$SCRATCH_MNT/v1_policy_dir_1/$i
- 	touch $file
- 	inodes+=("$(stat -c %i $file)")
--
--	file=$SCRATCH_MNT/v2_policy_dir_1/$i
--	touch $file
--	inodes+=("$(stat -c %i $file)")
- done
- _scratch_unmount
- 
-diff --git a/tests/generic/613.out b/tests/generic/613.out
-index 203a64f2..4a218d03 100644
---- a/tests/generic/613.out
-+++ b/tests/generic/613.out
-@@ -1,7 +1,6 @@
- QA output created by 613
- 
--# Adding encryption keys
--Added encryption key with identifier 69b2f6edeee720cce0577937eb8a6751
-+# Adding encryption key
- Added encryption key with descriptor 0000111122223333
- 
- # Creating encrypted files and directories
-@@ -12,5 +11,5 @@ Added encryption key with descriptor 0000111122223333
- Listing non-unique nonces:
- 
- # Verifying randomness of nonces
--Uncompressed size is 3200 bytes
-+Uncompressed size is 1600 bytes
- Nonces are incompressible, as expected
-diff --git a/tests/generic/800 b/tests/generic/800
-new file mode 100755
-index 00000000..18377da4
---- /dev/null
-+++ b/tests/generic/800
-@@ -0,0 +1,115 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright 2023 Meta
-+#
-+# FS QA Test No. 800
-+#
-+# A variation of generic/613 that only tests v2, and checks data nonces for any
-+# file system that supporst per-extent encryption.
-+#
-+# Test that encryption nonces are unique and random, where randomness is
-+# approximated as "incompressible by the xz program".
-+#
-+# An encryption nonce is the 16-byte value that the filesystem generates for
-+# each encrypted file.  These nonces must be unique in order to cause different
-+# files to be encrypted differently, which is an important security property.
-+# In practice, they need to be random to achieve that; and it's easy enough to
-+# test for both uniqueness and randomness, so we test for both.
-+#
-+. ./common/preamble
-+_begin_fstest auto quick encrypt
-+
-+# Import common functions.
-+. ./common/filter
-+. ./common/encrypt
-+
-+_require_scratch_encryption -v 2
-+_require_get_encryption_nonce_support
-+_require_command "$XZ_PROG" xz
-+
-+_check_nonce()
-+{
-+	local nonce=$1
-+
-+	if (( ${#nonce} != 32 )) || [ -n "$(echo "$nonce" | tr -d 0-9a-fA-F)" ]
-+	then
-+		_fail "Expected nonce for inode $inode to be 16 bytes (32 hex characters), but got \"$nonce\""
-+	fi
-+}
-+
-+_scratch_mkfs_encrypted &>> $seqres.full
-+_scratch_mount
-+
-+echo -e "\n# Adding encryption key"
-+_add_enckey $SCRATCH_MNT "$TEST_RAW_KEY"
-+
-+# Create a bunch of encrypted files and directories -- enough for the uniqueness
-+# and randomness tests to be meaningful, but not so many that this test takes a
-+# long time.  Test using the v2 encryption policy, test the case of an
-+# encryption policy that is assigned to an empty directory as well as the case
-+# of a file created in an encrypted directory.
-+echo -e "\n# Creating encrypted files and directories"
-+inodes=()
-+for i in {1..50}; do
-+	dir=$SCRATCH_MNT/v2_policy_dir_$i
-+	mkdir $dir
-+	inodes+=("$(stat -c %i $dir)")
-+	_set_encpolicy $dir $TEST_KEY_IDENTIFIER
-+done
-+for i in {1..50}; do
-+	file=$SCRATCH_MNT/v2_policy_dir_1/$i
-+	$XFS_IO_PROG -f -c "pwrite 0 1m" $file > /dev/null
-+	inodes+=("$(stat -c %i $file)")
-+done
-+_scratch_unmount
-+
-+# Build files that contain all the nonces.  nonces_hex contains them in hex, one
-+# per line.  nonces_bin contains them in binary, all concatenated.
-+echo -e "\n# Getting encryption nonces from inodes"
-+echo -n > $tmp.nonces_hex
-+echo -n > $tmp.nonces_bin
-+for inode in "${inodes[@]}"; do
-+	inode_nonce=$(_get_encryption_file_nonce $SCRATCH_DEV $inode)
-+	_check_nonce $inode_nonce
-+	
-+	echo $inode_nonce >> $tmp.nonces_hex
-+	echo -ne "$(echo $inode_nonce | sed 's/[0-9a-fA-F]\{2\}/\\x\0/g')" \
-+		>> $tmp.nonces_bin
-+
-+	data_nonce=$(_get_encryption_data_nonce $SCRATCH_DEV $inode)
-+
-+	# If the inode is empty we won't have a data nonce
-+	[ "$data_nonce" = "" ] && continue
-+
-+	# If the inode nonce and data nonce are the same continue
-+	[ "$inode_nonce" = "$data_nonce" ] && continue
-+
-+	_check_nonce $data_nonce
-+	
-+	echo $data_nonce >> $tmp.nonces_hex
-+	echo -ne "$(echo $data_nonce | sed 's/[0-9a-fA-F]\{2\}/\\x\0/g')" \
-+		>> $tmp.nonces_bin
-+done
-+
-+# Verify the uniqueness and randomness of the nonces.  In theory randomness
-+# implies uniqueness here, but it's easy enough to explicitly test for both.
-+
-+echo -e "\n# Verifying uniqueness of nonces"
-+echo "Listing non-unique nonces:"
-+sort < $tmp.nonces_hex | uniq -d
-+
-+echo -e "\n# Verifying randomness of nonces"
-+uncompressed_size=$(stat -c %s $tmp.nonces_bin)
-+echo "Uncompressed size is $uncompressed_size bytes" >> $seqres.full
-+compressed_size=$($XZ_PROG -c < $tmp.nonces_bin | wc -c)
-+echo "Compressed size is $compressed_size bytes" >> $seqres.full
-+# The xz format has 60 bytes of overhead.  Go a bit lower to avoid flakiness.
-+if (( compressed_size >= uncompressed_size + 55 )); then
-+	echo "Nonces are incompressible, as expected"
-+else
-+	_fail "Nonces are compressible (non-random); compressed $uncompressed_size => $compressed_size bytes!"
-+fi
-+
-+# success, all done
-+status=0
-+exit
-diff --git a/tests/generic/800.out b/tests/generic/800.out
-new file mode 100644
-index 00000000..5c477654
---- /dev/null
-+++ b/tests/generic/800.out
-@@ -0,0 +1,14 @@
-+QA output created by 800
-+
-+# Adding encryption key
-+Added encryption key with identifier 69b2f6edeee720cce0577937eb8a6751
-+
-+# Creating encrypted files and directories
-+
-+# Getting encryption nonces from inodes
-+
-+# Verifying uniqueness of nonces
-+Listing non-unique nonces:
-+
-+# Verifying randomness of nonces
-+Nonces are incompressible, as expected
--- 
-2.53.0
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
 
 
