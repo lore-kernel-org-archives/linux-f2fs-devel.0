@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 633ACC531C9
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 15:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D62FEC53200
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 15:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=jOUlU7bo/pnJMECLIqDoAWZs/SgQzjxZXxLjWMFZoL8=; b=Lby0/UlzIn8idDSqv77O8t6bom
-	EqbmgmCg0IQqneI/OVh4iAAQn43Pi5P02saTWHV6P/tTxKxPZwptHzrClgssMrbCDQ+YTivEoarWe
-	WCB9PrkC5KifNuiXzzHgc294QMppqYbsRTmC2HghItUEfZnHyELfmOu7+fd7qSKKIlVg=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=FBTx7UFnzqQx6KkkNRaeYtLflyvezpFCISZ/lBD2pJ8=; b=JwnJyzyXWThQtlhpo5eYfJ4y6d
+	YjqLbLVx/+5h1QphT6dQ5jT6OnBPlCoc4b3J1JW5OQwusU+CjmuFrmmVpulxO+KrW3ficV9npj/vj
+	L5VXCvQz7VofP5DgSXbG5WJxxo1yfx7nfMaTnPy6/vdkSEW3IO/WJ8rbFevOC/fqXKqQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wnIAK-0006z7-Do;
-	Fri, 24 Jul 2026 15:50:25 +0000
+	id 1wnIDE-0005jE-68;
+	Fri, 24 Jul 2026 15:53:21 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <yangyongpeng.storage@gmail.com>) id 1wnIAJ-0006yz-9h
+ (envelope-from <yangyongpeng.storage@gmail.com>) id 1wnIDD-0005j8-9c
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 15:50:24 +0000
+ Fri, 24 Jul 2026 15:53:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=glOWsmtsYU5zyv+/g+AgggDt8s7Rj1H5/Lf/7X9utA0=; b=KSqlErm30kPD7COlDITxGYCV4u
- z9WCKCFZ0ilvHqIV0Cd0SlwRZuDo2ZO0zSCUdS0jcRXRU5HHRES0MJb6pNYfnYLWgnqJuCZ1lc5LI
- O7N7M2rSndTwzTO5DR82emQAe5OqFbz3HN6CDBGjdlH5LRA9nnNubvyVa50JK+HXtlNM=;
+ bh=RRXClAmA0LIjcN+2FQWdyezY6NtMo/f08Qt0QpELKMw=; b=SEla1kZWzfyFNLdxhGQH3nVBW9
+ /nyzVEQH7RGSMcOFW6uBeo9ask1F9FJy4xslTBq9s02ijJ68fl/djlYDuDkz6TqSc4ORy9QusSkwz
+ qANBC5TDlOTzm4kpQNpCv2JEqJmmsyq2URtcLIoFBKaGlGvJuTxBC79XjgbomrIVuPfs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,71 +42,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=glOWsmtsYU5zyv+/g+AgggDt8s7Rj1H5/Lf/7X9utA0=; b=ZbWgLiRltGktTGa+aATuI5RX11
- MZFqYrkmXBRu4JVaCAhXyU+zb1vYWzCXHPEZ/MpqYUI6cuzySKY2h2HN7IU0e0bTDrAzOhsKljauu
- x99qOjhpDErYW+NLiDP63BKJe1W+S+3fMjeZYpVuYAZhKyvSNiJibLyVlmjZLbU/k5xE=;
-Received: from mail-qv1-f43.google.com ([209.85.219.43])
+ bh=RRXClAmA0LIjcN+2FQWdyezY6NtMo/f08Qt0QpELKMw=; b=Oe9SgLs6TP/K5zISXhh9KH79SK
+ g4hEDnwi6RXyLtIGdKWfq8r+OACGHBQ051qkJazMiWuEBilUDl2o8ELZ3dAHttmKwBYghkMFy0IEA
+ G+v8kHUTiSoO3IkJP8xmkaFZYhPFbRiCgkqkBlkXxqvmHKLm3U4BSuD4z4chJcWlf3FA=;
+Received: from mail-vk1-f171.google.com ([209.85.221.171])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wnIAM-00059K-5o for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 15:50:23 +0000
-Received: by mail-qv1-f43.google.com with SMTP id
- 6a1803df08f44-8ef7b7651ecso23351906d6.1
+ id 1wnIDB-0005Fd-Jx for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 24 Jul 2026 15:53:20 +0000
+Received: by mail-vk1-f171.google.com with SMTP id
+ 71dfb90a1353d-5c276bfce7eso394132e0c.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 24 Jul 2026 08:50:22 -0700 (PDT)
+ Fri, 24 Jul 2026 08:53:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1784908217; x=1785513017; darn=lists.sourceforge.net;
+ d=gmail.com; s=20251104; t=1784908392; x=1785513192; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=glOWsmtsYU5zyv+/g+AgggDt8s7Rj1H5/Lf/7X9utA0=;
- b=Ao4nIaVpSJWx/mDcdJkhYRz/ITglo/wPDbcfX6KYiVepmEHkbS2HocT5LFc2A7DwKN
- ZpxJmg9FAjbRVjKOS3USe/iilNCMBJY+/k/xuj3q8d7sgvjuTuXoxYSm5FsN1Q68+FYX
- Ubmsga3/b6jBSxSGxez2PmVAraZ92ife0Q8YWvGm6WHuv7vfrtz717fEaI1MLW88RD0b
- 2jSoE+fbHlmQYvawSswtsgMnWz+2VmCf8iIkLfHWXstOwiISwvrC75X88m1ZcJKHF3OE
- 1PqzvOGiPSZ1w4dyjLxqNd/CVnPYcj9Y9Qx8Y4bIkTbp/qIYIeZyNXj8IPBnDs535LwV
- 3I7A==
+ bh=RRXClAmA0LIjcN+2FQWdyezY6NtMo/f08Qt0QpELKMw=;
+ b=TQ+RQn08tGYXNf1xqwJHqtuc5PE5At0jaw3y3+tN+8BLv92C7rXTL9Ww7pYd3ID2gn
+ ex+iX4O+fu2KwUN3A8g5h2weUs3O15EQKo+sTPF7ZZY57mB31PHiRZw7ci4QWJYLKw7q
+ a5fdGHUN6yBti+z3oe8XEs7Wp7NXRoNFGlSC8DhOw3rFAHDwGouPXg2ScwrRW38SmcUM
+ KoDr56Kvi5cVYjp6k52arUUjsLTL/ZtoIvhH3Ivbkmw3kikpXIYAAk2/feQfQHmWb87O
+ GqD0S8bAhHEna0XPcBi3IztOsIMRrO4plMHbwmz4sjcFOoLZx9n4pzgUgUJbPg4pnuAc
+ fonA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784908217; x=1785513017;
+ d=1e100.net; s=20251104; t=1784908392; x=1785513192;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=glOWsmtsYU5zyv+/g+AgggDt8s7Rj1H5/Lf/7X9utA0=;
- b=bF5k9dUIaVjZU6KhGHxwLe6L9/ooZwJmZGkhEFvIChfzeLHD5jc8QOI2O8tm8nYYt2
- +EoGUoSPdXvpFOdiOc7+havaPKvMbSTEqDsm+90/S+Sxy4s3inmgO64gfm6Y9ETtLlAg
- 5JCwfdAMFZQKFxET4iPiOLrhHSMTk2/JP6E7M3JTZJObqzx8bWqN3pwpxz8sZH3oyhVq
- jgYnYZYzXPOaM5f55IX9tswRTp1oh8sR7Ziu9NFy72c5HEUZ4d1YVBgiJbuW+kJIZW/I
- f2HALwnroLt12cV9ND9LI483FIsVMynJ1zh2Ola0jCOjwBUdayOcYpS1Q0QoZIw6lyVz
- 5VXA==
-X-Gm-Message-State: AOJu0YxKuX7b7Z+igdaVudykjKZRMO5pAHA67saOHRpz2dDCioylxuW4
- wFWALK87AJPNQ8/EfnWFUspkTbsxqhQPulqzbNwSGmDaiMkKZq3QIwnNcPnH8g==
-X-Gm-Gg: AR+sD10OCLDy62e9lGZRu3GXC0pr1ZW0HsnNwgfrpWp9t6HReNCBcozmysR8ETJBzOC
- s74KsPDZDf8JRLSx5ZiLEQs+DWSuVK19HVj4cw/+V6jhLVV1rkgjt36bpFfZAP+OzskC3O0Pamt
- Vsem9ZiMPsIiQ8Hduyi5/giKybkcWZicdNmXPLr5uemHqrteR4zycLogvoZzjQc6yfyJdnnmCSk
- ymyuFRjDxaIwMGs12jbgUDFcAolTKXZXoW5npGwq0HW3/WBzBNIhg0poD+OwQFNmmg+mxFHW/fg
- nyadNPFUqE/0LNUEOgmi4F/RQx8ULr+fJwm461k1scoa2RaIDPzT7ojvuRl4pJsnRuJmxzy9Hn5
- 7+JjoqrHMTCgffgI2sHfTIc7V/0mV/PgHoUxPG5CmrIGSDaJ0w26WNMbOCO2g1qbgLWhN2LYDST
- hiMs2lKXEQzanbFfGwu5p23Pn7eVD7nnF+KfIlUlTR2Aqccijj4vw1yx83Ka4=
-X-Received: by 2002:a4a:e907:0:b0:6aa:edca:e139 with SMTP id
- 006d021491bc7-6aaf45fb29bmr328541eaf.31.1784897964463; 
- Fri, 24 Jul 2026 05:59:24 -0700 (PDT)
+ bh=RRXClAmA0LIjcN+2FQWdyezY6NtMo/f08Qt0QpELKMw=;
+ b=nr9/lbKk7cK/yXwy7fULf4U6QCbDzi3wHiKkGTH8StQrvVMBMI2cWJAHoPgIGRpMI+
+ vT8zy1QSe+bZsnWJQo3dDVAKXR3aWt+6/ijErB8w4tn+i8GFwthWOafqZLYTQPW0+PUq
+ mz9jMd7CYIx2vwGPhUiaCOHjq+0wvKb5S259IFZPS34KVyZZK/Cg+w2W3C/t7MHPwBrX
+ dbCM+PEGt4gsC362idey138DtO9lLz07sWOe7KifG8EM0hlbu8+l4A0a/S8PUFZsGPO3
+ T9G/jLhihkvEhdRHrLnlOCQE4v4FVrqUBud7AMHgNWKSJxGtatcExvko9CUmCPQC1ePX
+ WJWw==
+X-Gm-Message-State: AOJu0Yz2RvQnFC3+jcpBmZr52KpaLHZfUWsegZ4NO+jZpPYOOglHvf9F
+ lheKvD4uU3aGs40jhnL3eIhwGKjkRm+KCcIBvjO7OArW8dD0CEis3wK7xQPxbA==
+X-Gm-Gg: AR+sD13zlT/2M9zB9uq1lebOxqat7BQTshLRGyhGvQxyg0//9IlXnSvaDdeWMT9typm
+ eHX6NixoOv8QCc5lCKhPVT6eYa2BgkZz6fgVCyv0rGWrZALnPV9xg1oAlu03F0K8rw1k5EQGFJv
+ YOMpiD3p8rxAkPG4/m37vF/JFmoGe5PQyKv8+KJg2I9jmB8ELXV5EINXaN0R+Xu1qt42L8xUnZR
+ mhQkOpBjes7ehrUfWkOGz2j2tloBgd8nbepB1sKy5GvdUPdHINAVqqeRMdZzerlhsI6Hk+KAftz
+ FuVY9S/gEJt2rqpMJb4aecE6rWXi4Qui0S59PcbNoZOC1NT4vxki7r2EKGUV1aUZuzU8FA/9XE0
+ +oKroMuMza/3f3H5YzPHdkI+fVK9zkWU6TYy+E57tICJGGWpFunxqhRbUGHAX9XwkvvWdPFaX5V
+ ljgwMX5qvWNGjbXJXy5lpK1HfWipA5otJYixIs8C6yvdSTH/+yjy7pK7BMQzU=
+X-Received: by 2002:a05:6830:498d:b0:7e6:f083:130e with SMTP id
+ 46e09a7af769-7ee43e426d8mr4554732a34.4.1784898016148; 
+ Fri, 24 Jul 2026 06:00:16 -0700 (PDT)
 Received: from xiaomi-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-45767486cf6sm7359957fac.15.2026.07.24.05.59.22
+ 46e09a7af769-7ee2a0ad03asm6069433a34.22.2026.07.24.06.00.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 24 Jul 2026 05:59:24 -0700 (PDT)
+ Fri, 24 Jul 2026 06:00:15 -0700 (PDT)
 From: Yongpeng Yang <yangyongpeng.storage@gmail.com>
 To: Chao Yu <chao@kernel.org>,
 	Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Fri, 24 Jul 2026 20:58:23 +0800
-Message-ID: <20260724125847.3928772-6-yangyongpeng.storage@gmail.com>
+Date: Fri, 24 Jul 2026 20:59:58 +0800
+Message-ID: <20260724125958.3929130-3-yangyongpeng.storage@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260724125847.3928772-2-yangyongpeng.storage@gmail.com>
-References: <20260724125847.3928772-2-yangyongpeng.storage@gmail.com>
+In-Reply-To: <20260724125958.3929130-2-yangyongpeng.storage@gmail.com>
+References: <20260724125958.3929130-2-yangyongpeng.storage@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1wnIAM-00059K-5o
-Subject: [f2fs-dev] [RFC PATCH v3 3/3] f2fs: introduce tracepoints for
- inline extent lookup and update
+X-Headers-End: 1wnIDB-0005Fd-Jx
+Subject: [f2fs-dev] [RFC PATCH v3 1/2] fsck.f2fs: adapt to inline extent
+ inode layout
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -126,167 +126,181 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 
-Add tracepoints to aid performance analysis and debugging of the
-inline extent mechanism:
+The kernel inline extent feature has been designed to place the inline
+extent area after struct f2fs_inode->i_extra_end, inside the
+i_extra_isize region. f2fs-tools only needs to track the inode layout
+change and keep the inline extent consistent with the largest cached
+extent.
 
-- trace_f2fs_iext_lookup_blkaddr_start: fired at the beginning of an
-  inline extent lookup, recording the inode and logical block offset.
+Adapt to the new on-disk inode layout:
 
-- trace_f2fs_iext_lookup_blkaddr_end: fired on successful lookup,
-  recording the inode, logical offset, resolved physical block address,
-  and extent length.
+- Split struct f2fs_inode->i_compr_blocks (was __le64) into
+  __le32 i_compr_blocks + __le32 i_inline_ext_capacity, matching the
+  kernel change. i_inline_ext_capacity records the number of inline
+  extent entries reserved in the inode.
+- Add struct f2fs_iext_header, the header of the inline extent area
+  located right after i_extra_end[].
+- Update all i_compr_blocks accesses (fsck.c, inject.c, mount.c,
+  segment.c) to use le32 helpers.
 
-- trace_f2fs_iext_update_data_blkaddr: fired when updating a block
-  mapping in the inline extent area, recording the inode, logical
-  offset, and new physical block address.
+Keep the inline extent consistent with the largest extent:
 
-These tracepoints can be used with ftrace/perf to measure inline
-extent cache hit rates and identify hot files benefiting from the
-feature.
+- Add f2fs_invalidate_inline_extent(), which resets the inline extent
+  entry count to 0.
+- The inline extent shares its lifetime with the largest extent cache:
+  whenever i_ext is dropped or truncated (in fsck_chk_inode_blk() and
+  update_data_blkaddr()), invalidate the inline extent as well so a
+  stale mapping is never left behind.
 
 Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
 ---
- fs/f2fs/iextent.c           | 11 +++++-
- include/trace/events/f2fs.h | 79 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 89 insertions(+), 1 deletion(-)
+ fsck/fsck.c       |  9 ++++++---
+ fsck/inject.c     |  6 +++---
+ fsck/mount.c      |  3 ++-
+ fsck/segment.c    |  2 +-
+ include/f2fs_fs.h | 22 +++++++++++++++++++++-
+ 5 files changed, 33 insertions(+), 9 deletions(-)
 
-diff --git a/fs/f2fs/iextent.c b/fs/f2fs/iextent.c
-index dd1d1782598f..35eb3be54963 100644
---- a/fs/f2fs/iextent.c
-+++ b/fs/f2fs/iextent.c
-@@ -10,6 +10,7 @@
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 497cca0..9b8f34c 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -919,7 +919,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 	u32 i_flags = le32_to_cpu(node_blk->i.i_flags);
+ 	bool compressed = i_flags & F2FS_COMPR_FL;
+ 	bool compr_rel = node_blk->i.i_inline & F2FS_COMPRESS_RELEASED;
+-	u64 i_compr_blocks = le64_to_cpu(node_blk->i.i_compr_blocks);
++	u64 i_compr_blocks = le32_to_cpu(node_blk->i.i_compr_blocks);
+ 	nid_t i_xattr_nid = le32_to_cpu(node_blk->i.i_xattr_nid);
+ 	int ofs;
+ 	char *en;
+@@ -1204,6 +1204,7 @@ check_next:
+ 					qf_last_blkofs[cur_qtype] = child.pgofs;
+ 			} else if (c.fix_on) {
+ 				node_blk->i.i_ext.len = cpu_to_le32(idx);
++				f2fs_invalidate_inline_extent(&node_blk->i);
+ 				need_fix = 1;
+ 				break;
+ 			}
+@@ -1332,7 +1333,7 @@ check:
  
- #include "f2fs.h"
- #include "iextent.h"
-+#include <trace/events/f2fs.h>
+ 	if (compressed && i_compr_blocks != cbc->cnt) {
+ 		if (c.fix_on) {
+-			node_blk->i.i_compr_blocks = cpu_to_le64(cbc->cnt);
++			node_blk->i.i_compr_blocks = cpu_to_le32(cbc->cnt);
+ 			need_fix = 1;
+ 			FIX_MSG("[0x%x] i_compr_blocks=0x%08"PRIx64" -> 0x%x",
+ 					nid, i_compr_blocks, cbc->cnt);
+@@ -1476,8 +1477,10 @@ skip_dot_fix:
+ 	}
  
- /*
-  * ASSERT - debug assertion for inline extent code.
-@@ -482,12 +483,18 @@ int f2fs_iext_lookup_blkaddr(struct inode *inode, struct folio *ifolio,
- 	struct f2fs_iext_header *eh = iext_get_header(ifolio);
- 	struct f2fs_extent *last_ext = EXT_LAST_INDEX(eh);
+ 	/* drop extent information to avoid potential wrong access */
+-	if (need_fix && f2fs_dev_is_writable() && !is_aliasing)
++	if (need_fix && f2fs_dev_is_writable() && !is_aliasing) {
+ 		node_blk->i.i_ext.len = 0;
++		f2fs_invalidate_inline_extent(&node_blk->i);
++	}
  
-+	trace_f2fs_iext_lookup_blkaddr_start(inode, fofs);
+ 	if ((c.feature & F2FS_FEATURE_INODE_CHKSUM) &&
+ 				f2fs_has_extra_isize(&node_blk->i)) {
+diff --git a/fsck/inject.c b/fsck/inject.c
+index 60a2d20..fa09f1e 100644
+--- a/fsck/inject.c
++++ b/fsck/inject.c
+@@ -1088,9 +1088,9 @@ static int inject_inode(struct f2fs_sb_info *sbi, struct f2fs_node *node,
+ 		inode->i_inode_checksum = cpu_to_le32((u32)opt->val);
+ 	} else if (!strcmp(opt->mb, "i_compr_blocks")) {
+ 		MSG(0, "Info: inject inode i_compr_blocks of nid %u: "
+-		    "%"PRIu64" -> %"PRIu64"\n", opt->nid,
+-		    le64_to_cpu(inode->i_compr_blocks), (u64)opt->val);
+-		inode->i_compr_blocks = cpu_to_le64((u64)opt->val);
++		    "%u -> %u\n", opt->nid,
++		    le32_to_cpu(inode->i_compr_blocks), (u32)opt->val);
++		inode->i_compr_blocks = cpu_to_le32((u32)opt->val);
+ 	} else if (!strcmp(opt->mb, "i_addr")) {
+ 		/* do not care if it is inline data */
+ 		if (opt->idx >= DEF_ADDRS_PER_INODE) {
+diff --git a/fsck/mount.c b/fsck/mount.c
+index f7985dc..8c14c97 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -344,7 +344,7 @@ void print_inode_info(struct f2fs_sb_info *sbi,
+ 			DISP_u32(inode, i_crtime_nsec);
+ 		}
+ 		if (c.feature & F2FS_FEATURE_COMPRESSION) {
+-			DISP_u64(inode, i_compr_blocks);
++			DISP_u32(inode, i_compr_blocks);
+ 			DISP_u8(inode, i_compress_algorithm);
+ 			DISP_u8(inode, i_log_cluster_size);
+ 			DISP_u16(inode, i_compress_flag);
+@@ -2574,6 +2574,7 @@ void update_data_blkaddr(struct f2fs_sb_info *sbi, nid_t nid,
+ 	endaddr = startaddr + le32_to_cpu(node_blk->i.i_ext.len);
+ 	if (oldaddr >= startaddr && oldaddr < endaddr) {
+ 		node_blk->i.i_ext.len = 0;
++		f2fs_invalidate_inline_extent(&node_blk->i);
+ 
+ 		/* update inode block */
+ 		if (node_blk_alloced)
+diff --git a/fsck/segment.c b/fsck/segment.c
+index 96de22a..2222b6e 100644
+--- a/fsck/segment.c
++++ b/fsck/segment.c
+@@ -725,7 +725,7 @@ int f2fs_build_file(struct f2fs_sb_info *sbi, struct dentry *de)
+ 		/* update inode meta */
+ 		node_blk->i.i_size = cpu_to_le64(off);
+ 		if (!c.compress.readonly) {
+-			node_blk->i.i_compr_blocks = cpu_to_le64(cblocks);
++			node_blk->i.i_compr_blocks = cpu_to_le32(cblocks);
+ 			node_blk->i.i_blocks += cpu_to_le64(cblocks);
+ 		}
+ 		ASSERT(update_inode(sbi, node_blk, &ni.blk_addr) >= 0);
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 1b24a3c..a06defb 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -929,6 +929,15 @@ struct f2fs_extent {
+ 
+ static_assert(sizeof(struct f2fs_extent) == 12, "");
+ 
++/*
++ * f2fs_iext_header: header for inline extent area in i_extra_attr region.
++ * Placed right after i_extra_end[0], before the extent array.
++ */
++struct f2fs_iext_header {
++	__le32 cnt;		/* current # of valid extents */
++	struct f2fs_extent exts[];
++} __attribute__((packed));
 +
- 	if (EXT_ENTRY_COUNT(eh) == 0 || F2FS_EXT_LOGICAL_END(last_ext) < fofs)
- 		error = -ENOENT;
- 	else
- 		error = __iext_lookup_data_blkaddr(inode, ifolio, fofs,
- 						blkaddr, len);
+ #define F2FS_NAME_LEN		255
  
-+	if (!error)
-+		trace_f2fs_iext_lookup_blkaddr_end(inode, fofs,
-+						*blkaddr, len ? *len : 1);
-+
- 	return error;
+ /* max output length of pretty_print_filename() including null terminator */
+@@ -1079,7 +1088,8 @@ struct f2fs_inode {
+ 			__le32 i_inode_checksum;/* inode meta checksum */
+ 			__le64 i_crtime;	/* creation time */
+ 			__le32 i_crtime_nsec;	/* creation time in nano scale */
+-			__le64 i_compr_blocks;	/* # of compressed blocks */
++			__le32 i_compr_blocks;	/* # of compressed blocks */
++			__le32 i_inline_ext_capacity;	/* # of inline extent entries */
+ 			__u8 i_compress_algorithm;	/* compress algorithm */
+ 			__u8 i_log_cluster_size;	/* log of cluster size */
+ 			__le16 i_compress_flag;		/* compress flag */
+@@ -1730,6 +1740,16 @@ static inline bool f2fs_has_extra_isize(struct f2fs_inode *inode)
+ 	return (inode->i_inline & F2FS_EXTRA_ATTR);
  }
  
-@@ -522,6 +529,8 @@ int f2fs_iext_update_data_blkaddr(struct inode *inode, struct folio *ifolio,
- 	struct f2fs_iext_info *iext_info = sbi->iext_info;
- #endif
- 
-+	trace_f2fs_iext_update_data_blkaddr(inode, fofs, blkaddr);
++static inline void f2fs_invalidate_inline_extent(struct f2fs_inode *inode)
++{
++	if (f2fs_has_extra_isize(inode) &&
++	    le32_to_cpu(inode->i_inline_ext_capacity) > 0) {
++		struct f2fs_iext_header *eh =
++			(struct f2fs_iext_header *)inode->i_extra_end;
++		eh->cnt = 0;
++	}
++}
 +
- retry:
- 	ASSERT(sbi, retry_cnt >= 0);
- 	ASSERT(sbi, EXT_ENTRY_COUNT(eh) <= max_inline_extents);
-@@ -747,4 +756,4 @@ void f2fs_iext_show_stat(struct f2fs_sb_info *sbi, struct seq_file *s)
- 		atomic64_read(&iext_info->truncate_last_ext_cnt),
- 		atomic64_read(&iext_info->drop_insert_new_ext_cnt));
- }
--#endif
-\ No newline at end of file
-+#endif
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 270c1a2c24c4..dc468a0c2980 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -2623,6 +2623,85 @@ TRACE_EVENT(f2fs_fault_report,
- 		__entry->data)
- );
- 
-+TRACE_EVENT(f2fs_iext_lookup_blkaddr_start,
-+
-+	TP_PROTO(struct inode *inode, unsigned int pgofs),
-+
-+	TP_ARGS(inode, pgofs),
-+
-+	TP_STRUCT__entry(
-+		__field(u64,	ino)
-+		__field(dev_t,	dev)
-+		__field(unsigned int, pgofs)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev = inode->i_sb->s_dev;
-+		__entry->ino = inode->i_ino;
-+		__entry->pgofs = pgofs;
-+	),
-+
-+	TP_printk("dev = (%d,%d), ino = %llu, pgofs = %u",
-+		show_dev_ino(__entry),
-+		__entry->pgofs)
-+);
-+
-+TRACE_EVENT(f2fs_iext_lookup_blkaddr_end,
-+
-+	TP_PROTO(struct inode *inode, unsigned int pgofs, block_t blkaddr,
-+						unsigned int len),
-+
-+	TP_ARGS(inode, pgofs, blkaddr, len),
-+
-+	TP_STRUCT__entry(
-+		__field(u64,	ino)
-+		__field(dev_t,	dev)
-+		__field(unsigned int, pgofs)
-+		__field(u32, blk)
-+		__field(unsigned int, len)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev = inode->i_sb->s_dev;
-+		__entry->ino = inode->i_ino;
-+		__entry->pgofs = pgofs;
-+		__entry->blk = blkaddr;
-+		__entry->len = len;
-+	),
-+
-+	TP_printk("dev = (%d,%d), ino = %llu, pgofs = %u, blkaddr = %u, len = %u",
-+		show_dev_ino(__entry),
-+		__entry->pgofs,
-+		__entry->blk,
-+		__entry->len)
-+);
-+
-+TRACE_EVENT(f2fs_iext_update_data_blkaddr,
-+
-+	TP_PROTO(struct inode *inode, unsigned int pgofs, block_t blkaddr),
-+
-+	TP_ARGS(inode, pgofs, blkaddr),
-+
-+	TP_STRUCT__entry(
-+		__field(u64,	ino)
-+		__field(dev_t,	dev)
-+		__field(unsigned int, pgofs)
-+		__field(u32, blk)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev = inode->i_sb->s_dev;
-+		__entry->ino = inode->i_ino;
-+		__entry->pgofs = pgofs;
-+		__entry->blk = blkaddr;
-+	),
-+
-+	TP_printk("dev = (%d,%d), ino = %llu, pgofs = %u, blkaddr = %u",
-+		show_dev_ino(__entry),
-+		__entry->pgofs,
-+		__entry->blk)
-+);
-+
- #endif /* _TRACE_F2FS_H */
- 
-  /* This part must be outside protection */
+ static inline int __get_extra_isize(struct f2fs_inode *inode)
+ {
+ 	if (f2fs_has_extra_isize(inode))
 -- 
 2.43.0
 
