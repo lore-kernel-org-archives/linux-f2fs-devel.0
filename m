@@ -4,79 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B43AAC53215
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 15:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 60A81C531FA
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 15:25:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=43mvinwRKhgUww39ApXUABptxA0SsPSnvWOu0zGazmE=; b=O+gvqPLPfuKDATAu2EyJcy7+Nk
-	0ltuNaaJQrxv9hXCi+Za4sJbCh2FVIcLUkHoTMd9kWLLOoWfmk2juvaZVe2WRhJALUKJhE3GJiwCE
-	ajxLYwHLWoNtEsftXnwPnr0GfbFXCYtFbiYug8UPwkGQZxPEGQbhKmegE+lIzyfnEyUI=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=rCkH6m5KrbNY4P81duQuw2gEeL/fM/FJ40hpVprll5M=; b=OJOnP6evyLPoQh9Tv1tIHB6/Ag
+	q3NyOz48lNTYdcza6Y6fPrR3Wee+BECdVuWv+30sZe8ex5UY/lfOIxqAK/CmDOfiSKM+pSML8k5xE
+	VO/ncf0BnnuDyOeDaKhobyP0JGQC0yiA5wVcZPLmCdW62lBPdTwSqeqMEOqZw43dewXU=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wnHdg-0007xq-Uf;
-	Fri, 24 Jul 2026 15:16:41 +0000
+	id 1wnHmD-00068e-8e;
+	Fri, 24 Jul 2026 15:25:29 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wnHdf-0007xc-LM
+ (envelope-from <neelx@suse.com>) id 1wnHmC-00068X-70
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 15:16:40 +0000
+ Fri, 24 Jul 2026 15:25:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yo68qjongadB1GZqXZprYtsFAZFHbGPoQ+5S7vlZ7+E=; b=UbVaoGa3yOUYJnaUcIfq3ihAWw
- RJHv5+gJ0gduHjalTfYNfaMOfBBGBd8o5hUs/7YjV96LaTWU+C4I167wzcjTO4vwnYIwqipQTsL/b
- 9uzT8Ivxq4AfXqNjj8O/DYXvAPiotl2dWv6WuEuZa1w16FlSGso8ymsNzRj0PCzXpaDs=;
+ bh=dDkj4/XaZCB/3RGw6WFW1ZhjB+XY1FzxG2VHfm9q1zw=; b=J4kZ0srAejhP3r9J5DOV5S943k
+ ywDfZCkj0ru5YG8QmXK/hTBrDgqyV1JAVh5EO2Zh8Z8Vy32/QkHzoWP5BMOv/o7fa/jiA4hcAhvjF
+ G3sWZDTzLZZVlYv+llrO61VmBftZuAMwBaQ2JWiA20HPc9Wg1Tb3nBytxRu41wAgY+vU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=yo68qjongadB1GZqXZprYtsFAZFHbGPoQ+5S7vlZ7+E=; b=UDS3dD2m4ifWt91gJjHTENEE+e
- QgYBpsXpa/GauhtbXs8KnaSMWDKxHfY7nUUzeX2YjyfG60r0iMsjSrfYRVDit4A1SuIXvMxLyRyp0
- NFvO3SU5wZPHlV8UgpOb2RzJYkvri/XItKuszlV9w5MzF2C6Acni125ZV1/t1NgMe0M8=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wnHdj-0003wv-C2 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 15:16:40 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 51857600AA;
- Fri, 24 Jul 2026 14:21:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A47191F000E9;
- Fri, 24 Jul 2026 14:21:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784902899;
- bh=yo68qjongadB1GZqXZprYtsFAZFHbGPoQ+5S7vlZ7+E=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=bfqTKrQZoghsWVyi+N3a1tMHl+uOYqNHFzxanWJM5XT8Mq2ua1dbXs6VjffBJc6e3
- 2Y7FwpnYv0gSI+QpfA+4acSlm/1QRI7FGdDk6a5rxjF8/XLwwhSeuWc9fPOOOdVtFe
- gZZQDpxnXCzr9T4B3SYJVw/5u+3ZMaNuBqx3Tc/PhS2+aKgh+2/7wx4Lu6bnQRTyXn
- IGRh1YpWIYvZZEaZWi7IYYopm8m98ahUlSEuubXPt4gn9xl5I1AbSCVZRXc9E7hqCO
- KeTAaDc8Mf+HRtHgNnIYv/+HDtzAr8N+bAbN3sMBDGLyKAoNheQebkE8aJT5SSv15S
- XlX7BYRPjj5Ow==
-Date: Fri, 24 Jul 2026 07:19:47 -0700
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20260724141947.GC1876@sol>
-References: <20260721184346.416657-1-aalbersh@kernel.org>
- <20260721184346.416657-7-aalbersh@kernel.org>
- <20260724131353.GB27878@lst.de>
+ bh=dDkj4/XaZCB/3RGw6WFW1ZhjB+XY1FzxG2VHfm9q1zw=; b=l9kCBjku0f5jBWepUi9wSwW4y0
+ GqM4LOADdwGxwHeiCF3TAnk8ntEqFfGJ0EO15vUVvGYIB1WRT7G+snTpk95NMJFr7xYFkmPVcGI9x
+ gW63ZdVp7ySRcDJsqhmySICn0Vb7ItXrYssYeawb3oOd2Dd5pryWqXjqaIWOCT3g1pkY=;
+Received: from smtp-out2.suse.de ([195.135.223.131])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1wnHmB-0007Mh-81 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 24 Jul 2026 15:25:28 +0000
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 426FF3F58;
+ Fri, 24 Jul 2026 13:33:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+ t=1784900027; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=dDkj4/XaZCB/3RGw6WFW1ZhjB+XY1FzxG2VHfm9q1zw=;
+ b=dvrScDRFg7hbmYFkkSATulRQNReIBu8GNs0Pu/CuOutAsHzIIjm0hoCU5C3Jy7kgxa4UdC
+ 2luPawCAxuWOkeFbf72NW4lu+yH/6zQvsGN2xW8VJ8y3lEIkTAKJW3essZISgWp6pzWaPf
+ aHpxBN/s5kCz0oY7VFa3Bvjj12CSQ/k=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+ t=1784900027; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=dDkj4/XaZCB/3RGw6WFW1ZhjB+XY1FzxG2VHfm9q1zw=;
+ b=dvrScDRFg7hbmYFkkSATulRQNReIBu8GNs0Pu/CuOutAsHzIIjm0hoCU5C3Jy7kgxa4UdC
+ 2luPawCAxuWOkeFbf72NW4lu+yH/6zQvsGN2xW8VJ8y3lEIkTAKJW3essZISgWp6pzWaPf
+ aHpxBN/s5kCz0oY7VFa3Bvjj12CSQ/k=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested)
+ by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B3A18779BA;
+ Fri, 24 Jul 2026 13:33:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+ by imap1.dmz-prg2.suse.org with ESMTPSA id 6FkaHLppY2pIJgAAD6G6ig
+ (envelope-from <neelx@suse.com>); Fri, 24 Jul 2026 13:33:46 +0000
+To: fstests@vger.kernel.org
+Date: Fri, 24 Jul 2026 15:33:22 +0200
+Message-ID: <20260724133328.1837318-7-neelx@suse.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260724133328.1837318-1-neelx@suse.com>
+References: <20260724133328.1837318-1-neelx@suse.com>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260724131353.GB27878@lst.de>
-X-Headers-End: 1wnHdj-0003wv-C2
-Subject: Re: [f2fs-dev] [PATCH v13 06/23] fsverity: don't allow setting DAX
- file attribute on fsverity files
+X-Spamd-Result: default: False [-2.80 / 50.00]; BAYES_HAM(-3.00)[100.00%];
+ MID_CONTAINS_FROM(1.00)[]; NEURAL_HAM_LONG(-1.00)[-1.000];
+ R_MISSING_CHARSET(0.50)[]; NEURAL_HAM_SHORT(-0.20)[-0.997];
+ MIME_GOOD(-0.10)[text/plain]; ARC_NA(0.00)[];
+ MIME_TRACE(0.00)[0:+]; RCVD_COUNT_TWO(0.00)[2];
+ RCPT_COUNT_TWELVE(0.00)[12];
+ FUZZY_RATELIMITED(0.00)[rspamd.com];
+ DKIM_SIGNED(0.00)[suse.com:s=susede1];
+ TO_MATCH_ENVRCPT_ALL(0.00)[]; FROM_HAS_DN(0.00)[];
+ RCVD_VIA_SMTP_AUTH(0.00)[]; FROM_EQ_ENVFROM(0.00)[];
+ RCVD_TLS_ALL(0.00)[]; TO_DN_SOME(0.00)[];
+ DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email, suse.com:mid,
+ imap1.dmz-prg2.suse.org:helo]
+X-Headers-End: 1wnHmB-0007Mh-81
+Subject: [f2fs-dev] [PATCH 06/12] btrfs: add simple test of reflink of
+ encrypted data
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,31 +119,125 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
+From: Daniel Vacek via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: fsverity@lists.linux.dev, Andrey Albershteyn <aalbersh@kernel.org>,
- djwong@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+Reply-To: Daniel Vacek <neelx@suse.com>
+Cc: hch@infradead.org, Daniel Vacek <neelx@suse.com>, djwong@kernel.org,
+ zlang@redhat.com, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, Sweet Tea Dorminy <sweettea-kernel@dorminy.me>,
+ linux-fscrypt@vger.kernel.org, David Sterba <dsterba@suse.com>,
  linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jul 24, 2026 at 03:13:53PM +0200, Christoph Hellwig wrote:
-> Looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
-> Shouldn't this have a fixes tag and go into -stable as well as it already
-> affects ext4?
-> 
+From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
 
-ext4 already checks this, as I pointed out before
-(https://lore.kernel.org/linux-fsdevel/20260710234643.GF1911@quark/).
-It would be good to note this in the commit message...
+Make sure that we succeed at reflinking encrypted data.
 
-- Eric
+Test deliberately numbered with a high number so it won't conflict with
+tests between now and merge.
+
+v1:
+    An array overflow bug in btrfs_check_encrypted_read_bio() was hidden
+    during fscrypt v6 32/43 patch development until the file size was
+    extended to more than 144k (16k + 64k + >64k a.k.a. BTRFS_MAX_BLOCKSIZE
+    - it was 33k before).
+    We simply needed more pages in the game to run out of the array.
+
+    Even-though the bug was fixed in v7, it may be useful to keep this
+    test checking, just to be sure nothing similar happens in the future.
+
+Signed-off-by: Daniel Vacek <neelx@suse.com>
+---
+ tests/btrfs/613     | 54 +++++++++++++++++++++++++++++++++++++++++++++
+ tests/btrfs/613.out | 13 +++++++++++
+ 2 files changed, 67 insertions(+)
+ create mode 100755 tests/btrfs/613
+ create mode 100644 tests/btrfs/613.out
+
+diff --git a/tests/btrfs/613 b/tests/btrfs/613
+new file mode 100755
+index 00000000..fddb9243
+--- /dev/null
++++ b/tests/btrfs/613
+@@ -0,0 +1,54 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (c) 2023 Meta Platforms, Inc.  All Rights Reserved.
++#
++# FS QA Test 613
++#
++# Check if reflinking one encrypted file on btrfs succeeds.
++#
++. ./common/preamble
++_begin_fstest auto encrypt
++
++# Import common functions.
++. ./common/encrypt
++. ./common/filter
++. ./common/reflink
++
++_require_test
++_require_scratch
++_require_cp_reflink
++_require_scratch_encryption -v 2
++_require_command "$KEYCTL_PROG" keyctl
++
++_scratch_mkfs_encrypted &>> $seqres.full
++_scratch_mount
++
++dir=$SCRATCH_MNT/dir
++mkdir $dir
++_set_encpolicy $dir $TEST_KEY_IDENTIFIER
++_add_enckey $SCRATCH_MNT "$TEST_RAW_KEY"
++echo "Creating and reflinking a file"
++$XFS_IO_PROG -t -f -c "pwrite 0 145k" $dir/test > /dev/null
++cp --reflink=always $dir/test $dir/test2
++
++echo "Can't reflink encrypted and unencrypted"
++cp --reflink=always $dir/test $SCRATCH_MNT/fail |& _filter_scratch
++
++echo "Diffing the file and its copy"
++diff $dir/test $dir/test2
++
++echo "Verifying the files are reflinked"
++_verify_reflink $dir/test $dir/test2
++
++echo "Diffing the files after remount"
++_scratch_cycle_mount
++_add_enckey $SCRATCH_MNT "$TEST_RAW_KEY"
++diff $dir/test $dir/test2
++
++echo "Diffing the files after key remove"
++_rm_enckey $SCRATCH_MNT $TEST_KEY_IDENTIFIER
++diff $dir/test $dir/test2 |& _filter_scratch
++
++# success, all done
++status=0
++exit
+diff --git a/tests/btrfs/613.out b/tests/btrfs/613.out
+new file mode 100644
+index 00000000..4895d6dd
+--- /dev/null
++++ b/tests/btrfs/613.out
+@@ -0,0 +1,13 @@
++QA output created by 613
++Added encryption key with identifier 69b2f6edeee720cce0577937eb8a6751
++Creating and reflinking a file
++Can't reflink encrypted and unencrypted
++cp: failed to clone 'SCRATCH_MNT/fail' from 'SCRATCH_MNT/dir/test': Invalid argument
++Diffing the file and its copy
++Verifying the files are reflinked
++Diffing the files after remount
++Added encryption key with identifier 69b2f6edeee720cce0577937eb8a6751
++Diffing the files after key remove
++Removed encryption key with identifier 69b2f6edeee720cce0577937eb8a6751
++diff: SCRATCH_MNT/dir/test: No such file or directory
++diff: SCRATCH_MNT/dir/test2: No such file or directory
+-- 
+2.53.0
+
 
 
 _______________________________________________
