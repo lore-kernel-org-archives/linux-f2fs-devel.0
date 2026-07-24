@@ -4,109 +4,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CA3A6C531FA
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 15:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 99A5CC531C9
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 15:38:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=e7GiMnP3EcW8+6nNxdmzbr6BUlf3hiq4RRvudY6e4ck=; b=eMAW33u1wtpMGqYCfNEl645c0V
-	/nnVI4vETyzpGh5TcOvP5UBd1B5hnce4zTetSupu0P5sHHg++0JNAmsp8eva2yGNqmrYAIJvlkt1N
-	tUVSEzp0+sPxw5jJaYDDNLN31fAJEGxDaDIjQeoJ657HdyzrGMtIWu5iYKVLHy0Cm9vw=;
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=UT8lYwHje4PVUV0ZLpKZmMbCI/EMhipRia9ppK2gF6k=; b=DRj/uuhSMe9+qQRu11k0WL1wh+
+	gBmB76TEhFtbQF0rIcZB/67o+SWEKJVJS/e91lTxBJYNouPxEOHkLzOSwYjYP2xLRty+bB89DNLuI
+	YqDzK0xJGskU2HjopqjwXJj5hh3Ql54SWHGVzfzWhqEzPM2dBHJjjTBaSmw3c7VjXXfc=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wnHyO-0006Wp-0u;
-	Fri, 24 Jul 2026 15:38:04 +0000
+	id 1wnHyb-0006Y8-Jv;
+	Fri, 24 Jul 2026 15:38:18 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <yangyongpeng.storage@gmail.com>) id 1wnHyN-0006WR-0z
+ (envelope-from <yangyongpeng.storage@gmail.com>) id 1wnHya-0006Xy-36
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 15:38:03 +0000
+ Fri, 24 Jul 2026 15:38:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PjNwMz/Z5UG0ZoN+cxVL+762ajJBzWuLwkqAg/i2iNo=; b=X7LtxCAN8tFh3RQH9JoaYgS47I
- GA2xT7byqYVyZkdmJboQhEx926rnw60IfsudA5YyjInqAAMIVORd1TMUzCASVkRvDHlneVjWpdaw2
- nuiQ7udp5XD0nca70g4+95k6f5GFqIbTelRWtFGEguc/w3Xn/BO5DeA5sDsr5DJbOQ6s=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=PjNwMz/Z5UG0ZoN+cxVL+762ajJBzWuLwkqAg/i2iNo=; b=mXpNF4hXte9737Wo0/+QVkiCCS
- wsXihH+1ti4GugqQ11x6pSZQ07jaauviAAXXfLHlEpNYf31NsxhRY7ZeajMIrQD4Cb7GSVZTBM08j
- B9AiGq3zuNO+9L7CC1KeZfPmvqVOmhWiLpmrYbije+PTddXKFAlo7fx9rt9HFCnwqB5c=;
-Received: from mail-vk1-f177.google.com ([209.85.221.177])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=qsmLhMuXoVzNlk4bQ/7bqAn6Yi2fslBw1ZmXsjLrQyA=; b=DebWiD4qq7GRjDBnjr26gWUuSi
+ t2lllmg9lsvf/sQp246Hqhnnkb6C4zWNAn9J4/2ADpqdzTvsfA+KDB1GdllT63RH8QivGaT9rhbWe
+ rrFdU0a/CP5bfLUC/c4X+rhzKOc2U8zwXxhTpGtOQnCyeoDPW4J/zIsujuT6Ve5AFCmQ=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=qsmLhMuXoVzNlk4bQ/7bqAn6Yi2fslBw1ZmXsjLrQyA=; b=h
+ 2YCKJAJKy4yUoRwjsHtFYqlS3GS/ZybKWato0VLGTbFrozeGjd3N+tsGKXNtYvhW3yvSKxXpa04No
+ rViQpzy5d52UTu7Q85wiZxOYCzRtg1564xnTwoSLuKdHRW+vmpiQYEkZDf/i9inu+BFxGYWdzxz/V
+ n7s5Io8HDWcBs2hA=;
+Received: from mail-ua1-f53.google.com ([209.85.222.53])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wnHyH-0004bj-2F for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 15:37:53 +0000
-Received: by mail-vk1-f177.google.com with SMTP id
- 71dfb90a1353d-5c27e38ee18so275124e0c.1
+ id 1wnHyZ-0007q0-EF for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 24 Jul 2026 15:38:16 +0000
+Received: by mail-ua1-f53.google.com with SMTP id
+ a1e0cc1a2514c-966e7380109so327086241.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 24 Jul 2026 08:37:53 -0700 (PDT)
+ Fri, 24 Jul 2026 08:38:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1784907467; x=1785512267; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=PjNwMz/Z5UG0ZoN+cxVL+762ajJBzWuLwkqAg/i2iNo=;
- b=EiTbxVop6z9DO9iuZxt2wzmZrJkAaYOwgV9wp4YW7tjU2MzHykQHbeZkCSNWZxHGFY
- V6p9xfLrVXV2XHeIQZLnl5vhJ8SsdaJIhpBV8j5hvJ341bvzTHWIMjgBs/Xv0PMDmnWz
- zpfUnPxOOc8uGly4dm8kFLCcZQ5MVmHmM/6lV9IaCLWMbZeo9lk1J5Ne35bQ2yHy9v/Z
- fYNdb1s0HCw3CYqEwamuCFGjt5tKybiZdFA/CjC9vQga6SahTEXzSxEQksT9FaDtfC1h
- /6Xse/7GWt6D3GM6z0rUhxvgajel5Kbk7sFAtDtPsO2e5ObQU8JgSu7CoxM4uzN/4sfZ
- wP9A==
+ d=gmail.com; s=20251104; t=1784907489; x=1785512289; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=qsmLhMuXoVzNlk4bQ/7bqAn6Yi2fslBw1ZmXsjLrQyA=;
+ b=Rx5fGYAtUZAucE5lbI+nDr4kFIVuSNx/gRZvbvnqy+ldwzQEoM1yeL4aWJTY+xL1aM
+ iXX5Up75oxH8eiwGSu7YHeKFSniScy+IcrFvDUIf2k+GoPwSNo6vOfwycKohAeKgDVu5
+ ZPbY5yqlfTG13ZNrzDNn2RsyKeJffDzmTCiG1kN4QtaG3yHqdTD08omqcCfUmUGujkFn
+ WI3E3YuiVBEZw5HNcWdHpMPiwNrMmk17GmzD8QbxA+N0/HFZAVAJmEPSQd8KB9CTtfLR
+ nE8hpZXzDfEUJqngPb2CjFxSLX36WlbozUoy4fiRb6HdQDvFamzbzZ4AnUM4tKiW5X4C
+ 3vhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1784907467; x=1785512267;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=PjNwMz/Z5UG0ZoN+cxVL+762ajJBzWuLwkqAg/i2iNo=;
- b=deAnVY/OjfTWYcDxkYDOYe5B3N70PYEWLCViSU1jxf1JwqkbvzYBGize00O2ywTaYl
- MXMyKGkJPEesLTZKh2KoUr55X2YxlMbE+zBG/F09wYWC4vEUdHPsr1w7tPen8omLsEIC
- 21+eSfFFZibfRgiV6Bo4vj6b5sFp1rwk5UmL5o9nWg7+pYRpUmiz2sZROmNgzeQhDD3z
- tLwjQcmf4+eSYKTFTdKTzvIeXIpbhgoJHeDsFFBr99/QU40U55n1mWG+g/Ndr6HJTnC3
- 8DWDMRLJrHGPwrfMovIE2l9zHz83pva1xJ9QZfn/PhbbHvGwHn2WTQ7tPlUsVzazAwL1
- YVIw==
-X-Gm-Message-State: AOJu0YwUn0fkJxd7UFNP2pLgHzflCQ81emqfPebGXl/XtzNEQYWkHQ5k
- F7XrnEl10Kbor6ejpOrocRhU7IIVfxKRAlW7sGg4GqnG5FBoOsJZY5vcN7lhmg==
-X-Gm-Gg: AR+sD12B1snZ3Sice/lZe+w/fIKmtKEjK1CuK7nc6urMlZDUZfdVVe2Xn1dayaLxG8T
- WlxCYwngaTc0rTApPrLbBjgE//f+UzTjW3CLSlC+7sVHZRvRxCknmnuTzAGEOBjpg9nKzai/E7c
- UI+0Qlfl3Qb2k1Ugv5ve//4/PM73Pnw/Z+i1sEj/1m3V7UkPpE1G3V6VPeTt10x0bebJRRhP61B
- FItS3cN4lKZ7AkHFLEcQ4S8OarGs+bfITaFHPxbIF9KXcyBdkquVZrK27cTu7VRY62dcJax4TqE
- /i3lG7Y47JYTLGdo/DlWwngKYOR+zwESqKVs8YZsB5mF9v4acshZyCFQ+Ab/dpM4tOKxCj8U4aC
- QmYEPJqMiR/d+rcRiiuIstzKme3V/n3Q25ZXfTg4p/P7Uhz4W9dO0ClMfLcYXsP1R42zRbjFZa6
- qxpm8+X4eNHMxw7rAQT47eCsjhw5lftcOtXHCyy/MFhOqMOWVFtAyQDD2igdw=
-X-Received: by 2002:a05:6830:661c:b0:7e9:e313:4fdb with SMTP id
- 46e09a7af769-7ee43e3f812mr4671044a34.2.1784898022098; 
- Fri, 24 Jul 2026 06:00:22 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1784907489; x=1785512289;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=qsmLhMuXoVzNlk4bQ/7bqAn6Yi2fslBw1ZmXsjLrQyA=;
+ b=H2/tFR0w476xi2k0I87ZYN28zX9nUzGdw7PLZ+5KagG/+eA75t5ZqbfE7zOc7krurB
+ Q8oN0vvL5P33nstqwl+t3jFe0xtpNxdhtp3QBnB0tP6f+lmepOVpISmU6silVkFTxFAo
+ /hJM8X72uDHdc8DKlbdH3YwQ7JWjRFTWoC35Vrvt2kDq5QdBl7Gb7w8eLgZZEeSHQhJp
+ Lkho0jaUocsTSFr3ba5Ip4ERlS1K46KfINYKJE7pY5vbrTcn/siuJXfzI5HZC3Pwb8op
+ E0PG0C5tOl2ZWidPIHQTHRFIoJhI5aINmXIoAKG0e96yNDOCxZrp5feEan0eKy5CQkMw
+ pNdA==
+X-Gm-Message-State: AOJu0YwlV8Yy+2ZQ1ef7gRLiHUGLBN436+ZyoocjhnQoOU7sDRwCdojP
+ 30WAsX7yb46g116ro/e+0vYDuq3w135JKPEfoqcgquhMQr59bR9kELV1gL7LHQ==
+X-Gm-Gg: AR+sD12jPHI737Rlic3HVHQtazmoagik4gKSQ8V3ZLh5DjWtKYJNC8gNFm9Xghmyg62
+ o6ooGzx6EXtKJT0pZi3F6fNRdF7hEI5cAIbDLUoZVCjBDbcG/AFEHrJ/YBnqcGfjKVmD2hcD+Yi
+ ixxGjIDlFFabgwgIrYr+2F8sSn4JbT1s6rgS465EOJVFawGClWl+YR03iUo9xq1xU4npPn70Aon
+ CvuRKZZb9SXu6qrYBXdXCuhS442K9MbLD1468KM+RENOFOtARC5Wfc8jlZ5IGc5k6snh9XddLjt
+ Kb6LxyifOv3PKB5vL+1/fs037S1BbvplzIeNEqCURlmWgV5ELw6546d7U+nI8PNLv07ae+Jis5w
+ a/hlkJvIeqGw7cBARMIgz6+fr3GmDhWjwnKKOJAsg+F2W/jn7fvUGjaUf6j7u0ejHb6+TxkzDL0
+ Fp6Q9YUPB3AtjxOM+LB8ECKlc3AJzaLV2d2pWFr4tGDWg1du2C
+X-Received: by 2002:a05:6820:813:b0:6aa:cce3:ab5e with SMTP id
+ 006d021491bc7-6aad4163563mr3791019eaf.50.1784897944807; 
+ Fri, 24 Jul 2026 05:59:04 -0700 (PDT)
 Received: from xiaomi-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7ee2a0ad03asm6069433a34.22.2026.07.24.06.00.19
+ 586e51a60fabf-45767486cf6sm7359957fac.15.2026.07.24.05.59.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 24 Jul 2026 06:00:21 -0700 (PDT)
+ Fri, 24 Jul 2026 05:59:03 -0700 (PDT)
 From: Yongpeng Yang <yangyongpeng.storage@gmail.com>
 To: Chao Yu <chao@kernel.org>,
 	Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Fri, 24 Jul 2026 20:59:59 +0800
-Message-ID: <20260724125958.3929130-4-yangyongpeng.storage@gmail.com>
+Date: Fri, 24 Jul 2026 20:58:19 +0800
+Message-ID: <20260724125847.3928772-2-yangyongpeng.storage@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260724125958.3929130-2-yangyongpeng.storage@gmail.com>
-References: <20260724125958.3929130-2-yangyongpeng.storage@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1wnHyH-0004bj-2F
-Subject: [f2fs-dev] [RFC PATCH v3 2/2] dump.f2fs: dump inline extent mapping
- information
+X-Headers-End: 1wnHyZ-0007q0-EF
+Subject: [f2fs-dev] [RFC PATCH v3 0/3] f2fs: introduce inline extent mapping
+ for inode data blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -126,55 +123,131 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 
-When extra attributes are enabled and an inode reserves an inline
-extent area (i_inline_ext_capacity > 0), print the capacity, the valid
-extent count, and the content of every extent entry (fofs, blkaddr,
-len) in print_inode_info().
+Changes since v2:
+- Inline extent no longer covers direct block mappings. The inline
+  extent area is now placed after struct f2fs_inode->i_extra_end,
+  inside the i_extra_isize region. This removes the need for format
+  conversion and for f2fs-tools to understand/modify the inline extent
+  on-disk format.
+- Split struct f2fs_inode->i_compr_blocks (was __le64) into __le32
+  i_compr_blocks + __le32 i_inline_ext_capacity, where
+  i_inline_ext_capacity records the per-inode inline extent capacity.
+- Dropped [RFC PATCH v2 1/5] "replace raw dnode pointer arithmetic with
+  f2fs_data_blkaddr()": f2fs_truncate_data_blocks_range no longer needs
+  changes to accommodate the redesigned inline extent.
+- Dropped [RFC PATCH v2 3/5] "support setting inline extent flag via
+  ioctl": format conversion between inline extent and the direct block
+  address array is no longer needed.
+- Re-ran the performance tests (see updated numbers below).
 
-The inline extent area lives right after struct f2fs_inode->i_extra_end,
-so it can be read directly without any format-specific decoding.
+v2: https://lore.kernel.org/all/20260529085629.2664539-1-yangyongpeng.storage@gmail.com/
 
-Example output:
+Changes since v1:
+- Introduce tracepoints for f2fs_iext_update_data_blkaddr and
+  f2fs_iext_lookup_blkaddr to aid debugging (new patch 5/5).
+- Bypass inline extent lookup for F2FS_GET_BLOCK_PRECACHE to ensure all
+  mappings are loaded into the read extent cache.
+- Unify the check for fofs exceeding direct_blocks range to use
+  "fofs >= direct_blocks" consistently.
+- Remove support for caching NULL_ADDR in inline extent area. If a fofs
+  within [0, direct_blocks) is not found in inline extent, it implies
+  NULL_ADDR. This simplifies merge and split logic.
+- Fix f2fs_iext_enable_inline_extent to use PTR_ERR instead of -ENOMEM.
+- Change f2fs_iext_convert_to_inline_extent return type to bool.
+- Add benchmark data covering 4K/8K/32K/64K random read.
+- Rename __is_extent_mergeable to __is_iextent_mergeable to avoid
+  naming collision with extent cache code.
+- Remove inode parameter from f2fs_iext_sanity_check (always NULL).
+- Reduce #ifdef CONFIG_F2FS_INLINE_EXTENT nesting in node.c.
+- Code style fixes to comply with kernel coding style.
 
-  i_inline_ext_capacity         [0x     100 : 256]
-  inline_ext (cnt/cap)          [3 / 256]
-    inline_ext[0]: fofs:3ac blkaddr:12f400 len:64
-    inline_ext[1]: fofs:410 blkaddr:12f480 len:20
-    inline_ext[2]: fofs:500 blkaddr:130000 len:c
+v1: https://lore.kernel.org/all/20260507113840.1353304-2-monty_pavel@sina.com/
 
-Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
----
- fsck/mount.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+This patchset introduces an inline extent mapping mechanism for f2fs.
+Instead of storing individual block addresses for indirect-node blocks,
+this feature packs contiguous block ranges into compact extent entries
+stored directly in the inode, reducing indirect/double-indirect node
+page reads and enabling O(log n) block address lookup via binary search.
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 8c14c97..1c0429f 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -349,6 +349,23 @@ void print_inode_info(struct f2fs_sb_info *sbi,
- 			DISP_u8(inode, i_log_cluster_size);
- 			DISP_u16(inode, i_compress_flag);
- 		}
-+		if (le32_to_cpu(inode->i_inline_ext_capacity) > 0) {
-+			struct f2fs_iext_header *eh =
-+				(struct f2fs_iext_header *)inode->i_extra_end;
-+			u32 cnt = le32_to_cpu(eh->cnt);
-+			u32 cap = le32_to_cpu(inode->i_inline_ext_capacity);
-+			u32 j;
-+
-+			DISP_u32(inode, i_inline_ext_capacity);
-+			printf("%-30s\t\t[%u / %u]\n",
-+				"inline_ext (cnt/cap)", cnt, cap);
-+			for (j = 0; j < cnt && j < cap; j++) {
-+				printf("  inline_ext[%u]: fofs:%x blkaddr:%x len:%x\n",
-+					j, le32_to_cpu(eh->exts[j].fofs),
-+					le32_to_cpu(eh->exts[j].blk_addr),
-+					le32_to_cpu(eh->exts[j].len));
-+			}
-+		}
- 	}
- 
- 	addrs = ADDRS_PER_INODE(inode);
+Design overview:
+- The inline extent area is placed immediately after i_extra_end in the
+  on-disk inode, within the i_extra_isize region. Its size (number of
+  extent entries) is determined by the new field i_inline_ext_capacity.
+- On-disk layout:
+    [i_extra_isize .. i_extra_end] [f2fs_iext_header | f2fs_extent[cap]]
+    |<------------------ i_extra_isize (in bytes) ------------------->|
+- Inline extent only caches mappings for indirect blocks
+  (fofs >= ADDRS_PER_INODE). Direct block mappings continue to use
+  i_addr[], so no format conversion is required.
+- Per-inode capacity is decided at file creation time based on the
+  configured file-extension matching rules (see sysfs below).
+- Mutually exclusive with compression.
+
+Patch 1: Core implementation -- data structures, extent operations
+         (lookup, insert, merge, split, truncate), and integration
+         with the f2fs data/node/inode/recovery paths.
+Patch 2: sysfs interface -- runtime enable/disable toggle and the file
+         extension list (with optional per-extension capacity) for
+         automatic inline extent activation.
+Patch 3: Tracepoints for inline extent lookup and update operations.
+
+Test setup (Xiaomi smartphone, UFS 4.0 storage):
+
+  echo 1 > /sys/fs/f2fs/<dev>/inline_extent_enable
+  echo 'mp4:256' > /sys/fs/f2fs/<dev>/inline_extent_extension_list
+  fio --name=test --filename=data.mp4 --rw=write:4k --bs=64M \
+      --size=8G --ioengine=libaio --direct=1
+  sync
+  fio --name=test --filename=data.mp4 --rw=write --bs=64M \
+      --size=8G --ioengine=libaio --direct=1
+  sync
+  echo 3 > /proc/sys/vm/drop_caches
+  fio --name=buffer-read --ioengine=libaio --rw=randread --bs=$BS \
+      --size=8G --io_size=1G --numjobs=1 --filename=data.mp4
+
+Results (random read bandwidth, MiB/s):
++---------------------------------------------------+
+| BS     | baseline | inline ext | improvement      |
+|--------+----------+------------+------------------|
+| 4K     | 31.6     | 32.4       | +2.5%            |
+| 8K     | 55.4     | 58.5       | +5.6%            |
+| 32K    | 155.3    | 166.8      | +7.4%            |
+| 64K    | 229.8    | 255.3      | +11.1%           |
+| 128K   | 337.8    | 388        | +14.9%           |
++---------------------------------------------------+
+
+The improvement comes from eliminating indirect/double-indirect node
+page reads during block address lookup -- indirect-block mappings are
+stored directly in the inode page and found via binary search.
+
+Yongpeng Yang (3):
+  f2fs: introduce inline extent mapping for inode data blocks
+  f2fs: add sysfs interface for inline extent management
+  f2fs: introduce tracepoints for inline extent lookup and update
+
+ fs/f2fs/Kconfig             |  18 +
+ fs/f2fs/Makefile            |   1 +
+ fs/f2fs/data.c              | 148 ++++++-
+ fs/f2fs/debug.c             |   4 +
+ fs/f2fs/dir.c               |   1 +
+ fs/f2fs/f2fs.h              |  44 ++-
+ fs/f2fs/file.c              |   1 +
+ fs/f2fs/iextent.c           | 759 ++++++++++++++++++++++++++++++++++++
+ fs/f2fs/iextent.h           | 166 ++++++++
+ fs/f2fs/inline.c            |   1 +
+ fs/f2fs/inode.c             |  41 +-
+ fs/f2fs/namei.c             |  67 ++++
+ fs/f2fs/node.c              |  38 +-
+ fs/f2fs/node.h              |   4 +
+ fs/f2fs/recovery.c          |  15 +
+ fs/f2fs/super.c             |  29 ++
+ fs/f2fs/sysfs.c             |  91 +++++
+ include/linux/f2fs_fs.h     |   3 +-
+ include/trace/events/f2fs.h |  79 ++++
+ 19 files changed, 1489 insertions(+), 21 deletions(-)
+ create mode 100644 fs/f2fs/iextent.c
+ create mode 100644 fs/f2fs/iextent.h
+
 -- 
 2.43.0
 
