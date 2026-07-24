@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6C242C531C9
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1EDA6C531FA
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 15:46:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,18 +12,18 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=e8qfyoSPyPfjE0jCCqLhRQvm/sqiAGHIjfAWqfboNlU=; b=ddrN02soP+Nd3vLdS1vxEkjNSR
-	48qGvQnosH/bfAwMCp4sjqI+X+/p9gG7aGO+QUoTMfhMZPAFdZ7JHvVCf+ATadR1h+nQcC63BKOeu
-	1sQxlvKsg6bl01UNEylGA4vGG9J3GLGoRwLjAXMtGipPJPY3JYX33/ILkuNzNLrs6eAE=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Md4rbo8dSqJUaWDRe/xam2qtEErUUaPm6PG1CDWf3V8=; b=CqwKc7ZDpJT+glqIEoYsTaX5zo
+	dx/spEnWt1WfP5697A4PfTe6TrARAjhc8S5WRx5MXh7bJdQEaLSuMpKrWsCAU5LKUP+4OuDCuWFcd
+	cOuNBgeZERIauSk+z3aBWA+BsN9f7tAEy8+LOPa+8adS+8YL9d8meLWkzjLyTum/0yXA=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wnI6S-0002Cp-Cd;
-	Fri, 24 Jul 2026 15:46:25 +0000
+	id 1wnI6R-0006rm-Nq;
+	Fri, 24 Jul 2026 15:46:24 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1wnI6Q-0002CZ-Ax
+ (envelope-from <hch@lst.de>) id 1wnI6Q-0006rg-DX
  for linux-f2fs-devel@lists.sourceforge.net;
  Fri, 24 Jul 2026 15:46:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=Bt6jtLL8LYMno9zHDCKDEHmW7e
- BfyvOamTEfEJCsKi1kXhsM45TuVp6RsrMWQU/QFzU3u32zhVOIPBUwLzJVu7ocjEVPa7Q88jN3k8c
- LVPtG1rJD1buzjWc3deteh/9qYuEhZAbs+WGX1Whesi+QFM5dmV7ubwjIKUTbArkeW78=;
+ bh=jkpiNj5yYWUn9DX3khritgNaoGIvMgas1udwsxs4nsI=; b=bc1Q3xczBMcWktwPLUpSJpDn1n
+ bgV9+Oe7bDiDn/orSyNjUvA6CWAdKnV5uGRpkMNfMzz2yTy5aUf8q3KaQrSrLoAGW9/uqVa4xC0sD
+ 4XnZybUUJjF+UHF+dOTNAkLXJ1f1m2bLb9iEafzcTRrnL/VDZRxwWulNQXG6wcUVEDcE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,28 +42,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=es0lksM+pTv4jmFaFb/qQMyD0l
- dJkX+TbcGfMFanwwok9V9jogG1Ct6WIHSCtlP3ReazxTNJ1pjwIsZLyDfbm6BWqDeSI7bWjqsAN/u
- Rbrjzd9p5OecBlXbQ7Ks93lwgS9hgexEC8H+VSTxlHUqxRNwWD6z21/1f9r0qqAlfcXQ=;
+ bh=jkpiNj5yYWUn9DX3khritgNaoGIvMgas1udwsxs4nsI=; b=StPUDR6wNr45M+7/AwJRkIgmQA
+ sRDpu6w+Xw+4c/GRi5Ni6NAtPqoWHSnWCWDQ+PWIf/OwFlot7cwh1isQEMEL/fuftMFvtpPXp7Vdg
+ 9S+UAgY8LBH95sOlk2P7MYME+Aa0hgBTTs0u4pk6Qt8ekliZJ+kWcgrdrUDXm/fKku9Q=;
 Received: from verein.lst.de ([213.95.11.211])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wnI6P-0008MV-9F for linux-f2fs-devel@lists.sourceforge.net;
+ id 1wnI6S-0004zL-0S for linux-f2fs-devel@lists.sourceforge.net;
  Fri, 24 Jul 2026 15:46:23 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id 088E268D05; Fri, 24 Jul 2026 15:17:08 +0200 (CEST)
-Date: Fri, 24 Jul 2026 15:17:07 +0200
+ id CDF6E68D09; Fri, 24 Jul 2026 15:20:18 +0200 (CEST)
+Date: Fri, 24 Jul 2026 15:20:18 +0200
 From: Christoph Hellwig <hch@lst.de>
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20260724131707.GE27878@lst.de>
+Message-ID: <20260724132018.GF27878@lst.de>
 References: <20260721184346.416657-1-aalbersh@kernel.org>
- <20260721184346.416657-17-aalbersh@kernel.org>
+ <20260721184346.416657-18-aalbersh@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260721184346.416657-17-aalbersh@kernel.org>
+In-Reply-To: <20260721184346.416657-18-aalbersh@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1wnI6P-0008MV-9F
-Subject: Re: [f2fs-dev] [PATCH v13 16/23] xfs: add fs-verity support
+X-Headers-End: 1wnI6S-0004zL-0S
+Subject: Re: [f2fs-dev] [PATCH v13 17/23] xfs: remove unwritten extents
+ after preallocations in fsverity metadata
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,9 +84,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Looks good:
+On Tue, Jul 21, 2026 at 08:40:54PM +0200, Andrey Albershteyn wrote:
+> +	while (offset_fsb < end_fsb) {
+> +		nimaps = 1;
+> +
+> +		error = xfs_trans_alloc(mp, &M_RES(mp)->tr_write, 0, 0, 0, &tp);
+> +		if (error)
+> +			return error;
+> +
+> +		xfs_ilock(ip, XFS_ILOCK_EXCL);
+> +		error = xfs_bmapi_read(ip, offset_fsb,
+> +				end_fsb - offset_fsb, &imap, &nimaps,
+> +				0);
+> +		if (error)
+> +			goto out_cancel;
+> +
+> +		if (nimaps == 0)
+> +			goto out_cancel;
+> +
+> +		if (imap.br_state == XFS_EXT_UNWRITTEN) {
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Do we also need to cancel COW fork extents here?  Should this
+share code xfs_free_eofblocks by adding an end argument to that?
 
 
 
