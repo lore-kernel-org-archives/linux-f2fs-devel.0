@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 82A72C531F9
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 23:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 57D5BC531C9
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 23:57:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=c6N6xDk/HRMA4j+FMUEOKkJ6bPxioO5EfPGBX2MTKwY=; b=DBJjGAiC9QfOpOOzuIouuuhKbj
-	fyXYWmGIfRheZ0qvbHNxzLXzpbAvckdNq1R0acSmMEgYe5IgEqOw0LyKKwPyqrl1RDDYzM6qHxIif
-	5q48BuWeMhEt64ZXp5T7defKy7tNOfyj3aLMb4a4jpVGcF0AlBgSNryDWgAzflEzhcvc=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=+dGEMMmqWjzKFvmwBW+jURN56pR2PQ3ZxdKn4MJraAA=; b=bzOaCpkMZEYFp/DKTRlxIaHZ7F
+	35RVuBwr3W+93EuYxoaBsvHlvZppJVxKTL+coIe5s+499dS8j6OmGOLPzXCX7RRhaWWdRzMWzryig
+	l+8CAKiJhQWJGCVSW/txR8AxKEwALJMqSX4nTIM+uB75818lyzGo361Mz6JolXoipt6k=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wnPaP-0008VH-9h;
-	Fri, 24 Jul 2026 23:45:50 +0000
+	id 1wnPlj-0004CV-A1;
+	Fri, 24 Jul 2026 23:57:28 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wnPaN-0008V9-Tt
+ (envelope-from <ebiggers@kernel.org>) id 1wnPlh-0004CN-Jn
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 23:45:48 +0000
+ Fri, 24 Jul 2026 23:57:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UButzxL7Kw/j5kopPBpah4WDYkmBhSrmLzL/921+7Ng=; b=KfuA/GSbYCbxOfdy/Md6ahc+aF
- 1pDmZpXtIj0i69yKlBMn+VSBhadzEYLXSeDBmZHbQgTwPIU5p5+9FkGM3UkOcC+DgHLKfKXG3f/dN
- FCg2zzytmw//DI4N8UigG4c9koL3Rd4fHnsfC1pn0ZNV5wojLIOuQk+s3Wtu2IIKqYCU=;
+ bh=C0S2kswV9X4RK00vTenlq33sqHknnXJ8l36Z+cCOrHw=; b=OGNRWAXXCdRl3seCu04T2U4Pe6
+ 378x6/BqHM1bzVcsNvRbDdBWZ17d+vDvTDKXwz/inbaTXfjkZ2JsEE35ZAm0D5SG9d/HMZRO111Uh
+ pS73SFM0rPaEByJv0qB1j3xIQdYy7zzJSkKrdGkEyh/YBFEEOhfvMQkBBgmMkJ5cXVMk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=UButzxL7Kw/j5kopPBpah4WDYkmBhSrmLzL/921+7Ng=; b=Oe7zG652VIU0jKp4kO9O8gYrjv
- Dv/45+SMlojEamjDPPSazyRyGsfoJIuX/bll2/jZD7YXteHI32aK8j/coTC+sm0QvhmqAtaNUQg24
- ff+FtS7uPEyDgPAEp04PV1qSS0UE2LgENCi8ME+WnHM1NFZHmr9PDNxexypToz3LMHrM=;
+ bh=C0S2kswV9X4RK00vTenlq33sqHknnXJ8l36Z+cCOrHw=; b=m8EXKd4+EhJIIIg8JlLCiq3wv9
+ M5Rzj+zd02/BmJp49Yhu3j+C4dA/hDgjlGZBUPw1Bze+rHeSOFDlPoc31o1m/bnve23VR24VM18XN
+ KWMGmLTpzCOUK96i6amL+DTlOVUJI29oBNsWp1JclyROBBNwGnlN9JXzS+th+uAFGXJk=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wnPaO-0007QP-4P for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 23:45:48 +0000
+ id 1wnPle-0007eV-Ms for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 24 Jul 2026 23:57:27 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 724C360A60;
- Fri, 24 Jul 2026 23:45:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D53B01F000E9;
- Fri, 24 Jul 2026 23:45:41 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id DB178600AD;
+ Fri, 24 Jul 2026 23:57:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51E051F00A3A;
+ Fri, 24 Jul 2026 23:57:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784936742;
- bh=UButzxL7Kw/j5kopPBpah4WDYkmBhSrmLzL/921+7Ng=;
+ s=k20260515; t=1784937440;
+ bh=C0S2kswV9X4RK00vTenlq33sqHknnXJ8l36Z+cCOrHw=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=nm7MZYo9+tnTIlCeT+kz73KmCi3UyfhyR8CfNACCQlOic6dpLpdkLGe1Qm3lgu6ZW
- QrDtWKBRfpWwvRUQxzekj/1Jh50mBNyhveWcEtk00jeQTMnJgp16mUwMGI6GpSRszy
- z2GtEJTJllfyh5xb8aHxTHgwP4qej6KhoHAE+RdwyooRJQSSNiY9Ry3G7p3i8Q7cKJ
- 0b91gJ6QeJSGvUa4OJZ1pQPrldqAb1MNi76N01EwAg5wbxD51W1tPHkoD640Pmw8Ij
- ETpvlh6FR7maGjn7oDpZ6pV0XnnC25YH0KmjgRApUoKES04uNKppnq7Cd6WWtX8J+R
- TPvRzJ0yoJJ2g==
-Date: Fri, 24 Jul 2026 16:43:49 -0700
+ b=bCyKY8CIpwOcIVw1Calx1/kJVRmpUX/mI5E/uRHL73C3zvnjGYkeZAaOuSttdlCJn
+ vGtG9tlRK+OIfFnqFI30F55IEOvHX0mgkuGh/wwwos2GzDQgwses019ZV3RUUdxsWg
+ vBwn5mCKUZahVt1K7KzLqBzaMxBevZWGgpvu4KdBwGF491YQbaELDtUN9nKwF3acGk
+ np25i8NMPwSxnVvBjkV9iCbyJ1sJbAMxAssmBpAbdD5PKAWXnxHrSi/t4KU6OdGrqD
+ OJIhZlZR+SapJdQ1a3vASLffq20YPOFz7MqlThxqSOvv6cMuxn51B9VnSaY+qaJyjn
+ Fd1j+SiJ9Uf/w==
+Date: Fri, 24 Jul 2026 16:55:28 -0700
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20260724234349.GC1901@sol>
+Message-ID: <20260724235528.GD1901@sol>
 References: <20260721184346.416657-1-aalbersh@kernel.org>
- <20260721184346.416657-9-aalbersh@kernel.org>
+ <20260721184346.416657-7-aalbersh@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260721184346.416657-9-aalbersh@kernel.org>
-X-Headers-End: 1wnPaO-0007QP-4P
-Subject: Re: [f2fs-dev] [PATCH v13 08/23] fsverity: hoist statx reporting of
- fs-verity flag
+In-Reply-To: <20260721184346.416657-7-aalbersh@kernel.org>
+X-Headers-End: 1wnPle-0007eV-Ms
+Subject: Re: [f2fs-dev] [PATCH v13 06/23] fsverity: don't allow setting DAX
+ file attribute on fsverity files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,20 +98,53 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jul 21, 2026 at 08:40:45PM +0200, Andrey Albershteyn wrote:
-> All filesystems supporting fsverity report this status by checking inode
-> flag. Also, BTRFS was missing stat->attributes_mask, which is fixed now.
+On Tue, Jul 21, 2026 at 08:40:43PM +0200, Andrey Albershteyn wrote:
+> When fsverity is enabled on the file, with FS_IOC_ENABLE_VERITY ioctl(),
+> it checks if file has DAX enabled and fails if that's true. However, the
+> opposite case is not checked.
 > 
-> Fixes: 146054090b08 ("btrfs: initial fsverity support")
 > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 > ---
->  fs/btrfs/inode.c | 3 ---
->  fs/ext4/inode.c  | 5 +----
->  fs/f2fs/file.c   | 5 +----
->  fs/stat.c        | 6 +++++-
->  4 files changed, 7 insertions(+), 12 deletions(-)
+>  fs/file_attr.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/fs/file_attr.c b/fs/file_attr.c
+> index bfb00d256dd5..5424ec4e3949 100644
+> --- a/fs/file_attr.c
+> +++ b/fs/file_attr.c
+> @@ -246,6 +246,11 @@ static int fileattr_set_prepare(struct inode *inode,
+>  	if (fa->fsx_cowextsize == 0)
+>  		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
+>  
+> +	/* Can not enable DAX on fsverity file */
+> +	if ((old_ma->fsx_xflags & FS_XFLAG_VERITY) &&
+> +			fa->fsx_xflags & FS_XFLAG_DAX)
+> +		return -EINVAL;
+> +
 
-Acked-by: Eric Biggers <ebiggers@kernel.org>
+As mentioned elsewhere, this is actually already checked in ext4, and
+the commit message should mention this.
+
+Also, I notice this function already checks conditions on when the DAX
+flag can be enabled:
+
+        /*                                                                       
+         * It is only valid to set the DAX flag on regular files and             
+         * directories on filesystems.                                           
+         */                                                                      
+        if ((fa->fsx_xflags & FS_XFLAG_DAX) &&                                   
+            !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))                 
+                return -EINVAL;                                                  
+
+Could we combine those into something like the following so the DAX
+enablement conditions are in one place?
+
+        if (fa->fsx_xflags & FS_XFLAG_DAX) {                                     
+                if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))          
+                        return -EINVAL;                                          
+                if (old_ma->fsx_xflags & FS_XFLAG_VERITY)                        
+                        return -EINVAL;                                          
+        }                                                                        
 
 - Eric
 
