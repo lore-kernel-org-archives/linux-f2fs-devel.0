@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EC2C3C531C9
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 23:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 82A72C531F9
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2026 23:45:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Xo60wUN4oc2fBw1hkTfVhxjmbNAWdqWSOPuXIa8ELKc=; b=R0Ln7bRecexp8zCJmrzMKzPgsK
-	TS+COsDwb/COHSbix13M4LKXxHNLZIM+LKRQMtOHuE6IPMowQXhAm6kANqp6MMDvrSEjBX58Gvaw6
-	0wgT474TVrb8sEmvMbygM5fJrWefV28UchiQ9Vjj59KD4bzKnysDPnX8OxbaDmmvj+jk=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=c6N6xDk/HRMA4j+FMUEOKkJ6bPxioO5EfPGBX2MTKwY=; b=DBJjGAiC9QfOpOOzuIouuuhKbj
+	fyXYWmGIfRheZ0qvbHNxzLXzpbAvckdNq1R0acSmMEgYe5IgEqOw0LyKKwPyqrl1RDDYzM6qHxIif
+	5q48BuWeMhEt64ZXp5T7defKy7tNOfyj3aLMb4a4jpVGcF0AlBgSNryDWgAzflEzhcvc=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wnPUU-0007hl-F7;
-	Fri, 24 Jul 2026 23:39:43 +0000
+	id 1wnPaP-0008VH-9h;
+	Fri, 24 Jul 2026 23:45:50 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wnPUU-0007hc-0k
+ (envelope-from <ebiggers@kernel.org>) id 1wnPaN-0008V9-Tt
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 23:39:42 +0000
+ Fri, 24 Jul 2026 23:45:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=goIlfZdhjdT3tIGjuN909d/KJf7uRaDedvTvGTi3EZE=; b=iglAPOZrPPFVyvZS/gGSTiDULx
- R6L+6NfBL91f141Jgga6YA0z4IpfMGuNeQpcGcavSLG9rGC4sJGih8fSpIWOmSPJ8WyDxZyKbDQlQ
- sYZQcyPxR/+PkZjoCN0Ov8Zl1OzxsBtBXouzqd8AU6enpefx/3+n+okSscRMUEqZqnFc=;
+ bh=UButzxL7Kw/j5kopPBpah4WDYkmBhSrmLzL/921+7Ng=; b=KfuA/GSbYCbxOfdy/Md6ahc+aF
+ 1pDmZpXtIj0i69yKlBMn+VSBhadzEYLXSeDBmZHbQgTwPIU5p5+9FkGM3UkOcC+DgHLKfKXG3f/dN
+ FCg2zzytmw//DI4N8UigG4c9koL3Rd4fHnsfC1pn0ZNV5wojLIOuQk+s3Wtu2IIKqYCU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=goIlfZdhjdT3tIGjuN909d/KJf7uRaDedvTvGTi3EZE=; b=AIjMZPF1ewlkzC/geEEABNTuWb
- knM1xHLsT2FKqRcqKtjaCFmaPoTkSPzkyKsOOqOVyRXJE1zjDjp5vVXadp+9mtzzJtL+N2tODWVQX
- 2JVuUWSTn8vDw/SXJhc+4/tUK1wuLf4jH0Loo0gJoE7kgzQ8hRilRFKXUF+OqBMjntLM=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=UButzxL7Kw/j5kopPBpah4WDYkmBhSrmLzL/921+7Ng=; b=Oe7zG652VIU0jKp4kO9O8gYrjv
+ Dv/45+SMlojEamjDPPSazyRyGsfoJIuX/bll2/jZD7YXteHI32aK8j/coTC+sm0QvhmqAtaNUQg24
+ ff+FtS7uPEyDgPAEp04PV1qSS0UE2LgENCi8ME+WnHM1NFZHmr9PDNxexypToz3LMHrM=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wnPUX-0001SF-Uo for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 24 Jul 2026 23:39:42 +0000
+ id 1wnPaO-0007QP-4P for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 24 Jul 2026 23:45:48 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 1A9D943C9D;
- Fri, 24 Jul 2026 23:39:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 817A71F000E9;
- Fri, 24 Jul 2026 23:39:36 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 724C360A60;
+ Fri, 24 Jul 2026 23:45:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D53B01F000E9;
+ Fri, 24 Jul 2026 23:45:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784936376;
- bh=goIlfZdhjdT3tIGjuN909d/KJf7uRaDedvTvGTi3EZE=;
+ s=k20260515; t=1784936742;
+ bh=UButzxL7Kw/j5kopPBpah4WDYkmBhSrmLzL/921+7Ng=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=oEQfFFdfTLpZP2umUFeVIz3GgOK5wrRf5ZBgxwL/tDWEEtvr3MjoC9lH4rUgIyJFn
- A9kER4SRt3W05s7bS2SstzlNEWtWwidZn09PLOc2ziyP5SUqJXGvawqxkjSeKYEUUb
- c7NAX19yVkOoOA5aOfwLb/ilQ5Yb8MsKIF9E/mAJSCpsBQv3X09cvlJoAx8pVypEa7
- iSPOWKf2Ww+tC+RZzKw9wwDjiZXDAwysoha4m9Txcs+nz0eqYAYdgH+D6c4Qf5VATB
- NEz79vcH5IUy2/EHPsrBNjnPNF69cxHT/zy9s4x0G7OlahobnvoEG/Es68ToZI4I9/
- nBGO03ubfBTXQ==
-Date: Fri, 24 Jul 2026 16:37:44 -0700
+ b=nm7MZYo9+tnTIlCeT+kz73KmCi3UyfhyR8CfNACCQlOic6dpLpdkLGe1Qm3lgu6ZW
+ QrDtWKBRfpWwvRUQxzekj/1Jh50mBNyhveWcEtk00jeQTMnJgp16mUwMGI6GpSRszy
+ z2GtEJTJllfyh5xb8aHxTHgwP4qej6KhoHAE+RdwyooRJQSSNiY9Ry3G7p3i8Q7cKJ
+ 0b91gJ6QeJSGvUa4OJZ1pQPrldqAb1MNi76N01EwAg5wbxD51W1tPHkoD640Pmw8Ij
+ ETpvlh6FR7maGjn7oDpZ6pV0XnnC25YH0KmjgRApUoKES04uNKppnq7Cd6WWtX8J+R
+ TPvRzJ0yoJJ2g==
+Date: Fri, 24 Jul 2026 16:43:49 -0700
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20260724233744.GB1901@sol>
+Message-ID: <20260724234349.GC1901@sol>
 References: <20260721184346.416657-1-aalbersh@kernel.org>
- <20260721184346.416657-3-aalbersh@kernel.org>
+ <20260721184346.416657-9-aalbersh@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260721184346.416657-3-aalbersh@kernel.org>
-X-Headers-End: 1wnPUX-0001SF-Uo
-Subject: Re: [f2fs-dev] [PATCH v13 02/23] fsverity: expose
- ensure_fsverity_info()
+In-Reply-To: <20260721184346.416657-9-aalbersh@kernel.org>
+X-Headers-End: 1wnPaO-0007QP-4P
+Subject: Re: [f2fs-dev] [PATCH v13 08/23] fsverity: hoist statx reporting of
+ fs-verity flag
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,35 +98,20 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jul 21, 2026 at 08:40:39PM +0200, Andrey Albershteyn wrote:
-> +/**
-> + * fsverity_ensure_verity_info() - cache verity info if it's not already cached
-> + * @inode: the inode for which verity info should be cached
-> + *
-> + * Ensure this inode has verity info attached to it, it's assumed the inode
-> + * already has fsverity enabled. Read fsverity descriptor and creates verity
-> + * based on that.
-> + *
-> + * This needs to be called at least once before any of the inode's data
-> + * can be verified (and thus read at all) or the inode's fsverity digest
-> + * retrieved.  fsverity_file_open() calls this already, which handles
-> + * normal file accesses.  If a filesystem does any internal (i.e. not
-> + * associated with a file descriptor) reads of the file's data or
-> + * fsverity digest, it must call this explicitly before doing so.
-> + *
-> + * Return: 0 on success, -errno on failure
-> + */
-> +int fsverity_ensure_verity_info(struct inode *inode)
+On Tue, Jul 21, 2026 at 08:40:45PM +0200, Andrey Albershteyn wrote:
+> All filesystems supporting fsverity report this status by checking inode
+> flag. Also, BTRFS was missing stat->attributes_mask, which is fixed now.
+> 
+> Fixes: 146054090b08 ("btrfs: initial fsverity support")
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> ---
+>  fs/btrfs/inode.c | 3 ---
+>  fs/ext4/inode.c  | 5 +----
+>  fs/f2fs/file.c   | 5 +----
+>  fs/stat.c        | 6 +++++-
+>  4 files changed, 7 insertions(+), 12 deletions(-)
 
-There really should be a note here that if the file is also encrypted,
-then the encryption key has to have been set up first.  This was already
-gotten wrong when it was proposed for overlayfs to call this.
-
-Do we also need a more specific contract than "-errno on failure"?  The
-caller in xchk_inode_setup_verity() tries to distinguish between
-"metadata validation errors" and "runtime errors" by checking for a
-bunch of different error codes, and I'm not sure what that means
-exactly.
+Acked-by: Eric Biggers <ebiggers@kernel.org>
 
 - Eric
 
