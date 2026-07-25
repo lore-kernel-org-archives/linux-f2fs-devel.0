@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A1D2BC531F9
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 25 Jul 2026 07:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8642BC531C9
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 25 Jul 2026 07:40:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=gf6E4jTKMypz+udP0k8E8d7+//HtMhyKoQQogr5CKMw=; b=T2JvSiKovTcyWVdi9+CRc0ppCt
-	/q1Lp/W+izJ+Mz+LHgw4RIqh0heus+GHLU1zQSRfSbFuFwqjM+tiBZkrNyntfusBPBj3WMDYZXbN7
-	rtjJuCrI9nFLPfXIzp3mrPdIcHrUBRjdPmB5jCMgkU3tH7N2ylDdiWnqxflCACbNLw3o=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=AyH2/OLdocuXl4RdLj38n8x+jDs9U/Jmh+dSiKc3W20=; b=FXO9HDEqtxZFrtvAt6SJ8juOIj
+	E+OkRdkNiBtyeYbFJIsOxN2pdiSfPRXpRxSLfRFXTKghBa+rUUnF4HzKo57qRIO7SKXCVgZBYUcmU
+	GlErypz+DkPL9XrAN5188oLzJAd957hHaatMw7gjxSjCfngh/m6S76gtxLsPzf9RtdL4=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wnWzG-00033W-EO;
-	Sat, 25 Jul 2026 07:39:59 +0000
+	id 1wnWzK-0001ER-No;
+	Sat, 25 Jul 2026 07:40:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <asj@kernel.org>) id 1wnWys-00032d-23
+ (envelope-from <asj@kernel.org>) id 1wnWz8-0001Dk-39
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 25 Jul 2026 07:39:34 +0000
+ Sat, 25 Jul 2026 07:39:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DV7Jn2uM7I5dhJYWcrR98O8AGHL2werlvw5uBfEBhZ4=; b=NqT4MXhmMATh0Ll59VTesstSnu
- Ie/z8ixk5fI57TEYW5FKFPeve0OKhO7ESTeWkX2056NLhRlyhvYOtOVdxyPCoU3IHRmBdQcN4o8fm
- Z12jFyROM5fk/WE7lKHqSXaSKDrwE8pgoQcRHIyrRMHxWAWVzmv+RjfGYbkw9s8BPxEo=;
+ bh=sLqlpYfUqqnUXzeM6LLwXu0zSUkOzx/Ofan0xuQplQY=; b=JL6JDdVV/01S5veHtW9z8QkQID
+ 1xs6r2GeCRMqPmMpfRBMCgxHWaYVTACDLTlpGxDWm9rAC8AUVDTK6MlDpC5PqZe3iJO7lA+/3Pzow
+ HWW7jOVp87x3EwtXtjp4VpIkZWGsmsZ3Za6ndmMQdS5PilQDY/HIvpFRCZ/9k3+8SEec=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=DV7Jn2uM7I5dhJYWcrR98O8AGHL2werlvw5uBfEBhZ4=; b=nHc89e00c/zIGj/FZgLOulcjih
- raqFyK6paaPMg2sEEcKUj/9bwvz2KTneIQn6P2zQwy2DpDKl7GoJVZ0GCnirA5pNSenzLU8W3hXXD
- 1DPgVcJPQ7FtKZ/QlR5sJSYCrvwo/ONNGibD/GJ8meiHNJPPisQMdA0KVtv7zgtCHoDM=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=sLqlpYfUqqnUXzeM6LLwXu0zSUkOzx/Ofan0xuQplQY=; b=m+MWQfrfpyzZL+T0GAR0hcBt4K
+ 6JArneeqDZzDbBEFcBX9wveS0DW0hMMZD2C2pZ7frgbeU8dhoJlRJfzX1lP59GW5VUMrxenfamGaG
+ IGGsglDe6vIAZL/Y2MIrhP8ZfZrxz6Y348gE3/c4tIZqGNm0OkfHrWnlVkTL7CkHPd7E=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wnWyv-0002Ff-Tf for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 25 Jul 2026 07:39:34 +0000
+ id 1wnWz5-0001cB-7R for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 25 Jul 2026 07:39:47 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id D8087407D2
+ by tor.source.kernel.org (Postfix) with ESMTP id A0049600FF
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 25 Jul 2026 07:39:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744441F00A3A;
- Sat, 25 Jul 2026 07:39:25 +0000 (UTC)
+ Sat, 25 Jul 2026 07:39:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7EB71F000E9;
+ Sat, 25 Jul 2026 07:39:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784965168;
- bh=DV7Jn2uM7I5dhJYWcrR98O8AGHL2werlvw5uBfEBhZ4=;
+ s=k20260515; t=1784965181;
+ bh=sLqlpYfUqqnUXzeM6LLwXu0zSUkOzx/Ofan0xuQplQY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=oggScPL1xubsVyIN8+2G7t3coZ7bAdyLP+KbDVb0M8TY4eJKuV5GDOtT3UtXRGiNz
- lZoxowlzCqfbbzdgFEhC1iUeeZpQxOPrKPXeAjbpAkS5PLos7K2biXi68dTWvx+Her
- jK93TW4HOx+t9wYjw0gcFv25CPQ6R0KbDxofNQ60SsjeF1bB+eUH+Cwfinc5v9YhQ9
- Yz6xbmAZqQxheqTUIwQyeqgcvPQ07zFgTF+VDlbHUZd+OIRzqKBQUlZQaX1nKbipBh
- Qe7hQyrhN6VLwWJou/rdpjVFMQsZ8hFaJ/ZgvqhP07WME95fL9kTxoNy/HqKIZ6TzY
- BhAxeLtKpuLdw==
+ b=TpbBYwjxPGfADkXxk5469TxW8zfvfEKLdVGQDvUyxmKPL3ZU6nADeyl5k819QBZE7
+ ObVZN1la+VUDtK5QgSrCGk4/77LrZq71nsQBnmKF5l7QSakVUdY8X1P8JMWExL+rzP
+ vxpLM9GxygNfW85XZrCRc9baQTNJWbfIEgsh53g77UlHdvGkNZpwLfxxbOSERZ4lly
+ sUtSiDqYe9uyrC1X+mMhHP/t0hej7VEhD4j2bQopWR0QgC0+eUm/RwMGYnYb5aQkKs
+ P/C82IegjI9+qsw4vtZF0P16NkD7tABPil8QCWn7kWPTYfZN0furc69mvsR0AgiS+f
+ aJpxVJKQRRLsg==
 To: fstests@vger.kernel.org
-Date: Sat, 25 Jul 2026 15:38:58 +0800
-Message-ID: <4fa4f6bc500e0496e3d8598d38cf69597493a25b.1784949154.git.asj@kernel.org>
+Date: Sat, 25 Jul 2026 15:39:01 +0800
+Message-ID: <d8fb7f5c0d67cf01249e8fc4807e963cc1a353d0.1784949155.git.asj@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1784949154.git.asj@kernel.org>
 References: <cover.1784949154.git.asj@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wnWyv-0002Ff-Tf
-Subject: [f2fs-dev] [PATCH v8 01/13] fstests: add _loop_image_create_clone()
- helper
+X-Headers-End: 1wnWz5-0001cB-7R
+Subject: [f2fs-dev] [PATCH v8 04/13] fstests: add _require_fanotify_function
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,91 +95,32 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Introduce _loop_image_create_clone() and _loop_image_destroy() to mkfs an
-image file and clone it to another image file, and attach a loop device to
-them. And its destroy part.
+fanotify support may not be compiled into the kernel. Add
+_require_fanotify_function to skip tests when fanotify is disabled.
 
 Signed-off-by: Anand Jain <asj@kernel.org>
 ---
- common/rc | 65 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+ common/rc | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/common/rc b/common/rc
-index 106f044adc2d..e8ff5be0c547 100644
+index 53e5d9d43af6..21b516accdf7 100644
 --- a/common/rc
 +++ b/common/rc
-@@ -1520,6 +1520,71 @@ _scratch_resvblks()
+@@ -6329,6 +6329,13 @@ _require_max_file_range_blocks()
  	esac
  }
  
-+# Create a small loop image, run an optional tuning function ($2) on it,
-+# clone it, and attach both to loop devices, returned in ($1).
-+# Args:
-+#   $1: Nameref to return the array of allocated loop devices [base, clone].
-+#   $2: Optional callback function to tune the base filesystem before cloning.
-+_loop_image_create_clone()
++_require_fanotify_function()
 +{
-+	local -n _ret=$1
-+	local pre_clone_tune_func="$2"
-+	local img_file=$TEST_DIR/${seq}.img
-+	local img_file_clone=$TEST_DIR/${seq}_clone.img
-+	local size=$(_small_fs_size_mb 128) # Smallest possible
-+	local loop_devs=()
-+
-+	# Since we copy the block device image, we keep its size small.
-+	_require_fs_space $TEST_DIR $((size * 1024 * 2))
-+
-+	_create_file_sized $((size * 1024 * 1024)) $img_file ||
-+				_fail "Failed: Create $img_file $size"
-+
-+	loop_devs=("$(_create_loop_device $img_file)")
-+
-+	case $FSTYP in
-+	xfs)
-+		_mkfs_dev -s size=4096 "${loop_devs[0]}"
-+		;;
-+	btrfs)
-+		_mkfs_dev "${loop_devs[0]}"
-+		;;
-+	*)
-+		_mkfs_dev "${loop_devs[0]}"
-+		;;
-+	esac
-+
-+	# Only execute if the function argument is not empty
-+	if [ -n "$pre_clone_tune_func" ]; then
-+		$pre_clone_tune_func "${loop_devs[0]}"
-+	fi
-+
-+	sync "${loop_devs[0]}"
-+	cp $img_file $img_file_clone || _fail "Failed to copy cloned image"
-+
-+	loop_devs+=("$(_create_loop_device $img_file_clone)")
-+
-+	_ret=()
-+	for i in "${loop_devs[@]}"; do
-+		_ret+=("$i")
-+	done
++        if $FSNOTIFYWAIT_PROG 2>&1 | grep -q "Function not implemented"; then
++                _notrun "Need CONFIG_FANOTIFY and CONFIG_FANOTIFY_ACCESS_PERMISSIONS to be enabled"
++        fi
 +}
 +
-+# Teardown loop devices and delete their underlying backing image files.
-+# Accepts a list of loop device paths (e.g., /dev/loop0 /dev/loop1).
-+_loop_image_destroy()
-+{
-+	for d in "$@"; do
-+		# Retrieve the path of the backing file
-+		local f=$(losetup --noheadings --output BACK-FILE $d)
-+
-+		# Detach the loop device from the backing file
-+		_destroy_loop_device "$d"
-+
-+		# Clean up the backing disk image file
-+		[ -n "$f" ] && rm -f "$f"
-+	done
-+}
- 
- # Repair scratch filesystem.  Returns 0 if the FS is good to go (either no
- # errors found or errors were fixed) and nonzero otherwise; also spits out
+ _require_fanotify_ioerrors()
+ {
+ 	local x
 -- 
 2.43.0
 
