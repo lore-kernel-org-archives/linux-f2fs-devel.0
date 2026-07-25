@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 251E6C531C9
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 25 Jul 2026 07:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A5A42C531C9
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 25 Jul 2026 07:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=MhqcGAEItNa2JMvfHeTaIk1Ihp+lhlWBZ+2pKvYx0C4=; b=SkU6qq65uBilb9EppE7RUr/lRY
-	PChagfyGjzZLCcWy3W709qLdYBBDd1RPy0wDEIYIj2mjFbVWmBLsp/doCPhclLSnx9WmtMj0ZbK2n
-	1ousdXc8P65y8LLU2UmK0OzLJc0ZWBci1xBI/bGDFUPHJzivkqHuU2LndRXDi3mxi2gc=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=NMLtPr3pTtxmYs2zUjN3Iy09BmN9FvwiLj94EzRSexc=; b=SnergsAZfsZe6rQo5wLkaQmO72
+	qHGJSGoS7gnfF7JKcCaC7sN/u8H8wDQvoDvyOBakktsWEmkuJ+F5gMAjGoWyqNnSFnKYMIWSOVGfz
+	Qa3hJ/on7IKMZkyuQdXV+ws3o2jhbdTkyRp59QSnYWLySTCJPpkzmk4SsBZxDkkzML9I=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wnWzM-00035e-4a;
-	Sat, 25 Jul 2026 07:40:04 +0000
+	id 1wnWzQ-0000p9-FS;
+	Sat, 25 Jul 2026 07:40:09 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <asj@kernel.org>) id 1wnWzK-00035K-Bk
+ (envelope-from <asj@kernel.org>) id 1wnWzO-0000oz-UC
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 25 Jul 2026 07:40:03 +0000
+ Sat, 25 Jul 2026 07:40:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VFzRoel95Mk0OMd9ieiVtGk8xEu55dadodVvWCnTMiA=; b=jOzzMyfffqxofwispFnR/9drRo
- ZGiED9G0CZIbatbO8tcCjgg9iL4D/r8kcpA1n0szzWQltBRL6YOOLNrMlrpM/ygIoIyrNWVYDTaE/
- NK9C9X+BVBfN6T3rUbUeu+blYNYg9CCk+MUVIgq+nU1kxrnv8W2kUI+t7sbezUDvQYS8=;
+ bh=59hR12Fh7OpPXrpLzZyElHGF/zwJFzn0kyHqlK4pJZk=; b=bmTsFpkZX/ws4mUPgqCrUcMdI/
+ ZCLPwy/4ueCUhUCGPbBBaUKC31kruStIyFmk6ZJbgt0aay+2y1/+q4l/WQskD38NkKxJOE+kBHjbI
+ lqIhvolF+F1J1+9Mhv6L/QGed1QlzE7ILNfuKR9k9vcY9xt0+SaMUIvDynM1A8HyhvXc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VFzRoel95Mk0OMd9ieiVtGk8xEu55dadodVvWCnTMiA=; b=ciZz8Q+gL83KrPk9/iHtxntGXT
- TYGL4R9lGaqIanKUWUEMdMIEfuuzgaiVyOPRUXyOvtHTO3H1jSyADo8lqXnTQqPjmjxZ3XUnjTuTy
- vduGz0XHyQ9K8WF+t1Mdgq460N541UAYjClNKsFVjULpoQOhicBQjw527wRqd1hadlEg=;
+ bh=59hR12Fh7OpPXrpLzZyElHGF/zwJFzn0kyHqlK4pJZk=; b=RINdFbL7ksLQdyhX2cylh+WPPG
+ 5SBU0p/rT/IJrhrc2kw0gf4UoAbE0qLHJh393TQET2ARcIpHL/Uazw/mrdeuh904a3UeI7KRggjmZ
+ TIEBaBdr+wTTlMiwEpiage2onAg6bBaZI8f2fADrHtR5vWuAib+RG8Y0ZM8NAKp6cL0M=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wnWzO-0002GN-3b for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 25 Jul 2026 07:40:03 +0000
+ id 1wnWzS-0002GT-3i for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 25 Jul 2026 07:40:07 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 436A0411CF
+ by sea.source.kernel.org (Postfix) with ESMTP id 4B76443B75
  for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 25 Jul 2026 07:40:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA6321F000E9;
  Sat, 25 Jul 2026 07:39:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28BC61F00A3D;
- Sat, 25 Jul 2026 07:39:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784965197;
- bh=VFzRoel95Mk0OMd9ieiVtGk8xEu55dadodVvWCnTMiA=;
+ s=k20260515; t=1784965201;
+ bh=59hR12Fh7OpPXrpLzZyElHGF/zwJFzn0kyHqlK4pJZk=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=Ff3xWOiiSum+eiQ0IDBD0xHnnau/0WLL5X0I9QyU57/8tD3oLR1PX9oGU/SUdRvS/
- fVSF+jl9Zln+tvT7AbqV90mL4LX5LfJt6JBY8hjkBI1KvxoQXhsQ6xlAhD5Cj627PC
- Vdf6u5la7w4C7yivHqEQmYBr4yJIGfnjg9hEhhm+V9VEN6aK3LPFQHdcV6i9lypCid
- I6LTy6ytdtiGOCSaVsE7SnAsN8X1a4wACwna547h+XmNycfe8qdB/jlqmzDvniucvG
- DxCwZH8Puv7R/aPTzZjITto1Omtg3/SJWvzMHbDA+4VZRFm4ueD0agoqKtxYclkg3j
- eB3E66YXVmiLA==
+ b=gj1xu1qFRtHFOglUxDz7eyx1nye8DqukMZuKtlauWLMs0U+4Znpb0NR5q1+RdWLmW
+ YnTh9FAG84igIshKYia6BHphZtmsLlC21rq2JAOudM6odJ9PZJ9AV7UEuzUaKGFhjT
+ I2kSNevThSitAKDSTzgT9lk7sayxQMvLx/YdzCldG3yDdPxPbIuSN/d+jKUbbEth9U
+ kuFT5LEMVECkcERxZ6Kulw0Yi6RfVHvoF3ACwtg1hjmKrQQmdXIk7rZE+5d6DPwN4V
+ 6rEBX4WZjKhcExMhKIxEZRqjARS8UTtI1f4IZXbHzWRJ4NbC1U+8WTsgLCdrV4koJt
+ /f8NOW5sHEpVA==
 To: fstests@vger.kernel.org
-Date: Sat, 25 Jul 2026 15:39:05 +0800
-Message-ID: <f68b3bd9fcee878289f8ddd7c85a6913c89772cd.1784949155.git.asj@kernel.org>
+Date: Sat, 25 Jul 2026 15:39:06 +0800
+Message-ID: <0e530686fa2bfb9a4b8ec4596484a4fec6d849e4.1784949155.git.asj@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1784949154.git.asj@kernel.org>
 References: <cover.1784949154.git.asj@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wnWzO-0002GN-3b
-Subject: [f2fs-dev] [PATCH v8 08/13] fstests: verify f_fsid for cloned
- filesystems
+X-Headers-End: 1wnWzS-0002GT-3i
+Subject: [f2fs-dev] [PATCH v8 09/13] fstests: verify libblkid resolution of
+ duplicate UUIDs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,32 +96,33 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Verify that the cloned filesystem provides an f_fsid that is persistent
-across mount cycles, yet unique from the original filesystem's f_fsid.
+Verify how findmnt, df (libblkid) resolve device paths when multiple
+block devices share the same FSUUID.
 
 Signed-off-by: Anand Jain <asj@kernel.org>
 ---
- tests/generic/802     | 64 +++++++++++++++++++++++++++++++++++++++++++
- tests/generic/802.out |  4 +++
- 2 files changed, 68 insertions(+)
- create mode 100644 tests/generic/802
- create mode 100644 tests/generic/802.out
+ tests/generic/803     | 72 +++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/803.out |  6 ++++
+ 2 files changed, 78 insertions(+)
+ create mode 100644 tests/generic/803
+ create mode 100644 tests/generic/803.out
 
-diff --git a/tests/generic/802 b/tests/generic/802
+diff --git a/tests/generic/803 b/tests/generic/803
 new file mode 100644
-index 000000000000..910807c11584
+index 000000000000..77901592366c
 --- /dev/null
-+++ b/tests/generic/802
-@@ -0,0 +1,64 @@
++++ b/tests/generic/803
+@@ -0,0 +1,72 @@
 +#! /bin/bash
 +# SPDX-License-Identifier: GPL-2.0
 +# Copyright (c) 2026 Anand Jain <asj@kernel.org>.  All Rights Reserved.
 +#
-+# FS QA Test 802
-+# Check that the cloned filesystem provides an f_fsid that is persistent
-+# across mount cycles if the block device maj:min remains unchanged.
++# FS QA Test 803
++# Check if the mountinfo based findmnt would resolve to the common uuid
++# as per the blkid (libblkid based).
 +
 +. ./common/preamble
++. ./common/filter
 +
 +_begin_fstest auto quick mount clone
 +
@@ -129,17 +130,19 @@ index 000000000000..910807c11584
 +_require_block_device $TEST_DEV
 +_require_loop
 +
-+_fixed_by_fs_commit btrfs xxxxxxxxxxxx \
-+	"btrfs: use on-disk uuid for s_uuid in temp_fsid mounts"
-+_fixed_by_fs_commit btrfs xxxxxxxxxxxx \
-+	"btrfs: derive f_fsid from on-disk fsuuid and dev_t"
-+
 +_cleanup()
 +{
 +	cd /
 +	rm -r -f $tmp.*
 +	umount $mnt1 $mnt2 2>/dev/null
 +	_loop_image_destroy "${devs[@]}" 2> /dev/null
++}
++
++# Normalize pool devices and mount points names
++filter_pool()
++{
++	sed -e "s|${devs[0]}|DEV1|g" -e "s|${mnt1}|MNT1|g" \
++	    -e "s|${devs[1]}|DEV2|g" -e "s|${mnt2}|MNT2|g" | _filter_spaces
 +}
 +
 +# Setup base loop device and its clone
@@ -151,19 +154,23 @@ index 000000000000..910807c11584
 +mkdir -p $mnt1
 +mkdir -p $mnt2
 +
-+# Mount both filesystems simultaneously using mandatory clone mount options
++# Get the uuid from the source device
++fsuuid=$(blkid -s UUID -o value ${devs[0]})
++
++# Mount both identical UUID filesystems simultaneously
 +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[0]} $mnt1 || \
 +						_fail "Failed to mount dev1"
 +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[1]} $mnt2 || \
 +						_fail "Failed to mount dev2"
 +
-+# Capture baseline filesystem IDs for comparison
-+fsid_scratch=$(stat -f -c "%i" $mnt1)
-+fsid_clone=$(stat -f -c "%i" $mnt2)
++findmnt -o SOURCE,TARGET,UUID "${devs[0]}" | tail -n +2 | \
++				sed -e "s/${fsuuid}/FSUUID/g" | filter_pool
++findmnt -o SOURCE,TARGET,UUID "${devs[1]}" | tail -n +2 | \
++				sed -e "s/${fsuuid}/FSUUID/g" | filter_pool
 +
-+# Verify that the fsids remain stable after a mount cycle, even when the
-+# mount order is reversed.
-+echo "**** fsid after mount cycle ****"
++# Btrfs assigned a random uuid for the clone fs before the fix.
++# Cycle mounts and reverse the initialization (source and clone fs) order.
++echo "**** mount cycle ****"
 +_unmount $mnt1
 +_unmount $mnt2
 +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[1]} $mnt2 || \
@@ -171,22 +178,25 @@ index 000000000000..910807c11584
 +_mount $(_common_dev_mount_options) $(_clone_mount_option) ${devs[0]} $mnt1 || \
 +						_fail "Failed to mount dev1"
 +
-+# Compare post mount-cycle values against the baseline
-+stat -f -c "%i" $mnt1 | sed -e "s/$fsid_scratch/FSID_SCRATCH/g"
-+stat -f -c "%i" $mnt2 | sed -e "s/$fsid_clone/FSID_CLONE/g"
++findmnt -o SOURCE,TARGET,UUID "${devs[0]}" | tail -n +2 | \
++				sed -e "s/${fsuuid}/FSUUID/g" | filter_pool
++findmnt -o SOURCE,TARGET,UUID "${devs[1]}" | tail -n +2 | \
++				sed -e "s/${fsuuid}/FSUUID/g" | filter_pool
 +
 +status=0
 +exit
-diff --git a/tests/generic/802.out b/tests/generic/802.out
+diff --git a/tests/generic/803.out b/tests/generic/803.out
 new file mode 100644
-index 000000000000..0202a9a2c108
+index 000000000000..3a130c662430
 --- /dev/null
-+++ b/tests/generic/802.out
-@@ -0,0 +1,4 @@
-+QA output created by 802
-+**** fsid after mount cycle ****
-+FSID_SCRATCH
-+FSID_CLONE
++++ b/tests/generic/803.out
+@@ -0,0 +1,6 @@
++QA output created by 803
++DEV1 MNT1 FSUUID
++DEV2 MNT2 FSUUID
++**** mount cycle ****
++DEV1 MNT1 FSUUID
++DEV2 MNT2 FSUUID
 -- 
 2.43.0
 
