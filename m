@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 89835C531C9
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 25 Jul 2026 07:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 67345C531FA
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 25 Jul 2026 07:40:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=aws1+ltFhQL3S7pR743Cf/KSdqfsLrJADjvjXwuOHFk=; b=imbU7M1df69u7eqhzp4rlqeFKX
-	KeyvyKmoVESZFGAX/dUG9eGi221O2IqtMK28NnlCHpWmka9OLEsuWYaGwrSzrqeIMXdd5IFovHfT3
-	TAKvuuNqM6dHEcYgdprN5URWPC829u7tsR1R6xg8tHCMPRs0eSyOdfnSZb0tHIT/KE7o=;
+	bh=M2LK7uVpvwruZN5/ivHico2crYyslvbUi1qN+qmsh9Y=; b=cD1FCosUaEBrFxu6a7kBhgzT5k
+	TFGsyTxSZowXBWWyHNUdZeqk9cgeiC57M9IvpHVItmdsI28vaNIHwFVfAU4TnPbjvsEkevKXmT1/N
+	l22H1KSCd2KL93SzebYazxJCm5iGrCEZo3PAEvgtFAZLRZKtYR7IsjHh02Zolac+Z25A=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wnWzG-0000ms-GC;
-	Sat, 25 Jul 2026 07:39:59 +0000
+	id 1wnWzG-0000mi-3f;
+	Sat, 25 Jul 2026 07:39:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <asj@kernel.org>) id 1wnWzB-0000mX-Ui
+ (envelope-from <asj@kernel.org>) id 1wnWyv-0000mJ-EU
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 25 Jul 2026 07:39:54 +0000
+ Sat, 25 Jul 2026 07:39:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qa1sayaIQvzwoExpdR95uN90DWjqj0ydUFZDZMchGLE=; b=JT8xp+Ef4hxNyItYKcw1HdqfLp
- L2RPhJneccWLr/Z1aGrCIfah6LYFOuDSDNNe6PlyNGecdAb62x5gkQED7OinwDqR2KMB/pVj/Zthw
- rroGS1FNIjvnZBgQ3xnj67FA5fhHKth1e4bcE6dxjCdtjEoPZsVYnDIcTH8Mpq1Wg33Q=;
+ bh=BkQ928IhhS+r1y6PyP6u8vBrScuRTuqSeOELrgnM3/Y=; b=T7S2rab99V9747iwmzn8kExboF
+ Zjj/5nR+hyuw2RNFhbvaU4NAOgv/ctyGgel/b1rJlHFyAn7Jt0QbsVykEJ9U1ijKSv0ADJaAnzO29
+ YDq++Z+UJuxeseHsF6HnZpuVjnJgBAf/MKGZ8Eea9h+hiQUTUOS5LZba3y+2CM/Ki5zs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qa1sayaIQvzwoExpdR95uN90DWjqj0ydUFZDZMchGLE=; b=PtepXWf+YJ0LPpohpHOLur34cv
- O350BZhiE/+HnwGxjGJLt3L71zub2oqhBrAt8UBH0YC0W/XxrNcUtuum57b/G/w042854gX+ZrwvG
- x4GWgqME41/dEKsTTHMpZEJ++KgZOtZtDVoSFSGGb0FwvHmjaQD+Medhb3ntGAYkOF6w=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=BkQ928IhhS+r1y6PyP6u8vBrScuRTuqSeOELrgnM3/Y=; b=ZxXmeB+qPGC0/vcvbS47PLAGAO
+ bUjaajXDDodsFsr1q5DUt/BhY73Mik5QgOQ4JvDV6Jv1BySCMyfwtgWPv/3FmTwtNExRElAWXlLs7
+ 1NKuOkE+AncaKL308SXJLUGYJT2I2zgTCRb3SKBcL0PkmvnzUZdVa373cI6+1MFdnLfs=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wnWzC-0001cK-8Z for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 25 Jul 2026 07:39:54 +0000
+ id 1wnWyv-0001bz-Pw for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 25 Jul 2026 07:39:38 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id AF540600AD
+ by sea.source.kernel.org (Postfix) with ESMTP id 8083843808
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 25 Jul 2026 07:39:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 460AD1F000E9;
- Sat, 25 Jul 2026 07:39:44 +0000 (UTC)
+ Sat, 25 Jul 2026 07:39:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 686371F000E9;
+ Sat, 25 Jul 2026 07:39:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784965188;
- bh=qa1sayaIQvzwoExpdR95uN90DWjqj0ydUFZDZMchGLE=;
+ s=k20260515; t=1784965172;
+ bh=BkQ928IhhS+r1y6PyP6u8vBrScuRTuqSeOELrgnM3/Y=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=dPaoRKB5mRsGUeO1YgS87w8dLD/3UFAfEQ+qSsf9LZYRfpN868YhWRSKU56SBFmCu
- /Bxn36BQTuszrVJuFUN3rhh2a9WY8cy9SHAER62S3hPtLtqopIybYrkwyi5oIZn2Rp
- HgomxRkJd6NslSKW7a+A9gjb4up7RagqMcX3YdXh2t8nVkkMMfQs2SjsG1Zx9KU+xp
- laUZcSChf+wCEj3DvZMIUI4az/vITGVX9E+xamSYk/5gkAElz9uX4RWI/ukSR0PaDX
- SxYDXXECamPrmK9/QT/cZpXvyn8BFDW/1Mu03vfv+aOjVvAVVFyR2Pl0lZoOzT5EkD
- D7l2hRmQJPo6Q==
+ b=lHYW8eX55SVMeWWNqD/xitYCLBDikNWltjyL/MM5YfJXS2SNbnoJdxdpuiF3O1Wm+
+ bPLwXJrfMQM/Tuo5c/aqeNiDANdTN+aRutBAnwdiTkPJrQmtlzbV6cblyeh6kdwuLq
+ G5PjfUJnbvaxe09etCN0+a56/afTupNrMWhVYfVuNiIWJd46ASJomhaWzCmLugaei2
+ dvsoayJUxNZ7I01SpC85OaBJxSHMNAJFKHW+qH24yImu6OjxDZVrzIscoDB3OIQXET
+ MpgHNNArxL/q33jLDoi8r/KNtGc74uR7y0ysWgq0mUEoYVW8eBmr+x7zCsM7JQ7KqD
+ ZQuWLsF5E31HQ==
 To: fstests@vger.kernel.org
-Date: Sat, 25 Jul 2026 15:39:03 +0800
-Message-ID: <97b71706f0c127ec1bf4c73cd97e664fbeb03086.1784949155.git.asj@kernel.org>
+Date: Sat, 25 Jul 2026 15:38:59 +0800
+Message-ID: <75ceae4b427ab53c921af395854794b78d7e07a9.1784949154.git.asj@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1784949154.git.asj@kernel.org>
 References: <cover.1784949154.git.asj@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wnWzC-0001cK-8Z
-Subject: [f2fs-dev] [PATCH v8 06/13] fstests: add SEMANAGE_PROG
+X-Headers-End: 1wnWyv-0001bz-Pw
+Subject: [f2fs-dev] [PATCH v8 02/13] fstests: add _clone_mount_option()
+ helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,25 +96,40 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Define `SEMANAGE_PROG` for an upcoming test case that uses `semanage(8)`.
+Adds _clone_mount_option() helper function to handle filesystem-specific
+requirements for mounting cloned devices. Abstract the need for -o nouuid
+on XFS.
 
 Signed-off-by: Anand Jain <asj@kernel.org>
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- common/config | 1 +
- 1 file changed, 1 insertion(+)
+ common/rc | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/common/config b/common/config
-index 5661fa0ec310..d760b796ce86 100644
---- a/common/config
-+++ b/common/config
-@@ -243,6 +243,7 @@ export PARTED_PROG="$(type -P parted)"
- export XFS_PROPERTY_PROG="$(type -P xfs_property)"
- export FSCRYPTCTL_PROG="$(type -P fscryptctl)"
- export FSNOTIFYWAIT_PROG="$(type -P fsnotifywait)"
-+export SEMANAGE_PROG="$(type -P semanage)"
+diff --git a/common/rc b/common/rc
+index e8ff5be0c547..53e5d9d43af6 100644
+--- a/common/rc
++++ b/common/rc
+@@ -414,6 +414,19 @@ _scratch_mount_options()
+ 					$SCRATCH_DEV $SCRATCH_MNT
+ }
  
- # udev wait functions.
- #
++# Return filesystem-specific mount options required for mounting clone/snapshot
++# devices.
++_clone_mount_option()
++{
++	case "$FSTYP" in
++	xfs)
++		# Allow mounting a duplicate filesystem on the same host
++		echo "-o nouuid"
++		;;
++	*)
++	esac
++}
++
+ _supports_filetype()
+ {
+ 	local dir=$1
 -- 
 2.43.0
 
