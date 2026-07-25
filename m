@@ -4,7 +4,7 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E4CADC53219
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A1D2BC531F9
 	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 25 Jul 2026 07:40:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
@@ -12,29 +12,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=glGpM4kpQevjgvu+GXHbQZaFUPUgJAuFVa5Xe2oi50E=; b=I67f2B77WmHpcDBPKgcdYdNSPw
-	r6Di6VZAFYsifspliG61LWSGoNuuEcwNUjC+zM5fJxkhIZnKJLDAEAMfUwbecgDZoE5Ua/7zYxFDx
-	v+z5QPvfrpg9nfu7Ps2QYb6v+8xuGlRV+Qn/ud0KiaemXhN3TW9UdXfYbPrJrVqubpDw=;
+	bh=gf6E4jTKMypz+udP0k8E8d7+//HtMhyKoQQogr5CKMw=; b=T2JvSiKovTcyWVdi9+CRc0ppCt
+	/q1Lp/W+izJ+Mz+LHgw4RIqh0heus+GHLU1zQSRfSbFuFwqjM+tiBZkrNyntfusBPBj3WMDYZXbN7
+	rtjJuCrI9nFLPfXIzp3mrPdIcHrUBRjdPmB5jCMgkU3tH7N2ylDdiWnqxflCACbNLw3o=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wnWzG-00033i-Px;
+	id 1wnWzG-00033W-EO;
 	Sat, 25 Jul 2026 07:39:59 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <asj@kernel.org>) id 1wnWz7-00032r-OY
+ (envelope-from <asj@kernel.org>) id 1wnWys-00032d-23
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 25 Jul 2026 07:39:50 +0000
+ Sat, 25 Jul 2026 07:39:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mRZi9Vfr+5T/gOdThVCpmuf5WVpFWTSa3j7CdZPm880=; b=JeRx6o/Ws8TfaLsZnhSINtrsWN
- T+QrySCIQGf1PhG0Rj8TmUir4uQ0M7pG3eAcE8oo9cBsud+86epSd50FJ0SmQB/2F8pKKllZz0vGB
- W6JJdikmxLy1O63q+JQsqYTF0uMyUSRxtxd8rkNLaF0btyJb6QXWxUlyNZsLJVRIQbGc=;
+ bh=DV7Jn2uM7I5dhJYWcrR98O8AGHL2werlvw5uBfEBhZ4=; b=NqT4MXhmMATh0Ll59VTesstSnu
+ Ie/z8ixk5fI57TEYW5FKFPeve0OKhO7ESTeWkX2056NLhRlyhvYOtOVdxyPCoU3IHRmBdQcN4o8fm
+ Z12jFyROM5fk/WE7lKHqSXaSKDrwE8pgoQcRHIyrRMHxWAWVzmv+RjfGYbkw9s8BPxEo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=mRZi9Vfr+5T/gOdThVCpmuf5WVpFWTSa3j7CdZPm880=; b=FD/f4q4cVDxOrYdh69yeZnAGRn
- M8JhcTd6QDK0zJQ4Qx97z5z01AnjqXyBRcPiNTxq6hxStENstbeusJSHCYnDIOtUkUSAiC+iIC9Zf
- wiFVEDiqt+FOqBlW4tj8HayAIWOHDK383eiA/kzwNlZ1X1EcKoTO3ils+8O0tP//oGh8=;
+ bh=DV7Jn2uM7I5dhJYWcrR98O8AGHL2werlvw5uBfEBhZ4=; b=nHc89e00c/zIGj/FZgLOulcjih
+ raqFyK6paaPMg2sEEcKUj/9bwvz2KTneIQn6P2zQwy2DpDKl7GoJVZ0GCnirA5pNSenzLU8W3hXXD
+ 1DPgVcJPQ7FtKZ/QlR5sJSYCrvwo/ONNGibD/GJ8meiHNJPPisQMdA0KVtv7zgtCHoDM=;
 Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wnWz7-0001cD-Vf for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 25 Jul 2026 07:39:50 +0000
+ id 1wnWyv-0002Ff-Tf for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 25 Jul 2026 07:39:34 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id AED1740E3D
+ by sea.source.kernel.org (Postfix) with ESMTP id D8087407D2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 25 Jul 2026 07:39:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F34711F00A3A;
- Sat, 25 Jul 2026 07:39:41 +0000 (UTC)
+ Sat, 25 Jul 2026 07:39:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744441F00A3A;
+ Sat, 25 Jul 2026 07:39:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1784965184;
- bh=mRZi9Vfr+5T/gOdThVCpmuf5WVpFWTSa3j7CdZPm880=;
+ s=k20260515; t=1784965168;
+ bh=DV7Jn2uM7I5dhJYWcrR98O8AGHL2werlvw5uBfEBhZ4=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=IEpQWLi63DihQWPfdLmhMmIcrNPoZswCEvxSc+yrUi3JzpbCG6/RTm7n0GgvVmbaZ
- ZDIvo3asJ+B1jIYoMdrTTKLF5t1+gBlqsv8v7ilbpCy4wTuX/5bTJqD/p+CS5Je+3N
- TVhfEbyyNV8l8p4tMzr0XsQZmh/sDZgbxk1U8gt9xr1KlYGh4w8Jrk5AFBuDfcPhHZ
- 9k2HWUNP19cBNRl/76IibVuDYPFDxyBS0/YOiJyNHr8nuxzxpIdKzEO+gY17qMgBqe
- BxmcyP99COCE6YW6r7QA5GLpYw1K9EZA0P8MsVG7e2Ix+z9uNr4CDYIXGNEPfkjqlW
- mVPHkEyYirNNw==
+ b=oggScPL1xubsVyIN8+2G7t3coZ7bAdyLP+KbDVb0M8TY4eJKuV5GDOtT3UtXRGiNz
+ lZoxowlzCqfbbzdgFEhC1iUeeZpQxOPrKPXeAjbpAkS5PLos7K2biXi68dTWvx+Her
+ jK93TW4HOx+t9wYjw0gcFv25CPQ6R0KbDxofNQ60SsjeF1bB+eUH+Cwfinc5v9YhQ9
+ Yz6xbmAZqQxheqTUIwQyeqgcvPQ07zFgTF+VDlbHUZd+OIRzqKBQUlZQaX1nKbipBh
+ Qe7hQyrhN6VLwWJou/rdpjVFMQsZ8hFaJ/ZgvqhP07WME95fL9kTxoNy/HqKIZ6TzY
+ BhAxeLtKpuLdw==
 To: fstests@vger.kernel.org
-Date: Sat, 25 Jul 2026 15:39:02 +0800
-Message-ID: <878a21ea507cb955ed414072c82ab5e5493b8ae0.1784949155.git.asj@kernel.org>
+Date: Sat, 25 Jul 2026 15:38:58 +0800
+Message-ID: <4fa4f6bc500e0496e3d8598d38cf69597493a25b.1784949154.git.asj@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1784949154.git.asj@kernel.org>
 References: <cover.1784949154.git.asj@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wnWz7-0001cD-Vf
-Subject: [f2fs-dev] [PATCH v8 05/13] fstests: add _require_unique_f_fsid()
+X-Headers-End: 1wnWyv-0002Ff-Tf
+Subject: [f2fs-dev] [PATCH v8 01/13] fstests: add _loop_image_create_clone()
  helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -96,60 +96,91 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Add a helper to check if the target filesystem supports unique f_fsid
-tracking across cloned or snapshot instances.
-
-Certain filesystems like XFS, Btrfs, and F2FS ensure unique f_fsid
-identifiers per filesystem instance. However, Ext4 derives its f_fsid
-directly from its superblock UUID, which leads to identical f_fsid
-values on cloned images until the UUID is manually modified by userspace.
-
-Introduce _require_unique_f_fsid() to allow test cases requiring strict
-f_fsid uniqueness to skip gracefully on unsupported filesystems.
+Introduce _loop_image_create_clone() and _loop_image_destroy() to mkfs an
+image file and clone it to another image file, and attach a loop device to
+them. And its destroy part.
 
 Signed-off-by: Anand Jain <asj@kernel.org>
 ---
- common/rc | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ common/rc | 65 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
 diff --git a/common/rc b/common/rc
-index 21b516accdf7..f73251365a60 100644
+index 106f044adc2d..e8ff5be0c547 100644
 --- a/common/rc
 +++ b/common/rc
-@@ -6356,6 +6356,33 @@ _require_fanotify_ioerrors()
- 	_notrun "$FSTYP does not support fanotify ioerrors"
+@@ -1520,6 +1520,71 @@ _scratch_resvblks()
+ 	esac
  }
  
-+# Skip the test if the filesystem does not enforce unique f_fsids
-+# natively. Checking this dynamically requires recreating a clone
-+# layout, so we use a static lookup based on FSTYP.
-+#
-+# Across all filesystems, a UUID collision causes libblkid tools to return
-+# non-deterministic device mappings. It is ultimately the responsibility
-+# of the userspace utility or use-case to enforce uniqueness when a clone
-+# diverges. For details, see mailing list thread discussions:
-+#   Link: https://lore.kernel.org/linux-ext4/20260409131238.GC18443@macsyma-wired.lan/
-+_require_unique_f_fsid()
++# Create a small loop image, run an optional tuning function ($2) on it,
++# clone it, and attach both to loop devices, returned in ($1).
++# Args:
++#   $1: Nameref to return the array of allocated loop devices [base, clone].
++#   $2: Optional callback function to tune the base filesystem before cloning.
++_loop_image_create_clone()
 +{
-+	case "$FSTYP" in
-+	ext*)
-+		# Ext4 derives f_fsid from the superblock UUID, meaning
-+		# clones share the same f_fsid until their UUIDs
-+		# diverge.
-+		_notrun "Target filesystem ($FSTYP) does not guarantee unique f_fsid on clones."
++	local -n _ret=$1
++	local pre_clone_tune_func="$2"
++	local img_file=$TEST_DIR/${seq}.img
++	local img_file_clone=$TEST_DIR/${seq}_clone.img
++	local size=$(_small_fs_size_mb 128) # Smallest possible
++	local loop_devs=()
++
++	# Since we copy the block device image, we keep its size small.
++	_require_fs_space $TEST_DIR $((size * 1024 * 2))
++
++	_create_file_sized $((size * 1024 * 1024)) $img_file ||
++				_fail "Failed: Create $img_file $size"
++
++	loop_devs=("$(_create_loop_device $img_file)")
++
++	case $FSTYP in
++	xfs)
++		_mkfs_dev -s size=4096 "${loop_devs[0]}"
++		;;
++	btrfs)
++		_mkfs_dev "${loop_devs[0]}"
 +		;;
 +	*)
-+		# Conversely, XFS, Btrfs, and F2FS ensure f_fsid remains
-+		# unique per filesystem instance (often by deriving it
-+		# from the UUID and underlying block device.)
++		_mkfs_dev "${loop_devs[0]}"
 +		;;
 +	esac
++
++	# Only execute if the function argument is not empty
++	if [ -n "$pre_clone_tune_func" ]; then
++		$pre_clone_tune_func "${loop_devs[0]}"
++	fi
++
++	sync "${loop_devs[0]}"
++	cp $img_file $img_file_clone || _fail "Failed to copy cloned image"
++
++	loop_devs+=("$(_create_loop_device $img_file_clone)")
++
++	_ret=()
++	for i in "${loop_devs[@]}"; do
++		_ret+=("$i")
++	done
 +}
 +
++# Teardown loop devices and delete their underlying backing image files.
++# Accepts a list of loop device paths (e.g., /dev/loop0 /dev/loop1).
++_loop_image_destroy()
++{
++	for d in "$@"; do
++		# Retrieve the path of the backing file
++		local f=$(losetup --noheadings --output BACK-FILE $d)
 +
- # Computes a percentage of the available space in a filesystem and
- # returns that quantity in MB. The percentage must not contain a percent
- # sign ("%").
++		# Detach the loop device from the backing file
++		_destroy_loop_device "$d"
++
++		# Clean up the backing disk image file
++		[ -n "$f" ] && rm -f "$f"
++	done
++}
+ 
+ # Repair scratch filesystem.  Returns 0 if the FS is good to go (either no
+ # errors found or errors were fixed) and nonzero otherwise; also spits out
 -- 
 2.43.0
 
