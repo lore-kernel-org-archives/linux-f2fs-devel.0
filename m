@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C75D8C53219
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 28 Jul 2026 02:24:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C8696C53219
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 28 Jul 2026 02:26:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=E3V3IsR0QgIR0gABzCAQPuiJx1uwznl34IVYCVCP2j0=; b=f5e4gd1lF+z1/if83X3/DKYZQl
-	dEXRkbsEPp+5e40v+N70RbsKfhA4zjQD7paSEQBzMXL80UoH/JmKn8ueb9wMA4PKsiV6wFyFO2ZD1
-	i6c4uU0r+PiVnBUlQJvGa3oSWBMsnc9VLaenMPUO4yk5TIMVkGOPASji93PeTD1J0Wco=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=9uUD7yzXIxbTwNmBz3fTbksAYqSGPjyXp2aMYDz+s9I=; b=NJf5EKOoUgspMYLRKcgwsv5RDi
+	f8vzO7Oy/5lMm3P7aL/8+XnkGJlYuRHdLb+7WGnuYYDTNIhSHuRcllyZHfEnLiX1vICfNeYCB66TT
+	J3g0EVC/UawYTRm7XUsBoHQdMrDCOljicZWg+tiDPukQu7CO8ypwQFuX5IqYTX9eJZqM=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1woXUU-0003Id-BL;
-	Tue, 28 Jul 2026 02:24:23 +0000
+	id 1woXWm-00073J-1T;
+	Tue, 28 Jul 2026 02:26:41 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1woXUS-0003IW-KZ
+ (envelope-from <chao@kernel.org>) id 1woXWk-00073B-C5
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 28 Jul 2026 02:24:21 +0000
+ Tue, 28 Jul 2026 02:26:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rBcAXdJQcY3iI3Wg4xoJvS5n3Os0jVA1lLtFYRNtx+I=; b=I6f6IKoexkcVz5JqLQu2cZ5Qds
- 3FaSadxVlF5JJP3MUyHe5kQH4VrFACApz1g2gXWvE/kPqf5hry/ILHB67kJSDD5GwryMorb0jE1Dc
- J0JktUrY10QxzInAq0LOa0T1FeAr+uNiAzeiKMzucI8cnOg8tS61iAAbdNjmGUvV9BbY=;
+ bh=Boc6ZDWhOR2IMNVe3afmtdm0W0PjXhJW31P7rErzzTo=; b=i9grztQkK9S8b6nn/7wqg68oK+
+ eErhhNM2UGkBm9IWlZSLoIoFOzbPoAFCpG254PJ9fHEQBpmp8d6nCnhU/y+zv1s+OfxmZ7+MsIyYV
+ L85T8rq4jyaMAF77tRs154Ld/mSFAChr0U/ZPistBuNq1fUYDl92zAMOF1MhEXPbi7qM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,46 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=rBcAXdJQcY3iI3Wg4xoJvS5n3Os0jVA1lLtFYRNtx+I=; b=mxk96eBtlK0WEP2kQtx9W3AN6K
- jhl08VBmWmoPCsm3kGiiQcHLGJNnoJr+f118n0D48zclq2XVhdxn0QPWrpmsnRzTPyO90QgFsxkil
- 2A8bIqIw0t3kYRf2L4QZrUCBTO4c++0gfU1jWodFgPvfi8vvuKCOaoJz90kY8FDkERLs=;
+ bh=Boc6ZDWhOR2IMNVe3afmtdm0W0PjXhJW31P7rErzzTo=; b=FsrFWVDjcUyDHhnGWtZuZY9yyp
+ hi7i5rkkBTzCDLdTwlRLrqu1YEDGe5S/2E8GRgu+v97lDfb9mwgLNX3foOKoe7i15e7WGSVLuggfp
+ lWEDekDWrbNCIsiNsEYz9vzm6fYzlQNjhNudHNWvOXP+g0eRIEE/4tDNnk7BmOqvEgAY=;
 Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1woXUR-0003mK-NO for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 28 Jul 2026 02:24:21 +0000
+ id 1woXWk-0004a3-0q for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 28 Jul 2026 02:26:39 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 575AB40DD9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 28 Jul 2026 02:24:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D53311F00A3A;
- Tue, 28 Jul 2026 02:24:12 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 1A2A341A1F;
+ Tue, 28 Jul 2026 02:26:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2071B1F000E9;
+ Tue, 28 Jul 2026 02:26:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785205454;
- bh=rBcAXdJQcY3iI3Wg4xoJvS5n3Os0jVA1lLtFYRNtx+I=;
+ s=k20260515; t=1785205593;
+ bh=Boc6ZDWhOR2IMNVe3afmtdm0W0PjXhJW31P7rErzzTo=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=Yu8uQ8bSN+Et/KKbTtX06u/rUKofBksO8L+HivLi2c830bi6BBZP53NS/pJURYLnq
- EuNabn4CEtHbogehcEjvPPvE9ULWXQxZZMTIoBm2q72PMnbgGPTytSeH/HezRPp4TJ
- TsENrotFPBf1iFHUP9kuyrUQTi3eFXFihFcpquTtk+fywzk87gn+6Hx6P83agdlMZh
- Rx6Kcyzmrga5CQ+2h/SK2oFwIC35Hw8ppc/f/3hvRwBSyVHzx+rpcjteyxx+xoz4xO
- thR4LoWhYww3kZIQhIJiPX+uYGFcdQeSpuWBp9SBUvndzsmHmjYNvlCSia4QFssb9r
- lmu+qeMg6vUjA==
-Message-ID: <99220f8b-05d4-427f-998d-7f15a84c8805@kernel.org>
-Date: Tue, 28 Jul 2026 10:24:10 +0800
+ b=QEFEPQcEVz/7fUiVfdaxh/2Pbcp849t0QllOb2mjcTNyQl6+8SklulFcuzOF9in+K
+ 0ojtX3r0uCpkZZ9Wnhg3Cj72WXX4Kw9h6Ue23K8CVMo5WqP4Qlny5lDPJy80lXvdpe
+ QHGhQf/cHVXuOr0fDhtEjBRWuKZ6ALIcEFG7wiKEZO7fTtMIRFM+2CwZvEedLO42hg
+ 4wmc7L8AOpgFSCbxL4a7PVMUz8jQ0iPMHacC8L0scV/exaMkRjqk//AXeNG826MWIn
+ O3rhcuFVbL21j6NhPljtmw5yIs/CL7NpSGSCISZ3BTMpCsQI+EKFVnQ2y7O5/2JHKo
+ VpVrwTtzqEnog==
+Message-ID: <38aebecc-1bc0-4f80-8259-f6d7bff2cf27@kernel.org>
+Date: Tue, 28 Jul 2026 10:26:30 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Zorro Lang <zlang@kernel.org>
-References: <20260706064326.3657995-1-chao@kernel.org>
- <af5f0eb1-0197-4952-a37b-0602799929ec@kernel.org>
- <5c11cd98-bb41-46e0-9765-e2aad57a08e4@kernel.org>
- <aloCfjjqesxpzL9z@zlang-mailbox>
- <a081f7cf-bd47-459d-baee-de772d816af4@kernel.org>
- <ameajJf8iiAQYWA3@zlang-mailbox>
+To: Bart Van Assche <bvanassche@acm.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <cover.1781119949.git.bvanassche@acm.org>
+ <2a18d06a0d810c922792703437f5775deee4483c.1781119949.git.bvanassche@acm.org>
 Content-Language: en-US
-In-Reply-To: <ameajJf8iiAQYWA3@zlang-mailbox>
-X-Headers-End: 1woXUR-0003mK-NO
-Subject: Re: [f2fs-dev] [PATCH v2] common/rc: support f2fs in
- _require_fanotify_ioerrors()
+In-Reply-To: <2a18d06a0d810c922792703437f5775deee4483c.1781119949.git.bvanassche@acm.org>
+X-Headers-End: 1woXWk-0004a3-0q
+Subject: Re: [f2fs-dev] [PATCH v2 4/4] f2fs: Run f2fs_write_end_io()
+ asynchronously
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,143 +90,141 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, fstests@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Anand Suveer Jain <asj@kernel.org>,
- jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 7/28/26 01:57, Zorro Lang wrote:
-> On Thu, Jul 23, 2026 at 05:09:12PM +0800, Chao Yu wrote:
->> On 7/17/26 18:47, Zorro Lang wrote:
->>> On Wed, Jul 08, 2026 at 11:25:37AM +0800, Chao Yu wrote:
->>>> On 7/7/26 18:13, Anand Suveer Jain wrote:
->>>>> On 6/7/26 14:43, Chao Yu wrote:
->>>>>> f2fs has supported to report fserror, this patch adds support for f2fs
->>>>>> in _require_fanotify_ioerrors(), so that we can run generic/791 on f2fs.
->>>>>>
->>>>>> Cc: Darrick J. Wong <djwong@kernel.org>
->>>>>> Signed-off-by: Chao Yu <chao@kernel.org>
->>>>>> ---
->>>>>>   common/rc | 3 +++
->>>>>>   1 file changed, 3 insertions(+)
->>>>>>
->>>>>> diff --git a/common/rc b/common/rc
->>>>>> index 494725547..f51ad59f3 100644
->>>>>> --- a/common/rc
->>>>>> +++ b/common/rc
->>>>>> @@ -6257,6 +6257,9 @@ _require_fanotify_ioerrors()
->>>>>>   		x="$(_get_fs_sysfs_attr $TEST_DEV err_report_sec)"
->>>>>>   		test -n "$x" && return 0
->>>>>>   		;;
->>>>>
->>>>>
->>>>>> +	f2fs)
->>>>>> +		x="$(cat /sys/fs/f2fs/features/fserror)"
->>>>>> +		test -n "$x" && return 0
->>>>>
->>>>> Don't we need to check if /sys/fs/f2fs/features/fserror
->>>>> is present in the running kernel (there are helpers)
->>>>
->>>> Hi Anand,
->>>>
->>>> You mean _has_fs_sysfs_attr()? however, it forces to check first parameter $dev
->>>> w/ block device type:
->>>>
->>>> 	if [ ! -b "$dev" -o -z "$attr" ];then
->>>> 		_fail "Usage: _has_fs_sysfs_attr <mounted_device> <attr>"
->>>> 	fi
->>>
->>> Hi Chao and Anand,
->>>
->>> The *_fs_sysfs related helpers were brought in by me in:
->>>    commit 2a7b77abcd1dde735186b363da24540706c43b73
->>>    Author: Zorro Lang <zlang@redhat.com>
->>>    Date:   Tue Jul 5 17:30:24 2016 +0800
->>>
->>>      xfs: configurable behavior on errors at unmount time
->>>
->>> At that time, I didn't think about the "features/" directory.
->>>
->>> Now, let me rethink this set of helpers. I feel that the *_fs_sysfs
->>> family of functions shouldn't be restricted to the $dev directory,
->>> we should remove this restriction.
->>>
->>> Following that, we bring in *_fs_sysfs_device (appending the _device suffix)
->>> helpers which call *_fs_sysfs(). Also change the test cases who call these
->>> functions.
->>>
->>> Finally, we can introduce the *_fs_sysfs_features functions (or simply use
->>> *_fs_sysfs directly).
->>>
->>> Also, we have both *_fs_sysfs_attr and *_fs_sysfs, and the logic between
->>> them is somewhat confusing and easy to mix up.
->>
->> Zorro,
->>
->> It makes sense, and good news to their user. Thanks for the proposal.
->>
->>>
->>> I need to write a series of patches to clean up these logic. For this current
->>> patch, we can start with a small-scale change first. What do you think?
->>
->> So I will use this first:
->>
->> f2fs)
->>      local feat_file="/sys/fs/f2fs/features/fserror"
->>      if [ -f "$feat_file" ] && [ "$(cat "$feat_file")" = "supported" ]; then
->>          return 0
->>      fi
->>      ;;
->>
->> And then waiting for your cleanup? or if you want to clean up this, please do it
->> directly while merging.
+On 6/11/26 03:34, Bart Van Assche wrote:
+> The bio_for_each_segment_all() loop can take more than 10 ms for a large
+> bio on an ARM little core. This is too much for interrupt context. Hence
+> perform the write bio completion work asynchronously if a bio is large and
+> if f2fs_write_end_io() is called from atomic context. This patch reduces
+> the time spent in f2fs_write_end_io() from about 10 ms to about 150
+> microseconds on an Arm Cortex-A520 core.
 > 
-> If f2fs wants to test this feature right away, I can merge your patch now and
-> clean it up later. If it's not urgent, I'll take care of it all together.
+> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+> ---
+>   Documentation/ABI/testing/sysfs-fs-f2fs |  9 +++++++++
+>   fs/f2fs/data.c                          | 21 ++++++++++++++++++++-
+>   fs/f2fs/f2fs.h                          |  2 ++
+>   fs/f2fs/super.c                         |  5 +++++
+>   fs/f2fs/sysfs.c                         |  2 ++
+>   5 files changed, 38 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+> index 423ec40e2e4e..7c6fe1e7e9bc 100644
+> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> @@ -1001,3 +1001,12 @@ Description:	It can be used to tune priority of f2fs critical task, e.g. f2fs_ck
+>   		threads, limitation as below:
+>   		- it requires user has CAP_SYS_NICE capability.
+>   		- the range is [100, 139], by default the value is 100.
+> +
+> +What:		/sys/fs/f2fs/<disk>/max_atc_write_bio_size
+> +Date:		June 2026
+> +Contact:	Bart Van Assche <bvanassche@acm.org>
+> +Description:	Every time a write operation completes f2fs_write_end_io() is
+> +		called. This function may be called from an atomic context,
+> +		e.g. from inside an interrupt handler. This attribute controls
+> +		the maximum size of a write bio that is completed in atomic
+> +		(atc) context.
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 48c004976c4e..6e169490c4cf 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -409,11 +409,30 @@ static void f2fs_write_end_bio(struct bio *bio)
+>   	bio_put(bio);
+>   }
+>   
+> +static void f2fs_write_end_io_work(struct work_struct *work)
+> +{
+> +	struct bio *bio = &container_of(work, struct f2fs_bio, work)->bio;
+> +
+> +	f2fs_write_end_bio(bio);
+> +}
+> +
+>   static void f2fs_write_end_io(struct bio *bio)
+>   {
+> +	struct f2fs_sb_info *sbi;
+> +
+>   	iostat_update_and_unbind_ctx(bio);
+>   
+> -	f2fs_write_end_bio(bio);
+> +	sbi = bio->bi_private;
+> +
+> +	if (in_atomic() && bio->bi_iter.bi_size > sbi->max_atc_write_bio_size) {
+> +		struct work_struct *w;
+> +
+> +		w = &container_of(bio, struct f2fs_bio, bio)->work;
+> +		INIT_WORK(w, f2fs_write_end_io_work);
+> +		queue_work(sbi->wq, w);
+> +	} else {
+> +		f2fs_write_end_bio(bio);
+> +	}
+>   }
+>   
+>   #ifdef CONFIG_BLK_DEV_ZONED
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 30353c439d3c..a6a3e01122e1 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1763,6 +1763,8 @@ struct f2fs_sb_info {
+>   	struct f2fs_sm_info *sm_info;		/* segment manager */
+>   
+>   	/* for bio operations */
+> +	/* Largest write bio size completed in atomic context (atc). */
+> +	u32 max_atc_write_bio_size;
+>   	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
+>   	/* keep migration IO order for LFS mode */
+>   	struct f2fs_rwsem io_order_lock;
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 5a100f740b3f..1e822380edb3 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -5007,6 +5007,11 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+>   
+>   	sb->s_fs_info = sbi;
+>   	sbi->raw_super = raw_super;
+> +	/*
+> +	 * SZ_16K restricts the time spent on completing writes to about 150
+> +	 * microseconds on an Arm Cortex-A520 core.
+> +	 */
+> +	sbi->max_atc_write_bio_size = SZ_16K;
 
-Zorro,
+Bart,
 
-Could you please help to merge it first? so that we can test 791 w/ last
-upstream code, and also in case we missed to track its status to lose it. :P
+Can you please update sbi->max_atc_write_bio_size to UINT_MAX to disable new
+feature by default? then we can merge this patch first.
+
+And then we can do some tests to figure out what is the preferred number for
+max_atc_write_bio_size in product, and set it via sysfs node.
 
 Thanks,
 
-> 
-> Thanks,
-> Zorro
-> 
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>> Zorro
->>>
->>>>
->>>>
->>>>> before reading it?
->>>>
->>>> How about this?
->>>>
->>>> f2fs)
->>>>      local feat_file="/sys/fs/f2fs/features/fserror"
->>>>      if [ -f "$feat_file" ] && [ "$(cat "$feat_file")" = "supported" ]; then
->>>>          return 0
->>>>      fi
->>>>      ;;
->>>>
->>>>>
->>>>>
->>>>>
->>>>>>   	esac
->>>>>>   
->>>>>>   	_notrun "$FSTYP does not support fanotify ioerrors"
->>>>>
->>>>
->>
->>
+>   
+>   	INIT_WORK(&sbi->s_error_work, f2fs_record_error_work);
+>   	memcpy(sbi->errors, raw_super->s_errors, MAX_F2FS_ERRORS);
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index 352e96ad5c3a..70b2e9be8f8b 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -1266,6 +1266,7 @@ F2FS_SBI_RW_ATTR(gc_idle_interval, interval_time[GC_TIME]);
+>   F2FS_SBI_RW_ATTR(umount_discard_timeout, interval_time[UMOUNT_DISCARD_TIMEOUT]);
+>   F2FS_SBI_RW_ATTR(gc_pin_file_thresh, gc_pin_file_threshold);
+>   F2FS_SBI_RW_ATTR(gc_reclaimed_segments, gc_reclaimed_segs);
+> +F2FS_SBI_RW_ATTR(max_atc_write_bio_size, max_atc_write_bio_size);
+>   F2FS_SBI_GENERAL_RW_ATTR(max_victim_search);
+>   F2FS_SBI_GENERAL_RW_ATTR(migration_granularity);
+>   F2FS_SBI_GENERAL_RW_ATTR(migration_window_granularity);
+> @@ -1508,6 +1509,7 @@ static struct attribute *f2fs_attrs[] = {
+>   	ATTR_LIST(seq_file_ra_mul),
+>   	ATTR_LIST(gc_segment_mode),
+>   	ATTR_LIST(gc_reclaimed_segments),
+> +	ATTR_LIST(max_atc_write_bio_size),
+>   	ATTR_LIST(max_fragment_chunk),
+>   	ATTR_LIST(max_fragment_hole),
+>   	ATTR_LIST(current_atomic_write),
 
 
 
