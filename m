@@ -4,88 +4,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E5DDEC53200
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2026 09:51:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B994EC53200
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2026 11:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=i4eWUkfA2ZgDJicpw0qO20iUYENi1kHj4tNbYhBcGnA=; b=f4fEMDmUdaqFwImPyGZ1vUb33Q
-	ZAu7BWP88EsZDt8Qq0a5y0ttWV58kxhfjdvHzLQJ9EiKRTu+CbLBL0LlSw/gNkyAdH0U9wL8h8kP/
-	KReQWy+Fa8E2eMoyh0lv7BbBcTB2FUUBsdyvTIWWAMZ/ts9OEDNo9S9S+d7NuThwFkhY=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=Kg8fPD+8YpKSCwz99JSkQQdRJ/GWDnbOQ/2yOe9zlAw=; b=h6TlfblaPT+Lzzmh4fAMmjHanq
+	8oxvwAh8+d6f/jQi0044VDO4DQiJuGCxjHojfKEN6r11YyLl5sz8YWcHd3S0vOl6okXWF/pRK3MKb
+	q/QqTgyXPk5KalMCyrN18PvKCOBhIgUxTSol/67t+CR8BXOGU/R1xo+2ke5L3myErWNY=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wp0wX-0007Gw-Qh;
-	Wed, 29 Jul 2026 09:51:18 +0000
+	id 1wp2fx-0002Nx-4O;
+	Wed, 29 Jul 2026 11:42:14 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wp0wE-0007GX-LA
+ (envelope-from <qwjhust@gmail.com>) id 1wp2fv-0002Nq-Ty
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Jul 2026 09:50:59 +0000
+ Wed, 29 Jul 2026 11:42:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vDMfKUd2yk4FcfjiXUBiX+Zz6DAVLFdnG7Bp7dzarnY=; b=bENj04tGjckicNLVzECtFyFVUn
- wjpHjCbtPSDGLTCAM8mbANYxeshif/mlbkPibzDCXVo/Lf6UE+pOVhk7yTZkdsnJGIoTJowEra7Ll
- B6Wu30Gn/LKqZqOsJdFcsVMTPgfXXberrC89J9dEacRJt/Fn1sya5vjPqNYJ2UQ7VXUE=;
+ bh=yuoz3PtgKXX1k02oR2d/hFIWFEkFXNq3pA596VbQzqo=; b=WNXdwZ66iwn1t5cEsJzeNa7rip
+ wXRCcnNEB9V9sB8FB/oOoEmt0efOEuRbwAHD4Ro/bfYnUDUpF5MKc/KkdOCq4HQuaa2PduQEA7+tG
+ KMlGGyhacU6ADzWmT2OVYtGnGMApcBIcXdgKVKG48T/P3sXkTJqV1MkERvO4xQHE+EhA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=vDMfKUd2yk4FcfjiXUBiX+Zz6DAVLFdnG7Bp7dzarnY=; b=ePbHlBnol306SArFe8KsWyyg5U
- hBht6UUHes74B1hX67WUHfogc19Lppc4VHFRl3URwElShSQqV+Q8iHkw1TshUL6Xm380OVYGTRDBd
- yiYYcqbOqoXySCowC3GcIFjnLufabkUC7FjjTOVnlxBXwhx0VWkx199wNOWMTOlMvU+8=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wp0wH-0001lI-Ij for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Jul 2026 09:50:59 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 83C0C41223
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=yuoz3PtgKXX1k02oR2d/hFIWFEkFXNq3pA596VbQzqo=; b=J
+ fynwp1lkEA218ARo50jTxPnMgInI/xHoQV9dqekvW/MdO58zlE9W4lw4oW2gwNAzrW7l+I3XY9+Jk
+ Yk0YtOJO8mJSHstWKGYp14v4PtOIqxuZi8EhdjjX8W6oMaSnx+nm8EsQIye9v0j64LJ8xptpCfbu0
+ B4DbqTVGdTjaKcR4=;
+Received: from mail-wr1-f52.google.com ([209.85.221.52])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1wp2fs-0005Mn-3X for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 29 Jul 2026 11:42:13 +0000
+Received: by mail-wr1-f52.google.com with SMTP id
+ ffacd0b85a97d-4799b3f7c83so611740f8f.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 29 Jul 2026 09:50:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 395C21F00A3D;
- Wed, 29 Jul 2026 09:50:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785318652;
- bh=vDMfKUd2yk4FcfjiXUBiX+Zz6DAVLFdnG7Bp7dzarnY=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=gICjKM51UPuhxbaZIBlsLemNnbqgtyWREyuWwBnYabUJN6dndCYtQB0xPBrmS/lbQ
- Pr+zqKp6dgPsAQDYugJHOGB1Z9zwqn0ec5CahblyntwPQJTU/afhtG47cS46liQJms
- mcKsV8ac0tLXGX+gAZTuZiz8zyH68rXvnNoxb0lFKi1hy9iOwK2FSV74groEWSeHMn
- HIrhZOX/jgWqnT3BHIhF7B0L6OGlHPpjCcLGM47PhaoJE4xv0q2cqp/rMX2epQkFnZ
- B4z69nMSgN8s+pRnVNsjRCQwynTxAriEiT+M3GKtHNAAtArxBBQy4fITcJgxFPruIJ
- kpnO52iYRxFJA==
-Message-ID: <0b5f2dc2-ae67-4d3e-b5ea-9edf43b4f357@kernel.org>
-Date: Wed, 29 Jul 2026 17:50:49 +0800
+ Wed, 29 Jul 2026 04:42:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1785325325; x=1785930125; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=yuoz3PtgKXX1k02oR2d/hFIWFEkFXNq3pA596VbQzqo=;
+ b=rUW//T1qxLlzDrYc6LIWn0rKVr44TMxZ/YEqOpFipu34TWzAZGmyDfT/enf66P73ZJ
+ durbOU1UUNoWXSrQN+bOBTV7gIZslnvfsisPkPBpj2N5mPi6Xj2bode0spZKbJUEFuv1
+ 7F5yiA89hcWyhuOkOHqdI7LcCPhF81Gdsdo74hw412B8MrHRA6Xa0FF8Oo4EVPpbCItG
+ BILvBll7Ckr1Fv9FWIprJQPU4PHUhq/CDW4/46KZ3+NHDrMnTasQYbXIW+lWE6c41SpL
+ H19eXTvOvtJ/qLvUDqyeGJDt/mg0AmR1fakzR9smo8tOCOx4caO2I6bc2MRX1GIz45nI
+ iB+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1785325325; x=1785930125;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=yuoz3PtgKXX1k02oR2d/hFIWFEkFXNq3pA596VbQzqo=;
+ b=Ben2b9wCbkSRV1q/AI9UIewVcbjfNBiM2QUUECSBzffP3dMiKA+JkFRxs/bwl+pglZ
+ NFxmFhmQ1cBKo7SrhdQ5UpGggOWXwp/iBWs8F0r2A7dOR0VPpS2yLdvv2xdJqZh5sDQR
+ 6g+7F5q2cXOjAGwOh3DP8cic4qcPsJs/XEiel9ZDSxkcwvoF8lQST/laq1SdOifQNJHh
+ ZEfuMpwA4lMDuIxoxK1S4wD4A7C9UDrB1RyPVS0Ps4EP6ZYZoAFVBWYj/iTUdXq5fHF8
+ f4zTRfI3R4JfGTBkEJp0pV2fvQzf3Qpfcv+KxSravFp1lNdtXV02vNfhxSXmrGOPli+K
+ Faew==
+X-Gm-Message-State: AOJu0YyTaJb5BW3GmhEuA5JAGdNhQIu9OV3m2i/bql6+9vFhjmme00gX
+ UEjLOwjyLK8oaywmDRmIASzzmDExBbQajhbcxExagHHXLpXHnDDMmFhl
+X-Gm-Gg: AR+sD134/HI2nTEX6MUPs4uGVh/TU3pVXLcqY479FD0cXZYc4L830Y3rsv4MCMyfaG+
+ NUl3N2yx+BgFtdYqrbovgV5DGmUzpI287231GbVehG2e72ra5Ffcm9m3JrdTElfMebTVaSyqepn
+ QQ0IKCa8kRoLnOnDe1sY8X12PFEuCQVK+lsiNAy4uB3vvAPQaej81xm+joZ9fn0G4P7fME0+gTI
+ R8KQmYacBLuS5WEpkrNKdiYdk79hU1z0lei+GTQISoxBmemHoyDtMzd/Kca9hteRkDRht6XMJzt
+ r+QBW4RXL0Yj4T5g5VE1WQPvfxnXEYnLuZQwUEyDuvkzVw2aC1p3wqN+JS8gau7OALzFNW9C5m0
+ J20diovupvmc7aKFYZl1XGkl1eM19NUQtDFPUVUpY2dzqhStaSsQCNKX2H3WZ5U0k8/EF7ZHdWj
+ 6aVGxDH80MzcS1hlXLmDPUpUbaP1OATNGlhVBpqigLyGxZxUWFCgbFkBDlkM1TqQOCJwKXVax7P
+ OttMHY6DH8e7vWP6ckhNent
+X-Received: by 2002:a05:6000:1883:b0:47f:96e3:5309 with SMTP id
+ ffacd0b85a97d-47fb1ec8813mr7822622f8f.9.1785325325285; 
+ Wed, 29 Jul 2026 04:42:05 -0700 (PDT)
+Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-47fb6b0f2ddsm7333367f8f.20.2026.07.29.04.42.02
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 29 Jul 2026 04:42:04 -0700 (PDT)
+From: Wenjie Qi <qwjhust@gmail.com>
+X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Wed, 29 Jul 2026 19:41:56 +0800
+Message-ID: <20260729114156.3348582-1-qiwenjie@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Anand Suveer Jain <asj@kernel.org>, fstests@vger.kernel.org,
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- "Darrick J. Wong" <djwong@kernel.org>
-References: <20260706064326.3657995-1-chao@kernel.org>
- <af5f0eb1-0197-4952-a37b-0602799929ec@kernel.org>
- <5c11cd98-bb41-46e0-9765-e2aad57a08e4@kernel.org>
- <aloCfjjqesxpzL9z@zlang-mailbox>
- <a081f7cf-bd47-459d-baee-de772d816af4@kernel.org>
- <ameajJf8iiAQYWA3@zlang-mailbox>
- <99220f8b-05d4-427f-998d-7f15a84c8805@kernel.org>
- <amhKovVDjwawoWdQ@zlang-mailbox>
-Content-Language: en-US
-In-Reply-To: <amhKovVDjwawoWdQ@zlang-mailbox>
-X-Headers-End: 1wp0wH-0001lI-Ij
-Subject: Re: [f2fs-dev] [PATCH v2] common/rc: support f2fs in
- _require_fanotify_ioerrors()
+X-Headers-End: 1wp2fs-0005Mn-3X
+Subject: [f2fs-dev] [PATCH] f2fs: reject invalid recovered filename lengths
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,157 +116,57 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
+Cc: qwjhust@gmail.com, qiwenjie@xiaomi.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 7/28/26 14:49, Zorro Lang wrote:
-> On Tue, Jul 28, 2026 at 10:24:10AM +0800, Chao Yu wrote:
->> On 7/28/26 01:57, Zorro Lang wrote:
->>> On Thu, Jul 23, 2026 at 05:09:12PM +0800, Chao Yu wrote:
->>>> On 7/17/26 18:47, Zorro Lang wrote:
->>>>> On Wed, Jul 08, 2026 at 11:25:37AM +0800, Chao Yu wrote:
->>>>>> On 7/7/26 18:13, Anand Suveer Jain wrote:
->>>>>>> On 6/7/26 14:43, Chao Yu wrote:
->>>>>>>> f2fs has supported to report fserror, this patch adds support for f2fs
->>>>>>>> in _require_fanotify_ioerrors(), so that we can run generic/791 on f2fs.
->>>>>>>>
->>>>>>>> Cc: Darrick J. Wong <djwong@kernel.org>
->>>>>>>> Signed-off-by: Chao Yu <chao@kernel.org>
->>>>>>>> ---
->>>>>>>>   common/rc | 3 +++
->>>>>>>>   1 file changed, 3 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/common/rc b/common/rc
->>>>>>>> index 494725547..f51ad59f3 100644
->>>>>>>> --- a/common/rc
->>>>>>>> +++ b/common/rc
->>>>>>>> @@ -6257,6 +6257,9 @@ _require_fanotify_ioerrors()
->>>>>>>>   		x="$(_get_fs_sysfs_attr $TEST_DEV err_report_sec)"
->>>>>>>>   		test -n "$x" && return 0
->>>>>>>>   		;;
->>>>>>>
->>>>>>>
->>>>>>>> +	f2fs)
->>>>>>>> +		x="$(cat /sys/fs/f2fs/features/fserror)"
->>>>>>>> +		test -n "$x" && return 0
->>>>>>>
->>>>>>> Don't we need to check if /sys/fs/f2fs/features/fserror
->>>>>>> is present in the running kernel (there are helpers)
->>>>>>
->>>>>> Hi Anand,
->>>>>>
->>>>>> You mean _has_fs_sysfs_attr()? however, it forces to check first parameter $dev
->>>>>> w/ block device type:
->>>>>>
->>>>>> 	if [ ! -b "$dev" -o -z "$attr" ];then
->>>>>> 		_fail "Usage: _has_fs_sysfs_attr <mounted_device> <attr>"
->>>>>> 	fi
->>>>>
->>>>> Hi Chao and Anand,
->>>>>
->>>>> The *_fs_sysfs related helpers were brought in by me in:
->>>>>    commit 2a7b77abcd1dde735186b363da24540706c43b73
->>>>>    Author: Zorro Lang <zlang@redhat.com>
->>>>>    Date:   Tue Jul 5 17:30:24 2016 +0800
->>>>>
->>>>>      xfs: configurable behavior on errors at unmount time
->>>>>
->>>>> At that time, I didn't think about the "features/" directory.
->>>>>
->>>>> Now, let me rethink this set of helpers. I feel that the *_fs_sysfs
->>>>> family of functions shouldn't be restricted to the $dev directory,
->>>>> we should remove this restriction.
->>>>>
->>>>> Following that, we bring in *_fs_sysfs_device (appending the _device suffix)
->>>>> helpers which call *_fs_sysfs(). Also change the test cases who call these
->>>>> functions.
->>>>>
->>>>> Finally, we can introduce the *_fs_sysfs_features functions (or simply use
->>>>> *_fs_sysfs directly).
->>>>>
->>>>> Also, we have both *_fs_sysfs_attr and *_fs_sysfs, and the logic between
->>>>> them is somewhat confusing and easy to mix up.
->>>>
->>>> Zorro,
->>>>
->>>> It makes sense, and good news to their user. Thanks for the proposal.
->>>>
->>>>>
->>>>> I need to write a series of patches to clean up these logic. For this current
->>>>> patch, we can start with a small-scale change first. What do you think?
->>>>
->>>> So I will use this first:
->>>>
->>>> f2fs)
->>>>      local feat_file="/sys/fs/f2fs/features/fserror"
->>>>      if [ -f "$feat_file" ] && [ "$(cat "$feat_file")" = "supported" ]; then
->>>>          return 0
->>>>      fi
->>>>      ;;
->>>>
->>>> And then waiting for your cleanup? or if you want to clean up this, please do it
->>>> directly while merging.
->>>
->>> If f2fs wants to test this feature right away, I can merge your patch now and
->>> clean it up later. If it's not urgent, I'll take care of it all together.
->>
->> Zorro,
->>
->> Could you please help to merge it first? so that we can test 791 w/ last
->> upstream code, and also in case we missed to track its status to lose it. :P
-> 
-> Sure, I'm good to have this first. Could you send a new patch version, if you'd
-> like to change it?
+Recovery uses raw_inode->i_namelen directly when rebuilding fsynced
+dentries. A zero-length name uses no dentry slots, so recovery can
+report success without recreating the dentry.
 
-Have sent v3, please take a look. :)
+Treat zero-length and oversized recovered names as corruption, mark
+NEED_FSCK, and stop recovery with -EFSCORRUPTED.
 
-Thanks,
+Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
+---
+ fs/f2fs/recovery.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-> 
-> Thanks,
-> Zorro
-> 
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>> Zorro
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>> Thanks,
->>>>> Zorro
->>>>>
->>>>>>
->>>>>>
->>>>>>> before reading it?
->>>>>>
->>>>>> How about this?
->>>>>>
->>>>>> f2fs)
->>>>>>      local feat_file="/sys/fs/f2fs/features/fserror"
->>>>>>      if [ -f "$feat_file" ] && [ "$(cat "$feat_file")" = "supported" ]; then
->>>>>>          return 0
->>>>>>      fi
->>>>>>      ;;
->>>>>>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>>   	esac
->>>>>>>>   	_notrun "$FSTYP does not support fanotify ioerrors"
->>>>>>>
->>>>>>
->>>>
->>>>
->>
-
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 89af8407b667..70cf99efcb3c 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -126,8 +126,8 @@ static int init_recovered_filename(const struct inode *dir,
+ 	fname->disk_name.len = le32_to_cpu(raw_inode->i_namelen);
+ 	fname->disk_name.name = raw_inode->i_name;
+ 
+-	if (WARN_ON(fname->disk_name.len > F2FS_NAME_LEN))
+-		return -ENAMETOOLONG;
++	if (!fname->disk_name.len || fname->disk_name.len > F2FS_NAME_LEN)
++		return -EFSCORRUPTED;
+ 
+ 	if (!IS_ENCRYPTED(dir)) {
+ 		usr_fname->name = fname->disk_name.name;
+@@ -185,8 +185,16 @@ static int recover_dentry(struct inode *inode, struct folio *ifolio,
+ 
+ 	dir = entry->inode;
+ 	err = init_recovered_filename(dir, raw_inode, &fname, &usr_fname);
+-	if (err)
++	if (err) {
++		if (err == -EFSCORRUPTED) {
++			f2fs_err(F2FS_I_SB(inode),
++				 "invalid recovered filename length %u for ino %llu",
++				 le32_to_cpu(raw_inode->i_namelen), inode->i_ino);
++			set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
++			f2fs_handle_error(F2FS_I_SB(inode), ERROR_CORRUPTED_INODE);
++		}
+ 		goto out;
++	}
+ retry:
+ 	de = __f2fs_find_entry(dir, &fname, &folio);
+ 	if (de && inode->i_ino == le32_to_cpu(de->ino))
 
 
 _______________________________________________
