@@ -4,74 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 11865C53219
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2026 15:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 77606C53219
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2026 15:29:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=j6jiM1pj09hqBhEVIHKLPf0VglXWqR9Gv1YC1fUO9yw=; b=FSJT7JI3RBGBOUrgOUmP46dmJ/
-	BkOm4jtNwkfWZPAEm2dVBPAt+9OvZ63FlHPacic/B5ts5cy8ZBYb5GAnS9KfN9IKf/DfGrg9qX67X
-	MPIjLbeqg34kVgPXbg57Ira1/E6+ZJxv7El+OmIPnWnTirlstCH6qOHGgfLJEce9otqg=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=ZSDPT166VV61vfFDHCEZzs0epbAvOszNEAHgNu4VnR0=; b=EeXBsnVUkDGe+Cp9dNP7trtwrY
+	SbhJbr3AehnjKKgxufTiEbU8aTmBk66iFwjMGo6qghuH0ipp8HYFrORkJGE5ZaVARpRAdEghkiDVR
+	vFGCHP/OpG7tNLv1WudpF5xVbJYFYBwE2yDQIBzjho/lKyVKatPXhU7GLvXVHJuB/KuQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wp6Cc-0007Qc-1S;
-	Wed, 29 Jul 2026 15:28:11 +0000
+	id 1wp6DY-00013Y-As;
+	Wed, 29 Jul 2026 15:29:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wp6CL-0007Q4-Je
+ (envelope-from <ebiggers@kernel.org>) id 1wp6DW-00013S-Qy
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Jul 2026 15:27:55 +0000
+ Wed, 29 Jul 2026 15:29:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=V0k1AZmb/TvfY7wNf00QwgRAmyWqz6BMjGXKysMVXCI=; b=hJdLI+9TJ1Tlc64bOo4xOoG86R
- a5iLlTRsdGX77tNwomFYFAaNDpV3IUv7+oICyEX9D1uHv/yYEzPbCPYq50BjAo3aWqJCKKN7xztVc
- Q5YVC2R8He3fe+RIIF3z27JtHwAKdgy8p+gXk5T9wqlTtVFHTFv5JQcHL+psxpqoU1iY=;
+ bh=WaesI/5GaSHtwRmPEhp5DbEmRnvxo8PvnSq6mqTrtwY=; b=TIZcwy2t5t0WC0hZkpcGxhqFUY
+ 7x/TfOTkxRNseUH+hfQRhN+XYpJfFE4bjypfJR2eOKpqBJIn33LEfTX9vx+l9isABJMPrvzQ14cFg
+ S2kxq1N8542YQFdRo7ZbLX1bbo7yc8K4szxmSB57tqlpu8OTn9TQ+5vCkcg0sfHoRM2Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=V0k1AZmb/TvfY7wNf00QwgRAmyWqz6BMjGXKysMVXCI=; b=J
- A1dqrGS7B9cR7bomrAk6yaQ3WRPC/NCeBwat5rJ5it7ONHUyWfP4rGom7eEdncPP4poD5DdKUwZAu
- B5QkPWQdnDpkPaT80psw5Kc3hxF5KZnMOHSJ1HPyVDIfUEJim/ZXkaBGY7XYRZraNZ0VOl1XHIYz/
- xGT/MYt3aLjxTvJk=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ List-Owner:List-Archive; bh=WaesI/5GaSHtwRmPEhp5DbEmRnvxo8PvnSq6mqTrtwY=; b=G
+ j1vIoUua5AroIPdcHMoMtLyMAe7lJ4oA7Tg9tS99ZnvySymtyhgQo6FQ6FsY8Q9Tlcq4fbNr6iSSK
+ KwFWzKyoH/AwLDyo6UfAjWt9uZgDc2tRN2AQFc5VsUw25CeHn5wgK944pfVcGdjmQOkc0K3rCtVVP
+ sJ41WlsB/+atG+PI=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wp6CI-00013a-H3 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Jul 2026 15:27:55 +0000
+ id 1wp6DW-0002aQ-QC for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 29 Jul 2026 15:29:11 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 60C4A6001D;
- Wed, 29 Jul 2026 15:27:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1C1E1F00A3F;
- Wed, 29 Jul 2026 15:27:44 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 7FBDF411E7;
+ Wed, 29 Jul 2026 15:29:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC5D1F000E9;
+ Wed, 29 Jul 2026 15:29:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785338865;
- bh=V0k1AZmb/TvfY7wNf00QwgRAmyWqz6BMjGXKysMVXCI=;
+ s=k20260515; t=1785338945;
+ bh=WaesI/5GaSHtwRmPEhp5DbEmRnvxo8PvnSq6mqTrtwY=;
  h=From:To:Cc:Subject:Date;
- b=Xje73TiTqYQPZPhEPQIExUs2UFQsFkWuaH+Kh88qKjzKJeOamBj+t0rKn6PsIGVP0
- 2+Xf5twiaCwOOJo/TARfoGbM7cSPHArOvl/Qp+MyrqgSEHpSscUMIi7bqDG1kTaHNs
- NSaiYc5982FWa5ebgtkG1CvPE6GQZ/iCpzLMloYCY/orBM9/IAli/vd67QB/V0CDlA
- T6LTUmjRCm2MObWMUyjW7Ze68ygjpzB32YUZplxbU71vkcCB0I7PL/3YrngO5ha9S4
- OskiTSEe2m9/uGtMUaknTW/tCgoME3bXZn31F7KF3ubvEMVkeEHUGNId5E6zYlD68Z
- UGHLvXrJFOCmg==
+ b=k/mKD4SEwys5QfNsdVFqJKyPCrlfnT8f3PH+RGCWhoLU3FseuWLeBlpD7/KhsOAPw
+ X2Deznag3Jpua9+LhoqGzgcqnTEmeDyvcvGzdlaaT7tayCHkVdulDctCvcVX+Zl8Be
+ W8XEce8EPl7FFdCtdFY5cmjz3RRA8K3z5YbLPmRUpdSq2d326U4YelZ7gFfETQq2Fi
+ dIF1xPNCV0sVfYAesmjIeJ344o2fBM8RF8QQLNj0gwBUmTWwNyZ7z6HFsZ73Pk+KuT
+ /e5anCzSV8VNhln7X1W3NvHekBZkkbNwVddKfaVDNWdGTFg2+K6H0LT+9n3QC1DVAO
+ PdwjXNuIQrgQA==
 To: stable@vger.kernel.org
-Date: Wed, 29 Jul 2026 08:25:39 -0700
-Message-ID: <20260729152539.21888-1-ebiggers@kernel.org>
+Date: Wed, 29 Jul 2026 08:26:55 -0700
+Message-ID: <20260729152655.28111-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.55.0
 MIME-Version: 1.0
-X-Headers-End: 1wp6CI-00013a-H3
-Subject: [f2fs-dev] [PATCH 6.6] fscrypt: Avoid dynamic allocation in
+X-Headers-End: 1wp6DW-0002aQ-QC
+Subject: [f2fs-dev] [PATCH 6.1] fscrypt: Avoid dynamic allocation in
  fscrypt_get_devices()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -258,10 +258,10 @@ index 8bfb3ce864766..47645c5539bc8 100644
  }
  
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c018d548e1634..95adc2c4c3c08 100644
+index 7c8e05a81a0c6..9d1b5699f5bf1 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -3248,24 +3248,27 @@ static void f2fs_get_ino_and_lblk_bits(struct super_block *sb,
+@@ -3126,24 +3126,27 @@ static void f2fs_get_ino_and_lblk_bits(struct super_block *sb,
  	*lblk_bits_ret = 8 * sizeof(block_t);
  }
  
@@ -301,7 +301,7 @@ index c018d548e1634..95adc2c4c3c08 100644
  
  static const struct fscrypt_operations f2fs_cryptops = {
 diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index c895b12737a19..e55ba9f1e3839 100644
+index 4f5f8a6512132..fe842c9af9dcb 100644
 --- a/include/linux/fscrypt.h
 +++ b/include/linux/fscrypt.h
 @@ -57,6 +57,9 @@ struct fscrypt_name {
@@ -344,7 +344,7 @@ index c895b12737a19..e55ba9f1e3839 100644
  
  static inline struct fscrypt_info *fscrypt_get_info(const struct inode *inode)
 
-base-commit: c5596480c50e081668ff170e80db6314a033be11
+base-commit: dc5c83b7f5f83ea99aea5c771b1ec77458263a15
 -- 
 2.55.0
 
