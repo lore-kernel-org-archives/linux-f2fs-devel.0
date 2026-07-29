@@ -4,74 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7A65BC53200
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2026 15:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 82F2BC53219
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2026 15:23:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=TLqg8GJfERdAiG04anzZFiKXbjCNShTnt2iWBO4cb7Y=; b=FlByjqF6UrY15nI9KgIZ+L9VRW
-	Vipy0AepzO5MV/9zF7xLRFjE1xVxi70c1AjFCNZU89fYkDQlldERTAr/g1v4uSIDeVJGZg1QiFo13
-	Iwwaf0qJZk9rMLKwxnyYAvcosNwPlH5zInm2OyITr4e7+mQC6LrBto77nnppz5LffAN4=;
+	bh=oDMUYq8ylPt03o1BNqcT6VkQw0kbR7FODQytVwU8X7U=; b=OXLl4hNDXnpL9kcyTopR4KrOhs
+	sdzboqGRic/GI+FV7EGkhcsXqHAeHkQ6Rrhq02QXpyAKcQW9+pub7KBAw0ViGKysSVN4TiqB/VBUK
+	bNYpxa1S3EzDtDLmsewVIvSEp7Rh8TKopNuFCR6q4AVG7grH4hRRp3iBRwpp6SNgiH/s=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wp66A-0000Um-R5;
-	Wed, 29 Jul 2026 15:21:35 +0000
+	id 1wp689-0000eD-Au;
+	Wed, 29 Jul 2026 15:23:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wp669-0000UZ-Ad
+ (envelope-from <ebiggers@kernel.org>) id 1wp688-0000e2-M9
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Jul 2026 15:21:34 +0000
+ Wed, 29 Jul 2026 15:23:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RltkKNIxqbXfedvBZ+fsnyiDQtz4LQ2Yf+BgfLGX4C4=; b=YfVX4PJNhQOm0nbWxZyp4R4are
- bflvtBze3G3OyjZjClbJXBXLMIh7sWJDqMisC22vx6lJ/u0/Wd9g11PpAle3h7LRVcdBZJOCSiuyf
- TC3+3AFx80hH37ZJfom8enoYkwwaSWZaQJ/KGlRy1PVUzcw8205T17jPn3ZobuQL9TA8=;
+ bh=r9MuuVbYjlaYdf0i4Dkeotbr1VPl+bXPqXMFVzlzhH0=; b=Bezp4rSlcxF/y9iwvyaGri3BN0
+ Ejar0wPtBtGjI1rj9B55At9p2NFec9mxwKEnhp+LKtdllfYkS94UmuxIHTPsEyxZGpXnbNQNMODMM
+ XhwghuNjPAApmBINBzxODuF6ZeqhEusiR0gH9DpUbTcrb7uP5s6J8d7ICF2Q7kqYOBxY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=RltkKNIxqbXfedvBZ+fsnyiDQtz4LQ2Yf+BgfLGX4C4=; b=J
- IlCdFvxJU8SjtU4EoLGRVvyYY7Q4YybYCz7omwy2Pq0rYqXlvpfyLAW+eQgiwdKd9d1kJrHOe7pCM
- vBtthlK1oGAA6bwpM7p4ZS+1OZzKL3pOITe8Yp0F4SnpKjb+C+XkITpj7t7r+JwTBW2L/25PPYLaM
- 4atMMh8y/0uxTSuE=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ List-Owner:List-Archive; bh=r9MuuVbYjlaYdf0i4Dkeotbr1VPl+bXPqXMFVzlzhH0=; b=j
+ 1ZJ1PUuHErWwC18EFnVpbFw3UxR3yygAWfdA+9fwXjHOQ0ADd2jrBzR6Aq6XIXk+MPXwGvtepldf6
+ 1NMFfPof1/SxN+u7z241V5Ldhnq0Y15IYIJ5AqT4bNgtz2ePNmHOQAJ77lKXvss6ejBgxhxigPTQ3
+ j3bnhDd1orwMy3pk=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wp669-0002I0-81 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Jul 2026 15:21:34 +0000
+ id 1wp68C-0000vq-4H for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 29 Jul 2026 15:23:37 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id DB7F84142A;
- Wed, 29 Jul 2026 15:21:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A6421F00A3A;
- Wed, 29 Jul 2026 15:21:27 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id B5655600BC;
+ Wed, 29 Jul 2026 15:23:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 400EA1F00A3A;
+ Wed, 29 Jul 2026 15:23:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785338487;
- bh=RltkKNIxqbXfedvBZ+fsnyiDQtz4LQ2Yf+BgfLGX4C4=;
+ s=k20260515; t=1785338610;
+ bh=r9MuuVbYjlaYdf0i4Dkeotbr1VPl+bXPqXMFVzlzhH0=;
  h=From:To:Cc:Subject:Date;
- b=CZIePGF5y8iamlnv1OPTRzFTRjlzBrELK+ed7QwOveIsbrrXqOKsuduH+M8JJuhej
- aIQB7qbTquqh4yJCwyezr1YAEpb8vUqL+Esa38aVFAi+0ZaO8jncf0f9CUKRmoD+je
- 9LJo41ybmCVx8kPJMpChFsKc6LDkQJUkjqqwPQHu/PKMZkuzr/kJdD5B5vMQhDBuGj
- gtAfGo8N/710t6ty17KwsUgcY63bQOeOR97koKiO7/jy+nYI8qq2NNyIGICFunoIpu
- h+O3iWJo44OZnCPmUgW/shmxsAILS2m/+VYxAQTRjcTAg+gJVeRyo6MtbvU9W9zsEB
- 039Q29ENBsmtQ==
+ b=fBFSt2qeY/3kt0gbhRAaY5ee8RKqnqcqIccVvhmn+9TzMPLaCm8q3sAYgenCFiQfh
+ JgNHHMlrVUm2WyUABqdI7uvzeLkoITf7/kw73Wyz7i2RBCD39usG9nGclmZlTY03Fq
+ QA5lAzuVKA599SHxIAxm3gFXjHu6nyZ35YtKK4ayvRU6Wx9Zz2JM5IPtblf8WKJZDy
+ AwBNZWP0RHZggl9RoY54rWoXyxBui9z9MyisozNu5ogAomSEOufyPvvuqw3PXsBFDX
+ M+QkpnRTaT6XpLNuE10ifWSh5sQuccW7VxWi9fts2o6T4gezodXhAgRupuaLLnxa//
+ QGCCMMjTU/EUQ==
 To: stable@vger.kernel.org
-Date: Wed, 29 Jul 2026 08:19:05 -0700
-Message-ID: <20260729151905.8303-1-ebiggers@kernel.org>
+Date: Wed, 29 Jul 2026 08:21:27 -0700
+Message-ID: <20260729152127.11918-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.55.0
 MIME-Version: 1.0
-X-Headers-End: 1wp669-0002I0-81
-Subject: [f2fs-dev] [PATCH 6.18] fscrypt: Avoid dynamic allocation in
+X-Headers-End: 1wp68C-0000vq-4H
+Subject: [f2fs-dev] [PATCH 6.12] fscrypt: Avoid dynamic allocation in
  fscrypt_get_devices()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -135,10 +135,10 @@ Signed-off-by: Eric Biggers <ebiggers@kernel.org>
  3 files changed, 44 insertions(+), 56 deletions(-)
 
 diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
-index 645cc49360729..500397ca8a26f 100644
+index 4b1f10f1cbd85..0a216d20e6950 100644
 --- a/fs/crypto/inline_crypt.c
 +++ b/fs/crypto/inline_crypt.c
-@@ -22,22 +22,14 @@
+@@ -21,22 +21,14 @@
  
  #include "fscrypt_private.h"
  
@@ -167,7 +167,7 @@ index 645cc49360729..500397ca8a26f 100644
  }
  
  static unsigned int fscrypt_get_dun_bytes(const struct fscrypt_inode_info *ci)
-@@ -96,7 +88,7 @@ int fscrypt_select_encryption_impl(struct fscrypt_inode_info *ci,
+@@ -94,7 +86,7 @@ int fscrypt_select_encryption_impl(struct fscrypt_inode_info *ci)
  	const struct inode *inode = ci->ci_inode;
  	struct super_block *sb = inode->i_sb;
  	struct blk_crypto_config crypto_cfg;
@@ -176,9 +176,9 @@ index 645cc49360729..500397ca8a26f 100644
  	unsigned int num_devs;
  	unsigned int i;
  
-@@ -135,20 +127,15 @@ int fscrypt_select_encryption_impl(struct fscrypt_inode_info *ci,
- 	crypto_cfg.key_type = is_hw_wrapped_key ?
- 		BLK_CRYPTO_KEY_TYPE_HW_WRAPPED : BLK_CRYPTO_KEY_TYPE_RAW;
+@@ -131,20 +123,15 @@ int fscrypt_select_encryption_impl(struct fscrypt_inode_info *ci)
+ 	crypto_cfg.data_unit_size = 1U << ci->ci_data_unit_bits;
+ 	crypto_cfg.dun_bytes = fscrypt_get_dun_bytes(ci);
  
 -	devs = fscrypt_get_devices(sb, &num_devs);
 -	if (IS_ERR(devs))
@@ -199,16 +199,16 @@ index 645cc49360729..500397ca8a26f 100644
  
  	return 0;
  }
-@@ -164,7 +151,7 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
- 	enum blk_crypto_key_type key_type = is_hw_wrapped ?
- 		BLK_CRYPTO_KEY_TYPE_HW_WRAPPED : BLK_CRYPTO_KEY_TYPE_RAW;
+@@ -157,7 +144,7 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
+ 	struct super_block *sb = inode->i_sb;
+ 	enum blk_crypto_mode_num crypto_mode = ci->ci_mode->blk_crypto_mode;
  	struct blk_crypto_key *blk_key;
 -	struct block_device **devs;
 +	struct block_device *devs[FSCRYPT_MAX_DEVICES];
  	unsigned int num_devs;
  	unsigned int i;
  	int err;
-@@ -182,17 +169,12 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
+@@ -175,17 +162,12 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
  	}
  
  	/* Start using blk-crypto on all the filesystem's block devices. */
@@ -227,7 +227,7 @@ index 645cc49360729..500397ca8a26f 100644
  	if (err) {
  		fscrypt_err(inode, "error %d starting to use blk-crypto", err);
  		goto fail;
-@@ -210,20 +192,21 @@ void fscrypt_destroy_inline_crypt_key(struct super_block *sb,
+@@ -203,20 +185,21 @@ void fscrypt_destroy_inline_crypt_key(struct super_block *sb,
  				      struct fscrypt_prepared_key *prep_key)
  {
  	struct blk_crypto_key *blk_key = prep_key->blk_key;
@@ -258,10 +258,10 @@ index 645cc49360729..500397ca8a26f 100644
  }
  
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f6b75ce11d1c1..6f787cbeefd09 100644
+index 1bce35d6f4e25..8ceffecf28c80 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -3659,24 +3659,27 @@ static bool f2fs_has_stable_inodes(struct super_block *sb)
+@@ -3282,24 +3282,27 @@ static bool f2fs_has_stable_inodes(struct super_block *sb)
  	return true;
  }
  
@@ -301,7 +301,7 @@ index f6b75ce11d1c1..6f787cbeefd09 100644
  
  static const struct fscrypt_operations f2fs_cryptops = {
 diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 516aba5b858b5..c009d4afe9185 100644
+index 772f822dc6b82..3cb1e449d8cfc 100644
 --- a/include/linux/fscrypt.h
 +++ b/include/linux/fscrypt.h
 @@ -57,6 +57,9 @@ struct fscrypt_name {
@@ -314,7 +314,7 @@ index 516aba5b858b5..c009d4afe9185 100644
  #ifdef CONFIG_FS_ENCRYPTION
  
  /* Crypto operations for filesystems */
-@@ -181,21 +184,20 @@ struct fscrypt_operations {
+@@ -175,21 +178,20 @@ struct fscrypt_operations {
  	bool (*has_stable_inodes)(struct super_block *sb);
  
  	/*
@@ -342,9 +342,9 @@ index 516aba5b858b5..c009d4afe9185 100644
 +		struct block_device *devs[FSCRYPT_MAX_DEVICES]);
  };
  
- int fscrypt_d_revalidate(struct inode *dir, const struct qstr *name,
+ int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags);
 
-base-commit: 221fc2f4d0eda59d02af2e751a9282fa013a8e97
+base-commit: 588b2d2beb4b3d1878a7fd9cdc876bab53326476
 -- 
 2.55.0
 
