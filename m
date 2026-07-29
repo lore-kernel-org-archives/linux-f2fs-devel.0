@@ -4,111 +4,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 50E73C53219
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2026 19:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 51CA0C54F51
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2026 21:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=N5zlkGhHUOl16FbsNutFg3TNOMCfOg9/Nop66GlebNY=; b=Yc7MGpmhfTIfp0LbeMIf1RHP4H
-	Hndj93jwPEQiDsIe42vZM9HBWNWt6gtARYx/8YCsrWWoqcfwxZLLiJ17iDTZHrC9dJHro2BKZjzdP
-	tNucLOluRA2Q3Sh0rZP8zlsKRVRjZ3FK1Rz+Hq9ClMCEGIP3r+7n2qwI6vG9PYoYka6E=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=3WOwcdjWw3uI5RAhoov5+eJLbvGkHCqh0GBITaKdr6g=; b=GBPHZB+rV92mrDA2aiENxW+pRz
+	Z/+pFJqRphMTZwY+pXnyoT/Hu+MqMBccWlgvVi2EhG09ekF0+eQwK6MbSlnze5+OmhtkYdkKp9zfu
+	YNW2hKJSDVYCIegT9woHBSQo609M51kpc1pkXFFRG5iNss+QsjLYSevG0W7qFRh94Mwc=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wp9sP-00074L-FL;
-	Wed, 29 Jul 2026 19:23:35 +0000
+	id 1wpBUm-0000ho-Mm;
+	Wed, 29 Jul 2026 21:07:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1wp9sO-00074E-EP
+ (envelope-from <jaegeuk@kernel.org>) id 1wpBUk-0000hi-TY
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Jul 2026 19:23:33 +0000
+ Wed, 29 Jul 2026 21:07:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ir8mro0pAa9FSPU6tRbweq5r7VV90UZUh0X/s7tjkNg=; b=LPMWZB7XveDqWYw3lfhXfcICqs
- 2ybM2sG1OsQeiYySuaHPsSQpyKD+eD+wQ4PkCDrL99fmtdqbS+0e+b20YAAjaJpUhu/9tS8pXoaM4
- 30Nq2vS1Hw1b+oRFJIKirpA/OTuGPthy4Tzr5EEXLNCBpJD+sROfn7JlbeeGTAAJprfk=;
+ bh=oHJbG8Hhgh/0n0sJW+9WheCBkbLkKeS9sY3kDfwRs2E=; b=fx1lLpuQxMV3KLRyPDgZZ64Fip
+ Gs/VOGfCpnPToLoxK8fAtihJv51rfH7FPRxDHRstXr+T1orrMtw8MAQoedrsxaCxiZX+LEwBHBcXo
+ V1c6gMBc/4r4aDyMTaeOWUbIsZ7B2DQCIry2b+RlmWe9mIFhnZkD5UwjE06t3uUg5pac=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Ir8mro0pAa9FSPU6tRbweq5r7VV90UZUh0X/s7tjkNg=; b=j
- bw0hQosmjRWofFR99Mj8c0xxTda46h1J/DvKHVBmNUhhORwTR/eN99NY0v6H/ystP+bGZzj+BZ9RS
- jwEMnL2sA3CrvyK4x4rfB8qE6OW5xLQ3Av7TCP70aWGg2gkEYi1y1NOhucpV2iQpwaXIuJrF4ZIwV
- y3GOUaEYrtR24wbs=;
-Received: from mail-pg1-f169.google.com ([209.85.215.169])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=oHJbG8Hhgh/0n0sJW+9WheCBkbLkKeS9sY3kDfwRs2E=; b=G5yg0erzjn6uxgkf0wjxyoxr9g
+ zriTUTvTJYjQGC/HTZvo7DBJZwhiNhDJCXT5M02gAcVBwdS7rOmkX6eTUe9+w2RBKZp6l9OsqxUdj
+ 8MFUD0QVXXcJ90tmXPnmjR0O4HNhQtetrqn5ESPVHew7NBLHgQZwvHHT6KOT/O0gaGrg=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wp9sL-0000dV-53 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Jul 2026 19:23:33 +0000
-Received: by mail-pg1-f169.google.com with SMTP id
- 41be03b00d2f7-c9e7391839cso1213547a12.0
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1wpBUj-0002jO-AJ for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 29 Jul 2026 21:07:18 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by tor.source.kernel.org (Postfix) with ESMTP id 47429600AF
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 29 Jul 2026 12:23:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1785353007; x=1785957807; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=Ir8mro0pAa9FSPU6tRbweq5r7VV90UZUh0X/s7tjkNg=;
- b=L3+q0ZNUYOtgRI7Q6yISWWG+tqUknOwtTY+iLNkvhjpRRNLZw8/5t4BU+w+z9LDQj8
- x6t6rYtvIzH4veT+qC4P+HA+5nxELqDOxRcMeAMpZPxN+wozAJE5r0xuk17dAMBH6h7G
- NKAFtFn4P5bFTk20gT5LzVkoN1mbFh8gX/xtrsdCeYsn/yUMVH03zP32oBgBLEm/eJ3t
- m0SODh6gubcJPqAAzP2lJDON7r8tMfk6sMoxOGlqyuyzR/ij5M/3FDw1atiuSLGhrkWI
- 9LYH6lnhVf8hogvT22ZGygTjVimbTxrOBte9RuV97cv5mprpXS4VTQxWrdqzcA5YAdJL
- OGPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785353007; x=1785957807;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=Ir8mro0pAa9FSPU6tRbweq5r7VV90UZUh0X/s7tjkNg=;
- b=tLMCpZLM7l76c8dBIfGHim6bZQxq7eTuAIXZhevoGtKUo5Oc3BddhcuxGIzJW6j19e
- 5SNpyrcTaVpEDhjsYppCX3g0xVFDCMIVihkjRVeTw5jrq8fxJCDLtkxB1cGm7GHR3Bec
- Cnr/qGJAMBFwUPbXPXPnxvrPtDZilBkwm4Aj7lYxmHaejMHjInxAHCw+XT08xZpCVdBr
- DOXnVnoh9zpsm0kw7NMhs9ZsPyaDbRIw5JFnIuxN8rpno1Yw4gvdON+h1SoF7ox4ceyI
- L10AZo7mmxTB+ogozYZ4ZYWjWkNHswFfp5oKmagvwd8JkHrDb/jRQXpEz0679jFsOWWQ
- E8nw==
-X-Forwarded-Encrypted: i=1;
- AHgh+RqxAqDAZhajAaXJA9BTiXYfyyBYAIvOSZc2l8D20lwYSe8xuA4VQkXmuzOWRKUJgpPwMjRYSwJNimKjgGKlG3rM@lists.sourceforge.net
-X-Gm-Message-State: AOJu0YzhzljBARgRoAU1lOSZsU1xtwgbHZrsFCzXtKuQ6F2KUCDRxKIF
- 55LOer5R29AwqKKn3wAg09Pnx0iJQBmnsSZNLLnPWpNqEUSSoxZQTqqER1dLpQ==
-X-Gm-Gg: AR+sD112vC/DLDa9RCdPQEoKD6ahVwLLw2oIyBevMuuO7ewiGTNJDUVu88oeNkAWHxt
- Q/TZtyJlfSs6lRCm8Ka6Oz/njq+eLgs0JqDQsocBuVgBO+NWGN9wfKvKEfmNrcss/nzUDwp4o0y
- UKYnu32ksfJE7tfhIEG3BUByFmyhTzQ4EpQrPX7NquUgiYLloQIogCjISfl5xW86XqsQ0ErHiMB
- YRk/ccBcATXs4r6zhU+T7GbUejatjEB9WVNdWxoUePLiL+ckUuw/NlBozZQx6Cc9m3Phhctf9L1
- 9qDLTJOmjx+4XzK6JfkYKAUORl3Zf8zyZHXZRbsP0GJu+CaD6EfgQt7RGlSp5R48JYpj8EwzpZf
- Y7GC5bFoZ5w6zNOTpIqrEZPT2lQ3MPyqEw7DRy6bdJvZd4EUmn/MntEo0uia0TPpqaUoI2WB8qI
- eiRpeGzy34CnoO/MtEFj+pYkiv5ocaGmcJqPtPytxACoGpeLjCLOtlLVNtR8fzcGtXVvIcjTsMi
- 5GyDtINJIEVxyydFVn8ByKTVvC/3RHpAdaQxyGHrqPGxkgW+DqY8WccCfdr2XUKdEBHXVnyt+x5
- pmwT5arymdF1
-X-Received: by 2002:a05:6a21:6b87:b0:3c0:9c1b:d0b4 with SMTP id
- adf61e73a8af0-3c8ba62710amr9029686637.63.1785353007265; 
- Wed, 29 Jul 2026 12:23:27 -0700 (PDT)
-Received: from daehojeong-desktop.mtv.corp.google.com
- ([2a00:79e0:2e7c:8:b81d:6d68:981d:e404])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13e7263cfd9sm17761715c88.4.2026.07.29.12.23.23
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 29 Jul 2026 12:23:23 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Date: Wed, 29 Jul 2026 12:23:19 -0700
-Message-ID: <20260729192319.4051409-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.55.0.571.g244d577d93-goog
+ Wed, 29 Jul 2026 21:07:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB2701F000E9;
+ Wed, 29 Jul 2026 21:07:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1785359231;
+ bh=oHJbG8Hhgh/0n0sJW+9WheCBkbLkKeS9sY3kDfwRs2E=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To;
+ b=k2LHIyQ/MSGGD5CgyX3b9K+A2nV3AjSuSrLDupMRpW4hmYuQZqHJy78IVEKr3jAnV
+ PqKQ+tChyzWLO9MFay/MJ1o3qOgujZpoT5klE97AEh/TBaYc7nCu7UqyRgtsK2rc+W
+ sshUqTMwQfjGV+U2oHWBHa08Wl2PM0K8iYYOwbHEqRE/rFG3WPQBN8owVKg6hAC9YF
+ 35c4Bkzu5JiruXvZO3ppfcQ3FAgArYW/YL7al9YOkClHa8sGfrOYpY+C/P0T6SjLCj
+ zUPCgh4GWovqX5pDZuWoJZsG5T8lj2e4jWq7D1QAIBBDD8hMUNVmkw75RqgsROT2LP
+ KvIZ2yZspN8VQ==
+Date: Wed, 29 Jul 2026 21:07:09 +0000
+To: Chao Yu <chao@kernel.org>
+Message-ID: <amprfeJZpVN4gtdF@google.com>
+References: <20260706072606.3709384-1-chao@kernel.org>
+ <alfL3c5Br1wQhvfb@google.com>
+ <9aa5a524-de44-4d07-b6df-70776dd7b0e5@kernel.org>
+ <aml2gcHER_hlCpjU@google.com>
+ <76a2ad47-bef8-46b6-b9c2-f4f93703ff54@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wp9sL-0000dV-53
-Subject: [f2fs-dev] [PATCH] f2fs: quiesce background threads during system
- suspend using PM notifier
+Content-Disposition: inline
+In-Reply-To: <76a2ad47-bef8-46b6-b9c2-f4f93703ff54@kernel.org>
+X-Headers-End: 1wpBUj-0002jO-AJ
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to zero post-EOF data when
+ extending file size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -120,211 +91,248 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>
+From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ stable@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daeho Jeong <daehojeong@google.com>
+On 07/29, Chao Yu via Linux-f2fs-devel wrote:
+> On 7/29/26 11:41, Jaegeuk Kim wrote:
+> > On 07/20, Chao Yu via Linux-f2fs-devel wrote:
+> >> On 7/16/26 02:05, Jaegeuk Kim wrote:
+> >>> This causes sysmtem hang during xfstests.
+> >>
+> >> Fixed a potential deadlock issue during checkpoint in v2, though I can
+> >> not reproduce it.
+> > 
+> > I got this on generic/269 with v2. I'll dequeue the patch first.
+> 
+> Oh, sorry, will take a look.
+> 
+> To confirm, do you run generic/269 test w/ fsync_mode=strict mount option?
 
-During system suspend, a race condition can cause f2fs_gc and f2fs_discard
-threads to call submit_bio() while the underlying block device (e.g., UFS)
-is in Runtime PM suspend. Because Runtime PM worker threads are already
-frozen during task freezing, the threads become trapped in
-__bio_queue_enter() waiting on mq_freeze_wq, leading to a PM freezer
-timeout.
+Yes.
 
-To prevent this deadlock, register a PM notifier to set SBI_IS_SUSPENDING
-during PM_SUSPEND_PREPARE. Background GC and discard threads check this
-flag and immediately stop issuing new bios, allowing them to enter a
-freezable sleep state cleanly before process freezing begins.
-
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
----
- fs/f2fs/f2fs.h    |  3 +++
- fs/f2fs/gc.c      | 13 ++++++++-----
- fs/f2fs/segment.c | 13 +++++++++----
- fs/f2fs/super.c   | 25 +++++++++++++++++++++++++
- 4 files changed, 45 insertions(+), 9 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f24e30bb5c3d..c46bf4df9412 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -25,6 +25,7 @@
- #include <linux/quotaops.h>
- #include <linux/part_stat.h>
- #include <linux/rw_hint.h>
-+#include <linux/suspend.h>
- 
- #include <linux/fscrypt.h>
- #include <linux/fsverity.h>
-@@ -1494,6 +1495,7 @@ enum {
- 	SBI_IS_FREEZING,			/* freezefs is in process */
- 	SBI_IS_WRITABLE,			/* remove ro mountoption transiently */
- 	SBI_ENABLE_CHECKPOINT,			/* indicate it's during f2fs_enable_checkpoint() */
-+	SBI_IS_SUSPENDING,			/* system suspend is in progress */
- 	MAX_SBI_FLAG,
- };
- 
-@@ -1757,6 +1759,7 @@ struct f2fs_sb_info {
- 	struct f2fs_rwsem sb_lock;		/* lock for raw super block */
- 	int valid_super_block;			/* valid super block no */
- 	unsigned long s_flag;				/* flags for sbi */
-+	struct notifier_block pm_nb;		/* for PM notifier */
- 	struct mutex writepages;		/* mutex for writepages() */
- 
- #ifdef CONFIG_BLK_DEV_ZONED
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 93bcb35a5b5d..86b2b29402a5 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -71,7 +71,8 @@ static int gc_thread_func(void *data)
- 		if (kthread_should_stop())
- 			break;
- 
--		if (sbi->sb->s_writers.frozen >= SB_FREEZE_WRITE) {
-+		if (sbi->sb->s_writers.frozen >= SB_FREEZE_WRITE ||
-+			is_sbi_flag_set(sbi, SBI_IS_SUSPENDING)) {
- 			increase_sleep_time(gc_th, &wait_ms);
- 			stat_other_skip_bggc_count(sbi);
- 			continue;
-@@ -1064,8 +1065,9 @@ static int gc_node_segment(struct f2fs_sb_info *sbi,
- 		struct node_info ni;
- 		int err;
- 
--		/* stop BG_GC if there is not enough free sections. */
--		if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0))
-+		/* stop BG_GC if there is not enough free sections or suspending. */
-+		if (gc_type == BG_GC && (has_not_enough_free_secs(sbi, 0, 0) ||
-+					is_sbi_flag_set(sbi, SBI_IS_SUSPENDING)))
- 			return submitted;
- 
- 		if (check_valid_map(sbi, segno, off) == 0)
-@@ -1611,7 +1613,8 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 		 * Or, stop GC if the segment becomes fully valid caused by
- 		 * race condition along with SSR block allocation.
- 		 */
--		if ((gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0)) ||
-+		if ((gc_type == BG_GC && (has_not_enough_free_secs(sbi, 0, 0) ||
-+					is_sbi_flag_set(sbi, SBI_IS_SUSPENDING))) ||
- 			(!force_migrate && get_valid_blocks(sbi, segno, true) ==
- 							CAP_BLKS_PER_SEC(sbi)))
- 			return submitted;
-@@ -2015,7 +2018,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
- 		goto stop;
- 	}
- retry:
--	if (unlikely(freezing(current))) {
-+	if (is_sbi_flag_set(sbi, SBI_IS_SUSPENDING)) {
- 		ret = 0;
- 		goto stop;
- 	}
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index d70dc5ef3de4..e27197953356 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1300,7 +1300,8 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 	if (dc->state != D_PREP)
- 		return 0;
- 
--	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
-+	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK) ||
-+		is_sbi_flag_set(sbi, SBI_IS_SUSPENDING))
- 		return 0;
- 
- #ifdef CONFIG_BLK_DEV_ZONED
-@@ -1341,6 +1342,9 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 		unsigned long flags;
- 		bool last = true;
- 
-+		if (is_sbi_flag_set(sbi, SBI_IS_SUSPENDING))
-+			break;
-+
- 		if (len > max_discard_blocks) {
- 			len = max_discard_blocks;
- 			last = false;
-@@ -1615,7 +1619,7 @@ static void __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
- 		if (dc->state != D_PREP)
- 			goto next;
- 
--		if (*issued > 0 && unlikely(freezing(current)))
-+		if (is_sbi_flag_set(sbi, SBI_IS_SUSPENDING))
- 			break;
- 
- 		if (dpolicy->io_aware && !is_idle(sbi, DISCARD_TIME)) {
-@@ -1688,7 +1692,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 		list_for_each_entry_safe(dc, tmp, pend_list, list) {
- 			f2fs_bug_on(sbi, dc->state != D_PREP);
- 
--			if (issued > 0 && unlikely(freezing(current))) {
-+			if (is_sbi_flag_set(sbi, SBI_IS_SUSPENDING)) {
- 				suspended = true;
- 				break;
- 			}
-@@ -1955,7 +1959,8 @@ static int issue_discard_thread(void *data)
- 			continue;
- 		if (kthread_should_stop())
- 			return 0;
--		if (is_sbi_flag_set(sbi, SBI_NEED_FSCK) ||
-+		if (is_sbi_flag_set(sbi, SBI_IS_SUSPENDING) ||
-+			is_sbi_flag_set(sbi, SBI_NEED_FSCK) ||
- 			!atomic_read(&dcc->discard_cmd_cnt)) {
- 			wait_ms = dpolicy.max_interval;
- 			continue;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index d5dc83e613e2..536f3ffe5354 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1979,6 +1979,26 @@ static void destroy_device_list(struct f2fs_sb_info *sbi)
- 	kvfree(sbi->devs);
- }
- 
-+static int f2fs_pm_notifier(struct notifier_block *nb,
-+			    unsigned long action, void *ptr)
-+{
-+	struct f2fs_sb_info *sbi = container_of(nb, struct f2fs_sb_info, pm_nb);
-+
-+	switch (action) {
-+	case PM_HIBERNATION_PREPARE:
-+	case PM_SUSPEND_PREPARE:
-+	case PM_RESTORE_PREPARE:
-+		set_sbi_flag(sbi, SBI_IS_SUSPENDING);
-+		break;
-+	case PM_POST_SUSPEND:
-+	case PM_POST_HIBERNATION:
-+	case PM_POST_RESTORE:
-+		clear_sbi_flag(sbi, SBI_IS_SUSPENDING);
-+		break;
-+	}
-+	return NOTIFY_OK;
-+}
-+
- static void f2fs_put_super(struct super_block *sb)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-@@ -1986,6 +2006,8 @@ static void f2fs_put_super(struct super_block *sb)
- 	int err = 0;
- 	bool done;
- 
-+	unregister_pm_notifier(&sbi->pm_nb);
-+
- 	/* unregister procfs/sysfs entries in advance to avoid race case */
- 	f2fs_unregister_sysfs(sbi);
- 
-@@ -5472,6 +5494,9 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	f2fs_restore_device_alias(sbi);
- 
-+	sbi->pm_nb.notifier_call = f2fs_pm_notifier;
-+	register_pm_notifier(&sbi->pm_nb);
-+
- 	sbi->umount_lock_holder = NULL;
- 	return 0;
- 
--- 
-2.55.0.571.g244d577d93-goog
-
+> 
+> If so, I guess this patch will run out-of-space since we trigger page writeback
+> of regular inodes during checkpoint(). :/
+> 
+> Thanks,
+> 
+> > 
+> > [   90.879237] ------------[ cut here ]------------
+> > [   90.881987] kernel BUG at segment.c:2902!
+> > [   90.884058] Oops: invalid opcode: 0000 [#1] SMP NOPTI
+> > [   90.886628] CPU: 7 UID: 0 PID: 2566 Comm: f2fs_ckpt-252:3 Tainted: G           OE       7.2.0-rc5-custom #1 PREEMPT(full)
+> > [   90.891533] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+> > [   90.894647] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.17.0-debian-1.17.0-1 04/01/2014
+> > [   90.900014] RIP: 0010:new_curseg+0xa17/0xa60 [f2fs]
+> > [   90.902240] Code: 8b 71 48 e9 16 f8 ff ff 4c 8b 69 08 41 8b 84 24 4c 06 00 00 31 d2 41 8b 8c 24 48 06 00 00 f7 f1 89 45 a4 89 f0 e9 e9 fe ff ff <0f> 0b 49 8b 3c 24 68 40 0c 00 00 45 31 c0 31 c9 41 b9 8b ff ff ff
+> > [   90.910818] RSP: 0018:ffffd4acc4167670 EFLAGS: 00010293
+> > [   90.913153] RAX: 00000000000000f8 RBX: 0000000000000000 RCX: 0000000000000000
+> > [   90.916400] RDX: ffffffffffffffff RSI: 00000000000000f8 RDI: 00000000000000f8
+> > [   90.919494] RBP: ffffd4acc41676d0 R08: ffff8d640bdab2a0 R09: ffffffffc10673eb
+> > [   90.923182] R10: 00000000000000f8 R11: 0000000000000014 R12: ffff8d64892c6000
+> > [   90.926315] R13: ffff8d648c236b80 R14: 00000000000000f8 R15: 0000000000000000
+> > [   90.929430] FS:  0000000000000000(0000) GS:ffff8d6504b73000(0000) knlGS:0000000000000000
+> > [   90.933668] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   90.937206] CR2: 00005577fade9868 CR3: 0000000092d82002 CR4: 0000000000372ef0
+> > [   90.940305] Call Trace:
+> > [   90.941486]  <TASK>
+> > [   90.942464]  f2fs_allocate_data_block+0x69b/0xb10 [f2fs]
+> > [   90.944862]  do_write_page+0x72/0x360 [f2fs]
+> > [   90.946798]  ? __folio_start_writeback+0x90/0x1d0
+> > [   90.949485]  f2fs_do_write_node_page+0x35/0x70 [f2fs]
+> > [   90.952813]  __write_node_folio+0x33c/0x640 [f2fs]
+> > [   90.955104]  ? debug_smp_processor_id+0x17/0x20
+> > [   90.957550]  f2fs_sync_node_pages+0x3d8/0x530 [f2fs]
+> > [   90.960954]  block_operations+0x41d/0x590 [f2fs]
+> > [   90.963415]  ? __pfx_issue_checkpoint_thread+0x10/0x10 [f2fs]
+> > [   90.966293]  f2fs_write_checkpoint+0x15a/0x13c0 [f2fs]
+> > [   90.969193]  ? update_load_avg+0x79/0x2e0
+> > [   90.971712]  ? kvm_clock_get_cycles+0x18/0x40
+> > [   90.974030]  ? module_sect_read+0x81/0xc0
+> > [   90.976675]  ? __pfx_issue_checkpoint_thread+0x10/0x10 [f2fs]
+> > [   90.980146]  __write_checkpoint_sync+0x75/0xb0 [f2fs]
+> > [   90.983100]  __checkpoint_and_complete_reqs+0x3b/0x110 [f2fs]
+> > [   90.986332]  ? __pfx_issue_checkpoint_thread+0x10/0x10 [f2fs]
+> > [   90.989853]  issue_checkpoint_thread+0x4b/0x100 [f2fs]
+> > [   90.992622]  ? __pfx_autoremove_wake_function+0x10/0x10
+> > [   90.995875]  kthread+0x10a/0x140
+> > [   90.998141]  ? __pfx_kthread+0x10/0x10
+> > [   91.000585]  ret_from_fork+0x1ef/0x2b0
+> > [   91.002565]  ? __pfx_kthread+0x10/0x10
+> > [   91.004510]  ret_from_fork_asm+0x1a/0x30
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>> On 07/06, Chao Yu via Linux-f2fs-devel wrote:
+> >>>> generic/794  4s ... - output mismatch (see /share/git/fstests/results//generic/794.out.bad)
+> >>>>      --- tests/generic/794.out   2026-06-12 08:46:32.766426241 +0800
+> >>>>      +++ /share/git/fstests/results//generic/794.out.bad 2026-07-05 18:32:55.000000000 +0800
+> >>>>      @@ -1,4 +1,16 @@
+> >>>>       QA output created by 794
+> >>>>       append_write
+> >>>>      +FAIL: non-zero data in gap [4080,4096) after shutdown+remount
+> >>>>      +000000 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  >ZZZZZZZZZZZZZZZZ<
+> >>>>      +*
+> >>>>      +001000
+> >>>>       truncate_up
+> >>>>      ...
+> >>>>      (Run 'diff -u /share/git/fstests/tests/generic/794.out /share/git/fstests/results//generic/794.out.bad'  to see the entire diff)
+> >>>> Ran: generic/794
+> >>>> Failures: generic/794
+> >>>> Failed 1 of 1 tests
+> >>>>
+> >>>> Steps of generic/794:
+> >>>> 1. write 4096 bytes to file w/ 0x5a
+> >>>> 2. use fiemap to get PBA of first block in file
+> >>>> 3. truncate file to 4080
+> >>>> 4. umount; write 4096 bytes to file w/ 0x5a directly via PBA; mount
+> >>>> 5. extend filesize via
+> >>>>     a) append 4096 from offset 4096, or
+> >>>>     b) truncate 8192, or
+> >>>>     c) fallocate 4096 from offset 4096
+> >>>> 6. verify the gap is zeroed in memory [4080,4096)
+> >>>> 7. sync range 4096 from offset 4096; shutdown -f (flush meta before shutdown)
+> >>>> 8. umount; mount; verify [4080,4096) is zeroed or not.
+> >>>>
+> >>>> When extending file size (e.g. via truncate, fallocate, or write) across an
+> >>>> unaligned EOF boundary, we need to ensure that post-EOF data in the partial
+> >>>> page is zeroed out in pagecache and marked dirty, meanwhile, tagging the inode
+> >>>> with FI_ZERO_POST_EOF, so that following checkpoint() and fsync() can persist
+> >>>> the page contain zeroed data before committing inode w/ updated i_size.
+> >>>>
+> >>>> This help to prevent stale disk data beyond the previous EOF from being exposed
+> >>>> after remounting or crash recovery.
+> >>>>
+> >>>> Since f2fs is a LFS filesystem, we only support direct write via PBA in pinfile,
+> >>>> and pinfile has section-aligned filesize, so in Android, there should no problem,
+> >>>> but for other usage in different environment, let's fix this w/ fsync_mode=strict
+> >>>> mount option.
+> >>>>
+> >>>> Cc: stable@kernel.org
+> >>>> Signed-off-by: Chao Yu <chao@kernel.org>
+> >>>> ---
+> >>>>   fs/f2fs/checkpoint.c |  4 ++++
+> >>>>   fs/f2fs/f2fs.h       |  1 +
+> >>>>   fs/f2fs/file.c       | 35 ++++++++++++++++++++++++++++++++---
+> >>>>   3 files changed, 37 insertions(+), 3 deletions(-)
+> >>>>
+> >>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >>>> index 064f5b537423..6f486d3a94c7 100644
+> >>>> --- a/fs/f2fs/checkpoint.c
+> >>>> +++ b/fs/f2fs/checkpoint.c
+> >>>> @@ -1359,6 +1359,10 @@ static int f2fs_sync_inode_meta(struct f2fs_sb_info *sbi)
+> >>>>   		inode = igrab(&fi->vfs_inode);
+> >>>>   		spin_unlock(&sbi->inode_lock[DIRTY_META]);
+> >>>>   		if (inode) {
+> >>>> +			if (is_inode_flag_set(inode, FI_ZERO_POST_EOF)) {
+> >>>> +				filemap_write_and_wait(inode->i_mapping);
+> >>>> +				clear_inode_flag(inode, FI_ZERO_POST_EOF);
+> >>>> +			}
+> >>>>   			sync_inode_metadata(inode, 0);
+> >>>>   			/* it's on eviction */
+> >>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>>> index 8e2fb0bda467..41be09dad43c 100644
+> >>>> --- a/fs/f2fs/f2fs.h
+> >>>> +++ b/fs/f2fs/f2fs.h
+> >>>> @@ -939,6 +939,7 @@ enum {
+> >>>>   	FI_ATOMIC_REPLACE,	/* indicate atomic replace */
+> >>>>   	FI_OPENED_FILE,		/* indicate file has been opened */
+> >>>>   	FI_DONATE_FINISHED,	/* indicate page donation of file has been finished */
+> >>>> +	FI_ZERO_POST_EOF,	/* indicate unaligned EOF gap was zeroed in pagecache */
+> >>>>   	FI_MAX,			/* max flag, never be used */
+> >>>>   };
+> >>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> >>>> index 11cc8d79c235..2e9d585073ec 100644
+> >>>> --- a/fs/f2fs/file.c
+> >>>> +++ b/fs/f2fs/file.c
+> >>>> @@ -36,21 +36,43 @@
+> >>>>   #include <trace/events/f2fs.h>
+> >>>>   #include <uapi/linux/f2fs.h>
+> >>>> +static int fill_zero(struct inode *inode, pgoff_t index,
+> >>>> +					loff_t start, loff_t len);
+> >>>> +
+> >>>>   static void f2fs_zero_post_eof_page(struct inode *inode,
+> >>>>   					loff_t new_size, bool lock)
+> >>>>   {
+> >>>>   	loff_t old_size = i_size_read(inode);
+> >>>> +	unsigned int offset;
+> >>>>   	if (old_size >= new_size)
+> >>>>   		return;
+> >>>> -	if (mapping_empty(inode->i_mapping))
+> >>>> -		return;
+> >>>> -
+> >>>>   	if (lock)
+> >>>>   		filemap_invalidate_lock(inode->i_mapping);
+> >>>> +
+> >>>>   	/* zero or drop pages only in range of [old_size, new_size] */
+> >>>>   	truncate_inode_pages_range(inode->i_mapping, old_size, new_size);
+> >>>> +
+> >>>> +	/*
+> >>>> +	 * When expanding an unaligned EOF size, zero post-EOF data in
+> >>>> +	 * pagecache and set FI_ZERO_POST_EOF, so following checkpointing
+> >>>> +	 * or fsync can persist correct data to disk before committing
+> >>>> +	 * inode w/ updated i_size.
+> >>>> +	 */
+> >>>> +	if (F2FS_OPTION(F2FS_I_SB(inode)).fsync_mode != FSYNC_MODE_STRICT)
+> >>>> +		goto out_unlock;
+> >>>> +
+> >>>> +	offset = old_size & (PAGE_SIZE - 1);
+> >>>> +	if (offset) {
+> >>>> +		unsigned int len = min_t(loff_t, PAGE_SIZE - offset,
+> >>>> +							new_size - old_size);
+> >>>> +		pgoff_t index = old_size >> PAGE_SHIFT;
+> >>>> +
+> >>>> +		fill_zero(inode, index, offset, len);
+> >>>> +		set_inode_flag(inode, FI_ZERO_POST_EOF);
+> >>>> +	}
+> >>>> +out_unlock:
+> >>>>   	if (lock)
+> >>>>   		filemap_invalidate_unlock(inode->i_mapping);
+> >>>>   }
+> >>>> @@ -304,6 +326,13 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+> >>>>   	if (S_ISDIR(inode->i_mode))
+> >>>>   		goto go_write;
+> >>>> +	if (is_inode_flag_set(inode, FI_ZERO_POST_EOF)) {
+> >>>> +		ret = filemap_write_and_wait(inode->i_mapping);
+> >>>> +		if (ret)
+> >>>> +			return ret;
+> >>>> +		clear_inode_flag(inode, FI_ZERO_POST_EOF);
+> >>>> +	}
+> >>>> +
+> >>>>   	/* if fdatasync is triggered, let's do in-place-update */
+> >>>>   	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+> >>>>   		set_inode_flag(inode, FI_NEED_IPU);
+> >>>> -- 
+> >>>> 2.49.0
+> >>>>
+> >>>>
+> >>>>
+> >>>> _______________________________________________
+> >>>> Linux-f2fs-devel mailing list
+> >>>> Linux-f2fs-devel@lists.sourceforge.net
+> >>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>
+> >>
+> >>
+> >> _______________________________________________
+> >> Linux-f2fs-devel mailing list
+> >> Linux-f2fs-devel@lists.sourceforge.net
+> >> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 _______________________________________________
