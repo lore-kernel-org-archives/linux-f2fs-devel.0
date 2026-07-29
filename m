@@ -4,107 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B994EC53200
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2026 11:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 646CFC54F51
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2026 11:44:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=Kg8fPD+8YpKSCwz99JSkQQdRJ/GWDnbOQ/2yOe9zlAw=; b=h6TlfblaPT+Lzzmh4fAMmjHanq
-	8oxvwAh8+d6f/jQi0044VDO4DQiJuGCxjHojfKEN6r11YyLl5sz8YWcHd3S0vOl6okXWF/pRK3MKb
-	q/QqTgyXPk5KalMCyrN18PvKCOBhIgUxTSol/67t+CR8BXOGU/R1xo+2ke5L3myErWNY=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=YlxB7ylSon/Htrk4hydeXbKw4IyBc7uwVEbEOpCv4vg=; b=iLbmgQWFHCl4Kgfy1ZS4xZjY1/
+	4vXXuX1m4wel9BQmLP8zS7DbBN0U1AhRaEXoxOQ5ffDhavwyuc7+fmVg1MwX63JwPuvd7bY9qVIkL
+	IkxszAnqXNChOLRBSpBRxMWP1zsJ69A9WfZLAowSZx5duOSxtuQJwTw7qC23iOY1X/Hg=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wp2fx-0002Nx-4O;
-	Wed, 29 Jul 2026 11:42:14 +0000
+	id 1wp2hz-0006eO-FD;
+	Wed, 29 Jul 2026 11:44:24 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1wp2fv-0002Nq-Ty
+ (envelope-from <chao@kernel.org>) id 1wp2hs-0006dh-Jd
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Jul 2026 11:42:13 +0000
+ Wed, 29 Jul 2026 11:44:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yuoz3PtgKXX1k02oR2d/hFIWFEkFXNq3pA596VbQzqo=; b=WNXdwZ66iwn1t5cEsJzeNa7rip
- wXRCcnNEB9V9sB8FB/oOoEmt0efOEuRbwAHD4Ro/bfYnUDUpF5MKc/KkdOCq4HQuaa2PduQEA7+tG
- KMlGGyhacU6ADzWmT2OVYtGnGMApcBIcXdgKVKG48T/P3sXkTJqV1MkERvO4xQHE+EhA=;
+ bh=4+Tca2IcSPPZfQSRkigbJtpn7Wv2qQKHxhyLWS7+PRU=; b=EME5KFSBHDHDohPFOZxDox62NA
+ 8jrsPS5a+ACkad9LDfmecRTvIBEutWloD2/pe8QKqsJaomkkdufIcCA512XHWOhW1UxcU1zxOgwN7
+ FJocaNY8lC4V4Tt4OXcYzt3eTBhrQLd427EIxtfEYhw933pq3BuvTA0B7LmXMf9vOx20=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=yuoz3PtgKXX1k02oR2d/hFIWFEkFXNq3pA596VbQzqo=; b=J
- fynwp1lkEA218ARo50jTxPnMgInI/xHoQV9dqekvW/MdO58zlE9W4lw4oW2gwNAzrW7l+I3XY9+Jk
- Yk0YtOJO8mJSHstWKGYp14v4PtOIqxuZi8EhdjjX8W6oMaSnx+nm8EsQIye9v0j64LJ8xptpCfbu0
- B4DbqTVGdTjaKcR4=;
-Received: from mail-wr1-f52.google.com ([209.85.221.52])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wp2fs-0005Mn-3X for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 29 Jul 2026 11:42:13 +0000
-Received: by mail-wr1-f52.google.com with SMTP id
- ffacd0b85a97d-4799b3f7c83so611740f8f.2
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 29 Jul 2026 04:42:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1785325325; x=1785930125; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=yuoz3PtgKXX1k02oR2d/hFIWFEkFXNq3pA596VbQzqo=;
- b=rUW//T1qxLlzDrYc6LIWn0rKVr44TMxZ/YEqOpFipu34TWzAZGmyDfT/enf66P73ZJ
- durbOU1UUNoWXSrQN+bOBTV7gIZslnvfsisPkPBpj2N5mPi6Xj2bode0spZKbJUEFuv1
- 7F5yiA89hcWyhuOkOHqdI7LcCPhF81Gdsdo74hw412B8MrHRA6Xa0FF8Oo4EVPpbCItG
- BILvBll7Ckr1Fv9FWIprJQPU4PHUhq/CDW4/46KZ3+NHDrMnTasQYbXIW+lWE6c41SpL
- H19eXTvOvtJ/qLvUDqyeGJDt/mg0AmR1fakzR9smo8tOCOx4caO2I6bc2MRX1GIz45nI
- iB+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785325325; x=1785930125;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=yuoz3PtgKXX1k02oR2d/hFIWFEkFXNq3pA596VbQzqo=;
- b=Ben2b9wCbkSRV1q/AI9UIewVcbjfNBiM2QUUECSBzffP3dMiKA+JkFRxs/bwl+pglZ
- NFxmFhmQ1cBKo7SrhdQ5UpGggOWXwp/iBWs8F0r2A7dOR0VPpS2yLdvv2xdJqZh5sDQR
- 6g+7F5q2cXOjAGwOh3DP8cic4qcPsJs/XEiel9ZDSxkcwvoF8lQST/laq1SdOifQNJHh
- ZEfuMpwA4lMDuIxoxK1S4wD4A7C9UDrB1RyPVS0Ps4EP6ZYZoAFVBWYj/iTUdXq5fHF8
- f4zTRfI3R4JfGTBkEJp0pV2fvQzf3Qpfcv+KxSravFp1lNdtXV02vNfhxSXmrGOPli+K
- Faew==
-X-Gm-Message-State: AOJu0YyTaJb5BW3GmhEuA5JAGdNhQIu9OV3m2i/bql6+9vFhjmme00gX
- UEjLOwjyLK8oaywmDRmIASzzmDExBbQajhbcxExagHHXLpXHnDDMmFhl
-X-Gm-Gg: AR+sD134/HI2nTEX6MUPs4uGVh/TU3pVXLcqY479FD0cXZYc4L830Y3rsv4MCMyfaG+
- NUl3N2yx+BgFtdYqrbovgV5DGmUzpI287231GbVehG2e72ra5Ffcm9m3JrdTElfMebTVaSyqepn
- QQ0IKCa8kRoLnOnDe1sY8X12PFEuCQVK+lsiNAy4uB3vvAPQaej81xm+joZ9fn0G4P7fME0+gTI
- R8KQmYacBLuS5WEpkrNKdiYdk79hU1z0lei+GTQISoxBmemHoyDtMzd/Kca9hteRkDRht6XMJzt
- r+QBW4RXL0Yj4T5g5VE1WQPvfxnXEYnLuZQwUEyDuvkzVw2aC1p3wqN+JS8gau7OALzFNW9C5m0
- J20diovupvmc7aKFYZl1XGkl1eM19NUQtDFPUVUpY2dzqhStaSsQCNKX2H3WZ5U0k8/EF7ZHdWj
- 6aVGxDH80MzcS1hlXLmDPUpUbaP1OATNGlhVBpqigLyGxZxUWFCgbFkBDlkM1TqQOCJwKXVax7P
- OttMHY6DH8e7vWP6ckhNent
-X-Received: by 2002:a05:6000:1883:b0:47f:96e3:5309 with SMTP id
- ffacd0b85a97d-47fb1ec8813mr7822622f8f.9.1785325325285; 
- Wed, 29 Jul 2026 04:42:05 -0700 (PDT)
-Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-47fb6b0f2ddsm7333367f8f.20.2026.07.29.04.42.02
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 29 Jul 2026 04:42:04 -0700 (PDT)
-From: Wenjie Qi <qwjhust@gmail.com>
-X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Wed, 29 Jul 2026 19:41:56 +0800
-Message-ID: <20260729114156.3348582-1-qiwenjie@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=4+Tca2IcSPPZfQSRkigbJtpn7Wv2qQKHxhyLWS7+PRU=; b=llWXN/dM2UtXVA8+NZP2o3Y7a0
+ Dwho+FEbxpTwlwFLUrMC35ZPUfegllKNbQJHCKTrNWC4sub+GTscrO44Rsms/pco4bT/z5nsj2/8i
+ X31AV9yZQXNwzhfXh8YV7sTjjD+coHsdylZhTKu30rWZAXb4juYqjspyUzrDrxE4RB3E=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1wp2hu-0004RX-Um for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 29 Jul 2026 11:44:16 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id 00E764243E;
+ Wed, 29 Jul 2026 11:44:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B44831F000E9;
+ Wed, 29 Jul 2026 11:44:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1785325449;
+ bh=4+Tca2IcSPPZfQSRkigbJtpn7Wv2qQKHxhyLWS7+PRU=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To;
+ b=LscUuNsHEOIIOnLYC/EMVAQAcHLC3ylAAbaW0bomLPhd2F3vEa3MXrazHPUCy0vGD
+ 8vzZMW8dSrXMqGeBgmzPQsMI9QPtmqjgsLfi+/wrrrmfqigfrJwapNhh8AikUxQOEx
+ EwJgwX/sgggb+K4JupWpo5or15d7goxob0QVSvAgkQdOEl+bYOl3ZDVUw0Jk3Cwyvj
+ kGwKudFD7tmC4peAWbPK6d5xvcz2x/3G57Xi+zFsTqMesCdHnT/EaB3KjjdDTFhpQ2
+ 8JQ2XHlmW2j26dO7Ajzgm3Y3nUrdQJxFGelD1gI45J1vsCkBhzgWj21zaDzBwR7/b9
+ RKa8Aw0hgH6Dg==
+Message-ID: <f643492e-b31d-48d4-a721-329c62db42d3@kernel.org>
+Date: Wed, 29 Jul 2026 19:44:06 +0800
 MIME-Version: 1.0
-X-Headers-End: 1wp2fs-0005Mn-3X
-Subject: [f2fs-dev] [PATCH] f2fs: reject invalid recovered filename lengths
+User-Agent: Mozilla Thunderbird
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20260723202008.2581659-1-daeho43@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20260723202008.2581659-1-daeho43@gmail.com>
+X-Headers-End: 1wp2hu-0004RX-Um
+Subject: Re: [f2fs-dev] [PATCH v5] f2fs: support dynamic reserve/release for
+ device aliasing
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -116,57 +88,56 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: qwjhust@gmail.com, qiwenjie@xiaomi.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Recovery uses raw_inode->i_namelen directly when rebuilding fsynced
-dentries. A zero-length name uses no dentry slots, so recovery can
-report success without recreating the dentry.
+On 7/24/26 04:20, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> This patch adds a dynamic management feature to the existing device
+> aliasing functionality. It allows users to dynamically reserve or
+> release specific devices from the filesystem's free pool at runtime
+> through new ioctls.
+> 
+> To support this, three new ioctls are introduced:
+> - F2FS_IOC_RESERVE_DEV_ALIAS: This reclaims the space occupied by a
+>   device aliasing file. It first performs a capacity check, resets GC
+>   victim information for the target range, marks the segments as in-use
+>   to prevent new allocations, and then triggers GC to migrate existing
+>   valid data out of the range. Finally, it reserves these blocks in the
+>   SIT to effectively exclude the device from the usable capacity.
+> 
+> - F2FS_IOC_RELEASE_DEV_ALIAS: This releases the reserved space of a
+>   previously reserved device aliasing file. It truncates the blocks
+>   associated with the file, which makes them available for general
+>   filesystem allocation again.
+> 
+> - F2FS_IOC_GET_DEV_ALIAS_STATUS: This retrieves the current aliasing
+>   status of a device aliasing file, returning whether the file is
+>   released (inactive alias) or reserved (active alias, with blocks
+>   fully allocated on the device).
 
-Treat zero-length and oversized recovered names as corruption, mark
-NEED_FSCK, and stop recovery with -EFSCORRUPTED.
+Hi Daeho,
 
-Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
----
- fs/f2fs/recovery.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+BTW, could you please consider to do some coverage test to prevent from
+suffering potential corruption.
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 89af8407b667..70cf99efcb3c 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -126,8 +126,8 @@ static int init_recovered_filename(const struct inode *dir,
- 	fname->disk_name.len = le32_to_cpu(raw_inode->i_namelen);
- 	fname->disk_name.name = raw_inode->i_name;
- 
--	if (WARN_ON(fname->disk_name.len > F2FS_NAME_LEN))
--		return -ENAMETOOLONG;
-+	if (!fname->disk_name.len || fname->disk_name.len > F2FS_NAME_LEN)
-+		return -EFSCORRUPTED;
- 
- 	if (!IS_ENCRYPTED(dir)) {
- 		usr_fname->name = fname->disk_name.name;
-@@ -185,8 +185,16 @@ static int recover_dentry(struct inode *inode, struct folio *ifolio,
- 
- 	dir = entry->inode;
- 	err = init_recovered_filename(dir, raw_inode, &fname, &usr_fname);
--	if (err)
-+	if (err) {
-+		if (err == -EFSCORRUPTED) {
-+			f2fs_err(F2FS_I_SB(inode),
-+				 "invalid recovered filename length %u for ino %llu",
-+				 le32_to_cpu(raw_inode->i_namelen), inode->i_ino);
-+			set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
-+			f2fs_handle_error(F2FS_I_SB(inode), ERROR_CORRUPTED_INODE);
-+		}
- 		goto out;
-+	}
- retry:
- 	de = __f2fs_find_entry(dir, &fname, &folio);
- 	if (de && inode->i_ino == le32_to_cpu(de->ino))
+e.g.:
+1. call ioctls in low storage environment
+2. race w/ checkpoint={disable,enable}
+3. injecting faults in new ioctls + random shutdown
+
+To verify if filesystem or device alias file is corrupted, it needs to
+call fsck after the testcase, and find a way to verify whether device alias
+status is as expected or not.
+
+Please sharing your thoughts about this. :)
+
+Thanks,
 
 
 _______________________________________________
