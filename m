@@ -4,84 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 35222C55160
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 30 Jul 2026 10:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E4709C55165
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 30 Jul 2026 13:46:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:Message-Id:Date:References:In-Reply-To:To:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Nsl1qeXSKeRZljjnAxn8QMwdxDTepLksldE+/EeKh40=; b=iwJMrqcTgRtiaXeEVrwN6PdHPw
-	560YxUiLeijGpIc7xtTTuk0/RqcCKEUIQUw/BurXzqx6sNXwPMklX6PWmwrqtQAIgo1bDfLerg68m
-	I7hU+zm6DTFVz8HBDljWv3nQgoC2Ski5qbAGDSp4hdZu48AEq7xj4afzMhs2ZfSSnT/E=;
+	bh=mjC13uBA1SqyDBltIBqHFXETGmeabTYDVq9v9dnMzao=; b=EN96LB+Okg0SjYwHPT6FV90WF6
+	3x7a5zNL/qsqCx/nilD10aSVPgtEKPr7vfU3rZiVokzpol4QKq3rXXT1fuP+/vo3tPG/828yCYRn7
+	8/W1WCfha16Nu/KCSsAURG/GwHy+bZnWx00hHqq378heFwGOSBYsYlVwaAg0J/T/P7vY=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wpNvg-0003nm-Fy;
-	Thu, 30 Jul 2026 10:23:57 +0000
+	id 1wpR5F-0008SB-AP;
+	Thu, 30 Jul 2026 13:46:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <brauner@kernel.org>) id 1wpNve-0003nc-I6
+ (envelope-from <chao@kernel.org>) id 1wpR5D-0008Rx-OP
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 30 Jul 2026 10:23:55 +0000
+ Thu, 30 Jul 2026 13:46:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Message-Id:Date:References:In-Reply-To:Cc:To:From:
- Subject:Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GsbS4Sw15ffaz8qVeqdZl5yarhOra7Ro1zRToupS0NU=; b=LRZQWRTuIg/b6FxQBzk6zKL0WS
- MtNv9wOKjxl57UpZ2HoZOx3fi4ibBg8ElPjl35onylJj3LyxrBBvcrskazQiEy6eCz0TS0hYFPIGR
- EQvekclKLQY2nZyiOUQRlVlJ2rEFjbC73LCTg9799/0qmwOQ3+kuj5FywH6nbU/8ckeo=;
+ bh=aUxZbDwdjoyd5VTpayjmuzIZ12zq8bCBYHyNHhSWyZI=; b=mac63O7ZIDDOYdEqxIe/pPQf5k
+ yABpyDMm8m/bZtlmX5qwmUM5lehUYLVUSHJV+mD25IlFfJOng+poFHFM3d2icvwb6AtXj1+EV8e3C
+ 4i8yZV/+IES8X8jTu5JAEcxUdIYMlo4ieq+fqqt3553zt+cIbvJYFxevZ9GoaQQ3DyfY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Message-Id:Date:References:In-Reply-To:Cc:To:From:Subject:
- Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GsbS4Sw15ffaz8qVeqdZl5yarhOra7Ro1zRToupS0NU=; b=K99ePuZbziHJUvNyhjhSqRLx+p
- G3Wvc0t7J8F/G9bnkJQRF27DtJ6XQKml36mjNz5WpDVyq7K0AuzaG1cH0Jk36WpHhkFCWE1LVjwoj
- kwL2IQrAQIGodDRFyTqek+dFRnadktyroJcaQCZuSnrJF/pWrsWIa5uPOgRjRO6RXfeI=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ ;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=aUxZbDwdjoyd5VTpayjmuzIZ12zq8bCBYHyNHhSWyZI=; b=MTBgZhJ6dAyRxaladKZWG5PS8B
+ T918KXa/G+XwRwKj9vwOByRVs/7SrTVeLpZwuNQJXSzW45WhO7FaPcbrIeuM+5I8YesPHLhRJr+L2
+ Y3um+wkFEtUCblGSIpm2jUHTgZPco/hg8/gFT0BRH3oLmI2TxQRcW1pGfNzbRKeqWEzw=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wpNvd-0005m5-RS for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 30 Jul 2026 10:23:55 +0000
+ id 1wpR5H-0000wV-Bw for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 30 Jul 2026 13:46:00 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 2E2FE600BC;
- Thu, 30 Jul 2026 10:23:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 428CC1F000E9;
- Thu, 30 Jul 2026 10:23:46 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 69E8942E94;
+ Thu, 30 Jul 2026 13:45:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABD951F000E9;
+ Thu, 30 Jul 2026 13:45:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785407027;
- bh=GsbS4Sw15ffaz8qVeqdZl5yarhOra7Ro1zRToupS0NU=;
- h=Subject:From:To:Cc:In-Reply-To:References:Date;
- b=OOlAKKWH5ZLW4C4vRqStaiLEwGPcFmygYug/aHGsoHcnv84pN+zBCWP3wF93rw3vv
- 0PIBoAJo4wAlHH4er7u69Q2owCaDEpzPQ4cWhH6lJ6c6zOknODiyvPwoHmDSll3NrN
- UWUXY+yi+F//BQz8wBCMl+uLK5DhgCL/1TiA0aJrE8s/Sddo3d0FB/uuMH+IbXnFWN
- 0qCkLTxIQ+oz2tJb06CQwc02ccXJY/jo266ABzN9gwRNJJwcNvu8zgQ9oH89Ioy2z3
- D5NssKKrsXf+IcF/ysQ67DgWGxrfjvG81CwidTrDH4zZ6k8A2FASFI/h8LD3URJ6nt
- RwJd7eHy4XaMA==
+ s=k20260515; t=1785419154;
+ bh=aUxZbDwdjoyd5VTpayjmuzIZ12zq8bCBYHyNHhSWyZI=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To;
+ b=kAvwrM4W/jloRc8TkIfKcBEUj08BTMAcAkeldpq1OnApkbNucNaPIW4JN91RqXGeC
+ 6/gHO0V/nD//+AiPj00tOYPyyUhqhHzK/qQXbYVdsQrdDrIn8UzqhufsR5ykUlBCYB
+ jD0i4IKxW/RN56eaWmvJhFvYiGri3IB2YxnVDkW5sJ818IrPhxpuCZufEvTcVWsJ5W
+ Oludk9//N2R9epUNIjigVDmVhby9H3swqKKjTeN/xfkLDguQz5WuJS82P5MbNmUVfq
+ 6RU//QBh/tc5eA6JTdfV9dhcNpEDC1XM+OXHK+nCrE/y6vbrhOwBSCk50toEyGs3N+
+ qcP73KDZc4Wag==
+Message-ID: <f1fece0c-6951-4c69-a681-344acfe1f62b@kernel.org>
+Date: Thu, 30 Jul 2026 21:45:50 +0800
 MIME-Version: 1.0
-To: Rochan Avlur <rochan.avlur@gmail.com>
-In-Reply-To: <20260729041656.51967-1-rochan.avlur@gmail.com>
-References: <20260729041656.51967-1-rochan.avlur@gmail.com>
-Date: Thu, 30 Jul 2026 12:23:42 +0200
-Message-Id: <20260730-jargon-tauchen-angehalten-d4e97dde0ebe@brauner>
-X-Mailer: b4 0.16-dev-3e0c3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=723; i=brauner@kernel.org;
- h=from:subject:message-id; bh=9VBLNDT4VKqFoxo1wXCe9pbICUl3NYjOWY9OtJVLAHY=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRlqxmWTf0f/bf7xn3mAxK9+ZxRlgvObqq7ncGgkrjGJ
- KFde/eKjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIl0djD8z01hMDV8MvdJyAaT
- /bItp/pY+zItfnWzPY129WJUO8UqwvA/c9GOGadPLetY2OAY45bKXyLgo90lOJHl4fwX9WxLrfa
- zAAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-X-Headers-End: 1wpNvd-0005m5-RS
-Subject: Re: [f2fs-dev] [PATCH] f2fs: use the mount idmap for the owner
- check in f2fs_xattr_advise_set()
+User-Agent: Mozilla Thunderbird
+To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20260729002827.303608-1-zhaonanzhe@xiaomi.com>
+Content-Language: en-US
+In-Reply-To: <20260729002827.303608-1-zhaonanzhe@xiaomi.com>
+X-Headers-End: 1wpR5H-0000wV-Bw
+Subject: Re: [f2fs-dev] [DISCUSSION] f2fs: compatibility between compressed
+ files and large folios
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,35 +87,156 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Christian Brauner via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Christian Brauner <brauner@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: Pengfei Li <lipengfei28@xiaomi.com>, Barry Song <baohua@kernel.org>,
+ Bo Zhang <zhangbo56@xiaomi.com>, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Rochan,
+Nanzhe,
 
-> f2fs_xattr_advise_set() calls inode_owner_or_capable() with
-> &nop_mnt_idmap before allowing the advise xattr to be set, instead of
-> the idmap that was passed into the handler.
+Thanks for the proposal.
+
+On 7/29/26 08:28, Nanzhe Zhao wrote:
+> Hi all,
 > 
-> Since f2fs supports idmapped mounts, this compares the caller's fsuid
-> against the unmapped on-disk owner rather than the mapped owner; resulting
-> in the actual owner to be wrongly denied with -EPERM. Use the idmap
-> argument that was already passed to the xattr handler instead.
+> Chao Yu and I discussed the compatibility between compressed files and large
+> folios.
 > 
-> Fixes: 984fc4e76d63 ("f2fs: support idmapped mounts")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Rochan Avlur <rochan.avlur@gmail.com>
+> The main race scenario is that f2fs_new_inode() creates an inode without the
+> compression flag and enables large-folio support for its mapping. Later,
+> f2fs_setflags_common() can set the compression flag while large-folio support
+> is already enabled for the inode. Neither f2fs_iget() nor f2fs_new_inode()
+> can prevent this for an active inode.
+> 
+> Here are the two approaches I am considering.
+> 
+> 1. Reject setting the compression flag on a large-folio mapping
+> 
+> We can reject setting the compression flag in f2fs_setflags_common() if the
+> inode mapping supports large folios:
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -2250,6 +2250,9 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+>          if ((iflags ^ masked_flags) & F2FS_COMPR_FL) {
+>                  if (masked_flags & F2FS_COMPR_FL) {
+>                          if (!f2fs_disable_compressed_file(inode))
+>                                  return -EINVAL;
+>                  } else {
+> +                       if (mapping_large_folio_support(inode->i_mapping))
+> +                               return -EOPNOTSUPP;
+> +
+>                          /* try to convert inline_data to support compression */
+>                          int err = f2fs_convert_inline_inode(inode);
+>                          if (err)
+>                                  return err;
+> 
+> Another implementation is:
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -2250,6 +2250,9 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+>          if ((iflags ^ masked_flags) & F2FS_COMPR_FL) {
+>                  if (masked_flags & F2FS_COMPR_FL) {
+>                          if (!f2fs_disable_compressed_file(inode))
+>                                  return -EINVAL;
+>                  } else {
+> +                       if (IS_ENABLED(CONFIG_F2FS_LARGE_FOLIO))
+> +                               return -EOPNOTSUPP;
+> +
+>                          /* try to convert inline_data to support compression */
+>                          int err = f2fs_convert_inline_inode(inode);
+>                          if (err)
+>                                  return err;
+> 
+> The concern with this approach is that new files trying to set compression
+> through the ioctl will be rejected, so compression will not be available. I
+> think we can document that enabling large-folio support in f2fs disables
+> compression.
+> 
+> 2. Keep the compression flag and restore order 0
+> 
+> If the compression flag and compression functionality need to remain
+> available, we can restore the mapping order to 0 after set_compress_context()
+> successfully sets the compression flag in f2fs_setflags_common():
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -2268,6 +2268,10 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+>                                  return -EINVAL;
+>                          }
+>                          err = set_compress_context(inode);
+> +                       if (!err &&
+> +                           mapping_large_folio_support(inode->i_mapping))
+> +                               mapping_set_folio_order_range(
+> +                                       inode->i_mapping, 0, 0);
 
-Seems generally fine to me,
-Acked-by: Christian Brauner (Amutable) <braurg>
+I prefer this solution, it keeps f2fs compression functionality available, rather
+than just disabling it after we enable large folio. I suspect there is existing
+users: applications are using it, I don't want to break any userspace use.
 
--- 
+>                          f2fs_up_write(&fi->i_sem);
+> 
+>                          if (err)
+>                                  return err;
+> 
+> Under normal Android workloads, a file whose compression flag can be set by
+> f2fs_setflags_common() has no data blocks. Also, an application will not read
+> a newly created file with size 0 and fill the page cache with zeroed large
+> folios. Therefore, setting the mapping order to 0 here is safe.
+> 
+> A theoretical sequence is: create a file, use ftruncate() to extend it to a
+> non-zero size without allocating data blocks, read the file holes so that
+> zeroed large folios are left in the page cache, and then set the compression
+> flag through the ioctl. If truncate_inode_pages() is not called before the
+> mapping order is reset, the existing large folios remain in the page cache.
+> Also, since mapping_set_folio_order_range() is not atomic, readahead may
+> theoretically access the mapping's folio-order flags without holding the inode
+> lock. Neither case is expected under normal Android workloads.
+
+Can we call truncate_inode_pages() after mapping_set_folio_order_range()? something
+like this:
+
+		filemap_invalidate_lock
+
+		mapping_set_folio_order_range(, 0, 0)
+		truncate_inode_pages()
+
+		if (mapping->nrpages) {
+			err = -EBUSY;
+			goto out_unlock;
+		}
+
+		...
+		err = set_compress_context(inode);
+		...
+
+		filemap_invalidate_unlock
+
+Thanks,
+
+> 
+> Jaegeuk previously mentioned that a file could have both the compression flag
+> and a large-folio mapping. Its writeback could use the normal large-folio path
+> without actually compressing the file. After the inode is evicted and the file
+> is opened again, f2fs_iget() would see the compression flag, prevent the
+> large-folio mapping from being enabled, and return to the normal order-0 read
+> path. Chao Yu pointed out that it would be functionally strange if a file
+> with the compression flag was not compressed during its first writeback.
+> 
+> Please let us know which of the above approaches you think is better, or
+> whether we have another better approach.
+> 
+> Thanks,
+> 
+> Nanzhe
+> 
 
 
 
