@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A585CC55162
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 02:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1DF30C55174
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 03:04:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=t7cYAvLwLwMg3uf0IwQCAZA2eeY9D1dNWnm5x5FQMBc=; b=A0nTcsqRZhUhw6bYo/Gsh7lhK7
-	ep6nNSs+ny4GHEjozpVbWq2ycWcN0otAXWLpYF29A4D4TT3E/DBGk90VR8TlVnBTbDmEjJLwdYL1p
-	FEBcOM60MIcSLHU4B4QODFt/2Vr/1xqh5Lh0//r5qh4y+LUTs9PhycWTFB+0IkcwDaHE=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=gaceZtFdZgfmF60U0xMn1JDLgeQ6OvbigOyCggXAt4o=; b=LgkidNqF0T/8SyRADvvuAeGime
+	R6J3fOEUXJBCJ+Z7jCh4vLJwugeV0MZNaOAA/Cs+PxKKEAvFDpEES8tFJiy9Z25hvbe6ZZQzqAJll
+	H1caxBvQGwB+oWIRcjverI4FPMSoJVslWwnpecqNtxNjSNnIQs2LHRZrj4trUTHWqFME=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wqiUE-00023L-Rx;
-	Mon, 03 Aug 2026 02:33:07 +0000
+	id 1wqiyp-00060i-20;
+	Mon, 03 Aug 2026 03:04:40 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wqiUD-00023D-Sf
+ (envelope-from <chao@kernel.org>) id 1wqiym-00060c-Hx
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 02:33:06 +0000
+ Mon, 03 Aug 2026 03:04:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yUUdgUi+9aMNWWibyppTVdNTC32O/HmK8pKq6gK212Q=; b=K7SaeiIHioMQBCjTGRiQUKsquw
- 8czrk0GodcLqSARja7rH+l+BanhiZii69cgoskjHLnwVSkNjp2VcEsYNgIG3bmg09spN+i/4sS/6J
- +z0dUnKhbo9QuiDM6vgXe0lQ13ViWu2PNpiJC1MJwjyA293ylhAjFYoUqE1cnL+nj168=;
+ bh=6fJcLy6n1zDvyoFaA5W3X+l8LTPqOlt+uZqCUBrTpg8=; b=VLJIYHKpYqN5KYYODZs6249xvl
+ 9vOSJI730mZ9hBK6HZyJT8MfZhC+LlAfjR07UT8K313Umsfd5fj66XfaQWvAaojwncq3LErj7Il9s
+ v7FkdC9dWf7y2K6EGUQzr1zGO7e1ee+Ig8VC/OlrCWTRF6uvWNlYXYTMUxoQi9BoiFsw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=yUUdgUi+9aMNWWibyppTVdNTC32O/HmK8pKq6gK212Q=; b=aWiQ/utEs+bkdMMKTncukaJTXi
- KtDlL3qlskh7mfwXwnlRnGD6nHt5+8uscT+DqPcqKE6tBZuUszvhjnJ9R5+YxMtmJuGP34rq7HHV+
- 9HAYE6JLIGrYK4AARCgp/T9raBHXQUZRUB5Emrc6u93CLNiqWuaHedY5rCTJ5lGxNJZo=;
+ bh=6fJcLy6n1zDvyoFaA5W3X+l8LTPqOlt+uZqCUBrTpg8=; b=k1zRpxEWHP2iW08vhL/un5AQd9
+ aQn/45EHjScaW06UvTuV/lE+4RiK0HtZLWx4A9ZeDscVxOoOIM1GjU1feBra+5PPEAEhGz9qmM+J8
+ bhpJgtRZ6jL5XwKDwcNbjSZQvm1qPua4LJX8guNcPneA65/FdrRspIH636olfPnhZUys=;
 Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wqiUH-00053q-Bb for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 02:33:06 +0000
+ id 1wqiyi-0006gl-2Z for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Aug 2026 03:04:37 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 50F9E405C1;
- Mon,  3 Aug 2026 02:33:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEF341F000E9;
- Mon,  3 Aug 2026 02:32:58 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 71FEA41723;
+ Mon,  3 Aug 2026 03:04:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8FC31F000E9;
+ Mon,  3 Aug 2026 03:04:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785724380;
- bh=yUUdgUi+9aMNWWibyppTVdNTC32O/HmK8pKq6gK212Q=;
+ s=k20260515; t=1785726270;
+ bh=6fJcLy6n1zDvyoFaA5W3X+l8LTPqOlt+uZqCUBrTpg8=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=Ef3ViM9pSMIfreQIIEC9pPGLP+7/OPPV0udEOcit73/Uz+Yu9q3MVI9hR1sCX38A4
- w0T4VWfguB2A+1pn1YgyHp21hz21RgbYQxvKGz10v/upc3SGkfbDk/0F0BNzFWCB+8
- L2aXGLYSghrlEaCmAbD9Fb1L712TJnZgsBv7+MuSWD6ZmNzs9W5zRmTHQMK2FTvIGj
- rVbR2QUTgP/SfebomAOW0sSJUzwd9ZFIunpXru2vOTsKpWcdNXNCi8h0jRWsBx45wW
- 1JiZVbN0QahgHkHMBwpfTUoLdkfxcit7GT4TG7jCUa3Kz/yx38Pi9pociVOmpI+QPf
- fEJAVVwzz1Q4g==
-Message-ID: <4549a2d6-f512-4f34-a6bd-5e7324f037ad@kernel.org>
-Date: Mon, 3 Aug 2026 10:32:56 +0800
+ b=WYOZ3DWweT8JtOL+BV/9B72upY0i5oDdgjLvfvoh6TmW//MjI4txYr1gmQuKaw21/
+ nQQuijkosS3SzDjTM9MltHSP6csNttR1ex0+iqh6yqmwM9cDAsgVRTX3miEoz8Ubbm
+ DNzWPamAJvMs/G8VxQB7FH0/yRkpsF3UcV5i2m7NMCivhn6dCAjp2Xh+nb6KOwbAjV
+ m/teh+Guo6+fugCYSlr60paaNhaRYF5/SIbgR0ktpNIhOpaInMc26oPaob+PrsHVZY
+ rIJFx101GfrzA83AnfFC2AgkmgOEwhv1mLO6xXwdr8AOiJ+pJtFLIrh5kag4yyx6ww
+ +nDpGFkSnJioA==
+Message-ID: <8ec122ba-7c79-48b0-ac44-100c4840b5bd@kernel.org>
+Date: Mon, 3 Aug 2026 11:04:26 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Wenjie Qi <qwjhust@gmail.com>, jaegeuk@kernel.org
-References: <20260616125219.1396871-1-qiwenjie@xiaomi.com>
+References: <20260630031700.2573819-1-qiwenjie@xiaomi.com>
 Content-Language: en-US
-In-Reply-To: <20260616125219.1396871-1-qiwenjie@xiaomi.com>
-X-Headers-End: 1wqiUH-00053q-Bb
-Subject: Re: [f2fs-dev] [PATCH] f2fs: account compressed writeback by raw
- folio type
+In-Reply-To: <20260630031700.2573819-1-qiwenjie@xiaomi.com>
+X-Headers-End: 1wqiyi-0006gl-2Z
+Subject: Re: [f2fs-dev] [PATCH] f2fs: validate MOVE_RANGE destination size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,122 +88,29 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: qiwenjie@xiaomi.com, linux-kernel@vger.kernel.org,
+Cc: stable@kernel.org, qiwenjie@xiaomi.com, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 6/16/26 20:52, Wenjie Qi wrote:
-> Compressed writeback is always charged as F2FS_WB_CP_DATA today because
-> WB_DATA_TYPE() is called with compressed_page set.  That is wrong for
-> normal compressed file writeback; the CP guarantee belongs to the raw
-> pagecache folio, not the compressed bounce page.
+On 6/30/26 11:17, Wenjie Qi wrote:
+> F2FS_IOC_MOVE_RANGE checks the source range, but not the destination end
+> before updating i_size. A source hole can expose this: __clone_blkaddrs()
+> skips NULL_ADDR entries and returns success, so the caller can still extend
+> the destination inode with unchecked pos_out + len.
+> 
+> Reject destination overflow and use inode_newsize_ok() before extending
+> the destination inode.
+> 
+> Fixes: 4dd6f977fc77 ("f2fs: support an ioctl to move a range of data blocks")
+> Cc: stable@kernel.org
+> Assisted-by: Codex:gpt-5.5
+> Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
 
-IIUC, I changed compressed writeback guaranteed by checkpoint to avoid
-compressed cluster corruption when encountering power off recovery after
-fsync/sync.
-
-I didn't get why it's wrong to set F2FS_WB_CP_DATA for compressed page,
-can you please explain more?
+Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
-
-> 
-> Use the raw folio for the writeback count type.  Also keep one raw page
-> under writeback until the compressed end_io callback is done using sbi,
-> as normal compressed writeback is no longer protected by the CP-data
-> counter.
- > > Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
-> ---
-> QEMU/KASAN tested with compress_mode=fs and compress_mode=user, using
-> concurrent 1MiB compressed writes and a background sync loop.  The user
-> mode case also ran F2FS_IOC_COMPRESS_FILE and fsync.  No dmesg splat was
-> reported and fsck.f2fs passed after unmount.
-> 
->   fs/f2fs/compress.c | 34 +++++++++++++++++++++++++++-------
->   fs/f2fs/data.c     |  2 +-
->   2 files changed, 28 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index 91855d91bbdd..be9483b9a401 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -1487,9 +1487,19 @@ void f2fs_compress_write_end_io(struct bio *bio, struct folio *folio)
->   	struct page *page = &folio->page;
->   	struct f2fs_sb_info *sbi = bio->bi_private;
->   	struct compress_io_ctx *cic = folio->private;
-> -	enum count_type type = WB_DATA_TYPE(folio, true);
-> +	unsigned int offset = folio->index & (cic->nr_rpages - 1);
-> +	struct page *last_page = NULL;
-> +	enum count_type type;
->   	int i;
->   
-> +	if (unlikely(!offset || offset >= cic->nr_rpages ||
-> +		     !cic->rpages[offset])) {
-> +		f2fs_bug_on(sbi, 1);
-> +		type = F2FS_WB_CP_DATA;
-> +	} else {
-> +		type = WB_DATA_TYPE(page_folio(cic->rpages[offset]), false);
-> +	}
-> +
->   	if (unlikely(bio->bi_status != BLK_STS_OK))
->   		mapping_set_error(cic->inode->i_mapping, -EIO);
->   
-> @@ -1501,21 +1511,31 @@ void f2fs_compress_write_end_io(struct bio *bio, struct folio *folio)
->   	}
->   
->   	for (i = 0; i < cic->nr_rpages; i++) {
-> -		WARN_ON(!cic->rpages[i]);
-> +		if (WARN_ON(!cic->rpages[i]))
-> +			continue;
-> +		last_page = cic->rpages[i];
-> +	}
-> +
-> +	for (i = 0; i < cic->nr_rpages; i++) {
-> +		if (!cic->rpages[i])
-> +			continue;
->   		clear_page_private_gcing(cic->rpages[i]);
-> -		end_page_writeback(cic->rpages[i]);
-> +
-> +		if (cic->rpages[i] != last_page)
-> +			end_page_writeback(cic->rpages[i]);
->   	}
->   
->   	page_array_free(sbi, cic->rpages, cic->nr_rpages);
->   	kmem_cache_free(cic_entry_slab, cic);
->   
->   	/*
-> -	 * Make sure dec_page_count() is the last access to sbi.
-> -	 * Once it drops the F2FS_WB_CP_DATA counter to zero, the
-> -	 * unmount thread can proceed to destroy sbi and
-> -	 * sbi->page_array_slab.
-> +	 * Keep all sbi accesses before the last raw page writeback is
-> +	 * released, so an unmount thread cannot free sbi while this callback
-> +	 * is still using it.
->   	 */
->   	dec_page_count(sbi, type);
-> +	if (last_page)
-> +		end_page_writeback(last_page);
->   }
->   
->   static int f2fs_write_raw_pages(struct compress_ctx *cc,
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index a765fda71536..1466a7825dc5 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1092,7 +1092,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
->   	/* set submitted = true as a return value */
->   	fio->submitted = 1;
->   
-> -	type = WB_DATA_TYPE(bio_folio, fio->compressed_page);
-> +	type = WB_DATA_TYPE(fio->compressed_page ? fio->folio : bio_folio, false);
->   	inc_page_count(sbi, type);
->   
->   	if (io->bio &&
-> 
-> base-commit: 7cc48ead1a8a96f2dd1eabd87c2f22947dc84cdf
-
 
 
 _______________________________________________
