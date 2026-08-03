@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3CF55C55162
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 02:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A585CC55162
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 02:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=AL2SAwFUtpuCiAMueUcnrkR2lrhBZtzXwRRjm29tT9k=; b=jnucpy1MGdBWcAjkaiHe4X/jM7
-	em+U3IpKloiaSVZN9azo5bbNeGVlTTyeNyi/unshiDp40TeVvd0PImecvE13HdpcbYEelKuyvADW7
-	BfaiDs2mpx/YFColmMny4djXIW93q1slWAeBGXun0GImGEotXcRa9a/oP3QhYCCLj9ZE=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=t7cYAvLwLwMg3uf0IwQCAZA2eeY9D1dNWnm5x5FQMBc=; b=A0nTcsqRZhUhw6bYo/Gsh7lhK7
+	ep6nNSs+ny4GHEjozpVbWq2ycWcN0otAXWLpYF29A4D4TT3E/DBGk90VR8TlVnBTbDmEjJLwdYL1p
+	FEBcOM60MIcSLHU4B4QODFt/2Vr/1xqh5Lh0//r5qh4y+LUTs9PhycWTFB+0IkcwDaHE=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wqiAI-0003ct-HV;
-	Mon, 03 Aug 2026 02:12:30 +0000
+	id 1wqiUE-00023L-Rx;
+	Mon, 03 Aug 2026 02:33:07 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wqiAA-0003ch-DG
+ (envelope-from <chao@kernel.org>) id 1wqiUD-00023D-Sf
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 02:12:22 +0000
+ Mon, 03 Aug 2026 02:33:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ld3fnnQevrRHNCxH/HctbVgrPv5BoFsH/RwdXZ9V4w4=; b=ZggsDRkeOaR8VyyQ+dkAgr6F5j
- iaWE/NOJ0H1pTZJ+S6jMI51PlOlJ/CShSIXLcQwr3w5BI9ouNM+srHaYEvsNqQfh8e+3aK3z1KAfd
- BwHIojOCEc63vfrxKVm1MakLO3BxeuiTXD2XD18R1AjexrR88yszp2xooSCqDJPVTWnw=;
+ bh=yUUdgUi+9aMNWWibyppTVdNTC32O/HmK8pKq6gK212Q=; b=K7SaeiIHioMQBCjTGRiQUKsquw
+ 8czrk0GodcLqSARja7rH+l+BanhiZii69cgoskjHLnwVSkNjp2VcEsYNgIG3bmg09spN+i/4sS/6J
+ +z0dUnKhbo9QuiDM6vgXe0lQ13ViWu2PNpiJC1MJwjyA293ylhAjFYoUqE1cnL+nj168=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,41 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Ld3fnnQevrRHNCxH/HctbVgrPv5BoFsH/RwdXZ9V4w4=; b=bY6xsrxt4YrvFYpTuJ81dhlWHg
- wBoTerfwUkIHEfZBMaOm9Mk5HfoHOBHWOrS+gvmGxjpTL+50iiVEBZzW4arFT4g1bBNeoI/M+aobH
- 1NPGr+cSNvJFzNr8QvRSzbhwASxByr65iexMRVtYptAJw+XS3zQ4oy1AieWvEFbniPFw=;
+ bh=yUUdgUi+9aMNWWibyppTVdNTC32O/HmK8pKq6gK212Q=; b=aWiQ/utEs+bkdMMKTncukaJTXi
+ KtDlL3qlskh7mfwXwnlRnGD6nHt5+8uscT+DqPcqKE6tBZuUszvhjnJ9R5+YxMtmJuGP34rq7HHV+
+ 9HAYE6JLIGrYK4AARCgp/T9raBHXQUZRUB5Emrc6u93CLNiqWuaHedY5rCTJ5lGxNJZo=;
 Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wqiA9-0004pJ-PN for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 02:12:22 +0000
+ id 1wqiUH-00053q-Bb for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Aug 2026 02:33:06 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 374EA406C9;
- Mon,  3 Aug 2026 02:12:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE6471F000E9;
- Mon,  3 Aug 2026 02:12:14 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 50F9E405C1;
+ Mon,  3 Aug 2026 02:33:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEF341F000E9;
+ Mon,  3 Aug 2026 02:32:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785723136;
- bh=Ld3fnnQevrRHNCxH/HctbVgrPv5BoFsH/RwdXZ9V4w4=;
+ s=k20260515; t=1785724380;
+ bh=yUUdgUi+9aMNWWibyppTVdNTC32O/HmK8pKq6gK212Q=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=b2SfWOxjEUBGOQMBFl0eWmrxDRdoqendt3DIjYSYZwWazNAW2WhSmrOUh7vwIFEzG
- 6NZdAtJgFACGbGAWnUHTL6EJzlkLc1W6Wq2n1iq9EXkTXPJpRcdapczHFenC78VnSx
- SKX/HNCV21jABeRSK16H0gpKexNwPolYgq4N3yunKhr5rA4TyMzi36E9ZQXQkeJKBX
- ktAhHy/pZxm+djce0W1TIEpn2TVyK0ElC3GL4sKd/euY6a6ptN/jfXM6pPY+sEhH4x
- szOvxC99qfk8Cczil1mCT1be44FwC7wxExZY07Zn6w6+/6LpKgI6RHhXib1CQPDh/O
- kO8TQp0IwSQlw==
-Message-ID: <01934160-5194-4a74-867a-11da373a3630@kernel.org>
-Date: Mon, 3 Aug 2026 10:12:12 +0800
+ b=Ef3ViM9pSMIfreQIIEC9pPGLP+7/OPPV0udEOcit73/Uz+Yu9q3MVI9hR1sCX38A4
+ w0T4VWfguB2A+1pn1YgyHp21hz21RgbYQxvKGz10v/upc3SGkfbDk/0F0BNzFWCB+8
+ L2aXGLYSghrlEaCmAbD9Fb1L712TJnZgsBv7+MuSWD6ZmNzs9W5zRmTHQMK2FTvIGj
+ rVbR2QUTgP/SfebomAOW0sSJUzwd9ZFIunpXru2vOTsKpWcdNXNCi8h0jRWsBx45wW
+ 1JiZVbN0QahgHkHMBwpfTUoLdkfxcit7GT4TG7jCUa3Kz/yx38Pi9pociVOmpI+QPf
+ fEJAVVwzz1Q4g==
+Message-ID: <4549a2d6-f512-4f34-a6bd-5e7324f037ad@kernel.org>
+Date: Mon, 3 Aug 2026 10:32:56 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20260606011942.1206814-1-daeho43@gmail.com>
+To: Wenjie Qi <qwjhust@gmail.com>, jaegeuk@kernel.org
+References: <20260616125219.1396871-1-qiwenjie@xiaomi.com>
 Content-Language: en-US
-In-Reply-To: <20260606011942.1206814-1-daeho43@gmail.com>
-X-Headers-End: 1wqiA9-0004pJ-PN
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs_io: add dev_alias command for
- dynamic device aliasing management
+In-Reply-To: <20260616125219.1396871-1-qiwenjie@xiaomi.com>
+X-Headers-End: 1wqiUH-00053q-Bb
+Subject: Re: [f2fs-dev] [PATCH] f2fs: account compressed writeback by raw
+ folio type
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,116 +89,121 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Daeho Jeong <daehojeong@google.com>
+Cc: qiwenjie@xiaomi.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Daeho, can you please update this patch to use last ioctl interface?
+On 6/16/26 20:52, Wenjie Qi wrote:
+> Compressed writeback is always charged as F2FS_WB_CP_DATA today because
+> WB_DATA_TYPE() is called with compressed_page set.  That is wrong for
+> normal compressed file writeback; the CP guarantee belongs to the raw
+> pagecache folio, not the compressed bounce page.
 
-On 6/6/26 09:19, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
+IIUC, I changed compressed writeback guaranteed by checkpoint to avoid
+compressed cluster corruption when encountering power off recovery after
+fsync/sync.
+
+I didn't get why it's wrong to set F2FS_WB_CP_DATA for compressed page,
+can you please explain more?
+
+Thanks,
+
 > 
-> This commit adds a new 'dev_alias' command to f2fs_io tool to support
-> dynamic inclusion, exclusion and status querying of device alias ranges.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> Use the raw folio for the writeback count type.  Also keep one raw page
+> under writeback until the compressed end_io callback is done using sbi,
+> as normal compressed writeback is no longer protected by the CP-data
+> counter.
+ > > Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
 > ---
-> v2: remove a f2fs specific flag from getflags.
-> ---
->   tools/f2fs_io/f2fs_io.c | 46 +++++++++++++++++++++++++++++++++++++++++
->   tools/f2fs_io/f2fs_io.h |  7 +++++++
->   2 files changed, 53 insertions(+)
+> QEMU/KASAN tested with compress_mode=fs and compress_mode=user, using
+> concurrent 1MiB compressed writes and a background sync loop.  The user
+> mode case also ran F2FS_IOC_COMPRESS_FILE and fsync.  No dmesg splat was
+> reported and fsck.f2fs passed after unmount.
 > 
-> diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-> index c977f4d..3fa323b 100644
-> --- a/tools/f2fs_io/f2fs_io.c
-> +++ b/tools/f2fs_io/f2fs_io.c
-> @@ -2509,6 +2509,51 @@ static void do_test_lookup_perf(int argc, char **argv, const struct cmd_desc *cm
->   	exit(0);
+>   fs/f2fs/compress.c | 34 +++++++++++++++++++++++++++-------
+>   fs/f2fs/data.c     |  2 +-
+>   2 files changed, 28 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index 91855d91bbdd..be9483b9a401 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -1487,9 +1487,19 @@ void f2fs_compress_write_end_io(struct bio *bio, struct folio *folio)
+>   	struct page *page = &folio->page;
+>   	struct f2fs_sb_info *sbi = bio->bi_private;
+>   	struct compress_io_ctx *cic = folio->private;
+> -	enum count_type type = WB_DATA_TYPE(folio, true);
+> +	unsigned int offset = folio->index & (cic->nr_rpages - 1);
+> +	struct page *last_page = NULL;
+> +	enum count_type type;
+>   	int i;
+>   
+> +	if (unlikely(!offset || offset >= cic->nr_rpages ||
+> +		     !cic->rpages[offset])) {
+> +		f2fs_bug_on(sbi, 1);
+> +		type = F2FS_WB_CP_DATA;
+> +	} else {
+> +		type = WB_DATA_TYPE(page_folio(cic->rpages[offset]), false);
+> +	}
+> +
+>   	if (unlikely(bio->bi_status != BLK_STS_OK))
+>   		mapping_set_error(cic->inode->i_mapping, -EIO);
+>   
+> @@ -1501,21 +1511,31 @@ void f2fs_compress_write_end_io(struct bio *bio, struct folio *folio)
+>   	}
+>   
+>   	for (i = 0; i < cic->nr_rpages; i++) {
+> -		WARN_ON(!cic->rpages[i]);
+> +		if (WARN_ON(!cic->rpages[i]))
+> +			continue;
+> +		last_page = cic->rpages[i];
+> +	}
+> +
+> +	for (i = 0; i < cic->nr_rpages; i++) {
+> +		if (!cic->rpages[i])
+> +			continue;
+>   		clear_page_private_gcing(cic->rpages[i]);
+> -		end_page_writeback(cic->rpages[i]);
+> +
+> +		if (cic->rpages[i] != last_page)
+> +			end_page_writeback(cic->rpages[i]);
+>   	}
+>   
+>   	page_array_free(sbi, cic->rpages, cic->nr_rpages);
+>   	kmem_cache_free(cic_entry_slab, cic);
+>   
+>   	/*
+> -	 * Make sure dec_page_count() is the last access to sbi.
+> -	 * Once it drops the F2FS_WB_CP_DATA counter to zero, the
+> -	 * unmount thread can proceed to destroy sbi and
+> -	 * sbi->page_array_slab.
+> +	 * Keep all sbi accesses before the last raw page writeback is
+> +	 * released, so an unmount thread cannot free sbi while this callback
+> +	 * is still using it.
+>   	 */
+>   	dec_page_count(sbi, type);
+> +	if (last_page)
+> +		end_page_writeback(last_page);
 >   }
 >   
-> +#define dev_alias_desc "device alias control"
-> +#define dev_alias_help						\
-> +"f2fs_io dev_alias [include|exclude|status] [file]\n\n"			\
-> +"include, exclude or status a range of device alias given the file\n"
-> +
-> +static void do_dev_alias(int argc, char **argv, const struct cmd_desc *cmd)
-> +{
-> +	int fd, ret;
-> +
-> +	if (argc != 3) {
-> +		fputs("Excess arguments\n\n", stderr);
-> +		fputs(cmd->cmd_help, stderr);
-> +		exit(1);
-> +	}
-> +
-> +	fd = xopen(argv[2], O_RDWR, 0);
-> +
-> +	if (!strcmp(argv[1], "exclude")) {
-> +		ret = ioctl(fd, F2FS_IOC_EXCLUDE_DEV_ALIAS);
-> +		if (ret < 0)
-> +			die_errno("F2FS_IOC_EXCLUDE_DEV_ALIAS failed");
-> +		printf("%s device alias range of %s\n", argv[1], argv[2]);
-> +	} else if (!strcmp(argv[1], "include")) {
-> +		ret = ioctl(fd, F2FS_IOC_INCLUDE_DEV_ALIAS);
-> +		if (ret < 0)
-> +			die_errno("F2FS_IOC_INCLUDE_DEV_ALIAS failed");
-> +		printf("%s device alias range of %s\n", argv[1], argv[2]);
-> +	} else if (!strcmp(argv[1], "status")) {
-> +		u32 status = 0;
-> +
-> +		ret = ioctl(fd, F2FS_IOC_GET_DEV_ALIAS_STATUS, &status);
-> +		if (ret < 0)
-> +			die_errno("F2FS_IOC_GET_DEV_ALIAS_STATUS failed");
-> +
-> +		printf("device alias status of %s: %s\n", argv[2],
-> +			status == F2FS_DEV_ALIAS_STATUS_EXCLUDED ? "excluded" : "included");
-> +	} else {
-> +		fputs("Wrong request type\n\n", stderr);
-> +		fputs(cmd->cmd_help, stderr);
-> +		exit(1);
-> +	}
-> +
-> +	exit(0);
-> +}
-> +
->   #define freeze_desc "freeze filesystem"
->   #define freeze_help "f2fs_io freeze [directory_path]\n\n"
+>   static int f2fs_write_raw_pages(struct compress_ctx *cc,
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index a765fda71536..1466a7825dc5 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1092,7 +1092,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+>   	/* set submitted = true as a return value */
+>   	fio->submitted = 1;
 >   
-> @@ -2603,6 +2648,7 @@ const struct cmd_desc cmd_list[] = {
->   	CMD(get_advise),
->   	CMD(ioprio),
->   	CMD(ftruncate),
-> +	CMD(dev_alias),
->   	CMD(test_create_perf),
->   	CMD(test_lookup_perf),
->   	CMD(freeze),
-> diff --git a/tools/f2fs_io/f2fs_io.h b/tools/f2fs_io/f2fs_io.h
-> index b0d4099..57d96b7 100644
-> --- a/tools/f2fs_io/f2fs_io.h
-> +++ b/tools/f2fs_io/f2fs_io.h
-> @@ -96,6 +96,9 @@ typedef u32	__be32;
->   #define F2FS_IOC_START_ATOMIC_REPLACE	_IO(F2FS_IOCTL_MAGIC, 25)
->   #define F2FS_IOC_GET_DEV_ALIAS_FILE	_IOR(F2FS_IOCTL_MAGIC, 26, __u32)
->   #define F2FS_IOC_IO_PRIO		_IOW(F2FS_IOCTL_MAGIC, 27, __u32)
-> +#define F2FS_IOC_EXCLUDE_DEV_ALIAS	_IO(F2FS_IOCTL_MAGIC, 28)
-> +#define F2FS_IOC_INCLUDE_DEV_ALIAS	_IO(F2FS_IOCTL_MAGIC, 29)
-> +#define F2FS_IOC_GET_DEV_ALIAS_STATUS	_IOR(F2FS_IOCTL_MAGIC, 30, __u32)
+> -	type = WB_DATA_TYPE(bio_folio, fio->compressed_page);
+> +	type = WB_DATA_TYPE(fio->compressed_page ? fio->folio : bio_folio, false);
+>   	inc_page_count(sbi, type);
 >   
->   #ifndef FSCRYPT_POLICY_V1
->   #define FSCRYPT_POLICY_V1		0
-> @@ -200,6 +203,10 @@ enum {
->   	F2FS_IOPRIO_WRITE = 1,  /* high write priority */
->   };
->   
-> +/* for F2FS_IOC_GET_DEV_ALIAS_STATUS */
-> +#define F2FS_DEV_ALIAS_STATUS_INCLUDED	0
-> +#define F2FS_DEV_ALIAS_STATUS_EXCLUDED	1
-> +
->   #ifndef FS_IMMUTABLE_FL
->   #define FS_IMMUTABLE_FL			0x00000010 /* Immutable file */
->   #endif
+>   	if (io->bio &&
+> 
+> base-commit: 7cc48ead1a8a96f2dd1eabd87c2f22947dc84cdf
 
 
 
