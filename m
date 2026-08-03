@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1DF30C55174
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 03:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 03AC7C55162
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 03:12:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=gaceZtFdZgfmF60U0xMn1JDLgeQ6OvbigOyCggXAt4o=; b=LgkidNqF0T/8SyRADvvuAeGime
-	R6J3fOEUXJBCJ+Z7jCh4vLJwugeV0MZNaOAA/Cs+PxKKEAvFDpEES8tFJiy9Z25hvbe6ZZQzqAJll
-	H1caxBvQGwB+oWIRcjverI4FPMSoJVslWwnpecqNtxNjSNnIQs2LHRZrj4trUTHWqFME=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Vh/7AdZifgSAgHoUrUXKHCJeZO8TljvhsMyA1iqoghg=; b=cJfLAT9fniETW7jJCJPbrbkgc2
+	rL6QOveLsil1zoTBEXoygO035vK+ZEF6WpsH/3J9+5ctLPCxkZ17CcVUbfjWa5x12QxMQhv6IQK3g
+	AqgXtHvaIi9QtkX/e00fYXUB4fT5b5QfbGX/3ncGwg0+ZgFiqwQyWxniCjjVKjLvAwkk=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wqiyp-00060i-20;
-	Mon, 03 Aug 2026 03:04:40 +0000
+	id 1wqj66-0004pH-F1;
+	Mon, 03 Aug 2026 03:12:14 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wqiym-00060c-Hx
+ (envelope-from <chao@kernel.org>) id 1wqj65-0004pA-NH
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 03:04:38 +0000
+ Mon, 03 Aug 2026 03:12:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6fJcLy6n1zDvyoFaA5W3X+l8LTPqOlt+uZqCUBrTpg8=; b=VLJIYHKpYqN5KYYODZs6249xvl
- 9vOSJI730mZ9hBK6HZyJT8MfZhC+LlAfjR07UT8K313Umsfd5fj66XfaQWvAaojwncq3LErj7Il9s
- v7FkdC9dWf7y2K6EGUQzr1zGO7e1ee+Ig8VC/OlrCWTRF6uvWNlYXYTMUxoQi9BoiFsw=;
+ bh=mLgTyfjp06VuzJdKqRwdfBH1RxDymkNTrq9wOfnhMGY=; b=NQj24Fq2tPapHVWDVd8HuP8BxH
+ K2+pRPYuwwKHxZAnPMBC2I2UkEtInKzrxbXVdRf6wCL6xkMAKQT/9tW+y7EiU8PmsXMh1TCAtlvLZ
+ i8PKXLCt4LmVQSlZr7cayuSjYh0mtWEnaA7S9/cFNNYfhWzO0wFZDODmbh4W73Zu+F+Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=6fJcLy6n1zDvyoFaA5W3X+l8LTPqOlt+uZqCUBrTpg8=; b=k1zRpxEWHP2iW08vhL/un5AQd9
- aQn/45EHjScaW06UvTuV/lE+4RiK0HtZLWx4A9ZeDscVxOoOIM1GjU1feBra+5PPEAEhGz9qmM+J8
- bhpJgtRZ6jL5XwKDwcNbjSZQvm1qPua4LJX8guNcPneA65/FdrRspIH636olfPnhZUys=;
+ bh=mLgTyfjp06VuzJdKqRwdfBH1RxDymkNTrq9wOfnhMGY=; b=HmPKtQA+IV3lOX9QZP+T3XJcW5
+ kuJRIcDVgkm2/UjDEp8RaSWDlFTYivoYokAyg/vpmcu/wvxxffz+zhV2Vig/prXhKGuonHmJDX6+p
+ YGRAIzYhMq4b5f+nxbT9Kmq++6iwM17T+wKE/AWFEnzh1aXh63CuO+WfY/99KkM0dsR0=;
 Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wqiyi-0006gl-2Z for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 03:04:37 +0000
+ id 1wqj68-0006RA-RM for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Aug 2026 03:12:13 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 71FEA41723;
- Mon,  3 Aug 2026 03:04:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8FC31F000E9;
- Mon,  3 Aug 2026 03:04:28 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id CBE6840511;
+ Mon,  3 Aug 2026 03:12:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 463B91F000E9;
+ Mon,  3 Aug 2026 03:12:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785726270;
- bh=6fJcLy6n1zDvyoFaA5W3X+l8LTPqOlt+uZqCUBrTpg8=;
+ s=k20260515; t=1785726727;
+ bh=mLgTyfjp06VuzJdKqRwdfBH1RxDymkNTrq9wOfnhMGY=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=WYOZ3DWweT8JtOL+BV/9B72upY0i5oDdgjLvfvoh6TmW//MjI4txYr1gmQuKaw21/
- nQQuijkosS3SzDjTM9MltHSP6csNttR1ex0+iqh6yqmwM9cDAsgVRTX3miEoz8Ubbm
- DNzWPamAJvMs/G8VxQB7FH0/yRkpsF3UcV5i2m7NMCivhn6dCAjp2Xh+nb6KOwbAjV
- m/teh+Guo6+fugCYSlr60paaNhaRYF5/SIbgR0ktpNIhOpaInMc26oPaob+PrsHVZY
- rIJFx101GfrzA83AnfFC2AgkmgOEwhv1mLO6xXwdr8AOiJ+pJtFLIrh5kag4yyx6ww
- +nDpGFkSnJioA==
-Message-ID: <8ec122ba-7c79-48b0-ac44-100c4840b5bd@kernel.org>
-Date: Mon, 3 Aug 2026 11:04:26 +0800
+ b=GqQKhS4qivs8koCbPh3oJxukRjZIqeUYfk2RGho/0RTFX8GCwoPjTNU0/I2NqCAid
+ HO3RLcPsDMDigOVgr8+oiErNTHSIz9fRHAG+7K8JP8EvMmLvaq7ZD0ZsYVaDNp6JhG
+ ngO/puoYNdUlEqDVzO4y5dJ8qYidyAWr2lbaRYtQuQLgQ0GVjWVpiHvUf3yHjz1l1S
+ ZKJ2L97wvAKKix5VkKDKmJItDlJh/sHK0xy9/FJHeQaeXn1Lzakc9qQgfVvR31xsZb
+ Bh6Owf2UCuJwcuzWV7qFCje6c9cEZ6y4qodKTgz1r2L8QHVuUu3KQ/qsFbPgcfqcnY
+ wLKnkNdJ2iFXw==
+Message-ID: <4d421da7-aa53-4f31-81d8-c03836487f72@kernel.org>
+Date: Mon, 3 Aug 2026 11:12:04 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Wenjie Qi <qwjhust@gmail.com>, jaegeuk@kernel.org
-References: <20260630031700.2573819-1-qiwenjie@xiaomi.com>
+References: <20260630082331.2757376-1-qiwenjie@xiaomi.com>
 Content-Language: en-US
-In-Reply-To: <20260630031700.2573819-1-qiwenjie@xiaomi.com>
-X-Headers-End: 1wqiyi-0006gl-2Z
-Subject: Re: [f2fs-dev] [PATCH] f2fs: validate MOVE_RANGE destination size
+In-Reply-To: <20260630082331.2757376-1-qiwenjie@xiaomi.com>
+X-Headers-End: 1wqj68-0006RA-RM
+Subject: Re: [f2fs-dev] [PATCH] f2fs: limit recovery filename logging to
+ stored length
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,16 +95,17 @@ Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 6/30/26 11:17, Wenjie Qi wrote:
-> F2FS_IOC_MOVE_RANGE checks the source range, but not the destination end
-> before updating i_size. A source hole can expose this: __clone_blkaddrs()
-> skips NULL_ADDR entries and returns success, so the caller can still extend
-> the destination inode with unchecked pos_out + len.
+On 6/30/26 16:23, Wenjie Qi wrote:
+> F2FS stores recovery filenames as a length plus a fixed-size i_name
+> buffer.  The buffer is not NUL-terminated, but recover_inode() and
+> recover_dentry() print it with %s.
 > 
-> Reject destination overflow and use inode_newsize_ok() before extending
-> the destination inode.
+> For a 255-byte filename, recovery logging can read past i_name into the
+> following raw inode fields.
 > 
-> Fixes: 4dd6f977fc77 ("f2fs: support an ioctl to move a range of data blocks")
+> Print the name with a precision bounded by i_namelen and F2FS_NAME_LEN.
+> 
+> Fixes: f356fe0cba0e ("f2fs: add debug msgs in the recovery routine")
 > Cc: stable@kernel.org
 > Assisted-by: Codex:gpt-5.5
 > Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
