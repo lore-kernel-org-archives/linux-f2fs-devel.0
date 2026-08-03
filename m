@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D4A3FC55175
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 07:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 98677C55184
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 07:53:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=qXWBgSvhB9pNFFKSAWDvi1sVXayKcaoQwSJVC1todjM=; b=QsBQV4BChmy1ObJCH4zPL6Eybh
-	BIw5ZJA+g2VkZzJnfCX9rjT72wX1JFUD4eS/6zC6Jy7MFb/42UU38P8PbmlejdfVbIFb2i4Jl6Lz5
-	95QL4XRzMDLwsL8PJKk5vyAc5DFGvZ5Wq1mOd1bMp29e8CwZD1ood+jFPoIX/DNWImPY=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=hbSOYrQAtggOmDIRWs9NJnAFEakKh8XIb2OVMTu3wXE=; b=dS9oJUGWancXe5fIMRPMZ8JXD5
+	xCV6dzMEO3tv71F5TDsGAXpEFNC89j/xkzmqG8kiudaDBich1VrpsIrqip3yKbu9sVeD/P8CkXEdg
+	iGoPSHn0M5QjfutZozFbKhQmP0pf84pyQcvOi5urnBIa9QSaTiDhUbLx72/k7TFz2AFI=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wqnNM-00033b-R5;
-	Mon, 03 Aug 2026 07:46:21 +0000
+	id 1wqnUj-0002G7-04;
+	Mon, 03 Aug 2026 07:53:57 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wqnNK-00033E-WD
+ (envelope-from <chao@kernel.org>) id 1wqnUh-0002Fy-F7
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 07:46:19 +0000
+ Mon, 03 Aug 2026 07:53:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=n+a3AaSWuqxbjv9Ky++6rdkhgJLQbuwaNSpxDI5Tj1s=; b=DrFOk9Nd7sxQE0KHKTCYJtiKfa
- 3VVlXxlRM0EqJjmEdPLLSexA0OfrtliKpQh4qFqbpM5GotdC5QPBH2V0V9OE8FNBHLsxGKvOr9niv
- it3lN7T6/kn2y3l5x8sRBdRJNIuRyBbb+oMLeDz/8DUnvWIRB0uy34swxUVLt/IcpldI=;
+ bh=s2kmPaBfw4Q8qnlJbZoUCA5TVNQr1VvZKD7T+D/ZMnQ=; b=Hu5Z426oOt4MkbLxyAWjmLCmO1
+ Zga0sGBfewveB4m7E6G04gx4JPKK25MvLsolZ4AV0gSOm4iVRScmOVtRWBlz5gHqV1+8aak0c4JK+
+ 8Llq0LGxhuqPYVMpP+yd1YfeUiRfpfCT4cNiTi2b7wFCu/ECLe57Vh8iajHZMcq5Pzq0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,41 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=n+a3AaSWuqxbjv9Ky++6rdkhgJLQbuwaNSpxDI5Tj1s=; b=NvUsEPNI3es8sIK3t3yYSvtRpj
- i9zlktPjJKuCywCQELQBkFb9SSytnp2tZwcCmuAPnNtAEhig03AZWjdZDZHl/rM9+Nx8X2rUzLW+7
- iHB2C3FDRG1GzdQOmVsoSSdT3UG0MBaPShVjDgOWSTYBpwtA5Xo+1/6NLNyyvqLK5GZ4=;
+ bh=s2kmPaBfw4Q8qnlJbZoUCA5TVNQr1VvZKD7T+D/ZMnQ=; b=ZjUvBjFR6h1QXf8fn0ApkTIhQv
+ NHT9m1QblHCR3A3BCAnq+CnAB0b73H+2prmbTnnu/QcrY2DFCmhREp/CfYptBd2LQBfoEepF5EKMg
+ RoqNzVfMW1FpsUoO1hVrPDZwBTWCw7TEgDEt78EyXVvzJjMaeW4pUr+B5RLivygBUGjM=;
 Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wqnNN-0007JP-Ln for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 07:46:19 +0000
+ id 1wqnUg-0007IH-QM for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Aug 2026 07:53:55 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 6F63460A59;
- Mon,  3 Aug 2026 07:46:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA86F1F000E9;
- Mon,  3 Aug 2026 07:46:10 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 3538B600FF;
+ Mon,  3 Aug 2026 07:53:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 504051F000E9;
+ Mon,  3 Aug 2026 07:53:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785743172;
- bh=n+a3AaSWuqxbjv9Ky++6rdkhgJLQbuwaNSpxDI5Tj1s=;
+ s=k20260515; t=1785743628;
+ bh=s2kmPaBfw4Q8qnlJbZoUCA5TVNQr1VvZKD7T+D/ZMnQ=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=L4rxjS9lcJCuwNJdInBtJPlQHcX7PC2mcE0PsM+NYtux8wpSO8rW89R/2xv6ajC++
- 8MCKEWKdUr9QtqvDuVDNtPB5tnAhnEsQ2Imy08ZBvu+cDayp2d0/EUOnBL5UAik0PO
- akMEzFEwjoOskuCrSEo9SUNzCdZEWbuThHyZ/T2gmbHAhWro9/WnVnsUb+DClmgw9b
- pEl8AgngbK2YmWaPN8m8i6x/PHjKVuJ9Lkpcr6doGcs74nnp+zEJsGxaXU6hHLnHjU
- 1ry39SDE+75kDGo+wYYiF44qAKjjpG1skg/HnoMmtVikiKyZ1jDjx8F+8Kr29bZ3XK
- oeCn+0O2PewNQ==
-Message-ID: <23ec02b1-aff7-40f2-80be-7cb904cb9acb@kernel.org>
-Date: Mon, 3 Aug 2026 15:46:08 +0800
+ b=ERjb+lao44DX2QBSKo3tlfGIymcpKToyvtzmF53mJg7TByXHqhepvqEHeSTf+9ez/
+ G3XH5D2sxismuq7b1UQhz3v9LeC+/fPiRBg0Vc8IMlN50v5YjM9CsbMvglKKTuFYqK
+ pgKKnn57at0IKm56TuWCCfMOlGxSaJ0iLZ6HTff8hqrVCbJdR3wPN9/LrH8pi03dkO
+ coP8680TZc+8VtSI4s1Dm1m/hD+ua6oNBnvK4U8sOkvlE8abxVa0+znF/4EttgzLqq
+ fyIZ/0/xhfFUmQEM/IC8rc2IftfxVPLNy9ziOCZluqhngmqoa1Gf0ZyyfBo9cXnoFK
+ X28LwMqaMi3ww==
+Message-ID: <c235897c-bec7-45f2-aed9-1efa7e0646ed@kernel.org>
+Date: Mon, 3 Aug 2026 15:53:45 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20260723200218.2528887-1-daeho43@gmail.com>
+To: Wenjie Qi <qwjhust@gmail.com>, jaegeuk@kernel.org
+References: <20260724090532.351989-1-qiwenjie@xiaomi.com>
 Content-Language: en-US
-In-Reply-To: <20260723200218.2528887-1-daeho43@gmail.com>
-X-Headers-End: 1wqnNN-0007JP-Ln
-Subject: Re: [f2fs-dev] [PATCH] fsck.f2fs: sanitize invalid segment type
- during block update
+In-Reply-To: <20260724090532.351989-1-qiwenjie@xiaomi.com>
+X-Headers-End: 1wqnUg-0007IH-QM
+Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid NULL checkpoint thread access in
+ sysfs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,81 +89,95 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Daeho Jeong <daehojeong@google.com>
+Cc: stable@kernel.org, qiwenjie@xiaomi.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 7/24/26 04:02, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
+On 7/24/26 17:05, Wenjie Qi wrote:
+> checkpoint_merge is set by default, but the checkpoint merge thread is not
+> created for read-only mounts. The ckpt_thread_ioprio sysfs store path uses
+> the mount option to decide whether to update the task ioprio. On such
+> mounts, writing the node passes a NULL task to set_task_ioprio().
 > 
-> If an invalid segment type (type < 0 || type >= NO_CHECK_TYPE) is read
-> from SIT during block update, update_block() now validates the type,
-> reports corruption, and falls back to a valid active curseg type when
-> fix_on is enabled. find_next_free_block() also validates want_type to
-> prevent out-of-bounds accesses.
+> Keep storing the requested ioprio, but apply it only when the checkpoint
+> thread exists. Take s_umount for ckpt_thread_ioprio and
+> critical_task_priority too, matching the existing protection for GC thread
+> entries.
 > 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> Fixes: e65920661708 ("f2fs: add ckpt_thread_ioprio sysfs node")
+> Cc: stable@kernel.org
+> Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
 > ---
->   fsck/mount.c   |  5 +++++
->   fsck/segment.c | 14 ++++++++++++++
->   2 files changed, 19 insertions(+)
+> Reproducer:
+>    mount -o ro -t f2fs /dev/vdb /mnt/f2fs
+>    echo be,4 > /sys/fs/f2fs/vdb/ckpt_thread_ioprio
 > 
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index 85ed404..ce96a44 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -3059,6 +3059,11 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left,
->   	u64 end_blkaddr = (get_sb(segment_count_main) <<
->   			get_sb(log_blocks_per_seg)) + get_sb(main_blkaddr);
+> Baseline dmesg:
+>    Oops: general protection fault
+>    KASAN: null-ptr-deref in range [0x00000000000007b0-0x00000000000007b7]
+>    RIP: set_task_ioprio+0x8b/0x360
+>    Call Trace:
+>     f2fs_sbi_store+0x2af/0x2580
+>     kernfs_fop_write_iter+0x360/0x620
+>     vfs_write+0x5f8/0xf50
+>     ksys_write+0xf9/0x1d0
+>     do_syscall_64+0x5f/0x550
+> 
+>   fs/f2fs/sysfs.c | 9 ++++++---
+>   1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index be92c05a5420..0294544d3d34 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -557,7 +557,7 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+>   			return -EINVAL;
 >   
-> +	if (want_type < 0 || want_type >= NO_CHECK_TYPE) {
-> +		ERR_MSG("Invalid segment type %d for block allocation\n", want_type);
+>   		cprc->ckpt_thread_ioprio = IOPRIO_PRIO_VALUE(class, level);
+> -		if (test_opt(sbi, MERGE_CHECKPOINT)) {
+> +		if (cprc->f2fs_issue_ckpt) {
+>   			ret = set_task_ioprio(cprc->f2fs_issue_ckpt,
+>   					cprc->ckpt_thread_ioprio);
+>   			if (ret)
+> @@ -1007,13 +1007,16 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+>   	ssize_t ret;
+>   	bool gc_entry = (!strcmp(a->attr.name, "gc_urgent") ||
+>   					a->struct_type == GC_THREAD);
+> +	bool thread_entry = gc_entry ||
+> +			!strcmp(a->attr.name, "ckpt_thread_ioprio") ||
+> +			!strcmp(a->attr.name, "critical_task_priority");
 
-Use ASSERT_MSG() instead? it can set c.bug_on.
+Oh, seems you fixed another race issue in this patch as well?
 
-> +		return -EINVAL;
-> +	}
-> +
->   	if (c.zoned_model == F2FS_ZONED_HM && !new_sec) {
->   		struct curseg_info *curseg = CURSEG_I(sbi, want_type);
->   		unsigned int segs_per_zone = sbi->segs_per_sec * sbi->secs_per_zone;
-> diff --git a/fsck/segment.c b/fsck/segment.c
-> index 46dc747..1ae90bf 100644
-> --- a/fsck/segment.c
-> +++ b/fsck/segment.c
-> @@ -779,6 +779,20 @@ int update_block(struct f2fs_sb_info *sbi, void *buf, u32 *blkaddr,
->   	se = get_seg_entry(sbi, GET_SEGNO(sbi, old_blkaddr));
->   	offset = OFFSET_IN_SEG(sbi, old_blkaddr);
->   	type = se->type;
-> +	if (type < 0 || type >= NO_CHECK_TYPE) {
-> +		MSG(0, "[FSCK] Invalid SIT segment type %d at blkaddr 0x%"PRIx64"\n",
-> +				type, old_blkaddr);
-> +		c.bug_on = 1;
+"mount -o remount,ro" vs "echo xx > critical_task_priority"
 
-Ditto,
+Can you fix this in a separated patch?
 
-> +
-> +		if (!c.fix_on)
-> +			return -EINVAL;
-> +
-> +		int fixed_type = IS_NODESEG(type) ? CURSEG_HOT_NODE : CURSEG_HOT_DATA;
-> +
-> +		FIX_MSG("Correct invalid segment type %d -> %d for blkaddr 0x%"PRIx64"\n",
-> +				type, fixed_type, old_blkaddr);
-> +		type = fixed_type;
+>   
+> -	if (gc_entry) {
+> +	if (thread_entry) {
 
-How about fixing se->type directly, otherwise we may fix this in local stack
-repeatly whenever encounter this buggy se->type.
+bool thread_entry = !strcmp(a->attr.name, "ckpt_thread_ioprio") ||
+			!strcmp(a->attr.name, "critical_task_priority");
 
-Please refer to fix_section_type().
+if (gc_entry || thread_entry)
+
+>   		if (!down_read_trylock(&sbi->sb->s_umount))
+>   			return -EAGAIN;
+>   	}
+>   	ret = __sbi_store(a, sbi, buf, count);
+> -	if (gc_entry)
+> +	if (thread_entry)
+
+if (gc_entry || thread_entry)
 
 Thanks,
 
-> +	}
->   	se->valid_blocks--;
->   	f2fs_clear_bit(offset, (char *)se->cur_valid_map);
->   	if (need_fsync_data_record(sbi))
+>   		up_read(&sbi->sb->s_umount);
+>   
+>   	return ret;
 
 
 
