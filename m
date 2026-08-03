@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5BF58C55196
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 20:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7B017C55182
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 20:09:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=pRZ91UbeBFY/Tw/5C9mDPdofv41GOArg2AZhVCPHBYc=; b=CNn1MV1sX0zNHiIC93eolMU0vY
-	BQEqINQhyEE6cfYxhG2gH7vtn8rA4YMIk1J8NKEOM+MbtxcdLjKKWGCmdhQbwNes1gNFMlK4AkXAS
-	+mHv3GT4rCDcqsvDf4pEw2bml5JgpDZ8ncb7EgECf5FzjBn+VTJZVFiGFDSilBZAnTPY=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=rgdRltfYZPVAZa9rEsAO18dzS/C2P1NRwMGB66PS+UU=; b=N6SaPhBNSLUvT3FL05gwEdNIuC
+	oTbEmYpox/Ca/UzDNU05U7uE0l8C3V+QT+KMrdIOEtefR6yUAhqyE3nmlSMpE9/voaWod6fvYqIn1
+	lS3AQAHNIjCnlRb9X+OwBkFFjYb9l6XxYhvMbEPBUTchlHYPHfPJrh1kIWynLKRANVtA=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wqyym-0004Fy-8t;
-	Mon, 03 Aug 2026 20:09:45 +0000
+	id 1wqyyr-0001bJ-PY;
+	Mon, 03 Aug 2026 20:09:49 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1wqyyk-0004Fd-DV
+ (envelope-from <aalbersh@kernel.org>) id 1wqyyp-0001b6-OY
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 20:09:43 +0000
+ Mon, 03 Aug 2026 20:09:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=f6lFZ+zFVW+ee359CJGo6s1PxiJC5wOAqyw1jZLM8dE=; b=IwBehNkpRalqMAy4cP/QaI49tp
- k7WqkjXQ4ylpCAwTZSplh9jI6qrBm3saa0FEY0UDqJCLKAdlJsKxrtWLa1EbNT0KWdTqYi/tHMtuo
- 1tdV7duwhQqLGuL6gjlN21i76sBz1cNXimmPkflsT0rx2QQpiKqWHOEVjIqJj7QGQYjM=;
+ bh=wjtx2lzB3uvb4xU+DIuox4Zw+1tx5e8JwgBOS4wBSrM=; b=SVnGRncp0DGMfOssXuyqWlN5IE
+ 4KTzd0rfwAQwJtU6yxkYk7Ykii243/vdgN+V6AfcRamzZJx2q+b5NI7O1hZboAmQ/P+F/kwBk0Ttl
+ 9yLlwZJjtdTSlL94anJD35OVQI81oQwKubpcKoec1sjocF/6Ex4k2fX7fZ2FC1Hzjhso=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=f6lFZ+zFVW+ee359CJGo6s1PxiJC5wOAqyw1jZLM8dE=; b=aCTBQzHRwZkIBmaKvrZf7jmU3P
- fPddDKQpfQXMkpFlHD/kGUquCbo4hEBGDdQb/QKE4asK2+JJWDnc3MaJl+WTC1cs43QAJnI9Fs//2
- SrJW1M45/Wsg8nIyl0SCo2fkVpNionAiYb6XauiT3jCJKm4KCk2TAiTuSoAi2ONM4FUA=;
+ bh=wjtx2lzB3uvb4xU+DIuox4Zw+1tx5e8JwgBOS4wBSrM=; b=RwGEvqJQin0BLoYL/PykO02KVL
+ wrnEwXg/RXxTvv15lntMLsWkRfk/S5C8SZKWUPXP5hRVCDkzrmB5Fh5rmV7gv6WeylVQMUSjPmPNT
+ EmeWfp4mj7hURHr/niJaT+Qb/5hugPZYs6RD676FoXxvYIhfLeCsI9RQ/h7BisupT1wA=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wqyyo-0000vw-4x for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 20:09:43 +0000
+ id 1wqyyr-0000w7-NM for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Aug 2026 20:09:47 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 0D99560A86;
+ by tor.source.kernel.org (Postfix) with ESMTP id 9A76960AAE;
+ Mon,  3 Aug 2026 20:09:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C45B1F000E9;
  Mon,  3 Aug 2026 20:09:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DC671F00A3A;
- Mon,  3 Aug 2026 20:09:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785787776;
- bh=f6lFZ+zFVW+ee359CJGo6s1PxiJC5wOAqyw1jZLM8dE=;
+ s=k20260515; t=1785787780;
+ bh=wjtx2lzB3uvb4xU+DIuox4Zw+1tx5e8JwgBOS4wBSrM=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=Wr6igXIauB91HFQFmq+MGUb/tqIIyuGrbSt8hPy6iTuO6nwYCBktptty9BbGd30jf
- 4ueI3bTDnfR7zhVmYuZXb5n11fe4Yp7T1LdZVMtGcpW+pLKAk2/wjCucUTCBWjjTWF
- suv2G36o+t4sYpgP2h0UbPK3aFd6D7MrJXFt6Ra4n65sdIQlxqH0hruHUN0uqt0FeO
- fD/xeR94JPnLh0amFqfpAk86mhpbdcCymmfK7QsdmohksSJTKAobwWgzUbaAI+WQ3c
- uCaX7PKjL5i2zS/BfzPaTVUdvkDb5dhzQPbd0zZez24ppgF0hBmzGK/uQnBJu2Rt6U
- EYefu7BJaEonw==
+ b=Hh8QvR+JFM2vn4N8VLB37XpPKP5uUHDwceciA0yfCjevTsXCLlnwKeeOb129Ju6t3
+ 2zCMkCj4OKZHfvUFjTinanm2t2oJzRF3BRQ0sobK/7EZebjRpIR70tSHwNjHAEAcVo
+ hXn/COW8tAx/oAWUU7SL8hlg5obYE3oJuFa++OxPqrko+JiJD/gLhUVduqCjyp/+7T
+ QX96xsvInL7laJSob55Ir8joh70s0rpH64v9kXjddPSAV4IF9UAvXANpT0ZMsyqmH8
+ wRH0CsH+c+lKBScybPP+N69Eg7FrcYDF97ciWIMO7m+5lBZU3l0V6Ar2ZKgLSGDHBt
+ Mv4fGIOq/wSUg==
 To: linux-xfs@vger.kernel.org, fsverity@lists.linux.dev,
  linux-fsdevel@vger.kernel.org, ebiggers@kernel.org
-Date: Mon,  3 Aug 2026 22:08:00 +0200
-Message-ID: <20260803200820.393203-11-aalbersh@kernel.org>
+Date: Mon,  3 Aug 2026 22:08:01 +0200
+Message-ID: <20260803200820.393203-12-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260803200820.393203-1-aalbersh@kernel.org>
 References: <20260803200820.393203-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wqyyo-0000vw-4x
-Subject: [f2fs-dev] [PATCH v14 10/21] xfs: disable direct read path for
- fs-verity files
+X-Headers-End: 1wqyyr-0000w7-NM
+Subject: [f2fs-dev] [PATCH v14 11/21] xfs: don't report dio_mem_align and
+ dio_offset_align for fsverity files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,131 +97,38 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The direct path is not supported on verity files. Attempts to use direct
-I/O path on such files should fall back to buffered I/O path.
+Sashiko.dev reported that while fsverity files falls back to the
+buffered IO for Direct I/O, they should not report non-zero values in
+dio_mem_align and dio_offset_align, meaning it's not supported.
 
-Add a fall back to buffered I/O at two place, in a common fast path and
-latter when lock is acquired. The second check prevents TOCTOU issue
-with reading fsverity_active() status and resetting IOCB_DIRECT flag.
-
-If one thread saw fsverity_active() to be false, and then second thread
-acquired XFS_IOLOCK_EXCL and enabled fsverity. The first thread will go
-through the DIO path.
-
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/xfs/xfs_file.c | 61 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 41 insertions(+), 20 deletions(-)
+ fs/xfs/xfs_iops.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 04301ab977a3..67c1357f4701 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -37,6 +37,7 @@
- #include <linux/fadvise.h>
- #include <linux/mount.h>
- #include <linux/filelock.h>
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 55667cc762f8..70637cdcc299 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -35,6 +35,7 @@
+ #include <linux/security.h>
+ #include <linux/iversion.h>
+ #include <linux/fiemap.h>
 +#include <linux/fsverity.h>
  
- static const struct vm_operations_struct xfs_file_vm_ops;
+ /*
+  * Directories have different lock order w.r.t. mmap_lock compared to regular
+@@ -580,6 +581,10 @@ xfs_report_dioalign(
+ 	struct block_device	*bdev = target->bt_bdev;
  
-@@ -244,6 +245,25 @@ static const struct iomap_dio_ops xfs_dio_read_bounce_ops = {
- 	.bio_set	= &iomap_ioend_bioset,
- };
+ 	stat->result_mask |= STATX_DIOALIGN | STATX_DIO_READ_ALIGN;
++
++	if (fsverity_active(VFS_I(ip)))
++		return;
++
+ 	stat->dio_mem_align = bdev_dma_alignment(bdev) + 1;
  
-+STATIC ssize_t
-+xfs_file_buffered_read(
-+	struct kiocb		*iocb,
-+	struct iov_iter		*to)
-+{
-+	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
-+	ssize_t			ret;
-+
-+	trace_xfs_file_buffered_read(iocb, to);
-+
-+	ret = xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
-+	if (ret)
-+		return ret;
-+	ret = generic_file_read_iter(iocb, to);
-+	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
-+
-+	return ret;
-+}
-+
- STATIC ssize_t
- xfs_file_dio_read(
- 	struct kiocb		*iocb,
-@@ -264,6 +284,17 @@ xfs_file_dio_read(
- 	ret = xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
- 	if (ret)
- 		return ret;
-+
-+	/*
-+	 * Re-check verity status after acquiring lock. This prevents TOCTOU in
-+	 * xfs_file_read_iter() while falling back from DIO to buffered I/O as
-+	 * now we are holding a lock
-+	 */
-+	if (fsverity_active(VFS_I(ip))) {
-+		xfs_iunlock(ip, XFS_IOLOCK_SHARED);
-+		iocb->ki_flags &= ~IOCB_DIRECT;
-+		return xfs_file_buffered_read(iocb, to);
-+	}
- 	if (mapping_stable_writes(iocb->ki_filp->f_mapping))
- 		dio_ops = &xfs_dio_read_bounce_ops;
- 	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, dio_ops, dio_flags,
-@@ -278,7 +309,8 @@ xfs_file_dax_read(
- 	struct kiocb		*iocb,
- 	struct iov_iter		*to)
- {
--	struct xfs_inode	*ip = XFS_I(iocb->ki_filp->f_mapping->host);
-+	struct inode		*inode = iocb->ki_filp->f_mapping->host;
-+	struct xfs_inode	*ip = XFS_I(inode);
- 	ssize_t			ret = 0;
- 
- 	trace_xfs_file_dax_read(iocb, to);
-@@ -296,25 +328,6 @@ xfs_file_dax_read(
- 	return ret;
- }
- 
--STATIC ssize_t
--xfs_file_buffered_read(
--	struct kiocb		*iocb,
--	struct iov_iter		*to)
--{
--	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
--	ssize_t			ret;
--
--	trace_xfs_file_buffered_read(iocb, to);
--
--	ret = xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
--	if (ret)
--		return ret;
--	ret = generic_file_read_iter(iocb, to);
--	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
--
--	return ret;
--}
--
- STATIC ssize_t
- xfs_file_read_iter(
- 	struct kiocb		*iocb,
-@@ -329,6 +342,14 @@ xfs_file_read_iter(
- 	if (xfs_is_shutdown(mp))
- 		return -EIO;
- 
-+	/*
-+	 * In case fs-verity is enabled, we also fallback to the buffered read
-+	 * from the direct read path. Therefore, IOCB_DIRECT is set and need to
-+	 * be cleared (see generic_file_read_iter())
-+	 */
-+	if (fsverity_active(inode))
-+		iocb->ki_flags &= ~IOCB_DIRECT;
-+
- 	if (IS_DAX(inode))
- 		ret = xfs_file_dax_read(iocb, to);
- 	else if (iocb->ki_flags & IOCB_DIRECT)
+ 	/*
 -- 
 2.54.0
 
