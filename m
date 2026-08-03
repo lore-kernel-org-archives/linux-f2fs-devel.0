@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 786A7C55184
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 08:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 040C8C55184
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 08:41:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=7u3rYrJWMB0ZxCLC3K+//ZfCFPJCYgwYSGJQ2jS/tEo=; b=g8x2bj/ZUjD/OSQTJx+ObL1lKV
-	KoZby/77pgFbjf1fsqPHH7dJ5KvbWUud26dPMF8X6pVBdn76bKa6Cabg5IYJ2qigAnyeSUCTn0MkH
-	NUgYyV48bo0F2Pnxk4rjwUORev52qgswonkyQLLzqD9unYduzG21d2XN/Z3AdMHogHHU=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=UMjvrWF8IWPavjy5BS0kmtuhbFFxZLCGCuzo6Yo98Bw=; b=D2oPT6m6wD/rJgthyYzUITgaF6
+	j0EHL5OM7+lunYhWLpXyuRKa3V4JHQnISlFeN48X7zKR+Lk3PaYA6NcsodPNM5SG1qhe2zepUr71v
+	WpnicBStd+44VHcn2GmBh4DVgMVi2wTXqWF7bKYqyREWHxYc4/UVKAfCtdDwcjca3VDY=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wqoBc-0001Oa-D5;
-	Mon, 03 Aug 2026 08:38:17 +0000
+	id 1wqoEj-0007Jw-8I;
+	Mon, 03 Aug 2026 08:41:26 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wqoBb-0001OU-1F
+ (envelope-from <chao@kernel.org>) id 1wqoEQ-0007Cd-Ql
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 08:38:15 +0000
+ Mon, 03 Aug 2026 08:41:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WQ5o/ZS88bX3vd4nCEy6hjeaPlzSqlhG9oApBltnFQs=; b=hrIQH1QK6E7bq3rSmZZjdFZNqu
- YAaPHWYsOt0NY2w7PpnCKPMtWnMjGig+yxBwoyxvgzmP3rVytxq3gHYrFdhKyAcCzypATOFlWiyQi
- 37aZYIxpllddKMNspk+/MB1WvB/PXOuFxgdJwNLhk5TSURHV4IP1eSB8NpWtUYfGnxUw=;
+ bh=TfQSkuEReZbncE2oup2LjZWcdyVQEqI2058eWQArA/c=; b=jYJi52LYMs363Jc9TDvTmJaFio
+ MzKRUnhK8mwqCl8jXlr0lfjgeDyncGPQ9b+U45y7D+2JOXSCGV7apC4PuBrnmTF7wKT4SUmn9tN9x
+ 8COhetTClyi/cKbybiLtIu+AFh0fg902FARqyCv2YEae9FhwtDtniq5/74Gk5XKaGfho=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=WQ5o/ZS88bX3vd4nCEy6hjeaPlzSqlhG9oApBltnFQs=; b=Fxu15mNDAuo5akMEkdFzqV1sHh
- jnpydeLxQwK1B4UIJDuaCJSLcuGNAbZx0XKRywRwUXHR350S2Z9UVAfZdX+a/WacPj9vG9RAknBSo
- kS+t0wS19MpiRWgyeAF3iSiRa7rAiTR0To97LwLNXbzjei25JVRm66gVhsImzyzkoIBk=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=TfQSkuEReZbncE2oup2LjZWcdyVQEqI2058eWQArA/c=; b=KY1Z2aelHab1rGC+SjxnTg8o1G
+ pWTTOaZuyp37sWF12WTMPqmS2WHspkjB3c5EwRlPD/bgpBijQ0c+GABIOI9r+2u3H6vm/nXkT+5hO
+ yxJcHlM5iMwk2ePOK3iE5Y0Ia4Hw/rombj7jDUxBwTCaqpPkMz/OjQhF/0kER2hK09FM=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wqoBe-0001PR-Mx for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 08:38:15 +0000
+ id 1wqoEN-0001PJ-Ol for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Aug 2026 08:41:08 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id C03E54023D;
- Mon,  3 Aug 2026 08:38:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17B851F000E9;
- Mon,  3 Aug 2026 08:38:07 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 1E53360A5D;
+ Mon,  3 Aug 2026 08:41:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DCCB1F000E9;
+ Mon,  3 Aug 2026 08:40:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785746289;
- bh=WQ5o/ZS88bX3vd4nCEy6hjeaPlzSqlhG9oApBltnFQs=;
+ s=k20260515; t=1785746461;
+ bh=TfQSkuEReZbncE2oup2LjZWcdyVQEqI2058eWQArA/c=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=ZyCpFj1bAj6C/EoMGPixNTbuEHEr7WvD2uM0TgWTN57rT6m3R2T+UqY6PBZ+tVVH9
- mibmvtL0/StwOvHAI+LujlpGpFLxeY+jXrt9e5veGyawPLkB2MuylU2blHalWY9M6o
- jEgWsYdgDeiRPWmZiZ+yMnHDqrRM86oCdHhyJjFYT9qrZYZ/6GJI2/1ZSAXOFNMyRm
- 6XotQF+8jndXGmjpP0VG+GuNP7PAR42CPw6G+YE/pshr4WGO8tFaixK9ws5oYYItxZ
- yMKdnNvjmZpLonTN7HHOn0gf6lVpECGYooNkVIx1dx7ulQmthjbx3Nbim1Pen9r0yT
- pUkLUc2OljDDg==
-Message-ID: <4e5ffe9b-6f93-4210-95cb-918686c17639@kernel.org>
-Date: Mon, 3 Aug 2026 16:38:06 +0800
+ b=KIEGVyW7iNJ2QQzeAjT6M+Ou0ZgtOAMCMwwCEUyMhhmUcSo/Ha6MOLAJVjET6WDB9
+ mXadHG4Cl8SWATeK2KIUFPWJaSw8bKBcGo28e4m3s+jQSvYcM97kUGrFmE5aSRPTUr
+ ji8RncBWrP71MVHhBLeMKFhn+dS5ScuEDe0xhtvatSaxgZbJg+OvfdCwred95VR4pq
+ Hx6m0EhPWr9Khltg5D02UdVNUW3LcZtyXqMXU6XsGxmdxOZc47c95pTj2TGqEeomHw
+ rFgTh9ZOTJsBw13LZycDgTRdHSyLFdl5tHzk8Y2i2kGNuRFYmOyDS5DEhzda9MuJIK
+ u0gbtiXca4OOA==
+Message-ID: <0b6c89a7-0c09-4244-8238-be12862328a3@kernel.org>
+Date: Mon, 3 Aug 2026 16:40:57 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Wenjie Qi <qwjhust@gmail.com>, jaegeuk@kernel.org
-References: <20260727130430.2109181-1-qiwenjie@xiaomi.com>
+To: Rochan Avlur <rochan.avlur@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20260729041656.51967-1-rochan.avlur@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20260727130430.2109181-1-qiwenjie@xiaomi.com>
-X-Headers-End: 1wqoBe-0001PR-Mx
-Subject: Re: [f2fs-dev] [PATCH] f2fs: only redirty pinned folios in
- redirty_blocks
+In-Reply-To: <20260729041656.51967-1-rochan.avlur@gmail.com>
+X-Headers-End: 1wqoEN-0001PJ-Ol
+Subject: Re: [f2fs-dev] [PATCH] f2fs: use the mount idmap for the owner
+ check in f2fs_xattr_advise_set()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,37 +89,53 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, qiwenjie@xiaomi.com, stable@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 7/27/26 21:04, Wenjie Qi wrote:
-> redirty_blocks() pins folios with read_cache_folio() and then walks the
-> same range again with filemap_lock_folio() to redirty them and drop the
-> references it took.
+On 7/29/26 12:16, Rochan Avlur wrote:
+> f2fs_xattr_advise_set() calls inode_owner_or_capable() with
+> &nop_mnt_idmap before allowing the advise xattr to be set, instead of
+> the idmap that was passed into the handler.
 > 
-> Commit 5951fee46bef ("f2fs: Use a folio in redirty_blocks()") changed
-> the second pass to a do/while loop. If read_cache_folio() fails before
-> anything is pinned, page_idx does not advance but the cleanup loop still
-> runs once.
+> Since f2fs supports idmapped mounts, this compares the caller's fsuid
+> against the unmapped on-disk owner rather than the mapped owner; resulting
+> in the actual owner to be wrongly denied with -EPERM. Use the idmap
+> argument that was already passed to the xattr handler instead.
 > 
-> If readahead has already populated the failed folio in page cache, that
-> extra iteration finds it and folio_put_refs(folio, 2) drops one
-> reference too many. Later drop_caches or reclaim can then report
-> "BUG: Bad page state".
-> 
-> Only redirty the range that was pinned successfully.
-> 
-> Fixes: 5951fee46bef ("f2fs: Use a folio in redirty_blocks()")
-> Cc: stable@kernel.org
-> Assisted-by: Codex:gpt-5.5
-> Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
+> Fixes: 984fc4e76d63 ("f2fs: support idmapped mounts")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Rochan Avlur <rochan.avlur@gmail.com>
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Thanks for the patch.
+
+I notice there is already a patch:
+
+https://lore.kernel.org/linux-f2fs-devel/20260716025908.608098-1-zhanxusheng@xiaomi.com
 
 Thanks,
+
+> ---
+>   fs/f2fs/xattr.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+> index 610d5810074d..281e2fd6c778 100644
+> --- a/fs/f2fs/xattr.c
+> +++ b/fs/f2fs/xattr.c
+> @@ -118,7 +118,7 @@ static int f2fs_xattr_advise_set(const struct xattr_handler *handler,
+>   	unsigned char old_advise = F2FS_I(inode)->i_advise;
+>   	unsigned char new_advise;
+>   
+> -	if (!inode_owner_or_capable(&nop_mnt_idmap, inode))
+> +	if (!inode_owner_or_capable(idmap, inode))
+>   		return -EPERM;
+>   	if (value == NULL)
+>   		return -EINVAL;
+
 
 
 _______________________________________________
