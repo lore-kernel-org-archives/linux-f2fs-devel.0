@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D1A8EC55184
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 23:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 63963C55184
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 23:39:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=DzbnYZAWeo85KsQPxUanABTjnJETuiTF5P3N5/jbUes=; b=mPqZSsxb1lPVHcxXHE0IUp7LIB
-	0bA/nt6dMB9TH2GVULVabqrzSlbxRCsgZU6SeTHCO4S8mZDTBuvxnNR/e0vPFMd9QGYZaOKnBesvG
-	ubILXN/3kRFuJtCN4AoiB74Kz0QJLG29UbSvqhhRFVMUmy38MGbolxNX9oqO7Dlsr3/A=;
+	bh=56vmAvzb90NHJD5vX78CYj5i6wZjKCwT2Kxm0T1oeFQ=; b=O851IhxtMBy+H+rhYaFQdgUegV
+	kOveGLVltMEifPiwI/Hc/tl3NHRBp+d9KGNl2Xo77amr8aSpZa9UbI7oUZ8W3OwPCf7jgBbyv19G0
+	RLBF0W7Fjo3avdQPfqtT2UUe9svsn5xfhCNU7NM4kQpMv+iQIepAYfEhWBn3IlMsXTHc=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wr29v-0003Oh-Gi;
-	Mon, 03 Aug 2026 23:33:28 +0000
+	id 1wr2FS-0003ur-7W;
+	Mon, 03 Aug 2026 23:39:11 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1wr29u-0003OW-KY
+ (envelope-from <jaegeuk@kernel.org>) id 1wr2FK-0003u9-Ln
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 23:33:27 +0000
+ Mon, 03 Aug 2026 23:39:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=uQ4lduqTGbaAGqVmz0m6IiMATE54BovOr9IQtRWkjk4=; b=VMBtgFSxnXVbXI/s0jzShWpxXN
- 7O5QzDp3L5LJUcipHghgZdXdwZEH8L2mDMecEnFNqKe4pd9Z1B7u5VOKwOQtASqE9xen3wbegv3bQ
- r9V0qpNhWdAgMSzIt9LbmeVxBTthMzRa3WDBQhyr1o8DrVDdw4EfypAfbHcdDj6WtBls=;
+ bh=ekwf9vCog9sckv/lAiz0aOTW4OCONGVONpGSEWR8L+0=; b=N0sw+8ebQOVeL4YRMfSxgmqOUd
+ HTnRBHjRCO5jKP/C8yjYI5F3hAMmoUNw4HXwGiALS3jXJ4dEVCeLNL3C7DJPyUdjotoGNR4EKV+4F
+ whZAfeNSHRQMtpG4dUJ8SrvijnJtJzOQCu9u+DO74m6DHxBa64VEKR1mcdQlM1i+6Osw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,40 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=uQ4lduqTGbaAGqVmz0m6IiMATE54BovOr9IQtRWkjk4=; b=BPKtln8h/53foLJLisVS1cHjEY
- JTohYvaTAXyD6pb1kvtWRV4WOwQ5Au26MMFJVnl0X4mSIIaDugKzDpmdpwKhEXNFNxunD8en2udV2
- VVTciAcCfTC3Wmk5JMT+WD0RG9JXFPRB3zPujidb5XaG6A63HofepfW3d0PLQVVERr7I=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=ekwf9vCog9sckv/lAiz0aOTW4OCONGVONpGSEWR8L+0=; b=hXJak83zOHElui5dxeKioERjSl
+ Ksfvt14Gf98ha+NgMo01MU/1nmi+ZfE4Lct5JTxknbD60Tmn0lt9EHpxXNmVG4NxRH4cweQsXqj8N
+ GYETZxK6nTShabR3zsxoB8Ee5MambgvL8to+HOKf1RDftM9vQ0PYvsRmqJzNeVvIaOvk=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wr29u-0000xp-P6 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 23:33:27 +0000
+ id 1wr2FK-00017N-SM for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Aug 2026 23:39:03 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 1D89960A60;
- Mon,  3 Aug 2026 23:33:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 916701F000E9;
- Mon,  3 Aug 2026 23:33:20 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 7D38C436DE;
+ Mon,  3 Aug 2026 23:38:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B8AD1F000E9;
+ Mon,  3 Aug 2026 23:38:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785800000;
- bh=uQ4lduqTGbaAGqVmz0m6IiMATE54BovOr9IQtRWkjk4=;
+ s=k20260515; t=1785800337;
+ bh=ekwf9vCog9sckv/lAiz0aOTW4OCONGVONpGSEWR8L+0=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=A8NJ+iDtMvOGhYSOi1+g0IZHr8Oy/RfbhD8Gg38HFJByHK1yGKs/vfv53cHHzm/eO
- 8ud4Aei8G8A/VJt2c4+dtnVUGmTG2G4nnsiZ+smqUnuK0LhYhOO9QGXwieEe0yrcFY
- 679X987Oy5LOWmXg8JIf4WczHHWasaApyEcOR7zuqgsdKkZyzMoaITrRhm+LuexRNe
- Ip31rhqrIjTDPGDt9Tny469TIAQzDkVQoDuv3ehwTKzExZ1Hgops74Olo5DMkf9oKh
- cBAr4soDPoE+mHsDz/NFd88/WX+NXxaMcgXqO+n8Tc9VsJomS/oIV6nQZKZ0YEwoWh
- UKQvvpRSv7tJQ==
-Date: Mon, 3 Aug 2026 23:33:19 +0000
-To: Christian Brauner <brauner@kernel.org>
-Message-ID: <anElP9djtLESAgWF@google.com>
-References: <20260729041656.51967-1-rochan.avlur@gmail.com>
- <20260730-jargon-tauchen-angehalten-d4e97dde0ebe@brauner>
+ b=bVk8VaCZkQ4OLen9UOBp7BqvfWgTpFWsIyoKAK/0p/IvwVqEjfSqq493Js9GBrFLa
+ E/QYRz5wrV43Euo/LRZHJTe95p7vJ6gRxBfaPwFsPT/HndELqmAmnOb8pGUctbw78F
+ 3NoNKtSU9Zv5Zp3ZR7RGbve8KmQUtmapfwnvxIUK5F99MvPJeHe0ZZ3cZa1SyWuNcH
+ Vjij4M8mG+3bV0ivXgxEKJttX/zbj3NR7WacgRDXpi6m87FRJ8UV66mkT9086Svfa7
+ HhL+/4XCXQwk5CiPEiU3XXi8y1o1tMw4DoHkAagyInr1m6QynDdEr42+gaKed3b8i9
+ ACQQ4374fAhLA==
+Date: Mon, 3 Aug 2026 23:38:55 +0000
+To: Nanzhe Zhao <zhaonanzhe@xiaomi.com>
+Message-ID: <anEmjytbni9He124@google.com>
+References: <20260729002827.303608-1-zhaonanzhe@xiaomi.com>
+ <f1fece0c-6951-4c69-a681-344acfe1f62b@kernel.org>
+ <20260731085215.863900-1-zhaonanzhe@xiaomi.com>
+ <20260731090714.876795-1-zhaonanzhe@xiaomi.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260730-jargon-tauchen-angehalten-d4e97dde0ebe@brauner>
-X-Headers-End: 1wr29u-0000xp-P6
-Subject: Re: [f2fs-dev] [PATCH] f2fs: use the mount idmap for the owner
- check in f2fs_xattr_advise_set()
+In-Reply-To: <20260731090714.876795-1-zhaonanzhe@xiaomi.com>
+X-Headers-End: 1wr2FK-00017N-SM
+Subject: Re: [f2fs-dev] [DISCUSSION] f2fs: compatibility between compressed
+ files and large folios
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,36 +91,30 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Rochan Avlur <rochan.avlur@gmail.com>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+Cc: baohua@kernel.org, lipengfei28@xiaomi.com, zhangbo56@xiaomi.com,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 07/30, Christian Brauner via Linux-f2fs-devel wrote:
-> Hi Rochan,
+On 07/31, Nanzhe Zhao via Linux-f2fs-devel wrote:
+> The quote part of last email to reply is:
 > 
-> > f2fs_xattr_advise_set() calls inode_owner_or_capable() with
-> > &nop_mnt_idmap before allowing the advise xattr to be set, instead of
-> > the idmap that was passed into the handler.
-> > 
-> > Since f2fs supports idmapped mounts, this compares the caller's fsuid
-> > against the unmapped on-disk owner rather than the mapped owner; resulting
-> > in the actual owner to be wrongly denied with -EPERM. Use the idmap
-> > argument that was already passed to the xattr handler instead.
-> > 
-> > Fixes: 984fc4e76d63 ("f2fs: support idmapped mounts")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Rochan Avlur <rochan.avlur@gmail.com>
+> > Can we call truncate_inode_pages() after mapping_set_folio_order_range()? something
+> > like this:
+> >
+> >                 filemap_invalidate_lock
+> >
+> >                 mapping_set_folio_order_range(, 0, 0)
 > 
-> Seems generally fine to me,
-> Acked-by: Christian Brauner (Amutable) <braurg>
+> Thanks,
+> 
+> Nanzhe
 
-Thanks, let me applied Acked-by: to the first submitted patch, which is same.
+From the previous experience, this won't work, as you mentioned it's not allowed
+to change the order on the fly. Should set the order in f2fs_iget() only, but
+it'd be better to keep supporting compression. :)
 
-> 
-> -- 
 > 
 > 
 > 
