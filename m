@@ -4,78 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 98677C55184
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 07:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7AF74C55175
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 07:57:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=hbSOYrQAtggOmDIRWs9NJnAFEakKh8XIb2OVMTu3wXE=; b=dS9oJUGWancXe5fIMRPMZ8JXD5
-	xCV6dzMEO3tv71F5TDsGAXpEFNC89j/xkzmqG8kiudaDBich1VrpsIrqip3yKbu9sVeD/P8CkXEdg
-	iGoPSHn0M5QjfutZozFbKhQmP0pf84pyQcvOi5urnBIa9QSaTiDhUbLx72/k7TFz2AFI=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=sjlWITxbJ3DTl1G3SJwgc4XQjDxZH9FfRB30w0NKCBU=; b=HzghJb8h/iMtmgQvsdExI1r4fK
+	u7AoNAhCveZWEuKQUfxX0QHdjwQQKeHeJRiLsXd/ied2kiW2aXQVk3qpLk5dzCBaVA4K3PTTPTeji
+	O7FEnCw18ZHxOHpv9Gm8Dq4jCYIXtiO7JaeETUl9MTZIOUs17tZOxi6i6G9TUn8mTr7E=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wqnUj-0002G7-04;
-	Mon, 03 Aug 2026 07:53:57 +0000
+	id 1wqnYG-00008O-DT;
+	Mon, 03 Aug 2026 07:57:37 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wqnUh-0002Fy-F7
+ (envelope-from <qwjhust@gmail.com>) id 1wqnYB-00008F-Ev
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 07:53:55 +0000
+ Mon, 03 Aug 2026 07:57:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=s2kmPaBfw4Q8qnlJbZoUCA5TVNQr1VvZKD7T+D/ZMnQ=; b=Hu5Z426oOt4MkbLxyAWjmLCmO1
- Zga0sGBfewveB4m7E6G04gx4JPKK25MvLsolZ4AV0gSOm4iVRScmOVtRWBlz5gHqV1+8aak0c4JK+
- 8Llq0LGxhuqPYVMpP+yd1YfeUiRfpfCT4cNiTi2b7wFCu/ECLe57Vh8iajHZMcq5Pzq0=;
+ bh=pEKQNJ0GeZ0TkdVN8gs19LHlDQKs8ULpJdgXj5UynNs=; b=FytjSXf2/P3Wbx9H0Z9bL/0okL
+ 5sSrivNEViDpVuSOytd+1CrNsaw1XRWB+l4vGghjDAlhvZjWp9ryNSTBRG1TCTNQ47W6VEJ/rcFBV
+ 05EDQ21HBuFTETUIn3pmdp7x0FajFCJKpJ0iU2OuHHH1dlaxHXAPR7UVA/qBf6Ns7gbg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=s2kmPaBfw4Q8qnlJbZoUCA5TVNQr1VvZKD7T+D/ZMnQ=; b=ZjUvBjFR6h1QXf8fn0ApkTIhQv
- NHT9m1QblHCR3A3BCAnq+CnAB0b73H+2prmbTnnu/QcrY2DFCmhREp/CfYptBd2LQBfoEepF5EKMg
- RoqNzVfMW1FpsUoO1hVrPDZwBTWCw7TEgDEt78EyXVvzJjMaeW4pUr+B5RLivygBUGjM=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=pEKQNJ0GeZ0TkdVN8gs19LHlDQKs8ULpJdgXj5UynNs=; b=Q
+ By2sejel1acchRdT1UQTJnm5x4ZcYfgZg5js8yzfT/40OntrW2PHjwUj2a5DezUF4z0rgKUPhvL52
+ DevqW6oCJdwKIFnVK1CTs9SgZJx+mfX1L26zecnAqiotINGxKExKeP3kyLDcIQGn6B3ZLBu2yX670
+ 9vi7nvzcUekUQZQY=;
+Received: from mail-pf1-f180.google.com ([209.85.210.180])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wqnUg-0007IH-QM for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 07:53:55 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 3538B600FF;
- Mon,  3 Aug 2026 07:53:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 504051F000E9;
- Mon,  3 Aug 2026 07:53:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785743628;
- bh=s2kmPaBfw4Q8qnlJbZoUCA5TVNQr1VvZKD7T+D/ZMnQ=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=ERjb+lao44DX2QBSKo3tlfGIymcpKToyvtzmF53mJg7TByXHqhepvqEHeSTf+9ez/
- G3XH5D2sxismuq7b1UQhz3v9LeC+/fPiRBg0Vc8IMlN50v5YjM9CsbMvglKKTuFYqK
- pgKKnn57at0IKm56TuWCCfMOlGxSaJ0iLZ6HTff8hqrVCbJdR3wPN9/LrH8pi03dkO
- coP8680TZc+8VtSI4s1Dm1m/hD+ua6oNBnvK4U8sOkvlE8abxVa0+znF/4EttgzLqq
- fyIZ/0/xhfFUmQEM/IC8rc2IftfxVPLNy9ziOCZluqhngmqoa1Gf0ZyyfBo9cXnoFK
- X28LwMqaMi3ww==
-Message-ID: <c235897c-bec7-45f2-aed9-1efa7e0646ed@kernel.org>
-Date: Mon, 3 Aug 2026 15:53:45 +0800
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1wqnYB-0007Om-O2 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Aug 2026 07:57:32 +0000
+Received: by mail-pf1-f180.google.com with SMTP id
+ d2e1a72fcca58-84a2dcede83so4237870b3a.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 03 Aug 2026 00:57:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1785743846; x=1786348646; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=pEKQNJ0GeZ0TkdVN8gs19LHlDQKs8ULpJdgXj5UynNs=;
+ b=AFVpth0soYR7Usiy7KsCAKiUfdTTPUhXKNGVYVCEA/4aOu9PaSpOojGzNCW42MduNa
+ qRhaVHxa26Xl6Q3n8/1yNqdcUH1L2zmgX5Nll7JwKmL7VcBqHfGd7CXmnpNgRICdJgJP
+ QfLwi3hiklNJR5wKuc0m2ppxTgHaO80aY8srsNUh0fg/on8xDP5P3TzaSiSUVbgUzBg+
+ HMYfuXSiR6VMIzfcvl4TzRLWgyPkDhLaB/hcG6LuZCL3ZA+EL0MmfJegGzOgpeKnZcEG
+ LHOcDe2EQiAYcaQxL0c/mmD7Yt1G0+mDQCver0a0ISrkDjvUOak41WXACwpqs+A2qSTf
+ 5hQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1785743846; x=1786348646;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=pEKQNJ0GeZ0TkdVN8gs19LHlDQKs8ULpJdgXj5UynNs=;
+ b=a/Fz+UUlFpVFALy3uk8g4tnvaft/O0kvBp2J5A0iPqf7ZNEgif/2lDKj5eBmJM8qpP
+ tVPfaa9Id5mI/fyGBNf3tWWn6j3yOb0D6KwqNOYvV1leaQFKW9wWJSZjLklXi1LphLhr
+ DxUA5jFeGbk5qDMNPXi2FZzr+W/RbBLGzTSZ8d7j+qrkIOL7qpmBVnw/VyOzsd9kkkrw
+ 9cAojz+DSEBeQlctaGpX7rgFbPNhU7jHFuZ1TMPB0z3c4NhnExU2L/5cxgl1/ToZ84yM
+ PD/ycvhUv7Z+1pX6p/0o23uuq14nTjFIY+/nG5fBmpPEbiB37KW3LEI3Kk1QEf01BFXK
+ 6+ug==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RpuD79aVuFZQWQeo3zchAPfwPcN2Zjrjk2g/hiPJefJT9DCSgv7rXsiMjifUB4G5WR3hUIrO0TwCWHD+w1naNre@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YzLnpTD6XlbfLEwbtizPBzq/gnAfxICkyQTzJ9X5Kw6Zicr0vW4
+ YiHVRe8TZMY7MG+zTMektGtDnme6lyFKWfFUGmjX3/P6sIyuazlNLo6m
+X-Gm-Gg: AR+sD13G2EoWZyfG88T/hM8lBzGO8GdgLLc84B+Bf4AGmzOiXa8dq4DVdc+EzUW6k6/
+ PkedKsMGjHdQxrpNnCjwy+c1KZJ1PpN1MDlu5VUuvBtJ4oSomH+QHln26p0XHxcr/Gr5+M18YsE
+ 5uTO7JnyunKjQ2ccyumyJ4fqrfFWTC1qqMWGgIotFxt9UHEmI0keHmCetjiFPws/hbApkWAyngx
+ Q+m679x45ekKfMrkgmv/heNQAzjIe3pQcWmsIONUbRt0N7Hb4sIoIJBgAs9W2iNg7UpEXE52hAk
+ X69L5gpb4FLL+GKpuTC5XLLe/E+cVwECgIlfYQ57zGWzk/w7SjRX2cRee04vOu3l3c3lLwyh+fL
+ nTrCbmXuRg/ScKC3L5HGvtVoyWXL8sR+DIYT5aUKQCwn/ESaMthGlQnaOIFqkf0RhZSiBkRJOUL
+ DhfO7pEo89V3PS8XjOEoOSGEOq6blqLH7lZ6sDRKl/KEuOGT8AH4LAq4z2Y+QrIe/hm9v5Hd7KQ
+ su2mliIe4nkpoSwZgfVXO70q3mlfxHDA1k=
+X-Received: by 2002:a05:6a00:99c:b0:848:2f77:e2da with SMTP id
+ d2e1a72fcca58-84ee498e27amr7666176b3a.67.1785743845990; 
+ Mon, 03 Aug 2026 00:57:25 -0700 (PDT)
+Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-84eecf81b08sm2166790b3a.22.2026.08.03.00.57.23
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 03 Aug 2026 00:57:25 -0700 (PDT)
+From: Wenjie Qi <qwjhust@gmail.com>
+X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Mon,  3 Aug 2026 15:57:16 +0800
+Message-ID: <20260803075716.1400915-1-qiwenjie@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Wenjie Qi <qwjhust@gmail.com>, jaegeuk@kernel.org
-References: <20260724090532.351989-1-qiwenjie@xiaomi.com>
-Content-Language: en-US
-In-Reply-To: <20260724090532.351989-1-qiwenjie@xiaomi.com>
-X-Headers-End: 1wqnUg-0007IH-QM
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid NULL checkpoint thread access in
- sysfs
+X-Headers-End: 1wqnYB-0007Om-O2
+Subject: [f2fs-dev] [PATCH v2] f2fs: stop checkpoint on compressed write IO
+ error
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,98 +119,59 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
-Cc: stable@kernel.org, qiwenjie@xiaomi.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: qwjhust@gmail.com, yuchao0@huawei.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, qiwenjie@xiaomi.com, stable@kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 7/24/26 17:05, Wenjie Qi wrote:
-> checkpoint_merge is set by default, but the checkpoint merge thread is not
-> created for read-only mounts. The ckpt_thread_ioprio sysfs store path uses
-> the mount option to decide whether to update the task ioprio. On such
-> mounts, writing the node passes a NULL task to set_task_ioprio().
-> 
-> Keep storing the requested ioprio, but apply it only when the checkpoint
-> thread exists. Take s_umount for ckpt_thread_ioprio and
-> critical_task_priority too, matching the existing protection for GC thread
-> entries.
-> 
-> Fixes: e65920661708 ("f2fs: add ckpt_thread_ioprio sysfs node")
-> Cc: stable@kernel.org
-> Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
-> ---
-> Reproducer:
->    mount -o ro -t f2fs /dev/vdb /mnt/f2fs
->    echo be,4 > /sys/fs/f2fs/vdb/ckpt_thread_ioprio
-> 
-> Baseline dmesg:
->    Oops: general protection fault
->    KASAN: null-ptr-deref in range [0x00000000000007b0-0x00000000000007b7]
->    RIP: set_task_ioprio+0x8b/0x360
->    Call Trace:
->     f2fs_sbi_store+0x2af/0x2580
->     kernfs_fop_write_iter+0x360/0x620
->     vfs_write+0x5f8/0xf50
->     ksys_write+0xf9/0x1d0
->     do_syscall_64+0x5f/0x550
-> 
->   fs/f2fs/sysfs.c | 9 ++++++---
->   1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index be92c05a5420..0294544d3d34 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -557,7 +557,7 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
->   			return -EINVAL;
->   
->   		cprc->ckpt_thread_ioprio = IOPRIO_PRIO_VALUE(class, level);
-> -		if (test_opt(sbi, MERGE_CHECKPOINT)) {
-> +		if (cprc->f2fs_issue_ckpt) {
->   			ret = set_task_ioprio(cprc->f2fs_issue_ckpt,
->   					cprc->ckpt_thread_ioprio);
->   			if (ret)
-> @@ -1007,13 +1007,16 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
->   	ssize_t ret;
->   	bool gc_entry = (!strcmp(a->attr.name, "gc_urgent") ||
->   					a->struct_type == GC_THREAD);
-> +	bool thread_entry = gc_entry ||
-> +			!strcmp(a->attr.name, "ckpt_thread_ioprio") ||
-> +			!strcmp(a->attr.name, "critical_task_priority");
+Compressed writeback is currently charged as F2FS_WB_CP_DATA through
+WB_DATA_TYPE(..., fio->compressed_page).  That classification keeps
+compressed cluster writeback under the checkpoint-guaranteed path for
+POR safety after fsync/sync.
 
-Oh, seems you fixed another race issue in this patch as well?
+When such a compressed write bio fails,
+f2fs_compress_write_end_io() only records -EIO in the inode mapping.
+Ordinary F2FS_WB_CP_DATA writeback also stops checkpoint on writeback
+failure, but compressed writeback does not.  Checkpoint can therefore
+continue after a failed checkpoint-guaranteed compressed write and later
+persist metadata that points to compressed data blocks whose writeback
+failed.
 
-"mount -o remount,ro" vs "echo xx > critical_task_priority"
+Stop checkpoint on failed compressed write IO the same way as other
+F2FS_WB_CP_DATA writeback.
 
-Can you fix this in a separated patch?
+Fixes: 4c8ff7095bef ("f2fs: support data compression")
+Cc: stable@kernel.org
+Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
+---
+v2:
+- rewrite the changelog around the existing checkpoint-guaranteed
+  compressed writeback semantics
+- no code changes
 
->   
-> -	if (gc_entry) {
-> +	if (thread_entry) {
+ fs/f2fs/compress.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-bool thread_entry = !strcmp(a->attr.name, "ckpt_thread_ioprio") ||
-			!strcmp(a->attr.name, "critical_task_priority");
-
-if (gc_entry || thread_entry)
-
->   		if (!down_read_trylock(&sbi->sb->s_umount))
->   			return -EAGAIN;
->   	}
->   	ret = __sbi_store(a, sbi, buf, count);
-> -	if (gc_entry)
-> +	if (thread_entry)
-
-if (gc_entry || thread_entry)
-
-Thanks,
-
->   		up_read(&sbi->sb->s_umount);
->   
->   	return ret;
-
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index caf522d667d6..9b1501004456 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1488,8 +1488,11 @@ void f2fs_compress_write_end_io(struct bio *bio, struct folio *folio)
+ 				f2fs_is_compressed_page(folio));
+ 	int i;
+ 
+-	if (unlikely(bio->bi_status != BLK_STS_OK))
++	if (unlikely(bio->bi_status != BLK_STS_OK)) {
+ 		mapping_set_error(cic->inode->i_mapping, -EIO);
++		if (type == F2FS_WB_CP_DATA)
++			f2fs_stop_checkpoint(sbi, true, STOP_CP_REASON_WRITE_FAIL);
++	}
+ 
+ 	f2fs_compress_free_page(page);
+ 
+-- 
+2.43.0
 
 
 _______________________________________________
