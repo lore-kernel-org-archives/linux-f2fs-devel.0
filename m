@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 07404C55174
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 02:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3CF55C55162
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 02:12:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=PBlY7rV3egyXcOvfMnzwUgw+3ekSeTZ/xM6cbKV9J9o=; b=hPkD6+nJF4BdixP2mo7dwaYTqb
-	ilM2j4f6j1it9cVrejoBbZvR5blEkEbmxKrwz3ZzIdY0eDB2JJixtkxFRpGWw4PdrSBkyZluQOU0B
-	CVwugDJVNN5M7L3xaCGYJJvVhAuHQpWIgvRdr5dCQjtTwosVgZag9wQfrFYkQUZbe5LU=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=AL2SAwFUtpuCiAMueUcnrkR2lrhBZtzXwRRjm29tT9k=; b=jnucpy1MGdBWcAjkaiHe4X/jM7
+	em+U3IpKloiaSVZN9azo5bbNeGVlTTyeNyi/unshiDp40TeVvd0PImecvE13HdpcbYEelKuyvADW7
+	BfaiDs2mpx/YFColmMny4djXIW93q1slWAeBGXun0GImGEotXcRa9a/oP3QhYCCLj9ZE=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wqi6g-0007xs-I2;
-	Mon, 03 Aug 2026 02:08:47 +0000
+	id 1wqiAI-0003ct-HV;
+	Mon, 03 Aug 2026 02:12:30 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wqi6f-0007xm-W5
+ (envelope-from <chao@kernel.org>) id 1wqiAA-0003ch-DG
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 02:08:46 +0000
+ Mon, 03 Aug 2026 02:12:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=akXWdnMvBxguKVgRZUt8MGf93stsSK4rwcrXnjHtvIU=; b=P1JuMOyponwFJ2/InRMgCn9ORJ
- b/LVHKhtsM5F2jbxAY6pnrWDGIuhsLGuwsF77LC+f6We3nS1SwzUxZYLIY6beMeDT90tpggW4Tixy
- OljuvegmjTisU7rq6ypcUBUntRgbnurkLzxEf9uBpZ/Qd1EtJuD+UyT+s5xFIMdC5yUc=;
+ bh=Ld3fnnQevrRHNCxH/HctbVgrPv5BoFsH/RwdXZ9V4w4=; b=ZggsDRkeOaR8VyyQ+dkAgr6F5j
+ iaWE/NOJ0H1pTZJ+S6jMI51PlOlJ/CShSIXLcQwr3w5BI9ouNM+srHaYEvsNqQfh8e+3aK3z1KAfd
+ BwHIojOCEc63vfrxKVm1MakLO3BxeuiTXD2XD18R1AjexrR88yszp2xooSCqDJPVTWnw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,39 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=akXWdnMvBxguKVgRZUt8MGf93stsSK4rwcrXnjHtvIU=; b=nNfE9MAd5LKeCz0lFYMDkL7KUE
- M37BBLSc2RbHXnXhuepUZVvUU95lD7Wur3whHFQvT+4uzn7nVlHznoVEvUnPE1WrzrTIodjTlBb0T
- LYGP7mid99hn3cIMKtSVZBlmzulTCnzsmjd2aBcIfgF2dKO72MHYENT/A8lLa7upqmUM=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ bh=Ld3fnnQevrRHNCxH/HctbVgrPv5BoFsH/RwdXZ9V4w4=; b=bY6xsrxt4YrvFYpTuJ81dhlWHg
+ wBoTerfwUkIHEfZBMaOm9Mk5HfoHOBHWOrS+gvmGxjpTL+50iiVEBZzW4arFT4g1bBNeoI/M+aobH
+ 1NPGr+cSNvJFzNr8QvRSzbhwASxByr65iexMRVtYptAJw+XS3zQ4oy1AieWvEFbniPFw=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wqi6g-0004aJ-An for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 02:08:46 +0000
+ id 1wqiA9-0004pJ-PN for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Aug 2026 02:12:22 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id A695160A58;
- Mon,  3 Aug 2026 02:08:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2804D1F000E9;
- Mon,  3 Aug 2026 02:08:38 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 374EA406C9;
+ Mon,  3 Aug 2026 02:12:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE6471F000E9;
+ Mon,  3 Aug 2026 02:12:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785722920;
- bh=akXWdnMvBxguKVgRZUt8MGf93stsSK4rwcrXnjHtvIU=;
+ s=k20260515; t=1785723136;
+ bh=Ld3fnnQevrRHNCxH/HctbVgrPv5BoFsH/RwdXZ9V4w4=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=G6FeoOZf9L3vR0tKh67td8aotR1b5qA7rGBF3KGuhCy4A7YQgUuaPtO9pA9a5UKny
- JmyG1dEC38HNLMMhcbQv7kEIz01ww/WSc4/yAiQcaEXNxAPE2n8RfXb+UoL9KduE69
- HHc5R0DUuFMm8Jipi4zrG1p1AYOEJ2aBipc3Y6Ldh8cLAef61JzMHHP/yNoQfiWg+V
- FABS6/C8lYfIPtwRRqxzDXDFr9rsZiCkVPPuZLLd0VzYgqX20ka+MfMx476cG8dgwy
- VDL3UV663Yyt3T0Ix7rM65czUq6OwmSjoUJZXWRIsYZKHpG36X3r6dEaVJzUXN9cfd
- 8CxR4+3w7G5Jw==
-Message-ID: <3edacd16-9112-4470-9b59-b5a8edf25eb9@kernel.org>
-Date: Mon, 3 Aug 2026 10:08:37 +0800
+ b=b2SfWOxjEUBGOQMBFl0eWmrxDRdoqendt3DIjYSYZwWazNAW2WhSmrOUh7vwIFEzG
+ 6NZdAtJgFACGbGAWnUHTL6EJzlkLc1W6Wq2n1iq9EXkTXPJpRcdapczHFenC78VnSx
+ SKX/HNCV21jABeRSK16H0gpKexNwPolYgq4N3yunKhr5rA4TyMzi36E9ZQXQkeJKBX
+ ktAhHy/pZxm+djce0W1TIEpn2TVyK0ElC3GL4sKd/euY6a6ptN/jfXM6pPY+sEhH4x
+ szOvxC99qfk8Cczil1mCT1be44FwC7wxExZY07Zn6w6+/6LpKgI6RHhXib1CQPDh/O
+ kO8TQp0IwSQlw==
+Message-ID: <01934160-5194-4a74-867a-11da373a3630@kernel.org>
+Date: Mon, 3 Aug 2026 10:12:12 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Chunhai Guo <guochunhai@vivo.com>, jaegeuk@kernel.org
-References: <20260605100559.94843-1-guochunhai@vivo.com>
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20260606011942.1206814-1-daeho43@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20260605100559.94843-1-guochunhai@vivo.com>
-X-Headers-End: 1wqi6g-0004aJ-An
-Subject: Re: [f2fs-dev] [PATCH] fsck.f2fs: drop unused SB_ENCODE_FLAG
+In-Reply-To: <20260606011942.1206814-1-daeho43@gmail.com>
+X-Headers-End: 1wqiA9-0004pJ-PN
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs_io: add dev_alias command for
+ dynamic device aliasing management
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,25 +90,117 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 6/5/26 18:05, Chunhai Guo wrote:
-> Since commit 29c1e18a0bc5 ("fsck.f2fs: tune linear_lookup in
-> f2fs_do_mount()"), fsck_update_sb_flags() writes the superblock directly
-> and nothing sets c.invalid_sb with SB_ENCODE_FLAG anymore. Drop the dead
-> flag and simplify the SB_NEED_FIX check.
-> 
-> BTW, SB_ENCODE_FLAG should originally have been 0x10, not 0x16, since
-> invalid_sb is a bitmask.
-> 
-> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
+Daeho, can you please update this patch to use last ioctl interface?
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+On 6/6/26 09:19, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> This commit adds a new 'dev_alias' command to f2fs_io tool to support
+> dynamic inclusion, exclusion and status querying of device alias ranges.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> ---
+> v2: remove a f2fs specific flag from getflags.
+> ---
+>   tools/f2fs_io/f2fs_io.c | 46 +++++++++++++++++++++++++++++++++++++++++
+>   tools/f2fs_io/f2fs_io.h |  7 +++++++
+>   2 files changed, 53 insertions(+)
+> 
+> diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+> index c977f4d..3fa323b 100644
+> --- a/tools/f2fs_io/f2fs_io.c
+> +++ b/tools/f2fs_io/f2fs_io.c
+> @@ -2509,6 +2509,51 @@ static void do_test_lookup_perf(int argc, char **argv, const struct cmd_desc *cm
+>   	exit(0);
+>   }
+>   
+> +#define dev_alias_desc "device alias control"
+> +#define dev_alias_help						\
+> +"f2fs_io dev_alias [include|exclude|status] [file]\n\n"			\
+> +"include, exclude or status a range of device alias given the file\n"
+> +
+> +static void do_dev_alias(int argc, char **argv, const struct cmd_desc *cmd)
+> +{
+> +	int fd, ret;
+> +
+> +	if (argc != 3) {
+> +		fputs("Excess arguments\n\n", stderr);
+> +		fputs(cmd->cmd_help, stderr);
+> +		exit(1);
+> +	}
+> +
+> +	fd = xopen(argv[2], O_RDWR, 0);
+> +
+> +	if (!strcmp(argv[1], "exclude")) {
+> +		ret = ioctl(fd, F2FS_IOC_EXCLUDE_DEV_ALIAS);
+> +		if (ret < 0)
+> +			die_errno("F2FS_IOC_EXCLUDE_DEV_ALIAS failed");
+> +		printf("%s device alias range of %s\n", argv[1], argv[2]);
+> +	} else if (!strcmp(argv[1], "include")) {
+> +		ret = ioctl(fd, F2FS_IOC_INCLUDE_DEV_ALIAS);
+> +		if (ret < 0)
+> +			die_errno("F2FS_IOC_INCLUDE_DEV_ALIAS failed");
+> +		printf("%s device alias range of %s\n", argv[1], argv[2]);
+> +	} else if (!strcmp(argv[1], "status")) {
+> +		u32 status = 0;
+> +
+> +		ret = ioctl(fd, F2FS_IOC_GET_DEV_ALIAS_STATUS, &status);
+> +		if (ret < 0)
+> +			die_errno("F2FS_IOC_GET_DEV_ALIAS_STATUS failed");
+> +
+> +		printf("device alias status of %s: %s\n", argv[2],
+> +			status == F2FS_DEV_ALIAS_STATUS_EXCLUDED ? "excluded" : "included");
+> +	} else {
+> +		fputs("Wrong request type\n\n", stderr);
+> +		fputs(cmd->cmd_help, stderr);
+> +		exit(1);
+> +	}
+> +
+> +	exit(0);
+> +}
+> +
+>   #define freeze_desc "freeze filesystem"
+>   #define freeze_help "f2fs_io freeze [directory_path]\n\n"
+>   
+> @@ -2603,6 +2648,7 @@ const struct cmd_desc cmd_list[] = {
+>   	CMD(get_advise),
+>   	CMD(ioprio),
+>   	CMD(ftruncate),
+> +	CMD(dev_alias),
+>   	CMD(test_create_perf),
+>   	CMD(test_lookup_perf),
+>   	CMD(freeze),
+> diff --git a/tools/f2fs_io/f2fs_io.h b/tools/f2fs_io/f2fs_io.h
+> index b0d4099..57d96b7 100644
+> --- a/tools/f2fs_io/f2fs_io.h
+> +++ b/tools/f2fs_io/f2fs_io.h
+> @@ -96,6 +96,9 @@ typedef u32	__be32;
+>   #define F2FS_IOC_START_ATOMIC_REPLACE	_IO(F2FS_IOCTL_MAGIC, 25)
+>   #define F2FS_IOC_GET_DEV_ALIAS_FILE	_IOR(F2FS_IOCTL_MAGIC, 26, __u32)
+>   #define F2FS_IOC_IO_PRIO		_IOW(F2FS_IOCTL_MAGIC, 27, __u32)
+> +#define F2FS_IOC_EXCLUDE_DEV_ALIAS	_IO(F2FS_IOCTL_MAGIC, 28)
+> +#define F2FS_IOC_INCLUDE_DEV_ALIAS	_IO(F2FS_IOCTL_MAGIC, 29)
+> +#define F2FS_IOC_GET_DEV_ALIAS_STATUS	_IOR(F2FS_IOCTL_MAGIC, 30, __u32)
+>   
+>   #ifndef FSCRYPT_POLICY_V1
+>   #define FSCRYPT_POLICY_V1		0
+> @@ -200,6 +203,10 @@ enum {
+>   	F2FS_IOPRIO_WRITE = 1,  /* high write priority */
+>   };
+>   
+> +/* for F2FS_IOC_GET_DEV_ALIAS_STATUS */
+> +#define F2FS_DEV_ALIAS_STATUS_INCLUDED	0
+> +#define F2FS_DEV_ALIAS_STATUS_EXCLUDED	1
+> +
+>   #ifndef FS_IMMUTABLE_FL
+>   #define FS_IMMUTABLE_FL			0x00000010 /* Immutable file */
+>   #endif
 
-Thanks,
 
 
 _______________________________________________
