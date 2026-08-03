@@ -4,83 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 559CCC55182
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 16:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9FEFBC561F8
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Aug 2026 18:05:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=FuVDgQaVvLWEg+UjraRlFS7MQ3d1yDSmEnoo6YpPPEw=; b=cQiD8E6s4wSePx1Y+W/MaTmrZB
-	lwhJ9lH0P4Gfb6SbeJeMdVFg2BZVdGGHRL3uHxHKHAJBunX7DAbGx7EuGo21gPMVqs6SSgBYRf2jl
-	Turx63HP77B1JK2b6HKgXX9wpLkH5fzI8i4b66aCVg3WOywEevGMaWHo9OnlCGqFYO5w=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Gs8Ts3VA0HiEJWaoWsmpznNFLfFtjfGpn1vBi8EKPhA=; b=EdRjed73gZ9H35tZQoGWLKqsn5
+	PzFjAOzhn7QkR5W6/ZEJLsCmddw0teYNpnEJXrKJo32ZvxcCEvvHa0Oq5fJELWmVxPmhEXywFXnoK
+	rwRseWmiFQnhuKb5ttpuXnFUWMRT+Ytf9sRdKDjdFZ4fubcP/eqq36nMR6xmaE+UEueg=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wqvu8-0002q7-LW;
-	Mon, 03 Aug 2026 16:52:45 +0000
+	id 1wqx2U-0006Ji-1u;
+	Mon, 03 Aug 2026 18:05:23 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <bvanassche@acm.org>) id 1wqvu7-0002q0-MR
+ (envelope-from <ebiggers@kernel.org>) id 1wqx2S-0006Jc-4x
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 16:52:44 +0000
+ Mon, 03 Aug 2026 18:05:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kd+0ZsnKCdUOMRA/vYk//AkBb7YYehALy83z5G++w50=; b=nDzoRr0akFKy2j/DwyF3bJnRK9
- oUBLIWo0YeoaM6x3Jt3HfK4ZOvMFIenJv6ULVjctHbulC72SLZdeS4zSJ4Zv438Rk6cGnBv9WcMke
- 28OWDKkobbdV4KpoBF7tVTngcczzgVgIrXuV56aI0m1z7SoWXvJiuB0zloPwOXvZNp3Y=;
+ bh=W2kStB1YVLVAsQPtUhw3R9F4+saCiGZ5gertLGOHTy8=; b=ja2FQZw2wTAaIwsCT7PRIug5kZ
+ 5A/bGlKJRvD9ZRTiwvm39lX+6wWfdFxcEIcgJl8aw2eIPNmawL0W6HVeNyG0Yw30pEAZEqVtDpaLo
+ KmlxACFmkJq/okUR419epkbjfD0p3lQuehUCmVkHY1EXWWc4Ai1JBRKUFTTgnA82TS78=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=kd+0ZsnKCdUOMRA/vYk//AkBb7YYehALy83z5G++w50=; b=N
- v4LhqLUj+e+KPUnw+Mcy2ygo22HtuLD/j/BaE0PQYiS1nYO59IT5SY6CYZlutkMKqSB4B/Br2Pyc0
- d38Z3jjlmcCk3e6JtmcaC3/jDs+suy//ssWovjI4yNWqRA6evO0VUQEzHbqiKVSZtf3YUgmeTxNCc
- +v4zDlroxQzb1m0A=;
-Received: from 013.lax.mailroute.net ([199.89.1.16])
+ List-Owner:List-Archive; bh=W2kStB1YVLVAsQPtUhw3R9F4+saCiGZ5gertLGOHTy8=; b=O
+ 3WiV5E/NCfzj5YKoSS4SSVLt4/OYopPFI8BuGV4TdYPrGn7/8/S/QoE2o6a2vXbw2iiSb3HIWMwxt
+ grQy6hXOsrBkWtyfQ4mYNgBcjVtfH9+7pgSTv0CFrVXrcYy3i2Yb9tVLFTQaZroDIT5xALwkOQXu9
+ CnOXvFI89go5fkD8=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wqvuB-0002PM-B3 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Aug 2026 16:52:44 +0000
-Received: from localhost (localhost [127.0.0.1])
- by 013.lax.mailroute.net (Postfix) with ESMTP id 4hDN5L536Zzlfvq4;
- Mon,  3 Aug 2026 16:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
- content-transfer-encoding:mime-version:x-mailer:message-id:date
- :date:subject:subject:from:from:received:received; s=mr01; t=
- 1785775955; x=1788367956; bh=kd+0ZsnKCdUOMRA/vYk//AkBb7YYehALy83
- z5G++w50=; b=V6hNPpSKoFgIsxgpODDFgdjNDeUKjQ9pwigCI2D1Oee87eHpGV7
- dHdXK8N9DEk7iOgwD7daJupMfVGlWVMsGymFBasncqi+l7P5qab53VJm97EDuSsO
- FuJqQ00NhJG1ZRL44azO/lcb52w8QaWZFz5+Z407DM9cDEuQT7jRKrFSXYWr03aw
- 5pNqowWOSMCKDqBJzE1Y/y/GhWib9gg0DZGHdRRV2mRleRASJL5XG0oKjI7sn0pz
- PIdiKdNqPXuxHpOez2aO8ECb1O9pHmse9h2u5sXkcE2fxpfN8Knje2jX1BRKGViv
- tZzu/KQGms/RfeBoG0Y3UfDAc+wtK3zm+8g==
-X-Virus-Scanned: by MailRoute
-Received: from 013.lax.mailroute.net ([127.0.0.1])
- by localhost (013.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 0KvzjbAOpj0I; Mon,  3 Aug 2026 16:52:35 +0000 (UTC)
-Received: from bvanassche.mtv.corp.google.com (unknown [104.135.180.219])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- (Authenticated sender: bvanassche@acm.org)
- by 013.lax.mailroute.net (Postfix) with ESMTPSA id 4hDN5G1nq5zlfvpM;
- Mon,  3 Aug 2026 16:52:33 +0000 (UTC)
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Mon,  3 Aug 2026 09:52:22 -0700
-Message-ID: <4493e1b9c502f9394cb6522ea433f43a64f218da.1785775861.git.bvanassche@acm.org>
-X-Mailer: git-send-email 2.55.0.508.g3f0d502094-goog
+ id 1wqx2R-0004eu-IN for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 03 Aug 2026 18:05:21 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id 663FF4501A;
+ Mon,  3 Aug 2026 18:05:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA4F01F00A3D;
+ Mon,  3 Aug 2026 18:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1785780314;
+ bh=W2kStB1YVLVAsQPtUhw3R9F4+saCiGZ5gertLGOHTy8=;
+ h=From:To:Cc:Subject:Date;
+ b=JMUECnJP5du5ysAKwoLyMQiDiGNYXlVRUq/jZCqBrv1ijy7sailXgEvXbniKkAgUv
+ 7CvucJgQ2c/xRqrhe1JGRT3xaN38/honV6cGw/RCu1hMtL1sN4vs3VLIT2sfMkdD9R
+ LCY/87XFNb1QnLJu7tfvrWYuzZhIpACYLQCHvI7Ze75HQsWaxFYmfKHbYpqtwIt/Ay
+ GT8WPt+dPkX94Ha8/d68fRGAeaFSBS8NsxJHizAOSdkLH5VsWnk+fLI96Y412qKhEB
+ JW1LYt7Zf8mhN3d4Y7zp5B+tvU3YsozNo1RVdBAHVc8AOYu4JX/vBVu8UXYtVST7rI
+ PxI03tlWuVv5g==
+To: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Chris Li <chrisl@kernel.org>, Kairui Song <kasong@tencent.com>
+Date: Mon,  3 Aug 2026 11:04:26 -0700
+Message-ID: <20260803180426.3123-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.55.0
 MIME-Version: 1.0
-X-Headers-End: 1wqvuB-0002PM-B3
-Subject: [f2fs-dev] [PATCH v2] f2fs: Run f2fs_write_end_io() asynchronously
+X-Headers-End: 1wqx2R-0004eu-IN
+Subject: [f2fs-dev] [PATCH v2] mm/swap: reject swapon() on filesystem-level
+ encrypted files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,135 +85,83 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Bart Van Assche via Linux-f2fs-devel
+From: Eric Biggers via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Bart Van Assche <bvanassche@acm.org>,
- linux-f2fs-devel@lists.sourceforge.net
+Reply-To: Eric Biggers <ebiggers@kernel.org>
+Cc: Barry Song <baohua@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
+ Baoquan He <baoquan.he@linux.dev>, Kemeng Shi <shikemeng@huaweicloud.com>,
+ Youngjun Park <youngjun.park@lge.com>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The bio_for_each_segment_all() loop can take more than 10 ms for a large
-bio on an ARM little core. This is too much for interrupt context. Hence
-perform the write bio completion work asynchronously if a bio is large and
-if f2fs_write_end_io() is called from atomic context. This patch reduces
-the time spent in f2fs_write_end_io() from about 10 ms to about 150
-microseconds on an Arm Cortex-A520 core if the max_atc_write_bio_size
-parameter is changed to 16384.
+ext4 and f2fs don't prevent filesystem-level encrypted files from being
+set up directly as swap files.  In this case, encryption is bypassed.
 
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+No one should be doing this, vs. the methods of encrypted swap that
+actually do work (such as swapping to a dm-crypt device, or swapping to
+a loopback device on top of a filesystem-level encrypted file).
+
+Nevertheless, to prevent user error, make swapon() explicitly reject
+this case.  Document this behavior in fscrypt.rst as well.
+
+Fixes: 9bd8212f981e ("ext4 crypto: add encryption policy and password salt support")
+Fixes: f424f664f0e8 ("f2fs crypto: add encryption policy and password salt support")
+Cc: stable@vger.kernel.org
+Reviewed-by: Baoquan He <baoquan.he@linux.dev>
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
 
-Changes compared to v1: changed the default value of the new sysfs parameter
-  from 16 K to UINT_MAX (disabled).
+Changed in v2:
+   - Added a pr_warn_once
+   - Removed unnecessary word from fscrypt.rst
+   - Added Reviewed-by
 
- Documentation/ABI/testing/sysfs-fs-f2fs | 10 ++++++++++
- fs/f2fs/data.c                          | 21 ++++++++++++++++++++-
- fs/f2fs/f2fs.h                          |  2 ++
- fs/f2fs/super.c                         |  1 +
- fs/f2fs/sysfs.c                         |  2 ++
- 5 files changed, 35 insertions(+), 1 deletion(-)
+ Documentation/filesystems/fscrypt.rst | 4 ++++
+ mm/swapfile.c                         | 7 +++++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 1b58c029abd0..f4e6a7415cde 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -1002,3 +1002,13 @@ Description:	It can be used to tune priority of f2fs critical task, e.g. f2fs_ck
- 		threads, limitation as below:
- 		- it requires user has CAP_SYS_NICE capability.
- 		- the range is [100, 139], by default the value is 120.
-+
-+What:		/sys/fs/f2fs/<disk>/max_atc_write_bio_size
-+Date:		June 2026
-+Contact:	Bart Van Assche <bvanassche@acm.org>
-+Description:	Every time a write operation completes f2fs_write_end_io() is
-+		called. This function may be called from an atomic context,
-+		e.g. from inside an interrupt handler. This attribute controls
-+		the maximum size of a write bio that is completed in atomic
-+		(atc) context. The default value for this attribute is UINT_MAX
-+		which means that this functionality is disabled by default.
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 0429766a2d5d..b986ba8fa532 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -411,11 +411,30 @@ static void f2fs_write_end_bio(struct bio *bio)
- 	bio_put(bio);
- }
+diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+index c0dd35f1af12..e4882b73120e 100644
+--- a/Documentation/filesystems/fscrypt.rst
++++ b/Documentation/filesystems/fscrypt.rst
+@@ -1238,6 +1238,10 @@ astute users may notice some differences in behavior:
  
-+static void f2fs_write_end_io_work(struct work_struct *work)
-+{
-+	struct bio *bio = &container_of(work, struct f2fs_bio, work)->bio;
-+
-+	f2fs_write_end_bio(bio);
-+}
-+
- static void f2fs_write_end_io(struct bio *bio)
- {
-+	struct f2fs_sb_info *sbi;
-+
- 	iostat_update_and_unbind_ctx(bio);
+ - DAX (Direct Access) is not supported on encrypted files.
  
--	f2fs_write_end_bio(bio);
-+	sbi = bio->bi_private;
++- Encrypted files cannot be used directly as swap files.  To swap to
++  an encrypted file, set up a loopback device on top of it.
++  Alternatively, encrypted swap can use a dm-crypt device.
 +
-+	if (in_atomic() && bio->bi_iter.bi_size > sbi->max_atc_write_bio_size) {
-+		struct work_struct *w;
-+
-+		w = &container_of(bio, struct f2fs_bio, bio)->work;
-+		INIT_WORK(w, f2fs_write_end_io_work);
-+		queue_work(sbi->wq, w);
-+	} else {
-+		f2fs_write_end_bio(bio);
+ - The maximum length of an encrypted symlink is 2 bytes shorter than
+   the maximum length of an unencrypted symlink.  For example, on an
+   EXT4 filesystem with a 4K block size, unencrypted symlinks can be up
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 78b49b0658ad..8538659acb9e 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -3650,6 +3650,13 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 		error = -EBUSY;
+ 		goto bad_swap_unlock_inode;
+ 	}
++	if (IS_ENCRYPTED(inode)) {
++		pr_warn_once(
++			"Filesystem-level encrypted swapfile '%s' is unsupported. Create a loop device over it, or use dm-crypt\n",
++			name->name);
++		error = -EINVAL;
++		goto bad_swap_unlock_inode;
 +	}
- }
  
- #ifdef CONFIG_BLK_DEV_ZONED
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 60affd57a19d..5d020b21eaaa 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1773,6 +1773,8 @@ struct f2fs_sb_info {
- 	struct f2fs_sm_info *sm_info;		/* segment manager */
- 
- 	/* for bio operations */
-+	/* Largest write bio size completed in atomic context (atc). */
-+	u32 max_atc_write_bio_size;
- 	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
- 	/* keep migration IO order for LFS mode */
- 	struct f2fs_rwsem io_order_lock;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 9760e4efeffe..a87ec20d3363 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -5068,6 +5068,7 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	sb->s_fs_info = sbi;
- 	sbi->raw_super = raw_super;
-+	sbi->max_atc_write_bio_size = UINT_MAX;
- 
- 	INIT_WORK(&sbi->s_error_work, f2fs_record_error_work);
- 	memcpy(sbi->errors, raw_super->s_errors, MAX_F2FS_ERRORS);
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 665687244c93..47b378ccf07a 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -1266,6 +1266,7 @@ F2FS_SBI_RW_ATTR(gc_idle_interval, interval_time[GC_TIME]);
- F2FS_SBI_RW_ATTR(umount_discard_timeout, interval_time[UMOUNT_DISCARD_TIMEOUT]);
- F2FS_SBI_RW_ATTR(gc_pin_file_thresh, gc_pin_file_threshold);
- F2FS_SBI_RW_ATTR(gc_reclaimed_segments, gc_reclaimed_segs);
-+F2FS_SBI_RW_ATTR(max_atc_write_bio_size, max_atc_write_bio_size);
- F2FS_SBI_GENERAL_RW_ATTR(max_victim_search);
- F2FS_SBI_GENERAL_RW_ATTR(migration_granularity);
- F2FS_SBI_GENERAL_RW_ATTR(migration_window_granularity);
-@@ -1509,6 +1510,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(seq_file_ra_mul),
- 	ATTR_LIST(gc_segment_mode),
- 	ATTR_LIST(gc_reclaimed_segments),
-+	ATTR_LIST(max_atc_write_bio_size),
- 	ATTR_LIST(max_fragment_chunk),
- 	ATTR_LIST(max_fragment_hole),
- 	ATTR_LIST(current_atomic_write),
+ 	/*
+ 	 * The swap subsystem needs a major overhaul to support this.
+
+base-commit: f5098b6bae761e346ebcd9da7f95622c04733cff
+-- 
+2.55.0
+
 
 
 _______________________________________________
