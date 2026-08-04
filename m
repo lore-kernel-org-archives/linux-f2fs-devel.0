@@ -4,74 +4,115 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8A78FC55184
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Aug 2026 04:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7648AC55822
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Aug 2026 05:13:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=7BaGn4WZVlrf8cpww+PgKk/ytPSE++Yw38wPFaNzuY4=; b=L3KkV15QoDtzHlziVr4fN3wCiI
-	VYGx9lEnLQoDmyBF4S4k/29xM2cHwTq+jxcsdQVTiUZcQtLOo90ezff+/wcIXlZ8QGtexq7KKig87
-	rvNyNGwsi7qLdbXPYy+Ut8k0KKQ2oe9QM+Irr0Wdp4tDUfdKBzYP9+uy8r1hcf3Y/wgU=;
+	bh=J/qJ8TseDcqmjoUqORxHDrtw1tBksaxx4bxRu83sPyU=; b=dz8iTSA++aUYKTSs2YZOydnIiQ
+	oIm+dPLZ0PRU3PH2Mooy98tTs5mcUQEtfHSRrLzW4DETxP8JJkGAX/sH0n6/8KWBrJRvw8K7dbrw2
+	txmOPl96AvHWyPMfCyj0HLZDBTMuFVD5oyT8WRnZ9szzBLg2ad/EeCaOpRfk0uChm3HM=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wr6b6-00071O-Dr;
-	Tue, 04 Aug 2026 04:17:45 +0000
+	id 1wr7Sz-0002fn-UT;
+	Tue, 04 Aug 2026 05:13:27 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <usama.arif@linux.dev>) id 1wr6b4-00071H-Vj
+ (envelope-from <senozhatsky@chromium.org>) id 1wr7Su-0002fe-JE
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Aug 2026 04:17:44 +0000
+ Tue, 04 Aug 2026 05:13:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+ MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=64J9NQ8wINxMWeOp2Yatp476UcvWi6dCmOU/qEHakuw=; b=DH1ZwkoQY91Wxg6huNjyCqUH8g
- TbrsfW8+nS4nT4l0tED5DsF4MYGi8cHk1uyCVz0vAKqJRYjE7SxIyrToYR5XyErvf01n9pSiRQoNU
- HrtiHf+83p/BNMzeU0+1U8FFqZLeyYZ8MAeQDx4rEKbEAjSSvChI2u+WVHvpDEduVoo4=;
+ bh=ofILbuknwRcOfIjMMkJJdpQipeR+q4sG1AqmZyMuEBY=; b=kp/R4C1OFg9v7UJyL4Ot8GIkbJ
+ yWsUQgDDs81wwp9jXz/FcTv9ZGZ7sgvKEhZLrTBKPUDLHRJruTLWH5LkrlzFo9dBE1F9xwA7huH4p
+ T5RYAYdF0rWmWPYykaaHvLrel1rrfupUyF5miBSYgP1P8/O6nWEyw2A4FFVU1U0KEwVo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=64J9NQ8wINxMWeOp2Yatp476UcvWi6dCmOU/qEHakuw=; b=iTsHNKh2JTCNbbV2GCjjqmEcuV
- YF3G7Z4vIQ7dJfSaKd+P31wsifuPBDzRinihbXoXorYvApDzZJRA8FKG1sClZ60hb6iyX2Ehxf5RM
- 5gVU+eNwCT8L1KpdFQy0pMFlfZxszMNatSSkrKbD6XWA6yd9MeImmk8MFaspovXw2vF4=;
-Received: from out-181.mta0.migadu.com ([91.218.175.181])
+ bh=ofILbuknwRcOfIjMMkJJdpQipeR+q4sG1AqmZyMuEBY=; b=PkQDOzSt7K31r/SFBrMGok7MUj
+ dk/KnohzDhUsNdsC8EtpOpMQxR/FCuhzmxS1EgCoVVveRvn7i2CwiR2DLHzvhafRR6LpadTJOycCQ
+ U2ZzlrUJmwG5Ye6xPIwuoO/SV5kjXt6FMxH6kPlIrbeHiKdN9kXUbUgLkSr6XDij2NlU=;
+Received: from mail-yx1-f46.google.com ([74.125.224.46])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wr6b1-000097-TI for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Aug 2026 04:17:44 +0000
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and
- include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
- t=1785772104;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=64J9NQ8wINxMWeOp2Yatp476UcvWi6dCmOU/qEHakuw=;
- b=Hc/REYrJ28ABa30xrZ1S2G43zd3wYxS73exkn7ftrzeE6o48WnpuEbf10dM7FlgtRX0zIu
- WAbiZSO2Oti/9AmQcDnzXRIizlL4Q75woxE1p5gOjf8tcfILoGLFnqI6oK1iOwaONhC7UM
- olzNTFCByzZQd4kxyfr5PJN95Cd6BME=
-From: Usama Arif <usama.arif@linux.dev>
-To: Zi Yan <ziy@nvidia.com>
-Date: Mon,  3 Aug 2026 08:48:16 -0700
-Message-ID: <20260803154817.3112697-1-usama.arif@linux.dev>
-In-Reply-To: <20260731-remove-pg_private-v1-6-142c97ba3562@nvidia.com>
-References: 
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1wr7Sr-0001Mp-LO for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Aug 2026 05:13:22 +0000
+Received: by mail-yx1-f46.google.com with SMTP id
+ 956f58d0204a3-6682259cae6so4235853d50.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 03 Aug 2026 22:13:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=chromium.org; s=google; t=1785820396; x=1786425196;
+ darn=lists.sourceforge.net; 
+ h=in-reply-to:content-transfer-encoding:content-disposition
+ :content-type:mime-version:references:message-id:subject:cc:to:from
+ :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=ofILbuknwRcOfIjMMkJJdpQipeR+q4sG1AqmZyMuEBY=;
+ b=DvMNPN4FrzmRgfdrfKiIH79t01RR0kRHKkaUeMe2NgkaPX1/O3HXrH2Q9t3oBkzmQ8
+ pC/+VJ3zgUTPCK0yXUW97iH4kT/0+7rv839cHYkQo9zcbgoS0FogaSRehLhH30agb9k+
+ 9vC8wxMFnNXsrgxFSUMNFmNuGMWPa8C7SRCik=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1785820396; x=1786425196;
+ h=in-reply-to:content-transfer-encoding:content-disposition
+ :content-type:mime-version:references:message-id:subject:cc:to:from
+ :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to:content-type;
+ bh=ofILbuknwRcOfIjMMkJJdpQipeR+q4sG1AqmZyMuEBY=;
+ b=M3uXPEx43iHk2tjpUO55CjIjZWQ5ZPZRUvsWT+6QRz2EXf8Y6oJ4quw1i0K9jjTOEY
+ QGIIt3GlBnpPq5DwRKGnuer+axRzMhAvhZ2jYwMNzNTVwaBfp6cupc3QodsQ/XMgCd01
+ tCKWPovYsvMAObt6HzGJruUDFNJpcPoXE3kYBE9C+mqLSuHAK9k0lLjYbBZXzwSB7jCL
+ j2KYdp11K+2vY8ZUa7eiIuGZ6w8mW20NHOI96lQbPukfCoa1A8vaKnFzQ4cSqFDXbRcp
+ nX+CJfdCBfxhBUekcmfHOtI/v6b6WBVIOMlg/tBG3KWZwBJ+vf6ZrQL30+usiGWqcFKi
+ tXDA==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RoQ3BZnpaNJ8xIUJUBCC8KDK15oV13rlLUevFg/JnYaGqlOo8lN67+PFOPbMdrXEyDqaFJYgX30FvKW7A/yjdfO@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YwSN9+llgll78xWbmU/+yfe+Z0Huv+U1tjyabDWNt2fUrz0KmW8
+ 2sMJAHPwaMzr2PAn0TCJuJNui4L7qpMn0GBYWQ36Cj3e+xuoEYvVgnf2tNb7nZhDAWICT0NXgbn
+ hjQA=
+X-Gm-Gg: AR+sD12R7KVNQ9dYd2pjMyYLVnn2BHLw66XSz8ZwtPsMOQpUXEt+VaXWGSf7e/ncRCu
+ v+wB55kK3I0gkKD3YwYMGCgb6LQ5racN3qQuLI4Des2fEayJyJ4FMZ6hRfwBB6ss71fURM2QS9A
+ ZI5HCQp7jko6dRObuvOY8aBYlHW56/ZyPGtefFtFmsv+sYKcQ101SM15QanpQQ7PEWjRgPTVoOK
+ JuGP57IcHJRDxq9YsP5eGVnovTwCgxnLnGB5QFWEJjBNJCgsjRFWl1dudQNif1d62FtPSeW3UDC
+ ULqR2oT+kQ1GXCbaobJOrgWmcsSW4gD2HZ3ODf9e0IlaDb2GG+KmOp0gSxOoduToLojMuGb/7m0
+ 7wGdhfeabNB6CTAoqfZgwGqyfPDHogYdXFjOgyNgVCMN8YayxXyD5Q1VM9OTX5TgNwUzdqphjf9
+ Y2L4n9uNykb2XBsf3ogspQLkAWphBBjPiYMlqoq0LDQDgXbs4xeSor9MS+euPdZLItFQ2FotD5B
+ ywVbza4OZRqkxo7IqsCbIX+q5fefvwPma//J8g=
+X-Received: by 2002:a05:6a00:c94:b0:847:770f:da4c with SMTP id
+ d2e1a72fcca58-84ee4813951mr12064733b3a.16.1785818548446; 
+ Mon, 03 Aug 2026 21:42:28 -0700 (PDT)
+Received: from google.com ([2a00:79e0:2031:6:fcb5:533d:198b:8d48])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-84edbe564b3sm4629556b3a.14.2026.08.03.21.42.23
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 03 Aug 2026 21:42:27 -0700 (PDT)
+Date: Tue, 4 Aug 2026 13:42:21 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: haoqin huang <haoqinhuang7@gmail.com>
+Message-ID: <anFspPi023HFlwwE@google.com>
+References: <20260730025240.17724-1-haoqinhuang7@gmail.com>
+ <20260730060133.80233-1-haoqinhuang7@gmail.com>
+ <20260730060133.80233-4-haoqinhuang7@gmail.com>
+ <amr3P_4zxX2w7ZNR@google.com>
+ <CAEjiKSkExTnRc77Va-cOSpoNJ4S0i_-r2-iGFyxoSw2mqh1Diw@mail.gmail.com>
 MIME-Version: 1.0
-X-Migadu-Flow: FLOW_OUT
-X-Headers-End: 1wr6b1-000097-TI
-Subject: Re: [f2fs-dev] [PATCH RFC 06/14] fs/f2fs: stop using PG_private
+Content-Disposition: inline
+In-Reply-To: <CAEjiKSkExTnRc77Va-cOSpoNJ4S0i_-r2-iGFyxoSw2mqh1Diw@mail.gmail.com>
+X-Headers-End: 1wr7Sr-0001Mp-LO
+Subject: Re: [f2fs-dev] [PATCH v4 3/4] zram: validate parameters in each
+ backend's setup_params
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,89 +124,47 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Michal Hocko <mhocko@suse.com>, "Liam R. Howlett" <liam@infradead.org>,
- Shakeel Butt <shakeel.butt@linux.dev>,
- Ying Huang <ying.huang@linux.alibaba.com>, Qi Zheng <qi.zheng@linux.dev>,
- Vlastimil Babka <vbabka@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Alistair Popple <apopple@nvidia.com>, Dev Jain <dev.jain@arm.com>,
- "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
- Gregory Price <gourry@gourry.net>, Ryan Roberts <ryan.roberts@arm.com>,
- Usama Arif <usama.arif@linux.dev>, linux-f2fs-devel@lists.sourceforge.net,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Barry Song <baohua@kernel.org>,
- Kairui Song <kasong@tencent.com>, linux-mm@kvack.org,
- Muchun Song <muchun.song@linux.dev>, linux-kernel@vger.kernel.org,
- Nico Pache <nico.pache@linux.dev>, Lance Yang <lance.yang@linux.dev>,
- Johannes Weiner <hannes@cmpxchg.org>,
- Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: Jens Axboe <axboe@kernel.dk>, Minchan Kim <minchan@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-block@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Nick Terrell <terrelln@fb.com>, David Sterba <dsterba@suse.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Rongwei Wang <zigiwang@tencent.com>, Haoqin Huang <haoqinhuang@tencent.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, 31 Jul 2026 22:13:29 -0400 Zi Yan <ziy@nvidia.com> wrote:
-
-> f2fs sets its PAGE_PRIVATE_* flags in page->private and checking
-> page->private != NULL is equivalent to checking PG_private. Change
-> PagePrivate() to page_private(). Meanwhile, in set_page_private_##name(),
-> page->private is first set to 0/NULL before an PAGE_PRIVATE_* flag is set,
-> but it can cause confusion when PG_private is removed and
-> page->private != NULL is used instead. Change it to initialize
-> page->private to PAGE_PRIVATE_NOT_POINTER instead and retain the original
-> semantics.
-> 
-> It prepares for a future commit that removes PG_private.
-> 
-> No funtional change intended.
-> 
-> Assisted-by: Claude:claude-opus-4-8
-> Assisted-by: Codex:gpt-5
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> To: Jaegeuk Kim <jaegeuk@kernel.org>
-> To: Chao Yu <chao@kernel.org>
-> Cc: linux-f2fs-devel@lists.sourceforge.net
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  fs/f2fs/f2fs.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-
-Acked-by: Usama Arif <usama.arif@linux.dev>
-
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 8f3e632f315cc..edf01eb4b3b30 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2643,7 +2643,7 @@ static inline bool folio_test_f2fs_##name(const struct folio *folio)	\
->  }									\
->  static inline bool page_private_##name(struct page *page) \
->  { \
-> -	return PagePrivate(page) && \
-> +	return page_private(page) && \
->  		test_bit(PAGE_PRIVATE_NOT_POINTER, &page_private(page)) && \
->  		test_bit(PAGE_PRIVATE_##flagname, &page_private(page)); \
->  }
-> @@ -2662,9 +2662,9 @@ static inline void folio_set_f2fs_##name(struct folio *folio)		\
->  }									\
->  static inline void set_page_private_##name(struct page *page) \
->  { \
-> -	if (!PagePrivate(page)) \
-> -		attach_page_private(page, (void *)0); \
-> -	set_bit(PAGE_PRIVATE_NOT_POINTER, &page_private(page)); \
-> +	if (!page_private(page)) \
-> +		attach_page_private(page, \
-> +				(void *)BIT(PAGE_PRIVATE_NOT_POINTER)); \
->  	set_bit(PAGE_PRIVATE_##flagname, &page_private(page)); \
->  }
->  
-> 
-> -- 
-> 2.53.0
-> 
-> 
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gKDI2LzA4LzAzIDIwOjIwKSwgaGFvcWluIGh1YW5nIHdyb3RlOgo+IE9uIFRodSwgSnVsIDMw
+LCAyMDI2IGF0IDM6MjTigK9QTSBTZXJnZXkgU2Vub3poYXRza3kKPiA8c2Vub3poYXRza3lAY2hy
+b21pdW0ub3JnPiB3cm90ZToKPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvYmxvY2svenJhbS9i
+YWNrZW5kX2x6NGhjLmMgYi9kcml2ZXJzL2Jsb2NrL3pyYW0vYmFja2VuZF9sejRoYy5jCj4gPiA+
+IGluZGV4IGY2YTMzNmFjZmUyMC4uNWQ1NTFkMTY1MjEzIDEwMDY0NAo+ID4gPiAtLS0gYS9kcml2
+ZXJzL2Jsb2NrL3pyYW0vYmFja2VuZF9sejRoYy5jCj4gPiA+ICsrKyBiL2RyaXZlcnMvYmxvY2sv
+enJhbS9iYWNrZW5kX2x6NGhjLmMKPiA+ID4gQEAgLTIwLDYgKzIwLDExIEBAIHN0YXRpYyBpbnQg
+bHo0aGNfc2V0dXBfcGFyYW1zKHN0cnVjdCB6Y29tcF9wYXJhbXMgKnBhcmFtcykKPiA+ID4gIHsK
+PiA+ID4gICAgICAgaWYgKHBhcmFtcy0+bGV2ZWwgPT0gWkNPTVBfUEFSQU1fTk9UX1NFVCkKPiA+
+ID4gICAgICAgICAgICAgICBwYXJhbXMtPmxldmVsID0gTFo0SENfREVGQVVMVF9DTEVWRUw7Cj4g
+PiA+ICsgICAgIGVsc2UgaWYgKHBhcmFtcy0+bGV2ZWwgPCBMWjRIQ19NSU5fQ0xFVkVMIHx8Cj4g
+PiA+ICsgICAgICAgICAgICAgIHBhcmFtcy0+bGV2ZWwgPiBMWjRIQ19NQVhfQ0xFVkVMKSB7Cj4g
+PiA+ICsgICAgICAgICAgICAgcHJfZXJyKCJsejRoYzogaW52YWxpZCBjb21wcmVzc2lvbiBsZXZl
+bCAlZFxuIiwgcGFyYW1zLT5sZXZlbCk7Cj4gPiA+ICsgICAgICAgICAgICAgcmV0dXJuIC1FSU5W
+QUw7Cj4gPiA+ICsgICAgIH0KPiA+Cj4gPiBTby4uLiAgbGliL2x6NC9sejRoY19jb21wcmVzcy5j
+IHN1cHBvcnRzIGxldmVscyAxIGFuZCAyLiAgSG93ZXZlciwKPiA+IExaNEhDX01JTl9DTEVWRUwg
+aXMgc2V0IHRvIDMsIGJ1dCBjbGVhcmx5IHRoZSBjb21wcmVzc2lvbiBsaWJyYXJ5Cj4gPiBzdXBw
+b3J0cyBsZXZlbHMgbG93ZXIgdGhhbiBMWjRIQ19NSU5fQ0xFVkVMLiAgSW4gZmFjdCwgTFo0SENf
+TUlOX0NMRVZFTAo+ID4gaXMgbmV2ZXIgdXNlZCBpbiB0aGUgbHo0IGNvZGUuICBNYXliZSBoZXJl
+IHdlIG5lZWQgdG8ganVzdCBoYXJkY29kZQo+ID4gIjwgMSIgYW5kIHB1dCBhIGNvbW1lbnQ6Cj4g
+Pgo+IAo+IE15IGJhZCwgY29tcGxldGVseSBtaXNzZWQgdGhhdCBMWjRIQ19NSU5fQ0xFVkVMIGlz
+IGFkdmlzb3J5IGFuZCB0aGUKPiBsaWJyYXJ5IGFjdHVhbGx5IGFjY2VwdHMgMS0yLiAgV2lsbCBo
+YXJkY29kZSA8IDEgaW4gdjUuCgpObyB3b3JyaWVzLCB0aGF0IExaNEhDX01JTl9DTEVWRUwgdGhp
+bmcgaXMgZGlmZmljdWx0IHRvIHNwb3QuCgo+IEJ0dywgd291bGQgaXQgbWFrZSBzZW5zZSB0byBm
+aXggTFo0SENfTUlOX0NMRVZFTCB0byAxIGluIHRoZSBsejQKPiBoZWFkZXIgYXMgYSBzZXBhcmF0
+ZSBjbGVhbnVwPyAgSXQgc2VlbXMgbWlzbGVhZGluZyBhcy1pcy4KCkknbSBhZnJhaWQgd2UgY2Fu
+bm90IGRvIHRoYXQuICBmMmZzIHVzZXMgTFo0SENfTUlOX0NMRVZFTCwgSSBhc3N1bWUKY29tcHJl
+c3Npb24gbGV2ZWwgaXMgc3RvcmVkIHBlci1pbm9kZT8gIFNvIGlmIHdlIGNoYW5nZSBMWjRIQ19N
+SU5fQ0xFVkVMCnRoZW4gbmV3ZXIgZjJmcyB3aWxsIHN0YXJ0IGFjY2VwdGluZyBjb21wcmVzc2lv
+biBsZXZlbHMgdGhhdCBvbGRlciBrZXJuZWxzCmRvbid0IHN1cHBvcnQuICBDYy1lZCBKYWVnZXVr
+IGFuZCBDaGFvIGp1c3QgZm9yIHZpc2liaWxpdHkuCgoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGlu
+dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vm
+b3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
