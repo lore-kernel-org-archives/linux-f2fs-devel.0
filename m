@@ -4,84 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B76F3C55182
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Aug 2026 00:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8647BC55182
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Aug 2026 01:07:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-Id:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=RXGx5yX7/RK32hvvRM9+t/V9v362441zPzN7dn0ITVM=; b=Zll7oNhYzwoZtrzId77KPN7q9u
-	bF9BPVJ59Vl++Qu6HHFV1TBzq7vQ33vZ9efSi6m23VbDo+5YVJM1CuMzHQKgATciuFvaiXzhLPzaJ
-	pZUJUrdSNb1O0pXvg5uGA1BF0/w9MJ1Asy0bPE+tb5AgfPXqeoa/M5o0mLSnx+CL/5Zo=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=ovxTGs3HLLdEho1dwcbzthgVLAz4OSqweFlgtPfdiC4=; b=eVAnmJqEGMCXRZVGM0cOptw6XA
+	f7StgSIlKDT0VGK9KviTfelrqZ5OJx5jz25KonwDJ599W7RVVc39oC/0kHCIn3ajJKxYU1qXAhfvH
+	Te0ibujL3y40jPh7jkhKXoyJwWzSaGqnufTeA57J0cU1kgQNXODCmyJAEAUfiVA3d2uM=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wr3QW-0002LW-TG;
-	Tue, 04 Aug 2026 00:54:38 +0000
+	id 1wr3ck-0008FJ-Hs;
+	Tue, 04 Aug 2026 01:07:19 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chenchangcheng@kylinos.cn>) id 1wr3QU-0002LF-9E
+ (envelope-from <chao@kernel.org>) id 1wr3cc-0008ER-NQ
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Aug 2026 00:54:35 +0000
+ Tue, 04 Aug 2026 01:07:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hV22y9r9g2yVGod+L5gdR5079dise7UbgC3bQqBsJDU=; b=FWibxpD0vVqoBlvVW6mnAeiQbB
- j6hSOspFyS4dq5iTj0GbkHrKOEIdPhBSqHIhYFfuo0r9TgptoquRUGEzjePrwBpIpEW/5qrIslpUG
- MZzH6x0sKjP7jrwr30NKhu56YkQBQ+C0UrJTSazWeoie1YHKVxl5xNCzLI9fXQkSLy2A=;
+ bh=iEEBXdGRwABnDoln3/Ejwf7r5wJNQUWqwaeWtBAdyQE=; b=AxY4hONiosRIcotLiZOtYBRWIA
+ wd/CKgYj6bbqnVDvYhRD1Gcgdnu+aHzAFPquQrjFQg4jXiw8MueoBhnf4CGKFtMnfveUti+AMqrD/
+ MOm54fzvTteO9E2+Vl0gDbsCFRQXMVGGtJ2IloVN2YSNU22t10oSZVVr/CMwuI3xxHdQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hV22y9r9g2yVGod+L5gdR5079dise7UbgC3bQqBsJDU=; b=Q1JuHIiofz0KrVMJH9a2FFkKpj
- ZZ9snf/O3tZk+QwiswhPC++E3r/XG1yFOeFZ9vvReNShwCdkxk/d5588y0fiI4MxFef0N+vWJyIfx
- bTbwuAuZ2RoFZpG12L2XSKTmff2VfEj3ZYLzXJcYrKpZZ5gUe9+2ZdzOJKwLsPjhUgWM=;
-Received: from mailgw.kylinos.cn ([124.126.103.232])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=iEEBXdGRwABnDoln3/Ejwf7r5wJNQUWqwaeWtBAdyQE=; b=fejz+9vzBUDfk3RdRkYsS1U4pB
+ 1j/Vv9bbah5sAo4JFnOkKHB1FKF/gTQ4LYOV2LNFVreE7AWZZtsmMH5U8Zd4C/vnIx2ZGYEaWzA9j
+ hCnUD08W3BFUeatsLOgGZToKlWYR6CUlJsvYLl7qXUCvjZKrSRGim6ns0D9ZXacgHBNw=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wr3QB-0002Mh-J3 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Aug 2026 00:54:17 +0000
-X-UUID: ff31c4f28f9e11f1aa26b74ffac11d73-20260804
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.12, REQID:ddacd5a4-cb62-4303-86ad-8fffcb5ded40, IP:0,
- U
- RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
- N:release,TS:20
-X-CID-META: VersionHash:e7bac3a, CLOUDID:096f34ef334ec6474f12983b4c97942f,
- BulkI
- D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|136|850|865|898,TC:nil,Content
- :0|15|50,EDM:5,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,
- OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: ff31c4f28f9e11f1aa26b74ffac11d73-20260804
-X-User: chenchangcheng@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
- (envelope-from <chenchangcheng@kylinos.cn>)
- (Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
- with ESMTP id 1940239157; Tue, 04 Aug 2026 08:54:07 +0800
-From: Chen Changcheng <chenchangcheng@kylinos.cn>
-To: chao@kernel.org
-Date: Tue,  4 Aug 2026 08:54:02 +0800
-Message-Id: <20260804005402.13026-1-chenchangcheng@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <0b450e92-b9b0-4a55-bd16-ad106245d7e1@kernel.org>
-References: <0b450e92-b9b0-4a55-bd16-ad106245d7e1@kernel.org>
+ id 1wr3cb-0003l7-Dg for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Aug 2026 01:07:11 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by tor.source.kernel.org (Postfix) with ESMTP id BDE8160A59;
+ Tue,  4 Aug 2026 01:07:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C7101F000E9;
+ Tue,  4 Aug 2026 01:07:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1785805623;
+ bh=iEEBXdGRwABnDoln3/Ejwf7r5wJNQUWqwaeWtBAdyQE=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To;
+ b=Hlh/8BEi9bThvwybowwJcPUwl7L27MJxgD2pBXfWZ0NueTDIFK+ARmwVW6132q3sU
+ /ibSND03TrZOs5AUyjHc0/J4w0GMcB64kaS0uH0u5HpQzyCth3r4f2fF498mZjhMOF
+ UvhJkyugsydPTc8wxSElzmilGyuA/mAR+Scaqkt7gcPd5iSzhCPQBh85xpOBfrHYD3
+ SqEHCwcK+tWyuVyMdnB3+dKgihoU8rD2azUDoDQYefFq893hCH1p+PxyK3RDqDcCLB
+ AJgtbpgc61W9uQqYTH1P8bF5lxq3x6w1a3MpduBCY2QEW2oKtNKisfyYNzSBkp9D4/
+ IUzwEgzHPZOnA==
+Message-ID: <b48f3dfe-0004-4aea-bf0e-1401b4301b4f@kernel.org>
+Date: Tue, 4 Aug 2026 09:07:00 +0800
 MIME-Version: 1.0
-X-Headers-End: 1wr3QB-0002Mh-J3
-Subject: [f2fs-dev] [PATCH v3] f2fs: fix valid block count leak on data
- block allocation failure
+User-Agent: Mozilla Thunderbird
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20260803182120.2291138-1-daeho43@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20260803182120.2291138-1-daeho43@gmail.com>
+X-Headers-End: 1wr3cb-0003l7-Dg
+Subject: Re: [f2fs-dev] [PATCH v2] fsck.f2fs: sanitize invalid segment type
+ during block update
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,53 +88,102 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net,
- Chen Changcheng <chenchangcheng@kylinos.cn>, jaegeuk@kernel.org,
- ccc194101@163.com
-Content-Type: text/plain; charset="us-ascii"
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In __allocate_data_block(), when allocating a new data block
-(dn->data_blkaddr == NULL_ADDR), inc_valid_block_count() is
-called first to increment total_valid_block_count and i_blocks.
-If the subsequent f2fs_allocate_data_block() fails, the function
-returns the error directly without rolling back the
-already-incremented block counts, causing a permanent leak.
+On 8/4/26 02:21, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> If an invalid segment type (type < 0 || type >= NO_CHECK_TYPE) is read
+> from SIT during block update, update_block() now validates the type,
+> reports corruption via ASSERT_MSG(), fixes se->type directly, and falls
+> back to a valid active curseg type based on its SSA summary block type
+> when fix_on is enabled. find_next_free_block() also validates want_type to
+> prevent out-of-bounds accesses.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> ---
+> v2: used ASSERT_MSG() instead of ERR_MSG().
+>      used the correct type info for fixed_type.
+>      fixed se->type on top of fixing the local type only.
+> ---
+>   fsck/mount.c   |  5 +++++
+>   fsck/segment.c | 20 ++++++++++++++++++--
+>   2 files changed, 23 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index 85ed404..916dfbf 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -3059,6 +3059,11 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left,
+>   	u64 end_blkaddr = (get_sb(segment_count_main) <<
+>   			get_sb(log_blocks_per_seg)) + get_sb(main_blkaddr);
+>   
+> +	if (want_type < 0 || want_type >= NO_CHECK_TYPE) {
+> +		ASSERT_MSG("Invalid segment type %d for block allocation", want_type);
+> +		return -EINVAL;
+> +	}
+> +
+>   	if (c.zoned_model == F2FS_ZONED_HM && !new_sec) {
+>   		struct curseg_info *curseg = CURSEG_I(sbi, want_type);
+>   		unsigned int segs_per_zone = sbi->segs_per_sec * sbi->secs_per_zone;
+> diff --git a/fsck/segment.c b/fsck/segment.c
+> index 46dc747..43f85ec 100644
+> --- a/fsck/segment.c
+> +++ b/fsck/segment.c
+> @@ -770,15 +770,32 @@ int update_block(struct f2fs_sb_info *sbi, void *buf, u32 *blkaddr,
+>   	struct seg_entry *se;
+>   	struct f2fs_summary sum;
+>   	u64 new_blkaddr, old_blkaddr = *blkaddr, offset;
+> -	int ret, type;
+> +	int ret, type, sum_type;
+>   
+>   	if (c.zoned_model != F2FS_ZONED_HM)
+>   		return dev_write_block(buf, old_blkaddr, WRITE_LIFE_NONE);
+>   
+> +	sum_type = get_sum_entry(sbi, old_blkaddr, &sum);
+> +
+>   	/* update sit bitmap & valid_blocks && se->type for old block*/
+>   	se = get_seg_entry(sbi, GET_SEGNO(sbi, old_blkaddr));
+>   	offset = OFFSET_IN_SEG(sbi, old_blkaddr);
+>   	type = se->type;
+> +	if (type < 0 || type >= NO_CHECK_TYPE) {
+> +		int fixed_type = (sum_type == SEG_TYPE_NODE ||
+> +				sum_type == SEG_TYPE_CUR_NODE) ?
+> +				CURSEG_HOT_NODE : CURSEG_HOT_DATA;
+> +
+> +		ASSERT_MSG("Invalid SIT segment type %d at blkaddr 0x%"PRIx64,
+> +				type, old_blkaddr);
+> +
+> +		if (!c.fix_on)
+> +			return -EINVAL;
+> +
+> +		FIX_MSG("Correct invalid segment type %d -> %d for blkaddr 0x%"PRIx64"\n",
+> +				type, fixed_type, old_blkaddr);
+> +		se->type = se->orig_type = type = fixed_type;
 
-Fix this by calling dec_valid_block_count() to undo the
-increment before returning the error. The condition
-old_blkaddr == NULL_ADDR precisely identifies the case where
-inc_valid_block_count() was called.
+We should not change se->orig_type, because fsck uses it to record original
+se->type, so that in check_sit_types(), it can be compared w/ se->type to know
+which se->type is fixed.
 
-Fixes: 7d009e048d7c ("f2fs: fix to handle segment allocation failure correctly")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Chao Yu <chao@kernel.org>
-Signed-off-by: Chen Changcheng <chenchangcheng@kylinos.cn>
----
- fs/f2fs/data.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Thanks,
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index a765fda71536..819631bb61ae 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1532,8 +1532,11 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
- 	old_blkaddr = dn->data_blkaddr;
- 	err = f2fs_allocate_data_block(sbi, NULL, old_blkaddr,
- 				&dn->data_blkaddr, &sum, seg_type, NULL);
--	if (err)
-+	if (err) {
-+		if (old_blkaddr == NULL_ADDR)
-+			dec_valid_block_count(sbi, dn->inode, count);
- 		return err;
-+	}
- 
- 	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO)
- 		f2fs_invalidate_internal_cache(sbi, old_blkaddr, 1);
--- 
-2.25.1
+> +	}
+>   	se->valid_blocks--;
+>   	f2fs_clear_bit(offset, (char *)se->cur_valid_map);
+>   	if (need_fsync_data_record(sbi))
+> @@ -811,7 +828,6 @@ int update_block(struct f2fs_sb_info *sbi, void *buf, u32 *blkaddr,
+>   	f2fs_set_sit_bitmap(sbi, new_blkaddr);
+>   
+>   	/* update SSA */
+> -	get_sum_entry(sbi, old_blkaddr, &sum);
+>   	update_sum_entry(sbi, new_blkaddr, &sum);
+>   
+>   	if (IS_DATASEG(type)) {
 
 
 
