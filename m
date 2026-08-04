@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8074EC55184
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Aug 2026 18:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EC97BC55184
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Aug 2026 18:02:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=m36OUwogK5ES+iJB/r5IscmcrwcvvLs6FAr1nkaap1E=; b=ADcC6wnsZsbXKQI3d9TRr35Uqg
-	rVFfMmXUUMjSQyafk5R51AJLEPVVS5axiynYB0PrTWbh7WWavTTCD8yCXWyzhLBbuf8gUG+k2b7G1
-	fgVsLV4860zZjktfIsN4JZpd8wpWj8CiEb5t7hpk6qb5tg8A6bnD/DHKAOu7l1jeqS/E=;
+	bh=e3Sw/4TK5xDos3qIyI4qXzUoCn0kgSm9r8wkom/Lptk=; b=BJOSfxMZaxZx20MVrUjoqZL/Jc
+	xmBM/KQ7ym6xvF8zK/fqgyN2McUVrdr+JsWUPO6MWQf5y8bdVEXtTsmZky7S4IlfVbCLMffS6p4bj
+	qdud1DE79LqCMcH23Inda1ZgcuhdZzFWPXYACDR9e0d1u2f/ZHlgX1ZHi6ytfw5bOEdY=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wrJSD-0003EO-1n;
-	Tue, 04 Aug 2026 18:01:29 +0000
+	id 1wrJTQ-0003Gj-JY;
+	Tue, 04 Aug 2026 18:02:44 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <djwong@kernel.org>) id 1wrJSB-0003EH-CK
+ (envelope-from <djwong@kernel.org>) id 1wrJTD-0003GS-E9
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Aug 2026 18:01:27 +0000
+ Tue, 04 Aug 2026 18:02:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RSCZdlfHoN3MNNuFMvr7QIlKkJ47f+bwICwB/uhDA4Y=; b=U8idQRM5vTz4vk2mI3x/9h1iYr
- RvXJWmXfUSAdyLTVZKzgqWxg4SAF/LwE1wXij14mxcz7arVrew+nDuf93tgZrZphI0Dvi6jPaa4uU
- xbl5aNtmnSRiYTKDhUdieIP7wjEeGVaf9DRn14KqFmq0SU3/Mpz14VuvdDqXrw7eC/fU=;
+ bh=Y2NLRiGuBNOJ6Z8BI9xM1Xpil32458EDcgBYHRf5xO0=; b=HwemdeBVlaW+E0/W5MDSR9QSsQ
+ 2M0sJnKZAgSzarKOzhAGyFSkTzWlOxf9sEAWB4CQISciMoIly2kbVkHBvQovnC39Hn7Vuvm4CKZqK
+ VJ1RKcqZnurR6m3r2a7IWxyaZC9rTMsUswKgasx6GjP+H9DTdABcouAUiMmOMdl64j7c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=RSCZdlfHoN3MNNuFMvr7QIlKkJ47f+bwICwB/uhDA4Y=; b=f4cGoDDtDX26tHifwne87c7UCz
- JtWMoJNtYjA5iUev/12o5PcmgxyrBztgC2CM+FCQVd2vVd0oBmd2RD4pRIWsBwGK33b9y5s0cEQUf
- pQQgozrv5rFIQKyYStuO/YVfvU8NxcWZlLoXay8zQ1w/GYHMvpr/nEDnwope+EBJTST4=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=Y2NLRiGuBNOJ6Z8BI9xM1Xpil32458EDcgBYHRf5xO0=; b=ZNTBemSavOpT8Bhym0+GhqCzkJ
+ jP2kXqRhCToWMyIAlhtOOQC8owZ4wEwQakw4zX9b4nhZe0SMIiJAxPNOpAt8wgyUw06kDDCSSIlKY
+ PpNLuVo3JavodJDiz+y+tzar9H4z3BDFwI4GneiCrjld0I2mgjAD76SxcQhH4+7itXUs=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wrJSD-0008UD-FN for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Aug 2026 18:01:27 +0000
+ id 1wrJTE-0008Vb-Cr for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Aug 2026 18:02:31 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with UTF8SMTP id 7F0B44337C;
- Tue,  4 Aug 2026 18:01:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 549B71F000E9;
- Tue,  4 Aug 2026 18:01:20 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with UTF8SMTP id 3CCFF60AAC;
+ Tue,  4 Aug 2026 18:02:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id DC1381F000E9;
+ Tue,  4 Aug 2026 18:02:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785866480;
- bh=RSCZdlfHoN3MNNuFMvr7QIlKkJ47f+bwICwB/uhDA4Y=;
+ s=k20260515; t=1785866543;
+ bh=Y2NLRiGuBNOJ6Z8BI9xM1Xpil32458EDcgBYHRf5xO0=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=nPfLkZ4uC1++e501adfyJeG5XBlMkJCQJrbKrS23H9Mjw345JgvBtH6qU3al983b7
- Ethpm/m0+i9ddrwk/suuKrr1w54NrTCGTZuK0n1x2zemEqczgexKrTGp1KpHMRy/IY
- q4PMEa7clRn3ObuGZ1v0bNSxl4MXSWVW+j8cQSg8XUl55tPBsoRtx5tFZLUChR0lsB
- uEGgbK/BslSqTxu/Z0hPy0cn4f6eNbjiTKSLWFXgbbfWGq5RMHIFuFxJLdXm0WNBRl
- mWvDPFJw+ghJuVPnaKObQCenvV/8BLnSxIu3cQkzoBMECywmXCsbbdaF1FnFQw/io2
- D/9zxSMt8KuTg==
-Date: Tue, 4 Aug 2026 11:01:19 -0700
+ b=GAGCWjPIAyRk1FTePZVk3ZTky9GVEGih5BCDLS3DV9UiiXAn8lz3Bki8hOXq+7RfE
+ 1uswLruc72tjdUjSLt7W3WUWLokJw2cWHJ/hwndk34bsg+8KujXHysByZZ39l3ANAG
+ +ykl4oDTAOaHXoEmR0bNMKPgt8UEyIrVyYaqUFKMNsPvUfjRDkRnecChE8qKXRYfk3
+ Lzy9MLZT7WMiEDuVEbbyyX9nAN0wZ/8Yyx7xIJRw8JNNd/7SiY9ME6Pgw/ppye0xud
+ /NhvrRYpTbaBX8oLV2er1kYDmhklTapD37OwYPSrUlO97jf8Ste09csg5E4Kh9WDhO
+ GPfRMkwHGktpg==
+Date: Tue, 4 Aug 2026 11:02:22 -0700
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20260804180119.GJ3556460@frogsfrogsfrogs>
+Message-ID: <20260804180222.GK3556460@frogsfrogsfrogs>
 References: <20260803200820.393203-1-aalbersh@kernel.org>
- <20260803200820.393203-6-aalbersh@kernel.org>
+ <20260803200820.393203-7-aalbersh@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260803200820.393203-6-aalbersh@kernel.org>
-X-Headers-End: 1wrJSD-0008UD-FN
-Subject: Re: [f2fs-dev] [PATCH v14 05/21] fsverity: improve flushing
- performance of fsverity_fill_zerohash
+In-Reply-To: <20260803200820.393203-7-aalbersh@kernel.org>
+X-Headers-End: 1wrJTE-0008Vb-Cr
+Subject: Re: [f2fs-dev] [PATCH v14 06/21] fsverity: don't allow setting DAX
+ file attribute on fsverity files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,75 +98,58 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Aug 03, 2026 at 10:07:55PM +0200, Andrey Albershteyn wrote:
-> The current version calls flush_dcache_folio(), in memcpy_to_folio(), to
-> flush whole folio on every digest (which is 128 for 4k) on the HIGHMEM
-> systems. Open code folio mapping and flushing to copy all digests at
-> once.
+On Mon, Aug 03, 2026 at 10:07:56PM +0200, Andrey Albershteyn wrote:
+> When fsverity is enabled on the file, with FS_IOC_ENABLE_VERITY ioctl(),
+> it checks if file has DAX enabled and fails if that's true. However, the
+> opposite case is not checked.
+> 
+> Note, that the only other filesystem supporting DAX and fsverity is
+> ext4, and ext4 does check for this case.
+> 
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/file_attr.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/file_attr.c b/fs/file_attr.c
+> index bfb00d256dd5..473ebbe9af31 100644
+> --- a/fs/file_attr.c
+> +++ b/fs/file_attr.c
+> @@ -235,10 +235,15 @@ static int fileattr_set_prepare(struct inode *inode,
+>  	/*
+>  	 * It is only valid to set the DAX flag on regular files and
+>  	 * directories on filesystems.
+> +	 *
+> +	 * DAX and fsverity are incompatible.
+>  	 */
+> -	if ((fa->fsx_xflags & FS_XFLAG_DAX) &&
+> -	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
+> -		return -EINVAL;
+> +	if (fa->fsx_xflags & FS_XFLAG_DAX) {
+> +		if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
+> +			return -EINVAL;
+> +		if (old_ma->fsx_xflags & FS_XFLAG_VERITY)
+> +			return -EINVAL;
+> +	}
+>  
+>  	/* Extent size hints of zero turn off the flags. */
+>  	if (fa->fsx_extsize == 0)
+> @@ -246,6 +251,7 @@ static int fileattr_set_prepare(struct inode *inode,
+>  	if (fa->fsx_cowextsize == 0)
+>  		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
+>  
+> +
 
-Do we really have to care about HIGHMEM performance?  I thought that
-was going soon anyway[1].  The code change *looks* reasonable but ugh
-it adds more complexity and how many 32-bit phones and servers are
-there?
+Unnecessary addition of a blank line?
 
-(For Andrey: Why is this bolted onto an XFS patchset?  Nobody
-should run XFS on 32-bit at all these days.)
+With that removed, this makes sense to me so
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
-[1] https://lwn.net/Articles/1051010/
-
-> Reported-by: Eric Biggers <ebiggers@kernel.org>
-> Link: https://lore.kernel.org/linux-fsdevel/20260401222717.GH2466@quark/
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> ---
->  fs/verity/pagecache.c | 28 ++++++++++++++++++++++++++--
->  1 file changed, 26 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/verity/pagecache.c b/fs/verity/pagecache.c
-> index 9d82e6b74ba1..911207dc0ef7 100644
-> --- a/fs/verity/pagecache.c
-> +++ b/fs/verity/pagecache.c
-> @@ -68,14 +68,38 @@ EXPORT_SYMBOL_GPL(generic_readahead_merkle_tree);
->  void fsverity_fill_zerohash(struct folio *folio, size_t offset, size_t len,
->  			      struct fsverity_info *vi)
->  {
-> -	size_t off = offset;
-> +	size_t off;
->  
->  	WARN_ON_ONCE(!IS_ALIGNED(offset, vi->tree_params.digest_size));
->  	WARN_ON_ONCE(!IS_ALIGNED(len, vi->tree_params.digest_size));
-> +#ifdef CONFIG_HIGHMEM
-> +	WARN_ON_ONCE(offset + len > folio_size(folio));
->  
-> -	for (; off < (offset + len); off += vi->tree_params.digest_size)
-> +	do {
-> +		void *vaddr = kmap_local_folio(folio, offset);
-> +		void *to = vaddr;
-> +
-> +		off = len;
-> +
-> +		if (folio_test_partial_kmap(folio) &&
-> +		    off > PAGE_SIZE - offset_in_page(offset))
-> +			off = PAGE_SIZE - offset_in_page(offset);
-> +		for (; to < (vaddr + off); to += vi->tree_params.digest_size)
-> +			memcpy(to, vi->tree_params.zero_digest,
-> +				vi->tree_params.digest_size);
-> +		kunmap_local(vaddr);
-> +
-> +		offset += off;
-> +		len -= off;
-> +	} while (len > 0);
-> +
-> +	flush_dcache_folio(folio);
-> +#else
-> +	for (off = offset; off < (offset + len);
-> +			off += vi->tree_params.digest_size)
->  		memcpy_to_folio(folio, off, vi->tree_params.zero_digest,
->  				vi->tree_params.digest_size);
-> +#endif
+>  	return 0;
 >  }
->  EXPORT_SYMBOL_GPL(fsverity_fill_zerohash);
 >  
 > -- 
 > 2.54.0
