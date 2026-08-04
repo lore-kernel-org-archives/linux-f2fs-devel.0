@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 084E0C55184
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Aug 2026 18:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8B7E8C55822
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Aug 2026 18:57:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=CCdOo+sVfo3o1fm0ip4S+pjvxSkhiCVBQ9KDsdMYn6A=; b=Kauyr5GH83FDAtBOOpBb7F4WZ3
-	InaCIejLHuEISVbsIZ/ehMBwZDm6OYobfAxhtrsFe9m0Xqp86Qrs7bk8oFU0N3OVG1VKaKaXL4TPs
-	baAI5BXsMEv+OjWL8OukKlxCwPsuKi8jG3B0fGiwFTnmihk3OsRlCgIsHdVAzpvQrZEU=;
+	bh=j4K6WUYSUagG623Ei0oLQ87SZ2PNd32hIJpgibpPbnA=; b=a04Ic2gMjtXTRv9z4yQ+BHsP1B
+	GyBbvb0ntOA4pdSt3bBiYPjmgwSOLZMhFrJmZ8giBzRYgaZ+/5jD9NA/lycnDIApSh2bR8aBitFCI
+	fNtbd6TtNy7Ip7Q1DGIBrHrKZWU6IMiuLKJhvA6LSmmatckmLrOWJYWE3qbmfcfcujEM=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wrKJD-00050R-HU;
-	Tue, 04 Aug 2026 18:56:13 +0000
+	id 1wrKK7-00052w-Pl;
+	Tue, 04 Aug 2026 18:57:09 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <djwong@kernel.org>) id 1wrKJC-00050K-5o
+ (envelope-from <ebiggers@kernel.org>) id 1wrKK6-00052q-Lp
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Aug 2026 18:56:11 +0000
+ Tue, 04 Aug 2026 18:57:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nFk6R/B/BKxw+kr+MboqGD+mfukfGOz2/GgStRKasCc=; b=m0MHHfwuyzWtRZk5VcQrydzV5k
- mU3iqHxbFFrGQgtJy++B+Kv8QSr+q2uT6Ik/h0tmT3d3Oa/iXqeu9dGPl3OrJ81O4yJnM4pyaLAiq
- 5LKphr97nF2lfDwAIh6wlDwH90skINlp4gvGYJx5p46gQzdRXWChBTJA3UcTG408ekEo=;
+ bh=uhwOVppSRbXMKKCTiEx73huPloNqZB23NIsD+UJKgS4=; b=A4QuhCsdkvuyFh/anDIieqMnfN
+ I3Ie8l3AGLH9IGtpnPbGJzpoV27pxcwBddQGWWM/7XsiN7Vu5tXnpi3TLz7zEzr+YZoStwVS+bbBm
+ KLiCaWcc95JWQiO8Xx9St3ZBO4OvCm4zgTV/CUtqkG6Lk+tWCdfZF/+tMLwQfQRgAGUw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=nFk6R/B/BKxw+kr+MboqGD+mfukfGOz2/GgStRKasCc=; b=ahI0v1JK5YeeruVJiORalvBfOg
- OoYRE32YFIbZR0Cephqt9WgCzfePk8l1UPQh4DKupovIH/SLaPnQClXc42tCFA6rVDV7e4eNdAvKP
- dzyu42afZ7NP+uPSz6gNsNZWl+Olbo5SqV+Z6jUwG6c2KAkJ82sWMZ0WWgUbWNlka4UM=;
+ bh=uhwOVppSRbXMKKCTiEx73huPloNqZB23NIsD+UJKgS4=; b=EPErdGa2v0ocd7HVKjyIGddqi0
+ 7B3Je9we2kJUkxvtJp0KegIEmQiCl1TO8QrVwjn2IB2p4ofQbmH3JBSwG1fk6gGSROZmP7487x7B4
+ sAaAGIDUlU71CovQ1FLKGMiVs9YEPKG1JK96fAJfd9YXJXrDt020J9j18ptCUbh5bgS4=;
 Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wrKJB-0001ps-RW for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Aug 2026 18:56:11 +0000
+ id 1wrKK3-0003Vh-P6 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Aug 2026 18:57:08 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with UTF8SMTP id 83ACC60A78;
- Tue,  4 Aug 2026 18:56:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 1E5241F000E9;
- Tue,  4 Aug 2026 18:56:04 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 3C79260AAC;
+ Tue,  4 Aug 2026 18:57:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DD491F000E9;
+ Tue,  4 Aug 2026 18:57:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785869764;
- bh=nFk6R/B/BKxw+kr+MboqGD+mfukfGOz2/GgStRKasCc=;
+ s=k20260515; t=1785869822;
+ bh=uhwOVppSRbXMKKCTiEx73huPloNqZB23NIsD+UJKgS4=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=SHEa/nwq8r2kvOtxBoue7o7cfuRCShIJ4uDViRyPz3GjLxNsyGRBt5ITQ+c1xLxWd
- W8VSDB5WxQuUpV1UASJ4jDc+gspz8sMZTEKtZuDcmIjudDMoLsYKw+ra/WT/ppzS97
- wF9IcCtTdylxCYWTO0q2ZgggUKP935iq0t+TMbHz2ioVcpwJDYBVYRQaP84DDp3nHu
- 9JeimgeUsic3VQFPGqSqlrypSpDF4mpXUVCJiiERgHpCT+3Eq060NZSYmzx9qzcSbe
- 9cKMHCDsDyftSezqsFvw05wQcY4FsdoOVOvAdGbU9A3mQlWEMVQd4YRKq1kMlMqdyZ
- he3Tp/rp1XbOA==
-Date: Tue, 4 Aug 2026 11:56:03 -0700
-To: Matthew Wilcox <willy@infradead.org>
-Message-ID: <20260804185603.GP3556460@frogsfrogsfrogs>
+ b=bTBfxSVxHNSSiTMy+XjmV9JBgdMXcWkEebXrsyCKAkbJNr8hufQTkhA6FGGPT2uzo
+ iZYvyjT3K2TFnrn3clOypQEb4II+OrC8nJvvox9oLcUqGhJfIEUvW/+P+vFJZ6xMK+
+ gFxLsdaYceaMJzuiWoV+70e6FHCwN8TL33ngig3OwaoZEawbkDLSE5snIUptVic/Bt
+ GCABBSFvEra2BcEDwDwK5/5LASdWsesh/FNkh9B8Hgdnf1J+VnTqbAtpf9Gylcsmct
+ dgSVt7rxeCQPVfNr6yaiMTOj3KxtKb9jzMjxe54cdXAPZAcE7PQoB8FxDk+43jgl3B
+ 5evwlyUajkuCg==
+Date: Tue, 4 Aug 2026 18:57:00 +0000
+To: Christoph Hellwig <hch@lst.de>
+Message-ID: <20260804185700.GE2904385@google.com>
 References: <20260803200820.393203-1-aalbersh@kernel.org>
  <20260803200820.393203-6-aalbersh@kernel.org>
- <anIzawflI11C0FT2@casper.infradead.org>
+ <20260804174223.GB14046@lst.de>
+ <20260804183752.GC2904385@google.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <anIzawflI11C0FT2@casper.infradead.org>
-X-Headers-End: 1wrKJB-0001ps-RW
+In-Reply-To: <20260804183752.GC2904385@google.com>
+X-Headers-End: 1wrKK3-0003Vh-P6
 Subject: Re: [f2fs-dev] [PATCH v14 05/21] fsverity: improve flushing
  performance of fsverity_fill_zerohash
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -88,37 +89,57 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: "Darrick J. Wong via Linux-f2fs-devel"
+From: Eric Biggers via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: fsverity@lists.linux.dev, ebiggers@kernel.org,
- Andrey Albershteyn <aalbersh@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, hch@lst.de,
- linux-btrfs@vger.kernel.org
+Reply-To: Eric Biggers <ebiggers@kernel.org>
+Cc: fsverity@lists.linux.dev, Andrey Albershteyn <aalbersh@kernel.org>,
+ djwong@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Aug 04, 2026 at 07:46:03PM +0100, Matthew Wilcox wrote:
-> On Mon, Aug 03, 2026 at 10:07:55PM +0200, Andrey Albershteyn wrote:
-> > The current version calls flush_dcache_folio(), in memcpy_to_folio(), to
-> > flush whole folio on every digest (which is 128 for 4k) on the HIGHMEM
-> > systems. Open code folio mapping and flushing to copy all digests at
-> > once.
+On Tue, Aug 04, 2026 at 06:37:52PM +0000, Eric Biggers wrote:
+> On Tue, Aug 04, 2026 at 07:42:23PM +0200, Christoph Hellwig wrote:
+> > On Mon, Aug 03, 2026 at 10:07:55PM +0200, Andrey Albershteyn wrote:
+> > > The current version calls flush_dcache_folio(), in memcpy_to_folio(), to
+> > > flush whole folio on every digest (which is 128 for 4k) on the HIGHMEM
+> > > systems. Open code folio mapping and flushing to copy all digests at
+> > > once.
+> > 
+> > This looks correct, although to me optimizing for this feels like
+> > premature optimizations not worth the ugly code unless we have numbers
+> > to justify it.
+> > 
+> > If Eric wants it:
+> > 
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > 
+> > > +		if (folio_test_partial_kmap(folio) &&
+> > > +		    off > PAGE_SIZE - offset_in_page(offset))
+> > > +			off = PAGE_SIZE - offset_in_page(offset);
+> > > +		for (; to < (vaddr + off); to += vi->tree_params.digest_size)
+> > 
+> > Style nitpick: no need for braces when comparing with simple
+> > integer arithmetics like this.
+> > 
+> > > +	for (off = offset; off < (offset + len);
+> > 
+> > Same here.
 > 
-> Have you looked at the implementations of flush_dcache_folio()?  On
-> any architecture we actually care about, all it does is set one bit
-> in folio->flags noting that the folio will need to be flushed if
-> it's going to be accessed by userspace.
+> Well I didn't ask for it per se, but I pointed it out and asked whether
+> anyone will care about the combination of XFS && FS_VERITY && HIGHMEM.
+> Based on Darrick's email it seems the answer may be no?
 > 
-> But, um, do we support mapping folios containing fsverity data into
-> userspace?  Can't we just delete the calls to flush_dcache_folio()?
+> If it's kept as-is, adding a comment mentioning that it doesn't need to
+> be optimized for HIGHMEM would help preempt any questions about it.
 
-I don't think programs are allowed to mmap the fsverity data, right?
-I know there's an ioctl that effectively allows read()ing it.
+Note that the explanation in the commit message seems to be confusing
+people as well.  It only mentions flush_dcache_folio(), when the actual
+performance problem on HIGHMEM would be the mapping and unmapping.
 
---D
+- Eric
 
 
 _______________________________________________
