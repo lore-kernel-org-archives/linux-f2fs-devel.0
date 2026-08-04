@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EC97BC55184
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Aug 2026 18:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 89A03C5518F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Aug 2026 18:03:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=e3Sw/4TK5xDos3qIyI4qXzUoCn0kgSm9r8wkom/Lptk=; b=BJOSfxMZaxZx20MVrUjoqZL/Jc
-	xmBM/KQ7ym6xvF8zK/fqgyN2McUVrdr+JsWUPO6MWQf5y8bdVEXtTsmZky7S4IlfVbCLMffS6p4bj
-	qdud1DE79LqCMcH23Inda1ZgcuhdZzFWPXYACDR9e0d1u2f/ZHlgX1ZHi6ytfw5bOEdY=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=gJWAWFPuz/Q48DgROVwK7Z+whUxxJSDEU2vF31YMQfk=; b=VPxevfewPAV40oH0zvW20aNGK4
+	x+WiipqJiebY9Wd/AYaKuEtna6KZGgdRqcLxSXjMrxyt9nzBHItpAODmhFfTtRTMW/DPrLr3aPvqm
+	ZvuJA18+85cutsvfTNm358BGwYg2i/zGspwSpoC+8L2/8sbCPH3Cj9Csr6MM9PvpY4aM=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wrJTQ-0003Gj-JY;
-	Tue, 04 Aug 2026 18:02:44 +0000
+	id 1wrJTf-00054z-NE;
+	Tue, 04 Aug 2026 18:03:00 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <djwong@kernel.org>) id 1wrJTD-0003GS-E9
+ (envelope-from <djwong@kernel.org>) id 1wrJTe-00054s-Aw
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Aug 2026 18:02:31 +0000
+ Tue, 04 Aug 2026 18:02:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Y2NLRiGuBNOJ6Z8BI9xM1Xpil32458EDcgBYHRf5xO0=; b=HwemdeBVlaW+E0/W5MDSR9QSsQ
- 2M0sJnKZAgSzarKOzhAGyFSkTzWlOxf9sEAWB4CQISciMoIly2kbVkHBvQovnC39Hn7Vuvm4CKZqK
- VJ1RKcqZnurR6m3r2a7IWxyaZC9rTMsUswKgasx6GjP+H9DTdABcouAUiMmOMdl64j7c=;
+ bh=RUV8diOUH6tIOqPemd79Edzg1FCzsPp8Zo9fdBv9ho8=; b=ZzYoIyH/9FHXGtw2Z7vnlu+IcW
+ Tx8AVnOAGRgFyFBfmNy/9yY/8hsQ0vNjOWcEB5Co1X702vVZMBIV1rCwYLPCmRkZAOCB5FCSEADJp
+ XiB7cV5x8GYvmA3UuV50d/l2s9cXeowQnwflNTWJXyMkyYwbQh/lhQ8XaZsh0YDZF4Ew=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Y2NLRiGuBNOJ6Z8BI9xM1Xpil32458EDcgBYHRf5xO0=; b=ZNTBemSavOpT8Bhym0+GhqCzkJ
- jP2kXqRhCToWMyIAlhtOOQC8owZ4wEwQakw4zX9b4nhZe0SMIiJAxPNOpAt8wgyUw06kDDCSSIlKY
- PpNLuVo3JavodJDiz+y+tzar9H4z3BDFwI4GneiCrjld0I2mgjAD76SxcQhH4+7itXUs=;
+ bh=RUV8diOUH6tIOqPemd79Edzg1FCzsPp8Zo9fdBv9ho8=; b=jpcyEnGt5LCdnsH3zKWbur7sye
+ 0dr0Z9+gH09M0su8DNi7jJHjZ56ob0vZGH/xOb0uuZVeVu2xfUOCIODrknqv/9k5FWpzdQpZjQufm
+ LoHgJv/C0WNDmenxNzl4bZzpnoxs7FPsDCPfpmHa5CInOjT+ZQzY8rzSZNozNsTNp344=;
 Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wrJTE-0008Vb-Cr for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Aug 2026 18:02:31 +0000
+ id 1wrJTd-0001hF-FO for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Aug 2026 18:02:59 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with UTF8SMTP id 3CCFF60AAC;
- Tue,  4 Aug 2026 18:02:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id DC1381F000E9;
- Tue,  4 Aug 2026 18:02:22 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with UTF8SMTP id E302360AAB;
+ Tue,  4 Aug 2026 18:02:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8CBDF1F000E9;
+ Tue,  4 Aug 2026 18:02:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785866543;
- bh=Y2NLRiGuBNOJ6Z8BI9xM1Xpil32458EDcgBYHRf5xO0=;
+ s=k20260515; t=1785866571;
+ bh=RUV8diOUH6tIOqPemd79Edzg1FCzsPp8Zo9fdBv9ho8=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=GAGCWjPIAyRk1FTePZVk3ZTky9GVEGih5BCDLS3DV9UiiXAn8lz3Bki8hOXq+7RfE
- 1uswLruc72tjdUjSLt7W3WUWLokJw2cWHJ/hwndk34bsg+8KujXHysByZZ39l3ANAG
- +ykl4oDTAOaHXoEmR0bNMKPgt8UEyIrVyYaqUFKMNsPvUfjRDkRnecChE8qKXRYfk3
- Lzy9MLZT7WMiEDuVEbbyyX9nAN0wZ/8Yyx7xIJRw8JNNd/7SiY9ME6Pgw/ppye0xud
- /NhvrRYpTbaBX8oLV2er1kYDmhklTapD37OwYPSrUlO97jf8Ste09csg5E4Kh9WDhO
- GPfRMkwHGktpg==
-Date: Tue, 4 Aug 2026 11:02:22 -0700
+ b=Kf1LK7j/mxecdE+LM7nAUymhk7YJkc/hE1AAggkPApnXOsjIFo1Qnvjy6disQTebc
+ 3rlUZDBq5qr1+/RKkCLbDJnEjwIYQ05paIs8P2EMP3/p3Kaew6C5kjcGNr3vAwXk2A
+ NOGgmxxX4FVTmwNkvubOyJLXhd9LnzkKQXSAd5Pdg1YtfSwHm1kkOXuYWb82eUk1/W
+ AurLvQrkjvQplXuX8J7zqt7LDIczrvgZX5FdQhDMuaTSEwbB36ZIj1FZV+1ZX5Wipx
+ Buh5SJMbVrojcdmV3xBKGGIlO4RUvIsKbhTTqljxdGw+ZDal9WUXjSIvPOj+mCr+8B
+ X4t9DCHuVui4A==
+Date: Tue, 4 Aug 2026 11:02:51 -0700
 To: Andrey Albershteyn <aalbersh@kernel.org>
-Message-ID: <20260804180222.GK3556460@frogsfrogsfrogs>
+Message-ID: <20260804180251.GL3556460@frogsfrogsfrogs>
 References: <20260803200820.393203-1-aalbersh@kernel.org>
- <20260803200820.393203-7-aalbersh@kernel.org>
+ <20260803200820.393203-8-aalbersh@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260803200820.393203-7-aalbersh@kernel.org>
-X-Headers-End: 1wrJTE-0008Vb-Cr
-Subject: Re: [f2fs-dev] [PATCH v14 06/21] fsverity: don't allow setting DAX
- file attribute on fsverity files
+In-Reply-To: <20260803200820.393203-8-aalbersh@kernel.org>
+X-Headers-End: 1wrJTd-0001hF-FO
+Subject: Re: [f2fs-dev] [PATCH v14 07/21] fsverity: hoist statx reporting of
+ fs-verity flag
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,7 +90,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: "Darrick J. Wong via Linux-f2fs-devel"
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: fsverity@lists.linux.dev, ebiggers@kernel.org,
+Cc: fsverity@lists.linux.dev, ebiggers@kernel.org, stable@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, hch@lst.de,
  linux-btrfs@vger.kernel.org
@@ -98,59 +98,109 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Aug 03, 2026 at 10:07:56PM +0200, Andrey Albershteyn wrote:
-> When fsverity is enabled on the file, with FS_IOC_ENABLE_VERITY ioctl(),
-> it checks if file has DAX enabled and fails if that's true. However, the
-> opposite case is not checked.
+On Mon, Aug 03, 2026 at 10:07:57PM +0200, Andrey Albershteyn wrote:
+> All filesystems, supporting fsverity, report this status by checking
+> inode flag. Also, BTRFS was missing stat->attributes_mask, which is
+> fixed now.
 > 
-> Note, that the only other filesystem supporting DAX and fsverity is
-> ext4, and ext4 does check for this case.
-> 
+> Fixes: 146054090b08 ("btrfs: initial fsverity support")
+> Cc: stable@vger.kernel.org
 > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Eric Biggers <ebiggers@kernel.org>
 > ---
->  fs/file_attr.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
+>  fs/btrfs/inode.c | 3 ---
+>  fs/ext4/inode.c  | 5 +----
+>  fs/f2fs/file.c   | 5 +----
+>  fs/stat.c        | 6 +++++-
+>  4 files changed, 7 insertions(+), 12 deletions(-)
 > 
-> diff --git a/fs/file_attr.c b/fs/file_attr.c
-> index bfb00d256dd5..473ebbe9af31 100644
-> --- a/fs/file_attr.c
-> +++ b/fs/file_attr.c
-> @@ -235,10 +235,15 @@ static int fileattr_set_prepare(struct inode *inode,
->  	/*
->  	 * It is only valid to set the DAX flag on regular files and
->  	 * directories on filesystems.
-> +	 *
-> +	 * DAX and fsverity are incompatible.
->  	 */
-> -	if ((fa->fsx_xflags & FS_XFLAG_DAX) &&
-> -	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
-> -		return -EINVAL;
-> +	if (fa->fsx_xflags & FS_XFLAG_DAX) {
-> +		if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
-> +			return -EINVAL;
-> +		if (old_ma->fsx_xflags & FS_XFLAG_VERITY)
-> +			return -EINVAL;
-> +	}
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 272598f6ae77..de729c44d6d2 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -8040,7 +8040,6 @@ static int btrfs_getattr(struct mnt_idmap *idmap,
+>  	struct inode *inode = d_inode(path->dentry);
+>  	u32 blocksize = btrfs_sb(inode->i_sb)->sectorsize;
+>  	u32 bi_flags = BTRFS_I(inode)->flags;
+> -	u32 bi_ro_flags = BTRFS_I(inode)->ro_flags;
 >  
->  	/* Extent size hints of zero turn off the flags. */
->  	if (fa->fsx_extsize == 0)
-> @@ -246,6 +251,7 @@ static int fileattr_set_prepare(struct inode *inode,
->  	if (fa->fsx_cowextsize == 0)
->  		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
+>  	stat->result_mask |= STATX_BTIME;
+>  	stat->btime.tv_sec = BTRFS_I(inode)->i_otime_sec;
+> @@ -8053,8 +8052,6 @@ static int btrfs_getattr(struct mnt_idmap *idmap,
+>  		stat->attributes |= STATX_ATTR_IMMUTABLE;
+>  	if (bi_flags & BTRFS_INODE_NODUMP)
+>  		stat->attributes |= STATX_ATTR_NODUMP;
+> -	if (bi_ro_flags & BTRFS_INODE_RO_VERITY)
+> -		stat->attributes |= STATX_ATTR_VERITY;
 >  
-> +
+>  	stat->attributes_mask |= (STATX_ATTR_APPEND |
+>  				  STATX_ATTR_COMPRESSED |
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index ce99807c5f5b..99fa7a28951f 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -6250,15 +6250,12 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
+>  		stat->attributes |= STATX_ATTR_IMMUTABLE;
+>  	if (flags & EXT4_NODUMP_FL)
+>  		stat->attributes |= STATX_ATTR_NODUMP;
+> -	if (flags & EXT4_VERITY_FL)
+> -		stat->attributes |= STATX_ATTR_VERITY;
+>  
+>  	stat->attributes_mask |= (STATX_ATTR_APPEND |
+>  				  STATX_ATTR_COMPRESSED |
+>  				  STATX_ATTR_ENCRYPTED |
+>  				  STATX_ATTR_IMMUTABLE |
+> -				  STATX_ATTR_NODUMP |
+> -				  STATX_ATTR_VERITY);
+> +				  STATX_ATTR_NODUMP);
+>  
+>  	generic_fillattr(idmap, request_mask, inode, stat);
+>  	return 0;
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 4b52c56d71f0..9b531a016ed4 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -1024,15 +1024,12 @@ int f2fs_getattr(struct mnt_idmap *idmap, const struct path *path,
+>  		stat->attributes |= STATX_ATTR_IMMUTABLE;
+>  	if (flags & F2FS_NODUMP_FL)
+>  		stat->attributes |= STATX_ATTR_NODUMP;
+> -	if (IS_VERITY(inode))
+> -		stat->attributes |= STATX_ATTR_VERITY;
+>  
+>  	stat->attributes_mask |= (STATX_ATTR_COMPRESSED |
+>  				  STATX_ATTR_APPEND |
+>  				  STATX_ATTR_ENCRYPTED |
+>  				  STATX_ATTR_IMMUTABLE |
+> -				  STATX_ATTR_NODUMP |
+> -				  STATX_ATTR_VERITY);
+> +				  STATX_ATTR_NODUMP);
+>  
+>  	generic_fillattr(idmap, request_mask, inode, stat);
+>  
+> diff --git a/fs/stat.c b/fs/stat.c
+> index 89909746bed1..ae1299bd7436 100644
+> --- a/fs/stat.c
+> +++ b/fs/stat.c
+> @@ -203,8 +203,12 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
+>  	if (IS_DAX(inode))
+>  		stat->attributes |= STATX_ATTR_DAX;
+>  
+> +	if (IS_VERITY(inode))
+> +		stat->attributes |= STATX_ATTR_VERITY;
 
-Unnecessary addition of a blank line?
-
-With that removed, this makes sense to me so
+Makes sense to hoist this;
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
->  	return 0;
->  }
+> +
+>  	stat->attributes_mask |= (STATX_ATTR_AUTOMOUNT |
+> -				  STATX_ATTR_DAX);
+> +				  STATX_ATTR_DAX |
+> +				  STATX_ATTR_VERITY);
 >  
+>  	idmap = mnt_idmap(path->mnt);
+>  	if (inode->i_op->getattr) {
 > -- 
 > 2.54.0
 > 
