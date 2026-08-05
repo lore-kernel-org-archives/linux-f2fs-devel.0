@@ -4,79 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8B9FAC55ABF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Aug 2026 21:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EFC74C55ABF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Aug 2026 21:21:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=sQBSRSYRuU2Ip6lNO1C+oFoVS8F6emSqFPC1A2P1XrQ=; b=E8OMws1P7JKkByTJfmRIxURNVk
-	oOrEP11j3AgHWMQAkpP0Q1huYvSAOWQX5MM1Pq1W8omRbQqK/i3it0dEm5J9dpf9k0OnCx103jsiv
-	fyuoAaS6YnczqBTyNeb9eQEQoWHQuFzzeLlC69wi++ThVfP/1IucbnVkrW7fUzgfzycs=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=VRrR3VzFlwXgSbDzA5TV92/YZ7P0aPAAF0N4wIGbZ+g=; b=A1seuH9R04g8yL0m0EWMreIgsn
+	cjA0po/If2MgQYyg4U2xPstyZTeryKIVJsJKjrx+8nMN+zGSkJ947fZUiiML4VIh/avzujLIyBM+9
+	+c+bZGK9pDs5TrBnYxD+MGNca7SUvnEZa26PYXJpnYshW17VAlYmKTcBY0lfiA3nwy5w=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wrj3b-0002Dg-6L;
-	Wed, 05 Aug 2026 21:21:47 +0000
+	id 1wrj3g-0003G0-7V;
+	Wed, 05 Aug 2026 21:21:52 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wrj3a-0002DT-8V
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wrj3e-0003Fi-9m
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Aug 2026 21:21:47 +0000
+ Wed, 05 Aug 2026 21:21:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2/fM709Pg/bgckhFhH76yMCJSmUBEznqcuKehwxt5lc=; b=WPq0yIsj1brBiLy3jvvg7MNJyW
- feIwO3mtFu7AaDOyCAJOkDE6fHjZyEbURFWjTdHgSbA+Uz5717jkA0b47uB/OZkg3H6nRct4zDAbC
- l0oVWeJefam1aWfx5/CrHjUgARXb9z7A3PHvu08jAR4uKemxeDRkt+AfLp8MZ6aRlQEg=;
+ bh=kVrdpT7mWkB1LXBMIfBihO9UlZb9xRKyVf0KIbHuGSQ=; b=mqeU6HFbmk0+fDPJ6q6CF0I774
+ LzF4dryWps0XhXo3XtChIHQAjvqJg+s4X8S8Mp9rJczbZIQ79pXrmqpSNiTdjuhrKp2P5Uo4qfJnn
+ 5qzrm9hDpP6wj9MdH7jTTqrHl8cEUehc/ivK+zeFUmL8p9DOvVRdmGeiMk143MtyQJcE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2/fM709Pg/bgckhFhH76yMCJSmUBEznqcuKehwxt5lc=; b=OT3vvNAXQ/Eo34GUyJ1En8LQCw
- 0gnLBRxzcCHZ2rDPNMUjQDSdaxci5V8GDGNHIiVD5CgjueEZLlJM32TDltgksojX76bIMKWcY9l0B
- 2XR6IW7PqflCwAtVK3Y5JVpt+HRjC7BFUefOi50SlsBXYIcsO0/nI4ZfFTGdJo7jZiso=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=kVrdpT7mWkB1LXBMIfBihO9UlZb9xRKyVf0KIbHuGSQ=; b=Fw1gbjMY7m4hMZqnvgPJy2WxMA
+ CNUc+3ENzsto2vl5OUk/w37e5bvA/BfPqiwoYD81cB9ZwPK3teuOH3Y8jlsIvlNHk2gu3Z/+02cAM
+ C6HFXobf5vLKu+oIU2/gLz6XEJFFIZn6HKKSjjlKozZpOTdVrtcEI3d8IkQFm4FNb9UM=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wrj3d-00044e-0I for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Aug 2026 21:21:46 +0000
+ id 1wrj3g-00044w-FM for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 05 Aug 2026 21:21:49 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 32E9143CBE
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed,  5 Aug 2026 21:21:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16A201F00A3F;
- Wed,  5 Aug 2026 21:21:40 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 5FDC060A80;
+ Wed,  5 Aug 2026 21:21:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 155A91F00A3A;
+ Wed,  5 Aug 2026 21:21:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785964900;
- bh=2/fM709Pg/bgckhFhH76yMCJSmUBEznqcuKehwxt5lc=;
+ s=k20260515; t=1785964903;
+ bh=kVrdpT7mWkB1LXBMIfBihO9UlZb9xRKyVf0KIbHuGSQ=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=PDPoF5iTExTBcD9oPc4sRE6CHEhDE9V/pnQd7ksRXdyiNUMneJNLLkn7Bui65pHvl
- ew1ofpjkF7a8GUjIiRT1AWBUBLE6OhcagcRz38srx5uNSDZZO8KfrALcHnR1Ki4ges
- HGACsEqYCXS0scX/d3PvTpJkfNyyD69CvvpwyHG8co4qGFP4F+O1vfAvO5CPHCuCj5
- YxgEiEEzBZQRF14i34FR53gLH0rLKVbhb0Znijeo5DOU+hWiA6E0aCbdVD1qnITH7h
- +PqtSqvV/XZnpWNV/BxB3iak4CLqol/PVL3JpH8eTcqFoyMvTZJ9dhRPDnd8+zDEKx
- He1mOuK9oTHyQ==
+ b=B5/pu1BJXxDv0BDXujLOnnm4Io0TL8IlYzxELIqrIFqhcvD6pVpizSQPXlV3viKtP
+ HcyOspJmu+ger92MfwWUR51DG2CijrN2khcYVjKdDJ7Fr9Mhnm27Ht+lm+1DYWGq6n
+ ZwMKk4HB8ePhSJ8kckof4jXVarLz7Xb+ysVyaXUBpq/K6Y7I2pOG2ixHtx8w7CdPMD
+ lYEl1Rs1Us/TRMUu3biyr2XI8nPTFp1J99GHuzHUq1H04Kzt4hPLWLAGD8pDc4rPuC
+ rnNkB+b5kxzesT+1k2SbYMPLtr7mZW2FhI9VBEql7eoDJbxnfhfwcO7Yu/uV293cPA
+ AUuUpl8CarvGQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 19864392FFD1; Wed,  5 Aug 2026 21:21:01 +0000 (UTC)
+ 19845392FFD1; Wed,  5 Aug 2026 21:21:04 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <178596485963.530543.15398154731593436736.git-patchwork-notify@kernel.org>
-Date: Wed, 05 Aug 2026 21:20:59 +0000
-References: <20260805122050.665256-1-chao@kernel.org>
-In-Reply-To: <20260805122050.665256-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1wrj3d-00044e-0I
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid unnecessary shrink in
- f2fs_shrink_scan()
+Message-Id: <178596486263.530543.12202938187333968046.git-patchwork-notify@kernel.org>
+Date: Wed, 05 Aug 2026 21:21:02 +0000
+References: <20260630082331.2757376-1-qiwenjie@xiaomi.com>
+In-Reply-To: <20260630082331.2757376-1-qiwenjie@xiaomi.com>
+To: Wenjie Qi <qwjhust@gmail.com>
+X-Headers-End: 1wrj3g-00044w-FM
+Subject: Re: [f2fs-dev] [PATCH] f2fs: limit recovery filename logging to
+ stored length
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,8 +90,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ qiwenjie@xiaomi.com, jaegeuk@kernel.org, stable@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -102,18 +101,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed,  5 Aug 2026 12:20:50 +0000 you wrote:
-> In f2fs_shrink_scan(), let's check if we have already shrinked enough
-> number of memory before calling f2fs_shrink_read_extent_tree().
+On Tue, 30 Jun 2026 16:23:30 +0800 you wrote:
+> F2FS stores recovery filenames as a length plus a fixed-size i_name
+> buffer.  The buffer is not NUL-terminated, but recover_inode() and
+> recover_dentry() print it with %s.
 > 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/shrinker.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> For a 255-byte filename, recovery logging can read past i_name into the
+> following raw inode fields.
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: avoid unnecessary shrink in f2fs_shrink_scan()
-    https://git.kernel.org/jaegeuk/f2fs/c/7173538c41d6
+  - [f2fs-dev] f2fs: limit recovery filename logging to stored length
+    https://git.kernel.org/jaegeuk/f2fs/c/01027b2fcb74
 
 You are awesome, thank you!
 -- 
