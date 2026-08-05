@@ -4,82 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1F2BDC55838
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Aug 2026 01:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6E887C55838
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Aug 2026 01:28:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Message-ID:To:Date:Sender:Cc:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=xnmfP2x2VmuLozg1AMa5+OyvN6jk5grjBZU/Luzb2LQ=; b=TFPGkt1+ezUMTMeI0Vdmat1S0z
-	NvFzGgHwuFNXO921ELrdEHaUz+543qWc0zGO5C0PmCo/NQrsfFfFuF9MD48iGFBXqBTXd157e4PWq
-	IlYSDVYzxkJFvrHGOnmuY9MtiymYv/aDdDEbMREfNb4G13ZNHKNI/UPQdXojdSiDo1ig=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=IkxEfIs0Ze0O3NfAs5LLNMSo2XZP7Vz/2/uOUulX77A=; b=ljvqVQAZoTx+f2GpiLEQ9QVTuc
+	F7tSyuhWEVJE2dvcdUcPqO3NVVuIOLw11NJUO70acVC9/4rZMKqFp/nCu8msijtHTEnyYPBsFFFV6
+	NPgHqUW8isj+SMoZwQbrrAqhuTIxeUgh33OUPEGBLL46WY0trj/o5/m45OIcmhvA879A=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wrQOo-0005fO-0A;
-	Wed, 05 Aug 2026 01:26:23 +0000
+	id 1wrQQz-0001ui-CH;
+	Wed, 05 Aug 2026 01:28:42 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1wrQOm-0005fG-GQ
+ (envelope-from <jaegeuk@kernel.org>) id 1wrQQy-0001ub-3J
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Aug 2026 01:26:22 +0000
+ Wed, 05 Aug 2026 01:28:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
- MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RjB5UbMgEH+fadVKrw/dy/5s6yUledcJxc4bfMv8qu4=; b=RcV7SFwvMDJuYhg9FX4dmidSZf
- GoBb2UF1CAOsAOCJT6W7Eo58PEAS5nVlK9XaGz7avoXwVUYPZiANaMsYLyNpTF/8O8AMOeoLmeYkT
- t2Fpg9hCEXYZKGD1nTx/cIy4usmPCXS0ll+4RlV2Y7lmma8DLbfZvLIaucecN83RwDMI=;
+ bh=Z9d7X/buqZcBaYfAUZm7o2fD4jdhpQ+WxBxL7PKcn58=; b=IPavxG4IKozX0kR14MFhi9N9xU
+ I61KzJERxLbcAsg627A/YQCrO7IWGbNqIRTw7AceJJU7NHOaOebAt3p3Qc1Xq32i/Zq+RVhN+v7Eb
+ szDgymf3rVjmFHubKy1Lddo6gz4HUEoVZuX4vF0gPkwFFIRic2s6wGUZVrBV5b/ckk+M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:To:
+ From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=RjB5UbMgEH+fadVKrw/dy/5s6yUledcJxc4bfMv8qu4=; b=cdIFmmvmj/+Y6WILPTx8vLjRKp
- 080CH4TguZQUa/RTHn4DwZXL40LICQ7x1exNuis4SnpkdBLQyKt+dwojs4ZRXAFRuulvCDGGYl7At
- Mtu6Fxc3QSMcuOcHlW5fat8TBHJD/oOUHubeV6kFLwGV3Icd7TNNmgn//phCDWS1hl4k=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=Z9d7X/buqZcBaYfAUZm7o2fD4jdhpQ+WxBxL7PKcn58=; b=Y7JPxkx+g3m2vUWNqFIbhBfijQ
+ IKi4QHO3oOG0Vh0GsFgWkSMNXkwnARealUt2XaFk6u8cs45jIuGLRisou9hq6aPp5nfc1sd3r8YoI
+ l9X+ah1HZcDJzH8Foy0eWmgSNoVZLQpkZSL4a6uqSI+940xQ4SEPVRAf0erVgjs936U0=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wrQOm-0005sk-Sg for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Aug 2026 01:26:21 +0000
+ id 1wrQQy-00084p-10 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 05 Aug 2026 01:28:40 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 02C6B416C1;
- Wed,  5 Aug 2026 01:26:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68B8F1F000E9;
- Wed,  5 Aug 2026 01:26:15 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 32342600B1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed,  5 Aug 2026 01:28:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C74911F00A3A;
+ Wed,  5 Aug 2026 01:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785893175;
- bh=RjB5UbMgEH+fadVKrw/dy/5s6yUledcJxc4bfMv8qu4=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=X7mNLcDrFEB4Tf3nzdJw55mPnMIZp3XUBD7jrTkOsH6adrH6BL1evXW1XK3Vu5FOT
- zzzkAetM2iMyNP6D+G66whLHr6feZu66vjZwnwDLy0CFnnrb3RMZyg1EY/cYnAniWe
- Ej96D1Dxc4lVBd4Q392xs81mKauUOi8lwX/xGIf3QDaPgbnkMiz3lyFCr83X7q5+vO
- BZKTODrV/A9grZiJt9FvvKqpah6A3qiaMED29xAGMFKF6Hm1hNqmqYMtyp6Z8xnNCO
- JtHjB/bkLXcMyMWc095EQVrpN2TZECxdSc4UIovy70v0N/LsepnQ4iX1i3Rm7j+zru
- f6LeBViG7AUCQ==
-Date: Wed, 5 Aug 2026 01:26:13 +0000
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Message-ID: <anKRNeeIKO9K7Z2r@google.com>
-References: <20260730025240.17724-1-haoqinhuang7@gmail.com>
- <20260730060133.80233-1-haoqinhuang7@gmail.com>
- <20260730060133.80233-4-haoqinhuang7@gmail.com>
- <amr3P_4zxX2w7ZNR@google.com>
- <CAEjiKSkExTnRc77Va-cOSpoNJ4S0i_-r2-iGFyxoSw2mqh1Diw@mail.gmail.com>
- <anFspPi023HFlwwE@google.com>
+ s=k20260515; t=1785893313;
+ bh=Z9d7X/buqZcBaYfAUZm7o2fD4jdhpQ+WxBxL7PKcn58=;
+ h=Date:From:To:Subject:References:In-Reply-To;
+ b=m5WnbeWwbSkUInXgXyxlgcO8ZB/P3z0be26iWiBk41bcq0LVaXPuMosfbLFq8AM77
+ rohJBMLHlA+kGi5V2VBe6dI1SDJv34ISkFKDJQN7kn6hPZYKM0CMqHOJs4l5i4ZqVz
+ /jxk99FVr50pwS2d4B+qZeqJ2+mPqi47jE2Kn55vpcxlW2gjXbepsyGGRymQk6zUeR
+ froWvwycPrGLBnjzvr535/SdsEQgc5OcdCiux85pJSLJe2d6sWb+2vGGX+jIrYhqZ3
+ lkPiK0G45O9AegpAwrzvLKdaQFWarYwMYZAThrjAxrU5iEU9Vt9gHgl0oRapM6Y+wC
+ JMMZ5AXa+RUNQ==
+Date: Wed, 5 Aug 2026 01:28:32 +0000
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Message-ID: <anKRwA6t34sqgght@google.com>
+References: <20260804002027.2196300-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <anFspPi023HFlwwE@google.com>
-X-Headers-End: 1wrQOm-0005sk-Sg
-Subject: Re: [f2fs-dev] [PATCH v4 3/4] zram: validate parameters in each
- backend's setup_params
+In-Reply-To: <20260804002027.2196300-1-jaegeuk@kernel.org>
+X-Headers-End: 1wrQQy-00084p-10
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: call __add_ino_entry out of the
+ eviction path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,58 +89,278 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Jaegeuk Kim via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- Minchan Kim <minchan@kernel.org>, Nick Terrell <terrelln@fb.com>,
- David Sterba <dsterba@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
- Rongwei Wang <zigiwang@tencent.com>, Haoqin Huang <haoqinhuang@tencent.com>,
- haoqin huang <haoqinhuang7@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gMDgvMDQsIFNlcmdleSBTZW5vemhhdHNreSB3cm90ZToKPiBPbiAoMjYvMDgvMDMgMjA6MjAp
-LCBoYW9xaW4gaHVhbmcgd3JvdGU6Cj4gPiBPbiBUaHUsIEp1bCAzMCwgMjAyNiBhdCAzOjI04oCv
-UE0gU2VyZ2V5IFNlbm96aGF0c2t5Cj4gPiA8c2Vub3poYXRza3lAY2hyb21pdW0ub3JnPiB3cm90
-ZToKPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ibG9jay96cmFtL2JhY2tlbmRfbHo0aGMu
-YyBiL2RyaXZlcnMvYmxvY2svenJhbS9iYWNrZW5kX2x6NGhjLmMKPiA+ID4gPiBpbmRleCBmNmEz
-MzZhY2ZlMjAuLjVkNTUxZDE2NTIxMyAxMDA2NDQKPiA+ID4gPiAtLS0gYS9kcml2ZXJzL2Jsb2Nr
-L3pyYW0vYmFja2VuZF9sejRoYy5jCj4gPiA+ID4gKysrIGIvZHJpdmVycy9ibG9jay96cmFtL2Jh
-Y2tlbmRfbHo0aGMuYwo+ID4gPiA+IEBAIC0yMCw2ICsyMCwxMSBAQCBzdGF0aWMgaW50IGx6NGhj
-X3NldHVwX3BhcmFtcyhzdHJ1Y3QgemNvbXBfcGFyYW1zICpwYXJhbXMpCj4gPiA+ID4gIHsKPiA+
-ID4gPiAgICAgICBpZiAocGFyYW1zLT5sZXZlbCA9PSBaQ09NUF9QQVJBTV9OT1RfU0VUKQo+ID4g
-PiA+ICAgICAgICAgICAgICAgcGFyYW1zLT5sZXZlbCA9IExaNEhDX0RFRkFVTFRfQ0xFVkVMOwo+
-ID4gPiA+ICsgICAgIGVsc2UgaWYgKHBhcmFtcy0+bGV2ZWwgPCBMWjRIQ19NSU5fQ0xFVkVMIHx8
-Cj4gPiA+ID4gKyAgICAgICAgICAgICAgcGFyYW1zLT5sZXZlbCA+IExaNEhDX01BWF9DTEVWRUwp
-IHsKPiA+ID4gPiArICAgICAgICAgICAgIHByX2VycigibHo0aGM6IGludmFsaWQgY29tcHJlc3Np
-b24gbGV2ZWwgJWRcbiIsIHBhcmFtcy0+bGV2ZWwpOwo+ID4gPiA+ICsgICAgICAgICAgICAgcmV0
-dXJuIC1FSU5WQUw7Cj4gPiA+ID4gKyAgICAgfQo+ID4gPgo+ID4gPiBTby4uLiAgbGliL2x6NC9s
-ejRoY19jb21wcmVzcy5jIHN1cHBvcnRzIGxldmVscyAxIGFuZCAyLiAgSG93ZXZlciwKPiA+ID4g
-TFo0SENfTUlOX0NMRVZFTCBpcyBzZXQgdG8gMywgYnV0IGNsZWFybHkgdGhlIGNvbXByZXNzaW9u
-IGxpYnJhcnkKPiA+ID4gc3VwcG9ydHMgbGV2ZWxzIGxvd2VyIHRoYW4gTFo0SENfTUlOX0NMRVZF
-TC4gIEluIGZhY3QsIExaNEhDX01JTl9DTEVWRUwKPiA+ID4gaXMgbmV2ZXIgdXNlZCBpbiB0aGUg
-bHo0IGNvZGUuICBNYXliZSBoZXJlIHdlIG5lZWQgdG8ganVzdCBoYXJkY29kZQo+ID4gPiAiPCAx
-IiBhbmQgcHV0IGEgY29tbWVudDoKPiA+ID4KPiA+IAo+ID4gTXkgYmFkLCBjb21wbGV0ZWx5IG1p
-c3NlZCB0aGF0IExaNEhDX01JTl9DTEVWRUwgaXMgYWR2aXNvcnkgYW5kIHRoZQo+ID4gbGlicmFy
-eSBhY3R1YWxseSBhY2NlcHRzIDEtMi4gIFdpbGwgaGFyZGNvZGUgPCAxIGluIHY1Lgo+IAo+IE5v
-IHdvcnJpZXMsIHRoYXQgTFo0SENfTUlOX0NMRVZFTCB0aGluZyBpcyBkaWZmaWN1bHQgdG8gc3Bv
-dC4KPiAKPiA+IEJ0dywgd291bGQgaXQgbWFrZSBzZW5zZSB0byBmaXggTFo0SENfTUlOX0NMRVZF
-TCB0byAxIGluIHRoZSBsejQKPiA+IGhlYWRlciBhcyBhIHNlcGFyYXRlIGNsZWFudXA/ICBJdCBz
-ZWVtcyBtaXNsZWFkaW5nIGFzLWlzLgo+IAo+IEknbSBhZnJhaWQgd2UgY2Fubm90IGRvIHRoYXQu
-ICBmMmZzIHVzZXMgTFo0SENfTUlOX0NMRVZFTCwgSSBhc3N1bWUKPiBjb21wcmVzc2lvbiBsZXZl
-bCBpcyBzdG9yZWQgcGVyLWlub2RlPyAgU28gaWYgd2UgY2hhbmdlIExaNEhDX01JTl9DTEVWRUwK
-PiB0aGVuIG5ld2VyIGYyZnMgd2lsbCBzdGFydCBhY2NlcHRpbmcgY29tcHJlc3Npb24gbGV2ZWxz
-IHRoYXQgb2xkZXIga2VybmVscwo+IGRvbid0IHN1cHBvcnQuICBDYy1lZCBKYWVnZXVrIGFuZCBD
-aGFvIGp1c3QgZm9yIHZpc2liaWxpdHkuCgpZZWFoLCBzaW5jZSB3ZSBoYXZlCgogMjM5ICAgICAg
-ICAgY2xldmVsID0gbGUxNl90b19jcHUocmktPmlfY29tcHJlc3NfZmxhZykgPj4KIDI0MCAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIENPTVBSRVNTX0xFVkVMX09GRlNFVDsKCiAyNTUg
-I2lmZGVmIENPTkZJR19GMkZTX0ZTX0xaNAogMjU2ICNpZmRlZiBDT05GSUdfRjJGU19GU19MWjRI
-QwogMjU3ICAgICAgICAgICAgICAgICBpZiAoY2xldmVsICYmCiAyNTggICAgICAgICAgICAgICAg
-ICAgIChjbGV2ZWwgPCBMWjRIQ19NSU5fQ0xFVkVMIHx8IGNsZXZlbCA+IExaNEhDX01BWF9DTEVW
-RUwpKQogMjU5ICAgICAgICAgICAgICAgICAgICAgICAgIGdvdG8gZXJyX2xldmVsOwogMjYwICNl
-bHNlCiAyNjEgICAgICAgICAgICAgICAgIGlmIChjbGV2ZWwpCiAyNjIgICAgICAgICAgICAgICAg
-ICAgICAgICAgZ290byBlcnJfbGV2ZWw7CiAyNjMgI2VuZGlmCiAyNjQgI2VuZGlmCgoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZl
-bCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0
-cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZl
-bAo=
+The f2fs_evict_inode() can be called during the direct reclaim path, but
+__add_ino_entry requires allocating some memory. Since we don't need to
+do that in that context, let's migrate it in other workqueue context.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ Change log from v1:
+  - fix a bug on the wait logic
+
+ fs/f2fs/checkpoint.c | 11 ++++++
+ fs/f2fs/data.c       | 13 ++++++-
+ fs/f2fs/f2fs.h       |  4 ++
+ fs/f2fs/inode.c      | 91 +++++++++++++++++++++++++++++++++++++++++---
+ fs/f2fs/super.c      |  9 ++++-
+ 5 files changed, 121 insertions(+), 7 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 064f5b537423..4413eccb5ecb 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -766,6 +766,15 @@ static void __remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
+ 	spin_unlock(&im->ino_lock);
+ }
+ 
++static void f2fs_wait_for_inode_record(struct f2fs_sb_info *sbi, int mode)
++{
++	if (mode != APPEND_INO && mode != UPDATE_INO)
++		return;
++
++	/* Let's wait for some pending updates for APPEND_INO and UPDATE_INO. */
++	flush_workqueue(sbi->evict_wq);
++}
++
+ void f2fs_add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
+ {
+ 	/* add new dirty ino entry into list */
+@@ -798,6 +807,8 @@ void f2fs_release_ino_entry(struct f2fs_sb_info *sbi, bool all)
+ 	for (i = all ? ORPHAN_INO : APPEND_INO; i < MAX_INO_ENTRY; i++) {
+ 		struct inode_management *im = &sbi->im[i];
+ 
++		f2fs_wait_for_inode_record(sbi, i);
++
+ 		spin_lock(&im->ino_lock);
+ 		list_for_each_entry_safe(e, tmp, &im->ino_list, list) {
+ 			list_del(&e->list);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index c219ea76a3a7..6ae0eb37d20f 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -4558,13 +4558,24 @@ int f2fs_init_wq(struct f2fs_sb_info *sbi)
+ {
+ 	sbi->wq = alloc_workqueue("f2fs_wq", WQ_UNBOUND | WQ_HIGHPRI,
+ 				  num_online_cpus());
+-	return sbi->wq ? 0 : -ENOMEM;
++	if (!sbi->wq)
++		return -ENOMEM;
++
++	sbi->evict_wq = alloc_workqueue("f2fs_evict_wq",
++			WQ_UNBOUND | WQ_HIGHPRI, num_online_cpus());
++	if (!sbi->evict_wq) {
++		destroy_workqueue(sbi->wq);
++		return -ENOMEM;
++	}
++	return 0;
+ }
+ 
+ void f2fs_destroy_wq(struct f2fs_sb_info *sbi)
+ {
+ 	if (sbi->wq)
+ 		destroy_workqueue(sbi->wq);
++	if (sbi->evict_wq)
++		destroy_workqueue(sbi->evict_wq);
+ }
+ 
+ int __init f2fs_init_bio_entry_cache(void)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c44908258dc1..54f9d3856b5c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2016,6 +2016,8 @@ struct f2fs_sb_info {
+ 
+ 	struct workqueue_struct *wq;		/* bio completion workqueue */
+ 
++	struct workqueue_struct *evict_wq;	/* inode eviction workqueue */
++
+ 	/*
+ 	 * If we are in irq context, let's update error information into
+ 	 * on-disk superblock in the work.
+@@ -3875,6 +3877,8 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc);
+ void f2fs_remove_donate_inode(struct inode *inode);
+ void f2fs_evict_inode(struct inode *inode);
+ void f2fs_handle_failed_inode(struct inode *inode, struct f2fs_lock_context *lc);
++int f2fs_init_evict_inode_work(void);
++void f2fs_destroy_evict_inode_work(void);
+ 
+ /*
+  * namei.c
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index c95e0b126da4..0d30489cf083 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -24,6 +24,18 @@
+ extern const struct address_space_operations f2fs_compress_aops;
+ #endif
+ 
++#define NUM_PREALLOC_EVICT_INODE_WORK 8
++
++static struct kmem_cache *evict_inode_work_cache;
++static mempool_t *evict_inode_work_pool;
++
++struct evict_inode_work {
++	struct work_struct work;
++	struct f2fs_sb_info *sbi;
++	nid_t ino;
++	unsigned int add_ino_entry_bits;
++};
++
+ void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync)
+ {
+ 	if (is_inode_flag_set(inode, FI_NEW_INODE))
+@@ -637,6 +649,9 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+ 		inode->i_fop = &f2fs_dir_operations;
+ 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
++
++		/* Let's prepare APPEND/UPDATE_INO before future access. */
++		flush_workqueue(sbi->evict_wq);
+ 	} else if (S_ISLNK(inode->i_mode)) {
+ 		if (file_is_encrypt(inode))
+ 			inode->i_op = &f2fs_encrypted_symlink_inode_operations;
+@@ -854,6 +869,25 @@ void f2fs_remove_donate_inode(struct inode *inode)
+ 	spin_unlock(&sbi->inode_lock[DONATE_INODE]);
+ }
+ 
++static void f2fs_record_inode_state(struct f2fs_sb_info *sbi, nid_t ino,
++				    unsigned int bits)
++{
++	if (bits & BIT(APPEND_INO))
++		f2fs_add_ino_entry(sbi, ino, APPEND_INO);
++	if (bits & BIT(UPDATE_INO))
++		f2fs_add_ino_entry(sbi, ino, UPDATE_INO);
++}
++
++static void f2fs_evict_inode_work(struct work_struct *work)
++{
++	struct evict_inode_work *ew =
++		container_of(work, struct evict_inode_work, work);
++
++	f2fs_record_inode_state(ew->sbi, ew->ino, ew->add_ino_entry_bits);
++
++	mempool_free(ew, evict_inode_work_pool);
++}
++
+ /*
+  * Called at the last iput() if i_nlink is zero
+  */
+@@ -864,6 +898,7 @@ void f2fs_evict_inode(struct inode *inode)
+ 	nid_t xnid = fi->i_xattr_nid;
+ 	int err = 0;
+ 	bool freeze_protected = false;
++	unsigned int record_bits = 0;
+ 
+ 	f2fs_abort_atomic_write(inode, true);
+ 
+@@ -1003,12 +1038,32 @@ void f2fs_evict_inode(struct inode *inode)
+ 							inode->i_ino);
+ 	if (xnid)
+ 		invalidate_mapping_pages(NODE_MAPPING(sbi), xnid, xnid);
+-	if (inode->i_nlink) {
+-		if (is_inode_flag_set(inode, FI_APPEND_WRITE))
+-			f2fs_add_ino_entry(sbi, inode->i_ino, APPEND_INO);
+-		if (is_inode_flag_set(inode, FI_UPDATE_WRITE))
+-			f2fs_add_ino_entry(sbi, inode->i_ino, UPDATE_INO);
++
++	if (!inode->i_nlink)
++		goto skip_record;
++
++	if (is_inode_flag_set(inode, FI_APPEND_WRITE))
++		record_bits = BIT(APPEND_INO);
++	if (is_inode_flag_set(inode, FI_UPDATE_WRITE))
++		record_bits = BIT(UPDATE_INO);
++
++	if (!record_bits)
++		goto skip_record;
++
++	/* Let's do this in workqueue out of the direct reclaim path. */
++	if (current_is_kswapd()) {
++		f2fs_record_inode_state(sbi, inode->i_ino, record_bits);
++	} else {
++		struct evict_inode_work *ew =
++			mempool_alloc(evict_inode_work_pool, GFP_NOFS);
++
++		ew->sbi = sbi;
++		ew->ino = inode->i_ino;
++		ew->add_ino_entry_bits = record_bits;
++		INIT_WORK(&ew->work, f2fs_evict_inode_work);
++		queue_work(sbi->evict_wq, &ew->work);
+ 	}
++skip_record:
+ 	if (is_inode_flag_set(inode, FI_FREE_NID)) {
+ 		f2fs_alloc_nid_failed(sbi, inode->i_ino);
+ 		clear_inode_flag(inode, FI_FREE_NID);
+@@ -1079,3 +1134,29 @@ void f2fs_handle_failed_inode(struct inode *inode, struct f2fs_lock_context *lc)
+ 	/* iput will drop the inode object */
+ 	iput(inode);
+ }
++
++int __init f2fs_init_evict_inode_work(void)
++{
++	evict_inode_work_cache =
++		kmem_cache_create("f2fs_evict_inode_work",
++				  sizeof(struct evict_inode_work), 0, 0, NULL);
++	if (!evict_inode_work_cache)
++		goto fail;
++	evict_inode_work_pool =
++		mempool_create_slab_pool(NUM_PREALLOC_EVICT_INODE_WORK,
++					 evict_inode_work_cache);
++	if (!evict_inode_work_pool)
++		goto fail_free_cache;
++	return 0;
++
++fail_free_cache:
++	kmem_cache_destroy(evict_inode_work_cache);
++fail:
++	return -ENOMEM;
++}
++
++void f2fs_destroy_evict_inode_work(void)
++{
++	mempool_destroy(evict_inode_work_pool);
++	kmem_cache_destroy(evict_inode_work_cache);
++}
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 67abbf7ab477..6b55c30f0daa 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -5763,10 +5763,16 @@ static int __init init_f2fs_fs(void)
+ 	err = f2fs_init_xattr_cache();
+ 	if (err)
+ 		goto free_casefold_cache;
+-	err = register_filesystem(&f2fs_fs_type);
++	err = f2fs_init_evict_inode_work();
+ 	if (err)
+ 		goto free_xattr_cache;
++	err = register_filesystem(&f2fs_fs_type);
++	if (err)
++		goto free_evict_inode_cache;
+ 	return 0;
++
++free_evict_inode_cache:
++	f2fs_destroy_evict_inode_work();
+ free_xattr_cache:
+ 	f2fs_destroy_xattr_cache();
+ free_casefold_cache:
+@@ -5809,6 +5815,7 @@ static int __init init_f2fs_fs(void)
+ static void __exit exit_f2fs_fs(void)
+ {
+ 	unregister_filesystem(&f2fs_fs_type);
++	f2fs_destroy_evict_inode_work();
+ 	f2fs_destroy_xattr_cache();
+ 	f2fs_destroy_casefold_cache();
+ 	f2fs_destroy_compress_cache();
+-- 
+2.55.0.571.g244d577d93-goog
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
