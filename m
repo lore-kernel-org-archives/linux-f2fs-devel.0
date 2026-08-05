@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AA7B9C56207
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Aug 2026 21:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A3F08C55174
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Aug 2026 21:21:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=StSYiIsBxp71D4xA5wJ+Kh/dwvhcNm91C0xs+n4vhTk=; b=Jeestd8DQLGduqSjhcN3Sc03C9
-	yz7MzPulPZfljU+Km5S7L0fri6EnS/aExJ6aPgf/kCFsnxHCFyNoO9soClZ89vJwQ0t/HtPeyVSid
-	+9OdpWbZ9E5F5F7s4FvmxLfYVmMYIa4xyg2bHEtLqzjS8q2ykb7VnGE2mNZkzKv6t8PY=;
+	bh=Bj8roUbk/fMubyfgHxq+C5M2FdbzPr3zgS7HrPWkmaw=; b=hpjF6R3nFy4ymRDcMBzTcDRC2B
+	UxoQTd6RUheai/vKztVcU0mDKWzDjcwkHBr2WTidKYihqUCGUjWJK+6a++70J7LAcEfPSxkxWuMlR
+	cPiE/UpJiL8hf3KzymsZIm3FWhAxZQG+OP2cPYucb6UUn4qoncxZMAristME8VrKiuTI=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wrj3T-0001fv-Kh;
-	Wed, 05 Aug 2026 21:21:40 +0000
+	id 1wrj3V-0001gD-OS;
+	Wed, 05 Aug 2026 21:21:42 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wrj3P-0001fY-4s
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wrj3S-0001fp-PH
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Aug 2026 21:21:35 +0000
+ Wed, 05 Aug 2026 21:21:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VBAfDmBTrS4RbICPXLAAqohn/AEjIYJN050Ab/3SqCo=; b=UyfOpUYrrdaFVrd25fyj/H2/Tq
- EwejPzJf80YvZugUuG5k7F9ThHuG3Fyt4jfGFSmTKoHbarom+bMb4nCkmMLkZXSwA/rUGWmRwSSF2
- 2JEUmSwQIWCHRy3xAnD7DEGHrqY6cASmHywHNp+yQII4koHmpp2n4H1iOigFtr+oMFQg=;
+ bh=JoIn2woWP4yvg4R5//bLnyYh8omIezrzh5bc4PqgSbM=; b=K+1P/RB4uZ4dir1Rkqj+tBY5vY
+ TZM3mcZJxJNq05WB01bd9aI1oGMB9z3/ckzoSYxMcq/7V0S7gWVyuwRpTbr+dQWLDXnwHcJm22wxB
+ ECDOcc0QLeNdMQEBymZQSuRvER13O75S0Xb54idBrHBoz67MxT90p49nDqHtbFtbR97s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VBAfDmBTrS4RbICPXLAAqohn/AEjIYJN050Ab/3SqCo=; b=ZG5WEd5/oEhSNz9E+QcTEWsCO1
- HSsxEC8xRts857jiNfTA/4Z3bkaqMBEWQCRvuyTrcMGR5Vs/kTfFj6mV9g/aYUQBI6BFDoPCikOG+
- S6SwenJ9hNtNXbl/YTUoADepXTSOQGigQDf5MwUsktEnW1zvAszO04Qm+l31Xxh4G1Xs=;
+ bh=JoIn2woWP4yvg4R5//bLnyYh8omIezrzh5bc4PqgSbM=; b=i35qji4N0/JW6PYOzP5OajdIFm
+ tCYupRjMJ++hjUaXtDqaC+foIXedFHRtPbGgHsVeh6mW3uCYDwETxcuQa1paWATs5hUsCJkLO0a9T
+ oU8GIDrAprKg8+vUJt+UwL8fPR43fMDsYTHkmfo2Xu+b+RzLmUPOHfqWqyYg1Xqsrh+M=;
 Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wrj3N-0007Ae-Ti for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Aug 2026 21:21:35 +0000
+ id 1wrj3V-000447-3N for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 05 Aug 2026 21:21:39 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 5E45560A80;
- Wed,  5 Aug 2026 21:21:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 140CB1F00AC4;
- Wed,  5 Aug 2026 21:21:28 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 6065A60A64;
+ Wed,  5 Aug 2026 21:21:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1596B1F00ACF;
+ Wed,  5 Aug 2026 21:21:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1785964888;
- bh=VBAfDmBTrS4RbICPXLAAqohn/AEjIYJN050Ab/3SqCo=;
+ s=k20260515; t=1785964897;
+ bh=JoIn2woWP4yvg4R5//bLnyYh8omIezrzh5bc4PqgSbM=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=nxiVkdsUe2VaL/LOJ0Oi2Sbt8/nLaJM9sf6MdSr465ZMGBP6pczxhT3PkwlW+rq3V
- 5/2LV0JihhEzJ4e4DFrJUzziS13+YcZBiUj++HGgL14ZYc7yh8uH1lyar2CBjCBhhT
- 2sb5/8GgQfxNQ00soe5whGTL2hanxSf4BcYuJ48eiF7u5Cs2WK120+xVHuhF6HK/5R
- 7rfupX2A7Y9xdG5GCRJkTgdjfF05N1iD2Ro530E1pkuBQfvu2HLHN7VZusZk3b55iO
- 3ZzWqF1qhaHvoCILnFgpvfacj67tK4eUzJaXlCvE8BY3cPZo9kascn0ndaVdHoeGev
- hQfUu94W5LEDg==
+ b=WFmXjPo2ixpiFbTBSvZMqOT/j3gD2rhOsULGAvWISLMWBTiCn1hSCO6Cww/9CR8vU
+ JfNgpKS/dWbUaM551DNLHRYNzL3u90r4s3kjevdtyRN8OGhnnZwjw2WCRSvF4E7kwZ
+ 0O6CFTXTWQIdy/3hcVThmtm/cIwuQIu8SKN+Nt2UxW6olHith1SRZzEe9H0lbQlELU
+ Uov35Fd9uUTxd7/4mIPekGMGvuOlf4H7vbGp8t5pwow1PYL/HfB7HddeFUhUm8aLWS
+ JFDG7U47DaMovtAqldbeZ12ZVyYZ977oLdVNEfdrwBTctABiWj3yO/rOyEsW2PR9an
+ bgtCh44RQqekg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 19827392FFD1; Wed,  5 Aug 2026 21:20:49 +0000 (UTC)
+ 198A3392FFD1; Wed,  5 Aug 2026 21:20:58 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <178596484763.530543.1976176179653312885.git-patchwork-notify@kernel.org>
-Date: Wed, 05 Aug 2026 21:20:47 +0000
-References: <20260804005402.13026-1-chenchangcheng@kylinos.cn>
-In-Reply-To: <20260804005402.13026-1-chenchangcheng@kylinos.cn>
-To: Chen Changcheng <chenchangcheng@kylinos.cn>
-X-Headers-End: 1wrj3N-0007Ae-Ti
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix valid block count leak on data
- block allocation failure
+Message-Id: <178596485663.530543.6106799937167752297.git-patchwork-notify@kernel.org>
+Date: Wed, 05 Aug 2026 21:20:56 +0000
+References: <20260727130430.2109181-1-qiwenjie@xiaomi.com>
+In-Reply-To: <20260727130430.2109181-1-qiwenjie@xiaomi.com>
+To: Wenjie Qi <qwjhust@gmail.com>
+X-Headers-End: 1wrj3V-000447-3N
+Subject: Re: [f2fs-dev] [PATCH] f2fs: only redirty pinned folios in
+ redirty_blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,8 +90,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, ccc194101@163.com
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ qiwenjie@xiaomi.com, jaegeuk@kernel.org, stable@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -101,19 +101,21 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue,  4 Aug 2026 08:54:02 +0800 you wrote:
-> In __allocate_data_block(), when allocating a new data block
-> (dn->data_blkaddr == NULL_ADDR), inc_valid_block_count() is
-> called first to increment total_valid_block_count and i_blocks.
-> If the subsequent f2fs_allocate_data_block() fails, the function
-> returns the error directly without rolling back the
-> already-incremented block counts, causing a permanent leak.
+On Mon, 27 Jul 2026 21:04:29 +0800 you wrote:
+> redirty_blocks() pins folios with read_cache_folio() and then walks the
+> same range again with filemap_lock_folio() to redirty them and drop the
+> references it took.
+> 
+> Commit 5951fee46bef ("f2fs: Use a folio in redirty_blocks()") changed
+> the second pass to a do/while loop. If read_cache_folio() fails before
+> anything is pinned, page_idx does not advance but the cleanup loop still
+> runs once.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v3] f2fs: fix valid block count leak on data block allocation failure
-    https://git.kernel.org/jaegeuk/f2fs/c/0f9af07ecc1a
+  - [f2fs-dev] f2fs: only redirty pinned folios in redirty_blocks
+    https://git.kernel.org/jaegeuk/f2fs/c/85171332742e
 
 You are awesome, thank you!
 -- 
