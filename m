@@ -4,75 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F070AC2A09B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  7 Aug 2026 15:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CEC67C5AC7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  7 Aug 2026 15:32:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=FL3ROniK9rWzQMcoPN+FptlzGHDWCBSY0+ibxxmEC6Q=; b=PVdiyc2ZtojlmZg3YmE4Q/VoK1
-	FCOrDHPbYXsnxKKskxvae8TveaqPlTjTXCAMubZJl3RNCthPT7S7qHLD7pkMk6rD6TULLGz0+2RDB
-	1d2vj+OY8VlJWMOGu3K0vm50U8lWP7EgugNUDbyqjfTUIHQcRWV5cj4ebcryiyZJIJBA=;
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=DfXRgucK5/WCD01VZp8bbrN24FlaHpOz6a9EZWTahp8=; b=NSRMFHeomVIbSK+wdS4nGqo8CH
+	xv55GrKj6n/CNkjxEVc03VmPPxiTz2J/Nh3yCFDjnvLSvN5GN4E9e62J5ATYthE9vu7BOcxzssNX3
+	1jGNh2dieYg+N9/uHfQALwZ88Lpkp58jDLSstfyaPNSLcxCL8T87VFj1lMcZXmxR9OhA=;
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wsMMK-0002Qz-LH;
-	Fri, 07 Aug 2026 15:19:45 +0000
+	id 1wsMYE-0002sc-5S;
+	Fri, 07 Aug 2026 15:32:02 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <willy@infradead.org>) id 1wsMLw-0002Qe-4y
+ (envelope-from <chao@kernel.org>) id 1wsMYA-0002sM-Kb
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 07 Aug 2026 15:19:21 +0000
+ Fri, 07 Aug 2026 15:31:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=H9XKfy6+pFtdCncWq+6zsw9ueT3VoFKNoejpZHvXfFc=; b=CMjCePCS5sKw1ugDkgx7ERzXjO
- w4/b6DZjbBCtj9J7+W6mdeDRy/GQYFIusRzz65TBMXVqr0bXvihqjMuA5c5NDFtAuDwub/oMjdY4Z
- nkmPB7yAqWDC2kDKLEltF/r6nIsmSrNDtAb9hHr3DFOpNxhHTZ13qZbG+sPc+DssHD5s=;
+ bh=M/8qFOHz3lC84h2vv+hMSpBCbcdNn8SRVWYfKkHmWlU=; b=EVG0DX3N22D1dCbXtoSsjNRFax
+ eLEgjo4CtZ2RuGtRrWKx2ayMablUqghhAUyPvo+uptcW4qA++yN6VxSfUtYgk9tf5djsFRxwXF/qG
+ 7wO30Z5SI+MK5fEji8SsSo1lA+LQJvUp06+YcjlqOnzWIwU/yidHIpYmn7ml8S+QTw9c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=H9XKfy6+pFtdCncWq+6zsw9ueT3VoFKNoejpZHvXfFc=; b=myXsw+cFXfaghrPwBODFPy0tpB
- JbKdfC/i4Sc6vksbTLY9K9gHoavnavA+VmeKUBVj/DoyoVqn6tmu4f6+JE2+I+IOaHK4ky1yVYxjY
- JUBIXDohFKgAls6njoIzZodAwjiZwOAyQL/3QLQtgoXb63tPoQwObVokLarO9elKvMhU=;
-Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=M/8qFOHz3lC84h2vv+hMSpBCbcdNn8SRVWYfKkHmWlU=; b=PNaY6z/uc0htSYNEy6ejbo+Jkj
+ ushMA/NdpwdAtpDHRYs4IvZW8m1xYFybTkylmKnE7ygCK286lj7U9Ea9qqCikWosxRqMiRhfHHckI
+ eQKrIJcthv+cMFnvFrrHCSv7wWtgj9fwVfbApE8yEEay/ZX7LW8oKyqBDiTLcNgjcULY=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wsMLz-0002Jd-Ou for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 07 Aug 2026 15:19:20 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=H9XKfy6+pFtdCncWq+6zsw9ueT3VoFKNoejpZHvXfFc=; b=izKcaAZ2gxytqFBY9YbEu9VZ2i
- I36MK2oBRJXsQ7d5nYIxtMPU8dPgG5tcoKahg1wsn52S4Oc9pXmRiS200wPjC84NFxCfnBRduvdFZ
- JG6Cnave0uFWtSjrfkFoXv4LAdmJCUktQq19FCUjJY43jl8XbpGTOUUIgbNw/tBXdZBZ6KBexQGXo
- t+NpjPWS6LUk9Bsi9Nk8vpN7eR1BZ5LZvkJ2YF/QO9P1O+oDXfUbGNYju7oqtyUIgY1QnUW5TR5Nk
- GQbVKYcJqJF+hBr2wv7H7MT25neb+3mx+NG4IMXvFUWuH6GHfgofnM/EISXD1+89NRZnVhu12d3Aq
- /eZWh+BQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red
- Hat Linux)) id 1wsL9C-000000097f9-30i6;
- Fri, 07 Aug 2026 14:02:06 +0000
-Date: Fri, 7 Aug 2026 15:02:06 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Wenjie Qi <qwjhust@gmail.com>
-Message-ID: <anXlXntN14GKvY58@casper.infradead.org>
-References: <20260807130445.465203-1-qiwenjie@xiaomi.com>
+ id 1wsMY8-0000kf-M2 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 07 Aug 2026 15:31:59 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by tor.source.kernel.org (Postfix) with ESMTP id 4868C60A69
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri,  7 Aug 2026 13:06:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09CD31F00ACF;
+ Fri,  7 Aug 2026 13:06:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1786107982;
+ bh=M/8qFOHz3lC84h2vv+hMSpBCbcdNn8SRVWYfKkHmWlU=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=ZOMqLcaphL9cY3saGjBCxYJAHGKYbEdLpsRuIbr09UYaZAYqbjSxVfbFEfE/qToUh
+ wYiTXh83dfV2OJzzyxehy1DdIVSCpcNDrB9ENd6c5/Wn2zSfX5nlR7FpfNXKcTeHuZ
+ mf/dg0jRXCA4vZ7dWHLu2QSs/4rKu4BCeL+PqHhXnmNKR98dA4s+SYx3z+15VxT0ZE
+ 1t3ddRPeL90VSyCm1bIjtmZiRUi846ZS4s0l9VqplncjT9uv5S9Zb3Rgkh9rWlz2FO
+ fd6rAsRjSZZXbQgrnz12M4FJ/u+8omSrkS4Zt/LhePR0Zu1A1n6+V4BTRpsEqboUgN
+ dnkzeZdMv+g8A==
+To: jaegeuk@kernel.org
+Date: Fri,  7 Aug 2026 13:06:10 +0000
+Message-ID: <20260807130610.2615940-2-chao@kernel.org>
+X-Mailer: git-send-email 2.55.0.654.g21b8a5bc05-goog
+In-Reply-To: <20260807130610.2615940-1-chao@kernel.org>
+References: <20260807130610.2615940-1-chao@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260807130445.465203-1-qiwenjie@xiaomi.com>
-X-Headers-End: 1wsMLz-0002Jd-Ou
-Subject: Re: [f2fs-dev] [PATCH] f2fs: return symlink writeback errors
+X-Headers-End: 1wsMY8-0000kf-M2
+Subject: [f2fs-dev] [PATCH v3 2/2] f2fs: fix to zero post-EOF data when
+ extending file size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,26 +87,276 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- qiwenjie@xiaomi.com, jaegeuk@kernel.org, stable@kernel.org
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: stable@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Aug 07, 2026 at 09:04:45PM +0800, Wenjie Qi wrote:
-> F2FS writes long symlink data with page_symlink() and then flushes the
-> symlink mapping to reduce the chance of exposing a broken symlink.
-> 
-> That flush result is currently ignored. If the writeback fails, symlink()
-> still returns success even though the symlink is not durable and the same
-> operation can already surface -EIO through syncfs().
-> 
-> Return the writeback error to userspace and skip the dirsync flush once the
-> symlink data flush has failed.
-> 
-> Fixes: 424fd5d831e1 ("f2fs: Remove f2fs_get_node_page()")
+generic/794  4s ... - output mismatch (see /share/git/fstests/results//generic/794.out.bad)
+    --- tests/generic/794.out   2026-06-12 08:46:32.766426241 +0800
+    +++ /share/git/fstests/results//generic/794.out.bad 2026-07-05 18:32:55.000000000 +0800
+    @@ -1,4 +1,16 @@
+     QA output created by 794
+     append_write
+    +FAIL: non-zero data in gap [4080,4096) after shutdown+remount
+    +000000 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  >ZZZZZZZZZZZZZZZZ<
+    +*
+    +001000
+     truncate_up
+    ...
+    (Run 'diff -u /share/git/fstests/tests/generic/794.out /share/git/fstests/results//generic/794.out.bad'  to see the entire diff)
+Ran: generic/794
+Failures: generic/794
+Failed 1 of 1 tests
 
-That commit did not touch this code.
+Steps of generic/794:
+1. write 4096 bytes to file w/ 0x5a
+2. use fiemap to get PBA of first block in file
+3. truncate file to 4080
+4. umount; write 4096 bytes to file w/ 0x5a directly via PBA; mount
+5. extend filesize via
+   a) append 4096 from offset 4096, or
+   b) truncate 8192, or
+   c) fallocate 4096 from offset 4096
+6. verify the gap is zeroed in memory [4080,4096)
+7. sync range 4096 from offset 4096; shutdown -f (flush meta before shutdown)
+8. umount; mount; verify [4080,4096) is zeroed or not.
+
+When extending file size (e.g. via truncate, fallocate, or write) across an
+unaligned EOF boundary, we need to ensure that post-EOF data in the partial
+page is zeroed out in pagecache and marked dirty, meanwhile, tagging the inode
+with FI_ZERO_POST_EOF, so that following checkpoint() and fsync() can persist
+the page contain zeroed data before committing inode w/ updated i_size.
+
+This help to prevent stale disk data beyond the previous EOF from being exposed
+after remounting or crash recovery.
+
+Since f2fs is a LFS filesystem, we only support direct write via PBA in pinfile,
+and pinfile has section-aligned filesize, so in Android, there should no problem,
+but for other usage in different environment, let's fix this w/ fsync_mode=strict
+mount option.
+
+Cc: stable@kernel.org
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v3:
+- persist post eof data in f2fs_zero_post_eof_page()
+ fs/f2fs/file.c | 100 +++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 84 insertions(+), 16 deletions(-)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 9dbe509926b2..efa06aef3077 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -36,16 +36,52 @@
+ #include <trace/events/f2fs.h>
+ #include <uapi/linux/f2fs.h>
+ 
+-static void f2fs_zero_post_eof_page(struct inode *inode,
+-					loff_t new_size, bool lock)
++static int fill_zero(struct inode *inode, pgoff_t index,
++					loff_t start, loff_t len);
++
++static int do_zero_post_eof_page(struct inode *inode, loff_t new_size)
++{
++	loff_t old_size = i_size_read(inode);
++	unsigned int offset, len;
++	pgoff_t index;
++	int err;
++
++	offset = old_size & (PAGE_SIZE - 1);
++
++	if (!offset)
++		return 0;
++
++	len = min_t(loff_t, PAGE_SIZE - offset, new_size - old_size);
++	index = old_size >> PAGE_SHIFT;
++
++	if (f2fs_has_inline_data(inode)) {
++		/* data post eof should be always zero */
++		if (new_size <= MAX_INLINE_DATA(inode))
++			return 0;
++		err = f2fs_convert_inline_inode(inode);
++		if (err)
++			return err;
++	}
++
++	err = fill_zero(inode, index, offset, len);
++	if (err)
++		return err;
++	return filemap_write_and_wait_range(inode->i_mapping,
++				old_size, old_size + len - 1);
++}
++
++static int f2fs_zero_post_eof_page(struct inode *inode,
++					loff_t new_size, bool lock, bool writeback)
+ {
+ 	loff_t old_size = i_size_read(inode);
++	bool strict =
++		F2FS_OPTION(F2FS_I_SB(inode)).fsync_mode == FSYNC_MODE_STRICT;
+ 
+ 	if (old_size >= new_size)
+-		return;
++		return 0;
+ 
+-	if (mapping_empty(inode->i_mapping))
+-		return;
++	if (!strict && mapping_empty(inode->i_mapping))
++		return 0;
+ 
+ 	if (lock)
+ 		filemap_invalidate_lock(inode->i_mapping);
+@@ -53,6 +89,16 @@ static void f2fs_zero_post_eof_page(struct inode *inode,
+ 	truncate_inode_pages_range(inode->i_mapping, old_size, new_size - 1);
+ 	if (lock)
+ 		filemap_invalidate_unlock(inode->i_mapping);
++
++	if (!writeback || !strict)
++		return 0;
++	/*
++	 * In fsync_mode=strict, when we expand an unaligned EOF size, we
++	 * should zero post EOF data and writeback the data immediately,
++	 * so that it can avoid exposing stale data after metadata flush
++	 * and POR.
++	 */
++	return do_zero_post_eof_page(inode, new_size);
+ }
+ 
+ static vm_fault_t f2fs_filemap_fault(struct vm_fault *vmf)
+@@ -132,7 +178,10 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 
+ 	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
+ 
+-	f2fs_zero_post_eof_page(inode, (folio->index + 1) << PAGE_SHIFT, true);
++	ret = f2fs_zero_post_eof_page(inode,
++		(folio->index + 1) << PAGE_SHIFT, true, false);
++	if (ret)
++		goto out_pagefault;
+ 
+ 	file_update_time(vmf->vma->vm_file);
+ 	filemap_invalidate_lock_shared(inode->i_mapping);
+@@ -189,7 +238,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 
+ out_sem:
+ 	filemap_invalidate_unlock_shared(inode->i_mapping);
+-
++out_pagefault:
+ 	sb_end_pagefault(inode->i_sb);
+ out:
+ 	ret = vmf_fs_error(err);
+@@ -1182,8 +1231,12 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
+ 		filemap_invalidate_lock(inode->i_mapping);
+ 
+-		if (attr->ia_size > old_size)
+-			f2fs_zero_post_eof_page(inode, attr->ia_size, false);
++		if (attr->ia_size > old_size) {
++			err = f2fs_zero_post_eof_page(inode,
++				attr->ia_size, false, true);
++			if (err)
++				goto err_out;
++		}
+ 		truncate_setsize(inode, attr->ia_size);
+ 
+ 		if (attr->ia_size <= old_size)
+@@ -1192,6 +1245,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		 * do not trim all blocks after i_size if target size is
+ 		 * larger than i_size.
+ 		 */
++err_out:
+ 		filemap_invalidate_unlock(inode->i_mapping);
+ 		f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
+ 		if (err)
+@@ -1303,7 +1357,9 @@ static int f2fs_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 	if (ret)
+ 		return ret;
+ 
+-	f2fs_zero_post_eof_page(inode, offset + len, true);
++	ret = f2fs_zero_post_eof_page(inode, offset + len, true, false);
++	if (ret)
++		return ret;
+ 
+ 	pg_start = ((unsigned long long) offset) >> PAGE_SHIFT;
+ 	pg_end = ((unsigned long long) offset + len) >> PAGE_SHIFT;
+@@ -1590,7 +1646,9 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
+ 	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	filemap_invalidate_lock(inode->i_mapping);
+ 
+-	f2fs_zero_post_eof_page(inode, offset + len, false);
++	ret = f2fs_zero_post_eof_page(inode, offset + len, false, false);
++	if (ret)
++		goto out_unlock;
+ 
+ 	f2fs_lock_op(sbi, &lc);
+ 	f2fs_drop_extent_tree(inode);
+@@ -1598,6 +1656,7 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
+ 	ret = __exchange_data_block(inode, inode, end, start, nrpages - end, true);
+ 	f2fs_unlock_op(sbi, &lc);
+ 
++out_unlock:
+ 	filemap_invalidate_unlock(inode->i_mapping);
+ 	f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	return ret;
+@@ -1719,7 +1778,9 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 	if (ret)
+ 		return ret;
+ 
+-	f2fs_zero_post_eof_page(inode, offset + len, true);
++	ret = f2fs_zero_post_eof_page(inode, offset + len, true, false);
++	if (ret)
++		return ret;
+ 
+ 	pg_start = ((unsigned long long) offset) >> PAGE_SHIFT;
+ 	pg_end = ((unsigned long long) offset + len) >> PAGE_SHIFT;
+@@ -1854,7 +1915,9 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	filemap_invalidate_lock(mapping);
+ 
+-	f2fs_zero_post_eof_page(inode, offset + len, false);
++	ret = f2fs_zero_post_eof_page(inode, offset + len, false, false);
++	if (ret)
++		goto out_unlock;
+ 	truncate_pagecache(inode, offset);
+ 
+ 	while (!ret && idx > pg_start) {
+@@ -1872,6 +1935,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 					idx + delta, nr, false);
+ 		f2fs_unlock_op(sbi, &lc);
+ 	}
++out_unlock:
+ 	filemap_invalidate_unlock(mapping);
+ 	f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	if (ret)
+@@ -1914,7 +1978,9 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
+ 	if (err)
+ 		return err;
+ 
+-	f2fs_zero_post_eof_page(inode, offset + len, true);
++	err = f2fs_zero_post_eof_page(inode, offset + len, true, true);
++	if (err)
++		return err;
+ 
+ 	f2fs_balance_fs(sbi, true);
+ 
+@@ -5285,8 +5351,10 @@ static ssize_t f2fs_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ 	if (err)
+ 		return err;
+ 
+-	f2fs_zero_post_eof_page(inode,
+-		iocb->ki_pos + iov_iter_count(from), true);
++	err = f2fs_zero_post_eof_page(inode,
++		iocb->ki_pos + iov_iter_count(from), true, true);
++	if (err)
++		return err;
+ 	return count;
+ }
+ 
+-- 
+2.49.0
+
 
 
 _______________________________________________
