@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A2243C5AC82
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 Aug 2026 08:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C960EC5AD4E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 Aug 2026 08:33:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
 	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=x/u2FKuzTQi9ae0tX5APR6cBh8++Rtg9CKx+Xv5PghE=; b=NzDbbXATPkfu93hh0HmTyriTIa
-	dsAjwGbTHTpS51waprn214HceevSrYb6ykkY1fp8hWN9ks0c/uSAkIZE3JX9ENbYdVW7IqanGxEUb
-	gyiZ4Qxck+q18U7vQAq0PAJjGfm4hNXbClvBbPQDV8UV5hsxB026DaCMSLDF9hHMiSXo=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=Q7wUQpNIgSEZqgdj3ALyVcn1veat3vTamXGDsVpwktE=; b=QqPQDllJuD8UJxz79kukB5JMQ7
+	4p4M/E4LWaHdM9jIOOdUgHNUDLPJKJGVdo2yTBHCWoSpWJTAkOOui1puBbwZo4kIY+B4/4EVAzv9E
+	q3vmBz4zJP6P9zsG4y1xK5cv6kvsTUkG8wENUZeZerDweaX4PBwxIZ+iSIHHiaCupQRE=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wtLNa-0003OB-Kb;
-	Mon, 10 Aug 2026 08:29:04 +0000
+	id 1wtLS3-0003lY-N5;
+	Mon, 10 Aug 2026 08:33:44 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1wtLN4-00039e-JP
+ (envelope-from <aalbersh@kernel.org>) id 1wtLS2-0003lS-R9
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 10 Aug 2026 08:28:32 +0000
+ Mon, 10 Aug 2026 08:33:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8ooJ1K9gJPbRSmciql3NBWA3FYXEMtRNBkMvQDxZ9OM=; b=FMdFOciV+XFn3zx4F4DlZyIKlf
- cO10OaRq0Ecq5xYbJhN7RcJXt3+WfsMfIebvRfv0GBO+JOIKKQnjpMdIeyQ2kIcSEL4E0yEUOW94d
- s87WJ+s6uHUhKzzZffxSOrXXQqqBaHvpe8J8Pngooxwl0BvURkzIh1+B2+H21k93NU88=;
+ bh=BAtyw81+dBMiu7XlLAIQLatNTnzJYfKHmuu6xvYOIyo=; b=k2tD5e+ZN3dQI6/G56RWxhmWsg
+ Ki9aRkOqHGFNfhCMldj9W1WcAqT0WKru9YJIPGPDcUNFzCvdGG9xPaYQMuQyRb0wXAhqHnw5vu0MQ
+ DkNu4KbylDllSr+yEP9BKBLw+OW0f/+s7pOIgM4tfHaMLjdna/hDzOSCzjvw+L+8R1L0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,41 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=8ooJ1K9gJPbRSmciql3NBWA3FYXEMtRNBkMvQDxZ9OM=; b=BPYFG3jrR5vydaWcOhDEJrMemS
- vhf2J1NhGObb2t4fIpFXez6spO7EusIcXOo464MrV/jUy1emK+OIPTO89UxRHnLe3ugkWMJmjg/9R
- z45s6daryc+lIMdlVzLr21FQT6Shr7WvwyVB91G1/4RDOku5606kR6vQJeI5qpfPSh+E=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=BAtyw81+dBMiu7XlLAIQLatNTnzJYfKHmuu6xvYOIyo=; b=FX3+WRiUd8kcDTKPH5YnfMng0G
+ tOlTz5T7tXkRQUIfaAJaMlboMVL9w859ZEA0Y1scOczb9zZ+mEuLxCV2ADFxeTr6TV0Je15frXH5A
+ nIgsrc4gA/38Xav5n8ye+TH3mfoiGi59oyqbjwsfhg6uLO/gPRM/RkZvZjcAds6NUtPo=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wtLN1-0008Bd-SW for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 10 Aug 2026 08:28:32 +0000
+ id 1wtLS3-0000PK-2u for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 10 Aug 2026 08:33:43 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id A5E0D600B1;
- Mon, 10 Aug 2026 08:28:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C1461F000E9;
- Mon, 10 Aug 2026 08:28:19 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id B3DA241499;
+ Mon, 10 Aug 2026 08:33:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECF9E1F00A3A;
+ Mon, 10 Aug 2026 08:33:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1786350502;
- bh=8ooJ1K9gJPbRSmciql3NBWA3FYXEMtRNBkMvQDxZ9OM=;
+ s=k20260515; t=1786350817;
+ bh=BAtyw81+dBMiu7XlLAIQLatNTnzJYfKHmuu6xvYOIyo=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=OHSjCgb0zyYYJnpVXHkENn+EQu/H697chYZZJkFhESi6/NP7iVQcFRaPRbj2caJgl
- xocFGq5ItG0BNFugzGkJIih4QVQSt7Efs/VOhLmVcuJR+9fbHTMYyG63BqdHzg7wer
- eYwX0A7sLiPpI3xJIkx6lk3HPbFW2Y1JpD6FFecaYLISsqFnMQ+Pb2l/c6MapY/Oea
- kCnWp6UIWyn4IbDssy5z3mc9UXSKmUjC5Ar+Eyl5doYemGydfLVLqu6eqO0EY4G+vN
- al6C0EkcLaKaMi8tV7xa0eWlgFSffXjgc3g0LHInhLZgf5gFVRaiOzhazHcgOfdEqP
- ZYFQN2F9gv/UA==
-Date: Mon, 10 Aug 2026 10:28:17 +0200
-To: "Darrick J. Wong" <djwong@kernel.org>
-Message-ID: <anmFWhPNOqe4uyht@aalbersh-thinkpadx1carbongen13.rmtcz.csb>
+ b=AZ0sNoTsACbmKvxS8u/yWus9xVKhsJ1sw7YXHSY0plOcnJztWWyy6K7DffjeNScfJ
+ M1ACXgiigHq/zftVDKz2KWQRGvyhIb+tyw1bJEKJWMSf7zAfFLjUEf69iE9aidV2UK
+ tbheV4Pug5nZv+XzwjxuCRiZGSsO9yDsnUCK3y5U18rVHPNC0BIusLbm5uw7Fxmvh3
+ pfzhRxc+pyg8ksrAsCAZPvmSRJ8Xo2tl2L5rDjMoQtBTm/Eg8azJOFBogY2QPgJHoB
+ 0FS0xvBC8mBOthwT7GrgoxXEcYjYsI5TmBe2531CO6lj3KX3kM7EykqimuYVUqzl+r
+ 5fz1kjp8sjgpg==
+Date: Mon, 10 Aug 2026 10:33:32 +0200
+To: Eric Biggers <ebiggers@kernel.org>
+Message-ID: <anmMB2QB_CkGEdN0@aalbersh-thinkpadx1carbongen13.rmtcz.csb>
 References: <20260803200820.393203-1-aalbersh@kernel.org>
- <20260804173548.GA13900@lst.de>
- <20260804175203.GI3556460@frogsfrogsfrogs>
+ <20260803200820.393203-12-aalbersh@kernel.org>
+ <20260804174347.GC14046@lst.de>
+ <20260804182453.GA2904385@google.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20260804175203.GI3556460@frogsfrogsfrogs>
-X-Headers-End: 1wtLN1-0008Bd-SW
-Subject: Re: [f2fs-dev] [PATCH v14 00/21] fs-verity support for XFS with
- post EOF merkle tree
+In-Reply-To: <20260804182453.GA2904385@google.com>
+X-Headers-End: 1wtLS3-0000PK-2u
+Subject: Re: [f2fs-dev] [PATCH v14 11/21] xfs: don't report dio_mem_align
+ and dio_offset_align for fsverity files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,42 +92,41 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Andrey Albershteyn via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
-Cc: fsverity@lists.linux.dev, ebiggers@kernel.org, david@fromorbit.com,
- linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
- linux-btrfs@vger.kernel.org
+Cc: fsverity@lists.linux.dev, djwong@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2026-08-04 10:52:03, Darrick J. Wong wrote:
-> On Tue, Aug 04, 2026 at 07:35:48PM +0200, Christoph Hellwig wrote:
-> > On Mon, Aug 03, 2026 at 10:07:50PM +0200, Andrey Albershteyn wrote:
-> > > This series based on v7.2-rc4 + lazy-bounce@hch-misc
+On 2026-08-04 18:24:53, Eric Biggers wrote:
+> On Tue, Aug 04, 2026 at 07:43:47PM +0200, Christoph Hellwig wrote:
+> > On Mon, Aug 03, 2026 at 10:08:01PM +0200, Andrey Albershteyn wrote:
+> > > Sashiko.dev reported that while fsverity files falls back to the
+> > > buffered IO for Direct I/O, they should not report non-zero values in
+> > > dio_mem_align and dio_offset_align, meaning it's not supported.
 > > 
-> > Oh, I gave up my hopes to get this into 7.3 and was waiting for
-> > your series to land first.  Right now there is one outstanding issue
-> > I know of with the series, which is that we need to clear REQ_POLL
-> > for bounce buffer I/O, and of course the somewhat complex cross-tree
-> > depenencies.
-> > 
-> > I can try to get it rposted, although this week I'm travelling for
-> > two conferences, which doesn't help.
-> > 
-> > If you only need a few patches from that series and they are kinda
-> > localized to xfs, maybe you should just cherry pick those from
-> > my series and include them?
+> > This doesn't make much sense to me.  If we didn't want to report
+> > we'd also want to not set STATX_DIOALIGN | STATX_DIO_READ_ALIGN.
+> > But in the end there is very little upside of this while adding
+> > extra special cases.
+> 
+> Zero values in the alignments are defined to mean that DIO is
+> unsupported; see statx(2).  It's right to do that here and also set
+> STATX_DIOALIGN | STATX_DIO_READ_ALIGN, as that explicitly reports that
+> DIO is unsupported.
+> 
+> Leaving the attribute flags unset would mean not reporting anything at
+> all, which could mean DIO either supported or unsupported.
+>
 
-I'm basically interested in the BIO in task context patches + read
-ioend use of this
+I will extend the commit message to include this
 
 > 
-> I hadn't noticed that this patchset had added even more patches and were
-> waiting for review, but cem told me this morning that he thinks it's too
-> late to put this into for-next for 7.3. :(
+> Acked-by: Eric Biggers <ebiggers@kernel.org>
 
-Yeah, it's probably a bit late.
+Thanks!
 
 -- 
 - Andrey
