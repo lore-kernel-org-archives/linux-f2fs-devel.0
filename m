@@ -4,78 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 26E80C5AD2C
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  9 Aug 2026 01:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9C38BC5AD55
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 Aug 2026 02:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=LDLl/faRflxJwCScqCAfUUvch3J+Ps1l8ksH+fHoDDI=; b=fy/dyHd1KueNBqn56u3ADxVWMz
-	Kl7uszGyYfNed6jcw9i5Aze0g4zxB/1y184Zd5kuB7nwnb4vKQDYeiYxCrljuWlEiwfn18a27LKTu
-	/uD2lv1vkV1l4mvAKo+b1Paw/wsTd3cwBR/1T0uyF4lg0elcIX2P2eVnEllm4OvhEHYs=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=4xxyDFNEKYKtFqDuZ6WohikhVebY/GkVadTXdontimk=; b=YmIjs/3i0Y4jOcKnHAjQK434bY
+	DB2s/wqAU57Py6eTl725eaE84eAlTmkSSALBAYdjMoaVn1RwSLRLL1zPoeqxWobJVTrTLCCtYLNNH
+	AVUp8wytyQdegndwbeiC6eCUVbUrtrNd5nRRNgnQ2XmgnkKiVg5Qf5UojGP5TU1+aQBI=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wssJR-0004RF-1X;
-	Sun, 09 Aug 2026 01:26:53 +0000
+	id 1wtFTA-0004cH-Dh;
+	Mon, 10 Aug 2026 02:10:29 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wssJP-0004R7-LP
+ (envelope-from <chao@kernel.org>) id 1wtFT9-0004cA-KH
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 09 Aug 2026 01:26:52 +0000
+ Mon, 10 Aug 2026 02:10:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GdyR95RgyXNdZtaoq952nJ4CVYObk7LTzOIlLzQE7oY=; b=kXoJMOvDAVze7ydNPEJmXU/kq1
- ZI3rO2TypQdjwakYo8smZwrOYUomOus9+Nrbdv1fYx1+44FOGiq83CHOT3LxRTyC5RZ5RAZlnux2j
- 6g2q1231m/bhMbNkme2us9wX1N0pzKE7EYR/UuL1oNJHOgZwt8PFe88ayCAH6liyVdSg=;
+ bh=YPgzYY5iPcBB9dAei64TOcifX0pTD7mBDEN5VxDnztI=; b=BxRoJK0H/dSu4J+k6KxyslSiif
+ a6Ke7zcIzs1HUy/fdrAGpNDqn3lPtWo9wjTQ+/zSs8L864rPUytdZLoLcrWHTOa0oG07DRibVSmwz
+ qMbxbVeSO8XQmuULB4KoBHwOnBQr4MKc3cfuMAuhMR7fHeE7twKEKMyOTU1Vo5y4rOmw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GdyR95RgyXNdZtaoq952nJ4CVYObk7LTzOIlLzQE7oY=; b=DnlqfXu18dtOPuPqYLTemAzqXM
- DRj4CTbCFh254Lr06BolFfogaAZKPbhxQLRdDHnbfiPVNCfSd5fxF1a0PZ8y7xnBTdgwe7zSy8lC1
- LulrANqRg8wFWFq0PPP4o61Y2zm6yNZfWe5dPkf8/gIzh9P4p++Zww6eH5YeeZtIjbEc=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=YPgzYY5iPcBB9dAei64TOcifX0pTD7mBDEN5VxDnztI=; b=Vfo+hvOAHmVw1TvIVaKNFk0yQ5
+ gJabILmeHyhRjobuYStJI6MQwyDutStz1j6Sr9cUDB7rldLhyK9V1Qgr9aBq/kmWAmlJJHItfCv5+
+ krMYDq3R8HoUa9IvIkKCSM1XMJbc1u6OnEPVg34DNhJkOKWljAAwfMeZ5sWE4p2B599M=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wssJT-00055j-83 for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 09 Aug 2026 01:26:52 +0000
+ id 1wtFT8-0000yS-MR for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 10 Aug 2026 02:10:28 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 1B2AC60008
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun,  9 Aug 2026 01:26:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4A531F00A3D;
- Sun,  9 Aug 2026 01:26:44 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 5B35441787;
+ Mon, 10 Aug 2026 02:10:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80CA81F000E9;
+ Mon, 10 Aug 2026 02:10:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1786238805;
- bh=GdyR95RgyXNdZtaoq952nJ4CVYObk7LTzOIlLzQE7oY=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=nK4CLs6OdPCvRlXBuEZC3AlYFEbPg6RUWXCAPji55t/VlEimtfSYx0feOIdiVwIIu
- TNyKInxIMSNYixxmzFjU6eo9movg6sH6pVzhzQOpmF8mqL0kgiq9rUIvJ566vUkrrU
- 1YaW8pywA1LiVYWX5EzjrK1gPFiFSWqT8iAB82awMAcgP5DZNbZjjb4SwFcgCPVd/1
- Wry/9Nd8vd6uFW63GXLBjjrO2TT3E+3kAtnV/A5VngZXrOo+NIVRKPPcY6A1XCNX2q
- oTjbW3rJ78k1Rq+rlOwURqRRKxOvGWpUAGuSfTcKRTuSuoZZQO/CCO63sSBBmnw9uD
- l9tCoP7Le95kA==
-To: jaegeuk@kernel.org
-Date: Sun,  9 Aug 2026 09:26:39 +0800
-Message-ID: <20260809012639.568485-2-chao@kernel.org>
-X-Mailer: git-send-email 2.55.0.654.g21b8a5bc05-goog
-In-Reply-To: <20260809012639.568485-1-chao@kernel.org>
-References: <20260809012639.568485-1-chao@kernel.org>
+ s=k20260515; t=1786327821;
+ bh=YPgzYY5iPcBB9dAei64TOcifX0pTD7mBDEN5VxDnztI=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To;
+ b=Az21/RPhCnOSS0Wxip5JOgvQxkvPZXbXYkXamn+RPvGQjmqrwIK2EC2/SGAnRqmv4
+ 2OQAbpYN7hv5JqPqABK4/u7sUHeIRaXVh+qFtDjqpoIfy6AGxRzqIxjlePt5moutl4
+ q8TOg+QqKdcnMIEzQjaTXvPRaZH9Pg4TWT8hFzGlL69p6zpv9trYkBiZkOI8BntQD1
+ ALHP7b1jidDS5h1VJfTpRmpxTlJJrJBfY88zusFXbxRMKIMWC6d1q44pA+VERayUZN
+ gJXlADMXmf7J2sgKjeXxFBgD6pZpbAOtFOG7ZQ9g7OTMZG+1E5l+Q4TTrbbFjZq4r7
+ lqrnkLKfPdmig==
+Message-ID: <f7dabaa3-6d3c-4c70-b953-08dd52c35f49@kernel.org>
+Date: Mon, 10 Aug 2026 02:10:17 +0000
 MIME-Version: 1.0
-X-Headers-End: 1wssJT-00055j-83
-Subject: [f2fs-dev] [PATCH v2 2/2] f2fs: reduce memory footprint of ino
- management
+User-Agent: Mozilla Thunderbird
+To: yonggil.song@samsung.com, "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+ "corbet@lwn.net" <corbet@lwn.net>
+References: <20260707225035epcms2p812b92e6001afb57eb06d98225f1acd87@epcms2p8>
+ <CGME20260707225035epcms2p812b92e6001afb57eb06d98225f1acd87@epcms2p4>
+ <20260707225453epcms2p4f8323f4f8b88f3ee892cddc126da51a6@epcms2p4>
+Content-Language: en-US
+In-Reply-To: <20260707225453epcms2p4f8323f4f8b88f3ee892cddc126da51a6@epcms2p4>
+X-Headers-End: 1wtFT8-0000yS-MR
+Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: introduce gcless mount option
+ to avoid foreground GC
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,225 +92,335 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>, Seokhwan Kim <sukka.kim@samsung.com>,
+ Dongjin Kim <dongjin_.kim@samsung.com>
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Currently, ino entries for APPEND_INO, UPDATE_INO, TRANS_DIR_INO, and
-XATTR_DIR_INO allocate a 'struct ino_entry' slab object and attach it to
-both a list and a radix tree solely for existence checks via
-f2fs_exist_written_data().
+Hi Yonggil,
 
-Since these ino types only track binary existence status, we can embed
-the information directly into radix tree value entries as a bitmap:
+Sorry for the delay.
 
-- The Linux radix tree/XArray supports in-place value entries via
-  xa_mk_value() / xa_to_value(), which tag the least significant bit
-  to store an unallocated integer value of BITS_PER_XA_VALUE bits
-  (BITS_PER_LONG - 1) directly in the slot pointer.
-- For each inode, (ino / BITS_PER_XA_VALUE) serves as the radix tree
-  slot index, and (ino % BITS_PER_XA_VALUE) is used as the bit offset
-  within the slot's bitmap.
+On 7/7/26 22:54, Yonggil Song wrote:
+> Under heavy out-of-place overwrite at near-full utilization, foreground
+> GC picks nearly-fully-valid victims and relocates almost every block,
+> while the scattered invalid space is not SSR-reusable until a checkpoint
+> stabilizes it.  WAF explodes even though reclaimable space exists.
+> 
+> Add a "gcless" mount option that counts checkpoint-stable invalid blocks
+> (invalid as of the last checkpoint, hence SSR-reusable) and credits them
+> as free sections in has_not_enough_free_secs().  The watermark then sees
+> the slack as free, so f2fs_balance_fs() skips foreground GC and
+> allocation reclaims the space through SSR instead.  The count is
+> recomputed at mount and after each successful checkpoint under
+> block_operations(), where it is exact and needs no locking.
+> 
+> The option is limited to adaptive (non-LFS) mode.
+> 
+> 8 GiB UFS, 2 GiB random overwrite at 99% utilization:
+>    baseline: WAF 76.7, foreground GC calls 578k
+>    gcless:   WAF  1.2, foreground GC calls 504
 
-For example, when tracking ino = 7:
-- Before: Allocate a 'struct ino_entry' ({ .ino = 7 }), insert its
-  pointer into the radix tree at index = 7, and link it to im->ino_list.
-- After: Compute slot_index = 7 / BITS_PER_XA_VALUE (index 0) and
-  bit_offset = 7 % BITS_PER_XA_VALUE (bit 7), then set bit 7 in the
-  value entry via xa_mk_value(bitmap) at index 0, without allocating
-  a slab object or linking to a list.
+Can we mitigate this by increasing min_ssr_sections?
 
-Additionally:
-- In-place slot updates are performed via radix_tree_replace_slot(), and
-  slots are deleted with radix_tree_delete() once the bitmap is zeroed.
-- Reorder the ino list enum so ORPHAN_INO and FLUSH_INO (which still
-  require struct ino_entry and list traversal) remain separated, while
-  bitmap-based trees are torn down using xa_destroy().
+> 
+> Signed-off-by: Yonggil Song <yonggil.song@samsung.com>
+> ---
+> v2:
+>   - split out the BIT_ULL() conversion for mount option bits into a
+>     preparation patch, fixing the 32-bit shift-count-overflow warning
+>     reported by kernel test robot <lkp@intel.com>
+>   Documentation/filesystems/f2fs.rst |  8 +++++
+>   fs/f2fs/checkpoint.c               |  1 +
+>   fs/f2fs/debug.c                    |  4 +++
+>   fs/f2fs/f2fs.h                     | 12 ++++++++
+>   fs/f2fs/gc.c                       |  5 ++--
+>   fs/f2fs/segment.c                  | 47 ++++++++++++++++++++++++++++++
+>   fs/f2fs/segment.h                  | 15 ++++++++++
+>   fs/f2fs/super.c                    | 17 +++++++++++
+>   8 files changed, 107 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+> index 7e4031631286..05ac3f76bfba 100644
+> --- a/Documentation/filesystems/f2fs.rst
+> +++ b/Documentation/filesystems/f2fs.rst
+> @@ -409,6 +409,14 @@ lookup_mode=%s		 Control the directory lookup behavior for casefolded
+>   					        on-disk `SB_ENC_NO_COMPAT_FALLBACK_FL`
+>   					        flag.
+>   			     ================== ========================================
+> +gcless			 Avoid foreground GC by crediting checkpoint-stable invalid
+> +			 blocks (invalid at the last checkpoint and thus SSR-reusable)
+> +			 as free space in the free section watermark, so allocation
+> +			 recycles that slack via SSR instead of relocating valid
+> +			 blocks. Intended for heavy out-of-place overwrite at
+> +			 near-full utilization, where it reduces write amplification.
+> +			 Not allowed in LFS mode (including zoned block devices),
+> +			 by default it's disabled.
+>   ======================== ============================================================
+>   
+>   Debugfs Entries
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 01e1ba77263e..0d83e90b583c 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1932,6 +1932,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>   		f2fs_release_discard_addrs(sbi);
+>   	} else {
+>   		f2fs_clear_prefree_segments(sbi, cpc);
+> +		f2fs_update_cib(sbi);
+>   	}
+>   
+>   	f2fs_restore_inmem_curseg(sbi);
+> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+> index af88db8fdb71..b1435e01447d 100644
+> --- a/fs/f2fs/debug.c
+> +++ b/fs/f2fs/debug.c
+> @@ -285,6 +285,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+>   	for (i = 0; i < MAX_CALL_TYPE; i++)
+>   		si->cp_call_count[i] = atomic_read(&sbi->cp_call_count[i]);
+>   
+> +	si->cib_total_blocks = READ_ONCE(sbi->cib_total_blocks);
+> +
+>   	for (i = 0; i < 2; i++) {
+>   		si->segment_count[i] = sbi->segment_count[i];
+>   		si->block_count[i] = sbi->block_count[i];
+> @@ -623,6 +625,8 @@ static int stat_show(struct seq_file *s, void *v)
+>   		seq_printf(s, "  - Total : %4d\n", si->nr_total_ckpt);
+>   		seq_printf(s, "  - Cur time : %4d(ms)\n", si->cur_ckpt_time);
+>   		seq_printf(s, "  - Peak time : %4d(ms)\n", si->peak_ckpt_time);
+> +		seq_printf(s, "GCless CIB budget : %u blocks\n",
+> +			   si->cib_total_blocks);
+>   		seq_printf(s, "GC calls: %d (gc_thread: %d)\n",
+>   			   si->gc_call_count[BACKGROUND] +
+>   			   si->gc_call_count[FOREGROUND],
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 20a1e2353f60..a2a85eaa636d 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -137,6 +137,7 @@ enum f2fs_mount_opt {
+>   	 * string rather than using the MS_LAZYTIME flag, so this must remain.
+>   	 */
+>   	F2FS_MOUNT_LAZYTIME,
+> +	F2FS_MOUNT_GCLESS,
+>   	F2FS_MOUNT_RESERVE_NODE,
+>   };
+>   
+> @@ -1870,6 +1871,15 @@ struct f2fs_sb_info {
+>   
+>   	struct f2fs_mount_info mount_opt;	/* mount options */
+>   
+> +	/*
+> +	 * Checkpoint-stable invalid blocks: sum of blocks that were invalid at
+> +	 * the last checkpoint and are thus SSR-eligible while their section stays
+> +	 * dirty.  Written only by f2fs_update_cib() (mount and after each
+> +	 * successful checkpoint, under block_operations()), read locklessly, so a
+> +	 * plain block_t with READ_ONCE()/WRITE_ONCE() suffices -- no atomic.
+> +	 */
+> +	block_t cib_total_blocks;
+> +
+>   	/* for cleaning operations */
+>   	struct f2fs_rwsem gc_lock;		/*
+>   						 * semaphore for GC, avoid
+> @@ -4000,6 +4010,7 @@ bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi, bool need_check);
+>   void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+>   					struct cp_control *cpc);
+>   void f2fs_dirty_to_prefree(struct f2fs_sb_info *sbi);
+> +void f2fs_update_cib(struct f2fs_sb_info *sbi);
+>   block_t f2fs_get_unusable_blocks(struct f2fs_sb_info *sbi);
+>   int f2fs_disable_cp_again(struct f2fs_sb_info *sbi, block_t unusable);
+>   void f2fs_release_discard_addrs(struct f2fs_sb_info *sbi);
+> @@ -4289,6 +4300,7 @@ struct f2fs_stat_info {
+>   	int dirty_count, node_pages, meta_pages, compress_pages;
+>   	int compress_page_hit;
+>   	int prefree_count, free_segs, free_secs;
+> +	block_t cib_total_blocks;
+>   	int cp_call_count[MAX_CALL_TYPE], cp_count;
+>   	int gc_call_count[MAX_CALL_TYPE];
+>   	int gc_segs[2][2];
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index e60c1106f70b..ebf47ef5fff0 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -1964,10 +1964,11 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
+>   		 * threshold, we can make them free by checkpoint. Then, we
+>   		 * secure free segments which doesn't need fggc any more.
+>   		 */
+> -		if (prefree_segments(sbi)) {
+> +		if (prefree_segments(sbi) || test_opt(sbi, GCLESS)) {
+>   			stat_inc_cp_call_count(sbi, TOTAL_CALL);
+>   			ret = f2fs_write_checkpoint(sbi, &cpc);
+> -			if (ret)
+> +			if (ret ||
+> +			    (test_opt(sbi, GCLESS) && has_enough_free_secs(sbi, 0, 0)))
+>   				goto stop;
+>   			/* Reset due to checkpoint */
+>   			sec_freed = 0;
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 788f8b050249..e020714261ff 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -305,6 +305,53 @@ static void __complete_revoke_list(struct inode *inode, struct list_head *head,
+>   		f2fs_do_truncate_blocks(inode, start_index * PAGE_SIZE, false);
+>   }
+>   
+> +static inline u32 cib_contrib_of_se(struct f2fs_sb_info *sbi, unsigned long seg)
+> +{
+> +	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+> +	struct free_segmap_info *free_i = SM_I(sbi)->free_info;
+> +	struct seg_entry *se = get_seg_entry(sbi, seg);
+> +	u32 usable = f2fs_usable_blks_in_seg(sbi, seg);
+> +	u32 ckpt_v = se->ckpt_valid_blocks;
+> +
+> +	/* free, prefree and current segments hold no reusable SSR slack */
+> +	if (test_bit(seg, free_i->free_segmap))
+> +		return 0;
+> +	if (test_bit(seg, dirty_i->dirty_segmap[PRE]))
+> +		return 0;
+> +	if (is_curseg(sbi, seg))
+> +		return 0;
+> +	if (ckpt_v >= usable)
+> +		return 0;
+> +
+> +	return usable - ckpt_v;
 
-This eliminates 'struct ino_entry' slab allocations and linked-list
-tracking for these ino types, significantly reducing memory consumption.
+If SSR is enabled, there may be valid but not checkpointed blocks in section?
+such space can not be treated as free?
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- fix to call __remove_ino_entry correctly for FLUSH_INO
- fs/f2fs/checkpoint.c | 99 ++++++++++++++++++++++++++++++++++++++++----
- fs/f2fs/f2fs.h       |  6 ++-
- 2 files changed, 95 insertions(+), 10 deletions(-)
+And, only updating sbi->cib_total_blocks w/ f2fs_update_cib() in checkpoint()
+is not enough? since free space in section may change due to SSR allocation
+and deletion. right?
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index eb2f955b1e2a..f81ba8cc861a 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -766,6 +766,64 @@ static void __remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
- 	spin_unlock(&im->ino_lock);
- }
- 
-+static void __set_ino_bitmap(struct f2fs_sb_info *sbi, nid_t ino, int type)
-+{
-+	struct inode_management *im = &sbi->im[type];
-+	unsigned long index = INO_SLOT_INDEX(ino);
-+	unsigned int ofs = INO_BIT_OFFSET(ino);
-+	void **slot, *entry;
-+	unsigned long bitmap = 0;
-+	int ret;
-+
-+	ret = radix_tree_preload(GFP_NOFS | __GFP_NOFAIL);
-+	f2fs_bug_on(sbi, ret);
-+
-+	spin_lock(&im->ino_lock);
-+	slot = radix_tree_lookup_slot(&im->ino_root, index);
-+	if (slot) {
-+		entry = radix_tree_deref_slot(slot);
-+		bitmap = xa_to_value(entry);
-+		if (!(bitmap & (1UL << ofs))) {
-+			bitmap |= (1UL << ofs);
-+			entry = xa_mk_value(bitmap);
-+			radix_tree_replace_slot(&im->ino_root, slot, entry);
-+		}
-+	} else {
-+		bitmap |= (1UL << ofs);
-+		entry = xa_mk_value(bitmap);
-+		if (unlikely(radix_tree_insert(&im->ino_root, index, entry)))
-+			f2fs_bug_on(sbi, 1);
-+	}
-+	spin_unlock(&im->ino_lock);
-+	radix_tree_preload_end();
-+}
-+
-+static void __clear_ino_bitmap(struct f2fs_sb_info *sbi, nid_t ino, int type)
-+{
-+	struct inode_management *im = &sbi->im[type];
-+	unsigned long index = INO_SLOT_INDEX(ino);
-+	unsigned int ofs = INO_BIT_OFFSET(ino);
-+	void **slot, *entry;
-+	unsigned long bitmap;
-+
-+	spin_lock(&im->ino_lock);
-+	slot = radix_tree_lookup_slot(&im->ino_root, index);
-+	if (slot) {
-+		entry = radix_tree_deref_slot(slot);
-+		bitmap = xa_to_value(entry);
-+		if (bitmap & (1UL << ofs))
-+			bitmap &= ~(1UL << ofs);
-+
-+		if (bitmap) {
-+			entry = xa_mk_value(bitmap);
-+			radix_tree_replace_slot(&im->ino_root, slot, entry);
-+		} else {
-+			radix_tree_delete(&im->ino_root, index);
-+		}
-+	}
-+	spin_unlock(&im->ino_lock);
-+}
-+
- static void f2fs_wait_for_inode_record(struct f2fs_sb_info *sbi, int mode)
- {
- 	if (mode != APPEND_INO && mode != UPDATE_INO)
-@@ -778,8 +836,10 @@ static void f2fs_wait_for_inode_record(struct f2fs_sb_info *sbi, int mode)
- static void __f2fs_add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino,
- 					unsigned int devidx, int type)
- {
--	/* add new dirty ino entry into list */
--	__add_ino_entry(sbi, ino, devidx, type);
-+	if (type <= FLUSH_INO)
-+		__add_ino_entry(sbi, ino, devidx, type);
-+	else
-+		__set_ino_bitmap(sbi, ino, type);
- }
- 
- void f2fs_add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
-@@ -789,20 +849,33 @@ void f2fs_add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
- 
- void f2fs_remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
- {
--	/* remove dirty ino entry from list */
--	__remove_ino_entry(sbi, ino, type);
-+	if (type <= FLUSH_INO)
-+		__remove_ino_entry(sbi, ino, type);
-+	else
-+		__clear_ino_bitmap(sbi, ino, type);
- }
- 
--/* mode should be APPEND_INO, UPDATE_INO or TRANS_DIR_INO */
-+/* mode should be APPEND_INO, UPDATE_INO, TRANS_DIR_INO and XATTR_DIR_INO */
- bool f2fs_exist_written_data(struct f2fs_sb_info *sbi, nid_t ino, int mode)
- {
- 	struct inode_management *im = &sbi->im[mode];
--	struct ino_entry *e;
-+	unsigned long index = INO_SLOT_INDEX(ino);
-+	unsigned int ofs = INO_BIT_OFFSET(ino);
-+	void *entry;
-+	unsigned long bitmap;
-+
-+	f2fs_bug_on(sbi, mode <= FLUSH_INO);
- 
- 	spin_lock(&im->ino_lock);
--	e = radix_tree_lookup(&im->ino_root, ino);
-+	entry = radix_tree_lookup(&im->ino_root, index);
-+	if (!entry) {
-+		spin_unlock(&im->ino_lock);
-+		return false;
-+	}
-+	bitmap = xa_to_value(entry);
- 	spin_unlock(&im->ino_lock);
--	return e ? true : false;
-+
-+	return bitmap & (1UL << ofs);
- }
- 
- void f2fs_release_ino_entry(struct f2fs_sb_info *sbi, bool all)
-@@ -810,7 +883,7 @@ void f2fs_release_ino_entry(struct f2fs_sb_info *sbi, bool all)
- 	struct ino_entry *e, *tmp;
- 	int i;
- 
--	for (i = all ? ORPHAN_INO : APPEND_INO; i < MAX_INO_ENTRY; i++) {
-+	for (i = all ? ORPHAN_INO : FLUSH_INO; i <= FLUSH_INO; i++) {
- 		struct inode_management *im = &sbi->im[i];
- 
- 		f2fs_wait_for_inode_record(sbi, i);
-@@ -824,6 +897,14 @@ void f2fs_release_ino_entry(struct f2fs_sb_info *sbi, bool all)
- 		}
- 		spin_unlock(&im->ino_lock);
- 	}
-+
-+	for (i = APPEND_INO; i < MAX_INO_ENTRY; i++) {
-+		struct inode_management *im = &sbi->im[i];
-+
-+		spin_lock(&im->ino_lock);
-+		xa_destroy(&im->ino_root);
-+		spin_unlock(&im->ino_lock);
-+	}
- }
- 
- void f2fs_set_dirty_device(struct f2fs_sb_info *sbi, nid_t ino,
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 160e7db0674e..5ae2d347c3ce 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -389,14 +389,18 @@ enum {
- /* for the list of ino */
- enum {
- 	ORPHAN_INO,		/* for orphan ino list */
-+	FLUSH_INO,		/* for multiple device flushing */
- 	APPEND_INO,		/* for append ino list */
- 	UPDATE_INO,		/* for update ino list */
- 	TRANS_DIR_INO,		/* for transactions dir ino list */
- 	XATTR_DIR_INO,		/* for xattr updated dir ino list */
--	FLUSH_INO,		/* for multiple device flushing */
- 	MAX_INO_ENTRY,		/* max. list */
- };
- 
-+#define INO_BITS_PER_SLOT	BITS_PER_XA_VALUE
-+#define INO_SLOT_INDEX(ino)	((ino) / INO_BITS_PER_SLOT)
-+#define INO_BIT_OFFSET(ino)	((ino) % INO_BITS_PER_SLOT)
-+
- struct ino_entry {
- 	struct list_head list;		/* list head */
- 	nid_t ino;			/* inode number */
--- 
-2.49.0
+> +}
+> +
+> +/*
+> + * Recompute the checkpoint-stable invalid-block budget by scanning all main
+> + * segments via ckpt_valid_blocks (free/prefree/current segments contribute
+> + * nothing).  Called at mount and after every successful checkpoint, both under
+> + * block_operations(), so it is the only writer and needs no atomic; readers use
+> + * READ_ONCE().  ckpt_valid_blocks is fixed between checkpoints, so the value is
+> + * exact at each checkpoint -- gcless checkpoints often enough to keep it fresh,
+> + * which is why no per-allocation delta hooks are needed.
+> + */
+> +void f2fs_update_cib(struct f2fs_sb_info *sbi)
+> +{
+> +	unsigned long nsegs = MAIN_SEGS(sbi);
+> +	unsigned long seg;
+> +	block_t total = 0;
+> +
+> +	if (!test_opt(sbi, GCLESS)) {
+> +		WRITE_ONCE(sbi->cib_total_blocks, 0);
+> +		return;
+> +	}
+> +
+> +	for (seg = 0; seg < nsegs; seg++)
+> +		total += cib_contrib_of_se(sbi, seg);
+> +
+> +	WRITE_ONCE(sbi->cib_total_blocks, total);
+> +}
+> +
+>   static int __f2fs_commit_atomic_write(struct inode *inode)
+>   {
+>   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 068845660b0f..3226930d759a 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -702,6 +702,21 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
+>   	free_secs = free_sections(sbi) + freed;
+>   	required_secs = needed + reserved_sections(sbi) +
+>   			__get_secs_required(sbi);
+> +	/*
+> +	 * Credit the checkpoint-stable invalid-block budget (SSR-reusable slack)
+> +	 * to free_secs, so the watermark lets allocation recycle that slack via
+> +	 * SSR instead of running foreground GC.  cib_total_blocks is a section/
+> +	 * block count (always non-negative), so the math stays in unsigned int and
+> +	 * is capped at the sections still unaccounted for.
+> +	 */
+> +	if (test_opt(sbi, GCLESS)) {
+> +		unsigned int sec_blks = CAP_BLKS_PER_SEC(sbi);
+> +		unsigned int add_secs = READ_ONCE(sbi->cib_total_blocks) / sec_blks;
+> +		unsigned int room = free_secs < MAIN_SECS(sbi) ?
+> +					MAIN_SECS(sbi) - free_secs : 0;
+> +
+> +		free_secs += min(add_secs, room);
+
+A free section can be reused by any DATA or NODE type write, but above GCLESS
+"free_secs" may not, e.g. all free_secs are from DATA type, then latter checkpoint
+won't write any node into DATA type section w/ SSR.
+
+Thanks,
+
+> +	}
+>   
+>   	return free_secs < required_secs;
+>   }
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 62d3a58cb1b2..07c7d88719a6 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -234,6 +234,7 @@ enum {
+>   	Opt_jqfmt,
+>   	Opt_checkpoint,
+>   	Opt_lookup_mode,
+> +	Opt_gcless,
+>   	Opt_err,
+>   };
+>   
+> @@ -336,6 +337,7 @@ static const struct fs_parameter_spec f2fs_param_specs[] = {
+>   	fsparam_flag("usrquota", Opt_usrquota),
+>   	fsparam_flag("grpquota", Opt_grpquota),
+>   	fsparam_flag("prjquota", Opt_prjquota),
+> +	fsparam_flag("gcless", Opt_gcless),
+>   	fsparam_string("usrjquota", Opt_usrjquota),
+>   	fsparam_flag("usrjquota", Opt_usrjquota),
+>   	fsparam_string("grpjquota", Opt_grpjquota),
+> @@ -1230,6 +1232,9 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>   	case Opt_nat_bits:
+>   		ctx_set_opt(ctx, F2FS_MOUNT_NAT_BITS);
+>   		break;
+> +	case Opt_gcless:
+> +		ctx_set_opt(ctx, F2FS_MOUNT_GCLESS);
+> +		break;
+>   	case Opt_lookup_mode:
+>   		F2FS_CTX_INFO(ctx).lookup_mode = result.uint_32;
+>   		ctx->spec_mask |= F2FS_SPEC_lookup_mode;
+> @@ -1603,6 +1608,13 @@ static int f2fs_check_opt_consistency(struct fs_context *fc,
+>   		f2fs_err(sbi, "Allow to mount readonly mode only");
+>   		return -EROFS;
+>   	}
+> +
+> +	/* Only for adaptive mode */
+> +	if (test_opt(sbi, GCLESS) && f2fs_lfs_mode(sbi)) {
+> +		f2fs_err(sbi, "gcless is not allowed in LFS mode");
+> +		return -EINVAL;
+> +	}
+> +
+>   	return 0;
+>   }
+>   
+> @@ -2542,6 +2554,9 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+>   	else if (F2FS_OPTION(sbi).lookup_mode == LOOKUP_AUTO)
+>   		seq_show_option(seq, "lookup_mode", "auto");
+>   
+> +	if (test_opt(sbi, GCLESS))
+> +		seq_puts(seq, ",gcless");
+> +
+>   	return 0;
+>   }
+>   
+> @@ -5344,6 +5359,8 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+>   	if (err)
+>   		goto sync_free_meta;
+>   
+> +	f2fs_update_cib(sbi);
+> +
+>   	/*
+>   	 * If filesystem is not mounted as read-only then
+>   	 * do start the gc_thread.
 
 
 
