@@ -4,88 +4,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CC41EC5B56A
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 Aug 2026 16:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F2529C5B56A
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 Aug 2026 16:53:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=x4y8WE0P6pOo3rDdWmF51hr6XBfiCMfWc3uOXl5CCa4=; b=XBM147Bn8GKIlRyZ802jKTtt4k
-	KKxOMx6U3LYqYSXfz3E+YXq73YsAJXj/B7ZGY3pU3uaBj6YgvJ61kzg6EMkJhZyLx8QjhHqxpJnNX
-	fLJgi0Tk8gp5ENX4TtQFvoMm+WV7puOrZBdFCwQJP+b1evpPE1Py3NSS+Ute9tjMLSaU=;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:To:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=oilR01AtbdYR5pQD0tUQBrLc0fjvboWF0hyMaUh3ShI=; b=mZLBIuRhbsndRcWqD7ONOSLHo0
+	nkmK1yI4QybIW70BlGqjva1403+corqfVxT1XdLF4i0nmPffTsrCPHRZdDLM7Yp+hj9tuqmGK0w6a
+	rkdhMAn3j3D+IRTzcOl3os6sUc1+MGjhNGjSCBT+apFMvCpb2dSTc3G++SE4SMT0xfLw=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wtSxj-0003l6-J0;
-	Mon, 10 Aug 2026 16:34:53 +0000
+	id 1wtTFq-0006mk-QQ;
+	Mon, 10 Aug 2026 16:53:36 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <bvanassche@acm.org>) id 1wtSxi-0003l0-PW
+ (envelope-from <daeho43@gmail.com>) id 1wtTFq-0006md-4I
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 10 Aug 2026 16:34:52 +0000
+ Mon, 10 Aug 2026 16:53:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GA+WLiTlvjArbsYCWEM0t+Rl0HCxi12K1ZGpQe+GWcs=; b=DMZvDTdVrtzblFDmZqt3KxPg+L
- YsU7fjGoLrt0BjBE3+OepMfFLykF2rzbsgam6tLaZ4/buPu3E7pHjZyUo5QUaCmPWTNQfrajwHP7U
- DD1CIMxhL/EofcTHTmOjLlzO7pvPY4iBQSn4Q7JDt2MKRtYfIWXqe0FxHudUR25f8ij8=;
+ bh=0bO/4kz8Aib9NVgfYR/0fvWYSJJ+gEF2SgfiBtwRXyI=; b=ThF1WNGi8GtKkum9GgO6dD0OU/
+ 0NSddhD150jTYaHZDLgxBLmRcFoVyTlSVfllUFCTW2/4odTwp0SFvkKMb9E7PMdgnh17ziikC3ZUN
+ czF8bp+acN90dtvjoqHnQxKa/Y9Kvydb+4l9z03GcSWMdcWZNDnDedKJ+E6YgR7ea6k8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GA+WLiTlvjArbsYCWEM0t+Rl0HCxi12K1ZGpQe+GWcs=; b=gZRKA9TWqFM7FV+jSFIp1RIoMU
- UskNMBym7DLg++pYrAWCYVg1Tkk32bYi5v/McoWG2gd65+vxuGcY4oFRjnP2dObSaFSVgHiX5nnL9
- uvgaRAuZbTAC++2fDGRGnLb0HM+FLNPijIxMEtXhzYhxjJZf/YC/w4FFQT7G3rh63IWM=;
-Received: from 011.lax.mailroute.net ([199.89.1.14])
+ bh=0bO/4kz8Aib9NVgfYR/0fvWYSJJ+gEF2SgfiBtwRXyI=; b=dfoNfKoCbFmXHSftF7NnbTZCIp
+ XGOAN19V/FvktIAr0pH4XctYsXGm9rN5hlkUSlhxF8wMN1RDndFzUNV93uqGu649icyxEfS6ukJ/V
+ BjdZD0ed6KsUql0uEyCIPam4cgVdu/RTCLYiCkuVrSWKKubKlS/w0NLiOIesL90yAecQ=;
+Received: from mail-lj1-f179.google.com ([209.85.208.179])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wtSxe-0005h7-MD for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 10 Aug 2026 16:34:52 +0000
-Received: from localhost (localhost [127.0.0.1])
- by 011.lax.mailroute.net (Postfix) with ESMTP id 4hJgMT3mvLz1XM30j;
- Mon, 10 Aug 2026 16:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
- content-transfer-encoding:content-type:content-type:in-reply-to
- :from:from:content-language:references:subject:subject
- :user-agent:mime-version:date:date:message-id:received:received;
- s=mr01; t=1786379677; x=1788971678; bh=GA+WLiTlvjArbsYCWEM0t+Rl
- 0HCxi12K1ZGpQe+GWcs=; b=wuedhpCelYOQX8TPOIHXkV5XLSVA1UJyIgx33s5G
- 5lryYVaJasvQZFr5DJRF4ipPBcwUQnCnA3r48yAA1QGh3FRvUGX7j0QBAx42zeJ6
- TloGPaoDshk2iyFKL8yWCAT47Sst0fLEV5LKKQpc2xaF99DBA0tuQvNSlT0QqL/x
- WyB+VnkUwOIHwz79BGCUVJynMCK76wCGRkiPhgNOYnQsF0mD6GiMvLdeAUU+3S9v
- qdopmSEe1npfMEOQhjLGtEEogYPxMLRAyR+IxoczkjSg2qWzBwa1bk3ySusLkBI1
- AFtjcUEygrtdZcIdKwwvZivpC+Q7OPp4O3WI6Z/oyHHJVg==
-X-Virus-Scanned: by MailRoute
-Received: from 011.lax.mailroute.net ([127.0.0.1])
- by localhost (011.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id sk6PZJJKqySN; Mon, 10 Aug 2026 16:34:37 +0000 (UTC)
-Received: from [IPV6:2a00:79e0:2e3b:8:bf02:1d5:26f3:7213] (unknown
- [104.135.204.235])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- (Authenticated sender: bvanassche@acm.org)
- by 011.lax.mailroute.net (Postfix) with ESMTPSA id 4hJgMG2MbTz1XM30h;
- Mon, 10 Aug 2026 16:34:34 +0000 (UTC)
-Message-ID: <ff74edb1-43c7-485f-ab78-ec13b500a0bb@acm.org>
-Date: Mon, 10 Aug 2026 09:34:33 -0700
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1wtTFm-0006YM-7p for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 10 Aug 2026 16:53:35 +0000
+Received: by mail-lj1-f179.google.com with SMTP id
+ 38308e7fff4ca-39c74722e27so1364191fa.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 10 Aug 2026 09:53:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786380807; cv=none;
+ d=google.com; s=arc-20260327;
+ b=cnmXjMEZpCnZSTQxKfkPwfN7bhescFn2QPMBw5d0LFQM1hyzQFg91okYenjGXFD8RV
+ QJTKVs8ZFEA6RdB325f+lJVOMYAaWI3kusFTp4KdvZtuP7JMZJ7tyZ48Tkh5d8m60+r+
+ YLWVLW8pYsv+aGztzHdBJoM54T8kI4ZZRNt6QNcBFfs2Mn+4bFDe5hJlDbGpce92+0U6
+ UeQJJ7NQ2nS25ia3sMNCuHDdNkS18IHq+cF/ROXJyLXlosJljh15qkk8AjGGoopZ9qNu
+ UVbj9e9xnX39OOxkox0M8deDOq8tXA/bHMIurD/9dnd0RKj/TiD7AvBoHh+HHjWPX997
+ sfiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=0bO/4kz8Aib9NVgfYR/0fvWYSJJ+gEF2SgfiBtwRXyI=;
+ fh=yP/upTdJzKeUu6wNNI5iXC0WDUn1SHYdNhcryGT+mc0=;
+ b=hH4eUunGs7vftzKlL1N6xVbi9JcZ5XK/ZKXbYhoejfxLHlaANLdLbg4yruUXWDe5O2
+ kcXtgWxfFMo+bWIOvHXzmUpDrerXx8yCFogtF3wkYH3E3Pr0S7iYe1sw0HYv2k7lndIi
+ mNrXpJOY5p9GPWSa3+4yntCttl8BjO2+Ue/FDJzH8444beOTRnf0dLIyNN2Y9J9obcyx
+ G64cQRxb6pIrdUFeMeKdLKgLHKpgRrnJemwFtHgaCZkNqRdo2lPZlFmKUbiWNFZxCiZg
+ p71XD1839Rh5DItDKL8DQPu/gnjO8Mv127KcujZPGJxR2erJ85Tll/sVvsmSmQsyByqv
+ mC2A==; darn=lists.sourceforge.net
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1786380807; x=1786985607; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=0bO/4kz8Aib9NVgfYR/0fvWYSJJ+gEF2SgfiBtwRXyI=;
+ b=X8UkPLWNQ5sB/dP7lfaKtJjkvXqLgs8s5tjyvCbdwFd19h2bm1fNi1FVnxID1uuOqD
+ onNvXIvr6BRuIZIjL11lUjxVNvbURocGJ7O2GqEJHzV6W7HHebihiLTdaojC6AKgQTJZ
+ BU81frZRgG5vh+HZ85L4Ta4Lg0NSJNEnCZB6SOwPzV5d5cdMw6i7h+Q4isEYfP8N8zfS
+ 71pWQEZlLkgcK1+iEadZhsJ5lCtJYGqyXJtgZpVkJo8m5UBa9OLbM65Rv2AipYJBvIQT
+ YM1AvUBR1wmhzxUQCZRVPolJ2Eh7BtmxBhJo1bBtBmpz444claaQDIUPpMJHFZvSdnjH
+ onAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1786380807; x=1786985607;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=0bO/4kz8Aib9NVgfYR/0fvWYSJJ+gEF2SgfiBtwRXyI=;
+ b=gqVyoRBFSYKjron6SHkyMGQteFAEkR1zI8w3K/i+rT6UevEk9xfnKOBS1xDrx8juaa
+ j9VYcLHDG35sKZx0LQlEeEyMzTmhhlu8t14nlZSYCqTowbkGulGp4t50x+pDjIqvymav
+ K9kgpGTHFyxg75Z5fk2q8D7xeC7Syc6sTw3cykpbRh32iNXpTeYzNzFDa/bOZpZncZzB
+ 8CJH3JI0NqWO+GAa3t5BFJTgF7g9mLpxvAHwAzkF0cdqNMWv6xW2mvbfzQVYvk79b3PI
+ bNxwUMTfmKegKoL4+2csRH716zzrah9ZPY5pwBQqYBcWqJcyaMVN2BUpY+MWAV7V6Ij6
+ Fu6w==
+X-Forwarded-Encrypted: i=1;
+ AHgh+Roh3cu4XOVZyoeNR1Wf1wcOducLSssAq6LNn+UuYUNuoL/JPMSElrmA5W6fq9ihwXS7VUpxT34jipNm8zMg0U/6@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YxvhenIKowx82nUqdanDkJRqISsLd1La67EYcEIS+rf+fIMoD6d
+ iECpvI+WmgoAxoBdDE+ML9LmWjT6KkC8bxvyXSZiMs2KfPXOHaAiM0nbVptizUhNaEQnPgY9Ohx
+ 5t2R6ChTFntFNuKRN5dkN51PSnRoaxX4=
+X-Gm-Gg: AR+sD10uC3s79C4vsVjHbDjRRb8UDlfCGXjHR6j7atcdPDjzp8w8cLYtPw7Pik1UJAc
+ NGJqPyJD9iII1S9xLe9p4EmrrNrucl85xc0m9IgXmkA4Q/pUcoSvr+UN9o01H2yn9Al5r+L0AF3
+ Ukgd+/dLpS3QiDWAH1qzEs7A0/EjGKVnkHilC0CiFn255DkLBu6gIxnov/ZpR/Q7YH8X3qjcl3X
+ pVGbbwxYMhnsnoWJFECBaCT3boaMkWFT+YaKl1LysOxPCuTtIfk7G1uT8Jvx0+tTj0IThMTnVoa
+ FkpvbqZjEfXSWdr/9mSci7STNRdxs34B0Wv/fkRH/0R/qoQw9qoJBIpSiNCzuKjvy+9Ii4GjHtC
+ kzcAWYGUAHlPS6Tvf1zuxNpxyN2wYKPyhwKF/KJPn9Hc5zQ==
+X-Received: by 2002:a2e:a589:0:b0:39f:af21:75d7 with SMTP id
+ 38308e7fff4ca-39fe8316b4cmr28346751fa.2.1786380807071; Mon, 10 Aug 2026
+ 09:53:27 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Christoph Hellwig <hch@infradead.org>, Daeho Jeong <daeho43@gmail.com>
 References: <20260806170108.2100312-1-daeho43@gmail.com>
  <ann0OPPglToV_hjs@infradead.org>
-Content-Language: en-US
-In-Reply-To: <ann0OPPglToV_hjs@infradead.org>
-X-Headers-End: 1wtSxe-0005h7-MD
+ <ff74edb1-43c7-485f-ab78-ec13b500a0bb@acm.org>
+In-Reply-To: <ff74edb1-43c7-485f-ab78-ec13b500a0bb@acm.org>
+From: Daeho Jeong <daeho43@gmail.com>
+Date: Mon, 10 Aug 2026 09:53:14 -0700
+X-Gm-Features: AUfX_myHa-HGIxfGx31VEif489SQOdZ1JWJCG5M4SLT2WDWvbOhVQ3bd6pEJrl8
+Message-ID: <CACOAw_zqOS0vHdQV6WoUJyxnDf=kdDAz27pNGDLdQLUdUYOzBQ@mail.gmail.com>
+To: Bart Van Assche <bvanassche@acm.org>
+X-Headers-End: 1wtTFm-0006YM-7p
 Subject: Re: [f2fs-dev] [PATCH v2] f2fs: quiesce background threads during
  system suspend using PM notifier
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -99,68 +138,71 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Bart Van Assche via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Pavel Machek <pavel@kernel.org>, Daeho Jeong <daehojeong@google.com>,
+Cc: linux-block@vger.kernel.org, Daeho Jeong <daehojeong@google.com>,
  "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- kernel-team@android.com, Len Brown <lenb@kernel.org>
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+ Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+ Len Brown <lenb@kernel.org>, kernel-team@android.com,
+ Pavel Machek <pavel@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 8/10/26 8:54 AM, Christoph Hellwig wrote:
-> On Thu, Aug 06, 2026 at 10:01:08AM -0700, Daeho Jeong wrote:
->> From: Daeho Jeong <daehojeong@google.com>
->>
->> During system suspend, a race condition can cause f2fs_gc and f2fs_discard
->> threads to call submit_bio() while the underlying block device (e.g., UFS)
->> is in Runtime PM suspend. Because Runtime PM worker threads are already
->> frozen during task freezing, the threads become trapped in
->> __bio_queue_enter() waiting on mq_freeze_wq, leading to a PM freezer
->> timeout.
-> 
-> That does sound like a general issue with our block device / threading
-> handling.
-
-Daeho's description above mixes up unrelated topics. A runtime suspended 
-UFS device is resumed automatically by the block layer if necessary. The
-issue Daeho is trying to solve is unrelated to runtime suspend according
-to my understanding.
-
->> To prevent this deadlock, register a PM notifier to set SBI_IS_SUSPENDING
->> during PM_SUSPEND_PREPARE. Background GC and discard threads check this
->> flag and immediately stop issuing new bios, allowing them to enter a
->> freezable sleep state cleanly before process freezing begins.
->>
->> In addition, check freezing() as a fast path to stop issuing new I/O
->> when non-PM freezing (e.g. dm-snapshot or cgroup freezer) is requested.
-> 
-> .. which means that we really sould have all the relevant parties
-> invited into figuring out whast is happening here, rather than
-> band-aiding something that looks like a horrible hack inside a
-> file system.
-> 
-> Unfortunately I see this a lot with f2fs.  Please reach out to all
-> relevant maintainers for something that does not look strictly local
-> to f2fs.
-
-This information was shared earlier with Daeho 
-(https://b.corp.google.com/issues/515470309#comment45): [ ... ]
-Register a Freezable Kernel Thread (Recommended) [ ... ]
-Why this works: During suspend, freezer stops freezable kernel threads 
-before devices and block queues enter their PM suspend phases. When the 
-queue freezes later, your thread is already safely sleeping in 
-try_to_freeze() and will not attempt submit_bio(). [ ... ]
-
-PS: I'm no longer subscribed to the f2fs-devel mailing list.
-
-Bart.
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gTW9uLCBBdWcgMTAsIDIwMjYgYXQgOTozNOKAr0FNIEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFz
+c2NoZUBhY20ub3JnPiB3cm90ZToKPgo+IE9uIDgvMTAvMjYgODo1NCBBTSwgQ2hyaXN0b3BoIEhl
+bGx3aWcgd3JvdGU6Cj4gPiBPbiBUaHUsIEF1ZyAwNiwgMjAyNiBhdCAxMDowMTowOEFNIC0wNzAw
+LCBEYWVobyBKZW9uZyB3cm90ZToKPiA+PiBGcm9tOiBEYWVobyBKZW9uZyA8ZGFlaG9qZW9uZ0Bn
+b29nbGUuY29tPgo+ID4+Cj4gPj4gRHVyaW5nIHN5c3RlbSBzdXNwZW5kLCBhIHJhY2UgY29uZGl0
+aW9uIGNhbiBjYXVzZSBmMmZzX2djIGFuZCBmMmZzX2Rpc2NhcmQKPiA+PiB0aHJlYWRzIHRvIGNh
+bGwgc3VibWl0X2JpbygpIHdoaWxlIHRoZSB1bmRlcmx5aW5nIGJsb2NrIGRldmljZSAoZS5nLiwg
+VUZTKQo+ID4+IGlzIGluIFJ1bnRpbWUgUE0gc3VzcGVuZC4gQmVjYXVzZSBSdW50aW1lIFBNIHdv
+cmtlciB0aHJlYWRzIGFyZSBhbHJlYWR5Cj4gPj4gZnJvemVuIGR1cmluZyB0YXNrIGZyZWV6aW5n
+LCB0aGUgdGhyZWFkcyBiZWNvbWUgdHJhcHBlZCBpbgo+ID4+IF9fYmlvX3F1ZXVlX2VudGVyKCkg
+d2FpdGluZyBvbiBtcV9mcmVlemVfd3EsIGxlYWRpbmcgdG8gYSBQTSBmcmVlemVyCj4gPj4gdGlt
+ZW91dC4KPiA+Cj4gPiBUaGF0IGRvZXMgc291bmQgbGlrZSBhIGdlbmVyYWwgaXNzdWUgd2l0aCBv
+dXIgYmxvY2sgZGV2aWNlIC8gdGhyZWFkaW5nCj4gPiBoYW5kbGluZy4KPgo+IERhZWhvJ3MgZGVz
+Y3JpcHRpb24gYWJvdmUgbWl4ZXMgdXAgdW5yZWxhdGVkIHRvcGljcy4gQSBydW50aW1lIHN1c3Bl
+bmRlZAo+IFVGUyBkZXZpY2UgaXMgcmVzdW1lZCBhdXRvbWF0aWNhbGx5IGJ5IHRoZSBibG9jayBs
+YXllciBpZiBuZWNlc3NhcnkuIFRoZQo+IGlzc3VlIERhZWhvIGlzIHRyeWluZyB0byBzb2x2ZSBp
+cyB1bnJlbGF0ZWQgdG8gcnVudGltZSBzdXNwZW5kIGFjY29yZGluZwo+IHRvIG15IHVuZGVyc3Rh
+bmRpbmcuCj4KPiA+PiBUbyBwcmV2ZW50IHRoaXMgZGVhZGxvY2ssIHJlZ2lzdGVyIGEgUE0gbm90
+aWZpZXIgdG8gc2V0IFNCSV9JU19TVVNQRU5ESU5HCj4gPj4gZHVyaW5nIFBNX1NVU1BFTkRfUFJF
+UEFSRS4gQmFja2dyb3VuZCBHQyBhbmQgZGlzY2FyZCB0aHJlYWRzIGNoZWNrIHRoaXMKPiA+PiBm
+bGFnIGFuZCBpbW1lZGlhdGVseSBzdG9wIGlzc3VpbmcgbmV3IGJpb3MsIGFsbG93aW5nIHRoZW0g
+dG8gZW50ZXIgYQo+ID4+IGZyZWV6YWJsZSBzbGVlcCBzdGF0ZSBjbGVhbmx5IGJlZm9yZSBwcm9j
+ZXNzIGZyZWV6aW5nIGJlZ2lucy4KPiA+Pgo+ID4+IEluIGFkZGl0aW9uLCBjaGVjayBmcmVlemlu
+ZygpIGFzIGEgZmFzdCBwYXRoIHRvIHN0b3AgaXNzdWluZyBuZXcgSS9PCj4gPj4gd2hlbiBub24t
+UE0gZnJlZXppbmcgKGUuZy4gZG0tc25hcHNob3Qgb3IgY2dyb3VwIGZyZWV6ZXIpIGlzIHJlcXVl
+c3RlZC4KPiA+Cj4gPiAuLiB3aGljaCBtZWFucyB0aGF0IHdlIHJlYWxseSBzb3VsZCBoYXZlIGFs
+bCB0aGUgcmVsZXZhbnQgcGFydGllcwo+ID4gaW52aXRlZCBpbnRvIGZpZ3VyaW5nIG91dCB3aGFz
+dCBpcyBoYXBwZW5pbmcgaGVyZSwgcmF0aGVyIHRoYW4KPiA+IGJhbmQtYWlkaW5nIHNvbWV0aGlu
+ZyB0aGF0IGxvb2tzIGxpa2UgYSBob3JyaWJsZSBoYWNrIGluc2lkZSBhCj4gPiBmaWxlIHN5c3Rl
+bS4KPiA+Cj4gPiBVbmZvcnR1bmF0ZWx5IEkgc2VlIHRoaXMgYSBsb3Qgd2l0aCBmMmZzLiAgUGxl
+YXNlIHJlYWNoIG91dCB0byBhbGwKPiA+IHJlbGV2YW50IG1haW50YWluZXJzIGZvciBzb21ldGhp
+bmcgdGhhdCBkb2VzIG5vdCBsb29rIHN0cmljdGx5IGxvY2FsCj4gPiB0byBmMmZzLgo+Cj4gVGhp
+cyBpbmZvcm1hdGlvbiB3YXMgc2hhcmVkIGVhcmxpZXIgd2l0aCBEYWVobwo+IChodHRwczovL2Iu
+Y29ycC5nb29nbGUuY29tL2lzc3Vlcy81MTU0NzAzMDkjY29tbWVudDQ1KTogWyAuLi4gXQo+IFJl
+Z2lzdGVyIGEgRnJlZXphYmxlIEtlcm5lbCBUaHJlYWQgKFJlY29tbWVuZGVkKSBbIC4uLiBdCj4g
+V2h5IHRoaXMgd29ya3M6IER1cmluZyBzdXNwZW5kLCBmcmVlemVyIHN0b3BzIGZyZWV6YWJsZSBr
+ZXJuZWwgdGhyZWFkcwo+IGJlZm9yZSBkZXZpY2VzIGFuZCBibG9jayBxdWV1ZXMgZW50ZXIgdGhl
+aXIgUE0gc3VzcGVuZCBwaGFzZXMuIFdoZW4gdGhlCj4gcXVldWUgZnJlZXplcyBsYXRlciwgeW91
+ciB0aHJlYWQgaXMgYWxyZWFkeSBzYWZlbHkgc2xlZXBpbmcgaW4KPiB0cnlfdG9fZnJlZXplKCkg
+YW5kIHdpbGwgbm90IGF0dGVtcHQgc3VibWl0X2JpbygpLiBbIC4uLiBdCgpIaSBCYXJ0LAoKVG8g
+Y2xhcmlmeSBpdDoKCmYyZnMgdGhyZWFkcyBhcmUgYWxyZWFkeSBmcmVlemFibGU6IGYyZnNfZ2Mg
+YW5kIGYyZnNfZGlzY2FyZCBhcmUKYWxyZWFkeSByZWdpc3RlcmVkIHdpdGggc2V0X2ZyZWV6YWJs
+ZSgpIGFuZCBjYWxsIHRyeV90b19mcmVlemUoKS4KSG93ZXZlciwgYSByYWNlIHdpbmRvdyBleGlz
+dHM6IGEgdGhyZWFkIGNoZWNrcyBmcmVlemluZygpIChmYWxzZSksCmNhbGxzIHN1Ym1pdF9iaW8o
+KSwgYW5kIGdldHMgdHJhcHBlZCBpbnNpZGUgX19iaW9fcXVldWVfZW50ZXIoKS4KQmVjYXVzZSBp
+dCBnZXRzIGJsb2NrZWQgYmVmb3JlIHJlYWNoaW5nIHRyeV90b19mcmVlemUoKSwgaXQgdHJpZ2dl
+cnMgYQpQTSBmcmVlemVyIHRpbWVvdXQuCgpIaSBDaHJpc3RvcGgsCgpQb2ludCB0YWtlbi4gQXNp
+ZGUgZnJvbSB0aGlzIGYyZnMgcGF0Y2gsIEkgYWdyZWUgdGhhdCBhZGRyZXNzaW5nIHRoaXMKYXQg
+dGhlIGJsb2NrIGxheWVyIG9yIFBNIHN1YnN5c3RlbSBsZXZlbCB3b3VsZCBiZSBhIG11Y2ggY2xl
+YW5lciwKc3lzdGVtLXdpZGUgc29sdXRpb24uCknigJlsbCBnaXZlIG1vcmUgdGhvdWdodCB0byBo
+b3cgd2UgY2FuIHByb3Blcmx5IHNvbHZlIHRoaXMgcmFjZQpjb25kaXRpb24gZm9yIHRoZSBlbnRp
+cmUgc3lzdGVtLCBhbmQgSSdsbCBsb29wIGluIHRoZSByZWxldmFudApQTS9ibG9jayBtYWludGFp
+bmVycyBpZiBhIHZpYWJsZSBnZW5lcmljIGFwcHJvYWNoIGVtZXJnZXMuCgpUaGFuayB5b3UsCgo+
+Cj4gUFM6IEknbSBubyBsb25nZXIgc3Vic2NyaWJlZCB0byB0aGUgZjJmcy1kZXZlbCBtYWlsaW5n
+IGxpc3QuCj4KPiBCYXJ0LgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxA
+bGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3Rz
+L2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
