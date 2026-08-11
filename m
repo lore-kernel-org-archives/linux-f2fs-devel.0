@@ -4,81 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 12DE7C5AD7B
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Aug 2026 01:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5D0E1C5AC67
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Aug 2026 04:30:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
-	Message-ID:Sender:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=HbaYUOXwZnhY3Wi8wBQxpANjPdtze5v1UNKHkYEBe2M=; b=BLH05emzPniF4U/wWs6I+o+14L
-	Pgk4p2UYsoKmGmsAdCFdTlQx0GDC172HjmL9uq8KlTT72GBODXJsYCPI1P31VdUvqvho0uGCEb7T/
-	VpRDni0mD0tMSNYFDukKh0AjJCJBGquT986gtai2kzMB3gG16cfSPD/bu7YOfJdYAhFk=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=mcOsM900YDTR9uiaB0E7zn04Wh3RrW7eqxFsN00Y/hk=; b=nV8W9y8tC2NiOhUfqoSUefsyMM
+	lmAOaT6GvqfkSi9i/1Uf8cbmmqAp7Gb2+owQcRXwPQNQsBheHC2fWGMK0UMm06ZBXNvxNcL/hcqu1
+	+rUw3++Tws/Zt8MjMEOnlrmWk8jVTCvfMgc0i/8S44dP/C6Cj0O1mT1yCvYfFplX8qPs=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wtbcG-0007E9-3i;
-	Tue, 11 Aug 2026 01:49:17 +0000
+	id 1wte8g-0002ty-8V;
+	Tue, 11 Aug 2026 04:30:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wtbcF-0007E3-AB
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wte8e-0002tp-Qh
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Aug 2026 01:49:16 +0000
+ Tue, 11 Aug 2026 04:30:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=fbQdEIkPKTw83MfJdf7DZIxef/pakG3anpSyXn5xx0g=; b=fVh2nfRSQFdM0vhVyr4AGSEDCY
- 635bW4bZfaOoHdsKf6TFF8k7IOSCofF08+ALfRncjFOcs5fW0l16Yhu8Ozow0bqsyCOHwGVk5aQx2
- n8ueVk9cjcS/VT8kfRdmfTqiYQMRj5ddH8yoyBozLKxokBekV1TjEFNbNxBtRnNGK9fo=;
+ bh=SPFu2tOpk8VNy7obR/fUKgpbzhD9fY3W7xp+FXZKt9s=; b=Js3qEl/3cTb1UMzAL7vl308imd
+ cRgjEkFhTDsS8+/zRKpHHcceh1q3tTexAQk7A0cLVj7q3z8mhYN7qaGP376xR5qvHFZcHtHzFpLPJ
+ AJX8TVpR6iN1jrg0OdwONrgEJOgnMTcXyHFB+6E+LWHTrsMt/ZMYy6QEkHQqt6fWxF4M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=fbQdEIkPKTw83MfJdf7DZIxef/pakG3anpSyXn5xx0g=; b=fW/F7TK+VM8iO2tHP1X4SLf9V4
- RfNMHlco7c6tM/jwp/v4cc45q2Q+28kwF4amGQOQReI/3FYM4SyK8ZBEUT6r5QVENknc2nWHPWinr
- 0Z2fL7vH2Z4PT/WhrLIv/FmLHfaW9u7YwKkZooMJJBaCVC2Dw8VgFdQxjojQuLbMZy8Q=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=SPFu2tOpk8VNy7obR/fUKgpbzhD9fY3W7xp+FXZKt9s=; b=EZCC/2vwQWvskONxo432+e/OGZ
+ OyNHafSF4ahe6nlP5x3WuDtGAVk7VZMsrmeIGEr8PAttDkZfkmpAcJNLhEL6JBIDXr24m8pWYyZdq
+ tz1MfZe7d4lyshpLSHTBRdpsuqQmnRCgrQl1wJdrzBPyseCRWEw98BXrO5YVtCVkiLd4=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wtbcF-00021O-VO for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Aug 2026 01:49:16 +0000
+ id 1wte8e-0001dB-38 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 11 Aug 2026 04:30:57 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id BE2F56001D
+ by sea.source.kernel.org (Postfix) with ESMTP id 97A0740163
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 11 Aug 2026 01:49:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A357B1F000E9;
- Tue, 11 Aug 2026 01:49:09 +0000 (UTC)
+ Tue, 11 Aug 2026 04:30:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AE191F00A3A;
+ Tue, 11 Aug 2026 04:30:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1786412950;
- bh=fbQdEIkPKTw83MfJdf7DZIxef/pakG3anpSyXn5xx0g=;
- h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=aYS6WtjT+Vuk2zfrsAfGMOuSeC1lvGDww95hmcn05dM6Y71Weksp5ORA1mvtmPKae
- 5TD4DbUyPd9OQOOHvISZDS4+6F3fO5uMn7V0s97R+RK4rlOJTvDoQ5Tl+FrD6gI8Pb
- WJIFJ5sfX168uDDJC2GBr4GZFZAvU/2eK1ye3mAFdg0ZHPAthxDmtCgAq8bKg5Xnt+
- Mg/3FTF8tZC75UaaPRzyMzeMbZpaoM2eeWywDaT4H/WNsogcmW2uCwgJ7Y9TTyx43W
- 0xv2mpGHrh0EWTsvY2WPyxoLM0r9RR0bx07T3OIk764BYgPxHHvf+NX8CdDzZ3btxw
- nXn4uGOLmEy3g==
-Message-ID: <26a8478c-e8e4-47a3-8ffa-6a0b0b3182eb@kernel.org>
-Date: Tue, 11 Aug 2026 09:49:07 +0800
+ s=k20260515; t=1786422650;
+ bh=SPFu2tOpk8VNy7obR/fUKgpbzhD9fY3W7xp+FXZKt9s=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc;
+ b=bfapdcBKrHG+IWLl0eed3vfzVbQJtYe0kAIPGjlSXuQavzolVlhiqduajpRFLdUIn
+ OIB18ucbWjA1S/7J7CVGhooLXwivFLs0Ve+V0l1n4N3E2mBlRy99whRw5sWSRVRZ+r
+ 7oTCfEnpReXMGEreChI1u0s3vcHZ0RoCkE7/T2v8q0wyQQVMlL78sfwkmjCZSyOvLQ
+ 9CNjsciAfDqw6lS1lPj3hK9PrcfGVmVNNkP635VZijVXwTiEXE5CWejeBEli7japx2
+ MTFXwFZ+XJrtK+HGhgUQPYvPRrE0XYO/H35kTjCNf3HsR+pC8xnUszDjlVSGy8ABto
+ PZOebUSWqiFXg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+ by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
+ 198403926278; Tue, 11 Aug 2026 04:30:08 +0000 (UTC)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-References: <20260807220235.384637-1-jaegeuk@kernel.org>
- <20260807220235.384637-2-jaegeuk@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20260807220235.384637-2-jaegeuk@kernel.org>
-X-Headers-End: 1wtbcF-00021O-VO
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: call __add_ino_entry out of the
- eviction path
+Message-Id: <178642260663.332426.16745639324119870571.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Aug 2026 04:30:06 +0000
+References: <20260806123537.1516699-1-chao@kernel.org>
+In-Reply-To: <20260806123537.1516699-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1wte8e-0001dB-38
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to pass folio->index to
+ f2fs_sanity_check_node_footer()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,21 +88,40 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chao Yu <chao@kernel.org>
+From: patchwork-bot+f2fs--- via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: patchwork-bot+f2fs@kernel.org
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ stable@kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 8/8/26 06:02, Jaegeuk Kim via Linux-f2fs-devel wrote:
-> The f2fs_evict_inode() can be called during the direct reclaim path, but
-> __add_ino_entry requires allocating some memory. Since we don't need to
-> do that in that context, let's migrate it in other workqueue context.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Reviewed-by: Chao Yu <chao@kernel.org>
+Hello:
 
-Thanks,
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
+
+On Thu,  6 Aug 2026 20:35:37 +0800 you wrote:
+> Otherwise in f2fs_sanity_check_node_footer(), it will check the
+> same nid incorrectly.
+> 
+> Cc: stable@kernel.org
+> Fixes: 0a736109c9d2 ("f2fs: fix to do sanity check on node footer in __write_node_folio()")
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> 
+> [...]
+
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix to pass folio->index to f2fs_sanity_check_node_footer()
+    https://git.kernel.org/jaegeuk/f2fs/c/7e188e9f9437
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
 
 _______________________________________________
