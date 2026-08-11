@@ -4,77 +4,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 92959C5B572
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Aug 2026 18:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7F721C5B56A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Aug 2026 18:54:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=/H7L+tVQaigymBkxUyq4V17AIYpYN8NglgbG16xTURs=; b=HL9gRC40eqg2PWqWMzL1G3Kr1D
-	oLc/v3O0Ft9sl8rO1XlC6d/CeY9P7M4edmDZYU8d7o+fhuGpXuocX3i8OKiS6og1RHofRibEx80dD
-	Ww2oq8cczj7UAgn/DVylBtb8QKIvuWmS/7WX1JrhAoOuQb9LeGzQwf/82sXjBpGoGnUA=;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Cc:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:Message-ID:To:From:Date:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=l75W/3r0R0zKlIV5cBvA2VuSKOV+/vJTODBIErDsAOc=; b=alcnV5Ei0HJlvWSyGg8HfBo6eX
+	XqHE9G1ldI2/ZF0vpRnXiZGqoraZr7KPprQH/kK+XbxuWwIaEclxqql004tRv8/5LVZZrn4MXgiR5
+	eTVQ6ANIehPL1gqT77VoDz+yuPL2EoVHckFQg4viyLnn/TU/FxCkVtDQXOiG47he1Wv0=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wtqpw-00005h-V9;
-	Tue, 11 Aug 2026 18:04:26 +0000
+	id 1wtrc4-0003xn-Bn;
+	Tue, 11 Aug 2026 18:54:09 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1wtqpv-00005b-SR
+ (envelope-from <lkp@intel.com>) id 1wtrc2-0003xg-AB
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Aug 2026 18:04:25 +0000
+ Tue, 11 Aug 2026 18:54:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CCXYUWfaQmVmTc4INn+t522+Y+UjSzJVsGmbRsWsMQE=; b=j4a7/RActPm5Zr1OYIjM8b3wa7
- H37f1tbhBmsd74NKt2QlQ2KnI9BrlzCKwwM5EuAlU9FEWcBz6Mot6Xq/8G/WuYjPap1844LEr+ZFP
- FdqxmKrNEV8FVCp9byJCSBWdhfC/ricwLDNx0H7XYvfDkD59r2WzzA7FKINV5MUcC4hg=;
+ bh=XHOR4Fro0Alk7Q2qiLoBKMfCnLPZNpb0MJj1SM7Fuvg=; b=gz9lU4Dr50Lb3g9m8pCnruwehb
+ DfZrSxmlE4FQ4JzWZlksA/iyg5cyLA9Nd8sS6gwb1f5E167+oFGZRUiUSw0qTirHqsLBcbbO0mhjV
+ ofCX/WuUCo4jBM3x32y6Z0RGZttlIClJM7WLJtVqNjba3Q70kQN1RT88JJsq9DES3AqY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ h=Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:MIME-Version:
+ Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=CCXYUWfaQmVmTc4INn+t522+Y+UjSzJVsGmbRsWsMQE=; b=eK/fKeG/WS9AeGK1MUju5bC7fU
- 2wrSa8pNze2qpBa+D153yBplTibBJ4SE1rmsWJIzDs0xNAWuDld4V9mXU3h8u58FwYqG9r9DpnuyA
- 7G3eobQfIUi+t8l3+QvkIokFzjetlSEAO5slKYtm6MKKFmRd0lX0iXPIAIEaBOC1mXaw=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=XHOR4Fro0Alk7Q2qiLoBKMfCnLPZNpb0MJj1SM7Fuvg=; b=ZyctcqIhokMmJsoi4VidllW1gO
+ WV9OznbW55nNkXV9QDqMIjBJgfM/UMyChuas+O2fNo6hgjfvYoigno/XQcQz/Khaj8QmtmDsLewug
+ Wr6LJbxOiUAublIDUUtAqeu3zErloE3Tn8aKghFGGzCZXBpb0YRaxf8QBjqQK0BRr2uk=;
+Received: from mgamail.intel.com ([198.175.65.19])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wtqpp-0003DF-Pl for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Aug 2026 18:04:25 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 2691F600AD;
- Tue, 11 Aug 2026 18:04:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E8D91F000E9;
- Tue, 11 Aug 2026 18:04:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1786471455;
- bh=CCXYUWfaQmVmTc4INn+t522+Y+UjSzJVsGmbRsWsMQE=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=ews4KBL/NG6I/XZFa+YJuqD0O1o5vmAY20ZvXzDnNOIRkvLOHdWW4RNZc51t+Ew1d
- RAI4431LXFOyhWiGc9gTmgjV5F+1JxZzlLCM7ZmWLFpvdOwXjDft01aP917AGnLtf9
- 0hGeyCo+1YzXtKJxC9fibxEcbKCk2Cy1zou8j3tjRgn2/QWWSGjbBOY0z4uDEyEGug
- cWzq/Ow2uPzS0phA4ToFbCBqmvQnTlaLiCepreHEDediHD4GAHe1WBNwU5XQm0kn3y
- sDBCoTBR9c3HZUeipE9maCyUrtqL4YgTD4tkiW5LucjIAR0fD1CnlkArUrshUpA4a5
- kvKQx1kvqItfA==
-Date: Tue, 11 Aug 2026 18:04:13 +0000
-To: linux-fscrypt@vger.kernel.org
-Message-ID: <20260811180413.GA2895176@google.com>
-References: <20260713023708.9245-1-ebiggers@kernel.org>
- <20260720174323.GA1865@quark>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260720174323.GA1865@quark>
-X-Headers-End: 1wtqpp-0003DF-Pl
-Subject: Re: [f2fs-dev] [PATCH v3 00/17] fscrypt: Standardize on blk-crypto
+ id 1wtrc1-0001wn-P7 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 11 Aug 2026 18:54:07 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1786474447; x=1818010447;
+ h=date:from:to:cc:subject:message-id;
+ bh=Sx5uHCrZFPNX5yvYm8oROhZshBsdiIqU752CifUUvdA=;
+ b=kR8+xhFlMUiYMp1boGIRT7QPo4zqzxSq1V6jCBqqvHzXgCGx7t9ORwHI
+ +c5yVG9aZvYmwPnQqA/RPj40tCFLaZoG/yHbhOrYYLz7OaUfS7k2kKUCb
+ knbe42u2BFXRRnl77fKbu0PZE9K7SDKte/k2WbR/VBDUbTQAePIeNG+e/
+ O0V3t94Ec3Z0CDOzeABuMH2qcDDtCWTCA7sjmKEaBAJq/fYvxCVVtIrOC
+ jG07B17Y7kmQGndKG2t9JyD88g85phaeXH0M9UEYIxbkLtYRvuqvOW6L+
+ 5vAy16K2y2xxAoL1Ji3KTn/MFVlGXXxN12749CD6mf/Eb83gqKISup5jL Q==;
+X-CSE-ConnectionGUID: 0HR8LFIlRpWf3vE/wgsydw==
+X-CSE-MsgGUID: SdwZE6ywQaWH/XRiYO/apQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="86946691"
+X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; d="scan'208";a="86946691"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Aug 2026 11:54:01 -0700
+X-CSE-ConnectionGUID: auL5ED/vT2qcusRRXuZaVg==
+X-CSE-MsgGUID: pR35G3OJTfqITsnpMKB7Mw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; d="scan'208";a="261672206"
+Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
+ by orviesa006.jf.intel.com with ESMTP; 11 Aug 2026 11:53:59 -0700
+Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
+ (envelope-from <lkp@intel.com>) id 1wtrbo-00000000PAo-2BWw;
+ Tue, 11 Aug 2026 18:53:56 +0000
+Date: Wed, 12 Aug 2026 02:53:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Message-ID: <202608120225.emwHea9z-lkp@intel.com>
+User-Agent: s-nail v14.9.25
+X-Headers-End: 1wtrc1-0001wn-P7
+Subject: [f2fs-dev] [jaegeuk-f2fs:dev-test 30/30] fs/f2fs/inode.c:1065:13:
+ error: implicit declaration of function 'current_is_kswapd'
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,48 +96,109 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, Theodore Ts'o <tytso@mit.edu>,
- Zhang Yi <yi.zhang@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
- linux-block@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
- Ojaswin Mujoo <ojaswin@linux.ibm.com>, Baokun Li <libaokun@linux.alibaba.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org,
- Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>
+Cc: linux-f2fs-devel@lists.sourceforge.net, oe-kbuild-all@lists.linux.dev
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Jul 20, 2026 at 10:43:23AM -0700, Eric Biggers wrote:
-> On Sun, Jul 12, 2026 at 10:36:51PM -0400, Eric Biggers wrote:
-> > Eric Biggers (17):
-> >   blk-crypto: Simplify check for fallback support
-> >   blk-crypto: Fold __blk_crypto_cfg_supported() into its caller
-> >   blk-crypto: Allow control over whether hardware is used
-> >   fscrypt: Fully disallow IV_INO_LBLK_32 with s_blocksize != PAGE_SIZE
-> >   fscrypt: Always use blk-crypto for contents on block-based filesystems
-> >   Documentation: fscrypt: Update docs for inlinecrypt
-> >   ext4: Remove fs-layer file contents en/decryption code
-> >   ext4: Make ext4_bio_write_folio() return void
-> >   ext4: Further de-generalize the bio postprocessing code
-> >   f2fs: Remove fs-layer file contents en/decryption code
-> >   fs/buffer: Remove fs-layer decryption code
-> >   fscrypt: Replace calls to fscrypt_inode_uses_inline_crypto()
-> >   fscrypt: Remove fscrypt_dio_supported()
-> >   fscrypt: Remove fs-layer zeroout code
-> >   fscrypt: Remove unused functions and workqueue
-> >   fscrypt: Merge bio.c and inline_crypt.c into block.c
-> >   fscrypt: Add safety checks to non-block-based en/decryption
-> 
-> Applied to https://git.kernel.org/pub/scm/fs/fscrypt/linux.git/log/?h=for-next
-> 
-> But I'd still like acks on the ext4 and f2fs patches.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
+head:   7451b3cd93b30f714efc83f6571abf8c50541839
+commit: 7451b3cd93b30f714efc83f6571abf8c50541839 [30/30] f2fs: call __add_ino_entry out of the eviction path
+config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20260812/202608120225.emwHea9z-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 16.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260812/202608120225.emwHea9z-lkp@intel.com/reproduce)
 
-Ted and Jaegeuk, any chance for Acks on the ext4 and f2fs patches?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202608120225.emwHea9z-lkp@intel.com/
 
-- Eric
+All errors (new ones prefixed by >>):
+
+   fs/f2fs/inode.c: In function 'f2fs_post_evict_inode':
+>> fs/f2fs/inode.c:1065:13: error: implicit declaration of function 'current_is_kswapd' [-Wimplicit-function-declaration]
+    1065 |         if (current_is_kswapd()) {
+         |             ^~~~~~~~~~~~~~~~~
+
+
+vim +/current_is_kswapd +1065 fs/f2fs/inode.c
+
+  1019	
+  1020	static void f2fs_post_evict_inode(struct inode *inode)
+  1021	{
+  1022		struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+  1023		struct f2fs_inode_info *fi = F2FS_I(inode);
+  1024		nid_t xnid = fi->i_xattr_nid;
+  1025		unsigned int record_bits = 0;
+  1026	
+  1027		dquot_drop(inode);
+  1028	
+  1029		stat_dec_inline_xattr(inode);
+  1030		stat_dec_inline_dir(inode);
+  1031		stat_dec_inline_inode(inode);
+  1032		stat_dec_compr_inode(inode);
+  1033		stat_sub_compr_blocks(inode,
+  1034				atomic_read(&fi->i_compr_blocks));
+  1035	
+  1036		if (likely(!f2fs_cp_error(sbi) &&
+  1037					!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+  1038			f2fs_bug_on(sbi, is_inode_flag_set(inode, FI_DIRTY_INODE));
+  1039	
+  1040		/*
+  1041		 * anyway, it needs to remove the inode from sbi->inode_list[DIRTY_META]
+  1042		 * list to avoid UAF in f2fs_sync_inode_meta() during checkpoint.
+  1043		 */
+  1044		f2fs_inode_synced(inode);
+  1045	
+  1046		/* for the case f2fs_new_inode() was failed, .i_ino is zero, skip it */
+  1047		if (inode->i_ino)
+  1048			invalidate_mapping_pages(NODE_MAPPING(sbi), inode->i_ino,
+  1049								inode->i_ino);
+  1050		if (xnid)
+  1051			invalidate_mapping_pages(NODE_MAPPING(sbi), xnid, xnid);
+  1052	
+  1053		if (!inode->i_nlink)
+  1054			goto skip_record;
+  1055	
+  1056		if (is_inode_flag_set(inode, FI_APPEND_WRITE))
+  1057			record_bits = BIT(APPEND_INO);
+  1058		if (is_inode_flag_set(inode, FI_UPDATE_WRITE))
+  1059			record_bits = BIT(UPDATE_INO);
+  1060	
+  1061		if (!record_bits)
+  1062			goto skip_record;
+  1063	
+  1064		/* Let's do this in workqueue out of the direct reclaim path. */
+> 1065		if (current_is_kswapd()) {
+  1066			f2fs_record_inode_state(sbi, inode->i_ino, record_bits);
+  1067		} else {
+  1068			struct evict_inode_work *ew =
+  1069				mempool_alloc(evict_inode_work_pool, GFP_NOFS);
+  1070	
+  1071			ew->sbi = sbi;
+  1072			ew->ino = inode->i_ino;
+  1073			ew->add_ino_entry_bits = record_bits;
+  1074			INIT_WORK(&ew->work, f2fs_evict_inode_work);
+  1075			queue_work(sbi->evict_wq, &ew->work);
+  1076		}
+  1077	skip_record:
+  1078		if (is_inode_flag_set(inode, FI_FREE_NID)) {
+  1079			f2fs_alloc_nid_failed(sbi, inode->i_ino);
+  1080			clear_inode_flag(inode, FI_FREE_NID);
+  1081		} else {
+  1082			/*
+  1083			 * If xattr nid is corrupted, we can reach out error condition,
+  1084			 * err & !f2fs_exist_written_data(sbi, inode->i_ino, ORPHAN_INO)).
+  1085			 * In that case, f2fs_check_nid_range() is enough to give a clue.
+  1086			 */
+  1087		}
+  1088	}
+  1089	
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
 _______________________________________________
