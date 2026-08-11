@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 70852C5AD55
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Aug 2026 01:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 12DE7C5AD7B
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Aug 2026 01:49:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=rzYtEq9rLIExaY0Vh5ahIU9i6BH60vz1G4eeJObsVkg=; b=AWui1TqfT2g1kx1bWzk23Xn3tW
-	vFEHF56dt6A0aRhkpOzRJA6UbTyUB4PFAyn863a2OMRDEjgEU7ccK4FZVThfUjJwsWZABp7JyJZ7g
-	f8AJdlhVbZ9ZKM7UUtfl2FMF/HG9v0R4fJLeJocSOcTjaBjkr/71KU/r4YEV3+Y6D/VM=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=HbaYUOXwZnhY3Wi8wBQxpANjPdtze5v1UNKHkYEBe2M=; b=BLH05emzPniF4U/wWs6I+o+14L
+	Pgk4p2UYsoKmGmsAdCFdTlQx0GDC172HjmL9uq8KlTT72GBODXJsYCPI1P31VdUvqvho0uGCEb7T/
+	VpRDni0mD0tMSNYFDukKh0AjJCJBGquT986gtai2kzMB3gG16cfSPD/bu7YOfJdYAhFk=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wtbbX-0001cU-Fv;
-	Tue, 11 Aug 2026 01:48:36 +0000
+	id 1wtbcG-0007E9-3i;
+	Tue, 11 Aug 2026 01:49:17 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wtbbW-0001cJ-Km
+ (envelope-from <chao@kernel.org>) id 1wtbcF-0007E3-AB
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Aug 2026 01:48:35 +0000
+ Tue, 11 Aug 2026 01:49:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=I+GWjg8hBvbU7KU+S4PDCbfHpRBPfeUB/s6esOsf0QI=; b=QIlWAyBpkeHP8OFmLZ1n4VzFFN
- YRAcREz4ktRsF4Fp5NPHt9My2xr8V3dRwPMyjPnhbiy16Ft7G2upVDbnnx9ASxHc+F8VrEljNglJm
- 3jdIxHNgXVX2iBAeIyPD9GhwwEMaYwEFJar7Q/IsjuC4RmbMPuHDfF+jV4ZYZXvyLaO0=;
+ bh=fbQdEIkPKTw83MfJdf7DZIxef/pakG3anpSyXn5xx0g=; b=fVh2nfRSQFdM0vhVyr4AGSEDCY
+ 635bW4bZfaOoHdsKf6TFF8k7IOSCofF08+ALfRncjFOcs5fW0l16Yhu8Ozow0bqsyCOHwGVk5aQx2
+ n8ueVk9cjcS/VT8kfRdmfTqiYQMRj5ddH8yoyBozLKxokBekV1TjEFNbNxBtRnNGK9fo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,42 +42,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=I+GWjg8hBvbU7KU+S4PDCbfHpRBPfeUB/s6esOsf0QI=; b=nDmIPGDAlBgvKnU/WiqUBorGwN
- s4vbUr9jgO3/ut8im9TUJv+JpGO7mMjXD/GbsJZ27D3xLyWv7pqjgTrjG9JZ/c64Drm3aNedCCT19
- Z1t+MTHXAGJjHloj0qB3bWIVYhCoDvBsKM1OD+TDPE7jI7k4KPRrMEOwWndZk2WbyAWY=;
-Received: from sea.source.kernel.org ([172.234.252.31])
+ bh=fbQdEIkPKTw83MfJdf7DZIxef/pakG3anpSyXn5xx0g=; b=fW/F7TK+VM8iO2tHP1X4SLf9V4
+ RfNMHlco7c6tM/jwp/v4cc45q2Q+28kwF4amGQOQReI/3FYM4SyK8ZBEUT6r5QVENknc2nWHPWinr
+ 0Z2fL7vH2Z4PT/WhrLIv/FmLHfaW9u7YwKkZooMJJBaCVC2Dw8VgFdQxjojQuLbMZy8Q=;
+Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wtbba-000206-HK for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Aug 2026 01:48:35 +0000
+ id 1wtbcF-00021O-VO for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 11 Aug 2026 01:49:16 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id A6EA24186B
+ by tor.source.kernel.org (Postfix) with ESMTP id BE2F56001D
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 11 Aug 2026 01:48:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B93F01F000E9;
- Tue, 11 Aug 2026 01:48:28 +0000 (UTC)
+ Tue, 11 Aug 2026 01:49:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A357B1F000E9;
+ Tue, 11 Aug 2026 01:49:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1786412909;
- bh=I+GWjg8hBvbU7KU+S4PDCbfHpRBPfeUB/s6esOsf0QI=;
+ s=k20260515; t=1786412950;
+ bh=fbQdEIkPKTw83MfJdf7DZIxef/pakG3anpSyXn5xx0g=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=F/OY/br3TG2VGX882ECqcSfWDJd7fSp/STpNUurVUKAHf3XQ9+5bUYkar7rONd3Ww
- GxOXSmYQX4D1VUDsU8ZEZQLodC1/hA0Au7kIXRX9tBwJ1bfIoTbjjS1em8WoNIUfIk
- EHTjdLjAI+qSdAcQsjGN5wuKX9hD3fszZ0aLlXXnKel6RLdjxl08AxjPl6b/GznhxV
- YkqV4TeLN4BZj+9rz7rocRYkwFOJ2maxjAV14T32ijWPHQHOzYWBMHSVn0an/IljN/
- hXFCZ6E/Y3VNvd+tIUW1FWD1h0jSx9LpCzuZlswWV/CRvRZD+ED9AM0wZaOfoZ6uN7
- akxQ2IIDxxBMg==
-Message-ID: <43d7f2ef-ddb4-46af-ab6d-eda8d15a4983@kernel.org>
-Date: Tue, 11 Aug 2026 09:48:26 +0800
+ b=aYS6WtjT+Vuk2zfrsAfGMOuSeC1lvGDww95hmcn05dM6Y71Weksp5ORA1mvtmPKae
+ 5TD4DbUyPd9OQOOHvISZDS4+6F3fO5uMn7V0s97R+RK4rlOJTvDoQ5Tl+FrD6gI8Pb
+ WJIFJ5sfX168uDDJC2GBr4GZFZAvU/2eK1ye3mAFdg0ZHPAthxDmtCgAq8bKg5Xnt+
+ Mg/3FTF8tZC75UaaPRzyMzeMbZpaoM2eeWywDaT4H/WNsogcmW2uCwgJ7Y9TTyx43W
+ 0xv2mpGHrh0EWTsvY2WPyxoLM0r9RR0bx07T3OIk764BYgPxHHvf+NX8CdDzZ3btxw
+ nXn4uGOLmEy3g==
+Message-ID: <26a8478c-e8e4-47a3-8ffa-6a0b0b3182eb@kernel.org>
+Date: Tue, 11 Aug 2026 09:49:07 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 References: <20260807220235.384637-1-jaegeuk@kernel.org>
+ <20260807220235.384637-2-jaegeuk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20260807220235.384637-1-jaegeuk@kernel.org>
-X-Headers-End: 1wtbba-000206-HK
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: refactor f2fs_evict_inode having
- three major parts
+In-Reply-To: <20260807220235.384637-2-jaegeuk@kernel.org>
+X-Headers-End: 1wtbcF-00021O-VO
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: call __add_ino_entry out of the
+ eviction path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,17 +97,9 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 8/8/26 06:02, Jaegeuk Kim via Linux-f2fs-devel wrote:
-> 1. f2fs_pre_evict_inode()
->  : drop all in-memory structures
-> 
-> 2. f2fs_delete_inode()
->  : truncate inode blocks, if it was unlinked.
-> 
-> 3. f2fs_post_evict_inode()
->  : update inode records for future access
-
-That's a good cleanup! more clear now.
-
+> The f2fs_evict_inode() can be called during the direct reclaim path, but
+> __add_ino_entry requires allocating some memory. Since we don't need to
+> do that in that context, let's migrate it in other workqueue context.
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Reviewed-by: Chao Yu <chao@kernel.org>
