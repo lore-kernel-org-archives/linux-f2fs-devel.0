@@ -4,78 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4A258C5AD5A
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Aug 2026 12:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CAC73C5B56A
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Aug 2026 12:20:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=LvzNBjM5/vTdlh2iNcE8AyiD/VlrTndWhN5doA/zlo4=; b=TomY0QpnCcdHTR4uES70n78X2u
-	NsOXS46fLytzra1iH6ORagYIi1ljrrFAe1reXO91fQgHx82kqhElUbgkC3NEnTnRmeik73YWyz5ju
-	SFXLxlZ5NnUO1NVR7bht6jH/lVtkIHIm8fDICiHaR4sh8M6Nhhu+/891SNCeVf+usgVU=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=5STvemAPx9VbSlHmeDrnikKnXdwD6fRAMHxTgbmWkjM=; b=evRXYXpL+r94xh1ykMkITIrrs0
+	3M+pRUE/UiEaW78lWVXF5BU+KC/Tdi7nKLo9D+xuWvTcNg7TnN7Y7FZ6nI7bccUkyBINDzPrT6Pab
+	EHJC/bZ+V+bZ/nL5f5bNzouNZrzdmvsm0dgu4gYo2AcXbZbHy5BvBDRDM1EuWtgQclM8=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wu7wk-0003Oj-2V;
-	Wed, 12 Aug 2026 12:20:38 +0000
+	id 1wu7x0-0003wD-CX;
+	Wed, 12 Aug 2026 12:20:54 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wu7wT-0003OI-KR
+ (envelope-from <chao@kernel.org>) id 1wu7wz-0003w7-Co
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Aug 2026 12:20:22 +0000
+ Wed, 12 Aug 2026 12:20:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=OB1LgUDO6q+Z1e27+rQDO3GVOn3HYn1EGE7refovvZI=; b=l9aj9mt2rjqhzOoI/cVTUhJCHW
- FK+3A8WfRQOzBp4EIGzfiI5NDlfkMf+qznvMETcUX4II82J1HY+NM7YvOUhRYzQVE27gMe8ucpxNg
- bvyHFHygm3MMbhCgAlOKEuWz7gtIcArvYbEfe72/TXOZAlGqgoLJ5PtUSc7fJQ3uCqjw=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=OB1LgUDO6q+Z1e27+rQDO3GVOn3HYn1EGE7refovvZI=; b=M1t7V2tvOfK0pVzteMY1JyQKcZ
- w3BZiDndJxUr/u7lHKStAuDdOabg/WxtsnrPIlVUauJ56L8VU4Hr/vOFhvUzHvbdVhjNfYtWEi3Hj
- P3Wx3UWVQTP6TJt2vu4M43/f0roCAg9QO9rby2I1kmaEo6Mb06kJnyuVSumFjk/82MVo=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=kZg03mGGOq81u4B61Lg/APAIsg+87Ay12C/WV1nBv3o=; b=SNU4alMGDwtSBMthefjuCK9z+h
+ qBDly90MKghCYKnhrIudVjmFOMlEzAS12nDwUZretLe2LbQB2PqyimNPKHEsNWnCw70cNGpyGzxPv
+ G2kASotiNqDKsNuQCwvBJyy4gydRMG6UXe5/rHJwQmXgPkCAisuO/ibqNvwEHZRAO25A=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=kZg03mGGOq81u4B61Lg/APAIsg+87Ay12C/WV1nBv3o=; b=Z
+ JL1wBroHr/OSHR5XEYcLueF4X1keOlKm2JQ+5AhLrdnjqYxMuNx2WUWAl5/WP6IKKTeJ4D9HTgsOg
+ D1JKgV/cHnG7ltlnUNq8LO9lRr0o06R4ZDgqcpyQrOwbyWHTMfn/vgmCzQZg1OXyOVZFtOiMbu5pt
+ p2ZbzQPjFaKb+Cyw=;
 Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wu7wW-0000xq-Hx for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Aug 2026 12:20:22 +0000
+ id 1wu7wy-0004gu-NW for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 12 Aug 2026 12:20:53 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id ABA1C40406
+ by sea.source.kernel.org (Postfix) with ESMTP id 711B943865
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 12 Aug 2026 12:20:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9AB51F00A3E;
- Wed, 12 Aug 2026 12:20:14 +0000 (UTC)
+ Wed, 12 Aug 2026 12:20:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 799EE1F000E9;
+ Wed, 12 Aug 2026 12:20:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1786537215;
- bh=OB1LgUDO6q+Z1e27+rQDO3GVOn3HYn1EGE7refovvZI=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=n+6DiXwFDXDlspjMb/a4ZIZH4dtZrBtvFnvq8QdN+aNZiINm7FiGk6CMa7OShnfXu
- 4DFvPdUYfPrpeXcDRuPUjZM1LZDNd36Sov2I3J2NabFsnShPoLcaLARNmkIkfeZUHW
- fxOoqZ+aO+rr8Nj9bWAeld/dP2/+jR7ZlhJmbOwm2XGZccjl2hnz8X5PrcfcAB9VCc
- 0Tj2VxHZ1Uxik5CaSbBPx/qnAUQTKzYTZaB/XMVI+0XL7rlDF74YRSyns9OwHFh6zy
- QcPDcyDWdDuJNtLEBEzM3F5aaT+J/QrCbmirg7gbzXHfJwZ0SAf9RfyWa+T6yKEoHY
- pAr0TM5wejkoQ==
+ s=k20260515; t=1786537247;
+ bh=kZg03mGGOq81u4B61Lg/APAIsg+87Ay12C/WV1nBv3o=;
+ h=From:To:Cc:Subject:Date;
+ b=nq70MJ2QRHC6tQhybaj0SVjKCObIv6jr0Iydr3bCWznrFVark8dUMKpN/2J2LkOhY
+ 70u/uDh3/IqzdOao0eeJgHKZNa6+IaORH9CkC22StBVSqsmCm8iK1a83pLKHyMbzB3
+ v27VWU6HG/LE3hEjwzrn55rkPx8JmS4kX75yT8C3zchnsuHG4GRiEG3fTmtA9Kx7DU
+ alE7DuUfDkc379IkGrtzJ9reBBIgJv2CFkkgTsu94F8V15zu9mATWZMg2Ycyy3KeuY
+ Af60ZhqAFxWFU/80obAsMkAGXqNTdYOeTGh0Ws5R8ZeWzv9l1nYj5/0We3u8m8YANf
+ CWWpgmkkTYClA==
 To: jaegeuk@kernel.org
-Date: Wed, 12 Aug 2026 12:20:08 +0000
-Message-ID: <20260812122008.281434-2-chao@kernel.org>
+Date: Wed, 12 Aug 2026 12:20:43 +0000
+Message-ID: <20260812122043.282195-1-chao@kernel.org>
 X-Mailer: git-send-email 2.55.0.679.g6767b8d81c-goog
-In-Reply-To: <20260812122008.281434-1-chao@kernel.org>
-References: <20260812122008.281434-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wu7wW-0000xq-Hx
-Subject: [f2fs-dev] [PATCH 2/2] f2fs: fix to avoid pinfile fragment on
- fragment:{block, segment} mode
+X-Headers-End: 1wu7wy-0004gu-NW
+Subject: [f2fs-dev] [PATCH] f2fs: fix to propagate error from f2fs_sync_fs()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,166 +91,140 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-pinfile fallocate() conflicts w/ mode=fragment:{block,segment} mount option,
-result in fragment blocks in pinfile, it violate semantics of pinfile
-introduced in commit f5a53edcf01e ("f2fs: support aligned pinned file").
+So that caller can detect any failure from f2fs_sync_fs().
 
-mkfs.f2fs -f /dev/vdb
-mount -t f2fs -o mode=fragment:block /dev/vdb /mnt/f2fs/
-dd if=/dev/zero of=/mnt/f2fs/file bs=1M count=3900
-sync
-touch /mnt/f2fs/pinfile
-f2fs_io pinfile set /mnt/f2fs/pinfile
-f2fs_io fallocate 0 0 $((1024*1024*16)) /mnt/f2fs/pinfile
-sync
-f2fs_io fiemap 0 $((1024*1024*16)) /mnt/f2fs/pinfile
-
-[Before]
-fallocate failed: No space left on device
-Fiemap: offset = 0 len = 16777216
-        logical addr.    physical addr.   length           flags
-0       0000000000000000 00000000d7200000 0000000000004000 00001000
-1       0000000000004000 00000000d7207000 0000000000001000 00001000
-2       0000000000005000 00000000d720c000 0000000000002000 00001000
-3       0000000000007000 00000000d7211000 0000000000001000 00001000
-4       0000000000008000 00000000d7214000 0000000000001000 00001000
-5       0000000000009000 00000000d7218000 0000000000001000 00001000
-6       000000000000a000 00000000d721d000 0000000000001000 00001000
-7       000000000000b000 00000000d721f000 0000000000004000 00001000
-...
-96      00000000000f1000 00000000d73e9000 0000000000004000 00001000
-97      00000000000f5000 00000000d73f1000 0000000000003000 00001000
-98      00000000000f8000 00000000d73f5000 0000000000004000 00001000
-99      00000000000fc000 00000000d73fa000 0000000000001000 00001000
-100     00000000000fd000 00000000d73ff000 0000000000001000 00001001
-
-[After]
-fallocated a file: i_size=16777216, i_blocks=32808
-Fiemap: offset = 0 len = 16777216
-        logical addr.    physical addr.   length           flags
-0       0000000000000000 0000000018a00000 0000000000400000 00001000
-1       0000000000400000 0000000019000000 0000000000400000 00001000
-2       0000000000800000 0000000032400000 0000000000200000 00001000
-3       0000000000a00000 0000000038000000 0000000000200000 00001000
-4       0000000000c00000 0000000039c00000 0000000000200000 00001000
-5       0000000000e00000 0000000044c00000 0000000000200000 00001001
-
-Let's ignore mode=fragment:{block,segment} mount option while fallocate()
-on pinfile.
-
-Fixes: 6691d940b0e0 ("f2fs: introduce fragment allocation mode mount option")
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/f2fs.h    | 15 +++++++++++----
- fs/f2fs/gc.c      |  2 +-
- fs/f2fs/segment.c |  8 ++++----
- fs/f2fs/super.c   |  4 ++--
- 4 files changed, 18 insertions(+), 11 deletions(-)
+ fs/f2fs/namei.c | 51 ++++++++++++++++++++++++++++++++++---------------
+ fs/f2fs/super.c |  4 +++-
+ 2 files changed, 39 insertions(+), 16 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 069fe6537160..1b96d8718c5c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4146,19 +4146,26 @@ static inline struct inode *fio_inode(struct f2fs_io_info *fio)
- #define MIN_FRAGMENT_SIZE	1
- #define MAX_FRAGMENT_SIZE	512
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index f67864417455..37897f4321c0 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -402,8 +402,11 @@ static int f2fs_create(struct mnt_idmap *idmap, struct inode *dir,
  
--static inline bool f2fs_need_rand_blk(struct f2fs_sb_info *sbi)
-+static inline bool f2fs_need_rand_blk(struct f2fs_sb_info *sbi,
-+					enum log_type type)
- {
-+	if (type == CURSEG_COLD_DATA_PINNED)
-+		return false;
- 	return F2FS_OPTION(sbi).fs_mode == FS_MODE_FRAGMENT_BLK;
- }
+ 	d_instantiate_new(dentry, inode);
  
--static inline bool f2fs_need_rand_seg(struct f2fs_sb_info *sbi)
-+static inline bool f2fs_need_rand_seg(struct f2fs_sb_info *sbi,
-+					enum log_type type)
- {
-+	if (type == CURSEG_COLD_DATA_PINNED)
-+		return false;
- 	return F2FS_OPTION(sbi).fs_mode == FS_MODE_FRAGMENT_SEG;
- }
+-	if (IS_DIRSYNC(dir))
+-		f2fs_sync_fs(sbi->sb, 1);
++	if (IS_DIRSYNC(dir)) {
++		err = f2fs_sync_fs(sbi->sb, 1);
++		if (err)
++			return err;
++	}
  
--static inline bool f2fs_need_rand_seg_blk(struct f2fs_sb_info *sbi)
-+static inline bool f2fs_need_rand_seg_blk(struct f2fs_sb_info *sbi,
-+					enum log_type type)
- {
--	return f2fs_need_rand_blk(sbi) || f2fs_need_rand_seg(sbi);
-+	return f2fs_need_rand_blk(sbi, type) || f2fs_need_rand_seg(sbi, type);
- }
- 
- /*
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index e6758adc5da1..c4da2f31805b 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -310,7 +310,7 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
- 		p->max_search = sbi->max_victim_search;
- 
- 	/* let's select beginning hot/small space first. */
--	if (f2fs_need_rand_seg_blk(sbi)) {
-+	if (f2fs_need_rand_seg_blk(sbi, type)) {
- 		p->offset = get_random_u32_below(MAIN_SECS(sbi) *
- 						SEGS_PER_SEC(sbi));
- 		SIT_I(sbi)->last_victim[p->gc_mode] = p->offset;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9e0b6776341c..f4ec1b743ccd 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3055,7 +3055,7 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
- 
- 	sanity_check_seg_type(sbi, seg_type);
- 	if (__is_large_section(sbi)) {
--		if (f2fs_need_rand_seg_blk(sbi)) {
-+		if (f2fs_need_rand_seg_blk(sbi, type)) {
- 			unsigned int hint = GET_SEC_FROM_SEG(sbi, curseg->segno);
- 
- 			if (GET_SEC_FROM_SEG(sbi, curseg->segno + 1) != hint)
-@@ -3064,7 +3064,7 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
- 					GET_SEG_FROM_SEC(sbi, hint + 1) - 1);
- 		}
- 		return curseg->segno;
--	} else if (f2fs_need_rand_seg_blk(sbi)) {
-+	} else if (f2fs_need_rand_seg_blk(sbi, type)) {
- 		return get_random_u32_below(MAIN_SECS(sbi) * SEGS_PER_SEC(sbi));
- 	}
- 
-@@ -3120,7 +3120,7 @@ static int new_curseg(struct f2fs_sb_info *sbi, int type, bool new_sec)
- 	curseg->next_segno = segno;
- 	reset_curseg(sbi, type, 1);
- 	curseg->alloc_type = LFS;
--	if (f2fs_need_rand_blk(sbi))
-+	if (f2fs_need_rand_blk(sbi, type))
- 		curseg->fragment_remained_chunk =
- 				get_random_u32_inclusive(1, sbi->max_fragment_chunk);
+ 	f2fs_balance_fs(sbi, true);
  	return 0;
-@@ -3939,7 +3939,7 @@ int f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct folio *folio,
- 		curseg->next_blkoff = f2fs_find_next_ssr_block(sbi, curseg);
- 	} else {
- 		curseg->next_blkoff++;
--		if (f2fs_need_rand_blk(sbi))
-+		if (f2fs_need_rand_blk(sbi, type))
- 			f2fs_randomize_chunk(sbi, curseg);
+@@ -455,8 +458,11 @@ static int f2fs_link(struct dentry *old_dentry, struct inode *dir,
+ 
+ 	d_instantiate(dentry, inode);
+ 
+-	if (IS_DIRSYNC(dir))
+-		f2fs_sync_fs(sbi->sb, 1);
++	if (IS_DIRSYNC(dir)) {
++		err = f2fs_sync_fs(sbi->sb, 1);
++		if (err)
++			return err;
++	}
+ 	return 0;
+ out:
+ 	clear_inode_flag(inode, FI_INC_LINK);
+@@ -624,8 +630,11 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+ 		d_invalidate(dentry);
+ 
+-	if (IS_DIRSYNC(dir))
+-		f2fs_sync_fs(sbi->sb, 1);
++	if (IS_DIRSYNC(dir)) {
++		err = f2fs_sync_fs(sbi->sb, 1);
++		if (err)
++			goto out;
++	}
+ 
+ 	goto out;
+ corrupted:
+@@ -717,7 +726,7 @@ static int f2fs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 						   disk_link.len - 1);
+ 
+ 		if (!err && IS_DIRSYNC(dir))
+-			f2fs_sync_fs(sbi->sb, 1);
++			err = f2fs_sync_fs(sbi->sb, 1);
  	}
- 	if (curseg->next_blkoff >= f2fs_usable_blks_in_seg(sbi, curseg->segno))
+ 
+ 	if (err)
+@@ -769,8 +778,11 @@ static struct dentry *f2fs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 
+ 	d_instantiate_new(dentry, inode);
+ 
+-	if (IS_DIRSYNC(dir))
+-		f2fs_sync_fs(sbi->sb, 1);
++	if (IS_DIRSYNC(dir)) {
++		err = f2fs_sync_fs(sbi->sb, 1);
++		if (err)
++			return ERR_PTR(err);
++	}
+ 
+ 	f2fs_balance_fs(sbi, true);
+ 	return NULL;
+@@ -824,8 +836,11 @@ static int f2fs_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 
+ 	d_instantiate_new(dentry, inode);
+ 
+-	if (IS_DIRSYNC(dir))
+-		f2fs_sync_fs(sbi->sb, 1);
++	if (IS_DIRSYNC(dir)) {
++		err = f2fs_sync_fs(sbi->sb, 1);
++		if (err)
++			return err;
++	}
+ 
+ 	f2fs_balance_fs(sbi, true);
+ 	return 0;
+@@ -1122,8 +1137,11 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 
+ 	f2fs_unlock_op(sbi, &lc);
+ 
+-	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
+-		f2fs_sync_fs(sbi->sb, 1);
++	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir)) {
++		err = f2fs_sync_fs(sbi->sb, 1);
++		if (err)
++			return err;
++	}
+ 
+ 	f2fs_update_time(sbi, REQ_TIME);
+ 	return 0;
+@@ -1289,8 +1307,11 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ 	f2fs_unlock_op(sbi, &lc);
+ 
+-	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
+-		f2fs_sync_fs(sbi->sb, 1);
++	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir)) {
++		err = f2fs_sync_fs(sbi->sb, 1);
++		if (err)
++			return err;
++	}
+ 
+ 	f2fs_update_time(sbi, REQ_TIME);
+ 	return 0;
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8dd656a7d3dc..0c8f60b7242f 100644
+index 0c8f60b7242f..3bdb0f891c35 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -2457,9 +2457,9 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_puts(seq, "adaptive");
- 	else if (F2FS_OPTION(sbi).fs_mode == FS_MODE_LFS)
- 		seq_puts(seq, "lfs");
--	else if (f2fs_need_rand_seg(sbi))
-+	else if (f2fs_need_rand_seg(sbi, NO_CHECK_TYPE))
- 		seq_puts(seq, "fragment:segment");
--	else if (f2fs_need_rand_blk(sbi))
-+	else if (f2fs_need_rand_blk(sbi, NO_CHECK_TYPE))
- 		seq_puts(seq, "fragment:block");
- 	seq_printf(seq, ",active_logs=%u", F2FS_OPTION(sbi).active_logs);
- 	if (test_opt(sbi, RESERVE_ROOT) || test_opt(sbi, RESERVE_NODE))
+@@ -2960,7 +2960,9 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 
+ 		set_sbi_flag(sbi, SBI_IS_DIRTY);
+ 		set_sbi_flag(sbi, SBI_IS_CLOSE);
+-		f2fs_sync_fs(sb, 1);
++		err = f2fs_sync_fs(sb, 1);
++		if (err)
++			goto restore_gc;
+ 		clear_sbi_flag(sbi, SBI_IS_CLOSE);
+ 	}
+ 
 -- 
 2.49.0
 
