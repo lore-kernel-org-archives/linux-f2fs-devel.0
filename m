@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7F721C5B56A
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Aug 2026 18:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B3A25C5CFDB
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Aug 2026 08:30:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	MIME-Version:Cc:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:Message-ID:To:From:Date:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=l75W/3r0R0zKlIV5cBvA2VuSKOV+/vJTODBIErDsAOc=; b=alcnV5Ei0HJlvWSyGg8HfBo6eX
-	XqHE9G1ldI2/ZF0vpRnXiZGqoraZr7KPprQH/kK+XbxuWwIaEclxqql004tRv8/5LVZZrn4MXgiR5
-	eTVQ6ANIehPL1gqT77VoDz+yuPL2EoVHckFQg4viyLnn/TU/FxCkVtDQXOiG47he1Wv0=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=eEdHzbwcoCkaCGxLU0R3Z9++YgzOj50g7YwISNOXQmY=; b=QfsvO0NWn8rezTrxeOHl8fFE4d
+	xue2M0brHKdaAIYfRIpECxbpdk9JH/VV2YPycXOnDEGBSBvUskOrzE5lC9Cn18dWy4lmwycOZzhBV
+	RMWD0Rx7mIODUrJPqsFfm8fGa36o3mLfz1uU6Mo47jAScMkBsGlJx3xe9KpaR2C6MlOw=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wtrc4-0003xn-Bn;
-	Tue, 11 Aug 2026 18:54:09 +0000
+	id 1wu4Lr-0004Ow-N2;
+	Wed, 12 Aug 2026 08:30:20 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lkp@intel.com>) id 1wtrc2-0003xg-AB
+ (envelope-from <lkp@intel.com>) id 1wu4Lq-0004Oi-4D
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Aug 2026 18:54:08 +0000
+ Wed, 12 Aug 2026 08:30:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XHOR4Fro0Alk7Q2qiLoBKMfCnLPZNpb0MJj1SM7Fuvg=; b=gz9lU4Dr50Lb3g9m8pCnruwehb
- DfZrSxmlE4FQ4JzWZlksA/iyg5cyLA9Nd8sS6gwb1f5E167+oFGZRUiUSw0qTirHqsLBcbbO0mhjV
- ofCX/WuUCo4jBM3x32y6Z0RGZttlIClJM7WLJtVqNjba3Q70kQN1RT88JJsq9DES3AqY=;
+ bh=5BICLD0710L3SpbhkdpZRZcijtorYGGpTWaZwrqr6bc=; b=DoWdl4uNsG9KTvtZ1GjI+FbLWi
+ z8oQPkJAafkpy/YNTLIW27NGjKOXjyXGjta5JfCGa05iM54FYdg5AxZlDjMEtWaJbwAsWZYnojSGj
+ gAwd+Zc8B99FncSOcf7Pq7gip0lFemuHzmOUYwCCy34Wfr98vg4+atNR3EX1v62LUpkA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:MIME-Version:
@@ -42,49 +42,50 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
  In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=XHOR4Fro0Alk7Q2qiLoBKMfCnLPZNpb0MJj1SM7Fuvg=; b=ZyctcqIhokMmJsoi4VidllW1gO
- WV9OznbW55nNkXV9QDqMIjBJgfM/UMyChuas+O2fNo6hgjfvYoigno/XQcQz/Khaj8QmtmDsLewug
- Wr6LJbxOiUAublIDUUtAqeu3zErloE3Tn8aKghFGGzCZXBpb0YRaxf8QBjqQK0BRr2uk=;
-Received: from mgamail.intel.com ([198.175.65.19])
+ bh=5BICLD0710L3SpbhkdpZRZcijtorYGGpTWaZwrqr6bc=; b=jPO1rEa8DTNvyywOsBoq5hOUOg
+ RkdKQj1x1B2y5U0Y01kChzcZGwzOo+NFw7uKqtJWM8HwJARwvtCrAu1EGcLy6Y9pyl8ej79IqaPPQ
+ 7E7lvIaxzFQULAUklaol4sInVy5NKGyOT68mjLzDfVTx5qkNWh3u+I4gdEt1vmKqPle8=;
+Received: from mgamail.intel.com ([198.175.65.12])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wtrc1-0001wn-P7 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Aug 2026 18:54:07 +0000
+ id 1wu4Lt-0003Fi-Dl for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 12 Aug 2026 08:30:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786474447; x=1818010447;
+ t=1786523418; x=1818059418;
  h=date:from:to:cc:subject:message-id;
- bh=Sx5uHCrZFPNX5yvYm8oROhZshBsdiIqU752CifUUvdA=;
- b=kR8+xhFlMUiYMp1boGIRT7QPo4zqzxSq1V6jCBqqvHzXgCGx7t9ORwHI
- +c5yVG9aZvYmwPnQqA/RPj40tCFLaZoG/yHbhOrYYLz7OaUfS7k2kKUCb
- knbe42u2BFXRRnl77fKbu0PZE9K7SDKte/k2WbR/VBDUbTQAePIeNG+e/
- O0V3t94Ec3Z0CDOzeABuMH2qcDDtCWTCA7sjmKEaBAJq/fYvxCVVtIrOC
- jG07B17Y7kmQGndKG2t9JyD88g85phaeXH0M9UEYIxbkLtYRvuqvOW6L+
- 5vAy16K2y2xxAoL1Ji3KTn/MFVlGXXxN12749CD6mf/Eb83gqKISup5jL Q==;
-X-CSE-ConnectionGUID: 0HR8LFIlRpWf3vE/wgsydw==
-X-CSE-MsgGUID: SdwZE6ywQaWH/XRiYO/apQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="86946691"
-X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; d="scan'208";a="86946691"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Aug 2026 11:54:01 -0700
-X-CSE-ConnectionGUID: auL5ED/vT2qcusRRXuZaVg==
-X-CSE-MsgGUID: pR35G3OJTfqITsnpMKB7Mw==
+ bh=grROCCp/NlSZhIChKu/T+K573rFhmjdvZT5uMTe+e3A=;
+ b=XZh78SkLaBvPT/nq6c0Wzan6Kl5uijOqBpE3h7iyYHInnwk77zA5Ik/L
+ StimfG7vXvvNGVrFDEATReOKKwwX+crUsrIKnCLOQpxlYuew/37dR/w+N
+ 39b3LNhiauI2G+LU3unn8exYpylVT/VAzLyrSdXywoAl6xaVBVRhDL9RV
+ N7G1YbO9ZiU/FWtF0RzQ/D2zEYA7KG79z8JRAKFhcH84NA5Ul2oOZ0qA8
+ jW7zNYQPLUuCCOR5SisGMOKrsThuH/nscaBOf6P6xULAiVxlbr2T+NY2C
+ Z0sXMPJx0i4D0pW9oaZ60phMaT1hvQ5DZGehzf0lFcj4GeSWc7A/BET6a Q==;
+X-CSE-ConnectionGUID: Kx7c5AXVR820tTp9+tbNxQ==
+X-CSE-MsgGUID: 0CUIW93UQHqEGxj6TkQXgg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="98582545"
+X-IronPort-AV: E=Sophos;i="6.25,219,1779174000"; d="scan'208";a="98582545"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Aug 2026 01:30:12 -0700
+X-CSE-ConnectionGUID: B6SYgmSXRtCnkgOGvIVo2Q==
+X-CSE-MsgGUID: lKm+h/wGQG+7TNYrCzz/3Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; d="scan'208";a="261672206"
+X-IronPort-AV: E=Sophos;i="6.25,219,1779174000"; d="scan'208";a="267072037"
 Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
- by orviesa006.jf.intel.com with ESMTP; 11 Aug 2026 11:53:59 -0700
+ by orviesa003.jf.intel.com with ESMTP; 12 Aug 2026 01:30:10 -0700
 Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
- (envelope-from <lkp@intel.com>) id 1wtrbo-00000000PAo-2BWw;
- Tue, 11 Aug 2026 18:53:56 +0000
-Date: Wed, 12 Aug 2026 02:53:47 +0800
+ (envelope-from <lkp@intel.com>) id 1wu4Lf-00000000Q6w-1DjN;
+ Wed, 12 Aug 2026 08:30:07 +0000
+Date: Wed, 12 Aug 2026 16:29:54 +0800
 From: kernel test robot <lkp@intel.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Message-ID: <202608120225.emwHea9z-lkp@intel.com>
+Message-ID: <202608121654.riTjCLm7-lkp@intel.com>
 User-Agent: s-nail v14.9.25
-X-Headers-End: 1wtrc1-0001wn-P7
-Subject: [f2fs-dev] [jaegeuk-f2fs:dev-test 30/30] fs/f2fs/inode.c:1065:13:
- error: implicit declaration of function 'current_is_kswapd'
+X-Headers-End: 1wu4Lt-0003Fi-Dl
+Subject: [f2fs-dev] [jaegeuk-f2fs:dev-test 30/30] fs/f2fs/inode.c:1065:6:
+ error: call to undeclared function 'current_is_kswapd';
+ ISO C99 and later do not support implicit function declarations
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,7 +97,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net, oe-kbuild-all@lists.linux.dev
+Cc: llvm@lists.linux.dev, linux-f2fs-devel@lists.sourceforge.net,
+ oe-kbuild-all@lists.linux.dev
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -105,21 +107,21 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
 head:   7451b3cd93b30f714efc83f6571abf8c50541839
 commit: 7451b3cd93b30f714efc83f6571abf8c50541839 [30/30] f2fs: call __add_ino_entry out of the eviction path
-config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20260812/202608120225.emwHea9z-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 16.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260812/202608120225.emwHea9z-lkp@intel.com/reproduce)
+config: loongarch-defconfig (https://download.01.org/0day-ci/archive/20260812/202608121654.riTjCLm7-lkp@intel.com/config)
+compiler: clang version 24.0.0git (https://github.com/llvm/llvm-project 12df34b8469b8095359de8c249cb1b2753fadeea)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260812/202608121654.riTjCLm7-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202608120225.emwHea9z-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202608121654.riTjCLm7-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   fs/f2fs/inode.c: In function 'f2fs_post_evict_inode':
->> fs/f2fs/inode.c:1065:13: error: implicit declaration of function 'current_is_kswapd' [-Wimplicit-function-declaration]
+>> fs/f2fs/inode.c:1065:6: error: call to undeclared function 'current_is_kswapd'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
     1065 |         if (current_is_kswapd()) {
-         |             ^~~~~~~~~~~~~~~~~
+         |             ^
+   1 error generated.
 
 
 vim +/current_is_kswapd +1065 fs/f2fs/inode.c
