@@ -4,79 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0FC19C5CFEB
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 25AFDC5CFDB
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Aug 2026 20:31:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=OpiGdrjAY/uuxxSrYLSthZTTm60x85/yw4ZaFIpwrpE=; b=hLsnGV9AEeSrJjyhVGm7cUp+St
-	QcfWzN9UQcOzwy/cTDmCIuT0RMnG593WrwzpctXQz9WR+AFIeNqjTpFzZLuqyjD0XG0BZma0dbzj9
-	gAgnZ0Gjqsagw4Q4BICsk+P2XV84uft2T54Y9h32iPayhIIjifjj+D1ZVmF4IzFMPu6w=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Unsubscribe:List-Id:Subject:To:Date:Message-Id:MIME-Version:Sender:Cc:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=D4qyvigSeH37NCLaHnCnZG4s5RzPwahJX8fwkNu6dgo=; b=Pv1q42o9ypLFKn43PRVSrCV2K9
+	sEpIHA4sb0e4utZoteoLYoiqU18PZGvOnvko9kn3LqthZE/uexLPw5wudb3sIOEPGBTGScpwAXeSq
+	rBhGncgxP1ILMWk3h/YbF0MWM2blUCe8+FSk9219le54iwbewmNvD+RDRwSsqkKBy0YA=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wuFbS-0004st-Aw;
-	Wed, 12 Aug 2026 20:31:10 +0000
+	id 1wuFbR-0004wW-Af;
+	Wed, 12 Aug 2026 20:31:06 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wuFbP-0004sY-0R
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wuFbF-0004vy-OW
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Aug 2026 20:31:07 +0000
+ Wed, 12 Aug 2026 20:30:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0KsMbcIsQ6Onf+LFvw3bMprRVz8+BKo+sixC1zIUR2I=; b=LfirSQjirvRqz45ROHT5mQ5nty
- J1M4BNZiBdqdqGYwV0Rqt6S4Eu8VVI66OM/az56T7Z9oSX8o+5Kt8OHeYhMw+1O2gXk4Ki+nSE+78
- jNJw9sOgh0VXpBvBYrYjvVTIHLcTWfXxCyCmoGx1tPmRlgqCJi+lwVlN29K1R2XT75VE=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=CYjAoy8BP9E3RlYGILPY3F0ow1kY9HQCCFMfpBG1Ajc=; b=j5HQlQg4YisqJDWGNC+wMR2vDN
+ lMuIEqodcw/L6VsMT2jLEy3eMEMpNt2Ex3uRHFl0/dynlHxCNUl/0zrTzT5lPG5LOigUPNgrq3ch2
+ mxN9gQ0isRqhBuoobeS23Pg3bOMNFp9ukaRGlyC1vdwI5V0RVDik7nrXJ3zqmH38qpgw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0KsMbcIsQ6Onf+LFvw3bMprRVz8+BKo+sixC1zIUR2I=; b=TtEdhLUG4Qf1anNrDkSB9OeWAC
- ABPuXrx296d7yKeigOJ7uL/sxfcTt0/oamGVvSArZBSXc2/4S5yaw3uEkh40Jm9p0CXzjC3lz91zq
- eztQrAauouRRt/yyINmHqjlJt8sa3/GOpBioadrWH1XXHEv2uDfi7Pu5YiFArEQw39ks=;
+ ;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=CYjAoy8BP9E3RlYGILPY3F0ow1kY9HQCCFMfpBG1Ajc=; b=G
+ ELOSABLxxzVfR6GPUf/vl/wSXl97WjT3BItgul2CLybLO8tKlMZ9EeR+fGX8Rbaazja/ZN9Ns7zrB
+ a6Z2anV9CxDukXF24VQYijPN7B6zY57ZSt3mamG6CnsC2JZuRNBrsk69+z5jiMJaGNhEgTIANZoGB
+ XvxbEkfoX7W4AG/c=;
 Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wuFbI-0004xW-G6 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Aug 2026 20:30:57 +0000
+ id 1wuFbG-0004xS-3n for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 12 Aug 2026 20:30:55 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id A9DB240279
+ by sea.source.kernel.org (Postfix) with ESMTP id 0245F4045A
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 12 Aug 2026 20:30:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D1141F00A3A;
- Wed, 12 Aug 2026 20:30:51 +0000 (UTC)
+ Wed, 12 Aug 2026 20:30:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE751F000E9
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 12 Aug 2026 20:30:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1786566651;
- bh=0KsMbcIsQ6Onf+LFvw3bMprRVz8+BKo+sixC1zIUR2I=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=o2ABs0WrZzyCEo1sjEIXFlsJ7SbluyN0FdUPY6I1OMDPzBuhn6fyoiCu/ltRucqdh
- DHai023EoUhaSlnAT6YelcpeFp6m6REEakm4j9SGwGQK/SdXQKWMg+j85jmSSlCUFt
- bWQCQZ/rgg0QyXkTkwc5JbrZuG4ToGuxpCbC88RYxcxCIhRmxL2Fg3Y/nNebTmD89x
- p3tzZ9kIF2rjE1AflPOWXBzIM52JY543CGDPkU45eqVSYR77ji+9RmbqkobfT/i1nQ
- LNwXVLAoCxML1poW+7RVSf86PTzN9OM/HlsEEwvimiGQwfKc+iXlUQ1QJg1VDJm06v
- FkW2GTd9HPUGQ==
+ s=k20260515; t=1786566648;
+ bh=CYjAoy8BP9E3RlYGILPY3F0ow1kY9HQCCFMfpBG1Ajc=;
+ h=Subject:From:Date:To;
+ b=WaspZDJ4voLpBaNBBmkYKrkNy1p6pPCvoxzZRW8YNNgNX3OgCqCRDm49Fx/rlYe5I
+ seOrGj8kdnh3rkaiWSpEsYHE/rifvRTqpHbpNN9MjVeXK2fAMZsikShGmBsy10J58X
+ SxBJM/CPeKRAjLREE4KP4GQ4JX/RVYiJ+PbkaWCZdbWQYmSKCR6Q/44sKdcxJpYwus
+ zhpR2GFL272HQf4N3+1YmZ98Xu+fk6NbNc5iJqABcHgyHNFuEEsG3BQYU9lwyBMy3D
+ PMwRlQDEMl+TA8Qx9KO/0PgxYD7sNTDPmEClYXiXApdnwwYsAGI2PuzYL0EVkKQ10N
+ FpvljeRe0Q8TQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 196D6380CEC4; Wed, 12 Aug 2026 20:30:08 +0000 (UTC)
+ 590F1380CEC4 for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 12 Aug 2026 20:30:05 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <178656660663.2090005.4601812465227179093.git-patchwork-notify@kernel.org>
-Date: Wed, 12 Aug 2026 20:30:06 +0000
-References: <20260811071637.4176024-1-chao@kernel.org>
-In-Reply-To: <20260811071637.4176024-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1wuFbI-0004xW-G6
-Subject: Re: [f2fs-dev] [PATCH v5 1/2] f2fs: fix to off-by-one issue in
- f2fs_zero_post_eof_page()
+Message-Id: <178656660380.2090005.8163548606146451164.git-patchwork-summary@kernel.org>
+Date: Wed, 12 Aug 2026 20:30:03 +0000
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1wuFbG-0004xS-3n
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,34 +91,40 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: patchwork-bot+f2fs--- via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- stable@kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-On Tue, 11 Aug 2026 15:16:36 +0800 you wrote:
-> Otherwise, it will drop one more page after new_size which is not
-> necessary.
-> 
-> Cc: stable@kernel.org
-> Fixes: ba8dac350faf ("f2fs: fix to zero post-eof page")
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> 
-> [...]
+Patch: [f2fs-dev,v2] f2fs: return symlink writeback errors
+  Submitter: Wenjie Qi <qwjhust@gmail.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1143427
+  Lore link: https://lore.kernel.org/r/20260810133832.3530016-1-qiwenjie@xiaomi.com
 
-Here is the summary with links:
-  - [f2fs-dev,v5,1/2] f2fs: fix to off-by-one issue in f2fs_zero_post_eof_page()
-    https://git.kernel.org/jaegeuk/f2fs/c/b2205d3cfd6c
-  - [f2fs-dev,v5,2/2] f2fs: fix to zero post-EOF data when extending file size
-    https://git.kernel.org/jaegeuk/f2fs/c/5eced87b7d19
+Series: [f2fs-dev,v5,1/2] f2fs: fix to off-by-one issue in f2fs_zero_post_eof_page()
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1143911
+  Lore link: https://lore.kernel.org/r/20260811071637.4176024-1-chao@kernel.org
+    Patches: [f2fs-dev,v5,1/2] f2fs: fix to off-by-one issue in f2fs_zero_post_eof_page()
+             [f2fs-dev,v5,2/2] f2fs: fix to zero post-EOF data when extending file size
 
-You are awesome, thank you!
+Series: [f2fs-dev,v2,1/2] f2fs: unify add/remove ino entry API for all ino types
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=1142808
+  Lore link: https://lore.kernel.org/r/20260809012639.568485-1-chao@kernel.org
+    Patches: [f2fs-dev,v2,1/2] f2fs: unify add/remove ino entry API for all ino types
+             [f2fs-dev,v2,2/2] f2fs: reduce memory footprint of ino management
+
+
+Total patches: 5
+
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
