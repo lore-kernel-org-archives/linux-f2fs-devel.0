@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 96056C5CFDB
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Aug 2026 08:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C9409C5AD5A
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Aug 2026 09:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=jbtwBrnCUfZd4RtdqALbRKDOJY1ioIlHzTU9w2e3bHI=; b=lwBB3h6KDwOxD2YseZdBQA+jMQ
-	OW0gZ1vBULc3lGZU1cLTk4yNiUT8Rg4h+s0m9Q42i/ocEPtbvEH/+yX1j6OL5421y90IHdVq9CSUS
-	/5W35FFGcWNtPli4W2CxkHcm+wFvaQYvSyhZnBXAG59v4zpZ2VZ6wEhmovw+c6dcRNy0=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=STMi5rVH292VUXtWSKZk5bro72TaOvWyDlOnaAAv9Qo=; b=FiI92renL5enzwFFwL+IcFrZjH
+	lTiM4sR18ehhClzSk18jnWZufl+RBL0weTUBKiv0RkC/Mr2AKxe+K04+Mvfwu82kf/PcV5yNVZgy5
+	i5Hrp2rANikJ/0h5+3ZJ99MA0ibtBew9NmUW4LAJHEtO0QeY7GrFIvGeRXzu/Bdy2QFw=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wu4ny-0003fs-GF;
-	Wed, 12 Aug 2026 08:59:23 +0000
+	id 1wu5IF-0001Se-Ss;
+	Wed, 12 Aug 2026 09:30:37 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wu4nx-0003fl-RW
+ (envelope-from <chao@kernel.org>) id 1wu5IE-0001SW-1y
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Aug 2026 08:59:22 +0000
+ Wed, 12 Aug 2026 09:30:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+sXSWsDHiGJ/oqKpPmE3usoB20L3uj2n6Y1Q/dywr44=; b=O4im2EkKs1qb4KznmcVl7MYVFx
- FLnlNhm+PsvVoOpUah9fH7UMizkSolxiN+OUDafMyMuuvO3BKB7UCXeIXDo/8uVtQkhPiBA0tpb4V
- lAHt2LLxmN03c6Gc63bBXTpZq+fxJnZa0Z48Nbi/D6IdAtoHYqA1fzs6RBXVFkawcfrg=;
+ bh=sCNy7bwSl7GQs5/Abl5un/U19S8NKl7KYsInH1bT2Cw=; b=OmiAz3tvyybhyYqgI1j8iK7KG2
+ CbXXLpJ1vaEN/qonQZmaa+bvrpFcsCvFaqsu7NA54nUY30ADCRX4MaMpbcjAGdu0eUxNV3uG4hSZR
+ blp+csVejuJO2RGYErud5Y9JPAOoMvVb+JhDJ9hj8XyQ54HDjAHeZJZDDZHVzcZTSS64=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+sXSWsDHiGJ/oqKpPmE3usoB20L3uj2n6Y1Q/dywr44=; b=NoyOfp62r/2S9LHyi3h85SbeER
- 90kRqllBVWPvnEEA/v0yqYHo8itHMA0ZQUxoQvvclO/88uzI8ZBHd3LqV2ihtIx8MoGR6LX25srVa
- lEjPSTywBO52jHrybs28UMCjqLPR09ddWFsJOFGqMgf2J1UUg+pjKZ3In4FOmjM52RuA=;
+ bh=sCNy7bwSl7GQs5/Abl5un/U19S8NKl7KYsInH1bT2Cw=; b=eQKvbLEJP7CKkcyISkGAnQli1I
+ rY7iHQI1rN2qLwC38+PL+R8unxKNc3su3LHbYPECjmjhJQByXAUoC3/5Abxapn9DdCHZYhxkFhOO/
+ rcDhrEnYkWxjWYIfwDdJOrWDdmsOLcBn2IOuXuFBpsCd+Slgkn5p7v5NFE33ubZsxC60=;
 Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wu4nx-0008FR-5U for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Aug 2026 08:59:22 +0000
+ id 1wu5ID-0005VE-GO for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 12 Aug 2026 09:30:35 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id C77AC41416;
- Wed, 12 Aug 2026 08:59:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 407111F000E9;
- Wed, 12 Aug 2026 08:59:14 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 8C42E415CA;
+ Wed, 12 Aug 2026 09:30:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2200F1F00A3A;
+ Wed, 12 Aug 2026 09:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1786525155;
- bh=+sXSWsDHiGJ/oqKpPmE3usoB20L3uj2n6Y1Q/dywr44=;
+ s=k20260515; t=1786527028;
+ bh=sCNy7bwSl7GQs5/Abl5un/U19S8NKl7KYsInH1bT2Cw=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=R9HmW+eFR5PvIAJfrs1UPVEPr83axuziR2Sndt6ibGVRubkp94sCD1CyyUmL0Jr0k
- ZvDZ2bPSuwqwGG1XH0JUjN3tPUhL+NeBgjBhkJ5wvzGqY2fLhEV81kvx/sGbFa9j+K
- TNT6ptG7m2k/2j4kBiI5ITRkhHGH97Y8FluPFncfvXmCJwOdCkzcCRbsqeg9EGBeX2
- NUqLV4MT3mTu3zSqNpavZxBZm1/eJ+tlQui5bsMDTqjIXOf+2qorTpKrLWXsr0Q3Mw
- elGq395mufPOy3dwjvP9J38wp0UKG1DcQWaRdYWH0vFh0dfl9b1ECnnP9twXPzaNf/
- z3mOuXoFufYlQ==
-Message-ID: <5e5aa114-3425-4d26-a9c4-c21922eb67be@kernel.org>
-Date: Wed, 12 Aug 2026 16:59:12 +0800
+ b=Lo5R6OaamcQYN8WgvHhxuzmC4u4UKBsCcC4IF6ADiGzMveMSAfwYElX8lgwVsz0kf
+ B4f2W7PjM4KETJ7KnQnwvrqR5W4mBbyafq8vFbFzzCM19QnLn+NsAiIj1gld9AjG0r
+ RvK3QX0yb0H3zEm5v5xNCBZ+3C+JohoVBjbtFDN3rLF+3W+Rltb2n7xZ1jou4PQIWP
+ 9TbozClEMsOtCRd2THqjOXl1kpYiGPgUnOEmGfJY2jJWvgqgBNNt62Sfk5G84B74yP
+ M+BoVPaDWbqlRuX1uViNzCZPx8Zljg5jDk+TaQLy6fa9LQAmn0nGd9mgm3PS4CJKxS
+ rQsmy/Lx1/RmQ==
+Message-ID: <c9a95043-f4bb-403b-8603-b65c703e037c@kernel.org>
+Date: Wed, 12 Aug 2026 17:30:25 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 To: Wenjie Qi <qwjhust@gmail.com>, jaegeuk@kernel.org
-References: <20260806061807.3267392-1-qiwenjie@xiaomi.com>
+References: <20260810133832.3530016-1-qiwenjie@xiaomi.com>
 Content-Language: en-US
-In-Reply-To: <20260806061807.3267392-1-qiwenjie@xiaomi.com>
-X-Headers-End: 1wu4nx-0008FR-5U
-Subject: Re: [f2fs-dev] [PATCH] f2fs: check cp_error before committing
- atomic writes
+In-Reply-To: <20260810133832.3530016-1-qiwenjie@xiaomi.com>
+X-Headers-End: 1wu5ID-0005VE-GO
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: return symlink writeback errors
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,56 +94,23 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 8/6/26 14:18, Wenjie Qi wrote:
-> F2FS checks cp_error before entering the ioctl path, but cp_error can be
-> set after that and before atomic commit starts replacing blocks.
+On 8/10/26 21:38, Wenjie Qi wrote:
+> F2FS writes long symlink data with page_symlink() and then flushes the
+> symlink mapping to reduce the chance of exposing a broken symlink.
 > 
-> In that case, F2FS_IOC_COMMIT_ATOMIC_WRITE returns -EIO, but the current
-> mount can still expose the new data before remount.
+> That flush result is currently ignored. If the writeback fails, symlink()
+> still returns success even though the symlink is not durable and the same
+> operation can already surface -EIO through syncfs().
 > 
-> Check cp_error again in f2fs_commit_atomic_write() after
-> filemap_write_and_wait_range() and before block replacement starts.
+> Return the writeback error to userspace and skip the dirsync flush once the
+> symlink data flush has failed.
 > 
-> Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
+> Fixes: d0cae97cb600 ("f2fs: flush symlink path to avoid broken symlink after POR")
 > Cc: stable@kernel.org
 > Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
-> ---
->  fs/f2fs/segment.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> QEMU validation:
-> - before fix, FAULT_CHECKPOINT made COMMIT_ATOMIC_WRITE fail with -EIO,
->   while the current mount still exposed the new data; after remount, the
->   file reverted to the old data.
-> - after fix, the same fault still failed with -EIO, and both the current
->   mount and the remounted filesystem kept the old data.
-> - no-fault smoke still committed the new data successfully and preserved it
->   across remount.
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 0b706568b034..e6384dd2e916 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -408,6 +408,9 @@ int f2fs_commit_atomic_write(struct inode *inode)
->  	if (err)
->  		return err;
->  
-> +	if (unlikely(f2fs_cp_error(sbi)))
-> +		return -EIO;
-
-I suspect even we add cp_error in more places, we may suffer both conditions:
-1) expose new data to userspace if cp_error occurs before f2fs_do_sync_file()
-after f2fs_commit_atomic_write().
-2) not expose new data to userspace if we cp_error occurs before or during
-__f2fs_commit_atomic_write().
+Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
-
-> +
->  	f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
->  	f2fs_lock_op(sbi, &lc);
->  
-
 
 
 _______________________________________________
