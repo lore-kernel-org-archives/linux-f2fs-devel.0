@@ -4,79 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 13C43C5DF65
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 Aug 2026 20:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2D879C5B572
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 13 Aug 2026 16:02:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
 	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=NrW36YfhM2x1IhWULgRHP9yLDpxw0AEkcv+6mNYgsgg=; b=RtUpe1LbbNHQbFdeUGnzHTmggc
-	WOe09mfbGn6C3k+0CEn3YBfkCB2qoQR7jGbna20Xl55MDgPUDlQp+sZlTWl4Bik4GNyDuEFM6mWB+
-	RdHkok0HgCc7G0m0Xaxxdlq5Dk0iboMDBjZ1rzFR0cQq2/M5JMO4Gv/Gu2JCGsVpMoMw=;
+	bh=LUIEtFNEjqolzylpQXzxy789RQHLSicv5gcxNRGMxGs=; b=K37aEoxGcHrQl3zISosndjweC8
+	Q0T5TnRIsnVcttWzKAXCpQuUH3/T98iOTiKHoZiDTtQ3wUH4JphCUxjdUdRjnASeFbm+RsLwk4h0l
+	JWX0NP1sQf/fq1IeoDwS4pG2y10RVVClNbszuSoL+1Vcv3OSbHiZaxvgtBJxuv/B4Lgg=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wuFbS-0004wk-PG;
-	Wed, 12 Aug 2026 20:31:08 +0000
+	id 1wuXsx-0008Ff-8h;
+	Thu, 13 Aug 2026 16:02:24 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wuFbR-0004w8-25
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wuXsw-0008AE-1m
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Aug 2026 20:31:06 +0000
+ Thu, 13 Aug 2026 16:02:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KWayOvxdGhPR/EVDl3AJbGwV+v1v/6G2FIF2bn4bCnw=; b=D+5P30Zz/eHMFe8GObWxuZ/VFD
- bHzrfP7TllytmYwGVTi/YfaTPIUb4L3X3AVnZCZO0I5QX9445JtdXz9su9/XIKZKAICq5XiC0W43+
- scRNOfap3uslVrsujRonY0xUx/0XlYzIZy1n8mCtRCeLdDIYgbHmt8rPgZdIoASzRrnA=;
+ bh=HGmwtS6B+lmMNfgDG8dwjsD34hOGygpvCW32rqNxU/g=; b=RXpa7mcrSTn1gdB4eneDJbABms
+ E5ogibKIPSdlGVHPD6+qZCSY7PgAbPOsYdG2p1Dn5sawfiDsPVAZTyvi9ZtLGkorPLz97WN/Vq+eo
+ g/7cV+D5Sayn5GsRa5G6Pqel/nMRcicDhbkKPm+izwZXb7EKsQmEgiA7fsUhB/5D60Co=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KWayOvxdGhPR/EVDl3AJbGwV+v1v/6G2FIF2bn4bCnw=; b=kJLxyLCtlZ3JLf2P1+YS1P2dH0
- 4CpTNB/hIR+pA1T2HCzmjcRj/UdPLZstCKug9VGWcjXxB/m/ws+BxTs773K81ZS/8Z9KakdX3bfAt
- 516eQussxs/PVI9ft7kwO03FcOrPA+NunnWO8VyUWqfH0IrDMNHgvyjl8+lY7WZ3J+CY=;
+ bh=HGmwtS6B+lmMNfgDG8dwjsD34hOGygpvCW32rqNxU/g=; b=hvefv3BSTai6vQhvqpks5va8lZ
+ DM4xWOp5VB8OQHAxrEFpE57wvPXLMWHfzeQqCymH05CXD0qTF2G20o6gXSFya90fdFFAFsGfbDXrO
+ jrEZ8/74++oIJHOT23hK2HXWVLrASkXLtRFjQLu+39yaP77W/YvDyG/uDmADGr8CDXXQ=;
 Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wuFbG-0000qO-Ey for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 12 Aug 2026 20:30:59 +0000
+ id 1wuXsb-0005mJ-0N for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 13 Aug 2026 16:02:03 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 326AE4394F
+ by sea.source.kernel.org (Postfix) with ESMTP id 3248643B25
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 12 Aug 2026 20:30:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 158231F000E9;
- Wed, 12 Aug 2026 20:30:53 +0000 (UTC)
+ Thu, 13 Aug 2026 16:01:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 165FF1F000E9;
+ Thu, 13 Aug 2026 16:01:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1786566653;
- bh=KWayOvxdGhPR/EVDl3AJbGwV+v1v/6G2FIF2bn4bCnw=;
+ s=k20260515; t=1786636916;
+ bh=HGmwtS6B+lmMNfgDG8dwjsD34hOGygpvCW32rqNxU/g=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=LmtlVqmcPDMD8XNDCuJ7uKAnPlxhpW4wYXTntjCdHQbZppiBVt3M/0JoamTDj1TlT
- rDK4/btzLhDGLRalE11WsCx3WlL6vHx0edJA+e4+I5vGlKGOZ3XqSolwoG9ZbU3sm2
- a7aHW+/Q7t38eaXcnMEiVzThsZylHtIp2NKqKxbQ/UcDOv90dxz3HPjwty//jKGDgl
- HIoe5CZc4klM0n2fC1AZqb1YlgB2GdKV3tUve0psKKnZ/E4sanQrz35jdB11ih0M1h
- QSAMycosf7vjV/E5qgznOIF3mk0oQEACQYLFv1batQeLES4ga1e0O7cDm3gzncE+XR
- 9gQ4E03s7bYXQ==
+ b=mUyJXnSm8ptX7vvia86pBms4JWP1sp0crFkBy7KPFf9pbZpNHMXZWjKvMFhcQX2ri
+ 9zktthef4Qf/SuhpN1kEdTS4Uxu7NJrNlEuM3+KE/J9CopRsL7W4etYGiCJz1p+Y0u
+ pTFSFCCr28q8Kq8ypr+oTCldOJXpbQ1iRQkR8ws7oHvZSjRB9gjceCn4Q5ArOhW81u
+ XnU75w0fzuZi7k6DR111l6Y84bWqcwmHbRFBkTdWw3Ni6Ujk69EsrNn5si3FykemE1
+ gJNid9ouLnDNnuQ3ke9upBRePNpi8aUCNz3bk/Ufc8fAkv8PDiozq3L/Vnc74RBxWI
+ UKv2hz+zYvojw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
  by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 93972380CEC4; Wed, 12 Aug 2026 20:30:09 +0000 (UTC)
+ 198C3380CEE2; Thu, 13 Aug 2026 16:01:12 +0000 (UTC)
 MIME-Version: 1.0
-Message-Id: <178656660813.2090005.5153919600313897354.git-patchwork-notify@kernel.org>
-Date: Wed, 12 Aug 2026 20:30:08 +0000
-References: <20260809012639.568485-1-chao@kernel.org>
-In-Reply-To: <20260809012639.568485-1-chao@kernel.org>
+Message-Id: <178663687070.2934858.5259431434864990132.git-patchwork-notify@kernel.org>
+Date: Thu, 13 Aug 2026 16:01:10 +0000
+References: <20260812122043.282195-1-chao@kernel.org>
+In-Reply-To: <20260812122043.282195-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1wuFbG-0000qO-Ey
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: unify add/remove ino entry API
- for all ino types
+X-Headers-End: 1wuXsb-0005mJ-0N
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to propagate error from
+ f2fs_sync_fs()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,24 +99,21 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Sun,  9 Aug 2026 09:26:38 +0800 you wrote:
-> - Call f2fs_add_ino_entry() and f2fs_remove_ino_entry() for ORPHAN_INO
-> - introduce __f2fs_add_ino_entry() to wrap __add_ino_entry(), so that
-> both f2fs_add_ino_entry() and f2fs_set_dirty_device() will call
-> __f2fs_add_ino_entry().
+On Wed, 12 Aug 2026 12:20:43 +0000 you wrote:
+> So that caller can detect any failure from f2fs_sync_fs().
 > 
-> So, after this change:
-> 
-> [...]
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/namei.c | 51 ++++++++++++++++++++++++++++++++++---------------
+>  fs/f2fs/super.c |  4 +++-
+>  2 files changed, 39 insertions(+), 16 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev,v2,1/2] f2fs: unify add/remove ino entry API for all ino types
-    https://git.kernel.org/jaegeuk/f2fs/c/d3915a0a356e
-  - [f2fs-dev,v2,2/2] f2fs: reduce memory footprint of ino management
-    https://git.kernel.org/jaegeuk/f2fs/c/798bddf3d9a3
+  - [f2fs-dev] f2fs: fix to propagate error from f2fs_sync_fs()
+    https://git.kernel.org/jaegeuk/f2fs/c/c7d026012a46
 
 You are awesome, thank you!
 -- 
