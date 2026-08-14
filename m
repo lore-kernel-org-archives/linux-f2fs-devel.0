@@ -4,78 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 103C3C5B572
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 13 Aug 2026 16:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EE8B4C5CFC1
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Aug 2026 06:31:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:In-Reply-To:References:Date:Message-Id:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=gQZs/vOL+tgt55JmVN65m2r3q7+IvOl1gm+fFeK8P30=; b=ekJMc7TWh7GRFynPeAjQvG2HQR
-	tri87gSpBEL3Auw60rpTXylqc8gPRsR0eoY1loGeVTq3JYwKSl5Ems4CrsSCcpbqquDr+OVAUbNS4
-	m6z2+SO7aiAMZzR103ape2OgQx4kmNVad2/LpAjiW3/YgR0s1duh9CEX/CR8hTnXPgS8=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=G875BVy9Xks+atJEQFWyPLedL3PXgnJvZ3dxKdaJTMs=; b=daMPYC4nN6mGJHSFVNIKVjPP7F
+	9mE9wK0y/zu9uCqO+gCiOHD1OkQe5wNgtvMTD0ekqb1WfVpYdv3F3KGk3k33+JTIZLlF2dg19c4PH
+	cWku36udEy7QBOE21UdXbSss0+hGls8qIBm1PHQMV193cXLu9EatmbxkzRaCIix26CPs=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wuXsv-00085O-Pz;
-	Thu, 13 Aug 2026 16:02:26 +0000
+	id 1wulRV-00013F-Bj;
+	Fri, 14 Aug 2026 06:30:58 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1wuXss-00083i-Pk
- for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 13 Aug 2026 16:02:23 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+b45d4071d3315f6a5e0d+8391+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1wulRB-00012x-3a for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 14 Aug 2026 06:30:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+ MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=17AGzNjYzTu+Qu1HMf7HJ3Gvuph8avJQT4rc0fFN/1E=; b=gv1zUMMlnaTeUeZ2ibQsnYWWLn
- WMxBqFDVqjKobqQX1eEY2WBT2yi9Lxh039dwsCxRQk0bZdRWZpIsc5Y2Or/2wG+RUF7+LgmKbVjSV
- KfOi11PwUTIqIMR5EbNmd9deCOesa83REBQO/MzE9ayCkZf5A+PiwK00Tygv2mAgCuEc=;
+ bh=00WqtERUtnYBEUzQd0/SsEG+LWqmr6egKXeBQhrAo2I=; b=RbNMC58lmEt7/C5hS5/fDbHmgF
+ eMIwSvt2t7em1muxy0oyKo2qF9Fozpu+efKEEQ+RpqO8lTdCMjM3E8qfgYtH6re1/uTSInGNvH1KM
+ 26csrY6zKa2+Q5Q2ah14wsl+NAi4jC1EE/3khPdPXSZR/VvygOeltBRfWi6WMm3XydtE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=17AGzNjYzTu+Qu1HMf7HJ3Gvuph8avJQT4rc0fFN/1E=; b=lUaiVTYX3ouhcl9ZQ3rQ/iec2N
- AgsiQKlEDmjEKcGDIYlQZd65w+22DoHBLcfz30Cgg+FaLzGJ+5xtFiMtgbN+7R/RIO6Hb6TeW916+
- lOMwxGngHhpliszlWTDCxWRUZCgl1eB/ZsUMyGKO3+Se1Jwdex54ohiPhY4/KxhXScj8=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ ;
+ h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=00WqtERUtnYBEUzQd0/SsEG+LWqmr6egKXeBQhrAo2I=; b=cem3P4YzfymEpv8hcddqSeNVIg
+ acRO2dBfSE6aJP2dF+m7wFdsCewwdJgyeMpcn3HtQ9mlw772tgt+ytGNW6UkhstK587xLl8YhsKv+
+ s0vdIFzhuZ9BOLHZLPhpe0IFCnfmY/HLhmDNGswAv1xh23JArkOpG0kXuvRlYgWAWM8U=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wuXsa-0005mH-4a for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 13 Aug 2026 16:02:04 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id D8EA360A72;
- Thu, 13 Aug 2026 16:01:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FDE81F000E9;
- Thu, 13 Aug 2026 16:01:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1786636914;
- bh=17AGzNjYzTu+Qu1HMf7HJ3Gvuph8avJQT4rc0fFN/1E=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc;
- b=QaGR6xBYh7XOLaTEYK07JE0RIGZXjruyvltXDpeH3Qv9y6VGoUnm8xpSKd1kmIS5m
- 8aZQXCd2uESkPH0HMmxUf9uLrqrNVzy6A63CELe1KFE6Z830AGwt+Jgxc5mgzyjYnS
- RjOMt7GADy25xUTaCxLDhEPsGlK9EkWVyPQDxRaBU3Lk2kVl46INkvaalHcrQsGaKA
- vZPoqxvgCiLaPjA7fIsfLwxZdq2Wptoj93Pstw9oNrPeCl2kKBgtdUkpd/67rhdvIz
- dmzNrPZkrwVDzeWF1gQR5vXf74kB8N7SG6WQRonJ2dvBI+QO3CVizJyglfh56tJ6Oe
- 5Q+AxQdhE0TwQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
- by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id
- 93875380CEE2; Thu, 13 Aug 2026 16:01:10 +0000 (UTC)
+ id 1wulRA-0001O5-Hy for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 14 Aug 2026 06:30:38 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+ :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+ Sender:Reply-To:Content-ID:Content-Description;
+ bh=00WqtERUtnYBEUzQd0/SsEG+LWqmr6egKXeBQhrAo2I=; b=WsNtQ8TniakQxZNdnuggvJh74C
+ OE+4sgkHXEZuda9o7TCIN8ZpLZKayt5lMhfPBdi9qDc9BllPvmwc41LE3Qr0O6NB/jVAV2LwQuFig
+ FlIYI5FxGw1AG6pjRP5HOMuYO5WfUr8kHRcZ5XmnhP5l608QVpHTXsW/QRiOF9QYwFUb+EdK34tUE
+ XdU8zGpWXJQx8aCNuUFimFxp5McV/biDcAuI44NAc+pepbC7nfgSfQjLeLxMmXbAsHtq7BhOwpN9J
+ r7MJ/rT1jha6cCGI6WlKmC2yAcqtpZJ5m7y8EPyTIiQMCzeTMqJ9JXrKo+i+hgy46uCKXsdA/qzEI
+ gu1YioiQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.99.1 #2 (Red
+ Hat Linux)) id 1wulR0-000000022L3-2Xh4;
+ Fri, 14 Aug 2026 06:30:31 +0000
+Date: Thu, 13 Aug 2026 23:30:30 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Daeho Jeong <daeho43@gmail.com>
+Message-ID: <an62BorNrc-IX228@infradead.org>
+References: <20260806170108.2100312-1-daeho43@gmail.com>
+ <ann0OPPglToV_hjs@infradead.org>
+ <ff74edb1-43c7-485f-ab78-ec13b500a0bb@acm.org>
+ <CACOAw_zqOS0vHdQV6WoUJyxnDf=kdDAz27pNGDLdQLUdUYOzBQ@mail.gmail.com>
 MIME-Version: 1.0
-Message-Id: <178663686914.2934858.14952972896342801609.git-patchwork-notify@kernel.org>
-Date: Thu, 13 Aug 2026 16:01:09 +0000
-References: <20260812121756.278690-1-chao@kernel.org>
-In-Reply-To: <20260812121756.278690-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1wuXsa-0005mH-4a
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix to reclaim space in
- f2fs_allocate_pinning_section()
+Content-Disposition: inline
+In-Reply-To: <CACOAw_zqOS0vHdQV6WoUJyxnDf=kdDAz27pNGDLdQLUdUYOzBQ@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1wulRA-0001O5-Hy
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: quiesce background threads during
+ system suspend using PM notifier
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,59 +90,37 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: patchwork-bot+f2fs--- via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: patchwork-bot+f2fs@kernel.org
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- stable@kernel.org, linux-kernel@vger.kernel.org, daehojeong@google.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: linux-block@vger.kernel.org, Daeho Jeong <daehojeong@google.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+ Len Brown <lenb@kernel.org>, kernel-team@android.com,
+ Pavel Machek <pavel@kernel.org>, Bart Van Assche <bvanassche@acm.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
-
-This series was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Wed, 12 Aug 2026 12:17:54 +0000 you wrote:
-> It needs to trigger checkpoint to free space reclaimed by f2fs_gc_range(),
-> otherwise, fallocate() on pinfile will fail easily even there is slash
-> space in conventional zone.
-> 
-> [Testcase]
-> nullblk_create.sh 512 2 1024 1024
-> mkfs.f2fs /dev/nullb0 -f -m
-> mount /dev/nullb0 /mnt/f2fs/
-> touch /mnt/f2fs/pinfile
-> f2fs_io pinfile set /mnt/f2fs/pinfile
-> mkdir /mnt/f2fs/dir/
-> for((i=0;i<3934;i++)) do { dd if=/dev/zero of=/mnt/f2fs/dir/$i bs=1M count=1;} done
-> sync
-> for((i=0;i<3934;i+=2)) do { rm /mnt/f2fs/dir/$i;} done
-> for((i=0;i<1950;i++)) do { rm /mnt/f2fs/dir/$i;} done
-> sync
-> f2fs_io fallocate 0 0 $((1024*1024*1024)) /mnt/f2fs/pinfile
-> sync
-> stat /mnt/f2fs/pinfile
-> f2fs_io fiemap 0 $((1024*1024*1024)) /mnt/f2fs/pinfile
-> 
-> [...]
-
-Here is the summary with links:
-  - [f2fs-dev,1/2] f2fs: fix to reclaim space in f2fs_allocate_pinning_section()
-    https://git.kernel.org/jaegeuk/f2fs/c/5502c956d6f3
-  - [f2fs-dev,2/2] f2fs: fix to shrink gc_lock coverage in f2fs_gc_range()
-    https://git.kernel.org/jaegeuk/f2fs/c/a53894831f5d
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gTW9uLCBBdWcgMTAsIDIwMjYgYXQgMDk6NTM6MTRBTSAtMDcwMCwgRGFlaG8gSmVvbmcgd3Jv
+dGU6Cj4gT24gTW9uLCBBdWcgMTAsIDIwMjYgYXQgOTozNOKAr0FNIEJhcnQgVmFuIEFzc2NoZSA8
+YnZhbmFzc2NoZUBhY20ub3JnPiB3cm90ZToKPiA+IFRoaXMgaW5mb3JtYXRpb24gd2FzIHNoYXJl
+ZCBlYXJsaWVyIHdpdGggRGFlaG8KPiA+IChodHRwczovL2IuY29ycC5nb29nbGUuY29tL2lzc3Vl
+cy81MTU0NzAzMDkjY29tbWVudDQ1KTogWyAuLi4gXQoKVGhpcyBkb2VzIG5vdCBzZWVtIHRvIGJl
+IGluZm9ybWF0aW9uIGF2YWlsYWJsZSB0byB0aGUgcHVibGljLgoKPiBmMmZzIHRocmVhZHMgYXJl
+IGFscmVhZHkgZnJlZXphYmxlOiBmMmZzX2djIGFuZCBmMmZzX2Rpc2NhcmQgYXJlCj4gYWxyZWFk
+eSByZWdpc3RlcmVkIHdpdGggc2V0X2ZyZWV6YWJsZSgpIGFuZCBjYWxsIHRyeV90b19mcmVlemUo
+KS4KPiBIb3dldmVyLCBhIHJhY2Ugd2luZG93IGV4aXN0czogYSB0aHJlYWQgY2hlY2tzIGZyZWV6
+aW5nKCkgKGZhbHNlKSwKPiBjYWxscyBzdWJtaXRfYmlvKCksIGFuZCBnZXRzIHRyYXBwZWQgaW5z
+aWRlIF9fYmlvX3F1ZXVlX2VudGVyKCkuCj4gQmVjYXVzZSBpdCBnZXRzIGJsb2NrZWQgYmVmb3Jl
+IHJlYWNoaW5nIHRyeV90b19mcmVlemUoKSwgaXQgdHJpZ2dlcnMgYQo+IFBNIGZyZWV6ZXIgdGlt
+ZW91dC4KClRoaXMgZG9lcyBzb3VuZCB2ZXJ5IG11Y2ggbGlrZSBhIGJsb2NrIGxheWVyIGZyZWV6
+aW5nIGlzc3VlLgoKPiBQb2ludCB0YWtlbi4gQXNpZGUgZnJvbSB0aGlzIGYyZnMgcGF0Y2gsIEkg
+YWdyZWUgdGhhdCBhZGRyZXNzaW5nIHRoaXMKPiBhdCB0aGUgYmxvY2sgbGF5ZXIgb3IgUE0gc3Vi
+c3lzdGVtIGxldmVsIHdvdWxkIGJlIGEgbXVjaCBjbGVhbmVyLAo+IHN5c3RlbS13aWRlIHNvbHV0
+aW9uLgo+IEnigJlsbCBnaXZlIG1vcmUgdGhvdWdodCB0byBob3cgd2UgY2FuIHByb3Blcmx5IHNv
+bHZlIHRoaXMgcmFjZQo+IGNvbmRpdGlvbiBmb3IgdGhlIGVudGlyZSBzeXN0ZW0sIGFuZCBJJ2xs
+IGxvb3AgaW4gdGhlIHJlbGV2YW50Cj4gUE0vYmxvY2sgbWFpbnRhaW5lcnMgaWYgYSB2aWFibGUg
+Z2VuZXJpYyBhcHByb2FjaCBlbWVyZ2VzLgoKVGhhbmtzLCBpdCB3b3VsZCBiZSBncmVhdCB0byBm
+aXggdGhpcyBwcm9wZXJseS4KCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZl
+bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlz
+dHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
