@@ -4,107 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7BE43C5CFCF
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Aug 2026 16:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0A2CCC5CFCF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Aug 2026 16:49:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=JfbgtnkWHgdAvHe/BRkANs7J04HaqCGDjTv/dHRdZuY=; b=KbpWbUhsxHthTV4imsGZPHVP5v
-	1GnDNjY2P+XXeQKojPDWiMcx1Mctg6xI6pdXMSULqMg1lPdxmv7Bn40yMv+P46mO/EU9W7HX9g9+E
-	lcDIky0tecdkrobQzSUjrvVHZns1OjOHMiHcEhh84BNFhXebYnGX9q/h+KsIbfzo8hU0=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=faUJV/S7qJmrjLRwPDdjiou+3dbr1c7xRrPM0gvryLk=; b=MegFaSEe5x5JXhvBhOqtT71knh
+	+Wimlf70tFoyiTtV8fTx1MSPWmwnrYMhKzqCyfHh0x5JzlOVGY9FyZ+G5/E41KkJYf1oVM7pQlmDn
+	MXGphoBcYrGrrmXK9kCmYULQwN4N8ii/wvJNepShZEuoXTorXlyKXE8hgtZzxENhSYik=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wuv6O-0002bz-5S;
-	Fri, 14 Aug 2026 16:49:49 +0000
+	id 1wuv6Q-00067n-UC;
+	Fri, 14 Aug 2026 16:49:55 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <yangyongpeng.storage@gmail.com>) id 1wuv6N-0002bt-Ck
+ (envelope-from <yangyongpeng.storage@gmail.com>) id 1wuv6P-00067Y-FU
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Aug 2026 16:49:48 +0000
+ Fri, 14 Aug 2026 16:49:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WBOhL6yD2Fr5WJGSmgtiEzRaohcDni1jbLWWy09rRXc=; b=lka0ukTsL7N0ZGOkKXWJrT9PER
- aYe9N+sbCbqRL3iwi/FFplwsYcIQpZnL6NVn6zYU59eWjHugL4DpgoZPwSCp39CBQKNr8cy+b/TKV
- np4gxzGoCsEYl9txWNurD94vBz1BapSKn7mqycxRaXYrHbf7MecixWU5iyP2OpbQc1P8=;
+ bh=6M2k7V6ZJevzzzPofdHWAFd16WWvytUeVI/DEegh0rw=; b=c/m96kyqc91SfpOtSYf/+D56ZU
+ ayW4b4ecB38oX+PYVm8prVXT7xaMfGF8oK+l6dCcQcgiilGE/kdcK5hiWLXgwSXd8TRO/D78u3t8y
+ N6QytwXFL1ssfoPFF5a17qmhNHGDQChq4ZTrkXsSnwuVY4CFKR1gLvj7yMO1BhfDuSq0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=WBOhL6yD2Fr5WJGSmgtiEzRaohcDni1jbLWWy09rRXc=; b=n
- Qhq3wRpDhRL0vTMSYrqi46W9LuwuIuB8oWZsQIpj1ziQBsTgW1H9UcTj/C7ituz2Q+O2Q5TKEymIL
- FhAaDOldUn0eIzyGUraBgcTqzXBI9/n4AkgNxys+59db+2Xb8XxkiNc5cRePzO20swGKs/0qwQL3s
- 3Poci4BkViVZck38=;
-Received: from mail-wr1-f53.google.com ([209.85.221.53])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=6M2k7V6ZJevzzzPofdHWAFd16WWvytUeVI/DEegh0rw=; b=hSrd8SGj3OhCBwQRfgqNrHaKOa
+ 8VO3lVr4/vo/jTPywng64ObOoKIEG1C7zH3WhmBsCtXQxr0G91k0qfRTRNjSJWMfDjMLkG/sSAm9J
+ NypFau5h8JWsTA17eg4EzuDOSVpWC9jgtZyOMKgUvlWS9aqz2JprFDzx4FKIUxBdVsVA=;
+Received: from mail-wm1-f42.google.com ([209.85.128.42])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wuv6M-0008JJ-Rn for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Aug 2026 16:49:48 +0000
-Received: by mail-wr1-f53.google.com with SMTP id
- ffacd0b85a97d-481412f1828so460252f8f.1
+ id 1wuv6P-0007D2-PP for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 14 Aug 2026 16:49:54 +0000
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-495437bb891so9438145e9.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 14 Aug 2026 09:49:47 -0700 (PDT)
+ Fri, 14 Aug 2026 09:49:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1786726181; x=1787330981; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=WBOhL6yD2Fr5WJGSmgtiEzRaohcDni1jbLWWy09rRXc=;
- b=YPnWBWoy42hVE8LXG8DBDGzhH0iT3bopWDDqtEpZlSVDFTt5lNPSEoodCxkyhLnso/
- V8Ux3k3Jy4gb+tl7qeseORJuOEAanERPnAP6gmzl8+d/x9PZ4aiDD5LagQeEGuLLTkih
- t8NUxLFlLZlSAZjJQsfdFxYEhmezM6ZFoJfk7kT0DyCAQHchPOYcbLm+Fy9dbahnyI1V
- qKu6xJLe7g5mP20R8tLIoEwA9Wml+taMkuH7A2AKeTMb4V2ds4THcZyqisNRLtnieqvo
- y/ICzpKlIsq5BC6J+XlWjTZNt8Y1O7469kMe9xKw8rssRM27hHShcByxNKUM4+byKN9w
- nKHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786726181; x=1787330981;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1786726187; x=1787330987; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=WBOhL6yD2Fr5WJGSmgtiEzRaohcDni1jbLWWy09rRXc=;
- b=NAT+ry8SAGp9B3+EIXf25i296OakVCl0TMWlJU9Kk/fFGEdCeOGLVFVZUAeoz8ZHgP
- V2jrZHDItU9Y4FROFIOiPzKgGHSDJUKfvFm0HrceePUlYezkkzy/BGw7JRAAC0t2wj4q
- 0CCFMrxzZcNC1SqyLQLcpUjEUY6tvR1d3D7rEBLreIjBeDIzj7LFTgnj+p8q9+kMERaF
- v06PCPbfBj0kNG+jY8IS9FiHqq/ncfdl53BYZ73JYtDDaGH+jLsi7dfO0INwGNSeXuEt
- dilbzd76pZecXc5qhZWUUGe/ihXM5UwTv4YCQ0QrVppBNt2bTg2wFPTlaOV0vqmWsM6w
- DUXA==
-X-Gm-Message-State: AOJu0Yw5U/KuBMwZTR/SvCQkJ2g7le3HBN7WPH/rPw0QqUU3gN9Qcxg8
- ZQYZz3ye/3IZ3vLIzUaGgj/RGVGrYKLPGLvjtPfe70VP9Yb8KkfGKkqW
-X-Gm-Gg: AR+sD12qedNC3j578HiSKWCwJBBZl/hMSUxVbblqCQo1hA9JvAaKz9dxUwNuGAc8Vvz
- /090zgxuMuVyGztgY6y3/FmKn0HyZUDwDXLcf5R5A59XlXBF+v3txNFOgpQtMCRKbutsig4rcQY
- kfMobmqp7A76TAGEq9vvYylxBOKxUTzn545r9Hu8D4MmMA6D3DWyfnJTYVf/ndD2dn3rsiD/ZGq
- LJsZrObYHJPxESY9spsyKucYCJCKIBEN/+lcvGXuf38Jg3W+FbC31HUCkQOzoxQ9z9XcFr+vnPy
- CcPWgsBwZTxaj8gedSiye++5kPjjR0QkFao5fX9awqloc05cTi4lY+xBCkh/qQa4ElIYAsNxfwt
- BiSZSX/VM6mMwAFevnt/UNH1zkq70riduic/d4saCKQaE/AYRr8dnNswGlok6csIXnZpYHpxXUB
- FC1yROk1W2UPIgs3/LttuhYunY00wq0P1TKFsMwPDi3QgIPEpo9pRxmk6vObhYVGYdjZVcuprOI
- aVVWzm8lOwm0kHyBw7r3AOgtayY9L1qncWAIXoL+5/eng==
-X-Received: by 2002:adf:f708:0:b0:47f:aead:f81b with SMTP id
- ffacd0b85a97d-48160756569mr8593520f8f.21.1786726180520; 
- Fri, 14 Aug 2026 09:49:40 -0700 (PDT)
+ bh=6M2k7V6ZJevzzzPofdHWAFd16WWvytUeVI/DEegh0rw=;
+ b=JUr/e/GG8+0R+EJ2DMHxMunoyLoj7gmA524QGE4+Tggo4ysejf66oWxzY1nLJcaAr1
+ ZPlzF++yH8d6mx9/kX57MP7ivZ0GzucBFbBR00svaDm3oiXDp++pcATo/vy9O1EJw4Hg
+ zfbdMSQsmsGdLfAw52Gpq8kozZssselAY2FVbPAs1IgMkAAG9UTD41z+7wYoYC+Bqfdj
+ mluGiAi3+HPZ7Wjy6vbB/YWap/rgrASx53UozUjoE2EMDfr6hcXd4neSqvptAZ0JGhw8
+ nUZfu5emeXQEgOMoKt67iczmCah/NEyrprJAJ80XPNtx1013Wddbiw1MdC4s9uMEpDob
+ W5rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1786726187; x=1787330987;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=6M2k7V6ZJevzzzPofdHWAFd16WWvytUeVI/DEegh0rw=;
+ b=PUQASLorJyO32vxbaI0PspanKM2iCff5NKH3VDIJXSajD9KqMAGTEddOymNSm++d93
+ mjLcy8Ls/NcAdlj5XRVlxlEarAo2b4liy0KCPSa9HdfU5KTit7SviTO5Y+7bVtxufKLP
+ f96ri27FHspnUa+8RB3NFmIpu9TLwQpnTeM/Cs/BUPAMTUf/bohw0dddLDPeVTw5O4SU
+ eht6gGPwtB5Gm+Iat0x8VAmFfpzKZAFo2T7beSy8nuSQenw7i48UtrnPsMJPiY/WqDPE
+ WyUgkfmprMiXt5IjYOscCzw/hfe4CNLpv1sjLJgWZPK7FffK87eqqDhelgTTjdgkjkOh
+ ifFw==
+X-Gm-Message-State: AOJu0YyHOwrI2QuFuV7NGTqpyIjnE0yLnFvS1Vzgr7GyLwQERo4VFWTU
+ 3jLx9iL67NT2mMwqXy0rIOjSQICgStyJk8wrxWf9JryN3QqXGSeD8wFz
+X-Gm-Gg: AR+sD11d3yaJxlp/2f0uJE0OA/y7Tm2kkmLanxJuSuq/B5600r17J/OQwGnYU8pBwIG
+ tDBBcGU0oOfvL//tk9Owc/bI2lfUzjbnVAMiGHLq0SNxux3Hvj4CspiR0/WmUphhDGZTlhSj3a+
+ ipNvkykrO0irz7e42A6t4V6BmcMlx8KeySG0ZfRYzA6FxxEBSGTboPseNdoiue+5rEpvm2CiwBS
+ qQwCLYMABqLnN6MD4L44heNg3f2ZtIri5Z5aA5F5kJFJdghgJPEN0vtDlNLG1VS3ybi4NDAtDIB
+ ao3lhd95miq9iG/zUhJbnW8B5fVWobpTgcauqQ3qFW04XI+doiCM3JK+BcG09l16X9SRzNpk/cC
+ HVZElBGB297GL4Y1vxP+d9ri1CbJZhva8KO1bKlDkXpA59IybyEF9YppBT9nNo1SZWquVfOAN7o
+ wIZC9xkDZY9f3jWbi3DDVSeKmc3D9hbe7jlzvSG3G2ThkvyZpTMC8ALh/3oBM3qDmDWYuOW31jA
+ cedg/6gH74f/PKEilbBohOyT4GiOUcm6AY=
+X-Received: by 2002:a05:600c:a205:b0:493:e543:1dd9 with SMTP id
+ 5b1f17b1804b1-499821b25f7mr151940775e9.9.1786726187165; 
+ Fri, 14 Aug 2026 09:49:47 -0700 (PDT)
 Received: from xiaomi-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4815f2b1a91sm9021223f8f.21.2026.08.14.09.49.37
+ ffacd0b85a97d-4815f2b1a91sm9021223f8f.21.2026.08.14.09.49.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 14 Aug 2026 09:49:39 -0700 (PDT)
+ Fri, 14 Aug 2026 09:49:46 -0700 (PDT)
 From: Yongpeng Yang <yangyongpeng.storage@gmail.com>
 To: Chao Yu <chao@kernel.org>,
 	Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Sat, 15 Aug 2026 00:49:25 +0800
-Message-ID: <20260814164929.693412-1-yangyongpeng.storage@gmail.com>
+Date: Sat, 15 Aug 2026 00:49:26 +0800
+Message-ID: <20260814164929.693412-2-yangyongpeng.storage@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260814164929.693412-1-yangyongpeng.storage@gmail.com>
+References: <20260814164929.693412-1-yangyongpeng.storage@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1wuv6M-0008JJ-Rn
-Subject: [f2fs-dev] [PATCH v2 0/3] f2fs: fix read extent cache merge and add
- debug interface
+X-Headers-End: 1wuv6P-0007D2-PP
+Subject: [f2fs-dev] [PATCH 1/3] f2fs: fix extent merge failure when largest
+ extent is not in rb-tree
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -124,60 +127,80 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 
-This series fixes a read extent cache merge bug and adds a sysfs-based
-debug interface for inspecting the in-memory extent tree, which is
-otherwise invisible to userspace (fsck can only see the on-disk i_ext,
-never the in-memory rbtree).
+The following scenario can cause fiemap to report incorrect extents:
 
-Changes since v1 (RESEND [1]):
+$ mkfs.f2fs /dev/vdb -f
+$ mount -o mode=lfs /dev/vdb /mnt/f2fs/
+$ dd if=/dev/urandom of=data bs=4K count=874 conv=notrunc
+$ f2fs_io fiemap 0 1000000 data 1
+$ shrink all extent
+$ dd if=/dev/urandom of=data bs=4K count=150 seek=874 conv=notrunc
+$ f2fs_io fiemap 0 1000000 data 1
+Fiemap: offset = 0 len = 1000000
+        logical addr.    physical addr.   length           flags
+0       0000000000000000 00000002868d4000 000000000036a000 00001000
+1       0000000000000000 0000000286c3e000 0000000000096000 00001001
 
-- Patch 1 (was 1/5) reuse the result of __is_back_mergeable().
+The root cause is that when the largest extent is not in the extent
+tree, mergeable extents are not merged, causing f2fs_map_blocks to
+misjudge and output an incorrect extent list.
 
-- Dropped [PATCH RESEND 2/5] "only initialize largest extent without
-  extent_node at inode init": no benefit was observed in practice.
+Fix this by allowing the extent being inserted to merge with the largest
+extent. When updating the extent tree range, if the new extent can be
+front-merged or back-merged with the largest extent and the largest
+extent is not in the rb-tree, merge them before the normal lookup.
 
-- Patch 2 (was 3/5) unchanged.
+The merge logic only applies to the read extent cache, whose largest
+extent may be cached without a corresponding rb-tree node. Reuse the
+front/back mergeable check results instead of recomputing them.
 
-- Dropped [PATCH RESEND 4/5] "add extent_access_mode to track extent
-  cache access patterns": on phones the read extent node memory budget
-  is small, and no hit-ratio improvement was observed in performance
-  tests.
+Fixes: 429511cdf8b3 ("f2fs: add core functions for rb-tree extent cache")
+Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
+---
+v2:
+- Reuse the result of __is_back_mergeable().
+---
+ fs/f2fs/extent_cache.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-- Patch 3 (was 5/5) -- replace the ioctl with a write-only per-sb sysfs
-  entry `extent_cache_debug`. Writing a file descriptor to it resolves
-  the inode in the writer's context, dumps the largest extent and every
-  rbtree node (fofs/blk/len) to the kernel log via f2fs_info(); inspect
-  with "dmesg | grep ino=<ino>". A matching f2fs_io `extent_cache`
-  subcommand is added in f2fs-tools.
-
-[1] https://lore.kernel.org/all/20260612115839.2065903-1-yangyongpeng.storage@gmail.com/
-
-Patch 1: fix extent merge failure when largest extent is not in rb-tree.
-  When the largest extent exists only as a hint with no rbtree node
-  (e.g. after shrink eviction), a newly inserted extent that is
-  mergeable with it is not merged, leaving a gap that fiemap reports as
-  separate extents.  Merge the new extent with the largest before the
-  normal lookup.
-
-Patch 2: punch largest extent instead of dropping it entirely on
-  overlap.  Keep the larger remaining left/right portion after a
-  partial overlap instead of discarding the whole largest extent,
-  preserving cache coverage for truncate/overwrite.
-
-Patch 3: dump read extent cache via sysfs for debugging.
-
-Yongpeng Yang (3):
-  f2fs: fix extent merge failure when largest extent is not in rb-tree
-  f2fs: punch largest extent instead of dropping it entirely on overlap
-  f2fs: dump read extent cache via sysfs for debugging
-
- fs/f2fs/extent_cache.c | 100 ++++++++++++++++++++++++++++++++++++++---
- fs/f2fs/f2fs.h         |   1 +
- fs/f2fs/sysfs.c        |  18 +++++++
- 3 files changed, 112 insertions(+), 7 deletions(-)
-
---
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 37cf9fa8d537..72e6587f76ab 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -711,6 +711,30 @@ static void __update_extent_tree_range(struct inode *inode,
+ 		__drop_largest_extent(et, fofs, len);
+ 	}
+ 
++	if (type == EX_READ && et->largest.len != 0) {
++		bool front_merge = __is_front_mergeable(tei, &et->largest, type);
++		bool back_merge = __is_back_mergeable(tei, &et->largest, type);
++
++		if (front_merge || back_merge) {
++			/* 0. try to merge with largest extent. */
++			en = __lookup_extent_node_ret(&et->root,
++					et->cached_en, et->largest.fofs,
++					&prev_en, &next_en,
++					&insert_p, &insert_parent,
++					&leftmost);
++			if (!en) {
++				if (back_merge) {
++					tei->fofs = et->largest.fofs;
++					tei->blk = et->largest.blk;
++					fofs = tei->fofs;
++				}
++				tei->len += et->largest.len;
++				len = tei->len;
++				end = fofs + len;
++			}
++		}
++	}
++
+ 	/* 1. lookup first extent node in range [fofs, fofs + len - 1] */
+ 	en = __lookup_extent_node_ret(&et->root,
+ 					et->cached_en, fofs,
+-- 
 2.43.0
+
 
 
 _______________________________________________
