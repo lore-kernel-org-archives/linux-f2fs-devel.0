@@ -4,110 +4,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3C876C5CFCF
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Aug 2026 16:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BD813C5CFCF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Aug 2026 16:50:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=iRo24zcjyznim0nNYLQqyWbZn66dueYs85+TwimkoSk=; b=g5Rhm8F7nzW3wW+ocYw3GL/jtr
-	T1ej6i3+FpUrjHlzlpNMYImDh7JQ3FF5F1ytePcrSmc6s0luq43JvhtfnDh61fqL/OfTpdpl1msvD
-	/yGtevtAdblhGkwbEtigf1AGrQH99W89nrUpvP3XKc/L0uMq7rkV7WlH4JstxcjQTwuA=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=EoT0WUwNBcdQeUc2kMcPNDgM/26Ee1Qc2tx90Bn9TLw=; b=gfdqAExCsmwa00ln5QiUzBDaCS
+	rkp2PgOPsNnx6Hrao79QDFfKSRaBwwETnwpoMmn9RQZbVTEzxp/2siwFdhx9TCvOTny9cd2lp4gmK
+	bJ9vgMQPkxWjwz44sUIaqA8wFUt4Cv/LF+yK2VG3leyoOs+e4u5FSDyD6wCYReSt6aBU=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wuv6g-0002do-Gp;
-	Fri, 14 Aug 2026 16:50:08 +0000
+	id 1wuv79-0006CX-JQ;
+	Fri, 14 Aug 2026 16:50:40 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <yangyongpeng.storage@gmail.com>) id 1wuv6f-0002dh-0E
+ (envelope-from <yangyongpeng.storage@gmail.com>) id 1wuv6w-0006By-ND
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Aug 2026 16:50:06 +0000
+ Fri, 14 Aug 2026 16:50:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cNL7v7GZnT9mWfD7XEFWr83ILnsjWusW1EcmZcHwsvs=; b=Wi3oZL8oTlzsk/pE/LHq9DehMD
- YedIBOrUcm2d/IXrHXlc4KZlrsnqkHIQU0rKv+JjPkPPsHhX15G53yCpD1JjjCHqX0LpvP0g2YazE
- u54JGKVzdBy11S6pvVuzR9g/26aKJ68yI90tQkdVdLKhBLXw7/lqKHPFP/pPF0NLZ1o8=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=cNL7v7GZnT9mWfD7XEFWr83ILnsjWusW1EcmZcHwsvs=; b=Iy8mwJm2CZ8OP9UR7dQk3y55on
- +FppdVcYrhiugbtKPNxLoTCajjw8QCFfiJkxxvHekyYIj4zQA88svnNWfC7DIMDEqYGE+xHoeZjrh
- gBMFrv0AIRd3pTKp0MLHLECKytFXz7jiULUThdzxydauGfJLVQXwNtDz34q4T3Ao9X9k=;
-Received: from mail-wm1-f42.google.com ([209.85.128.42])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=FKQYe757dVza+zfn+crk8LzBCJ2wEr3hC+1rkx+8QP0=; b=BJAq998c2mr7Vo9EW1bJRE5sB+
+ ig2XCq/oZkfFSy+z26eyV31LywSKxg47x5K5/xBaqefExEJBhhSNA69jnuh3DG6lcsmtFQ89bQKCo
+ +mtSBusAzNX+8lQdPGg6jPf5JXM6WoV6Hj9l9hQduPNB/SWFy6rHVEDUdzuFerVhHuYo=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=FKQYe757dVza+zfn+crk8LzBCJ2wEr3hC+1rkx+8QP0=; b=D
+ 7+TqQBiGYrkCKM8RfsEttZ5kpHlNbhiDafGpzO+tm2x+MiNq9enCEz6iwoCpTO4M/GWrYLjZiiqTM
+ A+NSzrleMToTSqRa99EKwXdwcyT1lVIxfug0Vxh4hB9vgRsELqefgMlt3FgIbS0i6SeQGcvQ7+UD+
+ w2z84UvhPXr8OtfI=;
+Received: from mail-wr1-f45.google.com ([209.85.221.45])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wuv6Z-0007DR-Tr for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Aug 2026 16:50:06 +0000
-Received: by mail-wm1-f42.google.com with SMTP id
- 5b1f17b1804b1-4953de5be0aso9090565e9.0
+ id 1wuv6w-0007EY-Vb for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 14 Aug 2026 16:50:27 +0000
+Received: by mail-wr1-f45.google.com with SMTP id
+ ffacd0b85a97d-47f7872abb6so709578f8f.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 14 Aug 2026 09:50:03 -0700 (PDT)
+ Fri, 14 Aug 2026 09:50:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1786726197; x=1787330997; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=cNL7v7GZnT9mWfD7XEFWr83ILnsjWusW1EcmZcHwsvs=;
- b=p/nB2PmFRWdjXHGhAG0wjQD+Rms4eYJFK2vqO/lBP20Xa5/59+K8f+sBOqygG2NLJv
- d1DV0WqiEG2nKdbD5jrnQDoaDITHv5LYfhC1T+fSvo3MhI2k/9WnmnUwq2UEp3wxZDWI
- dmgcCg2AXx6svbpqdVXJZQcNcrMAEFu+dQqAhFULBtIzizEbSnGJ0QAVSBUGjQBQxJ9U
- 2pd4QW1DXXCPjQKVYRs/XS3UlmlAZXqsGUOvJVf9gnsKDE3hnxpBE9Kz1kYtxzYn4/1g
- xklvAnmQ13ZNXkrVBDg8QjWbeyul/Nyb55ppjjU7P/zX7P6Wc+nQdUbZG2XsmsGACEcb
- iEnQ==
+ d=gmail.com; s=20251104; t=1786726220; x=1787331020; darn=lists.sourceforge.net;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=FKQYe757dVza+zfn+crk8LzBCJ2wEr3hC+1rkx+8QP0=;
+ b=NPmf7hBNx0mTkJx+2x/THIcaznd72Tucsp6evvIwGjHEDWutL7gkW6ynB8JMb//fCs
+ lYzgWUrBWalBAro4352Q3TqUIPuMz/RSxR0aWmpQXdwmY0GwLu/P7FyLzV103w1jD3HW
+ ZGN84zHXpXOq2ddu3uE3O9L512hfK5FC6RP+qxe30yFpIUth1CQHwe5ISRSmvUUOUFWH
+ 2NTO0RRdeXCMKPdAf2Ku75wL4qo5MqF3pvntekdijY0Jx9phxxBQnKG/wyADQlNTmoAv
+ jVFdmSWq+89VH2MyX1W5YEOsTHUaSPDcDQbxBRpArdnSn9q1jOiX3Z0YYDCMOZ5vfC/7
+ N6yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786726197; x=1787330997;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=cNL7v7GZnT9mWfD7XEFWr83ILnsjWusW1EcmZcHwsvs=;
- b=nxWxWcu9ffndDJjugUaJlDZlciVXuQ8HHku1ISmE8+GZvZNw/Pj2VuqpjEDl87GPql
- PoU+/aOEGk+QpH2vbkcausbR16MiwYyiDcZSZLI/aI6ORdV1gH7IpG0GsyFAZGCjtyAX
- 9tRlZKa0wchaw3cQijxotTFaW4ATKxjq3JMj/DZ5QLaCp7Od7z336yX+ZRhrfrs9Yl5u
- J4l2hWLpS6lK60jiai1MZfjsSn/lIu4lsMFegHJ9GDHqBCY6wb5Cdm2U4uWSQioFDHHn
- Jo/4qIjRAl0ONMeBYSHfByb932+8MJAg0yCgw0oU+XgJV2sdkwaCq7AeBGUzFPUQjgey
- GOpg==
-X-Gm-Message-State: AOJu0YzACmc4W1D4L9Y83HiOwkKNLyMDAMewBUrsj6tpYoZrpPnSYdKB
- /LxNwwnwOFtckPJ7xt3wlOssOOaY73ch3H0Vv5GjShNFD/EHNXVoxlHa
-X-Gm-Gg: AR+sD11O8iIAoOvhdetAoTbIXV4r+okPmRAP2DrH/jrllRUNZ+ot7yy0WxI4kLXcc1Z
- IGj5AKZ5G7exdmBtDAbT+Ea0AYEhO91lXeVWa9ifF63y84D7Qec3broBSZtrtVfMIme5N4b5Nd+
- 8r8ZgOAHfS+sfsoigUrsULAFrjlR16hjU9LVPnwQyEDqdxAubcnZf7Ivvvj1HKUV9U2uE3+vTUl
- G8nfk8WJrwjm0fPL3f5p9oUJ2uY/4lbjbbpNP6vclM2tSL4GEmyCGahlh9uGYkYdozvqLUbUOUM
- IcsMVB+ySa20q5HDkqklk9rAvqfKhn0Q1m8HZ6tHCqJh3sYFf7cAuTmpW6LgCMikAVIzhCC09mv
- BFOfYw1PCfdvFgNymT57Quy3Kx2yVCEz+zwgp+0B+fCGsnibzogGFvLWRhmZgtysfKO+4xhVCKZ
- Rn3RXMxWBk6omTIUBU+FMaB57vil/BpO7vWP0K5IsXv3FiFwtCmIlYScE2kfkhGm4TpdjMfy7j+
- 5pYdxrHTiIALy5eucjaKplQvhW6rjoNjFw=
-X-Received: by 2002:a05:600c:4fcb:b0:499:5a50:b022 with SMTP id
- 5b1f17b1804b1-49987928d0cmr115168195e9.3.1786726197293; 
- Fri, 14 Aug 2026 09:49:57 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1786726220; x=1787331020;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=FKQYe757dVza+zfn+crk8LzBCJ2wEr3hC+1rkx+8QP0=;
+ b=bLYBDrC7WjrQIbM2pxRoqkS/1nqGZtCVu8yXk8IOkeVc0E5vi11FhgTojI5EXrmR7p
+ P2ormVC6ofufqX3VD7j29c1draCpJzNm002IfvsRTRSJCyfEGv2VgnLBz9PpzNAOWzQp
+ fohnp4xft8EuJJ5pvGHybWrwwSBLEg03XyLirVu87MzXYoWZjOfCwjBO1yYmaTuaIHqz
+ HFOO+qqr+6nFhijBcHedTSEcn4BgYJ29xc61flmTKtCi4Y6Glcf2IAhi9JDG/8ocCMd/
+ +aDieILAP48+ZRiPYHmHZBOFdmcjb21qCrJVP0B9/PqhdlVfMY6aRU4xr5VwTfiQef9m
+ Zo9A==
+X-Gm-Message-State: AOJu0YxEj/uUhV1cCzC5kIdfxqmEbD1jIkAuC+5qwO2fIWNlIZf5LeJf
+ A/M/uSzEMyhC/keFTeO5l7JLaCGfjA+H+dptov6bINwhK4/GJmkvRqm/
+X-Gm-Gg: AR+sD12e6vs1dSMkMx/ReAKWrDf9yC1oZ+rynkOkbYi8Hi6AKb0kDVZG2/Z2r66Tpwd
+ BurSz86lt6RT1YRfkcmqMHm0ag1AtPkC1sIso8cLYtHvziBP6n4PFGni/Pkx3afh6Ief9M60WIR
+ be/q5ukm8FY4yUb+h+iPbY3tEEaFn+CCXFmYXXLk05kasppeFhhBmZxoG3hrkLpudoElygrtieA
+ lLOhkecz1xha304/kwyiDGIyp/K78oGOdD+15s/99zhICzHzlC6TsIrCQvm6jE3bKAho7pJFhS+
+ DiRXnbPRUHpte89F7rRULDlOegWV2jObrOfcmXwuDiFO5op2TPWMFSrTmt8DpgG8m6tTfFbjfO9
+ KgmFE9saROkfC/vlRaxKz09Dmou4gnTDme2NSyscrXfTOgDWZvJIA6Z587vGaRQ8Yv/DejVG1bE
+ 59KiK2bViqm7UrBH9z7Z2QfVKgllB5hksZA/yPFSrI+c7Bq3Sg2ZUY4YHbRZ8/bUtsEFrP5cxHL
+ xry5Cng4sbW7axL7qnUa7DQirbwpOWPfLs=
+X-Received: by 2002:a05:6000:2606:b0:482:6faf:4078 with SMTP id
+ ffacd0b85a97d-4826faf4102mr5282684f8f.21.1786726220311; 
+ Fri, 14 Aug 2026 09:50:20 -0700 (PDT)
 Received: from xiaomi-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4815f2b1a91sm9021223f8f.21.2026.08.14.09.49.54
+ ffacd0b85a97d-4815f1fff25sm15116681f8f.3.2026.08.14.09.50.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 14 Aug 2026 09:49:56 -0700 (PDT)
+ Fri, 14 Aug 2026 09:50:19 -0700 (PDT)
 From: Yongpeng Yang <yangyongpeng.storage@gmail.com>
 To: Chao Yu <chao@kernel.org>,
 	Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Sat, 15 Aug 2026 00:49:28 +0800
-Message-ID: <20260814164929.693412-4-yangyongpeng.storage@gmail.com>
+Date: Sat, 15 Aug 2026 00:50:08 +0800
+Message-ID: <20260814165008.693980-1-yangyongpeng.storage@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260814164929.693412-1-yangyongpeng.storage@gmail.com>
-References: <20260814164929.693412-1-yangyongpeng.storage@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1wuv6Z-0007DR-Tr
-Subject: [f2fs-dev] [PATCH 3/3] f2fs: dump read extent cache via sysfs for
- debugging
+X-Headers-End: 1wuv6w-0007EY-Vb
+Subject: [f2fs-dev] [PATCH] f2fs_io: add extent_cache command to dump read
+ extent cache
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -127,130 +124,109 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Yongpeng Yang <yangyongpeng@xiaomi.com>
 
-Add a write-only per-sb sysfs entry "extent_cache_debug": writing a file
-descriptor resolves the inode in the writer's context, dumps the largest
-extent and every rbtree node (fofs/blk/len) to the kernel log via
-f2fs_info(). A matching f2fs_io "extent_cache" subcommand is added in
-f2fs-tools.
+Add an "extent_cache" subcommand that dumps the in-memory read extent
+cache of a given file to the kernel log, by passing the file's
+descriptor to the /sys/fs/f2fs/<dev>/extent_cache_debug sysfs entry
+introduced by the kernel counterpart patch.
+
+The dump itself is emitted by the kernel via f2fs_info(),  inspect it
+with "dmesg | grep ino=<ino>".
 
 Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
 ---
- fs/f2fs/extent_cache.c | 45 ++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/f2fs.h         |  1 +
- fs/f2fs/sysfs.c        | 18 +++++++++++++++++
- 3 files changed, 64 insertions(+)
+ tools/f2fs_io/f2fs_io.c | 65 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index aaad72fa1553..d5d57bc642c8 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -13,6 +13,7 @@
-  */
- 
- #include <linux/fs.h>
-+#include <linux/file.h>
- #include <linux/f2fs_fs.h>
- 
- #include "f2fs.h"
-@@ -1268,6 +1269,50 @@ static void __init_extent_tree_info(struct extent_tree_info *eti)
- 	atomic_set(&eti->total_ext_node, 0);
+diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+index 06e0ea0..3025b7b 100644
+--- a/tools/f2fs_io/f2fs_io.c
++++ b/tools/f2fs_io/f2fs_io.c
+@@ -33,6 +33,7 @@
+ #include <sys/mman.h>
+ #include <sys/sendfile.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #include <sys/types.h>
+ #include <termios.h>
+ #include <time.h>
+@@ -1965,6 +1966,69 @@ static void do_precache_extents(int argc, char **argv, const struct cmd_desc *cm
+ 	exit(0);
  }
  
-+/* Dump the read extent cache of the inode behind @fd to the kernel log. */
-+int f2fs_dump_read_extent_cache(struct f2fs_sb_info *sbi, int fd)
++#define extent_cache_desc "dump the in-memory read extent cache of a file"
++#define extent_cache_help							\
++"f2fs_io extent_cache [file_path]\n\n"					\
++"Dump the in-memory read extent cache (largest extent plus every rbtree\n" \
++"node, as fofs/blk/len) of the given file to the kernel log by passing\n" \
++"its file descriptor to the per-sb sysfs entry\n"			\
++"/sys/fs/f2fs/<dev>/extent_cache_debug.\n\n"				\
++"Read the file beforehand so its extent tree is populated, then run\n" \
++"this command and inspect the dump with 'dmesg | grep ino=<ino>'.\n"
++
++static void do_extent_cache(int argc, char **argv, const struct cmd_desc *cmd)
 +{
-+	struct fd f = fdget(fd);
-+	struct inode *inode;
-+	struct extent_tree *et;
-+	struct rb_node *node;
-+	struct extent_node *en;
-+	unsigned int count = 0;
-+	int ret = 0;
++	struct stat st;
++	char fd_str[32];
++	char devlink[PATH_MAX];
++	char devname[NAME_MAX + 1];
++	char sysfs_path[PATH_MAX];
++	char *base;
++	ssize_t rlen;
++	int fd, sfd, ret;
 +
-+	if (fd_empty(f))
-+		return -EBADF;
-+
-+	inode = file_inode(fd_file(f));
-+	if (inode->i_sb != sbi->sb) {
-+		fdput(f);
-+		return -EINVAL;
++	if (argc != 2) {
++		fputs("Excess arguments\n\n", stderr);
++		fputs(cmd->cmd_help, stderr);
++		exit(1);
 +	}
 +
-+	et = F2FS_I(inode)->extent_tree[EX_READ];
-+	if (!et) {
-+		f2fs_info(sbi, "ino=%llu: read extent cache disabled",
-+			  (unsigned long long)inode->i_ino);
-+		goto out;
-+	}
++	/* Open the target file; its fd is handed to the kernel. */
++	fd = xopen(argv[1], O_RDONLY, 0);
++	if (fstat(fd, &st) < 0)
++		die_errno("fstat %s failed", argv[1]);
++	if (!S_ISREG(st.st_mode))
++		die("%s is not a regular file", argv[1]);
 +
-+	read_lock(&et->lock);
-+	f2fs_info(sbi, "ino=%llu largest: fofs=%u blk=%u len=%u node_count=%u",
-+		  (unsigned long long)inode->i_ino, et->largest.fofs,
-+		  et->largest.blk, et->largest.len,
-+		  atomic_read(&et->node_cnt));
-+	for (node = rb_first_cached(&et->root); node; node = rb_next(node)) {
-+		en = rb_entry(node, struct extent_node, rb_node);
-+		f2fs_info(sbi, "  [%u] fofs=%u blk=%u len=%u",
-+			  count, en->ei.fofs, en->ei.blk, en->ei.len);
-+		count++;
-+	}
-+	read_unlock(&et->lock);
-+out:
-+	fdput(f);
-+	return ret;
++	/* Resolve the kernel device name (sb->s_id) from st_dev. */
++	ret = snprintf(devlink, sizeof(devlink), "/sys/dev/block/%u:%u",
++		       major(st.st_dev), minor(st.st_dev));
++	if (ret < 0 || (size_t)ret >= sizeof(devlink))
++		die("device path too long");
++	rlen = readlink(devlink, sysfs_path, sizeof(sysfs_path) - 1);
++	if (rlen < 0)
++		die_errno("readlink %s failed", devlink);
++	sysfs_path[rlen] = '\0';
++	base = basename(sysfs_path);
++	snprintf(devname, sizeof(devname), "%s", base);
++
++	ret = snprintf(sysfs_path, sizeof(sysfs_path),
++		       "/sys/fs/f2fs/%s/extent_cache_debug", devname);
++	if (ret < 0 || (size_t)ret >= sizeof(sysfs_path))
++		die("sysfs path too long");
++
++	/* Pass the fd to the kernel; the dump is written to the kernel log. */
++	snprintf(fd_str, sizeof(fd_str), "%d", fd);
++	sfd = xopen(sysfs_path, O_WRONLY, 0);
++	full_write(sfd, fd_str, strlen(fd_str));
++	close(sfd);
++
++	printf("ino=%lu extent cache dump written to kernel log\n"
++	       "inspect with: dmesg | grep ino=%lu\n", st.st_ino, st.st_ino);
++	close(fd);
++	exit(0);
 +}
 +
- void f2fs_init_extent_cache_info(struct f2fs_sb_info *sbi)
- {
- 	__init_extent_tree_info(&sbi->extent_tree[EX_READ]);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1b96d8718c5c..be2bd6e2a2bd 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4648,6 +4648,7 @@ void f2fs_update_read_extent_cache_range(struct dnode_of_data *dn,
- 			pgoff_t fofs, block_t blkaddr, unsigned int len);
- unsigned int f2fs_shrink_read_extent_tree(struct f2fs_sb_info *sbi,
- 			int nr_shrink);
-+int f2fs_dump_read_extent_cache(struct f2fs_sb_info *sbi, int fd);
- 
- /* block age extent cache ops */
- void f2fs_init_age_extent_tree(struct inode *inode);
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 3201e2185fea..046d68962d18 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -1368,6 +1368,23 @@ F2FS_GENERAL_RO_ATTR(avg_vblocks);
- F2FS_GENERAL_RO_ATTR(defrag_blocks);
- #endif
- 
-+static ssize_t extent_cache_debug_store(struct f2fs_attr *a,
-+		struct f2fs_sb_info *sbi, const char *buf, size_t count)
-+{
-+	int fd, ret;
-+
-+	ret = kstrtoint(buf, 0, &fd);
-+	if (ret < 0)
-+		return ret;
-+	ret = f2fs_dump_read_extent_cache(sbi, fd);
-+	if (ret < 0)
-+		return ret;
-+	return count;
-+}
-+
-+static struct f2fs_attr f2fs_attr_extent_cache_debug = __ATTR(
-+		extent_cache_debug, 0200, NULL, extent_cache_debug_store);
-+
- #ifdef CONFIG_FS_ENCRYPTION
- F2FS_FEATURE_RO_ATTR(encryption);
- F2FS_FEATURE_RO_ATTR(test_dummy_encryption_v2);
-@@ -1491,6 +1508,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(avg_vblocks),
- 	ATTR_LIST(defrag_blocks),
- #endif
-+	ATTR_LIST(extent_cache_debug),
- #ifdef CONFIG_BLK_DEV_ZONED
- 	ATTR_LIST(unusable_blocks_per_sec),
- 	ATTR_LIST(max_open_zones),
+ #define move_range_desc "moving a range of data blocks from source file to destination file"
+ #define move_range_help						\
+ "f2fs_io move_range [src_path] [dst_path] [src_start] [dst_start] "	\
+@@ -2636,6 +2700,7 @@ const struct cmd_desc cmd_list[] = {
+ 	CMD(gc),
+ 	CMD(checkpoint),
+ 	CMD(precache_extents),
++	CMD(extent_cache),
+ 	CMD(move_range),
+ 	CMD(gc_range),
+ 	CMD(listxattr),
 -- 
 2.43.0
 
