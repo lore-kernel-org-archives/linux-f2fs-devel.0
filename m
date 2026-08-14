@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B9785C5CFC1
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Aug 2026 09:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0098FC5B572
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Aug 2026 09:27:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=Z+29OQwoCMt9k9vfv4SF5xrvKnyaIfLnRxrEk8Jw3hs=; b=GQqcw2eRtMvJrPelfcts/QSJT3
-	PuppED8Fn++A3f82TbsfjARvPOToUlsYMYazkXNXDHK8R6Li+uInV063pryJl4WWVqsKniGtw+HIR
-	YFuHKoNMn4l6Nyw7EHtcz4SbeHiXD9NR6OkkiWKvHu8TdwRbkY0vamggVLdKNBjm4+mQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=qVJpIpsg/IMv2mdGYIM38ni3ujCJNGhUPpqFWnNVHAI=; b=X0ERmHkNCFhelW4PfhfKapS32g
+	c/TYi9PPMI+X11mYqIM7+hTC85FQTlEDk1toA7y8cpwXPf/SA5ZcIOQlVO42frqAljAU8XwPMnj75
+	NXEAaHjr27pZRlWauDRSka1jllGmKfTFCOkxhJzNz2kU4UunX5WtHXNAWpsAYGIxzHJg=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wuoCD-00050b-Fs;
-	Fri, 14 Aug 2026 09:27:23 +0000
+	id 1wuoCG-0006Pk-RI;
+	Fri, 14 Aug 2026 09:27:28 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1wuoC7-0004zE-N9
+ (envelope-from <aalbersh@kernel.org>) id 1wuoCB-0006OS-HF
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Aug 2026 09:27:17 +0000
+ Fri, 14 Aug 2026 09:27:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=giX2dcWxgKGhap3ejBHZWfLPOTR0m2VLYbHv8ZTBG40=; b=OJsJ3/6UM9Gdu6isVGcrxgyU1L
- 3t9JTCd2XzPrybif01k62tZw+sYiOcsQPOzNY8hPswcbFMrBigwbYF44LB8jJpmg3SE+ygogQT0xD
- C19wcT4izw+niiEZ4Pj/9u4Rj4/9xgHPX3keXH+lVH72yUwRpKjwpO6pkOHaBgtId6kk=;
+ bh=FcfrVvu5lchr1e1sUVC5XjbFLS3hhJKHv222lwYU8aE=; b=bjEbuVq7zxKYJ0iA8e6PvqxDp0
+ 4sZbPs/hiA6y4COfDPRLG+plt2jFeAIbnB6M+IkTNx0pxsqaN6JhkeccMhI6cr2Nwij5gBItNbS/c
+ b3KyYwjKLQCjiYkNrEoKPbelVrP5p5HXnhDhhGcL0fIQorySUNxhE23s1YWO0bi0L/1g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,40 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=giX2dcWxgKGhap3ejBHZWfLPOTR0m2VLYbHv8ZTBG40=; b=bZc8fGbjUZnrEYQjmOO2JyLgDh
- lt4nuJPEC+y8k1HdbFmvDPJQgKxdvIqvSnEwAcedE50UhtRaFPlKTrNrAMlw+HrLYOR7leGlMQbrP
- k1FX6kIQDIq3urH6W80MDjVCbVZLL6bJgZ0RwXD5mZKLmm0kk6gL52Gm7OaHv5ZNSneM=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=FcfrVvu5lchr1e1sUVC5XjbFLS3hhJKHv222lwYU8aE=; b=Usr33gS8Tn7cHNLRHKDeOi6J3T
+ LveQBlLJtOf4vW/4k4Xo8sOQC9AT/8fs5+yo4SPnPxRKJKcOGp+fIVtQgYzRJBm6s3kaPejo38eE0
+ Ia1j50Mgdh91Xde5TW9qoMW+1SIMijF8GMiNabrRTgFCIJJU0gS7izGAMoffqyManw+Y=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wuoBh-0007lm-UR for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Aug 2026 09:26:54 +0000
+ id 1wuoCC-0000r1-FG for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 14 Aug 2026 09:27:23 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 404B860A5D;
- Fri, 14 Aug 2026 09:26:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE94C1F000E9;
- Fri, 14 Aug 2026 09:26:42 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 85E0F4106A;
+ Fri, 14 Aug 2026 09:27:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E0991F00A3A;
+ Fri, 14 Aug 2026 09:27:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1786699608;
- bh=giX2dcWxgKGhap3ejBHZWfLPOTR0m2VLYbHv8ZTBG40=;
+ s=k20260515; t=1786699635;
+ bh=FcfrVvu5lchr1e1sUVC5XjbFLS3hhJKHv222lwYU8aE=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=GqtoLl1JIGWVjsvmfzz05rL/fwLue6wqzeHWtCWpIaPhh+RJSJR5BDIMmaLM9sC+S
- tFrsXByWsr30zPcwDkKyQOYovjEe4bjbeSZGtNJVq0FPoa7Yv2ykyt5ytRyyNdbCsi
- icOPUPmXbO2DlEzeaZ9gG7C/R/O7JueBDZHgKw1a0zqQnav9+9wp/ot0QQ460KR7+5
- +TkX5H2e4W0C+o5WDaUqBmFHHKUeVB6qBJrAOeklTP1JLwaBQxBKDesKzWAkROZzjx
- ZJFVt2hMPitfM7Y2xCY/FgsxK/4ck+dhLtilzZle0WUldYLjqXctmjnKrx/7NMuc+P
- Sb8Y7RUiKQ0xQ==
+ b=fhO+kJSic4st/GaZfDT/Wi9+tPgzsrJZ2HW+GBlSBmv1Ycgc6PHiBW51kFO1T5GLQ
+ n25hvGdwvsfNd8xI2lGbM+7RWeS51bpC3nVWEeY9MWIXFFxD+JAO4puyDn3g8eC0b3
+ D98ddNpvhIK1kfU4q0KzE/3dIGWU1hrIe6kUnlxLoUVJuTrQ1WTvL0vyJrR8yQ6hT6
+ v3DMM9sDuIktccZ8Kvz7s+FgMNTXXVtoOCaO0l/+1NnKHqKTDE01dGzYoBlKUFBN3T
+ ZJyTLXnlXFCbR3vaHHa90OVIFvzkN1HuIOit+CSlr6u3JX3ko35vJ+0dNYiN1+R0fj
+ FUXwy8LX+IeQw==
 To: djwong@kernel.org, ebiggers@kernel.org, hch@lst.de,
  Jens Axboe <axboe@kernel.dk>, Carlos Maiolino <cem@kernel.org>
-Date: Fri, 14 Aug 2026 11:24:32 +0200
-Message-ID: <20260814092448.1818082-16-aalbersh@kernel.org>
+Date: Fri, 14 Aug 2026 11:24:37 +0200
+Message-ID: <20260814092448.1818082-21-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260814092448.1818082-1-aalbersh@kernel.org>
 References: <20260814092448.1818082-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wuoBh-0007lm-UR
-Subject: [f2fs-dev] [PATCH v15 15/25] xfs: don't report dio_mem_align and
- dio_offset_align for fsverity files
+X-Headers-End: 1wuoCC-0000r1-FG
+Subject: [f2fs-dev] [PATCH v15 20/25] xfs: initialize fs-verity on file open
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,44 +99,39 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Sashiko.dev reported that while fsverity files falls back to the
-buffered IO for Direct I/O, they should not report non-zero values in
-dio_mem_align and dio_offset_align, meaning it's not supported.
+fs-verity will read and attach metadata (not the tree itself) from
+a disk for those inodes which already have fs-verity enabled.
 
-The STATX_DIOALIGN | STATX_DIO_READ_ALIGN flags are used to explicitly
-report if DIO is supported or not. They can not indicate that fallback
-to the buffered IO is used in this case. The zero alignment values also
-mean that DIO is not supported on this file, see statx(2).
-
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-Acked-by: Eric Biggers <ebiggers@kernel.org>
 ---
- fs/xfs/xfs_iops.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/xfs/xfs_file.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 55667cc762f8..70637cdcc299 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -35,6 +35,7 @@
- #include <linux/security.h>
- #include <linux/iversion.h>
- #include <linux/fiemap.h>
-+#include <linux/fsverity.h>
- 
- /*
-  * Directories have different lock order w.r.t. mmap_lock compared to regular
-@@ -580,6 +581,10 @@ xfs_report_dioalign(
- 	struct block_device	*bdev = target->bt_bdev;
- 
- 	stat->result_mask |= STATX_DIOALIGN | STATX_DIO_READ_ALIGN;
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index 1bedf2ef647c..a9775415f3fd 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -1721,11 +1721,18 @@ xfs_file_open(
+ 	struct inode	*inode,
+ 	struct file	*file)
+ {
++	int		error;
 +
-+	if (fsverity_active(VFS_I(ip)))
-+		return;
+ 	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
+ 		return -EIO;
+ 	file->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
+ 	if (xfs_get_atomic_write_min(XFS_I(inode)) > 0)
+ 		file->f_mode |= FMODE_CAN_ATOMIC_WRITE;
 +
- 	stat->dio_mem_align = bdev_dma_alignment(bdev) + 1;
++	error = fsverity_file_open(inode, file);
++	if (error)
++		return error;
++
+ 	return generic_file_open(inode, file);
+ }
  
- 	/*
 -- 
 2.54.0
 
