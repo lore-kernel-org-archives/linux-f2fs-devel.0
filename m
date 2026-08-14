@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D6299C5B572
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Aug 2026 09:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C033CC5B572
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Aug 2026 09:27:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
 	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=ma8tjkLhlpwZhUjd2qQfea5t6vT3XjEPacQZbUIS1wA=; b=Nn1pUydSQuiizk+6jv66LE5BaD
-	3Ec0XlqqPKRUAwB59pPx4KDuBHOO41UhoxUbq40PLkfIANFUHMIegpTy3IW84egisI4+Ex/9GTeOx
-	3OKGmW6BeJfDBC011vNanSP7DH/BJdM+QpuEEVPX3V/09Zu3mgEmafVhLqTpO2sHh3xc=;
+	bh=cFzyL1/kH00DkHMX4vrT4g4AkskLfBd6jPm0dzsRU7w=; b=VtlxRh3oQxOfbILWr0cXrBNCGo
+	vollhPxZTfOTfp7LeWbdQRE+qPBGnWznpE5T6rQ2VzKGaQSzxc4dfZQIJcJbrxOjWi0+97wNrQJ8q
+	Xya9HkDQQx5brCY0lgAMG+OJvo7/4/j5jes55oOVTGFVFtuWKDYIJb4POfP0kUs9+VHU=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wuoCM-0006R4-66;
-	Fri, 14 Aug 2026 09:27:34 +0000
+	id 1wuoCQ-0006SR-He;
+	Fri, 14 Aug 2026 09:27:38 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@kernel.org>) id 1wuoCK-0006Qn-RE
+ (envelope-from <aalbersh@kernel.org>) id 1wuoCP-0006SA-TB
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Aug 2026 09:27:32 +0000
+ Fri, 14 Aug 2026 09:27:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dse18FWQSUIoP6yquYEBISwJ2j8wLduiXGfJxJRjVuc=; b=Id2HrR/d6ZQZYrjyHat1CBMVRS
- KSu/S/JRqkS8En5x6W8rA+glyDtNSy1dvJboa4pDAbTYlkjdKPDZmJxjykyNuSPmDNR0TFFpLfzPf
- Q2tM9TOPqVbY+Kz7DRDY0YNL4I0orkEhc0V7iuBgzJt4a5sjM2aH3k84fcFWDWInqXls=;
+ bh=d+gCw8DY5xRJnv9bLvU/3aejVrqjwUJS770c7agRs00=; b=LCosZqh75EuNss+Um5/ECGQo2B
+ s22faQjpMOIpZ381eai4fCjkkPvKkUvYd0g5SlsqKIF5X0ItqENbChkSE8sxdCpQPL0sq0Nyhcx5C
+ bKgnIP0mvKT8f7yXYIItg1DuDNcBOf+XO40+NCloBTPdyh90ijIAMoCs2xcv6gmf9tKk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=dse18FWQSUIoP6yquYEBISwJ2j8wLduiXGfJxJRjVuc=; b=kUKB0kC8eSNI1fDy0m23e5CeED
- OO35UMeN5uH5Rordw7pIlBm/qYG6yFWjKi+q+w9u29bOWstmZD71UJuoELOLVsH8GiseTAmP6mYp1
- X1OHu/kK+0IFStJxmJPUOoozIiMM0JcDc0JakSeUQw5N6ZSL/P6h2Xfo4lmXGZVwA08o=;
+ bh=d+gCw8DY5xRJnv9bLvU/3aejVrqjwUJS770c7agRs00=; b=NaL9zigQ7xnwVNe58lLxWXa6Dc
+ 9U1paIMsAWjuNKEGMcvuV+z+L4Xpn/NcFKIsz/1a5A0c/OwN/x+vU2ejFFDEr56PTb1GrIkJZt8kq
+ d6mvafNVk6qHNFRWhQsnKpYwdKOlCfXrUF/J3SykF0ramGSE6AtDA5uwGiXsVHnaxPpc=;
 Received: from tor.source.kernel.org ([172.105.4.254])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wuoCI-0000rc-16 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Aug 2026 09:27:32 +0000
+ id 1wuoCN-0000s9-FI for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 14 Aug 2026 09:27:37 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id E846860A72;
- Fri, 14 Aug 2026 09:27:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 158541F00A3D;
- Fri, 14 Aug 2026 09:27:15 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 5B42660A61;
+ Fri, 14 Aug 2026 09:27:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BC9A1F00A3A;
+ Fri, 14 Aug 2026 09:27:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1786699640;
- bh=dse18FWQSUIoP6yquYEBISwJ2j8wLduiXGfJxJRjVuc=;
+ s=k20260515; t=1786699646;
+ bh=d+gCw8DY5xRJnv9bLvU/3aejVrqjwUJS770c7agRs00=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=HonV7aqfeQsMGvoCrLXNJWRL8SiztkR8OhKouolUR45inLrS6t/Ein2YBoSi/i4hS
- RoU0RmnrN0tgf2wga5a7DPKlexWrUKwBH2zrOgQPTlgqTigIwZBuuvSzyMReUxsncK
- P1d2xSMwuLzHQ5knbrPlKDXCfri3rDlWG1rcTf8YYam0OwxOnWeJHyDGgsV0joue9N
- MAgEa+FePdFgHpAs+lCnWtohVGKMc/EX6PWw13mRjAPNd/xlQQb23MLVGQstZ4VSBv
- X76/PJoS3GHGrDtwKbrAoe6UJ19C4rNFxkikJl+69l3m2x28QPk1/j4RSyY1oYA1l3
- Hxira+zhhGE8Q==
+ b=P80IHQvDwjhD7oBFPrnAacVTRuUgQ+ducv49FMhfl4AygPacOl3IGnpw1RG4pjO0g
+ 4HVbIVid+GHfrfLN+7sJgOxifxhSwAl4u9zLpuIbGRLjqdon2NW+3wHvntxo2JyS9D
+ 2w2sgxhleKedJ5zy6s+kxWLsWkDPh0mTo0oHeUDwfWEkPebjuo3U1JVQq6YtR8lhcR
+ Eb+IEWJkHgZgrygiFYEyCnPn1+uiSjOtkW/EmPiGf8RaaJvPjcB1hKJnRutxbdas6i
+ z9TsQmQAHo0LnaZGNd0pveKVI969RfdKi5FQ7AYfFZDv1yNIa9VAhNB+phz1xZJXYW
+ Sf0fFISR08fgg==
 To: djwong@kernel.org, ebiggers@kernel.org, hch@lst.de,
  Jens Axboe <axboe@kernel.dk>, Carlos Maiolino <cem@kernel.org>
-Date: Fri, 14 Aug 2026 11:24:38 +0200
-Message-ID: <20260814092448.1818082-22-aalbersh@kernel.org>
+Date: Fri, 14 Aug 2026 11:24:39 +0200
+Message-ID: <20260814092448.1818082-23-aalbersh@kernel.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260814092448.1818082-1-aalbersh@kernel.org>
 References: <20260814092448.1818082-1-aalbersh@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wuoCI-0000rc-16
-Subject: [f2fs-dev] [PATCH v15 21/25] xfs: add fs-verity ioctls
+X-Headers-End: 1wuoCN-0000s9-FI
+Subject: [f2fs-dev] [PATCH v15 22/25] xfs: advertise fs-verity being
+ available on filesystem
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,7 +91,8 @@ From: Andrey Albershteyn via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Andrey Albershteyn <aalbersh@kernel.org>
 Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
- Andrey Albershteyn <aalbersh@kernel.org>, david@fromorbit.com,
+ Andrey Albershteyn <aalbersh@kernel.org>,
+ Andrey Albershteyn <aalbersh@redhat.com>, david@fromorbit.com,
  linux-unionfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  Tal Zussman <tz2294@columbia.edu>, linux-ext4@vger.kernel.org,
@@ -99,50 +101,44 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Add fs-verity ioctls to enable, dump metadata (descriptor and Merkle
-tree pages) and obtain file's digest.
+From: "Darrick J. Wong" <djwong@kernel.org>
 
-[djwong: remove unnecessary casting]
+Advertise that this filesystem supports fsverity.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 ---
- fs/xfs/xfs_ioctl.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ fs/xfs/libxfs/xfs_fs.h | 1 +
+ fs/xfs/libxfs/xfs_sb.c | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index 1b53701bebea..fc7860a8b5ab 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -49,6 +49,7 @@
+diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
+index 185f09f327c0..c80133784419 100644
+--- a/fs/xfs/libxfs/xfs_fs.h
++++ b/fs/xfs/libxfs/xfs_fs.h
+@@ -250,6 +250,7 @@ typedef struct xfs_fsop_resblks {
+ #define XFS_FSOP_GEOM_FLAGS_PARENT	(1 << 25) /* linux parent pointers */
+ #define XFS_FSOP_GEOM_FLAGS_METADIR	(1 << 26) /* metadata directories */
+ #define XFS_FSOP_GEOM_FLAGS_ZONED	(1 << 27) /* zoned rt device */
++#define XFS_FSOP_GEOM_FLAGS_VERITY	(1 << 28) /* fs-verity */
  
- #include <linux/mount.h>
- #include <linux/fileattr.h>
-+#include <linux/fsverity.h>
+ /*
+  * Minimum and maximum sizes need for growth checks.
+diff --git a/fs/xfs/libxfs/xfs_sb.c b/fs/xfs/libxfs/xfs_sb.c
+index 5ac467f387c2..4f9657c8dd95 100644
+--- a/fs/xfs/libxfs/xfs_sb.c
++++ b/fs/xfs/libxfs/xfs_sb.c
+@@ -1590,6 +1590,8 @@ xfs_fs_geometry(
+ 		geo->flags |= XFS_FSOP_GEOM_FLAGS_METADIR;
+ 	if (xfs_has_zoned(mp))
+ 		geo->flags |= XFS_FSOP_GEOM_FLAGS_ZONED;
++	if (xfs_has_verity(mp))
++		geo->flags |= XFS_FSOP_GEOM_FLAGS_VERITY;
+ 	geo->rtsectsize = sbp->sb_blocksize;
+ 	geo->dirblocksize = xfs_dir2_dirblock_bytes(sbp);
  
- /* Return 0 on success or positive error */
- int
-@@ -1466,6 +1467,19 @@ xfs_file_ioctl(
- 	case XFS_IOC_VERIFY_MEDIA:
- 		return xfs_ioc_verify_media(filp, arg);
- 
-+	case FS_IOC_ENABLE_VERITY:
-+		if (!xfs_has_verity(mp))
-+			return -EOPNOTSUPP;
-+		return fsverity_ioctl_enable(filp, arg);
-+	case FS_IOC_MEASURE_VERITY:
-+		if (!xfs_has_verity(mp))
-+			return -EOPNOTSUPP;
-+		return fsverity_ioctl_measure(filp, arg);
-+	case FS_IOC_READ_VERITY_METADATA:
-+		if (!xfs_has_verity(mp))
-+			return -EOPNOTSUPP;
-+		return fsverity_ioctl_read_metadata(filp, arg);
-+
- 	default:
- 		return -ENOTTY;
- 	}
 -- 
 2.54.0
 
