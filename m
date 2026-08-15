@@ -4,107 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BD813C5CFCF
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Aug 2026 16:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6775AC5CFC1
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 15 Aug 2026 00:55:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=EoT0WUwNBcdQeUc2kMcPNDgM/26Ee1Qc2tx90Bn9TLw=; b=gfdqAExCsmwa00ln5QiUzBDaCS
-	rkp2PgOPsNnx6Hrao79QDFfKSRaBwwETnwpoMmn9RQZbVTEzxp/2siwFdhx9TCvOTny9cd2lp4gmK
-	bJ9vgMQPkxWjwz44sUIaqA8wFUt4Cv/LF+yK2VG3leyoOs+e4u5FSDyD6wCYReSt6aBU=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=L75Knrh1so30kKD0Ti+0AbaBECoayTN5rCJVkPthj7M=; b=hrYZHhBirQBUBT39LTA6BQvx/l
+	iUQz3kBwsHsnStuE1ntumiXULKVP8jkLleJefO+Us8zYUNu7Kus542Tc8KtF/uyeoRue6minwLnHA
+	0jVCG38FGY5rNRBFo0BR1jKrOZMPRcFUHYv0HJNjRAaPNbms3KoNX79KjDnST1WEjWm4=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wuv79-0006CX-JQ;
-	Fri, 14 Aug 2026 16:50:40 +0000
+	id 1wv2gM-00008B-8X;
+	Sat, 15 Aug 2026 00:55:30 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <yangyongpeng.storage@gmail.com>) id 1wuv6w-0006By-ND
+ (envelope-from <chao@kernel.org>) id 1wv2g2-00007s-2a
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Aug 2026 16:50:27 +0000
+ Sat, 15 Aug 2026 00:55:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FKQYe757dVza+zfn+crk8LzBCJ2wEr3hC+1rkx+8QP0=; b=BJAq998c2mr7Vo9EW1bJRE5sB+
- ig2XCq/oZkfFSy+z26eyV31LywSKxg47x5K5/xBaqefExEJBhhSNA69jnuh3DG6lcsmtFQ89bQKCo
- +mtSBusAzNX+8lQdPGg6jPf5JXM6WoV6Hj9l9hQduPNB/SWFy6rHVEDUdzuFerVhHuYo=;
+ bh=Jh9woRgo1yB+sOH6AcX4fM9oiWw/Q4nliNfwwNCN9Y0=; b=JseNwJJVe90BgETKOi7JOAIYuG
+ 4rwJLOAcH17hsW+sx/c+MpycSPXtv11iY/AAgJj26ue9BL0dkBoGsFjHmpoQqYQurN9gwRHfDcLgk
+ c0stWPg5Rl83Q5meCAAcFqM1q7ZudTPglYVrSLWF6ermX2oNWHMUhmy+DVXq4Ich0Ex4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=FKQYe757dVza+zfn+crk8LzBCJ2wEr3hC+1rkx+8QP0=; b=D
- 7+TqQBiGYrkCKM8RfsEttZ5kpHlNbhiDafGpzO+tm2x+MiNq9enCEz6iwoCpTO4M/GWrYLjZiiqTM
- A+NSzrleMToTSqRa99EKwXdwcyT1lVIxfug0Vxh4hB9vgRsELqefgMlt3FgIbS0i6SeQGcvQ7+UD+
- w2z84UvhPXr8OtfI=;
-Received: from mail-wr1-f45.google.com ([209.85.221.45])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=Jh9woRgo1yB+sOH6AcX4fM9oiWw/Q4nliNfwwNCN9Y0=; b=EzE9vJe8OvRBFaUTD/XWS4MLJ8
+ 3dZBhk3f4LgZzdTd1L5YkZNxt6xgVw3QGlRFwx69mJRuZmfuOYB+Hp33/Qkf0bQQeQv6+62bygyvY
+ 0N83m1opXEiXEXf7JAowid0AnYtmLpFjmWf0RCtPs7ic+PVs/D8leTTyeEDXgILG989E=;
+Received: from sea.source.kernel.org ([172.234.252.31])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wuv6w-0007EY-Vb for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 14 Aug 2026 16:50:27 +0000
-Received: by mail-wr1-f45.google.com with SMTP id
- ffacd0b85a97d-47f7872abb6so709578f8f.3
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1wv2fx-0001J2-Sx for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 15 Aug 2026 00:55:06 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id 5E95741810
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 14 Aug 2026 09:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1786726220; x=1787331020; darn=lists.sourceforge.net;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=FKQYe757dVza+zfn+crk8LzBCJ2wEr3hC+1rkx+8QP0=;
- b=NPmf7hBNx0mTkJx+2x/THIcaznd72Tucsp6evvIwGjHEDWutL7gkW6ynB8JMb//fCs
- lYzgWUrBWalBAro4352Q3TqUIPuMz/RSxR0aWmpQXdwmY0GwLu/P7FyLzV103w1jD3HW
- ZGN84zHXpXOq2ddu3uE3O9L512hfK5FC6RP+qxe30yFpIUth1CQHwe5ISRSmvUUOUFWH
- 2NTO0RRdeXCMKPdAf2Ku75wL4qo5MqF3pvntekdijY0Jx9phxxBQnKG/wyADQlNTmoAv
- jVFdmSWq+89VH2MyX1W5YEOsTHUaSPDcDQbxBRpArdnSn9q1jOiX3Z0YYDCMOZ5vfC/7
- N6yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786726220; x=1787331020;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=FKQYe757dVza+zfn+crk8LzBCJ2wEr3hC+1rkx+8QP0=;
- b=bLYBDrC7WjrQIbM2pxRoqkS/1nqGZtCVu8yXk8IOkeVc0E5vi11FhgTojI5EXrmR7p
- P2ormVC6ofufqX3VD7j29c1draCpJzNm002IfvsRTRSJCyfEGv2VgnLBz9PpzNAOWzQp
- fohnp4xft8EuJJ5pvGHybWrwwSBLEg03XyLirVu87MzXYoWZjOfCwjBO1yYmaTuaIHqz
- HFOO+qqr+6nFhijBcHedTSEcn4BgYJ29xc61flmTKtCi4Y6Glcf2IAhi9JDG/8ocCMd/
- +aDieILAP48+ZRiPYHmHZBOFdmcjb21qCrJVP0B9/PqhdlVfMY6aRU4xr5VwTfiQef9m
- Zo9A==
-X-Gm-Message-State: AOJu0YxEj/uUhV1cCzC5kIdfxqmEbD1jIkAuC+5qwO2fIWNlIZf5LeJf
- A/M/uSzEMyhC/keFTeO5l7JLaCGfjA+H+dptov6bINwhK4/GJmkvRqm/
-X-Gm-Gg: AR+sD12e6vs1dSMkMx/ReAKWrDf9yC1oZ+rynkOkbYi8Hi6AKb0kDVZG2/Z2r66Tpwd
- BurSz86lt6RT1YRfkcmqMHm0ag1AtPkC1sIso8cLYtHvziBP6n4PFGni/Pkx3afh6Ief9M60WIR
- be/q5ukm8FY4yUb+h+iPbY3tEEaFn+CCXFmYXXLk05kasppeFhhBmZxoG3hrkLpudoElygrtieA
- lLOhkecz1xha304/kwyiDGIyp/K78oGOdD+15s/99zhICzHzlC6TsIrCQvm6jE3bKAho7pJFhS+
- DiRXnbPRUHpte89F7rRULDlOegWV2jObrOfcmXwuDiFO5op2TPWMFSrTmt8DpgG8m6tTfFbjfO9
- KgmFE9saROkfC/vlRaxKz09Dmou4gnTDme2NSyscrXfTOgDWZvJIA6Z587vGaRQ8Yv/DejVG1bE
- 59KiK2bViqm7UrBH9z7Z2QfVKgllB5hksZA/yPFSrI+c7Bq3Sg2ZUY4YHbRZ8/bUtsEFrP5cxHL
- xry5Cng4sbW7axL7qnUa7DQirbwpOWPfLs=
-X-Received: by 2002:a05:6000:2606:b0:482:6faf:4078 with SMTP id
- ffacd0b85a97d-4826faf4102mr5282684f8f.21.1786726220311; 
- Fri, 14 Aug 2026 09:50:20 -0700 (PDT)
-Received: from xiaomi-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4815f1fff25sm15116681f8f.3.2026.08.14.09.50.17
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 14 Aug 2026 09:50:19 -0700 (PDT)
-From: Yongpeng Yang <yangyongpeng.storage@gmail.com>
-To: Chao Yu <chao@kernel.org>,
-	Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Sat, 15 Aug 2026 00:50:08 +0800
-Message-ID: <20260814165008.693980-1-yangyongpeng.storage@gmail.com>
-X-Mailer: git-send-email 2.43.0
+ Sat, 15 Aug 2026 00:55:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3949F1F000E9;
+ Sat, 15 Aug 2026 00:54:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1786755300;
+ bh=Jh9woRgo1yB+sOH6AcX4fM9oiWw/Q4nliNfwwNCN9Y0=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References;
+ b=K2zdU/16D4waGZDaegS6i/jDHLndlvkN+u7Rb/kC86ix9RzR8RZfMjeQatvK8ANI5
+ dl5iM53OC2quasbrMltX7q8IPt8A2pMPKBKFtSBmIMeKoCEebtlJODfvzxFqVdtJIz
+ 4yWLqoZzep9VvJ/j8kTwHc+vIntimF9ZbwNF/Lk4LeJ1yT/nu7mIx3o7tssC2mMwzA
+ /b0XdQbQ2bdpb67+EJoelZ4gwj3XRUtfdCI7D+SiLMHF246kAzrMIIXyHXBAH9ZqVv
+ pyAkvsT4jA6lrZ07ABzYXUtHxrnC3Q6kuN5eJ73wrF57SgbjdgjpsCcGVU/olvhy2X
+ 0/K8hQ+ZTJhfw==
+To: jaegeuk@kernel.org
+Date: Sat, 15 Aug 2026 08:54:40 +0800
+Message-ID: <20260815005441.1444273-3-chao@kernel.org>
+X-Mailer: git-send-email 2.55.0.691.gc56d675ccc-goog
+In-Reply-To: <20260815005441.1444273-1-chao@kernel.org>
+References: <20260815005441.1444273-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1wuv6w-0007EY-Vb
-Subject: [f2fs-dev] [PATCH] f2fs_io: add extent_cache command to dump read
- extent cache
+X-Headers-End: 1wv2fx-0001J2-Sx
+Subject: [f2fs-dev] [PATCH 3/3] fsck.f2fs: sanity check quota file size in
+ v2_init_io
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -116,119 +87,66 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Yongpeng Yang <yangyongpeng@xiaomi.com>,
- Yongpeng Yang <monty_pavel@sina.com>, linux-f2fs-devel@lists.sourceforge.net
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Yongpeng Yang <yangyongpeng@xiaomi.com>
+In v2_init_io(), quota file size is not bounded. A corrupted or crafted
+quota inode with a large i_size can set dqi_blocks to a huge value
+(e.g. 0xFFFFFFFC).
 
-Add an "extent_cache" subcommand that dumps the in-memory read extent
-cache of a given file to the kernel log, by passing the file's
-descriptor to the /sys/fs/f2fs/<dev>/extent_cache_debug sysfs entry
-introduced by the kernel counterpart patch.
+When scanning dquots in qtree_scan_dquots(), computing the bitmap size
+as (info->dqi_blocks + 7) >> 3 causes an unsigned 32-bit integer wrap to 0,
+allocating a 0-byte buffer via malloc(0). Later, report_block() performs
+out-of-bounds bit-setting writes past the heap buffer.
 
-The dump itself is emitted by the kernel via f2fs_info(),  inspect it
-with "dmesg | grep ino=<ino>".
+This patch fixes the issue by:
+1. Porting the e2fsprogs check (CVE-2019-5094) into v2_init_io() to cap
+   quota file size at 2GB (1ULL << 31).
+2. Casting info->dqi_blocks to size_t when calculating bitmap allocation
+   size in qtree_scan_dquots() as defense-in-depth.
 
-Signed-off-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- tools/f2fs_io/f2fs_io.c | 65 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+ fsck/quotaio_tree.c | 2 +-
+ fsck/quotaio_v2.c   | 6 ++++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index 06e0ea0..3025b7b 100644
---- a/tools/f2fs_io/f2fs_io.c
-+++ b/tools/f2fs_io/f2fs_io.c
-@@ -33,6 +33,7 @@
- #include <sys/mman.h>
- #include <sys/sendfile.h>
- #include <sys/stat.h>
-+#include <sys/sysmacros.h>
- #include <sys/types.h>
- #include <termios.h>
- #include <time.h>
-@@ -1965,6 +1966,69 @@ static void do_precache_extents(int argc, char **argv, const struct cmd_desc *cm
- 	exit(0);
- }
+diff --git a/fsck/quotaio_tree.c b/fsck/quotaio_tree.c
+index 40521c5..60cec7d 100644
+--- a/fsck/quotaio_tree.c
++++ b/fsck/quotaio_tree.c
+@@ -667,7 +667,7 @@ int qtree_scan_dquots(struct quota_handle *h,
+ 		return -1;
  
-+#define extent_cache_desc "dump the in-memory read extent cache of a file"
-+#define extent_cache_help							\
-+"f2fs_io extent_cache [file_path]\n\n"					\
-+"Dump the in-memory read extent cache (largest extent plus every rbtree\n" \
-+"node, as fofs/blk/len) of the given file to the kernel log by passing\n" \
-+"its file descriptor to the per-sb sysfs entry\n"			\
-+"/sys/fs/f2fs/<dev>/extent_cache_debug.\n\n"				\
-+"Read the file beforehand so its extent tree is populated, then run\n" \
-+"this command and inspect the dump with 'dmesg | grep ino=<ino>'.\n"
-+
-+static void do_extent_cache(int argc, char **argv, const struct cmd_desc *cmd)
-+{
-+	struct stat st;
-+	char fd_str[32];
-+	char devlink[PATH_MAX];
-+	char devname[NAME_MAX + 1];
-+	char sysfs_path[PATH_MAX];
-+	char *base;
-+	ssize_t rlen;
-+	int fd, sfd, ret;
-+
-+	if (argc != 2) {
-+		fputs("Excess arguments\n\n", stderr);
-+		fputs(cmd->cmd_help, stderr);
-+		exit(1);
+ 	dquot->dq_h = h;
+-	if (quota_get_memzero((info->dqi_blocks + 7) >> 3, &bitmap))
++	if (quota_get_memzero(((size_t)info->dqi_blocks + 7) >> 3, &bitmap))
+ 		goto out;
+ 	if (report_tree(dquot, QT_TREEOFF, 0, bitmap, &entries, process_dquot,
+ 				data))
+diff --git a/fsck/quotaio_v2.c b/fsck/quotaio_v2.c
+index e19f303..50daf26 100644
+--- a/fsck/quotaio_v2.c
++++ b/fsck/quotaio_v2.c
+@@ -206,6 +206,12 @@ static int v2_init_io(struct quota_handle *h, enum quota_type qtype)
+ 		f2fs_filesize_update(qf->sbi, qf->ino, filesize);
+ 	}
+ 
++	if (filesize > (1ULL << 31)) {
++		log_err("Quota inode %u corrupted: file size %" PRIu64
++			" too large", h->qh_qf.ino, filesize);
++		return -1;
 +	}
 +
-+	/* Open the target file; its fd is handed to the kernel. */
-+	fd = xopen(argv[1], O_RDONLY, 0);
-+	if (fstat(fd, &st) < 0)
-+		die_errno("fstat %s failed", argv[1]);
-+	if (!S_ISREG(st.st_mode))
-+		die("%s is not a regular file", argv[1]);
-+
-+	/* Resolve the kernel device name (sb->s_id) from st_dev. */
-+	ret = snprintf(devlink, sizeof(devlink), "/sys/dev/block/%u:%u",
-+		       major(st.st_dev), minor(st.st_dev));
-+	if (ret < 0 || (size_t)ret >= sizeof(devlink))
-+		die("device path too long");
-+	rlen = readlink(devlink, sysfs_path, sizeof(sysfs_path) - 1);
-+	if (rlen < 0)
-+		die_errno("readlink %s failed", devlink);
-+	sysfs_path[rlen] = '\0';
-+	base = basename(sysfs_path);
-+	snprintf(devname, sizeof(devname), "%s", base);
-+
-+	ret = snprintf(sysfs_path, sizeof(sysfs_path),
-+		       "/sys/fs/f2fs/%s/extent_cache_debug", devname);
-+	if (ret < 0 || (size_t)ret >= sizeof(sysfs_path))
-+		die("sysfs path too long");
-+
-+	/* Pass the fd to the kernel; the dump is written to the kernel log. */
-+	snprintf(fd_str, sizeof(fd_str), "%d", fd);
-+	sfd = xopen(sysfs_path, O_WRONLY, 0);
-+	full_write(sfd, fd_str, strlen(fd_str));
-+	close(sfd);
-+
-+	printf("ino=%lu extent cache dump written to kernel log\n"
-+	       "inspect with: dmesg | grep ino=%lu\n", st.st_ino, st.st_ino);
-+	close(fd);
-+	exit(0);
-+}
-+
- #define move_range_desc "moving a range of data blocks from source file to destination file"
- #define move_range_help						\
- "f2fs_io move_range [src_path] [dst_path] [src_start] [dst_start] "	\
-@@ -2636,6 +2700,7 @@ const struct cmd_desc cmd_list[] = {
- 	CMD(gc),
- 	CMD(checkpoint),
- 	CMD(precache_extents),
-+	CMD(extent_cache),
- 	CMD(move_range),
- 	CMD(gc_range),
- 	CMD(listxattr),
+ 	if ((info->dqi_qtree.dqi_blocks >
+ 			(filesize + QT_BLKSIZE - 1) >> QT_BLKSIZE_BITS)) {
+ 		log_err("Quota inode %u corrupted: file size %" PRId64 "; "
 -- 
-2.43.0
+2.49.0
 
 
 
