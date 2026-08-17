@@ -4,74 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 884DDC5DF66
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 17 Aug 2026 17:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 43168C5DF66
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 17 Aug 2026 17:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-ID:To:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=/sb8vI+DpSHDt2zLn9xdJVAFowGEULZi2A/fiJbgjhw=; b=Lp1ohd0R24IO6ErXosgCSKGIzA
-	TmTCTtyAhVaK9z6plmO6DCMhb3Sk53LmDtleefb1TUkGXSlouxUkdPXmdyhOeemLlpp9ATXyBZKYA
-	eKXdvT66fuHvlQUHv71BFiUhR8QBNELZNbdidiBcwCRAuqENZvP9OJz8CAjS2IP4t0HE=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
+	Subject:To:From:Message-ID:Date:MIME-Version:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=LwFZ97ZmFFProrUTyrQAlG1NdNUTmbJ0lKUlSYm6SOY=; b=Q6uSgjYd5xD1GAnAOjR1sWSOy5
+	aJwbBlMhA5j3AOnEl+zxYT2R/iQMFfeBOEL8kf3lrkwnlI1KiHe2iUbrf7ug0iiUJaPEvzJnl0amp
+	TyOEPm512yONtApHE3ShRozvmQTYegeWcM60CTzwX6O99vsQGzjLy93hTxZOtDTPiN44=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ww1DA-0005Kt-Rq;
-	Mon, 17 Aug 2026 17:33:22 +0000
+	id 1ww1L6-0003HZ-Uz;
+	Mon, 17 Aug 2026 17:41:37 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1ww1D9-0005Km-Eb
- for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 17 Aug 2026 17:33:20 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <3xkeDagkbAL0v12ndoohudsslg.jrrjohxvhufrqwhqw.frp@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
+ id 1ww1L2-0003H6-Lg for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 17 Aug 2026 17:41:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
- From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
+ MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=EmyV7xbzNpKPMsgyi7dD1KtLhUmJvpKWR0aS98Q0COk=; b=l+tr9wYvYpbORJO5yRMr2N1fOj
- y6m/8PEOBHF1DRSoh65vyANIgMdCpsmsUqNM6UCjmiw0YDvgDHUcaPJO9u0FHxxBzgBuJqvNuuwUe
- rqE8jCaYJq8KnLxQAbVcye8mfduj1BB5K/ZmnmTB3jiizxwRz+Mz6hLfj/7Hje8diRcg=;
+ bh=fPIj09CKOiIyPwKzk4p43ltnDz9Y4EvUkGwV6DzV3Fs=; b=WpZNpLxUrrcZhUMglC8Qt4Gwrc
+ tb6G5BA13nUBAyJbQvC17O29+seA3sf2m75fQGzIoWQefzNrkmuUL99we4EKW9TYEb+bdbA5XF4W+
+ iVqKtZ7YV+6eM7R03IHQ+rPCViIknJd7XSEjJU7uSoH6DNrVzxfPe7yyhfiYaFoqJpDA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
+ :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=EmyV7xbzNpKPMsgyi7dD1KtLhUmJvpKWR0aS98Q0COk=; b=h
- eNiCVaN0N+RKdKe3ywPrxnD7Ihq79sYTh16A0oqcSzuFdF3ea8p4/vQTSC9GlmHXoNWnXWIWpCZ7x
- mCDzmsxkndpx9cJ+z7nrXcK6CtgegdU2BxOdhAtPh943FqjSLeFQ4wudH9BT4UkOeTvTUgEhPdR0X
- GmtCKy1Rq72qTKO4=;
-Received: from tor.source.kernel.org ([172.105.4.254])
+ List-Owner:List-Archive; bh=fPIj09CKOiIyPwKzk4p43ltnDz9Y4EvUkGwV6DzV3Fs=; b=A
+ pjwRJwkjF30yA3M34Ccu1M9xGkk+masgnCyhxU1W8x6jOYFiOt4Ar5sWsRQ2DpS8Hf7RPOmJAjWt+
+ IX+py6ENc3s1qGPgq1pr4IYfgOwBSG/K50wQr8lkRmsaDOblntqfk2ekJpEy6YN+NqpEs8Zz+UaNI
+ HkcEERUEuXdJzIVE=;
+Received: from mail-oi1-f207.google.com ([209.85.167.207])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ww1D5-0005US-GS for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 17 Aug 2026 17:33:20 +0000
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id A9B16600AE;
- Mon, 17 Aug 2026 17:33:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E5EB1F00A3A;
- Mon, 17 Aug 2026 17:33:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1786987993;
- bh=EmyV7xbzNpKPMsgyi7dD1KtLhUmJvpKWR0aS98Q0COk=;
- h=Date:From:To:Cc:Subject;
- b=DkCH1N9Lskx1xfHS9tQKoXIYa9ECtWkT0PFiAorHAT9gTDyb5YmdOGUImCvXbr9ZP
- 7UnJf8n6ye5OGeTaQb2nwqy725T7QcTe3N2amXGBn9H8w6a+iM4O1YHntanFRDUgTP
- ITM8/ZjVTuPS8gM2EuV9ekbbLRTXSLqf1pGMvQGozgvtdeB/6QpaoIK0sVSNKPsLbD
- U2sbbw6+uxxEqOeEe0jxiZnm59+AueHzXLp/vGg9kxoGmk3MXZIRys8GkG1/x+oE8i
- hJmrJhEtomWzI/myHBmI9FKStCNCCnUQWYLJkuzm0/vzr5ngZz3kpVJrfhZLJsZ1Am
- 50UpOyClxFn3w==
-Date: Mon, 17 Aug 2026 10:33:11 -0700
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <20260817173311.GB8327@quark>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1ww1L2-0005te-0l for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 17 Aug 2026 17:41:33 +0000
+Received: by mail-oi1-f207.google.com with SMTP id
+ 5614622812f47-4afa222912eso1930210b6e.2
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 17 Aug 2026 10:41:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1786988486; x=1787593286;
+ h=content-type:to:from:subject:message-id:date:mime-version
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=fPIj09CKOiIyPwKzk4p43ltnDz9Y4EvUkGwV6DzV3Fs=;
+ b=MyxEcgAJvd4cYqfv4+cb1umyw7dezC+cku43+Br9K65I94LYsLimduxbgmdN92G00H
+ 1ml1NQEmDNHgVyhyFT3hjQaycIZPmXghWbxt9ytXvwnfefqfP9cPqXLVo8igPjP+cEWU
+ zz5aTy39dmLGGiw7u0/s5rm8mCfw+ndD8DM383OKkZbK0wt7SRTttKaIVmszwHCrb7EO
+ 8Nr/DRc0tiINbRpgen7r0LqUheBW6l2Ak+CnXZy/DmWe+U81w3ltvvOUA+b5Ei3Ofvm4
+ kkyvOxkIx9qH+TIs+4PRl9pSWaFS7q0uHUCXOE0I5uCL4FKdbKM5dNH88aUonsMjF7AD
+ FCbw==
+X-Forwarded-Encrypted: i=1;
+ AHgh+Rrkc2qS2kjxop/UTUcD9uRcPUsCp/Dusgu4haLrI6zyEclHxQb8t0M7rStOeNV2+w8Lg3AaYZnA7t1Ec2Ghllfl@lists.sourceforge.net
+X-Gm-Message-State: AOJu0YwqCnulOs9aeo/UM2RtJ8F0YOwz//26ALx5vXp55Hhb6JNM5IM2
+ R9+0NxAEJpEiE9iY+WREsNBS8E4Jdejtnz/fA8hsV4ByJgNGWU1CAyBwjI+dT1NxC47FmODuEwS
+ ILL+LKn8KOysMEFGCMGmv5GnC/ijPvwM3TVq5jxzrR42y6PGbERpl+/GXgjM=
 MIME-Version: 1.0
-Content-Disposition: inline
-X-Headers-End: 1ww1D5-0005US-GS
-Subject: [f2fs-dev] [GIT PULL] fscrypt updates for 7.3
+X-Received: by 2002:a05:6808:1506:b0:489:5d05:552c with SMTP id
+ 5614622812f47-4b241e3c0f7mr20916579b6e.18.1786988486332; Mon, 17 Aug 2026
+ 10:41:26 -0700 (PDT)
+Date: Mon, 17 Aug 2026 10:41:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6a8347c6.4d75e56a.c9a88.0004.GAE@google.com>
+From: syzbot <syzbot+e1fcebe01f24c6309792@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+ syzkaller-bugs@googlegroups.com
+X-Headers-End: 1ww1L2-0005te-0l
+Subject: [f2fs-dev] [syzbot] [f2fs?] WARNING: suspicious RCU usage in
+ f2fs_remove_ino_entry
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,147 +97,117 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Eric Biggers via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The following changes since commit 6fe4e4b8259e1330945b5f3c9476e08473b8e0e8:
+Hello,
 
-  fscrypt: Avoid dynamic allocation in fscrypt_get_devices() (2026-07-20 10:39:24 -0700)
+syzbot found the following issue on:
 
-are available in the Git repository at:
+HEAD commit:    4477a78374a5 Add linux-next specific files for 20260814
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14e5ea25580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9b32a36dd637b06f
+dashboard link: https://syzkaller.appspot.com/bug?extid=e1fcebe01f24c6309792
+compiler:       Debian clang version 22.1.8 (++20260613092233+e80beda6e255-1~exp1~20260613092250.77), Debian LLD 22.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1320d949580000
 
-  https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/994c1c8c560e/disk-4477a783.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/cd54543d69ae/vmlinux-4477a783.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/407cdf8f3fc2/bzImage-4477a783.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/8c65ba7adddd/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=16b9fa79580000)
 
-for you to fetch changes up to 7dd38d9dd7a05329825fe2324d4d8e27ad4b3cec:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e1fcebe01f24c6309792@syzkaller.appspotmail.com
 
-  blk-crypto: Update docs for blk-crypto-fallback motivation (2026-07-20 10:39:26 -0700)
+=============================
+WARNING: suspicious RCU usage
+syzkaller #0 Not tainted
+-----------------------------
+./include/linux/radix-tree.h:179 suspicious rcu_dereference_check() usage!
 
-----------------------------------------------------------------
+other info that might help us debug this:
 
-The main change this cycle is a significant simplification that's been
-overdue for a while now: standardizing on a single file contents
-encryption implementation in ext4 and f2fs, instead of having two.
 
-Specifically, the original filesystem-layer file contents encryption
-implementation is removed, and the blk-crypto implementation is now
-used unconditionally. blk-crypto delegates either to inline crypto
-hardware or to the CPU via blk-crypto-fallback. The latter is
-functionally equivalent to the original filesystem-layer code.
+rcu_scheduler_active = 2, debug_locks = 1
+locks held by syz-executor/5756: 2, last CPU#0:
+ #0: ffff888079faa0e8 (&type->s_umount_key#56){+.+.}-{4:4}, at: __super_lock fs/super.c:60 [inline]
+ #0: ffff888079faa0e8 (&type->s_umount_key#56){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:75 [inline]
+ #0: ffff888079faa0e8 (&type->s_umount_key#56){+.+.}-{4:4}, at: deactivate_super+0xac/0xe0 fs/super.c:631
+ #1: ffff88801cf908c8 (&im->ino_lock){+.+.}-{3:3}, at: spin_lock include/linux/spinlock.h:347 [inline]
+ #1: ffff88801cf908c8 (&im->ino_lock){+.+.}-{3:3}, at: __clear_ino_bitmap fs/f2fs/checkpoint.c:809 [inline]
+ #1: ffff88801cf908c8 (&im->ino_lock){+.+.}-{3:3}, at: f2fs_remove_ino_entry+0x18d/0x3f0 fs/f2fs/checkpoint.c:855
 
-The blk-crypto implementation already existed, but previously it was
-used only when the filesystem was mounted with "-o inlinecrypt". Now,
-"-o inlinecrypt" just selects whether inline crypto hardware is used.
+stack backtrace:
+CPU: 0 UID: 0 PID: 5756 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/24/2026
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
+ lockdep_rcu_suspicious+0x140/0x1d0 kernel/locking/lockdep.c:6938
+ radix_tree_deref_slot include/linux/radix-tree.h:179 [inline]
+ __clear_ino_bitmap fs/f2fs/checkpoint.c:812 [inline]
+ f2fs_remove_ino_entry+0x3ae/0x3f0 fs/f2fs/checkpoint.c:855
+ f2fs_delete_inode fs/f2fs/inode.c:946 [inline]
+ f2fs_evict_inode+0x83d/0x21f0 fs/f2fs/inode.c:1100
+ evict+0x624/0xb50 fs/inode.c:822
+ f2fs_pre_evict_inode fs/f2fs/inode.c:911 [inline]
+ f2fs_evict_inode+0x20f/0x21f0 fs/f2fs/inode.c:1096
+ evict+0x624/0xb50 fs/inode.c:822
+ dispose_list fs/inode.c:864 [inline]
+ evict_inodes+0x7e3/0x870 fs/inode.c:918
+ generic_shutdown_super+0xaa/0x2d0 fs/super.c:755
+ kill_block_super+0x44/0xa0 fs/super.c:1918
+ kill_f2fs_super+0x3b3/0x700 fs/f2fs/super.c:5635
+ deactivate_locked_super+0xbc/0x110 fs/super.c:603
+ cleanup_mnt+0x3d3/0x460 fs/namespace.c:1317
+ task_work_run+0x1d9/0x270 kernel/task_work.c:233
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ __exit_to_user_mode_loop kernel/entry/common.c:70 [inline]
+ exit_to_user_mode_loop+0x204/0x770 kernel/entry/common.c:101
+ __exit_to_user_mode_prepare include/linux/irq-entry-common.h:207 [inline]
+ syscall_exit_to_user_mode_prepare include/linux/irq-entry-common.h:230 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:336 [inline]
+ do_syscall_64+0x328/0x520 arch/x86/entry/syscall_64.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f896299f317
+Code: a2 c7 05 dc 43 25 00 00 00 00 00 eb 96 e8 e1 12 00 00 90 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 e8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffc3257e798 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 00007f8962a34474 RCX: 00007f896299f317
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffc3257e850
+RBP: 00007ffc3257e850 R08: 00007ffc3257f850 R09: 00000000ffffffff
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc3257f8e0
+R13: 00007f8962a34474 R14: 0000000000016591 R15: 00007ffc3257f920
+ </TASK>
 
-To allow maintaining that user control over hardware use, the
-blk-crypto API is extended with a new flag BLK_CRYPTO_CFG_ALLOW_HW.
 
-Overall, this removes quite a bit of redundant code from ext4, f2fs,
-and fs/crypto/. It should make things easier for ongoing filesystem
-efforts such as iomap support, large folios, and btrfs encryption.
-(btrfs had already been planning to use blk-crypto exclusively.)
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-There are two small behavior changes of note:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-- Direct I/O now works on encrypted files even without
-  "-o inlinecrypt", rather than falling back to buffered I/O. This is
-  effectively a bugfix, though I'll continue to keep an eye out for
-  any user that may have been depending on the buffered I/O fallback.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-- IV_INO_LBLK_32 policies are no longer supported in certain cases
-  that didn't make sense and have no known uses.
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-This has been in linux-next since July 22 with no reported issues.
-All encryption xfstests pass on ext4 and f2fs. As usual I've also been
-using it on a system with an fscrypt-encrypted home directory. Of
-course, the blk-crypto code paths also aren't new and were already
-being used on many systems via the inlinecrypt mount option.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-In addition to the main change described above, there are a few other
-cleanups such as using lock guards for mutexes, improving
-documentation, and removing a workaround for outdated gcc versions.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-----------------------------------------------------------------
-Eric Biggers (29):
-      fscrypt: Use lock guards for mutexes
-      fscrypt: Remove FSCRYPT_MODE_MAX
-      fscrypt: Simplify handling of errors during initcall
-      fscrypt: Remove workaround for bug in gcc 7 and earlier
-      blk-crypto: Simplify check for fallback support
-      blk-crypto: Fold __blk_crypto_cfg_supported() into its caller
-      blk-crypto: Allow control over whether hardware is used
-      fscrypt: Fully disallow IV_INO_LBLK_32 with s_blocksize != PAGE_SIZE
-      fscrypt: Always use blk-crypto for contents on block-based filesystems
-      Documentation: fscrypt: Update docs for inlinecrypt
-      ext4: Remove fs-layer file contents en/decryption code
-      ext4: Make ext4_bio_write_folio() return void
-      ext4: Further de-generalize the bio postprocessing code
-      f2fs: Remove fs-layer file contents en/decryption code
-      fs/buffer: Remove fs-layer decryption code
-      fscrypt: Replace calls to fscrypt_inode_uses_inline_crypto()
-      fscrypt: Remove fscrypt_dio_supported()
-      fscrypt: Remove fs-layer zeroout code
-      fscrypt: Remove unused functions and workqueue
-      fscrypt: Merge bio.c and inline_crypt.c into block.c
-      fscrypt: Add safety checks to non-block-based en/decryption
-      fscrypt: Replace some variable-size memsets with fixed-size
-      fscrypt: Update encryption policy version docs
-      fs: Update outdated comment for SB_INLINECRYPT
-      f2fs: Update outdated comment in f2fs_write_begin()
-      fscrypt: Remove unused function fscrypt_finalize_bounce_page()
-      fscrypt: Update docs for data path
-      blk-crypto: Remove unused function blk_crypto_config_supported()
-      blk-crypto: Update docs for blk-crypto-fallback motivation
-
- Documentation/admin-guide/ext4.rst          |   8 +-
- Documentation/block/inline-encryption.rst   |  43 ++---
- Documentation/filesystems/f2fs.rst          |  10 +-
- Documentation/filesystems/fscrypt.rst       | 154 +++++++--------
- arch/loongarch/configs/loongson32_defconfig |   1 -
- arch/loongarch/configs/loongson64_defconfig |   1 -
- block/blk-crypto-fallback.c                 |   3 +-
- block/blk-crypto-internal.h                 |   3 -
- block/blk-crypto-profile.c                  |  22 ---
- block/blk-crypto.c                          |  46 +++--
- drivers/md/dm-inlinecrypt.c                 |   3 +-
- fs/buffer.c                                 |  45 +----
- fs/crypto/Kconfig                           |   8 +-
- fs/crypto/Makefile                          |   3 +-
- fs/crypto/bio.c                             | 216 ---------------------
- fs/crypto/{inline_crypt.c => block.c}       | 279 ++++++++++++++--------------
- fs/crypto/crypto.c                          | 180 ++++++------------
- fs/crypto/fscrypt_private.h                 |  33 +---
- fs/crypto/keyring.c                         |  21 +--
- fs/crypto/keysetup.c                        |  63 ++-----
- fs/crypto/keysetup_v1.c                     |   2 +-
- fs/crypto/policy.c                          |  34 ++--
- fs/ext4/crypto.c                            |   2 +-
- fs/ext4/ext4.h                              |   6 +-
- fs/ext4/inode.c                             |  71 ++-----
- fs/ext4/page-io.c                           |  74 +-------
- fs/ext4/readpage.c                          | 139 ++++----------
- fs/ext4/super.c                             |   6 +-
- fs/f2fs/compress.c                          |  31 +---
- fs/f2fs/data.c                              |  95 +---------
- fs/f2fs/f2fs.h                              |   2 -
- fs/f2fs/file.c                              |   6 +-
- fs/f2fs/segment.c                           |   2 -
- fs/f2fs/super.c                             |   2 +-
- include/linux/blk-crypto.h                  |  15 +-
- include/linux/fs/super_types.h              |   2 +-
- include/linux/fscrypt.h                     | 107 ++---------
- include/uapi/linux/fscrypt.h                |   1 -
- tools/include/uapi/linux/fscrypt.h          |   1 -
- 39 files changed, 494 insertions(+), 1246 deletions(-)
- delete mode 100644 fs/crypto/bio.c
- rename fs/crypto/{inline_crypt.c => block.c} (61%)
+If you want to undo deduplication, reply with:
+#syz undup
 
 
 _______________________________________________
