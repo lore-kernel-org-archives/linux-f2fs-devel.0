@@ -4,92 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 07BE5C5DF67
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Aug 2026 07:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 832F9C5DF7E
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Aug 2026 11:51:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
-	Subject:In-Reply-To:MIME-Version:References:Message-ID:To:From:Date:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=aIkWwF1/fgBBQZPKwrDN/CkOuekTWHmztciIlIYlZjk=; b=YRZTSJdpcDHDQYc/qVXj5JHJum
-	ZEuYFUC6+YHulrCnHHESIodFQcvrFVDMVISP/46NwMM0uLvWiwHEQpE1UmEjgrU+vPTlchipPgKxY
-	Cp6ykozTVyLBj5ineG1SU5a8z6xhu0RhJiqX+kOE3Eyz3YrVrdMEl17k20cukWwU9ncM=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
+	Message-ID:Sender:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=srZpcDZpXCbsenDuFMlliGXgNsLsSOlG9WtcGWXcJOM=; b=mSr69F+WIcQ0r70zT6Z1QBhuYC
+	DawFnqQ4pbf1K2se6bG6t/m9V6IXKJRTti9LOAf56Ibe9lrvi+DSnhB5bg/pyG2Aow0gFGhUyvI6y
+	R4j1VOUOfI7ZmxYWfLiQCPVi9AzFpZBIFE3uzAn5ivbJJreIV9JE8F7gvFg+A2TRRJak=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wwDom-00078O-Tf;
-	Tue, 18 Aug 2026 07:01:04 +0000
+	id 1wwILP-0006Mt-Pq;
+	Tue, 18 Aug 2026 11:51:01 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lkp@intel.com>) id 1wwDol-00078G-Kz
+ (envelope-from <chao@kernel.org>) id 1wwILA-0006MY-52
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Aug 2026 07:01:03 +0000
+ Tue, 18 Aug 2026 11:50:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nMnj7NnQsctKz7lH47mw77VM5qUASp9bSWW6DMnOlKg=; b=mv4M8+z+SJyw2aVZl0capjUy9I
- LSkb0kbw5m/6k+h/M7wpPeOTA4BZlkmR5Jlczm+v99TZgUxjVH6NaR6ETXrZtyraxPMc19/c6p7AN
- aOERXZiRceS6GFrLRGmqE9F0MQXXtVBeneTtXYURWdrUbO7voitOixx7RJZihhC3j9ss=;
+ bh=Z9b5XXuybQ7GI+3Z2/bQurGayFuYmB1m5lZSagDKMcU=; b=nJ+l8Z3272L7712YGrE1Yz5PU9
+ A0ww1v3lmbsE7dIBynlrej+mGOUF7W8fV+dQ768RvDbWv7kyFOwyuuXb65d/2q+2JWy2y7IzTk0so
+ +GPiIZi7gVb9NVfsoZsnwv6h0GeeVoCYvqbkXs0hjDVAzrA9QuSZhqwq5qda8CJq7PFw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=nMnj7NnQsctKz7lH47mw77VM5qUASp9bSWW6DMnOlKg=; b=c+JdZX6DEboBkx+PFSGwKs8tf2
- 1RPaY0ljfds+MTgxHIuo8OeK+aaOg1GDFv+2wlak0mjdW5Ga1MIrhUt/H3b1x9xIduI15cqaOPoQt
- u/4hfn7M62OtJJgqLECjNWA1imVyOvkBpKmMj5MyhhJN9qe3CoIZAViWp9uZPqMgZr0g=;
-Received: from mgamail.intel.com ([198.175.65.15])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=Z9b5XXuybQ7GI+3Z2/bQurGayFuYmB1m5lZSagDKMcU=; b=AUY0T1NqgVE8q+DUoDqkgZufy1
+ xEkQyDkbTRoJhxZR56guLWTXksS7f1WVoQvW/mXV6Pvbd+DDTClCF1wADxYJ9PhStZJW+VDk+WXtQ
+ cV9ctlkrprgEPvkt/uBXwH7t0zoL/WNhvDmINS/TZgp5Y5pQvUdKn2fsDJCi9QyD25Mk=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wwDol-0003ph-Hp for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Aug 2026 07:01:01 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787036460; x=1818572460;
- h=date:from:to:cc:subject:message-id:references:
- mime-version:in-reply-to;
- bh=Ilq7+57j7PhbL9oW0B5OqBDnoB8QEbpNuEjW+TFnan4=;
- b=RKwtoci2nr29O/F4kLrkojUXqvic9cujv5SVrc8vqCW2gYfu7sHvCNNa
- Mlc2HfzItJmCrlpbjCGb/L2r81U6UDQDH6VBNqvkynrR5Rxo+3OkxIqF/
- NsAVYqWk45mQq0VT3qCNLNBbv97l9m6jPf8N3hEQwGuZk1RCEXHPY8P4j
- gKVGYqqmtOhnfNL0WJ0hIXvtl9X6S6k9Qai/KQCFqJ8tiBi4X9TdTZ7X+
- 1udhw4jTpjCC1udTb84qTKlW0WfXZWuEo78USbqKJWCUroXHOJv240lAv
- YupHMyV3m+HY3/Z545/oTFqK4xYX75eH/21J619KlZHtOB3IDqi1lYs/O Q==;
-X-CSE-ConnectionGUID: QuJNITITQuajHLZWJmbI9Q==
-X-CSE-MsgGUID: 6d4oyaJ1R7aHjWK30Jqn4g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="91201259"
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="91201259"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Aug 2026 00:00:55 -0700
-X-CSE-ConnectionGUID: 6cxLhSokT+2X4bgAaWCxpA==
-X-CSE-MsgGUID: 4WoSgp6pRlGFc+N0JZzBIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="265171788"
-Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
- by orviesa007.jf.intel.com with ESMTP; 18 Aug 2026 00:00:53 -0700
-Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
- (envelope-from <lkp@intel.com>) id 1wwDoY-00000000eAU-2hzi;
- Tue, 18 Aug 2026 07:00:50 +0000
-Date: Tue, 18 Aug 2026 14:59:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Message-ID: <202608181459.m9UmVCUU-lkp@intel.com>
-References: <20260804002027.2196300-1-jaegeuk@kernel.org>
+ id 1wwIL6-0006gn-Ry for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 18 Aug 2026 11:50:45 +0000
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+ by sea.source.kernel.org (Postfix) with ESMTP id 1FB1340B41;
+ Tue, 18 Aug 2026 11:50:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B4D11F000E9;
+ Tue, 18 Aug 2026 11:50:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+ s=k20260515; t=1787053839;
+ bh=Z9b5XXuybQ7GI+3Z2/bQurGayFuYmB1m5lZSagDKMcU=;
+ h=Date:Cc:Subject:To:References:From:In-Reply-To;
+ b=U1xOEDh+QxbsjGPMT7UcyO02InVuQwtioOAzzUJMDx0QSMxkvB/Nz+57+0e9fBSCh
+ HJJmgVUscYoditRDj9DG1KEUjc9qvkjQBo3+H6oyjLwvFqgjkA+Q2091eoy0ca/Gcd
+ KjESm/9rOBu7xsBrbSabDGo5XuHSxll1NjkyZzFGvYspNki9hm48waTYQ5CevcP/2p
+ S3gYdp3XUHRhxCdYNuOQg+mTUM6BxGAw1Ma4dK17fDI+k6OYsLoFOoGfgZKFK8JxnQ
+ 1phpE/jZyOuWanPJPzeewdv+9NBBW7De2R0H0pnMe1/70SXy9yBb7ZimHPmEACHM2p
+ 3RqzO7vQ8Zk4w==
+Message-ID: <40fef665-0a29-4c44-9ce0-e02e6dc8d07b@kernel.org>
+Date: Tue, 18 Aug 2026 19:50:36 +0800
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20260804002027.2196300-1-jaegeuk@kernel.org>
-X-Headers-End: 1wwDol-0003ph-Hp
-Subject: Re: [f2fs-dev] [PATCH] f2fs: call __add_ino_entry out of the
- eviction path
+User-Agent: Mozilla Thunderbird
+To: syzbot <syzbot+014a7b70788139e6196d@syzkaller.appspotmail.com>,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <6a834262.4d75e56a.c9a88.0002.GAE@google.com>
+Content-Language: en-US
+In-Reply-To: <6a834262.4d75e56a.c9a88.0002.GAE@google.com>
+X-Headers-End: 1wwIL6-0006gn-Ry
+Subject: Re: [f2fs-dev] [syzbot] [f2fs?] WARNING: suspicious RCU usage in
+ __f2fs_add_ino_entry
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,242 +89,109 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, llvm@lists.linux.dev,
- oe-kbuild-all@lists.linux.dev
+From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Chao Yu <chao@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jaegeuk,
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git bugfix/common
 
-kernel test robot noticed the following build errors:
+On 8/18/26 01:18, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    4477a78374a5 Add linux-next specific files for 20260814
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=150bea25580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9b32a36dd637b06f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=014a7b70788139e6196d
+> compiler:       Debian clang version 22.1.8 (++20260613092233+e80beda6e255-1~exp1~20260613092250.77), Debian LLD 22.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d3fa79580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/994c1c8c560e/disk-4477a783.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/cd54543d69ae/vmlinux-4477a783.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/407cdf8f3fc2/bzImage-4477a783.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/12687adce9ef/mount_0.gz
+>   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=171cd949580000)
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+014a7b70788139e6196d@syzkaller.appspotmail.com
+> 
+> =============================
+> WARNING: suspicious RCU usage
+> syzkaller #0 Not tainted
+> -----------------------------
+> ./include/linux/radix-tree.h:179 suspicious rcu_dereference_check() usage!
+> 
+> other info that might help us debug this:
+> 
+> 
+> rcu_scheduler_active = 2, debug_locks = 1
+> locks held by kworker/u9:3/5775: 4, last CPU#0:
+>  #0: ffff88807f597940 ((wq_completion)f2fs_evict_wq){+.+.}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:309 [inline]
+>  #0: ffff88807f597940 ((wq_completion)f2fs_evict_wq){+.+.}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+>  #0: ffff88807f597940 ((wq_completion)f2fs_evict_wq){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3352 [inline]
+>  #0: ffff88807f597940 ((wq_completion)f2fs_evict_wq){+.+.}-{0:0}, at: process_scheduled_works+0x97a/0x1630 kernel/workqueue.c:3470
+>  #1: ffffc90003fb7c40 ((work_completion)(&ew->work)){+.+.}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:309 [inline]
+>  #1: ffffc90003fb7c40 ((work_completion)(&ew->work)){+.+.}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+>  #1: ffffc90003fb7c40 ((work_completion)(&ew->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3352 [inline]
+>  #1: ffffc90003fb7c40 ((work_completion)(&ew->work)){+.+.}-{0:0}, at: process_scheduled_works+0x97a/0x1630 kernel/workqueue.c:3470
+>  #2: ffff8880b863a820 (lock){+.+.}-{3:3}, at: local_lock_acquire include/linux/local_lock_internal.h:46 [inline]
+>  #2: ffff8880b863a820 (lock){+.+.}-{3:3}, at: __radix_tree_preload+0x82/0x870 lib/radix-tree.c:334
+>  #3: ffff8880338688c8 (&im->ino_lock){+.+.}-{3:3}, at: spin_lock include/linux/spinlock.h:347 [inline]
+>  #3: ffff8880338688c8 (&im->ino_lock){+.+.}-{3:3}, at: __set_ino_bitmap fs/f2fs/checkpoint.c:781 [inline]
+>  #3: ffff8880338688c8 (&im->ino_lock){+.+.}-{3:3}, at: __f2fs_add_ino_entry+0x14c/0x830 fs/f2fs/checkpoint.c:842
+> 
+> stack backtrace:
+> CPU: 0 UID: 0 PID: 5775 Comm: kworker/u9:3 Not tainted syzkaller #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/24/2026
+> Workqueue: f2fs_evict_wq f2fs_evict_inode_work
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
+>  lockdep_rcu_suspicious+0x140/0x1d0 kernel/locking/lockdep.c:6938
+>  radix_tree_deref_slot include/linux/radix-tree.h:179 [inline]
+>  __set_ino_bitmap fs/f2fs/checkpoint.c:784 [inline]
+>  __f2fs_add_ino_entry+0x782/0x830 fs/f2fs/checkpoint.c:842
+>  f2fs_record_inode_state fs/f2fs/inode.c:877 [inline]
+>  f2fs_evict_inode_work+0xa1/0x120 fs/f2fs/inode.c:887
+>  process_one_work kernel/workqueue.c:3387 [inline]
+>  process_scheduled_works+0xc3d/0x1630 kernel/workqueue.c:3470
+>  worker_thread+0xa47/0xfb0 kernel/workqueue.c:3551
+>  kthread+0x38b/0x480 kernel/kthread.c:436
+>  ret_from_fork+0x514/0xb70 arch/x86/kernel/process.c:158
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-[auto build test ERROR on v7.2-rc7]
-[also build test ERROR on linus/master]
-[cannot apply to jaegeuk-f2fs/dev-test jaegeuk-f2fs/dev next-20260817]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jaegeuk-Kim/f2fs-call-__add_ino_entry-out-of-the-eviction-path/20260815-151820
-base:   v7.2-rc7
-patch link:    https://lore.kernel.org/r/20260804002027.2196300-1-jaegeuk%40kernel.org
-patch subject: [PATCH] f2fs: call __add_ino_entry out of the eviction path
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20260818/202608181459.m9UmVCUU-lkp@intel.com/config)
-compiler: clang version 22.1.3 (https://github.com/llvm/llvm-project e9846648fd6183ee6d8cbdb4502213fcf902a211)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260818/202608181459.m9UmVCUU-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202608181459.m9UmVCUU-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> fs/f2fs/inode.c:1051:6: error: call to undeclared function 'current_is_kswapd'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    1051 |         if (current_is_kswapd()) {
-         |             ^
-   1 error generated.
-
-
-vim +/current_is_kswapd +1051 fs/f2fs/inode.c
-
-   887	
-   888	/*
-   889	 * Called at the last iput() if i_nlink is zero
-   890	 */
-   891	void f2fs_evict_inode(struct inode *inode)
-   892	{
-   893		struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-   894		struct f2fs_inode_info *fi = F2FS_I(inode);
-   895		nid_t xnid = fi->i_xattr_nid;
-   896		int err = 0;
-   897		bool freeze_protected = false;
-   898		unsigned int record_bits = 0;
-   899	
-   900		f2fs_abort_atomic_write(inode, true);
-   901	
-   902		if (fi->cow_inode && f2fs_is_cow_file(fi->cow_inode)) {
-   903			struct inode *cow_inode = fi->cow_inode;
-   904	
-   905			f2fs_down_write(&F2FS_I(cow_inode)->i_sem);
-   906			clear_inode_flag(cow_inode, FI_COW_FILE);
-   907			F2FS_I(cow_inode)->atomic_inode = NULL;
-   908			fi->cow_inode = NULL;
-   909			f2fs_up_write(&F2FS_I(cow_inode)->i_sem);
-   910	
-   911			iput(cow_inode);
-   912		}
-   913	
-   914		trace_f2fs_evict_inode(inode);
-   915		truncate_inode_pages_final(&inode->i_data);
-   916	
-   917		if ((inode->i_nlink || is_bad_inode(inode)) &&
-   918			test_opt(sbi, COMPRESS_CACHE) && f2fs_compressed_file(inode))
-   919			f2fs_invalidate_compress_pages(sbi, inode->i_ino);
-   920	
-   921		if (inode->i_ino == F2FS_NODE_INO(sbi) ||
-   922				inode->i_ino == F2FS_META_INO(sbi) ||
-   923				inode->i_ino == F2FS_COMPRESS_INO(sbi))
-   924			goto out_clear;
-   925	
-   926		f2fs_bug_on(sbi, get_dirty_pages(inode));
-   927		f2fs_remove_dirty_inode(inode);
-   928		f2fs_remove_donate_inode(inode);
-   929	
-   930		if (!IS_DEVICE_ALIASING(inode))
-   931			f2fs_destroy_extent_tree(inode);
-   932	
-   933		if (inode->i_nlink || is_bad_inode(inode))
-   934			goto no_delete;
-   935	
-   936		err = f2fs_dquot_initialize(inode);
-   937		if (err) {
-   938			err = 0;
-   939			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
-   940		}
-   941	
-   942		f2fs_remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
-   943		f2fs_remove_ino_entry(sbi, inode->i_ino, UPDATE_INO);
-   944		f2fs_remove_ino_entry(sbi, inode->i_ino, FLUSH_INO);
-   945	
-   946		if (!is_sbi_flag_set(sbi, SBI_IS_FREEZING)) {
-   947			sb_start_intwrite(inode->i_sb);
-   948			freeze_protected = true;
-   949		}
-   950		set_inode_flag(inode, FI_NO_ALLOC);
-   951		i_size_write(inode, 0);
-   952	retry:
-   953		if (F2FS_HAS_BLOCKS(inode))
-   954			err = f2fs_truncate(inode);
-   955	
-   956		if (time_to_inject(sbi, FAULT_EVICT_INODE))
-   957			err = -EIO;
-   958	
-   959		if (!err) {
-   960			struct f2fs_lock_context lc;
-   961	
-   962			f2fs_lock_op(sbi, &lc);
-   963			err = f2fs_remove_inode_page(inode);
-   964			f2fs_unlock_op(sbi, &lc);
-   965			if (err == -ENOENT) {
-   966				err = 0;
-   967	
-   968				/*
-   969				 * in fuzzed image, another node may has the same
-   970				 * block address as inode's, if it was truncated
-   971				 * previously, truncation of inode node will fail.
-   972				 */
-   973				if (is_inode_flag_set(inode, FI_DIRTY_INODE)) {
-   974					f2fs_warn(F2FS_I_SB(inode),
-   975						"f2fs_evict_inode: inconsistent node id, ino:%llu",
-   976						inode->i_ino);
-   977					f2fs_inode_synced(inode);
-   978					set_sbi_flag(sbi, SBI_NEED_FSCK);
-   979				}
-   980			}
-   981		}
-   982	
-   983		/* give more chances, if ENOMEM case */
-   984		if (err == -ENOMEM) {
-   985			err = 0;
-   986			goto retry;
-   987		}
-   988	
-   989		if (IS_DEVICE_ALIASING(inode))
-   990			f2fs_destroy_extent_tree(inode);
-   991	
-   992		if (err) {
-   993			f2fs_update_inode_page(inode);
-   994			if (dquot_initialize_needed(inode))
-   995				set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
-   996	
-   997			/*
-   998			 * If both f2fs_truncate() and f2fs_update_inode_page() failed
-   999			 * due to fuzzed corrupted inode, call f2fs_inode_synced() to
-  1000			 * avoid triggering later f2fs_bug_on().
-  1001			 */
-  1002			if (is_inode_flag_set(inode, FI_DIRTY_INODE)) {
-  1003				f2fs_warn(sbi,
-  1004					"f2fs_evict_inode: inode is dirty, ino:%llu",
-  1005					inode->i_ino);
-  1006				f2fs_inode_synced(inode);
-  1007				set_sbi_flag(sbi, SBI_NEED_FSCK);
-  1008			}
-  1009		}
-  1010		if (freeze_protected)
-  1011			sb_end_intwrite(inode->i_sb);
-  1012	no_delete:
-  1013		dquot_drop(inode);
-  1014	
-  1015		stat_dec_inline_xattr(inode);
-  1016		stat_dec_inline_dir(inode);
-  1017		stat_dec_inline_inode(inode);
-  1018		stat_dec_compr_inode(inode);
-  1019		stat_sub_compr_blocks(inode,
-  1020				atomic_read(&fi->i_compr_blocks));
-  1021	
-  1022		if (likely(!f2fs_cp_error(sbi) &&
-  1023					!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
-  1024			f2fs_bug_on(sbi, is_inode_flag_set(inode, FI_DIRTY_INODE));
-  1025	
-  1026		/*
-  1027		 * anyway, it needs to remove the inode from sbi->inode_list[DIRTY_META]
-  1028		 * list to avoid UAF in f2fs_sync_inode_meta() during checkpoint.
-  1029		 */
-  1030		f2fs_inode_synced(inode);
-  1031	
-  1032		/* for the case f2fs_new_inode() was failed, .i_ino is zero, skip it */
-  1033		if (inode->i_ino)
-  1034			invalidate_mapping_pages(NODE_MAPPING(sbi), inode->i_ino,
-  1035								inode->i_ino);
-  1036		if (xnid)
-  1037			invalidate_mapping_pages(NODE_MAPPING(sbi), xnid, xnid);
-  1038	
-  1039		if (!inode->i_nlink)
-  1040			goto skip_record;
-  1041	
-  1042		if (is_inode_flag_set(inode, FI_APPEND_WRITE))
-  1043			record_bits = BIT(APPEND_INO);
-  1044		if (is_inode_flag_set(inode, FI_UPDATE_WRITE))
-  1045			record_bits = BIT(UPDATE_INO);
-  1046	
-  1047		if (!record_bits)
-  1048			goto skip_record;
-  1049	
-  1050		/* Let's do this in workqueue out of the direct reclaim path. */
-> 1051		if (current_is_kswapd()) {
-  1052			f2fs_record_inode_state(sbi, inode->i_ino, record_bits);
-  1053		} else {
-  1054			struct evict_inode_work *ew =
-  1055				mempool_alloc(evict_inode_work_pool, GFP_NOFS);
-  1056	
-  1057			ew->sbi = sbi;
-  1058			ew->ino = inode->i_ino;
-  1059			ew->add_ino_entry_bits = record_bits;
-  1060			INIT_WORK(&ew->work, f2fs_evict_inode_work);
-  1061			queue_work(sbi->evict_wq, &ew->work);
-  1062		}
-  1063	skip_record:
-  1064		if (is_inode_flag_set(inode, FI_FREE_NID)) {
-  1065			f2fs_alloc_nid_failed(sbi, inode->i_ino);
-  1066			clear_inode_flag(inode, FI_FREE_NID);
-  1067		} else {
-  1068			/*
-  1069			 * If xattr nid is corrupted, we can reach out error condition,
-  1070			 * err & !f2fs_exist_written_data(sbi, inode->i_ino, ORPHAN_INO)).
-  1071			 * In that case, f2fs_check_nid_range() is enough to give a clue.
-  1072			 */
-  1073		}
-  1074	out_clear:
-  1075		fscrypt_put_encryption_info(inode);
-  1076		clear_inode(inode);
-  1077	}
-  1078	
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
 
 _______________________________________________
