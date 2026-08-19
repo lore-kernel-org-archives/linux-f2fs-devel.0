@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 95319C5DF81
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Aug 2026 02:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C66F7C5DF7D
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Aug 2026 02:56:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=xZ8UQzpPtS+8m0WR9J9N2DGpH2A01RiPnr/eQxoEvZU=; b=O2l0+sdsFompwkdENUADW/ADDH
-	2MgmM64s4K8/9vhMB8YSDx7tsQnEU6bh6q1azw+kTcSooc5Sn6IN6oWh0sYUv26OB6dPfjEyc2cEp
-	Z0HFd2qOVY1jnodt1Y/SahHvwexd0qWXGYZyAWB6rqYS/6S/Hvyifo5b4MazHcgzFn5s=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=D9PL0TLXKBAxkTzMFZ/nmW4ksdLcMHmfHx71ksRz/pc=; b=SgZLCAahYr8Qom6pWefumw9jtW
+	OCLRDAU4bXlG8jNfyiJVt1kiaD1Z/+vpUo55vzlgf36U32nTkZKP1NNggeAD2KR6tqeCDo1rgrMcw
+	O8VEgVpfSVkouTB2FcyV7Vo1D+Z5boOOw1t6ker7ou5qahI+lpCA9hvpUua/B3M8Xn+k=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wwW8d-0004yb-El;
-	Wed, 19 Aug 2026 02:34:47 +0000
+	id 1wwWU7-0007Z4-I1;
+	Wed, 19 Aug 2026 02:56:57 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wwW8O-0004yM-P4
+ (envelope-from <chao@kernel.org>) id 1wwWU6-0007Yw-4S
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 19 Aug 2026 02:34:32 +0000
+ Wed, 19 Aug 2026 02:56:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8r4VBKabDA433cmhj+qWtxabqGu1maRWF+/47QrjGC4=; b=AE6xLG00uOXaY/4enVkWaCNoUE
- J7opvwEz7b+suPmSYt99sS7KmBL0ZNfpGHX/MjQ6Lg5ANdCXi/epG2w4PBVDrsHG/0Rp1Yt1aPnq2
- 97bCG9K1U5ZpOtG8dIDlK7SnAI1LPdqHrFdT+HXYgfosI+3qdydQa/v66bM+KHCI+6gw=;
+ bh=xLwKJgu85Wnk2KX65yrhATcj9Q4UfxUVdXevuIpfB0M=; b=JHt4wXWTkcpMJVh42h+zs4xr50
+ Ay/y3hX7BfV6Pm36MEeK0u1AES1sCOpbgzH7DPPLabYwS7YngnmwY++kvYSH9LdYG2Hklj0cZ4crJ
+ ADA60MvY1/PSzF2iup7cVPMeRbHNhZLtKx9h9xx8cNXtkxO1uVJO9EK6m2ObAYu2OaRc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,41 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=8r4VBKabDA433cmhj+qWtxabqGu1maRWF+/47QrjGC4=; b=kz8/qXSTzGq2Lw00/4zRNpAST7
- F4sJ4SjI2jbH4cXU4TUBbhyW7pYr7MNoQFgfEOtg1CsDotoq1MvvThr732fmMnWkcNJ1/cOwiS8aK
- hjyKqlUl1WgO/GKYyC2MDwkLx1NE9Z87uPF9tCx7aqCtsDCV48hHxp2qBOYIhTVXC3pI=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=xLwKJgu85Wnk2KX65yrhATcj9Q4UfxUVdXevuIpfB0M=; b=TUfNiLraZcu56WHFuNeZdIzZeo
+ Lifie8Qj6GShaCJri4RDsfEawVUeK1ci6y/Xuy0xRdwjaadVBY7PgDbcMf2HNTZbKA5QlxepGJSgU
+ a1joEUWaaJaCrgyrO0fhJzpCLNeEUmsIMMGXRKRGoBrb/Vdbj+CsycrjBiwqE6jMZDAw=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wwW8Q-00054Q-OA for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 19 Aug 2026 02:34:32 +0000
+ id 1wwWU2-0002iR-7R for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 19 Aug 2026 02:56:55 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id A2A88413E4;
- Wed, 19 Aug 2026 02:34:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E1881F000E9;
- Wed, 19 Aug 2026 02:34:24 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id D1CCE601FB;
+ Wed, 19 Aug 2026 02:56:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C01321F01558;
+ Wed, 19 Aug 2026 02:56:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1787106865;
- bh=8r4VBKabDA433cmhj+qWtxabqGu1maRWF+/47QrjGC4=;
+ s=k20260515; t=1787108207;
+ bh=xLwKJgu85Wnk2KX65yrhATcj9Q4UfxUVdXevuIpfB0M=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=C2dOcBEkfs6Niq415YM0S8ZoQ9wwAWO2+hueXbosYxRgqd/kvcmOtHTtC8iWkb23F
- 5s3bxZ2PQfYOSAvaDNKb/mxLOKmyPZggyLZceeEvGJ4sR+BO0VXIo5lttLHmfe4pGL
- tU0M0OFuLE8Jmh8w+F4GrI8AYN8TAT5Sayp+DPdkFCt6zPj4D3tT7xCIxcsxBrBLbk
- HytE2zm32kT1wAgkIw89OhWSueWadsbu8pEIUAGEnPZakxpM7K1sXeZ3sgfPAPxtH0
- 8u+PGdU6qRyrOTZm031cSHHQhUqsiM99vB6wQNXIpub1Mc/Ddvy9D24UTyHKbU1EEo
- DpO0+LW/SgJXA==
-Message-ID: <6b55a4e9-e4a0-421c-9bb6-98ffc2c915c9@kernel.org>
-Date: Wed, 19 Aug 2026 10:34:23 +0800
+ b=H6mRy30qMzG8evoDYfFQT5j+F9MMXq3xjhSHHrNm6vGuFkdTIyigpfkB8AZTYamC9
+ iBYv+tSAg/wtwWUBOsB+ZEbn4tpBuaUk6chObKjK8OAem0MnLXGnJwzOmJhQFzcUfg
+ o9eL91vI4UkgSj1Hh6Moe+2fBj9Vthv7SvIIhm/ou8WpauS/VBsaby0OnxTsUjaZzI
+ +1RCs3Pqw4XsN93WBJv45YRywznw7lgLaaG2o0UWBnxRZOKvreVrFetX6x78nh1AXp
+ VpgBefoHay4jjX4g7KX4Gez3Bmpi3+g15o4JuKRKr+D6yZ/cn3JTayezotId5Ss8IH
+ eeFuv4AACCO+A==
+Message-ID: <4f8e32e7-be61-44f0-9bc7-10eefe1cad94@kernel.org>
+Date: Wed, 19 Aug 2026 10:56:45 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20260818170535.3190869-1-daeho43@gmail.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20260818200121.2684318-1-jaegeuk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20260818170535.3190869-1-daeho43@gmail.com>
-X-Headers-End: 1wwW8Q-00054Q-OA
-Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid setting SBI_NEED_FSCK on
- transient resize failure with -EAGAIN
+In-Reply-To: <20260818200121.2684318-1-jaegeuk@kernel.org>
+X-Headers-End: 1wwWU2-0002iR-7R
+Subject: Re: [f2fs-dev] [PATCH] f2fs: don't leave the hashed inode while
+ it's unlinked
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,57 +89,82 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: Daeho Jeong <daehojeong@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 8/19/26 01:05, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
+On 8/19/26 04:01, Jaegeuk Kim via Linux-f2fs-devel wrote:
+> f2fs_symlink()
+> 1. f2fs_new_inode
+> 2. f2fs_add_link
+> 3. page_symlink
+> 4. flush dirty pages and or checkpoint
 > 
-> When f2fs_resize_fs() fails due to transient lock contention or retryable
-> GC failure in free_segment_range() returning -EAGAIN, no filesystem
-> metadata has been modified on-disk yet. The filesystem remains completely
-> consistent and clean.
+> Step 4 is nice to succeed, which doesn't become a reason to roll back
+> the created symlink. OTOH, if we get an error till step 3, let's roll
+> back and remove the cached inode.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/namei.c | 26 +++++++++++---------------
+>  1 file changed, 11 insertions(+), 15 deletions(-)
+> 
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 37897f4321c0..7b318cee2ed6 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -704,14 +704,16 @@ static int f2fs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+>  	f2fs_alloc_nid_done(sbi, inode->i_ino);
+>  
+>  	err = fscrypt_encrypt_symlink(inode, symname, len, &disk_link);
+> -	if (err)
+> -		goto err_out;
+> -
+> -	err = page_symlink(inode, disk_link.name, disk_link.len);
+> +	if (!err)
+> +		err = page_symlink(inode, disk_link.name, disk_link.len);
+>  
+> -err_out:
+>  	d_instantiate_new(dentry, inode);
 
-Any way to make sure EAGAIN is from free_segment_range(), in case we return
-EAGAIN from 1) any other places that we may miss to check now or 2) we changed
-the code to return EAGAIN in future.
+IIUC, Al means we'd better not call d_instantiate_new() before every thing is
+done? IOW, do not call d_instantiate_new() if we're in error handling.
+
+Let me know if I missed something.
 
 Thanks,
 
-> 
-> However, the current error recovery path unconditionally sets the
-> SBI_NEED_FSCK flag on any error, forcing an unnecessary and time-consuming
-> fsck.f2fs repair on the subsequent mount/reboot.
-> 
-> Fix this by guarding set_sbi_flag(sbi, SBI_NEED_FSCK) with
-> `if (err != -EAGAIN)`, avoiding false-positive filesystem corruption
-> flags on transient resize retries.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> Signed-off-by: Sunmin Jeong <s_min.jeong@samsung.com>
-> ---
->  fs/f2fs/gc.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 192b16ac02f8..787133ee2eb2 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -2446,8 +2446,10 @@ int f2fs_resize_fs(struct file *filp, __u64 block_count)
->  recover_out:
->  	clear_sbi_flag(sbi, SBI_IS_RESIZEFS);
->  	if (err) {
-> -		set_sbi_flag(sbi, SBI_NEED_FSCK);
-> -		f2fs_err(sbi, "resize_fs failed, should run fsck to repair!");
-> +		if (err != -EAGAIN) {
-> +			set_sbi_flag(sbi, SBI_NEED_FSCK);
-> +			f2fs_err(sbi, "resize_fs failed, should run fsck to repair!");
-> +		}
 >  
->  		spin_lock(&sbi->stat_lock);
->  		sbi->user_block_count += shrunk_blocks;
+> +	if (err) {
+> +		f2fs_unlink(dir, dentry);
+> +		goto out_f2fs_handle_failed_inode;
+> +	}
+> +
+>  	/*
+>  	 * Let's flush symlink data in order to avoid broken symlink as much as
+>  	 * possible. Nevertheless, fsyncing is the best way, but there is no
+> @@ -721,16 +723,10 @@ static int f2fs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+>  	 * If the symlink path is stored into inline_data, there is no
+>  	 * performance regression.
+>  	 */
+> -	if (!err) {
+> -		err = filemap_write_and_wait_range(inode->i_mapping, 0,
+> -						   disk_link.len - 1);
+> -
+> -		if (!err && IS_DIRSYNC(dir))
+> -			err = f2fs_sync_fs(sbi->sb, 1);
+> -	}
+> -
+> -	if (err)
+> -		f2fs_unlink(dir, dentry);
+> +	err = filemap_write_and_wait_range(inode->i_mapping, 0,
+> +					   disk_link.len - 1);
+> +	if (!err && IS_DIRSYNC(dir))
+> +		f2fs_sync_fs(sbi->sb, 1);
+>  
+>  	f2fs_balance_fs(sbi, true);
+>  	goto out_free_encrypted_link;
 
 
 
