@@ -4,109 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 85F12C5DF86
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Aug 2026 13:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5653EC5DF85
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Aug 2026 18:07:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:Message-ID:Date:To:From:Sender:Reply-To:Content-ID:
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=Ep1gtk9BQdBNWibD0QLBb1rHZiyxDTZlTt6BLGkwUos=; b=K3IX3p4riKMtc6dsi2I5ZagCVq
-	2BQGzlM/wUd93WRIjlVAejuS/ie2cDVazSuMW9eXOsxknxeUI13j0f8haS8wj6oNtW91GExdq7VR8
-	PFk/rtXOqIe5Eo4vbByxrW4JSloJr3tLfgP45fvVG7mcw62xl0THXg4F6OIkrX8k+wBk=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=jz+KC2lVifHjFmI/KHwet6ueG2WCNO3g6Acbtw29aKQ=; b=cLve6ocPhRTnKKdAnqmunOPMmj
+	LcK2rENxJONML6cCEaXvplrg9b9soPcidGDglC1QhHVsCHmyO+NXsbRKVlbT2gK55fAhslALMkerd
+	S+wY5zwSzUOZZmmOiXCOtoaZ7U/ftM+BHjdiGZrWcFSusQwwClTz33qdADnrMus4Uz3M=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wwg7u-0000eq-KI;
-	Wed, 19 Aug 2026 13:14:42 +0000
+	id 1wwkgn-0002ha-Sm;
+	Wed, 19 Aug 2026 18:06:59 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1wwg7t-0000ek-O6
+ (envelope-from <daeho43@gmail.com>) id 1wwkgm-0002hT-T8
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 19 Aug 2026 13:14:41 +0000
+ Wed, 19 Aug 2026 18:06:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YkturzlV37zRTwxFEsUoMia3rueHM20fJQJwHe6NoXw=; b=XYWvbPtD0AZh8O9toCPgZ3EOsQ
- Z4tWv/BVu15y5l43oSRjDJ/lQg70E/+OEN03MScyRZjjVmuqX/ahMJvEhX5+lT3/dDXXpa6WNsR+m
- d0QaJ60GBnHnZpO7E1HbglQ17lS88i0ew5fyc/KZ0RNiMlrArluFsA3qgXTC00eWPKqc=;
+ bh=8GIX06LK7ExT+q3Aigt+SM74hjeyo4GTr/pSIL5HQvw=; b=Dz+wb4ab8koAF4A7CTpXzJfGvv
+ YNt5z80y4NFRb72s5JTeDrNnATg3XAg2kyy1KYZVgf3trfQfuzEe4n8/NG3BQU2AJ3FhNn5EK0PyP
+ ipQYHFqlMQ8714MIdQm2S2KtihoYMeT+PEW1UDQkxZki6mwxnWOEssmhWMoYFyp1MDg4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=YkturzlV37zRTwxFEsUoMia3rueHM20fJQJwHe6NoXw=; b=e
- 2YLcA1Fp063kHiSN8VQyxsUpEGe6BSPbVzcH2TZs3bC/rcG21SXS00RZcogFb+e8ddRmo5fd8yOSX
- LGLHFgpHWmiDrJuPhfdfA7WpBKLqzDuFoZ8Iwy5yc+5CTT+mAKUYfO6uVsWtoAdOynUCg5T+J8D5p
- 6mFgL5fzCeCT7/r0=;
+ List-Owner:List-Archive; bh=8GIX06LK7ExT+q3Aigt+SM74hjeyo4GTr/pSIL5HQvw=; b=B
+ pVivYNPCqL75Q0HhYDYFYLj8MJn8xgyZElA7t0cYl1PXgJS9FrQ7xM5kploMJQbxGcXf2G3uEDL+0
+ L86OuJX7I689zu1wvl4JW9iE5npG0rAkRF40y9jIu0P4VlVUSorOjgZI0fRnWZX3Trw94vy/d/wum
+ pkuEdw5pa3iCKPlI=;
 Received: from mail-pj1-f47.google.com ([209.85.216.47])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wwg7r-0008HW-07 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 19 Aug 2026 13:14:41 +0000
+ id 1wwkgm-0001sE-Tq for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 19 Aug 2026 18:06:58 +0000
 Received: by mail-pj1-f47.google.com with SMTP id
- 98e67ed59e1d1-38e58034d05so899520a91.2
+ 98e67ed59e1d1-38e58034d05so1185383a91.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 19 Aug 2026 06:14:38 -0700 (PDT)
+ Wed, 19 Aug 2026 11:06:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1787145273; x=1787750073; darn=lists.sourceforge.net;
+ d=gmail.com; s=20251104; t=1787162812; x=1787767612; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=YkturzlV37zRTwxFEsUoMia3rueHM20fJQJwHe6NoXw=;
- b=rwm0a6yIOWeqaYugdtfPBmLndaUZO392Pya5ihe4W/XDLcJJIbsA09uDEowuy8fhi1
- Nvog5lo+WnTCA5a+HdHpeF1ZIwPZQ9SPRSpvNkgUGJYM/oByNtgHkuWNyQ7ltZjpmGD8
- li76J4De45VTAJmMyk8kibnM6Dduh1/j+jArgZVxXipkVlD4LivGWonCYSoo3+cr2XSk
- j6oAgDLw6WPRSjIgV2VoFrVkQLuG1h1tMl8tWjIVKJGd/CTyZLI1xKP6+RC6wwP8iQ1T
- 3/twhinM8D9QWq7bN60+8oopA0vRTwG0gBU6WR7mFXH8kOXY2ttQmI/lPqB3RkpPyr/g
- FA3g==
+ bh=8GIX06LK7ExT+q3Aigt+SM74hjeyo4GTr/pSIL5HQvw=;
+ b=RTNQ7WHoDIQg8mO0Qxw5kqFqvslvc50UAMimejwXvDwUsNoibmM83k0jM7IE6u6UaQ
+ oQA/fe3V+Ar9hCS8I8BXUWGFwGhIqAR1RfeP6lJFtjPz9vblPC7D00exbpIjR0/rsVvA
+ mZUeMMiHE3u27WyPQPYAPZKzj7HhLv1gjfc8yFvcJG8sLcPuyqXunJzVU5BHdTaBzgmD
+ wr5seAx20/VdYrUmzWIGPzQWXk7N6FN8uv+kbDe2OG0Tld1r3yce/Feeh3MXnzPZDDzx
+ 5on5T1nmBbg93hVD73XDXvH4/RdaBhoIHqucIsezkFOG9XanK7S4x12+UuhcmeExhAzy
+ 4GSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787145273; x=1787750073;
+ d=1e100.net; s=20251104; t=1787162812; x=1787767612;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=YkturzlV37zRTwxFEsUoMia3rueHM20fJQJwHe6NoXw=;
- b=QKDNIvnruQJpZIFeJ+PjKVc1gpJJNOaRNkMT2GloN0w8q7UMnmX+BZnt8XbPLOhU2j
- SFBbk3LMhqWhvpxJ5pCvAxvmJroklkwx8e9cI7+kPKzVTuZQzzXCzf9ZT/MSfVM1Dy1I
- qqvMwJRP159jR84RH17AtdCGOiGymaIril1JIrp2CyJBO/Gm3d4m27/HuIkU76RU9eG8
- m3Y4VaFF6UCCOH6F16jVgrczwV8tLKI2AkUy2d0bhSghoHNcTiXESTgKtC2Caf6q/Fat
- 8s7LmHD57xgH9+IcZVLqJB2gbWqERtz58vq3K7QMb5PF3uuvV46ZgTdgV9fs+xK4ya84
- iXwg==
+ bh=8GIX06LK7ExT+q3Aigt+SM74hjeyo4GTr/pSIL5HQvw=;
+ b=SYQxMfxVm9og8cHLTK5PrNOU3eoFPsAqTlxrcXvaeJwc+HrxZRtrvwQ34ZLJ31PeCF
+ F/Guk9YwiAbeeyeaDuIC/tiiT95Yp7A73B42MOIpCgsI/jf3AUZt6cv83ocWFT0/hbd4
+ Q2BuC2dXpeh659LlTcF6+LA/KUlFOYHSMc6cNtM3bF1nOboGCdlQiZ0JW+ziBx7JTVDO
+ 13tXkNrgccDVmoj+RYEltI7uwHj7IOiGObHOSIx2LSYoZDFQMdxbsnzLIfwBv9icWs96
+ 5zsjb9ziucHpkdRZjlaMl8zpPmLN1r1Lln54UYwaCDSiMZYpYfi7FS5Fc3ArzFFKsFPs
+ 4KMQ==
 X-Forwarded-Encrypted: i=1;
- AHgh+RqE2cgHu44c6rPyN0hvdfLERkZ37KHy9uW93go04Szm1uJng62WAnKb4VpI4xhhdsZkgRzV/0qyqsLFyf4/Gpoc@lists.sourceforge.net
-X-Gm-Message-State: AFuF++n1vbsbzawG1SHOWD4KVRbJa7XJTV6aVC6K1PYSVgyKT6AIN1xY
- Br4u0Z1ETbxHNdZW4SEQo8s9R6wMRtRR5ly8XommYVDVp/F9A3tmj9s6
-X-Gm-Gg: AR+sD13dg9G6wPH6tEblgDWSHslQjhVBi6GLjhCEiv/P9P20exZPeYYlOLbfNBPNxKU
- DiluDOhgJb76s6+099hGZ/LW7x2zW9pRhzrO7rNjGwzCa7JP9/HfCYCHr2NBebK5bruAakmerAh
- UdCld61Ie7bYLyDILQdYJjCm2Pv6XRCrSXHbzfhZLJNGoVGXwyeQfuaRMDcfsLAwiH/oGfGp3id
- yEuTNt/rNqa2mqeCM9S/sAiACOuBed/PGnY1AeqPIfX6wS+ojUruIybMREMoWcvDuH7TPmcmEGg
- mU+oUTqmc8cdjZ0Ro5i8ZNxxvLHAKaggbJyNzWl9XPWNPXFEUmWQ5RJnV7xj0s6IqxyvsqiCIYX
- E94DUxppTjAsDItCVL9GOC5Hj1HX6R1FBA2s36Xms/qoZA76m4qShXcY6RDFEGkqmqi6AopMidq
- nxwA5oKPjsRFuqRcRCGvgE+00n5/eMYRNDPQsYMVRauKQXffDIycsFLKzM3PxfTGhyitB1+FOh5
- p0vGbu95paogictJ36ZJDVIxFDwknU8bqQ=
-X-Received: by 2002:a17:90b:3cc5:b0:393:194d:5366 with SMTP id
- 98e67ed59e1d1-39580f3bcdemr9196929a91.10.1787145273058; 
- Wed, 19 Aug 2026 06:14:33 -0700 (PDT)
-Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
+ AHgh+RobViXMfeU2/ubXeRU44q55VgNsDTdqcwy47U7zX0j+A/Nq8JlnlvT7i6WDK0ntT4mUMgsyk5IrZIU/o18HqYVL@lists.sourceforge.net
+X-Gm-Message-State: AFuF++k+0jPJRYtc0PLWSoDZr1jTgWb+JQr2Ptwm4Z7ZmSyyHh4mcEmG
+ n6Nyp5jWr8ysY4Ze+OFOCUqzzdgr5W3HWA2la2RP2pke2mViN9oAHJl3dAmOWA==
+X-Gm-Gg: AR+sD126dAr23Sdlq/H1BxGlNMj5XH0YM0772ht6kmQ1Etv612hLxwsFQnEZPTTY3N+
+ Muh75p93uTgE42HiSDkzG98kiu0CtY3alRyZaLWqnDychoac1win7kDSkYro5LwQmZB7HCFe/QK
+ o9cYoegRfg8rP3DeFQOOUwjVJiBnhRAMhqFk5jeoBmZkNioIVQuCSwYpjvD0Jy9mkvERl+MQk87
+ PgCI1nUW4BKaiGbgE9uEAowc+pZ13UxZ6g26MNMX0iPfq8DT7EYJ2dpYFaFubMYU9H9ZkOlarjY
+ 0NNmCk++yAc8SMxtt2NvnoZSmbh4b6OW2AvTd6RK3q7PMvAeXARG91B21+t03TvMUEyiokzYoyP
+ tYYhndkV9PSykiX04evp6diVJaFoUDBc+2ANsn8VGH3U6azFdPqxgWQeWm6RaQ0TdFqoL1C+gJF
+ UsEvyqYJB1HilFPJ4jqjMMEFWpj7ffETAOauoHpU81TVJgr7QMQ9mC9/oDrY5xfjG8FehlE0CnD
+ qvGiDWKCXENb1IC4NeHgigraMQp9adsgyYIz880GJVoRjw4t8ZsRwxR69y4v5MLmGpQNp0nnjfe
+ dJiieBOP73zm3JjUw8CEKa8=
+X-Received: by 2002:a17:90b:5105:b0:37f:fb1d:63fa with SMTP id
+ 98e67ed59e1d1-39581070da4mr12594675a91.15.1787162811435; 
+ Wed, 19 Aug 2026 11:06:51 -0700 (PDT)
+Received: from daehojeong-desktop.mtv.corp.google.com
+ ([2a00:79e0:2e7c:8:f24b:89c3:b14:d945])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3957fb8578asm2659651a91.11.2026.08.19.06.14.30
+ 5a478bee46e88-327bef7a0easm10426663eec.12.2026.08.19.11.06.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Aug 2026 06:14:32 -0700 (PDT)
-From: Wenjie Qi <qwjhust@gmail.com>
-X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Wed, 19 Aug 2026 21:14:25 +0800
-Message-ID: <20260819131425.189025-1-qiwenjie@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
+ Wed, 19 Aug 2026 11:06:50 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Wed, 19 Aug 2026 11:06:35 -0700
+Message-ID: <20260819180635.1165300-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.55.0.691.gc56d675ccc-goog
 MIME-Version: 1.0
-X-Headers-End: 1wwg7r-0008HW-07
-Subject: [f2fs-dev] [PATCH] f2fs: avoid instantiating failed symlinks
+X-Headers-End: 1wwkgm-0001sE-Tq
+Subject: [f2fs-dev] [PATCH] f2fs: fix to migrate all curseg types during
+ free_segment_range
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -118,193 +120,51 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: qwjhust@gmail.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, qiwenjie@xiaomi.com, stable@kernel.org,
- viro@zeniv.linux.org.uk
+Cc: Daeho Jeong <daehojeong@google.com>, stable@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-f2fs_add_link() initializes inode metadata needed by page_symlink(), so
-the directory entry is added before the symlink target is set up. If
-target setup fails, the current error path instantiates the dentry and
-calls f2fs_unlink() directly. This bypasses the dcache update performed
-by vfs_unlink() and leaves a hashed positive dentry attached to an
-unlinked inode.
+From: Daeho Jeong <daehojeong@google.com>
 
-Factor the F2FS unlink work into an internal helper which takes the
-directory, name and inode, and use it while the creation dentry is still
-negative. Always unhash the dentry before releasing the inode so an
-entry left behind by a failed rollback remains discoverable.
+In free_segment_range(), the curseg evacuation loop only iterates up to
+NR_CURSEG_PERSIST_TYPE (0..5), missing non-persistent in-memory curseg
+types such as CURSEG_COLD_DATA_PINNED and CURSEG_ALL_DATA_ATGC.
 
-Return -ENOENT explicitly when f2fs_find_entry() cannot find the
-directory entry. Successful quota initialization otherwise leaves err
-set to zero and makes the helper report a successful deletion.
+Even though these in-memory curseg types are not saved in the on-disk
+checkpoint header, they still occupy active physical segments at runtime.
+If an active in-memory curseg happens to be allocated within the segment
+range being truncated during filesystem shrink, failing to evacuate it
+will cause subsequent writes to the curseg attempting out-of-bounds I/O
+on the truncated storage range.
 
-Fixes: a6be014e1d28 ("f2fs: fix error path of ->symlink")
-Cc: stable@kernel.org
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Link: https://lore.kernel.org/linux-f2fs-devel/20260815051820.GA660827@ZenIV/
-Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
+Fix this by expanding the curseg evacuation loop upper bound to
+NR_CURSEG_TYPE to ensure all active curseg types are safely migrated
+out of the target range.
+
+Fixes: d0b9e42ab615 ("f2fs: introduce inmem curseg")
+Cc: stable@vger.kernel.org
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Sunmin Jeong <s_min.jeong@samsung.com>
 ---
- fs/f2fs/namei.c | 83 ++++++++++++++++++++++++++++---------------------
- 1 file changed, 48 insertions(+), 35 deletions(-)
+ fs/f2fs/gc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 784f63624..5438d8ffc 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -560,38 +560,31 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 	return ERR_PTR(err);
- }
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index ffaa7ba76a1b..192b16ac02f8 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -2222,7 +2222,7 @@ static int free_segment_range(struct f2fs_sb_info *sbi,
+ 	mutex_unlock(&DIRTY_I(sbi)->seglist_lock);
  
--static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
-+static int f2fs_unlink_inode(struct inode *dir, const struct qstr *name,
-+			     struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
--	struct inode *inode = d_inode(dentry);
- 	struct f2fs_dir_entry *de;
- 	struct f2fs_lock_context lc;
- 	struct folio *folio;
- 	int err;
- 
--	trace_f2fs_unlink_enter(dir, dentry);
--
- 	if (IS_DEVICE_ALIASING(inode))
- 		return -EPERM;
- 
--	if (unlikely(f2fs_cp_error(sbi))) {
--		err = -EIO;
--		goto out;
--	}
-+	if (unlikely(f2fs_cp_error(sbi)))
-+		return -EIO;
- 
- 	err = f2fs_dquot_initialize(dir);
- 	if (err)
--		goto out;
-+		return err;
- 	err = f2fs_dquot_initialize(inode);
- 	if (err)
--		goto out;
-+		return err;
- 
--	de = f2fs_find_entry(dir, &dentry->d_name, &folio);
--	if (!de) {
--		if (IS_ERR(folio))
--			err = PTR_ERR(folio);
--		goto out;
--	}
-+	de = f2fs_find_entry(dir, name, &folio);
-+	if (!de)
-+		return IS_ERR(folio) ? PTR_ERR(folio) : -ENOENT;
- 
- 	if (unlikely(inode->i_nlink == 0)) {
- 		f2fs_warn(sbi, "%s: inode (ino=%llx) has zero i_nlink",
-@@ -610,29 +603,40 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
- 	if (err) {
- 		f2fs_unlock_op(sbi, &lc);
- 		f2fs_folio_put(folio, false);
--		goto out;
-+		return err;
- 	}
- 	f2fs_delete_entry(de, folio, dir, inode);
- 	f2fs_unlock_op(sbi, &lc);
- 
-+	return 0;
-+
-+corrupted:
-+	set_sbi_flag(sbi, SBI_NEED_FSCK);
-+	f2fs_folio_put(folio, false);
-+	return -EFSCORRUPTED;
-+}
-+
-+static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
-+{
-+	struct inode *inode = d_inode(dentry);
-+	int err;
-+
-+	trace_f2fs_unlink_enter(dir, dentry);
-+
-+	err = f2fs_unlink_inode(dir, &dentry->d_name, inode);
-+
- 	/* VFS negative dentries are incompatible with Encoding and
- 	 * Case-insensitiveness. Eventually we'll want avoid
- 	 * invalidating the dentries here, alongside with returning the
- 	 * negative dentries at f2fs_lookup(), when it is better
- 	 * supported by the VFS for the CI case.
- 	 */
--	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
-+	if (!err && IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
- 		d_invalidate(dentry);
- 
--	if (IS_DIRSYNC(dir))
--		f2fs_sync_fs(sbi->sb, 1);
-+	if (!err && IS_DIRSYNC(dir))
-+		f2fs_sync_fs(F2FS_I_SB(dir)->sb, 1);
- 
--	goto out;
--corrupted:
--	err = -EFSCORRUPTED;
--	set_sbi_flag(sbi, SBI_NEED_FSCK);
--	f2fs_folio_put(folio, false);
--out:
- 	trace_f2fs_unlink_exit(inode, err);
- 	return err;
- }
-@@ -660,7 +664,7 @@ static int f2fs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	struct inode *inode;
- 	size_t len = strlen(symname);
- 	struct fscrypt_str disk_link;
--	int err;
-+	int err, ret;
- 
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
-@@ -701,6 +705,19 @@ static int f2fs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	err = page_symlink(inode, disk_link.name, disk_link.len);
- 
- err_out:
-+	if (err) {
-+		ret = f2fs_unlink_inode(dir, &dentry->d_name, inode);
-+		if (ret)
-+			f2fs_warn(sbi, "failed to rollback symlink inode %llu, err: %d",
-+				  inode->i_ino, ret);
-+		d_drop(dentry);
-+		unlock_new_inode(inode);
-+		if (!ret && IS_DIRSYNC(dir))
-+			f2fs_sync_fs(sbi->sb, 1);
-+		iput(inode);
-+		goto out_balance;
-+	}
-+
- 	d_instantiate_new(dentry, inode);
- 
- 	/*
-@@ -712,16 +729,12 @@ static int f2fs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	 * If the symlink path is stored into inline_data, there is no
- 	 * performance regression.
- 	 */
--	if (!err) {
--		filemap_write_and_wait_range(inode->i_mapping, 0,
--							disk_link.len - 1);
-+	filemap_write_and_wait_range(inode->i_mapping, 0, disk_link.len - 1);
- 
--		if (IS_DIRSYNC(dir))
--			f2fs_sync_fs(sbi->sb, 1);
--	} else {
--		f2fs_unlink(dir, dentry);
--	}
-+	if (IS_DIRSYNC(dir))
-+		f2fs_sync_fs(sbi->sb, 1);
- 
-+out_balance:
- 	f2fs_balance_fs(sbi, true);
- 	goto out_free_encrypted_link;
- 
+ 	/* Move out cursegs from the target range */
+-	for (type = CURSEG_HOT_DATA; type < NR_CURSEG_PERSIST_TYPE; type++) {
++	for (type = CURSEG_HOT_DATA; type < NR_CURSEG_TYPE; type++) {
+ 		err = f2fs_allocate_segment_for_resize(sbi, type, start, end);
+ 		if (err)
+ 			goto out;
 -- 
-2.43.0
+2.55.0.691.gc56d675ccc-goog
 
 
 
