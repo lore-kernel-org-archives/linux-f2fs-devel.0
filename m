@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1966EC5DF81
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Aug 2026 01:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1AA7CC5DF7D
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Aug 2026 01:56:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=m0sBLktcMpbsNRFhqFrhfPOKwDweabYsS5+DDBf/Ixc=; b=SInJQs8rsjbVlZ3iOBGP87fEdD
-	asddbhUT33B7qj+FB0QA4oC3JhG+LI5LtNM7XbAcmpymjj7pHvyuZUiOoFGV4HUvl2M+ufEJ1ABsH
-	IVcn71WoWevAhUUSu37CTQtBzdxuHCFSbkFZq5hnhfE+BoMv2Nb7i/N173o4gQ/4XQZY=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=gAXZk0yEKTEkAY+DK5rdhiH5coGnEqwX09XJBbyrMSM=; b=VheMaVAW1OmGQDFlvTlYodinmw
+	NG4r4KGVKTfTSU4yWjQ2si3pKN7lAAtMOuFrC/mBEASaKsRmRdf1LNlJn6e8ZQzgaYtrrT6IGB3zr
+	S2GFDtG0xt23gKXf2PZrM657cR5kIzWKGVVEX2NJerZYygj17lGypkTmor3xhhVvs3l4=;
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wwVOf-00043T-Jm;
-	Wed, 19 Aug 2026 01:47:17 +0000
+	id 1wwVXH-0006eW-TO;
+	Wed, 19 Aug 2026 01:56:12 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wwVOe-00043M-9n
+ (envelope-from <chao@kernel.org>) id 1wwVXG-0006eP-V5
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 19 Aug 2026 01:47:16 +0000
+ Wed, 19 Aug 2026 01:56:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qoQwe2sWJ0MbRaZViAD/nPZTyI4dpqFu3NiN2Dfommo=; b=YNSR6xfS4XxJd/0LBbbcqHNmMh
- Xly5shIPHS9wb0tgqeafq47KkUgJvC8wWNRiMXwVVdwcaL2s4Udt11h33K+AKynfIZImb+/Um2TVk
- NVXR9qzHjt1qHDOJCTi/9pAiGeWkS4s0r7HCQRO0grVbyV0wX2QBjM1LeMaJq2JENiPU=;
+ bh=vNdNDPovsZb3v1itBtf61PsshCxrSN/GzcDvtjBPKJQ=; b=bjpPpBHTbM6ctKAdEjZJmTz0Xb
+ iGrdzUSfEIRtgQTfs5z6oi0trEynkn7EFRrJsttK/K4XR8G3HtVh97I4gOqutUFEYnpfUtUfU0cIo
+ e+huVwMj/2ezG51N0w/1Z/pv6hUmLMRpJP7FLm+VdGPEzgIypYFleQEFmhquxTDkaJkw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,42 +42,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qoQwe2sWJ0MbRaZViAD/nPZTyI4dpqFu3NiN2Dfommo=; b=gTT/wUbSC+XqsU3ZtOEY5ySMWj
- w1Dt/r09wV0ZfuintrUUKKWFIx6gpkt5OmdiFDCjd/++FTrDgXXiXpTj7womshApKVQC39c0eqTh6
- 7JwMukxcd1U2hmgC4Ek1eHHcRCyh98VvChJ7HUg27G4XM+e8ReTDRUC6WueixuCu9qeA=;
-Received: from tor.source.kernel.org ([172.105.4.254])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=vNdNDPovsZb3v1itBtf61PsshCxrSN/GzcDvtjBPKJQ=; b=QpTy+towGZeofTmDP0CFpmq3uh
+ MYjNj6JthhHhMQfKexac9hRnkKaLrXOKKeXP3s1tdGXWl2/YLnK5/ux4OcXd8NrPLuYlGyU7h0gF/
+ mtrEC+wzwg0IsD+8mPhhTcwboanJqr9Bmv50T7CdFgKlt+9LD8LyOEj4QMIP8F192wX4=;
+Received: from sea.source.kernel.org ([172.234.252.31])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wwVOd-00086l-15 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 19 Aug 2026 01:47:16 +0000
+ id 1wwVXJ-0003UE-Jd for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 19 Aug 2026 01:56:11 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by tor.source.kernel.org (Postfix) with ESMTP id 57A4F601DE;
- Wed, 19 Aug 2026 01:47:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F07671F000E9;
- Wed, 19 Aug 2026 01:47:07 +0000 (UTC)
+ by sea.source.kernel.org (Postfix) with ESMTP id 8D2AF4115F;
+ Wed, 19 Aug 2026 01:56:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8623B1F000E9;
+ Wed, 19 Aug 2026 01:56:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1787104029;
- bh=qoQwe2sWJ0MbRaZViAD/nPZTyI4dpqFu3NiN2Dfommo=;
+ s=k20260515; t=1787104564;
+ bh=vNdNDPovsZb3v1itBtf61PsshCxrSN/GzcDvtjBPKJQ=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=hgyO5vL78VktH1YqCIX6i9q2EYBTyZtVi2RDnzd8+kFcAqwNLJt1tb1hFMO0Io2Oi
- ASxrdfSL6fQ20VnwO1/AB9nHEKOiTtTzPNE1vT7KXWro5jwSHajqdCaK3TNXtBstu5
- /4zsvonEFoRPzEjAruGj02rsdbgf+bbWopaDJVtrUNcNyKDD2CxV7Zk1rwcqgROqRt
- U020kGYd1U3nH8oBdCzY/0UOEX1keJgykX7Q/DADONOWROEpw6cUlRsyBHuOlNCPWZ
- s24TIBKvT4vt3LcNsymho6CnpveFKVdCR0/3denWZkgGUaktMWmdV0X02rw6YsUutD
- KMevdVXED/i5g==
-Message-ID: <f40d5ab3-0073-4af4-902a-f17548961638@kernel.org>
-Date: Wed, 19 Aug 2026 09:47:06 +0800
+ b=P/tsCXXbzX0a/LhA8TBEVPiKezZUp/ZwFnQV7EudWyxjMVEbGaXPgCxF46eTQcDLw
+ DQ0MxNryorcszkKMFCR6Bc4R24iJvJlNsZW/bBzpMjk5pgvLQVGy+JFDV6C+sDP+PE
+ BwwgQ8nSik6Bqyq3z98lBrAVoUxtCp8lUicRXHCXYNmdVv6K9k5sc0/dJSh17ZAHVq
+ tnchA9chnbqboELWfMuA4lUdvDQKkXibC7qyscLQl8dcmsufKiFpzG29VTukLOjf7F
+ I6TxLVS9Hq2gEHpD+oqAiu7Te2hGcqzuERBC+VOcDUKYw/qzGlktNdzoFD6+XM7bhN
+ 3hmPgNZyDNWlQ==
+Message-ID: <cff8d49a-ef21-415e-984f-ffe57d824da9@kernel.org>
+Date: Wed, 19 Aug 2026 09:56:02 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: =?UTF-8?B?7KCV7ISx7J6s?= <jsjlee1020@gmail.com>
-References: <20260814105234.31620-1-jsjlee1020@gmail.com>
- <2a3d8702-f7fd-4013-8181-d9fd68b6aa18@kernel.org>
- <CAPHXVrzgPpxgAJrCmJ_Ro19AertMnqKfC1oW_y_FpbLoqO7nug@mail.gmail.com>
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20260818170018.3132110-1-daeho43@gmail.com>
 Content-Language: en-US
-In-Reply-To: <CAPHXVrzgPpxgAJrCmJ_Ro19AertMnqKfC1oW_y_FpbLoqO7nug@mail.gmail.com>
-X-Headers-End: 1wwVOd-00086l-15
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix O_DIRECT cleanup range for append
- writes
+In-Reply-To: <20260818170018.3132110-1-daeho43@gmail.com>
+X-Headers-End: 1wwVXJ-0003UE-Jd
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to migrate all curseg types during
+ free_segment_range
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,31 +90,55 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- jaegeuk@kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Daeho Jeong <daehojeong@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gOC8xOC8yNiAyMDoyMywg7KCV7ISx7J6sIHdyb3RlOgo+PiBJZiBnZW5lcmljX3dyaXRlX2No
-ZWNrcygpIGNhbiBhZGp1c3Qgd3JpdGluZyBwb3NpdGlvbiBvciBhbW91bnQgb2YgYnl0ZXMKPj4g
-dG8gd3JpdGUsIHNob3VsZG4ndCB3ZSBhY2Nlc3MgaW9jYi0+a2lfcG9zIGFuZCBpb3ZfaXRlcl9j
-b3VudChmcm9tKSBhZnRlcgo+PiBnZW5lcmljX3dyaXRlX2NoZWNrcygpPwo+IAo+IFllcywgYWdy
-ZWVkLiBnZW5lcmljX3dyaXRlX2NoZWNrcygpIGNhbiBhZGp1c3QgYm90aCBpb2NiLT5raV9wb3Mg
-YW5kCj4gdGhlIGl0ZXJhdG9yIGNvdW50Lgo+IAo+IEkgbm90aWNlZCB0aGF0IHRoZSBwaW5uZWQg
-ZmlsZSBvdmVyd3JpdGUgY2hlY2sgdXNlcyBwb3MgYW5kIGNvdW50Cj4gc2F2ZWQgYmVmb3JlIGYy
-ZnNfd3JpdGVfY2hlY2tzKCkuIEkgcGxhbiB0byBrZWVwIHRoZSBjaGVjayBpbgo+IGYyZnNfZmls
-ZV93cml0ZV9pdGVyKCksIGJ1dCBtb3ZlIGl0IGFmdGVyIGYyZnNfd3JpdGVfY2hlY2tzKCkgYW5k
-IHVzZQo+IHRoZSBhZGp1c3RlZCBpb2NiLT5raV9wb3MgYW5kIGlvdl9pdGVyX2NvdW50KGZyb20p
-LgoKWWVhaCwgSSB0aGluayBpdCdzIHRoZSBjb3JyZWN0IHdheS4KCj4gCj4gVGhpcyBhbHNvIGtl
-ZXBzIHRoZSBjaGFuZ2UgbG9jYWwgdG8gZjJmc19maWxlX3dyaXRlX2l0ZXIoKSwgd2hlcmUgb3Ro
-ZXIKPiBjaGVja3MgYXJlIGFscmVhZHkgcGVyZm9ybWVkIGFmdGVyIGYyZnNfd3JpdGVfY2hlY2tz
-KCkuCj4gCj4gRm9yIHRoZSBidWZmZXJlZCBjbGVhbnVwLCBhcyBpbiBteSBvcmlnaW5hbCBwYXRj
-aCwgSSBwbGFuIHRvIHNhdmUgdGhlCj4gYWRqdXN0ZWQgd3JpdGUgcG9zaXRpb24gYWZ0ZXIgZjJm
-c193cml0ZV9jaGVja3MoKSBhbmQgdXNlIGl0IGZvcgo+IGYyZnNfZmx1c2hfYnVmZmVyZWRfd3Jp
-dGUoKS4KPiAKPiBEb2VzIHRoaXMgYXBwcm9hY2ggbG9vayByZWFzb25hYmxlIHRvIHlvdT8KCkl0
-IG1ha2Ugc2Vuc2UsIHBsZWFzZSBnbyBhaGVhZC4gOikKClRoYW5rcywKCj4gCj4gVGhhbmtzLAo+
-IFNlb25namFlCgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMu
-c291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3Rp
-bmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+On 8/19/26 01:00, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> In free_segment_range(), the curseg evacuation loop only iterates up to
+> NR_CURSEG_PERSIST_TYPE (0..5), missing non-persistent in-memory curseg
+> types such as CURSEG_COLD_DATA_PINNED and CURSEG_ALL_DATA_ATGC.
+> 
+> Even though these in-memory curseg types are not saved in the on-disk
+> checkpoint header, they still occupy active physical segments at runtime.
+> If an active in-memory curseg happens to be allocated within the segment
+> range being truncated during filesystem shrink, failing to evacuate it
+> will cause subsequent writes to the curseg attempting out-of-bounds I/O
+> on the truncated storage range.
+> 
+> Fix this by expanding the curseg evacuation loop upper bound to
+> NR_CURSEG_TYPE to ensure all active curseg types are safely migrated
+> out of the target range.
+> 
+
+Need fixes and Cc stable line.
+
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> Signed-off-by: Sunmin Jeong <s_min.jeong@samsung.com>
+> ---
+>  fs/f2fs/gc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index ffaa7ba76a1b..192b16ac02f8 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -2222,7 +2222,7 @@ static int free_segment_range(struct f2fs_sb_info *sbi,
+>  	mutex_unlock(&DIRTY_I(sbi)->seglist_lock);
+>  
+>  	/* Move out cursegs from the target range */
+> -	for (type = CURSEG_HOT_DATA; type < NR_CURSEG_PERSIST_TYPE; type++) {
+> +	for (type = CURSEG_HOT_DATA; type < NR_CURSEG_TYPE; type++) {
+>  		err = f2fs_allocate_segment_for_resize(sbi, type, start, end);
+>  		if (err)
+>  			goto out;
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
