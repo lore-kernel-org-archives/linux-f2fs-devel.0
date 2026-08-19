@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9E505C5DF7D
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Aug 2026 01:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1966EC5DF81
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Aug 2026 01:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:To:MIME-Version:Date:
 	Message-ID:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=/iMQ9GSzOPZCUQJODuH6Q3bg80aCQyHECy/cgRiQ4j4=; b=O20uD24hBdlNiOb0B4CdEeNySt
-	QM3dzvAdE1e0uKWZVxUOKQ0TYPMfugaMWFsJAumiKVt0KKMGLoad/Pc8Aw6Bc6OFk66oWD9F+rEJ5
-	hBoPYWrLUQNjwOj/V7gKAzmO9BAMsEWcpl0/uD8z3EGOh/JRtpI7bMkBth+Du9UOX6pI=;
+	bh=m0sBLktcMpbsNRFhqFrhfPOKwDweabYsS5+DDBf/Ixc=; b=SInJQs8rsjbVlZ3iOBGP87fEdD
+	asddbhUT33B7qj+FB0QA4oC3JhG+LI5LtNM7XbAcmpymjj7pHvyuZUiOoFGV4HUvl2M+ufEJ1ABsH
+	IVcn71WoWevAhUUSu37CTQtBzdxuHCFSbkFZq5hnhfE+BoMv2Nb7i/N173o4gQ/4XQZY=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wwVM5-0003yl-Rj;
-	Wed, 19 Aug 2026 01:44:37 +0000
+	id 1wwVOf-00043T-Jm;
+	Wed, 19 Aug 2026 01:47:17 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1wwVLk-0003yS-AW
+ (envelope-from <chao@kernel.org>) id 1wwVOe-00043M-9n
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 19 Aug 2026 01:44:16 +0000
+ Wed, 19 Aug 2026 01:47:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=y1r7r1ef+XaZdtVHqxWc3yLM/RtI5eF6GflDDDAKlSs=; b=mM1Dh3va/wXsON2ZvfeCb+EOy2
- NkgAMn7hhEPJLl+qW2gu8P7lvel8Ke96Izb9GuTHn5LhlO0fYqPyOiBtDUpsmp+JAlfoGEZgxTU2n
- n+bwZAIaIEQ9A3t9ylfXDlpDQ8RptJx6nYRbkniUWpJAQ3+hjj5+j7hEPx4mbeT2/m04=;
+ bh=qoQwe2sWJ0MbRaZViAD/nPZTyI4dpqFu3NiN2Dfommo=; b=YNSR6xfS4XxJd/0LBbbcqHNmMh
+ Xly5shIPHS9wb0tgqeafq47KkUgJvC8wWNRiMXwVVdwcaL2s4Udt11h33K+AKynfIZImb+/Um2TVk
+ NVXR9qzHjt1qHDOJCTi/9pAiGeWkS4s0r7HCQRO0grVbyV0wX2QBjM1LeMaJq2JENiPU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
@@ -42,40 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=y1r7r1ef+XaZdtVHqxWc3yLM/RtI5eF6GflDDDAKlSs=; b=IGnqtmHPjiZY8uvaWkbMBNX/IB
- kOjxbBjNs1mWHcizR0aDcY4RZM1zCau7LlNXpmvtpA67Rdq4mut19/EzcUHC0X36Jz7+GEa5oWHvL
- /QjSw+T+8tUP7cSlyaEJ5j9T6FQrZPMxERY2hLHfcxDSTniM/X0tZsXlcFaRBOfTFCUM=;
-Received: from sea.source.kernel.org ([172.234.252.31])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=qoQwe2sWJ0MbRaZViAD/nPZTyI4dpqFu3NiN2Dfommo=; b=gTT/wUbSC+XqsU3ZtOEY5ySMWj
+ w1Dt/r09wV0ZfuintrUUKKWFIx6gpkt5OmdiFDCjd/++FTrDgXXiXpTj7womshApKVQC39c0eqTh6
+ 7JwMukxcd1U2hmgC4Ek1eHHcRCyh98VvChJ7HUg27G4XM+e8ReTDRUC6WueixuCu9qeA=;
+Received: from tor.source.kernel.org ([172.105.4.254])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1wwVLm-000303-7F for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 19 Aug 2026 01:44:16 +0000
+ id 1wwVOd-00086l-15 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 19 Aug 2026 01:47:16 +0000
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
- by sea.source.kernel.org (Postfix) with ESMTP id 202F74195C;
- Wed, 19 Aug 2026 01:44:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E5961F000E9;
- Wed, 19 Aug 2026 01:44:07 +0000 (UTC)
+ by tor.source.kernel.org (Postfix) with ESMTP id 57A4F601DE;
+ Wed, 19 Aug 2026 01:47:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F07671F000E9;
+ Wed, 19 Aug 2026 01:47:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
- s=k20260515; t=1787103849;
- bh=y1r7r1ef+XaZdtVHqxWc3yLM/RtI5eF6GflDDDAKlSs=;
+ s=k20260515; t=1787104029;
+ bh=qoQwe2sWJ0MbRaZViAD/nPZTyI4dpqFu3NiN2Dfommo=;
  h=Date:Cc:Subject:To:References:From:In-Reply-To;
- b=FYZdizJ6iBbR7KHKgktjZMXk40APAX0sPCEi3LxnKXveCgYS7ZvyQEjEMOPiVg7ng
- xx1d7iSkI6fDqK12bvn9xZrv7wubNCVZ4NZ6EipmmyfDoVCPF3a3TNE7yLXxvv3NS2
- Y0EO/yHlZJPwQiIjpswpikTzktRBu9IZc0da6srmxRXmztgf0he4slW4zXeAfgFhdH
- AYQ2lrIOLxHeYvW5rL+dHZsatTAAAAhPsmVH/06lC7OxrU6GSBJAfxqchlhNf93wsb
- q11gBfIoHZbjyBvUaDB7UilRcIBwQXRt9W5z5twKCyod8WpAyM6EZ1iXq0HzpfC/CL
- vj3r61H5Pr+OQ==
-Message-ID: <8f85cf1e-fcc2-431e-b005-59a8ca6f5b8e@kernel.org>
-Date: Wed, 19 Aug 2026 09:44:05 +0800
+ b=hgyO5vL78VktH1YqCIX6i9q2EYBTyZtVi2RDnzd8+kFcAqwNLJt1tb1hFMO0Io2Oi
+ ASxrdfSL6fQ20VnwO1/AB9nHEKOiTtTzPNE1vT7KXWro5jwSHajqdCaK3TNXtBstu5
+ /4zsvonEFoRPzEjAruGj02rsdbgf+bbWopaDJVtrUNcNyKDD2CxV7Zk1rwcqgROqRt
+ U020kGYd1U3nH8oBdCzY/0UOEX1keJgykX7Q/DADONOWROEpw6cUlRsyBHuOlNCPWZ
+ s24TIBKvT4vt3LcNsymho6CnpveFKVdCR0/3denWZkgGUaktMWmdV0X02rw6YsUutD
+ KMevdVXED/i5g==
+Message-ID: <f40d5ab3-0073-4af4-902a-f17548961638@kernel.org>
+Date: Wed, 19 Aug 2026 09:47:06 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Zhan Xusheng <zhanxusheng1024@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20260818145535.449055-1-zhanxusheng@xiaomi.com>
+To: =?UTF-8?B?7KCV7ISx7J6s?= <jsjlee1020@gmail.com>
+References: <20260814105234.31620-1-jsjlee1020@gmail.com>
+ <2a3d8702-f7fd-4013-8181-d9fd68b6aa18@kernel.org>
+ <CAPHXVrzgPpxgAJrCmJ_Ro19AertMnqKfC1oW_y_FpbLoqO7nug@mail.gmail.com>
 Content-Language: en-US
-In-Reply-To: <20260818145535.449055-1-zhanxusheng@xiaomi.com>
-X-Headers-End: 1wwVLm-000303-7F
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix i_size when pinned fallocate
- partially fails
+In-Reply-To: <CAPHXVrzgPpxgAJrCmJ_Ro19AertMnqKfC1oW_y_FpbLoqO7nug@mail.gmail.com>
+X-Headers-End: 1wwVOd-00086l-15
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix O_DIRECT cleanup range for append
+ writes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,63 +91,31 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Chao Yu <chao@kernel.org>
-Cc: zhanxusheng@xiaomi.com, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- Sungjong Seo <sj1557.seo@samsung.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ jaegeuk@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 8/18/26 22:55, Zhan Xusheng wrote:
-> From: Zhan Xusheng <zhanxusheng1024@gmail.com>
-> 
-> From: Zhan Xusheng <zhanxusheng@xiaomi.com>
-> 
-> Commit 4275b59673eb ("f2fs: fix to round down start offset of fallocate
-> for pin file") moved the allocation loop's start down to a section
-> boundary, but the error path still converts @expanded against @pg_start,
-> which holds the unrounded start.
-> 
-> @pg_start exists for that conversion: commit 88f2cfc5fa90 ("f2fs: fix to
-> update last i_size if fallocate partially succeeds") added it as an
-> immutable base because map.m_lblk moves every round.  Each round now maps
-> exactly sec_blks blocks starting from rounddown(pg_start, sec_blks), so
-> pg_start + expanded overshoots the last allocated block by
-> pg_start % sec_blks, and a partial failure leaves i_size covering a tail
-> that was never allocated.  Nothing corrects that afterwards either, since
-> file_dont_truncate() has already cleared FADVISE_TRUNC_BIT.
-> 
-> It needs a start offset that is not section aligned plus a fallocate that
-> hits ENOSPC partway, so the error path runs with expanded > 0.  On an
-> 80 MiB image with 2 MiB sections:
-> 
->   truncate -s 80M img
->   mkfs.f2fs -s 1 -f img
->   mount -o loop img /mnt
->   touch /mnt/pinned
->   f2fs_io pinfile set /mnt/pinned
->   # 2093056 = block 511, so pg_start % sec_blks = 511
->   f2fs_io fallocate 0 2093056 536870912 /mnt/pinned
->   stat -c %s /mnt/pinned
->   filefrag -v /mnt/pinned
-> 
-> The last extent ends at block 10737 either way.  Before, i_size is
-> 46075904, block 11249, so 511 blocks of it were never allocated, and
-> filefrag does not mark the last extent eof.  After, i_size is 43982848,
-> block 10738, and eof is back.  A kernel from before that commit also
-> shows no overshoot.
-> 
-> Keep @pg_start pointing at where allocation actually begins.
-> 
-> Fixes: 4275b59673eb ("f2fs: fix to round down start offset of fallocate for pin file")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Zhan Xusheng <zhanxusheng@xiaomi.com>
-Reviewed-by: Chao Yu <chao@kernel.org>
-
-Thanks,
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gOC8xOC8yNiAyMDoyMywg7KCV7ISx7J6sIHdyb3RlOgo+PiBJZiBnZW5lcmljX3dyaXRlX2No
+ZWNrcygpIGNhbiBhZGp1c3Qgd3JpdGluZyBwb3NpdGlvbiBvciBhbW91bnQgb2YgYnl0ZXMKPj4g
+dG8gd3JpdGUsIHNob3VsZG4ndCB3ZSBhY2Nlc3MgaW9jYi0+a2lfcG9zIGFuZCBpb3ZfaXRlcl9j
+b3VudChmcm9tKSBhZnRlcgo+PiBnZW5lcmljX3dyaXRlX2NoZWNrcygpPwo+IAo+IFllcywgYWdy
+ZWVkLiBnZW5lcmljX3dyaXRlX2NoZWNrcygpIGNhbiBhZGp1c3QgYm90aCBpb2NiLT5raV9wb3Mg
+YW5kCj4gdGhlIGl0ZXJhdG9yIGNvdW50Lgo+IAo+IEkgbm90aWNlZCB0aGF0IHRoZSBwaW5uZWQg
+ZmlsZSBvdmVyd3JpdGUgY2hlY2sgdXNlcyBwb3MgYW5kIGNvdW50Cj4gc2F2ZWQgYmVmb3JlIGYy
+ZnNfd3JpdGVfY2hlY2tzKCkuIEkgcGxhbiB0byBrZWVwIHRoZSBjaGVjayBpbgo+IGYyZnNfZmls
+ZV93cml0ZV9pdGVyKCksIGJ1dCBtb3ZlIGl0IGFmdGVyIGYyZnNfd3JpdGVfY2hlY2tzKCkgYW5k
+IHVzZQo+IHRoZSBhZGp1c3RlZCBpb2NiLT5raV9wb3MgYW5kIGlvdl9pdGVyX2NvdW50KGZyb20p
+LgoKWWVhaCwgSSB0aGluayBpdCdzIHRoZSBjb3JyZWN0IHdheS4KCj4gCj4gVGhpcyBhbHNvIGtl
+ZXBzIHRoZSBjaGFuZ2UgbG9jYWwgdG8gZjJmc19maWxlX3dyaXRlX2l0ZXIoKSwgd2hlcmUgb3Ro
+ZXIKPiBjaGVja3MgYXJlIGFscmVhZHkgcGVyZm9ybWVkIGFmdGVyIGYyZnNfd3JpdGVfY2hlY2tz
+KCkuCj4gCj4gRm9yIHRoZSBidWZmZXJlZCBjbGVhbnVwLCBhcyBpbiBteSBvcmlnaW5hbCBwYXRj
+aCwgSSBwbGFuIHRvIHNhdmUgdGhlCj4gYWRqdXN0ZWQgd3JpdGUgcG9zaXRpb24gYWZ0ZXIgZjJm
+c193cml0ZV9jaGVja3MoKSBhbmQgdXNlIGl0IGZvcgo+IGYyZnNfZmx1c2hfYnVmZmVyZWRfd3Jp
+dGUoKS4KPiAKPiBEb2VzIHRoaXMgYXBwcm9hY2ggbG9vayByZWFzb25hYmxlIHRvIHlvdT8KCkl0
+IG1ha2Ugc2Vuc2UsIHBsZWFzZSBnbyBhaGVhZC4gOikKClRoYW5rcywKCj4gCj4gVGhhbmtzLAo+
+IFNlb25namFlCgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMu
+c291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3Rp
+bmZvL2xpbnV4LWYyZnMtZGV2ZWwK
