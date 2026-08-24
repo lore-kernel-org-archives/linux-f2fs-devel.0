@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 81588C5DF94
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Aug 2026 10:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 450B6C5DF94
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Aug 2026 10:34:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	List-Subscribe:List-Help:List-Post:List-Archive:List-Unsubscribe:List-Id:
 	Subject:MIME-Version:References:In-Reply-To:Message-ID:Date:To:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=whPqdySN9rPxa0VCkkTiJFpHmMVytFqXglFZiyxQpHY=; b=LK+aEfmMjSDBjDdTkOcyG3DimR
-	SCAUIgVSrJ32oRh5Aqbuh4XfB+nVPUz4mr8sFQSrr24DSVWceKhsRZ/DXMUtlsLq/gYpmNV8Bsbh/
-	9Ha9pmSpEtYC0pZD1oQ6+eOBqUrUKKkjut1yIOti3aiVOPeaSEzt9mbobHvAHbECIRl4=;
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	bh=7aWqr+mQ7bfyLvAalv5bJoasUTYKhdHucVhd4mrm66A=; b=V4G//L9C0FDBEm8FyvXMXKMq88
+	QacYJA+2b/wa3MAPycT2xxkEOpXE4NgCbMh9aqdQiIuDvdul6sfQqBjhGy/QJm1y/tkYGk1YBveo7
+	WGTYcu+Dx+i0ilreH8chRv9XL4FRNhxJaP6b1cxuwhLOW9PAdCK0B3QS54Gs4OtjLUr4=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1wyS0G-0004KZ-H6;
-	Mon, 24 Aug 2026 10:34:09 +0000
+	id 1wyS0L-0004OT-Ue;
+	Mon, 24 Aug 2026 10:34:13 +0000
 Received: from [172.30.29.66] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qwjhust@gmail.com>) id 1wyS0F-0004KR-2Z
+ (envelope-from <qwjhust@gmail.com>) id 1wyS0K-0004OM-HS
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Aug 2026 10:34:07 +0000
+ Mon, 24 Aug 2026 10:34:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hJJbk4tPuMZ/n5IgnZpbMmRDFynIgVeuM9Ohf0uhx24=; b=aQAvK2uIVQ6pyk2YXUjWXxV0Q+
- 44j371CyP0APhpzKu/bd+VR8DktYbMKLQiWL6Raunwc5ziHa99kpn1r3UaCmDxkLmyEmfU7826Mni
- TYXQZ9NQDAsx/jTCUl1YqWafp8bHU+rh14g6OTAu+hjEDsVUTN1/ZMBXhsJofpnW7sOc=;
+ bh=gAe9u96jNxE6H3oZgwbxQpRnQm+N+LumGnkEUW5jR6Q=; b=PriQzovtDzf2Pxl5ZiXR/Ai95y
+ GX+WpbM4lgRogv+MRyOo9tukXVmtfIgLGzLZUzXtp0zfSzi2bo9Fdh9VK+vbhl08xDoGpiaPdJUWh
+ LXAxfYavk+VyuG1oAMHI3QP3y0LXRCeK4AR+ta/eiJQysDpLMPxS5zJVMXSMykENNpEE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:
@@ -42,74 +42,73 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hJJbk4tPuMZ/n5IgnZpbMmRDFynIgVeuM9Ohf0uhx24=; b=NeB3F5/x+aKypYRjRaGI4FVJLc
- hqJrVDx1q4KOxitLBYzL3+FGfTwOIZvcmBm02IJoo21a1yJ07epZaFacKoZ8sW7vz4N9mpnfdQGIY
- szztlyH6ZWC3iTY8Yh4C97X1SwFaIn/0p3YmN6q7RGbPxgDiwUItZLoK/wj4YIZJ1q1Y=;
-Received: from mail-pj1-f42.google.com ([209.85.216.42])
+ bh=gAe9u96jNxE6H3oZgwbxQpRnQm+N+LumGnkEUW5jR6Q=; b=WKYtWKcv2cNnB5IxICxIgVTgm2
+ E2pPDb3W4hgYMassoIhHwdZA2ZMEttDmMCYWxCMa5KtNIeEWzqbGU7dcjVnrHbgP6DCq0tWpaVS7r
+ QNYjfCIxpOg/oJLY8HTD1I3pMfH9J16LezjvwaRsiHV3bPEbx+MMq8NqauDNltmT/x34=;
+Received: from mail-pf1-f169.google.com ([209.85.210.169])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1wyS0E-0001aD-B3 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Aug 2026 10:34:07 +0000
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-38e08baf860so3635633a91.2
+ id 1wyS0I-0001aP-0n for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Aug 2026 10:34:12 +0000
+Received: by mail-pf1-f169.google.com with SMTP id
+ d2e1a72fcca58-84a4d8fd6ecso3337916b3a.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 24 Aug 2026 03:34:06 -0700 (PDT)
+ Mon, 24 Aug 2026 03:34:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1787567640; x=1788172440; darn=lists.sourceforge.net;
+ d=gmail.com; s=20251104; t=1787567644; x=1788172444; darn=lists.sourceforge.net;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=hJJbk4tPuMZ/n5IgnZpbMmRDFynIgVeuM9Ohf0uhx24=;
- b=IxLksAGkv+zbCv0ElUEoAM4ckFdzTTAhhWPV2Dnaoq39c10kCt2luLt+iNW7nrompc
- lKyOJNForFRvXubSTvdyChlPpJNh3c3CkuwR0ZEq89kkfsfxMHmfDDaU/km+OPvw5FM/
- X89J8oLciko0H3rdxn36x6q+scb0jcTv12C+yZV9SjG05fB1VZE19AEKV/FbacBxgHTr
- EpkFKkR6HPcrnEdcQJHcXX8h+jLIxC9MUV1Y+3XXa4qWTYdV352qp8q367Ue+WdhYPSW
- euElbiZR9tFrSyNpVIeCmHwUsIOg+5JwhxsXRGXH/8SC0FOZJk+/rwftO7O4TetPZGVw
- 5b3Q==
+ bh=gAe9u96jNxE6H3oZgwbxQpRnQm+N+LumGnkEUW5jR6Q=;
+ b=oQbuOmpiy0L56MEEHLEHok7NMfmk6RiUD+RnNjZgPqljEGURhA2QARLWZj/grzsGH9
+ 1J4urEzoK/Y6MY2hFOyIqe7dCFt/WaHFDy4Yzt1Qsb87eVBdCrOaJmrpoJfIRWwTRkqc
+ S+/h2WFlXQIGyIoUFQDc05fuDJ8eelwt7+VPQ1eq2b3AX803iDmvSVNz+vIbr4I0+ptV
+ ldPaB6hCTTVCyLmByE4pPVQ/IGScWoHe2yAG81OShMRO97ZfQIu3IkdA+gTflpVno1ep
+ nzirVpDPTE6xNGq7TOyidD0CNRx12bEt7Kw1bO3hY65Z3Mmn/Zm34Na/i5AANcdq2MCA
+ clww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787567640; x=1788172440;
+ d=1e100.net; s=20251104; t=1787567644; x=1788172444;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=hJJbk4tPuMZ/n5IgnZpbMmRDFynIgVeuM9Ohf0uhx24=;
- b=hAp2OTfDkfd60jmpHj+Rn3ukvVnDRcZ/XtyomvxQZzski1dExIW8BvUGc+o1rWMLSO
- H9sS4zi/Yv1fic6krdsqxWe5sqFnqU53IPwgz/4/9Trl5PXgVgmPXSAYn7e2bhsLxFJF
- wmA65mCPcG432Elas13n7hl/XFO4Biu+A6D/zK7boTkllEJmsO1HPhnJOI1OGCj70uFB
- AxGEElZE2wsG13r4u/U1Oy2rOze0uGvfa+x4muWd04Em6sy2QGArnb8Ibj/9PGESxTh0
- UDG90oR3KBJmcyzCuYd8ZVWSUJRMkgPWrdJ078QHeVi1zSQBVVsLTusxlbpIryGhk4xI
- qDEw==
-X-Gm-Message-State: AFuF++nVJ2z33jE96dionERnvtRtG4nBjOIbSj7FYMvHxAv+cVmh55kE
- MOo/xlSv2BRIegMreMWSLCoRLEICsslp2aXjP6rc91aaX0Mq0u+pBL/8
-X-Gm-Gg: AR+sD11HY8xmhHHZITKlN5ZF+6fvDCAks+F/s5LfPmV3d6cC1FnypDT1Ykdv4wuAxdt
- FuKhz2QIoe+EREDHFby+NwXbX7YZMmQtFo43zV9zflTwCGeZtvuKP0pXA4CuEjHi22HaDBQAcDd
- dN9xkZQU6x4vUHVpR98YmLtQ3D13Fw4c/0V1TFvFFj2U1BZDqy0lsr97eL/pHD9HZwgUj70AQ4k
- j0IUnw8onYjN/vLQcZURk1CFtGjcFUdSsDGUpS/h9mDjbHmZHDRbBawBDBIJHR9++M0cA0MCYf0
- O3tzgminqqzwsauibCWinAC/iPrG01nshP97ENrFUTiZR6oYUw2jNNshio/KiTO8mOrc/Q/rsHG
- LLCYcLVt8lAIyEMKGAiWJWdQ5uV45SH+X83BS/tdCpJLaPzDJY9rH9r/uQ2y2zeufYdoQo13HX4
- YVr2SwbCf3xb1nGHIESSAlN732IGprjH2bWODuDGzsCYkqi/dXd8V1qgvG769LZS5GtwxbOGZ/h
- DSo7MMfYcZ7lEqkM06BTfBD
-X-Received: by 2002:a17:90b:1d01:b0:38f:5801:dc0e with SMTP id
- 98e67ed59e1d1-395df5e8426mr33513930a91.15.1787567640562; 
- Mon, 24 Aug 2026 03:34:00 -0700 (PDT)
+ bh=gAe9u96jNxE6H3oZgwbxQpRnQm+N+LumGnkEUW5jR6Q=;
+ b=oiFBPx7UgtU876hn/ffTvPb5fTxtqG+Y8Il1jK0LHnQqh7VaoZd6SX0M8cSkTxHRUJ
+ /CUcJQRiFvj71A3GFSErRdD04VYCfso2PiOJKUaBd10GKLCk54UKAB+oKaVtPqgcvecd
+ 73WKTsLuBtAz6K7r641//DnN9XP3fSGr2EzUfgTmOEzuxiRJZzg0tK4EnY3gmJiUJ4pV
+ RDxnjsSNV4HWMJOWPST0OHOhlkMgw89h38nqqUtiLFxU9btop3kO8a5LgkovMnhV9TH5
+ g8CQm1FPuhWUQwnZvKSun5EE0hidtPT7ccGlnv1ktythLkhkiHW/fdOvGUP2hSrJXTfT
+ zJPA==
+X-Gm-Message-State: AFuF++mkK5r6ioVL062h71gCYwu03egwTfYciI0VEKcJxRED5s4j9ZNM
+ Li4UimeqnsXxxreoi4eO4O5XgakYOJf3AO1K1mntpyWdznqah1gz2TnLKXS7iWs7
+X-Gm-Gg: AR+sD10ZgF+i5tOtG9kZNsPI4gLrxhp34nb/Bct+nfekUC6B/JmpELY7VBi/zkKxx99
+ zfho2CAYQ382vw9ElVhXeSuZXxMxf1J+uYPlJaQSBdd8ObM6umq2ixL1ngDcvz3ggebnmHpMt1k
+ sGvHOeRQBl3Hz64i6qwocNe2/0TeTGkpangCsQ4DJhqWT9fJ701OXQDN9ETFwA6gtGWjkt/0P7r
+ XT8RT1LVfDvQ60O42ndwMRBOTyC/LmUIQX7V7qmyuyg/i2PtvCvQ+/lPALsyxJsZZyY7uxWc/En
+ XlwTLdtE37JYCJYi2gZ6UE+YURA0daLxkgvdSyVHO+ZOofI7zHma2s/drA/cNGrMnz7uKwIHVTM
+ YqrpKOBjgGckHtnFLmxbS/mY38cib8jKGdhcC3Fvl5mJf80PAmGv7eB7Z5vo67/B/U+FrjBXNMA
+ Yg12U1PlxNRuYDY3dS7zUiSwjRLYjsW8Q4++Ffmccfh4RjduDnoB39CbEIFAPskN0pOH6hkhUio
+ 9EPGw3gJXDT12gV/XUHfBU6Qbrts32j7WY=
+X-Received: by 2002:a05:6a00:1d8f:b0:84f:a7bf:8fb9 with SMTP id
+ d2e1a72fcca58-8520b9c6cfemr30801153b3a.3.1787567644332; 
+ Mon, 24 Aug 2026 03:34:04 -0700 (PDT)
 Received: from qiwenjie-ThinkCentre-M760t.mioffice.cn ([43.224.245.241])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-8520f14abb3sm1805081b3a.45.2026.08.24.03.33.58
+ d2e1a72fcca58-8520f14abb3sm1805081b3a.45.2026.08.24.03.34.02
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Aug 2026 03:33:59 -0700 (PDT)
+ Mon, 24 Aug 2026 03:34:03 -0700 (PDT)
 From: Wenjie Qi <qwjhust@gmail.com>
 X-Google-Original-From: Wenjie Qi <qiwenjie@xiaomi.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Mon, 24 Aug 2026 18:33:46 +0800
-Message-ID: <ef06bf67db77a009d5fc2932069c2b3366d972c4.1787564706.git.qiwenjie@xiaomi.com>
+Date: Mon, 24 Aug 2026 18:33:47 +0800
+Message-ID: <03790070c828924d98ba6d78e909391fb0014c7a.1787564706.git.qiwenjie@xiaomi.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1787564706.git.qiwenjie@xiaomi.com>
 References: <20260820071438.695893-1-qiwenjie@xiaomi.com>
  <cover.1787564706.git.qiwenjie@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1wyS0E-0001aD-B3
-Subject: [f2fs-dev] [PATCH v3 1/2] f2fs: complete dropbehind write bios in
- safe task context
+X-Headers-End: 1wyS0I-0001aP-0n
+Subject: [f2fs-dev] [PATCH v3 2/2] f2fs: enable buffered RWF_DONTCACHE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -127,131 +126,65 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Buffered RWF_DONTCACHE writes invalidate dropbehind folios from writeback
-completion. Keep normal and dropbehind folios in separate write bios, and
-defer dropbehind bios to sbi->wq unless completion runs in preemptible task
-context.
+Pass FGP_DONTCACHE to f2fs_filemap_get_folio() for IOCB_DONTCACHE
+writes and advertise FOP_DONTCACHE.
 
-Use an F2FS-local context check for this decision. Task context alone is
-not sufficient: preemption may still be disabled, or completion may run in
-a preemptible RCU read-side critical section.
-
-Keep the existing large-ATC deferral unchanged.
+Keep the F2FS-specific lookup flags because write_begin_get_folio() adds
+FGP_STABLE, which can deadlock here.
 
 Signed-off-by: Wenjie Qi <qiwenjie@xiaomi.com>
 ---
- fs/f2fs/data.c | 50 ++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 42 insertions(+), 8 deletions(-)
+ fs/f2fs/data.c | 9 ++++++---
+ fs/f2fs/file.c | 2 +-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 6ae0eb37d20..774a3e2d8e3 100644
+index 774a3e2d8e3..ebd9dc582f9 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -21,6 +21,7 @@
- #include <linux/fiemap.h>
- #include <linux/iomap.h>
- #include <linux/fserror.h>
-+#include <linux/rcupdate.h>
+@@ -3981,11 +3981,15 @@ static int f2fs_write_begin(const struct kiocb *iocb,
+ 	struct inode *inode = mapping->host;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct folio *folio;
++	fgf_t fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT;
+ 	pgoff_t index = pos >> PAGE_SHIFT;
+ 	bool need_balance = false;
+ 	block_t blkaddr = NULL_ADDR;
+ 	int err = 0;
  
- #include "f2fs.h"
- #include "node.h"
-@@ -43,9 +44,29 @@ struct f2fs_folio_state {
++	if (iocb->ki_flags & IOCB_DONTCACHE)
++		fgp_flags |= FGP_DONTCACHE;
++
+ 	trace_f2fs_write_begin(inode, pos, len);
  
- struct f2fs_bio {
- 	struct work_struct work;
-+	bool dropbehind;
- 	struct bio bio;
+ 	if (!f2fs_is_checkpoint_ready(sbi)) {
+@@ -4031,9 +4035,8 @@ static int f2fs_write_begin(const struct kiocb *iocb,
+ 	 * Do not use FGP_STABLE to avoid deadlock.
+ 	 * Will wait that below with our IO control.
+ 	 */
+-	folio = f2fs_filemap_get_folio(mapping, index,
+-				FGP_LOCK | FGP_WRITE | FGP_CREAT,
+-				mapping_gfp_mask(mapping));
++	folio = f2fs_filemap_get_folio(mapping, index, fgp_flags,
++				       mapping_gfp_mask(mapping));
+ 	if (IS_ERR(folio)) {
+ 		err = PTR_ERR(folio);
+ 		goto fail;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index d82be8c1502..8e9d86dd42c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -5912,6 +5912,6 @@ const struct file_operations f2fs_file_operations = {
+ 	.splice_read	= f2fs_file_splice_read,
+ 	.splice_write	= iter_file_splice_write,
+ 	.fadvise	= f2fs_file_fadvise,
+-	.fop_flags	= FOP_BUFFER_RASYNC,
++	.fop_flags	= FOP_BUFFER_RASYNC | FOP_DONTCACHE,
+ 	.setlease	= generic_setlease,
  };
- 
-+static struct f2fs_bio *to_f2fs_bio(struct bio *bio)
-+{
-+	return container_of(bio, struct f2fs_bio, bio);
-+}
-+
-+/* Keep in sync with the proposed block-layer bio_in_atomic(). */
-+static bool f2fs_bio_in_atomic(void)
-+{
-+#ifdef CONFIG_PREEMPTION
-+	if (rcu_preempt_depth())
-+		return true;
-+#endif
-+#ifndef CONFIG_PREEMPT_COUNT
-+	return true;
-+#else
-+	return !preemptible();
-+#endif
-+}
-+
- #define	F2FS_BIO_POOL_SIZE	NR_CURSEG_TYPE
- 
- int __init f2fs_init_bioset(void)
-@@ -426,12 +447,13 @@ static void f2fs_write_end_io(struct bio *bio)
- 
- 	sbi = bio->bi_private;
- 
--	if (in_atomic() && bio->bi_iter.bi_size > sbi->max_atc_write_bio_size) {
--		struct work_struct *w;
-+	if ((to_f2fs_bio(bio)->dropbehind && f2fs_bio_in_atomic()) ||
-+	    (in_atomic() &&
-+	     bio->bi_iter.bi_size > sbi->max_atc_write_bio_size)) {
-+		struct work_struct *work = &to_f2fs_bio(bio)->work;
- 
--		w = &container_of(bio, struct f2fs_bio, bio)->work;
--		INIT_WORK(w, f2fs_write_end_io_work);
--		queue_work(sbi->wq, w);
-+		INIT_WORK(work, f2fs_write_end_io_work);
-+		queue_work(sbi->wq, work);
- 	} else {
- 		f2fs_write_end_bio(bio);
- 	}
-@@ -530,6 +552,8 @@ static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
- 	bio = bio_alloc_bioset(bdev, npages,
- 				fio->op | fio->op_flags | f2fs_io_flags(fio),
- 				GFP_NOIO, &f2fs_bioset);
-+	to_f2fs_bio(bio)->dropbehind =
-+			!is_read_io(fio->op) && folio_test_dropbehind(fio->folio);
- 	bio->bi_iter.bi_sector = sector;
- 	if (is_read_io(fio->op)) {
- 		bio->bi_end_io = f2fs_read_end_io;
-@@ -825,6 +849,13 @@ static bool page_is_mergeable(struct f2fs_sb_info *sbi, struct bio *bio,
- 	return bio->bi_bdev == f2fs_target_device(sbi, cur_blkaddr, NULL);
- }
- 
-+static bool f2fs_bio_dropbehind_mergeable(struct bio *bio,
-+					  struct f2fs_io_info *fio)
-+{
-+	return to_f2fs_bio(bio)->dropbehind ==
-+		folio_test_dropbehind(fio->folio);
-+}
-+
- static bool io_type_is_mergeable(struct f2fs_bio_info *io,
- 						struct f2fs_io_info *fio)
- {
-@@ -1017,8 +1048,10 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 
- 	trace_f2fs_submit_folio_bio(data_folio, fio);
- 
--	if (bio && !page_is_mergeable(fio->sbi, bio, *fio->last_block,
--						fio->new_blkaddr))
-+	if (bio &&
-+	    (!page_is_mergeable(fio->sbi, bio, *fio->last_block,
-+				fio->new_blkaddr) ||
-+	     !f2fs_bio_dropbehind_mergeable(bio, fio)))
- 		f2fs_submit_merged_ipu_write(fio->sbi, &bio, NULL);
- alloc_new:
- 	if (!bio) {
-@@ -1118,7 +1151,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
- 			      fio->new_blkaddr) ||
- 	     !f2fs_crypt_mergeable_bio(io->bio, fio_inode(fio),
--				bio_folio->index, fio)))
-+				bio_folio->index, fio) ||
-+	     !f2fs_bio_dropbehind_mergeable(io->bio, fio)))
- 		__submit_merged_bio(io);
- alloc_new:
- 	if (io->bio == NULL) {
 -- 
 2.43.0
+
 
 
 _______________________________________________
